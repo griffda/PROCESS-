@@ -322,7 +322,7 @@ tinstf   = 0.008 * Ground insulation thickness surrounding winding pack (m)
 tmargmin = 1.500 * Minimum allowable temperature margin (cs and tf coils) (k)
 vdalw    = 10.00 * Max voltage across tf coil during quench (kv)
 vftf     = 0.300 * Coolant fraction of tfc 'cable' (i_tf_sup=1); or of tfc leg (i_tf_sup=0)
-isumattf = 5
+i_tf_sc_mat = 5
 *strncon = -0.0066
 
 n_pancake = 20
@@ -339,17 +339,17 @@ tburn    = 1.0d4 * Burn time (s) (calculated if lpulse=1)
 tburn    = 1.0d4 * Burn time (s) (calculated if lpulse=1)
 
 
-                      bt            =   5.3292E+00
-                      rmajor        =   8.8901E+00
-                      te             =  1.2330E+01
-                      beta           =  3.1421E-02
-                      dene           =  7.4321E+19
-                      fdene          =  1.2000E+00
-                      oacdcp         =  8.6739E+06
-                      tfcth          =  1.2080E+00
-                      fwalld         =  1.3100E-01
+                     bt            =   5.3292E+00
+                     rmajor        =   8.8901E+00
+                     te             =  1.2330E+01
+                     beta           =  3.1421E-02
+                     dene           =  7.4321E+19
+                     fdene          =  1.2000E+00
+                     oacdcp         =  8.6739E+06
+                     tfcth          =  1.2080E+00
+                     fwalld         =  1.3100E-01
                      ohcth          =  5.5242E-01
-                    q              =  3.5000E+00
+                     q              =  3.5000E+00
                      bore           =  2.3322E+00
                      fbetatry       =  4.8251E-01
                      coheof         =  2.0726E+07

@@ -58,6 +58,9 @@ RUN pip3 install scipy
 RUN pip3 install matplotlib
 RUN pip3 install pathlib
 
+# Get anybadge
+RUN pip3 install pillow
+
 # Set locale
 # RUN export LANG=C.UTF-8
 # configure the container to list directory by default

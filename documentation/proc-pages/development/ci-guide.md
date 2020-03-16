@@ -1,9 +1,6 @@
 
 # Introduction
 
-!!! Note "CI Branches"
-    Currently runs on `develop` and any branch with a name starting with `issue-`
-
 The CI jobs run using the Ubuntu image that has been uploaded to the repository 
 called `git.ccfe.ac.uk:4567/process/process/ci-image`.
 
@@ -114,8 +111,20 @@ There is a Freia stage of jobs that only run on the develop branch. These jobs a
 
 To run to PROCESS GitLab jobs locally do the following:
 
-- Install `gitlab-runner` (see [here](https://docs.gitlab.com/runner/install/))
-- Install docker (see [here](https://docs.docker.com/install/))
-- In the top level of the repository run
-  - `gitlab-runner exec docker <job_name>`
-  - Where `<job_name>` is the name of the job from the tables above (excluding Freia jobs).
+Install `gitlab-runner` (see [here](https://docs.gitlab.com/runner/install/))
+
+Install docker (see [here](https://docs.docker.com/install/))
+
+Link your local Docker to the PROCESS GitLab image [registry](https://git.ccfe.ac.uk/process/process/container_registry) by running:
+
+```bash
+docker login git.ccfe.ac.uk:4567
+```
+
+In the top level of the repository run
+
+```bash
+gitlab-runner exec docker <job_name>
+```
+  
+Where `<job_name>` is the name of the job from the tables above (excluding Freia jobs).

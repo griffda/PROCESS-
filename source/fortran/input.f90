@@ -60,6 +60,7 @@ module process_input
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   use build_variables
   use buildings_variables
   use constraint_variables
@@ -1660,15 +1661,21 @@ contains
        case ('etapump')
           call parse_real_variable('etapump', etapump, 0.0D0, 1.0D0, &
                'Efficiency of c/p coolant pump')
-       case ('eystl')
-          call parse_real_variable('eystl', eystl, 1.0D8, 1.0D13, &
+       case ('eyoung_steel')
+          call parse_real_variable('eyoung_steel', eyoung_steel, 1.0D8, 1.0D13, &
                'Steel case Youngs Modulus (Pa)')
-       case ('eyins')
-          call parse_real_variable('eyins', eyins, 1.0D8, 1.0D13, &
+       case ('eyoung_ins')
+          call parse_real_variable('eyoung_ins', eyoung_ins, 1.0D8, 1.0D13, &
                'Insulator Youngs Modulus (Pa)')
-       case ('eywp')
-          call parse_real_variable('eywp', eywp, 1.0D8, 1.0D13, &
+       case ('eyoung_winding')
+          call parse_real_variable('eyoung_winding', eyoung_winding, 1.0D8, 1.0D13, &
                'Winding pack Youngs Modulus (Pa)')
+       case ('eyoung_al')
+          call parse_real_variable('eyoung_al', eyoung_al, 0.0D0, 1.0D0, &
+               'Reinforced aluminium Young modulus for TF stress calc.')
+       case ('eyoung_reinforced_al')
+          call parse_real_variable('eyoung_reinforced_al', eyoung_reinforced_al, 0.0D0, 1.0D0, &
+               'Reinforced aluminium Young modulus for TF stress calc.')
        case ('farc4tf')
           call parse_real_variable('farc4tf', farc4tf, 0.0D0, 1.0D0, &
                'TF coil shape parameter')
@@ -1690,20 +1697,38 @@ contains
        case ('frholeg')
           call parse_real_variable('frholeg', frholeg, 0.01D0, 5.0D0, &
                'TART outboard leg resistivity enhancement factor')
+       case ('rho_tf_joints')
+          call parse_real_variable('rho_tf_joints', rho_tf_joints, 0.0D0, 1.0D-2, &
+               'TF joints surfacic resistivity')
+       case ('th_joint_contact')
+          call parse_real_variable('th_joint_contact', th_joint_contact, 0.0D0, 1.0D0, &
+               'TF sliding joints contact pad width')
+       case ('n_tf_joints_contact')
+          call parse_int_variable('n_tf_joints_contact', n_tf_joints_contact, 1, 50, &
+               'Number of contact per sliding joint')
+       case ('n_tf_joints')
+          call parse_int_variable('n_tf_joints', n_tf_joints, 1, 50, &
+               'Number of joints per turn')
+       case ('eff_tf_cryo')
+          call parse_real_variable('eff_tf_cryo', eff_tf_cryo, -1.0D0, 1.0D0, &
+               'TF coil cryo-plane efficiency')  
        case ('i_tf_tresca')
           call parse_int_variable('i_tf_tresca', i_tf_tresca, 0, 1, &
                          'Switch for TF coil Tresca criterion.')
        case ('i_tf_turns_integer')
           call parse_int_variable('i_tf_turns_integer', i_tf_turns_integer, 0, 1, &
                     'Switch for TF coil integer/non-integer turns')
-       case ('isumattf')
-          call parse_int_variable('isumattf', isumattf, 1, 6, &
+       case ('i_tf_bucking')
+          call parse_int_variable('i_tf_bucking', i_tf_bucking, -1, 2, &
+               'Switch for bucking cylinder (case)')
+       case ('i_tf_sc_mat')
+          call parse_int_variable('i_tf_sc_mat', i_tf_sc_mat, 1, 6, &
                'TF coil superconductor material')
-          if (isumattf == 2) then
+          if (i_tf_sc_mat == 2) then
              write(outfile,*) ' '
              write(outfile,*) '**********'
              write(outfile,*) 'Warning if you are using an old input file:'
-             write(outfile,*) 'ISUMATTF=2 usage has changed -'
+             write(outfile,*) 'i_tf_sc_mat=2 usage has changed -'
              write(outfile,*) 'please check validity!'
              write(outfile,*) '**********'
              write(outfile,*) ' '
@@ -1748,12 +1773,21 @@ contains
        case ('n_layer')
           call parse_int_variable('n_layer', n_layer, 1, 100, &
                'Number of layers in TF coil (i_tf_turns_integer=1)')
+       case ('n_tf_graded_layers')
+          call parse_int_variable('n_tf_graded_layers', n_tf_graded_layers, 1, 20, &
+               'Number of layers of different stress properties in the WP')
        case ('oacdcp')
           call parse_real_variable('oacdcp', oacdcp, 1.0D4, 1.0D9, &
                'Overall J in inboard TF coil midplane')
-       case ('poisson')
-          call parse_real_variable('poisson', poisson, 0.0D0, 1.0D0, &
-               'Poissons ratio for TF stress calc.')
+       case ('poisson_steel')
+          call parse_real_variable('poisson_steel', poisson_steel, 0.0D0, 1.0D0, &
+               'Steel Poissons ratio for TF stress calc.')
+       case ('poisson_copper')
+          call parse_real_variable('poisson_copper', poisson_copper, 0.0D0, 1.0D0, &
+               'Steel Poissons ratio for TF stress calc.')
+       case ('poisson_al')
+          call parse_real_variable('poisson_al', poisson_al, 0.0D0, 1.0D0, &
+               'Aluminium Poissons ratio for TF stress calc.')
        case ('ptempalw')
           call parse_real_variable('ptempalw', ptempalw, 4.0D0, 573.15D0, &
                'Maximum peak centrepost temp. (K)')
@@ -3156,12 +3190,12 @@ contains
     !  Arguments
 
     character(len=*), intent(in) :: varnam, description
-    real(kind(1.0D0)), intent(inout) :: varval
-    real(kind(1.0D0)), intent(in) :: vmin, vmax
+    real(dp), intent(inout) :: varval
+    real(dp), intent(in) :: vmin, vmax
 
     !  Local variables
 
-    real(kind(1.0D0)) :: oldval
+    real(dp) :: oldval
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3351,11 +3385,11 @@ contains
     integer, intent(inout) :: isub1
     integer, intent(in) :: n
     integer, intent(out) :: icode
-    real(kind(1.0D0)), dimension(n), intent(inout) :: varval
+    real(dp), dimension(n), intent(inout) :: varval
 
     !  Local variables
 
-    real(kind(1.0D0)) :: oldval, val
+    real(dp) :: oldval, val
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3653,12 +3687,12 @@ contains
 
     character(len=*), intent(in) :: string
     integer, intent(in) :: length
-    real(kind(1.0D0)), intent(out) :: rval
+    real(dp), intent(out) :: rval
     integer, intent(out) :: icode
 
     !  Local variables
 
-    real(kind(1.0D0)) :: valbdp,valadp,xfact
+    real(dp) :: valbdp,valadp,xfact
     integer :: iptr,izero,iexpon
     logical :: negatm,negate
 
@@ -3949,7 +3983,7 @@ contains
     !  Arguments
 
     integer, intent(out) :: icode
-    real(kind(1.0D0)), intent(out) :: rval
+    real(dp), intent(out) :: rval
 
     !  Local variables
 
@@ -4449,7 +4483,7 @@ contains
     !  Arguments
 
     character(len=*), intent(in) :: cvar
-    real(kind(1.0D0)), intent(in) :: varval,min_value,max_value
+    real(dp), intent(in) :: varval,min_value,max_value
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

@@ -9,7 +9,6 @@ icc = 2        * global power balance (consistency equation)
 icc = 5        * density upper limit
 icc = 7        * beam ion density (nbi) (consistency equation)
 icc = 8        * neutron wall load upper limit
-*icc = 10       * toroidal field 1/r (consistency equation)
 icc = 11       * radial build (consistency equation)
 icc = 13       * burn time lower limit (pulse)
 icc = 15       * l-h power threshold limit

@@ -11,8 +11,8 @@ module costs_2015_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  ! Import modules !
-  ! !!!!!!!!!!!!!!!!!
+  ! Import modules
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
 
   use constants
   use cost_variables
@@ -436,17 +436,17 @@ contains
     integer :: i, j
 
     ! Enrichment variables
-    real(kind(1.0D0)) :: product_li6
-    real(kind(1.0D0)) :: feed_li6
-    real(kind(1.0D0)) :: tail_li6
-    real(kind(1.0D0)) :: feed_to_product_mass_ratio
-    real(kind(1.0D0)) :: tail_to_product_mass_ratio
-    real(kind(1.0D0)) :: p_v, f_v, t_v
-    real(kind(1.0D0)) :: swu, total_swu
-    real(kind(1.0D0)) :: mass_li
+    real(dp) :: product_li6
+    real(dp) :: feed_li6
+    real(dp) :: tail_li6
+    real(dp) :: feed_to_product_mass_ratio
+    real(dp) :: tail_to_product_mass_ratio
+    real(dp) :: p_v, f_v, t_v
+    real(dp) :: swu, total_swu
+    real(dp) :: mass_li
 
     ! First wall W coating variables
-    real(kind(1.0D0)) :: W_density
+    real(dp) :: W_density
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -594,12 +594,12 @@ contains
     integer :: i
 
     !  Divertor RH system variables
-    !real(kind(1.0D0)) :: ITER_num_div_rh_systems
-    !real(kind(1.0D0)) :: div_num_rh_systems_ratio
+    !real(dp) :: ITER_num_div_rh_systems
+    !real(dp) :: div_num_rh_systems_ratio
 
     !  First wall and blanket RH system variables
-    !real(kind(1.0D0)) :: ITER_num_blanket_rh_systems
-    !real(kind(1.0D0)) :: blanket_num_rh_systems_ratio
+    !real(dp) :: ITER_num_blanket_rh_systems
+    !real(dp) :: blanket_num_rh_systems_ratio
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1005,8 +1005,8 @@ contains
     implicit none
 
     !  Arguments
-    real(kind(1.0D0)), intent(in) :: x
-    real(kind(1.0D0)), intent(out) :: v
+    real(dp), intent(in) :: x
+    real(dp), intent(out) :: v
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1027,7 +1027,7 @@ subroutine ocost(file,descr,n,value)
     integer :: n
     character(len=*), intent(in) :: descr
     character(len=5) :: vname
-    real(kind(1.0D0)), intent(in) :: value
+    real(dp), intent(in) :: value
     !  Local variables
     character(len=70) :: dum70
 
@@ -1055,7 +1055,7 @@ subroutine ocost(file,descr,n,value)
     integer, intent(in) :: file
     character(len=*), intent(in) :: descr
     character(len=*), intent(in) :: vname
-    real(kind(1.0D0)), intent(in) :: value
+    real(dp), intent(in) :: value
     !  Local variables
     character(len=70) :: dum70
 

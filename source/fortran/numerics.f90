@@ -9,6 +9,7 @@ module numerics
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   use global_variables
   use constants
   use maths_library
@@ -306,34 +307,34 @@ module numerics
 
   character(len=14), dimension(:), allocatable :: name_xc
 
-  real(kind(1.0D0)) :: sqsumsq = 0.0D0
+  real(dp) :: sqsumsq = 0.0D0
   !!  sqsumsq : sqrt of the sum of the square of the constraint residuals
-  real(kind(1.0D0)) :: epsfcn = 1.0D-3
+  real(dp) :: epsfcn = 1.0D-3
   !!  epsfcn /1.0e-3/ : finite difference step length for HYBRD/VMCON derivatives
-  real(kind(1.0D0)) :: epsvmc = 1.0D-6
+  real(dp) :: epsvmc = 1.0D-6
   !!  epsvmc /1.0e-6/ : error tolerance for VMCON
-  real(kind(1.0D0)) :: factor = 0.1D0
+  real(dp) :: factor = 0.1D0
   !!  factor /0.1/ : used in HYBRD for first step size
-  real(kind(1.0D0)) :: ftol = 1.0D-4
+  real(dp) :: ftol = 1.0D-4
   !!  ftol /1.0e-4/ : error tolerance for HYBRD
 
-  real(kind(1.0D0)), dimension(ipnvars) :: boundl = 9.d-99
+  real(dp), dimension(ipnvars) :: boundl = 9.d-99
   !!  boundl(ipnvars) /../ : lower bounds used on ixc variables during
   !!                         VMCON optimisation runs
 
   ! Issue #287 These bounds now defined in initial.f90
-  real(kind(1.0D0)), dimension(ipnvars) :: boundu = 9.d99
+  real(dp), dimension(ipnvars) :: boundu = 9.d99
   ! !!  boundu(ipnvars) /../ : upper bounds used on ixc variables 
 
-  real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0
-  real(kind(1.0D0)), dimension(ipnvars) :: bondu = 0.0D0
-  real(kind(1.0D0)), dimension(ipnvars) :: rcm = 0.0D0
-  real(kind(1.0D0)), dimension(ipnvars) :: resdl = 0.0D0
-  real(kind(1.0D0)), dimension(ipnvars) :: scafc = 0.0D0
-  real(kind(1.0D0)), dimension(ipnvars) :: scale = 0.0D0
-  real(kind(1.0D0)), dimension(ipnvars) :: xcm = 0.0D0
-  real(kind(1.0D0)), dimension(ipnvars) :: xcs = 0.0D0
-  real(kind(1.0D0)), dimension(ipvlam)  :: vlam = 0.0D0
+  real(dp), dimension(ipnvars) :: bondl = 0.0D0
+  real(dp), dimension(ipnvars) :: bondu = 0.0D0
+  real(dp), dimension(ipnvars) :: rcm = 0.0D0
+  real(dp), dimension(ipnvars) :: resdl = 0.0D0
+  real(dp), dimension(ipnvars) :: scafc = 0.0D0
+  real(dp), dimension(ipnvars) :: scale = 0.0D0
+  real(dp), dimension(ipnvars) :: xcm = 0.0D0
+  real(dp), dimension(ipnvars) :: xcs = 0.0D0
+  real(dp), dimension(ipvlam)  :: vlam = 0.0D0
 
 contains
 
@@ -417,18 +418,18 @@ contains
 
     external :: fcnhyb
     integer, intent(in) :: n, nprint, lwa
-    real(kind(1.0D0)), dimension(n), intent(inout) :: x
-    real(kind(1.0D0)), dimension(n), intent(out) :: fvec, resdl
-    real(kind(1.0D0)), dimension(lwa), intent(out) :: wa
-    real(kind(1.0D0)), intent(in) :: tol, epsfcn, factor
+    real(dp), dimension(n), intent(inout) :: x
+    real(dp), dimension(n), intent(out) :: fvec, resdl
+    real(dp), dimension(lwa), intent(out) :: wa
+    real(dp), intent(in) :: tol, epsfcn, factor
     integer, intent(out) :: info, nfev
 
     !  Local variables
 
     integer :: n1,indx,lr,maxfev,ml,mode,mu
-    real(kind(1.0D0)), parameter :: one = 1.0D0
-    real(kind(1.0D0)), parameter :: zero = 0.0D0
-    real(kind(1.0D0)) :: xtol
+    real(dp), parameter :: one = 1.0D0
+    real(dp), parameter :: zero = 0.0D0
+    real(dp) :: xtol
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -491,7 +492,7 @@ contains
 
     external :: fcnvmc1, fcnvmc2
     integer, intent(out) :: ifail
-    real(kind(1.0D0)), intent(out) :: f
+    real(dp), intent(out) :: f
 
     !  Local variables
 
@@ -508,19 +509,19 @@ contains
     integer, dimension(nvar)          :: ixc_opt_out
     integer, dimension(neqns+nineqns) :: icc_opt_out
 
-    real(kind(1.0D0)), parameter :: zero = 0.0D0
-    real(kind(1.0D0)), parameter :: bfactor = 2.0D0
-    real(kind(1.0D0)) :: xtol
-    real(kind(1.0D0)), dimension(ipnvars) :: bdelta,bndl,bndu,etav,fgrd, &
+    real(dp), parameter :: zero = 0.0D0
+    real(dp), parameter :: bfactor = 2.0D0
+    real(dp) :: xtol
+    real(dp), dimension(ipnvars) :: bdelta,bndl,bndu,etav,fgrd, &
          gammv,glag,glaga,xa,xv
-    real(kind(1.0D0)), dimension(ipeqns) :: cm,conf
-    real(kind(1.0D0)), dimension(ippn1) :: bdl,bdu,gm
-    real(kind(1.0D0)), dimension(ipvmu) :: vmu
-    real(kind(1.0D0)), dimension(ipldel) :: delta
-    real(kind(1.0D0)), dimension(iplh) :: wa
-    real(kind(1.0D0)), dimension(ippn1,ipeqns) :: cnorm
-    real(kind(1.0D0)), dimension(ippn1,ippn1) :: b
-    real(kind(1.0D0)), dimension(iplh,iplh) :: h
+    real(dp), dimension(ipeqns) :: cm,conf
+    real(dp), dimension(ippn1) :: bdl,bdu,gm
+    real(dp), dimension(ipvmu) :: vmu
+    real(dp), dimension(ipldel) :: delta
+    real(dp), dimension(iplh) :: wa
+    real(dp), dimension(ippn1,ipeqns) :: cnorm
+    real(dp), dimension(ippn1,ippn1) :: b
+    real(dp), dimension(iplh,iplh) :: h
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

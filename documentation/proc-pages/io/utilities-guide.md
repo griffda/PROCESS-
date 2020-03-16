@@ -115,20 +115,27 @@ config file
 > `./utilities/plot_sankey.py`
 
 The power flows of the power plant will be extracted from MFILE.DAT and used to populate a
-Sankey diagram. The diagram will start from the initial fusion power and show all of the inputs 
-and outputs for the power flows. The Recirculated will finish to connect with the initial
-fusion power.
+Sankey diagram. The diagram will start from the initial fusion power and show the inputs
+and outputs for the power flows. The Recirculated power will finish by connecting the plasma
+heating back into the fusion power.
 
 ### Usage
 
 ```
-python plot_sankey.py [-h] [-e END] [-f MFILE] [-s]
+python plot_sankey.py [-h] [-e END] [-m MFILE] [-f]
 ```
 
 ### Output
 
-A .pdf file is created called 'SankeyPowerFlow.pdf', and 'SankeyPowerFlow_simplified.pdf' if
-the -s option is used, in the directory the utility was run. 
+A .pdf file is created called 'SankeyPowerFlow.pdf', and 'SankeyPowerFlow_full.pdf' if
+the -f option is used, in the directory the utility was run. The full version is current
+not working and will be implemented in the future.
+N.B. Rounding to whole integer can cause errors of $\pm$1 between adjacent arrows.
+
+### Example Output
+
+![Sankey flow chart of 2018 baseline](../../img/SankeyPowerFlow.png)
+Figure 1: *Sankey flow chart of 2018 baseline*
 
 ### Options
 
@@ -136,8 +143,8 @@ the -s option is used, in the directory the utility was run.
 | - | - |
 | `-h --help`       | show help message and exit      |
 | `-e --end`        | file format, default = pdf      |
-| `-f --mfile`      | mfile name, default = MFILE.DAT |
-| `-s, --simplified`| Plot a simplified version       |
+| `-m --mfile`      | mfile name, default = MFILE.DAT |
+| `-f, --full`      | Plot a full version             |
 
 ## Morris Method
 
@@ -291,6 +298,7 @@ The configuration file `sobol_method_conf.json` used the JSON format and has the
     "num_vars": 4
 }
 ```
+
 The file specifies a dictionary that gives all the information for running the Morris method tool. The number of variables considered in the Morris method with `num_vars`, the name of the variable as it appears the PROCESS MFILE is listed under `names` and the upper and lower bounds of the flat distribution is given in bounds. In addition the utility also uses `run_process.py` and therefore can optionally use the configuation file `run_process.conf`. Additionally, an `IN.DAT` file describing the relevant design point needs to be present.
 
 ### Output
@@ -338,3 +346,67 @@ A .pdf file is created called `sobol_output.pdf`. The name of the produced pdf f
 | `-h, --help`    | show this help message and exit                           |
 | `-f DATAFILE`   | datafile for plotting, default = sobol.txt                |
 | `-o OUTPUTFILE` | filename of outputed pdf file, default = sobol_output.pdf |
+
+
+
+## TF Stress distribution plots
+
+> `./utilities/plot_stress_tf.py`
+
+Program to plot stress, strain and displacement radial distributions at the inboard mid-plane section of the TF coil.
+This program uses the `SIG_TF.DAT` file, that store stress distributions of the VMCON point and stores the outputs
+plots in the `SIG_TF_plots/` folder, created if not existing.
+
+### Discussion of the stress modelling assumptions
+
+In case of a resisitive coil, the stress is calculated from a generalized plane strain model, hence provinding vertical
+stress radial distribution, alongside the radial and the toroidal ones. This is not the case for superconducting magnets
+as a plane stress modelling is used for now. The reason is that a transverse orthotropic formulation of the generalized 
+plane strain, is needed to correctly take the difference of the casing in the vertical direction properly. This will be
+done in the near future. 
+
+### Usage
+
+```bash
+usage: plot_stress_tf.py [-h] [-p [PLOT_SELEC]] [-sf [SAVE_FORMAT]] [-as [AXIS_FONT_SIZE]]
+```
+
+### Option
+
+| Argument | Description |
+| - | - |
+| `-h, --help`    | show this help message and exit                           |
+| `-p, --plot_selec [PLOT_SELEC]`   | Plot selection string :                 |
+| - |   - if the string contains `sig`, plot the stress distributions |
+| - |   - if the string contains `strain`, plot the strain distributions |
+| - |   - if the string contains `disp`, plot the radial displacement distribution |
+| - |   - if the string contains `all`, plot stress and displecement distributions |
+| `-sf, --save_format [SAVE_FORMAT]` | output format (default='pdf')  |
+| `-as, --axis_font_size [AXIS_FONT_SIZE]` | Axis label font size selection (default=18) |
+
+## JSON Exporter
+
+```bash
+./utilities/mfile_to_json.py
+```
+
+This script outputs the contents of the MFILE to a JSON file.
+
+### Usage
+
+```bash
+usage: mfile-to-json.py [-h] [-f filename] [-n N] [--radial_build]
+                        [--vertical_build] [--all_build] [--verbose]
+```
+
+### Option
+
+| Argument | Description |
+| - | - |
+| `-h, --help`    | show this help message and exit |
+| `-f, [filename]` | specify MFILE file path |
+| `-n, [N]` | specify scan to plot (-1=last, 0=all) |
+| `--radial-build` | only output radial build |
+| `--vertical-build` | only output vertical build  |
+| `--all-build` | only output radial + vertical build |
+| `--verbose` | output both variable name and description |

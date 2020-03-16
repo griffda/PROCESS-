@@ -1,5 +1,9 @@
 module main_module
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+
+  implicit none
+
 contains
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -25,7 +29,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=98) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '1.0.16   Release Date :: 2019-07-15'
+       '1.0.17   Release Date :: 2020-02-25'
   character(len = 50) :: dt_time
   character(len=72), dimension(10) :: id
 
@@ -254,10 +258,10 @@ subroutine eqslv(ifail)
 
   !  Local variables
   integer :: inn,nprint,nx
-  real(kind(1.0D0)) :: sumsq
-!  real(kind(1.0D0)), dimension(iptnt) :: wa
-  real(kind(1.0D0)) :: wa(iptnt)
-  real(kind(1.0D0)), dimension(ipeqns) :: con1, con2, err
+  real(dp) :: sumsq
+!  real(dp), dimension(iptnt) :: wa
+  real(dp) :: wa(iptnt)
+  real(dp), dimension(ipeqns) :: con1, con2, err
   character(len = 1), dimension(ipeqns) :: sym
   character(len = 10), dimension(ipeqns) :: lab
 
@@ -605,7 +609,7 @@ subroutine runtests
   use hare, only:hare_calc
 
   implicit none
-  real(kind(1.0D0)) :: fshift, xf, enpa,ftherm,fpp,cdeff, ampperwatt
+  real(dp) :: fshift, xf, enpa,ftherm,fpp,cdeff, ampperwatt
   logical :: Temperature_capped
   call ovarre(nout,'Binomial coefficients C(5,0): 1', '(binomial(5,0))', binomial(5,0))
   call ovarre(nout,'Binomial coefficients C(5,1): 5', '(binomial(5,1))', binomial(5,1))

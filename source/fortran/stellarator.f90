@@ -759,7 +759,7 @@ contains
 
     
     if ( ANY( ixc == 5 ) ) then  ! Check if beta (iteration variable 5) is an iteration variable
-      call report_error(245)
+      call report_error(251)
     end if
 
     !  Set beta as a consequence:

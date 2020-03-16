@@ -14,6 +14,7 @@ module build_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   use build_variables
   use constants
   use current_drive_variables
@@ -58,8 +59,8 @@ contains
     !  Local variables
 
 
-    real(kind(1.0D0)) :: hbot,hfw,htop,r1,r2,r3,radius,r_tf_outboard_midl,vbuild, rbldtotf, deltf, vbuild1
-    real(kind(1.0D0)) :: fwtth
+    real(dp) :: hbot,hfw,htop,r1,r2,r3,radius,r_tf_outboard_midl,vbuild, rbldtotf, deltf, vbuild1
+    real(dp) :: fwtth
 
     integer :: ripflag = 0
 
@@ -517,7 +518,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: divht
+    real(dp) :: divht
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -575,19 +576,19 @@ contains
 
     integer, intent(in) :: iprint,outfile
 
-    real(kind(1.0D0)), intent(out) :: divht
+    real(dp), intent(out) :: divht
 
     !  Local variables
 
-    !real(kind(1.0D0)), parameter :: soleno = 0.2D0  !  length along outboard divertor
+    !real(dp), parameter :: soleno = 0.2D0  !  length along outboard divertor
     !  plate that scrapeoff hits
-    real(kind(1.0D0)) :: kap,thetao, rci, rco, thetai
-    ! real(kind(1.0D0)) :: yspointo,xspointo,yprimeb,xpointo, tri, rprimeo, phio
-    ! real(kind(1.0D0)) :: denomo, alphad
-    real(kind(1.0d0)) :: triu, tril, rxpt, zxpt
-    real(kind(1.0d0)) :: rspi, zspi, zspo, rplti, zplti
-    real(kind(1.0d0)) :: rplbi, zplbi, rplto, zplto, rplbo, zplbo
-    real(kind(1.0d0)) :: ptop_radial,ptop_vertical
+    real(dp) :: kap,thetao, rci, rco, thetai
+    ! real(dp) :: yspointo,xspointo,yprimeb,xpointo, tri, rprimeo, phio
+    ! real(dp) :: denomo, alphad
+    real(dp) :: triu, tril, rxpt, zxpt
+    real(dp) :: rspi, zspi, zspo, rplti, zplti
+    real(dp) :: rplbi, zplbi, rplto, zplto, rplbo, zplbo
+    real(dp) :: ptop_radial,ptop_vertical
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -826,12 +827,12 @@ contains
 
   !   !  Arguments
 
-  !   real(kind(1.0D0)), intent(in) :: ripmax,rmajor,rminor,r_tf_outboard_mid,n_tf
-  !   real(kind(1.0D0)), intent(out) :: ripple,r_tf_outboard_midl
+  !   real(dp), intent(in) :: ripmax,rmajor,rminor,r_tf_outboard_mid,n_tf
+  !   real(dp), intent(out) :: ripple,r_tf_outboard_midl
 
   !   !  Local variables
 
-  !   real(kind(1.0D0)) :: prip,rotrp,pripc,coeff
+  !   real(dp) :: prip,rotrp,pripc,coeff
 
   !   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -889,12 +890,12 @@ contains
     !  Arguments
 
     integer, intent(out) :: flag
-    real(kind(1.0D0)), intent(in) :: ripmax,r_tf_outboard_mid
-    real(kind(1.0D0)), intent(out) :: ripple,r_tf_outboard_midmin
+    real(dp), intent(in) :: ripmax,r_tf_outboard_mid
+    real(dp), intent(out) :: ripple,r_tf_outboard_midmin
 
     !  Local variables
 
-    real(kind(1.0D0)) :: w, x, c1, c2, n
+    real(dp) :: w, x, c1, c2, n
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -954,8 +955,8 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: a,b,c,d,e,f,g,h
-    real(kind(1.0D0)) :: alpha,eps,theta,phi,omega
+    real(dp) :: a,b,c,d,e,f,g,h
+    real(dp) :: alpha,eps,theta,phi,omega
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

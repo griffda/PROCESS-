@@ -90,8 +90,8 @@ if __name__ == '__main__':
     parser.add_argument( '-ic', '--i_const'       , nargs='?', default=-1   , help="Selection of the constraint to be plotted (PROCESS number defined in vardes, default=-1)", type=int )
     parser.add_argument('-ixv', '--i_X_var'       , nargs='?', default=-1   , help="X variable on pair plot selection (PROCESS number defined in vardes, default=-1)", type=int )
     parser.add_argument('-iyv', '--i_Y_var'       , nargs='?', default=-1   , help="Y variable on pair plot selection (PROCESS number defined in vardes, default=-1)", type=int )
-    parser.add_argument('-sf' , '--save_format'   , nargs='?', default='eps', help="output format (default='eps') " )
-    parser.add_argument('-as' , '--axis_font_size', nargs='?', default=14   , help="Axis label font size selection (default=14)", type=int )
+    parser.add_argument('-sf' , '--save_format'   , nargs='?', default='pdf', help="output format (default='pdf') " )
+    parser.add_argument('-as' , '--axis_font_size', nargs='?', default=18   , help="Axis label font size selection (default=18)", type=int )
 
     # Option argument extraction
     # --------------------------
@@ -125,19 +125,20 @@ if __name__ == '__main__':
 
 
 
-    ## Step 1 : Extraction of relevant data
+    ## Step 1 : Data extraction
     # ----------------------------------------------------------------------------------------------
-    vmcon_indexes         = []
-    figures_of_merit      = []
-    vmcon_convergence     = []
-    constraints_quad_sum  = []
-    convergence_parameter = []
-    constraints           = [[]]
-    variables             = [[]]
-    gradients             = [[]]
+    plot_indexes          = list()
+    vmcon_indexes         = list()
+    figures_of_merit      = list()
+    vmcon_convergence     = list()
+    constraints_quad_sum  = list()
+    convergence_parameter = list()
+    constraints           = list()
+    variables             = list()
+    gradients             = list()
 
     # Opening the pandora box
-    with open('../OPT.DAT', 'r') as opt_data :
+    with open('../bin/OPT.DAT', 'r') as opt_data :
         opt_data_lines = opt_data.readlines()
         opt_data_lines = [ line.strip('\n') for line in opt_data_lines ] # Just removing the \n statment
         
@@ -153,14 +154,17 @@ if __name__ == '__main__':
         
         # Number of VMCON iterations
         n_vmcon = int(len(opt_data_lines) - 15)
+
+        # Plot indexes
+        plot_indexes = [ ii+1 for ii in range(n_vmcon) ]
         # ------------------------------------------
 
 
         ## VMCON data extraction
         # ----------------------
         # Full data extraction
-        data = []
-        data_str = []
+        data = list()
+        data_str = list()
         for ii_vmcon in range( 0, n_vmcon ):
             data_str.append(opt_data_lines[15+ii_vmcon].split(" "))
             ii = int(0) 
@@ -170,7 +174,7 @@ if __name__ == '__main__':
                 else :
                     ii += 1
             
-            data.append([])
+            data.append(list())
             for data_ii in data_str[ii_vmcon] :
                 data[ii_vmcon].append(float(data_ii))
         
@@ -184,14 +188,14 @@ if __name__ == '__main__':
     
         # Constrains
         for ii_constraint in range( 0, n_constraints ) :
-            constraints.append([]) 
+            constraints.append(list()) 
             for ii_vmcon in range( 0, n_vmcon ) :
                 constraints[ii_constraint].append( abs(float(data[ii_vmcon][ii_constraint+4])) )
 
         # Variables
         for ii_variables in range( 0, n_variables ) :
-            variables.append([])
-            gradients.append([])
+            variables.append(list())
+            gradients.append(list())
             for ii_vmcon in range( 0, n_vmcon ) :
                 variables[ii_variables].append( float(data[ii_vmcon][ 4 + n_constraints + ii_variables ]) )
                 gradients[ii_variables].append( float(data[ii_vmcon][ 4 + n_constraints + n_variables + ii_variables ]) )
@@ -213,8 +217,9 @@ if __name__ == '__main__':
     ## PLOT 1 : Figure of merit evolution
     # -----------------------------------
     if plot_FoM :
+
         # Plot
-        plt.plot( vmcon_indexes, figures_of_merit, 'g-' )
+        plt.plot( plot_indexes, figures_of_merit, 'g-' )
 
         # Range
         max_FoM     = max(figures_of_merit)
@@ -229,7 +234,8 @@ if __name__ == '__main__':
         plt.xlabel('$VMCON$ iteration', fontsize = axis_font_size)
         plt.ylabel('Figure of merit'  , fontsize = axis_font_size)
         plt.axis([ x_min, x_max, y_min, y_max ])
-        plt.grid('true')
+        plt.grid(True)
+        plt.tight_layout()
         plt.savefig('OPT_plots/FoM_evolution.'+save_format, format=save_format)
         plt.close()
     # -----------------------------------
@@ -246,9 +252,9 @@ if __name__ == '__main__':
         y_max = 1.
 
         # Plot
-        plt.plot( vmcon_indexes, vmcon_convergence     , 'b-', label='VMCON conv')
-        plt.plot( vmcon_indexes, constraints_quad_sum  , 'c-', label='const quad sum')
-        plt.plot( vmcon_indexes, convergence_parameter , 'k:', label='final conv    ')
+        plt.plot( plot_indexes, vmcon_convergence     , 'b-', label='VMCON conv')
+        plt.plot( plot_indexes, constraints_quad_sum  , 'c-', label='const quad sum')
+        plt.plot( plot_indexes, convergence_parameter , 'k:', label='final conv    ')
         plt.plot( [x_min,x_max], [tolerance, tolerance], 'k-')
 
         # Cosmetics
@@ -257,7 +263,8 @@ if __name__ == '__main__':
         plt.ylabel('Criteria'         , fontsize = axis_font_size)
         plt.yscale('log')
         plt.axis([ x_min, x_max, y_min, y_max ])
-        plt.grid('true')
+        plt.grid(True)
+        plt.tight_layout()
         plt.savefig('OPT_plots/convergence_evolution.'+save_format, format=save_format)
         plt.close()
     # --------------------------------
@@ -312,9 +319,9 @@ if __name__ == '__main__':
                 constraint_name = constraint_name.replace('Central solenoid', 'CS').replace('central solenoid', 'CS')
                 constraint_name = constraint_name[:17] 
 
-            plt.plot( vmcon_indexes, constraints[dominant_constaints_indexes[ii]], plot_opt[ii], label=str(ii+1)+': '+constraint_name+' ('+str(constraints_indexes[dominant_constaints_indexes[ii]])+')')
-        plt.plot( vmcon_indexes, dominant_quad_sum     , 'k--', label='dominant const quad sum ' )
-        plt.plot( vmcon_indexes, constraints_quad_sum  , 'k:' , label='total const quad sum' )
+            plt.plot( plot_indexes, constraints[dominant_constaints_indexes[ii]], plot_opt[ii], label=str(ii+1)+': '+constraint_name+' ('+str(constraints_indexes[dominant_constaints_indexes[ii]])+')')
+        plt.plot( plot_indexes, dominant_quad_sum     , 'k--', label='dominant const quad sum ' )
+        plt.plot( plot_indexes, constraints_quad_sum  , 'k:' , label='total const quad sum' )
         plt.plot( [x_min,x_max], [tolerance, tolerance], 'k-' )
 
         # Actions if the legend gets too big
@@ -328,7 +335,8 @@ if __name__ == '__main__':
         plt.xlabel('$VMCON$ iteration', fontsize = axis_font_size)
         plt.ylabel('Constraint'       , fontsize = axis_font_size)
         plt.axis([ x_min, x_max, y_min, y_max ])
-        plt.grid('true')
+        plt.grid(True)
+        plt.tight_layout()
         plt.savefig('OPT_plots/constraints_evolution.'+save_format, format=save_format)
         # plt.show()
         plt.close()
@@ -354,8 +362,8 @@ if __name__ == '__main__':
         y_max = 1.
 
         # Plot
-        plt.plot( vmcon_indexes, constraints[ii_constraint], 'r-', label=constraint_name)
-        plt.plot( vmcon_indexes, constraints_quad_sum  , 'k:' , label='total const quad sum' )
+        plt.plot( plot_indexes, constraints[ii_constraint], 'r-', label=constraint_name)
+        plt.plot( plot_indexes, constraints_quad_sum  , 'k:' , label='total const quad sum' )
         plt.plot( [x_min,x_max], [tolerance, tolerance], 'k-' )
 
         # Cosmetics
@@ -364,7 +372,8 @@ if __name__ == '__main__':
         plt.ylabel('Constraints'      , fontsize = axis_font_size)
         plt.xlabel('$VMCON$ iteration', fontsize = axis_font_size)
         plt.axis([ x_min, x_max, y_min, y_max ])
-        plt.grid('true')
+        plt.grid(True)
+        plt.tight_layout()
         plt.savefig('OPT_plots/'+str(p_dicts['DICT_ICC_FULL'][str(constraint_selection)]['name'])+'_dominant_constraints_evolution.'+save_format, format=save_format)
         # plt.show()
         plt.close()
@@ -394,7 +403,7 @@ if __name__ == '__main__':
         # Plot
         for ii in range(0, n_var_plots):
             leg_label = '{} : {} ({})'.format(ii+1, p_dicts['DICT_IXC_SIMPLE'][str(variables_indexes[ranked_variables_index[ii]])], variables_indexes[ranked_variables_index[ii]])
-            plt.plot( vmcon_indexes, variables[ranked_variables_index[ii]], plot_opt[ii], label=leg_label)
+            plt.plot( plot_indexes, variables[ranked_variables_index[ii]], plot_opt[ii], label=leg_label)
 
         # Action if the legend gets too big ...
         if n_var_plots > 6 :
@@ -404,7 +413,8 @@ if __name__ == '__main__':
         plt.legend(loc='best')
         plt.xlabel('$VMCON$ iteration', fontsize = axis_font_size)
         plt.ylabel('variable'         , fontsize = axis_font_size)
-        plt.grid('true')
+        plt.grid(True)
+        plt.tight_layout()
         plt.savefig('OPT_plots/dominant_variables_evolution.'+save_format, format=save_format)
         # plt.show()
         plt.close()
@@ -430,11 +440,12 @@ if __name__ == '__main__':
         ln_convergence_parameter = [ np.log10(conv_param) for conv_param in convergence_parameter ] # the ln of the convergence parameter is taken for visibility isues
         scat = plt.scatter( variables[ii_x_variable], variables[ii_y_variable], c=ln_convergence_parameter)
         plt.plot(variables[ii_x_variable], variables[ii_y_variable], 'k-')
-        plt.grid('true')
+        plt.grid(True)
         plt.xlabel(p_dicts['DICT_IXC_SIMPLE'][str(x_variable_selection)], fontsize = axis_font_size)
         plt.ylabel(p_dicts['DICT_IXC_SIMPLE'][str(y_variable_selection)], fontsize = axis_font_size)
         plot_colorbar = plt.colorbar(scat)
         plot_colorbar.set_label('$ln_{10}$(final conv)', size = axis_font_size)
+        plt.tight_layout()
         plt.savefig('OPT_plots/var'+str(x_variable_selection)+'_vs_var'+str(y_variable_selection)+'.'+save_format, format=save_format)
         plt.close()
     # ------------------------------------
@@ -453,10 +464,11 @@ if __name__ == '__main__':
             variable_name = p_dicts['DICT_IXC_SIMPLE'][str(variables_indexes[ii])]
             variable_name = variable_name.replace('(','').replace(')','')
         
-            plt.plot( vmcon_indexes, variable, 'k-' )
+            plt.plot( plot_indexes, variable, 'k-' )
             plt.xlabel( '$VMCON$ iteration', fontsize = axis_font_size )
             plt.ylabel( variable_name      , fontsize = axis_font_size )
-            plt.grid('true')
+            plt.grid(True)
+            plt.tight_layout()
             plt.savefig('OPT_plots/All_Var/{}_evolution.{}'.format(variable_name, save_format), format=save_format)    
             plt.close()
             ii += 1
@@ -480,8 +492,8 @@ if __name__ == '__main__':
         for constraint in constraints :
 
             constraint_name = p_dicts['DICT_ICC_FULL'][str(constraints_indexes[ii])]['name']
-            plt.plot( vmcon_indexes, constraint            , 'r-' , label=constraint_name )
-            plt.plot( vmcon_indexes, constraints_quad_sum  , 'k--', label='const quad sum' )
+            plt.plot( plot_indexes, constraint            , 'r-' , label=constraint_name )
+            plt.plot( plot_indexes, constraints_quad_sum  , 'k--', label='const quad sum' )
         
             # Cosmetics
             plt.xlabel( '$VMCON$ iteration', fontsize = axis_font_size )
@@ -489,7 +501,8 @@ if __name__ == '__main__':
             plt.legend(loc='best')
             plt.yscale('log')
             plt.axis([ x_min, x_max, y_min, y_max ])
-            plt.grid('true')
+            plt.grid(True)
+            plt.tight_layout()
 
             constraint_name_f = constraint_name.replace(' ','_').replace(')','').replace('(','')
             plt.savefig('OPT_plots/All_Const/{}_evolution.{}'.format(constraint_name_f, save_format), format=save_format)    
