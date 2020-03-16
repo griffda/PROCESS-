@@ -2614,6 +2614,8 @@ subroutine outtf(outfile, peaktfflag)
             call ocmmnt(outfile, ' (WST Nb3Sn)')
         case (6)
             call ocmmnt(outfile, ' (High temperature superconductor: REBCO HTS tape in CroCo strand)')
+        case (7)
+            call ocmmnt(outfile, ' (Durham Ginzburg-Landau critical surface model)')
         end select
 
         call ocmmnt(outfile,'Current Density :')
@@ -2935,6 +2937,7 @@ contains
         !! 3 = NbTi,
         !! 4 = ITER Nb3Sn, user-defined parameters
         !! 5 = WST Nb3Sn parameterisation
+        !! 7 = Durham Ginzburg-Landau Nb-Ti parameterisation
         !! fhts    : input real : Adjustment factor (<= 1) to account for strain,
         !! radiation damage, fatigue or AC losses
         !! strain : input real : Strain on superconductor at operation conditions
@@ -3044,7 +3047,7 @@ contains
             idiags(1) = isumat ; call report_error(105)
 
         case (7) ! Durham Ginzburg-Landau Nb-Ti parameterisation
-            bc20m = fbcupper
+            bc20m = upper_critical_field
             tc0m = 9.04D0
             call GL_nbti(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
             jcritstr = jcritsc  * (1.0D0-fcu)
@@ -3158,6 +3161,11 @@ contains
         case (5)
             call ocmmnt(outfile,'Superconductor used: Nb3Sn')
             call ocmmnt(outfile, ' (WST Nb3Sn critical surface model)')
+            call ovarre(outfile,'Critical field at zero temperature and strain (T)','(bc20m)',bc20m)
+            call ovarre(outfile,'Critical temperature at zero field and strain (K)', '(tc0m)',tc0m)
+        case (7)
+            call ocmmnt(outfile,'Superconductor used: Nb-Ti')
+            call ocmmnt(outfile, ' (Durham Ginzburg-Landau critical surface model)')
             call ovarre(outfile,'Critical field at zero temperature and strain (T)','(bc20m)',bc20m)
             call ovarre(outfile,'Critical temperature at zero field and strain (K)', '(tc0m)',tc0m)
         end select ! isumat
