@@ -1188,39 +1188,38 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine imprad(radb, radl, radcore, radtot)
+    !! author: H Lux (UKAEA)
+    !!
+    !! This routine calculates the total radiation losses from impurity line 
+    !! radiation and bremsstrahlung for all elements for a given temperature 
+    !! and density profile.
+    !!
+    !! **References**
+    !!
+    !! - Bremsstrahlung equation from Johner, Fusion Science and Technology 59 (2011), pp 308-349
+    !! - L(z) data (coronal equilibrium) from Marco Sertoli, ASDEX-U, private communication
+    !! - Kallenbach et al., Plasma Phys. Control. Fus. 55 (2013) 124041
+  
+    real(dp), intent(out) :: radb
+    !! bremsstrahlung only [MW/m\(^3\)]
 
-    !! Total impurity line radiation and bremsstrahlung
-    !! author: H Lux, CCFE, Culham Science Centre
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! radb    : output real : bremsstrahlung only (MW/m3)
-    !! radl    : output real : line radiation only (MW/m3)
-    !! radcore : output real : total impurity radiation from core (MW/m3)
-    !! radtot  : output real : total impurity radiation (MW/m3)
-    !! This routine calculates the total radiation losses from
-    !! impurity line radiation and bremsstrahlung for all elements
-    !! for a given temperature and density profile.
-    !! <P>Bremsstrahlung equation from Johner
-    !! <P>L(z) data (coronal equilibrium) from Marco Sertoli, ASDEX-U,
-    !! ref. Kallenbach et al.
-    !! Johner, Fusion Science and Technology 59 (2011), pp 308-349
-    !! Sertoli, private communication
-    !! Kallenbach et al., Plasma Phys. Control. Fus. 55 (2013) 124041
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    real(dp), intent(out) :: radl
+    !! line radiation only [MW/m\(^3\)]
 
-    !  Arguments
+    real(dp), intent(out) :: radcore
+    !! total impurity radiation from core [MW/m\(^3\)]
 
-    real(dp), intent(out) :: radb, radl, radcore, radtot
+    real(dp), intent(out) :: radtot
+    !! total impurity radiation [MW/m\(^3\)]
 
-    !  Local variables
-
+    ! Local variables
     real(dp) :: rho, drho, trho,  nrho
     real(dp) :: pimp, pbrem, pline
     integer :: i, imp, npts
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    npts = 200  !  originally 1000; no significant difference found
+    npts = 200  ! originally 1000; no significant difference found
     drho = 1.0D0/real(npts,kind(1.0D0))
 
     radtot = 0.0D0
@@ -1234,27 +1233,26 @@ contains
 
     do i = 0, npts-1
 
-       rho = (0.5D0 + i)/npts
-       trho = tprofile(rho, rhopedt, te0, teped, tesep, alphat, tbeta)
-       nrho = nprofile(rho, rhopedn, ne0, neped, nesep, alphan)
+      rho = (0.5D0 + i)/npts
+      trho = tprofile(rho, rhopedt, te0, teped, tesep, alphat, tbeta)
+      nrho = nprofile(rho, rhopedn, ne0, neped, nesep, alphan)
 
-       do imp = 1, size(impurity_arr)
+      do imp = 1, size(impurity_arr)
 
-          if (impurity_arr(imp)%frac > 1.0D-30) then
+        if (impurity_arr(imp)%frac > 1.0D-30) then
 
-             call impradprofile(impurity_arr(imp), nrho, trho, pimp, pbrem, pline)
+          call impradprofile(impurity_arr(imp), nrho, trho, pimp, pbrem, pline)
 
-             radtot  = radtot  + pimp*rho
-             radcore = radcore + pimp*rho * fradcore(rho,coreradius,coreradiationfraction)
-             radb = radb + pbrem*rho
-             radl = radl + pline*rho
-          end if
+          radtot  = radtot  + pimp*rho
+          radcore = radcore + pimp*rho * fradcore(rho,coreradius,coreradiationfraction)
+          radb = radb + pbrem*rho
+          radl = radl + pline*rho
+        end if
 
-       end do
+      end do
     end do
 
     !  Radiation powers in MW/m3
-
     radtot  = 2.0D-6 * drho * radtot
     radcore = 2.0D-6 * drho * radcore
     radb    = 2.0D-6 * drho * radb
@@ -1265,25 +1263,27 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function plasma_elongation_IPB() &
-     bind (C, name="c_plasma_elongation_IPB")
-     !! Volume measure of plasma elongation using the IPB definition
-     !! author: H Lux, CCFE, Culham Science Centre
-     !! author: P J Knight, CCFE, Culham Science Centre
-     !! Routine to calculate vol measure of plasma elongation for IPB98
-     !! Otto Kardaun et al 2008 Nucl. Fusion 48 099801
-     !
-     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    bind (C, name="c_plasma_elongation_IPB")
+    !! author: H Lux (UKAEA)
+    !!
+    !! Volume measure of plasma elongation using the IPB definition
+    !!
+    !! See Otto Kardaun et al 2008 Nucl. Fusion 48 099801
      
-     ! Module variables
-     use physics_variables, only : vol, rminor, rmajor
-     use constants, only : pi
+    ! Module variables
+    use physics_variables, only : vol, rminor, rmajor
+    use constants, only : pi
 
-     ! Return value
-     real(dp) :: plasma_elongation_IPB
+    real(dp) :: plasma_elongation_IPB
+    !! Plasma elongation (IPB)
 
-     ! Volume measure of plasma elongation (used by IPB scalings)
-     plasma_elongation_IPB = vol / ( 2.0D0 * pi*pi * rminor*rminor * rmajor ) 
-
+    plasma_elongation_IPB = vol / ( 2.0D0 * pi*pi * rminor*rminor * rmajor ) 
+    !! \begin{equation} \kappa_{IPB} = \frac{V}{2\pi a^2 R_0} \end{equation}
+    !!
+    !! - \( V \) -- Plasma volume [m\(^3\)]
+    !! - \( a \) -- Plasma minor radius [m]
+    !! - \( R_0 \) -- Plasma major radius [m]
+    
   end function plasma_elongation_IPB
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
