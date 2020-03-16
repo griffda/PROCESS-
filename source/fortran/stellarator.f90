@@ -2204,7 +2204,8 @@ contains
  
        ! Sample coil winding pack
        Awp(k) = (r_coil_minor/50.0D0 + (dble(k)-1) / (dble(N_it)-1) * (r_coil_minor/1.0D0-r_coil_minor/50.0D0))**2
-       if (isumattf==6) Awp(k) =(r_coil_minor/150.0D0 + (dble(k)-1) / (dble(N_it)-1) * (r_coil_minor/1.0D0-r_coil_minor/150.0D0))**2
+       if (i_tf_sc_mat==6) Awp(k) =(r_coil_minor/150.0D0 + (dble(k)-1) / (dble(N_it)-1)&
+                * (r_coil_minor/1.0D0-r_coil_minor/150.0D0))**2
  
        !  B-field calculation
        B_max_k(k) = bmax_from_awp(Awp(k)/r_coil_major**2,coilcurrent)
@@ -2224,7 +2225,7 @@ contains
      RHS = coilcurrent/(Awp(:)*f_scu) ! f_scu should be the fraction of the sc that is in the winding pack.
  
      Awp_min = (r_coil_minor/10.0D0)**2 ! Initial guess for intersection routine
-     if (isumattf==6) Awp_min = (r_coil_minor/100.0D0)**2 ! If REBCO, then start at smaller winding pack ratios
+     if (i_tf_sc_mat==6) Awp_min = (r_coil_minor/100.0D0)**2 ! If REBCO, then start at smaller winding pack ratios
  
      ! Find the intersection between LHS and RHS (or: how much awp do I need to get to the desired coil current)
      call intersect(Awp,LHS,N_it,Awp,RHS,N_it,Awp_min)
@@ -2367,12 +2368,12 @@ contains
     whtcas = tfleng * acasetf * dcase
      ! [kg] mass of Superconductor
     whtconsc = (tfleng * turnstf * acstf*(1.0D0-vftf) * (1.0D0-fcutfsu) - tfleng*awphec) &
-               *dcond(isumattf) !awphec is 0 for a stellarator. but keep this term for now.
+               *dcond(i_tf_sc_mat) !awphec is 0 for a stellarator. but keep this term for now.
       ! [kg] mass of Copper in conductor
     whtconcu =  (tfleng * turnstf * acstf*(1.0D0-vftf) * fcutfsu - tfleng*awphec) * dcopper
       ! [kg] mass of Steel conduit (sheath)
     whtconsh = tfleng*turnstf*acndttf * denstl
-    !if (isumattf==6)   whtconsh = fcondsteel * awptf *tfleng* denstl
+    !if (i_tf_sc_mat==6)   whtconsh = fcondsteel * awptf *tfleng* denstl
       ! Conduit insulation mass [kg]
     ! (aiwp already contains turnstf)
     whtconin = tfleng * aiwp * dcondins
@@ -2461,7 +2462,7 @@ contains
   
   
         ! This fraction is copied from sctfcoil.f90 10/2019
-        select case (isumattf)
+        select case (i_tf_sc_mat)
   
         case (1)  !  ITER Nb3Sn critical surface parameterization
            bc20m = 32.97D0 ! these are values taken from sctfcoil.f90
@@ -2541,7 +2542,7 @@ contains
            ! this call might not be consistent with fcu and fhe.
            jcritsc = Max(1.0D-9,jcritsc)
         case default  !  Error condition
-           idiags(1) = isumattf ; call report_error(156)
+           idiags(1) = i_tf_sc_mat ; call report_error(156)
   
         end select
   
