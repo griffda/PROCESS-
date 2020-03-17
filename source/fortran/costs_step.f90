@@ -1,37 +1,17 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module costs_step_module
-
-  !! Module containing STEP fusion power plant costing algorithms
-  !! author: S I Muldrew, CCFE, Culham Science Centre
-  !! N/A
-  !! This module contains the STEP fusion power plant costing model,
-  !! developed by Nizar Ben Ayed, Tim Hender and Stuart Muldrew, based
-  !! on the STARFIRE costing framework.
-  !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-  !! Sheffield et al. (1986), Fusion Technology, 9, 199
-  !! Sheffield & Milora (2016), Fusion Science and Technology, 70, 14
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use build_variables
-  use buildings_variables
-  use constants
-  use cost_variables
-  use current_drive_variables
-  use divertor_variables
-  use error_handling
-  use fwbs_variables
-  use heat_transport_variables
-  use pfcoil_variables
-  use physics_variables
-  use pf_power_variables
-  use process_output
-  use pulse_variables
-  use structure_variables
-  use tfcoil_variables
-  use times_variables
-  use vacuum_variables
+  !! author: S I Muldrew (UKAEA)
+  !!
+  !! This module contains the STEP fusion power plant costing model, developed 
+  !! by Nizar Ben Ayed, Tim Hender and Stuart Muldrew, based  on the STARFIRE 
+  !! costing framework.
+  !! 
+  !! **References**
+  !! 
+  !! - STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+  !! - Sheffield et al. (1986), Fusion Technology, 9, 199
+  !! - Sheffield & Milora (2016), Fusion Science and Technology, 70, 14
 
   implicit none
 
@@ -65,6 +45,14 @@ contains
     !! Sheffield & Milora (2016), Fusion Science and Technology, 70, 14
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use constants, only: pi
+    use build_variables, only: r_tf_outboard_mid, tfthko, hpfu, hmax, tfcth
+    use cost_variables, only: output_costs, cdirt, concost
+    use fwbs_variables, only: emultmw
+    use heat_transport_variables, only: pinjwp
+    use physics_variables, only: powfmw
+    use process_output, only: oshead, ocosts, oheadr
 
     implicit none
 
@@ -160,6 +148,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use cost_variables, only: output_costs, step_ref
+    use process_output, only: oshead, ocosts, oblnkl
+
     implicit none
 
     ! Arguments
@@ -206,6 +197,9 @@ contains
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use cost_variables, only: output_costs, step_con, step_ref
+    use process_output, only: oshead, ocosts, oblnkl
 
     implicit none
 
@@ -359,7 +353,10 @@ contains
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+    
+    use process_output, only: oshead, ocosts, oblnkl
+    use cost_variables, only: output_costs, step_con
+
     implicit none
   
     ! Arguments
@@ -431,7 +428,13 @@ contains
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
+    use build_variables, only: fwarea
+    use cost_variables, only: output_costs, step_ref, ifueltyp, fcdfuel, divcst, cdcost
+    use current_drive_variables, only: pinjmw
+    use physics_variables, only: rmajor, rminor
+    use process_output, only: ocosts, oblnkl
+    
     implicit none
   
     ! Arguments
@@ -592,6 +595,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
+    use cost_variables, only: output_costs, step_ref
+    use process_output, only: ocosts, oblnkl
+
     implicit none
   
     ! Arguments
@@ -636,6 +642,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
+    use cost_variables, only: output_costs, step_ref
+    use process_output, only: ocosts, oblnkl
+
     implicit none
   
     ! Arguments
@@ -700,6 +709,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
+    use cost_variables, only: output_costs, step_ref
+    use process_output, only: ocosts, oblnkl
+
     implicit none
   
     ! Arguments
@@ -758,6 +770,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
+    use cost_variables, only: output_costs, step_ref
+    use process_output, only: ocosts, oblnkl
+
     implicit none
   
     ! Arguments
@@ -804,7 +819,10 @@ contains
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+    
+    use cost_variables, only: output_costs, step_ref
+    use process_output, only: ocosts, oblnkl
+
     implicit none
   
     ! Arguments
@@ -899,6 +917,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
+    use cost_variables, only: output_costs,step_ref
+    use process_output, only: ocosts, oblnkl
+
     implicit none
   
     ! Arguments
@@ -942,6 +963,9 @@ contains
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use cost_variables, only: output_costs, step_con, step_ref
+    use process_output, only: oshead, ocosts, oblnkl
 
     implicit none
 
@@ -1034,6 +1058,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use cost_variables, only: output_costs, step_con, step_ref
+    use process_output, only: oshead, ocosts, oblnkl
+
     implicit none
 
     ! Arguments
@@ -1125,7 +1152,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-     implicit none
+    use cost_variables, only: output_costs, step_con, step_ref
+    use process_output, only: oshead, ocosts, oblnkl
+
+    implicit none
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
@@ -1200,6 +1230,16 @@ contains
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use cost_variables, only: output_costs, ratecdol, tlife, ucfuel, uche3, cdcost, &
+      divcst, fcdfuel, ifueltyp, moneyint, lsa, ucwst, ucoam, fwallcst, fcr0, fcap0cp, &
+      cfind, fcap0, dtlife, divlife, dintrt, decomf, cpstcst, cplife, concost, coeoam, &
+      coefuelt, coecap, coe, cfactr, cdrlife, capcost
+    use fwbs_variables, only: bktlife
+    use heat_transport_variables, only: pnetelmw
+    use physics_variables, only: fhe3, itart, wtgpd
+    use times_variables, only: tburn, tcycle
+    use process_output, only: oshead, ocosts, oblnkl,  ovarrf, osubhd, oheadr
 
     implicit none
 
