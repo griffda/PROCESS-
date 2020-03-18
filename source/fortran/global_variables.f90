@@ -3903,9 +3903,9 @@ module cost_variables
   !! ucpp /48.0/ FIX : cost of primary power transformers ($/kVA**0.9)
   real(dp) :: ucrb = 400.0D0
   !! ucrb /400.0/ : cost of reactor building (M$/m3)
-  real(dp), dimension(6) :: ucsc = &
+  real(dp), dimension(7) :: ucsc = &
   !! ucsc(6) /600.0,600.0,300.0,600.0/ : cost of superconductor ($/kg)
-       (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0/)
+       (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0/)
   real(dp), parameter :: ucsh = 115.0D0
   !! ucsh /115.0/ FIX : cost of shops and warehouses (M$/m3)
   real(dp) :: ucshld = 32.0D0
