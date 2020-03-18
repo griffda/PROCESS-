@@ -2200,7 +2200,7 @@ module tfcoil_variables
 
   real(dp) :: dcase = 8000.0D0
   !! dcase /8000.0/ : density of coil case (kg/m3)
-  real(dp), dimension(6) :: dcond = 9000.0D0
+  real(dp), dimension(7) :: dcond = 9000.0D0
   !! dcond(6) /9000.0/ : density of superconductor type given by i_tf_sc_mat/isumatoh/isumatpf (kg/m3)
   
   real(dp) :: dcondins = 1800.0D0
