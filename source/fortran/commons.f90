@@ -30,39 +30,39 @@ module mod_f90_kind
 end module mod_f90_kind
 
 module param
-  use mod_f90_kind   !EXTERNAL
+  use mod_f90_kind, only: rkind   !EXTERNAL
   implicit none
   real(rkind), parameter :: pi = 3.14159265358979e0_rkind, &
                             c  = 2.99792458e10_rkind
 end module param
 
 module freq
-  use mod_f90_kind   !EXTERNAL
+  use mod_f90_kind, only: rkind   !EXTERNAL
   implicit none
   real(rkind), save :: om, xk0
 end module freq
 
 module mode
-  use mod_f90_kind   !EXTERNAL
+  use mod_f90_kind, only: ikind   !EXTERNAL
   implicit none
   integer(ikind), save :: imod
 end module mode
 
 module machin
-  use mod_f90_kind   !EXTERNAL
+  use mod_f90_kind, only: rkind   !EXTERNAL
   implicit none
   real(rkind), save :: rmaj, rmin, sgnm, zsearch
   character(len=160), save :: machname
 end module machin
 
 module bsquar
-  use mod_f90_kind   !EXTERNAL
+  use mod_f90_kind, only: rkind   !EXTERNAL
   implicit none
   real(rkind), save :: conf, conf2, qb2
 end module bsquar
 
 module linliu
-  use mod_f90_kind   !EXTERNAL
+  use mod_f90_kind, only: rkind   !EXTERNAL
   implicit none
   save
   complex(rkind) :: PCEXNORMO, PCEYNORMO, PCEZNORMO
@@ -70,7 +70,7 @@ module linliu
 end module linliu
 
 module abs_cd
-  use mod_f90_kind   !EXTERNAL
+  use mod_f90_kind, only: ikind   !EXTERNAL
   implicit none
   integer(ikind), save :: cdroutine, absroutine, iastra, profcalc
 end module abs_cd
