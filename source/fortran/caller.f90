@@ -44,9 +44,9 @@ subroutine caller(xc,nvars)
   use global_variables, only: verbose
 
   ! Import blanket modules
-  use ccfe_hcpb_module
-  use kit_hcpb_module
-  use kit_hcll_module
+  use ccfe_hcpb_module, only: ccfe_hcpb, tbr_shimwell
+  use kit_hcpb_module, only: kit_hcpb
+  use kit_hcll_module, only: kit_hcll
 
   implicit none
 
