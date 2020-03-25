@@ -781,11 +781,9 @@ contains
     end if
 
     !  Weight of steel
-
     wts(nohc) = areaspf * 2.0D0*pi*rpf(nohc) * denstl
 
     !  Non-steel cross-sectional area
-
     awpoh = areaoh - areaspf
 
     !  Issue #97. Fudge to ensure awpoh is positive; result is continuous, smooth and
@@ -795,7 +793,6 @@ contains
     if (awpoh < da) awpoh = da*da / (2.0D0*da - awpoh)
 
     !  Weight of conductor in Central Solenoid
-
     if (ipfres == 0) then
        wtc(nohc) = awpoh * (1.0D0-vfohc) * 2.0D0*pi*rpf(nohc) * dcond(isumatoh)
     else
