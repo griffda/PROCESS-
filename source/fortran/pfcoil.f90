@@ -99,7 +99,6 @@ contains
 
     !  Set up the number of PF coils including the Central Solenoid (nohc),
     !  and the number of PF circuits including the plasma (ncirt)
-
     if (ngrp > ngrpmx) then
        idiags(1) = ngrp ; idiags(2) = ngrpmx
        call report_error(64)
@@ -107,7 +106,6 @@ contains
 
     !  Total the number of PF coils in all groups, and check that none
     !  exceeds the limit
-
     nohc = 0
     do i = 1,ngrp
        if (ncls(i) > nclsmx) then
@@ -118,22 +116,18 @@ contains
     end do
 
     !  Add one if an Central Solenoid is present, and make an extra group
-
     if (iohcl /= 0) then
        nohc = nohc + 1
        ncls(ngrp+1) = 1
     end if
 
     !  Add one for the plasma
-
     ncirt = nohc + 1
 
     !  Overall current density in the Central Solenoid at beginning of pulse
-
     cohbop = coheof * fcohbop
 
     !  Set up array of times
-
     tim(1) = 0.0D0
     tim(2) = tramp
     tim(3) = tim(2) + tohs
@@ -149,13 +143,14 @@ contains
 
     !  nfxf is the total no of filaments into which the Central Solenoid is split,
     !  if present
-
     if (iohcl == 0) then
        nfxf = 0
        ioheof = 0.0D0
     else
        nfxf = 2*nfxfh
-       ioheof = -hmax*ohhghf*ohcth*2.0D0*coheof  !  total Central Solenoid current at EOF
+
+       !  total Central Solenoid current at EOF
+       ioheof = -hmax*ohhghf*ohcth*2.0D0*coheof  
 
        if (nfxf > nfixmx) then
           idiags(1) = nfxf ; idiags(2) = nfixmx
@@ -175,25 +170,21 @@ contains
     end if
 
     !  Scale PF coil locations
-
     signn(1) =  1.0D0
     signn(2) = -1.0D0
     rclsnorm = r_tf_outboard_mid + 0.5D0*tfthko + routr
 
     !  N.B. Problems here if k=ncls(group) is greater than 2.
-
     do j = 1,ngrp
 
        if (ipfloc(j) == 1) then
 
           !  PF coil is stacked on top of the Central Solenoid
-
           do k = 1,ncls(j)
              rcls(j,k) = rohc + rpf1
 
              !  Z coordinate of coil enforced so as not
              !  to occupy the same space as the Central Solenoid
-
              zcls(j,k) = signn(k) * ( hmax*ohhghf + 0.1D0 + &
                   0.5D0 * ( hmax*(1.0D0-ohhghf) + tfcth + 0.1D0) )
           end do
@@ -309,7 +300,6 @@ contains
              !  PF coil is stacked on top of the Central Solenoid
              !  This coil is to balance Central Solenoid flux and should not be involved
              !  in equilibrium calculation -- RK 07/12
-
              ccls(i) = 0.0D0
              nfxf0 = nfxf0 + ncls(i)
              do ccount = 1,ncls(i)
@@ -385,7 +375,6 @@ contains
     !  If this is the first visit to the routine the inductance matrix
     !  sxlg and the turns array have not yet been calculated, so we set
     !  them to (very) approximate values to avoid strange behaviour...
-
     if (first_call) then
        sxlg(:,:) = 1.0D0
        turns(:) = 100.0D0
@@ -403,7 +392,6 @@ contains
     end do
 
     !  Flux swing required from CS coil
-
     csflux = -(vsres + vsind) - pfflux
 
     if (iohcl == 1) then
@@ -429,9 +417,7 @@ contains
        call report_error(71)
     end if
 
-
     !  Split groups of coils into one set containing ncl coils
-
     ncl = 0
     do nng = 1,ngrp
        do ng2 = 1,ncls(nng)
@@ -454,20 +440,17 @@ contains
 
     !  Current in Central Solenoid as a function of time
     !  N.B. If the Central Solenoid is not present then ioheof is zero.
-
     curpfs(ncl+1) = -1.0D-6 * ioheof * fcohbop
     curpff(ncl+1) = 1.0D-6 * ioheof * fcohbof
     curpfb(ncl+1) = 1.0D-6 * ioheof
 
     !  Set up coil current waveforms, normalised to the peak current in
     !  each coil
-
     call waveform  !  returns ric(), waves()
 
     !  Calculate PF coil geometry, current and number of turns
     !  Dimensions are those of the winding pack, and exclude
     !  the steel supporting case
-
     i = 0
     pfrmax = 0.0D0
 
@@ -478,26 +461,22 @@ contains
           if (ipfloc(ii) == 1) then
 
              !  PF coil is stacked on top of the Central Solenoid
-
              dx = 0.5D0 * ohcth
              dz = 0.5D0 * (hmax*(1.0D0-ohhghf) + tfcth + 0.1D0)  !  ???
              area = 4.0D0 * dx * dz
 
              !  Number of turns
              !  CPTDIN(I) is the current per turn (input)
-
              turns(i) = abs( (ric(i)*1.0D6)/cptdin(i) )
              aturn(i) = area / turns(i)
 
              !  Actual winding pack current density
-
              rjconpf(i) = 1.0D6*abs(ric(i))/area
 
              !  Location of edges of each coil:
              !  ra = inner radius, rb = outer radius
              !  zl = 'lower' edge z (i.e. edge nearer to midplane)
              !  zh = 'upper' edge z (i.e. edge further from midplane)
-
              ra(i) = rpf(i) - dx
              rb(i) = rpf(i) + dx
 
@@ -511,7 +490,6 @@ contains
 
              !  Other coils. N.B. Current density RJCONPF(I) is defined in
              !  routine INITIAL for these coils.
-
              area = abs(ric(i)*1.0D6/rjconpf(i))
 
              turns(i) = abs( (ric(i)*1.0D6)/cptdin(i) )
@@ -531,7 +509,6 @@ contains
           end if
 
           !  Outside radius of largest PF coil (m)
-
           pfrmax = max(pfrmax, rb(i))
 
        end do
@@ -539,7 +516,6 @@ contains
 
     !  Calculate peak field, allowable current density, resistive
     !  power losses and volumes and weights for each PF coil
-
     i = 0
     powpfres = 0.0D0
     pfmmax = 0.0D0
@@ -640,11 +616,9 @@ contains
     itr_sum = itr_sum + ((bore + 0.5*ohcth) * turns(nohc) * cptdin(nohc))
 
     !  Find Central Solenoid information
-
     if (iohcl /= 0) call ohcalc
 
     !  Summation of weights and current
-
     whtpf = 0.0D0 ; whtpfs = 0.0D0 ; ricpf = 0.0D0
     do i = 1,nohc
        whtpf = whtpf + wtc(i)
@@ -653,7 +627,6 @@ contains
     end do
 
     !  Plasma size and shape
-
     zh(nohc+1) =  rminor*kappa
     zl(nohc+1) = -rminor*kappa
     ra(nohc+1) = rmajor - rminor
@@ -662,7 +635,6 @@ contains
 
     !  Generate coil currents as a function of time using
     !  user-provided waveforms etc. (cptdin, fcohbop, fcohbof)
-
     do k = 1,6  !  time points
        do i = 1,ncirt-1
           cpt(i,k) = waves(i,k) * sign(cptdin(i), ric(i))
@@ -670,7 +642,6 @@ contains
     end do
 
     !  Plasma wave form
-
     cpt(ncirt,1) = 0.0D0
     cpt(ncirt,2) = 0.0D0
     cpt(ncirt,3) = plascur
@@ -707,33 +678,26 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Half-height of Central Solenoid
-
     hohc = hmax * ohhghf
 
     !  Z coordinates of coil edges
-
     zh(nohc) = hohc
     zl(nohc) = -zh(nohc)
 
     !  (R,Z) coordinates of coil centre
-
     rpf(nohc) = rohc
     zpf(nohc) = 0.0D0
 
     !  Radius of outer edge
-
     rb(nohc) = rohc + 0.5D0*ohcth
 
     !  Radius of inner edge
-
     ra(nohc) = rb(nohc) - ohcth
 
     !  Total cross-sectional area
-
     areaoh = 2.0D0 * hohc * ohcth
 
     !  Maximum current (MA-turns) in Central Solenoid, at either BOP or EOF
-
     if (cohbop > coheof) then
        sgn = 1.0D0
        ric(nohc) = sgn * 1.0D-6*cohbop*areaoh
@@ -743,22 +707,18 @@ contains
     end if
 
     !  Number of turns
-
     turns(nohc) = 1.0D6 * abs(ric(nohc))/cptdin(nohc)
 
     !  Non-steel area void fraction for coolant
-
     vf(nohc) = vfohc
 
     !  Peak field at the End-Of-Flattop (EOF)
     !  Occurs at inner edge of coil; bmaxoh2 and bzi are of opposite sign at EOF
 
     !  Peak field due to Central Solenoid itself
-
     bmaxoh2 = bfmax(coheof,ra(nohc),rb(nohc),hohc)
 
     !  Peak field due to other PF coils plus plasma
-
     timepoint = 5 ; call peakb(nohc,99,timepoint,bri,bro,bzi,bzo)
 
     bmaxoh = abs(bzi - bmaxoh2)
@@ -766,28 +726,23 @@ contains
 
     !  Peak field on outboard side of Central Solenoid
     !  (self-field is assumed to be zero - long solenoid approximation)
-
     bohco = abs(bzo)
 
     !  Peak field at the Beginning-Of-Pulse (BOP)
     !  Occurs at inner edge of coil; bmaxoh0 and bzi are of same sign at BOP
-
     bmaxoh0 = bfmax(cohbop,ra(nohc),rb(nohc),hohc)
     timepoint = 2 ; call peakb(nohc,99,timepoint,bri,bro,bzi,bzo)
 
     bmaxoh0 = abs(bmaxoh0 + bzi)
 
     !  Maximum field values
-
     bpf(nohc) = max(bmaxoh, abs(bmaxoh0))
     bpf2(nohc) = max(bohco, abs(bzo))
 
     !  (J x B) hoop force on Central Solenoid (N)
-
     forcepf = 0.5D6 * (bpf(nohc)+bpf2(nohc))*abs(ric(nohc))*rpf(nohc)
 
     !  Stress ==> cross-sectional area of supporting steel to use
-
     if (ipfres == 0) then
 
        !  Superconducting coil
@@ -2127,7 +2082,7 @@ end subroutine superconpf
 
     real(dp) :: kb2, k2b2, ekb2_1, ekb2_2, ek2b2_1, ek2b2_2
 
-  !real(dp) :: kb, k2b
+    !real(dp) :: kb, k2b
 
     real(dp) :: axial_term_1, axial_term_2, axial_term_3
 

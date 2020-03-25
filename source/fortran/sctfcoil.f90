@@ -1305,7 +1305,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             
         ! SC magnets smeared properties
         else if ( i_tf_sup == 1 ) then
-            eyoung(i_tf_bucking  + ii) = eyngeff( eyoung_steel, eyoung_ins, t_ins_eff, thwcndut, tcbs )
+            eyoung(i_tf_bucking  + ii) = eyngeff( eyoung_steel, eyoung_ins, &
+                                                 t_ins_eff, thwcndut, tcbs )
             poisson(i_tf_bucking + ii) = poisson_steel
         
         ! Cryogenic aluminium properties
