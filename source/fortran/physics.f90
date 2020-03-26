@@ -742,7 +742,8 @@ module physics_module
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use physics_variables, only: te0, ne0
-		use constants, only: rmu0, echarge
+      use constants, only: rmu0, echarge
+      use maths_library, only: quanc8
     implicit none
 
     real(dp) :: bootstrap_fraction_nevins
