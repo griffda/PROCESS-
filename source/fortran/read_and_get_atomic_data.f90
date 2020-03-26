@@ -7,6 +7,10 @@ module read_and_get_atomic_data
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  ! Modules to import !
+  ! !!!!!!!!!!!!!!!!!!!!
+
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
 contains
@@ -34,9 +38,9 @@ contains
     ! Subroutine declarations !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    real(kind(1.0D0)), intent(in) :: density, temperature, mass
+    real(dp), intent(in) :: density, temperature, mass
 
-    real(kind(1.0D0)), intent(out) :: s, al, Rcx, plt, prb
+    real(dp), intent(out) :: s, al, Rcx, plt, prb
 
     logical, intent(in) :: verbose
 
@@ -44,17 +48,17 @@ contains
 
     ! These arrays are read only once and then saved
     ! Density values: "_d"
-    real(kind(1.0D0)), save, dimension(24) :: scd_d, acd_d, ccd_d, plt_d,prb_d
+    real(dp), save, dimension(24) :: scd_d, acd_d, ccd_d, plt_d,prb_d
 
     ! Temperature values: "_t"
-    real(kind(1.0D0)), save, dimension(29) :: scd_t,acd_t,ccd_t, plt_t, prb_t
+    real(dp), save, dimension(29) :: scd_t,acd_t,ccd_t, plt_t, prb_t
 
     ! Rate coefficients: "_r"
-    real(kind(1.0D0)), save, dimension(24,29) :: scd_r, acd_r, ccd_r, plt_r,prb_r
+    real(dp), save, dimension(24,29) :: scd_r, acd_r, ccd_r, plt_r,prb_r
 
     character(len=100) :: acd_file, scd_file, plt_file, prb_file, ccd_file
 
-    real(kind(1.0D0)) :: logdens, logtemp
+    real(dp) :: logdens, logtemp
 
     logical, save :: FirstCall = .true.
 
@@ -70,11 +74,11 @@ contains
     character(len=200), save :: hdatadir = trim(INSTALLDIR//'/data/h_data/')
 
     ! Maxima for log density and log temperature in each data file
-    real(kind(1.0D0)), save :: max_scd_d, max_scd_t
-    real(kind(1.0D0)), save :: max_acd_d, max_acd_t
-    real(kind(1.0D0)), save :: max_ccd_d, max_ccd_t
-    real(kind(1.0D0)), save :: max_plt_d, max_plt_t
-    real(kind(1.0D0)), save :: max_prb_d, max_prb_t
+    real(dp), save :: max_scd_d, max_scd_t
+    real(dp), save :: max_acd_d, max_acd_t
+    real(dp), save :: max_ccd_d, max_ccd_t
+    real(dp), save :: max_plt_d, max_plt_t
+    real(dp), save :: max_prb_d, max_prb_t
 
     ine = 24
     ite = 29
@@ -198,9 +202,9 @@ contains
     ! Subroutine declarations !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    real(kind(1.0D0)), dimension(ine) :: density
-    real(kind(1.0D0)), dimension(ite):: temperature
-    real(kind(1.0D0)), dimension(ine,ite) :: rates
+    real(dp), dimension(ine) :: density
+    real(dp), dimension(ite):: temperature
+    real(dp), dimension(ine,ite) :: rates
     character(len=100), intent(in) :: filename
     logical, intent(in), optional::verbose
     integer, intent(in)::ine,ite
@@ -230,8 +234,9 @@ contains
         use read_radiation, only: read_lz
         implicit none
 
-        real(kind(1.0D0)):: s, al, Rcx, plt, prb, density, temperature, mass
-        real(kind(1.0D0)):: te,netau,test_lz,estimate_lz
+        real(dp):: s, al, Rcx, plt, prb, density, temperature, mass
+        real(dp):: te,netau,test_lz,estimate_lz
+        
         te=sqrt(1.000 * 1.047)
         netau=sqrt(0.1*1.0)
 
@@ -267,13 +272,13 @@ contains
   subroutine plot_rates()
     ! Reads rate coefficients for deuterium.
     ! Compare to Figure 2 in Kallenbach 2016.
-    real(kind(1.0D0)):: s(3), al(3), Rcx
-    real(kind(1.0D0)):: plt(3), prb(3), mass
-    real(kind(1.0D0)):: lz_deuterium(3)
-    real(kind(1.0D0)):: dummy1, dummy2, dummy3, dummy4, dummy5
+    real(dp):: s(3), al(3), Rcx
+    real(dp):: plt(3), prb(3), mass
+    real(dp):: lz_deuterium(3)
+    real(dp):: dummy1, dummy2, dummy3, dummy4, dummy5
     integer::i,j
-    real(kind(1.0D0))::te(15)=(/1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,12.,14.,16.,18.,20./)
-    real(kind(1.0D0))::density(3)=(/1.e19,1.e20,1.e21/)
+    real(dp)::te(15)=(/1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,12.,14.,16.,18.,20./)
+    real(dp)::density(3)=(/1.e19,1.e20,1.e21/)
     !  Obtain the root directory from the file 'root.dir'
     ! The # character must be at the start of the line.
     open(unit=12,file='rate_coefficients.txt',status='replace')

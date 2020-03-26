@@ -55,6 +55,12 @@ extern "C"
    //--------------
    double c_binomial(int *, int *);
 
+   // Physics  module
+   //-------------------------
+   void c_diamagnetic_fraction_hender(double *, double *);
+   void c_diamagnetic_fraction_scene(double *, double *, double *, double *);
+   void c_ps_fraction_scene(double *, double *);
+
    // Physics functions module
    //-------------------------
    double c_t_eped_scaling();

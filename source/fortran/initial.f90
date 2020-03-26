@@ -39,7 +39,9 @@ subroutine initial
         init_itv_151, init_itv_152, init_itv_153, init_itv_154, init_itv_155, &
         init_itv_156, init_itv_157, init_itv_158, init_itv_159, init_itv_160, &
         init_itv_161, init_itv_162, init_itv_163, init_itv_164, init_itv_165, &
-        init_itv_166, init_itv_167, init_itv_168, init_itv_169, init_itv_170
+        init_itv_166, init_itv_167, init_itv_168, init_itv_169, init_itv_170, &
+        init_itv_171, init_itv_172
+    use, intrinsic :: iso_fortran_env, only: dp=>real64
 
     implicit none
 
@@ -132,6 +134,7 @@ subroutine initial
     call init_itv_73
     call init_itv_74
     call init_itv_75
+
     
     
     
@@ -225,6 +228,8 @@ subroutine initial
     call init_itv_168
     call init_itv_169
     call init_itv_170
+    call init_itv_171
+    call init_itv_172
 
 
     !    call init_itv_1
@@ -373,8 +378,8 @@ subroutine initial
     !    !!  <LI> (74) scraplo
     !    lablxc(75) = 'tfootfi       '; boundl(75) = 0.200D0; boundu(75) = 5.000D0
     !    !!  <LI> (75) tfootfi
-    !    !!  <LI> (77) NOT USED
     !    !!  <LI> (76) NOT USED
+    !    !!  <LI> (77) NOT USED
     !    !!  <LI> (78) NOT USED
     !    !!  <LI> (79) fbetap (f-value for equation 48)
     !    lablxc(79) = 'fbetap        '; boundl(79) = 0.001D0; boundu(79) = 1.000D0
@@ -496,8 +501,8 @@ subroutine initial
     !    !!  <LI> (141) fcqt : TF coil quench temperature < tmax_croco (f-value for equation 74)
     !    lablxc(142) = 'nesep         '; boundl(142) = 1.00D17; boundu(142) = 1.00D20
     !    !!  <LI> (142) nesep : electron density at separatrix [m-3]
-    !    lablxc(143) = 'f_copperA_m2  '; boundl(143) = 0.001D0; boundu(143) = 1.000D0
-    !    !!  <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value (f-value for equation 75)
+    !    lablxc(143) = 'f_coppera_m2  '; boundl(143) = 0.001D0; boundu(143) = 1.000D0
+    !    !!  <LI> (143) f_coppera_m2 : TF coil current / copper area < Maximum value (f-value for equation 75)
     !    lablxc(144) = 'fnesep        '; boundl(144) = 0.001D0; boundu(144) = 1.000D0
     !    !!  <LI> (144) fnesep : Eich critical electron density at separatrix (f-value for constraint equation 76) [m-3]
     !    lablxc(145) = 'fgwped        '; boundl(145) = 0.500D0; boundu(145) = 1.000D0
@@ -520,11 +525,15 @@ subroutine initial
     !    !!  <LI> (153) fpdivlim : F-value for minimum pdivt (con. 80)
     !    lablxc(154) = 'fpdivlim      '; boundl(154) = 0.001D0; boundu(154) = 1.000D0
     !    !!  <LI> (154) fne0 : F-value for ne(0) > ne(ped) (con. 81)</UL>
+    !    lablxc(172) = 'f_avspace       '; boundl(172) = 0.0010D0; boundu(172) = 1.000D0
+    !    !!  <LI> (172) f_avspace
+    !    lablxc(173) = 'fbetatry_lower       '; boundl(173) = 0.0010D0; boundu(173) = 1.000D0
+    !    !!  <LI> (173) fbetatry_lower
 
 
     !  Initialise stellarator parameters if necessary
     !  This overrides some of the bounds of the tokamak parameters.
-    if (istell == 1) call stinit
+    if (istell /= 0) call stinit
 
 end subroutine initial
 
@@ -614,10 +623,10 @@ subroutine check
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables, only: blnkith
+    use build_variables, only: blnkith, bore, gapoh, ohcth, precomp
     use buildings_variables, only: esbldgm3, triv
     use current_drive_variables, only: gamcd, iefrf, irfcd
-    use divertor_kallenbach_variables, only: impurity_enrichment
+    use divertor_kallenbach_variables, only: impurity_enrichment, kallenbach_switch
     use error_handling, only: errors_on, idiags, fdiags, report_error
     use fwbs_variables, only: breeder_multiplier, iblanket, vfcblkt, vfpblkt, &
         iblnkith
@@ -638,31 +647,31 @@ subroutine check
     use reinke_variables, only: fzactual, impvardiv
     use tfcoil_variables, only: casthi, casthi_is_fraction, casths, i_tf_sup, &
         tcoolin, tcpav, tfc_sidewall_is_fraction, tmargmin, tmargmin_cs, &
-        tmargmin_tf
+        tmargmin_tf, eff_tf_cryo, eyoung_ins, i_tf_bucking, i_tf_shape, &
+        n_tf_graded_layers, n_tf_stress_layers, tlegav
     use stellarator_variables, only: istell
     use sctfcoil_module, only: initialise_cables
     use vacuum_variables, only: vacuum_model
+    use, intrinsic :: iso_fortran_env, only: dp=>real64
 
     implicit none
 
     !  Local variables
 
     integer :: i,j,k,imp
-    real(kind(1.0D0)) :: fsum
+    real(dp) :: fsum
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     errors_on = .true.
 
     !  Check that there are sufficient iteration variables
-
     if (nvar < neqns) then
         idiags(1) = nvar ; idiags(2) = neqns
         call report_error(137)
     end if
 
     !  Check that sufficient elements of ixc and icc have been specified
-
     if ( any(ixc(1:nvar) == 0) ) then
         idiags(1) = nvar
         call report_error(139)
@@ -675,7 +684,6 @@ subroutine check
     end if
 
     !  Deprecate constraints 3 and 4
-
     if ( any(icc(1:neqns+nineqns) == 3) ) then
         call report_error(162)
         write(*,*) 'PROCESS stopping'
@@ -687,6 +695,7 @@ subroutine check
         write(*,*) 'PROCESS stopping'
         stop
     end if
+
 
     ! MDK Report error if constraint 63 is used with old vacuum model
     if (any(icc(1:neqns+nineqns) == 63).and.(vacuum_model.ne.'simple') ) then
@@ -703,7 +712,6 @@ subroutine check
     end if
 
     !  Fuel ion fractions must add up to 1.0
-
     if (abs(1.0D0 - fdeut - ftrit - fhe3) > 1.0D-6) then
         fdiags(1) = fdeut; fdiags(2) = ftrit ; fdiags(3) = fhe3
         call report_error(36)
@@ -722,14 +730,14 @@ subroutine check
 
     ! The 1/R B field dependency constraint variable is being depreciated
     ! Stop the run if the constraint 10 is used
-    if ( any(icc == 10 )) then
+    if ( any( icc == 10 ) ) then
         call report_error(236)
         stop
     end if
 
     ! Stop the run if oacdcp is used as an optimisation variable
     ! As the current density is now calculated from bt without constraint 10
-    if ( any(ixc == 12 ) ) then
+    if ( any( ixc == 12 ) ) then
         call report_error(236)
         stop
     end if 
@@ -739,67 +747,71 @@ subroutine check
         call report_error(138)
     end if
 
+    ! Check if the kallenbach model is used with a variable target temperature
+    ! is so a discontinuity might appears that is highly likely to prevent VMCON
+    ! to converge.
+    if ( any(ixc == 120 ) .and. kallenbach_switch == 1 ) then
+        call report_error(237)
+    end if 
+
     !  Plasma profile consistency checks
-
     if (ife /= 1) then
-    if (ipedestal == 1 .or. ipedestal == 2) then
+        if (ipedestal == 1 .or. ipedestal == 2) then
 
-        !  Temperature checks
+            !  Temperature checks
+            if (teped < tesep) then
+                fdiags(1) = teped ; fdiags(2) = tesep
+                call report_error(146)
+            end if
 
-        if (teped < tesep) then
-            fdiags(1) = teped ; fdiags(2) = tesep
-            call report_error(146)
-        end if
+            if ((abs(rhopedt-1.0D0) <= 1.0D-7).and.((teped-tesep) >= 1.0D-7)) then
+                fdiags(1) = rhopedt ; fdiags(2) = teped ; fdiags(3) = tesep
+                call report_error(147)
+            end if
 
-        if ((abs(rhopedt-1.0D0) <= 1.0D-7).and.((teped-tesep) >= 1.0D-7)) then
-            fdiags(1) = rhopedt ; fdiags(2) = teped ; fdiags(3) = tesep
-            call report_error(147)
-        end if
+            !  Core temperature should always be calculated (later) as being
+            !  higher than the pedestal temperature, if and only if the
+            !  volume-averaged temperature never drops below the pedestal
+            !  temperature. Prevent this by adjusting te, and its lower bound
+            !  (which will only have an effect if this is an optimisation run)
+            if (te <= teped) then
+                fdiags(1) = te ; fdiags(2) = teped
+                te = teped*1.001D0
+                call report_error(149)
+            end if
 
-        !  Core temperature should always be calculated (later) as being
-        !  higher than the pedestal temperature, if and only if the
-        !  volume-averaged temperature never drops below the pedestal
-        !  temperature. Prevent this by adjusting te, and its lower bound
-        !  (which will only have an effect if this is an optimisation run)
+            if ((ioptimz >= 0).and.(any(ixc == 4)).and.(boundl(4) < teped*1.001D0)) then
+                call report_error(150)
+                boundl(4) = teped*1.001D0
+                boundu(4) = max(boundu(4), boundl(4))
+            end if
 
-        if (te <= teped) then
-            fdiags(1) = te ; fdiags(2) = teped
-            te = teped*1.001D0
-            call report_error(149)
-        end if
+             !  Density checks
+             !  Case where pedestal density is set manually
+             ! ---------------
+             if ( (fgwped < 0) .or. (.not.any(ixc==145)) ) then
+            
+                 ! Issue #589 Pedestal density is set manually using neped but it is less than nesep.
+                 if ( neped < nesep ) then
+                     fdiags(1) = neped ; fdiags(2) = nesep
+                     call report_error(151)
+                 end if  
 
-        if ((ioptimz >= 0).and.(any(ixc == 4)).and.(boundl(4) < teped*1.001D0)) then
-            call report_error(150)
-            boundl(4) = teped*1.001D0
-            boundu(4) = max(boundu(4), boundl(4))
-        end if
+                 ! Issue #589 Pedestal density is set manually using neped,
+                 ! but pedestal width = 0.
+                 if ( (abs(rhopedn-1.0D0) <= 1.0D-7).and.((neped-nesep) >= 1.0D-7) ) then
+                     fdiags(1) = rhopedn ; fdiags(2) = neped ; fdiags(3) = nesep
+                     call report_error(152)
+                 end if
+             end if 
 
-         !  Density checks
-         !  Case where pedestal density is set manually
-         ! ---------------
-         if ( (fgwped < 0) .or. (.not.any(ixc==145)) ) then
-    
-             ! Issue #589 Pedestal density is set manually using neped but it is less than nesep.
-             if ( neped < nesep ) then
-                 fdiags(1) = neped ; fdiags(2) = nesep
-                 call report_error(151)
-             end if  
-
-             ! Issue #589 Pedestal density is set manually using neped,
-             ! but pedestal width = 0.
-             if ( (abs(rhopedn-1.0D0) <= 1.0D-7).and.((neped-nesep) >= 1.0D-7) ) then
-                 fdiags(1) = rhopedn ; fdiags(2) = neped ; fdiags(3) = nesep
-                 call report_error(152)
+             ! Issue #862 : Variable ne0/neped ratio without constraint eq 81 (ne0>neped)
+             !  -> Potential hollowed density profile
+             if ( (ioptimz >= 0) .and. (.not.any(icc==81)) ) then
+                 if ( any(ixc == 145 )) call report_error(154)
+                 if ( any(ixc ==   6 )) call report_error(155)
              end if
-         end if 
-
-         ! Issue #862 : Variable ne0/neped ratio without constraint eq 81 (ne0>neped)
-         !  -> Potential hollowed density profile
-         if ( (ioptimz >= 0) .and. (.not.any(icc==81)) ) then
-             if ( any(ixc == 145 )) call report_error(154)
-             if ( any(ixc ==   6 )) call report_error(155)
          end if
-     end if
      end if
      ! ---------------
 
@@ -1010,7 +1022,7 @@ subroutine check
 
     !  Tight aspect ratio options (ST)
     ! --------------------------------
-     if (itart == 1) then
+    if ( itart == 1 ) then
 
         icase  = 'Tight aspect ratio tokamak model'
 
@@ -1031,26 +1043,54 @@ subroutine check
         ipfloc(2) = 3
         ipfloc(3) = 3
 
+        ! Water cooled copper magnets initalisation / checks
+        if ( i_tf_sup == 0 ) then
+            ! Check if the initial centrepost coolant loop adapted to the magnet technology
+            ! Ice cannot flow so tcoolin > 273.15 K 
+            if ( tcoolin < 273.15D0 ) call report_error(234)
+
+            ! Temperature of the TF legs cannot be cooled down 
+            if ( abs(tlegav+1.0D0) > epsilon(tlegav) .and. tlegav < 273.15D0 ) call report_error(239)
+
+            ! Check if conductor upper limit is properly set to 50 K or below
+            if ( any(ixc == 20 ) .and. boundu(20) < 273.15D0 ) call report_error(241)
+
         ! Call a lvl 3 error if superconductor magnets are used
-        if ( i_tf_sup == 1 ) call report_error(233)
+        else if ( i_tf_sup == 1 ) then 
+            call report_error(233)
 
-        ! Initialize the CP conductor temperature to cryogenic temperatire for cryo-al magnets (20 K)
-        if ( i_tf_sup == 2 ) tcpav  = 20.0D0
+        ! Helium cooled cryogenic aluminium magnets initalisation / checks
+        ! Initialize the CP conductor temperature to cryogenic temperature for cryo-al magnets (20 K)
+        else  if ( i_tf_sup == 2 ) then
 
-        ! Check if the initial centrepost coolant loop adapted to the magnet technology
-        ! Ice cannot flow so tcoolin > 273.15 K 
-        if ( i_tf_sup == 0 .and. tcoolin < 273.15D0 ) call report_error(234)
+            ! Call a lvl 3 error if the inlet coolant temperature is too large
+            ! Motivation : ill-defined aluminium resistivity fit for T > 40-50 K
+            if ( tcoolin > 40.0D0 ) call report_error(235)
+            
+            ! Check if the leg average temperature is low enough for the resisitivity fit
+            if ( tlegav > 50.0D0 ) call report_error(238)
 
-        ! Too large temperatures leading to out of range resisitivity model
-        if ( i_tf_sup == 2 .and. tcoolin > 50.0D0 ) call report_error(235)
+            ! Check if conductor upper limit is properly set to 50 K or below
+            if ( any(ixc == 20 ) .and. boundu(20) > 50.0D0 ) call report_error(240)
+
+            ! Otherwise intitialise the average conductor temperature at 
+            tcpav = tcoolin
+        
+        end if
 
         ! Check if the boostrap current selection is addapted to ST
         if (ibss  == 1) call report_error(38)
 
-        ! Check if a single null divertor is used (double null not yet implemented)
+        ! Check if a single null divertor is used
         if (i_single_null == 1) call report_error(39)
+
+        ! Set the TF coil shape to picture frame (if default value)
+        if ( i_tf_shape == 0 ) i_tf_shape = 2
     ! --------------------------------
 
+    
+    ! Conventionnal aspect ratios specific
+    ! ------------------------------------
     else
 
         if (icurr == 2 .or. icurr == 9) call report_error(40)
@@ -1061,8 +1101,10 @@ subroutine check
             idivrt = 1
         end if
 
-        !  Check PF coil configurations
+        ! Set the TF coil shape to PROCESS D-shape (if default value)
+        if ( i_tf_shape == 0 ) i_tf_shape = 1
 
+        !  Check PF coil configurations
         j = 0 ; k = 0
         do i = 1, ngrp
             if ((ipfloc(i) /= 2).and.(ncls(i) /= 2)) then
@@ -1081,9 +1123,9 @@ subroutine check
         if ((i_single_null == 1).and.(j < 2)) call report_error(44)
 
     end if
+    ! ------------------------------------
 
     !  Pulsed power plant model
-
     if (lpulse == 1) then
         icase = 'Pulsed tokamak model'
     else
@@ -1092,7 +1134,6 @@ subroutine check
 
     !  Ensure minimum cycle time constraint is turned off
     !  (not currently available, as routine thrmal has been commented out)
-
     if ( any(icc == 42) ) then
         call report_error(164)
     end if
@@ -1104,17 +1145,83 @@ subroutine check
 
     ! TF coil
     ! -------
+    ! TF stress model not defined of r_tf_inboard = 0
+    ! -> If bore + gapoh + ohcth = 0 and fixed and stress constraint is used
+    !    Generate a lvl 3 error proposing not to use any stress constraints
+    if (       ( .not. ( any(ixc == 16 ) .or. any(ixc == 29 ) .or. any(ixc == 42 ) ) ) & ! No bore,gapoh, ohcth iteration  
+         .and. ( abs(bore + gapoh + ohcth + precomp) < epsilon(bore) )                 & ! bore + gapoh + ohcth = 0
+         .and. ( any(icc == 31) .or. any(icc == 32) ) ) then                                                     ! Stress constraint (31) is used 
+
+        call report_error(246)
+        stop
+    end if
+     
+    ! bucking cylinder default option setting
+    !  - bucking (casing) for SC i_tf_bucking ( i_tf_bucking = 1 )
+    !  - No bucking for copper magnets ( i_tf_bucking = 0 )
+    !  - Bucking for aluminium magnets ( i_tf_bucking = 1 )
+    if ( i_tf_bucking == -1 ) then
+        if ( i_tf_sup == 0 ) then
+            i_tf_bucking = 0
+        else
+            i_tf_bucking = 1
+        end if
+    end if 
+
+    ! Error indicating that the buck and wedge solution is not yet implemented
+    if ( i_tf_bucking == 2 ) then
+        call report_error(247)
+        stop
+    end if
+
+    ! Number of stress calculation layers
+    n_tf_stress_layers = i_tf_bucking + n_tf_graded_layers
 
     ! If TFC sidewall has not been set by user
     if(casths<0.1d-10) tfc_sidewall_is_fraction = .true.
     ! If inboard TF coil case plasma side thickness has not been set by user
     if(casthi<0.1d-10) casthi_is_fraction = .true.
 
-    ! Issue #514 Radial dimensions of inboard leg
-    ! Ensure that tfcth is defined if thkwp is an iteration variable (140)
-    ! if (any(ixc(1:nvar) == 140) ) then
-    !     tfcth = thkwp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
-    ! endif
+    ! Setting the default cryo-plants efficiencies
+    !-!
+    if ( abs(eff_tf_cryo + 1.0D0) < epsilon(eff_tf_cryo) ) then 
+        
+        ! The ITER cyoplant efficiency is used for SC
+        if ( i_tf_sup == 1 ) then
+            eff_tf_cryo = 0.13D0
+
+        ! Strawbrige plot extrapolation is used for Cryo-Al
+        else if ( i_tf_sup == 2 ) then
+            eff_tf_cryo = 0.40D0
+        end if
+    
+    ! Cryo-plane efficiency must be in [0-1.0]
+    else if ( eff_tf_cryo >  1.0D0 .or. eff_tf_cryo < 0.0D0 ) then
+        call report_error(248)
+        stop
+    end if
+    !-!  
+
+    ! Setting up insulation layer young modulae default values [Pa]
+    !-!
+    if ( abs(eyoung_ins - 1.0D8 ) < epsilon(eyoung_ins) ) then
+
+        ! Copper magnets, no insulation material defined
+        ! But use the ITER design by default
+        if ( i_tf_sup == 0 ) then
+            eyoung_ins = 20.0D9
+
+        ! SC magnets 
+        ! Value from DDD11-2 v2 2 (2009)
+        else if ( i_tf_sup == 1 ) then
+            eyoung_ins = 20.0D9
+        
+        ! Cryo-aluminum magnets (Kapton polymer)
+        else if ( i_tf_sup == 2 ) then
+            eyoung_ins = 2.5D9
+        end if
+    end if
+    !-!
 
     !  PF coil resistivity is zero if superconducting
     if (ipfres == 0) pfclres = 0.0D0

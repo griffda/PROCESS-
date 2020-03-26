@@ -9,6 +9,8 @@ module fw_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  ! Modules to import
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   private
@@ -34,12 +36,13 @@ contains
 
     implicit none
 
-    ! Arguments
-    real(kind=double), intent(in) :: reynolds
-    real(kind=double), intent(out) :: darcy_friction
+    real(dp), intent(in) :: reynolds
+    real(dp), intent(out) :: darcy_friction
 
-    ! Local variables
-    real(kind=double) :: bracket
+    ! Local variables !
+    ! !!!!!!!!!!!!!!!!!!
+
+    real(dp) :: bracket
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -73,47 +76,47 @@ contains
     ! Arguments
 
     ! Function output: Heat transfer coefficient (W/m2K)
-    real(kind=double) :: heat_transfer
+    real(dp) :: heat_transfer
 
     ! Coolant mass flux in a single channel (kg/m2/s)
-    real(kind=double) :: masflx
+    real(dp) :: masflx
 
     ! Coolant density (average of inlet and outlet) (kg/m3)
-    real(kind=double) :: rhof
+    real(dp) :: rhof
 
     ! Coolant pipe radius (m)
-    real(kind=double) :: radius
+    real(dp) :: radius
 
     ! Coolant specific heat capacity (average of inlet and outlet) (J/K)
-    real(kind=double) :: cf
+    real(dp) :: cf
 
     ! Coolant viscosity (average of inlet and outlet) (Pa.s)
-    real(kind=double) :: viscf
+    real(dp) :: viscf
 
     ! Thermal conductivity of coolant (average of inlet and outlet) (W/m.K)
-    real(kind=double) :: kf
+    real(dp) :: kf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Local variables
 
     ! Calculate flow velocity (m/s)
-    real(kind=double) :: velocity
+    real(dp) :: velocity
 
     ! Reynolds number
-    real(kind=double) :: reynolds
+    real(dp) :: reynolds
 
     ! Prandtl number
-    real(kind=double) :: pr
+    real(dp) :: pr
 
     ! Darcy friction factor
-    real(kind=double) :: f
+    real(dp) :: f
 
     ! Nusselt number
-    real(kind=double) :: nusselt
+    real(dp) :: nusselt
 
     ! Pipe diameter (m)
-    real(kind=double) ::diameter
+    real(dp) ::diameter
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -166,10 +169,12 @@ contains
     implicit none
 
     ! Function return value: thermal conductivity of first wall (W/m.K)
-    real(kind=double) :: fw_thermal_conductivity
+    real(dp) :: fw_thermal_conductivity
 
-    ! Arguments
-    real(kind=double), intent(in) :: t
+    ! Arguments !
+    ! !!!!!!!!!!!!
+
+    real(dp), intent(in) :: t
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -224,89 +229,89 @@ contains
 
     ! Arguments
     integer, intent(in) :: ip, ofile
-    real(kind=double), intent(in) :: pnuc_deposited, afw, thickness, area, prad_incident
-    real(kind=double), intent(out) ::  tpeakfw, cfmean, rhofmean, massrate
+    real(dp), intent(in) :: pnuc_deposited, afw, thickness, area, prad_incident
+    real(dp), intent(out) ::  tpeakfw, cfmean, rhofmean, massrate
     character(len=*) :: label
 
     ! Local variables
     integer :: coolant
 
     ! FW volume (inboard or outboard depending on arguments) (m3)
-    real(kind=double) :: fwvol
+    real(dp) :: fwvol
 
     ! Heat transfer coefficient (W/m2K)
-    real(kind=double) :: hcoeff
+    real(dp) :: hcoeff
 
     ! thermal conductivity of inlet coolant, outlet coolant and mean (W/m.K)
-    real(kind=double) :: kfi, kfo, kfmean
+    real(dp) :: kfi, kfo, kfmean
 
     ! Heat flux incident on the first wall surface (W/m2)
-    real(kind=double) :: qpp
+    real(dp) :: qpp
 
     ! Heat generation in the first wall due to neutron flux deposited in the material (W/m3)
-    real(kind=double) :: qppp
+    real(dp) :: qppp
 
     ! Mean temperature of the wall material on the plasma side of the coolant (K)
-    real(kind=double) :: temp_k
+    real(dp) :: temp_k
 
     ! Viscosity of the inlet coolant, outlet coolant and average coolant (Pa.s)
-    real(kind=double) :: viscfi, viscfo, viscfmean
+    real(dp) :: viscfi, viscfo, viscfmean
 
     ! Heat load per unit length of one first wall pipe (MW/m)
-    real(kind=double) :: load
+    real(dp) :: load
 
     ! Thermal conductivity of first wall material (W/m.K)
-    real(kind=double) :: tkfw
+    real(dp) :: tkfw
 
     ! Temperature drop in first-wall material (K)
-    real(kind=double) :: deltat_solid
+    real(dp) :: deltat_solid
 
     ! Temperature drop between channel inner wall and bulk coolant. (K)
-    real(kind=double) :: deltat_coolant
+    real(dp) :: deltat_coolant
 
     ! First wall channel cross-sectional area (m2)
-    real(kind=double) :: channel_area
+    real(dp) :: channel_area
 
     ! Specific heat capacity for inlet and outlet coolant (J/K)
-    real(kind=double) :: cfi, cfo
+    real(dp) :: cfi, cfo
 
     ! Density of inlet and outlet coolant (kg/m3)
-    real(kind=double) :: rhofi, rhofo
+    real(dp) :: rhofi, rhofo
 
     ! Outlet coolant velocity (m/s)
-    real(kind=double) :: velocity
+    real(dp) :: velocity
 
     ! Temperature drop in first-wall material (Model B)
-    real(kind=double) :: deltat_solid_1D
+    real(dp) :: deltat_solid_1D
 
     ! Worst case load (as above) per unit length in 1-D calculation (Model B)
-    real(kind=double) :: onedload
+    real(dp) :: onedload
 
     ! Effective area for heat transfer (m2)
-    real(kind=double) :: effective_area_for_heat_transfer
+    real(dp) :: effective_area_for_heat_transfer
 
     ! Maximum distance travelled by surface heat load (m)
-    real(kind=double) :: diagonal
+    real(dp) :: diagonal
 
     ! Mean distance travelled by surface heat (m)
-    real(kind=double) :: mean_distance
+    real(dp) :: mean_distance
 
     ! Mean heat spread width (m)
-    real(kind=double) :: mean_width
+    real(dp) :: mean_width
 
     ! Coolant mass flux in a single channel (kg/m2/s)
-    real(kind=double) :: masflx
+    real(dp) :: masflx
 
     ! Mean nuclear power deposited in first wall per unit area (W/m2)
-    real(kind=double) :: nuclear_heat_per_area
+    real(dp) :: nuclear_heat_per_area
 
     ! TODO sort out these variables and model A, B, C order and labels.
     ! Variables for the old FW temperature model (LeClaire)
-    ! real(kind=double) :: tmthet
+    ! real(dp) :: tmthet
     ! first wall pipe outer radius (m)
-    ! real(kind=double) :: bfw
+    ! real(dp) :: bfw
     ! Coolant viscosity (Pa.s)
-    ! real(kind=double) :: viscf
+    ! real(dp) :: viscf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

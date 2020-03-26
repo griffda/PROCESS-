@@ -10,6 +10,7 @@ module process_output
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   public
@@ -349,7 +350,7 @@ contains
 
     integer, intent(in) :: file
     character(len=*), intent(in) :: descr, varnam
-    real(kind(1.0D0)), intent(in) :: value
+    real(dp), intent(in) :: value
     character(len=3), intent(in), optional :: output_flag
 
     !  Local variables
@@ -423,7 +424,7 @@ contains
 
     integer, intent(in) :: file
     character(len=*), intent(in) :: descr, varnam
-    real(kind(1.0D0)), intent(in) :: value
+    real(dp), intent(in) :: value
     character(len=3), intent(in), optional :: output_flag
 
     !  Local variables
@@ -615,7 +616,7 @@ contains
 
     integer, intent(in) :: file
     character(len=*), intent(in) :: ccode, descr
-    real(kind(1.0D0)), intent(in) :: value
+    real(dp), intent(in) :: value
 
     !  Local variables
 
@@ -666,7 +667,7 @@ contains
     integer, intent(in) :: file
     character(len=*), intent(in) :: descr
     character(len=*), optional :: variable_name
-    real(kind(1.0D0)), intent(in) :: thick, total
+    real(dp), intent(in) :: thick, total
 
     !  Local variables
 

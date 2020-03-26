@@ -7,6 +7,8 @@ module kit_hcll_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  ! Modules to import
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   !  Subroutine declarations
@@ -16,348 +18,358 @@ module kit_hcll_module
   !  Precision variable
   integer, parameter :: double = 8
 
+  ! TODO - blanket thickness includes the first wall in Fabrizio's model
+  ! real(dp) :: blnkith = 0.025D0 + 0.375D0 + 0.21D0
+  ! real(dp) :: blnkoth = 0.025D0 + 0.715D0 + 0.21D0
+
+  ! TODO - vacuum vessel different thicknesses in FF model
+  ! real(dp) :: ddwi = 0.25D0
+  ! real(dp) :: ddwo = 0.50D0
+
+  ! TODO - need checking of the bounds of validity
+
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  Variables for output to file
   integer, private :: ip, ofile
 
   ! Blanket inlet/outlet He temperatures
-  real(kind=double), private :: T_he_in, T_He_out
+  real(dp), private :: T_he_in, T_He_out
 
   ! Density of lead lithium (kg/m3)
-  real(kind=double), private :: denpbli
+  real(dp), private :: denpbli
 
   ! Density of helium (kg/m3 at 8MPa, 400C)
-  real(kind=double), private :: denhe
+  real(dp), private :: denhe
 
   ! Coverage factor (%)
-  real(kind=double), private :: cf
+  real(dp), private :: cf
 
   ! Energy multiplication in blanket, VV and divertor
-  real(kind=double), private :: emult_all
+  real(dp), private :: emult_all
 
   ! TBR formula correction Factors
-  real(kind=double), private :: ff_ib, ff_ob
+  real(dp), private :: ff_ib, ff_ob
 
   ! Fraction of neutronic current going towards inboard/outboard blankets (%)
-  real(kind=double), private :: j_plus_ib, j_plus_ob
+  real(dp), private :: j_plus_ib, j_plus_ob
 
   ! Specific heat at constant pressure for He at 8 MPa and 400C (kJ/kg/K)
-  real(kind=double),private :: cp_he
+  real(dp),private :: cp_he
 
   ! Reference thermal blanket power, DEMO 2007 (MW)
-  real(kind=double), private :: P_th_0
+  real(dp), private :: P_th_0
 
   ! Reference He pumping power, DEMO 2007 (MW)
-  real(kind=double),private :: P_pump_0
+  real(dp),private :: P_pump_0
 
   ! Radial position of first wall inboard/outboard side (m)
-  real(kind=double),private :: rad_ib, rad_ob
+  real(dp),private :: rad_ib, rad_ob
 
   ! Breeder zone and back plate size percentage of blanket inboard/outboard (%)
-  real(kind=double),private :: bp_ratio_ib, bp_ratio_ob, bz_ratio_ib, bz_ratio_ob
+  real(dp),private :: bp_ratio_ib, bp_ratio_ob, bz_ratio_ib, bz_ratio_ob
 
   ! Breeder blanket breeder zone thickness (m)
-  real(kind=double), private :: thick_bz_ib, thick_bz_ob
+  real(dp), private :: thick_bz_ib, thick_bz_ob
 
   ! Breeder blanket back plate thickness (m)
-  real(kind=double), private :: thick_bp_ib, thick_bp_ob
+  real(dp), private :: thick_bp_ib, thick_bp_ob
 
   ! First wall thicknesses inboard/outboard (m)
-  real(kind=double),private :: thick_fw_ib, thick_fw_ob
+  real(dp),private :: thick_fw_ib, thick_fw_ob
 
   ! Breeder blanket thicknesses inboard/outboard (m)
-  real(kind=double),private :: dr_bb_ib, dr_bb_ob
+  real(dp),private :: dr_bb_ib, dr_bb_ob
 
   ! TODO Why is this comment here?
   ! Breeder blanket breeder zone thickness (m)
 
   ! Inboard ellipse 1 minor and major radii (m)
-  real(kind=double),private :: r_ib, z_ib
+  real(dp),private :: r_ib, z_ib
 
   ! Outboard ellipse 2 minor and major radii (m)
-  real(kind=double),private :: r_ob, z_ob
+  real(dp),private :: r_ob, z_ob
 
   ! h parameter for ellipse's length formula inboard/outboard
-  real(kind=double), private :: h_ib, h_ob
+  real(dp), private :: h_ib, h_ob
 
   ! ellipse length (m) inboard/outboard
-  real(kind=double), private :: len_ib, len_ob
+  real(dp), private :: len_ib, len_ob
 
   ! Fraction of ideal blanket ellipse length for divertor inboard/outboard
-  real(kind=double), private :: frac_div_ib, frac_div_ob
+  real(dp), private :: frac_div_ib, frac_div_ob
 
   ! ellipse length (accounting for divertor gap) (m) inboard/outboard
-  real(kind=double), private :: len_act_ib, len_act_ob
+  real(dp), private :: len_act_ib, len_act_ob
 
   ! Number of inboard/outboard modules in the poloidal direction
-  real(kind=double), private :: nb_pol_ib, nb_pol_ob
+  real(dp), private :: nb_pol_ib, nb_pol_ob
 
   ! Max allowed (from Maintainance) Poloidal thickness of inboard blanket module (m)
-  real(kind=double), private :: dp_bb_ib_max, dp_bb_ob_max
+  real(dp), private :: dp_bb_ib_max, dp_bb_ob_max
 
   ! Number of inboard/outboard  modules in the toroidal direction (blanket segment)
-  real(kind=double), private :: nb_tor_ib, nb_tor_ob
+  real(dp), private :: nb_tor_ib, nb_tor_ob
 
   ! Max allowed (from RH) toroidal thickness of inboard/outboard blanket module (m)
-  real(kind=double), private :: dt_bb_ib_max, dt_bb_ob_max
+  real(dp), private :: dt_bb_ib_max, dt_bb_ob_max
 
   ! Poloidal length of inboard/outboard blanket module
-  real(kind=double), private :: dp_bb_ib, dp_bb_ob
+  real(dp), private :: dp_bb_ib, dp_bb_ob
 
   ! Toroidal length of inboard/outboard blanket module (m)
-  real(kind=double), private :: dt_bb_ib, dt_bb_ob
+  real(dp), private :: dt_bb_ib, dt_bb_ob
 
   ! Inboard/outboard and total FW area (m2)
-  real(kind=double), private :: area_fw_ib, area_fw_ob, area_fw
+  real(dp), private :: area_fw_ib, area_fw_ob, area_fw
 
   ! Inboard/outboard blanket module side wall thickness
-  real(kind=double), private :: thick_sw_ib, thick_sw_ob
+  real(dp), private :: thick_sw_ib, thick_sw_ob
 
   ! Inboard/outboard blanket module cap thickness (m)
-  real(kind=double), private :: thick_cap_ib, thick_cap_ob
+  real(dp), private :: thick_cap_ib, thick_cap_ob
 
   ! Radial thickness of inboard/outboard breeding zone (m)
-  real(kind=double), private :: dr_bz_ib, dr_bz_ob
+  real(dp), private :: dr_bz_ib, dr_bz_ob
 
   ! Toroidal thickness of inboard/outboard breeding zone (m)
-  real(kind=double), private :: dt_bz_ib, dt_bz_ob
+  real(dp), private :: dt_bz_ib, dt_bz_ob
 
   ! Poloidal thickness of inboard/outboard breeding zone (m)
-  real(kind=double), private :: dp_bz_ib, dp_bz_ob
+  real(dp), private :: dp_bz_ib, dp_bz_ob
 
   ! Number of BU in a inboard/outboard module along the toroidal direction
-  real(kind=double), private :: nb_bu_tor_ib, nb_bu_tor_ob
+  real(dp), private :: nb_bu_tor_ib, nb_bu_tor_ob
 
   ! Number of BU in a inboard/outboard module along the poloidal direction
-  real(kind=double), private :: nb_bu_pol_ib, nb_bu_pol_ob
+  real(dp), private :: nb_bu_pol_ib, nb_bu_pol_ob
 
   ! Toroidal thickness of a inboard/outboard BU (m)
-  real(kind=double), private :: dt_bu_ib, dt_bu_ob
+  real(dp), private :: dt_bu_ib, dt_bu_ob
 
   ! Poloidal thickness of a inboard/outboard BU (m)
-  real(kind=double), private :: dp_bu_ib, dp_bu_ob
+  real(dp), private :: dp_bu_ib, dp_bu_ob
 
   ! Max allowed toroidal/poloidal dimension of BU (m)
-  real(kind=double), private :: dt_bu_max, dp_bu_max
+  real(dp), private :: dt_bu_max, dp_bu_max
 
   ! Inboard/outboard back supporting structure radial thickness (m)
-  real(kind=double), private :: thick_bss_ib, thick_bss_ob
+  real(dp), private :: thick_bss_ib, thick_bss_ob
 
   ! Poloidal thickness of inboard/outboard manifold region (m)
-  real(kind=double), private :: dp_mf_ib, dp_mf_ob
+  real(dp), private :: dp_mf_ib, dp_mf_ob
 
   ! Toroidal thickness of inboard/outboard manifold region (m)
-  real(kind=double), private :: dt_mf_ib, dt_mf_ob
+  real(dp), private :: dt_mf_ib, dt_mf_ob
 
   ! Radial thickness of inboard/outboard manifold region (m)
-  real(kind=double), private :: dr_mf_ib, dr_mf_ob
+  real(dp), private :: dr_mf_ib, dr_mf_ob
 
   ! volume fraction of helium in the FW (calculated in the CEA version) (%)
-  real(kind=double), private :: frac_vol_he_fw
+  real(dp), private :: frac_vol_he_fw
 
   ! Percentage of steel in the FW (%)
-  real(kind=double), private :: frac_vol_steel_fw
+  real(dp), private :: frac_vol_steel_fw
 
   ! FW volume in an inboard/outboard blanket module (m3)
-  real(kind=double), private :: vol_fw_ib, vol_fw_ob
+  real(dp), private :: vol_fw_ib, vol_fw_ob
 
   ! Total FW volume (reactor segment) (m3)
-  real(kind=double), private :: vol_fw
+  real(dp), private :: vol_fw
 
   ! He volume in the FW for in inboard/outboard blanket module (m3)
-  real(kind=double), private :: vol_he_fw_ib, vol_he_fw_ob
+  real(dp), private :: vol_he_fw_ib, vol_he_fw_ob
 
   ! Total He volume in FW (reactor segment) (m3)
-  real(kind=double), private :: vol_he_fw
+  real(dp), private :: vol_he_fw
 
   ! Steel volume in the FW for an inboard outboard blanket module (m3)
-  real(kind=double), private :: vol_steel_fw_ib, vol_steel_fw_ob
+  real(dp), private :: vol_steel_fw_ib, vol_steel_fw_ob
 
   ! Total steel volume in the FW (reactor segment) (m3)
-  real(kind=double), private :: vol_steel_fw
+  real(dp), private :: vol_steel_fw
 
   ! Tungsten volume in the FW for an inboard/outboard blanket module (m3)
-  real(kind=double), private :: vol_w_fw_ib, vol_w_fw_ob
+  real(dp), private :: vol_w_fw_ib, vol_w_fw_ob
 
   ! Volume fraction of tungsten in the FW (%)
-  real(kind=double), private :: frac_vol_w_fw
+  real(dp), private :: frac_vol_w_fw
 
   ! Volume fraction of He in BZ (%)
-  real(kind=double), private :: frac_vol_he_bz
+  real(dp), private :: frac_vol_he_bz
 
   ! Volume fraction of steel in BZ (%)
-  real(kind=double), private :: frac_vol_steel_bz
+  real(dp), private :: frac_vol_steel_bz
 
   ! Volume fraction of PbLi in manifold region (%)
-  real(kind=double), private :: frac_vol_pbli_mf
+  real(dp), private :: frac_vol_pbli_mf
 
   ! Volume fraction of steel in manifold region (%)
-  real(kind=double), private :: frac_vol_steel_mf
+  real(dp), private :: frac_vol_steel_mf
 
   ! Percentage of PbLi in the BZ (%)
-  real(kind=double), private :: frac_vol_pbli_bz
+  real(dp), private :: frac_vol_pbli_bz
 
   ! BZ volume in an inboard/outboard blanket module
-  real(kind=double), private :: vol_bz_ib, vol_bz_ob
+  real(dp), private :: vol_bz_ib, vol_bz_ob
 
   ! Total He volume in inboard/outboard BZ (m3)
-  real(kind=double), private :: vol_he_bz_ib, vol_he_bz_ob
+  real(dp), private :: vol_he_bz_ib, vol_he_bz_ob
 
   ! Total steel volume in the inboard/outboard blanket module (m3)
-  real(kind=double), private :: vol_steel_bz_ib, vol_steel_bz_ob
+  real(dp), private :: vol_steel_bz_ib, vol_steel_bz_ob
 
   ! Total PbLi volume in the inboard/outboard blanket module BZ
-  real(kind=double), private :: vol_pbli_bz_ib, vol_pbli_bz_ob
+  real(dp), private :: vol_pbli_bz_ib, vol_pbli_bz_ob
 
   ! Total He volume in the BZ for a reactor sector (m3)
-  real(kind=double), private :: vol_he_bz
+  real(dp), private :: vol_he_bz
 
   ! Total steel volume in the BZ for a reactor sector (m3)
-  real(kind=double), private :: vol_steel_bz
+  real(dp), private :: vol_steel_bz
 
   ! Total volume in the BZ for a reactor sector (m3)
-  real(kind=double), private :: vol_bz
+  real(dp), private :: vol_bz
 
   ! Total Pb-Li volume in the BZ for a reactor sector (m3)
-  real(kind=double), private :: vol_pbli_bz
+  real(dp), private :: vol_pbli_bz
 
   ! Percentage of He in the manifold region (%)
-  real(kind=double), private :: frac_vol_he_mf
+  real(dp), private :: frac_vol_he_mf
 
   ! Total volume in the inboard/outboard manifold region (m3)
-  real(kind=double), private :: vol_mf_ib, vol_mf_ob
+  real(dp), private :: vol_mf_ib, vol_mf_ob
 
   ! Total PbLi volume in the inboard/outboard manifold region (m3)
-  real(kind=double), private :: vol_pbli_mf_ib, vol_pbli_mf_ob
+  real(dp), private :: vol_pbli_mf_ib, vol_pbli_mf_ob
 
   ! Total He volume in the inboard/outboard manifold region (m3)
-  real(kind=double), private :: vol_he_mf_ib, vol_he_mf_ob
+  real(dp), private :: vol_he_mf_ib, vol_he_mf_ob
 
   ! Total steel volume in the inboard/outboard manifold region (m3)
-  real(kind=double), private :: vol_steel_mf_ib, vol_steel_mf_ob
+  real(dp), private :: vol_steel_mf_ib, vol_steel_mf_ob
 
   ! Total PbLi volume in the manifold region for a reactor sector (m3)
-  real(kind=double), private :: vol_pbli_mf
+  real(dp), private :: vol_pbli_mf
 
   ! Total steel volume in the manifold region for a reactor sector (m3)
-  real(kind=double), private :: vol_steel_mf
+  real(dp), private :: vol_steel_mf
 
   ! Total volume in the manifold region for a reactor sector (m3)
-  real(kind=double), private :: vol_mf
+  real(dp), private :: vol_mf
 
   ! Total steel volume in the manifold region for a reactor sector (m3)
-  real(kind=double), private :: vol_he_mf
+  real(dp), private :: vol_he_mf
 
   ! Helium mass for an inboard/outboard reactor segment (kg)
-  real(kind=double), private :: mass_he_segm_ib, mass_he_segm_ob
+  real(dp), private :: mass_he_segm_ib, mass_he_segm_ob
 
   ! Steel mass for an inboard/outboard reactor segment (kg)
-  real(kind=double), private :: mass_steel_segm_ib, mass_steel_segm_ob
+  real(dp), private :: mass_steel_segm_ib, mass_steel_segm_ob
 
   ! PbLi mass for an inboard/outboard reactor segment (kg)
-  real(kind=double), private :: mass_pbli_segm_ib, mass_pbli_segm_ob
+  real(dp), private :: mass_pbli_segm_ib, mass_pbli_segm_ob
 
   ! Tungsten mass for an inboard/outboard reactor segment (kg)
-  real(kind=double), private :: mass_w_segm_ib, mass_w_segm_ob
+  real(dp), private :: mass_w_segm_ib, mass_w_segm_ob
 
   ! Total mass for an inboard/outboard reactor segment (kg)
-  real(kind=double), private :: mass_segm_ib, mass_segm_ob
+  real(dp), private :: mass_segm_ib, mass_segm_ob
 
   ! Total mass for a blanket sector (kg)
-  real(kind=double), private :: mass_sector
+  real(dp), private :: mass_sector
 
   ! Total He mass for the whole blanket (kg)
-  real(kind=double), private :: mass_he_blanket
+  real(dp), private :: mass_he_blanket
 
   ! Total PbLi mass for the whole blanket (kg)
-  real(kind=double), private :: mass_pbli_blanket
+  real(dp), private :: mass_pbli_blanket
 
   ! Total steel mass for the whole blanket (kg)
-  real(kind=double), private :: mass_steel_blanket
+  real(dp), private :: mass_steel_blanket
 
   ! Total tungsten mass for the whole breeding blanket (kg)
-  real(kind=double), private :: mass_w_blanket
+  real(dp), private :: mass_w_blanket
 
   ! Total blanket mass (kg)
-  real(kind=double), private :: mass_blanket
+  real(dp), private :: mass_blanket
 
   ! Dimensionless inboard/outboard Tritium Production Rate
-  real(kind=double), private :: TPR_ib, TPR_ob
+  real(dp), private :: TPR_ib, TPR_ob
 
   ! TBR from the inboard/outboard blankets
-  real(kind=double), private :: TBR_ib, TBR_ob
+  real(dp), private :: TBR_ib, TBR_ob
 
   ! Fast neutron flux on the inboard/outboard leg (cm-2 s-1)
-  real(kind=double), private :: phi_tfc_ib, phi_tfc_ob
+  real(dp), private :: phi_tfc_ib, phi_tfc_ob
 
   ! He mass flow rate (kg/s)
-  real(kind=double), private :: w_he
+  real(dp), private :: w_he
 
   ! Blanket He pumping power (MW)
-  ! real(kind=double), private :: p_pump
+  ! real(dp), private :: p_pump
 
   ! Surface heat flux on first wall (MW) (sum = pradfw)
-  real(kind=double), private :: psurffwi, psurffwo
+  real(dp), private :: psurffwi, psurffwo
 
   ! Ratio of FW/BKT nuclear power as fraction of total
-  real(kind=double), private :: pnuc_fw_ratio, pnuc_bkt_ratio
+  real(dp), private :: pnuc_fw_ratio, pnuc_bkt_ratio
 
   ! Powerflow calculation variables
 
   ! Inboard/outboard blanket coolant channel length (radial direction) (m)
-  real(kind=double), private :: bldepti, bldepto
+  real(dp), private :: bldepti, bldepto
 
   ! Inboard/outboard blanket flow lengths (m)
-  real(kind=double), private :: bzfllengi, bzfllengo
+  real(dp), private :: bzfllengi, bzfllengo
 
   ! Inboard/outboard coolant velocity in blanket (m/s)
-  real(kind=double), private :: velblkti, velblkto
+  real(dp), private :: velblkti, velblkto
 
   ! Inboard/outboard first wall peak temperature (K)
-  real(kind=double), private :: tpeakfwi, tpeakfwo
+  real(dp), private :: tpeakfwi, tpeakfwo
 
   ! Inboard/outboard first wall nuclear heating (MW)
-  real(kind=double), private :: pnucfwi, pnucfwo
+  real(dp), private :: pnucfwi, pnucfwo
 
   ! Neutron power deposited inboard/outboard blanket blanket (MW)
-  real(kind=double), private :: pnucblkti, pnucblkto
+  real(dp), private :: pnucblkti, pnucblkto
 
   ! Inboard/utboard total number of pipes
-  real(kind=double), private :: npfwi, npfwo
+  real(dp), private :: npfwi, npfwo
 
   ! Inboard/outboard total num of pipes
-  real(kind=double), private :: npblkti, npblkto
+  real(dp), private :: npblkti, npblkto
 
   ! Total mass flow rate for coolant (kg/s)
-  real(kind=double), private :: mftotal
+  real(dp), private :: mftotal
 
   ! Inboard/outboard mass flow rate per coolant pipe (kg/s)
-  real(kind=double), private :: mffwpi, mffwpo
+  real(dp), private :: mffwpi, mffwpo
 
   ! Inboard/outboard total mass flow rate to remove inboard FW power (kg/s)
-  real(kind=double), private :: mffwi, mffwo, mffw
+  real(dp), private :: mffwi, mffwo, mffw
 
   ! Inboard/outboard blanket mass flow rate for coolant (kg/s)
-  real(kind=double), private :: mfblkti, mfblkto, mfblkt
+  real(dp), private :: mfblkti, mfblkto, mfblkt
 
   ! Inboard/outboard mass flow rate per coolant pipe (kg/s)
-  real(kind=double), private :: mfblktpi, mfblktpo
+  real(dp), private :: mfblktpi, mfblktpo
 
   ! Blanket internal half-height (m)
-  real(kind=double), private :: hblnkt
+  real(dp), private :: hblnkt
 
   ! Inboard/outboard blanket segment poloidal length (m)
-  real(kind=double), private :: bllengi, bllengo
+  real(dp), private :: bllengi, bllengo
 
   ! Inboard/outboard blanket mid-plan toroidal circumference for segment (m)
-  real(kind=double), private :: blwidti, blwidto
+  real(dp), private :: blwidti, blwidto
 
   ! Inboard/outboard first wall pumping power (MW)
-  real(kind=double), private :: htpmw_fwi, htpmw_fwo
+  real(dp), private :: htpmw_fwi, htpmw_fwo
 
   ! Inboard/outboard blanket pumping power (MW)
-  real(kind=double), private :: htpmw_blkti, htpmw_blkto
+  real(dp), private :: htpmw_blkti, htpmw_blkto
 
 contains
 
@@ -835,8 +847,8 @@ contains
     ! Local variables
 
     ! Dimensions in cm for TBR
-    real(kind=double) :: bz_ri, bz_ro
-    real(kind=double) :: f_steel_bz, f_pbli_bz
+    real(dp) :: bz_ri, bz_ro
+    real(dp) :: f_steel_bz, f_pbli_bz
 
     bz_ri = dr_bz_ib*100.0D0
     bz_ro = dr_bz_ob*100.0D0
@@ -1012,10 +1024,10 @@ contains
     ! Local variables
 
     ! coolant specific heat capacity at constant pressure (J/kg/K)
-    real(kind=double) :: cf
+    real(dp) :: cf
 
     ! coolant density (kg/m3)
-    real(kind=double) :: rhof
+    real(dp) :: rhof
 
     ! Number of 90 degree angle turns in FW and blanket flow channels
     integer :: no90fw, no90bz
@@ -1220,211 +1232,204 @@ contains
       call ocmmnt(ofile, 'Mechanical pumping power is calculated for first wall and blanket')
     end if
 
-    call ovarre(ofile, 'Pumping power for first wall (MW)', '(htpmw_fw)', htpmw_fw, 'OP ')
-    call ovarre(ofile, 'Pumping power for blanket (MW)', '(htpmw_blkt)', htpmw_blkt, 'OP ')
-    call ovarre(ofile, 'Pumping power for divertor (MW)', '(htpmw_div)', htpmw_div, 'OP ')
-    call ovarre(ofile, 'Pumping power for shield and vacuum vessel (MW)', '(htpmw_shld)', &
-      htpmw_shld, 'OP ')
-    call ovarre(ofile, 'Total coolant pumping power: first wall, blanket, shield&
-      &and divertor (MW)', '(htpmw)', htpmw, 'OP ')
+     call ovarre(ofile, 'Pumping power for first wall (MW)', '(htpmw_fw)', htpmw_fw, 'OP ')
+     call ovarre(ofile, 'Pumping power for blanket (MW)', '(htpmw_blkt)', htpmw_blkt, 'OP ')
+     call ovarre(ofile, 'Pumping power for divertor (MW)', '(htpmw_div)', htpmw_div, 'OP ')
+     call ovarre(ofile, 'Pumping power for shield and vacuum vessel (MW)', '(htpmw_shld)', htpmw_shld, 'OP ')
+     call ovarre(ofile, 'Total coolant pumping power: first wall, blanket, shield and divertor (MW)', '(htpmw)', htpmw, 'OP ')
 
-  end subroutine thermo_hydraulic_model
+   end subroutine thermo_hydraulic_model
 
-  function pumppower(temp_in, temp_out, pressure, flleng, rad, mf, mfp, no90, &
-    no180, etaiso, coolant, label)
-    !! Routine to calculate the coolant pumping power in MW in the first
-    !! wall and breeding zone
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! temp_in     : input real : inlet temperature (K)
-    !! temp_out    : input real : outlet temperature (K)
-    !! pressure    : input real : outlet coolant pressure (Pa)
-    !! flleng      : input real : total flow length along pipe (m)
-    !! rad         : input real : pipe inner radius (m)
-    !! mf          : input real : total coolant mass flow rate in (kg/s)
-    !! mfp         : input real : coolant mass flow rate per pipe (kg/s)
-    !! no90        : input integer : number of 90 degree bends in pipe
-    !! no180       : input integer : number of 180 degree bends in pipe
-    !! etaiso      : input real : isentropic efficiency of coolant pumps
-    !! coolant     : input integer: coolant fluid (1=helium, 2=water)
-    !! label       : input string: description of this calculation
-    !! This routine calculates the power required (MW) to pump the coolant in the
-    !! first wall and breeding zone.
-    !! <P>Pressure drops are calculated for a pipe with a number of 90
-    !! and 180 degree bends.  The pressure drop due to frictional forces along
-    !! the total straight length of the pipe is calculated, then the pressure
-    !! drop due to the bends is calculated.  The total pressure drop is the sum
-    !! of all contributions.
-    !! The pumping power is be calculated in the most general way,
-    !! using enthalpies before and after the pump.
-    !! WCLL DDD, WP12-DAS02-T03, J. Aubert et al, EFDA_D_2JNFUP
-    !! A Textbook on Heat Transfer, S.P. Sukhatme, 2005
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   function pumppower(temp_in, temp_out, pressure, flleng, rad, mf, mfp, no90, no180, etaiso, coolant, label)
+     !! Routine to calculate the coolant pumping power in MW in the first
+     !! wall and breeding zone
+     !! author: P J Knight, CCFE, Culham Science Centre
+     !! temp_in     : input real : inlet temperature (K)
+     !! temp_out    : input real : outlet temperature (K)
+     !! pressure    : input real : outlet coolant pressure (Pa)
+     !! flleng      : input real : total flow length along pipe (m)
+     !! rad         : input real : pipe inner radius (m)
+     !! mf          : input real : total coolant mass flow rate in (kg/s)
+     !! mfp         : input real : coolant mass flow rate per pipe (kg/s)
+     !! no90        : input integer : number of 90 degree bends in pipe
+     !! no180       : input integer : number of 180 degree bends in pipe
+     !! etaiso      : input real : isentropic efficiency of coolant pumps
+     !! coolant     : input integer: coolant fluid (1=helium, 2=water)
+     !! label       : input string: description of this calculation
+     !! This routine calculates the power required (MW) to pump the coolant in the
+     !! first wall and breeding zone.
+     !! <P>Pressure drops are calculated for a pipe with a number of 90
+     !! and 180 degree bends.  The pressure drop due to frictional forces along
+     !! the total straight length of the pipe is calculated, then the pressure
+     !! drop due to the bends is calculated.  The total pressure drop is the sum
+     !! of all contributions.
+     !! The pumping power is be calculated in the most general way,
+     !! using enthalpies before and after the pump.
+     !! WCLL DDD, WP12-DAS02-T03, J. Aubert et al, EFDA_D_2JNFUP
+     !! A Textbook on Heat Transfer, S.P. Sukhatme, 2005
+     !
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      use constants, only: pi
+      use fwbs_variables, only: coolwh
+      use process_output, only: oheadr, ovarre, ocmmnt, oblnkl
+      use fw_module, only: friction
+      use refprop_interface, only: fluid_properties, enthalpy_ps
+      use global_variables, only: verbose
+     implicit none
 
-    use constants, only: pi
-    use fwbs_variables, only: coolwh
-    use process_output, only: oheadr, ovarre, ocmmnt, oblnkl
-    use fw_module, only: friction
-    use refprop_interface, only: fluid_properties, enthalpy_ps
+     ! Function return parameter: Calculated pumping power (MW)
+     real(dp) :: pumppower
 
-		use global_variables, only: verbose
-    implicit none
+     ! Arguments !
+     ! !!!!!!!!!!!!
 
-    ! Function return parameter: Calculated pumping power (MW)
-    real(kind=double) :: pumppower
+     real(dp), intent(in) :: flleng, rad, mf, mfp, etaiso
+     real(dp), intent(in) :: temp_in, temp_out, pressure
+     integer, intent(in) :: no90, no180, coolant
+     character(len=*), intent(in) :: label
 
-    ! Arguments !
-    ! !!!!!!!!!!!!
+     ! Local variables !
+     ! !!!!!!!!!!!!!!!!!!
 
-    real(kind=double), intent(in) :: flleng, rad, mf, mfp, etaiso
-    real(kind=double), intent(in) :: temp_in, temp_out, pressure
-    integer, intent(in) :: no90, no180, coolant
-    character(len=*), intent(in) :: label
+     ! Inlet pressure (Pa)
+     real(dp) :: coolpin
 
-    ! Local variables !
-    ! !!!!!!!!!!!!!!!!!!
+     ! Coolant pressure drop (Pa)
+     real(dp) :: deltap
 
-    ! Inlet pressure (Pa)
-    real(kind=double) :: coolpin
+     ! Hydraulic diameter (circular channels assumed) (m)
+     real(dp) :: dh
 
-    ! Coolant pressure drop (Pa)
-    real(kind=double) :: deltap
+     ! Fluid specific enthalpy from refprop (J/kg)
+     real(dp) :: h1
 
-    ! Hydraulic diameter (circular channels assumed) (m)
-    real(kind=double) :: dh
+     ! enthalpy
+     !real(dp) ::
 
-    ! Fluid specific enthalpy from refprop (J/kg)
-    real(kind=double) :: h1
+     real(dp) :: h2, kelbwn, kelbwt, kstrght, &
+          lambda, reyn, rhof, s1, s2, viscf, xifn, xift, ximn, ximt, vv, &
+          temp_mean,pdropstraight, pdrop90, pdrop180
 
-    ! enthalpy
-    !real(kind=double) ::
+     ! TODO Variables that appear not to be used below. Check again before removing
+     !real(dp) :: cf
 
-    real(kind=double) :: h2, kelbwn, kelbwt, kstrght, &
-        lambda, reyn, rhof, s1, s2, viscf, xifn, xift, ximn, ximt, vv, &
-        temp_mean,pdropstraight, pdrop90, pdrop180
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! TODO Variables that appear not to be used below. Check again before removing
-    !real(kind=double) :: cf
+     if ((temp_in<100.0d0).or.(temp_in>1500.0d0).or.(temp_in/=temp_in)) call write_output
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     if ((temp_out<100.0d0).or.(temp_out>1500.0d0).or.(temp_out/=temp_out)) call write_output
 
-    if ((temp_in<100.0d0).or.(temp_in>1500.0d0).or.(temp_in/=temp_in)) call write_output
+     if ((pressure<1.0d5).or.(pressure>1.0d9).or.(pressure/=pressure)) call write_output
 
-    if ((temp_out<100.0d0).or.(temp_out>1500.0d0).or.(temp_out/=temp_out)) call write_output
+     if ((mfp<1.0d-8).or.(mfp>1.0d0).or.(mfp/=mfp)) call write_output
 
-    if ((pressure<1.0d5).or.(pressure>1.0d9).or.(pressure/=pressure)) call write_output
+     ! Mean properties
+     temp_mean = (temp_in + temp_out)/2.0d0
 
-    if ((mfp<1.0d-8).or.(mfp>1.0d0).or.(mfp/=mfp)) call write_output
+     ! Calculate coolant fluid properties
+     call fluid_properties(temp_mean, pressure, coolwh, density=rhof, viscosity=viscf, label='2001')
 
-    ! Mean properties
-    temp_mean = (temp_in + temp_out)/2.0d0
+     ! Check that coolant density is within bounds and not a NaN/Inf
+     if ((rhof>1.0d9).or.(rhof<=0.0d0).or.(rhof/=rhof)) then
+         write(*,*)'Error in pumppower.  rhof = ', rhof
+         stop
+     end if
 
-    ! Calculate coolant fluid properties
-    call fluid_properties(temp_mean, pressure, coolwh, density=rhof, viscosity=viscf, label='2001')
+     ! Hydraulic diameter (circular channels assumed) (m)
+     dh = 2.0D0*rad
 
-    ! Check that coolant density is within bounds and not a NaN/Inf
-    if ((rhof>1.0d9).or.(rhof<=0.0d0).or.(rhof/=rhof)) then
-        write(*,*)'Error in pumppower.  rhof = ', rhof
-        stop
-    end if
+     ! Flow velocity (m.s)
+     vv = mfp / (rhof*pi*rad*rad)
 
-    ! Hydraulic diameter (circular channels assumed) (m)
-    dh = 2.0D0*rad
+     ! Reynolds number
+     reyn = rhof * vv * dh / viscf
 
-    ! Flow velocity (m.s)
-    vv = mfp / (rhof*pi*rad*rad)
+     ! Calculate Darcy friction factor
+     call friction(reyn,lambda)
 
-    ! Reynolds number
-    reyn = rhof * vv * dh / viscf
+     ! Straight section pressure drop coefficient
+     kstrght = lambda * flleng/dh
 
-    ! Calculate Darcy friction factor
-    call friction(reyn,lambda)
+     ! 90 degree elbow pressure drop coefficient
+     ! Elbow radius assumed = 0.018m, from WCLL
+     ximn = 0.21D0 / sqrt(0.018D0/dh)  !  singularity coefficient
+     xifn = 0.0175D0*lambda*0.018D0*90.0D0/dh  !  friction coefficient
+     kelbwn = ximn + xifn
 
-    ! Straight section pressure drop coefficient
-    kstrght = lambda * flleng/dh
+     ! 180 degree elbow pressure drop coefficient
+     ! Elbow radius assumed half that of 90 deg case
+     ximt = (0.7D0 + 0.35D0*180.0D0/90.0D0) * 0.21D0 / sqrt(0.009D0/dh)
+     xift = 0.0175D0*lambda*0.018D0*90.0D0/dh  !+PJK... 90 or 180?
+     kelbwt = ximt + xift
 
-    ! 90 degree elbow pressure drop coefficient
-    ! Elbow radius assumed = 0.018m, from WCLL
-    ximn = 0.21D0 / sqrt(0.018D0/dh)  !  singularity coefficient
-    xifn = 0.0175D0*lambda*0.018D0*90.0D0/dh  !  friction coefficient
-    kelbwn = ximn + xifn
+     ! Total pressure drop (Pa)
+     pdropstraight = kstrght * 0.5D0*rhof*vv*vv
+     pdrop90 = no90*kelbwn * 0.5D0*rhof*vv*vv
+     pdrop180 = no180*kelbwt * 0.5D0*rhof*vv*vv
+     deltap = pdropstraight + pdrop90 + pdrop180
 
-    ! 180 degree elbow pressure drop coefficient
-    ! Elbow radius assumed half that of 90 deg case
-    ximt = (0.7D0 + 0.35D0*180.0D0/90.0D0) * 0.21D0 / sqrt(0.009D0/dh)
-    xift = 0.0175D0*lambda*0.018D0*90.0D0/dh  !+PJK... 90 or 180?
-    kelbwt = ximt + xift
+     ! Pumping power
 
-    ! Total pressure drop (Pa)
-    pdropstraight = kstrght * 0.5D0*rhof*vv*vv
-    pdrop90 = no90*kelbwn * 0.5D0*rhof*vv*vv
-    pdrop180 = no180*kelbwt * 0.5D0*rhof*vv*vv
-    deltap = pdropstraight + pdrop90 + pdrop180
+     ! Inlet pressure (Pa)
+     ! Here we are approximating the outlet pressure as 'pressure'.
+     coolpin = pressure + deltap
 
-    ! Pumping power
+     ! Obtain inlet enthalpy and entropy from inlet pressure and temperature
+     if ((coolpin>1.0d9).or.(coolpin<=0.0d0).or.(coolpin/=coolpin)) call write_output
 
-    ! Inlet pressure (Pa)
-    ! Here we are approximating the outlet pressure as 'pressure'.
-    coolpin = pressure + deltap
+     !
+     call fluid_properties(temp_in, coolpin, coolant, enthalpy=h2, entropy=s2, label='2049')
 
-    ! Obtain inlet enthalpy and entropy from inlet pressure and temperature
-    if ((coolpin>1.0d9).or.(coolpin<=0.0d0).or.(coolpin/=coolpin)) call write_output
+     ! Assume isentropic pump so that s1 = s2
+     s1 = s2
 
-    !
-    call fluid_properties(temp_in, coolpin, coolant, enthalpy=h2, entropy=s2, label='2049')
+     ! Get specific enthalpy at the outlet (J/kg) before pump using pressure and entropy s1
+     call enthalpy_ps(pressure, s1, coolant, h1)
 
-    ! Assume isentropic pump so that s1 = s2
-    s1 = s2
+     ! Pumping power (MW) is given by enthalpy change, with a correction for
+     ! the isentropic efficiency of the pump.
+     pumppower = 1.0D-6 * mf * (h2-h1) / etaiso
 
-    ! Get specific enthalpy at the outlet (J/kg) before pump using pressure and entropy s1
-    call enthalpy_ps(pressure, s1, coolant, h1)
+     ! Output !
+     ! !!!!!!!!!
 
-    ! Pumping power (MW) is given by enthalpy change, with a correction for
-    ! the isentropic efficiency of the pump.
-    pumppower = 1.0D-6 * mf * (h2-h1) / etaiso
+     if (ip  == 1) call write_output
 
-    ! Output !
-    ! !!!!!!!!!
+     contains
+       subroutine write_output
 
-    if (ip  == 1) call write_output
+         call oheadr(ofile, 'Pumping power for ' // label)
+         call ovarre(ofile, 'Viscosity (Pa.s)', '(viscf)', viscf, 'OP ')
+         call ovarre(ofile, 'Density (kg/m3)', '(rhof)', rhof, 'OP ')
+         call ovarre(ofile, 'Velocity (m/s)', '(vv)', vv, 'OP ')
+         call ovarre(ofile, 'Reynolds number', '(reyn)', reyn, 'OP ')
+         call ovarre(ofile, 'Darcy friction factor', '(lambda)', lambda, 'OP ')
+         call ovarre(ofile, 'Channel length', '(flleng)', flleng, 'OP ')
+         call ovarre(ofile, 'Pressure drop (Pa)', '(deltap)', deltap, 'OP ')
+         call ocmmnt(ofile, 'This is the sum of the following:')
+         call ovarre(ofile, '            Straight sections (Pa)', '(pdropstraight)', pdropstraight, 'OP ')
+         call ovarre(ofile, '            90 degree bends (Pa)', '(pdrop90)', pdrop90, 'OP ')
+         call ovarre(ofile, '            180 degree bends (Pa)', '(pdrop180)', pdrop180, 'OP ')
+         call ovarre(ofile, 'Inlet pressure (Pa)', '(coolpin)', coolpin, 'OP ')
+         call ovarre(ofile, 'Total coolant mass flow rate in (kg/s)', '(mf)', mf, 'OP ')
+         call ovarre(ofile, 'Coolant mass flow rate in one channel (kg/s)', '(mfp)', mfp, 'OP ')
+         call ovarre(ofile, 'Pumping power (MW)', '(pumppower)', pumppower, 'OP ')
+         call ocmmnt(ofile, 'Additional information is printed when verbose = 1')
+         if (verbose==1) then
+             call oblnkl(ofile)
+             call ovarre(ofile, 'Straight section pressure drop coefficient', '(kstrght)', kstrght, 'OP ')
+             call ovarre(ofile, '90 degree elbow singularity coefficient', '(ximn)', ximn, 'OP ')
+             call ovarre(ofile, '90 degree elbow friction coefficient', '(xifn)', xifn, 'OP ')
+             call ovarre(ofile, '180 degree elbow singularity coefficient', '(ximt)', ximt, 'OP ')
+             call ovarre(ofile, '180 degree elbow friction coefficient', '(xift)', xift, 'OP ')
+             call ovarre(ofile, 'Inlet specific enthalpy (J/kg)', '(h2)', h2, 'OP ')
+             call ovarre(ofile, 'Specific enthalpy before pump (J/kg)', '(h1)', h1, 'OP ')
+             call ovarre(ofile, 'Specific enthalpy added by pump (J/kg)', '(h2-h1)', h2-h1, 'OP ')
+         end if
 
-    contains
-      subroutine write_output
+     end subroutine
 
-        call oheadr(ofile, 'Pumping power for ' // label)
-        call ovarre(ofile, 'Viscosity (Pa.s)', '(viscf)', viscf, 'OP ')
-        call ovarre(ofile, 'Density (kg/m3)', '(rhof)', rhof, 'OP ')
-        call ovarre(ofile, 'Velocity (m/s)', '(vv)', vv, 'OP ')
-        call ovarre(ofile, 'Reynolds number', '(reyn)', reyn, 'OP ')
-        call ovarre(ofile, 'Darcy friction factor', '(lambda)', lambda, 'OP ')
-        call ovarre(ofile, 'Channel length', '(flleng)', flleng, 'OP ')
-        call ovarre(ofile, 'Pressure drop (Pa)', '(deltap)', deltap, 'OP ')
-        call ocmmnt(ofile, 'This is the sum of the following:')
-        call ovarre(ofile, '            Straight sections (Pa)', '(pdropstraight)', &
-          pdropstraight, 'OP ')
-        call ovarre(ofile, '            90 degree bends (Pa)', '(pdrop90)', pdrop90, 'OP ')
-        call ovarre(ofile, '            180 degree bends (Pa)', '(pdrop180)', pdrop180, 'OP ')
-        call ovarre(ofile, 'Inlet pressure (Pa)', '(coolpin)', coolpin, 'OP ')
-        call ovarre(ofile, 'Total coolant mass flow rate in (kg/s)', '(mf)', mf, 'OP ')
-        call ovarre(ofile, 'Coolant mass flow rate in one channel (kg/s)', '(mfp)', mfp, 'OP ')
-        call ovarre(ofile, 'Pumping power (MW)', '(pumppower)', pumppower, 'OP ')
-        call ocmmnt(ofile, 'Additional information is printed when verbose = 1')
-        if (verbose==1) then
-            call oblnkl(ofile)
-            call ovarre(ofile, 'Straight section pressure drop coefficient', '(kstrght)', &
-              kstrght, 'OP ')
-            call ovarre(ofile, '90 degree elbow singularity coefficient', '(ximn)', ximn, 'OP ')
-            call ovarre(ofile, '90 degree elbow friction coefficient', '(xifn)', xifn, 'OP ')
-            call ovarre(ofile, '180 degree elbow singularity coefficient', '(ximt)', ximt, 'OP ')
-            call ovarre(ofile, '180 degree elbow friction coefficient', '(xift)', xift, 'OP ')
-            call ovarre(ofile, 'Inlet specific enthalpy (J/kg)', '(h2)', h2, 'OP ')
-            call ovarre(ofile, 'Specific enthalpy before pump (J/kg)', '(h1)', h1, 'OP ')
-            call ovarre(ofile, 'Specific enthalpy added by pump (J/kg)', '(h2-h1)', h2-h1, 'OP ')
-        end if
-
-    end subroutine
-
-  end function pumppower
+   end function pumppower
 
   subroutine blanket_mod_pol_height
     !! Calculations for blanket module poloidal height
@@ -1443,16 +1448,16 @@ contains
     ! Local variables
 
     ! Mid-plane distance from inboard to outboard side (m)
-    real(kind=double) :: a
+    real(dp) :: a
 
     ! Internal half-height of blanket (m)
-    real(kind=double) :: b
+    real(dp) :: b
 
     ! Calculate ellipse circumference using Ramanujan approximation (m)
-    real(kind=double) :: ptor
+    real(dp) :: ptor
 
     ! Major radius where half-ellipses 'meet' (m)
-    real(kind=double) :: r1
+    real(dp) :: r1
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1503,11 +1508,11 @@ contains
 
       ! Calculate outboard blanket poloidal length and segment, subtracting divertor length (m)
       bllengo = 0.5D0*ptor * (1.0D0 - fdiv) / nblktmodpo
-
+      
     end if
-
+    
   end subroutine blanket_mod_pol_height
-
+     
   subroutine fast_neutron_flux(dr_fw, dr_bz, dr_mf, dr_sh, dr_vv, f_vol_steel_bz, &
     f_vol_pbli_bz, fnflux)
     !! KIT HCLL blanket model fast_neutron_flux
@@ -1516,27 +1521,26 @@ contains
     !! the KIT HCLL blanket model.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    
     use physics_variables, only: powfmw
 
     implicit none
 
     ! Arguments !
     ! !!!!!!!!!!!!
-
+    
     ! Radial thicknesses of FW, BZ, MF, shield, VV for inboard or outboard (m)
-    real(kind=double), intent(in) :: dr_fw, dr_bz, dr_mf, dr_sh, dr_vv
-
+    real(dp), intent(in) :: dr_fw, dr_bz, dr_mf, dr_sh, dr_vv
+  
     ! Volume fraction of steel and PbLi in BZ (%)
-    real(kind=double), intent(in) :: f_vol_steel_bz, f_vol_pbli_bz
-
+    real(dp), intent(in) :: f_vol_steel_bz, f_vol_pbli_bz
+  
     ! Fast Neutron Flux (cm-2 sec-1)
-    real(kind=double), intent(out) :: fnflux
-
+    real(dp), intent(out) :: fnflux
     ! Local variables
 
     ! Exponential factor
-    real(kind=double) :: f
+    real(dp) :: f
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

@@ -48,10 +48,12 @@ subroutine caller(xc,nvars)
   use kit_hcpb_module, only: kit_hcpb
   use kit_hcll_module, only: kit_hcll
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
-  !  Arguments
-  real(kind(1.0D0)), dimension(ipnvars), intent(in) :: xc
+  !  Arguments !
+  ! !!!!!!!!!!!!!
+  real(dp), dimension(ipnvars), intent(in) :: xc
   integer, intent(in) :: nvars
   logical :: verbose_logical
 

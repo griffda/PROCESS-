@@ -10,8 +10,9 @@ module availability_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  ! Modules to import
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   use iso_c_binding
-
   implicit none
 
   ! Module subroutine and variable declarations !
@@ -20,8 +21,8 @@ module availability_module
   private
   public :: avail
   public :: avail_2
-  real(kind(1.0D0)), parameter :: year = 31557600.0D0
-  real(kind(1.0D0)), parameter :: day = 86400.0D0
+  real(dp), parameter :: year = 31557600.0D0
+  real(dp), parameter :: day = 86400.0D0
 
 contains
 
@@ -53,9 +54,11 @@ contains
     !  Arguments
     integer, intent(in) :: outfile,iprint
 
-    !  Local variables
-    real(kind(1.0D0)) :: lb, ld, td
-    real(kind(1.0D0)), save :: uplanned, uutot
+    !  Local variables !
+    ! !!!!!!!!!!!!!!!!!!!
+
+    real(dp) :: lb, ld, td
+    real(dp), save :: uplanned, uutot
     integer :: n
 
     ! Full power lifetime (in years)
@@ -213,15 +216,17 @@ contains
     !  Arguments
     integer, intent(in) :: outfile, iprint
 
-    !  Local variables
-    real(kind(1.0D0)) :: u_planned
-    real(kind(1.0D0)) :: u_unplanned
-    real(kind(1.0D0)) :: u_unplanned_magnets
-    real(kind(1.0D0)) :: u_unplanned_div
-    real(kind(1.0D0)) :: u_unplanned_fwbs
-    real(kind(1.0D0)) :: u_unplanned_bop
-    real(kind(1.0D0)) :: u_unplanned_hcd
-    real(kind(1.0D0)) :: u_unplanned_vacuum
+    !  Local variables !
+    ! !!!!!!!!!!!!!!!!!!!
+
+    real(dp) :: u_planned
+    real(dp) :: u_unplanned
+    real(dp) :: u_unplanned_magnets
+    real(dp) :: u_unplanned_div
+    real(dp) :: u_unplanned_fwbs
+    real(dp) :: u_unplanned_bop
+    real(dp) :: u_unplanned_hcd
+    real(dp) :: u_unplanned_vacuum
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -311,11 +316,13 @@ contains
 
     ! Arguments
     integer, intent(in) :: outfile, iprint
-    real(kind(1.0D0)), intent(out) :: u_planned
+    real(dp), intent(out) :: u_planned
 
-    ! Local variables
-    real(kind(1.0D0)) :: mttr_blanket, mttr_divertor, mttr_shortest
-    real(kind(1.0D0)) :: lifetime_shortest, lifetime_longest
+    ! Local variables !
+    ! !!!!!!!!!!!!!!!!!!
+
+    real(dp) :: mttr_blanket, mttr_divertor, mttr_shortest
+    real(dp) :: lifetime_shortest, lifetime_longest
     integer :: n
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -415,12 +422,14 @@ contains
 
     ! Arguments
     integer, intent(in) :: outfile, iprint
-    real(kind(1.0D0)), intent(out) :: u_unplanned_magnets
+    real(dp), intent(out) :: u_unplanned_magnets
 
-    ! Local Variables
-    real(kind(1.0D0)) :: mag_temp_marg_limit, mag_temp_marg, mag_main_time
-    real(kind(1.0D0)) :: mag_min_u_unplanned, start_of_risk, t_life
-    real(kind(1.0D0)) :: tmargmin
+    ! Local Variables !
+    ! !!!!!!!!!!!!!!!!!!
+
+    real(dp) :: mag_temp_marg_limit, mag_temp_marg, mag_main_time
+    real(dp) :: mag_min_u_unplanned, start_of_risk, t_life
+    real(dp) :: tmargmin
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -491,10 +500,12 @@ contains
 
     ! Arguments
     integer, intent(in) :: outfile, iprint
-    real(kind(1.0D0)), intent(out) :: u_unplanned_div
+    real(dp), intent(out) :: u_unplanned_div
 
-    ! Local Variables
-    real(kind(1.0D0)) :: a0, div_avail, n, pf
+    ! Local Variables !
+    ! !!!!!!!!!!!!!!!!!!
+
+    real(dp) :: a0, div_avail, n, pf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -572,10 +583,12 @@ contains
 
     ! Arguments
     integer, intent(in) :: outfile, iprint
-    real(kind(1.0D0)), intent(out) :: u_unplanned_fwbs
+    real(dp), intent(out) :: u_unplanned_fwbs
 
-    ! Local Variables
-    real(kind(1.0D0)) :: a0, fwbs_avail, n, pf
+    ! Local Variables !
+    ! !!!!!!!!!!!!!!!!!!
+
+    real(dp) :: a0, fwbs_avail, n, pf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -648,10 +661,12 @@ contains
 
     ! Arguments
     integer, intent(in) :: outfile, iprint
-    real(kind(1.0D0)), intent(out) :: u_unplanned_bop
+    real(dp), intent(out) :: u_unplanned_bop
 
-    ! Local variables
-    real(kind(1.0D0)) :: bop_fail_rate, bop_mttr
+    ! Local variables !
+    ! !!!!!!!!!!!!!!!!!!
+
+    real(dp) :: bop_fail_rate, bop_mttr
     integer :: bop_num_failures
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -702,8 +717,10 @@ contains
 
     implicit none
 
-    ! Arguments
-    real(kind(1.0D0)), intent(out) :: u_unplanned_hcd
+    ! Arguments !
+    ! !!!!!!!!!!!!
+
+    real(dp), intent(out) :: u_unplanned_hcd
 
     ! Currently just a fixed value until more information available or Q.
     ! Tran's response provides useful data.
@@ -736,14 +753,15 @@ contains
 
     ! Arguments
     integer, intent(in) :: outfile, iprint
-    real(kind(1.0D0)), intent(out) :: u_unplanned_vacuum
+    real(dp), intent(out) :: u_unplanned_vacuum
 
     ! Local variables
     integer :: total_pumps, n
-    real(kind(1.0D0)) :: cryo_failure_rate, cryo_main_time
-    real(kind(1.0D0)) :: cryo_nfailure_rate, t_down
-    real(kind(1.0D0)) :: n_shutdown, t_op_bt, sum_prob
-    real(kind(1.0D0)), dimension(vpumpn + redun_vac + 1) :: vac_fail_p
+    real(dp) :: cryo_failure_rate, cryo_main_time
+    real(dp) :: cryo_nfailure_rate, t_down
+    real(dp) :: n_shutdown, t_op_bt, sum_prob
+
+    real(dp), dimension(vpumpn + redun_vac + 1) :: vac_fail_p
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

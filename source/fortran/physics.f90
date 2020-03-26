@@ -10,7 +10,7 @@ module physics_module
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   private
@@ -20,25 +20,26 @@ module physics_module
   !  Module-level variables
 
   integer :: iscz
-  real(kind(1.0D0)) :: rad_fraction_core
-  real(kind(1.0D0)) :: total_plasma_internal_energy  ! [J]
-  real(kind(1.0D0)) :: total_loss_power        ! [W]
-  real(kind(1.0D0)) :: total_energy_conf_time  ! [s]
-  real(kind(1.0D0)) :: ptarmw, lambdaio, drsep
-  real(kind(1.0D0)) :: fio, fLI, fLO, fUI, fUO, pLImw, pLOmw, pUImw, pUOmw
-  real(kind(1.0D0)) :: rho_star  
-  real(kind(1.0D0)) :: nu_star  
-  real(kind(1.0D0)) :: beta_mcdonald
-  real(kind(1.0D0)) :: itart_r
+  integer :: err242, err243
+  real(dp) :: rad_fraction_core
+  real(dp) :: total_plasma_internal_energy  ! [J]
+  real(dp) :: total_loss_power        ! [W]
+  real(dp) :: total_energy_conf_time  ! [s]
+  real(dp) :: ptarmw, lambdaio, drsep
+  real(dp) :: fio, fLI, fLO, fUI, fUO, pLImw, pLOmw, pUImw, pUOmw
+  real(dp) :: rho_star  
+  real(dp) :: nu_star  
+  real(dp) :: beta_mcdonald
+  real(dp) :: itart_r
 
-contains
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-subroutine subr(a, b)
-   implicit none
-   real, intent(in) :: a
-   real, intent(out) :: b
-   b = a
-end subroutine subr
+  contains
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  subroutine subr(a, b)
+     implicit none
+     real, intent(in) :: a
+     real, intent(out) :: b
+     b = a
+  end subroutine subr
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -61,7 +62,8 @@ end subroutine subr
     use current_drive_module, only: cudriv
     use current_drive_variables, only: irfcd, bscf_nevins, bscfmax, cboot, &
       cnbeam, ftritbm, bscf_wilson, bscf_sauter, pinjmw, bootipf, pinjimw, &
-      bscf_iter89, pinjemw, enbeam
+      bscf_iter89, pinjemw, enbeam, psipf, pscf_scene, plasipf, diaipf, &
+      diacf_scene, diacf_hender
     use divertor_variables, only: prn1
     use error_handling, only: idiags, report_error
     use fwbs_variables, only: fhcd, fdiv
@@ -87,7 +89,7 @@ end subroutine subr
       iinvqd, dnitot, alphan, beamfus0, palpmw, kappa, figmer, tauee, iprofile, &
       rminor, vsbrn, ifalphap, palppv, palpepv, pohmmw, rlp, rmajor, ptripv, &
       dntau, ftrit, bt, fhe3, rli, pthrmw, burnup, phiint, ptrepv, alphap, &
-      qstar, powerht, alphaj, fdeut, deni, q0, pperim, plascur, bp
+      qstar, powerht, alphaj, fdeut, deni, q0, pperim, plascur, bp, idia, ips
     use plasmod_module, only: convert_plasmod2process, setupplasmod
     use profiles_module, only: plasma_profiles
     use numerics, only: icc
@@ -103,7 +105,7 @@ end subroutine subr
     implicit none
     !  Local variables
 
-    real(kind(1.0D0)) :: betat,betpth,fusrat,pddpv,pdtpv,pdhe3pv, &
+    real(dp) :: betat,betpth,fusrat,pddpv,pdtpv,pdhe3pv, &
          pinj,sbar,sigvdt,zion, fsep, fgw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -257,8 +259,17 @@ end subroutine subr
 
        !  Wilson scaling uses thermal poloidal beta, not total
        betpth = (beta-betaft-betanb) * ( btot/bp )**2
-       bscf_wilson = cboot * bootstrap_fraction_wilson(alphaj,alphap,alphat,beta,betpth, &
-            q0,q95,rmajor,rminor,itart)
+       bscf_wilson = cboot * bootstrap_fraction_wilson(alphaj,alphap,alphat,betpth, &
+            q0,q95,rmajor,rminor)
+
+       ! Hender scaling for diamagnetic current at tight aspect ratio
+       call diamagnetic_fraction_hender(beta,diacf_hender)
+
+       ! SCENE scaling for diamagnetic current
+       call diamagnetic_fraction_scene(beta,q95,q0,diacf_scene)
+
+       ! Pfirsch-Schlüter scaling for diamagnetic current
+       call ps_fraction_scene(beta,pscf_scene)
     endif
 
     bscf_sauter = cboot * bootstrap_fraction_sauter()
@@ -279,16 +290,36 @@ end subroutine subr
              idiags(1) = ibss ; call report_error(75)
           end if
 
-          bootipf = min(bootipf,bscfmax)
+          err242 = 0
+          if (bootipf.gt.bscfmax)then
+             bootipf = min(bootipf,bscfmax)
+             err242 = 1
+          end if
+
+          if (idia == 1) then
+             diaipf = diacf_hender
+          else if (idia == 2) then
+             diaipf = diacf_scene
+          end if
+
+          if (ips == 1) then
+             psipf = pscf_scene
+          end if
+
+          plasipf = bootipf + diaipf + psipf
 
        end if
 
-       !  Bootstrap current fraction constrained to be less than
+       !  Plasma driven current fraction (Bootstrap + Diamagnetic
+       !  + Pfirsch-Schlüter) constrained to be less than
        !  or equal to the total fraction of the plasma current
        !  produced by non-inductive means (which also includes
        !  the current drive proportion)
-
-       bootipf = min(bootipf,fvsbrnni)
+       err243 = 0
+       if (plasipf.gt.fvsbrnni)then
+          plasipf = min(plasipf,fvsbrnni)
+          err243 = 1
+       end if
 
     endif
 
@@ -296,7 +327,7 @@ end subroutine subr
     if (ipedestal .ne. 3) then
       facoh = max( 1.0D-10, (1.0D0 - fvsbrnni) )
     !   Fraction of plasma current produced by auxiliary current drive
-      faccd = fvsbrnni - bootipf
+      faccd = fvsbrnni - plasipf
     endif
 
     !  Auxiliary current drive power calculations
@@ -656,16 +687,16 @@ end subroutine subr
     use constants, only: pi, rmu0
     implicit none
 
-    real(kind(1.0D0)) :: bootstrap_fraction_iter89
+    real(dp) :: bootstrap_fraction_iter89
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: aspect, beta, bt, cboot, &
+    real(dp), intent(in) :: aspect, beta, bt, cboot, &
          plascur, q95, q0, rmajor, vol
 
     !  Local variables
 
-    real(kind(1.0D0)) :: betapbs, bpbs, cbs, xbs, bootipf
+    real(dp) :: betapbs, bpbs, cbs, xbs, bootipf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -714,17 +745,17 @@ end subroutine subr
 		use constants, only: rmu0, echarge
     implicit none
 
-    real(kind(1.0D0)) :: bootstrap_fraction_nevins
+    real(dp) :: bootstrap_fraction_nevins
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: alphan,alphat,betat,bt,dene,plascur, &
+    real(dp), intent(in) :: alphan,alphat,betat,bt,dene,plascur, &
          q0,q95,rmajor,rminor,ten,zeff
 
     !  Local variables
 
     integer :: nofun
-    real(kind(1.0D0)) :: aibs,ainteg,betae0,dum1,fibs,flag
+    real(dp) :: aibs,ainteg,betae0,dum1,fibs,flag
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -761,15 +792,15 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: bsinteg
+      real(dp) :: bsinteg
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: y
+      real(dp), intent(in) :: y
 
       !  Local variables
 
-      real(kind(1.0D0)) :: alphai,al1,al2,a1,a2,betae,c1,c2,c3, &
+      real(dp) :: alphai,al1,al2,a1,a2,betae,c1,c2,c3, &
            d,del,pratio,q,x,z
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -809,8 +840,8 @@ end subroutine subr
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function bootstrap_fraction_wilson(alphaj,alphap,alphat,beta,betpth, &
-       q0,qpsi,rmajor,rminor,itart)
+  function bootstrap_fraction_wilson(alphaj,alphap,alphat,betpth, &
+       q0,qpsi,rmajor,rminor)
 
     !! Bootstrap current fraction from Wilson et al scaling
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -823,7 +854,6 @@ end subroutine subr
     !! qpsi    : input real :  edge safety factor
     !! rmajor  : input real :  major radius (m)
     !! rminor  : input real :  minor radius (m)
-    !! itart   : input integer :  switch denoting tight aspect ratio option
     !! This function calculates the bootstrap current fraction
     !! using the numerically fitted algorithm written by Howard Wilson.
     !! AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -835,19 +865,18 @@ end subroutine subr
 		use maths_library, only: linesolv
     implicit none
 
-    real(kind(1.0D0)) :: bootstrap_fraction_wilson
+    real(dp) :: bootstrap_fraction_wilson
 
     !  Arguments
 
-    integer, intent(in) :: itart
-    real(kind(1.0D0)), intent(in) :: alphaj,alphap,alphat,beta,betpth, &
+    real(dp), intent(in) :: alphaj,alphap,alphat,betpth, &
          q0,qpsi,rmajor,rminor
 
     !  Local variables
 
     integer :: i
-    real(kind(1.0D0)), dimension(12) :: a, b
-    real(kind(1.0D0)) :: aj,alfpnw,alftnw,eps1,r1,r2, &
+    real(dp), dimension(12) :: a, b
+    real(dp) :: aj,alfpnw,alftnw,eps1,r1,r2, &
          saj,seps1,sss,termj,termp,termt,term1,term2,z
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -928,14 +957,6 @@ end subroutine subr
 
     bootstrap_fraction_wilson = seps1 * betpth * sss
 
-    !  Diamagnetic contribution to the bootstrap fraction
-    !  at tight aspect ratio.
-    !  Tim Hender fit
-
-    if (itart == 1) then
-       bootstrap_fraction_wilson = bootstrap_fraction_wilson + beta/2.8D0
-    end if
-
   end function bootstrap_fraction_wilson
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -965,7 +986,7 @@ end subroutine subr
 		use plasmod_variables, only: radp, ped
     implicit none
 
-    real(kind(1.0D0)) :: bootstrap_fraction_sauter
+    real(dp) :: bootstrap_fraction_sauter
 
     !  Arguments
 
@@ -973,9 +994,9 @@ end subroutine subr
 
     integer, parameter :: nr = 200
     integer :: ir
-    real(kind(1.0D0)) :: da,drho,iboot,jboot,roa
-    real(kind(1.0D0)) :: dlogne_drho,dlogte_drho,dlogti_drho
-    real(kind(1.0D0)), dimension(nr) :: amain,mu,ne,ni,rho,sqeps,tempe,tempi,zef,zmain
+    real(dp) :: da,drho,iboot,jboot,roa
+    real(dp) :: dlogne_drho,dlogte_drho,dlogti_drho
+    real(dp), dimension(nr) :: amain,mu,ne,ni,rho,sqeps,tempe,tempi,zef,zmain
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1067,7 +1088,7 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: beta_poloidal_local
+      real(dp) :: beta_poloidal_local
 
       !  Arguments
 
@@ -1109,7 +1130,7 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: beta_poloidal_local_total
+      real(dp) :: beta_poloidal_local_total
 
       !  Arguments
 
@@ -1152,7 +1173,7 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: nues
+      real(dp) :: nues
 
       !  Arguments
 
@@ -1187,7 +1208,7 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: nuee
+      real(dp) :: nuee
 
       !  Arguments
 
@@ -1221,7 +1242,7 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: coulg
+      real(dp) :: coulg
 
       !  Arguments
 
@@ -1254,7 +1275,7 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: nuis
+      real(dp) :: nuis
 
       !  Arguments
 
@@ -1285,7 +1306,7 @@ end subroutine subr
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      real(kind(1.0D0)) :: nui
+      real(dp) :: nui
 
       !  Arguments
 
@@ -1326,7 +1347,7 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: dcsa
+      real(dp) :: dcsa
 
       !  Arguments
 
@@ -1334,7 +1355,7 @@ end subroutine subr
 
       !  Local variables
 
-      real(kind(1.0D0)) :: zz,zft,zdf
+      real(dp) :: zz,zft,zdf
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1381,7 +1402,7 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: hcsa
+      real(dp) :: hcsa
 
       !  Arguments
 
@@ -1389,8 +1410,8 @@ end subroutine subr
 
       !  Local variables
 
-      real(kind(1.0D0)) :: zz,zft,zdf,zfte,zfte2,zfte3,zfte4
-      real(kind(1.0D0)) :: zfti,zfti2,zfti3,zfti4,hcee,hcei
+      real(dp) :: zz,zft,zdf,zfte,zfte2,zfte3,zfte4
+      real(dp) :: zfti,zfti2,zfti3,zfti4,hcee,hcei
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1454,7 +1475,7 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: xcsa
+      real(dp) :: xcsa
 
       !  Arguments
 
@@ -1462,7 +1483,7 @@ end subroutine subr
 
       !  Local variables
 
-      real(kind(1.0D0)) :: zz,zft,zdf,a0,alp,a1,zfte
+      real(dp) :: zz,zft,zdf,a0,alp,a1,zfte
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1520,7 +1541,7 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: tpf
+      real(dp) :: tpf
 
       !  Arguments
 
@@ -1530,7 +1551,7 @@ end subroutine subr
 
       integer, parameter :: ASTRA=1, SAUTER2002=2, SAUTER2013=3
 
-      real(kind(1.0D0)) :: eps,epseff,g,s,zz
+      real(dp) :: eps,epseff,g,s,zz
 
       integer :: fit = ASTRA
 
@@ -1658,6 +1679,79 @@ end subroutine subr
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  subroutine diamagnetic_fraction_hender(beta,diacf) &
+           bind(C,name="c_diamagnetic_fraction_hender")
+
+    !! author: S.I. Muldrew, CCFE, Culham Science Centre
+    !! Diamagnetic contribution at tight aspect ratio.
+    !! Tim Hender fit
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   implicit none
+
+   !  Arguments
+
+   real(dp), intent(in) ::  beta
+   real(dp), intent(out) :: diacf
+
+   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   diacf = beta / 2.8D0
+
+
+  end subroutine diamagnetic_fraction_hender
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine diamagnetic_fraction_scene(beta,q95,q0,diacf) &
+                  bind(C,name="c_diamagnetic_fraction_scene")
+
+    !! author: S.I. Muldrew, CCFE, Culham Science Centre
+    !! Diamagnetic fraction based on SCENE fit by Tim Hender
+    !! See Issue #992
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    real(dp), intent(in) ::  beta, q95, q0
+    real(dp), intent(out) :: diacf
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    diacf = beta * (0.1D0*q95/q0+0.44D0) * 4.14D-1
+
+  end subroutine diamagnetic_fraction_scene
+
+   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine ps_fraction_scene(beta,pscf) &
+          bind(C,name="c_ps_fraction_scene")
+
+    !! author: S.I. Muldrew, CCFE, Culham Science Centre
+    !! Pfirsch-Schlüter fraction based on SCENE fit by Tim Hender
+    !! See Issue #992
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    real(dp), intent(in) ::  beta
+    real(dp), intent(out) :: pscf
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    pscf = -9.0D-2 * beta
+
+  end subroutine ps_fraction_scene
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   subroutine culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95, &
        p0,pperim,q0,qpsi,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
 
@@ -1719,14 +1813,14 @@ end subroutine subr
     !  Arguments
 
     integer, intent(in) :: icurr, iprofile
-    real(kind(1.0D0)), intent(inout) :: alphaj, rli
-    real(kind(1.0D0)), intent(in) :: alphap, bt, eps, kappa, &
+    real(dp), intent(inout) :: alphaj, rli
+    real(dp), intent(in) :: alphap, bt, eps, kappa, &
          kappa95, p0, pperim, q0, qpsi, rmajor, rminor, sf, triang, triang95
-    real(kind(1.0D0)), intent(out) :: bp, qstar, plascur
+    real(dp), intent(out) :: bp, qstar, plascur
 
     !  Local variables
 
-    real(kind(1.0D0)) :: asp, curhat, fq, w07
+    real(dp) :: asp, curhat, fq, w07
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1789,7 +1883,7 @@ end subroutine subr
 
     case (9) ! FIESTA ST fit
 
-       fq = 0.704D0 * (1.0D0 + 2.440D0*eps**2.736D0) * kappa95**2.154D0 * triang95**0.060D0
+       fq = 0.538D0 * (1.0D0 + 2.440D0*eps**2.736D0) * kappa**2.154D0 * triang**0.060D0
 
     case default
        idiags(1) = icurr ; call report_error(77)
@@ -1857,15 +1951,15 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: plasc
+      real(dp) :: plasc
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: aspect,bt,delta,kappa,qbar,rminor
+      real(dp), intent(in) :: aspect,bt,delta,kappa,qbar,rminor
 
       !  Local variables
 
-      real(kind(1.0D0)) :: c1,c2,d1,d2,eps,e1,e2,f1,f2,ff1,ff2,g,h1,h2,y1,y2
+      real(dp) :: c1,c2,d1,d2,eps,e1,e2,f1,f2,ff1,ff2,g,h1,h2,y1,y2
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1938,12 +2032,12 @@ end subroutine subr
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: alphaj,alphap,bt,delta95,eps,kappa95,p0
-      real(kind(1.0D0)), intent(out) :: fq
+      real(dp), intent(in) :: alphaj,alphap,bt,delta95,eps,kappa95,p0
+      real(dp), intent(out) :: fq
 
       !  Local variables
 
-      real(kind(1.0D0)) :: beta0, deltap, deltar, eprime, er, kap1, &
+      real(dp) :: beta0, deltap, deltar, eprime, er, kap1, &
            lambda, lamp1, li, nu, tprime, tr
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2033,16 +2127,16 @@ end subroutine subr
 		use constants, only: pi, rmu0
     implicit none
 
-    real(kind(1.0D0)) :: bpol
+    real(dp) :: bpol
 
     !  Arguments
 
     integer, intent(in) :: icurr
-    real(kind(1.0D0)), intent(in) :: aspect,bt,delta,ip,kappa,perim,qbar
+    real(dp), intent(in) :: aspect,bt,delta,ip,kappa,perim,qbar
 
     !  Local variables
 
-    real(kind(1.0D0)) :: c1,c2,d1,d2,eps,f1,f2,ff1,ff2,g,h1,h2,y1,y2
+    real(dp) :: c1,c2,d1,d2,eps,f1,f2,ff1,ff2,g,h1,h2,y1,y2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2125,8 +2219,8 @@ end subroutine subr
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: bt, dnbeta, plascur, rminor
-    real(kind(1.0D0)), intent(out) :: betalim
+    real(dp), intent(in) :: bt, dnbeta, plascur, rminor
+    real(dp), intent(out) :: betalim
 
     !  Local variables
 
@@ -2166,7 +2260,7 @@ end subroutine subr
 
     !  Local variables
 
-    real(kind(1.0D0)) :: znimp, pc, znfuel
+    real(dp) :: znimp, pc, znfuel
     integer :: imp
     integer :: first_call = 1
 
@@ -2363,14 +2457,14 @@ end subroutine subr
     !  Arguments
 
     integer, intent(inout) :: idensl
-    real(kind(1.0D0)), intent(in) :: bt, pdivt, plascur, prn1, q95, &
+    real(dp), intent(in) :: bt, pdivt, plascur, prn1, q95, &
          qcyl, rmajor, rminor, sarea, zeff
-    real(kind(1.0D0)), intent(out) :: dnelimt
-    real(kind(1.0D0)), dimension(7), intent(out) :: dlimit
+    real(dp), intent(out) :: dnelimt
+    real(dp), dimension(7), intent(out) :: dlimit
 
     !  Local variables
 
-    real(kind(1.0D0)) :: denom, dlim, qperp
+    real(dp) :: denom, dlim, qperp
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2524,15 +2618,15 @@ end subroutine subr
 
     !  Arguments
     integer, intent(in) :: iinvqd, isc, ignite
-    real(kind(1.0D0)), intent(in) :: afuel, palpmw, aspect, bt, dene, &
+    real(dp), intent(in) :: afuel, palpmw, aspect, bt, dene, &
          dnitot, dnla, eps, hfact, kappa, kappa95, pchargemw, pinjmw, &
          plascur, pcoreradpv, q, qstar, rmajor, rminor, te, &
          ten, tin, vol, xarea, zeff
-    real(kind(1.0D0)), intent(out) :: kappaa, powerht, ptrepv, ptripv, &
+    real(dp), intent(out) :: kappaa, powerht, ptrepv, ptripv, &
          tauee, taueff, tauei
 
     !  Local variables
-    real(kind(1.0D0)) :: chii,ck2,denfac,dnla19,dnla20,eps2,gjaeri,iotabar, &
+    real(dp) :: chii,ck2,denfac,dnla19,dnla20,eps2,gjaeri,iotabar, &
          n20,pcur,qhat,ratio,rll,str2,str5,taueena,tauit1,tauit2, &
          term1,term2, h, qratio, nratio, nGW, taunstx,taupetty
 
@@ -3202,13 +3296,13 @@ end subroutine subr
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: csawth, eps, facoh, gamma, kappa, &
+    real(dp), intent(in) :: csawth, eps, facoh, gamma, kappa, &
          plascur, rli, rmajor, rplas, tburn, theat
-    real(kind(1.0D0)), intent(out) :: phiint, rlp, vsbrn, vsind, vsres, vsstt
+    real(dp), intent(out) :: phiint, rlp, vsbrn, vsind, vsres, vsstt
 
     !  Local variables
 
-    real(kind(1.0D0)) :: aeps,beps,rlpext,rlpint,vburn
+    real(dp) :: aeps,beps,rlpext,rlpint,vburn
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3288,9 +3382,9 @@ end subroutine subr
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: aspect, dene, deni, dnalp, &
+    real(dp), intent(in) :: aspect, dene, deni, dnalp, &
          fusionrate, alpharate, plascur, sbar, taueff, vol
-    real(kind(1.0D0)), intent(out) :: burnup, dntau, figmer, fusrat, &
+    real(dp), intent(out) :: burnup, dntau, figmer, fusrat, &
          qfuel, rndfuel, taup
 
     !  Local variables
@@ -3364,13 +3458,13 @@ end subroutine subr
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: alphan, alphat, dene, dlamie, &
+    real(dp), intent(in) :: alphan, alphat, dene, dlamie, &
          te, ti, zeffai
-    real(kind(1.0D0)), intent(out) :: piepv
+    real(dp), intent(out) :: piepv
 
     !  Local variables
 
-    real(kind(1.0D0)) :: conie, profie
+    real(dp) :: conie, profie
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3417,13 +3511,13 @@ end subroutine subr
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: facoh, kappa95, plascur, rmajor, &
+    real(dp), intent(in) :: facoh, kappa95, plascur, rmajor, &
          rminor, ten, vol, zeff
-    real(kind(1.0D0)), intent(out) :: pohmpv, pohmmw, rpfac, rplas
+    real(dp), intent(out) :: pohmpv, pohmmw, rpfac, rplas
 
     !  Local variables
 
-    real(kind(1.0D0)) :: t10
+    real(dp) :: t10
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3489,8 +3583,8 @@ end subroutine subr
     !  Local variables
 
     integer :: iisc
-    real(kind(1.0D0)), parameter :: d1 = 1.0D0
-    real(kind(1.0D0)) :: powerhtz, ptrez, ptriz, &
+    real(dp), parameter :: d1 = 1.0D0
+    real(dp) :: powerhtz, ptrez, ptriz, &
          taueez, taueffz, taueiz
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3537,7 +3631,7 @@ end subroutine subr
 		use maths_library, only: zeroin
     implicit none
 
-    real(kind(1.0D0)) :: fhfac
+    real(dp) :: fhfac
 
     !  Arguments
 
@@ -3545,9 +3639,9 @@ end subroutine subr
 
     !  Local variables
 
-    real(kind(1.0D0)) :: abserr = 0.003D0  !  numerical tolerance
-    real(kind(1.0D0)) :: xlow = 0.01D0     !  minimum bound on H-factor
-    real(kind(1.0D0)) :: xhigh = 100.0D0   !  maximum bound on H-factor
+    real(dp) :: abserr = 0.003D0  !  numerical tolerance
+    real(dp) :: xlow = 0.01D0     !  minimum bound on H-factor
+    real(dp) :: xhigh = 100.0D0   !  maximum bound on H-factor
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3582,15 +3676,15 @@ end subroutine subr
       ignite, aspect, qstar, q, afuel, plascur, pcoreradpv
     implicit none
 
-    real(kind(1.0D0)) :: fhz
+    real(dp) :: fhz
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: hhh
+    real(dp), intent(in) :: hhh
 
     !  Local variables
 
-    real(kind(1.0D0)) :: powerhtz,ptrez,ptriz,taueezz,taueiz,taueffz
+    real(dp) :: powerhtz,ptrez,ptriz,taueezz,taueiz,taueffz
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3642,7 +3736,8 @@ end subroutine subr
     use constraint_variables, only: maxradwallload, peakradwallload, fbetatry, &
       taulimit, peakfactrad
     use current_drive_variables, only: bscf_nevins, bscfmax, cboot, &
-      bscf_wilson, bscf_sauter, pinjmw, bscf_iter89, bootipf, pinjimw, pinjemw
+      bscf_wilson, bscf_sauter, pinjmw, bscf_iter89, bootipf, pinjimw, pinjemw, &
+      psipf, pscf_scene, diacf_hender, diacf_scene, diaipf
 		use error_handling, only: fdiags, idiags, report_error
     use impurity_radiation_module, only: nimp, coreradiationfraction, &
       coreradius, fimp, impurity_arr
@@ -3663,7 +3758,7 @@ end subroutine subr
       psolradmw, tauei, ishape, plinepv, palpmw, icurr, pdivt, gammaft, powfmw
     use physics_variables, only: betaft, tauscl, fgwsep, rmajor, falpha, &
       nesep, facoh, kappa, dlimit, beta, dlimit, eps, pthrmw, dnla, bt, &
-      pthrmw, pthrmw, pthrmw, idivrt
+      pthrmw, pthrmw, pthrmw, idivrt, ips, idia
     use process_output, only: int_to_string2, ovarre, ovarrf, oheadr, &
       oblnkl, ovarin, ocmmnt, osubhd, ovarst
     use numerics, only: active_constraints, boundu, icc, &
@@ -3679,13 +3774,13 @@ end subroutine subr
 
     !  Local variables
 
-    real(kind(1.0D0)) :: betath
+    real(dp) :: betath
     ! pinj
     integer :: imp
     character(len=30) :: tauelaw
     character(len=30) :: str1,str2
-    real(kind(1.0D0)) :: fgwped_out ! neped/dlimit(7)
-    real(kind(1.0D0)) :: fgwsep_out ! nesep/dlimit(7)
+    real(dp) :: fgwped_out ! neped/dlimit(7)
+    real(dp) :: fgwsep_out ! nesep/dlimit(7)
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ! Dimensionless plasma parameters. See reference below.    
@@ -4046,7 +4141,7 @@ end subroutine subr
          '(coreradiationfraction)',coreradiationfraction)
     call ovarre(outfile,'Total core radiation power (MW)', '(pcoreradmw)',pcoreradmw, 'OP ')
     call ovarre(outfile,'Edge radiation power (MW)','(pedgeradmw)', pedgeradmw, 'OP ')
-    if (istell==1) then
+    if (istell/=0) then
         call ovarre(outfile,'SOL radiation power (MW)','(psolradmw)', psolradmw, 'OP ')
     end if
     call ovarre(outfile,'Total radiation power (MW)','(pradmw)',pradmw, 'OP ')
@@ -4278,7 +4373,19 @@ end subroutine subr
           call ocmmnt(outfile,'(PLASMOD bootstrap current fraction used)')
        else
           call ovarrf(outfile,'Bootstrap fraction (Nevins et al)', '(bscf_nevins)',bscf_nevins, 'OP ')
-          call ovarrf(outfile,'Bootstrap fraction (Wilson et al)', '(bscf_wilson)',bscf_wilson, 'OP ')
+          call ovarrf(outfile,'Bootstrap fraction (Wilson)', '(bscf_wilson)',bscf_wilson, 'OP ')
+          call ovarrf(outfile,'Diamagnetic fraction (Hender)', '(diacf_hender)',diacf_hender, 'OP ')
+          call ovarrf(outfile,'Diamagnetic fraction (SCENE)', '(diacf_scene)',diacf_scene, 'OP ')
+          call ovarrf(outfile,'Pfirsch-Schlueter fraction (SCENE)', '(pscf_scene)',pscf_scene, 'OP ')
+          ! Error to catch if bootstap fraction limit has been enforced
+          if (err242==1)then
+              call report_error(242)
+          end if
+          ! Error to catch if self-driven current fraction limit has been enforced
+          if (err243==1)then
+              call report_error(243)
+          end if
+          
           if (bscfmax < 0.0D0) then
              call ocmmnt(outfile,'  (User-specified bootstrap current fraction used)')
           else if (ibss == 1) then
@@ -4286,13 +4393,34 @@ end subroutine subr
           else if (ibss == 2) then
              call ocmmnt(outfile,'  (Nevins et al bootstrap current fraction model used)')
           else if (ibss == 3) then
-             call ocmmnt(outfile,'  (Wilson et al bootstrap current fraction model used)')
+             call ocmmnt(outfile,'  (Wilson bootstrap current fraction model used)')
           else if (ibss == 4) then
              call ocmmnt(outfile,'  (Sauter et al bootstrap current fraction model used)')
           end if
+          
+          if (idia == 0) then
+             call ocmmnt(outfile,'  (Diamagnetic current fraction not calculated)')
+             ! Error to show if diamagnetic current is above 1% but not used
+             if (diacf_scene.gt.0.01D0) then
+               call report_error(244)
+             end if
+          else if (idia == 1) then
+             call ocmmnt(outfile,'  (Hender diamagnetic current fraction scaling used)')
+          else if (idia == 2) then
+             call ocmmnt(outfile,'  (SCENE diamagnetic current fraction scaling used)')
+         end if
+         
+         if (ips == 0) then
+              call ocmmnt(outfile,'  (Pfirsch-Schlüter current fraction not calculated)')
+         else if (ips == 1) then
+              call ocmmnt(outfile,'  (SCENE Pfirsch-Schlüter current fraction scaling used)')
+         end if
+
        endif
 
        call ovarrf(outfile,'Bootstrap fraction (enforced)','(bootipf.)',bootipf, 'OP ')
+       call ovarrf(outfile,'Diamagnetic fraction (enforced)','(diaipf.)',diaipf, 'OP ')
+       call ovarrf(outfile,'Pfirsch-Schlueter fraction (enforced)','(psipf.)',psipf, 'OP ')
 
        call ovarre(outfile,'Loop voltage during burn (V)','(vburn)', plascur*rplas*facoh, 'OP ')
        call ovarre(outfile,'Plasma resistance (ohm)','(rplas)',rplas, 'OP ')

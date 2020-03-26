@@ -1,6 +1,11 @@
 module init_module
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+
+  implicit none
+
 contains
+
 subroutine init
 
   !! Routine that calls the initialisation routines
@@ -18,7 +23,7 @@ subroutine init
 
   use global_variables, only: verbose, fileprefix, output_prefix
   use main_module, only: run_summary
-  use constants, only: opt_file, vfile, nout, nplot, mfile
+  use constants, only: opt_file, vfile, nout, nplot, mfile, sig_file
   use error_handling, only: initialise_error_list 
   use impurity_radiation_module, only: initialise_imprad 
   use numerics, only: ixc , lablxc, nvar
@@ -50,6 +55,7 @@ subroutine init
   open(unit=nplot    ,file=trim(output_prefix)//'PLOT.DAT'  ,status='unknown')
   open(unit=mfile    ,file=trim(output_prefix)//'MFILE.DAT' ,status='unknown')
   open(unit=opt_file ,file=trim(output_prefix)//'OPT.DAT'   ,status='unknown')
+  open(unit=sig_file ,file=trim(output_prefix)//'SIG_TF.DAT',status='unknown')
 
   !  Input any desired new initial values
   call input

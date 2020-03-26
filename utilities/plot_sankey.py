@@ -9,10 +9,12 @@ Input file:
 MFILE.DAT
 
 """
+import matplotlib
+matplotlib.use('Agg')
 
 import argparse
 from pylab import show, savefig
-from process_io_lib.sankey_funcs import plot_sankey, plot_simplified_sankey
+from process_io_lib.sankey_funcs import plot_full_sankey, plot_sankey
 
 
 
@@ -28,25 +30,24 @@ if __name__ == '__main__':
                         default='pdf',
                         help="file format, default = pdf")
 
-    PARSER.add_argument("-f", "--mfile",
+    PARSER.add_argument("-m", "--mfile",
                         default='MFILE.DAT',
                         help="mfile name, default = MFILE.DAT")
 
-    PARSER.add_argument("-s", "--simplified",
+    PARSER.add_argument("-f", "--full",
                         action="store_true",
-                        help="Plot simplified version")
+                        help="Plot full version")
 
     ARGS = PARSER.parse_args()
 
     #########################################################
     #main program
 
-    if ARGS.simplified:
-        plot_simplified_sankey(ARGS.mfile)
-        savefig("SankeyPowerFlow_simplified."+ARGS.end)
+    if ARGS.full:
+        plot_full_sankey(ARGS.mfile)
+        savefig("SankeyPowerFlow_full."+ARGS.end)
     else:
         plot_sankey(ARGS.mfile)
         savefig("SankeyPowerFlow."+ARGS.end)
 
     show()
-    

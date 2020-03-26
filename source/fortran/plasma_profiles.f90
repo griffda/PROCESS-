@@ -11,6 +11,7 @@ module profiles_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   private
   public :: plasma_profiles, ncore, nprofile, tcore, tprofile
 
@@ -44,8 +45,8 @@ contains
 
     integer, parameter :: nrho = 501
     integer :: irho
-    real(kind(1.0D0)) :: drho, rho, integ1, integ2, dens, temp
-    real(kind(1.0D0)), dimension(nrho) :: arg1, arg2, arg3
+    real(dp) :: drho, rho, integ1, integ2, dens, temp
+    real(dp), dimension(nrho) :: arg1, arg2, arg3
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -178,16 +179,16 @@ contains
 		use maths_library, only: gamfun
     implicit none
 
-    real(kind(1.0D0)) :: tcore
+    real(dp) :: tcore
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: rhopedt, tped, tsep, tav, alphat, tbeta
+    real(dp), intent(in) :: rhopedt, tped, tsep, tav, alphat, tbeta
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: numacc = 1.0D-7
-    real(kind(1.0D0)) :: gamfac
+    real(dp), parameter :: numacc = 1.0D-7
+    real(dp) :: gamfac
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -239,11 +240,11 @@ contains
 		use physics_variables, only: ipedestal
     implicit none
 
-    real(kind(1.0D0)) :: tprofile
+    real(dp) :: tprofile
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: rho, rhopedt, t0, tped, tsep, alphat, tbeta
+    real(dp), intent(in) :: rho, rhopedt, t0, tped, tsep, alphat, tbeta
 
     !  Local variables
 
@@ -293,11 +294,11 @@ contains
 		use error_handling, only: report_error
     implicit none
 
-    real(kind(1.0D0)) :: ncore
+    real(dp) :: ncore
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: rhopedn, nped, nsep, nav, alphan
+    real(dp), intent(in) :: rhopedn, nped, nsep, nav, alphan
  
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -342,11 +343,11 @@ contains
 		use physics_variables, only: ipedestal
     implicit none
 
-    real(kind(1.0D0)) :: nprofile
+    real(dp) :: nprofile
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: rho, rhopedn, n0,  nped, nsep, alphan
+    real(dp), intent(in) :: rho, rhopedn, n0,  nped, nsep, alphan
 
     !  Local variables
 

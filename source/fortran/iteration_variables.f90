@@ -1,11 +1,12 @@
 module define_iteration_variables 
    !! Module to define iteration variables
 
+   use, intrinsic :: iso_fortran_env, only: dp=>real64
    implicit none
 
    public
 
-   real(kind(1.0D0)) :: DUMMY
+   real(dp) :: DUMMY
 
 contains
    
@@ -316,7 +317,7 @@ subroutine init_itv_1
       use stellarator_variables, only: istell
       implicit none
       itv_13 = tfcth
-      if (istell == 1) then 
+      if (istell /= 0) then 
          call report_error(46)   
       end if
    end function itv_13
@@ -1313,7 +1314,7 @@ subroutine init_itv_1
       use tfcoil_variables, only: thkcas
       implicit none
       itv_57 = thkcas 
-      if (istell == 1) then
+      if (istell /= 0) then
          call report_error(48)
       end if
    end function itv_57
@@ -1390,7 +1391,7 @@ subroutine init_itv_1
       use tfcoil_variables, only: i_tf_sup, cpttf
       implicit none
       itv_60 = cpttf 
-      if ((istell == 1).or.(i_tf_sup /= 1)) then
+      if ((istell /= 0).or.(i_tf_sup /= 1)) then
          call report_error(49)
       end if
    end function itv_60
@@ -3214,10 +3215,10 @@ subroutine init_itv_1
 
    subroutine init_itv_143
       !! <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value
+      !!            (f-value for equation 75)
       use numerics, only: lablxc, boundl, boundu
       implicit none
-      !!            (f-value for equation 75)
-      lablxc(143) = 'f_copperA_m2  '
+      lablxc(143) = 'f_coppera_m2  '
       boundl(143) = 0.001D0
       boundu(143) = 1.000D0
    end subroutine init_itv_143
@@ -3232,7 +3233,7 @@ subroutine init_itv_1
       use rebco_variables, only: f_coppera_m2
       implicit none
       real(kind(1.d0)) :: ratio
-      f_copperA_m2 = ratio
+      f_coppera_m2 = ratio
    end subroutine set_itv_143
 
    !---------------------------------
@@ -3581,29 +3582,31 @@ subroutine init_itv_1
    end subroutine set_itv_157
 
    !---------------------------------
-   ! DUMMY variables below here
-   !---------------------------------
 
    subroutine init_itv_158
-      !! <LI> (158) DUMMY : Description
+      !! <LI> (158) croco_thick : Thickness of CroCo copper tube (m)
       use numerics, only: lablxc, boundl, boundu
       implicit none
-      lablxc(158) = 'DUMMY         '
-      boundl(158) = 1.0d-99
-      boundu(158) = 1.0d99
+      lablxc(158) = 'croco_thick   '
+      boundl(158) = 1.0d-3
+      boundu(158) = 1.0d-1
    end subroutine init_itv_158
 
    real(kind(1.d0)) function itv_158()
+      use rebco_variables, only: croco_thick
       implicit none
-      itv_158 = DUMMY 
+      itv_158 = croco_thick
    end function itv_158
 
    subroutine set_itv_158(ratio)
+      use rebco_variables, only: croco_thick
       implicit none
       real(kind(1.d0)) :: ratio
-      DUMMY = ratio
+      croco_thick = ratio
    end subroutine set_itv_158
 
+   !---------------------------------
+   ! DUMMY variables below here
    !---------------------------------
 
    subroutine init_itv_159
@@ -3868,6 +3871,80 @@ subroutine init_itv_1
       DUMMY = ratio
    end subroutine set_itv_170
 
+   !---------------------------------
+
+   subroutine init_itv_171
+      !! <LI> (171) ftoroidalgap : F-value for toroidalgap >  tftort constraint (con. 82)
+      use numerics, only: lablxc, boundl, boundu
+      lablxc(171) = 'ftoroidalgap  ' 
+      boundl(171) = 1.0D-4
+      boundu(171) = 1.0D0
+   end subroutine init_itv_171
+
+   real(kind(1.d0)) function itv_171()
+      use tfcoil_variables, only: ftoroidalgap
+      implicit none
+      itv_171 = ftoroidalgap 
+   end function itv_171
+
+   subroutine set_itv_171(ratio)
+      use tfcoil_variables, only: ftoroidalgap
+      implicit none
+      real(kind(1.d0)) :: ratio
+      ftoroidalgap = ratio
+   end subroutine set_itv_171
+
+
+   !---------------------------------
+
+   subroutine init_itv_172
+      !! <LI> (76) f_avspace (f-value for equation 83)
+      use numerics, only: lablxc, boundu, boundl
+      lablxc(172) = 'f_avspace     '
+      boundl(172) = 0.010D0
+      boundu(172) = 1.000D0
+   end subroutine init_itv_172
+
+
+   real(kind(1.d0)) function itv_172()
+      use build_variables, only: f_avspace
+      implicit none
+      itv_172 = f_avspace 
+   end function itv_172
+
+   subroutine set_itv_172(ratio)
+      use build_variables, only: f_avspace
+      implicit none
+      real(kind(1.d0)) :: ratio
+      f_avspace = ratio
+   end subroutine set_itv_172
+
+
+   !---------------------------------
+
+
+   subroutine init_itv_173
+      !! <LI> (76) fbetatry_lower (f-value for equation 84)
+      use constraint_variables, only: fbetatry_lower
+      use numerics, only: lablxc, boundl, boundu
+      implicit none
+      lablxc(173) = 'fbetatry_lower     '
+      boundl(173) = 0.010D0
+      boundu(173) = 1.000D0
+   end subroutine init_itv_173
+
+
+   real(kind(1.d0)) function itv_173()
+      use constraint_variables, only: fbetatry_lower
+      implicit none
+      itv_173 = fbetatry_lower 
+   end function itv_173
+
+   subroutine set_itv_173(ratio)
+      use constraint_variables, only: fbetatry_lower
+      real(kind(1.d0)) :: ratio
+      fbetatry_lower = ratio
+   end subroutine set_itv_173
 !! </UL>
 end module define_iteration_variables
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3904,7 +3981,8 @@ subroutine loadxc
     itv_158, itv_89, itv_17, itv_131, itv_67, itv_154, itv_23, itv_63, &
     itv_167, itv_90, itv_97, itv_123, itv_37, itv_19, itv_147, itv_64, &
     itv_22, itv_7, itv_68, itv_72, itv_28, itv_77, itv_137, itv_120, &
-    itv_129, itv_11, itv_18, itv_42, itv_31, itv_38, itv_109, itv_32
+    itv_129, itv_11, itv_18, itv_42, itv_31, itv_38, itv_109, itv_32, itv_171, &
+    itv_172, itv_173
       use error_handling, only: idiags, fdiags, report_error
       use numerics, only: nvar, xcm, ixc, name_xc, lablxc, scafc, scale
       use physics_variables, only: icurr
@@ -3959,7 +4037,7 @@ subroutine loadxc
          case (40);  xcm(i) = itv_40()
          case (41);  xcm(i) = itv_41()
          case (42);  xcm(i) = itv_42()
-         case (43);  xcm(i) = itv_43()
+         case (43);  
          case (44);  xcm(i) = itv_44()
          case (45);  xcm(i) = itv_45()
          case (46);  xcm(i) = itv_46()
@@ -4073,9 +4151,9 @@ subroutine loadxc
          case (154);  xcm(i) = itv_154()
          case (155);  xcm(i) = itv_155()
          case (156);  xcm(i) = itv_156()
-         ! DUMMY Cases
          case (157);  xcm(i) = itv_157()
          case (158);  xcm(i) = itv_158()
+          ! DUMMY Cases
          case (159);  xcm(i) = itv_159()
          case (160);  xcm(i) = itv_160()
          case (161);  xcm(i) = itv_161()
@@ -4088,6 +4166,9 @@ subroutine loadxc
          case (168);  xcm(i) = itv_168()
          case (169);  xcm(i) = itv_169()
          case (170);  xcm(i) = itv_170()
+         case (171);  xcm(i) = itv_171()
+         case (172);  xcm(i) = itv_172()
+         case (173);  xcm(i) = itv_173()
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -4182,22 +4263,24 @@ subroutine convxc(xc,nn)
   set_itv_151, set_itv_152, set_itv_153, set_itv_154, set_itv_155, &
   set_itv_156, set_itv_157, set_itv_158, set_itv_159, set_itv_160, &
   set_itv_161, set_itv_162, set_itv_163, set_itv_164, set_itv_165, &
-  set_itv_166, set_itv_167, set_itv_168, set_itv_169, set_itv_170
+  set_itv_166, set_itv_167, set_itv_168, set_itv_169, set_itv_170, &
+  set_itv_171, set_itv_172, set_itv_173
   use error_handling, only: idiags, fdiags, report_error
   use numerics, only: ipnvars, scale, ixc, lablxc
   use maths_library, only: variable_error
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
 
   implicit none
 
   !  Arguments
 
   integer, intent(in) :: nn
-  real(kind(1.0D0)), dimension(ipnvars), intent(in) :: xc
+  real(dp), dimension(ipnvars), intent(in) :: xc
 
   !  Local variables
 
   integer :: i
-  real(kind(1.0D0))::ratio
+  real(dp)::ratio
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4361,9 +4444,9 @@ subroutine convxc(xc,nn)
          case (154);  call set_itv_154(ratio)
          case (155);  call set_itv_155(ratio)
          case (156);  call set_itv_156(ratio)
-         ! DUMMY Cases
          case (157);  call set_itv_157(ratio)
          case (158);  call set_itv_158(ratio)
+          ! DUMMY Cases
          case (159);  call set_itv_159(ratio)
          case (160);  call set_itv_160(ratio)
          case (161);  call set_itv_161(ratio)
@@ -4375,7 +4458,10 @@ subroutine convxc(xc,nn)
          case (167);  call set_itv_167(ratio)
          case (168);  call set_itv_168(ratio)
          case (169);  call set_itv_169(ratio)
-         case (170);  call set_itv_170(ratio)      
+         case (170);  call set_itv_170(ratio)
+         case (171);  call set_itv_171(ratio)
+         case (172);  call set_itv_172(ratio)    
+         case (173);  call set_itv_173(ratio)     
 
          case default
             call report_error(57)

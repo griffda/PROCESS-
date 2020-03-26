@@ -13,6 +13,8 @@ module function_evaluator
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+  use iso_c_binding
   implicit none
 
   public
@@ -45,8 +47,8 @@ contains
     !  Arguments
 
     integer, intent(in) :: n
-    real(kind(1.0D0)), dimension(n), intent(inout) :: xc
-    real(kind(1.0D0)), dimension(n), intent(out) :: rc
+    real(dp), dimension(n), intent(inout) :: xc
+    real(dp), dimension(n), intent(out) :: rc
     integer, intent(inout) :: iflag
 
     !  Local variables
@@ -101,14 +103,14 @@ contains
     !  Arguments
 
     integer, intent(in) :: n,m
-    real(kind(1.0D0)), dimension(n), intent(in) :: xv
-    real(kind(1.0D0)), intent(out) :: objf
-    real(kind(1.0D0)), dimension(m), intent(out) :: conf
+    real(dp), dimension(n), intent(in) :: xv
+    real(dp), intent(out) :: objf
+    real(dp), dimension(m), intent(out) :: conf
     integer, intent(inout) :: ifail
 
     !  Local variables
 
-    real(kind(1.0D0)) :: summ,sqsumconfsq
+    real(dp) :: summ,sqsumconfsq
     logical :: first_call = .true.
     integer :: ii, loop
 
@@ -129,7 +131,7 @@ contains
 
     !  Convergence loop to ensure burn time consistency
 
-    if (istell /= 1) then
+    if (istell == 0) then
        loop = 0
        do while ( (loop < 10).and. &
             (abs((tburn-tburn0)/max(tburn,0.01D0)) > 0.001D0) )
@@ -206,16 +208,16 @@ contains
     !  Arguments
 
     integer, intent(in) :: n,m,lcnorm
-    real(kind(1.0D0)), dimension(n), intent(in) :: xv
-    real(kind(1.0D0)), dimension(n), intent(out) :: fgrd
-    real(kind(1.0D0)), dimension(lcnorm,m), intent(out) :: cnorm
+    real(dp), dimension(n), intent(in) :: xv
+    real(dp), dimension(n), intent(out) :: fgrd
+    real(dp), dimension(lcnorm,m), intent(out) :: cnorm
     integer, intent(inout) :: ifail
 
     !  Local variables
 
     integer :: i,j
-    real(kind(1.0D0)) :: fbac,ffor
-    real(kind(1.0D0)), dimension(ipnvars) :: xfor,xbac,cfor,cbac
+    real(dp) :: fbac,ffor
+    real(dp), dimension(ipnvars) :: xfor,xbac,cfor,cbac
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -301,12 +303,12 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(out) :: fc
+    real(dp), intent(out) :: fc
 !    real(c_double), intent(out) :: fc
     !  Local variables
 
     integer :: iab
-    real(kind(1.0D0)) :: sgn
+    real(dp) :: sgn
 
 !        write(*,*) 'Figure of merit 2 (fusion power / input power) is not used.'
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

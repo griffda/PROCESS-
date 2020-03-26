@@ -1,5 +1,9 @@
 module utilities
-  use iso_c_binding, only: c_double
+
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+  use iso_c_binding
+  implicit none
+  
 contains
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   real function process_value(x, y) result(ret_value)! bind(C, name="c_process_value_cpp")

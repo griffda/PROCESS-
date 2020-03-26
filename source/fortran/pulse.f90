@@ -11,6 +11,7 @@ module pulse_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   private
@@ -94,7 +95,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: albusa,ioht1,ioht2,ipdot,loh,m,pfbusl,r,rho,v
+    real(dp) :: albusa,ioht1,ioht2,ipdot,loh,m,pfbusl,r,rho,v
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -188,7 +189,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: tb,vburn,vsmax,vssoft
+    real(dp) :: tb,vburn,vsmax,vssoft
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

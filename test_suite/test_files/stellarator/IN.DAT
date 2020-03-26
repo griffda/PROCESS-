@@ -9,17 +9,26 @@
 
 *---------------Constraint Equations---------------*
 
-icc = 1                 *Beta (consistency equation)
+neqns = 3               *number of equalities
+
+
+*--------------- equaltities
 icc = 2                 *Global power balance (consistency equation)
 icc = 11                *Radial build (consistency equation)
 icc = 16                *Net electric power lower limit
 
+
+*-------------- inequaltities
+icc = 84                *Lower beta limit
+icc = 24                *Upper beta limit
+
+
+
 *---------------Iteration Variables----------------*
 
-ixc = 5                 *beta
-beta = 0.044513         *Total plasma beta
-boundl(5) = 0.02
-boundu(5) = 0.09
+ixc = 4                 *te
+boundl(4) = 4.
+boundu(4) = 25.
 
 ixc = 6                 *dene
 dene = 2.0914E20        *Electron density (/m3)
@@ -38,6 +47,11 @@ boundu(25) = 1.0
 ixc = 29                *bore
 bore = 17.607           *Central solenoid inboard radius (m)
 boundl(29) = 5.0
+
+ixc = 50                * itv_fiooic
+boundu(50) = 0.9
+boundl(50) = 0.001
+
 
 *----------------Physics Variables-----------------*
 
@@ -87,6 +101,8 @@ vgap     = 0.0          *Vertical gap between x-point and divertor (m)
 *---------------Constraint Variables---------------*
 
 pnetelin = 1000         *Required net electric power (MW)
+betalim = 0.05          *upper beta limit
+betalim_lower = 0.01    *lower beta limit
 
 *-------------Current Drive Variables--------------*
 
@@ -155,8 +171,9 @@ runtitle = HELIAS-5B
 *-----------------Tfcoil Variables-----------------*
 
 fcutfsu  = 0.69         *Copper fraction of cable conductor (TF coils)
-isumattf = 1            *Switch for superconductor material in tf coils (1: ITER Nb3Sn)
+i_tf_sc_mat = 1            *Switch for superconductor material in tf coils (1: ITER Nb3Sn)
 tftmp    = 4.2          *Peak helium coolant temperature in TF coils and PF coils (k)
+leno     = 0.056        *Dimension conductor area including steel and insulation.
 thicndut = 0.002        *Conduit insulation thickness (m)
 thwcndut = 0.0012       *TF coil conduit case thickness (m)
 vftf     = 0.3          *Coolant fraction of TF coil leg (i_tf_sup=0)

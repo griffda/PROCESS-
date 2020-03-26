@@ -10,25 +10,27 @@ module costs_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+  use iso_c_binding
   implicit none
 
   private
   public :: costs
 
   !  Various cost account values (M$)
-  real(kind(1.0D0)), public, bind(C) :: c228, c229, c23, c25, c26, cindrt, ccont
+  real(dp), public, bind(C) :: c228, c229, c23, c25, c26, cindrt, ccont
 
   !  Account 226 - Heat transport system 
-  real(kind(1.0D0)), protected, public, bind(C) :: c226, c2261, c2262, c2263
+  real(dp), protected, public, bind(C) :: c226, c2261, c2262, c2263
 
   !  Account 227 - Fuel handling
-  real(kind(1.0D0)), public, bind(C) :: c227, c2271, c2272, c2273, c2274
+  real(dp), public, bind(C) :: c227, c2271, c2272, c2273, c2274
 
   !  Account 24 - electrical plant equipment
-  real(kind(1.0D0)), public, bind(C) :: c24, c241, c242, c243, c244, c245
+  real(dp), public, bind(C) :: c24, c241, c242, c243, c244, c245
 
 
-  real(kind(1.0D0)) :: &
+  real(dp) :: &
        c21,c211,c212,c213,c214,c2141,c2142,c215,c216,c217,c2171, &
        c2172,c2173,c2174,c22,c2211,c2212,c22121,c22122,c22123, &
        c22124,c22125,c22126,c22127,c2213,c22131,c22132,c2214,c2215, &
@@ -369,7 +371,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
+    real(dp) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
          annfuelt,annfwbl,annoam,anntot,annwst,coecdr, &
          coecp,coedecom,coediv,coefuel,coefwbl,coewst,crfcdr,crfcp, &
          crfdiv,crffwbl,fefcdr,fefcp,fefdiv,feffwbl,fwbllife,kwhpy
@@ -729,8 +731,8 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: exprb = 1.0D0
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), parameter :: exprb = 1.0D0
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -922,7 +924,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -985,7 +987,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1087,7 +1089,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1149,7 +1151,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1274,15 +1276,15 @@ contains
 		use physics_variables, only: itart 
 		use structure_variables, only: clgsmass, aintmass 
 		use tfcoil_variables, only: whtconcu, whtconsc, whtcas, n_tf, whttflgs, &
-      whtcp, i_tf_sup, turnstf, tfleng, isumattf
+      whtcp, i_tf_sup, turnstf, tfleng, i_tf_sc_mat
     implicit none
 
     !  Arguments
 
     !  Local variables
 
-    real(kind(1.0D0)) :: costtfsc,costtfcu,costwire,ctfconpm
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp) :: costtfsc,costtfcu,costwire,ctfconpm
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1321,7 +1323,7 @@ contains
 
        !  Superconductor ($/m)
 
-       costtfsc = ucsc(isumattf) * whtconsc / (tfleng*turnstf)
+       costtfsc = ucsc(i_tf_sc_mat) * whtconsc / (tfleng*turnstf)
 
        !  Copper ($/m)
 
@@ -1402,9 +1404,9 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
+    real(dp) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
          pfwndl
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
     integer :: i,npf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1557,7 +1559,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1604,8 +1606,8 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: exprf = 1.0D0
-    real(kind(1.0D0)) :: switch
+    real(dp), parameter :: exprf = 1.0D0
+    real(dp) :: switch
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1823,7 +1825,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: expel = 0.7D0
+    real(dp), parameter :: expel = 0.7D0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1964,8 +1966,8 @@ contains
 
     !  Local variables
 
-    ! real(kind(1.0D0)), parameter :: expes = 0.8D0
-    real(kind(1.0D0)) :: shcss
+    ! real(dp), parameter :: expes = 0.8D0
+    real(dp) :: shcss
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2112,8 +2114,8 @@ contains
     implicit none
 
     !  Local variables
-    real(kind(1.0D0)), parameter :: exphts = 0.7D0
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), parameter :: exphts = 0.7D0
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2157,8 +2159,8 @@ contains
     implicit none 
 
     !  Local variables
-    real(kind(1.0D0)), parameter :: exphts = 0.7D0
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), parameter :: exphts = 0.7D0
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2200,8 +2202,8 @@ contains
     implicit none
 
     !  Local variables
-    real(kind(1.0D0)), parameter :: expcry = 0.67D0
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), parameter :: expcry = 0.67D0
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2280,7 +2282,7 @@ contains
 		use physics_variables, only: wtgpd, rndfuel, afuel
     implicit none
 
-    real(kind(1.0D0)) targtm
+    real(dp) targtm
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2322,7 +2324,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) cfrht
+    real(dp) cfrht
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2425,7 +2427,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: exptpe = 0.83D0
+    real(dp), parameter :: exptpe = 0.83D0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2470,7 +2472,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2502,8 +2504,8 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: expepe = 0.9D0
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), parameter :: expepe = 0.9D0
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2538,7 +2540,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2570,7 +2572,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2601,7 +2603,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2634,7 +2636,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2672,8 +2674,8 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: pwrrej
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp) :: pwrrej
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

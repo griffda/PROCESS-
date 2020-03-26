@@ -9,9 +9,7 @@ module ife_module
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  ! use physics_variables
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   private
@@ -171,7 +169,8 @@ contains
     integer, intent(in) :: outfile,iprint
 
     !  Local variables
-    real(kind(1.0D0)) :: aaion,bmax,dpp,dtheta,emitt,etai,lf,phi,qion, &
+
+    real(dp) :: aaion,bmax,dpp,dtheta,emitt,etai,lf,phi,qion, &
          sang,sigma,sigma0,tauf,theta,vi
     integer :: nbeams
 
@@ -331,25 +330,25 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use constants, only: echarge, mproton, degrad, pi
-
-		use constants, only: pi
     implicit none
 
     !  Arguments
-    real(kind(1.0D0)), intent(in) :: aaion,bmax,dpp,dtheta,edrive,emitt,etai,lf,qion, &
+
+    real(dp), intent(in) :: aaion,bmax,dpp,dtheta,edrive,emitt,etai,lf,qion, &
          sigma,sigma0,tauf,theta,vi
     integer, intent(in) :: nbeams
-    real(kind(1.0D0)), intent(out) :: gain,etadrv
+    real(dp), intent(out) :: gain,etadrv
 
     !  Local variables
-    real(kind(1.0D0)), parameter :: c2 = 8.98755178737D16
+
+    real(dp), parameter :: c2 = 8.98755178737D16
     integer, parameter :: isimp = 1  !  Switch for simple model (1=yes)
 
-    real(kind(1.0D0)) :: ci,de,dgap,dlcore,drcore,e,eomc2,fins,floss, &
+    real(dp) :: ci,de,dgap,dlcore,drcore,e,eomc2,fins,floss, &
          ibf,ibfo,ibi,ibpc,lfocus,lpf,lpfo,lpi,lppc,lq,phif,phifo, &
          phii,phipc,rion,rs,rs1,rs2,rs3,rs4,sig,sig0,taufo,taui, &
          taupc,tbrad,vf,vfo,vpc,vs,vscore,vshe,vsle,vspc,xhe,xle,xpc
-    real(kind(1.0D0)), dimension(10) :: eve,gve
+    real(dp), dimension(10) :: eve,gve
     integer :: i,ie,j,nche,ncle,ncpc,nqarrs,nqle,nqpche,nquads
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -706,16 +705,16 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: cbeam
+      real(dp) :: cbeam
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: etai,bmax,aaion,qion,sigma,sigma0, &
+      real(dp), intent(in) :: etai,bmax,aaion,qion,sigma,sigma0, &
            emitt,vi,eomc2
 
       !  Local variables
 
-      real(kind(1.0D0)) :: bbe
+      real(dp) :: bbe
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -752,15 +751,15 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: betgam
+      real(dp) :: betgam
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: aaion,qion,v
+      real(dp), intent(in) :: aaion,qion,v
 
       !  Local variables
 
-      real(kind(1.0D0)), parameter :: c2 = 8.98755178737D16
+      real(dp), parameter :: c2 = 8.98755178737D16
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -794,13 +793,13 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: edrive
-    real(kind(1.0D0)), intent(out) :: etadrv,gain
+    real(dp), intent(in) :: edrive
+    real(dp), intent(out) :: etadrv,gain
 
     !  Local variables
 
-    real(kind(1.0D0)) :: e,de
-    real(kind(1.0D0)), dimension(10) :: gve,eve
+    real(dp) :: e,de
+    real(dp), dimension(10) :: gve,eve
     integer :: ie
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -886,13 +885,13 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: edrive
-    real(kind(1.0D0)), dimension(10), intent(in) :: etave,gainve
-    real(kind(1.0D0)), intent(out) :: etadrv,gain
+    real(dp), intent(in) :: edrive
+    real(dp), dimension(10), intent(in) :: etave,gainve
+    real(dp), intent(out) :: etadrv,gain
 
     !  Local variables
 
-    real(kind(1.0D0)) :: de,e
+    real(dp) :: de,e
     integer :: ie
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1165,19 +1164,18 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine bld2019
-    !! Routine to create the build of a 2019 inertial fusion energy
-    !! device, and to calculate the material volumes for the device core
-    !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
-    !! This routine constructs the build of a modern inertial fusion energy
-    !! device, assumed to be cylindrically-symmetric, with a pool at bottom
-    !! and top corners and with a lower shield at the centre.  See diagram
-    !! attached to Issue #907.
-    !! Issue #907
-    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+     !! Routine to create the build of a 2019 inertial fusion energy
+     !! device, and to calculate the material volumes for the device core
+     !! author: S I Muldrew, CCFE, Culham Science Centre
+     !! None
+     !! This routine constructs the build of a modern inertial fusion energy
+     !! device, assumed to be cylindrically-symmetric, with a pool at bottom
+     !! and top corners and with a lower shield at the centre.  See diagram
+     !! attached to Issue #907.
+     !! Issue #907
+     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+     !
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use constants, only: pi
     use build_variables, only: fwarea
     use error_handling, only: report_error  
@@ -1186,126 +1184,135 @@ contains
     use ife_variables, only: blmatf, bldrc, lipmw, etali, taufall, rrmax, chvol, &
       fwvol, v1vol, blvol, v2vol, shvol, flirad, v3vol, maxmat, chmatf, fwmatf, &
       v1matf, v2matf, shmatf, v3matf
-
     implicit none
 
-    !  Local variables
-    integer :: i,j
-    real(kind(1.0D0)), save :: g, vel, acurt, mdot, phi, sang, li_frac
+     !  Arguments
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     !  Local variables
 
-    ! Check input
-    if ((fwdr.gt.1.0D-9).or.(v1dr.gt.1.0d-9)) then
-      call report_error(230)
-    else if ((fwdzu.gt.1.0D-9).or.(v1dzu.gt.1.0D-9).or.(v2dzu.gt.1.0D-9)) then
-      call report_error(231)
-    else if ((fwdzl.gt.1.0D-9).or.(v1dzl.gt.1.0d-9).or.(v2dzu.gt.1.0D-9)) then
-      call report_error(232)
-    end if
+     integer :: i,j
+     real(dp), save :: g, vel, acurt, mdot, phi, sang, li_frac
+
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+     ! Check input
+     if ((fwdr.gt.1.0D-9).or.(v1dr.gt.1.0d-9)) then
+          call report_error(230)
+     else if ((fwdzu.gt.1.0D-9).or.(v1dzu.gt.1.0D-9).or.(v2dzu.gt.1.0D-9)) then
+          call report_error(231)
+     else if ((fwdzl.gt.1.0D-9).or.(v1dzl.gt.1.0d-9).or.(v2dzu.gt.1.0D-9)) then
+          call report_error(232)
+     end if
      
-    ! Lithium Pump 
+     ! Lithium Pump 
 
-    ! Acceleration due to gravity (m/s^2)
-    g = 9.81D0
+     ! Acceleration due to gravity (m/s^2)
+     g = 9.81D0
 
-    ! Velocity
-    vel = sqrt(2.0D0*g*(chdzu+bldzu))
+     ! Velocity
+     vel = sqrt(2.0D0*g*(chdzu+bldzu))
 
-    ! Lithium Fraction
-    blmatf(1,8) = 0.91*sqrt(bldzu/(chdzu+bldzu))
-    blmatf(1,0) = 1.0D0 - blmatf(1,8)
+     ! Lithium Fraction
+     blmatf(1,8) = 0.91*sqrt(bldzu/(chdzu+bldzu))
+     blmatf(1,0) = 1.0D0 - blmatf(1,8)
 
-    ! Spatial Thickness
-    bldr = bldrc / blmatf(1,8)
+     ! Spatial Thickness
+     bldr = bldrc / blmatf(1,8)
 
-    ! Area
-    acurt = pi * ((chrad+bldr)**2.0D0-chrad**2.0D0)
+     ! Area
+     acurt = pi * ((chrad+bldr)**2.0D0-chrad**2.0D0)
 
-    ! Mass Flow
-    mdot = 512.0D0 * vel * blmatf(1,8) * acurt
+     ! Mass Flow
+     mdot = 512.0D0 * vel * blmatf(1,8) * acurt
 
-    ! Pump Power (MW)
-    lipmw = 1.0D-6 * mdot * g * (chdzl+chdzu+bldzu+bldzl) / etali
+     ! Pump Power (MW)
+     lipmw = 1.0D-6 * mdot * g * (chdzl+chdzu+bldzu+bldzl) / etali
 
-    ! Fall Time
-    taufall = 2.0D0 * (chdzl+chdzu+bldzu) / vel
+     ! Fall Time
+     taufall = 2.0D0 * (chdzl+chdzu+bldzu) / vel
 
-    rrmax = 1.0D0 / taufall
+     rrmax = 1.0D0 / taufall
 
-    ! TBR and Emult model was for spherical lithium
-    ! Remove reactor head
-    phi = atan(r1/zu1)
-    sang = 1.0D0 - cos(phi)
-    li_frac = 1.0D0 - 0.5D0 * sang
+     ! TBR and Emult model was for spherical lithium
+     ! Remove reactor head
+     phi = atan(r1/zu1)
+     sang = 1.0D0 - cos(phi)
+     li_frac = 1.0D0 - 0.5D0 * sang
 
-    ! TBR
-    tbr = 3.7418D0 * (1.0D0 / (1.0D0 + exp(-2.6366D0 * bldrc)) - 0.5D0)
-    tbr = tbr * li_frac
+     ! TBR
+     tbr = 3.7418D0 * (1.0D0 / (1.0D0 + exp(-2.6366D0 * bldrc)) - 0.5D0)
+     tbr = tbr * li_frac
 
-    ! Energy Multiplication
-    emult = 2.2414D0 * (1.0D0 / (1.0D0 + exp(-3.0038D0 * bldrc)) - 0.5D0)
-    emult = emult * li_frac
+     ! Energy Multiplication
+     emult = 2.2414D0 * (1.0D0 / (1.0D0 + exp(-3.0038D0 * bldrc)) - 0.5D0)
+     emult = emult * li_frac
 
-    !  Radial build
-    r1 = chrad
-    r2 = r1 + fwdr
-    r3 = r2 + v1dr
-    r4 = r3 + bldr
-    r5 = r4 + v2dr
-    r6 = r5 + shdr
-    r7 = r6 + v3dr
+     !  Radial build
 
-    !  Vertical build (below midplane)
-    zl1 = chdzl
-    zl2 = zl1 + fwdzl
-    zl3 = zl2 + v1dzl
-    zl4 = zl3 + bldzl
-    zl5 = zl4 + v2dzl
-    zl6 = zl5 + shdzl
-    zl7 = zl6 + v3dzl
+     r1 = chrad
+     r2 = r1 + fwdr
+     r3 = r2 + v1dr
+     r4 = r3 + bldr
+     r5 = r4 + v2dr
+     r6 = r5 + shdr
+     r7 = r6 + v3dr
 
-    !  Vertical build (above midplane)
-    zu1 = chdzu
-    zu2 = zu1 + fwdzu
-    zu3 = zu2 + v1dzu
-    zu4 = zu3 + bldzu
-    zu5 = zu4 + v2dzu
-    zu6 = zu5 + shdzu
+     !  Vertical build (below midplane)
 
-    v3dzu = (zu6+zl6) + trcl + stcl + 5.1D0 + 9.41D-6 * 1.0D5
+     zl1 = chdzl
+     zl2 = zl1 + fwdzl
+     zl3 = zl2 + v1dzl
+     zl4 = zl3 + bldzl
+     zl5 = zl4 + v2dzl
+     zl6 = zl5 + shdzl
+     zl7 = zl6 + v3dzl
 
-    zu7 = zu6 + v3dzu
+     !  Vertical build (above midplane)
 
-    !  Component volumes
-    !  The following notation applies below:
-    !  J=1 : side part
-    !  J=2 : top part
-    !  J=3 : bottom part
+     zu1 = chdzu
+     zu2 = zu1 + fwdzu
+     zu3 = zu2 + v1dzu
+     zu4 = zu3 + bldzu
+     zu5 = zu4 + v2dzu
+     zu6 = zu5 + shdzu
 
-    !  Chamber
-    chvol = pi * r1*r1 * (zu1 + zl1)
+     v3dzu = (zu6+zl6) + trcl + stcl + 5.1D0 + 9.41D-6 * 1.0D5
 
-    !  First wall
-    fwvol(1) = pi * (r2*r2 - r1*r1) * (zu1 + zl1)
-    fwvol(2) = pi * r2*r2 * (zu2 - zu1)
-    fwvol(3) = pi * r2*r2 * (zl2 - zl1)
+     zu7 = zu6 + v3dzu
 
-    !  First void
-    v1vol(1) = pi * (r3*r3 - r2*r2) * (zu2 + zl2)
-    v1vol(2) = pi * r3*r3 * (zu3 - zu2)
-    v1vol(3) = pi * r3*r3 * (zl3 - zl2)
+     !  Component volumes
+     !  The following notation applies below:
+     !  J=1 : side part
+     !  J=2 : top part
+     !  J=3 : bottom part
 
-    !  Blanket
-    !  Radial Blanket - between void 2 and chamber 
-    blvol(1) = pi * (r4*r4 - r3*r3) * (zu3 + zl3)
-    !  Upper Blanket - Pool radially between shield and
-    !  chamber of input height.
-    blvol(2) = pi * (r5*r5 - r3*r3) * bldzu
-    !  Lower Blanket - Pool filling base of device
-    blvol(3) = pi * r5*r5 * (zl4 - zl3)
+     !  Chamber
 
-    !  Second void
+     chvol = pi * r1*r1 * (zu1 + zl1)
+
+     !  First wall
+
+     fwvol(1) = pi * (r2*r2 - r1*r1) * (zu1 + zl1)
+     fwvol(2) = pi * r2*r2 * (zu2 - zu1)
+     fwvol(3) = pi * r2*r2 * (zl2 - zl1)
+
+     !  First void
+
+     v1vol(1) = pi * (r3*r3 - r2*r2) * (zu2 + zl2)
+     v1vol(2) = pi * r3*r3 * (zu3 - zu2)
+     v1vol(3) = pi * r3*r3 * (zl3 - zl2)
+
+     !  Blanket
+     !  Radial Blanket - between void 2 and chamber 
+     blvol(1) = pi * (r4*r4 - r3*r3) * (zu3 + zl3)
+     !  Upper Blanket - Pool radially between shield and
+     !  chamber of input height.
+     blvol(2) = pi * (r5*r5 - r3*r3) * bldzu
+     !  Lower Blanket - Pool filling base of device
+     blvol(3) = pi * r5*r5 * (zl4 - zl3)
+
+     !  Second void
+     
     v2vol(1) = pi * (r5*r5 - r4*r4) * (chdzl+chdzu)
     v2vol(2) = 0.0D0
     v2vol(3) = 0.0D0
@@ -1533,8 +1540,9 @@ contains
       implicit none
 
       !  Local variables
-      real(kind(1.0D0)), parameter :: third  = 1.0D0/3.0D0
-      real(kind(1.0D0)) :: chcylh,ddz,dvol
+
+      real(dp), parameter :: third  = 1.0D0/3.0D0
+      real(dp) :: chcylh,ddz,dvol
       integer :: i,j
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1676,8 +1684,9 @@ contains
       implicit none
 
       !  Local variables
-      real(kind(1.0D0)), parameter :: third = 1.0D0/3.0D0
-      real(kind(1.0D0)) :: chcylh,ddz,dvol
+
+      real(dp), parameter :: third = 1.0D0/3.0D0
+      real(dp) :: chcylh,ddz,dvol
       integer :: i,j
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1863,8 +1872,9 @@ contains
     integer, intent(in) :: outfile,iprint
 
     !  Local variables
-    real(kind(1.0D0)) :: den,life
-    real(kind(1.0D0)), dimension(0:maxmat) :: matden
+
+    real(dp) :: den,life
+    real(dp), dimension(0:maxmat) :: matden
     integer :: i,j
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1998,7 +2008,8 @@ contains
     implicit none
 
     !  Local variables
-    real(kind(1.0D0)) :: pdrvmw
+
+    real(dp) :: pdrvmw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2083,7 +2094,8 @@ contains
     integer, intent(in) :: iprint,outfile
 
     !  Local variables
-    real(kind(1.0D0)), save :: basemw,pmwpm2
+
+    real(dp), save :: basemw,pmwpm2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2294,9 +2306,10 @@ contains
     integer, intent(in) :: outfile,iprint
 
     !  Local variables
-    real(kind(1.0D0)) :: cran,dcl,dcw,fac2,fac3,hcl,hcw,hrbi,rbh,rbl,rbw, &
+
+    real(dp) :: cran,dcl,dcw,fac2,fac3,hcl,hcw,hrbi,rbh,rbl,rbw, &
          rmbh,rmbl,rmbw,rwl,rww,shh,tch,tcl,tcw,wgts,wsa
-    real(kind(1.0D0)), save :: cryv,elev,rbv,rmbv,vrci,wsv
+    real(dp), save :: cryv,elev,rbv,rmbv,vrci,wsv
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

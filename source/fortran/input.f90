@@ -60,6 +60,7 @@ module process_input
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   private
@@ -157,7 +158,7 @@ contains
       iohcl, tftsgap, clhsf, bore, plleno, scrapli, gapomin, ddwex, &
       rinboard, fmstf, blnkoth, fseppc, plsepo, ddwi, fmssh, blnkith, &
       ohcth, plsepi, fmsoh, blbmith, gapoh, fcspc, scraplo, vgaptop, &
-      blbpoth, gapds, fwith, vgap, shldith, sigallpc, tfootfi
+      blbpoth, gapds, fwith, vgap, shldith, sigallpc, tfootfi, f_avspace
     use buildings_variables, only: hcwt, conv, wgt, trcl, rxcl, rbwt, mbvfac, &
       esbldgm3, rbvfac, fndt, row, wgt2, pibv, clh1, stcl, clh2, pfbldgm3, &
       shmf, tfcbv, hccl, rbrt, triv, shov, admv, wsvfac
@@ -171,7 +172,7 @@ contains
       fcqt, fzeffmax, fstrcase, fhldiv, foh_stress, fwalld, gammax, fjprot, &
       ftohs, tcycmn, auxmin, zeffmax, peakfactrad, fdtmp, fpoloidalpower, &
       fnbshinef, freinke, fvvhe, fqval, fq, ftaucq, fbetap, fbeta, fjohc, &
-      fflutf, bmxlim, tbrnmn 
+      fflutf, bmxlim, tbrnmn, fbetatry_lower
     use cost_variables, only: ucich, uctfsw, dintrt, ucblbe, uubop, dtlife, &
       cost_factor_vv, cfind, uccry, fcap0cp, uccase, uuves, cconshtf, conf_mag, &
       ucbllipb, ucfuel, uumag, ucpfbs, ireactor, uucd, div_umain_time, div_nu, &
@@ -244,7 +245,8 @@ contains
       itart, ralpne, iprofile, triang95, rad_fraction_sol, betbm0, protium, &
       teped, fhe3, iwalld, gamma, falpha, fgwped, gtscale, tbeta, ibss, &
       iradloss, te, alphan, rmajor, kappa, ifispact, iinvqd, fkzohm, beamfus0, &
-      tauratio, idensl, ieped, bt, iscrp, ipnlaws
+      tauratio, idensl, ieped, bt, iscrp, ipnlaws, betalim, betalim_lower, &
+      idia, ips
     use pf_power_variables, only: iscenr, maxpoloidalpower 
     use plasmod_variables, only: plasmod_x_control, plasmod_i_modeltype, &
       plasmod_nx, plasmod_chisaw, plasmod_contrpovr, plasmod_dtmax, &
@@ -265,17 +267,21 @@ contains
     use scan_module, only: isweep_2, nsweep, isweep, scan_dim, nsweep_2, &
       sweep_2, sweep, ipnscns, ipnscnv 
     use stellarator_variables, only: f_asym, isthtr, n_res, iotabar, fdivwet, &
-      f_w, bmn, shear, m_res, f_rad, flpitch 
-    use tfcoil_variables, only: eywp, fcoolcp, tfinsgap, vftf, &
-      quench_detection_ef, fhts, thkwp, rcool, rhotfleg, poisson, thkcas, &
+      f_w, bmn, shear, m_res, f_rad, flpitch, istell
+    use tfcoil_variables, only: fcoolcp, tfinsgap, vftf, &
+      quench_detection_ef, fhts, thkwp, rcool, rhotfleg, thkcas, &
       casthi, n_pancake, bcritsc, i_tf_sup, strncon_pf, thwcndut, farc4tf, &
       thicndut, tftmp, dalu, oacdcp, tmax_croco, ptempalw, tmargmin_tf, tmpcry, &
       alstrtf, dztop, dcond, strncon_cs, etapump, drtop, vcool, dcondins, &
       i_tf_tresca, dhecoil, tmaxpro, strncon_tf, n_tf, tcpav, fcutfsu, jbus, &
-      casthi_fraction, tmargmin_cs, eystl, isumattf, sigvvall, vdalw, dcase, &
+      casthi_fraction, tmargmin_cs, sigvvall, vdalw, dcase, &
       cpttf_max, dcopper, tdmptf, casths, i_tf_turns_integer, quench_model, &
-      tcritsc, layer_ins, eyins, tinstf, n_layer, tcoolin, ripmax, frhocp, &
-      cpttf, tmargmin, casths_fraction 
+      tcritsc, layer_ins, tinstf, n_layer, tcoolin, ripmax, frhocp, &
+      cpttf, tmargmin, casths_fraction, eff_tf_cryo, eyoung_al, eyoung_ins, &
+      eyoung_reinforced_al, eyoung_steel, eyoung_winding, f_vforce_inboard, &
+      fcoolleg, frholeg, ftoroidalgap, i_tf_sc_mat, i_tf_shape, i_tf_bucking, &
+      leno, n_tf_graded_layers, n_tf_joints, n_tf_joints_contact, poisson_al, &
+      poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
     use vacuum_variables, only: dwell_pump, pbase, tn, pumpspeedfactor, &
@@ -450,6 +456,12 @@ contains
        case ('beta')
           call parse_real_variable('beta', beta, 0.0D0, 1.0D0, &
                'Plasma beta')
+       case ('betalim')
+          call parse_real_variable('betalim', betalim, 0.0D0, 1.0D0, &
+              'Plasma beta upper limit')
+       case ('betalim_lower')
+          call parse_real_variable('betalim_lower', betalim_lower, 0.0D0, 1.0D0, &
+                'Plasma beta lower limit')
        case ('betbm0')
           call parse_real_variable('betbm0', betbm0, 0.0D0, 10.0D0, &
                'Leading coeff. for NB beta fraction')
@@ -460,8 +472,7 @@ contains
           call parse_real_variable('coreradius', coreradius, 0.0D0, 1.0D0, &
                'Normalised core radius')
        case ('coreradiationfraction')
-          call parse_real_variable('coreradiationfraction', &
-               coreradiationfraction, 0.0D0, 1.0D0, &
+          call parse_real_variable('coreradiationfraction', coreradiationfraction, 0.0D0, 1.0D0, &
                'Fraction of core radiation subtracted from P_L')
        case ('csawth')
           call parse_real_variable('csawth', csawth, 0.0D0, 10.0D0, &
@@ -586,6 +597,9 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
+       case ('idia')
+          call parse_int_variable('idia', idia, 0, 2, &
+                'Switch for diamagnetic scaling')
        case ('ifalphap')
           call parse_int_variable('ifalphap', ifalphap, 0, 1, &
                'Switch for fast alpha pressure fit')
@@ -626,6 +640,9 @@ contains
        case ('iprofile')
           call parse_int_variable('iprofile', iprofile, 0, 1, &
                'Switch for current profile consistency')
+       case ('ips')
+          call parse_int_variable('ips', ips, 0, 1, &
+               'Switch for Pfirsch-Schlüter scaling')
        case ('iradloss')
           call parse_int_variable('iradloss', iradloss, 0, 2, &
                'Switch for radiation loss term inclusion in pwr balance')
@@ -779,6 +796,9 @@ contains
        case ('fbetatry')
           call parse_real_variable('fbetatry', fbetatry, 0.001D0, 10.0D0, &
                'F-value for beta limit')
+       case ('fbetatry_lower')
+          call parse_real_variable('fbetatry_lower', fbetatry_lower, 0.001D0, 10.0D0, &
+                  'F-value for (lower) beta limit')
        case ('fcwr')
           call parse_real_variable('fcwr', fcwr, 0.001D0, 10.0D0, &
                'F-value for conducting wall radius')
@@ -850,6 +870,12 @@ contains
        case ('fpdivlim')
           call parse_real_variable('fpdivlim', fpdivlim, 0.001D0, 1.0D0, &
                'F-value for minimum pdivt')
+       case ('ftoroidalgap')
+          call parse_real_variable('ftoroidalgap', ftoroidalgap, 0.001D0, 10.0D0, &
+                'F-value for toroidal gap consistency')
+       case ('f_avspace')
+          call parse_real_variable('f_avspace', f_avspace, 0.001D0, 10.0D0, &
+                'F-value for radial build consistency (stellarators)')
        case ('fpsepr')
           call parse_real_variable('fpsepr', fpsepr, 0.001D0, 10.0D0, &
                'F-value for Psep/R limit')
@@ -1683,7 +1709,7 @@ contains
           call parse_real_variable('coppera_m2_max', copperA_m2_max, 1.0D6, 1.0D10, &
                'Maximum TF coil current / copper area (A/m2)')
        case ('f_coppera_m2')
-          call parse_real_variable('f_copperA_m2', f_copperA_m2, 1.0D-3, 1.0D1, &
+          call parse_real_variable('f_coppera_m2', f_coppera_m2, 1.0D-3, 1.0D1, &
                'f-value for constraint 75: TF coil current / copper area < copperA_m2_max')
 
        case ('casthi')
@@ -1749,21 +1775,30 @@ contains
        case ('etapump')
           call parse_real_variable('etapump', etapump, 0.0D0, 1.0D0, &
                'Efficiency of c/p coolant pump')
-       case ('eystl')
-          call parse_real_variable('eystl', eystl, 1.0D8, 1.0D13, &
+       case ('eyoung_steel')
+          call parse_real_variable('eyoung_steel', eyoung_steel, 1.0D8, 1.0D13, &
                'Steel case Youngs Modulus (Pa)')
-       case ('eyins')
-          call parse_real_variable('eyins', eyins, 1.0D8, 1.0D13, &
+       case ('eyoung_ins')
+          call parse_real_variable('eyoung_ins', eyoung_ins, 1.0D8, 1.0D13, &
                'Insulator Youngs Modulus (Pa)')
-       case ('eywp')
-          call parse_real_variable('eywp', eywp, 1.0D8, 1.0D13, &
+       case ('eyoung_winding')
+          call parse_real_variable('eyoung_winding', eyoung_winding, 1.0D8, 1.0D13, &
                'Winding pack Youngs Modulus (Pa)')
+       case ('eyoung_al')
+          call parse_real_variable('eyoung_al', eyoung_al, 0.0D0, 1.0D0, &
+               'Reinforced aluminium Young modulus for TF stress calc.')
+       case ('eyoung_reinforced_al')
+          call parse_real_variable('eyoung_reinforced_al', eyoung_reinforced_al, 0.0D0, 1.0D0, &
+               'Reinforced aluminium Young modulus for TF stress calc.')
        case ('farc4tf')
           call parse_real_variable('farc4tf', farc4tf, 0.0D0, 1.0D0, &
                'TF coil shape parameter')
        case ('fcoolcp')
           call parse_real_variable('fcoolcp', fcoolcp, 0.0D0, 1.0D0, &
-               'Coolant fraction of TF inboard leg')
+               'Coolant fraction of TF centrepost (itart=1) or the whole magnet (itart=0)')
+       case ('fcoolleg')
+          call parse_real_variable('fcoolleg', fcoolleg, 0.0D0, 1.0D0, &
+               'Coolant fraction of TF outboard leg (itart=1 only)')
        case ('fcutfsu')
           call parse_real_variable('fcutfsu', fcutfsu, 0.0D0, 1.0D0, &
                'Cu fraction of SCTF cable conductor')
@@ -1772,21 +1807,42 @@ contains
                'Technology adjustment factor for Bi-2212 HTS')
        case ('frhocp')
           call parse_real_variable('frhocp', frhocp, 0.01D0, 5.0D0, &
-               'TART c/p resistivity enhancement factor')
+               'Centrepost (itart=1) or global (itart=0) resistivity enhancement factor')
+       case ('frholeg')
+          call parse_real_variable('frholeg', frholeg, 0.01D0, 5.0D0, &
+               'TART outboard leg resistivity enhancement factor')
+       case ('rho_tf_joints')
+          call parse_real_variable('rho_tf_joints', rho_tf_joints, 0.0D0, 1.0D-2, &
+               'TF joints surfacic resistivity')
+       case ('th_joint_contact')
+          call parse_real_variable('th_joint_contact', th_joint_contact, 0.0D0, 1.0D0, &
+               'TF sliding joints contact pad width')
+       case ('n_tf_joints_contact')
+          call parse_int_variable('n_tf_joints_contact', n_tf_joints_contact, 1, 50, &
+               'Number of contact per sliding joint')
+       case ('n_tf_joints')
+          call parse_int_variable('n_tf_joints', n_tf_joints, 1, 50, &
+               'Number of joints per turn')
+       case ('eff_tf_cryo')
+          call parse_real_variable('eff_tf_cryo', eff_tf_cryo, -1.0D0, 1.0D0, &
+               'TF coil cryo-plane efficiency')  
        case ('i_tf_tresca')
           call parse_int_variable('i_tf_tresca', i_tf_tresca, 0, 1, &
                          'Switch for TF coil Tresca criterion.')
        case ('i_tf_turns_integer')
           call parse_int_variable('i_tf_turns_integer', i_tf_turns_integer, 0, 1, &
                     'Switch for TF coil integer/non-integer turns')
-       case ('isumattf')
-          call parse_int_variable('isumattf', isumattf, 1, 6, &
+       case ('i_tf_bucking')
+          call parse_int_variable('i_tf_bucking', i_tf_bucking, -1, 2, &
+               'Switch for bucking cylinder (case)')
+       case ('i_tf_sc_mat')
+          call parse_int_variable('i_tf_sc_mat', i_tf_sc_mat, 1, 6, &
                'TF coil superconductor material')
-          if (isumattf == 2) then
+          if (i_tf_sc_mat == 2) then
              write(outfile,*) ' '
              write(outfile,*) '**********'
              write(outfile,*) 'Warning if you are using an old input file:'
-             write(outfile,*) 'ISUMATTF=2 usage has changed -'
+             write(outfile,*) 'i_tf_sc_mat=2 usage has changed -'
              write(outfile,*) 'please check validity!'
              write(outfile,*) '**********'
              write(outfile,*) ' '
@@ -1803,6 +1859,9 @@ contains
        case ('i_tf_sup')
           call parse_int_variable('i_tf_sup', i_tf_sup, 0, 2, &
                'Switch for TF coil type')
+       case ('i_tf_shape')
+         call parse_int_variable('i_tf_shape', i_tf_shape, 0, 2, &
+              'Switch for TF coil shape')
        case ('jbus')
           call parse_real_variable('jbus', jbus, 1.0D4, 1.0D8, &
                'TF coil bus current density (A/m2)')
@@ -1828,12 +1887,21 @@ contains
        case ('n_layer')
           call parse_int_variable('n_layer', n_layer, 1, 100, &
                'Number of layers in TF coil (i_tf_turns_integer=1)')
+       case ('n_tf_graded_layers')
+          call parse_int_variable('n_tf_graded_layers', n_tf_graded_layers, 1, 20, &
+               'Number of layers of different stress properties in the WP')
        case ('oacdcp')
           call parse_real_variable('oacdcp', oacdcp, 1.0D4, 1.0D9, &
                'Overall J in inboard TF coil midplane')
-       case ('poisson')
-          call parse_real_variable('poisson', poisson, 0.0D0, 1.0D0, &
-               'Poissons ratio for TF stress calc.')
+       case ('poisson_steel')
+          call parse_real_variable('poisson_steel', poisson_steel, 0.0D0, 1.0D0, &
+               'Steel Poissons ratio for TF stress calc.')
+       case ('poisson_copper')
+          call parse_real_variable('poisson_copper', poisson_copper, 0.0D0, 1.0D0, &
+               'Steel Poissons ratio for TF stress calc.')
+       case ('poisson_al')
+          call parse_real_variable('poisson_al', poisson_al, 0.0D0, 1.0D0, &
+               'Aluminium Poissons ratio for TF stress calc.')
        case ('ptempalw')
           call parse_real_variable('ptempalw', ptempalw, 4.0D0, 573.15D0, &
                'Maximum peak centrepost temp. (K)')
@@ -1873,9 +1941,9 @@ contains
        case ('tfinsgap')
           call parse_real_variable('tfinsgap', tfinsgap, 1.0D-10, 1.0D-1, &
                'TF coil WP insertion gap (m)')
-       case ('rhotfleg')
-          call parse_real_variable('rhotfleg', rhotfleg, 1.0D-10, 1.0D-5, &
-               'TF coil leg resistivity (ohm-m)')
+       case ('rhotfbus')
+          call parse_real_variable('rhotfbus', rhotfbus, 0.0D0, 1.0D-5, &
+               'TF coil bus (feeders) resistivity (ohm-m)')
        case ('n_tf')
           call parse_real_variable('n_tf', n_tf, 0.0D0, 100.0D0, &
                'Number of TF coils')
@@ -1885,8 +1953,11 @@ contains
        case ('thicndut')
           call parse_real_variable('thicndut', thicndut, 0.0D0, 0.1D0, &
                'Conduit insulation thickness (m)')
+      case ('leno')
+          call parse_real_variable('leno', leno, 0.0D0, 0.2D0, &
+               'Dimension conductor area including steel and insulation (m)')
        case ('layer_ins')
-              call parse_real_variable('layer_ins', layer_ins, 0.0D0, 0.1D0, &
+          call parse_real_variable('layer_ins', layer_ins, 0.0D0, 0.1D0, &
                'Additional insulation thickness between layers (m)')
        case ('thkcas')
           call parse_real_variable('thkcas', thkcas, 0.0D0, 1.0D0, &
@@ -1932,11 +2003,14 @@ contains
        case ('vdalw')
           call parse_real_variable('vdalw', vdalw, 0.0D0, 100.0D0, &
                'Max V across TFC during quench (kV)')
+       case ('f_vforce_inboard')
+          call parse_real_variable('f_vforce_inboard', f_vforce_inboard, 0.01D0, 1.0D0, &
+               'Fraction of vertical force taken by the TF inboard leg')
        case ('vftf')
           call parse_real_variable('vftf', vftf, 0.0D0, 1.0D0, &
                'Coolant fraction of TF coil leg')
 
-          !  PF coil settings
+       !  PF coil settings
 
        case ('bmaxcs_lim')
          call parse_real_variable('bmaxcs_lim', bmaxcs_lim, 0.01D0, 100.0D0, &
@@ -2933,6 +3007,9 @@ contains
 
           !  Stellarator settings
 
+       case ('istell')
+          call parse_int_variable('istell', istell, 0, 5, &
+               'Stellarator machine specification (1=Helias5, 2=Helias4, 3=Helias3)')
        case ('bmn')
           call parse_real_variable('bmn', bmn, 1.0D-4, 1.0D-2, &
                'Relative radial field perturbation')
@@ -3227,12 +3304,12 @@ contains
     !  Arguments
 
     character(len=*), intent(in) :: varnam, description
-    real(kind(1.0D0)), intent(inout) :: varval
-    real(kind(1.0D0)), intent(in) :: vmin, vmax
+    real(dp), intent(inout) :: varval
+    real(dp), intent(in) :: vmin, vmax
 
     !  Local variables
 
-    real(kind(1.0D0)) :: oldval
+    real(dp) :: oldval
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3423,11 +3500,11 @@ contains
     integer, intent(inout) :: isub1
     integer, intent(in) :: n
     integer, intent(out) :: icode
-    real(kind(1.0D0)), dimension(n), intent(inout) :: varval
+    real(dp), dimension(n), intent(inout) :: varval
 
     !  Local variables
 
-    real(kind(1.0D0)) :: oldval, val
+    real(dp) :: oldval, val
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3725,12 +3802,12 @@ contains
 
     character(len=*), intent(in) :: string
     integer, intent(in) :: length
-    real(kind(1.0D0)), intent(out) :: rval
+    real(dp), intent(out) :: rval
     integer, intent(out) :: icode
 
     !  Local variables
 
-    real(kind(1.0D0)) :: valbdp,valadp,xfact
+    real(dp) :: valbdp,valadp,xfact
     integer :: iptr,izero,iexpon
     logical :: negatm,negate
 
@@ -4021,7 +4098,7 @@ contains
     !  Arguments
 
     integer, intent(out) :: icode
-    real(kind(1.0D0)), intent(out) :: rval
+    real(dp), intent(out) :: rval
 
     !  Local variables
 
@@ -4521,7 +4598,7 @@ contains
     !  Arguments
 
     character(len=*), intent(in) :: cvar
-    real(kind(1.0D0)), intent(in) :: varval,min_value,max_value
+    real(dp), intent(in) :: varval,min_value,max_value
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
