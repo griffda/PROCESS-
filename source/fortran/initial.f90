@@ -1132,10 +1132,10 @@ subroutine check
         end if
     end if 
 
-    ! Error indicating that the buck and wedge solution is not yet implemented
-    if ( i_tf_bucking == 2 ) then
-        call report_error(247)
-        stop
+    ! Ensure that no pre-compression structure 
+    ! is used for bucked and wedged design
+    if ( i_tf_bucking == 2 .and. iprecomp == 1 ) then
+        call report_error(252)
     end if
 
     ! Number of stress calculation layers

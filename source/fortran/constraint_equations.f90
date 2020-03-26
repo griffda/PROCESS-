@@ -2438,12 +2438,22 @@ contains
       !! s_tresca_oh : input real : Tresca stress coils/central solenoid (Pa)
       use constraint_variables, only: foh_stress
       use pfcoil_variables, only: alstroh, s_tresca_oh
+      use tfcoil_variables, only: strtf0, i_tf_bucking
       implicit none
       type (constraint_args_type), intent(out) :: args
 
-      args%cc = 1.0d0 - foh_stress * alstroh / s_tresca_oh
+      ! bucked and weged desing 
+      if ( i_tf_bucking == 2 ) then
+         args%cc = 1.0d0 - foh_stress * alstroh / max(s_tresca_oh, strtf0)
+         args%err = alstroh - max(s_tresca_oh, strtf0)
+      
+      ! Free standing CS
+      else 
+         args%cc = 1.0d0 - foh_stress * alstroh / s_tresca_oh
+         args%err = alstroh - s_tresca_oh
+      end if
+
       args%con = alstroh
-      args%err = alstroh - s_tresca_oh
       args%symbol = '<'
       args%units = 'Pa'
 

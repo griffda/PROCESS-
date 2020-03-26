@@ -709,6 +709,9 @@ contains
     !  Number of turns
     turns(nohc) = 1.0D6 * abs(ric(nohc))/cptdin(nohc)
 
+    ! Turn vertical cross-sectionnal area       
+    a_oh_turn = areaoh / turns(nohc)
+
     !  Non-steel area void fraction for coolant
     vf(nohc) = vfohc
 

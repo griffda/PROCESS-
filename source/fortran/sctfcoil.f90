@@ -12,11 +12,12 @@ module sctfcoil_module
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 use, intrinsic :: iso_fortran_env, only: dp=>real64
-use build_variables, only : r_tf_inboard_mid, hmax, r_tf_outboard_mid, tfcth, tfthko, hpfu, hr1, &
-    r_cp_top, r_vv_inboard_out
+use build_variables, only : r_tf_inboard_mid, hmax, r_tf_outboard_mid, tfcth, tfthko,&
+                            hpfu, hr1, r_cp_top, r_vv_inboard_out, bore
 use fwbs_variables, only : denstl
 use physics_variables, only : rmajor, rminor, bt, i_single_null, itart, kappa
 use tfcoil_variables
+use pfcoil_variables, only : ipfres, oh_steel_frac, a_oh_turn
 use superconductors
 use ode_mod
 implicit none
@@ -757,8 +758,7 @@ subroutine tf_res_heating()
         if ( i_tf_sup /= 1 ) then
 
             ! Total number of contact area (4 joints section per legs)
-            n_contact_tot = 4.0D0 * n_tf_joints_contact* n_tf_joints &
-                          * int(turnstf) * n_tf
+            n_contact_tot = 4 * n_tf_joints_contact* n_tf_joints * int(turnstf) * int(n_tf)
             
             ! Total area of joint contact
             a_joints = tfthko * th_joint_contact * dble(n_contact_tot)
@@ -1205,6 +1205,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(dp), dimension(n_tf_layer) :: poisson
     !! Poisson's ratio (one per layer) used in the stress models
     
+    real(dp), dimension(n_tf_layer) :: jeff
+    !! Effective current density [A/m2]
+  
     integer :: ii
     !! do loop index
 
@@ -1214,8 +1217,21 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(dp) :: sig_max
     !! Working float to find maximum TRESCA stress index
 
-    real(dp) :: seff, tcbs, fac, t_ins_eff
+    real(dp) :: seff, tcbs, t_ins_eff
+
+    real(dp) :: fac
+    !! TF steel conduit stress unsmearing factor
+
+    real(dp) :: l_cond_oh
+    !! Central Solenoid (OH) conduit thickness assuming square conduit [m]
+    !! Used only to get effective radial stress in bucked and wedged
     
+    real(dp) :: l_turn_oh
+    !! Central Solenoid (OH) turn dimension [m]
+
+    real(dp) :: fac_oh
+    !! Central Solenoid (OH) steel conduit stress unsmearing factor
+
     real(dp) :: sig_z_fac
     !! Vertical stress correction factor for inter turn structure
 
@@ -1239,8 +1255,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         return
     end if
 
-    !  Setup stress model call
-    ! ------
+
     seff = sqrt(cpttf/jwptf)
     if (acstf >= 0.0D0) then
         tcbs = sqrt(acstf)
@@ -1249,31 +1264,61 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     end if
 
 
-    ! bucking cylinder/casing properties
+    ! CS properties (bucked and wedged)
     ! ---
-    if ( i_tf_bucking == 1 ) then
-        
-        ! No current in bucking cylinder/casing
+    if ( i_tf_bucking == 2 ) then
+
+        ! Calculation performed at CS flux swing (no current on CS)
         jeff(1) = 0.0D0
 
-        ! Steel bucking cylinder (copper and SC design)
-        if ( i_tf_sup /= 2 ) then 
-            eyoung(1) = eyoung_steel
-            poisson(1) = poisson_steel
-        
-        ! Re-inforced aluminium 
-        else 
-            eyoung(1) = eyoung_reinforced_al
-            poisson(1) = poisson_al
-        end if
-        
-        ! Innernost TF radius
-        radtf(1) = r_tf_inboard_in
+        ! Superconducting CS
+        if ( ipfres == 0 ) then
 
+            ! Inner radius of the CS
+            radtf(1) = bore
+            
+            ! No current (at flux swing)
+            jeff(1) = 0.0D0
+
+            ! Effective young modulus assuming the parallel case
+            ! Rem the oh_steel_fraction is potentially a volumic one ... To be checked 
+            eyoung(1) = oh_steel_frac * eyoung_steel + (1.0D0 - oh_steel_frac) * eyoung_winding
+            poisson(1) = poisson_steel
+
+        ! resistive CS (assumed to copper)
+        else
+            ! Here is a rough approximation
+            eyoung(1) = eyoung_copper
+            poisson(1) = poisson_copper
+        end if
     end if
     ! ---
 
+    
+    ! bucking cylinder/casing properties
+    ! ---
+    if ( i_tf_bucking /= 0 ) then
+        
+        ! No current in bucking cylinder/casing
+        jeff(i_tf_bucking) = 0.0D0
 
+        ! Steel bucking cylinder (copper and SC design)
+        if ( i_tf_sup /= 2 ) then 
+            eyoung(i_tf_bucking) = eyoung_steel
+            poisson(i_tf_bucking) = poisson_steel
+        
+        ! Re-inforced aluminium 
+        else 
+            eyoung(i_tf_bucking) = eyoung_reinforced_al
+            poisson(i_tf_bucking) = poisson_al
+        end if
+        
+        ! Innernost TF casing radius
+        radtf(i_tf_bucking) = r_tf_inboard_in
+    end if
+    !---
+
+ 
     ! (Super)conductor layer properties
     ! ---
     ! Rem : They are only unique for isotropic materials, hence
@@ -1340,26 +1385,82 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                            n_tf_layer, n_radial_array,   & ! Inputs
                            sig_tf_r, sig_tf_t, deflect, radial_array ) ! Outputs
     
-        ! Vertical stress [Pa]
+        ! Vertical stress [Pa]  
+        ! Rem : In case of bucked and wedge design the CS and the TF should be
+        !       able to slide vertically so the CS area must not be included in
+        !       the TF vertical stress
         sig_tf_z = vforce / (acasetf + acndttf*turnstf)
+
+
+        ! CS yield stress (bucked and wedged)
+        ! ---
+        if ( i_tf_bucking == 2 ) then
+
+            ! SC central solenoid stress unsmeating
+            ! --- 
+            if ( ipfres == 0 ) then
+
+                ! Central Solenoid (OH) turn dimension [m]
+                l_turn_oh = sqrt(a_oh_turn)
+
+                ! OH/CS conduit thickness calculated assuming square conduit [m]  
+                ! The insulation layer is set to 0 in the calculation
+                ! Used only to get effective radial stress
+                l_cond_oh = 0.5D0 * l_turn_oh * (1.0D0 - sqrt(1.0D0-oh_steel_frac) )
+                
+                ! Central Solenoid (OH) steel conduit stress unsmearing factor
+                fac_oh = 0.5D0 * l_turn_oh / l_cond_oh 
+            end if
+            ! ---
+
+            do ii = 1, n_radial_array
+                
+                ! CS (OH) superconducting case unsmearing
+                if ( ipfres == 0 ) then 
+                    
+                    ! Stress correction
+                    sig_tf_r(ii) = sig_tf_r(ii) * fac_oh
+                    sig_tf_t(ii) = sig_tf_t(ii) / oh_steel_frac
+                end if 
+
+                ! CS and TF are sliding, so no vertical forces at flux swing
+                sig_tf_z(ii) = 0.0D0
+
+                ! Von-mises stress [Pa]
+                if ( iprint == 1 ) then
+                    sig_tf_vmises(ii) = sigvm( sig_tf_r(ii), sig_tf_t(ii), 0.0D0, &  
+                                               0.0D0, 0.0D0, 0.0D0 )
+                end if
+            
+                ! TRESCA stress [Pa] 
+                sig_tf_tresca(ii) = sig_tresca(sig_tf_r(ii), sig_tf_t(ii), 0.0D0)
+
+                ! TRESCA stress using CEA calculation [Pa]
+                s_tresca_cond_cea(ii) = sig_tf_tresca(ii)
+
+            end do
+        end if
+        ! ---
 
 
         ! Casing yield stress
         ! ---
-        do ii = 1, n_radial_array
-    
-            ! Von-mises stress [Pa]
-            if ( iprint == 1 ) then
-                sig_tf_vmises(ii) = sigvm( sig_tf_r(ii), sig_tf_t(ii), sig_tf_z(ii), &  
-                                           0.0D0, 0.0D0, 0.0D0 )
-            end if
-    
-            ! TRESCA stress [Pa] 
-            sig_tf_tresca(ii) = sig_tresca(sig_tf_r(ii), sig_tf_t(ii), sig_tf_z(ii))
+        if ( i_tf_bucking /= 0 ) then
+            do ii = (i_tf_bucking-1)*n_radial_array + 1,  i_tf_bucking*n_radial_array
             
-            ! TRESCA stress using CEA calculation [Pa]
-            s_tresca_cond_cea(ii) = sig_tf_tresca(ii)
-        end do
+                ! Von-mises stress [Pa]
+                if ( iprint == 1 ) then
+                    sig_tf_vmises(ii) = sigvm( sig_tf_r(ii), sig_tf_t(ii), sig_tf_z(ii), &  
+                                               0.0D0, 0.0D0, 0.0D0 )
+                end if
+            
+                ! TRESCA stress [Pa] 
+                sig_tf_tresca(ii) = sig_tresca(sig_tf_r(ii), sig_tf_t(ii), sig_tf_z(ii))
+
+                ! TRESCA stress using CEA calculation [Pa]
+                s_tresca_cond_cea(ii) = sig_tf_tresca(ii)
+            end do
+        end if 
         ! ---
     
         
@@ -1369,11 +1470,14 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         fac = eyoung_steel*eyoung_ins*seff / &
               (eyoung_ins*(seff-2.0D0*t_ins_eff) + 2.0D0*t_ins_eff*eyoung_steel)
 
-        do ii = n_radial_array + 1, n_tf_layer*n_radial_array
+        ! GRADED MODIF : add another do loop to allow the graded properties
+        !                to be taken into account
+        do ii = i_tf_bucking * n_radial_array + 1, n_tf_layer*n_radial_array
 
-            ! Stress unsmearing [Pa]
-            sig_tf_r(ii) = sig_tf_r(ii)/eyoung(2) * fac
-            sig_tf_t(ii) = sig_tf_t(ii)/eyoung(2) * fac
+            ! Stress unsmearing [Pa]        
+            ! GRADED MODIF: eyoung of the given layer to be used 
+            sig_tf_r(ii) = sig_tf_r(ii)/eyoung(i_tf_bucking+1) * fac
+            sig_tf_t(ii) = sig_tf_t(ii)/eyoung(i_tf_bucking+1) * fac
   
             ! Von-mises stress calculation (addapted to the smearing procedure) [Pa]
             if ( iprint == 1 ) then
@@ -1449,12 +1553,41 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     ! Output formating (Maximum TRESCA per layer and stress at the corresponding point)
     ! ------
-    ! In case/bucking cylinder
+    ! In CS (bucked and wedged)
     ! ---
-    if ( i_tf_bucking == 1 ) then
+    if ( i_tf_bucking == 2 ) then
         sig_max = 0.0D0
         ii_max = 1
-        do ii = 1, n_radial_array
+
+        if ( iprint == 1 ) then
+            do ii = 1, n_radial_array
+                if ( sig_tf_tresca(ii) > sig_max ) then
+                    ii_max = ii
+                    sig_max = sig_tf_tresca(ii)
+                end if
+            end do    
+
+            sig_tf_r_max(1) = sig_tf_r(ii_max)
+            sig_tf_t_max(1) = sig_tf_t(ii_max)
+            sig_tf_z_max(1) = sig_tf_z(ii_max)
+            sig_tf_vmises_max(1) = sig_tf_vmises(ii_max)
+    
+            ! Stresses of the maximum TRESCA stress point
+            sig_tf_tresca_max(1) = sig_tf_tresca(ii_max)
+
+            strtf0 = sig_tf_tresca_max(1)
+
+        end if
+
+    end if
+    ! ---
+
+    ! In case/bucking cylinder
+    ! ---
+    if ( i_tf_bucking /= 0 ) then
+        sig_max = 0.0D0
+        ii_max = 1
+        do ii = (i_tf_bucking - 1) * n_radial_array + 1,  i_tf_bucking * n_radial_array
             if ( sig_tf_tresca(ii) > sig_max ) then
                 ii_max = ii
                 sig_max = sig_tf_tresca(ii)
@@ -1462,18 +1595,17 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         end do    
 
         if ( iprint == 1 ) then
-            sig_tf_r_max(1) = sig_tf_r(ii_max)
-            sig_tf_t_max(1) = sig_tf_t(ii_max)
-            sig_tf_z_max(1) = sig_tf_z(ii_max)
-            sig_tf_vmises_max(1) = sig_tf_vmises(ii_max)
+            sig_tf_r_max(i_tf_bucking) = sig_tf_r(ii_max)
+            sig_tf_t_max(i_tf_bucking) = sig_tf_t(ii_max)
+            sig_tf_z_max(i_tf_bucking) = sig_tf_z(ii_max)
+            sig_tf_vmises_max(i_tf_bucking) = sig_tf_vmises(ii_max)
         end if
 
         ! Stresses of the maximum TRESCA stress point
-        sig_tf_tresca_max(1) = sig_tf_tresca(ii_max)
+        sig_tf_tresca_max(i_tf_bucking) = sig_tf_tresca(ii_max)
 
         ! Case/bucking maximum TRESCA stress used in constraint 31 [Pa]
-        strtf1 = sig_tf_tresca_max(1)
-
+        strtf1 = sig_tf_tresca_max(i_tf_bucking)
     end if
     ! ---
 

@@ -1884,7 +1884,11 @@ module pfcoil_variables
   !!                  <LI> = 1 Hoop + Axial stress</UL>
 
   real(dp) :: areaoh = 0.0D0
-  !! areaoh : central solenoid cross-sectional area (m2)
+  !! Central solenoid cross-sectional area (m2)
+
+  real(dp) :: a_oh_turn = 0.0D0
+  !! Central solenoid (OH) trun cross-sectional area (m2)
+
   real(dp) :: awpoh = 0.0D0
   !! awpoh : central solenoid conductor+void area (m2)
   real(dp) :: bmaxoh = 0.0D0
@@ -2301,8 +2305,7 @@ module tfcoil_variables
 
   real(dp) :: jbus = 1.25D6
   !! jbus /1.25e6/ : bussing current density (A/m2)
-  real(dp), dimension(2) :: jeff = 0.0D0
-  !! jeff(2) : work array used in stress calculation (A/m2)
+  
   real(dp) :: jwdgcrt = 0.0D0
   !! jwdgcrt : critical current density for winding pack (A/m2)
   real(dp) :: jwdgpro = 0.0D0
@@ -2402,6 +2405,11 @@ module tfcoil_variables
       
   real(dp), dimension(2*n_radial_array) :: sig_tf_tresca = 0.0D0 
   !! TF Inboard leg TRESCA stress in steel r distribution at mid-plane [Pa]
+
+  real(dp) :: strtf0 = 0.0D0
+  !! Maximum TRESCA stress in CS casing steel structures (Pa)
+  !! Only for bucked and wedged design (i_tf_bucking = 2).
+  !! Calculation made at CS flux swing
 
   real(dp) :: strtf1 = 0.0D0
   !! Maximum TRESCA stress in TF casing steel structures (Pa)
@@ -3396,13 +3404,13 @@ module build_variables
   !!        <LI> = 1 central solenoid exists</UL>
 
   integer :: iprecomp = 1
-  !! iprecomp /1/ : switch for existence of central solenoid pre-compression structure:<UL>
-  !!        <LI> = 0 no pre-compression structure;
-  !!        <LI> = 1 calculated pre-compression structure</UL>
+  !! Switch for existence of central solenoid pre-compression structure:
+  !!   0 - no pre-compression structure;
+  !!   1 - calculated pre-compression structure</UL>
 
   real(dp) :: ohcth = 0.811D0
-  !! ohcth /0.811/ : central solenoid thickness (m)
-  !!                (iteration variable 16)
+  !! Central solenoid thickness (m)
+  !!        (iteration variable 16)
 
   real(dp) :: precomp = 0.0D0
   !! precomp : CS coil precompression structure thickness (m)
