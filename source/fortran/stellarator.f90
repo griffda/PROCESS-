@@ -2233,7 +2233,6 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use helias5b_coil_parameters
     use build_variables, only: blnkith, blnkoth, ddwi, dh_tf_inner_bore, &
       dr_tf_inner_bore, fwith, fwoth, gapds, gapsto, hmax, r_tf_outboard_mid, &
       r_tf_outboard_mid, scrapli, scraplo, shldith, shldoth, tfcth, tfthko, &
