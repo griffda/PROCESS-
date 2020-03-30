@@ -13,25 +13,6 @@ module power_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-
-  use build_variables
-  use buildings_variables
-  use constants
-  use constraint_variables
-  use cost_variables
-  use current_drive_variables
-  use error_handling
-  use fwbs_variables
-  use heat_transport_variables
-  use pf_power_variables
-  use pfcoil_variables
-  use physics_variables
-  use process_output
-  use structure_variables
-  use tfcoil_variables
-  use times_variables
-  use primary_pumping_variables
-
   implicit none
 
   private
@@ -66,6 +47,15 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use buildings_variables, only: tfcbv
+    use heat_transport_variables, only: tfacpd, etatf
+    use physics_variables, only: rmajor
+    use process_output, only: oheadr, ovarre
+    use tfcoil_variables, only: tflegmw, estotftgj, tfcpmw, rhotfleg, &
+        tflegres, vtfskv, jbus, tfbusl, tfbusmas, tfcmw, vtfkv, i_tf_sup, &
+        tfckw, presleg, dcopper, ritfc, cpttf, prescp, n_tf, rhotfbus, tfjtsmw, &
+        pres_joints
+    use constants, only: pi
     implicit none
 
     !  Arguments
@@ -463,6 +453,17 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: iohcl
+    use heat_transport_variables, only: peakmva
+    use pf_power_variables, only: pfckts, maxpoloidalpower, peakpoloidalpower, &
+        spfbusl, poloidalpower, spsmva, vpfskv, ensxpfm, acptmax, srcktpm
+    use pfcoil_variables, only: ngc2, ngrp, cpt, pfwpmw, pfclres, ncirt, ncls, &
+        ric, etapsu, cptdin, curpfb, sxlg, turns, vf, rjconpf, rpf
+    use physics_variables, only: pohmmw, rmajor
+    use process_output, only: oheadr, ovarre, oblnkl, ocmmnt
+    use numerics, only: active_constraints, ioptimz
+    use times_variables, only: tim, intervallabel, timelabel, tohs
+    use constants, only: twopi, pi
     implicit none
 
     !  Arguments
@@ -731,6 +732,12 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use buildings_variables, only: efloor
+    use heat_transport_variables, only: baseel, crypmw, vachtmw, tfacpd, &
+        trithtmw, pinjwp, tlvpmw, peakmva, fcsht, fmgdmw, pwpm2, htpmw, pacpmw
+    use pf_power_variables, only: iscenr, srcktpm
+    use process_output, only: oheadr, ovarre, oblnkl
+    use constants, only: pi
     implicit none
 
     !  Arguments
@@ -824,6 +831,23 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use current_drive_variables, only: pinjmw, porbitlossmw, nbshinemw
+    use fwbs_variables, only: pnucblkt, pradfw, etahtp, praddiv, &
+        secondary_cycle, pnuccp, primary_pumping, ptfnuc, pnucshld, pradhcd, &
+        pnucdiv, pnucfw, pnuchcd
+    use heat_transport_variables, only: htpmw_shld, htpsecmw, pfwdiv, &
+        psecshld, crypmw, htpmw_min, nphx, htpmw_div, psechcd, helpow, &
+        htpmw_fw, pinjwp, pthermmw, psecdiv, etath, pinjht, iprimshld, htpmw, &
+        htpmw_blkt
+    use pf_power_variables, only: ensxpfm
+    use pfcoil_variables, only: ipfres
+    use physics_variables, only: pdivt, palpfwmw, ignite
+    use structure_variables, only: coldmass
+    use tfcoil_variables, only: tfsai, tcoolin, tmpcry, i_tf_sup, presleg, &
+        prescp, dtiocool, n_tf, cpttf, pres_joints, eff_tf_cryo
+    use times_variables, only: tpulse
+    use primary_pumping_variables, only: htpmw_fw_blkt
+    use constants, only: rmu0, pi
     implicit none
 
     real(dp) :: p_tf_cryoal_cryo = 0.0D0
@@ -977,6 +1001,26 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constraint_variables, only: pnetelin
+    use cost_variables, only: ipnet, ireactor
+    use current_drive_variables, only: pinjmw
+    use fwbs_variables, only: emultmw, inuclear, pnucblkt, pradfw, qnuc, &
+        etahtp, emult, praddiv, fdiv, fhcd, secondary_cycle, pnuccp, pnucdiv, &
+        primary_pumping, ptfnuc, pnuchcd, pnucshld, pradhcd, pnucfw
+    use heat_transport_variables, only: htpmw_shld, htpmw_blkt, psecshld, &
+        fpumpshld, tturb, pnetelmw, fpumpdiv, fpumpblkt, vachtmw, htpmw_div, &
+        nphx, helpow, htpmw_fw, precircmw, pthermmw, fpumpfw, fcsht, &
+        iprimshld, pinjwp, fachtmw, pgrossmw, psechtmw, trithtmw, psechcd, &
+        tfacpd, htpmw, etath, crypmw, psecdiv, pinjht, htpsecmw
+    use pfcoil_variables, only: pfwpmw
+    use physics_variables, only: palpmw, ignite, pcoreradmw, pradmw, itart, &
+        pdivt, palpfwmw, idivrt, pohmmw, iradloss, powfmw, pchargemw, &
+        pscalingmw, falpha
+    use process_output, only: ovarin, ocmmnt, ovarrf, oheadr, ovarre, oblnkl, &
+        osubhd
+    use tfcoil_variables, only: ppump, i_tf_sup, tfcmw, tmpcry
+    use primary_pumping_variables, only: htpmw_fw_blkt
+    use constants, only: rmu0, mfile, pi
     implicit none
 
     !  Arguments
@@ -1430,6 +1474,13 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use current_drive_variables, only: etacd
+    use heat_transport_variables, only: htpmw, pinjmax, crypmw, vachtmw, &
+        tfacpd, trithtmw, pinjwp, fachtmw, pgrossmw
+    use pf_power_variables, only: poloidalpower
+    use process_output, only: osubhd, oblnkl
+    use times_variables, only: tramp, tburn, theat, tdwell, tqnch, tohs
+    use constants, only: mfile
     implicit none
 
     ! Arguments
@@ -1634,6 +1685,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use fwbs_variables, only: qnuc, inuclear
+    use constants, only: pi
     implicit none
 
     !  Arguments
@@ -1695,6 +1748,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use error_handling, only: fdiags, idiags, report_error
+    use fwbs_variables, only: iblanket, secondary_cycle, outlet_temp
+    use heat_transport_variables, only: tturb
+    use constants, only: pi
     implicit none
 
     !  Arguments

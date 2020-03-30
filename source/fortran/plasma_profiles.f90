@@ -12,12 +12,6 @@ module profiles_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  use constants
-  use divertor_variables
-  use error_handling
-  use maths_library
-  use physics_variables
-
   private
   public :: plasma_profiles, ncore, nprofile, tcore, tprofile
 
@@ -37,6 +31,12 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: echarge
+    use divertor_variables, only: prn1
+    use maths_library, only: gamfun, sumup3
+    use physics_variables, only: rhopedt, ten, tin, alphap, tbeta, te0, p0, &
+      nesep, tesep, pcoef, ipedestal, ni0, ne0, ti0, tratio, dnla, alphat, &
+      dnitot, neped, ti, rhopedn, dene, teped, alphan, te
     implicit none
 
     !  Arguments
@@ -175,6 +175,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use constants, only: pi
+		use maths_library, only: gamfun
     implicit none
 
     real(dp) :: tcore
@@ -234,6 +236,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: fdiags, report_error
+		use physics_variables, only: ipedestal
     implicit none
 
     real(dp) :: tprofile
@@ -287,6 +291,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: report_error
     implicit none
 
     real(dp) :: ncore
@@ -334,6 +339,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: fdiags, report_error
+		use physics_variables, only: ipedestal
     implicit none
 
     real(dp) :: nprofile

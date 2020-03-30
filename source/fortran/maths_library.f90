@@ -28,8 +28,6 @@ module maths_library
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  use global_variables, only: verbose, maxcal
-  use constants
   ! MDK Remove this dependency, as iotty is now defined in global variables.
   !use process_output
 
@@ -915,7 +913,7 @@ contains
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use global_variables, only: verbose
     implicit none
 
     !  Arguments
@@ -1122,7 +1120,7 @@ contains
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use global_variables, only: verbose
     implicit none
 
     !  Arguments
@@ -2185,7 +2183,8 @@ contains
     !! Michael Minkoff, Argonne National Laboratory, 1980
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use constants, only: iotty, opt_file
+    use global_variables, only: maxcal, verbose
     implicit none
 
     !  Arguments
@@ -2818,7 +2817,7 @@ contains
     !  instead of through COMMON, J. Galambos, (5/21/91)
 
     !  25/02/14 PJK Diagnostic output added
-
+    use global_variables, only: verbose
     IMPLICIT NONE
 
     INTEGER n,m,meq,lcnorm,lb,info,ldel,lh,mact,lwa,liwa
@@ -3055,7 +3054,7 @@ contains
     !+**PJK 02/11/92 error but beware of future modifications.
 
     !  25/02/14 PJK Diagnostic output added
-
+    use global_variables, only: verbose
     IMPLICIT NONE
 
     INTEGER n,m,ia,ic,k,ke,ih,mode,info
@@ -5543,7 +5542,7 @@ contains
     !! Surface Area and Volume Calculations for Toroidal Shells
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use constants, only: pi, twopi
     implicit none
 
     !  Arguments
@@ -5621,7 +5620,7 @@ contains
     !! Surface Area and Volume Calculations for Toroidal Shells
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use constants, only: pi, twopi
     implicit none
 
     !  Arguments
@@ -5680,7 +5679,7 @@ contains
     !! Surface Area and Volume Calculations for Toroidal Shells
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use constants, only: pi, twopi
     implicit none
 
     !  Arguments
@@ -5727,7 +5726,7 @@ contains
     !! Surface Area and Volume Calculations for Toroidal Shells
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use constants, only: pi, twopi
     implicit none
 
     !  Arguments

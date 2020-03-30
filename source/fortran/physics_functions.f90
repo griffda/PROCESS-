@@ -8,15 +8,7 @@ module physics_functions_module
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use constants
-  use error_handling
-  use impurity_radiation_module
-  use maths_library
-  use physics_variables
-  use profiles_module
-  use read_and_get_atomic_data
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   public :: beamfus, palph, palph2
@@ -54,6 +46,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use physics_variables, only: rminor, plascur
     implicit none
 
     !  Arguments
@@ -175,7 +168,9 @@ contains
     !! T&amp;M/PKNIGHT/LOGBOOK24, p.6
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    
+    use constants, only: echarge
+    use maths_library, only: quanc8
     implicit none
 
     !  Arguments
@@ -193,100 +188,96 @@ contains
          fpow,frate,pa,pc,pn,prate,sigmav
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Initialise local quantities
-
-    alow = 0.0D0
-    bhigh = 1.0D0
-    epsq8 = 1.0D-9
-
-    !  Find fusion power
-    !  Integrate over plasma profiles to obtain fusion reaction rate
-
-    palppv = 0.0D0
-    pchargepv = 0.0D0
-    pneutpv = 0.0D0
-    fusionrate = 0.0D0
-    alpharate = 0.0D0
-    protonrate = 0.0D0
-    pddpv = 0.0D0
-
-    do ireaction = 1,4
-
-       !  Fusion reaction rate (m3/s) is calculated in fint for each ireaction
-       !  sigmav is the volume-averaged fusion reaction rate (m3/s)
-       !  = integral(2 rho sigv(rho).ni(rho)^2 drho) / (deni**2)
-
-       call quanc8(fint,alow,bhigh,epsq8,epsq8,sigmav,errest,nofun,flag)
-       if (ireaction == DT) sigvdt = sigmav
-
-       select case (ireaction)
-
-       case (DT)  !  D + T --> 4He + n reaction
-
-          etot = 17.59D0 * echarge  !  MJ
-          fpow = 1.0D0 * sigmav * etot * fdeut*ftrit * deni*deni  !  MW/m3
-          pa = 0.2D0 * fpow
-          pc = 0.0D0
-          pn = 0.8D0 * fpow
-          frate = fpow/etot  !  reactions/m3/second
-          arate = frate
-          prate = 0.0D0
-          pdtpv = fpow
-
-       case (DHE3)  !  D + 3He --> 4He + p reaction
-
-          etot = 18.35D0 * echarge  !  MJ
-          fpow = 1.0D0 * sigmav * etot * fdeut*fhe3 * deni*deni  !  MW/m3
-          pa = 0.2D0 * fpow
-          pc = 0.8D0 * fpow
-          pn = 0.0D0
-          frate = fpow/etot  !  reactions/m3/second
-          arate = frate
-          prate = frate      !  proton production /m3/second
-          pdhe3pv = fpow
-
-       case (DD1)  !  D + D --> 3He + n reaction
-          !  The 0.5 branching ratio is assumed to be included in sigmav
-
-          etot = 3.27D0 * echarge  !  MJ
-          fpow = 1.0D0 * sigmav * etot * 0.5D0*fdeut*fdeut * deni*deni  !  MW/m3
-          pa = 0.0D0
-          pc = 0.25D0 * fpow
-          pn = 0.75D0 * fpow
-          frate = fpow/etot  !  reactions/m3/second
-          arate = 0.0D0
-          prate = 0.0D0      !  Issue #557: No proton production
-          pddpv = pddpv + fpow
-
-       case (DD2)  !  D + D --> T + p reaction
-          !  The 0.5 branching ratio is assumed to be included in sigmav
-
-          etot = 4.03D0 * echarge  !  MJ
-          fpow = 1.0D0 * sigmav * etot * 0.5D0*fdeut*fdeut * deni*deni  !  MW/m3
-          pa = 0.0D0
-          pc = fpow
-          pn = 0.0D0
-          frate = fpow/etot  !  reactions/m3/second
-          arate = 0.0D0
-          prate = frate      !  proton production /m3/second
-          pddpv = pddpv + fpow
-
-       end select
-
-       palppv = palppv + pa
-       pchargepv = pchargepv + pc
-       pneutpv = pneutpv + pn
-       fusionrate = fusionrate + frate
-       alpharate = alpharate + arate
-       protonrate = protonrate + prate
-
-    end do
-
-  contains
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+        ! Initialise local quantities
+         alow = 0.0D0
+         bhigh = 1.0D0
+         epsq8 = 1.0D-9
+ 
+         ! Find fusion power
+         ! Integrate over plasma profiles to obtain fusion reaction rate
+         palppv = 0.0D0
+         pchargepv = 0.0D0
+         pneutpv = 0.0D0
+         fusionrate = 0.0D0
+         alpharate = 0.0D0
+         protonrate = 0.0D0
+         pddpv = 0.0D0
+ 
+         do ireaction = 1,4
+             ! Fusion reaction rate (m3/s) is calculated in fint for each ireaction
+             ! sigmav is the volume-averaged fusion reaction rate (m3/s)
+             ! = integral(2 rho sigv(rho).ni(rho)^2 drho) / (deni**2)
+ 
+             call quanc8(fint,alow,bhigh,epsq8,epsq8,sigmav,errest,nofun,flag)
+             if (ireaction == DT) sigvdt = sigmav
+ 
+             select case (ireaction)
+ 
+                 case (DT)  ! D + T --> 4He + n reaction
+ 
+                     etot = 17.59D0 * echarge  ! MJ
+                     fpow = 1.0D0 * sigmav * etot * fdeut*ftrit * deni*deni  ! MW/m3
+                     pa = 0.2D0 * fpow
+                     pc = 0.0D0
+                     pn = 0.8D0 * fpow
+                     frate = fpow/etot  ! reactions/m3/second
+                     arate = frate
+                     prate = 0.0D0
+                     pdtpv = fpow
+ 
+                 case (DHE3)  ! D + 3He --> 4He + p reaction
+ 
+                     etot = 18.35D0 * echarge  ! MJ
+                     fpow = 1.0D0 * sigmav * etot * fdeut*fhe3 * deni*deni  ! MW/m3
+                     pa = 0.2D0 * fpow
+                     pc = 0.8D0 * fpow
+                     pn = 0.0D0
+                     frate = fpow/etot  ! reactions/m3/second
+                     arate = frate
+                     prate = frate      ! proton production /m3/second
+                     pdhe3pv = fpow
+ 
+                 case (DD1)  ! D + D --> 3He + n reaction
+                     
+                     ! The 0.5 branching ratio is assumed to be included in sigmav
+                     etot = 3.27D0 * echarge  ! MJ
+                     fpow = 1.0D0 * sigmav * etot * 0.5D0*fdeut*fdeut * deni*deni  ! MW/m3
+                     pa = 0.0D0
+                     pc = 0.25D0 * fpow
+                     pn = 0.75D0 * fpow
+                     frate = fpow/etot  ! reactions/m3/second
+                     arate = 0.0D0
+                     prate = 0.0D0      ! Issue #557: No proton production
+                     pddpv = pddpv + fpow
+ 
+                 case (DD2)  !  D + D --> T + p reaction
+                 
+                     ! The 0.5 branching ratio is assumed to be included in sigmav
+                     etot = 4.03D0 * echarge  ! MJ
+                     fpow = 1.0D0 * sigmav * etot * 0.5D0*fdeut*fdeut * deni*deni  ! MW/m3
+                     pa = 0.0D0
+                     pc = fpow
+                     pn = 0.0D0
+                     frate = fpow/etot  ! reactions/m3/second
+                     arate = 0.0D0
+                     prate = frate      ! proton production /m3/second
+                     pddpv = pddpv + fpow
+ 
+             end select
+ 
+             palppv = palppv + pa
+             pchargepv = pchargepv + pc
+             pneutpv = pneutpv + pn
+             fusionrate = fusionrate + frate
+             alpharate = alpharate + arate
+             protonrate = protonrate + prate
+ 
+         end do
+ 
+     contains
+ 
+         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ 
     function fint(rho)
 
       !! Integrand for fusion power integration
@@ -302,7 +293,9 @@ contains
       !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+      use physics_variables, only: te, rhopedt, te0, teped, tesep, tbeta, &
+        dene, rhopedn, ne0, neped, nesep
+      use profiles_module, only: tprofile, nprofile
       implicit none
 
       real(dp) :: fint
@@ -379,6 +372,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: echarge, rmu0
+    use physics_variables, only: falpha, fdeut
     implicit none
 
     !  Arguments
@@ -671,123 +666,116 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    implicit none
+        use constants, only: echarge, mproton
+       
+        implicit none
 
-    !  Arguments
+        ! Arguments
+        real(kind(1.0D0)), intent(in) :: ealphadt, ebeam, ecritd, ecritt, &
+            ftritbm, ibeam, nd, nt, svdt, tausbme, ti, vol
+        real(kind(1.0D0)), intent(out) :: ehot, nhot, palfdb, palftb
 
-    real(dp), intent(in) :: ealphadt, ebeam, ecritd, ecritt, &
-         ftritbm, ibeam, nd, nt, svdt, tausbme, ti, vol
-    real(dp), intent(out) :: ehot, nhot, palfdb, palftb
+        ! Local variables
+        integer :: iabm
+        real(kind(1.0D0)) :: ebmratd, ebmratt, ehotd, ehott, ifbmd, ifbmt, &
+            ndhot, nhotmsd, nhotmst, nthot, presd, prest, s0d, s0t, svdhotn, &
+            svthotn, tauseffd, tausefft, vcds, vcritd, vcritt, vcts, xcoefd, &
+            xcoeft
+        real(kind(1.0D0)) :: atmd, atmt, epsabs, epsrel
 
-    !  Local variables
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    integer :: iabm
-    real(dp) :: ebmratd,ebmratt,ehotd,ehott,ifbmd,ifbmt, &
-         ndhot,nhotmsd,nhotmst,nthot,presd,prest,s0d,s0t,svdhotn, &
-         svthotn,tauseffd,tausefft,vcds,vcritd,vcritt,vcts,xcoefd, &
-         xcoeft
-    real(dp) :: atmd,atmt,epsabs,epsrel
+        ! Initialise shared variables
+        atmd = 2.0D0   !  atomic mass of deuterium
+        atmt = 3.0D0   !  atomic mass of tritium
+        epsabs = 1.0D-7  !  absolute error
+        epsrel = 1.0D-7  !  relative error
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        ! D and T beam current fractions
+        ifbmd = ibeam * (1.0D0 - ftritbm)
+        ifbmt = ibeam * ftritbm
 
-    !  Initialise shared variables
+        ebmratd = ebeam/ecritd
+        vcritd = sqrt(2.0D0*echarge*1000.0D0*ecritd/(mproton*atmd))
+        tauseffd = tausbme/3.0D0 * log(1.0D0+(ebmratd)**1.5D0)
+        nhotmsd = (1.0D0-ftritbm) * ibeam * tauseffd/(echarge * vol)
 
-    atmd = 2.0D0   !  atomic mass of deuterium
-    atmt = 3.0D0   !  atomic mass of tritium
-    epsabs = 1.0D-7  !  absolute error
-    epsrel = 1.0D-7  !  relative error
+        ebmratt = ebeam/ecritt
+        vcritt = sqrt(2.0D0*echarge*1000.0D0*ecritt/(mproton*atmt))
+        tausefft = tausbme/3.0D0 * log(1.0D0+(ebmratt)**1.5D0)
+        nhotmst = ftritbm * ibeam * tausefft/(echarge * vol)
 
-    !  D and T beam current fractions
+        nhot = nhotmsd + nhotmst
+        ndhot = nhotmsd
+        nthot = nhotmst
 
-    ifbmd = ibeam * (1.0D0 - ftritbm)
-    ifbmt = ibeam * ftritbm
+        ! Average hot ion energy from Deng & Emmert, UWFDM-718, Jan 87
+        vcds = 2.0D0 * ecritd * echarge * 1000.0D0/(2.0D0 * mproton)
+        vcts = 2.0D0 * ecritt * echarge * 1000.0D0/(3.0D0 * mproton)
 
-    ebmratd = ebeam/ecritd
-    vcritd = sqrt(2.0D0*echarge*1000.0D0*ecritd/(mproton*atmd))
-    tauseffd = tausbme/3.0D0 * log(1.0D0+(ebmratd)**1.5D0)
-    nhotmsd = (1.0D0-ftritbm) * ibeam * tauseffd/(echarge * vol)
+        s0d = ifbmd/(echarge * vol)
+        s0t = ifbmt/(echarge * vol)
 
-    ebmratt = ebeam/ecritt
-    vcritt = sqrt(2.0D0*echarge*1000.0D0*ecritt/(mproton*atmt))
-    tausefft = tausbme/3.0D0 * log(1.0D0+(ebmratt)**1.5D0)
-    nhotmst = ftritbm * ibeam * tausefft/(echarge * vol)
+        xcoefd = atmd * mproton * tausbme * vcds * s0d / &
+            (echarge * 1000.0D0 * 3.0D0)
+        xcoeft = atmt * mproton * tausbme * vcts * s0t / &
+            (echarge * 1000.0D0 * 3.0D0)
 
-    nhot = nhotmsd + nhotmst
-    ndhot = nhotmsd
-    nthot = nhotmst
+        presd = xcoefd * xbrak(ebeam,ecritd)
+        prest = xcoeft * xbrak(ebeam,ecritt)
 
-    !  Average hot ion energy from Deng & Emmert, UWFDM-718, Jan 87
+        ehotd = 1.5D0 * presd/ndhot
+        ehott = 1.5D0 * prest/nthot
+        ehot = (ndhot*ehotd + nthot*ehott)/nhot
 
-    vcds = 2.0D0 * ecritd * echarge * 1000.0D0/(2.0D0 * mproton)
-    vcts = 2.0D0 * ecritt * echarge * 1000.0D0/(3.0D0 * mproton)
+        iabm = 2 ; svdhotn = 1.0D-4 * sgvhot(iabm,vcritd,ebeam)
+        iabm = 3 ; svthotn = 1.0D-4 * sgvhot(iabm,vcritt,ebeam)
 
-    s0d = ifbmd/(echarge * vol)
-    s0t = ifbmt/(echarge * vol)
+        palfdb = palphabm(ealphadt,ndhot,nt,svdhotn,vol,ti,svdt)
+        palftb = palphabm(ealphadt,nthot,nd,svthotn,vol,ti,svdt)
 
-    xcoefd = atmd * mproton * tausbme * vcds * s0d / &
-         (echarge * 1000.0D0 * 3.0D0)
-    xcoeft = atmt * mproton * tausbme * vcts * s0t / &
-         (echarge * 1000.0D0 * 3.0D0)
+    contains
 
-    presd = xcoefd * xbrak(ebeam,ecritd)
-    prest = xcoeft * xbrak(ebeam,ecritt)
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ehotd = 1.5D0 * presd/ndhot
-    ehott = 1.5D0 * prest/nthot
-    ehot = (ndhot*ehotd + nthot*ehott)/nhot
+        function xbrak(e0,ec)
+            !! Hot ion energy parameter
+            !! author: P J Knight, CCFE, Culham Science Centre
+            !! e0 : input real :  neutral beam energy (keV)
+            !! ec : input real :  critical energy for electron/ion slowing down of
+            !! the beam ion (keV)
+            !! This routine calculates something to do with the hot ion energy...
+            !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+            !
+            ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    iabm = 2 ; svdhotn = 1.0D-4 * sgvhot(iabm,vcritd,ebeam)
-    iabm = 3 ; svthotn = 1.0D-4 * sgvhot(iabm,vcritt,ebeam)
+            implicit none
 
-    palfdb = palphabm(ealphadt,ndhot,nt,svdhotn,vol,ti,svdt)
-    palftb = palphabm(ealphadt,nthot,nd,svthotn,vol,ti,svdt)
-
-  contains
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    function xbrak(e0,ec)
-
-      !! Hot ion energy parameter
-      !! author: P J Knight, CCFE, Culham Science Centre
-      !! e0 : input real :  neutral beam energy (keV)
-      !! ec : input real :  critical energy for electron/ion slowing down of
-      !! the beam ion (keV)
-      !! This routine calculates something to do with the hot ion energy...
-      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-      !
-      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-      implicit none
-
-      real(dp) :: xbrak
-
-      !  Arguments
-
-      real(dp), intent(in) :: e0, ec
-
-      !  Local variables
+            real(dp) :: xbrak
+            
+            ! Arguments
+            real(dp), intent(in) :: e0, ec
 
       real(dp) :: ans,t1,t2,t3,t4,xarg,xc,xcs
 
-      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      xcs = e0/ec
-      xc = sqrt(xcs)
+            xcs = e0/ec
+            xc = sqrt(xcs)
 
-      t1 = xcs/2.0D0
-      t2 = (log((xcs + 2.0D0*xc + 1.0D0)/(xcs - xc + 1.0D0)))/6.0D0
+            t1 = xcs/2.0D0
+            t2 = (log((xcs + 2.0D0*xc + 1.0D0)/(xcs - xc + 1.0D0)))/6.0D0
 
-      xarg = (2.0D0*xc -1.0D0)/sqrt(3.0D0)
-      t3 = (atan(xarg))/sqrt(3.0D0)
-      t4 = 0.3022999D0
+            xarg = (2.0D0*xc -1.0D0)/sqrt(3.0D0)
+            t3 = (atan(xarg))/sqrt(3.0D0)
+            t4 = 0.3022999D0
 
-      ans = t1 + t2 - t3 - t4
-      xbrak = ans
+            ans = t1 + t2 - t3 - t4
+            xbrak = ans
 
-    end function xbrak
+        end function xbrak
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     function palphabm(ealphadt,nbm,nblk,sigv,vol,ti,svdt)
 
@@ -841,12 +829,14 @@ contains
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+      use error_handling, only: idiags, report_error
+      use maths_library, only: quanc8
+
       implicit none
 
       real(dp) :: sgvhot
 
       !  Arguments
-
       integer, intent(in) :: iabm
       real(dp), intent(in) :: ebeam, vcrx
 
@@ -887,7 +877,7 @@ contains
 
     end function sgvhot
 
-  end subroutine beamcalc
+    end subroutine beamcalc
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -902,6 +892,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: mproton, echarge
+    
     implicit none
 
     real(dp) :: fsv
@@ -1001,6 +993,10 @@ contains
     !! https://idm.euro-fusion.org/?uid=2MSZ4T
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use physics_variables, only: triang, plascur, rmajor, kappa, & 
+        normalised_total_beta, rminor, eped_sf
+    implicit none
+
     real(dp) :: t_eped_scaling
 
     ! Scaling constant and exponents
@@ -1042,6 +1038,9 @@ contains
     !! Issue #413.  See also comment dated 7/8/17
     !! Predictive pedestal modelling for DEMO,  Samuli Saarelma.
     !! https://idm.euro-fusion.org/?uid=2MSZ4T
+
+    use physics_variables, only: rmajor, rminor, eped_sf
+    implicit none
 
     real(dp) :: p_eped_scaling !pressure in kev*10¹9*m¯3
     ! Scaling constant and exponents
@@ -1137,6 +1136,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: pi
+    use physics_variables, only: vol, rmajor, rminor, ne0, bt, alphan, alphat, &
+        te0, ssync
+
     implicit none
 
     !  Arguments
@@ -1189,17 +1192,25 @@ contains
 
   subroutine imprad(radb, radl, radcore, radtot)
     !! author: H Lux (UKAEA)
-    !!
+!!
     !! This routine calculates the total radiation losses from impurity line 
     !! radiation and bremsstrahlung for all elements for a given temperature 
     !! and density profile.
     !!
-    !! **References**
+!! **References**
     !!
     !! - Bremsstrahlung equation from Johner, Fusion Science and Technology 59 (2011), pp 308-349
     !! - L(z) data (coronal equilibrium) from Marco Sertoli, ASDEX-U, private communication
-    !! - Kallenbach et al., Plasma Phys. Control. Fus. 55 (2013) 124041
-  
+!! - Kallenbach et al., Plasma Phys. Control. Fus. 55 (2013) 124041
+
+    use impurity_radiation_module, only: impurity_arr, coreradius, &
+        coreradiationfraction, fradcore, impradprofile
+    use physics_variables, only: rhopedt, rhopedn, te0, teped, tesep, alphan, &
+        alphat, tbeta, ne0, neped, nesep
+    use profiles_module, only: tprofile, nprofile
+
+    implicit none
+    
     real(dp), intent(out) :: radb
     !! bremsstrahlung only [MW/m\(^3\)]
 

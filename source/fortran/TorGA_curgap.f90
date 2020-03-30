@@ -2,8 +2,7 @@
       subroutine TorGA_curgap(rjpd,rjpd0,ratjpd,denom,eps,npara,nperp   &
      &,omode,cefldx,cefldy,cefldz,tebulk,thtc,thetap,yy,lh,zeffin,model &
      &,tol,ngauss,ig,cdharm)
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       REAL(p_) rjpd,rjpd0,ratjpd,denom
@@ -245,8 +244,7 @@
       end
       FUNCTION TorGa_alpha(x)
 !
-      USE precision_mod
-      USE real_mod
+      USE precision_mod, ONLY: p_
       IMPLICIT NONE
       REAL(p_) TorGa_alpha, x
       REAL(p_) TorGa_bessj
@@ -293,9 +291,8 @@
 
       function TorGa_funxjz(x)
 
-      use precision_mod
-      use real_mod
-      use abs_cd  !EXTERNAL
+      use precision_mod, only: p_
+      use abs_cd, only: cdroutine !EXTERNAL
       implicit none
       REAL(p_) TorGa_funxjz, x
       REAL(p_) TorGa_alpha
@@ -345,9 +342,8 @@
 
       function TorGa_funxjs(x)
 
-      use precision_mod
-      use real_mod
-      use abs_cd  !EXTERNAL
+      use precision_mod, only: p_
+      use abs_cd, only: cdroutine  !EXTERNAL
       implicit none
 
       REAL(p_) TorGa_funxjs,x
@@ -394,7 +390,7 @@
       end
 
       FUNCTION TorGA_bessj0(x)
-      USE precision_mod
+      USE precision_mod, ONLY: p_
       IMPLICIT NONE
 !
       REAL(p_) TorGA_bessj0,x
@@ -439,8 +435,7 @@
       RETURN
       END FUNCTION TorGA_bessj0
       FUNCTION TorGA_bessj1(x)
-      USE precision_mod
-      USE real_mod
+      USE precision_mod, ONLY: p_
       IMPLICIT NONE
 !
       REAL(p_) TorGA_bessj1,x
@@ -485,8 +480,7 @@
       RETURN
       END FUNCTION TorGA_bessj1
       FUNCTION TorGA_bessj(n,x)
-      USE precision_mod
-      USE real_mod
+      USE precision_mod, ONLY: p_
       IMPLICIT NONE
 !
       INTEGER n,IACC
@@ -566,8 +560,7 @@
 !     Gauss Legendre package
 !--------------------------------------------------------------------------
       subroutine TorGa_mgauleg (x, w, n)
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
       integer n
       REAL(p_) x(n),w(n)
@@ -608,8 +601,7 @@
 !
       function TorGa_zgauleg (func, a, b, n, multi, ifail)
 
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       REAL(p_) TorGa_zgauleg,func,a,b
@@ -677,8 +669,7 @@
       end
       subroutine TorGa_ceqmdl(eps,thetap)
 
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       REAL(p_) eps,thetap
@@ -707,8 +698,7 @@
 
       subroutine TorGa_getftrap
 
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       include 'globcd.h'
@@ -740,8 +730,7 @@
       end
       subroutine TorGa_gethcap(z_in,hcap,hprime)
 
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       REAL(p_) z_in,hcap,hprime
@@ -766,8 +755,7 @@
 !---------------------------------------------------------------------------
       function TorGa_hcapint(s)
 
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       REAL(p_) TorGa_hcapint,s
@@ -784,8 +772,7 @@
 
       subroutine TorGa_getfcap(u,fcap,fprime)
 
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       REAL(p_) u,tol
@@ -826,8 +813,7 @@
 !-------------------------------------------------------------------------
       function TorGa_fcapint(y)
 
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       REAL(p_) TorGa_fcapint,y
@@ -844,8 +830,7 @@
       end
       subroutine TorGa_getlims(etmax,epst1,epst2)
 
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       REAL(p_) etmax,epst1,epst2
@@ -893,8 +878,7 @@
 
       subroutine TorGa_gamsrc(gam1,gam2,xisq)
 
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       REAL(p_) gam1,gam2
@@ -932,8 +916,7 @@
       return
       end
       SUBROUTINE TorGa_mqromb1(func,a,b,ss,eps,jt)
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       INTEGER JMAX,JMAXP,K,KM
@@ -964,8 +947,7 @@
       END
 !------------------------------------------------------------------------
       SUBROUTINE TorGa_trapzd(func,a,b,s,n)
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       INTEGER n
@@ -992,8 +974,7 @@
       END
       function TorGa_qftint(s)
 
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       REAL(p_) TorGa_qftint,s
@@ -1008,8 +989,7 @@
       return
       end
       SUBROUTINE TorGa_polint(xa,ya,n,x,y,dy)
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       INTEGER n,NMAX
@@ -1057,7 +1037,6 @@
 
 !#######################################################################
  !INCLUDE 'const_and_precisions.f90'
- !INCLUDE 'config_ext.f90'
  !INCLUDE 'green_func_ext.f90'
 !#######################################################################
 
@@ -1085,8 +1064,9 @@
 ! USE precision_mod         ! emp
 ! USE real_mod              ! emp
 !---
- USE const_and_precisions  ! NM
- USE green_func_ext        ! NM
+! NM
+ USE green_func_ext, ONLY: wp_, mc2_, Setup_SpitzFunc, SpitzFuncCoeff, &
+  GenSpitzFunc
 !---
  IMPLICIT NONE
 !--- remove it later! ---

@@ -1,10 +1,6 @@
 module superconductors
   !! Module containing superconducter critical surfaces and conductor data
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  use process_output
-  use error_handling
-  use rebco_variables
-  use resistive_materials
   implicit none
 contains
 
@@ -18,6 +14,7 @@ subroutine jcrit_rebco(temperature, b, jcrit, validity, iprint)
     !! jcrit : output real : Critical current density in superconductor (A/m2)
     ! Will return a negative number if the temperature is greater than Tc0, the
     ! zero-field critical temperature.
+    use constants, only: pi
     implicit none
 
     !  Arguments
@@ -85,6 +82,7 @@ subroutine current_sharing_rebco(current_sharing_t, bfield, j)
     ! Uses 'function jcrit_rebco' and the finds the temperature for given field and current density
     ! Will return a negative number if the current density is too high
 
+    use maths_library, only: secant_solve
     implicit none
 
     !  Arguments
@@ -134,11 +132,15 @@ end function function_jcrit_rebco
 !--------------------------------------------------------------------
 
 subroutine test_quench()
+    use resistive_materials, only: resistive_material
+    implicit none
+
     real(dp) :: jcrit
     real(dp) :: B, delta_b,jcrit42,jcrit14,jcrit22, jcrit33
     real(dp) :: jcrit50, jcrit65, jcrit72, jcrit90
     real(dp) :: T, delta_t, copper0, copper10, hastelloyB, RRR
     real(dp) :: copper0B, copper10B
+    
     integer::i
     logical :: validity
     type(resistive_material)::copper, jacket, solder, hastelloy
@@ -245,6 +247,8 @@ subroutine itersc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use error_handling, only: fdiags, report_error
+    use constants, only: pi
   implicit none
 
   !  Arguments
@@ -367,6 +371,7 @@ subroutine bi2212(bmax,jstrand,tsc,fhts,jcrit,tmarg)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use error_handling, only: fdiags, report_error
     implicit none
 
     !  Arguments
@@ -430,6 +435,7 @@ subroutine jcrit_nbti(temperature,bmax,c0,bc20max,tc0max,jcrit,tcrit)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: pi
     implicit none
 
     !  Arguments
@@ -484,6 +490,8 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use error_handling, only: fdiags, report_error
+    use maths_library, only: variable_error
     implicit none
 
     ! Arguments
@@ -622,6 +630,12 @@ subroutine croco(jcritsc,croco_strand,conductor,croco_od,croco_thick)
     !! "CroCo" (cross-conductor) strand and cable design for
     !! "REBCO" 2nd generation HTS superconductor
     ! Updated 13/11/18 using data from Lewandowska et al 2018.
+    
+    use rebco_variables, only: copper_area, copper_thick, croco_id, &
+      hastelloy_area, hastelloy_thickness, rebco_area, solder_area, &
+      stack_thickness, tape_thickness, tape_width, tapes, rebco_thickness
+    use resistive_materials, only: volume_fractions, supercon_strand
+    use constants, only: pi
     implicit none
     real(dp), intent(in) ::jcritsc
     type(volume_fractions), intent(inout)::conductor
@@ -683,6 +697,9 @@ subroutine copper_properties(T,copper)
     ! RRR=100, B=12 T
     ! Cryodata Software Package, CRYOCOMP, v 3.0, Florence, SC, 1997
     ! Data are available up to 1000 K.
+    use resistive_materials, only: resistive_material
+    use constants, only: pi
+    implicit none
 
     type(resistive_material)::copper
     real(dp), intent(in) :: T   ! temperature
@@ -750,6 +767,7 @@ subroutine copper_properties2(T,B, copper)
     ! Different models use different definitions for residual resistivity ratio RRR.
     ! CUDI: resistivity at 290 K / 4 K.
     ! The range of validity of this t is between 4 K and 300 K.
+    use resistive_materials, only: resistive_material
     implicit none
 
     type(resistive_material)::copper
@@ -790,6 +808,7 @@ subroutine copper_properties2(T,B, copper)
 end subroutine copper_properties2
 ! -------------------------------------------------------------------------
 subroutine hastelloy_properties(temperature,hastelloy)
+    use resistive_materials, only: resistive_material
     implicit none
 
     type(resistive_material)::hastelloy
@@ -820,6 +839,8 @@ subroutine hastelloy_properties(temperature,hastelloy)
 end subroutine hastelloy_properties
 ! --------------------------------------------------------------------------
 subroutine solder_properties(T,solder)
+    use resistive_materials, only: resistive_material
+    use constants, only: pi
     implicit none
 
     type(resistive_material)::solder
@@ -838,7 +859,7 @@ subroutine solder_properties(T,solder)
 end subroutine solder_properties
 ! -------------------------------------------------------------------------
 subroutine jacket_properties(T, jacket)
-
+    use resistive_materials, only: resistive_material
     implicit none
 
     type(resistive_material)::jacket
@@ -864,6 +885,9 @@ subroutine jacket_properties(T, jacket)
 end subroutine jacket_properties
 ! ----------------------------------------------------------------------------
 subroutine helium_properties(T,helium)
+    use resistive_materials, only: resistive_material
+    implicit none
+  
     ! Isobaric Data for P = 0.60000 MPa
     ! http://webbook.nist.gov/chemistry/fluid/
     ! See very approximate fits in quench_data.xlsx (Issue #522)

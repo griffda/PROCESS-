@@ -11,15 +11,7 @@ module tfcoil_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  use build_variables, only : tfthko, hmax
-  use constants
-  use error_handling
-  use fwbs_variables
-  use physics_variables
-  use process_output
-  use sctfcoil_module
-  use tfcoil_variables
-
+  implicit none
   private
   
   public :: tfcoil, cntrpst
@@ -39,9 +31,13 @@ contains
     !! in routine <A HREF="sctfcoil.html">sctfcoil</A> instead.
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
-
-    use build_module, only : portsz
-   
+   use build_module, only: portsz
+   use process_output, only: int2char, oheadr, ovarre, osubhd, oblnkl, &
+      ocmmnt
+   use sctfcoil_module, only: sctfcoil
+   use tfcoil_variables, only: bmaxtf, cforce, estotftgj, i_tf_sup, n_tf, &
+      ripmax, ripple, ritfc, vforce, xarc, yarc
+   use constants, only: mfile
     implicit none
 
     !  Arguments
@@ -75,7 +71,15 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    implicit none
+   use build_variables, only: hmax, tfcth, tfthko
+   use fwbs_variables, only: pnuccp
+   use process_output, only: oheadr, ovarre, osubhd
+   use tfcoil_variables, only: cph2o, denh2o, dtiocool, etapump, fcoolcp, &
+      i_tf_sup, k_copper, kh2o, muh2o, ncool, ppump, prescp, rbmax, rcool, &
+      rhocp, tcoolin, tcpav, tcpav2, tcpmax, a_cp_cool, n_tf, vcool, vol_cond_cp
+   use constants, only: pi
+   use error_handling, only: report_error
+   implicit none
 
     !  Arguments
     integer, intent(in) :: outfile,iprint

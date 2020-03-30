@@ -17,10 +17,7 @@ module kit_blanket_model
   !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  use error_handling
-
   implicit none
 
   private
@@ -377,7 +374,7 @@ contains
     !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use constants, only: pi
     implicit none
 
     !  Arguments
@@ -481,6 +478,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use maths_library, only: hybrd
     implicit none
 
     !  Arguments
@@ -657,7 +655,8 @@ contains
     !! (describes 26/09/2013 model refinement)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use error_handling, only: report_error
+    
     implicit none
 
     !  Arguments
@@ -981,7 +980,7 @@ contains
     !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+		use maths_library, only: linesolv
     implicit none
 
     !  Arguments
@@ -1019,27 +1018,7 @@ module fwbs_module
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use build_module
-  use build_variables
-  use buildings_variables
-  use constants
-  use cost_variables
-  use divertor_variables
-  use fwbs_variables
-  use heat_transport_variables
-  use kit_blanket_model
-  use maths_library
-  use pfcoil_variables
-  use physics_variables
-  use plasma_geometry_module
-  use process_output
-  use refprop_interface
-
-  use stellarator_variables
-  use tfcoil_variables
-  use times_variables
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   private
@@ -1069,7 +1048,34 @@ contains
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use build_variables, only: blarea, blareaib, blareaob, blbmith, blbmoth, &
+      blbpith, blbpoth, blbuith, blbuoth, blnkith, blnkoth, blnktth, clhsf, &
+      ddwex, fwarea, fwith, fwoth, hmax, rsldi, rsldo, scrapli, scraplo, &
+      sharea, shareaib, shareaob, shldith, shldoth, shldtth, vgap, vgap2, &
+      ddwi, tfcth
+    use buildings_variables, only: clh1
+    use cost_variables, only: cfactr, tlife
+    use divertor_variables, only: divclfr, divdens, divfix, divmas, divplt, &
+      divsur, fdiva
+    use fwbs_variables, only: bktlife, blktmodel, breedmat, coolmass, &
+      declblkt, declfw, declshld, densbreed, denstl, dewmkg, emult, fblbe, &
+      fblbreed, fblhebmi, fblhebmo, fblhebpi, fblhebpo, fblli2o, fblss, &
+      fblvd, fdiv, fhcd, fhole, fvoldw, fvolsi, fvolso, fwclfr, fwmass, &
+      hcdportsize, li6enrich, nflutf, npdiv, nphcdin, nphcdout, pnucblkt, &
+      pnucdiv, pnucfw, pnuchcd, pnucloss, pnucshld, ptfnuc, rdewex, tbr, &
+      tritprate, vdewex, vdewin, vfblkt, vfshld, volblkt, volblkti, volblkto, &
+      volshld, vvmass, wallpf, whtblbe, whtblbreed, whtblkt, whtblss, whtblvd, &
+      whtshld, wpenshld, wtblli2o, pnuccp, rpf2dewar
+    use heat_transport_variables, only: ipowerflow
+    use kit_blanket_model, only: nflutfi, nflutfo, pnuctfi, pnuctfo, t_bl_y, &
+      vvhemaxi, vvhemaxo, vvhemini, vvhemino
+    use pfcoil_variables, only: rb, zh
+    use physics_variables, only: idivrt, kappa, pneutmw, rmajor, rminor, &
+      triang, wallmw
+    use process_output, only: ovarre, osubhd, ovarin, oheadr, ocmmnt
+    use tfcoil_variables, only: casthi, i_tf_sup, tfsai, tfsao, thkwp, tinstf
+		use constants, only: pi
+		use maths_library, only: eshellvol, eshellarea
     implicit none
 
     !  Arguments
@@ -1876,6 +1882,28 @@ contains
     !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    use build_variables, only: blareaib, blareaob, blbmith, blbmoth, blbpith, &
+      blbpoth, blbuith, blbuoth, ddwi, fwareaib, fwareaob, fwith, fwoth, &
+      shareaib, shareaob, shldith, shldoth
+    use cost_variables, only: cfactr, tlife
+    use fwbs_variables, only: bktlife, breedmat, densbreed, emult, fblbe, &
+      fblbreed, fblhebmi, fblhebmo, fblhebpi, fblhebpo, fblss, fdiv, fhcd, &
+      fhole, hcdportsize, li6enrich, nflutf, npdiv, nphcdout, pnucblkt, &
+      pnucshld, ptfnucpm3, ptfnucpm3, tbr, tritprate, vvhemax, wallpf, &
+      nphcdin, ptfnuc
+    use heat_transport_variables, only: ipowerflow
+    use kit_blanket_model, only: A_bl_IB, A_bl_OB, A_FW_IB, A_FW_OB, A_VV_IB, &
+      A_VV_OB, alpha_BM_IB, alpha_BM_OB, alpha_BP_IB, alpha_BP_OB, &
+      alpha_m, alpha_puls, breeder, CF_bl, chi_Be_BZ_IB, chi_Be_BZ_OB, &
+      chi_breed_BZ_IB, chi_breed_BZ_OB, chi_steels_BZ_IB, chi_steels_BZ_OB, &
+      e_Li, f_peak, f_peak, G_tot, H_CD_ports, M_E, n_ports_div, &
+      n_ports_H_CD_IB, n_ports_H_CD_OB, nflutfi, nflutfo, NWL_av, P_n, &
+      P_th_tot, pnucsh, pnuctfi, pnuctfo, t_bl_fpy, t_BM_IB, t_BM_OB, &
+      t_BP_IB, t_BP_OB, t_BZ_IB, t_BZ_OB, t_FW_IB, t_FW_OB, t_plant, &
+      t_VV_IB, t_VV_OB, tbratio, vvhemaxi, vvhemaxo, kit_blanket
+    use physics_variables, only: pneutmw, wallmw
+    use tfcoil_variables, only: arealeg, n_tf, tfareain, tfleng
+    use times_variables, only: tdwell, tpulse, tramp
 
     implicit none
 
@@ -2013,6 +2041,8 @@ contains
     !! Dept., Culham Laboratory, Abingdon
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    use fwbs_variables, only: coolwh, irefprop
+    use refprop_interface, only: tsat_refprop
 
     implicit none
 
@@ -2084,7 +2114,13 @@ contains
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    use build_variables, only: blnkith, blnkoth, fwith, fwoth, shldith, shldoth
+    use cost_variables, only: cfactr, tlife
+    use physics_variables, only: wallmw
+    use tfcoil_variables, only: casthi, i_tf_sup, tfsai, tfsao, thkwp, &
+      tinstf
 
+		use maths_library, only: tril
     implicit none
 
     !  Arguments

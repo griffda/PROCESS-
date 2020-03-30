@@ -61,33 +61,6 @@ module process_input
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  use build_variables
-  use buildings_variables
-  use constraint_variables
-  use cost_variables
-  use current_drive_variables
-  use divertor_Kallenbach_variables
-  use divertor_variables
-  use error_handling
-  use fwbs_variables
-  use heat_transport_variables
-  use ife_variables
-  use impurity_radiation_module
-  use numerics
-  use pfcoil_variables
-  use physics_variables
-  use pf_power_variables
-  use plasmod_variables
-  use process_output
-  use pulse_variables
-  use scan_module
-  use stellarator_variables
-  use tfcoil_variables
-  use times_variables
-  use vacuum_variables
-  use rebco_variables
-  use reinke_variables
-
   implicit none
 
   private
@@ -124,6 +97,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: nout
+    use numerics, only: ipeqns, icc, active_constraints
     implicit none
 
     !  Arguments
@@ -176,6 +151,145 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use global_variables, only: run_tests, verbose, maxcal, runtitle
+    use build_variables, only: fmsfw, blbmoth, blbuith, fmsbc, shldoth, &
+      fmsdwi, shldtth, shldlth, vgap2, plleni, fwoth, vvblgap, fmsbl, &
+      thshield, iprecomp, blbpith, aplasmin, blbuoth, tfcth, fmsdwe, &
+      iohcl, tftsgap, clhsf, bore, plleno, scrapli, gapomin, ddwex, &
+      rinboard, fmstf, blnkoth, fseppc, plsepo, ddwi, fmssh, blnkith, &
+      ohcth, plsepi, fmsoh, blbmith, gapoh, fcspc, scraplo, vgaptop, &
+      blbpoth, gapds, fwith, vgap, shldith, sigallpc, tfootfi, f_avspace
+    use buildings_variables, only: hcwt, conv, wgt, trcl, rxcl, rbwt, mbvfac, &
+      esbldgm3, rbvfac, fndt, row, wgt2, pibv, clh1, stcl, clh2, pfbldgm3, &
+      shmf, tfcbv, hccl, rbrt, triv, shov, admv, wsvfac
+    use constraint_variables, only: flhthresh, fpeakb, fpsep, fdivcol, ftcycl, &
+      betpmx, fpsepbqar, ftmargtf, fradwall, fptfnuc, fnesep, fportsz, tbrmin, &
+      maxradwallload, pseprmax, fdene, fniterpump, fpinj, pnetelin, powfmax, &
+      fgamcd, ftbr, mvalim, taulimit, walalw, fmva, fradpwr, nflutfmax, fipir, &
+      fauxmn, fiooic, fcwr, fjohc0, frminor, psepbqarmax, ftpeak, bigqmin, &
+      fstrcond, fptemp, ftmargoh, fvs, fbetatry, vvhealw, fpnetel, ftburn, &
+      ffuspow, fpsepr, ptfnucmax, fvdump, pdivtlim, ftaulimit, nbshinefmax, &
+      fcqt, fzeffmax, fstrcase, fhldiv, foh_stress, fwalld, gammax, fjprot, &
+      ftohs, tcycmn, auxmin, zeffmax, peakfactrad, fdtmp, fpoloidalpower, &
+      fnbshinef, freinke, fvvhe, fqval, fq, ftaucq, fbetap, fbeta, fjohc, &
+      fflutf, bmxlim, tbrnmn, fbetatry_lower
+    use cost_variables, only: ucich, uctfsw, dintrt, ucblbe, uubop, dtlife, &
+      cost_factor_vv, cfind, uccry, fcap0cp, uccase, uuves, cconshtf, conf_mag, &
+      ucbllipb, ucfuel, uumag, ucpfbs, ireactor, uucd, div_umain_time, div_nu, &
+      maintenance_gen, uctfps, uufw, tbktrepl, cost_factor_fwbs, decomf, &
+      cconshpf, uche3, ucpfdr1, ucech, uudiv, cost_model, adivflnc, &
+      cost_factor_rh, cost_factor_bop, ifueltyp, fcontng, fwbs_nref, &
+      cost_factor_buildings, favail, cconfix, ucblli2o, abktflnc, ucf1, ucfnc, &
+      ucpfps, iavail, ucpfbk, cost_factor_tf_coils, costexp_pebbles, ucmisc, &
+      cpstflnc, uccryo, costexp, fwbs_nu, ucpfic, ucblbreed, tcomrepl, uufuel, &
+      ucdiv, uccpcl1, ratecdol, uctfbr, uccpclb, ucoam, div_prob_fail, ucnbi, &
+      uccu, ucwst, cfactr, div_nref, amortization, ucwindtf, ucme, csi, cowner, &
+      cost_factor_misc, fcr0, cturbb, lsa, fcap0, output_costs, &
+      cost_factor_land, redun_vacp, ucrb, uctfbus, num_rh_systems, fkind, &
+      fwbs_umain_time, uchrs, avail_min, uciac, step_ref, ucshld, tdivrepl, &
+      ucblli, ucpfcb, tlife, ipnet, fcdfuel, ucbus, ucpfb, uchts, &
+      maintenance_fwbs, fwbs_prob_fail, uclh, ucblss, ucblvd, ucsc, ucturb, &
+      ucpens, cland, ucwindpf 
+    use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
+      ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
+      forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
+      etalh, frbeam 
+    use divertor_Kallenbach_variables, only: kallenbach_test_option, &
+      relerr_sol, kallenbach_scan_switch, lcon_factor, kallenbach_scan_num, &
+      kallenbach_scan_end, kallenbach_scan_start, target_spread, &
+      fractionwidesol, impurity_enrichment, mach0, kallenbach_scan_var, &
+      abserr_sol, qtargettotal, lambda_q_omp, ttarget, kallenbach_tests, &
+      kallenbach_switch, netau_sol, neratio, targetangle 
+    use divertor_variables, only: fdfs, anginc, divdens, divclfr, c4div, &
+      c5div, ksic, fififi, divplt, delld, c2div, betao, divdum, tdiv, c6div, &
+      omegan, prn1, fgamp, frrp, xpertin, c1div, betai, bpsout, xparain, fdiva, &
+      zeffdiv, hldivlim, rlenmax, divfix, c3div 
+    use fwbs_variables, only: fblhebpo, vfblkt, fdiv, fvolso, fwcoolant, &
+      pitch, iblanket, blktmodel, afwi, fblli2o, nphcdin, breeder_multiplier, &
+      fw_armour_thickness, roughness, fwclfr, breedmat, fblli, fblvd, &
+      iblanket_thickness, vfcblkt, breeder_f, fbllipb, fhcd, vfshld, fblhebmi, &
+      denw, f_neut_shield, fw_th_conductivity, nblktmodti, fw_wall, afwo, &
+      fvolsi, etahtp, nblktmodpo, fwpressure, emult, fwoutlet, nblktmodpi, &
+      fblhebpi, fblss, inlet_temp, outlet_temp, fblbreed, qnuc, blpressure, &
+      declblkt, fblhebmo, blkttype, afw, inuclear, declshld, hcdportsize, &
+      npdiv, peaking_factor, primary_pumping, rpf2dewar, secondary_cycle, &
+      denstl, declfw, nphcdout, iblnkith, vfpblkt, fwinlet, wallpf, fblbe, &
+      fhole, fwbsshape, coolp, tfwmatmax, irefprop, fw_channel_length, &
+      li6enrich, etaiso, nblktmodto, fvoldw 
+    use heat_transport_variables, only: htpmw_fw, baseel, fmgdmw, htpmw_div, &
+      pwpm2, etath, vachtmw, iprimshld, fpumpdiv, pinjmax, htpmw_blkt, etatf, &
+      htpmw_min, fpumpblkt, ipowerflow, htpmw_shld, fpumpshld, trithtmw, &
+      iprimnloss, fpumpfw 
+    use ife_variables, only: bldzu, etali, sombdr, gainve, cdriv0, v1dzl, &
+      bldrc, fauxbop, pfusife, dcdrv0, fwdr, pdrive, mcdriv, ucconc, shdr, &
+      v3dzu, bldzl, rrin, maxmat, shmatf, fwmatf, drveff, flirad, shdzu, v2dzu, &
+      pifecr, ifedrv, v2dr, chmatf, v1dr, v1matf, dcdrv1, chdzu, dcdrv2, &
+      ifetyp, fwdzl, htpmw_ife, uccarb, v3matf, fbreed, edrive, ptargf, cdriv2, &
+      fburn, fwdzu, etave, v3dr, uctarg, shdzl, ucflib, v3dzl, v1dzu, v2dzl, &
+      chdzl, chrad, cdriv1, tgain, somtdr, v2matf, rrmax, bldr, frrmax , blmatf
+    use impurity_radiation_module, only: coreradius, nimp, impvar, fimpvar, &
+      coreradiationfraction, impdir, fimp
+    use numerics, only: factor, boundl, minmax, neqns, nvar, epsfcn, ixc, &
+      epsvmc, ftol, ipnvars, ioptimz, nineqns, ipeqns, boundu, icc, ipnfoms, name_xc
+    use pfcoil_variables, only: rjconpf, zref, fcuohsu, oh_steel_frac, vf, &
+      coheof, sigpfcalw, alstroh, ipfres, fcupfsu, fvssu, etapsu, i_cs_stress, &
+      fbmaxcs, ngc, rpf2, fcohbop, ohhghf, vfohc, isumatoh, ngrpmx, ngc2, rpf1, &
+      ngrp, isumatpf, nfxfh, alfapf, routr, sigpfcf, pfclres, bmaxcs_lim, &
+      ncls, nfixmx, cptdin, ipfloc 
+    use physics_variables, only: ipedestal, taumax, i_single_null, fvsbrnni, &
+      rhopedt, cvol, fdeut, ffwal, eped_sf, iculbl, itartpf, ilhthresh, &
+      fpdivlim, epbetmax, isc, kappa95, aspect, cwrmax, nesep, csawth, dene, &
+      ftar, plasma_res_factor, ssync, rnbeam, beta, neped, hfact, dnbeta, &
+      fgwsep, rhopedn, tratio, q0, ishape, fne0, ignite, igeom, ftrit, &
+      ifalphap, tauee_in, alphaj, alphat, icurr, q, ti, tesep, rli, triang, &
+      itart, ralpne, iprofile, triang95, rad_fraction_sol, betbm0, protium, &
+      teped, fhe3, iwalld, gamma, falpha, fgwped, gtscale, tbeta, ibss, &
+      iradloss, te, alphan, rmajor, kappa, ifispact, iinvqd, fkzohm, beamfus0, &
+      tauratio, idensl, ieped, bt, iscrp, ipnlaws, betalim, betalim_lower, &
+      idia, ips
+    use pf_power_variables, only: iscenr, maxpoloidalpower 
+    use plasmod_variables, only: plasmod_x_control, plasmod_i_modeltype, &
+      plasmod_nx, plasmod_chisaw, plasmod_contrpovr, plasmod_dtmax, &
+      plasmod_eccdeff, plasmod_isawt, plasmod_dtinc, plasmod_eopt, &
+      plasmod_qdivt, plasmod_dx_cd, plasmod_maxa, plasmod_qnbi_psepfac, &
+      plasmod_dx_heat, plasmod_i_equiltype, plasmod_psepplh_sup, &
+      plasmod_imptype, plasmod_sawpertau, plasmod_dtmaxmax, &
+      plasmod_gamcdothers, plasmod_i_impmodel, plasmod_dtmaxmin, plasmod_test, &
+      plasmod_iprocess, plasmod_ainc, plasmod_fcdp, plasmod_x_fus, &
+      plasmod_dx_fus, plasmod_v_loop, plasmod_maxpauxor, plasmod_dtmin, &
+      plasmod_nchannels, plasmod_spellet, plasmod_pedscal, plasmod_capa, &
+      plasmod_dgy, plasmod_dt, plasmod_tol, plasmod_fpellet, plasmod_contrpovs, &
+      plasmod_x_heat, plasmod_fradc, plasmod_tolmin, plasmod_pech, &
+      plasmod_globtau, plasmod_pfus, plasmod_nbi_energy, plasmod_nxt, &
+      plasmod_x_cd, plasmod_chisawpos, plasmod_cxe_psepfac, plasmod_dx_control, &
+      plasmod_car_qdivt 
+    use pulse_variables, only: lpulse, dtstor, itcycl, istore, bctmp 
+    use scan_module, only: isweep_2, nsweep, isweep, scan_dim, nsweep_2, &
+      sweep_2, sweep, ipnscns, ipnscnv 
+    use stellarator_variables, only: f_asym, isthtr, n_res, iotabar, fdivwet, &
+      f_w, bmn, shear, m_res, f_rad, flpitch, istell
+    use tfcoil_variables, only: fcoolcp, tfinsgap, vftf, &
+      quench_detection_ef, fhts, thkwp, rcool, rhotfleg, thkcas, &
+      casthi, n_pancake, bcritsc, i_tf_sup, strncon_pf, thwcndut, farc4tf, &
+      thicndut, tftmp, dalu, oacdcp, tmax_croco, ptempalw, tmargmin_tf, tmpcry, &
+      alstrtf, dztop, dcond, strncon_cs, etapump, drtop, vcool, dcondins, &
+      i_tf_tresca, dhecoil, tmaxpro, strncon_tf, n_tf, tcpav, fcutfsu, jbus, &
+      casthi_fraction, tmargmin_cs, sigvvall, vdalw, dcase, &
+      cpttf_max, dcopper, tdmptf, casths, i_tf_turns_integer, quench_model, &
+      tcritsc, layer_ins, tinstf, n_layer, tcoolin, ripmax, frhocp, &
+      cpttf, tmargmin, casths_fraction, eff_tf_cryo, eyoung_al, eyoung_ins, &
+      eyoung_reinforced_al, eyoung_steel, eyoung_winding, f_vforce_inboard, &
+      fcoolleg, frholeg, ftoroidalgap, i_tf_sc_mat, i_tf_shape, i_tf_bucking, &
+      leno, n_tf_graded_layers, n_tf_joints, n_tf_joints_contact, poisson_al, &
+      poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact
+    use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
+      tdwell, tohsin 
+    use vacuum_variables, only: dwell_pump, pbase, tn, pumpspeedfactor, &
+      initialpressure, outgasfactor, prdiv, pumpspeedmax, rat, outgasindex, &
+      pumpareafraction, ntype, vacuum_model, pumptp 
+    use rebco_variables, only: hastelloy_thickness, f_coppera_m2, &
+      rebco_thickness, copper_rrr, coppera_m2_max, croco_thick, copper_thick 
+    use reinke_variables, only: reinke_mode, fzactual, impvardiv, lhat 
     implicit none
 
     !  Arguments
@@ -3252,6 +3366,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use constants, only: nout
     implicit none
 
     !  Arguments

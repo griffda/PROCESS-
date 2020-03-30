@@ -21,14 +21,13 @@ subroutine init
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!file:///home/mkumar/process/source/fortran/input.f90
 
-
-  use error_handling
   use global_variables, only: verbose, fileprefix, output_prefix
-  use impurity_radiation_module
-  use numerics
-  use process_input
-  use process_output
   use main_module, only: run_summary
+  use constants, only: opt_file, vfile, nout, nplot, mfile, sig_file
+  use error_handling, only: initialise_error_list 
+  use impurity_radiation_module, only: initialise_imprad 
+  use numerics, only: ixc , lablxc, nvar
+  use process_input, only: nin, input
   implicit none
 
   !  Arguments

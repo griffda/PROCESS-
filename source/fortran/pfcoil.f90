@@ -11,20 +11,9 @@ module pfcoil_module
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use build_variables
-  use constants
-  use error_handling
-  use fwbs_variables
-  use maths_library
-  use pfcoil_variables
-  use physics_variables
-  use process_output
-  use sctfcoil_module
-  use superconductors
-  use tfcoil_variables
-  use times_variables
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+  use resistive_materials, only: volume_fractions, supercon_strand
+  use pfcoil_variables, only: nfixmx, ngrpmx, nclsmx, ngc2
   implicit none
 
   private
@@ -61,6 +50,22 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: iohcl, hpfdif, hpfu, hmax, ohcth, tfthko, &
+        tfcth, r_tf_outboard_mid, bore
+    use error_handling, only: idiags, report_error
+    use fwbs_variables, only: denstl
+    use pfcoil_variables, only: rpf1, whtpfs, curpff, nohc, pfrmax, fcohbop, &
+        rjconpf, ngrp, rohc, ncls, zpf, cptdin, pfcaseth, itr_sum, sigpfcf, &
+        ohhghf, ipfloc, wts, powpfres, nptsmx, curpfb, routr, ric, fcohbof, &
+        rpf2, nfxfh, bpf, zl, wtc, vf, turns, curpfs, rpf, zref, &
+        pfmmax, ipfres, alfapf, ncirt, pfclres, cpt, waves, sxlg, sigpfcalw, &
+        coheof, zh, fcohbof, ra, rb, isumatpf, whtpf, fcupfsu, cohbop, rjpfalw
+    use physics_variables, only: bvert, kappa, rli, itartpf, vsres, plascur, &
+        triang, rminor, vsind, aspect, itart, betap, rmajor
+    use tfcoil_variables, only: dcopper, tftmp, dcond, i_tf_sup, fhts, &
+        tcritsc, strncon_pf, bcritsc
+    use times_variables, only: tim, tramp, tburn, tohs, tqnch, theat
+    use constants, only: pi, nout
     implicit none
 
     !  Arguments
@@ -693,6 +698,17 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use build_variables, only: hmax, ohcth
+		use fwbs_variables, only: denstl
+    use pfcoil_variables, only: nohc, bmaxoh, i_cs_stress, coheof, rohc, &
+        vfohc, jstrandoh_bop, fcuohsu, isumatoh, ohhghf, areaoh, powpfres, &
+        jstrandoh_eof, powohres, rjohc0, s_tresca_oh, awpoh, oh_steel_frac, &
+        bmaxoh0, rjohc, tmargoh, ipfres, rjpfalw, pfclres, vf, ric, bpf, &
+        jscoh_eof, zpf, rb, ra, jscoh_bop, cptdin, pfcaseth, rpf, cohbop, zh, &
+        wtc, zl, turns, wts
+		use tfcoil_variables, only: dcopper, dcond, tftmp, tcritsc, strncon_cs, &
+      fhts, bcritsc
+		use constants, only: pi
     implicit none
 
     !  Arguments
@@ -940,6 +956,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use maths_library, only: svd
     implicit none
 
     !  Arguments
@@ -1351,6 +1368,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use constants, only: twopi, rmu0
     implicit none
 
     !  Arguments
@@ -1455,6 +1473,11 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use build_variables, only: iohcl, hmax, ohcth
+		use error_handling, only: idiags, report_error
+    use pfcoil_variables, only: ra, nohc, ric, ohhghf, rb, rpf, waves, &
+        coheof, ngrp, bpf, zpf, ncls, zl, curpfb, curpff, curpfs, cohbop, zh
+		use physics_variables, only: rmajor, plascur
     implicit none
 
     !  Arguments
@@ -1600,6 +1623,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use constants, only: rmu0
     implicit none
 
     real(dp) :: bfmax
@@ -1670,6 +1694,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use pfcoil_variables, only: ric, nohc, waves, curpfb, curpff, curpfs
     implicit none
 
     !  Arguments
@@ -1757,6 +1782,11 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: fdiags, idiags, report_error
+    use superconductors, only: jcrit_nbti, wstsc, jcrit_rebco, bi2212, &
+      itersc, current_sharing_rebco
+		use tfcoil_variables, only: tmargmin_cs, temp_margin
+		use maths_library, only: variable_error, secant_solve
     implicit none
 
     !  Arguments
@@ -1969,6 +1999,9 @@ end subroutine superconpf
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use build_variables, only: iohcl
+    use pfcoil_variables, only: vsefsu, vsbn, nohc, vsohbn, cpt, vsefbn, &
+        vsohsu, vseft, vsoh, vssu, vstot, ncirt, sxlg
     implicit none
 
     !  Arguments
@@ -2044,6 +2077,8 @@ end subroutine superconpf
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use pfcoil_variables, only: oh_steel_frac, bmaxoh0, cohbop, nohc, rb, ra
+		use tfcoil_variables, only: poisson_steel
     implicit none
 
     !  Arguments
@@ -2117,6 +2152,9 @@ end subroutine superconpf
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use pfcoil_variables, only: oh_steel_frac, nohc, ra, ric, rb, zh
+		use constants, only: pi, rmu0
+		use maths_library, only: ellipke
     implicit none
 
     !  Arguments
@@ -2186,6 +2224,13 @@ end subroutine superconpf
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use build_variables, only: iohcl, ohcth
+		use error_handling, only: fdiags, idiags, report_error
+    use pfcoil_variables, only: nohc, turns, zpf, rpf, sxlg, rohc, ngrp, &
+        ncls, zl, ncirt, ra, zh, rb
+		use physics_variables, only: rmajor, rlp
+    use process_output, only: oheadr, oblnkl, ocmmnt
+		use constants, only: pi, rmu0
     implicit none
 
     !  Arguments
@@ -2471,6 +2516,8 @@ end subroutine superconpf
 
   subroutine brookscoil(outfile)
     ! http://www.nessengr.com/techdata/brooks/brooks.html
+		use process_output, only: ovarre, oblnkl, ocmmnt
+    implicit none
     real(dp) :: a,b,c, N, l, lp
     character(len=10) :: test
     integer, intent(in) :: outfile
@@ -2508,6 +2555,21 @@ end subroutine superconpf
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use build_variables, only: iohcl, ohcth, gapoh, bore
+		use error_handling, only: report_error
+    use pfcoil_variables, only: whtpfs, cohbop, nohc, jscoh_eof, bmaxoh, &
+        alstroh, i_cs_stress, rjconpf, coheof, vfohc, isumatpf, zpf, &
+        jstrandoh_bop, pfcaseth, fcuohsu, sigpfcf, jscoh_bop, isumatoh, &
+        areaoh, powpfres, fcupfsu, ric, jstrandoh_eof, powohres, rjohc0, &
+        sigpfcalw, bpf, s_tresca_oh, awpoh, zl, oh_steel_frac, bmaxoh0, ra, &
+        turns, rpf, rjohc, tmargoh, ipfres, alfapf, rjpfalw, whtpf, rb, wts, &
+        zh, wtc
+		use physics_variables, only: rminor, rmajor, kappa
+    use process_output, only: int_to_string2, ovarin, oheadr, &
+      ovarre, osubhd, oblnkl, ocmmnt
+    use tfcoil_variables, only: tmargmin_cs, strncon_cs, tftmp
+    use numerics, only: boundu
+		use constants, only: mfile
     implicit none
 
     !  Arguments
@@ -2820,6 +2882,11 @@ end subroutine superconpf
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use pfcoil_variables, only: nohc, turns, fcohbop, vstot, ncirt, vssu, cpt, &
+      fcohbof, vsohsu, vsohbn, vsoh, vseft, vsefsu, vsefbn, vsbn
+    use process_output, only: int_to_string2, ovarin, oheadr, ovarre, oshead, &
+      osubhd, oblnkl, ocmmnt
+		use times_variables, only: tim, timelabel
     implicit none
 
     !  Arguments

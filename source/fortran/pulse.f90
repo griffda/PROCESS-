@@ -12,20 +12,6 @@ module pulse_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  use build_variables
-  use constants
-  use constraint_variables
-  use current_drive_variables
-  use error_handling
-  use fwbs_variables
-  use heat_transport_variables
-  use pf_power_variables
-  use pfcoil_variables
-  use physics_variables
-  use process_output
-  use pulse_variables
-  use times_variables
-
   implicit none
 
   private
@@ -93,6 +79,14 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constraint_variables, only: tohsmn
+    use pf_power_variables, only: vpfskv
+    use pfcoil_variables, only: ncirt, ipfres, nohc, powohres, sxlg, cpt, ric, &
+      turns, cptdin
+    use physics_variables, only: plascur, rmajor
+    use process_output, only: ovarre, osubhd
+    use numerics, only: active_constraints
+    use pulse_variables, only: lpulse
     implicit none
 
     !  Arguments
@@ -181,6 +175,12 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: fdiags, report_error
+		use pfcoil_variables, only: vsbn, vstot
+		use physics_variables, only: rplas, vsres, vsind, plascur, facoh, csawth
+		use process_output, only: ocmmnt, ovarre, osubhd
+		use pulse_variables, only: lpulse
+		use times_variables, only: tburn, theat
     implicit none
 
     !  Arguments

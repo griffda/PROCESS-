@@ -10,8 +10,7 @@ module process_output
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  use global_variables
-  use numerics
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   public
@@ -36,6 +35,15 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: active_constraints, ncalls, ipnvars, ioptimz
+    use global_variables, only: run_tests, verbose, output_prefix
+		use constants, only: mfile
+		use maths_library, only: vmcon, secant_solve
+    use plasmod_variables, only: plasmod_nchannels, numerics_transp, & 
+      plasmod_chisawpos, plasmod_x_heat, geom, plasmod_psepplh_sup, &
+      plasmod_pfus, plasmod_dx_heat, plasmod_maxpauxor, plasmod_dtinc, num, &
+      plasmod_test, plasmod_ainc, plasmod_dt, inp0, plasmod_dtmaxmax, &
+      plasmod_tolmin, plasmod_dx_control, comp
     implicit none
 
     !  Arguments
@@ -105,6 +113,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use global_variables, only: output_prefix, fileprefix
+		use constants, only: mfile
+		use plasmod_variables, only: comp, inp0, num
     implicit none
 
     !  Arguments
@@ -139,6 +150,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: active_constraints, sqsumsq, ioptimz
+    use global_variables, only: vlabel, run_tests, verbose
+		use constants, only: rmu0, pi
+		use plasmod_variables, only: geom, comp, inp0, num
     implicit none
 
     !  Arguments
@@ -173,6 +188,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use global_variables, only: icase
+		use constants, only: pi
+		use plasmod_variables, only: comp, inp0, ped, geom, mhd
     implicit none
 
     !  Arguments
@@ -204,6 +222,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use constants, only: pi, nout
+		use plasmod_variables, only: comp, inp0, geom, ped
     implicit none
 
     !  Arguments
@@ -230,6 +250,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use constants, only: iotty, nout
+		use plasmod_variables, only: inp0, loss
     implicit none
 
     !  Arguments
@@ -258,6 +280,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: boundl, boundu, sqsumsq
+		use global_variables, only: icase, vlabel, iscan_global
+		use constants, only: rmu0
+		use plasmod_variables, only: radp, ped, mhd, i_flag, geom, inp0
     implicit none
 
     !  Arguments
@@ -313,6 +339,11 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: name_xc
+		use global_variables, only: verbose
+		use constants, only: pi, mfile, nplot, echarge
+    use plasmod_variables, only: power_losses, geom, i_flag, comp, ped, radp, &
+      plasmod_i_impmodel
     implicit none
 
     !  Arguments
@@ -382,6 +413,11 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: name_xc
+		use global_variables, only: icase, vlabel
+		use constants, only: mfile, nout
+		use maths_library, only: variable_error
+		use plasmod_variables, only: radp, geom, mhd, loss, ped
     implicit none
 
     !  Arguments
@@ -448,6 +484,11 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: name_xc, icc, ioptimz
+		use global_variables, only: xlabel_2, iscan_global
+		use constants, only: mfile, nout
+		use maths_library, only: variable_error
+		use plasmod_variables, only: plasmod_i_impmodel, mhd, loss
     implicit none
 
     !  Arguments
@@ -512,6 +553,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use numerics, only: sqsumsq
+		use constants, only: mfile
+    use plasmod_variables, only: radp, loss, comp, i_flag, &
+      plasmod_i_equiltype, geom, mhd
     implicit none
 
     !  Arguments
@@ -562,6 +607,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use constants, only: pi, mfile, nplot, twopi
+		use maths_library, only: variable_error
+		use plasmod_variables, only: radp, ped, num, mhd, loss, comp, inp0
     implicit none
 
     !  Arguments
@@ -608,6 +656,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: boundl, boundu
+		use constants, only: echarge
+		use maths_library, only: variable_error
+		use plasmod_variables, only: radp, geom, loss
     implicit none
 
     !  Arguments
@@ -653,6 +705,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use numerics, only: active_constraints, boundu, boundl
+		use constants, only: echarge
     implicit none
 
     !  Arguments
@@ -688,6 +742,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: epsvmc, boundu
+		use constants, only: rmu0
+		use plasmod_variables, only: i_flag
     implicit none
 
     character(len=1) :: int2char
@@ -727,6 +784,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use numerics, only: boundu
+		use constants, only: pi
+		use plasmod_variables, only: inp0
     implicit none
 
     character(len=2) :: int_to_string2
@@ -769,6 +829,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use numerics, only: boundu
+		use constants, only: pi
+		use plasmod_variables, only: radp
     implicit none
 
     character(len=3) :: int_to_string3

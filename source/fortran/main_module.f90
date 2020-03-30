@@ -20,6 +20,7 @@ subroutine inform(progid)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants, only: nout
   implicit none
 
   !  Arguments
@@ -75,10 +76,13 @@ subroutine run_summary
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use global_variables
-  use numerics
-  use process_output
-
+  use constants, only: nout, mfile, iotty, mfile
+  use maths_library, only: integer2string, integer3string
+  use global_variables, only: maxcal, fileprefix, icase, runtitle
+  use numerics, only: nvar, neqns, ioptimz, nineqns, epsvmc, minmax, icc, &
+    lablcc, lablmm
+  use process_output, only: ocentr, oblnkl, ocmmnt, ostars, ovarst
+  use physics_variables, only: te 
   implicit none
 
   !  Local variables
@@ -245,12 +249,16 @@ subroutine eqslv(ifail)
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use constraints
-  use process_output
-  use numerics
-  use function_evaluator
-
+  use constants, only: nout, mfile, iotty
+  use constraints, only: constraint_eqns
+  use function_evaluator, only: fcnhyb
+  use error_handling, only: idiags, fdiags, errors_on, report_error
+  use numerics, only: ipeqns, epsfcn, factor, ftol, iptnt, ncalls, ioptimz, &
+    neqns, nfev1, nfev2, sqsumsq, xcm, rcm, xcs, resdl, scafc, ixc, lablxc, &
+    icc, lablcc, eqsolv
+  use process_output, only: ovarin, oblnkl, ocmmnt, oheadr, osubhd, &
+    ovarre, int_to_string3
+  use physics_variables, only: bt, aspect, rmajor, powfmw, wallmw 
   implicit none
 
   !  Arguments
@@ -397,8 +405,8 @@ subroutine herror(ifail)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use process_output
-
+  use constants, only: nout, iotty
+  use process_output, only: oblnkl, ocmmnt
   implicit none
 
   !  Arguments
@@ -487,8 +495,8 @@ subroutine verror(ifail)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use process_output
-
+  use constants, only: nout, iotty
+  use process_output, only: ocmmnt, oblnkl
   implicit none
 
   !  Arguments
@@ -599,15 +607,13 @@ end subroutine verror
 
 
 subroutine runtests
-  use maths_library
-  use global_variables
-  use numerics
-  use process_output
-  use pfcoil_module
-  use superconductors
-  use reinke_module
-  use hare, only:hare_calc
-
+  use hare, only: hare_calc
+  use constants, only: nout
+  use maths_library, only: nearly_equal, binomial, test_secant_solve
+  use process_output, only: ocmmnt, ovarre
+  use pfcoil_module, only: brookscoil
+  use superconductors, only: test_quench
+  use reinke_module, only: test_reinke
   implicit none
   real(dp) :: fshift, xf, enpa,ftherm,fpp,cdeff, ampperwatt
   logical :: Temperature_capped

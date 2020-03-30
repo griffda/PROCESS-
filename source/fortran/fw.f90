@@ -11,26 +11,13 @@ module fw_module
 
   ! Modules to import
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-
-  use constants
-  use global_variables
-  use error_handling
-  use fwbs_variables
-  use refprop_interface
-  use process_output
-
   implicit none
-
-  ! Subroutine declarations !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!
 
   private
   public :: friction, heat_transfer, fw_thermal_conductivity, fw_temp
 
   ! Precision variable
   integer, parameter :: double = 8
-
-  ! Variables for output to file
 
 contains
 
@@ -45,10 +32,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    implicit none
+    use fwbs_variables, only: roughness, afw
 
-    ! Arguments !
-    ! !!!!!!!!!!!!
+    implicit none
 
     real(dp), intent(in) :: reynolds
     real(dp), intent(out) :: darcy_friction
@@ -83,10 +69,11 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use error_handling, only: fdiags, report_error
+
     implicit none
 
-    ! Arguments !
-    ! !!!!!!!!!!!!
+    ! Arguments
 
     ! Function output: Heat transfer coefficient (W/m2K)
     real(dp) :: heat_transfer
@@ -111,8 +98,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! Local variables !
-    ! !!!!!!!!!!!!!!!!!!
+    ! Local variables
 
     ! Calculate flow velocity (m/s)
     real(dp) :: velocity
@@ -178,6 +164,8 @@ contains
     !! Calculates the thermal conductivity of Eurofer (W/m/K).
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use fwbs_variables, only: fw_th_conductivity
+
     implicit none
 
     ! Function return value: thermal conductivity of first wall (W/m.K)
@@ -193,7 +181,8 @@ contains
     ! Eurofer correlation, from "Fusion Demo Interim Structural Design Criteria -
     ! Appendix A Material Design Limit Data", F. Tavassoli, TW4-TTMS-005-D01, 2004
     ! t in Kelvin
-    fw_thermal_conductivity = (5.4308D0 + 0.13565D0*t - 0.00023862D0*t*t + 1.3393D-7*t*t*t)*fw_th_conductivity/28.34D0
+    fw_thermal_conductivity = (5.4308D0 + 0.13565D0*t - 0.00023862D0*t*t + &
+      1.3393D-7*t*t*t)*fw_th_conductivity/28.34D0
 
   end function fw_thermal_conductivity
 
@@ -229,19 +218,22 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: pi
+    use error_handling, only: fdiags, report_error
+    use fwbs_variables, only: fwcoolant, fwinlet, fwpressure, fwoutlet, pitch, &
+      fw_channel_length, tpeak, peaking_factor, fw_wall
+    use refprop_interface, only: fluid_properties
+    use process_output, only: oheadr, ovarre
+
     implicit none
 
-    ! Arguments !
-    ! !!!!!!!!!!!!
-
+    ! Arguments
     integer, intent(in) :: ip, ofile
     real(dp), intent(in) :: pnuc_deposited, afw, thickness, area, prad_incident
     real(dp), intent(out) ::  tpeakfw, cfmean, rhofmean, massrate
     character(len=*) :: label
 
-    ! Local variables !
-    ! !!!!!!!!!!!!!!!!!!
-
+    ! Local variables
     integer :: coolant
 
     ! FW volume (inboard or outboard depending on arguments) (m3)
