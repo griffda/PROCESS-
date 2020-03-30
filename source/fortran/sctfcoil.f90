@@ -1517,8 +1517,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! Resistive magnet stress calculation
     ! ------
     else 
-        call generalized_plane_strain( poisson, radtf, eyoung, jeff, vforce, & ! Inputs
-                                       n_tf_layer, n_radial_array,           & ! Inputs
+        call generalized_plane_strain( poisson, radtf, eyoung, jeff, vforce,     & ! Inputs
+                                       n_tf_layer, n_radial_array, i_tf_bucking, & ! Inputs
                                        radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
                                        strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
     
@@ -1952,8 +1952,8 @@ end subroutine plane_stress
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine generalized_plane_strain( nu, rad, ey, d_curr, v_force, & ! Inputs
-                                     nlayers, n_radial_array,      & ! Inputs
+subroutine generalized_plane_strain( nu, rad, ey, d_curr, v_force,          & ! Inputs
+                                     nlayers, n_radial_array, i_tf_bucking, & ! Inputs
                                      rradius, sigr, sigt, sigz,              & ! Outputs
                                      strain_r, strain_t, strain_z, r_deflect ) ! Outputs
       
@@ -1975,6 +1975,12 @@ subroutine generalized_plane_strain( nu, rad, ey, d_curr, v_force, & ! Inputs
 
     integer, intent(in) :: nlayers
     !! Total number of layers
+
+    integer, intent(in) :: i_tf_bucking
+    !! Switch for bucking cylinder (case)
+    !!   0 : No casing/bucking cylinder
+    !!   1 : casing/buling cylinder
+    !!   2 : Bucked and wedged design
 
     real(dp), dimension(nlayers), intent(in) :: nu
     !! Poisson's ratios
@@ -2090,6 +2096,7 @@ subroutine generalized_plane_strain( nu, rad, ey, d_curr, v_force, & ! Inputs
         inner_layer_curr = inner_layer_curr + area(ii)*d_curr(ii)
     end do
       
+      
     ! Plain strain generalisation parameters
     !-!
     do ii = 1, nlayers
@@ -2097,11 +2104,30 @@ subroutine generalized_plane_strain( nu, rad, ey, d_curr, v_force, & ! Inputs
         par_2(ii) = pi * (log(rad(ii+1)) * rad(ii+1)**2 - log(rad(ii)) * rad(ii)**2)
     end do
  
-    sum_1 = sum( kk * area * (1.0D0 - nu) )
-    sum_2 = sum( nu * kk * (0.25D0*alpha*par_1 + beta*par_2) )
+    ! The first layer (CS) is not considered on the bucked and wedged option
+    if ( i_tf_bucking == 2 ) then
+
+        sum_1 = 0.0D0
+        sum_2 = 0.0D0
+        do jj = 2, nlayers
+            sum_1 = sum_1 + kk(jj) * area(jj) * (1.0D0 - nu(jj))
+            sum_2 = sum_2 + nu(jj) * kk(jj) * (0.25D0 * alpha(jj) * par_1(jj) + &
+                                               beta(jj)*par_2(jj))
+        end do        
+    
+    ! Free standing TF, the vertical force is distributed to all layers
+    else 
+        sum_1 = sum( kk * area * (1.0D0 - nu) )
+        sum_2 = sum( nu * kk * (0.25D0*alpha*par_1 + beta*par_2) )
+    end if
 
     aleph = (v_force - sum_2) / sum_1      
     beth = - (2.0D0*nu*kk*area) / sum_1   ! Vector equation
+
+    ! Bucked and wegde
+    ! CS (first layer) - TF (all remaining layer) sliding 
+    !  -> No TF vertical force on the CS layer (null coef)
+    if ( i_tf_bucking == 2 ) beth(1) = 0.0D0
     !-!
     ! ***
       
