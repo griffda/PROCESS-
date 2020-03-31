@@ -1134,7 +1134,7 @@ subroutine check
 
     ! Ensure that no pre-compression structure 
     ! is used for bucked and wedged design
-    if ( i_tf_bucking == 2 .and. iprecomp == 1 ) then
+    if ( i_tf_bucking >= 2 .and. iprecomp == 1 ) then
         call report_error(252)
     end if
 

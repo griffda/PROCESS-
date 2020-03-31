@@ -1719,7 +1719,7 @@ contains
           call parse_int_variable('i_tf_turns_integer', i_tf_turns_integer, 0, 1, &
                     'Switch for TF coil integer/non-integer turns')
        case ('i_tf_bucking')
-          call parse_int_variable('i_tf_bucking', i_tf_bucking, -1, 2, &
+          call parse_int_variable('i_tf_bucking', i_tf_bucking, -1, 3, &
                'Switch for bucking cylinder (case)')
        case ('i_tf_sc_mat')
           call parse_int_variable('i_tf_sc_mat', i_tf_sc_mat, 1, 6, &

@@ -2294,6 +2294,7 @@ module tfcoil_variables
   !!   0 : No casing/bucking cylinder
   !!   1 : casing/buling cylinder
   !!   2 : Bucked and wedged design
+  !!   3 : Bucked and wedged using the sliding joint expliciely in stress calc
 
   integer :: n_tf_graded_layers = 1
   !! Number of layers of different stress properties in the WP 
