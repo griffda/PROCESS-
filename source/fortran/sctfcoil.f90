@@ -1406,7 +1406,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                 ! OH/CS conduit thickness calculated assuming square conduit [m]  
                 ! The insulation layer is set to 0 in the calculation
                 ! Used only to get effective radial stress
-                l_cond_oh = 0.5D0 * l_turn_oh * (1.0D0 - sqrt(1.0D0-oh_steel_frac) )
+                l_cond_oh = 0.5D0*(l_turn_oh**2 - 2.0D0*layer_ins - &
+                                sqrt( (2.0D0*layer_ins - l_turn_oh)**2 - &
+                                    oh_steel_frac * l_turn_oh**2) )
                 
                 ! Central Solenoid (OH) steel conduit stress unsmearing factor
                 fac_oh = 0.5D0 * l_turn_oh / l_cond_oh 
