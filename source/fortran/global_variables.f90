@@ -1884,7 +1884,7 @@ module pfcoil_variables
   !!                  <LI> = 1 Hoop + Axial stress</UL>
 
   real(dp) :: areaoh = 0.0D0
-  !! Central solenoid cross-sectional area (m2)
+  !! Central solenoid vertical cross-sectional area (m2)
 
   real(dp) :: a_oh_turn = 0.0D0
   !! Central solenoid (OH) trun cross-sectional area (m2)
@@ -2304,9 +2304,9 @@ module tfcoil_variables
   !!        - if Superconducting  TF (i_tf_sup = 1) : Steel casing
   !!        - if cryo-aluminium   TF (i_tf_sup = 2) : Nibron special bucking cylinder
   !!   2 : The TF is in contact with the CS : "bucked and weged design"
-  !!       Fast version : thin interface layer neglected in the stress calculations (3 layers)
+  !!       Fast version : thin TF-CS interface neglected in the stress calculations (3 layers)
   !!   3 : The TF is in contact with the CS : "bucked and weged design"
-  !!       Full version : thin interface layer introduced in the stress calculations (4 layers)
+  !!       Full version : thin TF-CS Kapton interface introduced in the stress calculations (4 layers)
 
   integer :: n_tf_graded_layers = 1
   !! Number of layers of different stress properties in the WP 

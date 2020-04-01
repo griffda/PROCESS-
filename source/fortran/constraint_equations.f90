@@ -2443,7 +2443,7 @@ contains
       type (constraint_args_type), intent(out) :: args
 
       ! bucked and weged desing 
-      if ( i_tf_bucking == 2 ) then
+      if ( i_tf_bucking >= 2 ) then
          args%cc = 1.0d0 - foh_stress * alstroh / max(s_tresca_oh, strtf0)
          args%err = alstroh - max(s_tresca_oh, strtf0)
       
