@@ -2420,9 +2420,11 @@ module tfcoil_variables
   !! TF Inboard leg TRESCA stress in steel r distribution at mid-plane [Pa]
 
   real(dp) :: strtf0 = 0.0D0
-  !! Maximum TRESCA stress in CS casing steel structures (Pa)
-  !! Only for bucked and wedged design (i_tf_bucking = 2).
-  !! Calculation made at CS flux swing
+  !! Maximum TRESCA stress in CS structures at CS flux swing [Pa]
+  !!  - If superconducting CS (ipfres = 0): turn steel conduits TRESCA stress
+  !!  - If resistive       CS (ipfres = 1): copper conductor TRESCA stress 
+  !! Quantity only computed for bucked and wedged design (i_tf_bucking >= 2)
+  !! Def : CS Flux swing, instant when the current changes sign in CS (null current) 
 
   real(dp) :: strtf1 = 0.0D0
   !! Maximum TRESCA stress in TF casing steel structures (Pa)
