@@ -1897,11 +1897,14 @@ module pfcoil_variables
   !! bmaxoh0 : maximum field in central solenoid at beginning of pulse (T)
   real(dp), dimension(ngc2) :: bpf = 0.0D0
   !! bpf(ngc2) : peak field at coil i (T)
+  
   real(dp) :: cohbop = 0.0D0
-  !! cohbop : central solenoid overall current density at beginning of pulse (A/m2)
+  !! Central solenoid overall current density at beginning of pulse (A/m2)
+  
   real(dp) :: coheof = 1.85D7
-  !! coheof /1.85e7/ : central solenoid overall current density at end of flat-top (A/m2)
-  !!                   (iteration variable 37)
+  !! Central solenoid overall current density at end of flat-top (A/m2)
+  !!  (iteration variable 37)
+  
   real(dp), dimension(ngc2,6) :: cpt = 0.0D0
   !! cpt(ngc2,6) : current per turn in coil i at time j (A)
   real(dp), dimension(ngc2) :: cptdin = 4.0D4
@@ -1982,8 +1985,10 @@ module pfcoil_variables
   !!            Symmetric coil pairs should all be in the same group
   integer :: nohc = 0
   !! nohc : number of PF coils (excluding the central solenoid) + 1
+  
   real(dp) :: ohhghf = 0.71D0
-  !! ohhghf /0.71/ : central solenoid height / TF coil internal height
+  !! Central solenoid height / TF coil internal height
+  
   real(dp) :: oh_steel_frac = 0.5D0
   !! oh_steel_frac /0.5/ : central solenoid steel fraction (iteration variable 122)
   real(dp), dimension(ngc2) :: pfcaseth = 0.0D0
