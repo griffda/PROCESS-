@@ -12,12 +12,16 @@ module sctfcoil_module
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 use, intrinsic :: iso_fortran_env, only: dp=>real64
-use build_variables, only : r_tf_inboard_mid, hmax, r_tf_outboard_mid, tfcth, tfthko,&
-                            hpfu, hr1, r_cp_top, r_vv_inboard_out, bore, ohcth
+use build_variables, only : r_tf_inboard_mid, hmax, r_tf_outboard_mid, tfcth, & 
+                            tfthko, hpfu, hr1, r_cp_top, r_vv_inboard_out,    & 
+                            bore, ohcth
 use fwbs_variables, only : denstl
 use physics_variables, only : rmajor, rminor, bt, i_single_null, itart, kappa
 use tfcoil_variables
-use pfcoil_variables, only : ipfres, oh_steel_frac, a_oh_turn
+
+! PF coil variables are only used for the bucked and wedged 
+use pfcoil_variables, only : ipfres, oh_steel_frac, a_oh_turn, ohhghf, coheof, &
+                             cohbop, ncls, cptdin
 use superconductors
 use ode_mod
 implicit none
@@ -1222,6 +1226,18 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(dp) :: fac
     !! TF steel conduit stress unsmearing factor
 
+    real(dp) :: a_oh
+    !! CS vertical cross-section area [m2]
+
+    real(dp) :: curr_oh_max
+    !! Maximum CS current (absolute value) [A]
+
+    real(dp) :: n_oh_turns
+    !! Number of CS turn (float ...)
+
+    real(dp) :: a_oh_turn
+    !! CS turn vertica cross section area [m]
+
     real(dp) :: l_cond_oh
     !! Central Solenoid (OH) conduit thickness assuming square conduit [m]
     !! Used only to get effective radial stress in bucked and wedged
@@ -1315,7 +1331,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     
     ! bucking cylinder/casing properties
     ! ---
-    if ( i_tf_bucking /= 0 ) then
+    if ( i_tf_bucking >= 1 ) then
         
         ! No current in bucking cylinder/casing
         jeff(i_tf_bucking) = 0.0D0
@@ -1447,9 +1463,25 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! --- 
     if ( i_tf_bucking >= 2 .and. ipfres == 0 ) then
 
+        ! Getting the turn dimention from scratch 
+        ! as the TF is called before CS in caller.f90
+        !-!
+
+        ! CS area [m2]
+        a_oh = 2.0D0 * hmax * ohhghf * ohcth
+
+        ! Maximum current in Central Solenoid, at either BOP or EOF [MA-turns]
+        ! Absolute value
+        curr_oh_max = 1.0D-6*max(coheof,cohbop)*a_oh
+
+        !  Number of turns
+        n_oh_turns = 1.0D6 * curr_oh_max / cptdin(sum(ncls))
+
+        ! CS Turn vertical cross-sectionnal area    
+        a_oh_turn = a_oh / n_oh_turns
 
         ! Central Solenoid (OH) turn dimension [m]
-        l_turn_oh = sqrt(a_oh_turn)
+        l_turn_oh = sqrt( a_oh_turn )
 
         ! OH/CS conduit thickness calculated assuming square conduit [m]  
         ! The insulation layer is set to 0 in the calculation
@@ -1457,6 +1489,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         l_cond_oh = 0.5D0*(l_turn_oh - 2.0D0*layer_ins - &
                         sqrt( (2.0D0*layer_ins - l_turn_oh)**2 - &
                             oh_steel_frac * l_turn_oh**2) )
+        !-!
 
         ! Central Solenoid (OH) steel conduit stress unsmearing factor
         fac_oh = 0.5D0 * l_turn_oh / l_cond_oh 
