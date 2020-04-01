@@ -2292,14 +2292,21 @@ module tfcoil_variables
   !! stress quantities (stresses, strain displacement etc..)
 
   integer :: i_tf_bucking = -1
-  !! Switch for bucking cylinder (case)
-  !!  -1 : Casing for SC i.e. i_tf_sup = 1 (default) 
-  !!       No casing for copper magnets
-  !!       Casing for aluminium magnets 
-  !!   0 : No casing/bucking cylinder
-  !!   1 : casing/buling cylinder
-  !!   2 : Bucked and wedged design
-  !!   3 : Bucked and wedged using the sliding joint expliciely in stress calc
+  !! Switch for TF inboard suport structure design :
+  !!  -1 : Default option 
+  !!       - if copper resistive TF (i_tf_sup = 0) : Free standing TF without bucking structure 
+  !!       - if Superconducting  TF (i_tf_sup = 1) : Free standing TF with a steel casing  
+  !!       - if cryo-aluminium   TF (i_tf_sup = 2) : Free standing TF with a bucking structure
+  !!         Rem : the case is a bucking structure
+  !!   0 : Free standing TF without case/bucking cyliner (only a conductor layer)
+  !!   1 : Free standing TF with a case/bucking cylinder made of 
+  !!        - if copper resistive TF (i_tf_sup = 0) : Steel bucking cylinder
+  !!        - if Superconducting  TF (i_tf_sup = 1) : Steel casing
+  !!        - if cryo-aluminium   TF (i_tf_sup = 2) : Nibron special bucking cylinder
+  !!   2 : The TF is in contact with the CS : "bucked and weged design"
+  !!       Fast version : thin interface layer neglected in the stress calculations (3 layers)
+  !!   3 : The TF is in contact with the CS : "bucked and weged design"
+  !!       Full version : thin interface layer introduced in the stress calculations (4 layers)
 
   integer :: n_tf_graded_layers = 1
   !! Number of layers of different stress properties in the WP 
