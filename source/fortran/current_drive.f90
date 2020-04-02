@@ -1,7 +1,6 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module current_drive_module
-
   !! Module containing current drive system routines
   !! author: P J Knight, CCFE, Culham Science Centre
   !! N/A
@@ -14,17 +13,6 @@ module current_drive_module
   ! Import modules
   use, intrinsic :: iso_fortran_env, only: dp=>real64
   use iso_c_binding
-
-  use constraint_variables
-  use constants
-  use current_drive_variables
-  use error_handling
-  use profiles_module
-  use physics_variables
-  use process_output
-  use heat_transport_variables
-  use hare, only:hare_calc
-
   implicit none
 
   private
@@ -47,11 +35,27 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use error_handling, only: idiags, report_error
+    use profiles_module, only: tprofile, nprofile
+    use process_output, only: oblnkl, ocmmnt, ovarin, ovarre, ovarrf, osubhd, &
+      oheadr
+    use heat_transport_variables, only: pinjwpfix, pinjwp
+    use current_drive_variables, only: echpwr, pnbeam, plhybd, cnbeam, porbitlossmw, &
+      iefrf, iefrffix, pheat, pheatfix, pinjfixmw, irfcd, feffcd, fpion, nbshinef, &
+      gamcd, gamma_ecrh, rho_ecrh, etalh, etacd, etacdfix, etaech, forbitloss, &
+      pinjmw, pwpnb, etanbi, enbeam, effcd, pwplh, echwpow, pnbitot, nbshinemw, &
+      pinjemw, pinjimw, bigq, bootipf, bscfmax, taubeam, pinjalw, nbshield, &
+      frbeam, rtanbeam, rtanmax, diaipf, psipf, plasipf
+    use physics_variables, only: dene, te, rmajor, ten, zeff, dlamee, beta, &
+      rhopedt, rhopedn, te0, teped, tesep, alphat, alphan, ne0, nesep, neped, &
+      bt, rminor, tbeta, plascur, ipedestal, faccd, ignite, pohmmw, powfmw, &
+      facoh, fvsbrnni
+    use constants, only: nout, echarge, pi
+    use hare, only: hare_calc
+
     implicit none
 
-    ! Arguments !
-    ! !!!!!!!!!!!!
-
+    ! Arguments
     integer, intent(in) :: iprint, outfile
 
     ! Local variables !
@@ -667,6 +671,11 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use error_handling, only: fdiags, idiags, report_error
+    use current_drive_variables, only: frbeam, enbeam, taubeam, ftritbm
+    use physics_variables, only: eps, rmajor, abeam, te, dene, ralpne, rncne, &
+      rnone, rnfene, deni, ten, zeffai, dlamie, alphan, alphat, aspect, zeff
+		use constants, only: rmu0
     implicit none
 
     ! Arguments !
@@ -808,6 +817,8 @@ contains
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use constants, only: mproton, pi, echarge
 
     implicit none
 
@@ -997,6 +1008,11 @@ contains
     !! AEA FUS 172: Physics Assessment for the European Reactor Study
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use error_handling, only: fdiags, idiags, report_error
+    use profiles_module, only: nprofile, tprofile
+    use physics_variables, only: rminor, rhopedn, ne0, neped, nesep, alphan, &
+      rhopedt, te0, tesep, teped, alphat, tbeta, bt, rmajor, zeff
 
     implicit none
 
@@ -1230,9 +1246,11 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    implicit none
+    use profiles_module, only: tprofile, nprofile
+    use physics_variables, only: rhopedt, te0, teped, tesep, alphat, tbeta, &
+      rhopedn, ne0, nesep, neped, alphan, rminor, rmajor, zeff
 
-    !  Arguments
+    implicit none
 
     real(dp), intent(out) :: effrfss
 
@@ -1244,46 +1262,37 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Local plasma parameters : take r = a/3
-
     rrr = 1.0D0/3.0D0
 
     !  Temperature
-
     tlocal = tprofile(rrr,rhopedt,te0,teped,tesep,alphat,tbeta)
 
     !  Density (10**20 m**-3)
-
     dlocal = 1.0D-20 * nprofile(rrr,rhopedn,ne0,neped,nesep,alphan)
 
     !  Inverse aspect ratio
-
     epsloc = rrr * rminor/rmajor
 
     !  Effective charge (use average value)
-
     zlocal = zeff
 
     !  Coulomb logarithm for ion-electron collisions
     !  (From J. A. Wesson, 'Tokamaks', Clarendon Press, Oxford, p.293)
-
     coulog = 15.2D0 - 0.5D0*log(dlocal) + log(tlocal)
 
     !  Calculate normalised current drive efficiency at four different
     !  poloidal angles, and average.
     !  cosang = cosine of the poloidal angle at which ECCD takes place
     !         = +1 outside, -1 inside.
-
     cosang =  1.0D0 ; call eccdef(tlocal,epsloc,zlocal,cosang,coulog,ecgam1)
     cosang =  0.5D0 ; call eccdef(tlocal,epsloc,zlocal,cosang,coulog,ecgam2)
     cosang = -0.5D0 ; call eccdef(tlocal,epsloc,zlocal,cosang,coulog,ecgam3)
     cosang = -1.0D0 ; call eccdef(tlocal,epsloc,zlocal,cosang,coulog,ecgam4)
 
     !  Normalised current drive efficiency (A/W m**-2)
-
     ecgam = 0.25D0 * (ecgam1+ecgam2+ecgam3+ecgam4)
 
     !  Current drive efficiency (A/W)
-
     effrfss = ecgam/(dlocal*rmajor)
 
   contains
@@ -1318,6 +1327,8 @@ contains
       !! ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      use error_handling, only: report_error
 
       implicit none
 
@@ -1401,9 +1412,9 @@ contains
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      implicit none
+      use error_handling, only: fdiags, idiags, report_error
 
-      !  Arguments
+      implicit none
 
       real(dp), intent(in) :: zlocal,arg
       real(dp), intent(out) ::  palpha,palphap
@@ -1478,9 +1489,13 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    implicit none
+    use error_handling, only: fdiags, idiags, report_error
+    use current_drive_variables, only: enbeam, frbeam, taubeam, ftritbm
+    use physics_variables, only: eps, rmajor, abeam, te, dene, ralpne, rncne, &
+      rnone, rnfene, dnla, deni, ten, zeffai, dlamie, alphan, alphat, aspect, &
+      rminor, zeff
 
-    !  Arguments
+    implicit none
 
     real(dp), intent(out) :: effnbss,fpion,fshine
 
@@ -1533,8 +1548,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     function etanb2(abeam,alphan,alphat,aspect,dene,dnla,enbeam,frbeam, &
-         fshine,rmajor,rminor,ten,zeff)
-
+      fshine,rmajor,rminor,ten,zeff)
       !! Routine to find neutral beam current drive efficiency
       !! using the ITER 1990 formulation, plus correction terms
       !! outlined in Culham Report AEA FUS 172
@@ -1581,66 +1595,53 @@ contains
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       !  Charge of beam ions
-
       zbeam = 1.0D0
 
       !  Fitting factor (IPDG89)
-
       bbd = 1.0D0
 
       !  Volume averaged electron density (10**20 m**-3)
-
       dene20 = dene/1.0D20
 
       !  Line averaged electron density (10**20 m**-3)
-
       dnla20 = dnla/1.0D20
 
       !  Critical energy (MeV) (power to electrons = power to ions) (IPDG89)
       !  N.B. ten is in keV
-
       ecrit = 0.01D0 * abeam * ten
 
       !  Beam energy in MeV
-
       ebmev = enbeam/1.0D3
 
       !  x and y coefficients of function J0(x,y) (IPDG89)
-
       xjs = ebmev/(bbd*ecrit)
       xj = sqrt(xjs)
 
       yj = 0.8D0 * zeff/abeam
 
       !  Fitting function J0(x,y)
-
       j0 = xjs / (4.0D0 + 3.0D0*yj + xjs *(xj + 1.39D0 + &
            0.61D0 * yj**0.7D0))
 
       !  Effective inverse aspect ratio, with a limit on its maximum value
-
       epseff = min(0.2D0, (0.5D0/aspect))
 
       !  Reduction in the reverse electron current
       !  due to neoclassical effects
-
       gfac = (1.55D0 + 0.85D0/zeff)*sqrt(epseff) - &
            (0.2D0 + 1.55D0/zeff)*epseff
 
       !  Reduction in the net beam driven current
       !  due to the reverse electron current
-
       ffac = 1.0D0 - (zbeam/zeff) * (1.0D0 - gfac)
 
       !  Normalisation to allow results to be valid for
       !  non-ITER plasma size and density:
 
       !  Line averaged electron density (10**20 m**-3) normalised to ITER
-
       nnorm = 1.0D0
 
       !  Distance along beam to plasma centre
-
       r = max(rmajor,rmajor*frbeam)
       eps1 = rminor/r
 
@@ -1653,27 +1654,22 @@ contains
 
       !  Distance along beam to plasma centre for ITER
       !  assuming a tangency radius equal to the major radius
-
       epsitr = 2.15D0/6.0D0
       dnorm = 6.0D0 * sqrt(2.0D0*epsitr + epsitr**2)
 
       !  Normalisation to beam energy (assumes a simplified formula for
       !  the beam stopping cross-section)
-
       ebnorm = ebmev * ( (nnorm*dnorm)/(dnla20*d) )**(1.0D0/0.78D0)
 
       !  A_bd fitting coefficient, after normalisation with ebnorm
-
       abd = 0.107D0 * (1.0D0 - 0.35D0*alphan + 0.14D0*alphan**2) * &
            (1.0D0 - 0.21D0*alphat) * (1.0D0 - 0.2D0*ebnorm + 0.09D0*ebnorm**2)
 
       !  Normalised current drive efficiency (A/W m**-2) (IPDG89)
-
       gamnb = 5.0D0 * abd * 0.1D0*ten * (1.0D0-fshine) * frbeam * &
            j0/0.2D0 * ffac
 
       !  Current drive efficiency (A/W)
-
       etanb2 = gamnb / (dene20*rmajor)
 
     end function etanb2

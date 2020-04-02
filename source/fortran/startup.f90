@@ -11,16 +11,7 @@ module startup_module
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  use constraint_variables
-  use current_drive_variables
-  use maths_library
-  use physics_module
-  use physics_variables
-  use process_output
-  use startup_variables
-
   implicit none
 
   private
@@ -83,7 +74,16 @@ contains
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    use constraint_variables, only: auxmin
+    use physics_variables, only: alphan, alphat, dene, deni, ftrit, kappa, &
+      pcoef, plascur, ralpne, rmajor, rminor, rncne, rnfene, rnone, rpfac, &
+      te, ti, vol, zeff, facoh
+    use process_output, only: oheadr, ovarre
+    use startup_variables, only: nign, tign, ftaue, ftaue, ptaue, qtaue, &
+      rtaue, gtaue
 
+    
+		use maths_library, only: vmcon
     implicit none
 
     !  Arguments
@@ -355,6 +355,8 @@ contains
       !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      use current_drive_variables, only: pinjmw
+      use physics_module, only: physics
 
       implicit none
 

@@ -1,17 +1,6 @@
 module reinke_module
-    use impurity_radiation_module
-    use, intrinsic :: iso_fortran_env, only: dp=>real64
-
-!  use constants
-!  use error_handling
-!  use impurity_radiation_module
-!  use maths_library
-!  use physics_variables
-!  use profiles_module
-!  use read_and_get_atomic_data
-   use reinke_variables
-
-  implicit none
+   use, intrinsic :: iso_fortran_env, only: dp=>real64
+   implicit none
 
   !private
 
@@ -24,12 +13,7 @@ contains
 
 
   function reinke_fzmin(bt, flh, qstar, rmajor, eps, fsep, fgw, kappa, lhat, &
-       netau, tesep, impvardiv, impurity_arr, impurity_enrichment)
-
-!    use divertor_ode, only: impurity_concs
-    use divertor_ode_var, only: impurity_concs
-    use read_radiation
-!    use divertor_kallenbach_variables, only: impurity_enrichment
+    netau, tesep, impvardiv, impurity_arr, impurity_enrichment)
     !! Function for calculation of Reinke minimum impurity fraction
     !! author: H Lux, CCFE/UKAEA
     !! bt                  : input real : toroidal field on axis (T)
@@ -51,6 +35,15 @@ contains
     !! Call the reinke_tsep function first then use as an argument to this function
     !! Issue #707
     !! M.L. Reinke 2017 Nucl. Fusion 57 034004
+       
+    ! use divertor_ode, only: impurity_concs
+    ! use divertor_kallenbach_variables, only: impurity_enrichment
+    use divertor_ode_var, only: impurity_concs
+    use impurity_radiation_module, only: imp_dat
+    use reinke_variables, only: reinke_mode
+    use read_radiation, only: read_lz
+    use impurity_radiation_module, only: nimp, imp_label
+    
     implicit none
     real(dp) :: reinke_fzmin
     real(dp) :: bt, flh, qstar, rmajor, eps, fsep, fgw, kappa
@@ -154,6 +147,7 @@ contains
     !! Issue #707
     !! M.L. Reinke 2017 Nucl. Fusion 57 034004
 
+    implicit none
     real(dp) :: reinke_tsep
     real(dp) :: bt, flh, qstar, rmajor, eps, fgw, kappa, lhat
     real(dp) :: kappa_0 = 2D3 !Stangeby W/m/eV^(7/2)
@@ -172,6 +166,9 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine test_reinke()
+    use impurity_radiation_module, only: imp_dat, imp_label
+    implicit none
+
     real(dp) :: testResult_fZ_DEMOBASE, testResult_fZ_ASDEXBASE, testInput_tsep
     integer :: i, j
     real(dp) :: test_Bt = 5.8547

@@ -11,10 +11,7 @@ module read_and_get_atomic_data
   ! !!!!!!!!!!!!!!!!!!!!
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-    use maths_library
-    use read_radiation
-
-    implicit none
+  implicit none
 
 contains
 
@@ -35,6 +32,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use maths_library, only: interpolate
     implicit none
 
     ! Subroutine declarations !
@@ -72,7 +70,7 @@ contains
     ! The # character must be at the start of the line.
     include "root.dir"
 
-!    character(len=120), save :: hdatadir = trim(ROOTDIR//'/data/h_data/')
+    !    character(len=120), save :: hdatadir = trim(ROOTDIR//'/data/h_data/')
     character(len=200), save :: hdatadir = trim(INSTALLDIR//'/data/h_data/')
 
     ! Maxima for log density and log temperature in each data file
@@ -233,8 +231,12 @@ contains
         ! Radiative cooling function Lz
         ! To test the interpolation, use a point at the geometrical mean of the two
         ! first temperatures and the two first values of ne.tau
+        use read_radiation, only: read_lz
+        implicit none
+
         real(dp):: s, al, Rcx, plt, prb, density, temperature, mass
         real(dp):: te,netau,test_lz,estimate_lz
+        
         te=sqrt(1.000 * 1.047)
         netau=sqrt(0.1*1.0)
 

@@ -12,11 +12,6 @@ module kallenbach_module
   !---------------------------------------------------------------------------
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  use process_output
-  use output_module
-  use constants
-  use divertor_kallenbach_variables
-
 contains
 
   !---------------------------------------------------------------------------
@@ -29,7 +24,12 @@ contains
     !! 
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use process_output, only: ocmmnt, osubhd
+    use constants, only: opt_file, vfile, iotty
+    use divertor_kallenbach_variables, only: kallenbach_test_option, &
+      kallenbach_tests
+    implicit none
+    
     call osubhd(iotty,'# Running test of Kallenbach divertor model')
     select case (kallenbach_test_option)
         case (0)
@@ -59,9 +59,12 @@ contains
     use read_radiation
     use constants
     use process_output, only: oblnkl, obuild, ocentr, ocmmnt, oheadr, osubhd, &
-                              ovarin, ovarre, ovarrf, ovarst
+      ovarin, ovarre, ovarrf, ovarst
     use physics_variables, only: tesep
-
+		use constants, only: iotty
+		use divertor_kallenbach_variables, only: target_spread, lambda_q_omp, &
+      netau_sol, lcon_factor 
+    use divertor_ode_var, only: impurity_arr
     implicit none
 
     integer :: i
@@ -150,10 +153,12 @@ contains
                               ovarin, ovarre, ovarrf, ovarst
     use physics_variables, only: rmajor, rminor, bt, plascur, q, aspect, &
                                  pperim, itart, kappa, triang
-    use divertor_kallenbach_variables, only: ttarget, qtargettotal, targetangle
     use physics_module, only: bpol
     use plasma_geometry_module, only: xparam
-
+		use constants, only: mfile, vfile, nout, nplot, opt_file
+    use divertor_kallenbach_variables, only: kallenbach_tests, &
+      kallenbach_scan_switch, target_spread, lambda_q_omp, &
+      netau_sol, ttarget, qtargettotal, targetangle
     implicit none
 
     real(dp):: b_pol
@@ -236,7 +241,9 @@ contains
     use divertor_kallenbach_variables, only: ttarget, qtargettotal, targetangle
     use physics_module, only: bpol
     use plasma_geometry_module, only: xparam
-
+		use divertor_kallenbach_variables, only: lambda_q_omp, netau_sol, &
+      kallenbach_scan_var, target_spread, kallenbach_scan_start, &
+      kallenbach_scan_end, kallenbach_scan_num 
     implicit none
 
     integer :: i

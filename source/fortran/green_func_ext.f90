@@ -8,7 +8,7 @@
 ! the current drive value by adjoint approach
 !
 !#######################################################################
- USE const_and_precisions
+USE const_and_precisions, only: wp_, unit, zero, mc2_, comp_eps
 ! USE rayinfo_data
 ! USE config
 ! USE kinetic
@@ -16,7 +16,6 @@
 !------- necessary for gfunc (solver SYNCH of S.Kasilov)
 ! USE store_gfunc_mod, only : prop
 !-------
- USE config_ext  ! for use out of TRAVIS
 !---
  IMPLICIT NONE
  CHARACTER(Len=1), PRIVATE :: adj_appr(6)    ! adjoint approach switcher

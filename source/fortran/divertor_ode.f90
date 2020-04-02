@@ -9,23 +9,8 @@ module divertor_ode
   
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 
-  use global_variables
-  use maths_library
-  use read_and_get_atomic_data
-  use impurity_radiation_module, only: nimp, imp_label, impurity_arr
-  use process_output, only: oblnkl,obuild, ocentr, ocmmnt, oheadr, osubhd, &
-                            ovarin, ovarre, ovarrf, ovarst
-  use constants
-  use divertor_kallenbach_variables
-  use build_variables, only: rspo
-  use physics_variables, only:  tesep_keV => tesep
-  use divertor_ode_var
-
-! SJP Issue #834
-! Add access to variable hldiv
-
-  use divertor_variables, only : hldiv
-
+  use divertor_ode_var, only: nimp
+  use constants, only: pi
   implicit none
 
   ! Module-level declarations !
@@ -103,7 +88,22 @@ contains
     use ode_mod , only :            ode
     use numerics, only :            active_constraints
     use physics_variables, only :   nesep, pdivt
-
+    use read_radiation, only: read_lz
+    use global_variables, only: iscan_global, fileprefix
+    use maths_library, only: integer2string
+    use read_and_get_atomic_data, only: get_h_rates, unit_test_read
+    use process_output, only: oheadr, ocmmnt, ovarre, osubhd, ovarin
+    use constants, only: echarge, rmu0, umass
+		use divertor_kallenbach_variables, only: netau_sol, neratio, &
+      exchangepowerlost, fractionwidesol, target_spread, fmom, totalpowerlost, &
+      relerr_sol, hydrogenicpowerlost, ionisationpowerlost, impuritypowerlost, &
+      mach0, impurity_enrichment, lcon_factor, pressure0, abserr_sol, &
+      lambda_q_omp, kallenbach_switch 
+		use build_variables, only: rspo 
+		use physics_variables, only: tesep_keV => tesep
+		use divertor_ode_var, only: nimp, imp_label, &
+      impurity_concs, impurity_arr
+		use divertor_variables, only: hldiv 
     implicit none
 
     logical::verbose
@@ -969,6 +969,11 @@ do i = 2, nimp
     !! Y(7-10) are the power loss integrals
     !! 
 
+    use read_radiation, only: read_lz
+    use read_and_get_atomic_data, only: get_h_rates
+    use constants, only: echarge
+		use divertor_kallenbach_variables, only: abserr_sol, netau_sol 
+		use divertor_ode_var, only: impurity_concs, imp_label, nimp
     implicit none
 
     real(dp),intent(in) :: t       ! T, the independent variable
