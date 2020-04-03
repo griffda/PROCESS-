@@ -2582,10 +2582,13 @@ module tfcoil_variables
   !! thkwp /0.0/ : radial thickness of winding pack (m) (iteration variable 140)
   real(dp) :: thwcndut = 8.0D-3
   !! thwcndut /8.0e-3/ : TF coil conduit case thickness (m) (iteration variable 58)
+  
   real(dp) :: tinstf = 0.018D0
-  !! tinstf /0.018/ : ground insulation thickness surrounding winding pack (m)
-  !!                  Includes allowance for 10 mm insertion gap.
-  !!                  (calculated for stellarators)
+  !! Thickness of the ground insulation layer surrounding (m) 
+  !!   - Superconductor TF (i_tf_sup == 1) : The TF Winding packs
+  !!   - Resistive magnets (i_tf_sup /= 1) : The TF turns
+  !! Rem : The default value includes allowance for 10 mm insertion gap.
+  !! Rem : Thickness calculated for stellarators.
 
   real(dp), bind(C) :: tmargmin_tf = 0D0
   !! tmargmin_tf /0/ : minimum allowable temperature margin : TF coils (K)
