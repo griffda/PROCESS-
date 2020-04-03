@@ -278,7 +278,7 @@ contains
       cpttf_max, dcopper, tdmptf, casths, i_tf_turns_integer, quench_model, &
       tcritsc, layer_ins, tinstf, n_layer, tcoolin, ripmax, frhocp, &
       cpttf, tmargmin, casths_fraction, eff_tf_cryo, eyoung_al, eyoung_ins, &
-      eyoung_reinforced_al, eyoung_steel, eyoung_winding, f_vforce_inboard, &
+      eyoung_nibron, eyoung_steel, eyoung_winding, f_vforce_inboard, &
       fcoolleg, frholeg, ftoroidalgap, i_tf_sc_mat, i_tf_shape, i_tf_bucking, &
       leno, n_tf_graded_layers, n_tf_joints, n_tf_joints_contact, poisson_al, &
       poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact
@@ -1787,8 +1787,8 @@ contains
        case ('eyoung_al')
           call parse_real_variable('eyoung_al', eyoung_al, 0.0D0, 1.0D0, &
                'Reinforced aluminium Young modulus for TF stress calc.')
-       case ('eyoung_reinforced_al')
-          call parse_real_variable('eyoung_reinforced_al', eyoung_reinforced_al, 0.0D0, 1.0D0, &
+       case ('eyoung_nibron')
+          call parse_real_variable('eyoung_nibron', eyoung_nibron, 0.0D0, 1.0D0, &
                'Reinforced aluminium Young modulus for TF stress calc.')
        case ('farc4tf')
           call parse_real_variable('farc4tf', farc4tf, 0.0D0, 1.0D0, &

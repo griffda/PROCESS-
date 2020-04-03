@@ -1190,7 +1190,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         strtf1, rbmax, thicndut, acndttf, tfinsgap, &
         acasetf, alstrtf, poisson_steel, poisson_copper, poisson_al, &
         n_tf_graded_layers, i_tf_sup, i_tf_bucking, fcoolcp, eyoung_winding, &
-        eyoung_steel, eyoung_reinforced_al, eyoung_ins, eyoung_al, eyoung_copper, &
+        eyoung_steel, eyoung_nibron, eyoung_ins, eyoung_al, eyoung_copper, &
         aiwp, cpttf
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
         cohbop, ncls, cptdin
@@ -1414,7 +1414,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         
         ! Re-inforced aluminium 
         else 
-            eyoung(i_tf_bucking) = eyoung_reinforced_al
+            eyoung(i_tf_bucking) = eyoung_nibron
             poisson(i_tf_bucking) = poisson_al
         end if
         

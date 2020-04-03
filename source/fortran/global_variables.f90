@@ -2356,11 +2356,9 @@ module tfcoil_variables
   !! Aluminium young modulus
   !!  Default value taken from wikipedia
   
-  real(dp) :: eyoung_reinforced_al = 180.0D9 
-  !! Reinforced aluminium young modulus 
-  !!  Default value given Garry 
-  !!  Rem : Al reinforcement can be tuned to any values
-
+  real(dp) :: eyoung_nibron = 141.0D9 
+  !! Cryogenic aluminium magnet bucking clinder young modulus
+  !!  Ref : Garry's personnal comunication
   real(dp) :: poisson_steel = 0.3D0
   !! Steel Poisson's ratio 
   
