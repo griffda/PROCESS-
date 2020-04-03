@@ -28,6 +28,9 @@ INTRO = ("## Introduction\n"
 # Table column widths and headings
 COL_HEADINGS = ["Name", "Type", "Initial", "Description"]
 
+# Excluded modules
+EXCLUDED_MODS = ("autodoc_data")
+
 class VarDes(object):
     """A collection of the variable descriptions for PROCESS source code."""
     def __init__(self, project):
@@ -50,6 +53,10 @@ class VarDes(object):
         """
         # Sort modules by module name, alphabetically
         modules = sorted(self.project.modules, key=lambda module: module.name)
+
+        # Filter to exclude unwanted modules
+        modules = [module for module in modules if module.name not in EXCLUDED_MODS]
+
         for module in modules:
             self.vars[module.name] = OrderedDict()
             # Sort module variables by name, alphabetically
