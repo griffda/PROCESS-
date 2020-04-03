@@ -251,7 +251,7 @@ module physics_variables
   !! fpdivlim /1.0/ : F-value for minimum pdivt (constraint equation 80)
 
   real(dp) :: fne0 = 1.0D0
-  !! F-value for minimum pdivt (constraint equation 81)
+  !! f-value for the constraint ne(0) > ne(sep) (constraint equation 81)
   !! Iteration variable 154 
 
   real(dp), bind(C) :: ftrit = 0.5D0
@@ -3502,15 +3502,15 @@ module build_variables
   !! tfoffset : vertical distance between centre of TF coils and centre of plasma (m)
 
   real(dp) :: tfootfi = 1.19D0
-  !! tfootfi /1.19/ : TF coil outboard leg / inboard leg radial thickness
-  !!                 ratio (i_tf_sup=0 only)
-  !!                 (iteration variable 75)
+  !! TF coil outboard leg / inboard leg radial thickness
+  !!   ratio (i_tf_sup=0 only)
+  !!   (iteration variable 75)
 
   real(dp) :: tfthko = 0.0D0
-  !! tfthko : outboard TF coil thickness (m)
+  !! Outboard TF coil thickness (m)
 
   real(dp) :: tftsgap = 0.05D0
-  !! tftsgap /0.05/ : Minimum metal-to-metal gap between TF coil and thermal shield (m)
+  !! Minimum metal-to-metal gap between TF coil and thermal shield (m)
 
   real(dp) :: thshield = 0.05D0
   !! thshield /0.05/ : TF-VV thermal shield thickness (m)
