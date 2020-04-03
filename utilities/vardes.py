@@ -13,23 +13,20 @@ import re
 # must be run from the Process root dir
 MARKDOWN_FILE_PATH = "documentation/proc-pages/vardes.md"
 
-INTRO = ("Variables labelled with FIX are initialised with the given default "
+TITLE = "# PROCESS Variable Descriptions\n---\n"
+
+INTRO = ("## Introduction\n"
+    "Variables labelled with FIX are initialised with the given default "
     "value (shown between / / characters), but currently are not available to "
     "be changed in the input file.\n"
     "All other variables shown with a default value (including arrays boundl, "
     "boundu and sweep) can be changed in the input file.\n"
     "Variables not shown with a default value are calculated within PROCESS, "
-    "so need not be initialised.\n")
+    "so need not be initialised.\n"
+    "---\n\n")
 
 # Table column widths and headings
 COL_HEADINGS = ["Name", "Type", "Initial", "Description"]
-COL_HEADER_WIDTHS = [40, 15, 24, 80]
-# Number of chars in each header cell
-COL_WIDTHS = [16, 10, 9, 38]
-# Number of chars in each content cell
-# These have been arbitrarily tweaked to make all tables the same dimensions.
-# They are different because the nbsps used in the header cells are narrower
-# than most characters.
 
 class VarDes(object):
     """A collection of the variable descriptions for PROCESS source code."""
@@ -104,89 +101,21 @@ class VarDes(object):
 
         return fmt_info
 
-    def break_var_info(self, var_info):
-        """Insert line breaks into variable info strings.
-        
-        This is necessary because markdown tables are very difficult to style,
-        as assigning CSS classes or ids appears to be impossible. Therefore 
-        table dimensions are governed by the table header's nbsps, and these 
-        line breaks are designed not to exceed those dimensions.
-        :param var_info: Information about a given variable
-        :type var_info: dict
-        :return: Line-broken var_info
-        :rtype: dict
-        """
-        for (key, value), width in zip(var_info.items(), COL_WIDTHS):
-            # Start of a new table cell
-            broken_info = ""
-            # The line-breaked string
-            count = 0
-            # The current number of characters in the current line
-            words = value.split(" ")
-            # Break the value string into a list of words
-
-            # Does the word fit on this line?
-            for word in words:
-                # Set up space vars depending on start of new line or not
-                if count == 0:
-                    spaces = 0
-                    space_str = ""
-                else:
-                    spaces = 1
-                    space_str = " "
-
-                if spaces + len(word) < width - count:
-                    # Word will fit on current line
-                    broken_info += space_str + word
-                    count += spaces + len(word)
-                elif len(word) > width:
-                    # Word won't fit on this line, and word is longer than the 
-                    # width of the next one; break it up mid-word
-                    word_slices = []
-
-                    # First slice on remainder of first line
-                    first_line_space = width - count
-                    word_slices.append(word[0:first_line_space])
-
-                    # Append subsequent full-width slices
-                    word_slices.extend([word[i:i+width] for i in range(
-                        first_line_space, len(word), width)])
-                    
-                    # Add line breaks in between the word slices
-                    for i, word_slice in enumerate(word_slices):
-                        if i < len(word_slices):
-                            # Add break if not last line
-                            broken_info += word_slice + "<br>"
-                        else:
-                            # Last line; don't break and update count
-                            broken_info += word_slice
-                            count = len(word_slice)
-                else:
-                    # Word won't fit on this line, but will on new one
-                    broken_info += "<br>" + word
-                    count = len(word)
-
-            # Overwrite the var_info string with the line-broken version
-            var_info[key] = broken_info
-
-        return var_info
-
     def create_table_heading(self):
-        """Create a markdown table header row string.
+        """Create an HTML table header row string.
         
         Use nbsps to force the correct width for each column.
-        :return: Markdown string of the header row
+        :return: HTML string of the header row
         :rtype: str
         """
-        headings_str = "|"
-        for width, heading in zip(COL_HEADER_WIDTHS, COL_HEADINGS):
-            # Write the header, then the right number of spaces
-            headings_str += heading
-            spaces = width - len(heading)
-            headings_str += "&nbsp;" * spaces
-            headings_str += "|"
+        headings_str = "\t<tr>\n"
+        for i, heading in enumerate(COL_HEADINGS):
+            # Write the header
+            col_number = str(i + 1)
+            headings_str += ("\t\t<th class=\"col" + col_number + "\">" + 
+                heading + "</th>\n")
 
-        headings_str += "\n"
+        headings_str += "\t</tr>\n"
         return headings_str
 
     def create_table_row(self, var, info):
@@ -196,57 +125,49 @@ class VarDes(object):
         :type var: str
         :param info: Info associated with that variable
         :type info: dict
-        :return: Markdown string for the table row
+        :return: HTML string for the table row
         :rtype: str
         """
-        row_str = "|"
+        row_str = "\t<tr>\n"
         
         # Format the var name and info for markdown output
         fmt_var_info = self.format_var_info(var, info)
 
-        # Insert line breaks in the formatted values
-        fmt_var_info = self.break_var_info(fmt_var_info)
-
         # Write the value of each of the fields in a separate cell
         for value in fmt_var_info.values():
-            row_str += value + "|"
+            row_str += "\t\t<td>" + value + "</td>\n"
 
         # End of table row (one variable written)
-        row_str += "\n"
+        row_str += "\t</tr>\n"
         
         return row_str
 
     def write_markdown(self):
-        """Write the variable descriptions out in a markdown table."""
+        """Write the variable descriptions to a .md file.
+        
+        Use markdown for text and HTML for tables.
+        """
         md_file = open(MARKDOWN_FILE_PATH, 'w')
 
-        # Title
-        title = "# PROCESS Variable Descriptions\n"
-        title += "---\n"
-        md_file.write(title)
-
-        # Intro
-        intro = "## Introduction\n"
-        intro += INTRO
-        intro += "---\n\n"
-        md_file.write(intro)
+        # Title and intro
+        md_file.write(TITLE)
+        md_file.write(INTRO)
 
         # Write module headings and variable tables
         for module, variables in self.vars.items():
             # Module title
-            module_title = ("## " + module + "\n")
-            md_file.write(module_title)
+            md_file.write("## " + module + "\n")
             
-            # Table heading
-            table = self.create_table_heading()
-            table += "|---|---|---|---|\n"
+            # Create HTML table and table headings
+            table = "<table class=\"vardes\">\n"
+            table += self.create_table_heading()
             
             # Create table content rows (variable descriptions)
             for var, info in variables.items():
                 table += self.create_table_row(var, info)
 
             # End of module's table
-            table += "\n"
+            table += "</table>\n\n"
             md_file.write(table)
 
         md_file.close()
