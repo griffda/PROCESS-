@@ -96,6 +96,20 @@ class VarDes(object):
 
         return value
     
+    def truncate_value(self, value):
+        """Shorten a long value (like a big array) to avoid taking up space.
+        
+        :param value: A value to shorten, if required
+        :type value: str
+        :return: A value equal to or under the maximum length
+        :rtype: str
+        """
+        MAX_LENGTH = 30
+        if len(value) > MAX_LENGTH:
+            value = value[:MAX_LENGTH] + "..."
+        
+        return value
+
     def format_var_info(self, var, info):
         """Format the required variable information.
 
@@ -110,7 +124,11 @@ class VarDes(object):
 
         fmt_info["var"] = self.format_value(var)
         fmt_info["var_type"] = self.format_value(info["var_type"])
-        fmt_info["initial"] = self.format_value(info["initial"])
+        
+        # Truncate the initial value if it's too long
+        initial = self.format_value(info["initial"])
+        fmt_info["initial"] = self.truncate_value(initial)
+        
         fmt_info["description"] = self.format_value(info["description"])
 
         return fmt_info
