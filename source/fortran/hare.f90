@@ -4,10 +4,11 @@ contains
     subroutine hare_calc(dens,bfield,R0m,amin_m,rho,te0,zeff,        &
                          fshift,xf,enpa,ftherm,fpp,cdeff,ampperwatt, &
                          Temperature_capped)
-        use mode
-        use param
-        use freq
         use process_output, only:ocmmnt, ovarre, ovarin, ovarrf
+        use mode, only: imod 
+        use param, only: c, pi 
+        use mod_f90_kind, only: rkind, ikind
+        use freq, only: om, xk0 
         implicit none
         real(rkind), intent(in) :: dens,bfield,R0m,amin_m,rho,te0,zeff
         real(rkind), intent(out) :: fshift, xf, enpa,ftherm,fpp,cdeff, ampperwatt
@@ -122,7 +123,7 @@ contains
     end subroutine hare_calc
 
     subroutine polar(oc,op,npar,nperp,imode,exnorm,eynorm,eznorm)
-        use param
+        use mod_f90_kind, only: rkind, ikind
         implicit none
 
         integer(ikind), intent(in) :: imode
@@ -187,8 +188,8 @@ contains
     end subroutine polar
 
     subroutine parasitic(ne,bmod,temp,freq,npar,drho,theta,am,nh,percent)
-
-        use param
+        use mod_f90_kind, only: rkind
+        use param, only: pi, c 
         implicit none
 
         real(rkind) :: ne,bmod,temp,freq,npar,drho,theta,am,nh
@@ -208,7 +209,7 @@ contains
     end subroutine parasitic
 
     function angfac(nh,th)
-        use param
+        use mod_f90_kind, only: rkind
         implicit none
         real(rkind) :: nh, th, angfac
 
@@ -218,7 +219,7 @@ contains
     end function angfac
 
     function muO(nh,th)
-        use param
+        use mod_f90_kind, only: rkind
         implicit none
         real(rkind) :: nh, th, sin4o4nh, muO
 
@@ -231,7 +232,7 @@ contains
     end function muO
 
     function gammalow(nh,npa,bf,xf)
-        use param
+        use mod_f90_kind, only: rkind
         implicit none
         real(rkind) :: nh, npa, bf, xf, Ombar, npa2, gammalow
 

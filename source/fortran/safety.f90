@@ -154,15 +154,21 @@
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables
-    use constants
-    use fispact_variables
-    use fwbs_variables
-    use heat_transport_variables
-    use pfcoil_variables
-    use physics_variables
-    use process_output
-    use tfcoil_variables
+    use build_variables, only: blnkith, blnkoth, bore, ddwex, ddwi, fmsbl, &
+      fmsdwe, fmsdwi, fmsfw, fmsoh, fmssh, fmstf, fwith, fwoth, gapds, gapoh, &
+      gapsto, iohcl, ohcth, precomp, scrapli, scraplo, shldith, shldoth, &
+      tfcth, tfootfi, tfthko, tftsgap, thshield, vvblgap
+    use fispact_variables, only: fwtemp, blihkw, fwihkw, fwohkw, blohkw
+    use fwbs_variables, only: blkttype, denstl, fblbe, fblli, fblli2o, &
+      fbllipb, fblss, fblvd, fwclfr, vfblkt, vfshld
+    use heat_transport_variables, only: ipowerflow
+    use pfcoil_variables, only: fcuohsu, ipfres, isumatoh, nohc, vfohc, zl, &
+      rpf, zh, wts, ra, rb
+    use physics_variables, only: rminor
+    use process_output, only: oheadr, ovarre
+    use tfcoil_variables, only: acasetf, acond, aswp, avwp, fcoolcp, fcutfsu, &
+      i_tf_sup, n_tf, vftf, i_tf_sc_mat
+    use constants, only: pi
 
     implicit none
 
@@ -421,7 +427,7 @@
       matfrc(5,5) = avwp / a1
       matfrc(5,7) = acond / a1 * fcutfsu
 
-      if (isumattf /= 3) then  !  treat generic superconductors like Nb3Sn
+      if (i_tf_sc_mat /= 3) then  !  treat generic superconductors like Nb3Sn
          matfrc(5,12) = acond / a1 * (1.0D0 - fcutfsu)
       else
          matfrc(5,13) = acond / a1 * (1.0D0 - fcutfsu)
@@ -553,7 +559,7 @@
        matfrc(23,5) = avwp / a1
        matfrc(23,7) = acond / a1 * fcutfsu
 
-       if (isumattf /= 3) then  !  treat generic superconductors like Nb3Sn
+       if (i_tf_sc_mat /= 3) then  !  treat generic superconductors like Nb3Sn
           matfrc(23,12) = acond / a1 * (1.0D0 - fcutfsu)
        else
           matfrc(23,13) = acond / a1 * (1.0D0 - fcutfsu)

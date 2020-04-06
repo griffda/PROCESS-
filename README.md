@@ -5,6 +5,14 @@
 PROCESS is the reactor systems code at [CCFE](www.ccfe.ac.uk). More information on PROCESS
 can be found on the PROCESS [webpage](http://www.ccfe.ac.uk/powerplants.aspx).
 
+## Install
+
+Clone code from Gitlab, enter the process directory and run:
+
+```bash
+sudo -u $USER bash install.sh
+```
+
 ## Documentation
 
 ### HTML
@@ -34,6 +42,13 @@ A list of other papers using PROCESS:
 Design, ([paper](http://www.sciencedirect.com/science/article/pii/S0920379615302891))
 - "Implications of toroidal field coil stress limits on power plant design using PROCESS", J. Morris et al.,
 SOFT 2014, Fusion Engineering and Design ([paper](http://www.sciencedirect.com/science/article/pii/S0920379615301290)).
+
+## Getting Started
+PROCESS can be run simply by using the `process.py` script located in the root 
+project directory. This automates compiling the source, validating the input 
+file, running the executable and running utilities on the output. It guides 
+those unfamiliar with the project and is a good place to start. More 
+information is available [here](documentation/proc-pages/getting-started.md).
 
 ## Build System
 

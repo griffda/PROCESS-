@@ -9,7 +9,6 @@ icc = 2        * global power balance (consistency equation)
 icc = 5        * density upper limit
 icc = 7        * beam ion density (nbi) (consistency equation)
 icc = 8        * neutron wall load upper limit
-*icc = 10       * toroidal field 1/r (consistency equation)
 icc = 11       * radial build (consistency equation)
 icc = 13       * burn time lower limit (pulse)
 icc = 15       * l-h power threshold limit
@@ -35,7 +34,7 @@ boundu(2) = 10.0
 
 ixc = 3        * rmajor * Plasma major radius (m) (iteration variable 3)
 boundl(3) = 8.0
-boundu(3) = 9.0
+boundu(3) = 9.1
 
 ixc = 4        * te * Volume averaged electron temperature (kev)
 boundl(4) = 5.0

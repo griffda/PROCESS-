@@ -2,6 +2,7 @@ site_name: PROCESS
 docs_dir: "documentation/proc-pages/"
 nav:
     - Home: index.md
+    - Publications: publications.md
     - Getting Started: getting-started.md
     - I/O: 
         - Input: io/input-guide.md

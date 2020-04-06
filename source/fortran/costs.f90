@@ -10,47 +10,27 @@ module costs_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use build_variables
-  use buildings_variables
-  use constants
-  use cost_variables
-  use current_drive_variables
-  use divertor_variables
-  use error_handling
-  use fwbs_variables
-  use ife_variables
-  use heat_transport_variables
-  use pfcoil_variables
-  use physics_variables
-  use pf_power_variables
-  use process_output
-  use pulse_variables
-  use structure_variables
-  use tfcoil_variables
-  use times_variables
-  use vacuum_variables
-  
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   use iso_c_binding
-
   implicit none
 
   private
   public :: costs
 
   !  Various cost account values (M$)
-  real(kind(1.0D0)), public, bind(C) :: c228, c229, c23, c25, c26, cindrt, ccont
+  real(dp), public, bind(C) :: c228, c229, c23, c25, c26, cindrt, ccont
 
   !  Account 226 - Heat transport system 
-  real(kind(1.0D0)), protected, public, bind(C) :: c226, c2261, c2262, c2263
+  real(dp), protected, public, bind(C) :: c226, c2261, c2262, c2263
 
   !  Account 227 - Fuel handling
-  real(kind(1.0D0)), public, bind(C) :: c227, c2271, c2272, c2273, c2274
+  real(dp), public, bind(C) :: c227, c2271, c2272, c2273, c2274
 
   !  Account 24 - electrical plant equipment
-  real(kind(1.0D0)), public, bind(C) :: c24, c241, c242, c243, c244, c245
+  real(dp), public, bind(C) :: c24, c241, c242, c243, c244, c245
 
 
-  real(kind(1.0D0)) :: &
+  real(dp) :: &
        c21,c211,c212,c213,c214,c2141,c2142,c215,c216,c217,c2171, &
        c2172,c2173,c2174,c22,c2211,c2212,c22121,c22122,c22123, &
        c22124,c22125,c22126,c22127,c2213,c22131,c22132,c2214,c2215, &
@@ -81,6 +61,14 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use cost_variables, only: concost, crctcore, fkind, ireactor, moneyint, &
+      c222, cdirt, output_costs, ifueltyp, capcost, c221, lsa, ipnet 
+    use fwbs_variables, only: blkttype 
+    use ife_variables, only: ife 
+    use heat_transport_variables, only: ipowerflow 
+    use physics_variables, only: itart 
+    use process_output, only: ovarin, ovarre, oshead, oblnkl, oheadr, ocosts 
+    use tfcoil_variables, only: i_tf_sup 
     implicit none
 
     !  Arguments
@@ -364,6 +352,17 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: fcdfuel, uche3, tlife, ifueltyp, cpstcst, &
+      coeoam, coecap, output_costs, coe, lsa, cfactr, divcst, ucfuel, divlife, &
+      coefuelt, moneyint, cdrlife, capcost, cplife, fwallcst, fcr0, ratecdol, &
+      decomf, cdcost, fcap0, fcap0cp, ucwst, ucoam, dtlife, blkcst, dintrt, &
+      concost, cfind 
+		use fwbs_variables, only: bktlife 
+		use ife_variables, only: uctarg, ife, reprat
+		use heat_transport_variables, only: pnetelmw 
+		use physics_variables, only: itart, wtgpd, fhe3
+		use process_output, only: oheadr, osubhd, ovarrf, oshead 
+		use times_variables, only: tcycle, tburn
     implicit none
 
     !  Arguments
@@ -372,7 +371,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
+    real(dp) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
          annfuelt,annfwbl,annoam,anntot,annwst,coecdr, &
          coecp,coedecom,coediv,coefuel,coefwbl,coewst,crfcdr,crfcp, &
          crfdiv,crffwbl,fefcdr,fefcp,fefdiv,feffwbl,fwbllife,kwhpy
@@ -722,14 +721,18 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use buildings_variables, only: shovol, triv, elevol, rbvol, cryvol, &
+      rmbvol, admvol, convol, wsvol 
+		use cost_variables, only: uctr, uccr, ucel, ucrb, ireactor, ucad, ucmb, &
+      ucws, cturbb, ucsh, ucco, lsa, csi, cland
     implicit none
 
     !  Arguments
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: exprb = 1.0D0
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), parameter :: exprb = 1.0D0
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -800,6 +803,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: crctcore, c222, c221
     implicit none
 
     !  Account 221 : Reactor
@@ -860,6 +864,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: c221 
     implicit none
 
     !  Arguments
@@ -909,13 +914,17 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use build_variables, only: fwarea 
+		use cost_variables, only: ucblss, ucfws, fkind, fwallcst, ucblli2o, &
+      ifueltyp, ucfwps, ucfwa,lsa
+		use ife_variables, only: fwmatm, uccarb, ife, ucconc
     implicit none
 
     !  Arguments
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -966,13 +975,19 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: ucblss, ucblbreed, ucblbe, ucblli, ucblvd, &
+      ucblli2o, blkcst, ucbllipb, ifueltyp, lsa, fkind
+		use fwbs_variables, only: blktmodel, whtblli, blkttype, wtblli2o, &
+      whtblbreed, whtblvd, whtblbe, whtblss, wtbllipb 
+		use ife_variables, only: ucflib, blmatm, ife, ucconc, mflibe, uccarb
+		use heat_transport_variables, only: ipowerflow 
     implicit none
 
     !  Arguments
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1065,13 +1080,16 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: ucpens, ucshld, fkind, ucblli2o, lsa
+		use fwbs_variables, only: wpenshld, whtshld 
+		use ife_variables, only: shmatm, uccarb, ife, ucconc
     implicit none
 
     !  Arguments
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1125,13 +1143,15 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: fkind, ucgss, lsa
+		use structure_variables, only: gsmass 
     implicit none
 
     !  Arguments
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1165,6 +1185,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: ifueltyp, divcst, fkind, ucdiv 
+		use divertor_variables, only: divsur 
+		use ife_variables, only: ife 
     implicit none
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1199,6 +1222,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: c222 
+		use ife_variables, only: ife 
     implicit none
 
     !  Arguments
@@ -1246,14 +1271,20 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: uccpclb, uccase, uccu, fkind, ucgss, ucint, &
+      cconshtf, ucsc, ifueltyp, uccpcl1, ucwindtf, cpstcst, lsa, cconfix 
+		use physics_variables, only: itart 
+		use structure_variables, only: clgsmass, aintmass 
+		use tfcoil_variables, only: whtconcu, whtconsc, whtcas, n_tf, whttflgs, &
+      whtcp, i_tf_sup, turnstf, tfleng, i_tf_sc_mat
     implicit none
 
     !  Arguments
 
     !  Local variables
 
-    real(kind(1.0D0)) :: costtfsc,costtfcu,costwire,ctfconpm
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp) :: costtfsc,costtfcu,costwire,ctfconpm
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1292,7 +1323,7 @@ contains
 
        !  Superconductor ($/m)
 
-       costtfsc = ucsc(isumattf) * whtconsc / (tfleng*turnstf)
+       costtfsc = ucsc(i_tf_sc_mat) * whtconsc / (tfleng*turnstf)
 
        !  Copper ($/m)
 
@@ -1359,15 +1390,23 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use build_variables, only: iohcl 
+		use constants, only: twopi 
+		use cost_variables, only: uccase, uccu, cconshpf, ucfnc, cconfix, ucsc, &
+      ucwindpf, lsa, fkind
+		use pfcoil_variables, only: rjconpf, ipfres, vfohc, nohc, turns, isumatpf, &
+      whtpfs, ric, rpf, isumatoh, fcupfsu, fcuohsu, vf, awpoh 
+		use structure_variables, only: fncmass 
+		use tfcoil_variables, only: dcond, dcopper 
     implicit none
 
     !  Arguments
 
     !  Local variables
 
-    real(kind(1.0D0)) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
+    real(dp) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
          pfwndl
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
     integer :: i,npf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1512,13 +1551,15 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: uccryo, lsa, fkind
+		use fwbs_variables, only: vvmass 
     implicit none
 
     !  Arguments
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1554,14 +1595,19 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: ucich, fkind, ucnbi, ucech, uclh, ifueltyp, &
+      cdcost, fcdfuel
+		use current_drive_variables, only: plhybd, iefrf, echpwr, pnbitot 
+		use ife_variables, only: dcdrv2, mcdriv, cdriv2, dcdrv0, edrive, etadrv, &
+      ifedrv, ife, dcdrv1, cdriv1, cdriv3, cdriv0 
     implicit none
 
     !  Arguments
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: exprf = 1.0D0
-    real(kind(1.0D0)) :: switch
+    real(dp), parameter :: exprf = 1.0D0
+    real(dp) :: switch
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1655,6 +1701,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: ucduct, uctpmp, fkind, ucbpmp, ucvalv, ucvdsh, &
+      uccpmp, ucviac 
+		use vacuum_variables, only: dlscal, vacdshm, vpumpn, vcdimax, ntype, &
+      nvduct 
     implicit none
 
     !  Arguments
@@ -1716,6 +1766,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use ife_variables, only: ife 
     implicit none
 
     !  Arguments
@@ -1764,13 +1815,17 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: uctfsw, fkind, ucbus, uctfbr, uctfic, uctfps, &
+      uctfbus, uctfgr, uctfdr
+		use tfcoil_variables, only: vtfskv, tfcmw, tfbusl, estotftgj, i_tf_sup, &
+      tfbusmas, tfckw, n_tf, cpttf
     implicit none
 
     !  Arguments
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: expel = 0.7D0
+    real(dp), parameter :: expel = 0.7D0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1829,6 +1884,11 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: ucpfcb, ucpfbk, fkind, ucpfb, ucpfdr1, ucpfic, &
+      ucpfbs, ucpfps 
+		use heat_transport_variables, only: peakmva 
+		use pf_power_variables, only: ensxpfm, spfbusl, pfckts, srcktpm, vpfskv, &
+		  acptmax 
     implicit none
 
     !  Arguments
@@ -1895,14 +1955,19 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: ucblss, fkind 
+		use error_handling, only: idiags, report_error
+		use heat_transport_variables, only: pthermmw, pnetelmw 
+		use pulse_variables, only: lpulse, dtstor, istore 
+		use times_variables, only: tdown 
     implicit none
 
     !  Arguments
 
     !  Local variables
 
-    ! real(kind(1.0D0)), parameter :: expes = 0.8D0
-    real(kind(1.0D0)) :: shcss
+    ! real(dp), parameter :: expes = 0.8D0
+    real(dp) :: shcss
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2043,11 +2108,14 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: ucphx, uchts, lsa, fkind
+		use fwbs_variables, only: coolwh, pnucshld, pnucblkt
+		use heat_transport_variables, only: pthermmw, pfwdiv, nphx
     implicit none
 
     !  Local variables
-    real(kind(1.0D0)), parameter :: exphts = 0.7D0
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), parameter :: exphts = 0.7D0
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2085,11 +2153,14 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: lsa, ucahts, fkind
+		use ife_variables, only: tfacmw, ife, tdspmw
+		use heat_transport_variables, only: pinjht, vachtmw, trithtmw, fachtmw, crypmw 
     implicit none 
 
     !  Local variables
-    real(kind(1.0D0)), parameter :: exphts = 0.7D0
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), parameter :: exphts = 0.7D0
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2125,11 +2196,14 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: uccry, lsa, fkind
+		use heat_transport_variables, only: helpow 
+		use tfcoil_variables, only: tftmp 
     implicit none
 
     !  Local variables
-    real(kind(1.0D0)), parameter :: expcry = 0.67D0
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), parameter :: expcry = 0.67D0
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2176,6 +2250,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: ucf1, fkind 
     implicit none
 
     !  Local variables
@@ -2201,9 +2276,13 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use constants, only: umass 
+		use cost_variables, only: ucfpr, fkind 
+		use ife_variables, only: fburn, reprat, ife, gain, edrive
+		use physics_variables, only: wtgpd, rndfuel, afuel
     implicit none
 
-    real(kind(1.0D0)) targtm
+    real(dp) targtm
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2238,11 +2317,14 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use buildings_variables, only: wsvol, volrci
+		use cost_variables, only: ucdtc, fkind 
+		use physics_variables, only: ftrit 
     implicit none
 
     !  Local variables
 
-    real(kind(1.0D0)) cfrht
+    real(dp) cfrht
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2272,6 +2354,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use buildings_variables, only: wsvol, volrci
+		use cost_variables, only: ucnbv, fkind 
     implicit none
 
     !  Account 227.4 : Nuclear building ventilation
@@ -2296,6 +2380,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: uciac, fkind 
     implicit none
 
     c228 = 1.0D-6 * uciac
@@ -2315,6 +2400,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: ucme, fkind 
     implicit none
 
     c229 = 1.0D-6 * ucme
@@ -2334,11 +2420,14 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: ucturb, ireactor 
+		use fwbs_variables, only: coolwh 
+		use heat_transport_variables, only: pgrossmw 
     implicit none
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: exptpe = 0.83D0
+    real(dp), parameter :: exptpe = 0.83D0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2378,11 +2467,12 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: ucswyd, lsa
     implicit none
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2408,12 +2498,14 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: ucpp, lsa, ucap
+		use heat_transport_variables, only: pacpmw, fcsht
     implicit none
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: expepe = 0.9D0
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), parameter :: expepe = 0.9D0
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2442,11 +2534,13 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: uclv, lsa
+		use heat_transport_variables, only: tlvpmw 
     implicit none
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2473,11 +2567,12 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: ucdgen, lsa
     implicit none
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2503,11 +2598,12 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: ucaf, lsa
     implicit none
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2535,11 +2631,12 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: ucmisc, lsa
     implicit none
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2569,12 +2666,16 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: ireactor, uchrs, lsa
+		use heat_transport_variables, only: pthermmw, pinjwp, pgrossmw
+		use physics_variables, only: powfmw 
+		use tfcoil_variables, only: tfcmw 
     implicit none
 
     !  Local variables
 
-    real(kind(1.0D0)) :: pwrrej
-    real(kind(1.0D0)), dimension(4) :: cmlsa
+    real(dp) :: pwrrej
+    real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2617,6 +2718,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use cost_variables, only: fcontng, lsa, cowner, cdirt, cfind
     implicit none
 
     !  Indirect costs

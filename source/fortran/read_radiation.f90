@@ -10,9 +10,7 @@ module read_radiation
   ! Modules to import !
   ! !!!!!!!!!!!!!!!!!!!!
 
-  use maths_library
-  use impurity_radiation_module, only: nimp, fimp, imp_label
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   ! List of impurities in the SOL/divertor model IS now same as the main plasma impurities
@@ -38,6 +36,8 @@ contains
     ! Modules to import !
     ! !!!!!!!!!!!!!!!!!!!!
 
+    use maths_library, only: interpolate
+    use impurity_radiation_module, only: nimp, imp_label
     implicit none
 
     ! Variable declarations !
@@ -47,10 +47,10 @@ contains
     integer :: location=0
 
     ! "non-coronal parameter" for radiative loss function [ms.1e20/m3]
-    real(kind(1.0D0)), intent(in) :: netau
+    real(dp), intent(in) :: netau
 
     ! Electron temperature [eV]
-    real(kind(1.0D0)), intent(in) :: te
+    real(dp), intent(in) :: te
 
     ! Verbose switch
     logical, intent(in) :: verbose
@@ -62,25 +62,25 @@ contains
     character(len=*), intent(in) :: element
 
     ! Function output
-    real(kind(1.0D0)) :: read_lz
+    real(dp) :: read_lz
 
     ! Natural logs of netau and te
-    real(kind(1.0D0)) :: lnetau, lte
+    real(dp) :: lnetau, lte
 
     ! Length of temperature and netau data
     integer,save :: nt, nnetau
 
     ! Impurity data array
-    real(kind(1.0D0)), save, dimension(200,5) :: impurity_data
+    real(dp), save, dimension(200,5) :: impurity_data
 
     ! The values of the Lz, mean Z, and mean Z^2 stored in the data files
-    real(kind(1.0D0)), save, dimension(nimp,200,5) :: data_lz, data_z, data_qz
+    real(dp), save, dimension(nimp,200,5) :: data_lz, data_z, data_qz
 
     ! The values of ln(n.tau) at which the data is stored.
-    real(kind(1.0D0)), save, dimension(nimp,5) :: lnetau_lz, lnetau_z, lnetau_qz
+    real(dp), save, dimension(nimp,5) :: lnetau_lz, lnetau_z, lnetau_qz
 
     ! The values of ln(Te) at which the data is stored.
-    real(kind(1.0D0)), save, dimension(nimp, 200) :: logT_lz, logT_z, logT_qz
+    real(dp), save, dimension(nimp, 200) :: logT_lz, logT_z, logT_qz
 
     ! Lz data filename
     character(len=100) :: filename
@@ -237,20 +237,20 @@ contains
     integer, intent(out) :: nt, nnetau
 
     ! Impurity data array
-    real(kind(1.0D0)), intent(out), dimension(200,5) :: impurity_data
+    real(dp), intent(out), dimension(200,5) :: impurity_data
 
     ! Log netau and temperature arrays
-    real(kind(1.0D0)), intent(out), dimension(5) :: lnetau_array
-    real(kind(1.0D0)), intent(out), dimension(200) :: logT_array
+    real(dp), intent(out), dimension(5) :: lnetau_array
+    real(dp), intent(out), dimension(200) :: logT_array
 
     ! netau data
-    real(kind(1.0D0)) :: data_netau
+    real(dp) :: data_netau
 
     !
     integer :: pos, i, j, iostatus
 
     ! Electron temperature array [eV]
-    real(kind(1.0D0)), dimension(200) :: T_array
+    real(dp), dimension(200) :: T_array
 
     character(len=100) :: string, substring
 
@@ -319,6 +319,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use impurity_radiation_module, only: nimp, imp_label
     implicit none
 
     ! Subroutine declarations !
@@ -326,19 +327,19 @@ contains
 
     character(len=2) :: element
 
-    real(kind(1.0D0)) :: dummy
+    real(dp) :: dummy
 
     integer :: i, j
 
     integer, parameter :: points = 27
 
     ! Temperature plot points
-    real(kind(1.0D0)) :: te(points) = (/1., 1.2, 1.5, 2., 2.5, 3., 4., 5., 6., 7., 8., 9., &
+    real(dp) :: te(points) = (/1., 1.2, 1.5, 2., 2.5, 3., 4., 5., 6., 7., 8., 9., &
         10., 12., 14., 16., 20., 30., 40., 50., 60., 70., 80., 90., 100., 150., 200./)
 
-    real(kind(1.0D0)) :: Lz_plot(nimp)
+    real(dp) :: Lz_plot(nimp)
 
-    real(kind(1.0D0)) :: netau = 0.5
+    real(dp) :: netau = 0.5
 
     open(unit=12,file='radiative_loss_functions.txt',status='replace')
     write(12,'(30a11)')'Te (eV)', (imp_label(i), i=2,nimp)
@@ -369,6 +370,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use impurity_radiation_module, only: nimp, imp_label
     implicit none
 
     ! Subroutine declarations !
@@ -376,18 +378,18 @@ contains
 
     character(len=2) :: element
 
-    real(kind(1.0D0)) :: dummy
+    real(dp) :: dummy
 
     integer :: i, j, k
 
     integer, parameter :: points = 27
 
-    real(kind(1.0D0)) :: te(points) = (/1., 1.2, 1.5, 2., 2.5, 3.,4., 5., 6., 7., &
+    real(dp) :: te(points) = (/1., 1.2, 1.5, 2., 2.5, 3.,4., 5., 6., 7., &
         8., 9.,10.,12., 14., 16., 20., 30., 40., 50., 60., 70., 80., 90., 100., 150., 200./)
 
-    real(kind(1.0D0)) :: Z_plot(3,nimp)
+    real(dp) :: Z_plot(3,nimp)
 
-    real(kind(1.0D0)) :: netau(3) = (/0.1, 1.0, 10.0/)
+    real(dp) :: netau(3) = (/0.1, 1.0, 10.0/)
 
     open(unit=12,file='mean_Z.txt',status='replace')
 

@@ -8,21 +8,13 @@ module physics_functions_module
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use constants
-  use error_handling
-  use impurity_radiation_module
-  use maths_library
-  use physics_variables
-  use profiles_module
-  use read_and_get_atomic_data
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   public :: beamfus, palph, palph2
 
   !  Module-level variables
-  real(kind(1.0D0)) :: vcritx
+  real(dp) :: vcritx
 
 contains
 
@@ -54,16 +46,17 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use physics_variables, only: rminor, plascur
     implicit none
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: dene,dnla,bt,rmajor,kappa,sarea,aion
-    real(kind(1.0D0)), dimension(18), intent(out) :: pthrmw
+    real(dp), intent(in) :: dene,dnla,bt,rmajor,kappa,sarea,aion
+    real(dp), dimension(18), intent(out) :: pthrmw
 
     !  Local variables
 
-    real(kind(1.0D0)) :: dene20,dnla20,marterr
+    real(dp) :: dene20,dnla20,marterr
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -175,118 +168,116 @@ contains
     !! T&amp;M/PKNIGHT/LOGBOOK24, p.6
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    
+    use constants, only: echarge
+    use maths_library, only: quanc8
     implicit none
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: alphan, alphat, deni, fdeut, &
+    real(dp), intent(in) :: alphan, alphat, deni, fdeut, &
          fhe3, ftrit, ti
-    real(kind(1.0D0)), intent(out) :: palppv, pchargepv, pneutpv, sigvdt, &
+    real(dp), intent(out) :: palppv, pchargepv, pneutpv, sigvdt, &
          fusionrate, alpharate, protonrate, pdtpv, pdhe3pv, pddpv
 
     !  Local variables
 
     integer, parameter :: DT=1, DHE3=2, DD1=3, DD2=4
     integer :: ireaction,nofun
-    real(kind(1.0D0)) :: alow,arate,bhigh,epsq8,errest,etot,flag, &
+    real(dp) :: alow,arate,bhigh,epsq8,errest,etot,flag, &
          fpow,frate,pa,pc,pn,prate,sigmav
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Initialise local quantities
-
-    alow = 0.0D0
-    bhigh = 1.0D0
-    epsq8 = 1.0D-9
-
-    !  Find fusion power
-    !  Integrate over plasma profiles to obtain fusion reaction rate
-
-    palppv = 0.0D0
-    pchargepv = 0.0D0
-    pneutpv = 0.0D0
-    fusionrate = 0.0D0
-    alpharate = 0.0D0
-    protonrate = 0.0D0
-    pddpv = 0.0D0
-
-    do ireaction = 1,4
-
-       !  Fusion reaction rate (m3/s) is calculated in fint for each ireaction
-       !  sigmav is the volume-averaged fusion reaction rate (m3/s)
-       !  = integral(2 rho sigv(rho).ni(rho)^2 drho) / (deni**2)
-
-       call quanc8(fint,alow,bhigh,epsq8,epsq8,sigmav,errest,nofun,flag)
-       if (ireaction == DT) sigvdt = sigmav
-
-       select case (ireaction)
-
-       case (DT)  !  D + T --> 4He + n reaction
-
-          etot = 17.59D0 * echarge  !  MJ
-          fpow = 1.0D0 * sigmav * etot * fdeut*ftrit * deni*deni  !  MW/m3
-          pa = 0.2D0 * fpow
-          pc = 0.0D0
-          pn = 0.8D0 * fpow
-          frate = fpow/etot  !  reactions/m3/second
-          arate = frate
-          prate = 0.0D0
-          pdtpv = fpow
-
-       case (DHE3)  !  D + 3He --> 4He + p reaction
-
-          etot = 18.35D0 * echarge  !  MJ
-          fpow = 1.0D0 * sigmav * etot * fdeut*fhe3 * deni*deni  !  MW/m3
-          pa = 0.2D0 * fpow
-          pc = 0.8D0 * fpow
-          pn = 0.0D0
-          frate = fpow/etot  !  reactions/m3/second
-          arate = frate
-          prate = frate      !  proton production /m3/second
-          pdhe3pv = fpow
-
-       case (DD1)  !  D + D --> 3He + n reaction
-          !  The 0.5 branching ratio is assumed to be included in sigmav
-
-          etot = 3.27D0 * echarge  !  MJ
-          fpow = 1.0D0 * sigmav * etot * 0.5D0*fdeut*fdeut * deni*deni  !  MW/m3
-          pa = 0.0D0
-          pc = 0.25D0 * fpow
-          pn = 0.75D0 * fpow
-          frate = fpow/etot  !  reactions/m3/second
-          arate = 0.0D0
-          prate = 0.0D0      !  Issue #557: No proton production
-          pddpv = pddpv + fpow
-
-       case (DD2)  !  D + D --> T + p reaction
-          !  The 0.5 branching ratio is assumed to be included in sigmav
-
-          etot = 4.03D0 * echarge  !  MJ
-          fpow = 1.0D0 * sigmav * etot * 0.5D0*fdeut*fdeut * deni*deni  !  MW/m3
-          pa = 0.0D0
-          pc = fpow
-          pn = 0.0D0
-          frate = fpow/etot  !  reactions/m3/second
-          arate = 0.0D0
-          prate = frate      !  proton production /m3/second
-          pddpv = pddpv + fpow
-
-       end select
-
-       palppv = palppv + pa
-       pchargepv = pchargepv + pc
-       pneutpv = pneutpv + pn
-       fusionrate = fusionrate + frate
-       alpharate = alpharate + arate
-       protonrate = protonrate + prate
-
-    end do
-
-  contains
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+        ! Initialise local quantities
+         alow = 0.0D0
+         bhigh = 1.0D0
+         epsq8 = 1.0D-9
+ 
+         ! Find fusion power
+         ! Integrate over plasma profiles to obtain fusion reaction rate
+         palppv = 0.0D0
+         pchargepv = 0.0D0
+         pneutpv = 0.0D0
+         fusionrate = 0.0D0
+         alpharate = 0.0D0
+         protonrate = 0.0D0
+         pddpv = 0.0D0
+ 
+         do ireaction = 1,4
+             ! Fusion reaction rate (m3/s) is calculated in fint for each ireaction
+             ! sigmav is the volume-averaged fusion reaction rate (m3/s)
+             ! = integral(2 rho sigv(rho).ni(rho)^2 drho) / (deni**2)
+ 
+             call quanc8(fint,alow,bhigh,epsq8,epsq8,sigmav,errest,nofun,flag)
+             if (ireaction == DT) sigvdt = sigmav
+ 
+             select case (ireaction)
+ 
+                 case (DT)  ! D + T --> 4He + n reaction
+ 
+                     etot = 17.59D0 * echarge  ! MJ
+                     fpow = 1.0D0 * sigmav * etot * fdeut*ftrit * deni*deni  ! MW/m3
+                     pa = 0.2D0 * fpow
+                     pc = 0.0D0
+                     pn = 0.8D0 * fpow
+                     frate = fpow/etot  ! reactions/m3/second
+                     arate = frate
+                     prate = 0.0D0
+                     pdtpv = fpow
+ 
+                 case (DHE3)  ! D + 3He --> 4He + p reaction
+ 
+                     etot = 18.35D0 * echarge  ! MJ
+                     fpow = 1.0D0 * sigmav * etot * fdeut*fhe3 * deni*deni  ! MW/m3
+                     pa = 0.2D0 * fpow
+                     pc = 0.8D0 * fpow
+                     pn = 0.0D0
+                     frate = fpow/etot  ! reactions/m3/second
+                     arate = frate
+                     prate = frate      ! proton production /m3/second
+                     pdhe3pv = fpow
+ 
+                 case (DD1)  ! D + D --> 3He + n reaction
+                     
+                     ! The 0.5 branching ratio is assumed to be included in sigmav
+                     etot = 3.27D0 * echarge  ! MJ
+                     fpow = 1.0D0 * sigmav * etot * 0.5D0*fdeut*fdeut * deni*deni  ! MW/m3
+                     pa = 0.0D0
+                     pc = 0.25D0 * fpow
+                     pn = 0.75D0 * fpow
+                     frate = fpow/etot  ! reactions/m3/second
+                     arate = 0.0D0
+                     prate = 0.0D0      ! Issue #557: No proton production
+                     pddpv = pddpv + fpow
+ 
+                 case (DD2)  !  D + D --> T + p reaction
+                 
+                     ! The 0.5 branching ratio is assumed to be included in sigmav
+                     etot = 4.03D0 * echarge  ! MJ
+                     fpow = 1.0D0 * sigmav * etot * 0.5D0*fdeut*fdeut * deni*deni  ! MW/m3
+                     pa = 0.0D0
+                     pc = fpow
+                     pn = 0.0D0
+                     frate = fpow/etot  ! reactions/m3/second
+                     arate = 0.0D0
+                     prate = frate      ! proton production /m3/second
+                     pddpv = pddpv + fpow
+ 
+             end select
+ 
+             palppv = palppv + pa
+             pchargepv = pchargepv + pc
+             pneutpv = pneutpv + pn
+             fusionrate = fusionrate + frate
+             alpharate = alpharate + arate
+             protonrate = protonrate + prate
+ 
+         end do
+ 
+     contains
+ 
+         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ 
     function fint(rho)
 
       !! Integrand for fusion power integration
@@ -302,18 +293,20 @@ contains
       !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+      use physics_variables, only: te, rhopedt, te0, teped, tesep, tbeta, &
+        dene, rhopedn, ne0, neped, nesep
+      use profiles_module, only: tprofile, nprofile
       implicit none
 
-      real(kind(1.0D0)) :: fint
+      real(dp) :: fint
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: rho
+      real(dp), intent(in) :: rho
 
       !  Local variables
 
-      real(kind(1.0D0)) :: nprof, nprofsq, sigv, tiofr
+      real(dp) :: nprof, nprofsq, sigv, tiofr
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -379,20 +372,22 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: echarge, rmu0
+    use physics_variables, only: falpha, fdeut
     implicit none
 
     !  Arguments
 
     integer, intent(in) :: ifalphap
-    real(kind(1.0D0)), intent(in) :: bp, bt, dene, deni, dnitot, falpe, &
+    real(dp), intent(in) :: bp, bt, dene, deni, dnitot, falpe, &
          falpi, palpnb, pchargepv, ten, tin, vol
-    real(kind(1.0D0)), intent(inout) :: palppv, pneutpv
-    real(kind(1.0D0)), intent(out) :: palpmw, pneutmw, pchargemw, betaft, palpepv, &
+    real(dp), intent(inout) :: palppv, pneutpv
+    real(dp), intent(out) :: palpmw, pneutmw, pchargemw, betaft, palpepv, &
          palpipv, pfuscmw, powfmw
 
     !  Local variables
 
-    real(kind(1.0D0)) :: betath, fact, fact2, palppv_no_nb
+    real(dp) :: betath, fact, fact2, palppv_no_nb
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -476,19 +471,19 @@ contains
 
     implicit none
 
-    real(kind(1.0D0)) :: bosch_hale
+    real(dp) :: bosch_hale
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: t
+    real(dp), intent(in) :: t
     integer, intent(in) :: reaction
 
     !  Local variables
 
     integer, parameter :: DT=1, DHE3=2, DD1=3, DD2=4
-    real(kind(1.0D0)) :: theta1, theta, xi
-    real(kind(1.0D0)), dimension(4) :: bg, mrc2
-    real(kind(1.0D0)), dimension(4,7) :: cc
+    real(dp) :: theta1, theta, xi
+    real(dp), dimension(4) :: bg, mrc2
+    real(dp), dimension(4,7) :: cc
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -596,14 +591,14 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: beamfus0, betbm0, bp, bt, cnbeam, &
+    real(dp), intent(in) :: beamfus0, betbm0, bp, bt, cnbeam, &
          dene, deni, dlamie, ealphadt, enbeam, fdeut, ftrit, ftritbm, &
          sigvdt, ten, tin, vol, zeffai
-    real(kind(1.0D0)), intent(out) :: betanb, dnbeam2, palpnb
+    real(dp), intent(out) :: betanb, dnbeam2, palpnb
 
     !  Local variables
 
-    real(kind(1.0D0)) :: denid,denit,ecritd,ecritt,ehotnb,palpdb, &
+    real(dp) :: denid,denit,ecritd,ecritt,ehotnb,palpdb, &
          palptb,tausl
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -671,123 +666,116 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    implicit none
+        use constants, only: echarge, mproton
+       
+        implicit none
 
-    !  Arguments
+        ! Arguments
+        real(kind(1.0D0)), intent(in) :: ealphadt, ebeam, ecritd, ecritt, &
+            ftritbm, ibeam, nd, nt, svdt, tausbme, ti, vol
+        real(kind(1.0D0)), intent(out) :: ehot, nhot, palfdb, palftb
 
-    real(kind(1.0D0)), intent(in) :: ealphadt, ebeam, ecritd, ecritt, &
-         ftritbm, ibeam, nd, nt, svdt, tausbme, ti, vol
-    real(kind(1.0D0)), intent(out) :: ehot, nhot, palfdb, palftb
+        ! Local variables
+        integer :: iabm
+        real(kind(1.0D0)) :: ebmratd, ebmratt, ehotd, ehott, ifbmd, ifbmt, &
+            ndhot, nhotmsd, nhotmst, nthot, presd, prest, s0d, s0t, svdhotn, &
+            svthotn, tauseffd, tausefft, vcds, vcritd, vcritt, vcts, xcoefd, &
+            xcoeft
+        real(kind(1.0D0)) :: atmd, atmt, epsabs, epsrel
 
-    !  Local variables
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    integer :: iabm
-    real(kind(1.0D0)) :: ebmratd,ebmratt,ehotd,ehott,ifbmd,ifbmt, &
-         ndhot,nhotmsd,nhotmst,nthot,presd,prest,s0d,s0t,svdhotn, &
-         svthotn,tauseffd,tausefft,vcds,vcritd,vcritt,vcts,xcoefd, &
-         xcoeft
-    real(kind(1.0D0)) :: atmd,atmt,epsabs,epsrel
+        ! Initialise shared variables
+        atmd = 2.0D0   !  atomic mass of deuterium
+        atmt = 3.0D0   !  atomic mass of tritium
+        epsabs = 1.0D-7  !  absolute error
+        epsrel = 1.0D-7  !  relative error
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        ! D and T beam current fractions
+        ifbmd = ibeam * (1.0D0 - ftritbm)
+        ifbmt = ibeam * ftritbm
 
-    !  Initialise shared variables
+        ebmratd = ebeam/ecritd
+        vcritd = sqrt(2.0D0*echarge*1000.0D0*ecritd/(mproton*atmd))
+        tauseffd = tausbme/3.0D0 * log(1.0D0+(ebmratd)**1.5D0)
+        nhotmsd = (1.0D0-ftritbm) * ibeam * tauseffd/(echarge * vol)
 
-    atmd = 2.0D0   !  atomic mass of deuterium
-    atmt = 3.0D0   !  atomic mass of tritium
-    epsabs = 1.0D-7  !  absolute error
-    epsrel = 1.0D-7  !  relative error
+        ebmratt = ebeam/ecritt
+        vcritt = sqrt(2.0D0*echarge*1000.0D0*ecritt/(mproton*atmt))
+        tausefft = tausbme/3.0D0 * log(1.0D0+(ebmratt)**1.5D0)
+        nhotmst = ftritbm * ibeam * tausefft/(echarge * vol)
 
-    !  D and T beam current fractions
+        nhot = nhotmsd + nhotmst
+        ndhot = nhotmsd
+        nthot = nhotmst
 
-    ifbmd = ibeam * (1.0D0 - ftritbm)
-    ifbmt = ibeam * ftritbm
+        ! Average hot ion energy from Deng & Emmert, UWFDM-718, Jan 87
+        vcds = 2.0D0 * ecritd * echarge * 1000.0D0/(2.0D0 * mproton)
+        vcts = 2.0D0 * ecritt * echarge * 1000.0D0/(3.0D0 * mproton)
 
-    ebmratd = ebeam/ecritd
-    vcritd = sqrt(2.0D0*echarge*1000.0D0*ecritd/(mproton*atmd))
-    tauseffd = tausbme/3.0D0 * log(1.0D0+(ebmratd)**1.5D0)
-    nhotmsd = (1.0D0-ftritbm) * ibeam * tauseffd/(echarge * vol)
+        s0d = ifbmd/(echarge * vol)
+        s0t = ifbmt/(echarge * vol)
 
-    ebmratt = ebeam/ecritt
-    vcritt = sqrt(2.0D0*echarge*1000.0D0*ecritt/(mproton*atmt))
-    tausefft = tausbme/3.0D0 * log(1.0D0+(ebmratt)**1.5D0)
-    nhotmst = ftritbm * ibeam * tausefft/(echarge * vol)
+        xcoefd = atmd * mproton * tausbme * vcds * s0d / &
+            (echarge * 1000.0D0 * 3.0D0)
+        xcoeft = atmt * mproton * tausbme * vcts * s0t / &
+            (echarge * 1000.0D0 * 3.0D0)
 
-    nhot = nhotmsd + nhotmst
-    ndhot = nhotmsd
-    nthot = nhotmst
+        presd = xcoefd * xbrak(ebeam,ecritd)
+        prest = xcoeft * xbrak(ebeam,ecritt)
 
-    !  Average hot ion energy from Deng & Emmert, UWFDM-718, Jan 87
+        ehotd = 1.5D0 * presd/ndhot
+        ehott = 1.5D0 * prest/nthot
+        ehot = (ndhot*ehotd + nthot*ehott)/nhot
 
-    vcds = 2.0D0 * ecritd * echarge * 1000.0D0/(2.0D0 * mproton)
-    vcts = 2.0D0 * ecritt * echarge * 1000.0D0/(3.0D0 * mproton)
+        iabm = 2 ; svdhotn = 1.0D-4 * sgvhot(iabm,vcritd,ebeam)
+        iabm = 3 ; svthotn = 1.0D-4 * sgvhot(iabm,vcritt,ebeam)
 
-    s0d = ifbmd/(echarge * vol)
-    s0t = ifbmt/(echarge * vol)
+        palfdb = palphabm(ealphadt,ndhot,nt,svdhotn,vol,ti,svdt)
+        palftb = palphabm(ealphadt,nthot,nd,svthotn,vol,ti,svdt)
 
-    xcoefd = atmd * mproton * tausbme * vcds * s0d / &
-         (echarge * 1000.0D0 * 3.0D0)
-    xcoeft = atmt * mproton * tausbme * vcts * s0t / &
-         (echarge * 1000.0D0 * 3.0D0)
+    contains
 
-    presd = xcoefd * xbrak(ebeam,ecritd)
-    prest = xcoeft * xbrak(ebeam,ecritt)
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ehotd = 1.5D0 * presd/ndhot
-    ehott = 1.5D0 * prest/nthot
-    ehot = (ndhot*ehotd + nthot*ehott)/nhot
+        function xbrak(e0,ec)
+            !! Hot ion energy parameter
+            !! author: P J Knight, CCFE, Culham Science Centre
+            !! e0 : input real :  neutral beam energy (keV)
+            !! ec : input real :  critical energy for electron/ion slowing down of
+            !! the beam ion (keV)
+            !! This routine calculates something to do with the hot ion energy...
+            !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+            !
+            ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    iabm = 2 ; svdhotn = 1.0D-4 * sgvhot(iabm,vcritd,ebeam)
-    iabm = 3 ; svthotn = 1.0D-4 * sgvhot(iabm,vcritt,ebeam)
+            implicit none
 
-    palfdb = palphabm(ealphadt,ndhot,nt,svdhotn,vol,ti,svdt)
-    palftb = palphabm(ealphadt,nthot,nd,svthotn,vol,ti,svdt)
+            real(dp) :: xbrak
+            
+            ! Arguments
+            real(dp), intent(in) :: e0, ec
 
-  contains
+      real(dp) :: ans,t1,t2,t3,t4,xarg,xc,xcs
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    function xbrak(e0,ec)
+            xcs = e0/ec
+            xc = sqrt(xcs)
 
-      !! Hot ion energy parameter
-      !! author: P J Knight, CCFE, Culham Science Centre
-      !! e0 : input real :  neutral beam energy (keV)
-      !! ec : input real :  critical energy for electron/ion slowing down of
-      !! the beam ion (keV)
-      !! This routine calculates something to do with the hot ion energy...
-      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-      !
-      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            t1 = xcs/2.0D0
+            t2 = (log((xcs + 2.0D0*xc + 1.0D0)/(xcs - xc + 1.0D0)))/6.0D0
 
-      implicit none
+            xarg = (2.0D0*xc -1.0D0)/sqrt(3.0D0)
+            t3 = (atan(xarg))/sqrt(3.0D0)
+            t4 = 0.3022999D0
 
-      real(kind(1.0D0)) :: xbrak
+            ans = t1 + t2 - t3 - t4
+            xbrak = ans
 
-      !  Arguments
+        end function xbrak
 
-      real(kind(1.0D0)), intent(in) :: e0, ec
-
-      !  Local variables
-
-      real(kind(1.0D0)) :: ans,t1,t2,t3,t4,xarg,xc,xcs
-
-      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-      xcs = e0/ec
-      xc = sqrt(xcs)
-
-      t1 = xcs/2.0D0
-      t2 = (log((xcs + 2.0D0*xc + 1.0D0)/(xcs - xc + 1.0D0)))/6.0D0
-
-      xarg = (2.0D0*xc -1.0D0)/sqrt(3.0D0)
-      t3 = (atan(xarg))/sqrt(3.0D0)
-      t4 = 0.3022999D0
-
-      ans = t1 + t2 - t3 - t4
-      xbrak = ans
-
-    end function xbrak
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     function palphabm(ealphadt,nbm,nblk,sigv,vol,ti,svdt)
 
@@ -808,15 +796,15 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: palphabm
+      real(dp) :: palphabm
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: ealphadt,nblk,nbm,sigv,svdt,ti,vol
+      real(dp), intent(in) :: ealphadt,nblk,nbm,sigv,svdt,ti,vol
 
       !  Local variables
 
-      real(kind(1.0D0)) :: ratio
+      real(dp) :: ratio
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -841,19 +829,21 @@ contains
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+      use error_handling, only: idiags, report_error
+      use maths_library, only: quanc8
+
       implicit none
 
-      real(kind(1.0D0)) :: sgvhot
+      real(dp) :: sgvhot
 
       !  Arguments
-
       integer, intent(in) :: iabm
-      real(kind(1.0D0)), intent(in) :: ebeam, vcrx
+      real(dp), intent(in) :: ebeam, vcrx
 
       !  Local variables
 
       integer :: nofun
-      real(kind(1.0D0)) :: abm,abserr,epsabs1,flag,svint,t1,t2, &
+      real(dp) :: abm,abserr,epsabs1,flag,svint,t1,t2, &
            vbeam,vbeams,xv
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -887,7 +877,7 @@ contains
 
     end function sgvhot
 
-  end subroutine beamcalc
+    end subroutine beamcalc
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -902,17 +892,19 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: mproton, echarge
+    
     implicit none
 
-    real(kind(1.0D0)) :: fsv
+    real(dp) :: fsv
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: u
+    real(dp), intent(in) :: u
 
     !  Local variables
 
-    real(kind(1.0D0)) :: t1,t2,xvc,xvcs
+    real(dp) :: t1,t2,xvc,xvcs
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -946,15 +938,15 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: sigbmfus
+      real(dp) :: sigbmfus
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: vrelsq
+      real(dp), intent(in) :: vrelsq
 
       !  Local variables
 
-      real(kind(1.0D0)) :: a1,a2,a3,a4,a5,atmd,ebm,t1,t2
+      real(dp) :: a1,a2,a3,a4,a5,atmd,ebm,t1,t2
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1001,10 +993,14 @@ contains
     !! https://idm.euro-fusion.org/?uid=2MSZ4T
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    real(kind(1.0D0)) :: t_eped_scaling
+    use physics_variables, only: triang, plascur, rmajor, kappa, & 
+        normalised_total_beta, rminor, eped_sf
+    implicit none
+
+    real(dp) :: t_eped_scaling
 
     ! Scaling constant and exponents
-    real(kind(1.0D0)) :: c0, a_delta, a_ip, a_r, a_beta, a_kappa, a_a
+    real(dp) :: c0, a_delta, a_ip, a_r, a_beta, a_kappa, a_a
 
     c0 = 2.16d0
     a_delta = 0.82D0
@@ -1043,10 +1039,13 @@ contains
     !! Predictive pedestal modelling for DEMO,  Samuli Saarelma.
     !! https://idm.euro-fusion.org/?uid=2MSZ4T
 
-    real(kind(1.0D0)) :: p_eped_scaling !pressure in kev*10¹9*m¯3
+    use physics_variables, only: rmajor, rminor, eped_sf
+    implicit none
+
+    real(dp) :: p_eped_scaling !pressure in kev*10¹9*m¯3
     ! Scaling constant and exponents
-    real(kind(1.0D0)) :: c0, a_delta, a_ip, a_r, a_beta, a_kappa, a_a
-    real(kind(1.0D0)) :: betan_pl,kappa_pl,delta_pl,ip_pl
+    real(dp) :: c0, a_delta, a_ip, a_r, a_beta, a_kappa, a_a
+    real(dp) :: betan_pl,kappa_pl,delta_pl,ip_pl
 
     c0 = 9.4d0
     a_delta = 0.82D0
@@ -1094,12 +1093,12 @@ contains
     implicit none
 
     !  Arguments
-    real(kind(1.0D0)), intent(out) :: pbrempv,plinepv,psyncpv,pcoreradpv, &
+    real(dp), intent(out) :: pbrempv,plinepv,psyncpv,pcoreradpv, &
          pedgeradpv,pradpv
 
     !  Local variables
 
-    real(kind(1.0D0)) :: pimpcore, pimptot
+    real(dp) :: pimpcore, pimptot
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1137,15 +1136,19 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: pi
+    use physics_variables, only: vol, rmajor, rminor, ne0, bt, alphan, alphat, &
+        te0, ssync
+
     implicit none
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(out) :: psyncpv
+    real(dp), intent(out) :: psyncpv
 
     !  Local variables
 
-    real(kind(1.0D0)) :: de2o,dum,gfun,kap,kfun,pao,psync,rpow,tbet
+    real(dp) :: de2o,dum,gfun,kap,kfun,pao,psync,rpow,tbet
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1188,39 +1191,46 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine imprad(radb, radl, radcore, radtot)
+    !! author: H Lux (UKAEA)
+!!
+    !! This routine calculates the total radiation losses from impurity line 
+    !! radiation and bremsstrahlung for all elements for a given temperature 
+    !! and density profile.
+    !!
+!! **References**
+    !!
+    !! - Bremsstrahlung equation from Johner, Fusion Science and Technology 59 (2011), pp 308-349
+    !! - L(z) data (coronal equilibrium) from Marco Sertoli, ASDEX-U, private communication
+!! - Kallenbach et al., Plasma Phys. Control. Fus. 55 (2013) 124041
 
-    !! Total impurity line radiation and bremsstrahlung
-    !! author: H Lux, CCFE, Culham Science Centre
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! radb    : output real : bremsstrahlung only (MW/m3)
-    !! radl    : output real : line radiation only (MW/m3)
-    !! radcore : output real : total impurity radiation from core (MW/m3)
-    !! radtot  : output real : total impurity radiation (MW/m3)
-    !! This routine calculates the total radiation losses from
-    !! impurity line radiation and bremsstrahlung for all elements
-    !! for a given temperature and density profile.
-    !! <P>Bremsstrahlung equation from Johner
-    !! <P>L(z) data (coronal equilibrium) from Marco Sertoli, ASDEX-U,
-    !! ref. Kallenbach et al.
-    !! Johner, Fusion Science and Technology 59 (2011), pp 308-349
-    !! Sertoli, private communication
-    !! Kallenbach et al., Plasma Phys. Control. Fus. 55 (2013) 124041
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    use impurity_radiation_module, only: impurity_arr, coreradius, &
+        coreradiationfraction, fradcore, impradprofile
+    use physics_variables, only: rhopedt, rhopedn, te0, teped, tesep, alphan, &
+        alphat, tbeta, ne0, neped, nesep
+    use profiles_module, only: tprofile, nprofile
 
-    !  Arguments
+    implicit none
+    
+    real(dp), intent(out) :: radb
+    !! bremsstrahlung only [MW/m\(^3\)]
 
-    real(kind(1.0D0)), intent(out) :: radb, radl, radcore, radtot
+    real(dp), intent(out) :: radl
+    !! line radiation only [MW/m\(^3\)]
 
-    !  Local variables
+    real(dp), intent(out) :: radcore
+    !! total impurity radiation from core [MW/m\(^3\)]
 
-    real(kind(1.0D0)) :: rho, drho, trho,  nrho
-    real(kind(1.0D0)) :: pimp, pbrem, pline
+    real(dp), intent(out) :: radtot
+    !! total impurity radiation [MW/m\(^3\)]
+
+    ! Local variables
+    real(dp) :: rho, drho, trho,  nrho
+    real(dp) :: pimp, pbrem, pline
     integer :: i, imp, npts
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    npts = 200  !  originally 1000; no significant difference found
+    npts = 200  ! originally 1000; no significant difference found
     drho = 1.0D0/real(npts,kind(1.0D0))
 
     radtot = 0.0D0
@@ -1234,27 +1244,26 @@ contains
 
     do i = 0, npts-1
 
-       rho = (0.5D0 + i)/npts
-       trho = tprofile(rho, rhopedt, te0, teped, tesep, alphat, tbeta)
-       nrho = nprofile(rho, rhopedn, ne0, neped, nesep, alphan)
+      rho = (0.5D0 + i)/npts
+      trho = tprofile(rho, rhopedt, te0, teped, tesep, alphat, tbeta)
+      nrho = nprofile(rho, rhopedn, ne0, neped, nesep, alphan)
 
-       do imp = 1, size(impurity_arr)
+      do imp = 1, size(impurity_arr)
 
-          if (impurity_arr(imp)%frac > 1.0D-30) then
+        if (impurity_arr(imp)%frac > 1.0D-30) then
 
-             call impradprofile(impurity_arr(imp), nrho, trho, pimp, pbrem, pline)
+          call impradprofile(impurity_arr(imp), nrho, trho, pimp, pbrem, pline)
 
-             radtot  = radtot  + pimp*rho
-             radcore = radcore + pimp*rho * fradcore(rho,coreradius,coreradiationfraction)
-             radb = radb + pbrem*rho
-             radl = radl + pline*rho
-          end if
+          radtot  = radtot  + pimp*rho
+          radcore = radcore + pimp*rho * fradcore(rho,coreradius,coreradiationfraction)
+          radb = radb + pbrem*rho
+          radl = radl + pline*rho
+        end if
 
-       end do
+      end do
     end do
 
     !  Radiation powers in MW/m3
-
     radtot  = 2.0D-6 * drho * radtot
     radcore = 2.0D-6 * drho * radcore
     radb    = 2.0D-6 * drho * radb
@@ -1265,79 +1274,95 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function plasma_elongation_IPB() &
-     bind (C, name="c_plasma_elongation_IPB")
-     !! Volume measure of plasma elongation using the IPB definition
-     !! author: H Lux, CCFE, Culham Science Centre
-     !! author: P J Knight, CCFE, Culham Science Centre
-     !! Routine to calculate vol measure of plasma elongation for IPB98
-     !! Otto Kardaun et al 2008 Nucl. Fusion 48 099801
-     !
-     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    bind (C, name="c_plasma_elongation_IPB")
+    !! author: H Lux (UKAEA)
+    !!
+    !! Volume measure of plasma elongation using the IPB definition
+    !!
+    !! See Otto Kardaun et al 2008 Nucl. Fusion 48 099801
      
-     ! Module variables
-     use physics_variables, only : vol, rminor, rmajor
-     use constants, only : pi
+    ! Module variables
+    use physics_variables, only : vol, rminor, rmajor
+    use constants, only : pi
 
-     ! Return value
-     real(kind(1.0D0)) :: plasma_elongation_IPB
+    real(dp) :: plasma_elongation_IPB
+    !! Plasma elongation (IPB)
 
-     ! Volume measure of plasma elongation (used by IPB scalings)
-     plasma_elongation_IPB = vol / ( 2.0D0 * pi*pi * rminor*rminor * rmajor ) 
-
+    plasma_elongation_IPB = vol / ( 2.0D0 * pi*pi * rminor*rminor * rmajor ) 
+    !! \begin{equation} \kappa_{IPB} = \frac{V}{2\pi a^2 R_0} \end{equation}
+    !!
+    !! - \( V \) -- Plasma volume [m\(^3\)]
+    !! - \( a \) -- Plasma minor radius [m]
+    !! - \( R_0 \) -- Plasma major radius [m]
+    
   end function plasma_elongation_IPB
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function total_mag_field() &
-     bind (C, name="c_total_mag_field")
-     !! Calculates the total magnetic field
-     !! author: J. Morris, CCFE, Culham Science Centre
+    bind (C, name="c_total_mag_field")
+    !! author: J. Morris (UKAEA)
+    !! 
+    !! Calculates the total magnetic field
      
-     ! Module variables
-     use physics_variables, only : bt, bp
+    ! Module variables
+    use physics_variables, only : bt, bp
 
      ! Return value
-     real(kind(1.0D0)) :: total_mag_field
+     real(dp) :: total_mag_field
 
-     ! Volume measure of plasma elongation (used by IPB scalings)
-     total_mag_field = sqrt(bt**2 + bp**2)
+    total_mag_field = sqrt(bt**2 + bp**2)
+    !! \begin{equation} B_{tot} = \sqrt{B_T^2 + B_p^2} \end{equation}
 
   end function total_mag_field
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function beta_poloidal() &
-     bind (C, name="c_beta_poloidal")
-     !! Calculates beta poloidal
-     !! author: J. Morris, CCFE, Culham Science Centre
+    bind (C, name="c_beta_poloidal")
+    !! author: J. Morris (UKAEA)
+    !!
+    !! Calculates total poloidal beta
      
-     ! Module variables
-     use physics_variables, only : btot, bp, beta
+    ! Module variables
+    use physics_variables, only : btot, bp, beta
 
      ! Return value
-     real(kind(1.0D0)) :: beta_poloidal
+     real(dp) :: beta_poloidal
 
-     ! Volume measure of plasma elongation (used by IPB scalings)
-     beta_poloidal = beta * ( btot/bp )**2
+    beta_poloidal = beta * ( btot/bp )**2
+    !! \begin{equation} \beta_p = \beta \left( \frac{B_{tot}}{B_p} \right)^2 \end{equation}
+    !! See J.P. Freidberg, "Plasma physics and fusion energy", Cambridge University Press (2007) 
+    !! Page 270 ISBN 0521851076
 
   end function beta_poloidal
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function res_diff_time() &
-     bind (C, name="c_res_diff_time")
-     !! Calculates resistive diffusion time
-     !! author: J. Morris, CCFE, Culham Science Centre
+    bind (C, name="c_res_diff_time")
+    !! author: J. Morris (UKAEA)
+    !!
+    !! Calculates resistive diffusion time
      
-     ! Module variables
-     use physics_variables, only : rmajor, rplas, kappa95
-     use constants, only : rmu0
+    ! Module variables
+    use physics_variables, only : rmajor, rplas, kappa95
+    use constants, only : rmu0
 
-     ! Return value
-     real(kind(1.0D0)) :: res_diff_time
+    ! Return value
+    real(dp) :: res_diff_time
 
-     ! Resistive diffusion time = current penetration time ~ mu0.a^2/resistivity
-     res_diff_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
+    res_diff_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
+    !! Resistive diffusion time equals the current penetration time which is approximated by:
+    !! \begin{equation} t_{\text{res-diff}} \sim 
+    !! \frac{2\mu_0.R_0}{\rho_{\text{plasma}}\kappa_{95}}\end{equation}
+    !!
+    !! * \( \mu_0 \) -- permittivity of free space [H/m]
+    !! * \( R_0 \) -- plasma major radius [m]
+    !! - \( \rho_{\text{plasma}} \) -- plasma resistivity [Ohms]
+    !! - \( \kappa_{95} \) -- plasma elongation at 95% flux surface
+    !!
+    !! #TODO Reference needed
 
   end function res_diff_time
 

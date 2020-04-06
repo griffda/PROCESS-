@@ -12,32 +12,10 @@ module ccfe_hcpb_module
 
   ! Modules to import !
   ! !!!!!!!!!!!!!!!!!!!!
-
-  use build_variables
-  use buildings_variables
-  use constraint_variables
-  use cost_variables
-  use current_drive_variables
-  use divertor_variables
-  use error_handling
-  use fwbs_variables
-  use heat_transport_variables
-  use maths_library
-  use pfcoil_variables
-  use physics_variables
-  use process_output
-  use refprop_interface
-  use tfcoil_variables
-  use constants
-  use global_variables
-  use primary_pumping_variables
-
-  use fw_module
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
-  ! Subroutine declarations !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! Subroutine declarations
 
   private
   public :: ccfe_hcpb, tbr_shimwell
@@ -50,122 +28,122 @@ module ccfe_hcpb_module
 
   ! Module variables
   ! Tungsten density (kg/m3)
-  real(kind(1.0D0)), private :: W_density = 19.25D0 * 1000.0D0
+  real(dp), private :: W_density = 19.25D0 * 1000.0D0
 
   ! Smeared densities of build sections
   ! FW armour density
-  real(kind(1.0D0)), private :: armour_density
+  real(dp), private :: armour_density
 
   ! FW density
-  real(kind(1.0D0)), private :: fw_density
+  real(dp), private :: fw_density
 
   ! Blanket density
-  real(kind(1.0D0)), private :: blanket_density
+  real(dp), private :: blanket_density
 
   ! Shield density
-  real(kind(1.0D0)), private :: shield_density
+  real(dp), private :: shield_density
 
   ! Vacuum vessel density
-  real(kind(1.0D0)), private :: vv_density
+  real(dp), private :: vv_density
 
   ! First wall volume
-  real(kind(1.0D0)), private :: volfw
+  real(dp), private :: volfw
 
   ! Blanket exponent (tonne/m2)
-  real(kind(1.0D0)), private :: x_blanket
+  real(dp), private :: x_blanket
 
   ! Shield exponent (tonne/m2)
-  real(kind(1.0D0)), private :: x_shield
+  real(dp), private :: x_shield
 
   ! Unit nuclear heating in TF coil (W per W of fusion power)
-  real(kind(1.0D0)), private :: tfc_nuc_heating
+  real(dp), private :: tfc_nuc_heating
 
   ! Unit heating of FW and armour in FW armour (W/kg per W of fusion power)
-  real(kind(1.0D0)), private :: fw_armour_u_nuc_heating
+  real(dp), private :: fw_armour_u_nuc_heating
 
   ! Unit nuclear heating in shield (W per W of fusion power)
-  real(kind(1.0D0)), private :: shld_u_nuc_heating
+  real(dp), private :: shld_u_nuc_heating
 
   ! Blanket internal half-height (m)
-  real(kind(1.0D0)), private :: hblnkt
+  real(dp), private :: hblnkt
 
   ! Shield internal half-height (m)
-  real(kind(1.0D0)), private :: hshld
+  real(dp), private :: hshld
 
   ! Clearance between uppermost PF coil and cryostat lid (m)
-  real(kind(1.0D0)), private :: hcryopf
+  real(dp), private :: hcryopf
 
   ! Vacuum vessel internal half-height (m)
-  real(kind(1.0D0)), private :: hvv
+  real(dp), private :: hvv
 
   ! Volume of inboard and outboard shield (m3)
-  real(kind(1.0D0)), private :: volshldi, volshldo
+  real(dp), private :: volshldi, volshldo
 
   ! Inboard/outboard FW coolant void fraction
-  real(kind(1.0D0)), private :: vffwi, vffwo
+  real(dp), private :: vffwi, vffwo
 
   ! Surface heat flux on first wall (MW) (sum = pradfw)
-  real(kind(1.0D0)), private :: psurffwi, psurffwo
+  real(dp), private :: psurffwi, psurffwo
 
   ! Inboard/outboard blanket coolant channel length (radial direction) (m)
-  real(kind(1.0D0)), private :: bldepti, bldepto
+  real(dp), private :: bldepti, bldepto
 
   ! Inboard/outboard blanket mid-plan toroidal circumference for segment (m)
-  real(kind(1.0D0)), private :: blwidti, blwidto
+  real(dp), private :: blwidti, blwidto
 
   ! Inboard/outboard blanket segment poloidal length (m)
-  real(kind(1.0D0)), private :: bllengi, bllengo
+  real(dp), private :: bllengi, bllengo
 
   ! Inboard/outboard blanket flow lengths (m)
-  real(kind(1.0D0)), private :: bzfllengi, bzfllengo
+  real(dp), private :: bzfllengi, bzfllengo
 
   ! Inboard/outboard first wall nuclear heating (MW)
-  real(kind(1.0D0)), private :: pnucfwi, pnucfwo
+  real(dp), private :: pnucfwi, pnucfwo
 
   ! Inboard/outboard first wall peak temperature (K)
-  real(kind(1.0D0)), private :: tpeakfwi, tpeakfwo
+  real(dp), private :: tpeakfwi, tpeakfwo
 
   ! Inboard/outboard total mass flow rate to remove inboard FW power (kg/s)
-  real(kind(1.0D0)), private :: mffwi, mffwo, mffw
+  real(dp), private :: mffwi, mffwo, mffw
 
   ! Inboard/utboard total number of pipes
-  real(kind(1.0D0)), private :: npfwi, npfwo
+  real(dp), private :: npfwi, npfwo
 
   ! Inboard/outboard mass flow rate per coolant pipe (kg/s)
-  real(kind(1.0D0)), private :: mffwpi, mffwpo
+  real(dp), private :: mffwpi, mffwpo
 
   ! Neutron power deposited inboard/outboard blanket blanket (MW)
-  real(kind(1.0D0)), private :: pnucblkti, pnucblkto
+  real(dp), private :: pnucblkti, pnucblkto
 
   ! Inboard/outboard blanket mass flow rate for coolant (kg/s)
-  real(kind(1.0D0)), private :: mfblkti, mfblkto, mfblkt
+  real(dp), private :: mfblkti, mfblkto, mfblkt
 
   ! Total mass flow rate for coolant (kg/s)
-  real(kind(1.0D0)), private :: mftotal
+  real(dp), private :: mftotal
 
   ! Inboard/outboard total num of pipes
-  real(kind(1.0D0)), private :: npblkti, npblkto
+  real(dp), private :: npblkti, npblkto
 
   ! Inboard/outboard mass flow rate per coolant pipe (kg/s)
-  real(kind(1.0D0)), private :: mfblktpi, mfblktpo
+  real(dp), private :: mfblktpi, mfblktpo
 
   ! Inboard/outboard coolant velocity in blanket (m/s)
-  real(kind(1.0D0)), private :: velblkti, velblkto
+  real(dp), private :: velblkti, velblkto
 
   ! Inboard/outboard first wall pumping power (MW)
-  real(kind(1.0D0)), private :: htpmw_fwi, htpmw_fwo
+  real(dp), private :: htpmw_fwi, htpmw_fwo
 
   ! Inboard/outboard blanket pumping power (MW)
-  real(kind(1.0D0)), private :: htpmw_blkti, htpmw_blkto
+  real(dp), private :: htpmw_blkti, htpmw_blkto
 
   ! Total nuclear power deposited in FW, BLKT, SHLD, DIV, TF (MW)
-  real(kind(1.0D0)), private :: nuc_pow_dep_tot
+  real(dp), private :: nuc_pow_dep_tot
 
   ! Exponential factors in nuclear heating calcs
-  real(kind(1.0D0)), private :: exp_blanket, exp_shield1, exp_shield2
+  real(dp), private :: exp_blanket, exp_shield1, exp_shield2
 
   ! Fractions of blanket by volume: steel, lithium orthosilicate, titanium beryllide
-  real(kind(1.0D0)), private :: fblss_ccfe, fblli2sio4, fbltibe12
+  real(dp), private :: fblss_ccfe, fblli2sio4, fbltibe12
 
 contains
 
@@ -180,15 +158,16 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: fwith, fwoth, r_tf_inboard_mid, tfcth, thshield, &
+      gapds, shldith, hmax, r_tf_outboard_mid, r_sh_inboard_out
+    use fwbs_variables, only: afw, coolwh, emult, pnuccp, fw_wall, pnucfw, &
+      pnucblkt, pnucshld, ptfnuc, fdiv, emultmw, pnucdiv
+    use physics_variables, only: itart, pneutmw, idivrt
+
     implicit none
 
-    ! Arguments !
-    ! !!!!!!!!!!!!
     ! Inputs
     integer, intent(in) :: iprint, outfile
-
-    ! Internal
-    real(kind(1.0D0)) :: r_sh_inboard_out
     ! !!!!!!!!!!!!
 
     !  Assign module private variables to iprint and outfile
@@ -213,8 +192,7 @@ contains
     if (itart == 1) then
 
         ! Outer radius of the inborad neutronic shield (centra heigt of the CP)
-        r_sh_inboard_out = r_tf_inboard_mid + 0.5D0*tfcth + thshield + gapds + shldith
-        pnuccp = st_centrepost_nuclear_heating( pneutmw, hmax, r_sh_inboard_out )
+        call st_centrepost_nuclear_heating( pneutmw, hmax, r_sh_inboard_out, shldith, pnuccp )
     else
         pnuccp = 0.0D0
     end if
@@ -228,12 +206,14 @@ contains
     call nuclear_heating_shield
     call nuclear_heating_divertor
 
-    ! Neutron power to divertor: 0.8D0 * fdiv * powfmw (assume this is all absorbed, no multiplication)
+    ! Neutron power to divertor: 0.8D0 * fdiv * powfmw (assume this is all absorbed, 
+    ! no multiplication)
     ! Neutron power to main wall: 0.8D0 * (1-fdiv) * powfmw (assume that all are absorbed)
     ! Total energy deposited in main wall: emult * 0.8D0 * (1-fdiv) * powfmw
     ! Assume that all the neutrons are absorbed. (Not applicable for very thin blankets)
 
-    ! Split neutron power to main wall between fw, bkt, shld and TF with same fractions as before.
+    ! Split neutron power to main wall between fw, bkt, shld and TF with same 
+    ! fractions as before.
     ! Total nuclear power deposited (MW)
     nuc_pow_dep_tot = pnucfw + pnucblkt + pnucshld + ptfnuc
 
@@ -293,6 +273,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use fwbs_variables, only: fwbsshape
+    use physics_variables, only: itart
+
     implicit none
 
     call blanket_half_height
@@ -321,7 +304,7 @@ contains
     ! Calculate cryostat geometry
     call external_cryo_geometry
 
-  end subroutine
+  end subroutine component_volumes
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -332,10 +315,14 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! Local variables
+    use build_variables, only: vgap, blnktth, scrapli, scraplo, fwith, fwoth
+    use divertor_variables, only: divfix
+    use physics_variables, only: rminor, kappa, idivrt
+
+    implicit none
 
     ! Blanket bottom/top half-height (m)
-    real(kind(1.0D0)) :: hbot, htop
+    real(dp) :: hbot, htop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -353,7 +340,7 @@ contains
     ! Average of top and bottom (m)
     hblnkt = 0.5D0*(htop + hbot)
 
-  end subroutine
+  end subroutine blanket_half_height
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -364,10 +351,14 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! Local variables
+    use build_variables, only: vgap, scrapli, scraplo, fwith, fwoth, blnktth
+    use divertor_variables, only: divfix
+    use physics_variables, only: rminor, kappa, idivrt
+
+    implicit none
 
     ! Shield bottom/top half-height (m)
-    real(kind(1.0D0)) :: hbot, htop
+    real(dp) :: hbot, htop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -385,7 +376,7 @@ contains
     ! Average of top and bottom (m)
     hshld = 0.5D0*(htop + hbot)
 
-  end subroutine
+  end subroutine shield_half_height
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -396,10 +387,14 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! Local variables
+    use build_variables, only: hmax, vgap2, ddwi, scrapli, scraplo, fwith, &
+      fwoth, blnktth, shldtth
+    use physics_variables, only: idivrt, rminor, kappa
+
+    implicit none
 
     ! Vacuum vessel bottom/top internal half-height (m)
-    real(kind(1.0D0)) :: hbot, htop
+    real(dp) :: hbot, htop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -418,7 +413,7 @@ contains
     ! Average of top and bottom (m)
     hvv = 0.5D0*(htop + hbot)
 
-  end subroutine
+  end subroutine vv_half_height
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -429,16 +424,20 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: rsldi, shldith, blnkith, fwith, scrapli, scraplo, &
+      fwoth, blareaib, blareaob, blarea, blnkoth, blnktth
+    use fwbs_variables, only: volblkti, volblkto, volblkt
+    use physics_variables, only: rminor
+    use maths_library, only: dshellarea, dshellvol
+
     implicit none
 
-    ! Local variables
-
     ! Major radius to outer edge of inboard blanket (m)
-    real(kind(1.0D0)) :: r1
+    real(dp) :: r1
 
     ! Horizontal distance between inside edges of blanket (m)
     ! i.e. outer radius of inboard part to inner radius of outboard part
-    real(kind(1.0D0)) :: r2
+    real(dp) :: r2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -454,7 +453,7 @@ contains
     ! Calculate blanket volumes, assuming 100% coverage
     call dshellvol(r1, r2, hblnkt, blnkith, blnkoth, blnktth, volblkti, volblkto, volblkt)
 
-  end subroutine
+  end subroutine dshaped_blanket
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -465,16 +464,20 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: rsldi, shldith, blnkith, fwith, scrapli, scraplo, &
+      fwoth, blnkoth, shareaib, shareaob, sharea, shldoth, shldtth
+    use fwbs_variables, only: volshld
+    use physics_variables, only: rminor
+    use maths_library, only: dshellarea, dshellvol
+
     implicit none
 
-    ! Local variables
-
     ! Major radius to outer edge of inboard shield (m)
-    real(kind(1.0D0)) :: r1
+    real(dp) :: r1
 
     ! Horizontal distance between inside edges of shield (m)
     ! i.e. outer radius of inboard part to inner radius of outboard part
-    real(kind(1.0D0)) :: r2
+    real(dp) :: r2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -490,7 +493,7 @@ contains
     ! Calculate shield volumes, assuming 100% coverage
     call dshellvol(r1, r2, hshld, shldith, shldoth, shldtth, volshldi, volshldo, volshld)
 
-  end subroutine
+  end subroutine dshaped_shield
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -501,18 +504,20 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: rsldi, rsldo, ddwi
+    use fwbs_variables, only: vdewin, fvoldw
+    use maths_library, only: dshellvol
+
     implicit none
 
-    ! Local variables
-
     ! Major radius to outer edge of inboard section (m)
-    real(kind(1.0D0)) :: r1
+    real(dp) :: r1
 
     ! Horizontal distance between inside edges (m)
-    real(kind(1.0D0)) :: r2
+    real(dp) :: r2
 
     ! Unused outputs from dshellvol
-    real(kind(1.0D0)) :: v1, v2
+    real(dp) :: v1, v2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -529,7 +534,7 @@ contains
     ! Apply area coverage factor
     vdewin = fvoldw*vdewin
 
-  end subroutine
+  end subroutine dshaped_vv
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -540,18 +545,22 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: rsldi, shldith, blnkith, rsldo, shldoth, blnkoth, &  
+      blareaib, blareaob, blarea, blnktth
+    use fwbs_variables, only: volblkti, volblkto, volblkt
+    use physics_variables, only: rmajor, rminor, triang
+    use maths_library, only: eshellarea, eshellvol
+
     implicit none
 
-    ! Local variables
-
     ! Major radius to centre of inboard and outboard ellipses (m)
-    real(kind(1.0D0)) :: r1
+    real(dp) :: r1
 
     ! Distance between r1 and outer edge of inboard blanket (m)
-    real(kind(1.0D0)) :: r2
+    real(dp) :: r2
 
     ! Distance between r1 and inner edge of outboard blanket (m)
-    real(kind(1.0D0)) :: r3
+    real(dp) :: r3
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -569,9 +578,10 @@ contains
     call eshellarea(r1, r2, r3, hblnkt, blareaib, blareaob, blarea)
 
     ! Calculate blanket volumes, assuming 100% coverage
-    call eshellvol(r1, r2, r3, hblnkt, blnkith, blnkoth, blnktth, volblkti, volblkto, volblkt)
+    call eshellvol(r1, r2, r3, hblnkt, blnkith, blnkoth, blnktth, volblkti, &
+      volblkto, volblkt)
 
-  end subroutine
+  end subroutine elliptical_blanket
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -582,18 +592,22 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: rsldi, shldith, rsldo, shldoth, shareaib, &
+      shareaob, sharea, shldtth
+    use fwbs_variables, only: volshld
+    use physics_variables, only: rmajor, rminor, triang
+    use maths_library, only: eshellarea, eshellvol
+
     implicit none
 
-    ! Local variables
-
     ! Major radius to centre of inboard and outboard ellipses (m)
-    real(kind(1.0D0)) :: r1
+    real(dp) :: r1
 
     ! Distance between r1 and outer edge of inboard shield (m)
-    real(kind(1.0D0)) :: r2
+    real(dp) :: r2
 
     ! Distance between r1 and inner edge of outboard shield (m)
-    real(kind(1.0D0)) :: r3
+    real(dp) :: r3
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -611,9 +625,10 @@ contains
     call eshellarea(r1, r2, r3, hshld, shareaib, shareaob, sharea)
 
     ! Calculate shield volumes, assuming 100% coverage
-    call eshellvol(r1, r2, r3, hshld, shldith, shldoth, shldtth, volshldi, volshldo, volshld)
+    call eshellvol(r1, r2, r3, hshld, shldith, shldoth, shldtth, volshldi, &
+      volshldo, volshld)
 
-  end subroutine
+  end subroutine elliptical_shield
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -624,21 +639,24 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: rsldi, rsldo, ddwi
+    use fwbs_variables, only: vdewin, fvoldw
+    use physics_variables, only: rmajor, rminor, triang
+    use maths_library, only: eshellarea, eshellvol
+
     implicit none
 
-    ! Local variables
-
     ! Major radius to centre of inboard and outboard ellipses (m)
-    real(kind(1.0D0)) :: r1
+    real(dp) :: r1
 
     ! Distance between r1 and outer edge of inboard section (m)
-    real(kind(1.0D0)) :: r2
+    real(dp) :: r2
 
     ! Distance between r1 and inner edge of outboard section (m)
-    real(kind(1.0D0)) :: r3
+    real(dp) :: r3
 
     ! Unused output from eshellvol
-    real(kind(1.0D0)) :: v1, v2
+    real(dp) :: v1, v2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -658,7 +676,7 @@ contains
     ! Apply area coverage factor
     vdewin = fvoldw*vdewin
 
-  end subroutine
+  end subroutine elliptical_vv
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -668,6 +686,12 @@ contains
     !! Apply coverage factors to volumes
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use build_variables, only: blareaob, blarea, blareaib, shareaib, shareaob, &
+      sharea
+    use fwbs_variables, only: fdiv, fhcd, volblkto, volblkti, volblkt, fvolsi, &
+      fvolso, volshld
+    use physics_variables, only: idivrt
 
     implicit none
 
@@ -694,7 +718,7 @@ contains
     volshldo = fvolso*volshldo
     volshld = volshldi + volshldo
 
-  end subroutine
+  end subroutine apply_coverage_factors
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -704,6 +728,13 @@ contains
     !! Calculate cryostat geometry
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use constants, only: pi
+    use build_variables, only: clhsf, hmax, tfcth, ddwex
+    use buildings_variables, only: clh1
+    use fwbs_variables, only: rdewex, rpf2dewar, zdewex, vdewex, vdewin, vvmass, &
+      denstl, dewmkg
+    use pfcoil_variables, only: rb, zh
 
     implicit none
 
@@ -733,7 +764,7 @@ contains
     ! Sum of internal vacuum vessel and cryostat masses (kg)
     dewmkg = (vdewin + vdewex) * denstl
 
-  end subroutine
+  end subroutine external_cryo_geometry
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -747,17 +778,25 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: pi
+    use build_variables, only: fwith, ddwi, fwoth, blnkith, blnkoth, shldith, &
+      shldoth
+    use fwbs_variables, only: afw, pitch, denstl, whtblkt, volblkt, whtshld, &
+      volshld, vvmass, vdewin, fw_armour_thickness, ptfnuc
+    use physics_variables, only: powfmw
+    use process_output, only: oheadr, ovarre
+    use tfcoil_variables, only: whttf
+    use global_variables, only: verbose
+
     implicit none
 
-    ! Local variables
-
     ! Model factors and coefficients
-    real(kind(1.0D0)) :: a ! Exponential factor (m2/tonne)
-    real(kind(1.0D0)) :: b ! Exponential factor (m2/tonne)
-    real(kind(1.0D0)) :: e ! Pre-factor (1/kg). Corrected see issue #272
+    real(dp) :: a ! Exponential factor (m2/tonne)
+    real(dp) :: b ! Exponential factor (m2/tonne)
+    real(dp) :: e ! Pre-factor (1/kg). Corrected see issue #272
 
     ! mean FW coolant void fraction
-    real(kind(1.0D0)) :: vffwm
+    real(dp) :: vffwm
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -806,21 +845,20 @@ contains
     ! Total heating (MW)
     ptfnuc = tfc_nuc_heating * (powfmw / 1000.0D0) / 1.0D6
 
-    ! Output !
-    ! !!!!!!!!!
-
+    ! Output
     if (ip == 0) return
     if (verbose == 1) then
         call oheadr(ofile, 'Nuclear Heating Magnets Before Renormalisation')
         call ovarre(ofile, 'Shield line density (tonne/m2)', '(x_shield)', x_shield)
         call ovarre(ofile, 'Blanket line density (tonne/m2)', '(x_blanket)', x_blanket)
-        call ovarre(ofile, 'Unit nuclear heating in TF coil (W/GW)', '(tfc_nuc_heating)', tfc_nuc_heating)
+        call ovarre(ofile, 'Unit nuclear heating in TF coil (W/GW)', &
+          '(tfc_nuc_heating)', tfc_nuc_heating)
         call ovarre(ofile, 'Total nuclear heating in TF coil (MW)', '(ptfnuc)', ptfnuc)
         call ovarre(ofile, 'powfmw', '(powfmw.)', powfmw)
         call ovarre(ofile, 'total mass of the TF coils (kg)', '(whttf)', whttf)
     end if
 
-  end subroutine
+  end subroutine nuclear_heating_magnets
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -830,6 +868,9 @@ contains
     !! This subroutine calculates the nuclear heating in the FW
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use fwbs_variables, only: pnucfw, fwmass
+    use physics_variables, only: powfmw
 
     implicit none
 
@@ -844,7 +885,7 @@ contains
         stop
     end if
 
-  end subroutine
+  end subroutine nuclear_heating_fw
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -855,18 +896,19 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use fwbs_variables, only: whtblkt, pnucblkt
+    use physics_variables, only: powfmw
+
     implicit none
 
-    ! Local variables
-
     ! Blanket nuclear heating coefficient
-    real(kind(1.0D0)) :: a
+    real(dp) :: a
 
     ! Blanket nuclear heating exponent (1/tonne)
-    real(kind(1.0D0)) :: b
+    real(dp) :: b
 
     ! Mass of the blanket (tonnes)
-    real(kind(1.0D0)) :: mass
+    real(dp) :: mass
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -887,7 +929,7 @@ contains
         stop
     end if
 
-  end subroutine
+  end subroutine nuclear_heating_blanket
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -898,18 +940,22 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: shldith, shldoth
+    use fwbs_variables, only: whtshld, pnucshld
+    use physics_variables, only: powfmw
+
     implicit none
 
     ! Local variables
 
     ! Shield nuclear heating coefficient (W/kg/W)
-    real(kind(1.0D0)) :: f
+    real(dp) :: f
 
     ! Shield nuclear heating exponent m2/tonne
-    real(kind(1.0D0)) :: g, h
+    real(dp) :: g, h
 
     ! Decay "length" (kg/m2)
-    real(kind(1.0D0)) :: y
+    real(dp) :: y
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -927,7 +973,7 @@ contains
     ! Total nuclear heating in shield (MW)
     pnucshld = shld_u_nuc_heating * (powfmw / 1000.D0) / 1.0D6
 
-  end subroutine
+  end subroutine nuclear_heating_shield
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -937,6 +983,9 @@ contains
     !! This subroutine calculates the nuclear heating in the divertor
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use fwbs_variables, only: fdiv, pnucdiv, pnuchcd
+    use physics_variables, only: idivrt, powfmw
 
     implicit none
 
@@ -959,7 +1008,7 @@ contains
     ! No heating of the H & CD
     pnuchcd = 0.0D0
 
-  end subroutine
+  end subroutine nuclear_heating_divertor
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -969,8 +1018,21 @@ contains
     !! Calculations for powerflow
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: fwareaob, fwarea
+    use current_drive_variables, only: porbitlossmw
+    use fwbs_variables, only: fdiv, praddiv, pradhcd, fhcd, pradfw, coolwh, &
+      outlet_temp, blpressure, primary_pumping, pnucfw, pnucblkt, pnucdiv, &
+      pnucshld, etaiso
+    use heat_transport_variables, only: htpmw_fw, fpumpfw, htpmw_blkt, fpumpblkt, &
+      htpmw_shld, fpumpshld, htpmw_div, fpumpdiv
+    use physics_variables, only: idivrt, pradmw, palpfwmw, pdivt
+    use process_output, only: oheadr, ovarre
+    use primary_pumping_variables, only: p_he, dp_he, gamma_he, t_in_bb, t_out_bb, &
+      htpmw_fw_blkt
+    use refprop_interface, only: tsat_refprop
+
     implicit none
-    real(kind(1.0D0)):: t_in_compressor, dt_he, fpump, pfactor, p_plasma
+    real(dp):: t_in_compressor, dt_he, fpump, pfactor, p_plasma
 
     ! Radiation power incident on divertor (MW)
     if (idivrt == 2) then
@@ -990,7 +1052,7 @@ contains
     ! If we have chosen pressurised water as the blanket coolant, set the
     ! coolant outlet temperature as 20 deg C below the boiling point
     if (coolwh == 2) then
-        outlet_temp = tsat_refprop(blpressure*1.0D6, coolwh) - 20.0D0  !  in K
+      outlet_temp = tsat_refprop(blpressure*1.0D6, coolwh) - 20.0D0  !  in K
     end if
 
     ! Surface heat flux on first wall (outboard and inboard) (MW)
@@ -1004,23 +1066,25 @@ contains
       ! Values of htpmw_blkt, htpmw_div, htpmw_fw, htpmw_shld set in input file
 
     else if (primary_pumping == 1) then
-       ! User sets mechanical pumping power as a fraction of thermal power removed by coolant
-       htpmw_fw = fpumpfw * (pnucfw + psurffwi + psurffwo)
-       htpmw_blkt = fpumpblkt * pnucblkt
-       htpmw_shld = fpumpshld * pnucshld
-       htpmw_div = fpumpdiv * (pdivt + pnucdiv + praddiv)
+      ! User sets mechanical pumping power as a fraction of thermal power 
+      ! removed by coolant
+      htpmw_fw = fpumpfw * (pnucfw + psurffwi + psurffwo)
+      htpmw_blkt = fpumpblkt * pnucblkt
+      htpmw_shld = fpumpshld * pnucshld
+      htpmw_div = fpumpdiv * (pdivt + pnucdiv + praddiv)
 
     else if (primary_pumping == 2) then
-       ! Mechanical pumping power is calculated for first wall and blanket
-       call thermo_hydraulic_model
-       ! For divertor and shield, mechanical pumping power is a fraction of thermal power removed by coolant
-       htpmw_shld = fpumpshld * pnucshld
-       htpmw_div = fpumpdiv * (pdivt + pnucdiv + praddiv)
+      ! Mechanical pumping power is calculated for first wall and blanket
+      call thermo_hydraulic_model
+      ! For divertor and shield, mechanical pumping power is a fraction of thermal 
+      ! power removed by coolant
+      htpmw_shld = fpumpshld * pnucshld
+      htpmw_div = fpumpdiv * (pdivt + pnucdiv + praddiv)
 
-   else if (primary_pumping == 3) then
+    else if (primary_pumping == 3) then
       ! Issue #503
-      ! Mechanical pumping power is calculated using specified pressure drop for first wall and blanket circuit,
-      ! including heat exchanger and pipes
+      ! Mechanical pumping power is calculated using specified pressure drop for 
+      ! first wall and blanket circuit, including heat exchanger and pipes
       pfactor = (p_he/(p_he-dp_he))**((gamma_he-1.0d0)/gamma_he)
       t_in_compressor = t_in_bb / pfactor
       dt_he = t_out_bb - t_in_bb
@@ -1028,20 +1092,28 @@ contains
       p_plasma = pnucfw + psurffwi + psurffwo + pnucblkt
       htpmw_fw_blkt = fpump/(1-fpump) * p_plasma
 
-      ! For divertor and shield, mechanical pumping power is a fraction of thermal power removed by coolant
+      ! For divertor and shield, mechanical pumping power is a fraction of thermal 
+      ! power removed by coolant
       htpmw_shld = fpumpshld * pnucshld
       htpmw_div = fpumpdiv * (pdivt + pnucdiv + praddiv)
       if (ip /= 0) then
-          call oheadr(ofile, 'Pumping for primary coolant (helium)')
-          call ovarre(ofile, 'Pressure drop in FW and blanket coolant incl. hx and pipes (Pa)', '(dp_he)', dp_he)
-          call ovarre(ofile, 'Fraction of FW and blanket thermal power required for pumping', '(fpump)', fpump, 'OP ')
-          call ovarre(ofile, 'Total power absorbed by FW & blanket (MW)', '(p_plasma)', p_plasma, 'OP ')
-          call ovarre(ofile, 'Inlet temperature of FW & blanket coolant pump (K)', '(t_in_compressor)', t_in_compressor, 'OP ')
-          call ovarre(ofile, 'Outlet temperature of FW & blanket coolant pump (K)', '(t_in_bb)', t_in_bb)
-          call ovarre(ofile, 'Mechanical pumping power for FW and blanket cooling loop including heat exchanger (MW)', &
-                             '(htpmw_fw_blkt)', htpmw_fw_blkt, 'OP ')
-          call ovarre(ofile, 'Mechanical pumping power for divertor (MW)', '(htpmw_div)', htpmw_div, 'OP ')
-          call ovarre(ofile, 'Mechanical pumping power for shield and vacuum vessel (MW)', '(htpmw_shld)', htpmw_shld, 'OP ')
+        call oheadr(ofile, 'Pumping for primary coolant (helium)')
+        call ovarre(ofile, 'Pressure drop in FW and blanket coolant incl. hx and &
+          &pipes (Pa)', '(dp_he)', dp_he)
+        call ovarre(ofile, 'Fraction of FW and blanket thermal power required for pumping', &
+          '(fpump)', fpump, 'OP ')
+        call ovarre(ofile, 'Total power absorbed by FW & blanket (MW)', &
+          '(p_plasma)', p_plasma, 'OP ')
+        call ovarre(ofile, 'Inlet temperature of FW & blanket coolant pump (K)', &
+          '(t_in_compressor)', t_in_compressor, 'OP ')
+        call ovarre(ofile, 'Outlet temperature of FW & blanket coolant pump (K)', &
+          '(t_in_bb)', t_in_bb)
+        call ovarre(ofile, 'Mechanical pumping power for FW and blanket cooling loop &
+          &including heat exchanger (MW)', '(htpmw_fw_blkt)', htpmw_fw_blkt, 'OP ')
+        call ovarre(ofile, 'Mechanical pumping power for divertor (MW)', &
+          '(htpmw_div)', htpmw_div, 'OP ')
+        call ovarre(ofile, 'Mechanical pumping power for shield and vacuum vessel (MW)', &
+          '(htpmw_shld)', htpmw_shld, 'OP ')
       endif
    end if
 
@@ -1056,15 +1128,26 @@ contains
     ! ONLY CALLED if primary_pumping = 2
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: pi
+    use build_variables, only: blnkith, blnkoth, scrapli, scraplo, fwarea, &
+      fwareaib, fwareaob, fwith, fwoth
+    use fwbs_variables, only: nblktmodti, nblktmodto, afw, fwoutlet, fwinlet, &
+      fw_channel_length, pitch, iblnkith, pnucblkt, volblkti, volblkt, &
+      outlet_temp, inlet_temp, vfblkt, fwcoolant, fwpressure, etaiso, coolwh, &
+      blpressure, volblkto, tpeak, fw_wall, roughness, tfwmatmax, pnucfw
+    use heat_transport_variables, only: htpmw_fw, htpmw_blkt, htpmw_div, &
+      htpmw_shld, htpmw
+    use physics_variables, only: rmajor, rminor
+    use process_output, only: oheadr, ovarin, ovarre, ovarst, ovarrf
+    use fw_module, only: fw_temp
+
     implicit none
 
-    ! Local variables
-
     ! coolant specific heat capacity at constant pressure (J/kg/K)
-    real(kind(1.0D0)) :: cf
+    real(dp) :: cf
 
     ! coolant density (kg/m3)
-    real(kind(1.0D0)) :: rhof
+    real(dp) :: rhof
 
     ! Number of 90 degree angle turns in FW and blanket flow channels
     integer :: no90fw, no90bz
@@ -1124,7 +1207,8 @@ contains
     ! First wall flow is just along the first wall, with no allowance for radial
     ! pipes, manifolds etc.
     ! The outputs are mean quantities of inlet and outlet
-    call fw_temp(ip, ofile, afw, fwith, fwareaib, psurffwi, pnucfwi, tpeakfwi, cf, rhof, mffwpi, 'Inboard first wall')
+    call fw_temp(ip, ofile, afw, fwith, fwareaib, psurffwi, pnucfwi, tpeakfwi, &
+      cf, rhof, mffwpi, 'Inboard first wall')
     ! Recalculate the mass flow rates here using the heat capacity output by fw_temp
 
     ! Total mass flow rate to remove inboard first wall power (kg/s)
@@ -1143,7 +1227,8 @@ contains
         ! Mass flow rate for inboard blanket coolant (kg/s)
         mfblkti = 1.0D6*(pnucblkti) / (cf*(outlet_temp-inlet_temp))
 
-        ! Calc total num of pipes (in all inboard modules) from coolant frac and channel dimensions
+        ! Calc total num of pipes (in all inboard modules) from coolant frac 
+        ! and channel dimensions
         ! Assumes up/down flow, two 90 deg bends per length
         npblkti = (vfblkt * volblkti) / (pi * afw * afw * bzfllengi)
 
@@ -1176,7 +1261,8 @@ contains
     ! !!!!!!!!!!!
 
     ! Maximum FW temperature. (27/11/2015) Issue #348.
-    call fw_temp(ip, ofile, afw, fwoth, fwareaob, psurffwo, pnucfwo, tpeakfwo, cf, rhof, mffwo, 'Outboard first wall')
+    call fw_temp(ip, ofile, afw, fwoth, fwareaob, psurffwo, pnucfwo, tpeakfwo, &
+      cf, rhof, mffwo, 'Outboard first wall')
 
     ! Recalculate the mass flow rates here using the heat capacity output by fw_temp
     ! Total mass flow rate to remove outboard first wall power (kg/s)
@@ -1247,20 +1333,24 @@ contains
     call ovarre(ofile, 'First wall coolant mass flow rate (kg/s)', '(mffw)', mffw, 'OP ')
     call ovarre(ofile, 'Blanket coolant mass flow rate (kg/s)', '(mfblkt)', mfblkt, 'OP ')
     ! Total coolant flow rate (if they are the same coolant)
-    if (((fwcoolant == 'helium').and.(coolwh == 1)).or.((fwcoolant == 'water').and.(coolwh == 2))) then
+    if (((fwcoolant=='helium').and.(coolwh==1)).or.((fwcoolant=='water').and.(coolwh==2))) then
         mftotal = mffw + mfblkt
         call ovarre(ofile, 'Total coolant mass flow rate(kg/s)', '(mftotal)', mftotal, 'OP ')
     end if
     call ovarre(ofile, 'First wall coolant pressure (Pa)', '(fwpressure)', fwpressure)
     call ovarre(ofile, 'Blanket coolant pressure (Pa)', '(blpressure)', blpressure)
 
-    call ovarrf(ofile, 'Allowable temperature of first wall material, excluding armour (K)', '(tfwmatmax)', tfwmatmax)
-    call ovarrf(ofile, 'Actual peak temperature of first wall material (K)', '(tpeak)', tpeak, 'OP ')
+    call ovarrf(ofile, 'Allowable temperature of first wall material, excluding armour (K)', &
+      '(tfwmatmax)', tfwmatmax)
+    call ovarrf(ofile, 'Actual peak temperature of first wall material (K)', &
+      '(tpeak)', tpeak, 'OP ')
 
     call ovarre(ofile, 'Mechanical pumping power for FW (MW)', '(htpmw_fw)', htpmw_fw, 'OP ')
-    call ovarre(ofile, 'Mechanical pumping power for blanket (MW)', '(htpmw_blkt)', htpmw_blkt, 'OP ')
+    call ovarre(ofile, 'Mechanical pumping power for blanket (MW)', '(htpmw_blkt)', &
+      htpmw_blkt, 'OP ')
     call ovarre(ofile, 'Pumping power for divertor (MW)', '(htpmw_div)', htpmw_div, 'OP ')
-    call ovarre(ofile, 'Pumping power for shield and vacuum vessel (MW)', '(htpmw_shld)', htpmw_shld, 'OP ')
+    call ovarre(ofile, 'Pumping power for shield and vacuum vessel (MW)', &
+      '(htpmw_shld)', htpmw_shld, 'OP ')
     call ovarre(ofile, 'Total primary coolant pumping power (MW)', '(htpmw)', htpmw, 'OP ')
 
   end subroutine thermo_hydraulic_model
@@ -1274,12 +1364,21 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: pi
+    use build_variables, only: fwareaib, fwith, fwareaob, fwoth, fwarea
+    use divertor_variables, only: divsur, divclfr, divplt, fdiva, divmas, divdens
+    use fwbs_variables, only: volblkt, vfblkt, volshld, vfshld, coolmass, fwclfr, &
+      breeder_f, breeder_multiplier, whtbltibe12, whtblli4sio4, whtblbe, wtblli2o, &
+      vfcblkt, vfpblkt, whtblss, denstl, whtblkt, whtshld, wpenshld, fwmass, &
+      fw_armour_vol, fw_armour_thickness, fw_armour_mass, armour_fw_bl_mass
+    use physics_variables, only: rminor, rmajor, idivrt, sarea
+
     implicit none
 
     ! Local variables
 
     ! Coolant volume (m3)
-    real(kind(1.0D0)) :: coolvol
+    real(dp) :: coolvol
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1359,7 +1458,7 @@ contains
     ! Total mass of first wall and blanket
     armour_fw_bl_mass = fw_armour_mass + fwmass + whtblkt
 
-  end subroutine
+  end subroutine component_masses
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1370,21 +1469,26 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: pi
+    use build_variables, only: scrapli, scraplo
+    use fwbs_variables, only: fwbsshape, nblktmodpi, fdiv, nblktmodpo
+    use physics_variables, only: itart, rminor, idivrt, rmajor, triang
+
     implicit none
 
     ! Local variables
 
     ! Mid-plane distance from inboard to outboard side (m)
-    real(kind(1.0D0)) :: a
+    real(dp) :: a
 
     ! Internal half-height of blanket (m)
-    real(kind(1.0D0)) :: b
+    real(dp) :: b
 
     ! Calculate ellipse circumference using Ramanujan approximation (m)
-    real(kind(1.0D0)) :: ptor
+    real(dp) :: ptor
 
     ! Major radius where half-ellipses 'meet' (m)
-    real(kind(1.0D0)) :: r1
+    real(dp) :: r1
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1456,7 +1560,7 @@ contains
 
     end if
 
-  end subroutine
+  end subroutine blanket_mod_pol_height
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1467,6 +1571,20 @@ contains
     !! an output file
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use build_variables, only: fwarea
+    use buildings_variables, only: clh1
+    use cost_variables, only: abktflnc
+    use divertor_variables, only: divsur, divmas
+    use fwbs_variables, only: vfcblkt, vfpblkt, fw_armour_vol, volblkt, volshld, &
+      vdewin, fw_armour_mass, fwmass, whtblkt, whtbltibe12, whtblli4sio4, whtblss, &
+      armour_fw_bl_mass, whtshld, vvmass, pnuccp, pnucfw, ptfnuc, pnucblkt, &
+      pnucshld, pnucdiv, secondary_cycle, fwpressure, blpressure, primary_pumping, &
+      nblktmodpi, nblktmodti, nblktmodpo, nblktmodto, etaiso, rdewex, zdewex
+    use heat_transport_variables, only: htpmw_fw, htpmw_blkt, htpmw_div, &
+      htpmw_shld, htpmw
+    use physics_variables, only: itart
+    use process_output, only: oheadr, osubhd, ovarrf, ovarre, ocmmnt, ovarin
 
     implicit none
 
@@ -1481,7 +1599,8 @@ contains
 
     call osubhd(ofile, 'Component Volumes :')
 
-    call ovarrf(ofile, 'First Wall Armour Volume (m3)', '(fw_armour_vol)', fw_armour_vol, 'OP ')
+    call ovarrf(ofile, 'First Wall Armour Volume (m3)', '(fw_armour_vol)', &
+      fw_armour_vol, 'OP ')
     call ovarrf(ofile, 'First Wall Volume (m3)', '(volfw)', volfw, 'OP ')
     call ovarrf(ofile, 'Blanket Volume (m3)', '(volblkt)', volblkt, 'OP ')
     call ovarrf(ofile, 'Shield Volume (m3)', '(volshld)', volshld, 'OP ')
@@ -1495,7 +1614,8 @@ contains
     call ovarre(ofile, '    Blanket Mass - TiBe12 (kg)', '(whtbltibe12)', whtbltibe12, 'OP ')
     call ovarre(ofile, '    Blanket Mass - Li2SiO4 (kg)', '(whtblli4sio4)', whtblli4sio4, 'OP ')
     call ovarre(ofile, '    Blanket Mass - Steel (kg)', '(whtblss)', whtblss, 'OP ')
-    call ovarre(ofile, 'Total mass of armour, first wall and blanket (kg)', '(armour_fw_bl_mass)', armour_fw_bl_mass, 'OP ')
+    call ovarre(ofile, 'Total mass of armour, first wall and blanket (kg)', &
+      '(armour_fw_bl_mass)', armour_fw_bl_mass, 'OP ')
     call ovarre(ofile, 'Shield Mass (kg)', '(whtshld)', whtshld, 'OP ')
     call ovarre(ofile, 'Vacuum vessel mass (kg)', '(vvmass)', vvmass, 'OP ')
 
@@ -1508,9 +1628,11 @@ contains
        call ovarre(ofile,'ST centrepost heating (MW)','(pnuccp)',pnuccp, 'OP ')
     end if
 
-    call ovarre(ofile, 'Total nuclear heating in TF+PF coils (CS is negligible) (MW)', '(ptfnuc)', ptfnuc, 'OP ')
+    call ovarre(ofile, 'Total nuclear heating in TF+PF coils (CS is negligible) (MW)', &
+      '(ptfnuc)', ptfnuc, 'OP ')
     call ovarre(ofile, 'Total nuclear heating in FW (MW)', '(pnucfw)', pnucfw, 'OP ')
-    call ovarre(ofile, 'Total nuclear heating in the blanket (including emult) (MW)', '(pnucblkt)', pnucblkt, 'OP ')
+    call ovarre(ofile, 'Total nuclear heating in the blanket (including emult) (MW)', &
+      '(pnucblkt)', pnucblkt, 'OP ')
     call ocmmnt(ofile, '(Note: emult is fixed for this model inside the code)')
     call ovarre(ofile, 'Total nuclear heating in the shield (MW)', '(pnucshld)', pnucshld, 'OP ')
     call ovarre(ofile, 'Total nuclear heating in the divertor (MW)', '(pnucdiv)', pnucdiv, 'OP ')
@@ -1524,20 +1646,26 @@ contains
     call ovarre(ofile, 'Blanket coolant pressure (Pa)', '(blpressure)', blpressure)
 
     if(primary_pumping/=3)then
-        call ovarre(ofile, 'Mechanical pumping power for first wall (MW)', '(htpmw_fw)', htpmw_fw, 'OP ')
-        call ovarre(ofile, 'Mechanical pumping power for blanket (MW)', '(htpmw_blkt)', htpmw_blkt, 'OP ')
-        call ovarre(ofile, 'Mechanical pumping power for divertor (MW)', '(htpmw_div)', htpmw_div, 'OP ')
-        call ovarre(ofile, 'Mechanical pumping power for shield and vacuum vessel (MW)', '(htpmw_shld)', htpmw_shld, 'OP ')
-        call ovarre(ofile, 'Total electrical coolant pumping power: first wall, blanket, shield and divertor (MW)', &
-            '(htpmw)', htpmw, 'OP ')
+        call ovarre(ofile, 'Mechanical pumping power for first wall (MW)', &
+          '(htpmw_fw)', htpmw_fw, 'OP ')
+        call ovarre(ofile, 'Mechanical pumping power for blanket (MW)', &
+          '(htpmw_blkt)', htpmw_blkt, 'OP ')
+        call ovarre(ofile, 'Mechanical pumping power for divertor (MW)', &
+          '(htpmw_div)', htpmw_div, 'OP ')
+        call ovarre(ofile, 'Mechanical pumping power for shield and vacuum vessel (MW)', &
+          '(htpmw_shld)', htpmw_shld, 'OP ')
+        call ovarre(ofile, 'Total electrical coolant pumping power: first wall, &
+          &blanket, shield and divertor (MW)', '(htpmw)', htpmw, 'OP ')
     end if
 
-    call ovarre(ofile, 'Allowable nominal neutron fluence at first wall (MW.year/m2)', '(abktflnc)', abktflnc)
+    call ovarre(ofile, 'Allowable nominal neutron fluence at first wall (MW.year/m2)', &
+      '(abktflnc)', abktflnc)
     call ovarin(ofile, 'No of inboard blanket modules poloidally', '(nblktmodpi)', nblktmodpi)
     call ovarin(ofile, 'No of inboard blanket modules toroidally', '(nblktmodti)', nblktmodti)
     call ovarin(ofile, 'No of outboard blanket modules poloidally', '(nblktmodpo)', nblktmodpo)
     call ovarin(ofile,'No of outboard blanket modules toroidally', '(nblktmodto)', nblktmodto)
-    call ovarre(ofile, 'Isentropic efficiency of first wall / blanket coolant pumps', '(etaiso)', etaiso)
+    call ovarre(ofile, 'Isentropic efficiency of first wall / blanket coolant pumps', &
+      '(etaiso)', etaiso)
 
     call osubhd(ofile, 'Other volumes, masses and areas :')
     call ovarre(ofile, 'First wall area (m2)', '(fwarea)', fwarea, 'OP ')
@@ -1549,10 +1677,10 @@ contains
 
   end subroutine write_ccfe_hcpb_output
 
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function st_centrepost_nuclear_heating(pneut, cphalflen, cpradius) &
-       result(pnuccp)
+  subroutine st_centrepost_nuclear_heating(pneut, cphalflen, cpradius, sh_width, pnuc_cp) 
+
     !! Estimates the nuclear power absorbed by the ST centrepost
     !! author: P J Knight, CCFE, Culham Science Centre
     !! pneut : input real : total neutron power (MW)
@@ -1569,24 +1697,27 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: tfcth, shldith
+    use fwbs_variables, only: f_neut_shield
+    use physics_variables, only: rmajor, pneutmw
+    use tfcoil_variables, only: i_tf_sup
+    use constants, only: pi
+
     implicit none
 
-    ! Arguments !
-    ! !!!!!!!!!!!!
+    ! Inputs
+    real(dp), intent(in) :: pneut, cphalflen, cpradius, sh_width
+    
+    ! Outputs
+    real(dp), intent(out) :: pnuc_cp
 
-    real(kind(1.0D0)), intent(in) :: pneut, cphalflen, cpradius
-
-    ! Local variables !
-    ! !!!!!!!!!!!!!!!!!!
-
-    ! nuclear heating in the ST centrepost [MW]
-    real(kind(1.0D0)) :: pnuccp
+    ! Local variables
 
     ! Fraction of neutrons that hit the centrepost shield
-    real(kind(1.0D0)) :: f_neut_geom
+    real(dp) :: f_neut_geom
 
     ! Fraction of neutron power actually absobed by the magnet system
-    real(kind(1.0D0)) :: f_neut_absorb
+    real(dp) :: f_neut_absorb
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1601,14 +1732,15 @@ contains
       f_neut_geom = cphalflen / sqrt(cphalflen**2 + (rmajor-cpradius)**2 ) * &
            atan(cpradius/(rmajor-cpradius) )/pi
 
-      ! Fraction of the nuclear power absorbed by the copper centrepost (0.08 m e-folding decay length)
+      ! Fraction of the nuclear power absorbed by the copper centrepost 
+      ! (0.08 m e-folding decay length)
       f_neut_absorb = 1.0D0 - exp( -2.0D0*tfcth / 0.08D0) 
     
       ! Nuclear power
-      pnuccp = pneut * f_neut_geom * f_neut_absorb
+      pnuc_cp = pneut * f_neut_geom * f_neut_absorb
       
       ! Correct for shielding 
-      if ( f_neut_shield > 0.0D0 ) pnuccp = pnuccp * f_neut_shield 
+      if ( f_neut_shield > 0.0D0 ) pnuc_cp = pnuc_cp * f_neut_shield 
       ! ---------
 
 
@@ -1617,15 +1749,16 @@ contains
     ! From Pfus = 1 GW ST neutronic calculations assuming
     ! Tungsten carbyde with 13% water cooling fraction
     else if ( i_tf_sup == 2 ) then
-      pnuccp = ( pneutmw / 800.0D0 ) * exp( 3.882D0 - 16.69D0*shldith )
+      pnuc_cp = ( pneutmw / 800.0D0 ) * exp( 3.882D0 - 16.69D0*sh_width )
     end if 
     ! ------------
 
-  end function st_centrepost_nuclear_heating
+  end subroutine st_centrepost_nuclear_heating
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function pumppower(temp_in, temp_out, pressure, flleng, rad, mf, mfp, no90, no180, etaiso, coolant, label)
+  function pumppower(temp_in, temp_out, pressure, flleng, rad, mf, mfp, no90, &
+    no180, etaiso, coolant, label)
     !! Routine to calculate the coolant pumping power in MW in the first
     !! wall and breeding zone
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -1655,43 +1788,49 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: pi
+    use global_variables, only: verbose
+    use fwbs_variables, only: coolwh
+    use process_output, only: oheadr, ovarre, ocmmnt, oblnkl
+    use fw_module, only: friction
+    use refprop_interface, only: fluid_properties, enthalpy_ps
+
     implicit none
 
     ! Function return parameter: Calculated pumping power (MW)
-    real(kind(1.0D0)) :: pumppower
+    real(dp) :: pumppower
 
     ! Arguments !
     ! !!!!!!!!!!!!
 
-    real(kind(1.0D0)), intent(in) :: flleng, rad, mf, mfp, etaiso
-    real(kind(1.0D0)), intent(in) :: temp_in, temp_out, pressure
+    real(dp), intent(in) :: flleng, rad, mf, mfp, etaiso
+    real(dp), intent(in) :: temp_in, temp_out, pressure
     integer, intent(in) :: no90, no180, coolant
     character(len=*), intent(in) :: label
 
-    ! Local variables !
-    ! !!!!!!!!!!!!!!!!!!
+    ! Local variables
 
     ! Inlet pressure (Pa)
-    real(kind(1.0D0)) :: coolpin
+    real(dp) :: coolpin
 
     ! Coolant pressure drop (Pa)
-    real(kind(1.0D0)) :: deltap
+    real(dp) :: deltap
 
     ! Hydraulic diameter (circular channels assumed) (m)
-    real(kind(1.0D0)) :: dh
+    real(dp) :: dh
 
     ! Fluid specific enthalpy from refprop (J/kg)
-    real(kind(1.0D0)) :: h1
+    real(dp) :: h1
 
     ! enthalpy
-    !real(kind(1.0D0)) ::
+    !real(dp) ::
 
-    real(kind(1.0D0)) :: h2, kelbwn, kelbwt, kstrght, &
+    real(dp) :: h2, kelbwn, kelbwt, kstrght, &
          lambda, reyn, rhof, s1, s2, viscf, xifn, xift, ximn, ximt, vv, &
          temp_mean,pdropstraight, pdrop90, pdrop180
 
     ! TODO Variables that appear not to be used below. Check again before removing
-    !real(kind(1.0D0)) :: cf
+    !real(dp) :: cf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1707,7 +1846,8 @@ contains
     temp_mean = (temp_in + temp_out)/2.0d0
 
     ! Calculate coolant fluid properties
-    call fluid_properties(temp_mean, pressure, coolwh, density=rhof, viscosity=viscf, label='1819')
+    call fluid_properties(temp_mean, pressure, coolwh, density=rhof, &
+      viscosity=viscf, label='1819')
 
     ! Check that coolant density is within bounds and not a NaN/Inf
     if ((rhof>1.0d9).or.(rhof<=0.0d0).or.(rhof/=rhof)) then
@@ -1787,7 +1927,8 @@ contains
         call ovarre(ofile, 'Channel length', '(flleng)', flleng, 'OP ')
         call ovarre(ofile, 'Pressure drop (Pa)', '(deltap)', deltap, 'OP ')
         call ocmmnt(ofile, 'This is the sum of the following:')
-        call ovarre(ofile, '            Straight sections (Pa)', '(pdropstraight)', pdropstraight, 'OP ')
+        call ovarre(ofile, '            Straight sections (Pa)', '(pdropstraight)', &
+          pdropstraight, 'OP ')
         call ovarre(ofile, '            90 degree bends (Pa)', '(pdrop90)', pdrop90, 'OP ')
         call ovarre(ofile, '            180 degree bends (Pa)', '(pdrop180)', pdrop180, 'OP ')
         call ovarre(ofile, 'Inlet pressure (Pa)', '(coolpin)', coolpin, 'OP ')
@@ -1797,7 +1938,8 @@ contains
         call ocmmnt(ofile, 'Additional information is printed when verbose = 1')
         if (verbose==1) then
             call oblnkl(ofile)
-            call ovarre(ofile, 'Straight section pressure drop coefficient', '(kstrght)', kstrght, 'OP ')
+            call ovarre(ofile, 'Straight section pressure drop coefficient', &
+              '(kstrght)', kstrght, 'OP ')
             call ovarre(ofile, '90 degree elbow singularity coefficient', '(ximn)', ximn, 'OP ')
             call ovarre(ofile, '90 degree elbow friction coefficient', '(xifn)', xifn, 'OP ')
             call ovarre(ofile, '180 degree elbow singularity coefficient', '(ximt)', ximt, 'OP ')
@@ -1822,23 +1964,26 @@ contains
     !! tbr         : output real : 5-year time-averaged tritium breeding ratio
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! Arguments !
-    ! !!!!!!!!!!!!
+    use build_variables, only: fwith, fwoth
+    use constraint_variables, only: tbrmin
+    use fwbs_variables, only: fw_armour_thickness
+    use process_output, only: ovarrf, ovarin, ocmmnt, ovarre
+
+    implicit none
 
     ! Inputs
     integer, intent(in) :: iprint, outfile, iblanket_thickness
-    real(kind(1.0D0)), intent(in) :: breeder_f, li6enrich
+    real(dp), intent(in) :: breeder_f, li6enrich
 
     ! outputs
-    real(kind(1.0D0)) :: tbr
+    real(dp) :: tbr
 
-    ! Local variables !
-    ! !!!!!!!!!!!!!!!!!!
+    ! Local variables
 
     ! Fit expansion terms
-    real(kind(1.0D0)), dimension(3) :: v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, &
+    real(dp), dimension(3) :: v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, &
                                        v11, v12, v13, v14, v15, v16, v17, v18, v19
-    real(kind(1.0D0)) :: x, y
+    real(dp) :: x, y
     integer ::  i
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1915,34 +2060,34 @@ contains
           v13(i)*y**2*x**3 + v14(i)*y**3*x + v15(i)*y**3*x**2 + v16(i)*y**3*x**3 + &
           v17(i)*log(x) + v18(i)*log(y) + v19(i)*log(x)*log(y)
 
-    ! Output !
-    ! !!!!!!!!!
-
+    ! Output
     if (iprint == 1) then
         call ovarrf(outfile, 'Lithium-6 enrichment (%)', '(li6enrich)', li6enrich)
-        call ovarrf(outfile, 'Breeder fraction by volume: Li4SiO4/(Be12Ti+Li4SiO4)', '(breeder_f)', breeder_f)
-        if (i == 1) call ovarin(outfile, 'Blanket thickness choice: THIN (0.53 m inboard, 0.91 m outboard)', &
-            '(iblanket_thickness)', iblanket_thickness)
-        if (i == 2) call ovarin(outfile, 'Blanket thickness choice: MEDIUM (0.64 m inboard, 1.11 m outboard)', &
-            '(iblanket_thickness)', iblanket_thickness)
-        if (i == 3) call ovarin(outfile, 'Blanket thickness choice: THICK (0.75 m inboard, 1.30 m outboard)', &
-            '(iblanket_thickness)', iblanket_thickness)
+        call ovarrf(outfile, 'Breeder fraction by volume: Li4SiO4/(Be12Ti+Li4SiO4)', &
+          '(breeder_f)', breeder_f)
+        if (i == 1) call ovarin(outfile, 'Blanket thickness choice: THIN (0.53 m &
+          &inboard, 0.91 m outboard)', '(iblanket_thickness)', iblanket_thickness)
+        if (i == 2) call ovarin(outfile, 'Blanket thickness choice: MEDIUM (0.64 m &
+          &inboard, 1.11 m outboard)', '(iblanket_thickness)', iblanket_thickness)
+        if (i == 3) call ovarin(outfile, 'Blanket thickness choice: THICK (0.75 m &
+          &inboard, 1.30 m outboard)', '(iblanket_thickness)', iblanket_thickness)
         call ovarrf(outfile, 'Tritium breeding ratio (5-year time-averaged)','(tbr)',tbr, 'OP ')
         call ovarrf(outfile, 'Minimum Tritium breeding ratio','(tbrmin)',tbrmin)
 
-        call ocmmnt(outfile,'(See "A parameter study of time-varying tritium production in solid-type breeder blankets,')
+        call ocmmnt(outfile,'(See "A parameter study of time-varying tritium production &
+          &in solid-type breeder blankets,')
         call ocmmnt(outfile, 'J. Shimwell et al, Fusion Engineering and Design')
-        call ovarre(outfile, 'For consistency, inboard first wall thicknesses should be 0.03 (m)', '(fwith)', fwith)
-        call ovarre(outfile, 'For consistency, outboard first wall thicknesses should be 0.03 (m)', '(fwoth)', fwoth)
-        call ovarre(outfile, 'For consistency, first wall armour thickness should be 0.003 (m)', &
-            '(fw_armour_thickness)', fw_armour_thickness)
+        call ovarre(outfile, 'For consistency, inboard first wall thicknesses &
+          &should be 0.03 (m)', '(fwith)', fwith)
+        call ovarre(outfile, 'For consistency, outboard first wall thicknesses &
+          &should be 0.03 (m)', '(fwoth)', fwoth)
+        call ovarre(outfile, 'For consistency, first wall armour thickness &
+          &should be 0.003 (m)', '(fw_armour_thickness)', fw_armour_thickness)
     end if
 
-  end subroutine
+  end subroutine tbr_shimwell
 
-end module
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+end module ccfe_hcpb_module
 
 module kit_hcpb_module
   !! Module containing the KIT HCPB blanket model based on the HCPB concept design
@@ -1971,24 +2116,8 @@ module kit_hcpb_module
 
   ! Modules to import !
   ! !!!!!!!!!!!!!!!!!!!!
-
-  use build_variables
-  use cost_variables
-  use error_handling
-  use fwbs_variables
-  use physics_variables
-  use process_output
-  use tfcoil_variables
-  use times_variables
-  use divertor_variables
-  use pfcoil_variables
-  use global_variables
-  use buildings_variables
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
-
-  ! Subroutine declarations !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!
 
   private
   public :: kit_hcpb
@@ -2002,169 +2131,169 @@ module kit_hcpb_module
   ! Array length
   integer, parameter :: np = 2
 
-  real(kind(1.0D0)), dimension(np) :: x_BZ_IB, x_BM_IB, x_BP_IB, x_VV_IB
-  real(kind(1.0D0)), dimension(np) :: x_BZ_OB, x_BM_OB, x_BP_OB, x_VV_OB
+  real(dp), dimension(np) :: x_BZ_IB, x_BM_IB, x_BP_IB, x_VV_IB
+  real(dp), dimension(np) :: x_BZ_OB, x_BM_OB, x_BP_OB, x_VV_OB
 
   ! Values shared between subroutines in this module
-  real(kind(1.0D0)) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
-  real(kind(1.0D0)) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
-  real(kind(1.0D0)) :: phi_n_vv_IB_start,phi_n_vv_OB_start
+  real(dp) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
+  real(dp) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
+  real(dp) :: phi_n_vv_IB_start,phi_n_vv_OB_start
 
   ! Universal constants
-  real(kind(1.0D0)), parameter :: E_n = 14.1D0    ! [MeV] Average neutron energy
-  real(kind(1.0D0)), parameter :: PA_T = 3.0D0    ! [g/mol] Tritium atomic weight
-  real(kind(1.0D0)), parameter :: N_Av = 6.02D23  ! [at/mol] Avogadro number
+  real(dp), parameter :: E_n = 14.1D0    ! [MeV] Average neutron energy
+  real(dp), parameter :: PA_T = 3.0D0    ! [g/mol] Tritium atomic weight
+  real(dp), parameter :: N_Av = 6.02D23  ! [at/mol] Avogadro number
 
   ! Constants and fixed coefficients used in the model
   ! Based on Helium-Cooled Pebble Beds (HCPB) configuration
   ! of the PPCS Model B design
-  real(kind(1.0D0)) :: A_cov_PPCS = 1365.0D0   ! [m^2] Total blanket coverage area
-  real(kind(1.0D0)) :: A_FW_PPCS = 1253.0D0    ! [m^2] First wall area
-  real(kind(1.0D0)) :: NWL_av_PPCS = 1.94D0    ! [MW/m^2] Average neutron wall load
-  real(kind(1.0D0)) :: NWL_av_IB_PPCS = 1.73D0 ! [MW/m^2] Average IB wall load
-  real(kind(1.0D0)) :: NWL_av_OB_PPCS = 1.92D0 ! [MW/m^2] Average OB wall load
-  real(kind(1.0D0)) :: NWL_max_IB_PPCS = 1.99D0 ! [MW/m^2] Maximum IB wall load
-  real(kind(1.0D0)) :: NWL_max_OB_PPCS = 2.41D0 ! [MW/m^2] Maximum OB wall load
-  real(kind(1.0D0)) :: CF_bl_PPCS              ! [%] Blanket coverage factor (calculated)
+  real(dp) :: A_cov_PPCS = 1365.0D0   ! [m^2] Total blanket coverage area
+  real(dp) :: A_FW_PPCS = 1253.0D0    ! [m^2] First wall area
+  real(dp) :: NWL_av_PPCS = 1.94D0    ! [MW/m^2] Average neutron wall load
+  real(dp) :: NWL_av_IB_PPCS = 1.73D0 ! [MW/m^2] Average IB wall load
+  real(dp) :: NWL_av_OB_PPCS = 1.92D0 ! [MW/m^2] Average OB wall load
+  real(dp) :: NWL_max_IB_PPCS = 1.99D0 ! [MW/m^2] Maximum IB wall load
+  real(dp) :: NWL_max_OB_PPCS = 2.41D0 ! [MW/m^2] Maximum OB wall load
+  real(dp) :: CF_bl_PPCS              ! [%] Blanket coverage factor (calculated)
 
   ! 2012 blanket report values and unused parameters
-  ! real(kind(1.0D0)) :: e_Li_PPCS = 60.0D0      ! [%] Li6 enrichment
-  ! real(kind(1.0D0)) :: A_FW_IB_PPCS = 348.2D0  ! [m^2] IB first wall area
-  ! real(kind(1.0D0)) :: A_FW_OB_PPCS = 905.6D0  ! [m^2] OB first wall area
+  ! real(dp) :: e_Li_PPCS = 60.0D0      ! [%] Li6 enrichment
+  ! real(dp) :: A_FW_IB_PPCS = 348.2D0  ! [m^2] IB first wall area
+  ! real(dp) :: A_FW_OB_PPCS = 905.6D0  ! [m^2] OB first wall area
   ! character(len=13) :: breeder_PPCS = 'Orthosilicate' ! Breeder type
-  ! real(kind(1.0D0)) :: f_peak_PPCS = 1.21D0      ! [--] Neutron wall load peaking factor
-  ! real(kind(1.0D0)) :: M_E_PPCS = 1.38D0       ! [--] Energy multiplication factor
-  ! real(kind(1.0D0)) :: t_BZ_IB_PPCS = 23.5D0   ! [cm] IB Breeding Zone thickness
-  ! real(kind(1.0D0)) :: t_BZ_OB_PPCS = 50.4D0   ! [cm] OB Breeding Zone thickness
-  ! real(kind(1.0D0)) :: TBR_PPCS = 1.09D0       ! [--] Tritium Breeding Ratio
-  ! real(kind(1.0D0)) :: e_Li_PPCS = 30.0D0      ! [%] Li6 enrichment
-  ! real(kind(1.0D0)) :: t_BZ_IB_PPCS = 36.5D0   ! [cm] IB Breeding Zone thickness
-  ! real(kind(1.0D0)) :: t_BZ_OB_PPCS = 46.5D0   ! [cm] OB Breeding Zone thickness
-  ! real(kind(1.0D0)) :: TBR_PPCS = 1.12D0       ! [--] Tritium Breeding Ratio
+  ! real(dp) :: f_peak_PPCS = 1.21D0      ! [--] Neutron wall load peaking factor
+  ! real(dp) :: M_E_PPCS = 1.38D0       ! [--] Energy multiplication factor
+  ! real(dp) :: t_BZ_IB_PPCS = 23.5D0   ! [cm] IB Breeding Zone thickness
+  ! real(dp) :: t_BZ_OB_PPCS = 50.4D0   ! [cm] OB Breeding Zone thickness
+  ! real(dp) :: TBR_PPCS = 1.09D0       ! [--] Tritium Breeding Ratio
+  ! real(dp) :: e_Li_PPCS = 30.0D0      ! [%] Li6 enrichment
+  ! real(dp) :: t_BZ_IB_PPCS = 36.5D0   ! [cm] IB Breeding Zone thickness
+  ! real(dp) :: t_BZ_OB_PPCS = 46.5D0   ! [cm] OB Breeding Zone thickness
+  ! real(dp) :: TBR_PPCS = 1.12D0       ! [--] Tritium Breeding Ratio
 
   ! Power density pre-exponential terms and decay lengths
-  real(kind(1.0D0)) :: q_0_BZ_breed_IB = 23.41D0 ! [W/cm^3] Pre-exp term in IB BZ breeder
-  real(kind(1.0D0)) :: q_0_BZ_breed_OB = 28.16D0 ! [W/cm^3] Pre-exp term in OB BZ breeder
-  real(kind(1.0D0)) :: lambda_q_BZ_breed_IB = 44.56D0 ! [cm] Decay length in IB BZ breeder
-  real(kind(1.0D0)) :: lambda_q_BZ_breed_OB = 28.37D0 ! [cm] Decay length in OB BZ breeder
+  real(dp) :: q_0_BZ_breed_IB = 23.41D0 ! [W/cm^3] Pre-exp term in IB BZ breeder
+  real(dp) :: q_0_BZ_breed_OB = 28.16D0 ! [W/cm^3] Pre-exp term in OB BZ breeder
+  real(dp) :: lambda_q_BZ_breed_IB = 44.56D0 ! [cm] Decay length in IB BZ breeder
+  real(dp) :: lambda_q_BZ_breed_OB = 28.37D0 ! [cm] Decay length in OB BZ breeder
 
-  real(kind(1.0D0)) :: q_0_BZ_Be_IB = 7.5D0 ! [W/cm^3] Pre-exp term in IB BZ Beryllium
-  real(kind(1.0D0)) :: q_0_BZ_Be_OB = 8.85D0 ! [W/cm^3] Pre-exp term in OB BZ Beryllium
-  real(kind(1.0D0)) :: lambda_q_BZ_Be_IB = 21.19D0 ! [cm] Decay length in IB BZ Beryllium
-  real(kind(1.0D0)) :: lambda_q_BZ_Be_OB = 19.33D0 ! [cm] Decay length in OB BZ Beryllium
+  real(dp) :: q_0_BZ_Be_IB = 7.5D0 ! [W/cm^3] Pre-exp term in IB BZ Beryllium
+  real(dp) :: q_0_BZ_Be_OB = 8.85D0 ! [W/cm^3] Pre-exp term in OB BZ Beryllium
+  real(dp) :: lambda_q_BZ_Be_IB = 21.19D0 ! [cm] Decay length in IB BZ Beryllium
+  real(dp) :: lambda_q_BZ_Be_OB = 19.33D0 ! [cm] Decay length in OB BZ Beryllium
 
-  real(kind(1.0D0)) :: q_0_BZ_steels_IB = 9.04D0 ! [W/cm^3] Pre-exp term in IB BZ steels
-  real(kind(1.0D0)) :: q_0_BZ_steels_OB = 9.93D0 ! [W/cm^3] Pre-exp term in OB BZ steels
-  real(kind(1.0D0)) :: lambda_q_BZ_steels_IB = 21.59D0 ! [cm] Decay length in IB BZ steels
-  real(kind(1.0D0)) :: lambda_q_BZ_steels_OB = 20.61D0 ! [cm] Decay length in OB BZ steels
+  real(dp) :: q_0_BZ_steels_IB = 9.04D0 ! [W/cm^3] Pre-exp term in IB BZ steels
+  real(dp) :: q_0_BZ_steels_OB = 9.93D0 ! [W/cm^3] Pre-exp term in OB BZ steels
+  real(dp) :: lambda_q_BZ_steels_IB = 21.59D0 ! [cm] Decay length in IB BZ steels
+  real(dp) :: lambda_q_BZ_steels_OB = 20.61D0 ! [cm] Decay length in OB BZ steels
 
-  real(kind(1.0D0)) :: lambda_EU = 11.57D0  ! [cm] Decay length in EUROFER
-  real(kind(1.0D0)) :: lambda_q_BM_IB       ! [cm] Decay length in IB BM (calculated)
-  real(kind(1.0D0)) :: lambda_q_BM_OB       ! [cm] Decay length in OB BM (calculated)
-  real(kind(1.0D0)) :: lambda_q_BP_IB       ! [cm] Decay length in IB BP (calculated)
-  real(kind(1.0D0)) :: lambda_q_BP_OB       ! [cm] Decay length in OB BP (calculated)
-  real(kind(1.0D0)) :: lambda_q_VV = 6.92D0 ! [cm] Decay length in Vacuum Vessel
+  real(dp) :: lambda_EU = 11.57D0  ! [cm] Decay length in EUROFER
+  real(dp) :: lambda_q_BM_IB       ! [cm] Decay length in IB BM (calculated)
+  real(dp) :: lambda_q_BM_OB       ! [cm] Decay length in OB BM (calculated)
+  real(dp) :: lambda_q_BP_IB       ! [cm] Decay length in IB BP (calculated)
+  real(dp) :: lambda_q_BP_OB       ! [cm] Decay length in OB BP (calculated)
+  real(dp) :: lambda_q_VV = 6.92D0 ! [cm] Decay length in Vacuum Vessel
 
   ! Fast neutron flux pre-exponential terms and decay lengths
-  real(kind(1.0D0)) :: phi_0_n_BZ_IB = 5.12D14  ! [n/cm^2/sec] Pre-exp term in IB BZ
-  real(kind(1.0D0)) :: phi_0_n_BZ_OB = 5.655D14 ! [n/cm^2/sec] Pre-exp term in OB BZ
-  real(kind(1.0D0)) :: lambda_n_BZ_IB = 18.79D0 ! [cm] Decay length in IB BZ
-  real(kind(1.0D0)) :: lambda_n_BZ_OB = 19.19D0 ! [cm] Decay length in OB BZ
-  real(kind(1.0D0)) :: lambda_n_VV = 8.153D0    ! [cm] Decay length in VV
+  real(dp) :: phi_0_n_BZ_IB = 5.12D14  ! [n/cm^2/sec] Pre-exp term in IB BZ
+  real(dp) :: phi_0_n_BZ_OB = 5.655D14 ! [n/cm^2/sec] Pre-exp term in OB BZ
+  real(dp) :: lambda_n_BZ_IB = 18.79D0 ! [cm] Decay length in IB BZ
+  real(dp) :: lambda_n_BZ_OB = 19.19D0 ! [cm] Decay length in OB BZ
+  real(dp) :: lambda_n_VV = 8.153D0    ! [cm] Decay length in VV
 
   ! [n/cm^2/sec] Reference fast neutron flux on VV inner side [Fish09]
-  real(kind(1.0D0)) :: phi_n_0_VV_ref = 2.0D10
+  real(dp) :: phi_n_0_VV_ref = 2.0D10
 
   ! Vacuum vessel helium production pre-exponential terms and decay lengths
-  real(kind(1.0D0)) :: Gamma_He_0_ref = 1.8D-3  ! [appm/yr] Pre-exp term
-  real(kind(1.0D0)) :: lambda_He_VV = 7.6002D0  ! [cm] Decay length
+  real(dp) :: Gamma_He_0_ref = 1.8D-3  ! [appm/yr] Pre-exp term
+  real(dp) :: lambda_He_VV = 7.6002D0  ! [cm] Decay length
 
   ! [dpa] Allowable neutron damage to the FW EUROFER
-  real(kind(1.0D0)) :: D_EU_max = 60.0D0
+  real(dp) :: D_EU_max = 60.0D0
 
   ! Variables used in this module, ultimately to be set via the calling routine
   ! to values given by PROCESS variables
-  real(kind(1.0D0)), public :: P_n = 2720.0D0    ! [MW] Fusion neutron power
-  real(kind(1.0D0)), public :: NWL_av = 1.94D0   ! [MW/m^2] Average neutron wall load
-  real(kind(1.0D0)), public :: f_peak = 1.21D0   ! [--] NWL peaking factor
-  real(kind(1.0D0)), public :: t_FW_IB = 2.3D0   ! [cm] IB first wall thickness
-  real(kind(1.0D0)), public :: t_FW_OB = 2.3D0   ! [cm] OB first wall thickness
-  real(kind(1.0D0)), public :: A_FW_IB = 3.5196D6 ! [cm^2] IB first wall area
-  real(kind(1.0D0)), public :: A_FW_OB = 9.0504D6 ! [cm^2] OB first wall area
-  real(kind(1.0D0)), public :: A_bl_IB = 3.4844D6 ! [cm^2] IB blanket area
-  real(kind(1.0D0)), public :: A_bl_OB = 8.9599D6 ! [cm^2] OB blanket area
-  real(kind(1.0D0)), public :: A_VV_IB = 3.8220D6 ! [cm^2] IB shield/VV area
-  real(kind(1.0D0)), public :: A_VV_OB = 9.8280D6 ! [cm^2] OB shield/VV area
-  real(kind(1.0D0)), public :: CF_bl = 91.7949D0 ! [%] Blanket coverage factor
+  real(dp), public :: P_n = 2720.0D0    ! [MW] Fusion neutron power
+  real(dp), public :: NWL_av = 1.94D0   ! [MW/m^2] Average neutron wall load
+  real(dp), public :: f_peak = 1.21D0   ! [--] NWL peaking factor
+  real(dp), public :: t_FW_IB = 2.3D0   ! [cm] IB first wall thickness
+  real(dp), public :: t_FW_OB = 2.3D0   ! [cm] OB first wall thickness
+  real(dp), public :: A_FW_IB = 3.5196D6 ! [cm^2] IB first wall area
+  real(dp), public :: A_FW_OB = 9.0504D6 ! [cm^2] OB first wall area
+  real(dp), public :: A_bl_IB = 3.4844D6 ! [cm^2] IB blanket area
+  real(dp), public :: A_bl_OB = 8.9599D6 ! [cm^2] OB blanket area
+  real(dp), public :: A_VV_IB = 3.8220D6 ! [cm^2] IB shield/VV area
+  real(dp), public :: A_VV_OB = 9.8280D6 ! [cm^2] OB shield/VV area
+  real(dp), public :: CF_bl = 91.7949D0 ! [%] Blanket coverage factor
   integer, public :: n_ports_div = 2             ! [ports] Number of divertor ports
   integer, public :: n_ports_H_CD_IB = 2         ! [ports] Number of IB H&CD ports
   integer, public :: n_ports_H_CD_OB = 2         ! [ports] Number of OB H&CD ports
   character(len=5), public :: H_CD_ports = 'small' ! Type of H&CD ports (small or large)
-  real(kind(1.0D0)), public :: e_Li = 60.0D0     ! [%] Lithium 6 enrichment
-  real(kind(1.0D0)), public :: t_plant = 40.0D0  ! [FPY] Plant lifetime
-  real(kind(1.0D0)), public :: alpha_m = 0.75D0  ! [--] Availability factor
-  real(kind(1.0D0)), public :: alpha_puls = 1.0D0 ! [--] Pulsed regime fraction
+  real(dp), public :: e_Li = 60.0D0     ! [%] Lithium 6 enrichment
+  real(dp), public :: t_plant = 40.0D0  ! [FPY] Plant lifetime
+  real(dp), public :: alpha_m = 0.75D0  ! [--] Availability factor
+  real(dp), public :: alpha_puls = 1.0D0 ! [--] Pulsed regime fraction
 
   ! Breeder type (allowed values are Orthosilicate, Metatitanate or Zirconate)
   character(len=20), public :: breeder = 'Orthosilicate'
 
   ! Inboard parameters
-  real(kind(1.0D0)), public :: t_BZ_IB = 36.5D0     ! [cm] BZ thickness
-  real(kind(1.0D0)), public :: t_BM_IB = 17.0D0     ! [cm] BM thickness
-  real(kind(1.0D0)), public :: t_BP_IB = 30.0D0     ! [cm] BP thickness
-  real(kind(1.0D0)), public :: t_VV_IB = 35.0D0     ! [cm] VV thickness
-  real(kind(1.0D0)), public :: alpha_BM_IB = 40.0D0  ! [%] Helium fraction in the IB BM
-  real(kind(1.0D0)), public :: alpha_BP_IB = 65.95D0 ! [%] Helium fraction in the IB BP
-  real(kind(1.0D0)), public :: chi_Be_BZ_IB = 69.2D0 ! [%] Beryllium vol. frac. in IB BZ
-  real(kind(1.0D0)), public :: chi_breed_BZ_IB = 15.4D0 ! [%] Breeder vol. frac. in IB BZ
-  real(kind(1.0D0)), public :: chi_steels_BZ_IB = 9.8D0 ! [%] Steels vol. frac. in IB BZ
+  real(dp), public :: t_BZ_IB = 36.5D0     ! [cm] BZ thickness
+  real(dp), public :: t_BM_IB = 17.0D0     ! [cm] BM thickness
+  real(dp), public :: t_BP_IB = 30.0D0     ! [cm] BP thickness
+  real(dp), public :: t_VV_IB = 35.0D0     ! [cm] VV thickness
+  real(dp), public :: alpha_BM_IB = 40.0D0  ! [%] Helium fraction in the IB BM
+  real(dp), public :: alpha_BP_IB = 65.95D0 ! [%] Helium fraction in the IB BP
+  real(dp), public :: chi_Be_BZ_IB = 69.2D0 ! [%] Beryllium vol. frac. in IB BZ
+  real(dp), public :: chi_breed_BZ_IB = 15.4D0 ! [%] Breeder vol. frac. in IB BZ
+  real(dp), public :: chi_steels_BZ_IB = 9.8D0 ! [%] Steels vol. frac. in IB BZ
 
   ! Outboard parameters
-  real(kind(1.0D0)), public :: t_BZ_OB = 46.5D0     ! [cm] BZ thickness
-  real(kind(1.0D0)), public :: t_BM_OB = 27.0D0     ! [cm] BM thickness
-  real(kind(1.0D0)), public :: t_BP_OB = 35.0D0     ! [cm] BP thickness
-  real(kind(1.0D0)), public :: t_VV_OB = 65.0D0     ! [cm] VV thickness
-  real(kind(1.0D0)), public :: alpha_BM_OB = 40.0D0  ! [%] Helium fraction in the OB BM
-  real(kind(1.0D0)), public :: alpha_BP_OB = 67.13D0 ! [%] Helium fraction in the OB BP
-  real(kind(1.0D0)), public :: chi_Be_BZ_OB = 69.2D0 ! [%] Beryllium vol. frac. in OB BZ
-  real(kind(1.0D0)), public :: chi_breed_BZ_OB = 15.4D0 ! [%] Breeder vol. frac. in OB BZ
-  real(kind(1.0D0)), public :: chi_steels_BZ_OB = 9.8D0 ! [%] Steels vol. frac. in OB BZ
+  real(dp), public :: t_BZ_OB = 46.5D0     ! [cm] BZ thickness
+  real(dp), public :: t_BM_OB = 27.0D0     ! [cm] BM thickness
+  real(dp), public :: t_BP_OB = 35.0D0     ! [cm] BP thickness
+  real(dp), public :: t_VV_OB = 65.0D0     ! [cm] VV thickness
+  real(dp), public :: alpha_BM_OB = 40.0D0  ! [%] Helium fraction in the OB BM
+  real(dp), public :: alpha_BP_OB = 67.13D0 ! [%] Helium fraction in the OB BP
+  real(dp), public :: chi_Be_BZ_OB = 69.2D0 ! [%] Beryllium vol. frac. in OB BZ
+  real(dp), public :: chi_breed_BZ_OB = 15.4D0 ! [%] Breeder vol. frac. in OB BZ
+  real(dp), public :: chi_steels_BZ_OB = 9.8D0 ! [%] Steels vol. frac. in OB BZ
 
   ! Model outputs
-  real(kind(1.0D0)), public :: pnuctfi  ! [MW/m3] Nuclear heating on IB TF coil
-  real(kind(1.0D0)), public :: pnuctfo  ! [MW/m3] Nuclear heating on OB TF coil
-  real(kind(1.0D0)), public :: P_th_tot ! [MW] Nuclear power generated in blanket
-  real(kind(1.0D0)), public :: pnucsh   ! [MW] Nuclear power generated in shield/VV
-  real(kind(1.0D0)), public :: M_E      ! [--] Energy multiplication factor
-  real(kind(1.0D0)), public :: tbratio  ! [--] Tritium breeding ratio
-  real(kind(1.0D0)), public :: G_tot    ! [g/day] Tritium production rate
-  real(kind(1.0D0)), public :: nflutfi  ! [n/cm2] Fast neutron fluence on IB TF coil
-  real(kind(1.0D0)), public :: nflutfo  ! [n/cm2] Fast neutron fluence on OB TF coil
-  real(kind(1.0D0)), public :: vvhemini ! [appm] minimum final He. conc in IB VV
-  real(kind(1.0D0)), public :: vvhemino ! [appm] minimum final He. conc in OB VV
-  real(kind(1.0D0)), public :: vvhemaxi ! [appm] maximum final He. conc in IB VV
-  real(kind(1.0D0)), public :: vvhemaxo ! [appm] maximum final He. conc in OB VV
-  real(kind(1.0D0)), public :: t_bl_fpy ! [y] blanket lifetime in full power years
-  real(kind(1.0D0)), public :: t_bl_y   ! [y] blanket lifetime in calendar years
+  real(dp), public :: pnuctfi  ! [MW/m3] Nuclear heating on IB TF coil
+  real(dp), public :: pnuctfo  ! [MW/m3] Nuclear heating on OB TF coil
+  real(dp), public :: P_th_tot ! [MW] Nuclear power generated in blanket
+  real(dp), public :: pnucsh   ! [MW] Nuclear power generated in shield/VV
+  real(dp), public :: M_E      ! [--] Energy multiplication factor
+  real(dp), public :: tbratio  ! [--] Tritium breeding ratio
+  real(dp), public :: G_tot    ! [g/day] Tritium production rate
+  real(dp), public :: nflutfi  ! [n/cm2] Fast neutron fluence on IB TF coil
+  real(dp), public :: nflutfo  ! [n/cm2] Fast neutron fluence on OB TF coil
+  real(dp), public :: vvhemini ! [appm] minimum final He. conc in IB VV
+  real(dp), public :: vvhemino ! [appm] minimum final He. conc in OB VV
+  real(dp), public :: vvhemaxi ! [appm] maximum final He. conc in IB VV
+  real(dp), public :: vvhemaxo ! [appm] maximum final He. conc in OB VV
+  real(dp), public :: t_bl_fpy ! [y] blanket lifetime in full power years
+  real(dp), public :: t_bl_y   ! [y] blanket lifetime in calendar years
 
   ! Inboard/outboard void fraction of blanket
-  real(kind(1.0D0)), private :: vfblkti, vfblkto
+  real(dp), private :: vfblkti, vfblkto
 
   ! Component volume info
   ! Blanket internal half-height (m)
-  real(kind(1.0D0)), private :: hblnkt
+  real(dp), private :: hblnkt
 
   ! Shield internal half-height (m)
-  real(kind(1.0D0)), private :: hshld
+  real(dp), private :: hshld
 
   ! Clearance between uppermost PF coil and cryostat lid (m)
-  real(kind(1.0D0)), private :: hcryopf
+  real(dp), private :: hcryopf
 
   ! Vacuum vessel internal half-height (m)
-  real(kind(1.0D0)), private :: hvv
+  real(dp), private :: hvv
 
   ! Volume of inboard and outboard shield (m3)
-  real(kind(1.0D0)), private :: volshldi, volshldo
+  real(dp), private :: volshldi, volshldo
 
 contains
 
@@ -2190,10 +2319,10 @@ contains
     implicit none
 
     ! Arguments
-    real(kind(1.0D0)), intent(in) :: alpha
+    real(dp), intent(in) :: alpha
 
     ! Local variables
-    real(kind(1.0D0)) :: f_alpha
+    real(dp) :: f_alpha
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2214,10 +2343,22 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: fwith, fwoth, fwareaib, fwareaob, blareaib, &
+      blareaob, shareaib, shareaob, blbuith, blbmith, blbpith, shldith, ddwi, &
+      blbuoth, blbmoth, blbpoth, shldoth
+    use cost_variables, only: abktflnc, tlife, cfactr
+    use fwbs_variables, only: afw, fw_wall, fwlife, coolwh, wallpf, fhcd, fdiv, &
+      npdiv, nphcdin, nphcdout, hcdportsize, li6enrich, breedmat, densbreed, &
+      fblhebmi, fblhebmo, fblhebpi, fblhebpo, fblbe, fblbreed, fblss, pnucblkt, &
+      pnucshld, emult, tbr, tritprate, bktlife, nflutf, ptfnucpm3, ptfnuc, &
+      vvhemax
+    use physics_variables, only: wallmw, pneutmw
+    use tfcoil_variables, only: tfleng, tfareain, arealeg, n_tf
+    use times_variables, only: tpulse, tramp, tdwell
+
     implicit none
 
     ! Arguments
-
     integer, intent(in) :: iprint, outfile
 
     ! Assign module private variables to iprint and outfile
@@ -2439,14 +2580,14 @@ contains
     implicit none
 
     ! Arguments
-    real(kind(1.0D0)), intent(out) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
-    real(kind(1.0D0)), intent(out) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
-    real(kind(1.0D0)), intent(out) :: pnuctfi, pnuctfo
+    real(dp), intent(out) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
+    real(dp), intent(out) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
+    real(dp), intent(out) :: pnuctfi, pnuctfo
 
     ! Local variables
-    real(kind(1.0D0)), dimension(np) :: q_steels_BZ_IB, q_steels_BZ_OB
-    real(kind(1.0D0)), dimension(np) :: q_BM_IB, q_BP_IB, q_VV_IB
-    real(kind(1.0D0)), dimension(np) :: q_BM_OB, q_BP_OB, q_VV_OB
+    real(dp), dimension(np) :: q_steels_BZ_IB, q_steels_BZ_OB
+    real(dp), dimension(np) :: q_BM_IB, q_BP_IB, q_VV_IB
+    real(dp), dimension(np) :: q_BM_OB, q_BP_OB, q_VV_OB
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2523,20 +2664,20 @@ contains
     implicit none
 
     ! Arguments
-    real(kind(1.0D0)), intent(in) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
-    real(kind(1.0D0)), intent(in) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
-    real(kind(1.0D0)), intent(out) :: P_th_tot, M_E, pnucsh
+    real(dp), intent(in) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
+    real(dp), intent(in) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
+    real(dp), intent(out) :: P_th_tot, M_E, pnucsh
 
     ! Local variables
-    real(kind(1.0D0)) :: A_BZ_breed_IB, A_BZ_breed_OB, A_BZ_Be_IB, A_BZ_Be_OB
-    real(kind(1.0D0)) :: A_BZ_steels_IB, A_BZ_steels_OB
-    real(kind(1.0D0)) :: P_BZ_breed_IB, P_BZ_Be_IB, P_BZ_steels_IB
-    real(kind(1.0D0)) :: P_BZ_IB, P_BM_IB, P_BP_IB, P_VV_IB
-    real(kind(1.0D0)) :: P_BZ_breed_OB, P_BZ_Be_OB, P_BZ_steels_OB
-    real(kind(1.0D0)) :: P_BZ_OB, P_BM_OB, P_BP_OB, P_VV_OB
-    real(kind(1.0D0)) :: P_tot_IB, P_tot_OB, P_n_FW
+    real(dp) :: A_BZ_breed_IB, A_BZ_breed_OB, A_BZ_Be_IB, A_BZ_Be_OB
+    real(dp) :: A_BZ_steels_IB, A_BZ_steels_OB
+    real(dp) :: P_BZ_breed_IB, P_BZ_Be_IB, P_BZ_steels_IB
+    real(dp) :: P_BZ_IB, P_BM_IB, P_BP_IB, P_VV_IB
+    real(dp) :: P_BZ_breed_OB, P_BZ_Be_OB, P_BZ_steels_OB
+    real(dp) :: P_BZ_OB, P_BM_OB, P_BP_OB, P_VV_OB
+    real(dp) :: P_tot_IB, P_tot_OB, P_n_FW
 
-    real(kind(1.0D0)) :: nwl_ratio, nwl_IB_ratio_PPCS, nwl_OB_ratio_PPCS
+    real(dp) :: nwl_ratio, nwl_IB_ratio_PPCS, nwl_OB_ratio_PPCS
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2669,12 +2810,12 @@ contains
 
     ! Arguments
 
-    real(kind(1.0D0)), intent(out) :: tbr, g_tot
+    real(dp), intent(out) :: tbr, g_tot
 
     ! Local variables
 
-    real(kind(1.0D0)) :: wib, wob, eu_frac
-    real(kind(1.0D0)), parameter :: wib_PPCS = 0.28D0, wob_PPCS = 0.72D0
+    real(dp) :: wib, wob, eu_frac
+    real(dp), parameter :: wib_PPCS = 0.28D0, wob_PPCS = 0.72D0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2712,14 +2853,16 @@ contains
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+      use error_handling, only: report_error
+
       implicit none
 
       ! Arguments
-      real(kind(1.0D0)), intent(in) :: e_Li
+      real(dp), intent(in) :: e_Li
       character(len=*), intent(in) :: breeder
 
       ! Local variables
-      real(kind(1.0D0)) :: TBR_breed
+      real(dp) :: TBR_breed
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2768,7 +2911,7 @@ contains
       character(len=*), intent(in) :: H_CD_ports
 
       ! Local variables
-      real(kind(1.0D0)) :: TBR_ports
+      real(dp) :: TBR_ports
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2816,16 +2959,16 @@ contains
     implicit none
 
     ! Arguments
-    real(kind(1.0D0)), intent(out) :: phi_n_VV_IB_start,phi_n_VV_OB_start
-    real(kind(1.0D0)), intent(out) :: phi_n_IB_TFC, phi_n_OB_TFC
+    real(dp), intent(out) :: phi_n_VV_IB_start,phi_n_VV_OB_start
+    real(dp), intent(out) :: phi_n_IB_TFC, phi_n_OB_TFC
 
     ! Local variables
     integer, parameter :: K_tau = 31536000  ! [sec/yr] Number of seconds per year
-    real(kind(1.0D0)), dimension(np) :: phi_n_BZ_IB, phi_n_BM_IB
-    real(kind(1.0D0)), dimension(np) :: phi_n_BP_IB, phi_n_VV_IB
-    real(kind(1.0D0)), dimension(np) :: phi_n_BZ_OB, phi_n_BM_OB
-    real(kind(1.0D0)), dimension(np) :: phi_n_BP_OB, phi_n_VV_OB
-    real(kind(1.0D0)) :: nwl_ratio
+    real(dp), dimension(np) :: phi_n_BZ_IB, phi_n_BM_IB
+    real(dp), dimension(np) :: phi_n_BP_IB, phi_n_VV_IB
+    real(dp), dimension(np) :: phi_n_BZ_OB, phi_n_BM_OB
+    real(dp), dimension(np) :: phi_n_BP_OB, phi_n_VV_OB
+    real(dp) :: nwl_ratio
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2896,12 +3039,12 @@ contains
     implicit none
 
     ! Arguments
-    real(kind(1.0D0)), intent(in) :: phi_n_VV_IB_start,phi_n_VV_OB_start
-    real(kind(1.0D0)), intent(out) :: vvhemini,vvhemino,vvhemaxi,vvhemaxo
+    real(dp), intent(in) :: phi_n_VV_IB_start,phi_n_VV_OB_start
+    real(dp), intent(out) :: vvhemini,vvhemino,vvhemaxi,vvhemaxo
 
     ! Local variables
-    real(kind(1.0D0)), dimension(np) :: Gamma_He_IB, Gamma_He_OB
-    real(kind(1.0D0)), dimension(np) :: C_He_IB, C_He_OB
+    real(dp), dimension(np) :: Gamma_He_IB, Gamma_He_OB
+    real(dp), dimension(np) :: C_He_IB, C_He_OB
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2942,7 +3085,7 @@ contains
     implicit none
 
     ! Arguments
-    real(kind(1.0D0)), intent(out) :: t_bl_FPY, t_bl_Y
+    real(dp), intent(out) :: t_bl_FPY, t_bl_Y
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2964,6 +3107,12 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: blnkith, blbuith, blbmith, blbpith, blnkoth, &
+      blbuoth, blbmoth, blbpoth
+    use fwbs_variables, only: iblnkith, whtblss, denstl, volblkti, &
+      fblhebmi, fblhebpi, volblkto, fblhebmo, fblhebpo, fblss, whtblbe, fblbe, &
+      whtblbreed, densbreed, fblbreed, volblkt, vfblkt, whtblkt
+
     implicit none
 
     ! Mass of steel in blanket (kg)
@@ -2978,14 +3127,16 @@ contains
 
     ! Mass of beryllium in blanket (kg)
     if (iblnkith==1) then
-        whtblbe = 1850.0D0 * fblbe * ( (volblkti * blbuith/blnkith) + (volblkto * blbuoth/blnkoth) )
+        whtblbe = 1850.0D0 * fblbe * ( (volblkti * blbuith/blnkith) + &
+          (volblkto * blbuoth/blnkoth) )
     else
         whtblbe = 1850.0D0 * fblbe * (volblkto * blbuoth/blnkoth)
     end if
 
     ! Mass of breeder material in blanket (kg)
     if (iblnkith==1) then
-        whtblbreed = densbreed * fblbreed * ( (volblkti * blbuith/blnkith) + (volblkto * blbuoth/blnkoth) )
+        whtblbreed = densbreed * fblbreed * ( (volblkti * blbuith/blnkith) + &
+          (volblkto * blbuoth/blnkoth) )
     else
         whtblbreed = densbreed * fblbreed * (volblkto * blbuoth/blnkoth)
     end if
@@ -3008,7 +3159,7 @@ contains
     ! Void fraction of blanket
     vfblkt = vfblkti + vfblkto
 
-  end subroutine
+  end subroutine component_masses
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3018,6 +3169,9 @@ contains
     !! Calculate the blanket, shield, vacuum vessel and cryostat volumes
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use fwbs_variables, only: fwbsshape
+    use physics_variables, only: itart
 
     implicit none
 
@@ -3056,7 +3210,7 @@ contains
     ! Calculate cryostat geometry
     call external_cryo_geometry
 
-  end subroutine
+  end subroutine component_volumes
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3067,8 +3221,14 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: vgap, blnktth, scrapli, scraplo, fwith, fwoth
+    use physics_variables, only: rminor, kappa, idivrt
+    use divertor_variables, only: divfix
+
+    implicit none
+
     ! Local variables
-    real(kind(1.0D0)) :: hbot, htop
+    real(dp) :: hbot, htop
 
     ! Calculate blanket internal lower half-height (m)
     hbot = rminor*kappa + vgap + divfix - blnktth
@@ -3084,7 +3244,7 @@ contains
     ! Average of top and bottom (m)
     hblnkt = 0.5D0*(htop + hbot)
 
-  end subroutine
+  end subroutine blanket_half_height
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3095,8 +3255,14 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: vgap, scrapli, scraplo, fwith, fwoth, blnktth
+    use physics_variables, only: rminor, kappa, idivrt
+    use divertor_variables, only: divfix
+
+    implicit none
+
     ! Local variables
-    real(kind(1.0D0)) :: hbot, htop
+    real(dp) :: hbot, htop
 
     ! Calculate shield internal lower half-height (m)
     hbot = rminor*kappa + vgap + divfix
@@ -3112,7 +3278,7 @@ contains
     ! Average of top and bottom (m)
     hshld = 0.5D0*(htop + hbot)
 
-  end subroutine
+  end subroutine shield_half_height
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3123,8 +3289,14 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: hmax, vgap2, ddwi, scrapli, scraplo, fwith, &
+      fwoth, blnktth, shldtth
+    use physics_variables, only: idivrt, rminor, kappa
+
+    implicit none
+
     ! Local variables
-    real(kind(1.0D0)) :: hbot, htop
+    real(dp) :: hbot, htop
 
     ! Calculate vacuum vessel internal lower half-height (m)
     hbot = hmax - vgap2 - ddwi
@@ -3141,7 +3313,7 @@ contains
     ! Average of top and bottom (m)
     hvv = 0.5D0*(htop + hbot)
 
-  end subroutine
+  end subroutine vv_half_height
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3152,10 +3324,16 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use maths_library, only: dshellarea, dshellvol
+    use build_variables, only: rsldi, shldith, blnkith, fwith, scrapli, scraplo, &
+      fwoth, blareaib, blareaob, blarea, blnkoth, blnktth
+    use fwbs_variables, only: volblkti, volblkto, volblkt
+    use physics_variables, only: rminor
+
     implicit none
 
     ! Local variables
-    real(kind(1.0D0)) :: r1, r2
+    real(dp) :: r1, r2
 
     ! Major radius to outer edge of inboard blanket (m)
     r1 = rsldi + shldith + blnkith
@@ -3170,7 +3348,7 @@ contains
     ! Calculate blanket volumes, assuming 100% coverage
     call dshellvol(r1, r2, hblnkt, blnkith, blnkoth, blnktth, volblkti, volblkto, volblkt)
 
-  end subroutine
+  end subroutine dshaped_blanket
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3181,10 +3359,16 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use maths_library, only: dshellarea, dshellvol
+    use build_variables, only: rsldi, shldith, blnkith, fwith, scrapli, scraplo, &
+      fwoth, blnkoth, shareaib, shareaob, sharea, shldoth, shldtth
+    use fwbs_variables, only: volshld
+    use physics_variables, only: rminor
+
     implicit none
 
     ! Local variables
-    real(kind(1.0D0)) :: r1, r2
+    real(dp) :: r1, r2
 
     ! Major radius to outer edge of inboard shield (m)
     r1 = rsldi + shldith
@@ -3199,7 +3383,7 @@ contains
     ! Calculate shield volumes, assuming 100% coverage
     call dshellvol(r1, r2, hshld, shldith, shldoth, shldtth, volshldi, volshldo, volshld)
 
-  end subroutine
+  end subroutine dshaped_shield
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3210,10 +3394,14 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use maths_library, only: dshellvol
+    use build_variables, only: rsldi, rsldo, ddwi
+    use fwbs_variables, only: vdewin, fvoldw
+
     implicit none
 
     ! Local variables
-    real(kind(1.0D0)) :: r1, r2, v1, v2
+    real(dp) :: r1, r2, v1, v2
 
     ! Major radius to outer edge of inboard section (m)
     r1 = rsldi
@@ -3228,7 +3416,7 @@ contains
     ! Apply area coverage factor
     vdewin = fvoldw*vdewin
 
-  end subroutine
+  end subroutine dshaped_vv
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3239,10 +3427,16 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use maths_library, only: eshellarea, eshellvol
+    use build_variables, only: rsldi, shldith, blnkith, rsldo, shldoth, blnkoth, &
+      blareaib, blareaob, blarea, blnktth
+    use fwbs_variables, only: volblkti, volblkto, volblkt
+    use physics_variables, only: rmajor, rminor, triang
+
     implicit none
 
     ! Local variables
-    real(kind(1.0D0)) :: r1, r2, r3
+    real(dp) :: r1, r2, r3
 
     ! Major radius to centre of inboard and outboard ellipses (m)
     ! (coincident in radius with top of plasma)
@@ -3260,7 +3454,7 @@ contains
     ! Calculate blanket volumes, assuming 100% coverage
     call eshellvol(r1, r2, r3, hblnkt, blnkith, blnkoth, blnktth, volblkti, volblkto, volblkt)
 
-  end subroutine
+  end subroutine elliptical_blanket
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3271,10 +3465,16 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use maths_library, only: eshellarea, eshellvol
+    use build_variables, only: rsldi, shldith, rsldo, shldoth, shareaib, &
+      shareaob, sharea, shldtth
+    use fwbs_variables, only: volshld
+    use physics_variables, only: rmajor, rminor, triang
+    
     implicit none
 
     ! Local variables
-    real(kind(1.0D0)) :: r1, r2, r3
+    real(dp) :: r1, r2, r3
 
     ! Major radius to centre of inboard and outboard ellipses (m)
     ! (coincident in radius with top of plasma)
@@ -3292,7 +3492,7 @@ contains
     ! Calculate shield volumes, assuming 100% coverage
     call eshellvol(r1, r2, r3, hshld, shldith, shldoth, shldtth, volshldi, volshldo, volshld)
 
-  end subroutine
+  end subroutine elliptical_shield
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3303,10 +3503,15 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use maths_library, only: eshellvol
+    use build_variables, only: rsldi, rsldo, ddwi
+    use fwbs_variables, only: vdewin, fvoldw
+    use physics_variables, only: rmajor, rminor, triang
+
     implicit none
 
     ! Local variables
-    real(kind(1.0D0)) :: r1, r2, r3, v1, v2
+    real(dp) :: r1, r2, r3, v1, v2
 
     ! Major radius to centre of inboard and outboard ellipses (m)
     ! (coincident in radius with top of plasma)
@@ -3324,7 +3529,7 @@ contains
     ! Apply area coverage factor
     vdewin = fvoldw*vdewin
 
-  end subroutine
+  end subroutine elliptical_vv
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3334,6 +3539,12 @@ contains
     !! Apply coverage factors to volumes
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use build_variables, only: blareaob, blarea, blareaib, shareaib, shareaob, &
+      sharea
+    use fwbs_variables, only: fdiv, fhcd, volblkto, volblkti, volblkt, fvolsi, &
+      fvolso, volshld
+    use physics_variables, only: idivrt
 
     implicit none
 
@@ -3360,7 +3571,7 @@ contains
     volshldo = fvolso*volshldo
     volshld = volshldi + volshldo
 
-  end subroutine
+  end subroutine apply_coverage_factors
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3370,6 +3581,13 @@ contains
     !! Calculate cryostat geometry
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use constants, only: pi
+    use build_variables, only: clhsf, hmax, tfcth, ddwex
+    use fwbs_variables, only: rdewex, rpf2dewar, zdewex, vdewex, vvmass, vdewin, &
+      denstl, dewmkg
+    use pfcoil_variables, only: rb, zh
+    use buildings_variables, only: clh1
 
     implicit none
 
@@ -3398,7 +3616,7 @@ contains
     ! Sum of internal vacuum vessel and cryostat masses (kg)
     dewmkg = (vdewin + vdewex) * denstl
 
-  end subroutine
+  end subroutine external_cryo_geometry
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3410,12 +3628,17 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use fwbs_variables, only: pnucblkt, pnucshld, emult, npdiv, nphcdin, &
+      nphcdout, hcdportsize, breedmat, li6enrich, tbr, tritprate, ptfnuc, bktlife
+    use process_output, only: oheadr, osubhd, ovarre, ovarin, ocmmnt
+
     implicit none
 
     call oheadr(ofile, 'Blanket model output - KIT HCPB model')
     call osubhd(ofile, 'Blanket Composition :')
     call osubhd(ofile,'Blanket neutronics :')
-    call ovarre(ofile,'Blanket heating (prior to energy multiplication) (MW)', '(pnucblkt)', pnucblkt)
+    call ovarre(ofile,'Blanket heating (prior to energy multiplication) (MW)', &
+      '(pnucblkt)', pnucblkt)
     call ovarre(ofile,'Shield heating (MW)','(pnucshld)',pnucshld)
     call ovarre(ofile,'Energy multiplication in blanket','(emult)',emult)
     call ovarin(ofile,'Number of divertor ports assumed','(npdiv)',npdiv)
@@ -3453,10 +3676,6 @@ contains
     call ovarre(ofile,'Blanket lifetime (full power years)','(t_bl_fpy)',bktlife)
     call ovarre(ofile,'Blanket lifetime (calendar years)','(t_bl_y)',t_bl_y)
 
-  end subroutine
+  end subroutine write_kit_hcpb_output
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-end module
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+end module kit_hcpb_module

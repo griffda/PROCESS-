@@ -751,7 +751,7 @@
         "inputs":[],
         "output-sections":[],
         "outputs":[
-            "isumattf",
+            "i_tf_sc_mat",
             "jwptf",
             "tfno",
             "ritfc/1.d6",

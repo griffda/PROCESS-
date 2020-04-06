@@ -11,74 +11,96 @@ module sctfcoil_module
 !
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-use build_variables, only : r_tf_inboard_mid, hmax, r_tf_outboard_mid, tfcth, tfthko, hpfu, hr1, r_vv_inboard_out
-! use constants  ! No constants seems to be used !
-use error_handling
-use fwbs_variables
-use maths_library
-use physics_variables, only : rmajor, rminor, bt, i_single_null
-use process_output
-use tfcoil_variables
-use superconductors
-use resistive_materials
-use ode_mod
+use, intrinsic :: iso_fortran_env, only: dp=>real64
+use resistive_materials, only: resistive_material, volume_fractions, &
+    supercon_strand
 implicit none
 
 private
-public :: bi2212, itersc, wstsc, jcrit_nbti, outtf, sctfcoil, stresscl, &
+public :: outtf, sctfcoil, stresscl, &
 tfcind, tfspcall, initialise_cables
 
 ! Module variables
 !-----------------
 
-! Dimensionless winding pack width
-real(kind(1.0D0)), private :: tf_fit_t
+real(dp), private :: tf_fit_t
+!! Dimensionless winding pack width
 
-! Dimensionless winding pack radial thickness
-real(kind(1.0D0)), private :: tf_fit_z
+real(dp), private :: tf_fit_z
+!! Dimensionless winding pack radial thickness
 
-! Ratio of peak field with ripple to nominal axisymmetric peak field
-real(kind(1.0D0)), private :: tf_fit_y
+real(dp), private :: tf_fit_y
+!! Ratio of peak field with ripple to nominal axisymmetric peak field
 
-! Current in each TF coil
-real(kind(1.0D0)) :: tfc_current
+real(dp) :: tfc_current
+!! Current in each TF coil
 
-! Total cross-sectional area of winding pack including
-! GW insulation and insertion gap [m2]
-real(kind(1.0D0)), private :: awpc
+real(dp), private :: awpc
+!! Total cross-sectional area of winding pack including
+!! GW insulation and insertion gap [m2]
 
-! Total cross-sectional area of winding pack [m2]
-real(kind(1.0D0)), private :: awptf
+real(dp), private :: awptf
+!! Total cross-sectional area of winding pack [m2]
 
-  ! Radial position of plasma-facing edge of TF coil outboard leg [m]
-real(kind(1.0D0)), private :: r_tf_inleg_in
+real(dp), private :: h_cp_top
+!! Vertical distance from the midplane to the top of the tapered section [m]
 
-! Radial position of plasma-facing edge of TF coil inboard leg [m]
-real(kind(1.0D0)), private :: r_tf_inleg_out
+real(dp), private :: r_tf_inboard_in
+!! Radial position of inner edge of TF coil inboard leg [m]
 
-! Radial position of inner/outer edge and centre of winding pack [m]
-real(kind(1.0D0)), private :: r_wp_inner, r_wp_outer, r_wp_centre
+real(dp), private :: r_tf_inboard_out
+!! Radial position of plasma-facing edge of TF coil inboard leg [m]
 
-! Toroidal thickness of of winding pack [m]
-real(kind(1.0D0)), private :: t_wp_toroidal
+real(dp), private :: r_tf_outboard_in
+!! Radial position of plasma-facing edge of TF coil outboard leg [m]
 
-! Half toroidal angular extent of a single TF coil inboard leg
-real(kind(1.0D0)), private :: theta_coil
+real(dp), private :: r_tf_outboard_out
+!! Radial position of outer edge of TF coil inboard leg [m]
 
-! Tan half toroidal angular extent of a single TF coil inboard leg
-real(kind(1.0D0)), private :: tan_theta_coil
+real(dp), private :: r_wp_inner
+!! Radial position of inner edge and centre of winding pack [m]
 
-! Conductor area radial and toroidal dimension [m]
-real(kind(1.0D0)), private :: t_conductor_radial, t_conductor_toroidal
+real(dp), private :: r_wp_outer
+!! Radial position of outer edge and centre of winding pack [m]
 
-! Cable area radial and toroidal dimension [m]
-real(kind(1.0D0)), private :: t_cable_radial, t_cable_toroidal
+real(dp), private :: r_wp_centre
+!! Radial position of centre and centre of winding pack [m]
 
-! Turn radial and toroidal dimension [m]
-real(kind(1.0D0)), private :: t_turn_radial, t_turn_toroidal
+real(dp), private :: vol_ins
+!! Total/CP insulator insulator volume [m3]
 
-! Conduit Tresca stress with CEA adjustment factors [Pa]
-real(kind(1.0D0)), private :: s_tresca_cond_cea
+real(dp), private :: vol_ins_cp
+!! CP insulator insulator volume [m3]
+
+real(dp), private :: vol_ins_leg
+!! Outboard leg insulator volume [m3]
+
+real(dp), private :: vol_cond
+!! Total conductor insulator volume [m3]
+
+real(dp), private :: vol_cond_leg
+!! Outboard leg conductor insulator volume [m3]
+
+real(dp), private :: vol_case_cp
+!! Volume of the CP outer casing cylinder
+
+real(dp), private :: t_wp_toroidal
+!! Toroidal thickness of of winding pack [m]
+
+real(dp), private :: theta_coil
+!! Half toroidal angular extent of a single TF coil inboard leg
+
+real(dp), private :: tan_theta_coil
+!! Tan half toroidal angular extent of a single TF coil inboard leg
+
+real(dp), private :: t_conductor_radial, t_conductor_toroidal
+!! Conductor area radial and toroidal dimension [m]
+
+real(dp), private :: t_cable_radial, t_cable_toroidal
+!! Cable area radial and toroidal dimension [m]
+
+real(dp), private :: t_turn_radial, t_turn_toroidal
+!! Turn radial and toroidal dimension [m]
 
 type(resistive_material):: copper
 type(resistive_material):: hastelloy
@@ -88,15 +110,16 @@ type(resistive_material):: helium
 type(volume_fractions):: conductor
 type(supercon_strand)::croco_strand
 
-real(kind(1.0D0)):: T1, time2, tau2, estotft
+real(dp):: T1, time2, tau2, estotft
 ! (OBSOLETE, but leave for moment)
 ! real (kind(1.0D0)) ::croco_quench_factor
-! real(kind(1.0D0)):: jwdgpro_1, jwdgpro_2,  etamax
+! real(dp):: jwdgpro_1, jwdgpro_2,  etamax
 contains
 
 ! --------------------------------------------------------------------------
 subroutine initialise_cables()
-    
+    use rebco_variables, only: copper_rrr
+
     implicit none
 
     copper%rrr = copper_rrr
@@ -115,19 +138,29 @@ subroutine sctfcoil(outfile,iprint)
     !! author: J Galambos, FEDC/ORNL
     !! author: R Kemp, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
-    !! outfile : input integer : output file unit
-    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! author: S Kahn, CCFE, Culham Science Centre
     !! This subroutine calculates various parameters for a superconducting
     !! TF coil set. The primary outputs are coil size, shape, stress,
     !! and fields.
-    !! <P>It is a variant from the original FEDC/Tokamak systems code.
+    !! It is a variant from the original FEDC/Tokamak systems code.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    use build_variables, only: tfcth, tfthko, r_tf_outboard_mid, r_tf_inboard_mid, &
+        hmax
+    use tfcoil_variables, only: i_tf_turns_integer, wwp1, estotftgj, tfind, &
+        ritfc, thkwp, n_tf, bmaxtfrp, bmaxtf, n_tf_stress_layers, n_rad_per_layer, &
+        i_tf_sup, i_tf_shape
+    use constants, only: rmu0, pi
+    use physics_variables, only: itart
 
     implicit none
 
     !  Arguments
-    integer, intent(in) :: iprint, outfile
+    integer, intent(in) :: iprint
+    !! switch for writing to output file (1=yes)
+
+    integer, intent(in) :: outfile
+    !! output file unit
 
     !  Local variables
     integer :: peaktfflag
@@ -136,27 +169,46 @@ subroutine sctfcoil(outfile,iprint)
 
     call tf_coil_geometry
 
-    if (i_tf_turns_integer == 1) then
-        call tf_integer_winding_pack()
-    else
-        call tf_winding_pack()
-    end if
+    call tf_current
 
-    call tf_field_and_force
+    ! Conductor section internal geometry
+    ! ---
+    ! Resitive magnets
+    if ( i_tf_sup /= 1 ) then   
+        call tf_turn_geom
+    
+    ! SC using an integer number of turns per WP
+    else if ( i_tf_turns_integer == 1 ) then  
+        call tf_integer_winding_pack
+    
+    ! SC using a float numnber of turns per WP
+    else   
+        call tf_winding_pack
+    end if
+    ! ---
 
     call coilshap
 
+    if ( i_tf_sup /= 1 ) call tf_res_heating
+
+    call tf_field_and_force
+
+
     ! Calculation of TF coil inductance
-    call tfcind(tfcth)
+    ! ---
+    if ( itart == 0 .and. i_tf_shape == 1 ) then 
+        call tfcind(tfcth)
+    else 
+       tfind = ( hmax + tfthko ) * rmu0/pi * log(r_tf_outboard_mid/r_tf_inboard_mid)
+    end if 
 
     ! Total TF coil stored magnetic energy [J]
     estotft = 0.5D0*tfind * ritfc**2
 
     ! Total TF coil stored magnetic energy [Gigajoule]
     estotftgj = 1.0D-9 * estotft
+    ! ---
 
-    ! Case thicknesses (inboard leg)
-    ! if (tfc_model == 0) thkcas = tfcth * 0.5D0
 
     ! Calculate TF coil areas and masses
     call tf_coil_area_and_masses
@@ -164,8 +216,9 @@ subroutine sctfcoil(outfile,iprint)
     ! Peak field including ripple
     call peak_tf_with_ripple(n_tf, wwp1, thkwp, r_wp_centre, bmaxtf, bmaxtfrp, peaktfflag)
 
-    ! Do stress calculations
-    call stresscl
+    ! Do stress calculations (writes the stress output)
+    if ( iprint == 1 ) n_rad_per_layer = 500
+    call stresscl(n_tf_stress_layers, n_rad_per_layer, iprint, outfile)
 
     if (iprint == 1) call outtf(outfile, peaktfflag)
 
@@ -174,90 +227,187 @@ end subroutine sctfcoil
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine tf_coil_geometry()
-    ! Subroutine for calculating the TF coil geometry
-    ! This includes:
-    !   - Overall geometry of coil
-    !   - Cross-sectional areas of components
-    !   - Winding Pack NOT included
-
+    !! Subroutine for calculating the TF coil geometry
+    !! This includes:
+    !!   - Overall geometry of coil (radii and toroidal planes area)
+    !!   - Winding Pack NOT included
+    use physics_variables, only: rmajor, bt, kappa, itart, rminor
+    use build_variables, only: tfcth, tfthko, r_tf_inboard_mid, &
+        r_tf_outboard_mid, r_cp_top
+    use tfcoil_variables, only: tinstf, tfc_sidewall_is_fraction, tfareain, &
+        ritfc, tftort, n_tf, casthi_is_fraction, bmaxtf, arealeg, &
+        casthi_fraction, casths_fraction, tfinsgap, rbmax, casthi, casths, i_tf_sup, &
+        dztop, tinstf, tftort, tfinsgap
+    use constants, only: pi
     implicit none
-
-    ! Local variables
-    !----------------
-    real(kind(1.0D0)) :: deltf
-
     
+
+    ! Inner leg geometry
+    ! ---
     ! Radial position of inner/outer edge of inboard TF coil leg [m]
-    r_tf_inleg_in  = r_tf_inboard_mid - 0.5D0 * tfcth
-    r_tf_inleg_out = r_tf_inboard_mid + 0.5D0 * tfcth
-    
+    r_tf_inboard_in =  r_tf_inboard_mid - 0.5D0 * tfcth
+    r_tf_inboard_out = r_tf_inboard_mid + 0.5D0 * tfcth
+
+    ! Annular area of midplane containing TF coil inboard legs ( WP + casing ) [m2]
+    tfareain = pi * (r_tf_inboard_out**2 - r_tf_inboard_in**2)
+
+    ! Vertical distance from the midplane to the top of the tapered section [m]
+    if ( itart ==  1 ) h_cp_top = rminor * kappa + dztop 
+    ! ---
+
+
+    ! Outer leg geometry
+    ! ---    
+    ! Mid-plane inner/out radial position of the TF coil outer leg [m] 
+    r_tf_outboard_in =  r_tf_outboard_mid - tfthko * 0.5D0 
+    r_tf_outboard_out = r_tf_outboard_mid + tfthko * 0.5D0 
+
     ! Half toroidal angular extent of a single TF coil inboard leg
-    theta_coil = pi/n_tf
+    theta_coil = pi/n_tf              ! eq(9)
     tan_theta_coil = tan(theta_coil)
 
     ! TF coil width in toroidal direction at inboard leg outer edge [m]
-    tftort = 2.0D0 * r_tf_inleg_out*sin(theta_coil)
+    ! *** 
+    ! Sliding joints geometry
+    if ( itart == 1 .and. i_tf_sup /= 1 ) then 
+        tftort = 2.0D0 * r_cp_top * sin(theta_coil) 
 
-    ! Radial position of centre of inboard TF coil leg [m]
-    r_tf_inboard_mid = r_tf_inleg_in + 0.5D0*tfcth
- 
-    ! Plasma-facing wall thickness if fraction option selected [m]
-    if(casthi_is_fraction) casthi = casthi_fraction * tfcth
-
-    ! Case thickness of side wall [m]
-    if(tfc_sidewall_is_fraction) casths = casths_fraction * tftort
-
-    ! Annular area of midplane containing TF coil inboard legs
-    tfareain = pi * (r_tf_inleg_out**2 - r_tf_inleg_in**2)
+    ! Default thickness, initially written for DEMO SC magnets
+    else if ( itart == 1 .and. i_tf_sup ==  1 ) then 
+        write(*,*) '[tfcoil.f90] Warining : The SC clamped joints geometry has not been worked out precisely'
+        tftort = 2.0D0 * r_tf_inboard_out * sin(theta_coil)
+    else 
+        tftort = 2.0D0 * r_tf_inboard_out * sin(theta_coil)    
+    end if
 
     ! Area of rectangular cross-section TF outboard leg [m2]
     arealeg = tftort * tfthko
-
-    ! Gap between inboard TF coil and thermal shield [m]
-    ! Not used and calculated in radial build
-    ! deltf = r_tf_inleg_out * ((1.0d0 / cos(pi/n_tf)) - 1.0d0) + tftsgap
-
-
-    ! Magnetic field and current
-    ! ---    
-    ! Radial position of peak toroidal field (assuming axisymmetry) [m]
-    ! (assumed to be at the outer edge of the winding pack)
-    rbmax = r_tf_inleg_out - casthi - tinstf - tfinsgap
-
-    ! Calculation of the maximum B field on the magnet [T]
-    bmaxtf = bt * rmajor / rbmax
-
-    ! Calculation of the total current necessary to reach Bmax
-    ! rem SK : ritcf is no longer an input
-    ritfc = bmaxtf * rbmax * 5.0D6 
     ! ---
-
 
 end subroutine tf_coil_geometry
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine tf_winding_pack()
-    ! Subroutine for calculating winding pack quantities
-    !   - Overall dimensions of winding pack
-    !   - Turn dimensions
-    !   - Current, field, etc.
-    !
+subroutine tf_current()
+    !! Calculation of the maximum B field and the corresponding TF current
+    use tfcoil_variables, only: casthi, ritfc, rbmax, i_tf_sup, casths_fraction, &
+        tinstf, tftort, bmaxtf, tfinsgap, tfc_sidewall_is_fraction, casths, &
+        casthi_is_fraction, casthi_fraction
+    use physics_variables, only: bt, rmajor
+    use build_variables, only: tfcth
+    implicit none
 
+
+    ! Plasma-facing wall thickness if fraction option selected [m]
+    if (casthi_is_fraction) casthi = casthi_fraction * tfcth
+
+    ! Case thickness of side wall [m]
+    if (tfc_sidewall_is_fraction) casths = casths_fraction * tftort  
+    
+    ! Radial position of peak toroidal field (assuming axisymmetry) [m]
+    ! (assumed to be at the outer edge of the winding pack)    
+    if ( i_tf_sup == 1 ) then
+        rbmax = r_tf_inboard_out - casthi - tinstf - tfinsgap
+    else 
+        rbmax = r_tf_inboard_out - casthi - tinstf   ! eq(11)
+    end if
+
+    ! Calculation of the maximum B field on the magnet [T]
+    bmaxtf = bt * rmajor / rbmax  
+    
+    ! Total current in TF coils [A]
+    ! rem SK : ritcf is no longer an input
+    ritfc = bmaxtf * rbmax * 5.0D6 
+
+end subroutine tf_current
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine tf_turn_geom()
+    !! Resisitve TF turn geometry, equivalent to winding_pack subroutines
+    use tfcoil_variables, only: turnstf, tinstf, thkcas, thkwp, tftort, n_tf, &
+        tfareain, ritfc, oacdcp, fcoolcp, cpttf, cdtfleg, casthi, aiwp, acasetf
+    use build_variables, only: tfthko
+    use constants, only: pi
+    implicit none
+            
+    ! Radial position of inner/outer edge of winding pack [m]
+    r_wp_inner = r_tf_inboard_in  + thkcas + tinstf 
+    r_wp_outer = r_tf_inboard_out - casthi - tinstf 
+
+    ! Mid-plane Radial thickness of conductor layer [m]
+    thkwp = r_wp_outer - r_wp_inner
+
+    ! Number of turns
+    ! Set by user (no turn structure by default, i.e. turnstf = 1 ) 
+    if ( abs(turnstf) < epsilon(turnstf) ) turnstf = 1.0D0
+
+    ! Total mid-plane cross-sectional area of winding pack, [m2]
+    ! including the surrounding ground-wall insulation layer 
+    awpc = pi * ( (r_wp_outer + tinstf)**2 - (r_wp_inner - tinstf)**2 ) / n_tf
+
+    ! Exact mid-plane cross-section area of the conductor per TF turn [m2]
+    awptf = ( 1.0D0 - fcoolcp ) * ( pi*(r_wp_outer**2 - r_wp_inner**2)/(n_tf*turnstf) - &
+                                  2.0D0 * tinstf * thkwp )
+
+    ! Inter turn insulation area per turn [m2]                    
+    aiwp = (awpc / turnstf) - awptf / ( 1.0D0 - fcoolcp )  
+
+    ! Total cross-sectional area of surrounding case [m2]
+    ! Only valid at mid-plane for resistive itart design
+    acasetf = ( tfareain / n_tf ) - awpc 
+
+    ! Current per turn 
+    cpttf = ritfc / ( turnstf * n_tf )
+
+    ! Exact current density on the mid-plane conductors  
+    oacdcp = ritfc / ( awptf * n_tf * turnstf ) 
+
+    ! Exact current density on TF oubard legs
+    cdtfleg = ritfc / ( ( 1.0D0 - fcoolcp ) * &
+                        ( tftort - 2.0D0 * turnstf * tinstf) * &
+                        ( tfthko - 2.0D0 * tinstf ) ) 
+
+
+end subroutine tf_turn_geom
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine tf_winding_pack()
+    !! Subroutine for calculating winding pack quantities
+    !!   - Overall dimensions of winding pack
+    !!   - Turn dimensions
+    !!   - Current, field, etc.
+    !!   - Turns geometry
+    use error_handling, only: fdiags, report_error
+    use build_variables, only: tfcth, tfthko
+    use tfcoil_variables, only: dhecoil, thicndut, cpttf, aswp, aiwp, tftort, &
+        leni, turnstf, tfareain, n_tf, tinstf, leno, acstf, wwp1, &
+        vftf, avwp, jwptf, acasetfo, acasetf, wwp2, thwcndut, insulation_area, &
+        tftort, aswp, tinstf, turnstf, leno, acasetf, n_tf, jwptf, &
+        thwcndut, thicndut, wwp1, &
+        dhecoil, tfareain, leni, insulation_area, cpttf, ritfc, thkwp, &
+        arealeg, casths, awphec, acndttf, acond, layer_ins, thkcas, &
+        conductor_width, oacdcp, tfinsgap, casthi, i_tf_sc_mat
+    use global_variables, only: icase
+    use constants, only: pi
     implicit none
 
     ! Local variables
     !----------------
     ! Rounded corner radius
-    real(kind(1.0D0)) :: rbcndut
-    real(kind(1.0D0)) :: A
+    real(dp) :: rbcndut
+    real(dp) :: A
+    !----------------
 
-    ! Radial thickness of winding pack [m]
-    thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
 
     ! Radial position of inner edge of winding pack [m]
-    r_wp_inner = r_tf_inleg_in + thkcas + tinstf + tfinsgap
-
+    ! Rem SK : added the insulation thickness/insertion gap
+    r_wp_inner = r_tf_inboard_in + thkcas + tinstf + tfinsgap  
+        
+    ! Radial thickness of winding pack [m]
+    thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
+    
     ! Radial position of outer edge of winding pack [m]
     r_wp_outer = r_wp_inner + thkwp
 
@@ -279,14 +429,14 @@ subroutine tf_winding_pack()
     ! Total cross-sectional area of winding pack [m2]
     awptf = (0.5D0*thkwp)*(wwp1 + wwp2)
 
-    ! Total cross-sectional area of winding pack,
+    ! Total cross-sectional area of winding pack, [m2]
     ! including the surrounding ground-wall insulation layer
     ! and insertion gap [m2]
     awpc = 0.5D0*thkwp*(wwp2 + 2.0D0*tinstf + 2.0d0*tfinsgap) + &
-    (0.5D0*thkwp + 2.0D0*tinstf + 2.0d0*tfinsgap)*(wwp1 + 2.0D0*tinstf+ 2.0d0*tfinsgap)
+        (0.5D0*thkwp + 2.0D0*tinstf + 2.0d0*tfinsgap)*(wwp1 + 2.0D0*tinstf+ 2.0d0*tfinsgap)
 
     ! Total cross-sectional area of surrounding case [m2]
-    acasetf = (tfareain/n_tf) - awpc
+    acasetf = ( tfareain / n_tf ) - awpc   ! eq(14)
 
     if ((awptf <= 0.0D0).or.(awpc <= 0.0D0).or.(acasetf <= 0.0D0)) then
         fdiags(1) = awptf ; fdiags(2) = awpc ; fdiags(3) = acasetf
@@ -299,9 +449,6 @@ subroutine tf_winding_pack()
         write(*,*) ' '
     end if
 
-    ! Area of rectangular cross-section outboard leg [m2]
-    arealeg = tftort * tfthko
-
     ! Cross-sectional area of surrounding case, outboard leg [m2]
     acasetfo = arealeg - awpc
 
@@ -312,27 +459,32 @@ subroutine tf_winding_pack()
     ! Allow for additional inter-layer insulation MDK 13/11/18
     ! Area of turn including conduit and inter-layer insulation
     A = cpttf / jwptf
+
     ! Dimension of square cross-section of each turn including inter-turn insulation [m]
     leno = sqrt(cpttf / jwptf)
+
     ! See derivation in k:\power plant physics and technology\process\hts\hts coil module for process.docx
     conductor_width = (-layer_ins + sqrt(layer_ins**2 + 4.d0*A))/2.d0 - 2.0D0*thicndut
 
     ! Total number of turns per TF coil (not required to be an integer)
     turnstf = awptf / A
-        
+
     ! Area of inter-turn insulation: single turn [m2]
     insulation_area = A - conductor_width**2
+
     ! Area of inter-turn insulation: total [m2]
     aiwp = turnstf * insulation_area
 
     ! Area of steel structure in winding pack [m2]
     aswp = turnstf*acndttf
 
-    if(isumattf.ne.6)then  ! NOT REBCO
+    if ( i_tf_sc_mat .ne. 6) then  ! NOT REBCO
         ! Radius of rounded corners of cable space inside conduit [m]
         rbcndut = thwcndut * 0.75D0     
+
         ! Dimension of square cable space inside conduit [m]
         leni = conductor_width - 2.0D0*thwcndut
+
         ! Cross-sectional area of cable space per turn
         ! taking account of rounded inside corners [m2]
         acstf = leni**2 - (4.0D0-pi)*rbcndut**2
@@ -367,13 +519,13 @@ subroutine tf_winding_pack()
         acond = acstf * turnstf * (1.0D0-vftf) - awphec
         ! Void area in conductor for He, not including central channel [m2]
         avwp = acstf * turnstf * vftf
-       
-    else if(isumattf == 6)then  ! REBCO
+        
+    else if (i_tf_sc_mat == 6 ) then  ! REBCO
         ! Diameter of circular cable space inside conduit [m]
         leni = conductor_width - 2.0D0*thwcndut
         ! Cross-sectional area of conduit jacket per turn [m2]
         acndttf = conductor_width**2 - acstf
-            
+
     end if  
 
 end subroutine tf_winding_pack
@@ -381,20 +533,31 @@ end subroutine tf_winding_pack
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine tf_integer_winding_pack()
-    ! Subroutine to calculate integer winding pack   
-
+    !! Subroutine to calculate integer winding pack   
+    use error_handling, only: fdiags, report_error
+    use build_variables, only: tfcth, tfthko
+    use tfcoil_variables, only: dhecoil, thicndut, cpttf, aswp, aiwp, tftort, &
+        leni, turnstf, tfareain, casths, n_tf, tinstf, acstf, wwp1, &
+        acndttf, vftf, avwp, jwptf, acasetfo, acasetf, thwcndut, &
+        insulation_area, avwp, arealeg, acasetf, ritfc, vftf, n_pancake, &
+        acstf, jwptf, acasetfo, wwp1, insulation_area, thwcndut, awphec, &
+        tinstf, acndttf, acond, oacdcp, n_layer, thkwp, thkcas, tfinsgap, &
+        casthi, i_tf_sc_mat
+    use constants, only: pi
+    use maths_library, only: hybrd
     implicit none
     
     ! Local variables
     !----------------
-
     ! Radius of rounded corners of cable space inside conduit [m]
-    real(kind(1.0D0)) :: rbcndut
+    real(dp) :: rbcndut
 
     ! TF coil width at inner egde of winding pack toroidal direction [m]
-    real(kind(1.0D0)) :: t_tf_at_wp
+    real(dp) :: t_tf_at_wp
+    !----------------
 
-    if(isumattf==6)then
+
+    if(i_tf_sc_mat==6)then
         write(*,*)'Integer turns in TF coil not yet available for CROCO model (i_tf_turns_integer == 1)'
         stop
     end if
@@ -406,7 +569,7 @@ subroutine tf_integer_winding_pack()
     thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
 
     ! Radial position of inner edge of winding pack [m]
-    r_wp_inner = r_tf_inleg_in + thkcas + tinstf + tfinsgap
+    r_wp_inner = r_tf_inboard_in + thkcas + tinstf + tfinsgap
 
     ! Radial position of outner edge of winding pack [m]
     r_wp_outer = r_wp_inner + thkwp
@@ -434,7 +597,7 @@ subroutine tf_integer_winding_pack()
     ! including the surrounding ground-wall insulation layer
     ! and insertion gap [m2]
     awpc = (thkwp + 2.0D0*tinstf + 2.0D0*tfinsgap)* &
-    (t_wp_toroidal + 2.0D0*tinstf + 2.0D0*tfinsgap)
+        (t_wp_toroidal + 2.0D0*tinstf + 2.0D0*tfinsgap)
 
     ! Total cross-sectional area of surrounding case [m2]
     acasetf = (tfareain/n_tf) - awpc
@@ -550,42 +713,259 @@ end subroutine tf_integer_winding_pack
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+subroutine tf_res_heating()
+    !! Resitive magnet resitive heating calculations
+    !! Rem SK : Clamped joined superconductors might have resistive power losses on the joints
+    !! Rem SK : Sliding joints might have a region of high resistivity
+    use tfcoil_variables, only: rhocp, tlegav, tinstf, th_joint_contact, rhotfleg, &
+        voltfleg, vol_cond_cp, turnstf, thkcas, tftort, tfleng, tflegres, tcpav, &
+        ritfc, rho_tf_joints, presleg, prescp, pres_joints, n_tf_joints_contact, &
+        n_tf_joints, n_tf, i_tf_sup, frholeg, frhocp, fcoolcp, casthi, arealeg, &
+        a_cp_cool, fcoolleg
+    use build_variables, only: tfthko, tfcth, r_cp_top, hmax
+    use physics_variables, only: itart
+    use constants, only: pi
+    implicit none
+
+    ! Internal variable
+    ! ---
+    real(dp) :: a_wp_ins_turn
+    !! TF ouboard leg insulation area  
+
+    real(dp) :: a_wp_cond_leg
+    !! Exact TF ouboard leg conductor area 
+    
+    real(dp) :: a_joints
+    !! Total area of joint contact
+
+    integer ::  n_contact_tot
+    !! Total number of contact area (4 joints section per legs)
+
+    integer :: is_leg_cp_temp_same = 0
+    ! ---
+
+        
+    ! Copper : Copper resistivity degraded by 1/0.92 for the used of GLIDCOP A-15 
+    !          Better structural properties at high temperature and radiation damage resilience
+    if ( i_tf_sup == 0 ) rhocp = (frhocp/0.92D0) * ( 1.72D0 + 0.0039D0*(tcpav-273.15D0) ) * 1.0D-8
+
+    ! Cryogenic aluminium
+    if ( i_tf_sup == 2 ) rhocp = frhocp * ( 2.00016D-14*tcpav**3 - 6.75384D-13*tcpav**2 + 8.89159D-12*tcpav )
+
+    ! Calculations dedicated for configurations with CP
+    ! ***
+    if ( itart == 1 ) then 
+
+        ! Tricky trick to make the leg / CP tempearture the same
+        if ( abs(tlegav + 1.0D0) < epsilon(tlegav) ) then 
+            is_leg_cp_temp_same = 1
+            tlegav = tcpav
+        end if
+
+        ! Leg resistivity (different leg temperature as separate cooling channels) 
+        if ( i_tf_sup == 0 ) rhotfleg = (frholeg/0.92D0) * ( 1.72D0 + 0.0039D0*(tlegav-273.15D0) ) * 1.0D-8              
+        if ( i_tf_sup == 2 ) rhotfleg =  frholeg * ( 2.00016D-14*tlegav**3 - 6.75384D-13*tlegav**2 + 8.89159D-12*tlegav )
+
+        ! Tricky trick to make the leg / CP tempearture the same
+        if ( is_leg_cp_temp_same == 1 ) tlegav = -1.0D0  
+
+        ! Centrepost resisitivity and conductor/insulation volume
+        call cpost( r_cp_top-casthi, h_cp_top, r_tf_inboard_out-casthi, hmax+tfthko, & ! Inputs
+                    ritfc, rhocp, fcoolcp, r_tf_inboard_in+thkcas, tinstf, casthi,   & ! Inputs
+                    n_tf*turnstf,                                                    & ! Inputs
+                    a_cp_cool, vol_cond_cp, prescp, vol_ins_cp, vol_case_cp )          ! Outputs
+
+
+        ! Outer leg cross-section areas
+        ! ---
+        ! Area taken by one outboard leg's turns insulation [m2]
+        a_wp_ins_turn = 2.0D0 * tinstf * ( (tftort/turnstf) + tfthko - 2.0D0*tinstf ) 
+
+        ! Exact TF outboard leg conductor area (per leg) [m2]
+        a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * turnstf )  
+        ! ---
+
+
+        ! Outer leg resistive power loss
+        ! ---
+        ! TF outboard leg's resistance calculation (per leg) [ohm]
+        tflegres = rhotfleg * tfleng / a_wp_cond_leg  
+
+        ! TF outer leg resistive power (TOTAL) [W]   
+        presleg = tflegres * ritfc**2 / n_tf 
+        ! ---
+
+
+        ! Sliding joints resistive heating
+        ! ---
+        if ( i_tf_sup /= 1 ) then
+
+            ! Total number of contact area (4 joints section per legs)
+            n_contact_tot = 4.0D0 * n_tf_joints_contact* n_tf_joints * turnstf * n_tf
+            
+            ! Total area of joint contact
+            a_joints = tfthko * th_joint_contact * dble(n_contact_tot)
+
+            ! joints resistive power losses
+            pres_joints = rho_tf_joints * ritfc**2 / a_joints
+        else 
+            ! Joints resistance to be evaluated for SC
+            pres_joints = 0.0D0
+        end if
+        ! ---
+
+
+        ! Total volume of one outerleg [m3]
+        voltfleg = tfleng * arealeg
+            
+        ! Outboard leg TF conductor volume [m3]
+        vol_cond_leg = tfleng * a_wp_cond_leg 
+
+        ! Total TF conductor volume [m3]
+        vol_cond = vol_cond_cp + n_tf * vol_cond_leg
+
+        ! Outboard leg TF insulation layer volume (per leg) [m3]
+        vol_ins_leg = tfleng * a_wp_ins_turn * turnstf
+
+        ! Total insulation layer volume [m3]
+        vol_ins = vol_ins_cp + n_tf * vol_ins_leg
+
+        ! Total volume of the CP casing [m3]
+        vol_case_cp = vol_case_cp + pi*((r_tf_inboard_in + thkcas)**2 - r_tf_inboard_in**2 )
+
+    ! Case of a continuous resistive magnet 
+    ! ***
+    else          
+                        
+        ! Conductor / insulation cross-section areas
+        ! ---
+        ! Rem SK : These quantities assume a square shape of the turn, this is a
+        !          crude approximation if the inboard legs are vaulted
+            
+        ! Area taken by the inter turn ground insulation
+        a_wp_ins_turn = 2.0D0 * tinstf * ( (tfcth/turnstf) + tfcth - 2.0D0*tinstf )
+
+        ! Exact TF outboard leg conductor area
+        a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * turnstf ) 
+        ! ---
+
+        ! TF resistive powers
+        prescp = rhocp * ritfc**2 * tfleng / ( a_wp_cond_leg * n_tf ) 
+        presleg = 0.0D0
+
+        ! Total TF outer leg conductor volume (not per leg)
+        vol_cond = tfleng * a_wp_cond_leg * n_tf 
+
+        ! Total insulation layer volume
+        vol_ins = tfleng * a_wp_ins_turn * n_tf * turnstf
+                        
+    end if
+
+end subroutine tf_res_heating
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine tf_field_and_force()
-    ! Calculate the TF coil field, force and VV quench consideration
+    !! Calculate the TF coil field, force and VV quench consideration, and the resistive magnets resistance/volume
+    use physics_variables, only: rminor, rmajor, bt, itart
+    use build_variables, only: r_tf_outboard_mid, r_vv_inboard_out, &
+        r_tf_inboard_mid, r_cp_top
+    use tfcoil_variables, only: vforce, n_tf, taucq, sigvvall, cforce, &
+        ritfc, bmaxtf, rbmax, i_tf_sup, f_vforce_inboard, vforce_outboard, &
+        tinstf, thkwp
 
     implicit none
 
     ! Determine quench time (based on IDM: 2MBSE3)
+    ! Resistive magnets : calculation of the resistive power losses added
     ! Issue #337: Force on the vessel wall due to TF coil quench
 
     ! Quench time [s]
-    taucq = (bt * ritfc * rminor * rminor) / (r_vv_inboard_out * sigvvall)
+    if ( i_tf_sup == 1 ) taucq = (bt * ritfc * rminor * rminor) / (r_vv_inboard_out * sigvvall)
+    
 
+    ! In plane forces 
+    ! ---
+    ! Centering force = net inwards radial force per meters per TF coil [N/m]
+    cforce = 0.5D0 * bmaxtf*ritfc/n_tf 
 
-    ! Centering force = net inwards radial force per TF coil [N]
-    cforce = bmaxtf*ritfc/(2.0D0*n_tf)
 
     ! Vertical force per leg [N]
-    vforce = 0.5D0 * bt * rmajor * 0.5D0*ritfc * log(r_tf_outboard_mid/r_tf_inboard_mid) / n_tf
+    ! ***
+    ! Case of a centrepost (itart == 1) with sliding joints (the CP vertical are separated from the leg ones)
+    ! Rem SK : casing/insulation thickness not subtracted as part of the CP is genuinely connected to the legs..
+    if ( itart == 1 .and. i_tf_sup /= 1 ) then
+        
+        ! Tricky trick to avoid dividing by 0 if the TF has no hole in it
+        if ( abs(r_wp_inner) < epsilon(r_wp_inner) ) r_wp_inner = 1.0D-9
 
+        vforce = 0.25D0 * (bt * rmajor * ritfc) / (n_tf * thkwp**2) * (       & 
+                      2.0D0 * r_wp_outer**2 * log(r_wp_outer / r_wp_inner ) + &
+                      2.0D0 * thkwp**2 * log( r_cp_top     / r_wp_inner )   + &
+                      3.0D0 * thkwp**2                                      - &
+                      2.0D0 * thkwp * r_wp_outer                            + &
+                      4.0D0 * thkwp * r_wp_outer *log( r_wp_inner / r_wp_outer ) )
+
+        r_tf_outboard_in = r_tf_outboard_in + tinstf    ! Tricky trick t avoid writting tinstg all the time           
+        vforce_outboard = 0.5D0 * (bt * rmajor * ritfc) / (n_tf * thkwp**2) * ( &
+                      r_wp_outer**2       * log( r_wp_outer       / r_wp_inner                 ) + &
+                      r_tf_outboard_in**2 * log( (r_tf_outboard_in + thkwp) / r_tf_outboard_in ) + &
+                      thkwp**2         * log( (r_tf_outboard_in + thkwp) / r_wp_inner          ) - &
+                      thkwp            * ( r_wp_outer + r_tf_outboard_in                       )  + &
+                      2.0D0 * thkwp * ( r_wp_outer     * log(r_wp_inner / r_wp_outer)             + &
+                                           r_tf_outboard_in * log((r_tf_outboard_in + thkwp)      / &
+                                           r_tf_outboard_in))) - vforce 
+        r_tf_outboard_in = r_tf_outboard_in - tinstf    ! Tricky trick to avoid writting tinstf all the time
+        
+        ! End of tricky trick
+        if ( abs( r_wp_inner - 1.0D-9 ) < epsilon(r_wp_inner) ) r_wp_inner = 0.0D0
+
+    ! Case of TF without joints or with clamped joints total
+    ! Rem SK : f_vforce_inboard might be calculated analytically (see M. Kovari comment in #848)
+    else 
+
+        ! Inboard leg vertical force (per coil) [N]
+        r_tf_outboard_in = r_tf_outboard_in + tinstf ! Tricky trick to avoid writting tinstg all the time    
+        
+        vforce = 0.5D0 * f_vforce_inboard * (bmaxtf * rbmax * ritfc) / (n_tf * thkwp**2) * ( &
+                         r_wp_outer**2       * log( r_wp_outer                 / r_wp_inner       ) + &
+                         r_tf_outboard_in**2 * log( (r_tf_outboard_in + thkwp) / r_tf_outboard_in ) + &
+                         thkwp**2            * log( (r_tf_outboard_in + thkwp) / r_wp_inner       ) - &
+                         thkwp * ( r_wp_outer + r_tf_outboard_in                                  ) + &
+                         2.0D0 * thkwp * ( r_wp_outer       * log(r_wp_inner                 / r_wp_outer ) + &
+                                           r_tf_outboard_in * log((r_tf_outboard_in + thkwp) / r_tf_outboard_in ) ))      
+        
+        r_tf_outboard_in = r_tf_outboard_in - tinstf  ! Tricky trick to avoid writting tinstf all the time
+
+        vforce_outboard = vforce * ( ( 1.0D0 / f_vforce_inboard ) - 1.0D0 )  
+    end if
+    ! ***
 
 end subroutine tf_field_and_force
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine tf_coil_area_and_masses()
-    ! Subroutine to calculate the TF coil areas and masses
-
+    !! Subroutine to calculate the TF coil areas and masses
+    use build_variables, only: hr1, r_tf_outboard_mid, tfcth, r_tf_inboard_mid
+    use fwbs_variables, only: denstl
+    use tfcoil_variables, only: whtconsh, whttf, whtcas, tficrn, tfcryoarea, &
+        tfsao, whtgw, tfocrn, whtconsc, whtconcu, whtcon, whtconin, &
+        tfsai, dcopper, vftf, whtconin, tfsai, dcond, dcondins, whtcon, &
+        tfleng, dthet, dcase, acndttf, turnstf, n_tf, aiwp, radctf, acasetfo, &
+        acasetf, fcutfsu, awphec, acstf, whttflgs, whtcp, whtconal, vol_cond_cp, &
+        i_tf_sup, i_tf_sc_mat, dalu
+    use constants, only: twopi
+    use physics_variables, only: itart
     implicit none
 
     ! Local Variables
-    real(kind(1.0D0)) :: cplen, wbtf
+    real(dp) :: cplen, wbtf
 
     ! Surface areas (for cryo system) [m2]
     ! tfsai, tfsao are retained for the (obsolescent) TF coil nuclear heating calculation
-    wbtf = r_tf_inleg_out*sin(theta_coil) - r_tf_inleg_in*tan_theta_coil
-    tfocrn = r_tf_inleg_in * tan_theta_coil
+    wbtf = r_tf_inboard_out*sin(theta_coil) - r_tf_inboard_in*tan_theta_coil
+    tfocrn = r_tf_inboard_in * tan_theta_coil
     tficrn = tfocrn + wbtf
     tfsai = 4.0D0 * n_tf * tficrn * hr1
     tfsao = 2.0D0 * n_tf * tficrn * (tfleng - 2.0D0*hr1)
@@ -597,42 +977,89 @@ subroutine tf_coil_area_and_masses()
     ! in subroutine cryo - not done at present.)
     tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(r_tf_inboard_mid+r_tf_outboard_mid)
 
-    ! Mass of case [kg]
+    ! Superconductor coil design specific calculation
+    ! ---
+    if ( i_tf_sup == 1 ) then
 
-    ! The length of the vertical section is that of the first (inboard) segment
-    cplen = 2.0D0*(radctf(1) + 0.5D0*tfcth) * dthet(1)
+        ! Mass of case [kg]
+        ! ***
+        ! The length of the vertical section is that of the first (inboard) segment
+        cplen = 2.0D0*(radctf(1) + 0.5D0*tfcth) * dthet(1)
+        
+        ! The 2.2 factor is used as a scaling factor to fit
+        ! to the ITER-FDR value of 450 tonnes; see CCFE note T&M/PKNIGHT/PROCESS/026
+        whtcas = 2.2D0 * dcase * (cplen * acasetf + (tfleng-cplen) * acasetfo)
+        ! ***
+        
+        ! Mass of ground-wall insulation [kg]
+        ! (assumed to be same density/material as conduit insulation)
+        whtgw = tfleng * (awpc-awptf) * dcondins
 
-    ! The 2.2 factor is used as a scaling factor to fit
-    ! to the ITER-FDR value of 450 tonnes; see CCFE note T&M/PKNIGHT/PROCESS/026
-    whtcas = 2.2D0 * dcase * (cplen * acasetf + (tfleng-cplen) * acasetfo)
+        ! Masses of conductor constituents
+        !---------------------------------    
 
-    ! Mass of ground-wall insulation [kg]
-    ! (assumed to be same density/material as conduit insulation)
-    whtgw = tfleng * (awpc-awptf) * dcondins
+        ! Superconductor mass [kg]
+        ! Includes space allowance for central helium channel, area awphec
+        whtconsc = (tfleng * turnstf * acstf*(1.0D0-vftf) * (1.0D0-fcutfsu) - tfleng*awphec) &
+        *dcond(i_tf_sc_mat)
 
-    ! Masses of conductor constituents
-    !---------------------------------
+        ! Copper mass [kg]
+        whtconcu = (tfleng * turnstf * acstf*(1.0D0-vftf) * fcutfsu - tfleng*awphec) * dcopper
 
-    ! Superconductor mass [kg]
-    ! Includes space allowance for central helium channel, area awphec
-    whtconsc = (tfleng * turnstf * acstf*(1.0D0-vftf) * (1.0D0-fcutfsu) - tfleng*awphec) &
-    *dcond(isumattf)
+        ! Steel conduit (sheath) mass [kg]
+        whtconsh = tfleng * turnstf * acndttf * denstl
 
-    ! Copper mass [kg]
-    whtconcu = (tfleng * turnstf * acstf*(1.0D0-vftf) * fcutfsu - tfleng*awphec) * dcopper
+        ! Conduit insulation mass [kg]
+        ! (aiwp already contains turnstf)
+        whtconin = tfleng * aiwp * dcondins
 
-    ! Steel conduit (sheath) mass [kg]
-    whtconsh = tfleng * turnstf * acndttf * denstl
+        ! Total conductor mass [kg]
+        whtcon = whtconsc + whtconcu + whtconsh + whtconin
+        !---------------------------------
+    
+        ! Total TF coil mass [kg] (all coils)
+        whttf = (whtcas + whtcon + whtgw) * n_tf
 
-    ! Conduit insulation mass [kg]
-    ! (aiwp already contains turnstf)
-    whtconin = tfleng * aiwp * dcondins
+    ! Resitivive magnets weights
+    ! ---
+    ! Rem SK : No casing for the outboard leg is considered for now !
+    else 
+        
+        ! Copper magnets casing/conductor weights per coil [kg]
+        if ( i_tf_sup == 0 ) then 
 
-    ! Total conductor mass [kg]
-    whtcon = whtconsc + whtconcu + whtconsh + whtconin
+            whtcas = denstl * vol_case_cp / n_tf  ! Per TF leg, no casing for outer leg
+            whtconcu = dcopper * vol_cond / n_tf
+            whtconal = 0.0D0         
 
-    ! Total TF coil mass [kg] (all coils)
-    whttf = (whtcas + whtcon + whtgw) * n_tf
+            ! Outer legs/CP weights
+            if ( itart == 1 ) then
+                whttflgs = n_tf * ( dcopper * vol_cond_leg + dcondins * vol_ins_leg ) 
+                whtcp =  dcopper * vol_cond_cp + dcondins * vol_ins_cp + vol_case_cp * denstl 
+            end if
+
+        ! Cryo-aluminium conductor weights
+        ! Casing made of re-inforced aluminium alloy
+        else  
+            whtcas = dalu * vol_case_cp / n_tf
+            whtconcu = 0.0D0            
+            whtconal = dalu * vol_cond / n_tf
+
+            ! Outer legs/CP weights
+            if ( itart == 1 ) then
+                whttflgs = n_tf * ( dalu * vol_cond_leg + dcondins * vol_ins_leg ) 
+                whtcp =  dalu * vol_cond_cp + dcondins * vol_ins_cp + vol_case_cp * dalu 
+            end if
+        end if
+            
+        ! Ground wall insulation layer weight
+        whtgw = dcondins * vol_ins / n_tf
+
+        ! Total weight
+        whttf = (whtcas + whtconcu + whtconal + whtgw) * n_tf
+
+    end if 
+    ! ---
 
 end subroutine tf_coil_area_and_masses
 
@@ -662,18 +1089,19 @@ subroutine peak_tf_with_ripple(n_tf,wwp1,thkwp,tfin,bmaxtf,bmaxtfrp,flag)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: pi
     implicit none
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: n_tf,wwp1,thkwp,tfin,bmaxtf
-    real(kind(1.0D0)), intent(out) :: bmaxtfrp
+    real(dp), intent(in) :: n_tf,wwp1,thkwp,tfin,bmaxtf
+    real(dp), intent(out) :: bmaxtfrp
     integer, intent(out) :: flag
 
     !  Local variables
 
-    real(kind(1.0D0)) :: wmax
-    real(kind(1.0D0)), dimension(4) :: a
+    real(dp) :: wmax
+    real(dp), dimension(4) :: a
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -704,7 +1132,6 @@ subroutine peak_tf_with_ripple(n_tf,wwp1,thkwp,tfin,bmaxtf,bmaxtfrp,flag)
     case default
 
         !  Original calculation - no fits were performed
-
         bmaxtfrp = 1.09D0 * bmaxtf
         return
 
@@ -741,38 +1168,150 @@ end subroutine peak_tf_with_ripple
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine stresscl
+subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     !! TF coil stress routine
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
+    !! author: S Kahn, CCFE, Culham Science Centre
     !! author: J Galambos, FEDC/ORNL
-    !! None
     !! This subroutine sets up the stress calculations for the
     !! TF coil set.
     !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use build_variables, only: tfcth, r_tf_inboard_mid
+    use tfcoil_variables, only: eyzwp, casestr, windstrain, turnstf, &
+        thkwp, i_tf_tresca, acstf, vforce, &
+        ritfc, jwptf, strtf1, strtf2, &
+        thwcndut, insstrain, strtf2, vforce, tinstf, &
+        acstf, jwptf, jeff, insstrain, &
+        strtf1, rbmax, thicndut, acndttf, tfinsgap, &
+        acasetf, alstrtf, poisson_steel, poisson_copper, poisson_al, &
+        n_tf_graded_layers, i_tf_sup, i_tf_bucking, fcoolcp, eyoung_winding, &
+        eyoung_steel, eyoung_reinforced_al, eyoung_ins, eyoung_al, eyoung_copper, &
+        aiwp, cpttf
+    use constants, only: pi, sig_file
+    use error_handling, only: report_error
     implicit none
 
     !  Arguments
 
-    !  Local variables
+    ! Inputs
+    ! ------
+    integer, intent(in) :: iprint
+    !! Print option (if 1, output quantities calculated)
+    
+    integer, intent(in) :: outfile
+    !! output file unit
 
-    !integer :: i
-    real(kind(1.0D0)) :: seff, tcbs, fac, svmxz, svmyz, t_ins_eff
+    integer, intent(in) :: n_radial_array
+    !! Size of the arrays per layers storing the radial dependent 
+    !! stress quantities (stresses, strain displacement etc..)
+    
+    integer, intent(in) :: n_tf_layer
+    !! Number of layers considered for the inboard TF stress calculations
+    ! ------
 
+
+    ! Internal parameters
+    ! ---
+    real(dp), dimension(n_tf_layer*n_radial_array) :: radial_array
+    !! Array refining the radii of the stress calculations arrays
+    
+    real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_r
+    !! TF Inboard leg radial stress r distribution at mid-plane [Pa]
+    
+    real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_t
+    !! TF Inboard leg tangential stress r distribution at mid-plane [Pa]
+    
+    real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_z
+    !! TF Inboard leg vertical tensile stress at mid-plane [Pa]
+    
+    real(dp), dimension(n_tf_layer*n_radial_array) :: deflect
+    !! TF coil radial deflection (displacement) radial distribution [m]
+    
+    real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_vmises
+    !! TF Inboard leg Von-Mises stress r distribution at mid-plane [Pa]
+        
+    real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_tresca 
+    !! TF Inboard leg TRESCA stress r distribution at mid-plane [Pa]
+    
+    real(dp), dimension(n_tf_layer*n_radial_array) :: s_tresca_cond_cea
+    !! Conduit Tresca stress with CEA adjustment factors [Pa]
+    
+    real(dp), dimension(n_tf_layer) :: sig_tf_r_max
+    !! Radial stress of the point of maximum TRESCA stress (for each layers) [Pa]
+    
+    real(dp), dimension(n_tf_layer) :: sig_tf_t_max 
+    !! Toroidal stress of the point of maximum TRESCA stress (for each layers) [Pa]
+    
+    real(dp), dimension(n_tf_layer) :: sig_tf_z_max
+    !! Vertical stress of the point of maximum TRESCA stress (for each layers) [Pa]
+    !! Rem : Currently constant but will be r dependent in the future
+    
+    real(dp), dimension(n_tf_layer) :: sig_tf_vmises_max 
+    !! Von-Mises stress of the point of maximum TRESCA stress (for each layers) [Pa]
+    
+    real(dp), dimension(n_tf_layer) :: sig_tf_tresca_max
+    !! Maximum TRESCA stress (for each layers) [Pa]
+    !! If the CEA correction is addopted, the CEA corrected value is used
+    
+    real(dp), dimension(n_tf_layer*n_radial_array) :: strain_tf_r
+    !! Radial normal strain radial distribution
+    
+    real(dp), dimension(n_tf_layer*n_radial_array) :: strain_tf_t
+    !! Toroidal normal strain radial distribution
+     
+    real(dp) :: strain_tf_z
+    !! Vertical normal strain (constant as layer assumed to be bonded)
+    
+    real(dp), dimension(n_tf_layer+1) :: radtf
+    !! Radii used to define the layers used in the stress models [m]
+    !! Layers are labelled from inboard to outbard
+    
+    real(dp), dimension(n_tf_layer) :: eyoung
+    !! Young modulae (one per layer) used in the stress models [Pa]
+    
+    real(dp), dimension(n_tf_layer) :: poisson
+    !! Poisson's ratio (one per layer) used in the stress models
+    
+    integer :: ii
+    !! do loop index
+
+    integer :: ii_max
+    !! Index of the maximum TRESCA stress
+
+    real(dp) :: sig_max
+    !! Working float to find maximum TRESCA stress index
+
+    real(dp) :: seff, tcbs, fac, t_ins_eff
+    
+    real(dp) :: sig_z_fac
+    !! Vertical stress correction factor for inter turn structure
+
+    real(dp) :: svmxz
+    !! Von-mises stress in steel setting the radial stress to 0
+
+    real(dp) :: svmyz
+    !! Von-mises stress in stell setting the toroidal stress to 0
+
+    real(dp) :: dr_wp_layer
+    !! Size of WP layer with homogeneous smeared property 
+    ! ---
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Simple stress model option.  REMOVED Issue #781
-    ! if (tfc_model == 0) then
-    !     call sctfjalw(bmaxtfrp,r_tf_inboard_mid,r_tf_outboard_mid,rbmax,(1.0D-6*alstrtf), tdmptf,jwdgcrt)
-    !     return
-    ! end if
+    ! Stress model not valid the TF does not contain any hole
+    ! Rem SK : Can be easily ameneded playing around the boundary conditions
+    if ( abs(r_tf_inboard_in) < epsilon(r_tf_inboard_in) ) then
+        call report_error(245)
+        strtf1 = 0.0D0
+        strtf2 = 0.0D0
+        return
+    end if
 
-    !  Set up graded stress model call information
-
+    !  Setup stress model call
+    ! ------
     seff = sqrt(cpttf/jwptf)
     if (acstf >= 0.0D0) then
         tcbs = sqrt(acstf)
@@ -780,199 +1319,876 @@ subroutine stresscl
         tcbs = 0.0D0
     end if
 
-    !  CCFE two-layer model
-    !  Layers are labelled from inboard to outboard.
-    !  The first layer is the steel casing inboard of the winding pack,
-    !  while the second layer is the winding pack itself.
 
-    radtf(1) = r_tf_inboard_mid - 0.5D0*tfcth
-    radtf(2) = rbmax - thkwp
-    radtf(3) = rbmax
+    ! bucking cylinder/casing properties
+    ! ---
+    if ( i_tf_bucking == 1 ) then
+        
+        ! No current in bucking cylinder/casing
+        jeff(1) = 0.0D0
 
-    eyoung(1) = eystl
+        ! Steel bucking cylinder (copper and SC design)
+        if ( i_tf_sup /= 2 ) then 
+            eyoung(1) = eyoung_steel
+            poisson(1) = poisson_steel
+        
+        ! Re-inforced aluminium 
+        else 
+            eyoung(1) = eyoung_reinforced_al
+            poisson(1) = poisson_al
+        end if
+        
+        ! Innernost TF radius
+        radtf(1) = r_tf_inboard_in
 
+    end if
+    ! ---
+
+
+    ! (Super)conductor layer properties
+    ! ---
+    ! Rem : They are only unique for isotropic materials, hence
+    !       the underlying assumption of our models is the anisotropy
+    !       of the material. A good assumption for resistive magnets
+    !       but a doggy one for SC
+
+    ! Thickness of a homognenous WP stress property layer
+    dr_wp_layer = thkwp / dble(n_tf_graded_layers)
+
+    ! WP effective insulation thickness (SC only)
     ! include groundwall insulation + insertion gap in thicndut
     ! inertion gap is tfinsgap on 4 sides
-    t_ins_eff = thicndut + ((tfinsgap+tinstf)/turnstf)
+    if ( i_tf_sup == 1 ) t_ins_eff = thicndut + ((tfinsgap+tinstf)/turnstf)
 
-    eyoung(2) = eyngeff(eystl,eyins,t_ins_eff,thwcndut,tcbs)
+    ! Loop on layers
+    do ii = 1, n_tf_graded_layers
+        
+        ! Homogeneous current in (super)conductor
+        jeff(i_tf_bucking + ii) = ritfc / (pi * (r_wp_outer**2 - r_wp_inner**2))
 
-    jeff(1) = 0.0D0
-    jeff(2) = ritfc / ( pi * (radtf(3)**2 - radtf(2)**2))
+        ! Same thickness for all WP layers in stress calculation
+        radtf(i_tf_bucking + ii) = r_wp_inner + dble(ii-1)*dr_wp_layer
 
-    !  Call stress routine
-    call two_layer_stress(poisson,radtf,eyoung,jeff,sigrtf,sigttf,deflect)
+        ! Copper magent
+        if ( i_tf_sup == 0 ) then
+            eyoung(i_tf_bucking  + ii) = eyoung_copper
+            poisson(i_tf_bucking + ii) = poisson_copper
+            
+        ! SC magnets smeared properties
+        else if ( i_tf_sup == 1 ) then
+            eyoung(i_tf_bucking  + ii) = eyngeff( eyoung_steel, eyoung_ins, t_ins_eff, thwcndut, tcbs )
+            poisson(i_tf_bucking + ii) = poisson_steel
+        
+        ! Cryogenic aluminium properties
+        else 
+            eyoung(i_tf_bucking  + ii) = eyoung_al
+            poisson(i_tf_bucking + ii) = poisson_al
+        end if 
+    end do
 
-    !  Convert to conduit + case
+    ! last layer radius
+    radtf(n_tf_layer + 1) = r_wp_outer
+    ! ---  
 
-    !fac = eystl*eyins*seff / &
-    !     (eyins*(seff-2.0D0*thicndut) + 2.0D0*thicndut*eystl)
+    ! Stress model not valid the TF does not contain any hole
+    ! Current action : trigger and error and add a little hole
+    !                  to allow stress calculations 
+    ! Rem SK : Can be easily ameneded playing around the boundary conditions
+    if ( abs(radtf(1)) < epsilon(radtf(1)) ) then
+        call report_error(245)
+        radtf(1) = 1.0D-9
+    end if
+    ! ------
 
-    fac = eystl*eyins*seff / &
-    (eyins*(seff-2.0D0*t_ins_eff) + 2.0D0*t_ins_eff*eystl)
 
-    sigrcon = sigrtf(2)/eyoung(2) * fac
-    sigtcon = sigttf(2)/eyoung(2) * fac
-    sigvert = vforce / (acasetf + acndttf*turnstf)
+    ! Superconductor magnet stress calculation
+    ! ------
+    if ( i_tf_sup == 1 ) then 
 
-    !  Find case strain
-    casestr = sigvert / eystl
+        ! Plane stress calculation (SC) [Pa]
+        call plane_stress( poisson, radtf, eyoung, jeff, & ! Inputs
+                           n_tf_layer, n_radial_array,   & ! Inputs
+                           sig_tf_r, sig_tf_t, deflect, radial_array ) ! Outputs
+    
+        ! Vertical stress [Pa]
+        sig_tf_z = vforce / (acasetf + acndttf*turnstf)
 
-    !  Find Von-Mises stresses
-    !  For winding pack region take worst of two walls
-    svmxz = sigvm(sigrcon, 0.0D0, sigvert, 0.0D0,0.0D0,0.0D0)
-    svmyz = sigvm(0.0D0, sigtcon, sigvert, 0.0D0,0.0D0,0.0D0)
 
-    ! von Mises stresses [Pa]
-    s_vmises_case = sigvm(sigrtf(1), sigttf(1), sigvert, 0.0D0,0.0D0,0.0D0)
-    s_vmises_cond = max(svmxz,svmyz)
+        ! Casing yield stress
+        ! ---
+        do ii = 1, n_radial_array
+    
+            ! Von-mises stress [Pa]
+            if ( iprint == 1 ) then
+                sig_tf_vmises(ii) = sigvm( sig_tf_r(ii), sig_tf_t(ii), sig_tf_z(ii), &  
+                                           0.0D0, 0.0D0, 0.0D0 )
+            end if
+    
+            ! TRESCA stress [Pa] 
+            sig_tf_tresca(ii) = sig_tresca(sig_tf_r(ii), sig_tf_t(ii), sig_tf_z(ii))
+            
+            ! TRESCA stress using CEA calculation [Pa]
+            s_tresca_cond_cea(ii) = sig_tf_tresca(ii)
+        end do
+        ! ---
+    
+        
+        ! WP steel conduid yield stress
+        ! ---
+        ! WP conduit stress unsmearing
+        fac = eyoung_steel*eyoung_ins*seff / &
+              (eyoung_ins*(seff-2.0D0*t_ins_eff) + 2.0D0*t_ins_eff*eyoung_steel)
 
-    ! Tresca stress criterion [pa]
-    s_tresca_case = max(ABS(sigrtf(1)-sigttf(1)), ABS(sigttf(1)-sigvert), ABS(sigvert-sigrtf(1)))
-    s_tresca_cond = max(ABS(sigrcon-sigtcon), ABS(sigtcon-sigvert), ABS(sigvert-sigrcon))
+        do ii = n_radial_array + 1, n_tf_layer*n_radial_array
 
-    ! Tresca stress using CEA calculation [Pa]
-    s_tresca_cond_cea = 1.02D0*abs(sigrcon) + 1.6D0*sigvert
+            ! Stress unsmearing [Pa]
+            sig_tf_r(ii) = sig_tf_r(ii)/eyoung(2) * fac
+            sig_tf_t(ii) = sig_tf_t(ii)/eyoung(2) * fac
+  
+            ! Von-mises stress calculation (addapted to the smearing procedure) [Pa]
+            if ( iprint == 1 ) then
+                svmxz = sigvm( 0.0D0, sig_tf_t(ii), sig_tf_z(ii), 0.0D0,0.0D0,0.0D0)
+                svmyz = sigvm( sig_tf_r(ii), 0.0D0, sig_tf_z(ii), 0.0D0,0.0D0,0.0D0)
+                sig_tf_vmises(ii) = max(svmxz, svmyz)
+            end if
 
-    if (i_tf_tresca == 1) then
-        ! Use CEA adjusted stress
-        strtf1 = s_tresca_cond_cea
-    else
-        ! Stress to constrain
-        strtf1 = s_tresca_cond
+            ! TRESCA stres [Pa]
+            sig_tf_tresca(ii) = sig_tresca(sig_tf_r(ii), sig_tf_t(ii), sig_tf_z(ii))
+
+            ! TRESCA stress using CEA calculation [Pa]
+            s_tresca_cond_cea(ii) = 1.02D0*abs(sig_tf_r(ii)) + 1.6D0*sig_tf_z(ii)
+
+        end do ! end of radial array loop
+        ! ---
+
+
+        ! Strains
+        ! ---
+        ! Case strain
+        casestr = sig_tf_z(1) / eyoung_steel
+
+        ! Young's modulus in vertical direction on WP
+        eyzwp = eyngzwp(eyoung_steel,eyoung_ins,eyoung_winding,t_ins_eff,thwcndut,tcbs)
+    
+        ! Strain in vertical direction on WP
+        windstrain = sig_tf_z(1) / eyzwp
+    
+        ! Radial strain in insulator
+        insstrain = sig_tf_r(n_radial_array) / eyoung_ins * &
+                    edoeeff(eyoung_steel, eyoung_ins, t_ins_eff, thwcndut, tcbs)
+        ! ---
+    ! ------
+
+                    
+    ! Resistive magnet stress calculation
+    ! ------
+    else 
+        call generalized_plane_strain( poisson, radtf, eyoung, jeff, vforce, & ! Inputs
+                                       n_tf_layer, n_radial_array,           & ! Inputs
+                                       radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
+                                       strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
+    
+        ! Vertical stress turn structure correction (cooling fraction and insulation layer)
+        !-!
+        ! Vertical stress correction factor 
+        if ( i_tf_sup == 0 ) then
+            sig_z_fac = 1.0D0 / ( 1 - fcoolcp ) 
+        else if (i_tf_sup == 2 ) then
+            sig_z_fac = eyoung_al / ( awptf * eyoung_al + aiwp * eyoung_ins ) &
+                                  * ( awpc / turnstf ) 
+        end if
+        
+        ! Applying vertical stress correction factor
+        do ii = n_radial_array + 1, n_tf_layer*n_radial_array
+            sig_tf_z(ii) = sig_z_fac * sig_tf_z(ii)
+        end do
+        !-!
+
+
+        ! TRESCA stress (array equation)                     
+        sig_tf_tresca = max( abs(sig_tf_r - sig_tf_t), &
+                             abs(sig_tf_r - sig_tf_z), &
+                             abs(sig_tf_z - sig_tf_t) )
+        
+        sig_tf_vmises = sqrt( 0.5D0*(  (sig_tf_r - sig_tf_t)**2  &
+                                     + (sig_tf_r - sig_tf_z)**2  &
+                                     + (sig_tf_z - sig_tf_t)**2 ) )
+    end if
+    ! ---
+
+
+    ! Output formating (Maximum TRESCA per layer and stress at the corresponding point)
+    ! ------
+    ! In case/bucking cylinder
+    ! ---
+    if ( i_tf_bucking == 1 ) then
+        sig_max = 0.0D0
+        ii_max = 1
+        do ii = 1, n_radial_array
+            if ( sig_tf_tresca(ii) > sig_max ) then
+                ii_max = ii
+                sig_max = sig_tf_tresca(ii)
+            end if
+        end do    
+
+        if ( iprint == 1 ) then
+            sig_tf_r_max(1) = sig_tf_r(ii_max)
+            sig_tf_t_max(1) = sig_tf_t(ii_max)
+            sig_tf_z_max(1) = sig_tf_z(ii_max)
+            sig_tf_vmises_max(1) = sig_tf_vmises(ii_max)
+        end if
+
+        ! Stresses of the maximum TRESCA stress point
+        sig_tf_tresca_max(1) = sig_tf_tresca(ii_max)
+
+        ! Case/bucking maximum TRESCA stress used in constraint 31 [Pa]
+        strtf1 = sig_tf_tresca_max(1)
+
+    end if
+    ! ---
+
+    
+    ! WP steel conduit stress distributions
+    ! ---
+    sig_max = 0.0D0
+    ii_max = 0
+    do ii = i_tf_bucking*n_radial_array + 1, n_tf_layer*n_radial_array
+        
+        ! CEA out of plane approximation
+        if ( i_tf_tresca == 1 .and. i_tf_sup == 1 ) then
+            if ( sig_max < s_tresca_cond_cea(ii) ) then
+                sig_max = s_tresca_cond_cea(ii)
+                ii_max = ii
+            end if
+
+        ! No out of plane CEA approximation
+        else 
+            if ( sig_max < sig_tf_tresca(ii) ) then
+                sig_max = sig_tf_tresca(ii)
+                ii_max = ii
+            end if
+        end if
+    end do
+    
+    ! Stress of the maximum TRESCA stress point
+    if ( iprint == 1 ) then
+        sig_tf_r_max(i_tf_bucking+1) = sig_tf_r(ii_max)
+        sig_tf_t_max(i_tf_bucking+1) = sig_tf_t(ii_max)
+        sig_tf_z_max(i_tf_bucking+1) = sig_tf_z(ii_max)
+        sig_tf_vmises_max(i_tf_bucking+1) = sig_tf_vmises(ii_max)
     end if
 
-    strtf2 = s_tresca_case
+    if ( i_tf_tresca == 1 ) then
+        sig_tf_tresca_max(i_tf_bucking+1) = s_tresca_cond_cea(ii_max)
+    else
+        sig_tf_tresca_max(i_tf_bucking+1) = sig_tf_tresca(ii_max)
+    end if
 
-    ! Old von Mises
-    !strtf1 = s_vmises_cond
-    !strtf2 = s_vmises_case
+    ! WP conduit/conductor maximum TRESCA stress used in constraint 32 [Pa]
+    strtf2 = sig_tf_tresca_max(i_tf_bucking+1)     ! Conduit TRESCA constraint
+    !-!
+    ! ---
 
-    !  Young's modulus and strain in vertical direction on winding pack
-    eyzwp = eyngzwp(eystl,eyins,eywp,t_ins_eff,thwcndut,tcbs)
-    windstrain = sigvert / eyzwp
+    if ( iprint == 1 ) call out_stress
 
-    !  Radial strain in insulator
-    insstrain = sigrtf(2) / eyins * &
-    edoeeff(eystl,eyins,t_ins_eff,thwcndut,tcbs)
+
+    contains
+
+    subroutine out_stress
+        !! Subroutine showing the writing the TF midplane stress analysis
+        !! in the output file and the stress distribution in the SIG_TF.DAT
+        !! file used to plot stress distributions
+        !! Author : S. Kahn
+
+        use process_output, only: osubhd, ocmmnt, ovarre
+        implicit none
+        
+        ! Stress output section
+        call osubhd(outfile,'TF Coil Stresses (CCFE model) :')
+        
+        if ( i_tf_sup == 1 ) then
+            call ocmmnt(outfile, 'Plane stress model with smeared properties')
+        else 
+            call ocmmnt(outfile, 'Generalized plane strain model')
+        end if
+
+        call ovarre(outfile, 'Allowable Tresca stress limit (Pa)','(alstrtf)',alstrtf)
+        if ( i_tf_tresca == 1  .and. i_tf_sup == 1) then
+            call ocmmnt(outfile, 'WP conduit TRESCA stress corrected using CEA formula (i_tf_tresca = 1)')
+        end if
+
+        ! OUT.DAT data on maximum TRESCA stress values
+        call ocmmnt(outfile, 'Stresses of the point of maximum TRESCA stress per layer')
+        call ocmmnt(outfile, 'Please use utility/plot_TF_stress.py for radial plots plots summary')
+        write(outfile,'(t2, "Layers", t26, *(i11) )') 1, 2
+        write(outfile,'(t2, "Radial"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_r_max*1.0D-6
+        write(outfile,'(t2, "toroidal"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_t_max*1.0D-6
+        write(outfile,'(t2, "Vertical"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_z_max*1.0D-6
+        write(outfile,'(t2, "Von-Mises" ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_vmises_max*1.0D-6
+        if ( i_tf_tresca == 1 .and. i_tf_sup == 1 ) then
+            write(outfile,'(t2, "CEA TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
+        else 
+            write(outfile,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
+        end if
+
+        ! SIG_TF.DAT storage  
+        write(sig_file,'(t2, "Points per layers"                 ,t26, *(I11,3x))') n_radial_array          
+        write(sig_file,*) 
+        write(sig_file,'(t2, "radius"              , t20, "(m)"  ,t26, *(F11.3,3x))') radial_array
+        write(sig_file,'(t2, "Radial"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_r*1.0D-6
+        write(sig_file,'(t2, "toroidal"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_t*1.0D-6
+        write(sig_file,'(t2, "Vertical"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_z*1.0D-6
+        write(sig_file,'(t2, "Von-Mises" ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_vmises*1.0D-6
+        write(sig_file,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca*1.0D-6
+        if ( i_tf_sup == 1 ) then
+            write(sig_file,'(t2, "CEA TRESCA"," stress", t20, "(MPa)",t26, *(F11.3,3x))') s_tresca_cond_cea*1.0D-6
+        else 
+            write(sig_file,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca*1.0D-6
+        end if 
+        write(sig_file,*) 
+        write(sig_file,*) 'Displacement'         
+        write(sig_file,'(t2, "raidal displacement", t20, "(mm)",t26, *(F11.3,3x))') deflect*1.0D3
+        if ( i_tf_sup /= 1 ) then
+            write(sig_file,*)
+            write(sig_file,*) 'Strain'    
+            write(sig_file,'(t2, "radial strain"   ,t26, *(F11.8,3x))') strain_tf_r
+            write(sig_file,'(t2, "toroidal strain" ,t26, *(F11.8,3x))') strain_tf_t
+            write(sig_file,'(t2, "vertical strain" ,t26, *(F11.8,3x))') strain_tf_z
+        end if
+
+             ! Other quantities (displacement strain, etc..)
+        call ovarre(outfile,'Maximum radial deflection at midplane (m)','(deflect)',&
+                            deflect(n_radial_array), 'OP ')
+        call ovarre(outfile,"Winding pack vertical Young's Modulus (Pa)",'(eyzwp)', eyzwp, 'OP ')
+        call ovarre(outfile,'Vertical strain on casing','(casestr)', casestr, 'OP ')
+        call ovarre(outfile,'Vertical strain on winding pack','(windstrain)', windstrain, 'OP ')
+        call ovarre(outfile,'Radial strain on insulator','(insstrain)', insstrain, 'OP ')
+
+    end subroutine out_stress
+
 
 end subroutine stresscl
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect)
+subroutine plane_stress( nu, rad, ey, j,          & ! Inputs
+                         nlayers, n_radial_array, & ! Inputs
+                         sigr, sigt, r_deflect, rradius ) ! Outputs
 
     !! Calculates the stresses in a superconductor TF coil
-    !! inboard leg at the midplane
+    !! inboard leg at the midplane using the plain stress approximation 
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
-    !! nu      : input real : Poisson's ratio (assumed constant over entire coil)
-    !! rad(3)  : input real array : Radius points of regions (m)
-    !! (region i is bounded by rad(i) and rad(i+1) )
-    !! ey(2)   : input real array : Effective Young's modulus of region i (Pa)
-    !! j(2)    : input real array : Effective current density of region i (A/m2)
-    !! sigr(2) : output real array : Radial stress in region i (Pa)
-    !! sigt(2) : output real array : Tangential stress in region i (Pa)
-    !! deflect : output real : Deflection at point rad(1) (m)
+    !! author: S Kahn, CCFE, Culham Science Centre
     !! This routine calculates the stresses in a superconductor TF coil
     !! inboard leg at midplane.
-    !! <P>A two-layer model developed by CCFE is used. The first layer
+    !! <P>A 2 layer plane stress model developed by CCFE is used. The first layer
     !! is the steel case inboard of the winding pack, and the second
     !! layer is the winding pack itself.
     !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
-    !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use constants, only: pi, rmu0
+    use maths_library, only: linesolv
     implicit none
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: nu
-    real(kind(1.0D0)), dimension(3), intent(in) :: rad
-    real(kind(1.0D0)), dimension(2), intent(in) :: ey, j
-    real(kind(1.0D0)), dimension(2), intent(out) :: sigr, sigt
-    real(kind(1.0D0)), intent(out) :: deflect
+    integer, intent(in) :: n_radial_array
+    !! Number of elements per layers used in stress analysis 
+    !! quantities arrays (stress, strain, displacement) 
 
-    !  Local variables
+    integer, intent(in) :: nlayers
+    !! Number of layers considered in the stress model
 
-    real(kind(1.0D0)) :: alpha,beta,k1,k2
-    real(kind(1.0D0)), dimension(4,4) :: a
-    real(kind(1.0D0)), dimension(4) :: b, c
+    real(dp), dimension(nlayers), intent(in) :: nu
+    !! Poisson's ratio
 
+    real(dp), dimension(nlayers+1), intent(in) :: rad
+    !! Layers delimitation radii [m]
+    
+    real(dp), dimension(nlayers), intent(in) :: ey
+    !! Young modulae [Pa]
+    
+    real(dp), dimension(nlayers), intent(in) :: j
+    !! Layers effective current density [A/m2]
+
+    real(dp), dimension(nlayers*n_radial_array), intent(out) :: sigr
+    !! Radial stress radial distribution [Pa]
+    
+    real(dp), dimension(nlayers*n_radial_array), intent(out) :: sigt
+    !! Toroidal stress radial distribution [Pa]
+
+    real(dp), dimension(nlayers*n_radial_array), intent(out) :: r_deflect
+    !! Radial deflection (displacement) radial distribution [m]
+
+    real(dp), dimension(nlayers*n_radial_array), intent(out) :: rradius
+    !! Radius array [m]
+
+
+    ! Local variables
+    ! ---
+    ! Lorentz body force parametres
+    real(dp), dimension(nlayers) :: alpha
+    real(dp), dimension(nlayers) :: beta
+
+    ! Strain to stress hooke's law coeficient
+    real(dp), dimension(nlayers) :: kk
+
+    ! Layer area
+    real(dp), dimension(nlayers) :: area
+    
+    ! Matrix encoding the integration constant cc coeficients 
+    real(dp), dimension(2*nlayers, 2*nlayers) :: aa
+    
+    ! Vector encoding the alpha/beta (lorentz forces) contribution
+    real(dp), dimension(2*nlayers) :: bb
+
+    ! Integration constants vector (solution)
+    real(dp), dimension(2*nlayers) :: cc
+    real(dp), dimension(nlayers) :: c1, c2
+
+    ! Variables used for radial stress distribution  
+    real(dp) :: dradius
+    real(dp) :: inner_layer_curr
+    real(dp) :: rad_c
+
+    integer :: ii = 0
+    integer :: jj = 0
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  LHS matrix A
+    ! Layer parameterisation
+    ! ***
+    ! Array equation
+    kk = ey/(1.0D0 - nu**2)
 
-    k1 = ey(1)/(1.0D0 - nu*nu)
-    k2 = ey(2)/(1.0D0 - nu*nu)
+    ! Lorentz forces parametrisation coeficients (array equation)
+    alpha = 0.5D0*rmu0 * j**2 / kk
+    
+    inner_layer_curr = 0.0D0
+    do ii = 1, nlayers
 
-    a(:,:) = 0.0D0
-    a(1,1) = k1 * (1.0D0+nu)
-    a(1,2) = -k1 * (1.0D0-nu)/(rad(1)**2)
-    a(2,1) = a(1,1)
-    a(2,2) = -k1 * (1.0D0-nu)/(rad(2)**2)
-    a(2,3) = -k2 * (1.0D0+nu)
-    a(2,4) = k2 * (1.0D0-nu)/(rad(2)**2)
-    a(3,3) = k2 * (1.0D0+nu)
-    a(3,4) = -k2 * (1.0D0-nu)/(rad(3)**2)
-    a(4,1) = rad(2)
-    a(4,2) = 1.0D0/rad(2)
-    a(4,3) = -rad(2)
-    a(4,4) = -1.0D0/rad(2)
+        beta(ii) = 0.5D0*rmu0 * j(ii) * ( inner_layer_curr - pi*j(ii)*rad(ii)**2 ) / (pi*kk(ii))
 
-    !  RHS vector B
-    !  alpha, beta only non-zero where current density is non-zero
+        ! Layer area
+        area(ii) = pi * (rad(ii+1)**2 - rad(ii)**2)
 
-    alpha = 0.5D0*rmu0 * j(2)*j(2) * (1.0D0 - nu*nu)/ey(2)
-    beta = -alpha * rad(2)*rad(2)
+        ! Total current carried by the inners layers 
+        inner_layer_curr = inner_layer_curr + area(ii)*j(ii)
+    end do
+    ! ***
 
-    b(:) = 0.0D0
-    b(2) = -k2 * ( 0.125D0*alpha*(3.0D0+nu)*rad(2)*rad(2) &
-    + 0.5D0*beta*(1.0D0 + (1.0D0+nu)*log(rad(2))) )
-    b(3) = k2 * ( 0.125D0*alpha*(3.0D0+nu)*rad(3)*rad(3)  &
-    + 0.5D0*beta*(1.0D0 + (1.0D0+nu)*log(rad(3))) )
-    b(4) = -0.125D0*alpha*(rad(2))**3 - 0.5D0*beta*rad(2)*log(rad(2))
 
-    !  Find solution vector c:  A times c = b
-    !  N.B. In Morris, Section IV, C_xy is C_x in region y
-    !  Thus, array elements c(i) are as follows:
-    !  c(1) = C_31 = C_3 in case
-    !  c(2) = C_41 = C_4 in case
-    !  c(3) = C_32 = C_3 in winding pack
-    !  c(4) = C_32 = C_4 in winding pack
+    ! Left hand side matrix aa
+    ! ***
+    aa(:,:) = 0.0D0
+    
+    ! Null radial stress at R(1)
+    aa(1,1) = kk(1) * (1.0D0+nu(1))
+    aa(1,2) = -kk(1) * (1.0D0-nu(1))/(rad(1)**2)
 
-    c(:) = 0.0D0
-    call linesolv(a, 4, b, c)
+
+    ! Inter-layer boundary conditions
+    if ( nlayers /= 1 ) then 
+        do ii = 1, nlayers - 1
+
+            ! Continuous radial normal stress at R(ii+1)
+            aa(2*ii, 2*ii-1) = kk(ii) * ( 1.0D0 + nu(ii) )
+            aa(2*ii, 2*ii  ) = -kk(ii) * ( 1.0D0 - nu(ii) ) / rad(ii+1)**2 
+            aa(2*ii, 2*ii+1) = -kk(ii+1) * ( 1.0D0 + nu(ii+1) )
+            aa(2*ii, 2*ii+2) = kk(ii+1) * ( 1.0D0 - nu(ii+1) ) / rad(ii+1)**2 
+
+            ! Continuous displacement at R(ii+1)
+            aa(2*ii+1, 2*ii-1) = rad(ii+1)
+            aa(2*ii+1, 2*ii  ) = 1.0D0 / rad(ii+1)
+            aa(2*ii+1, 2*ii+1) = -rad(ii+1)
+            aa(2*ii+1, 2*ii+2) = -1.0D0 / rad(ii+1)
+
+        end do
+    end if
+
+    ! Radial stress = 0
+    aa(2*nlayers, 2*nlayers - 1) =  kk(nlayers) * ( 1.0D0 + nu(nlayers) )
+    aa(2*nlayers, 2*nlayers    ) = -kk(nlayers) * ( 1.0D0 - nu(nlayers) ) / rad(nlayers+1)**2
+    ! ***
+
+    ! Right hand side vector bb
+    ! ***
+    ! Null radial stress at R(1)
+    bb(1) = -kk(1) * ( 0.125D0*alpha(1)*(3.0D0+nu(1))*rad(1)**2   &
+                     + 0.5D0*beta(1)*(1.0D0 + (1.0D0+nu(1))*log(rad(1))) )
+
+    ! Inter-layer boundary conditions
+    if ( nlayers /= 1 ) then 
+        do ii = 1, nlayers - 1
+
+            ! Continuous radial normal stress at R(ii+1)
+            bb(2*ii) = -kk(ii) * ( 0.125D0*alpha(ii)*(3.0D0+nu(ii))*rad(ii+1)**2   &
+                                  + 0.5D0*beta(ii)*(1.0D0 + (1.0D0+nu(ii))*log(rad(ii+1))) ) &
+                       +kk(ii+1) * ( 0.125D0*alpha(ii+1)*(3.0D0+nu(ii+1))*rad(ii+1)**2   &
+                                  + 0.5D0*beta(ii+1)*(1.0D0 + (1.0D0+nu(ii+1))*log(rad(ii+1))) )
+
+            ! Continuous displacement at R(ii+1)
+            bb(2*ii+1) = - 0.125D0*alpha(ii)  * rad(ii+1)**3 - 0.5D0*beta(ii)  *rad(ii+1)*log(rad(ii+1))  &
+                         + 0.125D0*alpha(ii+1)* rad(ii+1)**3 + 0.5D0*beta(ii+1)*rad(ii+1)*log(rad(ii+1))
+        end do
+    end if
+
+    ! Null radial stress at R(nlayers+1)
+    bb(2*nlayers) = -kk(nlayers) * ( 0.125D0*alpha(nlayers)*(3.0D0+nu(nlayers))*rad(nlayers+1)**2  &
+                                   + 0.5D0*beta(nlayers)*(1.0D0 + (1.0D0+nu(nlayers))*log(rad(nlayers+1))) )
+    ! ***
+
+    !  Find solution vector cc
+    ! ***
+    cc(:) = 0.0D0
+    call linesolv(aa, 2*nlayers, bb, cc)
 
     !  Multiply c by (-1) (John Last, internal CCFE memorandum, 21/05/2013)
+    do ii = 1, nlayers
+        c1(ii) = cc(2*ii-1) 
+        c2(ii) = cc(2*ii) 
+    end do
+    ! ***
+    ! ------
+    
 
-    c(:) = -1.0D0*c(:)
-
-    !  Calculate stresses in each region
-
+    ! Radial/toroidal/vertical stress radial distribution
+    ! ------
+    rradius(:) = 0.0D0
     sigr(:) = 0.0D0
     sigt(:) = 0.0D0
+    r_deflect(:) = 0.0D0
 
-    !  Case; alpha = beta = 0 in this region
+    do ii = 1, nlayers
 
-    sigr(1) = k1 * ( (1.0D0+nu)*c(1) - (1.0D0-nu)*c(2)/(rad(1)*rad(1)) )
-    sigt(1) = k1 * ( (1.0D0+nu)*c(1) + (1.0D0-nu)*c(2)/(rad(1)*rad(1)) )
+        dradius = (rad(ii+1) - rad(ii)) / dble(n_radial_array)
+        do jj = (ii-1)*n_radial_array + 1, ii*n_radial_array
 
-    !  Winding pack
+            rad_c = rad(ii) + dradius*dble(jj - n_radial_array*(ii-1) - 1)
+            rradius(jj) = rad_c
 
-    sigr(2) = k2 * ( (1.0D0+nu)*c(3) - ((1.0D0-nu)*c(4))/(rad(2)*rad(2)) &
-    + 0.125D0*(3.0D0 + nu)*alpha*rad(2)*rad(2) &
-    + 0.5D0*beta*(1.0D0 + (1.0D0+nu)*log(rad(2))) )
 
-    sigt(2) = k2 * ( (1.0D0+nu)*c(3) + (1.0D0-nu)*c(4)/(rad(2)*rad(2)) &
-    + 0.125D0*(1.0D0+3.0D0*nu)*alpha*rad(2)*rad(2) &
-    + 0.5D0*beta*(nu + (1.0D0+nu)*log(rad(2))) )
+            ! Radial stress radial distribution [Pa]
+            sigr(jj) = kk(ii) * ( (1.0D0+nu(ii))*c1(ii) - ((1.0D0-nu(ii))*c2(ii))/ rad_c**2 &
+                                  + 0.125D0*(3.0D0 + nu(ii))*alpha(ii)* rad_c**2            &
+                                  + 0.5D0*beta(ii)*(1.0D0 + (1.0D0+nu(ii))*log(rad_c)) )
 
-    !  Deflection at inside edge of TF coil (m)
+            ! Radial stress radial distribution [Pa]
+            sigt(jj) = kk(ii) * ( (1.0D0+nu(ii))*c1(ii) + (1.0D0-nu(ii))*c2(ii)/ rad_c**2 &
+                                  + 0.125D0*(1.0D0+3.0D0*nu(ii))*alpha(ii)*rad_c**2       &
+                                  + 0.5D0*beta(ii)*(nu(ii) + (1.0D0+nu(ii))*log(rad_c)) )
 
-    deflect = c(1)*rad(1) + c(2)/rad(1)
+            !  Deflection [m]
+            r_deflect(jj) = c1(ii)*rad_c + c2(ii)/rad_c      &
+                              + 0.125D0*alpha(ii) * rad_c**3 &
+                              + 0.5D0*beta(ii) * rad_c*log(rad_c)
 
-end subroutine two_layer_stress
+        end do
+    end do
+   ! ---
+ 
+end subroutine plane_stress
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine generalized_plane_strain( nu, rad, ey, d_curr, v_force, & ! Inputs
+                                     nlayers, n_radial_array,      & ! Inputs
+                                     rradius, sigr, sigt, sigz,              & ! Outputs
+                                     strain_r, strain_t, strain_z, r_deflect ) ! Outputs
+      
+    !! This subroutine numerically find the constant (2 per layer) of the
+    !! analytical resolution of the mid-plane stress calculations using the
+    !! generalized plain strain formulation, from the radial stress and 
+    !! displacement boundary conditions. This conditions sets 2*nlayer
+    !! linear equation of the integrals constants cc, find with using matrix inversion 
+    !! S. Kahn, Jan 2020
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    use constants, only: rmu0, pi
+    use maths_library, only: linesolv
+    implicit none
+
+    ! Inputs
+    ! ---
+    integer, intent(in) :: n_radial_array
+    !! Number of elements per layers used in stress analysis 
+    !! quantities arrays (stress, strain, displacement) 
+
+    integer, intent(in) :: nlayers
+    !! Total number of layers
+
+    real(dp), dimension(nlayers), intent(in) :: nu
+    !! Poisson's ratios
+
+    real(dp), dimension(nlayers), intent(in) :: ey
+    !! Young modulae
+        
+    real(dp), dimension(nlayers), intent(in) :: d_curr
+    !! Layers current densities [A.m-2]
+      
+    real(dp), dimension(nlayers+1), intent(in) :: rad
+    !! Radii of the layers boundaries [m], starting from the innermost
+    !! i.e. the blking/casing cylinder
+        
+    real(dp), intent(in) :: v_force
+    !! Electromecanical vertical forces
+    ! ---
+      
+        
+    ! Outputs
+    ! ---
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: sigr
+    !! Stress distribution in the radial direction (r) [Pa]
+
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: sigt
+    !! Stress distribution in the toroidal direction (t) [Pa]
+
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: sigz
+    !! Stress distribution in the vertical direction (z)
+
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_r
+    !! Strain distribution in the radial direction (r)
+
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_t
+    !! Strain distribution in the toroidal direction (t)
+          
+    real(dp), intent(out) :: strain_z
+    !! Uniform strain in the vertical direction (z)
+
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: r_deflect
+    !! Radial displacement radial distribution [m]
+
+    real(dp), dimension(nlayers*n_radial_array), intent(out) :: rradius
+    !! Radius array [m]
+    ! ---
+
+
+    ! Local variables
+    ! ---
+    ! Lorentz body force parametres
+    real(dp), dimension(nlayers) :: alpha
+    real(dp), dimension(nlayers) :: beta
+      
+    ! Strain to stress hooke's law coeficient
+    real(dp), dimension(nlayers) :: kk
+
+    ! Layer area
+    real(dp), dimension(nlayers) :: area
+
+    ! Vertical strain parameters
+    real(dp) :: aleph
+    real(dp) :: sum_1 
+    real(dp) :: sum_2 
+    real(dp), dimension(nlayers) :: beth
+    real(dp), dimension(nlayers) :: par_1
+    real(dp), dimension(nlayers) :: par_2
+
+    ! Matrix encoding the integration constant cc coeficients 
+    real(dp), dimension(2*nlayers, 2*nlayers) :: aa
+
+    ! Vector encoding the alpha/beta (lorentz forces) contribution
+    real(dp), dimension(2*nlayers) :: bb
+
+    ! Integration constants vector (solution)
+    real(dp), dimension(2*nlayers) :: cc
+    real(dp), dimension(nlayers) :: c1, c2
+
+    ! Variables used for radial stress distribution     
+    real(dp) :: dradius  
+    real(dp) :: inner_layer_curr
+      
+    ! Indexes
+    integer :: ii = 0  ! Line in the aa matrix
+    integer :: jj = 0  ! Collumn in the aa matrix 
+    ! ---    
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      
+    ! The stress calcualtion differential equations is analytically sloved
+    ! The final solution is given by the layer boundary conditions on
+    ! radial stress and displacement between layers solved 
+    ! The problem is set as aa.cc = bb, cc being the constant we search
+    ! ------
+
+    ! Layer parameterisation
+    ! ***
+    ! Stress to strain coeficients (array equation)
+    kk = ey / ( 1.0D0 - nu - nu**2 )
+
+    ! Lorentz forces parametrisation coeficients (array equation)
+    alpha = 0.5D0*rmu0 * d_curr**2 / (kk * ( 1.0D0 - nu ))
+
+    inner_layer_curr = 0.0D0
+    do ii = 1, nlayers
+
+        beta(ii) = 0.5D0*rmu0 * d_curr(ii) * ( inner_layer_curr - pi*d_curr(ii)*rad(ii)**2 ) / &
+                                             ( pi*kk(ii)*(1.0D0 - nu(ii)) )
+         
+        ! Layer area
+        area(ii) = pi * (rad(ii+1)**2 - rad(ii)**2)
+
+        ! Total current carried by the inners layers 
+        inner_layer_curr = inner_layer_curr + area(ii)*d_curr(ii)
+    end do
+      
+    ! Plain strain generalisation parameters
+    !-!
+    do ii = 1, nlayers
+        par_1(ii) = pi * (rad(ii+1)**4 - rad(ii)**4)
+        par_2(ii) = pi * (log(rad(ii+1)) * rad(ii+1)**2 - log(rad(ii)) * rad(ii)**2)
+    end do
+ 
+    sum_1 = sum( kk * area * (1.0D0 - nu) )
+    sum_2 = sum( nu * kk * (0.25D0*alpha*par_1 + beta*par_2) )
+
+    aleph = (v_force - sum_2) / sum_1      
+    beth = - (2.0D0*nu*kk*area) / sum_1   ! Vector equation
+    !-!
+    ! ***
+      
+
+    ! Left hand side matrix aa
+    ! ***
+    aa(:,:) = 0.0D0
+
+    ! Null radial stress at R(1)
+    aa(1,1) = kk(1)
+    aa(1,2) = kk(1) * (2.0D0*nu(1) - 1.0D0) / rad(1)**2 
+
+    do jj = 1, nlayers ! Plain strain generalisation on C1 coeficients
+        aa(1, 2*jj-1) = aa(1, 2*jj-1) + beth(jj)*kk(1)*nu(1)
+    end do
+
+    ! Inter-layer boundary conditions
+    if ( nlayers /= 1 ) then 
+        do ii = 1, nlayers - 1
+
+            ! Continuous radial normal stress at R(ii+1)
+            aa(2*ii, 2*ii-1) = kk(ii)
+            aa(2*ii, 2*ii  ) = kk(ii) * ( 2.0D0*nu(ii) - 1.0D0 ) / rad(ii+1)**2 
+            aa(2*ii, 2*ii+1) = -kk(ii+1)
+            aa(2*ii, 2*ii+2) = -kk(ii+1) * ( 2.0D0*nu(ii+1) - 1.0D0 ) / rad(ii+1)**2
+
+            do jj = 1, nlayers ! Plain strain generalisation
+                aa(2*ii, 2*jj-1) = aa(2*ii, 2*jj-1) + beth(jj)*(kk(ii)*nu(ii) - kk(ii+1)*nu(ii+1)) 
+            end do
+
+            ! Continuous displacement at R(ii+1)
+            aa(2*ii+1, 2*ii-1) = rad(ii+1)
+            aa(2*ii+1, 2*ii  ) = 1.0D0 / rad(ii+1)
+            aa(2*ii+1, 2*ii+1) = -rad(ii+1)
+            aa(2*ii+1, 2*ii+2) = -1.0D0 / rad(ii+1)
+
+        end do
+    end if
+
+    ! Null radial stress at outermost radius at R(nlayers+1)
+    aa(2*nlayers, 2*nlayers - 1) = kk(nlayers)
+    aa(2*nlayers, 2*nlayers    ) = kk(nlayers) * (2.0D0*nu(nlayers) - 1.0D0) / rad(nlayers+1)**2
+
+    do jj = 1, nlayers ! Plain strain generalisation
+        aa(2*nlayers, 2*jj-1) = aa(2*nlayers, 2*jj-1) + beth(jj)*kk(nlayers)*nu(nlayers)
+    end do
+    ! ***
+
+    ! Right hand side vector bb
+    ! ***
+    ! Null radial stress at R(1)
+    bb(1) = -kk(1) * ( 0.125D0*alpha(1) * rad(1)**2 * ( 3.0D0 - 2.0D0*nu(1) ) &
+                      + 0.5D0*beta(1) * ( 1.0D0 - nu(1)   + log(rad(1)) )     &
+                      + nu(1)*aleph ) ! Plain strain generalisation
+
+    ! Inter-layer boundary conditions
+    if ( nlayers /= 1 ) then 
+        do ii = 1, nlayers - 1
+
+            ! Continuous radial normal stress at R(ii+1)
+            bb(2*ii) = - kk(ii) * ( 0.125D0*alpha(ii) * rad(ii+1)**2 * ( 3.0D0 - 2.0D0*nu(ii) )       &
+                                   + 0.5D0*beta(ii) * ( 1.0D0 - nu(ii)   + log(rad(ii+1)) ) )         &
+                       + kk(ii+1) * ( 0.125D0*alpha(ii+1) * rad(ii+1)**2 * ( 3.0D0 - 2.0D0*nu(ii+1) ) &
+                                     + 0.5D0*beta(ii+1) * ( 1.0D0 - nu(ii+1) + log(rad(ii+1)) ) )     &
+                       - aleph * ( kk(ii)*nu(ii) - kk(ii+1)*nu(ii+1) ) ! Plain strain generalisation line
+
+            ! Continuous displacement at R(ii+1)
+            bb(2*ii+1) = - 0.125D0*alpha(ii)  * rad(ii+1)**3 - 0.5D0*beta(ii)  *rad(ii+1)*log(rad(ii+1))  &
+                         + 0.125D0*alpha(ii+1)* rad(ii+1)**3 + 0.5D0*beta(ii+1)*rad(ii+1)*log(rad(ii+1))
+
+        end do
+    end if
+
+    ! Null radial stress at R(nlayers+1)
+    bb(2*nlayers) = -kk(nlayers) * ( 0.125D0*alpha(nlayers)*rad(nlayers+1)**2 * (3.0D0 - 2.0D0*nu(nlayers)) &
+                                    + 0.5D0*beta(nlayers) * (1.0D0 - nu(nlayers) + log(rad(nlayers+1)))      & 
+                                    + nu(nlayers)*aleph )   ! Plain strain generalisation
+    ! ***
+
+    !  Find solution vector cc
+    ! ***
+    cc(:) = 0.0D0
+    call linesolv(aa, 2*nlayers, bb, cc)
+
+    do ii = 1, nlayers
+        c1(ii) = cc(2*ii-1)
+        c2(ii) = cc(2*ii)
+    end do
+    ! ***
+    ! ------
+
+
+    ! Radial/toroidal/vertical stress radial distribution
+    ! ------
+    rradius(:) = 0.0D0
+    sigr(:) = 0.0D0
+    sigt(:) = 0.0D0
+    sigz(:) = 0.0D0
+    strain_r(:) = 0.0D0
+    strain_t(:) = 0.0D0
+    r_deflect(:) = 0.0D0
+
+    ! Vertical normal strain
+    strain_z = aleph
+    do ii = 1, nlayers
+        strain_z = strain_z + beth(ii)*c1(ii)
+    end do 
+
+    do ii = 1, nlayers
+         
+        dradius = (rad(ii+1) - rad(ii)) / dble(n_radial_array)
+        do jj = (ii-1)*n_radial_array + 1, ii*n_radial_array
+
+            rradius(jj) = rad(ii) + dradius*dble(jj - n_radial_array*(ii-1) - 1)
+
+            sigr(jj) = kk(ii) * ( c1(ii) + (2.0D0*nu(ii) - 1.0D0)*c2(ii)/rradius(jj)**2 + &
+                                  0.125D0*alpha(ii)*( 3.0D0 - 2.0D0*nu(ii) )*rradius(jj)**2 + &
+                                  0.5D0*beta(ii)*(1.0D0 - nu(ii) + log(rradius(jj)) ) + &
+                                  nu(ii)*strain_z )
+
+            sigt(jj) = kk(ii) * ( c1(ii) - (2.0D0*nu(ii) - 1.0D0)*c2(ii)/rradius(jj)**2 + &
+                                  0.125D0*alpha(ii)*( 1.0D0 + 2.0D0*nu(ii) )*rradius(jj)**2 + &
+                                  0.5D0*beta(ii)*(nu(ii) + log(rradius(jj))) + &
+                                  nu(ii)*strain_z )
+                                     
+            sigz(jj) = kk(ii) * ( nu(ii) * ( 2.0D0*c1(ii) + &
+                                  0.5D0*alpha(ii) * rradius(jj)**2 + &
+                                  0.5D0*beta(ii) * (1.0D0 + 2.0D0*log(rradius(jj))) ) + &
+                                  (1.0D0 - nu(ii)) * strain_z )
+
+            ! Radisal strain
+            strain_r(jj) = c1(ii) - c2(ii) / rradius(jj)**2 + &
+                           0.375D0*alpha(ii) * rradius(jj)**2 + 0.5D0*beta(ii) * (1 + log(rradius(jj)))
+      
+            ! Toroidal strain
+            strain_t(jj) = c1(ii) + c2(ii) / rradius(jj)**2 + &
+                           0.125D0*alpha(ii) * rradius(jj)**2 + 0.5D0*beta(ii) * log(rradius(jj))
+                              
+            ! Radial displacement
+            r_deflect(jj) = c1(ii)*rradius(jj) + c2(ii)/rradius(jj)   &
+                            + 0.125D0*alpha(ii) * rradius(jj)**3     &
+                            + 0.5D0*beta(ii) * rradius(jj)*log(rradius(jj))
+        end do ! layer array loop
+    end do ! Layer loop
+    ! ------     
+
+end subroutine generalized_plane_strain     
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -982,11 +2198,6 @@ function eyngeff(estl,eins,tins,tstl,tcs)
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
     !! author: J Galambos, FEDC/ORNL
-    !! estl : input real : Young's modulus of steel (Pa)
-    !! eins : input real : Young's modulus of insulator (Pa)
-    !! tins : input real : insulator wrap thickness (m)
-    !! tstl : input real : thickness of steel conduit (m)
-    !! tcs  : input real : dimension of cable space area inside conduit (m)
     !! This routine calculates the effective Young's modulus (Pa)
     !! of the TF coil in the winding pack section.
     !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -995,23 +2206,37 @@ function eyngeff(estl,eins,tins,tstl,tcs)
 
     implicit none
 
-    real(kind(1.0D0)) :: eyngeff
+    real(dp) :: eyngeff
 
     !  Arguments
+    ! ---
+    real(dp), intent(in) :: estl
+    !! Young's modulus of steel (Pa)
 
-    real(kind(1.0D0)), intent(in) :: estl,eins,tins,tstl,tcs
+    real(dp), intent(in) :: eins
+    !! Young's modulus of insulator (Pa)
+
+    real(dp), intent(in) :: tins
+    !! Insulator wrap thickness (m)
+
+    real(dp), intent(in) :: tstl
+    !! Thickness of steel conduit (m)
+
+    real(dp), intent(in) :: tcs
+    !! Dimension of cable space area inside conduit (m)
 
     !  Local variables
+    ! ---
+    real(dp) :: ed
 
-    real(kind(1.0D0)) :: ed,ttot
-
+    real(dp) :: ttot
+    !!  Total turn thickness
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Total thickness of a turn
     ttot = tcs + 2.0D0*(tins + tstl)
 
     !  See Figure 8 and Section III.4, Morris
-
     ed = ttot / (2.0D0*tins/eins + (tcs+2.0D0*tstl)/estl)
 
     eyngeff = 1.0D0/ttot * 2.0D0*tstl*ed
@@ -1025,29 +2250,35 @@ function edoeeff(estl,eins,tins,tstl,tcs)
     !! Returns ratio of E_d to E_eff in Morris
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
-    !! estl : input real : Young's modulus of steel (Pa)
-    !! eins : input real : Young's modulus of insulator (Pa)
-    !! tins : input real : insulator wrap thickness (m)
-    !! tstl : input real : thickness of steel conduit (m)
-    !! tcs  : input real : dimension of cable space area inside conduit (m)
     !! This routine calculates the ratio of E_d to the effective Young's
     !! modulus, given in Morris, Section III.4. This is used to calculate
     !! the strain in the insulator.
     !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
-    !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use maths_library, only: eshellvol
     implicit none
 
-    real(kind(1.0D0)) :: edoeeff
+    real(dp) :: edoeeff
 
     !  Arguments
+    real(dp), intent(in) :: estl
+    !! Young's modulus of steel (Pa)
 
-    real(kind(1.0D0)), intent(in) :: estl,eins,tins,tstl,tcs
+    real(dp), intent(in) :: eins
+    !! Young's modulus of insulator (Pa)
+    
+    real(dp), intent(in) :: tins
+    !! Insulator wrap thickness (m)
+    
+    real(dp), intent(in) :: tstl
+    !! Thickness of steel conduit (m)
+    
+    real(dp), intent(in) :: tcs
+    !! Dimension of cable space area inside conduit (m)
 
     !  Local variables
-
-    real(kind(1.0D0)) :: ed,ttot,eeff
+    real(dp) :: ed,ttot,eeff
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1056,11 +2287,8 @@ function edoeeff(estl,eins,tins,tstl,tcs)
 
     !  Code copied from eyngeff routine
     !  See Figure 8 and Section III.4, Morris
-
     ed = ttot / (2.0D0*tins/eins + (tcs+2.0D0*tstl)/estl)
-
     eeff = 1.0D0/ttot * 2.0D0*tstl*ed
-
     edoeeff = ed/eeff
 
 end function edoeeff
@@ -1072,12 +2300,6 @@ function eyngzwp(estl,eins,ewp,tins,tstl,tcs)
     !! Finds the vertical Young's modulus of the TF coil winding pack
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
-    !! estl : input real : Young's modulus of steel (Pa)
-    !! eins : input real : Young's modulus of insulator (Pa)
-    !! ewp  : input real : Young's modulus of windings (Pa)
-    !! tins : input real : insulator wrap thickness (m)
-    !! tstl : input real : thickness of steel conduit (m)
-    !! tcs  : input real : dimension of cable space area inside conduit (m)
     !! This routine calculates the vertical Young's modulus (Pa)
     !! of the TF coil in the winding pack section.
     !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -1086,27 +2308,69 @@ function eyngzwp(estl,eins,ewp,tins,tstl,tcs)
 
     implicit none
 
-    real(kind(1.0D0)) :: eyngzwp
+    real(dp) :: eyngzwp
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: estl,eins,ewp,tins,tstl,tcs
+    real(dp), intent(in) :: estl
+    !! Young's modulus of steel (Pa)
 
+    real(dp), intent(in) :: eins
+    !! Young's modulus of insulator (Pa)
+    
+    real(dp), intent(in) :: ewp
+    !! Young's modulus of windings (Pa)
+    
+    real(dp), intent(in) :: tins
+    !! insulator wrap thickness (m)
+
+    real(dp), intent(in) :: tstl
+    !! thickness of steel conduit (m)
+
+    real(dp), intent(in) :: tcs
+    !! dimension of cable space area inside conduit (m)
+ 
     !  Local variables
-
-    real(kind(1.0D0)) :: ttot
+    real(dp) :: ttot
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ttot = tcs + 2.0D0*(tins + tstl)
 
     eyngzwp = ewp*tcs*tcs &
-    + estl*( (tcs + 2.0D0*tstl)**2 - tcs*tcs ) &
-    + eins*( (tcs + 2.0D0*(tstl + tins))**2 - (tcs + 2.0D0*tstl)**2 )
+              + estl*( (tcs + 2.0D0*tstl)**2 - tcs*tcs ) &
+              + eins*( (tcs + 2.0D0*(tstl + tins))**2 - (tcs + 2.0D0*tstl)**2 )
 
     eyngzwp = eyngzwp / (ttot*ttot)
 
 end function eyngzwp
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+function sig_tresca(sx,sy,sz)
+    !! Calculates TRESCA stress in a TF coil
+    !! author: S Kahn
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    ! OUTPUT
+    real(dp) :: sig_tresca
+
+    !  Arguments
+    real(dp), intent(in) :: sx
+    !! In-plane stress in X direction [Pa]
+
+    real(dp), intent(in) :: sy
+    !! In-plane stress in Y direction [Pa]
+    
+    real(dp), intent(in) :: sz
+    !! In-plane stress in Z direction [Pa]
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    sig_tresca = max(ABS(sx-sy), ABS(sx-sz), ABS(sy-sz))
+
+end function sig_tresca
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1115,78 +2379,41 @@ function sigvm(sx,sy,sz,txy,txz,tyz)
     !! Calculates Von Mises stress in a TF coil
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: B Reimer, FEDC
-    !! sx  : input real : in-plane stress in X direction (Pa)
-    !! sy  : input real : in-plane stress in Y direction (Pa)
-    !! sz  : input real : in-plane stress in Z direction (Pa)
-    !! txy : input real : out of plane stress in X-Y plane (Pa)
-    !! txz : input real : out of plane stress in X-Z plane (Pa)
-    !! tyz : input real : out of plane stress in Y-Z plane (Pa)
     !! This routine calculates the Von Mises combination of
     !! stresses (Pa) in a TF coil.
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
-    real(kind(1.0D0)) :: sigvm
+    ! OUTPUT
+    real(dp) :: sigvm
 
     !  Arguments
+    real(dp), intent(in) :: sx
+    !! In-plane stress in X direction [Pa]
 
-    real(kind(1.0D0)), intent(in) :: sx,sy,sz,txy,txz,tyz
+    real(dp), intent(in) :: sy
+    !! In-plane stress in Y direction [Pa]
+    
+    real(dp), intent(in) :: sz
+    !! In-plane stress in Z direction [Pa]
+    
+    real(dp), intent(in) :: txy
+    !! Out of plane stress in X-Y plane [Pa]
+    
+    real(dp), intent(in) :: txz
+    !! Out of plane stress in X-Z plane [Pa]
+    
+    real(dp), intent(in) :: tyz
+    !! Out of plane stress in Y-Z plane [Pa]
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     sigvm = sqrt( 0.5D0 * ( (sx-sy)**2 + (sx-sz)**2 + (sz-sy)**2 &
-    + 6.0D0*(txy**2 + txz**2 + tyz**2) ) )
+                + 6.0D0*(txy**2 + txz**2 + tyz**2) ) )
 
 end function sigvm
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-! subroutine sctfjalw(bmaxtf,rtfmi,rtfmo,rtf2,sigmatf,tdump,jtfalw)
-
-!     !! Simple J(B) model for the superconducting TF Coil
-!     !! P J Knight, CCFE, Culham Science Centre
-!     !! J Galambos, FEDC/ORNL
-!     !! bmaxtf  : input real : peak field including ripple (T)
-!     !! rtfmi   : input real : mean inboard leg radius (m)
-!     !! rtfmo   : input real : mean outboard leg radius (m)
-!     !! rtf2    : input real : radius of inboard leg point nearest plasma (m)
-!     !! sigmatf : input real : allowable structure stress (MPa)
-!     !! tdump   : input real : dump time (s)
-!     !! jtfalw  : output real : overall allowable current density (A/m2)
-!     !! This routine using a simple model to calculate the allowable
-!     !! current density in a superconducting coil, given the magnetic
-!     !! field and the allowable stress.
-!     !! Programmed by J. Galambos from algorithms from J. Perkins.
-!     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-!     !
-!     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!     implicit none
-
-!     !  Arguments
-
-!     real(kind(1.0D0)), intent(in) :: bmaxtf,rtfmi,rtfmo,rtf2,sigmatf,tdump
-!     real(kind(1.0D0)), intent(out) :: jtfalw
-
-!     !  Local variables
-
-!     real(kind(1.0D0)), parameter :: tdumprf = 10.0D0  !  Reference dump time (s)
-
-!     real(kind(1.0D0)) :: sqrtdmp,temp1,temp2,temp3
-
-!     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!     sqrtdmp = sqrt(tdump/tdumprf)
-!     temp1 = 125.94D0*bmaxtf*rtf2 * log(rtfmo/rtfmi) / sigmatf
-!     temp2 = 0.036D0*sqrt(bmaxtf) / (1.0D0-bmaxtf/23.0D0)**2
-!     temp3 = 0.6D0 / (1.0D0 - (1.0D0 / (16.0D0 * (1.0D0 - bmaxtf/23.0D0)-5.0D0) ) )
-
-!     jtfalw = 152.0D6 / (temp1 + temp2*temp3 + sqrtdmp)
-
-! end subroutine sctfjalw
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1196,55 +2423,136 @@ subroutine coilshap
     !! Calculates the shape of the INSIDE of the TF coil. The coil is
     !! approximated by a straight inboard section and four elliptical arcs
     !! This is a totally ad hoc model, with no physics or engineering basis.
+    use physics_variables, only: i_single_null, rminor, rmajor, itart
+    use build_variables, only: hmax, hpfu, tfcth, r_tf_outboard_mid, &
+        r_tf_inboard_mid, tfthko, r_cp_top
+    use tfcoil_variables, only: yarc, xarc, tfleng, tfa, tfb, i_tf_shape
+    use constants, only: pi
     implicit none
+
     !  Arguments
     !  Local variables
-    real(kind(1.0D0)) :: fstraight, a, b
-    integer :: i
+    real(dp), parameter :: fstraight = 0.6D0
+    real(dp) :: aa, bb
+    integer :: ii
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    xarc(1) = r_tf_inboard_mid + tfcth/2.0d0
-    xarc(2) = rmajor - rminor/5.0d0
-    xarc(3) = r_tf_outboard_mid - tfcth/2.0d0
-    xarc(4) = xarc(2)
-    xarc(5) = xarc(1)
-    ! Height of straight section as a fraction of the coil inner height
-    fstraight = 0.6d0
-    if (i_single_null==0) then
-        ! Double null
-        yarc(1) = fstraight * hmax
-        yarc(2) = hmax
-        yarc(3) = 0
-        yarc(4) = -hmax
-        yarc(5) = -fstraight * hmax
-    else
-        ! Single null
-        yarc(1) = fstraight * (hpfu - tfcth)
+
+    if ( i_tf_shape == 1 .and. itart == 0 ) then
+    ! PROCESS D-shape parametrisation
+        
+        ! X position of the arcs, eq(15)
+        ! The xarc/yarc are defined in the INSIDE part of the TF
+        xarc(1) = r_tf_inboard_out
+        xarc(2) = rmajor - 0.2D0*rminor
+        xarc(3) = r_tf_outboard_in
+        xarc(4) = xarc(2)
+        xarc(5) = xarc(1)
+
+        ! Height of straight section as a fraction of the coil inner height
+        if ( i_single_null == 0 ) then
+            ! Double null
+            yarc(1) = fstraight * hmax
+            yarc(2) = hmax
+            yarc(3) = 0
+            yarc(4) = -hmax
+            yarc(5) = -fstraight * hmax
+        else
+            ! Single null
+            yarc(1) = fstraight * (hpfu - tfcth)
+            yarc(2) = hpfu - tfcth
+            yarc(3) = 0
+            yarc(4) = -hmax
+            yarc(5) = -fstraight * hmax
+        end if
+
+        ! Horizontal and vertical radii of inside edge of TF coil
+        ! Arcs are numbered clockwise:
+        ! 1=upper inboard, 2=upper outboard, 3=lower ouboard, 4=lower inboard
+        ! 'tfleng' is the length of the coil midline.
+        tfleng = yarc(1) - yarc(5)
+        do ii = 1, 4
+            tfa(ii) = abs(xarc(ii+1) - xarc(ii))
+            tfb(ii) = abs(yarc(ii+1) - yarc(ii))
+            ! Radii and length of midline of coil segments
+            aa = tfa(ii) + 0.5D0*tfcth
+            bb = tfb(ii) + 0.5D0*tfcth
+            tfleng = tfleng + 0.25d0 * circumference(aa,bb)
+        end do
+
+    ! Centrepost with D-shaped
+    ! ---
+    else if ( i_tf_shape == 1 .and. itart == 1  ) then
+        
+        ! X position of the arcs, eq(17) and text before it
+        xarc(1) = r_cp_top
+        xarc(2) = rmajor - 0.2D0*rminor
+        xarc(3) = r_tf_outboard_in
+        xarc(4) = xarc(2)
+        xarc(5) = xarc(1)
+
+        ! Double null, eq(17) and text before it
+        yarc(1) = hpfu - tfcth
         yarc(2) = hpfu - tfcth
         yarc(3) = 0
         yarc(4) = -hmax
-        yarc(5) = -fstraight * hmax
+        yarc(5) = -hmax
+
+        ! TF middle circumference, eq(18)
+        tfleng = 2*(xarc(2) - xarc(1))
+
+        do ii = 2, 3 
+           tfa(ii) = abs(xarc(ii+1) - xarc(ii))
+           tfb(ii) = abs(yarc(ii+1) - yarc(ii))
+   
+           ! Radii and length of midline of coil segments
+           aa = tfa(ii) + 0.5D0 * tfthko
+           bb = tfb(ii) + 0.5D0 * tfthko
+           tfleng = tfleng + 0.25d0 * circumference(aa,bb)
+        end do
+    ! ---
+
+    
+    ! Picture frame coil
+    ! ---
+    else if ( i_tf_shape == 2 ) then
+ 
+        ! X position of the arcs
+        if ( itart == 0 ) xarc(1) = r_tf_inboard_out  
+        if ( itart == 1 ) xarc(1) = r_cp_top        
+        xarc(2) = r_tf_outboard_in 
+        xarc(3) = xarc(2)
+        xarc(4) = xarc(2)
+        xarc(5) = xarc(1)
+
+        ! Y position of the arcs
+        yarc(1) = hpfu - tfcth
+        yarc(2) = hpfu - tfcth
+        yarc(3) = 0
+        yarc(4) = -hmax
+        yarc(5) = -hmax
+
+        ! TF middle circumference
+        ! IMPORTANT : THE CENTREPOST LENGTH IS NOT INCLUDED FOR TART 
+        if ( itart == 0 ) tfleng = 2.0D0 * ( 2.0D0*hmax + tfcth  + r_tf_outboard_mid - r_tf_inboard_mid )    ! eq(19)
+        if ( itart == 1 ) tfleng = hmax + hpfu + 2.0D0 * ( r_tf_outboard_mid - r_cp_top ) ! eq(20)
     end if
+    ! ---
 
-    ! Horizontal and vertical radii of inside edge of TF coil
-    ! Arcs are numbered clockwise:
-    ! 1=upper inboard, 2=upper outboard, 3=lower ouboard, 4=lower inboard
-    ! 'tfleng' is the length of the coil midline.
-    tfleng = yarc(1) - yarc(5)
-    do i = 1, 4
-        tfa(i) = abs(xarc(i+1) - xarc(i))
-        tfb(i) = abs(yarc(i+1) - yarc(i))
-        ! Radii and length of midline of coil segments
-        a = tfa(i) + tfcth/2.0d0
-        b = tfb(i) + tfcth/2.0d0
-        tfleng = tfleng + 0.25d0 * circumference(a,b)
-    end do
+    contains
+    function circumference(aaa,bbb)
+        !! Calculate ellipse arc circumference using Ramanujan approximation (m)
+        !!  See https://www.johndcook.com/blog/2013/05/05/ramanujan-circumference-ellipse/
+        !!  for a discussion of the precision of the formula 
 
-contains
-    function circumference(a,b)
-        real(kind(1.0D0)) :: circumference, a, b
-        !  Calculate ellipse circumference using Ramanujan approximation (m)
-        circumference = pi * ( 3.0D0*(a+b) - sqrt( (3.0D0*a + b)*(a + 3.0D0*b) ) )
+        real(dp) :: circumference
+        real(dp), intent(in) :: aaa, bbb
+        real(dp) :: hh
+        hh = ( aaa - bbb )**2 / ( aaa + bbb )**2
+        circumference = pi* ( aaa + bbb ) * ( 1.0D0 + (3.0D0*hh)/(10.0D0 + sqrt(4.0D0 - 3.0D0*hh)) )  ! eq(14)
+
+        ! Initial formula slightly less accurate
+        ! circumference = pi * ( 3.0D0*(aaa+bbb) - sqrt( (3.0D0*aaa + bbb)*(aaa + 3.0D0*bbb) ) ) 
     end function
 
 end subroutine coilshap
@@ -1263,14 +2571,16 @@ subroutine tfcind(tfthk)
     !! coil itself is calculated by taking the field as B(r)/2.
     !! The field in the bore is calculated for unit current.
     !! Top/bottom symmetry is assumed.
+    use tfcoil_variables, only: yarc, xarc, tfind
+    use constants, only: pi, rmu0
     implicit none
     !  Arguments
-    real(kind(1.0D0)), intent(in) :: tfthk
+    real(dp), intent(in) :: tfthk
 
     !  Local variables
     integer, parameter :: nintervals = 100
     integer :: i
-    real(kind(1.0D0)) :: ai, ao, bi, bo, x0, y0, h_bore, h_thick, dr, r, b
+    real(dp) :: ai, ao, bi, bo, x0, y0, h_bore, h_thick, dr, r, b
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1338,7 +2648,6 @@ subroutine tfcind(tfthk)
 
 end subroutine tfcind
 
-
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine outtf(outfile, peaktfflag)
@@ -1352,7 +2661,28 @@ subroutine outtf(outfile, peaktfflag)
     !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use rebco_variables, only: solder_area, copperA_m2, coppera_m2_max, &
+        copper_rrr
+    use error_handling, only: report_error
+    use build_variables, only: hmax, r_tf_inboard_mid, r_tf_outboard_mid, &
+        tfcth, tfthko, r_cp_top
+    use process_output, only: int2char, ovarre, ocmmnt, oheadr, &
+        oblnkl, ovarin, osubhd, ovarrf, obuild
+    use numerics, only: icc
+    use tfcoil_variables, only: wwp1, whttf, yarc, xarc, &
+        windstrain, wwp2, whtconsh, tftort, whtconcu, ritfc, &
+        conductor_width, tfinsgap, deflect, vtfskv, tmaxpro, fcutfsu, &
+        tinstf, turnstf, cforce, i_tf_turns_integer, tdmptf, &
+        leno, oacdcp, estotftgj, n_tf, whtconin, jwptf, tfa, &
+        tficrn, n_layer, tfleng, thwcndut, casthi, sigvvall, &
+        thkcas, casths, vforce, n_pancake, &
+        vftf, eyzwp, thicndut, dhecoil, insstrain, taucq, ripmax, &
+        whtconsc, alstrtf, bmaxtfrp, vdalw, leni, thkwp, whtcas, whtcon, &
+        ripple, i_tf_tresca, bmaxtf, awphec, avwp, aiwp, acond, acndttf, &
+        i_tf_sc_mat, voltfleg, vol_cond_cp, tflegres, tcpav, prescp, i_tf_sup, &
+        cpttf, cdtfleg, whttflgs, whtcp
+    use physics_variables, only: itart
+    use constants, only: mfile, pi
     implicit none
 
     !  Arguments
@@ -1361,257 +2691,286 @@ subroutine outtf(outfile, peaktfflag)
 
     !  Local variables
 
-    integer :: i
-    real(kind(1.0D0)) :: ap, radius
+    integer :: ii
+    real(dp) :: ap, radius
     character(len=1) :: intstring
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    call oheadr(outfile,'TF Coils')
-    call ocmmnt(outfile,'Superconducting TF coils')
+    if ( i_tf_sup == 1 ) then 
+        call oheadr(outfile,'TF Coils')
+        call ocmmnt(outfile,'Superconducting TF coils')
 
-    call ovarin(outfile,'TF coil superconductor material','(isumattf)',isumattf)
+        call ovarin(outfile,'TF coil superconductor material','(i_tf_sc_mat)',i_tf_sc_mat)
 
-    select case (isumattf)
-    case (1)
-        call ocmmnt(outfile,'  (ITER Nb3Sn critical surface model)')
-    case (2)
-        call ocmmnt(outfile,'  (Bi-2212 high temperature superconductor)')
-    case (3)
-        call ocmmnt(outfile,'  (NbTi)')
-    case (4)
-        call ocmmnt(outfile, &
-        '  (ITER Nb3Sn critical surface model, user-defined parameters)')
-    case (5)
-        call ocmmnt(outfile, ' (WST Nb3Sn)')
-    case (6)
-        call ocmmnt(outfile, ' (High temperature superconductor: REBCO HTS tape in CroCo strand)')
-    end select
+        select case (i_tf_sc_mat)
+        case (1)
+            call ocmmnt(outfile,'  (ITER Nb3Sn critical surface model)')
+        case (2)
+            call ocmmnt(outfile,'  (Bi-2212 high temperature superconductor)')
+        case (3)
+            call ocmmnt(outfile,'  (NbTi)')
+        case (4)
+            call ocmmnt(outfile, &
+            '  (ITER Nb3Sn critical surface model, user-defined parameters)')
+        case (5)
+            call ocmmnt(outfile, ' (WST Nb3Sn)')
+        case (6)
+            call ocmmnt(outfile, ' (High temperature superconductor: REBCO HTS tape in CroCo strand)')
+        end select
 
-    call ocmmnt(outfile,'Current Density :')
-    call oblnkl(outfile)
-    call ovarre(outfile,'Winding pack current density (A/m2)','(jwptf)',jwptf, 'OP ')
-    call ovarre(outfile,'Overall current density (A/m2)','(oacdcp)',oacdcp)
-
-    ! if (tfc_model == 0) then
-    !     call ovarre(outfile,'Allowable overall current density (A/m2)', '(jwdgcrt)',jwdgcrt, 'OP ')
-    ! end if
-
-    call osubhd(outfile,'General Coil Parameters :')
-    call ovarre(outfile,'Number of TF coils','(n_tf)',n_tf)
-    call ovarre(outfile,'Total inboard leg radial thickness (m)','(tfcth)',tfcth)
-    call ovarre(outfile,'Total outboard leg radial thickness (m)','(tfthko)',tfthko)
-    call ovarre(outfile,'Inboard leg toroidal thickness at widest point (m)','(2*tficrn)',2d0*tficrn, 'OP ')
-    call ovarre(outfile,'Outboard leg toroidal thickness (m)','(tftort)',tftort, 'OP ')
-    call ovarre(outfile,'Mean coil circumference (m)','(tfleng)',tfleng, 'OP ')
-    call ovarre(outfile,'Total current in all TF coils (MA)','(ritfc/1.D6)',1.0D-6*ritfc, 'OP ')
-    call ovarre(outfile,'Nominal peak field assuming Amperes Law with toroidal symmetry (T)','(bmaxtf)',bmaxtf, 'OP ')
-    call ovarre(outfile,'Actual peak field at discrete conductor (T)','(bmaxtfrp)',bmaxtfrp, 'OP ')
-    call ovarre(outfile,'Max allowed ripple amplitude at plasma outboard midplane (%)','(ripmax)',ripmax)
-    call ovarre(outfile,'Ripple amplitude at plasma outboard midplane (%)','(ripple)',ripple, 'OP ')
-    call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotftgj)',estotftgj, 'OP ')
-    call ovarre(outfile,'Total mass of TF coils (kg)','(whttf)',whttf, 'OP ')
-    call ovarre(outfile,'Mass of each TF coil (kg)','(whttf/n_tf)',whttf/n_tf, 'OP ')
-    call ovarre(outfile,'Vertical separating force per leg (N)','(vforce)',vforce, 'OP ')
-    call ovarre(outfile,'Centering force per coil (N/m)','(cforce)',cforce, 'OP ')
-
-    !  Report any applicability issues with peak field with ripple calculation
-
-    if (peaktfflag == 1) then
-        call report_error(144)
-    else if (peaktfflag == 2) then
-        call report_error(145)
-    else
-        continue
-    end if
-
-    call osubhd(outfile,'Coil Geometry :')
-    call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inboard_mid)',r_tf_inboard_mid, 'OP ')
-    call ovarre(outfile,'Outboard leg centre radius (m)','(r_tf_outboard_mid)',r_tf_outboard_mid, 'OP ')
-    call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax, 'OP ')
-    ! call ovarre(outfile,'gap between inboard vacuum vessel and thermal shield (m)','(gapds)',gapds) ! Not relevant to TF
-
-    call oblnkl(outfile)
-    call ocmmnt(outfile,'TF coil inner surface shape is approximated')
-    call ocmmnt(outfile,'by a straight segment and elliptical arcs between the following points :')
-    call oblnkl(outfile)
-
-    write(outfile,10)
-    10  format(t2,'point',t16,'x(m)',t31,'y(m)')
-
-    do i = 1,5
-        write(outfile,20) i,xarc(i),yarc(i)
-        intstring = int2char(i)
-        call ovarre(mfile,'TF coil arc point '//intstring//' R (m)', '(xarc('//intstring//'))',xarc(i))
-        call ovarre(mfile,'TF coil arc point '//intstring//' Z (m)', '(yarc('//intstring//'))',yarc(i))
-    end do
-    20  format(i4,t10,f10.3,t25,f10.3)
-
-    call osubhd(outfile,'Quench information :')
-    call ovarre(outfile,'Allowable stress in vacuum vessel (VV) due to quench (Pa)','(sigvvall)',sigvvall)
-    call ovarre(outfile,'Minimum allowed quench time due to stress in VV (s)','(taucq)',taucq, 'OP ')
-    call ovarre(outfile,'Actual quench time (or time constant) (s)','(tdmptf)',tdmptf)
-    ! call ovarre(outfile,'Max allowed current density in winding pack due to temperature rise in quench (A/m2)', &
-    !                     '(jwdgpro)', jwdgpro, 'OP ')
-    ! call ovarre(outfile,'Actual current density in winding pack (A/m2)', '(jwptf)', jwptf, 'OP ')
-    call ovarre(outfile,'Maximum allowed voltage during quench due to insulation (kV)', '(vdalw)', vdalw)
-    call ovarre(outfile,'Actual quench voltage (kV)','(vtfskv)',vtfskv, 'OP ')
-
-    select case (isumattf)
-    case (1,2,3,4,5)
-        call ovarre(outfile,'Maximum allowed temp rise during a quench (K)','(tmaxpro)', tmaxpro)
-    case(6)
-        call ocmmnt(outfile,'CroCo cable with jacket: ')
-        ! if (any(icc == 74) ) then
-        !     call ovarre(outfile,'Maximum permitted temperature in quench (K)',&
-        !                         '(tmax_croco)', tmax_croco)
-        ! endif
-        ! call ovarre(outfile,'Actual temp reached during a quench (K)', &
-        !                     '(croco_quench_temperature)', croco_quench_temperature)
-        if (any(icc == 75) ) then
-            call ovarre(outfile,'Maximum permitted TF coil current / copper area (A/m2)', &
-            '(copperA_m2_max)', copperA_m2_max)
-        endif
-        call ovarre(outfile,'Actual TF coil current / copper area (A/m2)', &
-                            '(copperA_m2)', copperA_m2)
-
-        ! call ocmmnt(outfile,'Fast discharge current model: '//quench_model)
-        ! if(quench_detection_ef>1d-10)then
-        !     call ocmmnt(outfile,'Two-phase quench model is used')
-        !     call ovarre(outfile,'Electric field at which TF quench is detected, discharge begins (V/m)',&
-        !                         '(quench_detection_ef)', quench_detection_ef)
-        !     call ovarre(outfile,'Peak temperature before quench is detected (K)','(T1)',T1,'OP ')
-        ! else
-        !     call ocmmnt(outfile, 'Simple one-phase quench model is used')
-        ! endif
-    end select
-
-    call osubhd(outfile,'Conductor Information :')
-    if (i_tf_turns_integer == 1) then
-        call ovarre(outfile, 'Radial width of conductor (m)', '(t_conductor_radial)', t_conductor_radial, 'OP ')
-        call ovarre(outfile, 'Toroidal width of conductor (m)', '(t_conductor_toroidal)', t_conductor_toroidal, 'OP ')
-        call ovarre(outfile, 'Radial width of turn (m)', '(t_turn_radial)', t_turn_radial)
-        call ovarre(outfile, 'Toroidal width of turn (m)', '(t_turn_toroidal)', t_turn_toroidal)
-        call ovarre(outfile, 'Radial width of cable space', '(t_cable_radial)', t_cable_radial)
-        call ovarre(outfile, 'Toroidal width of cable space', '(t_cable_toroidal)', t_cable_toroidal)
-    else
-        call ovarre(outfile,'Width of conductor (square) (m)','(conductor_width)',conductor_width, 'OP ')
-        call ovarre(outfile,'Width of turn including inter-turn insulation (m)','(leno)',leno, 'OP ')
-        call ovarre(outfile,'Width of space inside conductor (m)','(leni)',leni, 'OP ')
-    end if
-    call ovarre(outfile,'Conduit thickness (m)','(thwcndut)',thwcndut)
-    call ovarre(outfile,'Inter-turn insulation thickness (m)','(thicndut)',thicndut)
-
-    call ovarre(outfile,'Superconductor mass per coil (kg)','(whtconsc)',whtconsc, 'OP ')
-    call ovarre(outfile,'Copper mass per coil (kg)','(whtconcu)',whtconcu, 'OP ')
-    call ovarre(outfile,'Steel conduit mass per coil (kg)','(whtconsh)',whtconsh, 'OP ')
-    call ovarre(outfile,'Conduit insulation mass per coil (kg)','(whtconin)',whtconin, 'OP ')
-    call ovarre(outfile,'Total conductor mass per coil (kg)','(whtcon)',whtcon, 'OP ')
-
-    select case (isumattf)
-    case (1,2,3,4,5)
-        call osubhd(outfile,'Winding Pack Information :')
-        call ovarre(outfile,'Diameter of central helium channel in cable','(dhecoil)',dhecoil)
-        call ocmmnt(outfile,'Fractions by area')
-        call ovarre(outfile,'Coolant fraction in conductor excluding central channel','(vftf)',vftf)
-        call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcutfsu)
-        call ovarre(outfile,'Superconductor fraction of conductor','(1-fcutfsu)',1-fcutfsu)
-        ! TODO
-        !call ovarre(outfile,'Conductor fraction of winding pack','(acond/ap)',acond/ap, 'OP ')
-        !call ovarre(outfile,'Conduit fraction of winding pack','(turnstf*acndttf/ap)',turnstf*acndttf/ap, 'OP ')
-        !call ovarre(outfile,'Insulator fraction of winding pack','(aiwp/ap)',aiwp/ap, 'OP ')
-        !call ovarre(outfile,'Helium area fraction of winding pack excluding central channel','(avwp/ap)',avwp/ap, 'OP ')
-        !call ovarre(outfile,'Central helium channel area as fraction of winding pack','(awphec/ap)',awphec/ap, 'OP ')
-        ap = acond + turnstf*acndttf + aiwp + avwp + awphec
-        call ovarrf(outfile,'Check total area fractions in winding pack = 1','', &
-        (acond + turnstf*acndttf + aiwp + avwp + awphec)/ap)
-    end select
-
-    call ovarre(outfile,'Winding radial thickness (m)','(thkwp)',thkwp, 'OP ')
-
-    if (i_tf_turns_integer == 1) then
-        call ovarre(outfile, 'Winding toroidal width (m)', '(wwp1)', wwp1, 'OP ')
-    else
-        call ovarre(outfile,'Winding toroidal width 1 (m)','(wwp1)',wwp1, 'OP ')
-        call ovarre(outfile,'Winding toroidal width 2 (m)','(wwp2)',wwp2, 'OP ')
-    end if
-
-    call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)',tinstf)
-    call ovarre(outfile,'Winding pack insertion gap (m)','(tfinsgap)',tfinsgap)
-
-    if (i_tf_turns_integer == 1) then
-        call ovarin(outfile, 'Number of TF pancakes', '(n_pancake)', n_pancake)
-        call ovarin(outfile, 'Number of TF layers', '(n_layer)', n_layer)
-    end if
-
-    call ovarre(outfile,'Number of turns per TF coil','(turnstf)',turnstf, 'OP ')
-
-    call osubhd(outfile,'External Case Information :')
-
-    call ovarre(outfile,'Inboard leg case plasma side wall thickness (m)','(casthi)',casthi)
-    call ovarre(outfile,'Inboard leg case inboard "nose" thickness (m)','(thkcas)',thkcas)
-    call ovarre(outfile,'Inboard leg case sidewall thickness at its narrowest point (m)','(casths)',casths)
-    !call ovarre(outfile,'Inboard leg case area per coil (m2)','(acasetf)',acasetf, 'OP ')
-    !call ovarre(outfile,'Outboard leg case area per coil (m2)','(acasetfo)',acasetfo, 'OP ')
-    call ovarre(outfile,'External case mass per coil (kg)','(whtcas)',whtcas, 'OP ')
-
-    call osubhd(outfile,'Radial build of TF coil centre-line :')
-    write(outfile,5)
-    5   format(t43,'Thickness (m)',t60,'Outer radius (m)')
-    radius = r_tf_inboard_mid - 0.5D0*tfcth
-    call obuild(outfile,'Innermost edge of TF coil',radius,radius)
-    radius = radius + thkcas
-    call obuild(outfile,'Coil case ("nose")',thkcas,radius,'(thkcas)')
-    radius = radius + tfinsgap
-    call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
-    radius = radius + tinstf
-    call obuild(outfile,'Winding pack insulation',tinstf,radius,'(tinstf)')
-    radius = radius + thkwp/2d0
-    call obuild(outfile,'Winding - first half',thkwp/2d0,radius,'(thkwp/2 - tinstf)')
-    radius = radius + thkwp/2d0
-    call obuild(outfile,'Winding - second half',thkwp/2d0,radius,'(thkwp/2 - tinstf)')
-    radius = radius + tinstf
-    call obuild(outfile,'Winding pack insulation',tinstf,radius,'(tinstf)')
-    radius = radius + tfinsgap
-    call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
-    radius = radius + casthi
-    call obuild(outfile,'Coil case (plasma side)',casthi,radius,'(casthi)')
-    if(abs((radius - r_tf_inboard_mid - 0.5D0*tfcth)) < 1d-6)then
-        call ocmmnt(outfile,'TF coil dimensions are consistent')
-    else
-        call ocmmnt(outfile,'ERROR: TF coil dimensions are NOT consistent:')
-        call ovarre(outfile,'Radius of plasma-facing side of inner leg SHOULD BE [m]','',r_tf_inboard_mid + 0.5D0*tfcth)
-        call ovarre(outfile,'Inboard TF coil radial thickness [m]','(tfcth)',tfcth)
-        !thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
+        call ocmmnt(outfile,'Current Density :')
         call oblnkl(outfile)
-    end if
+        call ovarre(outfile,'Winding pack current density (A/m2)','(jwptf)',jwptf, 'OP ')
+        call ovarre(outfile,'Overall current density (A/m2)','(oacdcp)',oacdcp)
 
-    ! if (tfc_model == 0) then
-    !     call osubhd(outfile,'TF Coil Stresses (solid copper coil model) :')
-    ! else
-    call osubhd(outfile,'TF Coil Stresses (CCFE two-layer model) :')
-    ! end if
-    ! call ovarin(outfile,'TF coil model','(tfc_model)',tfc_model)
-    call ovarre(outfile,'Allowable Tresca stress limit (Pa)','(alstrtf)',alstrtf)
-    call ovarre(outfile,'Vertical stress (Pa)','(sigvert)',sigvert, 'OP ')
-    ! if (tfc_model == 1) then
-    call ovarre(outfile,'Case radial stress (Pa)','(sigrtf(1))',sigrtf(1))
-    call ovarre(outfile,'Case tangential stress (Pa)','(sigttf(1))',sigttf(1), 'OP ')
-    ! end if
-    call ovarre(outfile,'Conduit radial stress (Pa)','(sigrcon)',sigrcon, 'OP ')
-    call ovarre(outfile,'Conduit tangential stress (Pa)','(sigtcon)',sigtcon, 'OP ')
-    call ovarin(outfile,'Tresca conduit stress criterion', '(i_tf_tresca)', i_tf_tresca, 'OP ')
-    call ovarre(outfile,'Tresca stress in case (Pa)', '(s_tresca_case)', s_tresca_case, 'OP ')
-    call ovarre(outfile,'Tresca stress in conduit (Pa)', '(s_tresca_cond)', s_tresca_cond, 'OP ')
-    call ovarre(outfile,'CEA Adjusted Tresca stress in conduit (Pa)', '(s_tresca_cond_cea)', s_tresca_cond_cea, 'OP ')
-    call ovarre(outfile,'von Mises stress in case (Pa)', '(s_vmises_case)', s_vmises_case, 'OP ')
-    call ovarre(outfile,'von Mises stress in conduit (Pa)', '(s_vmises_cond)', s_vmises_cond, 'OP ')
-    call ovarre(outfile,'Peak radial deflection at midplane (m)','(deflect)',deflect, 'OP ')
-    ! if (tfc_model == 1) then
-    call ovarre(outfile,"Winding pack vertical Young's Modulus (Pa)",'(eyzwp)', eyzwp, 'OP ')
-    call ovarre(outfile,'Vertical strain on winding pack','(windstrain)', windstrain, 'OP ')
-    call ovarre(outfile,'Radial strain on insulator','(insstrain)', insstrain, 'OP ')
-    ! end if
+        ! if (tfc_model == 0) then
+        !     call ovarre(outfile,'Allowable overall current density (A/m2)', '(jwdgcrt)',jwdgcrt, 'OP ')
+        ! end if
+
+        call osubhd(outfile,'General Coil Parameters :')
+        call ovarre(outfile,'Number of TF coils','(n_tf)',n_tf)
+        call ovarre(outfile,'Total inboard leg radial thickness (m)','(tfcth)',tfcth)
+        call ovarre(outfile,'Total outboard leg radial thickness (m)','(tfthko)',tfthko)
+        call ovarre(outfile,'Inboard leg toroidal thickness at widest point (m)','(2*tficrn)',2d0*tficrn, 'OP ')
+        call ovarre(outfile,'Outboard leg toroidal thickness (m)','(tftort)',tftort, 'OP ')
+        call ovarre(outfile,'Mean coil circumference (m)','(tfleng)',tfleng, 'OP ')
+        call ovarre(outfile,'Total current in all TF coils (MA)','(ritfc/1.D6)',1.0D-6*ritfc, 'OP ')
+        call ovarre(outfile,'Nominal peak field assuming Amperes Law with toroidal symmetry (T)','(bmaxtf)',bmaxtf, 'OP ')
+        call ovarre(outfile,'Actual peak field at discrete conductor (T)','(bmaxtfrp)',bmaxtfrp, 'OP ')
+        call ovarre(outfile,'Max allowed ripple amplitude at plasma outboard midplane (%)','(ripmax)',ripmax)
+        call ovarre(outfile,'Ripple amplitude at plasma outboard midplane (%)','(ripple)',ripple, 'OP ')
+        call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotftgj)',estotftgj, 'OP ')
+        call ovarre(outfile,'Total mass of TF coils (kg)','(whttf)',whttf, 'OP ')
+        call ovarre(outfile,'Mass of each TF coil (kg)','(whttf/n_tf)',whttf/n_tf, 'OP ')
+        call ovarre(outfile,'Vertical separating force per leg (N)','(vforce)',vforce, 'OP ')
+        call ovarre(outfile,'Centring force per coil (N/m)','(cforce)',cforce, 'OP ')
+
+        !  Report any applicability issues with peak field with ripple calculation
+
+        if (peaktfflag == 1) then
+            call report_error(144)
+        else if (peaktfflag == 2) then
+            call report_error(145)
+        else
+            continue
+        end if
+
+        call osubhd(outfile,'Coil Geometry :')
+        call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inboard_mid)',r_tf_inboard_mid, 'OP ')
+        call ovarre(outfile,'Outboard leg centre radius (m)','(r_tf_outboard_mid)',r_tf_outboard_mid, 'OP ')
+        call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax, 'OP ')
+        ! call ovarre(outfile,'gap between inboard vacuum vessel and thermal shield (m)','(gapds)',gapds) ! Not relevant to TF
+
+        call oblnkl(outfile)
+        call ocmmnt(outfile,'TF coil inner surface shape is approximated')
+        call ocmmnt(outfile,'by a straight segment and elliptical arcs between the following points :')
+        call oblnkl(outfile)
+
+        write(outfile,10)
+        10  format(t2,'point',t16,'x(m)',t31,'y(m)')
+
+        do ii = 1,5
+            write(outfile,20) ii,xarc(ii),yarc(ii)
+            intstring = int2char(ii)
+            call ovarre(mfile,'TF coil arc point '//intstring//' R (m)', '(xarc('//intstring//'))',xarc(ii))
+            call ovarre(mfile,'TF coil arc point '//intstring//' Z (m)', '(yarc('//intstring//'))',yarc(ii))
+        end do
+        20  format(i4,t10,f10.3,t25,f10.3)
+
+        call osubhd(outfile,'Quench information :')
+        call ovarre(outfile,'Allowable stress in vacuum vessel (VV) due to quench (Pa)','(sigvvall)',sigvvall)
+        call ovarre(outfile,'Minimum allowed quench time due to stress in VV (s)','(taucq)',taucq, 'OP ')
+        call ovarre(outfile,'Actual quench time (or time constant) (s)','(tdmptf)',tdmptf)
+        ! call ovarre(outfile,'Max allowed current density in winding pack due to temperature rise in quench (A/m2)', &
+        !                     '(jwdgpro)', jwdgpro, 'OP ')
+        ! call ovarre(outfile,'Actual current density in winding pack (A/m2)', '(jwptf)', jwptf, 'OP ')
+        call ovarre(outfile,'Maximum allowed voltage during quench due to insulation (kV)', '(vdalw)', vdalw)
+        call ovarre(outfile,'Actual quench voltage (kV)','(vtfskv)',vtfskv, 'OP ')
+
+        select case (i_tf_sc_mat)
+        case (1,2,3,4,5)
+            call ovarre(outfile,'Maximum allowed temp rise during a quench (K)','(tmaxpro)', tmaxpro)
+        case(6)
+            call ocmmnt(outfile,'CroCo cable with jacket: ')
+            ! if (any(icc == 74) ) then
+            !     call ovarre(outfile,'Maximum permitted temperature in quench (K)',&
+            !                         '(tmax_croco)', tmax_croco)
+            ! endif
+            ! call ovarre(outfile,'Actual temp reached during a quench (K)', &
+            !                     '(croco_quench_temperature)', croco_quench_temperature)
+            if (any(icc == 75) ) then
+                call ovarre(outfile,'Maximum permitted TF coil current / copper area (A/m2)', &
+                '(copperA_m2_max)', copperA_m2_max)
+            endif
+            call ovarre(outfile,'Actual TF coil current / copper area (A/m2)', &
+                                '(copperA_m2)', copperA_m2)
+
+            ! call ocmmnt(outfile,'Fast discharge current model: '//quench_model)
+            ! if(quench_detection_ef>1d-10)then
+            !     call ocmmnt(outfile,'Two-phase quench model is used')
+            !     call ovarre(outfile,'Electric field at which TF quench is detected, discharge begins (V/m)',&
+            !                         '(quench_detection_ef)', quench_detection_ef)
+            !     call ovarre(outfile,'Peak temperature before quench is detected (K)','(T1)',T1,'OP ')
+            ! else
+            !     call ocmmnt(outfile, 'Simple one-phase quench model is used')
+            ! endif
+        end select
+
+        call osubhd(outfile,'Conductor Information :')
+        if (i_tf_turns_integer == 1) then
+            call ovarre(outfile, 'Radial width of conductor (m)', '(t_conductor_radial)', t_conductor_radial, 'OP ')
+            call ovarre(outfile, 'Toroidal width of conductor (m)', '(t_conductor_toroidal)', t_conductor_toroidal, 'OP ')
+            call ovarre(outfile, 'Radial width of turn (m)', '(t_turn_radial)', t_turn_radial)
+            call ovarre(outfile, 'Toroidal width of turn (m)', '(t_turn_toroidal)', t_turn_toroidal)
+            call ovarre(outfile, 'Radial width of cable space', '(t_cable_radial)', t_cable_radial)
+            call ovarre(outfile, 'Toroidal width of cable space', '(t_cable_toroidal)', t_cable_toroidal)
+        else
+            call ovarre(outfile,'Width of conductor (square) (m)','(conductor_width)',conductor_width, 'OP ')
+            call ovarre(outfile,'Width of turn including inter-turn insulation (m)','(leno)',leno, 'OP ')
+            call ovarre(outfile,'Width of space inside conductor (m)','(leni)',leni, 'OP ')
+        end if
+        call ovarre(outfile,'Conduit thickness (m)','(thwcndut)',thwcndut)
+        call ovarre(outfile,'Inter-turn insulation thickness (m)','(thicndut)',thicndut)
+
+        call ovarre(outfile,'Superconductor mass per coil (kg)','(whtconsc)',whtconsc, 'OP ')
+        call ovarre(outfile,'Copper mass per coil (kg)','(whtconcu)',whtconcu, 'OP ')
+        call ovarre(outfile,'Steel conduit mass per coil (kg)','(whtconsh)',whtconsh, 'OP ')
+        call ovarre(outfile,'Conduit insulation mass per coil (kg)','(whtconin)',whtconin, 'OP ')
+        call ovarre(outfile,'Total conductor mass per coil (kg)','(whtcon)',whtcon, 'OP ')
+
+        select case (i_tf_sc_mat)
+        case (1,2,3,4,5)
+            call osubhd(outfile,'Winding Pack Information :')
+            call ovarre(outfile,'Diameter of central helium channel in cable','(dhecoil)',dhecoil)
+            call ocmmnt(outfile,'Fractions by area')
+            call ovarre(outfile,'Coolant fraction in conductor excluding central channel','(vftf)',vftf)
+            call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcutfsu)
+            call ovarre(outfile,'Superconductor fraction of conductor','(1-fcutfsu)',1-fcutfsu)
+            ! TODO
+            !call ovarre(outfile,'Conductor fraction of winding pack','(acond/ap)',acond/ap, 'OP ')
+            !call ovarre(outfile,'Conduit fraction of winding pack','(turnstf*acndttf/ap)',turnstf*acndttf/ap, 'OP ')
+            !call ovarre(outfile,'Insulator fraction of winding pack','(aiwp/ap)',aiwp/ap, 'OP ')
+            !call ovarre(outfile,'Helium area fraction of winding pack excluding central channel','(avwp/ap)',avwp/ap, 'OP ')
+            !call ovarre(outfile,'Central helium channel area as fraction of winding pack','(awphec/ap)',awphec/ap, 'OP ')
+            ap = acond + turnstf*acndttf + aiwp + avwp + awphec
+            call ovarrf(outfile,'Check total area fractions in winding pack = 1','', &
+            (acond + turnstf*acndttf + aiwp + avwp + awphec)/ap)
+        end select
+
+        call ovarre(outfile,'Winding radial thickness (m)','(thkwp)',thkwp, 'OP ')
+
+        if (i_tf_turns_integer == 1) then
+            call ovarre(outfile, 'Winding toroidal width (m)', '(wwp1)', wwp1, 'OP ')
+        else
+            call ovarre(outfile,'Winding toroidal width 1 (m)','(wwp1)',wwp1, 'OP ')
+            call ovarre(outfile,'Winding toroidal width 2 (m)','(wwp2)',wwp2, 'OP ')
+        end if
+
+        call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)',tinstf)
+        call ovarre(outfile,'Winding pack insertion gap (m)','(tfinsgap)',tfinsgap)
+
+        if (i_tf_turns_integer == 1) then
+            call ovarin(outfile, 'Number of TF pancakes', '(n_pancake)', n_pancake)
+            call ovarin(outfile, 'Number of TF layers', '(n_layer)', n_layer)
+        end if
+
+        call ovarre(outfile,'Number of turns per TF coil','(turnstf)',turnstf, 'OP ')
+
+        call osubhd(outfile,'External Case Information :')
+
+        call ovarre(outfile,'Inboard leg case plasma side wall thickness (m)','(casthi)',casthi)
+        call ovarre(outfile,'Inboard leg case inboard "nose" thickness (m)','(thkcas)',thkcas)
+        call ovarre(outfile,'Inboard leg case sidewall thickness at its narrowest point (m)','(casths)',casths)
+        !call ovarre(outfile,'Inboard leg case area per coil (m2)','(acasetf)',acasetf, 'OP ')
+        !call ovarre(outfile,'Outboard leg case area per coil (m2)','(acasetfo)',acasetfo, 'OP ')
+        call ovarre(outfile,'External case mass per coil (kg)','(whtcas)',whtcas, 'OP ')
+
+        call osubhd(outfile,'Radial build of TF coil centre-line :')
+        write(outfile,5)
+        5   format(t43,'Thickness (m)',t60,'Outer radius (m)')
+        radius = r_tf_inboard_mid - 0.5D0*tfcth
+        call obuild(outfile,'Innermost edge of TF coil',radius,radius)
+        radius = radius + thkcas
+        call obuild(outfile,'Coil case ("nose")',thkcas,radius,'(thkcas)')
+        radius = radius + tfinsgap
+        call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
+        radius = radius + tinstf
+        call obuild(outfile,'Winding pack insulation',tinstf,radius,'(tinstf)')
+        radius = radius + thkwp/2d0
+        call obuild(outfile,'Winding - first half',thkwp/2d0,radius,'(thkwp/2 - tinstf)')
+        radius = radius + thkwp/2d0
+        call obuild(outfile,'Winding - second half',thkwp/2d0,radius,'(thkwp/2 - tinstf)')
+        radius = radius + tinstf
+        call obuild(outfile,'Winding pack insulation',tinstf,radius,'(tinstf)')
+        radius = radius + tfinsgap
+        call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
+        radius = radius + casthi
+        call obuild(outfile,'Coil case (plasma side)',casthi,radius,'(casthi)')
+        if(abs((radius - r_tf_inboard_mid - 0.5D0*tfcth)) < 1d-6)then
+            call ocmmnt(outfile,'TF coil dimensions are consistent')
+        else
+            call ocmmnt(outfile,'ERROR: TF coil dimensions are NOT consistent:')
+            call ovarre(outfile,'Radius of plasma-facing side of inner leg SHOULD BE [m]','',r_tf_inboard_mid + 0.5D0*tfcth)
+            call ovarre(outfile,'Inboard TF coil radial thickness [m]','(tfcth)',tfcth)
+            !thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
+            call oblnkl(outfile)
+        end if
+
+    else
+        !  Output section
+        call oheadr(outfile,'Resistive TF Coil Information')
+        call ovarin(outfile,'Resistive TF coil option (0:copper 2:aluminium)','(i_tf_sup)',i_tf_sup)
+        call ovarre(outfile,'Inboard leg mid-plane conductor current density (A/m2)','(oacdcp)',oacdcp)
+        call ovarre(outfile,'Outboard leg conductor current density (A/m2)','(cdtfleg)',cdtfleg)    
+        call ovarre(outfile,'Number of turns per outboard leg','(turnstf)',turnstf)
+        call ovarre(outfile,'Outboard leg current per turn (A)','(cpttf)',cpttf)
+        call ovarre(outfile,'Inboard leg conductor volume (m3)','(vol_cond_cp)',vol_cond_cp)
+        call ovarre(outfile,'Outboard leg volume per coil (m3)','(voltfleg)',voltfleg)
+        call ovarre(outfile,'Mass of inboard legs (kg)','(whtcp)',whtcp)
+        call ovarre(outfile,'Mass of outboard legs (kg)','(whttflgs)',whttflgs)
+        call ovarre(outfile,'Total TF coil mass (kg)','(whttf)',whttf)
+        call ovarre(outfile,'Inboard leg resistive power (W)','(prescp)',prescp)
+        call ovarre(outfile,'Outboard leg resistance per coil (ohm)','(tflegres)',tflegres)
+        call ovarre(outfile,'Average inboard leg temperature (K)','(tcpav)',tcpav)
+        if (itart==1) then
+          call osubhd(outfile,'Tapered Centrepost Dimensions:')
+          call ovarre(outfile,'Radius of the centrepost at the midplane (m)','(r_tf_inboard_out)',r_tf_inboard_out)
+          call ovarre(outfile,'Radius of the ends of the centrepost (m)','(r_cp_top)',r_cp_top)
+          call ovarre(outfile,'Distance from the midplane to the top of the tapered section (m)','(h_cp_top)',h_cp_top)
+          call ovarre(outfile,'Distance from the midplane to the top of the centrepost (m)','(hmax)',hmax + tfthko)
+        end if
+
+
+        call oheadr(outfile,'TF Coils')
+        call ovarre(outfile,'TF coil current (summed over all coils) (A)','(ritfc)',ritfc)
+        call ovarre(outfile,'Peak field at the TF coils (T)','(bmaxtf)',bmaxtf)
+        call ovarre(outfile,'Ripple at plasma edge (%)','(ripple)',ripple)
+        call ovarre(outfile,'Max allowed ripple amplitude at plasma (%)','(ripmax)',ripmax)
+        call ovarre(outfile,'Number of TF coil legs','(n_tf)',n_tf)
+ 
+        call osubhd(outfile,'Energy and Forces :')
+        call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotftgj)',estotftgj)
+        call ovarre(outfile,'Vertical force on inboard leg (N)','(vforce)',vforce)
+        call ovarre(outfile,'Centering force on inboard leg (N/m)','(cforce)',cforce)
+        call oblnkl(outfile)
+        call ocmmnt(outfile,'TF coil inner surface shape is given by a rectangle with the')
+        call ocmmnt(outfile,'following inner points (Note that this does not account')
+        call ocmmnt(outfile,'for the ST tapered centrepost):')
+        call oblnkl(outfile)
+ 
+        write(outfile,10)
+        ! 10  format(t2,'point',t16,'x(m)',t31,'y(m)')
+        do ii = 1,5
+           write(outfile,20) ii,xarc(ii),yarc(ii)
+           intstring = int2char(ii)
+           call ovarre(mfile,'TF coil arc point '//intstring//' R (m)', '(xarc('//intstring//'))',xarc(ii))
+           call ovarre(mfile,'TF coil arc point '//intstring//' Z (m)', '(yarc('//intstring//'))',yarc(ii))
+        end do
+        ! 20  format(i4,t10,f10.3,t25,f10.3)
+ 
+
+    end if 
 
 end subroutine outtf
 
@@ -1622,11 +2981,25 @@ subroutine tfspcall(outfile,iprint)
     !! Routine to call the superconductor module for the TF coils
     !! outfile : input integer : Fortran output unit identifier
     !! iprint : input integer : Switch to write output to file (1=yes)
+    use rebco_variables, only: copper_area, copper_thick, copperA_m2, &
+        croco_id, croco_od, croco_od, croco_thick, hastelloy_area, &
+        hastelloy_thickness, rebco_area, stack_thickness, tape_thickness, &
+        tape_thickness, tape_width, tapes, rebco_thickness, solder_area
+    use error_handling, only: idiags, fdiags, report_error
+    use process_output, only: ovarre, ocmmnt, oheadr, oblnkl, ovarin
+    use tfcoil_variables, only: tmargmin_tf, turnstf, n_tf, vftf, &
+        temp_margin, jwdgpro, tftmp, vtfskv, acndttf, dhecoil, tmaxpro, &
+        tmargtf, thwcndut, conductor_width, fcutfsu, jwdgcrt, tdmptf, cpttf, &
+        ritfc, jwptf, bmaxtfrp, tcritsc, acstf, strncon_tf, fhts, bcritsc, &
+        i_tf_sc_mat
+    use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, jcrit_nbti, croco, bi2212
+    use global_variables, only: run_tests
+    use constants, only: pi
     implicit none
     integer, intent(in) :: outfile, iprint
 
     !  Local variables
-    real(kind(1.0D0)) :: aturn, tfes, vdump
+    real(dp) :: aturn, tfes, vdump
 
     ! Simple model REMOVED Issue #781
     ! if (tfc_model == 0) then
@@ -1639,7 +3012,7 @@ subroutine tfspcall(outfile,iprint)
     ! Cross-sectional area per turn
     aturn = ritfc/(jwptf*n_tf*turnstf)    
 
-    if(isumattf==6)then
+    if(i_tf_sc_mat==6)then
         call supercon_croco(aturn,bmaxtfrp,cpttf,tftmp, &
         iprint, outfile,  &
         jwdgcrt,tmargtf)
@@ -1647,7 +3020,7 @@ subroutine tfspcall(outfile,iprint)
         vtfskv = croco_voltage()/1.0D3  !  TFC Quench voltage in kV
         
     else
-        call supercon(acstf,aturn,bmaxtfrp,vftf,fcutfsu,cpttf,jwptf,isumattf, &
+        call supercon(acstf,aturn,bmaxtfrp,vftf,fcutfsu,cpttf,jwptf,i_tf_sc_mat, &
         fhts,strncon_tf,tdmptf,tfes,tftmp,tmaxpro,bcritsc,tcritsc,iprint, &
         outfile,jwdgcrt,vdump,tmargtf)
         
@@ -1704,16 +3077,16 @@ contains
         implicit none
 
         integer, intent(in) :: isumat, iprint, outfile
-        real(kind(1.0D0)), intent(in) :: acs, aturn, bmax, fcu, fhe, fhts
-        real(kind(1.0D0)), intent(in) :: iop, jwp, strain, tdmptf, tfes, thelium, tmax, bcritsc, tcritsc
-        real(kind(1.0D0)), intent(out) :: jwdgcrt, vd, tmarg
+        real(dp), intent(in) :: acs, aturn, bmax, fcu, fhe, fhts
+        real(dp), intent(in) :: iop, jwp, strain, tdmptf, tfes, thelium, tmax, bcritsc, tcritsc
+        real(dp), intent(out) :: jwdgcrt, vd, tmarg
 
         !  Local variables
 
         integer :: lap
-        real(kind(1.0D0)) :: b,bc20m,bcrit,c0,delt,fcond,icrit,iooic, &
+        real(dp) :: b,bc20m,bcrit,c0,delt,fcond,icrit,iooic, &
         jcritsc,jcrit0,jcritm,jcritp,jcritstr,jsc,jstrand,jtol,jwdgop, &
-        t,tc0m,tcrit,ttest,ttestm,ttestp, tdump, fhetot, total
+        t,tc0m,tcrit,ttest,ttestm,ttestp, tdump, fhetot
 
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         ! Rename tdmptf as it is called tdump in this routine and those called from here.
@@ -1782,7 +3155,7 @@ contains
             icrit = jcritstr * acs * fcond
 
         case (6) ! "REBCO" 2nd generation HTS superconductor in CrCo strand
-            write(*,*)'ERROR: subroutine supercon has been called but isumattf=6'
+            write(*,*)'ERROR: subroutine supercon has been called but i_tf_sc_mat=6'
             stop
         case default  !  Error condition
             idiags(1) = isumat ; call report_error(105)
@@ -1937,13 +3310,13 @@ contains
         
         implicit none
         
-        real(kind(1.0D0)), intent(in) :: aturn, bmax, iop, thelium
+        real(dp), intent(in) :: aturn, bmax, iop, thelium
         integer, intent(in) :: iprint, outfile
-        real(kind(1.0D0)), intent(out) :: jwdgcrt, tmarg
+        real(dp), intent(out) :: jwdgcrt, tmarg
 
         !  Local variables
-        real(kind(1.0D0)) :: icrit,iooic, jcritsc,jcritstr,jsc,jwdgop, total
-        real(kind(1.0D0)) :: current_sharing_t
+        real(dp) :: icrit,iooic, jcritsc,jcritstr,jsc,jwdgop, total
+        real(dp) :: current_sharing_t
         logical:: validity
 
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2102,15 +3475,15 @@ contains
 
         !  Arguments
 
-        real(kind(1.0D0)), intent(in) :: aio, tfes, acs, aturn, tdump, fcond, &
+        real(dp), intent(in) :: aio, tfes, acs, aturn, tdump, fcond, &
         fcu,tba,tmax
-        real(kind(1.0D0)), intent(out) :: ajwpro, vd
+        real(dp), intent(out) :: ajwpro, vd
 
         !  Local variables
 
         integer :: no,np
-        real(kind(1.0D0)) :: aa,ai1,ai2,ai3,ajcp,bb,cc,dd,tav
-        real(kind(1.0D0)), dimension(11) :: p1, p2, p3
+        real(dp) :: aa,ai1,ai2,ai3,ajcp,bb,cc,dd,tav
+        real(dp), dimension(11) :: p1, p2, p3
 
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2177,40 +3550,21 @@ contains
     end subroutine protect
 
 end subroutine tfspcall
-! --------------------------------------------------------------------
-! ! subroutine croco_voltage()
 
-!     !! croco_voltage
-!     !! Finds the dump voltage in quench for the Croco HTS conductor
-!     !! Subroutine
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-!     implicit none
-
-!     ! vtfskv : voltage across a TF coil during quench (kV)
-!     ! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s) (time-dump-TF)
-!     ! For clarity I have copied this into 'time2' or 'tau2' depending on the model.
-
-!     if(quench_model=='linear')then
-!         time2 = tdmptf
-!         vtfskv = 2.0D0/time2 * (estotft/n_tf) / cpttf
-!     elseif(quench_model=='exponential')then
-!         tau2 = tdmptf
-!         vtfskv = 2.0D0/tau2 * (estotft/n_tf) / cpttf
-!     endif
-
-! ! end subroutine croco_voltage
-! --------------------------------------------------------------------
 function croco_voltage()
 
     !! Finds the coil voltage during a quench
-
+    
     ! croco_voltage : voltage across a TF coil during quench (V)
     ! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s) (time-dump-TF)
     ! For clarity I have copied this into 'time2' or 'tau2' depending on the model.
+    use tfcoil_variables, only: n_tf, quench_model, tdmptf, cpttf
 
     implicit none
 
-    real(kind(1.0D0)):: croco_voltage
+    real(dp):: croco_voltage
 
     if(quench_model=='linear')then
         time2 = tdmptf
@@ -2227,24 +3581,28 @@ subroutine croco_quench(conductor)
 
     !! Finds the current density limited by the maximum temperatures in quench
     !! It also finds the dump voltage.
-
+    use tfcoil_variables, only: leno, tmax_croco, bmaxtf, quench_detection_ef, &
+        tftmp, croco_quench_temperature, jwptf, conductor_width
+    use superconductors, only: copper_properties2, jcrit_rebco
+    use ode_mod, only: ode
+    use maths_library, only: secant_solve
     implicit none
 
     type(volume_fractions), intent(in)::conductor
-    real(kind(1.0D0)):: current_density_in_conductor
+    real(dp):: current_density_in_conductor
 
 
-    real(kind(1.0D0))::tout     !for the phase 2
-    real(kind(1.0D0))::relerr= 0.01d0, abserr= 0.01d0
+    real(dp)::tout     !for the phase 2
+    real(dp)::relerr= 0.01d0, abserr= 0.01d0
 
     integer(kind=4), parameter :: neqn = 1
     integer(kind=4) :: iflag
     integer(kind=4) :: iwork(5)
 
-    real(kind(1.0D0)) :: work(100+21*neqn)
-    real(kind(1.0D0)) :: y(neqn)
+    real(dp) :: work(100+21*neqn)
+    real(dp) :: y(neqn)
 
-    real(kind(1.0D0))::residual, t
+    real(dp)::residual, t
     logical::error
 
     if(quench_detection_ef>1d-10)then
@@ -2309,10 +3667,10 @@ contains
 
         implicit none
 
-        real(kind(1.0D0))::detection_field_error, deltaj,jcritsc
+        real(dp)::detection_field_error, deltaj,jcritsc
 
-        real(kind(1.0D0)), intent(in) :: t1
-        real(kind(1.0D0)):: jc
+        real(dp), intent(in) :: t1
+        real(dp):: jc
         logical :: validity
         integer :: iprint
 
@@ -2334,6 +3692,7 @@ contains
     end function
 
 end subroutine croco_quench
+
 !-------------------------------------------------------------------
 subroutine dtempbydtime ( qtime, qtemperature, derivative )
     !! Supplies the right hand side of the ODE for the croco quench phase 2 subroutine
@@ -2343,24 +3702,26 @@ subroutine dtempbydtime ( qtime, qtemperature, derivative )
     !! derivative : output real : the value of dtempbydtime
 
     ! Time-dependent quantities during the fast discharge local to this subroutine:
+    use tfcoil_variables, only: quench_model, bmaxtfrp, cpttf
+    use superconductors, only: jcrit_rebco
 
     implicit none
 
     ! time, the independent variable
-    real(kind(1.0D0)),intent(in) :: qtime
+    real(dp),intent(in) :: qtime
 
     ! Y(), the dependent variable
-    real(kind(1.0D0)),intent(in) :: qtemperature(1)
+    real(dp),intent(in) :: qtemperature(1)
 
     ! YP(), the value of the derivative
-    real(kind(1.0D0)),intent(out) :: derivative(1)
+    real(dp),intent(out) :: derivative(1)
 
-    real(kind(1.0D0))::qj  ! Current density in superconductor during fast discharge
-    real(kind(1.0D0))::qcurrent  ! Total current in cable during fast discharge
-    real(kind(1.0D0))::qbfield  ! Peak magnetic field in cable during fast discharge
-    real(kind(1.0D0))::q_crit_current ! Critical current during fast discharge
+    real(dp)::qj  ! Current density in superconductor during fast discharge
+    real(dp)::qcurrent  ! Total current in cable during fast discharge
+    real(dp)::qbfield  ! Peak magnetic field in cable during fast discharge
+    real(dp)::q_crit_current ! Critical current during fast discharge
     logical :: validity
-    real(kind(1.0D0))::qratio,qtemp
+    real(dp)::qratio,qtemp
 
     !write(*,*)'subroutine dtempbydtime ( qtime, qtemperature, derivative )'
     !write(*,*)'qtime = ',qtime,' qtemperature = ',qtemperature
@@ -2396,15 +3757,231 @@ subroutine dtempbydtime ( qtime, qtemperature, derivative )
 end subroutine dtempbydtime
 
 !-----------------------------------------------------------------------
-
-function resistivity_over_heat_capacity(qtemp,qbfield,copper,hastelloy,solder,helium,jacket)
-
+subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! Inputs
+                     ins_th, cas_out_th, n_turns_tot,                         &  ! Inputs
+                     acpcool, volume, respow, volins, volcasout )                ! Outputs
+    !!  author: P J Knight, CCFE, Culham Science Centre
+    !!  Calculates the volume and resistive power losses of a TART centrepost
+    !!  This routine calculates the volume and resistive power losses
+    !!  of a TART centrepost. It is assumed to be tapered - narrowest at
+    !!  the midplane and reaching maximum thickness at the height of the
+    !!  plasma. Above/below the plasma, the centrepost is cylindrical.
+    !!  The shape of the taper is assumed to be an arc of a circle.
+    !!  P J Knight, CCFE, Culham Science Centre
+    !!  21/10/96 PJK Initial version
+    !!  08/05/12 PJK Initial F90 version
+    !!  16/10/12 PJK Added constants; removed argument pi
+    !!  26/06/14 PJK Added error handling
+    !!  12/11/19 SK Using fixed cooling cross-section area along the CP 
+    !!  26/11/19 SK added the coolant area, the conuctor/isulator/outer casing volume 
+    !!  F/MI/PJK/LOGBOOK12, pp.33,34
+    !!  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    use error_handling, only: fdiags, report_error
+    use constants, only: pi
+    use tfcoil_variables, only: n_tf
+    use build_variables, only: hmax
     implicit none
 
-    real(kind(1.0D0)),intent(in):: qtemp,qbfield
+    !  Arguments
+    ! ---
+    ! Inputs
+    real(dp), intent(in) :: rtop,ztop,rmid,hmaxi,curr,rho,fcool,&
+                          r_tfin_inleg, ins_th, cas_out_th, n_turns_tot
+
+    ! Outputs
+    real(dp), intent(out) :: volume, respow, acpcool, volins, volcasout
+
+    ! Internal
+    real(dp) :: r1,z1,x,y,rc,dz,r,z, a_tfin_hole, res_cyl, res_taped
+    real(dp) :: sum1, sum2, sum3, sum4
+    real(dp) :: a_cond_midplane, a_cp_ins, a_casout
+    real(dp), dimension(0:100) :: yy, yy_ins, yy_casout
+
+    integer :: ii
+    ! ---
+
+
+    !  Error traps
+    ! ------------
+    if (rtop <= 0.0D0) then
+        fdiags(1) = rtop ; call report_error(115)
+    end if
+
+    if (ztop <= 0.0D0) then
+        fdiags(1) = ztop ; call report_error(116)
+    end if
+
+    if (rmid <= 0.0D0) then
+        fdiags(1) = rmid ; call report_error(117)
+    end if
+
+    if (hmax <= 0.0D0) then
+        fdiags(1) = hmax ; call report_error(118)
+    end if
+
+    if ((fcool < 0.0D0).or.(fcool > 1.0D0)) then
+        fdiags(1) = fcool ; call report_error(119)
+    end if
+
+    if (rtop < rmid) then
+        fdiags(1) = rtop ; fdiags(2) = rmid
+        call report_error(120)
+    end if
+
+    if (hmax < ztop) then
+        fdiags(1) = hmax ; fdiags(2) = ztop
+        call report_error(121)
+    end if
+    ! ------------
+
+
+    ! Mid-plane area calculations
+    ! ---------------------------
+    ! Area of the innner TF central hole [m2]
+    a_tfin_hole = pi*r_tfin_inleg**2  ! eq(32)
+
+    ! Mid-plane outer casing cross-section area [m2]
+    a_casout = pi * ( (rmid + cas_out_th)**2 - rmid**2 )
+
+    ! Mid-plane insualtion layer cross-section [m2] 
+    ! eq(27)
+    a_cp_ins = pi * ( (r_tfin_inleg + ins_th)**2 - r_tfin_inleg**2 ) + & ! Inner layer volume
+               pi * ( rmid**2 - ( rmid - ins_th )**2 )               + & ! Outter layer volume
+               2.0D0 * ins_th * (rmid - r_tfin_inleg - 2.0D0*ins_th) * n_turns_tot ! inter turn separtion layers
+
+    ! Cooling pipes cross-section [m2]
+    acpcool = fcool * ( pi*rmid**2 - a_tfin_hole - a_cp_ins ) / n_tf
+    ! ---------------------------
+
+
+    !  Trivial solutions
+    ! ------------------
+    if ( abs(fcool) < epsilon(fcool) ) then
+        volume = 0.0D0
+        respow = 0.0D0
+        call report_error(122)
+        return
+    end if
+
+    if ( abs(rmid - rtop) < epsilon(rtop) ) then
+
+        ! Exact conductor cross-section
+        a_cond_midplane = pi*rmid**2 - a_tfin_hole - n_tf * acpcool - a_cp_ins
+
+        ! Volumes and resisitive losses calculations
+        volume = 2.0D0 * hmaxi * a_cond_midplane
+        volins = 2.0D0 * hmaxi * a_cp_ins
+        respow = 2.0D0 * hmaxi * curr**2 * rho / a_cond_midplane
+        volcasout = 2.0D0 * hmaxi * a_casout
+
+        return
+    end if
+    ! ------------------
+
+
+    !  Find centre of circle (RC,0) defining the taper's arc
+    !  (r1,z1) is midpoint of line joining (rmid,0) and (rtop,ztop)
+    ! -------------------------------------------------------------
+    r1 = 0.5D0*(rmid + rtop)
+    z1 = 0.5D0*ztop
+
+    x = (r1-rmid)**2 + z1**2
+    y = ztop**2 / ( (rtop-rmid)**2 + ztop**2 )
+
+    rc = rmid + sqrt( x / (1.0D0-y) )
+    ! -------------------------------------------------------------
+
+
+    !  Find volume of tapered section of centrepost, and the resistive
+    !  power losses, by integrating along the centrepost from the midplane
+    ! --------------------------------------------------------------------
+    !  Calculate centrepost radius and cross-sectional areas at each Z
+    dz = 0.01D0*ztop
+
+    do ii = 0,100
+        z = dble(ii) * dz
+        z = min(z,ztop)
+
+        r = rc - sqrt( (rc-rmid)**2 - z*z )
+
+        if (r <= 0.0D0) then
+            fdiags(1) = r ; fdiags(2) = rc
+            fdiags(3) = rmid ; fdiags(4) = z
+            call report_error(123)
+        end if
+
+        ! Insulation cross-sectional area at Z
+        yy_ins(ii) = pi * ( (r_tfin_inleg + ins_th)**2 - r_tfin_inleg**2 )            + & ! Inner layer volume
+                     pi * ( r**2 - ( r - ins_th )**2 )                                + & ! Outter layer volume
+                     2.0D0 * ins_th * (r - r_tfin_inleg - 2.0D0*ins_th) * n_turns_tot     ! inter turn separtion layers
+
+        !  Cross-sectional area at Z
+        yy(ii) = pi*r**2 - a_tfin_hole - n_tf*acpcool - yy_ins(ii)  ! eq(32)
+
+        !  Outer casing Cross-sectional area at z 
+        yy_casout(ii) = pi * ( (r+cas_out_th)**2 - r**2 )
+
+    end do
+
+    !  Perform integrals using trapezium rule
+    sum1 = 0.0D0
+    sum2 = 0.0D0
+    sum3 = 0.0D0
+    sum4 = 0.0D0
+    do ii = 1,99
+        sum1 = sum1 + yy(ii)
+        sum2 = sum2 + 1.0D0/yy(ii)
+        sum3 = sum3 + yy_ins(ii)
+        sum4 = sum4 + yy_casout(ii)
+    end do
+
+    sum1 = 0.5D0*dz * ( yy(0) + yy(100) + 2.0D0*sum1 )
+    sum2 = 0.5D0*dz * ( 1.0D0/yy(0) + 1.0D0/yy(100) + 2.0D0*sum2 )
+    sum3 = 0.5D0*dz * ( yy_ins(0) + yy_ins(100) + 2.0D0*sum3 )
+    sum4 = 0.5D0*dz * ( yy_casout(0) + yy_casout(100) + 2.0D0*sum4 )
+
+    ! Insulation layer cross section at CP top 
+    a_cp_ins = pi * ( (r_tfin_inleg + ins_th)**2 - r_tfin_inleg**2 )           + & ! Inner layer volume
+               pi * ( rtop**2 - ( rtop - ins_th )**2 )                         + & ! Outter layer volume
+               2.0D0 * ins_th * (rtop - r_tfin_inleg - 2.0D0*ins_th) * n_turns_tot ! inter turn separtion layers      
+
+    ! Outer casing cross-section area at CP top [m2]
+    a_casout = pi * ( (rtop + cas_out_th)**2 - rtop**2 )
+
+    ! Centrepost volume (ignoring coolant fraction) [m3]
+    volume = 2.0D0 * ( sum1 + ( hmaxi - ztop ) * &
+                     ( pi*rtop**2 - a_tfin_hole - a_cp_ins - n_tf*acpcool ) )
+
+    ! Resistive power losses in taped section (variable radius section) [W]
+    res_taped = rho * curr**2 * sum2                    ! eq(31)
+
+    ! Centrepost insulator volume [m3]
+    volins = 2.0D0 * ( sum3 + (hmaxi - ztop) * a_cp_ins )
+
+    ! Outer casing volume [m3]
+    volcasout = 2.0D0 * ( sum4 + (hmaxi - ztop) * a_casout ) 
+
+    ! Resistive power losses in cylindrical section (constant radius) [W]
+    res_cyl = rho * curr**2 * ( ( hmaxi - ztop ) / &    ! eq(30)
+              ( pi * rtop**2 - a_tfin_hole  - a_cp_ins - n_tf*acpcool ) )  
+
+    ! Total CP resistive power [W]
+    respow = 2.0D0 * ( res_cyl + res_taped )   ! eq(36)   
+    ! --------------------------------------------------------------------
+
+end subroutine cpost
+
+!-----------------------------------------------------------------------
+function resistivity_over_heat_capacity(qtemp,qbfield,copper,hastelloy,solder,helium,jacket)
+    use superconductors, only: hastelloy_properties, solder_properties, &
+        helium_properties, jacket_properties, copper_properties2
+    implicit none
+    
+    real(dp),intent(in):: qtemp,qbfield
     ! Only those materials that are actually supplied in the arguments are used.
     type(resistive_material),intent(in),optional::copper,hastelloy,solder,helium,jacket
-    real(kind(1.0D0))::sum,resistivity_over_heat_capacity
+    real(dp)::sum,resistivity_over_heat_capacity
 
     sum = 0d0
     call copper_properties2(qtemp,qbfield, copper)
@@ -2438,5 +4015,6 @@ function resistivity_over_heat_capacity(qtemp,qbfield,copper,hastelloy,solder,he
 
 end function resistivity_over_heat_capacity
 !--------------------------------------------------------------
+
 
 end module sctfcoil_module

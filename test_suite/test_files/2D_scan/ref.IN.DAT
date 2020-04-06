@@ -4,7 +4,7 @@ icc = 1 * Beta
 icc = 2 * Global power balance
 icc = 5 * Density upper limit
 icc = 8 * Neutron wall load upper limit
-icc = 10 * Toroidal field 1
+*icc = 10 * Toroidal field 1
 icc = 11 * Radial build
 icc = 13 * Burn time lower limit
 icc = 15 * L
@@ -38,7 +38,7 @@ ixc = 5 * beta
 ixc = 6 * dene
 ixc = 9 * fdene
 boundu(9) = 1.2
-ixc = 12 * oacdcp
+*ixc = 12 * oacdcp
 ixc = 13 * tfcth
 boundl(13) = 1.4
 ixc = 14 * fwalld
@@ -331,7 +331,7 @@ tinstf   = 0.008 * Ground insulation thickness surrounding winding pack (m)
 tmargmin = 1.500 * Minimum allowable temperature margin (cs and tf coils) (k)
 vdalw    = 10.00 * Max voltage across tf coil during quench (kv)
 vftf     = 0.300 * Coolant fraction of tfc 'cable' (i_tf_sup=1); or of tfc leg (i_tf_sup=0)
-isumattf = 5
+i_tf_sc_mat = 5
 *strncon = -0.0066
 
 n_pancake = 20
