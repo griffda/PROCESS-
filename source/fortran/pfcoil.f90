@@ -1785,7 +1785,7 @@ contains
 
 		use error_handling, only: fdiags, idiags, report_error
     use superconductors, only: jcrit_nbti, wstsc, jcrit_rebco, bi2212, &
-      itersc, current_sharing_rebco
+      itersc, current_sharing_rebco, Gl_nbti
 		use tfcoil_variables, only: tmargmin_cs, temp_margin, b_crit_upper_nbti
 		use maths_library, only: variable_error, secant_solve
     implicit none

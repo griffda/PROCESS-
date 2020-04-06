@@ -2994,7 +2994,8 @@ subroutine tfspcall(outfile,iprint)
         tmargtf, thwcndut, conductor_width, fcutfsu, jwdgcrt, tdmptf, cpttf, &
         ritfc, jwptf, bmaxtfrp, tcritsc, acstf, strncon_tf, fhts, bcritsc, &
         i_tf_sc_mat, b_crit_upper_nbti
-    use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, jcrit_nbti, croco, bi2212
+    use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, jcrit_nbti, croco, bi2212,&
+    GL_nbti
     use global_variables, only: run_tests
     use constants, only: pi
     implicit none
