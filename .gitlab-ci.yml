@@ -415,6 +415,7 @@ pages:
   before_script:
     - "export LOGNAME=root"
     - export LANG=C.UTF-8
+    - export LC_ALL=C.UTF-8
     # Python3 uses the locale to choose the file encoding it uses
     # Without this it will use ASCII encoding and Ford will fail
   when: on_success
@@ -454,5 +455,6 @@ pages:
     - ls ../public
     
   artifacts:
+    expire_in: 1 week
     paths:
     - public

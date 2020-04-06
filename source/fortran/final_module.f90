@@ -19,10 +19,13 @@ subroutine final(ifail)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use process_output
-  use numerics
-  use output_module!, only:output
-  use constraints
+  use constants, only: mfile, nout, iotty
+  use process_output, only: ovarre, oheadr, ocmmnt, osubhd, oblnkl, &
+    int_to_string3
+  use numerics, only: nfev1, ncalls, xcm, ioptimz, icc, nineqns, nviter, &
+    ipeqns, nvar, neqns, lablcc, rcm
+  use output_module, only: output 
+  use constraints, only: constraint_eqns 
   implicit none
 
   !  Arguments

@@ -12,15 +12,6 @@ module vacuum_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  use build_variables
-  use constants
-  use error_handling
-  use physics_variables
-  use process_output
-  use tfcoil_variables
-  use times_variables
-  use vacuum_variables
-
   implicit none
 
   private
@@ -41,6 +32,15 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: ddwi, gapds, rsldi, scrapli, scraplo, shldith, &
+      shldoth, tfcth
+    use physics_variables, only: dene, idivrt, powfmw, qfuel, rmajor, rminor, &
+      sarea, vol, afuel
+    use tfcoil_variables, only: n_tf
+    use times_variables, only: tdwell
+    use vacuum_variables, only: dlscal, niterpump, nvduct, vacdshm, &
+      vacuum_model, vcdimax, vpumpn
+    use constants, only: umass
     implicit none
 
     !  Arguments
@@ -60,7 +60,7 @@ contains
     !  Total fuel gas load (kg/s)
     !  2 nuclei * nucleus-pairs/sec * mass/nucleus
 
-! MDK Check this!!
+    ! MDK Check this!!
     gasld = 2.0D0*qfuel * afuel*umass
 
     if (vacuum_model == 'old') then
@@ -87,6 +87,13 @@ contains
     !! outfile : input integer : Fortran output unit identifier
     !! npump : output real : number of pumps for pumpdown and steady-state
 
+    use physics_variables, only: qfuel, sarea
+    use process_output, only: ovarre, ovarst, ocmmnt, oheadr
+    use tfcoil_variables, only: n_tf
+    use times_variables, only: tdwell
+    use vacuum_variables, only: outgasfactor, outgasindex, pbase, &
+      pumpareafraction, pumpspeedfactor, pumpspeedmax, pumptp, vacuum_model
+    
     implicit none
 
     !  Arguments
@@ -176,6 +183,12 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use error_handling, only: fdiags, report_error
+    use physics_variables, only: powfmw, te
+    use process_output, only: ovarre, oblnkl, ovarin, osubhd, ocmmnt, oheadr
+    use times_variables, only: tramp
+    use vacuum_variables, only: dwell_pump, ntype, pbase, prdiv, rat, tn
+		use constants, only: mfile, nout, pi
     implicit none
 
     !  Arguments
@@ -469,7 +482,7 @@ contains
        call oblnkl(outfile)
        call ocmmnt(outfile,'Vacuum pumping ducts are space limited.')
        write(outfile,10) d1max
-10     format(' Maximum duct diameter is only ',f8.2,'m')
+       10 format(' Maximum duct diameter is only ',f8.2,'m')
        call ocmmnt(outfile,'Conductance is inadequate.')
        call oblnkl(outfile)
     end if
@@ -505,7 +518,7 @@ contains
     call ovarre(outfile,'Number of pumps','(pumpn)',pumpn, 'OP ')
     call oblnkl(outfile)
     write(outfile,20) ipump
-20  format(' The vacuum system uses ',a5,'pumps')
+    20 format(' The vacuum system uses ',a5,'pumps')
 
   end subroutine vacuum
 

@@ -17,11 +17,7 @@ module impurity_radiation_module
   !! Kallenbach et al., Plasma Phys. Control. Fus. 55(2013) 124041
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use constants
-  use error_handling
-  use profiles_module
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   private
@@ -237,6 +233,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use error_handling, only: idiags, report_error
     implicit none
 
     !  Arguments
@@ -331,6 +328,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: idiags, report_error
     implicit none
 
     !  Arguments
@@ -411,6 +409,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: idiags, report_error
     implicit none
 
     integer :: z2index
@@ -452,6 +451,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: report_error 
     implicit none
 
     integer :: element2index
@@ -582,6 +582,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: fdiags, report_error
     implicit none
 
     real(dp) :: pimpden

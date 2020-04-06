@@ -41,12 +41,9 @@
 !
 !CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
-        use build_variables
-        use fispact_variables
-        use fwbs_variables
-        use physics_variables
-        use process_output
-        use pulse_variables
+  use fispact_variables, only: bliact, bligdr, blihkw, bloact, blogdr, &
+    blohkw, fwiact, fwigdr, fwihkw, fwoact, fwogdr, fwohkw, bliizp, &
+    blimzp, bloizp, blomzp, fwiizp, fwimzp, fwoizp, fwomzp
 
 !  Arguments
       INTEGER IPRINT

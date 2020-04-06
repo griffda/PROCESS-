@@ -32,21 +32,21 @@ program process
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use error_handling, only: show_errors
+  use process_input, only: nin
+  use scan_module, only: scan
+  use main_module, only: runtests, eqslv
+  use init_module, only: init
+  use final_module, only: final
+  use kallenbach_module, only: kallenbach_testing, kallenbach_scan
+  use divertor_kallenbach_variables, only: kallenbach_scan_switch, &
+    kallenbach_tests
+  use constants, only: iotty, mfile, nout, nplot, opt_file, vfile
+  use process_output, only: oblnkl, ostars, ocentr, osubhd, ocmmnt, oheadr
+  use numerics, only: ioptimz
+  use global_variables, only: output_prefix, fileprefix, run_tests, verbose
+  
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  use error_handling
-  use global_variables
-  use process_input
-  use process_output
-  use scan_module
-  use numerics
-  use divertor_Kallenbach_variables, only: kallenbach_tests, kallenbach_scan_switch
-  use main_module
-!  use output_module
-  use init_module
-  use final_module
-  use kallenbach_module
-  use hare, only: hare_calc
-  use mode
   implicit none
 
   !  Arguments
