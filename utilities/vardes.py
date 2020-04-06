@@ -4,14 +4,16 @@ Ford outputs a project object that contains information about the Fortran source
 code. This module uses that object to create variable descriptions in 
 markdown format, which can then be used by mkdocs to create the variable 
 descriptions page on the gitpages site.
+
+This script is always called from Ford; when the cmake "dicts" target is run
+from the process home dir, Ford's working dir is the process/lib dir.
 """
 from collections import OrderedDict
 import re
 
-# Assume the script is being run from the Process root dir
-# This is ok as this module is only run from the cmake "dicts" target, which 
-# must be run from the Process root dir
-MARKDOWN_FILE_PATH = "documentation/proc-pages/vardes.md"
+MARKDOWN_FILE_PATH = "../documentation/proc-pages/vardes.md"
+# Relative to the process/lib dir, as this module is being called from Ford 
+# in cmake "dicts"
 
 TITLE = "# PROCESS Variable Descriptions\n---\n"
 
