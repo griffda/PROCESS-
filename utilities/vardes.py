@@ -6,13 +6,13 @@ markdown format, which can then be used by mkdocs to create the variable
 descriptions page on the gitpages site.
 
 This script is always called from Ford; when the cmake "dicts" target is run
-from the process home dir, Ford's working dir is the process/lib dir.
+from the process home dir, Ford's working dir is also the process home dir.
 """
 from collections import OrderedDict
 import re
 
-MARKDOWN_FILE_PATH = "../documentation/proc-pages/vardes.md"
-# Relative to the process/lib dir, as this module is being called from Ford 
+MARKDOWN_FILE_PATH = "documentation/proc-pages/vardes.md"
+# Relative to the process home dir, as this module is being called from Ford 
 # in cmake "dicts"
 
 TITLE = "# PROCESS Variable Descriptions\n---\n"
