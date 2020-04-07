@@ -1385,7 +1385,7 @@ if (inp0%contrpovr.gt.0.) inp0%q_control=inp0%contrpovr*geom%r
 !PROCESS function
 	ne_av = trapz(nepr*dv)/v(nx)*1.d19
 	nela=sum(nepr)/nx*1.d19
-	call pthresh(ne_av,nela,btor,rpmajor,elong,vprime(nx)*gradro(nx),amain,geom%A,PLH_th) !PROCESS function
+	call pthresh(ne_av,nela,btor,rpmajor,elong,vprime(nx)*gradro(nx),amain,asppect,PLH_th) !PROCESS function
 !!!
 
 !PLASMOD function
