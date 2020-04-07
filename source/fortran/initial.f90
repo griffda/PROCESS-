@@ -9,11 +9,39 @@ subroutine initial
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use process_output
-    use stellarator_module
-    use stellarator_variables
-    use numerics
-    use define_iteration_variables
+    use stellarator_module, only: stinit
+    use stellarator_variables, only: istell
+    use define_iteration_variables, only: init_itv_1, init_itv_2, init_itv_3, &
+        init_itv_4, init_itv_5, init_itv_6, init_itv_7, init_itv_8, init_itv_9, &
+        init_itv_10, init_itv_11, init_itv_12, init_itv_13, init_itv_14, init_itv_15, &
+        init_itv_16, init_itv_17, init_itv_18, init_itv_19, init_itv_20, init_itv_21, &
+        init_itv_23, init_itv_25, init_itv_26, init_itv_27, init_itv_28, init_itv_29, &
+        init_itv_30, init_itv_31, init_itv_32, init_itv_33, init_itv_34, init_itv_35, &
+        init_itv_36, init_itv_37, init_itv_38, init_itv_39, init_itv_40, init_itv_41, &
+        init_itv_42, init_itv_44, init_itv_45, init_itv_46, init_itv_47, init_itv_48, &
+        init_itv_49, init_itv_50, init_itv_51, init_itv_52, init_itv_53, init_itv_54, &
+        init_itv_56, init_itv_57, init_itv_58, init_itv_59, init_itv_60, init_itv_61, &
+        init_itv_62, init_itv_63, init_itv_64, init_itv_65, init_itv_66, init_itv_67, &
+        init_itv_68, init_itv_69, init_itv_70, init_itv_71, init_itv_72, init_itv_73, &
+        init_itv_74, init_itv_75, init_itv_79, init_itv_81, init_itv_82, init_itv_83, &
+        init_itv_84, init_itv_85, init_itv_86, init_itv_89, init_itv_90, init_itv_91, &
+        init_itv_92, init_itv_93, init_itv_94, init_itv_95, init_itv_96, init_itv_97, &
+        init_itv_98, init_itv_102, init_itv_103, init_itv_104, init_itv_105, &
+        init_itv_106, init_itv_107, init_itv_108, init_itv_109, init_itv_110, &
+        init_itv_111, init_itv_112, init_itv_113, init_itv_114, init_itv_115, &
+        init_itv_116, init_itv_117, init_itv_118, init_itv_119, init_itv_120, &
+        init_itv_121, init_itv_122, init_itv_123, init_itv_124, init_itv_125, &
+        init_itv_126, init_itv_127, init_itv_128, init_itv_129, init_itv_130, &
+        init_itv_131, init_itv_132, init_itv_133, init_itv_134, init_itv_135, &
+        init_itv_136, init_itv_137, init_itv_138, init_itv_139, init_itv_140, &
+        init_itv_141, init_itv_142, init_itv_143, init_itv_144, init_itv_145, &
+        init_itv_146, init_itv_147, init_itv_148, init_itv_149, init_itv_150, &
+        init_itv_151, init_itv_152, init_itv_153, init_itv_154, init_itv_155, &
+        init_itv_156, init_itv_157, init_itv_158, init_itv_159, init_itv_160, &
+        init_itv_161, init_itv_162, init_itv_163, init_itv_164, init_itv_165, &
+        init_itv_166, init_itv_167, init_itv_168, init_itv_169, init_itv_170, &
+        init_itv_171, init_itv_172
+    use, intrinsic :: iso_fortran_env, only: dp=>real64
 
     implicit none
 
@@ -106,6 +134,7 @@ subroutine initial
     call init_itv_73
     call init_itv_74
     call init_itv_75
+
     
     
     
@@ -199,6 +228,8 @@ subroutine initial
     call init_itv_168
     call init_itv_169
     call init_itv_170
+    call init_itv_171
+    call init_itv_172
 
 
     !    call init_itv_1
@@ -347,8 +378,8 @@ subroutine initial
     !    !!  <LI> (74) scraplo
     !    lablxc(75) = 'tfootfi       '; boundl(75) = 0.200D0; boundu(75) = 5.000D0
     !    !!  <LI> (75) tfootfi
-    !    !!  <LI> (77) NOT USED
     !    !!  <LI> (76) NOT USED
+    !    !!  <LI> (77) NOT USED
     !    !!  <LI> (78) NOT USED
     !    !!  <LI> (79) fbetap (f-value for equation 48)
     !    lablxc(79) = 'fbetap        '; boundl(79) = 0.001D0; boundu(79) = 1.000D0
@@ -494,6 +525,10 @@ subroutine initial
     !    !!  <LI> (153) fpdivlim : F-value for minimum pdivt (con. 80)
     !    lablxc(154) = 'fpdivlim      '; boundl(154) = 0.001D0; boundu(154) = 1.000D0
     !    !!  <LI> (154) fne0 : F-value for ne(0) > ne(ped) (con. 81)</UL>
+    !    lablxc(172) = 'f_avspace       '; boundl(172) = 0.0010D0; boundu(172) = 1.000D0
+    !    !!  <LI> (172) f_avspace
+    !    lablxc(173) = 'fbetatry_lower       '; boundl(173) = 0.0010D0; boundu(173) = 1.000D0
+    !    !!  <LI> (173) fbetatry_lower
 
 
     !  Initialise stellarator parameters if necessary
@@ -517,10 +552,10 @@ subroutine devtyp
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use error_handling
-    use global_variables
-    use ife_variables
-    use stellarator_variables
+    use error_handling, only: report_error
+    use global_variables, only: icase
+    use ife_variables, only: ife
+    use stellarator_variables, only: istell
 
     implicit none
 
@@ -588,34 +623,43 @@ subroutine check
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables
-    use buildings_variables
-    use current_drive_variables
-    use divertor_kallenbach_variables
-    use error_handling
-    use fwbs_variables
-    use global_variables
-    use heat_transport_variables
-    use ife_variables
-    use impurity_radiation_module
-    use numerics
-    use pfcoil_variables
-    use physics_variables
-    use plasmod_variables
-    use process_output
-    use pulse_variables
-    use reinke_variables
-    use tfcoil_variables
-    use stellarator_variables
-    use sctfcoil_module
-    use vacuum_variables
+    use build_variables, only: blnkith, bore, gapoh, ohcth, precomp
+    use buildings_variables, only: esbldgm3, triv
+    use current_drive_variables, only: gamcd, iefrf, irfcd
+    use divertor_kallenbach_variables, only: impurity_enrichment, kallenbach_switch
+    use error_handling, only: errors_on, idiags, fdiags, report_error
+    use fwbs_variables, only: breeder_multiplier, iblanket, vfcblkt, vfpblkt, &
+        iblnkith
+    use global_variables, only: icase
+    use heat_transport_variables, only: trithtmw
+    use ife_variables, only: ife
+    use impurity_radiation_module, only: nimp, impurity_arr, fimp
+    use numerics, only: ixc, icc, ioptimz, neqns, nineqns, nvar, boundl, &
+        boundu
+    use pfcoil_variables, only: ipfres, ngrp, pfclres, ipfloc, ncls
+    use physics_variables, only: aspect, eped_sf, fdeut, fgwped, fhe3, &
+        fgwsep, ftrit, ibss, i_single_null, icurr, ieped, idivrt, ishape, &
+        iradloss, isc, ipedestal, ilhthresh, itart, nesep, rhopedn, rhopedt, &
+        rnbeam, ifispact, neped, te, tauee_in, tesep, teped
+    use plasmod_variables, only: plasmod_contrpovr, plasmod_i_equiltype, &
+        plasmod_i_modeltype, plasmod_contrpovs
+    use pulse_variables, only: lpulse
+    use reinke_variables, only: fzactual, impvardiv
+    use tfcoil_variables, only: casthi, casthi_is_fraction, casths, i_tf_sup, &
+        tcoolin, tcpav, tfc_sidewall_is_fraction, tmargmin, tmargmin_cs, &
+        tmargmin_tf, eff_tf_cryo, eyoung_ins, i_tf_bucking, i_tf_shape, &
+        n_tf_graded_layers, n_tf_stress_layers, tlegav
+    use stellarator_variables, only: istell
+    use sctfcoil_module, only: initialise_cables
+    use vacuum_variables, only: vacuum_model
+    use, intrinsic :: iso_fortran_env, only: dp=>real64
 
     implicit none
 
     !  Local variables
 
     integer :: i,j,k,imp
-    real(kind(1.0D0)) :: fsum
+    real(dp) :: fsum
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -628,7 +672,6 @@ subroutine check
     end if
 
     !  Check that sufficient elements of ixc and icc have been specified
-
     if ( any(ixc(1:nvar) == 0) ) then
         idiags(1) = nvar
         call report_error(139)
@@ -641,7 +684,6 @@ subroutine check
     end if
 
     !  Deprecate constraints 3 and 4
-
     if ( any(icc(1:neqns+nineqns) == 3) ) then
         call report_error(162)
         write(*,*) 'PROCESS stopping'
@@ -653,6 +695,7 @@ subroutine check
         write(*,*) 'PROCESS stopping'
         stop
     end if
+
 
     ! MDK Report error if constraint 63 is used with old vacuum model
     if (any(icc(1:neqns+nineqns) == 63).and.(vacuum_model.ne.'simple') ) then
@@ -669,7 +712,6 @@ subroutine check
     end if
 
     !  Fuel ion fractions must add up to 1.0
-
     if (abs(1.0D0 - fdeut - ftrit - fhe3) > 1.0D-6) then
         fdiags(1) = fdeut; fdiags(2) = ftrit ; fdiags(3) = fhe3
         call report_error(36)
@@ -1084,7 +1126,6 @@ subroutine check
     ! ------------------------------------
 
     !  Pulsed power plant model
-
     if (lpulse == 1) then
         icase = 'Pulsed tokamak model'
     else
@@ -1093,7 +1134,6 @@ subroutine check
 
     !  Ensure minimum cycle time constraint is turned off
     !  (not currently available, as routine thrmal has been commented out)
-
     if ( any(icc == 42) ) then
         call report_error(164)
     end if
@@ -1105,17 +1145,83 @@ subroutine check
 
     ! TF coil
     ! -------
+    ! TF stress model not defined of r_tf_inboard = 0
+    ! -> If bore + gapoh + ohcth = 0 and fixed and stress constraint is used
+    !    Generate a lvl 3 error proposing not to use any stress constraints
+    if (       ( .not. ( any(ixc == 16 ) .or. any(ixc == 29 ) .or. any(ixc == 42 ) ) ) & ! No bore,gapoh, ohcth iteration  
+         .and. ( abs(bore + gapoh + ohcth + precomp) < epsilon(bore) )                 & ! bore + gapoh + ohcth = 0
+         .and. ( any(icc == 31) .or. any(icc == 32) ) ) then                                                     ! Stress constraint (31) is used 
+
+        call report_error(246)
+        stop
+    end if
+     
+    ! bucking cylinder default option setting
+    !  - bucking (casing) for SC i_tf_bucking ( i_tf_bucking = 1 )
+    !  - No bucking for copper magnets ( i_tf_bucking = 0 )
+    !  - Bucking for aluminium magnets ( i_tf_bucking = 1 )
+    if ( i_tf_bucking == -1 ) then
+        if ( i_tf_sup == 0 ) then
+            i_tf_bucking = 0
+        else
+            i_tf_bucking = 1
+        end if
+    end if 
+
+    ! Error indicating that the buck and wedge solution is not yet implemented
+    if ( i_tf_bucking == 2 ) then
+        call report_error(247)
+        stop
+    end if
+
+    ! Number of stress calculation layers
+    n_tf_stress_layers = i_tf_bucking + n_tf_graded_layers
 
     ! If TFC sidewall has not been set by user
     if(casths<0.1d-10) tfc_sidewall_is_fraction = .true.
     ! If inboard TF coil case plasma side thickness has not been set by user
     if(casthi<0.1d-10) casthi_is_fraction = .true.
 
-    ! Issue #514 Radial dimensions of inboard leg
-    ! Ensure that tfcth is defined if thkwp is an iteration variable (140)
-    ! if (any(ixc(1:nvar) == 140) ) then
-    !     tfcth = thkwp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
-    ! endif
+    ! Setting the default cryo-plants efficiencies
+    !-!
+    if ( abs(eff_tf_cryo + 1.0D0) < epsilon(eff_tf_cryo) ) then 
+        
+        ! The ITER cyoplant efficiency is used for SC
+        if ( i_tf_sup == 1 ) then
+            eff_tf_cryo = 0.13D0
+
+        ! Strawbrige plot extrapolation is used for Cryo-Al
+        else if ( i_tf_sup == 2 ) then
+            eff_tf_cryo = 0.40D0
+        end if
+    
+    ! Cryo-plane efficiency must be in [0-1.0]
+    else if ( eff_tf_cryo >  1.0D0 .or. eff_tf_cryo < 0.0D0 ) then
+        call report_error(248)
+        stop
+    end if
+    !-!  
+
+    ! Setting up insulation layer young modulae default values [Pa]
+    !-!
+    if ( abs(eyoung_ins - 1.0D8 ) < epsilon(eyoung_ins) ) then
+
+        ! Copper magnets, no insulation material defined
+        ! But use the ITER design by default
+        if ( i_tf_sup == 0 ) then
+            eyoung_ins = 20.0D9
+
+        ! SC magnets 
+        ! Value from DDD11-2 v2 2 (2009)
+        else if ( i_tf_sup == 1 ) then
+            eyoung_ins = 20.0D9
+        
+        ! Cryo-aluminum magnets (Kapton polymer)
+        else if ( i_tf_sup == 2 ) then
+            eyoung_ins = 2.5D9
+        end if
+    end if
+    !-!
 
     !  PF coil resistivity is zero if superconducting
     if (ipfres == 0) pfclres = 0.0D0

@@ -14,20 +14,7 @@ module build_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use build_variables
-  use constants
-  use current_drive_variables
-  use divertor_variables
-  use error_handling
-  use fwbs_variables
-  use heat_transport_variables
-  use maths_library
-  use pfcoil_variables
-  use physics_variables
-  use process_output
-
-  use tfcoil_variables
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   private
@@ -48,7 +35,29 @@ contains
     !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use numerics, only: ixc, nvar
+    use build_variables, only: sigallpc, r_tf_outboard_mid, vgap2, ddwex, &
+      shldlth, tftsgap, dr_tf_inner_bore, blnkith, thshield, rsldi, blnkoth, &
+      rsldo, tfcth, tfthko, vgaptop, blnktth, gapsto, vgap, vvblgap, &
+      r_vv_inboard_out, fwareaob, tfoffset, shldtth, rbld, iprecomp, &
+      r_tf_inboard_mid, shldtth, blbuith, r_vv_inboard_out, tfcth, &
+      gapsto, vgaptop, precomp, r_tf_inboard_mid, gapomin, vvblgap, &
+      fwareaob, blnktth, rbld, blnkoth, tfoffset, iprecomp, plsepo, tfthko, &
+      rsldo, vgap, gapoh, fwoth, ohcth, shldoth, scraplo, fwith, blbpith, &
+      tfootfi, blbuoth, gapds, fwareaib, fseppc, scrapli, blbmith, shldith, &
+      ddwi, fwarea, blbpoth, blbmoth, fcspc, bore, r_cp_top, r_sh_inboard_out
+    use constants, only: mfile, nout, pi
+    use current_drive_variables, only: beamwd
+    use divertor_variables, only: divfix
+    use error_handling, only: idiags, fdiags, report_error
+    use fwbs_variables, only: fwbsshape, blktmodel, fhcd, fdiv
+    use maths_library, only: eshellarea, dshellarea
+    use pfcoil_variables, only: ohhghf
+    use physics_variables, only: itart, i_single_null, idivrt, kappa, triang, &
+      rminor, rmajor
+    use process_output, only: ocmmnt, oheadr, ovarre, ovarin, obuild, oblnkl
+    use tfcoil_variables, only: ripple, tinstf, wwp1, drtop, i_tf_sup, n_tf, &
+      thkwp, ripmax, thkcas, tfinsgap, casthi
     implicit none
 
     !  Arguments
@@ -58,8 +67,8 @@ contains
     !  Local variables
 
 
-    real(kind(1.0D0)) :: hbot,hfw,htop,r1,r2,r3,radius,r_tf_outboard_midl,vbuild, rbldtotf, deltf, vbuild1
-    real(kind(1.0D0)) :: fwtth
+    real(dp) :: hbot,hfw,htop,r1,r2,r3,radius,r_tf_outboard_midl,vbuild, rbldtotf, deltf, vbuild1
+    real(dp) :: fwtth
 
     integer :: ripflag = 0
 
@@ -508,7 +517,11 @@ contains
     !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use build_variables, only: shldtth, vgap2, fwoth, vgap, vvblgap, hpfdif, &
+      tfcth, vgaptop, hpfu, thshield, fwith, tftsgap, dh_tf_inner_bore, &
+      shldlth, hmax, blnktth, ddwi
+		use divertor_variables, only: divfix
+		use physics_variables, only: rminor, i_single_null, kappa
     implicit none
 
     !  Arguments
@@ -517,7 +530,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: divht
+    real(dp) :: divht
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -569,25 +582,29 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use build_variables, only: rspo, plleno, tfoffset, plsepi, plleni, plsepo
+		use divertor_variables, only: betao, betai
+		use physics_variables, only: itart, rmajor, rminor, idivrt, kappa, triang
+		use process_output, only: ocmmnt, oblnkl, ovarrf, oheadr
     implicit none
 
     !  Arguments
 
     integer, intent(in) :: iprint,outfile
 
-    real(kind(1.0D0)), intent(out) :: divht
+    real(dp), intent(out) :: divht
 
     !  Local variables
 
-    !real(kind(1.0D0)), parameter :: soleno = 0.2D0  !  length along outboard divertor
+    !real(dp), parameter :: soleno = 0.2D0  !  length along outboard divertor
     !  plate that scrapeoff hits
-    real(kind(1.0D0)) :: kap,thetao, rci, rco, thetai
-    ! real(kind(1.0D0)) :: yspointo,xspointo,yprimeb,xpointo, tri, rprimeo, phio
-    ! real(kind(1.0D0)) :: denomo, alphad
-    real(kind(1.0d0)) :: triu, tril, rxpt, zxpt
-    real(kind(1.0d0)) :: rspi, zspi, zspo, rplti, zplti
-    real(kind(1.0d0)) :: rplbi, zplbi, rplto, zplto, rplbo, zplbo
-    real(kind(1.0d0)) :: ptop_radial,ptop_vertical
+    real(dp) :: kap,thetao, rci, rco, thetai
+    ! real(dp) :: yspointo,xspointo,yprimeb,xpointo, tri, rprimeo, phio
+    ! real(dp) :: denomo, alphad
+    real(dp) :: triu, tril, rxpt, zxpt
+    real(dp) :: rspi, zspi, zspo, rplti, zplti
+    real(dp) :: rplbi, zplbi, rplto, zplto, rplbo, zplbo
+    real(dp) :: ptop_radial,ptop_vertical
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -826,12 +843,12 @@ contains
 
   !   !  Arguments
 
-  !   real(kind(1.0D0)), intent(in) :: ripmax,rmajor,rminor,r_tf_outboard_mid,n_tf
-  !   real(kind(1.0D0)), intent(out) :: ripple,r_tf_outboard_midl
+  !   real(dp), intent(in) :: ripmax,rmajor,rminor,r_tf_outboard_mid,n_tf
+  !   real(dp), intent(out) :: ripple,r_tf_outboard_midl
 
   !   !  Local variables
 
-  !   real(kind(1.0D0)) :: prip,rotrp,pripc,coeff
+  !   real(dp) :: prip,rotrp,pripc,coeff
 
   !   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -884,17 +901,19 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use physics_variables, only: rminor, rmajor
+		use tfcoil_variables, only: tinstf, wwp1, n_tf, tftort, casths
     implicit none
 
     !  Arguments
 
     integer, intent(out) :: flag
-    real(kind(1.0D0)), intent(in) :: ripmax,r_tf_outboard_mid
-    real(kind(1.0D0)), intent(out) :: ripple,r_tf_outboard_midmin
+    real(dp), intent(in) :: ripmax,r_tf_outboard_mid
+    real(dp), intent(out) :: ripple,r_tf_outboard_midmin
 
     !  Local variables
 
-    real(kind(1.0D0)) :: w, x, c1, c2, n
+    real(dp) :: w, x, c1, c2, n
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -948,14 +967,21 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use build_variables, only: r_tf_outboard_mid, tfthko
+		use constants, only: twopi
+    use current_drive_variables, only: rtanbeam, rtanmax, nbshield, beamwd, &
+      frbeam
+		use error_handling, only: fdiags, report_error
+		use physics_variables, only: rmajor
+		use tfcoil_variables, only: tftort, n_tf
     implicit none
 
     !  Arguments
 
     !  Local variables
 
-    real(kind(1.0D0)) :: a,b,c,d,e,f,g,h
-    real(kind(1.0D0)) :: alpha,eps,theta,phi,omega
+    real(dp) :: a,b,c,d,e,f,g,h
+    real(dp) :: alpha,eps,theta,phi,omega
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

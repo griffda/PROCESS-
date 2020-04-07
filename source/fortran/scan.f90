@@ -11,25 +11,7 @@ module scan_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use build_variables
-  use constraint_variables
-  use cost_variables
-  use current_drive_variables
-  use divertor_variables
-  use error_handling
-  use global_variables
-  use heat_transport_variables
-  use impurity_radiation_module
-  use numerics
-  use pfcoil_variables
-  use physics_variables
-  use pf_power_variables
-  use process_output
-  use tfcoil_variables
-  use fwbs_variables
-  use divertor_kallenbach_variables
-  use final_module
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   public
@@ -107,10 +89,10 @@ module scan_module
   integer :: nsweep_2 = 3
   !! nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
 
-  real(kind(1.0D0)), dimension(ipnscns) :: sweep = 0.0D0
+  real(dp), dimension(ipnscns) :: sweep = 0.0D0
   !! sweep(ipnscns) /../: actual values to use in scan
 
-  real(kind(1.0D0)), dimension(ipnscns) :: sweep_2 = 0.0D0
+  real(dp), dimension(ipnscns) :: sweep_2 = 0.0D0
   !! sweep_2(ipnscns) /../: actual values to use in 2D scan
 
 contains
@@ -131,6 +113,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use error_handling, only: idiags, errors_on, report_error
+    use final_module, only: final
+    use constants, only: nout
     implicit none
 
     ! Local variables
@@ -165,6 +150,31 @@ contains
     !! author: J Morris, UKAEA, Culham Science Centre
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use constraint_variables, only: taulimit
+    use cost_variables, only: cdirt, coe, coeoam, coefuelt, c222, ireactor, &
+      capcost, coecap, c221
+		use current_drive_variables, only: pheat, pinjmw, bootipf, enbeam, bigq
+		use divertor_variables, only: hldiv
+		use error_handling, only: errors_on
+		use heat_transport_variables, only: pgrossmw, pinjwp, pnetelmw
+		use impurity_radiation_module, only: fimp
+		use pfcoil_variables, only: whtpf
+		use pf_power_variables, only: srcktpm
+    use process_output, only: oblnkl, ostars, ovarin
+    use numerics, only: sqsumsq
+    use tfcoil_variables, only: tfareain, wwp2, strtf2, tfcmw, tcpmax, oacdcp, &
+      tfcpmw, fcutfsu, acond, fcoolcp, rcool, whttf, ppump, vcool, wwp1, n_tf, &
+		  thkwp
+		use fwbs_variables, only: tpeak
+    use divertor_kallenbach_variables, only: totalpowerlost, pressure0, &
+      ttarget, neratio, qtargettotal, neomp, psep_kallenbach, fmom
+		use final_module, only: final
+    use physics_variables, only: q, aspect, pradmw, dene, powfmw, btot, tesep, &
+      pdivt, ralpne, ten, betap, hfac, teped, palpnb, qlim, rmajor, wallmw, &
+      beta, betalim, bt, plascur
+    use global_variables, only: iscan_global, vlabel, icase, xlabel, &
+        verbose, maxcal, runtitle, run_tests
+    use constants, only: nout, mfile, nplot
     implicit none
 
     ! Local variables
@@ -172,7 +182,7 @@ contains
     integer, parameter :: noutvars = 83
     integer, parameter :: width = 110
     character(len=25), dimension(noutvars), save :: plabel
-    real(kind(1.0D0)), dimension(noutvars,ipnscns) :: outvar
+    real(dp), dimension(noutvars,ipnscns) :: outvar
     integer :: ifail, iscan, ivar
     logical :: first_call = .TRUE.
 
@@ -412,6 +422,31 @@ contains
     !! author: J Morris, UKAEA, Culham Science Centre
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use constraint_variables, only: taulimit
+    use cost_variables, only: cdirt, coe, coeoam, coefuelt, c222, ireactor, &
+      capcost, coecap, c221
+		use current_drive_variables, only: pheat, pinjmw, bootipf, enbeam, bigq
+		use divertor_variables, only: hldiv
+		use error_handling, only: errors_on
+		use heat_transport_variables, only: pgrossmw, pinjwp, pnetelmw
+		use impurity_radiation_module, only: fimp
+		use pfcoil_variables, only: whtpf
+		use pf_power_variables, only: srcktpm
+    use numerics, only: sqsumsq
+    use process_output, only: oblnkl, ostars, ovarin
+    use tfcoil_variables, only: tfareain, wwp2, strtf2, tfcmw, tcpmax, oacdcp, &
+      tfcpmw, fcutfsu, acond, fcoolcp, rcool, whttf, ppump, vcool, wwp1, n_tf, &
+		  thkwp
+		use fwbs_variables, only: tpeak
+    use divertor_kallenbach_variables, only: totalpowerlost, pressure0, &
+      ttarget, neratio, qtargettotal, neomp, psep_kallenbach, fmom
+		use final_module, only: final
+    use physics_variables, only: q, aspect, pradmw, dene, powfmw, btot, tesep, &
+      pdivt, ralpne, ten, betap, hfac, teped, palpnb, qlim, rmajor, wallmw, &
+      beta, betalim, bt, plascur
+    use global_variables, only: icase, iscan_global, vlabel, xlabel, xlabel_2, &
+        vlabel_2
+    use constants, only: nout, mfile, nplot
     implicit none
 
     !  Arguments
@@ -421,10 +456,10 @@ contains
     integer, parameter :: noutvars = 83
     integer, parameter :: width = 110
     character(len=25), dimension(noutvars), save :: plabel
-    real(kind(1.0D0)), dimension(noutvars,ipnscns) :: outvar
+    real(dp), dimension(noutvars,ipnscns) :: outvar
     integer :: ifail, iscan, ivar, iscan_1, iscan_2, iscan_R
     logical :: first_call = .TRUE.
-    real(kind(1.0D0)), dimension(ipnscns) :: sweep_1_vals, sweep_2_vals
+    real(dp), dimension(ipnscns) :: sweep_1_vals, sweep_2_vals
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -682,11 +717,26 @@ contains
     !! author: J Morris, UKAEA, Culham Science Centre
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use build_variables, only: blnkoth
+    use constraint_variables, only: fiooic, walalw, bmxlim, fqval, taulimit, &
+      gammax, tbrnmn, tbrmin, fjprot, pnetelin, powfmax
+		use cost_variables, only: cfactr, iavail
+		use current_drive_variables, only: rho_ecrh, bscfmax
+		use divertor_variables, only: hldivlim
+		use error_handling, only: idiags, report_error
+		use impurity_radiation_module, only: fimp, fimpvar, coreradius, impurity_arr
+    use physics_variables, only: kappa, dnbeta, te, aspect, ftar, bt, &
+      rad_fraction_sol, triang, rmajor, beamfus0, hfact
+    use numerics, only: epsvmc, boundu, boundl
+    use tfcoil_variables, only: tmargmin_tf, alstrtf, n_pancake, oacdcp, &
+      n_layer
+    use divertor_kallenbach_variables, only: lcon_factor, impurity_enrichment, &
+      target_spread, lambda_q_omp, qtargettotal, ttarget
     implicit none
 
     ! Arguments
     integer, intent(in) :: nwp, iscn
-    real(kind(1.0D0)), intent(in), dimension(ipnscns) :: swp
+    real(dp), intent(in), dimension(ipnscns) :: swp
     character(len=25), intent(out) :: vlab, xlab
 
     select case (nwp)
@@ -884,7 +934,11 @@ contains
   ! for ipedestal = 2 option
   !use plasmod_variables
   use plasmod_module
-
+  use global_variables, only: convergence_parameter
+  use constants, only: iotty, nout, mfile
+  use plasmod_variables, only: ped, radp, num, mhd, inp0, loss, i_flag, geom, &
+    comp
+  use physics_variables, only: ipedestal
   implicit none
 
   !  Arguments
@@ -892,8 +946,8 @@ contains
 
   !  Local variables
   integer :: ii,inn,iflag
-  real(kind(1.0D0)) :: summ,xcval,xmaxx,xminn,f,xnorm
-  real(kind(1.0D0)), dimension(ipeqns) :: con1, con2, err
+  real(dp) :: summ,xcval,xmaxx,xminn,f,xnorm
+  real(dp), dimension(ipeqns) :: con1, con2, err
   character(len=1), dimension(ipeqns) :: sym
   character(len=10), dimension(ipeqns) :: lab
   character(len=30) :: strfom

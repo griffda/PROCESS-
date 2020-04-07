@@ -12,24 +12,7 @@ module power_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use build_variables
-  use buildings_variables
-  use constants
-  use constraint_variables
-  use cost_variables
-  use current_drive_variables
-  use error_handling
-  use fwbs_variables
-  use heat_transport_variables
-  use pf_power_variables
-  use pfcoil_variables
-  use physics_variables
-  use process_output
-  use structure_variables
-  use tfcoil_variables
-  use times_variables
-  use primary_pumping_variables
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   private
@@ -64,13 +47,22 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use buildings_variables, only: tfcbv
+    use heat_transport_variables, only: tfacpd, etatf
+    use physics_variables, only: rmajor
+    use process_output, only: oheadr, ovarre
+    use tfcoil_variables, only: tflegmw, estotftgj, tfcpmw, rhotfleg, &
+        tflegres, vtfskv, jbus, tfbusl, tfbusmas, tfcmw, vtfkv, i_tf_sup, &
+        tfckw, presleg, dcopper, ritfc, cpttf, prescp, n_tf, rhotfbus, tfjtsmw, &
+        pres_joints
+    use constants, only: pi
     implicit none
 
     !  Arguments
     integer, intent(in) :: outfile,iprint
 
     !  Local variables
-    real(kind(1.0D0)) :: abus, tfbusres, ztot, tfbusmw, tfreacmw
+    real(dp) :: abus, tfbusres, ztot, tfbusmw, tfreacmw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -104,6 +96,7 @@ contains
        !  Resistive powers (MW):
        tfcpmw  = 1.0D-6 * prescp   !  inboard legs (called centrepost, CP for tart design)
        tflegmw = 1.0D-6 * presleg  !  outboard legs
+       tfjtsmw =  1.0D-6 * pres_joints  ! Joints 
        tfbusmw = 1.0D-6 * cpttf**2 * tfbusres  !  TF coil bus => Dodgy !
 
        !  TF coil reactive power
@@ -115,7 +108,7 @@ contains
        tfreacmw = 0.0D0
 
        !  Total power consumption (MW)
-       tfcmw = tfcpmw + tflegmw + tfbusmw + tfreacmw
+       tfcmw = tfcpmw + tflegmw + tfbusmw + tfreacmw + tfjtsmw
 
        !  Total steady state AC power demand (MW)
        tfacpd = tfcmw / etatf
@@ -173,7 +166,7 @@ contains
 
       !  Local variables
 
-      real(kind(1.0D0)) :: drarea,ettfmj,itfka
+      real(dp) :: drarea,ettfmj,itfka
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -199,24 +192,6 @@ contains
       !! for superconducting coils
       !! author: P J Knight, CCFE, Culham Science Centre
       !! author: P C Shipe, ORNL
-      !! outfile : input integer : output file unit
-      !! iprint : input integer : switch for writing to output (1=yes)
-      !! ntfc : input real : number of TF coils
-      !! ettfmj : input real : total stored energy of one TF coils, MJ
-      !! itfka : input real : design current for the TF coils, kA
-      !! rptfc : input real : resistance of a TF coil, ohms
-      !! vtfskv : input real : allowable voltage across a TF coil
-      !! during quench, kV
-      !! rmajor : input real : plasma major radius, m
-      !! tfckw : output real : available DC power for charging the
-      !! TF coils, kW
-      !! tfbusl : output real : total bus length of the TF coil
-      !! system, m
-      !! drarea : output real : approx. area needed for the energy dump
-      !! resistors, m2
-      !! tfcbv : output real : approx. vol needed for the TF coil power
-      !! supplies and DC circuit breakers, m3
-      !! tfacpd : output real : steady state TF coil AC power demand, MW
       !! This routine calculates the TF power conversion system
       !! parameters:  floor space, power supplies, bussing,
       !! coil protection equipment, and the associated controls
@@ -229,15 +204,52 @@ contains
 
       implicit none
 
-      !  Arguments
+      ! Inputs
+      ! ---
+      integer, intent(in) :: outfile
+      !! Output file unit
 
-      integer, intent(in) :: outfile, iprint
-      real(kind(1.0D0)), intent(in) :: ntfc,ettfmj,itfka,rptfc,vtfskv,rmajor
-      real(kind(1.0D0)), intent(out) :: tfckw,tfbusl,drarea,tfcbv,tfacpd
+      integer, intent(in) :: iprint
+      !! Switch for writing to output (1=yes)
+
+      real(dp), intent(in) :: ntfc
+      !! Number of TF coils
+      
+      real(dp), intent(in) :: ettfmj
+      !! Total stored energy of one TF coils [MJ]
+
+      real(dp), intent(in) :: itfka
+      !! Design current for the TF coils, kA
+      
+      real(dp), intent(in) :: rptfc
+      !! Resistance of a TF coil [ohm]
+
+      real(dp), intent(in) :: vtfskv
+      !! Allowable voltage across a TF coil during quench [kV]
+
+      real(dp), intent(in) :: rmajor
+      !! Plasma major radius [m]
+      ! ---
+
+      ! Outputs
+      ! ---
+      real(dp), intent(out) :: tfckw
+      !! Available DC power for charging the TF coils [kW]
+      
+      real(dp), intent(out) :: tfbusl
+      !! Total bus length of the TF coil system [m]
+
+      real(dp), intent(out) :: drarea
+      !! Approx. area needed for the energy dump resistors, [m2]
+
+      real(dp), intent(out) :: tfcbv
+      !! Approx. vol needed for the TF coil power supplies and DC circuit breakers [m3]
+
+      real(dp), intent(out) :: tfacpd
+      !! Steady state TF coil AC power demand, [MW]
 
       !  Local variables
-
-      real(kind(1.0D0)) :: albusa,albuswt,djmka,fspc1,fspc2,fspc3,ettfc, &
+      real(dp) :: albusa,albuswt,djmka,fspc1,fspc2,fspc3,ettfc, &
            ltfth,lptfcs,ncpbkr,ndumpr,nsptfc,ntfbkr,ntfpm,part1,part2, &
            part3,rcoils,rpower,rtfbus,rtfps,r1dump,r1emj,r1ppmw,tchghr, &
            tfackw,tfcfsp,tfcv,tfpmka,tfpmkw,tfpska,tfpsv,tfpmv,tftbv, &
@@ -261,163 +273,123 @@ contains
       end if
 
       !  Total steady state TF coil AC power demand (summed later)
-
       tfacpd = 0.0D0
 
       !  Stored energy of all TF coils, MJ
-
       ettfc = ntfc*ettfmj
 
       !  Inductance of all TF coils, Henries
-
       ltfth = 2.0D0*ettfc/itfka**2
 
       !  Number of circuit breakers
-
       ntfbkr = ntfc/ncpbkr
 
       !  Inductance per TF coil, Henries
-
       lptfcs = ltfth/ntfc
 
       !  Aluminium bus section area, sq cm
-
       albusa = itfka/djmka
 
       !  Total TF system bus length, m
-
       tfbusl = 8.0D0*pi*rmajor + &
            (1.0D0+ntfbkr)*(12.0D0*rmajor+80.0D0) + &
            0.2D0*itfka*sqrt(ntfc*rptfc*1000.0D0)
 
       !  Aluminium bus weight, tonnes
-
       albuswt = 2.7D0*albusa*tfbusl/1.0D4
 
       !  Total resistance of TF bus, ohms
-
       rtfbus = 2.62D-4*tfbusl/albusa
 
       !  Total voltage drop across TF bus, volts
-
       vtfbus = 1000.0D0*itfka*rtfbus
 
       !  Total resistance of the TF coils, ohms
-
       rcoils = ntfc*rptfc
 
       !  Total impedance, ohms
-
       ztotal = rtfbus+rcoils+ltfth/(3600.0D0*tchghr)
 
       !  Charging voltage for the TF coils, volts
-
       tfcv = 1000.0D0*itfka*ztotal
 
       !  Number of TF power modules
-
       ntfpm = (itfka * (1.0D0 + nsptfc) )/5.0D0
 
       !  TF coil power module voltage, volts
-
       tfpmv = rtfps*tfcv/(1.0D0+nsptfc)
 
       !  TF coil power supply voltage, volts
-
       tfpsv = rtfps*tfcv
 
       !  Power supply current, kA
-
       tfpska = rtfps*itfka
 
       !  TF power module current, kA
-
       tfpmka = rtfps*itfka/(ntfpm/(1.0D0+nsptfc))
 
       !  TF power module power, kW
-
       tfpmkw = tfpmv*tfpmka
 
       !  Available DC power for charging the TF coils, kW
-
       tfckw = tfpmkw*ntfpm
 
       !  Peak AC power needed to charge coils, kW
-
       tfackw = tfckw/0.9D0
 
       !  Resistance of dump resistor, ohms
-
       r1dump = nsptfc*vtfskv*ncpbkr/itfka
 
       !  Time constant, s
-
       ttfsec = lptfcs*ncpbkr/(r1dump*nsptfc+rptfc*(1.0D0-nsptfc))
 
       !  Number of dump resistors
-
       ndumpr = ntfbkr*4.0D0
 
       !  Peak power to a dump resistor during quench, MW
-
       r1ppmw = nsptfc*r1dump*(itfka/2.0D0)**2
 
       !  Energy to dump resistor during quench, MJ
-
       r1emj = nsptfc*ettfc/(ndumpr+0.0001D0)
 
       !  Total TF coil peak resistive power demand, MVA
-
       rpower = (ntfc*rptfc+rtfbus)*itfka**2
 
       !  Total TF coil peak inductive power demand, MVA
-
       xpower = ltfth/(3600.0D0*tchghr)*itfka**2
 
       !  Building space:
-
       !  Power modules floor space, m2
-
       part1 = fspc1*ntfpm*tfpmkw**0.667D0
 
       !  Circuit breakers floor space, m2
-
       part2 = fspc2*ntfbkr*(vtfskv*itfka)**0.667D0
 
       !  Load centres floor space, m2
-
       part3 = fspc3*(tfackw/(2.4D0*nsptfc+13.8D0*(1.0D0-nsptfc)))**0.667D0
 
       !  Power conversion building floor area, m2
-
       tfcfsp = part1 + part2 + part3
 
       !  Dump resistor floor area, m2
-
       drarea = 0.5D0*ndumpr*(1.0D0+r1emj)**0.667D0
 
       !  Total TF coil power conversion building volume, m3
-
       tfcbv = 6.0D0*tfcfsp
 
       !  TF coil AC inductive power demand, MW
-
       xpwrmw = xpower/0.9D0
 
       !  Total steady state AC power demand, MW
-
       tfacpd = tfacpd + rpower/etatf
-
       !  Total TF coil power conversion building floor area, m2
 
       tftsp = tfcfsp
-
       !  Total TF coil power conversion building volume, m3
 
       tftbv = tfcbv
 
       !  Output section
-
       if (iprint == 0) return
 
       call oheadr(outfile,'Superconducting TF Coil Power Conversion')
@@ -481,6 +453,17 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: iohcl
+    use heat_transport_variables, only: peakmva
+    use pf_power_variables, only: pfckts, maxpoloidalpower, peakpoloidalpower, &
+        spfbusl, poloidalpower, spsmva, vpfskv, ensxpfm, acptmax, srcktpm
+    use pfcoil_variables, only: ngc2, ngrp, cpt, pfwpmw, pfclres, ncirt, ncls, &
+        ric, etapsu, cptdin, curpfb, sxlg, turns, vf, rjconpf, rpf
+    use physics_variables, only: pohmmw, rmajor
+    use process_output, only: oheadr, ovarre, oblnkl, ocmmnt
+    use numerics, only: active_constraints, ioptimz
+    use times_variables, only: tim, intervallabel, timelabel, tohs
+    use constants, only: twopi, pi
     implicit none
 
     !  Arguments
@@ -489,15 +472,15 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(ngc2) :: albusa,pfbusr,cktr, &
+    real(dp), dimension(ngc2) :: albusa,pfbusr,cktr, &
          powpfii,vpfi,psmva,pfcr,rcktvm,rcktpm
-    real(kind(1.0D0)) :: pfbusl,powpfr,cptburn,delktim,powpfi, &
+    real(dp) :: pfbusl,powpfr,cptburn,delktim,powpfi, &
          powpfr2,ensxpf,engx,vpfij
         !  engxpc
-    real(kind(1.0D0)), save :: pfbuspwr
-    real(kind(1.0D0)), dimension(6) :: inductxcurrent,poloidalenergy
-    real(kind(1.0D0)), dimension(5) :: pfdissipation
-    real(kind(1.0D0)):: wall_plug_ohmicmw, pfpower, pfpowermw
+    real(dp), save :: pfbuspwr
+    real(dp), dimension(6) :: inductxcurrent,poloidalenergy
+    real(dp), dimension(5) :: pfdissipation
+    real(dp):: wall_plug_ohmicmw, pfpower, pfpowermw
     integer :: i,ic,ngrpt,ig,ipf,jjpf,jjpf2,jpf,time
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -749,6 +732,12 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use buildings_variables, only: efloor
+    use heat_transport_variables, only: baseel, crypmw, vachtmw, tfacpd, &
+        trithtmw, pinjwp, tlvpmw, peakmva, fcsht, fmgdmw, pwpm2, htpmw, pacpmw
+    use pf_power_variables, only: iscenr, srcktpm
+    use process_output, only: oheadr, ovarre, oblnkl
+    use constants, only: pi
     implicit none
 
     !  Arguments
@@ -757,7 +746,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: basemw,bdvmw,crymw,pheatingmw,pkwpm2,ppfmw,ptfmw
+    real(dp) :: basemw,bdvmw,crymw,pheatingmw,pkwpm2,ppfmw,ptfmw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -792,7 +781,7 @@ contains
     if (iscenr /= 2) pacpmw = pacpmw + fmgdmw
 
     !  Total baseline power to facility loads, MW
-    fcsht  = basemw + efloor*pkwpm2/1000.0D0
+    fcsht = basemw + efloor*pkwpm2/1000.0D0
 
     ! Estimate of the total low voltage power, MW
     ! MDK No idea what this is - especially the last term
@@ -842,14 +831,28 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use current_drive_variables, only: pinjmw, porbitlossmw, nbshinemw
+    use fwbs_variables, only: pnucblkt, pradfw, etahtp, praddiv, &
+        secondary_cycle, pnuccp, primary_pumping, ptfnuc, pnucshld, pradhcd, &
+        pnucdiv, pnucfw, pnuchcd
+    use heat_transport_variables, only: htpmw_shld, htpsecmw, pfwdiv, &
+        psecshld, crypmw, htpmw_min, nphx, htpmw_div, psechcd, helpow, &
+        htpmw_fw, pinjwp, pthermmw, psecdiv, etath, pinjht, iprimshld, htpmw, &
+        htpmw_blkt
+    use pf_power_variables, only: ensxpfm
+    use pfcoil_variables, only: ipfres
+    use physics_variables, only: pdivt, palpfwmw, ignite
+    use structure_variables, only: coldmass
+    use tfcoil_variables, only: tfsai, tcoolin, tmpcry, i_tf_sup, presleg, &
+        prescp, dtiocool, n_tf, cpttf, pres_joints, eff_tf_cryo
+    use times_variables, only: tpulse
+    use primary_pumping_variables, only: htpmw_fw_blkt
+    use constants, only: rmu0, pi
     implicit none
 
-    ! Cryo-aluminium coolant average temperature
-    real(kind(1.0D0)) :: t_tf_cryoal_cool_av = 0.0D0
-
-    ! Cryo-aluminium cryoplant power consumption
-    real(kind(1.0D0)) :: p_tf_cryoal_cryo = 0.0D0
-
+    real(dp) :: p_tf_cryoal_cryo = 0.0D0
+    !! Cryo-aluminium cryoplant power consumption
+    
     !------------------------------------------------------------------------------------
     !- Collate pumping powers
     !------------------------------------------------------------------------------------
@@ -965,7 +968,7 @@ contains
         ! Use 13% of ideal Carnot efficiency to fit J. Miller estimate
         ! Rem SK : This ITER efficiency is very low compare to the Strowbridge curve
         !          any reasons why? 
-        crypmw = 1.0D-6 * (293.0D0 - tmpcry)/(0.13D0*tmpcry) * helpow   
+        crypmw = 1.0D-6 * (293.0D0 - tmpcry)/(eff_tf_cryo*tmpcry) * helpow   
     end if
 
     ! Cryogenic aluminium 
@@ -974,9 +977,8 @@ contains
     ! Rem : Nuclear heating on the outer legs assumed to be negligible
     ! Rem : To be updated with 2 cooling loops for TART designs
     if ( i_tf_sup == 2 ) then
-        t_tf_cryoal_cool_av = tcoolin + 0.5D0*dtiocool
-        p_tf_cryoal_cryo = (293.0D0 - t_tf_cryoal_cool_av)/(0.4D0*t_tf_cryoal_cool_av) * &
-                           ( prescp + presleg + pnuccp * 1.0D6 )
+        p_tf_cryoal_cryo = (293.0D0 - tcoolin)/(eff_tf_cryo*tcoolin) * &
+                           ( prescp + presleg + pres_joints + pnuccp * 1.0D6 )
         crypmw = crypmw + 1.0D-6 * p_tf_cryoal_cryo
     end if
 
@@ -999,6 +1001,26 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constraint_variables, only: pnetelin
+    use cost_variables, only: ipnet, ireactor
+    use current_drive_variables, only: pinjmw
+    use fwbs_variables, only: emultmw, inuclear, pnucblkt, pradfw, qnuc, &
+        etahtp, emult, praddiv, fdiv, fhcd, secondary_cycle, pnuccp, pnucdiv, &
+        primary_pumping, ptfnuc, pnuchcd, pnucshld, pradhcd, pnucfw
+    use heat_transport_variables, only: htpmw_shld, htpmw_blkt, psecshld, &
+        fpumpshld, tturb, pnetelmw, fpumpdiv, fpumpblkt, vachtmw, htpmw_div, &
+        nphx, helpow, htpmw_fw, precircmw, pthermmw, fpumpfw, fcsht, &
+        iprimshld, pinjwp, fachtmw, pgrossmw, psechtmw, trithtmw, psechcd, &
+        tfacpd, htpmw, etath, crypmw, psecdiv, pinjht, htpsecmw
+    use pfcoil_variables, only: pfwpmw
+    use physics_variables, only: palpmw, ignite, pcoreradmw, pradmw, itart, &
+        pdivt, palpfwmw, idivrt, pohmmw, iradloss, powfmw, pchargemw, &
+        pscalingmw, falpha
+    use process_output, only: ovarin, ocmmnt, ovarrf, oheadr, ovarre, oblnkl, &
+        osubhd
+    use tfcoil_variables, only: ppump, i_tf_sup, tfcmw, tmpcry
+    use primary_pumping_variables, only: htpmw_fw_blkt
+    use constants, only: rmu0, mfile, pi
     implicit none
 
     !  Arguments
@@ -1007,7 +1029,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: cirpowfr, primsum, pinj, secsum, rejected_main, sum
+    real(dp) :: cirpowfr, primsum, pinj, secsum, rejected_main, sum
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1452,53 +1474,60 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use current_drive_variables, only: etacd
+    use heat_transport_variables, only: htpmw, pinjmax, crypmw, vachtmw, &
+        tfacpd, trithtmw, pinjwp, fachtmw, pgrossmw
+    use pf_power_variables, only: poloidalpower
+    use process_output, only: osubhd, oblnkl
+    use times_variables, only: tramp, tburn, theat, tdwell, tqnch, tohs
+    use constants, only: mfile
     implicit none
 
     ! Arguments
     integer, intent(in) :: outfile, iprint
 
     ! Local variables
-    real(kind(1.0D0)) :: t_cs, t_ip_up, t_heat, t_flat_top, t_ip_down, t_extra
+    real(dp) :: t_cs, t_ip_up, t_heat, t_flat_top, t_ip_down, t_extra
 
     ! Total continuous power
-    real(kind(1.0D0)), dimension(6) :: p_cont_tot
+    real(dp), dimension(6) :: p_cont_tot
 
     ! Total intermittent power
-    real(kind(1.0D0)), dimension(6) :: p_int_tot
+    real(dp), dimension(6) :: p_int_tot
 
     ! Power arrays
     ! Primary cooling power array (MW)
-    real(kind(1.0D0)), dimension(6) :: p_cooling
+    real(dp), dimension(6) :: p_cooling
 
     ! Vacuum system power array (MW)
-    real(kind(1.0D0)), dimension(6) :: p_vac
+    real(dp), dimension(6) :: p_vac
 
     ! Cyroplant system power array (MW)
-    real(kind(1.0D0)), dimension(6) :: p_cryo
+    real(dp), dimension(6) :: p_cryo
 
     ! Heating and current drive power array (MW)
-    real(kind(1.0D0)), dimension(6) :: p_hcd
+    real(dp), dimension(6) :: p_hcd
 
     ! Tritium system power array (MW)
-    real(kind(1.0D0)), dimension(6) :: p_tritium
+    real(dp), dimension(6) :: p_tritium
 
     ! Facilities power array (MW)
-    real(kind(1.0D0)), dimension(6) :: p_fac
+    real(dp), dimension(6) :: p_fac
 
     ! TF coil system power array (MW)
-    real(kind(1.0D0)), dimension(6) :: p_tf
+    real(dp), dimension(6) :: p_tf
 
     ! PF coil system power array (MW)
-    real(kind(1.0D0)), dimension(6) :: p_pf
+    real(dp), dimension(6) :: p_pf
 
     ! Gross electric power array
-    real(kind(1.0D0)), dimension(6) :: p_gross
+    real(dp), dimension(6) :: p_gross
 
     ! Net electric power array
-    real(kind(1.0D0)), dimension(6) :: p_net
+    real(dp), dimension(6) :: p_net
 
     ! Net electric power average
-    real(kind(1.0D0)) :: p_net_avg
+    real(dp) :: p_net_avg
 
     ! Times
     ! Central solenoid pre-magnetisation time (s)
@@ -1656,18 +1685,20 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use fwbs_variables, only: qnuc, inuclear
+    use constants, only: pi
     implicit none
 
     !  Arguments
 
     integer, intent(in) :: i_tf_sup
-    real(kind(1.0D0)), intent(in) :: coldmass,cpttf,ensxpfm,ptfnuc,n_tf, &
+    real(dp), intent(in) :: coldmass,cpttf,ensxpfm,ptfnuc,n_tf, &
          tfsai,tpulse
-    real(kind(1.0D0)), intent(out) :: helpow
+    real(dp), intent(out) :: helpow
 
     !  Local variables
 
-    !real(kind(1.0D0)) :: qac,qcl,qnuc,qss
+    !real(dp) :: qac,qcl,qnuc,qss
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1717,6 +1748,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use error_handling, only: fdiags, idiags, report_error
+    use fwbs_variables, only: iblanket, secondary_cycle, outlet_temp
+    use heat_transport_variables, only: tturb
+    use constants, only: pi
     implicit none
 
     !  Arguments

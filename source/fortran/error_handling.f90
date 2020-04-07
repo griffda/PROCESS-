@@ -24,10 +24,7 @@ module error_handling
   !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use fson_library
-  use process_output
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   private
@@ -61,12 +58,12 @@ module error_handling
   !!                 <LI> 3  severe (fatal) errors have occurred</UL>
 
   integer, parameter :: INT_DEFAULT = -999999
-  real(kind(1.0D0)), parameter :: FLT_DEFAULT = real(INT_DEFAULT, kind(1.0D0))
+  real(dp), parameter :: FLT_DEFAULT = real(INT_DEFAULT, kind(1.0D0))
 
   !  Arrays for diagnostic output
 
   integer, dimension(8) :: idiags = INT_DEFAULT
-  real(kind(1.0D0)), dimension(8) :: fdiags = FLT_DEFAULT
+  real(dp), dimension(8) :: fdiags = FLT_DEFAULT
 
   !  Individual error item
   !  int and float arrays may be useful to provide diagnostic information
@@ -75,7 +72,7 @@ module error_handling
      integer            :: level    !  severity level
      character(len=200) :: message  !  information string
      integer, dimension(8) :: idiags = INT_DEFAULT
-     real(kind(1.0D0)), dimension(8) :: fdiags = FLT_DEFAULT
+     real(dp), dimension(8) :: fdiags = FLT_DEFAULT
   end type error
 
   !  Individual element in an error list
@@ -112,6 +109,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use fson_library, only: fson_parse, fson_value, fson_get, fson_destroy 
     implicit none
 
     !  Arguments
@@ -248,7 +246,8 @@ contains
     !! McGraw-Hill, ISBN 0-07-115896-0
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use constants, only: iotty, nout
+    use process_output, only: oblnkl, oheadr, ocmmnt, ovarin 
     implicit none
 
     !  Arguments

@@ -52,7 +52,7 @@ The following options are available within the superconducting TF coil model
 
 ## Superconducting materials
 
-Switch `isumattf` specifies which superconducting material is to be used:
+Switch `i_tf_sc_mat` specifies which superconducting material is to be used:
 
 - `== 1` -- Nb$_3$Sn superconductor, ITER critical surface parameterization[^1], 
   standard critical values
@@ -64,13 +64,13 @@ Switch `isumattf` specifies which superconducting material is to be used:
 The fraction of copper present in the superconducting filaments is given by
 the value of variable `fcutfsu` (iteration variable number 59).
 
-For `isumattf = 2`, a technology adjustment factor `fhts` may be used to modify 
+For `i_tf_sc_mat = 2`, a technology adjustment factor `fhts` may be used to modify 
 the critical current density fit for the Bi-2212 superconductor, to describe the 
 level of technology assumed (i.e. to account for stress, fatigue, radiation, 
 AC losses, joints or manufacturing variations). The default value for `fhts` is 
 0.5 (a value of 1.0 would be very optimistic).
 
-For `isumattf = 4`, important superconductor properties may be input by the user 
+For `i_tf_sc_mat = 4`, important superconductor properties may be input by the user 
 as follows: the upper critical field at zero temperature and strain is set 
 using input parameter `bcritsc`, and the critical temperature at zero field and 
 strain is set using input parameter `tcritsc`.

@@ -408,7 +408,7 @@ sweep = 0.007
 
 *-----------------Tfcoil Variables-----------------*
 itfsup   = 1  * switch for TF coil conductor model 1=superconductor
-isumattf = 5
+i_tf_sc_mat = 5
 casthi   = 0.06 * Inboard tf coil case inner (plasma side) thickness (m)
 casths   = 0.05 * Inboard tf coil sidewall case thickness (m)
 ripmax   = 0.6 * maximum allowable toroidal field ripple amplitude at plasma edge (%)

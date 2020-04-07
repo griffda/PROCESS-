@@ -10,27 +10,11 @@ module tfcoil_module
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use build_variables, only : tfthko, hmax
-  use constants
-  use error_handling
-  use fwbs_variables
-  use physics_variables
-  use process_output
-  use sctfcoil_module
-  use tfcoil_variables
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+  implicit none
   private
   
-  !! Radial position of plasma-facing edge of TF coil outboard leg [m]
-  !real(kind(1.0D0)), private :: r_tf_inboard_in
-  !
-  !! Radial position of plasma-facing edge of TF coil inboard leg [m]
-  !real(kind(1.0D0)), private :: r_tf_inboard_out
-
   public :: tfcoil, cntrpst
-
-
 
 contains
 
@@ -47,17 +31,18 @@ contains
     !! in routine <A HREF="sctfcoil.html">sctfcoil</A> instead.
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
-
-    use build_module, only : portsz
-   
+   use build_module, only: portsz
+   use process_output, only: int2char, oheadr, ovarre, osubhd, oblnkl, &
+      ocmmnt
+   use sctfcoil_module, only: sctfcoil
+   use tfcoil_variables, only: bmaxtf, cforce, estotftgj, i_tf_sup, n_tf, &
+      ripmax, ripple, ritfc, vforce, xarc, yarc
+   use constants, only: mfile
     implicit none
 
     !  Arguments
     integer, intent(in) :: outfile,iprint
-
-    !  Local variables
-    integer :: ii
-    character(len=1) :: intstring
+    
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     
@@ -86,13 +71,21 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    implicit none
+   use build_variables, only: hmax, tfcth, tfthko
+   use fwbs_variables, only: pnuccp
+   use process_output, only: oheadr, ovarre, osubhd
+   use tfcoil_variables, only: cph2o, denh2o, dtiocool, etapump, fcoolcp, &
+      i_tf_sup, k_copper, kh2o, muh2o, ncool, ppump, prescp, rbmax, rcool, &
+      rhocp, tcoolin, tcpav, tcpav2, tcpmax, a_cp_cool, n_tf, vcool, vol_cond_cp
+   use constants, only: pi
+   use error_handling, only: report_error
+   implicit none
 
     !  Arguments
     integer, intent(in) :: outfile,iprint
 
     !  Local variables
-    real(kind(1.0D0)) :: acool,acpav,dcool,dpres,dtcncpav,dtconcpmx, &
+    real(dp) :: acool,acpav,dcool,dpres,dtcncpav,dtconcpmx, &
          dtfilmav,fc,fricfac,h,lcool,nuselt,pcrt,presin,prndtl, &
          psat,ptot,reyn,ro,roughrat,sum,tclmx,tclmxs,tcoolmx,tmarg,vcoolav, &
          coolant_density, coolant_th_cond, coolant_visco, coolant_cp,&
@@ -115,7 +108,6 @@ contains
 
     ! Average conductor cross-sectional area to cool (with cooling area)
     acpav = 0.5D0 * vol_cond_cp/(hmax + tfthko) + acool
-
     ro = sqrt( acpav/(pi*ncool) )
 
     !  Inner legs total heating power (to be removed by coolant)
@@ -255,14 +247,27 @@ contains
     end if 
     ! ******
 
-    ! Average temperature rise : To be changed with Garry Voss' better documented formula (or add a switch?)
+    ! Average temperature rise : To be changed with Garry Voss' better documented formula ? 
     dtcncpav = (ptot/vol_cond_cp)/(2.0D0*conductor_th_cond*(ro**2 - rcool**2) ) * &
                ( ro**2*rcool**2 - 0.25D0*rcool**4 - 0.75D0*ro**4 + ro**4 * log(ro/rcool) )
 
-    ! Peak temperature rise : To be changed with Garry Voss' better documented formula (or add a switch?)
+    ! Peak temperature rise : To be changed with Garry Voss' better documented formula ?
     dtconcpmx = (ptot/vol_cond_cp)/(2.0D0*conductor_th_cond) * &
-         ( (rcool**2 - ro**2)/2.0D0 + ro**2 * log(ro/rcool) )
+                ( (rcool**2 - ro**2)/2.0D0 + ro**2 * log(ro/rcool) )
 
+
+    ! If the average conductor temperature difference is negative, set it to 0 
+    if ( dtcncpav < 0.0D0 ) then 
+      call report_error(249)
+      dtcncpav = 0.0D0
+    end if
+
+    ! If the average conductor temperature difference is negative, set it to 0  
+    if ( dtconcpmx < 0.0D0 ) then 
+      call report_error(250)
+      dtconcpmx = 0.0D0
+    end if
+    
     !  Average conductor temperature
     tcpav2 = tcoolin + dtcncpav + dtfilmav + 0.5D0*dtiocool
 
@@ -342,12 +347,5 @@ contains
     call ovarre(outfile,'Pump power (W)','(ppump)',ppump)
 
   end subroutine cntrpst
-
-
-
-
-
-
-
 
 end module tfcoil_module

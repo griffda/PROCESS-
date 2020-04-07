@@ -1,5 +1,9 @@
 module final_module
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+
+  implicit none
+
 contains
 
 
@@ -15,16 +19,19 @@ subroutine final(ifail)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use process_output
-  use numerics
-  use output_module!, only:output
-  use constraints
+  use constants, only: mfile, nout, iotty
+  use process_output, only: ovarre, oheadr, ocmmnt, osubhd, oblnkl, &
+    int_to_string3
+  use numerics, only: nfev1, ncalls, xcm, ioptimz, icc, nineqns, nviter, &
+    ipeqns, nvar, neqns, lablcc, rcm
+  use output_module, only: output 
+  use constraints, only: constraint_eqns 
   implicit none
 
   !  Arguments
   integer, intent(in) :: ifail
   integer :: inn
-  real(kind(1.0D0)), dimension(ipeqns) :: con1, con2, err
+  real(dp), dimension(ipeqns) :: con1, con2, err
   character(len=1), dimension(ipeqns) :: sym
   character(len=10), dimension(ipeqns) :: lab
 

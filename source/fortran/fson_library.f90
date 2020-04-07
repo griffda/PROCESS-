@@ -267,9 +267,7 @@ end module fson_string_m
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module fson_value_m
-
-  use fson_string_m
-
+  use fson_string_m, only: fson_string
   implicit none
 
   private
@@ -331,6 +329,9 @@ contains
   ! FSON VALUE DESTROY
   !
   recursive subroutine fson_value_destroy(this)
+    use fson_string_m, only: fson_string_destroy
+    implicit none
+
     type(fson_value), pointer :: this
 
     if (associated(this % children)) then
@@ -419,6 +420,9 @@ contains
   ! GET BY NAME CHARS
   !
   function get_by_name_chars(this, name) result(p)
+    use fson_string_m, only: fson_string, fson_string_create
+    implicit none
+
     type(fson_value), pointer :: this, p
     character(len=*), intent(in) :: name
 
@@ -435,6 +439,9 @@ contains
   ! GET BY NAME STRING
   !
   function get_by_name_string(this, name) result(p)
+    use fson_string_m, only: fson_string, fson_string_equals
+    implicit none
+
     type(fson_value), pointer :: this, p
     type(fson_string), pointer :: name
     integer :: i
@@ -460,6 +467,9 @@ contains
   ! FSON VALUE PRINT
   !
   recursive subroutine fson_value_print(this, indent)
+    use fson_string_m, only: fson_string_copy
+    implicit none
+
     type(fson_value), pointer :: this, element
     integer, optional, intent(in) :: indent
     character(len=1024) :: tmp_chars
@@ -538,9 +548,6 @@ end module fson_value_m
 
 module fson_path_m
 
-  use fson_value_m 
-  use fson_string_m
-
   private
 
   public :: fson_path_get, array_callback
@@ -576,6 +583,9 @@ contains
   ! []    = child array element
   !
   recursive subroutine get_by_path(this, path, p)
+    use fson_value_m, only: fson_value, fson_value_get
+    implicit none
+
     type(fson_value), pointer :: this, p
     character(len=*), intent(inout) :: path
     integer :: i, length, child_i
@@ -682,6 +692,9 @@ contains
   ! GET INTEGER
   !
   subroutine get_integer(this, path, value)
+    use fson_value_m, only: type_integer, type_real, type_logical, fson_value
+    implicit none
+  
     type(fson_value), pointer :: this, p
     character(len=*), optional :: path
     integer :: value
@@ -719,6 +732,9 @@ contains
   ! GET REAL
   !
   subroutine get_real(this, path, value)
+    use fson_value_m, only: type_integer, type_real, type_logical, fson_value
+    implicit none
+  
     type(fson_value), pointer :: this, p
     character(len=*), optional :: path
     real :: value
@@ -757,6 +773,9 @@ contains
   ! GET DOUBLE
   !
   subroutine get_double(this, path, value)
+    use fson_value_m, only: type_integer, type_real, type_logical, fson_value
+    implicit none
+  
     type(fson_value), pointer :: this, p
     character(len=*), optional :: path
     real(kind(1.0D0)) :: value
@@ -795,6 +814,9 @@ contains
   ! GET LOGICAL
   !
   subroutine get_logical(this, path, value)
+    use fson_value_m, only: type_integer, type_logical, fson_value
+    implicit none
+  
     type(fson_value), pointer :: this, p
     character(len=*), optional :: path
     logical :: value
@@ -827,6 +849,10 @@ contains
   ! GET CHARS
   !
   subroutine get_chars(this, path, value)
+    use fson_value_m, only: type_string, fson_value
+    use fson_string_m, only: fson_string_copy 
+    implicit none
+  
     type(fson_value), pointer :: this, p
     character(len=*), optional :: path
     character(len=*) :: value
@@ -857,6 +883,10 @@ contains
   ! GET ARRAY (original version using array_callback)
   !
   subroutine get_array(this, path, array_callback)
+    use fson_value_m, only: type_array, fson_value_get, fson_value_count, &
+      fson_value
+    implicit none
+  
     type(fson_value), pointer :: this, p, element
     character(len=*), optional :: path
     integer :: index, count
@@ -864,7 +894,8 @@ contains
     ! ELEMENT CALLBACK  (PJK: Added example comments)
     interface
        subroutine array_callback(element, index, count)
-         use fson_value_m
+         use fson_value_m, only: fson_value
+         implicit none
 
          !  In the actual routine add a second 'use' line as follows:
          !use shared_data  !  contains declarations for the array(s) to be populated
@@ -910,6 +941,10 @@ contains
   ! GET INT ARRAY
   !
   subroutine get_int_array(this, path, array)
+    use fson_value_m, only: type_array, fson_value_get, fson_value_count, &
+      fson_value
+    implicit none
+  
     type(fson_value), pointer :: this, p, element
     character(len=*), optional :: path
     integer :: index, count
@@ -946,6 +981,10 @@ contains
   ! GET REAL ARRAY
   !
   subroutine get_real_array(this, path, array)
+    use fson_value_m, only: type_array, fson_value_get, fson_value_count, &
+      fson_value
+    implicit none
+  
     type(fson_value), pointer :: this, p, element
     character(len=*), optional :: path
     integer :: index, count
@@ -982,6 +1021,10 @@ contains
   ! GET DOUBLE ARRAY
   !
   subroutine get_double_array(this, path, array)
+    use fson_value_m, only: type_array, fson_value_get, fson_value_count, &
+      fson_value  
+    implicit none
+  
     type(fson_value), pointer :: this, p, element
     character(len=*), optional :: path
     integer :: index, count
@@ -1018,6 +1061,11 @@ contains
   ! GET STRING ARRAY
   !
   subroutine get_string_array(this, path, array)
+    use fson_value_m, only: fson_value_count, fson_value_get, fson_value, &
+      TYPE_ARRAY
+    use fson_string_m, only: fson_string_copy 
+    implicit none
+  
     type(fson_value), pointer :: this, p, element
     character(len=*), optional :: path
     integer :: index, count
@@ -1054,6 +1102,10 @@ contains
   ! GET INT ARRAY IN STRUCTURE
   !
   subroutine get_int_array_in_struct(this, path, subpath, array)
+    use fson_value_m, only: fson_value_count, fson_value_get, fson_value, &
+      TYPE_ARRAY
+    implicit none
+  
     type(fson_value), pointer :: this, p, element
     character(len=*) :: path, subpath
     integer, dimension(:), intent(out) :: array
@@ -1086,6 +1138,10 @@ contains
   ! GET REAL ARRAY IN STRUCTURE
   !
   subroutine get_real_array_in_struct(this, path, subpath, array)
+    use fson_value_m, only: fson_value_count, fson_value_get, fson_value, &
+      TYPE_ARRAY
+    implicit none
+  
     type(fson_value), pointer :: this, p, element
     character(len=*) :: path, subpath
     real, dimension(:), intent(out) :: array
@@ -1118,6 +1174,10 @@ contains
   ! GET DOUBLE ARRAY IN STRUCTURE
   !
   subroutine get_double_array_in_struct(this, path, subpath, array)
+    use fson_value_m, only: fson_value_count, fson_value_get, fson_value, &
+      TYPE_ARRAY
+    implicit none
+  
     type(fson_value), pointer :: this, p, element
     character(len=*) :: path, subpath
     real(kind(1.0D0)), dimension(:), intent(out) :: array
@@ -1150,6 +1210,10 @@ contains
   ! GET STRING ARRAY IN STRUCTURE
   !
   subroutine get_string_array_in_struct(this, path, subpath, array)
+    use fson_value_m, only: fson_value_count, fson_value_get, fson_value, &
+      TYPE_ARRAY
+    implicit none
+  
     type(fson_value), pointer :: this, p, element
     character(len=*) :: path, subpath
     character(len=*), dimension(:), intent(out) :: array
@@ -1195,9 +1259,9 @@ module fson_library
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use fson_value_m, fson_print => fson_value_print, fson_destroy => fson_value_destroy
-  use fson_string_m
-  use fson_path_m, fson_get => fson_path_get
+  use fson_value_m, only: fson_print => fson_value_print, &
+    fson_destroy => fson_value_destroy, fson_value
+  use fson_path_m, only: fson_get => fson_path_get
 
   implicit none
 
@@ -1226,6 +1290,9 @@ contains
   ! FSON PARSE
   !
   function fson_parse(file, unit) result(p)
+    use fson_value_m, only: fson_value_create
+    implicit none
+
     type(fson_value), pointer :: p
     integer, optional, intent(inout) :: unit
     character(len = *), intent(in) :: file
@@ -1269,6 +1336,10 @@ contains
   ! PARSE_VALUE
   !
   recursive subroutine parse_value(unit, value)
+    use fson_value_m, only: TYPE_ARRAY, TYPE_LOGICAL, TYPE_NULL, TYPE_OBJECT, &
+      TYPE_STRING
+    implicit none
+
     integer, intent(inout) :: unit
     type(fson_value), pointer :: value
     logical :: eof
@@ -1333,6 +1404,9 @@ contains
   ! PARSE OBJECT
   !
   recursive subroutine parse_object(unit, parent)
+  use fson_value_m, only: fson_value_create, fson_value_add
+  implicit none
+
     integer, intent(inout) :: unit
     type(fson_value), pointer :: parent, pair
 
@@ -1389,6 +1463,9 @@ contains
   ! PARSE ARRAY
   !
   recursive subroutine parse_array(unit, array)
+    use fson_value_m, only: fson_value_create, fson_value_add
+    implicit none
+
     integer, intent(inout) :: unit
     type(fson_value), pointer :: array, element
 
@@ -1423,6 +1500,9 @@ contains
   ! PARSE STRING
   !
   function parse_string(unit) result(string)
+    use fson_string_m, only: fson_string, fson_string_create, fson_string_append
+    implicit none
+    
     integer, intent(inout) :: unit
     type(fson_string), pointer :: string
 
@@ -1474,6 +1554,9 @@ contains
   ! PARSE NUMBER
   !
   subroutine parse_number(unit, value)
+    use fson_value_m, only: TYPE_INTEGER, TYPE_REAL
+    implicit none
+    
     integer, intent(inout) :: unit
     type(fson_value), pointer :: value
     logical :: eof, negative, decimal, scientific

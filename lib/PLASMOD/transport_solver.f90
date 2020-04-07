@@ -11,7 +11,9 @@
     use grad_func
     use structs
     use physics_functions_module
+    use impurity_radiation_module, only: impurity_arr, Zav_of_te, impradprofile
     use global_variables
+    use physics_variables, only: fhe3, q, rhopedn
 
     implicit none
 

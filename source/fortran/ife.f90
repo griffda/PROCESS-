@@ -1,7 +1,6 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module ife_module
-
   !! Module containing Inertial Fusion Energy device routines
   !! author: P J Knight, CCFE, Culham Science Centre
   !! N/A
@@ -10,23 +9,7 @@ module ife_module
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use availability_module
-  use build_variables
-  use buildings_variables
-  use constants
-  use cost_variables
-  use costs_module
-  use error_handling
-  use fwbs_variables
-  use heat_transport_variables
-  use ife_variables
-  use physics_variables
-  use process_output
-  use pulse_variables
-  use structure_variables
-  use vacuum_variables
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   private
@@ -37,7 +20,6 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine ifecll
-
     !! Routine to call the physics and engineering modules
     !! relevant to inertial fusion energy power plants
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -49,60 +31,47 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use availability_module, only: avail
+    use costs_module, only: costs
+		use constants, only: nout
     implicit none
-
-    !  Arguments
-
-    !  Local variables
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
     !  Device build
-
     call ifebld(nout,0)
 
     !  IFE physics
-
     call ifephy(nout,0)
 
     !  Device structure
-
     call ifestr
 
     !  Target data
-
     call ifetgt
 
     !  First wall, blanket and shield
-
     call ifefbs(nout,0)
 
     !  Primary thermal power
-
     call ifepw1
 
     !  Vacuum system
-
     call ifevac
 
     !  Buildings
-
     call ifebdg(nout,0)
 
     !  AC power requirements
-
     call ifeacp(nout,0)
 
     !  Secondary thermal power
-
     call ifepw2(nout,0)
 
     !  Plant availability
-
     call avail(nout,0)
 
     !  Costs
-
     call costs(nout,0)
 
   end subroutine ifecll
@@ -110,7 +79,6 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine ifeout(outfile)
-
     !! Routine to output the physics and engineering information
     !! relevant to inertial fusion energy power plants
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -122,62 +90,50 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use availability_module, only: avail
+    use costs_module, only: costs
+
     implicit none
 
     !  Arguments
-
     integer, intent(in) :: outfile
-
-    !  Local variables
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Costs
-
     call costs(outfile,1)
 
     !  Plant availability
-
     call avail(outfile,1)
 
     !  IFE physics
-
     call ifephy(outfile,1)
 
     !  Device build
-
     call ifebld(outfile,1)
 
     !  First wall, blanket and shield
-
     call ifefbs(outfile,1)
 
     !  Device structure
-
     call ifestr
 
     !  Target data
-
     call ifetgt
 
     !  Primary thermal power
-
     call ifepw1
 
     !  Vacuum system
-
     call ifevac
 
     !  Buildings
-
     call ifebdg(outfile,1)
 
     !  AC power requirements
-
     call ifeacp(outfile,1)
 
     !  Secondary thermal power
-
     call ifepw2(outfile,1)
 
   end subroutine ifeout
@@ -198,15 +154,23 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: pi
+    use build_variables, only: fwarea
+    use error_handling, only: idiags, report_error
+    use process_output, only: oheadr, oblnkl, ocmmnt, ovarre
+    use ife_variables, only: ifedrv, edrive, gainve, etave, gain, etadrv, tgain, &
+      drveff, reprat, pdrive, rrin, pfusife, ifetyp, zl1, r1, zu1, flirad
+    use physics_variables, only: powfmw, wallmw
+
+		use constants, only: pi
     implicit none
 
     !  Arguments
-
     integer, intent(in) :: outfile,iprint
 
     !  Local variables
 
-    real(kind(1.0D0)) :: aaion,bmax,dpp,dtheta,emitt,etai,lf,phi,qion, &
+    real(dp) :: aaion,bmax,dpp,dtheta,emitt,etai,lf,phi,qion, &
          sang,sigma,sigma0,tauf,theta,vi
     integer :: nbeams
 
@@ -365,25 +329,26 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: echarge, mproton, degrad, pi
     implicit none
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: aaion,bmax,dpp,dtheta,edrive,emitt,etai,lf,qion, &
+    real(dp), intent(in) :: aaion,bmax,dpp,dtheta,edrive,emitt,etai,lf,qion, &
          sigma,sigma0,tauf,theta,vi
     integer, intent(in) :: nbeams
-    real(kind(1.0D0)), intent(out) :: gain,etadrv
+    real(dp), intent(out) :: gain,etadrv
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: c2 = 8.98755178737D16
+    real(dp), parameter :: c2 = 8.98755178737D16
     integer, parameter :: isimp = 1  !  Switch for simple model (1=yes)
 
-    real(kind(1.0D0)) :: ci,de,dgap,dlcore,drcore,e,eomc2,fins,floss, &
+    real(dp) :: ci,de,dgap,dlcore,drcore,e,eomc2,fins,floss, &
          ibf,ibfo,ibi,ibpc,lfocus,lpf,lpfo,lpi,lppc,lq,phif,phifo, &
          phii,phipc,rion,rs,rs1,rs2,rs3,rs4,sig,sig0,taufo,taui, &
          taupc,tbrad,vf,vfo,vpc,vs,vscore,vshe,vsle,vspc,xhe,xle,xpc
-    real(kind(1.0D0)), dimension(10) :: eve,gve
+    real(dp), dimension(10) :: eve,gve
     integer :: i,ie,j,nche,ncle,ncpc,nqarrs,nqle,nqpche,nquads
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -740,16 +705,16 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: cbeam
+      real(dp) :: cbeam
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: etai,bmax,aaion,qion,sigma,sigma0, &
+      real(dp), intent(in) :: etai,bmax,aaion,qion,sigma,sigma0, &
            emitt,vi,eomc2
 
       !  Local variables
 
-      real(kind(1.0D0)) :: bbe
+      real(dp) :: bbe
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -786,15 +751,15 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: betgam
+      real(dp) :: betgam
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: aaion,qion,v
+      real(dp), intent(in) :: aaion,qion,v
 
       !  Local variables
 
-      real(kind(1.0D0)), parameter :: c2 = 8.98755178737D16
+      real(dp), parameter :: c2 = 8.98755178737D16
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -828,13 +793,13 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: edrive
-    real(kind(1.0D0)), intent(out) :: etadrv,gain
+    real(dp), intent(in) :: edrive
+    real(dp), intent(out) :: etadrv,gain
 
     !  Local variables
 
-    real(kind(1.0D0)) :: e,de
-    real(kind(1.0D0)), dimension(10) :: gve,eve
+    real(dp) :: e,de
+    real(dp), dimension(10) :: gve,eve
     integer :: ie
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -920,13 +885,13 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: edrive
-    real(kind(1.0D0)), dimension(10), intent(in) :: etave,gainve
-    real(kind(1.0D0)), intent(out) :: etadrv,gain
+    real(dp), intent(in) :: edrive
+    real(dp), dimension(10), intent(in) :: etave,gainve
+    real(dp), intent(out) :: etadrv,gain
 
     !  Local variables
 
-    real(kind(1.0D0)) :: de,e
+    real(dp) :: de,e
     integer :: ie
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -966,7 +931,6 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine ifebld(outfile,iprint)
-
     !! Routine to create the build of an inertial fusion energy device
     !! and to calculate the material volumes for the device core
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -979,13 +943,17 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use process_output, only: oheadr, obuild, ovarre
+    use ife_variables, only: ifetyp, chrad, r1, fwdr, r2, v1dr, r3, bldr, r4, &
+      v2dr, r5, shdr, r6, v3dr, r7, zl7, v3dzl, zl6, shdzl, zl5, v2dzl, zl4, &
+      bldzl, zl3, v1dzl, zl2, fwdzl, zl1, chdzl, chdzu, zu1, fwdzu, zu2, &
+      v1dzu, zu3, bldzu, zu4, v2dzu, zu5, shdzu, zu6, v3dzu, zu7, fwmatv, &
+      v1matv, blmatv, v2matv, shmatv, v3matv, chmatv
+		use constants, only: mfile
     implicit none
 
     !  Arguments
-
     integer, intent(in) :: outfile,iprint
-
-    !  Local variables
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1008,7 +976,7 @@ contains
 
     call oheadr(outfile,'Radial Build')
     write(outfile,20)
-20  format(T43,'Thickness (m)',T60,'Radius (m)')
+    20  format(T43,'Thickness (m)',T60,'Radius (m)')
 
     call obuild(outfile,'Device centreline',0.0D0,0.0D0)
     call obuild(outfile,'Chamber',chrad,r1)
@@ -1026,7 +994,7 @@ contains
     call obuild(outfile,'Void 3',v3dr,r7)
     call ovarre(mfile,'Void 3 (m)','(v3dr)',v3dr)
 
-30  format(T43,'Thickness (m)',T60,'Height (m)')
+    30  format(T43,'Thickness (m)',T60,'Height (m)')
 
     if (ifetyp /= 4) then
         
@@ -1208,15 +1176,22 @@ contains
      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
      !
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-     implicit none
+    use constants, only: pi
+    use build_variables, only: fwarea
+    use error_handling, only: report_error  
+    use buildings_variables, only: trcl, stcl
+    use fwbs_variables, only: tbr, emult
+    use ife_variables, only: blmatf, bldrc, lipmw, etali, taufall, rrmax, chvol, &
+      fwvol, v1vol, blvol, v2vol, shvol, flirad, v3vol, maxmat, chmatf, fwmatf, &
+      v1matf, v2matf, shmatf, v3matf
+    implicit none
 
      !  Arguments
 
      !  Local variables
 
      integer :: i,j
-     real(kind(1.0D0)), save :: g, vel, acurt, mdot, phi, sang, li_frac
+     real(dp), save :: g, vel, acurt, mdot, phi, sang, li_frac
 
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1337,27 +1312,26 @@ contains
      blvol(3) = pi * r5*r5 * (zl4 - zl3)
 
      !  Second void
+     
+    v2vol(1) = pi * (r5*r5 - r4*r4) * (chdzl+chdzu)
+    v2vol(2) = 0.0D0
+    v2vol(3) = 0.0D0
 
-     v2vol(1) = pi * (r5*r5 - r4*r4) * (chdzl+chdzu)
-     v2vol(2) = 0.0D0
-     v2vol(3) = 0.0D0
+    !  Shield
+    shvol(1) = pi * (r6*r6 - r5*r5) * (zu5 + zl5)
+    ! Top Section is in three parts to account for the dip at 
+    ! the centre.  The first is the horizontal top, the second is the
+    ! horizontal 
+    shvol(2) = pi * (((r6*r6 - (chrad-shdr)*(chrad-shdr)) * shdzu) &
+      + ((r1*r1 - flirad*flirad) * shdzu) &
+      + ( (r1*r1 - (r1-shdzu)*(r1-shdzu)) *(bldzu-shdzu) ))
+    shvol(3) = pi * r6*r6 * (zl6 - zl5)
 
-     !  Shield
+    !  Third void
 
-     shvol(1) = pi * (r6*r6 - r5*r5) * (zu5 + zl5)
-     ! Top Section is in three parts to account for the dip at 
-     ! the centre.  The first is the horizontal top, the second is the
-     ! horizontal 
-     shvol(2) = pi * (((r6*r6 - (chrad-shdr)*(chrad-shdr)) * shdzu) &
-                + ((r1*r1 - flirad*flirad) * shdzu) &
-                + ( (r1*r1 - (r1-shdzu)*(r1-shdzu)) *(bldzu-shdzu) ))
-     shvol(3) = pi * r6*r6 * (zl6 - zl5)
-
-     !  Third void
-
-     v3vol(1) = pi * (r7*r7 - r6*r6) * (zu6 + zl6)
-     v3vol(2) = pi * r7*r7 * (zu7 - zu6) + pi * ((r1-shdzu)*(r1-shdzu) - flirad*flirad) * bldzu
-     v3vol(3) = pi * r7*r7 * (zl7 - zl6)
+    v3vol(1) = pi * (r7*r7 - r6*r6) * (zu6 + zl6)
+    v3vol(2) = pi * r7*r7 * (zu7 - zu6) + pi * ((r1-shdzu)*(r1-shdzu) - flirad*flirad) * bldzu
+    v3vol(3) = pi * r7*r7 * (zl7 - zl6)
 
      !  Material volumes
 
@@ -1400,12 +1374,14 @@ contains
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+      use constants, only: pi
+      use build_variables, only: fwarea
+      use ife_variables, only: chvol, fwvol, v1vol, blvol, v2vol, shvol, v3vol, &
+        maxmat, chmatf, fwmatf, v1matf, blmatf, v2matf, shmatf, v3matf
+
       implicit none
 
-      !  Arguments
-
       !  Local variables
-
       integer :: i,j
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1509,7 +1485,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     subroutine osibld
-
       !! Routine to create the build of an inertial fusion energy
       !! device, based on the design of the OSIRIS study,
       !! and to calculate the material volumes for the device core
@@ -1523,22 +1498,19 @@ contains
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+      use constants, only: pi
+      use build_variables, only: fwarea
+
       implicit none
-
-      !  Arguments
-
-      !  Local variables
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       !  Careful choice of thicknesses, and assuming that the FLiBe
       !  inlet radius is small, allows the generic build calculation
       !  to be roughly applicable.
-
       call genbld
 
       !  First wall area: no true first wall at bottom of chamber
-
       fwarea = 2.0D0*pi*r1*(zu1 + zl1) + pi*r1*r1
 
     end subroutine osibld
@@ -1546,7 +1518,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     subroutine sombld
-
       !! Routine to create the build of an inertial fusion energy
       !! device, based on the design of the SOMBRERO study,
       !! and to calculate the material volumes for the device core
@@ -1561,20 +1532,22 @@ contains
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      implicit none
+      use constants, only: pi
+      use build_variables, only: fwarea
+      use ife_variables, only: chvol, fwvol, v1vol, blvol, v2vol, somtdr, sombdr, &
+        shvol, v3vol, maxmat, chmatf, fwmatf, blmatf, v1matf, v2matf, shmatf, v3matf
 
-      !  Arguments
+      implicit none
 
       !  Local variables
 
-      real(kind(1.0D0)), parameter :: third  = 1.0D0/3.0D0
-      real(kind(1.0D0)) :: chcylh,ddz,dvol
+      real(dp), parameter :: third  = 1.0D0/3.0D0
+      real(dp) :: chcylh,ddz,dvol
       integer :: i,j
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       !  Radial build
-
       r1 = chrad
       r2 = r1 + fwdr
       r3 = r2 + v1dr
@@ -1584,7 +1557,6 @@ contains
       r7 = r6 + v3dr
 
       !  Vertical build (below midplane)
-
       zl1 = chdzl
       zl2 = zl1 + fwdzl
       zl3 = zl2 + v1dzl
@@ -1594,7 +1566,6 @@ contains
       zl7 = zl6 + v3dzl
 
       !  Vertical build (above midplane)
-
       zu1 = chdzu
       zu2 = zu1 + fwdzu
       zu3 = zu2 + v1dzu
@@ -1614,19 +1585,16 @@ contains
       !  J=3 : bottom part
 
       !  Chamber : CHCYLH is the height of the cylindrical part
-
       chcylh = chdzu + chdzl - 2.0D0*chrad
 
       chvol = pi * r1*r1 * (chcylh + 2.0D0*third * chrad)
 
       !  First wall
-
       fwvol(1) = pi * (r2*r2 - r1*r1) * chcylh
       fwvol(2) = third * pi * ( r2*r2*(chrad+fwdzu) - r1*r1*chrad )
       fwvol(3) = third * pi * ( r2*r2*(chrad+fwdzl) - r1*r1*chrad )
 
       !  First void
-
       v1vol(1) = pi * (r3*r3 - r2*r2) * chcylh
       v1vol(2) = third * pi * ( r3*r3*(chrad+fwdzu+v1dzu) -  &
            r2*r2*(chrad+fwdzu) )
@@ -1657,7 +1625,6 @@ contains
       blvol(3) = blvol(3) + dvol
 
       !  Second void
-
       v2vol(1) = pi * (r5*r5 - r4*r4) * chcylh
       v2vol(2) = pi * r5*r5 * (zu5 - chdzu + chrad) - ( &
            fwvol(2) + v1vol(2) + blvol(2) + (third*pi*r1*r1*chrad) )
@@ -1665,33 +1632,29 @@ contains
            fwvol(3) + v1vol(3) + blvol(3) + (third*pi*r1*r1*chrad) )
 
       !  Shield
-
       shvol(1) = pi * (r6*r6 - r5*r5) * (zu6 + zl6)
       shvol(2) = pi * r5*r5 * (zu6 - zu5)
       shvol(3) = pi * r5*r5 * (zl6 - zl5)
 
       !  Third void
-
       v3vol(1) = pi * (r7*r7 - r6*r6) * (zu7 + zl7)
       v3vol(2) = pi * r6*r6 * (zu7 - zu6)
       v3vol(3) = pi * r6*r6 * (zl7 - zl6)
 
       !  Material volumes
-
       do i = 0,maxmat
-         chmatv(i) = max(0.0D0, chvol * chmatf(i))
-         do j = 1,3
-            fwmatv(j,i) = max(0.0D0, fwvol(j) * fwmatf(j,i))
-            v1matv(j,i) = max(0.0D0, v1vol(j) * v1matf(j,i))
-            blmatv(j,i) = max(0.0D0, blvol(j) * blmatf(j,i))
-            v2matv(j,i) = max(0.0D0, v2vol(j) * v2matf(j,i))
-            shmatv(j,i) = max(0.0D0, shvol(j) * shmatf(j,i))
-            v3matv(j,i) = max(0.0D0, v3vol(j) * v3matf(j,i))
-         end do
+        chmatv(i) = max(0.0D0, chvol * chmatf(i))
+        do j = 1,3
+          fwmatv(j,i) = max(0.0D0, fwvol(j) * fwmatf(j,i))
+          v1matv(j,i) = max(0.0D0, v1vol(j) * v1matf(j,i))
+          blmatv(j,i) = max(0.0D0, blvol(j) * blmatf(j,i))
+          v2matv(j,i) = max(0.0D0, v2vol(j) * v2matf(j,i))
+          shmatv(j,i) = max(0.0D0, shvol(j) * shmatf(j,i))
+          v3matv(j,i) = max(0.0D0, v3vol(j) * v3matf(j,i))
+        end do
       end do
 
       !  First wall area
-
       fwarea = 2.0D0*pi*r1*( (zu1 + zl1) + r1*sqrt(2.0D0) )
 
     end subroutine sombld
@@ -1699,7 +1662,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     subroutine hylbld
-
       !! Routine to create the build of an inertial fusion energy
       !! device, based on the design of the HYLIFE-II study,
       !! and to calculate the material volumes for the device core
@@ -1714,20 +1676,22 @@ contains
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      implicit none
+      use constants, only: pi
+      use build_variables, only: fwarea
+      use ife_variables, only: chvol, fwvol, v1vol, blvol, v2vol, shvol, v3vol, &
+        maxmat, chmatf, fwmatf, blmatf, v1matf, v2matf, shmatf, v3matf, flirad
 
-      !  Arguments
+      implicit none
 
       !  Local variables
 
-      real(kind(1.0D0)), parameter :: third = 1.0D0/3.0D0
-      real(kind(1.0D0)) :: chcylh,ddz,dvol
+      real(dp), parameter :: third = 1.0D0/3.0D0
+      real(dp) :: chcylh,ddz,dvol
       integer :: i,j
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       !  Radial build
-
       r1 = chrad
       r2 = r1 + fwdr
       r3 = r2 + v1dr
@@ -1737,7 +1701,6 @@ contains
       r7 = r6 + v3dr
 
       !  Vertical build (below midplane)
-
       zl1 = chdzl
       zl2 = zl1 + fwdzl
       zl3 = zl2 + v1dzl
@@ -1747,7 +1710,6 @@ contains
       zl7 = zl6 + v3dzl
 
       !  Vertical build (above midplane)
-
       zu1 = chdzu
       zu2 = zu1 + fwdzu
       zu3 = zu2 + v1dzu
@@ -1765,62 +1727,53 @@ contains
       !  J=1 : side part
       !  J=2 : top part
       !  J=3 : bottom part
-
       chvol = pi * r1*r1 * ( (zu1 + zl5) - third*(zl5 - zl1) )
 
       !  First wall
       !  FLIRAD is the radius of the Flibe inlet
-
       fwvol(1) = pi * (r2*r2 - r1*r1) * (zu2 + zl5)
       fwvol(2) = pi * (r1*r1 - flirad*flirad) * (zu2 - zu1)
       fwvol(3) = third * pi * ( r2*r2*(zl5-zl1) - r1*r1*(zl5-zl2) )
 
       !  First void
-
       v1vol(1) = pi * (r3*r3 - r2*r2) * (zu2 + zl3)
       v1vol(2) = pi * (r4*r4 - flirad*flirad) * (zu3 - zu2)
       v1vol(3) = third * pi * r1*r1 * (zl3 - zl2)
 
       !  Blanket
-
       blvol(1) = pi * (r4*r4 - r3*r3) * (zu2 + zl3)
       blvol(2) = pi * (r4*r4 - flirad*flirad) * (zu4 - zu3)
       blvol(3) = pi * r4*r4 * (zl4 - zl3)
 
       !  Second void
-
       v2vol(1) = pi * (r5*r5 - r4*r4) * (zu4 + zl4)
       v2vol(2) = pi * (r5*r5 - flirad*flirad) * (zu5 - zu4)
       v2vol(3) = pi * r5*r5 * (zl5 - zl4)
 
       !  Shield
-
       shvol(1) = pi * (r6*r6 - r5*r5) * (zu5 + zl5)
       shvol(2) = pi * r6*r6 * (zu6 - zu5)
       shvol(3) = pi * r6*r6 * (zl6 - zl5)
 
       !  Third void
-
       v3vol(1) = pi * (r7*r7 - r6*r6) * (zu6 + zl6)
       v3vol(2) = pi * r7*r7 * (zu7 - zu6)
       v3vol(3) = pi * r7*r7 * (zl7 - zl6)
 
       !  Material volumes
-
       do i = 0,maxmat
-         chmatv(i) = max(0.0D0, chvol * chmatf(i))
-         do j = 1,3
-            fwmatv(j,i) = max(0.0D0, fwvol(j) * fwmatf(j,i))
-            v1matv(j,i) = max(0.0D0, v1vol(j) * v1matf(j,i))
-            blmatv(j,i) = max(0.0D0, blvol(j) * blmatf(j,i))
-            v2matv(j,i) = max(0.0D0, v2vol(j) * v2matf(j,i))
-            shmatv(j,i) = max(0.0D0, shvol(j) * shmatf(j,i))
-            v3matv(j,i) = max(0.0D0, v3vol(j) * v3matf(j,i))
-         end do
+        chmatv(i) = max(0.0D0, chvol * chmatf(i))
+        do j = 1,3
+          fwmatv(j,i) = max(0.0D0, fwvol(j) * fwmatf(j,i))
+          v1matv(j,i) = max(0.0D0, v1vol(j) * v1matf(j,i))
+          blmatv(j,i) = max(0.0D0, blvol(j) * blmatf(j,i))
+          v2matv(j,i) = max(0.0D0, v2vol(j) * v2matf(j,i))
+          shmatv(j,i) = max(0.0D0, shvol(j) * shmatf(j,i))
+          v3matv(j,i) = max(0.0D0, v3vol(j) * v3matf(j,i))
+        end do
       end do
 
       !  First wall area
-
       fwarea = 2.0D0 * pi * r1 * (zu1 + zl5)
       fwarea = fwarea + pi * (r1*r1 - flirad*flirad)
       fwarea = fwarea + pi * r1 * sqrt(r1*r1 + (zl3-zl1)**2)
@@ -1832,29 +1785,22 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine ifestr
-
     !! Routine to calculate the support structural masses for the core of
     !! an Inertial Fusion Energy power plant
     !! author: P J Knight, CCFE, Culham Science Centre
     !! This routine calculates the support structural masses for the core of
     !! an Inertial Fusion Energy power plant.
     !! <P>In fact, the output masses are all trivially zero, as they are
-    !! magnetic fusion specific.
-    !! F/MI/PJK/LOGBOOK12, p.87
+    !! magnetic fusion specific. F/MI/PJK/LOGBOOK12, p.87
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use structure_variables, only: aintmass, clgsmass, coldmass, fncmass, gsmass 
+
     implicit none
 
-    !  Arguments
-
-    !  Local variables
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
     !  Set all outputs to zero, as they are magnetic fusion specific
-
     aintmass = 0.0D0
     clgsmass = 0.0D0
     coldmass = 0.0D0
@@ -1866,7 +1812,6 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine ifetgt() bind(C, name="c_ifetgt")
-
     !! Routine to calculate the power requirements of the target
     !! delivery system and the target factory
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -1878,11 +1823,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use ife_variables, only: tfacmw, ptargf, reprat
+
     implicit none
-
-    !  Arguments
-
-    !  Local variables
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1892,7 +1835,6 @@ contains
 
     !  Target factory power (MWe)
     !  Assumed to scale with repetition rate (not quite linearly)
-
     tfacmw = ptargf * (reprat/6.0D0)**0.7D0
 
   end subroutine ifetgt
@@ -1900,7 +1842,6 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine ifefbs(outfile,iprint)
-
     !! Routine to calculate the first wall, blanket and shield volumes,
     !! masses and other parameters, for an Inertial Fusion Energy device
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -1914,16 +1855,26 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: fwarea
+    use error_handling, only: report_error, fdiags
+    use process_output, only: ovarre, oheadr
+    use cost_variables, only: tlife, abktflnc, cfactr
+    use fwbs_variables, only: denstl, fwmass, whtblkt, whtshld, whtblbe, whtblvd, &
+      whtblss, wtblli2o, whtblli, bktlife, fwlife
+    use ife_variables, only: maxmat, chmatm, chmatv, fwmatm, fwmatv, v1matm, &
+      v1matv, blmatm, blmatv, v2matm, v2matv, shmatm, shmatv, v3matm, v3matv, &
+      mflibe, fbreed, ifetyp
+    use physics_variables, only: wallmw
+
     implicit none
 
     !  Arguments
-
     integer, intent(in) :: outfile,iprint
 
     !  Local variables
 
-    real(kind(1.0D0)) :: den,life
-    real(kind(1.0D0)), dimension(0:maxmat) :: matden
+    real(dp) :: den,life
+    real(dp), dimension(0:maxmat) :: matden
     integer :: i,j
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1950,89 +1901,79 @@ contains
     matden(8) = 512.0D0
 
     !  Material masses
-
     do i = 0,maxmat
-       den = matden(i)
-       chmatm(i) = chmatv(i) * den
-       do j = 1,3
-          fwmatm(j,i) = fwmatv(j,i) * den
-          v1matm(j,i) = v1matv(j,i) * den
-          blmatm(j,i) = blmatv(j,i) * den
-          v2matm(j,i) = v2matv(j,i) * den
-          shmatm(j,i) = shmatv(j,i) * den
-          v3matm(j,i) = v3matv(j,i) * den
-       end do
+      den = matden(i)
+      chmatm(i) = chmatv(i) * den
+      do j = 1,3
+        fwmatm(j,i) = fwmatv(j,i) * den
+        v1matm(j,i) = v1matv(j,i) * den
+        blmatm(j,i) = blmatv(j,i) * den
+        v2matm(j,i) = v2matv(j,i) * den
+        shmatm(j,i) = shmatv(j,i) * den
+        v3matm(j,i) = v3matv(j,i) * den
+      end do
     end do
 
     !  Total masses of components (excluding coolant)
-
     fwmass = 0.0D0
     whtblkt = 0.0D0
     whtshld = 0.0D0
     do i = 1,5
-       do j = 1,3
-          fwmass = fwmass + fwmatm(j,i)
-          whtblkt = whtblkt + blmatm(j,i)
-          whtshld = whtshld + shmatm(j,i)
-       end do
+      do j = 1,3
+        fwmass = fwmass + fwmatm(j,i)
+        whtblkt = whtblkt + blmatm(j,i)
+        whtshld = whtshld + shmatm(j,i)
+      end do
     end do
 
     !  Other masses
-
     whtblbe = 0.0D0
     whtblvd = 0.0D0
     whtblss = 0.0D0
     wtblli2o = 0.0D0
     whtblli = 0.0D0
     do j = 1,3
-       whtblss = whtblss + blmatm(j,1)
-       wtblli2o = wtblli2o + blmatm(j,4)
-       whtblli = whtblli + blmatm(j,8)
+      whtblss = whtblss + blmatm(j,1)
+      wtblli2o = wtblli2o + blmatm(j,4)
+      whtblli = whtblli + blmatm(j,8)
     end do
 
     !  Total mass of FLiBe
-
     mflibe = chmatm(3)
     do j = 1,3
-       mflibe = mflibe + fwmatm(j,3) + v1matm(j,3) + blmatm(j,3) + &
-            v2matm(j,3) + shmatm(j,3) + v3matm(j,3)
+      mflibe = mflibe + fwmatm(j,3) + v1matm(j,3) + blmatm(j,3) + &
+        v2matm(j,3) + shmatm(j,3) + v3matm(j,3)
     end do
 
     !  A fraction FBREED of the total breeder inventory is outside the
     !  core region, i.e. is in the rest of the heat transport system
-
     if ((fbreed < 0.0D0).or.(fbreed > 0.999D0)) then
-       fdiags(1) = fbreed ; call report_error(26)
+      fdiags(1) = fbreed ; call report_error(26)
     end if
 
     !  Following assumes that use of FLiBe and Li2O are
     !  mutually exclusive
-
     mflibe = mflibe / (1.0D0 - fbreed)
     wtblli2o = wtblli2o / (1.0D0 - fbreed)
     whtblli = whtblli / (1.0D0 - fbreed)
 
     !  Blanket and first wall lifetimes (HYLIFE-II: = plant life)
-
     if ((ifetyp == 3).or.(ifetyp == 4)) THEN
-       life = tlife
+      life = tlife
     else
-       life = min( tlife, abktflnc/(wallmw*cfactr) )
+      life = min( tlife, abktflnc/(wallmw*cfactr) )
     end if
 
     bktlife = life
     fwlife = life
 
     !  Cryostat mass (=zero)
-
     !cryomass = 0.0D0
 
     if (iprint == 0) return
 
     !  Output section
-
     call oheadr(outfile,'First Wall, Blanket, Shield')
-
     call ovarre(outfile,'First wall area (m2)','(fwarea)',fwarea)
     call ovarre(outfile,'First wall mass (kg)','(fwmass)',fwmass)
     call ovarre(outfile,'Blanket mass (kg)','(whtblkt)',whtblkt)
@@ -2058,13 +1999,17 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    implicit none
+    use fwbs_variables, only: emult, fhole, pnucblkt, pnucshld, pnucloss
+    use heat_transport_variables, only: priheat, pthermmw, pfwdiv, nphx, pinjwp, &
+      pinjht, crypmw, helpow
+    use ife_variables, only: pdrive, ifetyp, etadrv, pifecr
+    use physics_variables, only: powfmw
 
-    !  Arguments
+    implicit none
 
     !  Local variables
 
-    real(kind(1.0D0)) :: pdrvmw
+    real(dp) :: pdrvmw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2137,15 +2082,20 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use buildings_variables, only: efloor
+    use process_output, only: oheadr, ovarre, oblnkl
+    use heat_transport_variables, only: baseel, pwpm2, pacpmw, crypmw, vachtmw, &
+      trithtmw, pinjwp, fcsht, tlvpmw
+    use ife_variables, only: tdspmw, tfacmw, htpmw_ife, reprat, lipmw, ifetyp
+
     implicit none
 
     ! Arguments
-
     integer, intent(in) :: iprint,outfile
 
     !  Local variables
 
-    real(kind(1.0D0)), save :: basemw,pmwpm2
+    real(dp), save :: basemw,pmwpm2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2175,7 +2125,6 @@ contains
     if (iprint == 0) return
 
     !  Output section
-
     call oheadr(outfile,'AC Power')
 
     call ovarre(outfile,'Facility base load (MW)','(basemw)',basemw)
@@ -2223,125 +2172,100 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use cost_variables, only: ireactor, ipnet
+    use process_output, only: oheadr, osubhd, ovarre, oblnkl, ovarin
+    use fwbs_variables, only: pnucloss, emult, tbr, pnucblkt
+    use heat_transport_variables, only: fachtmw, fcsht, psechtmw, pinjht, &
+      vachtmw, trithtmw, crypmw, pgrossmw, pthermmw, etath, fgrosbop, precircmw, &
+      pacpmw, pnetelmw, pinjwp, pfwdiv, nphx
+    use ife_variables, only: tdspmw, tfacmw, htpmw_ife, fauxbop, ifetyp, taufall
+
     implicit none
 
     !  Arguments
-
     integer, intent(in) :: outfile,iprint
-
-    !  Local variables
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Facility heat removal (fcsht calculated in IFEACP)
-
     fachtmw = fcsht
 
     !  Total secondary heat
-
     psechtmw = pinjht + pnucloss + fachtmw + vachtmw + trithtmw + &
-         tdspmw + tfacmw + crypmw + htpmw_ife
+      tdspmw + tfacmw + crypmw + htpmw_ife
 
     !  Calculate powers relevant to a power-producing plant
-
     if (ireactor == 1) then
 
-       !  Gross electric power
+      !  Gross electric power
+      pgrossmw = pthermmw * etath
 
-       pgrossmw = pthermmw * etath
+      !  Balance of plant recirculating power fraction
+      fgrosbop = min( 0.5D0, ( fauxbop/(pgrossmw/1000.0D0)**0.6D0) )
 
-       !  Balance of plant recirculating power fraction
+      !  Total recirculating power
+      precircmw = (fgrosbop*pgrossmw) + pacpmw
 
-       fgrosbop = min( 0.5D0, ( fauxbop/(pgrossmw/1000.0D0)**0.6D0) )
+      !  Net electric power
+      pnetelmw = pgrossmw - precircmw
 
-       !  Total recirculating power
-
-       precircmw = (fgrosbop*pgrossmw) + pacpmw
-
-       !  Net electric power
-
-       pnetelmw = pgrossmw - precircmw
-
-       !  Scaling to prevent negative pnetelmw
-
-       if ( (pnetelmw < 1.0D0).and.(ipnet == 0) ) then
-          pnetelmw = 1.0D0 / ( 1.0D0 + abs(pnetelmw-1.0D0))
-       end if
+      !  Scaling to prevent negative pnetelmw
+      if ( (pnetelmw < 1.0D0).and.(ipnet == 0) ) then
+        pnetelmw = 1.0D0 / ( 1.0D0 + abs(pnetelmw-1.0D0))
+      end if
 
     end if
 
     if (iprint == 0) return
 
     !  Output section
-
     call oheadr(outfile,'Power / Heat Transport')
-    call ovarre(outfile,'Fusion power escaping via holes (MW)', &
-         '(pnucloss)',pnucloss)
+    call ovarre(outfile,'Fusion power escaping via holes (MW)', '(pnucloss)', pnucloss)
     call ovarre(outfile,'Power multiplication factor','(emult)',emult)
     if (ifetyp.eq.4) then
         call ovarre(outfile,'Tritium Breeding Ratio','(tbr)',tbr)
         call ovarre(outfile,'Lithium Fall Time (s)','(taufall)',taufall)
     end if
-    call ovarre(outfile,'Driver wall plug power (MW)','(pinjwp)' &
-         ,pinjwp)
-    call ovarre(outfile,'First wall nuclear heating (MW)','(pfwdiv)', &
-         pfwdiv)
-    call ovarre(outfile,'Blanket nuclear heating (MW)','(pnucblkt)', &
-         pnucblkt)
-    call ovarre(outfile,'Primary heat (MW)','(pthermmw)',pthermmw)
-    call ovarre(outfile,'Secondary heat (MW)','(psechtmw)',psechtmw)
+    call ovarre(outfile,'Driver wall plug power (MW)','(pinjwp)', pinjwp)
+    call ovarre(outfile,'First wall nuclear heating (MW)','(pfwdiv)', pfwdiv)
+    call ovarre(outfile,'Blanket nuclear heating (MW)','(pnucblkt)', pnucblkt)
+    call ovarre(outfile,'Primary heat (MW)','(pthermmw)', pthermmw)
+    call ovarre(outfile,'Secondary heat (MW)','(psechtmw)', psechtmw)
     call oblnkl(outfile)
-    call ovarre(outfile,'Heat removal from driver power (MW)', &
-         '(pinjht)',pinjht)
-    call ovarre(outfile,'Heat removal from cryogenic plant (MW)', &
-         '(crypmw)',crypmw)
-    call ovarre(outfile,'Heat removal from vacuum pumps (MW)', &
-         '(vachtmw)',vachtmw)
-    call ovarre(outfile,'Heat removal from target factory (MW)', &
-         '(tfacmw)',tfacmw)
-    call ovarre(outfile,'Heat removal from delivery system (MW)', &
-         '(tdspmw)',tdspmw)
-    call ovarre(outfile,'Heat removal from tritium plant (MW)', &
-         '(trithtmw)',trithtmw)
-    call ovarre(outfile,'Heat removal from facilities (MW)','(fachtmw)' &
-         ,fachtmw)
-    call ovarin(outfile,'Number of primary heat exchangers','(nphx)' &
-         ,nphx)
+    call ovarre(outfile,'Heat removal from driver power (MW)', '(pinjht)', pinjht)
+    call ovarre(outfile,'Heat removal from cryogenic plant (MW)', '(crypmw)', crypmw)
+    call ovarre(outfile,'Heat removal from vacuum pumps (MW)', '(vachtmw)', vachtmw)
+    call ovarre(outfile,'Heat removal from target factory (MW)', '(tfacmw)', tfacmw)
+    call ovarre(outfile,'Heat removal from delivery system (MW)', '(tdspmw)', tdspmw)
+    call ovarre(outfile,'Heat removal from tritium plant (MW)', '(trithtmw)', trithtmw)
+    call ovarre(outfile,'Heat removal from facilities (MW)', '(fachtmw)', fachtmw)
+    call ovarin(outfile,'Number of primary heat exchangers', '(nphx)', nphx)
 
     if (ireactor /= 1) return
-
     call osubhd(outfile,'Reactor powers :')
-    call ovarre(outfile,'Gross electric power (MW)','(pgrossmw)' &
-         ,pgrossmw)
-    call ovarre(outfile,'Net electric power (MW)','(pnetelmw)',pnetelmw)
-    call ovarre(outfile,'Balance of plant aux. power fraction', &
-         '(fgrosbop)',fgrosbop)
+    call ovarre(outfile,'Gross electric power (MW)', '(pgrossmw)', pgrossmw)
+    call ovarre(outfile,'Net electric power (MW)', '(pnetelmw)', pnetelmw)
+    call ovarre(outfile,'Balance of plant aux. power fraction', '(fgrosbop)', fgrosbop)
 
   end subroutine ifepw2
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine ifevac
-
     !! Routine to calculate parameters of the vacuum system for an
     !! Inertial Fusion Energy power plant
     !! author: P J Knight, CCFE, Culham Science Centre
     !! This routine calculates the parameters of the vacuum system for an
     !! Inertial Fusion Energy power plant.
     !! <P>The calculated values are hard-wired; they are based loosely
-    !! on those for a tokamak of 6m major radius.
-    !! F/MI/PJK/LOGBOOK12, p.87
+    !! on those for a tokamak of 6m major radius. F/MI/PJK/LOGBOOK12, p.87
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use vacuum_variables, only: dlscal, nvduct, vacdshm, vcdimax, vpumpn
+
     implicit none
-
-    !  Arguments
-
-    !  Local variables
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     dlscal = 2.0D0
     nvduct = 16
@@ -2354,7 +2278,6 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine ifebdg(outfile,iprint)
-
     !! Routine to calculate the volumes of the buildings required for
     !! an Inertial Fusion Energy power plant
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -2369,17 +2292,24 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use buildings_variables, only: wrbi, rbwt, rbrt, fndt, trcl, hcwt, hccl, &
+      wgt2, stcl, pibv, efloor, triv, conv, admv, shov, admvol, convol, elevol, &
+      rbvol, rmbvol, shovol, volrci, wsvol, volnucb
+    use process_output, only: oheadr, ovarre
+    use fwbs_variables, only: whtshld
+    use heat_transport_variables, only: helpow
+    use ife_variables, only: zl7, zu7, r7, zl6, zu6, r6
+
     implicit none
 
     !  Arguments
-
     integer, intent(in) :: outfile,iprint
 
     !  Local variables
 
-    real(kind(1.0D0)) :: cran,dcl,dcw,fac2,fac3,hcl,hcw,hrbi,rbh,rbl,rbw, &
+    real(dp) :: cran,dcl,dcw,fac2,fac3,hcl,hcw,hrbi,rbh,rbl,rbw, &
          rmbh,rmbl,rmbw,rwl,rww,shh,tch,tcl,tcw,wgts,wsa
-    real(kind(1.0D0)), save :: cryv,elev,rbv,rmbv,vrci,wsv
+    real(dp), save :: cryv,elev,rbv,rmbv,vrci,wsv
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2387,28 +2317,23 @@ contains
     !  ================
 
     !  Total internal height
-
     hrbi = zl7 + zu7
 
     !  Distance from centre of device to wall
-
     wrbi = r7
 
     !  Internal volume (square floor)
-
     vrci = (2.0D0 * wrbi)**2 * hrbi
 
     !  External dimensions
     !  RBWT = wall thickness
     !  RBRT = roof thickness
     !  FNDT = foundation thickness
-
     rbw = 2.0D0 * (r7 + rbwt)
     rbl = rbw
     rbh = hrbi + rbrt + fndt
 
     !  External volume
-
     rbv = rbw * rbl * rbh
 
     !  Maintenance building
