@@ -2140,8 +2140,9 @@ module tfcoil_variables
   !! insulation_area : single turn insulation area (m2)
   real(dp) :: aiwp = 0.0D0
   !! aiwp : winding pack insulation area (m2)
+
   real(dp) :: alstrtf = 6.0D8
-  !! alstrtf /6.0D8/ : allowable Tresca stress in TF coil structural material (Pa)
+  !! Allowable Tresca stress in TF coil structural material (Pa)
 
   real(dp) :: arealeg = 0.0D0
   !! arealeg : outboard TF leg area (m2)
