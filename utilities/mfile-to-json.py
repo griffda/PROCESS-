@@ -19,14 +19,22 @@ RADIAL_BUILD = [
     "gapsto", "thshield", "tftsgap", "tfthko"
 ]
 
-VERTICAL_BUILD = [
+# Single-null vertical build
+VERTICAL_BUILD_SN = [
     "tfcth", "tftsgap", "thshield", "vgap2", "ddwi", "shldlth", "divfix", 
     "vgap", "rminor*kappa", "rminor*kappa", "vgaptop", "fwtth", "blnktth", 
     "vvblgap", "shldtth", "ddwi", "vgap2", "thshield", "tftsgap", "tfcth"
 ]
 
+# Double-null vertical build
+VERTICAL_BUILD_DN = [
+    "tfcth", "tftsgap", "thshield", "vgap2", "ddwi", "shldlth", "divfix", 
+    "vgap", "rminor*kappa", "rminor*kappa", "vgap", "divfix", "shldlth",
+    "ddwi", "vgap2", "thshield", "tftsgap", "tfcth"
+]
+
 if __name__ == "__main__":
-    
+
     # Setup command line arguments
     parser = argparse. \
         ArgumentParser(description="Produces a JSON file form an MFILE.  "
@@ -60,15 +68,24 @@ if __name__ == "__main__":
         parser.exit(1)
 
     process_mfile = MFile(filename=args.f)
+    i_single_null = process_mfile.data["i_single_null"].get_scan(-1)
 
     if args.radial_build:
         process_mfile.write_to_json(keys_to_write=RADIAL_BUILD, scan=args.n, 
                                     verbose=args.verbose)
     elif args.vertical_build:
-        process_mfile.write_to_json(keys_to_write=VERTICAL_BUILD, scan=args.n, 
+        if i_single_null==1:
+            process_mfile.write_to_json(keys_to_write=VERTICAL_BUILD_SN, scan=args.n, 
+                                    verbose=args.verbose)
+        else:
+            process_mfile.write_to_json(keys_to_write=VERTICAL_BUILD_DN, scan=args.n, 
                                     verbose=args.verbose)
     elif args.all_build:
-        process_mfile.write_to_json(keys_to_write=RADIAL_BUILD+VERTICAL_BUILD, 
+        if i_single_null==1:
+            process_mfile.write_to_json(keys_to_write=RADIAL_BUILD+VERTICAL_BUILD_SN, 
+                                    scan=args.n, verbose=args.verbose)
+        else:
+            process_mfile.write_to_json(keys_to_write=RADIAL_BUILD+VERTICAL_BUILD_DN, 
                                     scan=args.n, verbose=args.verbose)
     else:
         process_mfile.write_to_json(scan=args.n, verbose=args.verbose)
