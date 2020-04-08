@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 
 Script to dump whole MFILE to file.
