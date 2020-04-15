@@ -1726,10 +1726,15 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         !! file used to plot stress distributions
         !! Author : S. Kahn
 
-        use process_output, only: osubhd, ocmmnt, ovarre
+        use process_output, only: osubhd, ocmmnt, oheadr, ovarre, int2char
+        use constants, only: mfile
         implicit none
+
+        character(len=1) :: intstring
+        !! Char used for integer convertion to string
         
         ! Stress output section
+        call oheadr(outfile,'TF coils ')
         call osubhd(outfile,'TF Coil Stresses (CCFE model) :')
         
         if ( i_tf_sup == 1 ) then
@@ -1747,15 +1752,39 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         call ocmmnt(outfile, 'Stresses of the point of maximum TRESCA stress per layer')
         call ocmmnt(outfile, 'Please use utility/plot_TF_stress.py for radial plots plots summary')
         write(outfile,'(t2, "Layers", t26, *(i11) )') 1, 2
-        write(outfile,'(t2, "Radial"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_r_max*1.0D-6
-        write(outfile,'(t2, "toroidal"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_t_max*1.0D-6
-        write(outfile,'(t2, "Vertical"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_z_max*1.0D-6
-        write(outfile,'(t2, "Von-Mises" ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_vmises_max*1.0D-6
+        write(outfile,'(t2, "Radial"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') &
+              sig_tf_r_max*1.0D-6
+        write(outfile,'(t2, "toroidal"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') &
+              sig_tf_t_max*1.0D-6
+        write(outfile,'(t2, "Vertical"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') &
+              sig_tf_z_max*1.0D-6
+        write(outfile,'(t2, "Von-Mises" ," stress", t20, "(MPa)",t26, *(F11.3,3x))') &
+              sig_tf_vmises_max*1.0D-6
         if ( i_tf_tresca == 1 .and. i_tf_sup == 1 ) then
             write(outfile,'(t2, "CEA TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
         else 
             write(outfile,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
         end if
+
+        ! MFILE.DAT data
+        do ii = 1, i_tf_bucking + 1
+            intstring = int2char(ii)    
+            call ovarre(mfile,'Radial    stress at maximum TRESCA of layer '//intstring// &
+                        ' (Pa)', '(sig_tf_r_max('//intstring//'))', sig_tf_r_max(ii) )
+            call ovarre(mfile,'toroidal  stress at maximum TRESCA of layer '//intstring// &
+                        ' (Pa)', '(sig_tf_t_max('//intstring//'))', sig_tf_t_max(ii) )
+            call ovarre(mfile,'Vertical  stress at maximum TRESCA of layer '//intstring// &
+                        ' (Pa)', '(sig_tf_z_max('//intstring//'))', sig_tf_z_max(ii) )
+            call ovarre(mfile,'Von-Mises stress at maximum TRESCA of layer '//intstring// &
+                        ' (Pa)', '(sig_tf_vmises_max('//intstring//'))', sig_tf_vmises_max(ii) )
+            if ( i_tf_tresca == 1 .and. i_tf_sup == 1 ) then
+                call ovarre(mfile,'Maximum CEA TRESCA stress '//intstring// &
+                           ' (Pa)', '(sig_tf_tresca_max('//intstring//'))', sig_tf_tresca_max(ii) )
+            else           
+                call ovarre(mfile,'Maximum TRESCA stress '//intstring// &
+                            ' (Pa)', '(sig_tf_tresca_max('//intstring//'))', sig_tf_tresca_max(ii) )
+            end if
+        end do
 
         ! SIG_TF.DAT storage  
         write(sig_file,'(t2, "Points per layers"                 ,t26, *(I11,3x))') n_radial_array          
@@ -2817,7 +2846,7 @@ subroutine outtf(outfile, peaktfflag)
     use error_handling, only: report_error
     use build_variables, only: hmax, r_tf_inboard_mid, r_tf_outboard_mid, &
         tfcth, tfthko, r_cp_top
-    use process_output, only: int2char, ovarre, ocmmnt, oheadr, &
+    use process_output, only: int2char, ovarre, ocmmnt &
         oblnkl, ovarin, osubhd, ovarrf, obuild
     use numerics, only: icc
     use tfcoil_variables, only: wwp1, whttf, yarc, xarc, &
@@ -2831,7 +2860,8 @@ subroutine outtf(outfile, peaktfflag)
         whtconsc, alstrtf, bmaxtfrp, vdalw, leni, thkwp, whtcas, whtcon, &
         ripple, i_tf_tresca, bmaxtf, awphec, avwp, aiwp, acond, acndttf, &
         i_tf_sc_mat, voltfleg, vol_cond_cp, tflegres, tcpav, prescp, i_tf_sup, &
-        cpttf, cdtfleg, whttflgs, whtcp
+        cpttf, cdtfleg, whttflgs, whtcp, i_tf_bucking, tlegav, rhotfleg, rhocp, &
+        presleg, i_tf_shape, fcoolcp, pres_joints, tmargtf, tmargmin_tf
     use physics_variables, only: itart
     use constants, only: mfile, pi
     implicit none
@@ -2848,151 +2878,175 @@ subroutine outtf(outfile, peaktfflag)
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if ( i_tf_sup == 1 ) then 
-        call oheadr(outfile,'TF Coils')
-        call ocmmnt(outfile,'Superconducting TF coils')
-
-        call ovarin(outfile,'TF coil superconductor material','(i_tf_sc_mat)',i_tf_sc_mat)
-
-        select case (i_tf_sc_mat)
+     
+    ! General coil parameters
+    call osubhd(outfile,'TF design')
+    call ovarin(outfile,'Conductor technology','(i_tf_sup)',i_tf_sup)
+    select case (i_tf_sup)
+        case (0)
+            call ocmmnt(outfile,'  -> Resitive coil : Water cooled copper (GLIDCOP)')
         case (1)
-            call ocmmnt(outfile,'  (ITER Nb3Sn critical surface model)')
+            call ocmmnt(outfile,'  -> Superconducting coil (SC)')
         case (2)
-            call ocmmnt(outfile,'  (Bi-2212 high temperature superconductor)')
-        case (3)
-            call ocmmnt(outfile,'  (NbTi)')
-        case (4)
-            call ocmmnt(outfile, &
-            '  (ITER Nb3Sn critical surface model, user-defined parameters)')
-        case (5)
-            call ocmmnt(outfile, ' (WST Nb3Sn)')
-        case (6)
-            call ocmmnt(outfile, ' (High temperature superconductor: REBCO HTS tape in CroCo strand)')
-        end select
+            call ocmmnt(outfile,'  -> Reisitive coil : Helium cooled cryogenic aluminium')
+    end select
 
-        call ocmmnt(outfile,'Current Density :')
-        call oblnkl(outfile)
-        call ovarre(outfile,'Winding pack current density (A/m2)','(jwptf)',jwptf, 'OP ')
-        call ovarre(outfile,'Overall current density (A/m2)','(oacdcp)',oacdcp)
-
-        ! if (tfc_model == 0) then
-        !     call ovarre(outfile,'Allowable overall current density (A/m2)', '(jwdgcrt)',jwdgcrt, 'OP ')
-        ! end if
-
-        call osubhd(outfile,'General Coil Parameters :')
-        call ovarre(outfile,'Number of TF coils','(n_tf)',n_tf)
-        call ovarre(outfile,'Total inboard leg radial thickness (m)','(tfcth)',tfcth)
-        call ovarre(outfile,'Total outboard leg radial thickness (m)','(tfthko)',tfthko)
-        call ovarre(outfile,'Inboard leg toroidal thickness at widest point (m)','(2*tficrn)',2d0*tficrn, 'OP ')
-        call ovarre(outfile,'Outboard leg toroidal thickness (m)','(tftort)',tftort, 'OP ')
-        call ovarre(outfile,'Mean coil circumference (m)','(tfleng)',tfleng, 'OP ')
-        call ovarre(outfile,'Total current in all TF coils (MA)','(ritfc/1.D6)',1.0D-6*ritfc, 'OP ')
-        call ovarre(outfile,'Nominal peak field assuming Amperes Law with toroidal symmetry (T)','(bmaxtf)',bmaxtf, 'OP ')
-        call ovarre(outfile,'Actual peak field at discrete conductor (T)','(bmaxtfrp)',bmaxtfrp, 'OP ')
-        call ovarre(outfile,'Max allowed ripple amplitude at plasma outboard midplane (%)','(ripmax)',ripmax)
-        call ovarre(outfile,'Ripple amplitude at plasma outboard midplane (%)','(ripple)',ripple, 'OP ')
-        call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotftgj)',estotftgj, 'OP ')
-        call ovarre(outfile,'Total mass of TF coils (kg)','(whttf)',whttf, 'OP ')
-        call ovarre(outfile,'Mass of each TF coil (kg)','(whttf/n_tf)',whttf/n_tf, 'OP ')
-        call ovarre(outfile,'Vertical separating force per leg (N)','(vforce)',vforce, 'OP ')
-        call ovarre(outfile,'Centring force per coil (N/m)','(cforce)',cforce, 'OP ')
-
-        !  Report any applicability issues with peak field with ripple calculation
-
-        if (peaktfflag == 1) then
-            call report_error(144)
-        else if (peaktfflag == 2) then
-            call report_error(145)
-        else
-            continue
-        end if
-
-        call osubhd(outfile,'Coil Geometry :')
-        call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inboard_mid)',r_tf_inboard_mid, 'OP ')
-        call ovarre(outfile,'Outboard leg centre radius (m)','(r_tf_outboard_mid)',r_tf_outboard_mid, 'OP ')
-        call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax, 'OP ')
-        ! call ovarre(outfile,'gap between inboard vacuum vessel and thermal shield (m)','(gapds)',gapds) ! Not relevant to TF
-
-        call oblnkl(outfile)
-        call ocmmnt(outfile,'TF coil inner surface shape is approximated')
-        call ocmmnt(outfile,'by a straight segment and elliptical arcs between the following points :')
-        call oblnkl(outfile)
-
-        write(outfile,10)
-        10  format(t2,'point',t16,'x(m)',t31,'y(m)')
-
-        do ii = 1,5
-            write(outfile,20) ii,xarc(ii),yarc(ii)
-            intstring = int2char(ii)
-            call ovarre(mfile,'TF coil arc point '//intstring//' R (m)', '(xarc('//intstring//'))',xarc(ii))
-            call ovarre(mfile,'TF coil arc point '//intstring//' Z (m)', '(yarc('//intstring//'))',yarc(ii))
-        end do
-        20  format(i4,t10,f10.3,t25,f10.3)
-
-        call osubhd(outfile,'Quench information :')
-        call ovarre(outfile,'Allowable stress in vacuum vessel (VV) due to quench (Pa)','(sigvvall)',sigvvall)
-        call ovarre(outfile,'Minimum allowed quench time due to stress in VV (s)','(taucq)',taucq, 'OP ')
-        call ovarre(outfile,'Actual quench time (or time constant) (s)','(tdmptf)',tdmptf)
-        ! call ovarre(outfile,'Max allowed current density in winding pack due to temperature rise in quench (A/m2)', &
-        !                     '(jwdgpro)', jwdgpro, 'OP ')
-        ! call ovarre(outfile,'Actual current density in winding pack (A/m2)', '(jwptf)', jwptf, 'OP ')
-        call ovarre(outfile,'Maximum allowed voltage during quench due to insulation (kV)', '(vdalw)', vdalw)
-        call ovarre(outfile,'Actual quench voltage (kV)','(vtfskv)',vtfskv, 'OP ')
-
+    if ( i_tf_sup == 1 ) then
+        call ovarin(outfile,'Superconductor material','(i_tf_sc_mat)',i_tf_sc_mat)
         select case (i_tf_sc_mat)
-        case (1,2,3,4,5)
-            call ovarre(outfile,'Maximum allowed temp rise during a quench (K)','(tmaxpro)', tmaxpro)
-        case(6)
-            call ocmmnt(outfile,'CroCo cable with jacket: ')
-            ! if (any(icc == 74) ) then
-            !     call ovarre(outfile,'Maximum permitted temperature in quench (K)',&
-            !                         '(tmax_croco)', tmax_croco)
-            ! endif
-            ! call ovarre(outfile,'Actual temp reached during a quench (K)', &
-            !                     '(croco_quench_temperature)', croco_quench_temperature)
-            if (any(icc == 75) ) then
-                call ovarre(outfile,'Maximum permitted TF coil current / copper area (A/m2)', &
-                '(copperA_m2_max)', copperA_m2_max)
-            endif
-            call ovarre(outfile,'Actual TF coil current / copper area (A/m2)', &
-                                '(copperA_m2)', copperA_m2)
-
-            ! call ocmmnt(outfile,'Fast discharge current model: '//quench_model)
-            ! if(quench_detection_ef>1d-10)then
-            !     call ocmmnt(outfile,'Two-phase quench model is used')
-            !     call ovarre(outfile,'Electric field at which TF quench is detected, discharge begins (V/m)',&
-            !                         '(quench_detection_ef)', quench_detection_ef)
-            !     call ovarre(outfile,'Peak temperature before quench is detected (K)','(T1)',T1,'OP ')
-            ! else
-            !     call ocmmnt(outfile, 'Simple one-phase quench model is used')
-            ! endif
+            case (1)
+                call ocmmnt(outfile,'  -> ITER Nb3Sn critical surface model')
+            case (2)
+                call ocmmnt(outfile,'  -> Bi-2212 high temperature superconductor')
+            case (3)
+                call ocmmnt(outfile,'  -> NbTi')
+            case (4)
+                call ocmmnt(outfile, &
+                '  -> ITER Nb3Sn critical surface model, user-defined parameters')
+            case (5)
+                call ocmmnt(outfile, '  -> WST Nb3Sn')
+            case (6)
+                call ocmmnt(outfile, &
+                    '  -> High temperature superconductor: REBCO HTS tape in CroCo strand')
         end select
+    end if
 
-        call osubhd(outfile,'Conductor Information :')
-        if (i_tf_turns_integer == 1) then
-            call ovarre(outfile, 'Radial width of conductor (m)', '(t_conductor_radial)', t_conductor_radial, 'OP ')
-            call ovarre(outfile, 'Toroidal width of conductor (m)', '(t_conductor_toroidal)', t_conductor_toroidal, 'OP ')
+    call ovarin(outfile,'Presence of TF demountable joints','(itart)',itart)
+    if ( itart == 1 ) then
+        call ocmmnt(outfile,'  -> TF coil made of a Centerpost (CP) and outer legs')
+        call ocmmnt(outfile,'     interfaced with demountable joints')
+    else 
+        call ocmmnt(outfile,'  -> Coils without demountable joints')
+    end if
+
+    call ovarin(outfile,'TF inboard leg support strategy','(i_tf_bucking)', i_tf_bucking)
+    select case ( i_tf_bucking )
+        case (0)
+            call ocmmnt(outfile,'  -> No support structure')
+        case (1)
+            if ( i_tf_sup == 0 ) then
+                call ocmmnt(outfile,'  -> Steel bucking cylinder')
+            else if ( i_tf_sup == 1 ) then 
+                call ocmmnt(outfile,'  -> Steel casing')
+            else 
+                call ocmmnt(outfile,'  -> Nibron special bucking cylinder')
+            end if
+        case (2,3)
+            call ocmmnt(outfile,'  -> TF in contact with CS (bucked and weged design)')
+    end select
+
+    ! TF coil geometry
+    call osubhd(outfile,'TF coil Geometry :')
+    call ovarre(outfile,'Number of TF coils','(n_tf)',n_tf)
+    call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inboard_mid)',r_tf_inboard_mid, 'OP ')
+    call ovarre(outfile,'Outboard leg centre radius (m)','(r_tf_outboard_mid)',r_tf_outboard_mid, 'OP ')
+    call ovarre(outfile,'Total inboard leg radial thickness (m)','(tfcth)',tfcth)
+    call ovarre(outfile,'Total outboard leg radial thickness (m)','(tfthko)',tfthko)
+    call ovarre(outfile,'Outboard leg toroidal thickness (m)','(tftort)',tftort, 'OP ')
+    call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax, 'OP ')
+    call ovarre(outfile,'Mean coil circumference (m)','(tfleng)',tfleng, 'OP ')
+    
+    call ovarin(outfile,'Vertical TF shape','(i_tf_shape)',i_tf_shape)
+    if ( i_tf_shape == 1 ) then
+        call oblnkl(outfile)
+        call ocmmnt(outfile,'D-shape coil, inner surface shape approximated by')
+        call ocmmnt(outfile,'by a straight segment and elliptical arcs between the following points:')
+        call oblnkl(outfile)
+    else if ( i_tf_shape == 2 ) then 
+        call oblnkl(outfile)
+        call ocmmnt(outfile,'Picture frame coil, inner surface approximated by')
+        call ocmmnt(outfile,'by a straight segment between the following points:')
+        call oblnkl(outfile)
+    end if
+
+    write(outfile,10)
+    10  format(t2,'point',t16,'x(m)',t31,'y(m)')
+    do ii = 1,5
+        write(outfile,20) ii,xarc(ii),yarc(ii)
+        intstring = int2char(ii)
+        call ovarre(mfile,'TF coil arc point '//intstring//' R (m)', '(xarc('//intstring//'))',xarc(ii))
+        call ovarre(mfile,'TF coil arc point '//intstring//' Z (m)', '(yarc('//intstring//'))',yarc(ii))
+    end do
+    20 format(i4,t10,f10.3,t25,f10.3)      
+
+    if ( itart == 1 ) then
+        call osubhd(outfile,'Tapered Centrepost Dimensions:')
+        call ovarre(outfile,'Radius of the centrepost at the midplane (m)','(r_tf_inboard_out)',r_tf_inboard_out)
+        call ovarre(outfile,'Radius of the ends of the centrepost (m)','(r_cp_top)',r_cp_top)
+        call ovarre(outfile,'Distance from the midplane to the top of the tapered section (m)','(h_cp_top)',h_cp_top)
+        call ovarre(outfile,'Distance from the midplane to the top of the centrepost (m)','(hmax)',hmax + tfthko)
+    end if
+
+    ! TF current and field
+    call osubhd(outfile,'Maximum B field and currents:')
+    call ovarre(outfile,'Nominal peak field assuming toroidal symmetry (T)','(bmaxtf)',bmaxtf, 'OP ')
+    call ovarre(outfile,'Total current in all TF coils (MA)','(ritfc/1.D6)',1.0D-6*ritfc, 'OP ')
+    call ovarre(outfile,'TF coil current (summed over all coils) (A)','(ritfc)',ritfc)
+    if ( i_tf_sup == 1 ) then
+        call ovarre(outfile,'Actual peak field at discrete conductor (T)','(bmaxtfrp)',bmaxtfrp, 'OP ')
+        call ovarre(outfile,'Winding pack current density (A/m2)','(jwptf)',jwptf, 'OP ')
+    end if
+    call ovarre(outfile,'Inboard leg mid-plane conductor current density (A/m2)','(oacdcp)',oacdcp)
+    if ( itart == 1 ) then
+        call ovarre(outfile,'Outboard leg conductor current density (A/m2)','(cdtfleg)',cdtfleg)    
+    end if 
+    call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotftgj)',estotftgj, 'OP ')
+
+    ! Turn/WP gemoetry
+    if ( i_tf_sup == 1 ) then
+
+        ! External casing
+        call osubhd(outfile,'External steel Case Information :')
+        call ovarre(outfile,'Inboard leg case plasma side wall thickness (m)','(casthi)',casthi)
+        call ovarre(outfile,'Inboard leg case inboard "nose" thickness (m)','(thkcas)',thkcas)
+        call ovarre(outfile,'Inboard leg case sidewall thickness at its narrowest point (m)','(casths)',casths)
+        call ovarre(outfile,'External case mass per coil (kg)','(whtcas)',whtcas, 'OP ')
+
+        ! Winding pack structure
+        call osubhd(outfile,'TF winding pack (WP) geometry:')
+        call ovarre(outfile,'Winding pack radial thickness (m)','(thkwp)',thkwp, 'OP ')
+        if (  i_tf_turns_integer == 1 ) then
+            call ovarre(outfile, 'Winding pack toroidal width (m)', '(wwp1)', wwp1, 'OP ')
+        else
+            call ovarre(outfile,'Winding pack toroidal width 1 (m)','(wwp1)',wwp1, 'OP ')
+            call ovarre(outfile,'Winding pack toroidal width 2 (m)','(wwp2)',wwp2, 'OP ')
+        end if
+        call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)',tinstf)
+        call ovarre(outfile,'Winding pack insertion gap (m)','(tfinsgap)',tfinsgap)
+
+        ! Number of turns
+        call osubhd(outfile,'WP turn information:')    
+        call ovarin(outfile,'Turn parametrisation', '(i_tf_turns_integer)', i_tf_turns_integer)
+        if ( i_tf_turns_integer == 0 ) then 
+            call ocmmnt(outfile,'  Non-integer number of turns')
+        else 
+            call ocmmnt(outfile,'  Integer number of turns')
+        end if
+        call ovarre(outfile,'Number of turns per TF coil','(turnstf)',turnstf, 'OP ')
+        if ( i_tf_turns_integer == 1 ) then
+            call ovarin(outfile, 'Number of TF pancakes', '(n_pancake)', n_pancake)
+            call ovarin(outfile, 'Number of TF layers', '(n_layer)', n_layer)
+        end if    
+        call oblnkl(outfile)
+
+        if ( i_tf_turns_integer == 1 ) then
             call ovarre(outfile, 'Radial width of turn (m)', '(t_turn_radial)', t_turn_radial)
             call ovarre(outfile, 'Toroidal width of turn (m)', '(t_turn_toroidal)', t_turn_toroidal)
             call ovarre(outfile, 'Radial width of cable space', '(t_cable_radial)', t_cable_radial)
             call ovarre(outfile, 'Toroidal width of cable space', '(t_cable_toroidal)', t_cable_toroidal)
+            call ovarre(outfile, 'Radial width of conductor (m)', '(t_conductor_radial)', t_conductor_radial, 'OP ')
+            call ovarre(outfile, 'Toroidal width of conductor (m)', '(t_conductor_toroidal)', t_conductor_toroidal, 'OP ')
         else
             call ovarre(outfile,'Width of conductor (square) (m)','(conductor_width)',conductor_width, 'OP ')
             call ovarre(outfile,'Width of turn including inter-turn insulation (m)','(leno)',leno, 'OP ')
             call ovarre(outfile,'Width of space inside conductor (m)','(leni)',leni, 'OP ')
         end if
-        call ovarre(outfile,'Conduit thickness (m)','(thwcndut)',thwcndut)
+        call ovarre(outfile,'Steel conduit thickness (m)','(thwcndut)',thwcndut)
         call ovarre(outfile,'Inter-turn insulation thickness (m)','(thicndut)',thicndut)
-
-        call ovarre(outfile,'Superconductor mass per coil (kg)','(whtconsc)',whtconsc, 'OP ')
-        call ovarre(outfile,'Copper mass per coil (kg)','(whtconcu)',whtconcu, 'OP ')
-        call ovarre(outfile,'Steel conduit mass per coil (kg)','(whtconsh)',whtconsh, 'OP ')
-        call ovarre(outfile,'Conduit insulation mass per coil (kg)','(whtconin)',whtconin, 'OP ')
-        call ovarre(outfile,'Total conductor mass per coil (kg)','(whtcon)',whtcon, 'OP ')
 
         select case (i_tf_sc_mat)
         case (1,2,3,4,5)
-            call osubhd(outfile,'Winding Pack Information :')
+            call osubhd(outfile,'Conductor information:')    
             call ovarre(outfile,'Diameter of central helium channel in cable','(dhecoil)',dhecoil)
             call ocmmnt(outfile,'Fractions by area')
             call ovarre(outfile,'Coolant fraction in conductor excluding central channel','(vftf)',vftf)
@@ -3007,35 +3061,112 @@ subroutine outtf(outfile, peaktfflag)
             ap = acond + turnstf*acndttf + aiwp + avwp + awphec
             call ovarrf(outfile,'Check total area fractions in winding pack = 1','', &
             (acond + turnstf*acndttf + aiwp + avwp + awphec)/ap)
+            call ovarrf(outfile,'minimum TF conductor temperature margin  (K)','(tmargmin_tf)',tmargmin_tf)
+            call ovarrf(outfile,'TF conductor temperature margin (K)','(tmargtf)',tmargtf)
+
         end select
+    else
 
-        call ovarre(outfile,'Winding radial thickness (m)','(thkwp)',thkwp, 'OP ')
-
-        if (i_tf_turns_integer == 1) then
-            call ovarre(outfile, 'Winding toroidal width (m)', '(wwp1)', wwp1, 'OP ')
-        else
-            call ovarre(outfile,'Winding toroidal width 1 (m)','(wwp1)',wwp1, 'OP ')
-            call ovarre(outfile,'Winding toroidal width 2 (m)','(wwp2)',wwp2, 'OP ')
-        end if
-
-        call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)',tinstf)
-        call ovarre(outfile,'Winding pack insertion gap (m)','(tfinsgap)',tfinsgap)
-
-        if (i_tf_turns_integer == 1) then
-            call ovarin(outfile, 'Number of TF pancakes', '(n_pancake)', n_pancake)
-            call ovarin(outfile, 'Number of TF layers', '(n_layer)', n_layer)
-        end if
-
-        call ovarre(outfile,'Number of turns per TF coil','(turnstf)',turnstf, 'OP ')
-
-        call osubhd(outfile,'External Case Information :')
-
+        ! External casing
+        call osubhd(outfile,'Bucking cylinder information:')
         call ovarre(outfile,'Inboard leg case plasma side wall thickness (m)','(casthi)',casthi)
-        call ovarre(outfile,'Inboard leg case inboard "nose" thickness (m)','(thkcas)',thkcas)
-        call ovarre(outfile,'Inboard leg case sidewall thickness at its narrowest point (m)','(casths)',casths)
-        !call ovarre(outfile,'Inboard leg case area per coil (m2)','(acasetf)',acasetf, 'OP ')
-        !call ovarre(outfile,'Outboard leg case area per coil (m2)','(acasetfo)',acasetfo, 'OP ')
-        call ovarre(outfile,'External case mass per coil (kg)','(whtcas)',whtcas, 'OP ')
+        call ovarre(outfile,'Inboard leg bucking cylinder thickness (m)','(thkcas)',thkcas)
+
+        call osubhd(outfile,'Coil turn information:')
+        call ovarre(outfile,'Number of turns per TF leg','(turnstf)',turnstf)
+        call ovarre(outfile,'Turn insulation thickness','(tinstf)',tinstf)
+        call ovarre(outfile,'Mid-plane CP cooling fraction','(fcoolcp)',fcoolcp)
+        call ovarre(outfile,'Outboard leg current per turn (A)','(cpttf)',cpttf)
+        call ovarre(outfile,'Inboard leg conductor volume (m3)','(vol_cond_cp)',vol_cond_cp)
+        call ovarre(outfile,'Outboard leg volume per coil (m3)','(voltfleg)',voltfleg)
+    end if 
+
+    ! Coil masses
+    call osubhd(outfile,'TF coil mass:')    
+    call ovarre(outfile,'Superconductor mass per coil (kg)','(whtconsc)',whtconsc, 'OP ')
+    call ovarre(outfile,'Copper mass per coil (kg)','(whtconcu)',whtconcu, 'OP ')
+    call ovarre(outfile,'Steel conduit mass per coil (kg)','(whtconsh)',whtconsh, 'OP ')
+    call ovarre(outfile,'Conduit insulation mass per coil (kg)','(whtconin)',whtconin, 'OP ')
+    call ovarre(outfile,'Total conductor mass per coil (kg)','(whtcon)',whtcon, 'OP ')
+    if ( itart ==  1 ) then
+        call ovarre(outfile,'Mass of inboard legs (kg)','(whtcp)',whtcp)
+        call ovarre(outfile,'Mass of outboard legs (kg)','(whttflgs)',whttflgs)
+    end if 
+    call ovarre(outfile,'Mass of each TF coil (kg)','(whttf/n_tf)',whttf/n_tf, 'OP ')
+    call ovarre(outfile,'Total TF coil mass (kg)','(whttf)',whttf)
+
+    ! TF forces
+    call osubhd(outfile,'TF Forces:')
+    call ovarre(outfile,'Vertical separating force per leg (N)','(vforce)',vforce, 'OP ')
+    call ovarre(outfile,'Centring force per coil (N/m)','(cforce)',cforce, 'OP ')
+
+    ! Resistive coil parameters
+    if ( i_tf_sup /= 1 ) then 
+        call osubhd(outfile,'Resitive loss parameters:')
+        if ( itart == 1 ) then
+            call ovarre(outfile,'CP resistivity (ohm.m)','(rhocp)',rhocp)
+            call ovarre(outfile,'Leg resistivity (ohm.m)','(rhotfleg)',rhotfleg)
+            call ovarre(outfile,'CP resistive power loss (W)','(prescp)',prescp)
+            call ovarre(outfile,'Leg resitive power loss, (per leg) (W)','(presleg)',presleg)
+            call ovarre(outfile,'joints resistive power loss (W)','(pres_joints)',pres_joints)
+            call ovarre(outfile,'Outboard leg resistance per coil (ohm)','(tflegres)',tflegres)
+            call ovarre(outfile,'Average CP temperature (K)','(tcpav)',tcpav)
+            call ovarre(outfile,'Average leg temperature (K)','(tlegav)',tlegav)
+            
+        else    
+            call ovarre(outfile,'TF resistivity (ohm.m)','(prescp)',rhocp)
+            call ovarre(outfile,'TF coil resistive power less (total) (ohm.m)','(prescp)',prescp)        
+            call ovarre(outfile,'Average coil temperature (K)','(tcpav)',tcpav)
+        end if 
+    end if
+
+    ! Ripple calculations
+    call osubhd(outfile,'Ripple information:') 
+    if ( i_tf_shape == 1 ) then
+
+        if (peaktfflag == 1) then
+            call report_error(144)
+        else if (peaktfflag == 2) then
+            call report_error(145)
+        else
+            continue
+        end if
+ 
+        call ovarre(outfile,'Max allowed ripple amplitude at plasma outboard midplane (%)','(ripmax)',ripmax)
+        call ovarre(outfile,'Ripple amplitude at plasma outboard midplane (%)','(ripple)',ripple, 'OP ')
+    else 
+        call ovarre(outfile,'Max allowed ripple amplitude at plasma (%)','(ripmax)',ripmax)
+        call ovarre(outfile,'Ripple at plasma edge (%)','(ripple)',ripple)
+        call ocmmnt(outfile,'  Ripple calculation to be re-defined for picure frame coils') 
+    end if 
+
+    ! Quench information
+    if ( i_tf_sup == 1 ) then
+        call osubhd(outfile,'Quench information :')
+        call ovarre(outfile,'Allowable stress in vacuum vessel (VV) due to quench (Pa)','(sigvvall)',sigvvall)
+        call ovarre(outfile,'Minimum allowed quench time due to stress in VV (s)','(taucq)',taucq, 'OP ')
+        call ovarre(outfile,'Actual quench time (or time constant) (s)','(tdmptf)',tdmptf)
+        call ovarre(outfile,'Maximum allowed voltage during quench due to insulation (kV)', '(vdalw)', vdalw)
+        call ovarre(outfile,'Actual quench voltage (kV)','(vtfskv)',vtfskv, 'OP ')
+
+        select case (i_tf_sc_mat)
+        case (1,2,3,4,5)
+            call ovarre(outfile,'Maximum allowed temp rise during a quench (K)','(tmaxpro)', tmaxpro)
+        case(6)
+            call ocmmnt(outfile,'CroCo cable with jacket: ')
+
+            if (any(icc == 75) ) then
+                call ovarre(outfile,'Maximum permitted TF coil current / copper area (A/m2)', &
+                '(copperA_m2_max)', copperA_m2_max)
+            endif
+            call ovarre(outfile,'Actual TF coil current / copper area (A/m2)', &
+                                '(copperA_m2)', copperA_m2)
+
+        end select        
+    end if 
+
+    ! TF coil radial build
+    if ( i_tf_sup == 1 ) then
 
         call osubhd(outfile,'Radial build of TF coil centre-line :')
         write(outfile,5)
@@ -3058,6 +3189,7 @@ subroutine outtf(outfile, peaktfflag)
         call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
         radius = radius + casthi
         call obuild(outfile,'Coil case (plasma side)',casthi,radius,'(casthi)')
+      
         if(abs((radius - r_tf_inboard_mid - 0.5D0*tfcth)) < 1d-6)then
             call ocmmnt(outfile,'TF coil dimensions are consistent')
         else
@@ -3069,41 +3201,8 @@ subroutine outtf(outfile, peaktfflag)
         end if
 
     else
-        !  Output section
-        call oheadr(outfile,'Resistive TF Coil Information')
-        call ovarin(outfile,'Resistive TF coil option (0:copper 2:aluminium)','(i_tf_sup)',i_tf_sup)
-        call ovarre(outfile,'Inboard leg mid-plane conductor current density (A/m2)','(oacdcp)',oacdcp)
-        call ovarre(outfile,'Outboard leg conductor current density (A/m2)','(cdtfleg)',cdtfleg)    
-        call ovarre(outfile,'Number of turns per outboard leg','(turnstf)',turnstf)
-        call ovarre(outfile,'Outboard leg current per turn (A)','(cpttf)',cpttf)
-        call ovarre(outfile,'Inboard leg conductor volume (m3)','(vol_cond_cp)',vol_cond_cp)
-        call ovarre(outfile,'Outboard leg volume per coil (m3)','(voltfleg)',voltfleg)
-        call ovarre(outfile,'Mass of inboard legs (kg)','(whtcp)',whtcp)
-        call ovarre(outfile,'Mass of outboard legs (kg)','(whttflgs)',whttflgs)
-        call ovarre(outfile,'Total TF coil mass (kg)','(whttf)',whttf)
-        call ovarre(outfile,'Inboard leg resistive power (W)','(prescp)',prescp)
-        call ovarre(outfile,'Outboard leg resistance per coil (ohm)','(tflegres)',tflegres)
-        call ovarre(outfile,'Average inboard leg temperature (K)','(tcpav)',tcpav)
-        if (itart==1) then
-          call osubhd(outfile,'Tapered Centrepost Dimensions:')
-          call ovarre(outfile,'Radius of the centrepost at the midplane (m)','(r_tf_inboard_out)',r_tf_inboard_out)
-          call ovarre(outfile,'Radius of the ends of the centrepost (m)','(r_cp_top)',r_cp_top)
-          call ovarre(outfile,'Distance from the midplane to the top of the tapered section (m)','(h_cp_top)',h_cp_top)
-          call ovarre(outfile,'Distance from the midplane to the top of the centrepost (m)','(hmax)',hmax + tfthko)
-        end if
 
-
-        call oheadr(outfile,'TF Coils')
-        call ovarre(outfile,'TF coil current (summed over all coils) (A)','(ritfc)',ritfc)
-        call ovarre(outfile,'Peak field at the TF coils (T)','(bmaxtf)',bmaxtf)
-        call ovarre(outfile,'Ripple at plasma edge (%)','(ripple)',ripple)
-        call ovarre(outfile,'Max allowed ripple amplitude at plasma (%)','(ripmax)',ripmax)
-        call ovarre(outfile,'Number of TF coil legs','(n_tf)',n_tf)
- 
         call osubhd(outfile,'Energy and Forces :')
-        call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotftgj)',estotftgj)
-        call ovarre(outfile,'Vertical force on inboard leg (N)','(vforce)',vforce)
-        call ovarre(outfile,'Centering force on inboard leg (N/m)','(cforce)',cforce)
         call oblnkl(outfile)
         call ocmmnt(outfile,'TF coil inner surface shape is given by a rectangle with the')
         call ocmmnt(outfile,'following inner points (Note that this does not account')
@@ -3119,7 +3218,6 @@ subroutine outtf(outfile, peaktfflag)
            call ovarre(mfile,'TF coil arc point '//intstring//' Z (m)', '(yarc('//intstring//'))',yarc(ii))
         end do
         ! 20  format(i4,t10,f10.3,t25,f10.3)
- 
 
     end if 
 
