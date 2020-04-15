@@ -183,40 +183,40 @@ endif()
 # Create the PROCESS developer guide PDF from LaTeX
 add_custom_target(developerguide
   COMMAND pwd
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/developerguide > ${DOC_DIR}/devguide.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/devguide.log"
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/developerguide > ${DOC_DIR}/devguide.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/devguide.log"
-  COMMAND ${MOVE_FILE} developerguide.pdf developerguide.log pdf
+  COMMAND pdflatex -halt-on-error ${DOC_DIR}/archive/tex/developerguide > ${DOC_DIR}/archive/pdf/devguide.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/archive/pdf/devguide.log"
+  COMMAND pdflatex -halt-on-error ${DOC_DIR}/archive/tex/developerguide > ${DOC_DIR}/archive/pdf/devguide.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/archive/pdf/devguide.log"
+  COMMAND ${MOVE_FILE} developerguide.pdf developerguide.log archive/pdf
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/developerguide.aux
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/developerguide.lof
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/developerguide.log
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/developerguide.lot
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/developerguide.toc
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/developerguide.out
-  DEPENDS ${DOC_DIR}/developerguide.tex
+  DEPENDS ${DOC_DIR}/archive/tex/developerguide.tex
   WORKING_DIRECTORY ${DOC_DIR}
 )
 
 # Create the PROCESS utilities guide PDF from LaTeX
 add_custom_target(utilitiesdoc
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/utilitiesdoc > ${DOC_DIR}/utdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/utdoc.log"
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/utilitiesdoc > ${DOC_DIR}/utdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/utdoc.log"
-  COMMAND ${MOVE_FILE} utilitiesdoc.pdf utilitiesdoc.log pdf
+  COMMAND pdflatex -halt-on-error ${DOC_DIR}/archive/tex/utilitiesdoc > ${DOC_DIR}/archive/pdf/utdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/archive/pdf/utdoc.log"
+  COMMAND pdflatex -halt-on-error ${DOC_DIR}/archive/tex/utilitiesdoc > ${DOC_DIR}/archive/pdf/utdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/archive/pdf/utdoc.log"
+  COMMAND ${MOVE_FILE} utilitiesdoc.pdf utilitiesdoc.log archive/pdf
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/utilitiesdoc.aux
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/utilitiesdoc.lof
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/utilitiesdoc.lot
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/utilitiesdoc.toc
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/utilitiesdoc.out
-  DEPENDS ${DOC_DIR}/utilitiesdoc.tex
+  DEPENDS ${DOC_DIR}/archive/tex/utilitiesdoc.tex
   WORKING_DIRECTORY ${DOC_DIR}
 )
 
 # Create the PROCESS optimisation solver guide PDF from LaTeX
 add_custom_target(optsolverdoc
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/optsolverdoc > ${DOC_DIR}/optdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/optdoc.log"
+  COMMAND ${COPY_FILE} archive/tex/optsolverdoc.bib .
+  COMMAND pdflatex -halt-on-error ${DOC_DIR}/archive/tex/optsolverdoc > ${DOC_DIR}/archive/pdf/optdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/archive/pdf/optdoc.log"
   COMMAND bibtex optsolverdoc
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/optsolverdoc > ${DOC_DIR}/optdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/optdoc.log"
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/optsolverdoc > ${DOC_DIR}/optdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/optdoc.log"
-  COMMAND ${MOVE_FILE} optsolverdoc.pdf optsolverdoc.log pdf
+  COMMAND pdflatex -halt-on-error ${DOC_DIR}/archive/tex/optsolverdoc > ${DOC_DIR}/archive/pdf/optdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/archive/pdf/optdoc.log"
+  COMMAND pdflatex -halt-on-error ${DOC_DIR}/archive/tex/optsolverdoc > ${DOC_DIR}/archive/pdf/optdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/archive/pdf/optdoc.log"
+  COMMAND ${MOVE_FILE} optsolverdoc.pdf optsolverdoc.log archive/pdf
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.aux
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.lof
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.log
@@ -225,17 +225,20 @@ add_custom_target(optsolverdoc
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.out
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.bbl
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.blg
-  DEPENDS ${DOC_DIR}/optsolverdoc.tex
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.bib
+  DEPENDS ${DOC_DIR}/archive/tex/optsolverdoc.tex
+  DEPENDS ${DOC_DIR}/archive/tex/optsolverdoc.bib
   WORKING_DIRECTORY ${DOC_DIR}
 )
 
 # Create the PROCESS TF coil documentation PDF from LaTeX
 add_custom_target(tfdoc
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/tfdoc > ${DOC_DIR}/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/tfdoc.log"
+  COMMAND ${COPY_FILE} archive/tex/tf_refs.bib .
+  COMMAND pdflatex -halt-on-error ${DOC_DIR}/archive/tex/tfdoc > ${DOC_DIR}/archive/pdf/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/archive/pdf/tfdoc.log"
   COMMAND bibtex tfdoc
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/tfdoc > ${DOC_DIR}/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/tfdoc.log"
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/tfdoc > ${DOC_DIR}/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/tfdoc.log"
-  COMMAND ${MOVE_FILE} tfdoc.pdf tfdoc.log pdf
+  COMMAND pdflatex -halt-on-error ${DOC_DIR}/archive/tex/tfdoc > ${DOC_DIR}/archive/pdf/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/archive/pdf/tfdoc.log"
+  COMMAND pdflatex -halt-on-error ${DOC_DIR}/archive/tex/tfdoc > ${DOC_DIR}/archive/pdf/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/archive/pdf/tfdoc.log"
+  COMMAND ${MOVE_FILE} tfdoc.pdf tfdoc.log archive/pdf
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.aux
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.lof
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.log
@@ -246,7 +249,9 @@ add_custom_target(tfdoc
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.blg
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.fdb_latexmk
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.fls
-  DEPENDS ${DOC_DIR}/tfdoc.tex
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tf_refs.bib
+  DEPENDS ${DOC_DIR}/archive/tex/tfdoc.tex
+  DEPENDS ${DOC_DIR}/archive/tex/tf_refs.bib
   WORKING_DIRECTORY ${DOC_DIR}
 )
 

@@ -1,6 +1,6 @@
 # PROCESS
 
-<img src="img/ukaea.png" alt="alt text" width="150" height="150">
+<img src="img/ukaea.png" alt="UKAEA logo" width="150" height="150">
 
 PROCESS is a systems code at [CCFE](http://www.ccfe.ac.uk/) that calculates in a 
 self-consistent manner the parameters of a fusion power plant with a specified 
@@ -28,7 +28,7 @@ can be used in “non-optimisation” mode to find one of these whose physics an
 parameters are self-consistent. However, the machine found by PROCESS in this manner may 
 not be possible to build in practice — the coils may be overstressed, for instance, or 
 the plasma pressure may exceed the maximum possible value. PROCESS contains a large number 
-of constraints to prevent the code from finding a machine with such problems, and running 
+of constraints to prevent the code from finding a machine with such problems and running 
 the code in so-called “optimisation” mode forces these constraints to be met. The number 
 of possible conceptual machines is thus considerably reduced, and optimisation of the 
 parameters with respect to (say) the cost of electricity will reduce this number to a 
@@ -48,7 +48,7 @@ spherical tokamak class of machines.
 
 These codes, and much of the original version of PROCESS itself, were written by 
 personnel at Oak Ridge National Laboratory in Tennessee, USA, with contributions from 
-a number of other laboratories in the USA. In addition, many of the mathematical 
+several other laboratories in the USA. In addition, many of the mathematical 
 routines have been taken from a number of different well-established source libraries.
 
 A great deal of effort was expended at 
@@ -74,12 +74,21 @@ to anyone using PROCESS outputs or models based on them.
 
 ## References
 
-The main PROCESS references are:
+Below is a list of PROCESS publications and reference material links:
 
-- M. Kovari et al., PROCESS: A systems code for fusion power plants - Part 1: 
-  Physics ([link](http://www.sciencedirect.com/science/article/pii/S0920379614005961))
-- M. Kovari et al., PROCESS: A systems code for fusion power plants - Part 2: 
-Engineering ([link](http://www.sciencedirect.com/science/article/pii/S0920379614005961))
+- [M. Kovari et al., PROCESS: a systems code for fusion power plants - Part 1: 
+  Physics](http://www.sciencedirect.com/science/article/pii/S0920379614005961)
+- [M. Kovari et al., PROCESS: a systems code for fusion power plants - Part 2: 
+Engineering](http://www.sciencedirect.com/science/article/pii/S0920379614005961)
+- [H. Lux et al., Implications of uncertainties on European DEMO design, Nuc. Fus. 59 
+  (2019)](https://iopscience.iop.org/article/10.1088/1741-4326/ab13e2/meta)
+- [J. Morris, at al., Validation and sensitivity of CFETR design using EU systems 
+  codes, FED 2019 in press corrected proof](https://www.sciencedirect.com/science/article/pii/S0920379619300341)
+- [S.I. Muldrew et al., Uncertainty analysis of an SST-2 fusion reactor design. 
+  FED, 2019 in press corrected proof](https://www.sciencedirect.com/science/article/pii/S0920379618308317)
+- [S.B.L Chislett-McDonald et al., Could high H98-factor commercial tokamak power plants 
+  use Nb–Ti toroidal field coils?, IEEE Transactions on Applied Superconductivity 29 (2019) 
+  ](https://ieeexplore.ieee.org/abstract/document/8630091)
 
 A list of publications using PROCESS can be found [here](./publications/index.html).
   
