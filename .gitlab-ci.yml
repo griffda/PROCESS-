@@ -454,6 +454,7 @@ pages:
     - cp contributors.svg ../public
     - ls ../public
     - du -shc ../public/*
+    - du -shc ../public/ford_site/*
     
   artifacts:
     expire_in: 1 week
