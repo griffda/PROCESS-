@@ -30,10 +30,6 @@ beta = 0.03142
 *----------------------*
 icc = 2
 
-* Toroidal field 1/R consistency *
-*--------------------------------*
-icc = 10
-
 * Radial build consistency *
 *--------------------------*
 icc = 11
@@ -228,10 +224,6 @@ rmajor = 8.9
 ixc = 4
 boundu(4) = 150.0
 te = 12.33
-
-* oacdcp [A/m2]
-ixc = 12
-oacdcp = 8.67E6
 
 * tfcth [m]
 ixc = 13
@@ -441,7 +433,7 @@ isc = 34
 q0 = 1.0
 
 * Switch for single null / double null plasma
-snull = 1
+i_single_null = 1
 
 * Synchrotron wall reflectivity factor
 ssync = 0.6
@@ -607,7 +599,7 @@ casths = 0.05
 ripmax = 0.6
 
 * Number of TF coils
-tfno = 16
+n_tf = 16
 
 * Groundwall insulation thickness [m]
 tinstf = 0.008
