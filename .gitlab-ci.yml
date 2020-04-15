@@ -453,6 +453,7 @@ pages:
     - cp version.svg ../public
     - cp contributors.svg ../public
     - ls ../public
+    - du -shc ../public/*
     
   artifacts:
     expire_in: 1 week
