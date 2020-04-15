@@ -418,9 +418,14 @@ def toroidal_cross_section(axis, mfile_data, scan, demo_ranges):
     
     # Check for Copper magnets
     if "i_tf_sup" in mfile_data.data.keys():
-        i_tf_sup = mfile_data.data["i_tf_sup"].get_scan(scan)
+        i_tf_sup = int(mfile_data.data["i_tf_sup"].get_scan(scan))
     else:
-        i_tf_sup = 1
+        i_tf_sup = int(1)
+
+    if "i_tf_turns_integer" in mfile_data.data.keys():
+        i_tf_turns_integer = int(mfile_data.data["i_tf_turns_integer"].get_scan(scan))
+    else:
+        i_tf_turns_integer = int(0)
 
     axis.set_xlabel('x / m')
     axis.set_ylabel('y / m')
@@ -515,20 +520,31 @@ def toroidal_cross_section(axis, mfile_data, scan, demo_ranges):
     if i_tf_sup is 1 :
 
         # Inboard
-        rect = patches.Rectangle([r1 + thkcas +tinstf, 0], thkwp/2, wwp2/2, lw=0,
-                             facecolor=winding)
-        axis.add_patch(rect)
-        rect = patches.Rectangle([r1 + thkcas +tinstf + thkwp/2, 0], thkwp/2,
-                             wwp1/2, lw=0, facecolor=winding)
-        axis.add_patch(rect)
+        if i_tf_turns_integer is 1 :
+            rect = patches.Rectangle([r1 + thkcas +tinstf, 0], thkwp, wwp1/2, lw=0,
+                                     facecolor=winding)
+            axis.add_patch(rect)
+        else :
+            rect = patches.Rectangle([r1 + thkcas +tinstf, 0], thkwp/2, wwp2/2, lw=0,
+                                     facecolor=winding)
+            axis.add_patch(rect)
+        
+            rect = patches.Rectangle([r1 + thkcas +tinstf + thkwp/2, 0], thkwp/2,
+                                     wwp1/2, lw=0, facecolor=winding)
+            axis.add_patch(rect)
     
         # Outboard
-        rect = patches.Rectangle([r3+casthi+tinstf, 0], thkwp/2, wwp1/2, lw=0,
-                               facecolor=winding)
-        axis.add_patch(rect)
-        rect = patches.Rectangle([r3+casthi+tinstf+thkwp/2, 0], thkwp/2, wwp2/2,
-                               lw=0, facecolor=winding)
-        axis.add_patch(rect)
+        if i_tf_turns_integer is 1 :
+            rect = patches.Rectangle([r3+casthi+tinstf, 0], thkwp, wwp1/2, lw=0,
+                                   facecolor=winding)
+            axis.add_patch(rect)    
+        else :
+            rect = patches.Rectangle([r3+casthi+tinstf, 0], thkwp/2, wwp1/2, lw=0,
+                                   facecolor=winding)
+            axis.add_patch(rect)
+            rect = patches.Rectangle([r3+casthi+tinstf+thkwp/2, 0], thkwp/2, wwp2/2,
+                                    lw=0, facecolor=winding)
+            axis.add_patch(rect)
 
     iefrf = mfile_data.data["iefrf"].get_scan(scan)
     if((iefrf == 5)or(iefrf==8)):
@@ -1328,9 +1344,9 @@ def plot_tf_coils(axis, mfile_data, scan):
     
     # Check for Copper magnets
     if "i_tf_sup" in mfile_data.data.keys():
-        i_tf_sup = mfile_data.data["i_tf_sup"].get_scan(scan)
+        i_tf_sup = int(mfile_data.data["i_tf_sup"].get_scan(scan))
     else:
-        i_tf_sup = 1
+        i_tf_sup = int(1)
   
     # Superconducting TF coils are D-shaped (i_tf_sup=1), but copper TF coils are rectangular (i_tf_sup=0)
     if i_tf_sup != 1:
@@ -1699,6 +1715,13 @@ def plot_physics_info(axis, mfile_data, scan):
     nepeak = mfile_data.data["ne0"].get_scan(scan) / \
         mfile_data.data["dene"].get_scan(scan)
 
+    #Assume Martin scaling if pthresh is not printed
+    #Accounts for pthresh not being written prior to issue #679 and #680
+    if "plhthresh" in mfile_data.data.keys():
+        pthresh = mfile_data.data["plhthresh"].get_scan(scan)
+    else:
+        pthresh = mfile_data.data["pthrmw(6)"].get_scan(scan)
+
     data = [("plascur/1d6", "$I_p$", "MA"),
             ("bt", "Vacuum $B_T$ at $R_0$", "T"),
             ("q95", "$q_{\mathrm{95}}$", ""),
@@ -1716,6 +1739,7 @@ def plot_physics_info(axis, mfile_data, scan):
             (dnz, r"$n_Z/ < n_{\mathrm{e, vol}} >$", ""),
             ("taueff", r"$\tau_e$", "s"),
             ("hfact", "H-factor", ""),
+            (pthresh, "H-mode threshold", "MW"),
             ("tauelaw", "Scaling law", "")]
 
     plot_info(axis, data, mfile_data, scan)
@@ -1733,9 +1757,9 @@ def plot_magnetics_info(axis, mfile_data, scan):
 
     # Check for Copper magnets
     if "i_tf_sup" in mfile_data.data.keys():
-        i_tf_sup = mfile_data.data["i_tf_sup"].get_scan(scan)
+        i_tf_sup = int(mfile_data.data["i_tf_sup"].get_scan(scan))
     else:
-        i_tf_sup = 1
+        i_tf_sup = int(1)
 
     xmin = 0
     xmax = 1
@@ -1786,6 +1810,10 @@ def plot_magnetics_info(axis, mfile_data, scan):
     vssoft = mfile_data.data["vsres"].get_scan(scan) + \
              mfile_data.data["vsind"].get_scan(scan)
 
+    sig_case = 1.0e-6 * mfile_data.data["sig_tf_tresca_max(1)"].get_scan(scan)
+    sig_cond = 1.0e-6 * mfile_data.data["sig_tf_tresca_max(2)"].get_scan(scan)
+    alstrtf =  1.0e-6 * mfile_data.data["alstrtf"].get_scan(scan)
+
     if i_tf_sup is 1:
         data = [(pf_info[0][0], pf_info[0][1], "MA"),
                 (pf_info[1][0], pf_info[1][1], "MA"),
@@ -1799,12 +1827,19 @@ def plot_magnetics_info(axis, mfile_data, scan):
                 ("iooic", "I/I$_{\mathrm{crit}}$", ""),
                 ("tmargtf", "TF Temperature margin", "K"),
                 ("tmargoh", "CS Temperature margin", "K"),
-                ("s_tresca_cond", "Conduit Von Mises stress", "Pa"),
-                ("s_tresca_case", "Case Von Mises stress", "Pa"),
-                ("alstrtf", "Allowable stress", "Pa"),
+                (sig_cond, "TF Cond max TRESCA stress", "MPa"),
+                (sig_case, "TF Case max TRESCA stress", "MPa"),
+                (alstrtf, "Allowable stress", "Pa"),
                 ("whttf/n_tf", "Mass per TF coil", "kg")]
 
     else:
+
+        n_tf = mfile_data.data["n_tf"].get_scan(scan)
+        prescp =  1.0e-6 * mfile_data.data["prescp"].get_scan(scan)
+        presleg = 1.0e-6 * mfile_data.data["presleg"].get_scan(scan)
+        pres_joints = 1.0e-6 * mfile_data.data["pres_joints"].get_scan(scan)
+        fcoolcp = 100. * mfile_data.data["fcoolcp"].get_scan(scan)
+
         data = [(pf_info[0][0], pf_info[0][1], "MA"),
                 (pf_info[1][0], pf_info[1][1], "MA"),
                 (pf_info_3_a, pf_info_3_b, "MA"),
@@ -1819,14 +1854,14 @@ def plot_magnetics_info(axis, mfile_data, scan):
                 
                 ("", "", ""),
                 ("#TF coil forces/stresses", "", ""),
-                ("vforce", "Vertical forces", "N"),
-                ("cforce", "Centering forces", "N"),
-
-                ("", "", ""),
-                ("#TF centerpost colling", "", ""),
-                ("prescp", "Resisitive heating", "W"),
-                ("fcoolcp", "Centerpost cooling fraction", ""),
-                ("vcool", "Maximum coolant flow speed", "m/s")]
+                (sig_cond, "TF conductor max TRESCA stress", "MPa"),
+                (sig_case, "TF bucking max TRESCA stress", "MPa"),
+                (alstrtf, "conductor Allowable stress", "Pa"),
+                (fcoolcp, "CP cooling fraction", "%"),
+                ("vcool", "Maximum coolant flow speed", "m.s$^{-1}$"),
+                (prescp, "CP Resisitive heating", "MW"),
+                (presleg*n_tf, "legs Resisitive heating (all legs)", "MW"),
+                (pres_joints, "TF joints resisitive heating ", "MW")]
 
     plot_info(axis, data, mfile_data, scan)
 
@@ -1857,12 +1892,7 @@ def plot_power_info(axis, mfile_data, scan):
     bt = mfile_data.data["bt"].get_scan(scan)
     surf = mfile_data.data["sarea"].get_scan(scan)
 
-    #Assume Martin scaling if pthresh is not printed
-    #Accounts for pthresh not being written prior to issue #679 and #680
-    if "plhthresh" in mfile_data.data.keys():
-        pthresh = mfile_data.data["plhthresh"].get_scan(scan)
-    else:
-        pthresh = mfile_data.data["pthrmw(6)"].get_scan(scan)
+
 
     gross_eff = 100.0 * (mfile_data.data["pgrossmw"].get_scan(scan) /
                          mfile_data.data["pthermmw"].get_scan(scan))
@@ -1888,6 +1918,7 @@ def plot_power_info(axis, mfile_data, scan):
     dnalp = mfile_data.data["dnalp"].get_scan(scan)
     dene = mfile_data.data["dene"].get_scan(scan)
     ralpne = dnalp/dene
+    crypmw = mfile_data.data["crypmw"].get_scan(scan)
 
     data = [("wallmw", "Nominal neutron wall load", "MW m$^{-2}$"),
             coredescription,
@@ -1897,17 +1928,20 @@ def plot_power_info(axis, mfile_data, scan):
             ("pcoreradmw", "Core radiation", "MW"),
             ("pradmw", "Total radiation", "MW"),
             ("pnucblkt", "Nuclear heating in blanket", "MW"),
-            ("pnucshld", "Nuclear heating in shield", "MW"),
-            ("pdivt", "Power to divertor", "MW"),
-            (pthresh, "H-mode threshold", "MW"),
-            ("divlife", "Divertor life", "years"),
-            ("pthermmw", "Primary (high grade) heat", "MW"),
-            (gross_eff, "Gross cycle efficiency", "%"),
-            (net_eff, "Net cycle efficiency", "%"),
-            ("pgrossmw", "Gross electric power", "MW"),
-            ("pnetelmw", "Net electric power", "MW"),
-            (plant_eff, "Fusion-to-electric efficiency " +
-             r"$\frac{P_{\mathrm{e,net}}}{P_{\mathrm{fus}}}$", "%")]
+            ("pnucshld", "Nuclear heating in shield", "MW")]
+
+    if i_tf_sup is 2 :
+        data.append((crypmw, "TF cryogenic power", "MW"))
+
+    data.append(("pdivt", "Power to divertor", "MW"))
+    data.append(("divlife", "Divertor life", "years"))
+    data.append(("pthermmw", "Primary (high grade) heat", "MW"))
+    data.append((gross_eff, "Gross cycle efficiency", "%"))
+    data.append((net_eff, "Net cycle efficiency", "%"))
+    data.append(("pgrossmw", "Gross electric power", "MW"))
+    data.append(("pnetelmw", "Net electric power", "MW"))
+    data.append((plant_eff, "Fusion-to-electric efficiency " +
+             r"$\frac{P_{\mathrm{e,net}}}{P_{\mathrm{fus}}}$", "%"))
 
     plot_info(axis, data, mfile_data, scan)
 
@@ -1978,10 +2012,8 @@ def plot_current_drive_info(axis, mfile_data, scan):
             (pdivnr, r"$\frac{P_{\mathrm{div}}}{<n> R_{0}}$",
              r"$\times 10^{-20}$ MW m$^{2}$"),
             (flh, r"$\frac{P_{\mathrm{div}}}{P_{\mathrm{LH}}}$", ""),
-            (hstar, "H* (non-rad. corr.)", ""),
-            ("", "", ""),
-            ("#Costs", "", ""),
-            ("coe", "Cost of electricity", "\$/MWh")]
+            (hstar, "H* (non-rad. corr.)", "")]
+
     if nbi:
         data = [(pinjie, "Steady state auxiliary power", "MW"),
             ("pheat", "Power for heating only", "MW"),
@@ -1995,16 +2027,17 @@ def plot_current_drive_info(axis, mfile_data, scan):
             (pdivnr, r"$\frac{P_{\mathrm{div}}}{<n> R_{0}}$",
              r"$\times 10^{-20}$ MW m$^{2}$"),
             (flh, r"$\frac{P_{\mathrm{div}}}{P_{\mathrm{LH}}}$", ""),
-            (hstar, "H* (non-rad. corr.)", ""),
-            ("", "", ""),
-            ("#Costs", "", ""),
-            ("coe", "Cost of electricity", "\$/MWh")]
+            (hstar, "H* (non-rad. corr.)", "")]
 
-
-    # data.append(("", "", ""))
-    # data.append(("#Blanket Information", "", ""))
-    # data.append(("tbr", "Tritium breeding ratio", ""))
-    # data.append(("emult", "Energy multiplication in blanket", ""))
+    coe = mfile_data.data["coe"].get_scan(scan)
+    if coe == 0.0 :   
+        data.append(("", "", ""))
+        data.append(("#Costs", "", ""))
+        data.append(("","Cost output not selected", ""))  
+    else :
+        data.append(("", "", ""))
+        data.append(("#Costs", "", ""))
+        data.append((coe, "Cost of electricity", "\$/MWh"))
 
     plot_info(axis, data, mfile_data, scan)
 
@@ -2152,9 +2185,15 @@ def test(f):
 
         # Check for Copper magnets
         if "i_tf_sup" in m_file.data.keys():
-            i_tf_sup = m_file.data["i_tf_sup"].get_scan(scan)
+            i_tf_sup = int(m_file.data["i_tf_sup"].get_scan(scan))
         else:
-            i_tf_sup = 1
+            i_tf_sup = int(1)
+
+        # Check integer turns
+        if "i_tf_turns_integer" in m_file.data.keys():
+            i_tf_turns_integer = int(m_file.data["i_tf_turns_integer"].get_scan(scan))
+        else:
+            i_tf_turns_integer = int(0)
 
         global bore
         bore = m_file.data["bore"].get_scan(scan)
@@ -2205,8 +2244,9 @@ def test(f):
         if i_tf_sup is 1 : 
             global wwp1
             wwp1 = m_file.data["wwp1"].get_scan(scan)
-            global wwp2
-            wwp2 = m_file.data["wwp2"].get_scan(scan)
+            if i_tf_turns_integer is 0 :
+                global wwp2
+                wwp2 = m_file.data["wwp2"].get_scan(scan)
             global thkwp
             thkwp = m_file.data["thkwp"].get_scan(scan)
             global tinstf
@@ -2382,9 +2422,15 @@ if __name__ == '__main__':
 
     # Check for Copper magnets
     if "i_tf_sup" in m_file.data.keys():
-        i_tf_sup = m_file.data["i_tf_sup"].get_scan(scan)
+        i_tf_sup = int(m_file.data["i_tf_sup"].get_scan(scan))
     else:
-        i_tf_sup = 1
+        i_tf_sup = int(1)
+
+    # Check integer turns
+    if "i_tf_turns_integer" in m_file.data.keys():
+        i_tf_turns_integer = int(m_file.data["i_tf_turns_integer"].get_scan(scan))
+    else:
+        i_tf_turns_integer = int(0)
 
     bore = m_file.data["bore"].get_scan(scan)
     ohcth = m_file.data["ohcth"].get_scan(scan)
@@ -2413,7 +2459,8 @@ if __name__ == '__main__':
     n_tf = m_file.data["n_tf"].get_scan(scan)
     if i_tf_sup is 1: # If superconducting magnets 
         wwp1 = m_file.data["wwp1"].get_scan(scan)
-        wwp2 = m_file.data["wwp2"].get_scan(scan)
+        if i_tf_turns_integer is 0:
+            wwp2 = m_file.data["wwp2"].get_scan(scan)
         thkwp = m_file.data["thkwp"].get_scan(scan)
         tinstf = m_file.data["tinstf"].get_scan(scan)
         thkcas = m_file.data["thkcas"].get_scan(scan)
