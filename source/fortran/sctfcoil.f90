@@ -2846,8 +2846,8 @@ subroutine outtf(outfile, peaktfflag)
     use error_handling, only: report_error
     use build_variables, only: hmax, r_tf_inboard_mid, r_tf_outboard_mid, &
         tfcth, tfthko, r_cp_top
-    use process_output, only: int2char, ovarre, ocmmnt &
-        oblnkl, ovarin, osubhd, ovarrf, obuild
+    use process_output, only: int2char, ovarre, ocmmnt oblnkl, ovarin, osubhd, &
+        ovarrf, obuild
     use numerics, only: icc
     use tfcoil_variables, only: wwp1, whttf, yarc, xarc, &
         windstrain, wwp2, whtconsh, tftort, whtconcu, ritfc, &
