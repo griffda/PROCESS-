@@ -1795,12 +1795,18 @@ def plot_magnetics_info(axis, mfile_data, scan):
 
     tburn = mfile_data.data["tburn"].get_scan(scan) / 3600.0
 
+    if "i_tf_bucking" in mfile_data.data.keys():
+        i_tf_bucking = int(mfile_data.data["i_tf_bucking"].get_scan(scan))
+    else:
+        i_tf_bucking = int(1)
+
+
     # Get superconductor material (i_tf_sc_mat)
     # If i_tf_sc_mat not present, assume resistive
     if "i_tf_sc_mat" in mfile_data.data.keys():
-        i_tf_sc_mat = mfile_data.data["i_tf_sc_mat"].get_scan(scan)
+        i_tf_sc_mat = int(mfile_data.data["i_tf_sc_mat"].get_scan(scan))
     else:
-        i_tf_sc_mat = 0
+        i_tf_sc_mat = int(0)
 
     if i_tf_sc_mat > 0:
         tftype = proc_dict['DICT_TF_TYPE'][str(int(mfile_data.data["i_tf_sc_mat"].get_scan(scan)))]
@@ -1810,9 +1816,9 @@ def plot_magnetics_info(axis, mfile_data, scan):
     vssoft = mfile_data.data["vsres"].get_scan(scan) + \
              mfile_data.data["vsind"].get_scan(scan)
 
-    sig_case = 1.0e-6 * mfile_data.data["sig_tf_tresca_max(1)"].get_scan(scan)
-    sig_cond = 1.0e-6 * mfile_data.data["sig_tf_tresca_max(2)"].get_scan(scan)
-    alstrtf =  1.0e-6 * mfile_data.data["alstrtf"].get_scan(scan)
+    sig_case = 1.0e-6*mfile_data.data["sig_tf_tresca_max({})".format(i_tf_bucking)].get_scan(scan)
+    sig_cond = 1.0e-6*mfile_data.data["sig_tf_tresca_max({})".format(i_tf_bucking+1)].get_scan(scan)
+    alstrtf =  1.0e-6*mfile_data.data["alstrtf"].get_scan(scan)
 
     if i_tf_sup is 1:
         data = [(pf_info[0][0], pf_info[0][1], "MA"),
