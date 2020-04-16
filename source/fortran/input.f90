@@ -624,7 +624,7 @@ contains
           write(outfile,*) ' '
           obsolete_var = .true.
        case ('ilhthresh')
-          call parse_int_variable('ilhthresh', ilhthresh, 1, 18, &
+          call parse_int_variable('ilhthresh', ilhthresh, 1, 21, &
                'Switch for L-H power threshold to enforce')
        case ('impdir')
           call parse_string_variable('impdir', impdir, &
@@ -2501,7 +2501,7 @@ contains
           call parse_real_variable('fkind', fkind, 0.5D0, 1.0D0, &
                'Multiplier for Nth of a kind costs')
        case ('ifueltyp')
-          call parse_int_variable('ifueltyp', ifueltyp, 0, 1, &
+          call parse_int_variable('ifueltyp', ifueltyp, 0, 2, &
                'Switch for costing of 1st wall etc.')
        case ('ipnet')
           call parse_int_variable('ipnet', ipnet, 0, 1, &

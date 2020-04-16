@@ -629,14 +629,14 @@ module physics_variables
   !! psolradmw : SOL radiation power (MW) (stellarator only)
   real(dp) :: psyncpv = 0.0D0
   !! psyncpv : synchrotron radiation power per volume (MW/m3)
-  integer :: ilhthresh = 6
-  !! ilhthresh /6/ : switch for L-H mode power threshold scaling to use
+  integer :: ilhthresh = 19
+  !! ilhthresh /19/ : switch for L-H mode power threshold scaling to use
   !!                 (see pthrmw for list)
   real(dp) :: plhthresh = 0.0D0
   !! plhthresh : L-H mode power threshold (MW)
   !!             (chosen via ilhthresh, and enforced if constraint equation 15 is on)
-  real(dp), dimension(18) :: pthrmw = 0.0D0
-  !! pthrmw(18) : L-H power threshold for various scalings (MW): <OL>
+  real(dp), dimension(21) :: pthrmw = 0.0D0
+  !! pthrmw(21) : L-H power threshold for various scalings (MW): <OL>
   !!        <LI> ITER 1996 scaling: nominal
   !!        <LI> ITER 1996 scaling: upper bound
   !!        <LI> ITER 1996 scaling: lower bound
@@ -654,7 +654,10 @@ module physics_variables
   !!        <LI> Hubbard et al. 2012 L-I threshold scaling: nominal
   !!        <LI> Hubbard et al. 2012 L-I threshold scaling: lower bound
   !!        <LI> Hubbard et al. 2012 L-I threshold scaling: upper bound
-  !!        <LI> Hubbard et al. 2017 L-I threshold scaling</OL>
+  !!        <LI> Hubbard et al. 2017 L-I threshold scaling
+  !!        <LI> Martin 2008 aspect ratio corrected scaling: nominal
+  !!        <LI> Martin 2008 aspect ratio corrected scaling: 95% upper bound
+  !!        <LI> Martin 2008 aspect ratio corrected scaling: 95% lower bound </OL>
   real(dp) :: ptremw = 0.0D0
   !! ptremw : electron transport power (MW)
   real(dp) :: ptrepv = 0.0D0
@@ -3760,6 +3763,9 @@ module cost_variables
   !!                (iavail=1)
   integer :: ifueltyp = 0
   !! ifueltyp /0/ : switch:<UL>
+  !!           <LI> = 2 treat initial blanket, divertor, first wall
+  !!                    as capital costs. Treat all later items and 
+  !!                    fraction fcdfuel of CD equipment as fuel costs;
   !!           <LI> = 1 treat blanket divertor, first wall and
   !!                    fraction fcdfuel of CD equipment as fuel cost;
   !!           <LI> = 0 treat these as capital cost</UL>

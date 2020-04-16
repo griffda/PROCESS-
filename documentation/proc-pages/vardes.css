@@ -1,0 +1,26 @@
+table.vardes {
+    table-layout: fixed;
+    width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.vardes tbody {
+    display: table;
+    width: 100%;
+}
+
+.vardes .col1 {
+    width: 20%;
+}
+
+.vardes .col2 {
+    width: 12%;
+}
+
+.vardes .col3 {
+    width: 13%;
+}
+
+.vardes .col4 {
+    width: 45%;
+}
