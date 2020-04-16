@@ -102,6 +102,7 @@
     detailed in \S 5.
 
     \section{Coil Geometry}
+    \label{sec:geom}
 
     This section outlines the geometry used in the TF model. Figure 
     \ref{fig: geom-1}  shows the overall geometry of the TF coil inboard leg excluding 
@@ -1471,13 +1472,89 @@
         \epsilon_{sc} = \frac{\sigma_{av}}{E_{av}} = \frac{\sigma_z}{E_z}
     \end{equation}
 
+
+    \subsection{Bucked and wedged design}
+
+    \noindent The vaulted coil designs described in section~\ref{sec:geom} 
+    usually involves a thick bucking structure (nose steel casing). This 
+    increase substantially the radial build and hence the tokamak size and 
+    its associated capital cost. An efficient way to reduce the size of the 
+    support casing is to let the TF and the CS touch each other. The CS acts
+    itself as a support structure for the TF centring forces, while the TF
+    support the CS hoop forces. \newline
+
+    \noindent A simple model estimating the TF casing thickness reduction, has
+    been implemented in PROCESS. As the CS hoop forces is opposite to the 
+    TF centring one, these two forces cancel out. The TF worst case is hence
+    when no hoop forces is present, \textit{i.e.} at flux swing (no CS current).
+    The CS can be then considered as an additional inertial inner layer in the
+    model calculation. Orthotropic studies~\cite{J.Last2013} have shown that the
+    dominant young modulus in the stress calculation is the toroidal one. Hence
+    the average young modulus $\overline{E}$ of the CS layer is given by 
+    (parallel):
+
+    \begin{equation}
+        \overline{E} = f_\mathrm{steel}E_\mathrm{steel} + (1-f_\mathrm{steel}
+        )E_\mathrm{cable}
+    \end{equation}
+
+    \noindent with $f_\mathrm{steel}$, $E_\mathrm{cable}$ and $E_\mathrm{steel}$
+    being the steel fraction the conductor cable and the steel young modulus.
+    After the stress calculations, the radial and toroidal normal stresses 
+    ($\sigma_\theta^\mathrm{cond}$ and $\sigma_r^\mathrm{cond}$) on the CS steel
+    conduit is given by :
+
+    \begin{equation}
+        \sigma_\theta^\mathrm{cond} = \frac{t_\mathrm{turn}}{2t_\mathrm{steel}}\overline{\sigma_r} \\
+     \end{equation}
+
+    \begin{equation}
+        \sigma_\theta^\mathrm{cond} = \frac{\overline{\sigma_\theta}}{f_\mathrm{steel}} 
+    \end{equation}
+
+    \noindent with $t_\mathrm{steel}$ the CS turn steel conduit thickness 
+    estimated from the steel fraction and the insulation thickness ($t_\mathrm{ins}$)
+    assuming a square turn geometry:
+
+    \begin{equation}
+        t_\mathrm{steel} = \frac{t_\mathrm{turn} - 2t_\mathrm{ins} - 
+        \sqrt{(2t_\mathrm{ins} - t_\mathrm{turn})^2 - 
+        f_\mathrm{steel}t_\mathrm{turn}^2} }{2}.
+    \end{equation}
+
+    \noindent A vertically sliding TF-CS interface is necessary, as the TF 
+    vertical forces will increase the TF height when energized and CS will 
+    shrink when energized. Hence no TF vertical force should be transmitted
+    to the CS layer in the model ($\sigma_z^\mathrm{cond} = 0 $). A Von-Mises
+    and TRESCA stress is then deduced and used to define CS stress limit if 
+    larger than the Hoop stress one.
+
+    \noindent To use this model the following integer switch must be set to 2 or
+    3 : \texttt{i\_tf\_bucking}. This switch define the TF support structure
+
+    \begin{itemize}
+        \item \texttt{i\_tf\_bucking} = 0 : Free standing TF without a steel 
+            casing or bucking cylinder.
+        \item \texttt{i\_tf\_bucking} = 1 : Free standing TF with a steel casing
+            or bucking cylinder.
+        \item \texttt{i\_tf\_bucking} = 2 : TF in contact with the CS (bucked and
+            wedged). This option does not take the interface layer explicitly.
+        \item \texttt{i\_tf\_bucking} = 2 : TF in contact with the CS (bucked and
+            wedged). This option takes the interface layer explicitly. The 
+            interface is assumed to be made of Kapton within a young modulus of 
+            2.5 GPa and a Poissons ratio of 0.34.
+    \end{itemize}
+
+    \noindent If the CS is not superconducting, the procedure is the same without
+    the smearing/unsmearing procedure. 
+
     \section{Access required for neutral beams}
 
     The maximum tangency radius for the neutral beams is determined by the size and 
     shape of the TF coils, as the beams need to pass between them at an angle. This 
     may be an important constraint on the achievable neutral beam current drive, as 
     this is usually maximum when the tangency radius is equal to or slightly greater 
-    than the major radius \cite{kovari2014, Surrey2012}.  Figure \ref{fig: beam-access} 
+    than the major radius \cite{kovari2014, Surrey2012}. Figure \ref{fig: beam-access} 
     shows the geometry and symbols used.  The need for remote handling may impose 
     additional constraints.  If the blanket modules run the full height of the machine, 
     and are accessed for maintenance from above, then it would not be acceptable for a 
