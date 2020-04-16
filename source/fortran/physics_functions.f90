@@ -20,10 +20,9 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
-
-    !! L-mode to H-mode power threshold calculation
+  subroutine pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,aspect,pthrmw)
     !! author: P J Knight, CCFE, Culham Science Centre
+    !! L-mode to H-mode power threshold calculation
     !! dene   : input real :  volume-averaged electron density (/m3)
     !! dnla   : input real :  line-averaged electron density (/m3)
     !! bt     : input real :  toroidal field on axis (T)
@@ -31,6 +30,7 @@ contains
     !! kappa  : input real :  plasma elongation
     !! sarea  : input real :  plasma surface area (m**2)
     !! aion   : input real :  average mass of all ions (amu)
+    !! aspect : input real :  aspect ratio
     !! pthrmw(17) : output real array : power threshold (different scalings)
     !! This routine calculates the power threshold for the L-mode to
     !! H-mode transition.
@@ -51,8 +51,8 @@ contains
 
     !  Arguments
 
-    real(dp), intent(in) :: dene,dnla,bt,rmajor,kappa,sarea,aion
-    real(dp), dimension(18), intent(out) :: pthrmw
+    real(dp), intent(in) :: dene,dnla,bt,rmajor,kappa,sarea,aion,aspect
+    real(dp), dimension(21), intent(out) :: pthrmw
 
     !  Local variables
 
@@ -135,6 +135,18 @@ contains
 
     ! Hubbard et al. 2017 L-I threshold scaling
     pthrmw(18) = 0.162 * dnla20 * sarea * (bt)**0.26
+
+    !  Aspect ratio corrected Martin et al (2008)
+    !  Correction: Takizuka 2004, Plasma Phys. Control Fusion 46 A227
+    if (aspect.le.2.7D0) then
+        pthrmw(19) = pthrmw(6) * (0.098D0 * aspect / (1.0D0 - (2.0D0/(1.0D0 + aspect))**0.5D0))
+        pthrmw(20) = pthrmw(7) * (0.098D0 * aspect / (1.0D0 - (2.0D0/(1.0D0 + aspect))**0.5D0))
+        pthrmw(21) = pthrmw(8) * (0.098D0 * aspect / (1.0D0 - (2.0D0/(1.0D0 + aspect))**0.5D0))
+    else
+        pthrmw(19) = pthrmw(6)
+        pthrmw(20) = pthrmw(7)
+        pthrmw(21) = pthrmw(8)
+    end if
 
   end subroutine pthresh
 

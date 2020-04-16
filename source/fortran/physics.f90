@@ -403,7 +403,7 @@ module physics_module
 
        !  Calculate L- to H-mode power threshold for different scalings
 
-       call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
+       call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,aspect,pthrmw)
 
        !  Enforced L-H power threshold value (if constraint 15 is turned on)
 
@@ -4255,6 +4255,9 @@ module physics_module
        call ovarre(outfile,'Hubbard 2012 L-I threshold - lower bound (MW)', '(pthrmw(16))',pthrmw(16), 'OP ')
        call ovarre(outfile,'Hubbard 2012 L-I threshold - upper bound (MW)', '(pthrmw(17))',pthrmw(17), 'OP ')
        call ovarre(outfile,'Hubbard 2017 L-I threshold', '(pthrmw(18))',pthrmw(18), 'OP ')
+       call ovarre(outfile,'Martin 2008 aspect ratio corrected scaling: nominal (MW)', '(pthrmw(19))',pthrmw(19), 'OP ')
+       call ovarre(outfile,'Martin 2008 aspect ratio corrected scaling: 95% upper bound (MW)', '(pthrmw(20))',pthrmw(20), 'OP ')
+       call ovarre(outfile,'Martin 2008 aspect ratio corrected scaling: 95% lower bound (MW)', '(pthrmw(21))',pthrmw(21), 'OP ')
        call oblnkl(outfile)
        if ((ilhthresh.eq.9).or.(ilhthresh.eq.10).or.(ilhthresh.eq.11)) then
            if ((bt < 0.78D0).or.(bt > 7.94D0)) then
