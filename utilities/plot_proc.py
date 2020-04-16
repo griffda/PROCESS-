@@ -1921,6 +1921,7 @@ def plot_power_info(axis, mfile_data, scan):
         ped_height = ("", "No pedestal model used", "")
         ped_pos = ("", "", "")
 
+
     dnalp = mfile_data.data["dnalp"].get_scan(scan)
     dene = mfile_data.data["dene"].get_scan(scan)
     ralpne = dnalp/dene
@@ -1934,23 +1935,19 @@ def plot_power_info(axis, mfile_data, scan):
             ("pcoreradmw", "Core radiation", "MW"),
             ("pradmw", "Total radiation", "MW"),
             ("pnucblkt", "Nuclear heating in blanket", "MW"),
-            ("pnucshld", "Nuclear heating in shield", "MW")]
-
-    if i_tf_sup is 2 :
-        data.append((crypmw, "TF cryogenic power", "MW"))
-
-    data.append(("pdivt", "Power to divertor", "MW"))
-    data.append(("divlife", "Divertor life", "years"))
-    data.append(("pthermmw", "Primary (high grade) heat", "MW"))
-    data.append((gross_eff, "Gross cycle efficiency", "%"))
-    data.append((net_eff, "Net cycle efficiency", "%"))
-    data.append(("pgrossmw", "Gross electric power", "MW"))
-    data.append(("pnetelmw", "Net electric power", "MW"))
-    data.append((plant_eff, "Fusion-to-electric efficiency " +
-             r"$\frac{P_{\mathrm{e,net}}}{P_{\mathrm{fus}}}$", "%"))
+            ("pnucshld", "Nuclear heating in shield", "MW"),
+            (crypmw, "TF cryogenic power", "MW"),
+            ("pdivt", "Power to divertor", "MW"),
+            ("divlife", "Divertor life", "years"),
+            ("pthermmw", "Primary (high grade) heat", "MW"),
+            (gross_eff, "Gross cycle efficiency", "%"),
+            (net_eff, "Net cycle efficiency", "%"),
+            ("pgrossmw", "Gross electric power", "MW"),
+            ("pnetelmw", "Net electric power", "MW"),
+            (plant_eff, "Fusion-to-electric efficiency " +
+             r"$\frac{P_{\mathrm{e,net}}}{P_{\mathrm{fus}}}$", "%")]
 
     plot_info(axis, data, mfile_data, scan)
-
 
 def plot_current_drive_info(axis, mfile_data, scan):
     """Function to plot current drive info
@@ -2385,7 +2382,6 @@ def test(f):
         print("FTest failure for file : {}".format(f))
         return False
 
-
 if __name__ == '__main__':
 
     # Setup command line arguments
@@ -2605,5 +2601,3 @@ if __name__ == '__main__':
     #    save_plots(m_file)
     plt.close(page1)
     plt.close(page2)
-
-
