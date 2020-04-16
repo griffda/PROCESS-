@@ -1748,6 +1748,11 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             call ocmmnt(outfile, 'WP conduit TRESCA stress corrected using CEA formula (i_tf_tresca = 1)')
         end if
 
+        if ( i_tf_bucking >= 2) then
+            call ocmmnt(outfile, 'No stress limit imposed on the TF-CS interface layer')
+            call ocmmnt(outfile, '  -> Too much unknow on it material choice/properties')
+        end if 
+
         ! OUT.DAT data on maximum TRESCA stress values
         call ocmmnt(outfile, 'Stresses of the point of maximum TRESCA stress per layer')
         call ocmmnt(outfile, 'Please use utility/plot_TF_stress.py for radial plots plots summary')
