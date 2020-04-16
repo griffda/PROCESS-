@@ -758,7 +758,7 @@ subroutine tf_res_heating()
 
             ! Total number of contact area (4 joints section per legs)
             n_contact_tot = 4.0D0 * n_tf_joints_contact* n_tf_joints &
-                          * int(turnstf) * n_tf
+                          * nint(turnstf) * n_tf
             
             ! Total area of joint contact
             a_joints = tfthko * th_joint_contact * dble(n_contact_tot)
