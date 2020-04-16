@@ -283,8 +283,8 @@ add_custom_target(dicts
   # Add the utilities dir to the PYTHONPATH, so FORD can run create_dicts.py
   # Then run FORD on a "fast" md file, which doesn't make graphs or a search index
   # These are wanted for making docs, but not when making dicts quickly
-  COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=${UTILITIES_DIR}" python3 ford/ford.py ${DOC_DIR}/ford/index_fast.md
-  WORKING_DIRECTORY ${PROCESS_LIB_DIR}
+  COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=${UTILITIES_DIR}" python3 lib/ford/ford.py ${DOC_DIR}/ford/index_fast.md
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   DEPENDS ${CMAKE_SOURCE_DIR}/root.dir
   VERBATIM
 )
