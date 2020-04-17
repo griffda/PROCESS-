@@ -421,20 +421,24 @@ pages:
   when: on_success
   only:
     - develop
+    # Remove on merge to develop
+    - issue-vardes-to-gitpages
   stage: pages
   <<: *build-ubuntu-setup
   image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   script:
     - pwd
     - cmake -H. -Bbuild
-    - mkdocs build
-   
-    # # FORD documentation
-    # # Ensure FORD can find create_dicts.py inside Process
+    
+    # FORD documentation
+    # Ensure FORD can find create_dicts.py inside Process
     - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
     - python3 lib/ford/ford.py documentation/ford/index.md
-
-    # # Publish the MkDocs and FORD sites
+    
+    # Build the MkDocs site (after FORD has been used to create the vardes)
+    - mkdocs build
+    
+    # Publish the MkDocs and FORD sites
     - ls site
     - mv site public
     - mv ford_site public
@@ -453,6 +457,8 @@ pages:
     - cp version.svg ../public
     - cp contributors.svg ../public
     - ls ../public
+    - du -shc ../public/*
+    - du -shc ../public/ford_site/*
     
   artifacts:
     expire_in: 1 week

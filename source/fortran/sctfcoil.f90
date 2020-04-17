@@ -274,7 +274,6 @@ subroutine tf_coil_geometry()
 
     ! Default thickness, initially written for DEMO SC magnets
     else if ( itart == 1 .and. i_tf_sup ==  1 ) then 
-        write(*,*) '[tfcoil.f90] Warining : The SC clamped joints geometry has not been worked out precisely'
         tftort = 2.0D0 * r_tf_inboard_out * sin(theta_coil)
     else 
         tftort = 2.0D0 * r_tf_inboard_out * sin(theta_coil)    
@@ -445,7 +444,8 @@ subroutine tf_winding_pack()
         write(*,*) 'awptf = ',awptf, '  awpc = ',awpc, '  acasetf = ',acasetf
         write(*,*) 'KE thkwp, wwp1, wwp2 = ', thkwp, ', ', wwp1, ', ', wwp2
         !negative awptf comes from neg. thkwp
-        write(*,*) 'tfcth, casthi, thkcas, tinstf, tfinsgap = ', tfcth, ', ', casthi, ', ', thkcas, ', ', tinstf, ', ', tfinsgap
+        write(*,*) 'tfcth, casthi, thkcas, tinstf, tfinsgap = ', tfcth, ', ', &
+            casthi, ', ', thkcas, ', ', tinstf, ', ', tfinsgap
         write(*,*) ' '
     end if
 
@@ -500,7 +500,8 @@ subroutine tf_winding_pack()
                 fdiags(1) = acstf ; fdiags(2) = leni
                 call report_error(102)
                 write(*,*) 'Warning in routine SCTFCOIL:'
-                write(*,*) 'Cable space area, acstf = ',acstf, 'Cable space dimension, leni = ',leni
+                write(*,*) 'Cable space area, acstf = ',acstf,&
+                     'Cable space dimension, leni = ',leni
                 write(*,*) 'Reduce the upper limit for thwcndut (TF coil conduitcase thickness, iteration variable 58),'
                 write(*,*) 'or remove it from the list of iteration variables.'
                 write(*,*) 'Artificially set rounded corner radius to zero'
@@ -801,7 +802,8 @@ subroutine tf_res_heating()
         if ( i_tf_sup /= 1 ) then
 
             ! Total number of contact area (4 joints section per legs)
-            n_contact_tot = 4.0D0 * n_tf_joints_contact* n_tf_joints * turnstf * n_tf
+            n_contact_tot = 4.0D0 * n_tf_joints_contact* n_tf_joints &
+                          * nint(turnstf) * n_tf
             
             ! Total area of joint contact
             a_joints = tfthko * th_joint_contact * dble(n_contact_tot)
@@ -911,9 +913,9 @@ subroutine tf_field_and_force()
                       r_wp_outer**2       * log( r_wp_outer       / r_wp_inner                 ) + &
                       r_tf_outboard_in**2 * log( (r_tf_outboard_in + thkwp) / r_tf_outboard_in ) + &
                       thkwp**2         * log( (r_tf_outboard_in + thkwp) / r_wp_inner          ) - &
-                      thkwp            * ( r_wp_outer + r_tf_outboard_in                       )  + &
-                      2.0D0 * thkwp * ( r_wp_outer     * log(r_wp_inner / r_wp_outer)             + &
-                                           r_tf_outboard_in * log((r_tf_outboard_in + thkwp)      / &
+                      thkwp            * ( r_wp_outer + r_tf_outboard_in                       ) + &
+                      2.0D0 * thkwp * ( r_wp_outer     * log(r_wp_inner / r_wp_outer)            + &
+                                           r_tf_outboard_in * log((r_tf_outboard_in + thkwp)     / &
                                            r_tf_outboard_in))) - vforce 
         r_tf_outboard_in = r_tf_outboard_in - tinstf    ! Tricky trick to avoid writting tinstf all the time
         

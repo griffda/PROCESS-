@@ -173,6 +173,12 @@ contains
 20     format(t2, &
             'First wall, total blanket and divertor direct costs',/, &
             t2,'are zero as they are assumed to be fuel costs.')
+    elseif (ifueltyp == 2) then 
+         call oblnkl(outfile)
+         write(outfile,31)
+21     format(t2, &
+            'Initial First wall, total blanket and divertor direct costs',/,&
+            t2,'are in capital and replacemnet are in cost of electricity')
     end if
 
     call oblnkl(outfile)
@@ -213,6 +219,12 @@ contains
 30        format(t2, &
                'Centrepost direct cost is zero, as it ', &
                'is assumed to be a fuel cost.')
+       elseif ((itart == 1).and.(ifueltyp == 2)) then
+          call oblnkl(outfile)
+          write(outfile,31)
+31        format(t2, &
+               'Initial centrepost direct cost in included in capital ', &
+               'cost and replacements are assumed to be a fuel cost.')
        end if
 
        call oblnkl(outfile)
@@ -431,7 +443,9 @@ contains
     annfwbl = (fwallcst + blkcst) * &
          (1.0D0+cfind(lsa)) * fcap0cp * crffwbl
 
-
+    if (ifueltyp == 2) then
+      annfwbl = annfwbl * ( 1.0d0 - fwbllife / tlife)
+    end if
 
     !  Cost of electricity due to first wall/blanket replacements
 
@@ -460,6 +474,10 @@ contains
 
        !  Cost of electricity due to divertor replacements
 
+         if (ifueltyp == 2) then
+            anndiv = anndiv * (1.0d0 - divlife / tlife)
+         end if
+
        coediv = 1.0D9 * anndiv / kwhpy
 
     end if
@@ -483,6 +501,10 @@ contains
             (1.0D0+cfind(lsa)) * fcap0cp * crfcp
 
        !  Cost of electricity due to centrepost replacements
+         if (ifueltyp == 2) then
+            anncp = anncp * (1.0d0 - cplife / tlife)
+         end if
+
 
        coecp = 1.0D9 * anncp / kwhpy
 
@@ -860,6 +882,8 @@ contains
     !! and divertor plates.
     !! <P>If ifueltyp = 1, the first wall, blanket and divertor costs are
     !! treated as fuel costs, rather than as capital costs.
+    !! <P>If ifueltyp = 2, the initial first wall, blanket and divertor costs are
+    !! treated as capital costs, and replacemnts are included as fuel costs.
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -910,6 +934,8 @@ contains
     !! The first wall cost is scaled linearly with surface area from TFCX.
     !! If ifueltyp = 1, the first wall cost is treated as a fuel cost,
     !! rather than as a capital cost.
+    !! If ifueltyp = 2, inital first wall is included as a capital cost,
+    !! and the replacement first wall cost is treated as a fuel costs.
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -955,6 +981,8 @@ contains
     if (ifueltyp == 1) then
        fwallcst = c2211
        c2211 = 0.0D0
+    elseif (ifueltyp == 2) then
+       fwallcst = c2211
     else
        fwallcst = 0.0D0
     end if
@@ -971,6 +999,8 @@ contains
     !! This routine evaluates the Account 221.2 (blanket) costs.
     !! If ifueltyp = 1, the blanket cost is treated as a fuel cost,
     !! rather than as a capital cost.
+    !! If ifueltyp = 2, the initial blanket is included as a capital cost
+    !! and the replacement blanket costs are treated as a fuel cost.
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1062,6 +1092,8 @@ contains
     if (ifueltyp == 1) then
        blkcst = c2212
        c2212 = 0.0D0
+    elseif (ifueltyp == 2) then
+       blkcst = c2212
     else
        blkcst = 0.0D0
     end if
@@ -1181,6 +1213,8 @@ contains
     !! Tenth-of-a-kind engineering and installation is assumed.
     !! <P>If ifueltyp = 1, the divertor cost is treated as a fuel cost,
     !! rather than as a capital cost.
+    !! <P>If ifueltyp = 2, the initial divertor is included as a capital cost
+    !! and the replacement divertor costs ae treated as a fuel cost,
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1199,6 +1233,8 @@ contains
        if (ifueltyp == 1) then
           divcst = c2215
           c2215 = 0.0D0
+       elseif (ifueltyp == 2) then
+          divcst = c2215 
        else
           divcst = 0.0D0
        end if
@@ -1267,6 +1303,8 @@ contains
     !! by R. Hancox under contract to Culham Laboratory, Jan/Feb 1994.
     !! If ifueltyp = 1, the TART centrepost cost is treated as a fuel
     !! cost, rather than as a capital cost.
+    !! If ifueltyp = 2, the  initial centrepost is included as a capital cost
+    !! and the replacement TART centrepost costs are treated as a fuel
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1306,6 +1344,8 @@ contains
        if ((itart == 1).and.(ifueltyp == 1)) then
           cpstcst = c22211
           c22211 = 0.0D0
+       elseif ((itart == 1).and.(ifueltyp == 2)) then
+          cpstcst = c22211
        end if
 
        !  Account 222.1.2 : Outboard TF coil legs

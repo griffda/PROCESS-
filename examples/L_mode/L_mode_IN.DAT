@@ -8,7 +8,6 @@ icc = 1 * Beta
 icc = 2 * Global power balance
 icc = 5 * Density upper limit
 icc = 8 * Neutron wall load upper limit
-icc = 10 * Toroidal field 1
 icc = 11 * Radial build
 icc = 13 * Burn time lower limit
 icc = 15 * LH power threshold limit
@@ -43,7 +42,6 @@ ixc = 6 * dene
 ixc = 9 * fdene
 boundu(9) = 1.2
 ixc = 11 * pheat
-ixc = 12 * oacdcp
 ixc = 13 * tfcth
 boundl(13) = 1.4
 ixc = 14 * fwalld
@@ -292,7 +290,6 @@ ifalphap = 1 * Switch for fast alpha pressure calculation;
 ifispact = 0 * Switch for neutronics calculations;
 iinvqd   = 1 * Switch for inverse quadrature in l-mode scaling laws 5 and 9;
 ipedestal = 0 * Switch for pedestal profiles;
-iscdens  = 1 * Switch for pedestal profiles; obsolete
 ieped    = 1 * Switch for scaling pedestal-top temperature with plasma parameters;
 neped    = 0.678e20 * Electron density of pedestal [m-3] (ipedestal=1;2; calculated if 3)
 nesep    = 0.2e20 * Electron density at separatrix [m-3] (ipedestal=1;2; calculated if 3)
@@ -310,7 +307,7 @@ q        = 3.5 * Safety factor 'near' plasma edge (iteration variable 18);
 q0       = 1.0 * Safety factor on axis
 ralpne   = 0.052213 * Thermal alpha density / electron density (iteration variable 109)
 rmajor   = 17.539 * Plasma major radius (m) (iteration variable 3)
-snull    = 1 * Switch for single null / double null plasma;
+i_single_null = 1 * Switch for single null / double null plasma;
 ssync    = 0.6 * Synchrotron wall reflectivity factor
 te       = 6.7666 * Volume averaged electron temperature (kev)
 triang   = 0.5 * Plasma separatrix triangularity (calculated if ishape=1; 3 or 4)
@@ -352,7 +349,7 @@ n_layer  = 10 * Number of layers in tf coil (i_tf_turns_integer=1)
 oacdcp   = 3991500.0 * Overall current density in tf coil inboard legs (a/m2)
 ripmax   = 0.6 * Maximum allowable toroidal field ripple amplitude
 tdmptf   = 100.0 * Fast discharge time for tf coil in event of quench (s)
-tfno     = 16 * Number of tf coils (default = 50 for stellarators)
+n_tf     = 16 * Number of tf coils (default = 50 for stellarators)
 tftmp    = 4.750 * Peak helium coolant temperature in tf coils and pf coils (k)
 thicndut = 2.0d-3 * Conduit insulation thickness (m)
 thkcas   = 1.0 * Inboard tf coil case outer (non-plasma side) thickness (m)
