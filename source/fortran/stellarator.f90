@@ -4,69 +4,88 @@ module stellarator_configuration
    !!
    !! This module contains a set of constants that defines a
    !! stellarator configuration. These parameters are based on external
-   !! calculations.
-   !! The list will be modified in further commits.
+   !! calculations and are hardcoded right now into this module. There will be
+   !! the possibiltiy to set them via an input file in the future.
+   !! The list below will be modified in further commits.
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   use, intrinsic :: iso_fortran_env, only: dp=>real64
    implicit none
 
 
    type :: stella_config
-
-      ! Name
-      character (len = 20) :: name
-
-      !  Number of coils
-      integer symmetry
-      !  Coils per module
-      integer coilspermodule
-
-
-      !  Reference Point where all the other variables are determined
-      real(kind(1.0D0))  rmajor_ref
-      real(kind(1.0D0))  rminor_ref
-      real(kind(1.0D0))  aspect_ref
-      real(kind(1.0D0))  bt_ref
       
-      !  Coil current needed for 1T on axis at outer radius 1m
-      real(kind(1.0D0)) i0
-      !  Magnetic field fit parameter a1
-      real(kind(1.0D0)) a1
-      !  Magnetic field fit parameter a2
-      real(kind(1.0D0)) a2
-      !  Minimal intercoil distance dmin/Rmax
-      real(kind(1.0D0)) dmin
-      !  Inductivity
-      real(kind(1.0D0)) inductivity
-      !  Coil surface
-      real(kind(1.0D0)) coilsurface
-      !  Total coil length
-      real(kind(1.0D0)) coillength
-      !  Port size in toroidal direction
-      real(kind(1.0D0)) max_portsize_width
-      !  Average minor Coil Radius (as r/R) to get it dimensionless.
-      real(kind(1.0D0)) coil_epsilon 
+      character (len = 20) :: name
+      ! Name of the configuration
 
+      integer symmetry
+      !  Number of coils
+
+      integer coilspermodule
+      !  Coils per module
+
+      real(dp)  rmajor_ref
+      !  Reference Point for major radius where all the other variables are determined
+
+      real(dp)  rminor_ref
+      !  Reference Point for minor radius where all the other variables are determined
+
+      real(dp)  aspect_ref
+      !  Reference Point for aspect ratio where all the other variables are determined
+
+      real(dp)  bt_ref
+      !  Reference Point for toroidal b where all the other variables are determined
+      
+      real(dp) i0
+      !  Coil current needed for 1T on axis at outer radius 1m
+      
+      real(dp) a1
+      !  Magnetic field fit parameter a1 (for the maximal field on the coils)
+      
+      real(dp) a2
+      !  Magnetic field fit parameter a2
+
+      real(dp) dmin
+      !  Minimal intercoil distance dmin/Rmax
+      
+      real(dp) inductance
+      !  inductance
+
+      real(dp) coilsurface
+      !  Coil surface
+
+      real(dp) coillength
+      !  Total coil length
+      
+      real(dp) max_portsize_width
+      !  Port size in toroidal direction
+
+      real(dp) coil_epsilon 
+      !  Average minor Coil Radius (as r/R) to get it dimensionless.
+
+      real(dp) coil_to_plasma_ratio
       !  The ratio of the coil to plasma radius.
       !  (Average midpoint of the coils to average maj. radius. Will be approx. 1)
-      real(kind(1.0D0)) coil_to_plasma_ratio
 
+      real(dp) maximal_coil_height
       !  The maximal coil height at reference point.
-      real(kind(1.0D0)) maximal_coil_height
 
+      real(dp) min_plasma_coil_distance
       !  The minimal distance between coil and plasma
-      real(kind(1.0D0)) min_plasma_coil_distance
 
-      !  2 volume parameters v1 and v2. They scale according to r*R^2 and r^3
-      real(kind(1.0D0)) vr2r
+      real(dp) plasma_volume
+      !  Leading volume variable. Scales as a*R^2. [m^3]
 
-      !  2 surface parameters s0 and s1. They are the leading taylor orders.
-      real(kind(1.0D0)) s0 
+      real(dp) plasma_surface
+      !  The plasma surface a the reference point. [m^2]
 
-      !  Ratio radial to toroidal length of the winding pack. (a1 and a2 should be calculated using this value)
-      real(kind(1.0D0)) WP_ratio
-
-      !  Maximal force density in MN/m^3 at one point:
-      real(kind(1.0D0)) max_force_density
+      real(dp) WP_ratio
+      !  Ratio radial to toroidal length of the winding pack. (a1 and a2 should be calculated using this value) [1]
+     
+      real(dp) max_force_density
+      !  Maximal force density at reference point [MN/m^3]
+      
+      real(dp) min_bend_radius
+      !  Minimal bending radius at reference point [m]
 
 
    end type stella_config
@@ -94,8 +113,7 @@ contains
          case(1)
             ! Helias5 Machine
             new_stella_config%name = "Helias 5b"
-            ! Reference point where all the other variables are determined from
-            ! Plasma outer radius
+
             new_stella_config%rmajor_ref = 22.0D0
             new_stella_config%aspect_ref = 12.5D0
             new_stella_config%rminor_ref = 22.0D0/12.5D0
@@ -103,13 +121,15 @@ contains
 
             new_stella_config%symmetry = 5
             new_stella_config%coilspermodule = 10
+
             new_stella_config%a1 = 0.712D0
             new_stella_config%a2 = 0.027D0
-            new_stella_config%vr2r = 19.816D0  ! This value is for Helias 5
+
+            new_stella_config%plasma_volume = 19.816D0  ! This value is for Helias 5
             new_stella_config%dmin = 0.84D0
             new_stella_config%max_portsize_width = 2.12D0 
 
-            new_stella_config%s0 = 49.228D0 ! Plasma Surface
+            new_stella_config%plasma_surface = 49.228D0 ! Plasma Surface
 
             new_stella_config%maximal_coil_height = 12.7 ! [m] Full height max point to min point
 
@@ -122,13 +142,15 @@ contains
             new_stella_config%coil_to_plasma_ratio = 22.46D0/22.0D0 ! Approximately
       
             new_stella_config%I0 = 13.06D0/5.6D0/22.46D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
-            new_stella_config%inductivity = 1655.76D-6/22.0D0* 12.5D0**2 ! Inductivity/R*A^2 in muH/m
+            new_stella_config%inductance = 1655.76D-6/22.0D0* 12.5D0**2 ! inductance/R*A^2 in muH/m
 
             new_stella_config%WP_ratio = 1.3D0 ! The fit values in stellarator config class should be calculated using this value.
 
             new_stella_config%max_force_density = 0.37 ! Multiply with I^2 [MA] A_wp^(-1) [m^2] to obtain [MN/m^3]
 
             new_stella_config%min_plasma_coil_distance = (4.7D0-1.76D0)/22.0D0 ! This is coil minor radius - plasma radius divided by major radius for scaling.
+
+            new_stella_config%min_bend_radius = 1.32 ! [m]
 
          case(2)
             ! Helias4 Machine
@@ -144,11 +166,11 @@ contains
             new_stella_config%coilspermodule = 10
             new_stella_config%a1 = 0.691D0
             new_stella_config%a2 = 0.031D0
-            new_stella_config%vr2r =   1560.0D0/18.0D0/2.1D0**2
+            new_stella_config%plasma_volume =   1560.0D0/18.0D0/2.1D0**2
             new_stella_config%dmin = 1.08D0
             new_stella_config%max_portsize_width = 3.24D0
 
-            new_stella_config%s0 = 1492.0D0/18.0D0/2.1D0
+            new_stella_config%plasma_surface = 1492.0D0/18.0D0/2.1D0
             new_stella_config%maximal_coil_height = 13.34D0  ! [m] Full height max point to min point
 
             new_stella_config%coilsurface =  4019.0D0! Coil surface, dimensionfull. At reference point
@@ -160,13 +182,15 @@ contains
             new_stella_config%coil_to_plasma_ratio = 1.0D0 ! Approximately
       
             new_stella_config%I0 = 13.146D0/5.6D0/18.0D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
-            new_stella_config%inductivity = 1290.4D-6/18.0D0*(18.0D0/2.1D0)**2 ! Inductivity/R*A^2 in muH/m
+            new_stella_config%inductance = 1290.4D-6/18.0D0*(18.0D0/2.1D0)**2 ! inductance/R*A^2 in muH/m
 
             new_stella_config%WP_ratio = 1.3D0
 
             new_stella_config%max_force_density = 0.37 ! Multiply with I^2 [MA] A_wp^(-1) [m^2] to obtain [MN/m^3]
 
             new_stella_config%min_plasma_coil_distance = (4.95D0-2.1D0)/18.0D0 
+
+            new_stella_config%min_bend_radius = 0.86 ! [m]
 
 
          case(3)
@@ -183,11 +207,11 @@ contains
             new_stella_config%coilspermodule = 10
             new_stella_config%a1 = 0.571D0
             new_stella_config%a2 = 0.033D0
-            new_stella_config%vr2r =   1600.0D0/15.0D0/2.5D0**2
+            new_stella_config%plasma_volume =   1600.0D0/15.0D0/2.5D0**2
             new_stella_config%dmin = 1.15D0
             new_stella_config%max_portsize_width = 3.24D0
 
-            new_stella_config%s0 = 1480.44D0/15.0D0/2.5D0
+            new_stella_config%plasma_surface = 1480.44D0/15.0D0/2.5D0
 
             new_stella_config%maximal_coil_height = 17.74D0! [m] Full height max point to min point
 
@@ -200,13 +224,15 @@ contains
             new_stella_config%coil_to_plasma_ratio = 1.0D0 ! Approximately
       
             new_stella_config%I0 = 14.23D0/5.6D0/15.0D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
-            new_stella_config%inductivity = 1250.7D-6/15.0D0*(15.0D0/2.5D0)**2 ! Inductivity/R*A^2 in muH/m
+            new_stella_config%inductance = 1250.7D-6/15.0D0*(15.0D0/2.5D0)**2 ! inductance/R*A^2 in muH/m
 
             new_stella_config%WP_ratio = 1.3D0
 
             new_stella_config%max_force_density = 0.37 ! Multiply with I^2 [MA] A_wp^(-1) [m^2] to obtain [MN/m^3]
 
             new_stella_config%min_plasma_coil_distance = (6.12D0-2.5D0)/15.0D0 
+
+            new_stella_config%min_bend_radius = 0.81 ! [m]
 
          case default
             ! Return some error here. The index is not implemented yet.
@@ -233,6 +259,7 @@ module stellarator_module
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   use stellarator_configuration, only: stella_config
   implicit none
 
@@ -240,7 +267,7 @@ module stellarator_module
   type(stella_config) :: config
 
 
-  real(kind(1.0D0)), private :: f_n,f_r,f_a,f_b,f_i ! scaling parameters to reference point.
+  real(dp), private :: f_n,f_r,f_a,f_b,f_i ! scaling parameters to reference point.
 
   logical :: first_call = .true.
   private :: config
@@ -276,6 +303,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    ! Stellarator Routines      
     call stnewconfig          
     call stgeom
     call stphys
@@ -285,6 +313,7 @@ contains
     call stfwbs(nout,0)
     call stdiv(nout,0)
 
+    ! Tokamak Routines, where we think they are applicable also for stellarators
     call tfpwr(nout,0)
     call power1
     call vaccall(nout,0)
@@ -330,7 +359,7 @@ contains
 
     !  Local variables
 
-    !real(kind(1.0D0)) :: fsum
+    !real(dp) :: fsum
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -503,22 +532,21 @@ contains
 		use constants, only: pi
     implicit none
 
-    !  Arguments
-
-    !  Local variables
-
-    !  Cross-sectional area, averaged over toroidal angle
     rminor = rmajor/aspect
     eps = 1.0D0/aspect
 
-    vol = rmajor*rminor**2 * config%vr2r
+    ! Plasma volume scaled from effective parameter:
+    vol = rmajor*rminor**2 * config%plasma_volume
 
-    sarea = rmajor*rminor * config%s0 
+    ! Plasma surface scaled from effective parameter:
+    sarea = rmajor*rminor * config%plasma_surface 
 
+    ! Plasma cross section area. Approximated
     xarea = pi*rminor*rminor  ! average, could be calculated for every toroidal angle if desired
 
     !  sareao is retained only for obsolescent fispact calculation...
 
+    !  Cross-sectional area, averaged over toroidal angle
     sareao = 0.5D0*sarea  !  Used only in the divertor model; approximate as for tokamaks
 
   end subroutine stgeom
@@ -557,7 +585,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: drbild,radius,awall
+    real(dp) :: drbild,radius,awall
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -762,7 +790,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: fusrat,pddpv,pdtpv,pdhe3pv,powht,sbar,sigvdt,zion
+    real(dp) :: fusrat,pddpv,pdtpv,pdhe3pv,powht,sbar,sigvdt,zion
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -960,7 +988,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), save :: effnbss,fpion
+    real(dp), save :: effnbss,fpion
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1139,7 +1167,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: adewex,bfwi,bfwo,coilhtmx,coolvol,decaybl,decaybzi, &
+    real(dp) :: adewex,bfwi,bfwo,coilhtmx,coolvol,decaybl,decaybzi, &
          decaybzo,decayfwi,decayfwo,decayshldi,decayshldo,dpacop,htheci, &
          pheci,pheco,pneut2,pnucbsi,pnucbso,pnucbzi,pnucbzo,pnucfwbs, &
          pnucfwbsi,pnucfwbso,pnucfwi,pnucfwo,pnucshldi,pnucshldo,pnucsi, &
@@ -1799,12 +1827,12 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: bt,powht,rmajor,rminor
-    real(kind(1.0D0)), intent(out) :: dlimit
+    real(dp), intent(in) :: bt,powht,rmajor,rminor
+    real(dp), intent(out) :: dlimit
 
     !  Local variables
 
-    real(kind(1.0D0)) :: arg,dnlamx
+    real(dp) :: arg,dnlamx
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1844,7 +1872,7 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(out) :: betamx
+    real(dp), intent(out) :: betamx
 
     !  Local variables
 
@@ -1882,7 +1910,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: d2,powerhtz,ptrez,ptriz,taueez, &
+    real(dp) :: d2,powerhtz,ptrez,ptriz,taueez, &
          taueffz,taueiz
     integer :: i,iisc
     integer, parameter :: nstlaw = 5
@@ -2022,7 +2050,7 @@ contains
     integer, intent(in) :: iprint,outfile
 
     !  Local variables
-    real(kind(1.0D0)) :: intercoil_surface, M_intercoil, M_struc, msupstr
+    real(dp) :: intercoil_surface, M_intercoil, M_struc, msupstr
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Tokamak-specific PF coil fence mass set to zero
@@ -2111,9 +2139,9 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: R,alpha,xi_p,T_scrape,Theta,darea
-    real(kind(1.0D0)) :: E,c_s,w_r,Delta,L_P,L_X_T,l_q,l_b
-    real(kind(1.0D0)) :: F_x,L_D,L_T,L_W,P_div,A_eff,q_div
+    real(dp) :: R,alpha,xi_p,T_scrape,Theta,darea
+    real(dp) :: E,c_s,w_r,Delta,L_P,L_X_T,l_q,l_b
+    real(dp) :: F_x,L_D,L_T,L_W,P_div,A_eff,q_div
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2264,13 +2292,13 @@ contains
     integer, intent(in) :: outfile,iprint
 
 
-    real(kind(1.0D0)) :: r_coil_major, r_coil_minor, case_thickness_constant, coilcurrent
+    real(dp) :: r_coil_major, r_coil_minor, case_thickness_constant, coilcurrent
 
-    real(kind(1.0D0)), allocatable, dimension(:) ::   jcrit_vector,RHS,LHS,awp, B_max_k
+    real(dp), allocatable, dimension(:) ::   jcrit_vector,RHS,LHS,awp, B_max_k
 
-    real(kind(1.0D0)) :: ap,vd,f_scu, awp_min, awpc, awp_tor, awp_rad, &
+    real(dp) :: ap,vd,f_scu, awp_min, awpc, awp_tor, awp_rad, &
                            b_vert_max, awptf, r_tf_inleg_mid, radvv, tf_total_h_width, &
-                           tfborev
+                           tfborev, min_bending_radius
 
     integer :: N_it,k
 
@@ -2299,6 +2327,7 @@ contains
      acstf = 0.9D0 * leni**2 ! 0.9 to include some rounded corners. (acstf = pi (leni/2)**2 = pi/4 *leni**2 for perfect round conductor). This factor depends on how round the corners are.
      ! [m^2] Cross-sectional area of conduit case per turn
      acndttf = (leni + 2.0D0*thwcndut)**2 - acstf
+     !
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -2448,7 +2477,7 @@ contains
                                                           ! useful for stellarators
  
  
-     estotftgj = 0.5D0 * (config%inductivity*rmajor/aspect**2)&
+     estotftgj = 0.5D0 * (config%inductance*rmajor/aspect**2)&
                    * (ritfc/n_tf)**2 * 1.0D-9             ! [GJ] Total magnetic energy
   
      !  Coil dimensions
@@ -2467,7 +2496,9 @@ contains
      ! [m^2] Total surface area of toroidal shells covering coils
      tfcryoarea = config%coilsurface * f_r**2 / f_a *1.1D0 !1.1 to scale it out a bit. Should be coupled to winding pack maybe.
  
- 
+     ! Minimal bending radius:
+     min_bending_radius = config%min_bend_radius * f_r
+
    ! End of general coil geometry values
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2508,28 +2539,33 @@ contains
      ! Quench time [s]
      taucq = (bt * ritfc * rminor * rminor) / (radvv * sigvvall)
  
+     ! Here we do a slight modification now. we constrain it by the maximum force density.
+
+
      ! the conductor fraction is meant of the cable space!
      call protect(cpttf,estotftgj/n_tf*1.0D9,acstf,   leno**2   ,tdmptf,1-vftf,fcutfsu,tftmp,tmaxpro,jwdgpro,vd)
   
      ! Also give the copper area for REBCO quench calculations:
      copperA_m2 = coilcurrent*1.0D6/(acond * fcutfsu)
      vtfskv = vd/1.0D3 ! Dump voltage
- 
+     !
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !!!!!! Forces scaling !!!!!!!!!!!!!!
+    !
     max_force_density = config%max_force_density *(ritfc*1.0D-6/n_tf) * bmaxtf / awptf
-
+    !
     ! Approximate, very simple maxiumum stress: (needed for limitation of icc 32)
     strtf2 = max_force_density * thkwp *1.0D6 ! in Pa
-
+    !
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     if (iprint == 1) call stcoil_output(outfile)
 
    contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    real(kind(1.0D0)) function bmax_from_awp(awp_dimensionless,current)
+    real(dp) function bmax_from_awp(awp_dimensionless,current)
 
        !! Returns a fitted function for bmax for stellarators
        !! author: J Lion, IPP Greifswald
@@ -2542,7 +2578,7 @@ contains
        implicit none
  
        ! t is the winding pack width (sqrt(awp) r8 now) divided by coil_rmajor
-       real(kind(1.0D0)), intent(in) ::awp_dimensionless,current
+       real(dp), intent(in) ::awp_dimensionless,current
  
 
        ! This funtion is exact in scaling of the winding pack but does not take scaling in n_tf into account, neither does
@@ -2552,17 +2588,17 @@ contains
                       * (config%a1+config%a2/(sqrt(awp_dimensionless)))
     end function 
 
-    real(kind(1.0D0)) function jcrit_frommaterial(bmax,thelium)
+    real(dp) function jcrit_frommaterial(bmax,thelium)
 
        ! gives jcrit from material
   
-        real(kind(1.0D0)), intent(in) ::Bmax, thelium
+        real(dp), intent(in) ::Bmax, thelium
   
-        real(kind(1.0D0)) :: strain, bc20m, tc0m, jcritsc, bcrit, tcrit
+        real(dp) :: strain, bc20m, tc0m, jcritsc, bcrit, tcrit
   
-        real(kind(1.0D0)) :: jstrand, jwp, fhe, tmarg
+        real(dp) :: jstrand, jwp, fhe, tmarg
   
-        real(kind(1.0D0)) :: c0, jcritstr, fcu
+        real(dp) :: c0, jcritstr, fcu
   
         logical :: validity
   
@@ -2692,15 +2728,15 @@ contains
    
          !  Arguments
    
-         real(kind(1.0D0)), intent(in) :: aio, tfes, acs, aturn, tdump, fcond, &
+         real(dp), intent(in) :: aio, tfes, acs, aturn, tdump, fcond, &
          fcu,tba,tmax
-         real(kind(1.0D0)), intent(out) :: ajwpro, vd
+         real(dp), intent(out) :: ajwpro, vd
    
          !  Local variables
    
          integer :: no,np
-         real(kind(1.0D0)) :: aa,ai1,ai2,ai3,ajcp,bb,cc,dd,tav
-         real(kind(1.0D0)), dimension(11) :: p1, p2, p3
+         real(dp) :: aa,ai1,ai2,ai3,ajcp,bb,cc,dd,tav
+         real(dp), dimension(11) :: p1, p2, p3
    
          ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    
@@ -2790,13 +2826,13 @@ contains
       implicit none
 
       integer, intent(in) :: n1, n2
-      real(kind(1.0D0)), dimension(n1), intent(in) :: x1, y1
-      real(kind(1.0D0)), dimension(n2), intent(in) :: x2, y2
+      real(dp), dimension(n1), intent(in) :: x1, y1
+      real(dp), dimension(n2), intent(in) :: x2, y2
 
-      real(kind(1.0D0)), intent(inout) :: x
+      real(dp), intent(inout) :: x
 
-      real(kind(1.0D0)) :: dx,xmin,xmax,ymin,ymax
-      real(kind(1.0D0)) :: y01,y02,y,yleft,yright,epsy
+      real(dp) :: dx,xmin,xmax,ymin,ymax
+      real(dp) :: y01,y02,y,yleft,yright,epsy
       integer :: i, nmax = 100
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2924,7 +2960,8 @@ contains
       call ovarre(outfile,'Inboard leg outboard half-width (m)','(tficrn)',tficrn)
       call ovarre(outfile,'Inboard leg inboard half-width (m)','(tfocrn)',tfocrn)
       call ovarre(outfile,'Outboard leg toroidal thickness (m)','(tftort)',tftort)
-      call ovarre(outfile,'Minimum Coil distance (m)','(toroidalgap)',toroidalgap)
+      call ovarre(outfile,'Minimum coil distance (m)','(toroidalgap)',toroidalgap)
+      call ovarre(outfile,'Minimum coil bending radius (m)', '(min_bend_radius)',min_bending_radius)
       call ovarre(outfile,'Mean coil circumference (m)','(tfleng)',tfleng)
       call ovarre(outfile,'Total current (MA)','(ritfc)',1.0D-6*ritfc)
       call ovarre(outfile,'Current per coil(MA)','(ritfc/n_tf)',1.0D-6*ritfc/n_tf)
@@ -2950,6 +2987,7 @@ contains
       call ovarre(outfile,'Cable space coolant fraction','(vftf)',vftf)
       call ovarre(outfile,'Conduit case thickness (m)','(thwcndut)',thwcndut)
       call ovarre(outfile,'Cable insulation thickness (m)','(thicndut)',thicndut)
+      
   
 
       ap = awptf
@@ -2964,8 +3002,12 @@ contains
       call ovarre(outfile,'Winding toroidal thickness (m)','(wwp1)',wwp1)
       call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)',tinstf)
       call ovarre(outfile,'Number of turns per coil','(turnstf)',turnstf)
+      call ovarre(outfile,'Width of each turn (incl. insulation) (m)','(leno)',leno)
       call ovarre(outfile,'Current per turn (A)','(cpttf)',cpttf)
       call ovarre(outfile,'jop/jcrit','(fiooic)',fiooic)
+      call ovarre(outfile,'Current density in conductor area (A/m2)','(ritfc/acond)',1.0D-6*ritfc/n_tf/acond)
+      call ovarre(outfile,'Current density in SC area (A/m2)','(ritfc/acond/f_scu)',1.0D-6*ritfc/n_tf/ap/f_scu)
+      call ovarre(outfile,'Superconductor faction of WP (1)','(f_scu)',f_scu)
   
       call osubhd(outfile,'Forces and Stress :')
       call ovarre(outfile,'Maximal force density (MN/m3)','(max_force_density)',max_force_density)
