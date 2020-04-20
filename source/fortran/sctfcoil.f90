@@ -1223,6 +1223,12 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(dp), dimension(n_tf_layer*n_radial_array) :: radial_array
     !! Array refining the radii of the stress calculations arrays
     
+    real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_smeared_r
+    !! TF Inboard leg radial smeared stress r distribution at mid-plane [Pa]
+    
+    real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_smeared_t
+    !! TF Inboard leg tangential smeared stress r distribution at mid-plane [Pa]
+    
     real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_r
     !! TF Inboard leg radial stress r distribution at mid-plane [Pa]
     
@@ -1524,6 +1530,12 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                                        strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
     end if
     ! ---
+
+    ! Storing the smeared properties for output
+    if ( iprint == 1 ) then
+        sig_tf_smeared_r = sig_tf_r   ! Array equation
+        sig_tf_smeared_t = sig_tf_t   ! Array equation
+    end if
     ! ------------------------------
 
 
@@ -1798,6 +1810,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         write(sig_file,'(t2, "Radial"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_r*1.0D-6
         write(sig_file,'(t2, "toroidal"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_t*1.0D-6
         write(sig_file,'(t2, "Vertical"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_z*1.0D-6
+        write(sig_file,'(t2, "Radial"    ," smeared stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_smeared_r*1.0D-6
+        write(sig_file,'(t2, "toroidal"  ," smeared stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_smeared_t*1.0D-6
         write(sig_file,'(t2, "Von-Mises" ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_vmises*1.0D-6
         write(sig_file,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca*1.0D-6
         if ( i_tf_sup == 1 ) then
