@@ -1766,9 +1766,37 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         end if 
 
         ! OUT.DAT data on maximum TRESCA stress values
-        call ocmmnt(outfile, 'Stresses of the point of maximum TRESCA stress per layer')
+        call ocmmnt(outfile, 'Structural materal stress of the point of maximum TRESCA stress per layer')
         call ocmmnt(outfile, 'Please use utility/plot_TF_stress.py for radial plots plots summary')
-        write(outfile,'(t2, "Layers", t26, *(i11) )') 1, 2
+
+        select case (i_tf_bucking)
+            case (0)
+                if (i_tf_sup == 1 ) then
+                    write(outfile,'(t2, "Layers", t26, *(a11) )') "WP"
+                else 
+                    write(outfile,'(t2, "Layers", t26, *(a11) )') "conductor"
+                end if
+            case (1)
+                if (i_tf_sup == 1 ) then
+                    write(outfile,'(t2, "Layers", t26, *(a11) )') "Steel case", "WP"
+                else 
+                    write(outfile,'(t2, "Layers", t26, *(a11) )') "bucking", "conductor"
+                end if
+            case (2)
+                if (i_tf_sup == 1 ) then
+                    write(outfile,'(t2, "Layers", t26, *(a12) )') "CS", "Steel case", "WP"
+                else 
+                    write(outfile,'(t2, "Layers", t26, *(a12) )') "CS", "bucking", "conductor"
+                end if
+            case (3)
+                if (i_tf_sup == 1 ) then
+
+                    write(outfile,*) "Layers                         CS        interface    Steel case        WP"
+                else 
+                    write(outfile,*) "Layers                         CS        interface      bucking      conductor"
+                end if
+        end select
+        
         write(outfile,'(t2, "Radial"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') &
               sig_tf_r_max*1.0D-6
         write(outfile,'(t2, "toroidal"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') &
@@ -1782,6 +1810,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         else 
             write(outfile,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
         end if
+        write(outfile,* ) ''
 
         ! MFILE.DAT data
         do ii = 1, i_tf_bucking + 1
@@ -2874,7 +2903,7 @@ subroutine outtf(outfile, peaktfflag)
         tinstf, turnstf, cforce, i_tf_turns_integer, tdmptf, &
         leno, oacdcp, estotftgj, n_tf, whtconin, jwptf, tfa, &
         tficrn, n_layer, tfleng, thwcndut, casthi, sigvvall, &
-        thkcas, casths, vforce, n_pancake, &
+        thkcas, casths, vforce, n_pancake, aswp, aiwp, tfareain, acasetf, &
         vftf, eyzwp, thicndut, dhecoil, insstrain, taucq, ripmax, &
         whtconsc, alstrtf, bmaxtfrp, vdalw, leni, thkwp, whtcas, whtcon, &
         ripple, i_tf_tresca, bmaxtf, awphec, avwp, aiwp, acond, acndttf, &
@@ -2996,21 +3025,6 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'Distance from the midplane to the top of the centrepost (m)','(hmax)',hmax + tfthko)
     end if
 
-    ! TF current and field
-    call osubhd(outfile,'Maximum B field and currents:')
-    call ovarre(outfile,'Nominal peak field assuming toroidal symmetry (T)','(bmaxtf)',bmaxtf, 'OP ')
-    call ovarre(outfile,'Total current in all TF coils (MA)','(ritfc/1.D6)',1.0D-6*ritfc, 'OP ')
-    call ovarre(outfile,'TF coil current (summed over all coils) (A)','(ritfc)',ritfc)
-    if ( i_tf_sup == 1 ) then
-        call ovarre(outfile,'Actual peak field at discrete conductor (T)','(bmaxtfrp)',bmaxtfrp, 'OP ')
-        call ovarre(outfile,'Winding pack current density (A/m2)','(jwptf)',jwptf, 'OP ')
-    end if
-    call ovarre(outfile,'Inboard leg mid-plane conductor current density (A/m2)','(oacdcp)',oacdcp)
-    if ( itart == 1 ) then
-        call ovarre(outfile,'Outboard leg conductor current density (A/m2)','(cdtfleg)',cdtfleg)    
-    end if 
-    call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotftgj)',estotftgj, 'OP ')
-
     ! Turn/WP gemoetry
     if ( i_tf_sup == 1 ) then
 
@@ -3032,7 +3046,11 @@ subroutine outtf(outfile, peaktfflag)
         end if
         call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)',tinstf)
         call ovarre(outfile,'Winding pack insertion gap (m)','(tfinsgap)',tfinsgap)
-
+        call ovarre(outfile,'Steel TF fraction','(f_tf_steel)',(acasetf+aswp)/(tfareain/n_tf))
+        call ovarre(outfile,'Steel WP fraction','(aswp/awpc)',aswp/awpc)
+        call ovarre(outfile,'Insulation WP fraction','(aiwp/awpc)',aiwp/awpc)
+        call ovarre(outfile,'Cable WP fraction','((awpc-aswp-aiwp)/awpc)',(awpc-aswp-aiwp)/awpc)
+       
         ! Number of turns
         call osubhd(outfile,'WP turn information:')    
         call ovarin(outfile,'Turn parametrisation', '(i_tf_turns_integer)', i_tf_turns_integer)
@@ -3114,9 +3132,25 @@ subroutine outtf(outfile, peaktfflag)
     call ovarre(outfile,'Mass of each TF coil (kg)','(whttf/n_tf)',whttf/n_tf, 'OP ')
     call ovarre(outfile,'Total TF coil mass (kg)','(whttf)',whttf)
 
+    ! TF current and field
+    call osubhd(outfile,'Maximum B field and currents:')
+    call ovarre(outfile,'Nominal peak field assuming toroidal symmetry (T)','(bmaxtf)',bmaxtf, 'OP ')
+    call ovarre(outfile,'Total current in all TF coils (MA)','(ritfc/1.D6)',1.0D-6*ritfc, 'OP ')
+    call ovarre(outfile,'TF coil current (summed over all coils) (A)','(ritfc)',ritfc)
+    if ( i_tf_sup == 1 ) then
+        call ovarre(outfile,'Actual peak field at discrete conductor (T)','(bmaxtfrp)',bmaxtfrp, 'OP ')
+        call ovarre(outfile,'Winding pack current density (A/m2)','(jwptf)',jwptf, 'OP ')
+    end if
+    call ovarre(outfile,'Inboard leg mid-plane conductor current density (A/m2)','(oacdcp)',oacdcp)
+    if ( itart == 1 ) then
+        call ovarre(outfile,'Outboard leg conductor current density (A/m2)','(cdtfleg)',cdtfleg)    
+    end if 
+    call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotftgj)',estotftgj, 'OP ')
+
+
     ! TF forces
     call osubhd(outfile,'TF Forces:')
-    call ovarre(outfile,'Vertical separating force per leg (N)','(vforce)',vforce, 'OP ')
+    call ovarre(outfile,'Inboard vertical separating force per leg (N)','(vforce)',vforce, 'OP ')
     call ovarre(outfile,'Centring force per coil (N/m)','(cforce)',cforce, 'OP ')
 
     ! Resistive coil parameters

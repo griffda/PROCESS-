@@ -2630,9 +2630,8 @@ module tfcoil_variables
   !! vforce : vertical separating force on inboard leg/coil (N)
   
   real(dp) :: f_vforce_inboard = 0.5D0
-  !! f_vforce_inboard /0.50/ : Fraction of the total vertical force taken by the TF inboard leg
-  !!                           Not used for resistive itart = 1 (sliding joints)
-  
+  !! Fraction of the total vertical force taken by the TF inboard leg
+  !!   Not used for resistive itart = 1 (sliding joints)
 
   real(dp) :: vforce_outboard = 0.0D0
   !! vforce_outboard : vertical separating force on out board leg/coil (N)
