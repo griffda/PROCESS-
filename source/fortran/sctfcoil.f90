@@ -1378,6 +1378,11 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             eyoung(1) = oh_steel_frac * eyoung_steel + (1.0D0 - oh_steel_frac) * eyoung_winding
             poisson(1) = poisson_steel
 
+            write(*,*) ''
+            write(*,*) 'oh_steel_frac',oh_steel_frac
+            write(*,*) 'eyoung CS', eyoung(1)*1.0D-9
+            write(*,*) ''
+
         ! resistive CS (assumed to copper)
         else
             ! Here is a rough approximation
@@ -1505,13 +1510,13 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         sig_tf_z = vforce / (acasetf + acndttf*turnstf) ! Array equation
 
         ! Case strain
-        casestr = sig_tf_z(1) / eyoung_steel
+        casestr = sig_tf_z(i_tf_bucking) / eyoung_steel
 
         ! Young's modulus in vertical direction on WP
         eyzwp = eyngzwp(eyoung_steel,eyoung_ins,eyoung_winding,t_ins_eff,thwcndut,tcbs)
     
         ! Strain in vertical direction on WP
-        windstrain = sig_tf_z(1) / eyzwp
+        windstrain = sig_tf_z(i_tf_bucking+1) / eyzwp
     
         ! Radial strain in insulator
         insstrain = sig_tf_r(n_radial_array) / eyoung_ins * &
@@ -3028,8 +3033,19 @@ subroutine outtf(outfile, peaktfflag)
     ! Turn/WP gemoetry
     if ( i_tf_sup == 1 ) then
 
+
+        call osubhd(outfile,'Global material area/fractions:')
+        call ovarre(outfile,'TF cross-section (total) (m2)','(tfareain)', tfareain)
+        call ovarre(outfile,'Steel cross-section (total) (m2)','((acasetf+aswp)*n_tf)',(acasetf+aswp)*n_tf)
+        call ovarre(outfile,'Steel TF fraction','(f_tf_steel)',(acasetf+aswp)/(tfareain/n_tf))
+        call ovarre(outfile,'Steel WP cross-section (total) (m2)','(aswp*n_tf)',aswp*n_tf)
+        call ovarre(outfile,'Steel WP fraction','(aswp/awpc)',aswp/awpc)
+        call ovarre(outfile,'Insulation WP fraction','(aiwp/awpc)',aiwp/awpc)
+        call ovarre(outfile,'Cable WP fraction','((awpc-aswp-aiwp)/awpc)',(awpc-aswp-aiwp)/awpc)
+        
         ! External casing
         call osubhd(outfile,'External steel Case Information :')
+        call ovarre(outfile,'Casing cross section area (total) (m2)','(acasetf*n_tf))',acasetf*n_tf)
         call ovarre(outfile,'Inboard leg case plasma side wall thickness (m)','(casthi)',casthi)
         call ovarre(outfile,'Inboard leg case inboard "nose" thickness (m)','(thkcas)',thkcas)
         call ovarre(outfile,'Inboard leg case sidewall thickness at its narrowest point (m)','(casths)',casths)
@@ -3037,6 +3053,8 @@ subroutine outtf(outfile, peaktfflag)
 
         ! Winding pack structure
         call osubhd(outfile,'TF winding pack (WP) geometry:')
+        call ovarre(outfile,'WP cross section area with insulation and insertion (total) (m2)','(awpc*n_tf))',awpc*n_tf)
+        call ovarre(outfile,'WP cross section area (total) (m2)','(aswp*n_tf))',awptf*n_tf)
         call ovarre(outfile,'Winding pack radial thickness (m)','(thkwp)',thkwp, 'OP ')
         if (  i_tf_turns_integer == 1 ) then
             call ovarre(outfile, 'Winding pack toroidal width (m)', '(wwp1)', wwp1, 'OP ')
@@ -3046,10 +3064,6 @@ subroutine outtf(outfile, peaktfflag)
         end if
         call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)',tinstf)
         call ovarre(outfile,'Winding pack insertion gap (m)','(tfinsgap)',tfinsgap)
-        call ovarre(outfile,'Steel TF fraction','(f_tf_steel)',(acasetf+aswp)/(tfareain/n_tf))
-        call ovarre(outfile,'Steel WP fraction','(aswp/awpc)',aswp/awpc)
-        call ovarre(outfile,'Insulation WP fraction','(aiwp/awpc)',aiwp/awpc)
-        call ovarre(outfile,'Cable WP fraction','((awpc-aswp-aiwp)/awpc)',(awpc-aswp-aiwp)/awpc)
        
         ! Number of turns
         call osubhd(outfile,'WP turn information:')    
