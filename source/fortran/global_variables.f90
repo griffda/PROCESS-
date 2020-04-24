@@ -2346,7 +2346,7 @@ module tfcoil_variables
   !!  - Cryo-Al TF, eyoung_ins = 2.5 MPa (Kapton polymer)
 
   real(dp) :: eyoung_steel = 2.05D11
-  !! teel case Young's modulus (Pa)
+  !! Steel case Young's modulus (Pa)
   !!  (default value from DDD11-2 v2 2 (2009))
 
   real(dp) :: eyoung_winding = 6.6D8
@@ -2503,7 +2503,7 @@ module tfcoil_variables
   !! tfind : TF coil inductance (H)
 
   real(dp) :: tfinsgap = 0.010D0
-  !! tfinsgap /0.010/ : TF coil WP insertion gap (m)
+  !! TF coil WP insertion gap (m)
   
   real(dp) :: tflegmw = 0.0D0
   !! TF coil outboard leg resistive power (MW)
@@ -2634,7 +2634,7 @@ module tfcoil_variables
   !!   Not used for resistive itart = 1 (sliding joints)
 
   real(dp) :: vforce_outboard = 0.0D0
-  !! vforce_outboard : vertical separating force on out board leg/coil (N)
+  !! Vertical separating force on out board leg/coil (N)
 
   real(dp) :: vftf = 0.4D0
   !! vftf /0.4/ : coolant fraction of TFC 'cable' (i_tf_sup=1), or of TFC leg (i_tf_ssup=0)
