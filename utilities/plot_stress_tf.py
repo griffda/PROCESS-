@@ -21,9 +21,14 @@ if __name__ == '__main__':
     # Option definition
     # -----------------
     parser = argparse.ArgumentParser( description='Plot optimization information', formatter_class=RawTextHelpFormatter )
-    parser.add_argument('-p'  , '--plot_selec'    , nargs='?', default='all', help="Plot selection string :\n - If it containts 'sig'      -> Stress radial dependency \n - If it containts 'strain'   -> Strain \n - If it containts 'disp'     -> Displacement \n - If it containts 'all'      -> all the mentionned plots (default value)")
-    parser.add_argument('-sf' , '--save_format'   , nargs='?', default='pdf', help="output format (default='pdf') " )
-    parser.add_argument('-as' , '--axis_font_size', nargs='?', default=18   , help="Axis label font size selection (default=18)", type=int )
+    parser.add_argument('-p'  , '--plot_selec'     , nargs='?', default='all', 
+                        help="Plot selection string :\n - If it containts 'sig'      -> Stress radial dependency \n - If it containts 'strain'   -> Strain \n - If it containts 'disp'     -> Displacement \n - If it containts 'all'      -> all the mentionned plots (default value)")
+    parser.add_argument('-sf' , '--save_format'    , nargs='?', default='pdf', 
+                        help="output format (default='pdf') " )
+    parser.add_argument('-as' , '--axis_font_size' , nargs='?', default=18   ,
+                         help="Axis label font size selection (default=18)", type=int )
+    parser.add_argument('-out', '--term_output', action="store_true",
+                        help="Option to show stress on terminal output" )
 
     # Option argument extraction
     # --------------------------
@@ -31,6 +36,7 @@ if __name__ == '__main__':
     plot_selection = str(args.plot_selec)
     save_format    = str(args.save_format)
     axis_font_size = int(args.axis_font_size)
+    term_output = args.term_output
     
     ## Boolean swiches for plot selection
     # -----------------------------------
@@ -98,6 +104,39 @@ if __name__ == '__main__':
         
         for jj in range(0,len(radius)) :
             vertical_strain.append(data[16])
+
+
+    if term_output :
+        ii_ins =  list()
+        ii_mids = list()
+        ii_outs = list()
+    
+        ii = int(0)
+        ii_mid = int()
+        while ii_mid < len(radius) : 
+            ii_in =  ii*n_radial_array_layer
+            ii_mid = ii*n_radial_array_layer + int(0.5*float(n_radial_array_layer))
+            ii_out = ii*n_radial_array_layer + n_radial_array_layer - 1
+            
+            ii_ins.append(ii_in)
+            ii_mids.append(ii_mid)
+            ii_outs.append(ii_out)
+            ii += 1
+    
+        print("")
+        print("")
+        print("Layer stress details")
+        print("____________________")
+    
+    
+        for ii in range(0,len(ii_mids) - 1) :
+            print("Layer {}".format( ii+1 ))
+            print("------------------------------")
+            print("steel radial   stress stress in the inner/middle/out : {}/{}/{} MPa".format(radial_stress[ii_ins[ii]], radial_stress[ii_mids[ii]], radial_stress[ii_outs[ii]]) )
+            print("steel toroidal stress stress in the inner/middle/out : {}/{}/{} MPa".format(toroidal_stress[ii_ins[ii]], toroidal_stress[ii_mids[ii]], toroidal_stress[ii_outs[ii]]) )
+            print("steel TRESCA   stress stress in the inner/middle/out : {}/{}/{} MPa".format(tresca_stress[ii_ins[ii]], tresca_stress[ii_mids[ii]], tresca_stress[ii_outs[ii]]) )
+            print("")
+        print("")
 
     outdir = str("SIG_TF_plots")
     if not os.path.isdir(outdir) :
