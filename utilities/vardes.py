@@ -31,7 +31,28 @@ INTRO = ("## Introduction\n"
 COL_HEADINGS = ["Name", "Type", "Initial", "Description"]
 
 # Excluded modules
-EXCLUDED_MODS = ("autodoc_data")
+EXCLUDED_MODS = ("autodoc_data",
+    "abs_cd",
+    "bsquar",
+    "build_module",
+    "calltree_data",
+    "const_and_precisions",
+    "define_iteration_variables",
+    "freq",
+    "fson_library",
+    "fson_path_m",
+    "fson_string_m",
+    "fson_value_m",
+    "function_evaluator",
+    "green_func_ext",
+    "linliu",
+    "machin",
+    "mod_f90_kind",
+    "mode",
+    "param",
+    "precision_mod",
+    "real_mod",
+    "utilities")
 
 class VarDes(object):
     """A collection of the variable descriptions for PROCESS source code."""
@@ -58,6 +79,9 @@ class VarDes(object):
 
         # Filter to exclude unwanted modules
         modules = [module for module in modules if module.name not in EXCLUDED_MODS]
+
+        # Filter to exclude empty modules (containing no module-level variables)
+        modules = [module for module in modules if len(module.variables) > 0]
 
         for module in modules:
             self.vars[module.name] = OrderedDict()
