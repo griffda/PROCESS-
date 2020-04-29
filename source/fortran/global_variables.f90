@@ -251,7 +251,7 @@ module physics_variables
   !! fpdivlim /1.0/ : F-value for minimum pdivt (constraint equation 80)
 
   real(dp) :: fne0 = 1.0D0
-  !! F-value for minimum pdivt (constraint equation 81)
+  !! f-value for the constraint ne(0) > ne(sep) (constraint equation 81)
   !! Iteration variable 154 
 
   real(dp), bind(C) :: ftrit = 0.5D0
@@ -1886,7 +1886,11 @@ module pfcoil_variables
   !!                  <LI> = 1 Hoop + Axial stress</UL>
 
   real(dp) :: areaoh = 0.0D0
-  !! areaoh : central solenoid cross-sectional area (m2)
+  !! Central solenoid vertical cross-sectional area (m2)
+
+  real(dp) :: a_oh_turn = 0.0D0
+  !! Central solenoid (OH) trun cross-sectional area (m2)
+
   real(dp) :: awpoh = 0.0D0
   !! awpoh : central solenoid conductor+void area (m2)
   real(dp) :: bmaxoh = 0.0D0
@@ -1895,11 +1899,14 @@ module pfcoil_variables
   !! bmaxoh0 : maximum field in central solenoid at beginning of pulse (T)
   real(dp), dimension(ngc2) :: bpf = 0.0D0
   !! bpf(ngc2) : peak field at coil i (T)
+  
   real(dp) :: cohbop = 0.0D0
-  !! cohbop : central solenoid overall current density at beginning of pulse (A/m2)
+  !! Central solenoid overall current density at beginning of pulse (A/m2)
+  
   real(dp) :: coheof = 1.85D7
-  !! coheof /1.85e7/ : central solenoid overall current density at end of flat-top (A/m2)
-  !!                   (iteration variable 37)
+  !! Central solenoid overall current density at end of flat-top (A/m2)
+  !!  (iteration variable 37)
+  
   real(dp), dimension(ngc2,6) :: cpt = 0.0D0
   !! cpt(ngc2,6) : current per turn in coil i at time j (A)
   real(dp), dimension(ngc2) :: cptdin = 4.0D4
@@ -1980,8 +1987,10 @@ module pfcoil_variables
   !!            Symmetric coil pairs should all be in the same group
   integer :: nohc = 0
   !! nohc : number of PF coils (excluding the central solenoid) + 1
+  
   real(dp) :: ohhghf = 0.71D0
-  !! ohhghf /0.71/ : central solenoid height / TF coil internal height
+  !! Central solenoid height / TF coil internal height
+  
   real(dp) :: oh_steel_frac = 0.5D0
   !! oh_steel_frac /0.5/ : central solenoid steel fraction (iteration variable 122)
   real(dp), dimension(ngc2) :: pfcaseth = 0.0D0
@@ -2134,8 +2143,9 @@ module tfcoil_variables
   !! insulation_area : single turn insulation area (m2)
   real(dp) :: aiwp = 0.0D0
   !! aiwp : winding pack insulation area (m2)
+
   real(dp) :: alstrtf = 6.0D8
-  !! alstrtf /6.0D8/ : allowable Tresca stress in TF coil structural material (Pa)
+  !! Allowable Tresca stress in TF coil structural material (Pa)
 
   real(dp) :: arealeg = 0.0D0
   !! arealeg : outboard TF leg area (m2)
@@ -2285,13 +2295,21 @@ module tfcoil_variables
   !! stress quantities (stresses, strain displacement etc..)
 
   integer :: i_tf_bucking = -1
-  !! Switch for bucking cylinder (case)
-  !!  -1 : Casing for SC i.e. i_tf_sup = 1 (default) 
-  !!       No casing for copper magnets
-  !!       Casing for aluminium magnets 
-  !!   0 : No casing/bucking cylinder
-  !!   1 : casing/buling cylinder
-  !!   2 : Bucked and wedged design
+  !! Switch for TF inboard suport structure design :
+  !!  -1 : Default option 
+  !!       - if copper resistive TF (i_tf_sup = 0) : Free standing TF without bucking structure 
+  !!       - if Superconducting  TF (i_tf_sup = 1) : Free standing TF with a steel casing  
+  !!       - if cryo-aluminium   TF (i_tf_sup = 2) : Free standing TF with a bucking structure
+  !!         Rem : the case is a bucking structure
+  !!   0 : Free standing TF without case/bucking cyliner (only a conductor layer)
+  !!   1 : Free standing TF with a case/bucking cylinder made of 
+  !!        - if copper resistive TF (i_tf_sup = 0) : Steel bucking cylinder
+  !!        - if Superconducting  TF (i_tf_sup = 1) : Steel casing
+  !!        - if cryo-aluminium   TF (i_tf_sup = 2) : Nibron special bucking cylinder
+  !!   2 : The TF is in contact with the CS : "bucked and weged design"
+  !!       Fast version : thin TF-CS interface neglected in the stress calculations (3 layers)
+  !!   3 : The TF is in contact with the CS : "bucked and weged design"
+  !!       Full version : thin TF-CS Kapton interface introduced in the stress calculations (4 layers)
 
   integer :: n_tf_graded_layers = 1
   !! Number of layers of different stress properties in the WP 
@@ -2303,8 +2321,7 @@ module tfcoil_variables
 
   real(dp) :: jbus = 1.25D6
   !! jbus /1.25e6/ : bussing current density (A/m2)
-  real(dp), dimension(2) :: jeff = 0.0D0
-  !! jeff(2) : work array used in stress calculation (A/m2)
+  
   real(dp) :: jwdgcrt = 0.0D0
   !! jwdgcrt : critical current density for winding pack (A/m2)
   real(dp) :: jwdgpro = 0.0D0
@@ -2329,7 +2346,7 @@ module tfcoil_variables
   !!  - Cryo-Al TF, eyoung_ins = 2.5 MPa (Kapton polymer)
 
   real(dp) :: eyoung_steel = 2.05D11
-  !! teel case Young's modulus (Pa)
+  !! Steel case Young's modulus (Pa)
   !!  (default value from DDD11-2 v2 2 (2009))
 
   real(dp) :: eyoung_winding = 6.6D8
@@ -2343,11 +2360,9 @@ module tfcoil_variables
   !! Aluminium young modulus
   !!  Default value taken from wikipedia
   
-  real(dp) :: eyoung_reinforced_al = 180.0D9 
-  !! Reinforced aluminium young modulus 
-  !!  Default value given Garry 
-  !!  Rem : Al reinforcement can be tuned to any values
-
+  real(dp) :: eyoung_nibron = 141.0D9 
+  !! Cryogenic aluminium magnet bucking cylinder young modulus
+  !!  Ref : Garry's personnal communication
   real(dp) :: poisson_steel = 0.3D0
   !! Steel Poisson's ratio 
   
@@ -2404,6 +2419,13 @@ module tfcoil_variables
       
   real(dp), dimension(2*n_radial_array) :: sig_tf_tresca = 0.0D0 
   !! TF Inboard leg TRESCA stress in steel r distribution at mid-plane [Pa]
+
+  real(dp) :: strtf0 = 0.0D0
+  !! Maximum TRESCA stress in CS structures at CS flux swing [Pa]
+  !!  - If superconducting CS (ipfres = 0): turn steel conduits TRESCA stress
+  !!  - If resistive       CS (ipfres = 1): copper conductor TRESCA stress 
+  !! Quantity only computed for bucked and wedged design (i_tf_bucking >= 2)
+  !! Def : CS Flux swing, instant when the current changes sign in CS (null current) 
 
   real(dp) :: strtf1 = 0.0D0
   !! Maximum TRESCA stress in TF casing steel structures (Pa)
@@ -2481,7 +2503,7 @@ module tfcoil_variables
   !! tfind : TF coil inductance (H)
 
   real(dp) :: tfinsgap = 0.010D0
-  !! tfinsgap /0.010/ : TF coil WP insertion gap (m)
+  !! TF coil WP insertion gap (m)
   
   real(dp) :: tflegmw = 0.0D0
   !! TF coil outboard leg resistive power (MW)
@@ -2564,10 +2586,13 @@ module tfcoil_variables
   !! thkwp /0.0/ : radial thickness of winding pack (m) (iteration variable 140)
   real(dp) :: thwcndut = 8.0D-3
   !! thwcndut /8.0e-3/ : TF coil conduit case thickness (m) (iteration variable 58)
+  
   real(dp) :: tinstf = 0.018D0
-  !! tinstf /0.018/ : ground insulation thickness surrounding winding pack (m)
-  !!                  Includes allowance for 10 mm insertion gap.
-  !!                  (calculated for stellarators)
+  !! Thickness of the ground insulation layer surrounding (m) 
+  !!   - Superconductor TF (i_tf_sup == 1) : The TF Winding packs
+  !!   - Resistive magnets (i_tf_sup /= 1) : The TF turns
+  !! Rem : The default value includes allowance for 10 mm insertion gap.
+  !! Rem : Thickness calculated for stellarators.
 
   real(dp), bind(C) :: tmargmin_tf = 0D0
   !! tmargmin_tf /0/ : minimum allowable temperature margin : TF coils (K)
@@ -2605,12 +2630,11 @@ module tfcoil_variables
   !! vforce : vertical separating force on inboard leg/coil (N)
   
   real(dp) :: f_vforce_inboard = 0.5D0
-  !! f_vforce_inboard /0.50/ : Fraction of the total vertical force taken by the TF inboard leg
-  !!                           Not used for resistive itart = 1 (sliding joints)
-  
+  !! Fraction of the total vertical force taken by the TF inboard leg
+  !!   Not used for resistive itart = 1 (sliding joints)
 
   real(dp) :: vforce_outboard = 0.0D0
-  !! vforce_outboard : vertical separating force on out board leg/coil (N)
+  !! Vertical separating force on out board leg/coil (N)
 
   real(dp) :: vftf = 0.4D0
   !! vftf /0.4/ : coolant fraction of TFC 'cable' (i_tf_sup=1), or of TFC leg (i_tf_ssup=0)
@@ -3398,13 +3422,13 @@ module build_variables
   !!        <LI> = 1 central solenoid exists</UL>
 
   integer :: iprecomp = 1
-  !! iprecomp /1/ : switch for existence of central solenoid pre-compression structure:<UL>
-  !!        <LI> = 0 no pre-compression structure;
-  !!        <LI> = 1 calculated pre-compression structure</UL>
+  !! Switch for existence of central solenoid pre-compression structure:
+  !!   0 - no pre-compression structure;
+  !!   1 - calculated pre-compression structure</UL>
 
   real(dp) :: ohcth = 0.811D0
-  !! ohcth /0.811/ : central solenoid thickness (m)
-  !!                (iteration variable 16)
+  !! Central solenoid thickness (m)
+  !!        (iteration variable 16)
 
   real(dp) :: precomp = 0.0D0
   !! precomp : CS coil precompression structure thickness (m)
@@ -3482,15 +3506,15 @@ module build_variables
   !! tfoffset : vertical distance between centre of TF coils and centre of plasma (m)
 
   real(dp) :: tfootfi = 1.19D0
-  !! tfootfi /1.19/ : TF coil outboard leg / inboard leg radial thickness
-  !!                 ratio (i_tf_sup=0 only)
-  !!                 (iteration variable 75)
+  !! TF coil outboard leg / inboard leg radial thickness
+  !!   ratio (i_tf_sup=0 only)
+  !!   (iteration variable 75)
 
   real(dp) :: tfthko = 0.0D0
-  !! tfthko : outboard TF coil thickness (m)
+  !! Outboard TF coil thickness (m)
 
   real(dp) :: tftsgap = 0.05D0
-  !! tftsgap /0.05/ : Minimum metal-to-metal gap between TF coil and thermal shield (m)
+  !! Minimum metal-to-metal gap between TF coil and thermal shield (m)
 
   real(dp) :: thshield = 0.05D0
   !! thshield /0.05/ : TF-VV thermal shield thickness (m)

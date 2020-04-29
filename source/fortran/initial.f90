@@ -623,7 +623,7 @@ subroutine check
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables, only: blnkith, bore, gapoh, ohcth, precomp
+    use build_variables, only: blnkith, bore, gapoh, ohcth, precomp, iprecomp
     use buildings_variables, only: esbldgm3, triv
     use current_drive_variables, only: gamcd, iefrf, irfcd
     use divertor_kallenbach_variables, only: impurity_enrichment, kallenbach_switch
@@ -1168,10 +1168,10 @@ subroutine check
         end if
     end if 
 
-    ! Error indicating that the buck and wedge solution is not yet implemented
-    if ( i_tf_bucking == 2 ) then
-        call report_error(247)
-        stop
+    ! Ensure that no pre-compression structure 
+    ! is used for bucked and wedged design
+    if ( i_tf_bucking >= 2 .and. iprecomp == 1 ) then
+        call report_error(252)
     end if
 
     ! Number of stress calculation layers

@@ -1611,26 +1611,36 @@ The Harrison-Kukushkin-Hotston divertor model~\cite{IPDG} developed for ITER is 
 \subsection{Toroidal field coils}
 \label{sec:tfcoil}
 
-The toroidal field (TF) coils can be either resistive or
-superconducting. Switch \texttt{itfsup} should be set to \texttt{1} for
-superconducting coils, or \texttt{0} for purely copper coils. In the
-superconductor model, the \textit{CICC}\/ (Conductor In Cable Conduit)
-structure shown in Figure~\ref{fig:CICC} is assumed, and the coils are cooled
-using a liquid helium cryogenic system.
+The toroidal field (TF) coils can be either resistive or superconducting. The 
+choice of conductor design is set using the following integer switch 
+\texttt{i\_tf\_sup}:
 
-The steel radial plates shown in the figure help in the winding process and
-also provide extra support against tangential stresses. Iteration
-variable no.\ 101 (\texttt{prp}) is the ratio of the total radial plate plus
-steel cap cross-sectional area within the winding pack to the total winding
-pack cross-sectional area; from this, the half-thickness \texttt{trp} is
-calculated.
+\begin{itemize}
+  \item \texttt{i\_tf\_sup = 0} : Resistive copper (\textit{GLIDCOP}) magents 
+    with active water cooling.
+
+  \item \texttt{i\_tf\_sup = 1} : Superconducting magnets, the \textit{CICC}\/ 
+    (Conductor In Cable Conduit) structure shown in Figure~\ref{fig:CICC} is 
+    assumed, and the coils are cooled using a liquid helium cryogenic system.
+    The steel radial plates shown in the figure help in the winding process and
+    also provide extra support against tangential stresses. Iteration
+    variable no.\ 101 (\texttt{prp}) is the ratio of the total radial plate plus
+    steel cap cross-sectional area within the winding pack to the total winding
+    pack cross-sectional area; from this, the half-thickness \texttt{trp} is
+    calculated.
+    
+  \item \texttt{i\_tf\_sup = 2} : Resisitive aluminium (high purity) magnet with 
+    active gazeous Helium cooling at cryogenic temperature (20K)
+\end{itemize}
 
 The outboard leg of the TF coil is assumed to be the same width in the
 toroidal direction as the outside edge of the inboard leg. In the radial
-direction, for resistive TF coils the input parameter \texttt{tfootfi} gives
-the ratio of the outboard leg thickness to the inboard leg thickness
-\texttt{tfcth}; for superconducting coils the outboard thickness is set equal
-to the inboard thickness.
+direction, the input parameter \texttt{tfootfi} gives the ratio of the outboard 
+leg thickness to the inboard leg thickness \texttt{tfcth}. For superconducting magnet
+(\texttt{i\_tf\_sup = 1}), this ratio is set to one as there is no benefit of
+increasing the TF cross-section area on the design. However thicker TF legs can 
+reduce the resisitive power losse for resistive power loss for the TF designs
+(\texttt{i\_tf\_sup = 0,2}) and can be thus varied for resitive magnets.
 
 \begin{figure}[tbph]
 \epsfig{file=figures/tokamak_tfcoil.eps,width=160mm}
@@ -1646,19 +1656,86 @@ inner leg]
 }
 \end{figure}
 
-Each TF coil is defined in the $(R,Z)$ plane by a straight section and four elliptical arcs. Because of the finite
-number of TF coils used in a tokamak (18 for ITER), the toroidal field
-has a ripple introduced into it, the amplitude of which can be limited to a
-few percent (given by input parameter \texttt{ripmax}, default value 1\%) by
-the code by adjusting the outboard gap thickness (labelled \texttt{gapsto} in
-Figures~\ref{fig:build_d} and~\ref{fig:build_e}).
+Two vertical shapes can be selected for the coil designs using the 
+\texttt{i\_tf\_shape} integer switch:
+
+\begin{itemize}
+  \item \texttt{i\_tf\_shape = 1} : D-shapes magnets, each TF coil is defined 
+    in the $(R,Z)$ plane by a straight section and four elliptical arcs. This 
+    designed is considered by default for conventional aspect ratio tokamaks 
+    (\texttt{itart = 0}) as vertical forces remains imoprtant in the TF outboard section, 
+    necessiting the use of a shape close to the constant tension Princenton D.
+  
+  \item \texttt{i\_tf\_shape = 2} : Picture frame coils, each coils has a 
+    rectangular shape, allowing for an important space for the divertor (super-X).
+    However this design can only be used for low aspect ratio with low vertical
+    forces on the TF outboard section. 
+\end{itemize}
+
+Another aspect of the TF coil design is the presence of demountable joints, that
+ease the remote maintenance. These joints can be either clamped or sliding. 
+\textit{PROCESS} proposes an option (\texttt{itart = 1}) for TF design with
+sliding joints between the inboard section of the magnets, called the centrepost
+(CP) and the \texttt{n\_tf} outer legs of the TF coils. This design has been 
+mostly developped for spherical tokamak using resisive coils 
+(\texttt{i\_tf\_shape = 0,2}). To reduce the resistive power losses keeping the
+magnet as thin as possible to lower the aspect ratio, a tapered geometry is 
+assumed as shown in figure~\ref{fig:tf:itart_geom}.
+
+
+\begin{figure}[tbph]
+  \centering
+  \includegraphics[scale=0.75]{figures/ST_geom.PNG}
+  \caption{{Mid-plane toroidal (left) and vertocal (right) cross-section of 
+    a magnet using the \texttt{itart = 1} geometry. The toroidal cross-section
+    (left) shows the presence of vaulted trun geometry with a bucking cylinder (
+    that is not present by default for copper magnets) with isulation and cooling.
+    The vertical cross-section (right) shows the presence of 4 sliding joints
+    for remote maintenance purposes.} }
+  \label{fig:tf:itart_geom}
+\end{figure}
+
+Because of the finite number of TF coils used in a tokamak (18 for ITER), the 
+toroidal field has a ripple introduced into it, the amplitude of which can be 
+limited to a few percent (given by input parameter \texttt{ripmax}, default 
+value 1\%) by the code by adjusting the outboard gap thickness (labelled 
+\texttt{gapsto} in Figures~\ref{fig:build_d} and~\ref{fig:build_e}). The 
+ripple calculation are only valid for conventional aspect ratios tokamak.
+
+The support structure of the TF coil is set by parameter \texttt{i\_tf\_bucking}.
+\begin{itemize}
+  \item \texttt{i\_tf\_bucking = 0} : Free standing TF without case/bucking 
+    cyliner (only a conductor layer). This is the default option for copper 
+    magnet desing (\texttt{i\_tf\_sup = 0}), as the conductor (GLIDCOP) has 
+    already good structural properties.
+  \item \texttt{i\_tf\_bucking = 1} : Free standing TF with a case/bucking 
+    cylinder. This is the default option for both the superconducting magnets
+    (\texttt{i\_tf\_sup = 1}), that has a relatively weak conductor structural
+    properties as the conductor cable has a low young modulus value. This is 
+    also the default value for the aluminium magnets (\texttt{i\_tf\_sup = 2}),
+    as the a aluminium has a low allowable TRESCA yield and as a bucking layer
+    helps reducing the TRESCA stress from the the conductor layer. 
+  \item \texttt{i\_tf\_bucking = 2,3} : The TF is in contact with the CS 
+    (bucked and weged design). This design use the CS as a support structure
+    for the TF centering forces, allowing to substantially reduce the thickness
+    of the bucking cylinder/the steel casing nose. This introduce a significant
+    reduction in the radial build. The calculation are made when no current
+    flows in the CS layer (\textit{i.e.} without the beneficial CS hoop forces).
+    If the stress on the CS layer on this configuration is larger that the one
+    calculated in the PF module, it is used for the CS stress constraints. A 
+    fast version, neglecting the interface layer properties is implemented 
+    (\texttt{i\_tf\_bucking = 2}). And a more complete one, taking explicitly
+    the Kapton interface into account in the stress calcualtions 
+    \texttt{i\_tf\_bucking = 3} is also implemented.
+\end{itemize}
+
 
 Among the TF coil parameters calculated by the code are the maximum allowable
 current density, the stresses on the structure, the energy stored and the
 magnetic field produced by the coils.
 
 The following options are available within the superconducting TF coil model
-(\texttt{itfsup = 1}).
+(\texttt{i\_tf\_sup = 1}).
 
 \subsubsection{Superconducting materials}
 \label{sec:superconductors}
@@ -1672,6 +1749,8 @@ used:
 \item [\texttt{i\_tf\_sc\_mat = 3} :] NbTi superconductor
 \item [\texttt{i\_tf\_sc\_mat = 4} :] Nb$_3$Sn superconductor, ITER critical surface
   parameterization~\cite{iter_nb3sn}, user-defined critical parameters
+\item [\texttt{i\_tf\_sc\_mat = 5} :] WST Nb$_3$Sn parameterisation
+\item [\texttt{i\_tf\_sc\_mat = 6} :] REBCO HTS tape in CroCo strand
 \end{description}
 The fraction of copper present in the superconducting filaments is given by
 the value of variable \texttt{fcutfsu} (iteration variable no.\ 59).

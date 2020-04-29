@@ -2427,8 +2427,15 @@ contains
       !! args : output structure : residual error; constraint value; 
       !! residual error in physical units; output string; units string
       !! Central Solenoid Tresca stress limit
-      !! #=# tfcoil
+      !! #=# pfcoil
       !! #=#=# foh_stress, alstroh
+      !! In the case if the bucked and wedged option ( i_tf_bucking >= 2 ) the constrained
+      !! stress is the largest the largest stress of the
+      !!  - CS stress at maximum current (conservative as the TF inward pressure is not taken 
+      !!    into account)
+      !!  - CS stress at flux swing (no current in CS) from the TF inward pressure
+      !! This allow to cover the 2 worst stress scenario in the bucked and wedged design
+      !! Otherwise (free standing TF), the stress limits are only set by the CS stress at max current
       !! Reverse the sign so it works as an inequality constraint (args%cc > 0)
       !! This will have no effect if it is used as an equality constraint because it will be squared.
       !! and hence also optional here.
@@ -2436,14 +2443,27 @@ contains
       !! foh_stress : input real : f-value for Tresca stress limit in Central Solenoid
       !! alstroh : input real :  allowable hoop stress in Central Solenoid structural material (Pa)
       !! s_tresca_oh : input real : Tresca stress coils/central solenoid (Pa)
+      !! strtf0 : input real : Tresca stress in CS case at flux swing (no current in CS)
+      !!                       can be significant for the bucked and weged design
+      !! i_tf_bucking : input integer : switch for TF structure design 
       use constraint_variables, only: foh_stress
       use pfcoil_variables, only: alstroh, s_tresca_oh
+      use tfcoil_variables, only: strtf0, i_tf_bucking
       implicit none
       type (constraint_args_type), intent(out) :: args
 
-      args%cc = 1.0d0 - foh_stress * alstroh / s_tresca_oh
+      ! bucked and wedged desing (see subroutine comment)
+      if ( i_tf_bucking >= 2 ) then
+         args%cc = 1.0d0 - foh_stress * alstroh / max(s_tresca_oh, strtf0)
+         args%err = alstroh - max(s_tresca_oh, strtf0)
+      
+      ! Free standing CS
+      else 
+         args%cc = 1.0d0 - foh_stress * alstroh / s_tresca_oh
+         args%err = alstroh - s_tresca_oh
+      end if
+
       args%con = alstroh
-      args%err = alstroh - s_tresca_oh
       args%symbol = '<'
       args%units = 'Pa'
 
