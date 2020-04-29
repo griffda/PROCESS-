@@ -2552,7 +2552,7 @@ module tfcoil_variables
   !!  - i_tf_sup = 1 : SC magnet, eff_tf_cryo = 0.13 (ITER design)
   !!  - i_tf_sup = 2 : Cryo-aluminium, eff_tf_cryo = 0.4
 
-  integer :: n_tf = 16.0D0
+  real(dp) :: n_tf = 16.0D0
   !! Number of TF coils (default = 50 for stellarators)
   !! Number of TF coils outer legs for ST
 
