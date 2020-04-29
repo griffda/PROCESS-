@@ -802,7 +802,7 @@ subroutine tf_res_heating()
         if ( i_tf_sup /= 1 ) then
 
             ! Total number of contact area (4 joints section per legs)
-            n_contact_tot = 4 * n_tf_joints_contact* n_tf_joints * int(turnstf) * int(n_tf)
+            n_contact_tot = 4 * n_tf_joints_contact* n_tf_joints * nint(turnstf) * n_tf
             
             ! Total area of joint contact
             a_joints = tfthko * th_joint_contact * dble(n_contact_tot)
@@ -1296,9 +1296,16 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! Index of the maximum TRESCA stress
 
     real(dp) :: sig_max
-    !! Working float to find maximum TRESCA stress index
+    !! Working float to find maximum TRESCA stress index [Pa]
 
-    real(dp) :: seff, tcbs, t_ins_eff
+    real(dp) :: seff
+    !! Turn dimenstion [m] 
+
+    real(dp) :: tcbs
+    !! Square cable dimension [m]
+    
+    real(dp) :: t_ins_eff
+    !! Effective insulation thickness (turn + ground insulation per turn) [m]
 
     real(dp) :: fac
     !! TF steel conduit stress unsmearing factor
@@ -1377,11 +1384,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             ! Rem the oh_steel_fraction is potentially a volumic one ... To be checked 
             eyoung(1) = oh_steel_frac * eyoung_steel + (1.0D0 - oh_steel_frac) * eyoung_winding
             poisson(1) = poisson_steel
-
-            write(*,*) ''
-            write(*,*) 'oh_steel_frac',oh_steel_frac
-            write(*,*) 'eyoung CS', eyoung(1)*1.0D-9
-            write(*,*) ''
 
         ! resistive CS (assumed to copper)
         else
