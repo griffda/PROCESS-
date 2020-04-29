@@ -2361,8 +2361,8 @@ module tfcoil_variables
   !!  Default value taken from wikipedia
   
   real(dp) :: eyoung_nibron = 141.0D9 
-  !! Cryogenic aluminium magnet bucking clinder young modulus
-  !!  Ref : Garry's personnal comunication
+  !! Cryogenic aluminium magnet bucking cylinder young modulus
+  !!  Ref : Garry's personnal communication
   real(dp) :: poisson_steel = 0.3D0
   !! Steel Poisson's ratio 
   
@@ -2552,7 +2552,7 @@ module tfcoil_variables
   !!  - i_tf_sup = 1 : SC magnet, eff_tf_cryo = 0.13 (ITER design)
   !!  - i_tf_sup = 2 : Cryo-aluminium, eff_tf_cryo = 0.4
 
-  real(dp) :: n_tf = 16.0D0
+  integer :: n_tf = 16.0D0
   !! Number of TF coils (default = 50 for stellarators)
   !! Number of TF coils outer legs for ST
 
