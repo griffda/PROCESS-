@@ -410,103 +410,103 @@ module physics_variables
   !! isc /34 (=IPB98(y,2))/ : switch for energy confinement time scaling law
   !!         (see description in tauscl)
   character(len=24), dimension(ipnlaws) :: tauscl = (/ &
-  !! tauscl(ipnlaws) : labels describing energy confinement scaling laws:<UL>
        'Neo-Alcator      (ohmic)', &
-       !! <LI> ( 1)  Neo-Alcator (ohmic)
        'Mirnov               (H)', &
-       !! <LI> ( 2)  Mirnov (H-mode)
        'Merezkhin-Muhkovatov (L)', &
-       !! <LI> ( 3)  Merezkhin-Muhkovatov (L-mode)
        'Shimomura            (H)', &
-       !! <LI> ( 4)  Shimomura (H-mode)
        'Kaye-Goldston        (L)', &
-       !! <LI> ( 5)  Kaye-Goldston (L-mode)
        'ITER 89-P            (L)', &
-       !! <LI> ( 6)  ITER 89-P (L-mode)
        'ITER 89-O            (L)', &
-       !! <LI> ( 7)  ITER 89-O (L-mode)
        'Rebut-Lallia         (L)', &
-       !! <LI> ( 8)  Rebut-Lallia (L-mode)
        'Goldston             (L)', &
-       !! <LI> ( 9)  Goldston (L-mode)
        'T10                  (L)', &
-       !! <LI> (10)  T10 (L-mode)
        'JAERI-88             (L)', &
-       !! <LI> (11)  JAERI-88 (L-mode)
        'Kaye-Big Complex     (L)', &
-       !! <LI> (12)  Kaye-Big Complex (L-mode)
        'ITER H90-P           (H)', &
-       !! <LI> (13)  ITER H90-P (H-mode)
        'ITER Mix             (L)', &
-       !! <LI> (14)  ITER Mix (L-mode)
        'Riedel               (L)', &
-       !! <LI> (15)  Riedel (L-mode)
        'Christiansen         (L)', &
-       !! <LI> (16)  Christiansen (L-mode)
        'Lackner-Gottardi     (L)', &
-       !! <LI> (17)  Lackner-Gottardi (L-mode)
        'Neo-Kaye             (L)', &
-       !! <LI> (18)  Neo-Kaye (L-mode)
        'Riedel               (H)', &
-       !! <LI> (19)  Riedel (H-mode)
        'ITER H90-P amended   (H)', &
-       !! <LI> (20)  ITER H90-P amended (H-mode)
        'LHD              (stell)', &
-       !! <LI> (21)  LHD (stellarator)
        'Gyro-reduced Bohm(stell)', &
-       !! <LI> (22)  Gyro-reduced Bohm (stellarator)
        'Lackner-Gottardi (stell)', &
-       !! <LI> (23)  Lackner-Gottardi (stellarator)
        'ITER-93H             (H)', &
-       !! <LI> (24)  ITER-93H (H-mode)
        'TITAN RFP OBSOLETE      ', &
-       !! <LI> (25) OBSOLETE
        'ITER H-97P ELM-free  (H)', &
-       !! <LI> (26)  ITER H-97P ELM-free (H-mode)
        'ITER H-97P ELMy      (H)', &
-       !! <LI> (27)  ITER H-97P ELMy (H-mode)
        'ITER-96P             (L)', &
-       !! <LI> (28)  ITER-96P (=ITER-97L) (L-mode)
        'Valovic modified ELMy(H)', &
-       !! <LI> (29)  Valovic modified ELMy (H-mode)
        'Kaye PPPL April 98   (L)', &
-       !! <LI> (30)  Kaye PPPL April 98 (L-mode)
        'ITERH-PB98P(y)       (H)', &
-       !! <LI> (31)  ITERH-PB98P(y) (H-mode)
        'IPB98(y)             (H)', &
-       !! <LI> (32)  IPB98(y) (H-mode)
        'IPB98(y,1)           (H)', &
-       !! <LI> (33)  IPB98(y,1) (H-mode)
        'IPB98(y,2)           (H)', &
-       !! <LI> (34)  IPB98(y,2) (H-mode)
        'IPB98(y,3)           (H)', &
-       !! <LI> (35)  IPB98(y,3) (H-mode)
        'IPB98(y,4)           (H)', &
-       !! <LI> (36)  IPB98(y,4) (H-mode)
        'ISS95            (stell)', &
-       !! <LI> (37)  ISS95 (stellarator)
        'ISS04            (stell)', &
-       !! <LI> (38)  ISS04 (stellarator)
        'DS03                 (H)', &
-       !! <LI> (39)  DS03 (H-mode)
        'Murari et al NPL     (H)', &
-       !! <LI> (40)  Murari et al non-power law (H-mode)
        'Petty 2008           (H)', &
-       !! <LI> (41)  Petty 2008 (H-mode)
        'Lang et al. 2012     (H)', &
-       !! <LI> (42)  Lang et al. 2012 (H-mode)
        'Hubbard 2017 - nom   (I)', &
-       !! <LI> (43)  Hubbard 2017 (I-mode) - nominal
        'Hubbard 2017 - lower (I)', &
-       !! <LI> (44)  Hubbard 2017 (I-mode) - lower bound
        'Hubbard 2017 - upper (I)', &
-       !! <LI> (45)  Hubbard 2017 (I-mode) - upper bound
        'NSTX (Spherical)     (H)', &
-       !! <LI> (46)  NSTX (H-mode; Spherical tokamak)
        'NSTX-Petty08 Hybrid  (H)', &
-       !! <LI> (47)  NSTX-Petty08 Hybrid (H-mode)
        'Input tauee_in          ' /)
-       !! <LI> (48)  Use input tauee_in </UL>
+  !! tauscl(ipnlaws) : labels describing energy confinement scaling laws:<UL>
+  !! <LI> ( 1)  Neo-Alcator (ohmic)
+  !! <LI> ( 2)  Mirnov (H-mode)
+  !! <LI> ( 3)  Merezkhin-Muhkovatov (L-mode)
+  !! <LI> ( 4)  Shimomura (H-mode)
+  !! <LI> ( 5)  Kaye-Goldston (L-mode)
+  !! <LI> ( 6)  ITER 89-P (L-mode)
+  !! <LI> ( 7)  ITER 89-O (L-mode)
+  !! <LI> ( 8)  Rebut-Lallia (L-mode)
+  !! <LI> ( 9)  Goldston (L-mode)
+  !! <LI> (10)  T10 (L-mode)
+  !! <LI> (11)  JAERI-88 (L-mode)
+  !! <LI> (12)  Kaye-Big Complex (L-mode)
+  !! <LI> (13)  ITER H90-P (H-mode)
+  !! <LI> (14)  ITER Mix (L-mode)
+  !! <LI> (15)  Riedel (L-mode)
+  !! <LI> (16)  Christiansen (L-mode)
+  !! <LI> (17)  Lackner-Gottardi (L-mode)
+  !! <LI> (18)  Neo-Kaye (L-mode)
+  !! <LI> (19)  Riedel (H-mode)
+  !! <LI> (20)  ITER H90-P amended (H-mode)
+  !! <LI> (21)  LHD (stellarator)
+  !! <LI> (22)  Gyro-reduced Bohm (stellarator)
+  !! <LI> (23)  Lackner-Gottardi (stellarator)
+  !! <LI> (24)  ITER-93H (H-mode)
+  !! <LI> (25) OBSOLETE
+  !! <LI> (26)  ITER H-97P ELM-free (H-mode)
+  !! <LI> (27)  ITER H-97P ELMy (H-mode)
+  !! <LI> (28)  ITER-96P (=ITER-97L) (L-mode)
+  !! <LI> (29)  Valovic modified ELMy (H-mode)
+  !! <LI> (30)  Kaye PPPL April 98 (L-mode)
+  !! <LI> (31)  ITERH-PB98P(y) (H-mode)
+  !! <LI> (32)  IPB98(y) (H-mode)
+  !! <LI> (33)  IPB98(y,1) (H-mode)
+  !! <LI> (34)  IPB98(y,2) (H-mode)
+  !! <LI> (35)  IPB98(y,3) (H-mode)
+  !! <LI> (36)  IPB98(y,4) (H-mode)
+  !! <LI> (37)  ISS95 (stellarator)
+  !! <LI> (38)  ISS04 (stellarator)
+  !! <LI> (39)  DS03 (H-mode)
+  !! <LI> (40)  Murari et al non-power law (H-mode)
+  !! <LI> (41)  Petty 2008 (H-mode)
+  !! <LI> (42)  Lang et al. 2012 (H-mode)
+  !! <LI> (43)  Hubbard 2017 (I-mode) - nominal
+  !! <LI> (44)  Hubbard 2017 (I-mode) - lower bound
+  !! <LI> (45)  Hubbard 2017 (I-mode) - upper bound
+  !! <LI> (46)  NSTX (H-mode; Spherical tokamak)
+  !! <LI> (47)  NSTX-Petty08 Hybrid (H-mode)
+  !! <LI> (48)  Use input tauee_in </UL>
 
   integer :: iscrp = 1
   !! iscrp /1/ : switch for plasma-first wall clearances:<UL>
@@ -2092,6 +2092,7 @@ module pfcoil_variables
   real(dp), dimension(ngc2) :: zpf = 0.0D0
   !! zpf(ngc2) : z (height) location of PF coil i (m)
   real(dp), dimension(ngrpmx) :: zref = (/3.6D0, 1.2D0, 2.5D0, &
+  1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0/)
   !! zref(ngrpmx) /../ : PF coil vertical positioning adjuster:<UL>
   !!       <LI> - for groups j with ipfloc(j) = 1; zref(j) is ignored
   !!       <LI> - for groups j with ipfloc(j) = 2 AND itart=1 (only);
@@ -2100,7 +2101,6 @@ module pfcoil_variables
   !!              within the TF coil)
   !!       <LI> - for groups j with ipfloc(j) = 3; zref(j) = ratio of
   !!              height of coil group j to plasma minor radius</UL>
-       1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0/)
 
   real(dp) :: bmaxcs_lim = 13.0
   !! bmaxcs_lim : Central solenoid max field limit [T]
@@ -3139,18 +3139,18 @@ module times_variables
   real(dp), dimension(6) :: tim = 0.0D0
   !! tim(6) : array of time points during plasma pulse (s)
   character(len=11), dimension(6) :: timelabel = (/ 'Start',   &
+  'BOP  ',     &
+  'EOR  ',     &
+  'BOF  ',     &
+  'EOF  ',     &
+  'EOP  ' /)
   !! timelabel(6) : array of time labels during plasma pulse (s)
-                                                    'BOP  ',     &
-                                                    'EOR  ',     &
-                                                    'BOF  ',     &
-                                                    'EOF  ',     &
-                                                    'EOP  ' /)
   character(len=11), dimension(5) :: intervallabel = (/ 'tramp',     &
+  'tohs ',      &
+  'theat',     &
+  'tburn',     &
+  'tqnch' /)
   !! intervallabel(6) : time intervals - as strings (s)
-                                                        'tohs ',      &
-                                                        'theat',     &
-                                                        'tburn',     &
-                                                        'tqnch' /)
   real(dp), bind(C) :: tohs = 30.0D0
   !! tohs /30.0/ : plasma current ramp-up time for current initiation (s)
   !!               (but calculated if lpulse=0)
@@ -4390,16 +4390,16 @@ module ife_variables
      real(dp) :: bldzu  = 4.0D0
      !! bldzu /4.0/ : vertical thickness of IFE blanket above chamber (m)
      real(dp), dimension(3,0:maxmat) :: blmatf = reshape( (/ &
+     0.05D0,0.05D0,0.05D0, &
+     0.0D0, 0.0D0, 0.0D0,  &
+     0.45D0,0.45D0,0.45D0, &
+     0.0D0, 0.0D0, 0.0D0,  &
+     0.20D0,0.20D0,0.20D0, &
+     0.0D0, 0.0D0, 0.0D0,  &
+     0.30D0,0.30D0,0.30D0, &
+     0.0D0,0.0D0,0.0D0,    &
+     0.0D0, 0.0D0, 0.0D0  /), shape(blmatf))
      !! blmatf(3,0:maxmat) /.../ : IFE blanket material fractions
-          0.05D0,0.05D0,0.05D0, &
-          0.0D0, 0.0D0, 0.0D0,  &
-          0.45D0,0.45D0,0.45D0, &
-          0.0D0, 0.0D0, 0.0D0,  &
-          0.20D0,0.20D0,0.20D0, &
-          0.0D0, 0.0D0, 0.0D0,  &
-          0.30D0,0.30D0,0.30D0, &
-          0.0D0,0.0D0,0.0D0,    &
-          0.0D0, 0.0D0, 0.0D0  /), shape(blmatf))
      real(dp), dimension(3,0:maxmat) :: blmatm = 0.0D0
      !! blmatm(3,0:maxmat) : IFE blanket material masses (kg)
      real(dp), dimension(3,0:maxmat) :: blmatv = 0.0D0
@@ -4470,16 +4470,16 @@ module ife_variables
      real(dp) :: fwdzu = 0.01D0
      !! fwdzu /0.01/ : vertical thickness of IFE first wall above chamber (m)
      real(dp), dimension(3,0:maxmat) :: fwmatf = reshape( (/ &
+     0.05D0,0.05D0,0.05D0, &
+     0.0D0, 0.0D0, 0.0D0,  &
+     0.95D0,0.95D0,0.95D0, &
+     0.0D0, 0.0D0, 0.0D0,  &
+     0.0D0, 0.0D0, 0.0D0,  &
+     0.0D0, 0.0D0, 0.0D0,  &
+     0.0D0, 0.0D0, 0.0D0,  &
+     0.0D0, 0.0D0, 0.0D0,  &
+     0.0D0, 0.0D0, 0.0D0  /), shape(fwmatf))
      !! fwmatf(3,0:maxmat) /.../ : IFE first wall material fractions
-          0.05D0,0.05D0,0.05D0, &
-          0.0D0, 0.0D0, 0.0D0,  &
-          0.95D0,0.95D0,0.95D0, &
-          0.0D0, 0.0D0, 0.0D0,  &
-          0.0D0, 0.0D0, 0.0D0,  &
-          0.0D0, 0.0D0, 0.0D0,  &
-          0.0D0, 0.0D0, 0.0D0,  &
-          0.0D0, 0.0D0, 0.0D0,  &
-          0.0D0, 0.0D0, 0.0D0  /), shape(fwmatf))
      real(dp), dimension(3,0:maxmat) :: fwmatm = 0.0D0
      !! fwmatm(3,0:maxmat) : IFE first wall material masses (kg)
      real(dp), dimension(3,0:maxmat) :: fwmatv = 0.0D0
@@ -4489,9 +4489,9 @@ module ife_variables
      real(dp) :: gain = 0.0D0
      !! gain : IFE target gain
      real(dp), dimension(10) :: gainve = (/ &
+     60.0D0, 95.0D0,115.0D0,125.0D0,133.0D0, &
+     141.0D0,152.0D0,160.0D0,165.0D0,170.0D0 /)
      !! gainve(10) /.../ : IFE target gain vs driver energy (ifedrv=-1)
-           60.0D0, 95.0D0,115.0D0,125.0D0,133.0D0, &
-          141.0D0,152.0D0,160.0D0,165.0D0,170.0D0 /)
      real(dp) :: htpmw_ife = 0.0D0         
      !! htpmw_ife /0.0/ : IFE heat transport system electrical pump power (MW)
      integer :: ife = 0
@@ -4555,16 +4555,16 @@ module ife_variables
      real(dp) :: shdzu  = 5.0D0
      !! shdzu /5.0/ : vertical thickness of IFE shield above chamber (m)
      real(dp), dimension(3,0:maxmat) :: shmatf = reshape( (/ &
+     0.05D0,0.05D0,0.05D0, &
+     0.19D0,0.19D0,0.19D0, &
+     0.0D0, 0.0D0, 0.0D0,  &
+     0.0D0, 0.0D0, 0.0D0,  &
+     0.0D0, 0.0D0, 0.0D0,  &
+     0.665D0,0.665D0,0.665D0, &
+     0.095D0,0.095D0,0.095D0, &
+     0.0D0, 0.0D0, 0.0D0,  &
+     0.0D0, 0.0D0, 0.0D0  /), shape(shmatf))
      !! shmatf(3,0:maxmat) /.../ : IFE shield material fractions
-          0.05D0,0.05D0,0.05D0, &
-          0.19D0,0.19D0,0.19D0, &
-          0.0D0, 0.0D0, 0.0D0,  &
-          0.0D0, 0.0D0, 0.0D0,  &
-          0.0D0, 0.0D0, 0.0D0,  &
-          0.665D0,0.665D0,0.665D0, &
-          0.095D0,0.095D0,0.095D0, &
-          0.0D0, 0.0D0, 0.0D0,  &
-          0.0D0, 0.0D0, 0.0D0  /), shape(shmatf))
      real(dp), dimension(3,0:maxmat) :: shmatm = 0.0D0
      !! shmatm(3,0:maxmat) : IFE shield material masses (kg)
      real(dp), dimension(3,0:maxmat) :: shmatv = 0.0D0
@@ -4599,16 +4599,16 @@ module ife_variables
      real(dp) :: v1dzu = 0.0D0
      !! v1dzu /0.0/ : vertical thickness of IFE void 1 above chamber (m)
      real(dp), dimension(3,0:maxmat) :: v1matf = reshape( (/ &
+     1.0D0, 1.0D0, 1.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0  /), shape(v1matf))
      !! v1matf(3,0:maxmat) /.../ : IFE void 1 material fractions
-          1.0D0, 1.0D0, 1.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0  /), shape(v1matf))
      real(dp), dimension(3,0:maxmat) :: v1matm = 0.0D0
      !! v1matm(3,0:maxmat) : IFE void 1 material masses (kg)
      real(dp), dimension(3,0:maxmat) :: v1matv = 0.0D0
@@ -4622,16 +4622,16 @@ module ife_variables
      real(dp) :: v2dzu = 7.0D0
      !! v2dzu /7.0/ : vertical thickness of IFE void 2 above chamber (m)
      real(dp), dimension(3,0:maxmat) :: v2matf = reshape( (/ &
+     1.0D0, 1.0D0, 1.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0  /), shape(v2matf))
      !! v2matf(3,0:maxmat) /.../ : IFE void 2 material fractions
-          1.0D0, 1.0D0, 1.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0  /), shape(v2matf))
      real(dp), dimension(3,0:maxmat) :: v2matm = 0.0D0
      !! v2matm(3,0:maxmat) : IFE void 2 material masses (kg)
      real(dp), dimension(3,0:maxmat) :: v2matv = 0.0D0
@@ -4645,16 +4645,16 @@ module ife_variables
      real(dp) :: v3dzu  = 20.0D0
      !! v3dzu /20.0/ : vertical thickness of IFE void 3 above chamber (m)
      real(dp), dimension(3,0:maxmat) :: v3matf = reshape( (/ &
+     1.0D0, 1.0D0, 1.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0, &
+     0.0D0, 0.0D0, 0.0D0  /), shape(v3matf))
      !! v3matf(3,0:maxmat) /.../ : IFE void 3 material fractions
-          1.0D0, 1.0D0, 1.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0, &
-          0.0D0, 0.0D0, 0.0D0  /), shape(v3matf))
      real(dp), dimension(3,0:maxmat) :: v3matm = 0.0D0
      !! v3matm(3,0:maxmat) : IFE void 3 material masses (kg)
      real(dp), dimension(3,0:maxmat) :: v3matv = 0.0D0

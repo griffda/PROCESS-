@@ -44,34 +44,34 @@ module impurity_radiation_module
        (/ 1.0D0, 0.1D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
        0.0D0, 0.00D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0 /)
        character(len=2), public, dimension(nimp) :: imp_label = (/ &
-       !! imp_label(nimp) : impurity ion species names:<UL>
        'H_', &
-       !! <LI> ( 1)  Hydrogen  (fraction calculated by code)
        'He', &
-       !! <LI> ( 2)  Helium
        'Be', &
-       !! <LI> ( 3)  Beryllium
        'C_', &
-       !! <LI> ( 4)  Carbon
        'N_', &
-       !! <LI> ( 5)  Nitrogen
        'O_', &
-       !! <LI> ( 6)  Oxygen
        'Ne', &
-       !! <LI> ( 7)  Neon
        'Si', &
-       !! <LI> ( 8)  Silicon
        'Ar', &
-       !! <LI> ( 9)  Argon
        'Fe', &
-       !! <LI> (10)  Iron
        'Ni', &
-       !! <LI> (11)  Nickel
        'Kr', &
-       !! <LI> (12)  Krypton
        'Xe', &
-       !! <LI> (13)  Xenon
        'W_'/)
+       !! imp_label(nimp) : impurity ion species names:<UL>
+       !! <LI> ( 1)  Hydrogen  (fraction calculated by code)
+       !! <LI> ( 2)  Helium
+       !! <LI> ( 3)  Beryllium
+       !! <LI> ( 4)  Carbon
+       !! <LI> ( 5)  Nitrogen
+       !! <LI> ( 6)  Oxygen
+       !! <LI> ( 7)  Neon
+       !! <LI> ( 8)  Silicon
+       !! <LI> ( 9)  Argon
+       !! <LI> (10)  Iron
+       !! <LI> (11)  Nickel
+       !! <LI> (12)  Krypton
+       !! <LI> (13)  Xenon
        !! <LI> (14)  Tungsten</UL>
 
        !! fimpvar /1.0e-3/ : impurity fraction to be used as fimp(impvar)
