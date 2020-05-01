@@ -518,24 +518,30 @@ subroutine GL_nbti(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit)
 
     T_e = t_c0 * strain_func**(1 / w)
 
-    t_reduced = min(thelium/T_e, 0.9999D0)  !  avoids NaNs 
+    t_reduced = min(thelium/T_e, 0.9999D0) 
 
     A_e = A_0 * strain_func**(u / w) 
 
-    ! Critical field (T)
+    !  Critical Field 
 
     bcrit = bc20max * (1 - t_reduced**v) * strain_func
 
-    b_reduced = min(bmax/bcrit, 0.9999D0)  !  avoids NaNs 
+    b_reduced = min(bmax/bcrit, 0.9999D0) 
+
 
     !  Critical temperature (K)
 
-    tcrit = t_c0
+    
+    tcrit = t_c0 * (1 - b_reduced**(1/v))
+   
 
     !  Critical current density (A/m2)
 
-    jcrit = A_e * (T_e*(1-t_reduced**2))**2 * bcrit**(n-3) * b_reduced**(p-1) * (1 - b_reduced)**q 
-
+    if ((b_reduced>0.0d0).and.(b_reduced < 1.0d0).and.(t_reduced>0.0d0)) then
+        jcrit = A_e * (T_e*(1-t_reduced**2))**2 * bcrit**(n-3) * b_reduced**(p-1) * (1 - b_reduced)**q 
+    else
+        jcrit = A_e * (T_e*(1-t_reduced**2))**2 * bcrit**(n-3) * b_reduced**(p-1) * (1 - b_reduced)**q
+    end if
    
 end subroutine GL_nbti
 
