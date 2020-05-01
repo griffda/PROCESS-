@@ -390,6 +390,7 @@ subroutine tf_winding_pack()
         conductor_width, oacdcp, tfinsgap, casthi, i_tf_sc_mat
     use global_variables, only: icase
     use constants, only: pi
+    use numerics, only: nvar, ixc
     implicit none
 
     ! Local variables
@@ -404,8 +405,13 @@ subroutine tf_winding_pack()
     ! Rem SK : added the insulation thickness/insertion gap
     r_wp_inner = r_tf_inboard_in + thkcas + tinstf + tfinsgap  
         
-    ! Radial thickness of winding pack [m]
-    thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
+    if (any(ixc(1:nvar) == 140) ) then
+      ! Radial thickness of TF coil inboard leg [m]
+      tfcth = thkwp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
+    else
+      ! Radial thickness of winding pack [m]
+      thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
+    end if
     
     ! Radial position of outer edge of winding pack [m]
     r_wp_outer = r_wp_inner + thkwp
@@ -546,6 +552,7 @@ subroutine tf_integer_winding_pack()
         casthi, i_tf_sc_mat
     use constants, only: pi
     use maths_library, only: hybrd
+    use numerics, only: nvar, ixc
     implicit none
     
     ! Local variables
@@ -566,8 +573,13 @@ subroutine tf_integer_winding_pack()
     ! Total number of turns
     turnstf = n_pancake*n_layer
 
-    ! Radial thickness of winding pack [m]
-    thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
+    if (any(ixc(1:nvar) == 140)) then
+      ! Radial thickness of TF coil inboard leg [m]
+      tfcth = thkwp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
+    else
+      ! Radial thickness of winding pack [m]
+      thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
+    endif
 
     ! Radial position of inner edge of winding pack [m]
     r_wp_inner = r_tf_inboard_in + thkcas + tinstf + tfinsgap
