@@ -278,7 +278,7 @@ contains
       cpttf_max, dcopper, tdmptf, casths, i_tf_turns_integer, quench_model, &
       tcritsc, layer_ins, tinstf, n_layer, tcoolin, ripmax, frhocp, &
       cpttf, tmargmin, casths_fraction, eff_tf_cryo, eyoung_al, eyoung_ins, &
-      eyoung_reinforced_al, eyoung_steel, eyoung_winding, f_vforce_inboard, &
+      eyoung_nibron, eyoung_steel, eyoung_winding, f_vforce_inboard, &
       fcoolleg, frholeg, ftoroidalgap, i_tf_sc_mat, i_tf_shape, i_tf_bucking, &
       leno, n_tf_graded_layers, n_tf_joints, n_tf_joints_contact, poisson_al, &
       poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact, &
@@ -1788,8 +1788,8 @@ contains
        case ('eyoung_al')
           call parse_real_variable('eyoung_al', eyoung_al, 0.0D0, 1.0D0, &
                'Reinforced aluminium Young modulus for TF stress calc.')
-       case ('eyoung_reinforced_al')
-          call parse_real_variable('eyoung_reinforced_al', eyoung_reinforced_al, 0.0D0, 1.0D0, &
+       case ('eyoung_nibron')
+          call parse_real_variable('eyoung_nibron', eyoung_nibron, 0.0D0, 1.0D0, &
                'Reinforced aluminium Young modulus for TF stress calc.')
        case ('farc4tf')
           call parse_real_variable('farc4tf', farc4tf, 0.0D0, 1.0D0, &
@@ -1837,7 +1837,7 @@ contains
           call parse_int_variable('i_tf_turns_integer', i_tf_turns_integer, 0, 1, &
                     'Switch for TF coil integer/non-integer turns')
        case ('i_tf_bucking')
-          call parse_int_variable('i_tf_bucking', i_tf_bucking, -1, 2, &
+          call parse_int_variable('i_tf_bucking', i_tf_bucking, -1, 3, &
                'Switch for bucking cylinder (case)')
        case ('i_tf_sc_mat')
           call parse_int_variable('i_tf_sc_mat', i_tf_sc_mat, 1, 7, &
@@ -2008,7 +2008,7 @@ contains
           call parse_real_variable('vdalw', vdalw, 0.0D0, 100.0D0, &
                'Max V across TFC during quench (kV)')
        case ('f_vforce_inboard')
-          call parse_real_variable('f_vforce_inboard', f_vforce_inboard, 0.01D0, 1.0D0, &
+          call parse_real_variable('f_vforce_inboard', f_vforce_inboard, 0.0D0, 1.0D0, &
                'Fraction of vertical force taken by the TF inboard leg')
        case ('vftf')
           call parse_real_variable('vftf', vftf, 0.0D0, 1.0D0, &

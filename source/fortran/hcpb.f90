@@ -158,7 +158,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables, only: fwith, fwoth, r_tf_inboard_mid, tfcth, thshield, &
+    use build_variables, only: fwith, fwoth, r_tf_inboard_mid, tfcth, &
       gapds, shldith, hmax, r_tf_outboard_mid, r_sh_inboard_out
     use fwbs_variables, only: afw, coolwh, emult, pnuccp, fw_wall, pnucfw, &
       pnucblkt, pnucshld, ptfnuc, fdiv, emultmw, pnucdiv
