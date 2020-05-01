@@ -99,11 +99,11 @@ if __name__ == '__main__':
             vertical_stress = data[5]
     
     if len(data) > 15 :
-        radial_strain = data[14]
-        toroidal_strain = data[15]
+        radial_strain = data[16]
+        toroidal_strain = data[17]
         
         for jj in range(0,len(radius)) :
-            vertical_strain.append(data[16])
+            vertical_strain.append(data[18])
 
 
     if term_output :
@@ -163,7 +163,7 @@ if __name__ == '__main__':
         plt.savefig( '{}/steel_stress.{}'.format(outdir, save_format) )
         plt.clf()
         plt.cla()
-    
+
     ## PLOT 2 : Smeared stress summary
     # ------------------------
     if plot_sm_sig :
