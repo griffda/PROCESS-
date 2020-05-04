@@ -149,7 +149,7 @@ subroutine sctfcoil(outfile,iprint)
         hmax
     use tfcoil_variables, only: i_tf_turns_integer, wwp1, estotftgj, tfind, &
         ritfc, thkwp, n_tf, bmaxtfrp, bmaxtf, n_tf_stress_layers, n_rad_per_layer, &
-        i_tf_sup, i_tf_shape, b_crit_upper_nbti, T_crit_nbti 
+        i_tf_sup, i_tf_shape, b_crit_upper_nbti, t_crit_nbti 
     use constants, only: rmu0, pi
     use physics_variables, only: itart
 
@@ -3324,7 +3324,7 @@ subroutine tfspcall(outfile,iprint)
         temp_margin, jwdgpro, tftmp, vtfskv, acndttf, dhecoil, tmaxpro, &
         tmargtf, thwcndut, conductor_width, fcutfsu, jwdgcrt, tdmptf, cpttf, &
         ritfc, jwptf, bmaxtfrp, tcritsc, acstf, strncon_tf, fhts, bcritsc, &
-        i_tf_sc_mat, b_crit_upper_nbti, T_crit_nbti 
+        i_tf_sc_mat, b_crit_upper_nbti, t_crit_nbti 
     use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, jcrit_nbti, croco, bi2212,&
     GL_nbti
     use global_variables, only: run_tests
@@ -3497,7 +3497,7 @@ contains
 
         case (7) ! Durham Ginzburg-Landau Nb-Ti parameterisation
             bc20m = b_crit_upper_nbti
-            tc0m = T_crit_nbti 
+            tc0m = t_crit_nbti 
             call GL_nbti(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
             jcritstr = jcritsc  * (1.0D0-fcu)
             !  Critical current in cable

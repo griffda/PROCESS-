@@ -1794,8 +1794,8 @@ contains
        case ('farc4tf')
           call parse_real_variable('farc4tf', farc4tf, 0.0D0, 1.0D0, &
                'TF coil shape parameter')
-       case ('T_crit_nbti')
-          call parse_real_variable('T_crit_nbti ', T_crit_nbti , 0.0D0, 15.0D0, &
+       case ('t_crit_nbti')
+          call parse_real_variable('t_crit_nbti ', t_crit_nbti , 0.0D0, 15.0D0, &
                'Critical temperature of GL_nbti ')
        case ('b_crit_upper_nbti')
           call parse_real_variable('b_crit_upper_nbti', b_crit_upper_nbti, 0.0D0, 30.0D0, &

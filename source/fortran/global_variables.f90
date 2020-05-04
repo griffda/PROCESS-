@@ -2235,8 +2235,8 @@ module tfcoil_variables
   !! farc4tf /0.7/ : factor to size height of point 4 on TF coil
   real(kind(1.0D0)) :: b_crit_upper_nbti = 14.86D0
   !! b_crit_upper_nbti /14.86/ : upper critical field of GL_nbti
-  real(kind(1.0D0)) :: T_crit_nbti = 9.04D0
-  !! b_crit_upper_nbti /14.86/ : critical temperature of GL_nbti
+  real(kind(1.0D0)) :: t_crit_nbti = 9.04D0
+  !! t_crit_nbti /9.04/ : critical temperature of GL_nbti
   real(kind(1.0D0)) :: max_force_density = 0.0D0
   !! max_force_density :  Maximal (WP averaged) force density in TF coils at 1 point. (MN/m3)
   real(kind(1.0D0)) :: fcutfsu = 0.69D0
