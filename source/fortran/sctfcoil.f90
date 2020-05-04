@@ -42,6 +42,18 @@ real(dp), private :: awpc
 real(dp), private :: awptf
 !! Total cross-sectional area of winding pack [m2]
 
+real(dp), private :: a_tf_steel
+!! Inboard coil steel coil cross-sectional area [m2]
+
+real(dp), private :: a_tf_ins
+!! Inboard coil insulation cross-section per coil [m2]
+
+real(dp), private :: f_tf_steel
+!! Inboard coil steel fraction [-]
+
+real(dp), private :: f_tf_ins
+!! Inboard coil insulation fraction [-]
+
 real(dp), private :: h_cp_top
 !! Vertical distance from the midplane to the top of the tapered section [m]
 
@@ -356,6 +368,12 @@ subroutine tf_turn_geom()
     ! Only valid at mid-plane for resistive itart design
     acasetf = ( tfareain / n_tf ) - awpc 
 
+    ! Total insulation cross-section per coil [m2]
+    a_tf_ins = aiwp * turnstf
+
+    ! Insulation fraction [-]
+    f_tf_ins = n_tf * a_tf_ins / tfareain 
+
     ! Current per turn 
     cpttf = ritfc / ( turnstf * n_tf )
 
@@ -483,6 +501,18 @@ subroutine tf_winding_pack()
 
     ! Area of steel structure in winding pack [m2]
     aswp = turnstf*acndttf
+
+    ! Inboard coil steel area [m2]
+    a_tf_steel = acasetf + aswp
+
+    ! Inboard steel fraction [-]
+    f_tf_steel = n_tf * a_tf_steel / tfareain
+
+    ! Inboard coil insulation cross-section [m2]
+    a_tf_ins = aiwp * turnstf
+
+    ! Inboard coil insulation fraction [-]
+    f_tf_ins = n_tf * a_tf_ins / tfareain 
 
     if ( i_tf_sc_mat .ne. 6) then  ! NOT REBCO
         ! Radius of rounded corners of cable space inside conduit [m]
@@ -721,6 +751,18 @@ subroutine tf_integer_winding_pack()
 
     ! Area of steel structure in winding pack [m2]
     aswp = turnstf * acndttf
+
+    ! Inboard coil steel area [m2]
+    a_tf_steel = acasetf + aswp
+
+    ! Inboard coil steel fraction [-]
+    f_tf_steel = n_tf * a_tf_steel / tfareain
+
+    ! Inboard coil insulation cross-section [m2]
+    a_tf_ins = aiwp * turnstf
+
+    !  Inboard coil insulation fraction [-]
+    f_tf_ins = n_tf * a_tf_ins / tfareain 
 
 end subroutine tf_integer_winding_pack
 
@@ -1508,7 +1550,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             
         ! SC magnets smeared properties
         else if ( i_tf_sup == 1 ) then 
-            ! eyoung_p(i_tf_bucking+ii) = eyoung_wp_eff
             eyoung_p(i_tf_bucking+ii) = eyoung_wp_eff
             eyoung_z(i_tf_bucking+ii) = eyoung_wp_eff
             poisson_p(i_tf_bucking + ii) = poisson_steel
@@ -2144,8 +2185,8 @@ end subroutine plane_stress
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_force,          & ! Inputs
-                                     nlayers, n_radial_array, i_tf_bucking, & ! Inputs
+subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_force,   & ! Inputs
+                                     nlayers, n_radial_array, i_tf_bucking,          & ! Inputs
                                      rradius, sigr, sigt, sigz,              & ! Outputs
                                      strain_r, strain_t, strain_z, r_deflect ) ! Outputs
       
@@ -2404,8 +2445,8 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     ! Right hand side vector bb
     ! ***
     ! Null radial stress at R(1)
-    bb(1) = -kk_p(1) * ( 0.125D0*alpha(1) * rad(1)**2 * alpha_par_sigr(1) &
-                       + 0.5D0*beta(1) * ( beta_par_sigr(1) + log(rad(1)) )      &
+    bb(1) = -kk_p(1) * ( 0.125D0*alpha(1) * rad(1)**2 * alpha_par_sigr(1)     &
+                       + 0.5D0*beta(1) * ( beta_par_sigr(1) + log(rad(1)) )   &
                        + nu_z(1)*aleph(1) ) ! Plain strain generalisation
 
     ! Inter-layer boundary conditions
@@ -3121,11 +3162,17 @@ subroutine outtf(outfile, peaktfflag)
     ! Turn/WP gemoetry
     if ( i_tf_sup == 1 ) then
 
-
+        ! Total material fraction
         call osubhd(outfile,'Global material area/fractions:')
         call ovarre(outfile,'TF cross-section (total) (m2)','(tfareain)', tfareain)
-        call ovarre(outfile,'Steel cross-section (total) (m2)','((acasetf+aswp)*n_tf)',(acasetf+aswp)*n_tf)
-        call ovarre(outfile,'Steel TF fraction','(f_tf_steel)',(acasetf+aswp)/(tfareain/n_tf))
+        call ovarre(outfile,'Total steel cross-section (m2)','(a_tf_steel*n_tf)',a_tf_steel*n_tf)
+        call ovarre(outfile,'Total steel TF fraction','(f_tf_steel)',f_tf_steel)
+        call ovarre(outfile,'Total Insulation cross-section (total) (m2)','(a_tf_ins*n_tf)',a_tf_steel*n_tf)
+        call ovarre(outfile,'Total Insulation fraction','(f_tf_ins)',f_tf_ins)
+
+
+        ! WP material fraction        
+        call osubhd(outfile,'WP material area/fractions:')
         call ovarre(outfile,'Steel WP cross-section (total) (m2)','(aswp*n_tf)',aswp*n_tf)
         call ovarre(outfile,'Steel WP fraction','(aswp/awpc)',aswp/awpc)
         call ovarre(outfile,'Insulation WP fraction','(aiwp/awpc)',aiwp/awpc)
