@@ -282,7 +282,7 @@ contains
       fcoolleg, frholeg, ftoroidalgap, i_tf_sc_mat, i_tf_shape, i_tf_bucking, &
       leno, n_tf_graded_layers, n_tf_joints, n_tf_joints_contact, poisson_al, &
       poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact, &
-      b_crit_upper_nbti
+      b_crit_upper_nbti, T_crit_nbti 
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
     use vacuum_variables, only: dwell_pump, pbase, tn, pumpspeedfactor, &
@@ -1794,9 +1794,12 @@ contains
        case ('farc4tf')
           call parse_real_variable('farc4tf', farc4tf, 0.0D0, 1.0D0, &
                'TF coil shape parameter')
+       case ('T_crit_nbti')
+          call parse_real_variable('T_crit_nbti ', T_crit_nbti , 0.0D0, 15.0D0, &
+               'Critical temperature of GL_nbti ')
        case ('b_crit_upper_nbti')
           call parse_real_variable('b_crit_upper_nbti', b_crit_upper_nbti, 0.0D0, 30.0D0, &
-               'Upper critical field of GL_nbti ')
+                    'Upper critical field of GL_nbti ')
        case ('fcoolcp')
           call parse_real_variable('fcoolcp', fcoolcp, 0.0D0, 1.0D0, &
                'Coolant fraction of TF centrepost (itart=1) or the whole magnet (itart=0)')

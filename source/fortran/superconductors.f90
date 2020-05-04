@@ -1,7 +1,6 @@
 module superconductors
   !! Module containing superconducter critical surfaces and conductor data
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  use tfcoil_variables, only: b_crit_upper_nbti
   implicit none
 contains
 

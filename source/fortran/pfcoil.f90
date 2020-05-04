@@ -63,7 +63,7 @@ contains
     use physics_variables, only: bvert, kappa, rli, itartpf, vsres, plascur, &
         triang, rminor, vsind, aspect, itart, betap, rmajor
     use tfcoil_variables, only: dcopper, tftmp, dcond, i_tf_sup, fhts, &
-        tcritsc, strncon_pf, bcritsc, b_crit_upper_nbti
+        tcritsc, strncon_pf, bcritsc, b_crit_upper_nbti, T_crit_nbti 
     use times_variables, only: tim, tramp, tburn, tohs, tqnch, theat
     use constants, only: pi, nout
     implicit none
@@ -678,7 +678,7 @@ contains
         jscoh_eof, zpf, rb, ra, jscoh_bop, cptdin, pfcaseth, rpf, cohbop, zh, &
         wtc, zl, turns, wts, a_oh_turn 
 		use tfcoil_variables, only: dcopper, dcond, tftmp, tcritsc, strncon_cs, &
-      fhts, bcritsc, b_crit_upper_nbti
+      fhts, bcritsc, b_crit_upper_nbti, T_crit_nbti 
 		use constants, only: pi
     implicit none
 
@@ -1741,7 +1741,7 @@ contains
 		use error_handling, only: fdiags, idiags, report_error
     use superconductors, only: jcrit_nbti, wstsc, jcrit_rebco, bi2212, &
       itersc, current_sharing_rebco, Gl_nbti
-		use tfcoil_variables, only: tmargmin_cs, temp_margin, b_crit_upper_nbti
+		use tfcoil_variables, only: tmargmin_cs, temp_margin, b_crit_upper_nbti, T_crit_nbti 
 		use maths_library, only: variable_error, secant_solve
     implicit none
 
@@ -1824,7 +1824,7 @@ contains
 
    case (7) ! Durham Ginzburg-Landau Nb-Ti parameterisation
          bc20m = b_crit_upper_nbti
-         tc0m = 9.04D0
+         tc0m = T_crit_nbti 
          call GL_nbti(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
          jcritstr = jcritsc  * (1.0D0-fcu)
          
@@ -2556,7 +2556,8 @@ end subroutine superconpf
 		use physics_variables, only: rminor, rmajor, kappa
     use process_output, only: int_to_string2, ovarin, oheadr, &
       ovarre, osubhd, oblnkl, ocmmnt
-    use tfcoil_variables, only: tmargmin_cs, strncon_cs, tftmp, b_crit_upper_nbti
+    use tfcoil_variables, only: tmargmin_cs, strncon_cs, tftmp, b_crit_upper_nbti,&
+      T_crit_nbti 
     use numerics, only: boundu
 		use constants, only: mfile
     implicit none

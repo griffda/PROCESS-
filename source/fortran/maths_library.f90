@@ -5841,7 +5841,7 @@ contains
       ! Convergence not achieved.  Return the best value and a flag.
       error = .TRUE.
       solution = x(i-1)
-      write(*,*)"Secant solver not converged.  solution", solution, "  residual",residual
+      !write(*,*)"Secant solver not converged.  solution", solution, "  residual",residual
       !stop
 
   end subroutine secant_solve
