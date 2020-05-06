@@ -1,7 +1,22 @@
+div.wy-nav-content {
+    width: 100%;
+    max-width: 1400px;
+}
+
+table {
+    /* border-spacing: 10px; */
+    border-collapse: collapse;
+}
+
 table.vardes {
     table-layout: fixed;
     width: 100%;
     overflow-wrap: anywhere;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
 }
 
 .vardes tbody {

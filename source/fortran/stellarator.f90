@@ -2244,7 +2244,7 @@ contains
       vportamax, vportpmax, vporttmax
     use structure_variables, only: aintmass
     use tfcoil_variables, only: acasetf, acndttf, acond, acstf, aiwp, arealeg, &
-      aswp, avwp, bmaxtf, casthi, casths, cpttf, dcase, dcopper, estotftgj, &
+      aswp, avwp, bmaxtf, casthi, casths, cpttf, dcase, estotftgj, &
       fcutfsu, jwptf, n_tf, oacdcp, rbmax, ritfc, tfareain, &
       tfcryoarea, tficrn, tfleng, tfocrn, tfsai, tfsao, tftmp, tftort, &
       thicndut, thkcas, thkwp, thwcndut, tinstf, turnstf, vftf, whtcas, &
@@ -2252,7 +2252,7 @@ contains
       i_tf_sc_mat, jwdgpro, leni, leno, max_force_density, sigvvall, strtf2, taucq, &
       tdmptf, tmaxpro, toroidalgap, vtfkv, whtconin, wwp2, vdalw, bcritsc, fhts, &
       tcritsc, vtfskv
-		use constants, only: rmu0, twopi, pi
+		use constants, only: rmu0, twopi, pi, dcopper
 		use maths_library, only: find_y_nonuniform_x, tril, sumup3, ellipke
     use superconductors, only : jcrit_rebco, jcrit_nbti, bi2212, itersc, wstsc
     use rebco_variables, only: copperA_m2, copperA_m2_max

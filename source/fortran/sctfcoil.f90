@@ -373,167 +373,166 @@ end subroutine tf_turn_geom
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine tf_winding_pack()
-    !! Subroutine for calculating winding pack quantities
-    !!   - Overall dimensions of winding pack
-    !!   - Turn dimensions
-    !!   - Current, field, etc.
-    !!   - Turns geometry
-    use error_handling, only: fdiags, report_error
-    use build_variables, only: tfcth, tfthko
-    use tfcoil_variables, only: dhecoil, thicndut, cpttf, aswp, aiwp, tftort, &
-        leni, turnstf, tfareain, n_tf, tinstf, leno, acstf, wwp1, &
-        vftf, avwp, jwptf, acasetfo, acasetf, wwp2, thwcndut, insulation_area, &
-        tftort, aswp, tinstf, turnstf, leno, acasetf, n_tf, jwptf, &
-        thwcndut, thicndut, wwp1, &
-        dhecoil, tfareain, leni, insulation_area, cpttf, ritfc, thkwp, &
-        arealeg, casths, awphec, acndttf, acond, layer_ins, thkcas, &
-        conductor_width, oacdcp, tfinsgap, casthi, i_tf_sc_mat
-    use global_variables, only: icase
-    use constants, only: pi
-    use numerics, only: nvar, ixc
-    implicit none
+  !! Subroutine for calculating winding pack quantities
+  !!   - Overall dimensions of winding pack
+  !!   - Turn dimensions
+  !!   - Current, field, etc.
+  !!   - Turns geometry
+  use error_handling, only: fdiags, report_error
+  use build_variables, only: tfcth, tfthko
+  use tfcoil_variables, only: dhecoil, thicndut, cpttf, aswp, aiwp, tftort, &
+      leni, turnstf, tfareain, n_tf, tinstf, leno, acstf, wwp1, &
+      vftf, avwp, jwptf, acasetfo, acasetf, wwp2, thwcndut, insulation_area, &
+      tftort, aswp, tinstf, turnstf, leno, acasetf, n_tf, jwptf, &
+      thwcndut, thicndut, wwp1, &
+      dhecoil, tfareain, leni, insulation_area, cpttf, ritfc, thkwp, &
+      arealeg, casths, awphec, acndttf, acond, layer_ins, thkcas, &
+      conductor_width, oacdcp, tfinsgap, casthi, i_tf_sc_mat
+  use global_variables, only: icase
+  use constants, only: pi
+  use numerics, only: nvar, ixc
+  implicit none
 
-    ! Local variables
-    !----------------
-    ! Rounded corner radius
-    real(dp) :: rbcndut
-    real(dp) :: A
-    !----------------
+  ! Local variables
+  !----------------
+  ! Rounded corner radius
+  real(dp) :: rbcndut
+  real(dp) :: A
+  !----------------
 
+  ! Radial position of inner edge of winding pack [m]
+  ! Rem SK : added the insulation thickness/insertion gap
+  r_wp_inner = r_tf_inboard_in + thkcas + tinstf + tfinsgap  
+      
+  if (any(ixc(1:nvar) == 140) ) then
+    ! Radial thickness of TF coil inboard leg [m]
+    tfcth = thkwp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
+  else
+    ! Radial thickness of winding pack [m]
+    thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
+  end if
+  
+  ! Radial position of outer edge of winding pack [m]
+  r_wp_outer = r_wp_inner + thkwp
 
-    ! Radial position of inner edge of winding pack [m]
-    ! Rem SK : added the insulation thickness/insertion gap
-    r_wp_inner = r_tf_inboard_in + thkcas + tinstf + tfinsgap  
-        
-    if (any(ixc(1:nvar) == 140) ) then
-      ! Radial thickness of TF coil inboard leg [m]
-      tfcth = thkwp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
-    else
-      ! Radial thickness of winding pack [m]
-      thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
-    end if
-    
-    ! Radial position of outer edge of winding pack [m]
-    r_wp_outer = r_wp_inner + thkwp
+  ! Global inboard leg average current in TF coils [A/m2]
+  oacdcp = ritfc / tfareain
 
-    ! Global inboard leg average current in TF coils [A/m2]
-    oacdcp = ritfc / tfareain
+  ! Current per TF coil [A]
+  tfc_current = ritfc/n_tf
 
-    ! Current per TF coil [A]
-    tfc_current = ritfc/n_tf
+  ! Radius of geometrical centre of winding pack [m]
+  r_wp_centre = 0.5D0 * ( r_wp_inner + r_wp_outer )
 
-    ! Radius of geometrical centre of winding pack [m]
-    r_wp_centre = 0.5D0 * ( r_wp_inner + r_wp_outer )
+  ! Thickness of winding pack section at R > r_wp_centre [m]
+  wwp1 = 2.0D0 * (r_wp_centre*tan_theta_coil - casths - tinstf - tfinsgap)
 
-    ! Thickness of winding pack section at R > r_wp_centre [m]
-    wwp1 = 2.0D0 * (r_wp_centre*tan_theta_coil - casths - tinstf - tfinsgap)
+  ! Thickness of winding pack section at R < r_wp_centre [m]
+  wwp2 = 2.0D0 * ( r_wp_inner*tan_theta_coil - casths - tinstf - tfinsgap )
 
-    ! Thickness of winding pack section at R < r_wp_centre [m]
-    wwp2 = 2.0D0 * ( r_wp_inner*tan_theta_coil - casths - tinstf - tfinsgap )
+  ! Total cross-sectional area of winding pack [m2]
+  awptf = (0.5D0*thkwp)*(wwp1 + wwp2)
 
-    ! Total cross-sectional area of winding pack [m2]
-    awptf = (0.5D0*thkwp)*(wwp1 + wwp2)
+  ! Total cross-sectional area of winding pack, [m2]
+  ! including the surrounding ground-wall insulation layer
+  ! and insertion gap [m2]
+  awpc = 0.5D0*thkwp*(wwp2 + 2.0D0*tinstf + 2.0d0*tfinsgap) + &
+      (0.5D0*thkwp + 2.0D0*tinstf + 2.0d0*tfinsgap)*(wwp1 + 2.0D0*tinstf+ 2.0d0*tfinsgap)
 
-    ! Total cross-sectional area of winding pack, [m2]
-    ! including the surrounding ground-wall insulation layer
-    ! and insertion gap [m2]
-    awpc = 0.5D0*thkwp*(wwp2 + 2.0D0*tinstf + 2.0d0*tfinsgap) + &
-        (0.5D0*thkwp + 2.0D0*tinstf + 2.0d0*tfinsgap)*(wwp1 + 2.0D0*tinstf+ 2.0d0*tfinsgap)
+  ! Total cross-sectional area of surrounding case [m2]
+  acasetf = ( tfareain / n_tf ) - awpc   ! eq(14)
 
-    ! Total cross-sectional area of surrounding case [m2]
-    acasetf = ( tfareain / n_tf ) - awpc   ! eq(14)
+  if ((awptf <= 0.0D0).or.(awpc <= 0.0D0).or.(acasetf <= 0.0D0)) then
+    fdiags(1) = awptf ; fdiags(2) = awpc ; fdiags(3) = acasetf
+    call report_error(99)
+    write(*,*) 'Error in routine SCTFCOIL: Winding pack cross-section problem'
+    write(*,*) 'awptf = ',awptf, '  awpc = ',awpc, '  acasetf = ',acasetf
+    write(*,*) 'KE thkwp, wwp1, wwp2 = ', thkwp, ', ', wwp1, ', ', wwp2
+    !negative awptf comes from neg. thkwp
+    write(*,*) 'tfcth, casthi, thkcas, tinstf, tfinsgap = ', tfcth, ', ', &
+      casthi, ', ', thkcas, ', ', tinstf, ', ', tfinsgap
+    write(*,*) ' '
+  end if
 
-    if ((awptf <= 0.0D0).or.(awpc <= 0.0D0).or.(acasetf <= 0.0D0)) then
-        fdiags(1) = awptf ; fdiags(2) = awpc ; fdiags(3) = acasetf
-        call report_error(99)
-        write(*,*) 'Error in routine SCTFCOIL: Winding pack cross-section problem'
-        write(*,*) 'awptf = ',awptf, '  awpc = ',awpc, '  acasetf = ',acasetf
-        write(*,*) 'KE thkwp, wwp1, wwp2 = ', thkwp, ', ', wwp1, ', ', wwp2
-        !negative awptf comes from neg. thkwp
-        write(*,*) 'tfcth, casthi, thkcas, tinstf, tfinsgap = ', tfcth, ', ', &
-            casthi, ', ', thkcas, ', ', tinstf, ', ', tfinsgap
+  ! Cross-sectional area of surrounding case, outboard leg [m2]
+  acasetfo = arealeg - awpc
+
+  ! Winding pack current density (forced to be positive) [A/m2]
+  jwptf = max(1.0D0, ritfc/(n_tf*awptf))    
+
+  ! Dimension of square conductor [m]
+  ! Allow for additional inter-layer insulation MDK 13/11/18
+  ! Area of turn including conduit and inter-layer insulation
+  A = cpttf / jwptf
+
+  ! Dimension of square cross-section of each turn including inter-turn insulation [m]
+  leno = sqrt(cpttf / jwptf)
+
+  ! See derivation in k:\power plant physics and technology\process\hts\hts coil module for process.docx
+  conductor_width = (-layer_ins + sqrt(layer_ins**2 + 4.d0*A))/2.d0 - 2.0D0*thicndut
+
+  ! Total number of turns per TF coil (not required to be an integer)
+  turnstf = awptf / A
+
+  ! Area of inter-turn insulation: single turn [m2]
+  insulation_area = A - conductor_width**2
+
+  ! Area of inter-turn insulation: total [m2]
+  aiwp = turnstf * insulation_area
+
+  ! Area of steel structure in winding pack [m2]
+  aswp = turnstf*acndttf
+
+  if ( i_tf_sc_mat .ne. 6) then  ! NOT REBCO
+    ! Radius of rounded corners of cable space inside conduit [m]
+    rbcndut = thwcndut * 0.75D0     
+
+    ! Dimension of square cable space inside conduit [m]
+    leni = conductor_width - 2.0D0*thwcndut
+
+    ! Cross-sectional area of cable space per turn
+    ! taking account of rounded inside corners [m2]
+    acstf = leni**2 - (4.0D0-pi)*rbcndut**2
+
+    if (acstf <= 0.0D0) then
+      if (leni < 0.0D0) then
+        fdiags(1) = acstf ; fdiags(2) = leni
+        call report_error(101)
+        write(*,*) 'Warning in routine SCTFCOIL:'
+        write(*,*) 'Cable space area, acstf = ',acstf, 'Cable space dimension, leni = ',leni
         write(*,*) ' '
+      else
+        fdiags(1) = acstf ; fdiags(2) = leni
+        call report_error(102)
+        write(*,*) 'Warning in routine SCTFCOIL:'
+        write(*,*) 'Cable space area, acstf = ',acstf,&
+              'Cable space dimension, leni = ',leni
+        write(*,*) 'Reduce the upper limit for thwcndut (TF coil conduitcase thickness, iteration variable 58),'
+        write(*,*) 'or remove it from the list of iteration variables.'
+        write(*,*) 'Artificially set rounded corner radius to zero'
+        write(*,*)
+        rbcndut = 0.0D0
+        acstf = leni**2
+      end if
     end if
 
-    ! Cross-sectional area of surrounding case, outboard leg [m2]
-    acasetfo = arealeg - awpc
+    ! Cross-sectional area of conduit jacket per turn [m2]
+    acndttf = conductor_width**2 - acstf
+    ! Central helium channel down the conductor core [m2]
+    awphec = turnstf * ((pi/4.0d0)*dhecoil**2)
+    ! Total conductor cross-sectional area, taking account of void area
+    ! and central helium channel [m2]
+    acond = acstf * turnstf * (1.0D0-vftf) - awphec
+    ! Void area in conductor for He, not including central channel [m2]
+    avwp = acstf * turnstf * vftf
+      
+  else if (i_tf_sc_mat == 6 ) then  ! REBCO
+    ! Diameter of circular cable space inside conduit [m]
+    leni = conductor_width - 2.0D0*thwcndut
+    ! Cross-sectional area of conduit jacket per turn [m2]
+    acndttf = conductor_width**2 - acstf
 
-    ! Winding pack current density (forced to be positive) [A/m2]
-    jwptf = max(1.0D0, ritfc/(n_tf*awptf))    
-
-    ! Dimension of square conductor [m]
-    ! Allow for additional inter-layer insulation MDK 13/11/18
-    ! Area of turn including conduit and inter-layer insulation
-    A = cpttf / jwptf
-
-    ! Dimension of square cross-section of each turn including inter-turn insulation [m]
-    leno = sqrt(cpttf / jwptf)
-
-    ! See derivation in k:\power plant physics and technology\process\hts\hts coil module for process.docx
-    conductor_width = (-layer_ins + sqrt(layer_ins**2 + 4.d0*A))/2.d0 - 2.0D0*thicndut
-
-    ! Total number of turns per TF coil (not required to be an integer)
-    turnstf = awptf / A
-
-    ! Area of inter-turn insulation: single turn [m2]
-    insulation_area = A - conductor_width**2
-
-    ! Area of inter-turn insulation: total [m2]
-    aiwp = turnstf * insulation_area
-
-    ! Area of steel structure in winding pack [m2]
-    aswp = turnstf*acndttf
-
-    if ( i_tf_sc_mat .ne. 6) then  ! NOT REBCO
-        ! Radius of rounded corners of cable space inside conduit [m]
-        rbcndut = thwcndut * 0.75D0     
-
-        ! Dimension of square cable space inside conduit [m]
-        leni = conductor_width - 2.0D0*thwcndut
-
-        ! Cross-sectional area of cable space per turn
-        ! taking account of rounded inside corners [m2]
-        acstf = leni**2 - (4.0D0-pi)*rbcndut**2
-
-        if (acstf <= 0.0D0) then
-            if (leni < 0.0D0) then
-                fdiags(1) = acstf ; fdiags(2) = leni
-                call report_error(101)
-                write(*,*) 'Warning in routine SCTFCOIL:'
-                write(*,*) 'Cable space area, acstf = ',acstf, 'Cable space dimension, leni = ',leni
-                write(*,*) ' '
-            else
-                fdiags(1) = acstf ; fdiags(2) = leni
-                call report_error(102)
-                write(*,*) 'Warning in routine SCTFCOIL:'
-                write(*,*) 'Cable space area, acstf = ',acstf,&
-                     'Cable space dimension, leni = ',leni
-                write(*,*) 'Reduce the upper limit for thwcndut (TF coil conduitcase thickness, iteration variable 58),'
-                write(*,*) 'or remove it from the list of iteration variables.'
-                write(*,*) 'Artificially set rounded corner radius to zero'
-                write(*,*)
-                rbcndut = 0.0D0
-                acstf = leni**2
-            end if
-        end if
-
-        ! Cross-sectional area of conduit jacket per turn [m2]
-        acndttf = conductor_width**2 - acstf
-        ! Central helium channel down the conductor core [m2]
-        awphec = turnstf * ((pi/4.0d0)*dhecoil**2)
-        ! Total conductor cross-sectional area, taking account of void area
-        ! and central helium channel [m2]
-        acond = acstf * turnstf * (1.0D0-vftf) - awphec
-        ! Void area in conductor for He, not including central channel [m2]
-        avwp = acstf * turnstf * vftf
-        
-    else if (i_tf_sc_mat == 6 ) then  ! REBCO
-        ! Diameter of circular cable space inside conduit [m]
-        leni = conductor_width - 2.0D0*thwcndut
-        ! Cross-sectional area of conduit jacket per turn [m2]
-        acndttf = conductor_width**2 - acstf
-
-    end if  
+  end if  
 
 end subroutine tf_winding_pack
 
@@ -964,11 +963,11 @@ subroutine tf_coil_area_and_masses()
     use fwbs_variables, only: denstl
     use tfcoil_variables, only: whtconsh, whttf, whtcas, tficrn, tfcryoarea, &
         tfsao, whtgw, tfocrn, whtconsc, whtconcu, whtcon, whtconin, &
-        tfsai, dcopper, vftf, whtconin, tfsai, dcond, dcondins, whtcon, &
+        tfsai, vftf, whtconin, tfsai, dcond, dcondins, whtcon, &
         tfleng, dthet, dcase, acndttf, turnstf, n_tf, aiwp, radctf, acasetfo, &
         acasetf, fcutfsu, awphec, acstf, whttflgs, whtcp, whtconal, vol_cond_cp, &
-        i_tf_sup, i_tf_sc_mat, dalu
-    use constants, only: twopi
+        i_tf_sup, i_tf_sc_mat
+    use constants, only: twopi, dcopper, dalu
     use physics_variables, only: itart
     implicit none
 
@@ -1202,12 +1201,10 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         strtf1, rbmax, thicndut, acndttf, tfinsgap, &
         acasetf, alstrtf, poisson_steel, poisson_copper, poisson_al, &
         n_tf_graded_layers, i_tf_sup, i_tf_bucking, fcoolcp, eyoung_winding, &
-        eyoung_steel, eyoung_nibron, eyoung_ins, eyoung_al, eyoung_copper, &
-        aiwp, cpttf
+        eyoung_steel, eyoung_nibron, eyoung_ins, aiwp, cpttf
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
         cohbop, ncls, cptdin
-
-        use constants, only: pi, sig_file
+    use constants, only: pi, sig_file, eyoung_copper, eyoung_al
     use error_handling, only: report_error
     implicit none
 
