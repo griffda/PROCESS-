@@ -281,7 +281,8 @@ contains
       eyoung_nibron, eyoung_steel, eyoung_winding, f_vforce_inboard, &
       fcoolleg, frholeg, ftoroidalgap, i_tf_sc_mat, i_tf_shape, i_tf_bucking, &
       leno, n_tf_graded_layers, n_tf_joints, n_tf_joints_contact, poisson_al, &
-      poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact
+      poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact,&
+      i_tf_plane_stress
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
     use vacuum_variables, only: dwell_pump, pbase, tn, pumpspeedfactor, &
@@ -1826,9 +1827,12 @@ contains
        case ('eff_tf_cryo')
           call parse_real_variable('eff_tf_cryo', eff_tf_cryo, -1.0D0, 1.0D0, &
                'TF coil cryo-plane efficiency')  
+       case ('i_tf_plane_stress')
+         call parse_int_variable('i_tf_plane_stress', i_tf_plane_stress, 0, 1, &
+               'Switch for the TF stress model')
        case ('i_tf_tresca')
           call parse_int_variable('i_tf_tresca', i_tf_tresca, 0, 1, &
-                         'Switch for TF coil Tresca criterion.')
+                         'Switch for TF coil Tresca criterion')
        case ('i_tf_turns_integer')
           call parse_int_variable('i_tf_turns_integer', i_tf_turns_integer, 0, 1, &
                     'Switch for TF coil integer/non-integer turns')

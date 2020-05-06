@@ -2246,13 +2246,19 @@ module tfcoil_variables
   !!              of technology assumed (i.e. to account for stress, fatigue,
   !!              radiation, AC losses, joints or manufacturing variations;
   !!              1.0 would be very optimistic)
+  
   real(dp) :: insstrain = 0.0D0
-  !! insstrain : radial strain in insulator
+  !! Radial strain in insulator
+
+  integer :: i_tf_plane_stress = 0
+  !! Switch for the TF stress model
+  !!   0 : New generalized plane strain formulation 
+  !!   1 : Old plane stress model 
 
   integer :: i_tf_tresca = 0
-  !! i_tf_tresca /0/ : switch for TF coil conduit Tresca stress criterion:<UL>
-  !!         <LI> = 0 Tresca (no adjustment);
-  !!         <LI> = 1 Tresca with CEA adjustment factors (radial+2%, vertical+60%) </UL>
+  !! Switch for TF coil conduit Tresca stress criterion:
+  !!   0 : Tresca (no adjustment);
+  !!   1 : Tresca with CEA adjustment factors (radial+2%, vertical+60%) </UL>
   
   integer :: i_tf_turns_integer = 0
   !! Switch for TF coil integer/non-integer turns

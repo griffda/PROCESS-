@@ -53,6 +53,7 @@ if __name__ == '__main__':
     radius                  = list()
     radial_smeared_stress   = list()
     toroidal_smeared_stress = list()
+    vertical_smeared_stress = list()
     radial_stress           = list()
     toroidal_stress         = list()
     vertical_stress         = list()
@@ -87,10 +88,11 @@ if __name__ == '__main__':
     vertical_stress         = data[5]
     radial_smeared_stress   = data[6]
     toroidal_smeared_stress = data[7]
-    vm_stress               = data[8]
-    tresca_stress           = data[9]
-    cea_tresca_stress       = data[10]
-    radial_displacement     = data[13]
+    vertical_smeared_stress = data[8]
+    vm_stress               = data[9]
+    tresca_stress           = data[10]
+    cea_tresca_stress       = data[11]
+    radial_displacement     = data[14]
             
     if len(data[5]) == 1 :    
         for jj in range(0,len(radius)) :
@@ -98,12 +100,12 @@ if __name__ == '__main__':
     else :
             vertical_stress = data[5]
     
-    if len(data) > 15 :
-        radial_strain = data[16]
-        toroidal_strain = data[17]
+    if len(data) > 16 :
+        radial_strain = data[17]
+        toroidal_strain = data[18]
         
         for jj in range(0,len(radius)) :
-            vertical_strain.append(data[18])
+            vertical_strain.append(data[19])
 
 
     if term_output :
@@ -169,6 +171,7 @@ if __name__ == '__main__':
     if plot_sm_sig :
         plt.plot(radius, radial_smeared_stress  , label = r'$\sigma_{rr}^\mathrm{smeared}$')
         plt.plot(radius, toroidal_smeared_stress, label = r'$\sigma_{\theta\theta}^\mathrm{smeared}$')
+        plt.plot(radius, vertical_smeared_stress, label = r'$\sigma_{zz}^\mathrm{smeared}$')
         plt.grid(True)
         plt.ylabel( r'$\sigma$ [$MPa$]', fontsize = axis_font_size )
         plt.xlabel( r'$R$ [$m$]', fontsize = axis_font_size )
