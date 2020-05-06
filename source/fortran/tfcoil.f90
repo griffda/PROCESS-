@@ -74,10 +74,10 @@ contains
    use build_variables, only: hmax, tfcth, tfthko
    use fwbs_variables, only: pnuccp
    use process_output, only: oheadr, ovarre, osubhd
-   use tfcoil_variables, only: cph2o, denh2o, dtiocool, etapump, fcoolcp, &
-      i_tf_sup, k_copper, kh2o, muh2o, ncool, ppump, prescp, rbmax, rcool, &
+   use tfcoil_variables, only: dtiocool, etapump, fcoolcp, &
+      i_tf_sup, ncool, ppump, prescp, rbmax, rcool, &
       rhocp, tcoolin, tcpav, tcpav2, tcpmax, a_cp_cool, n_tf, vcool, vol_cond_cp
-   use constants, only: pi
+   use constants, only: pi, cph2o, denh2o, k_copper, kh2o, muh2o
    use error_handling, only: report_error
    implicit none
 

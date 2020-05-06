@@ -53,9 +53,9 @@ contains
     use process_output, only: oheadr, ovarre
     use tfcoil_variables, only: tflegmw, estotftgj, tfcpmw, rhotfleg, &
         tflegres, vtfskv, jbus, tfbusl, tfbusmas, tfcmw, vtfkv, i_tf_sup, &
-        tfckw, presleg, dcopper, ritfc, cpttf, prescp, n_tf, rhotfbus, tfjtsmw, &
+        tfckw, presleg, ritfc, cpttf, prescp, n_tf, rhotfbus, tfjtsmw, &
         pres_joints
-    use constants, only: pi
+    use constants, only: pi, dcopper
     implicit none
 
     !  Arguments
@@ -663,11 +663,6 @@ contains
     wall_plug_ohmicmw  = pohmmw * (1.d0 /etapsu - 1.d0) 
     ! Total mean wall plug power dissipated in PFC and CS power supplies.  Issue #713
     pfwpmw = wall_plug_ohmicmw + pfpowermw    
-
-    ! Waste heat generated in PFC and CS power supplies (MW),
-    ! classed as "secondary waste heat"
-    ! pfsec = pfwpmw - pohmmw
-    ! pfsec = pfwpmw
 
     !  Output Section
     if (iprint == 0) return

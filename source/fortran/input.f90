@@ -151,6 +151,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: dcopper, dalu, eyoung_al
     use global_variables, only: run_tests, verbose, maxcal, runtitle
     use build_variables, only: fmsfw, blbmoth, blbuith, fmsbc, shldoth, &
       fmsdwi, shldtth, shldlth, vgap2, plleni, fwoth, vvblgap, fmsbl, &
@@ -271,14 +272,14 @@ contains
     use tfcoil_variables, only: fcoolcp, tfinsgap, vftf, &
       quench_detection_ef, fhts, thkwp, rcool, rhotfleg, thkcas, &
       casthi, n_pancake, bcritsc, i_tf_sup, strncon_pf, thwcndut, farc4tf, &
-      thicndut, tftmp, dalu, oacdcp, tmax_croco, ptempalw, tmargmin_tf, tmpcry, &
+      thicndut, tftmp, oacdcp, tmax_croco, ptempalw, tmargmin_tf, tmpcry, &
       alstrtf, dztop, dcond, strncon_cs, etapump, drtop, vcool, dcondins, &
       i_tf_tresca, dhecoil, tmaxpro, strncon_tf, n_tf, tcpav, fcutfsu, jbus, &
       casthi_fraction, tmargmin_cs, sigvvall, vdalw, dcase, &
-      cpttf_max, dcopper, tdmptf, casths, i_tf_turns_integer, quench_model, &
+      cpttf_max, tdmptf, casths, i_tf_turns_integer, quench_model, &
       tcritsc, layer_ins, tinstf, n_layer, tcoolin, ripmax, frhocp, &
-      cpttf, tmargmin, casths_fraction, eff_tf_cryo, eyoung_al, eyoung_ins, &
-      eyoung_nibron, eyoung_steel, eyoung_winding, f_vforce_inboard, &
+      cpttf, tmargmin, casths_fraction, eff_tf_cryo, eyoung_ins, &
+      eyoung_steel, eyoung_nibron, eyoung_winding, f_vforce_inboard, &
       fcoolleg, frholeg, ftoroidalgap, i_tf_sc_mat, i_tf_shape, i_tf_bucking, &
       leno, n_tf_graded_layers, n_tf_joints, n_tf_joints_contact, poisson_al, &
       poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact
