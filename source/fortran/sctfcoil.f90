@@ -1558,8 +1558,22 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! Thickness of a homognenous WP stress property layer
     dr_wp_layer = thkwp / dble(n_tf_graded_layers)
 
-    ! Effective WP properties
-    if ( i_tf_sup == 1 ) then
+
+    ! Resistive coil
+    if ( i_tf_sup == 0 ) then
+
+        ! No vertical force is assumed to be on the plasma side TF tube 
+        f_vforce_case = 1.0D0
+
+        ! Effective WP young modulus in the toroidal direction [Pa]
+        ! Rem : effect of cooling pipes not taken into account for now
+        eyoung_wp_t = eyoung_copper
+
+        ! Effective conductor region young modulus in the vertical direction [Pa]
+        eyoung_wp_z = eyoung_copper * (1.0D0 - fcoolcp)
+
+    ! SC coil
+    else if ( i_tf_sup == 1 ) then
         
         ! WP area using the stress model circular geometry (per coil)
         a_wp_eff = pi * ( (r_wp_outer + tinstf + tfinsgap)**2 &
@@ -1584,20 +1598,30 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! inertion gap is tfinsgap on 4 sides
         t_ins_eff = thicndut + ( tfinsgap + tinstf ) / turnstf
 
-        ! Effective WP young modulus in the toroidal direction
+        ! Effective WP young modulus in the toroidal direction [Pa]
         eyoung_wp_t = eyngeff( eyoung_steel, eyoung_ins, &
                                  t_ins_eff, thwcndut, tcbs )
         
-        ! Effective younf modulus in the vertical direction
+        ! Effective younf modulus in the vertical direction [Pa]
         eyoung_wp_z = eyoung_steel * a_wp_steel_eff / a_wp_eff &
                     + eyoung_ins * a_tf_ins / a_wp_eff
 
-    ! Resistive coil
-    else 
+    ! Aluminium coil
+    else if ( i_tf_sup == 2 ) then
 
         ! No vertical force is assumed to be on the plasma side TF tube 
         f_vforce_case = 1.0D0
 
+        ! Effective WP young modulus in the toroidal direction [Pa]
+        ! Rem : effect of cooling pipes not taken into account for now
+        eyoung_wp_t = eyoung_al
+
+        ! WP area using the stress model circular geometry (per coil)
+        a_wp_eff = pi * ((r_wp_outer + tinstf)**2 - (r_wp_inner - tinstf)**2) / n_tf
+
+        ! Effective conductor region young modulus in the vertical direction [Pa]
+        eyoung_wp_z = eyoung_ins * a_tf_ins / a_wp_eff &
+                    + eyoung_al * (1.0D0 - a_tf_ins / a_wp_eff) * (1.0D0 - fcoolcp)
     end if 
 
     ! Loop on layers
@@ -1609,24 +1633,22 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! Same thickness for all WP layers in stress calculation
         radtf(i_tf_bucking + ii) = r_wp_inner + dble(ii-1)*dr_wp_layer
 
-        ! Copper magent
+        ! Young modulus
+        eyoung_p(i_tf_bucking + ii) = eyoung_wp_t
+        eyoung_z(i_tf_bucking + ii) = eyoung_wp_z
+
+        ! Poisson's ratio
         if ( i_tf_sup == 0 ) then
-            eyoung_p(i_tf_bucking + ii) = eyoung_copper
-            eyoung_z(i_tf_bucking + ii) = eyoung_copper * (1.0D0 - fcoolcp)
             poisson_p(i_tf_bucking + ii) = poisson_copper
             poisson_z(i_tf_bucking + ii) = poisson_copper
             
         ! SC magnets smeared properties
         else if ( i_tf_sup == 1 ) then 
-            eyoung_p(i_tf_bucking+ii) = eyoung_wp_t
-            eyoung_z(i_tf_bucking+ii) = eyoung_wp_z
             poisson_p(i_tf_bucking + ii) = poisson_steel
             poisson_z(i_tf_bucking + ii) = poisson_steel
         
         ! Cryogenic aluminium properties
         else 
-            eyoung_p(i_tf_bucking + ii) = eyoung_al
-            eyoung_z(i_tf_bucking + ii) = eyoung_al * (1.0D0 - fcoolcp)
             poisson_p(i_tf_bucking + ii) = poisson_al
             poisson_z(i_tf_bucking + ii) = poisson_al
         end if 
@@ -1764,7 +1786,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     if ( i_tf_sup == 0 ) then
 
         ! Vertical force unsmearing factor
-        fac_sig_z = 1.0D0 / ( 1.0D0 - fcoolcp ) 
+        fac_sig_z = eyoung_copper / eyoung_wp_z
 
         ! Toroidal WP steel stress unsmearing factor
         fac_sig_t = 1.0D0
@@ -1773,8 +1795,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
         ! Vertical WP steel stress unsmearing factor
         if ( i_tf_plane_stress == 0 ) then
-            fac_sig_z = ( a_wp_eff * eyoung_steel ) &
-                      / ( a_wp_steel_eff * eyoung_steel + a_tf_ins * eyoung_ins ) 
+            fac_sig_z = eyoung_steel / eyoung_wp_z
         else
             fac_sig_z = 1.0D0
         end if  
@@ -1787,10 +1808,10 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     else if ( i_tf_sup == 2 ) then
         
         ! Vertical WP steel stress unsmearing factor
-        fac_sig_z = ( a_wp_eff * eyoung_steel ) &
-                  / ( a_wp_eff * eyoung_steel + a_tf_ins * eyoung_ins ) 
+        fac_sig_z = eyoung_al / eyoung_wp_z
 
         ! Toroidal WP steel stress unsmearing factor
+        ! NO CALCULTED FOR THE MOMENT (to be done laters)
         fac_sig_t = 1.0D0
     
     end if
