@@ -512,12 +512,11 @@ subroutine GL_nbti(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit)
     real(kind(1.0D0)), parameter  :: u = 0.0D0
     real(kind(1.0D0)), parameter  :: w = 2.2D0
 
-
     strain_func = 1 + c2*(strain-em)**2 + c3*(strain-em)**3 + c4*(strain-em)**4
 
     T_e = t_c0 * strain_func**(1 / w)
 
-    t_reduced = min(thelium/T_e, 0.9999D0) 
+    t_reduced = thelium/T_e
 
     A_e = A_0 * strain_func**(u / w) 
 
@@ -525,21 +524,18 @@ subroutine GL_nbti(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit)
 
     bcrit = bc20max * (1 - t_reduced**v) * strain_func
 
-    b_reduced = min(bmax/bcrit, 0.9999D0) 
-
+    b_reduced = bmax/bcrit    
 
     !  Critical temperature (K)
-
     
     tcrit = t_c0 * (1 - b_reduced**(1/v))
-   
 
     !  Critical current density (A/m2)
 
-    if ((b_reduced>0.0d0).and.(b_reduced < 1.0d0).and.(t_reduced>0.0d0)) then
+    if (b_reduced <= 1.0D0) then
         jcrit = A_e * (T_e*(1-t_reduced**2))**2 * bcrit**(n-3) * b_reduced**(p-1) * (1 - b_reduced)**q 
-    else
-        jcrit = A_e * (T_e*(1-t_reduced**2))**2 * bcrit**(n-3) * b_reduced**(p-1) * (1 - b_reduced)**q
+    else !Fudge to yield negative single valued function of Jc for fields above Bc2
+        jcrit = A_e * (T_e*(1-t_reduced**2))**2 * bcrit**(n-3) * b_reduced**(p-1) * (1 - b_reduced)**1.0
     end if
    
 end subroutine GL_nbti

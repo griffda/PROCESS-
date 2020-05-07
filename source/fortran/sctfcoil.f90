@@ -3520,11 +3520,11 @@ contains
         end if
 
         !  Temperature margin (already calculated in bi2212 for isumat=2)
-        if ((isumat == 1).or.(isumat == 4).or.(isumat == 3).or.(isumat == 5)) then
+        if ((isumat == 1).or.(isumat == 4).or.(isumat == 3).or.(isumat == 5).or.(isumat == 7)) then
 
             !  Newton-Raphson method; start approx at requested minimum temperature margin
-            ttest = thelium + 0.00001!+ tmargmin_tf + 0.001d0
-            delt = 0.000001D0
+            ttest = thelium + tmargmin_tf + 0.001d0
+            delt = 0.01D0
             jtol = 1.0D4
 
             lap = 0

@@ -1922,15 +1922,15 @@ contains
    ! SCM 16/03/20 Use secant solver for GL_nbti.
    if(isumat==7) then
       ! Current sharing temperature for Durham Ginzburg-Landau Nb-Ti
-      x1 = 4.4999999d0  ! Initial values of temperature
-      x2 = 4.5000001d0
+      x1 = 4.0d0  ! Initial values of temperature
+      x2 = 6.0d0
       ! Solve for deltaj_GL_nbti = 0
       call secant_solve(deltaj_GL_nbti,x1,x2,current_sharing_t,error,residual,100d0)
       tmarg = current_sharing_t - thelium
       call GL_nbti(current_sharing_t,bmax,strain,bc20m,tc0m,jcrit0,b,t)
       if(variable_error(current_sharing_t))then  ! current sharing secant solver has failed.
-          !write(*,'(a24, 10(a12,es12.3))')'Gl_nbti: current sharing ', 'temperature=', current_sharing_t, '  tmarg=', tmarg, &
-           !                               '  jsc=',jsc, '  jcrit0=',jcrit0, '  residual=', residual
+          write(*,'(a24, 10(a12,es12.3))')'Gl_nbti: current sharing ', 'temperature=', current_sharing_t, '  tmarg=', tmarg, &
+                                          '  jsc=',jsc, '  jcrit0=',jcrit0, '  residual=', residual
       end if
   end if
 
@@ -1967,8 +1967,8 @@ contains
       real(dp)::deltaj_Gl_nbti, jcrit0
       call GL_nbti(temperature,bmax,strain,bc20m,tc0m,jcrit0,b,t)
       if(variable_error(jcrit0))then  ! GL_Nbti has failed.
-      !    write(*,'(a24, 10(a12,es12.3))')'deltaj_GL_nbti: ', 'bmax=', bmax, '  temperature=', temperature, &
-       !                                   '  jcrit0=',jcrit0
+        write(*,'(a24, 10(a12,es12.3))')'deltaj_GL_nbti: ', 'bmax=', bmax, '  temperature=', temperature, &
+                                          '  jcrit0=',jcrit0
       end if
       deltaj_GL_nbti = jcrit0 - jsc
   end function deltaj_GL_nbti
