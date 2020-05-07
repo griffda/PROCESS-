@@ -1266,7 +1266,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         aiwp, cpttf, n_tf, i_tf_plane_stress
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
         cohbop, ncls, cptdin
-    use constants, only: pi, sig_file, eyoung_copper, eyoung_al
+    use constants, only: pi, sig_file
     use error_handling, only: report_error
     implicit none
 

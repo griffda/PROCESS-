@@ -133,12 +133,6 @@ module constants
   real(dp), parameter :: denh2o = 985.0D0
   !! density of water (kg/m3)
 
-  real(dp) :: eyoung_copper = 117.0D9
-  !! Copper young modulus. Default value taken from wikipedia
-
-  real(dp) :: eyoung_al = 69.0D9 
-  !! Aluminium young modulus.  Default value taken from wikipedia
-
   real(dp), parameter :: k_copper = 330.0D0
   !! Copper thermal conductivity (W/m/K)
 
@@ -2894,9 +2888,8 @@ module tfcoil_variables
 
   real(dp) :: eyoung_ins = 1.0D8
   !! Insulator Young's modulus [Pa]. Default value (1.0D8) setup the following values
-  !!
   !!  - SC TF, eyoung_ins = 20 Mpa (default value from DDD11-2 v2 2 (2009))
-  !!  - Cryo-Al TF, eyoung_ins = 2.5 MPa (Kapton polymer)
+  !!  - Al TF, eyoung_ins = 2.5 MPa (Kapton polymer)
 
   real(dp) :: eyoung_steel = 2.05D11
   !! Steel case Young's modulus (Pa) (default value from DDD11-2 v2 2 (2009))
@@ -2907,6 +2900,12 @@ module tfcoil_variables
   real(dp) :: eyoung_nibron = 141.0D9 
   !! Cryogenic aluminium magnet bucking cylinder young modulus. Ref: Gary's personnal communication
 
+  real(dp) :: eyoung_copper = 117.0D9
+  !! Copper young modulus. Default value taken from wikipedia
+
+  real(dp) :: eyoung_al = 69.0D9 
+  !! Aluminium young modulus.  Default value taken from wikipedia
+  
   real(dp) :: poisson_steel = 0.3D0
   !! Steel Poisson's ratio 
   
