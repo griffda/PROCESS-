@@ -1431,13 +1431,13 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use build_variables, only: iohcl 
-		use constants, only: twopi 
+		use constants, only: twopi, dcopper
 		use cost_variables, only: uccase, uccu, cconshpf, ucfnc, cconfix, ucsc, &
       ucwindpf, lsa, fkind
 		use pfcoil_variables, only: rjconpf, ipfres, vfohc, nohc, turns, isumatpf, &
       whtpfs, ric, rpf, isumatoh, fcupfsu, fcuohsu, vf, awpoh 
 		use structure_variables, only: fncmass 
-		use tfcoil_variables, only: dcond, dcopper 
+		use tfcoil_variables, only: dcond
     implicit none
 
     !  Arguments

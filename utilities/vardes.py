@@ -106,6 +106,11 @@ class VarDes(object):
         if type(value) is not str:
             value = str(value)
 
+        value = value.replace("<ul>", "@--")
+        value = value.replace("<li>", "#-- ")
+        value = value.replace("</li>", "--#")
+        value = value.replace("</ul>", "--@")
+
         # Remove html tags and nbsps
         value = re.sub(r"</*\w+>|&nbsp;", "", value)
 
@@ -117,6 +122,14 @@ class VarDes(object):
         # Replace "\n"s with "<br>"s; these interfere with the table formatting 
         # otherwise
         value = re.sub(r"\n", "<br>", value)
+
+        value = value.replace("@--", "<ul>")
+        value = value.replace("#--", "<li>")
+        value = value.replace("--#", "</li>")
+        value = value.replace("--@", "</ul>")
+        value = value.replace("<ul><br><li>", "<ul><li>")
+        value = value.replace("</li><br><li>", "</li><li>")
+        value = value.replace("</li><br></ul>", "</li></ul>")
 
         return value
     
@@ -195,6 +208,8 @@ class VarDes(object):
 
         # End of table row (one variable written)
         row_str += "\t</tr>\n"
+
+        # print(row_str)
         
         return row_str
 

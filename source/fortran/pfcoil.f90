@@ -62,10 +62,10 @@ contains
         coheof, zh, fcohbof, ra, rb, isumatpf, whtpf, fcupfsu, cohbop, rjpfalw
     use physics_variables, only: bvert, kappa, rli, itartpf, vsres, plascur, &
         triang, rminor, vsind, aspect, itart, betap, rmajor
-    use tfcoil_variables, only: dcopper, tftmp, dcond, i_tf_sup, fhts, &
+    use tfcoil_variables, only: tftmp, dcond, i_tf_sup, fhts, &
         tcritsc, strncon_pf, bcritsc
     use times_variables, only: tim, tramp, tburn, tohs, tqnch, theat
-    use constants, only: pi, nout
+    use constants, only: pi, nout, dcopper
     implicit none
 
     !  Arguments
@@ -677,9 +677,9 @@ contains
         bmaxoh0, rjohc, tmargoh, ipfres, rjpfalw, pfclres, vf, ric, bpf, &
         jscoh_eof, zpf, rb, ra, jscoh_bop, cptdin, pfcaseth, rpf, cohbop, zh, &
         wtc, zl, turns, wts, a_oh_turn
-	 use tfcoil_variables, only: dcopper, dcond, tftmp, tcritsc, strncon_cs, &
+	 use tfcoil_variables, only: dcond, tftmp, tcritsc, strncon_cs, &
        fhts, bcritsc
-	 use constants, only: pi
+	 use constants, only: pi, dcopper
     implicit none
 
     !  Arguments
