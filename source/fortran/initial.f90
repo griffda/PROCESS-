@@ -648,7 +648,7 @@ subroutine check
     use tfcoil_variables, only: casthi, casthi_is_fraction, casths, i_tf_sup, &
         tcoolin, tcpav, tfc_sidewall_is_fraction, tmargmin, tmargmin_cs, &
         tmargmin_tf, eff_tf_cryo, eyoung_ins, i_tf_bucking, i_tf_shape, &
-        n_tf_graded_layers, n_tf_stress_layers, tlegav
+        n_tf_graded_layers, n_tf_stress_layers, tlegav,  i_tf_plane_stress
     use stellarator_variables, only: istell
     use sctfcoil_module, only: initialise_cables
     use vacuum_variables, only: vacuum_model
