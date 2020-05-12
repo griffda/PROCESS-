@@ -2788,10 +2788,10 @@ module tfcoil_variables
   real(dp) :: insstrain = 0.0D0
   !! Radial strain in insulator
 
-  integer :: i_tf_plane_stress = 0
+  integer :: i_tf_plane_stress = 1
   !! Switch for the TF stress model
   !!   0 : New generalized plane strain formulation 
-  !!   1 : Old plane stress model 
+  !!   1 : Old plane stress model (only for SC)
 
   integer :: i_tf_tresca = 0
   !! Switch for TF coil conduit Tresca stress criterion:
