@@ -190,7 +190,7 @@ class BuildDataContainer(object):
         self.thkcas = data.data["thkcas"].get_scan(-1)
 
         # TF coil winding pack radial thickness
-        self.thkwp = data.data["thkwp"].get_scan(-1)
+        self.dr_tf_wp = data.data["dr_tf_wp"].get_scan(-1)
 
         # TF coil inboard leg plasma facing case radial thickness
         self.casthi = data.data["casthi"].get_scan(-1)

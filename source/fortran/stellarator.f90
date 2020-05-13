@@ -2247,7 +2247,7 @@ contains
       aswp, avwp, bmaxtf, casthi, casths, cpttf, dcase, estotftgj, &
       fcutfsu, jwptf, n_tf, oacdcp, rbmax, ritfc, tfareain, &
       tfcryoarea, tficrn, tfleng, tfocrn, tfsai, tfsao, tftmp, tftort, &
-      thicndut, thkcas, thkwp, thwcndut, tinstf, turnstf, vftf, whtcas, &
+      thicndut, thkcas, dr_tf_wp, thwcndut, tinstf, turnstf, vftf, whtcas, &
       whtcon, whtconcu, whtconsc, whtconsh, whttf, wwp1, dcond, awphec, dcondins, &
       i_tf_sc_mat, jwdgpro, leni, leno, max_force_density, sigvvall, strtf2, taucq, &
       tdmptf, tmaxpro, toroidalgap, vtfkv, whtconin, wwp2, vdalw, bcritsc, fhts, &
@@ -2355,10 +2355,10 @@ contains
  
      wwp1 = awp_tor                ! [m] toroidal thickness of winding pack
      wwp2 = awp_tor                ! [m] toroidal thickness of winding pack (region in front)
-     thkwp = awp_rad               ! [m] radial thickness of winding pack
+     dr_tf_wp = awp_rad               ! [m] radial thickness of winding pack
  
      !  [m^2] winding-pack cross sectional area including insulation (not global)
-     awpc = (thkwp + 2.0D0*tinstf)*(wwp1 + 2.0D0*tinstf)
+     awpc = (dr_tf_wp + 2.0D0*tinstf)*(wwp1 + 2.0D0*tinstf)
  
 
      awptf = awp_tor*awp_rad                 ! [m^2] winding-pack cross sectional area
@@ -2421,8 +2421,8 @@ contains
    !  General Coil Geometry values
    !  
      tftort = wwp1 + 2.0D0*casths+ 2.0D0*tinstf     ! [m] Thickness of inboard leg in toroidal direction
-     tfcth = thkcas + thkwp + casthi+ 2.0D0*tinstf  ! [m] Thickness of inboard leg in radial direction
-     tfthko = thkcas + thkwp + casthi+ 2.0D0*tinstf ! [m] Thickness of outboard leg in radial direction (same as inboard)
+     tfcth = thkcas + dr_tf_wp + casthi+ 2.0D0*tinstf  ! [m] Thickness of inboard leg in radial direction
+     tfthko = thkcas + dr_tf_wp + casthi+ 2.0D0*tinstf ! [m] Thickness of outboard leg in radial direction (same as inboard)
      arealeg = tfcth*tftort                         ! [m^2] overall coil cross-sectional area (assuming inboard and 
                                                     !       outboard leg are the same)
      acasetf = (tfcth*tftort)-awpc                  ! [m^2] Cross-sectional area of surrounding case
@@ -2521,7 +2521,7 @@ contains
     max_force_density = config%max_force_density *(ritfc*1.0D-6/n_tf) * bmaxtf / awptf
 
     ! Approximate, very simple maxiumum stress: (needed for limitation of icc 32)
-    strtf2 = max_force_density * thkwp *1.0D6 ! in Pa
+    strtf2 = max_force_density * dr_tf_wp *1.0D6 ! in Pa
 
 
     if (iprint == 1) call stcoil_output(outfile)
@@ -2901,7 +2901,7 @@ contains
          vportamax, vportpmax, vporttmax
       use tfcoil_variables, only: acasetf, acond, acasetf, aiwp, aswp, bmaxtf, &
          casthi, casths, cpttf, estotftgj, fcutfsu, jwptf, n_tf, oacdcp, ritfc, &
-         tfareain, tficrn, tfleng, tfocrn, tftort, thicndut, thkcas, thkwp, &
+         tfareain, tficrn, tfleng, tfocrn, tftort, thicndut, thkcas, dr_tf_wp, &
          thwcndut, turnstf, turnstf, vftf, whtcas, whtcon, whtconcu, whtconsc, &
          whtconsh, whttf, wwp1, acstf, avwp, tinstf
       implicit none
@@ -2960,7 +2960,7 @@ contains
       call ovarre(outfile,'Structure fraction of winding pack','(aswp/ap)',aswp/ap)
       call ovarre(outfile,'Insulator fraction of winding pack','(aiwp/ap)',aiwp/ap)
       call ovarre(outfile,'Helium fraction of winding pack','(avwp/ap)',avwp/ap)
-      call ovarre(outfile,'Winding radial thickness (m)','(thkwp)',thkwp)
+      call ovarre(outfile,'Winding radial thickness (m)','(dr_tf_wp)',dr_tf_wp)
       call ovarre(outfile,'Winding toroidal thickness (m)','(wwp1)',wwp1)
       call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)',tinstf)
       call ovarre(outfile,'Number of turns per coil','(turnstf)',turnstf)

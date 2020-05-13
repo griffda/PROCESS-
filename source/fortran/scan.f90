@@ -164,7 +164,7 @@ contains
     use numerics, only: sqsumsq
     use tfcoil_variables, only: tfareain, wwp2, strtf2, tfcmw, tcpmax, oacdcp, &
       tfcpmw, fcutfsu, acond, fcoolcp, rcool, whttf, ppump, vcool, wwp1, n_tf, &
-		  thkwp
+		  dr_tf_wp
 		use fwbs_variables, only: tpeak
     use divertor_kallenbach_variables, only: totalpowerlost, pressure0, &
       ttarget, neratio, qtargettotal, neomp, psep_kallenbach, fmom
@@ -373,7 +373,7 @@ contains
         outvar(52,iscan) = pradmw
         outvar(53,iscan) = tpeak
         outvar(54,iscan) = fcutfsu
-        outvar(55,iscan) = (wwp1+wwp2)*thkwp
+        outvar(55,iscan) = (wwp1+wwp2)*dr_tf_wp
         outvar(56,iscan) = acond
         outvar(57,iscan) = tfareain/n_tf
         outvar(58,iscan) = taulimit
@@ -436,7 +436,7 @@ contains
     use process_output, only: oblnkl, ostars, ovarin
     use tfcoil_variables, only: tfareain, wwp2, strtf2, tfcmw, tcpmax, oacdcp, &
       tfcpmw, fcutfsu, acond, fcoolcp, rcool, whttf, ppump, vcool, wwp1, n_tf, &
-		  thkwp
+		  dr_tf_wp
 		use fwbs_variables, only: tpeak
     use divertor_kallenbach_variables, only: totalpowerlost, pressure0, &
       ttarget, neratio, qtargettotal, neomp, psep_kallenbach, fmom
@@ -661,7 +661,7 @@ contains
             outvar(52,iscan) = pradmw
             outvar(53,iscan) = tpeak
             outvar(54,iscan) = fcutfsu
-            outvar(55,iscan) = (wwp1+wwp2)*thkwp
+            outvar(55,iscan) = (wwp1+wwp2)*dr_tf_wp
             outvar(56,iscan) = acond
             outvar(57,iscan) = tfareain/n_tf
             outvar(58,iscan) = taulimit

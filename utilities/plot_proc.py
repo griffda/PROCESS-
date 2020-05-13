@@ -521,28 +521,28 @@ def toroidal_cross_section(axis, mfile_data, scan, demo_ranges):
 
         # Inboard
         if i_tf_turns_integer is 1 :
-            rect = patches.Rectangle([r1 + thkcas +tinstf, 0], thkwp, wwp1/2, lw=0,
+            rect = patches.Rectangle([r1 + thkcas +tinstf, 0], dr_tf_wp, wwp1/2, lw=0,
                                      facecolor=winding)
             axis.add_patch(rect)
         else :
-            rect = patches.Rectangle([r1 + thkcas +tinstf, 0], thkwp/2, wwp2/2, lw=0,
+            rect = patches.Rectangle([r1 + thkcas +tinstf, 0], dr_tf_wp/2, wwp2/2, lw=0,
                                      facecolor=winding)
             axis.add_patch(rect)
         
-            rect = patches.Rectangle([r1 + thkcas +tinstf + thkwp/2, 0], thkwp/2,
+            rect = patches.Rectangle([r1 + thkcas +tinstf + dr_tf_wp/2, 0], dr_tf_wp/2,
                                      wwp1/2, lw=0, facecolor=winding)
             axis.add_patch(rect)
     
         # Outboard
         if i_tf_turns_integer is 1 :
-            rect = patches.Rectangle([r3+casthi+tinstf, 0], thkwp, wwp1/2, lw=0,
+            rect = patches.Rectangle([r3+casthi+tinstf, 0], dr_tf_wp, wwp1/2, lw=0,
                                    facecolor=winding)
             axis.add_patch(rect)    
         else :
-            rect = patches.Rectangle([r3+casthi+tinstf, 0], thkwp/2, wwp1/2, lw=0,
+            rect = patches.Rectangle([r3+casthi+tinstf, 0], dr_tf_wp/2, wwp1/2, lw=0,
                                    facecolor=winding)
             axis.add_patch(rect)
-            rect = patches.Rectangle([r3+casthi+tinstf+thkwp/2, 0], thkwp/2, wwp2/2,
+            rect = patches.Rectangle([r3+casthi+tinstf+dr_tf_wp/2, 0], dr_tf_wp/2, wwp2/2,
                                     lw=0, facecolor=winding)
             axis.add_patch(rect)
 
@@ -2250,8 +2250,8 @@ def test(f):
             if i_tf_turns_integer is 0 :
                 global wwp2
                 wwp2 = m_file.data["wwp2"].get_scan(scan)
-            global thkwp
-            thkwp = m_file.data["thkwp"].get_scan(scan)
+            global dr_tf_wp
+            dr_tf_wp = m_file.data["dr_tf_wp"].get_scan(scan)
             global tinstf
             tinstf = m_file.data["tinstf"].get_scan(scan)
             global thkcas
@@ -2463,7 +2463,7 @@ if __name__ == '__main__':
         wwp1 = m_file.data["wwp1"].get_scan(scan)
         if i_tf_turns_integer is 0:
             wwp2 = m_file.data["wwp2"].get_scan(scan)
-        thkwp = m_file.data["thkwp"].get_scan(scan)
+        dr_tf_wp = m_file.data["dr_tf_wp"].get_scan(scan)
         tinstf = m_file.data["tinstf"].get_scan(scan)
         thkcas = m_file.data["thkcas"].get_scan(scan)
         

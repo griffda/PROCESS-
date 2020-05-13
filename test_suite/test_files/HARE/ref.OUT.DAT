@@ -682,7 +682,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Copper fraction of conductor                                             (fcutfsu)                 6.900E-01     
  Superconductor fraction of conductor                                     (1-fcutfsu)               3.100E-01     
  Check total area fractions in winding pack = 1                                                         1.000     
- Winding radial thickness (m)                                             (thkwp)                   4.490E-01  OP 
+ Winding radial thickness (m)                                             (dr_tf_wp)                   4.490E-01  OP 
  Winding toroidal width 1 (m)                                             (wwp1)                    1.535E+00  OP 
  Winding toroidal width 2 (m)                                             (wwp2)                    1.445E+00  OP 
  Ground wall insulation thickness (m)                                     (tinstf)                  8.000E-03     
@@ -703,8 +703,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Coil case ("nose")                           0.538           3.957   (thkcas)            
  Insertion gap for winding pack               0.010           3.967   (tfinsgap)          
  Winding pack insulation                      0.008           3.975   (tinstf)            
- Winding - first half                         0.224           4.199   (thkwp/2 - tinstf)  
- Winding - second half                        0.224           4.424   (thkwp/2 - tinstf)  
+ Winding - first half                         0.224           4.199   (dr_tf_wp/2 - tinstf)  
+ Winding - second half                        0.224           4.424   (dr_tf_wp/2 - tinstf)  
  Winding pack insulation                      0.008           4.432   (tinstf)            
  Insertion gap for winding pack               0.010           4.442   (tfinsgap)          
  Coil case (plasma side)                      0.070           4.512   (casthi)            
@@ -2029,7 +2029,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Copper fraction of conductor                                             (fcutfsu)                 6.900E-01     
  Superconductor fraction of conductor                                     (1-fcutfsu)               3.100E-01     
  Check total area fractions in winding pack = 1                                                         1.000     
- Winding radial thickness (m)                                             (thkwp)                   4.483E-01  OP 
+ Winding radial thickness (m)                                             (dr_tf_wp)                   4.483E-01  OP 
  Winding toroidal width 1 (m)                                             (wwp1)                    1.537E+00  OP 
  Winding toroidal width 2 (m)                                             (wwp2)                    1.448E+00  OP 
  Ground wall insulation thickness (m)                                     (tinstf)                  8.000E-03     
@@ -2050,8 +2050,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Coil case ("nose")                           0.537           3.964   (thkcas)            
  Insertion gap for winding pack               0.010           3.974   (tfinsgap)          
  Winding pack insulation                      0.008           3.982   (tinstf)            
- Winding - first half                         0.224           4.206   (thkwp/2 - tinstf)  
- Winding - second half                        0.224           4.430   (thkwp/2 - tinstf)  
+ Winding - first half                         0.224           4.206   (dr_tf_wp/2 - tinstf)  
+ Winding - second half                        0.224           4.430   (dr_tf_wp/2 - tinstf)  
  Winding pack insulation                      0.008           4.438   (tinstf)            
  Insertion gap for winding pack               0.010           4.448   (tfinsgap)          
  Coil case (plasma side)                      0.070           4.518   (casthi)            
@@ -3376,7 +3376,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Copper fraction of conductor                                             (fcutfsu)                 6.900E-01     
  Superconductor fraction of conductor                                     (1-fcutfsu)               3.100E-01     
  Check total area fractions in winding pack = 1                                                         1.000     
- Winding radial thickness (m)                                             (thkwp)                   4.477E-01  OP 
+ Winding radial thickness (m)                                             (dr_tf_wp)                   4.477E-01  OP 
  Winding toroidal width 1 (m)                                             (wwp1)                    1.540E+00  OP 
  Winding toroidal width 2 (m)                                             (wwp2)                    1.451E+00  OP 
  Ground wall insulation thickness (m)                                     (tinstf)                  8.000E-03     
@@ -3397,8 +3397,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Coil case ("nose")                           0.537           3.970   (thkcas)            
  Insertion gap for winding pack               0.010           3.980   (tfinsgap)          
  Winding pack insulation                      0.008           3.988   (tinstf)            
- Winding - first half                         0.224           4.212   (thkwp/2 - tinstf)  
- Winding - second half                        0.224           4.436   (thkwp/2 - tinstf)  
+ Winding - first half                         0.224           4.212   (dr_tf_wp/2 - tinstf)  
+ Winding - second half                        0.224           4.436   (dr_tf_wp/2 - tinstf)  
  Winding pack insulation                      0.008           4.444   (tinstf)            
  Insertion gap for winding pack               0.010           4.454   (tfinsgap)          
  Coil case (plasma side)                      0.070           4.524   (casthi)            
@@ -4723,7 +4723,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Copper fraction of conductor                                             (fcutfsu)                 6.900E-01     
  Superconductor fraction of conductor                                     (1-fcutfsu)               3.100E-01     
  Check total area fractions in winding pack = 1                                                         1.000     
- Winding radial thickness (m)                                             (thkwp)                   4.466E-01  OP 
+ Winding radial thickness (m)                                             (dr_tf_wp)                   4.466E-01  OP 
  Winding toroidal width 1 (m)                                             (wwp1)                    1.544E+00  OP 
  Winding toroidal width 2 (m)                                             (wwp2)                    1.455E+00  OP 
  Ground wall insulation thickness (m)                                     (tinstf)                  8.000E-03     
@@ -4744,8 +4744,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Coil case ("nose")                           0.536           3.982   (thkcas)            
  Insertion gap for winding pack               0.010           3.992   (tfinsgap)          
  Winding pack insulation                      0.008           4.000   (tinstf)            
- Winding - first half                         0.223           4.223   (thkwp/2 - tinstf)  
- Winding - second half                        0.223           4.447   (thkwp/2 - tinstf)  
+ Winding - first half                         0.223           4.223   (dr_tf_wp/2 - tinstf)  
+ Winding - second half                        0.223           4.447   (dr_tf_wp/2 - tinstf)  
  Winding pack insulation                      0.008           4.455   (tinstf)            
  Insertion gap for winding pack               0.010           4.465   (tfinsgap)          
  Coil case (plasma side)                      0.070           4.535   (casthi)            
@@ -6070,7 +6070,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Copper fraction of conductor                                             (fcutfsu)                 6.900E-01     
  Superconductor fraction of conductor                                     (1-fcutfsu)               3.100E-01     
  Check total area fractions in winding pack = 1                                                         1.000     
- Winding radial thickness (m)                                             (thkwp)                   4.455E-01  OP 
+ Winding radial thickness (m)                                             (dr_tf_wp)                   4.455E-01  OP 
  Winding toroidal width 1 (m)                                             (wwp1)                    1.548E+00  OP 
  Winding toroidal width 2 (m)                                             (wwp2)                    1.460E+00  OP 
  Ground wall insulation thickness (m)                                     (tinstf)                  8.000E-03     
@@ -6091,8 +6091,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Coil case ("nose")                           0.535           3.993   (thkcas)            
  Insertion gap for winding pack               0.010           4.003   (tfinsgap)          
  Winding pack insulation                      0.008           4.011   (tinstf)            
- Winding - first half                         0.223           4.234   (thkwp/2 - tinstf)  
- Winding - second half                        0.223           4.457   (thkwp/2 - tinstf)  
+ Winding - first half                         0.223           4.234   (dr_tf_wp/2 - tinstf)  
+ Winding - second half                        0.223           4.457   (dr_tf_wp/2 - tinstf)  
  Winding pack insulation                      0.008           4.465   (tinstf)            
  Insertion gap for winding pack               0.010           4.475   (tfinsgap)          
  Coil case (plasma side)                      0.070           4.545   (casthi)            
@@ -7417,7 +7417,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Copper fraction of conductor                                             (fcutfsu)                 6.900E-01     
  Superconductor fraction of conductor                                     (1-fcutfsu)               3.100E-01     
  Check total area fractions in winding pack = 1                                                         1.000     
- Winding radial thickness (m)                                             (thkwp)                   4.444E-01  OP 
+ Winding radial thickness (m)                                             (dr_tf_wp)                   4.444E-01  OP 
  Winding toroidal width 1 (m)                                             (wwp1)                    1.553E+00  OP 
  Winding toroidal width 2 (m)                                             (wwp2)                    1.465E+00  OP 
  Ground wall insulation thickness (m)                                     (tinstf)                  8.000E-03     
@@ -7438,8 +7438,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Coil case ("nose")                           0.534           4.005   (thkcas)            
  Insertion gap for winding pack               0.010           4.015   (tfinsgap)          
  Winding pack insulation                      0.008           4.023   (tinstf)            
- Winding - first half                         0.222           4.246   (thkwp/2 - tinstf)  
- Winding - second half                        0.222           4.468   (thkwp/2 - tinstf)  
+ Winding - first half                         0.222           4.246   (dr_tf_wp/2 - tinstf)  
+ Winding - second half                        0.222           4.468   (dr_tf_wp/2 - tinstf)  
  Winding pack insulation                      0.008           4.476   (tinstf)            
  Insertion gap for winding pack               0.010           4.486   (tfinsgap)          
  Coil case (plasma side)                      0.070           4.556   (casthi)            
@@ -8764,7 +8764,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Copper fraction of conductor                                             (fcutfsu)                 6.900E-01     
  Superconductor fraction of conductor                                     (1-fcutfsu)               3.100E-01     
  Check total area fractions in winding pack = 1                                                         1.000     
- Winding radial thickness (m)                                             (thkwp)                   4.433E-01  OP 
+ Winding radial thickness (m)                                             (dr_tf_wp)                   4.433E-01  OP 
  Winding toroidal width 1 (m)                                             (wwp1)                    1.558E+00  OP 
  Winding toroidal width 2 (m)                                             (wwp2)                    1.469E+00  OP 
  Ground wall insulation thickness (m)                                     (tinstf)                  8.000E-03     
@@ -8785,8 +8785,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Coil case ("nose")                           0.532           4.018   (thkcas)            
  Insertion gap for winding pack               0.010           4.028   (tfinsgap)          
  Winding pack insulation                      0.008           4.036   (tinstf)            
- Winding - first half                         0.222           4.257   (thkwp/2 - tinstf)  
- Winding - second half                        0.222           4.479   (thkwp/2 - tinstf)  
+ Winding - first half                         0.222           4.257   (dr_tf_wp/2 - tinstf)  
+ Winding - second half                        0.222           4.479   (dr_tf_wp/2 - tinstf)  
  Winding pack insulation                      0.008           4.487   (tinstf)            
  Insertion gap for winding pack               0.010           4.497   (tfinsgap)          
  Coil case (plasma side)                      0.070           4.567   (casthi)            

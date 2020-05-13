@@ -270,7 +270,7 @@ contains
     use stellarator_variables, only: f_asym, isthtr, n_res, iotabar, fdivwet, &
       f_w, bmn, shear, m_res, f_rad, flpitch, istell
     use tfcoil_variables, only: fcoolcp, tfinsgap, vftf, &
-      quench_detection_ef, fhts, thkwp, rcool, rhotfleg, thkcas, &
+      quench_detection_ef, fhts, dr_tf_wp, rcool, rhotfleg, thkcas, &
       casthi, n_pancake, bcritsc, i_tf_sup, strncon_pf, thwcndut, farc4tf, &
       thicndut, tftmp, oacdcp, tmax_croco, ptempalw, tmargmin_tf, tmpcry, &
       alstrtf, dztop, dcond, strncon_cs, etapump, drtop, vcool, dcondins, &
@@ -1646,8 +1646,8 @@ contains
        case ('tfcth')
           call parse_real_variable('tfcth', tfcth, 0.0D0, 10.0D0, &
                'TF coil thickness (m)')
-       case ('thkwp')
-          call parse_real_variable('thkwp', thkwp, 0.0D0, 10.0D0, &
+       case ('dr_tf_wp')
+          call parse_real_variable('dr_tf_wp', dr_tf_wp, 0.0D0, 10.0D0, &
                'TF coil winding pack radial thickness (m)')
 
        case ('tfootfi')

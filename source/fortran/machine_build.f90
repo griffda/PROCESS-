@@ -57,7 +57,7 @@ contains
       rminor, rmajor
     use process_output, only: ocmmnt, oheadr, ovarre, ovarin, obuild, oblnkl
     use tfcoil_variables, only: ripple, tinstf, wwp1, drtop, i_tf_sup, n_tf, &
-      thkwp, ripmax, thkcas, tfinsgap, casthi
+      dr_tf_wp, ripmax, thkcas, tfinsgap, casthi
     implicit none
 
     !  Arguments
@@ -95,9 +95,9 @@ contains
     end if
 
     ! Issue #514 Radial dimensions of inboard leg
-    ! Calculate tfcth if thkwp is an iteration variable (140)
+    ! Calculate tfcth if dr_tf_wp is an iteration variable (140)
     if (any(ixc(1:nvar) == 140) ) then
-        tfcth = thkwp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
+        tfcth = dr_tf_wp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
     endif
 
     ! Radial build to tfcoil
@@ -156,13 +156,13 @@ contains
     call ripple_amplitude(ripple,ripmax,r_tf_outboard_mid,r_tf_outboard_midl,ripflag)
 
     !  If the ripple is too large then move the outboard TF coil leg
-    if (r_tf_outboard_midl > r_tf_outboard_mid) then
-       r_tf_outboard_mid = r_tf_outboard_midl
-       gapsto = r_tf_outboard_mid - 0.5D0*tfthko - ddwi - rsldo - thshield - tftsgap - vvblgap
-       dr_tf_inner_bore = ( r_tf_outboard_mid - 0.5D0*tfthko ) - ( r_tf_inboard_mid - 0.5D0*tfcth )
-    else
+    ! if (r_tf_outboard_midl > r_tf_outboard_mid) then
+    !    r_tf_outboard_mid = r_tf_outboard_midl
+    !    gapsto = r_tf_outboard_mid - 0.5D0*tfthko - ddwi - rsldo - thshield - tftsgap - vvblgap
+    !    dr_tf_inner_bore = ( r_tf_outboard_mid - 0.5D0*tfthko ) - ( r_tf_inboard_mid - 0.5D0*tfcth )
+    ! else
        gapsto = gapomin
-    end if
+    ! end if
 
     !  Call ripple calculation again with new r_tf_outboard_mid/gapsto value
     !  call rippl(ripmax,rmajor,rminor,r_tf_outboard_mid,n_tf,ripple,r_tf_outboard_midl)

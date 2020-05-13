@@ -495,8 +495,8 @@ subroutine initial
     !    !!  <LI> (138) rebco_thickness : thickness of REBCO layer in tape (m)
     !    lablxc(139) = 'copper_thick  '; boundl(139) = 1.00D-6; boundu(139) = 1.00D-3
     !    !!  <LI> (139) copper_thick : thickness of copper layer in tape (m)
-    !    lablxc(140) = 'thkwp         '; boundl(140) = 0.001D0; boundu(140) = 2.000D0
-    !    !!  <LI> (140) thkwp : radial thickness of TFC winding pack (m)
+    !    lablxc(140) = 'dr_tf_wp         '; boundl(140) = 0.001D0; boundu(140) = 2.000D0
+    !    !!  <LI> (140) dr_tf_wp : radial thickness of TFC winding pack (m)
     !    lablxc(141) = 'fcqt          '; boundl(141) = 0.001D0; boundu(141) = 1.000D0
     !    !!  <LI> (141) fcqt : TF coil quench temperature < tmax_croco (f-value for equation 74)
     !    lablxc(142) = 'nesep         '; boundl(142) = 1.00D17; boundu(142) = 1.00D20

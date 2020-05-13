@@ -160,7 +160,7 @@ subroutine sctfcoil(outfile,iprint)
     use build_variables, only: tfcth, tfthko, r_tf_outboard_mid, r_tf_inboard_mid, &
         hmax
     use tfcoil_variables, only: i_tf_turns_integer, wwp1, estotftgj, tfind, &
-        ritfc, thkwp, n_tf, bmaxtfrp, bmaxtf, n_tf_stress_layers, n_rad_per_layer, &
+        ritfc, dr_tf_wp, n_tf, bmaxtfrp, bmaxtf, n_tf_stress_layers, n_rad_per_layer, &
         i_tf_sup, i_tf_shape
     use constants, only: rmu0, pi
     use physics_variables, only: itart
@@ -226,7 +226,7 @@ subroutine sctfcoil(outfile,iprint)
     call tf_coil_area_and_masses
 
     ! Peak field including ripple
-    call peak_tf_with_ripple(n_tf, wwp1, thkwp, r_wp_centre, bmaxtf, bmaxtfrp, peaktfflag)
+    call peak_tf_with_ripple(n_tf, wwp1, dr_tf_wp, r_wp_centre, bmaxtf, bmaxtfrp, peaktfflag)
 
     ! Do stress calculations (writes the stress output)
     if ( iprint == 1 ) n_rad_per_layer = 500
@@ -336,7 +336,7 @@ end subroutine tf_current
 
 subroutine tf_turn_geom()
     !! Resisitve TF turn geometry, equivalent to winding_pack subroutines
-    use tfcoil_variables, only: turnstf, tinstf, thkcas, thkwp, tftort, n_tf, &
+    use tfcoil_variables, only: turnstf, tinstf, thkcas, dr_tf_wp, tftort, n_tf, &
         tfareain, ritfc, oacdcp, fcoolcp, cpttf, cdtfleg, casthi, aiwp, acasetf
     use build_variables, only: tfthko
     use constants, only: pi
@@ -347,7 +347,7 @@ subroutine tf_turn_geom()
     r_wp_outer = r_tf_inboard_out - casthi - tinstf 
 
     ! Mid-plane Radial thickness of conductor layer [m]
-    thkwp = r_wp_outer - r_wp_inner
+    dr_tf_wp = r_wp_outer - r_wp_inner
 
     ! Number of turns
     ! Set by user (no turn structure by default, i.e. turnstf = 1 ) 
@@ -359,7 +359,7 @@ subroutine tf_turn_geom()
 
     ! Exact mid-plane cross-section area of the conductor per TF coil [m2]
     awptf = ( 1.0D0 - fcoolcp ) * ( pi*(r_wp_outer**2 - r_wp_inner**2) / n_tf  &
-                                  - 2.0D0 * tinstf * thkwp * turnstf)
+                                  - 2.0D0 * tinstf * dr_tf_wp * turnstf)
 
     ! Inter turn insulation area coil [m2]                    
     aiwp = awpc - awptf / ( 1.0D0 - fcoolcp )  
@@ -402,7 +402,7 @@ subroutine tf_winding_pack()
         vftf, avwp, jwptf, acasetfo, acasetf, wwp2, thwcndut, insulation_area, &
         tftort, aswp, tinstf, turnstf, leno, acasetf, n_tf, jwptf, &
         thwcndut, thicndut, wwp1, &
-        dhecoil, tfareain, leni, insulation_area, cpttf, ritfc, thkwp, &
+        dhecoil, tfareain, leni, insulation_area, cpttf, ritfc, dr_tf_wp, &
         arealeg, casths, awphec, acndttf, acond, layer_ins, thkcas, &
         conductor_width, oacdcp, tfinsgap, casthi, i_tf_sc_mat
     use global_variables, only: icase
@@ -423,10 +423,10 @@ subroutine tf_winding_pack()
     
     if (any(ixc(1:nvar) == 140) ) then
         ! Radial thickness of TF coil inboard leg [m]
-        tfcth = thkwp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
+        tfcth = dr_tf_wp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
     else
         ! Radial thickness of winding pack [m]
-        thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
+        dr_tf_wp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
     end if
 
     ! Radial position of inner edge of winding pack [m]
@@ -434,7 +434,7 @@ subroutine tf_winding_pack()
     r_wp_inner = r_tf_inboard_in + thkcas + tinstf + tfinsgap
   
     ! Radial position of outer edge of winding pack [m]
-    r_wp_outer = r_wp_inner + thkwp
+    r_wp_outer = r_wp_inner + dr_tf_wp
 
     ! Radius of geometrical centre of winding pack [m]
     r_wp_centre = 0.5D0 * ( r_wp_inner + r_wp_outer )
@@ -452,19 +452,19 @@ subroutine tf_winding_pack()
     wwp2 = 2.0D0 * ( r_wp_inner*tan_theta_coil - casths - tinstf - tfinsgap )
 
     ! Total cross-sectional area of winding pack [m2]
-    awptf = 0.5D0*thkwp*(wwp1 + wwp2)
+    awptf = 0.5D0*dr_tf_wp*(wwp1 + wwp2)
 
     ! Total cross-sectional area of winding pack [m2]
     ! including the surrounding ground-wall insulation layer
     ! and insertion gap [m2]
-    awpc = 0.5D0*thkwp * ( wwp2 + 2.0D0 * tinstf + 2.0d0 * tfinsgap ) + &
-         + ( 0.5D0*thkwp + 2.0D0 * tinstf + 2.0d0 * tfinsgap ) &
+    awpc = 0.5D0*dr_tf_wp * ( wwp2 + 2.0D0 * tinstf + 2.0d0 * tfinsgap ) + &
+         + ( 0.5D0*dr_tf_wp + 2.0D0 * tinstf + 2.0d0 * tfinsgap ) &
          * ( wwp1 + 2.0D0 * tinstf + 2.0d0 * tfinsgap )
 
 
     ! Cross-section area of the WP ground insulation [m2]
-    a_ground_ins = 0.5D0 * thkwp * ( wwp2 + 2.0D0*tinstf ) &
-                 * ( 0.5D0 * thkwp + 2.0D0*tinstf ) * ( wwp1 + 2.0D0*tinstf ) &
+    a_ground_ins = 0.5D0 * dr_tf_wp * ( wwp2 + 2.0D0*tinstf ) &
+                 * ( 0.5D0 * dr_tf_wp + 2.0D0*tinstf ) * ( wwp1 + 2.0D0*tinstf ) &
                  - awptf
 
     ! Total cross-sectional area of surrounding case [m2]
@@ -476,9 +476,9 @@ subroutine tf_winding_pack()
         
         write(*,*) 'Error in routine SCTFCOIL: Winding pack cross-section problem'
         write(*,*) 'awptf = ',awptf, '  awpc = ',awpc, '  acasetf = ',acasetf
-        write(*,*) 'KE thkwp, wwp1, wwp2 = ', thkwp, ', ', wwp1, ', ', wwp2
+        write(*,*) 'KE dr_tf_wp, wwp1, wwp2 = ', dr_tf_wp, ', ', wwp1, ', ', wwp2
         
-        !negative awptf comes from neg. thkwp
+        !negative awptf comes from neg. dr_tf_wp
         write(*,*) 'tfcth, casthi, thkcas, tinstf, tfinsgap = ', tfcth, ', ', &
                     casthi, ', ', thkcas, ', ', tinstf, ', ', tfinsgap
         write(*,*) ' '
@@ -593,7 +593,7 @@ subroutine tf_integer_winding_pack()
         acndttf, vftf, avwp, jwptf, acasetfo, acasetf, thwcndut, &
         insulation_area, avwp, arealeg, acasetf, ritfc, vftf, n_pancake, &
         acstf, jwptf, acasetfo, wwp1, insulation_area, thwcndut, awphec, &
-        tinstf, acndttf, acond, oacdcp, n_layer, thkwp, thkcas, tfinsgap, &
+        tinstf, acndttf, acond, oacdcp, n_layer, dr_tf_wp, thkcas, tfinsgap, &
         casthi, i_tf_sc_mat
     use constants, only: pi
     use maths_library, only: hybrd
@@ -623,17 +623,17 @@ subroutine tf_integer_winding_pack()
 
     if (any(ixc(1:nvar) == 140)) then
       ! Radial thickness of TF coil inboard leg [m]
-      tfcth = thkwp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
+      tfcth = dr_tf_wp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
     else
       ! Radial thickness of winding pack [m]
-      thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
+      dr_tf_wp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
     endif
 
     ! Radial position of inner edge of winding pack [m]
     r_wp_inner = r_tf_inboard_in + thkcas + tinstf + tfinsgap
 
     ! Radial position of outner edge of winding pack [m]
-    r_wp_outer = r_wp_inner + thkwp
+    r_wp_outer = r_wp_inner + dr_tf_wp
 
     ! Radius of geometrical centre of winding pack [m]
     r_wp_centre = 0.5D0 * ( r_wp_inner + r_wp_outer )
@@ -652,16 +652,16 @@ subroutine tf_integer_winding_pack()
     wwp1 = t_wp_toroidal
 
     ! Total cross-sectional area of winding pack [m2]
-    awptf = thkwp*t_wp_toroidal
+    awptf = dr_tf_wp*t_wp_toroidal
 
     ! Total cross-sectional area of winding pack,
     ! including the surrounding ground-wall insulation layer
     ! and insertion gap [m2]
-    awpc = ( thkwp + 2.0D0*tinstf + 2.0D0*tfinsgap )  &
+    awpc = ( dr_tf_wp + 2.0D0*tinstf + 2.0D0*tfinsgap )  &
          * ( t_wp_toroidal + 2.0D0*tinstf + 2.0D0*tfinsgap)
 
     ! Cross-section area of the WP ground insulation [m2]
-    a_ground_ins = (thkwp + 2.0D0*tinstf) * (t_wp_toroidal + 2.0D0*tinstf) - awptf
+    a_ground_ins = (dr_tf_wp + 2.0D0*tinstf) * (t_wp_toroidal + 2.0D0*tinstf) - awptf
 
     ! Total cross-sectional area of surrounding case [m2]
     acasetf = (tfareain/n_tf) - awpc
@@ -689,7 +689,7 @@ subroutine tf_integer_winding_pack()
     ! TODO: leno compatibility with croco
 
     ! Radial turn dimension [m]
-    t_turn_radial = thkwp/n_layer
+    t_turn_radial = dr_tf_wp/n_layer
 
     if (t_turn_radial <= (2.0D0*thicndut + 2.0D0*thwcndut)) then
         write(*,*) 'Error in routine SCTFCOIL:'
@@ -945,7 +945,7 @@ subroutine tf_field_and_force()
         r_tf_inboard_mid, r_cp_top
     use tfcoil_variables, only: vforce, n_tf, taucq, sigvvall, cforce, &
         ritfc, bmaxtf, rbmax, i_tf_sup, f_vforce_inboard, vforce_outboard, &
-        tinstf, thkwp
+        tinstf, dr_tf_wp
 
     implicit none
 
@@ -972,21 +972,21 @@ subroutine tf_field_and_force()
         ! Tricky trick to avoid dividing by 0 if the TF has no hole in it
         if ( abs(r_wp_inner) < epsilon(r_wp_inner) ) r_wp_inner = 1.0D-9
 
-        vforce = 0.25D0 * (bt * rmajor * ritfc) / (n_tf * thkwp**2) * (       & 
+        vforce = 0.25D0 * (bt * rmajor * ritfc) / (n_tf * dr_tf_wp**2) * (       & 
                       2.0D0 * r_wp_outer**2 * log(r_wp_outer / r_wp_inner ) + &
-                      2.0D0 * thkwp**2 * log( r_cp_top     / r_wp_inner )   + &
-                      3.0D0 * thkwp**2                                      - &
-                      2.0D0 * thkwp * r_wp_outer                            + &
-                      4.0D0 * thkwp * r_wp_outer *log( r_wp_inner / r_wp_outer ) )
+                      2.0D0 * dr_tf_wp**2 * log( r_cp_top     / r_wp_inner )   + &
+                      3.0D0 * dr_tf_wp**2                                      - &
+                      2.0D0 * dr_tf_wp * r_wp_outer                            + &
+                      4.0D0 * dr_tf_wp * r_wp_outer *log( r_wp_inner / r_wp_outer ) )
 
         r_tf_outboard_in = r_tf_outboard_in + tinstf    ! Tricky trick t avoid writting tinstg all the time           
-        vforce_outboard = 0.5D0 * (bt * rmajor * ritfc) / (n_tf * thkwp**2) * ( &
+        vforce_outboard = 0.5D0 * (bt * rmajor * ritfc) / (n_tf * dr_tf_wp**2) * ( &
                       r_wp_outer**2       * log( r_wp_outer       / r_wp_inner                 ) + &
-                      r_tf_outboard_in**2 * log( (r_tf_outboard_in + thkwp) / r_tf_outboard_in ) + &
-                      thkwp**2         * log( (r_tf_outboard_in + thkwp) / r_wp_inner          ) - &
-                      thkwp            * ( r_wp_outer + r_tf_outboard_in                       ) + &
-                      2.0D0 * thkwp * ( r_wp_outer     * log(r_wp_inner / r_wp_outer)            + &
-                                           r_tf_outboard_in * log((r_tf_outboard_in + thkwp)     / &
+                      r_tf_outboard_in**2 * log( (r_tf_outboard_in + dr_tf_wp) / r_tf_outboard_in ) + &
+                      dr_tf_wp**2         * log( (r_tf_outboard_in + dr_tf_wp) / r_wp_inner          ) - &
+                      dr_tf_wp            * ( r_wp_outer + r_tf_outboard_in                       ) + &
+                      2.0D0 * dr_tf_wp * ( r_wp_outer     * log(r_wp_inner / r_wp_outer)            + &
+                                           r_tf_outboard_in * log((r_tf_outboard_in + dr_tf_wp)     / &
                                            r_tf_outboard_in))) - vforce 
         r_tf_outboard_in = r_tf_outboard_in - tinstf    ! Tricky trick to avoid writting tinstf all the time
         
@@ -1000,13 +1000,13 @@ subroutine tf_field_and_force()
         ! Inboard leg vertical force (per coil) [N]
         r_tf_outboard_in = r_tf_outboard_in + tinstf ! Tricky trick to avoid writting tinstg all the time    
         
-        vforce = 0.5D0 * f_vforce_inboard * (bmaxtf * rbmax * ritfc) / (n_tf * thkwp**2) * ( &
+        vforce = 0.5D0 * f_vforce_inboard * (bmaxtf * rbmax * ritfc) / (n_tf * dr_tf_wp**2) * ( &
                          r_wp_outer**2       * log( r_wp_outer                 / r_wp_inner       ) + &
-                         r_tf_outboard_in**2 * log( (r_tf_outboard_in + thkwp) / r_tf_outboard_in ) + &
-                         thkwp**2            * log( (r_tf_outboard_in + thkwp) / r_wp_inner       ) - &
-                         thkwp * ( r_wp_outer + r_tf_outboard_in                                  ) + &
-                         2.0D0 * thkwp * ( r_wp_outer       * log(r_wp_inner                 / r_wp_outer ) + &
-                                           r_tf_outboard_in * log((r_tf_outboard_in + thkwp) / r_tf_outboard_in ) ))      
+                         r_tf_outboard_in**2 * log( (r_tf_outboard_in + dr_tf_wp) / r_tf_outboard_in ) + &
+                         dr_tf_wp**2            * log( (r_tf_outboard_in + dr_tf_wp) / r_wp_inner       ) - &
+                         dr_tf_wp * ( r_wp_outer + r_tf_outboard_in                                  ) + &
+                         2.0D0 * dr_tf_wp * ( r_wp_outer       * log(r_wp_inner                 / r_wp_outer ) + &
+                                           r_tf_outboard_in * log((r_tf_outboard_in + dr_tf_wp) / r_tf_outboard_in ) ))      
         
         r_tf_outboard_in = r_tf_outboard_in - tinstf  ! Tricky trick to avoid writting tinstf all the time
 
@@ -1138,13 +1138,13 @@ end subroutine tf_coil_area_and_masses
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine peak_tf_with_ripple(n_tf,wwp1,thkwp,tfin,bmaxtf,bmaxtfrp,flag)
+subroutine peak_tf_with_ripple(n_tf,wwp1,dr_tf_wp,tfin,bmaxtf,bmaxtfrp,flag)
 
     !! Peak toroidal field on the conductor
     !! author: P J Knight, CCFE, Culham Science Centre
     !! tfno : input real : number of TF coils
     !! wwp1 : input real : width of plasma-facing face of winding pack (m)
-    !! thkwp : input real : radial thickness of winding pack (m)
+    !! dr_tf_wp : input real : radial thickness of winding pack (m)
     !! tfin : input real : major radius of centre of winding pack (m)
     !! bmaxtf : input real : nominal (axisymmetric) peak toroidal field (T)
     !! bmaxtfrp : output real : peak toroidal field including ripple (T)
@@ -1167,7 +1167,7 @@ subroutine peak_tf_with_ripple(n_tf,wwp1,thkwp,tfin,bmaxtf,bmaxtfrp,flag)
 
     !  Arguments
 
-    real(dp), intent(in) :: n_tf,wwp1,thkwp,tfin,bmaxtf
+    real(dp), intent(in) :: n_tf,wwp1,dr_tf_wp,tfin,bmaxtf
     real(dp), intent(out) :: bmaxtfrp
     integer, intent(out) :: flag
 
@@ -1213,7 +1213,7 @@ subroutine peak_tf_with_ripple(n_tf,wwp1,thkwp,tfin,bmaxtf,bmaxtfrp,flag)
     !  Maximum winding pack width before adjacent packs touch
     !  (ignoring the external case and ground wall thicknesses)
 
-    wmax = (2.0D0 * tfin + thkwp) * tan(pi/n_tf)
+    wmax = (2.0D0 * tfin + dr_tf_wp) * tan(pi/n_tf)
 
     !  Dimensionless winding pack width
 
@@ -1225,7 +1225,7 @@ subroutine peak_tf_with_ripple(n_tf,wwp1,thkwp,tfin,bmaxtf,bmaxtfrp,flag)
 
     !  Dimensionless winding pack radial thickness
 
-    tf_fit_z = thkwp/wmax
+    tf_fit_z = dr_tf_wp/wmax
     if ((tf_fit_z < 0.26D0).or.(tf_fit_z > 0.7D0)) then
         !write(*,*) 'PEAK_TF_WITH_RIPPLE: fitting problem; z = ',z
         flag = 2
@@ -1255,7 +1255,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use build_variables, only: tfcth, r_tf_inboard_mid, bore, ohcth, hmax
     use tfcoil_variables, only: eyzwp, casestr, windstrain, turnstf, &
-        thkwp, i_tf_tresca, acstf, vforce, &
+        dr_tf_wp, i_tf_tresca, acstf, vforce, &
         ritfc, jwptf, strtf0, strtf1, strtf2, &
         thwcndut, insstrain, strtf2, vforce, tinstf, &
         acstf, jwptf, insstrain, layer_ins,&
@@ -1556,7 +1556,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !       but a doggy one for SC
 
     ! Thickness of a homognenous WP stress property layer
-    dr_wp_layer = thkwp / dble(n_tf_graded_layers)
+    dr_wp_layer = dr_tf_wp / dble(n_tf_graded_layers)
 
 
     ! Resistive coil
@@ -3130,7 +3130,7 @@ subroutine outtf(outfile, peaktfflag)
         tficrn, n_layer, tfleng, thwcndut, casthi, sigvvall, &
         thkcas, casths, vforce, n_pancake, aswp, aiwp, tfareain, acasetf, &
         vftf, eyzwp, thicndut, dhecoil, insstrain, taucq, ripmax, &
-        whtconsc, alstrtf, bmaxtfrp, vdalw, leni, thkwp, whtcas, whtcon, &
+        whtconsc, alstrtf, bmaxtfrp, vdalw, leni, dr_tf_wp, whtcas, whtcon, &
         ripple, i_tf_tresca, bmaxtf, awphec, avwp, aiwp, acond, acndttf, &
         i_tf_sc_mat, voltfleg, vol_cond_cp, tflegres, tcpav, prescp, i_tf_sup, &
         cpttf, cdtfleg, whttflgs, whtcp, i_tf_bucking, tlegav, rhotfleg, rhocp, &
@@ -3281,7 +3281,7 @@ subroutine outtf(outfile, peaktfflag)
         call osubhd(outfile,'TF winding pack (WP) geometry:')
         call ovarre(outfile,'WP cross section area with insulation and insertion (total) (m2)','(awpc*n_tf))',awpc*n_tf)
         call ovarre(outfile,'WP cross section area (total) (m2)','(aswp*n_tf))',awptf*n_tf)
-        call ovarre(outfile,'Winding pack radial thickness (m)','(thkwp)',thkwp, 'OP ')
+        call ovarre(outfile,'Winding pack radial thickness (m)','(dr_tf_wp)',dr_tf_wp, 'OP ')
         if (  i_tf_turns_integer == 1 ) then
             call ovarre(outfile, 'Winding pack toroidal width (m)', '(wwp1)', wwp1, 'OP ')
         else
@@ -3472,10 +3472,10 @@ subroutine outtf(outfile, peaktfflag)
         call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
         radius = radius + tinstf
         call obuild(outfile,'Winding pack insulation',tinstf,radius,'(tinstf)')
-        radius = radius + thkwp/2d0
-        call obuild(outfile,'Winding - first half',thkwp/2d0,radius,'(thkwp/2 - tinstf)')
-        radius = radius + thkwp/2d0
-        call obuild(outfile,'Winding - second half',thkwp/2d0,radius,'(thkwp/2 - tinstf)')
+        radius = radius + dr_tf_wp/2d0
+        call obuild(outfile,'Winding - first half',dr_tf_wp/2d0,radius,'(dr_tf_wp/2 - tinstf)')
+        radius = radius + dr_tf_wp/2d0
+        call obuild(outfile,'Winding - second half',dr_tf_wp/2d0,radius,'(dr_tf_wp/2 - tinstf)')
         radius = radius + tinstf
         call obuild(outfile,'Winding pack insulation',tinstf,radius,'(tinstf)')
         radius = radius + tfinsgap
@@ -3489,7 +3489,7 @@ subroutine outtf(outfile, peaktfflag)
             call ocmmnt(outfile,'ERROR: TF coil dimensions are NOT consistent:')
             call ovarre(outfile,'Radius of plasma-facing side of inner leg SHOULD BE [m]','',r_tf_inboard_mid + 0.5D0*tfcth)
             call ovarre(outfile,'Inboard TF coil radial thickness [m]','(tfcth)',tfcth)
-            !thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
+            !dr_tf_wp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
             call oblnkl(outfile)
         end if
 

@@ -293,7 +293,7 @@ fimp(13) = 0.00038
 * TF winding pack thickness [m]
 ixc = 140
 boundl(140) = 0.5
-thkwp = 0.5
+dr_tf_wp = 0.5
 
 * fgwped - ratio of pedestal density to GW limit
 ixc = 145

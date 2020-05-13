@@ -693,7 +693,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Copper fraction of conductor                                             (fcutfsu)                 8.518E-01  ITV
  Superconductor fraction of conductor                                     (1-fcutfsu)               1.482E-01     
  Check total area fractions in winding pack = 1                                                         1.000     
- Winding radial thickness (m)                                             (thkwp)                   4.931E-01  OP 
+ Winding radial thickness (m)                                             (dr_tf_wp)                   4.931E-01  OP 
  Winding toroidal width 1 (m)                                             (wwp1)                    8.708E-01  OP 
  Winding toroidal width 2 (m)                                             (wwp2)                    7.727E-01  OP 
  Ground wall insulation thickness (m)                                     (tinstf)                  5.000E-03     
@@ -714,8 +714,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Coil case ("nose")                           0.307           2.163   (thkcas)            
  Insertion gap for winding pack               0.010           2.173   (tfinsgap)          
  Winding pack insulation                      0.005           2.178   (tinstf)            
- Winding - first half                         0.247           2.425   (thkwp/2 - tinstf)  
- Winding - second half                        0.247           2.672   (thkwp/2 - tinstf)  
+ Winding - first half                         0.247           2.425   (dr_tf_wp/2 - tinstf)  
+ Winding - second half                        0.247           2.672   (dr_tf_wp/2 - tinstf)  
  Winding pack insulation                      0.005           2.677   (tinstf)            
  Insertion gap for winding pack               0.010           2.687   (tfinsgap)          
  Coil case (plasma side)                      0.044           2.730   (casthi)            
