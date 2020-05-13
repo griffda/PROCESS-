@@ -156,13 +156,13 @@ contains
     call ripple_amplitude(ripple,ripmax,r_tf_outboard_mid,r_tf_outboard_midl,ripflag)
 
     !  If the ripple is too large then move the outboard TF coil leg
-    ! if (r_tf_outboard_midl > r_tf_outboard_mid) then
-    !    r_tf_outboard_mid = r_tf_outboard_midl
-    !    gapsto = r_tf_outboard_mid - 0.5D0*tfthko - ddwi - rsldo - thshield - tftsgap - vvblgap
-    !    dr_tf_inner_bore = ( r_tf_outboard_mid - 0.5D0*tfthko ) - ( r_tf_inboard_mid - 0.5D0*tfcth )
-    ! else
+    if (r_tf_outboard_midl > r_tf_outboard_mid) then
+       r_tf_outboard_mid = r_tf_outboard_midl
+       gapsto = r_tf_outboard_mid - 0.5D0*tfthko - ddwi - rsldo - thshield - tftsgap - vvblgap
+       dr_tf_inner_bore = ( r_tf_outboard_mid - 0.5D0*tfthko ) - ( r_tf_inboard_mid - 0.5D0*tfcth )
+    else
        gapsto = gapomin
-    ! end if
+    end if
 
     !  Call ripple calculation again with new r_tf_outboard_mid/gapsto value
     !  call rippl(ripmax,rmajor,rminor,r_tf_outboard_mid,n_tf,ripple,r_tf_outboard_midl)
