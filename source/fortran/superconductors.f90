@@ -528,7 +528,7 @@ subroutine GL_nbti(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit)
 
     !  Critical temperature (K)
     
-    tcrit = t_c0 * (1 - b_reduced**(1/v))
+    tcrit = thelium / ( 1 - (bcrit/bc20max))**(1/v)
 
     !  Critical current density (A/m2)
 
