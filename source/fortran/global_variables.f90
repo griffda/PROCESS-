@@ -2798,6 +2798,12 @@ module tfcoil_variables
   !!   0 : Tresca (no adjustment);
   !!   1 : Tresca with CEA adjustment factors (radial+2%, vertical+60%) </UL>
   
+  integer :: i_tf_wp_geom = 0
+  !! Switch for TF WP geometry selection
+  !!   0 : Rectangular geometry 
+  !!   1 : Double rectangular geometry 
+  !!   2 : Trapezoidal geometry (constant lateral casing thickness)
+
   integer :: i_tf_turns_integer = 0
   !! Switch for TF coil integer/non-integer turns:
   !!
