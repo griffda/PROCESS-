@@ -412,15 +412,19 @@ subroutine tf_winding_pack()
 
     ! Local variables
     !----------------
-    ! Rounded corner radius
     real(dp) :: rbcndut
+    !! Radius of the stell conduit rounded inner corners [m]
+
     real(dp) :: A
+    !! Turn dimensions [m2]
 
     real(dp) :: a_ground_ins
     !! Cross-section area of the WP ground insulation [m2]
     !----------------  
     
-    
+
+    ! WP geometry
+    ! -----------
     if (any(ixc(1:nvar) == 140) ) then
         ! Radial thickness of TF coil inboard leg [m]
         tfcth = dr_tf_wp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
@@ -439,12 +443,6 @@ subroutine tf_winding_pack()
     ! Radius of geometrical centre of winding pack [m]
     r_wp_centre = 0.5D0 * ( r_wp_inner + r_wp_outer )
 
-    ! Global inboard leg average current in TF coils [A/m2]
-    oacdcp = ritfc / tfareain
-
-    ! Current per TF coil [A]
-    tfc_current = ritfc/n_tf
-
     ! Thickness of winding pack section at R > r_wp_centre [m]
     wwp1 = 2.0D0 * (r_wp_centre*tan_theta_coil - casths - tinstf - tfinsgap)
 
@@ -460,7 +458,6 @@ subroutine tf_winding_pack()
     awpc = 0.5D0*dr_tf_wp * ( wwp2 + 2.0D0 * tinstf + 2.0d0 * tfinsgap ) + &
          + ( 0.5D0*dr_tf_wp + 2.0D0 * tinstf + 2.0d0 * tfinsgap ) &
          * ( wwp1 + 2.0D0 * tinstf + 2.0d0 * tfinsgap )
-
 
     ! Cross-section area of the WP ground insulation [m2]
     a_ground_ins = 0.5D0 * dr_tf_wp * ( wwp2 + 2.0D0*tinstf ) &
@@ -486,11 +483,25 @@ subroutine tf_winding_pack()
 
     ! Cross-sectional area of surrounding case, outboard leg [m2]
     acasetfo = arealeg - awpc
+    ! -----------
+
+
+    ! WP/trun currents
+    ! ----------------
+    ! Global inboard leg average current in TF coils [A/m2]
+    oacdcp = ritfc / tfareain
+
+    ! Current per TF coil [A]
+    tfc_current = ritfc/n_tf
 
     ! Winding pack current density (forced to be positive) [A/m2]
     jwptf = max(1.0D0, ritfc/(n_tf*awptf))    
+    ! ----------------
 
-    ! Dimension of square conductor [m]
+
+    ! Turn geometry
+    ! -------------
+    ! Turn dimension [m2]
     ! Allow for additional inter-layer insulation MDK 13/11/18
     ! Area of turn including conduit and inter-layer insulation
     A = cpttf / jwptf
@@ -507,24 +518,6 @@ subroutine tf_winding_pack()
     ! Area of inter-turn insulation: single turn [m2]
     insulation_area = A - conductor_width**2
 
-    ! Area of inter-turn insulation: total [m2]
-    aiwp = turnstf * insulation_area
-
-    ! Area of steel structure in winding pack [m2]
-    aswp = turnstf * acndttf
-
-    ! Inboard coil steel area [m2]
-    a_tf_steel = acasetf + aswp
-
-    ! Inboard steel fraction [-]
-    f_tf_steel = n_tf * a_tf_steel / tfareain
-
-    ! Inboard coil insulation cross-section [m2]
-    a_tf_ins = aiwp + a_ground_ins
-
-    ! Inboard coil insulation fraction [-]
-    f_tf_ins = n_tf * a_tf_ins / tfareain 
-  
     if ( i_tf_sc_mat .ne. 6) then  ! NOT REBCO
         ! Radius of rounded corners of cable space inside conduit [m]
         rbcndut = thwcndut * 0.75D0     
@@ -578,8 +571,31 @@ subroutine tf_winding_pack()
         ! Cross-sectional area of conduit jacket per turn [m2]
         acndttf = conductor_width**2 - acstf
 
-    end if  
+    end if
+    ! -------------  
 
+
+    ! Areas and fractions
+    ! -------------------
+    ! Area of inter-turn insulation: total [m2]
+    aiwp = turnstf * insulation_area
+
+    ! Area of steel structure in winding pack [m2]
+    aswp = turnstf * acndttf
+
+    ! Inboard coil steel area [m2]
+    a_tf_steel = acasetf + aswp
+
+    ! Inboard steel fraction [-]
+    f_tf_steel = n_tf * a_tf_steel / tfareain
+
+    ! Inboard coil insulation cross-section [m2]
+    a_tf_ins = aiwp + a_ground_ins
+
+    ! Inboard coil insulation fraction [-]
+    f_tf_ins = n_tf * a_tf_ins / tfareain 
+    ! -------------------
+  
 end subroutine tf_winding_pack
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -621,6 +637,9 @@ subroutine tf_integer_winding_pack()
     ! Total number of turns
     turnstf = n_pancake*n_layer
 
+
+    ! WP geometry
+    ! -----------
     if (any(ixc(1:nvar) == 140)) then
       ! Radial thickness of TF coil inboard leg [m]
       tfcth = dr_tf_wp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
@@ -637,12 +656,6 @@ subroutine tf_integer_winding_pack()
 
     ! Radius of geometrical centre of winding pack [m]
     r_wp_centre = 0.5D0 * ( r_wp_inner + r_wp_outer )
-
-    ! Global inboard leg average current in TF coils [A/m2]
-    oacdcp = ritfc / tfareain
-    
-    ! Current per TF coil [A]
-    tfc_current = ritfc/n_tf
 
     ! TF coil width at inner egde of winding pack toroidal direction [m]
     t_tf_at_wp = 2.0D0 * r_wp_inner*sin(theta_coil)
@@ -679,10 +692,24 @@ subroutine tf_integer_winding_pack()
 
     ! Cross-sectional area of surrounding case, outboard leg [m2]
     acasetfo = arealeg - awpc
+    ! -----------
+
+
+    ! WP/trun currents
+    ! ----------------
+    ! Global inboard leg average current in TF coils [A/m2]
+    oacdcp = ritfc / tfareain
+    
+    ! Current per TF coil [A]
+    tfc_current = ritfc/n_tf
 
     ! Winding pack current density (forced to be positive) [A/m2]
     jwptf = max(1.0D0, ritfc/(n_tf*awptf))
+    ! ----------------
 
+
+    ! Turn geometry
+    ! -------------
     ! Radius of rounded corners of cable space inside conduit [m]
     rbcndut = thwcndut * 0.75D0
 
@@ -753,7 +780,11 @@ subroutine tf_integer_winding_pack()
 
     ! Central helium channel down the conductor core [m2]
     awphec = turnstf * ((pi/4.0d0)*dhecoil**2)
+    ! -------------
 
+    
+    ! Areas and fractions
+    ! -------------------
     ! Total conductor cross-sectional area, taking account of void area
     ! and central helium channel [m2]
     acond = acstf * turnstf * (1.0D0-vftf) - awphec
@@ -781,6 +812,7 @@ subroutine tf_integer_winding_pack()
 
     !  Inboard coil insulation fraction [-]
     f_tf_ins = n_tf * a_tf_ins / tfareain 
+    ! -------------------
 
 end subroutine tf_integer_winding_pack
 
@@ -1262,7 +1294,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         strtf1, rbmax, thicndut, acndttf, tfinsgap, &
         acasetf, alstrtf, poisson_steel, poisson_copper, poisson_al, &
         n_tf_graded_layers, i_tf_sup, i_tf_bucking, fcoolcp, eyoung_winding, &
-        eyoung_steel, eyoung_nibron, eyoung_ins, eyoung_al, eyoung_copper, &
+        eyoung_steel, eyoung_res_tf_buck, eyoung_ins, eyoung_al, eyoung_copper, &
         aiwp, cpttf, n_tf, i_tf_plane_stress
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
         cohbop, ncls, cptdin
@@ -1527,19 +1559,19 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! No current in bucking cylinder/casing
         jeff(i_tf_bucking) = 0.0D0
 
-        ! Steel bucking cylinder (copper and SC design)
-        if ( i_tf_sup /= 2 ) then 
+
+        if ( i_tf_sup == 1 ) then 
             eyoung_p(i_tf_bucking) = eyoung_steel
             eyoung_z(i_tf_bucking) = eyoung_steel
             poisson_p(i_tf_bucking) = poisson_steel
             poisson_z(i_tf_bucking) = poisson_steel
-        
-        ! Re-inforced aluminium 
+
+        ! Bucking cylinder properties
         else 
-            eyoung_p(i_tf_bucking) = eyoung_nibron
-            eyoung_z(i_tf_bucking) = eyoung_nibron
-            poisson_p(i_tf_bucking) = poisson_al
-            poisson_z(i_tf_bucking) = poisson_al
+            eyoung_p(i_tf_bucking) = eyoung_res_tf_buck
+            eyoung_z(i_tf_bucking) = eyoung_res_tf_buck
+            poisson_p(i_tf_bucking) = poisson_steel ! Seek better value !
+            poisson_z(i_tf_bucking) = poisson_steel ! Seek better value !
         end if
         
         ! Innernost TF casing radius
@@ -1996,6 +2028,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         else 
             write(outfile,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
         end if
+        write(outfile, *) ''
+        write(outfile,'(t2, "Toroidal"    ," modulus", t20, "(GPa)",t26, *(F11.3,3x))') eyoung_p * 1.0D-9
+        write(outfile,'(t2, "Vertical"    ," modulus", t20, "(GPa)",t26, *(F11.3,3x))') eyoung_z * 1.0D-9
         write(outfile,* ) ''
 
         ! MFILE.DAT data

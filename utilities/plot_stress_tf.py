@@ -54,6 +54,7 @@ if __name__ == '__main__':
     radial_smeared_stress   = list()
     toroidal_smeared_stress = list()
     vertical_smeared_stress = list()
+    tresca_smeared_stress   = list()
     radial_stress           = list()
     toroidal_stress         = list()
     vertical_stress         = list()
@@ -94,6 +95,9 @@ if __name__ == '__main__':
     cea_tresca_stress       = data[11]
     radial_displacement     = data[14]
             
+    for ii in range(0,len(radial_smeared_stress)) :
+        tresca_smeared_stress.append( max(abs(radial_smeared_stress[ii]), abs(toroidal_smeared_stress[ii])) + vertical_smeared_stress[ii]) 
+
     if len(data[5]) == 1 :    
         for jj in range(0,len(radius)) :
             vertical_stress.append(data[5][0])
@@ -136,7 +140,13 @@ if __name__ == '__main__':
             print("------------------------------")
             print("steel radial   stress stress in the inner/middle/out : {}/{}/{} MPa".format(radial_stress[ii_ins[ii]], radial_stress[ii_mids[ii]], radial_stress[ii_outs[ii]]) )
             print("steel toroidal stress stress in the inner/middle/out : {}/{}/{} MPa".format(toroidal_stress[ii_ins[ii]], toroidal_stress[ii_mids[ii]], toroidal_stress[ii_outs[ii]]) )
+            print("steel vertical stress stress in the inner/middle/out : {}/{}/{} MPa".format(vertical_stress[ii_ins[ii]], vertical_stress[ii_mids[ii]], vertical_stress[ii_outs[ii]]) )
             print("steel TRESCA   stress stress in the inner/middle/out : {}/{}/{} MPa".format(tresca_stress[ii_ins[ii]], tresca_stress[ii_mids[ii]], tresca_stress[ii_outs[ii]]) )
+            print("")
+            print("smeared radial   stress stress in the inner/middle/out : {}/{}/{} MPa".format(radial_smeared_stress[ii_ins[ii]]  , radial_smeared_stress[ii_mids[ii]]  , radial_smeared_stress[ii_outs[ii]]) )
+            print("smeared toroidal stress stress in the inner/middle/out : {}/{}/{} MPa".format(toroidal_smeared_stress[ii_ins[ii]], toroidal_smeared_stress[ii_mids[ii]], toroidal_smeared_stress[ii_outs[ii]]) )
+            print("smeared vertical stress stress in the inner/middle/out : {}/{}/{} MPa".format(vertical_smeared_stress[ii_ins[ii]], vertical_smeared_stress[ii_mids[ii]], vertical_smeared_stress[ii_outs[ii]]) )
+            print("smeared TRESCA   stress stress in the inner/middle/out : {}/{}/{} MPa".format(tresca_smeared_stress[ii_ins[ii]]  , tresca_smeared_stress[ii_mids[ii]]  , tresca_smeared_stress[ii_outs[ii]]) )
             print("")
         print("")
 

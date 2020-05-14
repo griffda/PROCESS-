@@ -1156,7 +1156,7 @@ subroutine check
         stop
     end if
      
-    ! Make sure that plane stress model is not used for resitivite magnets
+    ! Make sure that plane stress model is not used for resistive magnets
     if ( i_tf_plane_stress == 1 .and. i_tf_sup /= 1 ) call report_error(253)
      
     ! bucking cylinder default option setting

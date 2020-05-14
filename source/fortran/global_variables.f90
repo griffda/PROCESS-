@@ -2789,7 +2789,7 @@ module tfcoil_variables
   !! Radial strain in insulator
 
   integer :: i_tf_plane_stress = 1
-  !! Switch for the TF stress model
+  !! Switch for the TF coil stress model
   !!   0 : New generalized plane strain formulation 
   !!   1 : Old plane stress model (only for SC)
 
@@ -2844,15 +2844,15 @@ module tfcoil_variables
   !! Switch for TF inboard suport structure design:
   !! 
   !! - =-1 : Default option
-  !!     - if copper resistive TF (i_tf_sup = 0) : Free standing TF without bucking structure 
-  !!     - if Superconducting  TF (i_tf_sup = 1) : Free standing TF with a steel casing  
-  !!     - if cryo-aluminium   TF (i_tf_sup = 2) : Free standing TF with a bucking structure
+  !!     - if copper resistive TF    (i_tf_sup = 0) : Free standing TF without bucking structure 
+  !!     - if Superconducting TF     (i_tf_sup = 1) : Free standing TF with a steel casing  
+  !!     - if aluminium  TF (i_tf_sup = 2) : Free standing TF with a bucking structure
   !!     Rem : the case is a bucking structure
   !! - =0 : Free standing TF without case/bucking cyliner (only a conductor layer)
   !! - =1 : Free standing TF with a case/bucking cylinder made of 
-  !!     - if copper resistive TF (i_tf_sup = 0) : Steel bucking cylinder
-  !!     - if Superconducting  TF (i_tf_sup = 1) : Steel casing
-  !!     - if cryo-aluminium   TF (i_tf_sup = 2) : Nibron special bucking cylinder
+  !!     - if copper resistive     TF (i_tf_sup = 0) : used defined bucking cylinder
+  !!     - if Superconducting      TF (i_tf_sup = 1) : Steel casing
+  !!     - if aluminium resisitive TF (i_tf_sup = 2) : used defined bucking cylinder
   !! - =2 : The TF is in contact with the CS : "bucked and weged design"
   !!       Fast version : thin TF-CS interface neglected in the stress calculations (3 layers)
   !! - =3 : The TF is in contact with the CS : "bucked and weged design"
@@ -2888,8 +2888,8 @@ module tfcoil_variables
 
   real(dp) :: eyoung_ins = 1.0D8
   !! Insulator Young's modulus [Pa]. Default value (1.0D8) setup the following values
-  !!  - SC TF, eyoung_ins = 20 Mpa (default value from DDD11-2 v2 2 (2009))
-  !!  - Al TF, eyoung_ins = 2.5 MPa (Kapton polymer)
+  !!  - SC TF, eyoung_ins = 20 Gpa (default value from DDD11-2 v2 2 (2009))
+  !!  - Al TF, eyoung_ins = 2.5 GPa (Kapton polymer)
 
   real(dp) :: eyoung_steel = 2.05D11
   !! Steel case Young's modulus (Pa) (default value from DDD11-2 v2 2 (2009))
@@ -2897,8 +2897,8 @@ module tfcoil_variables
   real(dp) :: eyoung_winding = 6.6D8
   !! SC TF coil winding Young's modulus (Pa)
   
-  real(dp) :: eyoung_nibron = 141.0D9 
-  !! Cryogenic aluminium magnet bucking cylinder young modulus. Ref: Gary's personnal communication
+  real(dp) :: eyoung_res_tf_buck = 150.0D9 
+  !! Resistive TF magnets bucking cylinder young modulus (Pa)
 
   real(dp) :: eyoung_copper = 117.0D9
   !! Copper young modulus. Default value taken from wikipedia
@@ -3209,7 +3209,7 @@ module tfcoil_variables
   !! For `itart=1`, coil is return limb plus centrepost/n_tf
   
   real(dp) :: whtconal = 0.0D0
-  !! Cryogenic aluminium mass in TF coil conductor (kg/coil).
+  !! Aluminium mass in TF coil conductor (kg/coil).
   !! For `itart=1`, coil is return limb plus centrepost/n_tf
   
   real(dp) :: whtconin = 0.0D0
