@@ -73,3 +73,6 @@ test_suite/REBCO_JC.DAT
 test_suite/quench_data.DAT
 test_suite/OPT.DAT
 *.egg-info
+f90wrap_*
+.f2py_f2cmap
+fortran.py
