@@ -2806,9 +2806,8 @@ module tfcoil_variables
 
   integer :: i_tf_turns_integer = 0
   !! Switch for TF coil integer/non-integer turns:
-  !!
-  !! - =0 non-integer turns
-  !! - =1 integer turns
+  !!   0 : non-integer turns
+  !!   1 : integer turns
 
   integer :: i_tf_sc_mat = 1
   !! Switch for superconductor material in TF coils:
@@ -2882,7 +2881,7 @@ module tfcoil_variables
   !! allowable TF coil winding pack current density, for dump temperature rise protection (A/m2)
 
   real(dp) :: jwptf = 0.0D0
-  !! winding pack current density (A/m2)
+  !! winding pack engineering current density (A/m2)
 
   real(dp) :: oacdcp = 0.0D0
   !! Overall current density in TF coil inboard legs midplane (A/m2)
