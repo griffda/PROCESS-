@@ -170,7 +170,7 @@ subroutine sctfcoil(outfile,iprint)
         hmax
     use tfcoil_variables, only: i_tf_turns_integer, wwp1, estotftgj, tfind, &
         ritfc, dr_tf_wp, n_tf, bmaxtfrp, bmaxtf, n_tf_stress_layers, n_rad_per_layer, &
-        i_tf_sup, i_tf_shape, i_tf_wp_geom
+        i_tf_sup, i_tf_shape, i_tf_wp_geom, tinstf, tfinsgap
     use constants, only: rmu0, pi
     use physics_variables, only: itart
 
