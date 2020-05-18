@@ -97,7 +97,7 @@ contains
     ! Issue #514 Radial dimensions of inboard leg
     ! Calculate tfcth if dr_tf_wp is an iteration variable (140)
     if (any(ixc(1:nvar) == 140) ) then
-        tfcth = dr_tf_wp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
+        tfcth = dr_tf_wp + casthi + thkcas
     endif
 
     ! Radial build to tfcoil
