@@ -345,7 +345,6 @@ end subroutine tf_current
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-
 subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
     !! Author : S. Kahn, CCFE
     !! Seting the WP, case and tunrs geometry for SC magnets
@@ -383,10 +382,13 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
     else 
         ! Integer number of turns
         call tf_integer_turn_geom( n_layer, n_pancake, thwcndut, thicndut, & ! Inputs
-                                   acstf, acndttf, insulation_area, cpttf )  ! Outputs
+                                   acstf, acndttf, insulation_area, & ! Outputs
+                                   cpttf, turnstf )                   ! Outputs
     end if 
     
-
+    ! WP/trun currents
+    call tf_wp_currents
+    
     ! Areas and fractions
     ! -------------------
     ! Central helium channel down the conductor core [m2]
@@ -418,8 +420,6 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
     f_tf_ins = n_tf * a_tf_ins / tfareain 
     ! -------------------
 
-    ! WP/trun currents
-    call tf_wp_currents
 
     contains
     subroutine tf_wp_geom(i_tf_wp_geom)
@@ -702,7 +702,8 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
     end subroutine tf_averaged_turn_geom
 
     subroutine tf_integer_turn_geom( n_layer, n_pancake, thwcndut, thicndut, & ! Inputs
-                                     acstf, acndttf, insulation_area, cpttf )  ! Outputs
+                                     acstf, acndttf, insulation_area, & ! Outputs
+                                     cpttf, turnstf )                   ! Outputs
 
         !! Authors : J. Morris
         !! Authors : S. Kahn
@@ -746,6 +747,9 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
 
         real(dp), intent(out) :: cpttf
         !! TF turns current [A]
+
+        real(dp), intent(out) :: turnstf
+        !! Number of turns
         ! -------
 
         ! Local variables
@@ -781,6 +785,9 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
             call report_error(100)
         end if
     
+        ! Number of TF turns
+        turnstf = dble( n_layer * n_pancake )
+
         ! Current per turn [A/turn]
         cpttf = tfc_current/turnstf
     
@@ -843,7 +850,6 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
 end subroutine sc_tf_internal_geom
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 
 subroutine res_tf_internal_geom()
     !! Author : S. Kahn
