@@ -2798,11 +2798,14 @@ module tfcoil_variables
   !!   0 : Tresca (no adjustment);
   !!   1 : Tresca with CEA adjustment factors (radial+2%, vertical+60%) </UL>
   
-  integer :: i_tf_wp_geom = 0
+  integer :: i_tf_wp_geom = -1
   !! Switch for TF WP geometry selection
   !!   0 : Rectangular geometry 
   !!   1 : Double rectangular geometry 
   !!   2 : Trapezoidal geometry (constant lateral casing thickness)
+  !! Default setting for backward compatibility 
+  !!   if i_tf_turns_integer = 0 : Double rectangular
+  !!   if i_tf_turns_integer = 1 : Rectangular 
 
   integer :: i_tf_turns_integer = 0
   !! Switch for TF coil integer/non-integer turns:
@@ -2848,10 +2851,10 @@ module tfcoil_variables
   integer :: i_tf_bucking = -1
   !! Switch for TF inboard suport structure design:
   !! 
-  !! - =-1 : Default option
-  !!     - if copper resistive TF    (i_tf_sup = 0) : Free standing TF without bucking structure 
-  !!     - if Superconducting TF     (i_tf_sup = 1) : Free standing TF with a steel casing  
-  !!     - if aluminium  TF (i_tf_sup = 2) : Free standing TF with a bucking structure
+  !! Default setting for backward compatibility
+  !!     - if copper resistive TF (i_tf_sup = 0) : Free standing TF without bucking structure 
+  !!     - if Superconducting TF  (i_tf_sup = 1) : Free standing TF with a steel casing  
+  !!     - if aluminium  TF       (i_tf_sup = 2) : Free standing TF with a bucking structure
   !!     Rem : the case is a bucking structure
   !! - =0 : Free standing TF without case/bucking cyliner (only a conductor layer)
   !! - =1 : Free standing TF with a case/bucking cylinder made of 

@@ -1826,7 +1826,7 @@ contains
           call parse_int_variable('n_tf_joints', n_tf_joints, 1, 50, &
                'Number of joints per turn')
        case ('eff_tf_cryo')
-          call parse_real_variable('eff_tf_cryo', eff_tf_cryo, -1.0D0, 1.0D0, &
+          call parse_real_variable('eff_tf_cryo', eff_tf_cryo, 0.0D0, 1.0D0, &
                'TF coil cryo-plane efficiency')  
        case ('i_tf_plane_stress')
          call parse_int_variable('i_tf_plane_stress', i_tf_plane_stress, 0, 1, &
@@ -1841,7 +1841,7 @@ contains
           call parse_int_variable('i_tf_turns_integer', i_tf_turns_integer, 0, 1, &
                     'Switch for TF coil integer/non-integer turns')
        case ('i_tf_bucking')
-          call parse_int_variable('i_tf_bucking', i_tf_bucking, -1, 3, &
+          call parse_int_variable('i_tf_bucking', i_tf_bucking, 0, 3, &
                'Switch for bucking cylinder (case)')
        case ('i_tf_sc_mat')
           call parse_int_variable('i_tf_sc_mat', i_tf_sc_mat, 1, 6, &
