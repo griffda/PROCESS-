@@ -22,7 +22,10 @@ module availability_module
   public :: avail
   public :: avail_2
   real(dp), parameter :: year = 31557600.0D0
+  !! seconds in a year [s]
+
   real(dp), parameter :: day = 86400.0D0
+  !! seconds in a day [s]
 
 contains
 
