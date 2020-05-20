@@ -320,7 +320,7 @@ subroutine tf_current()
     !! Calculation of the maximum B field and the corresponding TF current
     use tfcoil_variables, only: casthi, ritfc, rbmax, i_tf_sup, casths_fraction, &
         tinstf, tftort, bmaxtf, tfinsgap, tfc_sidewall_is_fraction, casths, &
-        casthi_is_fraction, casthi_fraction
+        casthi_is_fraction, casthi_fraction, n_tf
     use physics_variables, only: bt, rmajor
     use build_variables, only: tfcth
     implicit none
@@ -346,6 +346,9 @@ subroutine tf_current()
     ! Total current in TF coils [A]
     ! rem SK : ritcf is no longer an input
     ritfc = bmaxtf * rbmax * 5.0D6 
+
+    ! Current per TF coil [A]
+    tfc_current = ritfc/n_tf
 
 end subroutine tf_current
 
@@ -374,11 +377,15 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
     !! Switch for TF coil integer/non-integer turns
     ! ------
 
+
     ! Calculating the WP / ground insulation areas
     call tf_wp_geom(i_tf_wp_geom)
 
     ! Calculating the TF steel casing areas 
     call tf_case_geom(i_tf_wp_geom)
+
+    ! WP/trun currents
+    call tf_wp_currents
     
     ! Setting the WP turn geometry / areas 
     if ( i_tf_turns_integer == 0 ) then 
@@ -392,8 +399,6 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
                                    cpttf, turnstf )                   ! Outputs
     end if 
     
-    ! WP/trun currents
-    call tf_wp_currents
     
     ! Areas and fractions
     ! -------------------
@@ -695,7 +700,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
             
         ! Total number of turns per TF coil (not required to be an integer)
         turnstf = awptf / a_turn
-            
+
         ! Area of inter-turn insulation: single turn [m2]
         insulation_area = a_turn - conductor_width**2
         
@@ -879,9 +884,6 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
         ! Global inboard leg average current in TF coils [A/m2]
         oacdcp = ritfc / tfareain
     
-        ! Current per TF coil [A]
-        tfc_current = ritfc/n_tf
-
         ! Winding pack current density (forced to be positive) [A/m2]
         jwptf = max(1.0D0, ritfc/(n_tf*awptf))
     
