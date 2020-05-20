@@ -97,7 +97,13 @@ real(dp), private :: vol_case_cp
 !! Volume of the CP outer casing cylinder
 
 real(dp), private :: t_wp_toroidal
-!! Toroidal thickness of of winding pack [m]
+!! Minimal toroidal thickness of of winding pack [m]
+
+real(dp), private :: t_wp_toroidal_av
+!! Averaged toroidal thickness of of winding pack [m]
+
+real(dp), private :: t_lat_case_av
+!! Average lateral casing thickness [m]
 
 real(dp), private :: theta_coil
 !! Half toroidal angular extent of a single TF coil inboard leg
@@ -349,7 +355,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
     !! Author : S. Kahn, CCFE
     !! Seting the WP, case and tunrs geometry for SC magnets
     
-    use tfcoil_variables, only: acndttf, awphec, cpttf, insulation_area,      &
+    use tfcoil_variables, only: acndttf, awphec, cpttf, insulation_area,     &
         n_layer, n_pancake, turnstf, i_tf_sc_mat, jwptf, thicndut, thwcndut, &
         acasetf, acstf, acond, aiwp, avwp, dhecoil, n_tf, aswp, vftf, tfareain
     use constants, only: pi
@@ -372,7 +378,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
     call tf_wp_geom(i_tf_wp_geom)
 
     ! Calculating the TF steel casing areas 
-    call tf_case_geom
+    call tf_case_geom(i_tf_wp_geom)
     
     ! Setting the WP turn geometry / areas 
     if ( i_tf_turns_integer == 0 ) then 
@@ -438,6 +444,9 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
         ! ------
         integer, intent(in) :: i_tf_wp_geom
         !! Switch for TF WP geometry selection
+        !!   0 : Rectangular geometry 
+        !!   1 : Double rectangular geometry 
+        !!   2 : Trapezoidal geometry (constant lateral casing thickness)
         ! ------
 
 
@@ -482,6 +491,9 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
             ! Outer WP layer toroidal thickness [m]
             wwp1 = t_wp_toroidal
 
+            ! Averaged toroidal thickness of of winding pack [m]
+            t_wp_toroidal_av = t_wp_toroidal
+
             ! Total cross-sectional area of winding pack [m2]
             awpc = dr_tf_wp * t_wp_toroidal
             
@@ -504,9 +516,12 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
             ! Thickness of winding pack section at R < r_wp_centre [m]
             wwp2 = 2.0D0 * ( r_wp_inner * tan_theta_coil - casths )
 
+            ! Averaged toroidal thickness of of winding pack [m]
+            t_wp_toroidal_av = 0.5D0 * ( wwp1 + wwp2 )
+
             ! Total cross-sectional area of winding pack [m2]
             ! Including ground insulation and insertion gap
-            awpc = 0.5D0 * dr_tf_wp * ( wwp1 + wwp2 )
+            awpc = dr_tf_wp * t_wp_toroidal_av
 
             ! WP cross-section without insertion gap and ground insulation [m2]
             awptf = 0.5D0 * ( dr_tf_wp - 2.0D0 * ( tinstf + tfinsgap ) )  &
@@ -527,6 +542,9 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
             ! Thickness of winding pack section at r_wp_inner [m]
             wwp2 = 2.0D0 * ( r_wp_inner * tan_theta_coil - casths )
             
+            ! Averaged toroidal thickness of of winding pack [m]
+            t_wp_toroidal_av = 0.5D0 * ( wwp1 + wwp2 )
+
             ! Total cross-sectional area of winding pack [m2]
             ! Including ground insulation and insertion gap
             awpc = dr_tf_wp * ( wwp2 + 0.5D0 * ( wwp1 - wwp2 ) )
@@ -536,7 +554,6 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
                   * ( wwp2 - 2.0D0 * ( tinstf + tfinsgap ) + 0.5D0 * ( wwp1 - wwp2 ) )
             
             ! Cross-section area of the WP ground insulation [m2]
-            ! A VERIFIER PRECAUTIONEUSEMENT !!!
             a_ground_ins = ( dr_tf_wp - 2.0D0 * tfinsgap ) &
                          * ( wwp2 - 2.0D0 * tfinsgap  + 0.5D0 * ( wwp1 - wwp2 ) ) - awptf
 
@@ -553,13 +570,20 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
         
     end subroutine tf_wp_geom
 
-    subroutine tf_case_geom()
+    subroutine tf_case_geom(i_tf_wp_geom)
         !! Author : S. Kahn, CCFE
         !! Seting the case geometry and area for SC magnets
 
         use error_handling, only: fdiags, report_error
-        use tfcoil_variables, only: acasetf, acasetfo, arealeg, tfareain, n_tf
+        use tfcoil_variables, only: acasetf, acasetfo, arealeg, tfareain, n_tf, &
+            casths
         implicit none
+
+        integer, intent(in) :: i_tf_wp_geom
+        !! Switch for TF WP geometry selection
+        !!   0 : Rectangular geometry 
+        !!   1 : Double rectangular geometry 
+        !!   2 : Trapezoidal geometry (constant lateral casing thickness)
 
         ! Inboard leg cross-sectional area of surrounding case [m2]
         acasetf = (tfareain/n_tf) - awpc
@@ -574,6 +598,21 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
             call report_error(99)
         end if
         
+        ! Average lateral casing thickness
+        ! --------------
+        ! Rectangular casing
+        if ( i_tf_wp_geom == 0 ) then
+            t_lat_case_av = casths + 0.5D0*sin(theta_coil) * (r_wp_outer - r_wp_inner)  
+    
+        ! Double rectangular WP
+        else if ( i_tf_wp_geom == 1 ) then 
+            t_lat_case_av = casths + 0.5D0*sin(theta_coil) * (r_wp_outer - r_wp_centre)  
+             
+        ! Trapezoidal WP
+        else 
+            t_lat_case_av = casths 
+        end if 
+        ! --------------
     end subroutine tf_case_geom
 
     subroutine tf_averaged_turn_geom( cpttf, jwptf, thwcndut, thicndut, i_tf_sc_mat, & ! Inputs
@@ -646,6 +685,8 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
             
         ! Dimension of square cross-section of each turn including inter-turn insulation [m]
         t_turn = sqrt(a_turn)
+        t_turn_radial = t_turn
+        t_turn_toroidal = t_turn
             
         ! See derivation in the following document
         ! k:\power plant physics and technology\process\hts\hts coil module for process.docx
@@ -1529,11 +1570,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(dp) :: sig_max
     !! Working float to find maximum TRESCA stress index [Pa]
 
-    real(dp) :: seff
-    !! Turn dimenstion [m] 
-
     real(dp) :: tcbs
-    !! Square cable dimension [m]
+    !! Radial cable dimension [m]
 
     real(dp) :: t_ins_eff
     !! Effective insulation thickness (turn + ground insulation per turn) [m]
@@ -1559,6 +1597,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     real(dp) :: fac_sig_t
     !! Toroidal WP steel conduit stress unsmearing factor
+
+    real(dp) :: fac_sig_r
+    !! Radial WP steel conduit stress unsmearing factor
 
     real(dp) :: fac_sig_z
     !! Vertical WP steel conduit stress unsmearing factor
@@ -1589,6 +1630,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(dp) :: f_vforce_case
     !! Correction factor for plasma side case vertical stress contribution 
 
+    real(dp) :: eyoung_wp_t_eff
+    !! WP young modulus in toroidal direction with lateral casing effect [Pa]
     ! ---
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1602,7 +1645,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     end if
 
 
-    seff = sqrt(cpttf/jwptf)
     if (acstf >= 0.0D0) then
         tcbs = sqrt(acstf)
     else
@@ -1672,7 +1714,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! No current in bucking cylinder/casing
         jeff(i_tf_bucking) = 0.0D0
 
-
         if ( i_tf_sup == 1 ) then 
             eyoung_p(i_tf_bucking) = eyoung_steel
             eyoung_z(i_tf_bucking) = eyoung_steel
@@ -1740,10 +1781,18 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! inertion gap is tfinsgap on 4 sides
         t_ins_eff = thicndut + ( tfinsgap + tinstf ) / turnstf
 
-        ! Effective WP young modulus in the toroidal direction [Pa]
+        ! Effective WP young modulus in the toroidal direction [Pa] 
+        ! The toroidal property drives the stress calculation (J. Last report no 4)
+        ! Hence, the radial direction is relevant for the property smearing 
+        ! Rem : This assumption might be re-defined for bucked and wedged design
         eyoung_wp_t = eyngeff( eyoung_steel, eyoung_ins, &
-                               t_ins_eff, thwcndut, tcbs )
+                               t_ins_eff, thwcndut, t_turn_radial )
         
+        ! Lateral casing correction
+        eyoung_wp_t_eff = ( 2.0D0 * t_lat_case_av + t_wp_toroidal_av ) &
+                        / ( 2.0D0 * t_lat_case_av / eyoung_steel  &
+                          + t_wp_toroidal_av / eyoung_wp_t )
+
         ! Effective younf modulus in the vertical direction [Pa]
         eyoung_wp_z = eyoung_steel * a_wp_steel_eff / a_wp_eff &
                     + eyoung_ins * a_tf_ins / a_wp_eff
@@ -1776,7 +1825,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         radtf(i_tf_bucking + ii) = r_wp_inner + dble(ii-1)*dr_wp_layer
 
         ! Young modulus
-        eyoung_p(i_tf_bucking + ii) = eyoung_wp_t
+        eyoung_p(i_tf_bucking + ii) = eyoung_wp_t_eff
         eyoung_z(i_tf_bucking + ii) = eyoung_wp_z
 
         ! Poisson's ratio
@@ -1932,6 +1981,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
         ! Toroidal WP steel stress unsmearing factor
         fac_sig_t = 1.0D0
+        fac_sig_r = 1.0D0
 
     else if ( i_tf_sup == 1 ) then
 
@@ -1942,10 +1992,13 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             fac_sig_z = 1.0D0
         end if  
 
-        ! Toroidal WP steel stress unsmearing factor
-        fac_sig_t = eyoung_steel*eyoung_ins*seff &
-                  / (eyoung_ins*(seff-2.0D0*t_ins_eff) + 2.0D0*t_ins_eff*eyoung_steel)
-        
+        ! Toroidal WP steel conduit stress unsmearing factor
+        fac_sig_t = ( dr_tf_wp / ( dr_tf_wp - 2.0D0 * ( tinstf + tfinsgap ) ) ) & 
+                  * ( 0.5D0 * t_turn_radial / thwcndut )
+
+        ! Radial WP steel conduit stress unsmearing factor
+        fac_sig_r = ( t_wp_toroidal_av / ( t_wp_toroidal_av - 2.0D0 * ( tinstf + tfinsgap ) ) ) & 
+                  * ( 0.5D0 * t_turn_toroidal / thwcndut )
 
     else if ( i_tf_sup == 2 ) then
         
@@ -1955,6 +2008,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! Toroidal WP steel stress unsmearing factor
         ! NO CALCULTED FOR THE MOMENT (to be done laters)
         fac_sig_t = 1.0D0
+        fac_sig_r = 1.0D0
     
     end if
     
@@ -1962,8 +2016,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! GRADED MODIF : add another do loop to allow the graded properties
     !                to be taken into account
     do ii = i_tf_bucking * n_radial_array + 1, n_tf_layer*n_radial_array  
-        sig_tf_r(ii) = sig_tf_r(ii)/eyoung_p(i_tf_bucking+1) * fac_sig_t
-        sig_tf_t(ii) = sig_tf_t(ii)/eyoung_p(i_tf_bucking+1) * fac_sig_t
+        sig_tf_r(ii) = sig_tf_r(ii) * fac_sig_r
+        sig_tf_t(ii) = sig_tf_t(ii) * fac_sig_t
         sig_tf_z(ii) = sig_tf_z(ii) * fac_sig_z  
     end do
     ! ---
