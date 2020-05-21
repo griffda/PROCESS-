@@ -1261,11 +1261,12 @@ subroutine tf_coil_area_and_masses()
 
         ! Superconductor mass [kg]
         ! Includes space allowance for central helium channel, area awphec
-        whtconsc = (tfleng * turnstf * acstf*(1.0D0-vftf) * (1.0D0-fcutfsu) - tfleng*awphec) &
-        *dcond(i_tf_sc_mat)
+        whtconsc = (tfleng * turnstf * acstf*(1.0D0-vftf) * &
+                   (1.0D0-fcutfsu) - tfleng*awphec) * dcond(i_tf_sc_mat)
 
         ! Copper mass [kg]
         whtconcu = (tfleng * turnstf * acstf*(1.0D0-vftf) * fcutfsu - tfleng*awphec) * dcopper
+        if ( whtconcu <= 0.0D0 ) whtconcu = 0.0D0
 
         ! Steel conduit (sheath) mass [kg]
         whtconsh = tfleng * turnstf * acndttf * denstl
