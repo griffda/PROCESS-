@@ -2487,12 +2487,14 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
                                      rradius, sigr, sigt, sigz,              & ! Outputs
                                      strain_r, strain_t, strain_z, r_deflect ) ! Outputs
       
+    !! Author : S. Kahn, CCFE
+    !! Jan 2020
     !! This subroutine numerically find the constant (2 per layer) of the
     !! analytical resolution of the mid-plane stress calculations using the
     !! generalized plain strain formulation, from the radial stress and 
     !! displacement boundary conditions. This conditions sets 2*nlayer
-    !! linear equation of the integrals constants cc, find with using matrix inversion 
-    !! S. Kahn, Jan 2020
+    !! linear equation of the integrals constants cc, find with using matrix inversion
+    !! See issue #991 for more details
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use constants, only: rmu0, pi
     use maths_library, only: linesolv
