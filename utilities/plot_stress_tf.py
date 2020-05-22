@@ -179,9 +179,10 @@ if __name__ == '__main__':
     ## PLOT 2 : Smeared stress summary
     # ------------------------
     if plot_sm_sig :
-        plt.plot(radius, radial_smeared_stress  , label = r'$\sigma_{rr}^\mathrm{smeared}$')
-        plt.plot(radius, toroidal_smeared_stress, label = r'$\sigma_{\theta\theta}^\mathrm{smeared}$')
-        plt.plot(radius, vertical_smeared_stress, label = r'$\sigma_{zz}^\mathrm{smeared}$')
+        plt.plot(radius, radial_smeared_stress  , '--', label = r'$\sigma_{rr}^\mathrm{smeared}$')
+        plt.plot(radius, toroidal_smeared_stress, '--', label = r'$\sigma_{\theta\theta}^\mathrm{smeared}$')
+        plt.plot(radius, vertical_smeared_stress, '--', label = r'$\sigma_{zz}^\mathrm{smeared}$')
+        plt.plot(radius, tresca_smeared_stress  , '-' , label = r'$\sigma_{TRESCA}^\mathrm{smeared}$')
         plt.grid(True)
         plt.ylabel( r'$\sigma$ [$MPa$]', fontsize = axis_font_size )
         plt.xlabel( r'$R$ [$m$]', fontsize = axis_font_size )
