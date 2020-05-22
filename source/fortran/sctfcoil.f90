@@ -2517,7 +2517,7 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     !! Toroidal plan's Poisson's ratios 
 
     real(dp), dimension(nlayers), intent(in) :: nu_z
-    !! Vertical direction's Poisson's ratios 
+    !! Toroidal plan to vertical direction's Poisson's ratios 
 
     real(dp), dimension(nlayers), intent(in) :: ey_p
     !! Toroidal plan's Young modulae
@@ -2575,7 +2575,7 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     real(dp), dimension(nlayers) :: kk_p
     real(dp), dimension(nlayers) :: kk_z
 
-    ! Vertical poisson's squared coefficient
+    ! Toroidal plan to vertical direction poisson's squared coefficient
     real(dp), dimension(nlayers) :: nu_z_eff2
     
     ! Body force parameter in displacement differential equation
