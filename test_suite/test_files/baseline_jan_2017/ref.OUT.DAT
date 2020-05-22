@@ -654,7 +654,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Copper fraction of conductor                                             (fcutfsu)                 6.900E-01     
  Superconductor fraction of conductor                                     (1-fcutfsu)               3.100E-01     
  Check total area fractions in winding pack = 1                                                         1.000     
- Winding radial thickness (m)                                             (dr_tf_wp)                   4.492E-01  OP 
+ Winding radial thickness (m)                                             (dr_tf_wp)                4.492E-01  OP 
  Winding toroidal width 1 (m)                                             (wwp1)                    1.534E+00  OP 
  Winding toroidal width 2 (m)                                             (wwp2)                    1.444E+00  OP 
  Ground wall insulation thickness (m)                                     (tinstf)                  8.000E-03     
