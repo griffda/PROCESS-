@@ -2494,7 +2494,7 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     !! generalized plain strain formulation, from the radial stress and 
     !! displacement boundary conditions. This conditions sets 2*nlayer
     !! linear equation of the integrals constants cc, find with using matrix inversion
-    !! See issue #991 for more details
+    !! Doc : Issue #991 for more details
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use constants, only: rmu0, pi
     use maths_library, only: linesolv
