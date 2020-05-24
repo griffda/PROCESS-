@@ -121,13 +121,10 @@ real(dp), private :: t_turn_radial, t_turn_toroidal
 !! Turn radial and toroidal dimension (integer turn only) [m]
 
 real(dp), private :: t_turn
-!! Turn sqaured dimension (averaged turn only) [m]
-
-real(dp), private :: t_conductor
-!! Cable area radial and toroidal dimension (averaged turn only) [m]
+!! Turn area averaged dimension (square shape) [m]
 
 real(dp), private :: t_cable
-!! Conductor area radial and toroidal dimension (averaged turn only) [m]
+!! Cable area averaged dimension (square shape) [m]
 
 type(resistive_material):: copper
 type(resistive_material):: hastelloy
@@ -633,7 +630,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
         
         use error_handling, only: fdiags, report_error
         use constants, only: pi
-        use tfcoil_variables, only : conductor_width, layer_ins
+        use tfcoil_variables, only : layer_ins, t_conductor
         
         implicit none
 
@@ -695,14 +692,14 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
             
         ! See derivation in the following document
         ! k:\power plant physics and technology\process\hts\hts coil module for process.docx
-        conductor_width = (-layer_ins + sqrt(layer_ins**2 + 4.0D00*a_turn))/2.d0 &
-                          - 2.0D0*thicndut
+        t_conductor = (-layer_ins + sqrt(layer_ins**2 + 4.0D00*a_turn))/2.d0 &
+                    - 2.0D0*thicndut
             
         ! Total number of turns per TF coil (not required to be an integer)
         turnstf = awptf / a_turn
 
         ! Area of inter-turn insulation: single turn [m2]
-        insulation_area = a_turn - conductor_width**2
+        insulation_area = a_turn - t_conductor**2
         
         ! ITER like turn structure 
         if ( i_tf_sc_mat /= 6) then 
@@ -711,7 +708,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
             rbcndut = thwcndut * 0.75D0     
         
             ! Dimension of square cable space inside conduit [m]
-            t_cable = conductor_width - 2.0D0*thwcndut
+            t_cable = t_conductor - 2.0D0*thwcndut
         
             ! Cross-sectional area of cable space per turn
             ! taking account of rounded inside corners [m2]
@@ -732,16 +729,16 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
             end if
         
             ! Cross-sectional area of conduit jacket per turn [m2]
-            acndttf = conductor_width**2 - acstf
+            acndttf = t_conductor**2 - acstf
 
         ! REBCO turn structure
         else if (i_tf_sc_mat == 6 ) then  
 
             ! Diameter of circular cable space inside conduit [m]
-            t_cable = conductor_width - 2.0D0*thwcndut
+            t_cable = t_conductor - 2.0D0*thwcndut
         
             ! Cross-sectional area of conduit jacket per turn [m2]
-            acndttf = conductor_width**2 - acstf
+            acndttf = t_conductor**2 - acstf
         
         end if
 
@@ -761,7 +758,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
         !! areas and the its associated current
 
         use error_handling, only: fdiags, report_error
-        use tfcoil_variables, only: dr_tf_wp, tinstf, tfinsgap
+        use tfcoil_variables, only: dr_tf_wp, tinstf, tfinsgap, t_conductor
         use constants, only: pi
         implicit none
 
@@ -830,6 +827,8 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
             fdiags(3) = thwcndut
             call report_error(100)
         end if
+
+        t_turn = sqrt(t_turn_radial*t_turn_toroidal)
     
         ! Number of TF turns
         turnstf = dble( n_layer * n_pancake )
@@ -840,11 +839,13 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
         ! Radial and toroidal dimension of conductor [m]
         t_conductor_radial = t_turn_radial - 2.0D0*thicndut
         t_conductor_toroidal = t_turn_toroidal - 2.0D0*thicndut
+        t_conductor = sqrt(t_conductor_radial*t_conductor_toroidal)
     
         ! Dimension of square cable space inside conduit [m]
         t_cable_radial = t_conductor_radial - 2.0D0*thwcndut
         t_cable_toroidal = t_conductor_toroidal - 2.0D0*thwcndut
-    
+        t_cable = sqrt(t_cable_radial*t_cable_toroidal)
+
         ! Cross-sectional area of cable space per turn
         ! taking account of rounded inside corners [m2]
         acstf = (t_cable_radial*t_cable_toroidal) - (4.0D0-pi)*rbcndut**2
@@ -3328,13 +3329,13 @@ subroutine outtf(outfile, peaktfflag)
     use numerics, only: icc
     use tfcoil_variables, only: wwp1, whttf, yarc, xarc, &
         windstrain, wwp2, whtconsh, tftort, whtconcu, ritfc, &
-        conductor_width, tfinsgap, deflect, vtfskv, tmaxpro, fcutfsu, &
+        tfinsgap, deflect, vtfskv, tmaxpro, fcutfsu, t_conductor, &
         tinstf, turnstf, cforce, i_tf_turns_integer, tdmptf, &
-        leno, oacdcp, estotftgj, n_tf, whtconin, jwptf, tfa, &
+        oacdcp, estotftgj, n_tf, whtconin, jwptf, tfa, &
         tficrn, n_layer, tfleng, thwcndut, casthi, sigvvall, &
         thkcas, casths, vforce, n_pancake, aswp, aiwp, tfareain, acasetf, &
         vftf, eyzwp, thicndut, dhecoil, insstrain, taucq, ripmax, &
-        whtconsc, alstrtf, bmaxtfrp, vdalw, leni, dr_tf_wp, whtcas, whtcon, &
+        whtconsc, alstrtf, bmaxtfrp, vdalw, dr_tf_wp, whtcas, whtcon, &
         ripple, i_tf_tresca, bmaxtf, awphec, avwp, aiwp, acond, acndttf, &
         i_tf_sc_mat, voltfleg, vol_cond_cp, tflegres, tcpav, prescp, i_tf_sup, &
         cpttf, cdtfleg, whttflgs, whtcp, i_tf_bucking, tlegav, rhotfleg, rhocp, &
@@ -3513,14 +3514,14 @@ subroutine outtf(outfile, peaktfflag)
         if ( i_tf_turns_integer == 1 ) then
             call ovarre(outfile, 'Radial width of turn (m)', '(t_turn_radial)', t_turn_radial)
             call ovarre(outfile, 'Toroidal width of turn (m)', '(t_turn_toroidal)', t_turn_toroidal)
-            call ovarre(outfile, 'Radial width of cable space', '(t_cable_radial)', t_cable_radial)
-            call ovarre(outfile, 'Toroidal width of cable space', '(t_cable_toroidal)', t_cable_toroidal)
             call ovarre(outfile, 'Radial width of conductor (m)', '(t_conductor_radial)', t_conductor_radial, 'OP ')
             call ovarre(outfile, 'Toroidal width of conductor (m)', '(t_conductor_toroidal)', t_conductor_toroidal, 'OP ')
-        else
-            call ovarre(outfile,'Width of conductor (square) (m)','(conductor_width)',conductor_width, 'OP ')
-            call ovarre(outfile,'Width of turn including inter-turn insulation (m)','(leno)',leno, 'OP ')
-            call ovarre(outfile,'Width of space inside conductor (m)','(leni)',leni, 'OP ')
+            call ovarre(outfile, 'Radial width of cable space', '(t_cable_radial)', t_cable_radial)
+            call ovarre(outfile, 'Toroidal width of cable space', '(t_cable_toroidal)', t_cable_toroidal)
+       else
+            call ovarre(outfile,'Width of turn including inter-turn insulation (m)','(t_turn)',t_turn, 'OP ')
+            call ovarre(outfile,'Width of conductor (square) (m)','(t_conductor)',t_conductor, 'OP ')
+            call ovarre(outfile,'Width of space inside conductor (m)','(t_cable)',t_cable, 'OP ')
         end if
         call ovarre(outfile,'Steel conduit thickness (m)','(thwcndut)',thwcndut)
         call ovarre(outfile,'Inter-turn insulation thickness (m)','(thicndut)',thicndut)
@@ -3734,7 +3735,7 @@ subroutine tfspcall(outfile,iprint)
     use process_output, only: ovarre, ocmmnt, oheadr, oblnkl, ovarin
     use tfcoil_variables, only: tmargmin_tf, turnstf, n_tf, vftf, &
         temp_margin, jwdgpro, tftmp, vtfskv, acndttf, dhecoil, tmaxpro, &
-        tmargtf, thwcndut, conductor_width, fcutfsu, jwdgcrt, tdmptf, cpttf, &
+        tmargtf, thwcndut, t_conductor, fcutfsu, jwdgcrt, tdmptf, cpttf, &
         ritfc, jwptf, bmaxtfrp, tcritsc, acstf, strncon_tf, fhts, bcritsc, &
         i_tf_sc_mat
     use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, jcrit_nbti, croco, bi2212
@@ -4069,10 +4070,10 @@ contains
         call jcrit_rebco(thelium,bmax,jcritsc,validity,iprint)
         ! acstf : Cable space - inside area (m2)
         ! Set new croco_od - allowing for scaling of croco_od
-        croco_od = conductor_width / 3.0d0 - thwcndut * ( 2.0d0 / 3.0d0 )
+        croco_od = t_conductor / 3.0d0 - thwcndut * ( 2.0d0 / 3.0d0 )
         conductor%acs =  9.d0/4.d0 * pi * croco_od**2
         acstf = conductor%acs
-        conductor%area =  conductor_width**2 ! does this not assume it's a sqaure???
+        conductor%area =  t_conductor**2 ! does this not assume it's a sqaure???
 
         conductor%jacket_area = conductor%area - conductor%acs
         acndttf = conductor%jacket_area
@@ -4146,7 +4147,8 @@ contains
 
         call oblnkl(outfile)
         call ocmmnt(outfile,'Conductor information (includes jacket, not including insulation)')
-        call ovarre(outfile,'Width of square conductor (m)','(conductor_width)', conductor_width , 'OP ')
+        call ovarre(outfile,'Width of square conductor (cable + steel jacket) (m)', &
+            '(t_conductor)', t_conductor , 'OP ')
         call ovarre(outfile,'Area of conductor (m2)','(area)', conductor%area , 'OP ')
         call ovarre(outfile,'REBCO area of conductor (mm2)','(rebco_area)',conductor%rebco_area , 'OP ')
         call ovarre(outfile,'Area of central copper bar (mm2)', '(copper_bar_area)', conductor%copper_bar_area, 'OP ')
@@ -4326,8 +4328,8 @@ subroutine croco_quench(conductor)
 
     !! Finds the current density limited by the maximum temperatures in quench
     !! It also finds the dump voltage.
-    use tfcoil_variables, only: leno, tmax_croco, bmaxtf, quench_detection_ef, &
-        tftmp, croco_quench_temperature, jwptf, conductor_width
+    use tfcoil_variables, only: tmax_croco, bmaxtf, quench_detection_ef, &
+        tftmp, croco_quench_temperature, jwptf, t_conductor
     use superconductors, only: copper_properties2, jcrit_rebco
     use ode_mod, only: ode
     use maths_library, only: secant_solve
@@ -4356,7 +4358,7 @@ subroutine croco_quench(conductor)
         ! Issue #548, or see K:\Power Plant Physics and Technology\PROCESS\HTS\
         ! Solve for the temperature at which the quench detection field is reached.
         ! secant_solve(f,x1,x2,solution,error,residual,opt_tol)
-        current_density_in_conductor = jwptf *  (leno / conductor_width)**2
+        current_density_in_conductor = jwptf *  (t_cable / t_conductor)**2
         call secant_solve(detection_field_error,5d0, 70d0,T1,error,residual)
         ! T1 = Peak temperature of normal zone before quench is detected
 

@@ -2249,7 +2249,7 @@ contains
       tfcryoarea, tficrn, tfleng, tfocrn, tfsai, tfsao, tftmp, tftort, &
       thicndut, thkcas, dr_tf_wp, thwcndut, tinstf, turnstf, vftf, whtcas, &
       whtcon, whtconcu, whtconsc, whtconsh, whttf, wwp1, dcond, awphec, dcondins, &
-      i_tf_sc_mat, jwdgpro, leni, leno, max_force_density, sigvvall, strtf2, taucq, &
+      i_tf_sc_mat, jwdgpro, max_force_density, sigvvall, strtf2, taucq, &
       tdmptf, tmaxpro, toroidalgap, vtfkv, whtconin, wwp2, vdalw, bcritsc, fhts, &
       tcritsc, vtfskv
 		use constants, only: rmu0, twopi, pi, dcopper
@@ -2265,6 +2265,7 @@ contains
 
 
     real(kind(1.0D0)) :: r_coil_major, r_coil_minor, case_thickness_constant, coilcurrent
+    real(kind(1.0D0)) :: t_cable, t_turn
 
     real(kind(1.0D0)), allocatable, dimension(:) ::   jcrit_vector,RHS,LHS,awp, B_max_k
 
@@ -2293,12 +2294,12 @@ contains
      !       
      ! [m] Dimension of square cable space inside insulation
      !     and case of the conduit of each turn
-     leni = leno - 2.0D0 * (thwcndut + thicndut)  !  leni = t_w
-     if(leni<0) print *, "leni is negative. Check leno, thwcndut and thicndut."
+     t_cable = t_turn - 2.0D0 * (thwcndut + thicndut)  !  t_cable = t_w
+     if(t_cable<0) print *, "t_cable is negative. Check t_turn, thwcndut and thicndut."
      ! [m^2] Cross-sectional area of cable space per turn
-     acstf = 0.9D0 * leni**2 ! 0.9 to include some rounded corners. (acstf = pi (leni/2)**2 = pi/4 *leni**2 for perfect round conductor). This factor depends on how round the corners are.
+     acstf = 0.9D0 * t_cable**2 ! 0.9 to include some rounded corners. (acstf = pi (t_cable/2)**2 = pi/4 *t_cable**2 for perfect round conductor). This factor depends on how round the corners are.
      ! [m^2] Cross-sectional area of conduit case per turn
-     acndttf = (leni + 2.0D0*thwcndut)**2 - acstf
+     acndttf = (t_cable + 2.0D0*thwcndut)**2 - acstf
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -2332,7 +2333,7 @@ contains
      LHS = fiooic * jcrit_vector 
      
      ! Conduct fraction of conduit * Superconductor fraction in conductor
-     f_scu =   (acstf*(1.0D0-vftf))/(leno**2)*(1.0D0-fcutfsu) !fraction that is SC of wp.
+     f_scu =   (acstf*(1.0D0-vftf))/(t_turn**2)*(1.0D0-fcutfsu) !fraction that is SC of wp.
      !print *, "f_scu. ",f_scu,"Awp min: ",Awp(1)
  
      RHS = coilcurrent/(Awp(:)*f_scu) ! f_scu should be the fraction of the sc that is in the winding pack.
@@ -2344,7 +2345,7 @@ contains
      call intersect(Awp,LHS,N_it,Awp,RHS,N_it,Awp_min)
  
      ! Maximum field at superconductor surface (T)
-     Awp_min = Max(leno**2,Awp_min)
+     Awp_min = Max(t_turn**2,Awp_min)
  
      ! Recalculate bmaxtf at the found awp_min:
      bmaxtf = bmax_from_awp(Awp_min/r_coil_major**2,coilcurrent)
@@ -2363,14 +2364,14 @@ contains
 
      awptf = awp_tor*awp_rad                 ! [m^2] winding-pack cross sectional area
      jwptf = coilcurrent*1.0D6/awptf         ! [A/m^2] winding pack current density
-     turnstf = awptf / (leno**2)             !  estimated number of turns for a given turn size (not global). Take at least 1.
+     turnstf = awptf / (t_turn**2)           !  estimated number of turns for a given turn size (not global). Take at least 1.
      cpttf = coilcurrent*1.0D6 / turnstf     ! [A] current per turn - estimation
      ! [m^2] Total conductor cross-sectional area, taking account of void area
      acond = acstf*turnstf * (1.0D0-vftf)
      ! [m^2] Void area in cable, for He
      avwp = acstf*turnstf*vftf
      ! [m^2] Insulation area (not including ground-wall)
-     aiwp = turnstf * (leno**2 - acndttf - acstf)
+     aiwp = turnstf * (t_turn**2 - acndttf - acstf)
      ! [m^2] Structure area for cable
      aswp = turnstf*acndttf
    ! End of winding pack calculations
@@ -2509,7 +2510,7 @@ contains
      taucq = (bt * ritfc * rminor * rminor) / (radvv * sigvvall)
  
      ! the conductor fraction is meant of the cable space!
-     call protect(cpttf,estotftgj/n_tf*1.0D9,acstf,   leno**2   ,tdmptf,1-vftf,fcutfsu,tftmp,tmaxpro,jwdgpro,vd)
+     call protect(cpttf,estotftgj/n_tf*1.0D9,acstf, t_turn**2 ,tdmptf,1-vftf,fcutfsu,tftmp,tmaxpro,jwdgpro,vd)
   
      ! Also give the copper area for REBCO quench calculations:
      copperA_m2 = coilcurrent*1.0D6/(acond * fcutfsu)

@@ -281,7 +281,7 @@ contains
       cpttf, tmargmin, casths_fraction, eff_tf_cryo, eyoung_ins, &
       eyoung_steel, eyoung_res_tf_buck, eyoung_winding, f_vforce_inboard, &
       fcoolleg, frholeg, ftoroidalgap, i_tf_sc_mat, i_tf_shape, i_tf_bucking, &
-      leno, n_tf_graded_layers, n_tf_joints, n_tf_joints_contact, poisson_al, &
+      n_tf_graded_layers, n_tf_joints, n_tf_joints_contact, poisson_al, &
       poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact,&
       i_tf_plane_stress, eyoung_al, i_tf_wp_geom
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
@@ -1961,9 +1961,6 @@ contains
        case ('thicndut')
           call parse_real_variable('thicndut', thicndut, 0.0D0, 0.1D0, &
                'Conduit insulation thickness (m)')
-      case ('leno')
-          call parse_real_variable('leno', leno, 0.0D0, 0.2D0, &
-               'Dimension conductor area including steel and insulation (m)')
        case ('layer_ins')
           call parse_real_variable('layer_ins', layer_ins, 0.0D0, 0.1D0, &
                'Additional insulation thickness between layers (m)')

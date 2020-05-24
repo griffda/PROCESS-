@@ -42,5 +42,8 @@ OBS_VARS = {
     "casthi_fraction":"f_tf_case_out",
     "casthi":"dr_tf_case_out",
     "eyoung_reinforced_al:eyoung_nibron",
-    "thkwp:dr_tf_wp"
-}
+    "thkwp:dr_tf_wp",
+    "leni:t_cable",
+    "leno:t_turn",
+    "conductor_width:t_conductor"
+}]
