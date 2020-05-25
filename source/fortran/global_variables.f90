@@ -2729,11 +2729,13 @@ module tfcoil_variables
   logical :: tfc_sidewall_is_fraction
   !! logical switch to make casths a fraction of TF coil thickness (`casths_fraction`)
 
-  real(dp) :: t_conductor
+  real(dp) :: t_conductor = 0.0D0
   !! Conductor (cable + steel conduit) area averaged dimension [m]
+  
+  real(dp) :: t_turn = 0.0D0
+  !! WP turn squared dimensions [m]
 
-
-  real(dp) :: acs
+  real(dp) :: acs = 0.0D0
   !! Area of space inside conductor (m2)
 
   real(dp) :: cdtfleg = 0.0D0

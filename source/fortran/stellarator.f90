@@ -2251,7 +2251,7 @@ contains
       whtcon, whtconcu, whtconsc, whtconsh, whttf, wwp1, dcond, awphec, dcondins, &
       i_tf_sc_mat, jwdgpro, max_force_density, sigvvall, strtf2, taucq, &
       tdmptf, tmaxpro, toroidalgap, vtfkv, whtconin, wwp2, vdalw, bcritsc, fhts, &
-      tcritsc, vtfskv
+      tcritsc, vtfskv, t_turn
 		use constants, only: rmu0, twopi, pi, dcopper
 		use maths_library, only: find_y_nonuniform_x, tril, sumup3, ellipke
     use superconductors, only : jcrit_rebco, jcrit_nbti, bi2212, itersc, wstsc
@@ -2265,7 +2265,7 @@ contains
 
 
     real(kind(1.0D0)) :: r_coil_major, r_coil_minor, case_thickness_constant, coilcurrent
-    real(kind(1.0D0)) :: t_cable, t_turn
+    real(kind(1.0D0)) :: t_cable
 
     real(kind(1.0D0)), allocatable, dimension(:) ::   jcrit_vector,RHS,LHS,awp, B_max_k
 

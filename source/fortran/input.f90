@@ -275,7 +275,7 @@ contains
       thicndut, tftmp, oacdcp, tmax_croco, ptempalw, tmargmin_tf, tmpcry, &
       alstrtf, dztop, dcond, strncon_cs, etapump, drtop, vcool, dcondins, &
       i_tf_tresca, dhecoil, tmaxpro, strncon_tf, n_tf, tcpav, fcutfsu, jbus, &
-      casthi_fraction, tmargmin_cs, sigvvall, vdalw, dcase, &
+      casthi_fraction, tmargmin_cs, sigvvall, vdalw, dcase, t_turn,&
       cpttf_max, tdmptf, casths, i_tf_turns_integer, quench_model, &
       tcritsc, layer_ins, tinstf, n_layer, tcoolin, ripmax, frhocp, &
       cpttf, tmargmin, casths_fraction, eff_tf_cryo, eyoung_ins, &
@@ -1957,7 +1957,10 @@ contains
                'Number of TF coils')
        case ('tftmp')
           call parse_real_variable('tftmp', tftmp, 0.01D0, 10.0D0, &
-               'Peak TF coil He coolant temp. (K)')
+               'Peak TF coil He coolant temp. (K)')      
+       case ('t_turn')
+          call parse_real_variable('t_turn', t_turn, 0.0D0, 0.1D0, &
+               'TF turn square dimensions (m)')
        case ('thicndut')
           call parse_real_variable('thicndut', thicndut, 0.0D0, 0.1D0, &
                'Conduit insulation thickness (m)')
