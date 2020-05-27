@@ -1,162 +1,153 @@
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module ccfe_hcpb_module
-  !! Module containing CCFE HCPB blanket model
-  !! author: J Morris, CCFE, Culham Science Centre
-  !! N/A
+  !! author: J Morris (UKAEA)
+  !!
   !! This module contains the PROCESS CCFE HCPB blanket model
   !! based on CCFE HCPB model from the PROCESS engineering paper
   !! PROCESS Engineering paper (M. Kovari et al.)
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  ! Modules to import !
-  ! !!!!!!!!!!!!!!!!!!!!
+  !!
+  !!### References
+  !!
+  !! - Kovari et al., Fusion Engineering and Design 104 (2016) 9-20  
+  
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  implicit none
 
-  ! Subroutine declarations
+  implicit none
 
   private
   public :: ccfe_hcpb, tbr_shimwell
 
-  ! Precision variable
-  integer, parameter :: double = 8
-
   ! Variables for output to file
   integer, private :: ip, ofile
 
-  ! Module variables
-  ! Tungsten density (kg/m3)
   real(dp), private :: W_density = 19.25D0 * 1000.0D0
+  !! Tungsten density [kg/m3]
 
   ! Smeared densities of build sections
-  ! FW armour density
   real(dp), private :: armour_density
+  !! FW armour density [kg/m3]
 
-  ! FW density
   real(dp), private :: fw_density
+  !! FW density [kg/m3]
 
-  ! Blanket density
   real(dp), private :: blanket_density
+  !! Blanket density [kg/m3]
 
-  ! Shield density
   real(dp), private :: shield_density
+  !! Shield density [kg/m3]
 
-  ! Vacuum vessel density
   real(dp), private :: vv_density
+  !! Vacuum vessel density [kg/m3]
 
-  ! First wall volume
   real(dp), private :: volfw
+  !! First wall volume [m3]
 
-  ! Blanket exponent (tonne/m2)
   real(dp), private :: x_blanket
+  !! Blanket exponent (tonne/m2)
 
-  ! Shield exponent (tonne/m2)
   real(dp), private :: x_shield
+  !! Shield exponent (tonne/m2)
 
-  ! Unit nuclear heating in TF coil (W per W of fusion power)
   real(dp), private :: tfc_nuc_heating
+  !! Unit nuclear heating in TF coil (W per W of fusion power)
 
-  ! Unit heating of FW and armour in FW armour (W/kg per W of fusion power)
   real(dp), private :: fw_armour_u_nuc_heating
+  !! Unit heating of FW and armour in FW armour (W/kg per W of fusion power)
 
-  ! Unit nuclear heating in shield (W per W of fusion power)
   real(dp), private :: shld_u_nuc_heating
+  !! Unit nuclear heating in shield (W per W of fusion power)
 
-  ! Blanket internal half-height (m)
   real(dp), private :: hblnkt
+  !! Blanket internal half-height (m)
 
-  ! Shield internal half-height (m)
   real(dp), private :: hshld
+  !! Shield internal half-height (m)
 
-  ! Clearance between uppermost PF coil and cryostat lid (m)
   real(dp), private :: hcryopf
+  !! Clearance between uppermost PF coil and cryostat lid (m)
 
-  ! Vacuum vessel internal half-height (m)
   real(dp), private :: hvv
+  !! Vacuum vessel internal half-height (m)
 
-  ! Volume of inboard and outboard shield (m3)
   real(dp), private :: volshldi, volshldo
+  !! Volume of inboard and outboard shield (m3)
 
-  ! Inboard/outboard FW coolant void fraction
   real(dp), private :: vffwi, vffwo
+  !! Inboard/outboard FW coolant void fraction
 
-  ! Surface heat flux on first wall (MW) (sum = pradfw)
   real(dp), private :: psurffwi, psurffwo
+  !! Surface heat flux on first wall (MW) (sum = pradfw)
 
-  ! Inboard/outboard blanket coolant channel length (radial direction) (m)
   real(dp), private :: bldepti, bldepto
+  !! Inboard/outboard blanket coolant channel length (radial direction) (m)
 
-  ! Inboard/outboard blanket mid-plan toroidal circumference for segment (m)
   real(dp), private :: blwidti, blwidto
+  !! Inboard/outboard blanket mid-plan toroidal circumference for segment (m)
 
-  ! Inboard/outboard blanket segment poloidal length (m)
   real(dp), private :: bllengi, bllengo
+  !! Inboard/outboard blanket segment poloidal length (m)
 
-  ! Inboard/outboard blanket flow lengths (m)
   real(dp), private :: bzfllengi, bzfllengo
+  !! Inboard/outboard blanket flow lengths (m)
 
-  ! Inboard/outboard first wall nuclear heating (MW)
   real(dp), private :: pnucfwi, pnucfwo
+  !! Inboard/outboard first wall nuclear heating (MW)
 
-  ! Inboard/outboard first wall peak temperature (K)
   real(dp), private :: tpeakfwi, tpeakfwo
+  !! Inboard/outboard first wall peak temperature (K)
 
-  ! Inboard/outboard total mass flow rate to remove inboard FW power (kg/s)
   real(dp), private :: mffwi, mffwo, mffw
+  !! Inboard/outboard total mass flow rate to remove inboard FW power (kg/s)
 
-  ! Inboard/utboard total number of pipes
   real(dp), private :: npfwi, npfwo
+  !! Inboard/utboard total number of pipes
 
-  ! Inboard/outboard mass flow rate per coolant pipe (kg/s)
   real(dp), private :: mffwpi, mffwpo
+  !! Inboard/outboard mass flow rate per coolant pipe (kg/s)
 
-  ! Neutron power deposited inboard/outboard blanket blanket (MW)
   real(dp), private :: pnucblkti, pnucblkto
+  !! Neutron power deposited inboard/outboard blanket blanket (MW)
 
-  ! Inboard/outboard blanket mass flow rate for coolant (kg/s)
   real(dp), private :: mfblkti, mfblkto, mfblkt
+  !! Inboard/outboard blanket mass flow rate for coolant (kg/s)
 
-  ! Total mass flow rate for coolant (kg/s)
   real(dp), private :: mftotal
+  !! Total mass flow rate for coolant (kg/s)
 
-  ! Inboard/outboard total num of pipes
   real(dp), private :: npblkti, npblkto
+  !! Inboard/outboard total num of pipes
 
-  ! Inboard/outboard mass flow rate per coolant pipe (kg/s)
   real(dp), private :: mfblktpi, mfblktpo
+  !! Inboard/outboard mass flow rate per coolant pipe (kg/s)
 
-  ! Inboard/outboard coolant velocity in blanket (m/s)
   real(dp), private :: velblkti, velblkto
+  !! Inboard/outboard coolant velocity in blanket (m/s)
 
-  ! Inboard/outboard first wall pumping power (MW)
   real(dp), private :: htpmw_fwi, htpmw_fwo
+  !! Inboard/outboard first wall pumping power (MW)
 
-  ! Inboard/outboard blanket pumping power (MW)
   real(dp), private :: htpmw_blkti, htpmw_blkto
+  !! Inboard/outboard blanket pumping power (MW)
 
-  ! Total nuclear power deposited in FW, BLKT, SHLD, DIV, TF (MW)
   real(dp), private :: nuc_pow_dep_tot
+  !! Total nuclear power deposited in FW, BLKT, SHLD, DIV, TF (MW)
 
-  ! Exponential factors in nuclear heating calcs
   real(dp), private :: exp_blanket, exp_shield1, exp_shield2
+  !! Exponential factors in nuclear heating calcs
 
-  ! Fractions of blanket by volume: steel, lithium orthosilicate, titanium beryllide
   real(dp), private :: fblss_ccfe, fblli2sio4, fbltibe12
+  !! Fractions of blanket by volume: steel, lithium orthosilicate, titanium beryllide
 
 contains
 
   subroutine ccfe_hcpb(outfile, iprint)
-    !! CCFE HCPB blanket model
-    !! author: J Morris, CCFE, Culham Science Centre
-    !! outfile : input integer : output file unit
-    !! iprint : input integer : switch for writing to output file (1=yes)
-    !! This routine calculates nuclear heating for the CCFE HCPB
-    !! blanket model.
-    !! PROCESS Engineering paper (M. Kovari et al.)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !! author: J Morris (UKAEA)
+    !!
+    !! This routine calculates nuclear heating for the CCFE HCPB blanket model.
+    !!
+    !!### References
+    !!
+    !! - Kovari et al., Fusion Engineering and Design 104 (2016) 9-20   
 
     use build_variables, only: fwith, fwoth, r_tf_inboard_mid, tfcth, &
       gapds, shldith, hmax, r_tf_outboard_mid, r_sh_inboard_out
@@ -166,11 +157,12 @@ contains
 
     implicit none
 
-    ! Inputs
-    integer, intent(in) :: iprint, outfile
-    ! !!!!!!!!!!!!
+    integer, intent(in) :: iprint
+    !!switch for writing to output file (1=yes)
 
-    !  Assign module private variables to iprint and outfile
+    integer, intent(in) :: outfile
+    !! output file unit
+
     ip = iprint
     ofile = outfile
 
@@ -2122,14 +2114,11 @@ module kit_hcpb_module
   private
   public :: kit_hcpb
 
-  ! Precision variable
-  integer, parameter :: double = 8
-
   ! Variables for output to file
   integer, private :: ip, ofile
 
-  ! Array length
   integer, parameter :: np = 2
+  !! Array length
 
   real(dp), dimension(np) :: x_BZ_IB, x_BM_IB, x_BP_IB, x_VV_IB
   real(dp), dimension(np) :: x_BZ_OB, x_BM_OB, x_BP_OB, x_VV_OB
@@ -2140,165 +2129,317 @@ module kit_hcpb_module
   real(dp) :: phi_n_vv_IB_start,phi_n_vv_OB_start
 
   ! Universal constants
-  real(dp), parameter :: E_n = 14.1D0    ! [MeV] Average neutron energy
-  real(dp), parameter :: PA_T = 3.0D0    ! [g/mol] Tritium atomic weight
-  real(dp), parameter :: N_Av = 6.02D23  ! [at/mol] Avogadro number
+  real(dp), parameter :: E_n = 14.1D0
+  !! [MeV] Average neutron energy
+
+  real(dp), parameter :: PA_T = 3.0D0
+  !! [g/mol] Tritium atomic weight
+
+  real(dp), parameter :: N_Av = 6.02D23  
+  !! [at/mol] Avogadro number
+  !#TODO: move to constants
 
   ! Constants and fixed coefficients used in the model
   ! Based on Helium-Cooled Pebble Beds (HCPB) configuration
   ! of the PPCS Model B design
-  real(dp) :: A_cov_PPCS = 1365.0D0   ! [m^2] Total blanket coverage area
-  real(dp) :: A_FW_PPCS = 1253.0D0    ! [m^2] First wall area
-  real(dp) :: NWL_av_PPCS = 1.94D0    ! [MW/m^2] Average neutron wall load
-  real(dp) :: NWL_av_IB_PPCS = 1.73D0 ! [MW/m^2] Average IB wall load
-  real(dp) :: NWL_av_OB_PPCS = 1.92D0 ! [MW/m^2] Average OB wall load
-  real(dp) :: NWL_max_IB_PPCS = 1.99D0 ! [MW/m^2] Maximum IB wall load
-  real(dp) :: NWL_max_OB_PPCS = 2.41D0 ! [MW/m^2] Maximum OB wall load
-  real(dp) :: CF_bl_PPCS              ! [%] Blanket coverage factor (calculated)
+  real(dp) :: A_cov_PPCS = 1365.0D0
+  !! Total blanket coverage area [m^2]
 
-  ! 2012 blanket report values and unused parameters
-  ! real(dp) :: e_Li_PPCS = 60.0D0      ! [%] Li6 enrichment
-  ! real(dp) :: A_FW_IB_PPCS = 348.2D0  ! [m^2] IB first wall area
-  ! real(dp) :: A_FW_OB_PPCS = 905.6D0  ! [m^2] OB first wall area
-  ! character(len=13) :: breeder_PPCS = 'Orthosilicate' ! Breeder type
-  ! real(dp) :: f_peak_PPCS = 1.21D0      ! [--] Neutron wall load peaking factor
-  ! real(dp) :: M_E_PPCS = 1.38D0       ! [--] Energy multiplication factor
-  ! real(dp) :: t_BZ_IB_PPCS = 23.5D0   ! [cm] IB Breeding Zone thickness
-  ! real(dp) :: t_BZ_OB_PPCS = 50.4D0   ! [cm] OB Breeding Zone thickness
-  ! real(dp) :: TBR_PPCS = 1.09D0       ! [--] Tritium Breeding Ratio
-  ! real(dp) :: e_Li_PPCS = 30.0D0      ! [%] Li6 enrichment
-  ! real(dp) :: t_BZ_IB_PPCS = 36.5D0   ! [cm] IB Breeding Zone thickness
-  ! real(dp) :: t_BZ_OB_PPCS = 46.5D0   ! [cm] OB Breeding Zone thickness
-  ! real(dp) :: TBR_PPCS = 1.12D0       ! [--] Tritium Breeding Ratio
+  real(dp) :: A_FW_PPCS = 1253.0D0
+  !! First wall area [m^2]
+
+  real(dp) :: NWL_av_PPCS = 1.94D0
+  !! Average neutron wall load [MW/m^2]
+
+  real(dp) :: NWL_av_IB_PPCS = 1.73D0
+  !! Average IB wall load [MW/m^2]
+
+  real(dp) :: NWL_av_OB_PPCS = 1.92D0
+  !! Average OB wall load [MW/m^2]
+
+  real(dp) :: NWL_max_IB_PPCS = 1.99D0
+  !! Maximum IB wall load [MW/m^2]
+
+  real(dp) :: NWL_max_OB_PPCS = 2.41D0
+  !! Maximum OB wall load [MW/m^2]
+
+  real(dp) :: CF_bl_PPCS
+  !! Blanket coverage factor (calculated) [%]
 
   ! Power density pre-exponential terms and decay lengths
-  real(dp) :: q_0_BZ_breed_IB = 23.41D0 ! [W/cm^3] Pre-exp term in IB BZ breeder
-  real(dp) :: q_0_BZ_breed_OB = 28.16D0 ! [W/cm^3] Pre-exp term in OB BZ breeder
-  real(dp) :: lambda_q_BZ_breed_IB = 44.56D0 ! [cm] Decay length in IB BZ breeder
-  real(dp) :: lambda_q_BZ_breed_OB = 28.37D0 ! [cm] Decay length in OB BZ breeder
+  real(dp) :: q_0_BZ_breed_IB = 23.41D0
+  !! Pre-exp term in IB BZ breeder [W/cm^3]
 
-  real(dp) :: q_0_BZ_Be_IB = 7.5D0 ! [W/cm^3] Pre-exp term in IB BZ Beryllium
-  real(dp) :: q_0_BZ_Be_OB = 8.85D0 ! [W/cm^3] Pre-exp term in OB BZ Beryllium
-  real(dp) :: lambda_q_BZ_Be_IB = 21.19D0 ! [cm] Decay length in IB BZ Beryllium
-  real(dp) :: lambda_q_BZ_Be_OB = 19.33D0 ! [cm] Decay length in OB BZ Beryllium
+  real(dp) :: q_0_BZ_breed_OB = 28.16D0
+  !! Pre-exp term in OB BZ breeder [W/cm^3]
 
-  real(dp) :: q_0_BZ_steels_IB = 9.04D0 ! [W/cm^3] Pre-exp term in IB BZ steels
-  real(dp) :: q_0_BZ_steels_OB = 9.93D0 ! [W/cm^3] Pre-exp term in OB BZ steels
-  real(dp) :: lambda_q_BZ_steels_IB = 21.59D0 ! [cm] Decay length in IB BZ steels
-  real(dp) :: lambda_q_BZ_steels_OB = 20.61D0 ! [cm] Decay length in OB BZ steels
+  real(dp) :: lambda_q_BZ_breed_IB = 44.56D0
+  !! Decay length in IB BZ breeder [cm]
 
-  real(dp) :: lambda_EU = 11.57D0  ! [cm] Decay length in EUROFER
-  real(dp) :: lambda_q_BM_IB       ! [cm] Decay length in IB BM (calculated)
-  real(dp) :: lambda_q_BM_OB       ! [cm] Decay length in OB BM (calculated)
-  real(dp) :: lambda_q_BP_IB       ! [cm] Decay length in IB BP (calculated)
-  real(dp) :: lambda_q_BP_OB       ! [cm] Decay length in OB BP (calculated)
-  real(dp) :: lambda_q_VV = 6.92D0 ! [cm] Decay length in Vacuum Vessel
+  real(dp) :: lambda_q_BZ_breed_OB = 28.37D0
+  !! Decay length in OB BZ breeder [cm]
+
+  real(dp) :: q_0_BZ_Be_IB = 7.5D0
+  !! Pre-exp term in IB BZ Beryllium [W/cm^3]
+
+  real(dp) :: q_0_BZ_Be_OB = 8.85D0
+  !! Pre-exp term in OB BZ Beryllium [W/cm^3]
+
+  real(dp) :: lambda_q_BZ_Be_IB = 21.19D0
+  !! Decay length in IB BZ Beryllium [cm]
+
+  real(dp) :: lambda_q_BZ_Be_OB = 19.33D0
+  !! Decay length in OB BZ Beryllium [cm]
+
+  real(dp) :: q_0_BZ_steels_IB = 9.04D0
+  !! Pre-exp term in IB BZ steels [W/cm^3]
+
+  real(dp) :: q_0_BZ_steels_OB = 9.93D0
+  !! Pre-exp term in OB BZ steels [W/cm^3]
+
+  real(dp) :: lambda_q_BZ_steels_IB = 21.59D0
+  !! Decay length in IB BZ steels [cm]
+
+  real(dp) :: lambda_q_BZ_steels_OB = 20.61D0
+  !! Decay length in OB BZ steels [cm]
+
+  real(dp) :: lambda_EU = 11.57D0
+  !! Decay length in EUROFER [cm]
+
+  real(dp) :: lambda_q_BM_IB
+  !! Decay length in IB BM (calculated) [cm]
+
+  real(dp) :: lambda_q_BM_OB
+  !! Decay length in OB BM (calculated) [cm]
+
+  real(dp) :: lambda_q_BP_IB
+  !! Decay length in IB BP (calculated) [cm]
+
+  real(dp) :: lambda_q_BP_OB
+  !! Decay length in OB BP (calculated) [cm]
+
+  real(dp) :: lambda_q_VV = 6.92D0
+  !! Decay length in Vacuum Vessel [cm]
 
   ! Fast neutron flux pre-exponential terms and decay lengths
-  real(dp) :: phi_0_n_BZ_IB = 5.12D14  ! [n/cm^2/sec] Pre-exp term in IB BZ
-  real(dp) :: phi_0_n_BZ_OB = 5.655D14 ! [n/cm^2/sec] Pre-exp term in OB BZ
-  real(dp) :: lambda_n_BZ_IB = 18.79D0 ! [cm] Decay length in IB BZ
-  real(dp) :: lambda_n_BZ_OB = 19.19D0 ! [cm] Decay length in OB BZ
-  real(dp) :: lambda_n_VV = 8.153D0    ! [cm] Decay length in VV
+  real(dp) :: phi_0_n_BZ_IB = 5.12D14  
+  !! Pre-exp term in IB BZ [n/cm^2/sec]
 
-  ! [n/cm^2/sec] Reference fast neutron flux on VV inner side [Fish09]
+  real(dp) :: phi_0_n_BZ_OB = 5.655D14 
+  !! Pre-exp term in OB BZ [n/cm^2/sec]
+
+  real(dp) :: lambda_n_BZ_IB = 18.79D0 
+  !! Decay length in IB BZ [cm]
+
+  real(dp) :: lambda_n_BZ_OB = 19.19D0 
+  !! Decay length in OB BZ [cm]
+
+  real(dp) :: lambda_n_VV = 8.153D0    
+  !! Decay length in VV [cm]
+
   real(dp) :: phi_n_0_VV_ref = 2.0D10
+  !! Reference fast neutron flux on VV inner side [Fish09] [n/cm^2/sec]
 
   ! Vacuum vessel helium production pre-exponential terms and decay lengths
-  real(dp) :: Gamma_He_0_ref = 1.8D-3  ! [appm/yr] Pre-exp term
-  real(dp) :: lambda_He_VV = 7.6002D0  ! [cm] Decay length
+  real(dp) :: Gamma_He_0_ref = 1.8D-3
+  !! Pre-exp term [appm/yr]
 
-  ! [dpa] Allowable neutron damage to the FW EUROFER
+  real(dp) :: lambda_He_VV = 7.6002D0 
+  !! Decay length [cm]
+
   real(dp) :: D_EU_max = 60.0D0
+  !! Allowable neutron damage to the FW EUROFER [dpa]
 
   ! Variables used in this module, ultimately to be set via the calling routine
   ! to values given by PROCESS variables
-  real(dp), public :: P_n = 2720.0D0    ! [MW] Fusion neutron power
-  real(dp), public :: NWL_av = 1.94D0   ! [MW/m^2] Average neutron wall load
-  real(dp), public :: f_peak = 1.21D0   ! [--] NWL peaking factor
-  real(dp), public :: t_FW_IB = 2.3D0   ! [cm] IB first wall thickness
-  real(dp), public :: t_FW_OB = 2.3D0   ! [cm] OB first wall thickness
-  real(dp), public :: A_FW_IB = 3.5196D6 ! [cm^2] IB first wall area
-  real(dp), public :: A_FW_OB = 9.0504D6 ! [cm^2] OB first wall area
-  real(dp), public :: A_bl_IB = 3.4844D6 ! [cm^2] IB blanket area
-  real(dp), public :: A_bl_OB = 8.9599D6 ! [cm^2] OB blanket area
-  real(dp), public :: A_VV_IB = 3.8220D6 ! [cm^2] IB shield/VV area
-  real(dp), public :: A_VV_OB = 9.8280D6 ! [cm^2] OB shield/VV area
-  real(dp), public :: CF_bl = 91.7949D0 ! [%] Blanket coverage factor
-  integer, public :: n_ports_div = 2             ! [ports] Number of divertor ports
-  integer, public :: n_ports_H_CD_IB = 2         ! [ports] Number of IB H&CD ports
-  integer, public :: n_ports_H_CD_OB = 2         ! [ports] Number of OB H&CD ports
-  character(len=5), public :: H_CD_ports = 'small' ! Type of H&CD ports (small or large)
-  real(dp), public :: e_Li = 60.0D0     ! [%] Lithium 6 enrichment
-  real(dp), public :: t_plant = 40.0D0  ! [FPY] Plant lifetime
-  real(dp), public :: alpha_m = 0.75D0  ! [--] Availability factor
-  real(dp), public :: alpha_puls = 1.0D0 ! [--] Pulsed regime fraction
+  real(dp), public :: P_n = 2720.0D0
+  !! Fusion neutron power [MW]
 
-  ! Breeder type (allowed values are Orthosilicate, Metatitanate or Zirconate)
+  real(dp), public :: NWL_av = 1.94D0 
+  !! Average neutron wall load [MW/m^2]
+
+  real(dp), public :: f_peak = 1.21D0 
+  !! NWL peaking factor [--]
+
+  real(dp), public :: t_FW_IB = 2.3D0 
+  !! IB first wall thickness [cm]
+
+  real(dp), public :: t_FW_OB = 2.3D0
+  !! OB first wall thickness [cm]
+
+  real(dp), public :: A_FW_IB = 3.5196D6
+  !! IB first wall area [cm^2]
+
+  real(dp), public :: A_FW_OB = 9.0504D6
+  !! OB first wall area [cm^2]
+
+  real(dp), public :: A_bl_IB = 3.4844D6
+  !! IB blanket area [cm^2]
+
+  real(dp), public :: A_bl_OB = 8.9599D6
+  !! OB blanket area [cm^2]
+
+  real(dp), public :: A_VV_IB = 3.8220D6
+  !! IB shield/VV area [cm^2]
+
+  real(dp), public :: A_VV_OB = 9.8280D6
+  !! OB shield/VV area [cm^2]
+
+  real(dp), public :: CF_bl = 91.7949D0
+  !! Blanket coverage factor [%]
+
+  integer, public :: n_ports_div = 2    
+  !! Number of divertor ports [ports]
+
+  integer, public :: n_ports_H_CD_IB = 2
+  !! Number of IB H&CD ports [ports]
+
+  integer, public :: n_ports_H_CD_OB = 2
+  !! Number of OB H&CD ports [ports]
+
+  character(len=5), public :: H_CD_ports = 'small'
+  !! Type of H&CD ports (small or large)
+
+  real(dp), public :: e_Li = 60.0D0     
+  !! Lithium 6 enrichment [%]
+  
+  real(dp), public :: t_plant = 40.0D0
+  !! Plant lifetime [FPY]
+
+  real(dp), public :: alpha_m = 0.75D0
+  !! Availability factor [--]
+
+  real(dp), public :: alpha_puls = 1.0D0
+  !! Pulsed regime fraction [--]
+
   character(len=20), public :: breeder = 'Orthosilicate'
+  !! Breeder type (allowed values are Orthosilicate, Metatitanate or Zirconate)
 
   ! Inboard parameters
-  real(dp), public :: t_BZ_IB = 36.5D0     ! [cm] BZ thickness
-  real(dp), public :: t_BM_IB = 17.0D0     ! [cm] BM thickness
-  real(dp), public :: t_BP_IB = 30.0D0     ! [cm] BP thickness
-  real(dp), public :: t_VV_IB = 35.0D0     ! [cm] VV thickness
-  real(dp), public :: alpha_BM_IB = 40.0D0  ! [%] Helium fraction in the IB BM
-  real(dp), public :: alpha_BP_IB = 65.95D0 ! [%] Helium fraction in the IB BP
-  real(dp), public :: chi_Be_BZ_IB = 69.2D0 ! [%] Beryllium vol. frac. in IB BZ
-  real(dp), public :: chi_breed_BZ_IB = 15.4D0 ! [%] Breeder vol. frac. in IB BZ
-  real(dp), public :: chi_steels_BZ_IB = 9.8D0 ! [%] Steels vol. frac. in IB BZ
+  real(dp), public :: t_BZ_IB = 36.5D0
+  !! BZ thickness [cm]
+
+  real(dp), public :: t_BM_IB = 17.0D0
+  !! BM thickness [cm]
+
+  real(dp), public :: t_BP_IB = 30.0D0
+  !! BP thickness [cm]
+
+  real(dp), public :: t_VV_IB = 35.0D0
+  !! VV thickness [cm]
+
+  real(dp), public :: alpha_BM_IB = 40.0D0 
+  !! Helium fraction in the IB BM [%]
+
+  real(dp), public :: alpha_BP_IB = 65.95D0
+  !! Helium fraction in the IB BP [%]
+
+  real(dp), public :: chi_Be_BZ_IB = 69.2D0
+  !! Beryllium vol. frac. in IB BZ [%]
+
+  real(dp), public :: chi_breed_BZ_IB = 15.4D0
+  !! Breeder vol. frac. in IB BZ [%]
+
+  real(dp), public :: chi_steels_BZ_IB = 9.8D0
+  !! Steels vol. frac. in IB BZ [%]
 
   ! Outboard parameters
-  real(dp), public :: t_BZ_OB = 46.5D0     ! [cm] BZ thickness
-  real(dp), public :: t_BM_OB = 27.0D0     ! [cm] BM thickness
-  real(dp), public :: t_BP_OB = 35.0D0     ! [cm] BP thickness
-  real(dp), public :: t_VV_OB = 65.0D0     ! [cm] VV thickness
-  real(dp), public :: alpha_BM_OB = 40.0D0  ! [%] Helium fraction in the OB BM
-  real(dp), public :: alpha_BP_OB = 67.13D0 ! [%] Helium fraction in the OB BP
-  real(dp), public :: chi_Be_BZ_OB = 69.2D0 ! [%] Beryllium vol. frac. in OB BZ
-  real(dp), public :: chi_breed_BZ_OB = 15.4D0 ! [%] Breeder vol. frac. in OB BZ
-  real(dp), public :: chi_steels_BZ_OB = 9.8D0 ! [%] Steels vol. frac. in OB BZ
+  real(dp), public :: t_BZ_OB = 46.5D0
+  !! BZ thickness [cm]
+
+  real(dp), public :: t_BM_OB = 27.0D0
+  !! BM thickness [cm]
+
+  real(dp), public :: t_BP_OB = 35.0D0
+  !! BP thickness [cm]
+
+  real(dp), public :: t_VV_OB = 65.0D0
+  !! VV thickness [cm]
+
+  real(dp), public :: alpha_BM_OB = 40.0D0 
+  !! Helium fraction in the OB BM [%]
+
+  real(dp), public :: alpha_BP_OB = 67.13D0
+  !! Helium fraction in the OB BP [%]
+
+  real(dp), public :: chi_Be_BZ_OB = 69.2D0
+  !! Beryllium vol. frac. in OB BZ [%]
+
+  real(dp), public :: chi_breed_BZ_OB = 15.4D0
+  !! Breeder vol. frac. in OB BZ [%]
+
+  real(dp), public :: chi_steels_BZ_OB = 9.8D0
+  !! Steels vol. frac. in OB BZ [%]
 
   ! Model outputs
-  real(dp), public :: pnuctfi  ! [MW/m3] Nuclear heating on IB TF coil
-  real(dp), public :: pnuctfo  ! [MW/m3] Nuclear heating on OB TF coil
-  real(dp), public :: P_th_tot ! [MW] Nuclear power generated in blanket
-  real(dp), public :: pnucsh   ! [MW] Nuclear power generated in shield/VV
-  real(dp), public :: M_E      ! [--] Energy multiplication factor
-  real(dp), public :: tbratio  ! [--] Tritium breeding ratio
-  real(dp), public :: G_tot    ! [g/day] Tritium production rate
-  real(dp), public :: nflutfi  ! [n/cm2] Fast neutron fluence on IB TF coil
-  real(dp), public :: nflutfo  ! [n/cm2] Fast neutron fluence on OB TF coil
-  real(dp), public :: vvhemini ! [appm] minimum final He. conc in IB VV
-  real(dp), public :: vvhemino ! [appm] minimum final He. conc in OB VV
-  real(dp), public :: vvhemaxi ! [appm] maximum final He. conc in IB VV
-  real(dp), public :: vvhemaxo ! [appm] maximum final He. conc in OB VV
-  real(dp), public :: t_bl_fpy ! [y] blanket lifetime in full power years
-  real(dp), public :: t_bl_y   ! [y] blanket lifetime in calendar years
+  real(dp), public :: pnuctfi 
+  !! Nuclear heating on IB TF coil [MW/m3]
 
-  ! Inboard/outboard void fraction of blanket
+  real(dp), public :: pnuctfo 
+  !! Nuclear heating on OB TF coil [MW/m3]
+
+  real(dp), public :: P_th_tot
+  !! Nuclear power generated in blanket [MW]
+
+  real(dp), public :: pnucsh  
+  !! Nuclear power generated in shield/VV [MW]
+
+  real(dp), public :: M_E     
+  !! Energy multiplication factor [--]
+
+  real(dp), public :: tbratio 
+  !! Tritium breeding ratio [--]
+
+  real(dp), public :: G_tot   
+  !! Tritium production rate [g/day]
+
+  real(dp), public :: nflutfi 
+  !! Fast neutron fluence on IB TF coil [n/cm2]
+
+  real(dp), public :: nflutfo 
+  !! Fast neutron fluence on OB TF coil [n/cm2]
+
+  real(dp), public :: vvhemini
+  !! minimum final He. conc in IB VV [appm]
+
+  real(dp), public :: vvhemino
+  !! minimum final He. conc in OB VV [appm]
+
+  real(dp), public :: vvhemaxi
+  !! maximum final He. conc in IB VV [appm]
+
+  real(dp), public :: vvhemaxo
+  !! maximum final He. conc in OB VV [appm]
+
+  real(dp), public :: t_bl_fpy
+  !! blanket lifetime in full power years [y]
+
+  real(dp), public :: t_bl_y  
+  !! blanket lifetime in calendar years [y]
+
   real(dp), private :: vfblkti, vfblkto
+  !! Inboard/outboard void fraction of blanket
 
   ! Component volume info
-  ! Blanket internal half-height (m)
   real(dp), private :: hblnkt
+  !! Blanket internal half-height (m)
 
-  ! Shield internal half-height (m)
   real(dp), private :: hshld
+  !! Shield internal half-height (m)
 
-  ! Clearance between uppermost PF coil and cryostat lid (m)
   real(dp), private :: hcryopf
+  !! Clearance between uppermost PF coil and cryostat lid (m)
 
-  ! Vacuum vessel internal half-height (m)
   real(dp), private :: hvv
+  !! Vacuum vessel internal half-height (m)
 
-  ! Volume of inboard and outboard shield (m3)
   real(dp), private :: volshldi, volshldo
+  !! Volume of inboard and outboard shield (m3)
 
 contains
 
-  ! TODO : global check
-  ! TODO : Output section for model!
+  ! #TODO : global check
+  ! #TODO : Output section for model!
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
