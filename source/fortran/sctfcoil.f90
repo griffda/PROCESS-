@@ -179,7 +179,7 @@ subroutine sctfcoil(outfile,iprint)
         hmax
     use tfcoil_variables, only: i_tf_turns_integer, wwp1, estotftgj, tfind, &
         ritfc, dr_tf_wp, n_tf, bmaxtfrp, bmaxtf, n_tf_stress_layers, n_rad_per_layer, &
-        i_tf_sup, i_tf_shape, i_tf_wp_geom, tinstf, tfinsgap
+        i_tf_sup, i_tf_shape, i_tf_wp_geom, i_tf_case_geom, tinstf, tfinsgap
     use constants, only: rmu0, pi
     use physics_variables, only: itart
 
@@ -207,7 +207,7 @@ subroutine sctfcoil(outfile,iprint)
     ! ---
     ! Superconducting magnets
     if ( i_tf_sup == 1 ) then 
-        call sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
+        call sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
 
     ! Resitive magnets
     else
@@ -269,19 +269,32 @@ subroutine tf_global_geometry()
     use tfcoil_variables, only: tinstf, tfc_sidewall_is_fraction, tfareain, &
         ritfc, tftort, n_tf, casthi_is_fraction, bmaxtf, arealeg, &
         casthi_fraction, casths_fraction, tfinsgap, rbmax, casthi, casths, i_tf_sup, &
-        dztop, tinstf, tftort, tfinsgap
+        dztop, tinstf, tftort, tfinsgap, i_tf_case_geom
     use constants, only: pi
     implicit none
     
 
+    
     ! Inner leg geometry
     ! ---
+
     ! Radial position of inner/outer edge of inboard TF coil leg [m]
     r_tf_inboard_in =  r_tf_inboard_mid - 0.5D0 * tfcth
     r_tf_inboard_out = r_tf_inboard_mid + 0.5D0 * tfcth
 
-    ! Annular area of midplane containing TF coil inboard legs ( WP + casing ) [m2]
-    tfareain = pi * (r_tf_inboard_out**2 - r_tf_inboard_in**2)
+    ! Half toroidal angular extent of a single TF coil inboard leg
+    theta_coil = pi / n_tf 
+    tan_theta_coil = tan(theta_coil)
+
+    ! TF coil inboard legs mid-plane cross-section area (WP + casing ) [m2]
+    if ( i_tf_case_geom == 0 ) then
+        ! Circular front case
+        tfareain = pi * ( r_tf_inboard_out**2 - r_tf_inboard_in**2 )
+    else
+        ! Straight front case
+        tfareain = n_tf * sin(theta_coil)*cos(theta_coil) * r_tf_inboard_out**2  &
+                 - pi * r_tf_inboard_in**2 
+    end if
 
     ! Vertical distance from the midplane to the top of the tapered section [m]
     if ( itart ==  1 ) h_cp_top = rminor * kappa + dztop 
@@ -294,9 +307,6 @@ subroutine tf_global_geometry()
     r_tf_outboard_in =  r_tf_outboard_mid - tfthko * 0.5D0 
     r_tf_outboard_out = r_tf_outboard_mid + tfthko * 0.5D0 
 
-    ! Half toroidal angular extent of a single TF coil inboard leg
-    theta_coil = pi/n_tf              ! eq(9)
-    tan_theta_coil = tan(theta_coil)
 
     ! TF coil width in toroidal direction at inboard leg outer edge [m]
     ! *** 
@@ -359,7 +369,7 @@ end subroutine tf_current
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
+subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
     !! Author : S. Kahn, CCFE
     !! Seting the WP, case and tunrs geometry for SC magnets
     
@@ -375,6 +385,9 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
 
     ! Inputs
     ! ------
+    integer, intent(in) :: i_tf_case_geom
+    !! Switch for TF case geometry selection
+
     integer, intent(in) :: i_tf_wp_geom
     !! Switch for TF WP geometry selection
 
@@ -387,7 +400,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
     call tf_wp_geom(i_tf_wp_geom)
 
     ! Calculating the TF steel casing areas 
-    call tf_case_geom(i_tf_wp_geom)
+    call tf_case_geom(i_tf_wp_geom, i_tf_case_geom)
 
     ! WP/trun currents
     call tf_wp_currents
@@ -575,20 +588,28 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
         
     end subroutine tf_wp_geom
 
-    subroutine tf_case_geom(i_tf_wp_geom)
+    subroutine tf_case_geom(i_tf_wp_geom, i_tf_case_geom)
         !! Author : S. Kahn, CCFE
         !! Seting the case geometry and area for SC magnets
 
         use error_handling, only: fdiags, report_error
         use tfcoil_variables, only: acasetf, acasetfo, arealeg, tfareain, n_tf, &
-            casths
+            casths, casthi
         implicit none
 
+        ! Inputs
+        ! ------
         integer, intent(in) :: i_tf_wp_geom
         !! Switch for TF WP geometry selection
         !!   0 : Rectangular geometry 
         !!   1 : Double rectangular geometry 
         !!   2 : Trapezoidal geometry (constant lateral casing thickness)
+
+        integer, intent(in) :: i_tf_case_geom
+        !! Switch for TF case geometry selection
+        !!   0 : Circular front case (ITER design)
+        !!   1 : Straight front case
+        ! ------
 
         ! Inboard leg cross-sectional area of surrounding case [m2]
         acasetf = (tfareain / n_tf) - awpc
@@ -597,9 +618,18 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
         acasetfo = arealeg - awpc
 
         ! Front casing area [m2]
-        a_case_front = theta_coil * r_tf_inboard_out**2  &
-                     - tan_theta_coil * r_wp_outer**2 
-        
+        if ( i_tf_case_geom == 0 ) then
+
+            ! Circular front case
+            a_case_front = theta_coil * r_tf_inboard_out**2  &
+                         - tan_theta_coil * r_wp_outer**2 
+        else
+            
+            ! Straight front case
+            a_case_front = ( (r_wp_outer + casthi)**2 - r_wp_outer**2 ) * tan_theta_coil
+        end if
+
+
         ! Nose casing area [m2]
         a_case_nose = tan_theta_coil * r_wp_inner**2  &
                     - theta_coil * r_tf_inboard_in**2

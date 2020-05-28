@@ -2804,6 +2804,11 @@ module tfcoil_variables
   !!   if i_tf_turns_integer = 0 : Double rectangular
   !!   if i_tf_turns_integer = 1 : Rectangular 
 
+  integer :: i_tf_case_geom = 0
+  !! Switch for TF case geometry selection
+  !!   0 : Circular front case (ITER design)
+  !!   1 : Straight front case
+
   integer :: i_tf_turns_integer = 0
   !! Switch for TF coil integer/non-integer turns:
   !!   0 : non-integer turns
