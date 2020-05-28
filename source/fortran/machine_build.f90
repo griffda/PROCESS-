@@ -67,7 +67,14 @@ contains
     !  Local variables
 
 
-    real(dp) :: hbot,hfw,htop,r1,r2,r3,radius,r_tf_outboard_midl,vbuild, rbldtotf, deltf, vbuild1
+    real(dp) :: hbot,hfw,htop,r1,r2,r3,radius,r_tf_outboard_midl,vbuild, deltf, vbuild1
+    
+    real(dp) :: r_tf_inboard_in
+    !! Inboard side inner radius [m]
+
+    real(dp) :: r_tf_inboard_out
+    !! Inboard side outer radius [m]
+
     real(dp) :: fwtth
 
     integer :: ripflag = 0
@@ -94,22 +101,24 @@ contains
       precomp = 0.0D0
     end if
 
+    ! Inboard side inner radius [m]
+    r_tf_inboard_in = bore + ohcth + precomp + gapoh
+
     ! Issue #514 Radial dimensions of inboard leg
     ! Calculate tfcth if dr_tf_wp is an iteration variable (140)
-    if (any(ixc(1:nvar) == 140) ) then
-        tfcth = dr_tf_wp + casthi + thkcas
-    endif
+    if ( any(ixc(1:nvar) == 140) ) then
+        tfcth = ( r_tf_inboard_in + dr_tf_wp + casthi + thkcas ) / cos(pi/n_tf) &
+              - r_tf_inboard_in
+    end if
 
-    ! Radial build to tfcoil
-    r_tf_inboard_mid = bore + ohcth + precomp + gapoh + 0.5D0*tfcth
-    rbldtotf = r_tf_inboard_mid + 0.5D0*tfcth
+    ! Radial build to tfcoil middle [m]
+    r_tf_inboard_mid = r_tf_inboard_in + 0.5D0*tfcth
 
-    ! Additional gap spacing due to flat surfaces of TF
-    if ( i_tf_sup == 1 ) then
-      deltf = rbldtotf * ((1.0d0 / cos(pi/n_tf)) - 1.0d0) + tftsgap
-    else
-      deltf = tftsgap
-    end if 
+    ! Radial build to tfcoil plasma facing side [m]
+    r_tf_inboard_out = r_tf_inboard_in + tfcth
+
+    ! Outer TF separation gap
+    deltf = tftsgap
 
     ! Radius of the centrepost at the top of the machine
     if ( itart == 1 ) then
@@ -126,7 +135,7 @@ contains
     end if 
 
     !  Radial position of vacuum vessel [m]
-    r_vv_inboard_out = rbldtotf + deltf + thshield + gapds + ddwi
+    r_vv_inboard_out = r_tf_inboard_out + deltf + thshield + gapds + ddwi
 
     ! Radial position of the plasma facing side of inboard neutronic shield
     r_sh_inboard_out = r_vv_inboard_out + shldith
