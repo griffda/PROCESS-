@@ -133,12 +133,6 @@ module constants
   real(dp), parameter :: denh2o = 985.0D0
   !! density of water (kg/m3)
 
-  real(dp) :: eyoung_copper = 117.0D9
-  !! Copper young modulus. Default value taken from wikipedia
-
-  real(dp) :: eyoung_al = 69.0D9 
-  !! Aluminium young modulus.  Default value taken from wikipedia
-
   real(dp), parameter :: k_copper = 330.0D0
   !! Copper thermal conductivity (W/m/K)
 
@@ -2735,16 +2729,13 @@ module tfcoil_variables
   logical :: tfc_sidewall_is_fraction
   !! logical switch to make casths a fraction of TF coil thickness (`casths_fraction`)
 
-  real(dp) :: conductor_width
-  !! Width of square conductor (m)
+  real(dp) :: t_conductor = 0.0D0
+  !! Conductor (cable + steel conduit) area averaged dimension [m]
+  
+  real(dp) :: t_turn = 0.0D0
+  !! WP turn squared dimensions [m]
 
-  real(dp) :: leno
-  !! Dimension of each turn including inter-turn insulation (m)
-
-  real(dp) :: leni
-  !! Dimension of space inside conductor (m)
-
-  real(dp) :: acs
+  real(dp) :: acs = 0.0D0
   !! Area of space inside conductor (m2)
 
   real(dp) :: cdtfleg = 0.0D0
@@ -2790,21 +2781,33 @@ module tfcoil_variables
   !! Bi-2212 superconductor, to describe the level of technology assumed (i.e. to 
   !! account for stress, fatigue, radiation, AC losses, joints or manufacturing 
   !! variations; 1.0 would be very optimistic)
-
+  
   real(dp) :: insstrain = 0.0D0
-  !! radial strain in insulator
+  !! Radial strain in insulator
+
+  integer :: i_tf_plane_stress = 1
+  !! Switch for the TF coil stress model
+  !!   0 : New generalized plane strain formulation 
+  !!   1 : Old plane stress model (only for SC)
 
   integer :: i_tf_tresca = 0
-  !! switch for TF coil conduit Tresca stress criterion:
-  !!
-  !! - =0 Tresca (no adjustment)
-  !! - =1 Tresca with CEA adjustment factors (radial+2%, vertical+60%)
+  !! Switch for TF coil conduit Tresca stress criterion:
+  !!   0 : Tresca (no adjustment);
+  !!   1 : Tresca with CEA adjustment factors (radial+2%, vertical+60%) </UL>
   
+  integer :: i_tf_wp_geom = -1
+  !! Switch for TF WP geometry selection
+  !!   0 : Rectangular geometry 
+  !!   1 : Double rectangular geometry 
+  !!   2 : Trapezoidal geometry (constant lateral casing thickness)
+  !! Default setting for backward compatibility 
+  !!   if i_tf_turns_integer = 0 : Double rectangular
+  !!   if i_tf_turns_integer = 1 : Rectangular 
+
   integer :: i_tf_turns_integer = 0
   !! Switch for TF coil integer/non-integer turns:
-  !!
-  !! - =0 non-integer turns
-  !! - =1 integer turns
+  !!   0 : non-integer turns
+  !!   1 : integer turns
 
   integer :: i_tf_sc_mat = 1
   !! Switch for superconductor material in TF coils:
@@ -2845,16 +2848,16 @@ module tfcoil_variables
   integer :: i_tf_bucking = -1
   !! Switch for TF inboard suport structure design:
   !! 
-  !! - =-1 : Default option
+  !! Default setting for backward compatibility
   !!     - if copper resistive TF (i_tf_sup = 0) : Free standing TF without bucking structure 
-  !!     - if Superconducting  TF (i_tf_sup = 1) : Free standing TF with a steel casing  
-  !!     - if cryo-aluminium   TF (i_tf_sup = 2) : Free standing TF with a bucking structure
+  !!     - if Superconducting TF  (i_tf_sup = 1) : Free standing TF with a steel casing  
+  !!     - if aluminium  TF       (i_tf_sup = 2) : Free standing TF with a bucking structure
   !!     Rem : the case is a bucking structure
   !! - =0 : Free standing TF without case/bucking cyliner (only a conductor layer)
   !! - =1 : Free standing TF with a case/bucking cylinder made of 
-  !!     - if copper resistive TF (i_tf_sup = 0) : Steel bucking cylinder
-  !!     - if Superconducting  TF (i_tf_sup = 1) : Steel casing
-  !!     - if cryo-aluminium   TF (i_tf_sup = 2) : Nibron special bucking cylinder
+  !!     - if copper resistive     TF (i_tf_sup = 0) : used defined bucking cylinder
+  !!     - if Superconducting      TF (i_tf_sup = 1) : Steel casing
+  !!     - if aluminium resisitive TF (i_tf_sup = 2) : used defined bucking cylinder
   !! - =2 : The TF is in contact with the CS : "bucked and weged design"
   !!       Fast version : thin TF-CS interface neglected in the stress calculations (3 layers)
   !! - =3 : The TF is in contact with the CS : "bucked and weged design"
@@ -2878,7 +2881,7 @@ module tfcoil_variables
   !! allowable TF coil winding pack current density, for dump temperature rise protection (A/m2)
 
   real(dp) :: jwptf = 0.0D0
-  !! winding pack current density (A/m2)
+  !! winding pack engineering current density (A/m2)
 
   real(dp) :: oacdcp = 0.0D0
   !! Overall current density in TF coil inboard legs midplane (A/m2)
@@ -2890,9 +2893,8 @@ module tfcoil_variables
 
   real(dp) :: eyoung_ins = 1.0D8
   !! Insulator Young's modulus [Pa]. Default value (1.0D8) setup the following values
-  !!
-  !!  - SC TF, eyoung_ins = 20 Mpa (default value from DDD11-2 v2 2 (2009))
-  !!  - Cryo-Al TF, eyoung_ins = 2.5 MPa (Kapton polymer)
+  !!  - SC TF, eyoung_ins = 20 Gpa (default value from DDD11-2 v2 2 (2009))
+  !!  - Al TF, eyoung_ins = 2.5 GPa (Kapton polymer)
 
   real(dp) :: eyoung_steel = 2.05D11
   !! Steel case Young's modulus (Pa) (default value from DDD11-2 v2 2 (2009))
@@ -2900,9 +2902,15 @@ module tfcoil_variables
   real(dp) :: eyoung_winding = 6.6D8
   !! SC TF coil winding Young's modulus (Pa)
   
-  real(dp) :: eyoung_nibron = 141.0D9 
-  !! Cryogenic aluminium magnet bucking cylinder young modulus. Ref: Gary's personnal communication
+  real(dp) :: eyoung_res_tf_buck = 150.0D9 
+  !! Resistive TF magnets bucking cylinder young modulus (Pa)
 
+  real(dp) :: eyoung_copper = 117.0D9
+  !! Copper young modulus. Default value taken from wikipedia
+
+  real(dp) :: eyoung_al = 69.0D9 
+  !! Aluminium young modulus.  Default value taken from wikipedia
+  
   real(dp) :: poisson_steel = 0.3D0
   !! Steel Poisson's ratio 
   
@@ -3124,7 +3132,7 @@ module tfcoil_variables
   !! inboard TF coil case outer (non-plasma side) thickness (m) (`iteration variable 57`)
   !! (calculated for stellarators)
 
-  real(dp) :: thkwp = 0.0D0
+  real(dp) :: dr_tf_wp = 0.0D0
   !! radial thickness of winding pack (m) (`iteration variable 140`) (issue #514)
 
   real(dp) :: thwcndut = 8.0D-3
@@ -3206,7 +3214,7 @@ module tfcoil_variables
   !! For `itart=1`, coil is return limb plus centrepost/n_tf
   
   real(dp) :: whtconal = 0.0D0
-  !! Cryogenic aluminium mass in TF coil conductor (kg/coil).
+  !! Aluminium mass in TF coil conductor (kg/coil).
   !! For `itart=1`, coil is return limb plus centrepost/n_tf
   
   real(dp) :: whtconin = 0.0D0

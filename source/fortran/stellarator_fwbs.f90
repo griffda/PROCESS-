@@ -1073,7 +1073,7 @@ contains
     use physics_variables, only: idivrt, kappa, pneutmw, rmajor, rminor, &
       triang, wallmw
     use process_output, only: ovarre, osubhd, ovarin, oheadr, ocmmnt
-    use tfcoil_variables, only: casthi, i_tf_sup, tfsai, tfsao, thkwp, tinstf
+    use tfcoil_variables, only: casthi, i_tf_sup, tfsai, tfsao, dr_tf_wp, tinstf
 		use constants, only: pi
 		use maths_library, only: eshellvol, eshellarea
     implicit none
@@ -1293,7 +1293,7 @@ contains
           !  Winding pack radial thickness, including groundwall insulation
 
           !wpthk = tfcth - 1.5D0 * thkcas  !  Old calculation
-          wpthk = thkwp + 2.0D0*tinstf
+          wpthk = dr_tf_wp + 2.0D0*tinstf
 
           !  Nuclear heating rate in inboard TF coil (MW/m**3)
 
@@ -1473,7 +1473,7 @@ contains
           ! !  Winding pack radial thickness, including groundwall insulation
 
           ! !wpthk = tfcth - 1.5D0 * thkcas  !  Old calculation
-          ! wpthk = thkwp + 2.0D0*tinstf
+          ! wpthk = dr_tf_wp + 2.0D0*tinstf
 
           ! !  Nuclear heating rate in inboard TF coil (MW/m**3)
 
@@ -2117,7 +2117,7 @@ contains
     use build_variables, only: blnkith, blnkoth, fwith, fwoth, shldith, shldoth
     use cost_variables, only: cfactr, tlife
     use physics_variables, only: wallmw
-    use tfcoil_variables, only: casthi, i_tf_sup, tfsai, tfsao, thkwp, &
+    use tfcoil_variables, only: casthi, i_tf_sup, tfsai, tfsao, dr_tf_wp, &
       tinstf
 
 		use maths_library, only: tril
@@ -2140,7 +2140,7 @@ contains
     !  Global shared variables
 
     !  Input: blnkith,blnkoth,casthi,cfactr,fwith,fwoth,i_tf_sup,shldith
-    !  Input: shldoth,tfsai,tfsao,thkwp,tinstf,tlife,wallmw
+    !  Input: shldoth,tfsai,tfsao,dr_tf_wp,tinstf,tlife,wallmw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2201,7 +2201,7 @@ contains
 
        !  Winding pack radial thickness, including groundwall insulation
 
-       wpthk = thkwp + 2.0D0*tinstf
+       wpthk = dr_tf_wp + 2.0D0*tinstf
 
        !  Nuclear heating rate in inboard TF coil (MW/m**3)
 

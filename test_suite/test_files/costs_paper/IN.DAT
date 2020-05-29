@@ -60,10 +60,6 @@ ixc = 10       * hfact * H factor on energy confinement times (iteration variabl
 boundl(10) = 0.1
 boundu(10) = 1.1
 
-*ixc = 12       * oacdcp * Overall current density in tf coil inboard legs (a/m2)
-*boundl(12) = 100000.0
-*boundu(12) = 150000000.0
-
 ixc = 13      * tfcth * Inboard tf coil thickness; (centrepost for st) (m)
 boundl(13) = 1.05
 boundu(13) = 5.0
@@ -149,7 +145,7 @@ boundl(57) = 0.05
 boundu(57) = 1.0
 
 ixc = 58      * thwcndut * Tf coil conduit case thickness (m)
-boundl(58) = 0.004
+boundl(58) = 0.003
 boundu(58) = 1.0
 
 ixc = 59      * fcutfsu * Copper fraction of cable conductor (tf coils)

@@ -155,8 +155,8 @@
     the internal dimensions of the coil. As shown in figure 2, the radial thickness 
     of the TF coil winding pack is:
 
-    \begin{equation}\label{eq: thkwp}
-    \text{thkwp} = \text{tfcth} - \text{casthi} - \text{thkcas} - 2\times \text{tinstf} 
+    \begin{equation}\label{eq:dr_tf_wp}
+    \text{dr\_tf\_wp} = \text{tfcth} - \text{casthi} - \text{thkcas} - 2\times \text{tinstf} 
     - 2\times \text{tfinsgap}
     \end{equation}
 
@@ -172,7 +172,7 @@
     \end{equation}
 
     \begin{equation}\label{eq: wwp2}
-    \text{wwp2} = 2((\text{radwp}-\frac{1}{2}\text{thkwp})\times \tan(\text{theta\_coil}) - 
+    \text{wwp2} = 2((\text{radwp}-\frac{1}{2}\text{dr\_tf\_wp})\times \tan(\text{theta\_coil}) - 
     \text{casths} - \text{tinstf}); \hspace{0.3cm} r < \text{radwp} 
     \end{equation}
 
@@ -182,14 +182,14 @@
     the coil. The total cross-sectional area of the winding pack is:
 
     \begin{equation}\label{eq: awptf}
-    \text{awptf} = (\frac{1}{2}\text{thkwp})(\text{wwp1}+\text{wwp2}) 
+    \text{awptf} = (\frac{1}{2}\text{dr\_tf\_wp})(\text{wwp1}+\text{wwp2}) 
     \end{equation}
 
     \noi The area of the entire winding pack, the insulation and insertion gap is:
 
     \begin{equation}\label{eq: awpc}
-    \text{awpc} = \frac{1}{2}\text{thkwp}(\text{wwp2} + 2\times \text{tinstf} 
-    + 2\times \text{tfinsgap}) + (\frac{1}{2}\text{thkwp} + 2\times \text{tinstf})(\text{wwp1} 
+    \text{awpc} = \frac{1}{2}\text{dr\_tf\_wp}(\text{wwp2} + 2\times \text{tinstf} 
+    + 2\times \text{tfinsgap}) + (\frac{1}{2}\text{dr\_tf\_wp} + 2\times \text{tinstf})(\text{wwp1} 
     + 2 \times \text{tinstf} + 2\times \text{tfinsgap})
     \end{equation}
 
@@ -333,13 +333,13 @@
     \noi The area of the winding pack is
 
     \begin{equation}\label{eq: awptf-int}
-    \text{awptf} = \text{thkwp} \times \text{wwp1}
+    \text{awptf} = \text{dr\_tf\_wp} \times \text{wwp1}
     \end{equation}
 
     \noi The area of the entire winding pack, the insulation and insertion gap is:
 
     \begin{equation}\label{eq: awpc-int}
-    \text{awpc} = (\text{thkwp} + 2\times \text{tinstf} + 2\times \text{tfinsgap}) 
+    \text{awpc} = (\text{dr\_tf\_wp} + 2\times \text{tinstf} + 2\times \text{tfinsgap}) 
     \times (\text{wwp1} + 2\times \text{tinstf} + 2\times \text{tfinsgap})
     \end{equation}
 
@@ -603,7 +603,7 @@
     shown in figure \ref{fig: turn-int}
 
     \begin{eqnarray}
-        \text{t\_turn\_radial} &=& \frac{\text{thkwp}}{\text{n\_layer}} \\
+        \text{t\_turn\_radial} &=& \frac{\text{dr\_tf\_wp}}{\text{n\_layer}} \\
         \text{t\_turn\_toroidal} &=& \frac{\text{t\_wp\_toroidal}}{\text{n\_pancake}}
     \end{eqnarray}
 
@@ -1012,7 +1012,7 @@
     \begin{itemize}
         \item $N_\mathrm{TF}$, the number of TF coils (n\_tf)
         \item $\Delta R_\mathrm{WP}$, the winding pack thickness without ground insulation and
-              insertion gap(thkwp)
+              insertion gap(dr\_tf\_wp)
         \item $R_\mathrm{in}$, the winding pack inboard (r\_wp\_outer) radius at the plasma facing side
         \item $R_\mathrm{out}$, the winding pack outboard (r\_tf\_outboard\_in + tinstf) radius at the plasma facing side 
     \end{itemize}

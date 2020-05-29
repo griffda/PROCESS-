@@ -151,7 +151,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use constants, only: dcopper, dalu, eyoung_al
+    use constants, only: dcopper, dalu
     use global_variables, only: run_tests, verbose, maxcal, runtitle
     use build_variables, only: fmsfw, blbmoth, blbuith, fmsbc, shldoth, &
       fmsdwi, shldtth, shldlth, vgap2, plleni, fwoth, vvblgap, fmsbl, &
@@ -270,19 +270,20 @@ contains
     use stellarator_variables, only: f_asym, isthtr, n_res, iotabar, fdivwet, &
       f_w, bmn, shear, m_res, f_rad, flpitch, istell
     use tfcoil_variables, only: fcoolcp, tfinsgap, vftf, &
-      quench_detection_ef, fhts, thkwp, rcool, rhotfleg, thkcas, &
+      quench_detection_ef, fhts, dr_tf_wp, rcool, rhotfleg, thkcas, &
       casthi, n_pancake, bcritsc, i_tf_sup, strncon_pf, thwcndut, farc4tf, &
       thicndut, tftmp, oacdcp, tmax_croco, ptempalw, tmargmin_tf, tmpcry, &
       alstrtf, dztop, dcond, strncon_cs, etapump, drtop, vcool, dcondins, &
       i_tf_tresca, dhecoil, tmaxpro, strncon_tf, n_tf, tcpav, fcutfsu, jbus, &
-      casthi_fraction, tmargmin_cs, sigvvall, vdalw, dcase, &
+      casthi_fraction, tmargmin_cs, sigvvall, vdalw, dcase, t_turn,&
       cpttf_max, tdmptf, casths, i_tf_turns_integer, quench_model, &
       tcritsc, layer_ins, tinstf, n_layer, tcoolin, ripmax, frhocp, &
       cpttf, tmargmin, casths_fraction, eff_tf_cryo, eyoung_ins, &
-      eyoung_steel, eyoung_nibron, eyoung_winding, f_vforce_inboard, &
+      eyoung_steel, eyoung_res_tf_buck, eyoung_winding, f_vforce_inboard, &
       fcoolleg, frholeg, ftoroidalgap, i_tf_sc_mat, i_tf_shape, i_tf_bucking, &
-      leno, n_tf_graded_layers, n_tf_joints, n_tf_joints_contact, poisson_al, &
-      poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact
+      n_tf_graded_layers, n_tf_joints, n_tf_joints_contact, poisson_al, &
+      poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact,&
+      i_tf_plane_stress, eyoung_al, i_tf_wp_geom
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
     use vacuum_variables, only: dwell_pump, pbase, tn, pumpspeedfactor, &
@@ -1645,8 +1646,8 @@ contains
        case ('tfcth')
           call parse_real_variable('tfcth', tfcth, 0.0D0, 10.0D0, &
                'TF coil thickness (m)')
-       case ('thkwp')
-          call parse_real_variable('thkwp', thkwp, 0.0D0, 10.0D0, &
+       case ('dr_tf_wp')
+          call parse_real_variable('dr_tf_wp', dr_tf_wp, 0.0D0, 10.0D0, &
                'TF coil winding pack radial thickness (m)')
 
        case ('tfootfi')
@@ -1788,8 +1789,8 @@ contains
        case ('eyoung_al')
           call parse_real_variable('eyoung_al', eyoung_al, 0.0D0, 1.0D0, &
                'Reinforced aluminium Young modulus for TF stress calc.')
-       case ('eyoung_nibron')
-          call parse_real_variable('eyoung_nibron', eyoung_nibron, 0.0D0, 1.0D0, &
+       case ('eyoung_res_tf_buck')
+          call parse_real_variable('eyoung_res_tf_buck', eyoung_res_tf_buck, 0.0D0, 1.0D0, &
                'Reinforced aluminium Young modulus for TF stress calc.')
        case ('farc4tf')
           call parse_real_variable('farc4tf', farc4tf, 0.0D0, 1.0D0, &
@@ -1825,16 +1826,22 @@ contains
           call parse_int_variable('n_tf_joints', n_tf_joints, 1, 50, &
                'Number of joints per turn')
        case ('eff_tf_cryo')
-          call parse_real_variable('eff_tf_cryo', eff_tf_cryo, -1.0D0, 1.0D0, &
+          call parse_real_variable('eff_tf_cryo', eff_tf_cryo, 0.0D0, 1.0D0, &
                'TF coil cryo-plane efficiency')  
+       case ('i_tf_plane_stress')
+         call parse_int_variable('i_tf_plane_stress', i_tf_plane_stress, 0, 1, &
+               'Switch for the TF stress model')
        case ('i_tf_tresca')
           call parse_int_variable('i_tf_tresca', i_tf_tresca, 0, 1, &
-                         'Switch for TF coil Tresca criterion.')
+                         'Switch for TF coil Tresca criterion')
+       case ('i_tf_wp_geom')
+          call parse_int_variable('i_tf_wp_geom', i_tf_wp_geom, 0, 2, &
+                    'Switch for TF WP geometry selection')
        case ('i_tf_turns_integer')
           call parse_int_variable('i_tf_turns_integer', i_tf_turns_integer, 0, 1, &
                     'Switch for TF coil integer/non-integer turns')
        case ('i_tf_bucking')
-          call parse_int_variable('i_tf_bucking', i_tf_bucking, -1, 3, &
+          call parse_int_variable('i_tf_bucking', i_tf_bucking, 0, 3, &
                'Switch for bucking cylinder (case)')
        case ('i_tf_sc_mat')
           call parse_int_variable('i_tf_sc_mat', i_tf_sc_mat, 1, 6, &
@@ -1950,13 +1957,13 @@ contains
                'Number of TF coils')
        case ('tftmp')
           call parse_real_variable('tftmp', tftmp, 0.01D0, 10.0D0, &
-               'Peak TF coil He coolant temp. (K)')
+               'Peak TF coil He coolant temp. (K)')      
+       case ('t_turn')
+          call parse_real_variable('t_turn', t_turn, 0.0D0, 0.1D0, &
+               'TF turn square dimensions (m)')
        case ('thicndut')
           call parse_real_variable('thicndut', thicndut, 0.0D0, 0.1D0, &
                'Conduit insulation thickness (m)')
-      case ('leno')
-          call parse_real_variable('leno', leno, 0.0D0, 0.2D0, &
-               'Dimension conductor area including steel and insulation (m)')
        case ('layer_ins')
           call parse_real_variable('layer_ins', layer_ins, 0.0D0, 0.1D0, &
                'Additional insulation thickness between layers (m)')
