@@ -41,5 +41,5 @@ OBS_VARS = {
     "tinstf":"dr_tf_ins",
     "casthi_fraction":"f_tf_case_out",
     "casthi":"dr_tf_case_out",
-    "eyoung_reinforced_al:eyoung_nibron"
+    "eyoung_reinforced_al":"eyoung_nibron"
 }
