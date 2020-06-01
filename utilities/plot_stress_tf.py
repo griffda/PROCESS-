@@ -53,6 +53,8 @@ if __name__ == '__main__':
     radius                  = list()
     radial_smeared_stress   = list()
     toroidal_smeared_stress = list()
+    vertical_smeared_stress = list()
+    tresca_smeared_stress   = list()
     radial_stress           = list()
     toroidal_stress         = list()
     vertical_stress         = list()
@@ -87,23 +89,27 @@ if __name__ == '__main__':
     vertical_stress         = data[5]
     radial_smeared_stress   = data[6]
     toroidal_smeared_stress = data[7]
-    vm_stress               = data[8]
-    tresca_stress           = data[9]
-    cea_tresca_stress       = data[10]
-    radial_displacement     = data[13]
+    vertical_smeared_stress = data[8]
+    vm_stress               = data[9]
+    tresca_stress           = data[10]
+    cea_tresca_stress       = data[11]
+    radial_displacement     = data[14]
             
+    for ii in range(0,len(radial_smeared_stress)) :
+        tresca_smeared_stress.append( max(abs(radial_smeared_stress[ii]), abs(toroidal_smeared_stress[ii])) + vertical_smeared_stress[ii]) 
+
     if len(data[5]) == 1 :    
         for jj in range(0,len(radius)) :
             vertical_stress.append(data[5][0])
     else :
             vertical_stress = data[5]
     
-    if len(data) > 15 :
-        radial_strain = data[14]
-        toroidal_strain = data[15]
+    if len(data) > 16 :
+        radial_strain = data[17]
+        toroidal_strain = data[18]
         
         for jj in range(0,len(radius)) :
-            vertical_strain.append(data[16])
+            vertical_strain.append(data[19])
 
 
     if term_output :
@@ -134,7 +140,13 @@ if __name__ == '__main__':
             print("------------------------------")
             print("steel radial   stress stress in the inner/middle/out : {}/{}/{} MPa".format(radial_stress[ii_ins[ii]], radial_stress[ii_mids[ii]], radial_stress[ii_outs[ii]]) )
             print("steel toroidal stress stress in the inner/middle/out : {}/{}/{} MPa".format(toroidal_stress[ii_ins[ii]], toroidal_stress[ii_mids[ii]], toroidal_stress[ii_outs[ii]]) )
+            print("steel vertical stress stress in the inner/middle/out : {}/{}/{} MPa".format(vertical_stress[ii_ins[ii]], vertical_stress[ii_mids[ii]], vertical_stress[ii_outs[ii]]) )
             print("steel TRESCA   stress stress in the inner/middle/out : {}/{}/{} MPa".format(tresca_stress[ii_ins[ii]], tresca_stress[ii_mids[ii]], tresca_stress[ii_outs[ii]]) )
+            print("")
+            print("smeared radial   stress stress in the inner/middle/out : {}/{}/{} MPa".format(radial_smeared_stress[ii_ins[ii]]  , radial_smeared_stress[ii_mids[ii]]  , radial_smeared_stress[ii_outs[ii]]) )
+            print("smeared toroidal stress stress in the inner/middle/out : {}/{}/{} MPa".format(toroidal_smeared_stress[ii_ins[ii]], toroidal_smeared_stress[ii_mids[ii]], toroidal_smeared_stress[ii_outs[ii]]) )
+            print("smeared vertical stress stress in the inner/middle/out : {}/{}/{} MPa".format(vertical_smeared_stress[ii_ins[ii]], vertical_smeared_stress[ii_mids[ii]], vertical_smeared_stress[ii_outs[ii]]) )
+            print("smeared TRESCA   stress stress in the inner/middle/out : {}/{}/{} MPa".format(tresca_smeared_stress[ii_ins[ii]]  , tresca_smeared_stress[ii_mids[ii]]  , tresca_smeared_stress[ii_outs[ii]]) )
             print("")
         print("")
 
@@ -163,12 +175,14 @@ if __name__ == '__main__':
         plt.savefig( '{}/steel_stress.{}'.format(outdir, save_format) )
         plt.clf()
         plt.cla()
-    
+
     ## PLOT 2 : Smeared stress summary
     # ------------------------
     if plot_sm_sig :
-        plt.plot(radius, radial_smeared_stress  , label = r'$\sigma_{rr}^\mathrm{smeared}$')
-        plt.plot(radius, toroidal_smeared_stress, label = r'$\sigma_{\theta\theta}^\mathrm{smeared}$')
+        plt.plot(radius, radial_smeared_stress  , '--', label = r'$\sigma_{rr}^\mathrm{smeared}$')
+        plt.plot(radius, toroidal_smeared_stress, '--', label = r'$\sigma_{\theta\theta}^\mathrm{smeared}$')
+        plt.plot(radius, vertical_smeared_stress, '--', label = r'$\sigma_{zz}^\mathrm{smeared}$')
+        plt.plot(radius, tresca_smeared_stress  , '-' , label = r'$\sigma_{TRESCA}^\mathrm{smeared}$')
         plt.grid(True)
         plt.ylabel( r'$\sigma$ [$MPa$]', fontsize = axis_font_size )
         plt.xlabel( r'$R$ [$m$]', fontsize = axis_font_size )

@@ -273,7 +273,7 @@ def populate_ctf_ellipse_data(shape_objs, mf_data):
 
     # TF coil winding pack thickness
     name = "TF Coil winding pack thickness (m)"
-    value = mf_data.data["thkwp"].get_scan(-1)
+    value = mf_data.data["dr_tf_wp"].get_scan(-1)
     shape_objs["i5"] = InfoHolder(name, value)
 
     return shape_objs
@@ -416,7 +416,7 @@ def populate_tok_ellipse_data(shape_objs, mf_data):
 
     # TF coil winding pack thickness
     name = "TF Coil winding pack thickness (m)"
-    value = mf_data.data["thkwp"].get_scan(-1)
+    value = mf_data.data["dr_tf_wp"].get_scan(-1)
     shape_objs["i5"] = InfoHolder(name, value)
 
     return shape_objs

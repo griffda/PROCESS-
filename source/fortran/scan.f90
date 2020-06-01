@@ -165,7 +165,7 @@ contains
     use numerics, only: sqsumsq
     use tfcoil_variables, only: tfareain, wwp2, strtf2, tfcmw, tcpmax, oacdcp, &
       tfcpmw, fcutfsu, acond, fcoolcp, rcool, whttf, ppump, vcool, wwp1, n_tf, &
-		  thkwp, b_crit_upper_nbti, bmaxtfrp
+		  dr_tf_wp, b_crit_upper_nbti
 		use fwbs_variables, only: tpeak
     use divertor_kallenbach_variables, only: totalpowerlost, pressure0, &
       ttarget, neratio, qtargettotal, neomp, psep_kallenbach, fmom
@@ -375,7 +375,7 @@ contains
         outvar(52,iscan) = pradmw
         outvar(53,iscan) = tpeak
         outvar(54,iscan) = fcutfsu
-        outvar(55,iscan) = (wwp1+wwp2)*thkwp
+        outvar(55,iscan) = (wwp1+wwp2)*dr_tf_wp
         outvar(56,iscan) = acond
         outvar(57,iscan) = tfareain/n_tf
         outvar(58,iscan) = taulimit
@@ -404,7 +404,6 @@ contains
         outvar(81,iscan) = fimp(13)
         outvar(82,iscan) = fimp(14)
         outvar(83,iscan) = teped
-        outvar(84,iscan) = bmaxtfrp
 
     end do  !  End of scanning loop
 
@@ -439,7 +438,7 @@ contains
     use process_output, only: oblnkl, ostars, ovarin
     use tfcoil_variables, only: tfareain, wwp2, strtf2, tfcmw, tcpmax, oacdcp, &
       tfcpmw, fcutfsu, acond, fcoolcp, rcool, whttf, ppump, vcool, wwp1, n_tf, &
-		  thkwp, b_crit_upper_nbti, bmaxtfrp
+		  dr_tf_wp, b_crit_upper_nbti
 		use fwbs_variables, only: tpeak
     use divertor_kallenbach_variables, only: totalpowerlost, pressure0, &
       ttarget, neratio, qtargettotal, neomp, psep_kallenbach, fmom
@@ -665,7 +664,7 @@ contains
             outvar(52,iscan) = pradmw
             outvar(53,iscan) = tpeak
             outvar(54,iscan) = fcutfsu
-            outvar(55,iscan) = (wwp1+wwp2)*thkwp
+            outvar(55,iscan) = (wwp1+wwp2)*dr_tf_wp
             outvar(56,iscan) = acond
             outvar(57,iscan) = tfareain/n_tf
             outvar(58,iscan) = taulimit
@@ -694,7 +693,6 @@ contains
             outvar(81,iscan) = fimp(13)
             outvar(82,iscan) = fimp(14)
             outvar(83,iscan) = teped
-            outvar(84,iscan) = bmaxtfrp
 
             sweep_1_vals(iscan) = sweep(iscan_1)
             sweep_2_vals(iscan) = sweep_2(iscan_R)
@@ -734,7 +732,7 @@ contains
       rad_fraction_sol, triang, rmajor, beamfus0, hfact
     use numerics, only: epsvmc, boundu, boundl
     use tfcoil_variables, only: tmargmin_tf, alstrtf, n_pancake, oacdcp, &
-      n_layer, b_crit_upper_nbti, bmaxtfrp
+      n_layer, b_crit_upper_nbti
     use divertor_kallenbach_variables, only: lcon_factor, impurity_enrichment, &
       target_spread, lambda_q_omp, qtargettotal, ttarget
     implicit none

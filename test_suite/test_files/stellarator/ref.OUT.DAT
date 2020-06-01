@@ -579,7 +579,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Structure fraction of winding pack                                       (aswp/ap)                 7.496E-02     
  Insulator fraction of winding pack                                       (aiwp/ap)                 1.321E-01     
  Helium fraction of winding pack                                          (avwp/ap)                 2.379E-01     
- Winding radial thickness (m)                                             (thkwp)                   7.055E-01     
+ Winding radial thickness (m)                                             (dr_tf_wp)                7.055E-01     
  Winding toroidal thickness (m)                                           (wwp1)                    6.679E-01     
  Ground wall insulation thickness (m)                                     (tinstf)                  0.000E+00     
  Number of turns per coil                                                 (turnstf)                 1.377E+02     

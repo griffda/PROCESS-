@@ -695,7 +695,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Helium area fraction of winding pack excluding central channel           (avwp/ap)                 1.355E+00  OP 
  Central helium channel area as fraction of winding pack                  (awphec/ap)               1.963E-01  OP 
  Check total area fractions in winding pack = 1                                                         1.000     
- Winding radial thickness (m)                                             (thkwp)                   4.299E-01  OP 
+ Winding radial thickness (m)                                             (dr_tf_wp)                4.299E-01  OP 
  Winding width 1 (m)                                                      (wwp1)                    1.420E+00  OP 
  Winding width 2 (m)                                                      (wwp2)                    1.335E+00  OP 
  Ground wall insulation thickness (m)                                     (tinstf)                  8.000E-03     

@@ -57,7 +57,7 @@ contains
       rminor, rmajor
     use process_output, only: ocmmnt, oheadr, ovarre, ovarin, obuild, oblnkl
     use tfcoil_variables, only: ripple, tinstf, wwp1, drtop, i_tf_sup, n_tf, &
-      thkwp, ripmax, thkcas, tfinsgap, casthi
+      dr_tf_wp, ripmax, thkcas, tfinsgap, casthi
     implicit none
 
     !  Arguments
@@ -95,9 +95,9 @@ contains
     end if
 
     ! Issue #514 Radial dimensions of inboard leg
-    ! Calculate tfcth if thkwp is an iteration variable (140)
+    ! Calculate tfcth if dr_tf_wp is an iteration variable (140)
     if (any(ixc(1:nvar) == 140) ) then
-        tfcth = thkwp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
+        tfcth = dr_tf_wp + casthi + thkcas
     endif
 
     ! Radial build to tfcoil
