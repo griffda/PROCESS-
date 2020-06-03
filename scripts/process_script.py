@@ -4,6 +4,7 @@
 This compiles, runs and displays output from PROCESS. The aim is to provide a 
 common entry point to the code in Python, and to automate a standard workflow.
 """
+# TODO This requires converting to run the Python-wrapped version of Process
 import subprocess
 import os
 import sys

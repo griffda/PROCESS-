@@ -7,12 +7,16 @@ setup_kwargs = {
         "Safety Studies"),
     "url": "https://ccfe.ukaea.uk/resources/process/",
     "author": "UKAEA",
-    "packages": ["utilities"],
-    "entry_points": {
-        "console_scripts": [
-            "process=utilities.process:main"
-        ]
+    "packages": ["process"],
+    "package_dir": {
+        "process": "process"
     }
+    # TODO Point this at a script in the /scripts dir
+    # "entry_points": {
+    #     "console_scripts": [
+    #         "process=utilities.process:main"
+    #   ]
+    # }
 }
 
 if __name__ == "__main__":
