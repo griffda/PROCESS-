@@ -252,7 +252,7 @@ subroutine sctfcoil(outfile,iprint)
     if ( iprint == 1 ) n_rad_per_layer = 500
     call stresscl(n_tf_stress_layers, n_rad_per_layer, iprint, outfile)
 
-    if (iprint == 1) call outtf(outfile, peaktfflag)
+    if ( iprint == 1 ) call outtf(outfile, peaktfflag)
 
 end subroutine sctfcoil
 
@@ -594,7 +594,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
 
         use error_handling, only: fdiags, report_error
         use tfcoil_variables, only: acasetf, acasetfo, arealeg, tfareain, n_tf, &
-            casths, casthi
+            casths, casthi, dr_tf_wp
         implicit none
 
         ! Inputs
@@ -645,11 +645,11 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
         ! --------------
         ! Rectangular casing
         if ( i_tf_wp_geom == 0 ) then
-            t_lat_case_av = casths + 0.5D0*sin(theta_coil) * (r_wp_outer - r_wp_inner)  
+            t_lat_case_av = casths + 0.5D0*tan_theta_coil * dr_tf_wp
     
         ! Double rectangular WP
         else if ( i_tf_wp_geom == 1 ) then 
-            t_lat_case_av = casths + 0.5D0*sin(theta_coil) * (r_wp_outer - r_wp_centre)  
+            t_lat_case_av = casths + 0.25D0*tan_theta_coil * dr_tf_wp
              
         ! Trapezoidal WP
         else 
@@ -1494,7 +1494,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         acasetf, alstrtf, poisson_steel, poisson_copper, poisson_al, &
         n_tf_graded_layers, i_tf_sup, i_tf_bucking, fcoolcp, eyoung_winding, &
         eyoung_steel, eyoung_res_tf_buck, eyoung_ins, eyoung_al, eyoung_copper, &
-        aiwp, cpttf, n_tf, i_tf_plane_stress
+        aiwp, aswp, cpttf, n_tf, i_tf_plane_stress
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
         cohbop, ncls, cptdin
     use constants, only: pi, sig_file
@@ -1534,6 +1534,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_smeared_z
     !! TF Inboard leg vertical smeared stress r distribution at mid-plane [Pa]
     
+    real(dp), dimension((n_tf_layer-i_tf_bucking)*n_radial_array) :: sig_tf_wp_av_z
+    !! TF Inboard leg WP smeared vertical stress r distribution at mid-plane [Pa]
+
     real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_r
     !! TF Inboard leg radial stress r distribution at mid-plane [Pa]
     
@@ -1584,8 +1587,11 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(dp) :: eyoung_wp_t
     !! Effective WP young modulus in the toroidal direction
 
+    real(dp) :: eyoung_wp_z
+    !! Smeared WP young modulus in the vertical direction [Pa]
+
     real(dp) :: eyoung_wp_z_eff
-    !! Effective WP young modulus in the vertical direction
+    !! Effective WP young modulus used in the stress calculations [Pa]
 
     real(dp), dimension(n_tf_layer+1) :: radtf
     !! Radii used to define the layers used in the stress models [m]
@@ -1648,6 +1654,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     real(dp) :: fac_sig_z
     !! Vertical WP steel conduit stress unsmearing factor
+
+    real(dp) :: fac_sig_z_wp_av
+    !! WP averaged vertical stress unsmearing factor
 
     real(dp) :: fac_oh
     !! Central Solenoid (OH) steel conduit stress unsmearing factor
@@ -1851,9 +1860,12 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                         / ( 2.0D0 * t_lat_case_av / eyoung_steel  &
                           + t_wp_toroidal_av / eyoung_wp_t )
 
-        ! Effective younf modulus in the vertical direction [Pa]
-        eyoung_wp_z_eff = eyoung_steel * a_wp_steel_eff / a_wp_eff &
-                        + eyoung_ins * a_tf_ins / a_wp_eff
+        ! Average young WP modulus [Pa]
+        eyoung_wp_z = ( eyoung_steel * aswp + eyoung_ins * a_tf_ins ) / awpc
+
+        ! Average young modulus used in the WP layer stress calculation [Pa]
+        eyoung_wp_z_eff = ( eyoung_steel * a_wp_steel_eff + eyoung_ins * a_tf_ins ) &
+                        / a_wp_eff 
 
     ! Aluminium coil
     else if ( i_tf_sup == 2 ) then
@@ -2057,6 +2069,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! Vertical WP steel stress unsmearing factor
         if ( i_tf_plane_stress == 0 ) then
             fac_sig_z = eyoung_steel / eyoung_wp_z_eff
+            fac_sig_z_wp_av = eyoung_wp_z / eyoung_wp_z_eff
         else
             fac_sig_z = 1.0D0
         end if  
@@ -2086,6 +2099,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! GRADED MODIF : add another do loop to allow the graded properties
     !                to be taken into account
     do ii = i_tf_bucking * n_radial_array + 1, n_tf_layer*n_radial_array  
+        sig_tf_wp_av_z(ii - i_tf_bucking * n_radial_array) = sig_tf_z(ii) * fac_sig_z_wp_av
         sig_tf_r(ii) = sig_tf_r(ii) * fac_sig_r
         sig_tf_t(ii) = sig_tf_t(ii) * fac_sig_t
         sig_tf_z(ii) = sig_tf_z(ii) * fac_sig_z  
@@ -2266,6 +2280,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         write(outfile,'(t2, "Toroidal"    ," modulus", t20, "(GPa)",t26, *(F11.3,3x))') eyoung_p * 1.0D-9
         write(outfile,'(t2, "Vertical"    ," modulus", t20, "(GPa)",t26, *(F11.3,3x))') eyoung_z * 1.0D-9
         write(outfile,* ) ''
+        call ovarre(outfile,'WP toroidal modulus (GPa)','(eyoung_wp_t*1.0D-9)', eyoung_wp_t*1.0D-9, 'OP ')
+        call ovarre(outfile,'WP vertical modulus (GPa)','(eyoung_wp_z*1.0D-9)', eyoung_wp_z*1.0D-9, 'OP ')
 
         ! MFILE.DAT data
         do ii = 1, i_tf_bucking + 1
@@ -2307,7 +2323,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         write(sig_file,*) 
         write(sig_file,*) 'Displacement'         
         write(sig_file,'(t2, "raidal displacement", t20, "(mm)",t26, *(F11.3,3x))') deflect*1.0D3
-        if ( i_tf_sup /= 1 ) then
+        if ( i_tf_plane_stress /= 1 ) then
             write(sig_file,*)
             write(sig_file,*) 'Strain'    
             write(sig_file,'(t2, "radial strain"   ,t26, *(F11.8,3x))') strain_tf_r
@@ -2315,7 +2331,11 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             write(sig_file,'(t2, "vertical strain" ,t26, *(F11.8,3x))') strain_tf_z
         end if
 
-             ! Other quantities (displacement strain, etc..)
+        if ( i_tf_sup == 1 ) then
+            write(sig_file,'(t2, "WP"    ," smeared stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_wp_av_z*1.0D-6
+        end if 
+
+        ! Other quantities (displacement strain, etc..)
         call ovarre(outfile,'Maximum radial deflection at midplane (m)','(deflect)',&
                             deflect(n_radial_array), 'OP ')
         call ovarre(outfile,"Winding pack vertical Young's Modulus (Pa)",'(eyzwp)', eyzwp, 'OP ')

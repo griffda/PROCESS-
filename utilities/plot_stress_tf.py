@@ -65,6 +65,11 @@ if __name__ == '__main__':
     toroidal_strain         = list()
     vertical_strain         = list()
     radial_displacement     = list()
+    
+    wp_radial_stress   = list()
+    wp_toroidal_stress = list()
+    wp_vertical_stress = list()
+    
 
     data = list()
 
@@ -83,6 +88,7 @@ if __name__ == '__main__':
             ii += 1
    
     n_radial_array_layer = int(data[0][0])
+    n_points             = int(len(data[2]))
     radius                  = data[2]
     radial_stress           = data[3]
     toroidal_stress         = data[4]   
@@ -107,10 +113,12 @@ if __name__ == '__main__':
     if len(data) > 16 :
         radial_strain = data[17]
         toroidal_strain = data[18]
-        
-        for jj in range(0,len(radius)) :
-            vertical_strain.append(data[19])
+        wp_vertical_stress = data[20]
 
+        for jj in range(0,len(radius)) :
+            vertical_strain.append(data[19][0])
+    else :
+        wp_vertical_stress = data[15]
 
     if term_output :
         ii_ins =  list()
@@ -138,16 +146,22 @@ if __name__ == '__main__':
         for ii in range(0,len(ii_mids) - 1) :
             print("Layer {}".format( ii+1 ))
             print("------------------------------")
-            print("steel radial   stress stress in the inner/middle/out : {}/{}/{} MPa".format(radial_stress[ii_ins[ii]], radial_stress[ii_mids[ii]], radial_stress[ii_outs[ii]]) )
-            print("steel toroidal stress stress in the inner/middle/out : {}/{}/{} MPa".format(toroidal_stress[ii_ins[ii]], toroidal_stress[ii_mids[ii]], toroidal_stress[ii_outs[ii]]) )
-            print("steel vertical stress stress in the inner/middle/out : {}/{}/{} MPa".format(vertical_stress[ii_ins[ii]], vertical_stress[ii_mids[ii]], vertical_stress[ii_outs[ii]]) )
-            print("steel TRESCA   stress stress in the inner/middle/out : {}/{}/{} MPa".format(tresca_stress[ii_ins[ii]], tresca_stress[ii_mids[ii]], tresca_stress[ii_outs[ii]]) )
+            print("steel radial   stress in the inner/middle/out point: {}/{}/{} MPa".format(radial_stress[ii_ins[ii]], radial_stress[ii_mids[ii]], radial_stress[ii_outs[ii]]) )
+            print("steel toroidal stress in the inner/middle/out point: {}/{}/{} MPa".format(toroidal_stress[ii_ins[ii]], toroidal_stress[ii_mids[ii]], toroidal_stress[ii_outs[ii]]) )
+            print("steel vertical stress in the inner/middle/out point: {}/{}/{} MPa".format(vertical_stress[ii_ins[ii]], vertical_stress[ii_mids[ii]], vertical_stress[ii_outs[ii]]) )
+            print("steel TRESCA   stress in the inner/middle/out point: {}/{}/{} MPa".format(tresca_stress[ii_ins[ii]], tresca_stress[ii_mids[ii]], tresca_stress[ii_outs[ii]]) )
             print("")
-            print("smeared radial   stress stress in the inner/middle/out : {}/{}/{} MPa".format(radial_smeared_stress[ii_ins[ii]]  , radial_smeared_stress[ii_mids[ii]]  , radial_smeared_stress[ii_outs[ii]]) )
-            print("smeared toroidal stress stress in the inner/middle/out : {}/{}/{} MPa".format(toroidal_smeared_stress[ii_ins[ii]], toroidal_smeared_stress[ii_mids[ii]], toroidal_smeared_stress[ii_outs[ii]]) )
-            print("smeared vertical stress stress in the inner/middle/out : {}/{}/{} MPa".format(vertical_smeared_stress[ii_ins[ii]], vertical_smeared_stress[ii_mids[ii]], vertical_smeared_stress[ii_outs[ii]]) )
-            print("smeared TRESCA   stress stress in the inner/middle/out : {}/{}/{} MPa".format(tresca_smeared_stress[ii_ins[ii]]  , tresca_smeared_stress[ii_mids[ii]]  , tresca_smeared_stress[ii_outs[ii]]) )
+            print("smeared radial   stress in the inner/middle/out point : {}/{}/{} MPa".format(radial_smeared_stress[ii_ins[ii]]  , radial_smeared_stress[ii_mids[ii]]  , radial_smeared_stress[ii_outs[ii]]) )
+            print("smeared toroidal stress in the inner/middle/out point : {}/{}/{} MPa".format(toroidal_smeared_stress[ii_ins[ii]], toroidal_smeared_stress[ii_mids[ii]], toroidal_smeared_stress[ii_outs[ii]]) )
+            print("smeared vertical stress in the inner/middle/out point : {}/{}/{} MPa".format(vertical_smeared_stress[ii_ins[ii]], vertical_smeared_stress[ii_mids[ii]], vertical_smeared_stress[ii_outs[ii]]) )
+            print("smeared TRESCA   stress in the inner/middle/out point : {}/{}/{} MPa".format(tresca_smeared_stress[ii_ins[ii]]  , tresca_smeared_stress[ii_mids[ii]]  , tresca_smeared_stress[ii_outs[ii]]) )
             print("")
+            print("radial   strain in the inner/middle/out point : {}/{}/{}".format(radial_strain[ii_ins[ii]]  , radial_strain[ii_mids[ii]]  , radial_strain[ii_outs[ii]]) )
+            print("toroidal strain in the inner/middle/out point : {}/{}/{}".format(toroidal_strain[ii_ins[ii]], toroidal_strain[ii_mids[ii]], toroidal_strain[ii_outs[ii]]) )
+            print("vertical strain : {}".format(vertical_strain[0]) )
+            print("")
+
+        print("smeared WP vertical stress in the inner/middle/out point : {}/{}/{} MPa".format(wp_vertical_stress[0]  , wp_vertical_stress[int(float(n_radial_array_layer)/2.0)]  , wp_vertical_stress[n_radial_array_layer-1]) )
         print("")
 
     outdir = str("SIG_TF_plots")
