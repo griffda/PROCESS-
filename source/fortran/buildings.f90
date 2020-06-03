@@ -1,37 +1,29 @@
-!  $Id:: buildings.f90 209 2013-11-27 16:14:28Z pknight                 $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module buildings_module
-  !! Module containing plant buildings routines
-  !! author: P J Knight, CCFE, Culham Science Centre
-  !! N/A
+  !! author: J. Morris, P. Knight (UKAEA)
+  !!
   !! This module contains routines for calculating the
   !! parameters of the fusion power plant buildings.
-  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !!
+  !!### References
+  !!
+  !! - AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
-  ! Import modules
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+
   implicit none
 
-  ! Module subroutine and variable declrations
   private
+
   public :: bldgcall
 
 contains
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine bldgcall(outfile,iprint)
-    !! Calls the buildings module
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! outfile : input integer : output file unit
-    !! iprint : input integer : switch for writing to output file (1=yes)
+  subroutine bldgcall(outfile, iprint)
+    !! author: J. Morris, P. Knight (UKAEA)
+    !!
     !! This routine calls the buildings calculations.
-    !! None
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use build_variables, only: r_tf_inboard_mid, r_tf_outboard_mid, tfthko, tfcth, &
       hmax, rsldo, ddwi, vgap2, rsldi
@@ -43,26 +35,29 @@ contains
 
     implicit none
 
-    ! Arguments
-    integer, intent(in) :: iprint, outfile
+    integer, intent(in) :: iprint
+    !! switch for writing to output file (1=yes)
 
-    ! Local variables !
-    ! !!!!!!!!!!!!!!!!!!
+    integer, intent(in) :: outfile
+    !! output file unit
 
-    real(dp) :: tfh,tfmtn,tfri,tfro
+    real(dp) :: tfh
+    real(dp) :: tfmtn
+    real(dp) :: tfri
+    real(dp) :: tfro
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! mass per TF coil (tonnes)
     tfmtn = 1.0D-3 * whttf/n_tf
+    !! mass per TF coil (tonnes)
 
-    ! TF coil inner and outer radial position (m)
     tfro = r_tf_outboard_mid + 0.5D0*tfthko
     tfri = r_tf_inboard_mid - 0.5D0*tfcth
+    !! TF coil inner and outer radial position (m)
 
-    ! TF coil vertical height (m)
-    ! Rem : SK not valid for single null
     tfh = (hmax + tfcth)*2.0D0
+    !! TF coil vertical height (m)
+    ! Rem : SK not valid for single null
 
     ! Reactor vault wall and roof thicknesses are hardwired
     call bldgs(pfrmax,pfmmax,tfro,tfri,tfh,tfmtn,n_tf,rsldo, &

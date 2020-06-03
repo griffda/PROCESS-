@@ -47,4 +47,4 @@ OBS_VARS = {
     "leno":"t_turn",
     "conductor_width":"t_conductor",
     "deltf":"tftsgap"
-}]
+}
