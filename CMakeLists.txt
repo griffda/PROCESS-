@@ -87,7 +87,13 @@ add_custom_target(f2py ALL
   DEPENDS ${FORTRAN_INTERFACE_NAME_UNDER}.so)
 
 add_custom_command(OUTPUT ${FORTRAN_INTERFACE_NAME_UNDER}.so
-  COMMAND f2py -c -m ${FORTRAN_INTERFACE_NAME_UNDER} -I${CMAKE_BINARY_DIR} -L${CMAKE_BINARY_DIR} -lprocess_lib ${FORTRAN_SOURCE_DIR}/f90wrap_*.f90)
+  COMMAND LDFLAGS=-Wl,-rpath=${CMAKE_BINARY_DIR} f2py -c -m ${FORTRAN_INTERFACE_NAME_UNDER} -I${CMAKE_BINARY_DIR} -L${CMAKE_BINARY_DIR} -lprocess_lib ${FORTRAN_SOURCE_DIR}/f90wrap_*.f90)
+# LDFLAGS=-Wl,-rpath=${CMAKE_BINARY_DIR} embeds the RPATH (run path, list of 
+# directories to search for shared library dependencies) into the shared object
+# library ${FORTRAN_INTERFACE_NAME_UNDER}.so. This allows the dynamic linker to 
+# find libprocess_lib.so when loading ${FORTRAN_INTERFACE_NAME_UNDER}.so. This 
+# is a workaround when using f2py to link two shared libraries, as the linking
+# can't be controlled by cmake in this case.
 
 # Depends on process_lib, because we're linking to the libprocess_lib.so shared
 # library with the -lprocess_lib option
