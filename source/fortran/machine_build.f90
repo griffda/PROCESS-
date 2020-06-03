@@ -40,8 +40,8 @@ contains
       shldlth, tftsgap, dr_tf_inner_bore, blnkith, thshield, rsldi, blnkoth, &
       rsldo, tfcth, tfthko, vgaptop, blnktth, gapsto, vgap, vvblgap, &
       r_vv_inboard_out, fwareaob, tfoffset, shldtth, rbld, iprecomp, &
-      r_tf_inboard_mid, shldtth, blbuith, r_vv_inboard_out, tfcth, &
-      gapsto, vgaptop, precomp, r_tf_inboard_mid, gapomin, vvblgap, &
+      r_tf_inboard_mid, r_tf_inboard_in, shldtth, blbuith, r_vv_inboard_out, &
+      tfcth, gapsto, vgaptop, precomp, r_tf_inboard_out, gapomin, vvblgap, &
       fwareaob, blnktth, rbld, blnkoth, tfoffset, iprecomp, plsepo, tfthko, &
       rsldo, vgap, gapoh, fwoth, ohcth, shldoth, scraplo, fwith, blbpith, &
       tfootfi, blbuoth, gapds, fwareaib, fseppc, scrapli, blbmith, shldith, &
@@ -68,12 +68,6 @@ contains
 
 
     real(dp) :: hbot,hfw,htop,r1,r2,r3,radius,r_tf_outboard_midl,vbuild, vbuild1
-    
-    real(dp) :: r_tf_inboard_in
-    !! Inboard side inner radius [m]
-
-    real(dp) :: r_tf_inboard_out
-    !! Inboard side outer radius [m]
 
     real(dp) :: fwtth
 

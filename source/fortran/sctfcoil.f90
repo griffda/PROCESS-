@@ -57,12 +57,6 @@ real(dp), private :: f_tf_ins
 real(dp), private :: h_cp_top
 !! Vertical distance from the midplane to the top of the tapered section [m]
 
-real(dp), private :: r_tf_inboard_in
-!! Radial position of inner edge of TF coil inboard leg [m]
-
-real(dp), private :: r_tf_inboard_out
-!! Radial position of plasma-facing edge of TF coil inboard leg [m]
-
 real(dp), private :: r_tf_outboard_in
 !! Radial position of plasma-facing edge of TF coil outboard leg [m]
 
@@ -264,8 +258,8 @@ subroutine tf_global_geometry()
     !!   - Overall geometry of coil (radii and toroidal planes area)
     !!   - Winding Pack NOT included
     use physics_variables, only: rmajor, bt, kappa, itart, rminor
-    use build_variables, only: tfcth, tfthko, r_tf_inboard_mid, &
-        r_tf_outboard_mid, r_cp_top
+    use build_variables, only: tfcth, tfthko, r_tf_outboard_mid, r_cp_top, &
+        r_tf_inboard_in, r_tf_inboard_mid, r_tf_inboard_out
     use tfcoil_variables, only: tinstf, tfc_sidewall_is_fraction, tfareain, &
         ritfc, tftort, n_tf, casthi_is_fraction, bmaxtf, arealeg, &
         casthi_fraction, casths_fraction, tfinsgap, rbmax, casthi, casths, i_tf_sup, &
@@ -277,11 +271,6 @@ subroutine tf_global_geometry()
     
     ! Inner leg geometry
     ! ---
-
-    ! Radial position of inner/outer edge of inboard TF coil leg [m]
-    r_tf_inboard_in =  r_tf_inboard_mid - 0.5D0 * tfcth
-    r_tf_inboard_out = r_tf_inboard_mid + 0.5D0 * tfcth
-
     ! Half toroidal angular extent of a single TF coil inboard leg
     theta_coil = pi / n_tf 
     tan_theta_coil = tan(theta_coil)
@@ -334,6 +323,7 @@ subroutine tf_current()
     use tfcoil_variables, only: casthi, ritfc, rbmax, i_tf_sup, casths_fraction, &
         tinstf, tftort, bmaxtf, tfinsgap, tfc_sidewall_is_fraction, casths, &
         casthi_is_fraction, casthi_fraction, n_tf
+    use build_variables, only: r_tf_inboard_out
     use physics_variables, only: bt, rmajor
     use build_variables, only: tfcth
     implicit none
@@ -456,7 +446,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
         !! Seting the WP geometry and area for SC magnets
 
         use error_handling, only: fdiags, report_error
-        use build_variables, only: tfcth
+        use build_variables, only: tfcth, r_tf_inboard_in, r_tf_inboard_out
         use tfcoil_variables, only: dr_tf_wp, casthi, thkcas, casths, &
             wwp1, wwp2, tinstf, tfinsgap
         use numerics, only: nvar, ixc
@@ -595,6 +585,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
         use error_handling, only: fdiags, report_error
         use tfcoil_variables, only: acasetf, acasetfo, arealeg, tfareain, n_tf, &
             casths, casthi, dr_tf_wp
+        use build_variables, only: r_tf_inboard_in, r_tf_inboard_out
         implicit none
 
         ! Inputs
@@ -941,7 +932,7 @@ subroutine res_tf_internal_geom()
     !! Resisitve TF turn geometry, equivalent to winding_pack subroutines
     use tfcoil_variables, only: turnstf, tinstf, thkcas, dr_tf_wp, tftort, n_tf, &
         tfareain, ritfc, oacdcp, fcoolcp, cpttf, cdtfleg, casthi, aiwp, acasetf
-    use build_variables, only: tfthko
+    use build_variables, only: tfthko, r_tf_inboard_in, r_tf_inboard_out
     use constants, only: pi
 
     implicit none
@@ -1003,7 +994,8 @@ subroutine tf_res_heating()
         ritfc, rho_tf_joints, presleg, prescp, pres_joints, n_tf_joints_contact, &
         n_tf_joints, n_tf, i_tf_sup, frholeg, frhocp, fcoolcp, casthi, arealeg, &
         a_cp_cool, fcoolleg
-    use build_variables, only: tfthko, tfcth, r_cp_top, hmax
+    use build_variables, only: tfthko, tfcth, r_cp_top, hmax, &
+        r_tf_inboard_in, r_tf_inboard_out
     use physics_variables, only: itart
     use constants, only: pi
     implicit none
@@ -1250,7 +1242,8 @@ end subroutine tf_field_and_force
 
 subroutine tf_coil_area_and_masses()
     !! Subroutine to calculate the TF coil areas and masses
-    use build_variables, only: hr1, r_tf_outboard_mid, tfcth, r_tf_inboard_mid
+    use build_variables, only: hr1, r_tf_outboard_mid, tfcth, r_tf_inboard_mid, &
+        r_tf_inboard_in, r_tf_inboard_out
     use fwbs_variables, only: denstl
     use tfcoil_variables, only: whtconsh, whttf, whtcas, tficrn, tfcryoarea, &
         tfsao, whtgw, tfocrn, whtconsc, whtconcu, whtcon, whtconin, &
@@ -1484,7 +1477,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    use build_variables, only: tfcth, r_tf_inboard_mid, bore, ohcth, hmax
+    use build_variables, only: tfcth, r_tf_inboard_mid, bore, ohcth, hmax, &
+        r_tf_inboard_in
     use tfcoil_variables, only: eyzwp, casestr, windstrain, turnstf, &
         dr_tf_wp, i_tf_tresca, acstf, vforce, &
         ritfc, jwptf, strtf0, strtf1, strtf2, &
@@ -3169,7 +3163,7 @@ subroutine coilshap
     !! This is a totally ad hoc model, with no physics or engineering basis.
     use physics_variables, only: i_single_null, rminor, rmajor, itart
     use build_variables, only: hmax, hpfu, tfcth, r_tf_outboard_mid, &
-        r_tf_inboard_mid, tfthko, r_cp_top
+        r_tf_inboard_mid, tfthko, r_cp_top, r_tf_inboard_out
     use tfcoil_variables, only: yarc, xarc, tfleng, tfa, tfb, i_tf_shape
     use constants, only: pi
     implicit none
@@ -3409,7 +3403,7 @@ subroutine outtf(outfile, peaktfflag)
         copper_rrr
     use error_handling, only: report_error
     use build_variables, only: hmax, r_tf_inboard_mid, r_tf_outboard_mid, &
-        tfcth, tfthko, r_cp_top
+        tfcth, tfthko, r_cp_top, r_tf_inboard_in, r_tf_inboard_out
     use process_output, only: int2char, ovarre, ocmmnt, oblnkl, ovarin, osubhd, &
         ovarrf, obuild
     use numerics, only: icc
