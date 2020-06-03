@@ -67,7 +67,7 @@ contains
     !  Local variables
 
 
-    real(dp) :: hbot,hfw,htop,r1,r2,r3,radius,r_tf_outboard_midl,vbuild, deltf, vbuild1
+    real(dp) :: hbot,hfw,htop,r1,r2,r3,radius,r_tf_outboard_midl,vbuild, vbuild1
     
     real(dp) :: r_tf_inboard_in
     !! Inboard side inner radius [m]
@@ -117,13 +117,10 @@ contains
     ! Radial build to tfcoil plasma facing side [m]
     r_tf_inboard_out = r_tf_inboard_in + tfcth
 
-    ! Outer TF separation gap
-    deltf = tftsgap
-
     ! Radius of the centrepost at the top of the machine
     if ( itart == 1 ) then
 
-       r_cp_top = rmajor - rminor * triang - ( deltf + thshield + shldith + &
+       r_cp_top = rmajor - rminor * triang - ( tftsgap + thshield + shldith + &
                   vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
        r_cp_top = max( r_cp_top, ( r_tf_inboard_mid + 0.5D0*tfcth ) * 1.01D0 ) 
        
@@ -135,7 +132,7 @@ contains
     end if 
 
     !  Radial position of vacuum vessel [m]
-    r_vv_inboard_out = r_tf_inboard_out + deltf + thshield + gapds + ddwi
+    r_vv_inboard_out = r_tf_inboard_out + tftsgap + thshield + gapds + ddwi
 
     ! Radial position of the plasma facing side of inboard neutronic shield
     r_sh_inboard_out = r_vv_inboard_out + shldith
@@ -300,9 +297,9 @@ contains
     call obuild(outfile,'TF coil inboard leg',tfcth,radius,'(tfcth)')
     call ovarre(mfile,'TF coil inboard leg (m)','(tfcth)',tfcth)
     
-    radius = radius + deltf
-    call obuild(outfile,'Gap',deltf,radius,'(deltf)')
-    call ovarre(mfile,'TF coil inboard leg insulation gap (m)','(deltf)',deltf)
+    radius = radius + tftsgap
+    call obuild(outfile,'Gap',tftsgap,radius,'(tftsgap)')
+    call ovarre(mfile,'TF coil inboard leg insulation gap (m)','(tftsgap)',tftsgap)
 
     radius = radius + thshield
     call obuild(outfile,'Thermal shield',thshield,radius,'(thshield)')
