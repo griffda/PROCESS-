@@ -1606,6 +1606,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(dp), dimension(n_tf_layer) :: jeff
     !! Effective current density [A/m2]
   
+    integer :: n_tf_bucking
+    !! Number of layers without currents in stress calculation
+
     integer :: ii, jj
     !! do loop indexes
 
@@ -1713,6 +1716,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     ! LAYER ELASTIC PROPERTIES
     ! ------------------------
+    ! Number of bucking layers
+    n_tf_bucking = i_tf_bucking
+
     ! CS properties (bucked and wedged)
     ! ---
     if ( i_tf_bucking >= 2 ) then
@@ -1770,24 +1776,24 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     if ( i_tf_bucking >= 1 ) then
         
         ! No current in bucking cylinder/casing
-        jeff(i_tf_bucking) = 0.0D0
+        jeff(n_tf_bucking) = 0.0D0
 
         if ( i_tf_sup == 1 ) then 
-            eyoung_p(i_tf_bucking) = eyoung_steel
-            eyoung_z(i_tf_bucking) = eyoung_steel
-            poisson_p(i_tf_bucking) = poisson_steel
-            poisson_z(i_tf_bucking) = poisson_steel
+            eyoung_p(n_tf_bucking) = eyoung_steel
+            eyoung_z(n_tf_bucking) = eyoung_steel
+            poisson_p(n_tf_bucking) = poisson_steel
+            poisson_z(n_tf_bucking) = poisson_steel
 
         ! Bucking cylinder properties
         else 
-            eyoung_p(i_tf_bucking) = eyoung_res_tf_buck
-            eyoung_z(i_tf_bucking) = eyoung_res_tf_buck
-            poisson_p(i_tf_bucking) = poisson_steel ! Seek better value !
-            poisson_z(i_tf_bucking) = poisson_steel ! Seek better value !
+            eyoung_p(n_tf_bucking) = eyoung_res_tf_buck
+            eyoung_z(n_tf_bucking) = eyoung_res_tf_buck
+            poisson_p(n_tf_bucking) = poisson_steel ! Seek better value !
+            poisson_z(n_tf_bucking) = poisson_steel ! Seek better value !
         end if
         
         ! Innernost TF casing radius
-        radtf(i_tf_bucking) = r_tf_inboard_in
+        radtf(n_tf_bucking) = r_tf_inboard_in
     end if
     !---
 
@@ -1894,29 +1900,29 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     do ii = 1, n_tf_graded_layers
         
         ! Homogeneous current in (super)conductor
-        jeff(i_tf_bucking + ii) = ritfc / (pi * (r_wp_outer_eff**2 - r_wp_inner_eff**2))
+        jeff(n_tf_bucking + ii) = ritfc / (pi * (r_wp_outer_eff**2 - r_wp_inner_eff**2))
 
         ! Same thickness for all WP layers in stress calculation
-        radtf(i_tf_bucking + ii) = r_wp_inner_eff + dble(ii-1)*dr_wp_layer
+        radtf(n_tf_bucking + ii) = r_wp_inner_eff + dble(ii-1)*dr_wp_layer
 
         ! Young modulus
-        eyoung_p(i_tf_bucking + ii) = eyoung_wp_t_eff
-        eyoung_z(i_tf_bucking + ii) = eyoung_wp_z_eff
+        eyoung_p(n_tf_bucking + ii) = eyoung_wp_t_eff
+        eyoung_z(n_tf_bucking + ii) = eyoung_wp_z_eff
 
         ! Poisson's ratio
         if ( i_tf_sup == 0 ) then
-            poisson_p(i_tf_bucking + ii) = poisson_copper
-            poisson_z(i_tf_bucking + ii) = poisson_copper
+            poisson_p(n_tf_bucking + ii) = poisson_copper
+            poisson_z(n_tf_bucking + ii) = poisson_copper
             
         ! SC magnets smeared properties
         else if ( i_tf_sup == 1 ) then 
-            poisson_p(i_tf_bucking + ii) = poisson_steel
-            poisson_z(i_tf_bucking + ii) = poisson_steel
+            poisson_p(n_tf_bucking + ii) = poisson_steel
+            poisson_z(n_tf_bucking + ii) = poisson_steel
         
         ! Cryogenic aluminium properties
         else 
-            poisson_p(i_tf_bucking + ii) = poisson_al
-            poisson_z(i_tf_bucking + ii) = poisson_al
+            poisson_p(n_tf_bucking + ii) = poisson_al
+            poisson_z(n_tf_bucking + ii) = poisson_al
         end if 
     end do
 
@@ -1953,13 +1959,13 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         sig_tf_z = vforce / (acasetf + acndttf*turnstf) ! Array equation
 
         ! Case strain
-        casestr = sig_tf_z(i_tf_bucking) / eyoung_steel
+        casestr = sig_tf_z(n_tf_bucking) / eyoung_steel
 
         ! Young's modulus in vertical direction on WP
         eyzwp = eyngzwp(eyoung_steel,eyoung_ins,eyoung_winding,t_ins_eff,thwcndut,tcbs)
     
         ! Strain in vertical direction on WP
-        windstrain = sig_tf_z(i_tf_bucking+1) / eyzwp
+        windstrain = sig_tf_z(n_tf_bucking+1) / eyzwp
     
         ! Radial strain in insulator
         insstrain = sig_tf_r(n_radial_array) / eyoung_ins * &
@@ -1973,7 +1979,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! Generalized plane strain calculation [Pa]
         call generalized_plane_strain( poisson_p, poisson_z, eyoung_p, eyoung_z,  & ! Inputs
                                        radtf, jeff, vforce*f_vforce_case*n_tf,    & ! Inputs
-                                       n_tf_layer, n_radial_array, i_tf_bucking,  & ! Inputs
+                                       n_tf_layer, n_radial_array, n_tf_bucking,  & ! Inputs
                                        radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
                                        strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
     end if
@@ -2039,7 +2045,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! No TF vertical forces on CS and CS-TF layer (bucked and wedged only)
     ! ---
     if ( i_tf_bucking >= 2 ) then
-        do ii = 1, (i_tf_bucking-1)*n_radial_array
+        do ii = 1, (n_tf_bucking-1)*n_radial_array
             sig_tf_z(ii) = 0.0D0
         end do
     end if
@@ -2092,8 +2098,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! Application of the corrections on the WP layers
     ! GRADED MODIF : add another do loop to allow the graded properties
     !                to be taken into account
-    do ii = i_tf_bucking * n_radial_array + 1, n_tf_layer*n_radial_array  
-        sig_tf_wp_av_z(ii - i_tf_bucking * n_radial_array) = sig_tf_z(ii) * fac_sig_z_wp_av
+    do ii = n_tf_bucking * n_radial_array + 1, n_tf_layer*n_radial_array  
+        sig_tf_wp_av_z(ii - n_tf_bucking * n_radial_array) = sig_tf_z(ii) * fac_sig_z_wp_av
         sig_tf_r(ii) = sig_tf_r(ii) * fac_sig_r
         sig_tf_t(ii) = sig_tf_t(ii) * fac_sig_t
         sig_tf_z(ii) = sig_tf_z(ii) * fac_sig_z  
@@ -2125,7 +2131,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
         ! GRADED MODIF : add another do loop to allow the graded properties
         !                to be taken into account
-        do ii = i_tf_bucking * n_radial_array + 1, n_tf_layer*n_radial_array
+        do ii = n_tf_bucking * n_radial_array + 1, n_tf_layer*n_radial_array
        
             ! Addaped Von-mises stress calculation to WP strucure [Pa]
             if ( iprint == 1 ) then
@@ -2184,8 +2190,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     end do
 
     ! Constrains equation TRESCA stress values
-    strtf2 = sig_tf_tresca_max(i_tf_bucking + 1) ! Maximum assumed in the first graded layer
-    if ( i_tf_bucking >= 1 ) strtf1 = sig_tf_tresca_max(i_tf_bucking)
+    strtf2 = sig_tf_tresca_max(n_tf_bucking + 1) ! Maximum assumed in the first graded layer
+    if ( i_tf_bucking >= 1 ) strtf1 = sig_tf_tresca_max(n_tf_bucking)
     if ( i_tf_bucking >= 2 ) strtf0 = sig_tf_tresca_max(1)
     ! ----------------
 
@@ -2278,7 +2284,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         call ovarre(outfile,'WP vertical modulus (GPa)','(eyoung_wp_z*1.0D-9)', eyoung_wp_z*1.0D-9, 'OP ')
 
         ! MFILE.DAT data
-        do ii = 1, i_tf_bucking + 1
+        do ii = 1, n_tf_bucking + 1
             intstring = int2char(ii)    
             call ovarre(mfile,'Radial    stress at maximum TRESCA of layer '//intstring// &
                         ' (Pa)', '(sig_tf_r_max('//intstring//'))', sig_tf_r_max(ii) )
