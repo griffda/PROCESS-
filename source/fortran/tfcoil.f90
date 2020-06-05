@@ -71,7 +71,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   use build_variables, only: hmax, tfcth, tfthko
+   use build_variables, only: hmax, tfthko
    use fwbs_variables, only: pnuccp
    use process_output, only: oheadr, ovarre, osubhd
    use tfcoil_variables, only: dtiocool, etapump, fcoolcp, &

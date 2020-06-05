@@ -101,6 +101,7 @@ if __name__ == '__main__':
     cea_tresca_stress       = data[11]
     radial_displacement     = data[14]
             
+    # Reading strategy to be tidy up using dicts when time allows ... 
     for ii in range(0,len(radial_smeared_stress)) :
         tresca_smeared_stress.append( max(abs(radial_smeared_stress[ii]), abs(toroidal_smeared_stress[ii])) + vertical_smeared_stress[ii]) 
 
@@ -113,7 +114,9 @@ if __name__ == '__main__':
     if len(data) > 16 :
         radial_strain = data[17]
         toroidal_strain = data[18]
-        wp_vertical_stress = data[20]
+        
+        if len(data) >= 21 :
+            wp_vertical_stress = data[20]
 
         for jj in range(0,len(radius)) :
             vertical_strain.append(data[19][0])

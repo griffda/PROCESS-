@@ -1814,6 +1814,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
         ! Effective WP young modulus in the toroidal direction [Pa]
         ! Rem : effect of cooling pipes not taken into account for now
+        eyoung_wp_t_eff = eyoung_copper
         eyoung_wp_t = eyoung_copper
 
         ! Effective conductor region young modulus in the vertical direction [Pa]
@@ -1874,7 +1875,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         f_vforce_case = 1.0D0
 
         ! Effective WP young modulus in the toroidal direction [Pa]
-        ! Rem : effect of cooling pipes not taken into account for now
+        ! Rem : effect of cooling pipes and insulation not taken into account for now
+        eyoung_wp_t_eff = eyoung_al
         eyoung_wp_t = eyoung_al
 
         ! WP area using the stress model circular geometry (per coil) [m2]
@@ -4592,8 +4594,8 @@ end subroutine dtempbydtime
 
 !-----------------------------------------------------------------------
 subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! Inputs
-                     ins_th, cas_out_th, n_turns_tot,                         &  ! Inputs
-                     acpcool, volume, respow, volins, volcasout )                ! Outputs
+                  ins_th, cas_out_th, n_turns_tot,                         &  ! Inputs
+                  a_cp_cool, vol_cond_cp, respow, volins, volcasout )                ! Outputs
     !!  author: P J Knight, CCFE, Culham Science Centre
     !!  Calculates the volume and resistive power losses of a TART centrepost
     !!  This routine calculates the volume and resistive power losses
@@ -4624,7 +4626,13 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
                           r_tfin_inleg, ins_th, cas_out_th, n_turns_tot
 
     ! Outputs
-    real(dp), intent(out) :: volume, respow, acpcool, volins, volcasout
+    real(dp), intent(out) :: respow, volins, volcasout
+
+    real(dp), intent(out) :: a_cp_cool
+    !! Centrepost cooling area toroidal cross-section (constant over the whole CP) [m2]
+
+    real(dp), intent(out) :: vol_cond_cp
+    !! Exact conductor volume in the centrepost [m3]
 
     ! Internal
     real(dp) :: r1,z1,x,y,rc,dz,r,z, a_tfin_hole, res_cyl, res_taped
@@ -4673,7 +4681,7 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     ! Mid-plane area calculations
     ! ---------------------------
     ! Area of the innner TF central hole [m2]
-    a_tfin_hole = pi*r_tfin_inleg**2  ! eq(32)
+    a_tfin_hole = pi*r_tfin_inleg**2
 
     ! Mid-plane outer casing cross-section area [m2]
     a_casout = pi * ( (rmid + cas_out_th)**2 - rmid**2 )
@@ -4685,14 +4693,14 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
                2.0D0 * ins_th * (rmid - r_tfin_inleg - 2.0D0*ins_th) * n_turns_tot ! inter turn separtion layers
 
     ! Cooling pipes cross-section [m2]
-    acpcool = fcool * ( pi*rmid**2 - a_tfin_hole - a_cp_ins ) / n_tf
+    a_cp_cool = fcool * ( pi*rmid**2 - a_tfin_hole - a_cp_ins ) / n_tf
     ! ---------------------------
 
 
     !  Trivial solutions
     ! ------------------
     if ( abs(fcool) < epsilon(fcool) ) then
-        volume = 0.0D0
+        vol_cond_cp = 0.0D0
         respow = 0.0D0
         call report_error(122)
         return
@@ -4701,10 +4709,10 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     if ( abs(rmid - rtop) < epsilon(rtop) ) then
 
         ! Exact conductor cross-section
-        a_cond_midplane = pi*rmid**2 - a_tfin_hole - n_tf * acpcool - a_cp_ins
+        a_cond_midplane = pi*rmid**2 - a_tfin_hole - n_tf * a_cp_cool - a_cp_ins
 
         ! Volumes and resisitive losses calculations
-        volume = 2.0D0 * hmaxi * a_cond_midplane
+        vol_cond_cp = 2.0D0 * hmaxi * a_cond_midplane
         volins = 2.0D0 * hmaxi * a_cp_ins
         respow = 2.0D0 * hmaxi * curr**2 * rho / a_cond_midplane
         volcasout = 2.0D0 * hmaxi * a_casout
@@ -4751,7 +4759,7 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
                      2.0D0 * ins_th * (r - r_tfin_inleg - 2.0D0*ins_th) * n_turns_tot     ! inter turn separtion layers
 
         !  Cross-sectional area at Z
-        yy(ii) = pi*r**2 - a_tfin_hole - n_tf*acpcool - yy_ins(ii)  ! eq(32)
+        yy(ii) = pi*r**2 - a_tfin_hole - n_tf*a_cp_cool - yy_ins(ii)  ! eq(32)
 
         !  Outer casing Cross-sectional area at z 
         yy_casout(ii) = pi * ( (r+cas_out_th)**2 - r**2 )
@@ -4784,8 +4792,8 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     a_casout = pi * ( (rtop + cas_out_th)**2 - rtop**2 )
 
     ! Centrepost volume (ignoring coolant fraction) [m3]
-    volume = 2.0D0 * ( sum1 + ( hmaxi - ztop ) * &
-                     ( pi*rtop**2 - a_tfin_hole - a_cp_ins - n_tf*acpcool ) )
+    vol_cond_cp = 2.0D0 * ( sum1 + ( hmaxi - ztop ) * &
+                     ( pi*rtop**2 - a_tfin_hole - a_cp_ins - n_tf*a_cp_cool ) )
 
     ! Resistive power losses in taped section (variable radius section) [W]
     res_taped = rho * curr**2 * sum2                    ! eq(31)
@@ -4798,7 +4806,7 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
 
     ! Resistive power losses in cylindrical section (constant radius) [W]
     res_cyl = rho * curr**2 * ( ( hmaxi - ztop ) / &    ! eq(30)
-              ( pi * rtop**2 - a_tfin_hole  - a_cp_ins - n_tf*acpcool ) )  
+              ( pi * rtop**2 - a_tfin_hole  - a_cp_ins - n_tf*a_cp_cool ) )  
 
     ! Total CP resistive power [W]
     respow = 2.0D0 * ( res_cyl + res_taped )   ! eq(36)   
