@@ -9,7 +9,7 @@ This file, process.py, is now analogous to process.f90, which contains the
 Fortran "program" statement. This Python module effectively acts as the Fortran
 "program".
 """
-import fortran
+from process import fortran
 import argparse
 from pathlib import Path
 
