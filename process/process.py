@@ -11,5 +11,6 @@ Fortran "program" statement. This Python module effectively acts as the Fortran
 """
 from process import fortran
 
-# Run Process using the highest-level module
-fortran.process_module.process_subroutine()
+def main():
+    # Run Process using the highest-level module
+    fortran.process_module.process_subroutine()

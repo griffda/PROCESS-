@@ -5,4 +5,8 @@ be installed first with pip.
 """
 from process import process
 
-process.main()
+def main():
+    process.main()
+
+if __name__ == "__main__":
+    main()
