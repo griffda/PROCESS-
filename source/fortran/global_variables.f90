@@ -3186,14 +3186,14 @@ module tfcoil_variables
   !! max voltage across TF coil during quench (kV) (`iteration variable 52`)
 
   real(dp) :: vforce = 0.0D0
-  !! vertical separating force on inboard leg/coil (N)
+  !! vertical tension on inboard leg/coil (N)
   
   real(dp) :: f_vforce_inboard = 0.5D0
-  !! Fraction of the total vertical force taken by the TF inboard leg
+  !! Fraction of the total vertical force taken by the TF inboard leg tension
   !! Not used for resistive `itart=1` (sliding joints)
 
   real(dp) :: vforce_outboard = 0.0D0
-  !! Vertical separating force on out board leg/coil (N)
+  !! Vertical tension on outboard leg/coil (N)
 
   real(dp) :: vftf = 0.4D0
   !! coolant fraction of TFC 'cable' (`i_tf_sup=1`), or of TFC leg (`i_tf_ssup=0`)

@@ -126,6 +126,9 @@ real(dp), private :: t_turn
 real(dp), private :: t_cable
 !! Cable area averaged dimension (square shape) [m]
 
+real(dp), private :: vforce_inboard_tot
+!! Total inboard vertical tension (all coils) [N] 
+
 type(resistive_material):: copper
 type(resistive_material):: hastelloy
 type(resistive_material):: solder
@@ -1236,6 +1239,9 @@ subroutine tf_field_and_force()
     end if
     ! ***
 
+    ! Total vertical force
+    vforce_inboard_tot = vforce * n_tf
+
 end subroutine tf_field_and_force
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1680,7 +1686,10 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! WP + lateral casing area
 
     real(dp) :: f_vforce_case
-    !! Correction factor for plasma side case vertical stress contribution 
+    !! Correction factor for plasma side case vertical stress contribution
+
+    real(dp) :: vforce_eff
+    !! Effective vertical tension used in stess calculation [N]
 
     real(dp) :: eyoung_wp_t_eff
     !! WP young modulus in toroidal direction with lateral casing effect [Pa]
@@ -1892,6 +1901,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     end if 
 
+    ! Effective total inboard vertical tension for stress calculation [N]
+    vforce_eff = vforce_inboard_tot * f_vforce_case
+
     ! Thickness of the layer representing the WP in stress calcualtions [m]
     dr_tf_wp_eff = r_wp_outer_eff - r_wp_outer_eff
 
@@ -1980,7 +1992,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     else 
         ! Generalized plane strain calculation [Pa]
         call generalized_plane_strain( poisson_p, poisson_z, eyoung_p, eyoung_z,  & ! Inputs
-                                       radtf, jeff, vforce*f_vforce_case*n_tf,    & ! Inputs
+                                       radtf, jeff, vforce_eff,                   & ! Inputs
                                        n_tf_layer, n_radial_array, n_tf_bucking,  & ! Inputs
                                        radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
                                        strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
