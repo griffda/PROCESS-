@@ -271,7 +271,7 @@ subroutine tf_global_geometry()
     implicit none
     
 
-    
+
     ! Inner leg geometry
     ! ---
     ! Half toroidal angular extent of a single TF coil inboard leg
@@ -325,7 +325,7 @@ subroutine tf_current()
     !! Calculation of the maximum B field and the corresponding TF current
     use tfcoil_variables, only: casthi, ritfc, rbmax, i_tf_sup, casths_fraction, &
         tinstf, tftort, bmaxtf, tfinsgap, tfc_sidewall_is_fraction, casths, &
-        casthi_is_fraction, casthi_fraction, n_tf
+        casthi_is_fraction, casthi_fraction, n_tf, thicndut
     use build_variables, only: r_tf_inboard_out
     use physics_variables, only: bt, rmajor
     use build_variables, only: tfcth
@@ -345,7 +345,7 @@ subroutine tf_current()
         rbmax = r_tf_inboard_out * cos(theta_coil) - casthi - tinstf - tfinsgap
     else 
         ! Cesistive coils : No approx necessary as the symmetry is cylindrical 
-        rbmax = r_tf_inboard_out - casthi - tinstf
+        rbmax = r_tf_inboard_out - casthi - thicndut
     end if
 
     ! Calculation of the maximum B field on the magnet [T]
@@ -933,7 +933,9 @@ end subroutine sc_tf_internal_geom
 subroutine res_tf_internal_geom()
     !! Author : S. Kahn
     !! Resisitve TF turn geometry, equivalent to winding_pack subroutines
-    use tfcoil_variables, only: turnstf, tinstf, thkcas, dr_tf_wp, tftort, n_tf, &
+    use error_handling, only: fdiags, report_error 
+    use numerics, only: nvar, ixc
+    use tfcoil_variables, only: turnstf, thicndut, thkcas, dr_tf_wp, tftort, n_tf, &
         tfareain, ritfc, oacdcp, fcoolcp, cpttf, cdtfleg, casthi, aiwp, acasetf
     use build_variables, only: tfthko, r_tf_inboard_in, r_tf_inboard_out
     use constants, only: pi
@@ -945,7 +947,9 @@ subroutine res_tf_internal_geom()
     r_wp_outer = r_tf_inboard_out - casthi 
 
     ! Mid-plane Radial thickness of conductor layer [m]
-    dr_tf_wp = r_wp_outer - r_wp_inner
+    if ( .not. any(ixc(1:nvar) == 140) ) then 
+        dr_tf_wp = r_wp_outer - r_wp_inner
+    end if
 
     ! Number of turns
     ! Set by user (no turn structure by default, i.e. turnstf = 1 ) 
@@ -956,11 +960,11 @@ subroutine res_tf_internal_geom()
     awpc = pi * ( r_wp_outer**2 - r_wp_inner**2 ) / n_tf
 
     ! Exact mid-plane cross-section area of the conductor per TF coil [m2]
-    awptf = pi*( (r_wp_outer - tinstf)**2 - (r_wp_inner + tinstf)**2 )/n_tf  &
-           - 2.0D0*tinstf * ( dr_tf_wp - 2.0D0*tinstf ) * turnstf
+    awptf = pi*( (r_wp_outer - thicndut)**2 - (r_wp_inner + thicndut)**2 )/n_tf  &
+           - 2.0D0*thicndut * ( dr_tf_wp - 2.0D0*thicndut ) * turnstf
     awptf = awptf * (1.0D0 - fcoolcp)
 
-    ! Inter turn insulation area coil [m2]                    
+    ! Inter turn insulation area per coil [m2]                    
     aiwp = awpc - awptf / ( 1.0D0 - fcoolcp )  
 
     ! Total cross-sectional area of surrounding case per coil [m2]
@@ -981,8 +985,20 @@ subroutine res_tf_internal_geom()
 
     ! Exact current density on TF oubard legs
     cdtfleg = ritfc / ( ( 1.0D0 - fcoolcp ) * &
-                        ( tftort - 2.0D0 * turnstf * tinstf) * &
-                        ( tfthko - 2.0D0 * tinstf ) ) 
+                        ( tftort - 2.0D0 * turnstf * thicndut) * &
+                        ( tfthko - 2.0D0 * thicndut ) ) 
+
+    ! Reporting negative WP areas issues
+    if ( awpc < 0.0D0 ) then
+        fdiags(1) = awpc
+        fdiags(1) = dr_tf_wp
+        call report_error(99)
+
+    else if ( awptf < 0.0D0 ) then
+        fdiags(1) = awptf
+        call report_error(101)
+    end if
+       
 
 end subroutine res_tf_internal_geom
 
@@ -992,7 +1008,7 @@ subroutine tf_res_heating()
     !! Resitive magnet resitive heating calculations
     !! Rem SK : Clamped joined superconductors might have resistive power losses on the joints
     !! Rem SK : Sliding joints might have a region of high resistivity
-    use tfcoil_variables, only: rhocp, tlegav, tinstf, th_joint_contact, rhotfleg, &
+    use tfcoil_variables, only: rhocp, tlegav, thicndut, th_joint_contact, rhotfleg, &
         voltfleg, vol_cond_cp, turnstf, thkcas, tftort, tfleng, tflegres, tcpav, &
         ritfc, rho_tf_joints, presleg, prescp, pres_joints, n_tf_joints_contact, &
         n_tf_joints, n_tf, i_tf_sup, frholeg, frhocp, fcoolcp, casthi, arealeg, &
@@ -1047,7 +1063,7 @@ subroutine tf_res_heating()
 
         ! Centrepost resisitivity and conductor/insulation volume
         call cpost( r_cp_top-casthi, h_cp_top, r_tf_inboard_out-casthi, hmax+tfthko, & ! Inputs
-                    ritfc, rhocp, fcoolcp, r_tf_inboard_in+thkcas, tinstf, casthi,   & ! Inputs
+                    ritfc, rhocp, fcoolcp, r_tf_inboard_in+thkcas, thicndut, casthi,   & ! Inputs
                     n_tf*turnstf,                                                    & ! Inputs
                     a_cp_cool, vol_cond_cp, prescp, vol_ins_cp, vol_case_cp )          ! Outputs
 
@@ -1055,7 +1071,7 @@ subroutine tf_res_heating()
         ! Outer leg cross-section areas
         ! ---
         ! Area taken by one outboard leg's turns insulation [m2]
-        a_wp_ins_turn = 2.0D0 * tinstf * ( (tftort/turnstf) + tfthko - 2.0D0*tinstf ) 
+        a_wp_ins_turn = 2.0D0 * thicndut * ( (tftort/turnstf) + tfthko - 2.0D0*thicndut ) 
 
         ! Exact TF outboard leg conductor area (per leg) [m2]
         a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * turnstf )  
@@ -1119,7 +1135,7 @@ subroutine tf_res_heating()
         !          crude approximation if the inboard legs are vaulted
             
         ! Area taken by the inter turn ground insulation
-        a_wp_ins_turn = 2.0D0 * tinstf * ( (tfcth/turnstf) + tfcth - 2.0D0*tinstf )
+        a_wp_ins_turn = 2.0D0 * thicndut * ( (tfcth/turnstf) + tfcth - 2.0D0*thicndut )
 
         ! Exact TF outboard leg conductor area
         a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * turnstf ) 
@@ -1149,7 +1165,7 @@ subroutine tf_field_and_force()
         r_tf_inboard_mid, r_cp_top
     use tfcoil_variables, only: vforce, n_tf, taucq, sigvvall, cforce, &
         ritfc, bmaxtf, rbmax, i_tf_sup, f_vforce_inboard, vforce_outboard, &
-        tinstf, dr_tf_wp, tfinsgap
+        tinstf, thicndut, dr_tf_wp, tfinsgap
 
     implicit none
 
@@ -1172,18 +1188,20 @@ subroutine tf_field_and_force()
     ! Quench time [s]
     if ( i_tf_sup == 1 ) taucq = (bt * ritfc * rminor * rminor) / (r_vv_inboard_out * sigvvall)
     
+    ! Outer/inner WP radius removing the ground insulation layer and the insertion gap [m]
+    if ( i_tf_sup == 1 ) then 
+        r_out_wp = r_wp_outer - tinstf - tfinsgap
+        r_in_wp =  r_wp_inner + tinstf + tfinsgap
 
-    ! Outer WP radius removing the insulation layer and the insertion gap [m]
-    r_out_wp = r_wp_outer - tinstf
-    if ( i_tf_sup == 1 ) r_out_wp = r_out_wp - tfinsgap
-    
-    ! Inner WP radius removing the insulation layer and the insertion gap [m]
-    r_in_wp = r_wp_inner + tinstf
-    if ( i_tf_sup == 1 ) r_in_wp = r_in_wp + tfinsgap
+    ! Outer/inner conductor layer radius removing the turn insulation layer [m]
+    else 
+        r_out_wp = r_wp_outer - thicndut
+        r_in_wp =  r_wp_inner + thicndut
+    end if 
 
-    ! WP radial thickness removing the insulation layer and the insertion gap [m]
-    dr_wp = dr_tf_wp - 2.0D0 * tinstf
-    if ( i_tf_sup == 1 ) dr_wp = dr_wp - 2.0D0 * tfinsgap
+    ! Associated WP thickness
+    dr_wp = r_out_wp - r_in_wp
+
 
     ! In plane forces 
     ! ---
@@ -2229,7 +2247,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         call oheadr(outfile,'TF coils ')
         call osubhd(outfile,'TF Coil Stresses (CCFE model) :')
         
-        if ( i_tf_sup == 1 ) then
+        if ( i_tf_plane_stress == 1 ) then
             call ocmmnt(outfile, 'Plane stress model with smeared properties')
         else 
             call ocmmnt(outfile, 'Generalized plane strain model')

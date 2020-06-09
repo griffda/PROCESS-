@@ -101,8 +101,17 @@ contains
     ! Issue #514 Radial dimensions of inboard leg
     ! Calculate tfcth if dr_tf_wp is an iteration variable (140)
     if ( any(ixc(1:nvar) == 140) ) then
-        tfcth = ( r_tf_inboard_in + dr_tf_wp + casthi + thkcas ) / cos(pi/n_tf) &
-              - r_tf_inboard_in
+    
+        ! SC TF coil thickness defined using its maximum (diagonal)
+        if ( i_tf_sup == 1 ) then
+           tfcth = ( r_tf_inboard_in + dr_tf_wp + casthi + thkcas ) / cos(pi/n_tf) &
+                 - r_tf_inboard_in
+
+         ! Rounded resistive TF geometry
+        else
+            tfcth = dr_tf_wp + casthi + thkcas
+        end if
+
     end if
 
     ! Radial build to tfcoil middle [m]
@@ -112,18 +121,21 @@ contains
     r_tf_inboard_out = r_tf_inboard_in + tfcth
 
     ! Radius of the centrepost at the top of the machine
-    if ( itart == 1 ) then
+    if ( .not. any(ixc(1:nvar) == 174) ) then
+       if ( itart == 1 ) then
 
-       r_cp_top = rmajor - rminor * triang - ( tftsgap + thshield + shldith + &
-                  vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
-       r_cp_top = max( r_cp_top, ( r_tf_inboard_mid + 0.5D0*tfcth ) * 1.01D0 ) 
-       
-       if (r_cp_top <= 0.0D0) then
-         fdiags(1) = r_cp_top ; call report_error(115)
-       end if
-    else
-       r_cp_top = r_tf_inboard_mid + 0.5D0*tfcth
-    end if 
+          r_cp_top = rmajor - rminor * triang - ( tftsgap + thshield + shldith + &
+                     vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
+          r_cp_top = max( r_cp_top, r_tf_inboard_out * 1.01D0 ) 
+
+          if (r_cp_top <= 0.0D0) then
+            fdiags(1) = r_cp_top
+            call report_error(115)
+          end if
+       else
+          r_cp_top = r_tf_inboard_out
+       end if 
+    end if
 
     !  Radial position of vacuum vessel [m]
     r_vv_inboard_out = r_tf_inboard_out + tftsgap + thshield + gapds + ddwi
