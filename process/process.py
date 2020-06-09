@@ -15,14 +15,22 @@ from pathlib import Path
 
 class Process():
     """The main Process class."""
-    def __init__(self):
-        """Run Process."""
-        self.parse_args()
+    def __init__(self, args=None):
+        """Run Process.
+
+        :param args: Arguments to parse, defaults to None
+        :type args: list, optional
+        """
+        self.parse_args(args)
         self.set_filenames()
         self.run()
     
-    def parse_args(self):
-        """Parse the command-line arguments, such as the input filename."""
+    def parse_args(self, args=None):
+        """Parse the command-line arguments, such as the input filename.
+
+        :param args: Arguments to parse, defaults to None
+        :type args: list, optional
+        """
         parser = argparse.ArgumentParser(description=("PROCESS\n"
             "Power Reactor Optimisation Code\n"
             "Usage\n"
@@ -66,7 +74,12 @@ class Process():
             type=str,
             help="The path to the input file that Process runs on")
 
-        self.args = parser.parse_args()
+        # If args is not None, then parse the supplied arguments. This is likely
+        # to come from the test suite when testing command-line arguments; the 
+        # method is being run from the test suite.
+        # If args is None, then use actual command-line arguments (e.g. 
+        # sys.argv), as the method is being run from the command-line.
+        self.args = parser.parse_args(args)
         # Store namespace object of the args
 
     def set_filenames(self):
@@ -108,6 +121,15 @@ class Process():
         """Run Process using the highest-level module, process_module."""
         fortran.process_module.process_subroutine()
 
-def main():
-    """Run Process."""
-    Process()
+def main(args=None):
+    """Run Process.
+
+    The args parameter is used to control command-line arguments when running
+    tests. Optional args can be supplied by different tests, which are then 
+    used instead of command-line arguments by argparse. This allows testing of
+    different command-line arguments from the test suite.
+
+    :param args: Arguments to parse, defaults to None
+    :type args: list, optional
+    """
+    Process(args)
