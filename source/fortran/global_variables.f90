@@ -2846,7 +2846,7 @@ module tfcoil_variables
   integer :: n_layer = 20
   !! Number of layers in TF coil. Only used if `i_tf_turns_integer=1`
   
-  integer :: n_rad_per_layer = 50
+  integer :: n_rad_per_layer = 100
   !! Size of the arrays per layers storing the radial dependent stress 
   !! quantities (stresses, strain displacement etc..)
 
@@ -4106,7 +4106,7 @@ module build_variables
   !! radius to the centre of the outboard TF coil leg (m)
 
   real(dp) :: r_cp_top = 0.0D0
-  !! Top outer radius of centre of the centropost (ST only) (m)
+  !! Top outer radius of the centropost (ST only) (m)
 
   real(dp) :: dr_tf_inner_bore = 0.0D0
   !! TF coil horizontal inner bore (m)
