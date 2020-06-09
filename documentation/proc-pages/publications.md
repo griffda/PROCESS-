@@ -4,6 +4,14 @@ Below is a list of publications using PROCESS by year:
 
 ## 2020
 
+[Summary of the 3rd IAEA technical meeting on divertor concepts](https://iopscience.iop.org/article/10.1088/1741-4326/ab9a0c/meta)   
+M. Barbarino, A.W. Leonard, N. Asakura, M. Jakubowski, M. Kobayashi, B. Lipschultz, R. Neu, L. Wang, M. Wischmeier   
+Nuclear Fusion (2020) in press   
+
+[Assessment of alternative divertor configurations as an exhaust solution for DEMO](https://iopscience.iop.org/article/10.1088/1741-4326/ab8a6a)   
+H. Reimerdes, R. Ambrosino, P. Innocente, A. Castaldo, P. Chmielewski, G. Di Gironimo, S. Merriman, V. Pericoli-Ridolfini, L. Aho-Mantilla, R. Albanese, H. Bufferand, G. Calabro, G. Ciraolo, D. Coster, N. Fedorczak, S. Ha, R. Kembleton, K. Lackner, V.P. Loschiavo, T. Lunt, D. Marzullo, R. Maurizio, F. Militello, G. Ramogida, F. Subba, S. Varoutis, R. Zagórski, H. Zohm   
+Nuclear Fusion 60 (2020) 066030   
+
 [Comparison of the PROCESS systems code with the SONIC divertor code](https://ieeexplore.ieee.org/abstract/document/8998560)   
 J. Morris, N. Asakura, Y. Homma, K. Hoshino, M. Kovari   
 IEEE Transactions on Plasma Science (Early Access)   
