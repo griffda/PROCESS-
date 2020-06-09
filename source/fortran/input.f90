@@ -159,7 +159,8 @@ contains
       iohcl, tftsgap, clhsf, bore, plleno, scrapli, gapomin, ddwex, &
       rinboard, fmstf, blnkoth, fseppc, plsepo, ddwi, fmssh, blnkith, &
       ohcth, plsepi, fmsoh, blbmith, gapoh, fcspc, scraplo, vgaptop, &
-      blbpoth, gapds, fwith, vgap, shldith, sigallpc, tfootfi, f_avspace
+      blbpoth, gapds, fwith, vgap, shldith, sigallpc, tfootfi, f_avspace,&
+      r_cp_top
     use buildings_variables, only: hcwt, conv, wgt, trcl, rxcl, rbwt, mbvfac, &
       esbldgm3, rbvfac, fndt, row, wgt2, pibv, clh1, stcl, clh2, pfbldgm3, &
       shmf, tfcbv, hccl, rbrt, triv, shov, admv, wsvfac
@@ -284,7 +285,7 @@ contains
       n_tf_graded_layers, n_tf_joints, n_tf_joints_contact, poisson_al, &
       poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact,&
       i_tf_plane_stress, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
-      i_tf_turns_integer
+      i_tf_turns_integer, n_rad_per_layer
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
     use vacuum_variables, only: dwell_pump, pbase, tn, pumpspeedfactor, &
@@ -1621,6 +1622,9 @@ contains
        case ('rpf2dewar')
           call parse_real_variable('rpf2dewar', rpf2dewar, 0.1D0, 5.0D0, &
                'Outer PF coil to cryostat distance (m)')
+      case ('r_cp_top')
+         call parse_real_variable('r_cp_top', r_cp_top, 0.0010D0, 10.0D0, &
+              'Top CP outer radius (ST only) (m)')
        case ('scrapli')
           call parse_real_variable('scrapli', scrapli, 0.0D0, 10.0D0, &
                'Inboard scrapeoff length (m)')
@@ -1791,7 +1795,7 @@ contains
           call parse_real_variable('eyoung_al', eyoung_al, 0.0D0, 1.0D0, &
                'Reinforced aluminium Young modulus for TF stress calc.')
        case ('eyoung_res_tf_buck')
-          call parse_real_variable('eyoung_res_tf_buck', eyoung_res_tf_buck, 0.0D0, 1.0D0, &
+          call parse_real_variable('eyoung_res_tf_buck', eyoung_res_tf_buck, 1.0D-10, 1.0D12, &
                'Reinforced aluminium Young modulus for TF stress calc.')
        case ('farc4tf')
           call parse_real_variable('farc4tf', farc4tf, 0.0D0, 1.0D0, &
@@ -1902,6 +1906,9 @@ contains
        case ('n_tf_graded_layers')
           call parse_int_variable('n_tf_graded_layers', n_tf_graded_layers, 1, 20, &
                'Number of layers of different stress properties in the WP')
+       case ('n_rad_per_layer')
+          call parse_int_variable('n_rad_per_layer', n_rad_per_layer, 1, 500, &
+               'Size of the arrays per layers storing the radial dependent stress ')
        case ('oacdcp')
           call parse_real_variable('oacdcp', oacdcp, 1.0D4, 1.0D9, &
                'Overall J in inboard TF coil midplane')
