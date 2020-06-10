@@ -121,19 +121,33 @@ contains
     r_tf_inboard_out = r_tf_inboard_in + tfcth
 
     ! Radius of the centrepost at the top of the machine
-    if ( .not. any(ixc(1:nvar) == 174) ) then
-       if ( itart == 1 ) then
+    if ( itart == 1 ) then
+    
+      ! If r_cp_top is used as iteration variable
+      if ( any(ixc(1:nvar) == 174) ) then
 
+          ! Error if if r_cp_top is larger than the top plasma radius + shields
+          if ( r_cp_top > rmajor - rminor * triang - ( tftsgap + thshield +& 
+               shldith + vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop ) then
+
+             fdiags(1) = r_cp_top
+             call report_error(256)
+          end if
+
+       ! Otherwise calculate r_cp_top from plasma shape
+       else
           r_cp_top = rmajor - rminor * triang - ( tftsgap + thshield + shldith + &
                      vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
           r_cp_top = max( r_cp_top, r_tf_inboard_out * 1.01D0 ) 
 
+          ! lvl 3 error if r_cp_top is negative 
+          ! Not sure it is usefull with the max() statment ...
+          ! To be removed ?
           if (r_cp_top <= 0.0D0) then
             fdiags(1) = r_cp_top
             call report_error(115)
           end if
-       else
-          r_cp_top = r_tf_inboard_out
+       
        end if 
     end if
 
