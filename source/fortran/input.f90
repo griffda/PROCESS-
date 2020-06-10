@@ -2018,7 +2018,7 @@ contains
                'Cryogenic temperature (K)')
        case ('vcool')
           call parse_real_variable('vcool', vcool, 0.001D0, 100.0D0, &
-               'Max centrepost coolant speed (m/s)')
+               'Inlet centrepost coolant speed (m/s)')
        case ('vdalw')
           call parse_real_variable('vdalw', vdalw, 0.0D0, 100.0D0, &
                'Max V across TFC during quench (kV)')

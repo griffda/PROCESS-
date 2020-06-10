@@ -3339,7 +3339,7 @@ module tfcoil_variables
   !! peak centrepost temperature (K)
   
   real(dp) :: vcool = 20.0D0
-  !! max centrepost coolant flow speed at midplane (m/s) (`iteration variable 70`)
+  !! inlet centrepost coolant flow speed at midplane (m/s) (`iteration variable 70`)
 
   real(dp) :: vol_cond_cp = 0.0D0
   !! Exact conductor volume in the centrepost (m3)
