@@ -107,7 +107,7 @@ class Process():
                 "folder")
 
         # Set the input file in the Fortran
-        fortran.global_variables.fileprefix = self.input_path.resolve()
+        fortran.global_variables.fileprefix = str(self.input_path.resolve())
 
     def set_output(self):
         """Set the output file name.
