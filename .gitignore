@@ -74,3 +74,4 @@ test_suite/quench_data.DAT
 test_suite/OPT.DAT
 *.egg-info
 fortran.py
+.coverage
