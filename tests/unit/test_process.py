@@ -82,6 +82,7 @@ def test_set_input(process_obj, monkeypatch):
     :param monkeypatch: monkeypatch fixture
     :type monkeypatch: object
     """
+    expected = input_file_path
     # Mock the input file path to isolate this test from the other Process 
     # methods (don't have to run Process.parse_args() first to set up this way)
     # Set self.args to a Namespace object, then self.args.input to the input 
@@ -89,13 +90,16 @@ def test_set_input(process_obj, monkeypatch):
     monkeypatch.setattr(process_obj, "args", argparse.Namespace(), raising=False)
     monkeypatch.setattr(process_obj.args, "input", input_file_path, raising=False)
     
+    # Mock the Fortran set
+    monkeypatch.setattr(fortran.global_variables, "fileprefix", None)
+
     # Mocks set up, can now run set_input()
     process_obj.set_input()
 
-    # Check path has been set in the Fortran
-    fileprefix = fortran.global_variables.fileprefix.decode().strip()
+    # Check path has been set in the Fortran (mocked above)
+    result = fortran.global_variables.fileprefix.decode().strip()
     # Convert string from byte-string for comparison
-    assert fileprefix == input_file_path
+    assert result == expected
 
 def test_set_output(process_obj, monkeypatch):
     """Check output filename setting in the Fortran.
@@ -109,10 +113,25 @@ def test_set_output(process_obj, monkeypatch):
     expected = "output_prefix"
     # Mock self.filename_prefix on the process_obj with the value of expected
     monkeypatch.setattr(process_obj, "filename_prefix", expected, raising=False)
+    # Mock the Fortran set
+    monkeypatch.setattr(fortran.global_variables, "output_prefix", None)
     # Run the method, and extract the value from the Fortran
     process_obj.set_output()
     # Convert string from byte-string for comparison
     result = fortran.global_variables.output_prefix.decode().strip()
     assert result == expected
 
-# TODO Do the fortran modifications stick around? They're not a fixture...
+def test_side_effects():
+    """A rough test for side-effects.
+
+    This inexhaustive test checks for side-effects that persist between tests in
+    the Fortran shared library. It's important to keep tests isolated from each
+    other, and this aims to detect when that's not happening. The test fails if
+    it finds that the output_prefix has been left set in the shared library.
+    This and other calls/gets/sets into the shared library should have been 
+    mocked, so this will pass if the output_prefix is ""; that is, the shared
+    library is unperturbed from its initial state.
+    """
+    result = fortran.global_variables.output_prefix.decode().strip()
+    expected = ""
+    assert result == expected
