@@ -28,6 +28,7 @@ class Process():
         self.run_hare_tests()
         self.kallenbach_tests()
         self.kallenbach_scan()
+        self.call_solver()
         self.run()
     
     def parse_args(self, args=None):
@@ -145,6 +146,10 @@ class Process():
             fortran.kallenbach_module.kallenbach_scan()
             # Exit if just running the scan
             sys.exit()
+
+    def call_solver(self):
+        """Call the equation solver (HYBRD)."""
+        self.ifail = fortran.main_module.eqslv()
 
     def run(self):
         """Run Process using the highest-level module, process_module."""

@@ -34,7 +34,6 @@ contains
     use error_handling, only: show_errors
     use process_input, only: nin
     use scan_module, only: scan
-    use main_module, only: eqslv
     use final_module, only: final
     use kallenbach_module, only: kallenbach_testing, kallenbach_scan
     use constants, only: iotty, mfile, nout, nplot, opt_file, vfile
@@ -58,9 +57,6 @@ contains
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-      ! Call equation solver (HYBRD)
-    call eqslv(ifail)
-
       ! Call routine to do scans
     if (ioptimz >= 0) then
         call scan

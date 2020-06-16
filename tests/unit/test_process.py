@@ -179,3 +179,17 @@ def test_kallenbach_scan(process_obj, monkeypatch):
     # Catch a SystemExit after running the scan
     with pytest.raises(SystemExit):
         process_obj.kallenbach_scan()
+
+def test_call_solver(process_obj, monkeypatch):
+    """Check that the solver is called with the ifail integer.
+
+    :param process_obj: Process object
+    :type process_obj: object
+    :param monkeypatch: monkeypatch fixture
+    :type monkeypatch: object
+    """
+    # Mock the ifail value returned by the solver as 1
+    expected = 1
+    monkeypatch.setattr(fortran.main_module, "eqslv", lambda: expected)
+    process_obj.call_solver()
+    assert process_obj.ifail == expected
