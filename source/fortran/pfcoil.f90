@@ -63,7 +63,7 @@ contains
     use physics_variables, only: bvert, kappa, rli, itartpf, vsres, plascur, &
         triang, rminor, vsind, aspect, itart, betap, rmajor
     use tfcoil_variables, only: tftmp, dcond, i_tf_sup, fhts, &
-        tcritsc, strncon_pf, bcritsc
+        tcritsc, strncon_pf, bcritsc,b_crit_upper_nbti, t_crit_nbti 
     use times_variables, only: tim, tramp, tburn, tohs, tqnch, theat
     use constants, only: pi, nout, dcopper
     implicit none
@@ -678,7 +678,7 @@ contains
         jscoh_eof, zpf, rb, ra, jscoh_bop, cptdin, pfcaseth, rpf, cohbop, zh, &
         wtc, zl, turns, wts, a_oh_turn
 	 use tfcoil_variables, only: dcond, tftmp, tcritsc, strncon_cs, &
-       fhts, bcritsc
+       fhts, bcritsc,b_crit_upper_nbti, t_crit_nbti
 	 use constants, only: pi, dcopper
     implicit none
 
@@ -1720,6 +1720,7 @@ contains
     !! 3 = NbTi,
     !! 4 = ITER Nb3Sn, user-defined parameters
     !! 5 = WST Nb3Sn parameterisation
+    !! 7 = Durham Ginzbug-Landau Nb-Ti parameterisation
     !! fhts    : input real : Adjustment factor (<= 1) to account for strain,
     !! radiation damage, fatigue or AC losses
     !! strain : input real : Strain on superconductor at operation conditions
@@ -1739,8 +1740,8 @@ contains
 
 		use error_handling, only: fdiags, idiags, report_error
     use superconductors, only: jcrit_nbti, wstsc, jcrit_rebco, bi2212, &
-      itersc, current_sharing_rebco
-		use tfcoil_variables, only: tmargmin_cs, temp_margin
+      itersc, current_sharing_rebco, Gl_nbti
+		use tfcoil_variables, only: tmargmin_cs, temp_margin, b_crit_upper_nbti, t_crit_nbti 
 		use maths_library, only: variable_error, secant_solve
     implicit none
 
@@ -1820,6 +1821,13 @@ contains
     case (6) ! "REBCO" 2nd generation HTS superconductor in CrCo strand
        call jcrit_rebco(thelium,bmax,jcritsc,validity,0)
        jcritstr = jcritsc * (1.0D0-fcu)
+
+   case (7) ! Durham Ginzburg-Landau Nb-Ti parameterisation
+         bc20m = b_crit_upper_nbti
+         tc0m = t_crit_nbti 
+         call GL_nbti(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
+         jcritstr = jcritsc  * (1.0D0-fcu)
+         
 
     case default  !  Error condition
        idiags(1) = isumat ; call report_error(156)
@@ -1911,6 +1919,21 @@ contains
       temp_margin = tmarg
    end if
 
+   ! SCM 16/03/20 Use secant solver for GL_nbti.
+   if(isumat==7) then
+      ! Current sharing temperature for Durham Ginzburg-Landau Nb-Ti
+      x1 = 4.0d0  ! Initial values of temperature
+      x2 = 6.0d0
+      ! Solve for deltaj_GL_nbti = 0
+      call secant_solve(deltaj_GL_nbti,x1,x2,current_sharing_t,error,residual,100d0)
+      tmarg = current_sharing_t - thelium
+      call GL_nbti(current_sharing_t,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+      if(variable_error(current_sharing_t))then  ! current sharing secant solver has failed.
+          write(*,'(a24, 10(a12,es12.3))')'Gl_nbti: current sharing ', 'temperature=', current_sharing_t, '  tmarg=', tmarg, &
+                                          '  jsc=',jsc, '  jcrit0=',jcrit0, '  residual=', residual
+      end if
+  end if
+
 contains
     ! These functions are required because secant_solve requires a function not a subroutine
     ! They need to follow a 'contains' statement because 'jcrit0', 'bmax' and others
@@ -1938,6 +1961,17 @@ contains
         end if
         deltaj_wst = jcrit0 - jsc
     end function deltaj_wst
+
+    function deltaj_GL_nbti(temperature)
+      real(dp), intent(in) :: temperature
+      real(dp)::deltaj_Gl_nbti, jcrit0
+      call GL_nbti(temperature,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+      if(variable_error(jcrit0))then  ! GL_Nbti has failed.
+        write(*,'(a24, 10(a12,es12.3))')'deltaj_GL_nbti: ', 'bmax=', bmax, '  temperature=', temperature, &
+                                          '  jcrit0=',jcrit0
+      end if
+      deltaj_GL_nbti = jcrit0 - jsc
+  end function deltaj_GL_nbti
 
 end subroutine superconpf
 
@@ -2522,7 +2556,8 @@ end subroutine superconpf
 		use physics_variables, only: rminor, rmajor, kappa
     use process_output, only: int_to_string2, ovarin, oheadr, &
       ovarre, osubhd, oblnkl, ocmmnt
-    use tfcoil_variables, only: tmargmin_cs, strncon_cs, tftmp
+    use tfcoil_variables, only: tmargmin_cs, strncon_cs, tftmp, b_crit_upper_nbti,&
+      t_crit_nbti 
     use numerics, only: boundu
 		use constants, only: mfile
     implicit none
@@ -2564,6 +2599,8 @@ end subroutine superconpf
                   '  (ITER Nb3Sn critical surface model, user-defined parameters)')
           case (5)
              call ocmmnt(outfile, ' (WST Nb3Sn critical surface model)')
+          case (7)
+             call ocmmnt(outfile, ' (Durham Ginzburg-Landau critical surface model)')
           end select
 
           call osubhd(outfile,'Central Solenoid Current Density Limits :')
@@ -2665,6 +2702,8 @@ end subroutine superconpf
                '  (ITER Nb3Sn critical surface model, user-defined parameters)')
        case (5)
           call ocmmnt(outfile, ' (WST Nb3Sn critical surface model)')
+       case (7)
+            call ocmmnt(outfile, ' (Durham Ginzburg-Landau critical surface model)')
        end select
 
        call ovarre(outfile,'Copper fraction in conductor','(fcupfsu)',fcupfsu)

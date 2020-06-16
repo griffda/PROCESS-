@@ -173,7 +173,7 @@ subroutine sctfcoil(outfile,iprint)
         hmax
     use tfcoil_variables, only: i_tf_turns_integer, wwp1, estotftgj, tfind, &
         ritfc, dr_tf_wp, n_tf, bmaxtfrp, bmaxtf, n_tf_stress_layers, n_rad_per_layer, &
-        i_tf_sup, i_tf_shape, i_tf_wp_geom, tinstf, tfinsgap
+        i_tf_sup, i_tf_shape, i_tf_wp_geom, tinstf, tfinsgap, b_crit_upper_nbti, t_crit_nbti
     use constants, only: rmu0, pi
     use physics_variables, only: itart
 
@@ -3386,6 +3386,9 @@ subroutine outtf(outfile, peaktfflag)
             case (6)
                 call ocmmnt(outfile, &
                     '  -> High temperature superconductor: REBCO HTS tape in CroCo strand')
+            case (7)
+                call ocmmnt(outfile, & 
+                    '  ->  Durham Ginzburg-Landau critical surface model for Nb-Ti')
         end select
     end if
 
@@ -3737,8 +3740,9 @@ subroutine tfspcall(outfile,iprint)
         temp_margin, jwdgpro, tftmp, vtfskv, acndttf, dhecoil, tmaxpro, &
         tmargtf, thwcndut, t_conductor, fcutfsu, jwdgcrt, tdmptf, cpttf, &
         ritfc, jwptf, bmaxtfrp, tcritsc, acstf, strncon_tf, fhts, bcritsc, &
-        i_tf_sc_mat
-    use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, jcrit_nbti, croco, bi2212
+        i_tf_sc_mat, b_crit_upper_nbti, t_crit_nbti 
+    use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, jcrit_nbti, croco, bi2212,&
+    GL_nbti
     use global_variables, only: run_tests
     use constants, only: pi
     implicit none
@@ -3798,6 +3802,7 @@ contains
         !! 3 = NbTi,
         !! 4 = ITER Nb3Sn, user-defined parameters
         !! 5 = WST Nb3Sn parameterisation
+        !! 7 = Durham Ginzburg-Landau Nb-Ti parameterisation
         !! fhts    : input real : Adjustment factor (<= 1) to account for strain,
         !! radiation damage, fatigue or AC losses
         !! strain : input real : Strain on superconductor at operation conditions
@@ -3906,6 +3911,14 @@ contains
         case default  !  Error condition
             idiags(1) = isumat ; call report_error(105)
 
+        case (7) ! Durham Ginzburg-Landau Nb-Ti parameterisation
+            bc20m = b_crit_upper_nbti
+            tc0m = t_crit_nbti 
+            call GL_nbti(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
+            jcritstr = jcritsc  * (1.0D0-fcu)
+            !  Critical current in cable
+            icrit = jcritstr * acs * fcond
+
         end select
 
         ! Critical current density in winding pack
@@ -3926,7 +3939,7 @@ contains
         end if
 
         !  Temperature margin (already calculated in bi2212 for isumat=2)
-        if ((isumat == 1).or.(isumat == 4).or.(isumat == 3).or.(isumat == 5)) then
+        if ((isumat == 1).or.(isumat == 4).or.(isumat == 3).or.(isumat == 5).or.(isumat == 7)) then
 
             !  Newton-Raphson method; start approx at requested minimum temperature margin
             ttest = thelium + tmargmin_tf + 0.001d0
@@ -3960,6 +3973,11 @@ contains
                     if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
                     call wstsc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
                     call wstsc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
+                case (7)
+                    call GL_nbti(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+                    if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
+                    call GL_nbti(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
+                    call GL_nbti(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
                 end select
                 ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)
             end do solve_for_tmarg
@@ -4008,6 +4026,11 @@ contains
         case (5)
             call ocmmnt(outfile,'Superconductor used: Nb3Sn')
             call ocmmnt(outfile, ' (WST Nb3Sn critical surface model)')
+            call ovarre(outfile,'Critical field at zero temperature and strain (T)','(bc20m)',bc20m)
+            call ovarre(outfile,'Critical temperature at zero field and strain (K)', '(tc0m)',tc0m)
+        case (7)
+            call ocmmnt(outfile,'Superconductor used: Nb-Ti')
+            call ocmmnt(outfile, ' (Durham Ginzburg-Landau critical surface model)')
             call ovarre(outfile,'Critical field at zero temperature and strain (T)','(bc20m)',bc20m)
             call ovarre(outfile,'Critical temperature at zero field and strain (K)', '(tc0m)',tc0m)
         end select ! isumat
