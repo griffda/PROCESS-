@@ -131,3 +131,20 @@ def test_initialise(process_obj, monkeypatch):
     monkeypatch.setattr(fortran.init_module, "init", lambda: None)
     # Run initialise method; this will fail on a raised exception
     process_obj.initialise()
+
+def test_run_hare_tests(process_obj, monkeypatch):
+    """Check main_module.runtests() is run if run_tests == 1.
+
+    :param process_obj: Process object
+    :type process_obj: object
+    :param monkeypatch: monkeypatch fixture
+    :type monkeypatch: object
+    """
+    # TODO Can't actually check that this is being run yet; need a result that
+    # can be checked in the Python (isolated fixtures), to avoid side-effects 
+    # persisting in the Fortran
+    # For now, just check that no exceptions are thrown before calling into 
+    # the Fortran
+    monkeypatch.setattr(fortran.global_variables, "run_tests", 1)
+    monkeypatch.setattr(fortran.main_module, "runtests", lambda: None)
+    process_obj.run_hare_tests()

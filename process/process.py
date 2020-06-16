@@ -24,6 +24,7 @@ class Process():
         self.parse_args(args)
         self.set_filenames()
         self.initialise()
+        self.run_hare_tests()
         self.run()
     
     def parse_args(self, args=None):
@@ -121,6 +122,12 @@ class Process():
     def initialise(self):
         """Run the init module to call all initialisation routines."""
         fortran.init_module.init()
+
+    def run_hare_tests(self):
+        """Run HARE tests if required to by input file."""
+        # TODO This would do better in a separate input validation module.
+        if fortran.global_variables.run_tests == 1:
+            fortran.main_module.runtests()
 
     def run(self):
         """Run Process using the highest-level module, process_module."""

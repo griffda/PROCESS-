@@ -34,7 +34,7 @@ contains
     use error_handling, only: show_errors
     use process_input, only: nin
     use scan_module, only: scan
-    use main_module, only: runtests, eqslv
+    use main_module, only: eqslv
     use final_module, only: final
     use kallenbach_module, only: kallenbach_testing, kallenbach_scan
     use divertor_kallenbach_variables, only: kallenbach_scan_switch, &
@@ -42,7 +42,7 @@ contains
     use constants, only: iotty, mfile, nout, nplot, opt_file, vfile
     use process_output, only: oblnkl, ostars, ocentr, osubhd, ocmmnt, oheadr
     use numerics, only: ioptimz
-    use global_variables, only: output_prefix, run_tests, verbose
+    use global_variables, only: output_prefix, verbose
     
     use, intrinsic :: iso_fortran_env, only: dp=>real64
     implicit none
@@ -60,10 +60,6 @@ contains
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-    ! Run built-in tests.
-    ! These are distinct from the tests that are dependent on 'unit_test'.
-    if (run_tests == 1) call runtests
-
     if(kallenbach_tests == 1) then
       call kallenbach_testing()
       call exit(0)
