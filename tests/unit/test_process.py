@@ -148,3 +148,19 @@ def test_run_hare_tests(process_obj, monkeypatch):
     monkeypatch.setattr(fortran.global_variables, "run_tests", 1)
     monkeypatch.setattr(fortran.main_module, "runtests", lambda: None)
     process_obj.run_hare_tests()
+
+def test_kallenbach_tests(process_obj, monkeypatch):
+    """Check that the Kallenbach tests can be run if required.
+
+    :param process_obj: Process object
+    :type process_obj: object
+    :param monkeypatch: monkeypatch fixture
+    :type monkeypatch: object
+    """
+    # TODO Currently only checking for no exceptions before Fortran mock called
+    monkeypatch.setattr(fortran.div_kal_vars, "kallenbach_tests", 1)
+    monkeypatch.setattr(fortran.kallenbach_module, "kallenbach_testing", 
+        lambda: None)
+    # Expect a SystemExit, as the code is exited if the Kallenbach tests are run
+    with pytest.raises(SystemExit):
+        process_obj.kallenbach_tests()

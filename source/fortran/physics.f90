@@ -55,7 +55,7 @@ module physics_module
     !! DEMO Tokamak' Document, March 2012, EFDA Report
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    use divertor_kallenbach_variables, only: impurity_enrichment, netau_sol
+    use div_kal_vars, only: impurity_enrichment, netau_sol
 
     use build_variables, only: fwarea
     use constraint_variables, only: peakradwallload, flhthresh, peakfactrad

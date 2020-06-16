@@ -37,7 +37,7 @@ contains
     !! M.L. Reinke 2017 Nucl. Fusion 57 034004
        
     ! use divertor_ode, only: impurity_concs
-    ! use divertor_kallenbach_variables, only: impurity_enrichment
+    ! use div_kal_vars, only: impurity_enrichment
     use divertor_ode_var, only: impurity_concs
     use impurity_radiation_module, only: imp_dat
     use reinke_variables, only: reinke_mode

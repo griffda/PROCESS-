@@ -37,8 +37,7 @@ contains
     use main_module, only: eqslv
     use final_module, only: final
     use kallenbach_module, only: kallenbach_testing, kallenbach_scan
-    use divertor_kallenbach_variables, only: kallenbach_scan_switch, &
-      kallenbach_tests
+    use div_kal_vars, only: kallenbach_scan_switch
     use constants, only: iotty, mfile, nout, nplot, opt_file, vfile
     use process_output, only: oblnkl, ostars, ocentr, osubhd, ocmmnt, oheadr
     use numerics, only: ioptimz
@@ -60,11 +59,6 @@ contains
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-    if(kallenbach_tests == 1) then
-      call kallenbach_testing()
-      call exit(0)
-    endif
-
     if(kallenbach_scan_switch == 1) then
       call kallenbach_scan()
       call exit(0)

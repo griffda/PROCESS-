@@ -12,6 +12,7 @@ Fortran "program" statement. This Python module effectively acts as the Fortran
 from process import fortran
 import argparse
 from pathlib import Path
+import sys
 
 class Process():
     """The main Process class."""
@@ -25,6 +26,7 @@ class Process():
         self.set_filenames()
         self.initialise()
         self.run_hare_tests()
+        self.kallenbach_tests()
         self.run()
     
     def parse_args(self, args=None):
@@ -128,6 +130,13 @@ class Process():
         # TODO This would do better in a separate input validation module.
         if fortran.global_variables.run_tests == 1:
             fortran.main_module.runtests()
+
+    def kallenbach_tests(self):
+        """Run Kallenbach tests if required."""
+        if fortran.div_kal_vars.kallenbach_tests == 1:
+            fortran.kallenbach_module.kallenbach_testing()
+            # Exit if just running the Kallenbach tests
+            sys.exit()
 
     def run(self):
         """Run Process using the highest-level module, process_module."""

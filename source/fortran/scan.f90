@@ -166,7 +166,7 @@ contains
       tfcpmw, fcutfsu, acond, fcoolcp, rcool, whttf, ppump, vcool, wwp1, n_tf, &
 		  thkwp
 		use fwbs_variables, only: tpeak
-    use divertor_kallenbach_variables, only: totalpowerlost, pressure0, &
+    use div_kal_vars, only: totalpowerlost, pressure0, &
       ttarget, neratio, qtargettotal, neomp, psep_kallenbach, fmom
 		use final_module, only: final
     use physics_variables, only: q, aspect, pradmw, dene, powfmw, btot, tesep, &
@@ -438,7 +438,7 @@ contains
       tfcpmw, fcutfsu, acond, fcoolcp, rcool, whttf, ppump, vcool, wwp1, n_tf, &
 		  thkwp
 		use fwbs_variables, only: tpeak
-    use divertor_kallenbach_variables, only: totalpowerlost, pressure0, &
+    use div_kal_vars, only: totalpowerlost, pressure0, &
       ttarget, neratio, qtargettotal, neomp, psep_kallenbach, fmom
 		use final_module, only: final
     use physics_variables, only: q, aspect, pradmw, dene, powfmw, btot, tesep, &
@@ -730,7 +730,7 @@ contains
     use numerics, only: epsvmc, boundu, boundl
     use tfcoil_variables, only: tmargmin_tf, alstrtf, n_pancake, oacdcp, &
       n_layer
-    use divertor_kallenbach_variables, only: lcon_factor, impurity_enrichment, &
+    use div_kal_vars, only: lcon_factor, impurity_enrichment, &
       target_spread, lambda_q_omp, qtargettotal, ttarget
     implicit none
 

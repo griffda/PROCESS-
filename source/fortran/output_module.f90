@@ -53,7 +53,7 @@ subroutine output(outfile)
   use global_variables, only: verbose
   use process_output, only: ovarin
   use constants, only: mfile, nout
-  use divertor_kallenbach_variables, only: kallenbach_switch, neomp, &
+  use div_kal_vars, only: kallenbach_switch, neomp, &
     ttarget, targetangle, psep_kallenbach, qtargettotal, teomp
   implicit none
   
