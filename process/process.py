@@ -23,6 +23,7 @@ class Process():
         """
         self.parse_args(args)
         self.set_filenames()
+        self.initialise()
         self.run()
     
     def parse_args(self, args=None):
@@ -116,6 +117,10 @@ class Process():
         """
         self.output_path = Path(self.filename_prefix + "OUT.DAT")
         fortran.global_variables.output_prefix = self.filename_prefix
+
+    def initialise(self):
+        """Run the init module to call all initialisation routines."""
+        fortran.init_module.init()
 
     def run(self):
         """Run Process using the highest-level module, process_module."""

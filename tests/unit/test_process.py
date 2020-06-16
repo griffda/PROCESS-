@@ -120,3 +120,14 @@ def test_set_output(process_obj, monkeypatch):
     # Convert string from byte-string for comparison
     result = fortran.global_variables.output_prefix.decode().strip()
     assert result == expected
+
+def test_initialise(process_obj, monkeypatch):
+    """Test that the init_module can be called in the Fortran.
+
+    :param process_obj: Process object
+    :type process_obj: object
+    """
+    # Mock the init subroutine with a lambda function
+    monkeypatch.setattr(fortran.init_module, "init", lambda: None)
+    # Run initialise method; this will fail on a raised exception
+    process_obj.initialise()

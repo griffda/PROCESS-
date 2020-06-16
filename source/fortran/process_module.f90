@@ -35,7 +35,6 @@ contains
     use process_input, only: nin
     use scan_module, only: scan
     use main_module, only: runtests, eqslv
-    use init_module, only: init
     use final_module, only: final
     use kallenbach_module, only: kallenbach_testing, kallenbach_scan
     use divertor_kallenbach_variables, only: kallenbach_scan_switch, &
@@ -61,9 +60,6 @@ contains
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-    !  Initialise
-    call init    
-
     ! Run built-in tests.
     ! These are distinct from the tests that are dependent on 'unit_test'.
     if (run_tests == 1) call runtests
