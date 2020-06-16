@@ -120,18 +120,3 @@ def test_set_output(process_obj, monkeypatch):
     # Convert string from byte-string for comparison
     result = fortran.global_variables.output_prefix.decode().strip()
     assert result == expected
-
-def test_side_effects():
-    """A rough test for side-effects.
-
-    This inexhaustive test checks for side-effects that persist between tests in
-    the Fortran shared library. It's important to keep tests isolated from each
-    other, and this aims to detect when that's not happening. The test fails if
-    it finds that the output_prefix has been left set in the shared library.
-    This and other calls/gets/sets into the shared library should have been 
-    mocked, so this will pass if the output_prefix is ""; that is, the shared
-    library is unperturbed from its initial state.
-    """
-    result = fortran.global_variables.output_prefix.decode().strip()
-    expected = ""
-    assert result == expected
