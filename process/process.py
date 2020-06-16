@@ -27,6 +27,7 @@ class Process():
         self.initialise()
         self.run_hare_tests()
         self.kallenbach_tests()
+        self.kallenbach_scan()
         self.run()
     
     def parse_args(self, args=None):
@@ -136,6 +137,13 @@ class Process():
         if fortran.div_kal_vars.kallenbach_tests == 1:
             fortran.kallenbach_module.kallenbach_testing()
             # Exit if just running the Kallenbach tests
+            sys.exit()
+
+    def kallenbach_scan(self):
+        """Run Kallenbach scan if required."""
+        if fortran.div_kal_vars.kallenbach_scan_switch == 1:
+            fortran.kallenbach_module.kallenbach_scan()
+            # Exit if just running the scan
             sys.exit()
 
     def run(self):

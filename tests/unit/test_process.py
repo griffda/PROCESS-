@@ -164,3 +164,18 @@ def test_kallenbach_tests(process_obj, monkeypatch):
     # Expect a SystemExit, as the code is exited if the Kallenbach tests are run
     with pytest.raises(SystemExit):
         process_obj.kallenbach_tests()
+
+def test_kallenbach_scan(process_obj, monkeypatch):
+    """Check the Kallenbach scan can be run.
+
+    :param process_obj: Process object
+    :type process_obj: object
+    :param monkeypatch: monkeypatch fixture
+    :type monkeypatch: object
+    """
+    monkeypatch.setattr(fortran.div_kal_vars, "kallenbach_scan_switch", 1)
+    monkeypatch.setattr(fortran.kallenbach_module, "kallenbach_scan", lambda: 
+        None)
+    # Catch a SystemExit after running the scan
+    with pytest.raises(SystemExit):
+        process_obj.kallenbach_scan()
