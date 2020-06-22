@@ -29,14 +29,26 @@ module stellarator_configuration
       real(dp)  rminor_ref
       !  Reference Point for minor radius where all the other variables are determined
 
+      real(dp)  coil_rmajor
+      !  Reference Point for coil major radius
+
+      real(dp)  coil_rminor
+      !  Reference Point for coil minor radius
+
       real(dp)  aspect_ref
       !  Reference Point for aspect ratio where all the other variables are determined
 
       real(dp)  bt_ref
       !  Reference Point for toroidal b where all the other variables are determined
       
+      real(dp) WP_area
+      !  Winding pack area at the reference point [m^2]
+
+      real(dp)  WP_bmax
+      !  The maximal magnetic field in the winding pack at the reference size of the winding pack [T]
+
       real(dp) i0
-      !  Coil current needed for 1T on axis at outer radius 1m
+      !  Coil current needed for b0 at the reference point
       
       real(dp) a1
       !  Magnetic field fit parameter a1 (for the maximal field on the coils)
@@ -45,35 +57,28 @@ module stellarator_configuration
       !  Magnetic field fit parameter a2
 
       real(dp) dmin
-      !  Minimal intercoil distance dmin/Rmax
+      !  Minimal intercoil distance at the reference point
       
       real(dp) inductance
-      !  inductance
+      !  inductance at the reference point
 
       real(dp) coilsurface
-      !  Coil surface
+      !  Coil surface at the reference point
 
       real(dp) coillength
-      !  Total coil length
+      !  Total coil length at the reference point
       
       real(dp) max_portsize_width
-      !  Port size in toroidal direction
-
-      real(dp) coil_epsilon 
-      !  Average minor Coil Radius (as r/R) to get it dimensionless.
-
-      real(dp) coil_to_plasma_ratio
-      !  The ratio of the coil to plasma radius.
-      !  (Average midpoint of the coils to average maj. radius. Will be approx. 1)
+      !  Port size in toroidal direction at the reference point
 
       real(dp) maximal_coil_height
       !  The maximal coil height at reference point.
 
       real(dp) min_plasma_coil_distance
-      !  The minimal distance between coil and plasma
+      !  The minimal distance between coil and plasma at the reference point
 
       real(dp) plasma_volume
-      !  Leading volume variable. Scales as a*R^2. [m^3]
+      !  The plasma volume at the reference point. Scales as a*R^2. [m^3]
 
       real(dp) plasma_surface
       !  The plasma surface a the reference point. [m^2]
@@ -82,7 +87,7 @@ module stellarator_configuration
       !  Ratio radial to toroidal length of the winding pack. (a1 and a2 should be calculated using this value) [1]
      
       real(dp) max_force_density
-      !  Maximal force density at reference point [MN/m^3]
+      !  Maximal integrated force density at reference point in a WP cross section [MN/m^3]
       
       real(dp) min_bend_radius
       !  Minimal bending radius at reference point [m]
@@ -112,83 +117,91 @@ contains
 
          case(1)
             ! Helias5 Machine
+            ! The values are given at the reference point
+
             new_stella_config%name = "Helias 5b"
 
-            new_stella_config%rmajor_ref = 22.0D0
-            new_stella_config%aspect_ref = 12.5D0
-            new_stella_config%rminor_ref = 22.0D0/12.5D0
+            new_stella_config%rmajor_ref = 22.2D0
+            new_stella_config%rminor_ref = 1.80D0
+            new_stella_config%aspect_ref = 22.2D0/1.80D0
+
+            ! Coil radii
+            new_stella_config%coil_rmajor = 22.44D0
+            new_stella_config%coil_rminor = 4.76D0
+
             new_stella_config%bt_ref = 5.6D0
+            new_stella_config%WP_area = 0.8d0*0.6d0
+            new_stella_config%WP_bmax = 11.44d0
 
             new_stella_config%symmetry = 5
             new_stella_config%coilspermodule = 10
 
-            new_stella_config%a1 = 0.712D0
-            new_stella_config%a2 = 0.027D0
+            new_stella_config%a1 = 0.688D0
+            new_stella_config%a2 = 0.025D0
 
-            new_stella_config%plasma_volume = 19.816D0  ! This value is for Helias 5
+            new_stella_config%plasma_volume = 1422.63D0  ! This value is for Helias 5
             new_stella_config%dmin = 0.84D0
             new_stella_config%max_portsize_width = 2.12D0 
 
-            new_stella_config%plasma_surface = 49.228D0 ! Plasma Surface
+            new_stella_config%plasma_surface = 1960.0D0 ! Plasma Surface
 
             new_stella_config%maximal_coil_height = 12.7 ! [m] Full height max point to min point
 
             new_stella_config%coilsurface = 4817.7D0 ! Coil surface, dimensionfull. At reference point
+
+            new_stella_config%coillength = 1680.0D0 ! Central filament length of machine with outer radius 1m.
       
-            new_stella_config%coil_epsilon = 4.7D0 / 22.46D0
+            new_stella_config%I0 = 13.06D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
+            new_stella_config%inductance = 1655.76D-6 ! inductance in muH
 
-            new_stella_config%coillength = 1681.0D0 ! Central filament length of machine with outer radius 1m.
+            new_stella_config%WP_ratio = 1.2D0 ! The fit values in stellarator config class should be calculated using this value.
 
-            new_stella_config%coil_to_plasma_ratio = 22.46D0/22.0D0 ! Approximately
-      
-            new_stella_config%I0 = 13.06D0/5.6D0/22.46D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
-            new_stella_config%inductance = 1655.76D-6/22.0D0* 12.5D0**2 ! inductance/R*A^2 in muH/m
+            new_stella_config%max_force_density = 24.5 ! [MN/m^3]
 
-            new_stella_config%WP_ratio = 1.3D0 ! The fit values in stellarator config class should be calculated using this value.
+            new_stella_config%min_plasma_coil_distance = (4.7D0-1.76D0)
 
-            new_stella_config%max_force_density = 0.37 ! Multiply with I^2 [MA] A_wp^(-1) [m^2] to obtain [MN/m^3]
-
-            new_stella_config%min_plasma_coil_distance = (4.7D0-1.76D0)/22.0D0 ! This is coil minor radius - plasma radius divided by major radius for scaling.
-
-            new_stella_config%min_bend_radius = 1.32 ! [m]
+            new_stella_config%min_bend_radius = 1.0 ! [m]
 
          case(2)
             ! Helias4 Machine
             new_stella_config%name = "Helias 4"
             ! Reference point where all the other variables are determined from
             ! Plasma outer radius
-            new_stella_config%rmajor_ref = 18.0D0
-            new_stella_config%rminor_ref = 2.1D0
-            new_stella_config%aspect_ref =  18.0D0/2.1D0
+            new_stella_config%rmajor_ref = 17.6D0
+            new_stella_config%rminor_ref = 2.0D0
+            new_stella_config%aspect_ref =  17.6D0/2.0D0
+
+            ! Coil radii
+            new_stella_config%coil_rmajor = 18.39D0
+            new_stella_config%coil_rminor = 4.94D0
+
             new_stella_config%bt_ref = 5.6D0
+            new_stella_config%WP_area = 0.8d0*0.6d0
+            new_stella_config%WP_bmax = 11.51d0
 
             new_stella_config%symmetry = 4
             new_stella_config%coilspermodule = 10
-            new_stella_config%a1 = 0.691D0
-            new_stella_config%a2 = 0.031D0
-            new_stella_config%plasma_volume =   1560.0D0/18.0D0/2.1D0**2
+            new_stella_config%a1 = 0.676D0
+            new_stella_config%a2 = 0.029D0
+            new_stella_config%plasma_volume =   1380.0D0
             new_stella_config%dmin = 1.08D0
             new_stella_config%max_portsize_width = 3.24D0
 
-            new_stella_config%plasma_surface = 1492.0D0/18.0D0/2.1D0
+            new_stella_config%plasma_surface = 1900.0D0
             new_stella_config%maximal_coil_height = 13.34D0  ! [m] Full height max point to min point
 
-            new_stella_config%coilsurface =  4019.0D0! Coil surface, dimensionfull. At reference point
-      
-            new_stella_config%coil_epsilon = 4.95D0 / 18.41D0
+            new_stella_config%coilsurface =  4100.0D0! Coil surface, dimensionfull. At reference point
 
             new_stella_config%coillength = 1435.07D0 ! Central filament length of machine with outer radius 1m.
-
-            new_stella_config%coil_to_plasma_ratio = 1.0D0 ! Approximately
       
-            new_stella_config%I0 = 13.146D0/5.6D0/18.0D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
-            new_stella_config%inductance = 1290.4D-6/18.0D0*(18.0D0/2.1D0)**2 ! inductance/R*A^2 in muH/m
+            new_stella_config%I0 = 13.146D0 ! Coil Current needed to produce b0 on axis in [MA] at reference point
+            new_stella_config%inductance = 1290.4D-6 ! inductance/R*A^2 in muH
 
             new_stella_config%WP_ratio = 1.3D0
 
-            new_stella_config%max_force_density = 0.37 ! Multiply with I^2 [MA] A_wp^(-1) [m^2] to obtain [MN/m^3]
+            new_stella_config%max_force_density = 40.9d0 ! [MN/m^3]
 
-            new_stella_config%min_plasma_coil_distance = (4.95D0-2.1D0)/18.0D0 
+            new_stella_config%min_plasma_coil_distance = 1.7d0
 
             new_stella_config%min_bend_radius = 0.86 ! [m]
 
@@ -198,41 +211,137 @@ contains
             new_stella_config%name = "Helias 3"
             ! Reference point where all the other variables are determined from
             ! Plasma outer radius
-            new_stella_config%rmajor_ref = 15.0D0
-            new_stella_config%rminor_ref = 2.5D0
-            new_stella_config%aspect_ref =  15.0D0/2.5D0  
+            new_stella_config%rmajor_ref = 13.86d0
+            new_stella_config%rminor_ref = 2.18d0
+            new_stella_config%aspect_ref =  13.86d0/2.18d0
+
+            ! Coil radii
+            new_stella_config%coil_rmajor = 14.53D0
+            new_stella_config%coil_rminor = 6.12D0
+            
             new_stella_config%bt_ref = 5.6D0
+            new_stella_config%WP_bmax = 12.346d0
+            new_stella_config%WP_area = 0.8d0*0.6d0
 
             new_stella_config%symmetry = 3
             new_stella_config%coilspermodule = 10
-            new_stella_config%a1 = 0.571D0
-            new_stella_config%a2 = 0.033D0
-            new_stella_config%plasma_volume =   1600.0D0/15.0D0/2.5D0**2
-            new_stella_config%dmin = 1.15D0
-            new_stella_config%max_portsize_width = 3.24D0
 
-            new_stella_config%plasma_surface = 1480.44D0/15.0D0/2.5D0
+            ! Bmax fit parameters
+            new_stella_config%a1 = 0.56D0
+            new_stella_config%a2 = 0.030D0
+
+            new_stella_config%plasma_volume =   1300.8D0
+            new_stella_config%dmin = 1.145D0
+            new_stella_config%max_portsize_width = 3.24D0 !??? guess. not ready yet
+
+            new_stella_config%plasma_surface = 1600.00D0
 
             new_stella_config%maximal_coil_height = 17.74D0! [m] Full height max point to min point
 
-            new_stella_config%coilsurface = 4114.0D0 ! Coil surface, dimensionfull. At reference point
-      
-            new_stella_config%coil_epsilon = 6.12D0/14.58D0
+            new_stella_config%coilsurface = 4240.0D0 ! Coil surface, dimensionfull. At reference point
 
             new_stella_config%coillength = 1287.3D0 ! Central filament length of machine with outer radius 1m.
-
-            new_stella_config%coil_to_plasma_ratio = 1.0D0 ! Approximately
       
-            new_stella_config%I0 = 14.23D0/5.6D0/15.0D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
-            new_stella_config%inductance = 1250.7D-6/15.0D0*(15.0D0/2.5D0)**2 ! inductance/R*A^2 in muH/m
+            new_stella_config%I0 = 14.23D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
+            new_stella_config%inductance = 1250.7D-6 ! inductance in muH
 
             new_stella_config%WP_ratio = 1.3D0
 
-            new_stella_config%max_force_density = 0.37 ! Multiply with I^2 [MA] A_wp^(-1) [m^2] to obtain [MN/m^3]
+            new_stella_config%max_force_density = 57.0d0 ! Multiply with I^2 [MA] A_wp^(-1) [m^2] to obtain [MN/m^3]
 
-            new_stella_config%min_plasma_coil_distance = (6.12D0-2.5D0)/15.0D0 
+            new_stella_config%min_plasma_coil_distance = 1.78d0
 
-            new_stella_config%min_bend_radius = 0.81 ! [m]
+            new_stella_config%min_bend_radius = 1.145 ! [m]
+
+
+         case(4)
+            ! w7x30 Machine
+            new_stella_config%name = "W7X-30"
+            ! Reference point where all the other variables are determined from
+            ! Plasma outer radius
+            new_stella_config%rmajor_ref = 5.50D0
+            new_stella_config%rminor_ref = 0.49D0
+            new_stella_config%aspect_ref =  5.5D0/0.49D0
+
+            ! Coil radii
+            new_stella_config%coil_rmajor = 5.62D0
+            new_stella_config%coil_rminor = 1.36D0
+
+
+            new_stella_config%bt_ref = 3.0D0
+            new_stella_config%WP_area = 0.18d0*0.15d0
+            new_stella_config%WP_bmax = 10.6d0
+
+            new_stella_config%symmetry = 5
+            new_stella_config%coilspermodule = 6
+            new_stella_config%a1 = 0.98D0
+            new_stella_config%a2 = 0.041D0
+            new_stella_config%plasma_volume =   26.4D0
+            new_stella_config%dmin = 0.21D0
+            new_stella_config%max_portsize_width = 0.5D0
+
+            new_stella_config%plasma_surface = 128.3D0
+            new_stella_config%maximal_coil_height = 3.6D0  ! [m] Full height max point to min point
+
+            new_stella_config%coilsurface =  370.0D0! Coil surface, dimensionfull. At reference point
+
+            new_stella_config%coillength = 303.4D0 ! Central filament length of machine with outer radius 1m.
+      
+            new_stella_config%I0 = 2.9D0 ! Coil Current needed to produce b0 on axis in [MA] at reference point
+            new_stella_config%inductance = 25.27D-6 ! inductance/R*A^2 in muH
+
+            new_stella_config%WP_ratio = 1.2D0
+
+            new_stella_config%max_force_density = 0.95 ! [MN/m^3]
+
+            new_stella_config%min_plasma_coil_distance = 0.45D0 
+
+            new_stella_config%min_bend_radius = 0.186 ! [m]
+
+         case(5)
+            ! w7x50 Machine
+            new_stella_config%name = "W7X-50"
+            ! Reference point where all the other variables are determined from
+            ! Plasma outer radius
+            new_stella_config%rmajor_ref = 5.5D0
+            new_stella_config%rminor_ref = 0.49D0
+            new_stella_config%aspect_ref =  5.5D0/0.49D0
+
+            ! Coil radii
+            new_stella_config%coil_rmajor = 5.62d0
+            new_stella_config%coil_rminor = 1.18D0
+
+
+            new_stella_config%bt_ref = 3.0D0
+            new_stella_config%WP_area = 0.18d0*0.15d0
+            new_stella_config%WP_bmax = 6.3d0
+
+            new_stella_config%symmetry = 5
+            new_stella_config%coilspermodule = 10
+            new_stella_config%a1 = 0.66D0
+            new_stella_config%a2 = 0.025D0
+            new_stella_config%plasma_volume =   26.4D0
+            new_stella_config%dmin = 0.28D0
+            new_stella_config%max_portsize_width = 0.3D0
+
+            new_stella_config%plasma_surface = 128.3D0
+            new_stella_config%maximal_coil_height = 3.1D0  ! [m] Full height max point to min point
+
+            new_stella_config%coilsurface =  299.85D0! Coil surface, dimensionfull. At reference point
+
+            new_stella_config%coillength = 420.67D0 ! Central filament length of machine with outer radius 1m.
+      
+            new_stella_config%I0 = 1.745D0 ! Coil Current needed to produce b0 on axis in [MA] at reference point
+            new_stella_config%inductance = 41.24D-6 ! inductance/R*A^2 in muH
+
+            new_stella_config%WP_ratio = 1.2D0
+
+            new_stella_config%max_force_density = 0.366 ! [MN/m^3]
+
+            new_stella_config%min_plasma_coil_distance = 0.39D0
+
+            new_stella_config%min_bend_radius = 0.39 ! [m]
+
 
          case default
             ! Return some error here. The index is not implemented yet.
@@ -267,7 +376,7 @@ module stellarator_module
   type(stella_config) :: config
 
 
-  real(dp), private :: f_n,f_r,f_a,f_b,f_i ! scaling parameters to reference point.
+  real(dp), private :: f_n,f_r,f_aspect,f_b,f_i,f_a ! scaling parameters to reference point.
 
   logical :: first_call = .true.
   private :: config
@@ -491,7 +600,7 @@ contains
     !! in principle overwrite variables from the input file.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    use physics_variables, only: aspect, bt, rmajor
+    use physics_variables, only: aspect, bt, rmajor, rminor
     use tfcoil_variables, only: n_tf
     use stellarator_variables, only: istell
     use stellarator_configuration, only: new_stella_config
@@ -503,7 +612,8 @@ contains
    
     !  Factors used to scale the reference point.
     f_R = rmajor/config%rmajor_ref       !  Size scaling factor with respect to Helias 5-B
-    f_a = aspect / config%aspect_ref
+    f_a = rminor/config%rminor_ref       !  Size scaling factor with respect to Helias 5-B
+    f_aspect = aspect / config%aspect_ref
     f_N = n_tf/(config%coilspermodule * config%symmetry)       !  Coil number factor
     f_B = bt/config%bt_ref            !  B-field scaling factor
  
@@ -536,10 +646,10 @@ contains
     eps = 1.0D0/aspect
 
     ! Plasma volume scaled from effective parameter:
-    vol = rmajor*rminor**2 * config%plasma_volume
+    vol = f_r*f_a**2 * config%plasma_volume
 
     ! Plasma surface scaled from effective parameter:
-    sarea = rmajor*rminor * config%plasma_surface 
+    sarea = f_r*f_a * config%plasma_surface 
 
     ! Plasma cross section area. Approximated
     xarea = pi*rminor*rminor  ! average, could be calculated for every toroidal angle if desired
@@ -616,7 +726,7 @@ contains
     ! that ensures that there is enough space between coils and plasma.
     required_radial_space = (tfcth/2.0D0 + gapds + ddwi + shldith + blnkith + fwith + scrapli)
 
-    available_radial_space = config%min_plasma_coil_distance * rmajor
+    available_radial_space = config%min_plasma_coil_distance * f_r
 
 
 
@@ -793,7 +903,7 @@ contains
     real(dp) :: fusrat,pddpv,pdtpv,pdhe3pv,powht,sbar,sigvdt,zion
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    print *,"Volume",vol,beta
     !  Calculate plasma composition
     ! Issue #261 Remove old radiation model
     call plasma_composition
@@ -2081,11 +2191,11 @@ contains
     !total_coil_thickness = h + 2* d_ic + 2* case_thickness_constant
     !
     intercoil_surface = config%coilsurface *f_r**2 &
-                         - tftort * config%coillength* f_r/f_a * f_N 
+                         - tftort * config%coillength* f_r/f_aspect * f_N 
 
 
     ! This 0.18 m is an effective thickness which is scaled with empirial 1.5 law. 5.6 T is reference point of Helias
-    ! The thickness 0.18 was obtained as a measured value from Schauer, F. and Bykov, V. design of Helias 5-B. (Nucl Fus. 2013)
+    ! The thickness 0.18m was obtained as a measured value from Schauer, F. and Bykov, V. design of Helias 5-B. (Nucl Fus. 2013)
     aintmass = 0.18D0 *f_B**2 * intercoil_surface * denstl 
     
     clgsmass = 0.2D0*aintmass    ! Very simple approximation for the gravity support.
@@ -2298,7 +2408,7 @@ contains
 
     real(dp) :: ap,vd,f_scu, awp_min, awpc, awp_tor, awp_rad, &
                            b_vert_max, awptf, r_tf_inleg_mid, radvv, tf_total_h_width, &
-                           tfborev, min_bending_radius
+                           tfborev, min_bending_radius, jwdgpro2
 
     integer :: N_it,k
 
@@ -2306,8 +2416,8 @@ contains
 
     ! Sets major and minor coil radius (important for machine scalings) 
    
-    r_coil_major = config%coil_to_plasma_ratio * rmajor
-    r_coil_minor = config%coil_epsilon * r_coil_major * config%aspect_ref/aspect ! This aspect scaling is only valid close to the intended aspect ratio.
+    r_coil_major = config%coil_rmajor * f_r
+    r_coil_minor = config%coil_rminor * f_r / f_aspect ! This aspect scaling is only valid close to the intended aspect ratio.
 
     ! Coil case thickness (m). Here assumed to be constant 
     ! until something better comes up.
@@ -2335,7 +2445,7 @@ contains
    ! Winding Pack total size:
    !
      ! Total coil current (MA)
-     coilcurrent = bt * config%I0 * r_coil_major /f_N
+     coilcurrent = f_b * config%I0 * f_r /f_N
  
      N_it = 200     ! number of iterations
  
@@ -2425,7 +2535,7 @@ contains
      !  Maximal toroidal port size (vertical ports) (m)
      !  The maximal distance is correct but the vertical extension of this port is not clear!
      !  This is simplified for now and can be made more accurate in the future!
-     vporttmax = 0.4D0 * config%max_portsize_width /f_n  ! This is not accurate yet. Needs more insight!
+     vporttmax = 0.4D0 * config%max_portsize_width * f_r /f_n  ! This is not accurate yet. Needs more insight!
   
      !  Maximal poloidal port size (vertical ports) (m)
      vportpmax = 2.0* vporttmax ! Simple approximation
@@ -2435,7 +2545,7 @@ contains
   
      !  Horizontal ports
      !  Maximal toroidal port size (horizontal ports) (m)
-     hporttmax =  0.8D0 * config%max_portsize_width /f_n ! Factor 0.8 to take the variation with height into account
+     hporttmax =  0.8D0 * config%max_portsize_width *f_r/f_n ! Factor 0.8 to take the variation with height into account
   
      !  Maximal poloidal port size (horizontal ports) (m)
      hportpmax = 2.0D0 * hporttmax ! Simple approximation
@@ -2466,7 +2576,7 @@ contains
   
      ! [m] Minimal distance in toroidal direction between two stellarator coils (from mid to mid)
      ! Consistency with coil width is checked in constraint equation 82
-     toroidalgap = config%dmin * rmajor / config%rmajor_ref 
+     toroidalgap = config%dmin * f_r
   
      !  Variables for ALL coils.
      tfareain = n_tf*arealeg                              ! [m^2] Total area of all coil legs (midplane)
@@ -2477,11 +2587,11 @@ contains
                                                           ! useful for stellarators
  
  
-     estotftgj = 0.5D0 * (config%inductance*rmajor/aspect**2)&
+     estotftgj = 0.5D0 * (config%inductance*f_r/f_aspect**2)&
                    * (ritfc/n_tf)**2 * 1.0D-9             ! [GJ] Total magnetic energy
   
      !  Coil dimensions
-     hmax = 0.5D0 * config%maximal_coil_height *f_r/f_a   ! [m] maximum half-height of coil
+     hmax = 0.5D0 * config%maximal_coil_height *f_r/f_aspect   ! [m] maximum half-height of coil
      r_tf_inleg_mid =  r_coil_major-r_coil_minor          ! This is not very well defined for a stellarator.
                                                           ! Though, this is taken as an average value.
      tf_total_h_width = r_coil_minor                      !? not really sure what this is supposed to be. Estimated as
@@ -2491,13 +2601,13 @@ contains
      tfborev = 2.0D0*hmax                   ! [m] estimated vertical coil bore
      
      
-     tfleng = config%coillength/n_tf                      ! [m] estimated average length of a coil
+     tfleng = config%coillength*f_r/n_tf/f_aspect                     ! [m] estimated average length of a coil
  
      ! [m^2] Total surface area of toroidal shells covering coils
-     tfcryoarea = config%coilsurface * f_r**2 / f_a *1.1D0 !1.1 to scale it out a bit. Should be coupled to winding pack maybe.
+     tfcryoarea = config%coilsurface * f_r**2 / f_aspect *1.1D0 !1.1 to scale it out a bit. Should be coupled to winding pack maybe.
  
      ! Minimal bending radius:
-     min_bending_radius = config%min_bend_radius * f_r
+     min_bending_radius = config%min_bend_radius * f_r / f_aspect
 
    ! End of general coil geometry values
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2543,8 +2653,15 @@ contains
 
 
      ! the conductor fraction is meant of the cable space!
+     !    protect(aio,  tfes,               acs,       aturn,   tdump,  fcond,  fcu,   tba,  tmax   ,ajwpro, vd)
      call protect(cpttf,estotftgj/n_tf*1.0D9,acstf,   leno**2   ,tdmptf,1-vftf,fcutfsu,tftmp,tmaxpro,jwdgpro,vd)
   
+
+     ! comparison
+     jwdgpro2 = j_max_protect_Am2(tdmptf,0.0d0,fcutfsu,1-vftf,tftmp,acstf,leno**2)
+
+     print *, "Jmax, comparison: ", jwdgpro, "  ", jwdgpro2, "   , tdmptf: ",tdmptf, " fcutfsu: ",fcutfsu, "fcond", 1-vftf
+
      ! Also give the copper area for REBCO quench calculations:
      copperA_m2 = coilcurrent*1.0D6/(acond * fcutfsu)
      vtfskv = vd/1.0D3 ! Dump voltage
@@ -2553,9 +2670,11 @@ contains
 
     !!!!!! Forces scaling !!!!!!!!!!!!!!
     !
-    max_force_density = config%max_force_density *(ritfc*1.0D-6/n_tf) * bmaxtf / awptf
+    ! The force density scaling is according to ~I*B/A/N which is (apart from the N scaling) exact
+    max_force_density = config%max_force_density *f_I/f_N * bmaxtf/config%WP_bmax *config%WP_area/ awptf
     !
     ! Approximate, very simple maxiumum stress: (needed for limitation of icc 32)
+    ! This should be the stress on the ground insulation
     strtf2 = max_force_density * thkwp *1.0D6 ! in Pa
     !
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2699,6 +2818,70 @@ contains
         return
     end function 
 
+
+
+    real(dp) function j_max_protect_Am2(tau_quench,t_detect,fcu,fcond,temp,acs,aturn)
+      !! Finds the current density limited by the protection limit
+      !! acs : input real : Cable space - inside area (m2)
+      !! aturn : input real : Area per turn (i.e.  entire cable) (m2)
+      !! tau_quench : input real : Dump time (sec)
+      !! tau_detect : input real : Quench detection time (sec)
+      !! fcond : input real : Fraction of cable space containing conductor
+      !! fcu : input real : Fraction of conductor that is copper
+      !! temp : input real : Operating He temperature (K)
+      !! j_max_protect_Am2 : output real :  Winding pack current density from temperature
+      !! rise protection (A/m2)
+      !!
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      use maths_library, only: find_y_nonuniform_x
+      
+      implicit none
+      
+      real(dp), intent(in) :: tau_quench, t_detect, fcu, fcond, temp, acs, aturn
+      real(dp), dimension(13) :: temp_k, q_he_array_sA2m4, q_cu_array_sA2m4
+      real(dp) :: q_cu, q_he
+      
+      temp_k = (/4,14,24,34,44,54,64,74,84,94,104,114,124/)
+
+      q_cu_array_sA2m4 = (/ 1.08514d17, 1.12043d17, 1.12406d17, 1.05940d17, &
+                            9.49741d16, 8.43757d16, 7.56346d16, 6.85924d16, &
+                            6.28575d16, 5.81004d16, 5.40838d16, 5.06414d16, &
+                            4.76531d16/)
+      
+      
+      q_he_array_sA2m4 = (/ 3.44562d16, 9.92398d15, 4.90462d15, 2.41524d15, &
+                            1.26368d15, 7.51617d14, 5.01632d14, 3.63641d14, &
+                            2.79164d14, 2.23193d14, 1.83832d14, 1.54863d14, &
+                            1.32773d14 /)
+      
+      ! Interpolate to find the correct value for the temperature
+      q_he = find_y_nonuniform_x(temp,temp_k,q_he_array_sA2m4,13)
+      q_cu = find_y_nonuniform_x(temp,temp_k,q_cu_array_sA2m4,13)
+      
+      
+      ! This leaves out the contribution from the superconductor for now
+      j_max_protect_Am2 = (acs/aturn) * sqrt(1.0d0/(0.5d0 *tau_quench + t_detect)* &
+                          (fcu**2*fcond**2 * q_cu + fcu* fcond* (1.0d0-fcond)* q_he))
+      
+
+
+      end function
+
+      real(dp) function u_max_protect_V(tfes, tdump,aio)
+
+         !! tfes : input real : Energy stored in one TF coil (J)
+         !! tdump : input real : Dump time (sec)
+         !! aio : input real : Operating current (A)
+         
+         implicit none
+         
+         real, intent(in) :: tfes, tdump,aio
+         
+         !  Dump voltage
+         u_max_protect_V = 2.0D0 * tfes/(tdump*aio)
+         
+         end function
+
     subroutine protect(aio,tfes,acs,aturn,tdump,fcond,fcu,tba,tmax,ajwpro,vd)
 
         !! Finds the current density limited by the protection limit
@@ -2721,7 +2904,7 @@ contains
         !! It also finds the dump voltage.
         !! <P>These calculations are based on Miller's formulations.
         !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-        !
+        !!
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    
          implicit none
@@ -2782,7 +2965,6 @@ contains
          vd = 2.0D0 * tfes/(tdump*aio)
    
          !  Current density limited by temperature rise during quench
-   
          tav = 1.0D0 + (tmax-tba)/20.0D0
          no = int(tav)
          np = no+1
