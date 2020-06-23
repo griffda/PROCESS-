@@ -29,6 +29,7 @@ class Process():
         self.kallenbach_tests()
         self.kallenbach_scan()
         self.call_solver()
+        self.scan()
         self.run()
     
     def parse_args(self, args=None):
@@ -150,6 +151,13 @@ class Process():
     def call_solver(self):
         """Call the equation solver (HYBRD)."""
         self.ifail = fortran.main_module.eqslv()
+
+    def scan(self):
+        """Call scan routine if required."""
+        if fortran.numerics.ioptimz >= 0:
+            fortran.scan_module.scan()
+        else:
+            fortran.final_module.final(self.ifail)
 
     def run(self):
         """Run Process using the highest-level module, process_module."""

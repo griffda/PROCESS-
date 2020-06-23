@@ -33,12 +33,9 @@ contains
   
     use error_handling, only: show_errors
     use process_input, only: nin
-    use scan_module, only: scan
-    use final_module, only: final
     use kallenbach_module, only: kallenbach_testing, kallenbach_scan
     use constants, only: iotty, mfile, nout, nplot, opt_file, vfile
     use process_output, only: oblnkl, ostars, ocentr, osubhd, ocmmnt, oheadr
-    use numerics, only: ioptimz
     use global_variables, only: output_prefix, verbose
     
     use, intrinsic :: iso_fortran_env, only: dp=>real64
@@ -47,7 +44,6 @@ contains
     !  Arguments
   
     !  Local variables
-    integer :: ifail
     character(len = 130) :: line
     character(len = 10)  :: fmtAppend
     character(len = 200) :: inFile
@@ -57,13 +53,6 @@ contains
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-      ! Call routine to do scans
-    if (ioptimz >= 0) then
-        call scan
-    else
-        call final(ifail)
-    end if
-
     call show_errors
 
     call oheadr(nout,'End of PROCESS Output')

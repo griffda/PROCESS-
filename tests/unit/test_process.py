@@ -193,3 +193,22 @@ def test_call_solver(process_obj, monkeypatch):
     monkeypatch.setattr(fortran.main_module, "eqslv", lambda: expected)
     process_obj.call_solver()
     assert process_obj.ifail == expected
+
+def test_scan(process_obj, monkeypatch):
+    """Test if scan routine runs based on ioptimz value.
+
+    :param process_obj: Process object
+    :type process_obj: object
+    :param monkeypatch: monkeypatch fixture
+    :type monkeypatch: object
+    """
+    # Mock ioptimz value and check scan can run
+    monkeypatch.setattr(fortran.numerics, "ioptimz", 0)
+    monkeypatch.setattr(fortran.scan_module, "scan", lambda: None)
+    process_obj.scan()
+
+    # If ioptimz < 0, mock call to final
+    monkeypatch.setattr(fortran.numerics, "ioptimz", -1)
+    monkeypatch.setattr(process_obj, "ifail", 0, raising=False)
+    monkeypatch.setattr(fortran.final_module, "final", lambda x: None)
+    process_obj.scan()
