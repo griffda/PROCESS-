@@ -156,7 +156,7 @@ contains
 
             new_stella_config%WP_ratio = 1.2D0 ! The fit values in stellarator config class should be calculated using this value.
 
-            new_stella_config%max_force_density = 24.5 ! [MN/m^3]
+            new_stella_config%max_force_density = 120.0d0 ! [MN/m^3]
 
             new_stella_config%min_plasma_coil_distance = (4.7D0-1.76D0)
 
@@ -199,7 +199,7 @@ contains
 
             new_stella_config%WP_ratio = 1.3D0
 
-            new_stella_config%max_force_density = 40.9d0 ! [MN/m^3]
+            new_stella_config%max_force_density = 120.0d0 ! [MN/m^3]
 
             new_stella_config%min_plasma_coil_distance = 1.7d0
 
@@ -247,7 +247,7 @@ contains
 
             new_stella_config%WP_ratio = 1.3D0
 
-            new_stella_config%max_force_density = 57.0d0 ! Multiply with I^2 [MA] A_wp^(-1) [m^2] to obtain [MN/m^3]
+            new_stella_config%max_force_density = 120.0d0 ! Multiply with I^2 [MA] A_wp^(-1) [m^2] to obtain [MN/m^3]
 
             new_stella_config%min_plasma_coil_distance = 1.78d0
 
@@ -288,11 +288,11 @@ contains
             new_stella_config%coillength = 303.4D0 ! Central filament length of machine with outer radius 1m.
       
             new_stella_config%I0 = 2.9D0 ! Coil Current needed to produce b0 on axis in [MA] at reference point
-            new_stella_config%inductance = 25.27D-6 ! inductance/R*A^2 in muH
+            new_stella_config%inductance = 252.7D-6 ! inductance/R*A^2 in muH
 
             new_stella_config%WP_ratio = 1.2D0
 
-            new_stella_config%max_force_density = 0.95 ! [MN/m^3]
+            new_stella_config%max_force_density = 350.0d0 ! [MN/m^3]
 
             new_stella_config%min_plasma_coil_distance = 0.45D0 
 
@@ -332,11 +332,11 @@ contains
             new_stella_config%coillength = 420.67D0 ! Central filament length of machine with outer radius 1m.
       
             new_stella_config%I0 = 1.745D0 ! Coil Current needed to produce b0 on axis in [MA] at reference point
-            new_stella_config%inductance = 41.24D-6 ! inductance/R*A^2 in muH
+            new_stella_config%inductance = 412.4D-6 ! inductance/R*A^2 in muH
 
             new_stella_config%WP_ratio = 1.2D0
 
-            new_stella_config%max_force_density = 0.366 ! [MN/m^3]
+            new_stella_config%max_force_density = 250.0d0 ! [MN/m^3]
 
             new_stella_config%min_plasma_coil_distance = 0.39D0
 
@@ -598,21 +598,28 @@ contains
     !! Routine to initialise the stellarator configuration.
     !! This routine is called right before the calculation and could
     !! in principle overwrite variables from the input file.
+    !! It overwrites rminor with rmajor and aspect ratio e.g.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    use physics_variables, only: aspect, bt, rmajor, rminor
+    use physics_variables, only: aspect, bt, rmajor, rminor, eps
     use tfcoil_variables, only: n_tf
     use stellarator_variables, only: istell
     use stellarator_configuration, only: new_stella_config
     implicit none
 
     config = new_stella_config(istell)
+    
+    ! Set the rminor radius as result here.
+    aspect = config%aspect_ref ! Overwrite the aspect ratio as this should not be scaled for now.
+    rminor = rmajor/aspect
+    eps = 1.0D0/aspect
 
     n_tf = config%coilspermodule*config%symmetry !! This overwrites n_tf in input file.
    
     !  Factors used to scale the reference point.
     f_R = rmajor/config%rmajor_ref       !  Size scaling factor with respect to Helias 5-B
     f_a = rminor/config%rminor_ref       !  Size scaling factor with respect to Helias 5-B
+
     f_aspect = aspect / config%aspect_ref
     f_N = n_tf/(config%coilspermodule * config%symmetry)       !  Coil number factor
     f_B = bt/config%bt_ref            !  B-field scaling factor
@@ -637,13 +644,10 @@ contains
     !! surfaces with Fourier coefficients')
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    use physics_variables, only: aspect, eps, rmajor, rminor, sarea, sareao, &
+    use physics_variables, only: aspect, rmajor, rminor, sarea, sareao, &
       vol, xarea
 		use constants, only: pi
     implicit none
-
-    rminor = rmajor/aspect
-    eps = 1.0D0/aspect
 
     ! Plasma volume scaled from effective parameter:
     vol = f_r*f_a**2 * config%plasma_volume
@@ -658,6 +662,8 @@ contains
 
     !  Cross-sectional area, averaged over toroidal angle
     sareao = 0.5D0*sarea  !  Used only in the divertor model; approximate as for tokamaks
+
+
 
   end subroutine stgeom
 
@@ -903,7 +909,6 @@ contains
     real(dp) :: fusrat,pddpv,pdtpv,pdhe3pv,powht,sbar,sigvdt,zion
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    print *,"Volume",vol,beta
     !  Calculate plasma composition
     ! Issue #261 Remove old radiation model
     call plasma_composition
@@ -923,6 +928,7 @@ contains
 
     !  Set beta as a consequence:
     !  This replaces constraint equation 1 as it is just an equality.
+
     beta = (betaft + betanb + 2.0D3*rmu0*echarge * (dene*ten + dnitot*tin)/btot**2)
 
 
@@ -2446,7 +2452,9 @@ contains
    !
      ! Total coil current (MA)
      coilcurrent = f_b * config%I0 * f_r /f_N
- 
+     f_i = coilcurrent/config%I0
+
+
      N_it = 200     ! number of iterations
  
      allocate(RHS(n_it),LHS(n_it))
@@ -2586,8 +2594,8 @@ contains
                                                           ! jlion: not sure what this will be used for. Not very
                                                           ! useful for stellarators
  
- 
-     estotftgj = 0.5D0 * (config%inductance*f_r/f_aspect**2)&
+     
+     estotftgj = 0.5D0 * (config%inductance/f_r*f_a**2*f_n**2)&
                    * (ritfc/n_tf)**2 * 1.0D-9             ! [GJ] Total magnetic energy
   
      !  Coil dimensions
@@ -2653,14 +2661,15 @@ contains
 
 
      ! the conductor fraction is meant of the cable space!
+     ! This is the old routine which is being replaced for now by the new one below
      !    protect(aio,  tfes,               acs,       aturn,   tdump,  fcond,  fcu,   tba,  tmax   ,ajwpro, vd)
-     call protect(cpttf,estotftgj/n_tf*1.0D9,acstf,   leno**2   ,tdmptf,1-vftf,fcutfsu,tftmp,tmaxpro,jwdgpro,vd)
+     !call protect(cpttf,estotftgj/n_tf*1.0D9,acstf,   leno**2   ,tdmptf,1-vftf,fcutfsu,tftmp,tmaxpro,jwdgpro,vd)
   
 
      ! comparison
-     jwdgpro2 = j_max_protect_Am2(tdmptf,0.0d0,fcutfsu,1-vftf,tftmp,acstf,leno**2)
+     jwdgpro = j_max_protect_Am2(tdmptf,0.0d0,fcutfsu,1-vftf,tftmp,acstf,leno**2)
 
-     print *, "Jmax, comparison: ", jwdgpro, "  ", jwdgpro2, "   , tdmptf: ",tdmptf, " fcutfsu: ",fcutfsu, "fcond", 1-vftf
+     !print *, "Jmax, comparison: ", jwdgpro, "  ", jwdgpro2, "   , tdmptf: ",tdmptf, " fcutfsu: ",fcutfsu, "fcond", 1-vftf
 
      ! Also give the copper area for REBCO quench calculations:
      copperA_m2 = coilcurrent*1.0D6/(acond * fcutfsu)
@@ -2671,7 +2680,7 @@ contains
     !!!!!! Forces scaling !!!!!!!!!!!!!!
     !
     ! The force density scaling is according to ~I*B/A/N which is (apart from the N scaling) exact
-    max_force_density = config%max_force_density *f_I/f_N * bmaxtf/config%WP_bmax *config%WP_area/ awptf
+    max_force_density = config%max_force_density *f_I/f_N * bmaxtf/config%WP_bmax *config%WP_area/awptf
     !
     ! Approximate, very simple maxiumum stress: (needed for limitation of icc 32)
     ! This should be the stress on the ground insulation
