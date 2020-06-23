@@ -66,6 +66,9 @@ contains
     close(unit = opt_file)
     if (verbose == 1) close(unit = vfile)
 
+    ! Set output filename
+    outFile = trim(output_prefix)//"OUT.DAT"
+
     open(unit = 100, FILE = inFile)
     open(unit = 101, FILE = outFile, ACCESS = "append")
     open(unit = 102, FILE=trim(output_prefix)//'MFILE.DAT', ACCESS = "append")
