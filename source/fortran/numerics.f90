@@ -412,9 +412,21 @@ contains
 		use global_variables, only: icase, verbose, vlabel
     use constants, only: mfile, nout
     use maths_library, only: HYBRD
-		use plasmod_variables, only: geom, power_losses, i_flag
+    use plasmod_variables, only: geom, power_losses, i_flag
     implicit none
 
+    ! Interface for the external fcnhyb subroutine argument
+    ! This interface is necessary when wrapping with f2py
+    interface
+      subroutine fcnhyb(n, x, fvec, iflag)
+        use, intrinsic :: iso_fortran_env, only: dp=>real64
+        integer, intent(in) :: n
+        real(dp), dimension(n), intent(inout) :: x
+        real(dp), dimension(n), intent(out) :: fvec
+        integer, intent(inout) :: iflag
+      end subroutine fcnhyb
+    end interface
+    
     !  Arguments
 
     external :: fcnhyb
@@ -493,6 +505,19 @@ contains
 		use maths_library, only: vmcon
 		use plasmod_variables, only: plasmod_i_impmodel
     implicit none
+
+    ! Interface for the external fcnvmc1 subroutine argument
+    ! This interface is necessary when wrapping with f2py
+    interface
+      subroutine fcnvmc1(n,m,xv,objf,conf,ifail)
+        use, intrinsic :: iso_fortran_env, only: dp=>real64
+        integer, intent(in) :: n,m
+        real(dp), dimension(n), intent(in) :: xv
+        real(dp), intent(out) :: objf
+        real(dp), dimension(m), intent(out) :: conf
+        integer, intent(inout) :: ifail
+      end subroutine fcnvmc1
+    end interface
 
     !  Arguments
 
