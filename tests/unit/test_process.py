@@ -227,3 +227,14 @@ def test_set_mfile(process_obj, monkeypatch):
     monkeypatch.setattr(process_obj, "filename_prefix", prefix, raising=False)
     process_obj.set_mfile()
     assert process_obj.mfile_path == expected
+
+def test_show_errors(process_obj, monkeypatch):
+    """Check that the show errors subroutine is called.
+
+    :param process_obj: Process object
+    :type process_obj: object
+    :param monkeypatch: monkeypatch fixture
+    :type monkeypatch: object
+    """
+    monkeypatch.setattr(fortran.error_handling, "show_errors", lambda: None)
+    process_obj.show_errors()

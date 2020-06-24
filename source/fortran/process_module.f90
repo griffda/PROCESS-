@@ -31,15 +31,12 @@ contains
     !! Box file F/MI/PJK/PROCESS and F/PL/PJK/PROCESS (15/01/96 to 24/01/12)
     !! Box file T&amp;M/PKNIGHT/PROCESS (from 24/01/12)
   
-    use error_handling, only: show_errors
     use process_input, only: nin
     use constants, only: iotty, mfile, nout, nplot, opt_file, vfile
     use process_output, only: oheadr
     use global_variables, only: verbose
     implicit none
   
-    call show_errors
-
     call oheadr(nout,'End of PROCESS Output')
     call oheadr(iotty,'End of PROCESS Output')
     call oheadr(nout,'Copy of PROCESS Input Follows')

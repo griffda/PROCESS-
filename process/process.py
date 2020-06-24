@@ -30,6 +30,7 @@ class Process():
         self.kallenbach_scan()
         self.call_solver()
         self.scan()
+        self.show_errors()
         self.run()
         self.append_input()
     
@@ -164,6 +165,10 @@ class Process():
             fortran.scan_module.scan()
         else:
             fortran.final_module.final(self.ifail)
+
+    def show_errors(self):
+        """Report all informational/error messages encountered."""
+        fortran.error_handling.show_errors()
 
     def run(self):
         """Run Process using the highest-level module, process_module."""
