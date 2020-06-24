@@ -31,6 +31,7 @@ class Process():
         self.call_solver()
         self.scan()
         self.run()
+        self.append_input()
     
     def parse_args(self, args=None):
         """Parse the command-line arguments, such as the input filename.
@@ -93,6 +94,7 @@ class Process():
         """Validate the input filename and create other filenames from it."""
         self.set_input()
         self.set_output()
+        self.set_mfile()
 
     def set_input(self):
         """Validate and set the input file path."""
@@ -123,6 +125,10 @@ class Process():
         """
         self.output_path = Path(self.filename_prefix + "OUT.DAT")
         fortran.global_variables.output_prefix = self.filename_prefix
+
+    def set_mfile(self):
+        """Set the mfile filename."""
+        self.mfile_path = Path(self.filename_prefix + "MFILE.DAT")
 
     def initialise(self):
         """Run the init module to call all initialisation routines."""
@@ -162,6 +168,21 @@ class Process():
     def run(self):
         """Run Process using the highest-level module, process_module."""
         fortran.process_module.process_subroutine()
+
+    def append_input(self):
+        """Append the input file to the output file and mfile."""
+        # Read IN.DAT input file
+        with open(self.input_path, 'r') as input_file:
+            input_lines = input_file.readlines()
+
+        # Append the input file to the output file
+        with open(self.output_path, 'a') as output_file:
+            output_file.writelines(input_lines)
+
+        # Append the input file to the mfile
+        with open(self.mfile_path, 'a') as mfile_file:
+            mfile_file.write("***********************************************")
+            mfile_file.writelines(input_lines)
 
 def main(args=None):
     """Run Process.

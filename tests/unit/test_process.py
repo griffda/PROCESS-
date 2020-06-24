@@ -212,3 +212,18 @@ def test_scan(process_obj, monkeypatch):
     monkeypatch.setattr(process_obj, "ifail", 0, raising=False)
     monkeypatch.setattr(fortran.final_module, "final", lambda x: None)
     process_obj.scan()
+
+def test_set_mfile(process_obj, monkeypatch):
+    """Check the mfile filename is being stored correctly.
+
+    :param process_obj: Process object
+    :type process_obj: object
+    :param monkeypatch: monkeypatch fixture
+    :type monkeypatch: object
+    """
+    prefix = "test"
+    expected = Path(prefix + "MFILE.DAT")
+    # Mock filename_prefix and run
+    monkeypatch.setattr(process_obj, "filename_prefix", prefix, raising=False)
+    process_obj.set_mfile()
+    assert process_obj.mfile_path == expected

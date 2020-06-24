@@ -36,22 +36,10 @@ contains
     use kallenbach_module, only: kallenbach_testing, kallenbach_scan
     use constants, only: iotty, mfile, nout, nplot, opt_file, vfile
     use process_output, only: oblnkl, ostars, ocentr, osubhd, ocmmnt, oheadr
-    use global_variables, only: output_prefix, verbose
+    use global_variables, only: verbose
     
     use, intrinsic :: iso_fortran_env, only: dp=>real64
     implicit none
-  
-    !  Arguments
-  
-    !  Local variables
-    character(len = 130) :: line
-    character(len = 10)  :: fmtAppend
-    character(len = 200) :: inFile
-    character(len = 200) :: outFile
-    integer :: iost
-    integer, parameter :: width = 110
-  
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
     call show_errors
 
@@ -65,24 +53,5 @@ contains
     close(unit = mfile)
     close(unit = opt_file)
     if (verbose == 1) close(unit = vfile)
-
-    ! Set output filename
-    outFile = trim(output_prefix)//"OUT.DAT"
-
-    open(unit = 100, FILE = inFile)
-    open(unit = 101, FILE = outFile, ACCESS = "append")
-    open(unit = 102, FILE=trim(output_prefix)//'MFILE.DAT', ACCESS = "append")
-    fmtAppend = '(A)'
-    write(102, fmtAppend) "***********************************************"
-
-    DO
-      read(100, fmtAppend, IOSTAT = iost) line
-      if(iost < 0) exit                   ! exit if End of line is reached in IN.DAT
-      write(101, fmtAppend) trim(line)
-      write(102, fmtAppend) trim(line)
-    END DO
-    close(unit = 100)
-    close(unit = 101)
-    close(unit = 102)
   end subroutine process_subroutine
 end module process_module
