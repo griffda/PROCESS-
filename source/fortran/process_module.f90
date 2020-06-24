@@ -33,12 +33,9 @@ contains
   
     use error_handling, only: show_errors
     use process_input, only: nin
-    use kallenbach_module, only: kallenbach_testing, kallenbach_scan
     use constants, only: iotty, mfile, nout, nplot, opt_file, vfile
-    use process_output, only: oblnkl, ostars, ocentr, osubhd, ocmmnt, oheadr
+    use process_output, only: oheadr
     use global_variables, only: verbose
-    
-    use, intrinsic :: iso_fortran_env, only: dp=>real64
     implicit none
   
     call show_errors
