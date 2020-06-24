@@ -238,3 +238,14 @@ def test_show_errors(process_obj, monkeypatch):
     """
     monkeypatch.setattr(fortran.error_handling, "show_errors", lambda: None)
     process_obj.show_errors()
+
+def test_finish(process_obj, monkeypatch):
+    """Check that the finish subroutine is called.
+
+    :param process_obj: Process object
+    :type process_obj: object
+    :param monkeypatch: monkeypatch fixture
+    :type monkeypatch: object
+    """
+    monkeypatch.setattr(fortran.init_module, "finish", lambda: None)
+    process_obj.finish()

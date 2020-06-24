@@ -8,6 +8,38 @@ Process.
 This file, process.py, is now analogous to process.f90, which contains the 
 Fortran "program" statement. This Python module effectively acts as the Fortran
 "program".
+
+Power Reactor Optimisation Code for Environmental and Safety Studies
+P J Knight, CCFE, Culham Science Centre
+J Morris, CCFE, Culham Science Centre
+
+This is a systems code that evaluates various physics and
+engineering aspects of a fusion power plant subject to given
+constraints, and can optimise these parameters by minimising
+or maximising a function of them, such as the fusion power or
+cost of electricity.
+
+This program is derived from the TETRA and STORAC codes produced by
+Oak Ridge National Laboratory, Tennessee, USA. The main authors in
+the USA were J.D.Galambos and P.C.Shipe.
+
+The code was transferred to Culham Laboratory, Oxfordshire, UK, in
+April 1992, and the physics models were updated by P.J.Knight to
+include the findings of the Culham reactor studies documented in
+Culham Report AEA FUS 172 (1992). The standard of the Fortran has
+been thoroughly upgraded since that time, and a number of additional
+models have been added.
+
+During 2012, PROCESS was upgraded from FORTRAN 77 to Fortran 95,
+to facilitate the restructuring of the code into proper modules
+(with all the benefits that modern software practices bring), and to
+aid the inclusion of more advanced physics and engineering models under
+development as part of a number of EFDA-sponsored collaborations.
+
+AEA FUS 251: A User's Guide to the PROCESS Systems Code
+Box file F/RS/CIRE5523/PWF (up to 15/01/96)
+Box file F/MI/PJK/PROCESS and F/PL/PJK/PROCESS (15/01/96 to 24/01/12)
+Box file T&amp;M/PKNIGHT/PROCESS (from 24/01/12)
 """
 from process import fortran
 import argparse
@@ -31,8 +63,8 @@ class Process():
         self.call_solver()
         self.scan()
         self.show_errors()
-        self.run()
         self.append_input()
+        self.finish()
     
     def parse_args(self, args=None):
         """Parse the command-line arguments, such as the input filename.
@@ -170,10 +202,6 @@ class Process():
         """Report all informational/error messages encountered."""
         fortran.error_handling.show_errors()
 
-    def run(self):
-        """Run Process using the highest-level module, process_module."""
-        fortran.process_module.process_subroutine()
-
     def append_input(self):
         """Append the input file to the output file and mfile."""
         # Read IN.DAT input file
@@ -188,6 +216,10 @@ class Process():
         with open(self.mfile_path, 'a') as mfile_file:
             mfile_file.write("***********************************************")
             mfile_file.writelines(input_lines)
+
+    def finish(self):
+        """Run the finish subroutine to close files open in the Fortran."""
+        fortran.init_module.finish()
 
 def main(args=None):
     """Run Process.
