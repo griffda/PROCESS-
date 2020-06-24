@@ -123,7 +123,7 @@ contains
 
             new_stella_config%rmajor_ref = 22.2D0
             new_stella_config%rminor_ref = 1.80D0
-            new_stella_config%aspect_ref = 22.2D0/1.80D0
+            new_stella_config%aspect_ref = 12.33D0
 
             ! Coil radii
             new_stella_config%coil_rmajor = 22.44D0
@@ -158,7 +158,7 @@ contains
 
             new_stella_config%max_force_density = 120.0d0 ! [MN/m^3]
 
-            new_stella_config%min_plasma_coil_distance = (4.7D0-1.76D0)
+            new_stella_config%min_plasma_coil_distance = 1.9d0
 
             new_stella_config%min_bend_radius = 1.0 ! [m]
 
@@ -169,7 +169,7 @@ contains
             ! Plasma outer radius
             new_stella_config%rmajor_ref = 17.6D0
             new_stella_config%rminor_ref = 2.0D0
-            new_stella_config%aspect_ref =  17.6D0/2.0D0
+            new_stella_config%aspect_ref =  8.8D0
 
             ! Coil radii
             new_stella_config%coil_rmajor = 18.39D0
@@ -213,7 +213,7 @@ contains
             ! Plasma outer radius
             new_stella_config%rmajor_ref = 13.86d0
             new_stella_config%rminor_ref = 2.18d0
-            new_stella_config%aspect_ref =  13.86d0/2.18d0
+            new_stella_config%aspect_ref =  6.36d0
 
             ! Coil radii
             new_stella_config%coil_rmajor = 14.53D0
@@ -261,7 +261,7 @@ contains
             ! Plasma outer radius
             new_stella_config%rmajor_ref = 5.50D0
             new_stella_config%rminor_ref = 0.49D0
-            new_stella_config%aspect_ref =  5.5D0/0.49D0
+            new_stella_config%aspect_ref =  11.2D0
 
             ! Coil radii
             new_stella_config%coil_rmajor = 5.62D0
@@ -305,7 +305,7 @@ contains
             ! Plasma outer radius
             new_stella_config%rmajor_ref = 5.5D0
             new_stella_config%rminor_ref = 0.49D0
-            new_stella_config%aspect_ref =  5.5D0/0.49D0
+            new_stella_config%aspect_ref =   11.2D0
 
             ! Coil radii
             new_stella_config%coil_rmajor = 5.62d0
@@ -2669,8 +2669,8 @@ contains
      ! comparison
      jwdgpro = j_max_protect_Am2(tdmptf,0.0d0,fcutfsu,1-vftf,tftmp,acstf,leno**2)
 
-     !print *, "Jmax, comparison: ", jwdgpro, "  ", jwdgpro2, "   , tdmptf: ",tdmptf, " fcutfsu: ",fcutfsu, "fcond", 1-vftf
-
+     !print *, "Jmax, comparison: ", jwdgpro, "  ", jwdgpro2,"  ",jwptf/jwdgpro, "   , tdmptf: ",tdmptf, " fcutfsu: ",fcutfsu
+     !print *, "acstf: ", acstf
      ! Also give the copper area for REBCO quench calculations:
      copperA_m2 = coilcurrent*1.0D6/(acond * fcutfsu)
      vtfskv = vd/1.0D3 ! Dump voltage
@@ -2757,9 +2757,8 @@ contains
            jcritstr = jcritsc * (1.0D0-fcu)
   
            ! This is needed right now. Can we change it later?
-           if(jcritsc .lt. 0.0D0) then 
-              jcritsc = 1.0D-9
-           end if
+           jcritsc = Max(1.0D-9,jcritsc)
+           jcritstr = Max(1.0D-9,jcritstr)
   
         case (2)  !  Bi-2212 high temperature superconductor parameterization
   
@@ -2791,10 +2790,8 @@ contains
            jcritstr = jcritsc * (1.0D0-fcu)
            
            ! This is needed right now. Can we change it later?
-           if(jcritsc .lt. 0.0D0) then 
-  
-              jcritstr = 1.0D-9* (1.0D0-fcu)
-           end if
+           jcritsc = Max(1.0D-9,jcritsc)
+           jcritstr = Max(1.0D-9,jcritstr)
   
         case (4)  !  As (1), but user-defined parameters
            bc20m = bcritsc
