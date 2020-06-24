@@ -3030,7 +3030,7 @@ contains
                'Field line pitch (rad)')
        case ('iotabar')
           call parse_real_variable('iotabar', iotabar, 0.1D0, 10.0D0, &
-               'Stellarator rotational transform')
+               'Stellarator rotational transform (at s=2/3)')
        case ('isthtr')
           call parse_int_variable('isthtr', isthtr, 1, 3, &
                'Stellarator method of auxiliary heating')

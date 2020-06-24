@@ -1468,7 +1468,7 @@ contains
 
       args%cc =  1.0D0 - fjprot * jwdgpro/jwptf
       args%con = jwdgpro
-      args%err = jwptf - jwptf
+      args%err = jwdgpro - jwptf/jwdgpro
       args%symbol = '<'
       args%units = 'A/m2'
 
@@ -2762,7 +2762,6 @@ contains
       use constraint_variables, only: fbetatry_lower
       implicit none
       type (constraint_args_type), intent(out) :: args
-
 
       args%cc = 1.0D0 - fbetatry_lower * (beta-betaft)/betalim_lower
       args%con = betalim_lower * (1.0D0 - args%cc)

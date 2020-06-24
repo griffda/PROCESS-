@@ -98,10 +98,10 @@ module physics_module
     use times_variables, only: tramp, theat, tcycle, tpulse, tohs, tburn0, &
       tdwell, pulsetimings, tqnch, tohsin, tburn, tdown
     use reinke_module, only: reinke_tsep, reinke_fzmin
-		use global_variables, only: verbose
-		use constants, only: rmu0, pi, nout, echarge
-      use plasmod_variables, only: mhd, radp, loss, num, geom, ped, inp0, &
-         i_flag, comp
+    use global_variables, only: verbose
+    use constants, only: rmu0, pi, nout, echarge
+    use plasmod_variables, only: mhd, radp, loss, num, geom, ped, inp0, &
+       i_flag, comp
     implicit none
     !  Local variables
 
