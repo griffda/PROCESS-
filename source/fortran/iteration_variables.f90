@@ -3142,25 +3142,25 @@ subroutine init_itv_1
    !---------------------------------
 
    subroutine init_itv_140
-      !! <LI> (140) thkwp : radial thickness of TFC winding pack (m)
+      !! <LI> (140) dr_tf_wp : radial thickness of TFC winding pack (m)
       use numerics, only: lablxc, boundl, boundu
       implicit none
-      lablxc(140) = 'thkwp         '
+      lablxc(140) = 'dr_tf_wp         '
       boundl(140) = 0.001D0
       boundu(140) = 2.000D0
    end subroutine init_itv_140
 
    real(kind(1.d0)) function itv_140()
-      use tfcoil_variables, only: thkwp
+      use tfcoil_variables, only: dr_tf_wp
       implicit none
-      itv_140 = thkwp 
+      itv_140 = dr_tf_wp 
    end function itv_140
 
    subroutine set_itv_140(ratio)
-      use tfcoil_variables, only: thkwp
+      use tfcoil_variables, only: dr_tf_wp
       implicit none
       real(kind(1.d0)) :: ratio
-      thkwp = ratio
+      dr_tf_wp = ratio
    end subroutine set_itv_140
 
    !---------------------------------

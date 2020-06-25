@@ -19,7 +19,7 @@ module scan_module
   integer, parameter :: ipnscns = 1000
   !! ipnscns /1000/ FIX : maximum number of scan points
 
-  integer, parameter :: ipnscnv = 53
+  integer, parameter :: ipnscnv = 54
   !! ipnscnv /45/ FIX : number of available scan variables
 
   integer :: scan_dim = 1
@@ -85,6 +85,7 @@ module scan_module
   !!         <LI> 50 Xenon fraction fimp(13)
   !!         <LI> 51 Power fraction to lower DN Divertor ftar
   !!         <LI> 52 SoL radiation fraction </UL>
+  !!         <LI> 54 GL_nbti upper critical field at 0 Kelvin </UL>
 
   integer :: nsweep_2 = 3
   !! nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
@@ -164,7 +165,7 @@ contains
     use numerics, only: sqsumsq
     use tfcoil_variables, only: tfareain, wwp2, strtf2, tfcmw, tcpmax, oacdcp, &
       tfcpmw, fcutfsu, acond, fcoolcp, rcool, whttf, ppump, vcool, wwp1, n_tf, &
-		  thkwp
+		  dr_tf_wp, b_crit_upper_nbti
 		use fwbs_variables, only: tpeak
     use div_kal_vars, only: totalpowerlost, pressure0, &
       ttarget, neratio, qtargettotal, neomp, psep_kallenbach, fmom
@@ -179,7 +180,7 @@ contains
 
     ! Local variables
     character(len=48) :: tlabel
-    integer, parameter :: noutvars = 83
+    integer, parameter :: noutvars = 84
     integer, parameter :: width = 110
     character(len=25), dimension(noutvars), save :: plabel
     real(dp), dimension(noutvars,ipnscns) :: outvar
@@ -277,6 +278,7 @@ contains
        plabel(81) = 'Xe_concentration_________'
        plabel(82) = 'W__concentration_________'
        plabel(83) = 'teped____________________'
+       plabel(84) = 'Max_field_on_TF_coil_____'
 
        call ovarin(mfile,'Number of scan points','(isweep)',isweep)
        call ovarin(mfile,'Scanning variable number','(nsweep)',nsweep)
@@ -373,7 +375,7 @@ contains
         outvar(52,iscan) = pradmw
         outvar(53,iscan) = tpeak
         outvar(54,iscan) = fcutfsu
-        outvar(55,iscan) = (wwp1+wwp2)*thkwp
+        outvar(55,iscan) = (wwp1+wwp2)*dr_tf_wp
         outvar(56,iscan) = acond
         outvar(57,iscan) = tfareain/n_tf
         outvar(58,iscan) = taulimit
@@ -436,7 +438,7 @@ contains
     use process_output, only: oblnkl, ostars, ovarin
     use tfcoil_variables, only: tfareain, wwp2, strtf2, tfcmw, tcpmax, oacdcp, &
       tfcpmw, fcutfsu, acond, fcoolcp, rcool, whttf, ppump, vcool, wwp1, n_tf, &
-		  thkwp
+		  dr_tf_wp, b_crit_upper_nbti
 		use fwbs_variables, only: tpeak
     use div_kal_vars, only: totalpowerlost, pressure0, &
       ttarget, neratio, qtargettotal, neomp, psep_kallenbach, fmom
@@ -453,7 +455,7 @@ contains
 
     !  Local variables
     character(len=48) :: tlabel
-    integer, parameter :: noutvars = 83
+    integer, parameter :: noutvars = 84
     integer, parameter :: width = 110
     character(len=25), dimension(noutvars), save :: plabel
     real(dp), dimension(noutvars,ipnscns) :: outvar
@@ -552,6 +554,7 @@ contains
         plabel(81) = 'Xe_concentration_________'
         plabel(82) = 'W__concentration_________'
         plabel(83) = 'teped____________________'
+        plabel(84) = 'Max_field_on_TF_coil_____'
 
         call ovarin(mfile,'Number of scan points','(isweep)',isweep)
         call ovarin(mfile,'Scanning variable number','(nsweep)',nsweep)
@@ -661,7 +664,7 @@ contains
             outvar(52,iscan) = pradmw
             outvar(53,iscan) = tpeak
             outvar(54,iscan) = fcutfsu
-            outvar(55,iscan) = (wwp1+wwp2)*thkwp
+            outvar(55,iscan) = (wwp1+wwp2)*dr_tf_wp
             outvar(56,iscan) = acond
             outvar(57,iscan) = tfareain/n_tf
             outvar(58,iscan) = taulimit
@@ -729,7 +732,7 @@ contains
       rad_fraction_sol, triang, rmajor, beamfus0, hfact
     use numerics, only: epsvmc, boundu, boundl
     use tfcoil_variables, only: tmargmin_tf, alstrtf, n_pancake, oacdcp, &
-      n_layer
+      n_layer, b_crit_upper_nbti
     use div_kal_vars, only: lcon_factor, impurity_enrichment, &
       target_spread, lambda_q_omp, qtargettotal, ttarget
     implicit none
@@ -907,6 +910,10 @@ contains
         case (53)
             boundu(157) = swp(iscn)
             vlab = 'boundu(157)' ; xlab = 'Max allowable fvssu'
+        case (54)
+            b_crit_upper_nbti = swp(iscn)
+            vlab = 'Bc2(0K)' ; xlab = 'GL_NbTi Bc2(0K)'
+            
         case default
             idiags(1) = nwp ; call report_error(96)
 

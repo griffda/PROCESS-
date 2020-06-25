@@ -2244,15 +2244,15 @@ contains
       vportamax, vportpmax, vporttmax
     use structure_variables, only: aintmass
     use tfcoil_variables, only: acasetf, acndttf, acond, acstf, aiwp, arealeg, &
-      aswp, avwp, bmaxtf, casthi, casths, cpttf, dcase, dcopper, estotftgj, &
+      aswp, avwp, bmaxtf, casthi, casths, cpttf, dcase, estotftgj, &
       fcutfsu, jwptf, n_tf, oacdcp, rbmax, ritfc, tfareain, &
       tfcryoarea, tficrn, tfleng, tfocrn, tfsai, tfsao, tftmp, tftort, &
-      thicndut, thkcas, thkwp, thwcndut, tinstf, turnstf, vftf, whtcas, &
+      thicndut, thkcas, dr_tf_wp, thwcndut, tinstf, turnstf, vftf, whtcas, &
       whtcon, whtconcu, whtconsc, whtconsh, whttf, wwp1, dcond, awphec, dcondins, &
-      i_tf_sc_mat, jwdgpro, leni, leno, max_force_density, sigvvall, strtf2, taucq, &
+      i_tf_sc_mat, jwdgpro, max_force_density, sigvvall, strtf2, taucq, &
       tdmptf, tmaxpro, toroidalgap, vtfkv, whtconin, wwp2, vdalw, bcritsc, fhts, &
-      tcritsc, vtfskv
-		use constants, only: rmu0, twopi, pi
+      tcritsc, vtfskv, t_turn
+		use constants, only: rmu0, twopi, pi, dcopper
 		use maths_library, only: find_y_nonuniform_x, tril, sumup3, ellipke
     use superconductors, only : jcrit_rebco, jcrit_nbti, bi2212, itersc, wstsc
     use rebco_variables, only: copperA_m2, copperA_m2_max
@@ -2265,6 +2265,7 @@ contains
 
 
     real(kind(1.0D0)) :: r_coil_major, r_coil_minor, case_thickness_constant, coilcurrent
+    real(kind(1.0D0)) :: t_cable
 
     real(kind(1.0D0)), allocatable, dimension(:) ::   jcrit_vector,RHS,LHS,awp, B_max_k
 
@@ -2293,12 +2294,12 @@ contains
      !       
      ! [m] Dimension of square cable space inside insulation
      !     and case of the conduit of each turn
-     leni = leno - 2.0D0 * (thwcndut + thicndut)  !  leni = t_w
-     if(leni<0) print *, "leni is negative. Check leno, thwcndut and thicndut."
+     t_cable = t_turn - 2.0D0 * (thwcndut + thicndut)  !  t_cable = t_w
+     if(t_cable<0) print *, "t_cable is negative. Check t_turn, thwcndut and thicndut."
      ! [m^2] Cross-sectional area of cable space per turn
-     acstf = 0.9D0 * leni**2 ! 0.9 to include some rounded corners. (acstf = pi (leni/2)**2 = pi/4 *leni**2 for perfect round conductor). This factor depends on how round the corners are.
+     acstf = 0.9D0 * t_cable**2 ! 0.9 to include some rounded corners. (acstf = pi (t_cable/2)**2 = pi/4 *t_cable**2 for perfect round conductor). This factor depends on how round the corners are.
      ! [m^2] Cross-sectional area of conduit case per turn
-     acndttf = (leni + 2.0D0*thwcndut)**2 - acstf
+     acndttf = (t_cable + 2.0D0*thwcndut)**2 - acstf
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -2332,7 +2333,7 @@ contains
      LHS = fiooic * jcrit_vector 
      
      ! Conduct fraction of conduit * Superconductor fraction in conductor
-     f_scu =   (acstf*(1.0D0-vftf))/(leno**2)*(1.0D0-fcutfsu) !fraction that is SC of wp.
+     f_scu =   (acstf*(1.0D0-vftf))/(t_turn**2)*(1.0D0-fcutfsu) !fraction that is SC of wp.
      !print *, "f_scu. ",f_scu,"Awp min: ",Awp(1)
  
      RHS = coilcurrent/(Awp(:)*f_scu) ! f_scu should be the fraction of the sc that is in the winding pack.
@@ -2344,7 +2345,7 @@ contains
      call intersect(Awp,LHS,N_it,Awp,RHS,N_it,Awp_min)
  
      ! Maximum field at superconductor surface (T)
-     Awp_min = Max(leno**2,Awp_min)
+     Awp_min = Max(t_turn**2,Awp_min)
  
      ! Recalculate bmaxtf at the found awp_min:
      bmaxtf = bmax_from_awp(Awp_min/r_coil_major**2,coilcurrent)
@@ -2355,22 +2356,22 @@ contains
  
      wwp1 = awp_tor                ! [m] toroidal thickness of winding pack
      wwp2 = awp_tor                ! [m] toroidal thickness of winding pack (region in front)
-     thkwp = awp_rad               ! [m] radial thickness of winding pack
+     dr_tf_wp = awp_rad               ! [m] radial thickness of winding pack
  
      !  [m^2] winding-pack cross sectional area including insulation (not global)
-     awpc = (thkwp + 2.0D0*tinstf)*(wwp1 + 2.0D0*tinstf)
+     awpc = (dr_tf_wp + 2.0D0*tinstf)*(wwp1 + 2.0D0*tinstf)
  
 
      awptf = awp_tor*awp_rad                 ! [m^2] winding-pack cross sectional area
      jwptf = coilcurrent*1.0D6/awptf         ! [A/m^2] winding pack current density
-     turnstf = awptf / (leno**2)             !  estimated number of turns for a given turn size (not global). Take at least 1.
+     turnstf = awptf / (t_turn**2)           !  estimated number of turns for a given turn size (not global). Take at least 1.
      cpttf = coilcurrent*1.0D6 / turnstf     ! [A] current per turn - estimation
      ! [m^2] Total conductor cross-sectional area, taking account of void area
      acond = acstf*turnstf * (1.0D0-vftf)
      ! [m^2] Void area in cable, for He
      avwp = acstf*turnstf*vftf
      ! [m^2] Insulation area (not including ground-wall)
-     aiwp = turnstf * (leno**2 - acndttf - acstf)
+     aiwp = turnstf * (t_turn**2 - acndttf - acstf)
      ! [m^2] Structure area for cable
      aswp = turnstf*acndttf
    ! End of winding pack calculations
@@ -2421,8 +2422,8 @@ contains
    !  General Coil Geometry values
    !  
      tftort = wwp1 + 2.0D0*casths+ 2.0D0*tinstf     ! [m] Thickness of inboard leg in toroidal direction
-     tfcth = thkcas + thkwp + casthi+ 2.0D0*tinstf  ! [m] Thickness of inboard leg in radial direction
-     tfthko = thkcas + thkwp + casthi+ 2.0D0*tinstf ! [m] Thickness of outboard leg in radial direction (same as inboard)
+     tfcth = thkcas + dr_tf_wp + casthi+ 2.0D0*tinstf  ! [m] Thickness of inboard leg in radial direction
+     tfthko = thkcas + dr_tf_wp + casthi+ 2.0D0*tinstf ! [m] Thickness of outboard leg in radial direction (same as inboard)
      arealeg = tfcth*tftort                         ! [m^2] overall coil cross-sectional area (assuming inboard and 
                                                     !       outboard leg are the same)
      acasetf = (tfcth*tftort)-awpc                  ! [m^2] Cross-sectional area of surrounding case
@@ -2509,7 +2510,7 @@ contains
      taucq = (bt * ritfc * rminor * rminor) / (radvv * sigvvall)
  
      ! the conductor fraction is meant of the cable space!
-     call protect(cpttf,estotftgj/n_tf*1.0D9,acstf,   leno**2   ,tdmptf,1-vftf,fcutfsu,tftmp,tmaxpro,jwdgpro,vd)
+     call protect(cpttf,estotftgj/n_tf*1.0D9,acstf, t_turn**2 ,tdmptf,1-vftf,fcutfsu,tftmp,tmaxpro,jwdgpro,vd)
   
      ! Also give the copper area for REBCO quench calculations:
      copperA_m2 = coilcurrent*1.0D6/(acond * fcutfsu)
@@ -2521,7 +2522,7 @@ contains
     max_force_density = config%max_force_density *(ritfc*1.0D-6/n_tf) * bmaxtf / awptf
 
     ! Approximate, very simple maxiumum stress: (needed for limitation of icc 32)
-    strtf2 = max_force_density * thkwp *1.0D6 ! in Pa
+    strtf2 = max_force_density * dr_tf_wp *1.0D6 ! in Pa
 
 
     if (iprint == 1) call stcoil_output(outfile)
@@ -2901,7 +2902,7 @@ contains
          vportamax, vportpmax, vporttmax
       use tfcoil_variables, only: acasetf, acond, acasetf, aiwp, aswp, bmaxtf, &
          casthi, casths, cpttf, estotftgj, fcutfsu, jwptf, n_tf, oacdcp, ritfc, &
-         tfareain, tficrn, tfleng, tfocrn, tftort, thicndut, thkcas, thkwp, &
+         tfareain, tficrn, tfleng, tfocrn, tftort, thicndut, thkcas, dr_tf_wp, &
          thwcndut, turnstf, turnstf, vftf, whtcas, whtcon, whtconcu, whtconsc, &
          whtconsh, whttf, wwp1, acstf, avwp, tinstf
       implicit none
@@ -2960,7 +2961,7 @@ contains
       call ovarre(outfile,'Structure fraction of winding pack','(aswp/ap)',aswp/ap)
       call ovarre(outfile,'Insulator fraction of winding pack','(aiwp/ap)',aiwp/ap)
       call ovarre(outfile,'Helium fraction of winding pack','(avwp/ap)',avwp/ap)
-      call ovarre(outfile,'Winding radial thickness (m)','(thkwp)',thkwp)
+      call ovarre(outfile,'Winding radial thickness (m)','(dr_tf_wp)',dr_tf_wp)
       call ovarre(outfile,'Winding toroidal thickness (m)','(wwp1)',wwp1)
       call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)',tinstf)
       call ovarre(outfile,'Number of turns per coil','(turnstf)',turnstf)

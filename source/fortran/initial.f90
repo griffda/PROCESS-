@@ -495,8 +495,8 @@ subroutine initial
     !    !!  <LI> (138) rebco_thickness : thickness of REBCO layer in tape (m)
     !    lablxc(139) = 'copper_thick  '; boundl(139) = 1.00D-6; boundu(139) = 1.00D-3
     !    !!  <LI> (139) copper_thick : thickness of copper layer in tape (m)
-    !    lablxc(140) = 'thkwp         '; boundl(140) = 0.001D0; boundu(140) = 2.000D0
-    !    !!  <LI> (140) thkwp : radial thickness of TFC winding pack (m)
+    !    lablxc(140) = 'dr_tf_wp         '; boundl(140) = 0.001D0; boundu(140) = 2.000D0
+    !    !!  <LI> (140) dr_tf_wp : radial thickness of TFC winding pack (m)
     !    lablxc(141) = 'fcqt          '; boundl(141) = 0.001D0; boundu(141) = 1.000D0
     !    !!  <LI> (141) fcqt : TF coil quench temperature < tmax_croco (f-value for equation 74)
     !    lablxc(142) = 'nesep         '; boundl(142) = 1.00D17; boundu(142) = 1.00D20
@@ -648,7 +648,8 @@ subroutine check
     use tfcoil_variables, only: casthi, casthi_is_fraction, casths, i_tf_sup, &
         tcoolin, tcpav, tfc_sidewall_is_fraction, tmargmin, tmargmin_cs, &
         tmargmin_tf, eff_tf_cryo, eyoung_ins, i_tf_bucking, i_tf_shape, &
-        n_tf_graded_layers, n_tf_stress_layers, tlegav
+        n_tf_graded_layers, n_tf_stress_layers, tlegav,  i_tf_plane_stress, &
+        i_tf_sc_mat, i_tf_wp_geom, i_tf_turns_integer
     use stellarator_variables, only: istell
     use sctfcoil_module, only: initialise_cables
     use vacuum_variables, only: vacuum_model
@@ -1037,8 +1038,8 @@ subroutine check
         end if
 
         ! Location of the TF coils 
-        ! 2 : PF coil on top of TF coil;
-        ! 3 : PF coil outside of TF coil</UL>
+        ! 2 : PF coil on top of TF coil
+        ! 3 : PF coil outside of TF coil
         ipfloc(1) = 2
         ipfloc(2) = 3
         ipfloc(3) = 3
@@ -1156,6 +1157,9 @@ subroutine check
         stop
     end if
      
+    ! Make sure that plane stress model is not used for resistive magnets
+    if ( i_tf_plane_stress == 1 .and. i_tf_sup /= 1 ) call report_error(253)
+     
     ! bucking cylinder default option setting
     !  - bucking (casing) for SC i_tf_bucking ( i_tf_bucking = 1 )
     !  - No bucking for copper magnets ( i_tf_bucking = 0 )
@@ -1202,6 +1206,15 @@ subroutine check
     end if
     !-!  
 
+    ! Integer turns option not yet available for REBCO taped turns
+    !-!
+    if ( i_tf_sc_mat == 6 .and. i_tf_turns_integer == 1 ) then
+        call report_error(254)
+        stop
+    end if
+    !-!
+
+
     ! Setting up insulation layer young modulae default values [Pa]
     !-!
     if ( abs(eyoung_ins - 1.0D8 ) < epsilon(eyoung_ins) ) then
@@ -1221,6 +1234,14 @@ subroutine check
             eyoung_ins = 2.5D9
         end if
     end if
+    !-!
+
+    !-! Setting the default WP geometry
+    !-!
+    if ( i_tf_wp_geom == -1 ) then
+        if ( i_tf_turns_integer == 0 ) i_tf_wp_geom = 1
+        if ( i_tf_turns_integer == 1 ) i_tf_wp_geom = 0
+    end if 
     !-!
 
     !  PF coil resistivity is zero if superconducting
