@@ -469,6 +469,76 @@ subroutine jcrit_nbti(temperature,bmax,c0,bc20max,tc0max,jcrit,tcrit)
 
 end subroutine jcrit_nbti
 !--------------------------------------------------------------------
+subroutine GL_nbti(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit)
+  
+    !!  Author: S B L Chislett-McDonald Durham University
+    !!  Category: subroutine
+    !!
+    !!  Critical current density of the superconductor in an ITER 
+    !!  Nb-Ti strand based on the Ginzburg-Landau theory of superconductivity 
+    !!
+    !! \begin{equation}
+    !!  J_{c,TS}(B,T,\epsilon_{I}) = A(\epsilon_{I}) \left[T_{c}(\epsilon_{I})*(1-t^2)\right]^2\left
+    !!  [B_{c2}(\epsilon_I)*(1-t^\nu)\right]^{n-3}b^{p-1}(1-b)^q~.
+    !! \end{equation}
+    !!
+    !!  - \( \thelium \) -- Coolant/SC temperature [K]
+    !!  - \( \bmax \) -- Magnetic field at conductor [T]
+    !!  - \( \\epsilon_{I} \) -- Intrinsic strain in superconductor [\%]
+    !!  - \( \B_{c2}(\epsilon_I) \) -- Strain dependent upper critical field [T]    
+    !!  - \( \b \) -- Reduced field = bmax / \B_{c2}(\epsilon_I)*(1-t^\nu) [unitless]           
+    !!  - \( \T_{c}(\epsilon_{I}) \) -- Strain dependent critical temperature (K)
+    !!  - \( \t \) -- Reduced temperature = thelium / \T_{c}(\epsilon_{I}) [unitless]
+    !!  - \( \A(epsilon_{I}) \) -- Strain dependent Prefactor [A / ( m\(^2\) K\(^-2) T\(^n-3))]
+    !!  - \( \J_{c,TS} \) --  Critical current density in superconductor [A / m\(^-2\)]
+
+    implicit none
+
+    !  Arguments
+    real(kind(1.0D0)), intent(in) :: thelium, bmax, strain, bc20max, t_c0
+    real(kind(1.0D0)), intent(out) :: jcrit, tcrit, bcrit
+
+    !  Local variables
+    real(kind(1.0D0)) :: strain_func, T_e, A_e, b_reduced, t_reduced
+    real(kind(1.0D0)), parameter :: A_0 = 1102D6
+    real(kind(1.0D0)), parameter :: p = 0.49D0
+    real(kind(1.0D0)), parameter :: q = 0.56D0
+    real(kind(1.0D0)), parameter :: v = 1.42D0
+    real(kind(1.0D0)), parameter  :: n = 1.83D0
+    real(kind(1.0D0)), parameter  :: c2 = -0.0025D0
+    real(kind(1.0D0)), parameter  :: c3 = -0.0003D0
+    real(kind(1.0D0)), parameter  :: c4 = -0.0001D0
+    real(kind(1.0D0)), parameter  :: em = -0.002D-2
+    real(kind(1.0D0)), parameter  :: u = 0.0D0
+    real(kind(1.0D0)), parameter  :: w = 2.2D0
+
+    strain_func = 1 + c2*(strain-em)**2 + c3*(strain-em)**3 + c4*(strain-em)**4
+
+    T_e = t_c0 * strain_func**(1 / w)
+
+    t_reduced = thelium/T_e
+
+    A_e = A_0 * strain_func**(u / w) 
+
+    !  Critical Field 
+
+    bcrit = bc20max * (1 - t_reduced**v) * strain_func
+
+    b_reduced = bmax/bcrit    
+
+    !  Critical temperature (K)
+    
+    tcrit = T_e
+
+    !  Critical current density (A/m2)
+
+    if (b_reduced <= 1.0D0) then
+        jcrit = A_e * (T_e*(1-t_reduced**2))**2 * bcrit**(n-3) * b_reduced**(p-1) * (1 - b_reduced)**q 
+    else !Fudge to yield negative single valued function of Jc for fields above Bc2
+        jcrit = A_e * (T_e*(1-t_reduced**2))**2 * bcrit**(n-3) * b_reduced**(p-1) * (1 - b_reduced)**1.0
+    end if
+   
+end subroutine GL_nbti
 
 subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
 

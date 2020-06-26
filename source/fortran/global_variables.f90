@@ -2755,7 +2755,7 @@ module tfcoil_variables
   real(dp) :: dcase = 8000.0D0
   !! density of coil case (kg/m3)
 
-  real(dp), dimension(6) :: dcond = 9000.0D0
+  real(dp), dimension(7) :: dcond = 9000.0D0
   !! density of superconductor type given by i_tf_sc_mat/isumatoh/isumatpf (kg/m3)
   
   real(dp) :: dcondins = 1800.0D0
@@ -2769,13 +2769,15 @@ module tfcoil_variables
 
   real(dp) :: farc4tf = 0.7D0
   !! factor to size height of point 4 on TF coil
-
-  real(dp) :: max_force_density = 0.0D0
+  real(kind(1.0D0)) :: b_crit_upper_nbti = 14.86D0
+  !! upper critical field of GL_nbti
+  real(kind(1.0D0)) :: t_crit_nbti = 9.04D0
+  !! critical temperature of GL_nbti
+  real(kind(1.0D0)) :: max_force_density = 0.0D0
   !! Maximal (WP averaged) force density in TF coils at 1 point. (MN/m3)
-
-  real(dp) :: fcutfsu = 0.69D0
-  !! copper fraction of cable conductor (TF coils) (`iteration variable 59`)
-
+  real(kind(1.0D0)) :: fcutfsu = 0.69D0
+  !! copper fraction of cable conductor (TF coils)
+  !! (iteration variable 59)
   real(dp) :: fhts = 0.5D0
   !! technology adjustment factor for critical current density fit for isumat..=2 
   !! Bi-2212 superconductor, to describe the level of technology assumed (i.e. to 
@@ -4710,7 +4712,8 @@ module cost_variables
   real(dp) :: ucrb = 400.0D0
   !! cost of reactor building (M$/m3)
 
-  real(dp), dimension(6) :: ucsc = (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0/)
+  real(dp), dimension(7) :: ucsc = &
+      (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0/)
   !! cost of superconductor ($/kg)
 
   real(dp), parameter :: ucsh = 115.0D0

@@ -285,7 +285,8 @@ contains
       n_tf_graded_layers, n_tf_joints, n_tf_joints_contact, poisson_al, &
       poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact,&
       i_tf_plane_stress, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
-      i_tf_turns_integer, n_rad_per_layer
+      i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti
+
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
     use vacuum_variables, only: dwell_pump, pbase, tn, pumpspeedfactor, &
@@ -1800,6 +1801,12 @@ contains
        case ('farc4tf')
           call parse_real_variable('farc4tf', farc4tf, 0.0D0, 1.0D0, &
                'TF coil shape parameter')
+       case ('t_crit_nbti')
+          call parse_real_variable('t_crit_nbti ', t_crit_nbti , 0.0D0, 15.0D0, &
+               'Critical temperature of GL_nbti ')
+       case ('b_crit_upper_nbti')
+          call parse_real_variable('b_crit_upper_nbti', b_crit_upper_nbti, 0.0D0, 30.0D0, &
+                    'Upper critical field of GL_nbti ')
        case ('fcoolcp')
           call parse_real_variable('fcoolcp', fcoolcp, 0.0D0, 1.0D0, &
                'Coolant fraction of TF centrepost (itart=1) or the whole magnet (itart=0)')
@@ -1852,7 +1859,7 @@ contains
           call parse_int_variable('i_tf_bucking', i_tf_bucking, 0, 3, &
                'Switch for bucking cylinder (case)')
        case ('i_tf_sc_mat')
-          call parse_int_variable('i_tf_sc_mat', i_tf_sc_mat, 1, 6, &
+          call parse_int_variable('i_tf_sc_mat', i_tf_sc_mat, 1, 7, &
                'TF coil superconductor material')
           if (i_tf_sc_mat == 2) then
              write(outfile,*) ' '
@@ -2074,10 +2081,10 @@ contains
           call parse_int_variable('ipfres', ipfres, 0, 1, &
                'Switch for supercond / resist PF coils')
        case ('isumatoh')
-          call parse_int_variable('isumatoh', isumatoh, 1, 6, &
+          call parse_int_variable('isumatoh', isumatoh, 1, 7, &
                'Central Solenoid superconductor material')
        case ('isumatpf')
-          call parse_int_variable('isumatpf', isumatpf, 1, 5, &
+          call parse_int_variable('isumatpf', isumatpf, 1, 7, &
                'PF coil superconductor material')
        case ('ncls')
           call parse_int_array('ncls', ncls, isub1, ngrpmx, &
@@ -4650,65 +4657,65 @@ contains
 
   subroutine lower_case(string,start,finish)
 
-    !! Routine that converts a (sub-)string to lowercase
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! string : input string   : character string of interest
-    !! start  : optional input integer  : starting character for conversion
-    !! finish : optional input integer  : final character for conversion
-    !! This routine converts the specified section of a string
-    !! to lowercase. By default, the whole string will be converted.
-    !! None
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   !! Routine that converts a (sub-)string to lowercase
+   !! author: P J Knight, CCFE, Culham Science Centre
+   !! string : input string   : character string of interest
+   !! start  : optional input integer  : starting character for conversion
+   !! finish : optional input integer  : final character for conversion
+   !! This routine converts the specified section of a string
+   !! to lowercase. By default, the whole string will be converted.
+   !! None
+   !
+   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    implicit none
+   implicit none
 
-    !  Arguments
+   !  Arguments
 
-    character(len=*), intent(inout) :: string
-    integer, optional, intent(in) :: start,finish
+   character(len=*), intent(inout) :: string
+   integer, optional, intent(in) :: start,finish
 
-    !  Local variables
+   !  Local variables
 
-    character(len=1) :: letter
-    character(len=27) :: lowtab = 'abcdefghijklmnopqrstuvwxyz_'
-    integer :: loop, i
+   character(len=1) :: letter
+   character(len=27) :: lowtab = 'abcdefghijklmnopqrstuvwxyz_'
+   integer :: loop, i
 
-    integer :: first, last
+   integer :: first, last
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (present(start)) then
-       first = start
-    else
-       first = 1
-    end if
+   if (present(start)) then
+      first = start
+   else
+      first = 1
+   end if
 
-    if (present(finish)) then
-       last = finish
-    else
-       last = len(string)
-    end if
+   if (present(finish)) then
+      last = finish
+   else
+      last = len(string)
+   end if
 
-    if (first <= last) then
-       do loop = first,last
-          letter = string(loop:loop)
-          i = index('ABCDEFGHIJKLMNOPQRSTUVWXYZ_',letter)
-          if (i > 0) string(loop:loop) = lowtab(i:i)
-       end do
-    end if
+   if (first <= last) then
+      do loop = first,last
+         letter = string(loop:loop)
+         i = index('ABCDEFGHIJKLMNOPQRSTUVWXYZ_',letter)
+         if (i > 0) string(loop:loop) = lowtab(i:i)
+      end do
+   end if
 
-  end subroutine lower_case
+ end subroutine lower_case
 
 end module process_input
 
 #ifdef unit_test
 program test
-  use process_input
-  implicit none
+ use process_input
+ implicit none
 
-  open(unit=1,file='IN.DAT',status='old')
-  call parse_input_file(1,6,1)
-  close(unit=1)
+ open(unit=1,file='IN.DAT',status='old')
+ call parse_input_file(1,6,1)
+ close(unit=1)
 end program test
 #endif
