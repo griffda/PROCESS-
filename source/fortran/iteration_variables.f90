@@ -14,7 +14,7 @@ contains
 
 !---------------------------------
 
-subroutine init_itv_1
+   subroutine init_itv_1
       !! <LI> ( 1) aspect
       use numerics, only: lablxc, boundl, boundu
       implicit none
@@ -3898,7 +3898,7 @@ subroutine init_itv_1
    !---------------------------------
 
    subroutine init_itv_172
-      !! <LI> (76) f_avspace (f-value for equation 83)
+      !! <LI> (172) f_avspace (f-value for equation 83)
       use numerics, only: lablxc, boundu, boundl
       lablxc(172) = 'f_avspace     '
       boundl(172) = 0.010D0
@@ -3924,7 +3924,7 @@ subroutine init_itv_1
 
 
    subroutine init_itv_173
-      !! <LI> (76) fbetatry_lower (f-value for equation 84)
+      !! <LI> (173) fbetatry_lower (f-value for equation 84)
       use constraint_variables, only: fbetatry_lower
       use numerics, only: lablxc, boundl, boundu
       implicit none
@@ -3945,6 +3945,34 @@ subroutine init_itv_1
       real(kind(1.d0)) :: ratio
       fbetatry_lower = ratio
    end subroutine set_itv_173
+
+
+   !---------------------------------
+
+
+   subroutine init_itv_174
+      !! <LI> (174) r_cp_top : Top outer radius of the centropost (ST only) (m)
+      use numerics, only: lablxc, boundl, boundu
+      implicit none
+      lablxc(174) = 'r_cp_top           '
+      boundl(174) = 0.0010D0
+      boundu(174) = 10.000D0
+   end subroutine init_itv_174
+
+
+   real(kind(1.d0)) function itv_174()
+   use build_variables, only: r_cp_top
+      implicit none
+      itv_174 = r_cp_top 
+   end function itv_174
+
+   subroutine set_itv_174(ratio)
+      use build_variables, only: r_cp_top
+      real(kind(1.d0)) :: ratio
+      r_cp_top = ratio
+   end subroutine set_itv_174
+
+
 !! </UL>
 end module define_iteration_variables
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3982,7 +4010,7 @@ subroutine loadxc
     itv_167, itv_90, itv_97, itv_123, itv_37, itv_19, itv_147, itv_64, &
     itv_22, itv_7, itv_68, itv_72, itv_28, itv_77, itv_137, itv_120, &
     itv_129, itv_11, itv_18, itv_42, itv_31, itv_38, itv_109, itv_32, itv_171, &
-    itv_172, itv_173
+    itv_172, itv_173, itv_174
       use error_handling, only: idiags, fdiags, report_error
       use numerics, only: nvar, xcm, ixc, name_xc, lablxc, scafc, scale
       use physics_variables, only: icurr
@@ -4169,6 +4197,7 @@ subroutine loadxc
          case (171);  xcm(i) = itv_171()
          case (172);  xcm(i) = itv_172()
          case (173);  xcm(i) = itv_173()
+         case (174);  xcm(i) = itv_174()
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -4264,7 +4293,7 @@ subroutine convxc(xc,nn)
   set_itv_156, set_itv_157, set_itv_158, set_itv_159, set_itv_160, &
   set_itv_161, set_itv_162, set_itv_163, set_itv_164, set_itv_165, &
   set_itv_166, set_itv_167, set_itv_168, set_itv_169, set_itv_170, &
-  set_itv_171, set_itv_172, set_itv_173
+  set_itv_171, set_itv_172, set_itv_173, set_itv_174
   use error_handling, only: idiags, fdiags, report_error
   use numerics, only: ipnvars, scale, ixc, lablxc
   use maths_library, only: variable_error
@@ -4462,6 +4491,7 @@ subroutine convxc(xc,nn)
          case (171);  call set_itv_171(ratio)
          case (172);  call set_itv_172(ratio)    
          case (173);  call set_itv_173(ratio)     
+         case (174);  call set_itv_174(ratio)     
 
          case default
             call report_error(57)

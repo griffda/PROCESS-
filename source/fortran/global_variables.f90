@@ -2768,16 +2768,16 @@ module tfcoil_variables
   !! total stored energy in the toroidal field (GJ)
 
   real(dp) :: farc4tf = 0.7D0
-  !! farc4tf /0.7/ : factor to size height of point 4 on TF coil
+  !! factor to size height of point 4 on TF coil
   real(kind(1.0D0)) :: b_crit_upper_nbti = 14.86D0
-  !! b_crit_upper_nbti /14.86/ : upper critical field of GL_nbti
+  !! upper critical field of GL_nbti
   real(kind(1.0D0)) :: t_crit_nbti = 9.04D0
-  !! t_crit_nbti /9.04/ : critical temperature of GL_nbti
+  !! critical temperature of GL_nbti
   real(kind(1.0D0)) :: max_force_density = 0.0D0
-  !! max_force_density :  Maximal (WP averaged) force density in TF coils at 1 point. (MN/m3)
+  !! Maximal (WP averaged) force density in TF coils at 1 point. (MN/m3)
   real(kind(1.0D0)) :: fcutfsu = 0.69D0
-  !! fcutfsu /0.69/ : copper fraction of cable conductor (TF coils)
-  !!                  (iteration variable 59)
+  !! copper fraction of cable conductor (TF coils)
+  !! (iteration variable 59)
   real(dp) :: fhts = 0.5D0
   !! technology adjustment factor for critical current density fit for isumat..=2 
   !! Bi-2212 superconductor, to describe the level of technology assumed (i.e. to 
@@ -2805,6 +2805,11 @@ module tfcoil_variables
   !! Default setting for backward compatibility 
   !!   if i_tf_turns_integer = 0 : Double rectangular
   !!   if i_tf_turns_integer = 1 : Rectangular 
+
+  integer :: i_tf_case_geom = 0
+  !! Switch for TF case geometry selection
+  !!   0 : Circular front case (ITER design)
+  !!   1 : Straight front case
 
   integer :: i_tf_turns_integer = 0
   !! Switch for TF coil integer/non-integer turns:
@@ -2843,7 +2848,7 @@ module tfcoil_variables
   integer :: n_layer = 20
   !! Number of layers in TF coil. Only used if `i_tf_turns_integer=1`
   
-  integer :: n_rad_per_layer = 50
+  integer :: n_rad_per_layer = 100
   !! Size of the arrays per layers storing the radial dependent stress 
   !! quantities (stresses, strain displacement etc..)
 
@@ -3183,14 +3188,14 @@ module tfcoil_variables
   !! max voltage across TF coil during quench (kV) (`iteration variable 52`)
 
   real(dp) :: vforce = 0.0D0
-  !! vertical separating force on inboard leg/coil (N)
+  !! vertical tension on inboard leg/coil (N)
   
   real(dp) :: f_vforce_inboard = 0.5D0
-  !! Fraction of the total vertical force taken by the TF inboard leg
+  !! Fraction of the total vertical force taken by the TF inboard leg tension
   !! Not used for resistive `itart=1` (sliding joints)
 
   real(dp) :: vforce_outboard = 0.0D0
-  !! Vertical separating force on out board leg/coil (N)
+  !! Vertical tension on outboard leg/coil (N)
 
   real(dp) :: vftf = 0.4D0
   !! coolant fraction of TFC 'cable' (`i_tf_sup=1`), or of TFC leg (`i_tf_ssup=0`)
@@ -3336,7 +3341,7 @@ module tfcoil_variables
   !! peak centrepost temperature (K)
   
   real(dp) :: vcool = 20.0D0
-  !! max centrepost coolant flow speed at midplane (m/s) (`iteration variable 70`)
+  !! inlet centrepost coolant flow speed at midplane (m/s) (`iteration variable 70`)
 
   real(dp) :: vol_cond_cp = 0.0D0
   !! Exact conductor volume in the centrepost (m3)
@@ -4090,14 +4095,20 @@ module build_variables
   real(dp) :: r_sh_inboard_out = 0.0D0
   !! Radial plasma facing side position of inboard neutronic shield [m]
 
+  real(dp) :: r_tf_inboard_in = 0.0D0
+  !! Mid-plane Outer radius of inner of inboard TF leg (m)
+
   real(dp) :: r_tf_inboard_mid = 0.0D0
+  !! Mid-plane Outer radius of centre of inboard TF leg (m)
+       
+  real(dp) :: r_tf_inboard_out = 0.0D0
   !! Mid-plane Outer radius of centre of inboard TF leg (m)
        
   real(dp) :: r_tf_outboard_mid = 0.0D0
   !! radius to the centre of the outboard TF coil leg (m)
 
   real(dp) :: r_cp_top = 0.0D0
-  !! Top outer radius of centre of the centropost (ST only) (m)
+  !! Top outer radius of the centropost (ST only) (m)
 
   real(dp) :: dr_tf_inner_bore = 0.0D0
   !! TF coil horizontal inner bore (m)
@@ -4699,10 +4710,12 @@ module cost_variables
   !! cost of primary power transformers ($/kVA**0.9)
 
   real(dp) :: ucrb = 400.0D0
-  !! ucrb /400.0/ : cost of reactor building (M$/m3)
+  !! cost of reactor building (M$/m3)
+
   real(dp), dimension(7) :: ucsc = &
-  !! ucsc(6) /600.0,600.0,300.0,600.0/ : cost of superconductor ($/kg)
-       (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0/)
+      (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0/)
+  !! cost of superconductor ($/kg)
+
   real(dp), parameter :: ucsh = 115.0D0
   !! cost of shops and warehouses (M$/m3)
 

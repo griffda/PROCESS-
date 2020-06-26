@@ -57,12 +57,6 @@ real(dp), private :: f_tf_ins
 real(dp), private :: h_cp_top
 !! Vertical distance from the midplane to the top of the tapered section [m]
 
-real(dp), private :: r_tf_inboard_in
-!! Radial position of inner edge of TF coil inboard leg [m]
-
-real(dp), private :: r_tf_inboard_out
-!! Radial position of plasma-facing edge of TF coil inboard leg [m]
-
 real(dp), private :: r_tf_outboard_in
 !! Radial position of plasma-facing edge of TF coil outboard leg [m]
 
@@ -105,6 +99,12 @@ real(dp), private :: t_wp_toroidal_av
 real(dp), private :: t_lat_case_av
 !! Average lateral casing thickness [m]
 
+real(dp), private :: a_case_front
+!! Front casing area [m2]
+
+real(dp), private :: a_case_nose
+!! Nose casing area [m2]
+
 real(dp), private :: theta_coil
 !! Half toroidal angular extent of a single TF coil inboard leg
 
@@ -125,6 +125,9 @@ real(dp), private :: t_turn
 
 real(dp), private :: t_cable
 !! Cable area averaged dimension (square shape) [m]
+
+real(dp), private :: vforce_inboard_tot
+!! Total inboard vertical tension (all coils) [N] 
 
 type(resistive_material):: copper
 type(resistive_material):: hastelloy
@@ -173,7 +176,8 @@ subroutine sctfcoil(outfile,iprint)
         hmax
     use tfcoil_variables, only: i_tf_turns_integer, wwp1, estotftgj, tfind, &
         ritfc, dr_tf_wp, n_tf, bmaxtfrp, bmaxtf, n_tf_stress_layers, n_rad_per_layer, &
-        i_tf_sup, i_tf_shape, i_tf_wp_geom, tinstf, tfinsgap, b_crit_upper_nbti, t_crit_nbti
+        i_tf_sup, i_tf_shape, i_tf_wp_geom, i_tf_case_geom, tinstf, tfinsgap, &
+        b_crit_upper_nbti, t_crit_nbti
     use constants, only: rmu0, pi
     use physics_variables, only: itart
 
@@ -201,7 +205,7 @@ subroutine sctfcoil(outfile,iprint)
     ! ---
     ! Superconducting magnets
     if ( i_tf_sup == 1 ) then 
-        call sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
+        call sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
 
     ! Resitive magnets
     else
@@ -246,7 +250,7 @@ subroutine sctfcoil(outfile,iprint)
     if ( iprint == 1 ) n_rad_per_layer = 500
     call stresscl(n_tf_stress_layers, n_rad_per_layer, iprint, outfile)
 
-    if (iprint == 1) call outtf(outfile, peaktfflag)
+    if ( iprint == 1 ) call outtf(outfile, peaktfflag)
 
 end subroutine sctfcoil
 
@@ -258,24 +262,32 @@ subroutine tf_global_geometry()
     !!   - Overall geometry of coil (radii and toroidal planes area)
     !!   - Winding Pack NOT included
     use physics_variables, only: rmajor, bt, kappa, itart, rminor
-    use build_variables, only: tfcth, tfthko, r_tf_inboard_mid, &
-        r_tf_outboard_mid, r_cp_top
+    use build_variables, only: tfcth, tfthko, r_tf_outboard_mid, r_cp_top, &
+        r_tf_inboard_in, r_tf_inboard_mid, r_tf_inboard_out
     use tfcoil_variables, only: tinstf, tfc_sidewall_is_fraction, tfareain, &
         ritfc, tftort, n_tf, casthi_is_fraction, bmaxtf, arealeg, &
         casthi_fraction, casths_fraction, tfinsgap, rbmax, casthi, casths, i_tf_sup, &
-        dztop, tinstf, tftort, tfinsgap
+        dztop, tinstf, tftort, tfinsgap, i_tf_case_geom
     use constants, only: pi
     implicit none
     
 
+
     ! Inner leg geometry
     ! ---
-    ! Radial position of inner/outer edge of inboard TF coil leg [m]
-    r_tf_inboard_in =  r_tf_inboard_mid - 0.5D0 * tfcth
-    r_tf_inboard_out = r_tf_inboard_mid + 0.5D0 * tfcth
+    ! Half toroidal angular extent of a single TF coil inboard leg
+    theta_coil = pi / n_tf 
+    tan_theta_coil = tan(theta_coil)
 
-    ! Annular area of midplane containing TF coil inboard legs ( WP + casing ) [m2]
-    tfareain = pi * (r_tf_inboard_out**2 - r_tf_inboard_in**2)
+    ! TF coil inboard legs mid-plane cross-section area (WP + casing ) [m2]
+    if ( i_tf_case_geom == 0 ) then
+        ! Circular front case
+        tfareain = pi * ( r_tf_inboard_out**2 - r_tf_inboard_in**2 )
+    else
+        ! Straight front case
+        tfareain = n_tf * sin(theta_coil)*cos(theta_coil) * r_tf_inboard_out**2  &
+                 - pi * r_tf_inboard_in**2 
+    end if
 
     ! Vertical distance from the midplane to the top of the tapered section [m]
     if ( itart ==  1 ) h_cp_top = rminor * kappa + dztop 
@@ -288,9 +300,6 @@ subroutine tf_global_geometry()
     r_tf_outboard_in =  r_tf_outboard_mid - tfthko * 0.5D0 
     r_tf_outboard_out = r_tf_outboard_mid + tfthko * 0.5D0 
 
-    ! Half toroidal angular extent of a single TF coil inboard leg
-    theta_coil = pi/n_tf              ! eq(9)
-    tan_theta_coil = tan(theta_coil)
 
     ! TF coil width in toroidal direction at inboard leg outer edge [m]
     ! *** 
@@ -317,7 +326,8 @@ subroutine tf_current()
     !! Calculation of the maximum B field and the corresponding TF current
     use tfcoil_variables, only: casthi, ritfc, rbmax, i_tf_sup, casths_fraction, &
         tinstf, tftort, bmaxtf, tfinsgap, tfc_sidewall_is_fraction, casths, &
-        casthi_is_fraction, casthi_fraction, n_tf
+        casthi_is_fraction, casthi_fraction, n_tf, thicndut
+    use build_variables, only: r_tf_inboard_out
     use physics_variables, only: bt, rmajor
     use build_variables, only: tfcth
     implicit none
@@ -329,12 +339,14 @@ subroutine tf_current()
     ! Case thickness of side wall [m]
     if (tfc_sidewall_is_fraction) casths = casths_fraction * tftort  
     
-    ! Radial position of peak toroidal field (assuming axisymmetry) [m]
-    ! (assumed to be at the outer edge of the winding pack)    
+    ! Radial position of peak toroidal field [m]
     if ( i_tf_sup == 1 ) then
-        rbmax = r_tf_inboard_out - casthi - tinstf - tfinsgap
+        ! SC : conservative assumption as the radius is calculated with the
+        ! WP radial distances defined at the TF middle (cos)
+        rbmax = r_tf_inboard_out * cos(theta_coil) - casthi - tinstf - tfinsgap
     else 
-        rbmax = r_tf_inboard_out - casthi - tinstf   ! eq(11)
+        ! Cesistive coils : No approx necessary as the symmetry is cylindrical 
+        rbmax = r_tf_inboard_out - casthi - thicndut
     end if
 
     ! Calculation of the maximum B field on the magnet [T]
@@ -351,7 +363,7 @@ end subroutine tf_current
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
+subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
     !! Author : S. Kahn, CCFE
     !! Seting the WP, case and tunrs geometry for SC magnets
     
@@ -367,6 +379,9 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
 
     ! Inputs
     ! ------
+    integer, intent(in) :: i_tf_case_geom
+    !! Switch for TF case geometry selection
+
     integer, intent(in) :: i_tf_wp_geom
     !! Switch for TF WP geometry selection
 
@@ -379,7 +394,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
     call tf_wp_geom(i_tf_wp_geom)
 
     ! Calculating the TF steel casing areas 
-    call tf_case_geom(i_tf_wp_geom)
+    call tf_case_geom(i_tf_wp_geom, i_tf_case_geom)
 
     ! WP/trun currents
     call tf_wp_currents
@@ -435,7 +450,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
         !! Seting the WP geometry and area for SC magnets
 
         use error_handling, only: fdiags, report_error
-        use build_variables, only: tfcth
+        use build_variables, only: tfcth, r_tf_inboard_in, r_tf_inboard_out
         use tfcoil_variables, only: dr_tf_wp, casthi, thkcas, casths, &
             wwp1, wwp2, tinstf, tfinsgap
         use numerics, only: nvar, ixc
@@ -460,15 +475,10 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
     
 
 
-        ! Case : WP thickness set an input variable 
-        if (any(ixc(1:nvar) == 140) ) then
-            ! Radial thickness of TF coil inboard leg [m]
-            tfcth = dr_tf_wp + casthi + thkcas
-        
-        ! Case : TF thickness set an input variable 
-        else
-            ! Radial thickness of winding pack [m]
-            dr_tf_wp = tfcth - casthi - thkcas
+        ! Radial thickness of winding pack [m]
+        if ( .not. any(ixc(1:nvar) == 140) ) then
+            dr_tf_wp = cos(theta_coil) * r_tf_inboard_out  &
+                     - r_tf_inboard_in - casthi - thkcas
         end if
 
         ! Radial position of inner edge of winding pack [m]
@@ -481,7 +491,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
         r_wp_centre = 0.5D0 * ( r_wp_inner + r_wp_outer )
 
         ! TF toroidal thickness at the WP inner radius [m]
-        t_tf_at_wp = 2.0D0 * r_wp_inner*sin(theta_coil)    
+        t_tf_at_wp = 2.0D0 * r_wp_inner * tan_theta_coil    
 
         ! Minimal toroidal thickness of winding pack [m]
         t_wp_toroidal = t_tf_at_wp - 2.0D0 * casths
@@ -572,27 +582,53 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
         
     end subroutine tf_wp_geom
 
-    subroutine tf_case_geom(i_tf_wp_geom)
+    subroutine tf_case_geom(i_tf_wp_geom, i_tf_case_geom)
         !! Author : S. Kahn, CCFE
         !! Seting the case geometry and area for SC magnets
 
         use error_handling, only: fdiags, report_error
         use tfcoil_variables, only: acasetf, acasetfo, arealeg, tfareain, n_tf, &
-            casths
+            casths, casthi, dr_tf_wp
+        use build_variables, only: r_tf_inboard_in, r_tf_inboard_out
         implicit none
 
+        ! Inputs
+        ! ------
         integer, intent(in) :: i_tf_wp_geom
         !! Switch for TF WP geometry selection
         !!   0 : Rectangular geometry 
         !!   1 : Double rectangular geometry 
         !!   2 : Trapezoidal geometry (constant lateral casing thickness)
 
+        integer, intent(in) :: i_tf_case_geom
+        !! Switch for TF case geometry selection
+        !!   0 : Circular front case (ITER design)
+        !!   1 : Straight front case
+        ! ------
+
         ! Inboard leg cross-sectional area of surrounding case [m2]
-        acasetf = (tfareain/n_tf) - awpc
+        acasetf = (tfareain / n_tf) - awpc
     
         ! Outboard leg cross-sectional area of surrounding case [m2]
         acasetfo = arealeg - awpc
-        
+
+        ! Front casing area [m2]
+        if ( i_tf_case_geom == 0 ) then
+
+            ! Circular front case
+            a_case_front = theta_coil * r_tf_inboard_out**2  &
+                         - tan_theta_coil * r_wp_outer**2 
+        else
+            
+            ! Straight front case
+            a_case_front = ( (r_wp_outer + casthi)**2 - r_wp_outer**2 ) * tan_theta_coil
+        end if
+
+
+        ! Nose casing area [m2]
+        a_case_nose = tan_theta_coil * r_wp_inner**2  &
+                    - theta_coil * r_tf_inboard_in**2
+
         ! Report error if the casing area is negative
         if ( acasetf <= 0.0D0 .or. acasetfo <= 0.0D0 ) then
             fdiags(1) = acasetf
@@ -604,11 +640,11 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_turns_integer)
         ! --------------
         ! Rectangular casing
         if ( i_tf_wp_geom == 0 ) then
-            t_lat_case_av = casths + 0.5D0*sin(theta_coil) * (r_wp_outer - r_wp_inner)  
+            t_lat_case_av = casths + 0.5D0*tan_theta_coil * dr_tf_wp
     
         ! Double rectangular WP
         else if ( i_tf_wp_geom == 1 ) then 
-            t_lat_case_av = casths + 0.5D0*sin(theta_coil) * (r_wp_outer - r_wp_centre)  
+            t_lat_case_av = casths + 0.25D0*tan_theta_coil * dr_tf_wp
              
         ! Trapezoidal WP
         else 
@@ -898,9 +934,11 @@ end subroutine sc_tf_internal_geom
 subroutine res_tf_internal_geom()
     !! Author : S. Kahn
     !! Resisitve TF turn geometry, equivalent to winding_pack subroutines
-    use tfcoil_variables, only: turnstf, tinstf, thkcas, dr_tf_wp, tftort, n_tf, &
+    use error_handling, only: fdiags, report_error 
+    use numerics, only: nvar, ixc
+    use tfcoil_variables, only: turnstf, thicndut, thkcas, dr_tf_wp, tftort, n_tf, &
         tfareain, ritfc, oacdcp, fcoolcp, cpttf, cdtfleg, casthi, aiwp, acasetf
-    use build_variables, only: tfthko
+    use build_variables, only: tfthko, r_tf_inboard_in, r_tf_inboard_out
     use constants, only: pi
 
     implicit none
@@ -910,7 +948,9 @@ subroutine res_tf_internal_geom()
     r_wp_outer = r_tf_inboard_out - casthi 
 
     ! Mid-plane Radial thickness of conductor layer [m]
-    dr_tf_wp = r_wp_outer - r_wp_inner
+    if ( .not. any(ixc(1:nvar) == 140) ) then 
+        dr_tf_wp = r_wp_outer - r_wp_inner
+    end if
 
     ! Number of turns
     ! Set by user (no turn structure by default, i.e. turnstf = 1 ) 
@@ -921,11 +961,11 @@ subroutine res_tf_internal_geom()
     awpc = pi * ( r_wp_outer**2 - r_wp_inner**2 ) / n_tf
 
     ! Exact mid-plane cross-section area of the conductor per TF coil [m2]
-    awptf = pi*( (r_wp_outer - tinstf)**2 - (r_wp_inner + tinstf)**2 )/n_tf  &
-           - 2.0D0*tinstf * ( dr_tf_wp - 2.0D0*tinstf ) * turnstf
+    awptf = pi*( (r_wp_outer - thicndut)**2 - (r_wp_inner + thicndut)**2 )/n_tf  &
+           - 2.0D0*thicndut * ( dr_tf_wp - 2.0D0*thicndut ) * turnstf
     awptf = awptf * (1.0D0 - fcoolcp)
 
-    ! Inter turn insulation area coil [m2]                    
+    ! Inter turn insulation area per coil [m2]                    
     aiwp = awpc - awptf / ( 1.0D0 - fcoolcp )  
 
     ! Total cross-sectional area of surrounding case per coil [m2]
@@ -946,8 +986,20 @@ subroutine res_tf_internal_geom()
 
     ! Exact current density on TF oubard legs
     cdtfleg = ritfc / ( ( 1.0D0 - fcoolcp ) * &
-                        ( tftort - 2.0D0 * turnstf * tinstf) * &
-                        ( tfthko - 2.0D0 * tinstf ) ) 
+                        ( tftort - 2.0D0 * turnstf * thicndut) * &
+                        ( tfthko - 2.0D0 * thicndut ) ) 
+
+    ! Reporting negative WP areas issues
+    if ( awpc < 0.0D0 ) then
+        fdiags(1) = awpc
+        fdiags(1) = dr_tf_wp
+        call report_error(99)
+
+    else if ( awptf < 0.0D0 ) then
+        fdiags(1) = awptf
+        call report_error(101)
+    end if
+       
 
 end subroutine res_tf_internal_geom
 
@@ -957,12 +1009,13 @@ subroutine tf_res_heating()
     !! Resitive magnet resitive heating calculations
     !! Rem SK : Clamped joined superconductors might have resistive power losses on the joints
     !! Rem SK : Sliding joints might have a region of high resistivity
-    use tfcoil_variables, only: rhocp, tlegav, tinstf, th_joint_contact, rhotfleg, &
+    use tfcoil_variables, only: rhocp, tlegav, thicndut, th_joint_contact, rhotfleg, &
         voltfleg, vol_cond_cp, turnstf, thkcas, tftort, tfleng, tflegres, tcpav, &
         ritfc, rho_tf_joints, presleg, prescp, pres_joints, n_tf_joints_contact, &
         n_tf_joints, n_tf, i_tf_sup, frholeg, frhocp, fcoolcp, casthi, arealeg, &
         a_cp_cool, fcoolleg
-    use build_variables, only: tfthko, tfcth, r_cp_top, hmax
+    use build_variables, only: tfthko, tfcth, r_cp_top, hmax, &
+        r_tf_inboard_in, r_tf_inboard_out
     use physics_variables, only: itart
     use constants, only: pi
     implicit none
@@ -1011,7 +1064,7 @@ subroutine tf_res_heating()
 
         ! Centrepost resisitivity and conductor/insulation volume
         call cpost( r_cp_top-casthi, h_cp_top, r_tf_inboard_out-casthi, hmax+tfthko, & ! Inputs
-                    ritfc, rhocp, fcoolcp, r_tf_inboard_in+thkcas, tinstf, casthi,   & ! Inputs
+                    ritfc, rhocp, fcoolcp, r_tf_inboard_in+thkcas, thicndut, casthi,   & ! Inputs
                     n_tf*turnstf,                                                    & ! Inputs
                     a_cp_cool, vol_cond_cp, prescp, vol_ins_cp, vol_case_cp )          ! Outputs
 
@@ -1019,7 +1072,7 @@ subroutine tf_res_heating()
         ! Outer leg cross-section areas
         ! ---
         ! Area taken by one outboard leg's turns insulation [m2]
-        a_wp_ins_turn = 2.0D0 * tinstf * ( (tftort/turnstf) + tfthko - 2.0D0*tinstf ) 
+        a_wp_ins_turn = 2.0D0 * thicndut * ( (tftort/turnstf) + tfthko - 2.0D0*thicndut ) 
 
         ! Exact TF outboard leg conductor area (per leg) [m2]
         a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * turnstf )  
@@ -1083,7 +1136,7 @@ subroutine tf_res_heating()
         !          crude approximation if the inboard legs are vaulted
             
         ! Area taken by the inter turn ground insulation
-        a_wp_ins_turn = 2.0D0 * tinstf * ( (tfcth/turnstf) + tfcth - 2.0D0*tinstf )
+        a_wp_ins_turn = 2.0D0 * thicndut * ( (tfcth/turnstf) + tfcth - 2.0D0*thicndut )
 
         ! Exact TF outboard leg conductor area
         a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * turnstf ) 
@@ -1113,7 +1166,7 @@ subroutine tf_field_and_force()
         r_tf_inboard_mid, r_cp_top
     use tfcoil_variables, only: vforce, n_tf, taucq, sigvvall, cforce, &
         ritfc, bmaxtf, rbmax, i_tf_sup, f_vforce_inboard, vforce_outboard, &
-        tinstf, dr_tf_wp, tfinsgap
+        tinstf, thicndut, dr_tf_wp, tfinsgap
 
     implicit none
 
@@ -1136,18 +1189,20 @@ subroutine tf_field_and_force()
     ! Quench time [s]
     if ( i_tf_sup == 1 ) taucq = (bt * ritfc * rminor * rminor) / (r_vv_inboard_out * sigvvall)
     
+    ! Outer/inner WP radius removing the ground insulation layer and the insertion gap [m]
+    if ( i_tf_sup == 1 ) then 
+        r_out_wp = r_wp_outer - tinstf - tfinsgap
+        r_in_wp =  r_wp_inner + tinstf + tfinsgap
 
-    ! Outer WP radius removing the insulation layer and the insertion gap [m]
-    r_out_wp = r_wp_outer - tinstf
-    if ( i_tf_sup == 1 ) r_out_wp = r_out_wp - tfinsgap
-    
-    ! Inner WP radius removing the insulation layer and the insertion gap [m]
-    r_in_wp = r_wp_inner + tinstf
-    if ( i_tf_sup == 1 ) r_in_wp = r_in_wp + tfinsgap
+    ! Outer/inner conductor layer radius removing the turn insulation layer [m]
+    else 
+        r_out_wp = r_wp_outer - thicndut
+        r_in_wp =  r_wp_inner + thicndut
+    end if 
 
-    ! WP radial thickness removing the insulation layer and the insertion gap [m]
-    dr_wp = dr_tf_wp - 2.0D0 * tinstf
-    if ( i_tf_sup == 1 ) dr_wp = dr_wp - 2.0D0 * tfinsgap
+    ! Associated WP thickness
+    dr_wp = r_out_wp - r_in_wp
+
 
     ! In plane forces 
     ! ---
@@ -1203,13 +1258,17 @@ subroutine tf_field_and_force()
     end if
     ! ***
 
+    ! Total vertical force
+    vforce_inboard_tot = vforce * n_tf
+
 end subroutine tf_field_and_force
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine tf_coil_area_and_masses()
     !! Subroutine to calculate the TF coil areas and masses
-    use build_variables, only: hr1, r_tf_outboard_mid, tfcth, r_tf_inboard_mid
+    use build_variables, only: hr1, r_tf_outboard_mid, tfcth, r_tf_inboard_mid, &
+        r_tf_inboard_in, r_tf_inboard_out
     use fwbs_variables, only: denstl
     use tfcoil_variables, only: whtconsh, whttf, whtcas, tficrn, tfcryoarea, &
         tfsao, whtgw, tfocrn, whtconsc, whtconcu, whtcon, whtconin, &
@@ -1443,7 +1502,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    use build_variables, only: tfcth, r_tf_inboard_mid, bore, ohcth, hmax
+    use build_variables, only: tfcth, r_tf_inboard_mid, bore, ohcth, hmax, &
+        r_tf_inboard_in
     use tfcoil_variables, only: eyzwp, casestr, windstrain, turnstf, &
         dr_tf_wp, i_tf_tresca, acstf, vforce, &
         ritfc, jwptf, strtf0, strtf1, strtf2, &
@@ -1453,7 +1513,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         acasetf, alstrtf, poisson_steel, poisson_copper, poisson_al, &
         n_tf_graded_layers, i_tf_sup, i_tf_bucking, fcoolcp, eyoung_winding, &
         eyoung_steel, eyoung_res_tf_buck, eyoung_ins, eyoung_al, eyoung_copper, &
-        aiwp, cpttf, n_tf, i_tf_plane_stress
+        aiwp, aswp, cpttf, n_tf, i_tf_plane_stress
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
         cohbop, ncls, cptdin
     use constants, only: pi, sig_file
@@ -1493,6 +1553,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_smeared_z
     !! TF Inboard leg vertical smeared stress r distribution at mid-plane [Pa]
     
+    real(dp), dimension((n_tf_layer-i_tf_bucking)*n_radial_array) :: sig_tf_wp_av_z
+    !! TF Inboard leg WP smeared vertical stress r distribution at mid-plane [Pa]
+
     real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_r
     !! TF Inboard leg radial stress r distribution at mid-plane [Pa]
     
@@ -1544,7 +1607,10 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! Effective WP young modulus in the toroidal direction
 
     real(dp) :: eyoung_wp_z
-    !! Effective WP young modulus in the vertical direction
+    !! Smeared WP young modulus in the vertical direction [Pa]
+
+    real(dp) :: eyoung_wp_z_eff
+    !! Effective WP young modulus used in the stress calculations [Pa]
 
     real(dp), dimension(n_tf_layer+1) :: radtf
     !! Radii used to define the layers used in the stress models [m]
@@ -1565,6 +1631,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(dp), dimension(n_tf_layer) :: jeff
     !! Effective current density [A/m2]
   
+    integer :: n_tf_bucking
+    !! Number of layers without currents in stress calculation
+
     integer :: ii, jj
     !! do loop indexes
 
@@ -1608,6 +1677,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(dp) :: fac_sig_z
     !! Vertical WP steel conduit stress unsmearing factor
 
+    real(dp) :: fac_sig_z_wp_av
+    !! WP averaged vertical stress unsmearing factor
+
     real(dp) :: fac_oh
     !! Central Solenoid (OH) steel conduit stress unsmearing factor
 
@@ -1621,21 +1693,34 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! Size of WP layer with homogeneous smeared property 
 
     real(dp) :: a_steel_eff
-    !! Effective coil steel area used to take the plasma side case contribution 
-    !! to the vertical stress  [m2]
+    !! Effective coil steel area used in stress calculations [m2]
+    !! defined as the total steel area - the front casing 
 
     real(dp) :: a_wp_steel_eff
-    !! Winding pack effective steel area : 
-    !! conduits + lateral case area in circular geometry 
+    !! Winding pack stress layer effective steel area [m2] 
+    !! WP steel + latera casing area
 
     real(dp) :: a_wp_eff
-    !! WP area using the stress model circular geometry
+    !! WP area using the stress model circular geometry [m2]
+    !! WP + lateral casing area
 
     real(dp) :: f_vforce_case
-    !! Correction factor for plasma side case vertical stress contribution 
+    !! Correction factor for plasma side case vertical stress contribution
+
+    real(dp) :: vforce_eff
+    !! Effective vertical tension used in stess calculation [N]
 
     real(dp) :: eyoung_wp_t_eff
     !! WP young modulus in toroidal direction with lateral casing effect [Pa]
+
+    real(dp) :: r_wp_inner_eff
+    !! Inner radius of the stress model effective WP layer [m]
+    
+    real(dp) :: r_wp_outer_eff
+    !! Inner radius of the stress model effective WP layer [m]
+
+    real(dp) :: dr_tf_wp_eff
+    !! Width of the effective WP layer used in the stress calculations [m] 
     ! ---
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1659,6 +1744,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     ! LAYER ELASTIC PROPERTIES
     ! ------------------------
+    ! Number of bucking layers
+    n_tf_bucking = i_tf_bucking
+
     ! CS properties (bucked and wedged)
     ! ---
     if ( i_tf_bucking >= 2 ) then
@@ -1716,24 +1804,24 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     if ( i_tf_bucking >= 1 ) then
         
         ! No current in bucking cylinder/casing
-        jeff(i_tf_bucking) = 0.0D0
+        jeff(n_tf_bucking) = 0.0D0
 
         if ( i_tf_sup == 1 ) then 
-            eyoung_p(i_tf_bucking) = eyoung_steel
-            eyoung_z(i_tf_bucking) = eyoung_steel
-            poisson_p(i_tf_bucking) = poisson_steel
-            poisson_z(i_tf_bucking) = poisson_steel
+            eyoung_p(n_tf_bucking) = eyoung_steel
+            eyoung_z(n_tf_bucking) = eyoung_steel
+            poisson_p(n_tf_bucking) = poisson_steel
+            poisson_z(n_tf_bucking) = poisson_steel
 
         ! Bucking cylinder properties
         else 
-            eyoung_p(i_tf_bucking) = eyoung_res_tf_buck
-            eyoung_z(i_tf_bucking) = eyoung_res_tf_buck
-            poisson_p(i_tf_bucking) = poisson_steel ! Seek better value !
-            poisson_z(i_tf_bucking) = poisson_steel ! Seek better value !
+            eyoung_p(n_tf_bucking) = eyoung_res_tf_buck
+            eyoung_z(n_tf_bucking) = eyoung_res_tf_buck
+            poisson_p(n_tf_bucking) = poisson_steel ! Seek better value !
+            poisson_z(n_tf_bucking) = poisson_steel ! Seek better value !
         end if
         
         ! Innernost TF casing radius
-        radtf(i_tf_bucking) = r_tf_inboard_in
+        radtf(n_tf_bucking) = r_tf_inboard_in
     end if
     !---
 
@@ -1745,9 +1833,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !       of the material. A good assumption for resistive magnets
     !       but a doggy one for SC
 
-    ! Thickness of a homognenous WP stress property layer
-    dr_wp_layer = dr_tf_wp / dble(n_tf_graded_layers)
-
 
     ! Resistive coil
     if ( i_tf_sup == 0 ) then
@@ -1757,30 +1842,37 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
         ! Effective WP young modulus in the toroidal direction [Pa]
         ! Rem : effect of cooling pipes not taken into account for now
+        eyoung_wp_t_eff = eyoung_copper
         eyoung_wp_t = eyoung_copper
 
         ! Effective conductor region young modulus in the vertical direction [Pa]
-        eyoung_wp_z = eyoung_copper * (1.0D0 - fcoolcp)
+        eyoung_wp_z_eff = eyoung_copper * (1.0D0 - fcoolcp)
+
+        ! Effect conductor layer inner/outer radius
+        r_wp_inner_eff = r_wp_inner
+        r_wp_outer_eff = r_wp_outer
 
     ! SC coil
     else if ( i_tf_sup == 1 ) then
-        
-        ! WP area using the stress model circular geometry (per coil)
-        a_wp_eff = pi * ( r_wp_outer**2 - r_wp_inner**2 ) / n_tf
-       
-        ! Effective coil steel area [m2] 
-        ! defined as the total steel area - circular ring with the outer 
-        ! casing (plasma side) thickness 
-        a_steel_eff = a_tf_steel - pi * ( r_tf_inboard_out**2 - r_wp_outer**2 ) / n_tf
 
-        ! Winding pack effective steel area 
-        a_wp_steel_eff = a_steel_eff - pi*( r_wp_inner**2 - r_tf_inboard_in**2 ) / n_tf
+        ! Inner/outer radii of the layer representing the WP in stress calculations [m2]
+        r_wp_inner_eff = r_wp_inner * sqrt( tan_theta_coil / theta_coil )
+        r_wp_outer_eff = r_wp_outer * sqrt( tan_theta_coil / theta_coil )
         
-        ! Correction factor for plasma side case vertical stress contribution 
+        ! Area of the cylinder representing the WP in stress calculations [m2]
+        a_wp_eff = ( r_wp_outer_eff**2 - r_wp_inner_eff**2 ) * theta_coil
+       
+        ! Steel cross-section under the area considered in stress calculations [m2] 
+        a_steel_eff = a_tf_steel - a_case_front
+
+        ! Steel cross-section under the area representing the WP in stress calculations [m2]
+        a_wp_steel_eff = a_steel_eff - a_case_nose
+        
+        ! Fraction of the vertical force to be considered in the stress calculation 
         f_vforce_case = (eyoung_steel*a_steel_eff + eyoung_ins*a_tf_ins) &
                       / (eyoung_steel*a_tf_steel  + eyoung_ins*a_tf_ins)
 
-        ! WP effective insulation thickness (SC only)
+        ! WP effective insulation thickness (SC only) [m]
         ! include groundwall insulation + insertion gap in thicndut
         ! inertion gap is tfinsgap on 4 sides
         t_ins_eff = thicndut + ( tfinsgap + tinstf ) / turnstf
@@ -1792,14 +1884,17 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         eyoung_wp_t = eyngeff( eyoung_steel, eyoung_ins, &
                                t_ins_eff, thwcndut, t_turn_radial )
         
-        ! Lateral casing correction
+        ! Lateral casing correction (serie)
         eyoung_wp_t_eff = ( 2.0D0 * t_lat_case_av + t_wp_toroidal_av ) &
                         / ( 2.0D0 * t_lat_case_av / eyoung_steel  &
                           + t_wp_toroidal_av / eyoung_wp_t )
 
-        ! Effective younf modulus in the vertical direction [Pa]
-        eyoung_wp_z = eyoung_steel * a_wp_steel_eff / a_wp_eff &
-                    + eyoung_ins * a_tf_ins / a_wp_eff
+        ! Average young WP modulus [Pa]
+        eyoung_wp_z = ( eyoung_steel * aswp + eyoung_ins * a_tf_ins ) / awpc
+
+        ! Average young modulus used in the WP layer stress calculation [Pa]
+        eyoung_wp_z_eff = ( eyoung_steel * a_wp_steel_eff + eyoung_ins * a_tf_ins ) &
+                        / a_wp_eff 
 
     ! Aluminium coil
     else if ( i_tf_sup == 2 ) then
@@ -1808,49 +1903,64 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         f_vforce_case = 1.0D0
 
         ! Effective WP young modulus in the toroidal direction [Pa]
-        ! Rem : effect of cooling pipes not taken into account for now
+        ! Rem : effect of cooling pipes and insulation not taken into account for now
+        eyoung_wp_t_eff = eyoung_al
         eyoung_wp_t = eyoung_al
 
-        ! WP area using the stress model circular geometry (per coil)
-        a_wp_eff = pi * (r_wp_outer**2 - r_wp_inner**2) / n_tf
+        ! WP area using the stress model circular geometry (per coil) [m2]
+        a_wp_eff = (r_wp_outer**2 - r_wp_inner**2) * theta_coil
 
         ! Effective conductor region young modulus in the vertical direction [Pa]
-        eyoung_wp_z = eyoung_ins * a_tf_ins / a_wp_eff &
-                    + eyoung_al * (1.0D0 - a_tf_ins / a_wp_eff) * (1.0D0 - fcoolcp)
+        eyoung_wp_z_eff = eyoung_ins * a_tf_ins / a_wp_eff &
+                        + eyoung_al * (1.0D0 - a_tf_ins / a_wp_eff) * (1.0D0 - fcoolcp)
+
+        ! Effect conductor layer inner/outer radius
+        r_wp_inner_eff = r_wp_inner
+        r_wp_outer_eff = r_wp_outer
+
     end if 
+
+    ! Effective total inboard vertical tension for stress calculation [N]
+    vforce_eff = vforce_inboard_tot * f_vforce_case
+
+    ! Thickness of the layer representing the WP in stress calcualtions [m]
+    dr_tf_wp_eff = r_wp_outer_eff - r_wp_outer_eff
+
+    ! Thickness of WP with homogeneous stress property [m]
+    dr_wp_layer = dr_tf_wp_eff / dble(n_tf_graded_layers)
 
     ! Loop on layers
     do ii = 1, n_tf_graded_layers
         
         ! Homogeneous current in (super)conductor
-        jeff(i_tf_bucking + ii) = ritfc / (pi * (r_wp_outer**2 - r_wp_inner**2))
+        jeff(n_tf_bucking + ii) = ritfc / (pi * (r_wp_outer_eff**2 - r_wp_inner_eff**2))
 
         ! Same thickness for all WP layers in stress calculation
-        radtf(i_tf_bucking + ii) = r_wp_inner + dble(ii-1)*dr_wp_layer
+        radtf(n_tf_bucking + ii) = r_wp_inner_eff + dble(ii-1)*dr_wp_layer
 
         ! Young modulus
-        eyoung_p(i_tf_bucking + ii) = eyoung_wp_t_eff
-        eyoung_z(i_tf_bucking + ii) = eyoung_wp_z
+        eyoung_p(n_tf_bucking + ii) = eyoung_wp_t_eff
+        eyoung_z(n_tf_bucking + ii) = eyoung_wp_z_eff
 
         ! Poisson's ratio
         if ( i_tf_sup == 0 ) then
-            poisson_p(i_tf_bucking + ii) = poisson_copper
-            poisson_z(i_tf_bucking + ii) = poisson_copper
+            poisson_p(n_tf_bucking + ii) = poisson_copper
+            poisson_z(n_tf_bucking + ii) = poisson_copper
             
         ! SC magnets smeared properties
         else if ( i_tf_sup == 1 ) then 
-            poisson_p(i_tf_bucking + ii) = poisson_steel
-            poisson_z(i_tf_bucking + ii) = poisson_steel
+            poisson_p(n_tf_bucking + ii) = poisson_steel
+            poisson_z(n_tf_bucking + ii) = poisson_steel
         
         ! Cryogenic aluminium properties
         else 
-            poisson_p(i_tf_bucking + ii) = poisson_al
-            poisson_z(i_tf_bucking + ii) = poisson_al
+            poisson_p(n_tf_bucking + ii) = poisson_al
+            poisson_z(n_tf_bucking + ii) = poisson_al
         end if 
     end do
 
     ! last layer radius
-    radtf(n_tf_layer + 1) = r_wp_outer
+    radtf(n_tf_layer + 1) = r_wp_outer_eff
     ! ---  
     ! ------------------------
 
@@ -1882,13 +1992,13 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         sig_tf_z = vforce / (acasetf + acndttf*turnstf) ! Array equation
 
         ! Case strain
-        casestr = sig_tf_z(i_tf_bucking) / eyoung_steel
+        casestr = sig_tf_z(n_tf_bucking) / eyoung_steel
 
         ! Young's modulus in vertical direction on WP
         eyzwp = eyngzwp(eyoung_steel,eyoung_ins,eyoung_winding,t_ins_eff,thwcndut,tcbs)
     
         ! Strain in vertical direction on WP
-        windstrain = sig_tf_z(i_tf_bucking+1) / eyzwp
+        windstrain = sig_tf_z(n_tf_bucking+1) / eyzwp
     
         ! Radial strain in insulator
         insstrain = sig_tf_r(n_radial_array) / eyoung_ins * &
@@ -1901,8 +2011,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     else 
         ! Generalized plane strain calculation [Pa]
         call generalized_plane_strain( poisson_p, poisson_z, eyoung_p, eyoung_z,  & ! Inputs
-                                       radtf, jeff, vforce*f_vforce_case*n_tf,    & ! Inputs
-                                       n_tf_layer, n_radial_array, i_tf_bucking,  & ! Inputs
+                                       radtf, jeff, vforce_eff,                   & ! Inputs
+                                       n_tf_layer, n_radial_array, n_tf_bucking,  & ! Inputs
                                        radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
                                        strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
     end if
@@ -1968,7 +2078,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! No TF vertical forces on CS and CS-TF layer (bucked and wedged only)
     ! ---
     if ( i_tf_bucking >= 2 ) then
-        do ii = 1, (i_tf_bucking-1)*n_radial_array
+        do ii = 1, (n_tf_bucking-1)*n_radial_array
             sig_tf_z(ii) = 0.0D0
         end do
     end if
@@ -1981,7 +2091,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     if ( i_tf_sup == 0 ) then
 
         ! Vertical force unsmearing factor
-        fac_sig_z = eyoung_copper / eyoung_wp_z
+        fac_sig_z = eyoung_copper / eyoung_wp_z_eff
 
         ! Toroidal WP steel stress unsmearing factor
         fac_sig_t = 1.0D0
@@ -1991,12 +2101,14 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
         ! Vertical WP steel stress unsmearing factor
         if ( i_tf_plane_stress == 0 ) then
-            fac_sig_z = eyoung_steel / eyoung_wp_z
+            fac_sig_z = eyoung_steel / eyoung_wp_z_eff
+            fac_sig_z_wp_av = eyoung_wp_z / eyoung_wp_z_eff
         else
             fac_sig_z = 1.0D0
         end if  
 
         ! Toroidal WP steel conduit stress unsmearing factor
+        ! Rem : These correction factors are calculated with the genuine WP geom
         fac_sig_t = ( dr_tf_wp / ( dr_tf_wp - 2.0D0 * ( tinstf + tfinsgap ) ) ) & 
                   * ( 0.5D0 * t_turn_radial / thwcndut )
 
@@ -2007,7 +2119,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     else if ( i_tf_sup == 2 ) then
         
         ! Vertical WP steel stress unsmearing factor
-        fac_sig_z = eyoung_al / eyoung_wp_z
+        fac_sig_z = eyoung_al / eyoung_wp_z_eff
 
         ! Toroidal WP steel stress unsmearing factor
         ! NO CALCULTED FOR THE MOMENT (to be done laters)
@@ -2019,7 +2131,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! Application of the corrections on the WP layers
     ! GRADED MODIF : add another do loop to allow the graded properties
     !                to be taken into account
-    do ii = i_tf_bucking * n_radial_array + 1, n_tf_layer*n_radial_array  
+    do ii = n_tf_bucking * n_radial_array + 1, n_tf_layer*n_radial_array  
+        sig_tf_wp_av_z(ii - n_tf_bucking * n_radial_array) = sig_tf_z(ii) * fac_sig_z_wp_av
         sig_tf_r(ii) = sig_tf_r(ii) * fac_sig_r
         sig_tf_t(ii) = sig_tf_t(ii) * fac_sig_t
         sig_tf_z(ii) = sig_tf_z(ii) * fac_sig_z  
@@ -2051,7 +2164,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
         ! GRADED MODIF : add another do loop to allow the graded properties
         !                to be taken into account
-        do ii = i_tf_bucking * n_radial_array + 1, n_tf_layer*n_radial_array
+        do ii = n_tf_bucking * n_radial_array + 1, n_tf_layer*n_radial_array
        
             ! Addaped Von-mises stress calculation to WP strucure [Pa]
             if ( iprint == 1 ) then
@@ -2110,8 +2223,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     end do
 
     ! Constrains equation TRESCA stress values
-    strtf2 = sig_tf_tresca_max(i_tf_bucking + 1) ! Maximum assumed in the first graded layer
-    if ( i_tf_bucking >= 1 ) strtf1 = sig_tf_tresca_max(i_tf_bucking)
+    strtf2 = sig_tf_tresca_max(n_tf_bucking + 1) ! Maximum assumed in the first graded layer
+    if ( i_tf_bucking >= 1 ) strtf1 = sig_tf_tresca_max(n_tf_bucking)
     if ( i_tf_bucking >= 2 ) strtf0 = sig_tf_tresca_max(1)
     ! ----------------
 
@@ -2135,7 +2248,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         call oheadr(outfile,'TF coils ')
         call osubhd(outfile,'TF Coil Stresses (CCFE model) :')
         
-        if ( i_tf_sup == 1 ) then
+        if ( i_tf_plane_stress == 1 ) then
             call ocmmnt(outfile, 'Plane stress model with smeared properties')
         else 
             call ocmmnt(outfile, 'Generalized plane strain model')
@@ -2200,9 +2313,11 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         write(outfile,'(t2, "Toroidal"    ," modulus", t20, "(GPa)",t26, *(F11.3,3x))') eyoung_p * 1.0D-9
         write(outfile,'(t2, "Vertical"    ," modulus", t20, "(GPa)",t26, *(F11.3,3x))') eyoung_z * 1.0D-9
         write(outfile,* ) ''
+        call ovarre(outfile,'WP toroidal modulus (GPa)','(eyoung_wp_t*1.0D-9)', eyoung_wp_t*1.0D-9, 'OP ')
+        call ovarre(outfile,'WP vertical modulus (GPa)','(eyoung_wp_z*1.0D-9)', eyoung_wp_z*1.0D-9, 'OP ')
 
         ! MFILE.DAT data
-        do ii = 1, i_tf_bucking + 1
+        do ii = 1, n_tf_bucking + 1
             intstring = int2char(ii)    
             call ovarre(mfile,'Radial    stress at maximum TRESCA of layer '//intstring// &
                         ' (Pa)', '(sig_tf_r_max('//intstring//'))', sig_tf_r_max(ii) )
@@ -2241,7 +2356,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         write(sig_file,*) 
         write(sig_file,*) 'Displacement'         
         write(sig_file,'(t2, "raidal displacement", t20, "(mm)",t26, *(F11.3,3x))') deflect*1.0D3
-        if ( i_tf_sup /= 1 ) then
+        if ( i_tf_plane_stress /= 1 ) then
             write(sig_file,*)
             write(sig_file,*) 'Strain'    
             write(sig_file,'(t2, "radial strain"   ,t26, *(F11.8,3x))') strain_tf_r
@@ -2249,7 +2364,11 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             write(sig_file,'(t2, "vertical strain" ,t26, *(F11.8,3x))') strain_tf_z
         end if
 
-             ! Other quantities (displacement strain, etc..)
+        if ( i_tf_sup == 1 ) then
+            write(sig_file,'(t2, "WP"    ," smeared stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_wp_av_z*1.0D-6
+        end if 
+
+        ! Other quantities (displacement strain, etc..)
         call ovarre(outfile,'Maximum radial deflection at midplane (m)','(deflect)',&
                             deflect(n_radial_array), 'OP ')
         call ovarre(outfile,"Winding pack vertical Young's Modulus (Pa)",'(eyzwp)', eyzwp, 'OP ')
@@ -3083,7 +3202,7 @@ subroutine coilshap
     !! This is a totally ad hoc model, with no physics or engineering basis.
     use physics_variables, only: i_single_null, rminor, rmajor, itart
     use build_variables, only: hmax, hpfu, tfcth, r_tf_outboard_mid, &
-        r_tf_inboard_mid, tfthko, r_cp_top
+        r_tf_inboard_mid, tfthko, r_cp_top, r_tf_inboard_out
     use tfcoil_variables, only: yarc, xarc, tfleng, tfa, tfb, i_tf_shape
     use constants, only: pi
     implicit none
@@ -3323,7 +3442,7 @@ subroutine outtf(outfile, peaktfflag)
         copper_rrr
     use error_handling, only: report_error
     use build_variables, only: hmax, r_tf_inboard_mid, r_tf_outboard_mid, &
-        tfcth, tfthko, r_cp_top
+        tfcth, tfthko, r_cp_top, r_tf_inboard_in, r_tf_inboard_out
     use process_output, only: int2char, ovarre, ocmmnt, oblnkl, ovarin, osubhd, &
         ovarrf, obuild
     use numerics, only: icc
@@ -3672,7 +3791,8 @@ subroutine outtf(outfile, peaktfflag)
         call osubhd(outfile,'Radial build of TF coil centre-line :')
         write(outfile,5)
         5   format(t43,'Thickness (m)',t60,'Outer radius (m)')
-        radius = r_tf_inboard_mid - 0.5D0*tfcth
+
+        radius = r_tf_inboard_in
         call obuild(outfile,'Innermost edge of TF coil',radius,radius)
         radius = radius + thkcas
         call obuild(outfile,'Coil case ("nose")',thkcas,radius,'(thkcas)')
@@ -4528,8 +4648,8 @@ end subroutine dtempbydtime
 
 !-----------------------------------------------------------------------
 subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! Inputs
-                     ins_th, cas_out_th, n_turns_tot,                         &  ! Inputs
-                     acpcool, volume, respow, volins, volcasout )                ! Outputs
+                  ins_th, cas_out_th, n_turns_tot,                         &  ! Inputs
+                  a_cp_cool, vol_cond_cp, respow, volins, volcasout )                ! Outputs
     !!  author: P J Knight, CCFE, Culham Science Centre
     !!  Calculates the volume and resistive power losses of a TART centrepost
     !!  This routine calculates the volume and resistive power losses
@@ -4560,7 +4680,13 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
                           r_tfin_inleg, ins_th, cas_out_th, n_turns_tot
 
     ! Outputs
-    real(dp), intent(out) :: volume, respow, acpcool, volins, volcasout
+    real(dp), intent(out) :: respow, volins, volcasout
+
+    real(dp), intent(out) :: a_cp_cool
+    !! Centrepost cooling area toroidal cross-section (constant over the whole CP) [m2]
+
+    real(dp), intent(out) :: vol_cond_cp
+    !! Exact conductor volume in the centrepost [m3]
 
     ! Internal
     real(dp) :: r1,z1,x,y,rc,dz,r,z, a_tfin_hole, res_cyl, res_taped
@@ -4609,7 +4735,7 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     ! Mid-plane area calculations
     ! ---------------------------
     ! Area of the innner TF central hole [m2]
-    a_tfin_hole = pi*r_tfin_inleg**2  ! eq(32)
+    a_tfin_hole = pi*r_tfin_inleg**2
 
     ! Mid-plane outer casing cross-section area [m2]
     a_casout = pi * ( (rmid + cas_out_th)**2 - rmid**2 )
@@ -4621,14 +4747,14 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
                2.0D0 * ins_th * (rmid - r_tfin_inleg - 2.0D0*ins_th) * n_turns_tot ! inter turn separtion layers
 
     ! Cooling pipes cross-section [m2]
-    acpcool = fcool * ( pi*rmid**2 - a_tfin_hole - a_cp_ins ) / n_tf
+    a_cp_cool = fcool * ( pi*rmid**2 - a_tfin_hole - a_cp_ins ) / n_tf
     ! ---------------------------
 
 
     !  Trivial solutions
     ! ------------------
     if ( abs(fcool) < epsilon(fcool) ) then
-        volume = 0.0D0
+        vol_cond_cp = 0.0D0
         respow = 0.0D0
         call report_error(122)
         return
@@ -4637,10 +4763,10 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     if ( abs(rmid - rtop) < epsilon(rtop) ) then
 
         ! Exact conductor cross-section
-        a_cond_midplane = pi*rmid**2 - a_tfin_hole - n_tf * acpcool - a_cp_ins
+        a_cond_midplane = pi*rmid**2 - a_tfin_hole - n_tf * a_cp_cool - a_cp_ins
 
         ! Volumes and resisitive losses calculations
-        volume = 2.0D0 * hmaxi * a_cond_midplane
+        vol_cond_cp = 2.0D0 * hmaxi * a_cond_midplane
         volins = 2.0D0 * hmaxi * a_cp_ins
         respow = 2.0D0 * hmaxi * curr**2 * rho / a_cond_midplane
         volcasout = 2.0D0 * hmaxi * a_casout
@@ -4687,7 +4813,7 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
                      2.0D0 * ins_th * (r - r_tfin_inleg - 2.0D0*ins_th) * n_turns_tot     ! inter turn separtion layers
 
         !  Cross-sectional area at Z
-        yy(ii) = pi*r**2 - a_tfin_hole - n_tf*acpcool - yy_ins(ii)  ! eq(32)
+        yy(ii) = pi*r**2 - a_tfin_hole - n_tf*a_cp_cool - yy_ins(ii)  ! eq(32)
 
         !  Outer casing Cross-sectional area at z 
         yy_casout(ii) = pi * ( (r+cas_out_th)**2 - r**2 )
@@ -4720,8 +4846,8 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     a_casout = pi * ( (rtop + cas_out_th)**2 - rtop**2 )
 
     ! Centrepost volume (ignoring coolant fraction) [m3]
-    volume = 2.0D0 * ( sum1 + ( hmaxi - ztop ) * &
-                     ( pi*rtop**2 - a_tfin_hole - a_cp_ins - n_tf*acpcool ) )
+    vol_cond_cp = 2.0D0 * ( sum1 + ( hmaxi - ztop ) * &
+                     ( pi*rtop**2 - a_tfin_hole - a_cp_ins - n_tf*a_cp_cool ) )
 
     ! Resistive power losses in taped section (variable radius section) [W]
     res_taped = rho * curr**2 * sum2                    ! eq(31)
@@ -4734,7 +4860,7 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
 
     ! Resistive power losses in cylindrical section (constant radius) [W]
     res_cyl = rho * curr**2 * ( ( hmaxi - ztop ) / &    ! eq(30)
-              ( pi * rtop**2 - a_tfin_hole  - a_cp_ins - n_tf*acpcool ) )  
+              ( pi * rtop**2 - a_tfin_hole  - a_cp_ins - n_tf*a_cp_cool ) )  
 
     ! Total CP resistive power [W]
     respow = 2.0D0 * ( res_cyl + res_taped )   ! eq(36)   

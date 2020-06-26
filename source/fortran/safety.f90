@@ -177,8 +177,6 @@
     integer, intent(in) :: iprint,outfile
 
     !  Local variables
-    real(kind(1.0D0)) :: rbldtotf ! Radial build to tfcoil
-    real(kind(1.0D0)) :: deltf    ! TF - thermal shield gap due to flat surfaces of TF
     real(kind(1.0D0)) :: ac,as,av,a1
     integer :: i,k,ibc,itf,ioh
 
@@ -234,21 +232,9 @@
     radmin(5) = radpls(4)
     radpls(5) = radmin(5) + tfcth
 
-    ! Inner TF - thermal shield gap
-    ! ******
-    ! Radial build to tfcoil
-    rbldtotf = bore + ohcth + precomp + gapoh + tfcth
-    
-    ! Additional gap spacing due to flat surfaces of TF
-    if ( i_tf_sup == 1 ) then
-       deltf = rbldtotf * ((1.0d0 / cos(pi/n_tf)) - 1.0d0) + tftsgap
-    else
-       deltf = tftsgap
-    end if 
-
-    radmin(6) = radpls(5) + deltf
+    ! Inner TF - thermal shield gap    
+    radmin(6) = radpls(5) + tftsgap
     radpls(6) = radmin(6)
-    ! ******
 
     ! Inner thermal shield 
     radmin(7) = radpls(6)

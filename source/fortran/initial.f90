@@ -649,7 +649,8 @@ subroutine check
         tcoolin, tcpav, tfc_sidewall_is_fraction, tmargmin, tmargmin_cs, &
         tmargmin_tf, eff_tf_cryo, eyoung_ins, i_tf_bucking, i_tf_shape, &
         n_tf_graded_layers, n_tf_stress_layers, tlegav,  i_tf_plane_stress, &
-        i_tf_sc_mat, i_tf_wp_geom, i_tf_turns_integer
+        i_tf_sc_mat, i_tf_wp_geom, i_tf_turns_integer, tinstf, thwcndut, &
+        tfinsgap, rcool, dhecoil, thicndut
     use stellarator_variables, only: istell
     use sctfcoil_module, only: initialise_cables
     use vacuum_variables, only: vacuum_model
@@ -662,6 +663,8 @@ subroutine check
     integer :: i,j,k,imp
     real(dp) :: fsum
 
+    real(dp) :: dr_tf_wp_min
+    !! Minimal WP or conductor layer thickness [m]
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     errors_on = .true.
@@ -1139,10 +1142,7 @@ subroutine check
         call report_error(164)
     end if
 
-    !  Ensure that if TF coils are non-superconducting,
-    !  only simple stress calculations are performed
-    ! See Issue #781
-    ! if (i_tf_sup /= 1) tfc_model = 0
+
 
     ! TF coil
     ! -------
@@ -1182,9 +1182,10 @@ subroutine check
     n_tf_stress_layers = i_tf_bucking + n_tf_graded_layers
 
     ! If TFC sidewall has not been set by user
-    if(casths<0.1d-10) tfc_sidewall_is_fraction = .true.
+    if ( casths < 0.1d-10 ) tfc_sidewall_is_fraction = .true.
+
     ! If inboard TF coil case plasma side thickness has not been set by user
-    if(casthi<0.1d-10) casthi_is_fraction = .true.
+    if( casthi < 0.1d-10 ) casthi_is_fraction = .true.
 
     ! Setting the default cryo-plants efficiencies
     !-!
@@ -1243,7 +1244,37 @@ subroutine check
         if ( i_tf_turns_integer == 1 ) i_tf_wp_geom = 0
     end if 
     !-!
+    
+    ! Check if the WP/conductor radial thickness (dr_tf_wp) is large enough
+    ! To contains the insulation, cooling and the support structure
+    ! Rem : Only verified if the WP thickness is used
+    if ( any(ixc(1:nvar) == 140) ) then
 
+        ! Minimal WP thickness
+        if ( i_tf_sup == 1 ) then
+            dr_tf_wp_min = 2.0D0 * ( tinstf + tfinsgap + thicndut + dhecoil )
+
+            ! Steel conduit thickness (can be an iteration variable)
+            if ( any(ixc(1:nvar) == 58 ) ) then
+                dr_tf_wp_min = dr_tf_wp_min + boundl(58)
+            else 
+                dr_tf_wp_min = dr_tf_wp_min + thwcndut
+            end if 
+
+        ! Minimal conductor layer thickness
+        else if ( i_tf_sup == 0 .or. i_tf_sup == 2 ) then
+            dr_tf_wp_min = 2.0D0 * thicndut + 4.0D0 * rcool
+        end if
+
+        if ( boundl(140) < dr_tf_wp_min ) then
+            fdiags(1) = dr_tf_wp_min
+            call report_error(255) 
+        end if 
+    end if
+    ! -------
+
+
+    
     !  PF coil resistivity is zero if superconducting
     if (ipfres == 0) pfclres = 0.0D0
 
