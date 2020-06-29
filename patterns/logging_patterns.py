@@ -16,6 +16,7 @@ bug. Logs can also be written to file as well as the console.
 """
 import logging
 # The built-in logging module in Python
+from process import fortran
 
 logger = logging.getLogger(__name__)
 # Create a new logger with the name of the current module
@@ -69,3 +70,10 @@ def log_exception(value):
         # It is also possible to raise the exception again now that is has been
         # caught and logged. This allows the exception to carry on up the call
         # stack to be caught in another higher-up handler.
+
+def log_fortran():
+    """Log a value obtained from the Fortran interface."""
+    ifail = fortran.main_module.eqslv()
+
+    # Log the Fortran value at the info level
+    logger.info(f"The value of ifail is: {ifail}")

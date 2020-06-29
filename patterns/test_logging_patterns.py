@@ -2,6 +2,7 @@
 import logging_patterns as lp
 import logging
 import pytest
+from process import fortran
 
 def test_log_error(caplog):
     """Test that an error-level log can be written.
@@ -55,3 +56,22 @@ def test_log_exception(caplog):
     assert "value isn't acceptable!" in caplog.text
     # Check log contains stack trace of exception
     assert "Traceback" in caplog.text
+
+def test_log_fortran(caplog, monkeypatch):
+    """Check a Fortran value is logged.
+
+    :param caplog: Log capture fixture
+    :type caplog: object
+    :param monkeypatch: Mock fixture
+    :type monkeypatch: object
+    """
+    # Mock the Fortran return value of ifail
+    ifail = 1
+    monkeypatch.setattr(fortran.main_module, "eqslv", lambda: ifail)
+
+    # Set the log level to be low enough to catch info-level logs
+    caplog.set_level(logging.INFO)
+
+    # Run and check the ifail value was logged
+    lp.log_fortran()
+    assert "ifail is: 1" in caplog.text
