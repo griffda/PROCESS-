@@ -35,7 +35,23 @@ list(APPEND FORTRAN_LIB_SOURCES ${REFPROP_SOURCE_DIR}/refprop.f)
 list(APPEND FORTRAN_LIB_SOURCES ${REFPROP_SOURCE_DIR}/refprop_interface.f90)
 
 # Define interface source filenames to wrap
-list(APPEND FORTRAN_INTERFACE_SOURCE_NAMES global_variables.f90 init_module.f90 main_module.f90 div_kal_vars.f90 kallenbach_module.f90 numerics.f90 scan.f90 final_module.f90 error_handling.f90)
+list(APPEND FORTRAN_INTERFACE_SOURCE_NAMES global_variables.f90
+  init_module.f90
+  main_module.f90
+  div_kal_vars.f90
+  kallenbach_module.f90
+  numerics.f90
+  scan.f90
+  final_module.f90
+  error_handling.f90
+  availability.f90
+  cost_variables.f90
+  divertor_variables.f90
+  fwbs_variables.f90
+  physics_variables.f90
+  tfcoil_variables.f90
+  times_variables.f90
+  )
 # Create the interface source paths from this
 list(TRANSFORM FORTRAN_INTERFACE_SOURCE_NAMES PREPEND ${FORTRAN_SOURCE_DIR}/ OUTPUT_VARIABLE FORTRAN_INTERFACE_SOURCE_PATHS)
 # Define the f90wrap filenames
