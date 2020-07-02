@@ -51,6 +51,8 @@ list(APPEND FORTRAN_INTERFACE_SOURCE_NAMES global_variables.f90
   physics_variables.f90
   tfcoil_variables.f90
   times_variables.f90
+  ife_variables.f90
+  ife.f90
   )
 # Create the interface source paths from this
 list(TRANSFORM FORTRAN_INTERFACE_SOURCE_NAMES PREPEND ${FORTRAN_SOURCE_DIR}/ OUTPUT_VARIABLE FORTRAN_INTERFACE_SOURCE_PATHS)
