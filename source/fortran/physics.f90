@@ -15,7 +15,11 @@ module physics_module
 
   private
   public :: bpol,fhfac,igmarcal,outplas,outtim,pcond,phyaux, &
-       physics,plasma_composition,pohm, rether, subr
+    physics,plasma_composition,pohm, rether, subr, &
+    diamagnetic_fraction_hender, diamagnetic_fraction_scene, &
+    ps_fraction_scene
+    ! diamagnetic_fraction_hender, diamagnetic_fraction_scene,
+    ! ps_fraction_scene made public for testing via interface
 
   !  Module-level variables
 
@@ -1680,8 +1684,7 @@ module physics_module
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine diamagnetic_fraction_hender(beta,diacf) &
-           bind(C,name="c_diamagnetic_fraction_hender")
+  subroutine diamagnetic_fraction_hender(beta,diacf)
 
     !! author: S.I. Muldrew, CCFE, Culham Science Centre
     !! Diamagnetic contribution at tight aspect ratio.
@@ -1705,8 +1708,7 @@ module physics_module
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine diamagnetic_fraction_scene(beta,q95,q0,diacf) &
-                  bind(C,name="c_diamagnetic_fraction_scene")
+  subroutine diamagnetic_fraction_scene(beta,q95,q0,diacf)
 
     !! author: S.I. Muldrew, CCFE, Culham Science Centre
     !! Diamagnetic fraction based on SCENE fit by Tim Hender
@@ -1729,8 +1731,7 @@ module physics_module
 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine ps_fraction_scene(beta,pscf) &
-          bind(C,name="c_ps_fraction_scene")
+  subroutine ps_fraction_scene(beta,pscf)
 
     !! author: S.I. Muldrew, CCFE, Culham Science Centre
     !! Pfirsch-Schlüter fraction based on SCENE fit by Tim Hender

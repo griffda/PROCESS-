@@ -4,7 +4,6 @@
 #include "test_functions.h"
 #include "test_maths_lib.h"
 #include "test_costs_1990.h"
-#include "test_physics.h"
 #include "test_physics_functions.h"
 
 int main(int argc, char *argv[])
