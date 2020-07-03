@@ -46,5 +46,6 @@ OBS_VARS = {
     "leni":"t_cable",
     "leno":"t_turn",
     "conductor_width":"t_conductor",
-    "deltf":"tftsgap"
+    "deltf":"tftsgap",
+    "pnuccp":"pnuc_cp"
 }
