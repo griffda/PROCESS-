@@ -14,7 +14,7 @@ module fwbs_variables
 
   public
 
-  real(dp), bind(C):: bktlife = 0.0D0
+  real(dp) :: bktlife = 0.0D0
   !! blanket lifetime (years)
 
   real(dp) :: coolmass = 0.0D0
@@ -256,7 +256,7 @@ module fwbs_variables
   !! - =3 steam Rankine cycle
   !! - =4 supercritical CO2 cycle
 
-  integer, bind(C) :: coolwh = 1
+  integer :: coolwh = 1
   !! Switch for blanket coolant (set via blkttype):
   !!
   !! - =1 helium
