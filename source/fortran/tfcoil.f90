@@ -71,7 +71,7 @@ module tfcoil_module
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
    use build_variables, only: hmax, tfthko
-   use fwbs_variables, only: pnuccp
+   use fwbs_variables, only: pnuc_cp_tf
    use process_output, only: oheadr, ovarre, osubhd
    use tfcoil_variables, only: dtiocool, etapump, fcoolcp, &
       i_tf_sup, ncool, ppump, prescp, rbmax, rcool, &
@@ -210,7 +210,7 @@ module tfcoil_module
     ro = sqrt( acpav/(pi*ncool) )
 
     !  Inner legs total heating power (to be removed by coolant)
-    ptot = prescp + pnuccp*1.0D6
+    ptot = prescp + pnuc_cp_tf * 1.0D6
 
     !  Temperature calculations
     ! -------------------------
@@ -402,7 +402,7 @@ module tfcoil_module
     call osubhd(outfile,'Resistive Heating :')
     call ovarre(outfile,'Average conductor resistivity (ohm.m)','(rhocp)',rhocp)
     call ovarre(outfile,'Resistive heating (MW)','(prescp/1.0D6)',prescp/1.0D6)
-    call ovarre(outfile,'Nuclear heating (MW)','(pnuccp)',pnuccp)
+    call ovarre(outfile,'Nuclear heating (MW)','(pnuc_cp_tf)',pnuc_cp_tf)
     call ovarre(outfile,'Total heating (MW)','(ptot/1.0D6)',ptot/1.0D6)
 
     call osubhd(outfile,'Temperatures :')

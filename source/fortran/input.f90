@@ -191,7 +191,7 @@ contains
       fwbs_umain_time, uchrs, avail_min, uciac, step_ref, ucshld, tdivrepl, &
       ucblli, ucpfcb, tlife, ipnet, fcdfuel, ucbus, ucpfb, uchts, &
       maintenance_fwbs, fwbs_prob_fail, uclh, ucblss, ucblvd, ucsc, ucturb, &
-      ucpens, cland, ucwindpf 
+      ucpens, cland, ucwindpf, i_cp_lifetime, cplife_input
     use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
@@ -2502,6 +2502,9 @@ contains
        case ('cpstflnc')
           call parse_real_variable('cpstflnc', cpstflnc, 0.01D0, 30.0D0, &
                'Allowable centrepost neutron fluence (MW-yr/m2)')
+       case ('ccplife_input')
+         call parse_real_variable('cplife_input', cplife_input, 0.001D0, 50.0D0, &
+              'Full power centrepost lifetime (yr)')
        case ('decomf')
           call parse_real_variable('decomf', decomf, 0.0D0, 1.0D0, &
                'Decommissioning fund fraction')
@@ -2526,6 +2529,9 @@ contains
        case ('fkind')
           call parse_real_variable('fkind', fkind, 0.5D0, 1.0D0, &
                'Multiplier for Nth of a kind costs')
+       case ('i_cp_lifetime')
+         call parse_int_variable('i_cp_lifetime', i_cp_lifetime, 0, 3, &
+              'Switch for ST centrepost lifetime contraint (10) setting')
        case ('ifueltyp')
           call parse_int_variable('ifueltyp', ifueltyp, 0, 2, &
                'Switch for costing of 1st wall etc.')

@@ -45,7 +45,8 @@ contains
       fwareaob, blnktth, rbld, blnkoth, tfoffset, iprecomp, plsepo, tfthko, &
       rsldo, vgap, gapoh, fwoth, ohcth, shldoth, scraplo, fwith, blbpith, &
       tfootfi, blbuoth, gapds, fwareaib, fseppc, scrapli, blbmith, shldith, &
-      ddwi, fwarea, blbpoth, blbmoth, fcspc, bore, r_cp_top, r_sh_inboard_out
+      ddwi, fwarea, blbpoth, blbmoth, fcspc, bore, r_cp_top, r_sh_inboard_out, &
+      r_sh_inboard_in
     use constants, only: mfile, nout, pi
     use current_drive_variables, only: beamwd
     use divertor_variables, only: divfix
@@ -154,8 +155,11 @@ contains
     !  Radial position of vacuum vessel [m]
     r_vv_inboard_out = r_tf_inboard_out + tftsgap + thshield + gapds + ddwi
 
-    ! Radial position of the plasma facing side of inboard neutronic shield
-    r_sh_inboard_out = r_vv_inboard_out + shldith
+    ! Radial position of the inner side of inboard neutronic shield [m]
+    r_sh_inboard_in = r_vv_inboard_out
+
+    ! Radial position of the plasma facing side of inboard neutronic shield [m]
+    r_sh_inboard_out = r_sh_inboard_in + shldith
 
     !  Radial build to centre of plasma (should be equal to rmajor)
     rbld = r_sh_inboard_out + vvblgap + blnkith + fwith + scrapli + rminor

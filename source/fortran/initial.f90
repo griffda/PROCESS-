@@ -1090,6 +1090,10 @@ subroutine check
 
         ! Set the TF coil shape to picture frame (if default value)
         if ( i_tf_shape == 0 ) i_tf_shape = 2
+
+        ! Warning stating that the fast neutron fluence calculation i
+        ! s not addapted for cryoaluminium calculations yet
+        if ( i_tf_sup == 2 .and. any(icc(1:neqns+nineqns) == 10 ) ) call report_error(260)
     ! --------------------------------
 
     
@@ -1125,6 +1129,9 @@ subroutine check
         if (k == 1) call report_error(42)
         if (k > 2) call report_error(43)
         if ((i_single_null == 1).and.(j < 2)) call report_error(44)
+
+        ! Constraint 10 is dedicated to ST designs with demountable joints
+        if ( any(icc(1:neqns+nineqns) == 10 ) ) call report_error(259)
 
     end if
     ! ------------------------------------

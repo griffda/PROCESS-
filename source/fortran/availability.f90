@@ -45,13 +45,14 @@ contains
     use times_variables, only: tburn, tcycle
     use process_output, only: ovarre, oheadr
     use divertor_variables, only: hldiv
-    use fwbs_variables, only: fwlife, bktlife, blktmodel
+    use fwbs_variables, only: fwlife, bktlife, blktmodel, neut_flux_cp
     use ife_variables, only: ife
     use physics_variables, only: wallmw, itart
     use cost_variables, only: abktflnc, tlife, divlife, adivflnc, cplife, &
       cpstflnc, iavail, tdivrepl, tbktrepl, tcomrepl, uubop, uucd, uufuel, &
       uufw, uumag, uuves, uudiv, cpfact, cfactr, cdrlife
-
+    use constraint_variables, only : nflutfmax 
+    use tfcoil_variables, only: i_tf_sup
     implicit none
 
     !  Arguments
@@ -64,6 +65,9 @@ contains
     real(dp), save :: uplanned, uutot
     integer :: n
 
+    real(dp) :: n_sec_year
+    !! Number of seconds in a year
+    
     ! Full power lifetime (in years)
     if (ife /= 1) then
 
@@ -85,8 +89,24 @@ contains
       divlife = max(0.0, min(adivflnc/hldiv, tlife))
 
       ! Centrepost lifetime (years) (ST machines only)
-      if (itart == 1) then
-        cplife = min(cpstflnc/wallmw, tlife)
+      if ( itart ==  1) then
+        
+        ! Copper magnets CP lifetime
+        if ( i_tf_sup == 0 ) then
+          cplife = min( cpstflnc/wallmw, tlife )
+        
+        ! SC magnets CP lifetime
+        ! Rem : only the TF maximum fluence is considered for now
+        else if ( i_tf_sup == 1 ) then
+          n_sec_year = 3600.0D0 * 24.0D0 * 365.2425D0
+          cplife = min( nflutfmax / ( neut_flux_cp * n_sec_year ), tlife )
+          
+        ! Aluminium magnets CP lifetime
+        ! For now, we keep the original def, developped for GLIDCOP magnets ...
+        else 
+          cplife = min( cpstflnc / wallmw, tlife )
+        end if
+        
       end if
     end if
 
@@ -310,10 +330,12 @@ contains
 
     use process_output, only: oheadr, ocmmnt, ovarre, oblnkl, ovarin
     use divertor_variables, only: hldiv
-    use fwbs_variables, only: bktlife
+    use fwbs_variables, only: bktlife, neut_flux_cp
     use physics_variables, only: wallmw, itart
     use cost_variables, only: abktflnc, tlife, divlife, adivflnc, abktflnc, &
       cdrlife, cplife, cpstflnc, num_rh_systems
+    use tfcoil_variables, only: i_tf_sup
+    use constraint_variables, only : nflutfmax 
 
     implicit none
 
@@ -323,7 +345,9 @@ contains
 
     ! Local variables !
     ! !!!!!!!!!!!!!!!!!!
-
+    real(dp) :: n_sec_year
+    !! Number of seconds in a year
+    
     real(dp) :: mttr_blanket, mttr_divertor, mttr_shortest
     real(dp) :: lifetime_shortest, lifetime_longest
     integer :: n
@@ -341,8 +365,28 @@ contains
 
     ! Centrepost lifetime (years) (ST only)
     if (itart == 1) then
-      cplife = min( cpstflnc/wallmw, tlife )
-    end if
+
+      ! Copper magnets CP lifetime
+      if ( i_tf_sup == 0 ) then
+        cplife = min( cpstflnc/wallmw, tlife )
+      
+      ! SC magnets CP lifetime
+      ! Rem : only the TF maximum fluence is considered for now
+      else if ( i_tf_sup == 1 ) then
+        n_sec_year = 3600.0D0 * 24.0D0 * 365.2425D0
+        cplife = min( nflutfmax / ( neut_flux_cp * n_sec_year ), tlife )
+
+        write(*,*)  'neut_flux_cp',  neut_flux_cp * 1.0D-13, ' 10^13'
+        write(*,*)  'neut_flux_cp per year', n_sec_year*  neut_flux_cp * 1.0D-23, '*10^23'
+        write(*,*)  'CP full power year lifetime', cplife, 'year'
+        write(*,*)  ''
+
+      ! Aluminium magnets CP lifetime
+      ! For now, we keep the original def, developped for GLIDCOP magnets ...
+      else 
+        cplife = min( cpstflnc / wallmw, tlife )
+      end if
+    end if 
 
     ! Current drive lifetime (assumed equal to first wall and blanket lifetime)
     cdrlife = bktlife

@@ -738,7 +738,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
         insulation_area = a_turn - t_conductor**2
         
         ! ITER like turn structure 
-        if ( i_tf_sc_mat /= 6) then 
+        if ( i_tf_sc_mat /= 6 ) then 
 
             ! Radius of rounded corners of cable space inside conduit [m]
             rbcndut = thwcndut * 0.75D0     

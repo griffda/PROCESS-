@@ -828,7 +828,7 @@ contains
 
     use current_drive_variables, only: pinjmw, porbitlossmw, nbshinemw
     use fwbs_variables, only: pnucblkt, pradfw, etahtp, praddiv, &
-        secondary_cycle, pnuccp, primary_pumping, ptfnuc, pnucshld, pradhcd, &
+        secondary_cycle, pnuc_cp_tf, primary_pumping, ptfnuc, pnucshld, pradhcd, &
         pnucdiv, pnucfw, pnuchcd
     use heat_transport_variables, only: htpmw_shld, htpsecmw, pfwdiv, &
         psecshld, crypmw, htpmw_min, nphx, htpmw_div, psechcd, helpow, &
@@ -957,6 +957,7 @@ contains
     
     ! Superconductors TF/PF cryogenic cooling
     if ( i_tf_sup == 1 .or. ipfres == 0 ) then
+
         ! helpow calculation
         call cryo(i_tf_sup, tfsai, coldmass, ptfnuc, ensxpfm, tpulse, cpttf, n_tf, helpow)
 
@@ -964,6 +965,7 @@ contains
         ! Rem SK : This ITER efficiency is very low compare to the Strowbridge curve
         !          any reasons why? 
         crypmw = 1.0D-6 * (293.0D0 - tmpcry)/(eff_tf_cryo*tmpcry) * helpow   
+    
     end if
 
     ! Cryogenic aluminium 
@@ -973,7 +975,7 @@ contains
     ! Rem : To be updated with 2 cooling loops for TART designs
     if ( i_tf_sup == 2 ) then
         p_tf_cryoal_cryo = (293.0D0 - tcoolin)/(eff_tf_cryo*tcoolin) * &
-                           ( prescp + presleg + pres_joints + pnuccp * 1.0D6 )
+                           ( prescp + presleg + pres_joints + pnuc_cp_tf * 1.0D6 )
         crypmw = crypmw + 1.0D-6 * p_tf_cryoal_cryo
     end if
 
@@ -1000,7 +1002,7 @@ contains
     use cost_variables, only: ipnet, ireactor
     use current_drive_variables, only: pinjmw
     use fwbs_variables, only: emultmw, inuclear, pnucblkt, pradfw, qnuc, &
-        etahtp, emult, praddiv, fdiv, fhcd, secondary_cycle, pnuccp, pnucdiv, &
+        etahtp, emult, praddiv, fdiv, fhcd, secondary_cycle, pnuc_cp, pnucdiv, &
         primary_pumping, ptfnuc, pnuchcd, pnucshld, pradhcd, pnucfw
     use heat_transport_variables, only: htpmw_shld, htpmw_blkt, psecshld, &
         fpumpshld, tturb, pnetelmw, fpumpdiv, fpumpblkt, vachtmw, htpmw_div, &
@@ -1266,14 +1268,14 @@ contains
     if (itart == 1) then
         call oblnkl(outfile)
         write(outfile,'(t10,a)') 'TART centrepost:'
-        write(outfile,10) 0.0D0, pnuccp, pnuccp
+        write(outfile,10) 0.0D0, pnuc_cp, pnuc_cp
         write(outfile,20) 0.0D0, 0.0D0, 0.0D0
         write(outfile,30) 0.0D0, 0.0D0, 0.0D0
         write(outfile,40) 0.0D0, ppumpmw, ppumpmw  !  check
     end if
 
     primsum = primsum
-    secsum = secsum + pnuccp + ppumpmw
+    secsum = secsum + pnuc_cp + ppumpmw
 
     call oblnkl(outfile)
     write(outfile,'(t10,a)') 'TF coil:'
@@ -1702,7 +1704,7 @@ contains
     if ( i_tf_sup == 1 ) qss = qss + 2.0D0*tfsai
 
     !  Nuclear heating of TF coils (W) (zero if resistive)
-    if( inuclear == 0 .and. i_tf_sup == 1) qnuc = 1.0D6 * ptfnuc
+    if( inuclear == 0 .and. i_tf_sup == 1 ) qnuc = 1.0D6 * ptfnuc
     ! Issue #511: if inuclear = 1 then qnuc is input.
 
     !  AC losses

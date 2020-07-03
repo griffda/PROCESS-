@@ -1808,7 +1808,7 @@ module fwbs_variables
   public
 
   real(dp), bind(C):: bktlife = 0.0D0
-  !! blanket lifetime (years)
+  !! Full power blanket lifetime (years)
 
   real(dp) :: coolmass = 0.0D0
   !! mass of water coolant (in shield, blanket, first wall, divertor) (kg)
@@ -1854,7 +1854,7 @@ module fwbs_variables
   !#TODO: change to adopt switch naming convention
 
   real(dp) :: fwlife = 0.0D0
-  !! first wall full-power lifetime (y)
+  !! first wall full-power year lifetime (y)
 
   real(dp) :: fwmass = 0.0D0
   !! first wall mass (kg)
@@ -1897,8 +1897,14 @@ module fwbs_variables
   real(dp), bind(C) :: pnucblkt = 0.0D0
   !! nuclear heating in the blanket (MW)
 
-  real(dp) :: pnuccp = 0.0D0
-  !! nuclear heating in the ST centrepost (MW)
+  real(dp) :: pnuc_cp = 0.0D0
+  !! Total nuclear heating in the ST centrepost (MW)
+
+  real(dp) :: pnuc_cp_sh = 0.0D0
+  !! Neutronic shield nuclear heating in the ST centrepost (MW)
+
+  real(dp) :: pnuc_cp_tf = 0.0D0
+  !! TF neutronic nuclear heating in the ST centrepost (MW)
 
   real(dp) :: pnucdiv = 0.0D0
   !! nuclear heating in the divertor (MW)
@@ -1948,6 +1954,11 @@ module fwbs_variables
   real(dp) :: whtbltibe12 = 0.0D0
   !! mass of titanium beryllide in blanket (kg) (`iblanket=1,3` (CCFE HCPB))
 
+  real(dp) :: neut_flux_cp = 0.0D0
+  !! Centrepost TF fast neutron flux (E > 0.1 MeV) [m^(-2).^(-1)]
+  !! This variable is only calculated for superconducting (i_tf_sup = 1 )
+  !! spherical tokamal magnet designs (itart = 0)
+
   real(dp) :: f_neut_shield = -1.0D0
   !! Fraction of nuclear power shielded before the CP magnet (ST)
   !! ( neut_absorb = -1 --> a fit on simplified MCNP neutronic
@@ -1983,6 +1994,7 @@ module fwbs_variables
 
   real(dp) :: fblhebpo = 0.6713D0
   !! helium fraction of outboard blanket back plate by volume (`iblanket=2` (KIT HCPB))
+  
   integer :: hcdportsize = 1
   !! switch for size of heating/current drive ports (`iblanket=2` (KIT HCPB)):
   !!
@@ -2207,6 +2219,7 @@ module fwbs_variables
 
   real(dp) :: wtshldi = 0.0D0
   !! mass of inboard shield (kg)
+  
   real(dp) :: wtshldo = 0.0D0
   !! mass of outboard shield (kg)
   
@@ -4092,6 +4105,9 @@ module build_variables
   real(dp) :: r_vv_inboard_out = 0.0D0
   !! Radial plasma facing side position of inboard vacuum vessel [m]
 
+  real(dp) :: r_sh_inboard_in = 0.0D0
+  !! Radial inner side position of inboard neutronic shield [m]
+
   real(dp) :: r_sh_inboard_out = 0.0D0
   !! Radial plasma facing side position of inboard neutronic shield [m]
 
@@ -4321,11 +4337,21 @@ module cost_variables
   !! - =1 use $ 2014 Kovari model
   !! - =2 use $ 1980 STEP model (NOT RECOMMENDED - Under Development)
 
+  integer :: i_cp_lifetime = 0
+  !! Switch for the centrepost liftime constraint 
+  !!  0 : The CP full power yearlifelime is set by the user
+  !!  1 : The CP lifelime is equal to the divertor one
+  !!  2 : The CP lifetime is equal to the breeding blankets one
+  !!  3 : The CP lifetime is equal to the plant one
+
   real(dp), bind(C) :: cowner = 0.15D0
   !! owner cost factor
 
-  real(dp) :: cplife = 0.0D0
-  !! lifetime of centrepost (y)
+  real(dp) :: cplife_input = 2.0D0
+  !! User input full power year lifetime of the centrepost (years)
+
+  real(dp) :: cplife = -1.0D0
+  !! Calculated full power year lifetime of centrepost (years)
 
   real(dp) :: cpstcst = 0.0D0
   !! ST centrepost direct cost (M$)
@@ -4352,7 +4378,7 @@ module cost_variables
   !! divertor direct cost (M$)
 
   real(dp), bind(C) :: divlife = 0.0D0
-  !! lifetime of divertor (y)
+  !! Full power lifetime of divertor (y)
 
   real(dp) :: dtlife = 0.0D0
   !! period prior to the end of the plant life that the decommissioning fund is used (years)
@@ -4521,7 +4547,7 @@ module cost_variables
   !! Reference values for cost model 2
 
   real(dp), bind(C) :: tlife = 30.0D0
-  !! plant life (years)
+  !! Full power year plant lifetime (years)
 
   real(dp), parameter :: ucad = 180.0D0
   !! unit cost for administration buildings (M$/m3)
@@ -4997,6 +5023,8 @@ module constraint_variables
 
   real(dp) :: nflutfmax = 1.0D23
   !! max fast neutron fluence on TF coil (n/m2) (`blktmodel>0`) (`constraint equation 53`)
+  !! Aslo used for demontable magnets (itart = 1) and superdonducting coils (i_tf_sup = 1)
+  !! To set the CP lifetime
 
   real(dp) :: pdivtlim = 150.0D0
   !! Minimum pdivt [MW] (`constraint equation 80`)

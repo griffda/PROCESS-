@@ -29,7 +29,7 @@ module constraints
 
 contains
 
-  subroutine constraint_eqns(m,cc,ieqn,con,err,symbol,units)
+   subroutine constraint_eqns(m,cc,ieqn,con,err,symbol,units)
     !! Routine that formulates the constraint equations
     !!
     !! **author: P J Knight** (UKAEA)
@@ -306,11 +306,11 @@ contains
     ! This will have no effect if it is used as an equality constraint because it will be squared.
     cc = -cc
 
-  end subroutine constraint_eqns
+   end subroutine constraint_eqns
 
-  !--- Error-handling routines
+   !--- Error-handling routines
   
-  subroutine constraint_err_001()
+   subroutine constraint_err_001()
     !! Error in: Relationship between beta, temperature (keV) and density (consistency equation)
     !! author: P B Lloyd, CCFE, Culham Science Centre
     use physics_variables, only: betaft, betanb, dene, ten, dnitot, tin, btot, beta
@@ -322,9 +322,9 @@ contains
     write(*,*) 'tin = ', tin
     write(*,*) 'btot = ',btot
     write(*,*) 'beta = ', beta
-  end subroutine
+   end subroutine
    
-  subroutine constraint_err_016()
+   subroutine constraint_err_016()
     !! Error in: Equation for net electric power lower limit
     !! author: P B Lloyd, CCFE, Culham Science Centre
     use constraint_variables, only: fpnetel, pnetelin
@@ -333,9 +333,9 @@ contains
     write(*,*) 'fpnetel = ', fpnetel
     write(*,*) 'pnetelmw = ', pnetelmw
     write(*,*) 'pnetelin = ', pnetelin
-  end subroutine
+   end subroutine
  
-  subroutine constraint_err_030()
+   subroutine constraint_err_030()
     !! Error in: Equation for injection power upper limit
     !! author: P B Lloyd, CCFE, Culham Science Centre
     use current_drive_variables, only: pinjmw, pinjalw
@@ -344,9 +344,9 @@ contains
     write(*,*) 'fpinj = ', fpinj
     write(*,*) 'pinjalw = ', pinjalw
     write(*,*) 'pinjmw = ', pinjmw
-  end subroutine
+   end subroutine
     
-  subroutine constraint_err_066()
+   subroutine constraint_err_066()
     !! Error in: Limit on rate of change of energy in poloidal field
     !! author: P B Lloyd, CCFE, Culham Science Centre
     use constraint_variables, only: fpoloidalpower 
@@ -355,11 +355,11 @@ contains
     write(*,*) 'fpoloidalpower = ', fpoloidalpower
     write(*,*) 'maxpoloidalpower = ', maxpoloidalpower
     write(*,*) 'peakpoloidalpower = ', peakpoloidalpower
-  end subroutine constraint_err_066
+   end subroutine constraint_err_066
 
-  !---
+   !---
 
-  subroutine constraint_eqn_001(args)
+   subroutine constraint_eqn_001(args)
     !! author: J Morris
     !! category: equality constraint
     !!
@@ -394,9 +394,9 @@ contains
       args%symbol = '='
       args%units  = ''
 
-  end subroutine constraint_eqn_001
+   end subroutine constraint_eqn_001
 
-  subroutine constraint_eqn_002(args)
+   subroutine constraint_eqn_002(args)
     !! author: J. Morris
     !! category: equality constraint
     !!
@@ -461,7 +461,7 @@ contains
     args%symbol = '='
     args%units = 'MW/m3'
 
-  end subroutine constraint_eqn_002
+   end subroutine constraint_eqn_002
 
    subroutine constraint_eqn_003(args)
       !! Global power balance equation for ions
@@ -729,30 +729,53 @@ contains
    end subroutine constraint_eqn_009
 
    subroutine constraint_eqn_010(args)
-      !! Equation for field at TF coil
-      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! Author : S Kahn
       !! args : output structure : residual error; constraint value; 
       !! residual error in physical units; output string; units string
-      !! Equation for field at TF coil
-      !! (This is a consistency equation.)
-      !! #=# tfcoil
+      !! Equation constraining the centerpost (CP) lifetime
+      !! Depending on the chosen option : i_cp_lifetime
+      !!  - 0 : The CP full power year lifelime is set by the user (cplife_input)
+      !!  - 1 : The CP lifelime is equal to the divertor one
+      !!  - 2 : The CP lifetime is equal to the breeding blankets one
+      !!  - 3 : The CP lifetime is equal to the plant one
+      !! #=# availability
       !! #=#=# consistency
-      !! and hence also optional here.
-      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !! rmajor : input real : plasma major radius (m) 
-      !! bt : input real : toroidal field on axis (T)
-      !! rbmax : input real : radius of maximum TF B-field (m)
-      !! bmaxtf : input real : mean peak field at TF coil (T)
-      use physics_variables, only: rmajor, bt
-      use tfcoil_variables, only: rbmax, bmaxtf
-      implicit none
-      type (constraint_args_type), intent(out) :: args
+      !! Logic change during pre-factoring: err, symbol, units will be assigned 
+      !! only if present.
+      !! cplife : input real : calculated CP full power year lifetime (years)
+      !! bktlife : input real : calculated first wall/blanket power year lifetime (years)
+      !! divlife : input real : calculated divertor  power year lifetime (years)
+      !! i_cp_lifetime : input integer : switch chosing which plant element the CP
+      !!                                 the CP lifetime must equate  
+      use cost_variables, only : cplife, divlife, cplife_input, &
+         tlife, i_cp_lifetime
+      use fwbs_variables, only : bktlife
 
-      args%cc =  1.0D0 - (rmajor*bt)/(rbmax*bmaxtf)
-      args%con = (rbmax*bmaxtf) * (1.0D0 - args%cc)
-      args%err = (rbmax*bmaxtf) * args%cc
+      implicit none
+
+      type (constraint_args_type), intent(out) :: args
+      !! Constraints output
+
+      ! The CP lifetime is equal to the the divertor one
+      if  ( i_cp_lifetime == 0 ) then
+         args%cc = 1.0D0 - cplife/cplife_input
+
+      else if ( i_cp_lifetime == 1 ) then 
+         args%cc = 1.0D0 - cplife/divlife
+
+      ! The CP lifetime is equal to the tritium breeding blankets / FW one
+      else if ( i_cp_lifetime == 2 ) then
+         args%cc = 1.0D0 - cplife/bktlife
+         
+      ! The CP lifetime is equal to the 
+      else if ( i_cp_lifetime == 3 ) then
+         args%cc = 1.0D0 - cplife/tlife
+      end if
+
+      args%con = divlife * (1.0D0 - args%cc)
+      args%err = divlife * args%cc
       args%symbol = '='
-      args%units = 'T.m'
+      args%units = 'years'
 
    end subroutine constraint_eqn_010
 
@@ -2792,7 +2815,6 @@ contains
 
 
    end subroutine constraint_eqn_084
-
 
 end module constraints
 

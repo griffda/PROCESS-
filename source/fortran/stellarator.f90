@@ -1113,7 +1113,7 @@ contains
       densbreed, denstl, dewmkg, emult, emultmw, fblbe, fblbreed, fblhebmi, &
       fblhebmo, fblli, fbllipb, fblss, fblvd, fdiv, fhcd, fhole, fvoldw, &
       fvolso, fwclfr, fwlife, fwmass, hcdportsize, li6enrich, nflutf, &
-      npdiv, nphcdin, nphcdout, outlet_temp, pnucblkt, pnuccp, pnucdiv, &
+      npdiv, nphcdin, nphcdout, outlet_temp, pnucblkt, pnuc_cp, pnucdiv, &
       pnucdiv, pnucfw, pnuchcd, pnucloss, pnucshld, praddiv, pradfw, pradhcd, &
       pradloss, primary_pumping, ptfnuc, rdewex, rpf2dewar, secondary_cycle, &
       tbr, tritprate, vdewex, vdewin, vfblkt, vfshld, volblkt, volblkti, &
@@ -1225,15 +1225,15 @@ contains
 
     else
 
-       pnuccp = 0.0D0
+       pnuc_cp = 0.0D0
 
        if (ipowerflow == 0) then
 
           !  Energy-multiplied neutron power
 
-          pneut2 = (pneutmw - pnucloss - pnuccp) * emult
+          pneut2 = (pneutmw - pnucloss - pnuc_cp) * emult
 
-          emultmw = pneut2 - (pneutmw - pnucloss - pnuccp)
+          emultmw = pneut2 - (pneutmw - pnucloss - pnuc_cp)
 
           !  Nuclear heating in the blanket
 
@@ -1260,7 +1260,7 @@ contains
 
           !  Neutron power deposited in first wall, blanket and shield (MW)
 
-          pnucfwbs = pneutmw - pnucdiv - pnucloss - pnuccp - pnuchcd
+          pnucfwbs = pneutmw - pnucdiv - pnucloss - pnuc_cp - pnuchcd
 
           !  Split between inboard and outboard by first wall area fractions
 
