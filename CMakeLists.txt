@@ -49,6 +49,7 @@ list(APPEND FORTRAN_INTERFACE_SOURCE_NAMES global_variables.f90
   divertor_variables.f90
   fwbs_variables.f90
   physics.f90
+  physics_functions.f90
   physics_variables.f90
   tfcoil_variables.f90
   times_variables.f90
