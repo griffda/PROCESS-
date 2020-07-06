@@ -337,8 +337,7 @@ contains
   end subroutine ellipke
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  real(dp)  function binomial(n,k) result(coefficient) &
-  bind (C, name="c_binomial")
+  real(dp)  function binomial(n,k) result(coefficient)
     ! This outputs a real approximation to the coefficient
     ! http://en.wikipedia.org/wiki/Binomial_coefficient#Multiplicative_formula
     implicit none
@@ -524,6 +523,14 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
+
+    interface
+      function fun(rho)
+        use, intrinsic :: iso_fortran_env, only: dp=>real64
+        real(dp), intent(in) :: rho
+        real(dp) :: fint
+      end function fun
+    end interface
 
     !  Arguments
 
@@ -738,11 +745,19 @@ contains
 
     implicit none
 
+    interface
+      function fhz(hhh)
+        use, intrinsic :: iso_fortran_env, only: dp=>real64
+        real(dp), intent(in) :: hhh
+        real(dp) :: fhz
+      end function fhz
+    end interface
+
     real(dp) :: zeroin
 
     !  Arguments
 
-    real(dp), external :: fhz
+    external :: fhz
     real(dp), intent(in) :: ax,bx,tol
 
     !  Local variables
@@ -2187,6 +2202,17 @@ contains
     use global_variables, only: maxcal, verbose
     implicit none
 
+    interface
+      subroutine fcnvmc1(n,m,xv,objf,conf,ifail)
+        use, intrinsic :: iso_fortran_env, only: dp=>real64
+        integer, intent(in) :: n,m
+        real(dp), dimension(n), intent(in) :: xv
+        real(dp), intent(out) :: objf
+        real(dp), dimension(m), intent(out) :: conf
+        integer, intent(inout) :: ifail
+      end subroutine fcnvmc1
+    end interface
+    
     !  Arguments
 
     integer, intent(in) :: mode,n,m,meq,lcnorm,lb,maxfev,ldel,lh,lwa,liwa
@@ -4130,6 +4156,16 @@ contains
 
     IMPLICIT NONE
 
+    interface
+      subroutine fcnhyb(n, x, fvec, iflag)
+        use, intrinsic :: iso_fortran_env, only: dp=>real64
+        integer, intent(in) :: n
+        real(dp), dimension(n), intent(inout) :: x
+        real(dp), dimension(n), intent(out) :: fvec
+        integer, intent(inout) :: iflag
+      end subroutine fcnhyb
+    end interface
+
     INTEGER n,maxfev,ml,mu,mode,nprint,info,nfev,ldfjac,lr,irr
     INTEGER i,iflag,iter,j,jm1,l,msum,ncfail,ncsuc,nslow1,nslow2
 
@@ -5807,7 +5843,16 @@ contains
       ! https://en.wikipedia.org/wiki/Secant_method
       ! Requires two initial values, x0 and x1, which should ideally be chosen to lie close to the root.
       !external:: f
-      real(dp)::f
+      
+      interface
+        function f(x)
+          use, intrinsic :: iso_fortran_env, only: dp=>real64
+          real(dp), intent(in) :: x
+          real(dp) :: f
+        end function f
+      end interface
+
+      external :: f
       real(dp), intent(out) ::solution, residual
       real(dp), intent(in) ::x1,x2
       real(dp), intent(in), optional ::opt_tol
@@ -5863,7 +5908,8 @@ contains
 
   contains
       function dummy(x)
-          real(dp)::dummy,x
+          real(dp), intent(in) :: x
+          real(dp) :: dummy
           dummy = x**2 - 612.d0
       end function
   end subroutine test_secant_solve
@@ -5872,9 +5918,9 @@ end module maths_library
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-#ifdef unit_test
-
 module testdata
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+  implicit none
 
   integer :: nfun = 0  !  function call counter
 
@@ -6247,6 +6293,7 @@ program test
   use maths_library
   use numerics
   use testdata
+  use global_variables, only: maxcal
 
   implicit none
 
@@ -6375,5 +6422,3 @@ program test
   write(*,*)
 
 end program test
-
-#endif
