@@ -39,10 +39,6 @@ if [ "$OSTYPE" == "linux-gnu" ]; then
             grep -qxF 'export LANG=C.UTF-8' ~/.bashrc || \
                 echo 'export LANG=C.UTF-8' >> ~/.bashrc
 
-            export GTEST='/usr/src/gtest/'
-            grep -qxF 'export GTEST="/usr/src/gtest/"' ~/.bashrc || \
-                echo 'export GTEST="/usr/src/gtest/"' >> ~/.bashrc
-
             echo "- Linking gfortran to /usr/bin/gfortran"
             alias gfortran='/usr/bin/gfortran-4.8'
             grep -qxF "alias gfortran='/usr/bin/gfortran-4.8'" ~/.bashrc || \

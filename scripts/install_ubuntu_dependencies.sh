@@ -21,7 +21,6 @@ sudo apt-get install -y --fix-missing\
     cmake \
     gcc  \
     g++  \
-    libgtest-dev \
     git \
     python3 \
     binutils \
@@ -36,7 +35,3 @@ sudo apt-get install -y --fix-missing\
     python3-pip \
     pandoc \
     graphviz
-
-# compile googletest
-cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && \
-    sudo rm -rf lib && sudo mkdir lib && sudo cp *.a lib
