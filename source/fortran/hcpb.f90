@@ -1818,7 +1818,7 @@ contains
     real(dp) :: f_pnuc_cp_tf = 1.0D0
     !! Outer wall reflection TF nuclear heating enhancement factor [-] 
 
-    real(dp) :: f_pnuc_cp_sh = 1.0D0
+    real(dp) :: f_pnuc_cp_sh = 1.7D0
     !! Outer wall reflection shield nuclear heating enhancement factor [-]
 
     ! ---------------
@@ -1892,12 +1892,12 @@ contains
 
                      
       ! Nuclear power density deposited in the tungsten carbyde shield by photons [MW]
-      pnuc_cp_sh_gam = ( sh_width / rmajor ) * ( 238.40D0 * exp( -4.130D0 * sh_width ) &
-                                               + 36.235D0 * exp( 0.6837D0 * sh_width ) )
+      pnuc_cp_sh_gam = sh_width * ( 596.00D0 * exp( -4.130D0 * sh_width ) &
+                                  + 90.586D0 * exp( 0.6837D0 * sh_width ) )
       
       ! Nuclear power density deposited in the tungsten carbyde shield by neutrons [MW]
-      pnuc_cp_sh_n = ( sh_width / rmajor ) * ( 80.834D0 * exp( -10.533D0 * sh_width ) &
-                                             + 32.334D0 * exp( -0.9801D0 * sh_width ) )
+      pnuc_cp_sh_n = sh_width * ( 202.10D0 * exp( -10.533D0 * sh_width ) &
+                                + 80.510D0 * exp( -0.9801D0 * sh_width ) )
       ! ***
 
 
@@ -1966,7 +1966,7 @@ contains
       
       ! Fit [10^{-13}.cm^{-2}]
       neut_flux_cp = 5.835D0 * exp( -24.722D0 * sh_width ) &
-                   + 49.63D0 * ( sh_width / rmajor ) * exp( -15.392D0 * sh_width )
+                   + 39.70D0 * ( sh_width / rmajor ) * exp( -15.392D0 * sh_width )
 
       ! Units conversion [10^{-13}.cm^{-2}] -> [m^{-2}]
       neut_flux_cp = neut_flux_cp * 1.0D17
