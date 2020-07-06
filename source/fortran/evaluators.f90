@@ -14,7 +14,6 @@ module function_evaluator
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  use iso_c_binding
   implicit none
 
   public
@@ -271,7 +270,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine funfom(fc) bind(C, name="c_funfom")
+  subroutine funfom(fc)
 
     !! Objective function evaluator for VMCON
     !! author: P J Knight, CCFE, Culham Science Centre

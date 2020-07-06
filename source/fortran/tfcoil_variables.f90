@@ -392,7 +392,7 @@ module tfcoil_variables
   ! !!                 <LI> = 0 simple model (solid copper coil)
   ! !!                 <LI> = 1 CCFE two-layer stress model; superconductor</UL>
 
-  real(dp), bind(C) :: tfcmw = 0.0D0
+  real(dp) :: tfcmw = 0.0D0
   !! Peak power per TF power supply (MW)
   
   real(dp) :: tfcpmw = 0.0D0
@@ -470,7 +470,7 @@ module tfcoil_variables
   real(dp) :: tfsao = 0.0D0
   !! area of the outboard TF coil legs (m2)
 
-  real(dp), bind(C) :: tftmp = 4.5D0
+  real(dp) :: tftmp = 4.5D0
   !! peak helium coolant temperature in TF coils and PF coils (K)
 
   real(dp) :: tftort = 1.0D0
@@ -501,16 +501,16 @@ module tfcoil_variables
   !! Rem : The default value includes allowance for 10 mm insertion gap.
   !! Rem : Thickness calculated for stellarators.
 
-  real(dp), bind(C) :: tmargmin_tf = 0D0
+  real(dp) :: tmargmin_tf = 0D0
   !! minimum allowable temperature margin : TF coils (K)
 
-  real(dp), bind(C) :: tmargmin_cs = 0D0
+  real(dp) :: tmargmin_cs = 0D0
   !! minimum allowable temperature margin : CS (K)
 
   real(dp) :: tmargmin = 0D0
   !! minimum allowable temperature margin : TFC AND CS (K)
 
-  real(dp), bind(C) :: temp_margin = 0.00D0
+  real(dp) :: temp_margin = 0.00D0
   !! temperature margin (K)
 
   real(dp) :: tmargtf = 0.0D0

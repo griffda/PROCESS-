@@ -19,22 +19,22 @@ module times_variables
   !! - =0, tohs = Ip(MA)/0.1 tramp, tqnch = input
   !! - =1, tohs = iteration var or input. tramp/tqnch max of input or tohs
 
-  real(dp), bind(C) :: tburn = 1000.0D0
+  real(dp) :: tburn = 1000.0D0
   !! burn time (s) (calculated if `lpulse=1`)
 
   real(dp) :: tburn0 = 0.0D0
   !! burn time (s) - used for internal consistency
 
-  real(dp), bind(C) :: tcycle = 0.0D0
+  real(dp) :: tcycle = 0.0D0
   !! full cycle time (s)
 
-  real(dp), bind(C) :: tdown = 0.0D0
+  real(dp) :: tdown = 0.0D0
   !! down time (s)
 
-  real(dp), bind(C) :: tdwell = 1800.0D0
+  real(dp) :: tdwell = 1800.0D0
   !! time between pulses in a pulsed reactor (s) (`iteration variable 17`)
 
-  real(dp), bind(C) :: theat = 10.0D0
+  real(dp) :: theat = 10.0D0
   !! heating time, after current ramp up (s)
 
   real(dp), dimension(6) :: tim = 0.0D0
@@ -55,7 +55,7 @@ module times_variables
     'tqnch' /)
   !! time intervals - as strings (s)
 
-  real(dp), bind(C) :: tohs = 30.0D0
+  real(dp) :: tohs = 30.0D0
   !! plasma current ramp-up time for current initiation (s) (calculated if `lpulse=0`)
   !! (`iteration variable 65`)
 

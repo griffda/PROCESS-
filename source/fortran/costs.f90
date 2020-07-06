@@ -11,7 +11,6 @@ module costs_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  use iso_c_binding
   implicit none
 
   !  Various cost account values (M$)
@@ -2304,7 +2303,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2272() bind(C, name="c_acc2272")
+  subroutine acc2272()
     !! Account 2272 : Fuel processing and purification
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2345,7 +2344,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2273() bind(C, name="c_acc2273")
+  subroutine acc2273()
     !! Account 2273 : Atmospheric recovery systems
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2476,7 +2475,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc24() bind(C, name="costs_1990_acc24")
+  subroutine acc24()
     !! Account 24 : Electric plant equipment
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
@@ -2595,7 +2594,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc244() bind(C, name="c_acc244")
+  subroutine acc244()
     !! Account 244 : Electric plant equipment - Diesel generators
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2626,7 +2625,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc245() bind(C, name="c_acc245")
+  subroutine acc245()
     !! Account 245 : Electric plant equipment - Aux facility power
     !! author: J Morris, CCFE, Culham Science Centre
     !! None

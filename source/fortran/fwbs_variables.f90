@@ -101,7 +101,7 @@ module fwbs_variables
   real(dp) :: li6enrich = 30.0D0
   !! lithium-6 enrichment of breeding material (%)
 
-  real(dp), bind(C) :: pnucblkt = 0.0D0
+  real(dp) :: pnucblkt = 0.0D0
   !! nuclear heating in the blanket (MW)
 
   real(dp) :: pnuccp = 0.0D0
@@ -122,7 +122,7 @@ module fwbs_variables
   real(dp) :: pnucvvplus = 0.0D0
   !! nuclear heating to vacuum vessel and beyond(MW)
 
-  real(dp), bind(C) :: pnucshld = 0.0D0
+  real(dp) :: pnucshld = 0.0D0
   !! nuclear heating in the shield (MW)
 
   real(dp) :: whtblkt = 0.0D0

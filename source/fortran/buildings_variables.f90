@@ -106,7 +106,7 @@ module buildings_variables
     real(dp) :: volnucb = 0.0D0
     !! sum of nuclear buildings volumes (m3)
   
-    real(dp), bind(C) :: volrci = 0.0D0
+    real(dp) :: volrci = 0.0D0
     !! internal volume of reactor building (m3)
   
     real(dp) :: wgt = 5.0D5
@@ -121,7 +121,7 @@ module buildings_variables
     real(dp) :: wsvfac = 1.9D0
     !! warm shop building volume multiplication factor
   
-    real(dp), bind(C) :: wsvol = 0.0D0
+    real(dp) :: wsvol = 0.0D0
     !! volume of warm shop building (m3)
   
   end module buildings_variables

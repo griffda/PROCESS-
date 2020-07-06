@@ -19,7 +19,7 @@ module physics_variables
   real(dp) :: abeam = 0.0D0
   !! beam ion mass (amu)
 
-  real(dp), bind(C) :: afuel = 0.0D0
+  real(dp) :: afuel = 0.0D0
   !! average mass of fuel portion of ions (amu)
 
   real(dp) :: aion = 0.0D0
@@ -46,7 +46,7 @@ module physics_variables
   real(dp) :: beamfus0 = 1.0D0
   !! multiplier for beam-background fusion calculation
 
-  real(dp), bind(C) :: beta = 0.042D0
+  real(dp) :: beta = 0.042D0
   !! total plasma beta (`iteration variable 5`) (calculated if `ipedestal=3` or stellarator)
 
   real(dp) :: betaft = 0.0D0
@@ -64,19 +64,19 @@ module physics_variables
   real(dp) :: betap = 0.0D0
   !! poloidal beta
 
-  real(dp), bind(C) :: normalised_total_beta = 0.0D0
+  real(dp) :: normalised_total_beta = 0.0D0
   !! normaised total beta
 
   real(dp) :: betbm0 = 1.5D0
   !! leading coefficient for NB beta fraction
 
-  real(dp), bind(C) :: bp = 0.0D0
+  real(dp) :: bp = 0.0D0
   !! poloidal field (T)
 
-  real(dp), bind(C) :: bt = 5.68D0
+  real(dp) :: bt = 5.68D0
   !! toroidal field on axis (T) (`iteration variable 2`)
 
-  real(dp), bind(C) :: btot = 0.0D0
+  real(dp) :: btot = 0.0D0
   !! total toroidal + poloidal field (T)
 
   real(dp) :: burnup = 0.0D0
@@ -206,7 +206,7 @@ module physics_variables
   !! f-value for the constraint ne(0) > ne(sep) (`constraint equation 81`)
   !! (`Iteration variable 154`) 
 
-  real(dp), bind(C) :: ftrit = 0.5D0
+  real(dp) :: ftrit = 0.5D0
   !! tritium fuel fraction
 
   real(dp) :: fusionrate = 0.0D0
@@ -339,7 +339,7 @@ module physics_variables
   !! - =1 set pedestal-top temperature using EPED scaling (PLASMOD implementation 
   !!   of scaling within PLASMOD, `ipedestal =2,3 (ttps://idm.euro-fusion.org/?uid=2MSZ4T)
 
-  real(dp), bind(C) :: eped_sf = 1.0D0
+  real(dp) :: eped_sf = 1.0D0
   !! Adjustment factor for EPED scaling to reduce pedestal temperature or pressure 
   !! to mitigate or prevent ELMs
 
@@ -523,10 +523,10 @@ module physics_variables
   !! - =1 use scaled plasma surface area
   !! - =2 use first wall area directly
 
-  real(dp), bind(C) :: kappa = 1.792D0
+  real(dp) :: kappa = 1.792D0
   !! plasma separatrix elongation (calculated if `ishape > 0`)
 
-  real(dp), bind(C) :: kappa95 = 1.6D0
+  real(dp) :: kappa95 = 1.6D0
   !! plasma elongation at 95% surface (calculated if `ishape < 4`)
 
   real(dp) :: kappaa = 0.0D0
@@ -619,7 +619,7 @@ module physics_variables
   real(dp) :: piepv = 0.0D0
   !! ion/electron equilibration power per volume (MW/m3)
 
-  real(dp), bind(C) :: plascur = 0.0D0
+  real(dp) :: plascur = 0.0D0
   !! plasma current (A)
 
   real(dp) :: plinepv = 0.0D0
@@ -640,7 +640,7 @@ module physics_variables
   real(dp) :: powerht = 0.0D0
   !! heating power (= transport loss power) (MW) used in confinement time calculation
 
-  real(dp), bind(C) :: powfmw = 0.0D0
+  real(dp) :: powfmw = 0.0D0
   !! fusion power (MW)
 
   real(dp) :: pperim = 0.0D0
@@ -748,10 +748,10 @@ module physics_variables
   real(dp) :: rlp = 0.0D0
   !! plasma inductance (H)
 
-  real(dp), bind(C) :: rmajor = 8.14D0
+  real(dp) :: rmajor = 8.14D0
   !! plasma major radius (m) (`iteration variable 3`)
 
-  real(dp), bind(C) :: rminor = 0.0D0
+  real(dp) :: rminor = 0.0D0
   !! plasma minor radius (m)
 
   real(dp) :: rnbeam = 0.005D0
@@ -760,7 +760,7 @@ module physics_variables
   real(dp) :: rncne = 0.0D0
   !! n_carbon / n_e
 
-  real(dp), bind(C) :: rndfuel = 0.0D0
+  real(dp) :: rndfuel = 0.0D0
   !! fuel burnup rate (reactions/second)
 
   real(dp) :: rnfene = 0.0D0
@@ -772,7 +772,7 @@ module physics_variables
   real(dp) :: rpfac = 0.0D0
   !! neo-classical correction factor to rplas
 
-  real(dp), bind(C) :: rplas = 0.0D0
+  real(dp) :: rplas = 0.0D0
   !! plasma resistance (ohm)
 
   real(dp) :: res_time = 0.0D0
@@ -833,13 +833,13 @@ module physics_variables
   real(dp) :: tratio = 1.0D0
   !! ion temperature / electron temperature(used to calculate ti if `tratio > 0.0`
 
-  real(dp), bind(C) :: triang = 0.36D0
+  real(dp) :: triang = 0.36D0
   !! plasma separatrix triangularity (calculated if `ishape=1, 3 or 4`)
 
   real(dp) :: triang95 = 0.24D0
   !! plasma triangularity at 95% surface (calculated if `ishape < 3`)
 
-  real(dp), bind(C) :: vol = 0.0D0
+  real(dp) :: vol = 0.0D0
   !! plasma volume (m3)
 
   real(dp) :: vsbrn = 0.0D0
@@ -857,10 +857,10 @@ module physics_variables
   real(dp) :: vsstt = 0.0D0
   !! total V-s needed (Wb)
 
-  real(dp), bind(C) :: wallmw = 0.0D0
+  real(dp) :: wallmw = 0.0D0
   !! average neutron wall load (MW/m2)
 
-  real(dp), bind(C) :: wtgpd = 0.0D0
+  real(dp) :: wtgpd = 0.0D0
   !! mass of fuel used per day (g)
 
   real(dp) :: xarea = 0.0D0

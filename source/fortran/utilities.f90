@@ -1,26 +1,11 @@
 module utilities
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  use iso_c_binding
   implicit none
   
 contains
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  real function process_value(x, y) result(ret_value)! bind(C, name="c_process_value_cpp")
-    implicit none
-    real, intent(in) :: x
-    real, intent(in) :: y
-    ret_value = x + y
-  end function process_value
-
-  real(c_double) function process_value_cpp(x, y) result(ret_value) bind(C, name="c_process_value_cpp")
-    implicit none
-    real(c_double), intent(in) :: x
-    real(c_double), intent(in) :: y
-    ret_value = x + y
-  end function process_value_cpp
-
-  subroutine upper_case(string,start,finish) ! bind(C,name="utilities_upper_case")
+  subroutine upper_case(string,start,finish)
 
     !! Routine that converts a (sub-)string to uppercase
     !! author: P J Knight, CCFE, Culham Science Centre

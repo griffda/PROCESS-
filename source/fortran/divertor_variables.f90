@@ -99,7 +99,7 @@ module divertor_variables
   real(dp) :: frrp = 0.4D0
   !! fraction of radiated power to plate
 
-  real(dp), bind(C) :: hldiv = 0.0D0
+  real(dp) :: hldiv = 0.0D0
   !! divertor heat load (MW/m2)
 
   real(dp) :: hldivlim = 5.0D0

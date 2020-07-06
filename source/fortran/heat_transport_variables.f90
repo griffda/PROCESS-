@@ -17,7 +17,7 @@ module heat_transport_variables
     real(dp) :: baseel = 5.0D6
     !! base plant electric load (W)
   
-    real(dp), bind(C) :: crypmw = 0.0D0
+    real(dp) :: crypmw = 0.0D0
     !! cryogenic plant power (MW)
   
     real(dp) :: etatf = 0.9D0
@@ -29,7 +29,7 @@ module heat_transport_variables
     real(dp) :: fachtmw = 0.0D0
     !! facility heat removal (MW)
   
-    real(dp), bind(C) :: fcsht = 0.0D0
+    real(dp) :: fcsht = 0.0D0
     !! total baseline power required at all times (MW)
   
     real(dp) :: fgrosbop = 0.0D0
@@ -57,7 +57,7 @@ module heat_transport_variables
     real(dp) :: htpmw_min = 0.0D0
     !! Minimum total electrical power for primary coolant pumps (MW) (NOT RECOMMENDED)
   
-    real(dp), bind(C) :: helpow = 0.0D0
+    real(dp) :: helpow = 0.0D0
     !! heat removal at cryogenic temperatures (W)
   
     real(dp) :: htpmw = 0.0D0
@@ -99,25 +99,25 @@ module heat_transport_variables
     integer :: nphx = 0
     !! number of primary heat exchangers
   
-    real(dp), bind(C) :: pacpmw = 0.0D0
+    real(dp) :: pacpmw = 0.0D0
     !! total pulsed power system load (MW)
   
     real(dp) :: peakmva = 0.0D0
     !! peak MVA requirement
   
-    real(dp), bind(C) :: pfwdiv = 0.0D0
+    real(dp) :: pfwdiv = 0.0D0
     !! heat removal from first wall/divertor (MW)
   
-    real(dp), bind(C) :: pgrossmw = 0.0D0
+    real(dp) :: pgrossmw = 0.0D0
     !! gross electric power (MW)
   
-    real(dp), bind(C) :: pinjht = 0.0D0
+    real(dp) :: pinjht = 0.0D0
     !! power dissipated in heating and current drive system (MW)
   
     real(dp) :: pinjmax = 120.0D0
     !! maximum injector power during pulse (heating and ramp-up/down phase) (MW)
   
-    real(dp), bind(C) :: pinjwp = 0.0D0
+    real(dp) :: pinjwp = 0.0D0
     !! injector wall plug power (MW)
   
     real(dp) :: pinjwpfix = 0.0D0
@@ -147,7 +147,7 @@ module heat_transport_variables
     real(dp) :: psecshld = 0.0D0
     !! Low-grade heat deposited in shield (MW)
   
-    real(dp), bind(C) :: pthermmw = 0.0D0
+    real(dp) :: pthermmw = 0.0D0
     !! High-grade heat useful for electric production (MW)
   
     real(dp) :: pwpm2 = 150.0D0
@@ -156,16 +156,16 @@ module heat_transport_variables
     real(dp) :: tfacpd = 0.0D0
     !! total steady state TF coil AC power demand (MW)
   
-    real(dp), bind(C) :: tlvpmw = 0.0D0
+    real(dp) :: tlvpmw = 0.0D0
     !! estimate of total low voltage power (MW)
   
-    real(dp), bind(C) :: trithtmw = 15.0D0
+    real(dp) :: trithtmw = 15.0D0
     !! power required for tritium processing (MW)
   
     real(dp) :: tturb = 0.0D0
     !! coolant temperature at turbine inlet (K) (`secondary_cycle = 3,4`)
   
-    real(dp), bind(C) :: vachtmw = 0.5D0
+    real(dp) :: vachtmw = 0.5D0
     !! vacuum pump power (MW)
   
   end module heat_transport_variables

@@ -226,7 +226,7 @@ module ife_variables
     real(dp) :: pifecr = 10.0D0
     !! IFE cryogenic power requirements (MW)
   
-    real(dp), bind(C) :: ptargf = 2.0D0
+    real(dp) :: ptargf = 2.0D0
     !! IFE target factory power at 6 Hz repetition rate (MW)
   
     real(dp) :: r1 = 0.0D0
@@ -250,7 +250,7 @@ module ife_variables
     real(dp) :: r7 = 0.0D0
     !! IFE device radial build (m)
   
-    real(dp), bind(C) :: reprat = 0.0D0
+    real(dp) :: reprat = 0.0D0
     !! IFE driver repetition rate (Hz)
   
     real(dp) :: rrin = 6.0D0
@@ -301,7 +301,7 @@ module ife_variables
     real(dp) :: tdspmw = 0.01D0
     !! IFE target delivery system power (MW)
   
-    real(dp), bind(C) :: tfacmw = 0.0D0
+    real(dp) :: tfacmw = 0.0D0
     !! IFE target factory power (MW)
   
     real(dp) :: tgain = 85.0D0
