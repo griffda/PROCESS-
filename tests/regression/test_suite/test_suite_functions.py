@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
   PROCESS Test Suite
 
@@ -17,15 +16,24 @@ import datetime
 import argparse
 import subprocess
 import logging
+import shutil
+import re
 logging.basicConfig(level=logging.CRITICAL)
 
 # PROCESS libraries
 sys.path.append(os.path.join(os.path.dirname(__file__), '../utilities/'))
 from process_io_lib.mfile import MFile
+from bindir import BINDIR
 
 # Constants
-EXCLUSIONS = ["normres", "nitvar", "itvar", "xcm", "sigrtf(1)", "balance", 
-              "convergence_parameter", "branch_name", "nviter"]
+# Hardcoded var for CI and non-CI cases
+is_ci = False
+
+if is_ci:
+    EXCLUSIONS = ["normres", "nitvar", "itvar", "xcm"]
+else:
+    EXCLUSIONS = ["normres", "nitvar", "itvar", "xcm", "sigrtf(1)", "balance", 
+                "convergence_parameter", "branch_name", "nviter"]
 
 # *********************************** #
 
@@ -119,7 +127,23 @@ def setup_executable():
     PROCESS folder
     """
     subprocess.call(["cp ../bin/process.exe ."], shell=True)
+    if is_ci:
+        subprocess.call(["cp ../bin/libPROCESS_calc_engine.so ."], shell=True)
 
+def copyfiles(src, symlinks=False, ignore=None):
+    dst = os.getcwd()
+#    if not os.path.exists(dst):
+#        os.makedirs(dst)
+    for item in os.listdir(src):
+        s = os.path.join(src, item)
+        d = os.path.join(dst, item)
+        print("item is ")
+        print(item)
+        if os.path.isdir(s):
+            copytree(s, d, symlinks, ignore)
+        else:
+            if not os.path.exists(d) or os.stat(s).st_mtime - os.stat(d).st_mtime > 1:
+                shutil.copy2(s, d)
 
 def get_file_info(ar):
     """ Function to get the file structure information about the test files.
@@ -239,16 +263,19 @@ def mfile_compare(file1, file2, diff, scan=-1):
             try:
                 a = float(file1.data[item].get_scan(scan))
                 b = float(file2.data[item].get_scan(scan))
-                d = (1 - (b / a)) * 100.0
+                d = abs(1 - (b / a)) * 100.0
+                counter += 1
+                diff_item = dict()
+                diff_item["name"] = item
+                diff_item["ref"] = a
 
                 if d > diff:
-                    counter += 1
-                    diff_item = dict()
-                    diff_item["name"] = item
-                    diff_item["ref"] = a
                     diff_item["new"] = b
                     diff_item["diff"] = d
-                    differences[item] = diff_item
+                else:
+                    diff_item["new"] = a
+                    diff_item["diff"] = 0
+                differences[item] = diff_item
 
             except ZeroDivisionError:
                 pass
@@ -297,7 +324,8 @@ def clean_up(drs):
 
     # remove executable
     subprocess.call(["rm", "process.exe"])
-
+    if is_ci:
+        subprocess.call(["rm", "libPROCESS_calc_engine.so"])
 
 def save_summary(line):
     """ Save summary function
@@ -442,7 +470,7 @@ def write_diff_log(test, diff_val, diffs, diff_n, only_ref, only_new):
     # close file
     diff_file.close()
 
-def write_xunit_files(test, diff_val, diffs, diff_n, only_ref, only_new):
+def write_xunit_files(test, diff_val, diffs):
     """Write xunit file
 
     Function to write test.log file.
@@ -455,30 +483,45 @@ def write_xunit_files(test, diff_val, diffs, diff_n, only_ref, only_new):
     :param only_new: variables only in new MFILE not reference MFILE
     """
 
-    ref_file = open(test+".ref.xunit", "w")
-    new_file = open(test+".new.xunit", "w")
+    ref_file_name = test+".ref.xunit"
+    new_file_name = test+".new.xunit"
+    if os.path.exists(ref_file_name):
+      os.remove(ref_file_name)
+    if os.path.exists(new_file_name):
+      os.remove(new_file_name)
+
+    ref_file = open(ref_file_name, "w")
+    new_file = open(new_file_name, "w")
+#    ref_file = open(test+".ref.xunit", "w")
+#    new_file = open(test+".new.xunit", "w")
+    patterns =["\+", "\-","\*","\/","\.","\="]
     # write differences
     for key in diffs.keys():
+        toWrite = True
         df = diffs[key]["diff"]
         rf = diffs[key]["ref"]
         nw = d = diffs[key]["new"]
+        var_name = key[:39]
+        var_name = var_name.strip(" ")
+        match = False
+#        match = re.search("\/", var_name)
+        for pattern in patterns:
+          match = re.search(pattern, var_name)
+          if match:
+            break
+        
 
-        ref_file.write("{0:<40}\t{1:<10}\t{2:<10.3g}\t{3:<10}\t{4:<10.2f}\n".
-                        format(key[:39],"=" , rf, " *  Difference(%) = ", df))
-        new_file.write("{0:<40}\t{1:<10}\t{2:<10.3g}\t{3:<10}\t{4:<10.2f}\n".
-                        format(key[:39], "=", nw, " *  Difference(%) = ", df))
+        if(match):
+          toWrite = False
+          match = False
+          print("Found metacharacter - Not writing variable", var_name)
 
-    # write variables in ref but not in new
-##    diff_file.write("\n\nThere are {0} variables in ref NOT IN new:\n\n".
-##                    format(len(only_ref)))
-##    for item in only_ref:
-##        diff_file.write("{0}\n".format(item))
+        if(toWrite):
+          ref_file.write("{0:<40}\t{1:<10}\t{2:<10.3g}\t{3:<10}\t{4:<10.2f}\n".
+                          format(var_name,"=" , rf, " *  Difference(%) = ", df))
+          new_file.write("{0:<40}\t{1:<10}\t{2:<10.3g}\t{3:<10}\t{4:<10.2f}\n".
+                          format(var_name, "=", nw, " *  Difference(%) = ", df))
 
-    # write variables in new but not in ref
-##    diff_file.write("\n\nThere are {0} variables in new NOT IN ref:\n\n".
-##                    format(len(only_new)))
-##    for item in only_new:
-##        diff_file.write("{0}\n".format(item))
 
     # close file
     ref_file.close()
@@ -659,16 +702,23 @@ def test_in_dat_lib(fs, utils_only):
     sys.stdout = open("utilities.log", "a")
 
     # test all MFILEs
-    for key in fs.keys():
-        if "error_" not in key:
-            if "IFE" not in key:
-                if utils_only:
-                    file_name = "test_files/{0}/ref.IN.DAT".format(key)
-                else:
-                    file_name = "test_area/{0}/IN.DAT".format(key)
-                files_in_order.append(file_name)
+    if is_ci:
+        for key in fs.keys():
+            if "error_" not in key:
+                file_name = "test_area/{0}/IN.DAT".format(key)
                 # file_name = fs[key]["path"] + "IN.DAT"
                 results.append(indat.test(file_name))
+    else:
+        for key in fs.keys():
+            if "error_" not in key:
+                if "IFE" not in key:
+                    if utils_only:
+                        file_name = "test_files/{0}/ref.IN.DAT".format(key)
+                    else:
+                        file_name = "test_area/{0}/IN.DAT".format(key)
+                    files_in_order.append(file_name)
+                    # file_name = fs[key]["path"] + "IN.DAT"
+                    results.append(indat.test(file_name))
 
     sys.stdout = sys.__stdout__
 
@@ -688,11 +738,11 @@ def test_in_dat_lib(fs, utils_only):
     print(msg)
     save_summary(lmsg)
 
-    if error_status:
-        print(results)
-        print(files_in_order)
-        sys.exit("in_dat test_suite failure")
-
+    if is_ci is False:
+        if error_status:
+            print(results)
+            print(files_in_order)
+            sys.exit("in_dat test_suite failure")
 
 def test_plot_proc(fs, utils_only):
     """Test the PROCESS in_dat library
@@ -714,19 +764,16 @@ def test_plot_proc(fs, utils_only):
     for key in fs.keys():
         if "error_" not in key:
             if "stellarator" not in key:
-                if "IFE" not in key:
+                if is_ci:
+                    file_name = "test_area/{0}/new.MFILE.DAT".format(key)
+                    results.append(pp.test(file_name))
+                elif "IFE" not in key:
                     if utils_only:
                         file_name = "test_files/{0}/ref.MFILE.DAT".format(key)
                     else:
                         file_name = "test_area/{0}/new.MFILE.DAT".format(key)
                     # file_name = fs[key]["path"] + "new.MFILE.DAT"
                     results.append(pp.test(file_name))
-
-            # if results[-1]:
-            #    subprocess.call(["mv", "ref.SUMMARY.pdf", "test_area/{0}/".
-            #                    format(key)])
-
-    # sys.stdout = sys.__stdout__
 
     # Output message
     msg = "Test ==>  {0:<40}".format("plot_proc.py")
@@ -744,9 +791,8 @@ def test_plot_proc(fs, utils_only):
     print(msg)
     save_summary(lmsg)
 
-    if error_status:
+    if not is_ci and error_status:
         sys.exit("plot_proc test_suite failure")
-
 
 class TestCase(object):
     """
@@ -788,6 +834,12 @@ class TestCase(object):
         if self.test == "stellarator":
             subprocess.call(["cp {0} .".format(self.path + "device.dat")],
                             shell=True)
+            subprocess.call(["cp {0} .".format(self.path + "vmec_info.dat")],
+                            shell=True)
+            subprocess.call(["cp {0} .".format(self.path + "vmec_Rmn.dat")],
+                            shell=True)
+            subprocess.call(["cp {0} .".format(self.path + "vmec_Zmn.dat")],
+                            shell=True)
 
         if self.test == "IFE":
             subprocess.call(["cp {0} .".format(self.path + "device.dat")],
@@ -796,11 +848,15 @@ class TestCase(object):
         # run PROCESS
         subprocess.call(["cp {0} .".format(self.path + "IN.DAT")],
                         shell=True)
+
         self.process_exit_code = subprocess.call(["./process.exe >> run.log"],
                                                  shell=True, timeout=1000)
 
         if self.test == "stellarator":
             subprocess.call(["rm device.dat"], shell=True)
+            subprocess.call(["rm vmec_info.dat"], shell=True)
+            subprocess.call(["rm vmec_Rmn.dat"], shell=True)
+            subprocess.call(["rm vmec_Zmn.dat"], shell=True)
 
         if self.test == "IFE":
             subprocess.call(["rm device.dat"], shell=True)
@@ -888,7 +944,11 @@ class TestCase(object):
         files appropriately.
         """
         self.run_test()
-        if self.check_diff_status():
+        
+        if is_ci:
+            write_xunit_files(self.test, self.diff, self.diffs)
+            print("number of variables are : ",self.diff_num)
+        elif self.check_diff_status():
 
             # change test status
             self.status = "DIFF"
@@ -896,6 +956,7 @@ class TestCase(object):
             # output differences to test.log
             write_xunit_files(self.test, self.diff, self.diffs, self.diff_num,
                            self.only_ref, self.only_new)
+        
         # copy files to test_area
         copy_test_to_test_area(self.test, self.status, self.arguments)
 
