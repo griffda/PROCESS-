@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
   PROCESS Test Suite
 
@@ -9,7 +8,11 @@
   James Morris 14/11/2015
   CCFE
 """
+# TODO Needs to be adjusted for CI test suite funcs too
 from test_suite_functions import *
+
+# Hardcoded var to determine if we're running locally or on the CI system
+is_ci = False
 
 def main(args):
     """Main
@@ -31,7 +34,7 @@ def main(args):
 
     # Print start of tests message
     utils_only = args.utilities
-    if not utils_only : 
+    if is_ci or not utils_only:
         msg = BColours.BOLD + "PROCESS Test Cases\n" + BColours.ENDC
         print(msg)
         log_msg = "\nPROCESS Test Cases\n\n"
@@ -44,43 +47,56 @@ def main(args):
         tests = dict()
 
         # Go through and test each case
-        for key in drs.keys():
-            
-            if "error_" in key:
+        if is_ci:
+            # CI case
+            for key in drs.keys():
+                if "error_" in key:
+                    pass
+                else:
 
-                if args.debug:
                     # initiate test object for the test case
                     tests[key] = TestCase(key, drs[key], difference, args)
-    
-    
+
                     # run test
+                    print("Starting test test_suite ==>  {0:<40}".format(key))
+                    tests[key].CI_run_test()
+
+                    # Output message to terminal
+                    print_message(key, tests[key])
+        else:
+            # Non-CI case
+            for key in drs.keys():
+                if "error_" in key:
+                    if args.debug:
+                        # initiate test object for the test case
+                        tests[key] = TestCase(key, drs[key], difference, args)
+        
+                        # run test
+                        tests[key].user_run_test()
+        
+                        # Output message to terminal
+                        print_message(key, tests[key])
+                    else:
+                        pass
+                else:
+                    # initiate test object for the test case
+                    tests[key] = TestCase(key, drs[key], difference, args)
+        
+                    # run test
+                    print("Starting test ==>  {0:<40}".format(key))
                     tests[key].user_run_test()
-    
+        
                     # Output message to terminal
                     print_message(key, tests[key])
     
-                else:
-                    pass
-            else:
-    
-                # initiate test object for the test case
-                tests[key] = TestCase(key, drs[key], difference, args)
-    
-                # run test
-                print("Starting test ==>  {0:<40}".format(key))
-                tests[key].user_run_test()
-    
-                # Output message to terminal
-                print_message(key, tests[key])
-    
-        errors = list()
-        for ky in drs.keys():
-            if "error_" not in ky:
-                if tests[ky].status == "ERROR":
-                    errors.append(ky)
-    
-        if len(errors) >= 1:
-            sys.exit("ERROR in test case(s) :: {0}".format(errors))
+            errors = list()
+            for ky in drs.keys():
+                if "error_" not in ky:
+                    if tests[ky].status == "ERROR":
+                        errors.append(ky)
+        
+            if len(errors) >= 1:
+                sys.exit("ERROR in test case(s) :: {0}".format(errors))
     
         # version number
         vrsn = get_version(tests)
@@ -89,7 +105,10 @@ def main(args):
         close_print(vrsn)
 
     # test utilities
-    test_utilities(drs, utils_only)
+    if is_ci:
+        test_utilities(drs)
+    else:
+        test_utilities(drs, utils_only)
 
     # move summary
     move_summary()
@@ -109,7 +128,9 @@ def main(args):
         print("\nTest run saved to folder 'test_{0}'".format(vrsn))
 
     # cleanup
-    if not utils_only:
+    if is_ci:
+        clean_up(drs)
+    elif not utils_only:
         clean_up(drs)
 
     # if option given to overwrite reference cases with new output.
