@@ -169,7 +169,7 @@ contains
       end if
 
       ! Centrepost
-      if ((itart == 1).and.(cplife < tlife)) then
+      if ( itart == 1 .and. cplife < tlife ) then
         cplife = min( cplife/cfactr, tlife )
       end if
 
@@ -375,11 +375,6 @@ contains
       else if ( i_tf_sup == 1 ) then
         n_sec_year = 3600.0D0 * 24.0D0 * 365.2425D0
         cplife = min( nflutfmax / ( neut_flux_cp * n_sec_year ), tlife )
-
-        write(*,*)  'neut_flux_cp',  neut_flux_cp * 1.0D-13, ' 10^13'
-        write(*,*)  'neut_flux_cp per year', n_sec_year*  neut_flux_cp * 1.0D-23, '*10^23'
-        write(*,*)  'CP full power year lifetime', cplife, 'year'
-        write(*,*)  ''
 
       ! Aluminium magnets CP lifetime
       ! For now, we keep the original def, developped for GLIDCOP magnets ...
