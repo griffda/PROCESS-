@@ -2502,7 +2502,7 @@ contains
        case ('cpstflnc')
           call parse_real_variable('cpstflnc', cpstflnc, 0.01D0, 30.0D0, &
                'Allowable centrepost neutron fluence (MW-yr/m2)')
-       case ('ccplife_input')
+       case ('cplife_input')
          call parse_real_variable('cplife_input', cplife_input, 0.001D0, 50.0D0, &
               'Full power centrepost lifetime (yr)')
        case ('decomf')

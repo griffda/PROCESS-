@@ -4350,7 +4350,7 @@ module cost_variables
   real(dp) :: cplife_input = 2.0D0
   !! User input full power year lifetime of the centrepost (years)
 
-  real(dp) :: cplife = -1.0D0
+  real(dp) :: cplife = 0.0D0
   !! Calculated full power year lifetime of centrepost (years)
 
   real(dp) :: cpstcst = 0.0D0
