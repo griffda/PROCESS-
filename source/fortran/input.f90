@@ -285,7 +285,8 @@ contains
       n_tf_graded_layers, n_tf_joints, n_tf_joints_contact, poisson_al, &
       poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact,&
       i_tf_plane_stress, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
-      i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti
+      i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti, &
+      i_cp_joints
 
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
@@ -1828,6 +1829,9 @@ contains
        case ('rho_tf_joints')
           call parse_real_variable('rho_tf_joints', rho_tf_joints, 0.0D0, 1.0D-2, &
                'TF joints surfacic resistivity')
+       case ('i_cp_joints')
+          call parse_int_variable('i_cp_joints', i_cp_joints, 0, 1, &
+               'Switch for CP demoutable joints type')
        case ('th_joint_contact')
           call parse_real_variable('th_joint_contact', th_joint_contact, 0.0D0, 1.0D0, &
                'TF sliding joints contact pad width')

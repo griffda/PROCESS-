@@ -1166,7 +1166,7 @@ subroutine tf_field_and_force()
         r_tf_inboard_mid, r_cp_top
     use tfcoil_variables, only: vforce, n_tf, taucq, sigvvall, cforce, &
         ritfc, bmaxtf, rbmax, i_tf_sup, f_vforce_inboard, vforce_outboard, &
-        tinstf, thicndut, dr_tf_wp, tfinsgap
+        tinstf, thicndut, dr_tf_wp, tfinsgap, i_cp_joints
 
     implicit none
 
@@ -1214,7 +1214,7 @@ subroutine tf_field_and_force()
     ! ***
     ! Case of a centrepost (itart == 1) with sliding joints (the CP vertical are separated from the leg ones)
     ! Rem SK : casing/insulation thickness not subtracted as part of the CP is genuinely connected to the legs..
-    if ( itart == 1 .and. i_tf_sup /= 1 ) then
+    if ( itart == 1 .and. i_cp_joints == 1 ) then
         
         ! Tricky trick to avoid dividing by 0 if the TF has no hole in it
         if ( abs(r_in_wp) < epsilon(r_in_wp) ) r_in_wp = 1.0D-9

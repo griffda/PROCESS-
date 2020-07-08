@@ -3099,6 +3099,14 @@ module tfcoil_variables
   real(dp) :: frholeg = 1.0D0
   !! Ouboard legs resistivity enhancement factor. Only used for `itart=1`.
   
+  integer :: i_cp_joints = -1 
+  !! Switch for CP demoutable joints type
+  !!  -= 0 : Clampled joints
+  !!  -= 1 : Sliding joints
+  !! Default value (-1) choses : 
+  !!   Sliding joints for resistive magnets (i_tf_sup = 0, 2)  
+  !!   Clampled joints for superconducting magents (i_tf_sup = 1)
+
   real(dp) :: rho_tf_joints = 2.5D-10
   !! TF joints surfacic resistivity [ohm.m^2]. Feldmetal joints assumed.
 
