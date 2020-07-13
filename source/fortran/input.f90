@@ -286,7 +286,7 @@ contains
       poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact,&
       i_tf_plane_stress, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
       i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti, &
-      i_cp_joints
+      i_cp_joints, n_tf_turn
 
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
@@ -1977,6 +1977,9 @@ contains
        case ('n_tf')
           call parse_real_variable('n_tf', n_tf, 0.0D0, 100.0D0, &
                'Number of TF coils')
+       case ('n_tf_turn')
+          call parse_real_variable('n_tf_turn', n_tf_turn, 0.0D0, 100.0D0, &
+               'number of turns per TF coil')
        case ('tftmp')
           call parse_real_variable('tftmp', tftmp, 0.01D0, 10.0D0, &
                'Peak TF coil He coolant temp. (K)')      

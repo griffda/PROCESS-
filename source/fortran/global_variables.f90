@@ -3108,7 +3108,7 @@ module tfcoil_variables
   !!   Clampled joints for superconducting magents (i_tf_sup = 1)
 
   real(dp) :: rho_tf_joints = 2.5D-10
-  !! TF joints surfacic resistivity [ohm.m^2]. Feldmetal joints assumed.
+  !! TF joints surfacic resistivity [ohm.m]. Feldmetal joints assumed.
 
   integer :: n_tf_joints_contact = 6
   !! Number of contact per sliding joint
@@ -3202,7 +3202,7 @@ module tfcoil_variables
   real(dp) :: tmpcry = 4.5D0
   !! coil temperature for cryogenic plant power calculation (K)
 
-  real(dp) :: turnstf = 0.0D0
+  real(dp) :: n_tf_turn = 0.0D0
   !! number of turns per TF coil
 
   real(dp) :: vdalw = 20.0D0
