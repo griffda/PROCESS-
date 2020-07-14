@@ -428,6 +428,7 @@ contains
 
        betath = 2.0D3*rmu0*echarge * (dene*ten + dnitot*tin)/(bt**2 + bp**2)
 
+       ! jlion: This "fact" model is heavily flawed for smaller temperatures! It is unphysical for a stellarator (high n low T)
        ! IPDG89 fast alpha scaling
        if (ifalphap == 0) then
           fact = min( 0.30D0, &
