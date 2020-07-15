@@ -63,8 +63,8 @@ class Process():
         self.call_solver()
         self.scan()
         self.show_errors()
-        self.append_input()
         self.finish()
+        self.append_input()
     
     def parse_args(self, args=None):
         """Parse the command-line arguments, such as the input filename.
@@ -202,6 +202,14 @@ class Process():
         """Report all informational/error messages encountered."""
         fortran.error_handling.show_errors()
 
+    def finish(self):
+        """Run the finish subroutine to close files open in the Fortran.
+        
+        Files being handled by Fortran must be closed before attempting to
+        write to them using Python, otherwise only parts are written.
+        """
+        fortran.init_module.finish()
+
     def append_input(self):
         """Append the input file to the output file and mfile."""
         # Read IN.DAT input file
@@ -216,10 +224,6 @@ class Process():
         with open(self.mfile_path, 'a') as mfile_file:
             mfile_file.write("***********************************************")
             mfile_file.writelines(input_lines)
-
-    def finish(self):
-        """Run the finish subroutine to close files open in the Fortran."""
-        fortran.init_module.finish()
 
 def main(args=None):
     """Run Process.
