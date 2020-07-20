@@ -45,6 +45,7 @@ def scenarios_run():
 
     # Teardown
     logger.info("End of scenarios regression run")
+    # TODO Need to log summary result of all tests
 
 @pytest.fixture(params=get_scenarios())
 def scenario(scenarios_run, request):

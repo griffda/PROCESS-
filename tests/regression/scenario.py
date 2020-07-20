@@ -14,7 +14,22 @@ from process_io_lib.mfile import MFile
 # Variables to ignore when comparing differences (set)
 EXCLUSIONS = {"normres", "nitvar", "itvar", "xcm"}
 
+# Set up logging
+# Set logger name to name of module
+# Set to debug so all logs are passed to handlers
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+# Create log handlers for console and file output at different levels
+s_handler = logging.StreamHandler()
+f_handler = logging.FileHandler('tests/regression/scenarios.log', mode='w')
+# Log to scenarios.log and overwrite on each test run
+s_handler.setLevel(logging.INFO)
+f_handler.setLevel(logging.DEBUG)
+
+# Add handlers to logger
+logger.addHandler(s_handler)
+logger.addHandler(f_handler)
 
 class Scenario():
     """A scenario for a single regression test."""
@@ -44,7 +59,7 @@ class Scenario():
         :rtype: bool
         """
         self.test_dir = test_dir
-        logger.info(f"Running {self.name} scenario")
+        logger.info(f"Running scenario: {self.name}")
 
         # Run Process using the input file in the "test_dir" directory,
         # catching any errors
@@ -165,26 +180,28 @@ class Scenario():
     def log_summary(self):
         """Log a summary of the scenario's test result."""
         # Log differences outside tolerance
-        logger.warning(f"Total of {len(self.over_tolerance_diff_items)} "
-            "differences outside tolerance.")
+        logger.warning(f"\nTotal of {len(self.over_tolerance_diff_items)} "
+            "differences outside tolerance")
 
-        # Create table
-        logger.warning(f"{'Variable':40}\t{'Ref':10}\t{'New':10}\t{'Diff (%)':10}")
-        logger.warning("-"*40)
-        for diff_item in self.over_tolerance_diff_items:
-            var_name, exp, obs, chg = diff_item
-            logger.warning(f"{var_name:40}\t{exp:10.3g}\t{obs:10.3g}\t"
-                f"{chg:10.2f}")
+        # Create table if there's content
+        if len(self.over_tolerance_diff_items) > 0:
+            logger.warning(f"{'Variable':20}\t{'Ref':>10}\t{'New':>10}\t"
+                f"{'Diff (%)':>10}")
+            logger.warning("-"*60)
+            for diff_item in self.over_tolerance_diff_items:
+                var_name, exp, obs, chg = diff_item
+                logger.warning(f"{var_name:20}\t{exp:10.3g}\t{obs:10.3g}\t"
+                    f"{chg:10.2f}")
 
         # Log variables in ref but not in new
-        logger.warning(f"There are {len(self.vars_unique_ref)} variables in "
-            "ref not in new:")
+        logger.warning(f"\nThere are {len(self.vars_unique_ref)} variables in "
+            "ref not in new")
         for var in self.vars_unique_ref:
             logger.warning(var)
 
         # Log variables in new but not in ref
-        logger.warning(f"There are {len(self.vars_unique_new)} variables in "
-            "new not in ref:")
+        logger.warning(f"\nThere are {len(self.vars_unique_new)} variables in "
+            "new not in ref")
         for var in self.vars_unique_new:
             logger.warning(var)
 
