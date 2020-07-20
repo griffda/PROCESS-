@@ -2,7 +2,7 @@
  "version":  [ "PROCESS version 1.0.16" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 254,
+ "n_errortypes": 258,
  "errors": [
   { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -103,7 +103,7 @@
   { "no": 97, "level": 2, "message": "SCTFCOIL: Negative TF coil current; ritfc forced to be positive..." },
   { "no": 98, "level": 2, "message": "SCTFCOIL: Negative winding pack thickness; increase tfcth or its lower bound" },
   { "no": 99, "level": 2, "message": "SCTFCOIL: Winding pack cross-section problem..." },
-  { "no": 100, "level": 2, "message": "SCTFCOIL: Negative cable space dimension; reduce thicknesses or raise cpttf" },
+  { "no": 100, "level": 2, "message": "SCTFCOIL: Negative cable space dimension; reduce conduit thicknesses or raise cpttf" },
   { "no": 101, "level": 2, "message": "SCTFCOIL: Negative cable space dimension" },
   { "no": 102, "level": 2, "message": "SCTFCOIL: Cable space area problem; artificially set rounded corner radius to 0" },
   { "no": 103, "level": 2, "message": "SCTFCOIL: Inconsistent TF leg toroidal thickness; should never happen!" },
@@ -257,7 +257,11 @@
   {"no": 251, "level": 3, "message": "LOADXC: Beta should not be in ixc if istell>0. Use Constraints 24 and 84 instead."},
   {"no": 252, "level": 3, "message": "CHECK: No CS precompression structure for bucked and wedged, use iprecomp = 0."},
   {"no": 253, "level": 3, "message": "CHECK: Use generalized plane strain for resistive magnets (i_tf_plane_stress = 0)."},
-  {"no": 254, "level": 3, "message": "CHECK: integer turns (i_tf_turns_integer = 1) not supported for REBCO (i_tf_sc_mat = 6)"}
+  {"no": 254, "level": 3, "message": "CHECK: integer turns (i_tf_turns_integer = 1) not supported for REBCO (i_tf_sc_mat = 6)"},
+  {"no": 255, "level": 3, "message": "CHECK: The TF coil WP thickness (dr_tf_wp) must be at least"},
+  {"no": 256, "level": 2, "message": "CHECK: Top CP radius larger that its value determined with plasma shape"},
+  {"no": 257, "level": 2, "message": "[tfcoil] : Helium temperature out of helium property fiting range [4-50] K"},
+  {"no": 258, "level": 2, "message": "[tfcoil] : Aluminium temperature out of the th conductivity fit range [15-60] K"}
 ]
 
 }

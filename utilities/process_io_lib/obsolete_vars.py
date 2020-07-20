@@ -45,5 +45,6 @@ OBS_VARS = {
     "thkwp":"dr_tf_wp",
     "leni":"t_cable",
     "leno":"t_turn",
-    "conductor_width":"t_conductor"
+    "conductor_width":"t_conductor",
+    "deltf":"tftsgap"
 }

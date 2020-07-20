@@ -40,8 +40,8 @@ contains
       shldlth, tftsgap, dr_tf_inner_bore, blnkith, thshield, rsldi, blnkoth, &
       rsldo, tfcth, tfthko, vgaptop, blnktth, gapsto, vgap, vvblgap, &
       r_vv_inboard_out, fwareaob, tfoffset, shldtth, rbld, iprecomp, &
-      r_tf_inboard_mid, shldtth, blbuith, r_vv_inboard_out, tfcth, &
-      gapsto, vgaptop, precomp, r_tf_inboard_mid, gapomin, vvblgap, &
+      r_tf_inboard_mid, r_tf_inboard_in, shldtth, blbuith, r_vv_inboard_out, &
+      tfcth, gapsto, vgaptop, precomp, r_tf_inboard_out, gapomin, vvblgap, &
       fwareaob, blnktth, rbld, blnkoth, tfoffset, iprecomp, plsepo, tfthko, &
       rsldo, vgap, gapoh, fwoth, ohcth, shldoth, scraplo, fwith, blbpith, &
       tfootfi, blbuoth, gapds, fwareaib, fseppc, scrapli, blbmith, shldith, &
@@ -67,7 +67,8 @@ contains
     !  Local variables
 
 
-    real(dp) :: hbot,hfw,htop,r1,r2,r3,radius,r_tf_outboard_midl,vbuild, rbldtotf, deltf, vbuild1
+    real(dp) :: hbot,hfw,htop,r1,r2,r3,radius,r_tf_outboard_midl,vbuild, vbuild1
+
     real(dp) :: fwtth
 
     integer :: ripflag = 0
@@ -94,39 +95,64 @@ contains
       precomp = 0.0D0
     end if
 
+    ! Inboard side inner radius [m]
+    r_tf_inboard_in = bore + ohcth + precomp + gapoh
+
     ! Issue #514 Radial dimensions of inboard leg
     ! Calculate tfcth if dr_tf_wp is an iteration variable (140)
-    if (any(ixc(1:nvar) == 140) ) then
-        tfcth = dr_tf_wp + casthi + thkcas
-    endif
+    if ( any(ixc(1:nvar) == 140) ) then
+    
+        ! SC TF coil thickness defined using its maximum (diagonal)
+        if ( i_tf_sup == 1 ) then
+           tfcth = ( r_tf_inboard_in + dr_tf_wp + casthi + thkcas ) / cos(pi/n_tf) &
+                 - r_tf_inboard_in
 
-    ! Radial build to tfcoil
-    r_tf_inboard_mid = bore + ohcth + precomp + gapoh + 0.5D0*tfcth
-    rbldtotf = r_tf_inboard_mid + 0.5D0*tfcth
+         ! Rounded resistive TF geometry
+        else
+            tfcth = dr_tf_wp + casthi + thkcas
+        end if
 
-    ! Additional gap spacing due to flat surfaces of TF
-    if ( i_tf_sup == 1 ) then
-      deltf = rbldtotf * ((1.0d0 / cos(pi/n_tf)) - 1.0d0) + tftsgap
-    else
-      deltf = tftsgap
-    end if 
+    end if
+
+    ! Radial build to tfcoil middle [m]
+    r_tf_inboard_mid = r_tf_inboard_in + 0.5D0*tfcth
+
+    ! Radial build to tfcoil plasma facing side [m]
+    r_tf_inboard_out = r_tf_inboard_in + tfcth
 
     ! Radius of the centrepost at the top of the machine
     if ( itart == 1 ) then
+    
+      ! If r_cp_top is used as iteration variable
+      if ( any(ixc(1:nvar) == 174) ) then
 
-       r_cp_top = rmajor - rminor * triang - ( deltf + thshield + shldith + &
-                  vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
-       r_cp_top = max( r_cp_top, ( r_tf_inboard_mid + 0.5D0*tfcth ) * 1.01D0 ) 
+          ! Error if if r_cp_top is larger than the top plasma radius + shields
+          if ( r_cp_top > rmajor - rminor * triang - ( tftsgap + thshield +& 
+               shldith + vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop ) then
+
+             fdiags(1) = r_cp_top
+             call report_error(256)
+          end if
+
+       ! Otherwise calculate r_cp_top from plasma shape
+       else
+          r_cp_top = rmajor - rminor * triang - ( tftsgap + thshield + shldith + &
+                     vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
+          r_cp_top = max( r_cp_top, r_tf_inboard_out * 1.01D0 ) 
+
+          ! lvl 3 error if r_cp_top is negative 
+          ! Not sure it is usefull with the max() statment ...
+          ! To be removed ?
+          if (r_cp_top <= 0.0D0) then
+            fdiags(1) = r_cp_top
+            call report_error(115)
+          end if
        
-       if (r_cp_top <= 0.0D0) then
-         fdiags(1) = r_cp_top ; call report_error(115)
-       end if
-    else
-       r_cp_top = r_tf_inboard_mid + 0.5D0*tfcth
-    end if 
+       end if 
+    end if
 
     !  Radial position of vacuum vessel [m]
-    r_vv_inboard_out = rbldtotf + deltf + thshield + gapds + ddwi
+    r_vv_inboard_out = r_tf_inboard_out + tftsgap + thshield + gapds + ddwi
 
     ! Radial position of the plasma facing side of inboard neutronic shield
     r_sh_inboard_out = r_vv_inboard_out + shldith
@@ -291,9 +317,9 @@ contains
     call obuild(outfile,'TF coil inboard leg',tfcth,radius,'(tfcth)')
     call ovarre(mfile,'TF coil inboard leg (m)','(tfcth)',tfcth)
     
-    radius = radius + deltf
-    call obuild(outfile,'Gap',deltf,radius,'(deltf)')
-    call ovarre(mfile,'TF coil inboard leg insulation gap (m)','(deltf)',deltf)
+    radius = radius + tftsgap
+    call obuild(outfile,'Gap',tftsgap,radius,'(tftsgap)')
+    call ovarre(mfile,'TF coil inboard leg insulation gap (m)','(tftsgap)',tftsgap)
 
     radius = radius + thshield
     call obuild(outfile,'Thermal shield',thshield,radius,'(thshield)')

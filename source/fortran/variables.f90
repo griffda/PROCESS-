@@ -1426,14 +1426,20 @@ module build_variables
   real(dp) :: r_sh_inboard_out = 0.0D0
   !! Radial plasma facing side position of inboard neutronic shield [m]
 
+  real(dp) :: r_tf_inboard_in = 0.0D0
+  !! Mid-plane Outer radius of inner of inboard TF leg (m)
+
   real(dp) :: r_tf_inboard_mid = 0.0D0
+  !! Mid-plane Outer radius of centre of inboard TF leg (m)
+       
+  real(dp) :: r_tf_inboard_out = 0.0D0
   !! Mid-plane Outer radius of centre of inboard TF leg (m)
        
   real(dp) :: r_tf_outboard_mid = 0.0D0
   !! radius to the centre of the outboard TF coil leg (m)
 
   real(dp) :: r_cp_top = 0.0D0
-  !! Top outer radius of centre of the centropost (ST only) (m)
+  !! Top outer radius of the centropost (ST only) (m)
 
   real(dp) :: dr_tf_inner_bore = 0.0D0
   !! TF coil horizontal inner bore (m)

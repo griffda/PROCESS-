@@ -120,16 +120,16 @@ module tfcoil_variables
   !! total stored energy in the toroidal field (GJ)
 
   real(dp) :: farc4tf = 0.7D0
-  !! farc4tf /0.7/ : factor to size height of point 4 on TF coil
+  !! factor to size height of point 4 on TF coil
   real(kind(1.0D0)) :: b_crit_upper_nbti = 14.86D0
-  !! b_crit_upper_nbti /14.86/ : upper critical field of GL_nbti
+  !! upper critical field of GL_nbti
   real(kind(1.0D0)) :: t_crit_nbti = 9.04D0
-  !! t_crit_nbti /9.04/ : critical temperature of GL_nbti
+  !! critical temperature of GL_nbti
   real(kind(1.0D0)) :: max_force_density = 0.0D0
-  !! max_force_density :  Maximal (WP averaged) force density in TF coils at 1 point. (MN/m3)
+  !! Maximal (WP averaged) force density in TF coils at 1 point. (MN/m3)
   real(kind(1.0D0)) :: fcutfsu = 0.69D0
-  !! fcutfsu /0.69/ : copper fraction of cable conductor (TF coils)
-  !!                  (iteration variable 59)
+  !! copper fraction of cable conductor (TF coils)
+  !! (iteration variable 59)
   real(dp) :: fhts = 0.5D0
   !! technology adjustment factor for critical current density fit for isumat..=2 
   !! Bi-2212 superconductor, to describe the level of technology assumed (i.e. to 
@@ -157,6 +157,11 @@ module tfcoil_variables
   !! Default setting for backward compatibility 
   !!   if i_tf_turns_integer = 0 : Double rectangular
   !!   if i_tf_turns_integer = 1 : Rectangular 
+
+  integer :: i_tf_case_geom = 0
+  !! Switch for TF case geometry selection
+  !!   0 : Circular front case (ITER design)
+  !!   1 : Straight front case
 
   integer :: i_tf_turns_integer = 0
   !! Switch for TF coil integer/non-integer turns:
@@ -195,7 +200,7 @@ module tfcoil_variables
   integer :: n_layer = 20
   !! Number of layers in TF coil. Only used if `i_tf_turns_integer=1`
   
-  integer :: n_rad_per_layer = 50
+  integer :: n_rad_per_layer = 100
   !! Size of the arrays per layers storing the radial dependent stress 
   !! quantities (stresses, strain displacement etc..)
 
@@ -425,7 +430,7 @@ module tfcoil_variables
 
   real(dp) :: rhotfbus = -1.0D0 ! 2.5D-8
   !! Resistivity of a TF coil bus (Ohm-m). Default value takes the same res as the leg one
-  
+
   real(dp) :: frhocp = 1.0D0
   !! Centrepost resistivity enhancement factor. For `itart=0`, this factor 
   !! is used for the whole magnet 
@@ -535,14 +540,14 @@ module tfcoil_variables
   !! max voltage across TF coil during quench (kV) (`iteration variable 52`)
 
   real(dp) :: vforce = 0.0D0
-  !! vertical separating force on inboard leg/coil (N)
+  !! vertical tension on inboard leg/coil (N)
   
   real(dp) :: f_vforce_inboard = 0.5D0
-  !! Fraction of the total vertical force taken by the TF inboard leg
+  !! Fraction of the total vertical force taken by the TF inboard leg tension
   !! Not used for resistive `itart=1` (sliding joints)
 
   real(dp) :: vforce_outboard = 0.0D0
-  !! Vertical separating force on out board leg/coil (N)
+  !! Vertical tension on outboard leg/coil (N)
 
   real(dp) :: vftf = 0.4D0
   !! coolant fraction of TFC 'cable' (`i_tf_sup=1`), or of TFC leg (`i_tf_ssup=0`)
@@ -659,7 +664,7 @@ module tfcoil_variables
 
   real(dp) :: presleg = 0.0D0
   !! Summed resistive power in the TF coil legs [W]. Remain 0 if `itart=0`.
-    
+  
   real(dp) :: ptempalw = 473.15D0   ! 200 C
   !! maximum peak centrepost temperature (K) (`constraint equation 44`)
 
@@ -688,7 +693,7 @@ module tfcoil_variables
   !! peak centrepost temperature (K)
   
   real(dp) :: vcool = 20.0D0
-  !! max centrepost coolant flow speed at midplane (m/s) (`iteration variable 70`)
+  !! inlet centrepost coolant flow speed at midplane (m/s) (`iteration variable 70`)
 
   real(dp) :: vol_cond_cp = 0.0D0
   !! Exact conductor volume in the centrepost (m3)

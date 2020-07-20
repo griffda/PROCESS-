@@ -288,7 +288,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use current_drive_variables, only: pinjimw, bootipf, pinjemw, pinjmw, &
-        ftritbm
+        ftritbm, plasipf
 		use div_kal_vars, only: netau_sol
 		use error_handling, only: idiags, fdiags, report_error
     use impurity_radiation_module, only: impurity_arr, nimp, element2index, &
@@ -577,6 +577,7 @@ contains
     !------------------------------------------------
     !replacing parametrised bootstrap models
     bootipf= mhd%fbs
+    plasipf = bootipf
 
     !See #645 for discussion on fvsbrnni
     fvsbrnni = mhd%f_ni
