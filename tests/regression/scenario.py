@@ -136,7 +136,7 @@ class Scenario():
         new_vars = new_vars - EXCLUSIONS
 
         # Set difference and intersection
-        self.unique_to_new = new_vars - ref_vars
+        self.vars_unique_new = new_vars - ref_vars
         self.vars_unique_ref = ref_vars - new_vars
         self.vars_common_both = new_vars & ref_vars
         
