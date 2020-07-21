@@ -433,13 +433,13 @@ module stellarator_configuration
     
         !  Parse the json file
     
-        filename = INSTALLDIR//'/bin/stella_conf.json'
+        filename = 'stella_conf.json'
         stellafile => fson_parse(trim(filename))
     
         !  Extract information arrays from the file
     
-        call fson_get(stellafile, "name", stella_config_json%a1)
-        call fson_get(stellafile, "symmetry", stella_config_json%a2)
+        call fson_get(stellafile, "name", stella_config_json%name)
+        call fson_get(stellafile, "symmetry", stella_config_json%symmetry)
 
         call fson_get(stellafile, "coilspermodule", stella_config_json%coilspermodule)
         call fson_get(stellafile, "rmajor_ref", stella_config_json%rmajor_ref)
@@ -489,6 +489,7 @@ module stellarator_configuration
     select case (index)
     case(1)
         ! Error reading in a json attribute
+        ! Not used yet because I don't know how.
         write(*,*)'ERROR in initialization of stellarator config. Missing json key: ',keyname
 
 

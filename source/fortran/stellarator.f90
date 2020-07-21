@@ -49,6 +49,7 @@ contains
     use power_module, only: tfpwr, power1, acpow, power2
     use vacuum_module, only: vaccall
     use constants, only: nout
+
     implicit none
 
     !  Arguments
@@ -250,12 +251,18 @@ contains
     use tfcoil_variables, only: n_tf
     use stellarator_variables, only: istell
     use stellarator_configuration, only: new_stella_config
+    use numerics, only: ixc
     implicit none
 
     config = new_stella_config(istell)
     
+    ! If aspect ratio is not in ixc set it to default value
+    ! Or when you call it the first time
+    if(all(ixc .ne. 1) .or. first_call) then
+      aspect = config%aspect_ref
+    end if
+
     ! Set the rminor radius as result here.
-    aspect = config%aspect_ref ! Overwrite the aspect ratio as this should not be scaled for now.
     rminor = rmajor/aspect
     eps = 1.0D0/aspect
 
@@ -290,7 +297,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use physics_variables, only: aspect, rmajor, rminor, sarea, sareao, &
-      vol, xarea
+      vol, xarea, bt
 		use constants, only: pi
     implicit none
 
@@ -308,7 +315,7 @@ contains
     !  Cross-sectional area, averaged over toroidal angle
     sareao = 0.5D0*sarea  !  Used only in the divertor model; approximate as for tokamaks
 
-    print* , "Volume: ",vol, " Major Radius: ",rmajor, " Minor Radius: ",rminor, " Calc vol: ",2*pi**2*rminor**2*rmajor
+    print* , "Volume: ",vol, " Major Radius: ",rmajor, " Minor Radius: ",rminor, " bt: ", bt
 
   end subroutine stgeom
 
@@ -377,7 +384,7 @@ contains
     ! that ensures that there is enough space between coils and plasma.
     required_radial_space = (tfcth/2.0D0 + gapds + ddwi + shldith + blnkith + fwith + scrapli)
 
-    available_radial_space = config%min_plasma_coil_distance * f_a
+    available_radial_space = f_r*(config%rminor_ref+config%min_plasma_coil_distance) - rminor
 
 
 
@@ -687,7 +694,12 @@ contains
 
     !  Calculate density limit
 
-    call stdlim(bt,powht,rmajor,rminor,dnelimt)
+    !call stdlim(bt,powht,rmajor,rminor,dnelimt)
+    !print *, "Sudo limit: ",dnelimt
+    call stdlim_ecrh(170d9,bt,dnelimt)
+    ! This assumes 170GHz Gyrotrons
+
+    print *, "ECRH density limit", dnelimt
 
     !  Calculate transport losses and energy confinement time using the
     !  chosen scaling law
@@ -711,8 +723,7 @@ contains
          taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
 
     !  Calculate beta limit. Does nothing atm so commented out
-    
-    call stblim(betalim)
+    !call stblim(betalim)
 
 
   end subroutine stphys
@@ -1616,6 +1627,55 @@ contains
     dlimit = dnlamx * dene/dnla
 
   end subroutine stdlim
+
+  subroutine stdlim_ecrh(gyro_frequency_max,bt,dlimit_ecrh)
+
+   !! Routine to calculate the density limit due to an ECRH heating scheme on axis
+   !! author: J Lion, IPP Greifswald
+   !! gyro_frequency_max     : input real : Maximal available Gyrotron frequency (1/s) NOT (rad/s)
+   !! bt  : input real : Maximal magnetic field on axis (T)
+   !! dlimit_ecrh : output real : Maximum volume-averaged plasma density by ECRH constraints (/m3)
+   !! This routine calculates the density limit due to an ECRH heating scheme on axis
+   !
+   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   use physics_variables, only: ne0
+   use const_and_precisions, only: pi
+   use physics_variables, only: ipedestal,alphan
+   implicit none
+
+   !  Arguments
+
+   real(dp), intent(in) :: bt,gyro_frequency_max
+   real(dp), intent(out) :: dlimit_ecrh
+
+   !  Local variables
+
+   real(dp) :: gyro_frequency,ne0_max
+
+   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   gyro_frequency = 1.76d11 * bt
+
+   ! Restrict it to the maximal available gyrotron frequency
+   gyro_frequency = min(gyro_frequency,gyro_frequency_max * 2.0d0*pi)
+
+   !                 me*e0/e^2       * w^2
+   ne0_max = max(0.0d0, 3.142077d-4 * gyro_frequency**2) * 1.0d-20
+
+   !  Now calculate the result so that it applies to the volume-averaged
+   !  electron density
+   ! Check if parabolic profiles are used:
+   if (ipedestal == 0) then
+      ! Parabolic profiles used, use analytical formula:
+      dlimit_ecrh = ne0_max/(1+alphan)
+   else
+      print *,"WARNING: It was used ipedestal = 1 in a stellarator routine. "
+      print *,"PROCESS will pretend it got parabolic profiles (ipedestal = 0)."
+      dlimit_ecrh = ne0_max/(1+alphan)
+   end if
+
+  end subroutine stdlim_ecrh
+
 
   subroutine stblim(betamx)
 
