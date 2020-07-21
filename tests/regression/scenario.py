@@ -4,6 +4,7 @@ import logging
 import sys
 import os
 import shutil
+import re
 
 # TODO This isn't good: put MFile into process package?
 sys.path.append(os.path.join(os.path.dirname(__file__), '../utilities/'))
@@ -11,8 +12,12 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../utilities/'))
 from process import process
 from process_io_lib.mfile import MFile
 
-# Variables to ignore when comparing differences (set)
-EXCLUSIONS = {"normres", "nitvar", "itvar", "xcm"}
+# Variables and patterns to ignore when comparing differences (set and list)
+EXCLUSIONS = {"itvar", "xcm"}
+EXCLUSION_PATTERNS = [
+    r"normres\d{3}", # normres and 3 digits
+    r"nitvar\d{3}" # nitvar and 3 digits
+    ]
 
 # Set up logging
 # Set logger name to name of module
@@ -134,6 +139,11 @@ class Scenario():
         # interested in
         ref_vars = ref_vars - EXCLUSIONS
         new_vars = new_vars - EXCLUSIONS
+
+        # Filter out excluded variable patterns from the sets
+        for pattern in EXCLUSION_PATTERNS:
+            ref_vars = {var for var in ref_vars if not re.match(pattern, var)}
+            new_vars = {var for var in new_vars if not re.match(pattern, var)}
 
         # Set difference and intersection
         self.vars_unique_new = new_vars - ref_vars
