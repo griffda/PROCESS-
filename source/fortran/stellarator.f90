@@ -15,6 +15,7 @@ module stellarator_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   use, intrinsic :: iso_fortran_env, only: dp=>real64
   use stellarator_configuration, only: stella_config
+
   implicit none
 
 
@@ -558,7 +559,7 @@ contains
 
     !  Local variables
 
-    real(dp) :: fusrat,pddpv,pdtpv,pdhe3pv,powht,sbar,sigvdt,zion
+    real(dp) :: fusrat,pddpv,pdtpv,pdhe3pv,powht,sbar,sigvdt,zion,eff_chi, neo_chi
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !  Calculate plasma composition
@@ -699,7 +700,7 @@ contains
     call stdlim_ecrh(170d9,bt,dnelimt)
     ! This assumes 170GHz Gyrotrons
 
-    print *, "ECRH density limit", dnelimt
+    print *, "ECRH density limit", dnelimt, " Current density:",dene*1.0d-20
 
     !  Calculate transport losses and energy confinement time using the
     !  chosen scaling law
@@ -724,6 +725,14 @@ contains
 
     !  Calculate beta limit. Does nothing atm so commented out
     !call stblim(betalim)
+
+
+    ! Calculate an effective chi for a sanity check:
+    eff_chi = st_calc_eff_chi()
+    print *, "Effective chi: ",eff_chi," Nominator: ",falpha*palppv-pcoreradpv
+
+    neo_chi = st_calc_neo_chi()
+    print *, "Neoclassical chi: ",neo_chi
 
 
   end subroutine stphys
@@ -1675,6 +1684,67 @@ contains
    end if
 
   end subroutine stdlim_ecrh
+
+  real(dp) function st_calc_eff_chi()
+   !! Routine to calculate a maximal allowable chi given the profiles used
+   !! author: J Lion, IPP Greifswald
+   !! st_calc_eff_chi : output real : The needed chi to fulfil heat tranposrt in 1Dish (m2/s)
+   !! This routine calculates a maximal allowable chi given the profiles. It uses
+   !  an approximation of the 1D energy continuity equation with a constant chi
+   !
+   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   use physics_variables, only: Te0,ne0,falpha,palppv,pcoreradpv,alphan,alphaT,vol,sarea,rminor
+   use const_and_precisions, only: e_
+   use impurity_radiation_module, only: coreradius
+
+   implicit none
+
+   !  Arguments
+
+   !  Local variables
+
+   real(dp) :: chi, volscaling,surfacescaling,nominator,denominator
+
+   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   volscaling = vol * f_r * (coreradius*rminor/config%rminor_ref)**2
+   surfacescaling = sarea * f_r * (coreradius*rminor/config%rminor_ref)
+
+   nominator = (falpha*palppv - pcoreradpv) *volscaling
+
+   denominator = (3 *ne0*e_*Te0 * 1.0d3 *(0*alphan+alphat)*coreradius* &
+                  (1-coreradius**2)**(alphan+alphat-1))*surfacescaling * 1.0d-6
+
+   st_calc_eff_chi = nominator/denominator
+
+  end function st_calc_eff_chi
+
+  real(dp) function st_calc_neo_chi()
+
+  !! Routine to calculate an approximate chi using neoclassical monoenergetic transport coefficients
+  !! author: J Lion, IPP Greifswald
+  !! st_calc_neo_chi : output real : The approximated 1/nu chi from neoclassical theory (m2/s)
+  !! This routine calculates an approximate chi using neoclassical monoenergetic transport coefficients.
+  !! Beidler, C. Nucl. Fus. (2011)
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   use neoclassics_module, only: neoclassics,init_neoclassics
+
+   implicit none
+
+   !  Arguments
+
+   !  Local variables
+   type(neoclassics) :: neo_at_rhocore
+
+   neo_at_rhocore = init_neoclassics(0.6d0)
+
+   st_calc_neo_chi = neo_at_rhocore%q_flux(1)/(neo_at_rhocore%profiles%densities(1)* &
+                     neo_at_rhocore%profiles%dr_temperatures(1))
+
+   print *, neo_at_rhocore%q_flux(1), neo_at_rhocore%profiles%densities(1),neo_at_rhocore%profiles%dr_temperatures(1)
+ end function st_calc_neo_chi
+
 
 
   subroutine stblim(betamx)
