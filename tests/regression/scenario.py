@@ -189,30 +189,35 @@ class Scenario():
 
     def log_summary(self):
         """Log a summary of the scenario's test result."""
+        # Order variables alphabetically
+        sorted_diffs = sorted(self.over_tolerance_diff_items)
+        sorted_ref_vars = sorted(self.vars_unique_ref)
+        sorted_new_vars = sorted(self.vars_unique_new)
+        
         # Log differences outside tolerance
-        logger.warning(f"\nTotal of {len(self.over_tolerance_diff_items)} "
+        logger.warning(f"\nTotal of {len(sorted_diffs)} "
             "differences outside tolerance")
 
         # Create table if there's content
-        if len(self.over_tolerance_diff_items) > 0:
+        if len(sorted_diffs) > 0:
             logger.warning(f"{'Variable':20}\t{'Ref':>10}\t{'New':>10}\t"
                 f"{'Diff (%)':>10}")
             logger.warning("-"*60)
-            for diff_item in self.over_tolerance_diff_items:
+            for diff_item in sorted_diffs:
                 var_name, exp, obs, chg = diff_item
                 logger.warning(f"{var_name:20}\t{exp:10.3g}\t{obs:10.3g}\t"
                     f"{chg:10.2f}")
 
         # Log variables in ref but not in new
-        logger.warning(f"\nThere are {len(self.vars_unique_ref)} variables in "
+        logger.warning(f"\nThere are {len(sorted_ref_vars)} variables in "
             "ref not in new")
-        for var in self.vars_unique_ref:
+        for var in sorted_ref_vars:
             logger.warning(var)
 
         # Log variables in new but not in ref
-        logger.warning(f"\nThere are {len(self.vars_unique_new)} variables in "
+        logger.warning(f"\nThere are {len(sorted_new_vars)} variables in "
             "new not in ref")
-        for var in self.vars_unique_new:
+        for var in sorted_new_vars:
             logger.warning(var)
 
     def get_diff_items(self):
