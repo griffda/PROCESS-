@@ -175,12 +175,12 @@ class Scenario():
                 continue
             
             # Calulate percentage change
-            # TODO This could be made more intelligent in the case of zero or
-            # very small absolute changes
-            if obs == 0 or exp == 0:
+            if exp == 0:
+                # Relative change is nonsensical
                 chg = 0.0
             else:
-                chg = (obs / exp - 1) * 100
+                # Cater for negative changes too
+                chg = ((obs - exp) / abs(exp)) * 100
 
             # Create "expected and observed" comparison tuple
             # TODO Should this be a class?
