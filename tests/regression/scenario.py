@@ -220,6 +220,20 @@ class Scenario():
         for var in sorted_new_vars:
             logger.warning(var)
 
+    def overwrite_ref_files(self):
+        """Overwrite reference MFILES and OUT files.
+        
+        When a change to the scenario's reference result is justified, overwrite
+        the ref.MFILE.DAT and ref.OUT.DAT files.
+        """
+        # Copy the newly output MFILE.DAT and OUT.DAT from the test dir 
+        # (temporary), and overwrite the ref.MFILE.DAT and ref.OUT.DAT in the 
+        # reference directory (permanent)
+        for file in ["MFILE", "OUT"]:
+            src_path = self.test_dir / (file + ".DAT")
+            dst_path = self.ref_dir / ("ref." + file + ".DAT")
+            shutil.copyfile(src_path, dst_path)
+
     def get_diff_items(self):
         """Return list of diffs that exceed the tolerance.
 

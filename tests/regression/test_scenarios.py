@@ -19,6 +19,10 @@ from scenario import Scenario
 # customisation?
 logger = logging.getLogger(__name__)
 
+# Crude switch to overwrite reference MFILE and OUT files
+# TODO: Do this properly with a command-line arg
+OVERWRITE_REF = False
+
 def get_scenarios():
     """Generator to yield the scenarios that need to be tested.
 
@@ -134,6 +138,10 @@ def test_scenario(scenario, tmp_path):
 
     # Log summary result of test
     scenario.log_summary()
+
+    # Overwrite reference MFILE and OUT files (ref.MFILE.DAT and ref.OUT.DAT)
+    if OVERWRITE_REF:
+        scenario.overwrite_ref_files()
 
     # Check no diffs outside the tolerance have been found
     assert len(scenario.get_diff_items()) == 0
