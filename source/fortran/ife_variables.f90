@@ -185,7 +185,7 @@ module ife_variables
     !! IFE heat transport system electrical pump power (MW)
   
     integer :: ife = 0
-    !! Switch for IFE option (set via `device.dat`):
+    !! Switch for IFE option:
     !!
     !! - =0 use tokamak, RFP or stellarator model
     !! - =1 use IFE model

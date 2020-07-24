@@ -540,72 +540,14 @@ end subroutine initial
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine devtyp
-
-    !! Routine to determine which type of device is to be modelled
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! None
-    !! This routine uses the contents of an input file,
-    !! <CODE>device.dat</CODE>, to determine which type of device
-    !! is to be modelled. If the file is not present in the current
-    !! directory, a standard tokamak model is assumed.
-    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use error_handling, only: report_error
+    !! Set icase description based on device type
     use global_variables, only: icase
     use ife_variables, only: ife
-    use stellarator_variables, only: istell
-
     implicit none
 
-    !  Local variables
-
-    integer :: idev
-    integer :: iost
-    logical :: iexist
-    character(len = 20) :: devFile
-    character(len = 5) :: line
-    line = ' '
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    devFile = 'device.dat'
-    istell = 0
-    ife    = 0
-    idev   = 0      ! Default value MK
-
-    !  Read a second input file. If the file does not exist or
-    !  blank, then the standard tokamak option is assumed.
-
-    inquire(file = devFile, exist = iexist)
-
-    if (iexist) then
-        open(unit = 101, file = 'device.dat', status = 'old')
-        DO
-            read(101,'(A)', IOSTAT = iost) line
-            read(line, '(I2)') idev
-            if(iost < 0 .or. idev > 0) exit
-        END DO
-        close(unit = 101)
-
-        !  Set relevant switch
-
-        select case (idev)
-
-        case (1)  !  Stellarator model
-            istell = 1
-
-        case (2)  !  ! ISSUE #508 Remove RFP option
-            call report_error(228)
-        case (3)  !  Inertial Fusion Energy model
-            ife = 1
-            icase = 'Inertial Fusion model'
-
-        case default  !  Tokamak model
-            continue
-
-        end select
+    if (ife == 1) then
+        icase = 'Inertial Fusion model'
     end if
-
 end subroutine devtyp
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

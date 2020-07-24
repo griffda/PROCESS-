@@ -228,7 +228,8 @@ contains
       pifecr, ifedrv, v2dr, chmatf, v1dr, v1matf, dcdrv1, chdzu, dcdrv2, &
       ifetyp, fwdzl, htpmw_ife, uccarb, v3matf, fbreed, edrive, ptargf, cdriv2, &
       fburn, fwdzu, etave, v3dr, uctarg, shdzl, ucflib, v3dzl, v1dzu, v2dzl, &
-      chdzl, chrad, cdriv1, tgain, somtdr, v2matf, rrmax, bldr, frrmax , blmatf
+      chdzl, chrad, cdriv1, tgain, somtdr, v2matf, rrmax, bldr, frrmax, &
+      blmatf, ife
     use impurity_radiation_module, only: coreradius, nimp, impvar, fimpvar, &
       coreradiationfraction, impdir, fimp
     use numerics, only: factor, boundl, minmax, neqns, nvar, epsfcn, ixc, &
@@ -3072,6 +3073,9 @@ contains
 
        !  Inertial Fusion Energy plant settings
 
+       case ('ife')
+          call parse_int_variable('ife', ife, 0, 1, &
+                    'Switch for Inertial Fusion Energy model')
        case ('bldr')
           call parse_real_variable('bldr', bldr, 0.0D0, 10.0D0, &
                     'IFE blanket radial thickness (m)')
