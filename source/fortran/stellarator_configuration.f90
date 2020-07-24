@@ -132,7 +132,10 @@ module stellarator_configuration
        real(dp) max_radial_force_density
        !  Maximal radial force density of the coil set [MN/m]
 
-
+       real(dp), dimension(:), allocatable :: D11_star_mono_input
+       !  The monoenergetic radial transport coefficients normalized by the plateau value.
+       real(dp), dimension(:), allocatable :: nu_star_mono_input
+       !  The monoenergetic radial transport coefficients normalized by the plateau value.
  
     end type stella_config
  
@@ -469,10 +472,12 @@ module stellarator_configuration
         call fson_get(stellafile, "max_lateral_force_density", stella_config_json%max_lateral_force_density)
         call fson_get(stellafile, "max_radial_force_density", stella_config_json%max_radial_force_density)
 
+        call fson_get(stellafile, "D11_star_mono_input", stella_config_json%D11_star_mono_input)
+        call fson_get(stellafile, "nu_star_mono_input", stella_config_json%nu_star_mono_input)
+
 
 
         !  Clean up
-    
         call fson_destroy(stellafile)
     
     end function stella_config_json

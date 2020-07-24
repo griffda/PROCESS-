@@ -26,28 +26,43 @@ module neoclassics_module
         character, dimension(4) :: species = (/"e","D","T","a"/)
         !  Species that are considered
         real(dp), dimension(4) :: densities
-        !  Densities of the species that are considered
+        !  Densities of the species that are considered [/m3]
         real(dp), dimension(4) :: temperatures
-        !  Densities of the species that are considered
+        !  Temperature of the species that are considered [J]
         real(dp), dimension(4) :: dr_densities
-        !  Densities of the species that are considered
+        !  Radial derivative of the density of the species [/m3]
         real(dp), dimension(4) :: dr_temperatures
-        !  Densities of the species that are considered
+        !  Radial derivative of the temperature of the species [J]
     end type profile_values
 
     type, public :: neoclassics
         type(gauss_laguerre) :: gauss_laguerre
         !  Gauss Laguerre object
         real(dp), dimension(4,no_roots) :: nu = 0
-        !  90-degree deflection frequency 
+        !  90-degree deflection frequency on GL roots
+        real(dp), dimension(4,no_roots) :: nu_star = 0
+        !  Dimensionless 90-degree deflection frequency on GL roots
         real(dp), dimension(4,no_roots) :: vd = 0
-        !  Drift velocity
-        real(dp) :: Er = 0
-        !  Radial electrical field
+        !  Drift velocity on GL roots
+        real(dp), dimension(4,no_roots) :: KT = 0
+        !  Thermal energy on GL roots
+        real(dp) :: palphafactor = 0.0
+        !  The "g" coupling factor from alpha power to electrons
+        real(dp) :: Er = 0.0
+        !  Radial electrical field [V/m]
+        real(dp) :: iota = 1.0d0
+        !  Iota (1/safety factor)
         real(dp), dimension(no_roots) :: lnlambda = 0
-        !  Coulomb Logarithm
+        !  Coulomb Logarithm [1]
         real(dp), dimension(4,no_roots) :: D11_mono = 0
         !  Radial monoenergetic transport coefficient
+        real(dp), dimension(:), allocatable :: nu_star_mono_input
+        !  Radial monoenergetic transport coefficient as given by the stellarator input json
+        real(dp), dimension(:), allocatable :: D11_star_mono_input
+        !  Radial monoenergetic transport coefficient as given by the stellarator input json
+        real(dp), dimension(:), allocatable :: D13_star_mono_input
+        !  Toroidal monoenergetic transport coefficient as given by the stellarator
+        !  input json file
         real(dp), dimension(4) :: D111 = 0
         !  Radial integrated transport coefficient (n=1)
         real(dp), dimension(4) :: D112 = 0
@@ -55,7 +70,7 @@ module neoclassics_module
         real(dp), dimension(4) :: D113 = 0
         !  Radial integrated transport coefficient (n=3)
         real(dp), dimension(4) :: q_flux = 0
-        !  energy transport flux
+        !  energy transport flux (J/m2)
         real(dp), dimension(4) :: Gamma_flux = 0
         !  energy flux from particle transport
         real(dp), dimension(no_roots) :: D31_mono = 0
@@ -70,7 +85,10 @@ module neoclassics_module
         !  Profile values
 
     contains
+        procedure :: calc_KT => neoclassics_calc_KT
         procedure :: calc_nu => neoclassics_calc_nu
+        procedure :: calc_nu_star => neoclassics_calc_nu_star
+        procedure :: calc_palphafactor => neoclassics_calc_palphafactor
         procedure :: calc_D11_mono => neoclassics_calc_D11_mono
         procedure :: calc_vd => neoclassics_calc_vd
         procedure :: calc_D111 => neoclassics_calc_D111
@@ -95,23 +113,82 @@ module neoclassics_module
 
 
     ! Overwrite implicit fortran constructors
-    interface profiles ! Ignore the warning here
-       procedure :: init_profiles_from_PROCESS
-    end interface profiles
+    !interface profiles ! Ignore the warning here
+    !   procedure :: init_profiles_from_PROCESS
+    !end interface profiles
 
-    interface profile_values ! Ignore the warning here
-        procedure :: init_profile_values_from_PROCESS
-    end interface profile_values
+    !interface profile_values ! Ignore the warning here
+    !   procedure :: init_profile_values_from_PROCESS
+    !end interface profile_values
 
-    interface create_neoclassics ! Ignore the warning here
-       procedure :: init_neoclassics
-    end interface create_neoclassics
+    !interface create_neoclassics ! Ignore the warning here
+    !   procedure :: init_neoclassics
+    !end interface create_neoclassics
 
 
 
 
 
 contains
+
+
+    type(neoclassics) function init_neoclassics(r_eff,eps_eff,iota,D11_star_mono_input,nu_star_mono_input,D13_star_mono_input)
+        real(dp), intent(in) :: r_eff,eps_eff,iota
+        type(neoclassics) :: myneo
+        real(dp), dimension(4,no_roots) :: mynu
+        real(dp), dimension(:) :: D11_star_mono_input, nu_star_mono_input, D13_star_mono_input
+
+
+        ! This should be called as the standard constructor
+        myneo = neoclassics(gauss_laguerre = gauss_laguerre_30(), &
+                            profiles = init_profile_values_from_PROCESS(r_eff), &
+                            eps_eff = eps_eff, iota = iota, D11_star_mono_input = D11_star_mono_input, &
+                            nu_star_mono_input = nu_star_mono_input, D13_star_mono_input = D13_star_mono_input)
+
+        mynu = neoclassics_calc_nu(myneo)
+
+        print *, "My nu: ",mynu(1,1)
+
+
+        myneo%KT = myneo%calc_KT()
+        myneo%nu = myneo%calc_nu()
+        myneo%nu_star = myneo%calc_nu_star()
+        myneo%vd = myneo%calc_vd()
+
+        myneo%D11_mono = myneo%calc_D11_mono()
+
+        !print *, "Check: ",myneo%D11_mono
+        myneo%D111 = myneo%calc_D111()
+
+        myneo%D112 = myneo%calc_D112()
+        myneo%D113 = myneo%calc_D113()
+
+        myneo%Gamma_flux = myneo%calc_Gamma_flux()
+        myneo%q_flux = myneo%calc_q_flux()
+
+        myneo%palphafactor = myneo%calc_palphafactor()
+
+        init_neoclassics = myneo
+    end function init_neoclassics
+
+    function neoclassics_calc_KT(self) result(KK)
+        ! Calculates the drift velocities
+
+        use const_and_precisions, only: e_,c_,me_,mp_,keV_
+
+        class(neoclassics), intent(in) :: self
+        real(dp), dimension(no_roots) ::  K
+        real(dp), dimension(4,no_roots) :: KK
+
+        K = self%gauss_laguerre%roots/keV_
+
+        KK(1,:) = K * self%profiles%temperatures(1)
+        KK(2,:) = K * self%profiles%temperatures(2)
+        KK(3,:) = K * self%profiles%temperatures(3)
+        KK(4,:) = K * self%profiles%temperatures(4)
+
+
+    end function neoclassics_calc_KT
 
     function neoclassics_calc_Gamma_flux(self)
         ! Calculates the Energy flux by particle transport
@@ -129,15 +206,15 @@ contains
         z = (/-1.0,1.0,1.0,2.0/)
 
         neoclassics_calc_Gamma_flux = - densities * self%D111 * ((dr_densities/densities - z * self%Er/temps)+ &
-                        (self%D112/self%D113-3.0/2.0) * dr_temps/temps )
+                        (self%D112/self%D111-3.0/2.0) * dr_temps/temps )
         
     end function neoclassics_calc_Gamma_flux
 
-    function neoclassics_calc_q_flux(self) result(q_flux)
+    function neoclassics_calc_q_flux(self)
         ! Calculates the Energy flux by neocl. energy transport
 
         class(neoclassics), intent(in) :: self
-        real(dp),dimension(4) :: q_flux, densities, temps, dr_temps, dr_densities, z
+        real(dp),dimension(4) :: q_flux, densities, temps, dr_temps, dr_densities, z, neoclassics_calc_q_flux
 
 
         densities = self%profiles%densities
@@ -150,8 +227,24 @@ contains
         q_flux = - densities * temps * self%D112 * ((dr_densities/densities - z * self%Er/temps) + &
                         (self%D113/self%D112-3.0/2.0) * dr_temps/temps )
 
-
+        neoclassics_calc_q_flux = q_flux
     end function neoclassics_calc_q_flux
+
+    function neoclassics_calc_palphafactor(self) result(g)
+        ! Calculates the "g" factor, indicating an alpha electron coupling
+        ! Check: J. Sheffield Phys. Rev. (1994)
+        ! https://journals.aps.org/rmp/pdf/10.1103/RevModPhys.66.1015
+
+        use const_and_precisions, only: pi, keV_
+        class(neoclassics), intent(in) :: self
+        real(dp) :: y, g
+
+        y = sqrt(88*keV_/self%profiles%temperatures(1)) ! electron temperature
+
+        g = 1.0d0 - 2.0d0/y**2 * (1.0/6.0 * log((1-y+y**2)/(1+y)**2) + 1.0/sqrt(3.0) * &
+                atan((2.0*y-1.0)/sqrt(3.0)) + pi/(6.0*sqrt(3.0)))
+
+    end function neoclassics_calc_palphafactor
 
     function neoclassics_calc_D11_mono(self) result(D11_mono)
         use const_and_precisions, only: pi
@@ -165,7 +258,7 @@ contains
 
     end function neoclassics_calc_D11_mono
 
-    function neoclassics_calc_vd(self) result(vd)
+    function neoclassics_calc_vd(self)
         ! Calculates the drift velocities
 
         use const_and_precisions, only: e_
@@ -173,9 +266,7 @@ contains
 
         class(neoclassics), intent(in) :: self
         real(dp), dimension(no_roots) :: vde,vdT,vdD,vda, K
-        real(dp), dimension(4,no_roots) :: vd
-
-
+        real(dp), dimension(4,no_roots) :: vd,neoclassics_calc_vd
 
         K = self%gauss_laguerre%roots
 
@@ -189,13 +280,44 @@ contains
         vd(3,:) = vdT
         vd(4,:) = vda
 
+        neoclassics_calc_vd = vd
     end function neoclassics_calc_vd
 
-    function neoclassics_calc_D111(self) result(D111)
+    function neoclassics_calc_nu_star(self) result(nu_star)
+        ! Calculates the drift velocities
+
+        use const_and_precisions, only: e_,c_,me_,mp_
+        use physics_variables, only: rmajor
+
+        class(neoclassics), intent(in) :: self
+        real(dp), dimension(no_roots) ::  K
+        real(dp), dimension(4,no_roots) :: v,nu_star,KK
+        real(dp), dimension(4) :: mass
+
+        K = self%gauss_laguerre%roots
+
+        KK(1,:) = K * self%profiles%temperatures(1)
+        KK(2,:) = K * self%profiles%temperatures(2)
+        KK(3,:) = K * self%profiles%temperatures(3)
+        KK(4,:) = K * self%profiles%temperatures(4)
+
+        mass = (/me_,mp_*2.0d0,mp_*3.0d0,mp_*4.0d0/)
+
+        v(1,:) = c_ * sqrt(1.0d0-(KK(1,:)/(mass(1) * c_**2)+1)**(-1))
+        v(2,:) = c_ * sqrt(1.0d0-(KK(1,:)/(mass(2) * c_**2)+1)**(-1))
+        v(3,:) = c_ * sqrt(1.0d0-(KK(1,:)/(mass(3) * c_**2)+1)**(-1))
+        v(4,:) = c_ * sqrt(1.0d0-(KK(1,:)/(mass(4) * c_**2)+1)**(-1))
+
+        nu_star = rmajor * self%nu/(self%iota*v)
+
+
+    end function neoclassics_calc_nu_star
+
+    function neoclassics_calc_D111(self)
         use const_and_precisions, only: pi
 
         class(neoclassics), intent(in) :: self
-        real(dp),dimension(4) :: D111
+        real(dp),dimension(4) :: D111, neoclassics_calc_D111
 
         real(dp),dimension(no_roots) :: xi,wi
 
@@ -207,13 +329,15 @@ contains
         D111(3) = sum(2.0d0/sqrt(pi) * self%D11_mono(3,:) * xi**(1.0-0.5) * wi)
         D111(4) = sum(2.0d0/sqrt(pi) * self%D11_mono(4,:) * xi**(1.0-0.5) * wi)
 
+        neoclassics_calc_D111 = D111
+
     end function neoclassics_calc_D111
 
-    function neoclassics_calc_D112(self) result(D112)
+    function neoclassics_calc_D112(self)
         use const_and_precisions, only: pi
 
         class(neoclassics), intent(in) :: self
-        real(dp),dimension(4) :: D112
+        real(dp),dimension(4) :: D112, neoclassics_calc_D112
 
         real(dp),dimension(no_roots) :: xi,wi
 
@@ -225,13 +349,15 @@ contains
         D112(3) = sum(2.0d0/sqrt(pi) * self%D11_mono(3,:) * xi**(2.0-0.5) * wi)
         D112(4) = sum(2.0d0/sqrt(pi) * self%D11_mono(4,:) * xi**(2.0-0.5) * wi)
 
+        neoclassics_calc_D112 = D112
+
     end function neoclassics_calc_D112
 
-    function neoclassics_calc_D113(self) result(D113)
+    function neoclassics_calc_D113(self)
         use const_and_precisions, only: pi
 
         class(neoclassics), intent(in) :: self
-        real(dp),dimension(4) :: D113
+        real(dp),dimension(4) :: D113, neoclassics_calc_D113
 
         real(dp),dimension(no_roots) :: xi,wi
 
@@ -243,6 +369,7 @@ contains
         D113(3) = sum(2.0d0/sqrt(pi) * self%D11_mono(3,:) * xi**(3.0-0.5) * wi)
         D113(4) = sum(2.0d0/sqrt(pi) * self%D11_mono(4,:) * xi**(3.0-0.5) * wi)
 
+        neoclassics_calc_D113 = D113
     end function neoclassics_calc_D113
 
     function neoclassics_calc_nu(self)
@@ -264,13 +391,11 @@ contains
         mass = (/me_,mp_*2.0d0,mp_*3.0d0,mp_*4.0d0/)
         z = (/-1.0d0,1.0d0,1.0d0,2.0d0/) * e_
 
-        print *,"Densities: ",density(1),density(2),density(3),density(4)
         
         ! transform the temperature back in eV
         ! Formula from L. Spitzer.Physics of fully ionized gases.  Interscience, New York, 1962
         lnlambda = 32.2d0 - 1.15d0*log10(density(1)) + 2.3d0*log10(temp(1)/e_)
 
-        print *, "My lnlambda is:",lnlambda
         neoclassics_calc_nu(:,:) = 0.0
 
         do jj = 1, 4
@@ -289,40 +414,8 @@ contains
               enddo
            enddo
         enddo
-
     end function neoclassics_calc_nu
 
-
-    type(neoclassics) function init_neoclassics(r_eff)
-        real(dp), intent(in) :: r_eff
-        type(neoclassics) :: myneo
-        real(dp), dimension(4,no_roots) :: mynu
-
-        ! This should be called as the standard constructor
-        myneo = neoclassics(gauss_laguerre = gauss_laguerre_30(),&
-                            profiles = init_profile_values_from_PROCESS(r_eff))
-
-        mynu = neoclassics_calc_nu(myneo)
-
-        print *, "My nu: ",mynu(1,1)
-
-        myneo%nu = myneo%calc_nu()
-        myneo%vd = myneo%calc_vd()
-        
-        myneo%D11_mono = myneo%calc_D11_mono()
-        
-        !print *, "Check: ",myneo%D11_mono
-        myneo%D111 = myneo%calc_D111()
-        
-        myneo%D112 = myneo%calc_D112()
-        myneo%D113 = myneo%calc_D113()
-
-        myneo%Gamma_flux = myneo%calc_Gamma_flux()
-        myneo%q_flux = myneo%calc_q_flux()
-        
-        
-        init_neoclassics = myneo
-    end function init_neoclassics
 
 
 
@@ -464,35 +557,35 @@ contains
 
 
         gauss_laguerre_30%weights = (/1.160440860204388913d-01,&
-                                  2.208511247506771413d-01,&
-                                  2.413998275878537214d-01,&
-                                  1.946367684464170855d-01,&
-                                  1.237284159668764899d-01,&
-                                  6.367878036898660943d-02,&
-                                  2.686047527337972682d-02,&
-                                  9.338070881603925677d-03,&
-                                  2.680696891336819664d-03,&
-                                  6.351291219408556439d-04,&
-                                  1.239074599068830081d-04,&
-                                  1.982878843895233056d-05,&
-                                  2.589350929131392509d-06,&
-                                  2.740942840536013206d-07,&
-                                  2.332831165025738197d-08,&
-                                  1.580745574778327984d-09,&
-                                  8.427479123056716393d-11,&
-                                  3.485161234907855443d-12,&
-                                  1.099018059753451500d-13,&
-                                  2.588312664959080167d-15,&
-                                  4.437838059840028968d-17,&
-                                  5.365918308212045344d-19,&
-                                  4.393946892291604451d-21,&
-                                  2.311409794388543236d-23,&
-                                  7.274588498292248063d-26,&
-                                  1.239149701448267877d-28,&
-                                  9.832375083105887477d-32,&
-                                  2.842323553402700938d-35,&
-                                  1.878608031749515392d-39,&
-                                  8.745980440465011553d-45/)
+                                      2.208511247506771413d-01,&
+                                      2.413998275878537214d-01,&
+                                      1.946367684464170855d-01,&
+                                      1.237284159668764899d-01,&
+                                      6.367878036898660943d-02,&
+                                      2.686047527337972682d-02,&
+                                      9.338070881603925677d-03,&
+                                      2.680696891336819664d-03,&
+                                      6.351291219408556439d-04,&
+                                      1.239074599068830081d-04,&
+                                      1.982878843895233056d-05,&
+                                      2.589350929131392509d-06,&
+                                      2.740942840536013206d-07,&
+                                      2.332831165025738197d-08,&
+                                      1.580745574778327984d-09,&
+                                      8.427479123056716393d-11,&
+                                      3.485161234907855443d-12,&
+                                      1.099018059753451500d-13,&
+                                      2.588312664959080167d-15,&
+                                      4.437838059840028968d-17,&
+                                      5.365918308212045344d-19,&
+                                      4.393946892291604451d-21,&
+                                      2.311409794388543236d-23,&
+                                      7.274588498292248063d-26,&
+                                      1.239149701448267877d-28,&
+                                      9.832375083105887477d-32,&
+                                      2.842323553402700938d-35,&
+                                      1.878608031749515392d-39,&
+                                      8.745980440465011553d-45/)
                             
 
     end function gauss_laguerre_30

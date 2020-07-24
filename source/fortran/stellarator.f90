@@ -559,7 +559,7 @@ contains
 
     !  Local variables
 
-    real(dp) :: fusrat,pddpv,pdtpv,pdhe3pv,powht,sbar,sigvdt,zion,eff_chi, neo_chi
+    real(dp) :: fusrat,pddpv,pdtpv,pdhe3pv,powht,sbar,sigvdt,zion,eff_chi, neo_chi, q_flux
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !  Calculate plasma composition
@@ -730,6 +730,9 @@ contains
     ! Calculate an effective chi for a sanity check:
     eff_chi = st_calc_eff_chi()
     print *, "Effective chi: ",eff_chi," Nominator: ",falpha*palppv-pcoreradpv
+
+    q_flux = st_calc_eff_qflux()
+    print *, "Effective qflux: ",q_flux
 
     neo_chi = st_calc_neo_chi()
     print *, "Neoclassical chi: ",neo_chi
@@ -1719,6 +1722,46 @@ contains
 
   end function st_calc_eff_chi
 
+  real(dp) function st_calc_eff_qflux()
+   !! Routine to calculate a maximal allowable energy flux across a surface using power balance
+   !! author: J Lion, IPP Greifswald
+   !! st_calc_eff_qflux : output real : The needed flux to fulfil heat tranport (J/m2)
+   !! This routine calculates a maximal allowable heat flux given the powers.
+   !
+   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   use physics_variables, only: falpha,palppv,pcoreradpv,vol,sarea,rminor,te, powerht
+   use impurity_radiation_module, only: coreradius
+   use const_and_precisions, only: keV_, pi
+
+   implicit none
+
+   !  Arguments
+
+   !  Local variables
+
+   real(dp) :: chi, volscaling,surfacescaling, y, g
+
+   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+   y = sqrt(88/te) ! electron temperature keV
+
+   g = 1.0d0 - 2.0d0/y**2 * (1.0/6.0 * log((1-y+y**2)/(1+y)**2) + 1.0/sqrt(3.0) * &
+           atan((2.0*y-1.0)/sqrt(3.0)) + pi/(6.0*sqrt(3.0)))
+
+
+
+   volscaling = vol * f_r * (coreradius*rminor/config%rminor_ref)**2
+   surfacescaling = sarea * f_r * (coreradius*rminor/config%rminor_ref)
+
+   st_calc_eff_qflux =  (falpha*g*palppv - pcoreradpv) * volscaling/surfacescaling
+
+   print *, " eff qflux from pV: ",(falpha*palppv - pcoreradpv) * volscaling/surfacescaling, " from total:", powerht/sarea
+
+
+  end function st_calc_eff_qflux
+
+
   real(dp) function st_calc_neo_chi()
 
   !! Routine to calculate an approximate chi using neoclassical monoenergetic transport coefficients
@@ -1729,6 +1772,7 @@ contains
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    use neoclassics_module, only: neoclassics,init_neoclassics
+   use stellarator_variables, only: iotabar
 
    implicit none
 
@@ -1737,12 +1781,23 @@ contains
    !  Local variables
    type(neoclassics) :: neo_at_rhocore
 
-   neo_at_rhocore = init_neoclassics(0.6d0)
+   neo_at_rhocore = init_neoclassics(r_eff=0.6d0,eps_eff=config%epseff,iota = iotabar, &
+                     D11_star_mono_input = config%D11_star_mono_input, nu_star_mono_input = config%nu_star_mono_input, &
+                     D13_star_mono_input = config%D11_star_mono_input)
 
-   st_calc_neo_chi = neo_at_rhocore%q_flux(1)/(neo_at_rhocore%profiles%densities(1)* &
-                     neo_at_rhocore%profiles%dr_temperatures(1))
+   st_calc_neo_chi = -(neo_at_rhocore%q_flux(1)+neo_at_rhocore%Gamma_flux(1)*neo_at_rhocore%profiles%temperatures(1))/ &
+                     (neo_at_rhocore%profiles%densities(1)* &
+                     neo_at_rhocore%profiles%dr_temperatures(1) + neo_at_rhocore%profiles%temperatures(1)* &
+                     neo_at_rhocore%profiles%dr_densities(1))
 
-   print *, neo_at_rhocore%q_flux(1), neo_at_rhocore%profiles%densities(1),neo_at_rhocore%profiles%dr_temperatures(1)
+   
+   !print *, "D111: ", neo_at_rhocore%D111(1), "D112: ", neo_at_rhocore%D112(1), "D113: ", neo_at_rhocore%D113(1)
+   print *,"Q flux: (MJ/m2) ", neo_at_rhocore%q_flux(1)*1e-6 + neo_at_rhocore%Gamma_flux(1)* &
+            neo_at_rhocore%profiles%temperatures(1)*1e-6
+
+
+   print *,"Total Flux: (MJ/m2) ", sum(neo_at_rhocore%q_flux*1e-6 + neo_at_rhocore%Gamma_flux* &
+            neo_at_rhocore%profiles%temperatures*1e-6)
  end function st_calc_neo_chi
 
 
