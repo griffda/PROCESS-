@@ -25,6 +25,7 @@ pnetelin  = 1000.0     *Required net electric power (MW)
 IOPTIMZ   = -1         *Code operation switch (-1: No optimisation, HYBRD only)
 
 *------------------IFE Variables-------------------*
+ife         = 1        *Switch for Inertial Fusion Energy model
 ifetyp      = 1        *Switch for type of IFE device build (1: OSIRIS-like build)
 ifedrv      = 2        *Switch for type of IFE driver (2: Heavy ion beam driver based on OSIRIS)
 bldr        = 0.55     *Radial thickness of IFE blanket (m)
