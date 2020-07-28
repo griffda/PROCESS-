@@ -28,6 +28,7 @@ subroutine init
   use impurity_radiation_module, only: initialise_imprad 
   use numerics, only: ixc , lablxc, nvar
   use process_input, only: nin, input
+  use stellarator_module, only: stinit
   implicit none
 
   !  Arguments
@@ -59,6 +60,10 @@ subroutine init
 
   !  Input any desired new initial values
   call input
+
+  !  Initialise stellarator parameters if necessary
+  !  This overrides some of the bounds of the tokamak parameters
+  call stinit
 
   !  Initialise impurity radiation data
   call initialise_imprad

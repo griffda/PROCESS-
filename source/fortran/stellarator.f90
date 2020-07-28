@@ -361,8 +361,6 @@ contains
     !  Physics quantities
 
     dnbeta = 0.0D0
-    rmajor = 20.0D0
-    kappa = 1.0D0
     kappa95 = 1.0D0
     triang = 0.0D0
     q = 1.03D0

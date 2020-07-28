@@ -9,8 +9,6 @@ subroutine initial
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use stellarator_module, only: stinit
-    use stellarator_variables, only: istell
     use define_iteration_variables, only: init_itv_1, init_itv_2, init_itv_3, &
         init_itv_4, init_itv_5, init_itv_6, init_itv_7, init_itv_8, init_itv_9, &
         init_itv_10, init_itv_11, init_itv_12, init_itv_13, init_itv_14, init_itv_15, &
@@ -531,9 +529,6 @@ subroutine initial
     !    !!  <LI> (173) fbetatry_lower
 
 
-    !  Initialise stellarator parameters if necessary
-    !  This overrides some of the bounds of the tokamak parameters.
-    if (istell /= 0) call stinit
 
 end subroutine initial
 
@@ -541,13 +536,15 @@ end subroutine initial
 
 subroutine devtyp
     !! Set icase description based on device type
-    use global_variables, only: icase
-    use ife_variables, only: ife
-    implicit none
+    !! # TODO This will run before the input file is read in, and hence won't work
+    !! Needs to be moved after the input file reading
+    ! use global_variables, only: icase
+    ! use ife_variables, only: ife
+    ! implicit none
 
-    if (ife == 1) then
-        icase = 'Inertial Fusion model'
-    end if
+    ! if (ife == 1) then
+    !     icase = 'Inertial Fusion model'
+    ! end if
 end subroutine devtyp
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

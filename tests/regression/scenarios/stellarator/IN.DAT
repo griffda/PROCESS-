@@ -74,6 +74,7 @@ tratio   = 0.95         *Ion temperature / electron temperature
 
 *--------------Stellarator Variables---------------*
 
+istell   = 1            *Stellarator option
 bmn      = 0.001        *Relative radial field perturbation
 f_asym   = 1.1          *Divertor heat load peaking factor
 f_rad    = 0.85         *Radiated power fraction in sol
