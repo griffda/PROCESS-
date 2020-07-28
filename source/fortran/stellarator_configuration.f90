@@ -146,12 +146,12 @@ module stellarator_configuration
  
  contains
  
-    type(stella_config) function new_stella_config(index)
+    function new_stella_config(index) result(output_config)
        integer, intent(in) :: index
- 
+       type(stella_config) :: output_config
  
        select case (index)
- 
+          
           ! This is the istell case switch:
           ! istell = 1: Helias5 machine
           ! istell = 2: Helias4 machine
@@ -163,228 +163,228 @@ module stellarator_configuration
              ! Helias5 Machine
              ! The values are given at the reference point
  
-             new_stella_config%name = "Helias 5b"
+             output_config%name = "Helias 5b"
  
-             new_stella_config%rmajor_ref = 22.2D0
-             new_stella_config%rminor_ref = 1.80D0
-             new_stella_config%aspect_ref = 12.33D0
+             output_config%rmajor_ref = 22.2D0
+             output_config%rminor_ref = 1.80D0
+             output_config%aspect_ref = 12.33D0
  
              ! Coil radii
-             new_stella_config%coil_rmajor = 22.44D0
-             new_stella_config%coil_rminor = 4.76D0
+             output_config%coil_rmajor = 22.44D0
+             output_config%coil_rminor = 4.76D0
  
-             new_stella_config%bt_ref = 5.6D0
-             new_stella_config%WP_area = 0.8d0*0.6d0
-             new_stella_config%WP_bmax = 11.44d0
+             output_config%bt_ref = 5.6D0
+             output_config%WP_area = 0.8d0*0.6d0
+             output_config%WP_bmax = 11.44d0
  
-             new_stella_config%symmetry = 5
-             new_stella_config%coilspermodule = 10
+             output_config%symmetry = 5
+             output_config%coilspermodule = 10
  
-             new_stella_config%a1 = 0.688D0
-             new_stella_config%a2 = 0.025D0
+             output_config%a1 = 0.688D0
+             output_config%a2 = 0.025D0
  
-             new_stella_config%plasma_volume = 1422.63D0  ! This value is for Helias 5
-             new_stella_config%dmin = 0.84D0
-             new_stella_config%max_portsize_width = 2.12D0 
+             output_config%plasma_volume = 1422.63D0  ! This value is for Helias 5
+             output_config%dmin = 0.84D0
+             output_config%max_portsize_width = 2.12D0 
  
-             new_stella_config%plasma_surface = 1960.0D0 ! Plasma Surface
+             output_config%plasma_surface = 1960.0D0 ! Plasma Surface
  
-             new_stella_config%maximal_coil_height = 12.7 ! [m] Full height max point to min point
+             output_config%maximal_coil_height = 12.7 ! [m] Full height max point to min point
  
-             new_stella_config%coilsurface = 4817.7D0 ! Coil surface, dimensionfull. At reference point
+             output_config%coilsurface = 4817.7D0 ! Coil surface, dimensionfull. At reference point
  
-             new_stella_config%coillength = 1680.0D0 ! Central filament length of machine with outer radius 1m.
+             output_config%coillength = 1680.0D0 ! Central filament length of machine with outer radius 1m.
        
-             new_stella_config%I0 = 13.06D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
-             new_stella_config%inductance = 1655.76D-6 ! inductance in muH
+             output_config%I0 = 13.06D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
+             output_config%inductance = 1655.76D-6 ! inductance in muH
  
-             new_stella_config%WP_ratio = 1.2D0 ! The fit values in stellarator config class should be calculated using this value.
+             output_config%WP_ratio = 1.2D0 ! The fit values in stellarator config class should be calculated using this value.
  
-             new_stella_config%max_force_density = 120.0d0 ! [MN/m^3]
+             output_config%max_force_density = 120.0d0 ! [MN/m^3]
  
-             new_stella_config%min_plasma_coil_distance = 1.9d0
+             output_config%min_plasma_coil_distance = 1.9d0
  
-             new_stella_config%min_bend_radius = 1.0 ! [m]
+             output_config%min_bend_radius = 1.0 ! [m]
  
           case(2)
              ! Helias4 Machine
-             new_stella_config%name = "Helias 4"
+             output_config%name = "Helias 4"
              ! Reference point where all the other variables are determined from
              ! Plasma outer radius
-             new_stella_config%rmajor_ref = 17.6D0
-             new_stella_config%rminor_ref = 2.0D0
-             new_stella_config%aspect_ref =  8.8D0
+             output_config%rmajor_ref = 17.6D0
+             output_config%rminor_ref = 2.0D0
+             output_config%aspect_ref =  8.8D0
  
              ! Coil radii
-             new_stella_config%coil_rmajor = 18.39D0
-             new_stella_config%coil_rminor = 4.94D0
+             output_config%coil_rmajor = 18.39D0
+             output_config%coil_rminor = 4.94D0
  
-             new_stella_config%bt_ref = 5.6D0
-             new_stella_config%WP_area = 0.8d0*0.6d0
-             new_stella_config%WP_bmax = 11.51d0
+             output_config%bt_ref = 5.6D0
+             output_config%WP_area = 0.8d0*0.6d0
+             output_config%WP_bmax = 11.51d0
  
-             new_stella_config%symmetry = 4
-             new_stella_config%coilspermodule = 10
-             new_stella_config%a1 = 0.676D0
-             new_stella_config%a2 = 0.029D0
-             new_stella_config%plasma_volume =   1380.0D0
-             new_stella_config%dmin = 1.08D0
-             new_stella_config%max_portsize_width = 3.24D0
+             output_config%symmetry = 4
+             output_config%coilspermodule = 10
+             output_config%a1 = 0.676D0
+             output_config%a2 = 0.029D0
+             output_config%plasma_volume =   1380.0D0
+             output_config%dmin = 1.08D0
+             output_config%max_portsize_width = 3.24D0
  
-             new_stella_config%plasma_surface = 1900.0D0
-             new_stella_config%maximal_coil_height = 13.34D0  ! [m] Full height max point to min point
+             output_config%plasma_surface = 1900.0D0
+             output_config%maximal_coil_height = 13.34D0  ! [m] Full height max point to min point
  
-             new_stella_config%coilsurface =  4100.0D0! Coil surface, dimensionfull. At reference point
+             output_config%coilsurface =  4100.0D0! Coil surface, dimensionfull. At reference point
  
-             new_stella_config%coillength = 1435.07D0 ! Central filament length of machine with outer radius 1m.
+             output_config%coillength = 1435.07D0 ! Central filament length of machine with outer radius 1m.
        
-             new_stella_config%I0 = 13.146D0 ! Coil Current needed to produce b0 on axis in [MA] at reference point
-             new_stella_config%inductance = 1290.4D-6 ! inductance/R*A^2 in muH
+             output_config%I0 = 13.146D0 ! Coil Current needed to produce b0 on axis in [MA] at reference point
+             output_config%inductance = 1290.4D-6 ! inductance/R*A^2 in muH
  
-             new_stella_config%WP_ratio = 1.3D0
+             output_config%WP_ratio = 1.3D0
  
-             new_stella_config%max_force_density = 120.0d0 ! [MN/m^3]
+             output_config%max_force_density = 120.0d0 ! [MN/m^3]
  
-             new_stella_config%min_plasma_coil_distance = 1.7d0
+             output_config%min_plasma_coil_distance = 1.7d0
  
-             new_stella_config%min_bend_radius = 0.86 ! [m]
+             output_config%min_bend_radius = 0.86 ! [m]
  
  
           case(3)
              ! Helias 3 Machine
-             new_stella_config%name = "Helias 3"
+             output_config%name = "Helias 3"
              ! Reference point where all the other variables are determined from
              ! Plasma outer radius
-             new_stella_config%rmajor_ref = 13.86d0
-             new_stella_config%rminor_ref = 2.18d0
-             new_stella_config%aspect_ref =  6.36d0
+             output_config%rmajor_ref = 13.86d0
+             output_config%rminor_ref = 2.18d0
+             output_config%aspect_ref =  6.36d0
  
              ! Coil radii
-             new_stella_config%coil_rmajor = 14.53D0
-             new_stella_config%coil_rminor = 6.12D0
+             output_config%coil_rmajor = 14.53D0
+             output_config%coil_rminor = 6.12D0
              
-             new_stella_config%bt_ref = 5.6D0
-             new_stella_config%WP_bmax = 12.346d0
-             new_stella_config%WP_area = 0.8d0*0.6d0
+             output_config%bt_ref = 5.6D0
+             output_config%WP_bmax = 12.346d0
+             output_config%WP_area = 0.8d0*0.6d0
  
-             new_stella_config%symmetry = 3
-             new_stella_config%coilspermodule = 10
+             output_config%symmetry = 3
+             output_config%coilspermodule = 10
  
              ! Bmax fit parameters
-             new_stella_config%a1 = 0.56D0
-             new_stella_config%a2 = 0.030D0
+             output_config%a1 = 0.56D0
+             output_config%a2 = 0.030D0
  
-             new_stella_config%plasma_volume =   1300.8D0
-             new_stella_config%dmin = 1.145D0
-             new_stella_config%max_portsize_width = 3.24D0 !??? guess. not ready yet
+             output_config%plasma_volume =   1300.8D0
+             output_config%dmin = 1.145D0
+             output_config%max_portsize_width = 3.24D0 !??? guess. not ready yet
  
-             new_stella_config%plasma_surface = 1600.00D0
+             output_config%plasma_surface = 1600.00D0
  
-             new_stella_config%maximal_coil_height = 17.74D0! [m] Full height max point to min point
+             output_config%maximal_coil_height = 17.74D0! [m] Full height max point to min point
  
-             new_stella_config%coilsurface = 4240.0D0 ! Coil surface, dimensionfull. At reference point
+             output_config%coilsurface = 4240.0D0 ! Coil surface, dimensionfull. At reference point
  
-             new_stella_config%coillength = 1287.3D0 ! Central filament length of machine with outer radius 1m.
+             output_config%coillength = 1287.3D0 ! Central filament length of machine with outer radius 1m.
        
-             new_stella_config%I0 = 14.23D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
-             new_stella_config%inductance = 1250.7D-6 ! inductance in muH
+             output_config%I0 = 14.23D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
+             output_config%inductance = 1250.7D-6 ! inductance in muH
  
-             new_stella_config%WP_ratio = 1.3D0
+             output_config%WP_ratio = 1.3D0
  
-             new_stella_config%max_force_density = 120.0d0 ! Multiply with I^2 [MA] A_wp^(-1) [m^2] to obtain [MN/m^3]
+             output_config%max_force_density = 120.0d0 ! Multiply with I^2 [MA] A_wp^(-1) [m^2] to obtain [MN/m^3]
  
-             new_stella_config%min_plasma_coil_distance = 1.78d0
+             output_config%min_plasma_coil_distance = 1.78d0
  
-             new_stella_config%min_bend_radius = 1.145 ! [m]
+             output_config%min_bend_radius = 1.145 ! [m]
  
  
           case(4)
              ! w7x30 Machine
-             new_stella_config%name = "W7X-30"
+             output_config%name = "W7X-30"
              ! Reference point where all the other variables are determined from
              ! Plasma outer radius
-             new_stella_config%rmajor_ref = 5.50D0
-             new_stella_config%rminor_ref = 0.49D0
-             new_stella_config%aspect_ref =  11.2D0
+             output_config%rmajor_ref = 5.50D0
+             output_config%rminor_ref = 0.49D0
+             output_config%aspect_ref =  11.2D0
  
              ! Coil radii
-             new_stella_config%coil_rmajor = 5.62D0
-             new_stella_config%coil_rminor = 1.36D0
+             output_config%coil_rmajor = 5.62D0
+             output_config%coil_rminor = 1.36D0
  
  
-             new_stella_config%bt_ref = 3.0D0
-             new_stella_config%WP_area = 0.18d0*0.15d0
-             new_stella_config%WP_bmax = 10.6d0
+             output_config%bt_ref = 3.0D0
+             output_config%WP_area = 0.18d0*0.15d0
+             output_config%WP_bmax = 10.6d0
  
-             new_stella_config%symmetry = 5
-             new_stella_config%coilspermodule = 6
-             new_stella_config%a1 = 0.98D0
-             new_stella_config%a2 = 0.041D0
-             new_stella_config%plasma_volume =   26.4D0
-             new_stella_config%dmin = 0.21D0
-             new_stella_config%max_portsize_width = 0.5D0
+             output_config%symmetry = 5
+             output_config%coilspermodule = 6
+             output_config%a1 = 0.98D0
+             output_config%a2 = 0.041D0
+             output_config%plasma_volume =   26.4D0
+             output_config%dmin = 0.21D0
+             output_config%max_portsize_width = 0.5D0
  
-             new_stella_config%plasma_surface = 128.3D0
-             new_stella_config%maximal_coil_height = 3.6D0  ! [m] Full height max point to min point
+             output_config%plasma_surface = 128.3D0
+             output_config%maximal_coil_height = 3.6D0  ! [m] Full height max point to min point
  
-             new_stella_config%coilsurface =  370.0D0! Coil surface, dimensionfull. At reference point
+             output_config%coilsurface =  370.0D0! Coil surface, dimensionfull. At reference point
  
-             new_stella_config%coillength = 303.4D0 ! Central filament length of machine with outer radius 1m.
+             output_config%coillength = 303.4D0 ! Central filament length of machine with outer radius 1m.
        
-             new_stella_config%I0 = 2.9D0 ! Coil Current needed to produce b0 on axis in [MA] at reference point
-             new_stella_config%inductance = 252.7D-6 ! inductance/R*A^2 in muH
+             output_config%I0 = 2.9D0 ! Coil Current needed to produce b0 on axis in [MA] at reference point
+             output_config%inductance = 252.7D-6 ! inductance/R*A^2 in muH
  
-             new_stella_config%WP_ratio = 1.2D0
+             output_config%WP_ratio = 1.2D0
  
-             new_stella_config%max_force_density = 350.0d0 ! [MN/m^3]
+             output_config%max_force_density = 350.0d0 ! [MN/m^3]
  
-             new_stella_config%min_plasma_coil_distance = 0.45D0 
+             output_config%min_plasma_coil_distance = 0.45D0 
  
-             new_stella_config%min_bend_radius = 0.186 ! [m]
+             output_config%min_bend_radius = 0.186 ! [m]
  
           case(5)
              ! w7x50 Machine
-             new_stella_config%name = "W7X-50"
+             output_config%name = "W7X-50"
              ! Reference point where all the other variables are determined from
              ! Plasma outer radius
-             new_stella_config%rmajor_ref = 5.5D0
-             new_stella_config%rminor_ref = 0.49D0
-             new_stella_config%aspect_ref =   11.2D0
+             output_config%rmajor_ref = 5.5D0
+             output_config%rminor_ref = 0.49D0
+             output_config%aspect_ref =   11.2D0
  
              ! Coil radii
-             new_stella_config%coil_rmajor = 5.62d0
-             new_stella_config%coil_rminor = 1.18D0
+             output_config%coil_rmajor = 5.62d0
+             output_config%coil_rminor = 1.18D0
  
  
-             new_stella_config%bt_ref = 3.0D0
-             new_stella_config%WP_area = 0.18d0*0.15d0
-             new_stella_config%WP_bmax = 6.3d0
+             output_config%bt_ref = 3.0D0
+             output_config%WP_area = 0.18d0*0.15d0
+             output_config%WP_bmax = 6.3d0
  
-             new_stella_config%symmetry = 5
-             new_stella_config%coilspermodule = 10
-             new_stella_config%a1 = 0.66D0
-             new_stella_config%a2 = 0.025D0
-             new_stella_config%plasma_volume =   26.4D0
-             new_stella_config%dmin = 0.28D0
-             new_stella_config%max_portsize_width = 0.3D0
+             output_config%symmetry = 5
+             output_config%coilspermodule = 10
+             output_config%a1 = 0.66D0
+             output_config%a2 = 0.025D0
+             output_config%plasma_volume =   26.4D0
+             output_config%dmin = 0.28D0
+             output_config%max_portsize_width = 0.3D0
  
-             new_stella_config%plasma_surface = 128.3D0
-             new_stella_config%maximal_coil_height = 3.1D0  ! [m] Full height max point to min point
+             output_config%plasma_surface = 128.3D0
+             output_config%maximal_coil_height = 3.1D0  ! [m] Full height max point to min point
  
-             new_stella_config%coilsurface =  299.85D0! Coil surface, dimensionfull. At reference point
+             output_config%coilsurface =  299.85D0! Coil surface, dimensionfull. At reference point
  
-             new_stella_config%coillength = 420.67D0 ! Central filament length of machine with outer radius 1m.
+             output_config%coillength = 420.67D0 ! Central filament length of machine with outer radius 1m.
        
-             new_stella_config%I0 = 1.745D0 ! Coil Current needed to produce b0 on axis in [MA] at reference point
-             new_stella_config%inductance = 412.4D-6 ! inductance/R*A^2 in muH
+             output_config%I0 = 1.745D0 ! Coil Current needed to produce b0 on axis in [MA] at reference point
+             output_config%inductance = 412.4D-6 ! inductance/R*A^2 in muH
  
-             new_stella_config%WP_ratio = 1.2D0
+             output_config%WP_ratio = 1.2D0
  
-             new_stella_config%max_force_density = 250.0d0 ! [MN/m^3]
+             output_config%max_force_density = 250.0d0 ! [MN/m^3]
  
-             new_stella_config%min_plasma_coil_distance = 0.39D0
+             output_config%min_plasma_coil_distance = 0.39D0
  
-             new_stella_config%min_bend_radius = 0.39 ! [m]
+             output_config%min_bend_radius = 0.39 ! [m]
  
  
          
@@ -392,8 +392,9 @@ module stellarator_configuration
           
           case(6)
              ! Init from json
-             new_stella_config = stella_config_json()
 
+
+             output_config = stella_config_json()
           case default
              ! Return some error here. The index is not implemented yet.
              write(*,*)'ERROR in initialization of stellarator config. No such istell: ',index
@@ -403,7 +404,7 @@ module stellarator_configuration
  
 
 
-    type(stella_config) function stella_config_json()
+    function stella_config_json() result(output_config)
 
         !! Initialises the effective stellarator values using a json input file
         !! author: J Lion, IPP Greifswald
@@ -426,6 +427,9 @@ module stellarator_configuration
         integer :: n_values
         character(len=180) :: filename
         type(fson_value), pointer :: stellafile
+        type(stella_config) :: output_config
+
+        real(dp), dimension(:), allocatable :: nustar,d11,d13
         !type(stella_config), allocatable, dimension(:) :: stella_json
 
         ! Obtain the root directory
@@ -441,39 +445,49 @@ module stellarator_configuration
     
         !  Extract information arrays from the file
     
-        call fson_get(stellafile, "name", stella_config_json%name)
-        call fson_get(stellafile, "symmetry", stella_config_json%symmetry)
+        call fson_get(stellafile, "name", output_config%name)
+        call fson_get(stellafile, "symmetry", output_config%symmetry)
 
-        call fson_get(stellafile, "coilspermodule", stella_config_json%coilspermodule)
-        call fson_get(stellafile, "rmajor_ref", stella_config_json%rmajor_ref)
-        call fson_get(stellafile, "rminor_ref", stella_config_json%rminor_ref)
-        call fson_get(stellafile, "coil_rmajor", stella_config_json%coil_rmajor)
-        call fson_get(stellafile, "coil_rminor", stella_config_json%coil_rminor)
-        call fson_get(stellafile, "aspect_ref", stella_config_json%aspect_ref)
-        call fson_get(stellafile, "bt_ref", stella_config_json%bt_ref)
-        call fson_get(stellafile, "WP_area", stella_config_json%WP_area)
-        call fson_get(stellafile, "WP_bmax", stella_config_json%WP_bmax)
-        call fson_get(stellafile, "i0", stella_config_json%i0)
-        call fson_get(stellafile, "a1", stella_config_json%a1)
-        call fson_get(stellafile, "a2", stella_config_json%a2)
-        call fson_get(stellafile, "dmin", stella_config_json%dmin)
-        call fson_get(stellafile, "inductance", stella_config_json%inductance)
-        call fson_get(stellafile, "coilsurface", stella_config_json%coilsurface)
-        call fson_get(stellafile, "coillength", stella_config_json%coillength)
-        call fson_get(stellafile, "max_portsize_width", stella_config_json%max_portsize_width)
-        call fson_get(stellafile, "maximal_coil_height", stella_config_json%maximal_coil_height)
-        call fson_get(stellafile, "min_plasma_coil_distance", stella_config_json%min_plasma_coil_distance)
-        call fson_get(stellafile, "plasma_volume", stella_config_json%plasma_volume)
-        call fson_get(stellafile, "plasma_surface", stella_config_json%plasma_surface)
-        call fson_get(stellafile, "WP_ratio", stella_config_json%WP_ratio)
-        call fson_get(stellafile, "max_force_density", stella_config_json%max_force_density)
-        call fson_get(stellafile, "min_bend_radius", stella_config_json%min_bend_radius)
-        call fson_get(stellafile, "epseff", stella_config_json%epseff)
-        call fson_get(stellafile, "max_lateral_force_density", stella_config_json%max_lateral_force_density)
-        call fson_get(stellafile, "max_radial_force_density", stella_config_json%max_radial_force_density)
+        call fson_get(stellafile, "coilspermodule", output_config%coilspermodule)
+        call fson_get(stellafile, "rmajor_ref", output_config%rmajor_ref)
+        call fson_get(stellafile, "rminor_ref", output_config%rminor_ref)
+        call fson_get(stellafile, "coil_rmajor", output_config%coil_rmajor)
+        call fson_get(stellafile, "coil_rminor", output_config%coil_rminor)
+        call fson_get(stellafile, "aspect_ref", output_config%aspect_ref)
+        call fson_get(stellafile, "bt_ref", output_config%bt_ref)
+        call fson_get(stellafile, "WP_area", output_config%WP_area)
+        call fson_get(stellafile, "WP_bmax", output_config%WP_bmax)
+        call fson_get(stellafile, "i0", output_config%i0)
+        call fson_get(stellafile, "a1", output_config%a1)
+        call fson_get(stellafile, "a2", output_config%a2)
+        call fson_get(stellafile, "dmin", output_config%dmin)
+        call fson_get(stellafile, "inductance", output_config%inductance)
+        call fson_get(stellafile, "coilsurface", output_config%coilsurface)
+        call fson_get(stellafile, "coillength", output_config%coillength)
+        call fson_get(stellafile, "max_portsize_width", output_config%max_portsize_width)
+        call fson_get(stellafile, "maximal_coil_height", output_config%maximal_coil_height)
+        call fson_get(stellafile, "min_plasma_coil_distance", output_config%min_plasma_coil_distance)
+        call fson_get(stellafile, "plasma_volume", output_config%plasma_volume)
+        call fson_get(stellafile, "plasma_surface", output_config%plasma_surface)
+        call fson_get(stellafile, "WP_ratio", output_config%WP_ratio)
+        call fson_get(stellafile, "max_force_density", output_config%max_force_density)
+        call fson_get(stellafile, "min_bend_radius", output_config%min_bend_radius)
+        call fson_get(stellafile, "epseff", output_config%epseff)
+        call fson_get(stellafile, "max_lateral_force_density", output_config%max_lateral_force_density)
+        call fson_get(stellafile, "max_radial_force_density", output_config%max_radial_force_density)
 
-        call fson_get(stellafile, "D11_star_mono_input", stella_config_json%D11_star_mono_input)
-        call fson_get(stellafile, "nu_star_mono_input", stella_config_json%nu_star_mono_input)
+
+
+        call fson_get(stellafile, "number_nu_star", n_values)
+
+
+        allocate(output_config%D11_star_mono_input(n_values))
+        allocate(output_config%nu_star_mono_input(n_values))
+
+
+        call fson_get(stellafile, "D11_star_mono_input", output_config%D11_star_mono_input)
+        call fson_get(stellafile, "nu_star_mono_input", output_config%nu_star_mono_input)
+
 
 
 

@@ -130,7 +130,7 @@ module physics_variables
   !! beamfus0 /1.0/ : multiplier for beam-background fusion calculation
   real(dp), bind(C) :: beta = 0.042D0
   !! beta /0.042/ : total plasma beta (iteration variable 5)
-  !!            (calculated if ipedestal =3 or stellarator)
+  !!            (calculated if ipedestal = 3 or stellarator)
   real(dp) :: betaft = 0.0D0
   !! betaft : fast alpha beta component
   real(dp) :: betalim = 0.0D0

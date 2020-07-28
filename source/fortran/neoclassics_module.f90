@@ -46,29 +46,29 @@ module neoclassics_module
         !  Drift velocity on GL roots
         real(dp), dimension(4,no_roots) :: KT = 0
         !  Thermal energy on GL roots
-        real(dp) :: palphafactor = 0.0
-        !  The "g" coupling factor from alpha power to electrons
         real(dp) :: Er = 0.0
         !  Radial electrical field [V/m]
         real(dp) :: iota = 1.0d0
         !  Iota (1/safety factor)
-        real(dp), dimension(no_roots) :: lnlambda = 0
-        !  Coulomb Logarithm [1]
         real(dp), dimension(4,no_roots) :: D11_mono = 0
-        !  Radial monoenergetic transport coefficient
+        !  Radial monoenergetic transport coefficient on GL roots (species dependent)
+        real(dp), dimension(4,no_roots) :: D11_plateau = 0
+        !  Radial monoenergetic transport coefficient on GL roots (species dependent)
         real(dp), dimension(:), allocatable :: nu_star_mono_input
         !  Radial monoenergetic transport coefficient as given by the stellarator input json
+        !  on GL roots (species dependent)
         real(dp), dimension(:), allocatable :: D11_star_mono_input
         !  Radial monoenergetic transport coefficient as given by the stellarator input json
+        !  as function of nu_star, normalized by the plateau value.
         real(dp), dimension(:), allocatable :: D13_star_mono_input
         !  Toroidal monoenergetic transport coefficient as given by the stellarator
-        !  input json file
+        !  input json file as function of nu_star, normalized by the banana value.
         real(dp), dimension(4) :: D111 = 0
-        !  Radial integrated transport coefficient (n=1)
+        !  Radial integrated transport coefficient (n=1) (species dependent)
         real(dp), dimension(4) :: D112 = 0
-        !  Radial integrated transport coefficient (n=2)
+        !  Radial integrated transport coefficient (n=2) (species dependent)
         real(dp), dimension(4) :: D113 = 0
-        !  Radial integrated transport coefficient (n=3)
+        !  Radial integrated transport coefficient (n=3) (species dependent)
         real(dp), dimension(4) :: q_flux = 0
         !  energy transport flux (J/m2)
         real(dp), dimension(4) :: Gamma_flux = 0
@@ -76,10 +76,10 @@ module neoclassics_module
         real(dp), dimension(no_roots) :: D31_mono = 0
         !  Toroidal monoenergetic transport coefficient
         real(dp) :: eps_eff = 1d-5
-        !  Epsilon effective
+        !  Epsilon effective (used in neoclassics_calc_D11_mono)
 
         character, dimension(4) :: species = (/"e","D","T","a"/)
-        !  Species that are considered
+        !  Species that are considered (not used right now but keep it for now)
 
         type(profile_values) :: profiles
         !  Profile values
@@ -88,7 +88,6 @@ module neoclassics_module
         procedure :: calc_KT => neoclassics_calc_KT
         procedure :: calc_nu => neoclassics_calc_nu
         procedure :: calc_nu_star => neoclassics_calc_nu_star
-        procedure :: calc_palphafactor => neoclassics_calc_palphafactor
         procedure :: calc_D11_mono => neoclassics_calc_D11_mono
         procedure :: calc_vd => neoclassics_calc_vd
         procedure :: calc_D111 => neoclassics_calc_D111
@@ -96,6 +95,8 @@ module neoclassics_module
         procedure :: calc_D113 => neoclassics_calc_D113
         procedure :: calc_gamma_flux => neoclassics_calc_gamma_flux
         procedure :: calc_q_flux => neoclassics_calc_q_flux
+        procedure :: calc_D11_plateau => neoclassics_calc_D11_plateau
+        procedure :: interpolate_D11_mono => neoclassics_interpolate_D11_mono
 
     end type neoclassics
  
@@ -139,6 +140,9 @@ contains
         real(dp), dimension(:) :: D11_star_mono_input, nu_star_mono_input, D13_star_mono_input
 
 
+        allocate(myneo%D11_star_mono_input(size(D11_star_mono_input)))
+        allocate(myneo%D13_star_mono_input(size(D13_star_mono_input)))
+        allocate(myneo%nu_star_mono_input(size(nu_star_mono_input)))
         ! This should be called as the standard constructor
         myneo = neoclassics(gauss_laguerre = gauss_laguerre_30(), &
                             profiles = init_profile_values_from_PROCESS(r_eff), &
@@ -147,15 +151,15 @@ contains
 
         mynu = neoclassics_calc_nu(myneo)
 
-        print *, "My nu: ",mynu(1,1)
-
-
         myneo%KT = myneo%calc_KT()
         myneo%nu = myneo%calc_nu()
         myneo%nu_star = myneo%calc_nu_star()
         myneo%vd = myneo%calc_vd()
 
-        myneo%D11_mono = myneo%calc_D11_mono()
+        myneo%D11_plateau = myneo%calc_D11_plateau()
+
+        myneo%D11_mono = myneo%interpolate_D11_mono() !myneo%calc_D11_mono() for using epseff
+
 
         !print *, "Check: ",myneo%D11_mono
         myneo%D111 = myneo%calc_D111()
@@ -166,7 +170,6 @@ contains
         myneo%Gamma_flux = myneo%calc_Gamma_flux()
         myneo%q_flux = myneo%calc_q_flux()
 
-        myneo%palphafactor = myneo%calc_palphafactor()
 
         init_neoclassics = myneo
     end function init_neoclassics
@@ -230,22 +233,6 @@ contains
         neoclassics_calc_q_flux = q_flux
     end function neoclassics_calc_q_flux
 
-    function neoclassics_calc_palphafactor(self) result(g)
-        ! Calculates the "g" factor, indicating an alpha electron coupling
-        ! Check: J. Sheffield Phys. Rev. (1994)
-        ! https://journals.aps.org/rmp/pdf/10.1103/RevModPhys.66.1015
-
-        use const_and_precisions, only: pi, keV_
-        class(neoclassics), intent(in) :: self
-        real(dp) :: y, g
-
-        y = sqrt(88*keV_/self%profiles%temperatures(1)) ! electron temperature
-
-        g = 1.0d0 - 2.0d0/y**2 * (1.0/6.0 * log((1-y+y**2)/(1+y)**2) + 1.0/sqrt(3.0) * &
-                atan((2.0*y-1.0)/sqrt(3.0)) + pi/(6.0*sqrt(3.0)))
-
-    end function neoclassics_calc_palphafactor
-
     function neoclassics_calc_D11_mono(self) result(D11_mono)
         use const_and_precisions, only: pi
 
@@ -257,6 +244,50 @@ contains
                     * self%vd**2/self%nu
 
     end function neoclassics_calc_D11_mono
+
+    function neoclassics_calc_D11_plateau(self) result(D11_plateau)
+        use const_and_precisions, only: pi, me_, mp_, c_
+        use physics_variables, only: rmajor
+
+        class(neoclassics), intent(in) :: self
+        real(dp),dimension(4,no_roots) :: D11_plateau, v
+        real(dp),dimension(4) :: mass
+
+        mass = (/me_,mp_*2.0d0,mp_*3.0d0,mp_*4.0d0/)
+
+        v(1,:) = c_ * sqrt(1.0d0-(self%KT(1,:)/(mass(1) * c_**2)+1)**(-1))
+        v(2,:) = c_ * sqrt(1.0d0-(self%KT(2,:)/(mass(2) * c_**2)+1)**(-1))
+        v(3,:) = c_ * sqrt(1.0d0-(self%KT(3,:)/(mass(3) * c_**2)+1)**(-1))
+        v(4,:) = c_ * sqrt(1.0d0-(self%KT(4,:)/(mass(4) * c_**2)+1)**(-1))
+
+
+        D11_plateau = pi/4.0 * self%vd**2 * rmajor/ self%iota / v
+
+    end function neoclassics_calc_D11_plateau
+
+    function neoclassics_interpolate_D11_mono(self) result(D11_mono)
+        use const_and_precisions, only: pi
+        use maths_library, only: find_y_nonuniform_x
+        ! use grad_func, only: interp1_ef
+
+        class(neoclassics), intent(in) :: self
+        real(dp),dimension(4,no_roots) :: D11_mono
+        integer :: ii,jj
+
+
+
+
+        do ii = 1,4
+            do jj = 1,no_roots
+                D11_mono(ii,jj) = find_y_nonuniform_x(self%nu_star(ii,jj),self%nu_star_mono_input, &
+                                                      self%D11_star_mono_input,size(self%nu_star_mono_input)) * &
+                                  self%D11_plateau(ii,jj)
+            end do
+        end do
+
+     
+
+    end function neoclassics_interpolate_D11_mono
 
     function neoclassics_calc_vd(self)
         ! Calculates the drift velocities
@@ -304,9 +335,9 @@ contains
         mass = (/me_,mp_*2.0d0,mp_*3.0d0,mp_*4.0d0/)
 
         v(1,:) = c_ * sqrt(1.0d0-(KK(1,:)/(mass(1) * c_**2)+1)**(-1))
-        v(2,:) = c_ * sqrt(1.0d0-(KK(1,:)/(mass(2) * c_**2)+1)**(-1))
-        v(3,:) = c_ * sqrt(1.0d0-(KK(1,:)/(mass(3) * c_**2)+1)**(-1))
-        v(4,:) = c_ * sqrt(1.0d0-(KK(1,:)/(mass(4) * c_**2)+1)**(-1))
+        v(2,:) = c_ * sqrt(1.0d0-(KK(2,:)/(mass(2) * c_**2)+1)**(-1))
+        v(3,:) = c_ * sqrt(1.0d0-(KK(3,:)/(mass(3) * c_**2)+1)**(-1))
+        v(4,:) = c_ * sqrt(1.0d0-(KK(4,:)/(mass(4) * c_**2)+1)**(-1))
 
         nu_star = rmajor * self%nu/(self%iota*v)
 
@@ -416,9 +447,6 @@ contains
         enddo
     end function neoclassics_calc_nu
 
-
-
-
     type(profiles) function init_profiles_from_PROCESS(no_r)
         use physics_variables, only: ne0,te0,alphan,&
                                      alphat,ti0,ni0,fdeut, dnalp
@@ -520,8 +548,6 @@ contains
         init_profile_values_from_PROCESS%dr_temperatures = dr_temp
 
     end function init_profile_values_from_PROCESS
-
-
 
     type(gauss_laguerre) function gauss_laguerre_30()
         gauss_laguerre_30%roots = (/4.740718054080526184d-02,&
