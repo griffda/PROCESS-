@@ -49,10 +49,6 @@ subroutine initial
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  See which type of device is being modelled
-
-    call devtyp
-
     !! boundl(ipnvars) /../ : lower bounds on iteration variables 
     !! boundu(ipnvars) /../ : upper bounds on iteration variables 
 
@@ -531,23 +527,6 @@ subroutine initial
 
 
 end subroutine initial
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine devtyp
-    !! Set icase description based on device type
-    !! # TODO This will run before the input file is read in, and hence won't work
-    !! Needs to be moved after the input file reading
-    ! use global_variables, only: icase
-    ! use ife_variables, only: ife
-    ! implicit none
-
-    ! if (ife == 1) then
-    !     icase = 'Inertial Fusion model'
-    ! end if
-end subroutine devtyp
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine check
 

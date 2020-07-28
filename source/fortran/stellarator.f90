@@ -345,9 +345,6 @@ contains
     boundu(3) = 30.0D0
     boundu(29) = 20.0D0
 
-    icase = 'Stellarator model'
-
-
     !  These lines switch off tokamak specifics (solenoid, pf coils, pulses etc.).
     !  Are they still up to date? (11/03/20 JL)
     !  Build quantities
