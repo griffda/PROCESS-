@@ -38,6 +38,9 @@ subroutine init
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  ! Initialise all module variables
+  call init_all_module_vars
+
   !  Initialise error handling
   call initialise_error_list
 
@@ -86,6 +89,16 @@ subroutine init
   end if
 
 end subroutine init
+
+subroutine init_all_module_vars
+  !! Initialise all module variables
+  !! This is vital to ensure a 'clean' state of Process before a new run starts,
+  !! otherwise components of the previous run's state can persist into the new
+  !! run. This matters ever since Process is used as a shared library, rather
+  !! than a 'run-once' executable.
+  use numerics, only: init_numerics
+  call init_numerics
+end subroutine init_all_module_vars
 
 subroutine finish
   ! Originally at the end of the "program", this subroutine writes some final 
