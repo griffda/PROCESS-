@@ -134,6 +134,9 @@ contains
     !  Allocate memory for error_type array contents
 
     call fson_get(errorfile, "n_errortypes", n_errortypes)
+    
+    ! Guard against re-allocation
+    if (allocated(error_type)) deallocate(error_type)
     allocate(error_type(n_errortypes))
 
     error_type(:)%level = ERROR_OKAY

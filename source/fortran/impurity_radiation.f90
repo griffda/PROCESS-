@@ -270,6 +270,10 @@ contains
     impurity_arr(no)%frac    = frac
     impurity_arr(no)%len_tab = len_tab
 
+    ! Guard against re-allocation
+    if (allocated(impurity_arr(no)%Temp_keV)) deallocate(impurity_arr(no)%Temp_keV)
+    if (allocated(impurity_arr(no)%Lz_Wm3)) deallocate(impurity_arr(no)%Lz_Wm3)
+    if (allocated(impurity_arr(no)%Zav)) deallocate(impurity_arr(no)%Zav)
     allocate( &
          impurity_arr(no)%Temp_keV(len_tab), &
          impurity_arr(no)%Lz_Wm3(len_tab), &

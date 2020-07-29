@@ -3321,6 +3321,8 @@ contains
     if (error .eqv. .True.) stop
 
     ! MDK Try allocating here
+    ! Guard against re-allocation
+    if (allocated(name_xc)) deallocate(name_xc)
     allocate(name_xc(nvar))
 
   end subroutine parse_input_file
