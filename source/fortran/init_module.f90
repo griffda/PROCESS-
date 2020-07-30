@@ -101,12 +101,14 @@ subroutine init_all_module_vars
   use buildings_variables, only: init_buildings_variables
   use cost_variables, only: init_cost_variables
   use div_kal_vars, only: init_div_kal_vars
+  use divertor_ode, only: init_divertor_ode
 
   call init_numerics
   call init_input
   call init_buildings_variables
   call init_cost_variables
   call init_div_kal_vars
+  call init_divertor_ode
 end subroutine init_all_module_vars
 
 subroutine finish
