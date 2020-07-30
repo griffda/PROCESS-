@@ -98,8 +98,10 @@ subroutine init_all_module_vars
   !! than a 'run-once' executable.
   use numerics, only: init_numerics
   use process_input, only: init_input
+  use buildings_variables, only: init_buildings_variables
   call init_numerics
   call init_input
+  call init_buildings_variables
 end subroutine init_all_module_vars
 
 subroutine finish
