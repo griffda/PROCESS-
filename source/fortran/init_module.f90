@@ -97,7 +97,9 @@ subroutine init_all_module_vars
   !! run. This matters ever since Process is used as a shared library, rather
   !! than a 'run-once' executable.
   use numerics, only: init_numerics
+  use process_input, only: init_input
   call init_numerics
+  call init_input
 end subroutine init_all_module_vars
 
 subroutine finish

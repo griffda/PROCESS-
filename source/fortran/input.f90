@@ -64,7 +64,7 @@ module process_input
   implicit none
 
   private
-  public :: input, check_range_int, check_range_real, lower_case
+  public :: input, check_range_int, check_range_real, lower_case, init_input
   integer, public, parameter :: nin = 10
 
 #ifdef unit_test
@@ -78,12 +78,17 @@ module process_input
   integer :: iptr             !  current position on line
   integer :: infile, outfile, report_changes, icode
   logical :: subscript_present
-  logical :: error = .False.
+  logical :: error
   character(len=78) :: error_message
 
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine init_input
+    !! Initialise module variables
+    error = .False.
+  end subroutine init_input
 
   subroutine input
 
@@ -322,16 +327,21 @@ contains
 
     integer :: iost
     integer :: isub1,isub2,varlen
-    integer :: no_constraints=0
-    integer :: no_iteration=0
+    integer :: no_constraints
+    integer :: no_iteration
     integer :: foundAst
 
     character(len=32) :: varnam
 
-    logical :: obsolete_var = .false.
+    logical :: obsolete_var
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    ! Initialise local variables
+    no_constraints = 0
+    no_iteration = 0
+    obsolete_var = .false.
+    
     !  Initialise module-wide variables
 
     infile = in_file
