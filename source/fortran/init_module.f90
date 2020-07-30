@@ -100,10 +100,13 @@ subroutine init_all_module_vars
   use process_input, only: init_input
   use buildings_variables, only: init_buildings_variables
   use cost_variables, only: init_cost_variables
+  use div_kal_vars, only: init_div_kal_vars
+
   call init_numerics
   call init_input
   call init_buildings_variables
   call init_cost_variables
+  call init_div_kal_vars
 end subroutine init_all_module_vars
 
 subroutine finish
