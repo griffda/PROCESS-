@@ -487,20 +487,21 @@ contains
 
     end function init_profiles_from_PROCESS
 
-    type(profile_values) function init_profile_values_from_PROCESS(r)
+    type(profile_values) function init_profile_values_from_PROCESS(rho)
         use physics_variables, only: ne0,te0,alphan,&
-                                     alphat,ti0,ni0,fdeut, dnalp
+                                     alphat,ti0,ni0,fdeut, dnalp, rminor
         use const_and_precisions, only: keV_
 
-        real(dp), intent(in) :: r
+        real(dp), intent(in) :: rho
 
         real(dp),dimension(4) :: dens,temp, dr_dens, dr_temp
         real(dp) :: dense, densD,densT,densa, &
                     tempD,tempT,tempa,tempe, &
                     dr_tempe, dr_tempT, dr_tempD, dr_tempa,&
-                    dr_dense, dr_densT, dr_densD, dr_densa
+                    dr_dense, dr_densT, dr_densD, dr_densa, r
 
         
+        r = rho * rminor
 
         tempe = te0 * (1-r**2)**alphat * keV_ ! To SI units bc.. convenience I guess?
         tempT = ti0 * (1-r**2)**alphat * keV_

@@ -318,7 +318,7 @@ contains
     !  Cross-sectional area, averaged over toroidal angle
     sareao = 0.5D0*sarea  !  Used only in the divertor model; approximate as for tokamaks
 
-    print* , "Volume: ",vol, " Major Radius: ",rmajor, " Minor Radius: ",rminor, " bt: ", bt
+
 
   end subroutine stgeom
 
@@ -565,7 +565,8 @@ contains
 
     ! These parameters are outputs for the stellarator neoclassics module
     real(dp) :: chi_neo_e, chi_PROCESS_e, q_neo, q_PROCESS,q_PROCESS_r1, gamma_neo, gamma_PROCESS, total_q_neo,&
-                  q_neo_e, q_neo_D, q_neo_a, q_neo_T, g_neo_e, g_neo_D, g_neo_a, g_neo_T
+                  q_neo_e, q_neo_D, q_neo_a, q_neo_T, g_neo_e, g_neo_D, g_neo_a, g_neo_T, &
+                  dndt_neo_e, dndt_neo_D, dndt_neo_a, dndt_neo_T, dndt_neo_fuel, dmdt_neo_fuel
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !  Calculate plasma composition
@@ -703,10 +704,10 @@ contains
 
     !call stdlim(bt,powht,rmajor,rminor,dnelimt)
     !print *, "Sudo limit: ",dnelimt
-    call stdlim_ecrh(170d9,bt,dnelimt)
+    dnelimt = stdlim_ecrh(170d9,bt)
     ! This assumes 170GHz Gyrotrons
 
-    print *, "ECRH density limit", dnelimt, " Current density:",dene*1.0d-20
+    !print *, "ECRH density limit", dnelimt, " Current density:",dene*1.0d-20
 
     !  Calculate transport losses and energy confinement time using the
     !  chosen scaling law
@@ -735,6 +736,9 @@ contains
     ! Calculate the neoclassical sanity check with PROCESS parameters
     call calc_neoclassics
 
+    
+    !print '(A8,f10.1,A8,f10.1,A8,f10.1,A8,f10.1,A8,f10.1)',"rmajor",rmajor,"aspect",&
+    !        aspect,"bt",bt,"te",te,"dene",dene*1e-20
 
     if (iprint == 1) call stphys_output(outfile)
 
@@ -755,6 +759,10 @@ contains
          call ovarre(outfile,'Total neoclassical flux (r=rhocore) (MW/m2)','(total_q_neo)',total_q_neo)
          call ovarre(outfile,'Total heat flux due to neoclassical energy transport (MW/m2): ','(q_neo)',q_neo)
          call ovarre(outfile,'Total heat flux due to neoclassical particle transport (MW/m2): ','(gamma_neo)',gamma_neo)
+         call ovarre(outfile,'Total fuel (DT) particle flux due to neoclassical particle transport (1/s): ',&
+                                 '(dndt_neo_fuel)',dndt_neo_fuel)
+         call ovarre(outfile,'Total fuel (DT) mass flux due to neoclassical particle transport (mg/s): ', &
+                                 '(dmdt_neo_fuel)',dmdt_neo_fuel)
          call ovarre(outfile,'Considered Heatflux by LCFS heat flux ratio (1)','(q_PROCESS/q_PROCESS_r1)',q_PROCESS/q_PROCESS_r1)
 
          call ovarre(outfile,'Resulting electron effective chi (0D) (r=rhocore): ','(chi_PROCESS_e)',chi_PROCESS_e)
@@ -769,6 +777,11 @@ contains
          call ovarre(outfile,'Heat flux due to neoclassical particle transport (D) (MW/m2): ','(g_neo_D)',g_neo_D)
          call ovarre(outfile,'Heat flux due to neoclassical particle transport (T) (MW/m2): ','(g_neo_T)',g_neo_T)
          call ovarre(outfile,'Heat flux due to neoclassical particle transport (a) (MW/m2): ','(g_neo_a)',g_neo_a)
+
+         call ovarre(outfile,'Particle flux due to neoclassical particle transport (e) (1/m2/s): ','(dndt_neo_e)',dndt_neo_e)
+         call ovarre(outfile,'Particle flux due to neoclassical particle transport (D) (1/m2/s): ','(dndt_neo_D)',dndt_neo_D)
+         call ovarre(outfile,'Particle flux due to neoclassical particle transport (T) (1/m2/s): ','(dndt_neo_T)',dndt_neo_T)
+         call ovarre(outfile,'Particle flux due to neoclassical particle transport (a) (1/m2/s): ','(dndt_neo_a)',dndt_neo_a)
 
 
 
@@ -816,9 +829,9 @@ contains
          !! Fluxes as arising from 0D calculated PROCESS values
          !
          ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-         use physics_variables, only: falpha,palppv,pcoreradpv,vol,sarea,rminor,te,powerht
+         use physics_variables, only: falpha,palppv,pcoreradpv,vol,sarea,rminor,te,powerht,afuel
          use impurity_radiation_module, only: coreradius
-         use const_and_precisions, only: keV_, pi
+         use const_and_precisions, only: keV_, pi, mp_
          use neoclassics_module, only: neoclassics,init_neoclassics
          use stellarator_variables, only: iotabar
       
@@ -832,17 +845,14 @@ contains
       
          neo_at_rhocore = init_neoclassics(r_eff=0.6d0,eps_eff=config%epseff,iota = iotabar, &
                            D11_star_mono_input = config%D11_star_mono_input, nu_star_mono_input = config%nu_star_mono_input, &
-                           D13_star_mono_input = config%D11_star_mono_input)    
-      
-
-
-         q_PROCESS = (falpha*palppv - pcoreradpv) * vol/sarea * (coreradius*rminor/config%rminor_ref)
+                           D13_star_mono_input = config%D11_star_mono_input)
+         
+         
+         
+         q_PROCESS = (falpha*palppv - pcoreradpv) * vol/sarea * coreradius
 
          q_PROCESS_r1 = (falpha*palppv - pcoreradpv) * vol/sarea
 
-
- 
- 
 
 
          q_neo = sum(neo_at_rhocore%q_flux*1e-6)
@@ -855,10 +865,18 @@ contains
          q_neo_a = neo_at_rhocore%q_flux(4)*1e-6
          q_neo_T = neo_at_rhocore%q_flux(3)*1e-6
 
-         g_neo_e = neo_at_rhocore%Gamma_flux(1)*1e-6
-         g_neo_D = neo_at_rhocore%Gamma_flux(2)*1e-6
-         g_neo_a = neo_at_rhocore%Gamma_flux(4)*1e-6
-         g_neo_T = neo_at_rhocore%Gamma_flux(3)*1e-6
+         g_neo_e = neo_at_rhocore%Gamma_flux(1)*1e-6 * neo_at_rhocore%profiles%temperatures(1)
+         g_neo_D = neo_at_rhocore%Gamma_flux(2)*1e-6 * neo_at_rhocore%profiles%temperatures(2)
+         g_neo_a = neo_at_rhocore%Gamma_flux(4)*1e-6 * neo_at_rhocore%profiles%temperatures(4)
+         g_neo_T = neo_at_rhocore%Gamma_flux(3)*1e-6 * neo_at_rhocore%profiles%temperatures(3)
+
+         dndt_neo_e = neo_at_rhocore%Gamma_flux(1)
+         dndt_neo_D = neo_at_rhocore%Gamma_flux(2)
+         dndt_neo_a = neo_at_rhocore%Gamma_flux(4)
+         dndt_neo_T = neo_at_rhocore%Gamma_flux(3)
+
+         dndt_neo_fuel = (dndt_neo_D + dndt_neo_T) * sarea * coreradius
+         dmdt_neo_fuel = dndt_neo_fuel * afuel * mp_ * 1.0d6
 
          chi_neo_e =  -(neo_at_rhocore%q_flux(1)+neo_at_rhocore%Gamma_flux(1)*neo_at_rhocore%profiles%temperatures(1))/ &
                      (neo_at_rhocore%profiles%densities(1)* &
@@ -1775,7 +1793,7 @@ contains
 
   end subroutine stdlim
 
-  subroutine stdlim_ecrh(gyro_frequency_max,bt,dlimit_ecrh)
+  function stdlim_ecrh(gyro_frequency_max,bt_input) result(dlimit_ecrh)
 
    !! Routine to calculate the density limit due to an ECRH heating scheme on axis
    !! author: J Lion, IPP Greifswald
@@ -1792,8 +1810,8 @@ contains
 
    !  Arguments
 
-   real(dp), intent(in) :: bt,gyro_frequency_max
-   real(dp), intent(out) :: dlimit_ecrh
+   real(dp), intent(in) :: bt_input,gyro_frequency_max
+   real(dp) :: dlimit_ecrh
 
    !  Local variables
 
@@ -1801,7 +1819,7 @@ contains
 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   gyro_frequency = 1.76d11 * bt
+   gyro_frequency = 1.76d11 * bt_input
 
    ! Restrict it to the maximal available gyrotron frequency
    gyro_frequency = min(gyro_frequency,gyro_frequency_max * 2.0d0*pi)
@@ -1821,9 +1839,80 @@ contains
       dlimit_ecrh = ne0_max/(1+alphan)
    end if
 
-  end subroutine stdlim_ecrh
+  end function stdlim_ecrh
+
+  logical function ecrh_ignitable(gyro_frequency_max,bt)
+
+   !! Function to calculate if the plasma is ignitable with the current values for the B field. Assumes
+   !! current ECRH achievable peak temperature (which is inaccurate as the cordey pass should be calculated)
+   !! author: J Lion, IPP Greifswald
+   !! gyro_frequency_max     : input real : Maximal available Gyrotron frequency (1/s) NOT (rad/s)
+   !! bt  : input real : Maximal magnetic field on axis (T)
+   !! This routine calculates the density limit due to an ECRH heating scheme on axis
+   !! Assumes current peak temperature (which is inaccurate as the cordey pass should be calculated)
+   !! Maybe use this: https://doi.org/10.1088/0029-5515/49/8/085026
+   !!
+   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   use physics_variables, only: ne0
+   use const_and_precisions, only: pi, keV_
+   use physics_variables, only: ipedestal,alphan
+   use physics_functions_module, only: bosch_hale
+   use physics_module, only: pcond
+   use maths_library, only: gamfun
 
 
+   use current_drive_variables, only: pinjmw
+   use physics_variables, only: iradloss, vol, palpmw, pradpv, pchargemw, &
+     zeff, pohmpv, pchargepv, xarea, tin, eps, palppv, kappa95, &
+     ten, te, kappa, falpha, iinvqd, rminor, rmajor, &
+     ignite, aspect, qstar, q, afuel, plascur, pcoreradpv, q95, isc,&
+     hfact, alphan
+
+
+
+   implicit none
+
+   !  Arguments
+
+   real(dp), intent(in) :: bt, gyro_frequency_max
+
+   !  Local variables
+
+   real(dp) ::ne0_max, ptrepv,ptripv,tauee,tauei,taueff,powerht, kappaa, volumefusionrate,&
+               ptotal, pfusion_mw
+
+
+   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+   ne0_max = stdlim_ecrh(gyro_frequency_max, bt)
+
+   dene_local = ne0_max/(1.0d0+alphan)
+   deni_local = dene_local
+   dnla = dene*(1.0D0+alphan) * 0.886227D0 * gamfun(alphan+1.0D0) / &
+          gamfun(alphan+1.5D0)
+
+   ! Sets  ptrepv,ptripv,tauee,tauei,taueff,powerht and kappaa
+   call pcond(afuel,palpmw,aspect,bt,deni_local,dene_local,dnla,eps,hfact, &
+               iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
+               plascur,pcoreradpv,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
+               xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
+
+   ! Check Lawson ignition
+   volumefusionrate = 0.25d0 * deni**2 * bosch_hale(ten,1)
+   
+   pfusion_mw = volumefusionrate * 3.5d3*keV_ * falpha
+
+   ! Total loss power by confinement time scalings (MW/m3)
+   ptotal = (ptrepv + ptripv)
+
+
+   
+   
+   
+
+  end function ecrh_ignitable
 
   subroutine stblim(betamx)
 
@@ -2051,7 +2140,7 @@ contains
     !total_coil_thickness = h + 2* d_ic + 2* case_thickness_constant
     !
     intercoil_surface = config%coilsurface *f_r**2 &
-                         - tftort * config%coillength* f_r/f_aspect * f_N 
+                         - tftort * config%coillength* f_r * f_N 
 
 
     ! This 0.18 m is an effective thickness which is scaled with empirial 1.5 law. 5.6 T is reference point of Helias
@@ -2277,7 +2366,7 @@ contains
     ! Sets major and minor coil radius (important for machine scalings) 
    
     r_coil_major = config%coil_rmajor * f_r
-    r_coil_minor = config%coil_rminor * f_r / f_aspect ! This aspect scaling is only valid close to the intended aspect ratio.
+    r_coil_minor = config%coil_rminor * f_r
 
     ! Coil case thickness (m). Here assumed to be constant 
     ! until something better comes up.
@@ -2455,7 +2544,7 @@ contains
                    * (ritfc/n_tf)**2 * 1.0D-9             ! [GJ] Total magnetic energy
   
      !  Coil dimensions
-     hmax = 0.5D0 * config%maximal_coil_height *f_r/f_aspect   ! [m] maximum half-height of coil
+     hmax = 0.5D0 * config%maximal_coil_height *f_r   ! [m] maximum half-height of coil
      r_tf_inleg_mid =  r_coil_major-r_coil_minor          ! This is not very well defined for a stellarator.
                                                           ! Though, this is taken as an average value.
      tf_total_h_width = r_coil_minor                      !? not really sure what this is supposed to be. Estimated as
@@ -2465,13 +2554,13 @@ contains
      tfborev = 2.0D0*hmax                   ! [m] estimated vertical coil bore
      
      
-     tfleng = config%coillength*f_r/n_tf/f_aspect                     ! [m] estimated average length of a coil
+     tfleng = config%coillength*f_r/n_tf                     ! [m] estimated average length of a coil
  
      ! [m^2] Total surface area of toroidal shells covering coils
-     tfcryoarea = config%coilsurface * f_r**2 / f_aspect *1.1D0 !1.1 to scale it out a bit. Should be coupled to winding pack maybe.
+     tfcryoarea = config%coilsurface * f_r**2 *1.1D0 !1.1 to scale it out a bit. Should be coupled to winding pack maybe.
  
      ! Minimal bending radius:
-     min_bending_radius = config%min_bend_radius * f_r / f_aspect
+     min_bending_radius = config%min_bend_radius * f_r 
 
    ! End of general coil geometry values
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
