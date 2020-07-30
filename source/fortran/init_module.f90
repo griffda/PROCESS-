@@ -103,6 +103,7 @@ subroutine init_all_module_vars
   use div_kal_vars, only: init_div_kal_vars
   use divertor_ode, only: init_divertor_ode
   use divertor_variables, only: init_divertor_variables
+  use error_handling, only: init_error_handling
 
   call init_numerics
   call init_input
@@ -111,6 +112,7 @@ subroutine init_all_module_vars
   call init_div_kal_vars
   call init_divertor_ode
   call init_divertor_variables
+  call init_error_handling
 end subroutine init_all_module_vars
 
 subroutine finish

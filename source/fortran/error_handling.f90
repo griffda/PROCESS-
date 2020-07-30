@@ -29,14 +29,15 @@ module error_handling
 
   private
   public :: errors_on, error_status, idiags, fdiags
-  public :: initialise_error_list, report_error, show_errors
+  public :: initialise_error_list, report_error, show_errors, &
+    init_error_handling
 
   !  Switch to turn error handling on
   !  Error reporting is turned off, until either a severe error is found, or
   !  during an output step.  Warnings during intermediate iteration steps
   !  may be premature and might clear themselves at the final converged point.
 
-  logical :: errors_on = .false.
+  logical :: errors_on
 
   !  Levels of severity
 
@@ -45,12 +46,12 @@ module error_handling
   integer, parameter :: ERROR_WARN = 2
   integer, parameter :: ERROR_SEVERE = 3
 
-  integer :: error_id = 0
+  integer :: error_id
   !! error_id : identifier for final message encountered
 
   !  Overall status
 
-  integer :: error_status = ERROR_OKAY
+  integer :: error_status
   !! error_status : overall status flag for a run; on exit:<UL>
   !!                 <LI> 0  all okay
   !!                 <LI> 1  informational messages have been encountered
@@ -62,8 +63,8 @@ module error_handling
 
   !  Arrays for diagnostic output
 
-  integer, dimension(8) :: idiags = INT_DEFAULT
-  real(dp), dimension(8) :: fdiags = FLT_DEFAULT
+  integer, dimension(8) :: idiags
+  real(dp), dimension(8) :: fdiags
 
   !  Individual error item
   !  int and float arrays may be useful to provide diagnostic information
@@ -95,6 +96,17 @@ module error_handling
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine init_error_handling
+    !! Initialise the error_handling module variables
+    implicit none
+    
+    errors_on = .false.
+    error_id = 0
+    error_status = ERROR_OKAY
+    idiags = INT_DEFAULT
+    fdiags = FLT_DEFAULT
+  end subroutine init_error_handling
 
   subroutine initialise_error_list
 
