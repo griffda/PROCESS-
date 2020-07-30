@@ -110,8 +110,11 @@ contains
     !  Local variables
 
     real(dp) :: summ,sqsumconfsq
-    logical :: first_call = .true.
+    logical :: first_call
     integer :: ii, loop
+
+    ! Initialise local variables
+    first_call = .true.
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
