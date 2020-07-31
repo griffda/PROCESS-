@@ -24,6 +24,7 @@ subroutine init_all_module_vars
   use fwbs_variables, only: init_fwbs_variables
   use global_variables, only: init_global_variables
   use ccfe_hcpb_module, only: init_ccfe_hcpb_module
+  use kit_hcpb_module, only: init_kit_hcpb_module
 
   call init_numerics
   call init_input
@@ -37,6 +38,7 @@ subroutine init_all_module_vars
   call init_fwbs_variables
   call init_global_variables
   call init_ccfe_hcpb_module
+  call init_kit_hcpb_module
 end subroutine init_all_module_vars
 
 subroutine init
