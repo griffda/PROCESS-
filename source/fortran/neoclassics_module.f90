@@ -503,25 +503,26 @@ contains
         
         r = rho * rminor
 
-        tempe = te0 * (1-r**2)**alphat * keV_ ! To SI units bc.. convenience I guess?
-        tempT = ti0 * (1-r**2)**alphat * keV_
-        tempD = ti0 * (1-r**2)**alphat * keV_
-        tempa = ti0 * (1-r**2)**alphat * keV_
+        tempe = te0 * (1-rho**2)**alphat * keV_ ! To SI units bc.. convenience I guess?
+        tempT = ti0 * (1-rho**2)**alphat * keV_
+        tempD = ti0 * (1-rho**2)**alphat * keV_
+        tempa = ti0 * (1-rho**2)**alphat * keV_
 
-        dense = ne0 * (1-r**2)**alphan
-        densT = (1-fdeut) * ni0 * (1-r**2)**alphan
-        densD = fdeut *ni0 * (1-r**2)**alphan
-        densa = dnalp*(1+alphan) * (1-r**2)**alphan
+        dense = ne0 * (1-rho**2)**alphan
+        densT = (1-fdeut) * ni0 * (1-rho**2)**alphan
+        densD = fdeut *ni0 * (1-rho**2)**alphan
+        densa = dnalp*(1+alphan) * (1-rho**2)**alphan
 
-        dr_tempe = -2 * te0 * r * (1-r**2)**(alphat-1) * alphat * keV_
-        dr_tempT = -2 * ti0 * r * (1-r**2)**(alphat-1) * alphat * keV_
-        dr_tempD = -2 * ti0 * r * (1-r**2)**(alphat-1) * alphat * keV_
-        dr_tempa = -2 * ti0 * r * (1-r**2)**(alphat-1) * alphat * keV_
+        ! Derivatives in real space
+        dr_tempe = -2 * 1.0d0/rminor * te0 * rho * (1-rho**2)**(alphat-1) * alphat * keV_
+        dr_tempT = -2 * 1.0d0/rminor * ti0 * rho * (1-rho**2)**(alphat-1) * alphat * keV_
+        dr_tempD = -2 * 1.0d0/rminor * ti0 * rho * (1-rho**2)**(alphat-1) * alphat * keV_
+        dr_tempa = -2 * 1.0d0/rminor * ti0 * rho * (1-rho**2)**(alphat-1) * alphat * keV_
 
-        dr_dense = -2 * r * ne0 *             (1-r**2)**(alphan-1) * alphan
-        dr_densT = -2 * r * (1-fdeut) * ni0 * (1-r**2)**(alphan-1) * alphan
-        dr_densD = -2 * r * fdeut *ni0 *      (1-r**2)**(alphan-1) * alphan
-        dr_densa = -2 * r * dnalp*(1+alphan)* (1-r**2)**(alphan-1) * alphan
+        dr_dense = -2 * 1.0d0/rminor * rho * ne0 *             (1-rho**2)**(alphan-1) * alphan
+        dr_densT = -2 * 1.0d0/rminor * rho * (1-fdeut) * ni0 * (1-rho**2)**(alphan-1) * alphan
+        dr_densD = -2 * 1.0d0/rminor * rho * fdeut *ni0 *      (1-rho**2)**(alphan-1) * alphan
+        dr_densa = -2 * 1.0d0/rminor * rho * dnalp*(1+alphan)* (1-rho**2)**(alphan-1) * alphan
 
         dens(1) = dense
         dens(2) = densD

@@ -1880,7 +1880,7 @@ contains
    !  Local variables
 
    real(dp) ::ne0_max, ptrepv,ptripv,tauee,tauei,taueff,powerht, kappaa, volumefusionrate,&
-               ptotal, pfusion_mw
+               ptotal, pfusion_mw, dnla, deni_local, dene_local
 
 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1890,7 +1890,7 @@ contains
 
    dene_local = ne0_max/(1.0d0+alphan)
    deni_local = dene_local
-   dnla = dene*(1.0D0+alphan) * 0.886227D0 * gamfun(alphan+1.0D0) / &
+   dnla = dene_local*(1.0D0+alphan) * 0.886227D0 * gamfun(alphan+1.0D0) / &
           gamfun(alphan+1.5D0)
 
    ! Sets  ptrepv,ptripv,tauee,tauei,taueff,powerht and kappaa
@@ -1900,7 +1900,7 @@ contains
                xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
 
    ! Check Lawson ignition
-   volumefusionrate = 0.25d0 * deni**2 * bosch_hale(ten,1)
+   volumefusionrate = 0.25d0 * deni_local**2 * bosch_hale(ten,1)
    
    pfusion_mw = volumefusionrate * 3.5d3*keV_ * falpha
 
