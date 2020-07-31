@@ -6,6 +6,37 @@ module init_module
 
 contains
 
+subroutine init_all_module_vars
+  !! Initialise all module variables
+  !! This is vital to ensure a 'clean' state of Process before a new run starts,
+  !! otherwise components of the previous run's state can persist into the new
+  !! run. This matters ever since Process is used as a shared library, rather
+  !! than a 'run-once' executable.
+  use numerics, only: init_numerics
+  use process_input, only: init_input
+  use buildings_variables, only: init_buildings_variables
+  use cost_variables, only: init_cost_variables
+  use div_kal_vars, only: init_div_kal_vars
+  use divertor_ode, only: init_divertor_ode
+  use divertor_variables, only: init_divertor_variables
+  use error_handling, only: init_error_handling
+  use fson_library, only: init_fson_library
+  use fwbs_variables, only: init_fwbs_variables
+  use global_variables, only: init_global_variables
+
+  call init_numerics
+  call init_input
+  call init_buildings_variables
+  call init_cost_variables
+  call init_div_kal_vars
+  call init_divertor_ode
+  call init_divertor_variables
+  call init_error_handling
+  call init_fson_library
+  call init_fwbs_variables
+  call init_global_variables
+end subroutine init_all_module_vars
+
 subroutine init
 
   !! Routine that calls the initialisation routines
@@ -37,9 +68,6 @@ subroutine init
   integer :: i
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  ! Initialise all module variables
-  call init_all_module_vars
 
   !  Initialise error handling
   call initialise_error_list
@@ -89,35 +117,6 @@ subroutine init
   end if
 
 end subroutine init
-
-subroutine init_all_module_vars
-  !! Initialise all module variables
-  !! This is vital to ensure a 'clean' state of Process before a new run starts,
-  !! otherwise components of the previous run's state can persist into the new
-  !! run. This matters ever since Process is used as a shared library, rather
-  !! than a 'run-once' executable.
-  use numerics, only: init_numerics
-  use process_input, only: init_input
-  use buildings_variables, only: init_buildings_variables
-  use cost_variables, only: init_cost_variables
-  use div_kal_vars, only: init_div_kal_vars
-  use divertor_ode, only: init_divertor_ode
-  use divertor_variables, only: init_divertor_variables
-  use error_handling, only: init_error_handling
-  use fson_library, only: init_fson_library
-  use fwbs_variables, only: init_fwbs_variables
-
-  call init_numerics
-  call init_input
-  call init_buildings_variables
-  call init_cost_variables
-  call init_div_kal_vars
-  call init_divertor_ode
-  call init_divertor_variables
-  call init_error_handling
-  call init_fson_library
-  call init_fwbs_variables
-end subroutine init_all_module_vars
 
 subroutine finish
   ! Originally at the end of the "program", this subroutine writes some final 

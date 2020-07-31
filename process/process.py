@@ -55,6 +55,7 @@ class Process():
         :type args: list, optional
         """
         self.parse_args(args)
+        self.init_module_vars()
         self.set_filenames()
         self.initialise()
         self.run_hare_tests()
@@ -122,6 +123,14 @@ class Process():
         # sys.argv), as the method is being run from the command-line.
         self.args = parser.parse_args(args)
         # Store namespace object of the args
+
+    def init_module_vars(self):
+        """Initialise all module variables in the Fortran.
+
+        This "resets" all module variables to their initialised values, so each
+        new run doesn't have any side-effects from previous runs.
+        """
+        fortran.init_module.init_all_module_vars()
 
     def set_filenames(self):
         """Validate the input filename and create other filenames from it."""
