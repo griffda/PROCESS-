@@ -22,7 +22,7 @@ module impurity_radiation_module
 
   private
   public :: initialise_imprad, impradprofile, z2index, element2index, fradcore
-  public :: imp_dat, Zav_of_te
+  public :: imp_dat, Zav_of_te, init_impurity_radiation_module
 
 
   !! (It is recommended to turn on
@@ -31,53 +31,38 @@ module impurity_radiation_module
   integer, public, parameter :: nimp = 14
   !! nimp /14/ FIX : number of ion species in impurity radiation model
 
-  real(dp), public :: coreradius = 0.6D0
+  real(dp), public :: coreradius
   !! coreradius /0.6/ : normalised radius defining the 'core' region
 
-  real(dp), public :: coreradiationfraction = 1.0D0
+  real(dp), public :: coreradiationfraction
   !! coreradiationfraction /1.0/ : fraction of radiation from 'core' region that is subtracted from the loss power
 
   !! fimp(nimp) /1.0,0.1,0.02,0.0,0.0,0.0,0.0,0.0,0.0016,0.0,0.0,0.0,0.0,0.0/ :
   !!        impurity number density fractions relative to electron density
   !!        (iteration variable 102 is fimp(impvar))
-  real(dp), public, dimension(nimp) :: fimp = &
-       (/ 1.0D0, 0.1D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
-       0.0D0, 0.00D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0 /)
-       character(len=2), public, dimension(nimp) :: imp_label = (/ &
-       'H_', &
-       'He', &
-       'Be', &
-       'C_', &
-       'N_', &
-       'O_', &
-       'Ne', &
-       'Si', &
-       'Ar', &
-       'Fe', &
-       'Ni', &
-       'Kr', &
-       'Xe', &
-       'W_'/)
-       !! imp_label(nimp) : impurity ion species names:<UL>
-       !! <LI> ( 1)  Hydrogen  (fraction calculated by code)
-       !! <LI> ( 2)  Helium
-       !! <LI> ( 3)  Beryllium
-       !! <LI> ( 4)  Carbon
-       !! <LI> ( 5)  Nitrogen
-       !! <LI> ( 6)  Oxygen
-       !! <LI> ( 7)  Neon
-       !! <LI> ( 8)  Silicon
-       !! <LI> ( 9)  Argon
-       !! <LI> (10)  Iron
-       !! <LI> (11)  Nickel
-       !! <LI> (12)  Krypton
-       !! <LI> (13)  Xenon
-       !! <LI> (14)  Tungsten</UL>
+  real(dp), public, dimension(nimp) :: fimp
 
-       !! fimpvar /1.0e-3/ : impurity fraction to be used as fimp(impvar)
-       !!                    (iteration variable 102)
+  character(len=2), public, dimension(nimp) :: imp_label
+  !! imp_label(nimp) : impurity ion species names:<UL>
+  !! <LI> ( 1)  Hydrogen  (fraction calculated by code)
+  !! <LI> ( 2)  Helium
+  !! <LI> ( 3)  Beryllium
+  !! <LI> ( 4)  Carbon
+  !! <LI> ( 5)  Nitrogen
+  !! <LI> ( 6)  Oxygen
+  !! <LI> ( 7)  Neon
+  !! <LI> ( 8)  Silicon
+  !! <LI> ( 9)  Argon
+  !! <LI> (10)  Iron
+  !! <LI> (11)  Nickel
+  !! <LI> (12)  Krypton
+  !! <LI> (13)  Xenon
+  !! <LI> (14)  Tungsten</UL>
+
+  !! fimpvar /1.0e-3/ : impurity fraction to be used as fimp(impvar)
+  !!                    (iteration variable 102)
   ! Deprecated
-  real(dp), public :: fimpvar = 1.0D-3
+  real(dp), public :: fimpvar
 
     !  Obtain the root directory
 
@@ -85,11 +70,11 @@ module impurity_radiation_module
 
   !! impdir /'/home/PROCESS/[branch]/impuritydata'/ :
   !!          Directory containing impurity radiation data files
-  character(len=200), public :: impdir = INSTALLDIR//'/data/impuritydata/'
+  character(len=200), public :: impdir
 
   !! impvar : impurity to be iterated (deprecated)
   !!                      variable number 102 is turned on
-  integer, public :: impvar = 9
+  integer, public :: impvar
 
   !  Declare impurity data type
 
@@ -111,9 +96,41 @@ module impurity_radiation_module
 
   type(imp_dat),  dimension(nimp), save, public :: impurity_arr
 
+  logical :: toolow
+  !! Used for reporting error in function pimpden
+
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine init_impurity_radiation_module
+    !! Initialise module variables
+    implicit none
+
+    coreradius = 0.6D0
+    coreradiationfraction = 1.0D0
+    fimp = (/ 1.0D0, 0.1D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
+      0.0D0, 0.00D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0 /)
+    imp_label = (/ &
+      'H_', &
+      'He', &
+      'Be', &
+      'C_', &
+      'N_', &
+      'O_', &
+      'Ne', &
+      'Si', &
+      'Ar', &
+      'Fe', &
+      'Ni', &
+      'Kr', &
+      'Xe', &
+      'W_'/)
+      fimpvar = 1.0D-3
+      impdir = INSTALLDIR//'/data/impuritydata/'
+      impvar = 9
+      toolow = .false.
+  end subroutine init_impurity_radiation_module
 
   subroutine initialise_imprad
 
@@ -600,7 +617,6 @@ contains
 
     integer :: i
     real(dp) :: xi, yi, c, lz
-    logical :: toolow = .false.
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

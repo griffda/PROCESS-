@@ -27,6 +27,7 @@ subroutine init_all_module_vars
   use kit_hcpb_module, only: init_kit_hcpb_module
   use heat_transport_variables, only: init_heat_transport_variables
   use ife_variables, only: init_ife_variables
+  use impurity_radiation_module, only: init_impurity_radiation_module
 
   call init_numerics
   call init_input
@@ -43,6 +44,7 @@ subroutine init_all_module_vars
   call init_kit_hcpb_module
   call init_heat_transport_variables
   call init_ife_variables
+  call init_impurity_radiation_module
 end subroutine init_all_module_vars
 
 subroutine init
