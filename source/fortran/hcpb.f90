@@ -15,12 +15,12 @@ module ccfe_hcpb_module
   implicit none
 
   private
-  public :: ccfe_hcpb, tbr_shimwell
+  public :: ccfe_hcpb, tbr_shimwell, init_ccfe_hcpb_module
 
   ! Variables for output to file
   integer, private :: ip, ofile
 
-  real(dp), private :: W_density = 19.25D0 * 1000.0D0
+  real(dp), private :: W_density
   !! Tungsten density [kg/m3]
 
   ! Smeared densities of build sections
@@ -139,6 +139,13 @@ module ccfe_hcpb_module
   !! Fractions of blanket by volume: steel, lithium orthosilicate, titanium beryllide
 
 contains
+
+  subroutine init_ccfe_hcpb_module
+    !! Initialise module variables
+    implicit none
+
+    W_density = 19.25D0 * 1000.0D0
+  end subroutine init_ccfe_hcpb_module
 
   subroutine ccfe_hcpb(outfile, iprint)
     !! author: J Morris (UKAEA)
