@@ -26,6 +26,7 @@ subroutine init_all_module_vars
   use ccfe_hcpb_module, only: init_ccfe_hcpb_module
   use kit_hcpb_module, only: init_kit_hcpb_module
   use heat_transport_variables, only: init_heat_transport_variables
+  use ife_variables, only: init_ife_variables
 
   call init_numerics
   call init_input
@@ -41,6 +42,7 @@ subroutine init_all_module_vars
   call init_ccfe_hcpb_module
   call init_kit_hcpb_module
   call init_heat_transport_variables
+  call init_ife_variables
 end subroutine init_all_module_vars
 
 subroutine init
