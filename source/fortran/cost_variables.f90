@@ -187,88 +187,88 @@ module cost_variables
   !! - =1 calculate cfactr using Taylor and Ward 1999 model
   !! - =2 calculate cfactr using new (2015) model
 
-  real(dp) :: avail_min 
+  real(dp) :: avail_min
   !! Minimum availability (`constraint equation 61`)
 
-  real(dp) :: tok_build_cost_per_vol 
+  real(dp) :: tok_build_cost_per_vol
   !! Unit cost for tokamak complex buildings, including building and site services ($/m3)
 
-  real(dp) :: light_build_cost_per_vol 
+  real(dp) :: light_build_cost_per_vol
   !! Unit cost for unshielded non-active buildings ($/m3)
 
-  real(dp) :: favail 
+  real(dp) :: favail
   !! F-value for minimum availability (`constraint equation 61`)
 
-  integer :: num_rh_systems 
+  integer :: num_rh_systems
   !! Number of remote handling systems (1-10)
 
-  real(dp) :: conf_mag 
+  real(dp) :: conf_mag
   !! c parameter, which determines the temperature margin at which magnet lifetime starts to decline
 
-  real(dp) :: div_prob_fail 
+  real(dp) :: div_prob_fail
   !! Divertor probability of failure (per op day)
 
-  real(dp) :: div_umain_time 
+  real(dp) :: div_umain_time
   !! Divertor unplanned maintenance time (years)
 
-  real(dp) :: div_nref 
+  real(dp) :: div_nref
   !! Reference value for cycle cycle life of divertor
 
-  real(dp) :: div_nu 
+  real(dp) :: div_nu
   !! The cycle when the divertor fails with 100% probability
 
-  real(dp) :: fwbs_nref 
+  real(dp) :: fwbs_nref
   !! Reference value for cycle life of blanket
 
-  real(dp) :: fwbs_nu 
+  real(dp) :: fwbs_nu
   !! The cycle when the blanket fails with 100% probability
 
-  real(dp) :: fwbs_prob_fail 
+  real(dp) :: fwbs_prob_fail
   !! Fwbs probability of failure (per op day)
 
-  real(dp) :: fwbs_umain_time 
+  real(dp) :: fwbs_umain_time
   !! Fwbs unplanned maintenance time (years)
 
-  real(dp) :: redun_vacp 
+  real(dp) :: redun_vacp
   !! Vacuum system pump redundancy level (%)
 
-  integer :: redun_vac 
+  integer :: redun_vac
   !! Number of redundant vacuum pumps
 
-  real(dp) :: t_operation 
+  real(dp) :: t_operation
   !! Operational time (yrs)
 
-  real(dp) :: tbktrepl 
+  real(dp) :: tbktrepl
   !! time taken to replace blanket (y) (`iavail=1`)
 
-  real(dp) :: tcomrepl 
+  real(dp) :: tcomrepl
   !! time taken to replace both blanket and divertor (y) (`iavail=1`)
 
-  real(dp) :: tdivrepl 
+  real(dp) :: tdivrepl
   !! time taken to replace divertor (y) (`iavail=1`)
 
-  real(dp) :: uubop 
+  real(dp) :: uubop
   !! unplanned unavailability factor for balance of plant (`iavail=1`)
 
-  real(dp) :: uucd 
+  real(dp) :: uucd
   !! unplanned unavailability factor for current drive (`iavail=1`)
 
-  real(dp) :: uudiv 
+  real(dp) :: uudiv
   !! unplanned unavailability factor for divertor (`iavail=1`)
 
-  real(dp) :: uufuel 
+  real(dp) :: uufuel
   !! unplanned unavailability factor for fuel system (`iavail=1`)
 
-  real(dp) :: uufw 
+  real(dp) :: uufw
   !! unplanned unavailability factor for first wall (`iavail=1`)
 
-  real(dp) :: uumag 
+  real(dp) :: uumag
   !! unplanned unavailability factor for magnets (`iavail=1`)
 
-  real(dp) :: uuves 
+  real(dp) :: uuves
   !! unplanned unavailability factor for vessel (`iavail=1`)
 
-  integer :: ifueltyp 
+  integer :: ifueltyp
   !! Switch for fuel type:
   !!
   !! - =2 treat initial blanket, divertor, first wall
@@ -278,44 +278,44 @@ module cost_variables
   !!   fraction fcdfuel of CD equipment as fuel cost
   !! - =0 treat these as capital cost
 
-  integer :: ipnet 
+  integer :: ipnet
   !! Switch for net electric power calculation:
   !!
   !! - =0 scale so that always > 0
   !! - =1 let go < 0 (no c-o-e)
 
-  integer :: ireactor 
+  integer :: ireactor
   !! Switch for net electric power and cost of electricity calculations:
   !!
   !! - =0 do not calculate MW(electric) or c-o-e
   !! - =1 calculate MW(electric) and c-o-e
 
-  integer :: lsa 
+  integer :: lsa
   !! Level of safety assurance switch (generally, use 3 or 4):
   !!
   !! - =1 truly passively safe plant
   !! - =2,3 in-between
   !! - =4 like current fission plant
 
-  real(dp) :: moneyint 
+  real(dp) :: moneyint
   !! interest portion of capital cost (M$)
 
-  integer :: output_costs 
+  integer :: output_costs
   !! Switch for costs output:
   !!
   !! - =0 do not write cost-related outputs to file
   !! - =1 write cost-related outputs to file
 
-  real(dp) :: ratecdol 
+  real(dp) :: ratecdol
   !! effective cost of money in constant dollars
 
-  real(dp) :: step_con 
+  real(dp) :: step_con
   !! Contingency Percentage
 
   real(dp), dimension(68) :: step_ref
   !! Reference values for cost model 2
 
-  real(dp) :: tlife 
+  real(dp) :: tlife
   !! plant life (years)
 
   real(dp), parameter :: ucad = 180.0D0
@@ -330,43 +330,43 @@ module cost_variables
   real(dp), parameter :: ucap = 17.0D0
   !! unit cost of auxiliary transformer ($/kVA)
 
-  real(dp) :: ucblbe 
+  real(dp) :: ucblbe
   !! unit cost for blanket beryllium ($/kg)
 
-  real(dp) :: ucblbreed 
+  real(dp) :: ucblbreed
   !! unit cost for breeder material ($/kg) (`blktmodel>0`)
 
-  real(dp) :: ucblli 
+  real(dp) :: ucblli
   !! unit cost for blanket lithium ($/kg) (30% Li6)
 
-  real(dp) :: ucblli2o 
+  real(dp) :: ucblli2o
   !! unit cost for blanket Li_2O ($/kg)
 
-  real(dp) :: ucbllipb 
+  real(dp) :: ucbllipb
   !! unit cost for blanket Li-Pb ($/kg) (30% Li6)
 
-  real(dp) :: ucblss 
+  real(dp) :: ucblss
   !! unit cost for blanket stainless steel ($/kg)
 
-  real(dp) :: ucblvd 
+  real(dp) :: ucblvd
   !! unit cost for blanket vanadium ($/kg)
 
   real(dp), parameter :: ucbpmp = 2.925D5
   !! vacuum system backing pump cost ($)
 
-  real(dp) :: ucbus 
+  real(dp) :: ucbus
   !! cost of aluminium bus for TF coil ($/A-m)
 
-  real(dp) :: uccase 
+  real(dp) :: uccase
   !! cost of superconductor case ($/kg)
 
   real(dp), parameter :: ucco = 350.0D0
   !! unit cost for control buildings (M$/m3)
 
-  real(dp) :: uccpcl1 
+  real(dp) :: uccpcl1
   !! cost of high strength tapered copper ($/kg)
 
-  real(dp) :: uccpclb 
+  real(dp) :: uccpclb
   !! cost of TF outboard leg plate coils ($/kg)
 
   real(dp), parameter :: uccpmp = 3.9D5
@@ -375,19 +375,19 @@ module cost_variables
   real(dp), parameter :: uccr = 460.0D0
   !! unit cost for cryogenic building (M$/vol)
 
-  real(dp) :: uccry 
+  real(dp) :: uccry
   !! heat transport system cryoplant costs ($/W**expcry)
 
-  real(dp) :: uccryo 
+  real(dp) :: uccryo
   !! unit cost for vacuum vessel ($/kg)
 
-  real(dp) :: uccu 
+  real(dp) :: uccu
   !! unit cost for copper in superconducting cable ($/kg)
 
   real(dp), parameter :: ucdgen = 1.7D6
   !! cost per 8 MW diesel generator ($)
 
-  real(dp) :: ucdiv 
+  real(dp) :: ucdiv
   !! cost of divertor blade ($)
 
   real(dp), parameter :: ucdtc = 13.0D0
@@ -519,7 +519,7 @@ module cost_variables
   real(dp), parameter :: ucswyd = 1.84D7
   !! switchyard equipment costs ($)
 
-  real(dp) :: uctfbr 
+  real(dp) :: uctfbr
   !! cost of TF coil breakers ($/W**0.7)
 
   real(dp) :: uctfbus
@@ -576,6 +576,120 @@ module cost_variables
     !! Initialise cost variables
     implicit none
 
+    abktflnc = 5.0D0
+    adivflnc = 7.0D0
+    blkcst = 0.0D0
+    c221 = 0.0D0
+    c222 = 0.0D0
+    capcost = 0.0D0
+    cconfix = 80.0D0
+    cconshpf = 70.0D0
+    cconshtf = 75.0D0
+    cdcost = 0.0D0
+    cdirt = 0.0D0
+    cdrlife = 0.0D0
+    cfactr = 0.75D0
+    cpfact = 0.0D0
+    cfind = (/0.244D0, 0.244D0, 0.244D0, 0.29D0/)
+    cland = 19.2D0
+    coe = 0.0D0
+    coecap = 0.0D0
+    coefuelt = 0.0D0
+    coeoam = 0.0D0
+    concost = 0.0D0
+    costexp = 0.8D0
+    costexp_pebbles = 0.6D0
+    cost_factor_buildings = 1.0D0
+    cost_factor_land = 1.0D0
+    cost_factor_tf_coils = 1.0D0
+    cost_factor_fwbs = 1.0D0
+    cost_factor_rh = 1.0D0
+    cost_factor_vv = 1.0D0
+    cost_factor_bop = 1.0D0
+    cost_factor_misc = 1.0D0
+    maintenance_fwbs = 0.2D0
+    maintenance_gen = 0.05D0
+    amortization = 13.6D0
+    cost_model = 1
+    cowner = 0.15D0
+    cplife = 0.0D0
+    cpstcst = 0.0D0
+    cpstflnc = 10.0D0
+    crctcore = 0.0D0
+    csi = 16.0D0
+    cturbb = 38.0D0
+    decomf = 0.1D0
+    dintrt = 0.0D0
+    divcst = 0.0D0
+    divlife = 0.0D0
+    dtlife = 0.0D0
+    fcap0 = 1.165D0
+    fcap0cp = 1.08D0
+    fcdfuel = 0.1D0
+    fcontng = 0.195D0
+    fcr0 = 0.0966D0
+    fkind = 1.0D0
+    fwallcst = 0.0D0
+    iavail= 2
+    avail_min = 0.75D0
+    tok_build_cost_per_vol = 1283.0D0
+    light_build_cost_per_vol = 270.0D0
+    favail = 1.0D0
+    num_rh_systems = 4
+    conf_mag = 0.99D0
+    div_prob_fail = 0.0002D0
+    div_umain_time = 0.25D0
+    div_nref = 7000.0D0
+    div_nu = 14000.0D0
+    fwbs_nref = 20000.0D0
+    fwbs_nu = 40000.0D0
+    fwbs_prob_fail = 0.0002D0
+    fwbs_umain_time = 0.25D0
+    redun_vacp = 25.0D0
+    redun_vac = 0
+    t_operation = 0.0D0
+    tbktrepl = 0.5D0
+    tcomrepl = 0.5D0
+    tdivrepl = 0.25D0
+    uubop = 0.02D0
+    uucd = 0.02D0
+    uudiv = 0.04D0
+    uufuel = 0.02D0
+    uufw = 0.04D0
+    uumag = 0.02D0
+    uuves = 0.04D0
+    ifueltyp = 0
+    ipnet = 0
+    ireactor = 1
+    lsa = 4
+    moneyint = 0.0D0
+    output_costs = 1
+    ratecdol = 0.0435D0
+    step_con = 1.5D-1
+    step_ref = &
+      (/ 3.0D0, 3.0D-1, 1.115D1, 1.5744D2, 3.592D1, 7.96D0, 9.16D0, 3.26D0, 5.369D1, &
+      1.88D0, 6.6D-1, 8.63D0, 3.1D0, 2.05D0, 8.7D-1, 8.7D-1, 9.1D-1, 3.1D-1, 1.81D0, &
+      8.236D1, 1.8607D2, 1.2572D2, 3.46D1, 7.25D0, 4.0D0, 3.349D1, 5.274D1, 4.86D0, &
+      5.29D1, 2.45D0, 2.82D0, 1.676D1, 6.984D1, 7.7D0, 3.6D0, 2.8D0, 8.0D-1, 1.7D0, &
+      1.8D0, 1.3D0, 3.86D1, 3.83D1, 0.0D0, 2.4D-1, 8.0D-2, 0.0D0, 2.0D0, 1.97D0, 1.16D0, &
+      2.341D1, 7.733D1, 4.37D0, 4.434D1, 1.918D1, 9.39D0, 5.084D1, 8.7D0, 1.239D1, &
+      1.704D1, 7.8D0, 2.11D0, 1.74D1, 3.599D1, 8.2D0, 1.568D1, 1.235D1, 6.22D0, 7.5D-1 /)
+    tlife = 30.0D0
+    ucblbe = 260.0D0
+    ucblbreed = 875.0D0
+    ucblli = 875.0D0
+    ucblli2o = 600.0D0
+    ucbllipb = 10.3D0
+    ucblss = 90.0D0
+    ucblvd = 200.0D0
+    ucbus = 0.123D0
+    uccase = 50.0D0
+    uccpcl1 = 250.0D0
+    uccpclb = 150.0D0
+    uccry = 9.3D4
+    uccryo = 32.0D0
+    uccu = 75.0D0
+    ucdiv = 2.8D5
     ucech = 3.0D0
     ucf1 = 2.23D7
     ucfnc = 35.0D0
@@ -599,7 +713,8 @@ module cost_variables
     ucpfic = 1.0D4
     ucpfps = 3.5D4
     ucrb = 400.0D0
-    ucsc = (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0/)
+    ucsc = &
+      (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0/)
     ucshld = 32.0D0
     uctfbr = 1.22D0
     uctfbus = 100.0D0
