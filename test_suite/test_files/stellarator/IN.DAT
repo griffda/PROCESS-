@@ -74,6 +74,7 @@ tratio   = 0.95         *Ion temperature / electron temperature
 
 *--------------Stellarator Variables---------------*
 
+istell   = 6            *(1: Helias5 , 2: Hellias4, 3: Helias3, 4: W7x 50 Coils, 5: W7x 30 Coils, 6: Use json input file)
 bmn      = 0.001        *Relative radial field perturbation
 f_asym   = 1.1          *Divertor heat load peaking factor
 f_rad    = 0.85         *Radiated power fraction in sol
