@@ -17,7 +17,8 @@ module pfcoil_module
   implicit none
 
   private
-  public :: pfcoil, outpf, outvolt, induct, vsec, bfield, brookscoil
+  public :: pfcoil, outpf, outvolt, induct, vsec, bfield, brookscoil, &
+    init_pfcoil_module
 
   !  Local variables
 
@@ -30,12 +31,25 @@ module pfcoil_module
   real(dp), dimension(ngc2) :: bpf2
   real(dp), dimension(ngc2,3) :: vsdum
 
+  ! pfcoil subroutine var requiring re-initialisation before each new run
+  logical :: first_call
+  ! outpf subroutine var requiring re-initialisation before each new run
+  logical :: CSlimit
+
   type(volume_fractions):: conductorpf
   type(supercon_strand)::croco_strand
 
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine init_pfcoil_module
+    !! Initialise module variables
+    implicit none
+
+    first_call = .true.
+    CSlimit = .false.
+  end subroutine init_pfcoil_module
 
   subroutine pfcoil
 
@@ -93,8 +107,6 @@ contains
     real(dp), dimension(2) :: signn
 
     real(dp), dimension(ngc2) :: aturn
-
-    logical :: first_call = .true.
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2570,7 +2582,6 @@ end subroutine superconpf
 
     integer :: k,nef
     character(len=2) :: intstring
-    logical :: CSlimit=.false.
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

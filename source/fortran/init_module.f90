@@ -36,6 +36,7 @@ subroutine init_all_module_vars
   use build_module, only: init_build_module
   use maths_library, only: init_maths_library
   use testdata, only: init_testdata
+  use pfcoil_module, only: init_pfcoil_module
 
   call init_numerics
   call init_input
@@ -57,6 +58,7 @@ subroutine init_all_module_vars
   call init_build_module
   call init_maths_library
   call init_testdata
+  call init_pfcoil_module
 end subroutine init_all_module_vars
 
 subroutine init
