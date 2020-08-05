@@ -1,3 +1,7 @@
+#ifndef INSTALLDIR
+#error INSTALLDIR not defined!
+#endif
+
 module read_radiation
   !! Module for reading radiation data
   !! author: M Kovari, CCFE, Culham Science Centre
@@ -87,11 +91,6 @@ contains
 
     ! First call boolean switch
     logical, save :: FirstCall(nimp) = .true.
-
-    ! Obtain the root directory from the file 'root.dir'
-    ! The # character must be at the start of the line.
-#include "root.dir"
-
 
  !   character(len=120), save :: lzdir = trim(ROOTDIR//'/data/lz_non_corona_14_elements/')
     character(len=200), save :: lzdir = trim(INSTALLDIR//'/data/lz_non_corona_14_elements/')

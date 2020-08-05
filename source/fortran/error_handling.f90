@@ -1,5 +1,9 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+#ifndef INSTALLDIR
+#error INSTALLDIR not defined!
+#endif
+
 module error_handling
 
   !! Error handling module for PROCESS
@@ -119,10 +123,6 @@ contains
     integer :: n_errortypes
     character(len=180) :: filename
     type(fson_value), pointer :: errorfile
-
-    !  Obtain the root directory
-
-#include "root.dir"
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
