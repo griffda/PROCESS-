@@ -80,6 +80,10 @@ module process_input
   logical :: subscript_present
   logical :: error
   character(len=78) :: error_message
+  
+  ! Vars for subroutine input() requiring re-initialisation before each new run
+  integer :: show_changes
+  logical :: constraints_exist
 
 contains
 
@@ -87,7 +91,11 @@ contains
 
   subroutine init_input
     !! Initialise module variables
+    implicit none
+
     error = .False.
+    show_changes = 0
+    constraints_exist = .false.
   end subroutine init_input
 
   subroutine input
@@ -110,10 +118,8 @@ contains
 
     !  Local variables
 
-    integer :: show_changes = 0
     integer :: i
     !     j
-    logical :: constraints_exist=.false.
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     call parse_input_file(nin,nout,show_changes)
@@ -4710,7 +4716,7 @@ contains
    !  Local variables
 
    character(len=1) :: letter
-   character(len=27) :: lowtab = 'abcdefghijklmnopqrstuvwxyz_'
+   character(len=27), parameter :: lowtab = 'abcdefghijklmnopqrstuvwxyz_'
    integer :: loop, i
 
    integer :: first, last
