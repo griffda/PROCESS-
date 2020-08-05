@@ -9,10 +9,41 @@ cmake_minimum_required(VERSION 3.12)
 # Project's name
 project(PROCESS LANGUAGES Fortran)
 
+execute_process (
+    COMMAND bash -c "git show -s --format=format:%s"
+    OUTPUT_VARIABLE COMMIT_MSG
+)
+execute_process (
+    COMMAND bash -c "echo \"$(git diff | wc -l)\"|tr '\n' ' '"
+    OUTPUT_VARIABLE GIT_DIFF
+)
+execute_process (
+    COMMAND bash -c "echo \"$(git describe --tags)\"|tr '\n' ' '"
+    OUTPUT_VARIABLE GIT_TAG
+)
+execute_process (
+    COMMAND bash -c "echo \"$(git rev-parse --abbrev-ref HEAD)\"|tr '\n' ' '"
+    OUTPUT_VARIABLE GIT_BRANCH
+)
 # Questionable stuff to help the compiler handle preprocessor directives
 # TODO Review if these directives are necessary now
 # -cpp for preprocessor directives
 set(CMAKE_Fortran_FLAGS -cpp)
+add_definitions(-DINSTALLDIR="${CMAKE_SOURCE_DIR}")
+add_definitions(-DCOMMSG="${COMMIT_MSG}")
+add_definitions(-Dtagno="${GIT_TAG}")
+add_definitions(-Dbranch_name="${GIT_BRANCH}")
+add_definitions(-Duntracked=${GIT_DIFF})
+
+
+# ---------- Summarise Preprocessor Flags in Output ---------- #
+MESSAGE(STATUS "Preprocessor Variables: ")
+MESSAGE(STATUS "\tINSTALLDIR : ${CMAKE_SOURCE_DIR}")
+MESSAGE(STATUS "\tCOMMSG : ${COMMIT_MSG}")
+MESSAGE(STATUS "\tbranch_name : ${GIT_BRANCH}")
+MESSAGE(STATUS "\ttagno : ${GIT_TAG}")
+MESSAGE(STATUS "\tuntracked : ${GIT_DIFF}")
+# ------------------------------------------------------------ #
 
 # Define directories
 set(FORTRAN_SOURCE_DIR ${CMAKE_SOURCE_DIR}/source/fortran)

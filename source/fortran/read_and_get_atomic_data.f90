@@ -1,3 +1,7 @@
+#ifndef INSTALLDIR
+#error INSTALLDIR not defined!
+#endif
+
 module read_and_get_atomic_data
   !! Module for reading atomic data
   !! author: M Kovari, CCFE, Culham Science Centre
@@ -65,10 +69,6 @@ contains
     logical :: iexist
 
     integer :: ine, ite
-
-    !  Obtain the root directory from the file 'root.dir'
-    ! The # character must be at the start of the line.
-    include "root.dir"
 
     !    character(len=120), save :: hdatadir = trim(ROOTDIR//'/data/h_data/')
     character(len=200), save :: hdatadir = trim(INSTALLDIR//'/data/h_data/')
@@ -279,8 +279,7 @@ contains
     integer::i,j
     real(dp)::te(15)=(/1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,12.,14.,16.,18.,20./)
     real(dp)::density(3)=(/1.e19,1.e20,1.e21/)
-    !  Obtain the root directory from the file 'root.dir'
-    ! The # character must be at the start of the line.
+
     open(unit=12,file='rate_coefficients.txt',status='replace')
     write(12,'(30a11)')'te [eV]','Rcx', 'ionis19', 'recomb19', 'line rad19', 'cont rad19', 'tot rad19',&
                                        'ionis20', 'recomb20', 'line rad20', 'cont rad20', 'tot rad20',&

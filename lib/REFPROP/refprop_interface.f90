@@ -7,6 +7,10 @@
 !#define unit_test
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+#ifndef INSTALLDIR
+#error INSTALLDIR not defined!
+#endif
+
 module refprop_interface
 
   !! Interface routines between PROCESS and REFPROP
@@ -39,10 +43,6 @@ module refprop_interface
   character(len=255) :: herr
   integer :: ierr
   real(kind(1.0D0)), public :: molarmass
-
-  !  Obtain the root directory
-
-  include "root.dir"
 
 !  character(len=120) :: fluids_dir = ROOTDIR//'/data/fluids/'
   character(len=200) :: fluids_dir = INSTALLDIR//'/data/fluids/'
