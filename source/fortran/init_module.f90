@@ -33,6 +33,7 @@ subroutine init_all_module_vars
   use ife_variables, only: init_ife_variables
   use impurity_radiation_module, only: init_impurity_radiation_module
   use function_evaluator, only: init_function_evaluator
+  use build_module, only: init_build_module
 
   call init_numerics
   call init_input
@@ -51,6 +52,7 @@ subroutine init_all_module_vars
   call init_ife_variables
   call init_impurity_radiation_module
   call init_function_evaluator
+  call init_build_module
 end subroutine init_all_module_vars
 
 subroutine init
