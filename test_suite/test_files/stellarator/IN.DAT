@@ -9,22 +9,30 @@
 
 *---------------Constraint Equations---------------*
 
-neqns = 3               *number of equalities
+neqns = 2               *number of equalities
 
 
 *--------------- equaltities
 icc = 2                 *Global power balance (consistency equation)
-icc = 11                *Radial build (consistency equation)
+*icc = 11                *Radial build (consistency equation)
 icc = 16                *Net electric power lower limit
 
 
 *-------------- inequaltities
 icc = 84                *Lower beta limit
 icc = 24                *Upper beta limit
-
-
+icc = 83                *Encounter for place for blanket
+*icc = 35                * icc_quench
+*icc = 82                * icc_toroidalbuild
+*icc = 34                * icc_dumbvoltage
+*icc = 65                * icc_stressVV
 
 *---------------Iteration Variables----------------*
+
+
+ixc = 1                 *aspect
+boundl(1) = 12.
+boundu(1) = 13.
 
 ixc = 4                 *te
 boundl(4) = 4.
