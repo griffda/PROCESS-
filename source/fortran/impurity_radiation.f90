@@ -1,5 +1,9 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+#ifndef INSTALLDIR
+#error INSTALLDIR not defined!
+#endif
+
 module impurity_radiation_module
 
   !! Module for new impurity radiation calculations
@@ -63,10 +67,6 @@ module impurity_radiation_module
   !!                    (iteration variable 102)
   ! Deprecated
   real(dp), public :: fimpvar
-
-    !  Obtain the root directory
-
-  include "root.dir"
 
   !! impdir /'/home/PROCESS/[branch]/impuritydata'/ :
   !!          Directory containing impurity radiation data files

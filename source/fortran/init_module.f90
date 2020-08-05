@@ -1,3 +1,7 @@
+#ifndef INSTALLDIR
+#error INSTALLDIR not defined!
+#endif
+
 module init_module
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
@@ -82,6 +86,7 @@ subroutine init
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  Initialise error handling
+  
   call initialise_error_list
 
   !  Initialise the program variables
