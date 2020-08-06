@@ -16,7 +16,7 @@ module power_module
   implicit none
 
   private
-  public :: tfpwr, pfpwr, acpow, power1, power2, power3
+  public :: tfpwr, pfpwr, acpow, power1, power2, power3, init_power_module
 
   !  Precision variable
   integer, parameter :: double = 8
@@ -30,7 +30,17 @@ module power_module
   !  Primary power to divertor factor
   integer, private :: iprimdiv
 
+  ! Var in subroutine power1 requiring re-initialisation on each new run
+  real(dp) :: p_tf_cryoal_cryo
+
 contains
+
+  subroutine init_power_module
+    !! Initialise module variables
+    implicit none
+
+    p_tf_cryoal_cryo = 0.0D0
+  end subroutine init_power_module
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -845,7 +855,6 @@ contains
     use constants, only: rmu0, pi
     implicit none
 
-    real(dp) :: p_tf_cryoal_cryo = 0.0D0
     !! Cryo-aluminium cryoplant power consumption
     
     !------------------------------------------------------------------------------------
