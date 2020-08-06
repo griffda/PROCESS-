@@ -37,6 +37,7 @@ subroutine init_all_module_vars
   use maths_library, only: init_maths_library
   use testdata, only: init_testdata
   use pfcoil_module, only: init_pfcoil_module
+  use physics_module, only: init_physics_module
 
   call init_numerics
   call init_input
@@ -59,6 +60,7 @@ subroutine init_all_module_vars
   call init_maths_library
   call init_testdata
   call init_pfcoil_module
+  call init_physics_module
 end subroutine init_all_module_vars
 
 subroutine init
