@@ -18,7 +18,8 @@ use resistive_materials, only: resistive_material, volume_fractions, &
 implicit none
 
 private
-public :: outtf, sctfcoil, stresscl, tfcind, tfspcall, initialise_cables
+public :: outtf, sctfcoil, stresscl, tfcind, tfspcall, initialise_cables, &
+  init_sctfcoil_module
 
 ! Module variables
 !-----------------
@@ -141,7 +142,18 @@ real(dp):: T1, time2, tau2, estotft
 ! (OBSOLETE, but leave for moment)
 ! real (kind(1.0D0)) ::croco_quench_factor
 ! real(dp):: jwdgpro_1, jwdgpro_2,  etamax
+
+! Var in tf_res_heating requiring re-initialisation on each new run
+integer :: is_leg_cp_temp_same
+
 contains
+
+  subroutine init_sctfcoil_module
+    !! Initialise module variables
+    implicit none
+
+    is_leg_cp_temp_same = 0
+  end subroutine init_sctfcoil_module
 
 ! --------------------------------------------------------------------------
 subroutine initialise_cables()
@@ -1034,7 +1046,6 @@ subroutine tf_res_heating()
     integer ::  n_contact_tot
     !! Total number of contact area (4 joints section per legs)
 
-    integer :: is_leg_cp_temp_same = 0
     ! ---
 
         
@@ -2463,8 +2474,8 @@ subroutine plane_stress( nu, rad, ey, j,          & ! Inputs
     real(dp) :: inner_layer_curr
     real(dp) :: rad_c
 
-    integer :: ii = 0
-    integer :: jj = 0
+    integer :: ii
+    integer :: jj
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Layer parameterisation
@@ -2736,8 +2747,8 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     real(dp) :: inner_layer_curr
       
     ! Indexes
-    integer :: ii = 0  ! Line in the aa matrix
-    integer :: jj = 0  ! Collumn in the aa matrix 
+    integer :: ii  ! Line in the aa matrix
+    integer :: jj  ! Collumn in the aa matrix 
     ! ---    
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -4483,7 +4494,8 @@ subroutine croco_quench(conductor)
 
 
     real(dp)::tout     !for the phase 2
-    real(dp)::relerr= 0.01d0, abserr= 0.01d0
+    real(dp), parameter :: relerr= 0.01d0
+    real(dp), parameter :: abserr= 0.01d0
 
     integer(kind=4), parameter :: neqn = 1
     integer(kind=4) :: iflag
