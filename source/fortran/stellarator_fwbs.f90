@@ -21,7 +21,7 @@ module kit_blanket_model
   implicit none
 
   private
-  public :: kit_blanket
+  public :: kit_blanket, init_kit_blanket_model
 
   !  Local variables
 
@@ -55,18 +55,18 @@ module kit_blanket_model
   !  Based on Helium-Cooled Pebble Beds (HCPB) configuration
   !  of the PPCS Model B design
 
-  real(dp) :: A_cov_PPCS = 1365.0D0   ! [m^2] Total blanket coverage area
-  real(dp) :: A_FW_PPCS = 1253.0D0    ! [m^2] First wall area
-  real(dp) :: NWL_av_PPCS = 1.94D0    ! [MW/m^2] Average neutron wall load
-  real(dp) :: NWL_av_IB_PPCS = 1.73D0 ! [MW/m^2] Average IB wall load
-  real(dp) :: NWL_av_OB_PPCS = 1.92D0 ! [MW/m^2] Average OB wall load
-  real(dp) :: NWL_max_IB_PPCS = 1.99D0 ! [MW/m^2] Maximum IB wall load
-  real(dp) :: NWL_max_OB_PPCS = 2.41D0 ! [MW/m^2] Maximum OB wall load
-  real(dp) :: CF_bl_PPCS              ! [%] Blanket coverage factor (calculated)
-  real(dp) :: e_Li_PPCS = 30.0D0      ! [%] Li6 enrichment
-  real(dp) :: t_BZ_IB_PPCS = 36.5D0   ! [cm] IB Breeding Zone thickness
-  real(dp) :: t_BZ_OB_PPCS = 46.5D0   ! [cm] OB Breeding Zone thickness
-  real(dp) :: TBR_PPCS = 1.12D0       ! [--] Tritium Breeding Ratio
+  real(dp) :: A_cov_PPCS      ! [m^2] Total blanket coverage area
+  real(dp) :: A_FW_PPCS       ! [m^2] First wall area
+  real(dp) :: NWL_av_PPCS     ! [MW/m^2] Average neutron wall load
+  real(dp) :: NWL_av_IB_PPCS  ! [MW/m^2] Average IB wall load
+  real(dp) :: NWL_av_OB_PPCS  ! [MW/m^2] Average OB wall load
+  real(dp) :: NWL_max_IB_PPCS ! [MW/m^2] Maximum IB wall load
+  real(dp) :: NWL_max_OB_PPCS ! [MW/m^2] Maximum OB wall load
+  real(dp) :: CF_bl_PPCS      ! [%] Blanket coverage factor (calculated)
+  real(dp) :: e_Li_PPCS       ! [%] Li6 enrichment
+  real(dp) :: t_BZ_IB_PPCS    ! [cm] IB Breeding Zone thickness
+  real(dp) :: t_BZ_OB_PPCS    ! [cm] OB Breeding Zone thickness
+  real(dp) :: TBR_PPCS        ! [--] Tritium Breeding Ratio
   
   ! not used...
   ! real(dp) :: A_FW_IB_PPCS = 348.2D0  ! [m^2] IB first wall area
@@ -81,100 +81,98 @@ module kit_blanket_model
 
   !  Power density pre-exponential terms and decay lengths
 
-  real(dp) :: q_0_BZ_breed_IB = 31.348D0 ! [W/cm^3] Pre-exp term in IB BZ breeder
-  real(dp) :: q_0_BZ_breed_OB = 37.144D0 ! [W/cm^3] Pre-exp term in OB BZ breeder
-  real(dp) :: lambda_q_BZ_breed_IB = 29.42D0 ! [cm] Decay length in IB BZ breeder
-  real(dp) :: lambda_q_BZ_breed_OB = 27.03D0 ! [cm] Decay length in OB BZ breeder
+  real(dp) :: q_0_BZ_breed_IB ! [W/cm^3] Pre-exp term in IB BZ breeder
+  real(dp) :: q_0_BZ_breed_OB ! [W/cm^3] Pre-exp term in OB BZ breeder
+  real(dp) :: lambda_q_BZ_breed_IB ! [cm] Decay length in IB BZ breeder
+  real(dp) :: lambda_q_BZ_breed_OB ! [cm] Decay length in OB BZ breeder
 
-  real(dp) :: q_0_BZ_Be_IB = 9.532D0 ! [W/cm^3] Pre-exp term in IB BZ Beryllium
-  real(dp) :: q_0_BZ_Be_OB = 11.809D0 ! [W/cm^3] Pre-exp term in OB BZ Beryllium
-  real(dp) :: lambda_q_BZ_Be_IB = 16.39D0 ! [cm] Decay length in IB BZ Beryllium
-  real(dp) :: lambda_q_BZ_Be_OB = 16.39D0 ! [cm] Decay length in OB BZ Beryllium
+  real(dp) :: q_0_BZ_Be_IB ! [W/cm^3] Pre-exp term in IB BZ Beryllium
+  real(dp) :: q_0_BZ_Be_OB ! [W/cm^3] Pre-exp term in OB BZ Beryllium
+  real(dp) :: lambda_q_BZ_Be_IB ! [cm] Decay length in IB BZ Beryllium
+  real(dp) :: lambda_q_BZ_Be_OB ! [cm] Decay length in OB BZ Beryllium
 
-  real(dp) :: q_0_BZ_steels_IB = 16.067D0 ! [W/cm^3] Pre-exp term in IB BZ steels
-  real(dp) :: q_0_BZ_steels_OB = 18.788D0 ! [W/cm^3] Pre-exp term in OB BZ steels
-  real(dp) :: lambda_q_BZ_steels_IB = 21.27D0 ! [cm] Decay length in IB BZ steels
-  real(dp) :: lambda_q_BZ_steels_OB = 21.27D0 ! [cm] Decay length in OB BZ steels
+  real(dp) :: q_0_BZ_steels_IB ! [W/cm^3] Pre-exp term in IB BZ steels
+  real(dp) :: q_0_BZ_steels_OB ! [W/cm^3] Pre-exp term in OB BZ steels
+  real(dp) :: lambda_q_BZ_steels_IB ! [cm] Decay length in IB BZ steels
+  real(dp) :: lambda_q_BZ_steels_OB ! [cm] Decay length in OB BZ steels
 
-  real(dp) :: lambda_EU = 11.57D0  ! [cm] Decay length in EUROFER
+  real(dp) :: lambda_EU  ! [cm] Decay length in EUROFER
   real(dp) :: lambda_q_BM_IB       ! [cm] Decay length in IB BM (calculated)
   real(dp) :: lambda_q_BM_OB       ! [cm] Decay length in OB BM (calculated)
   real(dp) :: lambda_q_BP_IB       ! [cm] Decay length in IB BP (calculated)
   real(dp) :: lambda_q_BP_OB       ! [cm] Decay length in OB BP (calculated)
-  real(dp) :: lambda_q_VV = 6.92D0 ! [cm] Decay length in Vacuum Vessel
+  real(dp) :: lambda_q_VV ! [cm] Decay length in Vacuum Vessel
 
   !  Fast neutron flux pre-exponential terms and decay lengths
 
-  real(dp) :: phi_0_n_BZ_IB = 5.12D14  ! [n/cm^2/sec] Pre-exp term in IB BZ
-  real(dp) :: phi_0_n_BZ_OB = 5.655D14 ! [n/cm^2/sec] Pre-exp term in OB BZ
-  real(dp) :: lambda_n_BZ_IB = 18.79D0 ! [cm] Decay length in IB BZ
-  real(dp) :: lambda_n_BZ_OB = 19.19D0 ! [cm] Decay length in OB BZ
-  real(dp) :: lambda_n_VV = 8.153D0    ! [cm] Decay length in VV
+  real(dp) :: phi_0_n_BZ_IB  ! [n/cm^2/sec] Pre-exp term in IB BZ
+  real(dp) :: phi_0_n_BZ_OB ! [n/cm^2/sec] Pre-exp term in OB BZ
+  real(dp) :: lambda_n_BZ_IB ! [cm] Decay length in IB BZ
+  real(dp) :: lambda_n_BZ_OB ! [cm] Decay length in OB BZ
+  real(dp) :: lambda_n_VV    ! [cm] Decay length in VV
 
   !  [n/cm^2/sec] Reference fast neutron flux on VV inner side [Fish09]
 
-  real(dp) :: phi_n_0_VV_ref = 2.0D10
-
+  real(dp) :: phi_n_0_VV_ref 
   !  Vacuum vessel helium production pre-exponential terms and decay lengths
 
-  real(dp) :: Gamma_He_0_ref = 1.8D-3  ! [appm/yr] Pre-exp term
-  real(dp) :: lambda_He_VV = 7.6002D0  ! [cm] Decay length
+  real(dp) :: Gamma_He_0_ref  ! [appm/yr] Pre-exp term
+  real(dp) :: lambda_He_VV  ! [cm] Decay length
 
   !  [dpa] Allowable neutron damage to the FW EUROFER
 
-  real(dp) :: D_EU_max = 60.0D0
-
+  real(dp) :: D_EU_max 
   !  Variables used in this module, ultimately to be set via the calling routine
   !  to values given by PROCESS variables
 
-  real(dp), public :: P_n = 2720.0D0    ! [MW] Fusion neutron power
-  real(dp), public :: NWL_av = 1.94D0   ! [MW/m^2] Average neutron wall load
-  real(dp), public :: f_peak = 1.21D0   ! [--] NWL peaking factor
-  real(dp), public :: t_FW_IB = 2.3D0   ! [cm] IB first wall thickness
-  real(dp), public :: t_FW_OB = 2.3D0   ! [cm] OB first wall thickness
-  real(dp), public :: A_FW_IB = 3.5196D6 ! [cm^2] IB first wall area
-  real(dp), public :: A_FW_OB = 9.0504D6 ! [cm^2] OB first wall area
-  real(dp), public :: A_bl_IB = 3.4844D6 ! [cm^2] IB blanket area
-  real(dp), public :: A_bl_OB = 8.9599D6 ! [cm^2] OB blanket area
-  real(dp), public :: A_VV_IB = 3.8220D6 ! [cm^2] IB shield/VV area
-  real(dp), public :: A_VV_OB = 9.8280D6 ! [cm^2] OB shield/VV area
-  real(dp), public :: CF_bl = 91.7949D0 ! [%] Blanket coverage factor
-  integer, public :: n_ports_div = 2             ! [ports] Number of divertor ports
-  integer, public :: n_ports_H_CD_IB = 2         ! [ports] Number of IB H&CD ports
-  integer, public :: n_ports_H_CD_OB = 2         ! [ports] Number of OB H&CD ports
-  character(len=5), public :: H_CD_ports = 'small' ! Type of H&CD ports (small or large)
-  real(dp), public :: e_Li = 30.0D0     ! [%] Lithium 6 enrichment
-  real(dp), public :: t_plant = 40.0D0  ! [FPY] Plant lifetime
-  real(dp), public :: alpha_m = 0.75D0  ! [--] Availability factor
-  real(dp), public :: alpha_puls = 1.0D0 ! [--] Pulsed regime fraction
+  real(dp), public :: P_n     ! [MW] Fusion neutron power
+  real(dp), public :: NWL_av  ! [MW/m^2] Average neutron wall load
+  real(dp), public :: f_peak  ! [--] NWL peaking factor
+  real(dp), public :: t_FW_IB ! [cm] IB first wall thickness
+  real(dp), public :: t_FW_OB ! [cm] OB first wall thickness
+  real(dp), public :: A_FW_IB ! [cm^2] IB first wall area
+  real(dp), public :: A_FW_OB ! [cm^2] OB first wall area
+  real(dp), public :: A_bl_IB ! [cm^2] IB blanket area
+  real(dp), public :: A_bl_OB ! [cm^2] OB blanket area
+  real(dp), public :: A_VV_IB ! [cm^2] IB shield/VV area
+  real(dp), public :: A_VV_OB ! [cm^2] OB shield/VV area
+  real(dp), public :: CF_bl   ! [%] Blanket coverage factor
+  integer, public :: n_ports_div      ! [ports] Number of divertor ports
+  integer, public :: n_ports_H_CD_IB  ! [ports] Number of IB H&CD ports
+  integer, public :: n_ports_H_CD_OB  ! [ports] Number of OB H&CD ports
+  character(len=5), public :: H_CD_ports  ! Type of H&CD ports (small or large)
+  real(dp), public :: e_Li     ! [%] Lithium 6 enrichment
+  real(dp), public :: t_plant  ! [FPY] Plant lifetime
+  real(dp), public :: alpha_m  ! [--] Availability factor
+  real(dp), public :: alpha_puls ! [--] Pulsed regime fraction
 
   !  Breeder type (allowed values are Orthosilicate, Metatitanate or Zirconate)
 
-  character(len=20), public :: breeder = 'Orthosilicate'
+  character(len=20), public :: breeder 
 
   !  Inboard parameters
 
-  real(dp), public :: t_BZ_IB = 36.5D0     ! [cm] BZ thickness
-  real(dp), public :: t_BM_IB = 17.0D0     ! [cm] BM thickness
-  real(dp), public :: t_BP_IB = 30.0D0     ! [cm] BP thickness
-  real(dp), public :: t_VV_IB = 35.0D0     ! [cm] VV thickness
-  real(dp), public :: alpha_BM_IB = 40.0D0  ! [%] Helium fraction in the IB BM
-  real(dp), public :: alpha_BP_IB = 65.95D0 ! [%] Helium fraction in the IB BP
-  real(dp), public :: chi_Be_BZ_IB = 69.2D0 ! [%] Beryllium vol. frac. in IB BZ
-  real(dp), public :: chi_breed_BZ_IB = 15.4D0 ! [%] Breeder vol. frac. in IB BZ
-  real(dp), public :: chi_steels_BZ_IB = 9.8D0 ! [%] Steels vol. frac. in IB BZ
+  real(dp), public :: t_BZ_IB     ! [cm] BZ thickness
+  real(dp), public :: t_BM_IB     ! [cm] BM thickness
+  real(dp), public :: t_BP_IB     ! [cm] BP thickness
+  real(dp), public :: t_VV_IB     ! [cm] VV thickness
+  real(dp), public :: alpha_BM_IB  ! [%] Helium fraction in the IB BM
+  real(dp), public :: alpha_BP_IB ! [%] Helium fraction in the IB BP
+  real(dp), public :: chi_Be_BZ_IB ! [%] Beryllium vol. frac. in IB BZ
+  real(dp), public :: chi_breed_BZ_IB ! [%] Breeder vol. frac. in IB BZ
+  real(dp), public :: chi_steels_BZ_IB ! [%] Steels vol. frac. in IB BZ
 
   !  Outboard parameters
 
-  real(dp), public :: t_BZ_OB = 46.5D0     ! [cm] BZ thickness
-  real(dp), public :: t_BM_OB = 27.0D0     ! [cm] BM thickness
-  real(dp), public :: t_BP_OB = 35.0D0     ! [cm] BP thickness
-  real(dp), public :: t_VV_OB = 65.0D0     ! [cm] VV thickness
-  real(dp), public :: alpha_BM_OB = 40.0D0  ! [%] Helium fraction in the OB BM
-  real(dp), public :: alpha_BP_OB = 67.13D0 ! [%] Helium fraction in the OB BP
-  real(dp), public :: chi_Be_BZ_OB = 69.2D0 ! [%] Beryllium vol. frac. in OB BZ
-  real(dp), public :: chi_breed_BZ_OB = 15.4D0 ! [%] Breeder vol. frac. in OB BZ
-  real(dp), public :: chi_steels_BZ_OB = 9.8D0 ! [%] Steels vol. frac. in OB BZ
+  real(dp), public :: t_BZ_OB     ! [cm] BZ thickness
+  real(dp), public :: t_BM_OB     ! [cm] BM thickness
+  real(dp), public :: t_BP_OB     ! [cm] BP thickness
+  real(dp), public :: t_VV_OB     ! [cm] VV thickness
+  real(dp), public :: alpha_BM_OB  ! [%] Helium fraction in the OB BM
+  real(dp), public :: alpha_BP_OB ! [%] Helium fraction in the OB BP
+  real(dp), public :: chi_Be_BZ_OB ! [%] Beryllium vol. frac. in OB BZ
+  real(dp), public :: chi_breed_BZ_OB ! [%] Breeder vol. frac. in OB BZ
+  real(dp), public :: chi_steels_BZ_OB ! [%] Steels vol. frac. in OB BZ
 
   !  Model outputs
 
@@ -195,6 +193,85 @@ module kit_blanket_model
   real(dp), public :: t_bl_y   ! [y] blanket lifetime in calendar years
 
 contains
+
+  subroutine init_kit_blanket_model
+    !! Initialise module variables
+    implicit none
+
+    A_cov_PPCS = 1365.0D0
+    A_FW_PPCS = 1253.0D0
+    NWL_av_PPCS = 1.94D0
+    NWL_av_IB_PPCS = 1.73D0
+    NWL_av_OB_PPCS = 1.92D0
+    NWL_max_IB_PPCS = 1.99D0
+    NWL_max_OB_PPCS = 2.41D0
+    e_Li_PPCS = 30.0D0
+    t_BZ_IB_PPCS = 36.5D0
+    t_BZ_OB_PPCS = 46.5D0
+    TBR_PPCS = 1.12D0
+    q_0_BZ_breed_IB = 31.348D0
+    q_0_BZ_breed_OB = 37.144D0
+    lambda_q_BZ_breed_IB = 29.42D0
+    lambda_q_BZ_breed_OB = 27.03D0
+    q_0_BZ_Be_IB = 9.532D0
+    q_0_BZ_Be_OB = 11.809D0
+    lambda_q_BZ_Be_IB = 16.39D0
+    lambda_q_BZ_Be_OB = 16.39D0
+    q_0_BZ_steels_IB = 16.067D0
+    q_0_BZ_steels_OB = 18.788D0
+    lambda_q_BZ_steels_IB = 21.27D0
+    lambda_q_BZ_steels_OB = 21.27D0
+    lambda_EU = 11.57D0
+    lambda_q_VV = 6.92D0
+    phi_0_n_BZ_IB = 5.12D14
+    phi_0_n_BZ_OB = 5.655D14
+    lambda_n_BZ_IB = 18.79D0
+    lambda_n_BZ_OB = 19.19D0
+    lambda_n_VV = 8.153D0
+    phi_n_0_VV_ref = 2.0D10
+    Gamma_He_0_ref = 1.8D-3
+    lambda_He_VV = 7.6002D0
+    D_EU_max = 60.0D0
+    P_n = 2720.0D0
+    NWL_av = 1.94D0
+    f_peak = 1.21D0
+    t_FW_IB = 2.3D0
+    t_FW_OB = 2.3D0
+    A_FW_IB = 3.5196D6
+    A_FW_OB = 9.0504D6
+    A_bl_IB = 3.4844D6
+    A_bl_OB = 8.9599D6
+    A_VV_IB = 3.8220D6
+    A_VV_OB = 9.8280D6
+    CF_bl = 91.7949D0
+    n_ports_div = 2
+    n_ports_H_CD_IB = 2
+    n_ports_H_CD_OB = 2
+    H_CD_ports = 'small'
+    e_Li = 30.0D0
+    t_plant = 40.0D0
+    alpha_m = 0.75D0
+    alpha_puls = 1.0D0
+    breeder = 'Orthosilicate'
+    t_BZ_IB = 36.5D0
+    t_BM_IB = 17.0D0
+    t_BP_IB = 30.0D0
+    t_VV_IB = 35.0D0
+    alpha_BM_IB = 40.0D0
+    alpha_BP_IB = 65.95D0
+    chi_Be_BZ_IB = 69.2D0
+    chi_breed_BZ_IB = 15.4D0
+    chi_steels_BZ_IB = 9.8D0
+    t_BZ_OB = 46.5D0
+    t_BM_OB = 27.0D0
+    t_BP_OB = 35.0D0
+    t_VV_OB = 65.0D0
+    alpha_BM_OB = 40.0D0
+    alpha_BP_OB = 67.13D0
+    chi_Be_BZ_OB = 69.2D0
+    chi_breed_BZ_OB = 15.4D0
+    chi_steels_BZ_OB = 9.8D0
+  end subroutine init_kit_blanket_model
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

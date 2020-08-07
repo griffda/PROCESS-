@@ -45,6 +45,7 @@ subroutine init_all_module_vars
   use scan_module, only: init_scan_module
   use sctfcoil_module, only: init_sctfcoil_module
   use stellarator_module, only: init_stellarator_module
+  use kit_blanket_model, only: init_kit_blanket_model
 
   call init_numerics
   call init_input
@@ -75,6 +76,7 @@ subroutine init_all_module_vars
   call init_scan_module
   call init_sctfcoil_module
   call init_stellarator_module
+  call init_kit_blanket_model
 end subroutine init_all_module_vars
 
 subroutine init
