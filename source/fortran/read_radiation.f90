@@ -19,7 +19,19 @@ module read_radiation
 
   ! List of impurities in the SOL/divertor model IS now same as the main plasma impurities
 
+  ! Vars in function read_lz requiring re-initialisation on each new run
+  integer :: location
+  logical :: read_lz_first_call
+
 contains
+
+  subroutine init_read_radiation
+    !! Initialise module variables
+    implicit none
+
+    location = 0
+    read_lz_first_call = .true.
+  end subroutine init_read_radiation
 
   FUNCTION read_lz(element, te, netau, mean_z, mean_qz, verbose)
     !! Read Lz, mean_z or mean_qz data from database
@@ -48,7 +60,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!
 
     integer :: i, j
-    integer :: location=0
 
     ! "non-coronal parameter" for radiative loss function [ms.1e20/m3]
     real(dp), intent(in) :: netau
@@ -90,10 +101,17 @@ contains
     character(len=100) :: filename
 
     ! First call boolean switch
-    logical, save :: FirstCall(nimp) = .true.
+    logical, save :: FirstCall(nimp)
 
  !   character(len=120), save :: lzdir = trim(ROOTDIR//'/data/lz_non_corona_14_elements/')
-    character(len=200), save :: lzdir = trim(INSTALLDIR//'/data/lz_non_corona_14_elements/')
+    character(len=200), parameter :: lzdir = trim(INSTALLDIR//'/data/lz_non_corona_14_elements/')
+    
+    if (read_lz_first_call .eqv. .true.) then
+      ! Reset FirstCall array
+      FirstCall(nimp) = .true.
+      read_lz_first_call = .false.
+    end if
+    
     ! Find the index of the element.  Exclude hydrogen by starting at 2 (Helium)
     do i = 2, nimp
         if (imp_label(i) .eq. element) then
@@ -333,12 +351,12 @@ contains
     integer, parameter :: points = 27
 
     ! Temperature plot points
-    real(dp) :: te(points) = (/1., 1.2, 1.5, 2., 2.5, 3., 4., 5., 6., 7., 8., 9., &
+    real(dp), parameter :: te(points) = (/1., 1.2, 1.5, 2., 2.5, 3., 4., 5., 6., 7., 8., 9., &
         10., 12., 14., 16., 20., 30., 40., 50., 60., 70., 80., 90., 100., 150., 200./)
 
     real(dp) :: Lz_plot(nimp)
 
-    real(dp) :: netau = 0.5
+    real(dp), parameter :: netau = 0.5
 
     open(unit=12,file='radiative_loss_functions.txt',status='replace')
     write(12,'(30a11)')'Te (eV)', (imp_label(i), i=2,nimp)
@@ -383,12 +401,12 @@ contains
 
     integer, parameter :: points = 27
 
-    real(dp) :: te(points) = (/1., 1.2, 1.5, 2., 2.5, 3.,4., 5., 6., 7., &
+    real(dp), parameter :: te(points) = (/1., 1.2, 1.5, 2., 2.5, 3.,4., 5., 6., 7., &
         8., 9.,10.,12., 14., 16., 20., 30., 40., 50., 60., 70., 80., 90., 100., 150., 200./)
 
     real(dp) :: Z_plot(3,nimp)
 
-    real(dp) :: netau(3) = (/0.1, 1.0, 10.0/)
+    real(dp), parameter :: netau(3) = (/0.1, 1.0, 10.0/)
 
     open(unit=12,file='mean_Z.txt',status='replace')
 

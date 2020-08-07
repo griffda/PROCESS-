@@ -41,6 +41,7 @@ subroutine init_all_module_vars
   use physics_variables, only: init_physics_variables
   use power_module, only: init_power_module
   use read_and_get_atomic_data, only: init_read_and_get_atomic_data
+  use read_radiation, only: init_read_radiation
 
   call init_numerics
   call init_input
@@ -67,6 +68,7 @@ subroutine init_all_module_vars
   call init_physics_variables
   call init_power_module
   call init_read_and_get_atomic_data
+  call init_read_radiation
 end subroutine init_all_module_vars
 
 subroutine init
