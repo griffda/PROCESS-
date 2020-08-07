@@ -242,11 +242,23 @@ module stellarator_module
 
   real(kind(1.0D0)), private :: f_n,f_r,f_a,f_b,f_i ! scaling parameters to reference point.
 
-  logical :: first_call = .true.
+  logical :: first_call
+  
+  ! Var in subroutine stfwbs requiring re-initialisation on each new run
+  logical :: first_call_stfwbs
+
   private :: config
   public :: stcall, stinit, stout
 
 contains
+
+  subroutine init_stellarator_module
+    !! Initialise module variables
+    implicit none
+
+    first_call = .true.
+    first_call_stfwbs = .true.
+  end subroutine init_stellarator_module
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1141,7 +1153,6 @@ contains
          pnucso,psurffwi,psurffwo,ptfiwp,ptfowp,r1,raddose,vffwi,vffwo, &
          volshldi,volshldo
 
-    logical :: first_call = .true.
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1420,9 +1431,9 @@ contains
     !  N.B. divsur is calculated in stdiv after this point, so will
     !  be zero on first lap, hence the initial approximation
 
-    if (first_call) then
+    if (first_call_stfwbs) then
        divsur = 50.0D0
-       first_call = .false.
+       first_call_stfwbs = .false.
     end if
 
     divmas = divsur * divdens * (1.0D0 - divclfr) * divplt
@@ -2793,7 +2804,8 @@ contains
 
       real(kind(1.0D0)) :: dx,xmin,xmax,ymin,ymax
       real(kind(1.0D0)) :: y01,y02,y,yleft,yright,epsy
-      integer :: i, nmax = 100
+      integer :: i
+      integer, parameter :: nmax = 100
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
