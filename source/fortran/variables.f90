@@ -1,35 +1,3 @@
-module structure_variables
-  !! author: J. Morris (UKAEA)
-  !!
-  !! Module containing global variables relating to the support structure
-  !!
-  !!### References
-  !!
-  !! - AEA FUS 251: A User's Guide to the PROCESS Systems Code
-
-  use, intrinsic :: iso_fortran_env, only: dp=>real64
-
-  implicit none
-
-  public
-
-  real(dp) :: aintmass = 0.0D0
-  !! intercoil structure mass (kg)
-
-  real(dp) :: clgsmass = 0.0D0
-  !! gravity support structure for TF coil, PF coil and intercoil support systems (kg)
-
-  real(dp) :: coldmass = 0.0D0
-  !! total mass of components at cryogenic temperatures (kg)
-
-  real(dp) :: fncmass = 0.0D0
-  !! PF coil outer support fence mass (kg)
-
-  real(dp) :: gsmass = 0.0D0
-  !! reactor core gravity support mass (kg)
-
-end module structure_variables
-
 module vacuum_variables
   !! author: J. Morris, M. Kovari (UKAEA)
   !!

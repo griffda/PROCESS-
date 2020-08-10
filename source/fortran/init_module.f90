@@ -55,6 +55,7 @@ subroutine init_all_module_vars
   use divertor_kallenbach_variables, only: init_divertor_kallenbach_variables
   use primary_pumping_variables, only: init_primary_pumping_variables
   use pfcoil_variables, only: init_pfcoil_variables
+  use structure_variables, only: init_structure_variables
 
   call init_numerics
   call init_input
@@ -95,6 +96,7 @@ subroutine init_all_module_vars
   call init_divertor_kallenbach_variables
   call init_primary_pumping_variables
   call init_pfcoil_variables
+  call init_structure_variables
 end subroutine init_all_module_vars
 
 subroutine init
