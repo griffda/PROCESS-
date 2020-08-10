@@ -53,6 +53,7 @@ subroutine init_all_module_vars
   use plasmod_variables, only: init_plasmod_variables
   use current_drive_variables, only: init_current_drive_variables
   use divertor_kallenbach_variables, only: init_divertor_kallenbach_variables
+  use primary_pumping_variables, only: init_primary_pumping_variables
 
   call init_numerics
   call init_input
@@ -91,6 +92,7 @@ subroutine init_all_module_vars
   call init_plasmod_variables
   call init_current_drive_variables
   call init_divertor_kallenbach_variables
+  call init_primary_pumping_variables
 end subroutine init_all_module_vars
 
 subroutine init
