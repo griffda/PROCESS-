@@ -61,6 +61,7 @@ subroutine init_all_module_vars
   use build_variables, only: init_build_variables
   use constraint_variables, only: init_constraint_variables
   use stellarator_variables, only: init_stellarator_variables
+  use pulse_variables, only: init_pulse_variables
 
   call init_numerics
   call init_input
@@ -107,6 +108,7 @@ subroutine init_all_module_vars
   call init_build_variables
   call init_constraint_variables
   call init_stellarator_variables
+  call init_pulse_variables
 end subroutine init_all_module_vars
 
 subroutine init
