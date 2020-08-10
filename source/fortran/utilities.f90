@@ -28,7 +28,7 @@ contains
     !  Local variables
 
     character(len=1) :: letter
-    character(len=27) :: upptab = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_'
+    character(len=27), parameter :: upptab = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_'
     integer :: loop, i
 
     integer :: first, last
