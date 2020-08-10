@@ -3508,6 +3508,9 @@ subroutine outtf(outfile, peaktfflag)
             case (7)
                 call ocmmnt(outfile, & 
                     '  ->  Durham Ginzburg-Landau critical surface model for Nb-Ti')
+            case (8)
+                call ocmmnt(outfile, & 
+                    '  ->  Durham Ginzburg-Landau critical surface model for REBCO')
         end select
     end if
 
@@ -3862,7 +3865,7 @@ subroutine tfspcall(outfile,iprint)
         ritfc, jwptf, bmaxtfrp, tcritsc, acstf, strncon_tf, fhts, bcritsc, &
         i_tf_sc_mat, b_crit_upper_nbti, t_crit_nbti 
     use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, jcrit_nbti, croco, bi2212,&
-    GL_nbti
+    GL_nbti, GL_REBCO
     use global_variables, only: run_tests
     use constants, only: pi
     implicit none
@@ -4039,6 +4042,14 @@ contains
             !  Critical current in cable
             icrit = jcritstr * acs * fcond
 
+        case (8) ! Branch YCBO model fit to Tallahassee data
+            bc20m = 430
+            tc0m = 185
+            call GL_REBCO(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
+            jcritstr = jcritsc * 0.01
+            !  Critical current in cable
+            icrit = jcritstr * acs * fcond
+
         end select
 
         ! Critical current density in winding pack
@@ -4098,6 +4109,11 @@ contains
                     if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
                     call GL_nbti(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
                     call GL_nbti(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
+                case (8)
+                    call GL_REBCO(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+                    if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
+                    call GL_REBCO(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
+                    call GL_REBCO(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
                 end select
                 ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)
             end do solve_for_tmarg
@@ -4150,6 +4166,11 @@ contains
             call ovarre(outfile,'Critical temperature at zero field and strain (K)', '(tc0m)',tc0m)
         case (7)
             call ocmmnt(outfile,'Superconductor used: Nb-Ti')
+            call ocmmnt(outfile, ' (Durham Ginzburg-Landau critical surface model)')
+            call ovarre(outfile,'Critical field at zero temperature and strain (T)','(bc20m)',bc20m)
+            call ovarre(outfile,'Critical temperature at zero field and strain (K)', '(tc0m)',tc0m)
+        case (8)
+            call ocmmnt(outfile,'Superconductor used: REBCO')
             call ocmmnt(outfile, ' (Durham Ginzburg-Landau critical surface model)')
             call ovarre(outfile,'Critical field at zero temperature and strain (T)','(bc20m)',bc20m)
             call ovarre(outfile,'Critical temperature at zero field and strain (K)', '(tc0m)',tc0m)

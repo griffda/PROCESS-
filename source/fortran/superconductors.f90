@@ -695,6 +695,80 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
 end subroutine wstsc
 !--------------------------------------------------------------------------
 
+subroutine GL_REBCO(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit) !SCM added 13/06/18
+
+  !!  Author: S B L Chislett-McDonald Durham University
+  !!  Category: subroutine
+  !!
+  !!  Critical current density of the superconductor in a SuperPower REBCO tape
+  !!  (assuming the superconductor is 1% of the cross section of the tape) t
+  !!  based on the Ginzburg-Landau theory of superconductivity 
+  !! 
+  !! \begin{equation}
+  !!  J_{c,TS}(B,T,\epsilon_{I}) = A(\epsilon_{I}) \left[T_{c}(\epsilon_{I})*(1-t^2)\right]^2\left
+  !!  [B_{c2}(\epsilon_I)*(1-t)^s\right]^{n-3}b^{p-1}(1-b)^q~.
+  !! \end{equation}
+  !!
+  !!  - \( \thelium \) -- Coolant/SC temperature [K]
+  !!  - \( \bmax \) -- Magnetic field at conductor [T]
+  !!  - \( \\epsilon_{I} \) -- Intrinsic strain in superconductor [\%]
+  !!  - \( \B_{c2}(\epsilon_I) \) -- Strain dependent upper critical field [T]    
+  !!  - \( \b \) -- Reduced field = bmax / \B_{c2}(\epsilon_I)*(1-t^\nu) [unitless]           
+  !!  - \( \T_{c}(\epsilon_{I}) \) -- Strain dependent critical temperature (K)
+  !!  - \( \t \) -- Reduced temperature = thelium / \T_{c}(\epsilon_{I}) [unitless]
+  !!  - \( \A(epsilon_{I}) \) -- Strain dependent Prefactor [A / ( m\(^2\) K\(^-2) T\(^n-3))]
+  !!  - \( \J_{c,TS} \) --  Critical current density in superconductor [A / m\(^-2\)]
+
+
+  implicit none
+
+  !  Arguments
+  real(kind(1.0D0)), intent(in) :: thelium, bmax, strain, bc20max, t_c0
+  real(kind(1.0D0)), intent(out) :: jcrit, tcrit, bcrit
+
+  !  Local variables
+  real(kind(1.0D0)) :: strain_func, T_e, A_e, b_reduced, t_reduced
+  real(kind(1.0D0)), parameter :: A_0 = 2.95D2
+  real(kind(1.0D0)), parameter :: p = 0.32D0
+  real(kind(1.0D0)), parameter :: q = 2.50D0
+  real(kind(1.0D0)), parameter :: s = 5.27D0
+  real(kind(1.0D0)), parameter  :: n = 3.33D0
+  real(kind(1.0D0)), parameter  :: c2 = 0.00224D0
+  real(kind(1.0D0)), parameter  :: c3 = -0.0198D0
+  real(kind(1.0D0)), parameter  :: c4 = 0.00103D0
+  real(kind(1.0D0)), parameter  :: em = 0D0
+  real(kind(1.0D0)), parameter  :: u = 0.0D0
+  real(kind(1.0D0)), parameter  :: w = 2.2D0
+
+  strain_func = 1 + c2*(strain-em)**2 + c3*(strain-em)**3 + c4*(strain-em)**4
+
+  T_e = t_c0 * strain_func**(1 / w)
+
+  t_reduced = thelium/T_e
+
+  A_e = A_0 * strain_func**(u / w) 
+
+  !  Critical Field 
+
+  bcrit = bc20max * (1 - t_reduced)**s * strain_func
+
+  b_reduced = bmax/bcrit    
+
+  !  Critical temperature (K)
+  
+  tcrit = T_e
+
+  !  Critical current density (A/m2)
+
+
+  jcrit = A_e * (T_e*(1-t_reduced**2))**2 * bcrit**(n-3) * b_reduced**(p-1) * (1 - b_reduced)**q 
+
+
+
+end subroutine GL_REBCO
+
+!----------------------------------------------------------------
+
 subroutine croco(jcritsc,croco_strand,conductor,croco_od,croco_thick)
 
     !! "CroCo" (cross-conductor) strand and cable design for

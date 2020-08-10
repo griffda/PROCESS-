@@ -1859,7 +1859,7 @@ contains
           call parse_int_variable('i_tf_bucking', i_tf_bucking, 0, 3, &
                'Switch for bucking cylinder (case)')
        case ('i_tf_sc_mat')
-          call parse_int_variable('i_tf_sc_mat', i_tf_sc_mat, 1, 7, &
+          call parse_int_variable('i_tf_sc_mat', i_tf_sc_mat, 1, 8, &
                'TF coil superconductor material')
           if (i_tf_sc_mat == 2) then
              write(outfile,*) ' '
@@ -2081,7 +2081,7 @@ contains
           call parse_int_variable('ipfres', ipfres, 0, 1, &
                'Switch for supercond / resist PF coils')
        case ('isumatoh')
-          call parse_int_variable('isumatoh', isumatoh, 1, 7, &
+          call parse_int_variable('isumatoh', isumatoh, 1, 8, &
                'Central Solenoid superconductor material')
        case ('isumatpf')
           call parse_int_variable('isumatpf', isumatpf, 1, 7, &

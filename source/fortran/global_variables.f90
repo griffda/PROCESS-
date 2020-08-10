@@ -2755,7 +2755,7 @@ module tfcoil_variables
   real(dp) :: dcase = 8000.0D0
   !! density of coil case (kg/m3)
 
-  real(dp), dimension(7) :: dcond = 9000.0D0
+  real(dp), dimension(8) :: dcond = 9000.0D0
   !! density of superconductor type given by i_tf_sc_mat/isumatoh/isumatpf (kg/m3)
   
   real(dp) :: dcondins = 1800.0D0
@@ -4712,9 +4712,10 @@ module cost_variables
   real(dp) :: ucrb = 400.0D0
   !! cost of reactor building (M$/m3)
 
-  real(dp), dimension(7) :: ucsc = &
-      (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0/)
-  !! cost of superconductor ($/kg)
+  real(dp), dimension(8) :: ucsc = &
+  !! ucsc(6) /600.0,600.0,300.0,600.0/ : cost of superconductor ($/kg)
+       (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0, &
+       1200.0D0/)
 
   real(dp), parameter :: ucsh = 115.0D0
   !! cost of shops and warehouses (M$/m3)

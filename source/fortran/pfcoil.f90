@@ -1740,7 +1740,7 @@ contains
 
 		use error_handling, only: fdiags, idiags, report_error
     use superconductors, only: jcrit_nbti, wstsc, jcrit_rebco, bi2212, &
-      itersc, current_sharing_rebco, Gl_nbti
+      itersc, current_sharing_rebco, Gl_nbti, GL_REBCO
 		use tfcoil_variables, only: tmargmin_cs, temp_margin, b_crit_upper_nbti, t_crit_nbti 
 		use maths_library, only: variable_error, secant_solve
     implicit none
@@ -1822,11 +1822,17 @@ contains
        call jcrit_rebco(thelium,bmax,jcritsc,validity,0)
        jcritstr = jcritsc * (1.0D0-fcu)
 
-   case (7) ! Durham Ginzburg-Landau Nb-Ti parameterisation
+    case (7) ! Durham Ginzburg-Landau Nb-Ti parameterisation
          bc20m = b_crit_upper_nbti
          tc0m = t_crit_nbti 
          call GL_nbti(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
          jcritstr = jcritsc  * (1.0D0-fcu)
+
+    case (8) ! Branch YCBO model fit to Tallahassee data
+         bc20m = 429D0
+         tc0m = 185D0
+         call GL_REBCO(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit) 
+         jcritstr = jcritsc  *  0.01
          
 
     case default  !  Error condition
@@ -1934,6 +1940,21 @@ contains
       end if
   end if
 
+  ! SCM 10/08/20 Use secant solver for GL_REBCO.
+  if(isumat==8) then
+   ! Current sharing temperature for Durham Ginzburg-Landau Nb-Ti
+   x1 = 4.0d0  ! Initial values of temperature
+   x2 = 6.0d0
+   ! Solve for deltaj_GL_REBCO = 0
+   call secant_solve(deltaj_GL_REBCO,x1,x2,current_sharing_t,error,residual,100d0)
+   tmarg = current_sharing_t - thelium
+   call GL_REBCO(current_sharing_t,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+   if(variable_error(current_sharing_t))then  ! current sharing secant solver has failed.
+       write(*,'(a24, 10(a12,es12.3))')'Gl_REBCO: current sharing ', 'temperature=', current_sharing_t, '  tmarg=', tmarg, &
+                                       '  jsc=',jsc, '  jcrit0=',jcrit0, '  residual=', residual
+   end if
+end if
+
 contains
     ! These functions are required because secant_solve requires a function not a subroutine
     ! They need to follow a 'contains' statement because 'jcrit0', 'bmax' and others
@@ -1971,7 +1992,18 @@ contains
                                           '  jcrit0=',jcrit0
       end if
       deltaj_GL_nbti = jcrit0 - jsc
-  end function deltaj_GL_nbti
+    end function deltaj_GL_nbti
+
+    function deltaj_GL_REBCO(temperature)
+      real(dp), intent(in) :: temperature
+      real(dp)::deltaj_Gl_REBCO, jcrit0
+      call GL_REBCO(temperature,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+      if(variable_error(jcrit0))then  ! GL_REBCO has failed.
+        write(*,'(a24, 10(a12,es12.3))')'deltaj_GL_REBCO: ', 'bmax=', bmax, '  temperature=', temperature, &
+                                          '  jcrit0=',jcrit0
+      end if
+      deltaj_GL_REBCO = jcrit0 - jsc
+    end function deltaj_GL_REBCO
 
 end subroutine superconpf
 
@@ -2600,7 +2632,9 @@ end subroutine superconpf
           case (5)
              call ocmmnt(outfile, ' (WST Nb3Sn critical surface model)')
           case (7)
-             call ocmmnt(outfile, ' (Durham Ginzburg-Landau critical surface model)')
+             call ocmmnt(outfile, ' (Durham Nb-Ti Ginzburg-Landau critical surface model)')
+          case (8)
+             call ocmmnt(outfile, ' (Durham REBCO Ginzburg-Landau critical surface model)')
           end select
 
           call osubhd(outfile,'Central Solenoid Current Density Limits :')
@@ -2703,7 +2737,9 @@ end subroutine superconpf
        case (5)
           call ocmmnt(outfile, ' (WST Nb3Sn critical surface model)')
        case (7)
-            call ocmmnt(outfile, ' (Durham Ginzburg-Landau critical surface model)')
+          call ocmmnt(outfile, ' (Durham Nb-Ti Ginzburg-Landau critical surface model)')
+       case (8)
+          call ocmmnt(outfile, ' (Durham REBCO Ginzburg-Landau critical surface model)')
        end select
 
        call ovarre(outfile,'Copper fraction in conductor','(fcupfsu)',fcupfsu)
