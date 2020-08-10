@@ -59,6 +59,7 @@ subroutine init_all_module_vars
   use vacuum_variables, only: init_vacuum_variables
   use pf_power_variables, only: init_pf_power_variables
   use build_variables, only: init_build_variables
+  use constraint_variables, only: init_constraint_variables
 
   call init_numerics
   call init_input
@@ -103,6 +104,7 @@ subroutine init_all_module_vars
   call init_vacuum_variables
   call init_pf_power_variables
   call init_build_variables
+  call init_constraint_variables
 end subroutine init_all_module_vars
 
 subroutine init
