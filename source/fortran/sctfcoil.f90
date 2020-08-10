@@ -1237,6 +1237,8 @@ subroutine tf_field_and_force()
                                             / r_tf_outboard_in))) - vforce 
         r_tf_outboard_in = r_tf_outboard_in - tinstf    ! Tricky trick to avoid writting tinstf all the time
 
+        f_vforce_inboard = vforce / ( vforce + vforce_outboard )
+
     ! Case of TF without joints or with clamped joints total
     ! Rem SK : f_vforce_inboard might be calculated analytically (see M. Kovari comment in #848)
     else 
@@ -1882,7 +1884,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! Hence, the radial direction is relevant for the property smearing 
         ! Rem : This assumption might be re-defined for bucked and wedged design
         eyoung_wp_t = eyngeff( eyoung_steel, eyoung_ins, &
-                               t_ins_eff, thwcndut, t_turn_radial )
+                               t_ins_eff, thwcndut, t_cable_radial )
         
         ! Lateral casing correction (serie)
         eyoung_wp_t_eff = ( 2.0D0 * t_lat_case_av + t_wp_toroidal_av ) &
@@ -3458,7 +3460,8 @@ subroutine outtf(outfile, peaktfflag)
         ripple, i_tf_tresca, bmaxtf, awphec, avwp, aiwp, acond, acndttf, &
         i_tf_sc_mat, voltfleg, vol_cond_cp, tflegres, tcpav, prescp, i_tf_sup, &
         cpttf, cdtfleg, whttflgs, whtcp, i_tf_bucking, tlegav, rhotfleg, rhocp, &
-        presleg, i_tf_shape, fcoolcp, pres_joints, tmargtf, tmargmin_tf
+        presleg, i_tf_shape, fcoolcp, pres_joints, tmargtf, tmargmin_tf, &
+        f_vforce_inboard, vforce_outboard
     use physics_variables, only: itart
     use constants, only: mfile, pi
     implicit none
@@ -3717,7 +3720,9 @@ subroutine outtf(outfile, peaktfflag)
 
     ! TF forces
     call osubhd(outfile,'TF Forces:')
-    call ovarre(outfile,'Inboard vertical separating force per leg (N)','(vforce)',vforce, 'OP ')
+    call ovarre(outfile,'Inboard vertical tension per coil (N)','(vforce)',vforce, 'OP ')
+    call ovarre(outfile,'Outboard vertical tension per coil (N)','(vforce_outboard)', vforce_outboard, 'OP ')
+    call ovarre(outfile,'inboard vertical tension fraction (-)','(f_vforce_inboard)', f_vforce_inboard, 'OP ')
     call ovarre(outfile,'Centring force per coil (N/m)','(cforce)',cforce, 'OP ')
 
     ! Resistive coil parameters

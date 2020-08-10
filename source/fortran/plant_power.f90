@@ -829,7 +829,7 @@ contains
     use current_drive_variables, only: pinjmw, porbitlossmw, nbshinemw
     use fwbs_variables, only: pnucblkt, pradfw, etahtp, praddiv, &
         secondary_cycle, pnuc_cp_tf, primary_pumping, ptfnuc, pnucshld, pradhcd, &
-        pnucdiv, pnucfw, pnuchcd
+        pnucdiv, pnucfw, pnuchcd, pnuc_cp_sh
     use heat_transport_variables, only: htpmw_shld, htpsecmw, pfwdiv, &
         psecshld, crypmw, htpmw_min, nphx, htpmw_div, psechcd, helpow, &
         htpmw_fw, pinjwp, pthermmw, psecdiv, etath, pinjht, iprimshld, htpmw, &
@@ -854,7 +854,7 @@ contains
 
     ! Combine fw and blanket for convenience
     ! Already combined if primary_pumping=3
-    if(primary_pumping/=3) htpmw_fw_blkt = htpmw_fw + htpmw_blkt
+    if ( primary_pumping /= 3 ) htpmw_fw_blkt = htpmw_fw + htpmw_blkt
 
     !  Account for pump electrical inefficiencies. The coolant pumps are not assumed to be
     !  100% efficient so the electric power to run them is greater than the power deposited
@@ -887,7 +887,7 @@ contains
     end if
 
     !  Total power deposited in shield coolant (MW)
-    pthermshld = pnucshld + htpmw_shld
+    pthermshld = pnuc_cp_sh + pnucshld + htpmw_shld
 
     !  Total thermal power deposited in divertor coolant (MW)
     !  = (conduction to divertor, less radiation) + (neutron and radiation power)

@@ -3952,7 +3952,7 @@ module build_variables
   real(dp) :: aplasmin = 0.25D0
   !! minimum minor radius (m)
 
-  real(dp) ::   available_radial_space = 0.0D0
+  real(dp) :: available_radial_space = 0.0D0
   !! Minimal radial space between plasma and coils (m)
 
   real(dp) :: blarea = 0.0D0

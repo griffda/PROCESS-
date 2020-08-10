@@ -129,8 +129,8 @@ module ccfe_hcpb_module
   real(dp), private :: htpmw_blkti, htpmw_blkto
   !! Inboard/outboard blanket pumping power (MW)
 
-  real(dp), private :: nuc_pow_dep_tot
-  !! Total nuclear power deposited in FW, BLKT, SHLD, DIV, TF (MW)
+  real(dp), private :: pnuc_tot_blk_sector
+  !! Total nuclear power deposited in blanket covered sector (FW, BLKT, SHLD, TF) (MW)
 
   real(dp), private :: exp_blanket, exp_shield1, exp_shield2
   !! Exponential factors in nuclear heating calcs
@@ -150,11 +150,13 @@ contains
     !! - Kovari et al., Fusion Engineering and Design 104 (2016) 9-20   
 
     use build_variables, only: fwith, fwoth, r_tf_inboard_mid, tfcth, &
-      gapds, shldith, hmax, r_tf_outboard_mid, r_sh_inboard_out, r_sh_inboard_in
+      gapds, shldith, hmax, r_tf_outboard_mid, r_sh_inboard_out, &
+      r_sh_inboard_in, scrapli
     use fwbs_variables, only: afw, coolwh, emult, pnuc_cp_tf, pnuc_cp_sh, &
       pnuc_cp, fw_wall, pnucfw, pnucblkt, pnucshld, ptfnuc, fdiv, emultmw, &
       pnucdiv, neut_flux_cp
-    use physics_variables, only: itart, pneutmw, idivrt, rmajor
+    use physics_variables, only: itart, pneutmw, idivrt, rmajor, kappa, & 
+      triang, rminor
 
     implicit none
 
@@ -164,11 +166,18 @@ contains
     integer, intent(in) :: outfile
     !! output file unit
 
+    real(dp) :: f_geom_blanket
+    !! Solid angle fraction covered by the breeding blankets
+
     real(dp) :: f_geom_cp
     !! Solid angle fraction of neutrons that hit the centrepost shield [-]
 
-    real(dp) :: f_geom_blanket
-    !! Solid angle fraction covered by the breeding blankets
+    real(dp) :: r_sh_inboard_out_top
+    !! CP radius at the point of maximum sield radius [m]
+    !! The maximum shield radius is assumed to be at the X-point
+
+    real(dp) :: h_sh_max_r
+    !! Half height of the CP at the largest shield radius [m]
 
     ip = iprint
     ofile = outfile
@@ -190,13 +199,27 @@ contains
     ! Centrepost neutronics
     if ( itart == 1 ) then
 
+      ! CP radius at the point of maximum sield radius [m]
+      r_sh_inboard_out_top = rmajor - rminor * triang - 3.0D0*scrapli
+
+      ! Half height of the CP at the largest shield radius [m]
+      h_sh_max_r = rminor * kappa
+
+      ! Calculating the CP solid angle coverage fraction
+      ! Rem : This calculation considered the shield flaring
+      !       while the MCNP based neutronincs considers a 
+      !       cylindre
+      call st_cp_angle_fraction( h_sh_max_r, r_sh_inboard_out, & ! Inputs
+                                 r_sh_inboard_out_top, rmajor, & ! Inputs
+                                 f_geom_cp )
+
       ! TF fast neutron flux (E > 0.1 MeV) [m^{-2}.s^{-1}]
       call st_tf_centrepost_fast_neut_flux( pneutmw, shldith, rmajor, & ! Inputs
                                             neut_flux_cp )              ! Outputs
 
       ! TF, shield and total CP nuclear heating [MW]
-      call st_centrepost_nuclear_heating( pneutmw, hmax, r_sh_inboard_out, shldith, & ! Inputs
-                                         f_geom_cp, pnuc_cp_tf, pnuc_cp_sh, pnuc_cp  )           ! Outputs
+      call st_centrepost_nuclear_heating( pneutmw, shldith,               & ! Inputs
+                                          pnuc_cp_tf, pnuc_cp_sh, pnuc_cp ) ! Outputs
   
     else ! No CP
       f_geom_cp = 0.0D0
@@ -209,25 +232,29 @@ contains
     call component_masses
 
     ! Calculate the nuclear heating
+    ! Rem : The heating power will be normalized to the neutron power using
+    !       the divertor and the centrepost (for itart == 1), 
     call nuclear_heating_magnets
     call nuclear_heating_fw
     call nuclear_heating_blanket
     call nuclear_heating_shield
     call nuclear_heating_divertor
 
-    ! Neutron power to divertor: 0.8D0 * fdiv * powfmw (assume this is all absorbed, 
-    ! no multiplication)
-    ! Neutron power to main wall: 0.8D0 * (1-fdiv) * powfmw (assume that all are absorbed)
-    ! Total energy deposited in main wall: emult * 0.8D0 * (1-fdiv) * powfmw
+    ! Normalisation of the nuclear heating
+    ! The nuclear heating are noramalized assuming no energy multiplication
+    ! in the divertor and the centrepost
     ! Assume that all the neutrons are absorbed. (Not applicable for very thin blankets)
+    ! Rem SK : This calculation effectively only uses the angular fractions to get 
+    !          the energy multiplication and hence the power balance ...
 
     ! Split neutron power to main wall between fw, bkt, shld and TF with same 
     ! fractions as before.
-    ! Total nuclear power deposited (MW)
-    nuc_pow_dep_tot = pnucfw + pnucblkt + pnucshld + ptfnuc
+    ! Total nuclear power deposited in the blancket sector (MW)
+    pnuc_tot_blk_sector = pnucfw + pnucblkt + pnucshld + ptfnuc
 
-    if((nuc_pow_dep_tot<1.0d0).or.(nuc_pow_dep_tot/=nuc_pow_dep_tot))  then
-        write(*,*)'pnucfw =', pnucfw, ' at line 263  ', 'pnucblkt =', pnucblkt
+    ! Total nuclear power deposited in the 
+    if ( pnuc_tot_blk_sector < 1.0d0 .or. pnuc_tot_blk_sector /= pnuc_tot_blk_sector ) then
+        write(*,*)'pnucfw =', pnucfw, ' at line 247  ', 'pnucblkt =', pnucblkt
         write(*,*)'pnucshld =', pnucshld, ' ptfnuc =', ptfnuc
     end if
 
@@ -236,23 +263,32 @@ contains
     f_geom_blanket = 1.0D0 - dble(idivrt) * fdiv - f_geom_cp
 
     ! Power to the first wall (MW)
-    pnucfw = ( pnucfw / nuc_pow_dep_tot ) * emult * f_geom_blanket * pneutmw
+    pnucfw = ( pnucfw / pnuc_tot_blk_sector ) * emult * f_geom_blanket * pneutmw
 
     ! Power to the blanket (MW)
-    pnucblkt = ( pnucblkt / nuc_pow_dep_tot ) * emult  * f_geom_blanket * pneutmw
+    pnucblkt = ( pnucblkt / pnuc_tot_blk_sector ) * emult  * f_geom_blanket * pneutmw
     
     ! Power to the shield(MW)
     ! The power deposited in the CP shield is added back 
-    pnucshld = ( pnucshld / nuc_pow_dep_tot ) * emult * f_geom_blanket * pneutmw + pnuc_cp_sh
+    pnucshld = ( pnucshld / pnuc_tot_blk_sector ) * emult * f_geom_blanket * pneutmw
 
     ! Power to the TF coils (MW)
     ! The power deposited in the CP shield is added back 
-    ptfnuc = ( ptfnuc / nuc_pow_dep_tot ) * emult * f_geom_blanket * pneutmw + pnuc_cp_tf
+    ptfnuc = ( ptfnuc / pnuc_tot_blk_sector ) * emult * f_geom_blanket * pneutmw
 
+    ! Power deposited in the CP
+    pnuc_cp_sh = f_geom_cp * pneutmw - pnuc_cp_tf
+
+    
+    ! Old code kept for backward compatibility
+    ! ---
     ! pnucdiv is not changed.
     ! The energy due to multiplication, by subtraction:
-    !emultmw = pnucfw + pnucblkt + pnucshld + ptfnuc + pnucdiv - 0.8D0 * powfmw
-    emultmw = pnucfw + pnucblkt + pnucshld + ptfnuc + pnucdiv - pneutmw
+    !emultmw = pnucfw + pnucblkt + pnucshld + ptfnuc + pnucdiv - pneutmw
+    ! ---
+
+    ! New code, a bit simpler
+    emultmw = ( emult - 1.0D0 ) * f_geom_blanket * pneutmw
 
     ! powerflow calculation for pumping power
     call powerflow_calc
@@ -1062,7 +1098,7 @@ contains
     use current_drive_variables, only: porbitlossmw
     use fwbs_variables, only: fdiv, praddiv, pradhcd, fhcd, pradfw, coolwh, &
       outlet_temp, blpressure, primary_pumping, pnucfw, pnucblkt, pnucdiv, &
-      pnucshld, etaiso
+      pnucshld, etaiso, pnuc_cp_sh
     use heat_transport_variables, only: htpmw_fw, fpumpfw, htpmw_blkt, fpumpblkt, &
       htpmw_shld, fpumpshld, htpmw_div, fpumpdiv
     use physics_variables, only: idivrt, pradmw, palpfwmw, pdivt
@@ -1105,12 +1141,12 @@ contains
       ! User sets mechanical pumping power directly (primary_pumping_power)
       ! Values of htpmw_blkt, htpmw_div, htpmw_fw, htpmw_shld set in input file
 
-    else if (primary_pumping == 1) then
+    else if ( primary_pumping == 1 ) then
       ! User sets mechanical pumping power as a fraction of thermal power 
       ! removed by coolant
       htpmw_fw = fpumpfw * (pnucfw + psurffwi + psurffwo)
       htpmw_blkt = fpumpblkt * pnucblkt
-      htpmw_shld = fpumpshld * pnucshld
+      htpmw_shld = fpumpshld * ( pnucshld + pnuc_cp_sh )
       htpmw_div = fpumpdiv * (pdivt + pnucdiv + praddiv)
 
     else if (primary_pumping == 2) then
@@ -1118,7 +1154,7 @@ contains
       call thermo_hydraulic_model
       ! For divertor and shield, mechanical pumping power is a fraction of thermal 
       ! power removed by coolant
-      htpmw_shld = fpumpshld * pnucshld
+      htpmw_shld = fpumpshld * ( pnucshld + pnuc_cp_sh )
       htpmw_div = fpumpdiv * (pdivt + pnucdiv + praddiv)
 
     else if (primary_pumping == 3) then
@@ -1134,7 +1170,7 @@ contains
 
       ! For divertor and shield, mechanical pumping power is a fraction of thermal 
       ! power removed by coolant
-      htpmw_shld = fpumpshld * pnucshld
+      htpmw_shld = fpumpshld * ( pnucshld + pnuc_cp_sh )
       htpmw_div = fpumpdiv * (pdivt + pnucdiv + praddiv)
       if (ip /= 0) then
         call oheadr(ofile, 'Pumping for primary coolant (helium)')
@@ -1621,7 +1657,7 @@ contains
       armour_fw_bl_mass, whtshld, vvmass, pnuc_cp, pnuc_cp_tf, pnuc_cp_sh, pnucfw, &
       ptfnuc, pnucblkt, pnucshld, pnucdiv, secondary_cycle, fwpressure, blpressure, &
       primary_pumping, nblktmodpi, nblktmodti, nblktmodpo, nblktmodto, etaiso, &
-      rdewex, zdewex, neut_flux_cp
+      rdewex, zdewex, neut_flux_cp, fdiv
     use heat_transport_variables, only: htpmw_fw, htpmw_blkt, htpmw_div, &
       htpmw_shld, htpmw
     use tfcoil_variables, only: i_tf_sup
@@ -1691,10 +1727,11 @@ contains
     call ocmmnt(ofile, '(Note: emult is fixed for this model inside the code)')
     call ovarre(ofile, 'Total nuclear heating in the shield (MW)', '(pnucshld)', pnucshld, 'OP ')
     call ovarre(ofile, 'Total nuclear heating in the divertor (MW)', '(pnucdiv)', pnucdiv, 'OP ')
-    call osubhd(ofile,'Diagostic output for nuclear heating :')
+    call osubhd(ofile,' Diagostic output for nuclear heating :')
     call ovarre(ofile, 'Blanket exponential factor', '(exp_blanket)', exp_blanket, 'OP ')
     call ovarre(ofile, 'Shield: first exponential', '(exp_shield1)', exp_shield1, 'OP ')
     call ovarre(ofile, 'Shield: second exponential', '(exp_shield2)', exp_shield2, 'OP ')
+    call ovarre(ofile, 'Divertor nuclear power fraction', '(fdiv)', fdiv)
 
     call ovarin(ofile, 'Switch for plant secondary cycle ', '(secondary_cycle)', secondary_cycle)
     call ovarre(ofile, 'First wall coolant pressure (Pa)', '(fwpressure)', fwpressure)
@@ -1734,8 +1771,8 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine st_centrepost_nuclear_heating( pneut, cphalflen, r_cp_outer, sh_width, &
-                                            f_geom_cp, pnuc_cp_tf, pnuc_cp_sh, pnuc_cp ) 
+  subroutine st_centrepost_nuclear_heating( pneut, sh_width,                & ! Inputs
+                                            pnuc_cp_tf, pnuc_cp_sh, pnuc_cp ) ! Outputs 
 
     !! Author : P J Knight, CCFE, Culham Science Centre
     !! Author : S Kahn, CCFE, Culham Science Centre
@@ -1753,7 +1790,7 @@ contains
 
     use build_variables, only: tfcth
     use fwbs_variables, only: f_neut_shield
-    use physics_variables, only: rmajor, pneutmw
+    use physics_variables, only: rmajor
     use tfcoil_variables, only: i_tf_sup
     use constants, only: pi
 
@@ -1764,12 +1801,6 @@ contains
     real(dp), intent(in) :: pneut
     !! 14 MeV plasma neutron power generated by the plasma [MW]
   
-    real(dp), intent(in) :: cphalflen
-    !! Centrepost shield half height (from mid-plane to top CP) [m] 
-
-    real(dp), intent(in) :: r_cp_outer
-    !! Outer radius of the centrepost shield [m]
-
     real(dp), intent(in) :: sh_width
     !! Thickeness of the centrepost neutron shield [m]
     ! ------
@@ -1777,8 +1808,6 @@ contains
 
     ! Outputs
     ! -------
-    real(dp), intent(out) :: f_geom_cp
-    !! Solid angle fraction taken by the CP [-]
 
     real(dp), intent(out) :: pnuc_cp_tf
     !! Nuclear nuclear heat deposited in the centrepost TF coil [MW]
@@ -1793,10 +1822,6 @@ contains
 
     ! Local variables
     ! ---------------
-
-    real(dp) :: f_neut_absorb_Cp
-    !! Fraction of neutron power actually absobed by the magnet system [-]
-
     real(dp) :: pnuc_cp_wp_gam
     !! Nuclear power deposited in the CP winding pack by gammas [MW]
 
@@ -1821,106 +1846,104 @@ contains
     real(dp) :: f_pnuc_cp_sh = 1.7D0
     !! Outer wall reflection shield nuclear heating enhancement factor [-]
 
+    real(dp) :: f_wc_density = 2.0D0
+    !! Tungsten density may vary with different manufacturing processes.
+    !! Here is a factor to take this into account
+
+    real(dp) :: f_steel_struct = 0.1
+    !! Fraction of steel structures
+
+    real(dp) :: sh_width_eff
+    !! Effecting shield width, removing steel structures  
     ! ---------------
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-    ! Fraction of neutrons that hit the centre post neutronic shield
-    f_geom_cp = cphalflen / sqrt(cphalflen**2 + (rmajor-r_cp_outer)**2 ) &
-              * atan(r_cp_outer/(rmajor-r_cp_outer) )/pi
+    ! Former nuclear heating calculations for Copper magnets
+    ! Commented out as no nuclear shielding was included 
+    ! ---
+    ! ! Fraction of the nuclear power absorbed by the copper centrepost 
+    ! ! (0.08 m e-folding decay length)
+    ! f_neut_absorb_cp = 1.0D0 - exp( -2.0D0*tfcth / 0.08D0) 
+    ! 
+    ! ! Nuclear power
+    ! pnuc_cp = pneut * f_geom_cp * f_neut_absorb_cp
+    ! ---
 
-    ! Copper CP
-    ! ---------
-    ! No shileding integrated
-    ! Nuclear heating from solid angle fraction and neutron mean free path in copper
-    ! Rem SK : This calculation must be replaced by neutronics with shielding
-    if ( i_tf_sup == 0 ) then
-
-      ! Fraction of the nuclear power absorbed by the copper centrepost 
-      ! (0.08 m e-folding decay length)
-      f_neut_absorb_cp = 1.0D0 - exp( -2.0D0*tfcth / 0.08D0) 
-    
-      ! Nuclear power
-      pnuc_cp = pneut * f_geom_cp * f_neut_absorb_cp
-      
-      ! Correction for shielding 
-      if ( f_neut_shield > 0.0D0 ) then
-        pnuc_cp_tf = ( 1.0D0 - f_neut_shield ) * pnuc_cp
-        pnuc_cp_sh = f_neut_shield * pnuc_cp
-      else 
-        pnuc_cp_tf = 0.0D0
-        pnuc_cp_sh = 0.0D0
-      end if
-      ! ---------
-
+    ! Steel support structure effective WC shield thickness reduction
+    sh_width_eff = sh_width / ( 1.0D0 - f_steel_struct ) 
 
     ! Aluminium CP
     ! ------------
     ! From Pfus = 1 GW ST MCNP neutronic calculations assuming
     ! Tungsten carbyde with 13% water cooling fraction
-    else if ( i_tf_sup == 2 ) then
-      pnuc_cp_tf = ( pneutmw / 800.0D0 ) * exp( 3.882D0 - 16.69D0*sh_width )
+    if ( i_tf_sup == 2 ) then
+      pnuc_cp_tf = ( pneut / 800.0D0 ) * exp( 3.882D0 - 16.69D0*sh_width_eff )
 
       ! WARINING, this is an extraoilation from TF heat ...
       ! DO NOT TRUST THIS VALUE !!
-      pnuc_cp_sh = ( pneutmw / 800.0D0 ) * exp(3.882D0)
+      pnuc_cp_sh = ( pneut / 800.0D0 ) * exp(3.882D0) - pnuc_cp_tf
     ! ------------
 
 
-    ! Superconducting CP
-    ! ------------------
-    else if ( i_tf_sup == 1 ) then
+    ! Superconducting / copper CP
+    ! ---------------------------
+    ! MCNP calculations made with a TF magnet model with very large WP
+    ! so the TF is mostly copper, making the calculation also valid for 
+    ! Copper TF centrepost 
+    else 
       
       ! Nuclear powers fits for a 800 MW plasma neutron source
       ! ***
       ! Nuclear power deposited in the CP winding pack by gammas [MW]
-      pnuc_cp_wp_gam = 16.3D0 * exp( -14.63D0 * sh_width ) + 143.08D0 &
-                     * sh_width * ( sh_width / rmajor ) * exp( -21.747D0 * sh_width )
+      pnuc_cp_wp_gam = 16.3D0 * exp( -14.63D0 * sh_width_eff ) + 143.08D0 &
+                     * sh_width_eff * ( sh_width / rmajor ) * exp( -21.747D0 * sh_width_eff )
   
       ! Nuclear power deposited in the CP winding pack by neutrons [MW]
-      pnuc_cp_wp_n = 1.403D0  * exp( -16.535D0 * sh_width ) + 3.812D0 &
-                   * sh_width * ( sh_width / rmajor ) * exp( -23.631D0 * sh_width )
+      pnuc_cp_wp_n = 1.403D0  * exp( -16.535D0 * sh_width_eff ) + 3.812D0 &
+                   * sh_width_eff * ( sh_width / rmajor ) * exp( -23.631D0 * sh_width_eff )
       
       ! Nuclear power deposited in the CP steel case by gammas [MW]
-      pnuc_cp_case_gam = 1.802D0 * exp( -13.993D0 * sh_width ) + 38.592D0 &
-                       * sh_width * ( sh_width / rmajor ) * exp( -27.051D0 * sh_width )
+      pnuc_cp_case_gam = 1.802D0 * exp( -13.993D0 * sh_width_eff ) + 38.592D0 &
+                       * sh_width * ( sh_width_eff / rmajor ) * exp( -27.051D0 * sh_width_eff )
   
       ! Nuclear power deposited in the CP steel case by neutrons [MW]
-      pnuc_cp_case_n = 0.158D0 * exp( -55.046D0 * sh_width ) + 2.0742D0 &
-                     * sh_width * ( sh_width / rmajor ) * exp( -24.401D0 * sh_width )
+      pnuc_cp_case_n = 0.158D0 * exp( -55.046D0 * sh_width_eff ) + 2.0742D0 &
+                     * sh_width_eff * ( sh_width / rmajor ) * exp( -24.401D0 * sh_width_eff )
              
-
-                     
       ! Nuclear power density deposited in the tungsten carbyde shield by photons [MW]
-      pnuc_cp_sh_gam = sh_width * ( 596.00D0 * exp( -4.130D0 * sh_width ) &
-                                  + 90.586D0 * exp( 0.6837D0 * sh_width ) )
+      pnuc_cp_sh_gam = sh_width_eff * ( 596.00D0 * exp( -4.130D0 * sh_width_eff ) &
+                                      + 90.586D0 * exp( 0.6837D0 * sh_width_eff ) )
       
       ! Nuclear power density deposited in the tungsten carbyde shield by neutrons [MW]
-      pnuc_cp_sh_n = sh_width * ( 202.10D0 * exp( -10.533D0 * sh_width ) &
-                                + 80.510D0 * exp( -0.9801D0 * sh_width ) )
+      pnuc_cp_sh_n = sh_width_eff * ( 202.10D0 * exp( -10.533D0 * sh_width_eff ) &
+                                    + 80.510D0 * exp( -0.9801D0 * sh_width_eff ) )
       ! ***
 
 
       ! Fit generalisation
       ! ***
       ! Correction for the actual 14 MeV plasma neutron power
-      pnuc_cp_wp_gam   = ( pneutmw / 800.0D0 ) * pnuc_cp_wp_gam   
-      pnuc_cp_wp_n     = ( pneutmw / 800.0D0 ) * pnuc_cp_wp_n    
-      pnuc_cp_case_gam = ( pneutmw / 800.0D0 ) * pnuc_cp_case_gam
-      pnuc_cp_case_n   = ( pneutmw / 800.0D0 ) * pnuc_cp_case_n  
-      pnuc_cp_sh_gam   = ( pneutmw / 800.0D0 ) * pnuc_cp_sh_gam  
-      pnuc_cp_sh_n     = ( pneutmw / 800.0D0 ) * pnuc_cp_sh_n     
+      pnuc_cp_wp_gam =   ( pneut / 800.0D0 ) * pnuc_cp_wp_gam   
+      pnuc_cp_wp_n =     ( pneut / 800.0D0 ) * pnuc_cp_wp_n    
+      pnuc_cp_case_gam = ( pneut / 800.0D0 ) * pnuc_cp_case_gam
+      pnuc_cp_case_n =   ( pneut / 800.0D0 ) * pnuc_cp_case_n  
+      pnuc_cp_sh_gam =   ( pneut / 800.0D0 ) * pnuc_cp_sh_gam  
+      pnuc_cp_sh_n =     ( pneut / 800.0D0 ) * pnuc_cp_sh_n     
 
       ! Correction for neutron reflected by the outer wall hitting the CP
-      pnuc_cp_wp_gam   = f_pnuc_cp_tf * pnuc_cp_wp_gam
-      pnuc_cp_wp_n     = f_pnuc_cp_tf * pnuc_cp_wp_n
+      pnuc_cp_wp_gam =   f_pnuc_cp_tf * pnuc_cp_wp_gam
+      pnuc_cp_wp_n =     f_pnuc_cp_tf * pnuc_cp_wp_n
       pnuc_cp_case_gam = f_pnuc_cp_tf * pnuc_cp_case_gam
-      pnuc_cp_case_n   = f_pnuc_cp_tf * pnuc_cp_case_n
-      pnuc_cp_sh_gam   = f_pnuc_cp_sh * pnuc_cp_sh_gam
-      pnuc_cp_sh_n     = f_pnuc_cp_sh * pnuc_cp_sh_n               
+      pnuc_cp_case_n =   f_pnuc_cp_tf * pnuc_cp_case_n
+      pnuc_cp_sh_gam =   f_pnuc_cp_sh * pnuc_cp_sh_gam
+      pnuc_cp_sh_n =     f_pnuc_cp_sh * pnuc_cp_sh_n               
 
       ! TF nuclear heat [MW]
       pnuc_cp_tf = pnuc_cp_wp_gam + pnuc_cp_wp_n + pnuc_cp_case_gam + pnuc_cp_case_n  
+
+      ! Tungsten density correction
+      pnuc_cp_tf = pnuc_cp_tf * f_wc_density
 
       ! Shield nuclear heat [MW]
       pnuc_cp_sh = pnuc_cp_sh_gam + pnuc_cp_sh_n
@@ -1929,9 +1952,11 @@ contains
 
     ! Total CP nuclear heat [MW]
     pnuc_cp = pnuc_cp_tf + pnuc_cp_sh 
-    ! ------------------
+    ! ---------------------------
 
   end subroutine st_centrepost_nuclear_heating
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine st_tf_centrepost_fast_neut_flux( pneutmw, sh_width, rmajor, & ! Inputs
                                               neut_flux_cp )               ! Outputs
@@ -1962,21 +1987,148 @@ contains
     real(dp) :: f_neut_flux_out_wall = 1.0D0
     !! Fraction of fast neutrons originating from the outer wall reflection [-]
 
+    real(dp) :: f_wc_density = 2.0D0
+    !! Tungsten density may vary with different manufacturing processes.
+    !! Here is a factor to take this into account
+
+    real(dp) :: f_steel_struct = 0.1
+    !! Fraction of steel structures
+
+    real(dp) :: sh_width_eff
+    !! Effecting shield width, removing steel structures    
+
     if ( i_tf_sup == 1 ) then 
       
+      sh_width_eff = sh_width / ( 1.0D0 - f_steel_struct ) 
+
       ! Fit [10^{-13}.cm^{-2}]
-      neut_flux_cp = 5.835D0 * exp( -24.722D0 * sh_width ) &
-                   + 39.70D0 * ( sh_width / rmajor ) * exp( -15.392D0 * sh_width )
+      neut_flux_cp = 5.835D0 * exp( -15.392D0 * sh_width_eff ) &
+                   + 39.70D0 * ( sh_width_eff / rmajor ) * exp( -24.722D0 * sh_width_eff )
 
       ! Units conversion [10^{-13}.cm^{-2}] -> [m^{-2}]
       neut_flux_cp = neut_flux_cp * 1.0D17
 
       ! Scaling to the actual plasma neutron power
-      neut_flux_cp = f_neut_flux_out_wall * neut_flux_cp * ( pneutmw / 800.0D0 )
+      neut_flux_cp = f_wc_density * f_neut_flux_out_wall &
+                   * neut_flux_cp * ( pneutmw / 800.0D0 )
 
     end if    
 
   end subroutine st_tf_centrepost_fast_neut_flux
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine st_cp_angle_fraction( h_cp_top, r_cp_mid, r_cp_top, rmajor, & ! Inputs
+                                   f_geom_cp )                             ! Output
+    !! Author : S. Kahn, CCFE, Culham science centre
+    !! Estimates the CP angular solid angle coverage fration
+    !! Equation (1-3) from 
+    !! ref : P. Guest THE-REVIEW OF SCIENTIFIC INSTRUMENTS, vol 32, n 2 (1960)
+    !! Initial, but undocumented calculation kept as commented section
+    !! without any talor expansion approximation
+
+    use constants, only: pi
+
+    implicit none
+
+    ! Inputs
+    ! ------
+    real(dp), intent(in) :: h_cp_top
+    !! Centrepost shield half height [m] 
+
+    real(dp), intent(in) :: r_cp_top
+    !! Centrepost top radius [m]
+
+    real(dp), intent(in) :: r_cp_mid
+    !! Centrepost mid-plane radius [m]
+
+    real(dp), intent(in) :: rmajor
+    !! Plasma major radius [m]
+    ! ------
+
+    ! Output
+    ! ------
+    real(dp), intent(out) :: f_geom_cp
+    !! Solid angle fraction covered by the CP [-]
+    ! ------
+    
+    ! Local variables
+    ! ---------------
+    real(dp) :: rho_maj
+    !! Major radius normalized to the CP average radius [-]
+
+    real(dp) :: phy_cp
+    !! Average CP extent in the toroidal plane [rad]
+
+    real(dp) :: d_phy_cp
+    !! Toroidal plane infinitesimal angle used in the integral [rad]
+
+    real(dp) :: phy_cp_calc
+    !! Toroidal plane angles used in the integral [rad]
+    
+    real(dp) :: cp_sol_angle
+    !! Centrepost solid angle coverage from plasma centre source [sterad]
+
+    real(dp) :: int_calc_1, int_calc_2, int_calc_3
+    !! Variables used in the trapezoidal integral
+
+    integer :: n_integral = 10
+    !! Number of integral steps 
+
+    integer :: ii
+    !! Do loop integer 
+    ! ---------------
+
+
+    ! Initial calculation
+    ! -------------------
+    ! Kept as commented section for documentation 
+    ! ! Fraction of neutrons that hit the centre post neutronic shield
+    ! f_geom_cp = cphalflen / sqrt(cphalflen**2 + (rmajor-r_cp_outer)**2 ) &
+    !           * atan(r_cp_outer/(rmajor-r_cp_outer) )/pi
+    ! -------------------
+
+    ! Major radius normalized to the CP average radius [-]
+    rho_maj = 2.0D0 * rmajor / ( r_cp_mid + r_cp_top )
+
+    !! Average CP extent in the toroidal plane [rad]
+    phy_cp = asin( 1.0D0 / rho_maj )
+
+    ! toroidal plane infinitesimal angle used in the integral [rad]
+    d_phy_cp = phy_cp / dble(n_integral)
+
+    ! CP solid angle integral using trapezoidal method
+    phy_cp_calc = 0.0D0
+    cp_sol_angle = 0.0D0
+
+    do ii = 1, n_integral
+
+      ! Little tricks to avoild NaNs due to rounding
+      int_calc_3 = 1.0D0 - rho_maj**2 * sin(phy_cp_calc)**2 
+      if ( int_calc_3 < 0.0D0 ) int_calc_3 = 0.0D0  
+
+      int_calc_1 = 1.0D0 / sqrt( h_cp_top**2 + (rho_maj*cos(phy_cp_calc) &
+                               - sqrt(int_calc_3) )**2 )
+
+
+      phy_cp_calc = phy_cp_calc + d_phy_cp
+
+      ! Little tricks to avoild NaNs due to rounding
+      int_calc_3 = 1.0D0 - rho_maj**2 * sin(phy_cp_calc)**2 
+      if ( int_calc_3 < 0.0D0 ) int_calc_3 = 0.0D0
+
+      int_calc_2 = 1.0D0 / sqrt( h_cp_top**2 + (rho_maj*cos(phy_cp_calc) &
+                               - sqrt(int_calc_3) )**2 )
+
+      cp_sol_angle = cp_sol_angle + d_phy_cp * 0.5D0 * ( int_calc_1 + int_calc_2 )  
+
+    end do
+    cp_sol_angle = cp_sol_angle * 4.0D0 * h_cp_top
+
+    ! Solid angle fraction covered by the CP (OUTPUT) [-] 
+    f_geom_cp = 0.25D0 * cp_sol_angle / pi
+
+  end subroutine st_cp_angle_fraction
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

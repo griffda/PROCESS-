@@ -470,26 +470,32 @@ def plot_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow Sankey Diag
     pnucfw = m_file.data['pnucfw'].get_scan(-1) # nuclear heating in the first wall (MW)
     pnucblkt = m_file.data['pnucblkt'].get_scan(-1) # nuclear heating in the blanket (MW)
     pnucshld = m_file.data['pnucshld'].get_scan(-1) # nuclear heating in the shield (MW)
+    pnuc_cp_sh = m_file.data['pnuc_cp_sh'].get_scan(-1) # nuclear heating in the CP shield (MW)
     emultmw = m_file.data['emultmw'].get_scan(-1) # Blanket energy multiplication (MW)
     palpmw = m_file.data['palpmw'].get_scan(-1) # Alpha power (MW)
     falpha = m_file.data['falpha'].get_scan(-1) # Fraction of alpha power deposited in plasma
     palpfwmw = palpmw*(1-falpha) # Alpha power hitting 1st wall (MW)
     itart = m_file.data['itart'].get_scan(-1) # switch for spherical tokamak (ST) models
+    
     if itart == 0:
         # Power deposited on divertor (MW)
-        totaldivetc = pdivt+pnucdiv+praddiv
+        totaldivetc = pdivt + pnucdiv + praddiv
         # Power deposited on Blanket (MW)
-        totalblktetc = pnucfw+pnucblkt+pnucshld+pradfw+palpfwmw-emultmw
+        totalblktetc = pnucfw + pnucblkt + pnucshld + pradfw + palpfwmw - emultmw
+        # Power deposited in CP (MW) (None here)
+        totalcpetc = 0.0
     elif itart == 1:
         # Power deposited on divertor (MW)
-        totaldivetc = pdivt+pnucdiv+praddiv+pnucshld
+        totaldivetc = pdivt + pnucdiv + praddiv
         # Power deposited on Blanket (MW)
-        totalblktetc = pnucfw+pnucblkt+pradfw+palpfwmw-emultmw
+        totalblktetc = pnucfw + pnucblkt + pnucshld + pradfw + palpfwmw - emultmw
+        # Power deposited in CP (MW)
+        totalcpetc = pnuc_cp_sh
 
     # Used in [BLANKETSETC]
     pthermfw_blkt = m_file.data['pthermfw_blkt'].get_scan(-1) # Heat for electricity (MW)
     htpmw_fw_blkt = m_file.data['htpmw_fw_blkt'].get_scan(-1) # 1st wall & blanket pumping (MW)
-    pthermmw_p = pthermfw_blkt-htpmw_fw_blkt # Heat - pumping power (MW)
+    pthermmw_p = pthermfw_blkt - htpmw_fw_blkt # Heat - pumping power (MW)
 
     # Used in [PRIMARY]
     pgrossmw = m_file.data['pgrossmw'].get_scan(-1) # gross electric power (MW)
@@ -542,10 +548,10 @@ def plot_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow Sankey Diag
         # --------------------------------- ENERGY DEPOSITION - 1 ---------------------------------
         
         # Plasma power, - divertor deposited power, - blanket deposited power
-        DEPOSITION = [totalplasma, -totalblktetc-totaldivetc]
+        DEPOSITION = [totalplasma, -totalblktetc-totaldivetc-totalcpetc]
         # Check if difference >2 between plasma and divertor + blanket
         if _ == 1 and sqrt(sum(DEPOSITION)**2) > 2:
-            print("\ncomponents power balance difference =", totalplasma-totaldivetc-totalblktetc)
+            print("\ncomponents power balance difference =", totalplasma-totaldivetc-totalblktetc-totalcpetc)
         sankey.add(flows = DEPOSITION,
                    orientations = [0, 0], # [right(in), up(in), right(out)]
                    prior = 0, # PLASMA
@@ -557,10 +563,10 @@ def plot_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow Sankey Diag
         # -------------------------------------- BLANKET - 2 --------------------------------------
 
         # Blanket deposited power, blanket energy multiplication, - primary heat
-        BLANKETSETC = [totalblktetc+totaldivetc, emultmw, -pthermmw_p-totaldivetc]
+        BLANKETSETC = [totalblktetc + totaldivetc + totalcpetc, emultmw, -pthermmw_p - totaldivetc - totalcpetc ]
         #Check if difference >2 between primary heat and blanket + blanket multiplication
         if _ == 1 and sqrt(sum(BLANKETSETC)**2) > 2:
-            print("blankets etc. power balance", totalblktetc+emultmw, -pthermmw_p)
+            print("blankets etc. power balance", totalblktetc + emultmw, -pthermmw_p)
         sankey.add(flows=BLANKETSETC,
                    orientations=[0, -1, 0], # [right(in), down(in), right(out)]
                    prior=1, # DEPOSITION
@@ -572,7 +578,7 @@ def plot_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow Sankey Diag
         # ------------------------------------- HEAT LOSS - 3 -------------------------------------
 
         # Primary heat, -Gross electric power, -difference (loss)
-        PRIMARY = [pthermmw_p+totaldivetc, -pgrossmw, -pthermmw_p+pgrossmw-totaldivetc]
+        PRIMARY = [pthermmw_p + totaldivetc + totalcpetc, -pgrossmw, -pthermmw_p+pgrossmw-totaldivetc-totalcpetc]
         sankey.add(flows=PRIMARY,
                    orientations=[0, -1, 0], # [right(in), down(out), right(out)]
                    prior=2, # BLANKETSETC

@@ -38,7 +38,6 @@ OBS_VARS = {
     "turnstf":"n_tf_turn",
     "awptf":"a_tf_wp",
     "thkcas":"dr_tf_case_in",
-    "tinstf":"dr_tf_ins",
     "casthi_fraction":"f_tf_case_out",
     "casthi":"dr_tf_case_out",
     "eyoung_reinforced_al":"eyoung_nibron",
@@ -47,5 +46,6 @@ OBS_VARS = {
     "leno":"t_turn",
     "conductor_width":"t_conductor",
     "deltf":"tftsgap",
-    "pnuccp":"pnuc_cp"
+    "pnuccp":"pnuc_cp",
+    "nuc_pow_dep_tot":"pnuc_tot_blk_sector"
 }

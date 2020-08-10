@@ -137,16 +137,21 @@ contains
 
        ! Otherwise calculate r_cp_top from plasma shape
        else
-          r_cp_top = rmajor - rminor * triang - ( tftsgap + thshield + shldith + &
-                     vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
-          r_cp_top = max( r_cp_top, r_tf_inboard_out * 1.01D0 ) 
-
-          ! lvl 3 error if r_cp_top is negative 
-          ! Not sure it is usefull with the max() statment ...
-          ! To be removed ?
-          if (r_cp_top <= 0.0D0) then
-            fdiags(1) = r_cp_top
-            call report_error(115)
+          if ( i_tf_sup == 1 ) then 
+             r_cp_top = r_tf_inboard_out
+             
+          else
+             r_cp_top = rmajor - rminor * triang - ( tftsgap + thshield + shldith + &
+                        vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
+             r_cp_top = max( r_cp_top, r_tf_inboard_out * 1.01D0 ) 
+             
+             ! lvl 3 error if r_cp_top is negative 
+             ! Not sure it is usefull with the max() statment ...
+             ! To be removed ?
+             if (r_cp_top <= 0.0D0) then
+               fdiags(1) = r_cp_top
+               call report_error(115)
+             end if
           end if
        
        end if 
