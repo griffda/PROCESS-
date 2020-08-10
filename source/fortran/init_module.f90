@@ -50,6 +50,7 @@ subroutine init_all_module_vars
   use times_variables, only: init_times_variables
   use torga_curgap_module, only: init_torga_curgap_module
   use constants, only: init_constants
+  use plasmod_variables, only: init_plasmod_variables
 
   call init_numerics
   call init_input
@@ -85,6 +86,7 @@ subroutine init_all_module_vars
   call init_times_variables
   call init_torga_curgap_module
   call init_constants
+  call init_plasmod_variables
 end subroutine init_all_module_vars
 
 subroutine init
