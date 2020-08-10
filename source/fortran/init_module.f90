@@ -64,6 +64,7 @@ subroutine init_all_module_vars
   use pulse_variables, only: init_pulse_variables
   use startup_variables, only: init_startup_variables
   use fispact_variables, only: init_fispact_variables
+  use rebco_variables, only: init_rebco_variables
 
   call init_numerics
   call init_input
@@ -113,6 +114,7 @@ subroutine init_all_module_vars
   call init_pulse_variables
   call init_startup_variables
   call init_fispact_variables
+  call init_rebco_variables
 end subroutine init_all_module_vars
 
 subroutine init
