@@ -1832,7 +1832,8 @@ contains
          bc20m = 429D0
          tc0m = 185D0
          call GL_REBCO(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit) 
-         jcritstr = jcritsc  *  0.01
+         ! A0 calculated for tape cross section already
+         jcritstr = jcritsc 
          
 
     case default  !  Error condition
