@@ -49,6 +49,7 @@ subroutine init_all_module_vars
   use tfcoil_variables, only: init_tfcoil_variables
   use times_variables, only: init_times_variables
   use torga_curgap_module, only: init_torga_curgap_module
+  use constants, only: init_constants
 
   call init_numerics
   call init_input
@@ -83,6 +84,7 @@ subroutine init_all_module_vars
   call init_tfcoil_variables
   call init_times_variables
   call init_torga_curgap_module
+  call init_constants
 end subroutine init_all_module_vars
 
 subroutine init
