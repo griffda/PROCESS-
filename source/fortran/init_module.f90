@@ -57,6 +57,7 @@ subroutine init_all_module_vars
   use pfcoil_variables, only: init_pfcoil_variables
   use structure_variables, only: init_structure_variables
   use vacuum_variables, only: init_vacuum_variables
+  use pf_power_variables, only: init_pf_power_variables
 
   call init_numerics
   call init_input
@@ -99,6 +100,7 @@ subroutine init_all_module_vars
   call init_pfcoil_variables
   call init_structure_variables
   call init_vacuum_variables
+  call init_pf_power_variables
 end subroutine init_all_module_vars
 
 subroutine init
