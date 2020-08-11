@@ -222,15 +222,15 @@ class Process():
     def append_input(self):
         """Append the input file to the output file and mfile."""
         # Read IN.DAT input file
-        with open(self.input_path, 'r') as input_file:
+        with open(self.input_path, 'r', encoding="utf-8") as input_file:
             input_lines = input_file.readlines()
 
         # Append the input file to the output file
-        with open(self.output_path, 'a') as output_file:
+        with open(self.output_path, 'a', encoding="utf-8") as output_file:
             output_file.writelines(input_lines)
 
         # Append the input file to the mfile
-        with open(self.mfile_path, 'a') as mfile_file:
+        with open(self.mfile_path, 'a', encoding="utf-8") as mfile_file:
             mfile_file.write("***********************************************")
             mfile_file.writelines(input_lines)
 

@@ -83,7 +83,7 @@ class Scenario():
         :return: True if is has non-zero length, False if not
         :rtype: bool
         """
-        with open(self.test_dir / 'MFILE.DAT', "r") as mfile:
+        with open(self.test_dir / 'MFILE.DAT', "r", encoding="utf-8") as mfile:
             mfile_len = len(mfile.readlines())
 
         if mfile_len == 0:
