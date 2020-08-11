@@ -15,24 +15,36 @@ module reinke_variables
 
   public
 
-  integer       :: impvardiv = 9
+  integer :: impvardiv
   !! Index of impurity to be iterated for Reinke divertor detachment criterion
 
-  real(dp) :: lhat = 4.33D0
+  real(dp) :: lhat
   !! Connection length factor L|| = lhat qstar R for Reinke criterion, default value from
   !! Post et al. 1995 J. Nucl. Mat.  220-2 1014
 
-  real(dp) :: fzmin = 0.0D0
+  real(dp) :: fzmin
   !! Minimum impurity fraction necessary for detachment. This is the impurity at the SOL/Div.
 
-  real(dp) :: fzactual = 0.001D0
+  real(dp) :: fzactual
   !! Actual impurity fraction of divertor impurity (impvardiv) in the SoL (taking 
   !! impurity_enrichment into account) (`iteration variable 148`)
 
-  integer       :: reinke_mode = 0
+  integer :: reinke_mode
   !! Switch for Reinke criterion H/I mode:
   !!
   !! - =0 H-mode
   !! - =1 I-mode
 
+  contains
+
+  subroutine init_reinke_variables
+    !! Initialise module variables
+    implicit none
+
+    impvardiv = 9
+    lhat = 4.33D0
+    fzmin = 0.0D0
+    fzactual = 0.001D0
+    reinke_mode = 0
+  end subroutine init_reinke_variables
 end module reinke_variables
