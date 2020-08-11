@@ -65,6 +65,7 @@ contains
     call stnewconfig          
     call stgeom
     call stphys(nout,0)
+    call stopt(nout,0)
     call stcoil(nout,0)
     call stbild(nout,0)
     call ststrc(nout,0)
@@ -250,7 +251,7 @@ contains
     !! It overwrites rminor with rmajor and aspect ratio e.g.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    use physics_variables, only: aspect, bt, rmajor, rminor, eps
+    use physics_variables, only: aspect, bt, rmajor, rminor, eps, te, dene
     use tfcoil_variables, only: n_tf
     use stellarator_variables, only: istell
     use stellarator_configuration, only: new_stella_config
@@ -280,7 +281,8 @@ contains
     f_B = bt/config%bt_ref            !  B-field scaling factor
  
 
-
+    !print '(A8,f10.1,A8,f10.1,A8,f10.1,A8,f10.1,A8,f10.1)',"rmajor",rmajor,"aspect",&
+    !        aspect,"bt",bt,"te",te,"dene",dene*1e-20
   end subroutine stnewconfig
 
   subroutine stgeom
@@ -517,6 +519,77 @@ contains
 
   end subroutine stbild
 
+  subroutine stopt(outfile,iprint)
+    !! Routine to reiterate the physics loop
+    !! author: J Lion, IPP Greifswald
+    !! None
+    !! This routine reiterates some physics modules.
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    use physics_variables, only: bt, dene
+
+    implicit none
+
+    !  Arguments
+    integer, intent(in) :: outfile,iprint
+    real(dp) :: neo_max_ECRH,btmax, te_needed, bt_ecrh,max_gyro_frequency
+
+    max_gyro_frequency = 170d9
+
+    !  Calculate density limit
+
+    !call stdlim(bt,powht,rmajor,rminor,dnelimt)
+    !print *, "Sudo limit: ",dnelimt
+    call stdlim_ecrh(max_gyro_frequency,bt,neo_max_ECRH,btmax)
+    ! This assumes 170GHz Gyrotrons
+
+    !print *, "ECRH density limit", dnelimt, " Current density:",dene*1.0d-20
+
+
+    call ecrh_ignitable(max_gyro_frequency, bt, te_needed, bt_ecrh)
+
+    if (iprint == 1) call stopt_output(outfile)
+
+  contains
+
+   subroutine stopt_output(outfile)
+      !! Prints if the operating point can be ignited using ECRH
+      !! author: J Lion, IPP Greifswald
+      !
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      use process_output, only: oheadr, ovarre, ovarst
+      use physics_variables, only: te0, ne0
+      integer, intent(in) :: outfile
+
+
+      call oheadr(outfile,'ECRH Ignitable? Information:')
+
+      call ovarre(outfile,'Maximal available gyrotron freq (input)','(max_gyro_frequency)',max_gyro_frequency)
+
+      call ovarre(outfile,'Operating point: bfield','(bt)',bt)
+      call ovarre(outfile,'Operating point: Peak density','(ne0)',ne0)
+      call ovarre(outfile,'Operating point: Peak temperature','(te0)',te0)
+
+      call ovarre(outfile,'Ignition point: bfield (T)','(bt_ecrh)',bt_ecrh)
+      call ovarre(outfile,'Ignition point: density (/m3)','(neo_max_ECRH)',neo_max_ECRH)
+      call ovarre(outfile,'Minimum ECRH heated temperature for ignition (keV)','(te_needed)',te_needed)
+
+      if (te_needed<20.0) then
+         call ovarst(outfile, 'Operation point ECRH ignitable?', '(ecrh_bool)',"Likely")
+      else
+         call ovarst(outfile, 'Operation point ECRH ignitable?', '(ecrh_bool)',"No")
+      end if
+
+
+   end subroutine stopt_output
+
+  end subroutine stopt
+
+
+
+
+
+
   subroutine stphys(outfile,iprint)
 
     !! Routine to calculate stellarator plasma physics information
@@ -548,7 +621,7 @@ contains
       pscalingmw, psolradmw, psyncpv, ptremw, ptrepv, ptrimw, ptripv, q, q95, &
       qfuel, qstar, rad_fraction, rmajor, rminor, rndfuel, sarea, tauee, &
       taueff, tauei, taup, te, ten, ti, tin, vol, wallmw, xarea, zeff, zeffai, &
-      ffwal, palpnb, palppv, pchargepv
+      ffwal, palpnb, palppv, pchargepv, drhodt_max,drhodn_max,rho_max_dt, rho_max_dn
     use profiles_module, only: plasma_profiles
     use stellarator_variables, only: f_rad, iotabar
     use physics_functions_module, only: radpwr
@@ -562,11 +635,11 @@ contains
 
     !  Local variables
     real(dp) :: fusrat,pddpv,pdtpv,pdhe3pv,powht,sbar,sigvdt,zion
-
+    logical :: ignitable
     ! These parameters are outputs for the stellarator neoclassics module
     real(dp) :: chi_neo_e, chi_PROCESS_e, q_neo, q_PROCESS,q_PROCESS_r1, gamma_neo, gamma_PROCESS, total_q_neo,&
                   q_neo_e, q_neo_D, q_neo_a, q_neo_T, g_neo_e, g_neo_D, g_neo_a, g_neo_T, &
-                  dndt_neo_e, dndt_neo_D, dndt_neo_a, dndt_neo_T, dndt_neo_fuel, dmdt_neo_fuel
+                  dndt_neo_e, dndt_neo_D, dndt_neo_a, dndt_neo_T, dndt_neo_fuel, dmdt_neo_fuel, total_q_neo_e
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !  Calculate plasma composition
@@ -700,15 +773,6 @@ contains
 
     rad_fraction = pradmw / (falpha*palpmw+pchargemw+pohmmw+pinjmw)
 
-    !  Calculate density limit
-
-    !call stdlim(bt,powht,rmajor,rminor,dnelimt)
-    !print *, "Sudo limit: ",dnelimt
-    dnelimt = stdlim_ecrh(170d9,bt)
-    ! This assumes 170GHz Gyrotrons
-
-    !print *, "ECRH density limit", dnelimt, " Current density:",dene*1.0d-20
-
     !  Calculate transport losses and energy confinement time using the
     !  chosen scaling law
     !  N.B. iotabar replaces tokamak q95 in argument list
@@ -737,8 +801,7 @@ contains
     call calc_neoclassics
 
     
-    !print '(A8,f10.1,A8,f10.1,A8,f10.1,A8,f10.1,A8,f10.1)',"rmajor",rmajor,"aspect",&
-    !        aspect,"bt",bt,"te",te,"dene",dene*1e-20
+
 
     if (iprint == 1) call stphys_output(outfile)
 
@@ -755,8 +818,14 @@ contains
 
          call oheadr(outfile,'Stellarator Specific Physics:')
 
+         call ovarre(outfile,'Radius of Maximum ne gradient (m)','(r_max_dn)',rho_max_dn*rminor)
+         call ovarre(outfile,'Radius of Maximum te gradient (m)','(r_max_dt)',rho_max_dt*rminor)
+         call ovarre(outfile,'Maxium ne gradient (/m4)','(drdn_max)',drhodn_max/rminor)
+         call ovarre(outfile,'Maxium te gradient (keV/m)','(drdt_max)',drhodt_max/rminor)
+
          call ovarre(outfile,'Total 0D heat flux (r=rhocore) (MW/m2)','(q_PROCESS)',q_PROCESS)
          call ovarre(outfile,'Total neoclassical flux (r=rhocore) (MW/m2)','(total_q_neo)',total_q_neo)
+         call ovarre(outfile,'Total neoclassical flux from 4*q_e (r=rhocore) (MW/m2)','(total_q_neo_e)',total_q_neo_e)
          call ovarre(outfile,'Total heat flux due to neoclassical energy transport (MW/m2): ','(q_neo)',q_neo)
          call ovarre(outfile,'Total heat flux due to neoclassical particle transport (MW/m2): ','(gamma_neo)',gamma_neo)
          call ovarre(outfile,'Total fuel (DT) particle flux due to neoclassical particle transport (1/s): ',&
@@ -843,9 +912,9 @@ contains
          type(neoclassics) :: neo_at_rhocore
 
       
-         neo_at_rhocore = init_neoclassics(r_eff=0.6d0,eps_eff=config%epseff,iota = iotabar, &
-                           D11_star_mono_input = config%D11_star_mono_input, nu_star_mono_input = config%nu_star_mono_input, &
-                           D13_star_mono_input = config%D11_star_mono_input)
+         neo_at_rhocore = init_neoclassics(r_eff=0.6d0,eps_eff=config%epseff,iota = iotabar)!, &
+                           !D11_star_mono_input = config%D11_star_mono_input, nu_star_mono_input = config%nu_star_mono_input, &
+                           !D13_star_mono_input = config%D11_star_mono_input)
          
          
          
@@ -859,6 +928,8 @@ contains
          gamma_neo =  sum(neo_at_rhocore%Gamma_flux * neo_at_rhocore%profiles%temperatures*1e-6)
 
          total_q_neo = sum(neo_at_rhocore%q_flux*1e-6 + neo_at_rhocore%Gamma_flux * neo_at_rhocore%profiles%temperatures*1e-6)
+         total_q_neo_e = 2.0d0*2.0d0* (neo_at_rhocore%q_flux(1)*1e-6 + neo_at_rhocore%Gamma_flux(1)* &
+                         neo_at_rhocore%profiles%temperatures(1)*1e-6)
 
          q_neo_e = neo_at_rhocore%q_flux(1)*1e-6
          q_neo_D = neo_at_rhocore%q_flux(2)*1e-6
@@ -1159,6 +1230,11 @@ contains
     !  shield)
 
     pnucloss = pneutmw * fhole
+
+
+    ! The peaking factor, obtained as precalculated parameter
+
+    ! wallpf = config%neutron_peakfactor
 
     !  Blanket neutronics calculations
 
@@ -1793,13 +1869,14 @@ contains
 
   end subroutine stdlim
 
-  function stdlim_ecrh(gyro_frequency_max,bt_input) result(dlimit_ecrh)
+  subroutine stdlim_ecrh(gyro_frequency_max,bt_input,dlimit_ecrh,bt_max)
 
    !! Routine to calculate the density limit due to an ECRH heating scheme on axis
    !! author: J Lion, IPP Greifswald
    !! gyro_frequency_max     : input real : Maximal available Gyrotron frequency (1/s) NOT (rad/s)
    !! bt  : input real : Maximal magnetic field on axis (T)
-   !! dlimit_ecrh : output real : Maximum volume-averaged plasma density by ECRH constraints (/m3)
+   !! dlimit_ecrh : output real : Maximum peak plasma density by ECRH constraints (/m3)
+   !! bt_max : output real : Maximum allowable b field for ecrh heating (T)
    !! This routine calculates the density limit due to an ECRH heating scheme on axis
    !
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1811,7 +1888,7 @@ contains
    !  Arguments
 
    real(dp), intent(in) :: bt_input,gyro_frequency_max
-   real(dp) :: dlimit_ecrh
+   real(dp), intent(out) :: dlimit_ecrh, bt_max
 
    !  Local variables
 
@@ -1822,26 +1899,33 @@ contains
    gyro_frequency = 1.76d11 * bt_input
 
    ! Restrict it to the maximal available gyrotron frequency
+   if (gyro_frequency > gyro_frequency_max * 2.0d0*pi) then
+      bt_max = gyro_frequency_max * 2.0d0*pi/1.76d11
+   else
+      bt_max = bt_input
+   end if
+
+
    gyro_frequency = min(gyro_frequency,gyro_frequency_max * 2.0d0*pi)
 
    !                 me*e0/e^2       * w^2
-   ne0_max = max(0.0d0, 3.142077d-4 * gyro_frequency**2) * 1.0d-20
+   ne0_max = max(0.0d0, 3.142077d-4 * gyro_frequency**2)
 
    !  Now calculate the result so that it applies to the volume-averaged
    !  electron density
    ! Check if parabolic profiles are used:
    if (ipedestal == 0) then
       ! Parabolic profiles used, use analytical formula:
-      dlimit_ecrh = ne0_max/(1+alphan)
+      dlimit_ecrh = ne0_max
    else
       print *,"WARNING: It was used ipedestal = 1 in a stellarator routine. "
       print *,"PROCESS will pretend it got parabolic profiles (ipedestal = 0)."
-      dlimit_ecrh = ne0_max/(1+alphan)
+      dlimit_ecrh = ne0_max
    end if
 
-  end function stdlim_ecrh
+  end subroutine stdlim_ecrh
 
-  logical function ecrh_ignitable(gyro_frequency_max,bt)
+  subroutine ecrh_ignitable(gyro_frequency_max,bt_local,te_needed,bt_ecrh_max)
 
    !! Function to calculate if the plasma is ignitable with the current values for the B field. Assumes
    !! current ECRH achievable peak temperature (which is inaccurate as the cordey pass should be calculated)
@@ -1854,65 +1938,77 @@ contains
    !!
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   use physics_variables, only: ne0
    use const_and_precisions, only: pi, keV_
-   use physics_variables, only: ipedestal,alphan
-   use physics_functions_module, only: bosch_hale
-   use physics_module, only: pcond
-   use maths_library, only: gamfun
-
-
-   use current_drive_variables, only: pinjmw
-   use physics_variables, only: iradloss, vol, palpmw, pradpv, pchargemw, &
-     zeff, pohmpv, pchargepv, xarea, tin, eps, palppv, kappa95, &
-     ten, te, kappa, falpha, iinvqd, rminor, rmajor, &
-     ignite, aspect, qstar, q, afuel, plascur, pcoreradpv, q95, isc,&
-     hfact, alphan
-
-
-
+   use physics_variables, only: te, dene, alphan, alphat, powerht, pscalingmw,vol, bt
+   use constants, only: nout
    implicit none
 
    !  Arguments
 
-   real(dp), intent(in) :: bt, gyro_frequency_max
+   real(dp), intent(in) :: bt_local, gyro_frequency_max
+   real(dp), intent(out) :: te_needed, bt_ecrh_max
 
    !  Local variables
-
-   real(dp) ::ne0_max, ptrepv,ptripv,tauee,tauei,taueff,powerht, kappaa, volumefusionrate,&
-               ptotal, pfusion_mw, dnla, deni_local, dene_local
+   integer:: i
+   real(dp) ::ne0_max,te_old,dene_old, bt_old
 
 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-   ne0_max = stdlim_ecrh(gyro_frequency_max, bt)
-
-   dene_local = ne0_max/(1.0d0+alphan)
-   deni_local = dene_local
-   dnla = dene_local*(1.0D0+alphan) * 0.886227D0 * gamfun(alphan+1.0D0) / &
-          gamfun(alphan+1.5D0)
-
-   ! Sets  ptrepv,ptripv,tauee,tauei,taueff,powerht and kappaa
-   call pcond(afuel,palpmw,aspect,bt,deni_local,dene_local,dnla,eps,hfact, &
-               iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
-               plascur,pcoreradpv,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
-               xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
-
-   ! Check Lawson ignition
-   volumefusionrate = 0.25d0 * deni_local**2 * bosch_hale(ten,1)
    
-   pfusion_mw = volumefusionrate * 3.5d3*keV_ * falpha
+   ! This routine calculates the physics again at ecrh density
 
-   ! Total loss power by confinement time scalings (MW/m3)
-   ptotal = (ptrepv + ptripv)
-
+   ! Save the current values:
+   te_needed = 7.0d0
+   te_old = te
+   te = te_needed/(1.0D0+alphat)
 
    
+   call stdlim_ecrh(gyro_frequency_max, bt_local,ne0_max,bt_ecrh_max)
+
+   dene_old = dene
+   dene = ne0_max/(1.0d0+alphan)
+
+   bt_old = bt
+   bt = bt_ecrh_max
+
+
+   call stphys(nout,0)
+
+
+   ! Iterate it up
+   i = 1
+   do while (powerht< pscalingmw)
+      te_needed = te_needed + 2d0
+      te = te_needed/(1.0D0+alphat)
+      i = i+1
+
+      call stphys(nout,0)
+
+
+      if(i>8) then
+         te_needed = 1d3+te_needed
+         print *, "Heating Power (MW):", powerht, "Loss Power (MW):", pscalingmw,&
+             "bt_ECRH: ",bt_ecrh_max, " bt: ", bt_old, " te_needed: ",te_needed, "Density: ", ne0_max/(1.0d0+alphan)
+         exit
+      end if
+   end do
+
+
+
    
+   ! Reverse it and do it again because anything more efficiently isn't suitable with the current implementation
+   ! This is bad practice but seems to be necessary as of now:
+   te = te_old
+   dene = dene_old
+   bt = bt_old
+
+   !print *, "Heating Power (MW):", powerht, "Loss Power (MW):", pscalingmw,&
+   !         "bt_ECRH: ",bt_ecrh_max, " bt: ", bt, " te_needed: ",te_needed, "Density: ", ne0_max/(1.0d0+alphan)
+
+   call stphys(nout,0)
    
 
-  end function ecrh_ignitable
+  end subroutine ecrh_ignitable
 
   subroutine stblim(betamx)
 
@@ -2060,6 +2156,7 @@ contains
     call avail(outfile,1)
     call outplas(outfile)
     call stphys(outfile,1)
+    call stopt(outfile,1)
     call stigma(outfile)
     call stheat(outfile,1)
     call stdiv(outfile,1)
@@ -3087,7 +3184,15 @@ contains
   
       call osubhd(outfile,'General Coil Parameters :')
   
+
+
+
+
       call ovarre(outfile,'Number of modular coils','(n_tf)',n_tf)
+      call ovarre(outfile,'Av. coil major radius','(coil_r)',config%coil_rmajor*f_r)
+      call ovarre(outfile,'Av. coil minor radius','(coil_a)',config%coil_rminor*f_r)
+      call ovarre(outfile,'Av. coil aspect ratio','(coil_aspect)',config%coil_rmajor/config%coil_rminor)
+
       call ovarre(outfile,'Cross-sectional area per coil (m2)','(tfarea/n_tf)', &
                   tfareain/n_tf)
       call ovarre(outfile,'Total inboard leg radial thickness (m)','(tfcth)',tfcth)

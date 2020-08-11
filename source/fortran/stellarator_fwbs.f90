@@ -128,8 +128,8 @@ module kit_blanket_model
   !  to values given by PROCESS variables
 
   real(dp), public :: P_n = 2720.0D0    ! [MW] Fusion neutron power
-  real(dp), public :: NWL_av = 1.94D0   ! [MW/m^2] Average neutron wall load
-  real(dp), public :: f_peak = 1.21D0   ! [--] NWL peaking factor
+  real(dp), public :: NWL_av = 1.94D0   ! [MW/m^2] Average neutron wall load #! jlion 04/08:  this is highly dubious for stellarators
+  real(dp), public :: f_peak = 1.21D0   ! [--] NWL peaking factor     #! jlion 04/08:  this should be set by 
   real(dp), public :: t_FW_IB = 2.3D0   ! [cm] IB first wall thickness
   real(dp), public :: t_FW_OB = 2.3D0   ! [cm] OB first wall thickness
   real(dp), public :: A_FW_IB = 3.5196D6 ! [cm^2] IB first wall area

@@ -133,21 +133,21 @@ module neoclassics_module
 contains
 
 
-    type(neoclassics) function init_neoclassics(r_eff,eps_eff,iota,D11_star_mono_input,nu_star_mono_input,D13_star_mono_input)
+    type(neoclassics) function init_neoclassics(r_eff,eps_eff,iota)!,D11_star_mono_input,nu_star_mono_input,D13_star_mono_input)
         real(dp), intent(in) :: r_eff,eps_eff,iota
         type(neoclassics) :: myneo
         real(dp), dimension(4,no_roots) :: mynu
-        real(dp), dimension(:) :: D11_star_mono_input, nu_star_mono_input, D13_star_mono_input
+        !real(dp), dimension(:) :: D11_star_mono_input, nu_star_mono_input, D13_star_mono_input
 
 
-        allocate(myneo%D11_star_mono_input(size(D11_star_mono_input)))
-        allocate(myneo%D13_star_mono_input(size(D13_star_mono_input)))
-        allocate(myneo%nu_star_mono_input(size(nu_star_mono_input)))
-        ! This should be called as the standard constructor
+        !allocate(myneo%D11_star_mono_input(size(D11_star_mono_input)))
+        !allocate(myneo%D13_star_mono_input(size(D13_star_mono_input)))
+        !allocate(myneo%nu_star_mono_input(size(nu_star_mono_input)))
+        !! This should be called as the standard constructor
         myneo = neoclassics(gauss_laguerre = gauss_laguerre_30(), &
                             profiles = init_profile_values_from_PROCESS(r_eff), &
-                            eps_eff = eps_eff, iota = iota, D11_star_mono_input = D11_star_mono_input, &
-                            nu_star_mono_input = nu_star_mono_input, D13_star_mono_input = D13_star_mono_input)
+                            eps_eff = eps_eff, iota = iota)!, D11_star_mono_input = D11_star_mono_input) &
+                            !nu_star_mono_input = nu_star_mono_input, D13_star_mono_input = D13_star_mono_input)
 
         mynu = neoclassics_calc_nu(myneo)
 
@@ -158,8 +158,8 @@ contains
 
         myneo%D11_plateau = myneo%calc_D11_plateau()
 
-        myneo%D11_mono = myneo%interpolate_D11_mono() !myneo%calc_D11_mono() for using epseff
-
+        myneo%D11_mono = myneo%calc_D11_mono() !for using epseff
+        !alternatively use:  = myneo%interpolate_D11_mono() !
 
         !print *, "Check: ",myneo%D11_mono
         myneo%D111 = myneo%calc_D111()

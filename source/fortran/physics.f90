@@ -259,6 +259,8 @@ module physics_module
 
        !  Wilson scaling uses thermal poloidal beta, not total
        betpth = (beta-betaft-betanb) * ( btot/bp )**2
+
+       print *,alphaj,alphap,alphat,betpth, q0,q95,rmajor,rminor
        bscf_wilson = cboot * bootstrap_fraction_wilson(alphaj,alphap,alphat,betpth, &
             q0,q95,rmajor,rminor)
 
@@ -3252,7 +3254,6 @@ module physics_module
     ratio = dnitot/dene * tin/ten
 
     !  Global energy confinement time
-
     taueff = ((ratio + 1.0D0)/(ratio/tauei + 1.0D0/tauee))
 
     ! This is used only in subroutine startup, which is currently (r400)

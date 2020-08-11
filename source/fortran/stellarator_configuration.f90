@@ -137,6 +137,12 @@ module stellarator_configuration
        real(dp), dimension(:), allocatable :: nu_star_mono_input
        !  The monoenergetic radial transport coefficients normalized by the plateau value.
  
+       real(dp) :: neutron_peakfactor
+       !  The neutron peaking factor determined through inhomogeneities on the stellarator wall (qmax/qavg)
+
+
+
+
     end type stella_config
  
     ! Overload fortran constructor
@@ -205,7 +211,18 @@ module stellarator_configuration
              output_config%min_plasma_coil_distance = 1.9d0
  
              output_config%min_bend_radius = 1.0 ! [m]
+
+             output_config%neutron_peakfactor = 1.4
  
+             allocate(output_config%D11_star_mono_input(10))
+             allocate(output_config%nu_star_mono_input(10))
+
+             output_config%D11_star_mono_input = (/1,1,1,1,1,1,1,1,1,1/)
+             output_config%nu_star_mono_input = (/1d-8,1d-7,1d-6,1d-5,1d-4,1d-3,1d-2,1d-1,1d0,1d1/)
+
+   
+
+
           case(2)
              ! Helias4 Machine
              output_config%name = "Helias 4"
@@ -249,6 +266,8 @@ module stellarator_configuration
  
              output_config%min_bend_radius = 0.86 ! [m]
  
+             output_config%neutron_peakfactor = 1.4
+
  
           case(3)
              ! Helias 3 Machine
@@ -297,6 +316,8 @@ module stellarator_configuration
  
              output_config%min_bend_radius = 1.145 ! [m]
  
+             output_config%neutron_peakfactor = 1.4
+
  
           case(4)
              ! w7x30 Machine
@@ -342,6 +363,7 @@ module stellarator_configuration
  
              output_config%min_bend_radius = 0.186 ! [m]
  
+             output_config%neutron_peakfactor = 1.4
           case(5)
              ! w7x50 Machine
              output_config%name = "W7X-50"
@@ -386,7 +408,7 @@ module stellarator_configuration
  
              output_config%min_bend_radius = 0.39 ! [m]
  
- 
+             output_config%neutron_peakfactor = 1.4
          
           
           
@@ -476,6 +498,7 @@ module stellarator_configuration
         call fson_get(stellafile, "max_lateral_force_density", output_config%max_lateral_force_density)
         call fson_get(stellafile, "max_radial_force_density", output_config%max_radial_force_density)
 
+        call fson_get(stellafile, "neutron_peakfactor", output_config%neutron_peakfactor)
 
 
         call fson_get(stellafile, "number_nu_star", n_values)

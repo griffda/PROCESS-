@@ -197,6 +197,16 @@ module physics_variables
   !! dntau : plasma average "n-tau" (seconds/m3)
   real(dp) :: dnz = 0.0D0
   !! dnz : high Z ion density (/m3)
+
+  real(dp) :: drhodn_max = 0.0D0
+  !! drdt_max : Maximal temperature gradient (keV/m)
+  real(dp) :: drhodt_max = 0.0D0
+  !! drhodt_max : Maximal density gradient (/m4)
+  real(dp) :: rho_max_dt = 0.0D0
+  !! dr_max_t : Radius of maximum temperature gradient (m)
+  real(dp) :: rho_max_dn = 0.0D0
+  !! dr_max_n : Radius of maximum density gradient (m)
+
   real(dp), parameter :: ealphadt = 3520.0D0
   !! ealphadt /3520.0/ FIX : alpha birth energy in D-T reaction (keV)
   real(dp) :: epbetmax = 1.38D0
