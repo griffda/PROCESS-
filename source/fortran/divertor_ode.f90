@@ -71,7 +71,8 @@ contains
     !! Initialise divertor_ode
     implicit none
 
-    impurities_present(nimp)=.false.
+    impurities_present = .false.
+    ! Set entire array to false
     aplas=2.5D0
     fluxdens_to_pa= 1.0D0/1.55e23
     kappa0=2390.0D0
