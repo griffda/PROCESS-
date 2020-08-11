@@ -90,8 +90,8 @@ module error_handling
 
   !  Pointers to head and tail of the error list
 
-  type (error_list_item), pointer :: error_head => null()
-  type (error_list_item), pointer :: error_tail => null()
+  type (error_list_item), pointer :: error_head
+  type (error_list_item), pointer :: error_tail
 
   !  List of messages
 
@@ -110,6 +110,8 @@ contains
     error_status = ERROR_OKAY
     idiags = INT_DEFAULT
     fdiags = FLT_DEFAULT
+    error_head => null()
+    error_tail => null()
   end subroutine init_error_handling
 
   subroutine initialise_error_list
