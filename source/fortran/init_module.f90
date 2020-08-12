@@ -69,6 +69,7 @@ subroutine init_all_module_vars
   use costs_module, only: init_costs_module
   use costs_2015_module, only: init_costs_2015
   use costs_step_module, only: init_costs_step
+  use divertor_ode_var, only: init_divertor_ode_var
 
   call init_numerics
   call init_input
@@ -123,6 +124,7 @@ subroutine init_all_module_vars
   call init_costs_module
   call init_costs_2015
   call init_costs_step
+  call init_divertor_ode_var
 end subroutine init_all_module_vars
 
 subroutine init
