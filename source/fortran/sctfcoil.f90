@@ -4050,6 +4050,12 @@ contains
             jcritstr = jcritsc 
             !  Critical current in cable
             icrit = jcritstr * acs * fcond
+            
+            !REBCO fractures in strains above ~+/- 0.7%
+            if ( strncon_tf > 0.7D-2 .or. strncon_tf < -0.7D-2) then
+                fdiags(1) = strncon_tf ; call report_error(259)
+            end if
+            
 
         end select
 
@@ -4176,6 +4182,7 @@ contains
             call ovarre(outfile,'Critical field at zero temperature and strain (T)','(bc20m)',bc20m)
             call ovarre(outfile,'Critical temperature at zero field and strain (K)', '(tc0m)',tc0m)
         end select ! isumat
+
 
         if (run_tests==1) then
             call oblnkl(outfile)

@@ -636,7 +636,7 @@ subroutine check
     use impurity_radiation_module, only: nimp, impurity_arr, fimp
     use numerics, only: ixc, icc, ioptimz, neqns, nineqns, nvar, boundl, &
         boundu
-    use pfcoil_variables, only: ipfres, ngrp, pfclres, ipfloc, ncls
+    use pfcoil_variables, only: ipfres, ngrp, pfclres, ipfloc, ncls, isumatoh
     use physics_variables, only: aspect, eped_sf, fdeut, fgwped, fhe3, &
         fgwsep, ftrit, ibss, i_single_null, icurr, ieped, idivrt, ishape, &
         iradloss, isc, ipedestal, ilhthresh, itart, nesep, rhopedn, rhopedt, &
@@ -1022,6 +1022,24 @@ subroutine check
      if (any(ixc == 148)) then
         impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
      endif
+
+     if (any(icc == 36)) then
+
+        !Temperature margin calculation doesn't work with REBCO. Impossible to use 
+        !TF temperature margin constraint
+        if (i_tf_sc_mat == 8) then
+            call report_error(262)
+        end if
+     end if 
+
+     if (any(icc == 60)) then
+
+        !Temperature margin calculation doesn't work with REBCO. Impossible to use 
+        !TF temperature margin constraint
+        if (isumatoh == 8) then
+            call report_error(261)
+        end if
+     end if 
 
 
     !  Tight aspect ratio options (ST)
