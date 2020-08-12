@@ -71,6 +71,7 @@ subroutine init_all_module_vars
   use costs_step_module, only: init_costs_step
   use divertor_ode_var, only: init_divertor_ode_var
   use green_func_ext, only: init_green_func_ext
+  use kit_hcll_module, only: init_kit_hcll_module
 
   call init_numerics
   call init_input
@@ -127,6 +128,7 @@ subroutine init_all_module_vars
   call init_costs_step
   call init_divertor_ode_var
   call init_green_func_ext
+  call init_kit_hcll_module
 end subroutine init_all_module_vars
 
 subroutine init
