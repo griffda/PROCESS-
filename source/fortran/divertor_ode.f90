@@ -76,6 +76,20 @@ contains
     aplas=2.5D0
     fluxdens_to_pa= 1.0D0/1.55e23
     kappa0=2390.0D0
+    mi = 0.0D0
+    eightemi = 0.0D0
+    eightemi48 = 0.0D0
+    elEion = 0.0D0
+    v01 = 0.0D0
+    v02 = 0.0D0
+    circumference_omp = 0.0D0
+    circumference_target = 0.0D0
+    circumf_bu = 0.0D0
+    area_target = 0.0D0
+    area_omp = 0.0D0
+    zeff_div = 0.0D0
+    sol_broadening = 0.0D0
+    lengthofwidesol = 0.0D0
   end subroutine init_divertor_ode
 
   subroutine divertor_Kallenbach(rmajor,rminor,bt,plascur,q,verboseset,     &
