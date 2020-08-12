@@ -67,6 +67,7 @@ subroutine init_all_module_vars
   use rebco_variables, only: init_rebco_variables
   use reinke_variables, only: init_reinke_variables
   use costs_module, only: init_costs_module
+  use costs_2015_module, only: init_costs_2015
 
   call init_numerics
   call init_input
@@ -119,6 +120,7 @@ subroutine init_all_module_vars
   call init_rebco_variables
   call init_reinke_variables
   call init_costs_module
+  call init_costs_2015
 end subroutine init_all_module_vars
 
 subroutine init
