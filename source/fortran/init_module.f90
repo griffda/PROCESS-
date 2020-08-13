@@ -73,6 +73,7 @@ subroutine init_all_module_vars
   use green_func_ext, only: init_green_func_ext
   use kit_hcll_module, only: init_kit_hcll_module
   use define_iteration_variables, only: init_define_iteration_variables
+  use physics_functions_module, only: init_physics_functions
 
   call init_numerics
   call init_input
@@ -131,6 +132,7 @@ subroutine init_all_module_vars
   call init_green_func_ext
   call init_kit_hcll_module
   call init_define_iteration_variables
+  call init_physics_functions
 end subroutine init_all_module_vars
 
 subroutine init
