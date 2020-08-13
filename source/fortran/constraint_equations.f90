@@ -262,6 +262,8 @@ contains
          case (83); call constraint_eqn_083(args)
          ! Constraint for lower limit of beta
          case (84); call constraint_eqn_084(args)
+         ! Constraint for indication of ECRH ignitability
+         case (85); call constraint_eqn_085(args)
        case default
 
         idiags(1) = icc(i)
@@ -2727,9 +2729,9 @@ contains
       !! residual error in physical units; output string; units string
       !! available_radial_space > required_radial_space
       !! #=# build
-      !! #=#=# tftort, ftoroidalgap
+      !! #=#=# required_radial_space, f_avspace
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !! f_avspace : input real : f-value for constraint toroidalgap > tftort
+      !! f_avspace : input real : f-value for constraint available_radial_space > required_radial_space
       !! available_radial_space : input real :  avaible space in radial direction as given by each s.-configuration
       !! required_radial_space : input real :  required space in radial direction
       use build_variables, only: available_radial_space, required_radial_space, f_avspace
@@ -2751,9 +2753,9 @@ contains
       !! residual error in physical units; output string; units string
       !!  (beta-betaft) > betalim_lower
       !! #=# tfcoil
-      !! #=#=# tftort, ftoroidalgap
+      !! #=#=# tftort, fbetatry_lower
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !! fbetatry_lower : input real : f-value for constraint toroidalgap > tftort
+      !! fbetatry_lower : input real : f-value for constraint beta-betaft > betalim_lower
       !! betalim_lower : input real :  Lower limit for beta
       !! beta : input real :  plasma beta
       !! betaft : input real : Alpha particle beta
@@ -2771,6 +2773,42 @@ contains
 
 
    end subroutine constraint_eqn_084
+
+
+   subroutine constraint_eqn_085(args)
+      !! Equation for checking if the design point is ECRH ignitable 
+      !! at lower values for n and B
+      !! author: J Lion, IPP Greifswald
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !!  te0_ecrh_achievable > te_ECRH_needed
+      !! #=# tfcoil
+      !! #=#=# fecrh_ignition
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! fecrh_ignition : input real : f-value for constraint te0_ecrh_achievable > te_ECRH_needed
+      !! bt : input real :  Lower limit for beta
+      !! max_gyrotron_frequency : input real :  Max. av. gyrotron frequency
+      !! te0_ecrh_achievable : input real : Alpha particle beta
+
+      use constraint_variables, only: fecrh_ignition
+      use stellarator_module, only: power_at_ignition_point
+      use stellarator_variables, only: max_gyrotron_frequency, te0_ecrh_achievable
+      implicit none
+
+      type (constraint_args_type), intent(out) :: args
+      real(dp) :: te0_ECRH_needed,b_ECRH,powerht,powerscaling
+
+      call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht,powerscaling)
+
+      ! Achievable ECRH te needs to be larger than needed te for igntion
+      args%cc = 1.0D0 - fecrh_ignition* powerht/powerscaling
+      args%con = powerscaling * (1.0D0 - args%cc)
+      args%err = powerht * args%cc
+      args%symbol = '<'
+      args%units = 'MW'
+
+
+   end subroutine constraint_eqn_085
 
 
 end module constraints

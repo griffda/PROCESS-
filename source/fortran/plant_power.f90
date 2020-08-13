@@ -1400,7 +1400,8 @@ contains
     call ovarrf(outfile,'Total (MW)','',pthermfw_blkt+pthermshld+pthermdiv+psechcd, 'OP ')
     call oblnkl(outfile)
     if (abs(sum - (pthermfw_blkt+pthermshld+pthermdiv+psechcd)) > 5.0D0) then
-       write(*,*) 'WARNING: Power balance for reactor is in error by more than 5 MW.'
+       print*, 'WARNING: Power balance for reactor is in error by more than 5 MW. Diff: ',&
+                abs(sum - (pthermfw_blkt+pthermshld+pthermdiv+psechcd)), "MW"
        call ocmmnt(outfile,'WARNING: Power balance for reactor is in error by more than 5 MW.')
     end if
 

@@ -251,7 +251,7 @@ contains
     !! It overwrites rminor with rmajor and aspect ratio e.g.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    use physics_variables, only: aspect, bt, rmajor, rminor, eps, te, dene
+    use physics_variables, only: aspect, bt, rmajor, rminor, eps, te, dene,hfact
     use tfcoil_variables, only: n_tf
     use stellarator_variables, only: istell
     use stellarator_configuration, only: new_stella_config
@@ -281,8 +281,8 @@ contains
     f_B = bt/config%bt_ref            !  B-field scaling factor
  
 
-    !print '(A8,f10.1,A8,f10.1,A8,f10.1,A8,f10.1,A8,f10.1)',"rmajor",rmajor,"aspect",&
-    !        aspect,"bt",bt,"te",te,"dene",dene*1e-20
+    !print '(A8,f10.1,A8,f10.1,A8,f10.1,A8,f10.1,A8,f10.1,A8,f10.1)',"rmajor",rmajor,"aspect",&
+    !        aspect,"bt",bt,"te",te,"dene",dene*1e-20,"hfact",hfact
   end subroutine stnewconfig
 
   subroutine stgeom
@@ -527,26 +527,27 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use physics_variables, only: bt, dene
+    use stellarator_variables, only: max_gyrotron_frequency,te0_ecrh_achievable
+    use constraint_variables, only: fecrh_ignition
 
     implicit none
 
     !  Arguments
     integer, intent(in) :: outfile,iprint
-    real(dp) :: neo_max_ECRH,btmax, te_needed, bt_ecrh,max_gyro_frequency
-
-    max_gyro_frequency = 170d9
+    real(dp) :: neo_max_ECRH, te_needed, bt_ecrh, powerht,pscalingmw
 
     !  Calculate density limit
 
     !call stdlim(bt,powht,rmajor,rminor,dnelimt)
     !print *, "Sudo limit: ",dnelimt
-    call stdlim_ecrh(max_gyro_frequency,bt,neo_max_ECRH,btmax)
+    call stdlim_ecrh(max_gyrotron_frequency,bt,neo_max_ECRH,bt_ecrh)
     ! This assumes 170GHz Gyrotrons
 
     !print *, "ECRH density limit", dnelimt, " Current density:",dene*1.0d-20
 
 
-    call ecrh_ignitable(max_gyro_frequency, bt, te_needed, bt_ecrh)
+    !call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht,pscalingmw)
+    !print *, "powerscaling: ", pscalingmw, "powerht: ",powerht, "fecrh_ignition: ",fecrh_ignition
 
     if (iprint == 1) call stopt_output(outfile)
 
@@ -564,7 +565,7 @@ contains
 
       call oheadr(outfile,'ECRH Ignitable? Information:')
 
-      call ovarre(outfile,'Maximal available gyrotron freq (input)','(max_gyro_frequency)',max_gyro_frequency)
+      call ovarre(outfile,'Maximal available gyrotron freq (input)','(max_gyro_frequency)',max_gyrotron_frequency)
 
       call ovarre(outfile,'Operating point: bfield','(bt)',bt)
       call ovarre(outfile,'Operating point: Peak density','(ne0)',ne0)
@@ -947,7 +948,7 @@ contains
          dndt_neo_T = neo_at_rhocore%Gamma_flux(3)
 
          dndt_neo_fuel = (dndt_neo_D + dndt_neo_T) * sarea * coreradius
-         dmdt_neo_fuel = dndt_neo_fuel * afuel * mp_ * 1.0d6
+         dmdt_neo_fuel = dndt_neo_fuel * afuel * mp_ * 1.0d6 ! mg
 
          chi_neo_e =  -(neo_at_rhocore%q_flux(1)+neo_at_rhocore%Gamma_flux(1)*neo_at_rhocore%profiles%temperatures(1))/ &
                      (neo_at_rhocore%profiles%densities(1)* &
@@ -1925,13 +1926,15 @@ contains
 
   end subroutine stdlim_ecrh
 
-  subroutine ecrh_ignitable(gyro_frequency_max,bt_local,te_needed,bt_ecrh_max)
+  subroutine ecrh_ignitable(gyro_frequency_max,bt_local,te0_needed,bt_ecrh_max)
 
    !! Function to calculate if the plasma is ignitable with the current values for the B field. Assumes
    !! current ECRH achievable peak temperature (which is inaccurate as the cordey pass should be calculated)
    !! author: J Lion, IPP Greifswald
    !! gyro_frequency_max     : input real : Maximal available Gyrotron frequency (1/s) NOT (rad/s)
    !! bt  : input real : Maximal magnetic field on axis (T)
+   !! te0_needed : output real: Needed peak electron temperature, reached by ECRH (keV)
+   !! bt_ecrh_max : output real: Maximal operatable magnetic field strength for ECRH (T)
    !! This routine calculates the density limit due to an ECRH heating scheme on axis
    !! Assumes current peak temperature (which is inaccurate as the cordey pass should be calculated)
    !! Maybe use this: https://doi.org/10.1088/0029-5515/49/8/085026
@@ -1946,7 +1949,7 @@ contains
    !  Arguments
 
    real(dp), intent(in) :: bt_local, gyro_frequency_max
-   real(dp), intent(out) :: te_needed, bt_ecrh_max
+   real(dp), intent(out) :: te0_needed, bt_ecrh_max
 
    !  Local variables
    integer:: i
@@ -1958,9 +1961,9 @@ contains
    ! This routine calculates the physics again at ecrh density
 
    ! Save the current values:
-   te_needed = 7.0d0
+   te0_needed = 7.0d0 ! peak values
    te_old = te
-   te = te_needed/(1.0D0+alphat)
+   te = te0_needed/(1.0D0+alphat)
 
    
    call stdlim_ecrh(gyro_frequency_max, bt_local,ne0_max,bt_ecrh_max)
@@ -1978,17 +1981,16 @@ contains
    ! Iterate it up
    i = 1
    do while (powerht< pscalingmw)
-      te_needed = te_needed + 2d0
-      te = te_needed/(1.0D0+alphat)
+      te0_needed = te0_needed + 2d0
+      te = te0_needed/(1.0D0+alphat)
       i = i+1
 
       call stphys(nout,0)
 
-
       if(i>8) then
-         te_needed = 1d3+te_needed
+         te0_needed = 1d3+te0_needed
          print *, "Heating Power (MW):", powerht, "Loss Power (MW):", pscalingmw,&
-             "bt_ECRH: ",bt_ecrh_max, " bt: ", bt_old, " te_needed: ",te_needed, "Density: ", ne0_max/(1.0d0+alphan)
+             "bt_ECRH: ",bt_ecrh_max, " bt: ", bt_old, " te_needed: ",te0_needed, "Density: ", ne0_max/(1.0d0+alphan)
          exit
       end if
    end do
@@ -2009,6 +2011,70 @@ contains
    
 
   end subroutine ecrh_ignitable
+
+
+  subroutine power_at_ignition_point(gyro_frequency_max,te_available,powerht_out,pscalingmw_out)
+
+   !! Routine to calculate if the plasma is ignitable with the current values for the B field. Assumes
+   !! current ECRH achievable peak temperature (which is inaccurate as the cordey pass should be calculated)
+   !! author: J Lion, IPP Greifswald
+   !! gyro_frequency_max     : input real : Maximal available Gyrotron frequency (1/s) NOT (rad/s)
+   !! bt  : input real : Maximal magnetic field on axis (T)
+   !! te0_needed : output real: Needed peak electron temperature, reached by ECRH (keV)
+   !! bt_ecrh_max : output real: Maximal operatable magnetic field strength for ECRH (T)
+   !! This routine calculates the density limit due to an ECRH heating scheme on axis
+   !! Assumes current peak temperature (which is inaccurate as the cordey pass should be calculated)
+   !! Maybe use this: https://doi.org/10.1088/0029-5515/49/8/085026
+   !!
+   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   use const_and_precisions, only: pi, keV_
+   use physics_variables, only: te, dene, alphan, alphat, powerht, pscalingmw,vol, bt
+   use constants, only: nout
+   implicit none
+
+   !  Arguments
+
+   real(dp), intent(in) ::  gyro_frequency_max,te_available
+   real(dp), intent(out) :: powerht_out, pscalingmw_out
+
+   !  Local variables
+   integer:: i
+   real(dp) ::ne0_max,te_old,dene_old, bt_old, bt_ecrh_max
+
+
+   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   
+   ! This routine calculates the physics again at ecrh density
+
+   ! Save the current values:
+   te_old = te
+   te = te_available/(1.0D0+alphat)
+
+   call stdlim_ecrh(gyro_frequency_max, bt,ne0_max,bt_ecrh_max)
+
+   dene_old = dene
+   dene = min(dene_old, ne0_max/(1.0d0+alphan))
+
+   bt_old = bt
+   bt = bt_ecrh_max
+
+   call stphys(nout,0)
+   powerht_out = powerht
+   pscalingmw_out = pscalingmw
+
+   ! Reverse it and do it again because anything more efficiently isn't suitable with the current implementation
+   ! This is bad practice but seems to be necessary as of now:
+   te = te_old
+   dene = dene_old
+   bt = bt_old
+
+   call stphys(nout,0)
+   
+
+   
+
+  end subroutine power_at_ignition_point
 
   subroutine stblim(betamx)
 

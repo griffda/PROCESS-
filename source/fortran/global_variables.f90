@@ -4021,6 +4021,9 @@ module constraint_variables
   real(dp) :: fdtmp = 1.0D0
   !! fdtmp /1.0/ : f-value for first wall coolant temperature rise
   !!               (constraint equation 38, iteration variable 62)
+  real(dp) :: fecrh_ignition = 1.0D0
+  !! fdtmp /1.0/ : f-value for achievable ECRH temperature at ignition point
+  !!               (constraint equation 85, iteration variable 62)
   real(dp) :: fflutf = 1.0D0
   !! fflutf /1.0/ : f-value for neutron fluence on TF coil
   !!                 (constraint equation 53, iteration variable 92)
@@ -4280,6 +4283,10 @@ module stellarator_variables
 
   real(dp) :: bmn = 1.0D-3
   !! bmn /0.001/ : relative radial field perturbation
+  real(dp) :: max_gyrotron_frequency = 170.0d9
+  !! max_gyrotron_frequency /170d9/ : Maximal available gyrotron frequency [Hz]
+  real(dp) :: te0_ecrh_achievable = 7.0d0
+  !! te0_ecrh_achievable /170d9/ : Maximal achievable peak electron temperature [keV]
   real(dp) :: f_asym = 1.0D0
   !! f_asym /1.0/ : divertor heat load peaking factor
   real(dp) :: f_rad = 0.85D0
@@ -4316,6 +4323,9 @@ module stellarator_variables
   !! vportpmax : maximum available poloidal extent for vertical ports (m)
   real(dp) :: vporttmax = 0.0D0
   !! vporttmax : maximum available toroidal extent for vertical ports (m)
+
+
+
 
 end module stellarator_variables
 

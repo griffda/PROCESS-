@@ -19,9 +19,9 @@ icc = 16                *Net electric power lower limit
 
 
 *-------------- inequaltities
-icc = 84                *Lower beta limit
-icc = 24                *Upper beta limit
-icc = 83                *Encounter for place for blanket
+icc = 84                * Lower beta limit
+icc = 24                * Upper beta limit
+icc = 83                * Encounter for place for blanket
 *icc = 35                * icc_quench
 *icc = 82                * icc_toroidalbuild
 *icc = 34                * icc_dumbvoltage
@@ -97,14 +97,14 @@ shear    = 0.5          *Magnetic shear, derivative of iotabar
 blnkith  = 0.7          *Inboard blanket thickness (m)
 blnkoth  = 0.8          *Outboard blanket thickness (m)
 ddwex    = 0.15         *Cryostat thickness (m)
-ddwi     = 0.35         *Vacuum vessel thickness (TF coil / shield) (m)
+ddwi     = 0.25         *Vacuum vessel thickness (TF coil / shield) (m)
 gapds    = 0.025        *Gap between inboard vacuum vessel and tf coil (m)
 gapomin  = 0.025        *Minimum gap between outboard vacuum vessel and TF coil (m)
 scrapli  = 0.15         *Gap between plasma and first wall; inboard side (m)
 scraplo  = 0.3          *Gap between plasma and first wall; outboard side (m)
 shldith  = 0.4          *Inboard shield thickness (m)
-shldoth  = 0.7          *Outboard shield thickness (m)
-shldtth  = 0.7          *Upper/lower shield thickness (m)
+shldoth  = 0.6          *Outboard shield thickness (m)
+shldtth  = 0.6          *Upper/lower shield thickness (m)
 vgap     = 0.0          *Vertical gap between x-point and divertor (m)
 
 *---------------Constraint Variables---------------*

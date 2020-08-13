@@ -213,6 +213,8 @@ module stellarator_configuration
              output_config%min_bend_radius = 1.0 ! [m]
 
              output_config%neutron_peakfactor = 1.4
+
+             output_config%epseff = 0.015
  
              allocate(output_config%D11_star_mono_input(10))
              allocate(output_config%nu_star_mono_input(10))
@@ -268,6 +270,8 @@ module stellarator_configuration
  
              output_config%neutron_peakfactor = 1.4
 
+             output_config%epseff = 0.015
+
  
           case(3)
              ! Helias 3 Machine
@@ -318,6 +322,8 @@ module stellarator_configuration
  
              output_config%neutron_peakfactor = 1.4
 
+             output_config%epseff = 0.015
+
  
           case(4)
              ! w7x30 Machine
@@ -364,6 +370,9 @@ module stellarator_configuration
              output_config%min_bend_radius = 0.186 ! [m]
  
              output_config%neutron_peakfactor = 1.4
+
+             output_config%epseff = 0.015
+
           case(5)
              ! w7x50 Machine
              output_config%name = "W7X-50"
@@ -409,6 +418,8 @@ module stellarator_configuration
              output_config%min_bend_radius = 0.39 ! [m]
  
              output_config%neutron_peakfactor = 1.4
+
+             output_config%epseff = 0.015
          
           
           
