@@ -47,6 +47,29 @@ module physics_module
     implicit none
 
     first_call = 1
+    iscz = 0
+    err242 = 0
+    err243 = 0
+    rad_fraction_core = 0.0D0
+    total_plasma_internal_energy = 0.0D0
+    total_loss_power = 0.0D0
+    total_energy_conf_time = 0.0D0
+    ptarmw = 0.0D0
+    lambdaio = 0.0D0
+    drsep = 0.0D0
+    fio = 0.0D0
+    fLI = 0.0D0
+    fLO = 0.0D0
+    fUI = 0.0D0
+    fUO = 0.0D0
+    pLImw = 0.0D0
+    pLOmw = 0.0D0
+    pUImw = 0.0D0
+    pUOmw = 0.0D0
+    rho_star   = 0.0D0
+    nu_star   = 0.0D0
+    beta_mcdonald = 0.0D0
+    itart_r = 0.0D0
   end subroutine init_physics_module
 
   subroutine subr(a, b)
