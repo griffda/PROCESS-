@@ -96,6 +96,16 @@ contains
     error = .False.
     show_changes = 0
     constraints_exist = .false.
+    line = ""
+    linelen = 0
+    lineno = 0
+    iptr = 0
+    infile = 0
+    outfile = 0
+    report_changes = 0
+    icode = 0
+    subscript_present = .false.
+    error_message = ""
   end subroutine init_input
 
   subroutine input
