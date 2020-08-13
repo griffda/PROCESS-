@@ -130,6 +130,8 @@ contains
       impdir = INSTALLDIR//'/data/impuritydata/'
       impvar = 9
       toolow = .false.
+      impurity_arr = imp_dat("  ", 0, 0.0D0, 0.0D0, 0)
+      ! Re-initialise entire array
   end subroutine init_impurity_radiation_module
 
   subroutine initialise_imprad
