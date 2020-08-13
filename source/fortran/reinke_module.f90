@@ -11,6 +11,12 @@ module reinke_module
 
 contains
 
+  subroutine init_reinke_module
+    !! Initialise module variables
+    implicit none
+
+    vcritx = 0.0D0
+  end subroutine init_reinke_module
 
   function reinke_fzmin(bt, flh, qstar, rmajor, eps, fsep, fgw, kappa, lhat, &
     netau, tesep, impvardiv, impurity_arr, impurity_enrichment)

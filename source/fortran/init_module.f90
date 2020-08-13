@@ -74,6 +74,7 @@ subroutine init_all_module_vars
   use kit_hcll_module, only: init_kit_hcll_module
   use define_iteration_variables, only: init_define_iteration_variables
   use physics_functions_module, only: init_physics_functions
+  use reinke_module, only: init_reinke_module
 
   call init_numerics
   call init_input
@@ -133,6 +134,7 @@ subroutine init_all_module_vars
   call init_kit_hcll_module
   call init_define_iteration_variables
   call init_physics_functions
+  call init_reinke_module
 end subroutine init_all_module_vars
 
 subroutine init
