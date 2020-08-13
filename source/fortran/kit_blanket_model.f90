@@ -196,6 +196,42 @@ module kit_blanket_model
       !! Initialise module variables
       implicit none
   
+      x_BZ_IB = 0.0D0
+      x_BM_IB = 0.0D0
+      x_BP_IB = 0.0D0
+      x_VV_IB = 0.0D0
+      x_BZ_OB = 0.0D0
+      x_BM_OB = 0.0D0
+      x_BP_OB = 0.0D0
+      x_VV_OB = 0.0D0
+      q_BZ_IB_end = 0.0D0
+      q_BM_IB_end = 0.0D0
+      q_BP_IB_end = 0.0D0
+      q_BZ_OB_end = 0.0D0
+      q_BM_OB_end = 0.0D0
+      q_BP_OB_end = 0.0D0
+      phi_n_vv_IB_start = 0.0D0
+      phi_n_vv_OB_start = 0.0D0
+      CF_bl_PPCS = 0.0D0
+      lambda_q_BM_IB = 0.0D0
+      lambda_q_BM_OB = 0.0D0
+      lambda_q_BP_IB = 0.0D0
+      lambda_q_BP_OB = 0.0D0
+      pnuctfi = 0.0D0
+      pnuctfo = 0.0D0
+      P_th_tot = 0.0D0
+      pnucsh = 0.0D0
+      M_E = 0.0D0
+      tbratio = 0.0D0
+      G_tot = 0.0D0
+      nflutfi = 0.0D0
+      nflutfo = 0.0D0
+      vvhemini = 0.0D0
+      vvhemino = 0.0D0
+      vvhemaxi = 0.0D0
+      vvhemaxo = 0.0D0
+      t_bl_fpy = 0.0D0
+      t_bl_y = 0.0D0
       A_cov_PPCS = 1365.0D0
       A_FW_PPCS = 1253.0D0
       NWL_av_PPCS = 1.94D0
