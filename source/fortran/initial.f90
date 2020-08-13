@@ -1386,5 +1386,15 @@ subroutine check
 
     errors_on = .false.
 
+    ! Cannot use temperature margin constraint with REBCO TF coils
+    if(any(icc == 36) .and. (i_tf_sc_mat == 8)) then
+        call report_error(262)
+    endif
+
+    ! Cannot use temperature margin constraint with REBCO TF coils
+    if(any(icc == 60) .and. (isumatoh == 8)) then
+        call report_error(261)
+    endif
+
 
 end subroutine check
