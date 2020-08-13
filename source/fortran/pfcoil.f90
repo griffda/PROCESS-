@@ -49,6 +49,23 @@ contains
 
     first_call = .true.
     CSlimit = .false.
+    nef = 0
+    nfxf = 0
+    ricpf = 0.0D0
+    ssq0 = 0.0D0
+    sig_axial = 0.0D0
+    sig_hoop = 0D0
+    axial_force = 0D0
+    rfxf = 0.0D0
+    zfxf = 0.0D0
+    cfxf = 0.0D0
+    xind = 0.0D0
+    rcls = 0.0D0
+    zcls = 0.0D0
+    ccls = 0.0D0
+    ccl0 = 0.0D0
+    bpf2 = 0.0D0
+    vsdum = 0.0D0
   end subroutine init_pfcoil_module
 
   subroutine pfcoil
