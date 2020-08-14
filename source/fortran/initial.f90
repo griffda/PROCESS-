@@ -1023,24 +1023,6 @@ subroutine check
         impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
      endif
 
-     if (any(icc == 36)) then
-
-        !Temperature margin calculation doesn't work with REBCO. Impossible to use 
-        !TF temperature margin constraint
-        if (i_tf_sc_mat == 8) then
-            call report_error(262)
-        end if
-     end if 
-
-     if (any(icc == 60)) then
-
-        !Temperature margin calculation doesn't work with REBCO. Impossible to use 
-        !TF temperature margin constraint
-        if (isumatoh == 8) then
-            call report_error(261)
-        end if
-     end if 
-
 
     !  Tight aspect ratio options (ST)
     ! --------------------------------
@@ -1391,7 +1373,7 @@ subroutine check
         call report_error(262)
     endif
 
-    ! Cannot use temperature margin constraint with REBCO TF coils
+    ! Cannot use temperature margin constraint with REBCO CS coils
     if(any(icc == 60) .and. (isumatoh == 8)) then
         call report_error(261)
     endif
