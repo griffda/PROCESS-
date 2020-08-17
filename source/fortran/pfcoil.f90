@@ -2638,9 +2638,9 @@ module pfcoil_module
            case (5)
               call ocmmnt(outfile, ' (WST Nb3Sn critical surface model)')
            case (7)
-              call ocmmnt(outfile, ' (Durham Nb-Ti Ginzburg-Landau critical surface model)')
+              call ocmmnt(outfile, ' (Durham Ginzburg-Landau critical surface model for Nb-Ti)')
            case (8)
-              call ocmmnt(outfile, ' (Durham REBCO Ginzburg-Landau critical surface model)')
+              call ocmmnt(outfile, ' (Durham Ginzburg-Landau critical surface model for REBCO)')
            end select
  
  

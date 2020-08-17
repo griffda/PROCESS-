@@ -2444,6 +2444,8 @@ module pfcoil_variables
   !! - =4 ITER Nb3Sn model with user-specified parameters
   !! - =5 WST Nb3Sn parameterisation
   !! - =6 REBCO HTS parameterisation
+  !! - =7 Durham Ginzburg-Landau critical surface model for Nb-Ti
+  !! - =8 Durham Ginzburg-Landau critical surface model for REBCO
 
   integer :: isumatpf = 1
   !! switch for superconductor material in PF coils:
@@ -2455,6 +2457,8 @@ module pfcoil_variables
   !! - =3 NbTi
   !! - =4 ITER Nb3Sn model with user-specified parameters
   !! - =5 WST Nb3Sn parameterisation
+  !! - =7 Durham Ginzburg-Landau critical surface model for Nb-Ti
+  !! - =8 Durham Ginzburg-Landau critical surface model for REBCO
 
   real(dp) :: jscoh_bop = 0.0D0
   !! central solenoid superconductor critical current density (A/m2) at beginning-of-pulse
@@ -2827,6 +2831,8 @@ module tfcoil_variables
   !! - =4 ITER Nb3Sn model with user-specified parameters
   !! - =5 WST Nb3Sn parameterisation
   !! - =6 REBCO HTS tape in CroCo strand
+  !! - =7 Durham Ginzburg-Landau critical surface model for Nb-Ti
+  !! - =8 Durham Ginzburg-Landau critical surface model for REBCO
 
   integer :: i_tf_sup = 1
   !! Switch for TF coil conductor model:
