@@ -534,19 +534,18 @@ contains
 
     !  Arguments
     integer, intent(in) :: outfile,iprint
-    real(dp) :: neo_max_ECRH, te_needed, bt_ecrh, powerht,pscalingmw
+    real(dp) :: ne0_max_ECRH, bt_ecrh, powerht_local,pscalingmw_local
 
     !  Calculate density limit
 
     !call stdlim(bt,powht,rmajor,rminor,dnelimt)
     !print *, "Sudo limit: ",dnelimt
-    call stdlim_ecrh(max_gyrotron_frequency,bt,neo_max_ECRH,bt_ecrh)
+    call stdlim_ecrh(max_gyrotron_frequency,bt,ne0_max_ECRH,bt_ecrh)
     ! This assumes 170GHz Gyrotrons
 
     !print *, "ECRH density limit", dnelimt, " Current density:",dene*1.0d-20
 
-
-    !call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht,pscalingmw)
+    call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht_local,pscalingmw_local)
     !print *, "powerscaling: ", pscalingmw, "powerht: ",powerht, "fecrh_ignition: ",fecrh_ignition
 
     if (iprint == 1) call stopt_output(outfile)
@@ -563,7 +562,7 @@ contains
       integer, intent(in) :: outfile
 
 
-      call oheadr(outfile,'ECRH Ignitable? Information:')
+      call oheadr(outfile,'ECRH Ignition at lower values. Information:')
 
       call ovarre(outfile,'Maximal available gyrotron freq (input)','(max_gyro_frequency)',max_gyrotron_frequency)
 
@@ -572,15 +571,17 @@ contains
       call ovarre(outfile,'Operating point: Peak temperature','(te0)',te0)
 
       call ovarre(outfile,'Ignition point: bfield (T)','(bt_ecrh)',bt_ecrh)
-      call ovarre(outfile,'Ignition point: density (/m3)','(neo_max_ECRH)',neo_max_ECRH)
-      call ovarre(outfile,'Minimum ECRH heated temperature for ignition (keV)','(te_needed)',te_needed)
+      call ovarre(outfile,'Ignition point: density (/m3)','(ne0_max_ECRH)',ne0_max_ECRH)
+      call ovarre(outfile,'Maximum reachable ECRH temperature (pseudo) (keV)','(te0_ecrh_achievable)',te0_ecrh_achievable)
 
-      if (te_needed<20.0) then
+      call ovarre(outfile,'Ignition point: Heating Power (MW)','(powerht_ecrh)',powerht_local)
+      call ovarre(outfile,'Ignition point: Loss Power (MW)','(pscalingmw_ecrh)',pscalingmw_local)
+
+      if (powerht_local .ge. pscalingmw_local) then
          call ovarst(outfile, 'Operation point ECRH ignitable?', '(ecrh_bool)',"Likely")
       else
          call ovarst(outfile, 'Operation point ECRH ignitable?', '(ecrh_bool)',"No")
       end if
-
 
    end subroutine stopt_output
 
@@ -1897,23 +1898,15 @@ contains
 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   gyro_frequency = 1.76d11 * bt_input
+   ! Restrict the gyrofrequency by the maximal av. gyrotron frequncy (input parameter)
+   gyro_frequency = min(1.76d11 * bt_input,gyro_frequency_max * 2.0d0*pi)
 
-   ! Restrict it to the maximal available gyrotron frequency
-   if (gyro_frequency > gyro_frequency_max * 2.0d0*pi) then
-      bt_max = gyro_frequency_max * 2.0d0*pi/1.76d11
-   else
-      bt_max = bt_input
-   end if
+   ! Restrict b field to the maximal available gyrotron frequency
+   bt_max = min(bt_input,gyro_frequency/1.76d11)
 
-
-   gyro_frequency = min(gyro_frequency,gyro_frequency_max * 2.0d0*pi)
-
-   !                 me*e0/e^2       * w^2
+   !                      me*e0/e^2       * w^2
    ne0_max = max(0.0d0, 3.142077d-4 * gyro_frequency**2)
 
-   !  Now calculate the result so that it applies to the volume-averaged
-   !  electron density
    ! Check if parabolic profiles are used:
    if (ipedestal == 0) then
       ! Parabolic profiles used, use analytical formula:

@@ -162,6 +162,9 @@ module stellarator_configuration
           ! istell = 1: Helias5 machine
           ! istell = 2: Helias4 machine
           ! istell = 3: Helias3 machine
+          ! istell = 4: w7x30 machine
+          ! istell = 5: w7x50 machine
+          ! istell = 6: Init from json
  
           ! All parameters set here are prelimnirary versions and might be changed in further commits
  

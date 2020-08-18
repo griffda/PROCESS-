@@ -4277,9 +4277,12 @@ module stellarator_variables
   !! istell /0/ : switch for stellarator option
   !!              (set via <CODE>device.dat</CODE>):<UL>
   !!         <LI> = 0 use tokamak model;
-  !!         <LI> = 1 use stellarator model: Helias5-b</UL>
-  !!         <LI> = 2 use stellarator model: Helias4-b</UL>
-  !!         <LI> = 3 use stellarator model: Helias3-b</UL>
+  !!         <LI> = 1 use stellarator model: Helias5</UL>
+  !!         <LI> = 2 use stellarator model: Helias4</UL>
+  !!         <LI> = 3 use stellarator model: Helias3</UL>
+  !!         <LI> = 4 use stellarator model: w7x30</UL>
+  !!         <LI> = 5 use stellarator model: w7x50</UL>
+  !!         <LI> = 6 use stellarator model: From stella_conf.json</UL>
 
   real(dp) :: bmn = 1.0D-3
   !! bmn /0.001/ : relative radial field perturbation

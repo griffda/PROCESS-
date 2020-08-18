@@ -2796,14 +2796,14 @@ contains
       implicit none
 
       type (constraint_args_type), intent(out) :: args
-      real(dp) :: te0_ECRH_needed,b_ECRH,powerht,powerscaling
+      real(dp) :: te0_ECRH_needed,b_ECRH,powerht_local,powerscaling
 
-      call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht,powerscaling)
+      call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht_local,powerscaling)
 
       ! Achievable ECRH te needs to be larger than needed te for igntion
-      args%cc = 1.0D0 - fecrh_ignition* powerht/powerscaling
+      args%cc = 1.0D0 - fecrh_ignition* powerht_local/powerscaling
       args%con = powerscaling * (1.0D0 - args%cc)
-      args%err = powerht * args%cc
+      args%err = powerht_local * args%cc
       args%symbol = '<'
       args%units = 'MW'
 
