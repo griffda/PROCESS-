@@ -69,6 +69,11 @@ module global_variables
     maxcal = 200
     fileprefix = "" 
     output_prefix = ""
+    xlabel = ""
+    vlabel = ""
+    xlabel_2 = ""
+    vlabel_2 = ""
     iscan_global = 0
+    convergence_parameter = 0.0D0
   end subroutine init_global_variables
 end module global_variables
