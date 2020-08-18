@@ -15,13 +15,31 @@ module read_radiation
   ! !!!!!!!!!!!!!!!!!!!!
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+  use impurity_radiation_module, only: nimp
   implicit none
 
   ! List of impurities in the SOL/divertor model IS now same as the main plasma impurities
 
   ! Vars in function read_lz requiring re-initialisation on each new run
   integer :: location
-  logical :: read_lz_first_call
+  
+  ! Length of temperature and netau data
+  integer :: nt, nnetau
+  
+  ! Impurity data array
+  real(dp), dimension(200,5) :: impurity_data
+  
+  ! The values of the Lz, mean Z, and mean Z^2 stored in the data files
+  real(dp), dimension(nimp,200,5) :: data_lz, data_z, data_qz
+  
+  ! The values of ln(n.tau) at which the data is stored.
+  real(dp), dimension(nimp,5) :: lnetau_lz, lnetau_z, lnetau_qz
+  
+  ! The values of ln(Te) at which the data is stored.
+  real(dp), dimension(nimp, 200) :: logT_lz, logT_z, logT_qz
+  
+  ! First call boolean switch array
+  logical :: FirstCall(nimp)
 
 contains
 
@@ -30,7 +48,19 @@ contains
     implicit none
 
     location = 0
-    read_lz_first_call = .true.
+    nt = 0
+    nnetau = 0
+    impurity_data = 0.0D0
+    data_lz = 0.0D0
+    data_z = 0.0D0
+    data_qz = 0.0D0
+    lnetau_lz = 0.0D0
+    lnetau_z = 0.0D0
+    lnetau_qz = 0.0D0
+    logT_lz = 0.0D0
+    logT_z = 0.0D0
+    logT_qz = 0.0D0
+    FirstCall = .true.
   end subroutine init_read_radiation
 
   FUNCTION read_lz(element, te, netau, mean_z, mean_qz, verbose)
@@ -82,35 +112,11 @@ contains
     ! Natural logs of netau and te
     real(dp) :: lnetau, lte
 
-    ! Length of temperature and netau data
-    integer,save :: nt, nnetau
-
-    ! Impurity data array
-    real(dp), save, dimension(200,5) :: impurity_data
-
-    ! The values of the Lz, mean Z, and mean Z^2 stored in the data files
-    real(dp), save, dimension(nimp,200,5) :: data_lz, data_z, data_qz
-
-    ! The values of ln(n.tau) at which the data is stored.
-    real(dp), save, dimension(nimp,5) :: lnetau_lz, lnetau_z, lnetau_qz
-
-    ! The values of ln(Te) at which the data is stored.
-    real(dp), save, dimension(nimp, 200) :: logT_lz, logT_z, logT_qz
-
     ! Lz data filename
     character(len=100) :: filename
 
-    ! First call boolean switch
-    logical, save :: FirstCall(nimp)
-
  !   character(len=120), save :: lzdir = trim(ROOTDIR//'/data/lz_non_corona_14_elements/')
     character(len=200), parameter :: lzdir = trim(INSTALLDIR//'/data/lz_non_corona_14_elements/')
-    
-    if (read_lz_first_call .eqv. .true.) then
-      ! Reset FirstCall array
-      FirstCall(nimp) = .true.
-      read_lz_first_call = .false.
-    end if
     
     ! Find the index of the element.  Exclude hydrogen by starting at 2 (Helium)
     do i = 2, nimp
