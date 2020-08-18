@@ -2,7 +2,7 @@
  "version":  [ "PROCESS version 1.0.16" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 262,
+ "n_errortypes": 263,
  "errors": [
   { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -265,7 +265,8 @@
   {"no": 259, "level": 2, "message": "REBCO : Non physical strain used in TF. Use superconductor strain < +/- 0.7% "},
   {"no": 260, "level": 2, "message": "REBCO : Non physical strain used in CS. Use superconductor strain < +/- 0.7% "},
   {"no": 261, "level": 3, "message": "REBCO : turn off CS temperature margin constraint icc = 60 when using REBCO"},
-  {"no": 262, "level": 3, "message": "REBCO : turn off TF temperature margin constraint icc = 36 when using REBCO"}
+  {"no": 262, "level": 3, "message": "REBCO : turn off TF temperature margin constraint icc = 36 when using REBCO"},
+  {"no": 263, "level": 2, "message": "REBCO : Field on superconductor > 14 T (outside of interpolation range)"}  
 ]
 
 }

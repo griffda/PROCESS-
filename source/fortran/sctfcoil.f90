@@ -4052,7 +4052,7 @@ contains
             icrit = jcritstr * acs * fcond
             
             !REBCO fractures in strains above ~+/- 0.7%
-            if ( strncon_tf > 0.7D-2 .or. strncon_tf < -0.7D-2) then
+            if (strncon_tf > 0.7D-2 .or. strncon_tf < -0.7D-2) then
                 fdiags(1) = strncon_tf ; call report_error(259)
             end if
             
@@ -4074,6 +4074,11 @@ contains
             write(*,*) 'ERROR:Negative Iop/Icrit for TF coil'
             write(*,*) 'jsc', jsc, '  iooic', iooic, '  jcritsc', jcritsc
             write(*,*) 'Check conductor dimensions. fcond likely gone negative. fcond =', fcond
+        end if
+
+        ! REBCO measurements from 2 T to 14 T, extrapolating outside this
+        if((isumat == 8) .and. (bmaxtfrp >= 14)) then
+        call report_error(263)
         end if
 
         !  Temperature margin (already calculated in bi2212 for isumat=2)

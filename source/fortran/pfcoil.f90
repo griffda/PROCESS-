@@ -671,6 +671,7 @@ module pfcoil_module
  
      use build_variables, only: hmax, ohcth
      use fwbs_variables, only: denstl
+     use error_handling, only: idiags, report_error
      use pfcoil_variables, only: nohc, bmaxoh, i_cs_stress, coheof, rohc, &
          vfohc, jstrandoh_bop, fcuohsu, isumatoh, ohhghf, areaoh, powpfres, &
          jstrandoh_eof, powohres, rjohc0, s_tresca_oh, awpoh, oh_steel_frac, &
@@ -847,7 +848,7 @@ module pfcoil_module
              (areaoh * (1.0D0-vfohc)) * (1.0D6*ric(nohc))**2
         powpfres = powpfres + powohres
  
-     end if
+     end if   
  
    end subroutine ohcalc
  
@@ -1835,10 +1836,6 @@ module pfcoil_module
           ! A0 calculated for tape cross section already
           jcritstr = jcritsc 
  
-          !REBCO fractures in strains above ~+/- 0.7%
-          if ( strain > 0.7D-2 .or. strain < -0.7D-2) then
-             fdiags(1) = strain ; call report_error(259)
-         end if
           
  
      case default  !  Error condition
@@ -2718,6 +2715,11 @@ module pfcoil_module
                 (abs(cohbop) > 0.99D0*abs(boundu(39)*rjohc0)) ) CSlimit=.true.
            if (tmargoh < 1.01D0*tmargmin_cs) CSlimit=.true.
            if (.not.CSlimit) call report_error(135)
+
+           !REBCO fractures in strains above ~+/- 0.7%
+           if ((isumatoh == 8) .and. strncon_cs > 0.7D-2 .or. strncon_cs < -0.7D-2) then
+                call report_error(259)
+           end if
  
         else
            call ocmmnt(outfile,'Resistive central solenoid')
