@@ -728,6 +728,7 @@ module tfcoil_variables
     casestr = 0.0D0
     casthi = 0.0D0
     casthi_fraction = 0.05D0
+    casthi_is_fraction = .false.
     casths = 0.0D0
     casths_fraction = 0.03D0
     t_conductor = 0.0D0
@@ -901,5 +902,6 @@ module tfcoil_variables
     vol_cond_cp = 0.0D0
     whtcp = 0.0D0
     whttflgs = 0.0D0
+    tfc_sidewall_is_fraction = .false.
   end subroutine init_tfcoil_variables
 end module tfcoil_variables
