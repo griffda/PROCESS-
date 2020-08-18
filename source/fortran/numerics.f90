@@ -378,6 +378,8 @@ contains
     xcs = 0.0D0
     vlam = 0.0D0
     if (allocated(name_xc)) deallocate(name_xc)
+    allocate(name_xc(1))
+    name_xc = ""
   end subroutine init_numerics
 
   subroutine eqsolv(fcnhyb,n,x,fvec,tol,epsfcn,factor,nprint,info, &
