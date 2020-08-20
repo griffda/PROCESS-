@@ -79,7 +79,7 @@ contains
     integer :: ine, ite
 
     !    character(len=120), save :: hdatadir = trim(ROOTDIR//'/data/h_data/')
-    character(len=200), parameter :: hdatadir = trim(INSTALLDIR//'/data/h_data/')
+    character(len=200) :: hdatadir = trim(INSTALLDIR//'/data/h_data/')
 
     ! Maxima for log density and log temperature in each data file
     real(dp), save :: max_scd_d, max_scd_t
