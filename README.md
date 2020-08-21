@@ -5,12 +5,70 @@
 PROCESS is the reactor systems code at [CCFE](www.ccfe.ac.uk). More information on PROCESS
 can be found on the PROCESS [webpage](http://www.ccfe.ac.uk/powerplants.aspx).
 
-## Install
+## Installation and Release
 
-Clone code from Gitlab, enter the process directory and run:
+### Install from Repository
+
+It is highly recommended users create a Python virtual environment in order to use the PROCESS python module.
+After cloning the repository from GitLab and activating the virtual environent firstly install the required dependencies:
 
 ```bash
-sudo -u $USER bash install.sh
+pip install -r requirements.txt
+```
+
+Then build the project using CMake:
+
+```bash
+cmake -H. -B. build
+cmake --build build
+```
+
+this may take some time as the FORTRAN code is firstly compiled and then wrapped using `f90wrap` and `f2py` to create the
+Python libraries. Once this is completed you can then install the module itself from within the repository:
+
+```bash
+pip install .
+```
+
+To test that the setup has been successful try importing the module from outside of the repository folder:
+
+```Python
+import process.fortran
+```
+
+### Testing
+
+The included tests are run using PyTest, requirements for the tests are installed by running:
+
+```BASH
+pip install .[test]
+```
+
+PyTest can then be run on the tests folder:
+
+```BASH
+pytest tests/
+```
+
+### Prepare Release
+
+It is possible to build a standalone module which can be distributed without the need for the source code. This exists as a pippable "wheels" module which is build by running:
+
+```BASH
+mkdir process_dist
+python setup.py bdist_wheel -d process_dist
+```
+
+this will produce a `.whl` file within the folder `process_dist` which can be installed from by running:
+
+```BASH
+pip install --find-links=process_dist/ process
+```
+
+Alternatively the module can be packaged into an archive in the same location by running:
+
+```BASH
+python setup.py sdist
 ```
 
 ## Documentation

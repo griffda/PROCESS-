@@ -127,8 +127,13 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Parse the json file
-
-    filename = INSTALLDIR//'/utilities/errorlist.json'
+    character(len=200) :: process_dir
+    CALL get_environment_variable("PYTHON_PROCESS_ROOT", process_dir)
+    if (process_dir == "") then
+      filename = INSTALLDIR//'/process//utilities/errorlist.json'
+    else
+      filename = trim(process_dir)//'/utilities/errorlist.json'
+    end if
     errorfile => fson_parse(trim(filename))
 
     !  Allocate memory for error_type array contents

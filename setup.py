@@ -1,22 +1,42 @@
 from setuptools import setup
+from setuptools.command.test import test as TestCommand
+
+import sys
 
 setup_kwargs = {
     "name": "process",
     "version": "1.0.17",
-    "description": ("Power Reactor Optimisation Code for Environmental and "
-        "Safety Studies"),
+    "description": (
+        "Power Reactor Optimisation Code for Environmental and Safety Studies"
+    ),
     "url": "https://ccfe.ukaea.uk/resources/process/",
     "author": "UKAEA",
     "packages": ["process"],
     "package_dir": {
         "process": "process"
+    },
+    "package_data": {
+        "process": [
+            "_fortran*.so",
+            ".lib/libgfortran.so*",
+            ".lib/libprocess_lib.so",
+            "data/fluids/*",
+            "data/h_data/*",
+            "data/impuritydata/*",
+            "data/lz_non_corona/*",
+            "data/lz_non_corona_14_elements/*",
+            "utilities/*"
+        ],
+    },
+    "test_suite" : "pytest",
+    "install_requires" : ["numpy", "f90wrap"],
+    "extras_require" : {'test' : ['pytest', 'scipy']},
+    "entry_points": {
+        "console_scripts": [
+            "process_script=process.process_script_advanced:main",
+            "process=process.process:main"
+            ]
     }
-    # TODO Point this at a script in the /scripts dir
-    # "entry_points": {
-    #     "console_scripts": [
-    #         "process=utilities.process:main"
-    #   ]
-    # }
 }
 
 if __name__ == "__main__":
