@@ -23,11 +23,11 @@ import argparse
 from pprint import pformat
 from collections import defaultdict
 import sys
-from rootdir import ROOTDIR
+import os
 import json
 
 #process source directory
-SOURCEDIR = ROOTDIR
+SOURCEDIR = os.path.join(__file__.split('utilities')[0], "source", "fortran")
 
 # Path to the process_dicts.json output file
 DICTS_FILE_PATH = os.path.join(os.path.dirname(__file__),

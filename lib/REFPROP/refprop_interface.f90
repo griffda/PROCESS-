@@ -6,11 +6,6 @@
 !
 !#define unit_test
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-#ifndef INSTALLDIR
-#error INSTALLDIR not defined!
-#endif
-
 module refprop_interface
 
   !! Interface routines between PROCESS and REFPROP
@@ -42,12 +37,19 @@ module refprop_interface
   real(kind(1.0D0)), dimension(ncmax) :: x = 1.0D0
   character(len=255) :: herr
   integer :: ierr
-  real(kind(1.0D0)), public :: molarmass
-
-!  character(len=120) :: fluids_dir = ROOTDIR//'/data/fluids/'
-  character(len=200) :: fluids_dir = INSTALLDIR//'/data/fluids/'
+  real(kind(1.0D0)), public :: molarmass  
 
 contains
+  character(len=300) function fluids_dir()
+   implicit none
+   character(len=200) :: process_dir
+   CALL get_environment_variable("PYTHON_PROCESS_ROOT", process_dir)
+   if (process_dir == "") then
+      fluids_dir = INSTALLDIR//'/process/data/fluids/'
+   else
+      fluids_dir = trim(process_dir)//'/data/fluids/'
+   end if
+  end function fluids_dir
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -93,7 +95,7 @@ contains
 
     if (.not.initialised) then
 
-       call setpath(trim(fluids_dir))
+       call setpath(trim((fluids_dir())))
 
        if (fluid == 1) then
           hf(1) = 'helium.fld'

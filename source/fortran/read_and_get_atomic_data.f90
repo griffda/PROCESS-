@@ -1,6 +1,3 @@
-#ifndef INSTALLDIR
-#error INSTALLDIR not defined!
-#endif
 
 module read_and_get_atomic_data
   !! Module for reading atomic data
@@ -18,6 +15,17 @@ module read_and_get_atomic_data
   implicit none
 
 contains
+  character(len=300) function hdatadir()
+        implicit none
+        character(len=200) :: process_dir
+        CALL get_environment_variable("PYTHON_PROCESS_ROOT", process_dir)
+        if (process_dir == "") then
+          hdatadir = INSTALLDIR//'/process/data/h_data/'
+        else
+          hdatadir = trim(process_dir)//'/data/h_data/' 
+        end if
+        
+  end function hdatadir
 
   subroutine get_h_rates(density, temperature, s, al, Rcx, plt, prb, mass, verbose)
     !! 
@@ -70,9 +78,6 @@ contains
 
     integer :: ine, ite
 
-    !    character(len=120), save :: hdatadir = trim(ROOTDIR//'/data/h_data/')
-    character(len=200), save :: hdatadir = trim(INSTALLDIR//'/data/h_data/')
-
     ! Maxima for log density and log temperature in each data file
     real(dp), save :: max_scd_d, max_scd_t
     real(dp), save :: max_acd_d, max_acd_t
@@ -91,23 +96,23 @@ contains
 
       FirstCall=.false.
 
-      !  Add trailing / to hdatadir if necessary
-      ! if (index(hdatadir,'/',.true.) .ne. len(trim(hdatadir))) hdatadir = hdatadir//'/'
-      ! if (index(hdatadir,'\',.true.) .ne. len(trim(hdatadir))) hdatadir = hdatadir//'\'
+      !  Add trailing / to hdatadir() if necessary
+      ! if (index(hdatadir(),'/',.true.) .ne. len(trim(hdatadir()))) hdatadir() = hdatadir()//'/'
+      ! if (index(hdatadir(),'\',.true.) .ne. len(trim(hdatadir()))) hdatadir() = hdatadir()//'\'
 
-      acd_file = trim(hdatadir)//'acd96_h.dat'
-      scd_file = trim(hdatadir)//'scd96_h.dat'
-      plt_file = trim(hdatadir)//'plt96_h.dat'
-      prb_file = trim(hdatadir)//'prb96_h.dat'
+      acd_file = trim(hdatadir())//'acd96_h.dat'
+      scd_file = trim(hdatadir())//'scd96_h.dat'
+      plt_file = trim(hdatadir())//'plt96_h.dat'
+      prb_file = trim(hdatadir())//'prb96_h.dat'
 
       m = floor(mass+0.5)                     ! round to an integer
       ! Select the correct atomic species for the CX rates: H, D or T
       if      (m == 1) then
-          ccd_file = trim(hdatadir)//'ccd96_h.dat'
+          ccd_file = trim(hdatadir())//'ccd96_h.dat'
       elseif (m == 2) then
-          ccd_file = trim(hdatadir)//'ccd96_d.dat'
+          ccd_file = trim(hdatadir())//'ccd96_d.dat'
       elseif (m == 3) then
-          ccd_file = trim(hdatadir)//'ccd96_t.dat'
+          ccd_file = trim(hdatadir())//'ccd96_t.dat'
       else
           write(*,*) 'The atomic mass is ', m, '.  It must be in the range 1-3.'
       end if
