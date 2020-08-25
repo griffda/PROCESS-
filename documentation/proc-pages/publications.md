@@ -4,6 +4,10 @@ Below is a list of publications using PROCESS by year:
 
 ## 2020
 
+[DEMO physics challenges beyond ITER](https://www.sciencedirect.com/science/article/pii/S0920379620301514)   
+M. Siccinio, W. Biel, M. Cavedon, E. Fable, G. Federici, F. Janky, H. Lux, F. Maviglia, J. Morris, F. Palermo, O. Sauter, F. Subba, H. Zohm   
+Fusion Engineering and Design 156 (2020) 111603  
+
 [Summary of the 3rd IAEA technical meeting on divertor concepts](https://iopscience.iop.org/article/10.1088/1741-4326/ab9a0c/meta)   
 M. Barbarino, A.W. Leonard, N. Asakura, M. Jakubowski, M. Kobayashi, B. Lipschultz, R. Neu, L. Wang, M. Wischmeier   
 Nuclear Fusion (2020) in press   
@@ -14,7 +18,7 @@ Nuclear Fusion 60 (2020) 066030
 
 [Comparison of the PROCESS systems code with the SONIC divertor code](https://ieeexplore.ieee.org/abstract/document/8998560)   
 J. Morris, N. Asakura, Y. Homma, K. Hoshino, M. Kovari   
-IEEE Transactions on Plasma Science (Early Access)   
+IEEE Transactions on Plasma Science 48 (2020) 1799-1803   
 
 ["PROCESS": Systems studies of spherical tokamaks](https://www.sciencedirect.com/science/article/pii/S0920379620300788)  
 S.I. Muldrew, H. Lux, G. Cunningham, T.C. Hender, S. Kahn, P.J. Knight, B. Patel, G.M. Voss, H.R. Wilson  
