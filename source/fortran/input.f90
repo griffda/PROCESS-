@@ -196,7 +196,7 @@ contains
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
       etalh, frbeam 
-    use divertor_Kallenbach_variables, only: kallenbach_test_option, &
+    use div_kal_vars, only: kallenbach_test_option, &
       relerr_sol, kallenbach_scan_switch, lcon_factor, kallenbach_scan_num, &
       kallenbach_scan_end, kallenbach_scan_start, target_spread, &
       fractionwidesol, impurity_enrichment, mach0, kallenbach_scan_var, &
@@ -312,6 +312,9 @@ contains
     character(len=32) :: varnam
 
     logical :: obsolete_var = .false.
+    character(len=400) :: imp_dir 
+    
+    imp_dir = impdir()
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -632,7 +635,7 @@ contains
           call parse_int_variable('ilhthresh', ilhthresh, 1, 21, &
                'Switch for L-H power threshold to enforce')
        case ('impdir')
-          call parse_string_variable('impdir', impdir, &
+          call parse_string_variable('impdir', imp_dir, &
                'Directory containing impurity radiation data files')
 
        case ('impvar')

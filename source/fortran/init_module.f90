@@ -1,3 +1,7 @@
+#ifndef INSTALLDIR
+#error INSTALLDIR not defined!
+#endif
+
 module init_module
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
@@ -38,6 +42,7 @@ subroutine init
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  Initialise error handling
+  
   call initialise_error_list
 
   !  Initialise the program variables
@@ -81,5 +86,30 @@ subroutine init
   end if
 
 end subroutine init
+
+subroutine finish
+  ! Originally at the end of the "program", this subroutine writes some final 
+  ! lines via the output module and then closes any open files. This is 
+  ! currently called from Python, and will be removed once file handling is 
+  ! completely dealt with in Python
+  ! # TODO Move this output and file handling to Python
+
+  use process_input, only: nin
+  use constants, only: iotty, mfile, nout, nplot, opt_file, vfile
+  use process_output, only: oheadr
+  use global_variables, only: verbose
+  implicit none
+
+  call oheadr(nout,'End of PROCESS Output')
+  call oheadr(iotty,'End of PROCESS Output')
+  call oheadr(nout,'Copy of PROCESS Input Follows')
+
+  close(unit = nin)
+  close(unit = nout)
+  close(unit = nplot)
+  close(unit = mfile)
+  close(unit = opt_file)
+  if (verbose == 1) close(unit = vfile)
+end subroutine finish
 
 end module init_module

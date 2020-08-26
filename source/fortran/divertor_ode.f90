@@ -94,7 +94,7 @@ contains
     use read_and_get_atomic_data, only: get_h_rates, unit_test_read
     use process_output, only: oheadr, ocmmnt, ovarre, osubhd, ovarin
     use constants, only: echarge, rmu0, umass
-		use divertor_kallenbach_variables, only: netau_sol, neratio, &
+		use div_kal_vars, only: netau_sol, neratio, &
       exchangepowerlost, fractionwidesol, target_spread, fmom, totalpowerlost, &
       relerr_sol, hydrogenicpowerlost, ionisationpowerlost, impuritypowerlost, &
       mach0, impurity_enrichment, lcon_factor, pressure0, abserr_sol, &
@@ -972,7 +972,7 @@ do i = 2, nimp
     use read_radiation, only: read_lz
     use read_and_get_atomic_data, only: get_h_rates
     use constants, only: echarge
-		use divertor_kallenbach_variables, only: abserr_sol, netau_sol 
+		use div_kal_vars, only: abserr_sol, netau_sol 
 		use divertor_ode_var, only: impurity_concs, imp_label, nimp
     implicit none
 

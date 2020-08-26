@@ -13,7 +13,8 @@ module ife_module
   implicit none
 
   private
-  public :: ifecll, ifeout
+  public :: ifecll, ifeout, ifetgt
+  ! ifetgt made public for testing via interface
 
 contains
 
@@ -1811,7 +1812,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine ifetgt() bind(C, name="c_ifetgt")
+  subroutine ifetgt()
     !! Routine to calculate the power requirements of the target
     !! delivery system and the target factory
     !! author: P J Knight, CCFE, Culham Science Centre

@@ -626,7 +626,7 @@ subroutine check
     use build_variables, only: blnkith, bore, gapoh, ohcth, precomp, iprecomp
     use buildings_variables, only: esbldgm3, triv
     use current_drive_variables, only: gamcd, iefrf, irfcd
-    use divertor_kallenbach_variables, only: impurity_enrichment, kallenbach_switch
+    use div_kal_vars, only: impurity_enrichment, kallenbach_switch
     use error_handling, only: errors_on, idiags, fdiags, report_error
     use fwbs_variables, only: breeder_multiplier, iblanket, vfcblkt, vfpblkt, &
         iblnkith

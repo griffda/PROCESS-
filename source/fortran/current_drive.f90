@@ -12,7 +12,6 @@ module current_drive_module
 
   ! Import modules
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  use iso_c_binding
   implicit none
 
   private
@@ -656,7 +655,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine iternb(effnbss,fpion,fshine) bind(C, name="c_iternb")
+  subroutine iternb(effnbss,fpion,fshine)
 
     !! Routine to calculate ITER Neutral Beam current drive parameters
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -798,7 +797,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine cfnbi(afast,efast,te,ne,nd,nt,zeffai,xlmbda,fpion) bind(C, name="c_cfnbi")
+  subroutine cfnbi(afast,efast,te,ne,nd,nt,zeffai,xlmbda,fpion)
 
     !! Routine to calculate the fraction of the fast particle energy
     !! coupled to the ions

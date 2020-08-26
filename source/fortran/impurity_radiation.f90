@@ -1,5 +1,4 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 module impurity_radiation_module
 
   !! Module for new impurity radiation calculations
@@ -23,6 +22,7 @@ module impurity_radiation_module
   private
   public :: initialise_imprad, impradprofile, z2index, element2index, fradcore
   public :: imp_dat, Zav_of_te
+  public :: impdir
 
 
   !! (It is recommended to turn on
@@ -44,49 +44,41 @@ module impurity_radiation_module
        (/ 1.0D0, 0.1D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
        0.0D0, 0.00D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0 /)
        character(len=2), public, dimension(nimp) :: imp_label = (/ &
-       !! imp_label(nimp) : impurity ion species names:<UL>
        'H_', &
-       !! <LI> ( 1)  Hydrogen  (fraction calculated by code)
        'He', &
-       !! <LI> ( 2)  Helium
        'Be', &
-       !! <LI> ( 3)  Beryllium
        'C_', &
-       !! <LI> ( 4)  Carbon
        'N_', &
-       !! <LI> ( 5)  Nitrogen
        'O_', &
-       !! <LI> ( 6)  Oxygen
        'Ne', &
-       !! <LI> ( 7)  Neon
        'Si', &
-       !! <LI> ( 8)  Silicon
        'Ar', &
-       !! <LI> ( 9)  Argon
        'Fe', &
-       !! <LI> (10)  Iron
        'Ni', &
-       !! <LI> (11)  Nickel
        'Kr', &
-       !! <LI> (12)  Krypton
        'Xe', &
-       !! <LI> (13)  Xenon
        'W_'/)
+       !! imp_label(nimp) : impurity ion species names:<UL>
+       !! <LI> ( 1)  Hydrogen  (fraction calculated by code)
+       !! <LI> ( 2)  Helium
+       !! <LI> ( 3)  Beryllium
+       !! <LI> ( 4)  Carbon
+       !! <LI> ( 5)  Nitrogen
+       !! <LI> ( 6)  Oxygen
+       !! <LI> ( 7)  Neon
+       !! <LI> ( 8)  Silicon
+       !! <LI> ( 9)  Argon
+       !! <LI> (10)  Iron
+       !! <LI> (11)  Nickel
+       !! <LI> (12)  Krypton
+       !! <LI> (13)  Xenon
        !! <LI> (14)  Tungsten</UL>
 
        !! fimpvar /1.0e-3/ : impurity fraction to be used as fimp(impvar)
        !!                    (iteration variable 102)
   ! Deprecated
   real(dp), public :: fimpvar = 1.0D-3
-
-    !  Obtain the root directory
-
-  include "root.dir"
-
-  !! impdir /'/home/PROCESS/[branch]/impuritydata'/ :
-  !!          Directory containing impurity radiation data files
-  character(len=200), public :: impdir = INSTALLDIR//'/data/impuritydata/'
-
+  
   !! impvar : impurity to be iterated (deprecated)
   !!                      variable number 102 is turned on
   integer, public :: impvar = 9
@@ -112,6 +104,17 @@ module impurity_radiation_module
   type(imp_dat),  dimension(nimp), save, public :: impurity_arr
 
 contains
+
+  character(len=300) function impdir()
+      implicit none
+      character(len=200) :: process_dir
+      CALL get_environment_variable("PYTHON_PROCESS_ROOT", process_dir)
+      if (process_dir == "") then
+         impdir = INSTALLDIR//'/process/data/impuritydata/'
+      else
+         impdir = trim(process_dir)//'/data/impuritydata/'
+      end if
+  end function impdir
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -284,10 +287,10 @@ contains
 
     filename = label // 'Lzdata.dat'
 
-    if (index(impdir,'/',.true.) == len(trim(impdir))) then
-       fullpath = trim(impdir)//trim(filename)
+    if (index(impdir(),'/',.true.) == len(trim(impdir()))) then
+       fullpath = trim(impdir())//trim(filename)
     else
-       fullpath = trim(impdir)//'/'//trim(filename)
+       fullpath = trim(impdir())//'/'//trim(filename)
     end if
 
     inquire(file=trim(fullpath), exist=iexist)
@@ -296,7 +299,7 @@ contains
             impurity_arr(no)%Temp_keV, impurity_arr(no)%Lz_Wm3, impurity_arr(no)%Zav)
     else
        write(*,*) "# Warning :  Cannot find impurity data please check path."
-       write(*,*) "# Error   :  Current path is: ", impdir
+       write(*,*) "# Error   :  Current path is: ", impdir()
        stop
     end if
 

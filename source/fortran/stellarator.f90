@@ -22,51 +22,51 @@ module stellarator_configuration
 
 
       !  Reference Point where all the other variables are determined
-      real(kind(1.0D0))  rmajor_ref
-      real(kind(1.0D0))  rminor_ref
-      real(kind(1.0D0))  aspect_ref
-      real(kind(1.0D0))  bt_ref
+      real(kind(1.0D0)) ::  rmajor_ref
+      real(kind(1.0D0)) ::  rminor_ref
+      real(kind(1.0D0)) ::  aspect_ref
+      real(kind(1.0D0)) ::  bt_ref
       
       !  Coil current needed for 1T on axis at outer radius 1m
-      real(kind(1.0D0)) i0
+      real(kind(1.0D0)) :: i0
       !  Magnetic field fit parameter a1
-      real(kind(1.0D0)) a1
+      real(kind(1.0D0)) :: a1
       !  Magnetic field fit parameter a2
-      real(kind(1.0D0)) a2
+      real(kind(1.0D0)) :: a2
       !  Minimal intercoil distance dmin/Rmax
-      real(kind(1.0D0)) dmin
+      real(kind(1.0D0)) :: dmin
       !  Inductivity
-      real(kind(1.0D0)) inductivity
+      real(kind(1.0D0)) :: inductivity
       !  Coil surface
-      real(kind(1.0D0)) coilsurface
+      real(kind(1.0D0)) :: coilsurface
       !  Total coil length
-      real(kind(1.0D0)) coillength
+      real(kind(1.0D0)) :: coillength
       !  Port size in toroidal direction
-      real(kind(1.0D0)) max_portsize_width
+      real(kind(1.0D0)) :: max_portsize_width
       !  Average minor Coil Radius (as r/R) to get it dimensionless.
-      real(kind(1.0D0)) coil_epsilon 
+      real(kind(1.0D0)) :: coil_epsilon 
 
       !  The ratio of the coil to plasma radius.
       !  (Average midpoint of the coils to average maj. radius. Will be approx. 1)
-      real(kind(1.0D0)) coil_to_plasma_ratio
+      real(kind(1.0D0)) :: coil_to_plasma_ratio
 
       !  The maximal coil height at reference point.
-      real(kind(1.0D0)) maximal_coil_height
+      real(kind(1.0D0)) :: maximal_coil_height
 
       !  The minimal distance between coil and plasma
-      real(kind(1.0D0)) min_plasma_coil_distance
+      real(kind(1.0D0)) :: min_plasma_coil_distance
 
       !  2 volume parameters v1 and v2. They scale according to r*R^2 and r^3
-      real(kind(1.0D0)) vr2r
+      real(kind(1.0D0)) :: vr2r
 
       !  2 surface parameters s0 and s1. They are the leading taylor orders.
-      real(kind(1.0D0)) s0 
+      real(kind(1.0D0)) :: s0 
 
       !  Ratio radial to toroidal length of the winding pack. (a1 and a2 should be calculated using this value)
-      real(kind(1.0D0)) WP_ratio
+      real(kind(1.0D0)) :: WP_ratio
 
       !  Maximal force density in MN/m^3 at one point:
-      real(kind(1.0D0)) max_force_density
+      real(kind(1.0D0)) :: max_force_density
 
 
    end type stella_config

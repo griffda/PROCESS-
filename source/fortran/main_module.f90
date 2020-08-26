@@ -1,3 +1,19 @@
+#ifndef COMMSG
+#error COMMSG not defined!
+#endif
+
+#ifndef tagno
+#error tagno not defined!
+#endif
+
+#ifndef branch_name
+#error branch_name not defined!
+#endif
+
+#ifndef untracked
+#error untracked not defined!
+#endif
+
 module main_module
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
@@ -100,10 +116,6 @@ subroutine run_summary
   character(len = 14)  :: minmax_string
   character(len = 10)  :: eps_string
   character :: minmax_sign
-  include "com.msg"
-  include "tag.num"
-  include "branch.name"
-  include "untracked.info"
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

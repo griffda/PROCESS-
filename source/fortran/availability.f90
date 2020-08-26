@@ -12,15 +12,11 @@ module availability_module
 
   ! Modules to import
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  use iso_c_binding
   implicit none
 
   ! Module subroutine and variable declarations !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  private
-  public :: avail
-  public :: avail_2
   real(dp), parameter :: year = 31557600.0D0
   !! seconds in a year [s]
 
@@ -294,8 +290,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine calc_u_planned(outfile, iprint, u_planned) &
-    bind(C, name = "c_calc_u_planned")
+  subroutine calc_u_planned(outfile, iprint, u_planned)
     !! Calculates the planned unavailability of the plant
     !! author: J Morris, CCFE, Culham Science Centre
     !! outfile : input integer : output file unit
@@ -403,8 +398,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine calc_u_unplanned_magnets(outfile, iprint, u_unplanned_magnets) &
-    bind(C, name = "c_calc_u_unplanned_magnets")
+  subroutine calc_u_unplanned_magnets(outfile, iprint, u_unplanned_magnets)
     !! Calculates the unplanned unavailability of the magnets
     !! author: J Morris, CCFE, Culham Science Centre
     !! outfile : input integer : output file unit
@@ -483,8 +477,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine calc_u_unplanned_divertor(outfile, iprint, u_unplanned_div) & 
-    bind(C, name = "c_calc_u_unplanned_divertor")
+  subroutine calc_u_unplanned_divertor(outfile, iprint, u_unplanned_div)
     !! Calculates the unplanned unavailability of the divertor
     !! author: J Morris, CCFE, Culham Science Centre
     !! outfile : input integer : output file unit
@@ -566,8 +559,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine calc_u_unplanned_fwbs(outfile, iprint, u_unplanned_fwbs) &
-    bind(C, name = "c_calc_u_unplanned_fwbs")
+  subroutine calc_u_unplanned_fwbs(outfile, iprint, u_unplanned_fwbs)
     !! Calculates the unplanned unavailability of the first wall and blanket
     !! author: J Morris, CCFE, Culham Science Centre
     !! outfile : input integer : output file unit
@@ -643,8 +635,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine calc_u_unplanned_bop(outfile, iprint, u_unplanned_bop) &
-    bind(c,name= "c_calc_u_unplanned_bop")
+  subroutine calc_u_unplanned_bop(outfile, iprint, u_unplanned_bop)
     !! Calculates the unplanned unavailability of the balance of plant
     !! author: J Morris, CCFE, Culham Science Centre
     !! outfile : input integer : output file unit
@@ -704,8 +695,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine calc_u_unplanned_hcd(u_unplanned_hcd) &
-    bind(C,name="c_calc_u_unplanned_hcd")
+  subroutine calc_u_unplanned_hcd(u_unplanned_hcd)
     !! Calculates the unplanned unavailability of the heating and current drive system
     !! author: J Morris, CCFE, Culham Science Centre
     !! outfile : input integer : output file unit

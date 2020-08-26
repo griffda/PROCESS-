@@ -994,7 +994,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function t_eped_scaling() bind(C, name="c_t_eped_scaling")
+  function t_eped_scaling()
     !! Scaling function for calculation of pedestal temperature
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
@@ -1285,8 +1285,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function plasma_elongation_IPB() &
-    bind (C, name="c_plasma_elongation_IPB")
+  function plasma_elongation_IPB()
     !! author: H Lux (UKAEA)
     !!
     !! Volume measure of plasma elongation using the IPB definition
@@ -1311,8 +1310,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function total_mag_field() &
-    bind (C, name="c_total_mag_field")
+  function total_mag_field()
     !! author: J. Morris (UKAEA)
     !! 
     !! Calculates the total magnetic field
@@ -1330,8 +1328,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function beta_poloidal() &
-    bind (C, name="c_beta_poloidal")
+  function beta_poloidal()
     !! author: J. Morris (UKAEA)
     !!
     !! Calculates total poloidal beta
@@ -1351,8 +1348,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function res_diff_time() &
-    bind (C, name="c_res_diff_time")
+  function res_diff_time()
     !! author: J. Morris (UKAEA)
     !!
     !! Calculates resistive diffusion time

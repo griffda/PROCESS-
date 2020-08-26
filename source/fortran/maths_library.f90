@@ -337,8 +337,7 @@ contains
   end subroutine ellipke
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  real(dp)  function binomial(n,k) result(coefficient) &
-  bind (C, name="c_binomial")
+  real(dp)  function binomial(n,k) result(coefficient)
     ! This outputs a real approximation to the coefficient
     ! http://en.wikipedia.org/wiki/Binomial_coefficient#Multiplicative_formula
     implicit none
@@ -524,6 +523,14 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
+
+    interface
+      function fun(rho)
+        use, intrinsic :: iso_fortran_env, only: dp=>real64
+        real(dp), intent(in) :: rho
+        real(dp) :: fint
+      end function fun
+    end interface
 
     !  Arguments
 
@@ -738,11 +745,19 @@ contains
 
     implicit none
 
+    interface
+      function fhz(hhh)
+        use, intrinsic :: iso_fortran_env, only: dp=>real64
+        real(dp), intent(in) :: hhh
+        real(dp) :: fhz
+      end function fhz
+    end interface
+
     real(dp) :: zeroin
 
     !  Arguments
 
-    real(dp), external :: fhz
+    external :: fhz
     real(dp), intent(in) :: ax,bx,tol
 
     !  Local variables
@@ -2187,6 +2202,17 @@ contains
     use global_variables, only: maxcal, verbose
     implicit none
 
+    interface
+      subroutine fcnvmc1(n,m,xv,objf,conf,ifail)
+        use, intrinsic :: iso_fortran_env, only: dp=>real64
+        integer, intent(in) :: n,m
+        real(dp), dimension(n), intent(in) :: xv
+        real(dp), intent(out) :: objf
+        real(dp), dimension(m), intent(out) :: conf
+        integer, intent(inout) :: ifail
+      end subroutine fcnvmc1
+    end interface
+    
     !  Arguments
 
     integer, intent(in) :: mode,n,m,meq,lcnorm,lb,maxfev,ldel,lh,lwa,liwa
@@ -4130,6 +4156,16 @@ contains
 
     IMPLICIT NONE
 
+    interface
+      subroutine fcnhyb(n, x, fvec, iflag)
+        use, intrinsic :: iso_fortran_env, only: dp=>real64
+        integer, intent(in) :: n
+        real(dp), dimension(n), intent(inout) :: x
+        real(dp), dimension(n), intent(out) :: fvec
+        integer, intent(inout) :: iflag
+      end subroutine fcnhyb
+    end interface
+
     INTEGER n,maxfev,ml,mu,mode,nprint,info,nfev,ldfjac,lr,irr
     INTEGER i,iflag,iter,j,jm1,l,msum,ncfail,ncsuc,nslow1,nslow2
 
@@ -5807,7 +5843,16 @@ contains
       ! https://en.wikipedia.org/wiki/Secant_method
       ! Requires two initial values, x0 and x1, which should ideally be chosen to lie close to the root.
       !external:: f
-      real(dp)::f
+      
+      interface
+        function f(x)
+          use, intrinsic :: iso_fortran_env, only: dp=>real64
+          real(dp), intent(in) :: x
+          real(dp) :: f
+        end function f
+      end interface
+
+      external :: f
       real(dp), intent(out) ::solution, residual
       real(dp), intent(in) ::x1,x2
       real(dp), intent(in), optional ::opt_tol
@@ -5863,7 +5908,8 @@ contains
 
   contains
       function dummy(x)
-          real(dp)::dummy,x
+          real(dp), intent(in) :: x
+          real(dp) :: dummy
           dummy = x**2 - 612.d0
       end function
   end subroutine test_secant_solve
@@ -5872,9 +5918,9 @@ end module maths_library
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-#ifdef unit_test
-
 module testdata
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+  implicit none
 
   integer :: nfun = 0  !  function call counter
 
@@ -6240,140 +6286,139 @@ end module testdata
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-program test
+! program test
 
-  !  Unit testing program for VMCON
+!   !  Unit testing program for VMCON
 
-  use maths_library
-  use numerics
-  use testdata
+!   use maths_library
+!   use numerics
+!   use testdata
+!   use global_variables, only: maxcal
 
-  implicit none
+!   implicit none
 
-  integer :: ifail = 1
-  real(dp) :: objf
+!   integer :: ifail = 1
+!   real(dp) :: objf
 
-  integer :: ii,jj,lb,lcnorm,ldel,lh,liwa,lwa,m,meq,mode,n
-  integer, parameter :: ippn1  = ipnvars+1
-  integer, parameter :: ipldel = 7*ippn1
-  integer, parameter :: iplh   = 2*ippn1
-  integer, parameter :: ipvmu  = ipeqns+2*ipnvars+1
-  integer, parameter :: ipliwa = 6*ippn1+ipeqns
-  integer, dimension(ipliwa) :: iwa
-  integer, dimension(ipnvars) :: ilower,iupper
+!   integer :: ii,jj,lb,lcnorm,ldel,lh,liwa,lwa,m,meq,mode,n
+!   integer, parameter :: ippn1  = ipnvars+1
+!   integer, parameter :: ipldel = 7*ippn1
+!   integer, parameter :: iplh   = 2*ippn1
+!   integer, parameter :: ipvmu  = ipeqns+2*ipnvars+1
+!   integer, parameter :: ipliwa = 6*ippn1+ipeqns
+!   integer, dimension(ipliwa) :: iwa
+!   integer, dimension(ipnvars) :: ilower,iupper
 
-  real(dp) :: xtol
-  real(dp), dimension(ipnvars) :: bdelta,bndl,bndu,etav,fgrd, &
-       gammv,glag,glaga,xa,xv
-  real(dp), dimension(ipeqns) :: cm,conf
-  real(dp), dimension(ippn1) :: bdl,bdu,gm
-  real(dp), dimension(ipvmu) :: vmu
-  real(dp), dimension(ipldel) :: delta
-  real(dp), dimension(iplh) :: wa
-  real(dp), dimension(ippn1,ipeqns) :: cnorm
-  real(dp), dimension(ippn1,ippn1) :: b
-  real(dp), dimension(iplh,iplh) :: h
+!   real(dp) :: xtol
+!   real(dp), dimension(ipnvars) :: bdelta,bndl,bndu,etav,fgrd, &
+!        gammv,glag,glaga,xa,xv
+!   real(dp), dimension(ipeqns) :: cm,conf
+!   real(dp), dimension(ippn1) :: bdl,bdu,gm
+!   real(dp), dimension(ipvmu) :: vmu
+!   real(dp), dimension(ipldel) :: delta
+!   real(dp), dimension(iplh) :: wa
+!   real(dp), dimension(ippn1,ipeqns) :: cnorm
+!   real(dp), dimension(ippn1,ippn1) :: b
+!   real(dp), dimension(iplh,iplh) :: h
 
-  real(dp) :: summ,errlg,errlm,errcom,errcon
+!   real(dp) :: summ,errlg,errlm,errcom,errcon
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !  Change the test being run by modifying the value of itest
-  !  (defaults to 1)
+!   !  Change the test being run by modifying the value of itest
+!   !  (defaults to 1)
 
-  itest = 1
+!   itest = 1
 
-  call inittest(nvar,neqns,nineqns,xv,ilower,iupper,bndl,bndu)
+!   call inittest(nvar,neqns,nineqns,xv,ilower,iupper,bndl,bndu)
 
-  epsvmc = 1.0D-8
+!   epsvmc = 1.0D-8
 
-  n = nvar
-  m = neqns+nineqns
-  meq = neqns
-  xtol = epsvmc
-  mode = 0
-  lb = ippn1
-  lcnorm = ippn1
-  ldel = ipldel
-  lh = iplh
-  lwa = iplh
-  liwa = ipliwa
+!   n = nvar
+!   m = neqns+nineqns
+!   meq = neqns
+!   xtol = epsvmc
+!   mode = 0
+!   lb = ippn1
+!   lcnorm = ippn1
+!   ldel = ipldel
+!   lh = iplh
+!   lwa = iplh
+!   liwa = ipliwa
 
-  write(*,*) 'Initial solution estimate:'
-  do ii = 1,n
-     write(*,*) 'x(',ii,') = ',xv(ii)
-  end do
-  write(*,*)
+!   write(*,*) 'Initial solution estimate:'
+!   do ii = 1,n
+!      write(*,*) 'x(',ii,') = ',xv(ii)
+!   end do
+!   write(*,*)
 
-  call vmcon(objfn,dobjfn,mode,n,m,meq,xv,objf,fgrd,conf,cnorm, &
-       lcnorm,b,lb,xtol,maxcal,ifail,nfev2,nviter,vlam,glag,vmu,cm,glaga, &
-       gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &
-       liwa,ilower,iupper,bndl,bndu)
+!   call vmcon(objfn,dobjfn,mode,n,m,meq,xv,objf,fgrd,conf,cnorm, &
+!        lcnorm,b,lb,xtol,maxcal,ifail,nfev2,nviter,vlam,glag,vmu,cm,glaga, &
+!        gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &
+!        liwa,ilower,iupper,bndl,bndu)
 
-  write(*,*) 'ifail = ', ifail, '(expected value = ',ifail_exp,')'
-  write(*,*) 'Number of function evaluations = ',nfun
-  write(*,*)
+!   write(*,*) 'ifail = ', ifail, '(expected value = ',ifail_exp,')'
+!   write(*,*) 'Number of function evaluations = ',nfun
+!   write(*,*)
 
-  write(*,*) 'Final solution estimate: calculated vs expected'
-  do ii = 1,n
-     write(*,*) 'x(',ii,') = ',xv(ii),x_exp(ii)
-  end do
-  write(*,*)
+!   write(*,*) 'Final solution estimate: calculated vs expected'
+!   do ii = 1,n
+!      write(*,*) 'x(',ii,') = ',xv(ii),x_exp(ii)
+!   end do
+!   write(*,*)
 
-  write(*,*) 'Final objective function value: calculated vs expected'
-  write(*,*) 'f(x) = ',objf,objf_exp
-  write(*,*)
+!   write(*,*) 'Final objective function value: calculated vs expected'
+!   write(*,*) 'f(x) = ',objf,objf_exp
+!   write(*,*)
 
-  write(*,*) 'Constraints evaluated at x: calculated vs expected'
-  do ii = 1,m
-     write(*,*) conf(ii), c_exp(ii)
-  end do
-  write(*,*)
+!   write(*,*) 'Constraints evaluated at x: calculated vs expected'
+!   do ii = 1,m
+!      write(*,*) conf(ii), c_exp(ii)
+!   end do
+!   write(*,*)
 
-  write(*,*) 'Lagrange multiplier estimates: calculated vs expected'
-  do ii = 1,m
-     write(*,*) vlam(ii), vlam_exp(ii)
-  end do
-  write(*,*)
+!   write(*,*) 'Lagrange multiplier estimates: calculated vs expected'
+!   do ii = 1,m
+!      write(*,*) vlam(ii), vlam_exp(ii)
+!   end do
+!   write(*,*)
 
-  write(*,*) 'Lagrangian gradient error: calculated vs expected'
-  errlg = 0.0D0
-  do ii = 1,n
-     summ = fgrd(ii)
-     do jj = 1,m
-        summ = summ - vlam(jj)*cnorm(ii,jj)
-     end do
-     errlg = errlg + abs(summ)
-  end do
-  write(*,*) errlg, errlg_exp
-  write(*,*)
+!   write(*,*) 'Lagrangian gradient error: calculated vs expected'
+!   errlg = 0.0D0
+!   do ii = 1,n
+!      summ = fgrd(ii)
+!      do jj = 1,m
+!         summ = summ - vlam(jj)*cnorm(ii,jj)
+!      end do
+!      errlg = errlg + abs(summ)
+!   end do
+!   write(*,*) errlg, errlg_exp
+!   write(*,*)
 
-  write(*,*) 'Lagrange multiplier error: calculated vs expected'
-  errlm = 0.0D0
-  do ii = 1,m
-     if ((ii <= meq).or.(vlam(ii) >= 0.0D0)) cycle
-     errlm = errlm + abs(vlam(ii))
-  end do
-  write(*,*) errlm, errlm_exp
-  write(*,*)
+!   write(*,*) 'Lagrange multiplier error: calculated vs expected'
+!   errlm = 0.0D0
+!   do ii = 1,m
+!      if ((ii <= meq).or.(vlam(ii) >= 0.0D0)) cycle
+!      errlm = errlm + abs(vlam(ii))
+!   end do
+!   write(*,*) errlm, errlm_exp
+!   write(*,*)
 
-  write(*,*) 'Complementarity error: calculated vs expected'
-  errcom = 0.0D0
-  do ii = 1,m
-     errcom = errcom + abs(vlam(ii)*conf(ii))
-  end do
-  write(*,*) errcom, errcom_exp
-  write(*,*)
+!   write(*,*) 'Complementarity error: calculated vs expected'
+!   errcom = 0.0D0
+!   do ii = 1,m
+!      errcom = errcom + abs(vlam(ii)*conf(ii))
+!   end do
+!   write(*,*) errcom, errcom_exp
+!   write(*,*)
 
-  write(*,*) 'Constraint error: calculated vs expected'
-  errcon = 0.0D0
-  do ii = 1,m
-     if ((ii > meq).and.(conf(ii) >= 0.0D0)) cycle
-     errcon = errcon + abs(conf(ii))
-  end do
-  write(*,*) errcon, errcon_exp
-  write(*,*)
+!   write(*,*) 'Constraint error: calculated vs expected'
+!   errcon = 0.0D0
+!   do ii = 1,m
+!      if ((ii > meq).and.(conf(ii) >= 0.0D0)) cycle
+!      errcon = errcon + abs(conf(ii))
+!   end do
+!   write(*,*) errcon, errcon_exp
+!   write(*,*)
 
-end program test
-
-#endif
+! end program test

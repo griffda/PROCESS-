@@ -1,280 +1,226 @@
 #  CMake file for PROCESS
-#  J. Morris
-#  UKAEA
+#  Author : J. Morris (UKAEA)
+#  Modified by : J. Maddock (UKAEA), K. Zarebski (UKAEA)
+#  Date : last modified 2020-08-18
 
 # Specify the minimum version for CMake
-cmake_minimum_required(VERSION 3.5)
-
-# Specify CMake root location
-include(${CMAKE_ROOT}/Modules/CMakeDetermineCompiler.cmake)
-include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
-
-# Set CMake stadard to be 11
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS  -std=c++11)
-
-# Setup GoogleTest options
-set(GTEST_LIBRARY $ENV{GTEST}/lib)
-set(GTEST_INCLUDE_DIR $ENV{GTEST}/include)
-include_directories(${GTEST_INCLUDE_DIR})
-set(GTEST_MAIN_LIBRARY $ENV{GTEST})
-
-# Choose gfortran as compiler
-set(CMAKE_Fortran_Compiler gfortran)
+# 3.12 is required due to use of list TRANSFORM commands
+cmake_minimum_required(VERSION 3.12)
 
 # Project's name
-project(PROCESS LANGUAGES Fortran CXX)
+project(PROCESS LANGUAGES Fortran)
 
-# enable Fortran
-if(${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
-  message(STATUS, "Intel ")
-elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL PGI)
-  message( FATAL_ERROR "Please unload pgi(module unload pgi) and load gfortran "
-          "(module load gfortran) " )
-elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
-  execute_process(COMMAND gfortran --version
-                  OUTPUT_VARIABLE GFORT_COMPILER_VERSION)
-  message(STATUS, ${GFORT_COMPILER_VERSION})
-else()
-  message( FATAL_ERROR "Unrecognized compiler. Please use  gfortran, ifort" )
-endif()
+execute_process (
+    COMMAND bash -c "git show -s --format=format:%s"
+    OUTPUT_VARIABLE COMMIT_MSG
+)
+execute_process (
+    COMMAND bash -c "echo \"$(git diff | wc -l)\"|tr '\n' ' '"
+    OUTPUT_VARIABLE GIT_DIFF
+)
+execute_process (
+    COMMAND bash -c "echo \"$(git describe --tags)\"|tr '\n' ' '"
+    OUTPUT_VARIABLE GIT_TAG
+)
+execute_process (
+    COMMAND bash -c "echo \"$(git rev-parse --abbrev-ref HEAD)\"|tr '\n' ' '"
+    OUTPUT_VARIABLE GIT_BRANCH
+)
+execute_process (
+  COMMAND bash -c "which gfortran | tr -d '[:space:]'"
+  OUTPUT_VARIABLE CMAKE_Fortran_COMPILER
+)
+# Questionable stuff to help the compiler handle preprocessor directives
+# TODO Review if these directives are necessary now
+# -cpp for preprocessor directives
+SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none")
+add_definitions(-DINSTALLDIR="${CMAKE_SOURCE_DIR}")
+add_definitions(-DCOMMSG="${COMMIT_MSG}")
+add_definitions(-Dtagno="${GIT_TAG}")
+add_definitions(-Dbranch_name="${GIT_BRANCH}")
+add_definitions(-Duntracked=${GIT_DIFF})
 
-# Setup file extension preferences
-set(FORT_EXT .F90)
-set(PF_EXT .pf)
+MESSAGE(STATUS "------- Configuration -------")
 
-# Define directories for source etc.
-set(FORT_SOURCE_DIR ${CMAKE_SOURCE_DIR}/source/fortran)
-set(CPP_SOURCE_DIR ${CMAKE_SOURCE_DIR}/source/cpp)
-set(DOC_DIR ${CMAKE_SOURCE_DIR}/documentation)
-set(DATA_DIR ${CMAKE_SOURCE_DIR}/data)
-set(UTILITIES_DIR ${CMAKE_SOURCE_DIR}/utilities)
-set(HTML_DIR ${DOC_DIR}/html)
+# ---------- Summarise Preprocessor Flags in Output ---------- #
+MESSAGE(STATUS "[Preprocessor Variables]: ")
+MESSAGE(STATUS "\tINSTALLDIR : ${CMAKE_SOURCE_DIR}")
+MESSAGE(STATUS "\tCOMMSG : ${COMMIT_MSG}")
+MESSAGE(STATUS "\tbranch_name : ${GIT_BRANCH}")
+MESSAGE(STATUS "\ttagno : ${GIT_TAG}")
+MESSAGE(STATUS "\tuntracked : ${GIT_DIFF}")
+# ------------------------------------------------------------ #
+
+# Define directories
+SET(FORTRAN_SOURCE_DIR ${CMAKE_SOURCE_DIR}/source/fortran)
+# Set PLASMOD source code directory
+SET(PLASMOD_SOURCE_DIR ${CMAKE_SOURCE_DIR}/lib/PLASMOD)
+# Set the REFPROP source code directory
+SET(REFPROP_SOURCE_DIR ${CMAKE_SOURCE_DIR}/lib/REFPROP)
+# Set the Python source directory for exporting interface extension modules
+SET(PYTHON_SOURCE_DIR ${CMAKE_SOURCE_DIR}/process)
+# Set the documentation location
+SET(DOC_DIR ${CMAKE_SOURCE_DIR}/documentation)
+# Set the utilities directory location
+SET(UTILITIES_DIR ${CMAKE_SOURCE_DIR}/utilities)
+# Set library directory
 set(PROCESS_LIB_DIR ${CMAKE_SOURCE_DIR}/lib)
-set(TEST_DIR ${CMAKE_SOURCE_DIR}/unit_tests)
-set(GTEST_DIR ${CMAKE_SOURCE_DIR}/unit_tests)
-set(OBJ_DIR ${CMAKE_BINARY_DIR}/CMakeFiles/process.exe.dir/source/fortran)
-set(BLD_DIR ${CMAKE_BINARY_DIR})
-set(CMAKE_INSTALL_RPATH ${CMAKE_BINARY_DIR})
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-include_directories(${TEST_DIR})
 
 # Check operating systems and set OS specific options
 if(CMAKE_HOST_WIN32)  # For windows system
-   message(STATUS, "Windows ")
+   MESSAGE(STATUS "[Operating System]: Windows ")
 elseif(CMAKE_HOST_APPLE)  # For Apple OS X system
-   message(STATUS, "Apple OS X ")
-   message(STATUS,${CMAKE_BINARY_DIR})
-   set(MOVE_FILE mv)
-   set(COPY_FILE cp -p)
-   set(FORTRAN gfortran)
-   set(CMAKE_Fortran_COMPILER /usr/local/bin/gfortran)
-   set(CMAKE_CALC_ENGINE libPROCESS_calc_engine.dylib)
+   MESSAGE(STATUS "[Operating System]: macOS ")
+   MESSAGE(STATUS "[Binary Location]: ${CMAKE_BINARY_DIR}")
+   MESSAGE(STATUS "[Fortran Compiler]: ${CMAKE_Fortran_COMPILER}")
+   SET(MOVE_FILE mv)
+   SET(COPY_FILE cp -p)
+   SET(FORTRAN gfortran)
+   SET(CMAKE_CALC_ENGINE libPROCESS_calc_engine.dylib)
 elseif(CMAKE_HOST_UNIX)  # For unix/ linux system
-   message(STATUS, "Linux ")
-   message(STATUS,${CMAKE_BINARY_DIR})
-   set(MOVE_FILE mv)
-   set(COPY_FILE cp -p)
-   set(FORTRAN gfortran)
-   set(CMAKE_Fortran_COMPILER /usr/bin/gfortran)
-   set(CMAKE_CALC_ENGINE libPROCESS_calc_engine.so)
+   MESSAGE(STATUS "[Operating System]: Linux ")
+   MESSAGE(STATUS "[Binary Location]: ${CMAKE_BINARY_DIR}")
+   MESSAGE(STATUS "[Fortran Compiler]: ${CMAKE_Fortran_COMPILER}")
+   SET(MOVE_FILE mv)
+   SET(COPY_FILE cp -p)
+   SET(FORTRAN gfortran)
+   SET(CMAKE_CALC_ENGINE libPROCESS_calc_engine.so)
 endif()
 
-# Command line options
-# Turn debug on/off with option -Ddebug=ON
-option(debug "debug" OFF)
+MESSAGE(STATUS "-----------------------------")
 
-# Turn debug on/off with option -Ddll=ON
-option(dll "dll" ON)
+# Define files to compile
+file(GLOB FORTRAN_LIB_SOURCES ${FORTRAN_SOURCE_DIR}/*.f90 ${FORTRAN_SOURCE_DIR}/*.f)
+list(APPEND FORTRAN_LIB_SOURCES ${PLASMOD_SOURCE_DIR}/e3m.f)
+list(APPEND FORTRAN_LIB_SOURCES ${PLASMOD_SOURCE_DIR}/equil.f90)
+list(APPEND FORTRAN_LIB_SOURCES ${PLASMOD_SOURCE_DIR}/grad_func.f90)
+list(APPEND FORTRAN_LIB_SOURCES ${PLASMOD_SOURCE_DIR}/structs.f90)
+list(APPEND FORTRAN_LIB_SOURCES ${PLASMOD_SOURCE_DIR}/transport_solver.f90)
+list(APPEND FORTRAN_LIB_SOURCES ${PLASMOD_SOURCE_DIR}/trmodel.f90)
+list(APPEND FORTRAN_LIB_SOURCES ${REFPROP_SOURCE_DIR}/refprop.f)
+list(APPEND FORTRAN_LIB_SOURCES ${REFPROP_SOURCE_DIR}/refprop_interface.f90)
 
-# Setup C and C++ compilers
-find_program(CMAKE_C_COMPILER NAMES $ENV{CC} gcc PATHS ENV PATH NO_DEFAULT_PATH)
-find_program(CMAKE_CXX_COMPILER NAMES $ENV{CXX} g++ PATHS ENV PATH NO_DEFAULT_PATH)
+# Define interface source filenames to wrap
+list(APPEND FORTRAN_INTERFACE_SOURCE_NAMES global_variables.f90
+  init_module.f90
+  main_module.f90
+  div_kal_vars.f90
+  kallenbach_module.f90
+  numerics.f90
+  scan.f90
+  final_module.f90
+  error_handling.f90
+  availability.f90
+  cost_variables.f90
+  divertor_variables.f90
+  fwbs_variables.f90
+  physics.f90
+  physics_functions.f90
+  physics_variables.f90
+  tfcoil_variables.f90
+  times_variables.f90
+  ife_variables.f90
+  ife.f90
+  costs.f90
+  heat_transport_variables.f90
+  buildings_variables.f90
+  maths_library.f90
+  )
+# Create the interface source paths from this
+list(TRANSFORM FORTRAN_INTERFACE_SOURCE_NAMES PREPEND ${FORTRAN_SOURCE_DIR}/ OUTPUT_VARIABLE FORTRAN_INTERFACE_SOURCE_PATHS)
+# Define the f90wrap filenames
+list(TRANSFORM FORTRAN_INTERFACE_SOURCE_NAMES PREPEND f90wrap_ OUTPUT_VARIABLE FORTRAN_INTERFACE_F90WRAP_NAMES)
+# Create the f90wrap source paths from this
+list(TRANSFORM FORTRAN_INTERFACE_F90WRAP_NAMES PREPEND ${CMAKE_BINARY_DIR}/ OUTPUT_VARIABLE FORTRAN_INTERFACE_F90WRAP_PATHS)
 
-# Set CMake compiler flags
-SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath -Wl,/usr/local/lib64")
+# SET names and paths for the produced Fortran interface modules
+# These are the names of the products of f90wrap and f2py
+SET(FORTRAN_INTERFACE_NAME "fortran")
+SET(FORTRAN_INTERFACE_NAME_UNDER _${FORTRAN_INTERFACE_NAME})
+# The "Pythonic" Python module to import as the Fortran interface 
+# (e.g. fortran.py), created by f90wrap
+SET(FORTRAN_INTERFACE_MODULE ${CMAKE_BINARY_DIR}/${FORTRAN_INTERFACE_NAME}.py)
+# The underlying un-Pythonic Python module relied on by fortran.py 
+# (e.g. _fortran.py), created by f2py
+SET(FORTRAN_INTERFACE_MODULE_UNDER ${FORTRAN_SOURCE_DIR}/${FORTRAN_INTERFACE_NAME_UNDER}.py)
 
-# CMake compiler setup
-if ("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "GNU")
-  # using GCC
-  message(STATUS, "GNU GFORTRAN ")
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-  # using Intel C++
-  message(STATUS, "Intel ")
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-  # using Visual Studio C++
-  message(STATUS, "MSVC ")
-endif()
+# Build targets
+# Stage 1: Compile Fortran sources to a shared library
+# (libprocess_lib.so on Linux)
+# Make sure the library is able to link to dependencies that are colocated.
+# (e.g. set rpath=$ORIGIN)
+add_library(process_lib SHARED ${FORTRAN_LIB_SOURCES})
+SET_target_properties(process_lib PROPERTIES LINKER_LANGUAGE Fortran)
+SET_target_properties(process_lib PROPERTIES BUILD_RPATH $ORIGIN)
 
-# Set default fortran compiler flags
-if(${dll} MATCHES ON)
-  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -g -fcheck=bounds -fbacktrace")
-elseif(${dll} MATCHES OFF)
-  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -g -pg -fcheck=bounds -fbacktrace")
-endif()
+# Stage 2: Run f90wrap
+add_custom_target(f90wrap DEPENDS ${FORTRAN_INTERFACE_F90WRAP_PATHS})
 
-# Set custom compiler flags for particular files
-message("\nFlag configuration for files")
-file(GLOB FORTRAN_FILES ${FORT_SOURCE_DIR}/*.f90 ${PROCESS_LIB_DIR}/PLASMOD/*.f)
-foreach(file ${FORTRAN_FILES})
-  if(${file} MATCHES "fson_library.f90")
-    message("-- Removed -Wconversion flag for -> " ${file})
-    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wunused-dummy-argument -Wunused -fcheck=bounds -fbacktrace")
-  elseif(${file} MATCHES "maths_library.f90")
-    message("-- Removed -Wunused-dummy-argument flag for --> " ${file})
-    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wconversion -Wunused -fcheck=bounds -fbacktrace")
-  elseif(${file} MATCHES "superconductors.f90")
-    message("-- Removed -Wunused-dummy-argument flag for --> " ${file})
-    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wconversion -Wunused -fcheck=bounds -fbacktrace")
-  elseif(${file} MATCHES "fispact.f90")
-    message("-- Use legacy flag for --> " ${file})
-    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-std=legacy -fcheck=bounds -fbacktrace")
-  elseif(${file} MATCHES "TorGA_curgap.f90")
-    message("-- Use -fcheck=bounds -fbacktrace flags for --> " ${file})
-    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-fcheck=bounds -fbacktrace -Wno-argument-mismatch")
-  elseif(${file} MATCHES "e3m.f")
-    message("-- Use -fcheck=bounds -fbacktrace -std=legacy flags for --> " ${file})
-    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-fcheck=bounds -fbacktrace -Wno-argument-mismatch -std=legacy")
-  else()
-    # If debug mode chosen on command line turn on -Wall and -Wextra
-    if(${debug} MATCHES ON)
-      set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wall -Wextra -Wconversion -Wunused-dummy-argument -fcheck=bounds -fbacktrace -Wno-c-binding-type -Wno-unused-function")
-    else()
-      set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wconversion -Wunused-dummy-argument -fcheck=bounds -fbacktrace -Wno-c-binding-type -Wno-unused-function")
-    endif()
-  endif()
-endforeach()
-message("-- COMPILE_FLAGS for all other fortran files = -Wconversion -Wunused-dummy-argument -fcheck=bounds -fbacktrace -Wno-c-binding-type -Wno-unused-function")
+# Run f90wrap for the above f90wrap target
+# This wraps the interface Fortran .f90 files to generate f90wrap_*.f90 files
+# It also creates the Fortran interface Python module (fortran.py)
+# TODO Add variable for the kind map
+add_custom_command(OUTPUT ${FORTRAN_INTERFACE_F90WRAP_PATHS}
+  COMMAND f90wrap -k ${FORTRAN_SOURCE_DIR}/kind_map ${FORTRAN_INTERFACE_SOURCE_PATHS} -m ${FORTRAN_INTERFACE_NAME})
 
-message("\n")
-message("Fortran compiler used in this build will be -> ${CMAKE_Fortran_COMPILER_ID}")  # Must be after project(project_name)
-message("Fortran Flags are -> ${CMAKE_Fortran_FLAGS}")  # Must be after project(project_name)
+# Stage 3: Run f2py
+# Builds every time to make sure the libprocess_lib.so file is up-to-date
+# TODO Convert .so to non-platform specific
+add_custom_target(f2py ALL
+  DEPENDS ${FORTRAN_INTERFACE_NAME_UNDER}.so)
 
-# The version number.
-set (process_VERSION_MAJOR 1)
-set (process_VERSION_MINOR 0)
+add_custom_command(OUTPUT ${FORTRAN_INTERFACE_NAME_UNDER}.so
+  COMMAND echo \"run f2py\"\; LDFLAGS=-Wl,-rpath=\\$$ORIGIN/.lib f2py -c -m ${FORTRAN_INTERFACE_NAME_UNDER} -I${CMAKE_BINARY_DIR} -L${CMAKE_BINARY_DIR} -lprocess_lib ${FORTRAN_INTERFACE_F90WRAP_PATHS})
+# LDFLAGS=-Wl,-rpath=$ORIGIN/.lib embeds the RPATH (run path, list of directories
+# to search for shared library dependencies) into the shared object library
+# ${FORTRAN_INTERFACE_NAME_UNDER}.so. This allows the dynamic linker to find
+# libprocess_lib.so when loading ${FORTRAN_INTERFACE_NAME_UNDER}.so. This 
+# in turn allows the package to be run from any location as long as the
+# depdendencies that are not provided by the system are included in the .lib
+# directory. Note that the echo at the start of this command works around the
+# escaping of variables that cmake performs, otherwise the LDFLAGS would be
+# treated like a path to an executable.
 
-# Set the output folder where your program will be created
-set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+# Depends on process_lib, because we're linking to the libprocess_lib.so shared
+# library with the -lprocess_lib option
+# Depends on f90wrap because f90wrap_*.f90 source files are used, which are
+# generated by f90wrap
+add_dependencies(f2py process_lib f90wrap)
 
-# Set library path
-set(CMAKE_LIBRARY_PATH /usr/lib)
-
-# Setup for Process-customised FORD installation
-# Check that pip3 is installed in order to install Ford
-find_program(PIP3 NAMES pip3 PATHS ENV PATH NO_DEFAULT_PATH)
-if(NOT PIP3)
-  message(FATAL_ERROR "Can't find pip3. Please install pip3 and retry.")
-endif()
-
-# Set clone and install Ford commands if the ford folder doesn't exist
-if(NOT EXISTS ${PROCESS_LIB_DIR}/ford)
-  set(CLONE_FORD git clone https://github.com/jonMaddockUkaea/ford.git ${PROCESS_LIB_DIR}/ford)
-  set(INSTALL_FORD pip3 install ${PROCESS_LIB_DIR}/ford/ --user)
-else()
-  set(CLONE_FORD echo "Ford already cloned, skipping...")
-  set(INSTALL_FORD echo "Ford already installed, skipping...")
-endif()
-
-# Set build targets
-
-# Create the PROCESS developer guide PDF from LaTeX
-add_custom_target(developerguide
-  COMMAND pwd
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/archive/tex/developerguide > ${DOC_DIR}/archive/pdf/devguide.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/archive/pdf/devguide.log"
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/archive/tex/developerguide > ${DOC_DIR}/archive/pdf/devguide.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/archive/pdf/devguide.log"
-  COMMAND ${MOVE_FILE} developerguide.pdf developerguide.log archive/pdf
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/developerguide.aux
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/developerguide.lof
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/developerguide.lot
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/developerguide.toc
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/developerguide.out
-  DEPENDS ${DOC_DIR}/archive/tex/developerguide.tex
-  WORKING_DIRECTORY ${DOC_DIR}
+# Need to change the _fortran import path in fortran.py
+# Uses the f90wrap_interface_import_modifier.py script
+# TODO Might want to find python interpreter first
+# TODO Remove hardcoding of python script: SET as variable above
+add_custom_target(modify_so_python_import_path ALL
+  COMMAND python ${CMAKE_SOURCE_DIR}/scripts/f90wrap_interface_import_modifier.py ${FORTRAN_INTERFACE_MODULE}
 )
 
-# Create the PROCESS utilities guide PDF from LaTeX
-add_custom_target(utilitiesdoc
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/archive/tex/utilitiesdoc > ${DOC_DIR}/archive/pdf/utdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/archive/pdf/utdoc.log"
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/archive/tex/utilitiesdoc > ${DOC_DIR}/archive/pdf/utdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/archive/pdf/utdoc.log"
-  COMMAND ${MOVE_FILE} utilitiesdoc.pdf utilitiesdoc.log archive/pdf
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/utilitiesdoc.aux
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/utilitiesdoc.lof
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/utilitiesdoc.lot
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/utilitiesdoc.toc
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/utilitiesdoc.out
-  DEPENDS ${DOC_DIR}/archive/tex/utilitiesdoc.tex
-  WORKING_DIRECTORY ${DOC_DIR}
+add_dependencies(modify_so_python_import_path f90wrap)
+
+# Different OS distrubtions may have different gfortran libaries provided
+# by the system, so find gfortran so that it can be distributed and linked
+# to ensure consistency.
+# TODO: This isn't a very portable way to find gfortran but just searching for
+# gfortran fails.
+find_library(GFORTRAN_LIB NAMES gfortran libgfortran.so libgfortran.so.5 REQUIRED)
+
+# Make sure the .lib directory exists in the Python package source
+file(MAKE_DIRECTORY ${PYTHON_SOURCE_DIR}/.lib/)
+
+# Export the required modules to the Python package
+# These are _fortran.cpython....so (f2py) and fortran.py (f90wrap)
+# TODO Not sure that the Python package source dir is the right place for these
+# Perhaps /bin?
+# TODO Should only require one "ALL"?
+add_custom_target(export_modules ALL
+  COMMAND ${CMAKE_COMMAND} -E copy ${FORTRAN_INTERFACE_MODULE} ${PYTHON_SOURCE_DIR}
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/${FORTRAN_INTERFACE_NAME_UNDER}*.so ${PYTHON_SOURCE_DIR}
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/libprocess_lib.so ${PYTHON_SOURCE_DIR}/.lib/
+  COMMAND ${CMAKE_COMMAND} -E copy ${GFORTRAN_LIB} ${PYTHON_SOURCE_DIR}/.lib/
 )
 
-# Create the PROCESS optimisation solver guide PDF from LaTeX
-add_custom_target(optsolverdoc
-  COMMAND ${COPY_FILE} archive/tex/optsolverdoc.bib .
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/archive/tex/optsolverdoc > ${DOC_DIR}/archive/pdf/optdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/archive/pdf/optdoc.log"
-  COMMAND bibtex optsolverdoc
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/archive/tex/optsolverdoc > ${DOC_DIR}/archive/pdf/optdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/archive/pdf/optdoc.log"
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/archive/tex/optsolverdoc > ${DOC_DIR}/archive/pdf/optdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/archive/pdf/optdoc.log"
-  COMMAND ${MOVE_FILE} optsolverdoc.pdf optsolverdoc.log archive/pdf
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.aux
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.lof
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.log
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.lot
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.toc
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.out
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.bbl
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.blg
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.bib
-  DEPENDS ${DOC_DIR}/archive/tex/optsolverdoc.tex
-  DEPENDS ${DOC_DIR}/archive/tex/optsolverdoc.bib
-  WORKING_DIRECTORY ${DOC_DIR}
-)
-
-# Create the PROCESS TF coil documentation PDF from LaTeX
-add_custom_target(tfdoc
-  COMMAND ${COPY_FILE} archive/tex/tf_refs.bib .
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/archive/tex/tfdoc > ${DOC_DIR}/archive/pdf/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/archive/pdf/tfdoc.log"
-  COMMAND bibtex tfdoc
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/archive/tex/tfdoc > ${DOC_DIR}/archive/pdf/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/archive/pdf/tfdoc.log"
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/archive/tex/tfdoc > ${DOC_DIR}/archive/pdf/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/archive/pdf/tfdoc.log"
-  COMMAND ${MOVE_FILE} tfdoc.pdf tfdoc.log archive/pdf
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.aux
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.lof
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.log
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.lot
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.toc
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.out
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.bbl
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.blg
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.fdb_latexmk
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.fls
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tf_refs.bib
-  DEPENDS ${DOC_DIR}/archive/tex/tfdoc.tex
-  DEPENDS ${DOC_DIR}/archive/tex/tf_refs.bib
-  WORKING_DIRECTORY ${DOC_DIR}
-)
-
-# Create test files
-add_custom_target(test-builds
-  COMMAND make tests
-  COMMENT "building test files"
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-)
-
-# Cleans bin directory
-add_custom_target(cleandoc
-  COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_BINARY_DIR}/*
-)
-
-# ?
-set_property(DIRECTORY PROPERTY ADDITIONAL_MAKE_CLEAN_FILES
-  ${FORT_SOURCE_DIR}/root.dir
-  ${FORT_SOURCE_DIR}/tag.num
-  ${FORT_SOURCE_DIR}/untracked.info
-  ${UTILITIES_DIR}/process_io_lib/process_dicts.py
-  ${UTILITIES_DIR}/processgui/dicts/gui_dicts.py
-)
+# Only run once f2py has finished
+add_dependencies(export_modules modify_so_python_import_path f2py)
 
 # Create the Python dictionaries from FORTRAN source using FORD
 add_custom_target(dicts
@@ -283,131 +229,7 @@ add_custom_target(dicts
   # Add the utilities dir to the PYTHONPATH, so FORD can run create_dicts.py
   # Then run FORD on a "fast" md file, which doesn't make graphs or a search index
   # These are wanted for making docs, but not when making dicts quickly
-  COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=${UTILITIES_DIR}" python3 lib/ford/ford.py ${DOC_DIR}/ford/index_fast.md
+  COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=${UTILITIES_DIR}" ford ${DOC_DIR}/ford/index_fast.md
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  DEPENDS ${CMAKE_SOURCE_DIR}/root.dir
   VERBATIM
-)
-
-# Clone and install Ford, if required
-execute_process(COMMAND ${CLONE_FORD})
-execute_process(COMMAND ${INSTALL_FORD})
-
-# Get Git log information to put latest commit message into executable
-execute_process(
- COMMAND git log -1 --format=oneline OUTPUT_VARIABLE COM_MSG
- WORKING_DIRECTORY ${FORT_SOURCE_DIR}
- OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-string(SUBSTRING ${COM_MSG}, 41, 70, COM_MSG_PR)
-file(WRITE ${FORT_SOURCE_DIR}/com.msg "  character(len=*), parameter :: COMMSG = \"" ${COM_MSG_PR} "\"")
-
-# Get Git log information to put version number into executable
-execute_process(
- COMMAND git describe OUTPUT_VARIABLE TAG_NO
- WORKING_DIRECTORY ${FORT_SOURCE_DIR}
- OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-file(WRITE ${FORT_SOURCE_DIR}/tag.num "  character(len=*), parameter :: tagno = \"" ${TAG_NO} "\"")
-
-# Get git branch name
-execute_process(
- COMMAND git rev-parse --abbrev-ref HEAD OUTPUT_VARIABLE GIT_BRANCH
- WORKING_DIRECTORY ${FORT_SOURCE_DIR}
- OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-file(WRITE ${FORT_SOURCE_DIR}/branch.name "  character(len=*), parameter :: branch_name = \"" ${GIT_BRANCH} "\"")
-
-# Check Git status for untracked changes and put info into executable
-execute_process(
- COMMAND git diff OUTPUT_VARIABLE UNTR_INFO
- WORKING_DIRECTORY ${FORT_SOURCE_DIR}
- OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-string(LENGTH "${UNTR_INFO}" UNTR_LN)  # count no of words
-file(WRITE ${FORT_SOURCE_DIR}/untracked.info "  integer::untracked = " ${UNTR_LN} )
-
-# Set the REFPROP source code directory
-set(REFPROP_SOURCE_DIR ${CMAKE_SOURCE_DIR}/lib/REFPROP)
-
-# Create files for FORTRAN root and install directories
-file(WRITE ${FORT_SOURCE_DIR}/root.dir "      character(len=*), parameter :: ROOTDIR = \"" ${FORT_SOURCE_DIR} "\"\n")
-file(APPEND ${FORT_SOURCE_DIR}/root.dir "      character(len=*), parameter :: INSTALLDIR = \"" ${CMAKE_SOURCE_DIR} "\"")
-
-file(WRITE ${REFPROP_SOURCE_DIR}/root.dir "      character(len=*), parameter :: ROOTDIR = \"" ${FORT_SOURCE_DIR} "\"\n")
-file(APPEND ${REFPROP_SOURCE_DIR}/root.dir "      character(len=*), parameter :: INSTALLDIR = \"" ${CMAKE_SOURCE_DIR} "\"")
-
-file(WRITE ${UTILITIES_DIR}/rootdir.py "ROOTDIR = '" ${FORT_SOURCE_DIR} "'")
-file(WRITE ${CMAKE_SOURCE_DIR}/test_suite/bindir.py "BINDIR = '" ${CMAKE_BINARY_DIR} "'")
-file(COPY ${FORT_SOURCE_DIR}/root.dir DESTINATION ${CMAKE_SOURCE_DIR})
-
-# Set output path
-set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
-
-# Set PLASMOD source code directory
-set(PLSMOD_SOURCE_DIR ${CMAKE_SOURCE_DIR}/lib/PLASMOD)
-
-# The following folders will be included
-file(GLOB all_sources ${FORT_SOURCE_DIR}/*.f90 ${FORT_SOURCE_DIR}/*.f)
-list(APPEND all_sources ${PLSMOD_SOURCE_DIR}/e3m.f)
-list(APPEND all_sources ${PLSMOD_SOURCE_DIR}/equil.f90)
-list(APPEND all_sources ${PLSMOD_SOURCE_DIR}/grad_func.f90)
-list(APPEND all_sources ${PLSMOD_SOURCE_DIR}/structs.f90)
-list(APPEND all_sources ${PLSMOD_SOURCE_DIR}/transport_solver.f90)
-list(APPEND all_sources ${PLSMOD_SOURCE_DIR}/trmodel.f90)
-list(APPEND all_sources ${REFPROP_SOURCE_DIR}/refprop.f)
-list(APPEND all_sources ${REFPROP_SOURCE_DIR}/refprop_interface.f90)
-set(autodoc_sources ${all_sources})
-
-# Remove autodoc.f90 from compilation list
-list(REMOVE_ITEM all_sources ${FORT_SOURCE_DIR}/autodoc.f90)
-
-# Option to create DLL or single executable
-if(${dll} MATCHES ON)
-
-  # Remove process.f90 from compilation list
-  list(REMOVE_ITEM all_sources ${FORT_SOURCE_DIR}/process.f90)
-
-  # Create dynamic library/shared object
-  add_library(PROCESS_calc_engine SHARED ${all_sources})
-  set_target_properties(PROCESS_calc_engine PROPERTIES LINKER_LANGUAGE Fortran)
-
-  # add the executable source file process.f90
-  add_executable(process.exe ${FORT_SOURCE_DIR}/process.f90)
-  set_target_properties(process.exe PROPERTIES LINKER_LANGUAGE Fortran)
-
-  # Link the dynamic library/shared object with the executable
-  target_link_libraries(process.exe PROCESS_calc_engine)
-
-  # Link the lapack library for the testing software
-  target_link_libraries(process.exe lapack)
-
-  # Setup for Google test software (CPP executable)
-  if(DEFINED ENV{GTEST})
-    add_executable(process_GTest.exe ${GTEST_DIR}/main_test.cpp)
-    target_link_libraries(process_GTest.exe PROCESS_calc_engine)
-    target_link_libraries(process_GTest.exe lapack)
-    target_link_libraries(process_GTest.exe $ENV{GTEST}/lib/libgtest.a pthread)
-  endif()
-
-elseif(${dll} MATCHES OFF)
-
-  add_executable(process.exe ${all_sources})
-
-endif()
-
-# target_compile_features(PROCESS_Testing PRIVATE cxx_std_17)
-install(TARGETS process.exe DESTINATION ${CMAKE_SOURCE_DIR})
-
-if(${dll} MATCHES ON)
-  set(MOVE_DLL copy ${CMAKE_BINARY_DIR}/${CMAKE_CALC_ENGINE} ${CMAKE_SOURCE_DIR})
-elseif(${dll} MATCHES OFF)
-  set(MOVE_DLL echo "-- No dll to copy")
-endif()
-
-# Post build commands for copying executable and dynamic library to source dir
-add_custom_command(TARGET process.exe
-  POST_BUILD
-  # COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/process.exe ${CMAKE_SOURCE_DIR}
-  COMMAND ${CMAKE_COMMAND} -E ${MOVE_DLL}
 )

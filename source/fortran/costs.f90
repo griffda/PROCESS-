@@ -11,23 +11,19 @@ module costs_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  use iso_c_binding
   implicit none
 
-  private
-  public :: costs
-
   !  Various cost account values (M$)
-  real(dp), public, bind(C) :: c228, c229, c23, c25, c26, cindrt, ccont
+  real(dp) :: c228, c229, c23, c25, c26, cindrt, ccont
 
   !  Account 226 - Heat transport system 
-  real(dp), protected, public, bind(C) :: c226, c2261, c2262, c2263
+  real(dp) :: c226, c2261, c2262, c2263
 
   !  Account 227 - Fuel handling
-  real(dp), public, bind(C) :: c227, c2271, c2272, c2273, c2274
+  real(dp) :: c227, c2271, c2272, c2273, c2274
 
   !  Account 24 - electrical plant equipment
-  real(dp), public, bind(C) :: c24, c241, c242, c243, c244, c245
+  real(dp) :: c24, c241, c242, c243, c244, c245
 
 
   real(dp) :: &
@@ -2139,7 +2135,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2261() bind(C, name="c_acc2261")
+  subroutine acc2261()
     !! Account 2261 : Reactor cooling system
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2184,7 +2180,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2262() bind(C, name="c_acc2262")
+  subroutine acc2262()
     !! Account 2262 : Auxiliary component cooling
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2227,7 +2223,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2263() bind(C, name="c_acc2263")
+  subroutine acc2263()
     !! Account 2263 : Cryogenic system
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2281,7 +2277,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2271() bind(C, name="c_acc2271")
+  subroutine acc2271()
     !! Account 2271 : Fuelling system
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2307,7 +2303,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2272() bind(C, name="c_acc2272")
+  subroutine acc2272()
     !! Account 2272 : Fuel processing and purification
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2348,7 +2344,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2273() bind(C, name="c_acc2273")
+  subroutine acc2273()
     !! Account 2273 : Atmospheric recovery systems
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2385,7 +2381,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2274() bind(C, name="c_acc2274")
+  subroutine acc2274()
     !! Account 2274 : Nuclear building ventilation
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2408,7 +2404,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc228() bind(C, name="c_acc228")
+  subroutine acc228()
     !! Account 228 : Instrumentation and control
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
@@ -2430,7 +2426,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc229() bind(C, name="c_acc229")
+  subroutine acc229()
     !! Account 229 : Maintenance equipment
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
@@ -2450,7 +2446,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc23() bind(C, name="c_acc23")
+  subroutine acc23()
     !! Account 23 : Turbine plant equipment
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
@@ -2479,7 +2475,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc24() bind(C, name="costs_1990_acc24")
+  subroutine acc24()
     !! Account 24 : Electric plant equipment
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
@@ -2498,7 +2494,7 @@ contains
  
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc241() bind(C, name="c_acc241")
+  subroutine acc241()
     !! Account 241 : Electric plant equipment - switchyard
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2529,7 +2525,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc242() bind(C, name="c_acc242")
+  subroutine acc242()
     !! Account 242 : Electric plant equipment - Transformers
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2565,7 +2561,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc243() bind(C, name="c_acc243")
+  subroutine acc243()
     !! Account 243 : Electric plant equipment - Low voltage
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2598,7 +2594,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc244() bind(C, name="c_acc244")
+  subroutine acc244()
     !! Account 244 : Electric plant equipment - Diesel generators
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2629,7 +2625,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc245() bind(C, name="c_acc245")
+  subroutine acc245()
     !! Account 245 : Electric plant equipment - Aux facility power
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2660,7 +2656,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc25() bind(C, name="c_acc25")
+  subroutine acc25()
     !! Account 25 : Miscellaneous plant equipment
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
@@ -2693,7 +2689,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc26() bind(C, name="c_acc26")
+  subroutine acc26()
     !! Account 26 : Heat rejection system
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
@@ -2740,7 +2736,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc9() bind(C, name="c_acc9")
+  subroutine acc9()
     !! Account 9 : Indirect cost and contingency allowances
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
