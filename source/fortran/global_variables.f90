@@ -2846,7 +2846,7 @@ module tfcoil_variables
   !!
   !! - =0 copper
   !! - =1 superconductor
-  !! - =2 Cryogenic aluminium
+  !! - =2 Aluminium
 
   integer :: i_tf_shape = 0
   !! Switch for TF coil toroidal shape:

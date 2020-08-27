@@ -403,12 +403,12 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
     if ( i_tf_turns_integer == 0 ) then 
         ! Non-ingeger number of turns
         call tf_averaged_turn_geom( cpttf, jwptf, thwcndut, thicndut, i_tf_sc_mat, & ! Inputs
-                                    acstf, acndttf, insulation_area, n_tf_turn ) ! Outputs              ! Outputs
+                                    acstf, acndttf, insulation_area, n_tf_turn )     ! Outputs
     else 
         ! Integer number of turns
         call tf_integer_turn_geom( n_layer, n_pancake, thwcndut, thicndut, & ! Inputs
-                                   acstf, acndttf, insulation_area, & ! Outputs
-                                   cpttf, n_tf_turn )                   ! Outputs
+                                   acstf, acndttf, insulation_area, &        ! Outputs
+                                   cpttf, n_tf_turn )                        ! Outputs
     end if 
     
     
@@ -1042,7 +1042,7 @@ subroutine tf_res_heating()
     !          Better structural properties at high temperature and radiation damage resilience
     if ( i_tf_sup == 0 ) rhocp = (frhocp/0.92D0) * ( 1.72D0 + 0.0039D0*(tcpav-273.15D0) ) * 1.0D-8
 
-    ! Cryogenic aluminium
+    ! Aluminium
     if ( i_tf_sup == 2 ) rhocp = frhocp * ( 2.00016D-14*tcpav**3 - 6.75384D-13*tcpav**2 + 8.89159D-12*tcpav )
 
     ! Calculations dedicated for configurations with CP
@@ -1954,7 +1954,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             poisson_p(n_tf_bucking + ii) = poisson_steel
             poisson_z(n_tf_bucking + ii) = poisson_steel
         
-        ! Cryogenic aluminium properties
+        ! Aluminium properties
         else 
             poisson_p(n_tf_bucking + ii) = poisson_al
             poisson_z(n_tf_bucking + ii) = poisson_al
@@ -3488,7 +3488,7 @@ subroutine outtf(outfile, peaktfflag)
         case (1)
             call ocmmnt(outfile,'  -> Superconducting coil (SC)')
         case (2)
-            call ocmmnt(outfile,'  -> Reisitive coil : Helium cooled cryogenic aluminium')
+            call ocmmnt(outfile,'  -> Reisitive coil : Helium cooled aluminium')
     end select
 
     if ( i_tf_sup == 1 ) then

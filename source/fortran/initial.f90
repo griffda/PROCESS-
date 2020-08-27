@@ -1063,7 +1063,7 @@ subroutine check
         else if ( i_tf_sup == 1 ) then 
             call report_error(233)
 
-        ! Helium cooled cryogenic aluminium magnets initalisation / checks
+        ! Aluminium magnets initalisation / checks
         ! Initialize the CP conductor temperature to cryogenic temperature for cryo-al magnets (20 K)
         else  if ( i_tf_sup == 2 ) then
 

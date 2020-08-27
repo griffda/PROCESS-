@@ -305,7 +305,7 @@ module tfcoil_module
     if ( i_tf_sup ==  0 ) then
        conductor_th_cond = k_copper
     
-    ! Cryogenic aluminium 
+    ! Aluminium 
     else if ( i_tf_sup ==  2 ) then
 
        ! Fiting range verification
