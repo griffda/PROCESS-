@@ -4346,11 +4346,11 @@ module cost_variables
   !! - =2 use $ 1980 STEP model (NOT RECOMMENDED - Under Development)
 
   integer :: i_cp_lifetime = 0
-  !! Switch for the centrepost liftime constraint 
-  !!  0 : The CP full power yearlifelime is set by the user
-  !!  1 : The CP lifelime is equal to the divertor one
-  !!  2 : The CP lifetime is equal to the breeding blankets one
-  !!  3 : The CP lifetime is equal to the plant one
+  !! Switch for the centrepost lifetime constraint 
+  !!  0 : The CP full power year lifetime is set by the user
+  !!  1 : The CP lifetime is equal to the divertor lifetime
+  !!  2 : The CP lifetime is equal to the breeding blankets lifetime
+  !!  3 : The CP lifetime is equal to the plant lifetime
 
   real(dp), bind(C) :: cowner = 0.15D0
   !! owner cost factor
@@ -5031,7 +5031,7 @@ module constraint_variables
 
   real(dp) :: nflutfmax = 1.0D23
   !! max fast neutron fluence on TF coil (n/m2) (`blktmodel>0`) (`constraint equation 53`)
-  !! Aslo used for demontable magnets (itart = 1) and superdonducting coils (i_tf_sup = 1)
+  !! Also used for demontable magnets (itart = 1) and superconducting coils (i_tf_sup = 1)
   !! To set the CP lifetime
 
   real(dp) :: pdivtlim = 150.0D0
