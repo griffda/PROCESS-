@@ -1091,8 +1091,8 @@ subroutine check
         ! Set the TF coil shape to picture frame (if default value)
         if ( i_tf_shape == 0 ) i_tf_shape = 2
 
-        ! Warning stating that the fast neutron fluence calculation i
-        ! s not addapted for cryoaluminium calculations yet
+        ! Warning stating that the fast neutron fluence calculation 
+        ! is not addapted for cryoaluminium calculations yet
         if ( i_tf_sup == 2 .and. any(icc(1:neqns+nineqns) == 10 ) ) call report_error(260)
     
         ! Setting the CP joints default options : 
