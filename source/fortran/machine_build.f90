@@ -146,7 +146,7 @@ contains
              r_cp_top = max( r_cp_top, r_tf_inboard_out * 1.01D0 ) 
              
              ! lvl 3 error if r_cp_top is negative 
-             ! Not sure it is usefull with the max() statment ...
+             ! Not sure it is useful with the max() statment ...
              ! To be removed ?
              if (r_cp_top <= 0.0D0) then
                fdiags(1) = r_cp_top
