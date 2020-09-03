@@ -31,6 +31,7 @@ icc = 72 * central solenoid Tresca stress limit
 
 *---------------Iteration Variables----------------*
 
+ixc = 1 * aspect
 ixc = 2 * bt
 boundu(2) = 20.0
 ixc = 3 * rmajor
@@ -43,7 +44,7 @@ ixc = 9 * fdene
 boundu(9) = 1.2
 ixc = 11 * pheat
 ixc = 13 * tfcth
-boundl(13) = 1.4
+boundl(13) = 0.8
 ixc = 14 * fwalld
 ixc = 16 * ohcth
 boundl(16) = 0.5
@@ -281,7 +282,7 @@ fgwped   = 0.85 * Fraction of greenwald density to set as pedestal-top density
 fkzohm   = 1.0245 * Zohm elongation scaling adjustment factor (ishape=2; 3)
 fvsbrnni = 0.2063 * Fraction of the plasma current produced by
 gamma    = 0.3 * Ejima coefficient for resistive startup v-s formula
-hfact    = 1.13 * H factor on energy confinement times; radiation corrected
+hfact    = 1.3 * 1.13 H factor on energy confinement times; radiation corrected
 ibss     = 4 * Switch for bootstrap current scaling;
 iculbl   = 1 * Switch for beta limit scaling (constraint equation 24);
 icurr    = 4 * Switch for plasma current scaling to use;
@@ -327,9 +328,9 @@ lpulse   = 1 * Switch for reactor model;
 
 *-------------------Scan Module--------------------*
 
-*isweep   = 10 * Number of scan points to calculate
-*nsweep   = 4 * Switch denoting quantity to scan;
-*sweep    = 1.5, 1.45, 1.4, 1.35, 1.30, 1.25, 1.20, 1.15, 1.14, 1.13 * Actual values to use in scan
+*isweep = 4
+*sweep = 1.0e-5, 1.0e-6, 1.0e-7, 1.0e-8
+*nsweep = 32 
 
 *--------------Stellarator Variables---------------*
 
