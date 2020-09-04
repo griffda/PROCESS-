@@ -91,22 +91,18 @@ contains
       ! Centrepost lifetime (years) (ST machines only)
       if ( itart ==  1) then
         
-        ! Copper magnets CP lifetime
-        if ( i_tf_sup == 0 ) then
-          cplife = min( cpstflnc/wallmw, tlife )
-        
         ! SC magnets CP lifetime
         ! Rem : only the TF maximum fluence is considered for now
-        else if ( i_tf_sup == 1 ) then
+        if ( i_tf_sup == 1 ) then
           n_sec_year = 3600.0D0 * 24.0D0 * 365.2425D0
           cplife = min( nflutfmax / ( neut_flux_cp * n_sec_year ), tlife )
           
-        ! Aluminium magnets CP lifetime
+        ! Aluminium/Copper magnets CP lifetime
         ! For now, we keep the original def, developped for GLIDCOP magnets ...
         else 
           cplife = min( cpstflnc / wallmw, tlife )
+
         end if
-        
       end if
     end if
 
@@ -366,17 +362,13 @@ contains
     ! Centrepost lifetime (years) (ST only)
     if (itart == 1) then
 
-      ! Copper magnets CP lifetime
-      if ( i_tf_sup == 0 ) then
-        cplife = min( cpstflnc/wallmw, tlife )
-      
       ! SC magnets CP lifetime
       ! Rem : only the TF maximum fluence is considered for now
-      else if ( i_tf_sup == 1 ) then
+      if ( i_tf_sup == 1 ) then
         n_sec_year = 3600.0D0 * 24.0D0 * 365.2425D0
         cplife = min( nflutfmax / ( neut_flux_cp * n_sec_year ), tlife )
 
-      ! Aluminium magnets CP lifetime
+      ! Aluminium/Copper magnets CP lifetime
       ! For now, we keep the original def, developped for GLIDCOP magnets ...
       else 
         cplife = min( cpstflnc / wallmw, tlife )
