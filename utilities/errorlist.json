@@ -263,7 +263,6 @@
   {"no": 257, "level": 2, "message": "[tfcoil] : Helium temperature out of helium property fiting range [4-50] K"},
   {"no": 258, "level": 2, "message": "[tfcoil] : Aluminium temperature out of the th conductivity fit range [15-60] K"},
   {"no": 259, "level": 3, "message": "CHECK: Constraint equation 10 (CP lifetime) to used with ST desing (itart=1)"},
-  {"no": 260, "level": 3, "message": "CHECK: Al fluence not calculated properly for Al CP, dot not use constraint 10"}
-]
-
+  {"no": 260, "level": 3, "message": "CHECK: Al TF coil fluence not calculated properly for Al CP, do not use constraint 85"}
+  ]
 }

@@ -1091,10 +1091,12 @@ subroutine check
         ! Set the TF coil shape to picture frame (if default value)
         if ( i_tf_shape == 0 ) i_tf_shape = 2
 
-        ! Warning stating that the fast neutron fluence calculation 
+        ! Warning stating that the CP fast neutron fluence calculation 
         ! is not addapted for cryoaluminium calculations yet
-        if ( i_tf_sup == 2 .and. any(icc(1:neqns+nineqns) == 10 ) ) call report_error(260)
-    
+        if ( i_tf_sup == 2 .and. any( icc == 85 ) .and. itart == 1 ) then
+            call report_error(260)
+        end if
+
         ! Setting the CP joints default options : 
         !  1 : Sliding joints for resistive magnets (i_tf_sup = 0, 2)  
         !  0 : Clampled joints for superconducting magents (i_tf_sup = 1)

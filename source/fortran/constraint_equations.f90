@@ -114,7 +114,7 @@ contains
         case (8); call constraint_eqn_008(args)
 	      ! Equation for fusion power upper limit
         case (9); call constraint_eqn_009(args)
-	      ! Equation for field at TF coil
+	      ! Obsolete 
         case (10); call constraint_eqn_010(args)
 	      ! Equation for radial build
         case (11); call constraint_eqn_011(args)
@@ -242,26 +242,28 @@ contains
         case (73); call constraint_eqn_073(args)
         ! ensure TF coil quench temperature < tmax_croco   
         case (74); call constraint_eqn_074(args)
-	      ! ensure that TF coil current / copper area < Maximum value ONLY used for croco HTS coil
-         case (75); call constraint_eqn_075(args)
-         ! Eich critical separatrix density model
-         case (76); call constraint_eqn_076(args)
-         ! Equation for maximum TF current per turn upper limit
-         case (77); call constraint_eqn_077(args)
-	  	   ! Equation for Reinke criterion, divertor impurity fraction lower limit
-         case (78); call constraint_eqn_078(args)
-         ! Equation for maximum CS field
-         case (79); call constraint_eqn_079(args)
-         ! Lower limit pdivt
-         case (80); call constraint_eqn_080(args)
-         ! Constraint equation making sure that ne(0) > ne(ped)
-         case (81); call constraint_eqn_081(args)
-         ! Constraint equation making sure that stellarator coils dont touch in toroidal direction
-         case (82); call constraint_eqn_082(args)
-         ! Constraint ensuring radial build consistency for stellarators
-         case (83); call constraint_eqn_083(args)
-         ! Constraint for lower limit of beta
-         case (84); call constraint_eqn_084(args)
+	     ! ensure that TF coil current / copper area < Maximum value ONLY used for croco HTS coil
+        case (75); call constraint_eqn_075(args)
+        ! Eich critical separatrix density model
+        case (76); call constraint_eqn_076(args)
+        ! Equation for maximum TF current per turn upper limit
+        case (77); call constraint_eqn_077(args)
+	  	  ! Equation for Reinke criterion, divertor impurity fraction lower limit
+        case (78); call constraint_eqn_078(args)
+        ! Equation for maximum CS field
+        case (79); call constraint_eqn_079(args)
+        ! Lower limit pdivt
+        case (80); call constraint_eqn_080(args)
+        ! Constraint equation making sure that ne(0) > ne(ped)
+        case (81); call constraint_eqn_081(args)
+        ! Constraint equation making sure that stellarator coils dont touch in toroidal direction
+        case (82); call constraint_eqn_082(args)
+        ! Constraint ensuring radial build consistency for stellarators
+        case (83); call constraint_eqn_083(args)
+        ! Constraint for lower limit of beta
+        case (84); call constraint_eqn_084(args)
+         ! Constraint for CP lifetime
+        case (85); call constraint_eqn_085(args)
        case default
 
         idiags(1) = icc(i)
@@ -747,35 +749,19 @@ contains
       !! divlife : input real : calculated divertor  power year lifetime (years)
       !! i_cp_lifetime : input integer : switch chosing which plant element the CP
       !!                                 the CP lifetime must equate  
-      use cost_variables, only : cplife, divlife, cplife_input, &
-         tlife, i_cp_lifetime
-      use fwbs_variables, only : bktlife
 
       implicit none
 
       type (constraint_args_type), intent(out) :: args
       !! Constraints output
 
-      ! The CP lifetime is equal to the the divertor one
-      if  ( i_cp_lifetime == 0 ) then
-         args%cc = 1.0D0 - cplife/cplife_input
+      ! This constraint is depreciated
+      call report_error(236)
 
-      else if ( i_cp_lifetime == 1 ) then 
-         args%cc = 1.0D0 - cplife/divlife
-
-      ! The CP lifetime is equal to the tritium breeding blankets / FW one
-      else if ( i_cp_lifetime == 2 ) then
-         args%cc = 1.0D0 - cplife/bktlife
-         
-      ! The CP lifetime is equal to the 
-      else if ( i_cp_lifetime == 3 ) then
-         args%cc = 1.0D0 - cplife/tlife
-      end if
-
-      args%con = divlife * (1.0D0 - args%cc)
-      args%err = divlife * args%cc
+      args%con = 1.0D0
+      args%err = 0.0D0
       args%symbol = '='
-      args%units = 'years'
+      args%units = ''
 
    end subroutine constraint_eqn_010
 
@@ -2786,7 +2772,6 @@ contains
       args%units = 'm'
    end subroutine constraint_eqn_083
 
-
    subroutine constraint_eqn_084(args)
       !! Equation for the lower limit of beta
       !! author: J Lion, IPP Greifswald
@@ -2815,6 +2800,59 @@ contains
 
 
    end subroutine constraint_eqn_084
+
+   subroutine constraint_eqn_085(args)
+      !! Author : S Kahn
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation constraining the centerpost (CP) lifetime
+      !! Depending on the chosen option : i_cp_lifetime
+      !!  - 0 : The CP full power year lifelime is set by the user (cplife_input)
+      !!  - 1 : The CP lifelime is equal to the divertor one
+      !!  - 2 : The CP lifetime is equal to the breeding blankets one
+      !!  - 3 : The CP lifetime is equal to the plant one
+      !! #=# availability
+      !! #=#=# consistency
+      !! Logic change during pre-factoring: err, symbol, units will be assigned 
+      !! only if present.
+      !! cplife : input real : calculated CP full power year lifetime (years)
+      !! bktlife : input real : calculated first wall/blanket power year lifetime (years)
+      !! divlife : input real : calculated divertor  power year lifetime (years)
+      !! i_cp_lifetime : input integer : switch chosing which plant element the CP
+      !!                                 the CP lifetime must equate  
+      use cost_variables, only : cplife, divlife, cplife_input, &
+         tlife, i_cp_lifetime
+      use fwbs_variables, only : bktlife
+
+      implicit none
+
+      type (constraint_args_type), intent(out) :: args
+      !! Constraints output
+
+
+      ! The CP lifetime is equal to the the divertor one
+      if  ( i_cp_lifetime == 0 ) then
+         args%cc = 1.0D0 - cplife/cplife_input
+
+      else if ( i_cp_lifetime == 1 ) then 
+         args%cc = 1.0D0 - cplife/divlife
+
+      ! The CP lifetime is equal to the tritium breeding blankets / FW one
+      else if ( i_cp_lifetime == 2 ) then
+         args%cc = 1.0D0 - cplife/bktlife
+         
+      ! The CP lifetime is equal to the 
+      else if ( i_cp_lifetime == 3 ) then
+         args%cc = 1.0D0 - cplife/tlife
+      end if
+
+      args%con = divlife * (1.0D0 - args%cc)
+      args%err = divlife * args%cc
+      args%symbol = '='
+      args%units = 'years'
+
+   end subroutine constraint_eqn_085
+
 
 end module constraints
 
