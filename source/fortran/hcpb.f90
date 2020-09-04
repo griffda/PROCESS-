@@ -1731,7 +1731,7 @@ contains
     call ovarre(ofile, 'Blanket exponential factor', '(exp_blanket)', exp_blanket, 'OP ')
     call ovarre(ofile, 'Shield: first exponential', '(exp_shield1)', exp_shield1, 'OP ')
     call ovarre(ofile, 'Shield: second exponential', '(exp_shield2)', exp_shield2, 'OP ')
-    call ovarre(ofile, 'Divertor nuclear power fraction', '(fdiv)', fdiv)
+    call ovarre(ofile, 'Solid angle fraction taken by on divertor', '(fdiv)', fdiv)
 
     call ovarin(ofile, 'Switch for plant secondary cycle ', '(secondary_cycle)', secondary_cycle)
     call ovarre(ofile, 'First wall coolant pressure (Pa)', '(fwpressure)', fwpressure)

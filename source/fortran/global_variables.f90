@@ -1841,7 +1841,7 @@ module fwbs_variables
   !! KIT blanket model: steel fraction of breeding zone
 
   real(dp) :: fdiv = 0.115D0
-  !! area fraction taken up by divertor
+  !! Solid angle fraction taken by one divertor
 
   real(dp) :: fhcd = 0.0D0
   !! area fraction covered by heating/current drive apparatus plus diagnostics
