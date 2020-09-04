@@ -374,7 +374,9 @@ contains
 		use heat_transport_variables, only: pnetelmw 
 		use physics_variables, only: itart, wtgpd, fhe3
 		use process_output, only: oheadr, osubhd, ovarrf, oshead 
-		use times_variables, only: tcycle, tburn
+      use times_variables, only: tcycle, tburn
+      use constants, only: n_day_year
+
     implicit none
 
     !  Arguments
@@ -394,9 +396,9 @@ contains
     !  Number of kWh generated each year
 
     if (ife == 1) then
-       kwhpy = 1.0D3 * pnetelmw * (24.0D0*365.0D0) * cfactr
+       kwhpy = 1.0D3 * pnetelmw * (24.0D0*n_day_year) * cfactr
     else
-       kwhpy = 1.0D3 * pnetelmw * (24.0D0*365.0D0) * cfactr * tburn/tcycle
+       kwhpy = 1.0D3 * pnetelmw * (24.0D0*n_day_year) * cfactr * tburn/tcycle
     end if
 
     !  Costs due to reactor plant
@@ -582,7 +584,7 @@ contains
     if (ife /= 1) then
        !  Sum D-T fuel cost and He3 fuel cost
        annfuel = ucfuel * pnetelmw/1200.0D0 + &
-            1.0D-6 * fhe3 * wtgpd * 1.0D-3 * uche3 * 365.0D0 * cfactr
+            1.0D-6 * fhe3 * wtgpd * 1.0D-3 * uche3 * n_day_year * cfactr
     else
        annfuel = 1.0D-6 * uctarg * reprat * 3.1536D7 * cfactr
     end if

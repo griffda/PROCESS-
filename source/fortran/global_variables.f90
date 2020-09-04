@@ -142,6 +142,9 @@ module constants
   real(dp), parameter :: muh2o = 4.71D-4
   !! water dynamic viscosity (kg/m/s)
 
+  real(dp), parameter :: n_day_year = 365.2425D0
+  !! Average number of days in a year
+
 end module constants
 
 module physics_variables
