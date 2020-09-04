@@ -254,7 +254,7 @@ contains
 
     ! Total nuclear power deposited in the 
     if ( pnuc_tot_blk_sector < 1.0d0 .or. pnuc_tot_blk_sector /= pnuc_tot_blk_sector ) then
-        write(*,*)'pnucfw =', pnucfw, ' at line 247  ', 'pnucblkt =', pnucblkt
+        write(*,*)'pnucfw =', pnucfw, ' and ', 'pnucblkt =', pnucblkt
         write(*,*)'pnucshld =', pnucshld, ' ptfnuc =', ptfnuc
     end if
 
