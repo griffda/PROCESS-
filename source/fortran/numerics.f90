@@ -279,15 +279,15 @@ module numerics
        'pdivt lower limit                ',   &
        !!  <LI> (80) Divertor power lower limit pdivt (itv  153 fpdivlim)
        'ne0 > neped                      ',   &
-       !!  <LI> (81) Ne(0) > ne(ped) constraint (itv  154 fne0)</UL>
+       !!  <LI> (81) Ne(0) > ne(ped) constraint (itv  154 fne0)
        'toroidalgap >  tftort            ',   &
-       !!  <LI> (82) toroidalgap >  tftort constraint (itv  171 ftoroidalgap)</UL>
+       !!  <LI> (82) toroidalgap >  tftort constraint (itv  171 ftoroidalgap)
        'available_space > required_space ',   &
        !!  <LI> (83) Radial build consistency for stellarators (itv 172 f_avspace)
        'beta > betalim_lower             ',    &
        !!  <LI> (84) Lower limit for beta (itv 173 fbetatry_lower)
        'CP lifetime                      '    &
-       !!  <LI> (85) Constraint for CP lifetime
+       !!  <LI> (85) Constraint for CP lifetime</UL>
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
@@ -302,6 +302,181 @@ module numerics
   ! WARNING These labels are used as variable names by write_new_in_dat.py, and possibly
   ! other python utilities, so they cannot easily be changed.
   character(len=14), dimension(ipnvars) :: lablxc = ''
+  !! lablxc(ipnvars) : labels describing iteration variables<UL>
+  !!  <LI> ( 1) aspect
+  !!  <LI> ( 2) bt
+  !!  <LI> ( 3) rmajor
+  !! <LI> ( 4) te
+  !! <LI> ( 5) beta
+  !! <LI> ( 6) dene
+  !! <LI> ( 7) rnbeam
+  !! <LI> ( 8) fbeta (f-value for equation 6)
+  !! <LI> ( 9) fdene (f-value for equation 5)
+  !! <LI> (10) hfact
+  !! <LI> (11) pheat
+  !! <LI> (12) oacdcp
+  !! <LI> (13) tfcth (NOT RECOMMENDED)
+  !! <LI> (14) fwalld (f-value for equation 8)
+  !! <LI> (15) fvs (f-value for equation 12)
+  !! <LI> (16) ohcth
+  !! <LI> (17) tdwell
+  !! <LI> (18) q
+  !! <LI> (19) enbeam
+  !! <LI> (20) tcpav
+  !! <LI> (21) ftburn (f-value for equation 13)
+  !! <LI> (22) NOT USED
+  !! <LI> (23) fcoolcp
+  !! <LI> (24) NOT USED
+  !! <LI> (25) fpnetel (f-value for equation 16)
+  !! <LI> (26) ffuspow (f-value for equation 9)
+  !! <LI> (27) fhldiv (f-value for equation 18)
+  !! <LI> (28) fradpwr (f-value for equation 17), total radiation fraction
+  !! <LI> (29) bore
+  !! <LI> (30) fmva (f-value for equation 19)
+  !! <LI> (31) gapomin
+  !! <LI> (32) frminor (f-value for equation 21)
+  !! <LI> (33) fportsz (f-value for equation 20)
+  !! <LI> (34) fdivcol (f-value for equation 22)
+  !! <LI> (35) fpeakb (f-value for equation 25)
+  !! <LI> (36) fbetatry (f-value for equation 24)
+  !! <LI> (37) coheof
+  !! <LI> (38) fjohc (f-value for equation 26)
+  !! <LI> (39) fjohc0 (f-value for equation 27)
+  !! <LI> (40) fgamcd (f-value for equation 37)
+  !! <LI> (41) fcohbop
+  !! <LI> (42) gapoh
+  !! <LI> (43) NOT USED
+  !! <LI> (44) fvsbrnni
+  !! <LI> (45) fqval (f-value for equation 28)
+  !! <LI> (46) fpinj (f-value for equation 30)
+  !! <LI> (47) feffcd
+  !! <LI> (48) fstrcase (f-value for equation 31)
+  !! <LI> (49) fstrcond (f-value for equation 32)
+  !! <LI> (50) fiooic (f-value for equation 33)
+  !! <LI> (51) fvdump (f-value for equation 34)
+  !! <LI> (52) vdalw
+  !! <LI> (53) fjprot (f-value for equation 35)
+  !! <LI> (54) ftmargtf (f-value for equation 36)
+  !! <LI> (55) NOT USED
+  !! <LI> (56) tdmptf
+  !! <LI> (57) thkcas
+  !! <LI> (58) thwcndut
+  !! <LI> (59) fcutfsu
+  !! <LI> (60) cpttf
+  !! <LI> (61) gapds
+  !! <LI> (62) fdtmp (f-value for equation 38)
+  !! <LI> (63) ftpeak (f-value for equation 39)
+  !! <LI> (64) fauxmn (f-value for equation 40)
+  !! <LI> (65) tohs
+  !! <LI> (66) ftohs (f-value for equation 41)
+  !! <LI> (67) ftcycl (f-value for equation 42)
+  !! <LI> (68) fptemp (f-value for equation 44)
+  !! <LI> (69) rcool
+  !! <LI> (70) vcool
+  !! <LI> (71) fq (f-value for equation 45)
+  !! <LI> (72) fipir (f-value for equation 46)
+  !! <LI> (73) scrapli
+  !! <LI> (74) scraplo
+  !! <LI> (75) tfootfi
+  !! <LI> (76) NOT USED
+  !! <LI> (77) NOT USED
+  !! <LI> (78) NOT USED
+  !! <LI> (79) fbetap (f-value for equation 48)
+  !! <LI> (80) NOT USED
+  !! <LI> (81) edrive
+  !! <LI> (82) drveff
+  !! <LI> (83) tgain
+  !! <LI> (84) chrad
+  !! <LI> (85) pdrive
+  !! <LI> (86) frrmax (f-value for equation 50)
+  !! <LI> (87) NOT USED
+  !! <LI> (88) NOT USED
+  !! <LI> (89) ftbr (f-value for equation 52)
+  !! <LI> (90) blbuith
+  !! <LI> (91) blbuoth
+  !! <LI> (92) fflutf (f-value for equation 53)
+  !! <LI> (93) shldith
+  !! <LI> (94) shldoth
+  !! <LI> (95) fptfnuc (f-value for equation 54)
+  !! <LI> (96) fvvhe (f-value for equation 55)
+  !! <LI> (97) fpsepr (f-value for equation 56)
+  !! <LI> (98) li6enrich
+  !! <LI> (99) NOT USED
+  !! <LI> (100) NOT USED
+  !! <LI> (101) NOT USED
+  !! <LI> (102) fimpvar
+  !! <LI> (103) flhthresh (f-value for equation 15)
+  !! <LI> (104) fcwr (f-value for equation 23)
+  !! <LI> (105) fnbshinef (f-value for equation 59)
+  !! <LI> (106) ftmargoh (f-value for equation 60)
+  !! <LI> (107) favail (f-value for equation 61)
+  !! <LI> (108) breeder_f: Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)
+  !! <LI> (109) ralpne: thermal alpha density / electron density
+  !! <LI> (110) ftaulimit: Lower limit on taup/taueff the ratio of alpha 
+  !! <LI> (111) fniterpump: f-value for constraint that number
+  !! <LI> (112) fzeffmax: f-value for max Zeff (f-value for equation 64)
+  !! <LI> (113) ftaucq: f-value for minimum quench time (f-value for equation 65)
+  !! <LI> (114) fw_channel_length: Length of a single first wall channel
+  !! <LI> (115) fpoloidalpower: f-value for max rate of change of 
+  !! <LI> (116) fradwall: f-value for radiation wall load limit (eq. 67)
+  !! <LI> (117) fpsepbqar: f-value for  Psep*Bt/qar upper limit (eq. 68)
+  !! <LI> (118) fpsep: f-value to ensure separatrix power is less than
+  !! <LI> (119) tesep:  separatrix temperature calculated by the Kallenbach divertor model
+  !! <LI> (120) ttarget: Plasma temperature adjacent to divertor sheath [eV]
+  !! <LI> (121) neratio: ratio of mean SOL density at OMP to separatrix density at OMP
+  !! <LI> (122) oh_steel_frac : streel fraction of Central Solenoid
+  !! <LI> (123) foh_stress : f-value for CS coil Tresca stress limit (f-value for eq. 72)
+  !! <LI> (124) qtargettotal : Power density on target including surface recombination [W/m2]
+  !! <LI> (125) fimp(3) :  Beryllium density fraction relative to electron density
+  !! <LI> (126) fimp(4) :  Carbon density fraction relative to electron density
+  !! <LI> (127) fimp(5) :  Nitrogen fraction relative to electron density
+  !! <LI> (128) fimp(6) :  Oxygen density fraction relative to electron density
+  !! <LI> (129) fimp(7) :  Neon density fraction relative to electron density
+  !! <LI> (130) fimp(8) :  Silicon density fraction relative to electron density
+  !! <LI> (131) fimp(9) :  Argon density fraction relative to electron density
+  !! <LI> (132) fimp(10) :  Iron density fraction relative to electron density
+  !! <LI> (133) fimp(11) :  Nickel density fraction relative to electron density
+  !! <LI> (134) fimp(12) :  Krypton density fraction relative to electron density
+  !! <LI> (135) fimp(13) :  Xenon density fraction relative to electron density
+  !! <LI> (136) fimp(14) :  Tungsten density fraction relative to electron density
+  !! <LI> (137) fplhsep (f-value for equation 73)
+  !! <LI> (138) rebco_thickness : thickness of REBCO layer in tape (m)
+  !! <LI> (139) copper_thick : thickness of copper layer in tape (m)
+  !! <LI> (140) dr_tf_wp : radial thickness of TFC winding pack (m)
+  !! <LI> (141) fcqt : TF coil quench temperature < tmax_croco (f-value for equation 74)
+  !! <LI> (142) nesep : electron density at separatrix [m-3]
+  !! <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value
+  !! <LI> (144) fnesep : Eich critical electron density at separatrix 
+  !! <LI> (145) fgwped :  fraction of Greenwald density to set as pedestal-top density
+  !! <LI> (146) fcpttf : F-value for TF coil current per turn limit (constraint equation 77)
+  !! <LI> (147) freinke : F-value for Reinke detachment criterion (constraint equation 78)
+  !! <LI> (148) fzactual : fraction of impurity at SOL with Reinke detachment criterion
+  !! <LI> (149) fbmaxcs : F-value for max peak CS field (con. 79, itvar 149)
+  !! <LI> (150) plasmod_fcdp : (P_CD - Pheat)/(Pmax-Pheat) 
+  !! <LI> (151) plasmod_fradc : Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad)
+  !! <LI> (152) fbmaxcs : Ratio of separatrix density to Greenwald density
+  !! <LI> (153) fpdivlim : F-value for minimum pdivt (con. 80)
+  !! <LI> (154) fne0 : F-value for ne(0) > ne(ped) (con. 81)
+  !! <LI> (155) pfusife : IFE input fusion power (MW) (ifedrv=3 only)
+  !! <LI> (156) rrin : Input IFE repetition rate (Hz) (ifedrv=3 only)
+  !! <LI> (157) fvssu : F-value for available to required start up flux (con. 51)
+  !! <LI> (158) croco_thick : Thickness of CroCo copper tube (m)
+  !! <LI> (159) DUMMY : Description
+  !! <LI> (160) DUMMY : Description
+  !! <LI> (161) DUMMY : Description
+  !! <LI> (162) DUMMY : Description
+  !! <LI> (163) DUMMY : Description
+  !! <LI> (164) DUMMY : Description
+  !! <LI> (165) DUMMY : Description
+  !! <LI> (166) DUMMY : Description
+  !! <LI> (167) DUMMY : Description
+  !! <LI> (168) DUMMY : Description
+  !! <LI> (169) DUMMY : Description
+  !! <LI> (170) DUMMY : Description
+  !! <LI> (171) ftoroidalgap : F-value for toroidalgap >  tftort constraint (con. 82)
+  !! <LI> (172) f_avspace (f-value for equation 83)
+  !! <LI> (173) fbetatry_lower (f-value for equation 84)
+  !! <LI> (174) r_cp_top : Top outer radius of the centropost (ST only) (m)</UL>
   ! Issue 287 iteration variables are now defined in module define_iteration_variables in iteration variables.f90
 
   character(len=14), dimension(:), allocatable :: name_xc

@@ -43,12 +43,6 @@ if [ "$OSTYPE" == "linux-gnu" ]; then
             grep -qxF 'export GTEST="/usr/src/gtest/"' ~/.bashrc || \
                 echo 'export GTEST="/usr/src/gtest/"' >> ~/.bashrc
 
-            echo "- Linking gfortran to /usr/bin/gfortran"
-            alias gfortran='/usr/bin/gfortran-4.8'
-            grep -qxF "alias gfortran='/usr/bin/gfortran-4.8'" ~/.bashrc || \
-                echo "alias gfortran='/usr/bin/gfortran-4.8'" >> ~/.bashrc
-            sudo ln -sf /usr/bin/gfortran-4.8 /usr/bin/gfortran
-
             # Set PYTHONPATH to utilities
             echo "- Setting Pythonpath"
             export SRC_PATH=$(pwd)
