@@ -968,7 +968,7 @@ contains
     
     end if
 
-    ! Cryogenically cooled resistive material
+    ! Cryogenic alumimium
     ! Rem : The carnot efficiency is assumed at 40% as this is a conservative assumption since a 50%
     !       has been deduced from detailed studies
     ! Rem : Nuclear heating on the outer legs assumed to be negligible
