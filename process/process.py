@@ -45,6 +45,9 @@ from process import fortran
 import argparse
 from pathlib import Path
 import sys
+import os
+
+os.environ['PYTHON_PROCESS_ROOT'] =  os.path.join(os.path.dirname(__file__))
 
 class Process():
     """The main Process class."""

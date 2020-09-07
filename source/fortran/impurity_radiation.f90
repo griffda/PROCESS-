@@ -1,9 +1,4 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-#ifndef INSTALLDIR
-#error INSTALLDIR not defined!
-#endif
-
 module impurity_radiation_module
 
   !! Module for new impurity radiation calculations
@@ -26,7 +21,7 @@ module impurity_radiation_module
 
   private
   public :: initialise_imprad, impradprofile, z2index, element2index, fradcore
-  public :: imp_dat, Zav_of_te, init_impurity_radiation_module
+  public :: imp_dat, Zav_of_te, init_impurity_radiation_module, impdir
 
 
   !! (It is recommended to turn on
@@ -68,10 +63,6 @@ module impurity_radiation_module
   ! Deprecated
   real(dp), public :: fimpvar
 
-  !! impdir /'/home/PROCESS/[branch]/impuritydata'/ :
-  !!          Directory containing impurity radiation data files
-  character(len=200), public :: impdir
-
   !! impvar : impurity to be iterated (deprecated)
   !!                      variable number 102 is turned on
   integer, public :: impvar
@@ -101,6 +92,17 @@ module impurity_radiation_module
 
 contains
 
+  character(len=300) function impdir()
+      implicit none
+      character(len=200) :: process_dir
+      CALL get_environment_variable("PYTHON_PROCESS_ROOT", process_dir)
+      if (process_dir == "") then
+         impdir = INSTALLDIR//'/process/data/impuritydata/'
+      else
+         impdir = trim(process_dir)//'/data/impuritydata/'
+      end if
+  end function impdir
+
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine init_impurity_radiation_module
@@ -127,7 +129,6 @@ contains
       'Xe', &
       'W_'/)
       fimpvar = 1.0D-3
-      impdir = INSTALLDIR//'/data/impuritydata/'
       impvar = 9
       toolow = .false.
       impurity_arr = imp_dat("  ", 0, 0.0D0, 0.0D0, 0)
@@ -307,10 +308,10 @@ contains
 
     filename = label // 'Lzdata.dat'
 
-    if (index(impdir,'/',.true.) == len(trim(impdir))) then
-       fullpath = trim(impdir)//trim(filename)
+    if (index(impdir(),'/',.true.) == len(trim(impdir()))) then
+       fullpath = trim(impdir())//trim(filename)
     else
-       fullpath = trim(impdir)//'/'//trim(filename)
+       fullpath = trim(impdir())//'/'//trim(filename)
     end if
 
     inquire(file=trim(fullpath), exist=iexist)
@@ -319,7 +320,7 @@ contains
             impurity_arr(no)%Temp_keV, impurity_arr(no)%Lz_Wm3, impurity_arr(no)%Zav)
     else
        write(*,*) "# Warning :  Cannot find impurity data please check path."
-       write(*,*) "# Error   :  Current path is: ", impdir
+       write(*,*) "# Error   :  Current path is: ", impdir()
        stop
     end if
 

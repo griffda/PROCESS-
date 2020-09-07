@@ -3,9 +3,10 @@
 #
 #  J. Morris
 #  M. Kumar
+#  K. Zarebski
 #
 #  UKAEA
-#  29/07/19
+#  06/08/2020
 #
 #-----------------------------------------------------
 
@@ -34,15 +35,14 @@ stages:
     # Without this it will use ASCII encoding and Ford will fail
     - export LANG=en_GB.utf8
 
-.before_script_template: &build-ubuntu-setup
+.before_test_template: &test-setup
   before_script:
-    # Modify PATH so "ford" command can be found in cmake file
-    - export PATH=$PATH:~/.local/bin
-    - export LANG=C.UTF-8
-    - pwd
-    - gcc --version
-    - ls -lah
-    - cmake -H. -Bbuild
+    - pip install --upgrade pip
+    - pip install virtualenv
+    - virtualenv ~/testenv
+    - source ~/testenv/bin/activate
+    - pip install --find-links=process_dist process
+    - pip install -r requirements.txt
 
 #-----------------
 #  Build
@@ -50,111 +50,59 @@ stages:
 
 make:
   stage: build
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:latest
+  artifacts:
+    paths:
+      - process_dist/process-*.tar.gz
+      - process_dist/process-*.whl
+    expire_in: 1 week
   script:
+    - cmake -H. -Bbuild
     - cmake --build build
-
-
+    - python setup.py sdist -d process_dist
+    - python setup.py bdist_wheel -d process_dist
+  
 make_dicts:
   stage: build
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:latest
+  artifacts:
+    paths:
+      - utilities/process_io_lib/process_dicts.json
+    expire_in: 1 week
+
   script:
+    - pip install -r requirements.txt
+    - cmake -H. -Bbuild
     - cmake --build build --target dicts
-
-
-make_developerguide:
-  stage: build
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
-  script:
-    - cmake --build build --target developerguide
-
-
-make_utilitiesdoc:
-  stage: build
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
-  script:
-    - cmake --build build --target utilitiesdoc
-
-
-make_optsolverdoc:
-  stage: build
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
-  script:
-    - cmake --build build --target optsolverdoc
-
-
-make_tfdoc:
-  stage: build
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
-  script:
-    - cmake --build build --target tfdoc
-
-# install:
-#   stage: build
-#   only:
-#     - develop
-#   image: ubuntu
-#   script:
-#     - export LOGNAME=root
-#     - ls -lah
-#     - apt-get update
-#     - apt-get -y install sudo
-#     - sudo bash install.sh
-#     - process --help
 
 #-----------------
 #  Testing
 #-----------------
 
-unit_tests:
+python_coverage_tests:
   when: on_success
   stage: testing
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  <<: *test-setup
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:latest
   script:
-    - cmake --build build
-    - ls bin/
-    - ./bin/process_GTest.exe
-
-
-test_suite:
-  when: on_success
-  stage: testing
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
-  script:
-    - cmake --build build
-    - cmake --build build --target dicts
-    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
-    - cd test_suite
-    - python3 test_suite.py 
-
+    - pip install pytest
+    - pytest tests/ 
 
 baseline_2019:
   when: on_success
   stage: testing
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  <<: *test-setup
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:latest
   script:
-    - cmake --build build
-    - cmake --build build --target dicts
-    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
-    - cd tracking/baseline_2019
-    - ./../../bin/process.exe baseline_2019_IN.DAT
+    - process -i tracking/baseline_2019/baseline_2019_IN.DAT
     - > 
-      python3 ../../utilities/mfile_comparison.py 
-      -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT 
+      python utilities/mfile_comparison.py 
+      -f tracking/baseline_2019/baseline_2019_MFILE.DAT tracking/baseline_2019/ref_baseline_2019_MFILE.DAT 
       --acc 1.0 
       --baseline
     - > 
-      python3 ../../utilities/mfile_comparison.py 
-      -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT 
+      python utilities/mfile_comparison.py 
+      -f tracking/baseline_2019/baseline_2019_MFILE.DAT tracking/baseline_2019/ref_baseline_2019_MFILE.DAT 
       --acc 10.0 
       --baseline
 
@@ -162,22 +110,18 @@ baseline_2019:
 baseline_2018:
   when: on_success
   stage: testing
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  <<: *test-setup
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:latest
   script:
-    - cmake --build build
-    - cmake --build build --target dicts
-    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
-    - cd tracking/baseline_2018
-    - ./../../bin/process.exe baseline_2018_IN.DAT
-    - >
-      python3 ../../utilities/mfile_comparison.py 
-      -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT 
+    - process -i tracking/baseline_2018/baseline_2018_IN.DAT
+    - > 
+      python utilities/mfile_comparison.py 
+      -f tracking/baseline_2018/baseline_2018_MFILE.DAT tracking/baseline_2018/ref_baseline_2018_MFILE.DAT 
       --acc 1.0 
       --baseline
     - > 
-      python3 ../../utilities/mfile_comparison.py 
-      -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT 
+      python utilities/mfile_comparison.py 
+      -f tracking/baseline_2018/baseline_2019_MFILE.DAT tracking/baseline_2018/ref_baseline_2018_MFILE.DAT 
       --acc 10.0 
       --baseline
 
@@ -186,7 +130,7 @@ step_input:
   only: 
     - develop
   stage: testing
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:latest
   stage: pages
   script:
     - git config --global user.email "james.morris2@ukaea.uk"
@@ -213,8 +157,7 @@ step_input:
 line_length:
   when: on_success
   stage: quality
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:latest
   script:
     - pwd
     - python3 utilities/line_length_standard.py
@@ -256,100 +199,11 @@ make_dicts_freia:
     - gcc --version
     - ls -lah
     - cmake3 -H. -Bbuild
+    - pip install -r requirements
     - cmake3 --build build --target dicts
   tags:
     - freia
 
-make_developerguide_freia:
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - gcc --version
-    - ls -lah
-    - cmake3 -H. -Bbuild
-    - cmake3 --build build --target developerguide
-  tags:
-    - freia
-
-make_utilitiesdoc_freia:
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - gcc --version
-    - ls -lah
-    - cmake3 -H. -Bbuild
-    - cmake3 --build build --target utilitiesdoc
-  tags:
-    - freia
-
-make_optsolverdoc_friea:
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - gcc --version
-    - ls -lah
-    - cmake3 -H. -Bbuild
-    - cmake3 --build build --target optsolverdoc
-  tags:
-    - freia
-
-make_tfdoc_freia:
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - gcc --version
-    - ls -lah
-    - cmake3 -H. -Bbuild
-    - cmake3 --build build --target tfdoc
-  tags:
-    - freia
-
-unit_tests_freia:
-  when: on_success
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - gcc --version
-    - ls -lah
-    - rm -rf build
-    - cmake3 -H. -Bbuild
-    - cmake3 --build build
-    - ls bin/
-    - ./bin/process_GTest.exe
-  tags:
-    - freia
-
-test_suite_freia:
-  when: on_success
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - cmake3 -H. -Bbuild
-    - cmake3 --build build
-    - cmake3 --build build --target dicts
-    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
-    - cd test_suite
-    - python test_suite.py
-  tags:
-    - freia
 
 
 baseline_2019_freia:
@@ -388,7 +242,6 @@ baseline_2018_freia:
   script:
     - pwd
     - cmake3 -H. -Bbuild
-    - cmake3 --build build
     - cmake3 --build build --target dicts
     - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
     - cd tracking/baseline_2018
@@ -424,11 +277,9 @@ pages:
     # Remove on merge to develop
     - issue-vardes-to-gitpages
   stage: pages
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:latest
   script:
     - pwd
-    - cmake -H. -Bbuild
     
     # FORD documentation
     # Ensure FORD can find create_dicts.py inside Process

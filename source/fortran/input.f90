@@ -350,6 +350,9 @@ contains
     character(len=32) :: varnam
 
     logical :: obsolete_var
+    character(len=400) :: imp_dir 
+    
+    imp_dir = impdir()
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -675,7 +678,7 @@ contains
           call parse_int_variable('ilhthresh', ilhthresh, 1, 21, &
                'Switch for L-H power threshold to enforce')
        case ('impdir')
-          call parse_string_variable('impdir', impdir, &
+          call parse_string_variable('impdir', imp_dir, &
                'Directory containing impurity radiation data files')
 
        case ('impvar')

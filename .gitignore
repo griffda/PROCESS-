@@ -1,5 +1,5 @@
 *.o
-*.so
+*.so*
 *.html
 *.x
 *.mod
@@ -75,3 +75,4 @@ test_suite/OPT.DAT
 *.egg-info
 fortran.py
 .coverage
+dist/*

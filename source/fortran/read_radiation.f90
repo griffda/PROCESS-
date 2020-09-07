@@ -42,6 +42,16 @@ module read_radiation
   logical :: FirstCall(nimp)
 
 contains
+ character(len=300) function lzdir()
+        implicit none
+        character(len=200) :: process_dir
+        CALL get_environment_variable("PYTHON_PROCESS_ROOT", process_dir)
+        if (process_dir == "") then
+            lzdir = INSTALLDIR//'/process/data/lz_non_corona_14_elements/'
+        else
+            lzdir = trim(process_dir)//'/data/lz_non_corona_14_elements/'
+        end if    
+  end function lzdir
 
   subroutine init_read_radiation
     !! Initialise module variables
@@ -113,11 +123,9 @@ contains
     real(dp) :: lnetau, lte
 
     ! Lz data filename
+    ! Beware: changing length can affect Kallenbach solutions / regression test
     character(len=100) :: filename
 
- !   character(len=120), save :: lzdir = trim(ROOTDIR//'/data/lz_non_corona_14_elements/')
-    character(len=200), parameter :: lzdir = trim(INSTALLDIR//'/data/lz_non_corona_14_elements/')
-    
     ! Find the index of the element.  Exclude hydrogen by starting at 2 (Helium)
     do i = 2, nimp
         if (imp_label(i) .eq. element) then
@@ -146,7 +154,7 @@ contains
         ! Store data in logarithm form for interpolation
 
         ! Assign loss data filename
-        filename = trim(lzdir)//trim(element)//'_lz_tau.dat'
+        filename = trim(lzdir())//trim(element)//'_lz_tau.dat'
 
         ! Read the impuriy data
         call read_impurity_data(filename, nt, nnetau, impurity_data, logT_lz(location,:), lnetau_lz(location,:))
@@ -165,7 +173,7 @@ contains
         endif
 
         ! Assign z data filename
-        filename = trim(lzdir)//trim(element)//'_z_tau.dat'
+        filename = trim(lzdir())//trim(element)//'_z_tau.dat'
 
         ! Read z data
         call read_impurity_data(filename, nt, nnetau, impurity_data, logT_z(location,:), lnetau_z(location,:))
@@ -185,7 +193,7 @@ contains
         data_z(location,:,:) = log(impurity_data)
 
         ! Assign z^2 data filename
-        filename = trim(lzdir)//trim(element)//'_z2_tau.dat'
+        filename = trim(lzdir())//trim(element)//'_z2_tau.dat'
 
         ! Read root-mean square z data
         call read_impurity_data(filename, nt, nnetau, impurity_data, logT_qz(location,:), lnetau_qz(location,:))
