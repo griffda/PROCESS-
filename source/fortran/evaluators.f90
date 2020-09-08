@@ -17,10 +17,19 @@ module function_evaluator
   implicit none
 
   public
+  
+  logical :: first_call
+  !! First call flag for subroutine fcnvmc1
 
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine init_function_evaluator
+    !! Initialise module variables
+
+    first_call = .true.
+  end subroutine init_function_evaluator
 
   subroutine fcnhyb(n,xc,rc,iflag)
 
@@ -110,7 +119,6 @@ contains
     !  Local variables
 
     real(dp) :: summ,sqsumconfsq
-    logical :: first_call = .true.
     integer :: ii, loop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

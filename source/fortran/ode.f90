@@ -736,7 +736,7 @@ subroutine step ( x, y, f, neqn, h, eps, wt, start, hold, k, kold, crash, &
   external f
   real ( kind = 8 ) fouru
   real ( kind = 8 ) g(13)
-  real ( kind = 8 ), dimension ( 13 ) :: gstr = (/ &
+  real ( kind = 8 ), dimension ( 13 ), parameter :: gstr = (/ &
     0.50D+00,    0.0833D+00,  0.0417D+00,  0.0264D+00,  0.0188D+00, &
     0.0143D+00,  0.0114D+00,  0.00936D+00, 0.00789D+00, 0.00679D+00, &
     0.00592D+00, 0.00524D+00, 0.00468D+00 /)
@@ -772,7 +772,7 @@ subroutine step ( x, y, f, neqn, h, eps, wt, start, hold, k, kold, crash, &
   real ( kind = 8 ) tau
   real ( kind = 8 ) temp1
   real ( kind = 8 ) temp2
-  real ( kind = 8 ), dimension ( 13 ) :: two = (/ &
+  real ( kind = 8 ), dimension ( 13 ), parameter :: two = (/ &
        2.0D+00,    4.0D+00,    8.0D+00,  16.0D+00,   32.0D+00, &
       64.0D+00,  128.0D+00,  256.0D+00, 512.0D+00, 1024.0D+00, &
     2048.0D+00, 4096.0D+00, 8192.0D+00/)

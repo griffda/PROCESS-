@@ -105,6 +105,23 @@ USE const_and_precisions, only: wp_, unit, zero, mc2_, comp_eps
 
  CONTAINS
 
+  subroutine init_green_func_ext
+    !! Initialise module variables
+    implicit none
+
+    adj_appr = ""
+    r2 = 0.0D0
+    q2 = 0.0D0
+    gp1 = 0.0D0
+    Rfactor = 0.0D0
+
+    if (allocated(alam)) deallocate(alam)
+    if (allocated(aun)) deallocate(aun)
+    if (allocated(sft)) deallocate(sft)
+    if (allocated(sfn)) deallocate(sfn)
+    if (allocated(fe2)) deallocate(fe2)
+  end subroutine init_green_func_ext
+
 !#######################################################################
 
 ! SUBROUTINE Setup_SpitzFunc(Scen)

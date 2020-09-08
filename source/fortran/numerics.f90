@@ -25,7 +25,7 @@ module numerics
   integer, parameter :: iptnt   = (ipeqns*(3*ipeqns+13))/2
   integer, parameter :: ipvp1   = ipnvars+1
 
-  integer :: ioptimz = 1
+  integer :: ioptimz
   !!  ioptimz /1/ : code operation switch:<UL>
   !!           <LI> = -2 for no optimisation, no VMCOM or HYBRD;
   !!           <LI> = -1 for no optimisation, HYBRD only;
@@ -34,28 +34,8 @@ module numerics
 
   !!  minmax /7/ : switch for figure-of-merit (see lablmm for descriptions)
   !!               negative => maximise, positive => minimise
-  integer :: minmax = 7
-  character(len=22), dimension(ipnfoms) :: lablmm = (/ &
-       'major radius.         ', &
-       'not used.             ', &
-       'neutron wall load.    ', &
-       'P_tf + P_pf.          ', &
-       'fusion gain.          ', &
-       'cost of electricity.  ', &
-       'capital cost.         ', &
-       'aspect ratio.         ', &
-       'divertor heat load.   ', &
-       'toroidal field.       ', &
-       'total injected power. ', &
-       'H plant capital cost. ', &
-       'H production rate.    ', &
-       'pulse length.         ', &
-       'plant availability.   ', &
-       'min R0, max tau_burn. ', &
-       'net electrical output.', &
-       'Null figure of merit. ',  &
-       'max Q, max t_burn.    ' &
-       /)
+  integer :: minmax
+  character(len=22), dimension(ipnfoms) :: lablmm
   !!  lablmm(ipnfoms) : labels describing figures of merit:<UL>
   !!  <LI> ( 1) major radius
   !!  <LI> ( 2) not used
@@ -81,20 +61,20 @@ module numerics
   !!  <LI> (19) linear combination of big Q and pulse length (maximised)
   !!              note: FoM should be minimised only!</UL>
 
-  integer :: ncalls = 0
+  integer :: ncalls
   !!  ncalls : number of function calls during solution
-  integer :: neqns = 0
+  integer :: neqns
   !!  neqns /0/ : number of equality constraints to be satisfied
-  integer :: nfev1 = 0
+  integer :: nfev1
   !!  nfev1 : number of calls to FCNHYB (HYBRD function caller) made
-  integer :: nfev2 = 0
+  integer :: nfev2
   !!  nfev2 : number of calls to FCNVMC1 (VMCON function caller) made
-  integer :: nineqns = 0
+  integer :: nineqns
   !!  nineqns /0/ : number of inequality constraints VMCON must satisfy
   !!                (leave at zero for now)
-  integer :: nvar = 16
+  integer :: nvar
   !!  nvar /16/ : number of iteration variables to use
-  integer :: nviter = 0
+  integer :: nviter
   !!  nviter : number of VMCON iterations performed
 
   !!  icc(ipeqns) /0/ :
@@ -103,97 +83,12 @@ module numerics
 
   ! TODO Check the dictionaries are created correctly.
   ! Issue #491 Default constraints removed.
-  integer, dimension(ipeqns) :: icc = 0
+  integer, dimension(ipeqns) :: icc
 
-  logical, dimension(ipeqns) :: active_constraints = .false.
+  logical, dimension(ipeqns) :: active_constraints
   !!  active_constraints(ipeqns) : Logical array showing which constraints are active
 
-  character(len=33), dimension(ipeqns) :: lablcc = (/ &
-       'Beta consistency                 ', &
-       'Global power balance consistency ', &
-       'Ion power balance                ', &
-       'Electron power balance           ', &
-       'Density upper limit              ', &
-       '(Epsilon x beta-pol) upper limit ', &
-       'Beam ion density consistency     ', &
-       'Neutron wall load upper limit    ', &
-       'Fusion power upper limit         ', &
-       'Toroidal field 1/R consistency   ', &
-       'Radial build consistency         ', &
-       'Volt second lower limit          ', &
-       'Burn time lower limit            ', &
-       'NBI decay lengths consistency    ', &
-       'L-H power threshold limit        ', &
-       'Net electric power lower limit   ', &
-       'Radiation fraction upper limit   ', &
-       'Divertor heat load upper limit   ', &
-       'MVA upper limit                  ', &
-       'Beam tangency radius upper limit ', &
-       'Plasma minor radius lower limit  ', &
-       'Divertor collisionality upper lim', &
-       'Conducting shell radius upper lim', &
-       'Beta upper limit                 ', &
-       'Peak toroidal field upper limit  ', &
-       'CS coil EOF current density limit', &
-       'CS coil BOP current density limit', &
-       'Fusion gain Q lower limit        ', &
-       'Inboard radial build consistency ', &
-       'Injection power upper limit      ', &
-       'TF coil case stress upper limit  ', &
-       'TF coil conduit stress upper lim ', &
-       'I_op / I_critical (TF coil)      ', &
-       'Dump voltage upper limit         ', &
-       'J_winding pack/J_protection limit', &
-       'TF coil temp. margin lower limit ', &
-       'Current drive gamma limit        ', &
-       '1st wall coolant temp rise limit ', &
-       'First wall peak temperature limit', &
-       'Start-up inj. power lower limit  ', &
-       'Plasma curr. ramp time lower lim ', &
-       'Cycle time lower limit           ', &
-       'Average centrepost temperature   ', &
-       'Peak centrepost temp. upper limit', &
-       'Edge safety factor lower limit   ', &
-       'Ip/Irod upper limit              ', &
-       'TF coil tor. thickness upper lim ', &
-       'Poloidal beta upper limit        ', &
-       'RFP reversal parameter < 0       ', &
-       'IFE repetition rate upper limit  ', &
-       'Startup volt-seconds consistency ', &
-       'Tritium breeding ratio lower lim ', &
-       'Neutron fluence on TF coil limit ', &
-       'Peak TF coil nucl. heating limit ', &
-       'Vessel helium concentration limit', &
-       'Psep / R upper limit             ', &
-       'TF coil leg rad width lower limit', &
-       'TF coil leg rad width lower limit', &
-       'NB shine-through frac upper limit', &
-       'CS temperature margin lower limit', &
-       'Minimum availability value       ',  &
-       'taup/taueff                      ', &
-       'number of ITER-like vacuum pumps ',  &
-       'Zeff limit                       ',  &
-       'Dump time set by VV stress       ',   &
-       'Rate of change of energy in field',   &
-       'Upper Lim. on Radiation Wall load',   &
-       'Upper Lim. on Psep * Bt / q A R  ',   &
-       'pdivt < psep_kallenbach divertor ',   &
-       'Separatrix temp consistency      ',   &
-       'Separatrix density consistency   ',    &
-       'CS Tresca stress limit           ',    &
-       'Psep >= Plh + Paux               ',   &
-       'TFC quench < tmax_croco          ',    &
-       'TFC current/copper area < Max    ',    &
-       'Eich critical separatrix density ',   &
-       'TFC current per turn upper limit ',    &
-       'Reinke criterion fZ lower limit  ',   &
-       'Peak CS field upper limit        ',   &
-       'pdivt lower limit                ',   &
-       'ne0 > neped                      ',   &
-       'toroidalgap >  tftort            ',   &
-       'available_space > required_space ',   &
-       'beta > betalim_lower             '    &
-       /)
+  character(len=33), dimension(ipeqns) :: lablcc
   !!  lablcc(ipeqns) : labels describing constraint equations (corresponding itvs)<UL>
   !!  <LI> ( 1) Beta (consistency equation) (itv 5)
   !!  <LI> ( 2) Global power balance (consistency equation) (itv 10,1,2,3,4,6,11)
@@ -287,55 +182,205 @@ module numerics
   !!  <LI> (83) Radial build consistency for stellarators (itv 172 f_avspace)
   !!  <LI> (84) Lower limit for beta (itv 173 fbetatry_lower)
 
-       ! Please note: All strings between '...' above must be exactly 33 chars long
-       ! Each line of code has a comma before the ampersand, except the last one.
-       ! The last ad_varc line ends with the html tag "</UL>".
-
-  ! Issue #495.  Remove default iteration variables
-  !!  ixc(ipnvars) /0/ :
-  !!               array defining which iteration variables to activate
-  !!               (see lablxc for descriptions)
-  integer, dimension(ipnvars) :: ixc = 0
+  integer, dimension(ipnvars) :: ixc
   
-  ! WARNING These labels are used as variable names by write_new_in_dat.py, and possibly
-  ! other python utilities, so they cannot easily be changed.
-  character(len=14), dimension(ipnvars) :: lablxc = ''
-  ! Issue 287 iteration variables are now defined in module define_iteration_variables in iteration variables.f90
+  character(len=14), dimension(ipnvars) :: lablxc
 
   character(len=14), dimension(:), allocatable :: name_xc
 
-  real(dp) :: sqsumsq = 0.0D0
+  real(dp) :: sqsumsq
   !!  sqsumsq : sqrt of the sum of the square of the constraint residuals
-  real(dp) :: epsfcn = 1.0D-3
+  real(dp) :: epsfcn
   !!  epsfcn /1.0e-3/ : finite difference step length for HYBRD/VMCON derivatives
-  real(dp) :: epsvmc = 1.0D-6
+  real(dp) :: epsvmc
   !!  epsvmc /1.0e-6/ : error tolerance for VMCON
-  real(dp) :: factor = 0.1D0
+  real(dp) :: factor
   !!  factor /0.1/ : used in HYBRD for first step size
-  real(dp) :: ftol = 1.0D-4
+  real(dp) :: ftol
   !!  ftol /1.0e-4/ : error tolerance for HYBRD
 
-  real(dp), dimension(ipnvars) :: boundl = 9.d-99
+  real(dp), dimension(ipnvars) :: boundl
   !!  boundl(ipnvars) /../ : lower bounds used on ixc variables during
   !!                         VMCON optimisation runs
 
   ! Issue #287 These bounds now defined in initial.f90
-  real(dp), dimension(ipnvars) :: boundu = 9.d99
+  real(dp), dimension(ipnvars) :: boundu
   ! !!  boundu(ipnvars) /../ : upper bounds used on ixc variables 
 
-  real(dp), dimension(ipnvars) :: bondl = 0.0D0
-  real(dp), dimension(ipnvars) :: bondu = 0.0D0
-  real(dp), dimension(ipnvars) :: rcm = 0.0D0
-  real(dp), dimension(ipnvars) :: resdl = 0.0D0
-  real(dp), dimension(ipnvars) :: scafc = 0.0D0
-  real(dp), dimension(ipnvars) :: scale = 0.0D0
-  real(dp), dimension(ipnvars) :: xcm = 0.0D0
-  real(dp), dimension(ipnvars) :: xcs = 0.0D0
-  real(dp), dimension(ipvlam)  :: vlam = 0.0D0
+  real(dp), dimension(ipnvars) :: bondl
+  real(dp), dimension(ipnvars) :: bondu
+  real(dp), dimension(ipnvars) :: rcm
+  real(dp), dimension(ipnvars) :: resdl
+  real(dp), dimension(ipnvars) :: scafc
+  real(dp), dimension(ipnvars) :: scale
+  real(dp), dimension(ipnvars) :: xcm
+  real(dp), dimension(ipnvars) :: xcs
+  real(dp), dimension(ipvlam)  :: vlam
 
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine init_numerics()
+    ! Initialise module variables
+    ioptimz = 1
+    minmax = 7
+    lablmm = (/ &
+      'major radius.         ', &
+      'not used.             ', &
+      'neutron wall load.    ', &
+      'P_tf + P_pf.          ', &
+      'fusion gain.          ', &
+      'cost of electricity.  ', &
+      'capital cost.         ', &
+      'aspect ratio.         ', &
+      'divertor heat load.   ', &
+      'toroidal field.       ', &
+      'total injected power. ', &
+      'H plant capital cost. ', &
+      'H production rate.    ', &
+      'pulse length.         ', &
+      'plant availability.   ', &
+      'min R0, max tau_burn. ', &
+      'net electrical output.', &
+      'Null figure of merit. ',  &
+      'max Q, max t_burn.    ' &
+      /)
+
+    ncalls = 0
+    neqns = 0
+    nfev1 = 0
+    nfev2 = 0
+    nineqns = 0
+    nvar = 16
+    nviter = 0
+    icc = 0
+    active_constraints = .false.
+
+    lablcc = (/ &
+      'Beta consistency                 ', &
+      'Global power balance consistency ', &
+      'Ion power balance                ', &
+      'Electron power balance           ', &
+      'Density upper limit              ', &
+      '(Epsilon x beta-pol) upper limit ', &
+      'Beam ion density consistency     ', &
+      'Neutron wall load upper limit    ', &
+      'Fusion power upper limit         ', &
+      'Toroidal field 1/R consistency   ', &
+      'Radial build consistency         ', &
+      'Volt second lower limit          ', &
+      'Burn time lower limit            ', &
+      'NBI decay lengths consistency    ', &
+      'L-H power threshold limit        ', &
+      'Net electric power lower limit   ', &
+      'Radiation fraction upper limit   ', &
+      'Divertor heat load upper limit   ', &
+      'MVA upper limit                  ', &
+      'Beam tangency radius upper limit ', &
+      'Plasma minor radius lower limit  ', &
+      'Divertor collisionality upper lim', &
+      'Conducting shell radius upper lim', &
+      'Beta upper limit                 ', &
+      'Peak toroidal field upper limit  ', &
+      'CS coil EOF current density limit', &
+      'CS coil BOP current density limit', &
+      'Fusion gain Q lower limit        ', &
+      'Inboard radial build consistency ', &
+      'Injection power upper limit      ', &
+      'TF coil case stress upper limit  ', &
+      'TF coil conduit stress upper lim ', &
+      'I_op / I_critical (TF coil)      ', &
+      'Dump voltage upper limit         ', &
+      'J_winding pack/J_protection limit', &
+      'TF coil temp. margin lower limit ', &
+      'Current drive gamma limit        ', &
+      '1st wall coolant temp rise limit ', &
+      'First wall peak temperature limit', &
+      'Start-up inj. power lower limit  ', &
+      'Plasma curr. ramp time lower lim ', &
+      'Cycle time lower limit           ', &
+      'Average centrepost temperature   ', &
+      'Peak centrepost temp. upper limit', &
+      'Edge safety factor lower limit   ', &
+      'Ip/Irod upper limit              ', &
+      'TF coil tor. thickness upper lim ', &
+      'Poloidal beta upper limit        ', &
+      'RFP reversal parameter < 0       ', &
+      'IFE repetition rate upper limit  ', &
+      'Startup volt-seconds consistency ', &
+      'Tritium breeding ratio lower lim ', &
+      'Neutron fluence on TF coil limit ', &
+      'Peak TF coil nucl. heating limit ', &
+      'Vessel helium concentration limit', &
+      'Psep / R upper limit             ', &
+      'TF coil leg rad width lower limit', &
+      'TF coil leg rad width lower limit', &
+      'NB shine-through frac upper limit', &
+      'CS temperature margin lower limit', &
+      'Minimum availability value       ',  &
+      'taup/taueff                      ', &
+      'number of ITER-like vacuum pumps ',  &
+      'Zeff limit                       ',  &
+      'Dump time set by VV stress       ',   &
+      'Rate of change of energy in field',   &
+      'Upper Lim. on Radiation Wall load',   &
+      'Upper Lim. on Psep * Bt / q A R  ',   &
+      'pdivt < psep_kallenbach divertor ',   &
+      'Separatrix temp consistency      ',   &
+      'Separatrix density consistency   ',    &
+      'CS Tresca stress limit           ',    &
+      'Psep >= Plh + Paux               ',   &
+      'TFC quench < tmax_croco          ',    &
+      'TFC current/copper area < Max    ',    &
+      'Eich critical separatrix density ',   &
+      'TFC current per turn upper limit ',    &
+      'Reinke criterion fZ lower limit  ',   &
+      'Peak CS field upper limit        ',   &
+      'pdivt lower limit                ',   &
+      'ne0 > neped                      ',   &
+      'toroidalgap >  tftort            ',   &
+      'available_space > required_space ',   &
+      'beta > betalim_lower             '    &
+      /)
+
+    ! Please note: All strings between '...' above must be exactly 33 chars long
+    ! Each line of code has a comma before the ampersand, except the last one.
+    ! The last ad_varc line ends with the html tag "</UL>".
+
+    ! Issue #495.  Remove default iteration variables
+    !!  ixc(ipnvars) /0/ :
+    !!               array defining which iteration variables to activate
+    !!               (see lablxc for descriptions)
+    ixc = 0
+    
+    ! WARNING These labels are used as variable names by write_new_in_dat.py, and possibly
+    ! other python utilities, so they cannot easily be changed.
+    lablxc = ''
+    ! Issue 287 iteration variables are now defined in module define_iteration_variables in iteration variables.f90
+    sqsumsq = 0.0D0
+    epsfcn = 1.0D-3
+    epsvmc = 1.0D-6
+    factor = 0.1D0
+    ftol = 1.0D-4
+
+    boundl = 9.d-99
+    ! Issue #287 These bounds now defined in initial.f90
+    boundu = 9.d99
+
+    bondl = 0.0D0
+    bondu = 0.0D0
+    rcm = 0.0D0
+    resdl = 0.0D0
+    scafc = 0.0D0
+    scale = 0.0D0
+    xcm = 0.0D0
+    xcs = 0.0D0
+    vlam = 0.0D0
+    if (allocated(name_xc)) deallocate(name_xc)
+    allocate(name_xc(1))
+    name_xc = ""
+  end subroutine init_numerics
 
   subroutine eqsolv(fcnhyb,n,x,fvec,tol,epsfcn,factor,nprint,info, &
        wa,lwa,resdl,nfev)

@@ -9,8 +9,6 @@ subroutine initial
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use stellarator_module, only: stinit
-    use stellarator_variables, only: istell
     use define_iteration_variables, only: init_itv_1, init_itv_2, init_itv_3, &
         init_itv_4, init_itv_5, init_itv_6, init_itv_7, init_itv_8, init_itv_9, &
         init_itv_10, init_itv_11, init_itv_12, init_itv_13, init_itv_14, init_itv_15, &
@@ -50,10 +48,6 @@ subroutine initial
     !  Local variables
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  See which type of device is being modelled
-
-    call devtyp
 
     !! boundl(ipnvars) /../ : lower bounds on iteration variables 
     !! boundu(ipnvars) /../ : upper bounds on iteration variables 
@@ -531,84 +525,8 @@ subroutine initial
     !    !!  <LI> (173) fbetatry_lower
 
 
-    !  Initialise stellarator parameters if necessary
-    !  This overrides some of the bounds of the tokamak parameters.
-    if (istell /= 0) call stinit
 
 end subroutine initial
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine devtyp
-
-    !! Routine to determine which type of device is to be modelled
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! None
-    !! This routine uses the contents of an input file,
-    !! <CODE>device.dat</CODE>, to determine which type of device
-    !! is to be modelled. If the file is not present in the current
-    !! directory, a standard tokamak model is assumed.
-    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use error_handling, only: report_error
-    use global_variables, only: icase
-    use ife_variables, only: ife
-    use stellarator_variables, only: istell
-
-    implicit none
-
-    !  Local variables
-
-    integer :: idev
-    integer :: iost
-    logical :: iexist
-    character(len = 20) :: devFile
-    character(len = 5) :: line
-    line = ' '
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    devFile = 'device.dat'
-    istell = 0
-    ife    = 0
-    idev   = 0      ! Default value MK
-
-    !  Read a second input file. If the file does not exist or
-    !  blank, then the standard tokamak option is assumed.
-
-    inquire(file = devFile, exist = iexist)
-
-    if (iexist) then
-        open(unit = 101, file = 'device.dat', status = 'old')
-        DO
-            read(101,'(A)', IOSTAT = iost) line
-            read(line, '(I2)') idev
-            if(iost < 0 .or. idev > 0) exit
-        END DO
-        close(unit = 101)
-
-        !  Set relevant switch
-
-        select case (idev)
-
-        case (1)  !  Stellarator model
-            istell = 1
-
-        case (2)  !  ! ISSUE #508 Remove RFP option
-            call report_error(228)
-        case (3)  !  Inertial Fusion Energy model
-            ife = 1
-            icase = 'Inertial Fusion model'
-
-        case default  !  Tokamak model
-            continue
-
-        end select
-    end if
-
-end subroutine devtyp
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine check
 

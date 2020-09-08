@@ -17,7 +17,7 @@ module physics_module
   public :: bpol,fhfac,igmarcal,outplas,outtim,pcond,phyaux, &
     physics,plasma_composition,pohm, rether, subr, &
     diamagnetic_fraction_hender, diamagnetic_fraction_scene, &
-    ps_fraction_scene
+    ps_fraction_scene, init_physics_module
     ! diamagnetic_fraction_hender, diamagnetic_fraction_scene,
     ! ps_fraction_scene made public for testing via interface
 
@@ -36,8 +36,42 @@ module physics_module
   real(dp) :: beta_mcdonald
   real(dp) :: itart_r
 
+  ! Var in subroutine plasma_composition which requires re-initialisation on
+  ! each new run
+  integer :: first_call
+
   contains
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine init_physics_module
+    !! Initialise module variables
+    implicit none
+
+    first_call = 1
+    iscz = 0
+    err242 = 0
+    err243 = 0
+    rad_fraction_core = 0.0D0
+    total_plasma_internal_energy = 0.0D0
+    total_loss_power = 0.0D0
+    total_energy_conf_time = 0.0D0
+    ptarmw = 0.0D0
+    lambdaio = 0.0D0
+    drsep = 0.0D0
+    fio = 0.0D0
+    fLI = 0.0D0
+    fLO = 0.0D0
+    fUI = 0.0D0
+    fUO = 0.0D0
+    pLImw = 0.0D0
+    pLOmw = 0.0D0
+    pUImw = 0.0D0
+    pUOmw = 0.0D0
+    rho_star   = 0.0D0
+    nu_star   = 0.0D0
+    beta_mcdonald = 0.0D0
+    itart_r = 0.0D0
+  end subroutine init_physics_module
+
   subroutine subr(a, b)
      implicit none
      real, intent(in) :: a
@@ -1558,7 +1592,7 @@ module physics_module
 
       real(dp) :: eps,epseff,g,s,zz
 
-      integer :: fit = ASTRA
+      integer, parameter :: fit = ASTRA
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2264,7 +2298,6 @@ module physics_module
 
     real(dp) :: znimp, pc, znfuel
     integer :: imp
-    integer :: first_call = 1
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3641,9 +3674,9 @@ module physics_module
 
     !  Local variables
 
-    real(dp) :: abserr = 0.003D0  !  numerical tolerance
-    real(dp) :: xlow = 0.01D0     !  minimum bound on H-factor
-    real(dp) :: xhigh = 100.0D0   !  maximum bound on H-factor
+    real(dp), parameter :: abserr = 0.003D0  !  numerical tolerance
+    real(dp), parameter :: xlow = 0.01D0     !  minimum bound on H-factor
+    real(dp), parameter :: xhigh = 100.0D0   !  maximum bound on H-factor
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

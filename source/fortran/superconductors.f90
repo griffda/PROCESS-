@@ -91,7 +91,7 @@ subroutine current_sharing_rebco(current_sharing_t, bfield, j)
     real(dp)::x1,x2         ! Initial guesses for temperature
     logical::error                   ! True if the solver does not converge
     real(dp)::residual      ! Residual current density error
-    real(dp)::opt_tol = 1d7 ! Tolerance in current density
+    real(dp), parameter ::opt_tol = 1d7 ! Tolerance in current density
 
     x1 = 4d0
     x2 = 20d0

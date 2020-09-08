@@ -16,20 +16,20 @@ module divertor_ode
   ! Module-level declarations !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  logical, public, save :: impurities_present(nimp)=.false.
+  logical, public, save :: impurities_present(nimp)
 
   ! impurity element name - temporary
 
   ! relative ion mass
   ! Issue #501: change from 2 to 2.5
-  real(dp), private :: aplas=2.5D0
+  real(dp), private :: aplas
 
   ! ion mass [kg]
   real(dp), private :: mi
 
   ! conversion from flux density [el/s] to Pascal [Molecules]
   ! see page 6 of paper.
-  real(dp), private :: fluxdens_to_pa= 1.0D0/1.55e23
+  real(dp), private :: fluxdens_to_pa
 
   ! Useful values (combinations of other constants/variables)
   real(dp), private :: eightemi, eightemi48,  elEion
@@ -37,7 +37,7 @@ module divertor_ode
   real(dp), parameter :: ln10=log(10.0D0)
 
   ! constant in thermal conductivity (equation 5) [J/(s m eV^7/2)]
-  real(dp), private :: kappa0=2390.0D0
+  real(dp), private :: kappa0
 
   ! neutral velocity along the flux bundle, groups 1 & 2 [m/s]
   real(dp), private :: v01, v02
@@ -66,6 +66,31 @@ module divertor_ode
   real(dp), private :: lengthofwidesol
 
 contains
+
+  subroutine init_divertor_ode
+    !! Initialise divertor_ode
+    implicit none
+
+    impurities_present = .false.
+    ! Set entire array to false
+    aplas=2.5D0
+    fluxdens_to_pa= 1.0D0/1.55e23
+    kappa0=2390.0D0
+    mi = 0.0D0
+    eightemi = 0.0D0
+    eightemi48 = 0.0D0
+    elEion = 0.0D0
+    v01 = 0.0D0
+    v02 = 0.0D0
+    circumference_omp = 0.0D0
+    circumference_target = 0.0D0
+    circumf_bu = 0.0D0
+    area_target = 0.0D0
+    area_omp = 0.0D0
+    zeff_div = 0.0D0
+    sol_broadening = 0.0D0
+    lengthofwidesol = 0.0D0
+  end subroutine init_divertor_ode
 
   subroutine divertor_Kallenbach(rmajor,rminor,bt,plascur,q,verboseset,     &
              ttarget,qtargettotal,targetangle, &
@@ -107,7 +132,7 @@ contains
     implicit none
 
     logical::verbose
-    logical,save::firstcall=.true.
+    logical,save :: firstcall
     logical, intent(in) :: verboseset
     logical, optional, intent(in) :: unit_test
 
@@ -224,7 +249,7 @@ contains
     real(dp) :: Power0
 
     ! impurity element name - temporary
-    character(len=2) :: element='**'
+    character(len=2) :: element
 
     ! Poloidal, toroidal and total field at target
     real(dp) :: Bp_target, Bt_target, Btotal_target, pitch_angle, sin_pitch_angle
@@ -256,7 +281,7 @@ contains
     integer(kind=4) :: iwork(5)
 
     ! First step [m]
-    real(dp) :: step0=0.0002
+    real(dp) :: step0
 
     ! Ratio between successive step sizes
     real(dp) :: factor
@@ -330,7 +355,7 @@ contains
     ! Typical SOL temperature, used only for estimating zeffective in the SOL [eV]
     real(dp) :: ttypical
     ! Impurity radiation by species
-    real(dp) :: raddensspecies(nimp)=0.0d0
+    real(dp) :: raddensspecies(nimp)
 
     ! Chodura sheath width [m]
     real(dp) :: lchodura
@@ -343,6 +368,12 @@ contains
     real(dp) :: psi_p_omp, psi_p_target
     ! Power loss integrals corrected by subtracting  1
     real(dp) :: y7, y8, y9, y10
+
+    !! Initialise local variables
+    firstcall = .true.
+    element='**'
+    step0=0.0002
+    raddensspecies(nimp)=0.0d0
 
     ! Major radius at outer midplane [m]
     romp = rmajor + rminor

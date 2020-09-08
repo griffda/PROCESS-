@@ -14,6 +14,9 @@ module read_and_get_atomic_data
   use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
+  ! Var for subroutine get_h_rates requiring re-initialisation on each new run
+  logical, save :: FirstCall
+
 contains
   character(len=300) function hdatadir()
         implicit none
@@ -26,6 +29,13 @@ contains
         end if
         
   end function hdatadir
+
+  subroutine init_read_and_get_atomic_data
+    !! Initialise module variables
+    implicit none
+
+    FirstCall = .true.
+  end subroutine init_read_and_get_atomic_data
 
   subroutine get_h_rates(density, temperature, s, al, Rcx, plt, prb, mass, verbose)
     !! 
@@ -71,8 +81,6 @@ contains
     character(len=100) :: acd_file, scd_file, plt_file, prb_file, ccd_file
 
     real(dp) :: logdens, logtemp
-
-    logical, save :: FirstCall = .true.
 
     logical :: iexist
 
@@ -282,8 +290,8 @@ contains
     real(dp):: lz_deuterium(3)
     real(dp):: dummy1, dummy2, dummy3, dummy4, dummy5
     integer::i,j
-    real(dp)::te(15)=(/1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,12.,14.,16.,18.,20./)
-    real(dp)::density(3)=(/1.e19,1.e20,1.e21/)
+    real(dp), parameter ::te(15)=(/1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,12.,14.,16.,18.,20./)
+    real(dp), parameter ::density(3)=(/1.e19,1.e20,1.e21/)
 
     open(unit=12,file='rate_coefficients.txt',status='replace')
     write(12,'(30a11)')'te [eV]','Rcx', 'ionis19', 'recomb19', 'line rad19', 'cont rad19', 'tot rad19',&

@@ -26,10 +26,13 @@ contains
         complex(rkind) :: ex,ey,ez
 
         integer(ikind) :: lh1
-        integer(ikind) :: cdharm = 1
-
+        integer(ikind) :: cdharm
 
         external currn
+        
+        ! Initialise local variables
+        cdharm = 1
+
         R0 = R0m * 100.e0_rkind     ! Convert to cm
         amin = amin_m * 100.e0_rkind     ! Convert to cm
 

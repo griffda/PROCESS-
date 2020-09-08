@@ -15,9 +15,31 @@ module read_radiation
   ! !!!!!!!!!!!!!!!!!!!!
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+  use impurity_radiation_module, only: nimp
   implicit none
 
   ! List of impurities in the SOL/divertor model IS now same as the main plasma impurities
+
+  ! Vars in function read_lz requiring re-initialisation on each new run
+  integer :: location
+  
+  ! Length of temperature and netau data
+  integer :: nt, nnetau
+  
+  ! Impurity data array
+  real(dp), dimension(200,5) :: impurity_data
+  
+  ! The values of the Lz, mean Z, and mean Z^2 stored in the data files
+  real(dp), dimension(nimp,200,5) :: data_lz, data_z, data_qz
+  
+  ! The values of ln(n.tau) at which the data is stored.
+  real(dp), dimension(nimp,5) :: lnetau_lz, lnetau_z, lnetau_qz
+  
+  ! The values of ln(Te) at which the data is stored.
+  real(dp), dimension(nimp, 200) :: logT_lz, logT_z, logT_qz
+  
+  ! First call boolean switch array
+  logical :: FirstCall(nimp)
 
 contains
  character(len=300) function lzdir()
@@ -30,6 +52,26 @@ contains
             lzdir = trim(process_dir)//'/data/lz_non_corona_14_elements/'
         end if    
   end function lzdir
+
+  subroutine init_read_radiation
+    !! Initialise module variables
+    implicit none
+
+    location = 0
+    nt = 0
+    nnetau = 0
+    impurity_data = 0.0D0
+    data_lz = 0.0D0
+    data_z = 0.0D0
+    data_qz = 0.0D0
+    lnetau_lz = 0.0D0
+    lnetau_z = 0.0D0
+    lnetau_qz = 0.0D0
+    logT_lz = 0.0D0
+    logT_z = 0.0D0
+    logT_qz = 0.0D0
+    FirstCall = .true.
+  end subroutine init_read_radiation
 
   FUNCTION read_lz(element, te, netau, mean_z, mean_qz, verbose)
     !! Read Lz, mean_z or mean_qz data from database
@@ -58,7 +100,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!
 
     integer :: i, j
-    integer :: location=0
 
     ! "non-coronal parameter" for radiative loss function [ms.1e20/m3]
     real(dp), intent(in) :: netau
@@ -81,26 +122,9 @@ contains
     ! Natural logs of netau and te
     real(dp) :: lnetau, lte
 
-    ! Length of temperature and netau data
-    integer,save :: nt, nnetau
-
-    ! Impurity data array
-    real(dp), save, dimension(200,5) :: impurity_data
-
-    ! The values of the Lz, mean Z, and mean Z^2 stored in the data files
-    real(dp), save, dimension(nimp,200,5) :: data_lz, data_z, data_qz
-
-    ! The values of ln(n.tau) at which the data is stored.
-    real(dp), save, dimension(nimp,5) :: lnetau_lz, lnetau_z, lnetau_qz
-
-    ! The values of ln(Te) at which the data is stored.
-    real(dp), save, dimension(nimp, 200) :: logT_lz, logT_z, logT_qz
-
     ! Lz data filename
-    character(len=600) :: filename
-
-    ! First call boolean switch
-    logical, save :: FirstCall(nimp) = .true.
+    ! Beware: changing length can affect Kallenbach solutions / regression test
+    character(len=100) :: filename
 
     ! Find the index of the element.  Exclude hydrogen by starting at 2 (Helium)
     do i = 2, nimp
@@ -341,12 +365,12 @@ contains
     integer, parameter :: points = 27
 
     ! Temperature plot points
-    real(dp) :: te(points) = (/1., 1.2, 1.5, 2., 2.5, 3., 4., 5., 6., 7., 8., 9., &
+    real(dp), parameter :: te(points) = (/1., 1.2, 1.5, 2., 2.5, 3., 4., 5., 6., 7., 8., 9., &
         10., 12., 14., 16., 20., 30., 40., 50., 60., 70., 80., 90., 100., 150., 200./)
 
     real(dp) :: Lz_plot(nimp)
 
-    real(dp) :: netau = 0.5
+    real(dp), parameter :: netau = 0.5
 
     open(unit=12,file='radiative_loss_functions.txt',status='replace')
     write(12,'(30a11)')'Te (eV)', (imp_label(i), i=2,nimp)
@@ -391,12 +415,12 @@ contains
 
     integer, parameter :: points = 27
 
-    real(dp) :: te(points) = (/1., 1.2, 1.5, 2., 2.5, 3.,4., 5., 6., 7., &
+    real(dp), parameter :: te(points) = (/1., 1.2, 1.5, 2., 2.5, 3.,4., 5., 6., 7., &
         8., 9.,10.,12., 14., 16., 20., 30., 40., 50., 60., 70., 80., 90., 100., 150., 200./)
 
     real(dp) :: Z_plot(3,nimp)
 
-    real(dp) :: netau(3) = (/0.1, 1.0, 10.0/)
+    real(dp), parameter :: netau(3) = (/0.1, 1.0, 10.0/)
 
     open(unit=12,file='mean_Z.txt',status='replace')
 

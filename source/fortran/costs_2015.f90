@@ -43,6 +43,23 @@ module costs_2015_module
 
 contains
 
+  subroutine init_costs_2015
+    !! Initialise module variables
+    implicit none
+
+    ip = 0
+    ofile = 0
+    total_costs = 0.0D0
+    mean_electric_output = 0.0D0
+    annual_electric_output = 0.0D0
+    maintenance = 0.0D0
+    ip = 0.0D0
+    ofile = 0.0D0
+    total_costs = 0.0D0
+    ! Re-initialise entire array
+    s = scl('not used', 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0)
+  end subroutine init_costs_2015
+
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine costs_2015(outfile,iprint)

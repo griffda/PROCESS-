@@ -58,6 +58,7 @@ class Process():
         :type args: list, optional
         """
         self.parse_args(args)
+        self.init_module_vars()
         self.set_filenames()
         self.initialise()
         self.run_hare_tests()
@@ -66,8 +67,8 @@ class Process():
         self.call_solver()
         self.scan()
         self.show_errors()
-        self.append_input()
         self.finish()
+        self.append_input()
     
     def parse_args(self, args=None):
         """Parse the command-line arguments, such as the input filename.
@@ -125,6 +126,14 @@ class Process():
         # sys.argv), as the method is being run from the command-line.
         self.args = parser.parse_args(args)
         # Store namespace object of the args
+
+    def init_module_vars(self):
+        """Initialise all module variables in the Fortran.
+
+        This "resets" all module variables to their initialised values, so each
+        new run doesn't have any side-effects from previous runs.
+        """
+        fortran.init_module.init_all_module_vars()
 
     def set_filenames(self):
         """Validate the input filename and create other filenames from it."""
@@ -205,24 +214,28 @@ class Process():
         """Report all informational/error messages encountered."""
         fortran.error_handling.show_errors()
 
+    def finish(self):
+        """Run the finish subroutine to close files open in the Fortran.
+        
+        Files being handled by Fortran must be closed before attempting to
+        write to them using Python, otherwise only parts are written.
+        """
+        fortran.init_module.finish()
+
     def append_input(self):
         """Append the input file to the output file and mfile."""
         # Read IN.DAT input file
-        with open(self.input_path, 'r') as input_file:
+        with open(self.input_path, 'r', encoding="utf-8") as input_file:
             input_lines = input_file.readlines()
 
         # Append the input file to the output file
-        with open(self.output_path, 'a') as output_file:
+        with open(self.output_path, 'a', encoding="utf-8") as output_file:
             output_file.writelines(input_lines)
 
         # Append the input file to the mfile
-        with open(self.mfile_path, 'a') as mfile_file:
+        with open(self.mfile_path, 'a', encoding="utf-8") as mfile_file:
             mfile_file.write("***********************************************")
             mfile_file.writelines(input_lines)
-
-    def finish(self):
-        """Run the finish subroutine to close files open in the Fortran."""
-        fortran.init_module.finish()
 
 def main(args=None):
     """Run Process.

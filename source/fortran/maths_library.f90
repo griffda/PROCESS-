@@ -43,11 +43,21 @@ module maths_library
        eshellarea, dshellarea, binomial, binarysearch, interpolate, &
        secant_solve, test_secant_solve, nearly_equal
   public::variable_error
-  public :: integer2string, integer3string
+  public :: integer2string, integer3string, init_maths_library
+
+  ! Var from subroutine vmcon requiring re-initialisation on each new run
+  real(dp) :: best_sum_so_far
 
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine init_maths_library
+    !! Initialise module variables
+    implicit none
+
+    best_sum_so_far = 999d0
+  end subroutine init_maths_library
 
   function find_y_nonuniform_x(x0,x,y,n)
 
@@ -2244,7 +2254,6 @@ contains
 
     real(dp) :: alpha,aux,auxa,calpha,dbd,dflsa,dg, &
          fls,flsa,spgdel,temp,thcomp,theta
-    real(dp) :: best_sum_so_far = 999d0
     real(dp) :: summ, sqsumsq, sqsumsq_tol
     real(dp) :: lowest_valid_fom    
     real(dp), parameter :: zero = 0.0D0
@@ -5922,13 +5931,13 @@ module testdata
   use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
-  integer :: nfun = 0  !  function call counter
+  integer :: nfun !  function call counter
 
   !  Choose test to run by changing itest in main program below.
   !  1 to 3 are recommended, others are included to probe the code's
   !  behaviour with different initial guesses for the solution vector x
 
-  integer :: itest = 1
+  integer :: itest
 
   !  Expected answers for tests 1 to 3 are given in
   !  VMCON documentation ANL-80-64
@@ -5942,6 +5951,14 @@ module testdata
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine init_testdata
+    !! Initialise module variables
+    implicit none
+
+    nfun = 0
+    itest = 1
+  end subroutine init_testdata
 
   subroutine inittest(nvar,neqns,nineqns,x,ilower,iupper,bndl,bndu)
 

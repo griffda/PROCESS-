@@ -18,7 +18,7 @@ module costs_step_module
   implicit none
 
   private
-  public :: costs_step
+  public :: costs_step, init_costs_step
 
   !  Various cost account values (M$)
   real(dp) :: step20, step21, step22, step23, step24, step25, &
@@ -29,6 +29,30 @@ module costs_step_module
   rmajor_star, rminor_star, pth
 
 contains
+
+  subroutine init_costs_step
+    !! Initialise module variables
+    implicit none
+
+    step20 = 0.0D0
+    step21 = 0.0D0
+    step22 = 0.0D0
+    step23 = 0.0D0
+    step24 = 0.0D0
+    step25 = 0.0D0
+    step91 = 0.0D0
+    step92 = 0.0D0
+    step93 = 0.0D0
+    fwblkcost = 0.0D0
+    vfi = 0.0D0
+    vfi_star = 0.0D0
+    ptherm_star = 0.0D0
+    pinjmw_star = 0.0D0
+    fwarea_star = 0.0D0
+    rmajor_star = 0.0D0
+    rminor_star = 0.0D0
+    pth = 0.0D0
+  end subroutine init_costs_step
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

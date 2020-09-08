@@ -64,7 +64,7 @@ module process_input
   implicit none
 
   private
-  public :: input, check_range_int, check_range_real, lower_case
+  public :: input, check_range_int, check_range_real, lower_case, init_input
   integer, public, parameter :: nin = 10
 
 #ifdef unit_test
@@ -78,12 +78,35 @@ module process_input
   integer :: iptr             !  current position on line
   integer :: infile, outfile, report_changes, icode
   logical :: subscript_present
-  logical :: error = .False.
+  logical :: error
   character(len=78) :: error_message
+  
+  ! Vars for subroutine input() requiring re-initialisation before each new run
+  integer :: show_changes
+  logical :: constraints_exist
 
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine init_input
+    !! Initialise module variables
+    implicit none
+
+    error = .False.
+    show_changes = 0
+    constraints_exist = .false.
+    line = ""
+    linelen = 0
+    lineno = 0
+    iptr = 0
+    infile = 0
+    outfile = 0
+    report_changes = 0
+    icode = 0
+    subscript_present = .false.
+    error_message = ""
+  end subroutine init_input
 
   subroutine input
 
@@ -105,10 +128,8 @@ contains
 
     !  Local variables
 
-    integer :: show_changes = 0
     integer :: i
     !     j
-    logical :: constraints_exist=.false.
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     call parse_input_file(nin,nout,show_changes)
@@ -121,9 +142,25 @@ contains
         end if
     end do
 
+    ! Set the device type based on the input file's switches
+    call devtyp
   end subroutine input
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine devtyp
+    !! Set icase description based on device type
+    use global_variables, only: icase
+    use ife_variables, only: ife
+    use stellarator_variables, only: istell
+    implicit none
+
+    if (ife == 1) then
+        icase = 'Inertial Fusion model'
+    else if (istell /= 0) then
+        icase = 'Stellarator model'
+    end if
+  end subroutine devtyp
 
   subroutine parse_input_file(in_file,out_file,show_changes)
 
@@ -228,7 +265,8 @@ contains
       pifecr, ifedrv, v2dr, chmatf, v1dr, v1matf, dcdrv1, chdzu, dcdrv2, &
       ifetyp, fwdzl, htpmw_ife, uccarb, v3matf, fbreed, edrive, ptargf, cdriv2, &
       fburn, fwdzu, etave, v3dr, uctarg, shdzl, ucflib, v3dzl, v1dzu, v2dzl, &
-      chdzl, chrad, cdriv1, tgain, somtdr, v2matf, rrmax, bldr, frrmax , blmatf
+      chdzl, chrad, cdriv1, tgain, somtdr, v2matf, rrmax, bldr, frrmax, &
+      blmatf, ife
     use impurity_radiation_module, only: coreradius, nimp, impvar, fimpvar, &
       coreradiationfraction, impdir, fimp
     use numerics, only: factor, boundl, minmax, neqns, nvar, epsfcn, ixc, &
@@ -305,19 +343,24 @@ contains
 
     integer :: iost
     integer :: isub1,isub2,varlen
-    integer :: no_constraints=0
-    integer :: no_iteration=0
+    integer :: no_constraints
+    integer :: no_iteration
     integer :: foundAst
 
     character(len=32) :: varnam
 
-    logical :: obsolete_var = .false.
+    logical :: obsolete_var
     character(len=400) :: imp_dir 
     
     imp_dir = impdir()
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    ! Initialise local variables
+    no_constraints = 0
+    no_iteration = 0
+    obsolete_var = .false.
+    
     !  Initialise module-wide variables
 
     infile = in_file
@@ -3075,6 +3118,9 @@ contains
 
        !  Inertial Fusion Energy plant settings
 
+       case ('ife')
+          call parse_int_variable('ife', ife, 0, 1, &
+                    'Switch for Inertial Fusion Energy model')
        case ('bldr')
           call parse_real_variable('bldr', bldr, 0.0D0, 10.0D0, &
                     'IFE blanket radial thickness (m)')
@@ -3304,6 +3350,8 @@ contains
     if (error .eqv. .True.) stop
 
     ! MDK Try allocating here
+    ! Guard against re-allocation
+    if (allocated(name_xc)) deallocate(name_xc)
     allocate(name_xc(nvar))
 
   end subroutine parse_input_file
@@ -4681,7 +4729,7 @@ contains
    !  Local variables
 
    character(len=1) :: letter
-   character(len=27) :: lowtab = 'abcdefghijklmnopqrstuvwxyz_'
+   character(len=27), parameter :: lowtab = 'abcdefghijklmnopqrstuvwxyz_'
    integer :: loop, i
 
    integer :: first, last

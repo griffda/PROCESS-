@@ -57,7 +57,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!
 
     real(dp) :: lb, ld, td
-    real(dp), save :: uplanned, uutot
+    real(dp) :: uplanned, uutot
     integer :: n
 
     ! Full power lifetime (in years)

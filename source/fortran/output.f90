@@ -755,7 +755,7 @@ contains
 
     !  Local variables
 
-    character(len=10) :: number = '0123456789'
+    character(len=10), parameter :: number = '0123456789'
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

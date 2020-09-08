@@ -14,142 +14,142 @@ module tfcoil_variables
 
   public
 
-  real(dp) :: acasetf = 0.0D0
+  real(dp) :: acasetf
   !! external case area per coil (inboard leg) (m2)
 
-  real(dp) :: acasetfo = 0.0D0
+  real(dp) :: acasetfo
   !! external case area per coil (outboard leg) (m2)
 
-  real(dp) :: acndttf = 0.0D0
+  real(dp) :: acndttf
   !! area of the cable conduit (m2)
 
-  real(dp) :: acond = 0.0D0
+  real(dp) :: acond
   !! conductor area (winding pack) (m2)
 
-  real(dp) :: acstf = 0.0D0
+  real(dp) :: acstf
   !! internal area of the cable space (m2)
 
-  real(dp) :: insulation_area = 0.0D0
+  real(dp) :: insulation_area
   !! single turn insulation area (m2)
 
-  real(dp) :: aiwp = 0.0D0
+  real(dp) :: aiwp
   !! winding pack insulation area (m2)
 
-  real(dp) :: alstrtf = 6.0D8
+  real(dp) :: alstrtf
   !! Allowable Tresca stress in TF coil structural material (Pa)
 
-  real(dp) :: arealeg = 0.0D0
+  real(dp) :: arealeg
   !! outboard TF leg area (m2)
 
-  real(dp) :: aswp = 0.0D0
+  real(dp) :: aswp
   !! winding pack structure area (m2)
 
-  real(dp) :: avwp = 0.0D0
+  real(dp) :: avwp
   !! winding pack void (He coolant) area (m2)
 
-  real(dp) :: awphec = 0.0D0
+  real(dp) :: awphec
   !! winding pack He coil area (m2)
 
-  real(dp) :: bcritsc = 24.0D0
+  real(dp) :: bcritsc
   !! upper critical field (T) for Nb3Sn superconductor at zero temperature and 
   !! strain (`i_tf_sc_mat=4, =bc20m`)
 
-  real(dp) :: bmaxtf = 0.0D0
+  real(dp) :: bmaxtf
   !! mean peak field at TF coil (T)
 
-  real(dp) :: bmaxtfrp = 0.0D0
+  real(dp) :: bmaxtfrp
   !! peak field at TF conductor with ripple (T)
 
-  real(dp) :: casestr = 0.0D0
+  real(dp) :: casestr
   !! case strain
 
-  real(dp) :: casthi = 0.0D0
+  real(dp) :: casthi
   !! inboard TF coil case plasma side thickness (m) (calculated for stellarators)
 
-  real(dp) :: casthi_fraction = 0.05D0
+  real(dp) :: casthi_fraction
   !! inboard TF coil case plasma side thickness as a fraction of tfcth
 
   logical :: casthi_is_fraction
   !! logical switch to make casthi a fraction of TF coil thickness (`casthi_fraction`)
 
-  real(dp) :: casths = 0.0D0
+  real(dp) :: casths
   !! inboard TF coil sidewall case thickness (m) (calculated for stellarators)
 
-  real(dp) :: casths_fraction = 0.03D0
+  real(dp) :: casths_fraction
   !! inboard TF coil sidewall case thickness as a fraction of tftort
 
   logical :: tfc_sidewall_is_fraction
   !! logical switch to make casths a fraction of TF coil thickness (`casths_fraction`)
 
-  real(dp) :: t_conductor = 0.0D0
+  real(dp) :: t_conductor
   !! Conductor (cable + steel conduit) area averaged dimension [m]
   
-  real(dp) :: t_turn = 0.0D0
+  real(dp) :: t_turn
   !! WP turn squared dimensions [m]
 
-  real(dp) :: acs = 0.0D0
+  real(dp) :: acs
   !! Area of space inside conductor (m2)
 
-  real(dp) :: cdtfleg = 0.0D0
+  real(dp) :: cdtfleg
   !! TF outboard leg current density (A/m2) (resistive coils only)
   
-  real(dp) :: cforce = 0.0D0
+  real(dp) :: cforce
   !! centering force on inboard leg (per coil) (N/m)
 
-  real(dp) :: cpttf = 7.0e4
+  real(dp) :: cpttf
   !! TF coil current per turn (A). (calculated for stellarators) (calculated for 
   !! integer-turn TF coils `i_tf_turns_integer=1`) (`iteration variable 60`)
 
-  real(dp) :: cpttf_max = 9.0e4
+  real(dp) :: cpttf_max
   !! Max TF coil current per turn [A]. (for stellarators and `i_tf_turns_integer=1`) 
   !! (`constraint equation 77`)
 
-  real(dp) :: dcase = 8000.0D0
+  real(dp) :: dcase
   !! density of coil case (kg/m3)
 
-  real(dp), dimension(7) :: dcond = 9000.0D0
+  real(dp), dimension(7) :: dcond
   !! density of superconductor type given by i_tf_sc_mat/isumatoh/isumatpf (kg/m3)
   
-  real(dp) :: dcondins = 1800.0D0
+  real(dp) :: dcondins
   !! density of conduit + ground-wall insulation (kg/m3)
 
-  real(dp) :: dhecoil = 0.005D0
+  real(dp) :: dhecoil
   !! diameter of He coil in TF winding (m)
 
-  real(dp) :: estotftgj = 0.0D0
+  real(dp) :: estotftgj
   !! total stored energy in the toroidal field (GJ)
 
-  real(dp) :: farc4tf = 0.7D0
+  real(dp) :: farc4tf
   !! factor to size height of point 4 on TF coil
-  real(kind(1.0D0)) :: b_crit_upper_nbti = 14.86D0
+  real(kind(1.0D0)) :: b_crit_upper_nbti
   !! upper critical field of GL_nbti
-  real(kind(1.0D0)) :: t_crit_nbti = 9.04D0
+  real(kind(1.0D0)) :: t_crit_nbti
   !! critical temperature of GL_nbti
-  real(kind(1.0D0)) :: max_force_density = 0.0D0
+  real(kind(1.0D0)) :: max_force_density
   !! Maximal (WP averaged) force density in TF coils at 1 point. (MN/m3)
-  real(kind(1.0D0)) :: fcutfsu = 0.69D0
+  real(kind(1.0D0)) :: fcutfsu
   !! copper fraction of cable conductor (TF coils)
   !! (iteration variable 59)
-  real(dp) :: fhts = 0.5D0
+  real(dp) :: fhts
   !! technology adjustment factor for critical current density fit for isumat..=2 
   !! Bi-2212 superconductor, to describe the level of technology assumed (i.e. to 
   !! account for stress, fatigue, radiation, AC losses, joints or manufacturing 
   !! variations; 1.0 would be very optimistic)
   
-  real(dp) :: insstrain = 0.0D0
+  real(dp) :: insstrain
   !! Radial strain in insulator
 
-  integer :: i_tf_plane_stress = 1
+  integer :: i_tf_plane_stress
   !! Switch for the TF coil stress model
   !!   0 : New generalized plane strain formulation 
   !!   1 : Old plane stress model (only for SC)
 
-  integer :: i_tf_tresca = 0
+  integer :: i_tf_tresca
   !! Switch for TF coil conduit Tresca stress criterion:
   !!   0 : Tresca (no adjustment);
   !!   1 : Tresca with CEA adjustment factors (radial+2%, vertical+60%) </UL>
   
-  integer :: i_tf_wp_geom = -1
+  integer :: i_tf_wp_geom
   !! Switch for TF WP geometry selection
   !!   0 : Rectangular geometry 
   !!   1 : Double rectangular geometry 
@@ -158,17 +158,17 @@ module tfcoil_variables
   !!   if i_tf_turns_integer = 0 : Double rectangular
   !!   if i_tf_turns_integer = 1 : Rectangular 
 
-  integer :: i_tf_case_geom = 0
+  integer :: i_tf_case_geom
   !! Switch for TF case geometry selection
   !!   0 : Circular front case (ITER design)
   !!   1 : Straight front case
 
-  integer :: i_tf_turns_integer = 0
+  integer :: i_tf_turns_integer
   !! Switch for TF coil integer/non-integer turns:
   !!   0 : non-integer turns
   !!   1 : integer turns
 
-  integer :: i_tf_sc_mat = 1
+  integer :: i_tf_sc_mat
   !! Switch for superconductor material in TF coils:
   !!
   !! - =1 ITER Nb3Sn critical surface model with standard
@@ -180,31 +180,31 @@ module tfcoil_variables
   !! - =5 WST Nb3Sn parameterisation
   !! - =6 REBCO HTS tape in CroCo strand
 
-  integer :: i_tf_sup = 1
+  integer :: i_tf_sup
   !! Switch for TF coil conductor model:
   !!
   !! - =0 copper
   !! - =1 superconductor
   !! - =2 Cryogenic aluminium
 
-  integer :: i_tf_shape = 0
+  integer :: i_tf_shape
   !! Switch for TF coil toroidal shape:
   !!
   !! - =0  Default value : Picture frame coil for TART / PROCESS D-shape for non itart
   !! - =1  PROCESS D-shape : parametrise with 2 arcs 
   !! - =2  Picture frame coils 
 
-  integer :: n_pancake = 10
+  integer :: n_pancake
   !! Number of pancakes in TF coil. Only used if `i_tf_turns_integer=1`
 
-  integer :: n_layer = 20
+  integer :: n_layer
   !! Number of layers in TF coil. Only used if `i_tf_turns_integer=1`
   
-  integer :: n_rad_per_layer = 100
+  integer :: n_rad_per_layer
   !! Size of the arrays per layers storing the radial dependent stress 
   !! quantities (stresses, strain displacement etc..)
 
-  integer :: i_tf_bucking = -1
+  integer :: i_tf_bucking
   !! Switch for TF inboard suport structure design:
   !! 
   !! Default setting for backward compatibility
@@ -222,111 +222,111 @@ module tfcoil_variables
   !! - =3 : The TF is in contact with the CS : "bucked and weged design"
   !!       Full version : thin TF-CS Kapton interface introduced in the stress calculations (4 layers)
 
-  integer :: n_tf_graded_layers = 1
+  integer :: n_tf_graded_layers
   !! Number of layers of different stress properties in the WP. If `n_tf_graded_layers > 1`, 
   !! a graded coil is condidered
 
-  integer :: n_tf_stress_layers = 0
+  integer :: n_tf_stress_layers
   !! Number of layers considered for the inboard TF stress calculations
   !! set in initial.f90 from i_tf_bucking and n_tf_graded_layers
 
-  real(dp) :: jbus = 1.25D6
+  real(dp) :: jbus
   !! bussing current density (A/m2)
   
-  real(dp) :: jwdgcrt = 0.0D0
+  real(dp) :: jwdgcrt
   !! critical current density for winding pack (A/m2)
 
-  real(dp) :: jwdgpro = 0.0D0
+  real(dp) :: jwdgpro
   !! allowable TF coil winding pack current density, for dump temperature rise protection (A/m2)
 
-  real(dp) :: jwptf = 0.0D0
+  real(dp) :: jwptf
   !! winding pack engineering current density (A/m2)
 
-  real(dp) :: oacdcp = 0.0D0
+  real(dp) :: oacdcp
   !! Overall current density in TF coil inboard legs midplane (A/m2)
   !! Rem SK : Not used in tfcoil to set the current any more. Should not be used as
   !! iteration variable 12 any more. It is now calculated.
 
-  real(dp) :: eyzwp = 0.0D0
+  real(dp) :: eyzwp
   !! Winding pack vertical Young's modulus (Pa)
 
-  real(dp) :: eyoung_ins = 1.0D8
+  real(dp) :: eyoung_ins
   !! Insulator Young's modulus [Pa]. Default value (1.0D8) setup the following values
   !!  - SC TF, eyoung_ins = 20 Gpa (default value from DDD11-2 v2 2 (2009))
   !!  - Al TF, eyoung_ins = 2.5 GPa (Kapton polymer)
 
-  real(dp) :: eyoung_steel = 2.05D11
+  real(dp) :: eyoung_steel
   !! Steel case Young's modulus (Pa) (default value from DDD11-2 v2 2 (2009))
 
-  real(dp) :: eyoung_winding = 6.6D8
+  real(dp) :: eyoung_winding
   !! SC TF coil winding Young's modulus (Pa)
   
-  real(dp) :: eyoung_res_tf_buck = 150.0D9 
+  real(dp) :: eyoung_res_tf_buck
   !! Resistive TF magnets bucking cylinder young modulus (Pa)
 
-  real(dp) :: eyoung_copper = 117.0D9
+  real(dp) :: eyoung_copper
   !! Copper young modulus. Default value taken from wikipedia
 
-  real(dp) :: eyoung_al = 69.0D9 
+  real(dp) :: eyoung_al
   !! Aluminium young modulus.  Default value taken from wikipedia
   
-  real(dp) :: poisson_steel = 0.3D0
+  real(dp) :: poisson_steel
   !! Steel Poisson's ratio 
   
-  real(dp):: poisson_copper = 0.35D0
+  real(dp):: poisson_copper
   !! Copper Poisson's ratio. Source : https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html
 
-  real(dp):: poisson_al = 0.35D0
+  real(dp):: poisson_al
   !! Aluminium Poisson's ratio. 
   !! Source : https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html
 
-  real(dp) :: rbmax = 0.0D0
+  real(dp) :: rbmax
   !! Radius of maximum TF B-field (m)
 
-  real(dp) :: tflegres = 0.0D0
+  real(dp) :: tflegres
   !! TF coil leg resistance (ohm)
 
-  real(dp) :: toroidalgap = 1.0D0 ![m]
+  real(dp) :: toroidalgap
   !! Minimal distance between two toroidal coils. (m)
 
-  real(dp) :: ftoroidalgap = 1.0D0
+  real(dp) :: ftoroidalgap
   !! F-value for minimum tftort (`constraint equation 82`)
 
-  real(dp) :: ripmax = 1.0D0
+  real(dp) :: ripmax
   !! aximum allowable toroidal field ripple amplitude at plasma edge (%)
 
-  real(dp) :: ripple = 0.0D0
+  real(dp) :: ripple
   !! peak/average toroidal field ripple at plasma edge (%)
 
-  real(dp) :: ritfc = 0.0D0
+  real(dp) :: ritfc
   !! total (summed) current in TF coils (A)
   
   integer, parameter :: n_radial_array = 50
   !! Size of the radial distribution arrays per layers
   !! used for stress, strain and displacement distibution
 
-  real(dp), dimension(2*n_radial_array) :: radial_array = 0.0D0
+  real(dp), dimension(2*n_radial_array) :: radial_array
   !! Array refining the radii of the stress calculations arrays
 
-  real(dp), dimension(2*n_radial_array) :: sig_tf_r = 0.0D0
+  real(dp), dimension(2*n_radial_array) :: sig_tf_r
   !! TF Inboard leg radial stress in steel r distribution at mid-plane [Pa]
   
-  real(dp), dimension(2*n_radial_array) :: sig_tf_t = 0.0D0
+  real(dp), dimension(2*n_radial_array) :: sig_tf_t
   !! TF Inboard leg tangential stress in steel r distribution at mid-plane [Pa]
   
-  real(dp), dimension(2*n_radial_array) :: deflect = 0.0D0
+  real(dp), dimension(2*n_radial_array) :: deflect
   !! TF coil radial deflection (displacement) radial distribution [m]
 
-  real(dp) :: sig_tf_z = 0.0D0
+  real(dp) :: sig_tf_z
   !! TF Inboard leg vertical tensile stress in steel at mid-plane [Pa]
     
-  real(dp), dimension(2*n_radial_array) :: sig_tf_vmises = 0.0D0
+  real(dp), dimension(2*n_radial_array) :: sig_tf_vmises
   !! TF Inboard leg Von-Mises stress in steel r distribution at mid-plane [Pa]
       
-  real(dp), dimension(2*n_radial_array) :: sig_tf_tresca = 0.0D0 
+  real(dp), dimension(2*n_radial_array) :: sig_tf_tresca
   !! TF Inboard leg TRESCA stress in steel r distribution at mid-plane [Pa]
 
-  real(dp) :: strtf0 = 0.0D0
+  real(dp) :: strtf0
   !! Maximum TRESCA stress in CS structures at CS flux swing [Pa]:
   !!
   !!  - If superconducting CS (ipfres = 0): turn steel conduits TRESCA stress
@@ -335,43 +335,43 @@ module tfcoil_variables
   !! Quantity only computed for bucked and wedged design (`i_tf_bucking >= 2`)
   !! Def : CS Flux swing, instant when the current changes sign in CS (null current) 
 
-  real(dp) :: strtf1 = 0.0D0
+  real(dp) :: strtf1
   !! Maximum TRESCA stress in TF casing steel structures (Pa)
   
-  real(dp) :: strtf2 = 0.0D0
+  real(dp) :: strtf2
   !! Maximum TRESCA stress in TF WP conduit steel structures (Pa)
   
-  real(dp) :: sigvvall = 9.3D7
+  real(dp) :: sigvvall
   !! allowable stress from TF quench in vacuum vessel (Pa)
 
-  real(dp) :: strncon_cs = -0.005D0
+  real(dp) :: strncon_cs
   !! strain in CS superconductor material (used in Nb3Sn critical surface model `isumatoh=1,4,5`)
 
-  real(dp) :: strncon_pf = -0.005D0
+  real(dp) :: strncon_pf
   !! strain in PF superconductor material (used in Nb3Sn critical surface model `isumatph=1,4,5`)
 
-  real(dp) :: strncon_tf = -0.005D0
+  real(dp) :: strncon_tf
   !! strain in TF superconductor material (used in Nb3Sn critical surface model `i_tf_sc_mat=1,4,5`)
 
-  character(len=12) :: quench_model = 'exponential'
+  character(len=12) :: quench_model
   !! switch for TF coil quench model (Only applies to REBCO magnet at present, issue #522):
   !!
   !! - ='exponential' exponential quench with constant discharge resistor
   !! - ='linear' quench with constant voltage
 
-  real(dp) :: quench_detection_ef = 0D0
+  real(dp) :: quench_detection_ef
   !! Electric field at which TF quench is detected and discharge begins (V/m)
 
-  real(dp) :: time1 = 0D0
+  real(dp) :: time1
   !! Time at which TF quench is detected (s)
 
-  real(dp) :: taucq = 30.0D0
+  real(dp) :: taucq
   !! allowable TF quench time (s)
 
-  real(dp) :: tcritsc = 16.0D0
+  real(dp) :: tcritsc
   !! critical temperature (K) for superconductor at zero field and strain (`i_tf_sc_mat=4, =tc0m`)
 
-  real(dp) :: tdmptf = 10.0D0
+  real(dp) :: tdmptf
   !! fast discharge time for TF coil in event of quench (s) (`iteration variable 56`)
   !!
   !! For REBCO model, meaning depends on quench_model:
@@ -379,125 +379,125 @@ module tfcoil_variables
   !! - exponential quench : e-folding time (s)`
   !! - linear quench : discharge time (s)
 
-  real(dp) :: tfareain = 0.0D0
+  real(dp) :: tfareain
   !! Area of inboard midplane TF legs (m2)
 
-  real(dp) :: tfbusl = 0.0D0
+  real(dp) :: tfbusl
   !! TF coil bus length (m)
 
-  real(dp) :: tfbusmas = 0.0D0
+  real(dp) :: tfbusmas
   !! TF coil bus mass (kg)
 
-  real(dp) :: tfckw = 0.0D0
+  real(dp) :: tfckw
   !! available DC power for charging the TF coils (kW)
 
   !#TODO: issue #781
-  ! integer :: tfc_model = 1
+  ! integer :: tfc_model
   ! !! tfc_model /1/ : switch for TF coil magnet stress model:<UL>
   ! !!                 <LI> = 0 simple model (solid copper coil)
   ! !!                 <LI> = 1 CCFE two-layer stress model; superconductor</UL>
 
-  real(dp) :: tfcmw = 0.0D0
+  real(dp) :: tfcmw
   !! Peak power per TF power supply (MW)
   
-  real(dp) :: tfcpmw = 0.0D0
+  real(dp) :: tfcpmw
   !! Peak resistive TF coil inboard leg power (MW)
 
-  real(dp) :: tfjtsmw = 0.0D0
+  real(dp) :: tfjtsmw
   !! TF joints resistive power losses (MW)
 
-  real(dp) :: tfcryoarea = 0.0D0
+  real(dp) :: tfcryoarea
   !! surface area of toroidal shells covering TF coils (m2)
 
-  real(dp) :: tficrn = 0.0D0
+  real(dp) :: tficrn
   !! TF coil half-width - inner bore (m)
 
-  real(dp) :: tfind = 0.0D0
+  real(dp) :: tfind
   !! TF coil inductance (H)
 
-  real(dp) :: tfinsgap = 0.010D0
+  real(dp) :: tfinsgap
   !! TF coil WP insertion gap (m)
   
-  real(dp) :: tflegmw = 0.0D0
+  real(dp) :: tflegmw
   !! TF coil outboard leg resistive power (MW)
 
-  real(dp) :: rhocp = 0.0D0
+  real(dp) :: rhocp
   !! TF coil inboard leg resistivity [Ohm-m]. If `itart=0`, this variable is the 
   !! average resistivity over the whole magnet
 
-  real(dp) :: rhotfleg = 0.0D0
+  real(dp) :: rhotfleg
   !! Resistivity of a TF coil leg (Ohm-m)
 
-  real(dp) :: rhotfbus = -1.0D0 ! 2.5D-8
+  real(dp) :: rhotfbus
   !! Resistivity of a TF coil bus (Ohm-m). Default value takes the same res as the leg one
- 
-  real(dp) :: frhocp = 1.0D0
+
+  real(dp) :: frhocp
   !! Centrepost resistivity enhancement factor. For `itart=0`, this factor 
   !! is used for the whole magnet 
   
-  real(dp) :: frholeg = 1.0D0
+  real(dp) :: frholeg
   !! Ouboard legs resistivity enhancement factor. Only used for `itart=1`.
   
-  real(dp) :: rho_tf_joints = 2.5D-10
+  real(dp) :: rho_tf_joints
   !! TF joints surfacic resistivity [ohm.m^2]. Feldmetal joints assumed.
 
-  integer :: n_tf_joints_contact = 6
+  integer :: n_tf_joints_contact
   !! Number of contact per sliding joint
 
-  integer :: n_tf_joints = 4
+  integer :: n_tf_joints
   !! Number of joint per turn
 
-  real(dp) :: th_joint_contact = 0.03D0
+  real(dp) :: th_joint_contact
   !! TF sliding joints contact pad width [m]
 
-  real(dp) :: pres_joints = 0.0D0
+  real(dp) :: pres_joints
   !! Calculated TF joints resistive power losses [W]
 
-  real(dp) :: tfleng = 0.0D0
+  real(dp) :: tfleng
   !! TF coil circumference (m)
 
-  real(dp) :: eff_tf_cryo = -1.0D0
+  real(dp) :: eff_tf_cryo
   !! TF cryoplant efficiency (compared to pefect Carnot cycle).
   !! Using -1 set the default value depending on magnet technology:
   !!
   !!  - i_tf_sup = 1 : SC magnet, eff_tf_cryo = 0.13 (ITER design)
   !!  - i_tf_sup = 2 : Cryo-aluminium, eff_tf_cryo = 0.4
 
-  real(dp) :: n_tf = 16.0D0
+  real(dp) :: n_tf
   !! Number of TF coils (default = 50 for stellarators). Number of TF coils outer legs for ST
 
-  real(dp) :: tfocrn = 0.0D0
+  real(dp) :: tfocrn
   !! TF coil half-width - outer bore (m)
 
-  real(dp) :: tfsai = 0.0D0
+  real(dp) :: tfsai
   !! area of the inboard TF coil legs (m2)
 
-  real(dp) :: tfsao = 0.0D0
+  real(dp) :: tfsao
   !! area of the outboard TF coil legs (m2)
 
-  real(dp) :: tftmp = 4.5D0
+  real(dp) :: tftmp
   !! peak helium coolant temperature in TF coils and PF coils (K)
 
-  real(dp) :: tftort = 1.0D0
+  real(dp) :: tftort
   !! TF coil toroidal thickness (m)
 
-  real(dp) :: thicndut = 8.0D-4
+  real(dp) :: thicndut
   !! conduit insulation thickness (m)
 
-  real(dp) :: layer_ins = 0.0D0
+  real(dp) :: layer_ins
   !! Additional insulation thickness between layers (m)
 
-  real(dp) :: thkcas = 0.3D0
+  real(dp) :: thkcas
   !! inboard TF coil case outer (non-plasma side) thickness (m) (`iteration variable 57`)
   !! (calculated for stellarators)
 
-  real(dp) :: dr_tf_wp = 0.0D0
+  real(dp) :: dr_tf_wp
   !! radial thickness of winding pack (m) (`iteration variable 140`) (issue #514)
 
-  real(dp) :: thwcndut = 8.0D-3
+  real(dp) :: thwcndut
   !! TF coil conduit case thickness (m) (`iteration variable 58`)
   
-  real(dp) :: tinstf = 0.018D0
+  real(dp) :: tinstf
   !! Thickness of the ground insulation layer surrounding (m) 
   !! 
   !!   - Superconductor TF (`i_tf_sup == 1`) : The TF Winding packs
@@ -506,202 +506,402 @@ module tfcoil_variables
   !! Rem : The default value includes allowance for 10 mm insertion gap.
   !! Rem : Thickness calculated for stellarators.
 
-  real(dp) :: tmargmin_tf = 0D0
+  real(dp) :: tmargmin_tf
   !! minimum allowable temperature margin : TF coils (K)
 
-  real(dp) :: tmargmin_cs = 0D0
+  real(dp) :: tmargmin_cs
   !! minimum allowable temperature margin : CS (K)
 
-  real(dp) :: tmargmin = 0D0
+  real(dp) :: tmargmin
   !! minimum allowable temperature margin : TFC AND CS (K)
 
-  real(dp) :: temp_margin = 0.00D0
+  real(dp) :: temp_margin
   !! temperature margin (K)
 
-  real(dp) :: tmargtf = 0.0D0
+  real(dp) :: tmargtf
   !! TF coil temperature margin (K)
 
-  real(dp) :: tmaxpro = 150.0D0
+  real(dp) :: tmaxpro
   !! maximum temp rise during a quench for protection (K)
 
-  real(dp) :: tmax_croco = 200.0D0
+  real(dp) :: tmax_croco
   !! CroCo strand: maximum permitted temp during a quench (K)
 
-  real(dp) :: croco_quench_temperature = 0D0
+  real(dp) :: croco_quench_temperature
   !! CroCo strand: Actual temp reached during a quench (K)
 
-  real(dp) :: tmpcry = 4.5D0
+  real(dp) :: tmpcry
   !! coil temperature for cryogenic plant power calculation (K)
 
-  real(dp) :: turnstf = 0.0D0
+  real(dp) :: turnstf
   !! number of turns per TF coil
 
-  real(dp) :: vdalw = 20.0D0
+  real(dp) :: vdalw
   !! max voltage across TF coil during quench (kV) (`iteration variable 52`)
 
-  real(dp) :: vforce = 0.0D0
+  real(dp) :: vforce
   !! vertical tension on inboard leg/coil (N)
   
-  real(dp) :: f_vforce_inboard = 0.5D0
+  real(dp) :: f_vforce_inboard
   !! Fraction of the total vertical force taken by the TF inboard leg tension
   !! Not used for resistive `itart=1` (sliding joints)
 
-  real(dp) :: vforce_outboard = 0.0D0
+  real(dp) :: vforce_outboard
   !! Vertical tension on outboard leg/coil (N)
 
-  real(dp) :: vftf = 0.4D0
+  real(dp) :: vftf
   !! coolant fraction of TFC 'cable' (`i_tf_sup=1`), or of TFC leg (`i_tf_ssup=0`)
 
-  real(dp) :: voltfleg = 0.0D0
+  real(dp) :: voltfleg
   !! volume of each TF coil outboard leg (m3)
 
-  real(dp) :: vtfkv = 0.0D0
+  real(dp) :: vtfkv
   !! TF coil voltage for resistive coil including bus (kV)
 
-  real(dp) :: vtfskv = 0.0D0
+  real(dp) :: vtfskv
   !! voltage across a TF coil during quench (kV)
 
-  real(dp) :: whtcas = 0.0D0
+  real(dp) :: whtcas
   !! mass per coil of external case (kg)
 
-  real(dp) :: whtcon = 0.0D0
+  real(dp) :: whtcon
   !! TF coil conductor mass per coil (kg/coil).
   !! For `itart=1`, coil is return limb plus centrepost/n_tf
 
-  real(dp) :: whtconcu = 0.0D0
+  real(dp) :: whtconcu
   !! copper mass in TF coil conductor (kg/coil).
   !! For `itart=1`, coil is return limb plus centrepost/n_tf
   
-  real(dp) :: whtconal = 0.0D0
+  real(dp) :: whtconal
   !! Aluminium mass in TF coil conductor (kg/coil).
   !! For `itart=1`, coil is return limb plus centrepost/n_tf
   
-  real(dp) :: whtconin = 0.0D0
+  real(dp) :: whtconin
   !! conduit insulation mass in TF coil conductor (kg/coil)
 
-  real(dp) :: whtconsc = 0.0D0
+  real(dp) :: whtconsc
   !! superconductor mass in TF coil cable (kg/coil)
 
-  real(dp) :: whtconsh = 0.0D0
+  real(dp) :: whtconsh
   !! steel conduit mass in TF coil conductor (kg/coil)
 
-  real(dp) :: whtgw = 0.0D0
+  real(dp) :: whtgw
   !! mass of ground-wall insulation layer per coil (kg/coil)
 
-  real(dp) :: whttf = 0.0D0
+  real(dp) :: whttf
   !! total mass of the TF coils (kg)
 
-  real(dp) :: windstrain = 0.0D0
+  real(dp) :: windstrain
   !! longitudinal strain in winding pack
 
-  real(dp) :: wwp1 = 0.0D0
+  real(dp) :: wwp1
   !! width of first step of winding pack (m)
 
-  real(dp) :: wwp2 = 0.0D0
+  real(dp) :: wwp2
   !! width of second step of winding pack (m)
 
   ! Superconducting TF coil shape parameters</B> (see also farc4tf);
   ! the TF inner surface top half is approximated by four circular arcs.
   ! Arc 1 goes through points 1 and 2 on the inner surface. Arc 2
   ! goes through points 2 and 3, etc.
-  real(dp), dimension(4) :: dthet = 0.0D0
+  real(dp), dimension(4) :: dthet
   !! angle of arc i (rad)
 
-  real(dp), dimension(4) :: radctf = 0.0D0
+  real(dp), dimension(4) :: radctf
   !! radius of arc i (m)
 
-  real(dp), dimension(5) :: xarc = 0.0D0
+  real(dp), dimension(5) :: xarc
   !! x location of arc point i on surface (m)
 
-  real(dp), dimension(4) :: xctfc = 0.0D0
+  real(dp), dimension(4) :: xctfc
   !! x location of arc centre i (m)
 
-  real(dp), dimension(5) :: yarc = 0.0D0
+  real(dp), dimension(5) :: yarc
   !! y location of arc point i on surface (m)
 
-  real(dp), dimension(4) :: yctfc = 0.0D0
+  real(dp), dimension(4) :: yctfc
   !! y location of arc centre i (m)
 
   ! New TF shape:  Horizontal and vertical radii of inside edge of TF coil
   ! Arcs are numbered clockwise:
   ! 1=upper inboard, 2=upper outboard, 3=lower ouboard, 4=lower inboard
 
-  real(dp), dimension(4) :: tfa = 0.0D0
+  real(dp), dimension(4) :: tfa
   !! Horizontal radius of inside edge of TF coil (m)
 
-  real(dp), dimension(4) :: tfb = 0.0D0
+  real(dp), dimension(4) :: tfb
   !! Vertical radius of inside edge of TF coil (m)
   ! Quantities relating to the spherical tokamak model (itart=1)
   ! (and in some cases, also to resistive TF coils, i_tf_sup=0):
 
-  real(dp) :: drtop = 0.0D0
+  real(dp) :: drtop
   !! centrepost taper maximum radius adjustment (m)
 
-  real(dp) :: dztop = 0.0D0
+  real(dp) :: dztop
   !! centrepost taper height adjustment (m)
 
-  real(dp) :: etapump = 0.8D0
+  real(dp) :: etapump
   !! centrepost coolant pump efficiency
 
-  real(dp) :: fcoolcp = 0.3D0
+  real(dp) :: fcoolcp
   !! coolant fraction of TF coil inboard legs (`iteration variable 23`)
 
-  real(dp) :: fcoolleg = 0.2D0
+  real(dp) :: fcoolleg
   !! coolant fraction of TF coil inboard legs
   
-  real(dp) :: a_cp_cool = 0.0D0
+  real(dp) :: a_cp_cool
   !! Centrepost cooling area toroidal cross-section (constant over the whole CP)
 
-  real(dp) :: ncool = 0.0D0
+  real(dp) :: ncool
   !! number of centrepost coolant tubes
 
-  real(dp) :: ppump = 0.0D0
+  real(dp) :: ppump
   !! centrepost coolant pump power (W)
 
-  real(dp) :: prescp = 0.0D0
+  real(dp) :: prescp
   !! resistive power in the centrepost (itart=1) [W].
   !! If `itart=0`, this variable is the ressitive power on the whole magnet
 
-  real(dp) :: presleg = 0.0D0
+  real(dp) :: presleg
   !! Summed resistive power in the TF coil legs [W]. Remain 0 if `itart=0`.
-   
-  real(dp) :: ptempalw = 473.15D0   ! 200 C
+  
+  real(dp) :: ptempalw
   !! maximum peak centrepost temperature (K) (`constraint equation 44`)
 
-  real(dp) :: rcool = 0.005D0
+  real(dp) :: rcool
   !! average radius of coolant channel (m) (`iteration variable 69`)
 
-  real(dp) :: tcoolin = 313.15D0   ! 40 C
+  real(dp) :: tcoolin
   !! centrepost coolant inlet temperature (K)
 
-  real(dp) :: dtiocool = 0.0D0
+  real(dp) :: dtiocool
   !! inlet / outlet TF coil coolant temperature rise (K)  
 
-  real(dp) :: tcpav = 373.15D0     ! 100 C
+  real(dp) :: tcpav
   !! Average temperature of centrepost called CP (K). Only used for resistive coils 
   !! to compute the resisitive heating. Must be an iteration variable for 
   !! ST (`itart=1`) (`iteration variable 20`)
 
-  real(dp) :: tcpav2 = 0.0D0
+  real(dp) :: tcpav2
   !! Computed centrepost average temperature (K) (for consistency)
 
-  real(dp) :: tlegav = -1.0D0 
+  real(dp) :: tlegav
   !! Average temperature of the TF outboard legs [K]. If `tlegav=-1.0`, the ouboard 
   !! legs and CP temperatures are the same. Fixed for now, should use a contraints eq like tcpav 
 
-  real(dp) :: tcpmax = 0.0D0
+  real(dp) :: tcpmax
   !! peak centrepost temperature (K)
   
-  real(dp) :: vcool = 20.0D0
+  real(dp) :: vcool
   !! inlet centrepost coolant flow speed at midplane (m/s) (`iteration variable 70`)
 
-  real(dp) :: vol_cond_cp = 0.0D0
+  real(dp) :: vol_cond_cp
   !! Exact conductor volume in the centrepost (m3)
   
-  real(dp) :: whtcp = 0.0D0
+  real(dp) :: whtcp
   !! mass of TF coil inboard legs (kg)
 
-  real(dp) :: whttflgs = 0.0D0
+  real(dp) :: whttflgs
   !! mass of the TF coil legs (kg)
 
+  contains
+
+  subroutine init_tfcoil_variables
+    !! Initialise module variables
+    implicit none
+
+    acasetf = 0.0D0
+    acasetfo = 0.0D0
+    acndttf = 0.0D0
+    acond = 0.0D0
+    acstf = 0.0D0
+    insulation_area = 0.0D0
+    aiwp = 0.0D0
+    alstrtf = 6.0D8
+    arealeg = 0.0D0
+    aswp = 0.0D0
+    avwp = 0.0D0
+    awphec = 0.0D0
+    bcritsc = 24.0D0
+    bmaxtf = 0.0D0
+    bmaxtfrp = 0.0D0
+    casestr = 0.0D0
+    casthi = 0.0D0
+    casthi_fraction = 0.05D0
+    casthi_is_fraction = .false.
+    casths = 0.0D0
+    casths_fraction = 0.03D0
+    t_conductor = 0.0D0
+    t_turn = 0.0D0
+    acs = 0.0D0
+    cdtfleg = 0.0D0
+    cforce = 0.0D0
+    cpttf = 7.0e4
+    cpttf_max = 9.0e4
+    dcase = 8000.0D0
+    dcond = 9000.0D0
+    dcondins = 1800.0D0
+    dhecoil = 0.005D0
+    estotftgj = 0.0D0
+    farc4tf = 0.7D0
+    b_crit_upper_nbti = 14.86D0
+    t_crit_nbti = 9.04D0
+    max_force_density = 0.0D0
+    fcutfsu = 0.69D0
+    fhts = 0.5D0
+    insstrain = 0.0D0
+    i_tf_plane_stress = 1
+    i_tf_tresca = 0
+    i_tf_wp_geom = -1
+    i_tf_case_geom = 0
+    i_tf_turns_integer = 0
+    i_tf_sc_mat = 1
+    i_tf_sup = 1
+    i_tf_shape = 0
+    n_pancake = 10
+    n_layer = 20
+    n_rad_per_layer = 100
+    i_tf_bucking = -1
+    n_tf_graded_layers = 1
+    n_tf_stress_layers = 0
+    jbus = 1.25D6
+    jwdgcrt = 0.0D0
+    jwdgpro = 0.0D0
+    jwptf = 0.0D0
+    oacdcp = 0.0D0
+    eyzwp = 0.0D0
+    eyoung_ins = 1.0D8
+    eyoung_steel = 2.05D11
+    eyoung_winding = 6.6D8
+    eyoung_res_tf_buck = 150.0D9 
+    eyoung_copper = 117.0D9
+    eyoung_al = 69.0D9 
+    poisson_steel = 0.3D0
+    poisson_copper = 0.35D0
+    poisson_al = 0.35D0
+    rbmax = 0.0D0
+    tflegres = 0.0D0
+    toroidalgap = 1.0D0 ![m]
+    ftoroidalgap = 1.0D0
+    ripmax = 1.0D0
+    ripple = 0.0D0
+    ritfc = 0.0D0
+    radial_array = 0.0D0
+    sig_tf_r = 0.0D0
+    sig_tf_t = 0.0D0
+    deflect = 0.0D0
+    sig_tf_z = 0.0D0
+    sig_tf_vmises = 0.0D0
+    sig_tf_tresca = 0.0D0 
+    strtf0 = 0.0D0
+    strtf1 = 0.0D0
+    strtf2 = 0.0D0
+    sigvvall = 9.3D7
+    strncon_cs = -0.005D0
+    strncon_pf = -0.005D0
+    strncon_tf = -0.005D0
+    quench_model = 'exponential'
+    quench_detection_ef = 0D0
+    time1 = 0D0
+    taucq = 30.0D0
+    tcritsc = 16.0D0
+    tdmptf = 10.0D0
+    tfareain = 0.0D0
+    tfbusl = 0.0D0
+    tfbusmas = 0.0D0
+    tfckw = 0.0D0
+    tfcmw = 0.0D0
+    tfcpmw = 0.0D0
+    tfjtsmw = 0.0D0
+    tfcryoarea = 0.0D0
+    tficrn = 0.0D0
+    tfind = 0.0D0
+    tfinsgap = 0.010D0
+    tflegmw = 0.0D0
+    rhocp = 0.0D0
+    rhotfleg = 0.0D0
+    rhotfbus = -1.0D0 ! 2.5D-8
+    frhocp = 1.0D0
+    frholeg = 1.0D0
+    rho_tf_joints = 2.5D-10
+    n_tf_joints_contact = 6
+    n_tf_joints = 4
+    th_joint_contact = 0.03D0
+    pres_joints = 0.0D0
+    tfleng = 0.0D0
+    eff_tf_cryo = -1.0D0
+    n_tf = 16.0D0
+    tfocrn = 0.0D0
+    tfsai = 0.0D0
+    tfsao = 0.0D0
+    tftmp = 4.5D0
+    tftort = 1.0D0
+    thicndut = 8.0D-4
+    layer_ins = 0.0D0
+    thkcas = 0.3D0
+    dr_tf_wp = 0.0D0
+    thwcndut = 8.0D-3
+    tinstf = 0.018D0
+    tmargmin_tf = 0D0
+    tmargmin_cs = 0D0
+    tmargmin = 0D0
+    temp_margin = 0.00D0
+    tmargtf = 0.0D0
+    tmaxpro = 150.0D0
+    tmax_croco = 200.0D0
+    croco_quench_temperature = 0D0
+    tmpcry = 4.5D0
+    turnstf = 0.0D0
+    vdalw = 20.0D0
+    vforce = 0.0D0
+    f_vforce_inboard = 0.5D0
+    vforce_outboard = 0.0D0
+    vftf = 0.4D0
+    voltfleg = 0.0D0
+    vtfkv = 0.0D0
+    vtfskv = 0.0D0
+    whtcas = 0.0D0
+    whtcon = 0.0D0
+    whtconcu = 0.0D0
+    whtconal = 0.0D0
+    whtconin = 0.0D0
+    whtconsc = 0.0D0
+    whtconsh = 0.0D0
+    whtgw = 0.0D0
+    whttf = 0.0D0
+    windstrain = 0.0D0
+    wwp1 = 0.0D0
+    wwp2 = 0.0D0
+    dthet = 0.0D0
+    radctf = 0.0D0
+    xarc = 0.0D0
+    xctfc = 0.0D0
+    yarc = 0.0D0
+    yctfc = 0.0D0
+    tfa = 0.0D0
+    tfb = 0.0D0
+    drtop = 0.0D0
+    dztop = 0.0D0
+    etapump = 0.8D0
+    fcoolcp = 0.3D0
+    fcoolleg = 0.2D0
+    a_cp_cool = 0.0D0
+    ncool = 0.0D0
+    ppump = 0.0D0
+    prescp = 0.0D0
+    presleg = 0.0D0
+    ptempalw = 473.15D0   ! 200 C
+    rcool = 0.005D0
+    tcoolin = 313.15D0   ! 40 C
+    dtiocool = 0.0D0
+    tcpav = 373.15D0     ! 100 C
+    tcpav2 = 0.0D0
+    tlegav = -1.0D0 
+    tcpmax = 0.0D0
+    vcool = 20.0D0
+    vol_cond_cp = 0.0D0
+    whtcp = 0.0D0
+    whttflgs = 0.0D0
+    tfc_sidewall_is_fraction = .false.
+  end subroutine init_tfcoil_variables
 end module tfcoil_variables

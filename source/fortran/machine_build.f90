@@ -18,11 +18,21 @@ module build_module
   implicit none
 
   private
-  public :: radialb, vbuild, portsz
+  public :: radialb, vbuild, portsz, init_build_module
+
+  ! Var for subroutine radialb requiring re-initialisation before new run
+  integer :: ripflag
 
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine init_build_module
+    !! Initialise module variables
+    implicit none
+
+    ripflag = 0
+  end subroutine init_build_module
 
   subroutine radialb(outfile,iprint)
 
@@ -70,8 +80,6 @@ contains
     real(dp) :: hbot,hfw,htop,r1,r2,r3,radius,r_tf_outboard_midl,vbuild, vbuild1
 
     real(dp) :: fwtth
-
-    integer :: ripflag = 0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

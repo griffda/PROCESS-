@@ -9,6 +9,13 @@ module define_iteration_variables
    real(dp) :: DUMMY
 
 contains
+
+  subroutine init_define_iteration_variables
+    !! Initialise module variables
+    implicit none
+
+    DUMMY = 0.0D0
+  end subroutine init_define_iteration_variables
    
    !! lablxc(ipnvars) : labels describing iteration variables<UL>
 

@@ -18,6 +18,13 @@ module physics_functions_module
 
 contains
 
+  subroutine init_physics_functions
+    !! Initialise module variables
+    implicit none
+
+    vcritx = 0.0D0
+  end subroutine init_physics_functions
+
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,aspect,pthrmw)
