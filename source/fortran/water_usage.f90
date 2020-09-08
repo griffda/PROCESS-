@@ -1,37 +1,47 @@
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 MODULE water_use_module
 
-    !! Module containing fusion power plant water use algorithms
-    !! author: A Brown, CCFE, Culham Science Centre
+    !! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !!
+    !! Module containing algorithms that calculate the water use for a
+    !! fusion power plant, based on water use of a fission power plant
+    !!
+    !! Author: A Brown, CCFE, Culham Science Centre
     !! 
-    !! This module contains the PROCESS fusion power plant water
-    !! use model based on IAEA Water Management Program
-    !! https://www.iaea.org/topics/non-electric-applications/ &
-    !! efficient-water-management-in-nuclear-power-plants
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !! This module contains the PROCESS fusion power plant water use
+    !! model based on the IAEA Water Management Program:
+    !! https://www.iaea.org/topics/non-electric-applications/efficient
+    !! -water-management-in-nuclear-power-plants
+    !!
+    !! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Import modules !
-    ! !!!!!!!!!!!!!!!!!
-    USE process_output
+    ! USE process_output
 
     IMPLICIT NONE
-
     PRIVATE
 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 CONTAINS
+
+
+    !--------------------------------------- MAIN SUBROUTINE --------------------------------------
+
 
     SUBROUTINE water_use
         IMPLICIT NONE
 
         ! Variables
-        INTEGER wat_source, wat_type, choice, outfile
+        INTEGER wat_src, wat_type, choice, outfile
+
         ! Inputs
-        DOUBLE PRECISION t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, desal_cap, &
-        desal_rate, q_cr, p_therm, t_steam, spd_wind, dislv_solid, suspnd_solid, ammonia, plant_life, &
-        discnt_rate, elec_level, plant_avail, con_cycle, p_sat, t_wb, t_c_m, q_lat_desal, q_desal, &
-        p_ratio, q_cr_m, w_fr, t_c, wat_evap, wat_bleed, wat_mkup, sup_recirc, sup_evap, sup_bleed, &
+        DOUBLE PRECISION t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
+        desal_cap, desal_rate, q_cr, p_therm, t_steam, spd_wind, dislv_solid, suspnd_solid, &
+        ! plant_life can be taken from input / other module
+        ammonia, plant_life, discnt_rate, elec_level, plant_avail, con_cycle, p_sat, t_wb, t_c_m, &
+        q_lat_desal, q_desal, p_ratio, q_cr_m, w_fr, t_c, wat_evap, wat_bleed, wat_mkup, sup_recirc, sup_evap, sup_bleed, &
         sup_mkup, wat_evap_rate, evap_mwh, bleed_mwh, makeup_mwh, wat_drift, drift_mwh, wat_consump, &
         consump_mwh, wat_excav, wat_concrt, wat_constr_max, wat_constr, wat_dom, wat_drink, &
         wat_mkup_2, wat_mkup_1, wat_wst, wat_pol, wat_com, wat_fr, wat_pot, flow_riv, mix_riv, &
@@ -50,13 +60,13 @@ CONTAINS
         ! List of inputs as described in the excel input:
         ! Nuclear Power Plant
         pgrossmw = 100  ! Reference electric power (MWe)
-        call ovarrf(outfile,"Gross electric output (MW)", '(pgrossmw)', pgrossmw, 'OP ')
+        !call ovarrf(outfile,"Gross electric output (MW)", '(pgrossmw)', pgrossmw, 'OP ')
         eta = 0.1  ! Reference net efficiency (%)
         t_steam = 350  ! Live steam temperature (oC)
         ! Type
         wat_type = 3 ! Water type: Light = 3 / Heavy = 1
         ! Site/Weather Data
-        wat_source = 1  ! Water Source: River/Inland = 0, Sea/Coast = 1, Effluent = 2
+        wat_src = 1  ! Water Source: River/Inland = 0, Sea/Coast = 1, Effluent = 2
         t_db = 40  ! Air temperature (Dry Bulb) (oC)
         r_h = 0.3  ! Relative Humidity (%)
         ! t_wb = 25.2  ! Air temperature (Wet Bulb) (oC)
@@ -139,7 +149,7 @@ CONTAINS
         CALL heat_coeff_wat(mix_riv, spd_wind, q_coeff_wat)
         CALL heat_coeff(mix_riv, spd_wind, q_coeff)
         CALL river_evap(q_cr, q_desal, p_ratio, mix_riv, spd_wind, evap_riv)
-        CALL sys_inven_ch(wat_source, wat_type, choice)
+        CALL sys_inven_ch(wat_src, wat_type, choice)
         CALL sys_inven(array)
         CALL pond_dtemp(dt_ca, dt_cr, dt_pond)
         CALL pond_temp(dt_pond, t_db, t_pond)
@@ -194,7 +204,7 @@ CONTAINS
 
         WRITE(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')//" Site conditions:"
         WRITE(*,*) "Water source / Plant Location:"
-        CALL water_source(wat_source)
+        CALL water_source(wat_src)
         WRITE(*,'(a60)',advance='no') "Dry bulb temperature (oC) = "
         CALL output(t_db)
         WRITE(*,'(a60)',advance='no') "Wet bulb temperature (oC) = "
@@ -205,7 +215,7 @@ CONTAINS
         CALL output(t_sw)
         WRITE(*,'(a60)',advance='no') "Average wind velocity (m/s) = "
         CALL output(spd_wind)
-        IF (wat_source == 0) then
+        IF (wat_src == 0) then
             WRITE(*,'(a60)',advance='no') "River flow (m3/s) = "
             CALL output(flow_riv)
         END IF
@@ -358,112 +368,6 @@ CONTAINS
     END SUBROUTINE water_use
 
 
-    !--------------------------------------------------------------------------------------------------
-
-
-    ! List of the variables used in all SUBROUTINEs:
-        ! temp = temperature converted between celsius/fahrenheit/kelvin or of cooling system
-        ! t_desal = Water temperature required for desalination
-        ! t_c_m = Condenser temperature for desalination
-        ! t_wb = Wet bulb temperature (thermometer wrapped in wet cloth)
-        ! a, b, c = Unknown constants
-        ! p_sat = Partial vapour pressure
-        ! t_db = Dry bulb temperature (thermometer in air)
-        ! r_h = Relative air humidity
-        ! e_diff = Difference between previous and current iteration guesses
-        ! t_wb_gs = Current iteration guess for the wet bulb temperature
-        ! pres_mb = 1 atmospheric air pressure in millibars
-        ! sign_prev = Previous iteration change sign
-        ! incr = Change to current wet bulb temperature guess
-        ! e_diff_2 = Vapour pressure in bar
-        ! temp_C = Duplicate of dry bulb temperature in oC
-        ! ew_gs = Change to wet bulb temperature guess
-        ! e_gs = Change to wet bulb temperature guess
-        ! sign_cur = Current iteration change sign
-        ! c_type = The type of cooling mechanism
-        ! c_type_2 = Whether the cooling mechanism is wet, dry or open
-        ! t_sw = Surface water temperature of open water source
-        ! dt_ta = Cooling tower approach temperature (approach = temp leaving minus wet bulb temp)
-        ! dt_cr = Condenser range temperature (range = difference in temperature entering and leaving)
-        ! dt_ca = Condenser approach temperature (approach = temp leaving minus wet bulb temp)
-        ! t_c = Condensing temperature
-        ! dt_c = temperature change across condenser
-        ! t_l_ct = Water temperature leaving cooling tower
-        ! t_l_cd = Water temperature leaving condenser
-        ! fr2 = Water flow rate
-        ! dt_cd_ct = Difference in water temperature arriving at and leaving the cooling tower
-        ! dt_cta = Cooling tower approach temperature
-        ! fr1 = Water flow rate exponent
-        ! s_vp = Saturated vapor pressure
-        ! t_db_k = Dry bulb temperature in kelvin
-        ! t_func = Function used to derive the saturated vapor pressure
-        ! pressure = Air pressure in pascals
-        ! s_rh_ratio = Humidity ratio of saturated air
-        ! rh_ratio = Relative humidity ratio [kgH2O/kgAIR]
-        ! vap_press = Partial pressure of water vapor in moist air [Pa]
-        ! H_wb = Enthalpy of moist air
-        ! KILO = 1000 grams
-        ! t_wb_2 = storing the wet bulb temperature to convert to celsius
-        ! H_test = Initial enthalpy of most air
-        ! t_wb_prev = Storing value for the wet bulb temperature
-        ! H_prev = Storing value for the enthalpy of moist air
-        ! DHdT = Rate of change of enthalpy per unit temperature
-        ! DT = Change in temperature
-        ! Wat_evap = Water evaporated from the wet cooling water tower
-        ! lg1 = Unknown function result
-        ! RH_r_out = Relative humidity ratio coming out of the cooling tower
-        ! RH_r_prev = Stored value of the RH_r_out
-        ! H_out = Enthalpy of moist air coming out of the cooling tower
-        ! t_wb_out = Wet bulb temperature coming out of the cooling tower
-        ! H_sv = Specific enthalpy of saturated vapour
-        ! H_sl = Specific enthalpy of saturated liquid
-        ! q_lat = Latent heat
-        ! pgrossmw = Electricity capacity of power station reactor
-        ! eta = Net efficiency of power station electricity conversion
-        ! q_cr = Heat rejected from the condenser
-        ! Desal_cap = Capacity of the deslaination plant
-        ! Desal_rate = Rate of desalination as a multiplicative factor
-        ! q_lat_desal = Latent heat of desalination
-        ! q_desal = Heat needed for desalination
-        ! p_ratio = Power loss ratio
-        ! q_cr_m = Desalination modulated condenser reject heat
-        ! w_fr = Condenser water flow rate (tn/s)
-        ! Wat_evap_rate = Rate the water is evaporated from the cooling tower (m3/s)
-        ! Wat_drift = Water loss from drift
-        ! con_cycle = The number of times water completes the cooling circuit before being expelled
-        ! Wat_bleed = Water expelled to remove impurities
-        ! wat_mkup = Water required to replenish all water lost from cooling cycle
-        ! Wat_consump = Water lost from the cooling tower by evaporation and drift
-        ! Wat_m3 = Water rate in meter cubed
-        ! Hr = Number of seconds in an hour
-        ! Wat_MWh = Water rate in Mega Watt hours
-        ! Evap_MWh = 
-        ! Bleed_MWh = 
-        ! Makeup_MWh = 
-        ! Consump_MWh = 
-        ! wat_excav = 
-        ! wat_concrt = 
-        ! wat_constr = 
-        ! wat_dom = 
-        ! wat_drink = 
-        ! wat_mkup_2 = 
-        ! wat_mkup_1 = 
-        ! wat_wst = 
-        ! wat_pol = 
-        ! wat_com = 
-        ! wat_fr = 
-        ! wat_pot = 
-        ! q_cr_m = Desalination modulated condenser reject heat
-        ! dt_cr = Condenser range temperature
-        ! t_pond = Cooling pond temperature
-        ! spd_wind = The wind speed
-        ! km2_pond = Size of the cooling pond in km2
-        ! w_fr = Condenser water flow rate (tn/s)
-        ! q_coeff = Heat coefficient (kW/m2 K)
-        ! dt_pond = Cooling pond temperature change
-
-
-
     ! Subroutines for the water usage calculations
 
     !--------------------------------------TEMPERATURE CONVERSION--------------------------------------
@@ -503,14 +407,14 @@ CONTAINS
 
 
     ! Printing the water source type -> TESTED
-    SUBROUTINE water_source(wat_source)
+    SUBROUTINE water_source(wat_src)
         IMPLICIT NONE
-        INTEGER, INTENT(IN) :: wat_source
-        IF (wat_source == 0) THEN
+        INTEGER, INTENT(IN) :: wat_src
+        IF (wat_src == 0) THEN
             WRITE(*,*) "River/Inland"
-        ELSE IF (wat_source == 1) THEN
+        ELSE IF (wat_src == 1) THEN
             WRITE(*,*) "Sea/Coast"
-        ELSE IF (wat_source == 2) THEN
+        ELSE IF (wat_src == 2) THEN
             WRITE(*,*) "Effluent"
         ELSE
             WRITE(*,*) "Unknown water source"
@@ -520,18 +424,18 @@ CONTAINS
 
     ! 'Report' tab - NPP system inventories choice
     ! Using water type and water source determines what values to retrieve from sys_inven() -> TESTED
-    SUBROUTINE sys_inven_ch(wat_source, wat_type, choice)
+    SUBROUTINE sys_inven_ch(wat_src, wat_type, choice)
         IMPLICIT NONE
         INTEGER, INTENT(IN) :: wat_type
-        INTEGER, INTENT(INOUT) :: wat_source
+        INTEGER, INTENT(INOUT) :: wat_src
         INTEGER, INTENT(OUT) :: choice
-        INTEGER wat_source_2
-        IF (wat_source == 2) THEN
-            wat_source_2 = 0
+        INTEGER wat_src_2
+        IF (wat_src == 2) THEN
+            wat_src_2 = 0
         ELSE
-            wat_source_2 = wat_source
+            wat_src_2 = wat_src
         END IF
-        choice = wat_type + wat_source_2
+        choice = wat_type + wat_src_2
     END SUBROUTINE sys_inven_ch
 
 
@@ -1620,3 +1524,113 @@ CONTAINS
     !END SUBROUTINE print_array
 
 END MODULE water_use_module
+
+
+!---------------------------------------------APPENDIX---------------------------------------------
+
+
+! A list of all of the variables used and an explanation of each varibles:
+
+    ! wat_src - River/Inland = 0, Sea/Coast = 1, Effluent = 2
+    ! wat_type - Light = 3 / Heavy = 1
+    ! choice - = 
+    ! outfile - 
+    ! temp = temperature converted between celsius/fahrenheit/kelvin or of cooling system
+    ! t_desal = Water temperature required for desalination
+    ! t_c_m = Condenser temperature for desalination
+    ! t_wb = Wet bulb temperature (thermometer wrapped in wet cloth)
+    ! a, b, c = Unknown constants
+    ! p_sat = Partial vapour pressure
+    ! t_db = Dry bulb temperature (thermometer in air)
+    ! r_h = Relative air humidity
+    ! e_diff = Difference between previous and current iteration guesses
+    ! t_wb_gs = Current iteration guess for the wet bulb temperature
+    ! pres_mb = 1 atmospheric air pressure in millibars
+    ! sign_prev = Previous iteration change sign
+    ! incr = Change to current wet bulb temperature guess
+    ! e_diff_2 = Vapour pressure in bar
+    ! temp_C = Duplicate of dry bulb temperature in oC
+    ! ew_gs = Change to wet bulb temperature guess
+    ! e_gs = Change to wet bulb temperature guess
+    ! sign_cur = Current iteration change sign
+    ! c_type = The type of cooling mechanism
+    ! c_type_2 = Whether the cooling mechanism is wet, dry or open
+    ! t_sw = Surface water temperature of open water source
+    ! dt_ta = Cooling tower approach temperature (approach = temp leaving minus wet bulb temp)
+    ! dt_cr = Condenser range temperature (range = difference in temperature entering and leaving)
+    ! dt_ca = Condenser approach temperature (approach = temp leaving minus wet bulb temp)
+    ! t_c = Condensing temperature
+    ! dt_c = temperature change across condenser
+    ! t_l_ct = Water temperature leaving cooling tower
+    ! t_l_cd = Water temperature leaving condenser
+    ! fr2 = Water flow rate
+    ! dt_cd_ct = Difference in water temperature arriving at and leaving the cooling tower
+    ! dt_cta = Cooling tower approach temperature
+    ! fr1 = Water flow rate exponent
+    ! s_vp = Saturated vapor pressure
+    ! t_db_k = Dry bulb temperature in kelvin
+    ! t_func = Function used to derive the saturated vapor pressure
+    ! pressure = Air pressure in pascals
+    ! s_rh_ratio = Humidity ratio of saturated air
+    ! rh_ratio = Relative humidity ratio [kgH2O/kgAIR]
+    ! vap_press = Partial pressure of water vapor in moist air [Pa]
+    ! H_wb = Enthalpy of moist air
+    ! KILO = 1000 grams
+    ! t_wb_2 = storing the wet bulb temperature to convert to celsius
+    ! H_test = Initial enthalpy of most air
+    ! t_wb_prev = Storing value for the wet bulb temperature
+    ! H_prev = Storing value for the enthalpy of moist air
+    ! DHdT = Rate of change of enthalpy per unit temperature
+    ! DT = Change in temperature
+    ! Wat_evap = Water evaporated from the wet cooling water tower
+    ! lg1 = Unknown function result
+    ! RH_r_out = Relative humidity ratio coming out of the cooling tower
+    ! RH_r_prev = Stored value of the RH_r_out
+    ! H_out = Enthalpy of moist air coming out of the cooling tower
+    ! t_wb_out = Wet bulb temperature coming out of the cooling tower
+    ! H_sv = Specific enthalpy of saturated vapour
+    ! H_sl = Specific enthalpy of saturated liquid
+    ! q_lat = Latent heat
+    ! pgrossmw = Electricity capacity of power station reactor
+    ! eta = Net efficiency of power station electricity conversion
+    ! q_cr = Heat rejected from the condenser
+    ! Desal_cap = Capacity of the deslaination plant
+    ! Desal_rate = Rate of desalination as a multiplicative factor
+    ! q_lat_desal = Latent heat of desalination
+    ! q_desal = Heat needed for desalination
+    ! p_ratio = Power loss ratio
+    ! q_cr_m = Desalination modulated condenser reject heat
+    ! w_fr = Condenser water flow rate (tn/s)
+    ! Wat_evap_rate = Rate the water is evaporated from the cooling tower (m3/s)
+    ! Wat_drift = Water loss from drift
+    ! con_cycle = The number of times water completes the cooling circuit before being expelled
+    ! Wat_bleed = Water expelled to remove impurities
+    ! wat_mkup = Water required to replenish all water lost from cooling cycle
+    ! Wat_consump = Water lost from the cooling tower by evaporation and drift
+    ! Wat_m3 = Water rate in meter cubed
+    ! Hr = Number of seconds in an hour
+    ! Wat_MWh = Water rate in Mega Watt hours
+    ! Evap_MWh = 
+    ! Bleed_MWh = 
+    ! Makeup_MWh = 
+    ! Consump_MWh = 
+    ! wat_excav = 
+    ! wat_concrt = 
+    ! wat_constr = 
+    ! wat_dom = 
+    ! wat_drink = 
+    ! wat_mkup_2 = 
+    ! wat_mkup_1 = 
+    ! wat_wst = 
+    ! wat_pol = 
+    ! wat_com = 
+    ! wat_fr = 
+    ! wat_pot = 
+    ! q_cr_m = Desalination modulated condenser reject heat
+    ! dt_cr = Condenser range temperature
+    ! t_pond = Cooling pond temperature
+    ! spd_wind = The wind speed
+    ! km2_pond = Size of the cooling pond in km2
+    ! w_fr = Condenser water flow rate (tn/s)
+    ! q_coeff = Heat coefficient (kW/m2 K)
+    ! dt_pond = Cooling pond temperature change
