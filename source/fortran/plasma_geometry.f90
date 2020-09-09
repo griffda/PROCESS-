@@ -102,6 +102,26 @@ contains
        kappa = 1.12D0 * kappa95  !  Hartmann and Zohm
        triang = 1.5D0 * triang95
 
+    case (5)  !  Use input kappa95, triang95 values
+
+       kappa = 0.91300D0 * kappa95 + 0.38654D0 !  Fit to MAST data (Issue #1086)
+       triang = 0.77394D0 * triang95 + 0.18515D0
+
+    case (6)  !  Use input kappa, triang values
+
+       kappa95 = (kappa - 0.38654D0) / 0.91300D0 !  Fit to MAST data (Issue #1086)
+       triang95 = (triang - 0.18515D0) / 0.77394D0
+
+    case (7)  !  Use input kappa95, triang95 values
+
+       kappa = 0.90698D0 * kappa95 + 0.39467D0 !  Fit to FIESTA (Issue #1086)
+       triang = 1.3799D0 * triang95 + 0.048306D0
+
+    case (8)  !  Use input kappa, triang values
+
+       kappa95 = (kappa - 0.39467D0) / 0.90698D0 !  Fit to FIESTA (Issue #1086)
+       triang95 = (triang - 0.048306D0) / 1.3799D0
+
     end select
 
     !  Scrape-off layer thicknesses

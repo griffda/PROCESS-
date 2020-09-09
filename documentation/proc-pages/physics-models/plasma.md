@@ -46,9 +46,27 @@ $$
   for `ishape = 2` above), but the triangularity at the 95% flux surface is 
   input via variable `triang95`, and the LCFS triangularity `triang` is calculated
   from it, rather than the other way round.
-- Finally, if `ishape = 4`, the 95% flux surface values `kappa95` and `triang95` 
+- If `ishape = 4`, the 95% flux surface values `kappa95` and `triang95` 
   are both used as inputs, and the LCFS values are calculated from them by 
   inverting the equations above.
+- If `ishape = 5` the 95% flux surface values `kappa95` and `triang95` 
+  are both used as inputs and the LCFS values are calculated from a fit to MAST data:
+  $$
+  \kappa = 0.91 \kappa_{95} + 0.39
+  $$
+  $$
+  \delta = 0.77 \delta_{95} + 0.19 
+  $$
+- If `ishape = 6` the input values for `kappa` and `triang` are used directly and the 95% flux surface values are calculated using the MAST scaling from above.
+- If `ishape = 7` the 95% flux surface values `kappa95` and `triang95` 
+  are both used as inputs and the LCFS values are calculated from a fit to FIESTA runs:
+  $$
+  \kappa = 0.91 \kappa_{95} + 0.39
+  $$
+  $$
+  \delta = 1.38 \delta_{95} + 0.05 
+  $$
+- If `ishape = 8` the input values for `kappa` and `triang` are used directly and the 95% flux surface values are calculated using the FIESTA fit from above.
 
 A constraint relating to the plasma's vertical stability may be turned on if
 required. In principle, the inner surface of the outboard shield could be used
