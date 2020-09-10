@@ -67,8 +67,10 @@ contains
     case (0)  !  Use input kappa, triang values
 
        !  Rough estimate of 95% values
-       !  Hartmann and Zohm suggestion for kappa95 (close to previous estimate
-       !  of (kappa - 0.04) / 1.1 over a large kappa range)
+       !  ITER Physics Design Guidlines: 1989 (Uckan et al. 1990)
+       !  (close to previous estimate of (kappa - 0.04) / 1.1 
+       !  over a large kappa range)
+       !  Recommended by Hartmann & Zohm
 
        kappa95 = kappa / 1.12D0
        triang95 = triang / 1.50D0
@@ -80,46 +82,55 @@ contains
        kappa = 2.05D0 * (1.0D0 + 0.44D0 * eps**2.1D0)
        triang = 0.53D0 * (1.0D0 + 0.77D0 * eps**3)
 
-       kappa95 = kappa / 1.12D0  !  Hartmann and Zohm
-       triang95 = triang / 1.50D0
+       !  SIM 10/09/2020: Switched to FIESTA ST scaling  from IPDG89
+       kappa95 = (kappa - 0.39467D0) / 0.90698D0 !  Fit to FIESTA (Issue #1086)
+       triang95 = (triang - 0.048306D0) / 1.3799D0
 
     case (2)  !  Zohm et al. ITER scaling for elongation, input triang
 
        kappa = fkzohm * min(2.0D0, 1.5D0 + 0.5D0/(aspect-1.0D0))
 
-       kappa95 = kappa / 1.12D0  !  Hartmann and Zohm
+       !  ITER Physics Design Guidlines: 1989 (Uckan et al. 1990)
+       kappa95 = kappa / 1.12D0
        triang95 = triang / 1.50D0
 
     case (3)  !  Zohm et al. ITER scaling for elongation, input triang95
 
        kappa = fkzohm * min(2.0D0, 1.5D0 + 0.5D0/(aspect-1.0D0))
+       
+       !  ITER Physics Design Guidlines: 1989 (Uckan et al. 1990)
        triang = 1.5D0 * triang95
 
-       kappa95 = kappa / 1.12D0  !  Hartmann and Zohm
+       kappa95 = kappa / 1.12D0 
 
     case (4)  !  Use input kappa95, triang95 values
 
-       kappa = 1.12D0 * kappa95  !  Hartmann and Zohm
+       !  ITER Physics Design Guidlines: 1989 (Uckan et al. 1990)
+       kappa = 1.12D0 * kappa95 
        triang = 1.5D0 * triang95
 
     case (5)  !  Use input kappa95, triang95 values
 
-       kappa = 0.91300D0 * kappa95 + 0.38654D0 !  Fit to MAST data (Issue #1086)
+       !  Fit to MAST data (Issue #1086)
+       kappa = 0.91300D0 * kappa95 + 0.38654D0 
        triang = 0.77394D0 * triang95 + 0.18515D0
 
     case (6)  !  Use input kappa, triang values
 
-       kappa95 = (kappa - 0.38654D0) / 0.91300D0 !  Fit to MAST data (Issue #1086)
+       !  Fit to MAST data (Issue #1086)
+       kappa95 = (kappa - 0.38654D0) / 0.91300D0 
        triang95 = (triang - 0.18515D0) / 0.77394D0
 
     case (7)  !  Use input kappa95, triang95 values
 
-       kappa = 0.90698D0 * kappa95 + 0.39467D0 !  Fit to FIESTA (Issue #1086)
+       !  Fit to FIESTA (Issue #1086)
+       kappa = 0.90698D0 * kappa95 + 0.39467D0
        triang = 1.3799D0 * triang95 + 0.048306D0
 
     case (8)  !  Use input kappa, triang values
 
-       kappa95 = (kappa - 0.39467D0) / 0.90698D0 !  Fit to FIESTA (Issue #1086)
+       !  Fit to FIESTA (Issue #1086)
+       kappa95 = (kappa - 0.39467D0) / 0.90698D0 
        triang95 = (triang - 0.048306D0) / 1.3799D0
 
     end select
