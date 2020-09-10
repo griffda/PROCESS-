@@ -2,48 +2,56 @@ PROGRAM water_use_module
     IMPLICIT NONE
 
     ! Variables
-    INTEGER wat_src, wat_type, choice
+    INTEGER sys_inv, typ_wat, wat_src
 
     ! Inputs
-    DOUBLE PRECISION t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, desal_cap, &
-    desal_rate, q_cr, p_therm, t_steam, spd_wind, dislv_solid, suspnd_solid, ammonia, plant_life, &
-    discnt_rate, elec_level, plant_avail, con_cycle, p_sat, t_wb, t_c_m, q_lat_desal, q_desal, &
-    p_ratio, q_cr_m, w_fr, t_c, wat_evap, wat_bleed, wat_mkup, sup_recirc, sup_evap, sup_bleed, &
-    sup_mkup, wat_evap_rate, evap_mwh, bleed_mwh, makeup_mwh, wat_drift, drift_mwh, wat_consump, &
-    consump_mwh, wat_excav, wat_concrt, wat_constr_max, wat_constr, wat_dom, wat_drink, &
-    wat_mkup_2, wat_mkup_1, wat_wst, wat_pol, wat_com, wat_fr, wat_pot, flow_riv, mix_riv, &
-    q_coeff_wat, q_coeff, evap_riv, t_pond, dt_pond, km2_pond, evap_pond, bleed_pond, therm, &
-    wat_makeup, wat_withdraw, km2_pond_mwh, c_type_2
-    DOUBLE PRECISION, PARAMETER :: true = 1, false = 0, zero = 0, one = 1
+    DOUBLE PRECISION cap_desal, conc_cycle, conc_nh3, &
+    desal_rate, discnt_rate, dislv_solid, drift_mwh, dt_ca, dt_cr, dt_pond, dt_ta, &
+    elec_level, eta, evap_mwh, evap_pond, evap_riv, flow_riv, km2_pond, km2_pond_mwh, makeup_mwh, &
+    mix_riv, mwh_bleed, mwh_cons, p_ratio, p_sat, p_therm, pgrossmw, plant_avail, plant_life, pond_bleed, q_cr, q_cr_m, q_coeff, &
+    q_coeff_wat, q_desal, q_lat_desal, r_h, spd_wind, sup_bleed, sup_evap, sup_mkup, sup_recirc, &
+    suspnd_solid, t_c, t_c_m, t_desal, t_dry, t_pond, t_steam, t_sw, t_wb, therm, typ_cool, typ_mech, w_fr, &
+    wat_bleed, wat_com, wat_concrt, wat_constr, wat_constr_max, wat_consump, wat_dom, wat_drift, &
+    wat_drink, wat_evap, wat_evap_rate, wat_excav, wat_fr, wat_makeup, wat_mkup, wat_mkup_1, &
+    wat_mkup_2, wat_pol, wat_pot, wat_withdraw, wat_wst
+
+    ! Double precision inputs
+    DOUBLE PRECISION, PARAMETER :: false = 0.0, one = 1.0, true = 1.0, zero = 0.0
 
     ! Arrays
-    INTEGER, DIMENSION(1:8) :: type_array, list_array, treatment_array, plume_array, air_pol_array, visual_array, imping_array
-    DOUBLE PRECISION, DIMENSION(1:8) :: drift_array, wat_evap_array, wat_dis_array, therm_array
+    INTEGER, DIMENSION(1:8) :: air_pol_array, imping_array, list_array, plume_array, &
+    treatment_array, typ_array, visual_array
+    DOUBLE PRECISION, DIMENSION(1:8) :: drift_array, therm_array, wat_dis_array, wat_evap_array
     DOUBLE PRECISION, DIMENSION(4,14) :: array
     CHARACTER(len=30), DIMENSION(1:8) :: name_array
     CHARACTER(len=30) :: a1, a2, a3, a4, a5, a6, a7, a8
 
 
-    ! List of inputs as described in the excel input:
+    ! Inputs as described in the excel document wamp:
+
     ! Nuclear Power Plant
     pgrossmw = 100  ! Reference electric power (MWe)
     !call ovarrf(outfile,"Gross electric output (MW)", '(pgrossmw)', pgrossmw, 'OP ')
     eta = 0.1  ! Reference net efficiency (%)
     t_steam = 350  ! Live steam temperature (oC)
+
     ! Type
-    wat_type = 3 ! Water type: Light = 3 / Heavy = 1
+    typ_wat = 3 ! Water type: Light = 3 / Heavy = 1
+
     ! Site/Weather Data
     wat_src = 1  ! Water Source: River/Inland = 0, Sea/Coast = 1, Effluent = 2
-    t_db = 40  ! Air temperature (Dry Bulb) (oC)
+    t_dry = 40  ! Air temperature (Dry Bulb) (oC)
     r_h = 0.3  ! Relative Humidity (%)
     ! t_wb = 25.2  ! Air temperature (Wet Bulb) (oC)
     t_sw = 20  ! Inlet water temperature (oC) (Tsw)
     flow_riv = 50  ! River flow (if applicable) (m3/s) (friver)
     spd_wind = 2  ! Wind speed (m/s)
+
     ! Water Quality
     dislv_solid = 1500  ! Total Dissolved Solids (TDS) (ppm)
     suspnd_solid = 25  ! Total SuspENDed Solids (TSS) (ppm)
-    ammonia = 30  ! Ammonia (ppm)
+    conc_nh3 = 30  ! Ammonia (ppm)
+
     ! Economic Data
     plant_life = 50  ! Lifetime of the power plant (years)
     discnt_rate = 0.06  ! Discount Rate (%)
@@ -52,14 +60,16 @@ PROGRAM water_use_module
 
 
     ! Select Cooling System
-    c_type = 1  ! Cooling System, see name_array
+    typ_cool = 1  ! Cooling System, see name_array
+
     ! Approaches and ranges for heat exchanging devices
     dt_ca = 6  ! Condenser Approach (oC)
     dt_cr = 10  ! Condenser Range (oC) (Dtcr)
+
     ! Cooling Tower Parameters
     dt_ta = 6  ! Cooling Tower Approach (oC)
-    con_cycle = 6  ! Cycles of Concentration
-    
+    conc_cycle = 6  ! Cycles of Concentration
+
 
     ! Supporting systems constants in 'Report tab'
     sup_recirc = 1.2  ! Recirculating cooling water supporting systems
@@ -70,36 +80,37 @@ PROGRAM water_use_module
 
 
     ! Constants in 'Model tab'
-    desal_cap = 0
+    cap_desal = 0
     desal_rate = 10
     t_desal = 80
 
-    type_array = [1, 1, 1, 2, 2, 3, 2, 2]
-    c_type_2 = type_array(INT(c_type))
+
+    typ_array = [1, 1, 1, 2, 2, 3, 2, 2]
+    typ_mech = typ_array(INT(typ_cool))
     CALL p_therm__pgrossmw(pgrossmw, eta, p_therm)
     CALL heat_con_rej(pgrossmw, eta, q_cr)
-    CALL pres_sat(t_db, p_sat)
-    CALL wet_bulb_temp(t_db, p_sat, r_h, t_wb)
-    CALL pres_sat(t_db, p_sat)
-    CALL wet_bulb_temp(t_db, p_sat, r_h, t_wb)
-    CALL con_temp(c_type_2, t_sw, t_wb, dt_ta, dt_cr, dt_ca, t_db, t_c)
+    CALL pres_sat(t_dry, p_sat)
+    CALL wet_bulb_temp(t_dry, p_sat, r_h, t_wb)
+    CALL pres_sat(t_dry, p_sat)
+    CALL wet_bulb_temp(t_dry, p_sat, r_h, t_wb)
+    CALL con_temp(typ_mech, t_sw, t_wb, dt_ta, dt_cr, dt_ca, t_dry, t_c)
     CALL heat_con_rej(pgrossmw, eta, q_cr)
     CALL temp_con_mod(t_desal, t_c_m)
     CALL Heat_lat(t_c_m, q_lat_desal) ! 'model tab' - Latent Heat of Desal (Dhdes)
-    CALL Heat_desal(Desal_cap, Desal_rate, q_lat_desal, q_desal)
+    CALL Heat_desal(cap_desal, desal_rate, q_lat_desal, q_desal)
     CALL P_loss_ratio(t_c_m, t_c, p_ratio)
     CALL Heat_con_mod(q_cr, q_desal, p_ratio, q_cr_m)
     CALL wat_con_mod(q_cr_m, dt_cr, w_fr)
-    CALL Nat_draft_evap(t_db, c_type_2, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
-    Desal_cap, Desal_rate, Wat_evap, Wat_evap_rate)
-    CALL Nat_draft_drift(t_db, c_type_2, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
-    Desal_cap, Desal_rate, Wat_drift)
-    CALL Nat_draft_bleed(t_db, c_type_2, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
-    Desal_cap, Desal_rate, con_cycle, Wat_bleed)
-    CALL Nat_draft_makeup(t_db, c_type_2, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
-    Desal_cap, Desal_rate, con_cycle, wat_mkup)
-    CALL Nat_draft_consump(t_db, c_type_2, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
-    Desal_cap, Desal_rate, con_cycle, Wat_consump)
+    CALL Nat_draft_evap(t_dry, typ_mech, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
+    cap_desal, desal_rate, Wat_evap, Wat_evap_rate)
+    CALL Nat_draft_drift(t_dry, typ_mech, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
+    cap_desal, desal_rate, Wat_drift)
+    CALL Nat_draft_bleed(t_dry, typ_mech, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
+    cap_desal, desal_rate, conc_cycle, Wat_bleed)
+    CALL Nat_draft_makeup(t_dry, typ_mech, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
+    cap_desal, desal_rate, conc_cycle, wat_mkup)
+    CALL Nat_draft_consump(t_dry, typ_mech, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
+    cap_desal, desal_rate, conc_cycle, Wat_consump)
     CALL excav_water(pgrossmw, wat_excav)
     CALL concrete_water(pgrossmw, wat_concrt)
     CALL constr_water(pgrossmw, wat_constr)
@@ -116,13 +127,13 @@ PROGRAM water_use_module
     CALL heat_coeff_wat(mix_riv, spd_wind, q_coeff_wat)
     CALL heat_coeff(mix_riv, spd_wind, q_coeff)
     CALL river_evap(q_cr, q_desal, p_ratio, mix_riv, spd_wind, evap_riv)
-    CALL sys_inven_ch(wat_src, wat_type, choice)
-    CALL sys_inven(array)
+    CALL sys_inv_ch(wat_src, typ_wat, sys_inv)
+    CALL sys_inv_array(array)
     CALL pond_dtemp(dt_ca, dt_cr, dt_pond)
-    CALL pond_temp(dt_pond, t_db, t_pond)
+    CALL pond_temp(dt_pond, t_dry, t_pond)
     CALL pond_area(q_cr_m, dt_cr, t_pond, spd_wind, km2_pond)
-    CALL pond_evap(km2_pond, spd_wind, t_pond, r_h, t_db, evap_pond)
-    CALL pond_bleed(evap_pond, con_cycle, bleed_pond)
+    CALL pond_evap(km2_pond, spd_wind, t_pond, r_h, t_dry, evap_pond)
+    CALL sub_pond_bleed(evap_pond, conc_cycle, pond_bleed)
 
 
     ! Reference arrays for the values to populate the report depENDing on the cooling system
@@ -135,7 +146,7 @@ PROGRAM water_use_module
     treatment_array = [0, 0, 0, 1, 1, 0, 1, 0]
     wat_evap_array = [evap_riv, evap_riv, evap_pond, Wat_evap_rate, Wat_evap_rate, zero, Wat_evap_rate, zero]
     drift_array = [zero, zero, zero, Wat_drift, Wat_drift, zero, zero, zero]
-    wat_dis_array = [w_fr-evap_riv, w_fr-evap_riv, bleed_pond, Wat_bleed, Wat_bleed, zero, Wat_bleed, zero]
+    wat_dis_array = [w_fr-evap_riv, w_fr-evap_riv, pond_bleed, Wat_bleed, Wat_bleed, zero, Wat_bleed, zero]
     visual_array = [0, 2, 2, 2, 5, 1, 2, 2]
     imping_array = [5, 5, 0, 1, 1, 0, 1, 0]
     plume_array = [0, 0, 0, 4, 4, 0, 0, 0]
@@ -147,14 +158,14 @@ PROGRAM water_use_module
     therm_array = [therm, zero, zero, therm, therm, zero, one, one]
     air_pol_array = [0, 0, 0, 0, 0, 3, 1, 2]
 
-    wat_makeup = drift_array(INT(c_type)) + wat_evap_array(INT(c_type)) + wat_dis_array(INT(c_type))
+    wat_makeup = drift_array(INT(typ_cool)) + wat_evap_array(INT(typ_cool)) + wat_dis_array(INT(typ_cool))
     wat_withdraw = wat_makeup*3600*24*30/1000
     km2_pond_mwh = km2_pond / (pgrossmw/eta) * 1000000
-    CALL Wat_conv(wat_evap_array(INT(c_type)), pgrossmw, Evap_MWh)
-    CALL Wat_conv(drift_array(INT(c_type)), pgrossmw, Drift_MWh)
-    CALL Wat_conv(wat_dis_array(INT(c_type)), pgrossmw, Bleed_MWh)
+    CALL Wat_conv(wat_evap_array(INT(typ_cool)), pgrossmw, Evap_MWh)
+    CALL Wat_conv(drift_array(INT(typ_cool)), pgrossmw, Drift_MWh)
+    CALL Wat_conv(wat_dis_array(INT(typ_cool)), pgrossmw, mwh_bleed)
     CALL Wat_conv(wat_makeup, pgrossmw, Makeup_MWh)
-    CALL Wat_conv(Wat_consump, pgrossmw, Consump_MWh)
+    CALL Wat_conv(Wat_consump, pgrossmw, mwh_cons)
 
 
     ! Printing the report
@@ -173,7 +184,7 @@ PROGRAM water_use_module
     WRITE(*,*) "Water source / Plant Location:"
     CALL water_source(wat_src)
     WRITE(*,'(a60)',advance='no') "Dry bulb temperature (oC) = "
-    CALL output(t_db)
+    CALL output(t_dry)
     WRITE(*,'(a60)',advance='no') "Wet bulb temperature (oC) = "
     CALL output(t_wb)
     WRITE(*,'(a60)',advance='no') "Relative Humidity (%) = "
@@ -193,11 +204,11 @@ PROGRAM water_use_module
     WRITE(*,'(a60)',advance='no') "Recirculating cooling water - supporting (m3/s) = "
     CALL output(Sup_recirc)
     WRITE(*,'(a60)',advance='no') "Evaporation losses - main (m3/s) = "
-    CALL output(wat_evap_array(INT(c_type)))
+    CALL output(wat_evap_array(INT(typ_cool)))
     WRITE(*,'(a60)',advance='no') "Evaporation losses - supporting (m3/s) = "
     CALL output(Sup_evap)
     WRITE(*,'(a60)',advance='no') "Blow-down losses - main (m3/s) = "
-    CALL output(wat_dis_array(INT(c_type)))
+    CALL output(wat_dis_array(INT(typ_cool)))
     WRITE(*,'(a60)',advance='no') "Blow-down losses - supporting (m3/s) = "
     CALL output(Sup_bleed)
     WRITE(*,'(a60)',advance='no') "Make-up water - main (m3/s) = "
@@ -218,51 +229,51 @@ PROGRAM water_use_module
 
     WRITE(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')//" Total water inventory needed:"
     WRITE(*,'(a60)',advance='no') "fresh water (m3) = "
-    CALL output(array(choice,1)+array(choice,2)+array(choice,4))
+    CALL output(array(sys_inv,1)+array(sys_inv,2)+array(sys_inv,4))
     WRITE(*,'(a60)',advance='no') "Demineralised water (m3) = "
-    CALL output(array(choice,3)+sum(array(choice,5:14)))
+    CALL output(array(sys_inv,3)+sum(array(sys_inv,5:14)))
 
     WRITE(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')//" Design variables:"
     WRITE(*,'(a59)', advance='no') "Cooling system type ="
-    WRITE(*,*) name_array(INT(c_type))  
+    WRITE(*,*) name_array(INT(typ_cool))  
     WRITE(*,'(a60)',advance='no') "Cycles of Concentration = "
-    CALL output(con_cycle)
+    CALL output(conc_cycle)
     WRITE(*,'(a60)',advance='no') "Condenser Approach (oC) = "
     CALL output(dt_ca)
     WRITE(*,'(a60)',advance='no') "Condenser Range (oC) = "
     CALL output(dt_cr)
     WRITE(*,'(a60)',advance='no') "Cooling Tower Approach (oC) = "
     CALL output(dt_ta)
-    IF (c_type == 2) THEN
+    IF (typ_cool == 2) THEN
         WRITE(*,'(a60)',advance='no') "Cooling Pond Area (km2) = "
         CALL output(km2_pond)
     END IF
 
     WRITE(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')//" Results:"
-    IF (c_type == 3) THEN
+    IF (typ_cool == 3) THEN
         WRITE(*,'(a60)',advance='no') "Pond Area Needed (km2) = "
         CALL output(km2_pond)
         WRITE(*,'(a60)',advance='no') "Pond Area Needed (m2/MWh) = "
         CALL output(km2_pond_mwh)
     END IF
     WRITE(*,'(a60)',advance='no') "Evaporation losses (m3/s) = "
-    CALL output(wat_evap_array(INT(c_type)))
+    CALL output(wat_evap_array(INT(typ_cool)))
     WRITE(*,'(a60)',advance='no') "Evaporation losses (MWh) = "
     CALL output(Evap_MWh)
     WRITE(*,'(a60)',advance='no') "Drift losses (m3/s) = "
-    CALL output(drift_array(INT(c_type)))
+    CALL output(drift_array(INT(typ_cool)))
     WRITE(*,'(a60)',advance='no') "Drift losses (MWh) = "
     CALL output(Drift_MWh)
     WRITE(*,'(a60)',advance='no') "Blow-down losses (m3/s) = "
-    CALL output(wat_dis_array(INT(c_type)))
+    CALL output(wat_dis_array(INT(typ_cool)))
     WRITE(*,'(a60)',advance='no') "Blow-down losses (MWh) = "
-    CALL output(Bleed_MWh)
+    CALL output(mwh_bleed)
     WRITE(*,'(a60)',advance='no') "Cooling system makeup water (m3/s) = "
     CALL output(wat_makeup)
     WRITE(*,'(a60)',advance='no') "Cooling system makeup water (MWh) = "
     CALL output(Makeup_MWh)
     WRITE(*,'(a60)',advance='no') "Total consumption (m3/s) = "
-    CALL output(wat_evap_array(INT(c_type)) + drift_array(INT(c_type)))
+    CALL output(wat_evap_array(INT(typ_cool)) + drift_array(INT(typ_cool)))
     WRITE(*,'(a60)',advance='no') "Total consumption (MWh) = "
     CALL output(Evap_MWh + Drift_MWh)
 
@@ -300,33 +311,33 @@ PROGRAM water_use_module
     WRITE(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')// &
     " Water system inventories during operation:"
     WRITE(*,'(a60)',advance='no') "Condenser cooling water circuit (m3) = "
-    CALL output(array(choice,1))
+    CALL output(array(sys_inv,1))
     WRITE(*,'(a60)',advance='no') "Service water circuit (IDCT) + 7 days storage (m3) = "
-    CALL output(array(choice,2))
+    CALL output(array(sys_inv,2))
     WRITE(*,'(a60)',advance='no') "Fire water circuit - pipes (m3) = "
-    CALL output(array(choice,3))
+    CALL output(array(sys_inv,3))
     WRITE(*,'(a60)',advance='no') "Fire water circuit - storage (m3) = "
-    CALL output(array(choice,4))
+    CALL output(array(sys_inv,4))
     WRITE(*,'(a60)',advance='no') "Nuclear systems & component cooling circuit (m3) = "
-    CALL output(array(choice,5))
+    CALL output(array(sys_inv,5))
     WRITE(*,'(a60)',advance='no') "TG component cooling circuit (m3) = "
-    CALL output(array(choice,6))
+    CALL output(array(sys_inv,6))
     WRITE(*,'(a60)',advance='no') "Feed water circuit (m3) = "
-    CALL output(array(choice,7))
+    CALL output(array(sys_inv,7))
     WRITE(*,'(a60)',advance='no') "Steam generator secondary side inventory (m3) = "
-    CALL output(array(choice,8))
+    CALL output(array(sys_inv,8))
     WRITE(*,'(a60)',advance='no') "Reactor auxilary circuits (m3) = "
-    CALL output(array(choice,9))
+    CALL output(array(sys_inv,9))
     WRITE(*,'(a60)',advance='no') "Spent fuel bay cooling circuit (m3) = "
-    CALL output(array(choice,10))
+    CALL output(array(sys_inv,10))
     WRITE(*,'(a60)',advance='no') "Emergency core cooling circuit (and dump inventory) (m3) = "
-    CALL output(array(choice,11))
+    CALL output(array(sys_inv,11))
     WRITE(*,'(a60)',advance='no') "Emergency feed water pools and circuit (m3) = "
-    CALL output(array(choice,12))
+    CALL output(array(sys_inv,12))
     WRITE(*,'(a60)',advance='no') "Primary heat transport system (m3) = "
-    CALL output(array(choice,13))
+    CALL output(array(sys_inv,13))
     WRITE(*,'(a60)',advance='no') "Moderator system (m3) = "
-    CALL output(array(choice,14))
+    CALL output(array(sys_inv,14))
 
     !WRITE(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')// &
     !"Testing"
@@ -334,8 +345,6 @@ PROGRAM water_use_module
 
 END PROGRAM water_use_module
 
-
-! Subroutines for the water usage calculations
 
 !--------------------------------------TEMPERATURE CONVERSION--------------------------------------
 
@@ -390,25 +399,25 @@ END SUBROUTINE water_source
 
 
 ! 'Report' tab - NPP system inventories choice
-! Using water type and water source determines what values to retrieve from sys_inven() -> TESTED
-SUBROUTINE sys_inven_ch(wat_src, wat_type, choice)
+! Using water type and water source determines what values to retrieve from sys_inv_array() -> TESTED
+SUBROUTINE sys_inv_ch(wat_src, typ_wat, sys_inv)
     IMPLICIT NONE
-    INTEGER, INTENT(IN) :: wat_type
+    INTEGER, INTENT(IN) :: typ_wat
     INTEGER, INTENT(INOUT) :: wat_src
-    INTEGER, INTENT(OUT) :: choice
+    INTEGER, INTENT(OUT) :: sys_inv
     INTEGER wat_src_2
     IF (wat_src == 2) THEN
         wat_src_2 = 0
     ELSE
         wat_src_2 = wat_src
     END IF
-    choice = wat_type + wat_src_2
-END SUBROUTINE sys_inven_ch
+    sys_inv = typ_wat + wat_src_2
+END SUBROUTINE sys_inv_ch
 
 
 ! 'sheet 2' - NPP system inventories
 ! A reference SUBROUTINE for the water inventories
-SUBROUTINE sys_inven(array)
+SUBROUTINE sys_inv_array(array)
     IMPLICIT NONE
     DOUBLE PRECISION, dimension(4,14), INTENT(OUT) :: array
     array =    reshape ( [6500.0, 0.0, 6500.0, 0.0, &
@@ -426,7 +435,7 @@ SUBROUTINE sys_inven(array)
                         400.0, 400.0, 400.0, 400.0, &
                         310.0, 310.0, 0.0, 0.0], &
                         [4,14] )
-END SUBROUTINE sys_inven
+END SUBROUTINE sys_inv_array
 
 
 !--------------------------------------------------------------------------------------------------
@@ -474,15 +483,15 @@ END SUBROUTINE temp_con_mod
 
 ! Psat()
 ! Calculating the partial vapour pressure from the dry/wet bulb temperature -> TESTED
-SUBROUTINE pres_sat(t_db, p_sat)
+SUBROUTINE pres_sat(t_dry, p_sat)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(IN) :: t_db
+    DOUBLE PRECISION, INTENT(IN) :: t_dry
     DOUBLE PRECISION, INTENT(OUT) :: p_sat
     DOUBLE PRECISION a, b, c
     a = 8.07131
     b = 1730.63
     c = 233.426
-    p_sat = (10 ** (a - (b / (c + t_db)))) / 760
+    p_sat = (10 ** (a - (b / (c + t_dry)))) / 760
 END SUBROUTINE pres_sat
 
 
@@ -491,9 +500,9 @@ END SUBROUTINE pres_sat
 
 ! Wetbulb() & 'model tab' - Wet Bulb temperature (Twb)
 ! Calculating the wet bulb temperature from the dry bulb temperature and partial pressure -> TESTED
-SUBROUTINE wet_bulb_temp(t_db, p_sat, r_h, t_wb)
+SUBROUTINE wet_bulb_temp(t_dry, p_sat, r_h, t_wb)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(IN) :: t_db, r_h
+    DOUBLE PRECISION, INTENT(IN) :: t_dry, r_h
     DOUBLE PRECISION, INTENT(INOUT) :: p_sat
     DOUBLE PRECISION, INTENT(OUT) :: t_wb
     DOUBLE PRECISION p_sat_r_h, e_diff, t_wb_gs, pres_mb, sign_prev, incr, e_diff_2, temp_C, ew_gs, e_gs, sign_cur
@@ -505,7 +514,7 @@ SUBROUTINE wet_bulb_temp(t_db, p_sat, r_h, t_wb)
     sign_prev = 1
     incr = 10
     e_diff_2 = p_sat_r_h * 1000
-    temp_C = t_db
+    temp_C = t_dry
     i = 0
     DO WHILE (abs(e_diff) > 0.05)
         i = i + 1
@@ -544,18 +553,18 @@ END SUBROUTINE wet_bulb_temp
 
 ! 'model tab' - Condensing temperature (Tc)
 ! Calculating the condensing temperature based on the cooling mechanism -> TESTED
-SUBROUTINE con_temp(c_type, t_sw, t_wb, dt_ta, dt_cr, dt_ca, t_db, t_c)
+SUBROUTINE con_temp(typ_cool, t_sw, t_wb, dt_ta, dt_cr, dt_ca, t_dry, t_c)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(IN) :: c_type, t_sw, t_wb, dt_ta, dt_cr, dt_ca, t_db
+    DOUBLE PRECISION, INTENT(IN) :: typ_cool, t_sw, t_wb, dt_ta, dt_cr, dt_ca, t_dry
     DOUBLE PRECISION, INTENT(OUT) :: t_c
     DOUBLE PRECISION dt_c
     dt_c = dt_cr + dt_ca
-    IF (c_type == 1) THEN
+    IF (typ_cool == 1) THEN
         t_c = t_sw + dt_c
-    ELSE IF (c_type == 2) THEN
+    ELSE IF (typ_cool == 2) THEN
         t_c = t_wb + dt_ta + dt_c
-    ELSE IF (c_type == 3) THEN
-        t_c = t_db + dt_ta + dt_c
+    ELSE IF (typ_cool == 3) THEN
+        t_c = t_dry + dt_ta + dt_c
     ELSE
         PRINT *, "Incorrect cooling type"
     END IF
@@ -605,23 +614,23 @@ END SUBROUTINE lg
 
 
 ! GetSatVapPres()
-! Saturated vapor pressure as function of the dry bulb temperature -> TESTED
+! Saturated vapour pressure as function of the dry bulb temperature -> TESTED
 ! Prerequest: c_to_k(temp)
-SUBROUTINE dry_bulb__sat_vap_press(t_db, s_vp)
-    DOUBLE PRECISION, INTENT(IN) :: t_db
+SUBROUTINE dry_bulb__sat_vap_press(t_dry, s_vp)
+    DOUBLE PRECISION, INTENT(IN) :: t_dry
     DOUBLE PRECISION, INTENT(OUT) :: s_vp
-    DOUBLE PRECISION t_db_k, t_func
-    IF (t_db >= -100 .AND. t_db <= 200) THEN
-        t_db_k = t_db
-        CALL c_to_k(t_db_k)
-        IF (t_db >= -100 .AND. t_db <= 0) THEN
-            t_func = (-5.6745359 * ((10 ** 3) / t_db_k) + 6.3925247 - 9.677843 * (10.00 ** -3) * &
-            t_db_k + 6.2215701 * (10.00 ** -7) * (t_db_k ** 2))
-            t_func = t_func + 2.0747825 * (10.00 ** -9) * (t_db_k ** 3) - 9.484024 * &
-            (10.00 ** -13) * (t_db_k ** 4) + 4.1635019 * log(t_db_k)
-        ELSE IF (t_db > 0 .AND. t_db <= 200) THEN
-            t_func = (-5800.2206 / t_db_k) + 1.3914993 - 0.048640239 * t_db_k + 0.000041764768 * &
-            (t_db_k ** 2) - 0.000000014452093 * (t_db_k ** 3) + 6.5459673 * log(t_db_k)
+    DOUBLE PRECISION t_dry_k, t_func
+    IF (t_dry >= -100 .AND. t_dry <= 200) THEN
+        t_dry_k = t_dry
+        CALL c_to_k(t_dry_k)
+        IF (t_dry >= -100 .AND. t_dry <= 0) THEN
+            t_func = (-5.6745359 * ((10 ** 3) / t_dry_k) + 6.3925247 - 9.677843 * (10.00 ** -3) * &
+            t_dry_k + 6.2215701 * (10.00 ** -7) * (t_dry_k ** 2))
+            t_func = t_func + 2.0747825 * (10.00 ** -9) * (t_dry_k ** 3) - 9.484024 * &
+            (10.00 ** -13) * (t_dry_k ** 4) + 4.1635019 * log(t_dry_k)
+        ELSE IF (t_dry > 0 .AND. t_dry <= 200) THEN
+            t_func = (-5800.2206 / t_dry_k) + 1.3914993 - 0.048640239 * t_dry_k + 0.000041764768 * &
+            (t_dry_k ** 2) - 0.000000014452093 * (t_dry_k ** 3) + 6.5459673 * log(t_dry_k)
         END IF
         s_vp = exp(t_func)
     ELSE
@@ -636,14 +645,14 @@ END SUBROUTINE dry_bulb__sat_vap_press
 
 ! GetSatHumRatio()
 ! The humidity ratio of saturated air for a given dry bulb temperature and pressure -> TESTED
-! Prerequest: dry_bulb__sat_vap_press(t_db, s_vp)
-SUBROUTINE dry_bulb__sat_rh_ratio(t_db, pressure, s_rh_ratio)
+! Prerequest: dry_bulb__sat_vap_press(t_dry, s_vp)
+SUBROUTINE dry_bulb__sat_rh_ratio(t_dry, pressure, s_rh_ratio)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(INOUT) :: t_db
+    DOUBLE PRECISION, INTENT(INOUT) :: t_dry
     DOUBLE PRECISION, INTENT(IN) :: pressure
     DOUBLE PRECISION, INTENT(OUT) :: s_rh_ratio
     DOUBLE PRECISION s_vp
-    CALL dry_bulb__sat_vap_press(t_db, s_vp)
+    CALL dry_bulb__sat_vap_press(t_dry, s_vp)
     s_rh_ratio = 0.621945 * s_vp / (pressure - s_vp)
 END SUBROUTINE dry_bulb__sat_rh_ratio
 
@@ -653,17 +662,17 @@ END SUBROUTINE dry_bulb__sat_rh_ratio
 
 ! GetHumRatiofromTWetBulb()
 ! Calculate the humidity ratio from the wet and dry bulb temperature -> TESTED
-! Prerequest: dry_bulb__sat_rh_ratio(t_db, pressure, s_rh_ratio)
-SUBROUTINE wet_bulb__rh_ratio(t_db, t_wb, pressure, rh_ratio)
+! Prerequest: dry_bulb__sat_rh_ratio(t_dry, pressure, s_rh_ratio)
+SUBROUTINE wet_bulb__rh_ratio(t_dry, t_wb, pressure, rh_ratio)
     IMPLICIT NONE
     DOUBLE PRECISION, INTENT(INOUT) :: t_wb, pressure
-    DOUBLE PRECISION, INTENT(IN) :: t_db
+    DOUBLE PRECISION, INTENT(IN) :: t_dry
     DOUBLE PRECISION, INTENT(OUT) :: rh_ratio
     DOUBLE PRECISION s_rh_ratio
-    IF (t_wb <= t_db) THEN
+    IF (t_wb <= t_dry) THEN
         CALL dry_bulb__sat_rh_ratio(t_wb, pressure, s_rh_ratio)
-        rh_ratio = ((2501 - (2.326 * t_wb)) * s_rh_ratio - 1.006 * (t_db - t_wb)) / &
-        (2501 + 1.86 * t_db - 4.186 * t_wb)
+        rh_ratio = ((2501 - (2.326 * t_wb)) * s_rh_ratio - 1.006 * (t_dry - t_wb)) / &
+        (2501 + 1.86 * t_dry - 4.186 * t_wb)
     ELSE
         PRINT *, 'The wet bulb temperature is above the dry bulb temperature'
     END IF
@@ -674,15 +683,15 @@ END SUBROUTINE wet_bulb__rh_ratio
 
 
 ! GetVapPresfromRelHum()
-! Partial pressure of water vapor as a function of relative humidity and temperature in C -> TESTED
-! Prerequest: dry_bulb__sat_vap_press(t_db, s_vp)
-SUBROUTINE RH__vap_pressure(t_db, r_h, vap_press)
+! Partial pressure of water vapour as a function of relative humidity and temperature in C -> TESTED
+! Prerequest: dry_bulb__sat_vap_press(t_dry, s_vp)
+SUBROUTINE RH__vap_pressure(t_dry, r_h, vap_press)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(IN) :: t_db, r_h
+    DOUBLE PRECISION, INTENT(IN) :: t_dry, r_h
     DOUBLE PRECISION, INTENT(OUT) :: vap_press 
     DOUBLE PRECISION s_vp
     IF (r_h > 0 .AND. r_h <= 1) THEN
-        CALL dry_bulb__sat_vap_press(t_db, s_vp)
+        CALL dry_bulb__sat_vap_press(t_dry, s_vp)
         vap_press = s_vp * r_h
     ELSE
         PRINT *, 'Relative humidity is outside range [0,1]'
@@ -694,13 +703,13 @@ END SUBROUTINE RH__vap_pressure
 
 
 ! GetHumRatiofromVapPres()
-! Humidity ratio for given water vapor pressure and atmospheric pressure -> TESTED
+! Humidity ratio for given water vapour pressure and atmospheric pressure -> TESTED
 SUBROUTINE vap_pressure__rh_ratio(vap_press , pressure, rh_ratio)
     IMPLICIT NONE
     DOUBLE PRECISION, INTENT(IN) :: vap_press , pressure
     DOUBLE PRECISION, INTENT(OUT) :: rh_ratio
     IF (vap_press < 0) THEN
-        PRINT *, 'Partial pressure of water vapor in moist air is negative'
+        PRINT *, 'Partial pressure of water vapour in moist air is negative'
     ELSE
         rh_ratio = 0.621945 * vap_press / (pressure - vap_press )
     END IF
@@ -712,15 +721,15 @@ END SUBROUTINE vap_pressure__rh_ratio
 
 ! GetHumRatiofromRelHum()
 ! Calculating the relative humidity ratio for a given humidity -> TESTED
-! Prerequest: RH__vap_pressure(t_db, r_h, vap_press ), 
+! Prerequest: RH__vap_pressure(t_dry, r_h, vap_press ), 
 !             vap_pressure__rh_ratio(vap_press , pressure, rh_ratio)
-SUBROUTINE RH__rh_ratio(t_db, r_h, pressure, rh_ratio)
+SUBROUTINE RH__rh_ratio(t_dry, r_h, pressure, rh_ratio)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(INOUT) :: t_db, r_h, pressure
+    DOUBLE PRECISION, INTENT(INOUT) :: t_dry, r_h, pressure
     DOUBLE PRECISION, INTENT(OUT) :: rh_ratio
     DOUBLE PRECISION vap_press 
     IF (r_h > 0 .AND. r_h <= 1) THEN
-        CALL RH__vap_pressure(t_db, r_h, vap_press )
+        CALL RH__vap_pressure(t_dry, r_h, vap_press )
         CALL vap_pressure__rh_ratio(vap_press , pressure, rh_ratio)
         IF (rh_ratio < 0) THEN
             PRINT *, 'Humidity ratio is negative'
@@ -753,17 +762,17 @@ END SUBROUTINE rh_ratio__vap_pressure
 
 ! GetRelHumfromVapPres()
 ! The DOUBLE PRECISIONtive humidity calculated from the dry bulb temperature and vapour pressure -> TESTED
-! Prerequest: dry_bulb__sat_vap_press(t_db, s_vp)
-SUBROUTINE vap_pressure__RH(t_db, vap_press, r_h)
+! Prerequest: dry_bulb__sat_vap_press(t_dry, s_vp)
+SUBROUTINE vap_pressure__RH(t_dry, vap_press, r_h)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(IN) :: t_db, vap_press
+    DOUBLE PRECISION, INTENT(IN) :: t_dry, vap_press
     DOUBLE PRECISION, INTENT(OUT) :: r_h
     DOUBLE PRECISION s_vp
     IF (vap_press >= 0) THEN
-        CALL dry_bulb__sat_vap_press(t_db, s_vp)
+        CALL dry_bulb__sat_vap_press(t_dry, s_vp)
         r_h = vap_press / s_vp
     ELSE
-        PRINT *, 'Partial pressure of water vapor in moist air is negative'
+        PRINT *, 'Partial pressure of water vapour in moist air is negative'
     END IF
 END SUBROUTINE vap_pressure__RH
 
@@ -775,14 +784,14 @@ END SUBROUTINE vap_pressure__RH
 ! Calculating the relative humidity from the humidity ratio -> TESTED
 ! Prerequest: rh_ratio__vap_pressure()
 !             vap_pressure__RH()
-SUBROUTINE rh_ratio__RH(t_db, rh_ratio, pressure, r_h)
+SUBROUTINE rh_ratio__RH(t_dry, rh_ratio, pressure, r_h)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(IN) :: t_db, rh_ratio, pressure
+    DOUBLE PRECISION, INTENT(IN) :: t_dry, rh_ratio, pressure
     DOUBLE PRECISION, INTENT(OUT) :: r_h
     DOUBLE PRECISION vap_press 
     IF (rh_ratio > 0) THEN
         CALL rh_ratio__vap_pressure(rh_ratio, pressure, vap_press)
-        CALL vap_pressure__RH(t_db, vap_press, r_h)
+        CALL vap_pressure__RH(t_dry, vap_press, r_h)
     END IF
 END SUBROUTINE rh_ratio__RH
 
@@ -794,13 +803,13 @@ END SUBROUTINE rh_ratio__RH
 ! Calculating the relative humidity from the dry and wet bulb temperature -> 
 ! Prerequest: wet_bulb__rh_ratio()
 !             RH__rh_ratio()
-SUBROUTINE Dry_wet_bulb__RH(t_db, t_wb, pressure, r_h)
+SUBROUTINE Dry_wet_bulb__RH(t_dry, t_wb, pressure, r_h)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(INOUT) :: t_db, t_wb, pressure, r_h
+    DOUBLE PRECISION, INTENT(INOUT) :: t_dry, t_wb, pressure, r_h
     DOUBLE PRECISION rh_ratio
-    IF (t_wb <= t_db) THEN
-        CALL wet_bulb__rh_ratio(t_db, t_wb, pressure, rh_ratio)
-        CALL rh_ratio__RH(t_db, rh_ratio, pressure, r_h)
+    IF (t_wb <= t_dry) THEN
+        CALL wet_bulb__rh_ratio(t_dry, t_wb, pressure, rh_ratio)
+        CALL rh_ratio__RH(t_dry, rh_ratio, pressure, r_h)
     ELSE
         PRINT *, 'Wet bulb temperature is above dry bulb temperature'
     END IF
@@ -815,38 +824,38 @@ END SUBROUTINE Dry_wet_bulb__RH
 ! Prerequest: c_to_f()
 !             f_to_c()
 !             Dry_wet_bulb__RH()
-SUBROUTINE RH_wet_bulb__dry_bulb(t_wb, r_h, t_db)
+SUBROUTINE RH_wet_bulb__dry_bulb(t_wb, r_h, t_dry)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(INOUT) :: t_wb, t_db
+    DOUBLE PRECISION, INTENT(INOUT) :: t_wb, t_dry
     DOUBLE PRECISION, INTENT(IN) :: r_h
-    DOUBLE PRECISION RH_test, t_db_prev, RH_prev, dRH_dT, DT, pressure
+    DOUBLE PRECISION RH_test, t_dry_prev, RH_prev, dRH_dT, DT, pressure
     INTEGER i
     CALL c_to_f(t_wb)
-    t_db = t_wb
+    t_dry = t_wb
     RH_test = 1
-    t_db_prev = t_db
+    t_dry_prev = t_dry
     RH_prev = RH_test
     pressure = 101325
     IF (r_h /= 1) THEN
-        t_db = t_wb + (0.12 * (t_wb**1.5) * ((1 - r_h)**2.5))
+        t_dry = t_wb + (0.12 * (t_wb**1.5) * ((1 - r_h)**2.5))
         do i = 0, 10
-            CALL f_to_c(t_db)
+            CALL f_to_c(t_dry)
             CALL f_to_c(t_wb)
-            CALL Dry_wet_bulb__RH(t_db, t_wb, pressure, RH_test)
-            CALL c_to_f(t_db)
+            CALL Dry_wet_bulb__RH(t_dry, t_wb, pressure, RH_test)
+            CALL c_to_f(t_dry)
             CALL c_to_f(t_wb)
-            dRH_dT = (RH_test - RH_prev) / (t_db - t_db_prev)
+            dRH_dT = (RH_test - RH_prev) / (t_dry - t_dry_prev)
             DT = (RH_test - r_h) / dRH_dT
-            t_db_prev = t_db
+            t_dry_prev = t_dry
             RH_prev = RH_test
-            t_db = t_db - DT
+            t_dry = t_dry - DT
             IF (abs(DT) < 0.0005) THEN
                 EXIT
             END IF
         END DO
     END IF
     CALL f_to_c(t_wb)
-    CALL f_to_c(t_db)
+    CALL f_to_c(t_dry)
 END SUBROUTINE RH_wet_bulb__dry_bulb
 
 
@@ -856,14 +865,14 @@ END SUBROUTINE RH_wet_bulb__dry_bulb
 ! NOTE!! THIS IS THE SOURCE OF THE ERROR MESSAGES - INVESTIGATE
 ! GetMoistAirEnthalpy()
 ! Calculating the enthalpy of moist air from the dry bulb temperature -> TESTED
-SUBROUTINE Dry_bulb__enth_wb(t_db, rh_ratio, H_wb)
+SUBROUTINE Dry_bulb__enth_wb(t_dry, rh_ratio, H_wb)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(IN) :: t_db, rh_ratio
+    DOUBLE PRECISION, INTENT(IN) :: t_dry, rh_ratio
     DOUBLE PRECISION, INTENT(OUT) :: H_wb
     DOUBLE PRECISION KILO
     KILO = 1000
     IF (rh_ratio > 0) THEN
-        H_wb = ((1.006 * t_db) + (rh_ratio * (2501 + (1.86 * t_db)))) * KILO
+        H_wb = ((1.006 * t_dry) + (rh_ratio * (2501 + (1.86 * t_dry)))) * KILO
     ELSE
         !PRINT *, 'Humidity ratio is negative'
     END IF
@@ -882,16 +891,16 @@ SUBROUTINE Enth_wb__t_wb(H_wb, t_wb)
     IMPLICIT NONE
     DOUBLE PRECISION, INTENT(INOUT) :: H_wb
     DOUBLE PRECISION, INTENT(OUT) :: t_wb
-    DOUBLE PRECISION t_wb_2, pressure, t_db, rh_ratio, H_test, t_wb_prev, H_prev, DHdT, DT
+    DOUBLE PRECISION t_wb_2, pressure, t_dry, rh_ratio, H_test, t_wb_prev, H_prev, DHdT, DT
     INTEGER n, i
     H_wb = H_wb / 2324.4 ! Converting from j/kg to btu/lb
     t_wb = 32.0
     t_wb_2 = t_wb
     pressure = 101325.0
     CALL f_to_c(t_wb_2)
-    t_db = t_wb ! Setting the dry bulb temperature equivalent to the wet bulb temperature
-    CALL wet_bulb__rh_ratio(t_db, t_wb_2, pressure, rh_ratio)
-    CALL Dry_bulb__enth_wb(t_db, rh_ratio, H_test)
+    t_dry = t_wb ! Setting the dry bulb temperature equivalent to the wet bulb temperature
+    CALL wet_bulb__rh_ratio(t_dry, t_wb_2, pressure, rh_ratio)
+    CALL Dry_bulb__enth_wb(t_dry, rh_ratio, H_test)
     H_test = H_test / 2324.4 ! Converting from j/kg to btu/lb
     t_wb_prev = t_wb
     H_prev = H_test
@@ -902,9 +911,9 @@ SUBROUTINE Enth_wb__t_wb(H_wb, t_wb)
     END IF
     n = 0
     do i = 0, 10
-        t_db = t_wb ! Setting the dry bulb temperature to the wet bulb temperature
-        CALL wet_bulb__rh_ratio(t_db, t_wb, pressure, rh_ratio)
-        CALL Dry_bulb__enth_wb(t_db, rh_ratio, H_test)
+        t_dry = t_wb ! Setting the dry bulb temperature to the wet bulb temperature
+        CALL wet_bulb__rh_ratio(t_dry, t_wb, pressure, rh_ratio)
+        CALL Dry_bulb__enth_wb(t_dry, rh_ratio, H_test)
         H_test = H_test / 2324.4 ! Converting from j/kg to btu/lb
         DHdT = (H_test - H_prev) / (t_wb - t_wb_prev)
         DT = (H_test - H_wb) / DHdT
@@ -928,14 +937,14 @@ END SUBROUTINE Enth_wb__t_wb
 
 
 ! Hsatv()
-! Calculating the specific enthalpy of saturated vapor: kj/kg (oC) -> TESTED
-SUBROUTINE Enth_sv(temp, H_sv)
+! Calculating the specific enthalpy of saturated vapour: kj/kg (oC) -> TESTED
+SUBROUTINE Enth_sv(t_vap, H_sv)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(IN) :: temp
+    DOUBLE PRECISION, INTENT(IN) :: t_vap
     DOUBLE PRECISION, INTENT(OUT) :: H_sv
-    H_sv = 2500.918 + (1.834961 * temp) - (0.0003841512 * (temp**2)) - (0.000001108345 * &
-    (temp**3)) - (0.00000004896947 * (temp**4)) + (1.292303E-10 * (temp**5)) - (2.593501E-13 * &
-    (temp**6))
+    H_sv = 2500.918 + (1.834961 * t_vap) - (0.0003841512 * (t_vap**2)) - (0.000001108345 * &
+    (t_vap**3)) - (0.00000004896947 * (t_vap**4)) + (1.292303E-10 * (t_vap**5)) - (2.593501E-13 * &
+    (t_vap**6))
 END SUBROUTINE Enth_sv
 
 
@@ -977,11 +986,11 @@ END SUBROUTINE Heat_lat
 
 ! 'model tab' - Heat needed for desal (Qd)
 ! The heat required for the desalination plant -> TESTED
-SUBROUTINE Heat_desal(Desal_cap, Desal_rate, q_lat_desal, q_desal)
+SUBROUTINE Heat_desal(cap_desal, desal_rate, q_lat_desal, q_desal)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(IN) :: Desal_cap, Desal_rate, q_lat_desal
+    DOUBLE PRECISION, INTENT(IN) :: cap_desal, desal_rate, q_lat_desal
     DOUBLE PRECISION, INTENT(OUT) :: q_desal
-    q_desal = Desal_cap * (1000 / (Desal_rate * 24 * 3600)) * q_lat_desal
+    q_desal = cap_desal * (1000 / (desal_rate * 24 * 3600)) * q_lat_desal
 END SUBROUTINE Heat_desal
 
 
@@ -1044,7 +1053,7 @@ SUBROUTINE Ct_water_evap(t_l_cd, t_l_ct, t_wb, r_h, Wat_evap)
     IMPLICIT NONE
     DOUBLE PRECISION, INTENT(INOUT) :: t_l_cd, t_l_ct, t_wb, r_h
     DOUBLE PRECISION, INTENT(OUT) :: Wat_evap
-    DOUBLE PRECISION dt_cd_ct, lg1, t_db, pressure, rh_ratio, H_wb
+    DOUBLE PRECISION dt_cd_ct, lg1, t_dry, pressure, rh_ratio, H_wb
     DOUBLE PRECISION RH_r_out, RH_r_prev, H_out, t_wb_out
     INTEGER i
     CALL c_to_f(t_l_cd)
@@ -1053,10 +1062,10 @@ SUBROUTINE Ct_water_evap(t_l_cd, t_l_ct, t_wb, r_h, Wat_evap)
     dt_cd_ct = t_l_cd - t_l_ct
     CALL lg(t_l_cd, t_l_ct, t_wb, lg1)
     CALL f_to_c(t_wb)
-    CALL RH_wet_bulb__dry_bulb(t_wb, r_h, t_db)
+    CALL RH_wet_bulb__dry_bulb(t_wb, r_h, t_dry)
     pressure = 101325
-    CALL wet_bulb__rh_ratio(t_db, t_wb, pressure, rh_ratio)
-    CALL Dry_bulb__enth_wb(t_db, rh_ratio, H_wb)
+    CALL wet_bulb__rh_ratio(t_dry, t_wb, pressure, rh_ratio)
+    CALL Dry_bulb__enth_wb(t_dry, rh_ratio, H_wb)
     H_wb = H_wb / 2324.4 ! Converting from j/kg to btu/lb
     RH_r_out = rh_ratio + (0.0008 * dt_cd_ct * lg1)
     do i = 0, 5
@@ -1084,21 +1093,21 @@ END SUBROUTINE Ct_water_evap
 !              Heat_con_mod()
 !              wat_con_mod()
 !              Ct_water_evap()
-SUBROUTINE Nat_draft_evap(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
-    Desal_cap, Desal_rate, Wat_evap, Wat_evap_rate)
+SUBROUTINE Nat_draft_evap(t_dry, typ_cool, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
+    cap_desal, desal_rate, Wat_evap, Wat_evap_rate)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(INOUT) :: t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta
-    DOUBLE PRECISION, INTENT(INOUT) :: t_desal, Desal_cap, Desal_rate, Wat_evap
+    DOUBLE PRECISION, INTENT(INOUT) :: t_dry, typ_cool, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta
+    DOUBLE PRECISION, INTENT(INOUT) :: t_desal, cap_desal, desal_rate, Wat_evap
     DOUBLE PRECISION, INTENT(OUT) :: Wat_evap_rate
     DOUBLE PRECISION p_sat, t_wb, t_c, q_cr, t_c_m, q_lat_desal, q_desal, q_cr_m, w_fr
     DOUBLE PRECISION t_l_cd, t_l_ct, p_ratio
-    CALL pres_sat(t_db, p_sat)
-    CALL wet_bulb_temp(t_db, p_sat, r_h, t_wb)
-    CALL con_temp(c_type, t_sw, t_wb, dt_ta, dt_cr, dt_ca, t_db, t_c)
+    CALL pres_sat(t_dry, p_sat)
+    CALL wet_bulb_temp(t_dry, p_sat, r_h, t_wb)
+    CALL con_temp(typ_cool, t_sw, t_wb, dt_ta, dt_cr, dt_ca, t_dry, t_c)
     CALL heat_con_rej(pgrossmw, eta, q_cr)
     CALL temp_con_mod(t_desal, t_c_m)
     CALL Heat_lat(t_c_m, q_lat_desal) ! 'model tab' - Latent Heat of Desal (Dhdes)
-    CALL Heat_desal(Desal_cap, Desal_rate, q_lat_desal, q_desal)
+    CALL Heat_desal(cap_desal, desal_rate, q_lat_desal, q_desal)
     CALL P_loss_ratio(t_c_m, t_c, p_ratio)
     CALL Heat_con_mod(q_cr, q_desal, p_ratio, q_cr_m)
     CALL wat_con_mod(q_cr_m, dt_cr, w_fr)
@@ -1121,20 +1130,20 @@ END SUBROUTINE Nat_draft_evap
 !              P_loss_ratio()
 !              Heat_con_mod()
 !              wat_con_mod()
-SUBROUTINE Nat_draft_drift(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
-    Desal_cap, Desal_rate, Wat_drift)
+SUBROUTINE Nat_draft_drift(t_dry, typ_cool, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
+    cap_desal, desal_rate, Wat_drift)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(INOUT) :: t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta
-    DOUBLE PRECISION, INTENT(INOUT) :: t_desal, Desal_cap, Desal_rate
+    DOUBLE PRECISION, INTENT(INOUT) :: t_dry, typ_cool, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta
+    DOUBLE PRECISION, INTENT(INOUT) :: t_desal, cap_desal, desal_rate
     DOUBLE PRECISION, INTENT(OUT) :: Wat_drift
     DOUBLE PRECISION p_sat, t_wb, t_c, q_cr, t_c_m, q_lat_desal, q_desal, q_cr_m, w_fr, p_ratio
-    CALL pres_sat(t_db, p_sat)
-    CALL wet_bulb_temp(t_db, p_sat, r_h, t_wb)
-    CALL con_temp(c_type, t_sw, t_wb, dt_ta, dt_cr, dt_ca, t_db, t_c)
+    CALL pres_sat(t_dry, p_sat)
+    CALL wet_bulb_temp(t_dry, p_sat, r_h, t_wb)
+    CALL con_temp(typ_cool, t_sw, t_wb, dt_ta, dt_cr, dt_ca, t_dry, t_c)
     CALL heat_con_rej(pgrossmw, eta, q_cr)
     CALL temp_con_mod(t_desal, t_c_m)
     CALL Heat_lat(t_c_m, q_lat_desal)
-    CALL Heat_desal(Desal_cap, Desal_rate, q_lat_desal, q_desal)
+    CALL Heat_desal(cap_desal, desal_rate, q_lat_desal, q_desal)
     CALL P_loss_ratio(t_c_m, t_c, p_ratio)
     CALL Heat_con_mod(q_cr, q_desal, p_ratio, q_cr_m)
     CALL wat_con_mod(q_cr_m, dt_cr, w_fr)
@@ -1146,18 +1155,18 @@ END SUBROUTINE Nat_draft_drift
 ! Water deliberately expelled from the water cycle to remove impurities -> TESTED
 ! Prerequests: Nat_draft_evap()
 !              Nat_draft_drift()
-SUBROUTINE Nat_draft_bleed(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
-    Desal_cap, Desal_rate, con_cycle, Wat_bleed)
+SUBROUTINE Nat_draft_bleed(t_dry, typ_cool, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
+    cap_desal, desal_rate, conc_cycle, Wat_bleed)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(INOUT) :: t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, &
-    t_desal, Desal_cap, Desal_rate, con_cycle
+    DOUBLE PRECISION, INTENT(INOUT) :: t_dry, typ_cool, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, &
+    t_desal, cap_desal, desal_rate, conc_cycle
     DOUBLE PRECISION, INTENT(OUT) :: Wat_bleed
     DOUBLE PRECISION Wat_evap, Wat_evap_rate, Wat_drift
-    CALL Nat_draft_evap(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
-    Desal_cap, Desal_rate, Wat_evap, Wat_evap_rate)
-    CALL Nat_draft_drift(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
-    Desal_cap, Desal_rate, Wat_drift)
-    Wat_bleed = (Wat_evap_rate - ((con_cycle - 1) * Wat_drift)) / (con_cycle - 1)
+    CALL Nat_draft_evap(t_dry, typ_cool, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
+    cap_desal, desal_rate, Wat_evap, Wat_evap_rate)
+    CALL Nat_draft_drift(t_dry, typ_cool, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
+    cap_desal, desal_rate, Wat_drift)
+    Wat_bleed = (Wat_evap_rate - ((conc_cycle - 1) * Wat_drift)) / (conc_cycle - 1)
 END SUBROUTINE Nat_draft_bleed
 
 
@@ -1166,36 +1175,36 @@ END SUBROUTINE Nat_draft_bleed
 ! Prerequests: Nat_draft_evap()
 !              Nat_draft_drift()
 !              Nat_draft_bleed()
-SUBROUTINE Nat_draft_makeup(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
-    Desal_cap, Desal_rate, con_cycle, wat_mkup)
+SUBROUTINE Nat_draft_makeup(t_dry, typ_cool, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
+    cap_desal, desal_rate, conc_cycle, wat_mkup)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(INOUT) :: t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, &
-    t_desal, Desal_cap, Desal_rate, con_cycle
+    DOUBLE PRECISION, INTENT(INOUT) :: t_dry, typ_cool, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, &
+    t_desal, cap_desal, desal_rate, conc_cycle
     DOUBLE PRECISION, INTENT(OUT) :: wat_mkup
     DOUBLE PRECISION Wat_evap, Wat_evap_rate, Wat_drift, Wat_bleed
-    CALL Nat_draft_evap(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
-    Desal_cap, Desal_rate, Wat_evap, Wat_evap_rate)
-    CALL Nat_draft_drift(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
-    Desal_cap, Desal_rate, Wat_drift)
-    CALL Nat_draft_bleed(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
-    Desal_cap, Desal_rate, con_cycle, Wat_bleed)
+    CALL Nat_draft_evap(t_dry, typ_cool, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
+    cap_desal, desal_rate, Wat_evap, Wat_evap_rate)
+    CALL Nat_draft_drift(t_dry, typ_cool, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
+    cap_desal, desal_rate, Wat_drift)
+    CALL Nat_draft_bleed(t_dry, typ_cool, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
+    cap_desal, desal_rate, conc_cycle, Wat_bleed)
     wat_mkup = Wat_evap_rate + Wat_drift + Wat_bleed
 END SUBROUTINE Nat_draft_makeup
 
 
 ! 'model tab' - Wet cooling tower water consumption
 ! The water consumed by the cooling tower (excluding blowdown)-> 
-SUBROUTINE Nat_draft_consump(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
-    Desal_cap, Desal_rate, con_cycle, Wat_consump)
+SUBROUTINE Nat_draft_consump(t_dry, typ_cool, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
+    cap_desal, desal_rate, conc_cycle, Wat_consump)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(INOUT) :: t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, &
-    t_desal, Desal_cap, Desal_rate, con_cycle
+    DOUBLE PRECISION, INTENT(INOUT) :: t_dry, typ_cool, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, &
+    t_desal, cap_desal, desal_rate, conc_cycle
     DOUBLE PRECISION, INTENT(OUT) :: Wat_consump
     DOUBLE PRECISION Wat_bleed, wat_mkup
-    CALL Nat_draft_bleed(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
-    Desal_cap, Desal_rate, con_cycle, Wat_bleed)
-    CALL Nat_draft_makeup(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
-    Desal_cap, Desal_rate, con_cycle, wat_mkup)
+    CALL Nat_draft_bleed(t_dry, typ_cool, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
+    cap_desal, desal_rate, conc_cycle, Wat_bleed)
+    CALL Nat_draft_makeup(t_dry, typ_cool, t_sw, dt_ta, dt_cr, dt_ca, r_h, pgrossmw, eta, t_desal, &
+    cap_desal, desal_rate, conc_cycle, wat_mkup)
     Wat_consump = wat_mkup - Wat_bleed
 END SUBROUTINE Nat_draft_consump
 
@@ -1284,11 +1293,11 @@ END SUBROUTINE pond_dtemp
 
 ! 'Model' tab - Average water temperature in pond (Tpond)
 ! The average pond temperature as defined by the air temperature -> TESTED
-SUBROUTINE pond_temp(dt_pond, t_db, t_pond)
+SUBROUTINE pond_temp(dt_pond, t_dry, t_pond)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(IN) :: dt_pond, t_db
+    DOUBLE PRECISION, INTENT(IN) :: dt_pond, t_dry
     DOUBLE PRECISION, INTENT(OUT) :: t_pond
-    t_pond = t_db + dt_pond
+    t_pond = t_dry + dt_pond
 END SUBROUTINE pond_temp
 
 
@@ -1307,22 +1316,22 @@ END SUBROUTINE pond_area
 
 ! 'Model' tab - Evaporation (Evpond)
 ! The evaporation for the cooling pond as the temperature is raised from heating -> TESTED
-SUBROUTINE pond_evap(km2_pond, spd_wind, t_pond, r_h, t_db, evap_pond)
+SUBROUTINE pond_evap(km2_pond, spd_wind, t_pond, r_h, t_dry, evap_pond)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(IN) :: km2_pond, spd_wind, t_pond, r_h, t_db
+    DOUBLE PRECISION, INTENT(IN) :: km2_pond, spd_wind, t_pond, r_h, t_dry
     DOUBLE PRECISION, INTENT(OUT) :: evap_pond
-    evap_pond = 0.01 * km2_pond * (2.12 + 1.25 * spd_wind) * (EXP(0.05 * t_pond) - r_h * EXP(0.05 * t_db))
+    evap_pond = 0.01 * km2_pond * (2.12 + 1.25 * spd_wind) * (EXP(0.05 * t_pond) - r_h * EXP(0.05 * t_dry))
 END SUBROUTINE pond_evap
 
 
 ! 'Model' tab - Pond bleed (Bleed)
 ! The bleed from the cooling circuit when using a cooling pond -> TESTED
-SUBROUTINE pond_bleed(evap_pond, con_cycle, bleed_pond)
+SUBROUTINE sub_pond_bleed(evap_pond, conc_cycle, pond_bleed)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(IN) :: evap_pond, con_cycle
-    DOUBLE PRECISION, INTENT(OUT) :: bleed_pond
-    bleed_pond = evap_pond / (con_cycle - 1)
-END SUBROUTINE pond_bleed
+    DOUBLE PRECISION, INTENT(IN) :: evap_pond, conc_cycle
+    DOUBLE PRECISION, INTENT(OUT) :: pond_bleed
+    pond_bleed = evap_pond / (conc_cycle - 1)
+END SUBROUTINE sub_pond_bleed
 
 
 !----------------------------------------CONSTRUCTION NEEDS----------------------------------------
@@ -1490,22 +1499,28 @@ END SUBROUTINE output
 !    END do
 !END SUBROUTINE print_array
 
+
 !---------------------------------------------APPENDIX---------------------------------------------
 
 
 ! A list of all of the variables used and an explanation of each varibles:
 
-! wat_src - River/Inland = 0, Sea/Coast = 1, Effluent = 2
-! wat_type - Light = 3 / Heavy = 1
-! choice - = 
-! outfile - 
-! temp = temperature converted between celsius/fahrenheit/kelvin or of cooling system
+! conc_nh3 -> The parts per million (ppm) of ammonia in the water
+! mwh_bleed = Blow-down losses in MWh
+! sys_inv -> typ_wat + wat_src_2
+! outfile -> Use as the output to OUT.DAT
+! t_vap -> Temperature of saturated vapour
+! temp -> Generic tempeature for conversion (e.g. Celsius to Kelvin to Fahrenheit)
+! wat_src -> Source of water: River/Inland = 0, Sea/Coast = 1, Effluent = 2
+! typ_wat -> Type of water: Light = 3 / Heavy = 1
+
+
 ! t_desal = Water temperature required for desalination
 ! t_c_m = Condenser temperature for desalination
 ! t_wb = Wet bulb temperature (thermometer wrapped in wet cloth)
 ! a, b, c = Unknown constants
 ! p_sat = Partial vapour pressure
-! t_db = Dry bulb temperature (thermometer in air)
+! t_dry = Dry bulb temperature (thermometer in air)
 ! r_h = Relative air humidity
 ! e_diff = Difference between previous and current iteration guesses
 ! t_wb_gs = Current iteration guess for the wet bulb temperature
@@ -1517,8 +1532,8 @@ END SUBROUTINE output
 ! ew_gs = Change to wet bulb temperature guess
 ! e_gs = Change to wet bulb temperature guess
 ! sign_cur = Current iteration change sign
-! c_type = The type of cooling mechanism
-! c_type_2 = Whether the cooling mechanism is wet, dry or open
+! typ_cool = The type of cooling mechanism
+! typ_mech = Whether the cooling mechanism is wet, dry or open
 ! t_sw = Surface water temperature of open water source
 ! dt_ta = Cooling tower approach temperature (approach = temp leaving minus wet bulb temp)
 ! dt_cr = Condenser range temperature (range = difference in temperature entering and leaving)
@@ -1531,13 +1546,13 @@ END SUBROUTINE output
 ! dt_cd_ct = Difference in water temperature arriving at and leaving the cooling tower
 ! dt_cta = Cooling tower approach temperature
 ! fr1 = Water flow rate exponent
-! s_vp = Saturated vapor pressure
-! t_db_k = Dry bulb temperature in kelvin
-! t_func = Function used to derive the saturated vapor pressure
+! s_vp = Saturated vapour pressure
+! t_dry_k = Dry bulb temperature in kelvin
+! t_func = Function used to derive the saturated vapour pressure
 ! pressure = Air pressure in pascals
 ! s_rh_ratio = Humidity ratio of saturated air
 ! rh_ratio = Relative humidity ratio [kgH2O/kgAIR]
-! vap_press = Partial pressure of water vapor in moist air [Pa]
+! vap_press = Partial pressure of water vapour in moist air [Pa]
 ! H_wb = Enthalpy of moist air
 ! KILO = 1000 grams
 ! t_wb_2 = storing the wet bulb temperature to convert to celsius
@@ -1558,8 +1573,8 @@ END SUBROUTINE output
 ! pgrossmw = Electricity capacity of power station reactor
 ! eta = Net efficiency of power station electricity conversion
 ! q_cr = Heat rejected from the condenser
-! Desal_cap = Capacity of the deslaination plant
-! Desal_rate = Rate of desalination as a multiplicative factor
+! cap_desal = Capacity of the deslaination plant
+! desal_rate = Rate of desalination as a multiplicative factor
 ! q_lat_desal = Latent heat of desalination
 ! q_desal = Heat needed for desalination
 ! p_ratio = Power loss ratio
@@ -1567,7 +1582,7 @@ END SUBROUTINE output
 ! w_fr = Condenser water flow rate (tn/s)
 ! Wat_evap_rate = Rate the water is evaporated from the cooling tower (m3/s)
 ! Wat_drift = Water loss from drift
-! con_cycle = The number of times water completes the cooling circuit before being expelled
+! conc_cycle = The number of times water completes the cooling circuit before being expelled
 ! Wat_bleed = Water expelled to remove impurities
 ! wat_mkup = Water required to replenish all water lost from cooling cycle
 ! Wat_consump = Water lost from the cooling tower by evaporation and drift
@@ -1575,9 +1590,8 @@ END SUBROUTINE output
 ! Hr = Number of seconds in an hour
 ! Wat_MWh = Water rate in Mega Watt hours
 ! Evap_MWh = 
-! Bleed_MWh = 
 ! Makeup_MWh = 
-! Consump_MWh = 
+! mwh_cons = 
 ! wat_excav = 
 ! wat_concrt = 
 ! wat_constr = 
