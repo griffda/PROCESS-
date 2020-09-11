@@ -5084,7 +5084,7 @@ module constraint_variables
   !! (`iblanket =2`) (`constraint equation 55`)
 
   real(dp) :: walalw = 1.0D0
-  !! allowable wall-load (MW/m2) (`constraint equation 8`)
+  !! allowable neutron wall-load (MW/m2) (`constraint equation 8`)
 
   real(dp) :: taulimit = 5.0D0
   !! Lower limit on taup/taueff the ratio of alpha particle to energy confinement 
