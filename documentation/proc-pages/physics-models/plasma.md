@@ -17,7 +17,16 @@ its last closed flux surface (LCFS) elongation $\kappa$ (`kappa`) and triangular
 $\delta$ (`triang`), which can be scaled automatically with the aspect ratio if 
 required using switch `ishape`:
 
-- `ishape = 0` -- the input values for `kappa` and `triang` are used directly.
+- `ishape = 0` -- the input values for `kappa` and `triang` are used directly. 
+   The values for the plasma shaping parameters at the 95% flux surface are 
+   calculated as follows [^8]:
+   $$
+   \kappa_{95} = \kappa / 1.12
+   $$
+   $$
+   \delta_{95} = \delta / 1.5
+   $$
+
 - `ishape = 1` -- the following scaling is used, which is suitable for low aspect 
   ratio machines ($\epsilon = 1/A$) [^1]:
   $$
@@ -26,6 +35,9 @@ required using switch `ishape`:
   $$
   \delta = 0.53 \, (1 + 0.77 \, \epsilon^3)
   $$
+  The values for the plasma shaping parameters at the 95% flux surface are calculated 
+  using a fit to FIESTA runs, equivalent to `ishape = 8`.
+
 - `ishape = 2` -- the Zohm ITER scaling [^2] is used to calculate the elongation:
   $$
   \kappa = F_{kz} \, \times \, \mathrm{minimum} \left( 2.0, \, \, 1.5 + \frac{0.5}{A-1} \right)
@@ -33,22 +45,36 @@ required using switch `ishape`:
   where input variable `fkzohm` $= F_{kz}$ may be used to adjust the
   scaling, while the input value of the triangularity is used unchanged.
 
-If `ishape = 0, 1, 2`, the values for the plasma shaping parameters at the 95% 
-flux surface are calculated as follows [^3]:
-$$
-\kappa_{95} = \kappa / 1.12
-$$
-$$
-\delta_{95} = \delta / 1.5
-$$
-
-- If `ishape = 3`, the Zohm ITER scaling is used to calculate the elongation (as 
+- `ishape = 3` -- the Zohm ITER scaling is used to calculate the elongation (as 
   for `ishape = 2` above), but the triangularity at the 95% flux surface is 
   input via variable `triang95`, and the LCFS triangularity `triang` is calculated
   from it, rather than the other way round.
-- Finally, if `ishape = 4`, the 95% flux surface values `kappa95` and `triang95` 
+
+- `ishape = 4` -- the 95% flux surface values `kappa95` and `triang95` 
   are both used as inputs, and the LCFS values are calculated from them by 
-  inverting the equations above.
+  inverting ``ishape = 0``.
+
+- `ishape = 5` -- the 95% flux surface values `kappa95` and `triang95` 
+  are both used as inputs and the LCFS values are calculated from a fit to MAST data:
+  $$
+  \kappa = 0.91 \kappa_{95} + 0.39
+  $$
+  $$
+  \delta = 0.77 \delta_{95} + 0.19 
+  $$
+
+- `ishape = 6` -- the input values for `kappa` and `triang` are used directly and the 95% flux surface values are calculated using the MAST scaling from `ishape = 5`.
+
+- `ishape = 7` -- the 95% flux surface values `kappa95` and `triang95` 
+  are both used as inputs and the LCFS values are calculated from a fit to FIESTA runs:
+  $$
+  \kappa = 0.91 \kappa_{95} + 0.39
+  $$
+  $$
+  \delta = 1.38 \delta_{95} + 0.05 
+  $$
+
+- `ishape = 8` -- the input values for `kappa` and `triang` are used directly and the 95% flux surface values are calculated using the FIESTA fit from `ishape = 7`.
 
 A constraint relating to the plasma's vertical stability may be turned on if
 required. In principle, the inner surface of the outboard shield could be used
