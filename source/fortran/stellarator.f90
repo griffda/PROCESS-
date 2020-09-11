@@ -1113,7 +1113,7 @@ contains
       densbreed, denstl, dewmkg, emult, emultmw, fblbe, fblbreed, fblhebmi, &
       fblhebmo, fblli, fbllipb, fblss, fblvd, fdiv, fhcd, fhole, fvoldw, &
       fvolso, fwclfr, fwlife, fwmass, hcdportsize, li6enrich, nflutf, &
-      npdiv, nphcdin, nphcdout, outlet_temp, pnucblkt, pnuccp, pnucdiv, &
+      npdiv, nphcdin, nphcdout, outlet_temp, pnucblkt, pnuc_cp, pnucdiv, &
       pnucdiv, pnucfw, pnuchcd, pnucloss, pnucshld, praddiv, pradfw, pradhcd, &
       pradloss, primary_pumping, ptfnuc, rdewex, rpf2dewar, secondary_cycle, &
       tbr, tritprate, vdewex, vdewin, vfblkt, vfshld, volblkt, volblkti, &
@@ -1225,15 +1225,15 @@ contains
 
     else
 
-       pnuccp = 0.0D0
+       pnuc_cp = 0.0D0
 
        if (ipowerflow == 0) then
 
           !  Energy-multiplied neutron power
 
-          pneut2 = (pneutmw - pnucloss - pnuccp) * emult
+          pneut2 = (pneutmw - pnucloss - pnuc_cp) * emult
 
-          emultmw = pneut2 - (pneutmw - pnucloss - pnuccp)
+          emultmw = pneut2 - (pneutmw - pnucloss - pnuc_cp)
 
           !  Nuclear heating in the blanket
 
@@ -1260,7 +1260,7 @@ contains
 
           !  Neutron power deposited in first wall, blanket and shield (MW)
 
-          pnucfwbs = pneutmw - pnucdiv - pnucloss - pnuccp - pnuchcd
+          pnucfwbs = pneutmw - pnucdiv - pnucloss - pnuc_cp - pnuchcd
 
           !  Split between inboard and outboard by first wall area fractions
 
@@ -2247,7 +2247,7 @@ contains
       aswp, avwp, bmaxtf, casthi, casths, cpttf, dcase, estotftgj, &
       fcutfsu, jwptf, n_tf, oacdcp, rbmax, ritfc, tfareain, &
       tfcryoarea, tficrn, tfleng, tfocrn, tfsai, tfsao, tftmp, tftort, &
-      thicndut, thkcas, dr_tf_wp, thwcndut, tinstf, turnstf, vftf, whtcas, &
+      thicndut, thkcas, dr_tf_wp, thwcndut, tinstf, n_tf_turn, vftf, whtcas, &
       whtcon, whtconcu, whtconsc, whtconsh, whttf, wwp1, dcond, awphec, dcondins, &
       i_tf_sc_mat, jwdgpro, max_force_density, sigvvall, strtf2, taucq, &
       tdmptf, tmaxpro, toroidalgap, vtfkv, whtconin, wwp2, vdalw, bcritsc, fhts, &
@@ -2364,16 +2364,16 @@ contains
 
      awptf = awp_tor*awp_rad                 ! [m^2] winding-pack cross sectional area
      jwptf = coilcurrent*1.0D6/awptf         ! [A/m^2] winding pack current density
-     turnstf = awptf / (t_turn**2)           !  estimated number of turns for a given turn size (not global). Take at least 1.
-     cpttf = coilcurrent*1.0D6 / turnstf     ! [A] current per turn - estimation
+     n_tf_turn = awptf / (t_turn**2)           !  estimated number of turns for a given turn size (not global). Take at least 1.
+     cpttf = coilcurrent*1.0D6 / n_tf_turn     ! [A] current per turn - estimation
      ! [m^2] Total conductor cross-sectional area, taking account of void area
-     acond = acstf*turnstf * (1.0D0-vftf)
+     acond = acstf*n_tf_turn * (1.0D0-vftf)
      ! [m^2] Void area in cable, for He
-     avwp = acstf*turnstf*vftf
+     avwp = acstf*n_tf_turn*vftf
      ! [m^2] Insulation area (not including ground-wall)
-     aiwp = turnstf * (t_turn**2 - acndttf - acstf)
+     aiwp = n_tf_turn * (t_turn**2 - acndttf - acstf)
      ! [m^2] Structure area for cable
-     aswp = turnstf*acndttf
+     aswp = n_tf_turn*acndttf
    ! End of winding pack calculations
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2481,15 +2481,15 @@ contains
     ! This is only correct if the winding pack is 'thin' (tfleng>>sqrt(acasetf)).
     whtcas = tfleng * acasetf * dcase
      ! [kg] mass of Superconductor
-    whtconsc = (tfleng * turnstf * acstf*(1.0D0-vftf) * (1.0D0-fcutfsu) - tfleng*awphec) &
+    whtconsc = (tfleng * n_tf_turn * acstf*(1.0D0-vftf) * (1.0D0-fcutfsu) - tfleng*awphec) &
                *dcond(i_tf_sc_mat) !awphec is 0 for a stellarator. but keep this term for now.
       ! [kg] mass of Copper in conductor
-    whtconcu =  (tfleng * turnstf * acstf*(1.0D0-vftf) * fcutfsu - tfleng*awphec) * dcopper
+    whtconcu =  (tfleng * n_tf_turn * acstf*(1.0D0-vftf) * fcutfsu - tfleng*awphec) * dcopper
       ! [kg] mass of Steel conduit (sheath)
-    whtconsh = tfleng*turnstf*acndttf * denstl
+    whtconsh = tfleng*n_tf_turn*acndttf * denstl
     !if (i_tf_sc_mat==6)   whtconsh = fcondsteel * awptf *tfleng* denstl
       ! Conduit insulation mass [kg]
-    ! (aiwp already contains turnstf)
+    ! (aiwp already contains n_tf_turn)
     whtconin = tfleng * aiwp * dcondins
       ! [kg] Total conductor mass
     whtcon = whtconsc + whtconcu + whtconsh + whtconin
@@ -2903,7 +2903,7 @@ contains
       use tfcoil_variables, only: acasetf, acond, acasetf, aiwp, aswp, bmaxtf, &
          casthi, casths, cpttf, estotftgj, fcutfsu, jwptf, n_tf, oacdcp, ritfc, &
          tfareain, tficrn, tfleng, tfocrn, tftort, thicndut, thkcas, dr_tf_wp, &
-         thwcndut, turnstf, turnstf, vftf, whtcas, whtcon, whtconcu, whtconsc, &
+         thwcndut, n_tf_turn, n_tf_turn, vftf, whtcas, whtcon, whtconcu, whtconsc, &
          whtconsh, whttf, wwp1, acstf, avwp, tinstf
       implicit none
   
@@ -2964,7 +2964,7 @@ contains
       call ovarre(outfile,'Winding radial thickness (m)','(dr_tf_wp)',dr_tf_wp)
       call ovarre(outfile,'Winding toroidal thickness (m)','(wwp1)',wwp1)
       call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)',tinstf)
-      call ovarre(outfile,'Number of turns per coil','(turnstf)',turnstf)
+      call ovarre(outfile,'Number of turns per coil','(n_tf_turn)',n_tf_turn)
       call ovarre(outfile,'Current per turn (A)','(cpttf)',cpttf)
       call ovarre(outfile,'jop/jcrit','(fiooic)',fiooic)
   

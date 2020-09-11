@@ -16,8 +16,10 @@ module numerics
 
   integer, parameter :: ipnvars = 174
   !!  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipeqns = 84
+
+  integer, parameter :: ipeqns = 85
   !!  ipeqns  FIX : number of constraint equations available
+  
   integer, parameter :: ipnfoms = 19
   !!  ipnfoms FIX : number of available figures of merit
 
@@ -128,7 +130,7 @@ module numerics
        'Fusion power upper limit         ', &
        !!  <LI> ( 9) Fusion power upper limit (itv 26,1,2,3,4,6)
        'Toroidal field 1/R consistency   ', &
-       !!  <LI> (10) Toroidal field 1/R (consistency equation) (itv 12,1,2,3,13 )
+       !!  <LI> (10) NOT USED
        'Radial build consistency         ', &
        !!  <LI> (11) Radial build (consistency equation) (itv 3,1,13,16,29,42,61)
        'Volt second lower limit          ', &
@@ -282,8 +284,10 @@ module numerics
        !!  <LI> (82) toroidalgap >  tftort constraint (itv  171 ftoroidalgap)
        'available_space > required_space ',   &
        !!  <LI> (83) Radial build consistency for stellarators (itv 172 f_avspace)
-       'beta > betalim_lower             '    &
-       !!  <LI> (84) Lower limit for beta (itv 173 fbetatry_lower)</UL>
+       'beta > betalim_lower             ',    &
+       !!  <LI> (84) Lower limit for beta (itv 173 fbetatry_lower)
+       'CP lifetime                      '    &
+       !!  <LI> (85) Constraint for CP lifetime</UL>
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.

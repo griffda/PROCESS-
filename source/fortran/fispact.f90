@@ -119,8 +119,7 @@
 ! *** Number of neutrons leaving the plasma per second, and not lost
 ! *** to holes or the centrepost. Each has energy 14.06 MeV
 
-      nneut = REAL( &
-           (pneutmw-pnucloss-pnuccp)*1.0D6/(14.06D6*1.6022D-19) )
+      nneut = REAL( (pneutmw-pnucloss-pnuc_cp)*1.0D6/(14.06D6*1.6022D-19) )
 
 ! *** Inboard blanket ***********************
 
@@ -136,7 +135,7 @@
       call bbie(205,x,fbbie)
       blimzp = fbbie(1)
 
-! *** Mean zone neutron flux spectrum
+! *** Mean zone  spectrum
 
       call bbie(210,x,fbbie)
       do j = 1,100
