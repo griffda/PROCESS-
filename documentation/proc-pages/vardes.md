@@ -355,6 +355,12 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 		<td>Top outer radius of the centropost (ST only) (m)</td>
 	</tr>
 	<tr>
+		<td>r_sh_inboard_in</td>
+		<td>real</td>
+		<td>0.0D0</td>
+		<td>Radial inner side position of inboard neutronic shield [m]</td>
+	</tr>
+	<tr>
 		<td>r_sh_inboard_out</td>
 		<td>real</td>
 		<td>0.0D0</td>
@@ -1047,16 +1053,16 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 		<td>Inboard/utboard total number of pipes</td>
 	</tr>
 	<tr>
-		<td>nuc_pow_dep_tot</td>
-		<td>real</td>
-		<td>None</td>
-		<td>Total nuclear power deposited in FW, BLKT, SHLD, DIV, TF (MW)</td>
-	</tr>
-	<tr>
 		<td>ofile</td>
 		<td>integer</td>
 		<td>None</td>
 		<td></td>
+	</tr>
+	<tr>
+		<td>pnuc_tot_blk_sector</td>
+		<td>real</td>
+		<td>None</td>
+		<td>Total nuclear power deposited in blanket covered sector (FW, BLKT, SHLD, TF) (MW)</td>
 	</tr>
 	<tr>
 		<td>pnucblkti</td>
@@ -1736,7 +1742,7 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 		<td>nflutfmax</td>
 		<td>real</td>
 		<td>1.0D23</td>
-		<td>max fast neutron fluence on TF coil (n/m2) (blktmodel&gt;0) (constraint equation 53)</td>
+		<td>max fast neutron fluence on TF coil (n/m2) (blktmodel&gt;0) (constraint equation 53)<br> Aslo used for demontable magnets (itart = 1) and superdonducting coils (i_tf_sup = 1)<br> To set the CP lifetime</td>
 	</tr>
 	<tr>
 		<td>pdivtlim</td>
@@ -2064,7 +2070,13 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 		<td>cplife</td>
 		<td>real</td>
 		<td>0.0D0</td>
-		<td>lifetime of centrepost (y)</td>
+		<td>Calculated full power year lifetime of centrepost (years)</td>
+	</tr>
+	<tr>
+		<td>cplife_input</td>
+		<td>real</td>
+		<td>2.0D0</td>
+		<td>User input full power year lifetime of the centrepost (years)</td>
 	</tr>
 	<tr>
 		<td>cpstcst</td>
@@ -2142,7 +2154,7 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 		<td>divlife</td>
 		<td>real</td>
 		<td>0.0D0</td>
-		<td>lifetime of divertor (y)</td>
+		<td>Full power lifetime of divertor (y)</td>
 	</tr>
 	<tr>
 		<td>dtlife</td>
@@ -2221,6 +2233,12 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 		<td>real</td>
 		<td>0.25D0</td>
 		<td>Fwbs unplanned maintenance time (years)</td>
+	</tr>
+	<tr>
+		<td>i_cp_lifetime</td>
+		<td>integer</td>
+		<td>0</td>
+		<td>Switch for the centrepost liftime constraint <br>  0 : The CP full power yearlifelime is set by the user<br>  1 : The CP lifelime is equal to the divertor one<br>  2 : The CP lifetime is equal to the breeding blankets one<br>  3 : The CP lifetime is equal to the plant one</td>
 	</tr>
 	<tr>
 		<td>iavail</td>
@@ -2346,7 +2364,7 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 		<td>tlife</td>
 		<td>real</td>
 		<td>30.0D0</td>
-		<td>plant life (years)</td>
+		<td>Full power year plant lifetime (years)</td>
 	</tr>
 	<tr>
 		<td>tok_build_cost_per_vol</td>
@@ -4926,7 +4944,7 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 		<td>bktlife</td>
 		<td>real</td>
 		<td>0.0D0</td>
-		<td>blanket lifetime (years)</td>
+		<td>Full power blanket lifetime (years)</td>
 	</tr>
 	<tr>
 		<td>blktmodel</td>
@@ -5220,7 +5238,7 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 		<td>fwlife</td>
 		<td>real</td>
 		<td>0.0D0</td>
-		<td>first wall full-power lifetime (y)</td>
+		<td>first wall full-power year lifetime (y)</td>
 	</tr>
 	<tr>
 		<td>fwmass</td>
@@ -5313,6 +5331,12 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 		<td>number of outboard blanket modules in toroidal direction (secondary_cycle&gt;1)</td>
 	</tr>
 	<tr>
+		<td>neut_flux_cp</td>
+		<td>real</td>
+		<td>0.0D0</td>
+		<td>Centrepost TF fast neutron flux (E &gt; 0.1 MeV) [m^(-2).^(-1)]<br> This variable is only calculated for superconducting (i_tf_sup = 1 )<br> spherical tokamal magnet designs (itart = 0)</td>
+	</tr>
+	<tr>
 		<td>nflutf</td>
 		<td>real</td>
 		<td>0.0D0</td>
@@ -5355,16 +5379,28 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 		<td>pitch of first wall cooling channels (m)</td>
 	</tr>
 	<tr>
+		<td>pnuc_cp</td>
+		<td>real</td>
+		<td>0.0D0</td>
+		<td>Total nuclear heating in the ST centrepost (MW)</td>
+	</tr>
+	<tr>
+		<td>pnuc_cp_sh</td>
+		<td>real</td>
+		<td>0.0D0</td>
+		<td>Neutronic shield nuclear heating in the ST centrepost (MW)</td>
+	</tr>
+	<tr>
+		<td>pnuc_cp_tf</td>
+		<td>real</td>
+		<td>0.0D0</td>
+		<td>TF neutronic nuclear heating in the ST centrepost (MW)</td>
+	</tr>
+	<tr>
 		<td>pnucblkt</td>
 		<td>real</td>
 		<td>0.0D0</td>
 		<td>nuclear heating in the blanket (MW)</td>
-	</tr>
-	<tr>
-		<td>pnuccp</td>
-		<td>real</td>
-		<td>0.0D0</td>
-		<td>nuclear heating in the ST centrepost (MW)</td>
 	</tr>
 	<tr>
 		<td>pnucdiv</td>
@@ -12743,7 +12779,7 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 	<tr>
 		<td>ipnscnv</td>
 		<td>integer</td>
-		<td>53</td>
+		<td>54</td>
 		<td>ipnscnv /45/ FIX : number of available scan variables</td>
 	</tr>
 	<tr>
@@ -12762,7 +12798,7 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 		<td>nsweep</td>
 		<td>integer</td>
 		<td>1</td>
-		<td>nsweep /1/ : switch denoting quantity to scan:<br>          1  aspect<br>          2  hldivlim<br>          3  pnetelin<br>          4  hfact<br>          5  oacdcp<br>          6  walalw<br>          7  beamfus0<br>          8  fqval<br>          9  te<br>          10 boundu(15: fvs)<br>          11 dnbeta<br>          12 bscfmax (use negative values only)<br>          13 boundu(10: hfact)<br>          14 fiooic<br>          15 fjprot<br>          16 rmajor<br>          17 bmxlim<br>          18 gammax<br>          19 boundl(16: ohcth)<br>          20 tbrnmn<br>          21 not used<br>          22 cfactr (N.B. requires iavail=0)<br>          23 boundu(72: fipir)<br>          24 powfmax<br>          25 kappa<br>          26 triang<br>          27 tbrmin (for blktmodel &gt; 0 only)<br>          28 bt<br>          29 coreradius<br>          30 fimpvar<br>          31 taulimit<br>          32 epsvmc<br>          33 ttarget<br>          34 qtargettotal<br>          35 lambda_q_omp<br>          36 lambda_target<br>          37 lcon_factor<br>          38 Neon upper limit<br>          39 Argon upper limit<br>          40 Xenon upper limit<br>          41 blnkoth<br>          42 Argon fraction fimp(9)<br>          43 normalised minor radius at which electron cyclotron current drive is maximum<br>          44 Allowable tresca stress in tf coil structural material<br>          45 Minimum allowable temperature margin ; tf coils<br>          46 boundu(150) fgwsep<br>          47 impurity_enrichment(9) Argon impurity enrichment<br>          48 TF coil - n_pancake (integer turn winding pack)<br>          49 TF coil - n_layer (integer turn winding pack)<br>          50 Xenon fraction fimp(13)<br>          51 Power fraction to lower DN Divertor ftar<br>          52 SoL radiation fraction </td>
+		<td>nsweep /1/ : switch denoting quantity to scan:<br>          1  aspect<br>          2  hldivlim<br>          3  pnetelin<br>          4  hfact<br>          5  oacdcp<br>          6  walalw<br>          7  beamfus0<br>          8  fqval<br>          9  te<br>          10 boundu(15: fvs)<br>          11 dnbeta<br>          12 bscfmax (use negative values only)<br>          13 boundu(10: hfact)<br>          14 fiooic<br>          15 fjprot<br>          16 rmajor<br>          17 bmxlim<br>          18 gammax<br>          19 boundl(16: ohcth)<br>          20 tbrnmn<br>          21 not used<br>          22 cfactr (N.B. requires iavail=0)<br>          23 boundu(72: fipir)<br>          24 powfmax<br>          25 kappa<br>          26 triang<br>          27 tbrmin (for blktmodel &gt; 0 only)<br>          28 bt<br>          29 coreradius<br>          30 fimpvar<br>          31 taulimit<br>          32 epsvmc<br>          33 ttarget<br>          34 qtargettotal<br>          35 lambda_q_omp<br>          36 lambda_target<br>          37 lcon_factor<br>          38 Neon upper limit<br>          39 Argon upper limit<br>          40 Xenon upper limit<br>          41 blnkoth<br>          42 Argon fraction fimp(9)<br>          43 normalised minor radius at which electron cyclotron current drive is maximum<br>          44 Allowable tresca stress in tf coil structural material<br>          45 Minimum allowable temperature margin ; tf coils<br>          46 boundu(150) fgwsep<br>          47 impurity_enrichment(9) Argon impurity enrichment<br>          48 TF coil - n_pancake (integer turn winding pack)<br>          49 TF coil - n_layer (integer turn winding pack)<br>          50 Xenon fraction fimp(13)<br>          51 Power fraction to lower DN Divertor ftar<br>          52 SoL radiation fraction <br>          54 GL_nbti upper critical field at 0 Kelvin </td>
 	</tr>
 	<tr>
 		<td>nsweep_2</td>
@@ -13443,6 +13479,12 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 		<td>winding pack He coil area (m2)</td>
 	</tr>
 	<tr>
+		<td>b_crit_upper_nbti</td>
+		<td>real</td>
+		<td>14.86D0</td>
+		<td>upper critical field of GL_nbti</td>
+	</tr>
+	<tr>
 		<td>bcritsc</td>
 		<td>real</td>
 		<td>24.0D0</td>
@@ -13674,7 +13716,7 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 		<td>fcutfsu</td>
 		<td>real</td>
 		<td>0.69D0</td>
-		<td>copper fraction of cable conductor (TF coils) (iteration variable 59)</td>
+		<td>copper fraction of cable conductor (TF coils)<br> (iteration variable 59)</td>
 	</tr>
 	<tr>
 		<td>fhts</td>
@@ -13699,6 +13741,12 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 		<td>real</td>
 		<td>1.0D0</td>
 		<td>F-value for minimum tftort (constraint equation 82)</td>
+	</tr>
+	<tr>
+		<td>i_cp_joints</td>
+		<td>integer</td>
+		<td>-1</td>
+		<td>Switch for CP demoutable joints type<br>  -= 0 : Clampled joints<br>  -= 1 : Sliding joints<br> Default value (-1) choses : <br>   Sliding joints for resistive magnets (i_tf_sup = 0, 2)<br>   Clampled joints for superconducting magents (i_tf_sup = 1)</td>
 	</tr>
 	<tr>
 		<td>i_tf_bucking</td>
@@ -13817,7 +13865,7 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 	<tr>
 		<td>n_rad_per_layer</td>
 		<td>integer</td>
-		<td>50</td>
+		<td>100</td>
 		<td>Size of the arrays per layers storing the radial dependent stress <br> quantities (stresses, strain displacement etc..)</td>
 	</tr>
 	<tr>
@@ -13855,6 +13903,12 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 		<td>integer</td>
 		<td>0</td>
 		<td>Number of layers considered for the inboard TF stress calculations<br> set in initial.f90 from i_tf_bucking and n_tf_graded_layers</td>
+	</tr>
+	<tr>
+		<td>n_tf_turn</td>
+		<td>real</td>
+		<td>0.0D0</td>
+		<td>number of turns per TF coil</td>
 	</tr>
 	<tr>
 		<td>ncool</td>
@@ -13956,7 +14010,7 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 		<td>rho_tf_joints</td>
 		<td>real</td>
 		<td>2.5D-10</td>
-		<td>TF joints surfacic resistivity [ohm.m^2]. Feldmetal joints assumed.</td>
+		<td>TF joints surfacic resistivity [ohm.m]. Feldmetal joints assumed.</td>
 	</tr>
 	<tr>
 		<td>rhocp</td>
@@ -14071,6 +14125,12 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 		<td>real</td>
 		<td>0.0D0</td>
 		<td>Conductor (cable + steel conduit) area averaged dimension [m]</td>
+	</tr>
+	<tr>
+		<td>t_crit_nbti</td>
+		<td>real</td>
+		<td>9.04D0</td>
+		<td>critical temperature of GL_nbti</td>
 	</tr>
 	<tr>
 		<td>t_turn</td>
@@ -14349,16 +14409,10 @@ Variables not shown with a default value are calculated within PROCESS, so need 
 		<td>Minimal distance between two toroidal coils. (m)</td>
 	</tr>
 	<tr>
-		<td>turnstf</td>
-		<td>real</td>
-		<td>0.0D0</td>
-		<td>number of turns per TF coil</td>
-	</tr>
-	<tr>
 		<td>vcool</td>
 		<td>real</td>
 		<td>20.0D0</td>
-		<td>max centrepost coolant flow speed at midplane (m/s) (iteration variable 70)</td>
+		<td>inlet centrepost coolant flow speed at midplane (m/s) (iteration variable 70)</td>
 	</tr>
 	<tr>
 		<td>vdalw</td>
