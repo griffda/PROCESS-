@@ -1834,7 +1834,7 @@ module pfcoil_module
           tc0m = 185D0
           call GL_REBCO(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit) 
           ! A0 calculated for tape cross section already
-          jcritstr = jcritsc 
+          jcritstr = jcritsc * (1.0D0-fcu)
  
           
  
