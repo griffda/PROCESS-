@@ -2718,7 +2718,7 @@ module pfcoil_module
 
            !REBCO fractures in strains above ~+/- 0.7%
            if ((isumatoh == 8) .and. strncon_cs > 0.7D-2 .or. strncon_cs < -0.7D-2) then
-                call report_error(259)
+                call report_error(262)
            end if
  
         else

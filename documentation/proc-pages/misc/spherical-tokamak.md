@@ -44,7 +44,7 @@ Switch `itart` provides overall control of the ST switches within the code, and 
 
 | Switch | Conventional aspect ratio (`itart = 0`) | Low aspect ratio (`itart = 1`) |
 | --- | --- | --- |
-| `ishape` | 0, 2 | 0, 1 |
+| `ishape` | 0, 2, 3, 4 | 1, 5, 6, 7, 8 |
 | `ibss` | 1, 2, 3 | 2, 3 |
 | `icurr` | 1, 3, 4, 5, 6, 7 | 2, 9 |
 | `itfsup` | 0, 1 | 0 |

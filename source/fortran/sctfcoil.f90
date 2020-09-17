@@ -368,7 +368,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
     !! Seting the WP, case and tunrs geometry for SC magnets
     
     use tfcoil_variables, only: acndttf, awphec, cpttf, insulation_area,     &
-        n_layer, n_pancake, turnstf, i_tf_sc_mat, jwptf, thicndut, thwcndut, &
+        n_layer, n_pancake, n_tf_turn, i_tf_sc_mat, jwptf, thicndut, thwcndut, &
         acasetf, acstf, acond, aiwp, avwp, dhecoil, n_tf, aswp, vftf, tfareain
     use constants, only: pi
        
@@ -403,32 +403,32 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
     if ( i_tf_turns_integer == 0 ) then 
         ! Non-ingeger number of turns
         call tf_averaged_turn_geom( cpttf, jwptf, thwcndut, thicndut, i_tf_sc_mat, & ! Inputs
-                                    acstf, acndttf, insulation_area, turnstf ) ! Outputs              ! Outputs
+                                    acstf, acndttf, insulation_area, n_tf_turn )     ! Outputs
     else 
         ! Integer number of turns
         call tf_integer_turn_geom( n_layer, n_pancake, thwcndut, thicndut, & ! Inputs
-                                   acstf, acndttf, insulation_area, & ! Outputs
-                                   cpttf, turnstf )                   ! Outputs
+                                   acstf, acndttf, insulation_area, &        ! Outputs
+                                   cpttf, n_tf_turn )                        ! Outputs
     end if 
     
     
     ! Areas and fractions
     ! -------------------
     ! Central helium channel down the conductor core [m2]
-    awphec = 0.25D0 * turnstf * pi*dhecoil**2
+    awphec = 0.25D0 * n_tf_turn * pi*dhecoil**2
 
     ! Total conductor cross-sectional area, taking account of void area
     ! and central helium channel [m2]
-    acond = acstf * turnstf * (1.0D0-vftf) - awphec
+    acond = acstf * n_tf_turn * (1.0D0-vftf) - awphec
 
     ! Void area in conductor for He, not including central channel [m2]
-    avwp = acstf * turnstf * vftf
+    avwp = acstf * n_tf_turn * vftf
 
     ! Area of inter-turn insulation: total [m2]
-    aiwp = turnstf * insulation_area
+    aiwp = n_tf_turn * insulation_area
 
     ! Area of steel structure in winding pack [m2]
-    aswp = turnstf * acndttf
+    aswp = n_tf_turn * acndttf
 
     ! Inboard coil steel area [m2]
     a_tf_steel = acasetf + aswp
@@ -654,7 +654,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
     end subroutine tf_case_geom
 
     subroutine tf_averaged_turn_geom( cpttf, jwptf, thwcndut, thicndut, i_tf_sc_mat, & ! Inputs
-                                      acstf, acndttf, insulation_area, turnstf ) ! Outputs                    ! Outputs
+                                      acstf, acndttf, insulation_area, n_tf_turn ) ! Outputs                    ! Outputs
 
         !! Authors : J. Morris, CCFE
         !! Authors : S. Kahn, CCFE
@@ -700,7 +700,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
         real(dp), intent(out) :: insulation_area
         !! Turn insulation area (per turn) [m2]
 
-        real(dp), intent(out) :: turnstf
+        real(dp), intent(out) :: n_tf_turn
         !! Number of turns per WP (float)
         ! -------
 
@@ -732,13 +732,13 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
                     - 2.0D0*thicndut
             
         ! Total number of turns per TF coil (not required to be an integer)
-        turnstf = awptf / a_turn
+        n_tf_turn = awptf / a_turn
 
         ! Area of inter-turn insulation: single turn [m2]
         insulation_area = a_turn - t_conductor**2
         
         ! ITER like turn structure 
-        if ( i_tf_sc_mat /= 6) then 
+        if ( i_tf_sc_mat /= 6 ) then 
 
             ! Radius of rounded corners of cable space inside conduit [m]
             rbcndut = thwcndut * 0.75D0     
@@ -782,7 +782,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
 
     subroutine tf_integer_turn_geom( n_layer, n_pancake, thwcndut, thicndut, & ! Inputs
                                      acstf, acndttf, insulation_area, & ! Outputs
-                                     cpttf, turnstf )                   ! Outputs
+                                     cpttf, n_tf_turn )                   ! Outputs
 
         !! Authors : J. Morris
         !! Authors : S. Kahn
@@ -827,7 +827,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
         real(dp), intent(out) :: cpttf
         !! TF turns current [A]
 
-        real(dp), intent(out) :: turnstf
+        real(dp), intent(out) :: n_tf_turn
         !! Number of turns
         ! -------
 
@@ -867,10 +867,10 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
         t_turn = sqrt(t_turn_radial*t_turn_toroidal)
     
         ! Number of TF turns
-        turnstf = dble( n_layer * n_pancake )
+        n_tf_turn = dble( n_layer * n_pancake )
 
         ! Current per turn [A/turn]
-        cpttf = tfc_current/turnstf
+        cpttf = tfc_current/n_tf_turn
     
         ! Radial and toroidal dimension of conductor [m]
         t_conductor_radial = t_turn_radial - 2.0D0*thicndut
@@ -936,7 +936,7 @@ subroutine res_tf_internal_geom()
     !! Resisitve TF turn geometry, equivalent to winding_pack subroutines
     use error_handling, only: fdiags, report_error 
     use numerics, only: nvar, ixc
-    use tfcoil_variables, only: turnstf, thicndut, thkcas, dr_tf_wp, tftort, n_tf, &
+    use tfcoil_variables, only: n_tf_turn, thicndut, thkcas, dr_tf_wp, tftort, n_tf, &
         tfareain, ritfc, oacdcp, fcoolcp, cpttf, cdtfleg, casthi, aiwp, acasetf
     use build_variables, only: tfthko, r_tf_inboard_in, r_tf_inboard_out
     use constants, only: pi
@@ -953,8 +953,8 @@ subroutine res_tf_internal_geom()
     end if
 
     ! Number of turns
-    ! Set by user (no turn structure by default, i.e. turnstf = 1 ) 
-    if ( abs(turnstf) < epsilon(turnstf) ) turnstf = 1.0D0
+    ! Set by user (no turn structure by default, i.e. n_tf_turn = 1 ) 
+    if ( abs(n_tf_turn) < epsilon(n_tf_turn) ) n_tf_turn = 1.0D0
 
     ! Total mid-plane cross-sectional area of winding pack, [m2]
     ! including the surrounding ground-wall insulation layer 
@@ -962,7 +962,7 @@ subroutine res_tf_internal_geom()
 
     ! Exact mid-plane cross-section area of the conductor per TF coil [m2]
     awptf = pi*( (r_wp_outer - thicndut)**2 - (r_wp_inner + thicndut)**2 )/n_tf  &
-           - 2.0D0*thicndut * ( dr_tf_wp - 2.0D0*thicndut ) * turnstf
+           - 2.0D0*thicndut * ( dr_tf_wp - 2.0D0*thicndut ) * n_tf_turn
     awptf = awptf * (1.0D0 - fcoolcp)
 
     ! Inter turn insulation area per coil [m2]                    
@@ -973,20 +973,20 @@ subroutine res_tf_internal_geom()
     acasetf = ( tfareain / n_tf ) - awpc 
 
     ! Total insulation cross-section per coil [m2]
-    a_tf_ins = aiwp * turnstf
+    a_tf_ins = aiwp * n_tf_turn
 
     ! Insulation fraction [-]
     f_tf_ins = n_tf * a_tf_ins / tfareain 
 
     ! Current per turn 
-    cpttf = ritfc / ( turnstf * n_tf )
+    cpttf = ritfc / ( n_tf_turn * n_tf )
 
     ! Exact current density on the mid-plane conductors  
-    oacdcp = ritfc / ( awptf * n_tf * turnstf ) 
+    oacdcp = ritfc / ( awptf * n_tf * n_tf_turn ) 
 
     ! Exact current density on TF oubard legs
     cdtfleg = ritfc / ( ( 1.0D0 - fcoolcp ) * &
-                        ( tftort - 2.0D0 * turnstf * thicndut) * &
+                        ( tftort - 2.0D0 * n_tf_turn * thicndut) * &
                         ( tfthko - 2.0D0 * thicndut ) ) 
 
     ! Reporting negative WP areas issues
@@ -1010,7 +1010,7 @@ subroutine tf_res_heating()
     !! Rem SK : Clamped joined superconductors might have resistive power losses on the joints
     !! Rem SK : Sliding joints might have a region of high resistivity
     use tfcoil_variables, only: rhocp, tlegav, thicndut, th_joint_contact, rhotfleg, &
-        voltfleg, vol_cond_cp, turnstf, thkcas, tftort, tfleng, tflegres, tcpav, &
+        voltfleg, vol_cond_cp, n_tf_turn, thkcas, tftort, tfleng, tflegres, tcpav, &
         ritfc, rho_tf_joints, presleg, prescp, pres_joints, n_tf_joints_contact, &
         n_tf_joints, n_tf, i_tf_sup, frholeg, frhocp, fcoolcp, casthi, arealeg, &
         a_cp_cool, fcoolleg
@@ -1042,7 +1042,7 @@ subroutine tf_res_heating()
     !          Better structural properties at high temperature and radiation damage resilience
     if ( i_tf_sup == 0 ) rhocp = (frhocp/0.92D0) * ( 1.72D0 + 0.0039D0*(tcpav-273.15D0) ) * 1.0D-8
 
-    ! Cryogenic aluminium
+    ! Aluminium
     if ( i_tf_sup == 2 ) rhocp = frhocp * ( 2.00016D-14*tcpav**3 - 6.75384D-13*tcpav**2 + 8.89159D-12*tcpav )
 
     ! Calculations dedicated for configurations with CP
@@ -1065,17 +1065,17 @@ subroutine tf_res_heating()
         ! Centrepost resisitivity and conductor/insulation volume
         call cpost( r_cp_top-casthi, h_cp_top, r_tf_inboard_out-casthi, hmax+tfthko, & ! Inputs
                     ritfc, rhocp, fcoolcp, r_tf_inboard_in+thkcas, thicndut, casthi,   & ! Inputs
-                    n_tf*turnstf,                                                    & ! Inputs
+                    n_tf*n_tf_turn,                                                    & ! Inputs
                     a_cp_cool, vol_cond_cp, prescp, vol_ins_cp, vol_case_cp )          ! Outputs
 
 
         ! Outer leg cross-section areas
         ! ---
         ! Area taken by one outboard leg's turns insulation [m2]
-        a_wp_ins_turn = 2.0D0 * thicndut * ( (tftort/turnstf) + tfthko - 2.0D0*thicndut ) 
+        a_wp_ins_turn = 2.0D0 * thicndut * ( (tftort/n_tf_turn) + tfthko - 2.0D0*thicndut ) 
 
         ! Exact TF outboard leg conductor area (per leg) [m2]
-        a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * turnstf )  
+        a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * n_tf_turn )  
         ! ---
 
 
@@ -1094,7 +1094,7 @@ subroutine tf_res_heating()
         if ( i_tf_sup /= 1 ) then
 
             ! Total number of contact area (4 joints section per legs)
-            n_contact_tot = 4 * n_tf_joints_contact* n_tf_joints * nint(turnstf) * nint(n_tf)
+            n_contact_tot = 4 * n_tf_joints_contact* n_tf_joints * nint(n_tf_turn) * nint(n_tf)
             
             ! Total area of joint contact
             a_joints = tfthko * th_joint_contact * dble(n_contact_tot)
@@ -1118,7 +1118,7 @@ subroutine tf_res_heating()
         vol_cond = vol_cond_cp + n_tf * vol_cond_leg
 
         ! Outboard leg TF insulation layer volume (per leg) [m3]
-        vol_ins_leg = tfleng * a_wp_ins_turn * turnstf
+        vol_ins_leg = tfleng * a_wp_ins_turn * n_tf_turn
 
         ! Total insulation layer volume [m3]
         vol_ins = vol_ins_cp + n_tf * vol_ins_leg
@@ -1136,10 +1136,10 @@ subroutine tf_res_heating()
         !          crude approximation if the inboard legs are vaulted
             
         ! Area taken by the inter turn ground insulation
-        a_wp_ins_turn = 2.0D0 * thicndut * ( (tfcth/turnstf) + tfcth - 2.0D0*thicndut )
+        a_wp_ins_turn = 2.0D0 * thicndut * ( (tfcth/n_tf_turn) + tfcth - 2.0D0*thicndut )
 
         ! Exact TF outboard leg conductor area
-        a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * turnstf ) 
+        a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * n_tf_turn ) 
         ! ---
 
         ! TF resistive powers
@@ -1150,7 +1150,7 @@ subroutine tf_res_heating()
         vol_cond = tfleng * a_wp_cond_leg * n_tf 
 
         ! Total insulation layer volume
-        vol_ins = tfleng * a_wp_ins_turn * n_tf * turnstf
+        vol_ins = tfleng * a_wp_ins_turn * n_tf * n_tf_turn
                         
     end if
 
@@ -1166,7 +1166,7 @@ subroutine tf_field_and_force()
         r_tf_inboard_mid, r_cp_top
     use tfcoil_variables, only: vforce, n_tf, taucq, sigvvall, cforce, &
         ritfc, bmaxtf, rbmax, i_tf_sup, f_vforce_inboard, vforce_outboard, &
-        tinstf, thicndut, dr_tf_wp, tfinsgap
+        tinstf, thicndut, dr_tf_wp, tfinsgap, i_cp_joints
 
     implicit none
 
@@ -1214,7 +1214,7 @@ subroutine tf_field_and_force()
     ! ***
     ! Case of a centrepost (itart == 1) with sliding joints (the CP vertical are separated from the leg ones)
     ! Rem SK : casing/insulation thickness not subtracted as part of the CP is genuinely connected to the legs..
-    if ( itart == 1 .and. i_tf_sup /= 1 ) then
+    if ( itart == 1 .and. i_cp_joints == 1 ) then
         
         ! Tricky trick to avoid dividing by 0 if the TF has no hole in it
         if ( abs(r_in_wp) < epsilon(r_in_wp) ) r_in_wp = 1.0D-9
@@ -1236,6 +1236,8 @@ subroutine tf_field_and_force()
                                             + r_tf_outboard_in * log((r_tf_outboard_in + dr_wp)      &
                                             / r_tf_outboard_in))) - vforce 
         r_tf_outboard_in = r_tf_outboard_in - tinstf    ! Tricky trick to avoid writting tinstf all the time
+
+        f_vforce_inboard = vforce / ( vforce + vforce_outboard )
 
     ! Case of TF without joints or with clamped joints total
     ! Rem SK : f_vforce_inboard might be calculated analytically (see M. Kovari comment in #848)
@@ -1273,7 +1275,7 @@ subroutine tf_coil_area_and_masses()
     use tfcoil_variables, only: whtconsh, whttf, whtcas, tficrn, tfcryoarea, &
         tfsao, whtgw, tfocrn, whtconsc, whtconcu, whtcon, whtconin, &
         tfsai, vftf, whtconin, tfsai, dcond, dcondins, whtcon, &
-        tfleng, dthet, dcase, acndttf, turnstf, n_tf, aiwp, radctf, acasetfo, &
+        tfleng, dthet, dcase, acndttf, n_tf_turn, n_tf, aiwp, radctf, acasetfo, &
         acasetf, fcutfsu, awphec, acstf, whttflgs, whtcp, whtconal, vol_cond_cp, &
         i_tf_sup, i_tf_sc_mat
     use constants, only: twopi, dcopper, dalu
@@ -1321,18 +1323,18 @@ subroutine tf_coil_area_and_masses()
 
         ! Superconductor mass [kg]
         ! Includes space allowance for central helium channel, area awphec
-        whtconsc = (tfleng * turnstf * acstf*(1.0D0-vftf) * &
+        whtconsc = (tfleng * n_tf_turn * acstf*(1.0D0-vftf) * &
                    (1.0D0-fcutfsu) - tfleng*awphec) * dcond(i_tf_sc_mat)
 
         ! Copper mass [kg]
-        whtconcu = (tfleng * turnstf * acstf*(1.0D0-vftf) * fcutfsu - tfleng*awphec) * dcopper
+        whtconcu = (tfleng * n_tf_turn * acstf*(1.0D0-vftf) * fcutfsu - tfleng*awphec) * dcopper
         if ( whtconcu <= 0.0D0 ) whtconcu = 0.0D0
 
         ! Steel conduit (sheath) mass [kg]
-        whtconsh = tfleng * turnstf * acndttf * denstl
+        whtconsh = tfleng * n_tf_turn * acndttf * denstl
 
         ! Conduit insulation mass [kg]
-        ! (aiwp already contains turnstf)
+        ! (aiwp already contains n_tf_turn)
         whtconin = tfleng * aiwp * dcondins
 
         ! Total conductor mass [kg]
@@ -1504,7 +1506,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use build_variables, only: tfcth, r_tf_inboard_mid, bore, ohcth, hmax, &
         r_tf_inboard_in
-    use tfcoil_variables, only: eyzwp, casestr, windstrain, turnstf, &
+    use tfcoil_variables, only: eyzwp, casestr, windstrain, n_tf_turn, &
         dr_tf_wp, i_tf_tresca, acstf, vforce, &
         ritfc, jwptf, strtf0, strtf1, strtf2, &
         thwcndut, insstrain, strtf2, vforce, tinstf, &
@@ -1875,14 +1877,14 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! WP effective insulation thickness (SC only) [m]
         ! include groundwall insulation + insertion gap in thicndut
         ! inertion gap is tfinsgap on 4 sides
-        t_ins_eff = thicndut + ( tfinsgap + tinstf ) / turnstf
+        t_ins_eff = thicndut + ( tfinsgap + tinstf ) / n_tf_turn
 
         ! Effective WP young modulus in the toroidal direction [Pa] 
         ! The toroidal property drives the stress calculation (J. Last report no 4)
         ! Hence, the radial direction is relevant for the property smearing 
         ! Rem : This assumption might be re-defined for bucked and wedged design
         eyoung_wp_t = eyngeff( eyoung_steel, eyoung_ins, &
-                               t_ins_eff, thwcndut, t_turn_radial )
+                               t_ins_eff, thwcndut, t_cable_radial )
         
         ! Lateral casing correction (serie)
         eyoung_wp_t_eff = ( 2.0D0 * t_lat_case_av + t_wp_toroidal_av ) &
@@ -1952,7 +1954,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             poisson_p(n_tf_bucking + ii) = poisson_steel
             poisson_z(n_tf_bucking + ii) = poisson_steel
         
-        ! Cryogenic aluminium properties
+        ! Aluminium properties
         else 
             poisson_p(n_tf_bucking + ii) = poisson_al
             poisson_z(n_tf_bucking + ii) = poisson_al
@@ -1989,7 +1991,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                            sig_tf_r, sig_tf_t, deflect, radial_array ) ! Outputs
     
         ! Vertical stress [Pa]  
-        sig_tf_z = vforce / (acasetf + acndttf*turnstf) ! Array equation
+        sig_tf_z = vforce / (acasetf + acndttf*n_tf_turn) ! Array equation
 
         ! Case strain
         casestr = sig_tf_z(n_tf_bucking) / eyoung_steel
@@ -3449,7 +3451,7 @@ subroutine outtf(outfile, peaktfflag)
     use tfcoil_variables, only: wwp1, whttf, yarc, xarc, &
         windstrain, wwp2, whtconsh, tftort, whtconcu, ritfc, &
         tfinsgap, deflect, vtfskv, tmaxpro, fcutfsu, t_conductor, &
-        tinstf, turnstf, cforce, i_tf_turns_integer, tdmptf, &
+        tinstf, n_tf_turn, cforce, i_tf_turns_integer, tdmptf, &
         oacdcp, estotftgj, n_tf, whtconin, jwptf, tfa, &
         tficrn, n_layer, tfleng, thwcndut, casthi, sigvvall, &
         thkcas, casths, vforce, n_pancake, aswp, aiwp, tfareain, acasetf, &
@@ -3458,7 +3460,8 @@ subroutine outtf(outfile, peaktfflag)
         ripple, i_tf_tresca, bmaxtf, awphec, avwp, aiwp, acond, acndttf, &
         i_tf_sc_mat, voltfleg, vol_cond_cp, tflegres, tcpav, prescp, i_tf_sup, &
         cpttf, cdtfleg, whttflgs, whtcp, i_tf_bucking, tlegav, rhotfleg, rhocp, &
-        presleg, i_tf_shape, fcoolcp, pres_joints, tmargtf, tmargmin_tf
+        presleg, i_tf_shape, fcoolcp, pres_joints, tmargtf, tmargmin_tf, &
+        f_vforce_inboard, vforce_outboard
     use physics_variables, only: itart
     use constants, only: mfile, pi
     implicit none
@@ -3485,7 +3488,7 @@ subroutine outtf(outfile, peaktfflag)
         case (1)
             call ocmmnt(outfile,'  -> Superconducting coil (SC)')
         case (2)
-            call ocmmnt(outfile,'  -> Reisitive coil : Helium cooled cryogenic aluminium')
+            call ocmmnt(outfile,'  -> Reisitive coil : Helium cooled aluminium')
     end select
 
     if ( i_tf_sup == 1 ) then
@@ -3629,7 +3632,7 @@ subroutine outtf(outfile, peaktfflag)
         else 
             call ocmmnt(outfile,'  Integer number of turns')
         end if
-        call ovarre(outfile,'Number of turns per TF coil','(turnstf)',turnstf, 'OP ')
+        call ovarre(outfile,'Number of turns per TF coil','(n_tf_turn)',n_tf_turn, 'OP ')
         if ( i_tf_turns_integer == 1 ) then
             call ovarin(outfile, 'Number of TF pancakes', '(n_pancake)', n_pancake)
             call ovarin(outfile, 'Number of TF layers', '(n_layer)', n_layer)
@@ -3661,13 +3664,13 @@ subroutine outtf(outfile, peaktfflag)
             call ovarre(outfile,'Superconductor fraction of conductor','(1-fcutfsu)',1-fcutfsu)
             ! TODO
             !call ovarre(outfile,'Conductor fraction of winding pack','(acond/ap)',acond/ap, 'OP ')
-            !call ovarre(outfile,'Conduit fraction of winding pack','(turnstf*acndttf/ap)',turnstf*acndttf/ap, 'OP ')
+            !call ovarre(outfile,'Conduit fraction of winding pack','(n_tf_turn*acndttf/ap)',n_tf_turn*acndttf/ap, 'OP ')
             !call ovarre(outfile,'Insulator fraction of winding pack','(aiwp/ap)',aiwp/ap, 'OP ')
             !call ovarre(outfile,'Helium area fraction of winding pack excluding central channel','(avwp/ap)',avwp/ap, 'OP ')
             !call ovarre(outfile,'Central helium channel area as fraction of winding pack','(awphec/ap)',awphec/ap, 'OP ')
-            ap = acond + turnstf*acndttf + aiwp + avwp + awphec
+            ap = acond + n_tf_turn*acndttf + aiwp + avwp + awphec
             call ovarrf(outfile,'Check total area fractions in winding pack = 1','', &
-            (acond + turnstf*acndttf + aiwp + avwp + awphec)/ap)
+            (acond + n_tf_turn*acndttf + aiwp + avwp + awphec)/ap)
             call ovarrf(outfile,'minimum TF conductor temperature margin  (K)','(tmargmin_tf)',tmargmin_tf)
             call ovarrf(outfile,'TF conductor temperature margin (K)','(tmargtf)',tmargtf)
 
@@ -3680,7 +3683,7 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'Inboard leg bucking cylinder thickness (m)','(thkcas)',thkcas)
 
         call osubhd(outfile,'Coil turn information:')
-        call ovarre(outfile,'Number of turns per TF leg','(turnstf)',turnstf)
+        call ovarre(outfile,'Number of turns per TF leg','(n_tf_turn)',n_tf_turn)
         call ovarre(outfile,'Turn insulation thickness','(tinstf)',tinstf)
         call ovarre(outfile,'Mid-plane CP cooling fraction','(fcoolcp)',fcoolcp)
         call ovarre(outfile,'Outboard leg current per turn (A)','(cpttf)',cpttf)
@@ -3720,7 +3723,9 @@ subroutine outtf(outfile, peaktfflag)
 
     ! TF forces
     call osubhd(outfile,'TF Forces:')
-    call ovarre(outfile,'Inboard vertical separating force per leg (N)','(vforce)',vforce, 'OP ')
+    call ovarre(outfile,'Inboard vertical tension per coil (N)','(vforce)',vforce, 'OP ')
+    call ovarre(outfile,'Outboard vertical tension per coil (N)','(vforce_outboard)', vforce_outboard, 'OP ')
+    call ovarre(outfile,'inboard vertical tension fraction (-)','(f_vforce_inboard)', f_vforce_inboard, 'OP ')
     call ovarre(outfile,'Centring force per coil (N/m)','(cforce)',cforce, 'OP ')
 
     ! Resistive coil parameters
@@ -3859,7 +3864,7 @@ subroutine tfspcall(outfile,iprint)
         tape_thickness, tape_width, tapes, rebco_thickness, solder_area
     use error_handling, only: idiags, fdiags, report_error
     use process_output, only: ovarre, ocmmnt, oheadr, oblnkl, ovarin
-    use tfcoil_variables, only: tmargmin_tf, turnstf, n_tf, vftf, &
+    use tfcoil_variables, only: tmargmin_tf, n_tf_turn, n_tf, vftf, &
         temp_margin, jwdgpro, tftmp, vtfskv, acndttf, dhecoil, tmaxpro, &
         tmargtf, thwcndut, t_conductor, fcutfsu, jwdgcrt, tdmptf, cpttf, &
         ritfc, jwptf, bmaxtfrp, tcritsc, acstf, strncon_tf, fhts, bcritsc, &
@@ -3883,7 +3888,7 @@ subroutine tfspcall(outfile,iprint)
     ! Stored energy (J) per coil (NOT a physical meaningful quantity)
     tfes = estotft / n_tf
     ! Cross-sectional area per turn
-    aturn = ritfc/(jwptf*n_tf*turnstf)    
+    aturn = ritfc/(jwptf*n_tf*n_tf_turn)    
 
     if(i_tf_sc_mat==6)then
         call supercon_croco(aturn,bmaxtfrp,cpttf,tftmp, &
@@ -4053,7 +4058,7 @@ contains
             
             !REBCO fractures in strains above ~+/- 0.7%
             if (strncon_tf > 0.7D-2 .or. strncon_tf < -0.7D-2) then
-                fdiags(1) = strncon_tf ; call report_error(259)
+                fdiags(1) = strncon_tf ; call report_error(261)
             end if
             
 
@@ -4078,7 +4083,7 @@ contains
 
         ! REBCO measurements from 2 T to 14 T, extrapolating outside this
         if((isumat == 8) .and. (bmaxtfrp >= 14)) then
-        call report_error(263)
+        call report_error(265)
         end if
 
         !  Temperature margin (already calculated in bi2212 for isumat=2)

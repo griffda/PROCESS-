@@ -142,6 +142,9 @@ module constants
   real(dp), parameter :: muh2o = 4.71D-4
   !! water dynamic viscosity (kg/m/s)
 
+  real(dp), parameter :: n_day_year = 365.2425D0
+  !! Average number of days in a year
+
 end module constants
 
 module physics_variables
@@ -650,6 +653,11 @@ module physics_variables
   !! - =2 set kappa to the natural elongation value (Zohm ITER scaling), triang input
   !! - =3 set kappa to the natural elongation value (Zohm ITER scaling), triang95 input
   !! - =4 use input kappa95, triang95 to calculate separatrix values
+  !! - =5 use input kappa95, triang95 to calculate separatrix values based on MAST scaling (ST)
+  !! - =6 use input kappa, triang to calculate 95% values based on MAST scaling (ST)
+  !! - =7 use input kappa95, triang95 to calculate separatrix values based on fit to FIESTA (ST)
+  !! - =8 use input kappa, triang to calculate 95% values based on fit to FIESTA (ST)
+
 
   integer, bind(C) :: itart = 0
   !! switch for spherical tokamak (ST) models:
@@ -670,10 +678,10 @@ module physics_variables
   !! - =2 use first wall area directly
 
   real(dp), bind(C) :: kappa = 1.792D0
-  !! plasma separatrix elongation (calculated if `ishape > 0`)
+  !! plasma separatrix elongation (calculated if `ishape = 1-5 or 7`)
 
   real(dp), bind(C) :: kappa95 = 1.6D0
-  !! plasma elongation at 95% surface (calculated if `ishape < 4`)
+  !! plasma elongation at 95% surface (calculated if `ishape = 0-3, 6 or 8`)
 
   real(dp) :: kappaa = 0.0D0
   !! plasma elongation calculated as xarea/(pi.a^2)
@@ -980,10 +988,10 @@ module physics_variables
   !! ion temperature / electron temperature(used to calculate ti if `tratio > 0.0`
 
   real(dp), bind(C) :: triang = 0.36D0
-  !! plasma separatrix triangularity (calculated if `ishape=1, 3 or 4`)
+  !! plasma separatrix triangularity (calculated if `ishape = 1, 3-5 or 7`)
 
   real(dp) :: triang95 = 0.24D0
-  !! plasma triangularity at 95% surface (calculated if `ishape < 3`)
+  !! plasma triangularity at 95% surface (calculated if `ishape = 0-2, 6 or 8`)
 
   real(dp), bind(C) :: vol = 0.0D0
   !! plasma volume (m3)
@@ -1808,7 +1816,7 @@ module fwbs_variables
   public
 
   real(dp), bind(C):: bktlife = 0.0D0
-  !! blanket lifetime (years)
+  !! Full power blanket lifetime (years)
 
   real(dp) :: coolmass = 0.0D0
   !! mass of water coolant (in shield, blanket, first wall, divertor) (kg)
@@ -1838,7 +1846,7 @@ module fwbs_variables
   !! KIT blanket model: steel fraction of breeding zone
 
   real(dp) :: fdiv = 0.115D0
-  !! area fraction taken up by divertor
+  !! Solid angle fraction taken by one divertor
 
   real(dp) :: fhcd = 0.0D0
   !! area fraction covered by heating/current drive apparatus plus diagnostics
@@ -1854,7 +1862,7 @@ module fwbs_variables
   !#TODO: change to adopt switch naming convention
 
   real(dp) :: fwlife = 0.0D0
-  !! first wall full-power lifetime (y)
+  !! first wall full-power year lifetime (y)
 
   real(dp) :: fwmass = 0.0D0
   !! first wall mass (kg)
@@ -1897,8 +1905,14 @@ module fwbs_variables
   real(dp), bind(C) :: pnucblkt = 0.0D0
   !! nuclear heating in the blanket (MW)
 
-  real(dp) :: pnuccp = 0.0D0
-  !! nuclear heating in the ST centrepost (MW)
+  real(dp) :: pnuc_cp = 0.0D0
+  !! Total nuclear heating in the ST centrepost (MW)
+
+  real(dp) :: pnuc_cp_sh = 0.0D0
+  !! Neutronic shield nuclear heating in the ST centrepost (MW)
+
+  real(dp) :: pnuc_cp_tf = 0.0D0
+  !! TF neutronic nuclear heating in the ST centrepost (MW)
 
   real(dp) :: pnucdiv = 0.0D0
   !! nuclear heating in the divertor (MW)
@@ -1948,6 +1962,11 @@ module fwbs_variables
   real(dp) :: whtbltibe12 = 0.0D0
   !! mass of titanium beryllide in blanket (kg) (`iblanket=1,3` (CCFE HCPB))
 
+  real(dp) :: neut_flux_cp = 0.0D0
+  !! Centrepost TF fast neutron flux (E > 0.1 MeV) [m^(-2).^(-1)]
+  !! This variable is only calculated for superconducting (i_tf_sup = 1 )
+  !! spherical tokamal magnet designs (itart = 0)
+
   real(dp) :: f_neut_shield = -1.0D0
   !! Fraction of nuclear power shielded before the CP magnet (ST)
   !! ( neut_absorb = -1 --> a fit on simplified MCNP neutronic
@@ -1983,6 +2002,7 @@ module fwbs_variables
 
   real(dp) :: fblhebpo = 0.6713D0
   !! helium fraction of outboard blanket back plate by volume (`iblanket=2` (KIT HCPB))
+  
   integer :: hcdportsize = 1
   !! switch for size of heating/current drive ports (`iblanket=2` (KIT HCPB)):
   !!
@@ -2207,6 +2227,7 @@ module fwbs_variables
 
   real(dp) :: wtshldi = 0.0D0
   !! mass of inboard shield (kg)
+  
   real(dp) :: wtshldo = 0.0D0
   !! mass of outboard shield (kg)
   
@@ -3092,8 +3113,16 @@ module tfcoil_variables
   real(dp) :: frholeg = 1.0D0
   !! Ouboard legs resistivity enhancement factor. Only used for `itart=1`.
   
+  integer :: i_cp_joints = -1 
+  !! Switch for CP demoutable joints type
+  !!  -= 0 : Clampled joints
+  !!  -= 1 : Sliding joints
+  !! Default value (-1) choses : 
+  !!   Sliding joints for resistive magnets (i_tf_sup = 0, 2)  
+  !!   Clampled joints for superconducting magents (i_tf_sup = 1)
+
   real(dp) :: rho_tf_joints = 2.5D-10
-  !! TF joints surfacic resistivity [ohm.m^2]. Feldmetal joints assumed.
+  !! TF joints surfacic resistivity [ohm.m]. Feldmetal joints assumed.
 
   integer :: n_tf_joints_contact = 6
   !! Number of contact per sliding joint
@@ -3187,7 +3216,7 @@ module tfcoil_variables
   real(dp) :: tmpcry = 4.5D0
   !! coil temperature for cryogenic plant power calculation (K)
 
-  real(dp) :: turnstf = 0.0D0
+  real(dp) :: n_tf_turn = 0.0D0
   !! number of turns per TF coil
 
   real(dp) :: vdalw = 20.0D0
@@ -3937,7 +3966,7 @@ module build_variables
   real(dp) :: aplasmin = 0.25D0
   !! minimum minor radius (m)
 
-  real(dp) ::   available_radial_space = 0.0D0
+  real(dp) :: available_radial_space = 0.0D0
   !! Minimal radial space between plasma and coils (m)
 
   real(dp) :: blarea = 0.0D0
@@ -4097,6 +4126,9 @@ module build_variables
 
   real(dp) :: r_vv_inboard_out = 0.0D0
   !! Radial plasma facing side position of inboard vacuum vessel [m]
+
+  real(dp) :: r_sh_inboard_in = 0.0D0
+  !! Radial inner side position of inboard neutronic shield [m]
 
   real(dp) :: r_sh_inboard_out = 0.0D0
   !! Radial plasma facing side position of inboard neutronic shield [m]
@@ -4327,11 +4359,21 @@ module cost_variables
   !! - =1 use $ 2014 Kovari model
   !! - =2 use $ 1980 STEP model (NOT RECOMMENDED - Under Development)
 
+  integer :: i_cp_lifetime = 0
+  !! Switch for the centrepost lifetime constraint 
+  !!  0 : The CP full power year lifetime is set by the user
+  !!  1 : The CP lifetime is equal to the divertor lifetime
+  !!  2 : The CP lifetime is equal to the breeding blankets lifetime
+  !!  3 : The CP lifetime is equal to the plant lifetime
+
   real(dp), bind(C) :: cowner = 0.15D0
   !! owner cost factor
 
+  real(dp) :: cplife_input = 2.0D0
+  !! User input full power year lifetime of the centrepost (years)
+
   real(dp) :: cplife = 0.0D0
-  !! lifetime of centrepost (y)
+  !! Calculated full power year lifetime of centrepost (years)
 
   real(dp) :: cpstcst = 0.0D0
   !! ST centrepost direct cost (M$)
@@ -4358,7 +4400,7 @@ module cost_variables
   !! divertor direct cost (M$)
 
   real(dp), bind(C) :: divlife = 0.0D0
-  !! lifetime of divertor (y)
+  !! Full power lifetime of divertor (y)
 
   real(dp) :: dtlife = 0.0D0
   !! period prior to the end of the plant life that the decommissioning fund is used (years)
@@ -4527,7 +4569,7 @@ module cost_variables
   !! Reference values for cost model 2
 
   real(dp), bind(C) :: tlife = 30.0D0
-  !! plant life (years)
+  !! Full power year plant lifetime (years)
 
   real(dp), parameter :: ucad = 180.0D0
   !! unit cost for administration buildings (M$/m3)
@@ -5004,6 +5046,8 @@ module constraint_variables
 
   real(dp) :: nflutfmax = 1.0D23
   !! max fast neutron fluence on TF coil (n/m2) (`blktmodel>0`) (`constraint equation 53`)
+  !! Also used for demontable magnets (itart = 1) and superconducting coils (i_tf_sup = 1)
+  !! To set the CP lifetime
 
   real(dp) :: pdivtlim = 150.0D0
   !! Minimum pdivt [MW] (`constraint equation 80`)
@@ -5047,7 +5091,7 @@ module constraint_variables
   !! (`iblanket =2`) (`constraint equation 55`)
 
   real(dp) :: walalw = 1.0D0
-  !! allowable wall-load (MW/m2) (`constraint equation 8`)
+  !! allowable neutron wall-load (MW/m2) (`constraint equation 8`)
 
   real(dp) :: taulimit = 5.0D0
   !! Lower limit on taup/taueff the ratio of alpha particle to energy confinement 

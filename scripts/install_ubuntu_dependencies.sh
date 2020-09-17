@@ -15,7 +15,7 @@ sudo apt-get update
 ln -fs /usr/share/zoneinfo/GMT /etc/localtime
 
 sudo apt-get install -y --fix-missing\
-    gfortran-4.8 \
+    gfortran \
     gdb \
     make \
     cmake \
@@ -38,5 +38,5 @@ sudo apt-get install -y --fix-missing\
     graphviz
 
 # compile googletest
-cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && \
+cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && 
     sudo rm -rf lib && sudo mkdir lib && sudo cp *.a lib

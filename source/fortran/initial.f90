@@ -650,7 +650,7 @@ subroutine check
         tmargmin_tf, eff_tf_cryo, eyoung_ins, i_tf_bucking, i_tf_shape, &
         n_tf_graded_layers, n_tf_stress_layers, tlegav,  i_tf_plane_stress, &
         i_tf_sc_mat, i_tf_wp_geom, i_tf_turns_integer, tinstf, thwcndut, &
-        tfinsgap, rcool, dhecoil, thicndut
+        tfinsgap, rcool, dhecoil, thicndut, i_cp_joints
     use stellarator_variables, only: istell
     use sctfcoil_module, only: initialise_cables
     use vacuum_variables, only: vacuum_model
@@ -1063,7 +1063,7 @@ subroutine check
         else if ( i_tf_sup == 1 ) then 
             call report_error(233)
 
-        ! Helium cooled cryogenic aluminium magnets initalisation / checks
+        ! Aluminium magnets initalisation / checks
         ! Initialize the CP conductor temperature to cryogenic temperature for cryo-al magnets (20 K)
         else  if ( i_tf_sup == 2 ) then
 
@@ -1090,6 +1090,24 @@ subroutine check
 
         ! Set the TF coil shape to picture frame (if default value)
         if ( i_tf_shape == 0 ) i_tf_shape = 2
+
+        ! Warning stating that the CP fast neutron fluence calculation 
+        ! is not addapted for cryoaluminium calculations yet
+        if ( i_tf_sup == 2 .and. any( icc == 85 ) .and. itart == 1 ) then
+            call report_error(260)
+        end if
+
+        ! Setting the CP joints default options : 
+        !  1 : Sliding joints for resistive magnets (i_tf_sup = 0, 2)  
+        !  0 : Clampled joints for superconducting magents (i_tf_sup = 1)
+        if ( i_cp_joints == -1 ) then
+            if ( i_tf_sup == 1 ) then 
+                i_cp_joints = 0
+            else 
+                i_cp_joints = 1
+            end if 
+        end if
+
     ! --------------------------------
 
     
@@ -1125,6 +1143,9 @@ subroutine check
         if (k == 1) call report_error(42)
         if (k > 2) call report_error(43)
         if ((i_single_null == 1).and.(j < 2)) call report_error(44)
+
+        ! Constraint 10 is dedicated to ST designs with demountable joints
+        if ( any(icc(1:neqns+nineqns) == 10 ) ) call report_error(259)
 
     end if
     ! ------------------------------------
@@ -1370,12 +1391,12 @@ subroutine check
 
     ! Cannot use temperature margin constraint with REBCO TF coils
     if(any(icc == 36) .and. (i_tf_sc_mat == 8)) then
-        call report_error(262)
+        call report_error(264)
     endif
 
     ! Cannot use temperature margin constraint with REBCO CS coils
     if(any(icc == 60) .and. (isumatoh == 8)) then
-        call report_error(261)
+        call report_error(263)
     endif
 
 

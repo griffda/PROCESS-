@@ -18,9 +18,8 @@
       REAL(p_) zrtmp, fctmp
       common /dumm/zrtmp, fctmp
 
-      REAL(p_) TorGa_zgauleg
-      EXTERNAL TorGa_zgauleg
-      EXTERNAL TorGa_funxjs,TorGa_funxjz,TorGa_alpha
+      REAL(p_), EXTERNAL :: TorGa_zgauleg
+      REAL(p_), EXTERNAL :: TorGa_funxjs,TorGa_funxjz,TorGa_alpha
 !------------------------------------------------------------------------
 !     CURGAP(version 1.0) Y.R. Lin-Liu, 08/16/04
 !     This routine is an improved version and the replacement of CURGAC.
@@ -487,8 +486,7 @@
       REAL(p_) TorGA_bessj,x,BIGNO,BIGNI
       PARAMETER (IACC=40,BIGNO=1.E10_p_,BIGNI=1.E-10_p_)
 !     USES bessj0,bessj1
-      REAL(P_) TorGA_bessj0,TorGA_bessj1
-      EXTERNAL TorGA_bessj0,TorGA_bessj1
+      REAL(P_), EXTERNAL :: TorGA_bessj0,TorGA_bessj1
 !-----------------------------------------------------------------------&
 !234567890123456789012345678901234567890123456789012345678901234567890123
 !-----------------------------------------------------------------------&
@@ -713,7 +711,7 @@
       parameter (tolft=1.e-6_p_)
       REAL(p_) ap,ss
       integer jromb
-      external TorGa_qftint
+      REAL(p_), EXTERNAL :: TorGa_qftint
 !
       hbar=hav
       c2=cxi2
@@ -738,7 +736,7 @@
 !----------------------------------------------------------------------------
       REAL(p_) z,s,ss,ap
       integer jromb
-      external TorGa_hcapint
+      REAL(p_), EXTERNAL :: TorGa_hcapint
 ! DMC bugfix: prevent the first arg from reaching or exceeding 1.0
       z=min(0.9999999_p_,z_in)
       s=z*(1._p_-hav)/(1._p_-z*hav)
@@ -786,7 +784,7 @@
       REAL(p_) uv,rhocap,gamma,ss
       integer jromb
       common /cmbqfc/uv,rhocap,gamma
-      external TorGa_fcapint
+      REAL(p_), EXTERNAL :: TorGa_fcapint
 !
       if (u .le. 0._p_)then
          fcap=0._p_
@@ -922,7 +920,7 @@
       INTEGER JMAX,JMAXP,K,KM
       REAL(p_) a,b,ss, eps
       integer jt
-      EXTERNAL func
+      REAL(p_), EXTERNAL :: func
       PARAMETER (JMAX=200, JMAXP=JMAX+1, K=5, KM=K-1)
 !CU    USES TorGa_polint,trapzd
       INTEGER j
