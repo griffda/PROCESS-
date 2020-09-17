@@ -4053,8 +4053,8 @@ contains
             call GL_REBCO(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
             ! A0 calculated for tape cross section already
             jcritstr = jcritsc 
-            !  Critical current in cable
-            icrit = jcritstr * acs * fcond
+            !  Critical current in cable (copper added at this stage in HTS cables)
+            icrit = jcritstr * acs * fcond * (1.0D0-fcu)
             
             !REBCO fractures in strains above ~+/- 0.7%
             if (strncon_tf > 0.7D-2 .or. strncon_tf < -0.7D-2) then
