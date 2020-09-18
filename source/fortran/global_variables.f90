@@ -2798,8 +2798,6 @@ module tfcoil_variables
   !! upper critical field of GL_nbti
   real(kind(1.0D0)) :: t_crit_nbti = 9.04D0
   !! critical temperature of GL_nbti
-  real(kind(1.0D0)) :: f_cu_rebco = 0.3D0
-  !! f_cu_rebco /0.0/ : Durham REBCO model, HTS cable copper fraction
   real(kind(1.0D0)) :: max_force_density = 0.0D0
   !! Maximal (WP averaged) force density in TF coils at 1 point. (MN/m3)
   real(kind(1.0D0)) :: fcutfsu = 0.69D0

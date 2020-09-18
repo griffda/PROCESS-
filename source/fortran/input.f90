@@ -1808,9 +1808,6 @@ contains
        case ('b_crit_upper_nbti')
           call parse_real_variable('b_crit_upper_nbti', b_crit_upper_nbti, 0.0D0, 30.0D0, &
                     'Upper critical field of GL_nbti ')
-       case ('f_cu_rebco')
-         call parse_real_variable('f_cu_rebco', f_cu_rebco, 0.0D0, 100D0, &
-                     'Durham REBCO model, HTS cable copper fraction')
        case ('fcoolcp')
           call parse_real_variable('fcoolcp', fcoolcp, 0.0D0, 1.0D0, &
                'Coolant fraction of TF centrepost (itart=1) or the whole magnet (itart=0)')

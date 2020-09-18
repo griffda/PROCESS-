@@ -1742,8 +1742,7 @@ module pfcoil_module
        use error_handling, only: fdiags, idiags, report_error
      use superconductors, only: jcrit_nbti, wstsc, jcrit_rebco, bi2212, &
        itersc, current_sharing_rebco, Gl_nbti, GL_REBCO
-       use tfcoil_variables, only: tmargmin_cs, temp_margin, b_crit_upper_nbti, t_crit_nbti, & 
-       f_cu_rebco
+       use tfcoil_variables, only: tmargmin_cs, temp_margin, b_crit_upper_nbti, t_crit_nbti
        use maths_library, only: variable_error, secant_solve
      implicit none
  
@@ -1835,7 +1834,7 @@ module pfcoil_module
           tc0m = 185D0
           call GL_REBCO(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit) 
           ! A0 calculated for tape cross section already
-          jcritstr = jcritsc * (1.0D0-f_cu_rebco)
+          jcritstr = jcritsc * (1.0D0-fcu)
  
           
  
