@@ -3868,7 +3868,7 @@ subroutine tfspcall(outfile,iprint)
         temp_margin, jwdgpro, tftmp, vtfskv, acndttf, dhecoil, tmaxpro, &
         tmargtf, thwcndut, t_conductor, fcutfsu, jwdgcrt, tdmptf, cpttf, &
         ritfc, jwptf, bmaxtfrp, tcritsc, acstf, strncon_tf, fhts, bcritsc, &
-        i_tf_sc_mat, b_crit_upper_nbti, t_crit_nbti 
+        i_tf_sc_mat, b_crit_upper_nbti, t_crit_nbti, f_cu_rebco
     use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, jcrit_nbti, croco, bi2212,&
     GL_nbti, GL_REBCO
     use global_variables, only: run_tests
@@ -4054,7 +4054,7 @@ contains
             ! A0 calculated for tape cross section already
             jcritstr = jcritsc 
             !  Critical current in cable (copper added at this stage in HTS cables)
-            icrit = jcritstr * acs * fcond * (1.0D0-fcu)
+            icrit = jcritstr * acs * fcond * (1.0D0-f_cu_rebco)
             
             !REBCO fractures in strains above ~+/- 0.7%
             if (strncon_tf > 0.7D-2 .or. strncon_tf < -0.7D-2) then
