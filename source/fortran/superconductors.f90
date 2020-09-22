@@ -733,10 +733,10 @@ subroutine GL_REBCO(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit) !SCM add
   real(kind(1.0D0)), parameter :: q = 2.50D0
   real(kind(1.0D0)), parameter :: s = 5.27D0
   real(kind(1.0D0)), parameter  :: n = 3.33D0
-  real(kind(1.0D0)), parameter  :: c2 = 0.00224D0
-  real(kind(1.0D0)), parameter  :: c3 = -0.0198D0
+  real(kind(1.0D0)), parameter  :: c2 = -0.0191D0
+  real(kind(1.0D0)), parameter  :: c3 = 0.0039D0
   real(kind(1.0D0)), parameter  :: c4 = 0.00103D0
-  real(kind(1.0D0)), parameter  :: em = 0D0
+  real(kind(1.0D0)), parameter  :: em = 0.058D0
   real(kind(1.0D0)), parameter  :: u = 0.0D0
   real(kind(1.0D0)), parameter  :: w = 2.2D0
 
