@@ -310,7 +310,7 @@ contains
     end if
 
     write(outfile,10)
-10  format(t43,'Thickness (m)',t60,'Radius (m)')
+   10  format(t43,'Thickness (m)',t60,'Radius (m)')
 
     radius = 0.0D0
     call obuild(outfile,'Device centreline',0.0D0,radius)
@@ -418,7 +418,7 @@ contains
        call ocmmnt(outfile,'Double null case')
 
        write(outfile,20)
-20     format(t43,'Thickness (m)',t60,'Height (m)')
+       20 format(t43,'Thickness (m)',t60,'Height (m)')
 
        vbuild = 0.0D0
        call obuild(outfile,'Midplane',0.0D0,vbuild)

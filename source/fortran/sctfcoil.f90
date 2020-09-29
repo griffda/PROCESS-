@@ -1064,8 +1064,8 @@ subroutine tf_res_heating()
 
         ! Centrepost resisitivity and conductor/insulation volume
         call cpost( r_cp_top-casthi, h_cp_top, r_tf_inboard_out-casthi, hmax+tfthko, & ! Inputs
-                    ritfc, rhocp, fcoolcp, r_tf_inboard_in+thkcas, thicndut, casthi,   & ! Inputs
-                    n_tf*n_tf_turn,                                                    & ! Inputs
+                    ritfc, rhocp, fcoolcp, r_tf_inboard_in+thkcas, thicndut, casthi, & ! Inputs
+                    n_tf*n_tf_turn,                                                  & ! Inputs
                     a_cp_cool, vol_cond_cp, prescp, vol_ins_cp, vol_case_cp )          ! Outputs
 
 
@@ -3578,7 +3578,7 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'Radius of the ends of the centrepost (m)','(r_cp_top)',r_cp_top)
         call ovarre(outfile,'Top/miplane TF CP radius ratio (-)','(f_r_cp)', f_r_cp)
         call ovarre(outfile,'Distance from the midplane to the top of the tapered section (m)','(h_cp_top)',h_cp_top)
-        call ovarre(outfile,'Distance from the midplane to the top of the centrepost (m)','(hmax)',hmax + tfthko)
+        call ovarre(outfile,'Distance from the midplane to the top of the centrepost (m)','(hmax + tfthko)',hmax + tfthko)
     end if
 
     ! Turn/WP gemoetry
