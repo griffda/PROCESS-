@@ -76,3 +76,4 @@ test_suite/OPT.DAT
 fortran.py
 .coverage
 dist/*
+python_fortran_dicts.json

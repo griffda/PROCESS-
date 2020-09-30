@@ -28,7 +28,7 @@ import operator
 import logging
 import sys
 from sys import stderr
-from create_dicts import get_dicts
+from process.io.python_fortran_dicts import get_dicts
 import json
 LOG = logging.getLogger("mfile")
 
