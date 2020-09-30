@@ -57,23 +57,12 @@ make:
       - process_dist/process-*.whl
     expire_in: 1 week
   script:
+    - pip install -r requirements.txt
+    # Required to install Ford before cmake runs
     - cmake -H. -Bbuild
     - cmake --build build
     - python setup.py sdist -d process_dist
     - python setup.py bdist_wheel -d process_dist
-  
-make_dicts:
-  stage: build
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:latest
-  artifacts:
-    paths:
-      - utilities/process_io_lib/process_dicts.json
-    expire_in: 1 week
-
-  script:
-    - pip install -r requirements.txt
-    - cmake -H. -Bbuild
-    - cmake --build build --target dicts
 
 #-----------------
 #  Testing

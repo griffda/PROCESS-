@@ -1,20 +1,20 @@
+"""Create Python-Fortran dictionaries JSON.
+
+This module produces the python_fortran_dicts.json file used by Python in 
+Process. Make directs the Ford documentation program to read in the Process 
+source, create a project object which contains the structure of Process used for
+documenting the code within Ford, and then creates a pickled file from that 
+project object. Make then calls this module to create dictionaries of variables 
+which are used by Python in Process. The dicts are created from hardcoded 
+values, Process source parsing and the Ford project object, and then dumped into
+the JSON file for later use.
+
+Process Python can then call process.io.python_fortran_dicts.get_dicts() to load
+the dicts from the saved JSON file and use them.
+
+This ultimately provides Process Python with the ability to access variable
+information in the Process Fortran source code.
 """
-   This module produces the process_dicts.json file used by PROCESS Python 
-   utilities. The Ford documentation program reads in the PROCESS source, 
-   creates a project object which contains the structure of PROCESS used for
-   documenting the code within Ford, and then calls 
-   create_dicts.create_dicts(project). This module then creates dictionaries
-   of variables which are used by the Python utilities. The dicts are created 
-   from hardcoded values, PROCESS source parsing and the Ford project object, 
-   and then dumped into the JSON file for later use.
-
-   Utilities can then call create_dicts.get_dicts() to load the dicts from the
-   saved JSON file and use them.
-
-   This ultimately provides Python utilities with the ability to access variable
-   information in the PROCESS Fortran source code.
-"""
-
 import re
 import os
 import logging
@@ -25,13 +25,8 @@ from collections import defaultdict
 import sys
 import os
 import json
-
-#process source directory
-SOURCEDIR = os.path.join(__file__.split('utilities')[0], "source", "fortran")
-
-# Path to the process_dicts.json output file
-DICTS_FILE_PATH = os.path.join(os.path.dirname(__file__),
-    'process_io_lib/process_dicts.json')
+import argparse
+import pickle
 
 # Variables, arrays and dictionaries that aren't read from the source files so
 # have to be hard coded
@@ -760,14 +755,29 @@ def create_dicts(project):
         dict_object.publish()
 
     # Save output_dict as JSON, to be used by utilities scripts
-    with open(DICTS_FILE_PATH, 'w') as dicts_file:
+    with open(DICTS_FILENAME, 'w') as dicts_file:
         json.dump(output_dict, dicts_file, indent=4, sort_keys=True)
 
-def get_dicts():
-    # Return dicts loaded from the JSON file for use in Python utilities
-    try:
-        with open(DICTS_FILE_PATH, 'r') as dicts_file:
-            return json.load(dicts_file)
-    except:
-        print("Error loading the dicts JSON file")
-        exit()
+if __name__ == "__main__":
+    # TODO This has been written to cause minimal disruption to the original
+    # create_dicts.py. This module would benefit from more class structuring
+
+    # Called from make; parse arguments from make
+    parser = argparse.ArgumentParser(description="Create Fortran-Python "
+        "dictionaries")
+    parser.add_argument("fortran_source", help="Fortran source dir")
+    parser.add_argument("ford_project", help="The pickled Ford project filename")
+    parser.add_argument("dicts_filename", help="The output dicts filename")
+    args = parser.parse_args()
+    
+    # Load the pickled Ford project
+    with open(args.ford_project, "rb") as f:
+        project = pickle.load(f)
+
+    # Process source directory
+    SOURCEDIR = args.fortran_source
+    # The name of the output file (python_fortran_dicts.json)
+    DICTS_FILENAME = args.dicts_filename
+
+    # Create the dicts JSON output file
+    create_dicts(project)

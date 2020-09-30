@@ -9,8 +9,10 @@ import re
 # TODO This isn't good: put MFile into process package?
 sys.path.append(os.path.join(os.path.dirname(__file__), '../utilities/'))
 
+from process.io.mfile import MFile
 from process import process
-from process_io_lib.mfile import MFile
+# TODO Beware process package/module name shadowing! Rename process module or
+# import as something different?
 
 # Variables and patterns to ignore when comparing differences (set and list)
 EXCLUSIONS = {"itvar", "xcm"}

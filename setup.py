@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
 import sys
@@ -11,7 +11,7 @@ setup_kwargs = {
     ),
     "url": "https://ccfe.ukaea.uk/resources/process/",
     "author": "UKAEA",
-    "packages": ["process"],
+    "packages": find_packages(),
     "package_dir": {
         "process": "process"
     },
@@ -27,6 +27,9 @@ setup_kwargs = {
             "data/lz_non_corona_14_elements/*",
             "utilities/*"
         ],
+        "process.io": [
+            "python_fortran_dicts.json"
+        ]
     },
     "test_suite" : "pytest",
     "install_requires" : ["numpy", "f90wrap"],
