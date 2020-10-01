@@ -13,9 +13,9 @@
 import sys
 import scipy
 import argparse
-import process_io_lib.mfile as mf
+import process.io.mfile as mf
 from numpy import isfinite
-from create_dicts import get_dicts
+from process.io.python_fortran_dicts import get_dicts
 
 # Load dicts from dicts JSON file
 process_dicts = get_dicts()

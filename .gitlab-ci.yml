@@ -85,12 +85,12 @@ baseline_2019:
   script:
     - process -i tracking/baseline_2019/baseline_2019_IN.DAT
     - > 
-      python utilities/mfile_comparison.py 
+      python process/io/mfile_comparison.py
       -f tracking/baseline_2019/baseline_2019_MFILE.DAT tracking/baseline_2019/ref_baseline_2019_MFILE.DAT 
       --acc 1.0 
       --baseline
     - > 
-      python utilities/mfile_comparison.py 
+      python process/io/mfile_comparison.py
       -f tracking/baseline_2019/baseline_2019_MFILE.DAT tracking/baseline_2019/ref_baseline_2019_MFILE.DAT 
       --acc 10.0 
       --baseline
@@ -104,13 +104,13 @@ baseline_2018:
   script:
     - process -i tracking/baseline_2018/baseline_2018_IN.DAT
     - > 
-      python utilities/mfile_comparison.py 
+      python process/io/mfile_comparison.py
       -f tracking/baseline_2018/baseline_2018_MFILE.DAT tracking/baseline_2018/ref_baseline_2018_MFILE.DAT 
       --acc 1.0 
       --baseline
     - > 
-      python utilities/mfile_comparison.py 
-      -f tracking/baseline_2018/baseline_2019_MFILE.DAT tracking/baseline_2018/ref_baseline_2018_MFILE.DAT 
+      python process/io/mfile_comparison.py
+      -f tracking/baseline_2018/baseline_2018_MFILE.DAT tracking/baseline_2018/ref_baseline_2018_MFILE.DAT 
       --acc 10.0 
       --baseline
 
