@@ -3815,17 +3815,20 @@ subroutine outtf(outfile, peaktfflag)
         radius = radius + tfinsgap
         call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
         radius = radius + casthi
-        call obuild(outfile,'Coil case (plasma side)',casthi,radius,'(casthi)')
+        call obuild(outfile,'Plasma side case min radius',casthi,radius,'(casthi)')
+        radius = radius / cos(pi/n_tf)
+        call obuild(outfile,'Plasma side case max radius', &
+            r_tf_inboard_out, radius,'(r_tf_inboard_out)')
       
-        if(abs((radius - r_tf_inboard_mid - 0.5D0*tfcth)) < 1d-6)then
+        ! Radial build consistency check
+        if ( abs( radius - r_tf_inboard_in - tfcth ) < 10.0D0 * epsilon(radius) ) then
             call ocmmnt(outfile,'TF coil dimensions are consistent')
         else
             call ocmmnt(outfile,'ERROR: TF coil dimensions are NOT consistent:')
-            call ovarre(outfile,'Radius of plasma-facing side of inner leg SHOULD BE [m]','',r_tf_inboard_mid + 0.5D0*tfcth)
+            call ovarre(outfile,'Radius of plasma-facing side of inner leg SHOULD BE [m]','',r_tf_inboard_in + tfcth)
             call ovarre(outfile,'Inboard TF coil radial thickness [m]','(tfcth)',tfcth)
             call oblnkl(outfile)
         end if
-
     else
 
         call osubhd(outfile,'Energy and Forces :')
