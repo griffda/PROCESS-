@@ -51,7 +51,7 @@ ixc = 6 * dene
 ixc = 9 * fdene
 boundu(9) = 1.2
 ixc = 13 * tfcth
-boundl(13) = 1.4
+boundl(13) = 0.8
 ixc = 14 * fwalld
 ixc = 16 * ohcth
 boundl(16) = 0.5
@@ -101,6 +101,8 @@ ixc = 113 * ftaucq
 ixc = 122 * oh_steel_frac
 ixc = 123 * foh_stress
 ixc = 135 * fimp(13)
+ixc = 35 * fpeakb
+ixc = 25 * fpnetel
 
 
 *-----------------Build Variables------------------*
@@ -307,7 +309,7 @@ tramp = 500.0
 *-----------------Tfcoil Variables-----------------*
 
 fpeakb = 1.0
-bmxlim = 11.2
+bmxlim = 13.2
 casthi   = 0.06 * Inboard tf coil case inner \(plasma side) thickness (m)
 casths   = 0.05 * Inboard tf coil sidewall case thickness (m)
 cpttf    = 6.5e+04 * Tf coil current per turn (a);
@@ -339,3 +341,46 @@ qnuc = 1.292E4
 *-----------------Times Variables------------------*
 
 tburn    = 1.0d4 * Burn time (s) (calculated if lpulse=1)
+
+bt             =  5.5454E+00
+rmajor         =  8.6874E+00
+te             =  1.2630E+01
+beta           =  3.2807E-02
+dene           =  8.0081E+19
+fdene          =  1.2000E+00
+tfcth          =  1.3717E+00
+fwalld         =  1.4765E-01
+ohcth          =  5.0562E-01
+q              =  3.5000E+00
+bore           =  2.1555E+00
+fbetatry       =  4.8520E-01
+coheof         =  2.2357E+07
+fjohc          =  5.8670E-01
+fjohc0         =  5.4594E-01
+fcohbop        =  9.3063E-01
+gapoh          =  5.0000E-02
+fvsbrnni       =  3.8613E-01
+fstrcase       =  1.0000E+00
+fstrcond       =  8.7852E-01
+fiooic         =  6.0617E-01
+fvdump         =  1.0000E+00
+vdalw          =  1.0000E+01
+fjprot         =  1.0000E+00
+ftmargtf       =  1.0000E+00
+tdmptf         =  2.6411E+01
+thkcas         =  5.3438E-01
+thwcndut       =  8.0000E-03
+fcutfsu        =  7.7212E-01
+cpttf          =  6.5000E+04
+gapds          =  2.0000E-02
+flhthresh      =  1.3656E+00
+ftmargoh       =  1.0000E+00
+ralpne         =  6.7925E-02
+ftaulimit      =  1.0000E+00
+fpsepbqar      =  1.0000E+00
+ftaucq         =  9.3515E-01
+oh_steel_frac  =  5.6879E-01
+foh_stress     =  1.0000E+00
+fimp(13)       =  4.8667E-04
+fpeakb         =  9.1485E-01
+fpnetel        =  1.0000E+00
