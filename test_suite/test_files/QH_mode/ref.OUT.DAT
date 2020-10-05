@@ -4,16 +4,16 @@
  ************************************** Power Reactor Optimisation Code ***************************************
  **************************************************************************************************************
  
-   Program : ../../bin/process.exe
+   Program : ../process.exe
    Version : 1.0.17   Release Date :: 2020-02-25
    Tag No. : 1.0.17-397-gd13d9680
     Branch : develop
    Git log : Merge branch 'steadystate_test_docs' into 'develop',
- Date/time :  2 Oct 2020 13:57:09 +01:00(hh:mm) UTC
+ Date/time :  2 Oct 2020 11:34:41 +01:00(hh:mm) UTC
       User : morrisj
   Computer : BitFenix
- Directory : /home/morrisj/process/examples/QH_mode
-     Input : QH_mode.IN.DAT
+ Directory : /home/morrisj/process/bin/QH_mode
+     Input : IN.DAT
  Run title : Example QH-mode plasma scenario
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  

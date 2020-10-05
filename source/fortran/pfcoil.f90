@@ -671,8 +671,8 @@ module pfcoil_module
  
      use build_variables, only: hmax, ohcth
      use fwbs_variables, only: denstl
-     use error_handling, only: idiags, report_error
-     use pfcoil_variables, only: nohc, bmaxoh, i_cs_stress, coheof, rohc, &
+      use error_handling, only: idiags, report_error
+      use pfcoil_variables, only: nohc, bmaxoh, i_cs_stress, coheof, rohc, &
          vfohc, jstrandoh_bop, fcuohsu, isumatoh, ohhghf, areaoh, powpfres, &
          jstrandoh_eof, powohres, rjohc0, s_tresca_oh, awpoh, oh_steel_frac, &
          bmaxoh0, rjohc, tmargoh, ipfres, rjpfalw, pfclres, vf, ric, bpf, &
@@ -848,7 +848,7 @@ module pfcoil_module
              (areaoh * (1.0D0-vfohc)) * (1.0D6*ric(nohc))**2
         powpfres = powpfres + powohres
  
-     end if   
+     end if
  
    end subroutine ohcalc
  
@@ -1742,7 +1742,7 @@ module pfcoil_module
        use error_handling, only: fdiags, idiags, report_error
      use superconductors, only: jcrit_nbti, wstsc, jcrit_rebco, bi2212, &
        itersc, current_sharing_rebco, Gl_nbti, GL_REBCO
-       use tfcoil_variables, only: tmargmin_cs, temp_margin, b_crit_upper_nbti, t_crit_nbti
+       use tfcoil_variables, only: tmargmin_cs, temp_margin, b_crit_upper_nbti, t_crit_nbti 
        use maths_library, only: variable_error, secant_solve
      implicit none
  
@@ -1823,19 +1823,21 @@ module pfcoil_module
         call jcrit_rebco(thelium,bmax,jcritsc,validity,0)
         jcritstr = jcritsc * (1.0D0-fcu)
  
-     case (7) ! Durham Ginzburg-Landau Nb-Ti parameterisation
+    case (7) ! Durham Ginzburg-Landau Nb-Ti parameterisation
           bc20m = b_crit_upper_nbti
           tc0m = t_crit_nbti 
           call GL_nbti(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
           jcritstr = jcritsc  * (1.0D0-fcu)
  
      case (8) ! Branch YCBO model fit to Tallahassee data
-          bc20m = 429D0
-          tc0m = 185D0
-          call GL_REBCO(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit) 
-          ! A0 calculated for tape cross section already
-          jcritstr = jcritsc * (1.0D0-fcu)
- 
+           bc20m = 429D0
+           tc0m = 185D0
+           call GL_REBCO(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit) 
+           ! A0 calculated for tape cross section already
+           jcritstr = jcritsc * (1.0D0-fcu)
+  
+           
+       
           
  
      case default  !  Error condition
@@ -1943,21 +1945,21 @@ module pfcoil_module
        end if
    end if
  
-   ! SCM 10/08/20 Use secant solver for GL_REBCO.
-   if(isumat==8) then
-    ! Current sharing temperature for Durham Ginzburg-Landau Nb-Ti
-    x1 = 4.0d0  ! Initial values of temperature
-    x2 = 6.0d0
-    ! Solve for deltaj_GL_REBCO = 0
-    call secant_solve(deltaj_GL_REBCO,x1,x2,current_sharing_t,error,residual,100d0)
-    tmarg = current_sharing_t - thelium
-    call GL_REBCO(current_sharing_t,bmax,strain,bc20m,tc0m,jcrit0,b,t)
-    if(variable_error(current_sharing_t))then  ! current sharing secant solver has failed.
-        write(*,'(a24, 10(a12,es12.3))')'Gl_REBCO: current sharing ', 'temperature=', current_sharing_t, '  tmarg=', tmarg, &
-                                        '  jsc=',jsc, '  jcrit0=',jcrit0, '  residual=', residual
-    end if
- end if
- 
+ ! SCM 10/08/20 Use secant solver for GL_REBCO.
+    if(isumat==8) then
+     ! Current sharing temperature for Durham Ginzburg-Landau Nb-Ti
+     x1 = 4.0d0  ! Initial values of temperature
+     x2 = 6.0d0
+     ! Solve for deltaj_GL_REBCO = 0
+     call secant_solve(deltaj_GL_REBCO,x1,x2,current_sharing_t,error,residual,100d0)
+     tmarg = current_sharing_t - thelium
+     call GL_REBCO(current_sharing_t,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+     if(variable_error(current_sharing_t))then  ! current sharing secant solver has failed.
+         write(*,'(a24, 10(a12,es12.3))')'Gl_REBCO: current sharing ', 'temperature=', current_sharing_t, '  tmarg=', tmarg, &
+                                         '  jsc=',jsc, '  jcrit0=',jcrit0, '  residual=', residual
+     end if
+  end if
+  
  contains
      ! These functions are required because secant_solve requires a function not a subroutine
      ! They need to follow a 'contains' statement because 'jcrit0', 'bmax' and others
@@ -1995,19 +1997,19 @@ module pfcoil_module
                                            '  jcrit0=',jcrit0
        end if
        deltaj_GL_nbti = jcrit0 - jsc
-     end function deltaj_GL_nbti
- 
-     function deltaj_GL_REBCO(temperature)
-       real(dp), intent(in) :: temperature
-       real(dp)::deltaj_Gl_REBCO, jcrit0
-       call GL_REBCO(temperature,bmax,strain,bc20m,tc0m,jcrit0,b,t)
-       if(variable_error(jcrit0))then  ! GL_REBCO has failed.
-         write(*,'(a24, 10(a12,es12.3))')'deltaj_GL_REBCO: ', 'bmax=', bmax, '  temperature=', temperature, &
-                                           '  jcrit0=',jcrit0
-       end if
-       deltaj_GL_REBCO = jcrit0 - jsc
-     end function deltaj_GL_REBCO
- 
+   end function deltaj_GL_nbti
+   
+        function deltaj_GL_REBCO(temperature)
+        real(dp), intent(in) :: temperature
+        real(dp)::deltaj_Gl_REBCO, jcrit0
+        call GL_REBCO(temperature,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+        if(variable_error(jcrit0))then  ! GL_REBCO has failed.
+          write(*,'(a24, 10(a12,es12.3))')'deltaj_GL_REBCO: ', 'bmax=', bmax, '  temperature=', temperature, &
+                                            '  jcrit0=',jcrit0
+        end if
+        deltaj_GL_REBCO = jcrit0 - jsc
+      end function deltaj_GL_REBCO
+  
  end subroutine superconpf
  
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2462,7 +2464,7 @@ module pfcoil_module
      if (iprint == 0) return
  
      call oheadr(outfile,'PF Coil Inductances')
-     call ocmmnt(outfile,'Inductance matrix (Henries-turns**2) :')
+     call ocmmnt(outfile,'Inductance matrix [H] :')
      call oblnkl(outfile)
  
      do ig = 1,nef
@@ -2635,9 +2637,9 @@ module pfcoil_module
            case (5)
               call ocmmnt(outfile, ' (WST Nb3Sn critical surface model)')
            case (7)
-              call ocmmnt(outfile, ' (Durham Ginzburg-Landau critical surface model for Nb-Ti)')
-           case (8)
-              call ocmmnt(outfile, ' (Durham Ginzburg-Landau critical surface model for REBCO)')
+               call ocmmnt(outfile, ' (Durham Ginzburg-Landau critical surface model for Nb-Ti)')
+            case (8)
+               call ocmmnt(outfile, ' (Durham Ginzburg-Landau critical surface model for REBCO)')
            end select
  
  
@@ -2715,11 +2717,11 @@ module pfcoil_module
                 (abs(cohbop) > 0.99D0*abs(boundu(39)*rjohc0)) ) CSlimit=.true.
            if (tmargoh < 1.01D0*tmargmin_cs) CSlimit=.true.
            if (.not.CSlimit) call report_error(135)
-
-           !REBCO fractures in strains above ~+/- 0.7%
-           if ((isumatoh == 8) .and. strncon_cs > 0.7D-2 .or. strncon_cs < -0.7D-2) then
-                call report_error(262)
-           end if
+ 
+            !REBCO fractures in strains above ~+/- 0.7%
+            if ((isumatoh == 8) .and. strncon_cs > 0.7D-2 .or. strncon_cs < -0.7D-2) then
+                 call report_error(262)
+            end if
  
         else
            call ocmmnt(outfile,'Resistive central solenoid')
@@ -2746,9 +2748,9 @@ module pfcoil_module
         case (5)
            call ocmmnt(outfile, ' (WST Nb3Sn critical surface model)')
         case (7)
-           call ocmmnt(outfile, ' (Durham Nb-Ti Ginzburg-Landau critical surface model)')
-        case (8)
-           call ocmmnt(outfile, ' (Durham REBCO Ginzburg-Landau critical surface model)')
+            call ocmmnt(outfile, ' (Durham Nb-Ti Ginzburg-Landau critical surface model)')
+         case (8)
+            call ocmmnt(outfile, ' (Durham REBCO Ginzburg-Landau critical surface model)')
         end select
  
         call ovarre(outfile,'Copper fraction in conductor','(fcupfsu)',fcupfsu)
@@ -3034,4 +3036,5 @@ module pfcoil_module
    end subroutine outvolt
  
  end module pfcoil_module
+ 
  

@@ -439,7 +439,7 @@ def write_parameters(data, out_file):
                 # All other parameters
                 # Left justification set to 8 to allow easier reading
                 # info can currently be either a value or a dict
-                if type(info) is dict and info.get("value") and (
+                if type(info) is dict and "value" in info and (
                     type(info.get("comment")) is str):
                     
                     parameter_line = "{0} = {1} * {2}\n". \
