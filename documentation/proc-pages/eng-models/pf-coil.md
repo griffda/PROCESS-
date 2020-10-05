@@ -1,7 +1,5 @@
 # PF Coil Model
 
-[PDF Doc](./media/pfdoc.pdf)
-
 The poloidal field (PF) coils are used initially to cancel the vertical field produced at the centre of the plasma by the central solenoid during start-up, and then to maintain the plasma position and shape during the flat-top period.
 
 ## Positioning

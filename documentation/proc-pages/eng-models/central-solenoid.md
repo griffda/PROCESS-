@@ -1,7 +1,5 @@
 # Central Solenoid
 
-[PDF Doc](./media/csdoc.pdf)
-
 Formerly known as the ohmic heating (OH) coil, the central solenoid (CS) is a PF coil used during start-up and during the burn phase to create and maintain the plasma current by inductive means. Swinging (changing) the current through the central solenoid causes a change in the flux linked to the plasma region, inducing a current in it. `PROCESS` calculates the amount of flux required to produce the plasma curren, and also the amount actually available. The code measures the magnetic flux in units of Volt0seconds (= Webers).
 
 Switch `iohcl` controls whether a central solenoid is present. A value of 1 denotes that this coil is present, and should be assigned a non-zero thickness `ohcth`. A value of `iohcl` = 0 denotes that no central solenoid is present, in which case the thickness `ohcth` should be zero. No PF coils should be located at positions defined by `ipfloc(j)` = 1 if no central solenoid is present.

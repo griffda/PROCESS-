@@ -1,6 +1,20 @@
 # TF Coil Model
 
-[PDF Doc](./media/tfdoc.pdf)
+The toroidal field (TF) coils can be either resistive or superconducting. The 
+choice of conductor design is set using the following integer switch 
+`i_tf_sup`:
+
+- `i_tf_sup == 0` -- for resistive copper (GLIDCOP) magnets with active water 
+  cooling. 
+- `i_tf_sup == 1` -- for Superconducting magnets. The CICC(Conductor In Cable 
+Conduit) structure shown in Figure 1 is assumed. The steel radial plates shown 
+in Figure 1 helps in the winding process and also provide extra support against  tangential stresses. Iteration variable no. 101 (`prp`) is the ratio of the
+total radial plate plus steel cap cross-sectional area within the winding pack 
+to the total winding pack cross-sectional area. From this, the half-thickness 
+`trp` is calculated. The coils are cooled to 4 K a liquid helium cryogenic 
+system. 
+- `i_tf_sup == 2` -- for resistive aluminium (high purity) magnet with active
+gaseous Helium cooling at cryogenic temperature (20 K).
 
 The toroidal field (TF) coils can be either resistive or superconducting. The 
 choice of conductor design is set using the following integer switch 

@@ -1,5 +1,7 @@
 # Input File
 
+[PDF of webpage](../pdf/input-guide.pdf)
+
 The input file `IN.DAT` is used to change the values of the physics, engineering 
 and other code parameters from their default values, and to set up the numerics 
 (constraint equations, iteration variables etc.) required to define the problem 
@@ -19,7 +21,7 @@ of the input file name are `IN.DAT`.
 ./process.exe my_file_name_IN.DAT
 ```
 
-Will produce output files named
+Will produce output files named:
 
 - `my_file_name_OUT.DAT`
 - `my_file_name_MFILE.DAT`
@@ -40,7 +42,7 @@ icc = 2
 ```
 
 Where `icc` is the constraints array in PROCESS and the user is requesting constraint 
-equation 2. The user can add a comment on the same line
+equation 2. The user can add a comment on the same line:
 
 ```
 icc = 2 * Global power balance (consistency equation)
@@ -50,7 +52,7 @@ Some constraints have `f-value` variables. These are set as iteration variables,
 which are discussed below.
 
 !!! Note "Constraints"
-    See [solver](../../solver-guide/index.html) page for more info
+    See [solver](../solver/solver-guide.md) page for more info
 
 ## Iteration Variables
 
@@ -64,14 +66,14 @@ It is important to remember that iteration variables must never be initialised t
 The code will not be able to adjust the variable’s value if this is done, and it will 
 stop with an error message.
 
-An iteration variable can be specified in the input file using the following
+An iteration variable can be specified in the input file using the following:
 
 ```
 ixc = 3
 ```
 
 Where `ixc` is the iteration variable array in PROCESS. Like constraints, an in-line comment
-can be included
+can be included:
 
 ```
 ixc = 3 * Plasma major radius [m]
@@ -83,11 +85,11 @@ is selected as an iteration variable, it will be adjusted by the code. The value
 the default, if no value is specified), will be used as the starting value.
 
 !!! Note "Constraints"
-    See [solver](../../solver-guide/index.html) page for more info
+    See [solver](../solver/solver-guide.md) page for more info
 
 ## Bounds
 
-The upper/lower bound of an iteration variable can be set by the user in the input file by
+The upper/lower bound of an iteration variable can be set by the user in the input file by:
 
 ```
 boundl(3) = 8 
@@ -96,7 +98,7 @@ boundu(3) = 12
 ```
 
 Where `3` is the iteration variable number (in this case the major radius). Often the iteration
-variable and its bounds are input together
+variable and its bounds are input together:
 
 ```
 ixc = 3 * Plasma major radius [m]
@@ -133,7 +135,7 @@ epsvmc   = 1.0e-8 * Error tolerance for vmcon
 
 ## Fixed Inputs
 
-One can enter an input into the `IN.DAT`  by
+One can enter an input into the `IN.DAT` by:
 
 ```
 rmajor = 8.90 * Plasma major radius [m]
@@ -148,7 +150,7 @@ one can add a `*` to the beginning of the line, as below:
 
 !!! Note "Variable Descriptions"
     A full list of possible inputs is given in the PROCESS `html` documentation 
-    file `vardes.html` and on the variable description page [here](../../vardes/index.html).
+    file `vardes.html` and on the variable description page [here](../vardes.md).
 
 ## Scan
 
@@ -163,7 +165,7 @@ isweep = 4
 sweep = 2.8, 2.9, 3.0, 3.1
 ```
 
-where `nsweep` is the scan variable chosen (see [variable descriptions](../../vardes/index.html)),
+where `nsweep` is the scan variable chosen (see [variable descriptions](../vardes.md)),
 `isweep` is the number of scan points and `sweep` is the array of scan values. There 
 is the option to have a 2-D scan in PROCESS using the switch `scan_dim = 2` as below
 
@@ -185,7 +187,7 @@ dimension.
 The results from the previous scan point are used as the input to the next
 scan point. The output files contain all of the scan points for a given run.
 
-!!! Note "Note"
+!!! Note "Scanning"
     For obvious reasons, the active scanning variable must not also be an active
     iteration variable.
 
