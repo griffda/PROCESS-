@@ -30,7 +30,7 @@ If present, a neutral beam injection system needs sufficient space between the T
 
 <figure>
     <center>
-    <img src="../../img/portsize.png" alt="NBI port" 
+    <img src="../../images/portsize.png" alt="NBI port" 
     title="Neutral beam access geometry" 
     width="550" height="100" />
     <br><br>

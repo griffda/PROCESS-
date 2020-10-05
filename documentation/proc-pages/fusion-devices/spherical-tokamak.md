@@ -6,7 +6,7 @@
 
     <figure>
         <center>
-        <img src="../../img/build_d.png" alt="power core radial build" 
+        <img src="../../images/build_d.png" alt="power core radial build" 
         title="Schematic diagram of the Power Core radial build" 
         width="650" height="100" />
         <br><br>
@@ -51,7 +51,7 @@ Switch `itart` provides overall control of the ST switches within the code, and 
 
 <figure>
     <center>
-    <img src="../../img/build_e_snd.png" alt="power core radial build" 
+    <img src="../../images/build_e_snd.png" alt="power core radial build" 
     title="Schematic diagram of the Power Core radial build" 
     width="650" height="100" />
     <br><br>
@@ -63,7 +63,7 @@ Switch `itart` provides overall control of the ST switches within the code, and 
 
 <figure>
     <center>
-    <img src="../../img/build_e.png" alt="power core radial build" 
+    <img src="../../images/build_e.png" alt="power core radial build" 
     title="Schematic diagram of the Power Core radial build" 
     width="650" height="100" />
     <br><br>

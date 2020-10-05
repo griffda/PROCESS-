@@ -520,7 +520,7 @@ Figure 2 below shows the flow of power as calculated by the code.
 
 <figure>
     <center>
-    <img src="../../img/powerflow1.png" alt="powerflow" 
+    <img src="../../images/powerflow1.png" alt="powerflow" 
     title="Power balance within the core plasma" 
     width="650" height="100" />
     <br><br>

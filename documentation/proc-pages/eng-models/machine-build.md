@@ -31,7 +31,7 @@ different for single null plasma devices (see Figure 3 below).
 
 <figure>
     <center>
-    <img src="../../img/build_e_snd.png" alt="tokamak-layout-e-sn" 
+    <img src="../../images/build_e_snd.png" alt="tokamak-layout-e-sn" 
     title="Machine build for elliptiacal major components single-null" 
     width="650" height="100" />
     <br><br>

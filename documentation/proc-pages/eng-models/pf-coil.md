@@ -10,7 +10,7 @@ The PF coil locations are controlled using a set of switched stored in array `ip
 
 <figure>
     <center>
-    <img src="../../img/build_d.png" alt="tokamak-layout-d" 
+    <img src="../../images/build_d.png" alt="tokamak-layout-d" 
     title="Machine build for D-shaped major components" 
     width="650" height="100" />
     <br><br>
@@ -43,7 +43,7 @@ The peak current per turn, `cptdin(i)`, and the winding pack peak current densit
 
 <figure>
     <center>
-    <img src="../../img/current_vs_time.png" alt="current-vs-time-plot" 
+    <img src="../../images/current_vs_time.png" alt="current-vs-time-plot" 
     title="Current waveform for Plasma, PF coil and Central Solenoid" 
     width="650" height="100" />
     <br><br>

@@ -3,7 +3,7 @@
 
 <img
     title="UKAEA logo"
-    src="/images/ukaea-logo.png"
+    src="../../images/ukaea-logo.png"
     alt="ukaea-logo.png"
     class="logo"
     >

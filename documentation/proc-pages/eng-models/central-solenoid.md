@@ -14,7 +14,7 @@ The (absolute value of the) central solenoid current density at the end-of-flat-
 
 <figure>
     <center>
-    <img src="../../img/current_vs_time.png" alt="current-vs-time-plot" 
+    <img src="../../images/current_vs_time.png" alt="current-vs-time-plot" 
     title="Current waveform for Plasma, PF coil and Central Solenoid" 
     width="650" height="100" />
     <br><br>

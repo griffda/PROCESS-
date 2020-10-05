@@ -6,7 +6,7 @@ Figure 1 shows the overall power transfer mechanisms within the power plant outs
 
 <figure>
     <center>
-    <img src="../../img/powerflow3.png" alt="power flow 3" 
+    <img src="../../images/powerflow3.png" alt="power flow 3" 
     title="Power flow schematic diagram" 
     width="650" height="100" />
     <br><br>
@@ -18,7 +18,7 @@ Figure 1 shows the overall power transfer mechanisms within the power plant outs
 
 <figure>
     <center>
-    <img src="../../img/powerflow1.png" alt="power flow 1" 
+    <img src="../../images/powerflow1.png" alt="power flow 1" 
     title="Power flows" 
     width="650" height="100" />
     <br><br>

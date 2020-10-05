@@ -35,7 +35,7 @@ gaseous Helium cooling at cryogenic temperature (20 K).
 
 <figure>
     <center>
-    <img src="../../img/tokamak_tfcoil.png" alt="tok_tfcoil" 
+    <img src="../../images/tokamak_tfcoil.png" alt="tok_tfcoil" 
     title="Schematic diagram of tokamak TF coil" 
     width="550" height="100" />
     <br><br>
@@ -83,7 +83,7 @@ ratio), a tapered geometry is assumed as shown in Figure 2.
 
 <figure>
     <center>
-    <img src="../../img/ST_geom.png" alt="tok_tfcoil" 
+    <img src="../../images/ST_geom.png" alt="tok_tfcoil" 
     title="Schematic diagram of TART tokamak TF coil" 
     width="550" height="100" />
     <br><br>
