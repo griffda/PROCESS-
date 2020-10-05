@@ -2611,12 +2611,24 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
       
     !! Author : S. Kahn, CCFE
     !! Jan 2020
-    !! This subroutine numerically find the constant (2 per layer) of the
-    !! analytical resolution of the mid-plane stress calculations using the
-    !! generalized plain strain formulation, from the radial stress and 
-    !! displacement boundary conditions. This conditions sets 2*nlayer
-    !! linear equation of the integrals constants cc, find with using matrix inversion
-    !! Doc : Issue #991 for more details
+    !! This subroutine estimates the normal stresses/strains and radial displacement
+    !! radial distributions of a multilayer cylinder with forces at its ends,                                     
+    !! assuming the generalized plain strain formulation. This formlation relies
+    !! on the fact that the vertical forces are applied far enough at the ends
+    !! so that vertical strain can be approximated radially constant. 
+    !! The form of the radial displacement is calculated in the reference (issue #991)
+    !! up to two integration constants c1 and c2 per layers. As the geometry is 
+    !! cylindrical it is enough to deduce all the normal stress/strains distributions.
+    !! The c1 and c2 constants are then estimated from the inter-layers boundary 
+    !! conditions, assuming radial displacement and normal stress continuity,
+    !! and null radial stress at the TF(-CS) system, using a marix formulation. 
+    !! A more recent possiblity consider designs where the CS as a support 
+    !! for the TF centering pressure (B&W). For this design, the TF coil and the
+    !! CS vertical strains must be insulated as the TF gets taller with the 
+    !! current and the CS shrinks with current. Hence, two vertical boundary  
+    !! conditions must be applied separately on the strain generalization
+    !! parameter calculation and removing the inter TF-CS layers matrix cross
+    !!  terms.
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use constants, only: rmu0, pi
     use maths_library, only: linesolv
@@ -2636,6 +2648,7 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     !!   0 : No casing/bucking cylinder
     !!   1 : casing/buling cylinder
     !!   2 : Bucked and wedged design
+    !!   3 : Bucked and wedged design with CS-TF interlayer
 
     real(dp), dimension(nlayers), intent(in) :: nu_p
     !! Toroidal plan's Poisson's ratios 
@@ -2737,6 +2750,9 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     real(dp) :: dradius  
     real(dp) :: inner_layer_curr
       
+    ! Strain of the CS sector (B&W only)
+    real(dp) :: strain_z_cs
+      
     ! Indexes
     integer :: ii = 0  ! Line in the aa matrix
     integer :: jj = 0  ! Collumn in the aa matrix 
@@ -2790,32 +2806,48 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
 
       
     ! Plain strain generalisation parameters
+    ! Rem : if i_tf_bucking >= 2, the CS is used as a TF support structure
+    !       with vertical strain insulation. If so, two vertical boundary  
+    !       conditions (strain generalization) must be considered.
     !-!
+    ! Cylindrical integrals parameters
     do ii = 1, nlayers
         par_1(ii) = pi * (rad(ii+1)**4 - rad(ii)**4)
         par_2(ii) = pi * (log(rad(ii+1)) * rad(ii+1)**2 - log(rad(ii)) * rad(ii)**2)
     end do
 
-    sum_1 = sum( kk_z * ( 1.0D0 - nu_p ) * area )
-    sum_2 = sum( kk_z * ( nu_z_eff2 / nu_z ) * (0.25D0*alpha*par_1 + beta*par_2) )
-
-    ! Vector equations
-    aleph = (v_force - sum_2) / sum_1      
-    beth = - ( 2.0D0 * area * kk_z * nu_z_eff2 / nu_z ) / sum_1   
-
-    ! Bucked and wegde
-    ! CS (first layer) - TF (all remaining layer) sliding 
-    !  -> No TF vertical force on the CS layer (null coef)
+    ! CS layer parameter 
+    ! Rem : no CS vertical tension (uncoupled & CS flux swing)
+    sum_1 = 0.0D0
+    sum_2 = 0.0D0
+    aleph(:) = 0.0D0
+    beth(:) = 0.0D0
     if ( i_tf_bucking >= 2 ) then
-        aleph(1) = 0.0D0
-        beth(1) = 0.0D0
+        do ii = 1, i_tf_bucking - 1
+            sum_1 = sum_1 + kk_z(ii) * ( 1.0D0 - nu_p(ii) ) * area(ii)
+        end do 
+        do ii = 1, i_tf_bucking - 1 
+            beth(ii) = - ( 2.0D0 * area(ii) * kk_z(ii) * nu_z_eff2(ii) / nu_z(ii) ) / sum_1   
+        end do
     end if
-    if ( i_tf_bucking == 3 ) then
-        aleph(2) = 0.0D0
-        beth(2) = 0.0D0
-    end if 
+
+    ! TF coil layers parameters
+    sum_1 = 0.0D0
+    sum_2 = 0.0D0
+    do ii = max( 1, i_tf_bucking ), nlayers    
+        sum_1 = sum_1 + kk_z(ii) * ( 1.0D0 - nu_p(ii) ) * area(ii)
+        sum_2 = sum_2 + kk_z(ii) * ( nu_z_eff2(ii)/nu_z(ii) )  &
+                                 * ( 0.25D0 * alpha(ii) * par_1(ii) + beta(ii) * par_2(ii) )
+    end do
+
+    ! TF bucking/nose casing layer
+    do ii = max( 1, i_tf_bucking ), nlayers    
+        aleph(ii) = (v_force - sum_2) / sum_1
+        beth(ii) = - ( 2.0D0 * area(ii) * kk_z(ii) * nu_z_eff2(ii) / nu_z(ii) ) / sum_1
+    end do
     !-!
     ! ***
+      
       
     ! Left hand side matrix aa
     ! ***
@@ -2825,12 +2857,23 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     aa(1,1) = kk_p(1)
     aa(1,2) = kk_p(1) * cc_par_sig(1) / rad(1)**2 
 
-    do jj = 1, nlayers ! Plain strain generalisation on C1 coeficients
-        aa(1, 2*jj-1) = aa(1, 2*jj-1) + beth(jj)*kk_p(1)*nu_z(1)
-    end do
+    ! Free standing TF system plain strain generalisation 
+    if ( i_tf_bucking <= 1 ) then ! Free standing TF case
+        do jj = 1, nlayers
+            aa(1, 2*jj-1) = aa(1, 2*jj-1) + beth(jj)*kk_p(1)*nu_z(1)
+        end do
+    
+    ! CS system plane strain generalization
+    else if ( i_tf_bucking >= 2 ) then ! TF case bucked on CS
+        do jj = 1, i_tf_bucking - 1
+            aa(1, 2*jj-1) = aa(1, 2*jj-1) + beth(jj)*kk_p(1)*nu_z(1)
+        end do
+    end if
 
     ! Inter-layer boundary conditions
     if ( nlayers >= 2 ) then 
+        
+        ! Plane strain 
         do ii = 1, nlayers - 1
 
             ! Continuous radial normal stress at R(ii+1)
@@ -2839,25 +2882,71 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
             aa(2*ii, 2*ii+1) = -kk_p(ii+1)
             aa(2*ii, 2*ii+2) = -kk_p(ii+1) * cc_par_sig(ii+1) / rad(ii+1)**2
 
-            do jj = 1, nlayers ! Plain strain generalisation
-                aa(2*ii, 2*jj-1) = aa(2*ii, 2*jj-1) &
-                                 + beth(jj)*(kk_p(ii)*nu_z(ii) - kk_p(ii+1)*nu_z(ii+1)) 
-            end do
-
             ! Continuous displacement at R(ii+1)
             aa(2*ii+1, 2*ii-1) = rad(ii+1)
             aa(2*ii+1, 2*ii  ) = 1.0D0 / rad(ii+1)
             aa(2*ii+1, 2*ii+1) = -rad(ii+1)
             aa(2*ii+1, 2*ii+2) = -1.0D0 / rad(ii+1)
-
         end do
+
+        ! Free standing TF plain strain generalisation 
+        if ( i_tf_bucking <= 1 ) then ! 
+            do ii = 1, nlayers - 1
+                do jj = 1, nlayers
+                    aa(2*ii, 2*jj-1) = aa(2*ii, 2*jj-1) &
+                                     + beth(jj)*(kk_p(ii)*nu_z(ii) - kk_p(ii+1)*nu_z(ii+1)) 
+                end do
+            end do
+
+        ! TF case bucked on CS
+        else if ( i_tf_bucking == 2 ) then 
+
+            ! Layer 1-2 interface (vertical strain decoupled)
+            aa(2,1) = aa(2,1) + beth(1) * kk_p(1) * nu_z(1) 
+            do jj = 2, nlayers
+                aa(2, 2*jj-1) = aa(2, 2*jj-1) - beth(jj) * kk_p(2)*nu_z(2)
+            end do
+            
+            ! Remaining TF interfaces
+            do ii = 2, nlayers - 1           
+                do jj = 2, nlayers
+                    aa(2*ii, 2*jj-1) = aa(2*ii, 2*jj-1) &
+                                     + beth(jj)*(kk_p(ii)*nu_z(ii) - kk_p(ii+1)*nu_z(ii+1)) 
+                end do
+            end do
+
+        ! TF case bucked on CS with TF-CS interlayer
+        else if ( i_tf_bucking == 3 ) then 
+
+            ! Layer 1-2 interface
+            do jj = 1, 2
+                aa(2, 2*jj-1) = aa(2, 2*jj-1) + beth(jj) * ( kk_p(1)*nu_z(1) - kk_p(2)*nu_z(2) )
+            end do
+      
+            ! Layer 2-3 interface (vertical strain decoupled)
+            do jj = 1, 2
+                aa(4, 2*jj-1) = aa(4, 2*jj-1) + beth(jj) * kk_p(2) * nu_z(2) 
+            end do
+            do jj = 3, nlayers
+                aa(4, 2*jj-1) = aa(4, 2*jj-1) - beth(jj) * kk_p(3) * nu_z(3) 
+            end do
+            
+            ! Remaining TF interfaces
+            do ii = 3, nlayers - 1
+                do jj = 2, nlayers
+                    aa(2*ii, 2*jj-1) = aa(2*ii, 2*jj-1) &
+                                     + beth(jj)*(kk_p(ii)*nu_z(ii) - kk_p(ii+1)*nu_z(ii+1)) 
+                end do
+            end do
+        end if
     end if
 
     ! Null radial stress at outermost radius at R(nlayers+1)
     aa(2*nlayers, 2*nlayers - 1) = kk_p(nlayers)
     aa(2*nlayers, 2*nlayers    ) = kk_p(nlayers) * cc_par_sig(nlayers) / rad(nlayers+1)**2
 
-    do jj = 1, nlayers ! Plain strain generalisation
+    ! Plain strain generalisation
+    do jj = max(i_tf_bucking, 1), nlayers
         aa(2*nlayers, 2*jj-1) = aa(2*nlayers, 2*jj-1) + beth(jj)*kk_p(nlayers)*nu_z(nlayers)
     end do
     ! ***
@@ -2876,10 +2965,10 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
             ! Continuous radial normal stress at R(ii+1)
             bb(2*ii) = - kk_p(ii) * ( 0.125D0*alpha(ii) * rad(ii+1)**2 * alpha_par_sigr(ii)   &
                                     + 0.5D0*beta(ii) * ( beta_par_sigr(ii) + log(rad(ii+1)) ) &
-                                    + aleph(ii) * nu_z(ii) )        & ! Plain strain generalisation 
+                                    + aleph(ii) * nu_z(ii) )        & ! Plain strain generalisation line
                        + kk_p(ii+1) * ( 0.125D0*alpha(ii+1) * rad(ii+1)**2 * alpha_par_sigr(ii+1)  &
                                       + 0.5D0*beta(ii+1) * ( beta_par_sigr(ii+1) + log(rad(ii+1))) &
-                                      + aleph(ii+1) * nu_z(ii+1) )    ! Plain strain generalisation 
+                                      + aleph(ii+1) * nu_z(ii+1) )    ! Plain strain generalisation line
 
             ! Continuous displacement at R(ii+1)
             bb(2*ii+1) = - 0.125D0*alpha(ii) * rad(ii+1)**3 - 0.5D0*beta(ii) * rad(ii+1)*log(rad(ii+1))  &
@@ -2917,43 +3006,62 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     strain_t(:) = 0.0D0
     r_deflect(:) = 0.0D0
 
-    ! Vertical normal strain (constant)
-    strain_z = sum( beth * c1 )
-    strain_z = strain_z + aleph(i_tf_bucking)
+    ! CS system vertical strain
+    if ( i_tf_bucking >= 2 ) then
+        strain_z_cs = aleph(1)
+        do ii = 1, i_tf_bucking - 1
+            strain_z_cs = strain_z_cs + c1(ii) * beth(ii)
+        end do
+    end if
+    
+    ! TF system vertical normal strain (constant) WRONG IF GRADED COIL
+    strain_z = aleph(nlayers) 
+    do ii = max( 1, i_tf_bucking ), nlayers
+        strain_z = strain_z + c1(ii) * beth(ii)
+    end do
 
-    ! Radial dependent quantities
+
+    ! Radial displacement, stress and strain distributions
     do ii = 1, nlayers
          
-        dradius = (rad(ii+1) - rad(ii)) / dble(n_radial_array)
+        dradius = (rad(ii+1) - rad(ii)) / dble(n_radial_array - 1 )
         do jj = (ii-1)*n_radial_array + 1, ii*n_radial_array
 
             rradius(jj) = rad(ii) + dradius*dble(jj - n_radial_array*(ii-1) - 1)
 
+            ! Radial normal stress
             sigr(jj) = kk_p(ii)*( c1(ii) + cc_par_sig(ii)*c2(ii)/rradius(jj)**2       &
                                 + 0.125D0*alpha(ii)*alpha_par_sigr(ii)*rradius(jj)**2 &
                                 + 0.5D0*beta(ii)*(beta_par_sigr(ii) + log(rradius(jj)) ) ) 
 
+            ! Toroidal normal stress
             sigt(jj) = kk_p(ii)*( c1(ii) - cc_par_sig(ii)*c2(ii)/rradius(jj)**2       &
                                 + 0.125D0*alpha(ii)*alpha_par_sigt(ii)*rradius(jj)**2 &
                                 + 0.5D0*beta(ii)*(beta_par_sigt(ii) + log(rradius(jj)) ) )
                                      
+            ! Vertical normal stress  
             sigz(jj) = kk_z(ii) * nu_z_eff2(ii) / nu_z(ii)                   &
                      * ( 2.0D0*c1(ii) + 0.5D0*alpha(ii) * rradius(jj)**2     &
                        + 0.5D0*beta(ii) * ( 1.0D0 + 2.0D0*log(rradius(jj)) ) )
 
             ! No vertical strain effect on CS / TF-CS inter layer
-            if ( i_tf_bucking <= 1 .or. ii >= i_tf_bucking ) then
+            ! if ( i_tf_bucking <= 1 .or. ii >= i_tf_bucking ) then
+            if ( ii >= i_tf_bucking ) then
                 sigr(jj) = sigr(jj) + kk_p(ii) * strain_z * nu_z(ii) 
                 sigt(jj) = sigt(jj) + kk_p(ii) * strain_z * nu_z(ii)
                 sigz(jj) = sigz(jj) + kk_z(ii) * strain_z * (1.0D0 - nu_p(ii))
+            else 
+                sigr(jj) = sigr(jj) + kk_p(ii) * strain_z_cs * nu_z(ii) 
+                sigt(jj) = sigt(jj) + kk_p(ii) * strain_z_cs * nu_z(ii)
+                sigz(jj) = sigz(jj) + kk_z(ii) * strain_z_cs * (1.0D0 - nu_p(ii))
             end if
                     
-            ! Radisal strain
+            ! Radial normal strain
             strain_r(jj) = c1(ii) - c2(ii) / rradius(jj)**2                      &
                            + 0.375D0*alpha(ii) * rradius(jj)**2 + 0.5D0*beta(ii) &
                            * (1.0D0 + log(rradius(jj)))
       
-            ! Toroidal strain
+            ! Toroidal normal strain
             strain_t(jj) = c1(ii) + c2(ii) / rradius(jj)**2                       &
                             + 0.125D0*alpha(ii) * rradius(jj)**2 + 0.5D0*beta(ii) & 
                             * log(rradius(jj))
