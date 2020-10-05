@@ -6,18 +6,6 @@ from process.fortran import tfcoil_variables as tfv
 import pytest
 from pytest import approx
 
-@pytest.fixture(scope="module", autouse=True)
-def reinit_fix():
-    """Re-initialise module variables before tests in this module are run.
-    
-    This is run once before the module's tests are run (module scope), ensuring 
-    that all module variables are set to initial values. The individual test 
-    functions then use mocking to avoid changing the module variable values.
-    autouse ensures that this fixture is used automatically by any test function
-    in this module.
-    """
-    fortran.init_module.init_all_module_vars()
-
 def test_calc_u_unplanned_hcd():
     """Test calc_u_unplanned_hcd."""
     expected = 0.02
