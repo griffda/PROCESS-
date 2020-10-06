@@ -2363,7 +2363,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         end if 
         write(sig_file,*) 
         write(sig_file,*) 'Displacement'         
-        write(sig_file,'(t2, "raidal displacement", t20, "(mm)",t26, *(F11.3,3x))') deflect*1.0D3
+        write(sig_file,'(t2, "rad. displacement", t20, "(mm)",t26, *(F11.5,5x))') deflect*1.0D3
         if ( i_tf_plane_stress /= 1 ) then
             write(sig_file,*)
             write(sig_file,*) 'Strain'    
