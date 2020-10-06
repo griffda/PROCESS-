@@ -1510,7 +1510,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         dr_tf_wp, i_tf_tresca, acstf, vforce, &
         ritfc, jwptf, strtf0, strtf1, strtf2, &
         thwcndut, insstrain, strtf2, vforce, tinstf, &
-        acstf, jwptf, insstrain, layer_ins,&
+        acstf, jwptf, insstrain, &
         strtf1, rbmax, thicndut, acndttf, tfinsgap, &
         acasetf, alstrtf, poisson_steel, poisson_copper, poisson_al, &
         n_tf_graded_layers, i_tf_sup, i_tf_bucking, fcoolcp, eyoung_winding, &
@@ -1663,11 +1663,15 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(dp) :: a_oh_turn
     !! CS turn vertica cross section area [m]
 
-    real(dp) :: l_cond_oh
+    real(dp) :: t_cond_oh
     !! Central Solenoid (OH) conduit thickness assuming square conduit [m]
-    !! Used only to get effective radial stress in bucked and wedged
+    !! Used only for bucked and wedged design
     
-    real(dp) :: l_turn_oh
+    real(dp) :: t_cable_oh
+    !! Central Solenoid (OH) turn cable thickness assming square conduit [m]
+    !! Used only for bucked and wedged design
+
+    real(dp) :: t_turn_oh
     !! Central Solenoid (OH) turn dimension [m]
 
     real(dp) :: fac_sig_t
@@ -1762,14 +1766,44 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! Superconducting CS
         if ( ipfres == 0 ) then
 
+            ! Getting the turn dimention from scratch 
+            ! as the TF is called before CS in caller.f90
+            !-!
+
+            ! CS vertical cross-section area [m2]
+            a_oh = 2.0D0 * hmax * ohhghf * ohcth
+
+            ! Maximum current in Central Solenoid, at either BOP or EOF [MA-turns]
+            ! Absolute value
+            curr_oh_max = 1.0D-6*max(coheof,cohbop)*a_oh
+    
+            !  Number of turns
+            n_oh_turns = 1.0D6 * curr_oh_max / cptdin(sum(ncls))
+    
+            ! CS Turn vertical cross-sectionnal area    
+            a_oh_turn = a_oh / n_oh_turns
+    
+            ! Central Solenoid (OH) turn dimension [m]
+            t_turn_oh = sqrt( a_oh_turn )
+    
+            ! OH/CS conduit thickness calculated assuming square conduit [m]  
+            ! The CS insulation layer is assumed to the same as the TF one
+            t_cond_oh = 0.5D0*(t_turn_oh - 2.0D0*thicndut - &
+                               sqrt( (2.0D0*thicndut - t_turn_oh)**2 - &
+                               oh_steel_frac * t_turn_oh**2) )
+
+            ! CS turn cable space thickness
+            t_cable_oh = t_turn_oh - 2.0D0 * ( t_cond_oh + thicndut )
+            !-!
+
             ! Effective young modulus assuming the parallel case
             ! Rem the oh_steel_fraction is potentially a volumic one ... To be checked 
             eyoung_p(1) = oh_steel_frac * eyoung_steel + (1.0D0 - oh_steel_frac) * eyoung_winding
-            eyoung_z(1) = oh_steel_frac * eyoung_steel + (1.0D0 - oh_steel_frac) * eyoung_winding
+            eyoung_z(1) = eyngeff( eyoung_steel, eyoung_ins, thicndut, t_cond_oh, t_cable_oh )
             poisson_p(1) = poisson_steel
             poisson_z(1) = poisson_steel
 
-        ! resistive CS (assumed to copper)
+        ! resistive CS (copper)
         else
             ! Here is a rough approximation
             eyoung_p(1) = eyoung_copper
@@ -2036,36 +2070,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! --- 
     if ( i_tf_bucking >= 2 .and. ipfres == 0 ) then
 
-        ! Getting the turn dimention from scratch 
-        ! as the TF is called before CS in caller.f90
-        !-!
-
-        ! CS area [m2]
-        a_oh = 2.0D0 * hmax * ohhghf * ohcth
-
-        ! Maximum current in Central Solenoid, at either BOP or EOF [MA-turns]
-        ! Absolute value
-        curr_oh_max = 1.0D-6*max(coheof,cohbop)*a_oh
-
-        !  Number of turns
-        n_oh_turns = 1.0D6 * curr_oh_max / cptdin(sum(ncls))
-
-        ! CS Turn vertical cross-sectionnal area    
-        a_oh_turn = a_oh / n_oh_turns
-
-        ! Central Solenoid (OH) turn dimension [m]
-        l_turn_oh = sqrt( a_oh_turn )
-
-        ! OH/CS conduit thickness calculated assuming square conduit [m]  
-        ! The insulation layer is set to 0 in the calculation
-        ! Used only to get effective radial stress
-        l_cond_oh = 0.5D0*(l_turn_oh - 2.0D0*layer_ins - &
-                            sqrt( (2.0D0*layer_ins - l_turn_oh)**2 - &
-                            oh_steel_frac * l_turn_oh**2) )
-        !-!
-
         ! Central Solenoid (OH) steel conduit stress unsmearing factor
-        fac_oh = 0.5D0 * l_turn_oh / l_cond_oh 
+        fac_oh = 0.5D0 * t_turn_oh / t_cond_oh 
 
         do ii = 1, n_radial_array
 
