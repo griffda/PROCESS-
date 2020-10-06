@@ -2078,6 +2078,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             ! CS (OH) superconducting case stress unsmearing
             sig_tf_r(ii) = sig_tf_r(ii) * fac_oh
             sig_tf_t(ii) = sig_tf_t(ii) / oh_steel_frac
+            sig_tf_z(ii) = sig_tf_z(ii) * fac_oh
         end do
     end if
     ! ---
@@ -2085,7 +2086,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     ! No TF vertical forces on CS and CS-TF layer (bucked and wedged only)
     ! ---
-    if ( i_tf_bucking >= 2 ) then
+    ! This correction is only applied if the plane stress model is used
+    ! as the generalized plane strain calculates the vertical stress properly
+    if ( i_tf_bucking >= 2 .and. i_tf_plane_stress == 1 ) then
         do ii = 1, (n_tf_bucking-1)*n_radial_array
             sig_tf_z(ii) = 0.0D0
         end do
@@ -2130,7 +2133,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         fac_sig_z = eyoung_al / eyoung_wp_z_eff
 
         ! Toroidal WP steel stress unsmearing factor
-        ! NO CALCULTED FOR THE MOMENT (to be done laters)
+        ! NO CALCULTED FOR THE MOMENT (to be done later)
         fac_sig_t = 1.0D0
         fac_sig_r = 1.0D0
     
@@ -2939,7 +2942,7 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
             
             ! Remaining TF interfaces
             do ii = 3, nlayers - 1
-                do jj = 2, nlayers
+                do jj = 3, nlayers
                     aa(2*ii, 2*jj-1) = aa(2*ii, 2*jj-1) &
                                      + beth(jj)*(kk_p(ii)*nu_z(ii) - kk_p(ii+1)*nu_z(ii+1)) 
                 end do
