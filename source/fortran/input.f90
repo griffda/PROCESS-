@@ -160,7 +160,7 @@ contains
       rinboard, fmstf, blnkoth, fseppc, plsepo, ddwi, fmssh, blnkith, &
       ohcth, plsepi, fmsoh, blbmith, gapoh, fcspc, scraplo, vgaptop, &
       blbpoth, gapds, fwith, vgap, shldith, sigallpc, tfootfi, f_avspace,&
-      r_cp_top
+      r_cp_top, f_r_cp
     use buildings_variables, only: hcwt, conv, wgt, trcl, rxcl, rbwt, mbvfac, &
       esbldgm3, rbvfac, fndt, row, wgt2, pibv, clh1, stcl, clh2, pfbldgm3, &
       shmf, tfcbv, hccl, rbrt, triv, shov, admv, wsvfac
@@ -1627,6 +1627,9 @@ contains
       case ('r_cp_top')
          call parse_real_variable('r_cp_top', r_cp_top, 0.0010D0, 10.0D0, &
               'Top CP outer radius (ST only) (m)')
+      case ('f_r_cp')
+         call parse_real_variable('f_r_cp', f_r_cp, 1.0D0, 100.0D0, &
+              'Ratio between the top and the midplane TF CP outer radius (-) ')
        case ('scrapli')
           call parse_real_variable('scrapli', scrapli, 0.0D0, 10.0D0, &
                'Inboard scrapeoff length (m)')
