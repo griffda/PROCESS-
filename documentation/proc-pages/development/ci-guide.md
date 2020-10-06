@@ -1,12 +1,13 @@
 
 # Introduction
+[PDF of webpage](../pdf/ci-guide.pdf)
 
 The CI jobs run using the Ubuntu image that has been uploaded to the repository 
 called `git.ccfe.ac.uk:4567/process/process/ci-image`.
 
 ## CI Configuration File
 
-The GitLab CI system configuration is defined in the file
+The GitLab CI system configuration is defined in the file:
 
 > `./.gitlab-ci.yml`
 
@@ -121,7 +122,7 @@ Link your local Docker to the PROCESS GitLab image [registry](https://git.ccfe.a
 docker login git.ccfe.ac.uk:4567
 ```
 
-In the top level of the repository run
+In the top level of the repository run:
 
 ```bash
 gitlab-runner exec docker <job_name>

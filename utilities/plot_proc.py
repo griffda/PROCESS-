@@ -2459,9 +2459,9 @@ if __name__ == '__main__':
 
     # Magnets related
     n_tf = m_file.data["n_tf"].get_scan(scan)
-    if i_tf_sup is 1: # If superconducting magnets 
+    if i_tf_sup == 1: # If superconducting magnets 
         wwp1 = m_file.data["wwp1"].get_scan(scan)
-        if i_tf_turns_integer is 0:
+        if i_tf_turns_integer == 0:
             wwp2 = m_file.data["wwp2"].get_scan(scan)
         dr_tf_wp = m_file.data["dr_tf_wp"].get_scan(scan)
         tinstf = m_file.data["tinstf"].get_scan(scan)
