@@ -3,29 +3,25 @@
 
 The figure below shows schematically the layout of a typical tokamak
 as modelled by PROCESS. This is the so-called 'build' of the machine, the
-relative locations of the major components is shown below. 
+relative locations of the major components is shown below.
 
-<figure>
-    <center>
-    <img src="../../img/build_d.png" alt="tokamak-layout-d" 
-    title="Machine build for D-shaped major components" 
-    width="650" height="100" />
-    <br><br>
-    <figcaption><i>Figure 1: Machine build for D-shaped major components</i></figcaption>
-    <br>
-    </center>
-</figure>
+<img
+    title="Machine build for D-shaped major components"
+    src="/../images/build_d.png"
+    alt="tokamak-layout-d"
+    width="650px"
+    >
 
-<figure>
-    <center>
-    <img src="../../img/build_e.png" alt="tokamak-layout-e" 
-    title="Machine build for elliptical major components" 
-    width="650" height="100" />
-    <br><br>
-    <figcaption><i>Figure 2: Machine build for elliptical major components</i></figcaption>
-    <br>
-    </center>
-</figure>
+Figure 1: *Machine build for D-shaped major components*
+
+<img
+    title="Machine build for elliptical major components"
+    src="/../images/build_e.png"
+    alt="tokamak-layout-e"
+    width="650px"
+    >
+
+Figure 2: *Machine build for elliptical major components*
 
 Their positions are referenced to the $(R,Z)$ coordinate system, where $R$ is 
 the radial distance from the vertical centreline (axis) of the torus, and $Z$ is 
@@ -35,7 +31,7 @@ different for single null plasma devices (see Figure 3 below).
 
 <figure>
     <center>
-    <img src="../../img/build_e_snd.png" alt="tokamak-layout-e-sn" 
+    <img src="../../images/build_e_snd.png" alt="tokamak-layout-e-sn" 
     title="Machine build for elliptiacal major components single-null" 
     width="650" height="100" />
     <br><br>
@@ -62,5 +58,5 @@ using input parameter `fwbsshape`, which should be
 Most of the thicknesses shown in Figures 1 and 2 are input parameters, so are 
 not changed during the course of the simulation. The rest are calculated by the 
 code during execution. In addition, some of the component sizes can be used 
-as iteration variables (see [input file page](io/input-guide.md) and 
-[solver page](solver-guide.md)) to help in the optimisation process.
+as iteration variables (see [input file page](../io/input-guide.md) and 
+[solver page](../solver/solver-guide.md)) to help in the optimisation process.

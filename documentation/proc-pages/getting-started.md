@@ -1,5 +1,9 @@
+# Getting Started
+[PDF of webpage](pdf/getting-started.pdf)
 
-# Software Requirements
+## Software Requirements
+
+The following software needs to be installed prior to installing and running PROCESS:
 
 | Software | Version |
 | - | - |
@@ -9,9 +13,9 @@
 | texlive    | 2018+ |
 | googletest | 1.8+  |
 
-# UKAEA Freia Cluster
+## UKAEA Freia Cluster
 
-If working on the UKAEA Freia clusters add to your `.bashrc`
+If working on the UKAEA Freia clusters add to your `.bashrc`:
 
 ```bash
 module unload ifort
@@ -23,12 +27,11 @@ export GTEST=/home/PROCESS/testing_frameworks/googletest/googletest
 export PYTHONPATH=$PYTHONPATH:[path to process folder]/utilities
 ```
 
-# Directory Structure
+## Directory Structure
 
 The folder structure for the PROCESS system prior to compilation is described below:
 
 ```
-.
 +-- CMakeLists.txt                      : For building and compiling files
 +-- CHANGELOG.md                        : A list of the major changes
 +-- data/                               : data files
@@ -53,7 +56,7 @@ The folder structure for the PROCESS system prior to compilation is described be
 +-- utilities/                          : Python utilities files
 ```
 
-# Clone Repository
+## Clone Repository
 
 To clone the default branch (develop) from the remote enter:
 
@@ -61,7 +64,7 @@ To clone the default branch (develop) from the remote enter:
 git clone git@git.ccfe.ac.uk:process/process.git <folder_name>
 ```
 
-Where `<folder_name>`is the name of the folder which will be created when 
+Where `<folder_name>` is the name of the folder which will be created locally when 
 cloning the repository.
 
 To get a different branch:
@@ -70,10 +73,11 @@ To get a different branch:
 git clone git@git.ccfe.ac.uk:process/process.git -b <branch_name> <folder_name>
 ```
 
-Where `<branch_name>`is the name of the branch to checkout from the remote 
+Where `<branch_name>` is the name of the branch to checkout from the remote 
 repository.
+<br><br>
 
-# The `process.py` Script
+## The `process.py` script
 In the project root directory, there's a script called `process.py` which aims 
 to make running the code simpler for newcomers and more efficient for more 
 experienced users.
@@ -84,7 +88,7 @@ First, make sure that the `utilities` directory is on your PYTHONPATH:
 echo $PYTHONPATH
 ```
 
-If this includes the `process/utilities` directory already, then proceed to the 
+If this includes the `/utilities` directory already, then proceed to the 
 next step. Otherwise, add it to your PYTHONPATH:
 
 ```bash
@@ -93,7 +97,7 @@ export PYTHONPATH=$PYTHONPATH:~/<process>/utilities/
 
 where `<process>` is the path to the PROCESS directory.
 
-Navigate into the PROCESS root directory (where `process.py` is located), and 
+Navigate into the PROCESS root directory, where `process.py` is located, and 
 run:
 
 ```bash
@@ -108,14 +112,17 @@ validate and run on an input (`-i`) file, run:
 ./process.py -b -i tracking/baseline_2018/baseline_2018_IN.DAT
 ```
 
-The output files will be put in the same directory as the supplied input file.
+The output files will be put in the same directory as the supplied input file. 
+Detailed information for the `process.py` utility can be found 
+[here](io/utilities-guide.md).
+<br><br>
 
-# Compiling the Code
+## Compiling the Code
 
 !!! Note "On Freia cluster"
     Replace the `cmake` commands below with `cmake3`
 
-Inside the PROCESS directory, run **cmake** to build, compile and generate the 
+Inside the PROCESS directory, run `cmake` to build, compile and generate the 
 executable and shared object:
 
 ```bash
@@ -137,19 +144,20 @@ or to compile into single executable without dll:
 cmake -H. -Bbuild -Ddll=OFF
 ``` 
 
-After compile the code giving the build directory
+After compile the code giving the build directory:
 
 ```bash
 cmake --build build
 ```
 
-This step will create a folder called `bin`, which contains three files (except with `-Ddll=OFF` `libPROCESS_calc_engine.so` will not be inside `bin`)
+This step will create a folder called `bin`, which contains three files (except with `-Ddll=OFF` `libPROCESS_calc_engine.so` will not be inside `bin`):
 
 - `process.exe`
 - `process_GTest.exe`
 - `libPROCESS_calc_engine.so`
+<br><br>
 
-## Custom Build Targets
+### Custom Build Targets
 
 ```bash
 cmake --build build --target <target_name>
@@ -173,9 +181,9 @@ cmake --build build --target <target_name>
 
     `export PYTHONPATH=$PYTHONPATH:/home/<user_name>/<path_to_process>/utilities/`
 
-# Running PROCESS
+## Running PROCESS
 
-Create input file IN.DAT ([see input file section](io/input-guide.md))
+Create input file IN.DAT ([see input file section](io/input-guide.md)).
 
 To run the code (by default will try to use an input file called `IN.DAT` in 
 the current directory):
@@ -184,7 +192,7 @@ the current directory):
  ./process.exe
 ```
 
-To see the code help page
+To see the code help page:
 
  ```bash
  ./process.exe help
@@ -202,12 +210,14 @@ Optionally, one can run the `utilities/run_process.py` script in conjunction
 with a config file to randomly vary the starting point of the input parameter 
 set until a feasible solution is found. To look a the utility documentation 
 compile the utilities document as described [here](io/utilities-guide.md).
+<br><br>
 
-# Troubleshooting
+## Troubleshooting
 
-Experience has shown that the first few attempts at running `PROCESS` with a new file tends to produce infeasible results = that is, the code will not find a consistent set of machine parameters. The highly non-linear nature of the numerics of `PROCESS` is the reason for this difficulty, and it often requires a great deal of painstaking adjustment of the input file to overcome. The utility `a_to_b` is useful for this situation.
+Experience has shown that the first few attempts at running `PROCESS` with a new file tends to produce infeasible results; that is, the code will not find a consistent set of machine parameters. The highly non-linear nature of the numerics of `PROCESS` is the reason for this difficulty, and it often requires a great deal of painstaking adjustment of the input file to overcome. The utility `a_to_b` is useful for this situation.
+<br><br>
 
-## Error handling
+### Error handling
 
 In general, errors detected during a run are handled in a consistent manner, with the code producing useful diagnostic messages to help the user understand what has happened.
 
@@ -215,15 +225,16 @@ There are three levels of errors and warnings that may occur:
 
 Level 1: An *informational* message is produced under certain conditions, for example if the code modified the user's input choice for some reason.
 
-Level 2: A *warning"* message is produced if a non-fatal situation has occurred that may result in an output case that is inaccurate or unreliable in some way.
+Level 2: A *warning* message is produced if a non-fatal situation has occurred that may result in an output case that is inaccurate or unreliable in some way.
 
 Level 3: An *error* message will occur is a severe of fatal error has occurred and the program cannot continue.
 
 These messages are printed on the screen during the course of a run, and those still active at the final (feasible or unfeasible) solution point are also written to the end of the output file (messages encountered during the iteration process are not copied to the output file, as the convergence to a valid solution might resolve some of the warnings produced earlier in the solution process).
 
 The `error_status` variable returns the highest security level that has been encountered (or zero if no abnormal conditions have been found); of a severe error (level 3) is flagged at any point the program is terminated immediately. The final message number encountered during a run is returned via output variable `error_id` . In addition, with certain messages, a number of diagnostic values may also be given; these can be used to provide extra diagnostic information if the source code is available.
+<br><br>
 
-## General problems
+### General problems
 
 A code of the size and complexity of `PROCESS` contains myriads of equations and variables. Virtually everything depends indirectly on everything else because of the nature of the code structure, so perhaps it is not surprising that it is often difficult to achieve a successful outcome.
 
@@ -234,8 +245,9 @@ Occasionally arithmetic ("NaN") errors are reported. They usually occur when the
 The error messages produced by the code attempt to provide diagnostic information, telling the user where the problems occurs, and also suggest a possible solution. These messages are out of necessity brief, and so cannot promise to lead to a more successful outcome.
 
 The is the option to turn on extra debugging output; to do this, set `verbose = 1` in the input file.
+<br><br>
 
-## Optimisation problems
+### Optimisation problems
 
 On reflection it is perhaps surprising that `PROCESS` ever does manage to find the global minimum figure of merit value, if there are `nvar` iteration variables active the search is over `nvar`-dimensional parameter space, in which there may be many shallow minima of approximately equal depth. Remember that `nvar` is usually of the order of twenty.
 
@@ -244,12 +256,13 @@ The machine found by `PROCESS` may not, therefore, be the absolute optimal devic
 Scans should be started in the middle of a range of values, to try to keep the scan within the same family of machines. The optimum machine found may otherwise suddenly jump to a new region of parameter space, causing the output variables to seem to vary unpredictably with the scanning variable.
 
 It should be noted that in general the machine produced by `PROCESS` will always sit against one or more operation limits. If, during a scan, the limit being leant upon changes (i.e. if the machine jumps from leaning on the beta limit to leaning on the density limit) the output parameters may well become discontinuous in gradient, and trends may suddenly change direction.
+<br><br>
 
-## Unfeasible results
+### Unfeasible results
 
 In the numerics section of the output file, the code indicates whether the run produced a feasible ot unfeasible result.
 
-The former implies a successful outcome, although it is always worth checking that the sum of the squares of the constraint residuals (`sqsumsq`) is small ($~10^{-3}$ or less); the code will issue a warning if the solver reports convergence but the value of `sqsumsq` exceeds $10^{-2}$. If this occurs, reducing the value of the HYBRD tolerance `ftol` or `VMCON` tolerance `epsvmc` as appropriate should indicate whether the result is valid ot not; the output can usually be trusted of (1) the constraint residuals<sup>[1](#footnote1)</sup> fall as the tolerance is reduced to about $10^{-8}$, and (2) the code indicates that a feasible solution is still found.
+The former implies a successful outcome, although it is always worth checking that the sum of the squares of the constraint residuals (`sqsumsq`) is small ($~10^{-3}$ or less); the code will issue a warning if the solver reports convergence but the value of `sqsumsq` exceeds $10^{-2}$. If this occurs, reducing the value of the HYBRD tolerance `ftol` or `VMCON` tolerance `epsvmc` as appropriate should indicate whether the result is valid ot not; the output can usually be trusted of (1) the constraint residuals[^1] fall as the tolerance is reduced to about $10^{-8}$, and (2) the code indicates that a feasible solution is still found.
 
 An unfeasible result occurs if `PROCESS` cannot find a set of values for the iteration variables which satisfies all the given constraints. In this case, the values of the constraint residues shown in the output give some indication of which constraint equations are not being satisfied - those with the highest residues should be examined further. In optimisation mode, the code also indicates which iteration variables lie at the edge of their allowed range.
 
@@ -270,10 +283,9 @@ Similarly, the order in which the constraint equations and iteration variables a
 Another technique in such situations may be to change the finite difference step length `epsfcn`, as this might subtly change the path taken in the approach towards a solution.
 
 It may be the case that the act of satisfying all the required constraints is impossible. No machine can exist if the allowed operating regime is too restrictive, or if two constraints require conflicting (non-overlapping) parameters spaces. In this case some relaxation of the requirements is needed for the code to produce a successful machine design.
+<br><br>
 
-<a name="footnote1">1</a>: The constraint residuals are the final values of $c_i$ in the constraint equations. The value `sqsumsq` is the square root of the sum of the squares of these residuals.
-
-## Hints
+### Hints
 
 The above sections should indicate that it is the complex inter-play between the constraint equations and the iteration variables that determines whether the code will eb successful at producing a useful result. It can be somewhat laborious process to arrive at a working vase, and experience is often of great value in this situation.
 
@@ -282,3 +294,6 @@ It should be remembered that sufficient iteration variables should be used to so
 The lower and upper bounds of the iteration variables are all available to be changed in the input file. Constraints can be relaxed in a controlled manner by moving these bounds, although in some cases care should be taken to ensure that un-physical values cannot occur. The code indicates which iteration variables lie at the edge of their range.
 
 It is suggested that constraint equations should be added one at a time, with required new iteration variables activated at each step. If the situation becomes unfeasible it can be helpful to reset the initial iteration variable values to those shown in the output from a previous feasible case and rerun the code.
+<br><br>
+
+[^1]: The constraint residuals are the final values of $c_i$ in the constraint equations. The value `sqsumsq` is the square root of the sum of the squares of these residuals.

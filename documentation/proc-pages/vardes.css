@@ -39,3 +39,25 @@ th, td {
 .vardes .col4 {
     width: 45%;
 }
+
+/*-------------------- IMAGES --------------------*/
+
+.logo {
+    width:200px;
+}
+
+@media only screen and (max-width: 767px) {
+    .logo {
+        width:35%;
+    }
+  }
+
+  .image {
+    width:75%;
+}
+
+@media only screen and (max-width: 767px) {
+    .image {
+        width:100%;
+    }
+  }
