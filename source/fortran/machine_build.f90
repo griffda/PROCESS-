@@ -135,9 +135,6 @@ contains
              call report_error(256)
           end if
 
-          ! CP TF top / mid-plane radii fraction
-          f_r_cp = r_cp_top / r_tf_inboard_out
-
        ! Use the top CP radius fracion as an input if f_r_cp is user defined
        else if ( abs(f_r_cp + 1.0D0) > epsilon(f_r_cp) ) then 
           r_cp_top = f_r_cp * r_tf_inboard_out         
@@ -160,9 +157,6 @@ contains
                call report_error(115)
              end if
           end if
-       
-          ! CP TF top / mid-plane radii fraction
-          f_r_cp = r_cp_top / r_tf_inboard_out
        end if 
     end if
 

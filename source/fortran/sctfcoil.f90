@@ -3690,6 +3690,9 @@ subroutine outtf(outfile, peaktfflag)
     20 format(i4,t10,f10.3,t25,f10.3)      
 
     if ( itart == 1 ) then
+        ! Re-calculating f_r_cp 
+        f_r_cp = r_cp_top / r_tf_inboard_out 
+
         call osubhd(outfile,'Tapered Centrepost Dimensions:')
         call ovarre(outfile,'Radius of the centrepost at the midplane (m)','(r_tf_inboard_out)',r_tf_inboard_out)
         call ovarre(outfile,'Radius of the ends of the centrepost (m)','(r_cp_top)',r_cp_top)
