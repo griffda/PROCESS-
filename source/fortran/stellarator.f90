@@ -643,6 +643,9 @@ contains
                   q_neo_e, q_neo_D, q_neo_a, q_neo_T, g_neo_e, g_neo_D, g_neo_a, g_neo_T, &
                   dndt_neo_e, dndt_neo_D, dndt_neo_a, dndt_neo_T, dndt_neo_fuel, dmdt_neo_fuel, total_q_neo_e
 
+    ! These parameters are used for the stellarator 0.5D turbulence module
+    real(dp) :: q_turb, chi_turb, total_q_turb
+
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !  Calculate plasma composition
     ! Issue #261 Remove old radiation model
@@ -828,6 +831,8 @@ contains
          call ovarre(outfile,'Total 0D heat flux (r=rhocore) (MW/m2)','(q_PROCESS)',q_PROCESS)
          call ovarre(outfile,'Total neoclassical flux (r=rhocore) (MW/m2)','(total_q_neo)',total_q_neo)
          call ovarre(outfile,'Total neoclassical flux from 4*q_e (r=rhocore) (MW/m2)','(total_q_neo_e)',total_q_neo_e)
+         call ovarre(outfile,'Total turbulence flux from 2*q_e (r=rhocore) (MW/m2)','(total_q_turb)',total_q_turb)
+
          call ovarre(outfile,'Total heat flux due to neoclassical energy transport (MW/m2): ','(q_neo)',q_neo)
          call ovarre(outfile,'Total heat flux due to neoclassical particle transport (MW/m2): ','(gamma_neo)',gamma_neo)
          call ovarre(outfile,'Total fuel (DT) particle flux due to neoclassical particle transport (1/s): ',&
@@ -930,6 +935,8 @@ contains
          gamma_neo =  sum(neo_at_rhocore%Gamma_flux * neo_at_rhocore%profiles%temperatures*1e-6)
 
          total_q_neo = sum(neo_at_rhocore%q_flux*1e-6 + neo_at_rhocore%Gamma_flux * neo_at_rhocore%profiles%temperatures*1e-6)
+
+         !               Factor 4 to encounter for ion contribution and Er effects
          total_q_neo_e = 2.0d0*2.0d0* (neo_at_rhocore%q_flux(1)*1e-6 + neo_at_rhocore%Gamma_flux(1)* &
                          neo_at_rhocore%profiles%temperatures(1)*1e-6)
 
@@ -962,7 +969,41 @@ contains
 
       end subroutine calc_neoclassics
       
- 
+      
+      subroutine calc_turbulence_sanity
+         !! Routine to calculate the turbulence sanity check related parameters
+         !! author: J Lion, IPP Greifswald
+         !! This routine calculates the heat fluxes due to turbulence by using
+         !  a crude approximation (consider this to be a placeholder)
+         !  Turkin (2011): https://doi.org/10.1063/1.3553025
+         !
+         !  NOT used.
+         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+         use physics_variables, only: powerht,alphan,rminor,te0,ne0
+         use impurity_radiation_module, only: coreradius
+         use const_and_precisions, only: keV_, pi, mp_
+         use neoclassics_module, only: neoclassics,init_neoclassics
+         use stellarator_variables, only: iotabar
+      
+         implicit none
+      
+         !  Arguments
+      
+         !  Local variables
+         type(neoclassics) :: neo_at_rhocore
+         real(dp) :: drte
+
+         chi_turb = 0.035d0 * powerht**0.75/(((1+alphan) * (1-coreradius**2))**alphan) ! m^2/s
+
+         !       drho/dr      * dte/drho
+         drte = -1.0d0/rminor * 2.0d0 * coreradius * (1.0d0 - coreradius**2)**(-1.0d0 + alphat) * te0*alphat
+
+         q_turb = - chi_turb * ne0 * (1.0d0-coreradius**2)**alphat * drte * 1.0d-6 * keV_
+
+         total_q_turb = 2.0d0 * q_turb
+
+      end subroutine calc_turbulence_sanity
+      
 
   end subroutine stphys
 
@@ -1236,7 +1277,7 @@ contains
 
     ! The peaking factor, obtained as precalculated parameter
 
-    ! wallpf = config%neutron_peakfactor
+    wallpf = config%neutron_peakfactor
 
     !  Blanket neutronics calculations
 
@@ -2050,7 +2091,7 @@ contains
    dene = min(dene_old, ne0_max/(1.0d0+alphan))
 
    bt_old = bt
-   bt = bt_ecrh_max
+   bt = min(bt_ecrh_max,bt)
 
    call stphys(nout,0)
    powerht_out = powerht
@@ -2512,8 +2553,10 @@ contains
     real(dp), allocatable, dimension(:) ::   jcrit_vector,RHS,LHS,awp, B_max_k
 
     real(dp) :: ap,vd,f_scu, awp_min, awpc, awp_tor, awp_rad, &
-                           b_vert_max, awptf, r_tf_inleg_mid, radvv, tf_total_h_width, &
-                           tfborev, min_bending_radius, jwdgpro2, coilcoilgap
+               b_vert_max, awptf, r_tf_inleg_mid, radvv, tf_total_h_width, &
+               tfborev, min_bending_radius, jwdgpro2, coilcoilgap, &
+               max_lateral_force_density, max_radial_force_density, &
+               centering_force_max_MN, centering_force_min_MN, centering_force_avg_MN
 
     integer :: N_it,k
 
@@ -2716,7 +2759,7 @@ contains
      tfcryoarea = config%coilsurface * f_r**2 *1.1D0 !1.1 to scale it out a bit. Should be coupled to winding pack maybe.
  
      ! Minimal bending radius:
-     min_bending_radius = config%min_bend_radius * f_r 
+     min_bending_radius = config%min_bend_radius * f_r * 1/(1-thkwp/(2*r_coil_minor))
 
    ! End of general coil geometry values
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2784,6 +2827,15 @@ contains
     ! The force density scaling is according to ~I*B/A/N which is (apart from the N scaling) exact
     max_force_density = config%max_force_density *f_I/f_N * bmaxtf/config%WP_bmax *config%WP_area/awptf
     !
+    max_lateral_force_density = config%max_lateral_force_density *f_I/f_N * bmaxtf/config%WP_bmax *config%WP_area/awptf
+    max_radial_force_density = config%max_radial_force_density *f_I/f_N * bmaxtf/config%WP_bmax *config%WP_area/awptf
+    !
+    ! F = f*V = B*j*V \propto B/B0 * I/I0 * A0/A * A/A0 * len/len0
+    centering_force_max_MN = config%centering_force_max_MN *f_I/f_N * bmaxtf/config%WP_bmax * config%coillength/n_tf/tfleng
+    centering_force_min_MN = config%centering_force_min_MN *f_I/f_N * bmaxtf/config%WP_bmax * config%coillength/n_tf/tfleng
+    centering_force_avg_MN = config%centering_force_avg_MN *f_I/f_N * bmaxtf/config%WP_bmax * config%coillength/n_tf/tfleng
+
+    max_force_density = config%max_force_density *f_I/f_N * bmaxtf/config%WP_bmax *config%WP_area/awptf
     ! Approximate, very simple maxiumum stress: (needed for limitation of icc 32)
     ! This should be the stress on the ground insulation
     strtf2 = max_force_density * thkwp *1.0D6 ! in Pa
@@ -3288,8 +3340,6 @@ contains
       call ovarre(outfile,'Conduit case thickness (m)','(thwcndut)',thwcndut)
       call ovarre(outfile,'Cable insulation thickness (m)','(thicndut)',thicndut)
 
-
-
       ap = awptf
       call osubhd(outfile,'Winding Pack Information :')
       call ovarre(outfile,'Winding pack area','(ap)',ap)
@@ -3312,7 +3362,14 @@ contains
       call osubhd(outfile,'Forces and Stress :')
       call ovarre(outfile,'Maximal force density (MN/m3)','(max_force_density)',max_force_density)
       call ovarre(outfile,'Maximal stress (approx.) (MPa)','(strtf2)',strtf2*1.0D-6)
-  
+
+      call ovarre(outfile,'Maximal lateral force density (MN/m3)','(max_lateral_force_density)',max_lateral_force_density)
+      call ovarre(outfile,'Maximal radial force density (MN/m3)','(max_radial_force_density)',max_radial_force_density)
+
+      call ovarre(outfile,'Max. centering force (coil) (MN)','(centering_force_max_MN)',centering_force_max_MN)
+      call ovarre(outfile,'Min. centering force (coil) (MN)','(centering_force_max_MN)',centering_force_min_MN)
+      call ovarre(outfile,'Avg. centering force per coil (MN)','(centering_force_max_MN)',centering_force_avg_MN)
+      
       call osubhd(outfile,'Quench Restrictions :')
       call ovarre(outfile,'Allowable stress in vacuum vessel (VV) due to quench (Pa)','(sigvvall)',sigvvall)
       call ovarre(outfile,'Minimum allowed quench time due to stress in VV (s)','(taucq)',taucq, 'OP ')

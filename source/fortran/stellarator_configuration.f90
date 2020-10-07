@@ -132,8 +132,18 @@ module stellarator_configuration
        real(dp) max_radial_force_density
        !  Maximal radial force density of the coil set [MN/m]
 
+       real(dp) centering_force_max_MN
+       !  Maximal centering force of a coil in the coil set [MN]
+
+       real(dp) centering_force_min_MN
+       !  Minimal centering force of a coil in the coil set (negative means pointing outwards) [MN]
+
+       real(dp) centering_force_avg_MN
+       !  Average centering force the coils in the coil set [MN/coil]
+
        real(dp), dimension(:), allocatable :: D11_star_mono_input
        !  The monoenergetic radial transport coefficients normalized by the plateau value.
+
        real(dp), dimension(:), allocatable :: nu_star_mono_input
        !  The monoenergetic radial transport coefficients normalized by the plateau value.
  
@@ -210,12 +220,19 @@ module stellarator_configuration
              output_config%WP_ratio = 1.2D0 ! The fit values in stellarator config class should be calculated using this value.
  
              output_config%max_force_density = 120.0d0 ! [MN/m^3]
+
+             output_config%max_lateral_force_density = 92.4d0 ! [MN/m^3]
+             output_config%max_radial_force_density = 113.5d0   ! [MN/m^3]
+
+             output_config%centering_force_max_MN = 189.5d0
+             output_config%centering_force_min_MN = -55.7d0
+             output_config%centering_force_avg_MN = 93.0d0
  
              output_config%min_plasma_coil_distance = 1.9d0
  
              output_config%min_bend_radius = 1.0 ! [m]
 
-             output_config%neutron_peakfactor = 1.4
+             output_config%neutron_peakfactor = 1.6
 
              output_config%epseff = 0.015
  
@@ -266,12 +283,19 @@ module stellarator_configuration
              output_config%WP_ratio = 1.3D0
  
              output_config%max_force_density = 120.0d0 ! [MN/m^3]
+
+             output_config%max_lateral_force_density = 87.9d0 ! [MN/m^3]
+             output_config%max_radial_force_density = 109.9d0   ! [MN/m^3]
+
+             output_config%centering_force_max_MN = 226.0d0
+             output_config%centering_force_min_MN = -35.3d0
+             output_config%centering_force_avg_MN = 125.8d0
  
              output_config%min_plasma_coil_distance = 1.7d0
  
              output_config%min_bend_radius = 0.86 ! [m]
  
-             output_config%neutron_peakfactor = 1.4
+             output_config%neutron_peakfactor = 1.6
 
              output_config%epseff = 0.015
 
@@ -317,13 +341,20 @@ module stellarator_configuration
  
              output_config%WP_ratio = 1.3D0
  
-             output_config%max_force_density = 120.0d0 ! Multiply with I^2 [MA] A_wp^(-1) [m^2] to obtain [MN/m^3]
+             output_config%max_force_density = 120.0d0
+
+             output_config%max_lateral_force_density = 96.6d0 ! [MN/m^3]
+             output_config%max_radial_force_density = 130.5d0   ! [MN/m^3]
+
+             output_config%centering_force_max_MN = 428.1d0
+             output_config%centering_force_min_MN = -70.3d0
+             output_config%centering_force_avg_MN = 240.9d0
  
              output_config%min_plasma_coil_distance = 1.78d0
  
              output_config%min_bend_radius = 1.145 ! [m]
  
-             output_config%neutron_peakfactor = 1.4
+             output_config%neutron_peakfactor = 1.6
 
              output_config%epseff = 0.015
 
@@ -367,12 +398,19 @@ module stellarator_configuration
              output_config%WP_ratio = 1.2D0
  
              output_config%max_force_density = 350.0d0 ! [MN/m^3]
+
+             output_config%max_lateral_force_density = 271.1d0 ! [MN/m^3]
+             output_config%max_radial_force_density = 305.2d0   ! [MN/m^3]
+
+             output_config%centering_force_max_MN = 7.95d0
+             output_config%centering_force_min_MN = -2.15d0
+             output_config%centering_force_avg_MN = 3.46d0
  
              output_config%min_plasma_coil_distance = 0.45D0 
  
              output_config%min_bend_radius = 0.186 ! [m]
  
-             output_config%neutron_peakfactor = 1.4
+             output_config%neutron_peakfactor = 1.6
 
              output_config%epseff = 0.015
 
@@ -415,12 +453,19 @@ module stellarator_configuration
              output_config%WP_ratio = 1.2D0
  
              output_config%max_force_density = 250.0d0 ! [MN/m^3]
+
+             output_config%max_lateral_force_density = 116.4d0 ! [MN/m^3]
+             output_config%max_radial_force_density = 148.d0   ! [MN/m^3]
+
+             output_config%centering_force_max_MN = 2.99d0
+             output_config%centering_force_min_MN = -1.29d0
+             output_config%centering_force_avg_MN = 1.61d0
  
              output_config%min_plasma_coil_distance = 0.39D0
  
              output_config%min_bend_radius = 0.39 ! [m]
  
-             output_config%neutron_peakfactor = 1.4
+             output_config%neutron_peakfactor = 1.6
 
              output_config%epseff = 0.015
          
@@ -428,8 +473,6 @@ module stellarator_configuration
           
           case(6)
              ! Init from json
-
-
              output_config = stella_config_json()
           case default
              ! Return some error here. The index is not implemented yet.
@@ -509,8 +552,13 @@ module stellarator_configuration
         call fson_get(stellafile, "max_force_density", output_config%max_force_density)
         call fson_get(stellafile, "min_bend_radius", output_config%min_bend_radius)
         call fson_get(stellafile, "epseff", output_config%epseff)
+        
         call fson_get(stellafile, "max_lateral_force_density", output_config%max_lateral_force_density)
         call fson_get(stellafile, "max_radial_force_density", output_config%max_radial_force_density)
+
+        call fson_get(stellafile, "centering_force_max_MN", output_config%centering_force_max_MN)
+        call fson_get(stellafile, "centering_force_min_MN", output_config%centering_force_min_MN)
+        call fson_get(stellafile, "centering_force_avg_MN", output_config%centering_force_avg_MN)
 
         call fson_get(stellafile, "neutron_peakfactor", output_config%neutron_peakfactor)
 
