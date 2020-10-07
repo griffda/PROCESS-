@@ -49,7 +49,10 @@ if __name__ == '__main__':
     
     ## Step 1 : Data extraction
     # ----------------------------------------------------------------------------------------------
+    # Number of physical quantity value per coil layer
     n_radial_array_layer    = int()
+    
+    # Physical quantities : full vectors
     radius                  = list()
     radial_smeared_stress   = list()
     toroidal_smeared_stress = list()
@@ -66,14 +69,31 @@ if __name__ == '__main__':
     vertical_strain         = list()
     radial_displacement     = list()
     
+    # Physical quantity : WP stress
     wp_radial_stress   = list()
     wp_toroidal_stress = list()
     wp_vertical_stress = list()
-    
 
-    data = list()
-
+    # Physical quantity : values at layer border 
+    bound_radius                  = list()
+    bound_radial_smeared_stress   = list()
+    bound_toroidal_smeared_stress = list()
+    bound_vertical_smeared_stress = list()
+    bound_tresca_smeared_stress   = list()
+    bound_radial_stress           = list()
+    bound_toroidal_stress         = list()
+    bound_vertical_stress         = list()
+    bound_vm_stress               = list()
+    bound_tresca_stress           = list()
+    bound_cea_tresca_stress       = list()
+    bound_radial_strain           = list()
+    bound_toroidal_strain         = list()
+    bound_vertical_strain         = list()
+    bound_radial_displacement     = list()
+  
+   
     # Opening the pandora box
+    data = list()
     with open('../bin/SIG_TF.DAT', 'r') as sig_data :
    
         ii = 0
@@ -91,6 +111,8 @@ if __name__ == '__main__':
     n_points             = int(len(data[2]))
     n_layers             = int(n_points/n_radial_array_layer)
     for ii in range(n_layers):
+
+        # Full vector
         radius                 .append(list())
         radial_stress          .append(list())
         toroidal_stress        .append(list())
@@ -119,10 +141,45 @@ if __name__ == '__main__':
             cea_tresca_stress      [ii].append( data[11][ii*n_radial_array_layer+jj] )
             radial_displacement    [ii].append( data[14][ii*n_radial_array_layer+jj] )
 
+        # Layer lower boundaries values
+        bound_radius                 .append(data[2][ii*n_radial_array_layer])
+        bound_radial_stress          .append(data[3][ii*n_radial_array_layer])
+        bound_toroidal_stress        .append(data[4][ii*n_radial_array_layer])
+        if len(data[5]) == 1:
+            bound_vertical_stress.append( data[5][0]  )
+        else :
+            bound_vertical_stress.append( data[5][ii*n_radial_array_layer])
+        bound_radial_smeared_stress  .append( data[6][ii*n_radial_array_layer])
+        bound_toroidal_smeared_stress.append( data[7][ii*n_radial_array_layer])
+        bound_vertical_smeared_stress.append( data[8][ii*n_radial_array_layer])
+        bound_vm_stress              .append( data[9][ii*n_radial_array_layer])
+        bound_tresca_stress          .append( data[10][ii*n_radial_array_layer])
+        bound_cea_tresca_stress      .append( data[11][ii*n_radial_array_layer])
+        bound_radial_displacement    .append( data[14][ii*n_radial_array_layer])
+
+        # Layer upper boundaries values
+        bound_radius                 .append(data[2][(ii+1)*n_radial_array_layer-1])
+        bound_radial_stress          .append(data[3][(ii+1)*n_radial_array_layer-1])
+        bound_toroidal_stress        .append(data[4][(ii+1)*n_radial_array_layer-1])
+        if len(data[5]) == 1:
+            bound_vertical_stress.append( data[5][0]  )
+        else :
+            bound_vertical_stress.append( data[5][(ii+1)*n_radial_array_layer-1])
+        bound_radial_smeared_stress  .append( data[6][(ii+1)*n_radial_array_layer-1])
+        bound_toroidal_smeared_stress.append( data[7][(ii+1)*n_radial_array_layer-1])
+        bound_vertical_smeared_stress.append( data[8][(ii+1)*n_radial_array_layer-1])
+        bound_vm_stress              .append( data[9][(ii+1)*n_radial_array_layer-1])
+        bound_tresca_stress          .append( data[10][(ii+1)*n_radial_array_layer-1])
+        bound_cea_tresca_stress      .append( data[11][(ii+1)*n_radial_array_layer-1])
+        bound_radial_displacement    .append( data[14][(ii+1)*n_radial_array_layer-1])
+
+
     # TRESCA smeared stress [MPa]
     for ii in range(n_layers):
         tresca_smeared_stress.append(list())
 
+        bound_tresca_smeared_stress.append(max(abs(radial_smeared_stress[ii][0]), abs(toroidal_smeared_stress[ii][0])) + vertical_smeared_stress[ii][0]) 
+        bound_tresca_smeared_stress.append(max(abs(radial_smeared_stress[ii][n_radial_array_layer-1]), abs(toroidal_smeared_stress[ii][n_radial_array_layer-1])) + vertical_smeared_stress[ii][n_radial_array_layer-1]) 
         for jj in range(n_radial_array_layer):
             tresca_smeared_stress[ii].append(max(abs(radial_smeared_stress[ii][jj]), abs(toroidal_smeared_stress[ii][jj])) + vertical_smeared_stress[ii][jj]) 
 
@@ -131,19 +188,23 @@ if __name__ == '__main__':
         for ii in range(n_layers):
             radial_strain.append(list())
             toroidal_strain.append(list())
+            vertical_strain.append(list())
 
+            bound_radial_strain  .append(data[17][ii*n_radial_array_layer]) 
+            bound_toroidal_strain.append(data[18][ii*n_radial_array_layer])
+            bound_vertical_strain.append(data[19][ii*n_radial_array_layer])
+            bound_radial_strain  .append(data[17][(ii+1)*n_radial_array_layer-1]) 
+            bound_toroidal_strain.append(data[18][(ii+1)*n_radial_array_layer-1])
+            bound_vertical_strain.append(data[19][(ii+1)*n_radial_array_layer-1])
             for jj in range(n_radial_array_layer):
                 radial_strain[ii]  .append(data[17][ii*n_radial_array_layer+jj]) 
                 toroidal_strain[ii].append(data[18][ii*n_radial_array_layer+jj])
+                vertical_strain[ii].append(data[19][ii*n_radial_array_layer+jj])
         
         if len(data) >= 21 :
             for jj in range(n_radial_array_layer):
                 wp_vertical_stress.append(data[20][jj])
 
-        for ii in range(n_layers):
-            vertical_strain.append(list())
-            for jj in range(n_radial_array_layer):
-                vertical_strain[ii].append(data[19][ii*n_radial_array_layer+jj])
     else :
         for jj in range(n_radial_array_layer):
             wp_vertical_stress.append(data[15][jj])
@@ -190,21 +251,36 @@ if __name__ == '__main__':
 
     axis_tick_size = 16
     legend_size    = 12
+    mark_size      = 13
+    line_width     = 3.5
+
 
     ## PLOT 1 : Stress summary
     # ------------------------
     if plot_sig :
-        plt.plot(radius[0], radial_stress[0]  , '--', color = 'dodgerblue'    , label = r'$\sigma_{rr}$')
+
+        for ii in range(0, n_layers):
+            plt.plot(radius[ii], radial_stress[ii]  , '-', linewidth = line_width, color = 'lightblue' )
+            plt.plot(radius[ii], toroidal_stress[ii], '-', linewidth = line_width, color = 'wheat'     )
+            plt.plot(radius[ii], vertical_stress[ii], '-', linewidth = line_width, color = 'lightgrey' )
+            plt.plot(radius[ii], tresca_stress[ii]  , '-', linewidth = line_width, color = 'pink'      )
+            plt.plot(radius[ii], vm_stress[ii]      , '-', linewidth = line_width, color = 'violet'    )
+        plt.plot(radius[0], radial_stress[0]  , '--', color = 'dodgerblue'    , label = r'$\sigma_{rr}$'          )
         plt.plot(radius[0], toroidal_stress[0], '--', color = 'orange'        , label = r'$\sigma_{\theta\theta}$')
         plt.plot(radius[0], vertical_stress[0], '--', color = 'mediumseagreen', label = r'$\sigma_{zz}$')
         plt.plot(radius[0], tresca_stress[0]  , '-' , color = 'crimson'       , label = r'$\sigma_{TRESCA}$')
-        plt.plot(radius[0], vm_stress[0]      , '-' , color = 'blueviolet'    , label = r'$\sigma_{Von\ mises}$')
+        plt.plot(radius[0], vm_stress[0]      , '-' , color = 'darkviolet'    , label = r'$\sigma_{Von\ mises}$')
         for ii in range(1, n_layers):
             plt.plot(radius[ii], radial_stress[ii]  , '--', color = 'dodgerblue'     )
             plt.plot(radius[ii], toroidal_stress[ii], '--', color = 'orange'         )
             plt.plot(radius[ii], vertical_stress[ii], '--', color = 'mediumseagreen' )
             plt.plot(radius[ii], tresca_stress[ii]  , '-' , color = 'crimson'        )
-            plt.plot(radius[ii], vm_stress[ii]      , '-' , color = 'blueviolet'     )
+            plt.plot(radius[ii], vm_stress[ii]      , '-' , color = 'darkviolet'     )
+        plt.plot(bound_radius, bound_radial_stress  , '|', markersize = mark_size, color = 'dodgerblue'     )
+        plt.plot(bound_radius, bound_toroidal_stress, '|', markersize = mark_size, color = 'orange'         )
+        plt.plot(bound_radius, bound_vertical_stress, '|', markersize = mark_size, color = 'mediumseagreen' )
+        plt.plot(bound_radius, bound_tresca_stress  , '|', markersize = mark_size, color = 'crimson'        )
+        plt.plot(bound_radius, bound_vm_stress      , '|', markersize = mark_size, color = 'darkviolet'     )
         plt.grid(True)
         plt.ylabel( r'$\sigma$ [$MPa$]', fontsize = axis_font_size )
         plt.xlabel( r'$R$ [$m$]', fontsize = axis_font_size )
@@ -216,18 +292,29 @@ if __name__ == '__main__':
         plt.clf()
         plt.cla()
 
+
     ## PLOT 2 : Smeared stress summary
     # ------------------------
     if plot_sm_sig :
-        plt.plot(radius[0], radial_smeared_stress  [0], '--', color = 'dodgerblue'    , label = r'$\sigma_{rr}^\mathrm{smeared}$')
+
+        for ii in range(n_layers):
+            plt.plot(radius[ii], radial_smeared_stress[ii]  , '-', linewidth = line_width, color = 'lightblue')
+            plt.plot(radius[ii], toroidal_smeared_stress[ii], '-', linewidth = line_width, color = 'wheat'    )
+            plt.plot(radius[ii], vertical_smeared_stress[ii], '-', linewidth = line_width, color = 'lightgrey')
+            plt.plot(radius[ii], tresca_smeared_stress[ii]  , '-', linewidth = line_width, color = 'pink'     )
+        plt.plot(radius[0], radial_smeared_stress  [0], '--', color = 'dodgerblue'    , label = r'$\sigma_{rr}^\mathrm{smeared}$'          )
         plt.plot(radius[0], toroidal_smeared_stress[0], '--', color = 'orange'        , label = r'$\sigma_{\theta\theta}^\mathrm{smeared}$')
-        plt.plot(radius[0], vertical_smeared_stress[0], '--', color = 'mediumseagreen', label = r'$\sigma_{zz}^\mathrm{smeared}$')
-        plt.plot(radius[0], tresca_smeared_stress  [0], '-' , color = 'crimson'       , label = r'$\sigma_{TRESCA}^\mathrm{smeared}$')
+        plt.plot(radius[0], vertical_smeared_stress[0], '--', color = 'mediumseagreen', label = r'$\sigma_{zz}^\mathrm{smeared}$'          )
+        plt.plot(radius[0], tresca_smeared_stress  [0], '-' , color = 'crimson'       , label = r'$\sigma_{TRESCA}^\mathrm{smeared}$'      )
         for ii in range(1, n_layers):
-            plt.plot(radius[ii], radial_smeared_stress  [ii], '--', color = 'dodgerblue'     )
-            plt.plot(radius[ii], toroidal_smeared_stress[ii], '--', color = 'orange'         )
-            plt.plot(radius[ii], vertical_smeared_stress[ii], '--', color = 'mediumseagreen' )
-            plt.plot(radius[ii], tresca_smeared_stress  [ii], '-' , color = 'crimson'        )
+            plt.plot(radius[ii], radial_smeared_stress  [ii], '--', color = 'dodgerblue'    )
+            plt.plot(radius[ii], toroidal_smeared_stress[ii], '--', color = 'orange'        )
+            plt.plot(radius[ii], vertical_smeared_stress[ii], '--', color ='mediumseagreen' )
+            plt.plot(radius[ii], tresca_smeared_stress  [ii], '-' , color = 'crimson'       )
+        plt.plot(bound_radius, bound_radial_smeared_stress  , '|', markersize = mark_size, color = 'dodgerblue'     )
+        plt.plot(bound_radius, bound_toroidal_smeared_stress, '|', markersize = mark_size, color = 'orange'         )
+        plt.plot(bound_radius, bound_vertical_smeared_stress, '|', markersize = mark_size, color = 'mediumseagreen' )
+        plt.plot(bound_radius, bound_tresca_smeared_stress  , '|', markersize = mark_size, color = 'crimson'        )
         plt.grid(True)
         plt.ylabel( r'$\sigma$ [$MPa$]', fontsize = axis_font_size )
         plt.xlabel( r'$R$ [$m$]', fontsize = axis_font_size )
@@ -239,16 +326,25 @@ if __name__ == '__main__':
         plt.clf()
         plt.cla()
 
+
     ## PLOT 3 : Strain summary
     # ------------------------
     if plot_strain and len(data) > 15 :
-        plt.plot(radius[0], radial_strain  [0], '--', color = 'dodgerblue'    , label = r'$\epsilon_{rr}$')
+        
+        for ii in range(n_layers):
+            plt.plot(radius[ii], radial_strain  [ii], '-', linewidth = line_width, color = 'lightblue' )
+            plt.plot(radius[ii], toroidal_strain[ii], '-', linewidth = line_width, color = 'wheat'     )
+            plt.plot(radius[ii], vertical_strain[ii], '-', linewidth = line_width, color = 'lightgrey' )
+        plt.plot(radius[0], radial_strain  [0], '--', color = 'dodgerblue'    , label = r'$\epsilon_{rr}$'          )
         plt.plot(radius[0], toroidal_strain[0], '--', color = 'orange'        , label = r'$\epsilon_{\theta\theta}$')
-        plt.plot(radius[0], vertical_strain[0], '--', color = 'mediumseagreen', label = r'$\epsilon_{zz}$')
+        plt.plot(radius[0], vertical_strain[0], '--', color = 'mediumseagreen', label = r'$\epsilon_{zz}$'          )
         for ii in range(1, n_layers):
-            plt.plot(radius[ii], radial_strain  [ii], '--', color = 'dodgerblue' )
-            plt.plot(radius[ii], toroidal_strain[ii], '--', color = 'orange' )
-            plt.plot(radius[ii], vertical_strain[ii], '--', color = 'mediumseagreen' )
+            plt.plot(radius[ii], radial_strain  [ii], '--', color = 'dodgerblue'    )
+            plt.plot(radius[ii], toroidal_strain[ii], '--', color = 'orange'        )
+            plt.plot(radius[ii], vertical_strain[ii], '--', color = 'mediumseagreen')
+        plt.plot(bound_radius, bound_radial_strain  , '|', markersize = mark_size, color = 'dodgerblue'    )    
+        plt.plot(bound_radius, bound_toroidal_strain, '|', markersize = mark_size, color = 'orange'        )
+        plt.plot(bound_radius, bound_vertical_strain, '|', markersize = mark_size, color = 'mediumseagreen')
         plt.grid(True)
         plt.ylabel( r'$\epsilon$', fontsize = axis_font_size )
         plt.xlabel( r'$R$ [$m$]', fontsize = axis_font_size )
@@ -259,6 +355,7 @@ if __name__ == '__main__':
         plt.savefig( '{}/strains.{}'.format(outdir, save_format) )
         plt.clf()
         plt.cla()
+
 
     ## PLOT 4 : Displacement
     # ----------------------
