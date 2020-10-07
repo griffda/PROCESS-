@@ -46,7 +46,7 @@ contains
       rsldo, vgap, gapoh, fwoth, ohcth, shldoth, scraplo, fwith, blbpith, &
       tfootfi, blbuoth, gapds, fwareaib, fseppc, scrapli, blbmith, shldith, &
       ddwi, fwarea, blbpoth, blbmoth, fcspc, bore, r_cp_top, r_sh_inboard_out, &
-      r_sh_inboard_in, f_r_cp
+      r_sh_inboard_in, f_r_cp, i_r_cp_top
     use constants, only: mfile, nout, pi
     use current_drive_variables, only: beamwd
     use divertor_variables, only: divfix
@@ -124,9 +124,18 @@ contains
     ! Radius of the centrepost at the top of the machine
     if ( itart == 1 ) then
     
-       ! If r_cp_top is used as iteration variable
-       if ( any(ixc(1:nvar) == 174) ) then
+       ! r_cp_top is set using the plasma shape
+       if ( i_r_cp_top == 0 ) then      
+          r_cp_top = rmajor - rminor * triang - ( tftsgap + thshield + shldith + &
+                     vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
+          r_cp_top = max( r_cp_top, r_tf_inboard_out * 1.01D0 ) 
 
+          ! Top and bottom TF CP radius ratio
+          f_r_cp = r_cp_top / r_tf_inboard_out
+
+       ! User defined r_cp_top
+       else if ( i_r_cp_top == 1 ) then     
+       
           ! Error if if r_cp_top is larger than the top plasma radius + shields
           if ( r_cp_top > rmajor - rminor * triang - ( tftsgap + thshield +& 
                shldith + vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop ) then
@@ -135,30 +144,14 @@ contains
              call report_error(256)
           end if
 
-       ! Use the top CP radius fracion as an input if f_r_cp is user defined
-       else if ( abs(f_r_cp + 1.0D0) > epsilon(f_r_cp) ) then 
-          r_cp_top = f_r_cp * r_tf_inboard_out         
-       
-       ! Otherwise calculate r_cp_top from plasma shape
-       else
-          if ( i_tf_sup == 1 ) then 
-             r_cp_top = r_tf_inboard_out
-             
-          else
-             r_cp_top = rmajor - rminor * triang - ( tftsgap + thshield + shldith + &
-                        vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
-             r_cp_top = max( r_cp_top, r_tf_inboard_out * 1.01D0 ) 
-             
-             ! lvl 3 error if r_cp_top is negative 
-             ! Not sure it is useful with the max() statment ...
-             ! To be removed ?
-             if (r_cp_top <= 0.0D0) then
-               fdiags(1) = r_cp_top
-               call report_error(115)
-             end if
-          end if
-       end if 
-    end if
+          ! Top and bottom TF CP radius ratio
+          f_r_cp = r_cp_top / r_tf_inboard_out
+         
+       ! r_cp_top set as a fraction of the outer TF midplane radius
+       else if ( i_r_cp_top == 2 ) then 
+         r_cp_top = f_r_cp * r_tf_inboard_out        
+       end if
+    end if ! End of itart == 1
 
     !  Radial position of vacuum vessel [m]
     r_vv_inboard_out = r_tf_inboard_out + tftsgap + thshield + gapds + ddwi

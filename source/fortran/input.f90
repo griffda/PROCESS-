@@ -160,7 +160,7 @@ contains
       rinboard, fmstf, blnkoth, fseppc, plsepo, ddwi, fmssh, blnkith, &
       ohcth, plsepi, fmsoh, blbmith, gapoh, fcspc, scraplo, vgaptop, &
       blbpoth, gapds, fwith, vgap, shldith, sigallpc, tfootfi, f_avspace,&
-      r_cp_top, f_r_cp
+      r_cp_top, f_r_cp, i_r_cp_top
     use buildings_variables, only: hcwt, conv, wgt, trcl, rxcl, rbwt, mbvfac, &
       esbldgm3, rbvfac, fndt, row, wgt2, pibv, clh1, stcl, clh2, pfbldgm3, &
       shmf, tfcbv, hccl, rbrt, triv, shov, admv, wsvfac
@@ -1624,6 +1624,9 @@ contains
        case ('rpf2dewar')
           call parse_real_variable('rpf2dewar', rpf2dewar, 0.1D0, 5.0D0, &
                'Outer PF coil to cryostat distance (m)')
+       case ('i_r_cp_top')
+          call parse_int_variable('i_r_cp_top', i_r_cp_top, 0, 2, &
+               'Switch selecting the TF CP is parametrization (ST only)')
       case ('r_cp_top')
          call parse_real_variable('r_cp_top', r_cp_top, 0.0010D0, 10.0D0, &
               'Top CP outer radius (ST only) (m)')

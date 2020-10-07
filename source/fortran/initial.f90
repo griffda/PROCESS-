@@ -623,7 +623,8 @@ subroutine check
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables, only: blnkith, bore, gapoh, ohcth, precomp, iprecomp
+    use build_variables, only: blnkith, bore, gapoh, ohcth, precomp, iprecomp, &
+        i_r_cp_top, r_cp_top
     use buildings_variables, only: esbldgm3, triv
     use current_drive_variables, only: gamcd, iefrf, irfcd
     use divertor_kallenbach_variables, only: impurity_enrichment, kallenbach_switch
@@ -1108,6 +1109,11 @@ subroutine check
             end if 
         end if
 
+        ! Checking the CP TF top radius
+        if ( ( abs(r_cp_top) > epsilon(r_cp_top) .or. any(ixc(1:nvar) == 174) ) &
+            .and. i_r_cp_top /= 1 ) then
+             call report_error(261)
+        end if
     ! --------------------------------
 
     

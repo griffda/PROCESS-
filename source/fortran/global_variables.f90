@@ -4137,12 +4137,18 @@ module build_variables
   !! Mid-plane Outer radius of centre of inboard TF leg (m)
        
   real(dp) :: r_tf_outboard_mid = 0.0D0
-  !! radius to the centre of the outboard TF coil leg (m)
+  !! Radius to the centre of the outboard TF coil leg (m)
+
+  integer :: i_r_cp_top = 0
+  !! Switch selecting the TF CP is parametrization (ST only)
+  !!  0 : `r_cp_top` is set by the plasma shape
+  !!  1 : `r_cp_top` is a user input
+  !!  2 : `r_cp_top` is set as a fraction of the outer TF midplane radius 
 
   real(dp) :: r_cp_top = 0.0D0
   !! Top outer radius of the centropost (ST only) (m)
 
-  real(dp) :: f_r_cp = -1.0D0
+  real(dp) :: f_r_cp = 1.4D0
   !! Ratio between the top and the midplane TF CP outer radius [-] 
   !! Not used by default (-1) must be larger than 1 otherwise
 
