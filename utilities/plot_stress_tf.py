@@ -143,7 +143,7 @@ if __name__ == '__main__':
         for ii in range(n_layers):
             vertical_strain.append(list())
             for jj in range(n_radial_array_layer):
-                vertical_strain[ii].append(data[19][0])
+                vertical_strain[ii].append(data[19][ii*n_radial_array_layer+jj])
     else :
         for jj in range(n_radial_array_layer):
             wp_vertical_stress.append(data[15][jj])

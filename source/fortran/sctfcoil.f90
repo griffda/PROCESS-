@@ -1602,8 +1602,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(dp), dimension(n_tf_layer*n_radial_array) :: strain_tf_t
     !! Toroidal normal strain radial distribution
      
-    real(dp) :: strain_tf_z
-    !! Vertical normal strain (constant as layer assumed to be bonded)
+    real(dp), dimension(n_tf_layer*n_radial_array) :: strain_tf_z
+    !! Vertical normal strain radial distribution
 
     real(dp) :: eyoung_wp_t
     !! Effective WP young modulus in the toroidal direction
@@ -2700,7 +2700,7 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_t
     !! Strain distribution in the toroidal direction (t)
           
-    real(dp), intent(out) :: strain_z
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_z
     !! Uniform strain in the vertical direction (z)
 
     real(dp), dimension(n_radial_array*nlayers), intent(out) :: r_deflect
@@ -2759,8 +2759,8 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     real(dp) :: dradius  
     real(dp) :: inner_layer_curr
       
-    ! Strain of the CS sector (B&W only)
-    real(dp) :: strain_z_cs
+    ! Constraint strains for calculation (on for TF and CS systems)
+    real(dp), dimension(2) :: strain_z_calc
       
     ! Indexes
     integer :: ii = 0  ! Line in the aa matrix
@@ -3013,20 +3013,21 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     sigz(:) = 0.0D0
     strain_r(:) = 0.0D0
     strain_t(:) = 0.0D0
+    strain_z(:) = 0.0D0
     r_deflect(:) = 0.0D0
 
     ! CS system vertical strain
     if ( i_tf_bucking >= 2 ) then
-        strain_z_cs = aleph(1)
+        strain_z_calc(1) = aleph(1)
         do ii = 1, i_tf_bucking - 1
-            strain_z_cs = strain_z_cs + c1(ii) * beth(ii)
+            strain_z_calc(1) = strain_z_calc(1) + c1(ii) * beth(ii)
         end do
     end if
     
     ! TF system vertical normal strain (constant) WRONG IF GRADED COIL
-    strain_z = aleph(nlayers) 
+    strain_z_calc(2) = aleph(nlayers) 
     do ii = max( 1, i_tf_bucking ), nlayers
-        strain_z = strain_z + c1(ii) * beth(ii)
+        strain_z_calc(2) = strain_z_calc(2) + c1(ii) * beth(ii)
     end do
 
 
@@ -3054,15 +3055,14 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
                        + 0.5D0*beta(ii) * ( 1.0D0 + 2.0D0*log(rradius(jj)) ) )
 
             ! No vertical strain effect on CS / TF-CS inter layer
-            ! if ( i_tf_bucking <= 1 .or. ii >= i_tf_bucking ) then
-            if ( ii >= i_tf_bucking ) then
-                sigr(jj) = sigr(jj) + kk_p(ii) * strain_z * nu_z(ii) 
-                sigt(jj) = sigt(jj) + kk_p(ii) * strain_z * nu_z(ii)
-                sigz(jj) = sigz(jj) + kk_z(ii) * strain_z * (1.0D0 - nu_p(ii))
-            else 
-                sigr(jj) = sigr(jj) + kk_p(ii) * strain_z_cs * nu_z(ii) 
-                sigt(jj) = sigt(jj) + kk_p(ii) * strain_z_cs * nu_z(ii)
-                sigz(jj) = sigz(jj) + kk_z(ii) * strain_z_cs * (1.0D0 - nu_p(ii))
+            if ( ii >= i_tf_bucking ) then ! TF system
+                sigr(jj) = sigr(jj) + kk_p(ii) * strain_z_calc(2) * nu_z(ii) 
+                sigt(jj) = sigt(jj) + kk_p(ii) * strain_z_calc(2) * nu_z(ii)
+                sigz(jj) = sigz(jj) + kk_z(ii) * strain_z_calc(2) * (1.0D0 - nu_p(ii))
+            else ! CS system
+                sigr(jj) = sigr(jj) + kk_p(ii) * strain_z_calc(1) * nu_z(ii) 
+                sigt(jj) = sigt(jj) + kk_p(ii) * strain_z_calc(1) * nu_z(ii)
+                sigz(jj) = sigz(jj) + kk_z(ii) * strain_z_calc(1) * (1.0D0 - nu_p(ii))
             end if
                     
             ! Radial normal strain
@@ -3074,7 +3074,14 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
             strain_t(jj) = c1(ii) + c2(ii) / rradius(jj)**2                       &
                             + 0.125D0*alpha(ii) * rradius(jj)**2 + 0.5D0*beta(ii) & 
                             * log(rradius(jj))
-                              
+                    
+            ! Vertical normal strain
+            if ( ii >= i_tf_bucking ) then
+                strain_z(jj) = strain_z_calc(2)
+            else 
+                strain_z(jj) = strain_z_calc(1)
+            end if
+
             ! Radial displacement
             r_deflect(jj) = c1(ii)*rradius(jj) + c2(ii)/rradius(jj) &
                             + 0.125D0*alpha(ii) * rradius(jj)**3    &
