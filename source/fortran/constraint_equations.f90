@@ -731,24 +731,18 @@ contains
    end subroutine constraint_eqn_009
 
    subroutine constraint_eqn_010(args)
-      !! Author : S Kahn
-      !! args : output structure : residual error; constraint value; 
-      !! residual error in physical units; output string; units string
-      !! Equation constraining the centerpost (CP) lifetime
-      !! Depending on the chosen option : i_cp_lifetime
-      !!  - 0 : The CP full power year lifelime is set by the user (cplife_input)
-      !!  - 1 : The CP lifelime is equal to the divertor one
-      !!  - 2 : The CP lifetime is equal to the breeding blankets one
-      !!  - 3 : The CP lifetime is equal to the plant one
-      !! #=# availability
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! Equation for field at TF coil
+      !! This is a consistency equation
+      !! (do not use for stellarators)
+      !! #=# tfcoil
       !! #=#=# consistency
-      !! Logic change during pre-factoring: err, symbol, units will be assigned 
-      !! only if present.
-      !! cplife : input real : calculated CP full power year lifetime (years)
-      !! bktlife : input real : calculated first wall/blanket power year lifetime (years)
-      !! divlife : input real : calculated divertor  power year lifetime (years)
-      !! i_cp_lifetime : input integer : switch chosing which plant element the CP
-      !!                                 the CP lifetime must equate  
+      !! rmajor |  plasma major radius (m)
+      !! bt     |  toroidal field on axis (T)
+      !! rbmax  |  radius of maximum toroidal field (m)
+      !! bmaxtf |  peak field at toroidal field coil (T)
+ 
+      !! This constraint is depreciated
 
       implicit none
 
