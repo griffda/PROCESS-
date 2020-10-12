@@ -12,7 +12,7 @@
 import subprocess
 import numpy as np
 from sys import stderr
-from create_dicts import get_dicts
+from process.io.python_fortran_dicts import get_dicts
 
 # Load dicts from dicts JSON file
 process_dicts = get_dicts()
