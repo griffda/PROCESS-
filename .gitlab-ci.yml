@@ -36,6 +36,7 @@ stages:
     - export LANG=en_GB.utf8
 
 .before_test_template: &test-setup
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:latest
   before_script:
     - pip install --upgrade pip
     - pip install virtualenv
@@ -68,20 +69,31 @@ make:
 #  Testing
 #-----------------
 
-python_coverage_tests:
+unit:
   when: on_success
   stage: testing
   <<: *test-setup
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:latest
   script:
-    - pip install pytest
-    - pytest tests/ 
+    - pytest tests/unit
+
+integration:
+  when: on_success
+  stage: testing
+  <<: *test-setup
+  script:
+    - pytest tests/integration
+
+regression:
+  when: on_success
+  stage: testing
+  <<: *test-setup
+  script:
+    - pytest tests/regression
 
 baseline_2019:
   when: on_success
   stage: testing
   <<: *test-setup
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:latest
   script:
     - process -i tracking/baseline_2019/baseline_2019_IN.DAT
     - > 
@@ -100,7 +112,6 @@ baseline_2018:
   when: on_success
   stage: testing
   <<: *test-setup
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:latest
   script:
     - process -i tracking/baseline_2018/baseline_2018_IN.DAT
     - > 
