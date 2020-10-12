@@ -1,4 +1,4 @@
-"""Regression tests for utilities.
+"""Integration tests for utilities.
 
 These tests check the utilities that PROCESS uses, mainly for file IO.
 """
@@ -16,25 +16,27 @@ logger.setLevel(logging.DEBUG)
 
 # Create handlers for console and file output
 s_handler = logging.StreamHandler()
-f_handler = logging.FileHandler('tests/regression/utilities.log', mode='w')
+f_handler = logging.FileHandler('tests/integration/utilities.log', mode='w')
 s_handler.setLevel(logging.INFO)
 f_handler.setLevel(logging.DEBUG)
 logger.addHandler(s_handler)
 logger.addHandler(f_handler)
 
-logger.info("Running utilities regression tests")
+logger.info("Running utilities integration tests")
 
 # TODO More utilities tests to be implemented
 # test_make_plot_dat
 # test_convert_in_dat
 
 def get_scenario_paths():
-    """Get the paths to the scenario directories.
+    """Get the paths to the regression scenario directories.
 
+    The regression scenario IN.DATs and MFILE.DATs are used for these 
+    integration tests.
     :return: Path objects for the scenario dirs
     :rtype: list
     """
-    scenarios_path = Path(__file__).parent / "scenarios"
+    scenarios_path = Path(__file__).parent.parent / "regression" / "scenarios"
     scenarios_paths = [path for path in scenarios_path.iterdir()]
     return scenarios_paths
 
