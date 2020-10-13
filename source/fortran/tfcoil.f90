@@ -318,7 +318,7 @@ module tfcoil_module
        conductor_th_cond = k_copper
     
     ! Aluminium 
-    else if ( i_tf_sup == 2 ) 
+    else if ( i_tf_sup == 2 ) then
       call al_th_cond( tcool_film, conductor_th_cond )
     end if
     ! ******
