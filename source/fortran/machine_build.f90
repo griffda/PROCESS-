@@ -108,7 +108,7 @@ contains
            tfcth = ( r_tf_inboard_in + dr_tf_wp + casthi + thkcas ) / cos(pi/n_tf) &
                  - r_tf_inboard_in
 
-         ! Rounded resistive TF geometry
+        ! Rounded resistive TF geometry
         else
             tfcth = dr_tf_wp + casthi + thkcas
         end if
@@ -128,7 +128,16 @@ contains
        if ( i_r_cp_top == 0 ) then      
           r_cp_top = rmajor - rminor * triang - ( tftsgap + thshield + shldith + &
                      vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
-          r_cp_top = max( r_cp_top, r_tf_inboard_out * 1.01D0 ) 
+          
+          ! Notify user that r_cp_top has been set to 1.01*r_tf_inboard_out (lvl 2 error)
+          if ( r_cp_top < 1.01D0 * r_tf_inboard_out ) then
+            fdiags(1) = r_cp_top
+            fdiags(2) = r_tf_inboard_out
+            call report_error(262)
+
+            ! r_cp_top correction
+            r_cp_top = r_tf_inboard_out * 1.01D0
+          end if
 
           ! Top and bottom TF CP radius ratio
           f_r_cp = r_cp_top / r_tf_inboard_out
@@ -143,6 +152,16 @@ contains
              fdiags(1) = r_cp_top
              call report_error(256)
           end if
+
+          ! Notify user that r_cp_top has been set to 1.01*r_tf_inboard_out (lvl 2 error)
+          if ( r_cp_top < 1.01D0 * r_tf_inboard_out ) then
+            fdiags(1) = r_cp_top
+            fdiags(2) = r_tf_inboard_out
+            call report_error(262)
+
+            ! r_cp_top correction
+            r_cp_top = r_tf_inboard_out * 1.01D0
+          end if 
 
           ! Top and bottom TF CP radius ratio
           f_r_cp = r_cp_top / r_tf_inboard_out
