@@ -106,7 +106,7 @@ def test_in_dat_lib(input_file_path):
     try:
         assert indat.test(str(input_file_path)) == True
     except AssertionError:
-        logger.error(f"in_dat test for {scenario_path.name} has failed")
+        logger.error(f"in_dat test for {input_file_path.name} has failed")
         raise
 
 def test_plot_proc(mfile_path):
