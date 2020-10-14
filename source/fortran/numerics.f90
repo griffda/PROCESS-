@@ -88,6 +88,8 @@ module numerics
   logical, dimension(ipeqns) :: active_constraints
   !!  active_constraints(ipeqns) : Logical array showing which constraints are active
 
+  ! #TODO Do not change the comments for lablcc: they are used to create the 
+  ! Python-Fortran dictionaries. This must be improved on.
   character(len=33), dimension(ipeqns) :: lablcc
   !!  lablcc(ipeqns) : labels describing constraint equations (corresponding itvs)<UL>
   !!  <LI> ( 1) Beta (consistency equation) (itv 5)
