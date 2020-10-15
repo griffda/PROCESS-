@@ -7,6 +7,9 @@
 # 3.12 is required due to use of list TRANSFORM commands
 cmake_minimum_required(VERSION 3.12)
 
+# Ensure python3 interpreter is used
+find_package(Python3)
+
 # Project's name
 project(PROCESS LANGUAGES Fortran)
 
@@ -216,7 +219,7 @@ add_custom_target(dicts DEPENDS ${DICTS_FILE})
 add_custom_command(OUTPUT ${DICTS_FILE}
   # The create_dicts script needs to know the Fortran source dir, the pickled
   # Ford project object and the dicts.json file to output to
-  COMMAND python ${CREATE_DICTS_SCRIPT} ${FORTRAN_SOURCE_DIR} ${FORD_OUTPUT} 
+  COMMAND ${Python3_EXECUTABLE} ${CREATE_DICTS_SCRIPT} ${FORTRAN_SOURCE_DIR} ${FORD_OUTPUT} 
     ${DICTS_FILE}
 )
 
@@ -227,7 +230,7 @@ add_dependencies(dicts ford)
 # TODO Might want to find python interpreter first
 # TODO Remove hardcoding of python script: SET as variable above
 add_custom_target(modify_so_python_import_path ALL
-  COMMAND python ${BUILD_SCRIPTS_DIR}/f90wrap_interface_import_modifier.py 
+COMMAND ${Python3_EXECUTABLE} ${BUILD_SCRIPTS_DIR}/f90wrap_interface_import_modifier.py 
     ${FORTRAN_INTERFACE_MODULE}
 )
 
