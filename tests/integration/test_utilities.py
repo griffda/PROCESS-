@@ -115,6 +115,13 @@ def test_plot_proc(mfile_path):
     :param mfile_path: Path to the scenario's MFile
     :type mfile_path: Path
     """
+    EXCLUSIONS = ["stellarator", "IFE"]
+    # Don't run plot_proc tests for some scenarios
+    # plot_proc is not intended for stellarator or IFE
+    
+    if mfile_path.parent.name in EXCLUSIONS:
+        return
+
     logger.info("Testing plot_proc.py")
 
     # Test plot_proc on an MFile
