@@ -122,7 +122,7 @@ contains
     r_tf_inboard_out = r_tf_inboard_in + tfcth
 
     ! Radius of the centrepost at the top of the machine
-    if ( itart == 1 ) then
+    if ( itart == 1 .and. i_tf_sup /= 1 ) then
     
        ! r_cp_top is set using the plasma shape
        if ( i_r_cp_top == 0 ) then      
@@ -170,7 +170,9 @@ contains
        else if ( i_r_cp_top == 2 ) then 
          r_cp_top = f_r_cp * r_tf_inboard_out        
        end if
-    end if ! End of itart == 1
+    else ! End of itart == 1 .and. i_tf_sup /= 1
+       r_cp_top = r_tf_inboard_out
+    end if 
 
     !  Radial position of vacuum vessel [m]
     r_vv_inboard_out = r_tf_inboard_out + tftsgap + thshield + gapds + ddwi
