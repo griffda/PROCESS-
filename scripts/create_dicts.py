@@ -519,8 +519,8 @@ def dict_icc_full():
 
     di = dict()
 
-    # get slice of file from 'lablxc = (/' to '/)'
-    lcctext = slice_file(SOURCEDIR + "/numerics.f90", r"lablcc = \(/", r"/\)")
+    # get slice of file from ":: lablcc" to a blank line
+    lcctext = slice_file(SOURCEDIR + "/numerics.f90", r"::\slablcc", r"^$")
 
     regexp = r"""
                !!               #var comment begins with !!

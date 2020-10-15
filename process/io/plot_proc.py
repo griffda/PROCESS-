@@ -13,7 +13,7 @@
 import os
 import sys
 import argparse
-import process_io_lib.mfile as mf
+import process.io.mfile as mf
 import matplotlib
 if os.name == 'posix' and "DISPLAY" not in os.environ:
     matplotlib.use('Agg')
@@ -31,7 +31,7 @@ import numpy as np
 import  pathlib
 import time
 
-from create_dicts import get_dicts
+from process.io.python_fortran_dicts import get_dicts
 
 # Load dicts from dicts JSON file
 proc_dict = get_dicts()

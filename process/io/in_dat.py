@@ -12,7 +12,7 @@
 import subprocess
 import numpy as np
 from sys import stderr
-from create_dicts import get_dicts
+from process.io.python_fortran_dicts import get_dicts
 
 # Load dicts from dicts JSON file
 process_dicts = get_dicts()
@@ -680,11 +680,13 @@ def parameter_type(name, value):
 
         # Real array parameter
         if "real_array" in param_type:
-            return [float(item) for item in value]
+            return [item if item is None else float(item) for item in value]
+            # Convert list to floats, but not if the value is None
 
         # Integer array parameter
         elif "int_array" in param_type:
-            return [int(item) for item in value]
+            return [item if item is None else int(item) for item in value]
+            # Convert list to ints, but not if the value is None
 
     # Check if parameter is a string
     elif isinstance(value, str):
@@ -968,6 +970,18 @@ class InDat(object):
             line_commentless = line.split("*")[0]
             array_name = line_commentless.split("(")[0]
             empty_array = DICT_DEFAULT[array_name]
+            # empty_array is what the array is initialised to when it is 
+            # declared in the Fortran. If the array is declared but not
+            # initialised until later in a separate "init" subroutine, then
+            # empty_array will be None. This is a side-effect of the need to 
+            # re-initialise Fortran arrays in a separate subroutine.
+
+            if empty_array is None:
+                # Array is declared but not initialised at the same time;
+                # convert it to an empty list because this better reflects
+                # what it is, and allows further list operations
+                empty_array = []
+
             if array_name not in self.data.keys():
                 parameter_group = find_parameter_group(array_name)
 
@@ -975,6 +989,7 @@ class InDat(object):
                 comment = DICT_DESCRIPTIONS[array_name].replace(",", ";").\
                         replace(".", ";").replace(":", ";")
                 
+                # Copy the default array from the dicts
                 empty_array_copy = empty_array[:]
                 # Copy empty_array to decouple reference of self.data to 
                 # DICT_DEFAULT; don't want changes to data to change the 
@@ -1162,6 +1177,12 @@ class InDat(object):
         :param empty_array: Default array for this array name
         :return: nothing
         """
+        # TODO This is a mess after the Fortran module variable 
+        # re-initialisation work. It is hard to see how this can be improved
+        # as the regex method of Fortran inspection (i.e. Python-Fortran 
+        # dictionaries) is increasingly untenable. An attempt is made here,
+        # but with a view to the dictionaries method being dropped in future
+        # in light of increasing Python f2py conversion.
 
         if "*" in line:
             array_comment = line.split("*")[1]
@@ -1171,21 +1192,72 @@ class InDat(object):
 
         name  = line_commentless.split("(")[0]
         index = int(line_commentless.split("(")[1].split(")")[0]) - 1
+        # The -1 assumes all Fortran arrays begin at 1: they don't in Process!
+        # This bug would cause a Fortran index of 0 to be interpreted as a 
+        # Python index of -1 (last element). This didn't cause any exceptions,
+        # but would obviously set the wrong list index. This now throws 
+        # exceptions when trying to access [-1] of an empty list []. Hence it
+        # must be guarded against with the following:
+        if index == -1:
+            index = 0
+        # This will cause Fortran index 0 and 1 to overwrite the same Python 
+        # index of 0, which is clearly awful. However, it is equally bad to the 
+        # previous case above, where Fortran [0] would overwrite Python [-1].
+        # There isn't a way of reconciling this without knowing whether the 
+        # Fortran array begins at 0 or 1.
+        # TODO Either enforce Fortran arrays that start at 1 throughout, or 
+        # find a way of determining the starting index of the array
+
         value = line_commentless.split("=")[-1].replace(",", "")
 
+        # Many arrays are now declared but not initialised until the "init"
+        # subroutine is run in each Fortran module, to allow re-initialisation 
+        # on demand for a new run etc.
+        # In Fortran, we have a declared but uninitialised array of a given 
+        # length. This results in an empty list in the value attribute here.
+        # However, we need to set the value for a given index. Therefore
+        # make a list of Nones, so that we can set the value for a given
+        # index. We don't know the length of the Fortran array (its value is
+        # []), so we have to make the Python list as long as this Fortran index.
+        # This way, at least the list is long enough for this Fortran index.
+        # TODO Again, this requires a more robust solution
+
+        list_len = len(self.data[name].value)
+        # Length of Python list in self.data
+        max_list_index = list_len - 1
+        # The greatest index in that Python list
+        array_len = index + 1
+        # The Fortran array must be at least this long
+
+        # If the default array is an empty list, make a list of Nones of 
+        # matching length to the Fortran array
+        if len(empty_array) == 0:
+            empty_array = [None] * array_len
+
+        # If the Pyhton list is an empty list, make a list of Nones of 
+        # matching length to the Fortran array
+        if list_len == 0:
+            self.data[name].value = [None] * array_len
+        # Check the Python list is long enough to store the new index
+        elif max_list_index < index:
+            # The Python list already has a length > 0, but it's not long enough
+            # for this new index. Copy the old list and extend it with Nones so 
+            # that it is as long as the new index
+            len_diff = index - max_list_index
+            self.data[name].value.extend([None] * len_diff)
         # Array has already been set to default values (empty_array)
         # Need a way of checking for duplicate initialisations
         # If value is changing from default to custom value, then interpret as 
         # first initialisation. If value is changing from one custom value to
         # another, then interpret as a duplicate initialisation
-
-        if self.data[name].value[index] != empty_array[index]:
+        elif self.data[name].value[index] != empty_array[index]:
             # This array index is already not its default value; any further 
             # change must be a duplicate initialisation
             fortran_index = index + 1 
             # Index begins at 1!
             self.add_duplicate_variable("{0}({1})".format(name, fortran_index))
 
+        # Now we are sure that the Python list index exists, set its value
         self.data[name].value[index] = eval(fortran_python_scientific(value))
 
     def add_duplicate_variable(self, name):
