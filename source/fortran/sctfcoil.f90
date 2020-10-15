@@ -2382,7 +2382,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! Other quantities (displacement strain, etc..)
         call ovarre(outfile,'Maximum radial deflection at midplane (m)','(deflect)',&
                             deflect(n_radial_array), 'OP ')
-        call ovarre(outfile,"Winding pack vertical Young's Modulus (Pa)",'(eyzwp)', eyzwp, 'OP ')
         call ovarre(outfile,'Vertical strain on casing','(casestr)', casestr, 'OP ')
         call ovarre(outfile,'Vertical strain on winding pack','(windstrain)', windstrain, 'OP ')
         call ovarre(outfile,'Radial strain on insulator','(insstrain)', insstrain, 'OP ')
@@ -3585,7 +3584,7 @@ subroutine outtf(outfile, peaktfflag)
         i_tf_sc_mat, voltfleg, vol_cond_cp, tflegres, tcpav, prescp, i_tf_sup, &
         cpttf, cdtfleg, whttflgs, whtcp, i_tf_bucking, tlegav, rhotfleg, rhocp, &
         presleg, i_tf_shape, fcoolcp, pres_joints, tmargtf, tmargmin_tf, &
-        f_vforce_inboard, vforce_outboard
+        f_vforce_inboard, vforce_outboard, acstf
     use physics_variables, only: itart
     use constants, only: mfile, pi
     implicit none
@@ -3696,7 +3695,7 @@ subroutine outtf(outfile, peaktfflag)
     end do
     20 format(i4,t10,f10.3,t25,f10.3)      
 
-    if ( itart == 1 ) then
+    if ( itart == 1 .and. i_tf_sup /= 1 ) then
         call osubhd(outfile,'Tapered Centrepost Dimensions:')
         call ovarre(outfile,'Radius of the centrepost at the midplane (m)','(r_tf_inboard_out)',r_tf_inboard_out)
         call ovarre(outfile,'Radius of the ends of the centrepost (m)','(r_cp_top)',r_cp_top)
@@ -3715,14 +3714,6 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'Total steel TF fraction','(f_tf_steel)',f_tf_steel)
         call ovarre(outfile,'Total Insulation cross-section (total) (m2)','(a_tf_ins*n_tf)',a_tf_steel*n_tf)
         call ovarre(outfile,'Total Insulation fraction','(f_tf_ins)',f_tf_ins)
-
-
-        ! WP material fraction        
-        call osubhd(outfile,'WP material area/fractions:')
-        call ovarre(outfile,'Steel WP cross-section (total) (m2)','(aswp*n_tf)',aswp*n_tf)
-        call ovarre(outfile,'Steel WP fraction','(aswp/awpc)',aswp/awpc)
-        call ovarre(outfile,'Insulation WP fraction','(aiwp/awpc)',aiwp/awpc)
-        call ovarre(outfile,'Cable WP fraction','((awpc-aswp-aiwp)/awpc)',(awpc-aswp-aiwp)/awpc)
         
         ! External casing
         call osubhd(outfile,'External steel Case Information :')
@@ -3746,6 +3737,13 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)',tinstf)
         call ovarre(outfile,'Winding pack insertion gap (m)','(tfinsgap)',tfinsgap)
        
+        ! WP material fraction        
+        call osubhd(outfile,'TF winding pack (WP) material area/fractions:')
+        call ovarre(outfile,'Steel WP cross-section (total) (m2)','(aswp*n_tf)',aswp*n_tf)
+        call ovarre(outfile,'Steel WP fraction','(aswp/awpc)',aswp/awpc)
+        call ovarre(outfile,'Insulation WP fraction','(aiwp/awpc)',aiwp/awpc)
+        call ovarre(outfile,'Cable WP fraction','((awpc-aswp-aiwp)/awpc)',(awpc-aswp-aiwp)/awpc)
+
         ! Number of turns
         call osubhd(outfile,'WP turn information:')    
         call ovarin(outfile,'Turn parametrisation', '(i_tf_turns_integer)', i_tf_turns_integer)
@@ -3778,9 +3776,10 @@ subroutine outtf(outfile, peaktfflag)
 
         select case (i_tf_sc_mat)
         case (1,2,3,4,5)
-            call osubhd(outfile,'Conductor information:')    
+            call osubhd(outfile,'Conductor information:')
             call ovarre(outfile,'Diameter of central helium channel in cable','(dhecoil)',dhecoil)
             call ocmmnt(outfile,'Fractions by area')
+            call ovarre(outfile, 'internal area of the cable space', '(acstf)', acstf)
             call ovarre(outfile,'Coolant fraction in conductor excluding central channel','(vftf)',vftf)
             call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcutfsu)
             call ovarre(outfile,'Superconductor fraction of conductor','(1-fcutfsu)',1-fcutfsu)
