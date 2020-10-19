@@ -4148,6 +4148,10 @@ module build_variables
   real(dp) :: r_cp_top = 0.0D0
   !! Top outer radius of the centropost (ST only) (m)
 
+  real(dp) :: f_r_cp = -1.0D0
+  !! Ratio between the top and the midplane TF CP outer radius [-] 
+  !! Not used by default (-1) must be larger than 1 otherwise
+
   real(dp) :: dr_tf_inner_bore = 0.0D0
   !! TF coil horizontal inner bore (m)
 

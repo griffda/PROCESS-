@@ -1064,8 +1064,8 @@ subroutine tf_res_heating()
 
         ! Centrepost resisitivity and conductor/insulation volume
         call cpost( r_cp_top-casthi, h_cp_top, r_tf_inboard_out-casthi, hmax+tfthko, & ! Inputs
-                    ritfc, rhocp, fcoolcp, r_tf_inboard_in+thkcas, thicndut, casthi,   & ! Inputs
-                    n_tf*n_tf_turn,                                                    & ! Inputs
+                    ritfc, rhocp, fcoolcp, r_tf_inboard_in+thkcas, thicndut, casthi, & ! Inputs
+                    n_tf*n_tf_turn,                                                  & ! Inputs
                     a_cp_cool, vol_cond_cp, prescp, vol_ins_cp, vol_case_cp )          ! Outputs
 
 
@@ -3444,7 +3444,7 @@ subroutine outtf(outfile, peaktfflag)
         copper_rrr
     use error_handling, only: report_error
     use build_variables, only: hmax, r_tf_inboard_mid, r_tf_outboard_mid, &
-        tfcth, tfthko, r_cp_top, r_tf_inboard_in, r_tf_inboard_out
+        tfcth, tfthko, r_cp_top, r_tf_inboard_in, r_tf_inboard_out, f_r_cp
     use process_output, only: int2char, ovarre, ocmmnt, oblnkl, ovarin, osubhd, &
         ovarrf, obuild
     use numerics, only: icc
@@ -3579,8 +3579,9 @@ subroutine outtf(outfile, peaktfflag)
         call osubhd(outfile,'Tapered Centrepost Dimensions:')
         call ovarre(outfile,'Radius of the centrepost at the midplane (m)','(r_tf_inboard_out)',r_tf_inboard_out)
         call ovarre(outfile,'Radius of the ends of the centrepost (m)','(r_cp_top)',r_cp_top)
+        call ovarre(outfile,'Top/miplane TF CP radius ratio (-)','(f_r_cp)', f_r_cp)
         call ovarre(outfile,'Distance from the midplane to the top of the tapered section (m)','(h_cp_top)',h_cp_top)
-        call ovarre(outfile,'Distance from the midplane to the top of the centrepost (m)','(hmax)',hmax + tfthko)
+        call ovarre(outfile,'Distance from the midplane to the top of the centrepost (m)','(hmax + tfthko)',hmax + tfthko)
     end if
 
     ! Turn/WP gemoetry
@@ -4688,7 +4689,7 @@ end subroutine dtempbydtime
 !-----------------------------------------------------------------------
 subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! Inputs
                   ins_th, cas_out_th, n_turns_tot,                         &  ! Inputs
-                  a_cp_cool, vol_cond_cp, respow, volins, volcasout )                ! Outputs
+                  a_cp_cool, vol_cond_cp, respow, volins, volcasout )         ! Outputs
     !!  author: P J Knight, CCFE, Culham Science Centre
     !!  Calculates the volume and resistive power losses of a TART centrepost
     !!  This routine calculates the volume and resistive power losses
