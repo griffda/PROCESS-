@@ -197,7 +197,7 @@ contains
       rinboard, fmstf, blnkoth, fseppc, plsepo, ddwi, fmssh, blnkith, &
       ohcth, plsepi, fmsoh, blbmith, gapoh, fcspc, scraplo, vgaptop, &
       blbpoth, gapds, fwith, vgap, shldith, sigallpc, tfootfi, f_avspace,&
-      r_cp_top
+      r_cp_top, f_r_cp
     use buildings_variables, only: hcwt, conv, wgt, trcl, rxcl, rbwt, mbvfac, &
       esbldgm3, rbvfac, fndt, row, wgt2, pibv, clh1, stcl, clh2, pfbldgm3, &
       shmf, tfcbv, hccl, rbrt, triv, shov, admv, wsvfac
@@ -228,7 +228,7 @@ contains
       fwbs_umain_time, uchrs, avail_min, uciac, step_ref, ucshld, tdivrepl, &
       ucblli, ucpfcb, tlife, ipnet, fcdfuel, ucbus, ucpfb, uchts, &
       maintenance_fwbs, fwbs_prob_fail, uclh, ucblss, ucblvd, ucsc, ucturb, &
-      ucpens, cland, ucwindpf 
+      ucpens, cland, ucwindpf, i_cp_lifetime, cplife_input
     use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
@@ -323,7 +323,8 @@ contains
       n_tf_graded_layers, n_tf_joints, n_tf_joints_contact, poisson_al, &
       poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact,&
       i_tf_plane_stress, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
-      i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti
+      i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti, &
+      i_cp_joints, n_tf_turn
 
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
@@ -716,7 +717,7 @@ contains
           call parse_int_variable('iscrp', iscrp, 0, 1, &
                'Switch for scrapeoff width')
        case ('ishape')
-          call parse_int_variable('ishape', ishape, 0, 4, &
+          call parse_int_variable('ishape', ishape, 0, 8, &
                'Switch for plasma shape vs. aspect')
        case ('itart')
           call parse_int_variable('itart', itart, 0, 1, &
@@ -1672,6 +1673,9 @@ contains
       case ('r_cp_top')
          call parse_real_variable('r_cp_top', r_cp_top, 0.0010D0, 10.0D0, &
               'Top CP outer radius (ST only) (m)')
+      case ('f_r_cp')
+         call parse_real_variable('f_r_cp', f_r_cp, 1.0D0, 100.0D0, &
+              'Ratio between the top and the midplane TF CP outer radius (-) ')
        case ('scrapli')
           call parse_real_variable('scrapli', scrapli, 0.0D0, 10.0D0, &
                'Inboard scrapeoff length (m)')
@@ -1874,6 +1878,9 @@ contains
        case ('rho_tf_joints')
           call parse_real_variable('rho_tf_joints', rho_tf_joints, 0.0D0, 1.0D-2, &
                'TF joints surfacic resistivity')
+       case ('i_cp_joints')
+          call parse_int_variable('i_cp_joints', i_cp_joints, 0, 1, &
+               'Switch for CP demoutable joints type')
        case ('th_joint_contact')
           call parse_real_variable('th_joint_contact', th_joint_contact, 0.0D0, 1.0D0, &
                'TF sliding joints contact pad width')
@@ -2019,6 +2026,9 @@ contains
        case ('n_tf')
           call parse_real_variable('n_tf', n_tf, 0.0D0, 100.0D0, &
                'Number of TF coils')
+       case ('n_tf_turn')
+          call parse_real_variable('n_tf_turn', n_tf_turn, 0.0D0, 100.0D0, &
+               'number of turns per TF coil')
        case ('tftmp')
           call parse_real_variable('tftmp', tftmp, 0.01D0, 10.0D0, &
                'Peak TF coil He coolant temp. (K)')      
@@ -2548,6 +2558,9 @@ contains
        case ('cpstflnc')
           call parse_real_variable('cpstflnc', cpstflnc, 0.01D0, 30.0D0, &
                'Allowable centrepost neutron fluence (MW-yr/m2)')
+       case ('cplife_input')
+         call parse_real_variable('cplife_input', cplife_input, 0.001D0, 50.0D0, &
+              'Full power centrepost lifetime (yr)')
        case ('decomf')
           call parse_real_variable('decomf', decomf, 0.0D0, 1.0D0, &
                'Decommissioning fund fraction')
@@ -2572,6 +2585,9 @@ contains
        case ('fkind')
           call parse_real_variable('fkind', fkind, 0.5D0, 1.0D0, &
                'Multiplier for Nth of a kind costs')
+       case ('i_cp_lifetime')
+         call parse_int_variable('i_cp_lifetime', i_cp_lifetime, 0, 3, &
+              'Switch for ST centrepost lifetime contraint (10) setting')
        case ('ifueltyp')
           call parse_int_variable('ifueltyp', ifueltyp, 0, 2, &
                'Switch for costing of 1st wall etc.')

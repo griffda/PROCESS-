@@ -3862,48 +3862,48 @@ module physics_module
     if (istell == 0) then
 
        select case (ishape)
-       case (0)
-          call ovarrf(outfile,'Elongation, X-point (input value used)', '(kappa)',kappa)
+       case (0,6,8)
+          call ovarrf(outfile,'Elongation, X-point (input value used)', '(kappa)',kappa, 'IP ')
        case (1)
           call ovarrf(outfile,'Elongation, X-point (TART scaling)', '(kappa)',kappa, 'OP ')
        case (2,3)
           call ovarrf(outfile,'Elongation, X-point (Zohm scaling)', '(kappa)',kappa, 'OP ')
           call ovarrf(outfile,'Zohm scaling adjustment factor', '(fkzohm)',fkzohm)
-       case (4)
+       case (4,5,7)
           call ovarrf(outfile,'Elongation, X-point (calculated from kappa95)', '(kappa)',kappa, 'OP ')
        case default
           idiags(1) = ishape ; call report_error(86)
        end select
 
        select case (ishape)
-       case (4)
+       case (4,5,7)
           call ovarrf(outfile,'Elongation, 95% surface (input value used)', &
-               '(kappa95)',kappa95)
+               '(kappa95)',kappa95, 'IP ')
        case default
-          call ovarrf(outfile,'Elongation, 95% surface (kappa/1.12)', &
+          call ovarrf(outfile,'Elongation, 95% surface (calculated from kappa)', &
                '(kappa95)',kappa95, 'OP ')
        end select
 
        call ovarrf(outfile,'Elongation, area ratio calc.','(kappaa)',kappaa, 'OP ')
 
        select case (ishape)
-       case (0,2)
+       case (0,2,6,8)
           call ovarrf(outfile,'Triangularity, X-point (input value used)', &
-               '(triang)',triang)
+               '(triang)',triang, 'IP ')
        case (1)
           call ovarrf(outfile,'Triangularity, X-point (TART scaling)', &
                '(triang)',triang, 'OP ')
-       case (3,4)
+       case (3,4,5,7)
           call ovarrf(outfile,'Triangularity, X-point (calculated from triang95)', &
                '(triang)',triang, 'OP ')
        end select
 
        select case (ishape)
-       case (3,4)
+       case (3,4,5,7)
           call ovarrf(outfile,'Triangularity, 95% surface (input value used)', &
-               '(triang95)',triang95)
+               '(triang95)',triang95, 'IP ')
        case default
-          call ovarrf(outfile,'Triangularity, 95% surface (triang/1.5)', &
+          call ovarrf(outfile,'Triangularity, 95% surface (calculated from triang)', &
                '(triang95)',triang95, 'OP ')
        end select
 

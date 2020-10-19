@@ -1,5 +1,7 @@
 
-# Output Guide
+# Output File
+
+[PDF of webpage](../pdf/output-guide.pdf)
 
 The main output from the code is sent to file `OUT.DAT` in the working directory. It is essential to check that the code reports that it has found a *feasible solution*.
 

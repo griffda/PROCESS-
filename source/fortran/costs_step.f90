@@ -1266,6 +1266,7 @@ contains
     use physics_variables, only: fhe3, itart, wtgpd
     use times_variables, only: tburn, tcycle
     use process_output, only: oshead, ocosts, oblnkl,  ovarrf, osubhd, oheadr
+    use constants, only: n_day_year
 
     implicit none
 
@@ -1282,7 +1283,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Number of kWh generated each year
-    kwhpy = 1.0D3 * pnetelmw * (24.0D0*365.0D0) * cfactr * tburn/tcycle
+    kwhpy = 1.0D3 * pnetelmw * (24.0D0*n_day_year) * cfactr * tburn/tcycle
 
     ! Costs due to reactor plant
     ! ==========================
@@ -1411,7 +1412,7 @@ contains
   !  Annual cost of fuel
 
   !  Sum D-T fuel cost and He3 fuel cost
-  annfuel = ucfuel * pnetelmw/1200.0D0 + 1.0D-6 * fhe3 * wtgpd * 1.0D-3 * uche3 * 365.0D0 * cfactr
+  annfuel = ucfuel * pnetelmw/1200.0D0 + 1.0D-6 * fhe3 * wtgpd * 1.0D-3 * uche3 * n_day_year * cfactr
 
   !  Cost of electricity due to reactor fuel
   coefuel = 1.0D9 * annfuel / kwhpy

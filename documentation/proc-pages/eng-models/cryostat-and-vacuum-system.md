@@ -1,7 +1,5 @@
 # Structural components
 
-[PDF Doc](./media/cryodoc.pdf)
-
 The internal vacuum vessel provides a toroidal evacuated chamber containing the plasma, first wall, blanket and shield, and the space between this item and the external cylindrical cryostat encloses those components that need to operate at liquid helium temperatures. These include any superconducting (TF or PF) coils and the inter-coil structure. `PROCESS` calculates the cryogenic power load and the resulting heat exchanger requirements.
 
 The vertical distance *h* between the uppermost PF coil and the external cryostat lib may be adjusted by changing the value of input parameters `clhsf`; a scaling based on ITER is used:

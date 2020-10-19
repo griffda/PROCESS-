@@ -2,21 +2,14 @@ site_name: PROCESS
 docs_dir: "documentation/proc-pages/"
 nav:
     - Home: index.md
-    - Publications: publications.md
     - Getting Started: getting-started.md
-    - I/O: 
-        - Input: io/input-guide.md
-        - Output: io/output-guide.md
-        - Utilities: io/utilities-guide.md
-        - Test suite: io/test_suite.md
-        - Python Libraries: io/python-lib-guide.md
-        - Variable Descriptions: vardes.md
-    - Solver:
-        - Solver Guide: solver/solver-guide.md
-        - VMCON Optimisation Solver Explained: solver/optsolverdoc.md
-    - Physics Models:
-        - Plasma: physics-models/plasma.md
-        - PLASMOD: physics-models/plasmod.md
+    - FORD docs: ford_site/ford.md
+    - Cost Models: cost-models/cost-models.md
+    - Development: 
+        - Tools: development/tools.md
+        - Standards: development/standards.md
+        - Continuous Integration: development/ci-guide.md
+        - Unit Tests: development/unit-tests.md
     - Engineering Models:
         - Machine Build: eng-models/machine-build.md
         - Structural Components: eng-models/structural-components.md
@@ -30,27 +23,35 @@ nav:
         - Power conversion and heat dissipation systems: eng-models/power-conversion-and-heat-dissipation-systems.md
         - Auxiliary Power Systems: eng-models/auxiliary-power-systems.md
         - Cryostat and vacuum system: eng-models/cryostat-and-vacuum-system.md
-    - Misc:
-        Spherical Tokamak: misc/spherical-tokamak.md
-        Pulsed Plant Operation: misc/pulsed-plant.md
-        Stellarator Model: misc/stellarator.md
-        Inertial Fusion Energy Model: misc/inertial.md
-        Safety and Environment Models: misc/safety.md
-        Cost Models: misc/cost-models.md
-        Plant Availability: misc/plant.md
-        Electron Cyclotron Current Drive: misc/CD.md
-        Equation Solvers: misc/equation-solver.md
+        - Plant Availability: eng-models/plant.md
+    - Fusion Devices:
+        - Spherical Tokamak: fusion-devices/spherical-tokamak.md
+        - Stellarator Model: fusion-devices/stellarator.md
+        - Inertial Fusion Energy Model: fusion-devices/inertial.md
+    - I/O:
+        - Input: io/input-guide.md
+        - Output: io/output-guide.md
+        - Python Libraries: io/python-lib-guide.md
+        - Test suite: io/test-suite.md
+        - Utilities: io/utilities-guide.md
+        - Variable Descriptions: vardes.md
+    - Physics Models:
+        - Electron Cyclotron Current Drive: physics-models/CD.md
+        - Plasma: physics-models/plasma.md
+        - PLASMOD: physics-models/plasmod.md
+        - Pulsed Plant Operation: physics-models/pulsed-plant.md
+        - Safety and Environment Models: physics-models/safety.md
     - Plasma Scenarios:
-        I Mode: plasma/i-mode.md
-        QH Mode: plasma/qh-mode.md
-        L Mode: plasma/l-mode.md
-        Hybrid Scenario: plasma/hybrid-scenario.md 
-    - Development: 
-        Tools: development/tools.md
-        Standards: development/standards.md
-        Continuous Integration: development/ci-guide.md
-        Unit Tests: development/unit-tests.md
-    - FORD docs: ford_site/index.html
+        - I Mode: plasma/i-mode.md
+        - QH Mode: plasma/qh-mode.md
+        - L Mode: plasma/l-mode.md
+        - Hybrid Scenario: plasma/hybrid-scenario.md 
+    - Solver:
+        - Solver Guide: solver/solver-guide.md
+        - VMCON Optimisation Solver Explained: solver/optsolverdoc.md
+        - Equation Solvers: solver/equation-solver.md
+    - Publications: publications.md
+    - PDF pages: pdf/pdf.md
 
 repo_url: https://git.ccfe.ac.uk/process/process.git
 

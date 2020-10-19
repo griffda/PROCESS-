@@ -55,7 +55,8 @@ contains
       fwareaob, blnktth, rbld, blnkoth, tfoffset, iprecomp, plsepo, tfthko, &
       rsldo, vgap, gapoh, fwoth, ohcth, shldoth, scraplo, fwith, blbpith, &
       tfootfi, blbuoth, gapds, fwareaib, fseppc, scrapli, blbmith, shldith, &
-      ddwi, fwarea, blbpoth, blbmoth, fcspc, bore, r_cp_top, r_sh_inboard_out
+      ddwi, fwarea, blbpoth, blbmoth, fcspc, bore, r_cp_top, r_sh_inboard_out, &
+      r_sh_inboard_in, f_r_cp
     use constants, only: mfile, nout, pi
     use current_drive_variables, only: beamwd
     use divertor_variables, only: divfix
@@ -131,8 +132,8 @@ contains
     ! Radius of the centrepost at the top of the machine
     if ( itart == 1 ) then
     
-      ! If r_cp_top is used as iteration variable
-      if ( any(ixc(1:nvar) == 174) ) then
+       ! If r_cp_top is used as iteration variable
+       if ( any(ixc(1:nvar) == 174) ) then
 
           ! Error if if r_cp_top is larger than the top plasma radius + shields
           if ( r_cp_top > rmajor - rminor * triang - ( tftsgap + thshield +& 
@@ -142,28 +143,45 @@ contains
              call report_error(256)
           end if
 
+          ! CP TF top / mid-plane radii fraction
+          f_r_cp = r_cp_top / r_tf_inboard_out
+
+       ! Use the top CP radius fracion as an input if f_r_cp is user defined
+       else if ( abs(f_r_cp + 1.0D0) > epsilon(f_r_cp) ) then 
+          r_cp_top = f_r_cp * r_tf_inboard_out         
+       
        ! Otherwise calculate r_cp_top from plasma shape
        else
-          r_cp_top = rmajor - rminor * triang - ( tftsgap + thshield + shldith + &
-                     vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
-          r_cp_top = max( r_cp_top, r_tf_inboard_out * 1.01D0 ) 
-
-          ! lvl 3 error if r_cp_top is negative 
-          ! Not sure it is usefull with the max() statment ...
-          ! To be removed ?
-          if (r_cp_top <= 0.0D0) then
-            fdiags(1) = r_cp_top
-            call report_error(115)
+          if ( i_tf_sup == 1 ) then 
+             r_cp_top = r_tf_inboard_out
+             
+          else
+             r_cp_top = rmajor - rminor * triang - ( tftsgap + thshield + shldith + &
+                        vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
+             r_cp_top = max( r_cp_top, r_tf_inboard_out * 1.01D0 ) 
+             
+             ! lvl 3 error if r_cp_top is negative 
+             ! Not sure it is useful with the max() statment ...
+             ! To be removed ?
+             if (r_cp_top <= 0.0D0) then
+               fdiags(1) = r_cp_top
+               call report_error(115)
+             end if
           end if
        
+          ! CP TF top / mid-plane radii fraction
+          f_r_cp = r_cp_top / r_tf_inboard_out
        end if 
     end if
 
     !  Radial position of vacuum vessel [m]
     r_vv_inboard_out = r_tf_inboard_out + tftsgap + thshield + gapds + ddwi
 
-    ! Radial position of the plasma facing side of inboard neutronic shield
-    r_sh_inboard_out = r_vv_inboard_out + shldith
+    ! Radial position of the inner side of inboard neutronic shield [m]
+    r_sh_inboard_in = r_vv_inboard_out
+
+    ! Radial position of the plasma facing side of inboard neutronic shield [m]
+    r_sh_inboard_out = r_sh_inboard_in + shldith
 
     !  Radial build to centre of plasma (should be equal to rmajor)
     rbld = r_sh_inboard_out + vvblgap + blnkith + fwith + scrapli + rminor
@@ -300,7 +318,7 @@ contains
     end if
 
     write(outfile,10)
-10  format(t43,'Thickness (m)',t60,'Radius (m)')
+   10  format(t43,'Thickness (m)',t60,'Radius (m)')
 
     radius = 0.0D0
     call obuild(outfile,'Device centreline',0.0D0,radius)
@@ -408,7 +426,7 @@ contains
        call ocmmnt(outfile,'Double null case')
 
        write(outfile,20)
-20     format(t43,'Thickness (m)',t60,'Height (m)')
+       20 format(t43,'Thickness (m)',t60,'Height (m)')
 
        vbuild = 0.0D0
        call obuild(outfile,'Midplane',0.0D0,vbuild)

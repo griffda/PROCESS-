@@ -1,4 +1,5 @@
 # PROCESS Publications
+[PDF of webpage](pdf/publications.pdf)
 
 Below is a list of publications using PROCESS by year:
 
