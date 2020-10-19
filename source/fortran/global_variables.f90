@@ -352,7 +352,7 @@ module physics_variables
   !! F-value for minimum pdivt (`constraint equation 80`)
 
   real(dp) :: fne0 = 1.0D0
-  !! f-value for the constraint ne(0) > ne(sep) (`constraint equation 81`)
+  !! f-value for the constraint ne(0) > ne(ped) (`constraint equation 81`)
   !! (`Iteration variable 154`) 
 
   real(dp), bind(C) :: ftrit = 0.5D0
@@ -2753,8 +2753,21 @@ module tfcoil_variables
   real(dp) :: t_conductor = 0.0D0
   !! Conductor (cable + steel conduit) area averaged dimension [m]
   
-  real(dp) :: t_turn = 0.0D0
-  !! WP turn squared dimensions [m]
+  real(dp) :: t_turn_tf = 0.0D0
+  !! TF coils WP turn squared dimensions including turn insulation [m]
+  !! If the t_turn_tf is non zero, cpttf is calculated
+
+  logical :: t_turn_tf_is_input
+  !! Boolean switch to activated when the user set the TF turn dimensions
+  !! Not an input
+
+  real(dp) :: f_t_turn_tf = 1.0D0
+  !! f-value for TF coils WP trurn squared dimension constraint 
+  !! iteration variable ixc = 175
+  !! constraint equation icc = 86
+
+  real(dp) :: t_turn_tf_max = 0.05
+  !! TF coils WP turn squared dimension upper limit (constraint xx)
 
   real(dp) :: acs = 0.0D0
   !! Area of space inside conductor (m2)

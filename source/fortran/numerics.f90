@@ -14,10 +14,10 @@ module numerics
 
   public
 
-  integer, parameter :: ipnvars = 174
+  integer, parameter :: ipnvars = 175
   !!  ipnvars FIX : total number of variables available for iteration
 
-  integer, parameter :: ipeqns = 85
+  integer, parameter :: ipeqns = 86
   !!  ipeqns  FIX : number of constraint equations available
   
   integer, parameter :: ipnfoms = 19
@@ -284,10 +284,12 @@ module numerics
        !!  <LI> (82) toroidalgap >  tftort constraint (itv  171 ftoroidalgap)
        'available_space > required_space ',   &
        !!  <LI> (83) Radial build consistency for stellarators (itv 172 f_avspace)
-       'beta > betalim_lower             ',    &
+       'beta > betalim_lower             ',   &
        !!  <LI> (84) Lower limit for beta (itv 173 fbetatry_lower)
-       'CP lifetime                      '    &
-       !!  <LI> (85) Constraint for CP lifetime</UL>
+       'CP lifetime                      ',   &
+       !!  <LI> (85) Constraint for CP lifetime
+       'TFC turn dimension               '    &
+       !!  <LI> (86) Constraint for TF coil turn dimension </UL>
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
@@ -476,7 +478,8 @@ module numerics
   !! <LI> (171) ftoroidalgap : F-value for toroidalgap >  tftort constraint (con. 82)
   !! <LI> (172) f_avspace (f-value for equation 83)
   !! <LI> (173) fbetatry_lower (f-value for equation 84)
-  !! <LI> (174) r_cp_top : Top outer radius of the centropost (ST only) (m)</UL>
+  !! <LI> (174) r_cp_top : Top outer radius of the centropost (ST only) (m)
+  !! <LI> (175)  : f-value for TF coils WP trurn squared dimension constraint 
   ! Issue 287 iteration variables are now defined in module define_iteration_variables in iteration variables.f90
 
   character(len=14), dimension(:), allocatable :: name_xc

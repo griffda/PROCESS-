@@ -276,7 +276,7 @@ contains
       thicndut, tftmp, oacdcp, tmax_croco, ptempalw, tmargmin_tf, tmpcry, &
       alstrtf, dztop, dcond, strncon_cs, etapump, drtop, vcool, dcondins, &
       i_tf_tresca, dhecoil, tmaxpro, strncon_tf, n_tf, tcpav, fcutfsu, jbus, &
-      casthi_fraction, tmargmin_cs, sigvvall, vdalw, dcase, t_turn,&
+      casthi_fraction, tmargmin_cs, sigvvall, vdalw, dcase, t_turn_tf,&
       cpttf_max, tdmptf, casths, i_tf_turns_integer, quench_model, &
       tcritsc, layer_ins, tinstf, n_layer, tcoolin, ripmax, frhocp, &
       cpttf, tmargmin, casths_fraction, eff_tf_cryo, eyoung_ins, &
@@ -286,7 +286,7 @@ contains
       poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact,&
       i_tf_plane_stress, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
       i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti, &
-      i_cp_joints, n_tf_turn
+      i_cp_joints, n_tf_turn, f_t_turn_tf, t_turn_tf_max
 
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
@@ -1033,7 +1033,7 @@ contains
 
           !  PLASMOD 1D transport model settings
 
-    !Derived type numerics_transp
+       !Derived type numerics_transp
        case ('plasmod_tol')
           call parse_real_variable('plasmod_tol', plasmod_tol, 0.0D0, 1.0D4, &
                'Tolerance to be reached, in % variation at each time step')
@@ -1101,7 +1101,7 @@ contains
           call parse_int_variable('plasmod_i_impmodel', plasmod_i_impmodel, 0, 10000, &
                'Impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.')
 
-   !Derived type composition
+       !Derived type composition
        case ('plasmod_globtau')
           call parse_real_array('plasmod_globtau', plasmod_globtau, isub1, 5, &
                'Tauparticle/tauE for D, T, He, Xe, Ar', icode)
@@ -1116,7 +1116,7 @@ contains
           call parse_int_array('plasmod_imptype', plasmod_imptype, isub1, 3, &
                'Impurities: 1 - intrinsic, 2 - Psep control, 3 - seeding for SOL (defaults: W, Xe, Ar)', icode)
 
-    !Derived type inputs
+       !Derived type inputs
        case ('plasmod_qnbi_psepfac')
           call parse_real_variable('plasmod_qnbi_psepfac', plasmod_qnbi_psepfac, 0.0D0, 1.0D4, &
                'dqnbi/d(1-Psep/PLH)')
@@ -1371,8 +1371,8 @@ contains
                   'Relative contribution to the error tolerance in the Kallenbach divertor model')
         if((abserr_sol<1.d-6).and.(relerr_sol<1.d-6))write(*,*)'abserr_sol and relerr_sol must not both be very small.'
 
-      case ('mach0')
-      call parse_real_variable('mach0', mach0, 0.D0, 1.D0, &
+       case ('mach0')
+          call parse_real_variable('mach0', mach0, 0.D0, 1.D0, &
               'Mach number at target (must be just less than 1)')
 
        ! See HTS coil module for PROCESS.docx
@@ -1594,12 +1594,12 @@ contains
        case ('foh_stress')
           call parse_real_variable('foh_stress', foh_stress, 1.0D-3, 1.0D0, &
                'F-value for CS coil Tresca stress limit')
-!       case ('fwith')
-!          call parse_real_variable('fwith', fwith, 0.0D0, 10.0D0, &
-!               'Inboard first wall thickness, initial estimate (m)')
-!       case ('fwoth')
-!          call parse_real_variable('fwoth', fwoth, 0.0D0, 10.0D0, &
-!               'Outboard first wall thickness, initial estimate (m)')
+       !       case ('fwith')
+       !          call parse_real_variable('fwith', fwith, 0.0D0, 10.0D0, &
+       !               'Inboard first wall thickness, initial estimate (m)')
+       !       case ('fwoth')
+       !          call parse_real_variable('fwoth', fwoth, 0.0D0, 10.0D0, &
+       !               'Outboard first wall thickness, initial estimate (m)')
        case ('gapoh')
           call parse_real_variable('gapoh', gapoh, 0.0D0, 10.0D0, &
                'Gap between OHC and TF coil (m)')
@@ -1627,11 +1627,11 @@ contains
        case ('i_r_cp_top')
           call parse_int_variable('i_r_cp_top', i_r_cp_top, 0, 2, &
                'Switch selecting the TF CP is parametrization (ST only)')
-      case ('r_cp_top')
-         call parse_real_variable('r_cp_top', r_cp_top, 0.0010D0, 10.0D0, &
+       case ('r_cp_top')
+          call parse_real_variable('r_cp_top', r_cp_top, 0.0010D0, 10.0D0, &
               'Top CP outer radius (ST only) (m)')
-      case ('f_r_cp')
-         call parse_real_variable('f_r_cp', f_r_cp, 1.0D0, 100.0D0, &
+       case ('f_r_cp')
+          call parse_real_variable('f_r_cp', f_r_cp, 1.0D0, 100.0D0, &
               'Ratio between the top and the midplane TF CP outer radius (-) ')
        case ('scrapli')
           call parse_real_variable('scrapli', scrapli, 0.0D0, 10.0D0, &
@@ -1654,8 +1654,8 @@ contains
        case ('sigallpc')
           call parse_real_variable('sigallpc', sigallpc, 0.0D1, 1.0D9, &
                'Allowable stress in CS pre-comp structure (Pa)')
-    ! Issue #514 Make tfcth an output not an input or iteration variable:
-    ! Eventually this input will be removed.
+       ! Issue #514 Make tfcth an output not an input or iteration variable:
+       ! Eventually this input will be removed.
        case ('tfcth')
           call parse_real_variable('tfcth', tfcth, 0.0D0, 10.0D0, &
                'TF coil thickness (m)')
@@ -1701,21 +1701,21 @@ contains
        case ('hastelloy_thickness')
           call parse_real_variable('hastelloy_thickness', hastelloy_thickness, 0.01D-6, 1000.0D-6, &
                'hastelloy_thickness')
-      ! case ('croco_id')
-      !   call parse_real_variable('croco_id', croco_id, 0.0D0, 0.1D0, &
-      !       'croco_id')
-      ! case ('croco_od')
-      !    call parse_real_variable('croco_od', croco_od, 0.0D0, 0.1D0, &
-      !         'Outer diameter of CroCo strand (m)')
+       ! case ('croco_id')
+       !   call parse_real_variable('croco_id', croco_id, 0.0D0, 0.1D0, &
+       !       'croco_id')
+       ! case ('croco_od')
+       !    call parse_real_variable('croco_od', croco_od, 0.0D0, 0.1D0, &
+       !         'Outer diameter of CroCo strand (m)')
        case ('croco_thick')
           call parse_real_variable('croco_thick', croco_thick, 0.001D0, 0.1D0, &
                'Thickness of CroCo copper tube (m)')
        case ('copper_thick')
           call parse_real_variable('copper_thick', copper_thick, 0.0D0, 1000.0D-6, &
                'copper_thick (m)')
-    !    case ('copper_bar')
-    !       call parse_real_variable('copper_bar', copper_bar, 0.0D0, 0.9D0, &
-    !            'area of central copper bar, as a fraction of area inside the jacket')
+       !    case ('copper_bar')
+       !       call parse_real_variable('copper_bar', copper_bar, 0.0D0, 0.9D0, &
+       !            'area of central copper bar, as a fraction of area inside the jacket')
        case ('copper_rrr')
           call parse_real_variable('copper_rrr', copper_rrr, 1.0D0, 1.0D4, &
                'residual resistivity ratio copper in TF superconducting cable')
@@ -1989,9 +1989,15 @@ contains
        case ('tftmp')
           call parse_real_variable('tftmp', tftmp, 0.01D0, 10.0D0, &
                'Peak TF coil He coolant temp. (K)')      
-       case ('t_turn')
-          call parse_real_variable('t_turn', t_turn, 0.0D0, 0.1D0, &
+       case ('t_turn_tf')
+          call parse_real_variable('t_turn_tf', t_turn_tf, 0.0D0, 0.1D0, &
                'TF turn square dimensions (m)')
+       case ('f_t_turn_tf')
+          call parse_real_variable('f_t_turn_tf', f_t_turn_tf, 0.0D0, 1.D0, &
+                'f-value for TF coils WP trurn squared dimension constraint')
+       case ('t_turn_tf_max')
+          call parse_real_variable('t_turn_tf_max', t_turn_tf_max, 0.0D0, 1.D0, &
+                'TF coils WP turn squared dimension upper limit (m)')
        case ('thicndut')
           call parse_real_variable('thicndut', thicndut, 0.0D0, 0.1D0, &
                'Conduit insulation thickness (m)')
@@ -2022,17 +2028,16 @@ contains
 
        case ('quench_model')
           call parse_string_variable('quench_model', quench_model, 'quench_model')
-      case ('quench_detection_ef')
+       case ('quench_detection_ef')
           call parse_real_variable('quench_detection_ef', quench_detection_ef, 0.0D0, 1.0D1, &
                'Electric field at which TF quench is detected and discharge begins (V/m)')
 
        case ('tmax_croco')
           call parse_real_variable('tmax_croco', tmax_croco, 4.0D0, 1.0D3, &
                'CroCo strand: maximum temp during a quench (K)')
-    !    case ('tmax_jacket')
-    !       call parse_real_variable('tmax_jacket', tmax_jacket, 4.0D0, 1.0D3, &
-    !            'Jacket: maximum temp during a quench (K)')
-
+       !    case ('tmax_jacket')
+       !       call parse_real_variable('tmax_jacket', tmax_jacket, 4.0D0, 1.0D3, &
+       !            'Jacket: maximum temp during a quench (K)')
        case ('tmpcry')
           call parse_real_variable('tmpcry', tmpcry, 0.01D0, 10.0D0, &
                'Cryogenic temperature (K)')
@@ -2354,14 +2359,14 @@ contains
        case ('fvoldw')
           call parse_real_variable('fvoldw', fvoldw, 0.0D0, 10.0D0, &
                'Fudge factor for vacuum vessel volume')
-!+PJK FVOLSI, FVOLSO should now be restricted to <= 1
+       !+PJK FVOLSI, FVOLSO should now be restricted to <= 1
        case ('fvolsi')
           call parse_real_variable('fvolsi', fvolsi, 0.0D0, 10.0D0, &
                'Fudge factor for inboard shield volume')
        case ('fvolso')
           call parse_real_variable('fvolso', fvolso, 0.0D0, 10.0D0, &
                'Fudge factor for outboard shield volume')
-!-PJK
+       !-PJK
        case ('fwclfr')
           call parse_real_variable('fwclfr', fwclfr, 0.0D0, 1.0D0, &
                'First wall coolant fraction')
@@ -3015,24 +3020,24 @@ contains
           call parse_real_variable('tn', tn, 1.0D0, 1.0D3, &
                'Neutral gas temp in chamber (K)')
        case ('dwell_pump')
-               call parse_int_variable('dwell_pump', dwell_pump, 0, 2, &
-                    'switch for dwell pumping options')
+          call parse_int_variable('dwell_pump', dwell_pump, 0, 2, &
+               'switch for dwell pumping options')
        case ('pumpareafraction')
           call parse_real_variable('pumpareafraction', pumpareafraction, 1.0D-6, 1.0D0, &
                'Area of one pumping port as a fraction of plasma surface area')
-      case ('pumpspeedmax')
+       case ('pumpspeedmax')
           call parse_real_variable('pumpspeedmax', pumpspeedmax, 1.0D-6, 1.0D3, &
                'Maximum pumping speed per unit area for deuterium & tritium, molecular flow')
-      case ('pumpspeedfactor')
+       case ('pumpspeedfactor')
           call parse_real_variable('pumpspeedfactor', pumpspeedfactor, 1.0D-6, 1.0D0, &
                'Effective pumping speed reduction factor due to duct impedance')
-      case ('initialpressure')
+       case ('initialpressure')
           call parse_real_variable('initialpressure', initialpressure, 1.0D-6, 1.0D4, &
                'initial neutral pressure at the beginning of the dwell phase (Pa)')
-      case ('outgasindex')
+       case ('outgasindex')
           call parse_real_variable('outgasindex', outgasindex, 1.0D-6, 1.0D3, &
                'outgassing decay index')
-      case ('outgasfactor')
+       case ('outgasfactor')
           call parse_real_variable('outgasfactor', outgasfactor, 1.0D-6, 1.0D3, &
                'outgassing prefactor kw: outgassing rate at 1 s per unit area (Pa m s-1)')
 

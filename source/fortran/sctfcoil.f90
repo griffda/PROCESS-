@@ -120,9 +120,6 @@ real(dp), private :: t_cable_radial, t_cable_toroidal
 real(dp), private :: t_turn_radial, t_turn_toroidal
 !! Turn radial and toroidal dimension (integer turn only) [m]
 
-real(dp), private :: t_turn
-!! Turn area averaged dimension (square shape) [m]
-
 real(dp), private :: t_cable
 !! Cable area averaged dimension (square shape) [m]
 
@@ -402,7 +399,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
     ! Setting the WP turn geometry / areas 
     if ( i_tf_turns_integer == 0 ) then 
         ! Non-ingeger number of turns
-        call tf_averaged_turn_geom( cpttf, jwptf, thwcndut, thicndut, i_tf_sc_mat, & ! Inputs
+        call tf_averaged_turn_geom( jwptf, thwcndut, thicndut, i_tf_sc_mat, & ! Inputs
                                     acstf, acndttf, insulation_area, n_tf_turn )     ! Outputs
     else 
         ! Integer number of turns
@@ -653,7 +650,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
         ! --------------
     end subroutine tf_case_geom
 
-    subroutine tf_averaged_turn_geom( cpttf, jwptf, thwcndut, thicndut, i_tf_sc_mat, & ! Inputs
+    subroutine tf_averaged_turn_geom( jwptf, thwcndut, thicndut, i_tf_sc_mat, & ! Inputs
                                       acstf, acndttf, insulation_area, n_tf_turn ) ! Outputs                    ! Outputs
 
         !! Authors : J. Morris, CCFE
@@ -666,7 +663,8 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
         
         use error_handling, only: fdiags, report_error
         use constants, only: pi
-        use tfcoil_variables, only : layer_ins, t_conductor
+        use tfcoil_variables, only : layer_ins, t_conductor, t_turn_tf, &
+            t_turn_tf_is_input, cpttf
         
         implicit none
 
@@ -674,9 +672,6 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
         ! ------
         integer, intent(in) :: i_tf_sc_mat
         !! Switch for superconductor material in TF coils
-
-        real(dp), intent(in) :: cpttf
-        !! Current per turn [A]
 
         real(dp), intent(in) :: jwptf
         !! Winding pack engineering current density [A/m2]
@@ -715,16 +710,30 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
         !----------------
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-            
-        ! Turn dimension [m2]
-        ! Allow for additional inter-layer insulation MDK 13/11/18
-        ! Area of turn including conduit and inter-layer insulation
-        a_turn = cpttf / jwptf
-            
-        ! Dimension of square cross-section of each turn including inter-turn insulation [m]
-        t_turn = sqrt(a_turn)
-        t_turn_radial = t_turn
-        t_turn_toroidal = t_turn
+
+        ! Turn dimension is a an input
+        if ( t_turn_tf_is_input ) then 
+            ! Turn dimension [m2]
+            a_turn = t_turn_tf**2
+
+            ! Current per turn [A]
+            cpttf = a_turn * jwptf
+
+        ! Current per turn is an input
+        else                         
+            ! Turn dimension [m2]
+            ! Allow for additional inter-layer insulation MDK 13/11/18
+            ! Area of turn including conduit and inter-layer insulation
+            a_turn = cpttf / jwptf
+
+            ! Dimension of square cross-section of each turn including inter-turn insulation [m]
+            t_turn_tf = sqrt(a_turn)
+
+        end if 
+        
+        ! Square turn assumption
+        t_turn_radial = t_turn_tf
+        t_turn_toroidal = t_turn_tf
             
         ! See derivation in the following document
         ! k:\power plant physics and technology\process\hts\hts coil module for process.docx
@@ -794,7 +803,8 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
         !! areas and the its associated current
 
         use error_handling, only: fdiags, report_error
-        use tfcoil_variables, only: dr_tf_wp, tinstf, tfinsgap, t_conductor
+        use tfcoil_variables, only: dr_tf_wp, tinstf, tfinsgap, t_conductor, &
+            t_turn_tf
         use constants, only: pi
         implicit none
 
@@ -864,7 +874,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
             call report_error(100)
         end if
 
-        t_turn = sqrt(t_turn_radial*t_turn_toroidal)
+        t_turn_tf = sqrt(t_turn_radial*t_turn_toroidal)
     
         ! Number of TF turns
         n_tf_turn = dble( n_layer * n_pancake )
@@ -3584,7 +3594,7 @@ subroutine outtf(outfile, peaktfflag)
         i_tf_sc_mat, voltfleg, vol_cond_cp, tflegres, tcpav, prescp, i_tf_sup, &
         cpttf, cdtfleg, whttflgs, whtcp, i_tf_bucking, tlegav, rhotfleg, rhocp, &
         presleg, i_tf_shape, fcoolcp, pres_joints, tmargtf, tmargmin_tf, &
-        f_vforce_inboard, vforce_outboard, acstf
+        f_vforce_inboard, vforce_outboard, acstf, t_turn_tf
     use physics_variables, only: itart
     use constants, only: mfile, pi
     implicit none
@@ -3663,7 +3673,7 @@ subroutine outtf(outfile, peaktfflag)
 
     ! TF coil geometry
     call osubhd(outfile,'TF coil Geometry :')
-    call ovarre(outfile,'Number of TF coils','(n_tf)',n_tf)
+    call ovarin(outfile,'Number of TF coils','(n_tf)', int(n_tf))
     call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inboard_mid)',r_tf_inboard_mid, 'OP ')
     call ovarre(outfile,'Outboard leg centre radius (m)','(r_tf_outboard_mid)',r_tf_outboard_mid, 'OP ')
     call ovarre(outfile,'Total inboard leg radial thickness (m)','(tfcth)',tfcth)
@@ -3762,12 +3772,12 @@ subroutine outtf(outfile, peaktfflag)
         if ( i_tf_turns_integer == 1 ) then
             call ovarre(outfile, 'Radial width of turn (m)', '(t_turn_radial)', t_turn_radial)
             call ovarre(outfile, 'Toroidal width of turn (m)', '(t_turn_toroidal)', t_turn_toroidal)
-            call ovarre(outfile, 'Radial width of conductor (m)', '(t_conductor_radial)', t_conductor_radial, 'OP ')
+            call ovarre(outfile, 'Radial width of conductor (m)', '(elonductor_radial)', t_conductor_radial, 'OP ')
             call ovarre(outfile, 'Toroidal width of conductor (m)', '(t_conductor_toroidal)', t_conductor_toroidal, 'OP ')
             call ovarre(outfile, 'Radial width of cable space', '(t_cable_radial)', t_cable_radial)
             call ovarre(outfile, 'Toroidal width of cable space', '(t_cable_toroidal)', t_cable_toroidal)
        else
-            call ovarre(outfile,'Width of turn including inter-turn insulation (m)','(t_turn)',t_turn, 'OP ')
+            call ovarre(outfile,'Width of turn including inter-turn insulation (m)','(t_turn_tf)',t_turn_tf, 'OP ')
             call ovarre(outfile,'Width of conductor (square) (m)','(t_conductor)',t_conductor, 'OP ')
             call ovarre(outfile,'Width of space inside conductor (m)','(t_cable)',t_cable, 'OP ')
         end if
