@@ -203,7 +203,6 @@ contains
     htpmw_fwo = 0.0D0
     htpmw_blkti = 0.0D0
     htpmw_blkto = 0.0D0
-    nuc_pow_dep_tot = 0.0D0
     exp_blanket = 0.0D0
     exp_shield1 = 0.0D0
     exp_shield2 = 0.0D0
