@@ -2,7 +2,7 @@
  "version":  [ "PROCESS version 1.0.16" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 262,
+ "n_errortypes": 263,
  "errors": [
   { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -265,6 +265,7 @@
   {"no": 259, "level": 3, "message": "CHECK: Constraint equation 10 (CP lifetime) to used with ST desing (itart=1)"},
   {"no": 260, "level": 3, "message": "CHECK: Al TF coil fluence not calculated properly for Al CP, do not use constraint 85"},
   {"no": 261, "level": 3, "message": "CHECK: To set the TF CP top value, you must use i_r_cp_top = 1"},
-  {"no": 262, "level": 2, "message": "[radialb]: TF CP top radius (r_cp_top) replaced by 1.01*r_tf_inboard_out -> potential top rbuild issue"}
+  {"no": 262, "level": 2, "message": "[radialb]: TF CP top radius (r_cp_top) replaced by 1.01*r_tf_inboard_out -> potential top rbuild issue"},
+  {"no": 263, "level": 3, "message": "CHECK: Impossible to set the TF turn size with the integer turn option (i_tf_turns_integer: 1) "} 
   ]
 }

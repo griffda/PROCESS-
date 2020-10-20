@@ -1309,6 +1309,11 @@ subroutine check
     else
         t_turn_tf_is_input = .true.
     end if
+
+    ! Impossible to set the turn size of integer turn option
+    if ( t_turn_tf_is_input .and. i_tf_turns_integer == 1 ) then
+        call report_error(263) 
+    end if 
     ! -------
 
 
