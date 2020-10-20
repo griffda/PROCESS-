@@ -4084,7 +4084,7 @@ contains
 
         ! REBCO measurements from 2 T to 14 T, extrapolating outside this
         if((isumat == 8) .and. (bmaxtfrp >= 14)) then
-        call report_error(265)
+        call report_error(266)
         end if
 
         !  Temperature margin (already calculated in bi2212 for isumat=2)

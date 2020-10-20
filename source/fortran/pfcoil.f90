@@ -2722,6 +2722,9 @@ module pfcoil_module
             if ((isumatoh == 8) .and. strncon_cs > 0.7D-2 .or. strncon_cs < -0.7D-2) then
                  call report_error(262)
             end if
+            if ((isumatpf == 8) .and. strncon_pf > 0.7D-2 .or. strncon_pf < -0.7D-2) then
+               call report_error(263)
+            end if
  
         else
            call ocmmnt(outfile,'Resistive central solenoid')

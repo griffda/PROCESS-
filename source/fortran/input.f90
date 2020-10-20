@@ -2094,7 +2094,7 @@ contains
           call parse_int_variable('isumatoh', isumatoh, 1, 8, &
                'Central Solenoid superconductor material')
        case ('isumatpf')
-          call parse_int_variable('isumatpf', isumatpf, 1, 7, &
+          call parse_int_variable('isumatpf', isumatpf, 1, 8, &
                'PF coil superconductor material')
        case ('ncls')
           call parse_int_array('ncls', ncls, isub1, ngrpmx, &
