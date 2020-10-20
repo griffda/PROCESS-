@@ -145,14 +145,6 @@ contains
        ! User defined r_cp_top
        else if ( i_r_cp_top == 1 ) then     
        
-          ! Error if if r_cp_top is larger than the top plasma radius + shields
-          if ( r_cp_top > rmajor - rminor * triang - ( tftsgap + thshield +& 
-               shldith + vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop ) then
-
-             fdiags(1) = r_cp_top
-             call report_error(256)
-          end if
-
           ! Notify user that r_cp_top has been set to 1.01*r_tf_inboard_out (lvl 2 error)
           if ( r_cp_top < 1.01D0 * r_tf_inboard_out ) then
             fdiags(1) = r_cp_top
@@ -173,6 +165,15 @@ contains
     else ! End of itart == 1 .and. i_tf_sup /= 1
        r_cp_top = r_tf_inboard_out
     end if 
+
+    if ( i_r_cp_top /= 0 .and. ( r_cp_top > rmajor - rminor * triang  & 
+       - ( tftsgap + thshield + shldith + vvblgap + blnkith + fwith + 3.0D0*scrapli ) &
+       + drtop ) ) then
+
+       fdiags(1) = r_cp_top
+       call report_error(256)
+    end if
+
 
     !  Radial position of vacuum vessel [m]
     r_vv_inboard_out = r_tf_inboard_out + tftsgap + thshield + gapds + ddwi
