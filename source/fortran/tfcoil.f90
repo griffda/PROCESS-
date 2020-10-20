@@ -617,23 +617,23 @@ module tfcoil_module
     ! ----------------------------------------
 
     subroutine al_th_cond(temp, th_cond)
-      !! Author : S. Kahn
-      !! Subroutine calculating temperature dependent He thermal conductivity 
-      !! at 100 Bar from fit using the following data, valid in [4-50] K
-      !! Ref : R.W. Powel, National Standard Reference Data Series, Nov 25 1966 (S Kahn fit 15 < T < 60 K)
-
-      use error_handling, only: fdiags, report_error
-
-      implicit none
-
-      ! Input / output
-      ! --------------
-      real(dp), intent(in) :: temp
-      !! Helium temperature [K]
-
-      real(dp), intent(out) :: th_cond
-      !! Themal conductivity [W/(m.K)]
-      ! --------------
+       !! Author : S. Kahn
+       !! Subroutine calculating temperature dependent He thermal conductivity 
+       !! at 100 Bar from fit using the following data, valid in [4-50] K
+       !! Ref : R.W. Powel, National Standard Reference Data Series, Nov 25 1966 (S Kahn fit 15 < T < 60 K)
+ 
+       use error_handling, only: fdiags, report_error
+ 
+       implicit none
+ 
+       ! Input / output
+       ! --------------
+       real(dp), intent(in) :: temp
+       !! Helium temperature [K]
+ 
+       real(dp), intent(out) :: th_cond
+       !! Themal conductivity [W/(m.K)]
+       ! --------------
 
 
 
@@ -647,12 +647,12 @@ module tfcoil_module
        if ( temp < 60.0D0 ) then
           th_cond = 16332.2073D0 - 776.91775D0*temp + 13.405688D0*temp**2 - 8.01D-02*temp**3
 
-      ! Linear interpolation between the fits to avoid discontinuity
+       ! Linear interpolation between the fits to avoid discontinuity
        else if ( temp < 70.0D0 ) then 
          th_cond = 1587.9108966527328D0 - 15.19819661087886D0 * temp 
 
-      ! fit 70 < T < 150 K (order 2 poly)
-       else if ( temp < 70.0D0 ) then 
+       ! fit 70 < T < 150 K (order 2 poly)
+       else if ( temp < 150.0D0 ) then 
          th_cond = 1782.77406D0 - 24.7778504D0 * temp + 9.70842050D-2 * temp**2  
 
        ! constant value after that set with the fit upper limit to avoid discontinuities
