@@ -2594,7 +2594,7 @@ module pfcoil_module
      use process_output, only: int_to_string2, ovarin, oheadr, &
        ovarre, osubhd, oblnkl, ocmmnt
      use tfcoil_variables, only: tmargmin_cs, strncon_cs, tftmp, b_crit_upper_nbti,&
-       t_crit_nbti 
+       t_crit_nbti, strncon_pf
      use numerics, only: boundu
        use constants, only: mfile
      implicit none

@@ -499,7 +499,7 @@ subroutine GL_nbti(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit)
     real(dp), intent(out) :: jcrit, tcrit, bcrit
 
     !  Local variables
-    real(dp), parameter :: strain_func, T_e, A_e, b_reduced, t_reduced
+    real(dp) :: strain_func, T_e, A_e, b_reduced, t_reduced
     real(dp), parameter :: A_0 = 1102D6
     real(dp), parameter :: p = 0.49D0
     real(dp), parameter :: q = 0.56D0
@@ -724,7 +724,7 @@ subroutine GL_REBCO(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit) !SCM add
   real(dp), intent(out) :: jcrit, tcrit, bcrit
 
   !  Local variables
-  real(kind(1.0D0)) :: strain_func, T_e, A_e, b_reduced, t_reduced
+  real(dp) :: strain_func, T_e, A_e, b_reduced, t_reduced
   real(dp), parameter :: A_0 = 2.95D2
   real(dp), parameter :: p = 0.32D0
   real(dp), parameter :: q = 2.50D0
