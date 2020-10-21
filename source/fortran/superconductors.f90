@@ -499,20 +499,27 @@ subroutine GL_nbti(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit)
     real(dp), intent(out) :: jcrit, tcrit, bcrit
 
     !  Local variables
-    real(dp) :: strain_func, T_e, A_e, b_reduced, t_reduced
+    real(dp) :: strain_func, T_e, A_e, b_reduced, t_reduced, epsilon_I
+    !critical current density prefactor (strand non-copper J_c)
     real(dp), parameter :: A_0 = 1102D6
+    !flux pinning field scaling parameters
     real(dp), parameter :: p = 0.49D0
     real(dp), parameter :: q = 0.56D0
-    real(dp), parameter :: v = 1.42D0
     real(dp), parameter :: n = 1.83D0
+    !temperatute scaling parameter
+    real(dp), parameter :: v = 1.42D0
+    !strain scaling parameters
     real(dp), parameter :: c2 = -0.0025D0
     real(dp), parameter :: c3 = -0.0003D0
     real(dp), parameter :: c4 = -0.0001D0
     real(dp), parameter :: em = -0.002D-2
+    !strain conversion parameters
     real(dp), parameter :: u = 0.0D0
     real(dp), parameter :: w = 2.2D0
 
-    strain_func = 1 + c2*(strain-em)**2 + c3*(strain-em)**3 + c4*(strain-em)**4
+    epsilon_I = strain - em
+
+    strain_func = 1 + c2*(epsilon_I)**2 + c3*(epsilon_I)**3 + c4*(epsilon_I)**4
 
     T_e = t_c0 * strain_func**(1 / w)
 
@@ -715,6 +722,7 @@ subroutine GL_REBCO(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit) !SCM add
   !!  - \( \t \) -- Reduced temperature = thelium / \T_{c}(\epsilon_{I}) [unitless]
   !!  - \( \A(epsilon_{I}) \) -- Strain dependent Prefactor [A / ( m\(^2\) K\(^-2) T\(^n-3))]
   !!  - \( \J_{c,TS} \) --  Critical current density in superconductor [A / m\(^-2\)]
+  !!  - \( \\epsilon_{m} \) -- Strain at which peak in J_c occurs [\%]
 
 
   implicit none
@@ -724,20 +732,27 @@ subroutine GL_REBCO(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit) !SCM add
   real(dp), intent(out) :: jcrit, tcrit, bcrit
 
   !  Local variables
-  real(dp) :: strain_func, T_e, A_e, b_reduced, t_reduced
+  real(dp) :: strain_func, T_e, A_e, b_reduced, t_reduced, epsilon_I
+  !critical current density prefactor
   real(dp), parameter :: A_0 = 2.95D2
+  !flux pinning field scaling parameters
   real(dp), parameter :: p = 0.32D0
   real(dp), parameter :: q = 2.50D0
-  real(dp), parameter :: s = 5.27D0
   real(dp), parameter :: n = 3.33D0
+  !temperatute scaling parameter
+  real(dp), parameter :: s = 5.27D0
+  !strain scaling parameters
   real(dp), parameter :: c2 = -0.0191D0
   real(dp), parameter :: c3 = 0.0039D0
   real(dp), parameter :: c4 = 0.00103D0
   real(dp), parameter :: em = 0.058D0
+  !strain conversion parameters
   real(dp), parameter :: u = 0.0D0
   real(dp), parameter :: w = 2.2D0
 
-  strain_func = 1 + c2*(strain-em)**2 + c3*(strain-em)**3 + c4*(strain-em)**4
+  epsilon_I = strain - em
+
+  strain_func = 1 + c2*(epsilon_I)**2 + c3*(epsilon_I)**3 + c4*(epsilon_I)**4
 
   T_e = t_c0 * strain_func**(1 / w)
 
