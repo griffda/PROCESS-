@@ -33,6 +33,12 @@ execute_process (
   COMMAND bash -c "which gfortran | tr -d '[:space:]'"
   OUTPUT_VARIABLE CMAKE_Fortran_COMPILER
 )
+
+execute_process(
+  COMMAND bash -c "gfortran --version"
+  OUTPUT_VARIABLE CMAKE_Fortran_VERSION
+)
+
 # Questionable stuff to help the compiler handle preprocessor directives
 # TODO Review if these directives are necessary now
 # -cpp for preprocessor directives
@@ -91,6 +97,7 @@ elseif(CMAKE_HOST_UNIX)  # For unix/ linux system
    MESSAGE(STATUS "[Operating System]: Linux ")
    MESSAGE(STATUS "[Binary Location]: ${CMAKE_BINARY_DIR}")
    MESSAGE(STATUS "[Fortran Compiler]: ${CMAKE_Fortran_COMPILER}")
+   MESSAGE(STATUS "[Fortran Compiler Version]: ${CMAKE_Fortran_VERSION}")
    SET(MOVE_FILE mv)
    SET(COPY_FILE cp -p)
    SET(FORTRAN gfortran)
