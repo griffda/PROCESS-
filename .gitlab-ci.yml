@@ -183,11 +183,8 @@ baseline_2018:
 
 step_input:
   when: on_success
-  only: 
-    - develop
-  stage: testing
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   stage: pages
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   script:
     - git config --global user.email "james.morris2@ukaea.uk"
     - git config --global user.name "James Morris"
