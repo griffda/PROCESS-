@@ -13,3 +13,6 @@ PROCESS version created: 1.0.16
 OSIRIS Inertial Fusion device
 
 ## Additional Notes
+
+Note the need for additional file device.dat
+

@@ -4,15 +4,15 @@
  ************************************** Power Reactor Optimisation Code ***************************************
  **************************************************************************************************************
  
-   Program : ../process.exe
+   Program : ./process.exe
    Version : 1.0.17   Release Date :: 2020-02-25
-   Tag No. : 1.0.17-397-gd13d9680
+   Tag No. : 1.0.17-409-g7c7b1b4f
     Branch : develop
-   Git log : Merge branch 'steadystate_test_docs' into 'develop',
- Date/time :  2 Oct 2020 11:34:41 +01:00(hh:mm) UTC
-      User : morrisj
-  Computer : BitFenix
- Directory : /home/morrisj/process/bin/QH_mode
+   Git log : Merge branch '1145-latest-markdown-version-breaks-ford-on-develop' int
+ Date/time : 21 Oct 2020 16:16:22 +01:00(hh:mm) UTC
+      User : jmaddock
+  Computer : J0826UBUNTU
+ Directory : /home/jmaddock/process/test_suite
      Input : IN.DAT
  Run title : Example QH-mode plasma scenario
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
@@ -1033,7 +1033,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ******************************************** PF Coil Inductances *********************************************
  
- Inductance matrix (Henries-turns**2) :
+ Inductance matrix [H] :
  
    1     3.3E+00 4.8E-02 2.8E-01 1.8E-01 2.4E-01 7.4E-02 8.4E-01 9.0E-04
    2     4.8E-02 4.3E+00 1.9E-01 2.9E-01 7.5E-02 2.7E-01 7.0E-01 8.1E-04
