@@ -193,7 +193,7 @@ step_input:
     - echo $MESSAGE
     - pwd
     - cat commit_msg.txt
-    - git clone https://gitlab-ci-token:${STP_CI_API_TOKEN}@git.ccfe.ac.uk/smuldrew/process-step.git
+    - git clone https://smuldrew:${STP_CI_API_TOKEN}@git.ccfe.ac.uk/smuldrew/process-step.git
     - cp commit_msg.txt process-step
     - cd process-step
     - ls
