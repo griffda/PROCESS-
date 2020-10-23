@@ -5,49 +5,89 @@
 PROCESS is the reactor systems code at [CCFE](www.ccfe.ac.uk). More information on PROCESS
 can be found on the PROCESS [webpage](http://www.ccfe.ac.uk/powerplants.aspx).
 
-## Installation and Release
+## Getting Started
 
-### Install from Repository
+PROCESS was originally a Fortran code, but is now Python-wrapped Fortran. In order to use PROCESS, the Fortran must be compiled and a Python-Fortran interface generated for the Python to import. Once built, it can be installed and run as a Python package. The following steps guide you through this process.
 
-It is highly recommended users create a Python virtual environment in order to use the PROCESS python module.
-After cloning the repository from GitLab and activating the virtual environent firstly install the required dependencies:
+### Installation
 
+*It is highly recommended users create a Python virtual environment in order to use the PROCESS Python package, as this ensures that installations of required package versions don't affect other packages that require different versions in your environment. It isn't necessary, however.*
+
+If you have modified your `$PYTHONPATH` environment variable to include `process/utilities`, perhaps in your `~/.bashrc` file, then please remove this modification. Re-start your terminal for the changes to take effect, and check this is not on your `$PYTHONPATH` with:
 ```bash
-pip install -r requirements.txt
+echo $PYTHONPATH
 ```
 
-Then build the project using CMake:
+This modification shouldn't be required to run Process now, and it may result in Ford failing during the build process otherwise.
+
+Clone the PROCESS repository from Gitlab, and navigate into the resulting directory.
+```bash
+git clone git@git.ccfe.ac.uk:process/process.git
+cd process
+```
+
+Activate your virtual environent if you'd like to use one.
+
+Then install the required dependencies using pip3 (or pip, if you have an alias to pip3 set up):
+```bash
+pip3 install -r requirements.txt
+```
+
+Now we need to compile the Fortran and create the Python interface. This is done using Cmake to configure the build and then make to build it. Firstly create a build directory, navigate into it and configure the project using CMake, which is a build system generator.
 
 ```bash
-cmake -H. -B. build
+mkdir build
+cd build
+cmake ..
+```
+
+Then build it using make:
+```bash
+make
+```
+
+The two previous steps may also be accomplished by running the following from the project directory:
+```bash
+cmake -S . -B build
 cmake --build build
 ```
 
-this may take some time as the FORTRAN code is firstly compiled and then wrapped using `f90wrap` and `f2py` to create the
-Python libraries. Once this is completed you can then install the module itself from within the repository:
+The first command defines the source (`-S`) and build (`-B`) directories and configures the build. The second runs the build in the build directory (this uses make by default if you're on Linux). It's up to you which method you choose.
+
+The build step may take some time when run for the first time (~3 mins) as the Fortran code is compiled and then wrapped using `f90wrap` and `f2py` to create the Python libraries. Once this is completed you can then install the Process Python package from the project directory:
 
 ```bash
-pip install .
-```
-
-To test that the setup has been successful try importing the module from outside of the repository folder:
-
-```Python
-import process.fortran
+pip3 install .
 ```
 
 ### Testing
+As a first basic test that the setup has been successful try importing the package from outside of the repository folder in a Python interactive interpreter:
+```bash
+cd
+python3
+```
 
-The included tests are run using PyTest, requirements for the tests are installed by running:
+... to move to your home directory and start the Python interpreter. Then:
+```python
+import process
+process
+```
 
+... should output:
+```bash
+<module 'process' from '/home/jmaddock/process/process/__init__.py'>
+```
+
+This indicates that the Process Python package has been installed.
+
+For thorough testing, the test suite needs to be run. The included tests are run using PyTest, and requirements for the tests are installed by running:
 ```BASH
 pip install .[test]
 ```
 
 PyTest can then be run on the tests folder:
-
 ```BASH
-pytest tests/
+pytest tests
 ```
 
 ### Prepare Release
@@ -69,6 +109,17 @@ Alternatively the module can be packaged into an archive in the same location by
 
 ```BASH
 python setup.py sdist
+```
+
+### Running Process
+Process should now be able to be run in the following manner:
+```bash
+process --input <path/to/IN.DAT>
+```
+e.g.
+
+```bash
+process -i process/tracking/baseline_2018/baseline_2018_IN.DAT 
 ```
 
 ## Documentation
