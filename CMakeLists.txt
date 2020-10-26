@@ -14,28 +14,29 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS  -std=c++11)
 
-# Setup GoogleTest options
-set(GTEST_LIBRARY $ENV{GTEST}/lib)
-set(GTEST_INCLUDE_DIR $ENV{GTEST}/include)
-include_directories(${GTEST_INCLUDE_DIR})
-set(GTEST_MAIN_LIBRARY $ENV{GTEST})
-
 # Choose gfortran as compiler
 set(CMAKE_Fortran_Compiler gfortran)
 
 # Project's name
 project(PROCESS LANGUAGES Fortran CXX)
 
+# Setup GoogleTest options
+find_package(GTest)
+if(GTEST_FOUND)
+  set(GTEST_LIBRARY ${GTEST_LIBRARIES})
+  include_directories(${GTEST_INCLUDE_DIRS})
+endif()
+
 # enable Fortran
 if(${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
-  message(STATUS, "Intel ")
+  message(STATUS "Intel ")
 elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL PGI)
   message( FATAL_ERROR "Please unload pgi(module unload pgi) and load gfortran "
           "(module load gfortran) " )
 elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
   execute_process(COMMAND gfortran --version
                   OUTPUT_VARIABLE GFORT_COMPILER_VERSION)
-  message(STATUS, ${GFORT_COMPILER_VERSION})
+  message(STATUS ${GFORT_COMPILER_VERSION})
 else()
   message( FATAL_ERROR "Unrecognized compiler. Please use  gfortran, ifort" )
 endif()
@@ -53,7 +54,7 @@ set(UTILITIES_DIR ${CMAKE_SOURCE_DIR}/utilities)
 set(HTML_DIR ${DOC_DIR}/html)
 set(PROCESS_LIB_DIR ${CMAKE_SOURCE_DIR}/lib)
 set(TEST_DIR ${CMAKE_SOURCE_DIR}/unit_tests)
-set(GTEST_DIR ${CMAKE_SOURCE_DIR}/unit_tests)
+set(GTEST_TESTS_DIR ${CMAKE_SOURCE_DIR}/unit_tests)
 set(OBJ_DIR ${CMAKE_BINARY_DIR}/CMakeFiles/process.exe.dir/source/fortran)
 set(BLD_DIR ${CMAKE_BINARY_DIR})
 set(CMAKE_INSTALL_RPATH ${CMAKE_BINARY_DIR})
@@ -62,18 +63,18 @@ include_directories(${TEST_DIR})
 
 # Check operating systems and set OS specific options
 if(CMAKE_HOST_WIN32)  # For windows system
-   message(STATUS, "Windows ")
+   message(STATUS "Windows ")
 elseif(CMAKE_HOST_APPLE)  # For Apple OS X system
-   message(STATUS, "Apple OS X ")
-   message(STATUS,${CMAKE_BINARY_DIR})
+   message(STATUS "Apple OS X ")
+   message(STATUS${CMAKE_BINARY_DIR})
    set(MOVE_FILE mv)
    set(COPY_FILE cp -p)
    set(FORTRAN gfortran)
    set(CMAKE_Fortran_COMPILER /usr/local/bin/gfortran)
    set(CMAKE_CALC_ENGINE libPROCESS_calc_engine.dylib)
 elseif(CMAKE_HOST_UNIX)  # For unix/ linux system
-   message(STATUS, "Linux ")
-   message(STATUS,${CMAKE_BINARY_DIR})
+   message(STATUS "Linux ")
+   message(STATUS ${CMAKE_BINARY_DIR})
    set(MOVE_FILE mv)
    set(COPY_FILE cp -p)
    set(FORTRAN gfortran)
@@ -98,13 +99,13 @@ SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath -Wl,/usr/local/
 # CMake compiler setup
 if ("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "GNU")
   # using GCC
-  message(STATUS, "GNU GFORTRAN ")
+  message(STATUS "GNU GFORTRAN ")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
   # using Intel C++
-  message(STATUS, "Intel ")
+  message(STATUS "Intel ")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   # using Visual Studio C++
-  message(STATUS, "MSVC ")
+  message(STATUS "MSVC ")
 endif()
 
 # Set default fortran compiler flags
@@ -386,11 +387,11 @@ if(${dll} MATCHES ON)
   target_link_libraries(process.exe lapack)
 
   # Setup for Google test software (CPP executable)
-  if(DEFINED ENV{GTEST})
-    add_executable(process_GTest.exe ${GTEST_DIR}/main_test.cpp)
+  if(GTEST_FOUND)
+    add_executable(process_GTest.exe ${GTEST_TESTS_DIR}/main_test.cpp)
     target_link_libraries(process_GTest.exe PROCESS_calc_engine)
     target_link_libraries(process_GTest.exe lapack)
-    target_link_libraries(process_GTest.exe $ENV{GTEST}/lib/libgtest.a pthread)
+    target_link_libraries(process_GTest.exe ${GTEST_LIBRARIES} pthread)
   endif()
 
 elseif(${dll} MATCHES OFF)
