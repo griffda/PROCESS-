@@ -526,9 +526,10 @@ contains
     !! This routine reiterates some physics modules.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    use physics_variables, only: bt, dene
-    use stellarator_variables, only: max_gyrotron_frequency,te0_ecrh_achievable
+    use physics_variables, only: bt, dene, rmajor, rminor, powerht, dnelimt
+    use stellarator_variables, only: max_gyrotron_frequency,te0_ecrh_achievable,isthtr
     use constraint_variables, only: fecrh_ignition
+    use numerics, only: icc
 
     implicit none
 
@@ -536,16 +537,28 @@ contains
     integer, intent(in) :: outfile,iprint
     real(dp) :: ne0_max_ECRH, bt_ecrh, powerht_local,pscalingmw_local
 
-    !  Calculate density limit
+    !  Calculate sudo density limit if density constraint is active
+    if( any(icc == 5)) then
+      call stdlim(bt,powerht,rmajor,rminor,dnelimt)
+    end if
+   
 
-    !call stdlim(bt,powht,rmajor,rminor,dnelimt)
-    !print *, "Sudo limit: ",dnelimt
+    ! Calculates the ECRH parameters 
     call stdlim_ecrh(max_gyrotron_frequency,bt,ne0_max_ECRH,bt_ecrh)
     ! This assumes 170GHz Gyrotrons
 
     !print *, "ECRH density limit", dnelimt, " Current density:",dene*1.0d-20
-
-    call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht_local,pscalingmw_local)
+    
+    ! Check if the ECRH Calculation is in the icc vector.
+    ! If yes: Calculate heating power at ECRH operatable point. Otherwise don't calculate it
+    if ( any(icc == 85) ) then
+      if (isthtr .ne. 1) then
+         ! ECRH constraint called without indicated ECRH as heating scheme
+         write(*,*) 'Warning in routine STOPT:'
+         write(*,*) 'isthtr is not set to 1 but icc=85 (ECRH) was called.'
+      end if
+      call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht_local,pscalingmw_local)
+    end if
     !print *, "powerscaling: ", pscalingmw, "powerht: ",powerht, "fecrh_ignition: ",fecrh_ignition
 
     if (iprint == 1) call stopt_output(outfile)
@@ -692,6 +705,8 @@ contains
     pdhe3 = pdhe3pv * vol
     pdd = pddpv * vol
 
+    
+
     !  Calculate neutral beam slowing down effects
     !  If ignited, then ignore beam fusion effects
 
@@ -739,7 +754,7 @@ contains
     powht = falpha*palpmw + pchargemw + pohmmw - pradmw
     powht = max(0.001D0, powht) ! To avoid negative heating power.
 
-
+    
     if (ignite == 0) powht = powht + pinjmw
 
     !  Power to divertor, = (1-f_rad)*Psol
@@ -1915,6 +1930,7 @@ contains
   subroutine stdlim_ecrh(gyro_frequency_max,bt_input,dlimit_ecrh,bt_max)
 
    !! Routine to calculate the density limit due to an ECRH heating scheme on axis
+   !! depending on an assumed maximal available gyrotron frequency.
    !! author: J Lion, IPP Greifswald
    !! gyro_frequency_max     : input real : Maximal available Gyrotron frequency (1/s) NOT (rad/s)
    !! bt  : input real : Maximal magnetic field on axis (T)
@@ -2325,7 +2341,7 @@ contains
     !
     !  Values based on regression analysis by Greifswald, March 2014
     M_struc = 1.3483D0 * (1000.0D0 * estotftgj)**0.7821D0
-    msupstr = 1000.0D0*M_struc  !  kg
+    aintmass = 1000.0D0*M_struc  !  kg
 
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2342,7 +2358,7 @@ contains
 
     ! This 0.18 m is an effective thickness which is scaled with empirial 1.5 law. 5.6 T is reference point of Helias
     ! The thickness 0.18m was obtained as a measured value from Schauer, F. and Bykov, V. design of Helias 5-B. (Nucl Fus. 2013)
-    aintmass = 0.18D0 *f_B**2 * intercoil_surface * denstl 
+    !aintmass = 0.18D0 *f_B**2 * intercoil_surface * denstl 
     
     clgsmass = 0.2D0*aintmass    ! Very simple approximation for the gravity support.
                                  ! This fits for the Helias 5b reactor design point ( F. and Bykov, V. design of Helias 5-B. (nucl Fus. 2013)).
@@ -2356,10 +2372,10 @@ contains
     if (iprint == 0) return
 
     call oheadr(outfile,'Support Structure')
-    call ovarre(outfile,'Intercoil support structure mass (from intercoil calculation) (kg)', &
+    !call ovarre(outfile,'Intercoil support structure mass (from intercoil calculation) (kg)', &
+    !     '(aintmass)',aintmass)
+    call ovarre(outfile,'Intercoil support structure mass (from scaling) (kg)', &
          '(aintmass)',aintmass)
-   call ovarre(outfile,'Intercoil support structure mass (scaling, for comparison) (kg)', &
-         '(empiricalmass)',msupstr)
     call ovarre(outfile,'Gravity support structure mass (kg)', &
          '(clgsmass)',clgsmass)
     call ovarre(outfile,'Mass of cooled components (kg)', &
@@ -2531,7 +2547,7 @@ contains
       aswp, avwp, bmaxtf, casthi, casths, cpttf, dcase, dcopper, estotftgj, &
       fcutfsu, jwptf, n_tf, oacdcp, rbmax, ritfc, tfareain, &
       tfcryoarea, tficrn, tfleng, tfocrn, tfsai, tfsao, tftmp, tftort, &
-      thicndut, thkcas, thkwp, thwcndut, tinstf, turnstf, vftf, whtcas, &
+      thicndut, thkcas, thkwp, thwcndut, tinstf, turnstf, vftf, whtcas, whtgw,&
       whtcon, whtconcu, whtconsc, whtconsh, whttf, wwp1, dcond, awphec, dcondins, &
       i_tf_sc_mat, jwdgpro, leni, leno, max_force_density, sigvvall, strtf2, taucq, &
       tdmptf, tmaxpro, toroidalgap, vtfkv, whtconin, wwp2, vdalw, bcritsc, fhts, &
@@ -2550,13 +2566,14 @@ contains
 
     real(dp) :: r_coil_major, r_coil_minor, case_thickness_constant, coilcurrent
 
-    real(dp), allocatable, dimension(:) ::   jcrit_vector,RHS,LHS,awp, B_max_k
+    real(dp), allocatable, dimension(:) ::   jcrit_vector,RHS,LHS,wp_width_r, B_max_k
 
-    real(dp) :: ap,vd,f_scu, awp_min, awpc, awp_tor, awp_rad, &
+    real(dp) :: ap,vd,f_scu, wp_width_r_min, awpc, awp_tor, awp_rad, &
                b_vert_max, awptf, r_tf_inleg_mid, radvv, tf_total_h_width, &
                tfborev, min_bending_radius, jwdgpro2, coilcoilgap, &
                max_lateral_force_density, max_radial_force_density, &
-               centering_force_max_MN, centering_force_min_MN, centering_force_avg_MN
+               centering_force_max_MN, centering_force_min_MN, centering_force_avg_MN, &
+               max_force_density_MNm
 
     integer :: N_it,k
 
@@ -2567,10 +2584,6 @@ contains
     r_coil_major = config%coil_rmajor * f_r
     r_coil_minor = config%coil_rminor * f_r
 
-    ! Coil case thickness (m). Here assumed to be constant 
-    ! until something better comes up.
-    case_thickness_constant = 0.12D0 ! !? Leave this constant for now... Check this!!
-
 
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    ! Winding Pack Geometry: for one conductor
@@ -2580,6 +2593,7 @@ contains
      ! [m] Dimension of square cable space inside insulation
      !     and case of the conduit of each turn
      leni = leno - 2.0D0 * (thwcndut + thicndut)  !  leni = t_w
+
      if(leni<0) print *, "leni is negative. Check leno, thwcndut and thicndut."
      ! [m^2] Cross-sectional area of cable space per turn
      acstf = 0.9D0 * leni**2 ! 0.9 to include some rounded corners. (acstf = pi (leni/2)**2 = pi/4 *leni**2 for perfect round conductor). This factor depends on how round the corners are.
@@ -2600,17 +2614,17 @@ contains
      N_it = 200     ! number of iterations
  
      allocate(RHS(n_it),LHS(n_it))
-     allocate(jcrit_vector(n_it),Awp(n_it),b_max_k(n_it))
+     allocate(jcrit_vector(n_it),wp_width_r(n_it),b_max_k(n_it))
  
      do k = 1,N_it
  
        ! Sample coil winding pack
-       Awp(k) = (r_coil_minor/50.0D0 + (dble(k)-1) / (dble(N_it)-1) * (r_coil_minor/1.0D0-r_coil_minor/50.0D0))**2
-       if (i_tf_sc_mat==6) Awp(k) =(r_coil_minor/150.0D0 + (dble(k)-1) / (dble(N_it)-1)&
-                * (r_coil_minor/1.0D0-r_coil_minor/150.0D0))**2
+       wp_width_r(k) = (r_coil_minor/40.0D0 + (dble(k)-1) / (dble(N_it)-1) * (r_coil_minor/1.0D0-r_coil_minor/40.0D0))
+       if (i_tf_sc_mat==6) wp_width_r(k) =(r_coil_minor/150.0D0 + (dble(k)-1) / (dble(N_it)-1)&
+                * (r_coil_minor/1.0D0-r_coil_minor/150.0D0))
  
        !  B-field calculation
-       B_max_k(k) = bmax_from_awp(Awp(k)/r_coil_major**2,coilcurrent)
+       B_max_k(k) = bmax_from_awp(wp_width_r(k),coilcurrent)
  
        ! jcrit for this bmax:
        jcrit_vector(k) = jcrit_frommaterial(B_max_k(k),tftmp+1.5) ! Get here a temperature margin of 1.5K.
@@ -2621,26 +2635,26 @@ contains
      LHS = fiooic * jcrit_vector 
      
      ! Conduct fraction of conduit * Superconductor fraction in conductor
-     f_scu =   (acstf*(1.0D0-vftf))/(leno**2)*(1.0D0-fcutfsu) !fraction that is SC of wp.
+     f_scu = (acstf*(1.0D0-vftf))/(leno**2)*(1.0D0-fcutfsu) !fraction that is SC of wp.
      !print *, "f_scu. ",f_scu,"Awp min: ",Awp(1)
  
-     RHS = coilcurrent/(Awp(:)*f_scu) ! f_scu should be the fraction of the sc that is in the winding pack.
+     RHS = coilcurrent/(wp_width_r(:)**2/config%WP_ratio*f_scu) ! f_scu should be the fraction of the sc that is in the winding pack.
  
-     Awp_min = (r_coil_minor/10.0D0)**2 ! Initial guess for intersection routine
-     if (i_tf_sc_mat==6) Awp_min = (r_coil_minor/100.0D0)**2 ! If REBCO, then start at smaller winding pack ratios
+     wp_width_r_min = (r_coil_minor/10.0D0)**2 ! Initial guess for intersection routine
+     if (i_tf_sc_mat==6) wp_width_r_min = (r_coil_minor/20.0D0)**2 ! If REBCO, then start at smaller winding pack ratios
  
      ! Find the intersection between LHS and RHS (or: how much awp do I need to get to the desired coil current)
-     call intersect(Awp,LHS,N_it,Awp,RHS,N_it,Awp_min)
+     call intersect(wp_width_r,LHS,N_it,wp_width_r,RHS,N_it,wp_width_r_min)
  
      ! Maximum field at superconductor surface (T)
-     Awp_min = Max(leno**2,Awp_min)
+     wp_width_r_min = Max(leno**2,wp_width_r_min)
  
      ! Recalculate bmaxtf at the found awp_min:
-     bmaxtf = bmax_from_awp(Awp_min/r_coil_major**2,coilcurrent)
+     bmaxtf = bmax_from_awp(wp_width_r_min,coilcurrent)
  
      ! Winding pack toroidal, radial cross-sections (m)
-     awp_tor = sqrt(awp_min) / sqrt(config%WP_ratio) ! Toroidal dimension
-     awp_rad = sqrt(awp_min) * sqrt(config%WP_ratio) ! Radial dimension
+     awp_tor = wp_width_r_min / config%WP_ratio ! Toroidal dimension
+     awp_rad = wp_width_r_min ! Radial dimension
  
      wwp1 = awp_tor                ! [m] toroidal thickness of winding pack
      wwp2 = awp_tor                ! [m] toroidal thickness of winding pack (region in front)
@@ -2669,11 +2683,14 @@ contains
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    !  Casing calculations
    !  
+    ! Coil case thickness (m). Here assumed to be constant 
+    ! until something better comes up.
+    ! case_thickness_constant = thkcas !0.2D0 ! !? Leave this constant for now... Check this!! Should be scaled with forces I think.
     !  For now assumed to be constant in a bolted plate model.
     ! 
-    casthi = case_thickness_constant/2.0D0 ! [m] coil case thickness outboard distance (radial)
-    thkcas = case_thickness_constant/2.0D0 ! [m] coil case thickness inboard distance  (radial).
-    casths = case_thickness_constant/2.0D0 ! [m] coil case thickness toroidal distance (toroidal)
+    casthi = thkcas !case_thickness_constant/2.0D0 ! [m] coil case thickness outboard distance (radial)
+    !thkcas = case_thickness_constant/2.0D0 ! [m] coil case thickness inboard distance  (radial).
+    casths = thkcas !case_thickness_constant/2.0D0 ! [m] coil case thickness toroidal distance (toroidal)
  
    ! End of casing calculations
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2738,8 +2755,8 @@ contains
                                                           ! jlion: not sure what this will be used for. Not very
                                                           ! useful for stellarators
  
-     
-     estotftgj = 0.5D0 * (config%inductance/f_r*f_a**2*f_n**2)&
+     ! This uses the reference value for the inductance and scales it with a^2/R (toroid inductance scaling)
+     estotftgj = 0.5D0 * (config%inductance/f_r*(r_coil_minor/config%coil_rminor)**2*f_n**2)&
                    * (ritfc/n_tf)**2 * 1.0D-9             ! [GJ] Total magnetic energy
   
      !  Coil dimensions
@@ -2772,9 +2789,13 @@ contains
     !  (no need for correction factors as is the case for tokamaks)
     ! This is only correct if the winding pack is 'thin' (tfleng>>sqrt(acasetf)).
     whtcas = tfleng * acasetf * dcase
+    ! Mass of ground-wall insulation [kg]
+    ! (assumed to be same density/material as conduit insulation)
+    whtgw = tfleng * (awpc-awptf) * dcondins
      ! [kg] mass of Superconductor
     whtconsc = (tfleng * turnstf * acstf*(1.0D0-vftf) * (1.0D0-fcutfsu) - tfleng*awphec) &
                *dcond(i_tf_sc_mat) !awphec is 0 for a stellarator. but keep this term for now.
+    whtconsc = tfleng * f_scu * awptf
       ! [kg] mass of Copper in conductor
     whtconcu =  (tfleng * turnstf * acstf*(1.0D0-vftf) * fcutfsu - tfleng*awphec) * dcopper
       ! [kg] mass of Steel conduit (sheath)
@@ -2786,7 +2807,7 @@ contains
       ! [kg] Total conductor mass
     whtcon = whtconsc + whtconcu + whtconsh + whtconin
       ! [kg] Total coil mass
-    whttf = (whtcas + whtcon)*n_tf
+    whttf = (whtcas + whtcon + whtgw) * n_tf
     ! End of general coil geometry values
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2807,7 +2828,7 @@ contains
      ! the conductor fraction is meant of the cable space!
      ! This is the old routine which is being replaced for now by the new one below
      !    protect(aio,  tfes,               acs,       aturn,   tdump,  fcond,  fcu,   tba,  tmax   ,ajwpro, vd)
-     !call protect(cpttf,estotftgj/n_tf*1.0D9,acstf,   leno**2   ,tdmptf,1-vftf,fcutfsu,tftmp,tmaxpro,jwdgpro,vd)
+     !call protect(cpttf,estotftgj/n_tf*1.0D9,acstf,   leno**2   ,tdmptf,1-vftf,fcutfsu,tftmp,tmaxpro,jwdgpro2,vd)
 
      vd = u_max_protect_V(estotftgj/n_tf*1.0D9,tdmptf,cpttf)
 
@@ -2825,7 +2846,11 @@ contains
     !!!!!! Forces scaling !!!!!!!!!!!!!!
     !
     ! The force density scaling is according to ~I*B/A/N which is (apart from the N scaling) exact
+    ! Units MN/m^3
     max_force_density = config%max_force_density *f_I/f_N * bmaxtf/config%WP_bmax *config%WP_area/awptf
+
+    ! Units: MN/m
+    max_force_density_MNm = config%max_force_density_MNm *f_I/f_N * bmaxtf/config%WP_bmax
     !
     max_lateral_force_density = config%max_lateral_force_density *f_I/f_N * bmaxtf/config%WP_bmax *config%WP_area/awptf
     max_radial_force_density = config%max_radial_force_density *f_I/f_N * bmaxtf/config%WP_bmax *config%WP_area/awptf
@@ -2835,10 +2860,9 @@ contains
     centering_force_min_MN = config%centering_force_min_MN *f_I/f_N * bmaxtf/config%WP_bmax * config%coillength/n_tf/tfleng
     centering_force_avg_MN = config%centering_force_avg_MN *f_I/f_N * bmaxtf/config%WP_bmax * config%coillength/n_tf/tfleng
 
-    max_force_density = config%max_force_density *f_I/f_N * bmaxtf/config%WP_bmax *config%WP_area/awptf
-    ! Approximate, very simple maxiumum stress: (needed for limitation of icc 32)
+    ! Approximate, very simple maximum stress: (needed for limitation of icc 32)
     ! This should be the stress on the ground insulation
-    strtf2 = max_force_density * thkwp *1.0D6 ! in Pa
+    strtf2 = max_force_density *thkwp *1.0D6 ! in Pa
     !
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2847,7 +2871,7 @@ contains
    contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    real(dp) function bmax_from_awp(awp_dimensionless,current)
+    real(dp) function bmax_from_awp(wp_width_radial,current)
 
        !! Returns a fitted function for bmax for stellarators
        !! author: J Lion, IPP Greifswald
@@ -2860,14 +2884,14 @@ contains
        implicit none
  
        ! t is the winding pack width (sqrt(awp) r8 now) divided by coil_rmajor
-       real(dp), intent(in) ::awp_dimensionless,current
+       real(dp), intent(in) ::wp_width_radial,current
  
 
        ! This funtion is exact in scaling of the winding pack but does not take scaling in n_tf into account, neither does
        ! it work for varying aspect ratio. (In 0th order its insenstive to different aspect ratios.)
        ! r_coil_major and r_coil_minor are taken from parent scope
        bmax_from_awp = 2.0D-1 * current*n_tf/(r_coil_major-r_coil_minor) &
-                      * (config%a1+config%a2/(sqrt(awp_dimensionless)))
+                      * (config%a1+config%a2*r_coil_major/wp_width_radial)
     end function 
 
     real(dp) function jcrit_frommaterial(bmax,thelium)
@@ -2884,7 +2908,7 @@ contains
   
         logical :: validity
   
-        strain = 0.0D0  ! for now
+        strain =   -0.005D0 ! for now 0.0D0 
         fhe = vftf     ! this is helium fraction in the superconductor (set it to the fixed global variable here)
   
         fcu = fcutfsu ! fcutfsu is a global variable. Is the copper fraction
@@ -2981,7 +3005,7 @@ contains
 
 
     real(dp) function j_max_protect_Am2(tau_quench,t_detect,fcu,fcond,temp,acs,aturn)
-      !! Finds the current density limited by the protection limit
+      !! Finds the current density limited by temperature rise limit
       !! author: J Lion, IPP Greifswald
       !! acs : input real : Cable space - inside area (m2)
       !! aturn : input real : Area per turn (i.e.  entire cable) (m2)
@@ -3020,7 +3044,7 @@ contains
       q_cu = find_y_nonuniform_x(temp,temp_k,q_cu_array_sA2m4,13)
       
       
-      ! This leaves out the contribution from the superconductor for now
+      ! This leaves out the contribution from the superconductor fraction for now
       j_max_protect_Am2 = (acs/aturn) * sqrt(1.0d0/(0.5d0 *tau_quench + t_detect)* &
                           (fcu**2*fcond**2 * q_cu + fcu* fcond* (1.0d0-fcond)* q_he))
       
@@ -3279,7 +3303,7 @@ contains
       use stellarator_variables, only: hportamax, hportpmax, hporttmax, &
          vportamax, vportpmax, vporttmax
       use tfcoil_variables, only: acasetf, acond, acasetf, aiwp, aswp, bmaxtf, &
-         casthi, casths, cpttf, estotftgj, fcutfsu, jwptf, n_tf, oacdcp, ritfc, &
+         casthi, casths, cpttf, estotftgj, fcutfsu, jwptf, jwdgpro, n_tf, oacdcp, ritfc, &
          tfareain, tficrn, tfleng, tfocrn, tftort, thicndut, thkcas, thkwp, &
          thwcndut, turnstf, turnstf, vftf, whtcas, whtcon, whtconcu, whtconsc, &
          whtconsh, whttf, wwp1, acstf, avwp, tinstf
@@ -3318,6 +3342,7 @@ contains
       call ovarre(outfile,'Total current (MA)','(ritfc)',1.0D-6*ritfc)
       call ovarre(outfile,'Current per coil(MA)','(ritfc/n_tf)',1.0D-6*ritfc/n_tf)
       call ovarre(outfile,'Winding pack current density (A/m2)','(jwptf)',jwptf)
+      call ovarre(outfile,'Max allowable current density as restricted by quench (A/m2)','(jwdgpro)',jwdgpro)
       call ovarre(outfile,'Overall current density (A/m2)','(oacdcp)',oacdcp)
       call ovarre(outfile,'Maximum field on superconductor (T)','(bmaxtf)',bmaxtf)
       call ovarre(outfile,'Total Stored energy (GJ)','(estotftgj)',estotftgj)
@@ -3360,7 +3385,8 @@ contains
       call ovarre(outfile,'Superconductor faction of WP (1)','(f_scu)',f_scu)
   
       call osubhd(outfile,'Forces and Stress :')
-      call ovarre(outfile,'Maximal force density (MN/m3)','(max_force_density)',max_force_density)
+      call ovarre(outfile,'Maximal toroidally and radially av. force density (MN/m3)','(max_force_density)',max_force_density)
+      call ovarre(outfile,'Maximal force density (MN/m)','(max_force_density_Mnm)',max_force_density_Mnm)
       call ovarre(outfile,'Maximal stress (approx.) (MPa)','(strtf2)',strtf2*1.0D-6)
 
       call ovarre(outfile,'Maximal lateral force density (MN/m3)','(max_lateral_force_density)',max_lateral_force_density)

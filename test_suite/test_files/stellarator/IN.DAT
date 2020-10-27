@@ -30,7 +30,7 @@ icc = 83                * Encounter for place for blanket
 *---------------Iteration Variables----------------*
 
 
-ixc = 1                 *aspect
+*ixc = 1                 *aspect
 boundl(1) = 12.
 boundu(1) = 13.
 

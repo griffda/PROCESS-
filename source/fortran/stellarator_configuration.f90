@@ -13,7 +13,7 @@ module stellarator_configuration
     implicit none
 
 
-    character (len=35), parameter :: keys(26) = [Character(len=35):: "name",&
+    character (len=35), parameter :: keys(27) = [Character(len=35):: "name",&
                                             "symmetry",&
                                             "coilspermodule",&
                                             "rmajor_ref",&
@@ -38,6 +38,7 @@ module stellarator_configuration
                                             "plasma_surface",&
                                             "WP_ratio",&
                                             "max_force_density",&
+                                            "max_force_density_MNm",&
                                             "min_bend_radius"]
 
 
@@ -118,8 +119,11 @@ module stellarator_configuration
        !  Ratio radial to toroidal length of the winding pack. (a1 and a2 should be calculated using this value) [1]
       
        real(dp) max_force_density
-       !  Maximal integrated force density at reference point in a WP cross section [MN/m^3]
+       !  Maximal toroidal and radially averaged force density at reference point in a WP cross section [MN/m^3]
        
+       real(dp) max_force_density_MNm
+       !  Maximal integrated force density at reference point in a WP cross section [MN/m]
+
        real(dp) min_bend_radius
        !  Minimal bending radius at reference point [m]
  
@@ -220,6 +224,7 @@ module stellarator_configuration
              output_config%WP_ratio = 1.2D0 ! The fit values in stellarator config class should be calculated using this value.
  
              output_config%max_force_density = 120.0d0 ! [MN/m^3]
+             output_config%max_force_density_MNm = 98.0d0 ! [MN/m]
 
              output_config%max_lateral_force_density = 92.4d0 ! [MN/m^3]
              output_config%max_radial_force_density = 113.5d0   ! [MN/m^3]
@@ -283,6 +288,8 @@ module stellarator_configuration
              output_config%WP_ratio = 1.3D0
  
              output_config%max_force_density = 120.0d0 ! [MN/m^3]
+             output_config%max_force_density_MNm = 98.0d0 ! [MN/m]
+
 
              output_config%max_lateral_force_density = 87.9d0 ! [MN/m^3]
              output_config%max_radial_force_density = 109.9d0   ! [MN/m^3]
@@ -342,6 +349,8 @@ module stellarator_configuration
              output_config%WP_ratio = 1.3D0
  
              output_config%max_force_density = 120.0d0
+             output_config%max_force_density_MNm = 98.0d0 ! [MN/m]
+
 
              output_config%max_lateral_force_density = 96.6d0 ! [MN/m^3]
              output_config%max_radial_force_density = 130.5d0   ! [MN/m^3]
@@ -398,6 +407,8 @@ module stellarator_configuration
              output_config%WP_ratio = 1.2D0
  
              output_config%max_force_density = 350.0d0 ! [MN/m^3]
+             output_config%max_force_density_MNm = 98.0d0 ! [MN/m]
+
 
              output_config%max_lateral_force_density = 271.1d0 ! [MN/m^3]
              output_config%max_radial_force_density = 305.2d0   ! [MN/m^3]
@@ -453,6 +464,8 @@ module stellarator_configuration
              output_config%WP_ratio = 1.2D0
  
              output_config%max_force_density = 250.0d0 ! [MN/m^3]
+             output_config%max_force_density_MNm = 98.0d0 ! [MN/m]
+
 
              output_config%max_lateral_force_density = 116.4d0 ! [MN/m^3]
              output_config%max_radial_force_density = 148.d0   ! [MN/m^3]
@@ -550,6 +563,7 @@ module stellarator_configuration
         call fson_get(stellafile, "plasma_surface", output_config%plasma_surface)
         call fson_get(stellafile, "WP_ratio", output_config%WP_ratio)
         call fson_get(stellafile, "max_force_density", output_config%max_force_density)
+        call fson_get(stellafile, "max_force_density_MNm", output_config%max_force_density_MNm)
         call fson_get(stellafile, "min_bend_radius", output_config%min_bend_radius)
         call fson_get(stellafile, "epseff", output_config%epseff)
         
