@@ -3977,7 +3977,7 @@ contains
 
 
    subroutine init_itv_175
-      !! <LI> (175)f_t_turn_tf : Top outer radius of the centropost (ST only) (m)
+      !! <LI> (175) f_t_turn_tf : f-value for turn size constraint equation 86 (m)
       use numerics, only: lablxc, boundl, boundu
       implicit none
       lablxc(175) = 'f_t_turn_tf        '

@@ -2767,7 +2767,8 @@ module tfcoil_variables
   !! constraint equation icc = 86
 
   real(dp) :: t_turn_tf_max = 0.05
-  !! TF coils WP turn squared dimension upper limit (constraint xx)
+  !! TF coils WP turn squared dimension upper limit [m] 
+  !! constraint equation icc = 86
 
   real(dp) :: acs = 0.0D0
   !! Area of space inside conductor (m2)
@@ -4153,10 +4154,10 @@ module build_variables
   !! Radius to the centre of the outboard TF coil leg (m)
 
   integer :: i_r_cp_top = 0
-  !! Switch selecting the TF CP is parametrization (ST only)
+  !! Switch selecting the TF coil CP top radius parametrization (ST only)
   !!  0 : `r_cp_top` is set by the plasma shape
   !!  1 : `r_cp_top` is a user input
-  !!  2 : `r_cp_top` is set as a fraction of the outer TF midplane radius 
+  !!  2 : `r_cp_top` is set as a fraction of the coil inborad midplane outer radius 
 
   real(dp) :: r_cp_top = 0.0D0
   !! Top outer radius of the centropost (ST only) (m)
