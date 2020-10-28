@@ -52,12 +52,13 @@ fpnetel = 1.0000        *f-value for net electric power
 boundl(25) = 0.98
 boundu(25) = 1.0
 
-ixc = 29                *bore
+*ixc = 29                *bore
 bore = 17.607           *Central solenoid inboard radius (m)
 boundl(29) = 5.0
 
-ixc = 50                * itv_fiooic
-boundu(50) = 0.9
+ixc = 50                *fiooic
+fiooic = 0.2
+boundu(50) = 0.44
 boundl(50) = 0.001
 
 
@@ -94,8 +95,8 @@ shear    = 0.5          *Magnetic shear, derivative of iotabar
 
 *-----------------Build Variables------------------*
 
-blnkith  = 0.7          *Inboard blanket thickness (m)
-blnkoth  = 0.8          *Outboard blanket thickness (m)
+blnkith  = 0.6          *Inboard blanket thickness (m)
+blnkoth  = 0.7          *Outboard blanket thickness (m)
 ddwex    = 0.15         *Cryostat thickness (m)
 ddwi     = 0.25         *Vacuum vessel thickness (TF coil / shield) (m)
 gapds    = 0.025        *Gap between inboard vacuum vessel and tf coil (m)
@@ -180,12 +181,14 @@ runtitle = HELIAS-5B
 *-----------------Tfcoil Variables-----------------*
 
 fcutfsu  = 0.69         *Copper fraction of cable conductor (TF coils)
-i_tf_sc_mat = 1            *Switch for superconductor material in tf coils (1: ITER Nb3Sn)
+i_tf_sc_mat = 1         *Switch for superconductor material in tf coils (1: ITER Nb3Sn)
 tftmp    = 4.2          *Peak helium coolant temperature in TF coils and PF coils (k)
 leno     = 0.056        *Dimension conductor area including steel and insulation.
-thicndut = 0.002        *Conduit insulation thickness (m)
-thwcndut = 0.0012       *TF coil conduit case thickness (m)
+thicndut = 0.0015        *Conduit insulation thickness (m)
+thwcndut = 0.004        *TF coil conduit case thickness (m)
+tinstf   = 0.00         *TF coil insulation thickness (m)
 vftf     = 0.3          *Coolant fraction of TF coil leg (i_tf_sup=0)
+thkcas   = 0.05          *Thickness of the case (for stellarators this is input value)
 
 *-----------------Pfcoil Variables-----------------*
 

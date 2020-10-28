@@ -2795,7 +2795,6 @@ contains
      ! [kg] mass of Superconductor
     whtconsc = (tfleng * turnstf * acstf*(1.0D0-vftf) * (1.0D0-fcutfsu) - tfleng*awphec) &
                *dcond(i_tf_sc_mat) !awphec is 0 for a stellarator. but keep this term for now.
-    whtconsc = tfleng * f_scu * awptf
       ! [kg] mass of Copper in conductor
     whtconcu =  (tfleng * turnstf * acstf*(1.0D0-vftf) * fcutfsu - tfleng*awphec) * dcopper
       ! [kg] mass of Steel conduit (sheath)
