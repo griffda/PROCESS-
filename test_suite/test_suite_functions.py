@@ -803,6 +803,7 @@ class TestCase(object):
 
         if self.test == "stellarator":
             subprocess.call(["rm device.dat"], shell=True)
+            subprocess.call(["rm stella_conf.json"], shell=True)
 
         if self.test == "IFE":
             subprocess.call(["rm device.dat"], shell=True)
