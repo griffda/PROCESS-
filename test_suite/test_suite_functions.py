@@ -788,6 +788,8 @@ class TestCase(object):
         if self.test == "stellarator":
             subprocess.call(["cp {0} .".format(self.path + "device.dat")],
                             shell=True)
+            subprocess.call(["cp {0} .".format(self.path + "stella_conf.json")],
+                            shell=True) # stellarator PROCESS now needs json file called "stella_conf.json" iff istell=6
 
         if self.test == "IFE":
             subprocess.call(["cp {0} .".format(self.path + "device.dat")],
