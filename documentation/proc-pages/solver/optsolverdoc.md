@@ -47,7 +47,7 @@ where the factor $\lambda$ is necessary as only the direction, but not the magni
 
 <a name="figure-1"></a>
 
-![alt text](../../img/lagrange_multipliers-eps-converted-to.png "Illustration of Lagrange multiplier method")
+![alt text](../images/lagrange_multipliers-eps-converted-to.png "Illustration of Lagrange multiplier method")
 
 Figure 1: *Illustration of Lagrange Multiplier Method (credit Wikipedia) showing two contour lines of the objective function $f(x,y) = d_i$ (dark blue dashed lines) and the nonlinear constraint $g(x,y) = c$ (red solid line) as well as their gradients (blue and red arrows) at various positions including the constrained optimum (light blue and orange arrows).* 
 
@@ -116,7 +116,7 @@ where `epsvmc` is a user specific error tolerance, $\vec{\delta}^j$ is the vecto
 
 <a name="figure-2"></a>
 
-![alt text](../../img/VMCON_flow_chart.svg "VMCON optimisation solver flow chart")
+![alt text](../images/VMCON_flow_chart.svg "VMCON optimisation solver flow chart")
 
 Figure 2: *This is the flow chart of the `VMCON` optimisation solver. The criteria for and the interpretation of the successful (`ifail = 1`) and unsuccessful (`ifail` $\neq$ = 1) return parameters are described in [Table 1](#table-1)* 
 

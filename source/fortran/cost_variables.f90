@@ -123,11 +123,21 @@ module cost_variables
   !! - =1 use $ 2014 Kovari model
   !! - =2 use $ 1980 STEP model (NOT RECOMMENDED - Under Development)
 
+  integer :: i_cp_lifetime
+  !! Switch for the centrepost lifetime constraint 
+  !!  0 : The CP full power year lifetime is set by the user
+  !!  1 : The CP lifetime is equal to the divertor lifetime
+  !!  2 : The CP lifetime is equal to the breeding blankets lifetime
+  !!  3 : The CP lifetime is equal to the plant lifetime
+
   real(dp) :: cowner
   !! owner cost factor
 
+  real(dp) :: cplife_input
+  !! User input full power year lifetime of the centrepost (years)
+
   real(dp) :: cplife
-  !! lifetime of centrepost (y)
+  !! Calculated full power year lifetime of centrepost (years)
 
   real(dp) :: cpstcst
   !! ST centrepost direct cost (M$)
@@ -154,7 +164,7 @@ module cost_variables
   !! divertor direct cost (M$)
 
   real(dp) :: divlife
-  !! lifetime of divertor (y)
+  !! Full power lifetime of divertor (y)
 
   real(dp) :: dtlife
   !! period prior to the end of the plant life that the decommissioning fund is used (years)
@@ -316,7 +326,7 @@ module cost_variables
   !! Reference values for cost model 2
 
   real(dp) :: tlife
-  !! plant life (years)
+  !! Full power year plant lifetime (years)
 
   real(dp), parameter :: ucad = 180.0D0
   !! unit cost for administration buildings (M$/m3)
@@ -724,5 +734,7 @@ module cost_variables
     ucwindpf = 465.0D0
     ucwindtf = 480.0D0
     ucwst = (/0.0D0, 3.94D0, 5.91D0, 7.88D0/)
+    i_cp_lifetime = 0
+    cplife_input = 2.0D0
   end subroutine init_cost_variables
 end module cost_variables

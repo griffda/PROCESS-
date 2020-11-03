@@ -4,10 +4,10 @@
 *.x
 *.mod
 *.exe
-*.pdf
 *.aux
 *.log
 *.lof
+*.pdf
 *.dat
 *.dylib
 *.13

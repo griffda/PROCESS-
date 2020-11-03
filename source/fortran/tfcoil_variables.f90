@@ -438,8 +438,16 @@ module tfcoil_variables
   real(dp) :: frholeg
   !! Ouboard legs resistivity enhancement factor. Only used for `itart=1`.
   
+  integer :: i_cp_joints
+  !! Switch for CP demoutable joints type
+  !!  -= 0 : Clampled joints
+  !!  -= 1 : Sliding joints
+  !! Default value (-1) choses : 
+  !!   Sliding joints for resistive magnets (i_tf_sup = 0, 2)  
+  !!   Clampled joints for superconducting magents (i_tf_sup = 1)
+
   real(dp) :: rho_tf_joints
-  !! TF joints surfacic resistivity [ohm.m^2]. Feldmetal joints assumed.
+  !! TF joints surfacic resistivity [ohm.m]. Feldmetal joints assumed.
 
   integer :: n_tf_joints_contact
   !! Number of contact per sliding joint
@@ -533,7 +541,7 @@ module tfcoil_variables
   real(dp) :: tmpcry
   !! coil temperature for cryogenic plant power calculation (K)
 
-  real(dp) :: turnstf
+  real(dp) :: n_tf_turn
   !! number of turns per TF coil
 
   real(dp) :: vdalw
@@ -851,7 +859,7 @@ module tfcoil_variables
     tmax_croco = 200.0D0
     croco_quench_temperature = 0D0
     tmpcry = 4.5D0
-    turnstf = 0.0D0
+    n_tf_turn = 0.0D0
     vdalw = 20.0D0
     vforce = 0.0D0
     f_vforce_inboard = 0.5D0
@@ -903,5 +911,6 @@ module tfcoil_variables
     whtcp = 0.0D0
     whttflgs = 0.0D0
     tfc_sidewall_is_fraction = .false.
+    i_cp_joints = -1
   end subroutine init_tfcoil_variables
 end module tfcoil_variables

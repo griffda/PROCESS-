@@ -13,14 +13,14 @@
  **************************************************************************************************************
  
    Program : ./process.exe
-   Version : 1.0.16   Release Date :: 2019-07-15
-   Tag No. : 1.0.16-416-g7662003c
-    Branch : issue-992-ip
-   Git log : Added recommendation to use idia and ips if diamagnetic fraction is ov
- Date/time : 11 Feb 2020 14:58:47 +00:00(hh:mm) UTC
-      User : smuldrew
-  Computer : J0670-iMac
- Directory : /Users/smuldrew/process/develop/test_suite
+   Version : 1.0.17   Release Date :: 2020-02-25
+   Tag No. : 1.0.17-409-g7c7b1b4f
+    Branch : develop
+   Git log : Merge branch '1145-latest-markdown-version-breaks-ford-on-develop' int
+ Date/time : 21 Oct 2020 16:16:22 +01:00(hh:mm) UTC
+      User : jmaddock
+  Computer : J0826UBUNTU
+ Directory : /home/jmaddock/process/test_suite
      Input : IN.DAT
  Run title : IFE_001
   Run type : Reactor concept design: Inertial Fusion model, (c) CCFE
@@ -82,26 +82,26 @@
  *************************************** Power Reactor Costs (1990 US$) ***************************************
  
  First wall / blanket life (years)                                        (fwbllife)                    2.996     
- Cost of electricity (m$/kWh)                                             (coe)                        81.201     
+ Cost of electricity (m$/kWh)                                             (coe)                        81.147     
  
  Power Generation Costs :
  
                                                                            Annual Costs, M$       COE, m$/kWh
 
- Capital Investment                                                                375.51               57.16
- Operation & Maintenance                                                            67.92               10.34
+ Capital Investment                                                                375.51               57.12
+ Operation & Maintenance                                                            67.92               10.33
  Decommissioning Fund                                                                8.99                1.37
  Fuel Charge Breakdown
 
-     Blanket & first wall                                                   41.18                6.27
+     Blanket & first wall                                                   41.18                6.26
      Divertors                                                               0.00                0.00
      Centrepost (TART only)                                                  0.00                0.00
      Auxiliary Heating                                                       0.00                0.00
-     Actual Fuel                                                            32.70                4.98
+     Actual Fuel                                                            32.70                4.97
      Waste Disposal                                                          7.19                1.09
- Total Fuel Cost                                                                    81.08               12.34
+ Total Fuel Cost                                                                    81.08               12.33
 
- Total Cost                                                                        533.49               81.20
+ Total Cost                                                                        533.49               81.15
  
  ****************** Replaceable Components Direct Capital Cost ******************
  

@@ -1,9 +1,10 @@
 
 # Style Guide
+[PDF of webpage](../pdf/standards.pdf)
 
 ## Line Length
 
-
+For optimal readability, a limit of 100 characters for maximum line length has been set. This is below the maximum line length of 132 characters for Fortran (to prevent compilation errors) and prevents long lines that run on past the edge of the screen wasting programmers time with scrolling.
 
 # Coding Standards
 
@@ -104,6 +105,10 @@ end subroutine constraint_eqn_001
 
 ```
 
-Creates
+Creates:
 
-<img src="../../img/ford_example_1.png" alt="alt text" width="650" height="200">
+<img
+    src="../../images/ford_example_1.png"
+    alt="alt text"
+    width="700px"
+    >
