@@ -183,11 +183,8 @@ baseline_2018:
 
 step_input:
   when: on_success
-  only: 
-    - develop
-  stage: testing
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   stage: pages
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   script:
     - git config --global user.email "james.morris2@ukaea.uk"
     - git config --global user.name "James Morris"
@@ -196,7 +193,7 @@ step_input:
     - echo $MESSAGE
     - pwd
     - cat commit_msg.txt
-    - git clone https://smuldrew:Lxf8sdD9uvMxfdU6UEYS@git.ccfe.ac.uk/smuldrew/process-step.git
+    - git clone https://smuldrew:${STP_CI_API_TOKEN}@git.ccfe.ac.uk/smuldrew/process-step.git
     - cp commit_msg.txt process-step
     - cd process-step
     - ls
