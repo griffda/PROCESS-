@@ -14,30 +14,40 @@ find_package(Python3)
 project(PROCESS LANGUAGES Fortran)
 
 execute_process (
-    COMMAND bash -c "git show -s --format=format:%s"
+    COMMAND bash -c "git -C ${CMAKE_SOURCE_DIR} show -s --format=format:%s"
     OUTPUT_VARIABLE COMMIT_MSG
 )
+STRING(STRIP ${COMMIT_MSG} COMMIT_MSG)
+
 execute_process (
-    COMMAND bash -c "echo \"$(git diff | wc -l)\"|tr '\n' ' '"
+    COMMAND bash -c "echo \"$(git -C ${CMAKE_SOURCE_DIR} diff | wc -l)\"|tr '\n' ' '"
     OUTPUT_VARIABLE GIT_DIFF
 )
+STRING(STRIP ${GIT_DIFF} GIT_DIFF)
+
 execute_process (
-    COMMAND bash -c "echo \"$(git describe --tags)\"|tr '\n' ' '"
+    COMMAND bash -c "echo \"$(git -C ${CMAKE_SOURCE_DIR} describe --tags)\"|tr '\n' ' '"
     OUTPUT_VARIABLE GIT_TAG
 )
+STRING(STRIP ${GIT_TAG} GIT_TAG)
+
 execute_process (
-    COMMAND bash -c "echo \"$(git rev-parse --abbrev-ref HEAD)\"|tr '\n' ' '"
+    COMMAND bash -c "echo \"$(git -C ${CMAKE_SOURCE_DIR} rev-parse --abbrev-ref HEAD)\"|tr '\n' ' '"
     OUTPUT_VARIABLE GIT_BRANCH
 )
+STRING(STRIP ${GIT_BRANCH} GIT_BRANCH)
+
 execute_process (
   COMMAND bash -c "which gfortran | tr -d '[:space:]'"
   OUTPUT_VARIABLE CMAKE_Fortran_COMPILER
 )
+STRING(STRIP ${CMAKE_Fortran_COMPILER} CMAKE_Fortran_COMPILER)
 
 execute_process(
-  COMMAND bash -c "gfortran --version"
+  COMMAND bash -c "echo \"$(gfortran --version | head -n 1)\"|tr '\n' ' '"
   OUTPUT_VARIABLE CMAKE_Fortran_VERSION
 )
+STRING(STRIP ${CMAKE_Fortran_VERSION} CMAKE_Fortran_VERSION)
 
 # Questionable stuff to help the compiler handle preprocessor directives
 # TODO Review if these directives are necessary now
@@ -83,26 +93,58 @@ set(BUILD_SCRIPTS_DIR ${CMAKE_SOURCE_DIR}/scripts)
 set(CREATE_DICTS_SCRIPT ${BUILD_SCRIPTS_DIR}/create_dicts.py)
 
 # Check operating systems and set OS specific options
-if(CMAKE_HOST_WIN32)  # For windows system
-   MESSAGE(STATUS "[Operating System]: Windows ")
-elseif(CMAKE_HOST_APPLE)  # For Apple OS X system
-   MESSAGE(STATUS "[Operating System]: macOS ")
-   MESSAGE(STATUS "[Binary Location]: ${CMAKE_BINARY_DIR}")
-   MESSAGE(STATUS "[Fortran Compiler]: ${CMAKE_Fortran_COMPILER}")
+if(CMAKE_HOST_APPLE)  # For Apple OS X system
    SET(MOVE_FILE mv)
    SET(COPY_FILE cp -p)
    SET(FORTRAN gfortran)
-   SET(CMAKE_CALC_ENGINE libPROCESS_calc_engine.dylib)
+   SET(LIBRARY_OUTPUT_SUFFIX .dylib)
 elseif(CMAKE_HOST_UNIX)  # For unix/ linux system
-   MESSAGE(STATUS "[Operating System]: Linux ")
-   MESSAGE(STATUS "[Binary Location]: ${CMAKE_BINARY_DIR}")
-   MESSAGE(STATUS "[Fortran Compiler]: ${CMAKE_Fortran_COMPILER}")
-   MESSAGE(STATUS "[Fortran Compiler Version]: ${CMAKE_Fortran_VERSION}")
    SET(MOVE_FILE mv)
    SET(COPY_FILE cp -p)
    SET(FORTRAN gfortran)
-   SET(CMAKE_CALC_ENGINE libPROCESS_calc_engine.so)
+   SET(LIBRARY_OUTPUT_SUFFIX .so)
 endif()
+
+cmake_host_system_information(RESULT OS_LABEL QUERY OS_NAME)
+cmake_host_system_information(RESULT OS_VER QUERY OS_RELEASE)
+cmake_host_system_information(RESULT OS_PLAT QUERY OS_PLATFORM)
+MESSAGE(STATUS "[System Information]: ")
+MESSAGE(STATUS "\tOperating System: ${OS_LABEL} ")
+MESSAGE(STATUS "\tVersion: ${OS_VER}")
+MESSAGE(STATUS "\tPlatform: ${OS_PLAT}")
+MESSAGE(STATUS "[PROCESS Build Information]: ")
+MESSAGE(STATUS "\tBinary Location: ${CMAKE_BINARY_DIR}")
+MESSAGE(STATUS "\tFortran Compiler: ${CMAKE_Fortran_COMPILER}")
+MESSAGE(STATUS "\tFortran Compiler Version: ${CMAKE_Fortran_VERSION}")
+
+# ---------------- GFortran Library Retrieval -----------------#
+
+# Get the location of the GFortran Libraries so they can
+# be included with the Python module
+# TODO: Ideally we do not want to do this (likely be removed
+# when f90wrap is dropped)
+
+execute_process(
+	COMMAND bash -c "$(which gcc) -lgfortran -c -v 2>&1 >/dev/null | grep COMPILER_PATH | cut -d '=' -f 2 "
+	OUTPUT_VARIABLE GFORTRAN_LIBRARY_DIRS
+)
+STRING(REGEX MATCHALL "([^\:])+\/lib\/" LIB_LOCS "${GFORTRAN_LIBRARY_DIRS}")
+LIST(REMOVE_DUPLICATES LIB_LOCS)
+foreach(LOC ${LIB_LOCS})
+  FILE(GLOB_RECURSE GFORTSEARCH ${LOC}libgfortran*${LIBRARY_OUTPUT_SUFFIX})
+  if(GFORTSEARCH)
+    LIST(GET GFORTSEARCH 1 GFORTRAN_LIBRARY)
+    break()
+  endif()
+endforeach()
+    
+if(NOT GFORTRAN_LIBRARY)
+	MESSAGE(FATAL_ERROR "Could not retrieve location of GFortran Libraries from 'gcc -lgfortran'")
+endif()
+
+# ------------------------------------------------------------ #
+
+MESSAGE(STATUS "\tGFortran Library Location: ${GFORTRAN_LIBRARY}")
 
 MESSAGE(STATUS "-----------------------------")
 
@@ -189,13 +231,13 @@ add_custom_command(OUTPUT ${FORTRAN_INTERFACE_F90WRAP_PATHS}
 # Builds every time to make sure the libprocess_lib.so file is up-to-date
 # TODO Convert .so to non-platform specific
 add_custom_target(f2py
-  DEPENDS ${FORTRAN_INTERFACE_NAME_UNDER}.so)
+	DEPENDS ${FORTRAN_INTERFACE_NAME_UNDER}${LIBRARY_OUTPUT_SUFFIX})
 
-add_custom_command(OUTPUT ${FORTRAN_INTERFACE_NAME_UNDER}.so
-  COMMAND echo \"run f2py\"\; LDFLAGS=-Wl,-rpath=\\$$ORIGIN/.lib f2py -c -m ${FORTRAN_INTERFACE_NAME_UNDER} -I${CMAKE_BINARY_DIR} -L${CMAKE_BINARY_DIR} -lprocess_lib ${FORTRAN_INTERFACE_F90WRAP_PATHS})
+add_custom_command(OUTPUT ${FORTRAN_INTERFACE_NAME_UNDER}${LIBRARY_OUTPUT_SUFFIX}
+  COMMAND echo \"run f2py\"\; LDFLAGS=-Wl,-rpath,\\$$ORIGIN/.lib f2py -c -m ${FORTRAN_INTERFACE_NAME_UNDER} -I${CMAKE_BINARY_DIR} -L${CMAKE_BINARY_DIR} -lprocess_lib ${FORTRAN_INTERFACE_F90WRAP_PATHS})
 # LDFLAGS=-Wl,-rpath=$ORIGIN/.lib embeds the RPATH (run path, list of directories
 # to search for shared library dependencies) into the shared object library
-# ${FORTRAN_INTERFACE_NAME_UNDER}.so. This allows the dynamic linker to find
+# ${FORTRAN_INTERFACE_NAME_UNDER}${LIBRARY_OUTPUT_SUFFIX}. This allows the dynamic linker to find
 # libprocess_lib.so when loading ${FORTRAN_INTERFACE_NAME_UNDER}.so. This 
 # in turn allows the package to be run from any location as long as the
 # depdendencies that are not provided by the system are included in the .lib
@@ -243,13 +285,6 @@ COMMAND ${Python3_EXECUTABLE} ${BUILD_SCRIPTS_DIR}/f90wrap_interface_import_modi
 
 add_dependencies(modify_so_python_import_path f90wrap)
 
-# Different OS distrubtions may have different gfortran libaries provided
-# by the system, so find gfortran so that it can be distributed and linked
-# to ensure consistency.
-# TODO: This isn't a very portable way to find gfortran but just searching for
-# gfortran fails.
-find_library(GFORTRAN_LIB NAMES gfortran libgfortran.so libgfortran.so.5 REQUIRED)
-
 # Make sure the .lib directory exists in the Python package source
 file(MAKE_DIRECTORY ${PYTHON_SOURCE_DIR}/.lib/)
 
@@ -259,8 +294,8 @@ file(MAKE_DIRECTORY ${PYTHON_SOURCE_DIR}/.lib/)
 add_custom_target(export_modules ALL
   COMMAND ${CMAKE_COMMAND} -E copy ${FORTRAN_INTERFACE_MODULE} ${PYTHON_SOURCE_DIR}
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/${FORTRAN_INTERFACE_NAME_UNDER}*.so ${PYTHON_SOURCE_DIR}
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/libprocess_lib.so ${PYTHON_SOURCE_DIR}/.lib/
-  COMMAND ${CMAKE_COMMAND} -E copy ${GFORTRAN_LIB} ${PYTHON_SOURCE_DIR}/.lib/
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/libprocess_lib${LIBRARY_OUTPUT_SUFFIX} ${PYTHON_SOURCE_DIR}/.lib/
+  COMMAND ${CMAKE_COMMAND} -E copy ${GFORTRAN_LIBRARIES_DIR}/libgfortran* ${PYTHON_SOURCE_DIR}/.lib/
   COMMAND ${CMAKE_COMMAND} -E copy ${DICTS_FILE} ${PYTHON_SOURCE_IO_DIR}
 )
 
