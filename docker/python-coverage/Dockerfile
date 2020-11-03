@@ -1,38 +1,41 @@
-FROM python:latest
+# For Python conversion work on 1092 branch
+FROM ubuntu:latest
 LABEL Kristian Zarebski <kristian.zarebski@ukaea.uk>
 
-ENV DEBIAN_FRONTEND noninteractive
-RUN apt update -y
-RUN apt upgrade -y
-RUN apt install python3-pip -y
-RUN pip install --upgrade pip
-RUN pip install --upgrade cmake
+# Required to get around interactive timezone prompt
+ENV DEBIAN_FRONTEND=noninteractive
 
-# add gfortran, debugging tools and make
-RUN apt-get install -y gfortran
-RUN apt-get install -y gdb
-RUN apt-get install -y libblas-dev liblapack-dev liblapack3
+# Install apt packages
+# gfortran, debugging tools, git, maths and Latex libraries
+# This syntax is recommended by Docker to bust caching
+RUN apt-get update && apt-get install -y \
+    gdb \
+    gfortran \
+    git \
+    graphviz \
+    libblas-dev \
+    liblapack-dev \
+    liblapack3 \
+    pandoc \
+    python3-pip \
+    texlive-base \
+    texlive-font-utils \
+    texlive-latex-extra
 
-# Latex libraries
-RUN apt-get install -y texlive-base 
-RUN apt-get install -y texlive-latex-extra 
-RUN apt-get install -y texlive-font-utils 
-RUN apt-get install -y pandoc 
+# Install Python packages
+# cmake, MKdocs
+RUN pip3 install \
+    cmake \
+    matplotlib \
+    mkdocs \
+    mkdocs-material \
+    numpy \
+    pathlib \
+    pillow \
+    pymdown-extensions \
+    scipy
 
-# Libraries for MKdocs
-RUN apt-get install -y graphviz
-RUN pip3 install mkdocs
-RUN pip3 install mkdocs-material
-RUN pip3 install pymdown-extensions
-
-# Python libraries
-RUN pip install numpy
-RUN pip install scipy
-RUN pip install matplotlib
-RUN pip install pathlib
-
-# Get anybadge
-RUN pip install pillow
-
-# f90wrapper
-RUN pip install f90wrap
+# Install f90wrap separately: f90wrap's setup.py contains a numpy import which
+# is not handled correctly. Need to ensure numpy is installed before installing
+# f90wrap
+RUN pip3 install f90wrap
