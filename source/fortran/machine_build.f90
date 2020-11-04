@@ -139,7 +139,7 @@ contains
             r_cp_top = r_tf_inboard_out * 1.01D0
           end if
 
-          ! Top and bottom TF CP radius ratio
+          ! Top and mid-plane TF coil CP radius ratio
           f_r_cp = r_cp_top / r_tf_inboard_out
 
        ! User defined r_cp_top

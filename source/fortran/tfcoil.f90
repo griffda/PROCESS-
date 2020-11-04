@@ -186,13 +186,14 @@ module tfcoil_module
     !! Conductor thermal conductivity [W/(m.K)]
     
     real(dp) :: tcool_calc
-    !! coolant temperature used in the temperature rise calculations (not an output)
+    !! coolant temperature used in the temperature rise calculations (not an output) [K]
 
     real(dp) :: tcool_av
-    !! Average coolant temperature (not an output)
+    !! Average bulk coolant temperature (not an output) [K]
 
     real(dp) :: tcool_film
-    !! Average film temperature (not an output)
+    !! Coolant temperature at the pipe surface calculated from the average bulk
+    !! temperature (not an output) [K]
 
     integer, parameter :: n_tcool_it = 20
     !! Number of integral step used for the coolant temperature rise
@@ -618,10 +619,8 @@ module tfcoil_module
 
     subroutine al_th_cond(temp, th_cond)
        !! Author : S. Kahn
-       !! Subroutine calculating temperature dependent He thermal conductivity 
-       !! at 100 Bar from fit using the following data, valid in [4-50] K
-       !! Ref : R.W. Powel, National Standard Reference Data Series, Nov 25 1966 (S Kahn fit 15 < T < 60 K)
- 
+       !! Subroutine calculating temperature dependent Al thermal conductivity 
+       
        use error_handling, only: fdiags, report_error
  
        implicit none
