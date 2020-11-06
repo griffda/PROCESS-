@@ -9,5 +9,4 @@ pillow>=5.1.0
 Markdown>=3.2.2
 toposort>=1.5
 pytest>=5.4.1
-git+https://github.com/jonMaddockUkaea/ford
 f90wrap>=0.2.3

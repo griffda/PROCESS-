@@ -43,7 +43,6 @@ stages:
     - virtualenv ~/testenv
     - source ~/testenv/bin/activate
     - pip install --find-links=process_dist process
-    - pip install -r requirements.txt
 
 #-----------------
 #  Build
@@ -58,8 +57,6 @@ make:
       - process_dist/process-*.whl
     expire_in: 1 week
   script:
-    - pip install -r requirements.txt
-    # Required to install Ford before cmake runs
     - cmake -H. -Bbuild
     - cmake --build build
     - python setup.py sdist -d process_dist
@@ -199,7 +196,6 @@ make_dicts_freia:
     - gcc --version
     - ls -lah
     - cmake3 -H. -Bbuild
-    - pip install -r requirements
     - cmake3 --build build --target dicts
   tags:
     - freia
