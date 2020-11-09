@@ -30,7 +30,7 @@ MACRO(F2PY)
         ADD_CUSTOM_COMMAND(
             OUTPUT ${F2PY_TARGET} ${F2PY_OUTPUT}
             COMMAND echo "Running f2py to produce target '${F2PY_TARGET}':"
-            COMMAND ${F2PY_NAME} -c -m _${FORTRAN_INTERFACE_NAME} -L${PYTHON_LIBS_DIR} -l${PROJECT_NAME} ${F90WRAP_OUTPUT_FILES} --build-dir ${CMAKE_BINARY_DIR}
+            COMMAND ${F2PY_NAME}-${F90WRAP_NAME} -c -m _${FORTRAN_INTERFACE_NAME} -L../process/lib -l${PROJECT_NAME} ${F90WRAP_OUTPUT_FILES} --build-dir ${CMAKE_BINARY_DIR}
             COMMAND ${CMAKE_COMMAND} -E copy ${F2PY_TARGET} ${F2PY_OUTPUT}
         )
     ENDIF()

@@ -42,7 +42,9 @@ stages:
     - pip install virtualenv
     - virtualenv ~/testenv
     - source ~/testenv/bin/activate
-    - pip install --find-links=process_dist process
+    - python3 -m pip install -r requirements.txt
+    - python3 -m pip install git+https://github.com/jonMaddockUkaea/ford
+    - python3 -m pip install --find-links=process_dist process
 
 #-----------------
 #  Build
