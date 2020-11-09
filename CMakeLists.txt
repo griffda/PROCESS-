@@ -1,3 +1,9 @@
+#   CMake file for Pythonic PROCESS
+#   Author  :   K. Zarebski (UKAEA)
+#   Date    :   last modified 2020-11-09
+
+# Specify the minimum version for CMake
+# 3.12 is required due to use of list TRANSFORM commands
 CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
 
 # Ensure python3 interpreter is used
@@ -8,6 +14,7 @@ endif()
 SET(Python3_FIND_VIRTUALENV FIRST)
 find_package(PythonInterp 3 REQUIRED)
 
+# Set project name
 PROJECT(process LANGUAGES Fortran)
 
 # Read in external CMake scripts for preprocessing, f2py, f90wrap, ford, etc.
@@ -21,8 +28,10 @@ INCLUDE(${CMAKE_SOURCE_DIR}/cmake/gfortranlibs.cmake)
 # Retrieve and set information for preprocessor
 FindPreprocessingVars()
 
-SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none")
+SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -O3 -fPIC")
 
+# Get System information, log as much information as we can
+# for ease later on when debugging system specific issues
 CMAKE_HOST_SYSTEM_INFORMATION(RESULT OS_LABEL QUERY OS_NAME)
 CMAKE_HOST_SYSTEM_INFORMATION(RESULT OS_VER QUERY OS_RELEASE)
 CMAKE_HOST_SYSTEM_INFORMATION(RESULT OS_PLAT QUERY OS_PLATFORM)
@@ -37,12 +46,14 @@ MESSAGE(STATUS "\tFortran Compiler: ${CMAKE_Fortran_COMPILER}")
 MESSAGE(STATUS "\tFortran Compiler Version: ${CMAKE_Fortran_VERSION}")
 MESSAGE(STATUS "\tPROCESS Module Installation Directory: ${PROCESS_MODULE_INSTALL_LOCATION}")
 
+# Define various addresses for locations of files
+# relative to the CMake root directory
 SET(PROCESS_SRC_DIR ${CMAKE_SOURCE_DIR}/source/fortran)
 SET(PLASMOD_SRC_DIR ${CMAKE_SOURCE_DIR}/lib/PLASMOD)
 SET(REFPROP_SRC_DIR ${CMAKE_SOURCE_DIR}/lib/REFPROP)
 
 SET(PYTHON_MODULE_DIR ${CMAKE_SOURCE_DIR}/process)
-SET(PYTHON_LIBS_DIR ${PYTHON_MODULE_DIR}/.lib)
+SET(PYTHON_LIBS_DIR ${PYTHON_MODULE_DIR}/lib)
 SET(PYTHON_SOURCE_IO_DIR ${PYTHON_MODULE_DIR}/io)
 
 FILE(GLOB PROCESS_SRC_PATHS ${PROCESS_SRC_DIR}/*.f90 ${PROCESS_SRC_DIR}/*.f)
@@ -106,6 +117,11 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME}
     PROPERTIES LINKER_LANGUAGE Fortran
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/process/lib
 )
+IF(NOT CMAKE_HOST_APPLE)
+    SET_TARGET_PROPERTIES(${PROJECT_NAME}
+        PROPERTIES BUILD_RPATH $ORIGIN
+    )
+ENDIF()
 ADD_DEPENDENCIES(${PROJECT_NAME} ${PIP_NAME})
 
 # Stage 2: Run f90wrap
@@ -136,6 +152,10 @@ GET_GFORTRANLIBS()
 
 SET(PROCESS_MODULE_DIST ${CMAKE_SOURCE_DIR}/process_dist)
 
+# Things are different on macOS, use the 'install_name_tool' on 
+# macOS to change the shared object addresses to the install location
+# FIXME: This won't work when moving a build to another system unless
+# the exact same Python environment is used
 if(CMAKE_HOST_APPLE)
     SET(INSTALL_NAME_CHANGE "install_name_tool -change")
     ADD_CUSTOM_TARGET(install_process ALL
@@ -149,7 +169,7 @@ if(CMAKE_HOST_APPLE)
     )
 else()
     ADD_CUSTOM_TARGET(install_process ALL
-        COMMAND ${PYTHON_EXECUTABLE} -m pip install ${CMAKE_SOURCE_DIR}
+        COMMAND ${PYTHON_EXECUTABLE} -m pip install --no-cache-dir ${CMAKE_SOURCE_DIR}
     )
 endif()
 

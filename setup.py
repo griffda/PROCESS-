@@ -7,7 +7,7 @@ MODULE_NAME = 'process'
 _install_loc = os.path.join(site.getsitepackages()[0], MODULE_NAME)
 EXTRA_ARGS = []
 if platform.system() == 'Darwin':
-    EXTRA_ARGS = ['-Wl,-rpath,'+os.path.join(_install_loc, '.lib')]
+    EXTRA_ARGS = ['-Wl,-rpath,'+os.path.join(_install_loc, 'lib')]
 
 setup_kwargs = {
     "name": MODULE_NAME,
@@ -23,6 +23,7 @@ setup_kwargs = {
     },
     "package_data": {
         "process": [
+            "lib/*.so",
             "_fortran*.so",
             "data/fluids/*",
             "data/h_data/*",

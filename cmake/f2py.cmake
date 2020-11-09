@@ -1,6 +1,6 @@
 #   PROCESS f2py run
 #   Author    :   K. Zarebski (UKAEA)
-#   Date      :   last modified 2020-11-5
+#   Date      :   last modified 2020-11-09
 #
 #   Run f2py on the given files list
 
@@ -20,12 +20,20 @@ MACRO(F2PY)
         ${F2PY_NAME}
         DEPENDS ${F2PY_TARGET} ${F2PY_OUTPUT}
     )
-    ADD_CUSTOM_COMMAND(
-        OUTPUT ${F2PY_TARGET} ${F2PY_OUTPUT}
-        COMMAND echo "Running f2py to produce target '${F2PY_TARGET}':"
-        COMMAND ${F2PY_NAME} -c -m _${FORTRAN_INTERFACE_NAME} -L${PYTHON_LIBS_DIR} -l${PROJECT_NAME} ${F90WRAP_OUTPUT_FILES} --build-dir ${CMAKE_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy ${F2PY_TARGET} ${F2PY_OUTPUT}
-    )
+    IF(NOT CMAKE_HOST_APPLE)
+        ADD_CUSTOM_COMMAND(
+            OUTPUT ${F2PY_TARGET} ${F2PY_OUTPUT}
+            COMMAND echo \"Running f2py:\"\; LDFLAGS=-Wl,-rpath=\\$$ORIGIN/lib ${F2PY_NAME}-${F90WRAP_NAME} -c -m _${FORTRAN_INTERFACE_NAME} -L../process/lib/ -l${PROJECT_NAME} ${F90WRAP_OUTPUT_FILES} --build-dir ${CMAKE_BINARY_DIR}
+            COMMAND ${CMAKE_COMMAND} -E copy ${F2PY_TARGET} ${F2PY_OUTPUT}
+        )
+    ELSE()
+        ADD_CUSTOM_COMMAND(
+            OUTPUT ${F2PY_TARGET} ${F2PY_OUTPUT}
+            COMMAND echo "Running f2py to produce target '${F2PY_TARGET}':"
+            COMMAND ${F2PY_NAME} -c -m _${FORTRAN_INTERFACE_NAME} -L${PYTHON_LIBS_DIR} -l${PROJECT_NAME} ${F90WRAP_OUTPUT_FILES} --build-dir ${CMAKE_BINARY_DIR}
+            COMMAND ${CMAKE_COMMAND} -E copy ${F2PY_TARGET} ${F2PY_OUTPUT}
+        )
+    ENDIF()
 
-    ADD_DEPENDENCIES(${F2PY_NAME} ${PIP_NAME} ${F90WRAP_NAME} ${PROJECT_NAME})
+    ADD_DEPENDENCIES(${F2PY_NAME} ${PIP_NAME} ${PROJECT_NAME} ${F90WRAP_NAME})
 ENDMACRO()
