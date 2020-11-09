@@ -134,12 +134,6 @@ DICTS()
 # Copy libgfortran from system into Python module folder
 GET_GFORTRANLIBS()
 
-IF(CMAKE_HOST_APPLE)
-  MESSAGE(WARNING "Standalone Python Module creation is not supported on macOS,"
-  " in order to use the created 'process' Python module you will need to use the version "
-  " contained within this repository by running \n'pip install -e ${CMAKE_SOURCE_DIR}'")
-ENDIF()
-
 SET(PROCESS_MODULE_DIST ${CMAKE_SOURCE_DIR}/process_dist)
 
 if(CMAKE_HOST_APPLE)
