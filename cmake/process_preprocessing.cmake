@@ -48,6 +48,12 @@ MACRO(FindPreprocessingVars)
         ENDIF()
     ENDFOREACH()
 
+    EXECUTE_PROCESS(
+        COMMAND bash -c "${PYTHON_EXECUTABLE} -c \"import site, os;print(os.path.join(site.getsitepackages()[0], '${PROJECT_NAME}'))\""
+        OUTPUT_VARIABLE PROCESS_MODULE_INSTALL_LOCATION
+    )
+    STRING(STRIP ${PROCESS_MODULE_INSTALL_LOCATION} PROCESS_MODULE_INSTALL_LOCATION)
+
     # ---------- Summarise Preprocessor Flags in Output ---------- #
     MESSAGE(STATUS "[Preprocessor Variables]: ")
     MESSAGE(STATUS "\tINSTALLDIR : ${CMAKE_SOURCE_DIR}")
