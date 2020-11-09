@@ -2754,20 +2754,26 @@ module tfcoil_variables
   !! Conductor (cable + steel conduit) area averaged dimension [m]
   
   real(dp) :: t_turn_tf = 0.0D0
-  !! TF coils WP turn squared dimensions including turn insulation [m]
-  !! If the t_turn_tf is non zero, cpttf is calculated
+  !! TF turn edge length including turn insulation [m]
+  !!   If the turn is not a square (i_tf_turns_integer = 1) a squared turn of 
+  !!   equivelent size is use to calculated this quantity
+  !!   If the t_turn_tf is non zero, cpttf is calculated
 
   logical :: t_turn_tf_is_input
   !! Boolean switch to activated when the user set the TF turn dimensions
   !! Not an input
 
   real(dp) :: f_t_turn_tf = 1.0D0
-  !! f-value for TF coils WP trurn squared dimension constraint 
-  !! iteration variable ixc = 175
-  !! constraint equation icc = 86
+  !! f-value for TF turn edge length constraint 
+  !!  If the turn is not a square (i_tf_turns_integer = 1) a squared turn of 
+  !!  equivelent size is use for this constraint
+  !!  iteration variable ixc = 175
+  !!  constraint equation icc = 86
 
   real(dp) :: t_turn_tf_max = 0.05
-  !! TF coils WP turn squared dimension upper limit [m] 
+  !! TF turn edge length including turn insulation upper limit [m] 
+  !! If the turn is not a square (i_tf_turns_integer = 1) a squared turn of 
+  !! equivelent size is use for this constraint
   !! constraint equation icc = 86
 
   real(dp) :: acs = 0.0D0
@@ -4154,10 +4160,10 @@ module build_variables
   !! Radius to the centre of the outboard TF coil leg (m)
 
   integer :: i_r_cp_top = 0
-  !! Switch selecting the TF coil CP top radius parametrization (ST only)
+  !! Switch selecting the he parametrization of the outer radius of the top of the CP part of the TF coil
   !!  0 : `r_cp_top` is set by the plasma shape
   !!  1 : `r_cp_top` is a user input
-  !!  2 : `r_cp_top` is set as a fraction of the coil inborad midplane outer radius 
+  !!  2 : `r_cp_top` is set using the CP top and midplane CP radius ratio 
 
   real(dp) :: r_cp_top = 0.0D0
   !! Top outer radius of the centropost (ST only) (m)

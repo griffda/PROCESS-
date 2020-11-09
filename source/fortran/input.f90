@@ -1626,7 +1626,7 @@ contains
                'Outer PF coil to cryostat distance (m)')
        case ('i_r_cp_top')
           call parse_int_variable('i_r_cp_top', i_r_cp_top, 0, 2, &
-               'Switch selecting the TF CP is parametrization (ST only)')
+               'Switch selecting the parametrization of the TF CP top radius (ST only)')
        case ('r_cp_top')
           call parse_real_variable('r_cp_top', r_cp_top, 0.0010D0, 10.0D0, &
               'Top CP outer radius (ST only) (m)')

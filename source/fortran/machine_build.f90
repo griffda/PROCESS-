@@ -155,7 +155,7 @@ contains
             r_cp_top = r_tf_inboard_out * 1.01D0
           end if 
 
-          ! Top and bottom TF CP radius ratio
+          ! Top / mid-plane TF CP radius ratio
           f_r_cp = r_cp_top / r_tf_inboard_out
          
        ! r_cp_top set as a fraction of the outer TF midplane radius
