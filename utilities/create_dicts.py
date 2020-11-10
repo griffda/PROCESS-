@@ -169,7 +169,14 @@ class VariableDescriptions(ProjectDictionary):
         for var_name, var_desc in self.dict[self.name].items():
             # Strip the <p> and </p> tags from the description; not 
             # required in output
-            self.dict[self.name][var_name] = re.sub('</?p>', '', var_desc)
+            desc_sub = re.sub(r"</?p>", r"", var_desc)
+            # Some characters are modified in Ford; convert them back here
+            # Convert <code> tags back to backticks (`)
+            desc_sub = re.sub(r"<\/*code>", r"`", desc_sub)
+            # Convert > and < back
+            desc_sub = re.sub(r"&gt;", r">", desc_sub)
+            desc_sub = re.sub(r"&lt;", r"<", desc_sub)
+            self.dict[self.name][var_name] = desc_sub
 
 class DefaultValues(ProjectDictionary):
     # Dictionary of default values of variables

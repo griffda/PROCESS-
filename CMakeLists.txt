@@ -295,11 +295,14 @@ execute_process(COMMAND ${INSTALL_FORD})
 
 # Get Git log information to put latest commit message into executable
 execute_process(
- COMMAND git log -1 --format=oneline OUTPUT_VARIABLE COM_MSG
- WORKING_DIRECTORY ${FORT_SOURCE_DIR}
- OUTPUT_STRIP_TRAILING_WHITESPACE
+  COMMAND git log -1 --format=oneline OUTPUT_VARIABLE COM_MSG
+  WORKING_DIRECTORY ${FORT_SOURCE_DIR}
+  OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-string(SUBSTRING ${COM_MSG}, 41, 70, COM_MSG_PR)
+
+# Replace any semicolons in commit message variable; delimiters in cmake
+string(REPLACE ";" "," COM_MSG_ESC ${COM_MSG})
+string(SUBSTRING ${COM_MSG_ESC}, 41, 70, COM_MSG_PR)
 file(WRITE ${FORT_SOURCE_DIR}/com.msg "  character(len=*), parameter :: COMMSG = \"" ${COM_MSG_PR} "\"")
 
 # Get Git log information to put version number into executable

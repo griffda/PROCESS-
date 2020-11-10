@@ -60,6 +60,15 @@ BLANKET_COMPARE_PARAMS = [
     "blnkith", "blnkoth", "powfmw", "pnucblkt", "pnucfw",
     "ptfnuc", "pnucshld", "pnucdiv", "tbr", "li6enrich", "fwarea", "emult"]
 
+GENERIC_LIST = [
+    "rmajor", "rminor", "aspect", "kappa", "kappa95", "triang", "triang95",
+    "powfmw", "plascur/1d6", "bt", "q95", "beta", "te", "dene", "pinjmw",
+    "pnetelmw", "wallmw", "ralpne", "pcoreradmw", "pradmw", "bootipf",
+    "capcost", "bore", "ohcth", "precomp", "gapoh", "tfcth", "tftsgap", "thshield",
+    "gapds", "ddwi","shldith", "vvblgap", "blnkith", "fwith", "scrapli", "scraplo",
+    "fwoth", "blnkoth", "shldoth", "gapsto", "tftsgap", "tfthko", "etath"
+]
+
 class BColors(object):
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -109,6 +118,9 @@ def main(arg):
 
     if arg.baseline:
         var_list = BASELINE_LIST
+
+    if arg.generic:
+        var_list = GENERIC_LIST
 
     for v in var_list:
         if "normres" in v:
@@ -213,6 +225,8 @@ if __name__ == "__main__":
     parser.add_argument('--baseline', action="store_true")
 
     parser.add_argument('--blanket', action="store_true")
+
+    parser.add_argument('--generic', action="store_true")
 
     args = parser.parse_args()
 
