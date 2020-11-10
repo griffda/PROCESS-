@@ -152,21 +152,9 @@ GET_GFORTRANLIBS()
 
 SET(PROCESS_MODULE_DIST ${CMAKE_SOURCE_DIR}/process_dist)
 
-# Things are different on macOS, use the 'install_name_tool' on 
-# macOS to change the shared object addresses to the install location
-# FIXME: This won't work when moving a build to another system unless
-# the exact same Python environment is used
-if(CMAKE_HOST_APPLE)
-    SET(INSTALL_NAME_CHANGE "install_name_tool -change")
-    ADD_CUSTOM_TARGET(install_process ALL
-        COMMAND ${PYTHON_EXECUTABLE} -m pip install --no-cache-dir ${CMAKE_SOURCE_DIR}
-        COMMAND bash -c "${INSTALL_NAME_CHANGE} @rpath/lib${PROJECT_NAME}${LIBRARY_OUTPUT_SUFFIX} ${PROCESS_MODULE_INSTALL_LOCATION}/lib/lib${PROJECT_NAME}${LIBRARY_OUTPUT_SUFFIX} ${PROCESS_MODULE_INSTALL_LOCATION}/_${FORTRAN_INTERFACE_NAME}${CMAKE_PYTHON_ABI_VERSION}"
-        COMMAND bash -c "${INSTALL_NAME_CHANGE} @rpath/${GFORTLIB_NAME}${LIBRARY_OUTPUT_SUFFIX} ${PROCESS_MODULE_INSTALL_LOCATION}/lib/${GFORTLIB_NAME}${LIBRARY_OUTPUT_SUFFIX} ${PROCESS_MODULE_INSTALL_LOCATION}/_${FORTRAN_INTERFACE_NAME}${CMAKE_PYTHON_ABI_VERSION}"
-    )
-else()
-    ADD_CUSTOM_TARGET(install_process ALL
-        COMMAND ${PYTHON_EXECUTABLE} -m pip install --no-cache-dir ${CMAKE_SOURCE_DIR}
-    )
-endif()
+# Run the Pip Install
+ADD_CUSTOM_TARGET(install_process ALL
+    COMMAND ${PYTHON_EXECUTABLE} -m pip install --no-cache-dir ${CMAKE_SOURCE_DIR}
+)
 
 ADD_DEPENDENCIES(install_process ${PIP_NAME} ${F90WRAP_NAME} ${F2PY_NAME} ${FORD_NAME} ${DICTS_NAME} ${GFORTLIB_NAME})

@@ -23,7 +23,7 @@ setup_kwargs = {
     },
     "package_data": {
         "process": [
-            "lib/*.so",
+            "lib/lib*",
             "_fortran*.so",
             "data/fluids/*",
             "data/h_data/*",
