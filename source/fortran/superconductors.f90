@@ -704,9 +704,11 @@ subroutine GL_REBCO(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit) !SCM add
   !!  Author: S B L Chislett-McDonald Durham University
   !!  Category: subroutine
   !!
-  !!  Critical current density of the superconductor in a SuperPower REBCO tape
-  !!  (assuming the superconductor is 1% of the cross section of the tape) t
-  !!  based on the Ginzburg-Landau theory of superconductivity 
+  !!  Critical current density of a SuperPower REBCO tape based on measurements by P. Branch 
+  !!  at Durham University 
+  !!  https://git.ccfe.ac.uk/process/process/uploads/e98c6ea13da782cdc6fe16daea92078a/20200707_Branch-Osamura-Hampshire_-_accepted_SuST.pdf
+  !!  and fit to state-of-the-art measurements at 4.2 K published in SuST
+  !!  http://dx.doi.org/10.1088/0953-2048/24/3/035001
   !! 
   !! \begin{equation}
   !!  J_{c,TS}(B,T,\epsilon_{I}) = A(\epsilon_{I}) \left[T_{c}(\epsilon_{I})*(1-t^2)\right]^2\left
