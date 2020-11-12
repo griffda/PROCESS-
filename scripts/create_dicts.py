@@ -27,6 +27,7 @@ import os
 import json
 import argparse
 import pickle
+from pathlib import Path
 
 # Variables, arrays and dictionaries that aren't read from the source files so
 # have to be hard coded
@@ -167,6 +168,24 @@ class VariableDescriptions(ProjectDictionary):
             self.dict[self.name][var_name] = re.sub('</?p>', '', var_desc)
 
 class DefaultValues(ProjectDictionary):
+    """This is a nightmare. It takes combined declared/initialised values from
+    Ford's project and combines them with Fortran source regex parsing for 
+    values that are declared separately and initialised only in an init 
+    subroutine. e.g.:
+
+    Case 1:
+    integer, parameter :: n_radial_array = 50
+    Declared and initialised in same line: parameter, does not require 
+    re-initialisation. Use Ford project's value for this variable.
+
+    Case 2:
+    real(kind(1.0D0)) :: fcutfsu
+    Declared only (requires re-initialisation)
+    fcutfsu = 0.69D0
+    Initialised separately in init subroutine
+    The Ford project value will be None, but we want to extract the value from
+    the init subroutine. This requires Fortran source regex.
+    """
     # Dictionary of default values of variables
     def __init__(self, project):
         ProjectDictionary.__init__(self, 'DICT_DEFAULT', project, 'initial')
@@ -174,50 +193,188 @@ class DefaultValues(ProjectDictionary):
     def make_dict(self):
         # Assign the variable name key to the initial value of the variable
         # [var_name] = initial_value
+        # Use Ford's project object to attempt to fetch initial values first
         for module in self.project.modules:
             for var in module.variables:
-                self.dict[self.name][var.name] = self.process_initial_value(
-                    module.variables, var)
+                self.dict[self.name][var.name] = self.process_initial_value(var)
 
-    def process_initial_value(self, module_vars, var):
+        # Now fetch values in init subroutines to overwrite Ford's initial
+        # values if necessary
+        self.parse_init_subroutines()
+
+    def parse_init_subroutines(self):
+        # Find all the initialised values in the init subroutines in the entire 
+        # codebase
+
+        # Fetch all Fortran source files
+        sources = Path(SOURCEDIR).glob("*.f90")
+
+        for source in sources:
+            with open(source) as f:
+                lines = f.read()
+
+            # Parse file for init subroutine
+            # Match on a "subroutine init_" to "end subroutine" block
+            init_match = re.search(r"(?:subroutine\sinit_)(\w+)(.*?end\ssubroutine)",
+                
+                # r"(?<=subroutine\sinit_)" # Start on "subroutine init_"
+                # r"(\w+)" # Capture name of init subroutine
+                # r"(.*?)" # Capture multi-line contents of subroutine (lazy)
+                # r"(?=end\ssubroutine)", # End on "end subroutine"
+                lines,
+                re.S # Dot matches newline characters (allows multiline matches)
+            )
+            
+            if init_match:
+                module_init_name = init_match.group(1)
+                module_init_contents = init_match.group(2)
+
+                # Now process the contents of the init subroutine
+                # Extract the init values of the variables
+                self.parse_init_subroutine(module_init_name, module_init_contents)
+
+    def parse_init_subroutine(self, init_name, init_contents):
+        matches = re.finditer(r"\s*(\w+)\s*=\s*(.+?)\s*\n(?=(?:(?:\s+\w+\s*=)|(?:\s*end)|(?:\s*!))|(?:\s*if\s))", init_contents, re.S)
+        # Capture group 1: variable name
+        # Capture group 2: variable value
+        # TODO: Allow multi-line matches, e.g. for arrays on multiple lines
+        
+        for match in matches:
+            var = match.group(1)
+            value = match.group(2)
+
+            # Slice off any comment
+            value = value.split("!")[0]
+
+            # Remove any \n and \& characters from the value
+            # Used mainly for multiline arrays
+            value = value.replace("\n", "")
+            value = value.replace("&", "")
+            
+            # Remove space either side of value
+            value = value.strip()
+
+            # If the variable value is "" or '', value will be '""' or "''"
+            # Adjust this to be an empty string
+            if value in ['""', "''"]:
+                value = ""
+
+            # If the value is a Fortran array, convert it to a list
+            # Remove the (/ /) if the value starts with (/
+            if value.find("(/") == 0:
+                value = value.replace("(/", "")
+                value = value.replace("/)", "")
+                value = value.replace(" ", "")
+                
+                # Some arrays of strings contain commas inside the strings
+                # Try to avoid splitting these
+                comma_list = value.split("','")
+                if type(comma_list) is list and len(comma_list) > 1:
+                    comma_list = [i.replace("'", "") for i in comma_list]
+                    value = comma_list
+                else:
+                    # This is used for all number arrays
+                    value = value.split(",")
+
+            self.overwrite_init_subroutine_var(var, value)
+
+    def overwrite_init_subroutine_var(self, var, value):
+        if var not in self.dict[self.name]:
+            # If the var is not in the dict (picked up by Ford), discard it
+            # This probably means that something was picked up by the init 
+            # subroutine regex in error
+            return
+        elif self.dict[self.name][var] == None:
+            # Only overwrite the value if Ford has produced a None
+            # Check if an array needs to be written
+            # Find the var in the Ford project
+            for module in self.project.modules:
+                for mod_var in module.variables:
+                    if var == mod_var.name:
+                        if mod_var.dimension:
+                            # The var has a dimension, so needs to be 
+                            # initialised as a list
+                            if type(value) is list and mod_var.dimension == len(value):
+                                # The value list length and Ford variable dimension 
+                                # match; just use the list in value
+                                mod_var.initial = value
+                                self.dict[self.name][var] = value
+                            else:
+                                # value needs to be spread over the length of
+                                # the list
+                                # Set the Ford project var and the dictionary values
+                                mod_var.initial = [value] * mod_var.dimension
+                                self.dict[self.name][var] = mod_var.initial
+                            
+            # If it's not an array, set it to the value in the init subroutine
+            if self.dict[self.name][var] == None:
+                self.dict[self.name][var] = value
+
+    def process_initial_value(self, var):
         # The initial value could be an array that hasn't been picked up by Ford
         # Ford can't handle implicit array initialisation
         # e.g. real(kind(1.0D0)), dimension(14) :: impurity_enrichment = 5.0D0
         # Ford's initial variable value is 5.0D0, but should be an array of 
         # 14 5.0D0 values
         
-        # module_vars: all module-level variables in a given module
         # var: current variable for initial value processing
 
-        if var.initial and var.initial.find('(/') == -1:
-            # Initial value isn't currently an array
+        size_arg = None
+
+        # Check array declaration style, if any
+        if var.dimension:
+            # "impurity_enrichment(14)" style
+            size_arg = var.dimension
+        else:
+            # "dimension(14) :: impurity_enrichment" style
             for attrib in var.attribs:
-                # Does the variable have a dimension attribute? i.e. is it
-                # actually an array?
-                # Interested in attrib of the form "dimension(size)"
-                
-                # Check for size being a hardcoded int first
-                size = self.find_int_array_dimension(attrib)
-                
-                if size is None:
-                    # Check for size being a variable
-                    size = self.find_var_array_dimension(attrib, module_vars)
+                # Only interested in attribute of the form "dimension(size)"
+                if attrib.find("dimension") >= 0:
+                    size_arg = attrib
+                else:
+                    return
 
-                if size:            
-                    # Therefore the variable's initial value should be an array
-                    # Replace the initial value with an array of intial values
-                    # of length size
-                    var.initial = [var.initial for i in range(size)]
+        # If it's an array, parse the size
+        if (size_arg):
+            # Check for size being a hardcoded int first
+            size = self.find_int_array_dimension(size_arg)
+            
+            if size is None:
+                # Check for size being a variable
+                size = self.find_var_array_dimension(size_arg)
 
-        # Return either the original initial value (which could be an array or 
-        # not), or the modified initial value, which is now an array          
+            if size:            
+                # The variable is an array
+                var.dimension = size
+                
+                # Modify the initial value if we have one
+                if var.initial:
+                    if "(/" in var.initial:
+                        # Initial value is already an array; convert to str to 
+                        # list
+                        var.initial = var.initial.replace("(/", "")
+                        var.initial = var.initial.replace("/)", "")
+                        var.initial = var.initial.split("',")
+                        # Try to get single quotes back
+                        var.initial = [i.strip() + "'" for i in var.initial]
+                        var.initial[-1] = var.initial[-1][:-1]
+                    else:
+                        # Single initial value: replace with array of identical 
+                        # initial values of length size
+                        var.initial = [var.initial for i in range(size)]
+
+        # If the var wasn't an array, return the original initial value
+        # If it was an array and had an initial value, return an array of the 
+        # initial value
+        # If it was an array and had no initial value, return None (but with
+        # an updated dimension on the var)
         return var.initial
 
     def find_int_array_dimension(self, attrib):
         # Attempt to find the size of an array given its dimension attribute
         # with a hardcoded integer argument
         size = None
-        match = re.match(r"dimension\((\d+)\)", attrib)
+        match = re.search(r"\((\d+)\)", attrib)
         # 1st capturing group matches any number of digits for the size
         if match:
             # dimension argument is a hardcoded number
@@ -225,11 +382,13 @@ class DefaultValues(ProjectDictionary):
 
         return size
 
-    def find_var_array_dimension(self, attrib, module_vars):
+    def find_var_array_dimension(self, attrib):
         # Attempt to find the size of an array given its dimension attribute
         # with a variable argument
         size = None
-        match = re.match(r"dimension\((\w+)\)", attrib)
+
+        # Try to match "dimension(size)" or "(size)" style
+        match = re.search(r"\((\w+)\)", attrib)
         # 1st capturing group matches any number of word characters
         # for size: i.e. a variable name
         if match:
@@ -237,13 +396,15 @@ class DefaultValues(ProjectDictionary):
             size_arg = match.group(1)
             # Now look up the initial value of that variable within the current
             # module in the Ford project object
-            for var in module_vars:
-                if var.name == size_arg:
-                    try:
-                        size = int(var.initial)
-                        break
-                    except ValueError:
-                        pass
+            # TODO expand to all modules
+            for module in self.project.modules:
+                for var in module.variables:
+                    if var.name == size_arg:
+                        try:
+                            size = int(var.initial)
+                            break
+                        except ValueError:
+                            pass
 
             # If size_arg doesn't match a var.name or var.initial can't be
             # converted to int: they probably aren't a numerical value and 
