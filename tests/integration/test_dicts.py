@@ -134,6 +134,11 @@ def test_default_dict(ref_dicts, new_dicts):
         "q_0_BZ_breed_OB",
         "q_0_BZ_steels_IB",
         "q_0_BZ_steels_OB",
+        "intervallabel",
+        "lablmm",
+        "lablxc",
+        "timelabel",
+        "imp_label"
     ]
     """
     Ignore calltree_data: removed. ctfile, current, error_head, error_tail
@@ -153,6 +158,12 @@ def test_default_dict(ref_dicts, new_dicts):
     impdir, impurity_arr, s are now initialised with a function; can't parse
     
     iounit, lenmax, i_cp_joints, n_day_year removed
+
+    intervallabel contains spaces in an array of strings which are now stripped
+
+    lablmm was breaking on commas inside strings inside the array before
+
+    lablxc, timelabel, imp_label is the same, just with an annoying "''" for each value: now ''
     """
 
     # One difference is due to "null" in ref_dicts now being "0.0" or "" in 
@@ -161,10 +172,11 @@ def test_default_dict(ref_dicts, new_dicts):
 
     # Compare ref_dicts values individually
     for old_key, old_value in ref_dicts["DICT_DEFAULT"].items():
+        # Ignore excluded keys
         if old_key in EXCLUSIONS:
-            # Ignore excluded keys
             continue
         
+        # Assert old_key exists in new_dict
         try:
             assert old_key in new_dicts["DICT_DEFAULT"]
             new_value = new_dicts["DICT_DEFAULT"][old_key]
@@ -172,8 +184,12 @@ def test_default_dict(ref_dicts, new_dicts):
             logger.error(f"{old_key} isn't present in new_dicts")
             raise
         
+        # Compare differently if old_value is None or not
         if old_value is None:
-            # assert new_value is 0.0, None, "" or ["", "", ""]
+            # If value was None (null in json, not initialised in Fortran) before, 
+            # make sure the new value is None-y; initialised, but still representing
+            # in some way
+            # Assert new_value is 0.0, None, "", .false. or ["", "", ""]
             try:
                 if type(new_value) is str and len(new_value) > 0:
                     # The only acceptable value is .false.
@@ -181,7 +197,8 @@ def test_default_dict(ref_dicts, new_dicts):
                 else:
                     # Handle iterable and non-iterable values
                     try:
-                        # Try iterating over potential list
+                        # Try iterating over potential list, asserting each 
+                        # value to be None-y
                         for new_value in new_value:
                             assert new_value in [0.0, None, ""]
                     except TypeError:
@@ -193,7 +210,7 @@ def test_default_dict(ref_dicts, new_dicts):
                 raise
 
         else:
-            # old_value has a value: compare to new value
+            # old_value has a value, compare to new value
             # Strip all spaces for comparison
             if type(new_value) is str:
                 new_value = new_value.replace(" ", "")
@@ -203,15 +220,19 @@ def test_default_dict(ref_dicts, new_dicts):
             try:
                 assert old_value == new_value
             except AssertionError:
-                # Check for off-by-one errors: possibly caused by start-from
-                # -1 arrays in Fortran?
-                # TODO This needs to be investigated
-                if type(old_value) is list:
-                    try:
-                        if len(old_value) == len(new_value) + 1:
-                            logger.error(f"{old_key} list has an off-by-one error")
-                    except:
-                        pass
+                # The values are different, but is it acceptable?
+                if type(old_value) is list and type(new_value) is list:
+                    # Check for off-by-one errors: possibly caused by start-from
+                    # -1 arrays in Fortran, or dodgy array-guessing in create_dicts
+                    # TODO This needs to be investigated, although doesn't affect 
+                    # many vars
+                    if len(old_value) == len(new_value) + 1:
+                        # Allow an off-by-one error
+                        logger.error(f"{old_key} list has an off-by-one error")
+                    else:
+                        # Otherwise raise the error
+                        logger.error(f"{old_key} is different")
+                        raise
                 elif type(new_value) is list and type(old_value) is not list:
                     # var could now be properly initialised as list: check
                     if new_value[0] == old_value:
@@ -221,6 +242,8 @@ def test_default_dict(ref_dicts, new_dicts):
                         logger.error(f"{old_key} is different")
                         raise
                 else:
+                    # The old and new values are different and it's not 
+                    # acceptable
                     logger.error(f"{old_key} is different")
                     raise
 
