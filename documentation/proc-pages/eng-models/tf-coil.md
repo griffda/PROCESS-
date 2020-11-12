@@ -49,7 +49,7 @@ The TF coils are assumed to be supporting each other against the net TF coils ce
 
 <figure>
     <center>
-    <img src="/images/tfcoil_SC_inboard_structure.png" alt="SC_mid_plane_cross_section" 
+    <img src="../../images/tfcoil_SC_inboard_structure.png" alt="SC_mid_plane_cross_section" 
     title="Inboard mid-plane superconducting TF coil cross-section" 
     width="600" height="150" />
     <br>
@@ -116,7 +116,7 @@ Two different plasma side casing shapes can be selected using the `i_tf_case_geo
 
 <figure>
     <center>
-    <img src="/images/tfcoil_SC_plasma_case_option.png" alt="plasma side case geometry options" 
+    <img src="../../images/tfcoil_SC_plasma_case_option.png" alt="plasma side case geometry options" 
     title="plasma side case geometry options" 
     width="500" height="100" />
     <br>
@@ -143,7 +143,7 @@ Several Winding pack geometries can chosen with the `i_tf_wp_geom` integer switc
 
 <figure>
     <center>
-    <img src="../../images/tfcoil_SC_WP_option.png" alt="WP geometries options" 
+    <img src="../../images/tfcoil_SC_WP_option.png" alt="WP geometries options"
     title="Superconducting TF coil WP geometry"
     width="650"
     height="100"/>
@@ -680,7 +680,7 @@ $$
 
 <figure>
     <center>
-    <img src="/images/tfcoil_SC_stress_layers.png" alt="SC_mid_plane_stress_layers" 
+    <img src="../../images/tfcoil_SC_stress_layers.png" alt="SC_mid_plane_stress_layers" 
     title="Inboard mid-plane superconducting TF coil stress layers"
     width="500" height="100" />
     <br>
@@ -773,7 +773,7 @@ $$
   
 <figure>
     <center>
-    <img src="/images/tfcoil_SC_turn_diag.png" alt="SC_mid_plane_stress_layers" 
+    <img src="../../images/tfcoil_SC_turn_diag.png" alt="SC_mid_plane_stress_layers" 
     title="Inboard mid-plane superconducting TF coil stress layers"
     width="500" height="100" />
     <br>
