@@ -47,5 +47,6 @@ OBS_VARS = {
     "conductor_width":"t_conductor",
     "deltf":"tftsgap",
     "pnuccp":"pnuc_cp",
-    "nuc_pow_dep_tot":"pnuc_tot_blk_sector"
+    "nuc_pow_dep_tot":"pnuc_tot_blk_sector",
+    "t_turn:t_turn_tf"
 }

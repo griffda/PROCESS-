@@ -40,7 +40,7 @@ subroutine initial
         init_itv_156, init_itv_157, init_itv_158, init_itv_159, init_itv_160, &
         init_itv_161, init_itv_162, init_itv_163, init_itv_164, init_itv_165, &
         init_itv_166, init_itv_167, init_itv_168, init_itv_169, init_itv_170, &
-        init_itv_171, init_itv_172
+        init_itv_171, init_itv_172, init_itv_173, init_itv_174, init_itv_175
     use, intrinsic :: iso_fortran_env, only: dp=>real64
 
     implicit none
@@ -230,6 +230,9 @@ subroutine initial
     call init_itv_170
     call init_itv_171
     call init_itv_172
+    call init_itv_173
+    call init_itv_174
+    call init_itv_175
 
     !  Initialise stellarator parameters if necessary
     !  This overrides some of the bounds of the tokamak parameters.
@@ -323,7 +326,8 @@ subroutine check
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables, only: blnkith, bore, gapoh, ohcth, precomp, iprecomp
+    use build_variables, only: blnkith, bore, gapoh, ohcth, precomp, iprecomp, &
+        i_r_cp_top, r_cp_top
     use buildings_variables, only: esbldgm3, triv
     use current_drive_variables, only: gamcd, iefrf, irfcd
     use divertor_kallenbach_variables, only: impurity_enrichment, kallenbach_switch
@@ -350,7 +354,8 @@ subroutine check
         tmargmin_tf, eff_tf_cryo, eyoung_ins, i_tf_bucking, i_tf_shape, &
         n_tf_graded_layers, n_tf_stress_layers, tlegav,  i_tf_plane_stress, &
         i_tf_sc_mat, i_tf_wp_geom, i_tf_turns_integer, tinstf, thwcndut, &
-        tfinsgap, rcool, dhecoil, thicndut, i_cp_joints
+        tfinsgap, rcool, dhecoil, thicndut, i_cp_joints, t_turn_tf_is_input,&
+        t_turn_tf
     use stellarator_variables, only: istell
     use sctfcoil_module, only: initialise_cables
     use vacuum_variables, only: vacuum_model
@@ -808,6 +813,11 @@ subroutine check
             end if 
         end if
 
+        ! Checking the CP TF top radius
+        if ( ( abs(r_cp_top) > epsilon(r_cp_top) .or. any(ixc(1:nvar) == 174) ) &
+            .and. i_r_cp_top /= 1 ) then
+             call report_error(261)
+        end if
     ! --------------------------------
 
     
@@ -992,6 +1002,18 @@ subroutine check
             call report_error(255) 
         end if 
     end if
+
+    ! Setting t_turn_tf_is_input to true if t_turn_tf is an input
+    if ( abs(t_turn_tf) < epsilon(t_turn_tf) ) then
+        t_turn_tf_is_input = .false.
+    else
+        t_turn_tf_is_input = .true.
+    end if
+
+    ! Impossible to set the turn size of integer turn option
+    if ( t_turn_tf_is_input .and. i_tf_turns_integer == 1 ) then
+        call report_error(263) 
+    end if 
     ! -------
 
 

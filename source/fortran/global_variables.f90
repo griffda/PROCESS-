@@ -352,7 +352,7 @@ module physics_variables
   !! F-value for minimum pdivt (`constraint equation 80`)
 
   real(dp) :: fne0 = 1.0D0
-  !! f-value for the constraint ne(0) > ne(sep) (`constraint equation 81`)
+  !! f-value for the constraint ne(0) > ne(ped) (`constraint equation 81`)
   !! (`Iteration variable 154`) 
 
   real(dp), bind(C) :: ftrit = 0.5D0
@@ -2753,8 +2753,28 @@ module tfcoil_variables
   real(dp) :: t_conductor = 0.0D0
   !! Conductor (cable + steel conduit) area averaged dimension [m]
   
-  real(dp) :: t_turn = 0.0D0
-  !! WP turn squared dimensions [m]
+  real(dp) :: t_turn_tf = 0.0D0
+  !! TF turn edge length including turn insulation [m]
+  !!   If the turn is not a square (i_tf_turns_integer = 1) a squared turn of 
+  !!   equivelent size is use to calculated this quantity
+  !!   If the t_turn_tf is non zero, cpttf is calculated
+
+  logical :: t_turn_tf_is_input
+  !! Boolean switch to activated when the user set the TF turn dimensions
+  !! Not an input
+
+  real(dp) :: f_t_turn_tf = 1.0D0
+  !! f-value for TF turn edge length constraint 
+  !!  If the turn is not a square (i_tf_turns_integer = 1) a squared turn of 
+  !!  equivelent size is use for this constraint
+  !!  iteration variable ixc = 175
+  !!  constraint equation icc = 86
+
+  real(dp) :: t_turn_tf_max = 0.05
+  !! TF turn edge length including turn insulation upper limit [m] 
+  !! If the turn is not a square (i_tf_turns_integer = 1) a squared turn of 
+  !! equivelent size is use for this constraint
+  !! constraint equation icc = 86
 
   real(dp) :: acs = 0.0D0
   !! Area of space inside conductor (m2)
@@ -4137,12 +4157,18 @@ module build_variables
   !! Mid-plane Outer radius of centre of inboard TF leg (m)
        
   real(dp) :: r_tf_outboard_mid = 0.0D0
-  !! radius to the centre of the outboard TF coil leg (m)
+  !! Radius to the centre of the outboard TF coil leg (m)
+
+  integer :: i_r_cp_top = 0
+  !! Switch selecting the he parametrization of the outer radius of the top of the CP part of the TF coil
+  !!  0 : `r_cp_top` is set by the plasma shape
+  !!  1 : `r_cp_top` is a user input
+  !!  2 : `r_cp_top` is set using the CP top and midplane CP radius ratio 
 
   real(dp) :: r_cp_top = 0.0D0
   !! Top outer radius of the centropost (ST only) (m)
 
-  real(dp) :: f_r_cp = -1.0D0
+  real(dp) :: f_r_cp = 1.4D0
   !! Ratio between the top and the midplane TF CP outer radius [-] 
   !! Not used by default (-1) must be larger than 1 otherwise
 

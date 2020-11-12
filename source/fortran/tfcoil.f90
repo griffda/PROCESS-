@@ -186,7 +186,14 @@ module tfcoil_module
     !! Conductor thermal conductivity [W/(m.K)]
     
     real(dp) :: tcool_calc
-    !! coolant temperature used in the temperature rise calculations (not an output)
+    !! coolant temperature used in the temperature rise calculations (not an output) [K]
+
+    real(dp) :: tcool_av
+    !! Average bulk coolant temperature (not an output) [K]
+
+    real(dp) :: tcool_film
+    !! Coolant temperature at the pipe surface calculated from the average bulk
+    !! temperature (not an output) [K]
 
     integer, parameter :: n_tcool_it = 20
     !! Number of integral step used for the coolant temperature rise
@@ -270,6 +277,9 @@ module tfcoil_module
        dtiocool = tcool_calc - tcoolin
     end if
     ! --------------
+
+    ! Average coolant temperature
+    tcool_av = tcoolin + 0.5D0 * dtiocool
     ! **********************************************
 
 
@@ -279,21 +289,24 @@ module tfcoil_module
     ! this is not an exact approximation for average temperature rise
 
     ! Helium viscosity
-    if ( i_tf_sup == 2 ) call he_visco(tcool_calc, coolant_visco)
+    if ( i_tf_sup == 2 ) call he_visco(tcool_av, coolant_visco)
 
     ! Reynolds number
     reyn = coolant_density * vcool * dcool / coolant_visco
    
     ! Helium thermal conductivity [W/(m.K)]
-    if ( i_tf_sup == 2 ) call he_th_cond(tcool_calc, coolant_th_cond)
+    if ( i_tf_sup == 2 ) call he_th_cond( tcool_av, coolant_th_cond )
   
     ! Prandlt number  
     prndtl = coolant_cp * coolant_visco / coolant_th_cond
 
-    ! Temperature difference calculations
+    ! Film temperature difference calculations
     nuselt = 0.023D0 * reyn**0.8D0 * prndtl**0.3D0
     h = nuselt * coolant_th_cond / dcool
     dtfilmav = ptot / (h * 2.0D0*pi*rcool * ncool * lcool)
+
+    ! Average film temperature (in contact with te conductor)
+    tcool_film = tcool_av + dtfilmav
     ! *********************
 
 
@@ -306,17 +319,9 @@ module tfcoil_module
        conductor_th_cond = k_copper
     
     ! Aluminium 
-    else if ( i_tf_sup ==  2 ) then
-
-       ! Fiting range verification
-       if ( tcpav < 15.0D0 .or. tcpav > 60.0D0 ) then 
-         fdiags(1) = tcpav
-         call report_error(258)
-       end if
-
-       ! Ref : R.W. Powel, National Standard Reference Data Series, Nov 25 1966 (S Kahn fit 15 < T < 60 K)
-       conductor_th_cond = 16332.2073D0 - 776.91775*tcpav + 13.405688D0*tcpav**2 - 8.01D-02*tcpav**3 ! W/(m.K)
-    end if 
+    else if ( i_tf_sup == 2 ) then
+      call al_th_cond( tcool_film, conductor_th_cond )
+    end if
     ! ******
 
     ! Average temperature rise : To be changed with Garry Voss' better documented formula ? 
@@ -609,6 +614,52 @@ module tfcoil_module
       end if 
 
     end subroutine he_th_cond
+
+    ! ----------------------------------------
+
+    subroutine al_th_cond(temp, th_cond)
+       !! Author : S. Kahn
+       !! Subroutine calculating temperature dependent Al thermal conductivity 
+       
+       use error_handling, only: fdiags, report_error
+ 
+       implicit none
+ 
+       ! Input / output
+       ! --------------
+       real(dp), intent(in) :: temp
+       !! Helium temperature [K]
+ 
+       real(dp), intent(out) :: th_cond
+       !! Themal conductivity [W/(m.K)]
+       ! --------------
+
+
+
+       ! Fiting range verification
+       if ( temp < 15.0D0 .or. temp > 150.0D0 ) then 
+         fdiags(1) = temp
+         call report_error(258)
+       end if
+
+       ! fit 15 < T < 60 K (order 3 poly)
+       if ( temp < 60.0D0 ) then
+          th_cond = 16332.2073D0 - 776.91775D0*temp + 13.405688D0*temp**2 - 8.01D-02*temp**3
+
+       ! Linear interpolation between the fits to avoid discontinuity
+       else if ( temp < 70.0D0 ) then 
+         th_cond = 1587.9108966527328D0 - 15.19819661087886D0 * temp 
+
+       ! fit 70 < T < 150 K (order 2 poly)
+       else if ( temp < 150.0D0 ) then 
+         th_cond = 1782.77406D0 - 24.7778504D0 * temp + 9.70842050D-2 * temp**2  
+
+       ! constant value after that set with the fit upper limit to avoid discontinuities
+       else
+         th_cond = 250.4911087866094D0 
+       end if 
+
+    end subroutine al_th_cond
 
   end subroutine cntrpst
 
