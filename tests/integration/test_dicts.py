@@ -138,7 +138,8 @@ def test_default_dict(ref_dicts, new_dicts):
         "lablmm",
         "lablxc",
         "timelabel",
-        "imp_label"
+        "imp_label",
+        "pi"
     ]
     """
     Ignore calltree_data: removed. ctfile, current, error_head, error_tail
@@ -148,7 +149,10 @@ def test_default_dict(ref_dicts, new_dicts):
     Ignore all vardes and html stuff: this has been removed
     vdfile, vdunit, ffile, hfile, hfunit
     
-    e_Li, lambda_q_BZ_Be_IB are defined differently in 2 places
+    e_Li, lambda_q_BZ_Be_IB, pi are defined differently in multiple places. 
+    This leads to a race condition concerning which value overwrites last, and
+    differences between local and CI dicts. Unique dict names are necessary
+    to overcome this.
 
     fileprefix, output_prefix contains an unneccessary \"\", now ""
     
