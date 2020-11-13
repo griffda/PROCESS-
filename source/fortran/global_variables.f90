@@ -4035,8 +4035,17 @@ module build_variables
   real(dp) :: ddwex = 0.07D0
   !! cryostat thickness (m)
 
-  real(dp) :: ddwi = 0.07D0
-  !! vacuum vessel thickness (TF coil / shield) (m)
+  real(dp) :: d_vv_in = 0.07D0
+  !! vacuum vessel inboard thickness (TF coil / shield) (m)
+
+  real(dp) :: d_vv_out = 0.07D0
+  !! vacuum vessel outboard thickness (TF coil / shield) (m)
+
+  real(dp) :: d_vv_top = 0.07D0
+  !! vacuum vessel topside thickness (TF coil / shield) (m)
+
+  real(dp) :: d_vv_bot = 0.07D0
+  !! vacuum vessel underside thickness (TF coil / shield) (m)
 
   real(dp) :: f_avspace = 1.0D0
   !! F-value for stellarator radial space check (`constraint equation 83`)

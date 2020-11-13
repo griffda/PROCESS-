@@ -426,7 +426,7 @@
  TF_coil_inboard_leg_gap_(m)_____________________________________________ (deltf)_____________      8.554E-02    
  Thermal_shield_(m)______________________________________________________ (thshield)__________      5.000E-02    
  thermal_shield_to_vessel_radial_gap_(m)_________________________________ (gapds)_____________      1.200E-01    
- Vacuum_vessel_radial_thickness_(m)______________________________________ (ddwi)______________      3.000E-01    
+ Vacuum_vessel_radial_thickness_(m)______________________________________ (d_vv_in)___________      3.000E-01    
  Inner_radiation_shield_radial_thickness_(m)_____________________________ (shldith)___________      3.000E-01    
  Gap_(m)_________________________________________________________________ (vvblgap)___________      2.000E-02    
  Inboard_blanket_radial_thickness_(m)____________________________________ (blnkith)___________      7.550E-01    
@@ -1029,7 +1029,10 @@ blnkith  = 0.755 * Inboard blanket thickness (m);
 blnkoth  = 1.275 * Outboard blanket thickness (m);
 bore     = 2.0e+00 * Central solenoid inboard radius (m)
 ddwex    = 0.15 * Cryostat thickness (m)
-ddwi     = 0.3 * Vacuum vessel thickness (tf coil / shield) (m)
+d_vv_in  = 0.3 * Inboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_out = 0.3 * Outboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_top = 0.3 * Topside vacuum vessel thickness (tf coil / shield) (m)
+d_vv_bot = 0.3 * Underside vacuum vessel thickness (tf coil / shield) (m)
 *fwith    = 0.025 * Inboard first wall thickness; initial estimate (m) OBSOLETE
 *fwoth    = 0.025 * Outboard first wall thickness; initial estimate (m) OBSOLETE
 gapds    = 0.061 * Gap between inboard vacuum vessel and tf coil (m)

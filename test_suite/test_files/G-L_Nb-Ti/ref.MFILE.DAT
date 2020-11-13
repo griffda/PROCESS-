@@ -548,7 +548,10 @@
  TF_coil_inboard_leg_insulation_gap_(m)__________________________________ (deltf)_______________________      6.0586E-02    
  Thermal_shield_(m)______________________________________________________ (thshield)____________________      5.0000E-02    
  thermal_shield_to_vessel_radial_gap_(m)_________________________________ (gapds)_______________________      1.0000E-02 ITV
- Vacuum_vessel_radial_thickness_(m)______________________________________ (ddwi)________________________      3.2000E-01    
+ Inboard_Vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_in)_____________________      3.2000E-01    
+ Outboard_vacuum_vessel_radial_thickness_(m)_____________________________ (d_vv_out)____________________      3.2000E-01    
+ Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.2000E-01    
+ Underside_vacuum_vessel_radial_thickness_(m)____________________________ (d_vv_bot)____________________      3.2000E-01    
  Inner_radiation_shield_radial_thickness_(m)_____________________________ (shldith)_____________________      1.2000E-01    
  Gap_(m)_________________________________________________________________ (vvblgap)_____________________      1.0000E-02    
  Inboard_blanket_radial_thickness_(m)____________________________________ (blnkith)_____________________      5.3000E-01    
@@ -1637,7 +1640,10 @@
  TF_coil_inboard_leg_insulation_gap_(m)__________________________________ (deltf)_______________________      6.0493E-02    
  Thermal_shield_(m)______________________________________________________ (thshield)____________________      5.0000E-02    
  thermal_shield_to_vessel_radial_gap_(m)_________________________________ (gapds)_______________________      1.0000E-02 ITV
- Vacuum_vessel_radial_thickness_(m)______________________________________ (ddwi)________________________      3.2000E-01    
+ Inboard_Vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_in)_____________________      3.2000E-01    
+ Outboard_vacuum_vessel_radial_thickness_(m)_____________________________ (d_vv_out)____________________      3.2000E-01    
+ Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.2000E-01    
+ Underside_vacuum_vessel_radial_thickness_(m)____________________________ (d_vv_bot)____________________      3.2000E-01    
  Inner_radiation_shield_radial_thickness_(m)_____________________________ (shldith)_____________________      1.2000E-01    
  Gap_(m)_________________________________________________________________ (vvblgap)_____________________      1.0000E-02    
  Inboard_blanket_radial_thickness_(m)____________________________________ (blnkith)_____________________      5.3000E-01    
@@ -2726,7 +2732,10 @@
  TF_coil_inboard_leg_insulation_gap_(m)__________________________________ (deltf)_______________________      6.0677E-02    
  Thermal_shield_(m)______________________________________________________ (thshield)____________________      5.0000E-02    
  thermal_shield_to_vessel_radial_gap_(m)_________________________________ (gapds)_______________________      1.0000E-02 ITV
- Vacuum_vessel_radial_thickness_(m)______________________________________ (ddwi)________________________      3.2000E-01    
+ Inboard_Vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_in)_____________________      3.2000E-01    
+ Outboard_vacuum_vessel_radial_thickness_(m)_____________________________ (d_vv_out)____________________      3.2000E-01    
+ Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.2000E-01    
+ Underside_vacuum_vessel_radial_thickness_(m)____________________________ (d_vv_bot)____________________      3.2000E-01    
  Inner_radiation_shield_radial_thickness_(m)_____________________________ (shldith)_____________________      1.2000E-01    
  Gap_(m)_________________________________________________________________ (vvblgap)_____________________      1.0000E-02    
  Inboard_blanket_radial_thickness_(m)____________________________________ (blnkith)_____________________      5.3000E-01    
@@ -3815,7 +3824,10 @@
  TF_coil_inboard_leg_insulation_gap_(m)__________________________________ (deltf)_______________________      6.0862E-02    
  Thermal_shield_(m)______________________________________________________ (thshield)____________________      5.0000E-02    
  thermal_shield_to_vessel_radial_gap_(m)_________________________________ (gapds)_______________________      1.0000E-02 ITV
- Vacuum_vessel_radial_thickness_(m)______________________________________ (ddwi)________________________      3.2000E-01    
+ Inboard_Vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_in)_____________________      3.2000E-01    
+ Outboard_vacuum_vessel_radial_thickness_(m)_____________________________ (d_vv_out)____________________      3.2000E-01    
+ Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.2000E-01    
+ Underside_vacuum_vessel_radial_thickness_(m)____________________________ (d_vv_bot)____________________      3.2000E-01    
  Inner_radiation_shield_radial_thickness_(m)_____________________________ (shldith)_____________________      1.2000E-01    
  Gap_(m)_________________________________________________________________ (vvblgap)_____________________      1.0000E-02    
  Inboard_blanket_radial_thickness_(m)____________________________________ (blnkith)_____________________      5.3000E-01    
@@ -4543,7 +4555,10 @@ fimp(09) =  5.8503E-03
 blnkith  = 0.775 * Inboard blanket thickness (m); 0.775
 blnkoth  = 1.275* Outboard blanket thickness (m); 1.275
 ddwex    = 0.15 * Cryostat thickness (m)
-ddwi     = 0.32 * Vacuum vessel thickness (tf coil / shield) (m)
+d_vv_in  = 0.32 *Inboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_out = 0.32 *Outboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_top = 0.32 *Topside vacuum vessel thickness (tf coil / shield) (m)
+d_vv_bot = 0.32 *Underside vacuum vessel thickness (tf coil / shield) (m)
 gapomin  = 0.20 * Minimum gap between outboard vacuum vessel and tf coil (m)
 iohcl    = 1 * Switch for existence of central solenoid;
 scrapli  = 0.225 * Gap between plasma and first wall; inboard side (m)

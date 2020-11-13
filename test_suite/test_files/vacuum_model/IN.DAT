@@ -177,7 +177,10 @@ boundu(111) = 1.0
 
 bore     = 3.1845129701893766 * bore /1;42/ ; central solenoid inboard radius (m)
 ddwex    = 0.15 * ddwex /0;07/ ; cryostat thickness (m)
-ddwi     = 0.32 * ddwi /0;07/ ; vacuum vessel thickness (TF coil / shield) (m)
+d_vv_in  = 0.32 * d_vv_in /0;07/ ; Inboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_out = 0.32 * d_vv_out /0;07/ ; Outboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_top = 0.32 * d_vv_top /0;07/ ; Topside vacuum vessel thickness (tf coil / shield) (m)
+d_vv_bot = 0.32 * d_vv_bot /0;07/ ; Underside vacuum vessel thickness (tf coil / shield) (m)
 gapds    = 0.12916134243449773 * gapds /0;155/ ; gap between inboard vacuum vessel and thermal shield (m)
 gapoh    = 0.051266051992449206 * gapoh /0;08/ ; gap between central solenoid and TF coil (m)
 gapomin  = 0.2 * gapomin /0;234/ ; minimum gap between outboard vacuum vessel and TF coil (m)

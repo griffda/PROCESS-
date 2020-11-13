@@ -493,7 +493,10 @@
  TF_coil_inboard_leg_insulation_gap_(m)__________________________________ (deltf)_______________________      1.3078E-01    
  Thermal_shield_(m)______________________________________________________ (thshield)____________________      5.0000E-02    
  thermal_shield_to_vessel_radial_gap_(m)_________________________________ (gapds)_______________________      2.0000E-02 ITV
- Vacuum_vessel_radial_thickness_(m)______________________________________ (ddwi)________________________      3.2000E-01    
+ Inboard_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_in)_____________________      3.2000E-01    
+ Outboard_vacuum_vessel_radial_thickness_(m)_____________________________ (d_vv_out)____________________      3.2000E-01    
+ Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.2000E-01    
+ Underside_vacuum_vessel_radial_thickness_(m)____________________________ (d_vv_bot)____________________      3.2000E-01    
  Inner_radiation_shield_radial_thickness_(m)_____________________________ (shldith)_____________________      3.0000E-01    
  Gap_(m)_________________________________________________________________ (vvblgap)_____________________      5.0000E-02    
  Inboard_blanket_radial_thickness_(m)____________________________________ (blnkith)_____________________      7.5500E-01    
@@ -1154,7 +1157,10 @@ blnkith  = 0.755 * Inboard blanket thickness (m);
 blnkoth  = 1.275 * Outboard blanket thickness (m);
 bore     = 2.205 * Central solenoid inboard radius (m)
 ddwex    = 0.15 * Cryostat thickness (m)
-ddwi     = 0.32 * Vacuum vessel thickness (tf coil / shield) (m)
+d_vv_in  = 0.32 * Inboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_out = 0.32 * Outboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_top = 0.32 * Topside vacuum vessel thickness (tf coil / shield) (m)
+d_vv_bot = 0.32 * Underside vacuum vessel thickness (tf coil / shield) (m)
 gapds    = 0.02 * Gap between inboard vacuum vessel and thermal shield (m)
 gapoh    = 0.05 * Gap between central solenoid and tf coil (m)
 gapomin  = 0.20 * Minimum gap between outboard vacuum vessel and tf coil (m)

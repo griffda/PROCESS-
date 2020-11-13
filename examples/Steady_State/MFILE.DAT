@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "1.0.17   "
- Date_of_run_____________________________________________________________ (date)________________________     "27/07/2020"
- Time_of_run_____________________________________________________________ (time)________________________     "15:48"
- User____________________________________________________________________ (username)____________________     "apearce" 
+ Date_of_run_____________________________________________________________ (date)________________________     "05/10/2020"
+ Time_of_run_____________________________________________________________ (time)________________________     "14:09"
+ User____________________________________________________________________ (username)____________________     "asbrown" 
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.17-355-ge5333137"                                                                              
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1074-obs_var_typo"                                                                                 
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch 'issue-1063-IpWarn' into 'develop',"                                                  
- Input_filename__________________________________________________________ (fileprefix)__________________     "new_IN.DAT                                                                                                                                                                                              "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.17-425-g6b9c0a8d"                                                                              
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "issue-433-inboard-and-outboard-VV-thickness"                                                       
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merging develop into current branch and resolving conflicts,"                                      
+ Input_filename__________________________________________________________ (fileprefix)__________________     "IN.DAT                                                                                                                                                                                                  "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -186,10 +186,10 @@
  Minor_radius_(m)________________________________________________________ (rminor)______________________      3.6677E+00    
  Aspect_ratio____________________________________________________________ (aspect)______________________      2.3949E+00 ITV
  Elongation,_X-point_(input_value_used)__________________________________ (kappa)_______________________      1.8480E+00    
- Elongation,_95%_surface_(kappa/1.12)____________________________________ (kappa95)_____________________      1.6500E+00    
+ Elongation,_95%_surface_(calculated_from_kappa)_________________________ (kappa95)_____________________      1.6500E+00    
  Elongation,_area_ratio_calc.____________________________________________ (kappaa)______________________      1.7172E+00    
  Triangularity,_X-point_(input_value_used)_______________________________ (triang)______________________      5.0000E-01    
- Triangularity,_95%_surface_(triang/1.5)_________________________________ (triang95)____________________      3.3333E-01    
+ Triangularity,_95%_surface_(calculated_from_triang)_____________________ (triang95)____________________      3.3333E-01    
  Plasma_poloidal_perimeter_(m)___________________________________________ (pperim)______________________      3.3097E+01    
  Plasma_cross-sectional_area_(m2)________________________________________ (xarea)_______________________      7.2573E+01    
  Plasma_surface_area_(m2)________________________________________________ (sarea)_______________________      1.7576E+03 OP 
@@ -429,7 +429,7 @@
  TF_coil_inboard_leg_insulation_gap_(m)__________________________________ (tftsgap)_____________________      5.0000E-02    
  Thermal_shield_(m)______________________________________________________ (thshield)____________________      5.0000E-02    
  thermal_shield_to_vessel_radial_gap_(m)_________________________________ (gapds)_______________________      2.0000E-02 ITV
- Vacuum_vessel_radial_thickness_(m)______________________________________ (ddwi)________________________      3.0000E-01    
+ Inboard_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_in)_____________________      3.0000E-01    
  Inner_radiation_shield_radial_thickness_(m)_____________________________ (shldith)_____________________      3.0000E-01    
  Gap_(m)_________________________________________________________________ (vvblgap)_____________________      2.0000E-02    
  Inboard_blanket_radial_thickness_(m)____________________________________ (blnkith)_____________________      7.5500E-01    
@@ -439,12 +439,14 @@
  Outboard_first_wall_radial_thickness_(m)________________________________ (fwoth)_______________________      1.8000E-02    
  Outboard_blanket_radial_thickness_(m)___________________________________ (blnkoth)_____________________      9.8200E-01    
  Outer_radiation_shield_radial_thickness_(m)_____________________________ (shldoth)_____________________      8.0000E-01    
+ Outboard_vacuum_vessel_radial_thickness_(m)_____________________________ (d_vv_out)____________________      3.0000E-01    
  Vessel_to_TF_radial_gap_(m)_____________________________________________ (gapsto)______________________      1.9007E+00    
  Gap_(m)_________________________________________________________________ (tftsgap)_____________________      5.0000E-02    
  TF_coil_outboard_leg_radial_thickness_(m)_______________________________ (tfthko)______________________      1.4850E+00    
  # Vertical Build #
  Divertor_null_switch____________________________________________________ (i_single_null)_______________              1    
  Vessel_-_TF_coil_vertical_gap_(m)_______________________________________ (vgap2)_______________________      5.0000E-02    
+ Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.0000E-01    
  Top_radiation_shield_thickness_(m)______________________________________ (shldtth)_____________________      3.0000E-01    
  Top_blanket_vertical_thickness_(m)______________________________________ (blnktth)_____________________      8.6850E-01    
  Top_first_wall_vertical_thickness_(m)___________________________________ fwtth_________________________      1.8000E-02    
@@ -453,6 +455,7 @@
  Bottom_scrape-off_vertical_thickness_(m)________________________________ (vgap)________________________      2.0024E+00    
  Divertor_structure_vertical_thickness_(m)_______________________________ (divfix)______________________      6.2100E-01    
  Bottom_radiation_shield_thickness_(m)___________________________________ (shldlth)_____________________      7.0000E-01    
+ Underside_vacuum_vessel_radial_thickness_(m)____________________________ (d_vv_bot)____________________      3.0000E-01    
  External_cryostat_thickness_(m)_________________________________________ (ddwex)_______________________      1.5000E-01    
  Ratio_of_Central_solenoid_height_to_TF_coil_internal_height_____________ (ohhghf)______________________      9.0000E-01    
  Width_of_neutral_beam_duct_where_it_passes_between_the_TF_coils_(m)_____ (beamwd)______________________      5.8000E-01    
@@ -552,7 +555,7 @@
  Ground_wall_insulation_thickness_(m)____________________________________ (tinstf)______________________      8.0000E-03    
  Winding_pack_insertion_gap_(m)__________________________________________ (tfinsgap)____________________      1.0000E-02    
  Turn_parametrisation____________________________________________________ (i_tf_turns_integer)__________              1    
- Number_of_turns_per_TF_coil_____________________________________________ (turnstf)_____________________      2.0000E+02 OP 
+ Number_of_turns_per_TF_coil_____________________________________________ (n_tf_turn)___________________      2.0000E+02 OP 
  Number_of_TF_pancakes___________________________________________________ (n_pancake)___________________             20    
  Number_of_TF_layers_____________________________________________________ (n_layer)_____________________             10    
  Radial_width_of_turn_(m)________________________________________________ (t_turn_radial)_______________      9.9673E-02    
@@ -584,7 +587,9 @@
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      1.5200E+07 OP 
  Inboard_leg_mid-plane_conductor_current_density_(A/m2)__________________ (oacdcp)______________________      7.3671E+06    
  Total_stored_energy_in_TF_coils_(GJ)____________________________________ (estotftgj)___________________      1.3079E+02 OP 
- Inboard_vertical_separating_force_per_leg_(N)___________________________ (vforce)______________________      1.8247E+08 OP 
+ Inboard_vertical_tension_per_coil_(N)___________________________________ (vforce)______________________      1.8247E+08 OP 
+ Outboard_vertical_tension_per_coil_(N)__________________________________ (vforce_outboard)_____________      1.8247E+08 OP 
+ inboard_vertical_tension_fraction_(-)___________________________________ (f_vforce_inboard)____________      5.0000E-01 OP 
  Centring_force_per_coil_(N/m)___________________________________________ (cforce)______________________      6.3413E+07 OP 
  Max_allowed_ripple_amplitude_at_plasma_outboard_midplane_(%)____________ (ripmax)______________________      6.0000E-01    
  Ripple_amplitude_at_plasma_outboard_midplane_(%)________________________ (ripple)______________________      6.0000E-01 OP 
@@ -802,6 +807,7 @@
  Blanket_exponential_factor______________________________________________ (exp_blanket)_________________      9.9997E-01 OP 
  Shield:_first_exponential_______________________________________________ (exp_shield1)_________________      1.7209E-03 OP 
  Shield:_second_exponential______________________________________________ (exp_shield2)_________________      2.5427E-01 OP 
+ Solid_angle_fraction_taken_by_on_divertor_______________________________ (fdiv)________________________      1.1500E-01    
  Switch_for_plant_secondary_cycle________________________________________ (secondary_cycle)_____________              2    
  First_wall_coolant_pressure_(Pa)________________________________________ (fwpressure)__________________      1.5500E+07    
  Blanket_coolant_pressure_(Pa)___________________________________________ (blpressure)__________________      1.5500E+07    
@@ -963,11 +969,11 @@
  Injected_power_deposited_in_plasma_(MW)_________________________________ (pinjmw)______________________      2.2500E+02    
  Total_(MW)______________________________________________________________ ______________________________      8.1107E+02    
  Fusion_power_(MW)_______________________________________________________ (powfmw.)_____________________      3.0728E+03    
- Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      5.8496E+02    
+ Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      5.8471E+02    
  Injected_power_(MW)_____________________________________________________ (pinjmw.)_____________________      2.2500E+02    
  Ohmic_power_(MW)________________________________________________________ (pohmmw.)_____________________      1.4837E-10    
  Power_deposited_in_primary_coolant_by_pump_(MW)_________________________ (htpmw_mech)__________________      3.3264E+02    
- Total_(MW)______________________________________________________________ ______________________________      4.2154E+03    
+ Total_(MW)______________________________________________________________ ______________________________      4.2152E+03    
  Heat_extracted_from_first_wall_and_blanket_(MW)_________________________ (pthermfw_blkt)_______________      3.6889E+03    
  Heat_extracted_from_shield__(MW)________________________________________ (pthermshld)__________________      2.5384E+00    
  Heat_extracted_from_divertor_(MW)_______________________________________ (pthermdiv)___________________      5.2390E+02    
@@ -986,13 +992,13 @@
  Total_(MW)______________________________________________________________ ______________________________      1.5808E+03    
  Gross_electrical_output*_(MW)___________________________________________ (pgrossmw)____________________      1.5808E+03    
  Fusion_power_(MW)_______________________________________________________ (powfmw.)_____________________      3.0728E+03    
- Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      5.8496E+02    
- Total_(MW)______________________________________________________________ ______________________________      3.6578E+03    
+ Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      5.8471E+02    
+ Total_(MW)______________________________________________________________ ______________________________      3.6575E+03    
  Net_electrical_output_(MW)	_____________________________________________ (pnetelmw)____________________      5.0000E+02    
  Heat_rejected_by_main_power_conversion_circuit_(MW)_____________________ (rejected_main)_______________      2.6346E+03    
  Heat_rejected_by_other_cooling_circuits_(MW)____________________________ (psechtmw)____________________      5.2319E+02    
  Total_(MW)______________________________________________________________ ______________________________      3.6578E+03    
- Net_electric_power_/_total_nuclear_power_(%)____________________________ (pnetelmw/(powfmw+emultmw)____      1.3669E+01    
+ Net_electric_power_/_total_nuclear_power_(%)____________________________ (pnetelmw/(powfmw+emultmw)____      1.3670E+01    
  Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________      1.6272E+01    
  Gross_electric_power*_/_high_grade_heat_(%)_____________________________ (etath)_______________________      3.7500E+01    
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      6.8369E-01    
@@ -1125,7 +1131,10 @@ blnkith  = 0.755 * inboard blanket thickness (m); (calculated if <code>blktmodel
 blnkoth  = 0.982 * outboard blanket thickness (m); calculated if <code>blktmodel&gt;0</code>
 bore     = 1.3419 * central solenoid inboard radius (m) (<code>iteration variable 29</code>)
 ddwex    = 0.15 * cryostat thickness (m)
-ddwi     = 0.30 * vacuum vessel thickness (TF coil / shield) (m)
+d_vv_in  = 0.30 * Inboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_out = 0.30 * Outboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_top = 0.30 * Topside vacuum vessel thickness (tf coil / shield) (m)
+d_vv_bot = 0.30 * Underside vacuum vessel thickness (tf coil / shield) (m)
 gapds    = 0.02 * gap between inboard vacuum vessel and thermal shield (m) (<code>iteration variable 61</code>)
 gapoh    = 0.05 * gap between central solenoid and TF coil (m) (<code>iteration variable 42</code>)
 gapomin  = 0.20 * minimum gap between outboard vacuum vessel and TF coil (m) (<code>iteration variable 31</code>)

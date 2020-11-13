@@ -553,7 +553,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Gap                                          0.140           4.725   (deltf)             
  Thermal shield                               0.050           4.775   (thshield)          
  Gap                                          0.020           4.795   (gapds)             
- Vacuum vessel (and shielding)                0.600           5.395   (ddwi + shldith)    
+ Vacuum vessel (and shielding)                0.600           5.395   (d_vv_in + shldith) 
  Gap                                          0.020           5.415   (vvblgap)           
  Inboard blanket                              0.755           6.170   (blnkith)           
  Inboard first wall                           0.018           6.188   (fwith)             
@@ -564,7 +564,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Outboard first wall                          0.018          12.764   (fwoth)             
  Outboard blanket                             0.982          13.746   (blnkoth)           
  Gap                                          0.020          13.766   (vvblgap)           
- Vacuum vessel (and shielding)                1.100          14.866   (ddwi+shldoth)      
+ Vacuum vessel (and shielding)                1.100          14.866   (d_vv_out+shldoth)  
  Gap                                          1.811          16.677   (gapsto)            
  Thermal shield                               0.050          16.727   (thshield)          
  Gap                                          0.050          16.777   (tftsgap)           
@@ -578,7 +578,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Gap                                          0.050           8.313   (tftsgap)           
  Thermal shield                               0.050           8.263   (thshield)          
  Gap                                          0.163           8.213   (vgap2)             
- Vacuum vessel (and shielding)                0.900           8.050   (ddwi+shldtth)      
+ Vacuum vessel (and shielding)                0.900           8.050   (d_vv_top+shldtth)  
  Gap                                          0.020           7.150   (vvblgap)           
  Top blanket                                  0.869           7.130   (blnktth)           
  Top first wall                               0.018           6.262   (fwtth)             
@@ -588,7 +588,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Plasma bottom                                5.644          -5.644   (rminor*kappa)      
  Lower scrape-off                             2.002          -7.646   (vgap)              
  Divertor structure                           0.621          -8.267   (divfix)            
- Vacuum vessel (and shielding)                1.000          -9.267   (ddwi+shldlth)      
+ Vacuum vessel (and shielding)                1.000          -9.267   (d_vv_bot+shldlth)  
  Gap                                          0.163          -9.430   (vgap2)             
  Thermal shield                               0.050          -9.480   (thshield)          
  Gap                                          0.050          -9.530   (tftsgap)           
@@ -1758,7 +1758,16 @@ thshield = 0.050
 gapds = 0.02
 
 * Inboard vacuum vessel radial thickness [m]
-ddwi = 0.3
+d_vv_in  = 0.3
+
+* Outboard vacuum vessel radial thickness [m]
+d_vv_out = 0.3
+
+* Topside vacuum vessel radial thickness [m]
+d_vv_top = 0.3
+
+* Underside vacuum vessel radial thickness [m]
+d_vv_bot = 0.3
 
 * Inboard vacuum vessel thickness [m]
 shldith = 0.3

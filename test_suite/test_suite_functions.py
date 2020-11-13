@@ -366,7 +366,8 @@ def copy_test_to_test_area(test_name, test_status, ars):
 
     # diff.log
     if test_status == "DIFF":
-        subprocess.call(["cat", "diff.log"])
+        if ars.verbose == True:
+            subprocess.call(["cat", "diff.log"])
         subprocess.call(["mv", "diff.log", "test_area/{0}/".format(test_name)])
 
 
@@ -708,7 +709,7 @@ def test_plot_proc(fs, utils_only):
     # add to utilities.log
     amend_utility_log("plot_proc.py")
 
-    # sys.stdout = open("utilities.log", "a")
+    sys.stdout = open("utilities.log", "a")
 
     # test all MFILEs
     for key in fs.keys():
@@ -726,7 +727,7 @@ def test_plot_proc(fs, utils_only):
             #    subprocess.call(["mv", "ref.SUMMARY.pdf", "test_area/{0}/".
             #                    format(key)])
 
-    # sys.stdout = sys.__stdout__
+    sys.stdout = sys.__stdout__
 
     # Output message
     msg = "Test ==>  {0:<40}".format("plot_proc.py")
