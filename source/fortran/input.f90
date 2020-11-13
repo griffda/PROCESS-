@@ -1987,7 +1987,7 @@ contains
           call parse_real_variable('n_tf_turn', n_tf_turn, 0.0D0, 100.0D0, &
                'number of turns per TF coil')
        case ('tftmp')
-          call parse_real_variable('tftmp', tftmp, 0.01D0, 10.0D0, &
+          call parse_real_variable('tftmp', tftmp, 0.01D0, 40.0D0, &
                'Peak TF coil He coolant temp. (K)')      
        case ('t_turn_tf')
           call parse_real_variable('t_turn_tf', t_turn_tf, 0.0D0, 0.1D0, &

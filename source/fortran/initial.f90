@@ -354,8 +354,8 @@ subroutine check
         tmargmin_tf, eff_tf_cryo, eyoung_ins, i_tf_bucking, i_tf_shape, &
         n_tf_graded_layers, n_tf_stress_layers, tlegav,  i_tf_plane_stress, &
         i_tf_sc_mat, i_tf_wp_geom, i_tf_turns_integer, tinstf, thwcndut, &
-        tfinsgap, rcool, dhecoil, thicndut, i_cp_joints, t_turn_tf_is_input,&
-        t_turn_tf
+        tfinsgap, rcool, dhecoil, thicndut, i_cp_joints, t_turn_tf_is_input, &
+        t_turn_tf, tftmp
     use stellarator_variables, only: istell
     use sctfcoil_module, only: initialise_cables
     use vacuum_variables, only: vacuum_model
@@ -1013,6 +1013,14 @@ subroutine check
     ! Impossible to set the turn size of integer turn option
     if ( t_turn_tf_is_input .and. i_tf_turns_integer == 1 ) then
         call report_error(269) 
+    end if 
+
+    ! Checking the SC temperature for LTS
+    if ( ( i_tf_sc_mat == 1 .or. &
+           i_tf_sc_mat == 3 .or. &
+           i_tf_sc_mat == 4 .or. &
+           i_tf_sc_mat == 5 ) .and. tftmp > 10.0D0 ) then
+        call report_error(270)
     end if 
     ! -------
 
