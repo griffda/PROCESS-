@@ -14,23 +14,23 @@ from process_io_lib.mfile import MFile
 
 RADIAL_BUILD = [
     "bore", "ohcth", "precomp", "gapoh", "tfcth", "deltf", "thshield", "gapds",
-    "ddwi", "shldith", "vvblgap", "blnkith", "fwith", "scrapli", "rminor", 
-    "rminor", "scraplo", "fwoth", "blnkoth", "vvblgap", "shldoth", "ddwi", 
+    "d_vv_in", "shldith", "vvblgap", "blnkith", "fwith", "scrapli", "rminor", 
+    "rminor", "scraplo", "fwoth", "blnkoth", "vvblgap", "shldoth", "d_vv_out", 
     "gapsto", "thshield", "tftsgap", "tfthko"
 ]
 
 # Single-null vertical build
 VERTICAL_BUILD_SN = [
-    "tfcth", "tftsgap", "thshield", "vgap2", "ddwi", "shldlth", "divfix", 
+    "tfcth", "tftsgap", "thshield", "vgap2", "d_vv_bot", "shldlth", "divfix", 
     "vgap", "rminor*kappa", "rminor*kappa", "vgaptop", "fwtth", "blnktth", 
-    "vvblgap", "shldtth", "ddwi", "vgap2", "thshield", "tftsgap", "tfcth"
+    "vvblgap", "shldtth", "d_vv_top", "vgap2", "thshield", "tftsgap", "tfcth"
 ]
 
 # Double-null vertical build
 VERTICAL_BUILD_DN = [
-    "tfcth", "tftsgap", "thshield", "vgap2", "ddwi", "shldlth", "divfix", 
+    "tfcth", "tftsgap", "thshield", "vgap2", "d_vv_bot", "shldlth", "divfix", 
     "vgap", "rminor*kappa", "rminor*kappa", "vgap", "divfix", "shldlth",
-    "ddwi", "vgap2", "thshield", "tftsgap", "tfcth"
+    "d_vv_bot", "vgap2", "thshield", "tftsgap", "tfcth"
 ]
 
 if __name__ == "__main__":

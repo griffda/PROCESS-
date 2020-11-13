@@ -147,6 +147,9 @@ if __name__ == "__main__":
     parser.add_argument("-u", "--utilities", help="Test utilities only", 
                         action="store_true")
 
+    parser.add_argument("--verbose", help="List differences in terminal as well as log", 
+                        action="store_true", default=False)
+
     ag = parser.parse_args()
     main(ag)
 

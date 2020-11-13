@@ -5556,6 +5556,10 @@ contains
     !  Input: pi,twopi
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    ! #TODO - Review both equations containing dz and attempt to separate
+    !         top and bottom of vacuum vessel thickness
+    !         See issue #433 for explanation
+
     !  Inboard section
 
     !  Volume enclosed by outer (higher R) surface of elliptical section
@@ -5633,6 +5637,10 @@ contains
     !  Global shared variables
     !  Input: pi,twopi
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    ! #TODO - Review both equations containing dz and attempt to separate
+    !         top and bottom of vacuum vessel thickness
+    !         See issue #433 for explanation
 
     !  Volume of inboard cylindrical shell
     vin = 2.0D0*(zminor+dz) * pi*(rmajor**2 - (rmajor-drin)**2)

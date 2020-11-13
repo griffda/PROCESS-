@@ -1315,7 +1315,7 @@
                 "combination": false
             },
             "9":{
-                "name": "ddwi + shldith",
+                "name": "d_vv_in + shldith",
                 "des": "Inboard vacuum vessel (and shielding)",
                 "combination": true,
                 "combo_type": "+"
@@ -1371,7 +1371,7 @@
                 "combination": false
             },
             "20":{
-                "name": "ddwi + shldoth",
+                "name": "d_vv_out + shldoth",
                 "des": "Outboard vacuum vessel and shielding",
                 "combination": true,
                 "combo_type": "+"
@@ -1420,7 +1420,7 @@
                     "combination": false
                 },
                 "5":{
-                    "name": "ddwi + shldtth",
+                    "name": "d_vv_top + shldtth",
                     "des": "Top vacuum vessel (and shielding)",
                     "combination": true,
                     "combo_type": "+"
@@ -1468,7 +1468,7 @@
                     "combination": false
                 },
                 "14":{
-                    "name": "ddwi + shldlth",
+                    "name": "d_vv_bot + shldlth",
                     "des": "Lower vacuum vessel (and shielding)",
                     "combination": true,
                     "combo_type": "+"

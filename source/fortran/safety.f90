@@ -154,9 +154,9 @@
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables, only: blnkith, blnkoth, bore, ddwex, ddwi, fmsbl, &
-      fmsdwe, fmsdwi, fmsfw, fmsoh, fmssh, fmstf, fwith, fwoth, gapds, gapoh, &
-      gapsto, iohcl, ohcth, precomp, scrapli, scraplo, shldith, shldoth, &
+    use build_variables, only: blnkith, blnkoth, bore, ddwex, d_vv_in, d_vv_out, &
+      fmsbl, fmsdwe, fmsdwi, fmsfw, fmsoh, fmssh, fmstf, fwith, fwoth, gapds, &
+      gapoh, gapsto, iohcl, ohcth, precomp, scrapli, scraplo, shldith, shldoth, &
       tfcth, tfootfi, tfthko, tftsgap, thshield, vvblgap
     use fispact_variables, only: fwtemp, blihkw, fwihkw, fwohkw, blohkw
     use fwbs_variables, only: blkttype, denstl, fblbe, fblli, fblli2o, &
@@ -246,7 +246,7 @@
 
     ! Inner Vaccum vessel
     radmin(9) = radpls(8)
-    radpls(9) = radmin(9) + ddwi
+    radpls(9) = radmin(9) + d_vv_in
 
     ! Inner neutron shield
     radmin(10) = radpls(9)
@@ -286,7 +286,7 @@
 
     ! Outer VV
     radmin(19) = radpls(18)
-    radpls(19) = radmin(19) + ddwi
+    radpls(19) = radmin(19) + d_vv_out
 
     ! Outer VV - thermal shield gap 
     radmin(20) = radpls(19) + gapsto

@@ -1,0 +1,1211 @@
+
+PROCESS Test Suite
+
+Test name: 2D_scan
+Difference value: 5.0%
+
+Total of 8 differences above allowed value
+
+Variable                                	ref       	new       	diff (%)  
+----------------------------------------
+sqsumsq                                 	5.81e-09  	3.84e-10  	93.40     
+whtconsh                                	1.83e+05  	1.72e+05  	6.08      
+thkcas                                  	0.931     	0.864     	7.22      
+fcohbof                                 	0.18      	0.162     	10.32     
+pfc01t05                                	2.97e+06  	2.76e+06  	7.19      
+pfc02t05                                	8.75e+05  	5.05e+05  	42.30     
+cst03                                   	-3.5e+07  	-3.12e+07 	10.83     
+cst04                                   	-3.5e+07  	-3.12e+07 	10.83     
+
+
+There are 12 variables in ref NOT IN new:
+
+deltf
+2*tficrn
+sigvert
+sigttf(1)
+sigrcon
+sigtcon
+i_tf_tresca
+s_tresca_case
+s_tresca_cond
+s_tresca_cond_cea
+s_vmises_case
+s_vmises_cond
+
+
+There are 35 variables in new NOT IN ref:
+
+pthrmw(19)
+pthrmw(20)
+pthrmw(21)
+eyoung_wp_t*1.0d-9
+eyoung_wp_z*1.0d-9
+sig_tf_r_max(1)
+sig_tf_t_max(1)
+sig_tf_z_max(1)
+sig_tf_vmises_max(1)
+sig_tf_tresca_max(1)
+sig_tf_r_max(2)
+sig_tf_t_max(2)
+sig_tf_z_max(2)
+sig_tf_vmises_max(2)
+sig_tf_tresca_max(2)
+casestr
+i_tf_sup
+i_tf_bucking
+i_tf_shape
+tfareain
+a_tf_steel*n_tf
+f_tf_steel
+a_tf_ins*n_tf
+f_tf_ins
+aswp*n_tf
+aswp/awpc
+aiwp/awpc
+awpc-aswp-aiwp)
+acasetf*n_tf)
+awpc*n_tf)
+aswp*n_tf)
+i_tf_turns_integer
+tmargtf
+ritfc
+radius_of_plasma-facing_side_of_inner_leg_should_be_[m]
+
+PROCESS Test Suite
+
+Test name: Bucked_and_wedged
+Difference value: 5.0%
+
+Total of 13 differences above allowed value
+
+Variable                                	ref       	new       	diff (%)  
+----------------------------------------
+sqsumsq                                 	9.27e-09  	2.8e-09   	69.82     
+casestr                                 	0.00146   	0.0013    	10.91     
+windstrain                              	0.00319   	0.00283   	11.06     
+oacdcp                                  	1.14e+07  	1.06e+07  	7.07      
+t_conductor_toroidal                    	0.0462    	0.043     	7.04      
+t_turn_toroidal                         	0.0502    	0.047     	6.48      
+t_cable_toroidal                        	0.0302    	0.027     	10.76     
+thkcas                                  	0.116     	0.05      	56.93     
+fcohbof                                 	0.0159    	0.0133    	16.47     
+pfc01t05                                	2.1e+06   	1.98e+06  	5.82      
+pfc02t05                                	1.13e+05  	-1.31e+05 	215.90    
+cst03                                   	-3.38e+06 	-2.83e+06 	16.26     
+cst04                                   	-3.38e+06 	-2.83e+06 	16.26     
+
+
+There are 2 variables in ref NOT IN new:
+
+deltf
+2*tficrn
+
+
+There are 44 variables in new NOT IN ref:
+
+pthrmw(19)
+pthrmw(20)
+pthrmw(21)
+eyoung_wp_t*1.0d-9
+eyoung_wp_z*1.0d-9
+sig_tf_r_max(1)
+sig_tf_t_max(1)
+sig_tf_z_max(1)
+sig_tf_vmises_max(1)
+sig_tf_tresca_max(1)
+sig_tf_r_max(2)
+sig_tf_t_max(2)
+sig_tf_z_max(2)
+sig_tf_vmises_max(2)
+sig_tf_tresca_max(2)
+sig_tf_r_max(3)
+sig_tf_t_max(3)
+sig_tf_z_max(3)
+sig_tf_vmises_max(3)
+sig_tf_tresca_max(3)
+sig_tf_r_max(4)
+sig_tf_t_max(4)
+sig_tf_z_max(4)
+sig_tf_vmises_max(4)
+sig_tf_tresca_max(4)
+i_tf_sup
+i_tf_bucking
+i_tf_shape
+tfareain
+a_tf_steel*n_tf
+f_tf_steel
+a_tf_ins*n_tf
+f_tf_ins
+aswp*n_tf
+aswp/awpc
+aiwp/awpc
+awpc-aswp-aiwp)
+acasetf*n_tf)
+awpc*n_tf)
+aswp*n_tf)
+i_tf_turns_integer
+tmargtf
+ritfc
+radius_of_plasma-facing_side_of_inner_leg_should_be_[m]
+
+PROCESS Test Suite
+
+Test name: CFETR_small
+Difference value: 5.0%
+
+Total of 6 differences above allowed value
+
+Variable                                	ref       	new       	diff (%)  
+----------------------------------------
+nbshinef                                	9.1e-10   	8.62e-10  	5.33      
+nbshinemw                               	8.91e-08  	8.44e-08  	5.26      
+oacdcp                                  	1.01e+07  	9.43e+06  	6.86      
+windstrain                              	0.00116   	0.00103   	10.72     
+pfc03t02                                	1.57e+04  	-4.25e+03 	127.06    
+pfc04t02                                	1.57e+04  	-4.25e+03 	127.06    
+
+
+There are 15 variables in ref NOT IN new:
+
+deltf
+2*tficrn
+conductor_width
+leno
+leni
+sigvert
+sigttf(1)
+sigrcon
+sigtcon
+i_tf_tresca
+s_tresca_case
+s_tresca_cond
+s_tresca_cond_cea
+s_vmises_case
+s_vmises_cond
+
+
+There are 38 variables in new NOT IN ref:
+
+pthrmw(19)
+pthrmw(20)
+pthrmw(21)
+eyoung_wp_t*1.0d-9
+eyoung_wp_z*1.0d-9
+sig_tf_r_max(1)
+sig_tf_t_max(1)
+sig_tf_z_max(1)
+sig_tf_vmises_max(1)
+sig_tf_tresca_max(1)
+sig_tf_r_max(2)
+sig_tf_t_max(2)
+sig_tf_z_max(2)
+sig_tf_vmises_max(2)
+sig_tf_tresca_max(2)
+casestr
+i_tf_sup
+i_tf_bucking
+i_tf_shape
+tfareain
+a_tf_steel*n_tf
+f_tf_steel
+a_tf_ins*n_tf
+f_tf_ins
+aswp*n_tf
+aswp/awpc
+aiwp/awpc
+awpc-aswp-aiwp)
+acasetf*n_tf)
+awpc*n_tf)
+aswp*n_tf)
+i_tf_turns_integer
+t_turn
+t_conductor
+t_cable
+tmargtf
+ritfc
+radius_of_plasma-facing_side_of_inner_leg_should_be_[m]
+
+PROCESS Test Suite
+
+Test name: FNSF
+Difference value: 5.0%
+
+Total of 20 differences above allowed value
+
+Variable                                	ref       	new       	diff (%)  
+----------------------------------------
+tfcth                                   	0.606     	0.565     	6.76      
+tfthko                                  	0.606     	0.565     	6.76      
+oacdcp                                  	3.98e+07  	3.28e+07  	17.52     
+vol_cond_cp                             	16.3      	14.4      	12.03     
+voltfleg                                	4.65      	3.83      	17.55     
+whtcp                                   	1.59e+05  	1.38e+05  	13.49     
+whttflgs                                	3.97e+05  	3.26e+05  	17.94     
+whttf                                   	5.56e+05  	4.64e+05  	16.67     
+r_tf_inboard_out                        	0.606     	0.565     	6.76      
+r_cp_top                                	0.981     	0.858     	12.52     
+hmax                                    	4.73      	4.12      	12.81     
+xarc(1)                                 	0.981     	0.858     	12.52     
+xarc(5)                                 	0.981     	0.858     	12.52     
+fcoolcp                                 	0.153     	0.127     	16.74     
+pnuccp                                  	22.4      	20.5      	8.30      
+clgsmass                                	8.79e+03  	7.99e+03  	9.13      
+gsm3                                    	1.64e+04  	1.5e+04   	8.70      
+mf                                      	10.4      	9.71      	6.72      
+pumppower                               	0.0421    	0.0388    	7.90      
+ptfnuc                                  	0.081     	0.0676    	16.54     
+
+
+There are 6 variables in ref NOT IN new:
+
+deltf
+d_vv_top
+d_vv_bot
+sigrad
+sigtan
+sigver
+
+
+There are 25 variables in new NOT IN ref:
+
+pthrmw(19)
+pthrmw(20)
+pthrmw(21)
+i_tf_bucking
+r_tf_inboard_mid
+r_tf_outboard_mid
+tftort
+tfleng
+i_tf_shape
+casthi
+thkcas
+tinstf
+whtconsc
+whtconcu
+whtconsh
+whtconin
+whtcon
+whttf/n_tf
+ritfc/1.d6
+rhotfleg
+presleg
+pres_joints
+tlegav
+vcool_max
+cool_mass_flow
+
+PROCESS Test Suite
+
+Test name: G-L_Nb-Ti
+Difference value: 5.0%
+
+Total of 12 differences above allowed value
+
+Variable                                	ref       	new       	diff (%)  
+----------------------------------------
+sig_tf_r_max(1)                         	2.44e-08  	0         	100.00    
+sig_tf_z_max(1)                         	2.24e+08  	2.01e+08  	10.27     
+sig_tf_z_max(2)                         	2.24e+08  	2.01e+08  	10.27     
+casestr                                 	0.00109   	0.000981  	10.27     
+windstrain                              	0.00944   	0.00882   	6.52      
+f_tf_ins                                	0.0866    	0.0816    	5.75      
+aswp*n_tf                               	0.42      	0.394     	6.11      
+thkcas                                  	0.161     	0.136     	15.97     
+thwcndut                                	0.00132   	0.00125   	5.08      
+whtconsh                                	1.03e+04  	9.64e+03  	5.92      
+oacdcp                                  	1.23e+07  	1.16e+07  	5.58      
+pfc02t05                                	4.23e+05  	3.1e+05   	26.69     
+
+
+There are 1 variables in ref NOT IN new:
+
+deltf
+
+
+There are 3 variables in new NOT IN ref:
+
+eyoung_wp_t*1.0d-9
+eyoung_wp_z*1.0d-9
+radius_of_plasma-facing_side_of_inner_leg_should_be_[m]
+
+PROCESS Test Suite
+
+Test name: HARE
+Difference value: 5.0%
+
+Total of 6 differences above allowed value
+
+Variable                                	ref       	new       	diff (%)  
+----------------------------------------
+sqsumsq                                 	3.52e-09  	1.74e-09  	50.46     
+oacdcp                                  	9.22e+06  	8.71e+06  	5.45      
+thkcas                                  	0.532     	0.492     	7.68      
+windstrain                              	0.00429   	0.00395   	8.08      
+pfc05t02                                	3.81e+04  	-3.14e+04 	182.47    
+pfc06t02                                	3.81e+04  	-3.14e+04 	182.47    
+
+
+There are 15 variables in ref NOT IN new:
+
+deltf
+2*tficrn
+conductor_width
+leno
+leni
+sigvert
+sigttf(1)
+sigrcon
+sigtcon
+i_tf_tresca
+s_tresca_case
+s_tresca_cond
+s_tresca_cond_cea
+s_vmises_case
+s_vmises_cond
+
+
+There are 38 variables in new NOT IN ref:
+
+pthrmw(19)
+pthrmw(20)
+pthrmw(21)
+eyoung_wp_t*1.0d-9
+eyoung_wp_z*1.0d-9
+sig_tf_r_max(1)
+sig_tf_t_max(1)
+sig_tf_z_max(1)
+sig_tf_vmises_max(1)
+sig_tf_tresca_max(1)
+sig_tf_r_max(2)
+sig_tf_t_max(2)
+sig_tf_z_max(2)
+sig_tf_vmises_max(2)
+sig_tf_tresca_max(2)
+casestr
+i_tf_sup
+i_tf_bucking
+i_tf_shape
+tfareain
+a_tf_steel*n_tf
+f_tf_steel
+a_tf_ins*n_tf
+f_tf_ins
+aswp*n_tf
+aswp/awpc
+aiwp/awpc
+awpc-aswp-aiwp)
+acasetf*n_tf)
+awpc*n_tf)
+aswp*n_tf)
+i_tf_turns_integer
+t_turn
+t_conductor
+t_cable
+tmargtf
+ritfc
+radius_of_plasma-facing_side_of_inner_leg_should_be_[m]
+
+PROCESS Test Suite
+
+Test name: baseline_jan_2017
+Difference value: 5.0%
+
+Total of 5 differences above allowed value
+
+Variable                                	ref       	new       	diff (%)  
+----------------------------------------
+sqsumsq                                 	1.35e-09  	3.18e-10  	76.37     
+oacdcp                                  	9.23e+06  	8.74e+06  	5.34      
+thkcas                                  	0.538     	0.498     	7.53      
+windstrain                              	0.00431   	0.00396   	7.94      
+pfc01t05                                	9.23e+04  	-2.04e+05 	320.63    
+
+
+There are 15 variables in ref NOT IN new:
+
+deltf
+2*tficrn
+conductor_width
+leno
+leni
+sigvert
+sigttf(1)
+sigrcon
+sigtcon
+i_tf_tresca
+s_tresca_case
+s_tresca_cond
+s_tresca_cond_cea
+s_vmises_case
+s_vmises_cond
+
+
+There are 38 variables in new NOT IN ref:
+
+pthrmw(19)
+pthrmw(20)
+pthrmw(21)
+eyoung_wp_t*1.0d-9
+eyoung_wp_z*1.0d-9
+sig_tf_r_max(1)
+sig_tf_t_max(1)
+sig_tf_z_max(1)
+sig_tf_vmises_max(1)
+sig_tf_tresca_max(1)
+sig_tf_r_max(2)
+sig_tf_t_max(2)
+sig_tf_z_max(2)
+sig_tf_vmises_max(2)
+sig_tf_tresca_max(2)
+casestr
+i_tf_sup
+i_tf_bucking
+i_tf_shape
+tfareain
+a_tf_steel*n_tf
+f_tf_steel
+a_tf_ins*n_tf
+f_tf_ins
+aswp*n_tf
+aswp/awpc
+aiwp/awpc
+awpc-aswp-aiwp)
+acasetf*n_tf)
+awpc*n_tf)
+aswp*n_tf)
+i_tf_turns_integer
+t_turn
+t_conductor
+t_cable
+tmargtf
+ritfc
+radius_of_plasma-facing_side_of_inner_leg_should_be_[m]
+
+PROCESS Test Suite
+
+Test name: costs_paper
+Difference value: 5.0%
+
+Total of 7 differences above allowed value
+
+Variable                                	ref       	new       	diff (%)  
+----------------------------------------
+thwcndut                                	0.004     	0.00344   	14.07     
+whtconsh                                	4.91e+04  	4.11e+04  	16.28     
+whtcon                                  	1.28e+05  	1.18e+05  	7.25      
+eyzwp                                   	6e+10     	5.39e+10  	10.13     
+pfc01t05                                	6.66e+05  	4.74e+05  	28.83     
+pfc05t02                                	2.75e+05  	2.44e+05  	11.34     
+pfc06t02                                	2.75e+05  	2.44e+05  	11.34     
+
+
+There are 15 variables in ref NOT IN new:
+
+deltf
+2*tficrn
+conductor_width
+leno
+leni
+sigvert
+sigttf(1)
+sigrcon
+sigtcon
+i_tf_tresca
+s_tresca_case
+s_tresca_cond
+s_tresca_cond_cea
+s_vmises_case
+s_vmises_cond
+
+
+There are 38 variables in new NOT IN ref:
+
+pthrmw(19)
+pthrmw(20)
+pthrmw(21)
+eyoung_wp_t*1.0d-9
+eyoung_wp_z*1.0d-9
+sig_tf_r_max(1)
+sig_tf_t_max(1)
+sig_tf_z_max(1)
+sig_tf_vmises_max(1)
+sig_tf_tresca_max(1)
+sig_tf_r_max(2)
+sig_tf_t_max(2)
+sig_tf_z_max(2)
+sig_tf_vmises_max(2)
+sig_tf_tresca_max(2)
+casestr
+i_tf_sup
+i_tf_bucking
+i_tf_shape
+tfareain
+a_tf_steel*n_tf
+f_tf_steel
+a_tf_ins*n_tf
+f_tf_ins
+aswp*n_tf
+aswp/awpc
+aiwp/awpc
+awpc-aswp-aiwp)
+acasetf*n_tf)
+awpc*n_tf)
+aswp*n_tf)
+i_tf_turns_integer
+t_turn
+t_conductor
+t_cable
+tmargtf
+ritfc
+radius_of_plasma-facing_side_of_inner_leg_should_be_[m]
+
+PROCESS Test Suite
+
+Test name: hts_REBCO
+Difference value: 5.0%
+
+Total of 13 differences above allowed value
+
+Variable                                	ref       	new       	diff (%)  
+----------------------------------------
+sqsumsq                                 	7.78e-06  	4.1e-06   	47.27     
+gapds                                   	0.0339    	0.0253    	25.33     
+oacdcp                                  	9.71e+06  	9.19e+06  	5.28      
+vtfskv                                  	4.12      	3.4       	17.35     
+whtconsc                                	2.55e+04  	1.92e+04  	24.65     
+whtconcu                                	5.62e+04  	4.97e+04  	11.52     
+whtcon                                  	1.81e+05  	1.67e+05  	7.50      
+thkcas                                  	0.586     	0.548     	6.43      
+windstrain                              	0.00313   	0.0029    	7.22      
+r1dump                                  	0.0458    	0.0378    	17.35     
+r1ppmw                                  	92.7      	76.6      	17.35     
+tfcfsp                                  	1.47e+03  	1.39e+03  	5.75      
+tfcbv                                   	8.85e+03  	8.34e+03  	5.75      
+
+
+There are 17 variables in ref NOT IN new:
+
+deltf
+d_vv_top
+d_vv_bot
+2*tficrn
+conductor_width
+leno
+leni
+sigvert
+sigttf(1)
+sigrcon
+sigtcon
+i_tf_tresca
+s_tresca_case
+s_tresca_cond
+s_tresca_cond_cea
+s_vmises_case
+s_vmises_cond
+
+
+There are 37 variables in new NOT IN ref:
+
+pthrmw(19)
+pthrmw(20)
+pthrmw(21)
+eyoung_wp_t*1.0d-9
+eyoung_wp_z*1.0d-9
+sig_tf_r_max(1)
+sig_tf_t_max(1)
+sig_tf_z_max(1)
+sig_tf_vmises_max(1)
+sig_tf_tresca_max(1)
+sig_tf_r_max(2)
+sig_tf_t_max(2)
+sig_tf_z_max(2)
+sig_tf_vmises_max(2)
+sig_tf_tresca_max(2)
+casestr
+i_tf_sup
+i_tf_bucking
+i_tf_shape
+tfareain
+a_tf_steel*n_tf
+f_tf_steel
+a_tf_ins*n_tf
+f_tf_ins
+aswp*n_tf
+aswp/awpc
+aiwp/awpc
+awpc-aswp-aiwp)
+acasetf*n_tf)
+awpc*n_tf)
+aswp*n_tf)
+i_tf_turns_integer
+t_turn
+t_conductor
+t_cable
+ritfc
+radius_of_plasma-facing_side_of_inner_leg_should_be_[m]
+
+PROCESS Test Suite
+
+Test name: i_mode
+Difference value: 5.0%
+
+Total of 20 differences above allowed value
+
+Variable                                	ref       	new       	diff (%)  
+----------------------------------------
+oacdcp                                  	8e+06     	7.58e+06  	5.30      
+whtconsc                                	4.09e+04  	3.85e+04  	5.78      
+1-fcutfsu                               	0.252     	0.239     	5.41      
+thkcas                                  	0.752     	0.699     	7.11      
+windstrain                              	0.00283   	0.00261   	7.84      
+icrit                                   	1.44e+05  	1.35e+05  	6.24      
+cpttf                                   	7.99e+04  	7.56e+04  	5.29      
+coheof                                  	2.04e+07  	1.92e+07  	5.78      
+cst03                                   	-3.43e+07 	-3.19e+07 	6.88      
+cst04                                   	-3.43e+07 	-3.19e+07 	6.88      
+itfka                                   	79.9      	75.6      	5.29      
+r1ppmw                                  	200       	189       	5.29      
+tfpska                                  	83.9      	79.4      	5.29      
+rpower                                  	9.23      	8.74      	5.29      
+albusa                                  	639       	605       	5.29      
+albuswt                                 	609       	577       	5.29      
+tfacpd                                  	10.3      	9.71      	5.29      
+ptfmw                                   	10.3      	9.71      	5.29      
+qcl/1.0d6                               	0.0174    	0.0165    	5.29      
+error_id                                	155       	135       	12.90     
+
+
+There are 15 variables in ref NOT IN new:
+
+deltf
+2*tficrn
+conductor_width
+leno
+leni
+sigvert
+sigttf(1)
+sigrcon
+sigtcon
+i_tf_tresca
+s_tresca_case
+s_tresca_cond
+s_tresca_cond_cea
+s_vmises_case
+s_vmises_cond
+
+
+There are 38 variables in new NOT IN ref:
+
+pthrmw(19)
+pthrmw(20)
+pthrmw(21)
+eyoung_wp_t*1.0d-9
+eyoung_wp_z*1.0d-9
+sig_tf_r_max(1)
+sig_tf_t_max(1)
+sig_tf_z_max(1)
+sig_tf_vmises_max(1)
+sig_tf_tresca_max(1)
+sig_tf_r_max(2)
+sig_tf_t_max(2)
+sig_tf_z_max(2)
+sig_tf_vmises_max(2)
+sig_tf_tresca_max(2)
+casestr
+i_tf_sup
+i_tf_bucking
+i_tf_shape
+tfareain
+a_tf_steel*n_tf
+f_tf_steel
+a_tf_ins*n_tf
+f_tf_ins
+aswp*n_tf
+aswp/awpc
+aiwp/awpc
+awpc-aswp-aiwp)
+acasetf*n_tf)
+awpc*n_tf)
+aswp*n_tf)
+i_tf_turns_integer
+t_turn
+t_conductor
+t_cable
+tmargtf
+ritfc
+radius_of_plasma-facing_side_of_inner_leg_should_be_[m]
+
+PROCESS Test Suite
+
+Test name: kallenbach
+Difference value: 5.0%
+
+Total of 4 differences above allowed value
+
+Variable                                	ref       	new       	diff (%)  
+----------------------------------------
+sqsumsq                                 	1.6e-06   	4.2e-07   	73.75     
+oacdcp                                  	9.68e+06  	9.15e+06  	5.47      
+thkcas                                  	0.472     	0.439     	7.00      
+windstrain                              	0.00241   	0.00222   	8.00      
+
+
+There are 15 variables in ref NOT IN new:
+
+deltf
+2*tficrn
+conductor_width
+leno
+leni
+sigvert
+sigttf(1)
+sigrcon
+sigtcon
+i_tf_tresca
+s_tresca_case
+s_tresca_cond
+s_tresca_cond_cea
+s_vmises_case
+s_vmises_cond
+
+
+There are 38 variables in new NOT IN ref:
+
+pthrmw(19)
+pthrmw(20)
+pthrmw(21)
+eyoung_wp_t*1.0d-9
+eyoung_wp_z*1.0d-9
+sig_tf_r_max(1)
+sig_tf_t_max(1)
+sig_tf_z_max(1)
+sig_tf_vmises_max(1)
+sig_tf_tresca_max(1)
+sig_tf_r_max(2)
+sig_tf_t_max(2)
+sig_tf_z_max(2)
+sig_tf_vmises_max(2)
+sig_tf_tresca_max(2)
+casestr
+i_tf_sup
+i_tf_bucking
+i_tf_shape
+tfareain
+a_tf_steel*n_tf
+f_tf_steel
+a_tf_ins*n_tf
+f_tf_ins
+aswp*n_tf
+aswp/awpc
+aiwp/awpc
+awpc-aswp-aiwp)
+acasetf*n_tf)
+awpc*n_tf)
+aswp*n_tf)
+i_tf_turns_integer
+t_turn
+t_conductor
+t_cable
+tmargtf
+ritfc
+radius_of_plasma-facing_side_of_inner_leg_should_be_[m]
+
+PROCESS Test Suite
+
+Test name: kit_blanket
+Difference value: 5.0%
+
+Total of 1 differences above allowed value
+
+Variable                                	ref       	new       	diff (%)  
+----------------------------------------
+windstrain                              	0.00212   	0.002     	5.63      
+
+
+There are 15 variables in ref NOT IN new:
+
+deltf
+2*tficrn
+conductor_width
+leno
+leni
+sigvert
+sigttf(1)
+sigrcon
+sigtcon
+i_tf_tresca
+s_tresca_case
+s_tresca_cond
+s_tresca_cond_cea
+s_vmises_case
+s_vmises_cond
+
+
+There are 38 variables in new NOT IN ref:
+
+pthrmw(19)
+pthrmw(20)
+pthrmw(21)
+eyoung_wp_t*1.0d-9
+eyoung_wp_z*1.0d-9
+sig_tf_r_max(1)
+sig_tf_t_max(1)
+sig_tf_z_max(1)
+sig_tf_vmises_max(1)
+sig_tf_tresca_max(1)
+sig_tf_r_max(2)
+sig_tf_t_max(2)
+sig_tf_z_max(2)
+sig_tf_vmises_max(2)
+sig_tf_tresca_max(2)
+casestr
+i_tf_sup
+i_tf_bucking
+i_tf_shape
+tfareain
+a_tf_steel*n_tf
+f_tf_steel
+a_tf_ins*n_tf
+f_tf_ins
+aswp*n_tf
+aswp/awpc
+aiwp/awpc
+awpc-aswp-aiwp)
+acasetf*n_tf)
+awpc*n_tf)
+aswp*n_tf)
+i_tf_turns_integer
+t_turn
+t_conductor
+t_cable
+tmargtf
+ritfc
+radius_of_plasma-facing_side_of_inner_leg_should_be_[m]
+
+PROCESS Test Suite
+
+Test name: secondary_CD
+Difference value: 5.0%
+
+Total of 18 differences above allowed value
+
+Variable                                	ref       	new       	diff (%)  
+----------------------------------------
+nbshinef                                	9.68e-05  	8.85e-05  	8.59      
+nbshinemw                               	0.00436   	0.00398   	8.59      
+whtconsc                                	2.23e+04  	2.06e+04  	7.36      
+thkcas                                  	0.59      	0.54      	8.55      
+windstrain                              	0.00281   	0.00255   	9.22      
+icrit                                   	1.49e+05  	1.4e+05   	6.04      
+cpttf                                   	9e+04     	8.53e+04  	5.25      
+pfc01t05                                	1.24e+06  	1.02e+06  	17.30     
+pfc05t02                                	3.46e+05  	3.05e+05  	11.84     
+pfc06t02                                	3.46e+05  	3.05e+05  	11.84     
+itfka                                   	90        	85.3      	5.25      
+tfpska                                  	94.5      	89.5      	5.25      
+rpower                                  	10.1      	9.55      	5.63      
+albusa                                  	720       	682       	5.25      
+albuswt                                 	667       	630       	5.63      
+tfacpd                                  	11.2      	10.6      	5.63      
+ptfmw                                   	11.2      	10.6      	5.63      
+qcl/1.0d6                               	0.0196    	0.0186    	5.25      
+
+
+There are 15 variables in ref NOT IN new:
+
+deltf
+2*tficrn
+conductor_width
+leno
+leni
+sigvert
+sigttf(1)
+sigrcon
+sigtcon
+i_tf_tresca
+s_tresca_case
+s_tresca_cond
+s_tresca_cond_cea
+s_vmises_case
+s_vmises_cond
+
+
+There are 38 variables in new NOT IN ref:
+
+pthrmw(19)
+pthrmw(20)
+pthrmw(21)
+eyoung_wp_t*1.0d-9
+eyoung_wp_z*1.0d-9
+sig_tf_r_max(1)
+sig_tf_t_max(1)
+sig_tf_z_max(1)
+sig_tf_vmises_max(1)
+sig_tf_tresca_max(1)
+sig_tf_r_max(2)
+sig_tf_t_max(2)
+sig_tf_z_max(2)
+sig_tf_vmises_max(2)
+sig_tf_tresca_max(2)
+casestr
+i_tf_sup
+i_tf_bucking
+i_tf_shape
+tfareain
+a_tf_steel*n_tf
+f_tf_steel
+a_tf_ins*n_tf
+f_tf_ins
+aswp*n_tf
+aswp/awpc
+aiwp/awpc
+awpc-aswp-aiwp)
+acasetf*n_tf)
+awpc*n_tf)
+aswp*n_tf)
+i_tf_turns_integer
+t_turn
+t_conductor
+t_cable
+tmargtf
+ritfc
+radius_of_plasma-facing_side_of_inner_leg_should_be_[m]
+
+PROCESS Test Suite
+
+Test name: stellarator
+Difference value: 5.0%
+
+Total of 62 differences above allowed value
+
+Variable                                	ref       	new       	diff (%)  
+----------------------------------------
+fwbllife                                	17.8      	16.8      	5.46      
+divlife.                                	8.69      	8.04      	7.49      
+c2141                                   	54.2      	48.8      	10.01     
+c2142                                   	35.3      	31.9      	9.61      
+c22211                                  	861       	424       	50.79     
+c22212                                  	98.2      	58.7      	40.18     
+c22213                                  	213       	84.6      	60.30     
+c22214                                  	303       	151       	50.26     
+c2221                                   	1.48e+03  	748       	49.31     
+c222                                    	1.94e+03  	1.21e+03  	37.49     
+c22513                                  	26.9      	25.1      	6.78      
+c22                                     	4.18e+03  	3.77e+03  	9.79      
+crctcore                                	2.77e+03  	2.04e+03  	26.28     
+bktlife                                 	17.8      	16.8      	5.46      
+divlife                                 	8.69      	8.04      	7.49      
+cdrlife                                 	17.8      	16.8      	5.46      
+betap                                   	8.24      	0         	100.00    
+eps*betap                               	0.674     	0         	100.00    
+deltf                                   	0.95      	0.749     	21.17     
+tfthko                                  	0.95      	0.749     	21.17     
+tfarea/n_tf                             	0.83      	0.458     	44.79     
+tfcth                                   	0.95      	0.749     	21.17     
+tficrn                                  	0.437     	0.306     	29.97     
+tfocrn                                  	0.437     	0.306     	29.97     
+tftort                                  	0.874     	0.612     	29.97     
+estotftgj                               	153       	143       	6.81      
+whttf                                   	9.64e+06  	4.67e+06  	51.51     
+whtconsc                                	2.57e+04  	1.25e+04  	51.19     
+whtconcu                                	5.65e+04  	2.76e+04  	51.20     
+whtcon                                  	9.18e+04  	5.34e+04  	41.84     
+acstf                                   	0.00271   	0.00221   	18.41     
+acond/ap                                	0.555     	0.494     	10.96     
+avwp/ap                                 	0.238     	0.212     	10.96     
+dr_tf_wp                                	0.706     	0.593     	16.00     
+wwp1                                    	0.668     	0.456     	31.74     
+turnstf                                 	138       	86.2      	37.43     
+casthi                                  	0.0977    	0.06      	38.56     
+thkcas                                  	0.146     	0.06      	59.04     
+casths                                  	0.103     	0.06      	41.69     
+acasetf                                 	0.358     	0.149     	58.48     
+whtcas                                  	1.01e+05  	4e+04     	60.30     
+vporttmax                               	2.02      	0.848     	57.95     
+vportpmax                               	4.49      	1.7       	62.25     
+vportamax                               	9.06      	1.44      	84.13     
+hporttmax                               	2.02      	1.7       	15.91     
+hportpmax                               	5.22      	3.39      	35.08     
+hportamax                               	10.5      	5.75      	45.40     
+aintmass                                	1.03e+07  	5.1e+06   	50.26     
+coldmass                                	4.26e+07  	3.23e+07  	24.21     
+fwlife                                  	13.3      	12.6      	5.46      
+ltfth                                   	35.8      	12.9      	64.09     
+tfcv                                    	823       	726       	11.78     
+r1emj                                   	765       	713       	6.81      
+ttfsec                                  	inf       	10        	100.00    
+tfpsv                                   	864       	762       	11.78     
+xpower                                  	21.2      	19.8      	6.81      
+rtfbus                                  	0.00641   	0.00398   	37.93     
+xpwrmw                                  	23.6      	22        	6.81      
+l1                                      	1.65      	1.45      	12.19     
+qss/1.0d6                               	0.0199    	0.0149    	24.90     
+pnetelmw/(powfmw+emultmw                	30.5      	28.5      	6.57      
+pnetelmw/powfmw                         	33.6      	31.4      	6.57      
+
+
+There are 7 variables in ref NOT IN new:
+
+d_vv_out
+d_vv_top
+d_vv_bot
+ritfc/1.d6
+r_tf_inboard_mid
+dr_tf_inner_bore
+dh_tf_inner_bore
+
+
+There are 23 variables in new NOT IN ref:
+
+constr004
+constr005
+available_radial_space
+required_radial_space
+f_avspace
+toroidalgap
+ritfc
+ritfc/n_tf
+r_tf_inleg_mid
+tf_total_h_width
+tfborev
+ap
+fiooic
+max_force_density
+strtf2
+sigvvall
+taucq
+tdmptf
+vdalw
+coppera_m2
+coppera_m2/coppera_m2_max
+empiricalmass
+clgsmass
+
+PROCESS Test Suite
+
+Test name: vacuum_model
+Difference value: 5.0%
+
+Total of 5 differences above allowed value
+
+Variable                                	ref       	new       	diff (%)  
+----------------------------------------
+sqsumsq                                 	2.6e-05   	1.15e-06  	95.58     
+windstrain                              	0.00328   	0.00306   	6.52      
+pfc01t05                                	6.85e+05  	4.84e+05  	29.39     
+pfc05t02                                	2.77e+05  	2.31e+05  	16.72     
+pfc06t02                                	2.77e+05  	2.31e+05  	16.72     
+
+
+There are 15 variables in ref NOT IN new:
+
+deltf
+2*tficrn
+conductor_width
+leno
+leni
+sigvert
+sigttf(1)
+sigrcon
+sigtcon
+i_tf_tresca
+s_tresca_case
+s_tresca_cond
+s_tresca_cond_cea
+s_vmises_case
+s_vmises_cond
+
+
+There are 38 variables in new NOT IN ref:
+
+pthrmw(19)
+pthrmw(20)
+pthrmw(21)
+eyoung_wp_t*1.0d-9
+eyoung_wp_z*1.0d-9
+sig_tf_r_max(1)
+sig_tf_t_max(1)
+sig_tf_z_max(1)
+sig_tf_vmises_max(1)
+sig_tf_tresca_max(1)
+sig_tf_r_max(2)
+sig_tf_t_max(2)
+sig_tf_z_max(2)
+sig_tf_vmises_max(2)
+sig_tf_tresca_max(2)
+casestr
+i_tf_sup
+i_tf_bucking
+i_tf_shape
+tfareain
+a_tf_steel*n_tf
+f_tf_steel
+a_tf_ins*n_tf
+f_tf_ins
+aswp*n_tf
+aswp/awpc
+aiwp/awpc
+awpc-aswp-aiwp)
+acasetf*n_tf)
+awpc*n_tf)
+aswp*n_tf)
+i_tf_turns_integer
+t_turn
+t_conductor
+t_cable
+tmargtf
+ritfc
+radius_of_plasma-facing_side_of_inner_leg_should_be_[m]
+[1m
+PROCESS Test Suite[0m
+Date: 2020-08-11
+Diff set to: 5.0%
+[0m
+Using reference folder: [1mtest_files
+[0m
+[1mPROCESS Test Cases
+[0m
+Starting test ==>  2D_scan                                 
+Test ==>  2D_scan                                 [94mDIFF(8)[0m
+Starting test ==>  Bucked_and_wedged                       
+Test ==>  Bucked_and_wedged                       [94mDIFF(13)[0m
+Starting test ==>  CFETR_small                             
+Test ==>  CFETR_small                             [94mDIFF(6)[0m
+Starting test ==>  FNSF                                    
+Test ==>  FNSF                                    [94mDIFF(20)[0m
+Starting test ==>  G-L_Nb-Ti                               
+Test ==>  G-L_Nb-Ti                               [94mDIFF(12)[0m
+Starting test ==>  HARE                                    
+Test ==>  HARE                                    [94mDIFF(6)[0m
+Starting test ==>  IFE                                     
+Test ==>  IFE                                     [92mOK[0m
+Starting test ==>  baseline_jan_2017                       
+Test ==>  baseline_jan_2017                       [94mDIFF(5)[0m
+Starting test ==>  costs_paper                             
+Test ==>  costs_paper                             [94mDIFF(7)[0m
+Starting test ==>  hts_REBCO                               
+Test ==>  hts_REBCO                               [94mDIFF(13)[0m
+Starting test ==>  i_mode                                  
+Test ==>  i_mode                                  [94mDIFF(20)[0m
+Starting test ==>  kallenbach                              
+Test ==>  kallenbach                              [94mDIFF(4)[0m
+Starting test ==>  kit_blanket                             
+Test ==>  kit_blanket                             [94mDIFF(1)[0m
+Starting test ==>  secondary_CD                            
+Test ==>  secondary_CD                            [94mDIFF(18)[0m
+Starting test ==>  stellarator                             
+Test ==>  stellarator                             [94mDIFF(62)[0m
+Starting test ==>  vacuum_model                            
+Test ==>  vacuum_model                            [94mDIFF(5)[0m
+[1m
+PROCESS version 1.0.17-378-gd4f4a914 test run complete[0m
+[1m
+Utilities and Python libraries testing
+[0m
+Check utilities.log for warnings and errors.
+
+Test ==>  mfile.py                                [92mOK[0m
+Test ==>  in_dat.py                               [92mOK[0m
+FTest failure for file : test_area/FNSF/new.MFILE.DAT
+Test ==>  plot_proc.py                            [91mERROR[0m

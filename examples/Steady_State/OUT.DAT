@@ -4,16 +4,16 @@
  ************************************** Power Reactor Optimisation Code ***************************************
  **************************************************************************************************************
  
-   Program : /mnt/c/PROCESS/steadystate/bin/process.exe
+   Program : ./../../bin/process.exe
    Version : 1.0.17   Release Date :: 2020-02-25
-   Tag No. : 1.0.17-355-ge5333137 code contains untracked changes
-    Branch : 1074-obs_var_typo
-   Git log : Merge branch 'issue-1063-IpWarn' into 'develop',
- Date/time : 27 Jul 2020 15:48:21 +01:00(hh:mm) UTC
-      User : apearce
-  Computer : H0892
- Directory : /mnt/c/PROCESS/steadystate/steadystate/SSv3/sol
-     Input : new_IN.DAT
+   Tag No. : 1.0.17-425-g6b9c0a8d code contains untracked changes
+    Branch : issue-433-inboard-and-outboard-VV-thickness
+   Git log : Merging develop into current branch and resolving conflicts,
+ Date/time :  5 Oct 2020 14:09:14 +01:00(hh:mm) UTC
+      User : asbrown
+  Computer : J0293
+ Directory : /home/asbrown/work/develop/examples/Steady_State
+     Input : IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -179,11 +179,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Major radius (m)                                                         (rmajor)                      8.784  ITV
  Minor radius (m)                                                         (rminor)                      3.668  OP 
  Aspect ratio                                                             (aspect)                      2.395  ITV
- Elongation, X-point (input value used)                                   (kappa)                       1.848     
- Elongation, 95% surface (kappa/1.12)                                     (kappa95)                     1.650  OP 
+ Elongation, X-point (input value used)                                   (kappa)                       1.848  IP 
+ Elongation, 95% surface (calculated from kappa)                          (kappa95)                     1.650  OP 
  Elongation, area ratio calc.                                             (kappaa)                      1.717  OP 
- Triangularity, X-point (input value used)                                (triang)                      0.500     
- Triangularity, 95% surface (triang/1.5)                                  (triang95)                    0.333  OP 
+ Triangularity, X-point (input value used)                                (triang)                      0.500  IP 
+ Triangularity, 95% surface (calculated from triang)                      (triang95)                    0.333  OP 
  Plasma poloidal perimeter (m)                                            (pperim)                     33.097  OP 
  Plasma cross-sectional area (m2)                                         (xarea)                      72.573  OP 
  Plasma surface area (m2)                                                 (sarea)                   1.758E+03  OP 
@@ -519,7 +519,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Gap                                          0.050           3.428   (tftsgap)           
  Thermal shield                               0.050           3.478   (thshield)          
  Gap                                          0.020           3.498   (gapds)             
- Vacuum vessel (and shielding)                0.600           4.098   (ddwi + shldith)    
+ Vacuum vessel (and shielding)                0.600           4.098   (d_vv_in + shldith) 
  Gap                                          0.020           4.118   (vvblgap)           
  Inboard blanket                              0.755           4.873   (blnkith)           
  Inboard first wall                           0.018           4.891   (fwith)             
@@ -530,7 +530,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Outboard first wall                          0.018          12.695   (fwoth)             
  Outboard blanket                             0.982          13.677   (blnkoth)           
  Gap                                          0.020          13.697   (vvblgap)           
- Vacuum vessel (and shielding)                1.100          14.797   (ddwi+shldoth)      
+ Vacuum vessel (and shielding)                1.100          14.797   (d_vv_out+shldoth)  
  Gap                                          1.901          16.697   (gapsto)            
  Thermal shield                               0.050          16.747   (thshield)          
  Gap                                          0.050          16.797   (tftsgap)           
@@ -544,7 +544,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Gap                                          0.050           9.034   (tftsgap)           
  Thermal shield                               0.050           8.984   (thshield)          
  Gap                                          0.050           8.934   (vgap2)             
- Vacuum vessel (and shielding)                0.600           8.884   (ddwi+shldtth)      
+ Vacuum vessel (and shielding)                0.600           8.884   (d_vv_top+shldtth)  
  Gap                                          0.020           8.284   (vvblgap)           
  Top blanket                                  0.869           8.264   (blnktth)           
  Top first wall                               0.018           7.396   (fwtth)             
@@ -554,7 +554,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Plasma bottom                                6.778          -6.778   (rminor*kappa)      
  Lower scrape-off                             2.002          -8.780   (vgap)              
  Divertor structure                           0.621          -9.401   (divfix)            
- Vacuum vessel (and shielding)                1.000         -10.401   (ddwi+shldlth)      
+ Vacuum vessel (and shielding)                1.000         -10.401   (d_vv_bot+shldlth)  
  Gap                                          0.050         -10.451   (vgap2)             
  Thermal shield                               0.050         -10.501   (thshield)          
  Gap                                          0.050         -10.551   (tftsgap)           
@@ -693,7 +693,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Turn parametrisation                                                     (i_tf_turns_integer)              1     
    Integer number of turns
- Number of turns per TF coil                                              (turnstf)                 2.000E+02  OP 
+ Number of turns per TF coil                                              (n_tf_turn)               2.000E+02  OP 
  Number of TF pancakes                                                    (n_pancake)                      20     
  Number of TF layers                                                      (n_layer)                        10     
  
@@ -739,7 +739,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  TF Forces:
  
- Inboard vertical separating force per leg (N)                            (vforce)                  1.825E+08  OP 
+ Inboard vertical tension per coil (N)                                    (vforce)                  1.825E+08  OP 
+ Outboard vertical tension per coil (N)                                   (vforce_outboard)         1.825E+08  OP 
+ inboard vertical tension fraction (-)                                    (f_vforce_inboard)        5.000E-01  OP 
  Centring force per coil (N/m)                                            (cforce)                  6.341E+07  OP 
  
  Ripple information:
@@ -1008,7 +1010,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ******************************************** PF Coil Inductances *********************************************
  
- Inductance matrix (Henries-turns**2) :
+ Inductance matrix [H] :
  
    1     1.5E+00 9.7E-03 1.9E-01 1.2E-01 1.7E-01 3.8E-02 2.2E-01 4.0E-04
    2     9.7E-03 1.7E+00 1.1E-01 1.9E-01 3.5E-02 1.8E-01 1.6E-01 3.3E-04
@@ -1070,11 +1072,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Total nuclear heating in the shield (MW)                                 (pnucshld)                2.526E+00  OP 
  Total nuclear heating in the divertor (MW)                               (pnucdiv)                 2.827E+02  OP 
  
- Diagostic output for nuclear heating :
+  Diagostic output for nuclear heating :
  
  Blanket exponential factor                                               (exp_blanket)             1.000E+00  OP 
  Shield: first exponential                                                (exp_shield1)             1.721E-03  OP 
  Shield: second exponential                                               (exp_shield2)             2.543E-01  OP 
+ Solid angle fraction taken by on divertor                                (fdiv)                    1.150E-01     
  Switch for plant secondary cycle                                         (secondary_cycle)                 2     
  First wall coolant pressure (Pa)                                         (fwpressure)              1.550E+07     
  Blanket coolant pressure (Pa)                                            (blpressure)              1.550E+07     
@@ -1355,11 +1358,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power Balance for Reactor - Summary :
  -------------------------------------
  Fusion power (MW)                                                        (powfmw.)                  3072.824  OP 
- Power from energy multiplication in blanket and shield (MW)              (emultmw)                   584.957  OP 
+ Power from energy multiplication in blanket and shield (MW)              (emultmw)                   584.706  OP 
  Injected power (MW)                                                      (pinjmw.)                   225.000  OP 
  Ohmic power (MW)                                                         (pohmmw.)                     0.000  OP 
  Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                332.640  OP 
- Total (MW)                                                                                          4215.421  OP 
+ Total (MW)                                                                                          4215.170  OP 
  
  Heat extracted from first wall and blanket (MW)                          (pthermfw_blkt)            3688.897  OP 
  Heat extracted from shield  (MW)                                         (pthermshld)                  2.538  OP 
@@ -1387,8 +1390,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power balance for power plant :
  -------------------------------
  Fusion power (MW)                                                        (powfmw.)                  3072.824  OP 
- Power from energy multiplication in blanket and shield (MW)              (emultmw)                   584.957  OP 
- Total (MW)                                                                                          3657.781  OP 
+ Power from energy multiplication in blanket and shield (MW)              (emultmw)                   584.706  OP 
+ Total (MW)                                                                                          3657.530  OP 
  
  Net electrical output (MW)	                                              (pnetelmw)                  500.000  OP 
  Heat rejected by main power conversion circuit (MW)                      (rejected_main)            2634.587  OP 
@@ -1398,7 +1401,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Plant efficiency measures :
  
- Net electric power / total nuclear power (%)                             (pnetelmw/(powfmw+em         13.669  OP 
+ Net electric power / total nuclear power (%)                             (pnetelmw/(powfmw+em         13.670  OP 
  Net electric power / total fusion power (%)                              (pnetelmw/powfmw)            16.272  OP 
  Gross electric power* / high grade heat (%)                              (etath)                      37.500     
  (*Power for pumps in secondary circuit already subtracted)
@@ -1583,7 +1586,10 @@ blnkith  = 0.755 * inboard blanket thickness (m); (calculated if <code>blktmodel
 blnkoth  = 0.982 * outboard blanket thickness (m); calculated if <code>blktmodel&gt;0</code>
 bore     = 1.3419 * central solenoid inboard radius (m) (<code>iteration variable 29</code>)
 ddwex    = 0.15 * cryostat thickness (m)
-ddwi     = 0.30 * vacuum vessel thickness (TF coil / shield) (m)
+d_vv_in  = 0.30 * Inboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_out = 0.30 * Outboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_top = 0.30 * Topside vacuum vessel thickness (tf coil / shield) (m)
+d_vv_bot = 0.30 * Underside vacuum vessel thickness (tf coil / shield) (m)
 gapds    = 0.02 * gap between inboard vacuum vessel and thermal shield (m) (<code>iteration variable 61</code>)
 gapoh    = 0.05 * gap between central solenoid and TF coil (m) (<code>iteration variable 42</code>)
 gapomin  = 0.20 * minimum gap between outboard vacuum vessel and TF coil (m) (<code>iteration variable 31</code>)

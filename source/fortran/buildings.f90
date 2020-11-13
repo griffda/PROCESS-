@@ -26,7 +26,7 @@ contains
     !! This routine calls the buildings calculations.
 
     use build_variables, only: r_tf_inboard_mid, r_tf_outboard_mid, tfthko, tfcth, &
-      hmax, rsldo, ddwi, vgap2, rsldi
+      hmax, rsldo, d_vv_top, d_vv_bot, vgap2, rsldi
     use fwbs_variables, only: whtshld, rdewex
     use buildings_variables, only: cryvol, volrci, rbvol, rmbvol, wsvol, elevol
     use heat_transport_variables, only: helpow
@@ -61,8 +61,9 @@ contains
 
     ! Reactor vault wall and roof thicknesses are hardwired
     call bldgs(pfrmax,pfmmax,tfro,tfri,tfh,tfmtn,n_tf,rsldo, &
-      rsldi,2.0D0*(hmax-ddwi-vgap2),whtshld,rdewex,helpow,iprint, &
-      outfile,cryvol,volrci,rbvol,rmbvol,wsvol,elevol)
+      rsldi,2.0D0*(hmax-vgap2)-d_vv_top-d_vv_bot,whtshld, &
+      rdewex,helpow,iprint,outfile,cryvol,volrci,rbvol,rmbvol, &
+      wsvol,elevol)
 
   end subroutine bldgcall
 

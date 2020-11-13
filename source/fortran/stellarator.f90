@@ -539,10 +539,11 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use build_variables, only: blbmith, blbmoth, blbpith, blbpoth, blbuith, &
-      blbuoth, blnkith, blnkoth, blnktth, bore, ddwi, fwarea, fwith, fwoth, &
-      gapds, gapoh, gapomin, gapsto, hmax, ohcth, r_tf_outboard_mid, rbld, &
-      rsldi, rsldo, rspo, scrapli, scraplo, shldith, shldoth, shldtth, tfcth, &
-      tfthko, available_radial_space, f_avspace, required_radial_space
+      blbuoth, blnkith, blnkoth, blnktth, bore, d_vv_in, d_vv_out, fwarea, &
+      fwith, fwoth, gapds, gapoh, gapomin, gapsto, hmax, ohcth, &
+      r_tf_outboard_mid, rbld, rsldi, rsldo, rspo, scrapli, scraplo, shldith, &
+      shldoth, shldtth, tfcth, tfthko, available_radial_space, f_avspace, &
+      required_radial_space
     use fwbs_variables, only: afw, blktmodel, fdiv, fhcd, fhole, fw_wall
     use heat_transport_variables, only: ipowerflow
     use physics_variables, only: rmajor, rminor, sarea
@@ -581,12 +582,14 @@ contains
     !  Radial build to centre of plasma (should be equal to rmajor)
 
     rbld = bore + ohcth + gapoh + tfcth + gapds + &
-         ddwi + shldith + blnkith + fwith + scrapli + rminor
+         d_vv_in + shldith + blnkith + fwith + scrapli + rminor
 
 
-    ! Bc stellarators cannot scale rminor reasonably well an additional constraint equation is required,
-    ! that ensures that there is enough space between coils and plasma.
-    required_radial_space = (tfcth/2.0D0 + gapds + ddwi + shldith + blnkith + fwith + scrapli)
+    ! Bc stellarators cannot scale rminor reasonably well an
+    ! additional constraint equation is required, that ensures
+    ! that there is enough space between coils and plasma.
+    required_radial_space = (tfcth/2.0D0 + gapds + d_vv_in + &
+                          shldith + blnkith + fwith + scrapli)
 
     available_radial_space = config%min_plasma_coil_distance * rmajor
 
@@ -607,15 +610,15 @@ contains
     !  Radius to centre of outboard TF coil legs
 
     gapsto = gapomin
-    r_tf_outboard_mid = rsldo + ddwi + gapsto + 0.5D0*tfthko
+    r_tf_outboard_mid = rsldo + d_vv_out + gapsto + 0.5D0*tfthko
 
     !  Height to inside edge of TF coil
     !  Roughly equal to average of (inboard build from TF coil to plasma
     !  centre) and (outboard build from plasma centre to TF coil)
 
     hmax = 0.5D0 * ( &
-         (gapds+ddwi+shldith+blnkith+fwith+scrapli+rminor) + &
-         (rminor+scraplo+fwoth+blnkoth+shldoth+ddwi+gapsto) )
+         (gapds+d_vv_in+shldith+blnkith+fwith+scrapli+rminor) + &
+         (rminor+scraplo+fwoth+blnkoth+shldoth+d_vv_out+gapsto) )
 
     !  Outer divertor strike point radius, set equal to major radius
 
@@ -663,9 +666,9 @@ contains
     call obuild(outfile,'Gap',gapds,radius,'(gapds)')
     call ovarre(mfile,'Gap (m)','(gapds)',gapds)
 
-    radius = radius + ddwi
-    call obuild(outfile,'Vacuum vessel',ddwi,radius,'(ddwi)')
-    call ovarre(mfile,'Vacuum vessel radial thickness (m)','(ddwi)',ddwi)
+    radius = radius + d_vv_in
+    call obuild(outfile,'Vacuum vessel',d_vv_in,radius,'(d_vv_in)')
+    call ovarre(mfile,'Vacuum vessel radial thickness (m)','(d_vv_in)',d_vv_in)
 
     radius = radius + shldith
     call obuild(outfile,'Inboard shield',shldith,radius,'(shldith)')
@@ -705,8 +708,8 @@ contains
     call obuild(outfile,'Outboard shield',shldoth,radius,'(shldoth)')
     call ovarre(mfile,'Outer radiation shield radial thickness (m)','(shldoth)',shldoth)
 
-    radius = radius + ddwi
-    call obuild(outfile,'Vacuum vessel',ddwi,radius,'(ddwi)')
+    radius = radius + d_vv_out
+    call obuild(outfile,'Vacuum vessel',d_vv_out,radius,'(d_vv_out)')
 
     radius = radius + gapsto
     call obuild(outfile,'Gap',gapsto,radius,'(gapsto)')
@@ -1099,10 +1102,10 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use build_variables, only: blarea, blareaib, blbmith, blbmoth, blbpith, &
-      blbpoth, blbuith, blbuoth, blnkith, blnkoth, blnktth, ddwex, ddwi, &
-      fwarea, fwareaib, fwareaob, fwith, fwoth, r_tf_outboard_mid, scrapli, &
-      scraplo, sharea, shareaib, shareaob, shldith, shldoth, shldtth, tfthko, &
-      blareaob
+      blbpoth, blbuith, blbuoth, blnkith, blnkoth, blnktth, ddwex, d_vv_in, &
+      d_vv_out, fwarea, fwareaib, fwareaob, fwith, fwoth, r_tf_outboard_mid, &
+      scrapli, scraplo, sharea, shareaib, shareaob, shldith, shldoth, shldtth, &
+      tfthko, blareaob
     use cost_variables, only: abktflnc, tlife
     use current_drive_variables, only: porbitlossmw
     use divertor_variables, only: divclfr, divdens, divmas, divplt, divsur
@@ -1554,7 +1557,7 @@ contains
 
     r1 = rminor + 0.5D0*(scrapli+fwith+blnkith+shldith &
          + scraplo+fwoth+blnkoth+shldoth)
-    vdewin = ddwi * sarea * r1/rminor * fvoldw
+    vdewin = (d_vv_in+d_vv_out)/2.0D0 * sarea * r1/rminor * fvoldw
 
     !  Vacuum vessel mass
 
@@ -2233,7 +2236,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables, only: blnkith, blnkoth, ddwi, dh_tf_inner_bore, &
+    use build_variables, only: blnkith, blnkoth, dh_tf_inner_bore, &
       dr_tf_inner_bore, fwith, fwoth, gapds, gapsto, hmax, r_tf_outboard_mid, &
       r_tf_outboard_mid, scrapli, scraplo, shldith, shldoth, tfcth, tfthko, &
       r_tf_inboard_mid, vvblgap

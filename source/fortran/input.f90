@@ -157,10 +157,11 @@ contains
       fmsdwi, shldtth, shldlth, vgap2, plleni, fwoth, vvblgap, fmsbl, &
       thshield, iprecomp, blbpith, aplasmin, blbuoth, tfcth, fmsdwe, &
       iohcl, tftsgap, clhsf, bore, plleno, scrapli, gapomin, ddwex, &
-      rinboard, fmstf, blnkoth, fseppc, plsepo, ddwi, fmssh, blnkith, &
+      rinboard, fmstf, blnkoth, fseppc, plsepo, fmssh, blnkith, &
       ohcth, plsepi, fmsoh, blbmith, gapoh, fcspc, scraplo, vgaptop, &
       blbpoth, gapds, fwith, vgap, shldith, sigallpc, tfootfi, f_avspace,&
-      r_cp_top, f_r_cp, i_r_cp_top
+      r_cp_top, d_vv_in, d_vv_out, d_vv_top, d_vv_bot, f_r_cp, i_r_cp_top
+
     use buildings_variables, only: hcwt, conv, wgt, trcl, rxcl, rbwt, mbvfac, &
       esbldgm3, rbvfac, fndt, row, wgt2, pibv, clh1, stcl, clh2, pfbldgm3, &
       shmf, tfcbv, hccl, rbrt, triv, shov, admv, wsvfac
@@ -1555,9 +1556,18 @@ contains
        case ('ddwex')
           call parse_real_variable('ddwex', ddwex, 0.0D0, 10.0D0, &
                'cryostat wall thickness (m)')
-       case ('ddwi')
-          call parse_real_variable('ddwi', ddwi, 0.0D0, 10.0D0, &
-               'Vacuum vessel thickness (m)')
+       case ('d_vv_in')
+          call parse_real_variable('d_vv_in', d_vv_in, 0.0D0, 10.0D0, &
+               'Inboard vacuum vessel thickness (m)')
+       case ('d_vv_out')
+          call parse_real_variable('d_vv_out', d_vv_out, 0.0D0, 10.0D0, &
+               'Outboard vacuum vessel thickness (m)')
+       case ('d_vv_top')
+          call parse_real_variable('d_vv_top', d_vv_top, 0.0D0, 10.0D0, &
+               'Topside vacuum vessel thickness (m)')
+       case ('d_vv_bot')
+          call parse_real_variable('d_vv_bot', d_vv_bot, 0.0D0, 10.0D0, &
+               'Underside vacuum vessel thickness (m)')
        case ('fcspc')
           call parse_real_variable('fcspc', fcspc, 0.0D0, 1.0D0, &
                'Fraction of space occupied by CS pre-comp structure')

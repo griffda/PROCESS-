@@ -45,8 +45,8 @@ contains
       fwareaob, blnktth, rbld, blnkoth, tfoffset, iprecomp, plsepo, tfthko, &
       rsldo, vgap, gapoh, fwoth, ohcth, shldoth, scraplo, fwith, blbpith, &
       tfootfi, blbuoth, gapds, fwareaib, fseppc, scrapli, blbmith, shldith, &
-      ddwi, fwarea, blbpoth, blbmoth, fcspc, bore, r_cp_top, r_sh_inboard_out, &
-      r_sh_inboard_in, f_r_cp, i_r_cp_top
+      d_vv_in, d_vv_out, d_vv_top, d_vv_bot, fwarea, blbpoth, blbmoth, fcspc, &
+      bore, r_cp_top, r_sh_inboard_out, r_sh_inboard_in, f_r_cp, i_r_cp_top
     use constants, only: mfile, nout, pi
     use current_drive_variables, only: beamwd
     use divertor_variables, only: divfix
@@ -176,7 +176,7 @@ contains
 
 
     !  Radial position of vacuum vessel [m]
-    r_vv_inboard_out = r_tf_inboard_out + tftsgap + thshield + gapds + ddwi
+    r_vv_inboard_out = r_tf_inboard_out + tftsgap + thshield + gapds + d_vv_in
 
     ! Radial position of the inner side of inboard neutronic shield [m]
     r_sh_inboard_in = r_vv_inboard_out
@@ -201,7 +201,8 @@ contains
     end if
 
     !  Radius to centre of outboard TF coil legs
-    r_tf_outboard_mid = rsldo + vvblgap + ddwi + gapomin + thshield + tftsgap + 0.5D0*tfthko
+    r_tf_outboard_mid = rsldo + vvblgap + d_vv_out + gapomin + &
+                        thshield + tftsgap + 0.5D0*tfthko
 
     ! TF coil horizontal bore [m]
     dr_tf_inner_bore = ( r_tf_outboard_mid - 0.5D0*tfthko ) - ( r_tf_inboard_mid - 0.5D0*tfcth )
@@ -211,7 +212,7 @@ contains
     !  If the ripple is too large then move the outboard TF coil leg
     if (r_tf_outboard_midl > r_tf_outboard_mid) then
        r_tf_outboard_mid = r_tf_outboard_midl
-       gapsto = r_tf_outboard_mid - 0.5D0*tfthko - ddwi - rsldo - thshield - tftsgap - vvblgap
+       gapsto = r_tf_outboard_mid - 0.5D0*tfthko - d_vv_out - rsldo - thshield - tftsgap - vvblgap
        dr_tf_inner_bore = ( r_tf_outboard_mid - 0.5D0*tfthko ) - ( r_tf_inboard_mid - 0.5D0*tfcth )
     else
        gapsto = gapomin
@@ -356,9 +357,9 @@ contains
     call obuild(outfile,'Gap',gapds,radius,'(gapds)')
     call ovarre(mfile,'thermal shield to vessel radial gap (m)','(gapds)',gapds)
 
-    radius = radius + ddwi + shldith
-    call obuild(outfile,'Vacuum vessel (and shielding)',ddwi + shldith,radius,'(ddwi + shldith)')
-    call ovarre(mfile,'Vacuum vessel radial thickness (m)','(ddwi)',ddwi)
+    radius = radius + d_vv_in + shldith
+    call obuild(outfile,'Vacuum vessel (and shielding)',d_vv_in + shldith,radius,'(d_vv_in + shldith)')
+    call ovarre(mfile,'Inboard vacuum vessel radial thickness (m)','(d_vv_in)',d_vv_in)
     call ovarre(mfile,'Inner radiation shield radial thickness (m)','(shldith)',shldith)
 
     radius = radius + vvblgap
@@ -398,9 +399,10 @@ contains
     radius = radius + vvblgap
     call obuild(outfile,'Gap',vvblgap,radius,'(vvblgap)')
 
-    radius = radius + ddwi+shldoth
-    call obuild(outfile,'Vacuum vessel (and shielding)',ddwi+shldoth,radius,'(ddwi+shldoth)')
+    radius = radius + d_vv_out+shldoth
+    call obuild(outfile,'Vacuum vessel (and shielding)',d_vv_out+shldoth,radius,'(d_vv_out+shldoth)')
     call ovarre(mfile,'Outer radiation shield radial thickness (m)','(shldoth)',shldoth)
+    call ovarre(mfile,'Outboard vacuum vessel radial thickness (m)','(d_vv_out)',d_vv_out)
 
     radius = radius + gapsto
     call obuild(outfile,'Gap',gapsto,radius,'(gapsto)')
@@ -444,8 +446,9 @@ contains
        call obuild(outfile,'Divertor structure',divfix,vbuild,'(divfix)')
        call ovarre(mfile,'Divertor structure vertical thickness (m)','(divfix)',divfix)
 
-       vbuild = vbuild + shldlth + ddwi
-       call obuild(outfile,'Vacuum vessel (and shielding)',ddwi+shldlth,vbuild,'(ddwi+shldlth)')
+       vbuild = vbuild + shldlth + d_vv_bot
+       call obuild(outfile,'Vacuum vessel (and shielding)',d_vv_bot+shldlth,vbuild,'(d_vv_bot+shldlth)')
+       call ovarre(mfile,'Underside vacuum vessel radial thickness (m)','(d_vv_bot)',d_vv_bot)
        call ovarre(mfile,'Bottom radiation shield thickness (m)','(shldlth)',shldlth)
 
        vbuild = vbuild + vgap2
@@ -466,8 +469,8 @@ contains
        call ocmmnt(outfile,'Single null case')
        write(outfile,20)
 
-       vbuild = tfcth + tftsgap + thshield + vgap2 + ddwi + vvblgap + shldtth + blnktth + &
-            0.5D0*(fwith+fwoth) + vgaptop + rminor*kappa
+       vbuild = tfcth + tftsgap + thshield + vgap2 + 0.5D0*(d_vv_top+d_vv_bot) + &
+                vvblgap + shldtth + blnktth + 0.5D0*(fwith+fwoth) + vgaptop + rminor*kappa
 
        ! To calculate vertical offset between TF coil centre and plasma centre
        vbuild1 = vbuild
@@ -485,8 +488,9 @@ contains
        call ovarre(mfile,'Vessel - TF coil vertical gap (m)','(vgap2)',vgap2)
        vbuild = vbuild - vgap2
 
-       call obuild(outfile,'Vacuum vessel (and shielding)',ddwi+shldtth,vbuild,'(ddwi+shldtth)')
-       vbuild = vbuild - ddwi - shldtth
+       call obuild(outfile,'Vacuum vessel (and shielding)',d_vv_top+shldtth,vbuild,'(d_vv_top+shldtth)')
+       vbuild = vbuild - d_vv_top - shldtth
+       call ovarre(mfile,'Topside vacuum vessel radial thickness (m)','(d_vv_top)',d_vv_top)
        call ovarre(mfile,'Top radiation shield thickness (m)','(shldtth)',shldtth)
 
        call obuild(outfile,'Gap',vvblgap,vbuild,'(vvblgap)')
@@ -524,9 +528,10 @@ contains
 
        vbuild = vbuild - shldlth
 
-       vbuild = vbuild - ddwi
-       call obuild(nout,'Vacuum vessel (and shielding)',ddwi+shldlth,vbuild,'(ddwi+shldlth)')
+       vbuild = vbuild - d_vv_bot
+       call obuild(nout,'Vacuum vessel (and shielding)',d_vv_bot+shldlth,vbuild,'(d_vv_bot+shldlth)')
        call ovarre(mfile,'Bottom radiation shield thickness (m)','(shldlth)',shldlth)
+       call ovarre(mfile,'Underside vacuum vessel radial thickness (m)','(d_vv_bot)',d_vv_bot)
 
        vbuild = vbuild - vgap2
        call obuild(nout,'Gap',vgap2,vbuild,'(vgap2)')
@@ -572,7 +577,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use build_variables, only: shldtth, vgap2, fwoth, vgap, vvblgap, hpfdif, &
       tfcth, vgaptop, hpfu, thshield, fwith, tftsgap, dh_tf_inner_bore, &
-      shldlth, hmax, blnktth, ddwi
+      shldlth, hmax, blnktth, d_vv_top, d_vv_bot
 		use divertor_variables, only: divfix
 		use physics_variables, only: rminor, i_single_null, kappa
     implicit none
@@ -598,19 +603,19 @@ contains
 
     ! Height to inside edge of TF coil
     ! Rem SK : definition only valid for double null! 
-    hmax = rminor*kappa + vgap + divfix + shldlth + ddwi + vgap2 + thshield + tftsgap
+    hmax = rminor*kappa + vgap + divfix + shldlth + d_vv_bot + vgap2 + thshield + tftsgap
 
     ! TF coil vertical bore [m] (Not sure it is entirely consistent !)
     ! Rem SK : not consistend for single null!
     dh_tf_inner_bore = 2.0D0*(rminor*kappa + vgaptop + fwith + blnktth + vvblgap + &
-        shldtth + ddwi+ vgap2 + thshield + tftsgap)
+        shldtth + d_vv_top+ vgap2 + thshield + tftsgap)
 
     !  Vertical locations of divertor coils
     if (i_single_null == 0) then
        hpfu = hmax + tfcth
        hpfdif = 0.0D0
     else
-       hpfu = tfcth + tftsgap + thshield + vgap2 + ddwi + shldtth + vvblgap + blnktth + &
+       hpfu = tfcth + tftsgap + thshield + vgap2 + d_vv_top + shldtth + vvblgap + blnktth + &
             0.5D0*(fwith+fwoth) + vgaptop + rminor*kappa
        hpfdif = (hpfu - (hmax+tfcth)) / 2.0D0
     end if
