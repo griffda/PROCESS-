@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "1.0.17   "
- Date_of_run_____________________________________________________________ (date)________________________     "28/07/2020"
- Time_of_run_____________________________________________________________ (time)________________________     "15:01"
+ Date_of_run_____________________________________________________________ (date)________________________     "21/10/2020"
+ Time_of_run_____________________________________________________________ (time)________________________     "16:16"
  User____________________________________________________________________ (username)____________________     "jmaddock"
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "HELIAS-5B                                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.17-357-g87717801"                                                                              
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "test_suite_diff_fix"                                                                               
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Sort test_suite logged variables alphabetically,"                                                  
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jmaddock/pytest-417/test_scenario_scenario8_0/IN.DAT                                                                                                                                     "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.17-409-g7c7b1b4f"                                                                              
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "develop"                                                                                           
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch '1145-latest-markdown-version-breaks-ford-on-develop' int"                            
+ Input_filename__________________________________________________________ (fileprefix)__________________     "                                                                                                                                                                                                        "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -48,7 +48,7 @@
  # Power Reactor Costs (1990 US$) #
  First_wall_/_blanket_life_(years)_______________________________________ (fwbllife)____________________      1.6821E+01    
  Divertor_life_(years)___________________________________________________ (divlife.)____________________      8.0408E+00    
- Cost_of_electricity_(m$/kWh)____________________________________________ (coe)_________________________      9.5746E+01    
+ Cost_of_electricity_(m$/kWh)____________________________________________ (coe)_________________________      9.5682E+01    
  # Detailed Costings (1990 US$) #
  Acc.22_multiplier_for_Nth_of_a_kind_____________________________________ (fkind)_______________________      1.0000E+00    
  Level_of_Safety_Assurance_______________________________________________ (lsa)_________________________              2    
@@ -379,7 +379,7 @@
  Winding_radial_thickness_(m)____________________________________________ (dr_tf_wp)____________________      5.9264E-01    
  Winding_toroidal_thickness_(m)__________________________________________ (wwp1)________________________      4.5588E-01    
  Ground_wall_insulation_thickness_(m)____________________________________ (tinstf)______________________      1.8000E-02    
- Number_of_turns_per_coil________________________________________________ (turnstf)_____________________      8.6152E+01    
+ Number_of_turns_per_coil________________________________________________ (n_tf_turn)___________________      8.6152E+01    
  Current_per_turn_(A)____________________________________________________ (cpttf)_______________________      1.4889E+05    
  jop/jcrit_______________________________________________________________ (fiooic)______________________      5.7520E-01 ITV
  Maximal_force_density_(MN/m3)___________________________________________ (max_force_density)___________      2.3980E+02    
@@ -608,7 +608,8 @@
  # End of PROCESS Output #
  # End of PROCESS Output #
  # Copy of PROCESS Input Follows #
-************************************************************************************************************************
+***********************************************
+*************************************************************************
 *****                                                               *****
 *****                        HELIAS-5B                              *****
 *****               Stuart Muldrew (17/01/2019)                     *****
@@ -671,9 +672,9 @@ aspect   = 12.22        *Aspect ratio
 bt       = 5.5          *Toroidal field on axis (T)
 ifispact = 0            *Switch for neutronics calculations (0: Off)
 ignite   = 1            *Switch for ignition assumption (1: Ignited)
-iinvqd   = 1            *Switch for inverse quadrature in L-mode scaling laws 5 and 9 (1: Inverse quadrature with Neo-Alcator tau-E used)
+iinvqd   = 1            *Switch for inverse quadrature in L-mode scaling laws 5 and 9 (1: Inverse quadrature with Neo-Alcator tau-
 ipedestal = 0           *Switch for pedestal profiles (0: Parabolic Profiles)
-iradloss = 1            *Switch for radiation loss term usage in power balance (1: Total power lost is scaling power plus core radiation only)
+iradloss = 1            *Switch for radiation loss term usage in power balance (1: Total power lost is scaling power plus core rad
 isc      = 38           *Switch for energy confinement time scaling law (38: ISS04)
 kappa    = 1.001        *Plasma separatrix elongation
 rmajor   = 22.0         *Plasma major radius (m)
@@ -684,7 +685,6 @@ tratio   = 0.95         *Ion temperature / electron temperature
 
 *--------------Stellarator Variables---------------*
 
-istell   = 1            *Stellarator option
 bmn      = 0.001        *Relative radial field perturbation
 f_asym   = 1.1          *Divertor heat load peaking factor
 f_rad    = 0.85         *Radiated power fraction in sol

@@ -79,7 +79,7 @@ def test_scenario(scenario, tmp_path):
     :param tmp_path: temporary path fixture
     :type tmp_path: object
     """
-    tolerance = 5e-2
+    tolerance = None
     # The percentage tolerance used when comparing observed and expected values
     # TODO Remove hardcoding: should be a command-line argument
 

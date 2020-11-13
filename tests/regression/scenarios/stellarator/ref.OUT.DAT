@@ -12,16 +12,16 @@
  ************************************** Power Reactor Optimisation Code ***************************************
  **************************************************************************************************************
  
-   Program :
+   Program : ./process.exe
    Version : 1.0.17   Release Date :: 2020-02-25
-   Tag No. : 1.0.17-357-g87717801
-    Branch : test_suite_diff_fix
-   Git log : Sort test_suite logged variables alphabetically,
- Date/time : 28 Jul 2020 15:01:34 +01:00(hh:mm) UTC
+   Tag No. : 1.0.17-409-g7c7b1b4f
+    Branch : develop
+   Git log : Merge branch '1145-latest-markdown-version-breaks-ford-on-develop' int
+ Date/time : 21 Oct 2020 16:16:59 +01:00(hh:mm) UTC
       User : jmaddock
   Computer : J0826UBUNTU
- Directory : /home/jmaddock/process
-     Input : /tmp/pytest-of-jmaddock/pytest-417/test_scenario_scenario8_0/IN.DAT
+ Directory : /home/jmaddock/process/test_suite
+     Input : IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  
@@ -103,14 +103,14 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  First wall / blanket life (years)                                        (fwbllife)                   16.821     
  Divertor life (years)                                                    (divlife.)                    8.041     
- Cost of electricity (m$/kWh)                                             (coe)                        95.746     
+ Cost of electricity (m$/kWh)                                             (coe)                        95.682     
  
  Power Generation Costs :
  
                                                                            Annual Costs, M$       COE, m$/kWh
 
- Capital Investment                                                                555.05               84.49
- Operation & Maintenance                                                            62.81                9.56
+ Capital Investment                                                                555.05               84.43
+ Operation & Maintenance                                                            62.81                9.55
  Decommissioning Fund                                                                4.69                0.71
  Fuel Charge Breakdown
 
@@ -120,9 +120,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
      Auxiliary Heating                                                       0.00                0.00
      Actual Fuel                                                             2.88                0.44
      Waste Disposal                                                          3.60                0.55
- Total Fuel Cost                                                                     6.47                0.99
+ Total Fuel Cost                                                                     6.47                0.98
 
- Total Cost                                                                        629.02               95.75
+ Total Cost                                                                        629.02               95.68
  
  **************************************** Detailed Costings (1990 US$) ****************************************
  
@@ -593,7 +593,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Winding radial thickness (m)                                             (dr_tf_wp)                5.926E-01     
  Winding toroidal thickness (m)                                           (wwp1)                    4.559E-01     
  Ground wall insulation thickness (m)                                     (tinstf)                  1.800E-02     
- Number of turns per coil                                                 (turnstf)                 8.615E+01     
+ Number of turns per coil                                                 (n_tf_turn)               8.615E+01     
  Current per turn (A)                                                     (cpttf)                   1.489E+05     
  jop/jcrit                                                                (fiooic)                  5.752E-01  ITV
  
@@ -1048,9 +1048,9 @@ aspect   = 12.22        *Aspect ratio
 bt       = 5.5          *Toroidal field on axis (T)
 ifispact = 0            *Switch for neutronics calculations (0: Off)
 ignite   = 1            *Switch for ignition assumption (1: Ignited)
-iinvqd   = 1            *Switch for inverse quadrature in L-mode scaling laws 5 and 9 (1: Inverse quadrature with Neo-Alcator tau-E used)
+iinvqd   = 1            *Switch for inverse quadrature in L-mode scaling laws 5 and 9 (1: Inverse quadrature with Neo-Alcator tau-
 ipedestal = 0           *Switch for pedestal profiles (0: Parabolic Profiles)
-iradloss = 1            *Switch for radiation loss term usage in power balance (1: Total power lost is scaling power plus core radiation only)
+iradloss = 1            *Switch for radiation loss term usage in power balance (1: Total power lost is scaling power plus core rad
 isc      = 38           *Switch for energy confinement time scaling law (38: ISS04)
 kappa    = 1.001        *Plasma separatrix elongation
 rmajor   = 22.0         *Plasma major radius (m)
@@ -1061,7 +1061,6 @@ tratio   = 0.95         *Ion temperature / electron temperature
 
 *--------------Stellarator Variables---------------*
 
-istell   = 1            *Stellarator option
 bmn      = 0.001        *Relative radial field perturbation
 f_asym   = 1.1          *Divertor heat load peaking factor
 f_rad    = 0.85         *Radiated power fraction in sol

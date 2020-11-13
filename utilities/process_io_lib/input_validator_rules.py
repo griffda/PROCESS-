@@ -158,6 +158,30 @@ class Ishape(Rule):
             self.check_defined("triang95")
             self.check_undefined("kappa")
             self.check_undefined("triang")
+        elif ishape is 5:
+            # kappa95 and triang95 are used to calculate kappa and triang
+            self.check_defined("kappa95")
+            self.check_defined("triang95")
+            self.check_undefined("kappa")
+            self.check_undefined("triang")
+        elif ishape is 5:
+            # Use kappa and triang to calculate 95% kappa and triang
+            self.check_defined("kappa")
+            self.check_defined("triang")
+            self.check_undefined("kappa95")
+            self.check_undefined("triang95")            
+        elif ishape is 7:
+            # kappa95 and triang95 are used to calculate kappa and triang
+            self.check_defined("kappa95")
+            self.check_defined("triang95")
+            self.check_undefined("kappa")
+            self.check_undefined("triang")
+        elif ishape is 8:
+            # Use kappa and triang to calculate 95% kappa and triang
+            self.check_defined("kappa")
+            self.check_defined("triang")
+            self.check_undefined("kappa95")
+            self.check_undefined("triang95")      
 
 class Aspect(Rule):
     """Aspect ratio"""
@@ -189,7 +213,7 @@ class Kappa(Rule):
         """Should kappa be defined, based on value of ishape"""
         # This logic is covered in the Ishape rule
         ishape = self.get_param_value("ishape")
-        if ishape is 0:
+        if ishape is [0, 6, 8]:
             # kappa input value is used
             self.check_defined("kappa")
         else:
@@ -206,7 +230,7 @@ class Triang(Rule):
         """Should triang be defined, based on value of ishape"""
         # This logic is covered in the the Ishape rule
         ishape = self.get_param_value("ishape")
-        if ishape in [0, 2]:
+        if ishape in [0, 2, 6, 8]:
             self.check_defined("triang")
         else:
             self.check_undefined("triang")

@@ -2456,7 +2456,7 @@ end subroutine superconpf
     if (iprint == 0) return
 
     call oheadr(outfile,'PF Coil Inductances')
-    call ocmmnt(outfile,'Inductance matrix (Henries-turns**2) :')
+    call ocmmnt(outfile,'Inductance matrix [H] :')
     call oblnkl(outfile)
 
     do ig = 1,nef

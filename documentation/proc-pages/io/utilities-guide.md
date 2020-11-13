@@ -1,5 +1,7 @@
 
-# Introduction
+# Python Utilities
+
+[PDF of webpage](../pdf/utilities-guide.pdf)
 
 The PROCESS Python utilities are located in the repository folder
 
@@ -7,11 +9,440 @@ The PROCESS Python utilities are located in the repository folder
 /utilities/
 ```
 
-A number of utilities for `PRoCESS` are available, for instance to modify the input file `IN.DAT`, run `PROCESS` until a feasible solution is found, or to extract and plot data from the `PROCESS` output.
+A number of utilities for `PROCESS` are available, for instance to modify the input file `IN.DAT`, run `PROCESS` until a feasible solution is found, or to extract and plot data from the `PROCESS` output.
 
 All executables use Python library functions either from the publicly available `numpy`, `scipy` and `matplotlib` libraries of the `PROCESS` Python libraries. To used the `PROCESS` Python libraries made their directory is in your Python path.
 
 All Python code has been written for Python 3.
+
+## Archivable Files for PROCESS Runs Database
+
+`archive.sh`
+
+This is a very simple shell script to create all the relevant files for the PROCESS Runs database on the EUROfusion IDM (https://idm.euro-fusion.org/?uid=2MUP64). It uses the `create\_csv4database.py` and the `plot\_proc.py` utilities.
+
+**Input**: `IN.DAT`, `OUT.DAT`, `MFILE.DAT`
+
+**Output**: `PREFIX.IN.DAT`, `PREFIX.OUT.DAT`, `PREFIX.pdf`, `PREFIX.csv`
+
+The convention for the PREFIX is to use the following format e.g. DEMO1_detailed_description_Year_Month_Day, where DEMO1 is the description for the design investigated and the detailed description summarises the key changes made to the design.
+
+## Batch Jobs
+
+As PROCESS typically runs very fast and does not produce much data output, it is not typically necessary to submit PROCESS runs or any python executables as a batch job to the fusion linux machines. However, the `evaluate_uncertainties.py` tool is one example of a python tool for PROCESS that does run for a long time and does create a lot of output. As the CPU time limit for any non-batch jobs on the fuslw machines is 30 minutes, any decent sampled `evaluate_uncertainties.py` run will need to be submitted as a batch job. (Please note, that if you have forgotten to ubmit you job as a batch job, your job will be terminated after 30 CPU minutes, but as the output is written to file continuously, you should not loose any of the output that has been produced until then.)
+
+To submit a batch job, first create a file called e.g. `myjob.cmd`. It should contain the following content
+
+```
+# @ executable = evaluate_uncertainties.py
+# @ arguments
+# @ input = /dev/null
+# @ output = /ABSOLUTE_PATH_TO_WORK_DIR/ll.out
+# @ error = /ABSOLUTE_PATH_TO_WORK_DIR/ll.err
+# @ initialdir = /ABSOLUTE_PATH_TO_WORK_DIR/
+# @ notify_user = USERNAME
+# @ notification = complete
+# @ queue
+module use /home/PROCESS/modules
+module unload python
+module load python/3.3
+module load process/master
+```
+
+Once you have created the file you can submit a patch job by typing
+
+`llsubmit myjob.cmd`
+
+While your job is running you can keep track of its progress by typing `llq` or `xloadl`. More information and help with troubleshooting can be found under http://fusweb1.fusion.ccfe.ac.uk/computing/funfaq/ll/.
+
+As the `uncertainties.nc` output file can get quite large, it might by indicated to write the output to the `/sratch` or `/tmp` directories as they have faster I/O. Please remember to copy your results into your home directory afterwards, as these directories are not backed up and will be frequently cleaned.
+
+## Compare Input Files
+
+`in_dat_comparison.py`
+
+Tool for comparing two IN.DATs and outputting inputs in one file and not the other, inputs in both with different values and inputs in both with the same value.
+
+Arguments:
+* `-f` - Files to compare
+* `-s` - Save output to file called `input_comp.txt`
+
+## Compare MFILEs
+
+`mfile_comparison.py`
+
+Tool for comparing two MFILEs and outputting significant differences in numerical values.
+
+Arguments:
+* `-f` - Files to compare
+* `-s` - Save output to file called comp.txt
+* `--acc` - Percentage difference threshold for reporting
+* `--verbose` - Additional output
+
+## `Compare_radials.py`
+
+`compare_radials.py`
+
+Radial plot comparison tool using PLASMOD-type input
+
+## Compare Reference Design
+
+`ref_check.py`
+
+Tool for comparing a PROCESS MFILE output file to a JSON reference file for a certain type of machine.
+
+The JSON file format contains two dictionaries: 'PARAMS' and 'LIMITS'.
+
+Arguments:
+* `-r` - Reference JSON file
+* `-f` - MFILE file to compare to JSON reference
+* `-s` - Save output to file called `input_comp.txt`
+
+Below is an example of the JSON reference file. The PARAMS dictionary takes just a variable name and the value it has for the reference. The LIMITS dictionary takes the limit value as the key. The content of the limit is then the limit value, whether it is a minimum or maximum and then lastly the parameter it is limiting. For more examples look at the `cfetr_small_ref.json` in the test suite CFETR_small case folder.
+
+```
+{
+	"PARAMS":
+        {
+            "rmajor" : 5.7,
+            "rminor": 1.6,
+            "aspect": 3.563,
+            "bt": 5.0,
+            "kappa": 1.8,
+            "triang": 0.4,
+            "hfact": 1.3,
+            "powfmw": 250
+        },
+
+    "LIMITS":
+        {
+            "alstrtf" :
+                {
+                    "limit": 600.0e6,
+                    "type": "-",
+                    "parameter": "strtf2"
+                },
+            "pseprmax" :
+                {
+                    "limit": 25.0,
+                    "type": "-",
+                    "parameter": "pdivt/rmajor"
+                },
+            "ripmax" :
+               {
+                   "limit": 0.5,
+                    "type": "-",
+                    "parameter": "ripple"
+                }
+        }
+}
+```
+
+The code outputs the parameters which don't match, the parameters that match, the lower limits that aren't satisfied, the lower limits that are satisfied, the upper limits that aren't satisfied and the upper limits that are satisfied.
+
+## Convert `IN.DAT` format
+
+`convert_in_dat.py`
+
+The utility `convert_in_dat.py` takes an old format `IN.DAT` (~pre-2014) ad converts it into the newer format. As fewer old `IN.DAT` files exist this utility will eventually be removed. The options for the script are:
+
+```
+convert_in_dat.py [-h] [-f f] [-o o]
+
+PROCESS IN.DAT converter. Convert IN.DAT into new format. For info contact
+james.morris2@ccfe.ac.uk
+
+optional arguments:
+-h, --help  show this help message and exit
+-f f        File to read as IN.DAT (default="IN.DAT")
+-o o        File to read as IN.DAT (default="new_IN.DAT")
+```
+
+## Convert MFILE to Catia CAD
+
+`cad_output.py`
+
+The PROCESS utility `cad_output.py` takes the `mfile.py` and produces an output file suitable for using in CAD programs (for testing *Catia* was used). The output file is named `PROCESS.CAD` by default. The output file provides a list of named parameters for input into *Catia*. Modification for other CAD programs may be required. The options for the script are:
+
+```
+cad_output.py [-h] [-f FILENAME] [-o OUTPUT] [-s]
+
+Produce a CAD output file of the PROCESS MFILE file for a given scan. For info
+contact james.morris2@ccfe.ac.uk
+
+optional arguments:
+-h, --help   show this help message and exit
+-f FILENAME  specify input filename
+-o OUTPUT    specify output filename
+-s, --show   show plot as well as saving figure
+```
+
+## Create an HTML MFILE Summary
+
+`output_summary.py`
+
+This utility has two versions in the repository:
+* `output_summary.py` - general summary generate automatically. Not customisable.
+* `output_detailed.py` - takes a configuration file called `output_detailed.json` to configure the output html.
+
+The output HTML arranges the variables into sections and allows the user to add comments and other informations to the summary by adding comments to the PROCESS IN.DAT. The comments in the IN.DAT take the following form:
+
+```
+#header-physics : Comment under header called physics
+
+#constraint-1 : Comment for constraint number 1
+icc = 1
+
+#iteration-variable-10 : Comment for iteration variable 10
+ixc        = 10 * hfact
+
+#in-neped : Comment for input neped
+neped = 0.678e20 * Electron density of pedestal (/m3) (ipedestal=1)
+```
+
+The `IN.DAT` appendeed to the end of the `MFILE.DAT` and the Python gets this information from there. The comments have to follow the format above. It is not ideally on every PROCESS run, but is useful for summarising important PROCESS results. The options for the `output_summary.py` are:
+
+```
+output_summary.py [-h] [-f MFILENAME] [-o OUTFILENAME]
+
+Create PROCESS output document.For info contact james.morris2@ukaea.uk
+
+optional arguments:
+-h, --help      show this help message and exit
+-f MFILENAME    specify PROCESS MFILE
+-o OUTFILENAME  specify output file
+```
+
+The options for the output `output_detailed.py` are:
+
+```
+output_detailed.py [-h] [-f MFILENAME] [-j JSONFILE] [-o OUTFILENAME]
+
+Create PROCESS output document.For info contact james.morris2@ukaea.uk
+
+optional arguments:
+-h, --help      show this help message and exit
+-f MFILENAME    specify PROCESS MFILE
+-j JSONFILE     specify JSON file location and name
+-o OUTFILENAME  specify output file
+```
+
+`Output_detailed.py` also requires a configuration file named `output_detailed.json`. This JSON file contains the grouping of the output and allows the user to adjust what is output and where.
+
+## Create csv file summarising data in `plot_proc.py` output
+
+`output_data.py`
+
+A utility to output a set of data very similar to `plot_proc.py`, but to a comma-delimited format for inclusion in spreadsheets. This is used by `archive.sh` to import data into the PROCESS runs database. For other uses, it's best to use PLOT.DAT instead, as this is always generated by PROCESS, and can be easily loaded into a spreadsheet.
+
+**Input**: `MFILE.DAT` (or as specified by user)
+
+**Output**: `process_summary.txt` (or as specified by user)
+
+**Configuration Options**: Optional arguments are:
+
+```
+usage: output_data.py [-h] [-f FILENAME] [-o OUTPUT]
+
+Produce a single-column comma-separated (.txt) summary for a given scan. For
+info contact rich.kemp@ccfe.ac.uk or james.morris2@ccfe.ac.uk
+
+optional arguments:
+  -h, --help   show this help message and exit
+  -f FILENAME  specify input filename
+  -o OUTPUT    specify output filename
+```
+
+## Create csv file summarising data for database
+
+`create_csv4database.py`
+
+This is essentially the same tool as `output_data.py`, but the format is frozen to assure consistency for the PROCESS Runs database excel spreadsheet.
+
+## Create MCNP input file from `MFILE.DAT`
+
+`mcnp_output.py`
+
+The utility `mcnp_output.py` makes a `MFILE.DAT` and converts it to a suitable format for MCNP runs. The options for the script are:
+
+```
+mcnp_output.py [-h] [-f f] [-o o] [--ctf]
+
+Process MFILE.DAT into PROCESS.MCNP file.
+
+optional arguments:
+-h, --help  show this help message and exit
+-f f        File to read as MFILE.DAT
+-o o        File to write as PROCESS.MCNP
+--ctf       True/False flag for CTF
+```
+
+## JSON Exporter
+
+```bash
+./utilities/mfile_to_json.py
+```
+
+This script outputs the contents of the MFILE to a JSON file.
+
+### Usage
+
+```bash
+usage: mfile-to-json.py [-h] [-f filename] [-n N] [--radial_build]
+                        [--vertical_build] [--all_build] [--verbose]
+```
+
+### Option
+
+| Argument | Description |
+| - | - |
+| `-h, --help`    | show this help message and exit |
+| `-f, [filename]` | specify MFILE file path |
+| `-n, [N]` | specify scan to plot (-1=last, 0=all) |
+| `--radial-build` | only output radial build |
+| `--vertical-build` | only output vertical build  |
+| `--all-build` | only output radial + vertical build |
+| `--verbose` | output both variable name and description |
+
+## List PROCESS runs with comments
+
+`./utilities/build_index.py`
+
+Creates an index of all PROCESS run comments, after they have been created by `run_process.py` in a series of subfolders.
+
+**Input**: `README.txt` files in subfolders
+
+**Output**: `Index.txt`
+
+**Configuration Options**: Optional arguments are:
+
+```
+# change the name of the file containing the folder description
+build_index.py -r README.txt
+# append the results to Index.txt instead of creating a new file
+build_index.py -m a
+# change the name of the subfolder Base - default=Run
+build_index.py -b Base
+# give a list of subfolder suffixes - default=all
+build_index.py -b 1-4,6,8,9-12
+# increase verbosity
+buld_index.py -v
+```
+
+An example `Index.txt` file might look like this
+
+```
+Run1:
+    Original run
+
+Run2:
+    Changed the no. TF coils
+...
+```
+
+## Morris Method
+
+> `./utilities/morris_method.py`
+
+Program to evaluate model sensistivity by elementary effects method at a given PROCESS design point. The method of Morris is a technique for screening a large number of model parameters to identify the dominatant parameter for a global sensitivity analysis[1], and a guide to more details can be found, for example, in the textbook[2]. Note that this utility has a significanity longer run time that a typical evalution of PROCESS design points. This utilities requires the use of the Python library [SALib](https://salib.readthedocs.io/en/latest/index.html).
+
+[1] M. Morris, (1991) "Factorial Sampling Plans for Preliminary Computational Experiments." Technometrics, 33(2):161-174
+
+[2] A. Saltelli, S. Tarantola, F. Campolongo, M. Ratto, T. Andres, J. Cariboni, D. Gatelli and M. Saisana, (2008) "Global Sensitivity Analysis: The Primer" (New York: Wiley)
+
+### Usage
+
+```bash
+usage: morris_method.py [-h] [-f CONFIGFILE] [-i INPUTFILE] [-o OUTPUTVARNAME]
+                        [-s SOLLIST] [-e ERRORLIST] [-m OUTPUTMEAN]
+                        [-t TRAJNUM] [-n NUMLVLS]
+```
+
+### Configuration File
+
+The configuration file `morris_method_conf.json` used the JSON format and has the following style
+
+```
+{
+    "bounds": [
+        [
+            1.1,
+            1.3
+        ],
+        [
+            1.0,
+            1.2
+        ],
+        [
+            0.45,
+            0.75
+        ],
+        [
+            0.085,
+            0.115
+        ],
+        [
+            1e-05,
+            0.0001
+        ],
+    ],
+    "names": [
+        "boundu(9)",
+        "hfact",
+        "coreradius",
+        "fimp(2)",
+        "fimp(14)",
+    ],
+    "num_vars": 5
+}
+```
+The file specifies a dictionary that gives all the information for running the Morris method tool. The number of variables considered in the Morris method with `num_vars`, the name of the variable as it appears the PROCESS MFILE is listed under `names` and the upper and lower bounds of the flat distribution is given in bounds. In addition the utility also uses `run_process.py` and therefore can optionally use the configuation file `run_process.conf`. Additionally, an `IN.DAT` file describing the relevant design point needs to be present.
+
+### Output
+
+As this utility uses the `run_process.py` tool it produces the same output files and in addition the utility produces several output files all in a .txt format. The file `param_values.txt` is created in the same directory as the python tool which lists all the parameter inputs generated by the trajectories which are used in PROCESS model runs. Three files are produced in the folder containing all the output files. Firstly, `capcost_sol.txt` which lists all final figures of merits found in PROCESS runs, the filename can be changed with SOLLIST option. Then secondly, `error_log.txt` wihch list all the run numbers that failed to find a converged solution, the filename can be changed with ERRORLIST option. Finally, the file `morris_method_output.txt` contains a table of the output of the method, with mean and variance of the elementary effects.
+
+### Options
+
+| Argument | Description |
+| - | - |
+| `-h, --help`      | show this help message and exit                                   |
+| `-f CONFIGFILE`   | configuration file, default = run_process.conf                    |
+| `-i INPUTFILE`    | input parameters file, default = morris_method_conf.json          |
+| `-o OUTPUTVARNAME`| PROCESS output analysed, default = capcost                        |
+| `-s SOLLIST`      | filename of PROCESS outputs, default = capcost_sol.txt            |
+| `-e ERRORLIST`    | filename of failed PROCESS output, default = error_log.txt        |
+| `-m OUTPUTMEAN`   | PROCESS mean model output value, default = 8056.98 (DEMO capcost) |
+| `-t TRAJNUM`      | number of trajectories sampled, default = 25                      |
+| `-n NUMLVLS`      | Number of grid levels used in hypercube sampling, default = 4     |
+
+## Morris Plotting
+
+> `./utilities/morris_plotting.py`
+
+Program to plot the output of the the sensistivity analysis by elementary effects method at a given PROCESS design point. It creates a scatter plot showing the mean agaisnt the variance of the elementary effects.
+
+### Usage
+
+```bash
+usage: morris_plotting.py [-h] [-f DATAFILE] [-o OUTPUTFILE]
+```
+
+### Configuration File
+
+The tool reads the data contained `morris_method_output.txt` produced from the program `morris_method.py`.
+
+### Output
+
+A .pdf file is created called `morris_output.pdf`. The name of the produced pdf file can be specified using te option OUTPUTFILE.
+
+### Options
+
+| Argument | Description |
+| - | - |
+| `-h, --help`    | show this help message and exit                            |
+| `-f DATAFILE`   | datafile for plotting, default = morris_method_output.txt  |
+| `-o OUTPUTFILE` | filename of outputed pdf file, default = morris_output.pdf |
 
 ## PROCESS 2-Page Summary
 
@@ -168,8 +599,12 @@ N.B. Rounding to whole integer can cause errors of $\pm$1 between adjacent arrow
 
 ### Example Output
 
-![Sankey flow chart of 2018 baseline](../../img/SankeyPowerFlow.png)
-Figure 1: *Sankey flow chart of 2018 baseline*
+<img
+    src="/../images/sankey-power-flow.png"
+    class="image"
+    alt="Sankey flow chart of 2018 baseline"
+    >
+<figcaption> Figure 1: *Sankey flow chart of 2018 baseline* </figcaption>
 
 ### Options
 
@@ -179,110 +614,6 @@ Figure 1: *Sankey flow chart of 2018 baseline*
 | `-e --end`        | file format, default = pdf      |
 | `-m --mfile`      | mfile name, default = MFILE.DAT |
 | `-f, --full`      | Plot a full version             |
-
-## Morris Method
-
-> `./utilities/morris_method.py`
-
-Program to evaluate model sensistivity by elementary effects method at a given PROCESS design point. The method of Morris is a technique for screening a large number of model parameters to identify the dominatant parameter for a global sensitivity analysis[1], and a guide to more details can be found, for example, in the textbook[2]. Note that this utility has a significanity longer run time that a typical evalution of PROCESS design points. This utilities requires the use of the Python library [SALib](https://salib.readthedocs.io/en/latest/index.html).
-
-[1] M. Morris, (1991) "Factorial Sampling Plans for Preliminary Computational Experiments." Technometrics, 33(2):161-174
-
-[2] A. Saltelli, S. Tarantola, F. Campolongo, M. Ratto, T. Andres, J. Cariboni, D. Gatelli and M. Saisana, (2008) "Global Sensitivity Analysis: The Primer" (New York: Wiley)
-
-### Usage
-
-```bash
-usage: morris_method.py [-h] [-f CONFIGFILE] [-i INPUTFILE] [-o OUTPUTVARNAME]
-                        [-s SOLLIST] [-e ERRORLIST] [-m OUTPUTMEAN]
-                        [-t TRAJNUM] [-n NUMLVLS]
-```
-
-### Configuration File
-
-The configuration file `morris_method_conf.json` used the JSON format and has the following style
-
-```
-{
-    "bounds": [
-        [
-            1.1,
-            1.3
-        ],
-        [
-            1.0,
-            1.2
-        ],
-        [
-            0.45,
-            0.75
-        ],
-        [
-            0.085,
-            0.115
-        ],
-        [
-            1e-05,
-            0.0001
-        ],
-    ],
-    "names": [
-        "boundu(9)",
-        "hfact",
-        "coreradius",
-        "fimp(2)",
-        "fimp(14)",
-    ],
-    "num_vars": 5
-}
-```
-The file specifies a dictionary that gives all the information for running the Morris method tool. The number of variables considered in the Morris method with `num_vars`, the name of the variable as it appears the PROCESS MFILE is listed under `names` and the upper and lower bounds of the flat distribution is given in bounds. In addition the utility also uses `run_process.py` and therefore can optionally use the configuation file `run_process.conf`. Additionally, an `IN.DAT` file describing the relevant design point needs to be present.
-
-### Output
-
-As this utility uses the `run_process.py` tool it produces the same output files and in addition the utility produces several output files all in a .txt format. The file `param_values.txt` is created in the same directory as the python tool which lists all the parameter inputs generated by the trajectories which are used in PROCESS model runs. Three files are produced in the folder containing all the output files. Firstly, `capcost_sol.txt` which lists all final figures of merits found in PROCESS runs, the filename can be changed with SOLLIST option. Then secondly, `error_log.txt` wihch list all the run numbers that failed to find a converged solution, the filename can be changed with ERRORLIST option. Finally, the file `morris_method_output.txt` contains a table of the output of the method, with mean and variance of the elementary effects.
-
-### Options
-
-| Argument | Description |
-| - | - |
-| `-h, --help`      | show this help message and exit                                   |
-| `-f CONFIGFILE`   | configuration file, default = run_process.conf                    |
-| `-i INPUTFILE`    | input parameters file, default = morris_method_conf.json          |
-| `-o OUTPUTVARNAME`| PROCESS output analysed, default = capcost                        |
-| `-s SOLLIST`      | filename of PROCESS outputs, default = capcost_sol.txt            |
-| `-e ERRORLIST`    | filename of failed PROCESS output, default = error_log.txt        |
-| `-m OUTPUTMEAN`   | PROCESS mean model output value, default = 8056.98 (DEMO capcost) |
-| `-t TRAJNUM`      | number of trajectories sampled, default = 25                      |
-| `-n NUMLVLS`      | Number of grid levels used in hypercube sampling, default = 4     |
-
-## Morris Plotting
-
-> `./utilities/morris_plotting.py`
-
-Program to plot the output of the the sensistivity analysis by elementary effects method at a given PROCESS design point. It creates a scatter plot showing the mean agaisnt the variance of the elementary effects.
-
-### Usage
-
-```bash
-usage: morris_plotting.py [-h] [-f DATAFILE] [-o OUTPUTFILE]
-```
-
-### Configuration File
-
-The tool reads the data contained `morris_method_output.txt` produced from the program `morris_method.py`.
-
-### Output
-
-A .pdf file is created called `morris_output.pdf`. The name of the produced pdf file can be specified using te option OUTPUTFILE.
-
-### Options
-
-| Argument | Description |
-| - | - |
-| `-h, --help`    | show this help message and exit                            |
-| `-f DATAFILE`   | datafile for plotting, default = morris_method_output.txt  |
-| `-o OUTPUTFILE` | filename of outputed pdf file, default = morris_output.pdf |
 
 ## Sobol Method
 
@@ -691,6 +1022,41 @@ Additional parameters can be specified as in the `config` section for the `evalu
 
 The resulting NetCDF file can be visualised using the `ndscan_visualisation.py` tool. It has an interactive menu and is fairly self-explanatory.
 
+## TF Stress distribution plots
+
+> `./utilities/plot_stress_tf.py`
+
+Program to plot stress, strain and displacement radial distributions at the inboard mid-plane section of the TF coil.
+This program uses the `SIG_TF.DAT` file, that store stress distributions of the VMCON point and stores the outputs
+plots in the `SIG_TF_plots/` folder, created if not existing.
+
+### Discussion of the stress modelling assumptions
+
+In case of a resisitive coil, the stress is calculated from a generalized plane strain model, hence provinding vertical
+stress radial distribution, alongside the radial and the toroidal ones. This is not the case for superconducting magnets
+as a plane stress modelling is used for now. The reason is that a transverse orthotropic formulation of the generalized 
+plane strain, is needed to correctly take the difference of the casing in the vertical direction properly. This will be
+done in the near future. 
+
+### Usage
+
+```bash
+usage: plot_stress_tf.py [-h] [-p [PLOT_SELEC]] [-sf [SAVE_FORMAT]] [-as [AXIS_FONT_SIZE]]
+```
+
+### Option
+
+| Argument | Description |
+| - | - |
+| `-h, --help`    | show this help message and exit                           |
+| `-p, --plot_selec [PLOT_SELEC]`   | Plot selection string :                 |
+| - |   - if the string contains `sig`, plot the stress distributions |
+| - |   - if the string contains `strain`, plot the strain distributions |
+| - |   - if the string contains `disp`, plot the radial displacement distribution |
+| - |   - if the string contains `all`, plot stress and displecement distributions |
+| `-sf, --save_format [SAVE_FORMAT]` | output format (default='pdf')  |
+| `-as, --axis_font_size [AXIS_FONT_SIZE]` | Axis label font size selection (default=18) |
+
 ## Turn output into input
 
 `write_new_in_dat.py`
@@ -711,232 +1077,6 @@ optional arguments:
   -lfp         use the last feasible point from a scan (default)
   -ffp         use the first feasible point from a scan
 ```
-
-## Create csv file summarising data in `plot_proc.py` output
-
-`output_data.py`
-
-A utility to output a set of data very similar to `plot_proc.py`, but to a comma-delimited format for inclusion in spreadsheets. This is used by `archive.sh` to import data into the PROCESS runs database. For other uses, it's best to use PLOT.DAT instead, as this is always generated by PROCESS, and can be easily loaded into a spreadsheet.
-
-**Input**: `MFILE.DAT` (or as specified by user)
-
-**Output**: `process_summary.txt` (or as specified by user)
-
-**Configuration Options**: Optional arguments are:
-
-```
-usage: output_data.py [-h] [-f FILENAME] [-o OUTPUT]
-
-Produce a single-column comma-separated (.txt) summary for a given scan. For
-info contact rich.kemp@ccfe.ac.uk or james.morris2@ccfe.ac.uk
-
-optional arguments:
-  -h, --help   show this help message and exit
-  -f FILENAME  specify input filename
-  -o OUTPUT    specify output filename
-```
-
-## Create csv file summarising data for database
-
-`create_csv4database.py`
-
-This is essentially the same tool as `output_data.py`, but the format is frozen to assure consistency for the PROCESS Runs database excel spreadsheet.
-
-## Create archivable files for PROCESS Runs database
-
-`archive.sh`
-
-This is a very simple shell script to create all the relevant files for the PROCESS Runs database on the EUROfusion IDM (https://idm.euro-fusion.org/?uid=2MUP64). It uses the `create\_csv4database.py` and the `plot\_proc.py` utilities.
-
-**Input**: `IN.DAT`, `OUT.DAT`, `MFILE.DAT`
-
-**Output**: `PREFIX.IN.DAT`, `PREFIX.OUT.DAT`, `PREFIX.pdf`, `PREFIX.csv`
-
-The convention for the PREFIX is to use the following format e.g. DEMO1_detailed_description_Year_Month_Day, where DEMO1 is the description for the design investigated and the detailed description summarises the key changes made to the design.
-
-## Compare a reference design with a PROCESS run
-
-`ref_check.py`
-
-Tool for comparing a PROCESS MFILE output file to a JSON reference file for a certain type of machine.
-
-The JSON file format contains two dictionaries: 'PARAMS' and 'LIMITS'.
-
-Arguments:
-* `-r` - Reference JSON file
-* `-f` - MFILE file to compare to JSON reference
-* `-s` - Save output to file called `input_comp.txt`
-
-Below is an example of the JSON reference file. The PARAMS dictionary takes just a variable name and the value it has for the reference. The LIMITS dictionary takes the limit value as the key. The content of the limit is then the limit value, whether it is a minimum or maximum and then lastly the parameter it is limiting. For more examples look at the `cfetr_small_ref.json` in the test suite CFETR_small case folder.
-
-```
-{
-	"PARAMS":
-        {
-            "rmajor" : 5.7,
-            "rminor": 1.6,
-            "aspect": 3.563,
-            "bt": 5.0,
-            "kappa": 1.8,
-            "triang": 0.4,
-            "hfact": 1.3,
-            "powfmw": 250
-        },
-
-    "LIMITS":
-        {
-            "alstrtf" :
-                {
-                    "limit": 600.0e6,
-                    "type": "-",
-                    "parameter": "strtf2"
-                },
-            "pseprmax" :
-                {
-                    "limit": 25.0,
-                    "type": "-",
-                    "parameter": "pdivt/rmajor"
-                },
-            "ripmax" :
-               {
-                   "limit": 0.5,
-                    "type": "-",
-                    "parameter": "ripple"
-                }
-        }
-}
-```
-
-The code outputs the parameters which don't match, the parameters that match, the lower limits that aren't satisfied, the lower limits that are satisfied, the upper limits that aren't satisfied and the upper limits that are satisfied.
-
-## Compare two MFILEs
-
-`mfile_comparison.py`
-
-Tool for comparing two MFILEs and outputting significant differences in numerical values.
-
-Arguments:
-* `-f` - Files to compare
-* `-s` - Save output to file called comp.txt
-* `--acc` - Percentage difference threshold for reporting
-* `--verbose` - Additional output
-
-## Comparing two input files
-
-`in_dat_comparison.py`
-
-Tool for comparing two IN.DATs and outputting inputs in one file and not the other, inputs in both with different values and inputs in both with the same value.
-
-Arguments:
-* `-f` - Files to compare
-* `-s` - Save output to file called `input_comp.txt`
-
-## Convert PROCESS MFILE to Catia CAD readable output
-
-`cad_output.py`
-
-The PROCESS utility `cad_output.py` takes the `mfile.py` and produces an output file suitable for using in CAD programs (for testing *Catia* was used). The output file is named `PROCESS.CAD` by default. The output file provides a list of named parameters for input into *Catia*. Modification for other CAD programs may be required. The options for the script are:
-
-```
-cad_output.py [-h] [-f FILENAME] [-o OUTPUT] [-s]
-
-Produce a CAD output file of the PROCESS MFILE file for a given scan. For info
-contact james.morris2@ccfe.ac.uk
-
-optional arguments:
--h, --help   show this help message and exit
--f FILENAME  specify input filename
--o OUTPUT    specify output filename
--s, --show   show plot as well as saving figure
-```
-
-## Convert `IN.DAT` to new format
-
-`convert_in_dat.py`
-
-The utility `convert_in_dat.py` takes an old format `IN.DAT` (~pre-2014) ad converts it into the newer format. As fewer old `IN.DAT` files exist this utility will eventually be removed. The options for the script are:
-
-```
-convert_in_dat.py [-h] [-f f] [-o o]
-
-PROCESS IN.DAT converter. Convert IN.DAT into new format. For info contact
-james.morris2@ccfe.ac.uk
-
-optional arguments:
--h, --help  show this help message and exit
--f f        File to read as IN.DAT (default="IN.DAT")
--o o        File to read as IN.DAT (default="new_IN.DAT")
-```
-
-## Creat MCNP input file from `MFILE.DAT`
-
-`mcnp_output.py`
-
-The utility `mcnp_output.py` makes a `MFILE.DAT` and converts it to a suitable format for MCNP runs. The options for the script are:
-
-```
-mcnp_output.py [-h] [-f f] [-o o] [--ctf]
-
-Process MFILE.DAT into PROCESS.MCNP file.
-
-optional arguments:
--h, --help  show this help message and exit
--f f        File to read as MFILE.DAT
--o o        File to write as PROCESS.MCNP
---ctf       True/False flag for CTF
-```
-
-## Cretae a html output summary from MFILE.DAT
-
-`output_summary.py`
-
-This utility has two versions in the repository:
-* `output_summary.py` - general summary generate automatically. Not customisable.
-* `output_detailed.py` - takes a configuration file called `output_detailed.json` to configure the output html.
-
-The output HTML arranges the variables into sections and allows the user to add comments and other informations to the summary by adding comments to the PROCESS IN.DAT. The comments in the IN.DAT take the following form:
-
-```
-#header-physics : Comment under header called physics
-
-#constraint-1 : Comment for constraint number 1
-icc = 1
-
-#iteration-variable-10 : Comment for iteration variable 10
-ixc        = 10 * hfact
-
-#in-neped : Comment for input neped
-neped = 0.678e20 * Electron density of pedestal (/m3) (ipedestal=1)
-```
-
-The `IN.DAT` appendeed to the end of the `MFILE.DAT` and the Python gets this information from there. The comments have to follow the format above. It is not ideally on every PROCESS run, but is useful for summarising important PROCESS results. The options for the `output_summary.py` are:
-
-```
-output_summary.py [-h] [-f MFILENAME] [-o OUTFILENAME]
-
-Create PROCESS output document.For info contact james.morris2@ukaea.uk
-
-optional arguments:
--h, --help      show this help message and exit
--f MFILENAME    specify PROCESS MFILE
--o OUTFILENAME  specify output file
-```
-
-The options for the output `output_detailed.py` are:
-
-```
-output_detailed.py [-h] [-f MFILENAME] [-j JSONFILE] [-o OUTFILENAME]
-
-Create PROCESS output document.For info contact james.morris2@ukaea.uk
-
-optional arguments:
--h, --help      show this help message and exit
--f MFILENAME    specify PROCESS MFILE
--j JSONFILE     specify JSON file location and name
--o OUTFILENAME  specify output file
-```
-
-`Output_detailed.py` also requires a configuration file named `output_detailed.json`. This JSON file contains the grouping of the output and allows the user to adjust what is output and where.
 
 ## Output plotting: create data file
 
@@ -1371,36 +1511,6 @@ optional arguments:
                         uncertainties data file, default =uncertainties.nc
 ```
 
-## Batch Jobs
-
-As PROCESS typically runs very fast and does not produce much data output, it is not typically necessary to submit PROCESS runs or any python executables as a batch job to the fusion linux machines. However, the `evaluate_uncertainties.py` tool is one example of a python tool for PROCESS that does run for a long time and does create a lot of output. As the CPU time limit for any non-batch jobs on the fuslw machines is 30 minutes, any decent sampled `evaluate_uncertainties.py` run will need to be submitted as a batch job. (Please note, that if you have forgotten to ubmit you job as a batch job, your job will be terminated after 30 CPU minutes, but as the output is written to file continuously, you should not loose any of the output that has been produced until then.)
-
-To submit a batch job, first create a file called e.g. `myjob.cmd`. It should contain the following content
-
-```
-# @ executable = evaluate_uncertainties.py
-# @ arguments
-# @ input = /dev/null
-# @ output = /ABSOLUTE_PATH_TO_WORK_DIR/ll.out
-# @ error = /ABSOLUTE_PATH_TO_WORK_DIR/ll.err
-# @ initialdir = /ABSOLUTE_PATH_TO_WORK_DIR/
-# @ notify_user = USERNAME
-# @ notification = complete
-# @ queue
-module use /home/PROCESS/modules
-module unload python
-module load python/3.3
-module load process/master
-```
-
-Once you have created the file you can submit a patch job by typing
-
-`llsubmit myjob.cmd`
-
-While your job is running you can keep track of its progress by typing `llq` or `xloadl`. More information and help with troubleshooting can be found under http://fusweb1.fusion.ccfe.ac.uk/computing/funfaq/ll/.
-
-As the `uncertainties.nc` output file can get quite large, it might by indicated to write the output to the `/sratch` or `/tmp` directories as they have faster I/O. Please remember to copy your results into your home directory afterwards, as these directories are not backed up and will be frequently cleaned.
-
 # Miscellaneous
 
 ## `fit_profile.py`
@@ -1440,12 +1550,6 @@ This automatically generates the `process_dicts.py` file used by PROCESS utility
 `line_length_standard.py`
 
 Script to check line length of repository files
-
-## `Compare_radials.py`
-
-`compare_radials.py`
-
-Radial plot comparison tool using PLASMOD-type input
 
 ## References
 

@@ -15,7 +15,7 @@ module fwbs_variables
   public
 
   real(dp) :: bktlife
-  !! blanket lifetime (years)
+  !! Full power blanket lifetime (years)
 
   real(dp) :: coolmass
   !! mass of water coolant (in shield, blanket, first wall, divertor) (kg)
@@ -45,7 +45,7 @@ module fwbs_variables
   !! KIT blanket model: steel fraction of breeding zone
 
   real(dp) :: fdiv
-  !! area fraction taken up by divertor
+  !! Solid angle fraction taken by one divertor
 
   real(dp) :: fhcd
   !! area fraction covered by heating/current drive apparatus plus diagnostics
@@ -61,7 +61,7 @@ module fwbs_variables
   !#TODO: change to adopt switch naming convention
 
   real(dp) :: fwlife
-  !! first wall full-power lifetime (y)
+  !! first wall full-power year lifetime (y)
 
   real(dp) :: fwmass
   !! first wall mass (kg)
@@ -104,8 +104,14 @@ module fwbs_variables
   real(dp) :: pnucblkt
   !! nuclear heating in the blanket (MW)
 
-  real(dp) :: pnuccp
-  !! nuclear heating in the ST centrepost (MW)
+  real(dp) :: pnuc_cp
+  !! Total nuclear heating in the ST centrepost (MW)
+  
+  real(dp) :: pnuc_cp_sh
+  !! Neutronic shield nuclear heating in the ST centrepost (MW)
+  
+  real(dp) :: pnuc_cp_tf
+  !! TF neutronic nuclear heating in the ST centrepost (MW)
 
   real(dp) :: pnucdiv
   !! nuclear heating in the divertor (MW)
@@ -155,6 +161,11 @@ module fwbs_variables
   real(dp) :: whtbltibe12
   !! mass of titanium beryllide in blanket (kg) (`iblanket=1,3` (CCFE HCPB))
 
+  real(dp) :: neut_flux_cp
+  !! Centrepost TF fast neutron flux (E > 0.1 MeV) [m^(-2).^(-1)]
+  !! This variable is only calculated for superconducting (i_tf_sup = 1 )
+  !! spherical tokamal magnet designs (itart = 0)
+
   real(dp) :: f_neut_shield
   !! Fraction of nuclear power shielded before the CP magnet (ST)
   !! ( neut_absorb = -1 --> a fit on simplified MCNP neutronic
@@ -190,6 +201,7 @@ module fwbs_variables
 
   real(dp) :: fblhebpo
   !! helium fraction of outboard blanket back plate by volume (`iblanket=2` (KIT HCPB))
+  
   integer :: hcdportsize
   !! switch for size of heating/current drive ports (`iblanket=2` (KIT HCPB)):
   !!
@@ -414,6 +426,7 @@ module fwbs_variables
 
   real(dp) :: wtshldi
   !! mass of inboard shield (kg)
+
   real(dp) :: wtshldo
   !! mass of outboard shield (kg)
   
@@ -508,7 +521,6 @@ module fwbs_variables
     qnuc = 0.0D0  
     li6enrich = 30.0D0  
     pnucblkt = 0.0D0  
-    pnuccp = 0.0D0  
     pnucdiv = 0.0D0  
     pnucfw = 0.0D0  
     pnuchcd = 0.0D0  
@@ -612,5 +624,9 @@ module fwbs_variables
     blkttype = 3
     etaiso = 0.85D0  
     etahtp = 0.95D0  
+    pnuc_cp = 0.0D0
+    pnuc_cp_sh = 0.0D0
+    pnuc_cp_tf = 0.0D0
+    neut_flux_cp = 0.0D0
   end subroutine init_fwbs_variables
 end module fwbs_variables

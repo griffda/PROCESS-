@@ -1,14 +1,12 @@
 # Power conversion and heat dissipation systems
 
-[PDF Doc](./media/tfdoc.pdf)
-
 The `PROCESS` power plant takes into account all the systems required to perform the necessary conversion of fusion power to electricity, from the coolant systems in the plant components to the heat exchangers and turbines.
 
 Figure 1 shows the overall power transfer mechanisms within the power plant outside of the plasma. The efficiency of the primary coolant pumps in converting electrical to mechanical power is given by input parameter `etahtp` in all the calculations described below.
 
 <figure>
     <center>
-    <img src="../../img/powerflow3.png" alt="power flow 3" 
+    <img src="../../images/powerflow3.png" alt="power flow 3" 
     title="Power flow schematic diagram" 
     width="650" height="100" />
     <br><br>
@@ -20,7 +18,7 @@ Figure 1 shows the overall power transfer mechanisms within the power plant outs
 
 <figure>
     <center>
-    <img src="../../img/powerflow1.png" alt="power flow 1" 
+    <img src="../../images/powerflow1.png" alt="power flow 1" 
     title="Power flows" 
     width="650" height="100" />
     <br><br>

@@ -504,6 +504,10 @@ module physics_variables
   !! - =2 set kappa to the natural elongation value (Zohm ITER scaling), triang input
   !! - =3 set kappa to the natural elongation value (Zohm ITER scaling), triang95 input
   !! - =4 use input kappa95, triang95 to calculate separatrix values
+  !! - =5 use input kappa95, triang95 to calculate separatrix values based on MAST scaling (ST)
+  !! - =6 use input kappa, triang to calculate 95% values based on MAST scaling (ST)
+  !! - =7 use input kappa95, triang95 to calculate separatrix values based on fit to FIESTA (ST)
+  !! - =8 use input kappa, triang to calculate 95% values based on fit to FIESTA (ST)
 
   integer :: itart
   !! switch for spherical tokamak (ST) models:
@@ -524,10 +528,10 @@ module physics_variables
   !! - =2 use first wall area directly
 
   real(dp) :: kappa
-  !! plasma separatrix elongation (calculated if `ishape > 0`)
+  !! plasma separatrix elongation (calculated if `ishape = 1-5 or 7`)
 
   real(dp) :: kappa95
-  !! plasma elongation at 95% surface (calculated if `ishape < 4`)
+  !! plasma elongation at 95% surface (calculated if `ishape = 0-3, 6 or 8`)
 
   real(dp) :: kappaa
   !! plasma elongation calculated as xarea/(pi.a^2)
@@ -834,10 +838,10 @@ module physics_variables
   !! ion temperature / electron temperature(used to calculate ti if `tratio > 0.0`
 
   real(dp) :: triang
-  !! plasma separatrix triangularity (calculated if `ishape=1, 3 or 4`)
+  !! plasma separatrix triangularity (calculated if `ishape = 1, 3-5 or 7`)
 
   real(dp) :: triang95
-  !! plasma triangularity at 95% surface (calculated if `ishape < 3`)
+  !! plasma triangularity at 95% surface (calculated if `ishape = 0-2, 6 or 8`)
 
   real(dp) :: vol
   !! plasma volume (m3)
