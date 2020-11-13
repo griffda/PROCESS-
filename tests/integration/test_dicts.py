@@ -145,7 +145,8 @@ def test_default_dict(ref_dicts, new_dicts):
         "shmatf",
         "v1matf",
         "v2matf",
-        "v3matf"
+        "v3matf",
+        "lablcc"
     ]
     """
     Ignore calltree_data: removed. ctfile, current, error_head, error_tail
@@ -177,6 +178,8 @@ def test_default_dict(ref_dicts, new_dicts):
 
     blmatf, fwmatf, shmatf, v1matf, v2matf, v3matf contains shape and reshape() 
     functions: was str, is now list
+
+    lablcc used to contain &nbsps, and now has spaces stripped
     """
 
     # One difference is due to "null" in ref_dicts now being "0.0" or "" in 
