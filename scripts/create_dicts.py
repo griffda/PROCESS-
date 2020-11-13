@@ -434,10 +434,11 @@ class DefaultValues(ProjectDictionary):
                 value = ""
 
             # If the value is a Fortran array, convert it to a list
-            # Remove the (/ /) if the value starts with (/
-            if value.find("(/") == 0:
-                value = value.replace("(/", "")
-                value = value.replace("/)", "")
+            match = re.search(r"\(\/(.*)\/\)", value)
+            # Capture anything between (/ and /)
+            # This also deals with shape and reshape() functions
+            if match:
+                value = match.group(1)
                 value = value.replace(" ", "")
                 
                 # Some arrays of strings contain commas inside the strings

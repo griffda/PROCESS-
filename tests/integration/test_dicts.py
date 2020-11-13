@@ -139,7 +139,13 @@ def test_default_dict(ref_dicts, new_dicts):
         "lablxc",
         "timelabel",
         "imp_label",
-        "pi"
+        "pi",
+        "blmatf",
+        "fwmatf",
+        "shmatf",
+        "v1matf",
+        "v2matf",
+        "v3matf"
     ]
     """
     Ignore calltree_data: removed. ctfile, current, error_head, error_tail
@@ -168,6 +174,9 @@ def test_default_dict(ref_dicts, new_dicts):
     lablmm was breaking on commas inside strings inside the array before
 
     lablxc, timelabel, imp_label is the same, just with an annoying "''" for each value: now ''
+
+    blmatf, fwmatf, shmatf, v1matf, v2matf, v3matf contains shape and reshape() 
+    functions: was str, is now list
     """
 
     # One difference is due to "null" in ref_dicts now being "0.0" or "" in 
