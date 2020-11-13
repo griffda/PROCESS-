@@ -133,7 +133,7 @@ contains
           if ( r_cp_top < 1.01D0 * r_tf_inboard_out ) then
             fdiags(1) = r_cp_top
             fdiags(2) = r_tf_inboard_out
-            call report_error(262)
+            call report_error(268)
 
             ! r_cp_top correction
             r_cp_top = r_tf_inboard_out * 1.01D0
@@ -149,7 +149,7 @@ contains
           if ( r_cp_top < 1.01D0 * r_tf_inboard_out ) then
             fdiags(1) = r_cp_top
             fdiags(2) = r_tf_inboard_out
-            call report_error(262)
+            call report_error(268)
 
             ! r_cp_top correction
             r_cp_top = r_tf_inboard_out * 1.01D0

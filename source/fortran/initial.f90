@@ -340,7 +340,7 @@ subroutine check
     use impurity_radiation_module, only: nimp, impurity_arr, fimp
     use numerics, only: ixc, icc, ioptimz, neqns, nineqns, nvar, boundl, &
         boundu
-    use pfcoil_variables, only: ipfres, ngrp, pfclres, ipfloc, ncls
+    use pfcoil_variables, only: ipfres, ngrp, pfclres, ipfloc, ncls, isumatoh
     use physics_variables, only: aspect, eped_sf, fdeut, fgwped, fhe3, &
         fgwsep, ftrit, ibss, i_single_null, icurr, ieped, idivrt, ishape, &
         iradloss, isc, ipedestal, ilhthresh, itart, nesep, rhopedn, rhopedt, &
@@ -354,8 +354,8 @@ subroutine check
         tmargmin_tf, eff_tf_cryo, eyoung_ins, i_tf_bucking, i_tf_shape, &
         n_tf_graded_layers, n_tf_stress_layers, tlegav,  i_tf_plane_stress, &
         i_tf_sc_mat, i_tf_wp_geom, i_tf_turns_integer, tinstf, thwcndut, &
-        tfinsgap, rcool, dhecoil, thicndut, i_cp_joints, t_turn_tf_is_input,&
-        t_turn_tf
+        tfinsgap, rcool, dhecoil, thicndut, i_cp_joints, t_turn_tf_is_input, &
+        t_turn_tf, tftmp
     use stellarator_variables, only: istell
     use sctfcoil_module, only: initialise_cables
     use vacuum_variables, only: vacuum_model
@@ -816,7 +816,7 @@ subroutine check
         ! Checking the CP TF top radius
         if ( ( abs(r_cp_top) > epsilon(r_cp_top) .or. any(ixc(1:nvar) == 174) ) &
             .and. i_r_cp_top /= 1 ) then
-             call report_error(261)
+             call report_error(267)
         end if
     ! --------------------------------
 
@@ -1012,7 +1012,15 @@ subroutine check
 
     ! Impossible to set the turn size of integer turn option
     if ( t_turn_tf_is_input .and. i_tf_turns_integer == 1 ) then
-        call report_error(263) 
+        call report_error(269) 
+    end if 
+
+    ! Checking the SC temperature for LTS
+    if ( ( i_tf_sc_mat == 1 .or. &
+           i_tf_sc_mat == 3 .or. &
+           i_tf_sc_mat == 4 .or. &
+           i_tf_sc_mat == 5 ) .and. tftmp > 10.0D0 ) then
+        call report_error(270)
     end if 
     ! -------
 
@@ -1110,6 +1118,16 @@ subroutine check
     end if
 
     errors_on = .false.
+
+    ! Cannot use temperature margin constraint with REBCO TF coils
+    if(any(icc == 36) .and. (i_tf_sc_mat == 8)) then
+        call report_error(265)
+    endif
+
+    ! Cannot use temperature margin constraint with REBCO CS coils
+    if(any(icc == 60) .and. (isumatoh == 8)) then
+        call report_error(264)
+    endif
 
 
 end subroutine check

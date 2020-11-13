@@ -2465,6 +2465,8 @@ module pfcoil_variables
   !! - =4 ITER Nb3Sn model with user-specified parameters
   !! - =5 WST Nb3Sn parameterisation
   !! - =6 REBCO HTS parameterisation
+  !! - =7 Durham Ginzburg-Landau critical surface model for Nb-Ti
+  !! - =8 Durham Ginzburg-Landau critical surface model for REBCO
 
   integer :: isumatpf = 1
   !! switch for superconductor material in PF coils:
@@ -2476,6 +2478,8 @@ module pfcoil_variables
   !! - =3 NbTi
   !! - =4 ITER Nb3Sn model with user-specified parameters
   !! - =5 WST Nb3Sn parameterisation
+  !! - =7 Durham Ginzburg-Landau critical surface model for Nb-Ti
+  !! - =8 Durham Ginzburg-Landau critical surface model for REBCO
 
   real(dp) :: jscoh_bop = 0.0D0
   !! central solenoid superconductor critical current density (A/m2) at beginning-of-pulse
@@ -2796,7 +2800,7 @@ module tfcoil_variables
   real(dp) :: dcase = 8000.0D0
   !! density of coil case (kg/m3)
 
-  real(dp), dimension(7) :: dcond = 9000.0D0
+  real(dp), dimension(8) :: dcond = 9000.0D0
   !! density of superconductor type given by i_tf_sc_mat/isumatoh/isumatpf (kg/m3)
   
   real(dp) :: dcondins = 1800.0D0
@@ -2868,6 +2872,8 @@ module tfcoil_variables
   !! - =4 ITER Nb3Sn model with user-specified parameters
   !! - =5 WST Nb3Sn parameterisation
   !! - =6 REBCO HTS tape in CroCo strand
+  !! - =7 Durham Ginzburg-Landau critical surface model for Nb-Ti
+  !! - =8 Durham Ginzburg-Landau critical surface model for REBCO
 
   integer :: i_tf_sup = 1
   !! Switch for TF coil conductor model:
@@ -4784,9 +4790,10 @@ module cost_variables
   real(dp) :: ucrb = 400.0D0
   !! cost of reactor building (M$/m3)
 
-  real(dp), dimension(7) :: ucsc = &
-      (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0/)
-  !! cost of superconductor ($/kg)
+  real(dp), dimension(8) :: ucsc = &
+  !! ucsc(6) /600.0,600.0,300.0,600.0/ : cost of superconductor ($/kg)
+       (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0, &
+       1200.0D0/)
 
   real(dp), parameter :: ucsh = 115.0D0
   !! cost of shops and warehouses (M$/m3)

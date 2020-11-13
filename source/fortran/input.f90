@@ -1869,7 +1869,7 @@ contains
           call parse_int_variable('i_tf_bucking', i_tf_bucking, 0, 3, &
                'Switch for bucking cylinder (case)')
        case ('i_tf_sc_mat')
-          call parse_int_variable('i_tf_sc_mat', i_tf_sc_mat, 1, 7, &
+          call parse_int_variable('i_tf_sc_mat', i_tf_sc_mat, 1, 8, &
                'TF coil superconductor material')
           if (i_tf_sc_mat == 2) then
              write(outfile,*) ' '
@@ -1987,7 +1987,7 @@ contains
           call parse_real_variable('n_tf_turn', n_tf_turn, 0.0D0, 100.0D0, &
                'number of turns per TF coil')
        case ('tftmp')
-          call parse_real_variable('tftmp', tftmp, 0.01D0, 10.0D0, &
+          call parse_real_variable('tftmp', tftmp, 0.01D0, 40.0D0, &
                'Peak TF coil He coolant temp. (K)')      
        case ('t_turn_tf')
           call parse_real_variable('t_turn_tf', t_turn_tf, 0.0D0, 0.1D0, &
@@ -2099,10 +2099,10 @@ contains
           call parse_int_variable('ipfres', ipfres, 0, 1, &
                'Switch for supercond / resist PF coils')
        case ('isumatoh')
-          call parse_int_variable('isumatoh', isumatoh, 1, 7, &
+          call parse_int_variable('isumatoh', isumatoh, 1, 8, &
                'Central Solenoid superconductor material')
        case ('isumatpf')
-          call parse_int_variable('isumatpf', isumatpf, 1, 7, &
+          call parse_int_variable('isumatpf', isumatpf, 1, 8, &
                'PF coil superconductor material')
        case ('ncls')
           call parse_int_array('ncls', ncls, isub1, ngrpmx, &
