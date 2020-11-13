@@ -264,6 +264,8 @@ contains
         case (84); call constraint_eqn_084(args)
          ! Constraint for CP lifetime
         case (85); call constraint_eqn_085(args)
+         ! Constraint for turn dimension
+        case (86); call constraint_eqn_086(args)
        case default
 
         idiags(1) = icc(i)
@@ -944,8 +946,9 @@ contains
       implicit none
       type (constraint_args_type), intent(out) :: args
 
-      ! pradmaxpv : local real :  the maximum possible power/vol that can be radiated
       real(dp) :: pradmaxpv
+      !! Maximum possible power/vol that can be radiated (local)
+
       pradmaxpv = pinjmw/vol + palppv*falpha + pchargepv + pohmpv
       args%cc =  1.0D0 - fradpwr * pradmaxpv / pradpv
       args%con = pradmaxpv * (1.0D0 - args%cc)
@@ -2847,6 +2850,25 @@ contains
 
    end subroutine constraint_eqn_085
 
+   subroutine constraint_eqn_086(args)
+      !! Author : S Kahn
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; 
+      !! 
+      use tfcoil_variables, only : t_turn_tf, f_t_turn_tf, t_turn_tf_max
+
+      implicit none
+
+      type (constraint_args_type), intent(out) :: args
+      
+      !! Constraints output
+      args%cc = 1.0D0 - t_turn_tf / ( f_t_turn_tf * t_turn_tf_max )
+      args%con = t_turn_tf_max * (1.0D0 - args%cc)
+      args%err = t_turn_tf_max * args%cc
+      args%symbol = '<'
+      args%units = 'm'
+
+   end subroutine constraint_eqn_086
 
 end module constraints
 

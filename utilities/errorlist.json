@@ -2,7 +2,7 @@
   "version":  [ "PROCESS version 1.0.16" ],
   "comment1": [ "List of error messages used via error_handling.f90" ],
   "comment2": [ "Increment n_errortypes if an error is added to this list" ],
-  "n_errortypes": 266,
+  "n_errortypes": 269,
   "errors": [
    { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
    { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -269,7 +269,9 @@
    {"no": 263, "level": 2, "message": "REBCO : Non physical strain used in PF. Use superconductor strain < +/- 0.7% "},
    {"no": 264, "level": 3, "message": "REBCO : turn off CS temperature margin constraint icc = 60 when using REBCO"},
    {"no": 265, "level": 3, "message": "REBCO : turn off TF temperature margin constraint icc = 36 when using REBCO"},
-   {"no": 266, "level": 2, "message": "REBCO : Field on superconductor > 14 T (outside of interpolation range)"}  
+   {"no": 266, "level": 2, "message": "REBCO : Field on superconductor > 14 T (outside of interpolation range)"},
+   {"no": 267, "level": 3, "message": "CHECK: To set the TF CP top value, you must use i_r_cp_top = 1"},
+   {"no": 268, "level": 2, "message": "[radialb]: TF CP top radius (r_cp_top) replaced by 1.01*r_tf_inboard_out -> potential top rbuild issue"},
+   {"no": 269, "level": 3, "message": "CHECK: Impossible to set the TF turn size with the integer turn option (i_tf_turns_integer: 1) "} 
    ]
  }
- 
