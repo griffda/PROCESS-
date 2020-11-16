@@ -330,8 +330,16 @@ def test_icc_full(ref_dicts, new_dicts):
     :param new_dicts: new dicts
     :type new_dicts: dict
     """
-    for old_key, old_value in ref_dicts["ICC_FULL"].items():
-        assert old_value == new_dicts["ICC_FULL"][old_key]
+    # 10 is now used: was "NOT USED"
+    EXCLUSIONS = ["10"]
+
+    ref_icc = ref_dicts["DICT_ICC_FULL"]
+    new_icc = new_dicts["DICT_ICC_FULL"]
+    
+    for old_key, old_value in ref_icc.items():
+        if old_key in EXCLUSIONS:
+            continue
+        assert old_value == new_icc[old_key]
 
 def test_input_bounds(ref_dicts, new_dicts):
     """Compare the input_bounds dicts.
