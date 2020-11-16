@@ -419,5 +419,5 @@ def test_var_type(ref_dicts, new_dicts):
     :param new_dicts: new dicts
     :type new_dicts: dict
     """
-    for old_key, old_value in ref_dicts["VAR_TYPE"].items():
-        assert old_value == new_dicts["VAR_TYPE"][old_key]
+    for old_key, old_value in ref_dicts["DICT_VAR_TYPE"].items():
+        assert old_value == new_dicts["DICT_VAR_TYPE"][old_key]
