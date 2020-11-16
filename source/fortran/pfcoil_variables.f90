@@ -357,7 +357,7 @@ module pfcoil_variables
     fcupfsu = 0.69D0
     fvssu = 1.0
     ipfloc = (/2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0/)
-    ipfres = 0! 
+    ipfres = 0
     itr_sum = 0.0D0
     isumatoh = 1
     isumatpf = 1
