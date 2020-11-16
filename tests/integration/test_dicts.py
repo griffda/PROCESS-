@@ -363,8 +363,35 @@ def test_module(ref_dicts, new_dicts):
     :param new_dicts: new dicts
     :type new_dicts: dict
     """
-    for old_key, old_value in ref_dicts["DICT_MODULE"].items():
-        assert old_value == new_dicts["DICT_MODULE"][old_key]
+    # Modules to ignore (no longer exist)
+    MOD_EXCLUSIONS = [
+        "autodoc_data",
+        "calltree_data"
+    ]
+    # Module variables to ignore (defined differently: env vars or functions)
+    VAR_EXCLUSIONS = [
+        "ROOTDIR",
+        "INSTALLDIR",
+        "impdir"
+    ]
+    ref_module = ref_dicts["DICT_MODULE"]
+    new_module = new_dicts["DICT_MODULE"]
+
+    # All values in ref_dicts module dict are lists of module variables
+    for old_key, old_value in ref_module.items():
+        # Ignore modules if excluded
+        if old_key in MOD_EXCLUSIONS:
+            continue
+        # Assert that the var exists in the new list
+        for old_var in old_value:
+            # Ignore var if excluded
+            if old_var in VAR_EXCLUSIONS:
+                continue
+            try:
+                assert old_var in new_module[old_key]
+            except AssertionError:
+                logger.error(f"DICT_MODULE: {old_key} is missing {old_var}")
+                raise
 
 def test_var_type(ref_dicts, new_dicts):
     """Compare the var_type dicts.
