@@ -352,8 +352,18 @@ def test_ixc_default(ref_dicts, new_dicts):
     :param new_dicts: new dicts
     :type new_dicts: dict
     """
-    for old_key, old_value in ref_dicts["IXC_DEFAULT"].items():
-        assert old_value == new_dicts["IXC_DEFAULT"][old_key]
+    ref_ixc = ref_dicts["DICT_IXC_DEFAULT"]
+    new_ixc = new_dicts["DICT_IXC_DEFAULT"]
+
+    # DUMMY was null, now initialised as 0.0
+    EXCLUSIONS = [
+        "DUMMY"
+    ]
+
+    for old_key, old_value in ref_ixc.items():
+        if old_key in EXCLUSIONS:
+            continue
+        assert old_value == new_ixc[old_key]
 
 def test_module(ref_dicts, new_dicts):
     """Compare the module dicts.
