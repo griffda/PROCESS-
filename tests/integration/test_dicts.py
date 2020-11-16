@@ -319,8 +319,76 @@ def test_descriptions(ref_dicts, new_dicts):
     :param new_dicts: new dicts
     :type new_dicts: dict
     """
-    for old_key, old_value in ref_dicts["DICT_DESCRIPTIONS"].items():
-        assert old_value == new_dicts["DICT_DESCRIPTIONS"][old_key]
+    # Exclusions are similar to those in test_default(): most are as a result of
+    # autodoc removal, but some are different in insignifcant ways (e.g. missing
+    # a space, \n etc.)
+    EXCLUSIONS = [
+        "INSTALLDIR",
+        "ROOTDIR",
+        "autodoc_version",
+        "child",
+        "ctfile",
+        "current",
+        "fimpvar",
+        "first_call",
+        "ife",
+        "lablcc",
+        "lablmm",
+        "pi",
+        "r2",
+        "zeffdiv",
+        "ffile",
+        "first_routine",
+        "hfile",
+        "hfunit",
+        "html_arguments_header",
+        "html_author_header",
+        "html_calls_header",
+        "html_code_close",
+        "html_code_open",
+        "html_contents_header",
+        "html_details_header",
+        "html_dir_close",
+        "html_dir_open",
+        "html_doc_header",
+        "html_h2_close",
+        "html_h2_open",
+        "html_h3_close",
+        "html_h3_open",
+        "html_history_header",
+        "html_hrule",
+        "html_link_close",
+        "html_link_mid",
+        "html_link_open",
+        "html_listitem",
+        "html_par",
+        "html_problems_header",
+        "html_status_header",
+        "html_summary_header",
+        "html_type_header",
+        "html_ulist_close",
+        "html_ulist_open",
+        "html_var_header",
+        "impdir",
+        "iounit",
+        "latest_routine",
+        "lenmax",
+        "parent",
+        "recursion",
+        "tagcount",
+        "vdfile",
+        "vdunit",
+    ]
+    ref_des = ref_dicts["DICT_DESCRIPTIONS"]
+    new_des = new_dicts["DICT_DESCRIPTIONS"]
+
+    for old_key, old_value in ref_des.items():
+        if old_key in EXCLUSIONS:
+            continue
+        # Remove spaces for comparison; not concerned about space diffs
+        new_value = new_des[old_key].replace(" ", "")
+        old_value = old_value.replace(" ", "")
+        assert old_value == new_value
 
 def test_icc_full(ref_dicts, new_dicts):
     """Compare the icc_full dicts.
