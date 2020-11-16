@@ -36,7 +36,55 @@ def ref_dicts():
     with open(ref_dicts_path, 'r') as ref_dicts_file:
         return json.load(ref_dicts_file)
 
-def test_default_dict(ref_dicts, new_dicts):
+def test_ref_and_new_dicts(ref_dicts, new_dicts):
+    """Simple comparison of reference and new dicts.
+
+    Reference and new dicts will not match exactly due to differences between 
+    the develop and Python conversion branches. Some dicts should match exactly,
+    and they are asserted here. Ones that are expected to differ are excluded
+    and have their own custom test functions.
+
+    :param ref_dicts: reference dicts
+    :type ref_dicts: dict
+    :param new_dicts: new dicts
+    :type new_dicts: dict
+    """
+    # Dicts that are expected to differ, so are not asserted here
+    EXCLUSIONS = [
+        "DICT_DEFAULT",
+        "DICT_DESCRIPTIONS",
+        "DICT_ICC_FULL",
+        "DICT_INPUT_BOUNDS",
+        "DICT_IXC_DEFAULT",
+        "DICT_MODULE",
+        "DICT_VAR_TYPE"
+    ]
+
+    # Number of dictionaries that match and differ
+    match_dicts = 0
+    diff_dicts = 0
+    
+    # Compare all dicts, except the excluded ones
+    for old_dict_key, old_dict_value in ref_dicts.items():
+        if old_dict_key in EXCLUSIONS:
+            continue
+        try:
+            assert old_dict_value == new_dicts[old_dict_key]
+            logger.info(f"{old_dict_key} dict matches develop")
+            match_dicts += 1
+        except AssertionError:
+            logger.error(f"{old_dict_key} dict differs from develop")
+            diff_dicts += 1
+
+    # Assert there are no differences
+    try:
+        assert diff_dicts == 0
+    except AssertionError:
+        total_dicts = match_dicts + diff_dicts
+        logger.error(f"{diff_dicts} / {total_dicts} dont' match")
+        raise
+
+def test_default(ref_dicts, new_dicts):
     """Compare the default dict in reference and new dicts.
 
     This compares the initial values of vars in ref and new dicts.
@@ -263,37 +311,68 @@ def test_default_dict(ref_dicts, new_dicts):
                     logger.error(f"{old_key} is different")
                     raise
 
-@pytest.mark.skip(reason="old and new dicts cannot be identical")
-def test_ref_and_new_dicts_summary(ref_dicts, new_dicts):
-    """Simple comparison of reference and new dicts.
-
-    These will not match exactly due to differences between the develop and 
-    Python conversion branches. It will always fail, and is therefore skipped.
-    It provides a useful overview of which dicts are different, however.
+def test_descriptions(ref_dicts, new_dicts):
+    """Compare the descriptions dicts.
 
     :param ref_dicts: reference dicts
     :type ref_dicts: dict
     :param new_dicts: new dicts
     :type new_dicts: dict
     """
-    # Number of dictionaries that match and differ
-    match_dicts = 0
-    diff_dicts = 0
-    
-    # Compare all dicts
-    for old_dict_key, old_dict_value in ref_dicts.items():
-        try:
-            assert old_dict_value == new_dicts[old_dict_key]
-            logger.info(f"{old_dict_key} dict matches develop")
-            match_dicts += 1
-        except AssertionError:
-            logger.error(f"{old_dict_key} dict differs from develop")
-            diff_dicts += 1
+    for old_key, old_value in ref_dicts["DICT_DESCRIPTIONS"].items():
+        assert old_value == new_dicts["DICT_DESCRIPTIONS"][old_key]
 
-    # Assert there are no differences
-    try:
-        assert diff_dicts == 0
-    except AssertionError:
-        total_dicts = match_dicts + diff_dicts
-        logger.error(f"{diff_dicts} / {total_dicts} dont' match")
-        raise
+def test_icc_full(ref_dicts, new_dicts):
+    """Compare the icc_full dicts.
+
+    :param ref_dicts: reference dicts
+    :type ref_dicts: dict
+    :param new_dicts: new dicts
+    :type new_dicts: dict
+    """
+    for old_key, old_value in ref_dicts["ICC_FULL"].items():
+        assert old_value == new_dicts["ICC_FULL"][old_key]
+
+def test_input_bounds(ref_dicts, new_dicts):
+    """Compare the input_bounds dicts.
+
+    :param ref_dicts: reference dicts
+    :type ref_dicts: dict
+    :param new_dicts: new dicts
+    :type new_dicts: dict
+    """
+    for old_key, old_value in ref_dicts["INPUT_BOUNDS"].items():
+        assert old_value == new_dicts["INPUT_BOUNDS"][old_key]
+
+def test_ixc_default(ref_dicts, new_dicts):
+    """Compare the ixc_default dicts.
+
+    :param ref_dicts: reference dicts
+    :type ref_dicts: dict
+    :param new_dicts: new dicts
+    :type new_dicts: dict
+    """
+    for old_key, old_value in ref_dicts["IXC_DEFAULT"].items():
+        assert old_value == new_dicts["IXC_DEFAULT"][old_key]
+
+def test_module(ref_dicts, new_dicts):
+    """Compare the module dicts.
+
+    :param ref_dicts: reference dicts
+    :type ref_dicts: dict
+    :param new_dicts: new dicts
+    :type new_dicts: dict
+    """
+    for old_key, old_value in ref_dicts["DICT_MODULE"].items():
+        assert old_value == new_dicts["DICT_MODULE"][old_key]
+
+def test_var_type(ref_dicts, new_dicts):
+    """Compare the var_type dicts.
+
+    :param ref_dicts: reference dicts
+    :type ref_dicts: dict
+    :param new_dicts: new dicts
+    :type new_dicts: dict
+    """
+    for old_key, old_value in ref_dicts["VAR_TYPE"].items():
+        assert old_value == new_dicts["VAR_TYPE"][old_key]
