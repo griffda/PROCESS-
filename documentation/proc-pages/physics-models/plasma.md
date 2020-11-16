@@ -17,7 +17,16 @@ its last closed flux surface (LCFS) elongation $\kappa$ (`kappa`) and triangular
 $\delta$ (`triang`), which can be scaled automatically with the aspect ratio if 
 required using switch `ishape`:
 
-- `ishape = 0` -- the input values for `kappa` and `triang` are used directly.
+- `ishape = 0` -- the input values for `kappa` and `triang` are used directly. 
+   The values for the plasma shaping parameters at the 95% flux surface are 
+   calculated as follows [^8]:
+   $$
+   \kappa_{95} = \kappa / 1.12
+   $$
+   $$
+   \delta_{95} = \delta / 1.5
+   $$
+
 - `ishape = 1` -- the following scaling is used, which is suitable for low aspect 
   ratio machines ($\epsilon = 1/A$) [^1]:
   $$
@@ -26,6 +35,9 @@ required using switch `ishape`:
   $$
   \delta = 0.53 \, (1 + 0.77 \, \epsilon^3)
   $$
+  The values for the plasma shaping parameters at the 95% flux surface are calculated 
+  using a fit to FIESTA runs, equivalent to `ishape = 8`.
+
 - `ishape = 2` -- the Zohm ITER scaling [^2] is used to calculate the elongation:
   $$
   \kappa = F_{kz} \, \times \, \mathrm{minimum} \left( 2.0, \, \, 1.5 + \frac{0.5}{A-1} \right)
@@ -33,22 +45,36 @@ required using switch `ishape`:
   where input variable `fkzohm` $= F_{kz}$ may be used to adjust the
   scaling, while the input value of the triangularity is used unchanged.
 
-If `ishape = 0, 1, 2`, the values for the plasma shaping parameters at the 95% 
-flux surface are calculated as follows [^3]:
-$$
-\kappa_{95} = \kappa / 1.12
-$$
-$$
-\delta_{95} = \delta / 1.5
-$$
-
-- If `ishape = 3`, the Zohm ITER scaling is used to calculate the elongation (as 
+- `ishape = 3` -- the Zohm ITER scaling is used to calculate the elongation (as 
   for `ishape = 2` above), but the triangularity at the 95% flux surface is 
   input via variable `triang95`, and the LCFS triangularity `triang` is calculated
   from it, rather than the other way round.
-- Finally, if `ishape = 4`, the 95% flux surface values `kappa95` and `triang95` 
+
+- `ishape = 4` -- the 95% flux surface values `kappa95` and `triang95` 
   are both used as inputs, and the LCFS values are calculated from them by 
-  inverting the equations above.
+  inverting ``ishape = 0``.
+
+- `ishape = 5` -- the 95% flux surface values `kappa95` and `triang95` 
+  are both used as inputs and the LCFS values are calculated from a fit to MAST data:
+  $$
+  \kappa = 0.91 \kappa_{95} + 0.39
+  $$
+  $$
+  \delta = 0.77 \delta_{95} + 0.19 
+  $$
+
+- `ishape = 6` -- the input values for `kappa` and `triang` are used directly and the 95% flux surface values are calculated using the MAST scaling from `ishape = 5`.
+
+- `ishape = 7` -- the 95% flux surface values `kappa95` and `triang95` 
+  are both used as inputs and the LCFS values are calculated from a fit to FIESTA runs:
+  $$
+  \kappa = 0.91 \kappa_{95} + 0.39
+  $$
+  $$
+  \delta = 1.38 \delta_{95} + 0.05 
+  $$
+
+- `ishape = 8` -- the input values for `kappa` and `triang` are used directly and the 95% flux surface values are calculated using the FIESTA fit from `ishape = 7`.
 
 A constraint relating to the plasma's vertical stability may be turned on if
 required. In principle, the inner surface of the outboard shield could be used
@@ -101,10 +127,10 @@ Since the temperature required to ignite the D-$^3$He reaction is considerably
 higher than that for D-T, it is necessary to take into account the following
 D-D reactions, which have significant reaction rates at such temperatures:
 
-$$\begin{eqnarray*}
-\mathrm{D + D}  & \Longrightarrow  & \mathrm{^{3}He + n + 3.27 \,MeV} \\
-\mathrm{D + D}  & \Longrightarrow  & \mathrm{T + p + 4.03 \,MeV}
-\end{eqnarray*}$$
+$$\begin{aligned}
+\mathrm{D + D}  & \Longrightarrow \mathrm{^{3}He + n + 3.27 \,MeV} \\
+\mathrm{D + D}  & \Longrightarrow \mathrm{T + p + 4.03 \,MeV}
+\end{aligned}$$
 
 Also, as tritium is produced by the latter reaction, D-T fusion is also
 possible. As a result, there is still a small amount of neutron power
@@ -116,18 +142,18 @@ be produced for fuel.
 
 The contributions from all four of the above fusion reactions are included in
 the total fusion power production calculation. The fusion reaction rates are
-calculated using the parametrizations in [^5], integrated over the plasma 
+calculated using the parameterizations in [^5], integrated over the plasma 
 profiles (correctly, with or without pedestals).
 
 The fractional composition of the 'fuel' ions (D, T and $^3$He) is
 controlled using the three variables `fdeut`, `ftrit` and `fhe3`, respectively:
 
-$$\begin{eqnarray*}
-n_{\mbox{fuel}}  & =  & n_D + n_T + n_{\mathrm{^{3}He}}  \;\;\; \mbox{particles/m$^3$} \\
-n_D  & = & \mathtt{fdeut} \, n_{\mbox{fuel}} \\
-n_T  & = & \mathtt{ftrit} \, n_{\mbox{fuel}} \\
-n_{\mathrm{^{3}He}} & = & \mathtt{fhe3} \, n_{\mbox{fuel}}
-\end{eqnarray*}$$
+$$\begin{aligned}
+n_{\mbox{fuel}}  & = n_D + n_T + n_{\mathrm{^{3}He}}  \;\;\; \mbox{particles/m$^3$} \\
+n_D  & = \mathtt{fdeut} \, n_{\mbox{fuel}} \\
+n_T  & = \mathtt{ftrit} \, n_{\mbox{fuel}} \\
+n_{\mathrm{^{3}He}} & = \mathtt{fhe3} \, n_{\mbox{fuel}}
+\end{aligned}$$
 
 PROCESS checks that $fdeut + ftrit + fhe3 = 1.0$, and stops with an error 
 message otherwise.
@@ -137,25 +163,25 @@ message otherwise.
 If switch `ipedestal = 0`, the plasma profiles are assumed to be parabolic, 
 i.e.they are of the form
 
-$$\begin{eqnarray}
-\mbox{Density : } n(\rho) & = & n_0 \left( 1 - \rho^2 \right)^{\alpha_n} \\
-\mbox{Temperature : } T(\rho) & = & T_0 \left( 1 - \rho^2 \right)^{\alpha_T} \\
-\mbox{Current : } J(r) & = & J_0 \left( 1 - \rho^2 \right)^{\alpha_J}
-\end{eqnarray}$$
+$$\begin{aligned}
+\mbox{Density : } n(\rho) & = n_0 \left( 1 - \rho^2 \right)^{\alpha_n} \\
+\mbox{Temperature : } T(\rho) & = T_0 \left( 1 - \rho^2 \right)^{\alpha_T} \\
+\mbox{Current : } J(r) & = J_0 \left( 1 - \rho^2 \right)^{\alpha_J}
+\end{aligned}$$
 
 where $\rho = r/a$, and $a$ is the plasma minor radius. This gives
 volume-averaged values $\langle n \rangle = n_0 / (1+\alpha_n)$, and
 line-averaged values $\bar{n} \sim n_0 / \sqrt{(1+\alpha_n)}$, etc.  These
 volume- and line-averages are used throughout the code along with the profile
 indices $\alpha$, in the various physics models, many of which are fits to
-theory-based or empirical scalings. Thus, the plasma model in \process\ may
-be described as $\frac{1}{2}$-D.  The relevant profile index variables are
+theory-based or empirical scalings. Thus, the plasma model in PROCESS may
+be described as 1/2-D.  The relevant profile index variables are
 `alphan`, `alphat` and `alphaj`, respectively.
 
 However, by default, `ipedestal = 1` which allows the density and 
 temperature profiles to include a pedestal, using the forms specified in [^6]:
 
-$$\begin{equation}
+$$\begin{aligned}
 \mbox{density:} \qquad n(\rho) = \left\{ 
 \begin{aligned}
     & n_{ped} + (n_0 - n_{ped}) \left( 1 -
@@ -165,9 +191,9 @@ $$\begin{equation}
    & \qquad \rho_{ped,n} < \rho \leq 1
 \end{aligned}
 \right.
-\end{equation}$$
+\end{aligned}$$
 
-$$\begin{equation}
+$$\begin{aligned}
 \mbox{temperature:} \qquad T(\rho) = \left\{ 
 \begin{aligned}
    & T_{ped} + (T_0 - T_{ped}) \left( 1 - \frac{\rho^{\beta_T}}
@@ -176,7 +202,7 @@ $$\begin{equation}
    & \qquad \rho_{ped,T} < \rho \leq 1
 \end{aligned}
 \right.
-\end{equation}$$
+\end{aligned}$$
 
 Subscripts $0$, $ped$ and $sep$, denote values at the centre ($\rho = 0$), the
 pedestal ($\rho = \rho_{ped}$) and the separatrix ($\rho=1$),
@@ -188,39 +214,39 @@ at the separatrix (`neped, nesep` for the electron density, and
 `teped, tesep` for the electron temperature; the ion equivalents are
 scaled from the electron values by the ratio of the volume-averaged values).
 
-The density at the centre is given by
+The density at the centre is given by:
 
-$$\begin{eqnarray}
+$$\begin{aligned}
   \nonumber
   n_0 & = & \frac{1}{3\rho_{ped,n}^2} \left[3\langle n\rangle (1+\alpha_n)
     + n_{sep} (1+\alpha_n) (-2 + \rho_{ped,n} + \rho_{ped,n}^2) \right.\\
    & & \left. - n_{ped}\left( (1 + \alpha_n)(1+ \rho_{ped,n}) + (\alpha_n -2)
     \rho_{ped,n}^2 \right) \right]
-\end{eqnarray}$$
+\end{aligned}$$
 
 where $\langle n \rangle$ is the volume-averaged density. The temperature at
 the centre is given by
 
-$$\begin{equation}
+$$\begin{aligned}
 T_0 = T_{ped} + \gamma \left[ T_{ped}\, \rho_{ped,T}^2 - \langle T \rangle +
   \frac{1}{3}(1 - \rho_{ped,T}) \left[ \, (1 + 2\rho_{ped,T}) \, T_{ped} + ( 2 +
     \rho_{ped,T}) \, T_{sep} \, \right] \right]
-\end{equation}$$
+\end{aligned}$$
 
 with 
 
-$$\begin{equation}
-\gamma = \left\{ 
+$$\begin{aligned}
+\gamma = \left\{
 \begin{aligned}
   & \frac{ -\Gamma(1+\alpha_T+2/\beta_T)}
   {\rho_{ped,T}^2 \, \Gamma(1+\alpha_T) \, \Gamma((2+\beta_T)/\beta_T)}
-  &\qquad \text{for integer } \alpha_T \\
+  \qquad \text{for integer} \, \alpha_T \\
   &\frac{\Gamma(-\alpha_T)\sin(\pi\alpha)\, \Gamma(1+\alpha_T+2/\beta_T)}
   {\pi\rho_{ped,T}^2 \, \Gamma((2+\beta_T)/\beta_T)}
-  &\qquad \text{for non-integer } \alpha_T
+  \qquad \text{for non-integer} \, \alpha_T
 \end{aligned}
 \right.
-\end{equation}$$
+\end{aligned}$$
 
 where $\Gamma$ is the gamma function.
 
@@ -235,9 +261,9 @@ the Greenwald density (if `iscdens=1`).  The default fraction is 0.8[^7].
 
 The plasma beta limit[^8] is given by 
 
-$$\begin{equation}
+$$\begin{aligned}
 \langle \beta \rangle < g \, \frac{I(\mbox{MA})}{a(\mbox{m}) \, B_0(\mbox{T})}
-\end{equation}$$
+\end{aligned}$$
 
 where $B_0$ is the axial vacuum toroidal field, and $\beta$ is defined with
 respect to the total equilibrium $\mathbf{B}$-field [^9]. The beta
@@ -267,14 +293,14 @@ Switch `ifalphap` may be used to select the model used to calculate the pressure
 contribution from the fast alpha particles, there are two options 1[^8] and 
 2[^10]:
 
-$$\begin{eqnarray}
-\frac{\beta_{\alpha}}{\beta_{th}} & = & 0.29 \, \left( \langle T_{10} \rangle -
+$$\begin{aligned}
+\frac{\beta_{\alpha}}{\beta_{th}} & = 0.29 \, \left( \langle T_{10} \rangle -
   0.37 \right) \, \left( \frac{n_{DT}}{n_e} \right)^2
-\hspace{20mm} & \mbox{ifalphap = 0} \\
-\frac{\beta_{\alpha}}{\beta_{th}} & = & 0.26 \, \left( \langle T_{10} \rangle -
+\hspace{20mm} \mbox{ifalphap = 0} \\
+\frac{\beta_{\alpha}}{\beta_{th}} & = 0.26 \, \left( \langle T_{10} \rangle -
   0.65 \right)^{0.5} \, \left( \frac{n_{DT}}{n_e} \right)^2
-\hspace{16mm} & \mbox{ifalphap = 1 (default)}
-\end{eqnarray}$$
+\hspace{16mm} \mbox{ifalphap = 1 (default)}
+\end{aligned}$$
 
 The latter model is a better estimate at higher temperatures.
 
@@ -343,18 +369,8 @@ radius defining the core region. Only the impurity and synchrotron radiation
 from the core region affects the confinement scaling. Figure 1 below shows the
 radiation power contributions.
 
-<figure>
-    <center>
-    <img src="../../img/radiation.png" alt="radiation" 
-    title="Schematic diagram of radiation power contributions" 
-    width="650" height="100" />
-    <br><br>
-    <figcaption><i>Figure 1: Schematic diagram of the radiation power 
-    contributions and how they are split between core and edge radiation
-    </i></figcaption>
-    <br>
-    </center>
-</figure>
+![Schematic diagram of radiation power contributions](../images/radiation.png "Schematic diagram of radiation power contributions")
+*Figure 1: Schematic diagram of the radiation power contributions and how they are split between core and edge radiation*
 
 Constraint equation no. 17 with iteration variable no. 28 (`fradpwr`)
 ensures that the calculated total radiation power does not exceed the total
@@ -504,7 +520,7 @@ Figure 2 below shows the flow of power as calculated by the code.
 
 <figure>
     <center>
-    <img src="../../img/powerflow1.png" alt="powerflow" 
+    <img src="../../images/powerflow1.png" alt="powerflow" 
     title="Power balance within the core plasma" 
     width="650" height="100" />
     <br><br>

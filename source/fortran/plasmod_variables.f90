@@ -309,5 +309,7 @@ module plasmod_variables
     plasmod_fpellet = 0.5d0
     plasmod_pedscal = 1.0d0
     plasmod_imptype = (/ 14, 13, 9 /)
+    plasmod_i_equiltype = 1
+    plasmod_i_modeltype = 1
   end subroutine init_plasmod_variables
 end module plasmod_variables

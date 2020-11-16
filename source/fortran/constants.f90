@@ -80,8 +80,11 @@ module constants
   real(dp), parameter :: muh2o = 4.71D-4
   !! water dynamic viscosity (kg/m/s)
 
-  contains
+  real(dp), parameter :: n_day_year = 365.2425D0
+  !! Average number of days in a year
 
+  contains
+  
   subroutine init_constants
     !! Initialise module variables
     implicit none

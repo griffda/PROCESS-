@@ -36,10 +36,10 @@ stages:
     - export LANG=en_GB.utf8
 
 .before_test_template: &test-setup
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:latest
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
   before_script:
-    - pip install --upgrade pip
-    - pip install virtualenv
+    - pip3 install --upgrade pip
+    - pip3 install virtualenv
     - virtualenv ~/testenv
     - source ~/testenv/bin/activate
     - python3 -m pip install -r requirements.txt
@@ -52,7 +52,7 @@ stages:
 
 make:
   stage: build
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:latest
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
   artifacts:
     paths:
       - process_dist/process-*.tar.gz
@@ -61,8 +61,8 @@ make:
   script:
     - cmake -H. -Bbuild
     - cmake --build build
-    - python setup.py sdist -d process_dist
-    - python setup.py bdist_wheel -d process_dist
+    - python3 setup.py sdist -d process_dist
+    - python3 setup.py bdist_wheel -d process_dist
 
 #-----------------
 #  Testing
@@ -96,12 +96,12 @@ baseline_2019:
   script:
     - process -i tracking/baseline_2019/baseline_2019_IN.DAT
     - > 
-      python process/io/mfile_comparison.py
+      python3 process/io/mfile_comparison.py
       -f tracking/baseline_2019/baseline_2019_MFILE.DAT tracking/baseline_2019/ref_baseline_2019_MFILE.DAT 
       --acc 1.0 
       --baseline
     - > 
-      python process/io/mfile_comparison.py
+      python3 process/io/mfile_comparison.py
       -f tracking/baseline_2019/baseline_2019_MFILE.DAT tracking/baseline_2019/ref_baseline_2019_MFILE.DAT 
       --acc 10.0 
       --baseline
@@ -114,12 +114,12 @@ baseline_2018:
   script:
     - process -i tracking/baseline_2018/baseline_2018_IN.DAT
     - > 
-      python process/io/mfile_comparison.py
+      python3 process/io/mfile_comparison.py
       -f tracking/baseline_2018/baseline_2018_MFILE.DAT tracking/baseline_2018/ref_baseline_2018_MFILE.DAT 
       --acc 1.0 
       --baseline
     - > 
-      python process/io/mfile_comparison.py
+      python3 process/io/mfile_comparison.py
       -f tracking/baseline_2018/baseline_2018_MFILE.DAT tracking/baseline_2018/ref_baseline_2018_MFILE.DAT 
       --acc 10.0 
       --baseline
@@ -129,7 +129,7 @@ step_input:
   only: 
     - develop
   stage: testing
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:latest
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
   stage: pages
   script:
     - git config --global user.email "james.morris2@ukaea.uk"
@@ -156,7 +156,7 @@ step_input:
 line_length:
   when: on_success
   stage: quality
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:latest
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
   script:
     - pwd
     - python3 utilities/line_length_standard.py
@@ -275,7 +275,7 @@ pages:
     # Remove on merge to develop
     - issue-vardes-to-gitpages
   stage: pages
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:latest
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
   script:
     - pwd
     

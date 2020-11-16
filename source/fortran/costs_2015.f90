@@ -347,7 +347,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use tfcoil_variables, only: n_tf, tfleng, turnstf, whtconcu, whtconsc
+    use tfcoil_variables, only: n_tf, tfleng, n_tf_turn, whtconcu, whtconsc
     use cost_variables, only: cost_factor_tf_coils, costexp
 
     implicit none
@@ -376,7 +376,7 @@ contains
     ! ITER winding cost (2014 $)
     s(16)%cref = 414.0D6
     ! Scale with the total turn length (m)
-    s(16)%k = n_tf * tfleng * turnstf
+    s(16)%k = n_tf * tfleng * n_tf_turn
     s(16)%kref = 82249.0D0
     s(16)%cost = s(16)%cost_factor * s(16)%cref * (s(16)%k / s(16)%kref)**costexp
 
@@ -409,7 +409,7 @@ contains
     ! ITER cabling and jacketing costs (2014 $)
     s(20)%cref = 81.0D6
     ! Scale with total turn length.
-    s(20)%k = n_tf * tfleng * turnstf
+    s(20)%k = n_tf * tfleng * n_tf_turn
     s(20)%kref = 82249.0D0
     s(20)%cost = s(20)%cost_factor * s(20)%cref * (s(20)%k / s(20)%kref)**costexp
 

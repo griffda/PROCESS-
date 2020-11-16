@@ -471,7 +471,9 @@ contains
 		use heat_transport_variables, only: pnetelmw 
 		use physics_variables, only: itart, wtgpd, fhe3
 		use process_output, only: oheadr, osubhd, ovarrf, oshead 
-		use times_variables, only: tcycle, tburn
+      use times_variables, only: tcycle, tburn
+      use constants, only: n_day_year
+
     implicit none
 
     !  Arguments
@@ -491,9 +493,9 @@ contains
     !  Number of kWh generated each year
 
     if (ife == 1) then
-       kwhpy = 1.0D3 * pnetelmw * (24.0D0*365.0D0) * cfactr
+       kwhpy = 1.0D3 * pnetelmw * (24.0D0*n_day_year) * cfactr
     else
-       kwhpy = 1.0D3 * pnetelmw * (24.0D0*365.0D0) * cfactr * tburn/tcycle
+       kwhpy = 1.0D3 * pnetelmw * (24.0D0*n_day_year) * cfactr * tburn/tcycle
     end if
 
     !  Costs due to reactor plant
@@ -679,7 +681,7 @@ contains
     if (ife /= 1) then
        !  Sum D-T fuel cost and He3 fuel cost
        annfuel = ucfuel * pnetelmw/1200.0D0 + &
-            1.0D-6 * fhe3 * wtgpd * 1.0D-3 * uche3 * 365.0D0 * cfactr
+            1.0D-6 * fhe3 * wtgpd * 1.0D-3 * uche3 * n_day_year * cfactr
     else
        annfuel = 1.0D-6 * uctarg * reprat * 3.1536D7 * cfactr
     end if
@@ -1411,7 +1413,7 @@ contains
 		use physics_variables, only: itart 
 		use structure_variables, only: clgsmass, aintmass 
 		use tfcoil_variables, only: whtconcu, whtconsc, whtcas, n_tf, whttflgs, &
-      whtcp, i_tf_sup, turnstf, tfleng, i_tf_sc_mat
+      whtcp, i_tf_sup, n_tf_turn, tfleng, i_tf_sc_mat
     implicit none
 
     !  Arguments
@@ -1460,11 +1462,11 @@ contains
 
        !  Superconductor ($/m)
 
-       costtfsc = ucsc(i_tf_sc_mat) * whtconsc / (tfleng*turnstf)
+       costtfsc = ucsc(i_tf_sc_mat) * whtconsc / (tfleng*n_tf_turn)
 
        !  Copper ($/m)
 
-       costtfcu = uccu * whtconcu / (tfleng*turnstf)
+       costtfcu = uccu * whtconcu / (tfleng*n_tf_turn)
 
        !  Total cost/metre of superconductor and copper wire
 
@@ -1476,12 +1478,12 @@ contains
 
        !  Total conductor costs
 
-       c22211 = 1.0D-6 * ctfconpm * n_tf * tfleng * turnstf
+       c22211 = 1.0D-6 * ctfconpm * n_tf * tfleng * n_tf_turn
        c22211 = fkind * c22211 * cmlsa(lsa)
 
        !  Account 222.1.2 : Winding
 
-       c22212 = 1.0D-6 * ucwindtf * n_tf * tfleng * turnstf
+       c22212 = 1.0D-6 * ucwindtf * n_tf * tfleng * n_tf_turn
        c22212 = fkind * c22212 * cmlsa(lsa)
 
        !  Account 222.1.3 : Case

@@ -57,7 +57,7 @@ contains
       pnucdiv, pnucfw, pnuchcd, pnucloss, pnucshld, ptfnuc, rdewex, tbr, &
       tritprate, vdewex, vdewin, vfblkt, vfshld, volblkt, volblkti, volblkto, &
       volshld, vvmass, wallpf, whtblbe, whtblbreed, whtblkt, whtblss, whtblvd, &
-      whtshld, wpenshld, wtblli2o, pnuccp, rpf2dewar
+      whtshld, wpenshld, wtblli2o, pnuc_cp, rpf2dewar
     use heat_transport_variables, only: ipowerflow
     use kit_blanket_model, only: nflutfi, nflutfo, pnuctfi, pnuctfo, t_bl_y, &
       vvhemaxi, vvhemaxo, vvhemini, vvhemino
@@ -245,11 +245,11 @@ contains
        decay(6,2) = 15.25D0
        decay(7,2) = 17.25D0
 
-       pnuccp = 0.0D0
+       pnuc_cp = 0.0D0
 
        !  Energy-multiplied neutron power
 
-       pneut2 = (pneutmw - pnucloss - pnuccp) * emult
+       pneut2 = (pneutmw - pnucloss - pnuc_cp) * emult
 
        !  Nuclear heating in the blanket
        decaybl = 0.075D0 / (1.0D0 - vfblkt - fblli2o - fblbe)
@@ -349,7 +349,7 @@ contains
 
     else  !  ipowerflow == 1
 
-       pnuccp = 0.0D0
+       pnuc_cp = 0.0D0
 
        !  Neutron power incident on divertor
 
@@ -361,7 +361,7 @@ contains
 
        !  Neutron power deposited in first wall, blanket and shield
 
-       pnucfwbs = pneutmw - pnucdiv - pnucloss - pnuccp - pnuchcd
+       pnucfwbs = pneutmw - pnucdiv - pnucloss - pnuc_cp - pnuchcd
 
        !  Neutron power deposited in first wall
 

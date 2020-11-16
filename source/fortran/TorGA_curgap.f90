@@ -35,7 +35,8 @@ end module torga_curgap_module
       REAL(p_) zrtmp, fctmp
       common /dumm/zrtmp, fctmp
 
-      REAL(p_), EXTERNAL :: TorGa_zgauleg,TorGa_funxjs,TorGa_funxjz,TorGa_alpha
+      REAL(p_), EXTERNAL :: TorGa_zgauleg
+      REAL(p_), EXTERNAL :: TorGa_funxjs,TorGa_funxjz,TorGa_alpha
 !------------------------------------------------------------------------
 !     CURGAP(version 1.0) Y.R. Lin-Liu, 08/16/04
 !     This routine is an improved version and the replacement of CURGAC.
@@ -727,7 +728,7 @@ end module torga_curgap_module
       parameter (tolft=1.e-6_p_)
       REAL(p_) ap,ss
       integer jromb
-      REAL(p_), external :: TorGa_qftint
+      REAL(p_), EXTERNAL :: TorGa_qftint
 !
       hbar=hav
       c2=cxi2
@@ -752,7 +753,7 @@ end module torga_curgap_module
 !----------------------------------------------------------------------------
       REAL(p_) z,s,ss,ap
       integer jromb
-      REAL(p_), external :: TorGa_hcapint
+      REAL(p_), EXTERNAL :: TorGa_hcapint
 ! DMC bugfix: prevent the first arg from reaching or exceeding 1.0
       z=min(0.9999999_p_,z_in)
       s=z*(1._p_-hav)/(1._p_-z*hav)
@@ -800,7 +801,7 @@ end module torga_curgap_module
       REAL(p_) uv,rhocap,gamma,ss
       integer jromb
       common /cmbqfc/uv,rhocap,gamma
-      real(p_), external :: TorGa_fcapint
+      REAL(p_), EXTERNAL :: TorGa_fcapint
 !
       if (u .le. 0._p_)then
          fcap=0._p_

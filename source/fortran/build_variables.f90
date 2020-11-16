@@ -16,7 +16,7 @@ module build_variables
   real(dp) :: aplasmin
   !! minimum minor radius (m)
 
-  real(dp) ::   available_radial_space
+  real(dp) :: available_radial_space
   !! Minimal radial space between plasma and coils (m)
 
   real(dp) :: blarea
@@ -177,6 +177,9 @@ module build_variables
   real(dp) :: r_vv_inboard_out
   !! Radial plasma facing side position of inboard vacuum vessel [m]
 
+  real(dp) :: r_sh_inboard_in
+  !! Radial inner side position of inboard neutronic shield [m]
+
   real(dp) :: r_sh_inboard_out
   !! Radial plasma facing side position of inboard neutronic shield [m]
 
@@ -194,6 +197,10 @@ module build_variables
 
   real(dp) :: r_cp_top
   !! Top outer radius of the centropost (ST only) (m)
+
+  real(dp) :: f_r_cp
+  !! Ratio between the top and the midplane TF CP outer radius [-] 
+  !! Not used by default (-1) must be larger than 1 otherwise
 
   real(dp) :: dr_tf_inner_bore
   !! TF coil horizontal inner bore (m)
@@ -370,5 +377,7 @@ module build_variables
     plsepi = 1.0D0
     plsepo = 1.5D0
     rspo = 0.0D0
+    r_sh_inboard_in = 0.0D0
+    f_r_cp = -1.0D0
   end subroutine init_build_variables
 end module build_variables

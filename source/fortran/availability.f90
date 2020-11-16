@@ -41,13 +41,15 @@ contains
     use times_variables, only: tburn, tcycle
     use process_output, only: ovarre, oheadr
     use divertor_variables, only: hldiv
-    use fwbs_variables, only: fwlife, bktlife, blktmodel
+    use fwbs_variables, only: fwlife, bktlife, blktmodel, neut_flux_cp
     use ife_variables, only: ife
     use physics_variables, only: wallmw, itart
     use cost_variables, only: abktflnc, tlife, divlife, adivflnc, cplife, &
       cpstflnc, iavail, tdivrepl, tbktrepl, tcomrepl, uubop, uucd, uufuel, &
       uufw, uumag, uuves, uudiv, cpfact, cfactr, cdrlife
-
+    use constraint_variables, only : nflutfmax 
+    use tfcoil_variables, only: i_tf_sup
+    use constants, only : n_day_year
     implicit none
 
     !  Arguments
@@ -60,6 +62,9 @@ contains
     real(dp) :: uplanned, uutot
     integer :: n
 
+    real(dp) :: n_sec_year
+    !! Number of seconds in a year
+    
     ! Full power lifetime (in years)
     if (ife /= 1) then
 
@@ -81,8 +86,20 @@ contains
       divlife = max(0.0, min(adivflnc/hldiv, tlife))
 
       ! Centrepost lifetime (years) (ST machines only)
-      if (itart == 1) then
-        cplife = min(cpstflnc/wallmw, tlife)
+      if ( itart ==  1) then
+        
+        ! SC magnets CP lifetime
+        ! Rem : only the TF maximum fluence is considered for now
+        if ( i_tf_sup == 1 ) then
+          n_sec_year = 3600.0D0 * 24.0D0 * n_day_year
+          cplife = min( nflutfmax / ( neut_flux_cp * n_sec_year ), tlife )
+          
+        ! Aluminium/Copper magnets CP lifetime
+        ! For now, we keep the original def, developped for GLIDCOP magnets ...
+        else 
+          cplife = min( cpstflnc / wallmw, tlife )
+
+        end if
       end if
     end if
 
@@ -145,7 +162,7 @@ contains
       end if
 
       ! Centrepost
-      if ((itart == 1).and.(cplife < tlife)) then
+      if ( itart == 1 .and. cplife < tlife ) then
         cplife = min( cplife/cfactr, tlife )
       end if
 
@@ -305,10 +322,13 @@ contains
 
     use process_output, only: oheadr, ocmmnt, ovarre, oblnkl, ovarin
     use divertor_variables, only: hldiv
-    use fwbs_variables, only: bktlife
+    use fwbs_variables, only: bktlife, neut_flux_cp
     use physics_variables, only: wallmw, itart
     use cost_variables, only: abktflnc, tlife, divlife, adivflnc, abktflnc, &
       cdrlife, cplife, cpstflnc, num_rh_systems
+    use tfcoil_variables, only: i_tf_sup
+    use constraint_variables, only : nflutfmax 
+    use constants, only : n_day_year
 
     implicit none
 
@@ -318,7 +338,9 @@ contains
 
     ! Local variables !
     ! !!!!!!!!!!!!!!!!!!
-
+    real(dp) :: n_sec_year
+    !! Number of seconds in a year
+    
     real(dp) :: mttr_blanket, mttr_divertor, mttr_shortest
     real(dp) :: lifetime_shortest, lifetime_longest
     integer :: n
@@ -336,8 +358,19 @@ contains
 
     ! Centrepost lifetime (years) (ST only)
     if (itart == 1) then
-      cplife = min( cpstflnc/wallmw, tlife )
-    end if
+
+      ! SC magnets CP lifetime
+      ! Rem : only the TF maximum fluence is considered for now
+      if ( i_tf_sup == 1 ) then
+        n_sec_year = 3600.0D0 * 24.0D0 * n_day_year
+        cplife = min( nflutfmax / ( neut_flux_cp * n_sec_year ), tlife )
+
+      ! Aluminium/Copper magnets CP lifetime
+      ! For now, we keep the original def, developped for GLIDCOP magnets ...
+      else 
+        cplife = min( cpstflnc / wallmw, tlife )
+      end if
+    end if 
 
     ! Current drive lifetime (assumed equal to first wall and blanket lifetime)
     cdrlife = bktlife
@@ -650,6 +683,7 @@ contains
 
     use process_output, only: ocmmnt, ovarre, oblnkl, ovarin
     use cost_variables, only: t_operation
+    use constants, only : n_day_year
 
     implicit none
 
@@ -670,11 +704,11 @@ contains
     bop_fail_rate = 9.39D-5
 
     ! Number of balance of plant failures in plant operational lifetime
-    bop_num_failures = nint(bop_fail_rate * 365.25D0 * 24.0D0 * t_operation)
+    bop_num_failures = nint(bop_fail_rate * n_day_year * 24.0D0 * t_operation)
 
     ! Balance of plant mean time to repair (years)
     ! ENEA study WP13-DTM02-T01
-    bop_mttr = 96.0D0 / (24.0D0 * 365.25D0)
+    bop_mttr = 96.0D0 / (24.0D0 * n_day_year)
 
     ! Unplanned downtime balance of plant
     u_unplanned_bop = (bop_mttr * bop_num_failures)/(t_operation)
@@ -741,7 +775,7 @@ contains
     use maths_library, only: binomial
     use process_output, only: ocmmnt, ovarre, oblnkl, ovarin
     use cost_variables, only: redun_vac, tlife, t_operation, num_rh_systems
-
+    use constants, only: n_day_year
     implicit none
 
     ! Arguments
@@ -776,7 +810,7 @@ contains
     ! safety assessment tasks", Cadwallader (1994)
 
     ! probability of pump failure per operational period
-    cryo_failure_rate = 2.0D-6 * 365.25D0 * 24.0D0 * t_op_bt
+    cryo_failure_rate = 2.0D-6 * n_day_year * 24.0D0 * t_op_bt
 
     ! probability of no pump failure per operational period
     cryo_nfailure_rate = 1.0D0 - cryo_failure_rate
