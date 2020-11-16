@@ -47,8 +47,9 @@ PARAMETER_DEFAULTS = ["rmajor", "aspect", "rminor", "bt", "powfmw",
 NON_F_VALUES = ['fcohbop', 'fvsbrnni', 'feffcd', 'fcutfsu', 'fimpvar']
 
 # PROCESS TF Coil types
-DICT_TF_TYPE = {1: "ITER Nb3Sn", 2: "Bi-2212", 3: "NbTi", 4: "Nb3Sn", 
-    5: "WST Nb3Sn", 6: "REBCO", 7: "YBCO"}
+DICT_TF_TYPE = {1: "Nb3Sn ITER", 2: "Bi-2212", 3: "NbTi", 4: "Nb3Sn user", 
+    5: "Nb3Sn WST", 6: "REBCO Croco", 7: "NbTi Ginzburg-Landau", 
+    8: "REBCO Ginzburg-Landau"}
 
 # FIMP Values
 DICT_FIMP = {
