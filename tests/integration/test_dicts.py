@@ -341,8 +341,8 @@ def test_input_bounds(ref_dicts, new_dicts):
     :param new_dicts: new dicts
     :type new_dicts: dict
     """
-    for old_key, old_value in ref_dicts["INPUT_BOUNDS"].items():
-        assert old_value == new_dicts["INPUT_BOUNDS"][old_key]
+    for old_key, old_value in ref_dicts["DICT_INPUT_BOUNDS"].items():
+        assert old_value == new_dicts["DICT_INPUT_BOUNDS"][old_key]
 
 def test_ixc_default(ref_dicts, new_dicts):
     """Compare the ixc_default dicts.
