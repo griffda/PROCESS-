@@ -70,7 +70,7 @@ nbshield_colour = 'gray'
 thin = 0
 
 RADIAL_BUILD = ["bore", "ohcth", "precomp", "gapoh", "tfcth",
-                "deltf", "thshieldi", "gapds",
+                "tftsgap", "thshieldi", "gapds",
                 "d_vv_in", "shldith", "vvblgapi", "blnkith", "fwith", "scrapli",
                 "rminori", "rminoro", "scraplo", "fwoth", "blnkoth",
                 "vvblgapo", "shldoth", "d_vv_out", "gapsto", "thshieldo",
@@ -526,10 +526,10 @@ def toroidal_cross_section(axis, mfile_data, scan, demo_ranges):
         TF_outboard(axis, item, n_tf=n_tf, r3=r3, r4=r4, w=w, facecolor='cyan')
 
     # Winding pack : inboard (superconducor only)
-    if i_tf_sup is 1 :
+    if i_tf_sup == 1 :
 
         # Inboard
-        if i_tf_turns_integer is 1 :
+        if i_tf_turns_integer == 1 :
             rect = patches.Rectangle([r1 + thkcas +tinstf, 0], dr_tf_wp, wwp1/2, lw=0,
                                      facecolor=winding)
             axis.add_patch(rect)
@@ -543,7 +543,7 @@ def toroidal_cross_section(axis, mfile_data, scan, demo_ranges):
             axis.add_patch(rect)
     
         # Outboard
-        if i_tf_turns_integer is 1 :
+        if i_tf_turns_integer == 1 :
             rect = patches.Rectangle([r3+casthi+tinstf, 0], dr_tf_wp, wwp1/2, lw=0,
                                    facecolor=winding)
             axis.add_patch(rect)    
@@ -1829,7 +1829,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
     sig_cond = 1.0e-6*mfile_data.data["sig_tf_tresca_max({})".format(i_tf_bucking+1)].get_scan(scan)
     alstrtf =  1.0e-6*mfile_data.data["alstrtf"].get_scan(scan)
 
-    if i_tf_sup is 1:
+    if i_tf_sup == 1:
         data = [(pf_info[0][0], pf_info[0][1], "MA"),
                 (pf_info[1][0], pf_info[1][1], "MA"),
                 (pf_info_3_a, pf_info_3_b, "MA"),
@@ -2254,10 +2254,10 @@ def test(f):
         global n_tf
         n_tf = m_file.data["n_tf"].get_scan(scan)
 
-        if i_tf_sup is 1 : 
+        if i_tf_sup == 1 : 
             global wwp1
             wwp1 = m_file.data["wwp1"].get_scan(scan)
-            if i_tf_turns_integer is 0 :
+            if i_tf_turns_integer == 0 :
                 global wwp2
                 wwp2 = m_file.data["wwp2"].get_scan(scan)
             global dr_tf_wp
