@@ -43,13 +43,27 @@ cmake --build build
 
 The build step may take some time when run for the first time (~3 mins) as the Fortran code is compiled and then wrapped using `f90wrap` and `f2py` to create the Python libraries. Once this is completed the Process Python package is then automatically installed using `pip` and should be ready to use on Linux.
 
-For macOS users an additional step is required in which the shared object produced by `f2py` needs to be editted to change the library links using `image_name_tool`, a script has been provided to automate this process. Upon completion of the PROCESS installation Mac users should run:
+If the installation was successful the command `process` should be available on the command line.
+
+#### macOS Installation
+
+For macOS users it is highly recommended you install GCC using Homebrew. This version of PROCESS searches for the `libgfortran` library by using GCC and the build has been proven to work using this compiler. By default, mac will build with Apple Clang which is the default binary when running the `gcc` command. You will need to either specify the compiler when running CMake:
+
+```
+cmake -H. -Bbuild -DCMAKE_C_COMPILER=/path/to/gcc/binary
+```
+
+or set your GCC installation to be at the front of the `PATH` variable, e.g. if your installation is in `/usr/local/bin`:
+
+```
+export PATH=/usr/local/bin:$PATH
+```
+
+Furthermore an additional step is required post-build in which the shared object produced by `f2py` needs to be editted to change the library links using `image_name_tool`, a script has been provided to automate this process. Upon completion of the PROCESS installation Mac users should run:
 
 ```bash
 bash scripts/macos_update_shared_objects.sh
 ```
-
-If the installation was successful the command `process` should be available on the command line.
 
 ### Testing
 As a first basic test that the setup has been successful try importing the package from outside of the repository folder in a Python interactive interpreter:
