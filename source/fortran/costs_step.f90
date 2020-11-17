@@ -508,8 +508,8 @@ contains
     step2298 = step2298 + 2.335D-1 * step220104
   
     ! 22.01.05 Primary Structure and Support
-    ! Original STARFIRE value, no scaling
-    step220105 = step_ref(27)
+    ! Original STARFIRE value, scaling with fusion island volume
+    step220105 = step_ref(27) * (vfi / vfi_star)**(2.0D0/3.0D0)
     step2201 = step2201 + step220105
     ! STARFIRE percentage for spares
     step2298 = step2298 + 6.824D-2 * step220105
