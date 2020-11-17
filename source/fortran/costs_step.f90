@@ -849,8 +849,8 @@ contains
     step2298 = step2298 + 4.308D-1 * step220601
   
     ! 22.06.02 Special Heating Systems
-    ! Original STARFIRE value, no scaling
-    step220602 = step_ref(43)
+    ! Original STARFIRE value, scaling with thermal power
+    step220602 = step_ref(43) * (pth / ptherm_star)**0.6D0
     step2206 = step2206 + step220602
   
     ! 22.06.03 Coolant Storage
