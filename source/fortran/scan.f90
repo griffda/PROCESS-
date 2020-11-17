@@ -19,7 +19,7 @@ module scan_module
   integer, parameter :: ipnscns = 1000
   !! ipnscns /1000/ FIX : maximum number of scan points
 
-  integer, parameter :: ipnscnv = 54
+  integer, parameter :: ipnscnv = 55
   !! ipnscnv /45/ FIX : number of available scan variables
 
   integer :: scan_dim = 1
@@ -84,8 +84,9 @@ module scan_module
   !!         <LI> 49 TF coil - n_layer (integer turn winding pack)
   !!         <LI> 50 Xenon fraction fimp(13)
   !!         <LI> 51 Power fraction to lower DN Divertor ftar
-  !!         <LI> 52 SoL radiation fraction </UL>
-  !!         <LI> 54 GL_nbti upper critical field at 0 Kelvin </UL>
+  !!         <LI> 52 SoL radiation fraction
+  !!         <LI> 54 GL_nbti upper critical field at 0 Kelvin
+  !!         <LI> 55 `shldith` : Inboard neutron shield thickness </UL>
 
   integer :: nsweep_2 = 3
   !! nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
@@ -720,21 +721,21 @@ contains
     !! author: J Morris, UKAEA, Culham Science Centre
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use build_variables, only: blnkoth
+	use build_variables, only: blnkoth, shldith
     use constraint_variables, only: fiooic, walalw, bmxlim, fqval, taulimit, &
-      gammax, tbrnmn, tbrmin, fjprot, pnetelin, powfmax
-		use cost_variables, only: cfactr, iavail
-		use current_drive_variables, only: rho_ecrh, bscfmax
-		use divertor_variables, only: hldivlim
-		use error_handling, only: idiags, report_error
-		use impurity_radiation_module, only: fimp, fimpvar, coreradius, impurity_arr
+        gammax, tbrnmn, tbrmin, fjprot, pnetelin, powfmax
+	use cost_variables, only: cfactr, iavail
+	use current_drive_variables, only: rho_ecrh, bscfmax
+	use divertor_variables, only: hldivlim
+	use error_handling, only: idiags, report_error
+	use impurity_radiation_module, only: fimp, fimpvar, coreradius, impurity_arr
     use physics_variables, only: kappa, dnbeta, te, aspect, ftar, bt, &
-      rad_fraction_sol, triang, rmajor, beamfus0, hfact
+        rad_fraction_sol, triang, rmajor, beamfus0, hfact
     use numerics, only: epsvmc, boundu, boundl
     use tfcoil_variables, only: tmargmin_tf, alstrtf, n_pancake, oacdcp, &
-      n_layer, b_crit_upper_nbti
+        n_layer, b_crit_upper_nbti
     use divertor_kallenbach_variables, only: lcon_factor, impurity_enrichment, &
-      target_spread, lambda_q_omp, qtargettotal, ttarget
+        target_spread, lambda_q_omp, qtargettotal, ttarget
     implicit none
 
     ! Arguments
@@ -913,7 +914,9 @@ contains
         case (54)
             b_crit_upper_nbti = swp(iscn)
             vlab = 'Bc2(0K)' ; xlab = 'GL_NbTi Bc2(0K)'
-            
+        case(55)
+            shldith = swp(iscn)
+            vlab = 'shldith' ; xlab = 'Inboard neutronic shield'
         case default
             idiags(1) = nwp ; call report_error(96)
 

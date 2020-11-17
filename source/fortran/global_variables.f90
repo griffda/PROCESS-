@@ -4209,7 +4209,9 @@ module build_variables
   !! outboard shield surface area (m2)
 
   real(dp) :: shldith = 0.69D0
-  !! inboard shield thickness (m) (`iteration variable 93`)
+  !! inboard shield thickness (m) 
+  !! iteration variable : ixc = 93
+  !! Scan variable : nsweep = 55
 
   real(dp) :: shldlth = 0.7D0
   !! lower (under divertor) shield thickness (m)
