@@ -1,16 +1,3 @@
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!  To perform standalone tests of vmcon:
-!  1) Compile code as normal using 'make'
-!  2) Uncomment #define line below
-!  3) Re-compile using pre-processor:
-!     ifort -cpp -c maths_library.f90
-!     ifort -o vmcon_test maths_library.o numerics.o global_variables.o
-!
-!  Don't forget to comment the line below again afterwards!!!
-
-!#define unit_test
-
 module maths_library
 
   !! Library of mathematical and numerical routines
@@ -28,7 +15,7 @@ module maths_library
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  ! MDK Remove this dependency, as iotty is now defined in global variables.
+ 
   !use process_output
 
   implicit none
@@ -2096,10 +2083,15 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   recursive subroutine vmcon( &
-       fcnvmc1,fcnvmc2,mode,n,m,meq,x,objf,fgrd,conf,cnorm,lcnorm, &
-       b,lb,tol,maxfev,info,nfev,niter,vlam,glag,vmu,cm,glaga,gamma,eta, &
-       xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa,liwa,ilower, &
-       iupper,bndl,bndu, sum)
+       fcnvmc1,fcnvmc2,mode,n,m,&
+       meq,x,objf,fgrd,conf,&
+       cnorm,lcnorm,b,lb,tol,&
+       maxfev,info,nfev,niter,vlam,& 
+       glag,vmu,cm,glaga,gamma,&
+       eta,xa,bdelta,delta,ldel,&
+       gm,bdl,bdu,h,lh,&
+       wa,lwa,iwa,liwa,ilower, &
+       iupper,bndl,bndu,sum)
 
     !! Calculates the least value of a function of several variables
     !! subject to linear and/or nonlinear equality and inequality
@@ -2233,8 +2225,6 @@ contains
     real(dp), intent(out) :: objf
     real(dp), intent(in) :: tol
     real(dp), dimension(n), intent(inout) :: x
-    real(dp), dimension(n) :: best_solution_vector
-    real(dp), dimension(n) :: delta_var           ! For opt data extraction only
     real(dp), dimension(n), intent(in) :: bndl,bndu
     real(dp), dimension(n), intent(out) :: fgrd
     real(dp), dimension(m), intent(out) :: conf
@@ -2247,8 +2237,10 @@ contains
     real(dp), dimension(lb,lb), intent(inout) :: b
     real(dp), dimension(*), intent(out) :: vlam,vmu,gm,bdl,bdu
     real(dp), intent(out), optional :: sum
-    !  Local variables
 
+    !  Local variables
+    real(dp), dimension(n) :: best_solution_vector
+    real(dp), dimension(n) :: delta_var           ! For opt data extraction only
     integer :: i,j,k,mact,nfinit,nls,np1,np1j,npp,nqp,nsix,nsixi
     integer :: inx,ki,ml,mlp1,mcon,mp1,mpn,mpnpp1,mpnppn
 
@@ -2568,6 +2560,7 @@ contains
                 !  Error return because uphill search direction was calculated
                 info = 4
                 ! Issue #601 Return the best value of the solution vector - not the last value. MDK
+                write(*,*) 'info = 4'
                 x = best_solution_vector
                 sum = best_sum_so_far
                 write(*,*)
@@ -5935,18 +5928,21 @@ end module maths_library
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-module testdata
+module vmcon_test
+  !  Unit testing program for VMCON  
+  !  MDK.  Changed from a "program" to a module.  Issue #1078
+  !  Special compilation no longer required.
+  !#TODO Add "use onlys" for maths_library
+  use maths_library
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  implicit none
 
-  integer :: nfun !  function call counter
+  implicit none
+  integer :: nfun ! function call counter
+  integer :: itest
 
   !  Choose test to run by changing itest in main program below.
   !  1 to 3 are recommended, others are included to probe the code's
   !  behaviour with different initial guesses for the solution vector x
-
-  integer :: itest
-
   !  Expected answers for tests 1 to 3 are given in
   !  VMCON documentation ANL-80-64
 
@@ -5955,18 +5951,34 @@ module testdata
   real(dp) :: objf_exp, errlg_exp, errlm_exp
   real(dp) :: errcom_exp, errcon_exp
   integer :: ifail_exp
+  ! Issue #1078:-
+  integer, parameter :: maxcal = 100
+  integer :: neqns
+  integer :: nfev2     ! number of calls to FCNVMC1 (VMCON function caller) made
+  integer :: nineqns   !  number of inequality constraints VMCON must satisfy
+  integer :: nvar      !  number of iteration variables to use
+  integer :: nviter    !  number of VMCON iterations performed 
+  integer :: ipvlam
+  integer, parameter :: ipnvars = 175   ! Local variable
+  integer, parameter :: ipeqns = 86     ! Local variable
 
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine init_testdata
+  subroutine init_vmcon_test
     !! Initialise module variables
     implicit none
 
     nfun = 0
     itest = 1
-  end subroutine init_testdata
+    neqns = 0
+    nfev2 = 0
+    nineqns = 0
+    nvar = 0
+    nviter = 0
+    ipvlam = 0
+  end subroutine init_vmcon_test
 
   subroutine inittest(nvar,neqns,nineqns,x,ilower,iupper,bndl,bndu)
 
@@ -5978,7 +5990,8 @@ contains
     real(dp), dimension(:), intent(out) :: x
     integer, dimension(:), intent(out) :: ilower, iupper
     real(dp), dimension(:), intent(out) :: bndl, bndu
-
+    
+    ! itest is a module level variable
     select case (itest)
 
     case (1)
@@ -6154,21 +6167,18 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine objfn(n,m,x,objf,conf,ifail)
+  subroutine objfn(n,m,x,objf,conf, ifail)
+      ! variable itest cannot be passed here as the argument format is fixed by VMCON.
+      ! itest is a module-level variable.
 
     implicit none
-
-    !  Arguments
-
     integer, intent(in) :: n,m
     real(dp), dimension(n), intent(in) :: x
     real(dp), intent(out) :: objf
     real(dp), dimension(m), intent(out) :: conf
     integer, intent(inout) :: ifail
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    write(*,*)'subroutine objfn called, in module testdata, maths_library.f90'
-
+    ! ifail is not used here, but is required to avoid an interface mismatch
+    ! when calling vmcon with objfn as an argument
     select case (itest)
 
     case (1,2)
@@ -6237,6 +6247,7 @@ contains
     real(dp), dimension(n), intent(out) :: fgrd
     real(dp), dimension(lcnorm,m), intent(out) :: cnorm
     integer, intent(inout) :: ifail
+    ifail = 0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -6249,7 +6260,6 @@ contains
     select case (itest)
 
     case (1,2)
-
        !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
        !  subject to the following constraints:
        !  c1(x1,x2) = x1 - 2*x2 + 1 = 0  (itest = 1)
@@ -6265,7 +6275,6 @@ contains
        cnorm(2,2) = -2.0D0*x(2)
 
     case (3)
-
        !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
        !  subject to the following constraints:
        !  c1(x1,x2) = x1 + x2 - 3 = 0
@@ -6280,7 +6289,6 @@ contains
        cnorm(2,2) = -2.0D0*x(2)
 
     case (4)
-
        !  From Wikipedia: Lagrange Multiplier article
        !  Maximise f(x1,x2) = x1 + x2
        !  subject to the following constraint:
@@ -6307,143 +6315,147 @@ contains
 
   end subroutine dobjfn
 
-end module testdata
+  subroutine run_vmcon_test(test_index)
+    
+    implicit none  
+    integer, intent(in) :: test_index          !  Change the test being run by modifying the value of test_index
+                                              ! itest is a module level variable.
+    integer :: ifail = 1
+    real(dp) :: objf
 
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    integer :: ii,jj,lb,lcnorm,ldel,lh,liwa,lwa,m,meq,mode,n
+    integer, parameter :: ippn1 = ipnvars+1
+    integer, parameter :: ipldel = 7*ippn1
+    integer, parameter :: iplh  = 2*ippn1
+    integer, parameter :: ipvmu = ipeqns+2*ipnvars+1
+    integer, parameter :: ipvlam = ipeqns+2*ipnvars+1
+    integer, parameter :: ipliwa = 6*ippn1+ipeqns
+    integer, dimension(ipliwa) :: iwa
+    integer, dimension(ipnvars) :: ilower,iupper
+    real(dp) :: xtol
+    real(dp) :: sum
+    real(dp), dimension(ipnvars) :: bdelta,bndl,bndu,etav,fgrd, gammv,glag,glaga,xa,xv
+    real(dp), dimension(ipeqns) :: cm,conf
+    real(dp), dimension(ippn1) :: bdl,bdu,gm
+    real(dp), dimension(ipvmu) :: vmu
+    real(dp), dimension(ipldel) :: delta
+    real(dp), dimension(iplh) :: wa
+    real(dp), dimension(ippn1,ipeqns) :: cnorm
+    real(dp), dimension(ippn1,ippn1) :: b
+    real(dp), dimension(iplh,iplh) :: h
+    real(dp) :: summ,errlg,errlm,errcom,errcon
+    real(dp), dimension(ipvlam) :: vlam
+    logical :: pass=.true.
+    
+    itest = test_index
+    call inittest(nvar,neqns,nineqns,xv,ilower,iupper,bndl,bndu)
 
-! program test
+    n = nvar
+    m = neqns+nineqns
+    meq = neqns
+    !xtol = epsvmc   Issue #1078
+    xtol = 1.0D-8
+    mode = 0
+    lb = ippn1
+    lcnorm = ippn1
+    ldel = ipldel
+    lh = iplh
+    lwa = iplh
+    liwa = ipliwa
 
-!   !  Unit testing program for VMCON
+    !write(*,*) 'Initial solution estimate:'
+    !do ii = 1,n
+    !   write(*,*) 'x(',ii,') = ',xv(ii)
+    !end do
 
-!   use maths_library
-!   use numerics
-!   use testdata
-!   use global_variables, only: maxcal
+    call vmcon(objfn,dobjfn,mode,n,m,&
+              meq,xv,objf,fgrd,conf, &
+              cnorm,lcnorm,b,lb,xtol,&
+              maxcal,ifail,nfev2,nviter,vlam, &
+              glag,vmu,cm,glaga,gammv,&
+              etav,xa,bdelta,delta,ldel, &
+              gm,bdl,bdu,h,lh,&
+              wa,lwa,iwa,liwa,ilower, &
+              iupper,bndl,bndu,sum)
 
-!   implicit none
+    
+    pass = (ifail==ifail_exp)
+    pass = pass.and.nearly_equal(objf, objf_exp,1.d-8)        ! Final objective function value: calculated vs expected
+    do ii = 1,n  
+        pass = pass.and.nearly_equal(xv(ii),x_exp(ii),1.d-8)   ! Final solution estimate: calculated vs expected
+    end do
 
-!   integer :: ifail = 1
-!   real(dp) :: objf
+    ! Some tests are expected to return values of ifail not equal to 1.  
+    ! These just need to return the correct value of ifail.
+    pass = pass.or.((ifail==ifail_exp).and.(ifail/=1))
 
-!   integer :: ii,jj,lb,lcnorm,ldel,lh,liwa,lwa,m,meq,mode,n
-!   integer, parameter :: ippn1  = ipnvars+1
-!   integer, parameter :: ipldel = 7*ippn1
-!   integer, parameter :: iplh   = 2*ippn1
-!   integer, parameter :: ipvmu  = ipeqns+2*ipnvars+1
-!   integer, parameter :: ipliwa = 6*ippn1+ipeqns
-!   integer, dimension(ipliwa) :: iwa
-!   integer, dimension(ipnvars) :: ilower,iupper
+    if(pass)then
+        write(*,*)
+        write(*,*)'VMCON test ', itest, 'PASSED'
+        if(itest==3)write(*,*)'(Test 3 is not supposed to converge.)'
+    else
+        write(*,*)'VMCON test ', itest, 'FAILED'
+        write(*,*) 'ifail = ', ifail, '(expected value = ',ifail_exp,')'
+        write(*,*) 'Number of function evaluations = ',nfun
+        write(*,*)
+        write(*,*) 'Final solution estimate: calculated vs expected'
+        do ii = 1,n  
+              pass = pass.and.nearly_equal(xv(ii),x_exp(ii),1.d-8) 
+              write(*,*) 'x(',ii,') = ',xv(ii),x_exp(ii)
+        end do
+        write(*,*)
+        write(*,*) 'Final objective function value: calculated vs expected',objf,objf_exp
+        write(*,*)
+        write(*,*) 'Constraints evaluated at x: calculated vs expected'
+        do ii = 1,m
+          write(*,*) conf(ii), c_exp(ii)
+        end do
+        write(*,*)
 
-!   real(dp) :: xtol
-!   real(dp), dimension(ipnvars) :: bdelta,bndl,bndu,etav,fgrd, &
-!        gammv,glag,glaga,xa,xv
-!   real(dp), dimension(ipeqns) :: cm,conf
-!   real(dp), dimension(ippn1) :: bdl,bdu,gm
-!   real(dp), dimension(ipvmu) :: vmu
-!   real(dp), dimension(ipldel) :: delta
-!   real(dp), dimension(iplh) :: wa
-!   real(dp), dimension(ippn1,ipeqns) :: cnorm
-!   real(dp), dimension(ippn1,ippn1) :: b
-!   real(dp), dimension(iplh,iplh) :: h
+        write(*,*) 'Lagrange multiplier estimates: calculated vs expected'
+        do ii = 1,m
+          write(*,*) vlam(ii), vlam_exp(ii)
+        end do
+        write(*,*)
 
-!   real(dp) :: summ,errlg,errlm,errcom,errcon
+        write(*,*) 'Lagrangian gradient error: calculated vs expected'
+        errlg = 0.0D0
+        do ii = 1,n
+        summ = fgrd(ii)
+        do jj = 1,m
+          summ = summ - vlam(jj)*cnorm(ii,jj)
+        end do
+        errlg = errlg + abs(summ)
+        end do
+        write(*,*) errlg, errlg_exp
+        write(*,*)
 
-!   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        write(*,*) 'Lagrange multiplier error: calculated vs expected'
+        errlm = 0.0D0
+        do ii = 1,m
+          if ((ii <= meq).or.(vlam(ii) >= 0.0D0)) cycle
+          errlm = errlm + abs(vlam(ii))
+        end do
+        write(*,*) errlm, errlm_exp
+        write(*,*)
 
-!   !  Change the test being run by modifying the value of itest
-!   !  (defaults to 1)
+        write(*,*) 'Complementarity error: calculated vs expected'
+        errcom = 0.0D0
+        do ii = 1,m
+          errcom = errcom + abs(vlam(ii)*conf(ii))
+        end do
+        write(*,*) errcom, errcom_exp
+        write(*,*)
 
-!   itest = 1
+        write(*,*) 'Constraint error: calculated vs expected'
+        errcon = 0.0D0
+        do ii = 1,m
+          if ((ii > meq).and.(conf(ii) >= 0.0D0)) cycle
+          errcon = errcon + abs(conf(ii))
+        end do
+        write(*,*) errcon, errcon_exp
+        write(*,*)
+    endif
 
-!   call inittest(nvar,neqns,nineqns,xv,ilower,iupper,bndl,bndu)
-
-!   epsvmc = 1.0D-8
-
-!   n = nvar
-!   m = neqns+nineqns
-!   meq = neqns
-!   xtol = epsvmc
-!   mode = 0
-!   lb = ippn1
-!   lcnorm = ippn1
-!   ldel = ipldel
-!   lh = iplh
-!   lwa = iplh
-!   liwa = ipliwa
-
-!   write(*,*) 'Initial solution estimate:'
-!   do ii = 1,n
-!      write(*,*) 'x(',ii,') = ',xv(ii)
-!   end do
-!   write(*,*)
-
-!   call vmcon(objfn,dobjfn,mode,n,m,meq,xv,objf,fgrd,conf,cnorm, &
-!        lcnorm,b,lb,xtol,maxcal,ifail,nfev2,nviter,vlam,glag,vmu,cm,glaga, &
-!        gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &
-!        liwa,ilower,iupper,bndl,bndu)
-
-!   write(*,*) 'ifail = ', ifail, '(expected value = ',ifail_exp,')'
-!   write(*,*) 'Number of function evaluations = ',nfun
-!   write(*,*)
-
-!   write(*,*) 'Final solution estimate: calculated vs expected'
-!   do ii = 1,n
-!      write(*,*) 'x(',ii,') = ',xv(ii),x_exp(ii)
-!   end do
-!   write(*,*)
-
-!   write(*,*) 'Final objective function value: calculated vs expected'
-!   write(*,*) 'f(x) = ',objf,objf_exp
-!   write(*,*)
-
-!   write(*,*) 'Constraints evaluated at x: calculated vs expected'
-!   do ii = 1,m
-!      write(*,*) conf(ii), c_exp(ii)
-!   end do
-!   write(*,*)
-
-!   write(*,*) 'Lagrange multiplier estimates: calculated vs expected'
-!   do ii = 1,m
-!      write(*,*) vlam(ii), vlam_exp(ii)
-!   end do
-!   write(*,*)
-
-!   write(*,*) 'Lagrangian gradient error: calculated vs expected'
-!   errlg = 0.0D0
-!   do ii = 1,n
-!      summ = fgrd(ii)
-!      do jj = 1,m
-!         summ = summ - vlam(jj)*cnorm(ii,jj)
-!      end do
-!      errlg = errlg + abs(summ)
-!   end do
-!   write(*,*) errlg, errlg_exp
-!   write(*,*)
-
-!   write(*,*) 'Lagrange multiplier error: calculated vs expected'
-!   errlm = 0.0D0
-!   do ii = 1,m
-!      if ((ii <= meq).or.(vlam(ii) >= 0.0D0)) cycle
-!      errlm = errlm + abs(vlam(ii))
-!   end do
-!   write(*,*) errlm, errlm_exp
-!   write(*,*)
-
-!   write(*,*) 'Complementarity error: calculated vs expected'
-!   errcom = 0.0D0
-!   do ii = 1,m
-!      errcom = errcom + abs(vlam(ii)*conf(ii))
-!   end do
-!   write(*,*) errcom, errcom_exp
-!   write(*,*)
-
-!   write(*,*) 'Constraint error: calculated vs expected'
-!   errcon = 0.0D0
-!   do ii = 1,m
-!      if ((ii > meq).and.(conf(ii) >= 0.0D0)) cycle
-!      errcon = errcon + abs(conf(ii))
-!   end do
-!   write(*,*) errcon, errcon_exp
-!   write(*,*)
-
-! end program test
+  end subroutine run_vmcon_test
+end module vmcon_test
