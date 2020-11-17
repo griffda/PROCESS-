@@ -159,7 +159,18 @@ class VariableDescriptions(ProjectDictionary):
         # Assign the variable name key to the var description
         for module in self.project.modules:
             for var in module.variables:
-                self.dict[self.name][var.name] = getattr(var, self.value_type)
+                desc = getattr(var, self.value_type)
+                
+                # If var key doesn't exist, add it
+                if var.name not in self.dict[self.name]:
+                    self.dict[self.name][var.name] = desc
+
+                # Only overwrite description if it's falsey and we're 
+                # overwriting with something truthy
+                # Guards against multiple declarations in different modules,
+                # when only one declaration is commented
+                elif not self.dict[self.name][var.name] and desc:
+                    self.dict[self.name][var.name] = desc
 
     def post_process(self):
         for var_name, var_desc in self.dict[self.name].items():
