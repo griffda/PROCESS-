@@ -471,26 +471,26 @@ contains
     step2298 = step2298 + 9.985D-2 *  step220102
   
     ! 22.01.03.01 TF Coils
-    ! Original STARFIRE value, scaling with fusion island component volume
+    ! Original STARFIRE value, scaling with fusion island volume
     step22010301 = step_ref(22) * (vfi / vfi_star)
     step2201 = step2201 + step22010301
 
     ! 22.01.03.02 PF Coils
-    ! Original STARFIRE value, scaling with fusion island component volume
+    ! Original STARFIRE value, scaling with fusion island volume
     step22010302 = step_ref(23) * (vfi / vfi_star)
     step2201 = step2201 + step22010302
     ! STARFIRE percentage for spares
     step2298 = step2298 + 3.269D-1 * step22010302
 
     ! 22.01.03.03 Central Solenoid
-    ! Original STARFIRE value, scaling with fusion island component volume
+    ! Original STARFIRE value, scaling with fusion island volume
     step22010303 = step_ref(24) * (vfi / vfi_star)
     step2201 = step2201 + step22010303
     ! STARFIRE percentage for spares
     step2298 = step2298 + 6.124D-1 * step22010303
 
     ! 22.01.03.04 Control Coils
-    ! Original STARFIRE value, scaling with fusion island component volume
+    ! Original STARFIRE value, scaling with fusion island volume
     step22010304 = step_ref(25) * (vfi / vfi_star)
     step2201 = step2201 + step22010304
     ! STARFIRE percentage for spares
@@ -508,7 +508,7 @@ contains
     step2298 = step2298 + 2.335D-1 * step220104
   
     ! 22.01.05 Primary Structure and Support
-    ! Original STARFIRE value, scaling with fusion island component volume
+    ! Original STARFIRE value, scaling with fusion island volume
     step220105 = step_ref(27) * (vfi / vfi_star)
     step2201 = step2201 + step220105
     ! STARFIRE percentage for spares
