@@ -450,9 +450,11 @@ def test_module(ref_dicts, new_dicts):
     :type new_dicts: dict
     """
     # Modules to ignore (no longer exist)
+    # divertor_kallenbach_variables is now div_kal_vars
     MOD_EXCLUSIONS = [
         "autodoc_data",
-        "calltree_data"
+        "calltree_data",
+        "divertor_kallenbach_variables"
     ]
     # Module variables to ignore (defined differently: env vars or functions)
     VAR_EXCLUSIONS = [
