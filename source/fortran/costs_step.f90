@@ -1176,27 +1176,27 @@ contains
     step2501 = step_ref(65) * (pth / ptherm_star)**0.6D0
     step25 = step25 + step2501
   
-    ! 24.02 Air and Water Service System
+    ! 25.02 Air and Water Service System
     ! Original STARFIRE value, scaling with thermal power
     step2502 = step_ref(66) * (pth / ptherm_star)**0.6D0
     step25 = step25 + step2502
   
-    ! 24.03 Communications Equipment
+    ! 25.03 Communications Equipment
     ! Original STARFIRE value, scaling with thermal power
     step2503 = step_ref(67) * (pth / ptherm_star)**0.6D0
     step25 = step25 + step2503
   
-    ! 24.04 Furnishing and Fixtures
+    ! 25.04 Furnishing and Fixtures
     ! Original STARFIRE value, scaling with thermal power
     step2504 = step_ref(68) * (pth / ptherm_star)**0.6D0
     step25 = step25 + step2504
   
-    ! 24.98 Spares
+    ! 25.98 Spares
     ! Original STARFIRE value, no scaling
     step2598 = 1.286D-2 * step25
     step25 = step25 + step2598
   
-    ! 24.99 Contingency
+    ! 25.99 Contingency
     ! STARFIRE 15%
     step2599 = step_con * step25
     step25 = step25 + step2599
