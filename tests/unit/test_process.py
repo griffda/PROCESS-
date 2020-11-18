@@ -1,5 +1,5 @@
 """Unit tests for the process.py module."""
-from process import process
+from process import main
 from process import fortran
 import pytest
 from pathlib import Path
@@ -19,7 +19,7 @@ def test_main():
     so this should raise a FileNotFoundError, in which case the test passes.
     """
     with pytest.raises(FileNotFoundError):
-        process.main(args=[])
+        main.main(args=[])
         # If args is None, then the argparse parser uses sys.argv (i.e. the 
         # command-line args) instead. When running from pytest, these are some
         # pytest-specific arguments that we don't want going into the Process
@@ -48,9 +48,9 @@ def process_obj(monkeypatch):
     :return: Process object
     :rtype: object
     """
-    monkeypatch.setattr(process.Process, "__init__", mock_init)
+    monkeypatch.setattr(main.Process, "__init__", mock_init)
     # Mock the __init__ method of the Process class with mock_init
-    process_obj = process.Process()
+    process_obj = main.Process()
     # Return the mocked Process object
     return process_obj
 
@@ -61,7 +61,7 @@ def test_Process(process_obj):
     :param process_obj: Process object
     :type process_obj: object
     """
-    assert type(process_obj) is process.Process
+    assert type(process_obj) is main.Process
 
 def test_parse_args(process_obj):
     """Test parse_args() method.
