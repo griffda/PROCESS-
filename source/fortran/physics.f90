@@ -4144,7 +4144,7 @@ module physics_module
     call ovarre(outfile,'Total core radiation power (MW)', '(pcoreradmw)',pcoreradmw, 'OP ')
     call ovarre(outfile,'Edge radiation power (MW)','(pedgeradmw)', pedgeradmw, 'OP ')
     if (istell/=0) then
-        call ovarre(outfile,'SOL radiation power (MW)','(psolradmw)', psolradmw, 'OP ')
+        call ovarre(outfile,'SOL radiation power as imposed by f_rad (MW)','(psolradmw)', psolradmw, 'OP ')
     end if
     call ovarre(outfile,'Total radiation power (MW)','(pradmw)',pradmw, 'OP ')
     call ovarre(outfile,'Core radiation fraction = total radiation in core / total power deposited in plasma', &

@@ -424,8 +424,10 @@ contains
 
     !  First wall area: scales with minor radius
 
+    ! Average minor radius of the first wall
     awall = rminor + 0.5D0*(scrapli + scraplo)
     fwarea = sarea * awall/rminor
+
     if (ipowerflow == 0) then
        fwarea = (1.0D0-fhole) * fwarea
     else
@@ -561,6 +563,9 @@ contains
     end if
     !print *, "powerscaling: ", pscalingmw, "powerht: ",powerht, "fecrh_ignition: ",fecrh_ignition
 
+
+
+
     if (iprint == 1) call stopt_output(outfile)
 
   contains
@@ -628,7 +633,7 @@ contains
       beamfus0, beta, betaft, betalim, betanb, betap, betbm0, bp, bt, btot, &
       burnup, dene, deni, dlamie, dnalp, dnbeam2, dnelimt, dnitot, dnla, &
       dntau, ealphadt, eps, falpe, falpha, falpi, fdeut, fhe3, figmer, ftrit, &
-      fusionrate, hfact, ifalphap, ignite, iinvqd, isc, iwalld, kappa, &
+      fusionrate, hfact, ifalphap, ignite, iinvqd, iradloss, isc, iwalld, kappa, &
       kappa95, kappaa, palpepv, palpepv, palpfwmw, palpipv, palpmw, pbrempv, &
       pchargemw, pcoreradmw, pcoreradpv, pdd, pdhe3, pdivt, pdt, pedgeradmw, &
       pfuscmw, pedgeradpv, photon_wall, piepv, plascur, plinepv, pneutmw, &
@@ -745,13 +750,20 @@ contains
 
     pcoreradmw = pcoreradpv*vol
     pedgeradmw = pedgeradpv*vol
+
     pradmw = pradpv*vol
 
     !  Heating power to plasma (= Psol in divertor model)
     !  Ohmic power is zero in a stellarator
     !  pradmw here is core + edge (no SOL)
 
-    powht = falpha*palpmw + pchargemw + pohmmw - pradmw
+    powht = falpha*palpmw + pchargemw + pohmmw - pradpv*vol    
+
+    ! Here the implementation sometimes leaves the accessible regime when pradmw> powfmw which is unphysical and
+    ! is not taken care of by the rad module. We restrict the radiation power here by the fusion power:
+    pradmw = min(pradmw,powfmw)
+
+
     powht = max(0.001D0, powht) ! To avoid negative heating power.
 
     
@@ -772,6 +784,7 @@ contains
     !  this may not be quite correct for stellarators)
 
     pdivt = max(0.001D0, pdivt)
+
 
     !  Power transported to the first wall by escaped alpha particles
 
@@ -1248,10 +1261,10 @@ contains
     !  May be recalculated below if ipowerflow=1 and secondary_cycle>0,
     !  and also by the availability model
 
+    
     fwlife = min(abktflnc/wallmw, tlife)
 
     !  First wall inboard, outboard areas (assume 50% of total each)
-
     fwareaib = 0.5D0*fwarea
     fwareaob = 0.5D0*fwarea
 
@@ -2402,7 +2415,10 @@ contains
     use process_output, only: oheadr, ovarre, ovarin
     use stellarator_variables, only: bmn, f_asym, f_rad, f_w, fdivwet, &
       flpitch, m_res, n_res, shear
-		use constants, only: echarge, twopi, pi, umass
+    use constants, only: echarge, twopi, pi, umass
+    use fwbs_variables, only: fdiv
+    use build_variables, only: fwarea
+
     implicit none
 
     !  Arguments
@@ -2487,6 +2503,9 @@ contains
 
     hldiv = q_div
     divsur = darea
+
+    
+    fdiv = darea/fwarea
 
     if (iprint == 0) return
 

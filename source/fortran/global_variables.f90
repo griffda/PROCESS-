@@ -1437,7 +1437,7 @@ module fwbs_variables
   !! fblss /0.09705/ : KIT blanket model: steel fraction of breeding zone
 
   real(dp) :: fdiv = 0.115D0
-  !! fdiv /0.115/ : area fraction taken up by divertor
+  !! fdiv /0.115/ : area fraction taken up by divertor (calculated for stellarator)
 
   real(dp) :: fhcd = 0.0D0
   !! fhcd /0.0/ : area fraction covered by heating/current drive
@@ -1723,7 +1723,7 @@ module fwbs_variables
   real(dp) :: praddiv = 0.0D0
   !! praddiv : radiation power incident on the divertor (MW)
   real(dp) :: pradfw = 0.0D0
-  !! pradfw : radiation power incident on the divertor (MW)
+  !! pradfw : radiation power incident on the first wall (MW)
   real(dp) :: pradhcd = 0.0D0
   !! pradhcd : radiation power incident on the divertor (MW)
   real(dp) :: pradloss = 0.0D0
@@ -2485,7 +2485,7 @@ module tfcoil_variables
   real(dp) :: tficrn = 0.0D0
   !! tficrn : TF coil half-width - inner bore (m)
   real(dp) :: tfind = 0.0D0
-  !! tfind : TF coil inductance (H)
+  !! tfind : TF turn self inductance (H)
 
   real(dp) :: tfinsgap = 0.010D0
   !! tfinsgap /0.010/ : TF coil WP insertion gap (m)

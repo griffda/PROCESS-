@@ -456,7 +456,7 @@ contains
       ! if plasma ignited
       pdenom = falpha*palppv + pchargepv + pohmpv
     end if
-
+    
     args%cc = 1.0D0 - pnumerator / pdenom
     args%con = pdenom * (1.0D0 - args%cc)
     args%err = pdenom * args%cc

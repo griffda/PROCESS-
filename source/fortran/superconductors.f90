@@ -248,7 +248,8 @@ subroutine itersc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use error_handling, only: fdiags, report_error
-    use constants, only: pi
+  use constants, only: pi
+  use stellarator_variables, only: istell
   implicit none
 
   !  Arguments
@@ -320,7 +321,7 @@ subroutine itersc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
   bcrit = bc20eps * (1.0D0 - t**1.52D0)
 
   !  Reduced magnetic field, restricted to be < 1
-  if (bmax/bcrit >= 1.0D0) then
+  if (bmax/bcrit >= 1.0D0 .and. istell==0) then
      fdiags(1) = bmax ; fdiags(2) = bcrit
      call report_error(161)
   end if

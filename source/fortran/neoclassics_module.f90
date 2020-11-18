@@ -552,6 +552,9 @@ contains
     end function init_profile_values_from_PROCESS
 
     type(gauss_laguerre) function gauss_laguerre_30()
+        ! Sets the gauss Laguerre roots and weights for 30 
+        ! discretization points. Used for integration in this module
+    
         gauss_laguerre_30%roots = (/4.740718054080526184d-02,&
                                     2.499239167531593919d-01,&
                                     6.148334543927683749d-01,&
