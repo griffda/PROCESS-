@@ -9,10 +9,8 @@ import re
 # TODO This isn't good: put MFile into process package?
 sys.path.append(os.path.join(os.path.dirname(__file__), '../utilities/'))
 
+from process.main import main
 from process.io.mfile import MFile
-from process import process
-# TODO Beware process package/module name shadowing! Rename process module or
-# import as something different?
 
 # Variables and patterns to ignore when comparing differences (set and list)
 # These variables can differ substantially from their reference values when 
@@ -83,7 +81,7 @@ class Scenario():
         # catching any errors
         input_path_str = str(self.test_dir / 'IN.DAT')
         try:
-            process.main(args=['--input', input_path_str])
+            main(args=['--input', input_path_str])
             return True
         except:
             logger.exception(f"Process threw an exception when running "

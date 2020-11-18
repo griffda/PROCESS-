@@ -37,7 +37,7 @@ setup_kwargs = {
     "entry_points": {
         "console_scripts": [
             "process_script=process.process_script_advanced:main",
-            "process=process.process:main"
+            "process=process.main:main"
             ]
     }
 }

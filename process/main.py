@@ -249,3 +249,6 @@ def main(args=None):
     :type args: list, optional
     """
     Process(args)
+
+if __name__ == "__main__":
+    main()
