@@ -55,20 +55,85 @@ Code example in the `input.f90` file.
 
 ## Add a iteration variable
 
-This is a copy 
+<p style='text-align: justify;'>
+  To add a <em>PROCESS</em> iteration variable, please follow the following steps in 
+  addition to the instruction to add an input variable:
+</p>
+
+1. <p style='text-align: justify;'>
+    The parameter `ipnvars` in module `numerics` in `numerics.f90` will normally
+    be greater than the actual number of iteration variables, and does not need
+    to be changed.
+  </p>
+2. <p style='text-align: justify;'>
+    Utilise the next available block of code in module
+    `define_iteration_variables` in `numerics.f90`.
+</p>
+3. <p style='text-align: justify;'>
+    Assign values for the variable's lower and upper bounds to the relevant
+    elements in arrays `boundl` (lower) and `boundu` (upper).
+  </p>
+4. <p style='text-align: justify;'>
+    Paste the variable name in the relevant places in the code block in place
+    of the word `DUMMY`.
+  </p>
+5. <p style='text-align: justify;'>
+    Ensure that the relevant element of character array `lablxc` is exactly 14
+    characters long.
+  </p>
+6. <p style='text-align: justify;'>
+    Add the variable `use` `only` statement in the relevant functions (`itv_XX`
+    and subroutine `set_itv_XX`).
+  </p>
+
+
+It should be noted that iteration variables must not be reset elsewhere in the
+code. That is, they may only be assigned new values when originally
+initialised (in the relevant module, or in the input file if required), and in
+the \texttt{subroutine set\_itv\_XX` where the iteration process itself is performed.
+Otherwise, the numerical procedure cannot adjust the value as it requires, and
+the program will fail.
 
 ## Add a figure of merit
 
-To be udated!
+New figures of merit are added to *PROCESS* in the following way:
+
+
+1. <p style='text-align: justify;'>
+    Increment the parameter `ipnfoms` in module `numerics` in source file 
+    `numerics.f90` to accommodate the new figure of merit.
+  </p>
+2. <p style='text-align: justify;'>
+    Assign a description of the new figure of merit to the relevant element
+    of array `lablmm` in module `numerics` in the source file `numerics.f90`.
+  </p>
+3. <p style='text-align: justify;'>
+    Add the new figure of merit equation to routine `FUNFOM` in the source file
+    `evaluators.f90`, following the method used in the existing examples. The
+    value of `fc` should be of order unity, so select a reasonable scaling
+    factor if necessary. 
+  </p>
+4. <p style='text-align: justify;'>
+    Add the `use` `only` statements for all the added variables in all modified
+    functions
+  </p>
 
 ## Add a scan variable
 
 After following the instruction to add an input variable, you can make the variable a scan variable by following these steps:
 
-1. Increment the parameter `ipnscnv` defined in the `scan_module` module in the `scan.f90` source file, to accommodate the new scanning variable. The incremented value will identify your scan variable.
-2. Add a short description in the new scanning variable in the `nsweep` entry in source in the same source code, alongside its identification number:
-3. Update the `scan_select` subroutine in the `scan.f90` source file by adding a new case statement connecting the vaiable to the scan integer switch, a short variable desciption `vlab` (the variable name) and a more explicit variable description `xlab`. Don't forget to add the use only statment at the beginning of `scan_select`.
-4. Add a section on the input variable description indicating the scan switch.
+1. <p style='text-align: justify;'>
+    Increment the parameter `ipnscnv` defined in the `scan_module` module in the `scan.f90` source file, to accommodate the new scanning variable. The incremented value will identify your scan variable.
+  </p>
+2. <p style='text-align: justify;'>
+    Add a short description in the new scanning variable in the `nsweep` entry in source in the same source code, alongside its identification number:
+  </p>
+3. <p style='text-align: justify;'>
+    Update the `scan_select` subroutine in the `scan.f90` source file by adding a new case statement connecting the vaiable to the scan integer switch, a short variable desciption `vlab` (the variable name) and a more explicit variable description `xlab`. Don't forget to add the use only statment at the beginning of `scan_select`.
+  </p>
+4. <p style='text-align: justify;'>
+    Add a section on the input variable description indicating the scan switch.
+  </p>
 
 `nsweep` comment example:
 ```fortran
@@ -96,7 +161,35 @@ After following the instruction to add an input variable, you can make the varia
 
 ## Add a constraint equation
 
-To be udated!
+Constraint equations are added to *PROCESS* in the following way:
+
+
+1. <p style='text-align: justify;'>
+    Increment the parameter `ipeqns` in module `numerics` in the source file
+    `numerics.f90` in order to accommodate the new constraint.
+  </p>
+2. <p style='text-align: justify;'>
+    Add an additional line to the initialisation of the array `icc` in module
+    `numerics` in source file `numerics.f90`.
+  </p>
+3. <p style='text-align: justify;'>
+    Assign a description of the new constraint to the relevant element of
+    array `lablcc`, in module `numerics` in source file `numerics.f90`.
+  </p>
+4. <p style='text-align: justify;'>
+    Add a new Fortran `case` statement containing the new constraint
+    equation to routine `CONSTRAINT_EQNS` in source file
+    `constraint_equations.f90`, ensuring that all the variables used in the
+    formula are contained in the modules specified via `use` statements present
+    at the start of this file.  Use a similar formulation to that used for the
+    existing constraint equations, remembering that the code will try to force
+    `cc(i)` to be zero.
+  </p>
+
+<p style='text-align: justify;'>
+  Remember that if a limit equation is being added, a new f-value iteration
+  variable may also need to be added to the code.
+</p>
 
 # Code Documentation Using FORD
 PROCESS uses FORD (FORtran Documentation) to automatically generate documentation from comments 
