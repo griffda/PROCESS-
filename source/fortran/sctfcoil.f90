@@ -3865,6 +3865,12 @@ subroutine outtf(outfile, peaktfflag)
     ! Resistive coil parameters
     if ( i_tf_sup /= 1 ) then 
         call osubhd(outfile,'Resitive loss parameters:')
+        if ( i_tf_sup == 0 ) then
+            call ocmmnt(outfile,'Resitive material : GLIDCOP copper alloy with a AL-15 grading') 
+        else if ( i_tf_sup == 2 ) then
+            call ocmmnt(outfile,'Resitive material : Pure aluminium (99.999+)')
+        end if
+
         if ( itart == 1 ) then
             call ovarre(outfile,'CP resistivity (ohm.m)','(rhocp)',rhocp)
             call ovarre(outfile,'Leg resistivity (ohm.m)','(rhotfleg)',rhotfleg)
