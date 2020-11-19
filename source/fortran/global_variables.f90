@@ -3135,11 +3135,11 @@ module tfcoil_variables
   
   integer :: i_cp_joints = -1 
   !! Switch for CP demoutable joints type
-  !!  -= 0 : Clampled joints
+  !!  -= 0 : No joints
   !!  -= 1 : Sliding joints
   !! Default value (-1) choses : 
+  !!   No joints for superconducting magents (i_tf_sup = 1)
   !!   Sliding joints for resistive magnets (i_tf_sup = 0, 2)  
-  !!   Clampled joints for superconducting magents (i_tf_sup = 1)
 
   real(dp) :: rho_tf_joints = 2.5D-10
   !! TF joints surfacic resistivity [ohm.m]. Feldmetal joints assumed.
