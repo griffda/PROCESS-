@@ -379,11 +379,16 @@ contains
     fwith = 2.0D0*afw + 2.0D0*fw_wall
     fwoth = fwith
 
-    !  Radial build to centre of plasma (should be equal to rmajor)
 
+    bore = rmajor - (ohcth + gapoh + tfcth + gapds + &
+    ddwi + shldith + blnkith + fwith + scrapli + rminor)
+
+    !  Radial build to centre of plasma (should be equal to rmajor)
     rbld = bore + ohcth + gapoh + tfcth + gapds + &
          ddwi + shldith + blnkith + fwith + scrapli + rminor
 
+
+      
 
     ! Bc stellarators cannot scale rminor reasonably well an additional constraint equation is required,
     ! that ensures that there is enough space between coils and plasma.
@@ -528,7 +533,7 @@ contains
     !! This routine reiterates some physics modules.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    use physics_variables, only: bt, dene, rmajor, rminor, powerht, dnelimt
+    use physics_variables, only: bt, dene, rmajor, rminor, powerht, dnelimt, ne0
     use stellarator_variables, only: max_gyrotron_frequency,te0_ecrh_achievable,isthtr
     use constraint_variables, only: fecrh_ignition
     use numerics, only: icc
@@ -544,10 +549,11 @@ contains
       call stdlim(bt,powerht,rmajor,rminor,dnelimt)
     end if
    
-
     ! Calculates the ECRH parameters 
     call stdlim_ecrh(max_gyrotron_frequency,bt,ne0_max_ECRH,bt_ecrh)
-    ! This assumes 170GHz Gyrotrons
+
+    ne0_max_ECRH = min(ne0,ne0_max_ECRH)
+    bt_ecrh = min(bt,bt_ecrh)
 
     !print *, "ECRH density limit", dnelimt, " Current density:",dene*1.0d-20
     
@@ -559,7 +565,8 @@ contains
          write(*,*) 'Warning in routine STOPT:'
          write(*,*) 'isthtr is not set to 1 but icc=85 (ECRH) was called.'
       end if
-      call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht_local,pscalingmw_local)
+
+      !call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht_local,pscalingmw_local)
     end if
     !print *, "powerscaling: ", pscalingmw, "powerht: ",powerht, "fecrh_ignition: ",fecrh_ignition
 
@@ -592,6 +599,7 @@ contains
       call ovarre(outfile,'Ignition point: density (/m3)','(ne0_max_ECRH)',ne0_max_ECRH)
       call ovarre(outfile,'Maximum reachable ECRH temperature (pseudo) (keV)','(te0_ecrh_achievable)',te0_ecrh_achievable)
 
+      call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht_local,pscalingmw_local)
       call ovarre(outfile,'Ignition point: Heating Power (MW)','(powerht_ecrh)',powerht_local)
       call ovarre(outfile,'Ignition point: Loss Power (MW)','(pscalingmw_ecrh)',pscalingmw_local)
 
@@ -2076,15 +2084,15 @@ contains
   end subroutine ecrh_ignitable
 
 
-  subroutine power_at_ignition_point(gyro_frequency_max,te_available,powerht_out,pscalingmw_out)
+  subroutine power_at_ignition_point(gyro_frequency_max,te0_available,powerht_out,pscalingmw_out)
 
    !! Routine to calculate if the plasma is ignitable with the current values for the B field. Assumes
    !! current ECRH achievable peak temperature (which is inaccurate as the cordey pass should be calculated)
    !! author: J Lion, IPP Greifswald
-   !! gyro_frequency_max     : input real : Maximal available Gyrotron frequency (1/s) NOT (rad/s)
-   !! bt  : input real : Maximal magnetic field on axis (T)
-   !! te0_needed : output real: Needed peak electron temperature, reached by ECRH (keV)
-   !! bt_ecrh_max : output real: Maximal operatable magnetic field strength for ECRH (T)
+   !! gyro_frequency_max : input real : Maximal available Gyrotron frequency (1/s) NOT (rad/s)
+   !! te0_available : input real : Reachable peak electron temperature, reached by ECRH (keV)
+   !! powerht_out : output real: Heating Power at ignition point (MW)
+   !! pscalingmw_out : output real: Heating Power loss at ignition point (MW)
    !! This routine calculates the density limit due to an ECRH heating scheme on axis
    !! Assumes current peak temperature (which is inaccurate as the cordey pass should be calculated)
    !! Maybe use this: https://doi.org/10.1088/0029-5515/49/8/085026
@@ -2098,7 +2106,7 @@ contains
 
    !  Arguments
 
-   real(dp), intent(in) ::  gyro_frequency_max,te_available
+   real(dp), intent(in) ::  gyro_frequency_max,te0_available
    real(dp), intent(out) :: powerht_out, pscalingmw_out
 
    !  Local variables
@@ -2109,16 +2117,20 @@ contains
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    
    ! This routine calculates the physics again at ecrh density
-
    ! Save the current values:
    te_old = te
-   te = te_available/(1.0D0+alphat)
+
+   ! Volume averaged te from te0_achievable
+   te = te0_available/(1.0D0+alphat)
 
    call stdlim_ecrh(gyro_frequency_max, bt,ne0_max,bt_ecrh_max)
 
+   ! Now go to Ignition point where ECRH is still available
+   ! In density..
    dene_old = dene
    dene = min(dene_old, ne0_max/(1.0d0+alphan))
 
+   ! And B-field..
    bt_old = bt
    bt = min(bt_ecrh_max,bt)
 

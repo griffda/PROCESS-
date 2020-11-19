@@ -3330,7 +3330,7 @@ module build_variables
 
   real(dp) :: bore = 1.42D0
   !! bore /1.42/ : central solenoid inboard radius (m)
-  !!               (iteration variable 29)
+  !!               (iteration variable 29) (for stellarators calculated: radial distance to midpoint (m))
 
   real(dp) :: clhsf = 4.268D0
   !! clhsf /4.268/ : cryostat lid height scaling factor (tokamaks)
