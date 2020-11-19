@@ -3866,9 +3866,9 @@ subroutine outtf(outfile, peaktfflag)
     if ( i_tf_sup /= 1 ) then 
         call osubhd(outfile,'Resitive loss parameters:')
         if ( i_tf_sup == 0 ) then
-            call ocmmnt(outfile,'Resitive material : GLIDCOP AL-15 - Dispersion Strengthened Copper') 
+            call ocmmnt(outfile,'Resistive Material : GLIDCOP AL-15 - Dispersion Strengthened Copper') 
         else if ( i_tf_sup == 2 ) then
-            call ocmmnt(outfile,'Resitive material : Pure aluminium (99.999+)')
+            call ocmmnt(outfile,'Resistive Material : Pure Aluminium (99.999+ %)')
         end if
 
         if ( itart == 1 ) then
