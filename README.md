@@ -7,10 +7,28 @@ can be found on the PROCESS [webpage](http://www.ccfe.ac.uk/powerplants.aspx).
 
 ## Install
 
-Clone code from Gitlab, enter the process directory and run:
+To install PROCESS you will need CMake v3.5 or later. Clone the repository and within
+the main folder run:
 
 ```bash
-sudo -u $USER bash install.sh
+cmake -H. -Bbuild
+cmake --build build
+```
+
+if you wish to also run the included test you will need to have an installation of GTest
+available. If your copy of GTest is not found in the default installation locations
+(e.g. `/usr/local/lib`, `/usr/lib`) you will need to manually specify the locations of the include
+directory and library file with the `GTEST_LIBRARIES` and `GTEST_INCLUDE_DIRS` variables before building.
+On Linux this would be:
+
+```bash
+cmake -H. -Bbuild -DGTEST_INCLUDE_DIRS=<googletest-folder>/include -DGTEST_LIBRARIES=<googletest-folder>/lib/libgtest.a
+```
+
+You can then install the Python modules by running:
+
+```bash
+pip3 install -U -e .
 ```
 
 ## Documentation

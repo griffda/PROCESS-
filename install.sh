@@ -39,17 +39,20 @@ if [ "$OSTYPE" == "linux-gnu" ]; then
             grep -qxF 'export LANG=C.UTF-8' ~/.bashrc || \
                 echo 'export LANG=C.UTF-8' >> ~/.bashrc
 
-            export GTEST='/usr/src/gtest/'
-            grep -qxF 'export GTEST="/usr/src/gtest/"' ~/.bashrc || \
-                echo 'export GTEST="/usr/src/gtest/"' >> ~/.bashrc
-
             # Set PYTHONPATH to utilities
             echo "- Setting Pythonpath"
             export SRC_PATH=$(pwd)
             grep -qxF "export PYTHONPATH=$PYTHONPATH:$SRC_PATH/utilities" ~/.bashrc || \
                 echo "export PYTHONPATH=$PYTHONPATH:$SRC_PATH/utilities" >> ~/.bashrc
             
-            cmake -H. -Bbuild
+            if [ $# -ne 0 ]; then
+                export GTEST_LOC=$1
+                echo "Will look for GTest in location: $GTEST_LOC"
+                cmake -H. -Bbuild -DGTEST_INCLUDE_DIRS=$GTEST_LOC/include/ -DGTEST_LIBRARIES=$GTEST_LOC/lib/libgtest.a
+            else
+                cmake -H. -Bbuild
+            fi
+
             cmake --build build
             cmake --build build --target dicts
             sudo pip3 install -e .
