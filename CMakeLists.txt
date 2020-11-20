@@ -20,12 +20,22 @@ set(CMAKE_Fortran_Compiler gfortran)
 # Project's name
 project(PROCESS LANGUAGES Fortran CXX)
 
-# Setup GoogleTest options
-find_package(GTest)
-if(GTEST_FOUND)
-  set(GTEST_LIBRARY ${GTEST_LIBRARIES})
-  include_directories(${GTEST_INCLUDE_DIRS})
+# Setup GoogleTest options need to add the option for the user to specify
+# manually where the needed files are. First check whether the variable has
+# been set manually, if not then use the macro
+
+if(NOT GTEST_LIBRARIES OR NOT GTEST_INCLUDE_DIRS)
+  find_package(GTest)
+elseif(GTEST_LIBRARIES AND GTEST_INCLUDE_DIRS)
+  SET(GTEST_FOUND ON) # Manually set this variable if others exist without macro
+  MESSAGE(STATUS "GTest Library: ${GTEST_LIBRARIES}")
 endif()
+
+if(NOT GTEST_FOUND)
+  MESSAGE(WARNING " Failed to find GTest Installation, tests will not be built")
+endif()
+MESSAGE(STATUS "GTest Include Directory: ${GTEST_INCLUDE_DIRS}")
+include_directories(${GTEST_INCLUDE_DIRS})
 
 # enable Fortran
 if(${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
