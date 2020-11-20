@@ -90,7 +90,7 @@ Code example in the `input.f90` file.
 It should be noted that iteration variables must not be reset elsewhere in the
 code. That is, they may only be assigned new values when originally
 initialised (in the relevant module, or in the input file if required), and in
-the \texttt{subroutine set\_itv\_XX` where the iteration process itself is performed.
+the `subroutine set_itv_XX` where the iteration process itself is performed.
 Otherwise, the numerical procedure cannot adjust the value as it requires, and
 the program will fail.
 
