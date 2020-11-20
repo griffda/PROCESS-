@@ -1,4 +1,4 @@
-# Style Guide
+# Guide for adding variabales/constraints 
 [PDF of webpage](../pdf/add_vars.pdf)
 
 <p style='text-align: justify;'>
