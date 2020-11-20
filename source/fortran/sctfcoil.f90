@@ -3613,7 +3613,7 @@ subroutine outtf(outfile, peaktfflag)
     call ovarin(outfile,'Conductor technology','(i_tf_sup)',i_tf_sup)
     select case (i_tf_sup)
         case (0)
-            call ocmmnt(outfile,'  -> Resitive coil : Water cooled copper (GLIDCOP)')
+            call ocmmnt(outfile,'  -> Resitive coil : Water cooled copper (GLIDCOP AL-15)')
         case (1)
             call ocmmnt(outfile,'  -> Superconducting coil (SC)')
         case (2)
@@ -3861,6 +3861,12 @@ subroutine outtf(outfile, peaktfflag)
     ! Resistive coil parameters
     if ( i_tf_sup /= 1 ) then 
         call osubhd(outfile,'Resitive loss parameters:')
+        if ( i_tf_sup == 0 ) then
+            call ocmmnt(outfile,'Resistive Material : GLIDCOP AL-15 - Dispersion Strengthened Copper') 
+        else if ( i_tf_sup == 2 ) then
+            call ocmmnt(outfile,'Resistive Material : Pure Aluminium (99.999+ %)')
+        end if
+
         if ( itart == 1 ) then
             call ovarre(outfile,'CP resistivity (ohm.m)','(rhocp)',rhocp)
             call ovarre(outfile,'Leg resistivity (ohm.m)','(rhotfleg)',rhotfleg)
