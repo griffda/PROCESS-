@@ -62,10 +62,12 @@ BLANKET_COMPARE_PARAMS = [
 GENERIC_LIST = [
     "rmajor", "rminor", "aspect", "kappa", "kappa95", "triang", "triang95",
     "powfmw", "plascur/1d6", "bt", "q95", "beta", "te", "dene", "pinjmw",
-    "pnetelmw", "wallmw", "ralpne", "pcoreradmw", "pradmw", "bootipf",
-    "capcost", "bore", "ohcth", "precomp", "gapoh", "tfcth", "tftsgap", "thshield",
-    "gapds", "ddwi","shldith", "vvblgap", "blnkith", "fwith", "scrapli", "scraplo",
-    "fwoth", "blnkoth", "shldoth", "gapsto", "tftsgap", "tfthko", "etath"
+    "pnetelmw", "wallmw", "photon_wall", "ralpne", "pcoreradmw", "pradmw", 
+    "bootipf", "pdivmax/rmajor", "fimp(14", "etath", "capcost", "coe",
+    "bore", "ohcth", "precomp", "gapoh", "tfcth", "tftsgap", "thshield",
+    "gapds", "d_vv_in", "shldith", "vvblgap", "blnkith", "fwith", "scrapli", 
+    "scraplo", "fwoth", "blnkoth", "shldoth", "d_vv_out", "gapsto", "tftsgap", 
+    "tfthko", "vgap", "divfix", "d_vv_bot", "shldlth", "vgap2" 
 ]
 
 class BColors(object):

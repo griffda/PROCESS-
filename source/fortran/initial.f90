@@ -803,8 +803,8 @@ subroutine check
         end if
 
         ! Setting the CP joints default options : 
+        !  0 : No joints for superconducting magents (i_tf_sup = 1)
         !  1 : Sliding joints for resistive magnets (i_tf_sup = 0, 2)  
-        !  0 : Clampled joints for superconducting magents (i_tf_sup = 1)
         if ( i_cp_joints == -1 ) then
             if ( i_tf_sup == 1 ) then 
                 i_cp_joints = 0
