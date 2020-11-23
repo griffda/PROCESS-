@@ -7,11 +7,16 @@ Compatible with PROCESS version 368 """
 
 from os.path import join as pjoin
 from sys import stderr
-from process_io_lib.in_dat import InDat
-from process_io_lib.mfile import MFile
+from process.io.in_dat import InDat
+from process.io.mfile import MFile
 from numpy.random import uniform
 from time import sleep
-from create_dicts import get_dicts
+from process.io.python_fortran_dicts import get_dicts
+from pathlib import Path
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Load dicts from dicts JSON file
 process_dicts = get_dicts()
@@ -215,15 +220,29 @@ def check_input_error(wdir='.'):
     """
     Checks, if an input error has occurred.
     Stops as a consequence.
+    Will also fail if the MFILE.DAT isn't found.
     """
+    try:
+        mfile_path = Path(wdir) / "MFILE.DAT"
 
-    m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
-    error_id = m_file.data['error_id'].get_scan(-1)
+        # TODO Remove: what's here?
+        what = list(mfile_path.parent.glob("*"))
 
-    if error_id == 130:
-        print('Error in input file. Please check OUT.DAT \
-for more information.', file=stderr)
-        exit()
+        if mfile_path.exists():
+            mfile_path_str = str(mfile_path)
+            mfile = MFile(filename=mfile_path_str)
+        else:
+            raise FileNotFoundError("MFile doesn't exist")
+
+        error_id = mfile.data['error_id'].get_scan(-1)
+
+        if error_id == 130:
+            print('Error in input file. Please check OUT.DAT \
+    for more information.', file=stderr)
+            exit()
+    except:
+        logger.exception("Check input error exception")
+        raise
 
 
 ########################################

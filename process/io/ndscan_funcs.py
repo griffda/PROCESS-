@@ -11,10 +11,10 @@ Notes:
 Compatible with PROCESS version 319
 """
 
-from process_io_lib.in_dat import InDat
+from process.io.in_dat import InDat
 import collections as col
 import subprocess
-from create_dicts import get_dicts
+from process.io.python_fortran_dicts import get_dicts
 
 # Load dicts from dicts JSON file
 process_dicts = get_dicts()

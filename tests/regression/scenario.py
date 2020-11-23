@@ -77,11 +77,22 @@ class Scenario():
         self.test_dir = test_dir
         logger.info(f"Running scenario: {self.name}")
 
-        # Run Process using the input file in the "test_dir" directory,
-        # catching any errors
-        input_path_str = str(self.test_dir / 'IN.DAT')
+        # TODO Deal with a default conf file name or not; are both vary args
+        # really needed?
+        # Determine if this is a normal or vary iteration parameters run
+        if len(list(self.test_dir.glob("*.conf"))):
+            # A .conf file is present: vary iteration params scenario
+            conf_path_str = str(self.test_dir / "run_process.conf")
+            args = ["--varyiterparams", "--varyiterparamsconfig", conf_path_str]
+        else:
+            # No .conf file: normal run
+            input_path_str = str(self.test_dir / 'IN.DAT')
+            args = ['--input', input_path_str]
+
+        # Run Process using the input or config file in the test_dir
+        # directory, catching any errors
         try:
-            main(args=['--input', input_path_str])
+            main(args=args)
             return True
         except:
             logger.exception(f"Process threw an exception when running "

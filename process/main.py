@@ -46,6 +46,13 @@ import argparse
 from pathlib import Path
 import sys
 import os
+import subprocess
+
+# For VaryRun
+from process.io.process_config import RunProcessConfig
+from process.io.process_funcs import (get_neqns_itervars,
+    get_variable_range, check_input_error, process_stopped,
+    no_unfeasible_mfile, vary_iteration_variables, process_warnings)
 
 os.environ['PYTHON_PROCESS_ROOT'] =  os.path.join(os.path.dirname(__file__))
 
@@ -58,18 +65,8 @@ class Process():
         :type args: list, optional
         """
         self.parse_args(args)
-        self.init_module_vars()
-        self.set_filenames()
-        self.initialise()
-        self.run_hare_tests()
-        self.kallenbach_tests()
-        self.kallenbach_scan()
-        self.call_solver()
-        self.scan()
-        self.show_errors()
-        self.finish()
-        self.append_input()
-    
+        self.run_mode()
+
     def parse_args(self, args=None):
         """Parse the command-line arguments, such as the input filename.
 
@@ -112,12 +109,27 @@ class Process():
             )
 
         # Optional args
-        parser.add_argument("--input",
+        parser.add_argument(
             "-i",
+            "--input",
             default="IN.DAT",
             metavar="input_file_path",
             type=str,
-            help="The path to the input file that Process runs on")
+            help="The path to the input file that Process runs on"
+        )
+        parser.add_argument(
+            "-v",
+            "--varyiterparams",
+            action="store_true",
+            help="Vary iteration parameters"
+        )
+        parser.add_argument(
+            "-c",
+            "--varyiterparamsconfig",
+            metavar="config_file",
+            default="run_process.conf",
+            help="configuration file, default = run_process.conf"
+        )
 
         # If args is not None, then parse the supplied arguments. This is likely
         # to come from the test suite when testing command-line arguments; the 
@@ -126,6 +138,132 @@ class Process():
         # sys.argv), as the method is being run from the command-line.
         self.args = parser.parse_args(args)
         # Store namespace object of the args
+
+    def run_mode(self):
+        """Determine how to run Process."""
+        if self.args.varyiterparams:
+            VaryRun(self.args.varyiterparamsconfig)
+        else:
+            SingleRun(self.args.input)
+
+class VaryRun():
+    """Vary iteration parameters until a solution is found.
+
+    This is the old run_process.py utility.
+
+    Code to run PROCESS with a variation of the iteration parameters
+    until a feasible solution is found.
+    If running in sweep mode, the allowed number of unfeasible solutions
+    can be changed in the config file.
+
+    Input files:
+    run_process.conf (config file, in the same directory as this file)
+    An IN.DAT file as specified in the config file
+
+    Output files:
+    All of them in the work directory specified in the config file
+    OUT.DAT     -  PROCESS output
+    PLOT.DAT    -  PROCESS output
+    MFILE.DAT   -  PROCESS output
+    process.log - logfile of PROCESS output to stdout
+    README.txt  - contains comments from config file
+    """
+    def __init__(self, config_file):
+        # Store the absolute path to the config file immediately: various
+        # dir changes happen in old run_process code
+        self.config_file = Path(config_file).resolve()
+        self.run()
+    
+    def run(self):
+        # The input path for the varied input file
+        input_path = self.config_file.parent / "IN.DAT"
+
+        # Taken without much modification from the original run_process.py
+        # Something changes working dir in config lines below
+        config = RunProcessConfig(self.config_file)
+        config.setup()
+        neqns, itervars = get_neqns_itervars()
+        lbs, ubs = get_variable_range(itervars, config.factor)
+
+        # If config file contains WDIR, use that. Otherwise, use the directory
+        # containing the config file (used when running regression tests in
+        # temp dirs)
+        # TODO Not sure this is required any more
+        if config.wdir:
+            wdir = config.wdir
+        else:
+            wdir = Path(self.config_file).parent
+
+        # Check IN.DAT exists
+        if not input_path.exists():
+            raise FileNotFoundError
+
+        # TODO add diff ixc summary part
+        for i in range(config.niter):
+            print(i, end=' ')
+
+            logfile = open('process.log', 'w')
+            print("PROCESS run started ...", end='')
+
+            try:
+                # Run single runs (SingleRun()) of process as subprocesses. This
+                # is the only way to deal with Fortran "stop" statements when 
+                # running VaryRun(), which otherwise cause the Python 
+                # interpreter to exit, when we want to vary the parameters and 
+                # run again
+                # TODO Don't do this; remove stop statements from Fortran and 
+                # handle error codes
+                # Run process on an IN.DAT file
+                subprocess.check_call(["process", "-i", str(input_path)], stdout=logfile,
+                                    stderr=logfile)
+            except subprocess.CalledProcessError as err:
+                print('\n Error: There was a problem with the PROCESS \
+                    execution!', err, file=sys.stderr)
+                print('       Refer to the logfile for more information!',
+                    file=sys.stderr)
+                exit()
+
+            logfile.close()
+            print("finished.")
+            # End of run_process
+
+            check_input_error(wdir=wdir)
+
+            if not process_stopped():
+                no_unfeasible = no_unfeasible_mfile()
+                if no_unfeasible <= config.no_allowed_unfeasible:
+                    if no_unfeasible > 0:
+                        print("WARNING: Non feasible point(s) in sweep, "
+                            "But finished anyway! {} ".format(no_unfeasible))
+                    if process_warnings():
+                        print("\nThere were warnings in the final PROCESS run. "
+                            "Please check the log file!\n")
+                    # This means success: feasible solution found
+                    break
+                else:
+                    print("WARNING: {} non-feasible point(s) in sweep! "
+                        "Rerunning!".format(no_unfeasible))
+            else:
+                print("PROCESS has stopped without finishing!")
+
+            vary_iteration_variables(itervars, lbs, ubs)
+
+        config.error_status2readme()
+
+class SingleRun():
+    def __init__(self, input_file):
+        self.input_file = input_file
+        self.init_module_vars()
+        self.set_filenames()
+        self.initialise()
+        self.run_hare_tests()
+        self.kallenbach_tests()
+        self.kallenbach_scan()
+        self.call_solver()
+        self.scan()
+        self.show_errors()
+        self.finish()
+        self.append_input()
 
     def init_module_vars(self):
         """Initialise all module variables in the Fortran.
@@ -145,19 +283,19 @@ class Process():
         """Validate and set the input file path."""
         # Check input file ends in "IN.DAT", then save prefix
         # (the part before the IN.DAT)
-        if self.args.input[-6:] != "IN.DAT":
+        if self.input_file[-6:] != "IN.DAT":
             raise ValueError("Input filename must end in IN.DAT.")
         
-        self.filename_prefix = self.args.input[:-6]
+        self.filename_prefix = self.input_file[:-6]
 
         # Check input file exists (path specified as CLI argument)
-        input_path = Path(self.args.input)
+        input_path = Path(self.input_file)
         if input_path.exists():
             self.input_path = input_path
             # Set input as Path object
         else:
             raise FileNotFoundError("Input file not found on this path. There "
-                "is no input file named", self.args.input, "in the analysis "
+                "is no input file named", self.input_file, "in the analysis "
                 "folder")
 
         # Set the input file in the Fortran
