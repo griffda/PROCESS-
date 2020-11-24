@@ -1,16 +1,15 @@
-
 # Style Guide
 [PDF of webpage](../pdf/standards.pdf)
+
+# Coding Standards
 
 ## Line Length
 
 For optimal readability, a limit of 100 characters for maximum line length has been set. This is below the maximum line length of 132 characters for Fortran (to prevent compilation errors) and prevents long lines that run on past the edge of the screen wasting programmers time with scrolling.
 
-# Coding Standards
-
 ## Double declarations
 
-PROCESS uses the Fortran 2008+ intrinsic precision module as shown in the example below. The 
+PROCESS uses the Fortran 2008+ intrinsic precision module as shown in the example below. The
 use statement will need to be at the module level. See the 
 [fortran wiki](http://fortranwiki.org/fortran/show/Real+precision) for more information.
 
@@ -18,12 +17,16 @@ use statement will need to be at the module level. See the
 use, intrinsic :: iso_fortran_env, only: dp=>real64
 
 real(dp) :: b
+!! Variable description
 
 ```
 
 ## Naming conventions
 
+Please see <a href="https://git.ccfe.ac.uk/process/process/-/issues/939">issue 939</a>.
+
 # Code Documentation Using FORD
+
 PROCESS uses FORD (FORtran Documentation) to automatically generate documentation from comments 
 in the FORTRAN code. FORD parses FORTRAN source to understand the structure of the project as well 
 as picking up "docmarked" comments in the source to create the documentation.
@@ -37,8 +40,10 @@ The "!!" docmark goes after the statement it documents. For example, to document
 ```fortran
 real(kind(1.0D0)) :: alphan = 0.25D0
 !! Density profile index
+
 real(kind(1.0D0)) :: alphap = 0.0D0
 !! Pressure profile index
+
 real(kind(1.0D0)) :: alpharate = 0.0D0
 !! Alpha particle production rate (particles/m3/sec)
 ```
@@ -64,7 +69,7 @@ The FORD project on github can be found [here](https://github.com/Fortran-FOSS-P
 
 ## Example of FORD documentation for a subroutine (constraint equation)
 
-```fortran 
+```fortran
 
 subroutine constraint_eqn_001(args)
   !! author: J Morris

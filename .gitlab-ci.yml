@@ -230,7 +230,7 @@ make_freia:
     - gcc --version
     - ls -lah
     - rm -rf build
-    - cmake3 -H. -Bbuild
+    - cmake3 -H. -Bbuild -DGTEST_INCLUDE_DIRS=$GTEST/include/ -DGTEST_LIBRARIES=$GTEST/lib/libgtest.a
     - cmake3 --build build
     - ls bin -lah
     - echo "Test "
@@ -252,7 +252,7 @@ make_dicts_freia:
     - pwd
     - gcc --version
     - ls -lah
-    - cmake3 -H. -Bbuild
+    - cmake3 -H. -Bbuild -DGTEST_INCLUDE_DIRS=$GTEST/include/ -DGTEST_LIBRARIES=$GTEST/lib/libgtest.a
     - cmake3 --build build --target dicts
   tags:
     - freia
@@ -266,7 +266,7 @@ make_developerguide_freia:
     - pwd
     - gcc --version
     - ls -lah
-    - cmake3 -H. -Bbuild
+    - cmake3 -H. -Bbuild -DGTEST_INCLUDE_DIRS=$GTEST/include/ -DGTEST_LIBRARIES=$GTEST/lib/libgtest.a
     - cmake3 --build build --target developerguide
   tags:
     - freia
@@ -280,7 +280,7 @@ make_utilitiesdoc_freia:
     - pwd
     - gcc --version
     - ls -lah
-    - cmake3 -H. -Bbuild
+    - cmake3 -H. -Bbuild -DGTEST_INCLUDE_DIRS=$GTEST/include/ -DGTEST_LIBRARIES=$GTEST/lib/libgtest.a
     - cmake3 --build build --target utilitiesdoc
   tags:
     - freia
@@ -294,7 +294,7 @@ make_optsolverdoc_friea:
     - pwd
     - gcc --version
     - ls -lah
-    - cmake3 -H. -Bbuild
+    - cmake3 -H. -Bbuild -DGTEST_INCLUDE_DIRS=$GTEST/include/ -DGTEST_LIBRARIES=$GTEST/lib/libgtest.a
     - cmake3 --build build --target optsolverdoc
   tags:
     - freia
@@ -308,7 +308,7 @@ make_tfdoc_freia:
     - pwd
     - gcc --version
     - ls -lah
-    - cmake3 -H. -Bbuild
+    - cmake3 -H. -Bbuild -DGTEST_INCLUDE_DIRS=$GTEST/include/ -DGTEST_LIBRARIES=$GTEST/lib/libgtest.a
     - cmake3 --build build --target tfdoc
   tags:
     - freia
@@ -324,7 +324,7 @@ unit_tests_freia:
     - gcc --version
     - ls -lah
     - rm -rf build
-    - cmake3 -H. -Bbuild
+    - cmake3 -H. -Bbuild -DGTEST_INCLUDE_DIRS=$GTEST/include/ -DGTEST_LIBRARIES=$GTEST/lib/libgtest.a
     - cmake3 --build build
     - ls bin/
     - ./bin/process_GTest.exe
@@ -339,7 +339,7 @@ test_suite_freia:
   <<: *build-freia-setup
   script:
     - pwd
-    - cmake3 -H. -Bbuild
+    - cmake3 -H. -Bbuild -DGTEST_INCLUDE_DIRS=$GTEST/include/ -DGTEST_LIBRARIES=$GTEST/lib/libgtest.a
     - cmake3 --build build
     - cmake3 --build build --target dicts
     - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
@@ -357,7 +357,7 @@ baseline_2019_freia:
   <<: *build-freia-setup
   script:
     - pwd
-    - cmake3 -H. -Bbuild
+    - cmake3 -H. -Bbuild -DGTEST_INCLUDE_DIRS=$GTEST/include/ -DGTEST_LIBRARIES=$GTEST/lib/libgtest.a
     - cmake3 --build build
     - cmake3 --build build --target dicts
     - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
@@ -384,7 +384,7 @@ baseline_2018_freia:
   <<: *build-freia-setup
   script:
     - pwd
-    - cmake3 -H. -Bbuild
+    - cmake3 -H. -Bbuild -DGTEST_INCLUDE_DIRS=$GTEST/include/ -DGTEST_LIBRARIES=$GTEST/lib/libgtest.a
     - cmake3 --build build
     - cmake3 --build build --target dicts
     - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
