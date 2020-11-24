@@ -568,7 +568,7 @@ contains
 
       !call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht_local,pscalingmw_local)
     end if
-    !print *, "powerscaling: ", pscalingmw, "powerht: ",powerht, "fecrh_ignition: ",fecrh_ignition
+    print *, "te0_ecrh_achievable: ",te0_ecrh_achievable
 
 
 
@@ -667,7 +667,8 @@ contains
     ! These parameters are outputs for the stellarator neoclassics module
     real(dp) :: chi_neo_e, chi_PROCESS_e, q_neo, q_PROCESS,q_PROCESS_r1, gamma_neo, gamma_PROCESS, total_q_neo,&
                   q_neo_e, q_neo_D, q_neo_a, q_neo_T, g_neo_e, g_neo_D, g_neo_a, g_neo_T, &
-                  dndt_neo_e, dndt_neo_D, dndt_neo_a, dndt_neo_T, dndt_neo_fuel, dmdt_neo_fuel, total_q_neo_e
+                  dndt_neo_e, dndt_neo_D, dndt_neo_a, dndt_neo_T, dndt_neo_fuel, dmdt_neo_fuel,dmdt_neo_fuel_from_e, &
+                  total_q_neo_e
 
     ! These parameters are used for the stellarator 0.5D turbulence module
     real(dp) :: q_turb, chi_turb, total_q_turb
@@ -875,6 +876,8 @@ contains
                                  '(dndt_neo_fuel)',dndt_neo_fuel)
          call ovarre(outfile,'Total fuel (DT) mass flux due to neoclassical particle transport (mg/s): ', &
                                  '(dmdt_neo_fuel)',dmdt_neo_fuel)
+         call ovarre(outfile,'Total fuel (DT) mass flux by using 4 * neoclassical e transport (mg/s): ', &
+                                 '(dmdt_neo_fuel_from_e)',dmdt_neo_fuel_from_e)
          call ovarre(outfile,'Considered Heatflux by LCFS heat flux ratio (1)','(q_PROCESS/q_PROCESS_r1)',q_PROCESS/q_PROCESS_r1)
 
          call ovarre(outfile,'Resulting electron effective chi (0D) (r=rhocore): ','(chi_PROCESS_e)',chi_PROCESS_e)
@@ -993,6 +996,7 @@ contains
 
          dndt_neo_fuel = (dndt_neo_D + dndt_neo_T) * sarea * coreradius
          dmdt_neo_fuel = dndt_neo_fuel * afuel * mp_ * 1.0d6 ! mg
+         dmdt_neo_fuel_from_e = 4 * dndt_neo_e * sarea * coreradius * afuel * mp_ * 1.0d6  ! kg
 
          chi_neo_e =  -(neo_at_rhocore%q_flux(1)+neo_at_rhocore%Gamma_flux(1)*neo_at_rhocore%profiles%temperatures(1))/ &
                      (neo_at_rhocore%profiles%densities(1)* &
@@ -1312,7 +1316,6 @@ contains
 
 
     ! The peaking factor, obtained as precalculated parameter
-
     wallpf = config%neutron_peakfactor
 
     !  Blanket neutronics calculations
@@ -2075,6 +2078,7 @@ contains
    dene = dene_old
    bt = bt_old
 
+   print *,"te: ",te,". teold: ",te_old
    !print *, "Heating Power (MW):", powerht, "Loss Power (MW):", pscalingmw,&
    !         "bt_ECRH: ",bt_ecrh_max, " bt: ", bt, " te_needed: ",te_needed, "Density: ", ne0_max/(1.0d0+alphan)
 
@@ -2119,10 +2123,8 @@ contains
    ! This routine calculates the physics again at ecrh density
    ! Save the current values:
    te_old = te
-
    ! Volume averaged te from te0_achievable
    te = te0_available/(1.0D0+alphat)
-
    call stdlim_ecrh(gyro_frequency_max, bt,ne0_max,bt_ecrh_max)
 
    ! Now go to Ignition point where ECRH is still available
@@ -2135,9 +2137,10 @@ contains
    bt = min(bt_ecrh_max,bt)
 
    call stphys(nout,0)
+   
    powerht_out = powerht
    pscalingmw_out = pscalingmw
-
+   print *,"te: ",te,"Original te: ",te_old
    ! Reverse it and do it again because anything more efficiently isn't suitable with the current implementation
    ! This is bad practice but seems to be necessary as of now:
    te = te_old
@@ -2145,7 +2148,6 @@ contains
    bt = bt_old
 
    call stphys(nout,0)
-   
 
    
 

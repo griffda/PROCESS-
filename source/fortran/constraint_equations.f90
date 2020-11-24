@@ -2801,6 +2801,7 @@ contains
       call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht_local,powerscaling)
 
       ! Achievable ECRH te needs to be larger than needed te for igntion
+      print*, "Heatingpower: ",powerht_local, "Loss power: ",powerscaling
       args%cc = 1.0D0 - fecrh_ignition* powerht_local/powerscaling
       args%con = powerscaling * (1.0D0 - args%cc)
       args%err = powerht_local * args%cc

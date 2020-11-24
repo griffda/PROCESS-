@@ -40,7 +40,7 @@ subroutine initial
         init_itv_156, init_itv_157, init_itv_158, init_itv_159, init_itv_160, &
         init_itv_161, init_itv_162, init_itv_163, init_itv_164, init_itv_165, &
         init_itv_166, init_itv_167, init_itv_168, init_itv_169, init_itv_170, &
-        init_itv_171, init_itv_172, init_itv_173, init_itv_174
+        init_itv_171, init_itv_172, init_itv_173, init_itv_174,init_itv_175
     use, intrinsic :: iso_fortran_env, only: dp=>real64
 
     implicit none
@@ -232,7 +232,7 @@ subroutine initial
     call init_itv_172
     call init_itv_173
     call init_itv_174
-
+    call init_itv_175
 
 
     !    call init_itv_1
@@ -534,7 +534,8 @@ subroutine initial
     !    !!  <LI> (173) fbetatry_lower
     !    lablxc(174) = 'fecrh_ignition    '; boundl(174) = 0.0010D0; boundu(174) = 2.000D0
     !    !!  <LI> (174) fecrh_ignition
-
+    !    lablxc(175) = 'te0_ecrh_achievable    '; boundl(175) = 1.0D0; boundu(175) = 200.0D0
+    !    !!  <LI> (175) te0_ecrh_achievable
     !  Initialise stellarator parameters if necessary
     !  This overrides some of the bounds of the tokamak parameters.
     if (istell /= 0) call stinit
