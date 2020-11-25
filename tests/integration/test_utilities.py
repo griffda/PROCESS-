@@ -74,6 +74,14 @@ def input_file_path(scenario_path):
     :rtype: Path
     """
     input_file_path = scenario_path / "IN.DAT"
+    if not input_file_path.exists():
+        # VaryRun input files are called ref_IN.DAT; can't be called IN.DAT as 
+        # intermediate input files are IN.DAT. Try this instead
+        input_file_path = scenario_path / "ref_IN.DAT"
+        if not input_file_path.exists():
+            raise FileNotFoundError("Scenario directory doesn't contain an "
+                "input file")
+
     return input_file_path
 
 def test_mfile_lib(mfile_path):
