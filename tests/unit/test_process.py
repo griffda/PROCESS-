@@ -300,3 +300,23 @@ def test_finish(single_run, monkeypatch):
     """
     monkeypatch.setattr(fortran.init_module, "finish", lambda: None)
     single_run.finish()
+
+@pytest.fixture
+def vary_run(monkeypatch):
+    """Fixture to return a VaryRun object.
+
+    :param monkeypatch: monkeypatch fixture
+    :type monkeypatch: object
+    :return: VaryRun object
+    :rtype: VaryRun
+    """
+    monkeypatch.setattr(VaryRun, "__init__", mock_init)
+    return VaryRun()
+
+def test_vary_run(vary_run):
+    """Assert VaryRun object can be created.
+
+    :param vary_run: vary_run fixture
+    :type vary_run: VaryRun
+    """
+    assert type(vary_run) is VaryRun
