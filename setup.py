@@ -1,10 +1,16 @@
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, Extension
 from setuptools.command.test import test as TestCommand
 
-import sys
+import sys, site, os, subprocess, platform
+
+MODULE_NAME = 'process'
+_install_loc = os.path.join(site.getsitepackages()[0], MODULE_NAME)
+EXTRA_ARGS = []
+if platform.system() == 'Darwin':
+    EXTRA_ARGS = ['-Wl,-rpath,'+os.path.join(_install_loc, 'lib')]
 
 setup_kwargs = {
-    "name": "process",
+    "name": MODULE_NAME,
     "version": "1.0.17",
     "description": (
         "Power Reactor Optimisation Code for Environmental and Safety Studies"
@@ -17,9 +23,8 @@ setup_kwargs = {
     },
     "package_data": {
         "process": [
+            "lib/lib*",
             "_fortran*.so",
-            ".lib/libgfortran.so*",
-            ".lib/libprocess_lib.so",
             "data/fluids/*",
             "data/h_data/*",
             "data/impuritydata/*",
@@ -39,7 +44,8 @@ setup_kwargs = {
             "process_script=process.process_script_advanced:main",
             "process=process.main:main"
             ]
-    }
+    },
+    "extra_link_args": EXTRA_ARGS
 }
 
 if __name__ == "__main__":

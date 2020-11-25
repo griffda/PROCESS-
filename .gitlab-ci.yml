@@ -42,8 +42,9 @@ stages:
     - pip3 install virtualenv
     - virtualenv ~/testenv
     - source ~/testenv/bin/activate
-    - pip3 install --find-links=process_dist process
-    - pip3 install -r requirements.txt
+    - python3 -m pip install -r requirements.txt
+    - python3 -m pip install git+https://github.com/jonMaddockUkaea/ford
+    - python3 -m pip install --find-links=process_dist process
 
 #-----------------
 #  Build
@@ -58,8 +59,6 @@ make:
       - process_dist/process-*.whl
     expire_in: 1 week
   script:
-    - pip3 install -r requirements.txt
-    # Required to install Ford before cmake runs
     - cmake -H. -Bbuild
     - cmake --build build
     - python3 setup.py sdist -d process_dist
@@ -199,7 +198,6 @@ make_dicts_freia:
     - gcc --version
     - ls -lah
     - cmake3 -H. -Bbuild
-    - pip3 install -r requirements
     - cmake3 --build build --target dicts
   tags:
     - freia

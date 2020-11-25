@@ -12,6 +12,7 @@ PROCESS was originally a Fortran code, but is now Python-wrapped Fortran. In ord
 ### Installation
 
 *It is highly recommended users create a Python virtual environment in order to use the PROCESS Python package, as this ensures that installations of required package versions don't affect other packages that require different versions in your environment. It isn't necessary, however.*
+*Please note due to bugs in f90wrap, Python3.9 is not yet supported. Running with Python3.9 will cause syntax errors to be raised when running f2py on the f90wrap outputs.*
 
 If you have modified your `$PYTHONPATH` environment variable to include `process/utilities`, perhaps in your `~/.bashrc` file, then please remove this modification. Re-start your terminal for the changes to take effect, and check this is not on your `$PYTHONPATH` with:
 ```bash
@@ -26,38 +27,42 @@ git clone git@git.ccfe.ac.uk:process/process.git
 cd process
 ```
 
-Activate your virtual environent if you'd like to use one.
+Activate your virtual environment if you'd like to use one. It is no longer necessary to install the requirements from `requirements.txt` as this is part of the CMake installation procedure, however you may do so in advance if you wish.
 
-Then install the required dependencies using pip3 (or pip, if you have an alias to pip3 set up):
+Now we need to compile the Fortran and create the Python interface. This is done using CMake to configure the build and then make to build it, from within the root folder of the repository run:
+
 ```bash
-pip3 install -r requirements.txt
+cmake -H. -Bbuild
 ```
 
-Now we need to compile the Fortran and create the Python interface. This is done using Cmake to configure the build and then make to build it. Firstly create a build directory, navigate into it and configure the project using CMake, which is a build system generator.
+this should set up the build and also give information on the system in which PROCESS is being installed. Finally start the build process:
 
 ```bash
-mkdir build
-cd build
-cmake ..
-```
-
-Then build it using make:
-```bash
-make
-```
-
-The two previous steps may also be accomplished by running the following from the project directory:
-```bash
-cmake -S . -B build
 cmake --build build
 ```
 
-The first command defines the source (`-S`) and build (`-B`) directories and configures the build. The second runs the build in the build directory (this uses make by default if you're on Linux). It's up to you which method you choose.
+The build step may take some time when run for the first time (~3 mins) as the Fortran code is compiled and then wrapped using `f90wrap` and `f2py` to create the Python libraries. Once this is completed the Process Python package is then automatically installed using `pip` and should be ready to use on Linux.
 
-The build step may take some time when run for the first time (~3 mins) as the Fortran code is compiled and then wrapped using `f90wrap` and `f2py` to create the Python libraries. Once this is completed you can then install the Process Python package from the project directory:
+If the installation was successful the command `process` should be available on the command line.
+
+#### macOS Installation
+
+For macOS users it is highly recommended you install GCC using Homebrew. This version of PROCESS searches for the `libgfortran` library by using GCC and the build has been proven to work using this compiler. By default, mac will build with Apple Clang which is the default binary when running the `gcc` command. You will need to either specify the compiler when running CMake:
+
+```
+cmake -H. -Bbuild -DCMAKE_C_COMPILER=/path/to/gcc/binary
+```
+
+or set your GCC installation to be at the front of the `PATH` variable, e.g. if your installation is in `/usr/local/bin`:
+
+```
+export PATH=/usr/local/bin:$PATH
+```
+
+Furthermore an additional step is required post-build in which the shared object produced by `f2py` needs to be editted to change the library links using `image_name_tool`, a script has been provided to automate this process. Upon completion of the PROCESS installation Mac users should run:
 
 ```bash
-pip3 install .
+bash scripts/macos_update_shared_objects.sh
 ```
 
 ### Testing
