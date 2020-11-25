@@ -141,10 +141,11 @@ class Process():
 
     def run_mode(self):
         """Determine how to run Process."""
+        # Store run object: useful for testing
         if self.args.varyiterparams:
-            VaryRun(self.args.varyiterparamsconfig)
+            self.run = VaryRun(self.args.varyiterparamsconfig)
         else:
-            SingleRun(self.args.input)
+            self.run = SingleRun(self.args.input)
 
 class VaryRun():
     """Vary iteration parameters until a solution is found.
