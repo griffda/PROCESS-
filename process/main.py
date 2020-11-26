@@ -67,11 +67,11 @@ class Process():
         self.parse_args(args)
         self.run_mode()
 
-    def parse_args(self, args=None):
+    def parse_args(self, args):
         """Parse the command-line arguments, such as the input filename.
 
-        :param args: Arguments to parse, defaults to None
-        :type args: list, optional
+        :param args: Arguments to parse
+        :type args: list
         """
         parser = argparse.ArgumentParser(description=("PROCESS\n"
             "Power Reactor Optimisation Code\n"

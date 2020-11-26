@@ -14,22 +14,23 @@ INPUT_FILE = "tracking/baseline_2018/baseline_2018_IN.DAT"
 # Convert input file path to absolute and string
 input_file_path = str(Path(INPUT_FILE).resolve())
 
-# TODO Perhaps this should be an integration test?
-def test_main():
-    """Check that the main function can run.
+def test_main(monkeypatch):
+    """Check that main() can run.
     
-    Call the main function without any arguments. No input file is specified,
-    so this should raise a FileNotFoundError, in which case the test passes.
+    Call the main function without any arguments.
+    :param monkeypatch: monkeypatch fixture
+    :type monkeypatch: object
     """
-    with pytest.raises(FileNotFoundError):
-        main.main(args=[])
-        # If args is None, then the argparse parser uses sys.argv (i.e. the 
-        # command-line args) instead. When running from pytest, these are some
-        # pytest-specific arguments that we don't want going into the Process
-        # argparser. Hence explicitly setting args=[] ensures that the Process
-        # argparser gets an empty list (i.e. no arguments). This way it is
-        # possible to test command-line arguments from the test suite, as if the
-        # arguments are supplied on the command-line.
+    # Mock initialisation of the Process object
+    monkeypatch.setattr(Process, "__init__", mock_init)
+    main.main(args=[])
+    # If args is None, then the argparse parser uses sys.argv (i.e. the 
+    # command-line args) instead. When running from pytest, these are some
+    # pytest-specific arguments that we don't want going into the Process
+    # argparser. Hence explicitly setting args=[] ensures that the Process
+    # argparser gets an empty list (i.e. no arguments). This way it is
+    # possible to test command-line arguments from the test suite, as if the
+    # arguments are supplied on the command-line.
 
 def mock_init(*args, **kwargs):
     """Used to mock out __init__ methods on classes.

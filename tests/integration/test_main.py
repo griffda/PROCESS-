@@ -3,6 +3,8 @@ from process import main
 from process import fortran
 from pathlib import Path
 from shutil import copy
+import pytest
+import os
 
 def test_single_run(tmp_path):
     """Test a SingleRun Process run with CLI args."""
@@ -28,6 +30,16 @@ def test_single_run(tmp_path):
     # Run a SingleRun with an explicitly defined IN.DAT
     main.main(args=["-i", input_file])
 
+    # Try running without a defined input file (no args). This will look for
+    # an IN.DAT in the cwd. Copy to make a file named "IN.DAT", then cd to the
+    # test dir beforehand
+    copy(input_path, tmp_path / "IN.DAT")
+    old_wd = os.getcwd()
+    os.chdir(tmp_path)
+    # args must be emptylist; if None, argparse tries to use CLI args
+    main.main(args=[])
+    os.chdir(old_wd)
+
 def test_vary_run(tmp_path):
     """Test a VaryRun with CLI args.
 
@@ -49,3 +61,10 @@ def test_vary_run(tmp_path):
 
     # Run a VaryRun with a custom conf file name
     main.main(args=["--varyiterparams", "--varyiterparamsconfig", conf_file])
+
+    # Test VaryRun without explicitly defining the conf file name
+    # This will look for a run_process.conf in the cwd
+    old_wd = os.getcwd()
+    os.chdir(tmp_path)
+    main.main(args=["--varyiterparams"])
+    os.chdir(old_wd)
