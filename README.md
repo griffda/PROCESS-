@@ -117,14 +117,34 @@ python setup.py sdist
 ```
 
 ### Running Process
-Process should now be able to be run in the following manner:
-```bash
-process --input <path/to/IN.DAT>
-```
-e.g.
+Process can be run in two main modes, SingleRun (where Process runs once) and VaryRun (where Process runs multiple times, varying iteration parameters until a solution is found (what used to be run_process.py)).
 
+For a SingleRun:
 ```bash
-process -i process/tracking/baseline_2018/baseline_2018_IN.DAT 
+# Use an IN.DAT file in the current directory
+process
+
+# Use an IN.DAT file outside of the current directory
+process -i path/to/IN.DAT 
+```
+
+For a VaryRun:
+```bash
+# Use a configuration file called run_process.conf in the current directory
+process -v
+
+# Use a conf file outside of the current directory
+process -v -c path/to/my_conf_file.conf
+```
+
+The available arguments are:
+```bash
+process [--input, -i input_file_path] [--varyiterparams, -v] [--varyiterparamsconfig, -c config_file_path] [--help, -h]
+```
+
+Help is available with:
+```bash
+process --help
 ```
 
 ## Documentation
@@ -559,4 +579,3 @@ If you encounter issues with file line endings when working between Windows and 
 [Michael Kovari](michael.kovari@ukaea.uk)
 
 [Stuart Muldrew](stuart.muldrew@ukaea.uk)
-

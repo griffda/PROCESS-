@@ -10,8 +10,8 @@ import sys
 from sys import stderr
 import numpy as np
 from netCDF4 import Dataset
-from process_io_lib.mfile import MFile, MFileErrorClass
-from process_io_lib.in_dat import InDat
+from process.io.mfile import MFile, MFileErrorClass
+from process.io.in_dat import InDat
 
 
 NAME_MAPPINGS = {"/": "_slash_",

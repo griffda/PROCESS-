@@ -17,17 +17,21 @@ from time import sleep
 import collections as col
 from numpy.random import seed, uniform, normal
 from numpy import argsort, ndarray, argwhere, logical_or
-from process_io_lib.process_funcs import  get_neqns_itervars,\
+from pathlib import Path
+from process.io.process_funcs import  get_neqns_itervars,\
     get_variable_range, vary_iteration_variables, check_input_error,\
     process_stopped, get_from_indat_or_default,\
     set_variable_in_indat, check_in_dat
-from process_io_lib.ndscan_funcs import get_var_name_or_number,\
+from process.io.ndscan_funcs import get_var_name_or_number,\
     get_iter_vars, backup_in_file
-from process_io_lib.in_dat import InDat
-from process_io_lib.mfile import MFile
-from process_io_lib.configuration import Config
-from process_io_lib.process_netcdf import NetCDFWriter
-from create_dicts import get_dicts
+from process.io.in_dat import InDat
+from process.io.mfile import MFile
+from process.io.configuration import Config
+from process.io.process_netcdf import NetCDFWriter
+from process.io.python_fortran_dicts import get_dicts
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Load dicts from dicts JSON file
 process_dicts = get_dicts()
@@ -168,29 +172,6 @@ class ProcessConfig(object):
 
         seed(self.u_seed)
 
-
-
-    def run_process(self):
-
-        """ runs PROCESS binary """
-
-        logfile = open('process.log', 'w')
-        print("PROCESS run started ...", end='')
-
-        try:
-            subprocess.check_call([self.process], stdout=logfile,
-                                  stderr=logfile)
-        except subprocess.CalledProcessError as err:
-            print('\n Error: There was a problem with the PROCESS \
-execution!', err, file=stderr)
-            print('       Refer to the logfile for more information!',
-                  file=stderr)
-            exit()
-
-        logfile.close()
-        print("finished.")
-
-
     def get_comment(self):
 
         """ gets the comment line from the configuration file """
@@ -257,14 +238,29 @@ execution!', err, file=stderr)
     def set_attributes(self):
 
         """ sets the attributes of the class """
+        # TODO This Path/str filename type confusion is a mess and must be 
+        # sorted out once a run_process regression test is running. Using Paths
+        # or strs to decide if we're running a test or not is a bad idea, but
+        # works in the short term to get a test running.
 
-        buf = self.get_attribute('wdir')
-        if buf != None:
-            self.wdir = buf
+        # If self.filename is an instance of Path, this is being run from the 
+        # test suite in a temp dir. Set the working dir and input filename
+        # accordingly
+        if isinstance(self.filename, Path):
+            self.wdir = str(self.filename.parent)
+            # TODO It appears that the input file for run_process shouldn't be 
+            # called IN.DAT. Calling it ref_IN.DAT for now
+            self.or_in_dat = str(self.filename.parent / "ref_IN.DAT")
+        else:
+            # run_process is not being run by the test suite
+            # Get working dir and input files from run_process.conf
+            buf = self.get_attribute('wdir')
+            if buf != None:
+                self.wdir = buf
 
-        buf = self.get_attribute('ORIGINAL_IN_DAT')
-        if buf != None:
-            self.or_in_dat = buf
+            buf = self.get_attribute('ORIGINAL_IN_DAT')
+            if buf != None:
+                self.or_in_dat = buf
 
         try:
             indatfile = open(self.or_in_dat)
@@ -272,7 +268,7 @@ execution!', err, file=stderr)
         except FileNotFoundError:
             print('Error: %s does not exist! Create file or modify config file!'
                   %self.or_in_dat, file=stderr)
-            exit()
+            raise
 
         buf = self.get_attribute('process')
         if buf != None:
@@ -436,7 +432,7 @@ class RunProcessConfig(ProcessConfig):
         that stores all configuration parameters of the
         run_process.py
         """
-
+        # TODO filename can be a Path object or a str here
         self.filename = filename
 
         super().set_attributes()
