@@ -1127,7 +1127,7 @@ $$
         the on-coil ripple calculations with <em>FIESTA</em> with 16 coils. A
         radial and toroidal winding pack thickness of 0.5 m and 0.8 m for the 
         left graph, while a radial and toroidal thickness of 1.2 m and 1.9 m, 
-        respectively, is used on the right sub-figure. The right graph provides
+        respectively, is used in the right figure. The right graph provides
         a visual illustration of the case where the parameter \(t\) is close to
         unity.
       </p>
@@ -1148,10 +1148,10 @@ $$
   The three fits (for 16, 18 and 20 coils) are valid for:
 </p>
 - <p style='text-align: justify;'>
-    **relative toroidal thickness \(t\):** $t\in[0.35-0.99]$
+    **relative toroidal thickness:**  $t\in[0.35-0.99]$
   </p>
 - <p style='text-align: justify;'>
-    **relative radial thickness \(z\):** $t\in[0.2-0.7]$
+    **relative radial thickness:** $z\in[0.2-0.7]$
   </p>
 - <p style='text-align: justify;'>
     **Number of TF coils:** Individual fits has been made for 16, 18 and 20.
