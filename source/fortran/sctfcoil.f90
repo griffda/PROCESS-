@@ -341,7 +341,7 @@ subroutine tf_current()
 
     ! Case thickness of side wall [m]
     if ( tfc_sidewall_is_fraction ) then
-            casths = casths_fraction * ( r_tf_inboard_in + thkcas ) * tan(pi/n_tf)          
+        casths = casths_fraction * ( r_tf_inboard_in + thkcas ) * tan(pi/n_tf)
     end if
 
     ! Radial position of peak toroidal field [m]
