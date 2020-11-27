@@ -112,14 +112,28 @@ contains
         else
             tfcth = dr_tf_wp + casthi + thkcas
         end if
-
-    end if
-
+    end if 
+    
     ! Radial build to tfcoil middle [m]
     r_tf_inboard_mid = r_tf_inboard_in + 0.5D0*tfcth
 
     ! Radial build to tfcoil plasma facing side [m]
     r_tf_inboard_out = r_tf_inboard_in + tfcth
+
+    ! WP radial thickness [m]
+    ! Calculated only if not used as an iteration variable
+    if ( .not. any(ixc(1:nvar) == 140) ) then   
+      
+      ! SC magnets
+      if ( i_tf_sup == 1 ) then
+         dr_tf_wp = cos(pi/n_tf) * r_tf_inboard_out &
+                  - r_tf_inboard_in - casthi - thkcas
+
+      ! Resistive magnets
+      else 
+         dr_tf_wp = tfcth - casthi - thkcas
+      end if
+    end if
 
     ! Radius of the centrepost at the top of the machine
     if ( itart == 1 .and. i_tf_sup /= 1 ) then
@@ -220,7 +234,7 @@ contains
 
     !  Call ripple calculation again with new r_tf_outboard_mid/gapsto value
     !  call rippl(ripmax,rmajor,rminor,r_tf_outboard_mid,n_tf,ripple,r_tf_outboard_midl)
-    call ripple_amplitude(ripple,ripmax,r_tf_outboard_mid,r_tf_outboard_midl,ripflag)
+    call ripple_amplitude( ripple, ripmax, r_tf_outboard_mid, r_tf_outboard_midl, ripflag )
 
     !  Calculate first wall area
     !  Old calculation... includes a mysterious factor 0.875
@@ -960,46 +974,119 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use physics_variables, only: rminor, rmajor
-		use tfcoil_variables, only: tinstf, wwp1, n_tf, tftort, casths
+      use tfcoil_variables, only: tinstf, wwp1, n_tf, tftort, casths, dr_tf_wp, &
+         thkcas, casths_fraction, i_tf_sup, i_tf_wp_geom, tfinsgap, &
+         tfc_sidewall_is_fraction
+      use constants, only: pi
+      use build_variables, only: r_tf_inboard_in
     implicit none
 
-    !  Arguments
+    ! Arguments
+    ! ---------
+    ! Inputs 
+    ! ---
+    real(dp), intent(in) :: ripmax
+    !! Maximum tolearble outboard plasma ripple
+
+    real(dp), intent(in) :: r_tf_outboard_mid
+    !! Intial outboard middle of the TF coil conducting layer [m]
+
+    ! Outputs
+    ! ---
+    real(dp), intent(out) :: ripple
+    !! Calcualted plasma ripple
+
+    real(dp), intent(out) :: r_tf_outboard_midmin
+    !! Outboard middle of the TF coil conducting layer [m]
+    !! calculated with the user input ripple
 
     integer, intent(out) :: flag
-    real(dp), intent(in) :: ripmax,r_tf_outboard_mid
-    real(dp), intent(out) :: ripple,r_tf_outboard_midmin
+    !! Out of fitting range error flag 
+    ! ---
 
-    !  Local variables
+    ! Local variables
+    ! ---
+    real(dp) :: t_wp_max
+    !! Minimal radius where the WP toroidal thickness is maximum [m]
+    !! Internal variable corresponding to wwp1
 
-    real(dp) :: w, x, c1, c2, n
+    real(dp) :: side_case_th
+    !! Locally calculated sidewall case thickness
+    !! Internal variable corresponding to casths
+
+    real(dp) :: r_wp_min
+    !! Minimal inboard WP radius [m]
+    !! Internal variable corresponding to r_wp_inner in sctfcoil
+
+    real(dp) :: r_wp_max
+    !! Radius used to define the t_wp_max [m]    
+
+    real(dp) :: x
+    !! Winding pack to iter-coil at plasma centre toroidal lenth ratio
+
+    real(dp) :: n
+    !! Number of TF coils
+    !! n_tf converted in real number
+
+    real(dp) :: c1, c2
+    ! ---
+    ! ---------
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     n = real(n_tf, kind(1.0D0))
 
-    !  TF coil winding pack width
+    ! Calculation of the toroidal WP thickness
+    if ( i_tf_sup == 1 ) then 
 
-    if (wwp1 == 0.0D0) then  !  not yet calculated
-       w = tftort - 2.0D0*(casths + tinstf)  !  rough estimate of wwp1
-       x = w*n/rmajor
+      ! Minimal inboard WP radius [m]
+      r_wp_min = r_tf_inboard_in + thkcas
+
+      ! Rectangular WP
+      if ( i_tf_wp_geom == 0 ) then
+         r_wp_max = r_wp_min
+
+      ! Double rectangle WP
+      else if ( i_tf_wp_geom == 1 ) then
+         r_wp_max = r_wp_min + 0.5D0 * dr_tf_wp
+
+      ! Trapezoidal WP
+      else if ( i_tf_wp_geom == 2 ) then
+         r_wp_max = r_wp_min + dr_tf_wp
+      end if
+
+      ! Calculated maximum toroidal WP toroidal thickness [m]
+      if ( tfc_sidewall_is_fraction ) then
+         t_wp_max = 2.0D0 * ( ( r_wp_max - casths_fraction * r_wp_min ) &
+                              * tan(pi/n) - tinstf - tfinsgap )
+      else 
+         t_wp_max = 2.0D0 * ( r_wp_max * tan(pi/n) - casths - tinstf - tfinsgap )
+      end if 
+         
+    ! Resistive magnet case
     else
-       x = wwp1*n/rmajor
-    end if
+      ! Radius used to define the t_wp_max [m]
+      r_wp_max = r_tf_inboard_in + thkcas + dr_tf_wp
 
+      ! Calculated maximum toroidal WP toroidal thickness [m]
+      t_wp_max = 2.0D0 * r_wp_max * tan(pi/n)
+    end if 
+
+    ! Winding pack to iter-coil at plasma centre toroidal lenth ratio 
+    x = t_wp_max * n/rmajor
+
+    ! Fitting parameters
     c1 = 0.875D0 - 0.0557D0*x
     c2 = 1.617D0 + 0.0832D0*x
 
     !  Calculated ripple for coil at r_tf_outboard_mid (%)
-
     ripple = 100.0D0 * c1*( (rmajor+rminor)/r_tf_outboard_mid )**(n-c2)
 
     !  Calculated r_tf_outboard_mid to produce a ripple of amplitude ripmax
-
     r_tf_outboard_midmin = (rmajor+rminor) / &
          ( (0.01D0*ripmax/c1)**(1.0D0/(n-c2)) )
 
     !  Notify via flag if a range of applicability is violated
-
     flag = 0
     if ((x < 0.737D0).or.(x > 2.95D0)) flag = 1
     if ((n_tf < 16).or.(n_tf > 20)) flag = 2

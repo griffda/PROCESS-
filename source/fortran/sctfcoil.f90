@@ -239,9 +239,15 @@ subroutine sctfcoil(outfile,iprint)
     ! Calculate TF coil areas and masses
     call tf_coil_area_and_masses
 
+
     ! Peak field including ripple
-    call peak_tf_with_ripple(n_tf, wwp1, dr_tf_wp - 2.0D0*(tinstf+tfinsgap), &
-                             r_wp_centre, bmaxtf, bmaxtfrp, peaktfflag)
+    ! Rem : as resistive magnets are axisymmetric, no inboard ripple is present 
+    if ( i_tf_sup == 1 ) then 
+       call peak_tf_with_ripple(n_tf, wwp1, dr_tf_wp - 2.0D0*(tinstf+tfinsgap), &
+                                 r_wp_centre, bmaxtf, bmaxtfrp, peaktfflag)
+    else
+        bmaxtfrp = bmaxtf
+    end if
 
     ! Do stress calculations (writes the stress output)
     if ( iprint == 1 ) n_rad_per_layer = 500
@@ -323,10 +329,10 @@ subroutine tf_current()
     !! Calculation of the maximum B field and the corresponding TF current
     use tfcoil_variables, only: casthi, ritfc, rbmax, i_tf_sup, casths_fraction, &
         tinstf, tftort, bmaxtf, tfinsgap, tfc_sidewall_is_fraction, casths, &
-        casthi_is_fraction, casthi_fraction, n_tf, thicndut
-    use build_variables, only: r_tf_inboard_out
+        casthi_is_fraction, casthi_fraction, n_tf, thicndut, thkcas
+    use build_variables, only: r_tf_inboard_out, r_tf_inboard_in, tfcth
     use physics_variables, only: bt, rmajor
-    use build_variables, only: tfcth
+    use constants, only: pi
     implicit none
 
 
@@ -334,8 +340,10 @@ subroutine tf_current()
     if (casthi_is_fraction) casthi = casthi_fraction * tfcth
 
     ! Case thickness of side wall [m]
-    if (tfc_sidewall_is_fraction) casths = casths_fraction * tftort  
-    
+    if ( tfc_sidewall_is_fraction ) then
+        casths = casths_fraction * ( r_tf_inboard_in + thkcas ) * tan(pi/n_tf)
+    end if
+
     ! Radial position of peak toroidal field [m]
     if ( i_tf_sup == 1 ) then
         ! SC : conservative assumption as the radius is calculated with the
@@ -470,13 +478,6 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
         !! TF coil width at inner egde of winding pack toroidal direction [m]
         ! ------
     
-
-
-        ! Radial thickness of winding pack [m]
-        if ( .not. any(ixc(1:nvar) == 140) ) then
-            dr_tf_wp = cos(theta_coil) * r_tf_inboard_out  &
-                     - r_tf_inboard_in - casthi - thkcas
-        end if
 
         ! Radial position of inner edge of winding pack [m]
         r_wp_inner = r_tf_inboard_in + thkcas
@@ -956,11 +957,6 @@ subroutine res_tf_internal_geom()
     ! Radial position of inner/outer edge of winding pack [m]
     r_wp_inner = r_tf_inboard_in  + thkcas 
     r_wp_outer = r_tf_inboard_out - casthi 
-
-    ! Mid-plane Radial thickness of conductor layer [m]
-    if ( .not. any(ixc(1:nvar) == 140) ) then 
-        dr_tf_wp = r_wp_outer - r_wp_inner
-    end if
 
     ! Number of turns
     ! Set by user (no turn structure by default, i.e. n_tf_turn = 1 ) 

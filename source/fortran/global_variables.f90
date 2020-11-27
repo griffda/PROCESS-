@@ -2748,8 +2748,9 @@ module tfcoil_variables
   real(dp) :: casths = 0.0D0
   !! inboard TF coil sidewall case thickness (m) (calculated for stellarators)
 
-  real(dp) :: casths_fraction = 0.03D0
-  !! inboard TF coil sidewall case thickness as a fraction of tftort
+  real(dp) :: casths_fraction = 0.06D0
+  !! Fraction of toroidal thickness taken by the lateral case at winding pack
+  !! inner radius
 
   logical :: tfc_sidewall_is_fraction
   !! logical switch to make casths a fraction of TF coil thickness (`casths_fraction`)
