@@ -1008,21 +1008,25 @@ contains
     ! ---
     real(dp) :: t_wp_max
     !! Minimal radius where the WP toroidal thickness is maximum [m]
+    !! Internal variable corresponding to wwp1
 
     real(dp) :: side_case_th
     !! Locally calculated sidewall case thickness
+    !! Internal variable corresponding to casths
 
-    real(dp) :: r_wp_max
-    !! Radius used to define the t_wp_max [m]
-    
     real(dp) :: r_wp_min
     !! Minimal inboard WP radius [m]
+    !! Internal variable corresponding to r_wp_inner in sctfcoil
+
+    real(dp) :: r_wp_max
+    !! Radius used to define the t_wp_max [m]    
 
     real(dp) :: x
     !! Winding pack to iter-coil at plasma centre toroidal lenth ratio
 
     real(dp) :: n
     !! Number of TF coils
+    !! n_tf converted in real number
 
     real(dp) :: c1, c2
     ! ---
