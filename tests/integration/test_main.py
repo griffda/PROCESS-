@@ -52,3 +52,25 @@ def test_vary_run_cwd(temp_data_cwd):
     :type temp_data_cwd: Path
     """
     main.main(args=["--varyiterparams"])
+
+def test_plot_proc(temp_data, mfile_name):
+    """Run plot proc via CLI.
+
+    Currently, Process needs to run on an input file, then it can run plot_proc
+    on a produced MFILE.DAT.
+    :param temp_data: temporary dir containing data files
+    :type temp_data: Path
+    :param mfile_name: name of the mfile in the data dir
+    :type temp_data: str
+    """
+    # Specify input and mfiles
+    input_file = temp_data / "baseline_2018_IN.DAT"
+    input_file_str = str(input_file.resolve())
+    mfile = temp_data / mfile_name
+    mfile_str = str(mfile)
+
+    # Run on input, then plot custom mfile name
+    main.main(args=["-i", input_file_str, "--plot", "--mfile", mfile_str])
+
+    # Assert a pdf has been created
+    assert len(list(temp_data.glob("*.pdf")))
