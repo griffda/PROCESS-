@@ -4,15 +4,6 @@ from pathlib import Path
 from process.io import plot_proc
 from shutil import copy
 
-@pytest.fixture
-def mfile_name():
-    """Return the name of the mfile to test.
-
-    :return: name of the mfile
-    :rtype: str
-    """
-    return "baseline_2018_MFILE.DAT"
-
 def test_input_file(temp_data, mfile_name):
     """Run plot_proc on an input MFILE and check for an output.
 

@@ -43,3 +43,12 @@ def temp_data_cwd(temp_data):
 
     # Teardown by changing back to previous dir
     os.chdir(old_wd)
+
+@pytest.fixture
+def mfile_name():
+    """Return the name of the mfile to test.
+
+    :return: name of the mfile
+    :rtype: str
+    """
+    return "baseline_2018_MFILE.DAT"
