@@ -2045,7 +2045,7 @@ def plot_current_drive_info(axis, mfile_data, scan):
     plot_info(axis, data, mfile_data, scan)
 
 
-def main(fig1, fig2, m_file_data, scan, plasmod=False, imp="../data/impuritydata/", demo_ranges=False):
+def main_plot(fig1, fig2, m_file_data, scan, plasmod=False, imp="../data/impuritydata/", demo_ranges=False):
     """Function to create radial and vertical build plot on given figure.
 
     Arguments:
@@ -2362,8 +2362,8 @@ def test(f):
         page1 = plt.figure(figsize=(12, 9), dpi=80)
         page2 = plt.figure(figsize=(12, 9), dpi=80)
 
-        # run main
-        main(page1, page2, m_file, scan=scan)
+        # run main_plot
+        main_plot(page1, page2, m_file, scan=scan)
 
         # with bpdf.PdfPages(args.o) as pdf:
         # with bpdf.PdfPages("ref.SUMMARY.pdf") as pdf:
@@ -2382,8 +2382,14 @@ def test(f):
         print("FTest failure for file : {}".format(f))
         return False
 
-if __name__ == '__main__':
+def parse_args(args):
+    """Parse supplied arguments.
 
+    :param args: arguments to parse
+    :type args: list, None
+    :return: parsed arguments
+    :rtype: Namespace
+    """
     # Setup command line arguments
     parser = argparse. \
         ArgumentParser(description="Produces a two page summary of the PROCESS MFILE output, using the MFILE.  "
@@ -2404,7 +2410,12 @@ if __name__ == '__main__':
                         action="store_true")
 
 
-    args = parser.parse_args()
+    return parser.parse_args(args)
+
+def main(args=None):
+    # TODO The use of globals here isn't ideal, but is required to get main()
+    # working with minimal changes. Should be converted to class structure
+    args = parse_args(args)
 
     # read MFILE
     if args.f != "":
@@ -2434,6 +2445,29 @@ if __name__ == '__main__':
     else:
         i_tf_turns_integer = int(0)
 
+    global bore
+    global ohcth
+    global gapoh
+    global tfcth
+    global gapds
+    global ddwi
+    global shldith
+    global blnkith
+    global fwith
+    global scrapli
+    global rmajor
+    global rminor
+    global scraplo
+    global fwoth
+    global blnkoth
+    global shldoth
+    global ddwi
+    global gapsto
+    global tfthko
+    global rdewex
+    global zdewex
+    global ddwex
+   
     bore = m_file.data["bore"].get_scan(scan)
     ohcth = m_file.data["ohcth"].get_scan(scan)
     gapoh = m_file.data["gapoh"].get_scan(scan)
@@ -2458,6 +2492,14 @@ if __name__ == '__main__':
     ddwex = m_file.data["ddwex"].get_scan(scan)
 
     # Magnets related
+    global n_tf
+    global wwp1
+    global wwp2
+    global dr_tf_wp
+    global tinstf
+    global thkcas
+    global casthi
+
     n_tf = m_file.data["n_tf"].get_scan(scan)
     if i_tf_sup == 1: # If superconducting magnets 
         wwp1 = m_file.data["wwp1"].get_scan(scan)
@@ -2470,12 +2512,30 @@ if __name__ == '__main__':
         # To be re-inergrated to resistives when in-plane stresses is integrated
         casthi = m_file.data["casthi"].get_scan(scan)
     
+    global nbshield
+    global rtanbeam
+    global rtanmax
+    global beamwd
+
     nbshield = m_file.data["nbshield"].get_scan(scan)
     rtanbeam = m_file.data["rtanbeam"].get_scan(scan)
     rtanmax = m_file.data["rtanmax"].get_scan(scan)
     beamwd = m_file.data["beamwd"].get_scan(scan)
 
     # Pedestal profile parameters
+    global ipedestal
+    global neped
+    global nesep
+    global rhopedn
+    global rhopedt
+    global tbeta
+    global teped
+    global tesep
+    global alphan
+    global alphat
+    global ne0
+    global te0
+
     ipedestal = m_file.data["ipedestal"].get_scan(scan)
     neped = m_file.data["neped"].get_scan(scan)
     nesep = m_file.data["nesep"].get_scan(scan)
@@ -2488,7 +2548,14 @@ if __name__ == '__main__':
     alphat = m_file.data["alphat"].get_scan(scan)
     ne0 = m_file.data["ne0"].get_scan(scan)
     te0 = m_file.data["te0"].get_scan(scan)
+    
     # Plasma
+    global triang
+    global alphaj
+    global q0
+    global q95
+    global kallenbach_switch
+
     triang = m_file.data["triang95"].get_scan(scan)
     alphaj = m_file.data["alphaj"].get_scan(scan)
     q0 = m_file.data["q0"].get_scan(scan)
@@ -2513,6 +2580,15 @@ if __name__ == '__main__':
     # Ion dens(10^19 m^-3) -- 15
     # Poloidal flux (Wb) -- 16
     if args.m != "":
+        global pmod_r
+        global pmod_ne
+        global pmod_te
+        global pmod_ti
+        global pmod_nd
+        global pmod_nt
+        global pmod_q
+        global pmod_ni
+
         plasmod_profiles = np.loadtxt(args.m).transpose()
         pmod_r = plasmod_profiles[0]
         pmod_ne = plasmod_profiles[1]
@@ -2530,6 +2606,9 @@ if __name__ == '__main__':
             exit()
         pmod_switch = False
     # rad profile
+    global ssync
+    global bt
+    global vol
     ssync = m_file.data["ssync"].get_scan(scan)
     bt = m_file.data["bt"].get_scan(scan)
     vol = m_file.data["vol"].get_scan(scan)
@@ -2552,13 +2631,21 @@ if __name__ == '__main__':
     subtotal += build
     cumulative_radial[item] = subtotal
 
-    upper = {} ; cumulative_upper = {}; subtotal = 0
+    global upper
+    global cumulative_upper
+    upper = {}
+    cumulative_upper = {}
+    subtotal = 0
     for item in vertical_upper:
         upper[item] = m_file.data[item].get_scan(scan)
         subtotal +=upper[item]
         cumulative_upper[item] = subtotal
 
-    lower = {} ; cumulative_lower = {}; subtotal = 0
+    global lower
+    global cumulative_lower
+    lower = {}
+    cumulative_lower = {}
+    subtotal = 0
     for item in vertical_lower:
         lower[item] = m_file.data[item].get_scan(scan)
         subtotal -=lower[item]
@@ -2583,8 +2670,8 @@ if __name__ == '__main__':
     page1 = plt.figure(figsize=(12, 9), dpi=80)
     page2 = plt.figure(figsize=(12, 9), dpi=80)
 
-    # run main
-    main(page1, page2, m_file, scan=scan, plasmod=pmod_switch, demo_ranges=demo_ranges)
+    # run main_plot
+    main_plot(page1, page2, m_file, scan=scan, plasmod=pmod_switch, demo_ranges=demo_ranges)
 
     # with bpdf.PdfPages(args.o) as pdf:
     with bpdf.PdfPages(args.f + "SUMMARY.pdf") as pdf:
@@ -2601,3 +2688,6 @@ if __name__ == '__main__':
     #    save_plots(m_file)
     plt.close(page1)
     plt.close(page2)
+
+if __name__ == '__main__':
+    main()

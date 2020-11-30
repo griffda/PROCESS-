@@ -1,6 +1,7 @@
 """Integration tests for utilities.
 
-These tests check the utilities that PROCESS uses, mainly for file IO.
+These tests check the utilities that PROCESS uses, mainly for file IO. They run
+on each of the regression test scenarios.
 """
 import pytest
 import logging
