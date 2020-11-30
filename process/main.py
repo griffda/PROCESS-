@@ -170,6 +170,9 @@ class Process():
 
     def post_process(self):
         """Perform post-run actions, like plotting the mfile."""
+        # TODO Currently, Process will always run on an input file beforehand.
+        # It would be better to not require this, so just plot_proc could be 
+        # run, for example.
         if self.args.plot:
             # Check mfile exists, then plot
             mfile = Path(self.args.mfile)
