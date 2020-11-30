@@ -2,18 +2,45 @@
 import pytest
 from pathlib import Path
 from process.io import plot_proc
+from shutil import copy
 
-# TODO Test for mfile in cwd again?
+@pytest.fixture
+def mfile_name():
+    """Return the name of the mfile to test.
 
-def test_input_file(temp_data):
+    :return: name of the mfile
+    :rtype: str
+    """
+    return "baseline_2018_MFILE.DAT"
+
+def test_input_file(temp_data, mfile_name):
     """Run plot_proc on an input MFILE and check for an output.
 
-    :return: temporary path containing data files
-    :rtype: Path
+    :param temp_data: temporary data dir
+    :type temp_data: Path
+    :param mfile_name: name of the mfile in the data dir
+    :type mfile_name: str
     """
-    mfile = temp_data / "baseline_2018_MFILE.DAT"
+    mfile = temp_data / mfile_name
     mfile_str = str(mfile)
     plot_proc.main(args=["-f", mfile_str])
     
     # Assert a pdf has been created
-    assert len(list(mfile.parent.glob("*.pdf")))
+    assert len(list(temp_data.glob("*.pdf")))
+
+def test_input_file_cwd(temp_data_cwd, mfile_name):
+    """Run plot_proc on an MFILE in the cwd.
+
+    :param temp_data_cwd: temporary data dir, which is also the cwd
+    :type temp_data_cwd: Path
+    :param mfile_name: name of the mfile in the data dir
+    :type mfile_name: str
+    """
+    # Copy the mfile to its default name
+    copy(temp_data_cwd / mfile_name, temp_data_cwd / "MFILE.DAT")
+    
+    # Run plot_proc with no args, which will look for the default-named mfile
+    plot_proc.main(args=[])
+
+    # Assert a pdf has been created
+    assert len(list(temp_data_cwd.glob("*.pdf")))
