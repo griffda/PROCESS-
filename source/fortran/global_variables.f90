@@ -2706,7 +2706,7 @@ module tfcoil_variables
   !! single turn insulation area (m2)
 
   real(dp) :: aiwp = 0.0D0
-  !! winding pack insulation area (m2)
+  !! winding pack turn insulation area per coil (m2)
 
   real(dp) :: alstrtf = 6.0D8
   !! Allowable Tresca stress in TF coil structural material (Pa)

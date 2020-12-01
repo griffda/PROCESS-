@@ -72,20 +72,11 @@ real(dp), private :: r_wp_outer
 real(dp), private :: r_wp_centre
 !! Radial position of centre and centre of winding pack [m]
 
-real(dp), private :: vol_ins
-!! Total/CP insulator insulator volume [m3]
-
 real(dp), private :: vol_ins_cp
-!! CP insulator insulator volume [m3]
+!! CP turn insulation volume [m3]
 
-real(dp), private :: vol_ins_leg
-!! Outboard leg insulator volume [m3]
-
-real(dp), private :: vol_cond
-!! Total conductor insulator volume [m3]
-
-real(dp), private :: vol_cond_leg
-!! Outboard leg conductor insulator volume [m3]
+real(dp), private :: vol_gr_ins_cp
+!! CP ground insulation volume [m3]
 
 real(dp), private :: vol_case_cp
 !! Volume of the CP outer casing cylinder
@@ -104,6 +95,18 @@ real(dp), private :: a_case_front
 
 real(dp), private :: a_case_nose
 !! Nose casing area [m2]
+
+real(dp), private :: a_wp_ins_turn
+!! TF ouboard leg insulation area [m2]
+
+real(dp), private :: a_wp_gr_ins
+!! TF outboard leg ground insulation area [m2]
+
+real(dp), private :: a_ground_ins
+!! Inboard mid-plane cross-section area of the WP ground insulation [m2]
+
+real(dp), private :: a_wp_cond
+!! Exact TF ouboard leg conductor area [m2] 
 
 real(dp), private :: theta_coil
 !! Half toroidal angular extent of a single TF coil inboard leg
@@ -350,8 +353,9 @@ subroutine tf_current()
         ! WP radial distances defined at the TF middle (cos)
         rbmax = r_tf_inboard_out * cos(theta_coil) - casthi - tinstf - tfinsgap
     else 
-        ! Cesistive coils : No approx necessary as the symmetry is cylindrical 
-        rbmax = r_tf_inboard_out - casthi - thicndut
+        ! Resistive coils : No approx necessary as the symmetry is cylindrical 
+        ! The turn insulation th (thicndut) is also subtracted too here 
+        rbmax = r_tf_inboard_out - casthi - thicndut - tinstf
     end if
 
     ! Calculation of the maximum B field on the magnet [T]
@@ -379,8 +383,6 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
        
     implicit none
     
-    real(dp) :: a_ground_ins
-    !! Cross-section area of the WP ground insulation [m2]
 
     ! Inputs
     ! ------
@@ -947,12 +949,20 @@ subroutine res_tf_internal_geom()
     !! Resisitve TF turn geometry, equivalent to winding_pack subroutines
     use error_handling, only: fdiags, report_error 
     use numerics, only: nvar, ixc
-    use tfcoil_variables, only: n_tf_turn, thicndut, thkcas, dr_tf_wp, tftort, n_tf, &
-        tfareain, ritfc, oacdcp, fcoolcp, cpttf, cdtfleg, casthi, aiwp, acasetf
+    use tfcoil_variables, only: n_tf_turn, thicndut, thkcas, dr_tf_wp, tftort,   &
+        tfareain, ritfc, oacdcp, fcoolcp, cpttf, cdtfleg, casthi, aiwp, acasetf, &
+        tinstf, n_tf
     use build_variables, only: tfthko, r_tf_inboard_in, r_tf_inboard_out
     use constants, only: pi
 
     implicit none
+            
+    ! Inernal variables
+    ! -----------------
+    real(dp) :: a_tf_cond
+    !! Exact mid-plane conductor cross-section area [m2]
+    ! -----------------
+
             
     ! Radial position of inner/outer edge of winding pack [m]
     r_wp_inner = r_tf_inboard_in  + thkcas 
@@ -966,23 +976,30 @@ subroutine res_tf_internal_geom()
     ! including the surrounding ground-wall insulation layer 
     awpc = pi * ( r_wp_outer**2 - r_wp_inner**2 ) / n_tf
 
+    ! WP mid-plane cross-section excluding ground insulation
+    awptf = pi * ( ( r_wp_outer - tinstf )**2 - ( r_wp_inner + tinstf )**2 ) / n_tf
+
+    ! Ground insulation cross-section area per coil [m2]
+    a_ground_ins = awpc - awptf
+
     ! Exact mid-plane cross-section area of the conductor per TF coil [m2]
-    awptf = pi*( (r_wp_outer - thicndut)**2 - (r_wp_inner + thicndut)**2 )/n_tf  &
-           - 2.0D0*thicndut * ( dr_tf_wp - 2.0D0*thicndut ) * n_tf_turn
-    awptf = awptf * (1.0D0 - fcoolcp)
+    a_tf_cond = pi * ( ( r_wp_outer - tinstf - thicndut )**2          &
+                     - ( r_wp_inner + tinstf + thicndut )**2 ) / n_tf &
+              - 2.0D0*thicndut * (dr_tf_wp - 2.0D0*(tinstf + thicndut)) * n_tf_turn         
+    a_tf_cond = a_tf_cond * ( 1.0D0 - fcoolcp )
 
     ! Inter turn insulation area per coil [m2]                    
-    aiwp = awpc - awptf / ( 1.0D0 - fcoolcp )  
-
-    ! Total cross-sectional area of surrounding case per coil [m2]
-    ! Only valid at mid-plane for resistive itart design
-    acasetf = ( tfareain / n_tf ) - awpc 
+    aiwp = awptf - a_tf_cond / ( 1.0D0 - fcoolcp )  
 
     ! Total insulation cross-section per coil [m2]
-    a_tf_ins = aiwp * n_tf_turn
+    a_tf_ins = aiwp + a_ground_ins
 
     ! Insulation fraction [-]
     f_tf_ins = n_tf * a_tf_ins / tfareain 
+
+    ! Total cross-sectional area of surrounding case per coil [m2]
+    ! itart = 1 : Only valid at mid-plane
+    acasetf = ( tfareain / n_tf ) - awpc 
 
     ! Current per turn 
     cpttf = ritfc / ( n_tf_turn * n_tf )
@@ -991,9 +1008,9 @@ subroutine res_tf_internal_geom()
     oacdcp = ritfc / ( awptf * n_tf * n_tf_turn ) 
 
     ! Exact current density on TF oubard legs
-    cdtfleg = ritfc / ( ( 1.0D0 - fcoolcp ) * &
-                        ( tftort - 2.0D0 * n_tf_turn * thicndut) * &
-                        ( tfthko - 2.0D0 * thicndut ) ) 
+    cdtfleg = ritfc / ( ( 1.0D0 - fcoolcp )  &
+                      * ( tftort - 2.0D0 * ( n_tf_turn * thicndut - tinstf ) ) &
+                      * ( tfthko - 2.0D0 * ( thicndut - tinstf ) ) ) 
 
     ! Reporting negative WP areas issues
     if ( awpc < 0.0D0 ) then
@@ -1016,10 +1033,10 @@ subroutine tf_res_heating()
     !! Rem SK : Clamped joined superconductors might have resistive power losses on the joints
     !! Rem SK : Sliding joints might have a region of high resistivity
     use tfcoil_variables, only: rhocp, tlegav, thicndut, th_joint_contact, rhotfleg, &
-        voltfleg, vol_cond_cp, n_tf_turn, thkcas, tftort, tfleng, tflegres, tcpav, &
+        vol_cond_cp, n_tf_turn, thkcas, tftort, tfleng, tflegres, tcpav, arealeg, &
         ritfc, rho_tf_joints, presleg, prescp, pres_joints, n_tf_joints_contact, &
-        n_tf_joints, n_tf, i_tf_sup, frholeg, frhocp, fcoolcp, casthi, arealeg, &
-        a_cp_cool, fcoolleg
+        n_tf_joints, n_tf, i_tf_sup, frholeg, frhocp, fcoolcp, casthi, &
+        a_cp_cool, fcoolleg, i_cp_joints, tinstf
     use build_variables, only: tfthko, tfcth, r_cp_top, hmax, &
         r_tf_inboard_in, r_tf_inboard_out
     use physics_variables, only: itart
@@ -1028,19 +1045,14 @@ subroutine tf_res_heating()
 
     ! Internal variable
     ! ---
-    real(dp) :: a_wp_ins_turn
-    !! TF ouboard leg insulation area  
-
-    real(dp) :: a_wp_cond_leg
-    !! Exact TF ouboard leg conductor area 
-    
     real(dp) :: a_joints
-    !! Total area of joint contact
+    !! Total area of joint contact [m2]
 
-    integer ::  n_contact_tot
+    integer :: n_contact_tot
     !! Total number of contact area (4 joints section per legs)
 
     integer :: is_leg_cp_temp_same = 0
+    ! Not sure what it actually does --> to be understood !!
     ! ---
 
         
@@ -1052,7 +1064,6 @@ subroutine tf_res_heating()
     if ( i_tf_sup == 2 ) rhocp = frhocp * ( 2.00016D-14*tcpav**3 - 6.75384D-13*tcpav**2 + 8.89159D-12*tcpav )
 
     ! Calculations dedicated for configurations with CP
-    ! ***
     if ( itart == 1 ) then 
 
         ! Tricky trick to make the leg / CP tempearture the same
@@ -1069,26 +1080,39 @@ subroutine tf_res_heating()
         if ( is_leg_cp_temp_same == 1 ) tlegav = -1.0D0  
 
         ! Centrepost resisitivity and conductor/insulation volume
-        call cpost( r_cp_top-casthi, h_cp_top, r_tf_inboard_out-casthi, hmax+tfthko, & ! Inputs
-                    ritfc, rhocp, fcoolcp, r_tf_inboard_in+thkcas, thicndut, casthi, & ! Inputs
-                    n_tf*n_tf_turn,                                                  & ! Inputs
-                    a_cp_cool, vol_cond_cp, prescp, vol_ins_cp, vol_case_cp )          ! Outputs
+        call cpost( r_cp_top-casthi-tinstf, h_cp_top,                     & ! Inputs
+                    r_tf_inboard_out-casthi-tinstf, hmax+tfthko,          & ! Inputs
+                    ritfc, rhocp, fcoolcp, r_tf_inboard_in+thkcas+tinstf, & ! Inputs
+                    thicndut, tinstf , casthi, n_tf*n_tf_turn,            & ! Inputs
+                    a_cp_cool, vol_cond_cp, prescp, &        ! Outputs
+                    vol_ins_cp, vol_case_cp, vol_gr_ins_cp ) ! Outputs
+    end if
+
+    ! Leg cross-section areas
+    ! Rem : For itart = 1, these quantitire corresponds to the outer leg only
+    ! ---
+    ! Leg ground insulation area per coil [m2]
+    a_wp_gr_ins = arealeg - ( tftort - 2.0D0 * tinstf ) &
+                          * ( tfthko - 2.0D0 * tinstf )
+
+    ! Outboard leg turns insulation area per coil [m2]
+    a_wp_ins_turn = 2.0D0 * thicndut * ( tftort - 2.0D0 * tinstf     &
+                                       + tfthko - 2.0D0 * n_tf_turn  &
+                                       * ( thicndut + tinstf ) ) 
+
+    ! Exact TF outboard leg conductor area per coil [m2]
+    a_wp_cond = ( 1.0D0 - fcoolleg ) * ( ( tftort - 2.0D0 * tinstf )  &
+                                      * ( tfthko - 2.0D0 * tinstf )  &
+                                      - a_wp_ins_turn )
+    ! ---
 
 
-        ! Outer leg cross-section areas
-        ! ---
-        ! Area taken by one outboard leg's turns insulation [m2]
-        a_wp_ins_turn = 2.0D0 * thicndut * ( (tftort/n_tf_turn) + tfthko - 2.0D0*thicndut ) 
-
-        ! Exact TF outboard leg conductor area (per leg) [m2]
-        a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * n_tf_turn )  
-        ! ---
-
+    if ( itart == 1 ) then
 
         ! Outer leg resistive power loss
         ! ---
         ! TF outboard leg's resistance calculation (per leg) [ohm]
-        tflegres = rhotfleg * tfleng / a_wp_cond_leg  
+        tflegres = rhotfleg * tfleng / a_wp_cond
 
         ! TF outer leg resistive power (TOTAL) [W]   
         presleg = tflegres * ritfc**2 / n_tf 
@@ -1097,7 +1121,7 @@ subroutine tf_res_heating()
 
         ! Sliding joints resistive heating
         ! ---
-        if ( i_tf_sup /= 1 ) then
+        if ( i_cp_joints /= 0 ) then
 
             ! Total number of contact area (4 joints section per legs)
             n_contact_tot = 4 * n_tf_joints_contact* n_tf_joints * nint(n_tf_turn) * nint(n_tf)
@@ -1114,50 +1138,19 @@ subroutine tf_res_heating()
         ! ---
 
 
-        ! Total volume of one outerleg [m3]
-        voltfleg = tfleng * arealeg
-            
-        ! Outboard leg TF conductor volume [m3]
-        vol_cond_leg = tfleng * a_wp_cond_leg 
-
-        ! Total TF conductor volume [m3]
-        vol_cond = vol_cond_cp + n_tf * vol_cond_leg
-
-        ! Outboard leg TF insulation layer volume (per leg) [m3]
-        vol_ins_leg = tfleng * a_wp_ins_turn * n_tf_turn
-
-        ! Total insulation layer volume [m3]
-        vol_ins = vol_ins_cp + n_tf * vol_ins_leg
-
-        ! Total volume of the CP casing [m3]
-        vol_case_cp = vol_case_cp + pi*((r_tf_inboard_in + thkcas)**2 - r_tf_inboard_in**2 )
-
-    ! Case of a continuous resistive magnet 
+    ! Case of a resistive magnet without joints
     ! ***
     else          
-                        
-        ! Conductor / insulation cross-section areas
-        ! ---
-        ! Rem SK : These quantities assume a square shape of the turn, this is a
-        !          crude approximation if the inboard legs are vaulted
-            
-        ! Area taken by the inter turn ground insulation
-        a_wp_ins_turn = 2.0D0 * thicndut * ( (tfcth/n_tf_turn) + tfcth - 2.0D0*thicndut )
-
-        ! Exact TF outboard leg conductor area
-        a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * n_tf_turn ) 
-        ! ---
 
         ! TF resistive powers
-        prescp = rhocp * ritfc**2 * tfleng / ( a_wp_cond_leg * n_tf ) 
+        prescp = rhocp * ritfc**2 * tfleng / ( a_wp_cond * n_tf )
+
+        ! prescp containts the the total resistive power losses
         presleg = 0.0D0
+                           
+        ! No joints if itart = 0
+        pres_joints = 0.0D0
 
-        ! Total TF outer leg conductor volume (not per leg)
-        vol_cond = tfleng * a_wp_cond_leg * n_tf 
-
-        ! Total insulation layer volume
-        vol_ins = tfleng * a_wp_ins_turn * n_tf * n_tf_turn
-                        
     end if
 
 end subroutine tf_res_heating
@@ -1186,25 +1179,21 @@ subroutine tf_field_and_force()
 
     real(dp) :: dr_wp
     !! WP radial thickness removing the insulation layer and the insertion gap [m]
+
+    real(dp) :: vforce_tot
+    !! Total vertical force : inboard + outbord [N] 
     ! ---------------
 
+
+    ! Quench time [s]
     ! Determine quench time (based on IDM: 2MBSE3)
     ! Resistive magnets : calculation of the resistive power losses added
     ! Issue #337: Force on the vessel wall due to TF coil quench
-
-    ! Quench time [s]
     if ( i_tf_sup == 1 ) taucq = (bt * ritfc * rminor * rminor) / (r_vv_inboard_out * sigvvall)
     
     ! Outer/inner WP radius removing the ground insulation layer and the insertion gap [m]
-    if ( i_tf_sup == 1 ) then 
-        r_out_wp = r_wp_outer - tinstf - tfinsgap
-        r_in_wp =  r_wp_inner + tinstf + tfinsgap
-
-    ! Outer/inner conductor layer radius removing the turn insulation layer [m]
-    else 
-        r_out_wp = r_wp_outer - thicndut
-        r_in_wp =  r_wp_inner + thicndut
-    end if 
+    r_out_wp = r_wp_outer - tinstf - tfinsgap
+    r_in_wp = r_wp_inner + tinstf + tfinsgap
 
     ! Associated WP thickness
     dr_wp = r_out_wp - r_in_wp
@@ -1216,8 +1205,28 @@ subroutine tf_field_and_force()
     cforce = 0.5D0 * bmaxtf*ritfc/n_tf 
 
 
-    ! Vertical force per leg [N]
+    ! Vertical force per coil [N]
     ! ***
+    ! Rem : this force does not depends on the TF shape or the presence of
+    !        sliding joints, the in/outboard vertical tension repartition is
+    !-!
+    ! Tricky trick t avoid writting tinstf all the time 
+    r_tf_outboard_in = r_tf_outboard_in + tinstf + tfinsgap      
+    
+    ! May the force be with you
+    vforce_tot = 0.5D0 * ( bt * rmajor * ritfc ) / ( n_tf * dr_wp**2 ) &
+               * ( r_out_wp**2 * log( r_out_wp / r_in_wp )  &
+                 + r_tf_outboard_in**2 * log( (r_tf_outboard_in + dr_wp) / r_tf_outboard_in ) &
+                 + dr_wp**2         * log( (r_tf_outboard_in + dr_wp) / r_in_wp )             &
+                 - dr_wp            * ( r_out_wp + r_tf_outboard_in )                         &
+                 + 2.0D0 * dr_wp * ( r_out_wp     * log(r_in_wp / r_out_wp)                   &
+                                   + r_tf_outboard_in * log((r_tf_outboard_in + dr_wp)        &
+                                   / r_tf_outboard_in))) 
+
+    ! Tricky trick to avoid writting tinstf all the time
+    r_tf_outboard_in = r_tf_outboard_in - tinstf - tfinsgap
+    !-!
+
     ! Case of a centrepost (itart == 1) with sliding joints (the CP vertical are separated from the leg ones)
     ! Rem SK : casing/insulation thickness not subtracted as part of the CP is genuinely connected to the legs..
     if ( itart == 1 .and. i_cp_joints == 1 ) then
@@ -1225,6 +1234,7 @@ subroutine tf_field_and_force()
         ! Tricky trick to avoid dividing by 0 if the TF has no hole in it
         if ( abs(r_in_wp) < epsilon(r_in_wp) ) r_in_wp = 1.0D-9
 
+        ! CP vertical tension [N]
         vforce = 0.25D0 * (bt * rmajor * ritfc) / (n_tf * dr_wp**2) & 
                * ( 2.0D0 * r_out_wp**2 * log(r_out_wp / r_in_wp )   &
                  + 2.0D0 * dr_wp**2 * log( r_cp_top / r_in_wp )     &
@@ -1232,36 +1242,19 @@ subroutine tf_field_and_force()
                  - 2.0D0 * dr_wp * r_out_wp                         &
                  + 4.0D0 * dr_wp * r_out_wp *log( r_in_wp / r_out_wp ) )
 
-        r_tf_outboard_in = r_tf_outboard_in + tinstf    ! Tricky trick t avoid writting tinstf all the time           
-        vforce_outboard = 0.5D0 * (bt * rmajor * ritfc) / (n_tf * dr_wp**2) &
-                        * ( r_out_wp**2 * log( r_out_wp / r_in_wp )  &
-                          + r_tf_outboard_in**2 * log( (r_tf_outboard_in + dr_wp) / r_tf_outboard_in ) &
-                          + dr_wp**2         * log( (r_tf_outboard_in + dr_wp) / r_in_wp          )    &
-                          - dr_wp            * ( r_out_wp + r_tf_outboard_in                       )  &
-                          + 2.0D0 * dr_wp * ( r_out_wp     * log(r_in_wp / r_out_wp)             &
-                                            + r_tf_outboard_in * log((r_tf_outboard_in + dr_wp)      &
-                                            / r_tf_outboard_in))) - vforce 
-        r_tf_outboard_in = r_tf_outboard_in - tinstf    ! Tricky trick to avoid writting tinstf all the time
+        ! Vertical tension applied on the outer leg [N]
+        vforce_outboard = vforce_tot - vforce
 
-        f_vforce_inboard = vforce / ( vforce + vforce_outboard )
+        ! Inboard vertical tension fraction
+        f_vforce_inboard = vforce / vforce_tot
 
     ! Case of TF without joints or with clamped joints total
-    ! Rem SK : f_vforce_inboard might be calculated analytically (see M. Kovari comment in #848)
     else 
 
-        ! Inboard leg vertical force (per coil) [N]
-        r_tf_outboard_in = r_tf_outboard_in + tinstf ! Tricky trick to avoid writting tinstg all the time    
-        
-        vforce = 0.5D0 * f_vforce_inboard * (bmaxtf * rbmax * ritfc) / (n_tf * dr_wp**2)       &
-               * ( r_out_wp**2         * log( r_out_wp / r_in_wp )                             &
-                 + r_tf_outboard_in**2 * log( (r_tf_outboard_in + dr_wp) / r_tf_outboard_in )  &
-                 + dr_wp**2            * log( (r_tf_outboard_in + dr_wp) / r_in_wp       )     &
-                 - dr_wp * ( r_out_wp + r_tf_outboard_in ) &
-                 + 2.0D0 * dr_wp * ( r_out_wp * log(r_in_wp / r_out_wp )  &
-                                   + r_tf_outboard_in * log((r_tf_outboard_in+dr_wp) / r_tf_outboard_in )))      
-        
-        r_tf_outboard_in = r_tf_outboard_in - tinstf  ! Tricky trick to avoid writting tinstf all the time
+        ! Inboard vertical tension [N]
+        vforce = f_vforce_inboard * vforce_tot
 
+        ! Ouboard vertical tension [N]
         vforce_outboard = vforce * ( ( 1.0D0 / f_vforce_inboard ) - 1.0D0 )  
     end if
     ! ***
@@ -1283,13 +1276,34 @@ subroutine tf_coil_area_and_masses()
         tfsai, vftf, whtconin, tfsai, dcond, dcondins, whtcon, &
         tfleng, dthet, dcase, acndttf, n_tf_turn, n_tf, aiwp, radctf, acasetfo, &
         acasetf, fcutfsu, awphec, acstf, whttflgs, whtcp, whtconal, vol_cond_cp, &
-        i_tf_sup, i_tf_sc_mat
-    use constants, only: twopi, dcopper, dalu
+        i_tf_sup, i_tf_sc_mat, arealeg, thkcas, voltfleg
+    use constants, only: twopi, dcopper, dalu, pi
     use physics_variables, only: itart
     implicit none
 
     ! Local Variables
+    ! ---------------
     real(dp) :: cplen, wbtf
+
+    real(dp) :: vol_ins
+    !! Total leg turn isulation volume [m3]
+    
+    real(dp) :: vol_gr_ins
+    !! Total leg turn isulation volume [m3]
+    
+    real(dp) :: vol_cond
+    !! Total conductor insulator volume [m3]
+
+    real(dp) :: vol_ins_leg
+    !! Outboard leg turn isulation volume [m3]
+    
+    real(dp) :: vol_gr_ins_leg
+    !! Outboard leg turn isulation volume [m3]
+
+    real(dp) :: vol_cond_leg
+    !! Outboard leg conductor insulator volume [m3]
+    ! ---------------
+
 
     ! Surface areas (for cryo system) [m2]
     ! tfsai, tfsao are retained for the (obsolescent) TF coil nuclear heating calculation
@@ -1306,6 +1320,10 @@ subroutine tf_coil_area_and_masses()
     ! in subroutine cryo - not done at present.)
     tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(r_tf_inboard_mid+r_tf_outboard_mid)
 
+    ! Mass of ground-wall insulation [kg]
+    ! (assumed to be same density/material as turn insulation)
+    whtgw = tfleng * (awpc-awptf) * dcondins
+
     ! Superconductor coil design specific calculation
     ! ---
     if ( i_tf_sup == 1 ) then
@@ -1320,13 +1338,9 @@ subroutine tf_coil_area_and_masses()
         whtcas = 2.2D0 * dcase * (cplen * acasetf + (tfleng-cplen) * acasetfo)
         ! ***
         
-        ! Mass of ground-wall insulation [kg]
-        ! (assumed to be same density/material as conduit insulation)
-        whtgw = tfleng * (awpc-awptf) * dcondins
 
         ! Masses of conductor constituents
         !---------------------------------    
-
         ! Superconductor mass [kg]
         ! Includes space allowance for central helium channel, area awphec
         whtconsc = (tfleng * n_tf_turn * acstf*(1.0D0-vftf) * &
@@ -1355,6 +1369,53 @@ subroutine tf_coil_area_and_masses()
     ! Rem SK : No casing for the outboard leg is considered for now !
     else 
         
+        ! Volumes
+        ! -------
+        ! CP with joints
+        ! ---    
+        if ( itart == 1 ) then
+
+            ! Total volume of one outerleg [m3]
+            voltfleg = tfleng * arealeg
+
+            ! Outboard leg TF conductor volume [m3]
+            vol_cond_leg = tfleng * a_wp_cond
+
+            ! Total TF conductor volume [m3]
+            vol_cond = vol_cond_cp + n_tf * vol_cond_leg
+
+            ! Outboard leg TF turn insulation layer volume (per leg) [m3]
+            vol_ins_leg = tfleng * a_wp_ins_turn
+
+            ! Total turn insulation layer volume [m3]
+            vol_ins = vol_ins_cp + n_tf * vol_ins_leg
+
+            ! Ouboard leg TF ground insulation layer volume (per leg) [m3]
+            vol_gr_ins_leg = tfleng * a_wp_gr_ins
+
+            ! Total ground insulation layer volume [m3]
+            vol_gr_ins = vol_gr_ins_leg + n_tf * vol_gr_ins_leg
+
+            ! Total volume of the CP casing [m3]
+            vol_case_cp = vol_case_cp + pi * ( ( r_tf_inboard_in + thkcas )**2 &
+                                             - r_tf_inboard_in**2 )
+        
+        ! No joints
+        ! ---    
+        else 
+            ! Total TF outer leg conductor volume (not per leg)
+            vol_cond = tfleng * a_wp_cond * n_tf 
+    
+            ! Total turn insulation layer volume
+            vol_ins = tfleng * a_wp_ins_turn * n_tf
+
+            ! Total ground insulation volume
+            vol_gr_ins = tfleng * a_wp_gr_ins * n_tf
+        end if
+        ! ---    
+        ! -------
+
+
         ! Copper magnets casing/conductor weights per coil [kg]
         if ( i_tf_sup == 0 ) then 
 
@@ -1364,8 +1425,15 @@ subroutine tf_coil_area_and_masses()
 
             ! Outer legs/CP weights
             if ( itart == 1 ) then
-                whttflgs = n_tf * ( dcopper * vol_cond_leg + dcondins * vol_ins_leg ) 
-                whtcp =  dcopper * vol_cond_cp + dcondins * vol_ins_cp + vol_case_cp * denstl 
+
+                ! Weight of all the TF legs
+                whttflgs = n_tf * ( dcopper * vol_cond_leg &
+                                  + dcondins * ( vol_ins_leg + vol_gr_ins_leg ) )
+
+                ! CP weight 
+                whtcp = dcopper * vol_cond_cp &
+                      + dcondins * ( vol_ins_cp + vol_gr_ins_cp ) &
+                      + vol_case_cp * denstl 
             end if
 
         ! Cryo-aluminium conductor weights
@@ -1377,16 +1445,26 @@ subroutine tf_coil_area_and_masses()
 
             ! Outer legs/CP weights
             if ( itart == 1 ) then
-                whttflgs = n_tf * ( dalu * vol_cond_leg + dcondins * vol_ins_leg ) 
-                whtcp =  dalu * vol_cond_cp + dcondins * vol_ins_cp + vol_case_cp * dalu 
+
+                ! Weight of all the TF legs
+                whttflgs = n_tf * ( dalu * vol_cond_leg &
+                                  + dcondins * ( vol_ins_leg + vol_gr_ins_leg ) )
+
+                ! CP weight 
+                whtcp = dalu * vol_cond_cp &
+                      + dcondins * ( vol_ins_cp + vol_gr_ins_cp ) &
+                      + vol_case_cp * denstl 
             end if
         end if
+
+        ! Turn insulation mass [kg]
+        whtconin = dcondins * vol_ins / n_tf
             
         ! Ground wall insulation layer weight
-        whtgw = dcondins * vol_ins / n_tf
+        whtgw = dcondins * vol_gr_ins / n_tf
 
         ! Total weight
-        whttf = (whtcas + whtconcu + whtconal + whtgw) * n_tf
+        whttf = (whtcas + whtconcu + whtconal + whtconin + whtgw ) * n_tf
 
     end if 
     ! ---
@@ -3457,10 +3535,8 @@ subroutine coilshap
         real(dp), intent(in) :: aaa, bbb
         real(dp) :: hh
         hh = ( aaa - bbb )**2 / ( aaa + bbb )**2
-        circumference = pi* ( aaa + bbb ) * ( 1.0D0 + (3.0D0*hh)/(10.0D0 + sqrt(4.0D0 - 3.0D0*hh)) )  ! eq(14)
+        circumference = pi* ( aaa + bbb ) * ( 1.0D0 + (3.0D0*hh)/(10.0D0 + sqrt(4.0D0 - 3.0D0*hh)) )
 
-        ! Initial formula slightly less accurate
-        ! circumference = pi * ( 3.0D0*(aaa+bbb) - sqrt( (3.0D0*aaa + bbb)*(aaa + 3.0D0*bbb) ) ) 
     end function
 
 end subroutine coilshap
@@ -4826,8 +4902,9 @@ end subroutine dtempbydtime
 
 !-----------------------------------------------------------------------
 subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! Inputs
-                  ins_th, cas_out_th, n_turns_tot,                         &  ! Inputs
-                  a_cp_cool, vol_cond_cp, respow, volins, volcasout )         ! Outputs
+                  ins_th, gr_ins_th, cas_out_th, n_turns_tot,              &  ! Inputs
+                  a_cp_cool, vol_cond_cp, respow,        & ! Outputs
+                  vol_ins_cp, vol_case_cp, vol_gr_ins_cp ) ! Outputs
     !!  author: P J Knight, CCFE, Culham Science Centre
     !!  Calculates the volume and resistive power losses of a TART centrepost
     !!  This routine calculates the volume and resistive power losses
@@ -4842,6 +4919,7 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     !!  26/06/14 PJK Added error handling
     !!  12/11/19 SK Using fixed cooling cross-section area along the CP 
     !!  26/11/19 SK added the coolant area, the conuctor/isulator/outer casing volume 
+    !!  30/11/20 SK added the ground outer ground insulation volume 
     !!  F/MI/PJK/LOGBOOK12, pp.33,34
     !!  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -4851,28 +4929,119 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     use build_variables, only: hmax
     implicit none
 
+
     !  Arguments
-    ! ---
+    ! ----------
     ! Inputs
-    real(dp), intent(in) :: rtop,ztop,rmid,hmaxi,curr,rho,fcool,&
-                          r_tfin_inleg, ins_th, cas_out_th, n_turns_tot
+    real(dp), intent(in) :: rtop
+    !! Conductor outer radius at CP top [m]
+    
+    real(dp), intent(in) :: rmid
+    !! Conductor outer radius at CP mid-plane [m]
+
+    real(dp), intent(in) :: r_tfin_inleg
+    !! Conductor `WP` inner radius [m]
+    !! Rem : the insulation layer is included but not the ground one
+
+    real(dp), intent(in) :: ztop
+    !! Top vertical position (z) of the CP curved section [m]
+
+    real(dp), intent(in) :: hmaxi
+    !! Total CP half vertical length [m]
+
+    real(dp), intent(in) :: curr
+    !! CP total current [A]
+    
+    real(dp), intent(in) :: rho
+    !! CP conductor resistivity
+    
+    real(dp), intent(in) :: fcool
+    !! Mid-plane CP conductor cooling fraction    
+
+    real(dp), intent(in) :: ins_th
+    !! Turn insulation thickness [m]
+
+    real(dp), intent(in) :: gr_ins_th
+    !! Ground insulation thickness [m]
+
+    real(dp), intent(in) :: cas_out_th
+    !! Outer casing thickness [m]
+
+    real(dp), intent(in) :: n_turns_tot
+    !! Total number of turns in CP
+    ! ----------
+
 
     ! Outputs
-    real(dp), intent(out) :: respow, volins, volcasout
+    ! -------
+    real(dp), intent(out) :: respow
+    !! CP resistive power losses [W]
+    
+    real(dp), intent(out) :: vol_ins_cp
+    !! Total CP turn insulation volume [m3]
 
-    real(dp), intent(out) :: a_cp_cool
-    !! Centrepost cooling area toroidal cross-section (constant over the whole CP) [m2]
+    real(dp), intent(out) :: vol_gr_ins_cp
+    !! Total CP ground insulation volume [m3] 
+    
+    real(dp), intent(out) :: vol_case_cp
+    !! Total CP outer layer case volume [m3]
 
     real(dp), intent(out) :: vol_cond_cp
-    !! Exact conductor volume in the centrepost [m3]
+    !! Total conductor volume in the centrepost [m3]
+    !! Rem : The cooling space is removed
 
-    ! Internal
+    real(dp), intent(out) :: a_cp_cool
+    !! Centrepost cooling area toroidal cross-section [m2]
+    !! Rem : constant over the whole CP
+    ! -------
+
+
+    ! Internal variables
+    ! ------------------
     real(dp) :: r1,z1,x,y,rc,dz,r,z, a_tfin_hole, res_cyl, res_taped
-    real(dp) :: sum1, sum2, sum3, sum4
-    real(dp) :: a_cond_midplane, a_cp_ins, a_casout
-    real(dp), dimension(0:100) :: yy, yy_ins, yy_casout
+
+    real(dp) :: a_cond_midplane
+    !! Mid-plane conductor area [m2]
+    
+    real(dp) :: a_casout
+    !! Straight section (top) outter case area [m2] 
+
+    real(dp) :: a_cp_ins
+    !! Straight section (top) turn insulation area [m2] 
+
+    real(dp) :: a_cp_gr_ins
+    !! Straight section (top) outter ground insulation area [m2] 
+
+    real(dp) :: sum1
+    !! Exact conductor volume integration sum [m3]
+
+    real(dp) :: sum2
+    !! Resistive heating integration sum [1/m2]
+
+    real(dp) :: sum3
+    !! Turn insulation volume integration sum [m3]
+    
+    real(dp) :: sum4
+    !! Outter case volume integration sum [m3]
+
+    real(dp) :: sum5
+    !! Outer ground insulation volume integration sum [m3]
+
+    real(dp), dimension(0:100) :: yy
+    !! Exact conductor area (to be integrated)
+
+    real(dp), dimension(0:100) :: yy_ins
+    !! Turn insulation area (to be integrated)
+
+    real(dp), dimension(0:100) :: yy_gr_ins
+    !! Outter ground insulation area (to be integrated)
+
+    real(dp), dimension(0:100) :: yy_casout
+    !! Outter case area (to be integrated)
 
     integer :: ii
+    !! Loop iterator
+    ! ------------------
     ! ---
 
 
@@ -4913,18 +5082,21 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     ! Mid-plane area calculations
     ! ---------------------------
     ! Area of the innner TF central hole [m2]
-    a_tfin_hole = pi*r_tfin_inleg**2
+    a_tfin_hole = pi * r_tfin_inleg**2
 
     ! Mid-plane outer casing cross-section area [m2]
-    a_casout = pi * ( (rmid + cas_out_th)**2 - rmid**2 )
+    a_casout = pi * ( ( rmid + gr_ins_th + cas_out_th )**2   &
+                    - ( rmid + gr_ins_th )**2 )
 
-    ! Mid-plane insualtion layer cross-section [m2] 
-    ! eq(27)
-    a_cp_ins = pi * ( (r_tfin_inleg + ins_th)**2 - r_tfin_inleg**2 ) + & ! Inner layer volume
-               pi * ( rmid**2 - ( rmid - ins_th )**2 )               + & ! Outter layer volume
+    ! Mid-plane outter ground insulation thickness [m2]
+    a_cp_gr_ins = pi * ( ( rmid + gr_ins_th )**2 - rmid**2 ) 
+
+    ! Mid-plane turn layer cross-section area [m2] 
+    a_cp_ins = pi * ( ( r_tfin_inleg + ins_th )**2 - r_tfin_inleg**2 ) + & ! Inner layer volume
+               pi * ( rmid**2 - ( rmid - ins_th )**2 )                 + & ! Outter layer volume
                2.0D0 * ins_th * (rmid - r_tfin_inleg - 2.0D0*ins_th) * n_turns_tot ! inter turn separtion layers
 
-    ! Cooling pipes cross-section [m2]
+    ! Cooling pipes cross-section per coil [m2]
     a_cp_cool = fcool * ( pi*rmid**2 - a_tfin_hole - a_cp_ins ) / n_tf
     ! ---------------------------
 
@@ -4945,17 +5117,20 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
 
         ! Volumes and resisitive losses calculations
         vol_cond_cp = 2.0D0 * hmaxi * a_cond_midplane
-        volins = 2.0D0 * hmaxi * a_cp_ins
+        vol_ins_cp = 2.0D0 * hmaxi * a_cp_ins
+        vol_gr_ins_cp = 2.0D0 * hmaxi * a_cp_gr_ins
         respow = 2.0D0 * hmaxi * curr**2 * rho / a_cond_midplane
-        volcasout = 2.0D0 * hmaxi * a_casout
+        vol_case_cp = 2.0D0 * hmaxi * a_casout
 
         return
     end if
     ! ------------------
 
 
-    !  Find centre of circle (RC,0) defining the taper's arc
-    !  (r1,z1) is midpoint of line joining (rmid,0) and (rtop,ztop)
+    ! Find centre of circle (RC,0) defining the taper's arc
+    ! (r1,z1) is midpoint of line joining (rmid,0) and (rtop,ztop)
+    ! Rem : The taper arc is defined using the outer radius of the 
+    !       conductor including turn unsulation
     ! -------------------------------------------------------------
     r1 = 0.5D0*(rmid + rtop)
     z1 = 0.5D0*ztop
@@ -4985,16 +5160,20 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
             call report_error(123)
         end if
 
-        ! Insulation cross-sectional area at Z
+        ! Insulation cross-sectional area at z
         yy_ins(ii) = pi * ( (r_tfin_inleg + ins_th)**2 - r_tfin_inleg**2 )            + & ! Inner layer volume
                      pi * ( r**2 - ( r - ins_th )**2 )                                + & ! Outter layer volume
                      2.0D0 * ins_th * (r - r_tfin_inleg - 2.0D0*ins_th) * n_turns_tot     ! inter turn separtion layers
 
-        !  Cross-sectional area at Z
-        yy(ii) = pi*r**2 - a_tfin_hole - n_tf*a_cp_cool - yy_ins(ii)  ! eq(32)
+        !  Cross-sectional area at z
+        yy(ii) = pi*r**2 - a_tfin_hole - n_tf*a_cp_cool - yy_ins(ii)
+
+        !  Outer ground insulation area at z
+        yy_gr_ins(ii) = pi * ( ( r + gr_ins_th )**2 - r**2 ) 
 
         !  Outer casing Cross-sectional area at z 
-        yy_casout(ii) = pi * ( (r+cas_out_th)**2 - r**2 )
+        yy_casout(ii) = pi * ( ( r + gr_ins_th + cas_out_th )**2 &
+                             - ( r + gr_ins_th )**2 )
 
     end do
 
@@ -5003,45 +5182,56 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     sum2 = 0.0D0
     sum3 = 0.0D0
     sum4 = 0.0D0
+    sum5 = 0.0D0
     do ii = 1,99
         sum1 = sum1 + yy(ii)
         sum2 = sum2 + 1.0D0/yy(ii)
         sum3 = sum3 + yy_ins(ii)
         sum4 = sum4 + yy_casout(ii)
+        sum5 = sum5 + yy_gr_ins(ii)
     end do
 
     sum1 = 0.5D0*dz * ( yy(0) + yy(100) + 2.0D0*sum1 )
     sum2 = 0.5D0*dz * ( 1.0D0/yy(0) + 1.0D0/yy(100) + 2.0D0*sum2 )
     sum3 = 0.5D0*dz * ( yy_ins(0) + yy_ins(100) + 2.0D0*sum3 )
     sum4 = 0.5D0*dz * ( yy_casout(0) + yy_casout(100) + 2.0D0*sum4 )
+    sum5 = 0.5D0*dz * ( yy_gr_ins(0) + yy_gr_ins(100) + 2.0D0*sum5 )
 
-    ! Insulation layer cross section at CP top 
+    ! Turn insulation layer cross section at CP top  [m2]
     a_cp_ins = pi * ( (r_tfin_inleg + ins_th)**2 - r_tfin_inleg**2 )           + & ! Inner layer volume
                pi * ( rtop**2 - ( rtop - ins_th )**2 )                         + & ! Outter layer volume
                2.0D0 * ins_th * (rtop - r_tfin_inleg - 2.0D0*ins_th) * n_turns_tot ! inter turn separtion layers      
 
+    ! Ground insulation layer cross-section at CP top [m2]
+    a_cp_gr_ins = pi * ( ( rtop + gr_ins_th )**2 - rtop**2 ) 
+
     ! Outer casing cross-section area at CP top [m2]
-    a_casout = pi * ( (rtop + cas_out_th)**2 - rtop**2 )
+    a_casout = pi * ( ( rmid + gr_ins_th + cas_out_th )**2  &
+                    - ( rmid + gr_ins_th )**2 )
 
     ! Centrepost volume (ignoring coolant fraction) [m3]
     vol_cond_cp = 2.0D0 * ( sum1 + ( hmaxi - ztop ) * &
                      ( pi*rtop**2 - a_tfin_hole - a_cp_ins - n_tf*a_cp_cool ) )
 
     ! Resistive power losses in taped section (variable radius section) [W]
-    res_taped = rho * curr**2 * sum2                    ! eq(31)
+    res_taped = rho * curr**2 * sum2
 
     ! Centrepost insulator volume [m3]
-    volins = 2.0D0 * ( sum3 + (hmaxi - ztop) * a_cp_ins )
+    vol_ins_cp = 2.0D0 * ( sum3 + ( hmaxi - ztop ) * a_cp_ins )
+
+    ! Ground insulation volume [m3]
+    vol_gr_ins_cp = 2.0D0*( sum5 + ( hmaxi - ztop ) * a_cp_gr_ins   &
+                          + hmaxi * ( r_tfin_inleg**2 - (r_tfin_inleg - gr_ins_th)**2 ) )
 
     ! Outer casing volume [m3]
-    volcasout = 2.0D0 * ( sum4 + (hmaxi - ztop) * a_casout ) 
+    vol_case_cp = 2.0D0 * ( sum4 + (hmaxi - ztop) * a_casout ) 
 
     ! Resistive power losses in cylindrical section (constant radius) [W]
-    res_cyl = rho * curr**2 * ( ( hmaxi - ztop ) / &    ! eq(30)
-              ( pi * rtop**2 - a_tfin_hole  - a_cp_ins - n_tf*a_cp_cool ) )  
+    res_cyl = rho * curr**2 * ( ( hmaxi - ztop )   &
+                / ( pi * rtop**2 - a_tfin_hole  - a_cp_ins - n_tf*a_cp_cool ) )  
 
     ! Total CP resistive power [W]
-    respow = 2.0D0 * ( res_cyl + res_taped )   ! eq(36)   
+    respow = 2.0D0 * ( res_cyl + res_taped )
     ! --------------------------------------------------------------------
 
 end subroutine cpost
