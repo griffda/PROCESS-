@@ -96,16 +96,16 @@ real(dp), private :: a_case_front
 real(dp), private :: a_case_nose
 !! Nose casing area [m2]
 
-real(dp), private :: a_wp_ins_turn
-!! TF ouboard leg insulation area [m2]
-
-real(dp), private :: a_wp_gr_ins
-!! TF outboard leg ground insulation area [m2]
-
 real(dp), private :: a_ground_ins
 !! Inboard mid-plane cross-section area of the WP ground insulation [m2]
 
-real(dp), private :: a_wp_cond
+real(dp), private :: a_leg_ins
+!! TF ouboard leg insulation area [m2]
+
+real(dp), private :: a_leg_gr_ins
+!! TF outboard leg ground insulation area [m2]
+
+real(dp), private :: a_leg_cond
 !! Exact TF ouboard leg conductor area [m2] 
 
 real(dp), private :: theta_coil
@@ -1092,18 +1092,18 @@ subroutine tf_res_heating()
     ! Rem : For itart = 1, these quantitire corresponds to the outer leg only
     ! ---
     ! Leg ground insulation area per coil [m2]
-    a_wp_gr_ins = arealeg - ( tftort - 2.0D0 * tinstf ) &
+    a_leg_gr_ins = arealeg - ( tftort - 2.0D0 * tinstf ) &
                           * ( tfthko - 2.0D0 * tinstf )
 
     ! Outboard leg turns insulation area per coil [m2]
-    a_wp_ins_turn = 2.0D0 * thicndut * ( tftort - 2.0D0 * tinstf     &
+    a_leg_ins = 2.0D0 * thicndut * ( tftort - 2.0D0 * tinstf     &
                                        + tfthko - 2.0D0 * n_tf_turn  &
                                        * ( thicndut + tinstf ) ) 
 
     ! Exact TF outboard leg conductor area per coil [m2]
-    a_wp_cond = ( 1.0D0 - fcoolleg ) * ( ( tftort - 2.0D0 * tinstf )  &
+    a_leg_cond = ( 1.0D0 - fcoolleg ) * ( ( tftort - 2.0D0 * tinstf )  &
                                       * ( tfthko - 2.0D0 * tinstf )  &
-                                      - a_wp_ins_turn )
+                                      - a_leg_ins )
     ! ---
 
 
@@ -1112,7 +1112,7 @@ subroutine tf_res_heating()
         ! Outer leg resistive power loss
         ! ---
         ! TF outboard leg's resistance calculation (per leg) [ohm]
-        tflegres = rhotfleg * tfleng / a_wp_cond
+        tflegres = rhotfleg * tfleng / a_leg_cond
 
         ! TF outer leg resistive power (TOTAL) [W]   
         presleg = tflegres * ritfc**2 / n_tf 
@@ -1143,7 +1143,7 @@ subroutine tf_res_heating()
     else          
 
         ! TF resistive powers
-        prescp = rhocp * ritfc**2 * tfleng / ( a_wp_cond * n_tf )
+        prescp = rhocp * ritfc**2 * tfleng / ( a_leg_cond * n_tf )
 
         ! prescp containts the the total resistive power losses
         presleg = 0.0D0
@@ -1379,19 +1379,19 @@ subroutine tf_coil_area_and_masses()
             voltfleg = tfleng * arealeg
 
             ! Outboard leg TF conductor volume [m3]
-            vol_cond_leg = tfleng * a_wp_cond
+            vol_cond_leg = tfleng * a_leg_cond
 
             ! Total TF conductor volume [m3]
             vol_cond = vol_cond_cp + n_tf * vol_cond_leg
 
             ! Outboard leg TF turn insulation layer volume (per leg) [m3]
-            vol_ins_leg = tfleng * a_wp_ins_turn
+            vol_ins_leg = tfleng * a_leg_ins
 
             ! Total turn insulation layer volume [m3]
             vol_ins = vol_ins_cp + n_tf * vol_ins_leg
 
             ! Ouboard leg TF ground insulation layer volume (per leg) [m3]
-            vol_gr_ins_leg = tfleng * a_wp_gr_ins
+            vol_gr_ins_leg = tfleng * a_leg_gr_ins
 
             ! Total ground insulation layer volume [m3]
             vol_gr_ins = vol_gr_ins_leg + n_tf * vol_gr_ins_leg
@@ -1404,13 +1404,13 @@ subroutine tf_coil_area_and_masses()
         ! ---    
         else 
             ! Total TF outer leg conductor volume (not per leg)
-            vol_cond = tfleng * a_wp_cond * n_tf 
+            vol_cond = tfleng * a_leg_cond * n_tf 
     
             ! Total turn insulation layer volume
-            vol_ins = tfleng * a_wp_ins_turn * n_tf
+            vol_ins = tfleng * a_leg_ins * n_tf
 
             ! Total ground insulation volume
-            vol_gr_ins = tfleng * a_wp_gr_ins * n_tf
+            vol_gr_ins = tfleng * a_leg_gr_ins * n_tf
         end if
         ! ---    
         ! -------
