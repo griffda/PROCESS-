@@ -2023,7 +2023,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         f_vforce_case = 1.0D0
 
         ! Effective WP young modulus in the toroidal direction [Pa]
-        ! Rem : effect of cooling pipes and insulation not taken into account for now
+        ! Rem : effect of cooling pipes and insulation not taken into account 
+        !       for now as it needs a radially dependent Young modulus
         eyoung_wp_t_eff = eyoung_al
         eyoung_wp_t = eyoung_al
 
