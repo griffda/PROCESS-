@@ -20,39 +20,16 @@ if os.name == 'posix' and "DISPLAY" not in os.environ:
 matplotlib.rcParams["figure.max_open_warning"] = 40
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_pdf as bpdf
-
 import math
 from matplotlib.path import Path
 import matplotlib.patches as patches
-
 import numpy as np
-
-# Get repository root directory
-import  pathlib
-import time
+from importlib import resources
 
 from process.io.python_fortran_dicts import get_dicts
 
 # Load dicts from dicts JSON file
 proc_dict = get_dicts()
-
-timeout = time.time() + 10   # 10 seconds
-found_root = False
-back = ""
-while not found_root:
-    if time.time() > timeout:
-        print("Can't find repository root. Make sure utility is being run "
-              "inside a PROCESS repository clone")
-        break
-    else:
-        my_file = pathlib.Path(back + ".gitignore")
-        if my_file.is_file():
-            found_root = True
-            if back == "":
-                REPO_ROOT = ""
-            else:
-                REPO_ROOT = back
-        back += "../"
 
 solenoid = 'pink'
 cscompression = 'red'
@@ -2058,7 +2035,11 @@ def main_plot(fig1, fig2, m_file_data, scan, plasmod=False, imp="../data/impurit
     """
 
     # Checking the impurity data folder
-    data_folder= REPO_ROOT+"data/impuritydata/"
+    # Get path to impurity data dir
+    # TODO use Path objects throughout module, not strings
+    with resources.path("process.data.impuritydata", "ArLzdata.dat") as imp_path:
+        data_folder = str(imp_path.parent) + "/"
+    
     if os.path.isdir(data_folder):
         imp = data_folder
     else:
