@@ -38,6 +38,7 @@ stages:
 .before_test_template: &test-setup
   image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
   before_script:
+    - export PATH=/root/.local/bin:${PATH}
     - pip3 install --upgrade pip
     - pip3 install virtualenv
     - virtualenv ~/testenv
