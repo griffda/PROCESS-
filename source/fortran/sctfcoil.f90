@@ -409,8 +409,8 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
     ! Setting the WP turn geometry / areas 
     if ( i_tf_turns_integer == 0 ) then 
         ! Non-ingeger number of turns
-        call tf_averaged_turn_geom( jwptf, thwcndut, thicndut, i_tf_sc_mat, & ! Inputs
-                                    acstf, acndttf, insulation_area, n_tf_turn )     ! Outputs
+        call tf_averaged_turn_geom( jwptf, thwcndut, thicndut, i_tf_sc_mat, &     ! Inputs
+                                    acstf, acndttf, insulation_area, n_tf_turn )  ! Outputs
     else 
         ! Integer number of turns
         call tf_integer_turn_geom( n_layer, n_pancake, thwcndut, thicndut, & ! Inputs
@@ -653,8 +653,8 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
         ! --------------
     end subroutine tf_case_geom
 
-    subroutine tf_averaged_turn_geom( jwptf, thwcndut, thicndut, i_tf_sc_mat, & ! Inputs
-                                      acstf, acndttf, insulation_area, n_tf_turn ) ! Outputs                    ! Outputs
+    subroutine tf_averaged_turn_geom( jwptf, thwcndut, thicndut, i_tf_sc_mat,    & ! Inputs
+                                      acstf, acndttf, insulation_area, n_tf_turn ) ! Outputs
 
         !! Authors : J. Morris, CCFE
         !! Authors : S. Kahn, CCFE
@@ -4933,7 +4933,8 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
 
     !  Arguments
     ! ----------
-    ! Inputs
+    ! Inputs 
+    ! ------
     real(dp), intent(in) :: rtop
     !! Conductor outer radius at CP top [m]
     
@@ -4969,8 +4970,8 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     !! Outer casing thickness [m]
 
     real(dp), intent(in) :: n_turns_tot
-    !! Total number of turns in CP
-    ! ----------
+    !! Total number of turns in CP 
+    ! ------
 
 
     ! Outputs
