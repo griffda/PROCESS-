@@ -994,7 +994,7 @@ subroutine check
 
         ! Minimal conductor layer thickness
         else if ( i_tf_sup == 0 .or. i_tf_sup == 2 ) then
-            dr_tf_wp_min = 2.0D0 * thicndut + 4.0D0 * rcool
+            dr_tf_wp_min = 2.0D0 * ( thicndut + tinstf ) + 4.0D0 * rcool
         end if
 
         if ( boundl(140) < dr_tf_wp_min ) then
