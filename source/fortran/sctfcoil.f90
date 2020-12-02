@@ -976,8 +976,9 @@ subroutine res_tf_internal_geom()
     ! including the surrounding ground-wall insulation layer 
     awpc = pi * ( r_wp_outer**2 - r_wp_inner**2 ) / n_tf
 
-    ! WP mid-plane cross-section excluding ground insulation
-    awptf = pi * ( ( r_wp_outer - tinstf )**2 - ( r_wp_inner + tinstf )**2 ) / n_tf
+    ! WP mid-plane cross-section excluding ground insulation per coil [m2]
+    awptf = pi * ( ( r_wp_outer - tinstf )**2 - ( r_wp_inner + tinstf )**2 ) / n_tf &
+          - 2.0D0 * tinstf * ( dr_tf_wp - 2.0D0 * tinstf )
 
     ! Ground insulation cross-section area per coil [m2]
     a_ground_ins = awpc - awptf
@@ -985,7 +986,8 @@ subroutine res_tf_internal_geom()
     ! Exact mid-plane cross-section area of the conductor per TF coil [m2]
     a_tf_cond = pi * ( ( r_wp_outer - tinstf - thicndut )**2          &
                      - ( r_wp_inner + tinstf + thicndut )**2 ) / n_tf &
-              - 2.0D0*thicndut * (dr_tf_wp - 2.0D0*(tinstf + thicndut)) * n_tf_turn         
+              - ( dr_tf_wp - 2.0D0 * ( tinstf + thicndut ) )          &
+              * 2.0D0 * ( tinstf + thicndut * n_tf_turn )
     a_tf_cond = a_tf_cond * ( 1.0D0 - fcoolcp )
 
     ! Inter turn insulation area per coil [m2]                    
@@ -1083,7 +1085,7 @@ subroutine tf_res_heating()
         call cpost( r_cp_top-casthi-tinstf, h_cp_top,                     & ! Inputs
                     r_tf_inboard_out-casthi-tinstf, hmax+tfthko,          & ! Inputs
                     ritfc, rhocp, fcoolcp, r_tf_inboard_in+thkcas+tinstf, & ! Inputs
-                    thicndut, tinstf , casthi, n_tf*n_tf_turn,            & ! Inputs
+                    thicndut, tinstf, thkcas, casthi, n_tf*n_tf_turn,     & ! Inputs
                     a_cp_cool, vol_cond_cp, prescp, &        ! Outputs
                     vol_ins_cp, vol_case_cp, vol_gr_ins_cp ) ! Outputs
     end if
@@ -1093,12 +1095,12 @@ subroutine tf_res_heating()
     ! ---
     ! Leg ground insulation area per coil [m2]
     a_leg_gr_ins = arealeg - ( tftort - 2.0D0 * tinstf ) &
-                          * ( tfthko - 2.0D0 * tinstf )
+                           * ( tfthko - 2.0D0 * tinstf )
 
     ! Outboard leg turns insulation area per coil [m2]
     a_leg_ins = 2.0D0 * thicndut * ( tftort - 2.0D0 * tinstf     &
-                                       + tfthko - 2.0D0 * n_tf_turn  &
-                                       * ( thicndut + tinstf ) ) 
+                                   + tfthko - 2.0D0 * n_tf_turn  &
+                                   * ( thicndut + tinstf ) ) 
 
     ! Exact TF outboard leg conductor area per coil [m2]
     a_leg_cond = ( 1.0D0 - fcoolleg ) * ( ( tftort - 2.0D0 * tinstf )  &
@@ -1285,11 +1287,14 @@ subroutine tf_coil_area_and_masses()
     ! ---------------
     real(dp) :: cplen, wbtf
 
+    real(dp) :: vol_case
+    !! Total TF case volume [m3]
+
     real(dp) :: vol_ins
-    !! Total leg turn isulation volume [m3]
+    !! Total leg turn insulation volume [m3]
     
     real(dp) :: vol_gr_ins
-    !! Total leg turn isulation volume [m3]
+    !! Total leg turn insulation volume [m3]
     
     real(dp) :: vol_cond
     !! Total conductor insulator volume [m3]
@@ -1394,23 +1399,26 @@ subroutine tf_coil_area_and_masses()
             vol_gr_ins_leg = tfleng * a_leg_gr_ins
 
             ! Total ground insulation layer volume [m3]
-            vol_gr_ins = vol_gr_ins_leg + n_tf * vol_gr_ins_leg
+            vol_gr_ins = vol_gr_ins_cp + n_tf * vol_gr_ins_leg
 
             ! Total volume of the CP casing [m3]
-            vol_case_cp = vol_case_cp + pi * ( ( r_tf_inboard_in + thkcas )**2 &
-                                             - r_tf_inboard_in**2 )
+            ! Rem : no outer leg case
+            vol_case = vol_case_cp
         
         ! No joints
         ! ---    
         else 
-            ! Total TF outer leg conductor volume (not per leg)
+            ! Total TF outer leg conductor volume [m3]
             vol_cond = tfleng * a_leg_cond * n_tf 
     
-            ! Total turn insulation layer volume
+            ! Total turn insulation layer volume [m3]
             vol_ins = tfleng * a_leg_ins * n_tf
 
-            ! Total ground insulation volume
+            ! Total ground insulation volume [m3]
             vol_gr_ins = tfleng * a_leg_gr_ins * n_tf
+
+            ! Total case volume [m3]
+            vol_case = tfleng * acasetf * n_tf
         end if
         ! ---    
         ! -------
@@ -1419,7 +1427,7 @@ subroutine tf_coil_area_and_masses()
         ! Copper magnets casing/conductor weights per coil [kg]
         if ( i_tf_sup == 0 ) then 
 
-            whtcas = denstl * vol_case_cp / n_tf  ! Per TF leg, no casing for outer leg
+            whtcas = denstl * vol_case / n_tf  ! Per TF leg, no casing for outer leg
             whtconcu = dcopper * vol_cond / n_tf
             whtconal = 0.0D0         
 
@@ -1438,8 +1446,10 @@ subroutine tf_coil_area_and_masses()
 
         ! Cryo-aluminium conductor weights
         ! Casing made of re-inforced aluminium alloy
-        else  
-            whtcas = dalu * vol_case_cp / n_tf
+        else if ( i_tf_sup == 2 ) then
+            
+            ! Casing weight (CP only if itart = 1)bper leg/coil
+            whtcas = dalu * vol_case / n_tf
             whtconcu = 0.0D0            
             whtconal = dalu * vol_cond / n_tf
 
@@ -4903,7 +4913,7 @@ end subroutine dtempbydtime
 
 !-----------------------------------------------------------------------
 subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! Inputs
-                  ins_th, gr_ins_th, cas_out_th, n_turns_tot,              &  ! Inputs
+                  ins_th, gr_ins_th, cas_in_th, cas_out_th, n_turns_tot,   &  ! Inputs
                   a_cp_cool, vol_cond_cp, respow,        & ! Outputs
                   vol_ins_cp, vol_case_cp, vol_gr_ins_cp ) ! Outputs
     !!  author: P J Knight, CCFE, Culham Science Centre
@@ -4937,13 +4947,15 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     ! ------
     real(dp), intent(in) :: rtop
     !! Conductor outer radius at CP top [m]
-    
+    !! This includes the trun insulation by the exclude the ground one
+        
     real(dp), intent(in) :: rmid
     !! Conductor outer radius at CP mid-plane [m]
+    !! This includes the trun insulation by the exclude the ground one
 
     real(dp), intent(in) :: r_tfin_inleg
     !! Conductor `WP` inner radius [m]
-    !! Rem : the insulation layer is included but not the ground one
+    !! This includes the trun insulation by the exclude the ground one
 
     real(dp), intent(in) :: ztop
     !! Top vertical position (z) of the CP curved section [m]
@@ -4966,8 +4978,11 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     real(dp), intent(in) :: gr_ins_th
     !! Ground insulation thickness [m]
 
+    real(dp), intent(in) :: cas_in_th
+    !! Inner casing (bucking cylinder) thickness [m]
+
     real(dp), intent(in) :: cas_out_th
-    !! Outer casing thickness [m]
+    !! Outer casing (plasma side) thickness [m]
 
     real(dp), intent(in) :: n_turns_tot
     !! Total number of turns in CP 
@@ -5091,7 +5106,8 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
                     - ( rmid + gr_ins_th )**2 )
 
     ! Mid-plane outter ground insulation thickness [m2]
-    a_cp_gr_ins = pi * ( ( rmid + gr_ins_th )**2 - rmid**2 ) 
+    a_cp_gr_ins = pi * ( ( rmid + gr_ins_th )**2 - rmid**2 )  &
+                + 2.0D0 * gr_ins_th * ( rmid - r_tfin_inleg ) * n_tf
 
     ! Mid-plane turn layer cross-section area [m2] 
     a_cp_ins = pi * ( ( r_tfin_inleg + ins_th )**2 - r_tfin_inleg**2 ) + & ! Inner layer volume
@@ -5171,7 +5187,8 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
         yy(ii) = pi*r**2 - a_tfin_hole - n_tf*a_cp_cool - yy_ins(ii)
 
         !  Outer ground insulation area at z
-        yy_gr_ins(ii) = pi * ( ( r + gr_ins_th )**2 - r**2 ) 
+        yy_gr_ins(ii) = pi * ( ( r + gr_ins_th )**2 - r**2 ) &
+                      + 2.0D0 * gr_ins_th * ( r - r_tfin_inleg ) * n_tf
 
         !  Outer casing Cross-sectional area at z 
         yy_casout(ii) = pi * ( ( r + gr_ins_th + cas_out_th )**2 &
@@ -5205,7 +5222,8 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
                2.0D0 * ins_th * (rtop - r_tfin_inleg - 2.0D0*ins_th) * n_turns_tot ! inter turn separtion layers      
 
     ! Ground insulation layer cross-section at CP top [m2]
-    a_cp_gr_ins = pi * ( ( rtop + gr_ins_th )**2 - rtop**2 ) 
+    a_cp_gr_ins = pi * ( ( rtop + gr_ins_th )**2 - rtop**2 ) & 
+                + 2.0D0 * gr_ins_th * ( rtop - r_tfin_inleg ) * n_tf
 
     ! Outer casing cross-section area at CP top [m2]
     a_casout = pi * ( ( rmid + gr_ins_th + cas_out_th )**2  &
@@ -5225,8 +5243,10 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     vol_gr_ins_cp = 2.0D0*( sum5 + ( hmaxi - ztop ) * a_cp_gr_ins   &
                           + hmaxi * ( r_tfin_inleg**2 - (r_tfin_inleg - gr_ins_th)**2 ) )
 
-    ! Outer casing volume [m3]
-    vol_case_cp = 2.0D0 * ( sum4 + (hmaxi - ztop) * a_casout ) 
+    ! CP casing volume [m3]
+    vol_case_cp = 2.0D0*( sum4 + (hmaxi - ztop) * a_casout  &
+                        + hmaxi * ( ( r_tfin_inleg - gr_ins_th )**2 &
+                                  - ( r_tfin_inleg - gr_ins_th - cas_in_th )**2 ) )
 
     ! Resistive power losses in cylindrical section (constant radius) [W]
     res_cyl = rho * curr**2 * ( ( hmaxi - ztop )   &
