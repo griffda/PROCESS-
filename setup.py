@@ -27,14 +27,14 @@ setup_kwargs = {
             "_fortran*.so",
             "data/fluids/*",
             "data/h_data/*",
-            "data/impuritydata/*",
             "data/lz_non_corona/*",
             "data/lz_non_corona_14_elements/*",
             "utilities/*"
         ],
         "process.io": [
             "python_fortran_dicts.json"
-        ]
+        ],
+        "process.data.impuritydata": ["*"]
     },
     "test_suite" : "pytest",
     "install_requires" : ["numpy", "f90wrap"],

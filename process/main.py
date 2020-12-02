@@ -42,11 +42,13 @@ Box file F/MI/PJK/PROCESS and F/PL/PJK/PROCESS (15/01/96 to 24/01/12)
 Box file T&amp;M/PKNIGHT/PROCESS (from 24/01/12)
 """
 from process import fortran
+from process.io import plot_proc
 import argparse
 from pathlib import Path
 import sys
 import os
 import subprocess
+import logging
 
 # For VaryRun
 from process.io.process_config import RunProcessConfig
@@ -55,6 +57,12 @@ from process.io.process_funcs import (get_neqns_itervars,
     no_unfeasible_mfile, vary_iteration_variables, process_warnings)
 
 os.environ['PYTHON_PROCESS_ROOT'] =  os.path.join(os.path.dirname(__file__))
+
+logger = logging.getLogger(__name__)
+# Logging handler for console output
+s_handler = logging.StreamHandler()
+s_handler.setLevel(logging.INFO)
+logger.addHandler(s_handler)
 
 class Process():
     """The main Process class."""
@@ -66,6 +74,7 @@ class Process():
         """
         self.parse_args(args)
         self.run_mode()
+        self.post_process()
 
     def parse_args(self, args):
         """Parse the command-line arguments, such as the input filename.
@@ -128,7 +137,19 @@ class Process():
             "--varyiterparamsconfig",
             metavar="config_file",
             default="run_process.conf",
-            help="configuration file, default = run_process.conf"
+            help="configuration file for varying iteration parameters"
+        )
+        parser.add_argument(
+            "-p",
+            "--plot",
+            action="store_true",
+            help="plot an mfile"
+        )
+        parser.add_argument(
+            "-m",
+            "--mfile",
+            default="MFILE.DAT",
+            help="mfile for post-processing/plotting"
         )
 
         # If args is not None, then parse the supplied arguments. This is likely
@@ -146,6 +167,22 @@ class Process():
             self.run = VaryRun(self.args.varyiterparamsconfig)
         else:
             self.run = SingleRun(self.args.input)
+
+    def post_process(self):
+        """Perform post-run actions, like plotting the mfile."""
+        # TODO Currently, Process will always run on an input file beforehand.
+        # It would be better to not require this, so just plot_proc could be 
+        # run, for example.
+        if self.args.plot:
+            # Check mfile exists, then plot
+            mfile = Path(self.args.mfile)
+            mfile_str = str(mfile.resolve())
+            if mfile.exists():
+                # TODO Get --show arg to work: actually show the plot, don't 
+                # just save it
+                plot_proc.main(args=["-f", mfile_str])
+            else:
+                logger.error("mfile to be used for plotting doesn't exist")
 
 class VaryRun():
     """Vary iteration parameters until a solution is found.
