@@ -325,10 +325,11 @@ turns. The number of turns can be parametrized in three different ways :
 <p style='text-align: justify;'>
   The conductor layer is made of \(N_\mathrm{turn}\) turns per coils, set by the
   <em>n_tf_turn</em> user input (one turn per coil is used by default). Each
-  turn is made of a conductor wrapped in a turn insulation with a thickness set
-  with the <em>thicndut</em> user input. The conductor is cooled using a fraction
-  of the mid-plane cross-section are set by the <em>fcoolcp</em> (iteration
-  variable 23).
+  CP section corresponding to an outer leg is wrapped with ground insulation
+  of thickness <em>tinstf</em>. Inside, the ground insulation, each turn is made
+  of a conductor wrapped in a turn insulation with a thickness set with the
+  <em>thicndut</em> user input. The conductor is cooled using a fraction of the
+  mid-plane cross-section are set by the <em>fcoolcp</em> (iteration variable 23).
 </p>
 
 <figure>
