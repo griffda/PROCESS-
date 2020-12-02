@@ -311,11 +311,11 @@ turns. The number of turns can be parametrized in three different ways :
     <br><br>
     <figcaption><i>
       <p style='text-align: center;'>
-        Figure 6: Resistive TF coil inboard leg structure at mid-plane. Each
-        turn is wrapped with an insulation layer and cooling channels. The
-        position and the number of cooling shown is not representative of a
-        <em>PROCESS</em> design choice as averaged cooling fraction to 
-        parametrize the cooling.
+        Figure 6: Resistive TF coil inboard leg structure at mid-plane. The
+        disjoint steel case (no lateral case) are shown in light grey. The
+        ground insulation wrapping the turns is shown in grey and the conductor
+        region containing the turns in light blue. The dotted blue illustrate 
+        the location of the 6 coils turn.
       </p>
     </i></figcaption>
     <br>
@@ -335,11 +335,14 @@ turns. The number of turns can be parametrized in three different ways :
     <center>
     <img src="../../images/tfcoil_res_turn.png" alt="Res_geom" 
     title="Schematic diagram of TART tokamak TF coil" 
-    width="200" height="200" />
+    width="650" height="100" />
     <br><br>
     <figcaption><i>
       <p style='text-align: center;'>
-        Figure 7: Schematic view of a four resistive TF coil turns. 
+        Figure 7: Schematic view of a four resistive TF coil turns. The
+        position and the number of cooling channels shown is not representative
+        of a <em>PROCESS</em> design as no cooling channel position is specified
+        in PROCESS (the cooling fraction and pipe diameters are the inputs).
       </p>
     </i></figcaption>
     <br>
