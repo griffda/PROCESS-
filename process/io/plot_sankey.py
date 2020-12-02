@@ -14,14 +14,11 @@ matplotlib.use('Agg')
 
 import argparse
 from pylab import show, savefig
-from process_io_lib.sankey_funcs import plot_full_sankey, plot_sankey
+from process.io.sankey_funcs import plot_full_sankey, plot_sankey
 
-
-
-if __name__ == '__main__':
-
-###########################################################
-#Usage
+def main(args=None):
+    ###########################################################
+    #Usage
 
     PARSER = argparse.ArgumentParser(description='Program to plot\
      the power flow in PROCESS using a Sankey diagram.')
@@ -38,7 +35,7 @@ if __name__ == '__main__':
                         action="store_true",
                         help="Plot full version")
 
-    ARGS = PARSER.parse_args()
+    ARGS = PARSER.parse_args(args)
 
     #########################################################
     #main program
@@ -51,3 +48,6 @@ if __name__ == '__main__':
         savefig("SankeyPowerFlow."+ARGS.end)
 
     show()
+
+if __name__ == '__main__':
+    main()

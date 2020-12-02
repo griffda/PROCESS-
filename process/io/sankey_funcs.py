@@ -11,7 +11,7 @@ import numpy as np
 from numpy import sqrt
 from matplotlib.sankey import Sankey
 import matplotlib.pyplot as plt
-from process_io_lib.mfile import MFile
+from process.io.mfile import MFile
 
 
 def plot_full_sankey(mfilename="MFILE.DAT",): # Plots the power flow from PROCESS as a Sankey Diagram
