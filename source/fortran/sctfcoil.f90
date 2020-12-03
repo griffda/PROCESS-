@@ -5112,7 +5112,7 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     ! Mid-plane turn layer cross-section area [m2] 
     a_cp_ins = pi * ( ( r_tfin_inleg + ins_th )**2 - r_tfin_inleg**2 )  & ! Inner layer volume
              + pi * ( rmid**2 - ( rmid - ins_th )**2 )                  & ! Outter layer volume
-             + 2.0D0 * ( n_turns_tot * ins_th ) * ( rmid - r_tfin_inleg - 2.0D0*ins_th )
+             + 2.0D0 * n_turns_tot * ins_th * ( rmid - r_tfin_inleg - 2.0D0*ins_th ) ! inter turn separtion
 
     ! Cooling pipes cross-section per coil [m2]
     a_cp_cool = fcool * ( ( pi*rmid**2 - a_tfin_hole - a_cp_ins ) / n_tf  &
