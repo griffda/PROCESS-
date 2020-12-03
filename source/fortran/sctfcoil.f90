@@ -1194,8 +1194,13 @@ subroutine tf_field_and_force()
     if ( i_tf_sup == 1 ) taucq = (bt * ritfc * rminor * rminor) / (r_vv_inboard_out * sigvvall)
     
     ! Outer/inner WP radius removing the ground insulation layer and the insertion gap [m]
-    r_out_wp = r_wp_outer - tinstf - tfinsgap
-    r_in_wp = r_wp_inner + tinstf + tfinsgap
+    if ( i_tf_sup == 1 ) then
+        r_out_wp = r_wp_outer - tinstf - tfinsgap
+        r_in_wp = r_wp_inner + tinstf + tfinsgap
+    else
+        r_out_wp = r_wp_outer - tinstf
+        r_in_wp = r_wp_inner + tinstf
+    end if
 
     ! Associated WP thickness
     dr_wp = r_out_wp - r_in_wp
@@ -1213,7 +1218,11 @@ subroutine tf_field_and_force()
     !        sliding joints, the in/outboard vertical tension repartition is
     !-!
     ! Tricky trick t avoid writting tinstf all the time 
-    r_tf_outboard_in = r_tf_outboard_in + tinstf + tfinsgap      
+    if ( i_tf_sup == 1 ) then
+        r_tf_outboard_in = r_tf_outboard_in + tinstf + tfinsgap    
+    else
+        r_tf_outboard_in = r_tf_outboard_in + tinstf
+    end if
     
     ! May the force be with you
     vforce_tot = 0.5D0 * ( bt * rmajor * ritfc ) / ( n_tf * dr_wp**2 ) &
@@ -1226,7 +1235,11 @@ subroutine tf_field_and_force()
                                    / r_tf_outboard_in))) 
 
     ! Tricky trick to avoid writting tinstf all the time
-    r_tf_outboard_in = r_tf_outboard_in - tinstf - tfinsgap
+    if ( i_tf_sup == 1 ) then
+        r_tf_outboard_in = r_tf_outboard_in - tinstf - tfinsgap
+    else
+        r_tf_outboard_in = r_tf_outboard_in - tinstf
+    end if
     !-!
 
     ! Case of a centrepost (itart == 1) with sliding joints (the CP vertical are separated from the leg ones)
@@ -3707,6 +3720,7 @@ subroutine outtf(outfile, peaktfflag)
             call ocmmnt(outfile,'  -> Reisitive coil : Helium cooled aluminium')
     end select
 
+    ! SC material scaling 
     if ( i_tf_sup == 1 ) then
         call ovarin(outfile,'Superconductor material','(i_tf_sc_mat)',i_tf_sc_mat)
         select case (i_tf_sc_mat)
@@ -3733,6 +3747,7 @@ subroutine outtf(outfile, peaktfflag)
         end select
     end if
 
+    ! Joints strategy
     call ovarin(outfile,'Presence of TF demountable joints','(itart)',itart)
     if ( itart == 1 ) then
         call ocmmnt(outfile,'  -> TF coil made of a Centerpost (CP) and outer legs')
@@ -3741,6 +3756,7 @@ subroutine outtf(outfile, peaktfflag)
         call ocmmnt(outfile,'  -> Coils without demountable joints')
     end if
 
+    ! Centring forces support strategy
     call ovarin(outfile,'TF inboard leg support strategy','(i_tf_bucking)', i_tf_bucking)
     select case ( i_tf_bucking )
         case (0)
@@ -3768,6 +3784,7 @@ subroutine outtf(outfile, peaktfflag)
     call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax, 'OP ')
     call ovarre(outfile,'Mean coil circumference (m)','(tfleng)',tfleng, 'OP ')
     
+    ! Vertical shape
     call ovarin(outfile,'Vertical TF shape','(i_tf_shape)',i_tf_shape)
     if ( i_tf_shape == 1 ) then
         call oblnkl(outfile)
@@ -3791,6 +3808,7 @@ subroutine outtf(outfile, peaktfflag)
     end do
     20 format(i4,t10,f10.3,t25,f10.3)      
 
+    ! CP tapering geometry
     if ( itart == 1 .and. i_tf_sup /= 1 ) then
         call osubhd(outfile,'Tapered Centrepost Dimensions:')
         call ovarre(outfile,'Radius of the centrepost at the midplane (m)','(r_tf_inboard_out)',r_tf_inboard_out)
@@ -3813,7 +3831,7 @@ subroutine outtf(outfile, peaktfflag)
         
         ! External casing
         call osubhd(outfile,'External steel Case Information :')
-        call ovarre(outfile,'Casing cross section area (total) (m2)','(acasetf*n_tf))',acasetf*n_tf)
+        call ovarre(outfile,'Casing cross section area (per leg) (m2)','(acasetf)',acasetf)
         call ovarre(outfile,'Inboard leg case plasma side wall thickness (m)','(casthi)',casthi)
         call ovarre(outfile,'Inboard leg case inboard "nose" thickness (m)','(thkcas)',thkcas)
         call ovarre(outfile,'Inboard leg case sidewall thickness at its narrowest point (m)','(casths)',casths)
@@ -3821,8 +3839,8 @@ subroutine outtf(outfile, peaktfflag)
 
         ! Winding pack structure
         call osubhd(outfile,'TF winding pack (WP) geometry:')
-        call ovarre(outfile,'WP cross section area with insulation and insertion (total) (m2)','(awpc*n_tf))',awpc*n_tf)
-        call ovarre(outfile,'WP cross section area (total) (m2)','(aswp*n_tf))',awptf*n_tf)
+        call ovarre(outfile,'WP cross section area with insulation and insertion (per coil) (m2)','(awpc))',awpc)
+        call ovarre(outfile,'WP cross section area (per coil) (m2)','(aswp)', awptf)
         call ovarre(outfile,'Winding pack radial thickness (m)','(dr_tf_wp)',dr_tf_wp, 'OP ')
         if (  i_tf_turns_integer == 1 ) then
             call ovarre(outfile, 'Winding pack toroidal width (m)', '(wwp1)', wwp1, 'OP ')
@@ -3871,7 +3889,7 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'Inter-turn insulation thickness (m)','(thicndut)',thicndut)
 
         select case (i_tf_sc_mat)
-        case (1,2,3,4,5)
+        case (1,2,3,4,5,7,8)
             call osubhd(outfile,'Conductor information:')
             call ovarre(outfile,'Diameter of central helium channel in cable','(dhecoil)',dhecoil)
             call ocmmnt(outfile,'Fractions by area')
@@ -3896,9 +3914,19 @@ subroutine outtf(outfile, peaktfflag)
 
         ! External casing
         call osubhd(outfile,'Bucking cylinder information:')
+        call ovarre(outfile,'Casing cross section area (per leg) (m2)','(acasetf)',acasetf)
         call ovarre(outfile,'Inboard leg case plasma side wall thickness (m)','(casthi)',casthi)
         call ovarre(outfile,'Inboard leg bucking cylinder thickness (m)','(thkcas)',thkcas)
 
+        ! Conductor layer geometry
+        call osubhd(outfile,'Inboard TFC conductor sector geometry:')
+        call ovarre(outfile,'Inboard TFC conductor sector area with gr insulation (per leg) (m2)' &
+            ,'(awpc))',awpc)
+        call ovarre(outfile,'Inboard TFC conductor sector area (per leg) (m2)','(aswp)',awptf )
+        call ovarre(outfile,'Inboard conductor sector radial thickness (m)','(dr_tf_wp)',dr_tf_wp )
+        call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)', tinstf )
+       
+        ! Turn info
         call osubhd(outfile,'Coil turn information:')
         call ovarre(outfile,'Number of turns per TF leg','(n_tf_turn)',n_tf_turn)
         call ovarre(outfile,'Turn insulation thickness','(tinstf)',tinstf)
@@ -4017,63 +4045,77 @@ subroutine outtf(outfile, peaktfflag)
     end if 
 
     ! TF coil radial build
+    call osubhd(outfile,'Radial build of TF coil centre-line :')
+    write(outfile,5)
+    5   format(t43,'Thickness (m)',t60,'Outer radius (m)')
+
+    radius = r_tf_inboard_in
+    call obuild(outfile,'Innermost edge of TF coil',radius,radius)
+
+    radius = radius + thkcas
+    call obuild(outfile,'Coil case ("nose")',thkcas,radius,'(thkcas)')
+        
     if ( i_tf_sup == 1 ) then
-
-        call osubhd(outfile,'Radial build of TF coil centre-line :')
-        write(outfile,5)
-        5   format(t43,'Thickness (m)',t60,'Outer radius (m)')
-
-        radius = r_tf_inboard_in
-        call obuild(outfile,'Innermost edge of TF coil',radius,radius)
-        radius = radius + thkcas
-        call obuild(outfile,'Coil case ("nose")',thkcas,radius,'(thkcas)')
         radius = radius + tfinsgap
         call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
-        radius = radius + tinstf
-        call obuild(outfile,'Winding pack insulation',tinstf,radius,'(tinstf)')
-        radius = radius + 0.5D0*dr_tf_wp - tinstf - tfinsgap
-        call obuild(outfile,'Winding - first half',dr_tf_wp/2d0,radius,'(dr_tf_wp/2 - tinstf)')
-        radius = radius + 0.5D0*dr_tf_wp - tinstf - tfinsgap
-        call obuild(outfile,'Winding - second half',dr_tf_wp/2d0,radius,'(dr_tf_wp/2 - tinstf)')
-        radius = radius + tinstf
-        call obuild(outfile,'Winding pack insulation',tinstf,radius,'(tinstf)')
-        radius = radius + tfinsgap
-        call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
-        radius = radius + casthi
-        call obuild(outfile,'Plasma side case min radius',casthi,radius,'(casthi)')
-        radius = radius / cos(pi/n_tf)
-        call obuild(outfile,'Plasma side case max radius', &
-            r_tf_inboard_out, radius,'(r_tf_inboard_out)')
-      
-        ! Radial build consistency check
-        if ( abs( radius - r_tf_inboard_in - tfcth ) < 10.0D0 * epsilon(radius) ) then
-            call ocmmnt(outfile,'TF coil dimensions are consistent')
-        else
-            call ocmmnt(outfile,'ERROR: TF coil dimensions are NOT consistent:')
-            call ovarre(outfile,'Radius of plasma-facing side of inner leg SHOULD BE [m]','',r_tf_inboard_in + tfcth)
-            call ovarre(outfile,'Inboard TF coil radial thickness [m]','(tfcth)',tfcth)
-            call oblnkl(outfile)
-        end if
+    end if
+
+    radius = radius + tinstf
+    if ( i_tf_sup == 1 ) then
+        call obuild(outfile,'Winding pack ground insulation',tinstf,radius,'(tinstf)')
     else
+        call obuild(outfile,'Conductor ground insulation',tinstf,radius,'(tinstf)')
+    end if
 
-        call osubhd(outfile,'Energy and Forces :')
-        call oblnkl(outfile)
-        call ocmmnt(outfile,'TF coil inner surface shape is given by a rectangle with the')
-        call ocmmnt(outfile,'following inner points (Note that this does not account')
-        call ocmmnt(outfile,'for the ST tapered centrepost):')
-        call oblnkl(outfile)
- 
-        write(outfile,10)
-        ! 10  format(t2,'point',t16,'x(m)',t31,'y(m)')
-        do ii = 1,5
-           write(outfile,20) ii,xarc(ii),yarc(ii)
-           intstring = int2char(ii)
-           call ovarre(mfile,'TF coil arc point '//intstring//' R (m)', '(xarc('//intstring//'))',xarc(ii))
-           call ovarre(mfile,'TF coil arc point '//intstring//' Z (m)', '(yarc('//intstring//'))',yarc(ii))
-        end do
-        ! 20  format(i4,t10,f10.3,t25,f10.3)
+    if ( i_tf_sup == 1 ) then
+        radius = radius + 0.5D0*dr_tf_wp - tinstf - tfinsgap
+        call obuild(outfile,'Winding - first half', dr_tf_wp/2d0-tinstf-tfinsgap, & 
+            radius, '(dr_tf_wp/2-tinstf)')
+    else
+        radius = radius + 0.5D0*dr_tf_wp - tinstf
+        call obuild(outfile,'Conductor - first half', dr_tf_wp/2d0 - tinstf, radius, &
+            '(dr_tf_wp/2-tinstf)')
+    end if
+        
+    if ( i_tf_sup == 1 ) then
+        radius = radius + 0.5D0*dr_tf_wp - tinstf - tfinsgap
+        call obuild(outfile,'Winding - second half',dr_tf_wp/2d0-tinstf-tfinsgap, &
+            radius,'(dr_tf_wp/2-tinstf)')
+    else
+        radius = radius + 0.5D0*dr_tf_wp - tinstf
+        call obuild(outfile,'Conductor - second half',dr_tf_wp/2d0-tinstf, &
+            radius,'(dr_tf_wp/2-tinstf)')
+    end if
+        
+    radius = radius + tinstf
+    if ( i_tf_sup == 1 ) then
+        call obuild(outfile,'Winding pack insulation',tinstf,radius,'(tinstf)')
+    else 
+        call obuild(outfile,'Conductor ground insulation',tinstf,radius,'(tinstf)')
+    end if
+        
+    if ( i_tf_sup == 1 ) then
+        radius = radius + tfinsgap
+        call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
+    end if
 
-    end if 
+    radius = radius + casthi
+    call obuild(outfile,'Plasma side case min radius',casthi,radius,'(casthi)')
+
+    if ( i_tf_sup == 1 ) then
+        radius = radius / cos(pi/n_tf)
+        call obuild(outfile,'Plasma side case max radius', r_tf_inboard_out, radius,'(r_tf_inboard_out)')
+    end if
+
+    ! Radial build consistency check
+    if ( abs( radius - r_tf_inboard_in - tfcth ) < 10.0D0 * epsilon(radius) ) then
+        call ocmmnt(outfile,'TF coil dimensions are consistent')
+    else
+        call ocmmnt(outfile,'ERROR: TF coil dimensions are NOT consistent:')
+        call ovarre(outfile,'Radius of plasma-facing side of inner leg SHOULD BE [m]','',r_tf_inboard_in + tfcth)
+        call ovarre(outfile,'Inboard TF coil radial thickness [m]','(tfcth)',tfcth)
+        call oblnkl(outfile)
+    end if
 
 end subroutine outtf
 
