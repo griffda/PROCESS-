@@ -240,30 +240,15 @@ class VaryRun():
         for i in range(config.niter):
             print(i, end=' ')
 
-            logfile = open('process.log', 'w')
-            print("PROCESS run started ...", end='')
-
-            try:
-                # Run single runs (SingleRun()) of process as subprocesses. This
-                # is the only way to deal with Fortran "stop" statements when 
-                # running VaryRun(), which otherwise cause the Python 
-                # interpreter to exit, when we want to vary the parameters and 
-                # run again
-                # TODO Don't do this; remove stop statements from Fortran and 
-                # handle error codes
-                # Run process on an IN.DAT file
-                subprocess.check_call(["process", "-i", str(input_path)], stdout=logfile,
-                                    stderr=logfile)
-            except subprocess.CalledProcessError as err:
-                print('\n Error: There was a problem with the PROCESS \
-                    execution!', err, file=sys.stderr)
-                print('       Refer to the logfile for more information!',
-                    file=sys.stderr)
-                exit()
-
-            logfile.close()
-            print("finished.")
-            # End of run_process
+            # Run single runs (SingleRun()) of process as subprocesses. This
+            # is the only way to deal with Fortran "stop" statements when 
+            # running VaryRun(), which otherwise cause the Python 
+            # interpreter to exit, when we want to vary the parameters and 
+            # run again
+            # TODO Don't do this; remove stop statements from Fortran and 
+            # handle error codes
+            # Run process on an IN.DAT file
+            config.run_process(input_path)
 
             check_input_error(wdir=wdir)
 

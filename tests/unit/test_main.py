@@ -1,4 +1,4 @@
-"""Unit tests for the process.py module."""
+"""Unit tests for the main.py module."""
 from process import main
 from process.main import Process
 from process.main import SingleRun

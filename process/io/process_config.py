@@ -12,6 +12,7 @@ Compatible with PROCESS version 382
 
 import os
 import subprocess
+import sys
 from sys import stderr
 from time import sleep
 import collections as col
@@ -292,8 +293,23 @@ class ProcessConfig(object):
         if not self.get_comment():
             print('No comment in config file %s' %self.filename)
 
+    def run_process(self, input_path):
+        logfile = open('process.log', 'w')
+        print("PROCESS run started ...", end='')
 
+        try:
+            # Run process on an IN.DAT file
+            subprocess.check_call(["process", "-i", str(input_path)], stdout=logfile,
+                                stderr=logfile)
+        except subprocess.CalledProcessError as err:
+            print('\n Error: There was a problem with the PROCESS \
+                execution!', err, file=sys.stderr)
+            print('       Refer to the logfile for more information!',
+                file=sys.stderr)
+            exit()
 
+        logfile.close()
+        print("finished.")
 
 ################################################################################
 #class TestProcessConfig(ProcessConfig)

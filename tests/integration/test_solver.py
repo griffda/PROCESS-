@@ -1,78 +1,66 @@
-#!/usr/bin/env python
-"""
-Code to test PROCESS Solver by choosing different starting values
-for the iteration parameters around the initial values in the INPUT file
-Code modified by Sarah Medley in April 2015 to also calculate Q (fusion power/injected power) and output this to SolverTest.out
-
-Author: H. Lux (Hanni.Lux@ccfe.ac.uk)
-
-Date: November 2013 (Initial version)
-      March 2014 (Initial release version)
-      April 2015 - Code modified by Sarah Medley to also calculate Q - see above
-
-- Input files -
-test_process.conf  in the same directory as this file
-
-- Output files -
-(All of them in the working directory specified in the config file)
-OUT.DAT     - PROCESS output of last run
-PLOT.DAT    - PROCESS output of last run
-MFILE.DAT   - PROCESS output of last run
-process.log - logfile of PROCESS output to stdout
-time.info   - stores the run time of the inner loop
-SolverTest.out - 
-
-Ifail values:
- -1: Error in logfile, no solution vector in OUT.DAT
-  0: Error in VMCON: improper input parameters
-  1: normal run
-  2: too many function calls in VMCON
-3/4: either constraint/objective function + gradients
-     are not calculated well or data too noisy
-  5: either no feasible solution to the problem,
-     or identity matrix is a bad approximation ot the Hessian
-  6: restriction by an artificial bound or singular matrix
-     in quadratic problem.
-"""
-
-
-#######################
-#imported libraries
-
-from process_io_lib.mfile import MFile
+"""Tests for the Process solver."""
 import time
 import sys
 from numpy import histogram
 import argparse
-try:
-    from process_io_lib.process_dicts import IFAIL_SUCCESS
-except ImportError:
-    print("The Python dictionaries have not yet been created. Please run \
-'make dicts'!")
-    exit()
-
-from process_io_lib.process_config import TestProcessConfig
-from process_io_lib.process_funcs import get_neqns_itervars,\
+import subprocess
+from process.io.mfile import MFile
+from process.io.python_fortran_dicts import get_dicts
+from process.io.process_config import TestProcessConfig
+from process.io.process_funcs import get_neqns_itervars,\
     update_ixc_bounds, get_variable_range, check_input_error,\
     vary_iteration_variables, process_stopped,\
     get_solution_from_mfile,\
     process_warnings
 
+# Load dicts from dicts JSON file
+process_dicts = get_dicts()
+IFAIL_SUCCESS = process_dicts["IFAIL_SUCCESS"]
 
-if __name__ == '__main__':
-############################################################
-    #Usage/Help
+def test_solver(temp_data):
+    """Code to test PROCESS Solver by choosing different starting values
+    for the iteration parameters around the initial values in the INPUT file
+    Code modified by Sarah Medley in April 2015 to also calculate Q (fusion power/
+    injected power) and output this to SolverTest.out
 
-    parser = argparse.ArgumentParser(description='Program to test the PROCESS Solver')
+    Author: H. Lux (Hanni.Lux@ccfe.ac.uk)
 
-    parser.add_argument("-f", "--configfile", default='test_process.conf',
-                        help="configuration file, default = test_process.conf")
+    Date: November 2013 (Initial version)
+        March 2014 (Initial release version)
+        April 2015 - Code modified by Sarah Medley to also calculate Q - see above
 
-    ARGS = parser.parse_args()
+    - Input files -
+    test_process.conf: in integration/data dir
 
-    #############################################################
+    - Output files -
+    Saved to temporary test dir
+    OUT.DAT     - PROCESS output of last run
+    PLOT.DAT    - PROCESS output of last run
+    MFILE.DAT   - PROCESS output of last run
+    process.log - logfile of PROCESS output to stdout
+    time.info   - stores the run time of the inner loop
+    SolverTest.out - 
 
-    CONFIG = TestProcessConfig(ARGS.configfile)
+    Ifail values:
+    -1: Error in logfile, no solution vector in OUT.DAT
+    0: Error in VMCON: improper input parameters
+    1: normal run
+    2: too many function calls in VMCON
+    3/4: either constraint/objective function + gradients
+        are not calculated well or data too noisy
+    5: either no feasible solution to the problem,
+        or identity matrix is a bad approximation ot the Hessian
+    6: restriction by an artificial bound or singular matrix
+        in quadratic problem.
+
+    :param temp_data: temp test dir containing integration test data
+    :type temp_data: Path
+    """
+    # Path to config file and varied input file
+    conf_path = temp_data / "test_solver.conf"
+    input_path = temp_data / "IN.DAT"
+
+    CONFIG = TestProcessConfig(conf_path)
     CONFIG.setup()
 
     NEQNS, ITERVARS = get_neqns_itervars()
@@ -80,9 +68,6 @@ if __name__ == '__main__':
     update_ixc_bounds()
 
     LBS, UBS = get_variable_range(ITERVARS, CONFIG.factor)
-
-    #############################################################
-
 
     TABLE_ERR = []
     TABLE_OBJ = []
@@ -106,7 +91,8 @@ if __name__ == '__main__':
 
         print(i, end=' ')
 
-        CONFIG.run_process()
+        # Actually perform the Process run for this varied input file
+        CONFIG.run_process(input_path)
 
         check_input_error()
 
@@ -197,3 +183,4 @@ if __name__ == '__main__':
 
     OUTFILE.close()
 
+    # TODO This might need to assert something, like ifail == 1?
