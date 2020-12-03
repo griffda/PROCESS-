@@ -5044,7 +5044,7 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     real(dp) :: sum5
     !! Outer ground insulation volume integration sum [m3]
 
-    real(dp), dimension(0:100) :: yy
+    real(dp), dimension(0:100) :: yy_cond
     !! Exact conductor area (to be integrated)
 
     real(dp), dimension(0:100) :: yy_ins
@@ -5110,12 +5110,13 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
                 + 2.0D0 * gr_ins_th * ( rmid - r_tfin_inleg ) * n_tf
 
     ! Mid-plane turn layer cross-section area [m2] 
-    a_cp_ins = pi * ( ( r_tfin_inleg + ins_th )**2 - r_tfin_inleg**2 ) + & ! Inner layer volume
-               pi * ( rmid**2 - ( rmid - ins_th )**2 )                 + & ! Outter layer volume
-               2.0D0 * ins_th * (rmid - r_tfin_inleg - 2.0D0*ins_th) * n_turns_tot ! inter turn separtion layers
+    a_cp_ins = pi * ( ( r_tfin_inleg + ins_th )**2 - r_tfin_inleg**2 )  & ! Inner layer volume
+             + pi * ( rmid**2 - ( rmid - ins_th )**2 )                  & ! Outter layer volume
+             + 2.0D0 * ( n_turns_tot * ins_th ) * ( rmid - r_tfin_inleg - 2.0D0*ins_th )
 
     ! Cooling pipes cross-section per coil [m2]
-    a_cp_cool = fcool * ( pi*rmid**2 - a_tfin_hole - a_cp_ins ) / n_tf
+    a_cp_cool = fcool * ( ( pi*rmid**2 - a_tfin_hole - a_cp_ins ) / n_tf  &
+                        - 2.0D0 * gr_ins_th * ( rmid - r_tfin_inleg ) ) ! Wedge ground insulation
     ! ---------------------------
 
 
@@ -5181,14 +5182,15 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
         ! Insulation cross-sectional area at z
         yy_ins(ii) = pi * ( (r_tfin_inleg + ins_th)**2 - r_tfin_inleg**2 )            + & ! Inner layer volume
                      pi * ( r**2 - ( r - ins_th )**2 )                                + & ! Outter layer volume
-                     2.0D0 * ins_th * (r - r_tfin_inleg - 2.0D0*ins_th) * n_turns_tot     ! inter turn separtion layers
+                     2.0D0 * ins_th * (r - r_tfin_inleg - 2.0D0*ins_th) * n_turns_tot     ! inter turn layers
 
-        !  Cross-sectional area at z
-        yy(ii) = pi*r**2 - a_tfin_hole - n_tf*a_cp_cool - yy_ins(ii)
+        !  Conductor cross-sectional area at z
+        yy_cond(ii) = pi*r**2 - a_tfin_hole - n_tf*a_cp_cool - yy_ins(ii)  &
+                    - 2.0D0 * n_tf * gr_ins_th * ( r - r_tfin_inleg )   ! Wedge ground insulation
 
         !  Outer ground insulation area at z
         yy_gr_ins(ii) = pi * ( ( r + gr_ins_th )**2 - r**2 ) &
-                      + 2.0D0 * gr_ins_th * ( r - r_tfin_inleg ) * n_tf
+                      + 2.0D0 * n_tf * gr_ins_th * ( r - r_tfin_inleg )
 
         !  Outer casing Cross-sectional area at z 
         yy_casout(ii) = pi * ( ( r + gr_ins_th + cas_out_th )**2 &
@@ -5203,15 +5205,15 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     sum4 = 0.0D0
     sum5 = 0.0D0
     do ii = 1,99
-        sum1 = sum1 + yy(ii)
-        sum2 = sum2 + 1.0D0/yy(ii)
+        sum1 = sum1 + yy_cond(ii)
+        sum2 = sum2 + 1.0D0/yy_cond(ii)
         sum3 = sum3 + yy_ins(ii)
         sum4 = sum4 + yy_casout(ii)
         sum5 = sum5 + yy_gr_ins(ii)
     end do
 
-    sum1 = 0.5D0*dz * ( yy(0) + yy(100) + 2.0D0*sum1 )
-    sum2 = 0.5D0*dz * ( 1.0D0/yy(0) + 1.0D0/yy(100) + 2.0D0*sum2 )
+    sum1 = 0.5D0*dz * ( yy_cond(0) + yy_cond(100) + 2.0D0*sum1 )
+    sum2 = 0.5D0*dz * ( 1.0D0/yy_cond(0) + 1.0D0/yy_cond(100) + 2.0D0*sum2 )
     sum3 = 0.5D0*dz * ( yy_ins(0) + yy_ins(100) + 2.0D0*sum3 )
     sum4 = 0.5D0*dz * ( yy_casout(0) + yy_casout(100) + 2.0D0*sum4 )
     sum5 = 0.5D0*dz * ( yy_gr_ins(0) + yy_gr_ins(100) + 2.0D0*sum5 )
@@ -5219,19 +5221,20 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     ! Turn insulation layer cross section at CP top  [m2]
     a_cp_ins = pi * ( (r_tfin_inleg + ins_th)**2 - r_tfin_inleg**2 )           + & ! Inner layer volume
                pi * ( rtop**2 - ( rtop - ins_th )**2 )                         + & ! Outter layer volume
-               2.0D0 * ins_th * (rtop - r_tfin_inleg - 2.0D0*ins_th) * n_turns_tot ! inter turn separtion layers      
+               2.0D0 * ins_th * (rtop - r_tfin_inleg - 2.0D0*ins_th) * n_turns_tot ! turn separtion layers      
 
     ! Ground insulation layer cross-section at CP top [m2]
     a_cp_gr_ins = pi * ( ( rtop + gr_ins_th )**2 - rtop**2 ) & 
-                + 2.0D0 * gr_ins_th * ( rtop - r_tfin_inleg ) * n_tf
+                + 2.0D0 * gr_ins_th * ( rtop - r_tfin_inleg ) * n_tf 
 
     ! Outer casing cross-section area at CP top [m2]
     a_casout = pi * ( ( rmid + gr_ins_th + cas_out_th )**2  &
                     - ( rmid + gr_ins_th )**2 )
 
     ! Centrepost volume (ignoring coolant fraction) [m3]
-    vol_cond_cp = 2.0D0 * ( sum1 + ( hmaxi - ztop ) * &
-                     ( pi*rtop**2 - a_tfin_hole - a_cp_ins - n_tf*a_cp_cool ) )
+    vol_cond_cp = 2.0D0*( sum1 + ( hmaxi - ztop ) &
+                               * ( pi*rtop**2 - a_tfin_hole - a_cp_ins - n_tf*a_cp_cool &
+                                 - 2.0D0*n_tf * gr_ins_th * ( rtop - r_tfin_inleg ) ) ) ! ground insulation separation
 
     ! Resistive power losses in taped section (variable radius section) [W]
     res_taped = rho * curr**2 * sum2
@@ -5250,7 +5253,8 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
 
     ! Resistive power losses in cylindrical section (constant radius) [W]
     res_cyl = rho * curr**2 * ( ( hmaxi - ztop )   &
-                / ( pi * rtop**2 - a_tfin_hole  - a_cp_ins - n_tf*a_cp_cool ) )  
+                / ( pi * rtop**2 - a_tfin_hole  - a_cp_ins - n_tf*a_cp_cool &
+                  - 2.0D0*n_tf * gr_ins_th * ( rtop - r_tfin_inleg ) ) ) ! ground insulation separation
 
     ! Total CP resistive power [W]
     respow = 2.0D0 * ( res_cyl + res_taped )
