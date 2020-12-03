@@ -5244,12 +5244,13 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
 
     ! Ground insulation volume [m3]
     vol_gr_ins_cp = 2.0D0*( sum5 + ( hmaxi - ztop ) * a_cp_gr_ins   &
-                          + hmaxi * ( r_tfin_inleg**2 - (r_tfin_inleg - gr_ins_th)**2 ) )
+                          + hmaxi * pi * ( r_tfin_inleg**2          &
+                                       - (r_tfin_inleg - gr_ins_th)**2 ) )
 
     ! CP casing volume [m3]
     vol_case_cp = 2.0D0*( sum4 + (hmaxi - ztop) * a_casout  &
-                        + hmaxi * ( ( r_tfin_inleg - gr_ins_th )**2 &
-                                  - ( r_tfin_inleg - gr_ins_th - cas_in_th )**2 ) )
+                        + hmaxi * pi * ( ( r_tfin_inleg - gr_ins_th )**2 &
+                                       - ( r_tfin_inleg - gr_ins_th - cas_in_th )**2 ) )
 
     ! Resistive power losses in cylindrical section (constant radius) [W]
     res_cyl = rho * curr**2 * ( ( hmaxi - ztop )   &
