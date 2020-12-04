@@ -568,7 +568,7 @@ contains
 
       !call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht_local,pscalingmw_local)
     end if
-    print *, "te0_ecrh_achievable: ",te0_ecrh_achievable
+
 
 
 
@@ -757,6 +757,9 @@ contains
     !  Calculate radiation power
     call radpwr(pbrempv,plinepv,psyncpv, pcoreradpv,pedgeradpv,pradpv)
 
+    pcoreradpv = max(pcoreradpv, 0.0d0)
+    pedgeradpv = max(pedgeradpv, 0.0d0)
+
     pcoreradmw = pcoreradpv*vol
     pedgeradmw = pedgeradpv*vol
 
@@ -766,17 +769,19 @@ contains
     !  Ohmic power is zero in a stellarator
     !  pradmw here is core + edge (no SOL)
 
-    powht = falpha*palpmw + pchargemw + pohmmw - pradpv*vol    
+    powht = falpha*palpmw + pchargemw + pohmmw - pradpv*vol
+    powht = max(0.00001D0, powht) ! To avoid negative heating power. This line is VERY important
 
-    ! Here the implementation sometimes leaves the accessible regime when pradmw> powfmw which is unphysical and
-    ! is not taken care of by the rad module. We restrict the radiation power here by the fusion power:
-    pradmw = min(pradmw,powfmw)
-
-
-    powht = max(0.001D0, powht) ! To avoid negative heating power.
+    if (ignite == 0) then
+       powht = powht + pinjmw ! if not ignited add the auxiliary power
+    endif
 
     
-    if (ignite == 0) powht = powht + pinjmw
+
+    ! Here the implementation sometimes leaves the accessible regime when pradmw> powht which is unphysical and
+    ! is not taken care of by the rad module. We restrict the radiation power here by the heating power:
+    pradmw = max(pradmw, 0.0d0)  
+
 
     !  Power to divertor, = (1-f_rad)*Psol
 
@@ -786,12 +791,12 @@ contains
     ! Add SOL Radiation to total
 
     pradmw = pradmw + psolradmw
-    pradpv = pradmw / vol
+    pradpv = pradmw / vol ! this line OVERWRITES the original definition of pradpv
+    
 
     !  The following line is unphysical, but prevents -ve sqrt argument
     !  Should be obsolete if constraint eqn 17 is turned on (but beware -
     !  this may not be quite correct for stellarators)
-
     pdivt = max(0.001D0, pdivt)
 
 
@@ -2078,10 +2083,6 @@ contains
    dene = dene_old
    bt = bt_old
 
-   print *,"te: ",te,". teold: ",te_old
-   !print *, "Heating Power (MW):", powerht, "Loss Power (MW):", pscalingmw,&
-   !         "bt_ECRH: ",bt_ecrh_max, " bt: ", bt, " te_needed: ",te_needed, "Density: ", ne0_max/(1.0d0+alphan)
-
    call stphys(nout,0)
    
 
@@ -2140,7 +2141,7 @@ contains
    
    powerht_out = powerht
    pscalingmw_out = pscalingmw
-   print *,"te: ",te,"Original te: ",te_old
+
    ! Reverse it and do it again because anything more efficiently isn't suitable with the current implementation
    ! This is bad practice but seems to be necessary as of now:
    te = te_old
