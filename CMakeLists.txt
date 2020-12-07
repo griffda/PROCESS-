@@ -87,10 +87,22 @@ LIST(APPEND PROCESS_SRCS
     kallenbach_module.f90
     numerics.f90
     scan.f90
+    fw.f90
+    current_drive.f90
+    hcpb.f90
+    pfcoil.f90
+    reinke_module.f90
+    sctfcoil.f90
+    plasma_profiles.f90
+    superconductors.f90
+    plasma_geometry.f90
+    stellarator_fwbs.f90
+    plant_power.f90
     final_module.f90
     error_handling.f90
     availability.f90
     cost_variables.f90
+    divertor.f90
     divertor_variables.f90
     fwbs_variables.f90
     physics.f90
@@ -101,7 +113,9 @@ LIST(APPEND PROCESS_SRCS
     ife_variables.f90
     ife.f90
     costs.f90
+    costs_2015.f90
     heat_transport_variables.f90
+    buildings.f90
     buildings_variables.f90
     maths_library.f90
 )

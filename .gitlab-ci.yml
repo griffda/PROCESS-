@@ -6,7 +6,7 @@
 #  K. Zarebski
 #
 #  UKAEA
-#  06/08/2020
+#  02/12/2020
 #
 #-----------------------------------------------------
 
@@ -82,6 +82,15 @@ integration:
   <<: *test-setup
   script:
     - pytest tests/integration
+
+unitfort:
+  when: on_success
+  stage: testing
+  <<: *test-setup
+  script:
+    - python3 -m pip install tabulate
+    - pytest tests/ -m unitfort
+    - python3 tests/uft_tests/coverage.py
 
 regression:
   when: on_success
