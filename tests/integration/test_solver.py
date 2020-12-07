@@ -13,6 +13,9 @@ from process.io.process_funcs import get_neqns_itervars,\
     get_solution_from_mfile,\
     process_warnings
 
+
+TestProcessConfig.__test__ = False
+
 # Load dicts from dicts JSON file
 process_dicts = get_dicts()
 IFAIL_SUCCESS = process_dicts["IFAIL_SUCCESS"]
