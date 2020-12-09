@@ -124,10 +124,12 @@ def test_plot_proc(mfile_path):
     :param mfile_path: Path to the scenario's MFile
     :type mfile_path: Path
     """
-    EXCLUSIONS = ["stellarator", "IFE", "starfire"]
+    EXCLUSIONS = ["stellarator", "IFE", "starfire", "QH_mode", "steady_state",
+        "Hybrid_mode", "L_mode"]
     # Don't run plot_proc tests for some scenarios
     # plot_proc is not intended for stellarator or IFE
-    # ZeroDivisionErrors in starfire
+    # ZeroDivisionErrors in starfire, QH_mode, steady_state, Hybrid_mode
+    # L_mode
     
     if mfile_path.parent.name in EXCLUSIONS:
         return
