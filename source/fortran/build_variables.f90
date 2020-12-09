@@ -77,9 +77,6 @@ module build_variables
   real(dp) :: d_vv_bot
   !! vacuum vessel underside thickness (TF coil / shield) (m)
 
-  real(dp) :: ddwi
-  !! vacuum vessel thickness (TF coil / shield) (m)
-
   real(dp) :: f_avspace
   !! F-value for stellarator radial space check (`constraint equation 83`)
 
