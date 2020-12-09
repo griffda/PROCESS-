@@ -472,7 +472,7 @@ module physics_variables
   !!
   !! - =0 use original parabolic profiles
   !! - =1 use pedestal profile
-  !! - =2 use pedestal profiles and run PLASMOD on final outpu
+  !! - =2 use pedestal profiles and run PLASMOD on final output
   !! - =3 use PLASMOD transport model only to calculate pedestal profiles
 
   integer :: ips = 0
@@ -3351,7 +3351,7 @@ module tfcoil_variables
   !! coolant fraction of TF coil inboard legs (`iteration variable 23`)
 
   real(dp) :: fcoolleg = 0.2D0
-  !! coolant fraction of TF coil inboard legs
+  !! coolant fraction of TF coil outboard legs
   
   real(dp) :: a_cp_cool = 0.0D0
   !! Centrepost cooling area toroidal cross-section (constant over the whole CP)

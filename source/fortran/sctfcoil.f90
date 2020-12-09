@@ -100,10 +100,10 @@ real(dp), private :: a_ground_ins
 !! Inboard mid-plane cross-section area of the WP ground insulation [m2]
 
 real(dp), private :: a_leg_ins
-!! TF ouboard leg insulation area [m2]
+!! TF ouboard leg turn insulation area per coil [m2]
 
 real(dp), private :: a_leg_gr_ins
-!! TF outboard leg ground insulation area [m2]
+!! TF outboard leg ground insulation area per coil [m2]
 
 real(dp), private :: a_leg_cond
 !! Exact TF ouboard leg conductor area [m2] 
@@ -1011,8 +1011,8 @@ subroutine res_tf_internal_geom()
 
     ! Exact current density on TF oubard legs
     cdtfleg = ritfc / ( ( 1.0D0 - fcoolcp )  &
-                      * ( tftort - 2.0D0 * ( n_tf_turn * thicndut - tinstf ) ) &
-                      * ( tfthko - 2.0D0 * ( thicndut - tinstf ) ) ) 
+                      * ( tftort - 2.0D0 * ( n_tf_turn * thicndut + tinstf ) ) &
+                      * ( tfthko - 2.0D0 * ( thicndut + tinstf ) ) ) 
 
     ! Reporting negative WP areas issues
     if ( awpc < 0.0D0 ) then
@@ -1098,14 +1098,11 @@ subroutine tf_res_heating()
                            * ( tfthko - 2.0D0 * tinstf )
 
     ! Outboard leg turns insulation area per coil [m2]
-    a_leg_ins = 2.0D0 * thicndut * ( tftort - 2.0D0 * tinstf     &
-                                   + tfthko - 2.0D0 * n_tf_turn  &
-                                   * ( thicndut + tinstf ) ) 
+    a_leg_ins = 2.0D0 * thicndut * ( tftort - 2.0D0 * tinstf )     &                    ! toroidal direction 
+              + 2.0D0 * thicndut * n_tf_turn * ( tfthko - 2.0D0 * ( thicndut + tinstf ) ) ! radial direction
 
     ! Exact TF outboard leg conductor area per coil [m2]
-    a_leg_cond = ( 1.0D0 - fcoolleg ) * ( ( tftort - 2.0D0 * tinstf )  &
-                                      * ( tfthko - 2.0D0 * tinstf )  &
-                                      - a_leg_ins )
+    a_leg_cond = ( 1.0D0 - fcoolleg ) * ( arealeg - a_leg_gr_ins - a_leg_ins )  
     ! ---
 
 
@@ -1184,6 +1181,9 @@ subroutine tf_field_and_force()
 
     real(dp) :: vforce_tot
     !! Total vertical force : inboard + outbord [N] 
+
+    real(dp) :: r_in_outwp
+    !! Plasma side radius of the outboard leg winding pack (at-midplane) [m]
     ! ---------------
 
 
@@ -1217,30 +1217,22 @@ subroutine tf_field_and_force()
     ! Rem : this force does not depends on the TF shape or the presence of
     !        sliding joints, the in/outboard vertical tension repartition is
     !-!
-    ! Tricky trick t avoid writting tinstf all the time 
+    ! Ouboard leg WP plasma side radius without ground insulation/insertion gat [m]
     if ( i_tf_sup == 1 ) then
-        r_tf_outboard_in = r_tf_outboard_in + tinstf + tfinsgap    
+        r_in_outwp = r_tf_outboard_in + tinstf + tfinsgap    
     else
-        r_tf_outboard_in = r_tf_outboard_in + tinstf
+        r_in_outwp = r_tf_outboard_in + tinstf
     end if
     
     ! May the force be with you
     vforce_tot = 0.5D0 * ( bt * rmajor * ritfc ) / ( n_tf * dr_wp**2 ) &
                * ( r_out_wp**2 * log( r_out_wp / r_in_wp )  &
-                 + r_tf_outboard_in**2 * log( (r_tf_outboard_in + dr_wp) / r_tf_outboard_in ) &
-                 + dr_wp**2         * log( (r_tf_outboard_in + dr_wp) / r_in_wp )             &
-                 - dr_wp            * ( r_out_wp + r_tf_outboard_in )                         &
+                 + r_in_outwp**2 * log( (r_in_outwp + dr_wp) / r_in_outwp ) &
+                 + dr_wp**2         * log( (r_in_outwp + dr_wp) / r_in_wp )             &
+                 - dr_wp            * ( r_out_wp + r_in_outwp )                         &
                  + 2.0D0 * dr_wp * ( r_out_wp     * log(r_in_wp / r_out_wp)                   &
-                                   + r_tf_outboard_in * log((r_tf_outboard_in + dr_wp)        &
-                                   / r_tf_outboard_in))) 
-
-    ! Tricky trick to avoid writting tinstf all the time
-    if ( i_tf_sup == 1 ) then
-        r_tf_outboard_in = r_tf_outboard_in - tinstf - tfinsgap
-    else
-        r_tf_outboard_in = r_tf_outboard_in - tinstf
-    end if
-    !-!
+                                   + r_in_outwp * log((r_in_outwp + dr_wp)        &
+                                   / r_in_outwp))) 
 
     ! Case of a centrepost (itart == 1) with sliding joints (the CP vertical are separated from the leg ones)
     ! Rem SK : casing/insulation thickness not subtracted as part of the CP is genuinely connected to the legs..
@@ -1263,7 +1255,7 @@ subroutine tf_field_and_force()
         ! Inboard vertical tension fraction
         f_vforce_inboard = vforce / vforce_tot
 
-    ! Case of TF without joints or with clamped joints total
+    ! Case of TF without joints or with clamped joints vertical tension
     else 
 
         ! Inboard vertical tension [N]

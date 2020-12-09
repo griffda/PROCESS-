@@ -987,9 +987,9 @@ subroutine check
 
             ! Steel conduit thickness (can be an iteration variable)
             if ( any(ixc(1:nvar) == 58 ) ) then
-                dr_tf_wp_min = dr_tf_wp_min + boundl(58)
+                dr_tf_wp_min = dr_tf_wp_min + 2.0D0 * boundl(58)
             else 
-                dr_tf_wp_min = dr_tf_wp_min + thwcndut
+                dr_tf_wp_min = dr_tf_wp_min + 2.0D0 * thwcndut
             end if 
 
         ! Minimal conductor layer thickness
