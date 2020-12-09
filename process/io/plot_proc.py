@@ -47,21 +47,21 @@ nbshield_colour = 'gray'
 thin = 0
 
 RADIAL_BUILD = ["bore", "ohcth", "precomp", "gapoh", "tfcth",
-                "deltf", "thshieldi", "gapds",
-                "ddwi", "shldith", "vvblgapi", "blnkith", "fwith", "scrapli",
+                "tftsgap", "thshieldi", "gapds",
+                "d_vv_in", "shldith", "vvblgapi", "blnkith", "fwith", "scrapli",
                 "rminori", "rminoro", "scraplo", "fwoth", "blnkoth",
-                "vvblgapo", "shldoth", "ddwo", "gapsto", "thshieldo",
+                "vvblgapo", "shldoth", "d_vv_out", "gapsto", "thshieldo",
                 "tftsgap", "tfthko"]
 
 vertical_upper = ["rminor*kappa", "vgaptop",
                   "fwtth", "blnktth", "vvblgap",
-                  "shldtth", "ddwi",
+                  "shldtth", "d_vv_top",
                   "vgap2", "thshield",
                   "tftsgap", "tfcth"]
 
 vertical_lower = ["rminor*kappa", "vgap",
                   "divfix",
-                  "shldlth", "ddwi",
+                  "shldlth", "d_vv_bot",
                   "vgap2",
                   "thshield",
                   "tftsgap",
@@ -227,13 +227,20 @@ def cumulative_radial_build(section, mfile_data, scan):
             cumulative_build += mfile_data.data["vvblgap"].get_scan(scan)
         elif item == "thshieldi" or item == "thshieldo":
             cumulative_build += mfile_data.data["thshield"].get_scan(scan)
-        elif "ddw" in item:
-            cumulative_build += mfile_data.data["ddwi"].get_scan(scan)
+        elif "d_vv_in" in item:
+            cumulative_build += mfile_data.data["d_vv_in"].get_scan(scan)
+        elif "d_vv_out" in item:
+            cumulative_build += mfile_data.data["d_vv_out"].get_scan(scan)
+        elif "d_vv_top" in item:
+            cumulative_build += mfile_data.data["d_vv_top"].get_scan(scan)
+        elif "d_vv_bot" in item:
+            cumulative_build += mfile_data.data["d_vv_bot"].get_scan(scan)
         else:
             cumulative_build += mfile_data.data[item].get_scan(scan)
         if item == section:
             complete = True
             break
+    
     if complete == False:
         print('radial build parameter ', section, ' not found')
     return cumulative_build
@@ -261,8 +268,10 @@ def cumulative_radial_build2(section, mfile_data, scan):
             build = mfile_data.data["vvblgap"].get_scan(scan)
         elif item == "thshieldi" or item == "thshieldo":
             build = mfile_data.data["thshield"].get_scan(scan)
-        elif "ddw" in item:
-            build = mfile_data.data["ddwi"].get_scan(scan)
+        elif "d_vv_in" in item:
+            build = mfile_data.data["d_vv_in"].get_scan(scan)
+        elif "d_vv_out" in item:
+            build = mfile_data.data["d_vv_out"].get_scan(scan)
         else:
             build = mfile_data.data[item].get_scan(scan)
         cumulative_build += build
@@ -424,7 +433,7 @@ def toroidal_cross_section(axis, mfile_data, scan, demo_ranges):
     arc_fill(axis, r1, r2, color=thermal_shield)
 
 
-    r2, r1 = cumulative_radial_build2("ddwi", mfile_data, scan)
+    r2, r1 = cumulative_radial_build2("d_vv_in", mfile_data, scan)
     arc_fill(axis, r1, r2, color=vessel)
 
     r2, r1 = cumulative_radial_build2("shldith", mfile_data, scan)
@@ -447,7 +456,7 @@ def toroidal_cross_section(axis, mfile_data, scan, demo_ranges):
     r2, r1 = cumulative_radial_build2("shldoth", mfile_data, scan)
     arc_fill(axis, r1, r2, color=shield)
 
-    r2, r1 = cumulative_radial_build2("ddwo", mfile_data, scan)
+    r2, r1 = cumulative_radial_build2("d_vv_out", mfile_data, scan)
     arc_fill(axis, r1, r2, color=vessel)
 
     r2, r1 = cumulative_radial_build2("thshieldo", mfile_data, scan)
@@ -494,10 +503,10 @@ def toroidal_cross_section(axis, mfile_data, scan, demo_ranges):
         TF_outboard(axis, item, n_tf=n_tf, r3=r3, r4=r4, w=w, facecolor='cyan')
 
     # Winding pack : inboard (superconducor only)
-    if i_tf_sup is 1 :
+    if i_tf_sup == 1 :
 
         # Inboard
-        if i_tf_turns_integer is 1 :
+        if i_tf_turns_integer == 1 :
             rect = patches.Rectangle([r1 + thkcas +tinstf, 0], dr_tf_wp, wwp1/2, lw=0,
                                      facecolor=winding)
             axis.add_patch(rect)
@@ -511,7 +520,7 @@ def toroidal_cross_section(axis, mfile_data, scan, demo_ranges):
             axis.add_patch(rect)
     
         # Outboard
-        if i_tf_turns_integer is 1 :
+        if i_tf_turns_integer == 1 :
             rect = patches.Rectangle([r3+casthi+tinstf, 0], dr_tf_wp, wwp1/2, lw=0,
                                    facecolor=winding)
             axis.add_patch(rect)    
@@ -1071,33 +1080,33 @@ def plot_vacuum_vessel(axis, mfile_data, scan):
     temp_array_2 = ()
 
     # Outer side (furthest from plasma)
-    radx = (cumulative_radial_build("ddwo", mfile_data, scan)
+    radx = (cumulative_radial_build("d_vv_out", mfile_data, scan)
             + cumulative_radial_build("gapds", mfile_data, scan)) / 2.0
-    rminx = (cumulative_radial_build("ddwo", mfile_data, scan)
+    rminx = (cumulative_radial_build("d_vv_out", mfile_data, scan)
              - cumulative_radial_build("gapds", mfile_data, scan)) / 2.0
 
-    kapx = cumulative_upper['ddwi'] / rminx
+    kapx = cumulative_upper['d_vv_top'] / rminx
 
     if i_single_null==1:
         (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
         temp_array_1 = temp_array_1 + ((rs, zs))
 
-    kapx = cumulative_lower['ddwi'] / rminx
+    kapx = cumulative_lower['d_vv_bot'] / rminx
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
     temp_array_2 = temp_array_2 + ((rs, zs))
 
     # Inner side (nearest to the plasma)
     radx = (cumulative_radial_build("shldoth", mfile_data, scan)
-            + cumulative_radial_build("ddwi", mfile_data, scan)) / 2.0
+            + cumulative_radial_build("d_vv_out", mfile_data, scan)) / 2.0
     rminx = (cumulative_radial_build("shldoth", mfile_data, scan)
-             - cumulative_radial_build("ddwi", mfile_data, scan)) / 2.0
+             - cumulative_radial_build("d_vv_out", mfile_data, scan)) / 2.0
 
     if i_single_null==1:
-        kapx = (cumulative_upper['ddwi'] - upper["ddwi"]) / rminx
+        kapx = (cumulative_upper['d_vv_top'] - upper["d_vv_top"]) / rminx
         (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
         temp_array_1 = temp_array_1 + ((rs, zs))
 
-    kapx = (cumulative_lower['ddwi'] + lower["ddwi"]) / rminx
+    kapx = (cumulative_lower['d_vv_bot'] + lower["d_vv_bot"]) / rminx
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
     temp_array_2 = temp_array_2 + ((rs, zs))
 
@@ -1131,9 +1140,9 @@ def plot_shield(axis, mfile_data, scan):
 
     # Side furthest from plasma
     radx = (cumulative_radial_build("shldoth", mfile_data, scan)
-            + cumulative_radial_build("ddwi", mfile_data, scan)) / 2.0
+            + cumulative_radial_build("d_vv_out", mfile_data, scan)) / 2.0
     rminx = (cumulative_radial_build("shldoth", mfile_data, scan)
-             - cumulative_radial_build("ddwi", mfile_data, scan)) / 2.0
+             - cumulative_radial_build("d_vv_out", mfile_data, scan)) / 2.0
 
     if i_single_null==1:
         kapx = cumulative_upper['shldtth'] / rminx
@@ -1797,7 +1806,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
     sig_cond = 1.0e-6*mfile_data.data["sig_tf_tresca_max({})".format(i_tf_bucking+1)].get_scan(scan)
     alstrtf =  1.0e-6*mfile_data.data["alstrtf"].get_scan(scan)
 
-    if i_tf_sup is 1:
+    if i_tf_sup == 1:
         data = [(pf_info[0][0], pf_info[0][1], "MA"),
                 (pf_info[1][0], pf_info[1][1], "MA"),
                 (pf_info_3_a, pf_info_3_b, "MA"),
@@ -2189,8 +2198,8 @@ def test(f):
         tfcth = m_file.data["tfcth"].get_scan(scan)
         global gapds
         gapds = m_file.data["gapds"].get_scan(scan)
-        global ddwi
-        ddwi = m_file.data["ddwi"].get_scan(scan)
+        global d_vv_in
+        d_vv_in = m_file.data["d_vv_in"].get_scan(scan)
         global shldith
         shldith = m_file.data["shldith"].get_scan(scan)
         global blnkith
@@ -2211,7 +2220,8 @@ def test(f):
         blnkoth = m_file.data["blnkoth"].get_scan(scan)
         global shldoth
         shldoth = m_file.data["shldoth"].get_scan(scan)
-        # ddwi = m_file.data["ddwi"].get_scan(scan)
+        global d_vv_out
+        d_vv_out = m_file.data["d_vv_out"].get_scan(scan)
         global gapsto
         gapsto = m_file.data["gapsto"].get_scan(scan)
         global tfthko
@@ -2225,10 +2235,10 @@ def test(f):
         global n_tf
         n_tf = m_file.data["n_tf"].get_scan(scan)
 
-        if i_tf_sup is 1 : 
+        if i_tf_sup == 1 : 
             global wwp1
             wwp1 = m_file.data["wwp1"].get_scan(scan)
-            if i_tf_turns_integer is 0 :
+            if i_tf_turns_integer == 0 :
                 global wwp2
                 wwp2 = m_file.data["wwp2"].get_scan(scan)
             global dr_tf_wp
@@ -2299,8 +2309,10 @@ def test(f):
                 build = m_file.data["vvblgap"].get_scan(scan)
             elif item == "thshieldi" or item == "thshieldo":
                 build = m_file.data["thshield"].get_scan(scan)
-            elif "ddw" in item:
-                build = m_file.data["ddwi"].get_scan(scan)
+            elif "d_vv_in" in item:
+                build = m_file.data["d_vv_in"].get_scan(scan)
+            elif "d_vv_out" in item:
+                build = m_file.data["d_vv_out"].get_scan(scan)
             else:
                 build = m_file.data[item].get_scan(scan)
 
@@ -2332,7 +2344,10 @@ def test(f):
         colour_dict['ohcth'] = solenoid
         colour_dict['tfcth'] = tfc
         colour_dict['thshield'] = thermal_shield
-        colour_dict['ddwi'] = vessel
+        colour_dict['d_vv_in'] = vessel
+        colour_dict['d_vv_out'] = vessel
+        colour_dict['d_vv_top'] = vessel
+        colour_dict['d_vv_bot'] = vessel
         colour_dict['shldith'] = shield
         colour_dict['blnkith'] = blanket
         colour_dict['rminor'] = plasma
@@ -2454,7 +2469,7 @@ def main(args=None):
     gapoh = m_file.data["gapoh"].get_scan(scan)
     tfcth = m_file.data["tfcth"].get_scan(scan)
     gapds = m_file.data["gapds"].get_scan(scan)
-    ddwi = m_file.data["ddwi"].get_scan(scan)
+    d_vv_in = m_file.data["d_vv_in"].get_scan(scan)
     shldith = m_file.data["shldith"].get_scan(scan)
     blnkith = m_file.data["blnkith"].get_scan(scan)
     fwith = m_file.data["fwith"].get_scan(scan)
@@ -2465,7 +2480,7 @@ def main(args=None):
     fwoth = m_file.data["fwoth"].get_scan(scan)
     blnkoth = m_file.data["blnkoth"].get_scan(scan)
     shldoth = m_file.data["shldoth"].get_scan(scan)
-    ddwi = m_file.data["ddwi"].get_scan(scan)
+    d_vv_out = m_file.data["d_vv_out"].get_scan(scan)
     gapsto = m_file.data["gapsto"].get_scan(scan)
     tfthko = m_file.data["tfthko"].get_scan(scan)
     rdewex = m_file.data["rdewex"].get_scan(scan)
@@ -2603,8 +2618,10 @@ def main(args=None):
             build = m_file.data["vvblgap"].get_scan(scan)
         elif item == "thshieldi" or item == "thshieldo":
             build = m_file.data["thshield"].get_scan(scan)
-        elif "ddw" in item:
-            build = m_file.data["ddwi"].get_scan(scan)
+        elif "d_vv_in" in item:
+            build = m_file.data["d_vv_in"].get_scan(scan)
+        elif "d_vv_out" in item:
+            build = m_file.data["d_vv_out"].get_scan(scan)
         else:
             build = m_file.data[item].get_scan(scan)
 
@@ -2636,7 +2653,10 @@ def main(args=None):
     colour_dict['ohcth'] = solenoid
     colour_dict['tfcth'] = tfc
     colour_dict['thshield'] = thermal_shield
-    colour_dict['ddwi'] = vessel
+    colour_dict['d_vv_in'] = vessel
+    colour_dict['d_vv_out'] = vessel
+    colour_dict['d_vv_top'] = vessel
+    colour_dict['d_vv_bot'] = vessel
     colour_dict['shldith'] = shield
     colour_dict['blnkith'] = blanket
     colour_dict['rminor'] = plasma

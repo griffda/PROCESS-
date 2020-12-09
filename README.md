@@ -413,11 +413,7 @@ When you have finished making a major change on a new branch, you will need to m
 - Merge develop into your branch `git merge develop`
 - If there are conflicts check the files listed for the following:
 ```
-<<<<<<< HEAD
-This line was edited in dev_mynewmodel branch
-=======
 This line was edited in develop branch
->>>>>>> develop
 ```
 
 - Resolve any conflicts then `git add file_1 file_2` where file_1 and file_2 are

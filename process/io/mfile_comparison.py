@@ -41,17 +41,16 @@ BASELINE_LIST = [
     "procver", "time", "username", "tagno", "commsg", "ifail", "rmajor", 
     "rminor", "aspect", "kappa", "kappa95", "triang", "triang95", "sarea", 
     "vol", "n_tf", "powfmw", "plascur/1d6", "bt", "q95", "beta", 
-    "normalised_thermal_beta", "normalised_total_beta",
-    "thermal_beta", "thermal_poloidal_beta", "te", "te0", "dene", "ne0",
-    "dnla_gw", "tesep", "nesep", "teped", "neped", "ieped", "zeff", "dnz",
-    "taueff", "hfact", "tauelaw", "ralpne", "wallmw", "pcoreradmw",
-    "psyncpv*vol", "pradmw", "pnucblkt", "pnucshld", "pdivt",
-    "divlife", "pthermmw", "bore", "ohcth",
-    "precomp", "gapoh", "tfcth", "deltf", "thshield", "gapds", "ddwi",
-    "shldith", "vvblgap", "blnkith", "fwith", "scrapli", "scraplo", "fwoth",
-    "blnkoth", "shldoth", "gapsto", "tftsgap", "tfthko",
-    "etath", "pgrossmw", "pnetelmw", "pinjmw", "pheat", "bootipf", "faccd",
-    "facoh", "gamnb", "enbeam", "powerht", "pdivt",
+    "normalised_thermal_beta", "normalised_total_beta", "thermal_beta", 
+    "thermal_poloidal_beta", "te", "te0", "dene", "ne0", "dnla_gw", "tesep", 
+    "nesep", "teped", "neped", "ieped", "zeff", "dnz", "taueff", "hfact", 
+    "tauelaw", "ralpne", "wallmw", "pcoreradmw", "psyncpv*vol", "pradmw", 
+    "pnucblkt", "pnucshld", "pdivt", "divlife", "pthermmw", "bore", "ohcth", 
+    "precomp", "gapoh", "tfcth", "deltf", "thshield", "gapds", "d_vv_in", 
+    "d_vv_out", "d_vv_top", "d_vv_bot", "shldith", "vvblgap", "blnkith", 
+    "fwith", "scrapli", "scraplo", "fwoth", "blnkoth", "shldoth", "gapsto", 
+    "tftsgap", "tfthko", "etath", "pgrossmw", "pnetelmw", "pinjmw", "pheat", 
+    "bootipf", "faccd", "facoh", "gamnb", "enbeam", "powerht", "pdivt",
     "vssoft", "vstot", "tburn", "bmaxtf", "iooic", "tmarg", "tftmp",
     "qtarget", "qtargetcomplete", "totalpowerlost"
 ]
@@ -59,6 +58,17 @@ BASELINE_LIST = [
 BLANKET_COMPARE_PARAMS = [
     "blnkith", "blnkoth", "powfmw", "pnucblkt", "pnucfw",
     "ptfnuc", "pnucshld", "pnucdiv", "tbr", "li6enrich", "fwarea", "emult"]
+
+GENERIC_LIST = [
+    "rmajor", "rminor", "aspect", "kappa", "kappa95", "triang", "triang95",
+    "powfmw", "plascur/1d6", "bt", "q95", "beta", "te", "dene", "pinjmw",
+    "pnetelmw", "wallmw", "photon_wall", "ralpne", "pcoreradmw", "pradmw", 
+    "bootipf", "pdivmax/rmajor", "fimp(14", "etath", "capcost", "coe",
+    "bore", "ohcth", "precomp", "gapoh", "tfcth", "tftsgap", "thshield",
+    "gapds", "d_vv_in", "shldith", "vvblgap", "blnkith", "fwith", "scrapli", 
+    "scraplo", "fwoth", "blnkoth", "shldoth", "d_vv_out", "gapsto", "tftsgap", 
+    "tfthko", "vgap", "divfix", "d_vv_bot", "shldlth", "vgap2" 
+]
 
 class BColors(object):
     HEADER = '\033[95m'
@@ -109,6 +119,9 @@ def main(arg):
 
     if arg.baseline:
         var_list = BASELINE_LIST
+
+    if arg.generic:
+        var_list = GENERIC_LIST
 
     for v in var_list:
         if "normres" in v:
@@ -213,6 +226,8 @@ if __name__ == "__main__":
     parser.add_argument('--baseline', action="store_true")
 
     parser.add_argument('--blanket', action="store_true")
+
+    parser.add_argument('--generic', action="store_true")
 
     args = parser.parse_args()
 

@@ -23,15 +23,15 @@ except ImportError:
     exit()
 
 RADIAL_BUILD = ["bore", "ohcth", "gapoh", "tfcth", "gapds",
-                "ddwi", "shldith", "blnkith", "fwith", "scrapli",
+                "d_vv_in", "shldith", "blnkith", "fwith", "scrapli",
                 "rminori", "rminoro", "scraplo", "fwoth", "blnkoth",
-                "shldoth", "ddwo", "gapsto", "tfthko"]
+                "shldoth", "d_vv_out", "gapsto", "tfthko"]
 
-VERTICAL_BUILD = ["tfcth", "vgap2", "ddwi", "shldtth", "blnktth",
+VERTICAL_BUILD = ["tfcth", "vgap2", "d_vv_top", "shldtth", "blnktth",
                   "top first wall vertical thickness (m)",
                   "top scrape-off vertical thickness (m)",
                   "rminor*kappa", "midplane", "rminor*kappa",
-                  "vgap", "divfix", "shldtth", "ddwi", "vgap2", "tfcth"]
+                  "vgap", "divfix", "shldtth", "d_vv_top", "vgap2", "tfcth"]
 
 
 FILLCOLS = ('0.8', '0', '#00ff00', '#00ffff', '#ff0000', '#ff00ff')
@@ -187,8 +187,8 @@ def cumulative_radial_build(section, mfile_data, scan):
     for item in RADIAL_BUILD:
         if item == "rminori" or item == "rminoro":
             cumulative_build += mfile_data.data["rminor"].get_scan(scan)
-        elif "ddw" in item:
-            cumulative_build += mfile_data.data["ddwi"].get_scan(scan)
+        elif "d_vv_" in item:
+            cumulative_build += mfile_data.data["d_vv_in"].get_scan(scan)
         else:
             cumulative_build += mfile_data.data[item].get_scan(scan)
         if item == section:
@@ -299,10 +299,10 @@ def plot_i_single_null_cryo(axis, mfile_data, scan):
 
     # Inner side
     radx = (cumulative_radial_build("shldoth", mfile_data, scan)
-            + cumulative_radial_build("ddwi", mfile_data,
+            + cumulative_radial_build("d_vv_out", mfile_data,
                                       scan))/2.0
     rminx = (cumulative_radial_build("shldoth", mfile_data, scan)
-             - cumulative_radial_build("ddwi", mfile_data,
+             - cumulative_radial_build("d_vv_out", mfile_data,
                                        scan))/2.0
 
     a = cumulative_vertical_build(mfile_data, scan)
@@ -349,9 +349,9 @@ def plot_shield_i_single_null(axis, mfile_data, scan):
     temp_array_2 = ()
 
     radx = (cumulative_radial_build("shldoth", mfile_data, scan) +
-            cumulative_radial_build("ddwi", mfile_data, scan))/2.0
+            cumulative_radial_build("d_vv_out", mfile_data, scan))/2.0
     rminx = (cumulative_radial_build("shldoth", mfile_data, scan) -
-             cumulative_radial_build("ddwi", mfile_data, scan))/2.0
+             cumulative_radial_build("d_vv_out", mfile_data, scan))/2.0
     kapx = a[3]/rminx
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
     temp_array_1 = temp_array_1 + ((rs, zs))

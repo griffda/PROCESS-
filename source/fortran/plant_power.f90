@@ -82,7 +82,7 @@ contains
     use tfcoil_variables, only: tflegmw, estotftgj, tfcpmw, rhotfleg, &
         tflegres, vtfskv, jbus, tfbusl, tfbusmas, tfcmw, vtfkv, i_tf_sup, &
         tfckw, presleg, ritfc, cpttf, prescp, n_tf, rhotfbus, tfjtsmw, &
-        pres_joints
+        pres_joints, i_cp_joints
     use constants, only: pi, dcopper
     implicit none
 
@@ -165,6 +165,9 @@ contains
     call ovarre(outfile,'Power dissipation in TF coil set: inboard legs (MW)', '(tfcpmw)',tfcpmw, 'OP ')
     call ovarre(outfile,'Power dissipation in TF coil set: outboard legs (MW)', '(tflegmw)',tflegmw, 'OP ')
     call ovarre(outfile,'Power dissipation in TF coil set: buses','(tfbusmw)', tfbusmw, 'OP ')
+    if (i_cp_joints/=0) then 
+        call ovarre(outfile,'Power dissipation in TF coil set: joints','(tfjtsmw)', tfjtsmw, 'OP ')
+    end if
     ! Reactive poower has been set to zero.
     !call ovarre(outfile,'TF coil reactive power (MW)','(tfreacmw)', tfreacmw)
 

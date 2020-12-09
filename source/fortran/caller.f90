@@ -198,7 +198,7 @@ subroutine caller(xc,nvars)
   ! Tight aspect ratio machine model !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  if (itart == 1) then
+  if ( itart == 1 .and. i_tf_sup /= 1 ) then
      call cntrpst(nout,0)
   end if
 

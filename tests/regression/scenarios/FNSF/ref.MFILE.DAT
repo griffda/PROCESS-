@@ -376,8 +376,11 @@
  TF_coil_inboard_leg_insulation_gap_(m)__________________________________ (tftsgap)_____________________      5.0000E-02    
  Thermal_shield_(m)______________________________________________________ (thshield)____________________      0.0000E+00    
  thermal_shield_to_vessel_radial_gap_(m)_________________________________ (gapds)_______________________      0.0000E+00    
- Vacuum_vessel_radial_thickness_(m)______________________________________ (ddwi)________________________      0.0000E+00    
- Inner_radiation_shield_radial_thickness_(m)_____________________________ (shldith)_____________________      0.0000E+00    
+ Inboard_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_in)_____________________      0.0000E+00    
+ Outboard_vacuum_vessel_radial_thickness_(m)_____________________________ (d_vv_out)____________________      3.0000E-01    
+ Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.0000E-01    
+ Underside_vacuum_vessel_radial_thickness_(m)____________________________ (d_vv_bot)____________________      3.0000E-01    
+ Inner_radiation_shield_radial_thickness_(m)_____________________________ (shldith)_____________________      3.0000E+00    
  Gap_(m)_________________________________________________________________ (vvblgap)_____________________      0.0000E+00    
  Inboard_blanket_radial_thickness_(m)____________________________________ (blnkith)_____________________      0.0000E+00    
  Inboard_first_wall_radial_thickness_(m)_________________________________ (fwith)_______________________      1.8000E-02    
@@ -1068,7 +1071,10 @@ ohcth    = 0.0      *central solenoid thickness (m)
 thkcas   = 0.0      *Inboard TF coil case outer (non-plasma side) thickness (m)
 blnkith  = 0.0      *Inboard blanket thickness (m)
 blnkoth  = 0.7      *Outboard blanket thickness (m)
-ddwi     = 0.0      *Vacuum vessel thickness (m)
+d_vv_in  = 0.0      *Inboard vacuum vessel thickness (m)
+d_vv_out = 0.3      *Outboard vacuum vessel thickness (m)
+d_vv_top = 0.3      *Topside vacuum vessel thickness  (m)
+d_vv_bot = 0.3      *Underside vacuum vessel thickness (m)
 gapds    = 0.0      *Gap between inboard vacuum vessel and thermal shield (m)
 gapomin  = 0.0      *Minimum gap between outboard vacuum vessel and TF coil (m)
 iprecomp = 0        *Switch for existence of central solenoid pre-compression structure (0: no pre-compression structure)

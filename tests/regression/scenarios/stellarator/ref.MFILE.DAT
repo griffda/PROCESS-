@@ -329,7 +329,10 @@
  Machine_bore_(m)________________________________________________________ (bore)________________________      1.7808E+01 ITV
  Coil_inboard_leg_(m)____________________________________________________ (deltf)_______________________      7.4864E-01    
  Gap_(m)_________________________________________________________________ (gapds)_______________________      2.5000E-02    
- Vacuum_vessel_radial_thickness_(m)______________________________________ (ddwi)________________________      3.5000E-01    
+ Inboard_Vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_in)_____________________      3.5000E-01    
+ Outboard_vacuum_vessel_radial_thickness_(m)_____________________________ (d_vv_out)____________________      3.5000E-01    
+ Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.5000E-01    
+ Underside_vacuum_vessel_radial_thickness_(m)____________________________ (d_vv_bot)____________________      3.5000E-01    
  Inner_radiation_shield_radial_thickness_(m)_____________________________ (shldith)_____________________      4.0000E-01    
  Inboard_blanket_radial_thickness_(m)____________________________________ (blnkith)_____________________      7.0000E-01    
  Inboard_first_wall_radial_thickness_(m)_________________________________ (fwith)_______________________      1.8000E-02    
@@ -699,7 +702,10 @@ shear    = 0.5          *Magnetic shear, derivative of iotabar
 blnkith  = 0.7          *Inboard blanket thickness (m)
 blnkoth  = 0.8          *Outboard blanket thickness (m)
 ddwex    = 0.15         *Cryostat thickness (m)
-ddwi     = 0.35         *Vacuum vessel thickness (TF coil / shield) (m)
+d_vv_in  = 0.35         *Inboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_out = 0.35         *Outboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_top = 0.35         *Topside vacuum vessel thickness (tf coil / shield) (m)
+d_vv_bot = 0.35         *Underside vacuum vessel thickness (tf coil / shield) (m)
 gapds    = 0.025        *Gap between inboard vacuum vessel and tf coil (m)
 gapomin  = 0.025        *Minimum gap between outboard vacuum vessel and TF coil (m)
 scrapli  = 0.15         *Gap between plasma and first wall; inboard side (m)

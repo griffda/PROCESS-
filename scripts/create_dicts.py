@@ -43,8 +43,9 @@ PARAMETER_DEFAULTS = ["rmajor", "aspect", "rminor", "bt", "powfmw",
 NON_F_VALUES = ['fcohbop', 'fvsbrnni', 'feffcd', 'fcutfsu', 'fimpvar']
 
 # PROCESS TF Coil types
-DICT_TF_TYPE = {1: "ITER Nb3Sn", 2: "Bi-2212", 3: "NbTi", 4: "Nb3Sn", 
-    5: "WST Nb3Sn", 6: "REBCO", 7: "YBCO"}
+DICT_TF_TYPE = {1: "Nb3Sn ITER", 2: "Bi-2212", 3: "NbTi", 4: "Nb3Sn user", 
+    5: "Nb3Sn WST", 6: "REBCO Croco", 7: "NbTi Ginzburg-Landau", 
+    8: "REBCO Ginzburg-Landau"}
 
 # FIMP Values
 DICT_FIMP = {
@@ -176,7 +177,14 @@ class VariableDescriptions(ProjectDictionary):
         for var_name, var_desc in self.dict[self.name].items():
             # Strip the <p> and </p> tags from the description; not 
             # required in output
-            self.dict[self.name][var_name] = re.sub('</?p>', '', var_desc)
+            desc_sub = re.sub(r"</?p>", r"", var_desc)
+            # Some characters are modified in Ford; convert them back here
+            # Convert <code> tags back to backticks (`)
+            desc_sub = re.sub(r"<\/*code>", r"`", desc_sub)
+            # Convert > and < back
+            desc_sub = re.sub(r"&gt;", r">", desc_sub)
+            desc_sub = re.sub(r"&lt;", r"<", desc_sub)
+            self.dict[self.name][var_name] = desc_sub
 
 class DefaultValues(ProjectDictionary):
     """This is a nightmare. It takes combined declared/initialised values from

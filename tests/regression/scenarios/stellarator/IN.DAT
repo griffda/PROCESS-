@@ -9,26 +9,17 @@
 
 *---------------Constraint Equations---------------*
 
-neqns = 3               *number of equalities
-
-
-*--------------- equaltities
+icc = 1                 *Beta (consistency equation)
 icc = 2                 *Global power balance (consistency equation)
 icc = 11                *Radial build (consistency equation)
 icc = 16                *Net electric power lower limit
 
-
-*-------------- inequaltities
-icc = 84                *Lower beta limit
-icc = 24                *Upper beta limit
-
-
-
 *---------------Iteration Variables----------------*
 
-ixc = 4                 *te
-boundl(4) = 4.
-boundu(4) = 25.
+ixc = 5                 *beta
+beta = 0.044513         *Total plasma beta
+boundl(5) = 0.02
+boundu(5) = 0.09
 
 ixc = 6                 *dene
 dene = 2.0914E20        *Electron density (/m3)
@@ -47,11 +38,6 @@ boundu(25) = 1.0
 ixc = 29                *bore
 bore = 17.607           *Central solenoid inboard radius (m)
 boundl(29) = 5.0
-
-ixc = 50                * itv_fiooic
-boundu(50) = 0.9
-boundl(50) = 0.001
-
 
 *----------------Physics Variables-----------------*
 
@@ -74,7 +60,6 @@ tratio   = 0.95         *Ion temperature / electron temperature
 
 *--------------Stellarator Variables---------------*
 
-istell   = 1            *Stellarator option
 bmn      = 0.001        *Relative radial field perturbation
 f_asym   = 1.1          *Divertor heat load peaking factor
 f_rad    = 0.85         *Radiated power fraction in sol
@@ -89,7 +74,10 @@ shear    = 0.5          *Magnetic shear, derivative of iotabar
 blnkith  = 0.7          *Inboard blanket thickness (m)
 blnkoth  = 0.8          *Outboard blanket thickness (m)
 ddwex    = 0.15         *Cryostat thickness (m)
-ddwi     = 0.35         *Vacuum vessel thickness (TF coil / shield) (m)
+d_vv_in  = 0.35         *Inboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_out = 0.35         *Outboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_top = 0.35         *Topside vacuum vessel thickness (tf coil / shield) (m)
+d_vv_bot = 0.35         *Underside vacuum vessel thickness (tf coil / shield) (m)
 gapds    = 0.025        *Gap between inboard vacuum vessel and tf coil (m)
 gapomin  = 0.025        *Minimum gap between outboard vacuum vessel and TF coil (m)
 scrapli  = 0.15         *Gap between plasma and first wall; inboard side (m)
@@ -102,8 +90,6 @@ vgap     = 0.0          *Vertical gap between x-point and divertor (m)
 *---------------Constraint Variables---------------*
 
 pnetelin = 1000         *Required net electric power (MW)
-betalim = 0.05          *upper beta limit
-betalim_lower = 0.01    *lower beta limit
 
 *-------------Current Drive Variables--------------*
 
@@ -172,9 +158,8 @@ runtitle = HELIAS-5B
 *-----------------Tfcoil Variables-----------------*
 
 fcutfsu  = 0.69         *Copper fraction of cable conductor (TF coils)
-i_tf_sc_mat = 1         *Switch for superconductor material in tf coils (1: ITER Nb3Sn)
+i_tf_sc_mat = 1            *Switch for superconductor material in tf coils (1: ITER Nb3Sn)
 tftmp    = 4.2          *Peak helium coolant temperature in TF coils and PF coils (k)
-t_turn   = 0.056        *Dimension conductor area including steel and insulation.
 thicndut = 0.002        *Conduit insulation thickness (m)
 thwcndut = 0.0012       *TF coil conduit case thickness (m)
 vftf     = 0.3          *Coolant fraction of TF coil leg (i_tf_sup=0)

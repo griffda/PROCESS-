@@ -77,3 +77,4 @@ fortran.py
 .coverage
 dist/*
 python_fortran_dicts.json
+documentation/proc-pages/vardes.md

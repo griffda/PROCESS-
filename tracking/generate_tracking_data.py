@@ -30,7 +30,7 @@ TRACKING_LIST = [
     "taueff", "hfact", "tauelaw", "ralpne", "wallmw", "pcoreradmw",
     "psyncpv*vol", "pedgrandmw", "pradmw", "pnucblkt", "pnucshld", "pdivt",
     "pthresh", "fwbllife", "divlife", "pthermw", "bore", "ohcth",
-    "precomp", "gapoh", "tfcth", "deltf", "thshield", "gapds", "ddwi",
+    "precomp", "gapoh", "tfcth", "deltf", "thshield", "gapds", "d_vv_in",
     "shldith", "vvblgap", "blnkith", "fwith", "scrapli", "scraplo", "fwoth",
     "blnkoth", "shldoth", "gapsto", "tftsgap", "tfthko",
     "etath", "pgrossmw", "pnetelmw", "pinjmw", "pheat", "bootipf", "faccd",

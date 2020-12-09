@@ -656,7 +656,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables, only: rsldo, ddwi
+    use build_variables, only: rsldo, d_vv_out
     use heat_transport_variables, only: helpow
     use cost_variables, only: cost_factor_vv, costexp
 
@@ -675,7 +675,7 @@ contains
     !  ITER reference vacuum vessel cost (2014 $)
     s(32)%cref = 537.0D6
     !  Scale with outermost midplane radius of vacuum vessel squared (m2)
-    s(32)%k = (rsldo + ddwi)**2
+    s(32)%k = (rsldo + d_vv_out)**2
     s(32)%kref = 94.09D0
     s(32)%cost = s(32)%cost_factor * s(32)%cref * (s(32)%k / s(32)%kref)**costexp
 

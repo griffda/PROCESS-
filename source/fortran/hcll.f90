@@ -22,10 +22,6 @@ module kit_hcll_module
   ! real(dp) :: blnkith = 0.025D0 + 0.375D0 + 0.21D0
   ! real(dp) :: blnkoth = 0.025D0 + 0.715D0 + 0.21D0
 
-  ! TODO - vacuum vessel different thicknesses in FF model
-  ! real(dp) :: ddwi = 0.25D0
-  ! real(dp) :: ddwo = 0.50D0
-
   ! TODO - need checking of the bounds of validity
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1035,7 +1031,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables, only: fwith, shldith, ddwi, fwoth, shldoth
+    use build_variables, only: fwith, shldith, d_vv_in, d_vv_out, fwoth, shldoth
     use fwbs_variables, only: tbr
 
 		use global_variables, only: output_prefix, fileprefix
@@ -1090,12 +1086,12 @@ contains
 
     ! Fast neutron flux on the inboard leg (cm-2 s-1)
     call fast_neutron_flux(fwith*100.0D0, dr_bz_ib*100.0D0, dr_mf_ib*100.0D0, &
-      shldith*100.0D0, ddwi*100.0D0, frac_vol_steel_bz/100.0D0, &
+      shldith*100.0D0, d_vv_in*100.0D0, frac_vol_steel_bz/100.0D0, &
         frac_vol_pbli_bz/100.0D0, phi_tfc_ib)
 
     ! Fast neutron flux on the outboard leg (cm-2 s-1)
     call fast_neutron_flux(fwoth*100.0D0, dr_bz_ob*100.0D0, dr_mf_ob*100.0D0, &
-      shldoth*100.0D0, ddwi*100.0D0, frac_vol_steel_bz/100.0D0, &
+      shldoth*100.0D0, d_vv_out*100.0D0, frac_vol_steel_bz/100.0D0, &
         frac_vol_pbli_bz/100.0D0, phi_tfc_ob)
 
   end subroutine neutronics

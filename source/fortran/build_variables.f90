@@ -65,6 +65,18 @@ module build_variables
   real(dp) :: ddwex
   !! cryostat thickness (m)
 
+  real(dp) :: d_vv_in
+  !! vacuum vessel inboard thickness (TF coil / shield) (m)
+
+  real(dp) :: d_vv_out
+  !! vacuum vessel outboard thickness (TF coil / shield) (m)
+
+  real(dp) :: d_vv_top
+  !! vacuum vessel topside thickness (TF coil / shield) (m)
+
+  real(dp) :: d_vv_bot
+  !! vacuum vessel underside thickness (TF coil / shield) (m)
+
   real(dp) :: ddwi
   !! vacuum vessel thickness (TF coil / shield) (m)
 
@@ -195,6 +207,12 @@ module build_variables
   real(dp) :: r_tf_outboard_mid
   !! radius to the centre of the outboard TF coil leg (m)
 
+  integer :: i_r_cp_top
+  !! Switch selecting the he parametrization of the outer radius of the top of the CP part of the TF coil
+  !!  0 : `r_cp_top` is set by the plasma shape
+  !!  1 : `r_cp_top` is a user input
+  !!  2 : `r_cp_top` is set using the CP top and midplane CP radius ratio 
+
   real(dp) :: r_cp_top
   !! Top outer radius of the centropost (ST only) (m)
 
@@ -309,7 +327,10 @@ module build_variables
     bore = 1.42D0
     clhsf = 4.268D0
     ddwex = 0.07D0
-    ddwi = 0.07D0
+    d_vv_in = 0.07D0
+    d_vv_out = 0.07D0
+    d_vv_top = 0.07D0
+    d_vv_bot = 0.07D0
     f_avspace = 1.0D0
     fcspc = 0.6D0
     fmsbc = 0.0D0
@@ -349,7 +370,9 @@ module build_variables
     r_tf_inboard_mid = 0.0D0
     r_tf_inboard_out = 0.0D0
     r_tf_outboard_mid = 0.0D0
+    i_r_cp_top = 0
     r_cp_top = 0.0D0
+    f_r_cp = 1.4D0
     dr_tf_inner_bore = 0.0D0
     dh_tf_inner_bore = 0.0D0
     scrapli = 0.14D0
@@ -378,6 +401,5 @@ module build_variables
     plsepo = 1.5D0
     rspo = 0.0D0
     r_sh_inboard_in = 0.0D0
-    f_r_cp = -1.0D0
   end subroutine init_build_variables
 end module build_variables

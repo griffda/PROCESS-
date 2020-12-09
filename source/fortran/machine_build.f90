@@ -55,8 +55,8 @@ contains
       fwareaob, blnktth, rbld, blnkoth, tfoffset, iprecomp, plsepo, tfthko, &
       rsldo, vgap, gapoh, fwoth, ohcth, shldoth, scraplo, fwith, blbpith, &
       tfootfi, blbuoth, gapds, fwareaib, fseppc, scrapli, blbmith, shldith, &
-      ddwi, fwarea, blbpoth, blbmoth, fcspc, bore, r_cp_top, r_sh_inboard_out, &
-      r_sh_inboard_in, f_r_cp
+      d_vv_in, d_vv_out, d_vv_top, d_vv_bot, fwarea, blbpoth, blbmoth, fcspc, &
+      bore, r_cp_top, r_sh_inboard_out, r_sh_inboard_in, f_r_cp, i_r_cp_top
     use constants, only: mfile, nout, pi
     use current_drive_variables, only: beamwd
     use divertor_variables, only: divfix
@@ -116,66 +116,89 @@ contains
            tfcth = ( r_tf_inboard_in + dr_tf_wp + casthi + thkcas ) / cos(pi/n_tf) &
                  - r_tf_inboard_in
 
-         ! Rounded resistive TF geometry
+        ! Rounded resistive TF geometry
         else
             tfcth = dr_tf_wp + casthi + thkcas
         end if
-
-    end if
-
+    end if 
+    
     ! Radial build to tfcoil middle [m]
     r_tf_inboard_mid = r_tf_inboard_in + 0.5D0*tfcth
 
     ! Radial build to tfcoil plasma facing side [m]
     r_tf_inboard_out = r_tf_inboard_in + tfcth
 
-    ! Radius of the centrepost at the top of the machine
-    if ( itart == 1 ) then
-    
-       ! If r_cp_top is used as iteration variable
-       if ( any(ixc(1:nvar) == 174) ) then
+    ! WP radial thickness [m]
+    ! Calculated only if not used as an iteration variable
+    if ( .not. any(ixc(1:nvar) == 140) ) then   
+      
+      ! SC magnets
+      if ( i_tf_sup == 1 ) then
+         dr_tf_wp = cos(pi/n_tf) * r_tf_inboard_out &
+                  - r_tf_inboard_in - casthi - thkcas
 
-          ! Error if if r_cp_top is larger than the top plasma radius + shields
-          if ( r_cp_top > rmajor - rminor * triang - ( tftsgap + thshield +& 
-               shldith + vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop ) then
-
-             fdiags(1) = r_cp_top
-             call report_error(256)
-          end if
-
-          ! CP TF top / mid-plane radii fraction
-          f_r_cp = r_cp_top / r_tf_inboard_out
-
-       ! Use the top CP radius fracion as an input if f_r_cp is user defined
-       else if ( abs(f_r_cp + 1.0D0) > epsilon(f_r_cp) ) then 
-          r_cp_top = f_r_cp * r_tf_inboard_out         
-       
-       ! Otherwise calculate r_cp_top from plasma shape
-       else
-          if ( i_tf_sup == 1 ) then 
-             r_cp_top = r_tf_inboard_out
-             
-          else
-             r_cp_top = rmajor - rminor * triang - ( tftsgap + thshield + shldith + &
-                        vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
-             r_cp_top = max( r_cp_top, r_tf_inboard_out * 1.01D0 ) 
-             
-             ! lvl 3 error if r_cp_top is negative 
-             ! Not sure it is useful with the max() statment ...
-             ! To be removed ?
-             if (r_cp_top <= 0.0D0) then
-               fdiags(1) = r_cp_top
-               call report_error(115)
-             end if
-          end if
-       
-          ! CP TF top / mid-plane radii fraction
-          f_r_cp = r_cp_top / r_tf_inboard_out
-       end if 
+      ! Resistive magnets
+      else 
+         dr_tf_wp = tfcth - casthi - thkcas
+      end if
     end if
 
+    ! Radius of the centrepost at the top of the machine
+    if ( itart == 1 .and. i_tf_sup /= 1 ) then
+    
+       ! r_cp_top is set using the plasma shape
+       if ( i_r_cp_top == 0 ) then      
+          r_cp_top = rmajor - rminor * triang - ( tftsgap + thshield + shldith + &
+                     vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
+          
+          ! Notify user that r_cp_top has been set to 1.01*r_tf_inboard_out (lvl 2 error)
+          if ( r_cp_top < 1.01D0 * r_tf_inboard_out ) then
+            fdiags(1) = r_cp_top
+            fdiags(2) = r_tf_inboard_out
+            call report_error(268)
+
+            ! r_cp_top correction
+            r_cp_top = r_tf_inboard_out * 1.01D0
+          end if
+
+          ! Top and mid-plane TF coil CP radius ratio
+          f_r_cp = r_cp_top / r_tf_inboard_out
+
+       ! User defined r_cp_top
+       else if ( i_r_cp_top == 1 ) then     
+       
+          ! Notify user that r_cp_top has been set to 1.01*r_tf_inboard_out (lvl 2 error)
+          if ( r_cp_top < 1.01D0 * r_tf_inboard_out ) then
+            fdiags(1) = r_cp_top
+            fdiags(2) = r_tf_inboard_out
+            call report_error(268)
+
+            ! r_cp_top correction
+            r_cp_top = r_tf_inboard_out * 1.01D0
+          end if 
+
+          ! Top / mid-plane TF CP radius ratio
+          f_r_cp = r_cp_top / r_tf_inboard_out
+         
+       ! r_cp_top set as a fraction of the outer TF midplane radius
+       else if ( i_r_cp_top == 2 ) then 
+         r_cp_top = f_r_cp * r_tf_inboard_out        
+       end if
+    else ! End of itart == 1 .and. i_tf_sup /= 1
+       r_cp_top = r_tf_inboard_out
+    end if 
+
+    if ( i_r_cp_top /= 0 .and. ( r_cp_top > rmajor - rminor * triang  & 
+       - ( tftsgap + thshield + shldith + vvblgap + blnkith + fwith + 3.0D0*scrapli ) &
+       + drtop ) ) then
+
+       fdiags(1) = r_cp_top
+       call report_error(256)
+    end if
+
+
     !  Radial position of vacuum vessel [m]
-    r_vv_inboard_out = r_tf_inboard_out + tftsgap + thshield + gapds + ddwi
+    r_vv_inboard_out = r_tf_inboard_out + tftsgap + thshield + gapds + d_vv_in
 
     ! Radial position of the inner side of inboard neutronic shield [m]
     r_sh_inboard_in = r_vv_inboard_out
@@ -200,7 +223,8 @@ contains
     end if
 
     !  Radius to centre of outboard TF coil legs
-    r_tf_outboard_mid = rsldo + vvblgap + ddwi + gapomin + thshield + tftsgap + 0.5D0*tfthko
+    r_tf_outboard_mid = rsldo + vvblgap + d_vv_out + gapomin + &
+                        thshield + tftsgap + 0.5D0*tfthko
 
     ! TF coil horizontal bore [m]
     dr_tf_inner_bore = ( r_tf_outboard_mid - 0.5D0*tfthko ) - ( r_tf_inboard_mid - 0.5D0*tfcth )
@@ -210,7 +234,7 @@ contains
     !  If the ripple is too large then move the outboard TF coil leg
     if (r_tf_outboard_midl > r_tf_outboard_mid) then
        r_tf_outboard_mid = r_tf_outboard_midl
-       gapsto = r_tf_outboard_mid - 0.5D0*tfthko - ddwi - rsldo - thshield - tftsgap - vvblgap
+       gapsto = r_tf_outboard_mid - 0.5D0*tfthko - d_vv_out - rsldo - thshield - tftsgap - vvblgap
        dr_tf_inner_bore = ( r_tf_outboard_mid - 0.5D0*tfthko ) - ( r_tf_inboard_mid - 0.5D0*tfcth )
     else
        gapsto = gapomin
@@ -218,7 +242,7 @@ contains
 
     !  Call ripple calculation again with new r_tf_outboard_mid/gapsto value
     !  call rippl(ripmax,rmajor,rminor,r_tf_outboard_mid,n_tf,ripple,r_tf_outboard_midl)
-    call ripple_amplitude(ripple,ripmax,r_tf_outboard_mid,r_tf_outboard_midl,ripflag)
+    call ripple_amplitude( ripple, ripmax, r_tf_outboard_mid, r_tf_outboard_midl, ripflag )
 
     !  Calculate first wall area
     !  Old calculation... includes a mysterious factor 0.875
@@ -355,9 +379,9 @@ contains
     call obuild(outfile,'Gap',gapds,radius,'(gapds)')
     call ovarre(mfile,'thermal shield to vessel radial gap (m)','(gapds)',gapds)
 
-    radius = radius + ddwi + shldith
-    call obuild(outfile,'Vacuum vessel (and shielding)',ddwi + shldith,radius,'(ddwi + shldith)')
-    call ovarre(mfile,'Vacuum vessel radial thickness (m)','(ddwi)',ddwi)
+    radius = radius + d_vv_in + shldith
+    call obuild(outfile,'Vacuum vessel (and shielding)',d_vv_in + shldith,radius,'(d_vv_in + shldith)')
+    call ovarre(mfile,'Inboard vacuum vessel radial thickness (m)','(d_vv_in)',d_vv_in)
     call ovarre(mfile,'Inner radiation shield radial thickness (m)','(shldith)',shldith)
 
     radius = radius + vvblgap
@@ -397,9 +421,10 @@ contains
     radius = radius + vvblgap
     call obuild(outfile,'Gap',vvblgap,radius,'(vvblgap)')
 
-    radius = radius + ddwi+shldoth
-    call obuild(outfile,'Vacuum vessel (and shielding)',ddwi+shldoth,radius,'(ddwi+shldoth)')
+    radius = radius + d_vv_out+shldoth
+    call obuild(outfile,'Vacuum vessel (and shielding)',d_vv_out+shldoth,radius,'(d_vv_out+shldoth)')
     call ovarre(mfile,'Outer radiation shield radial thickness (m)','(shldoth)',shldoth)
+    call ovarre(mfile,'Outboard vacuum vessel radial thickness (m)','(d_vv_out)',d_vv_out)
 
     radius = radius + gapsto
     call obuild(outfile,'Gap',gapsto,radius,'(gapsto)')
@@ -443,8 +468,9 @@ contains
        call obuild(outfile,'Divertor structure',divfix,vbuild,'(divfix)')
        call ovarre(mfile,'Divertor structure vertical thickness (m)','(divfix)',divfix)
 
-       vbuild = vbuild + shldlth + ddwi
-       call obuild(outfile,'Vacuum vessel (and shielding)',ddwi+shldlth,vbuild,'(ddwi+shldlth)')
+       vbuild = vbuild + shldlth + d_vv_bot
+       call obuild(outfile,'Vacuum vessel (and shielding)',d_vv_bot+shldlth,vbuild,'(d_vv_bot+shldlth)')
+       call ovarre(mfile,'Underside vacuum vessel radial thickness (m)','(d_vv_bot)',d_vv_bot)
        call ovarre(mfile,'Bottom radiation shield thickness (m)','(shldlth)',shldlth)
 
        vbuild = vbuild + vgap2
@@ -465,8 +491,8 @@ contains
        call ocmmnt(outfile,'Single null case')
        write(outfile,20)
 
-       vbuild = tfcth + tftsgap + thshield + vgap2 + ddwi + vvblgap + shldtth + blnktth + &
-            0.5D0*(fwith+fwoth) + vgaptop + rminor*kappa
+       vbuild = tfcth + tftsgap + thshield + vgap2 + 0.5D0*(d_vv_top+d_vv_bot) + &
+                vvblgap + shldtth + blnktth + 0.5D0*(fwith+fwoth) + vgaptop + rminor*kappa
 
        ! To calculate vertical offset between TF coil centre and plasma centre
        vbuild1 = vbuild
@@ -484,8 +510,9 @@ contains
        call ovarre(mfile,'Vessel - TF coil vertical gap (m)','(vgap2)',vgap2)
        vbuild = vbuild - vgap2
 
-       call obuild(outfile,'Vacuum vessel (and shielding)',ddwi+shldtth,vbuild,'(ddwi+shldtth)')
-       vbuild = vbuild - ddwi - shldtth
+       call obuild(outfile,'Vacuum vessel (and shielding)',d_vv_top+shldtth,vbuild,'(d_vv_top+shldtth)')
+       vbuild = vbuild - d_vv_top - shldtth
+       call ovarre(mfile,'Topside vacuum vessel radial thickness (m)','(d_vv_top)',d_vv_top)
        call ovarre(mfile,'Top radiation shield thickness (m)','(shldtth)',shldtth)
 
        call obuild(outfile,'Gap',vvblgap,vbuild,'(vvblgap)')
@@ -523,9 +550,10 @@ contains
 
        vbuild = vbuild - shldlth
 
-       vbuild = vbuild - ddwi
-       call obuild(nout,'Vacuum vessel (and shielding)',ddwi+shldlth,vbuild,'(ddwi+shldlth)')
+       vbuild = vbuild - d_vv_bot
+       call obuild(nout,'Vacuum vessel (and shielding)',d_vv_bot+shldlth,vbuild,'(d_vv_bot+shldlth)')
        call ovarre(mfile,'Bottom radiation shield thickness (m)','(shldlth)',shldlth)
+       call ovarre(mfile,'Underside vacuum vessel radial thickness (m)','(d_vv_bot)',d_vv_bot)
 
        vbuild = vbuild - vgap2
        call obuild(nout,'Gap',vgap2,vbuild,'(vgap2)')
@@ -571,7 +599,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use build_variables, only: shldtth, vgap2, fwoth, vgap, vvblgap, hpfdif, &
       tfcth, vgaptop, hpfu, thshield, fwith, tftsgap, dh_tf_inner_bore, &
-      shldlth, hmax, blnktth, ddwi
+      shldlth, hmax, blnktth, d_vv_top, d_vv_bot
 		use divertor_variables, only: divfix
 		use physics_variables, only: rminor, i_single_null, kappa
     implicit none
@@ -597,19 +625,19 @@ contains
 
     ! Height to inside edge of TF coil
     ! Rem SK : definition only valid for double null! 
-    hmax = rminor*kappa + vgap + divfix + shldlth + ddwi + vgap2 + thshield + tftsgap
+    hmax = rminor*kappa + vgap + divfix + shldlth + d_vv_bot + vgap2 + thshield + tftsgap
 
     ! TF coil vertical bore [m] (Not sure it is entirely consistent !)
     ! Rem SK : not consistend for single null!
     dh_tf_inner_bore = 2.0D0*(rminor*kappa + vgaptop + fwith + blnktth + vvblgap + &
-        shldtth + ddwi+ vgap2 + thshield + tftsgap)
+        shldtth + d_vv_top+ vgap2 + thshield + tftsgap)
 
     !  Vertical locations of divertor coils
     if (i_single_null == 0) then
        hpfu = hmax + tfcth
        hpfdif = 0.0D0
     else
-       hpfu = tfcth + tftsgap + thshield + vgap2 + ddwi + shldtth + vvblgap + blnktth + &
+       hpfu = tfcth + tftsgap + thshield + vgap2 + d_vv_top + shldtth + vvblgap + blnktth + &
             0.5D0*(fwith+fwoth) + vgaptop + rminor*kappa
        hpfdif = (hpfu - (hmax+tfcth)) / 2.0D0
     end if
@@ -954,46 +982,119 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use physics_variables, only: rminor, rmajor
-		use tfcoil_variables, only: tinstf, wwp1, n_tf, tftort, casths
+      use tfcoil_variables, only: tinstf, wwp1, n_tf, tftort, casths, dr_tf_wp, &
+         thkcas, casths_fraction, i_tf_sup, i_tf_wp_geom, tfinsgap, &
+         tfc_sidewall_is_fraction
+      use constants, only: pi
+      use build_variables, only: r_tf_inboard_in
     implicit none
 
-    !  Arguments
+    ! Arguments
+    ! ---------
+    ! Inputs 
+    ! ---
+    real(dp), intent(in) :: ripmax
+    !! Maximum tolearble outboard plasma ripple
+
+    real(dp), intent(in) :: r_tf_outboard_mid
+    !! Intial outboard middle of the TF coil conducting layer [m]
+
+    ! Outputs
+    ! ---
+    real(dp), intent(out) :: ripple
+    !! Calcualted plasma ripple
+
+    real(dp), intent(out) :: r_tf_outboard_midmin
+    !! Outboard middle of the TF coil conducting layer [m]
+    !! calculated with the user input ripple
 
     integer, intent(out) :: flag
-    real(dp), intent(in) :: ripmax,r_tf_outboard_mid
-    real(dp), intent(out) :: ripple,r_tf_outboard_midmin
+    !! Out of fitting range error flag 
+    ! ---
 
-    !  Local variables
+    ! Local variables
+    ! ---
+    real(dp) :: t_wp_max
+    !! Minimal radius where the WP toroidal thickness is maximum [m]
+    !! Internal variable corresponding to wwp1
 
-    real(dp) :: w, x, c1, c2, n
+    real(dp) :: side_case_th
+    !! Locally calculated sidewall case thickness
+    !! Internal variable corresponding to casths
+
+    real(dp) :: r_wp_min
+    !! Minimal inboard WP radius [m]
+    !! Internal variable corresponding to r_wp_inner in sctfcoil
+
+    real(dp) :: r_wp_max
+    !! Radius used to define the t_wp_max [m]    
+
+    real(dp) :: x
+    !! Winding pack to iter-coil at plasma centre toroidal lenth ratio
+
+    real(dp) :: n
+    !! Number of TF coils
+    !! n_tf converted in real number
+
+    real(dp) :: c1, c2
+    ! ---
+    ! ---------
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     n = real(n_tf, kind(1.0D0))
 
-    !  TF coil winding pack width
+    ! Calculation of the toroidal WP thickness
+    if ( i_tf_sup == 1 ) then 
 
-    if (wwp1 == 0.0D0) then  !  not yet calculated
-       w = tftort - 2.0D0*(casths + tinstf)  !  rough estimate of wwp1
-       x = w*n/rmajor
+      ! Minimal inboard WP radius [m]
+      r_wp_min = r_tf_inboard_in + thkcas
+
+      ! Rectangular WP
+      if ( i_tf_wp_geom == 0 ) then
+         r_wp_max = r_wp_min
+
+      ! Double rectangle WP
+      else if ( i_tf_wp_geom == 1 ) then
+         r_wp_max = r_wp_min + 0.5D0 * dr_tf_wp
+
+      ! Trapezoidal WP
+      else if ( i_tf_wp_geom == 2 ) then
+         r_wp_max = r_wp_min + dr_tf_wp
+      end if
+
+      ! Calculated maximum toroidal WP toroidal thickness [m]
+      if ( tfc_sidewall_is_fraction ) then
+         t_wp_max = 2.0D0 * ( ( r_wp_max - casths_fraction * r_wp_min ) &
+                              * tan(pi/n) - tinstf - tfinsgap )
+      else 
+         t_wp_max = 2.0D0 * ( r_wp_max * tan(pi/n) - casths - tinstf - tfinsgap )
+      end if 
+         
+    ! Resistive magnet case
     else
-       x = wwp1*n/rmajor
-    end if
+      ! Radius used to define the t_wp_max [m]
+      r_wp_max = r_tf_inboard_in + thkcas + dr_tf_wp
 
+      ! Calculated maximum toroidal WP toroidal thickness [m]
+      t_wp_max = 2.0D0 * r_wp_max * tan(pi/n)
+    end if 
+
+    ! Winding pack to iter-coil at plasma centre toroidal lenth ratio 
+    x = t_wp_max * n/rmajor
+
+    ! Fitting parameters
     c1 = 0.875D0 - 0.0557D0*x
     c2 = 1.617D0 + 0.0832D0*x
 
     !  Calculated ripple for coil at r_tf_outboard_mid (%)
-
     ripple = 100.0D0 * c1*( (rmajor+rminor)/r_tf_outboard_mid )**(n-c2)
 
     !  Calculated r_tf_outboard_mid to produce a ripple of amplitude ripmax
-
     r_tf_outboard_midmin = (rmajor+rminor) / &
          ( (0.01D0*ripmax/c1)**(1.0D0/(n-c2)) )
 
     !  Notify via flag if a range of applicability is violated
-
     flag = 0
     if ((x < 0.737D0).or.(x > 2.95D0)) flag = 1
     if ((n_tf < 16).or.(n_tf > 20)) flag = 2

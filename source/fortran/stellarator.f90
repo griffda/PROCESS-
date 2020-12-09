@@ -332,10 +332,11 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use build_variables, only: blbmith, blbmoth, blbpith, blbpoth, blbuith, &
-      blbuoth, blnkith, blnkoth, blnktth, bore, ddwi, fwarea, fwith, fwoth, &
-      gapds, gapoh, gapomin, gapsto, hmax, ohcth, r_tf_outboard_mid, rbld, &
-      rsldi, rsldo, rspo, scrapli, scraplo, shldith, shldoth, shldtth, tfcth, &
-      tfthko, available_radial_space, f_avspace, required_radial_space
+      blbuoth, blnkith, blnkoth, blnktth, bore, d_vv_in, d_vv_out, fwarea, &
+      fwith, fwoth, gapds, gapoh, gapomin, gapsto, hmax, ohcth, &
+      r_tf_outboard_mid, rbld, rsldi, rsldo, rspo, scrapli, scraplo, shldith, &
+      shldoth, shldtth, tfcth, tfthko, available_radial_space, f_avspace, &
+      required_radial_space
     use fwbs_variables, only: afw, blktmodel, fdiv, fhcd, fhole, fw_wall
     use heat_transport_variables, only: ipowerflow
     use physics_variables, only: rmajor, rminor, sarea
@@ -374,12 +375,14 @@ contains
     !  Radial build to centre of plasma (should be equal to rmajor)
 
     rbld = bore + ohcth + gapoh + tfcth + gapds + &
-         ddwi + shldith + blnkith + fwith + scrapli + rminor
+         d_vv_in + shldith + blnkith + fwith + scrapli + rminor
 
 
-    ! Bc stellarators cannot scale rminor reasonably well an additional constraint equation is required,
-    ! that ensures that there is enough space between coils and plasma.
-    required_radial_space = (tfcth/2.0D0 + gapds + ddwi + shldith + blnkith + fwith + scrapli)
+    ! Bc stellarators cannot scale rminor reasonably well an
+    ! additional constraint equation is required, that ensures
+    ! that there is enough space between coils and plasma.
+    required_radial_space = (tfcth/2.0D0 + gapds + d_vv_in + &
+                          shldith + blnkith + fwith + scrapli)
 
     available_radial_space = config%min_plasma_coil_distance * rmajor
 
@@ -400,15 +403,15 @@ contains
     !  Radius to centre of outboard TF coil legs
 
     gapsto = gapomin
-    r_tf_outboard_mid = rsldo + ddwi + gapsto + 0.5D0*tfthko
+    r_tf_outboard_mid = rsldo + d_vv_out + gapsto + 0.5D0*tfthko
 
     !  Height to inside edge of TF coil
     !  Roughly equal to average of (inboard build from TF coil to plasma
     !  centre) and (outboard build from plasma centre to TF coil)
 
     hmax = 0.5D0 * ( &
-         (gapds+ddwi+shldith+blnkith+fwith+scrapli+rminor) + &
-         (rminor+scraplo+fwoth+blnkoth+shldoth+ddwi+gapsto) )
+         (gapds+d_vv_in+shldith+blnkith+fwith+scrapli+rminor) + &
+         (rminor+scraplo+fwoth+blnkoth+shldoth+d_vv_out+gapsto) )
 
     !  Outer divertor strike point radius, set equal to major radius
 
@@ -456,9 +459,9 @@ contains
     call obuild(outfile,'Gap',gapds,radius,'(gapds)')
     call ovarre(mfile,'Gap (m)','(gapds)',gapds)
 
-    radius = radius + ddwi
-    call obuild(outfile,'Vacuum vessel',ddwi,radius,'(ddwi)')
-    call ovarre(mfile,'Vacuum vessel radial thickness (m)','(ddwi)',ddwi)
+    radius = radius + d_vv_in
+    call obuild(outfile,'Vacuum vessel',d_vv_in,radius,'(d_vv_in)')
+    call ovarre(mfile,'Vacuum vessel radial thickness (m)','(d_vv_in)',d_vv_in)
 
     radius = radius + shldith
     call obuild(outfile,'Inboard shield',shldith,radius,'(shldith)')
@@ -498,8 +501,8 @@ contains
     call obuild(outfile,'Outboard shield',shldoth,radius,'(shldoth)')
     call ovarre(mfile,'Outer radiation shield radial thickness (m)','(shldoth)',shldoth)
 
-    radius = radius + ddwi
-    call obuild(outfile,'Vacuum vessel',ddwi,radius,'(ddwi)')
+    radius = radius + d_vv_out
+    call obuild(outfile,'Vacuum vessel',d_vv_out,radius,'(d_vv_out)')
 
     radius = radius + gapsto
     call obuild(outfile,'Gap',gapsto,radius,'(gapsto)')
@@ -892,10 +895,10 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use build_variables, only: blarea, blareaib, blbmith, blbmoth, blbpith, &
-      blbpoth, blbuith, blbuoth, blnkith, blnkoth, blnktth, ddwex, ddwi, &
-      fwarea, fwareaib, fwareaob, fwith, fwoth, r_tf_outboard_mid, scrapli, &
-      scraplo, sharea, shareaib, shareaob, shldith, shldoth, shldtth, tfthko, &
-      blareaob
+      blbpoth, blbuith, blbuoth, blnkith, blnkoth, blnktth, ddwex, d_vv_in, &
+      d_vv_out, fwarea, fwareaib, fwareaob, fwith, fwoth, r_tf_outboard_mid, &
+      scrapli, scraplo, sharea, shareaib, shareaob, shldith, shldoth, shldtth, &
+      tfthko, blareaob
     use cost_variables, only: abktflnc, tlife
     use current_drive_variables, only: porbitlossmw
     use divertor_variables, only: divclfr, divdens, divmas, divplt, divsur
@@ -1346,7 +1349,7 @@ contains
 
     r1 = rminor + 0.5D0*(scrapli+fwith+blnkith+shldith &
          + scraplo+fwoth+blnkoth+shldoth)
-    vdewin = ddwi * sarea * r1/rminor * fvoldw
+    vdewin = (d_vv_in+d_vv_out)/2.0D0 * sarea * r1/rminor * fvoldw
 
     !  Vacuum vessel mass
 
@@ -2025,7 +2028,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables, only: blnkith, blnkoth, ddwi, dh_tf_inner_bore, &
+    use build_variables, only: blnkith, blnkoth, dh_tf_inner_bore, &
       dr_tf_inner_bore, fwith, fwoth, gapds, gapsto, hmax, r_tf_outboard_mid, &
       r_tf_outboard_mid, scrapli, scraplo, shldith, shldoth, tfcth, tfthko, &
       r_tf_inboard_mid, vvblgap
@@ -2043,7 +2046,7 @@ contains
       whtcon, whtconcu, whtconsc, whtconsh, whttf, wwp1, dcond, awphec, dcondins, &
       i_tf_sc_mat, jwdgpro, max_force_density, sigvvall, strtf2, taucq, &
       tdmptf, tmaxpro, toroidalgap, vtfkv, whtconin, wwp2, vdalw, bcritsc, fhts, &
-      tcritsc, vtfskv, t_turn
+      tcritsc, vtfskv, t_turn_tf
 		use constants, only: rmu0, twopi, pi, dcopper
 		use maths_library, only: find_y_nonuniform_x, tril, sumup3, ellipke
     use superconductors, only : jcrit_rebco, jcrit_nbti, bi2212, itersc, wstsc
@@ -2086,7 +2089,7 @@ contains
      !       
      ! [m] Dimension of square cable space inside insulation
      !     and case of the conduit of each turn
-     t_cable = t_turn - 2.0D0 * (thwcndut + thicndut)  !  t_cable = t_w
+     t_cable = t_turn_tf - 2.0D0 * (thwcndut + thicndut)  !  t_cable = t_w
      if(t_cable<0) print *, "t_cable is negative. Check t_turn, thwcndut and thicndut."
      ! [m^2] Cross-sectional area of cable space per turn
      acstf = 0.9D0 * t_cable**2 ! 0.9 to include some rounded corners. (acstf = pi (t_cable/2)**2 = pi/4 *t_cable**2 for perfect round conductor). This factor depends on how round the corners are.
@@ -2125,7 +2128,7 @@ contains
      LHS = fiooic * jcrit_vector 
      
      ! Conduct fraction of conduit * Superconductor fraction in conductor
-     f_scu =   (acstf*(1.0D0-vftf))/(t_turn**2)*(1.0D0-fcutfsu) !fraction that is SC of wp.
+     f_scu =   (acstf*(1.0D0-vftf))/(t_turn_tf**2)*(1.0D0-fcutfsu) !fraction that is SC of wp.
      !print *, "f_scu. ",f_scu,"Awp min: ",Awp(1)
  
      RHS = coilcurrent/(Awp(:)*f_scu) ! f_scu should be the fraction of the sc that is in the winding pack.
@@ -2137,7 +2140,7 @@ contains
      call intersect(Awp,LHS,N_it,Awp,RHS,N_it,Awp_min)
  
      ! Maximum field at superconductor surface (T)
-     Awp_min = Max(t_turn**2,Awp_min)
+     Awp_min = Max(t_turn_tf**2,Awp_min)
  
      ! Recalculate bmaxtf at the found awp_min:
      bmaxtf = bmax_from_awp(Awp_min/r_coil_major**2,coilcurrent)
@@ -2156,14 +2159,14 @@ contains
 
      awptf = awp_tor*awp_rad                 ! [m^2] winding-pack cross sectional area
      jwptf = coilcurrent*1.0D6/awptf         ! [A/m^2] winding pack current density
-     n_tf_turn = awptf / (t_turn**2)           !  estimated number of turns for a given turn size (not global). Take at least 1.
+     n_tf_turn = awptf / (t_turn_tf**2)           !  estimated number of turns for a given turn size (not global). Take at least 1.
      cpttf = coilcurrent*1.0D6 / n_tf_turn     ! [A] current per turn - estimation
      ! [m^2] Total conductor cross-sectional area, taking account of void area
      acond = acstf*n_tf_turn * (1.0D0-vftf)
      ! [m^2] Void area in cable, for He
      avwp = acstf*n_tf_turn*vftf
      ! [m^2] Insulation area (not including ground-wall)
-     aiwp = n_tf_turn * (t_turn**2 - acndttf - acstf)
+     aiwp = n_tf_turn * (t_turn_tf**2 - acndttf - acstf)
      ! [m^2] Structure area for cable
      aswp = n_tf_turn*acndttf
    ! End of winding pack calculations
@@ -2302,7 +2305,7 @@ contains
      taucq = (bt * ritfc * rminor * rminor) / (radvv * sigvvall)
  
      ! the conductor fraction is meant of the cable space!
-     call protect(cpttf,estotftgj/n_tf*1.0D9,acstf, t_turn**2 ,tdmptf,1-vftf,fcutfsu,tftmp,tmaxpro,jwdgpro,vd)
+     call protect(cpttf,estotftgj/n_tf*1.0D9,acstf, t_turn_tf**2 ,tdmptf,1-vftf,fcutfsu,tftmp,tmaxpro,jwdgpro,vd)
   
      ! Also give the copper area for REBCO quench calculations:
      copperA_m2 = coilcurrent*1.0D6/(acond * fcutfsu)

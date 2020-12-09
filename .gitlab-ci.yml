@@ -140,7 +140,6 @@ step_input:
     - develop
   stage: testing
   image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
-  stage: pages
   script:
     - git config --global user.email "james.morris2@ukaea.uk"
     - git config --global user.name "James Morris"
@@ -149,7 +148,7 @@ step_input:
     - echo $MESSAGE
     - pwd
     - cat commit_msg.txt
-    - git clone https://smuldrew:Lxf8sdD9uvMxfdU6UEYS@git.ccfe.ac.uk/smuldrew/process-step.git
+    - git clone https://gitlab-ci-token:${STP_CI_API_TOKEN}@git.ccfe.ac.uk/smuldrew/process-step.git
     - cp commit_msg.txt process-step
     - cd process-step
     - ls
@@ -185,7 +184,7 @@ make_freia:
     - gcc --version
     - ls -lah
     - rm -rf build
-    - cmake3 -H. -Bbuild
+    - cmake3 -H. -Bbuild -DGTEST_INCLUDE_DIRS=$GTEST/include/ -DGTEST_LIBRARIES=$GTEST/lib/libgtest.a
     - cmake3 --build build
     - ls bin -lah
     - echo "Test "
@@ -207,12 +206,10 @@ make_dicts_freia:
     - pwd
     - gcc --version
     - ls -lah
-    - cmake3 -H. -Bbuild
+    - cmake3 -H. -Bbuild -DGTEST_INCLUDE_DIRS=$GTEST/include/ -DGTEST_LIBRARIES=$GTEST/lib/libgtest.a
     - cmake3 --build build --target dicts
   tags:
     - freia
-
-
 
 baseline_2019_freia:
   when: on_success
@@ -222,7 +219,7 @@ baseline_2019_freia:
   <<: *build-freia-setup
   script:
     - pwd
-    - cmake3 -H. -Bbuild
+    - cmake3 -H. -Bbuild -DGTEST_INCLUDE_DIRS=$GTEST/include/ -DGTEST_LIBRARIES=$GTEST/lib/libgtest.a
     - cmake3 --build build
     - cmake3 --build build --target dicts
     - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
@@ -249,7 +246,8 @@ baseline_2018_freia:
   <<: *build-freia-setup
   script:
     - pwd
-    - cmake3 -H. -Bbuild
+    - cmake3 -H. -Bbuild -DGTEST_INCLUDE_DIRS=$GTEST/include/ -DGTEST_LIBRARIES=$GTEST/lib/libgtest.a
+    - cmake3 --build build
     - cmake3 --build build --target dicts
     - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
     - cd tracking/baseline_2018

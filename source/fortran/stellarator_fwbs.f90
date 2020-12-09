@@ -44,7 +44,7 @@ contains
       blbpith, blbpoth, blbuith, blbuoth, blnkith, blnkoth, blnktth, clhsf, &
       ddwex, fwarea, fwith, fwoth, hmax, rsldi, rsldo, scrapli, scraplo, &
       sharea, shareaib, shareaob, shldith, shldoth, shldtth, vgap, vgap2, &
-      ddwi, tfcth
+      d_vv_in, d_vv_out, d_vv_top, d_vv_bot, tfcth
     use buildings_variables, only: clh1
     use cost_variables, only: cfactr, tlife
     use divertor_variables, only: divclfr, divdens, divfix, divmas, divplt, &
@@ -634,12 +634,13 @@ contains
     !  Factor of 2 to account for outside part of TF coil
     !  fvoldw accounts for ports, support, etc. additions
     !
-    !vdewin = (2.0D0*(2.0D0*hmax) + 2.0D0 * (rsldo-rsldi)) * &
-    !     2.0D0 * pi * rmajor * ddwi * 2.0D0 * fvoldw
+    !  d_vv_av = (d_vv_in+d_vv_out+d_vv_top+d_vv_bot)/4.0D0
+    !  vdewin = (2.0D0*(2.0D0*hmax) + 2.0D0 * (rsldo-rsldi)) * &
+    !     2.0D0 * pi * rmajor * d_vv_av * 2.0D0 * fvoldw
 
-    hbot = hmax - vgap2 - ddwi
+    hbot = hmax - vgap2 - d_vv_bot
     if (idivrt == 2) then  !  (i.e. i_single_null=0)
-       htop = hbot
+       htop = hmax - vgap2 - d_vv_top
     else
        htop = rminor*kappa + 0.5D0*(scrapli+scraplo + fwith+fwoth) &
             + blnktth + shldtth
@@ -663,7 +664,8 @@ contains
 
     !  Calculate volume, assuming 100% coverage
 
-    call eshellvol(r1,r2,r3,hvv,ddwi,ddwi,ddwi,v1,v2,vdewin)
+    call eshellvol(r1,r2,r3,hvv,d_vv_in,d_vv_out, &
+                  (d_vv_top+d_vv_bot)/2,v1,v2,vdewin)
 
     !  Apply area coverage factor
 
@@ -672,7 +674,7 @@ contains
     !  Vacuum vessel mass - original obscure calculation replaced
 
     !cryomass = fvolcry * 4.0D0 * (2.0D0*(r_tf_outboard_mid-rsldi) + 2.0D0*hmax) * &
-    !     2.0D0 * pi * rmajor * ddwi * denstl
+    !     2.0D0 * pi * rmajor * d_vv_av * denstl
 
     vvmass = vdewin * denstl
 
@@ -875,8 +877,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use build_variables, only: blareaib, blareaob, blbmith, blbmoth, blbpith, &
-      blbpoth, blbuith, blbuoth, ddwi, fwareaib, fwareaob, fwith, fwoth, &
-      shareaib, shareaob, shldith, shldoth
+      blbpoth, blbuith, blbuoth, d_vv_in, d_vv_out, fwareaib, fwareaob, fwith, &
+      fwoth, shareaib, shareaob, shldith, shldoth
     use cost_variables, only: cfactr, tlife
     use fwbs_variables, only: bktlife, breedmat, densbreed, emult, fblbe, &
       fblbreed, fblhebmi, fblhebmo, fblhebpi, fblhebpo, fblss, fdiv, fhcd, &
@@ -966,7 +968,7 @@ contains
     t_BZ_IB = blbuith * 100.0D0          ! [cm] BZ thickness
     t_BM_IB = blbmith * 100.0D0          ! [cm] BM thickness
     t_BP_IB = blbpith * 100.0D0          ! [cm] BP thickness
-    t_VV_IB = (shldith+ddwi) * 100.0D0   ! [cm] VV thickness
+    t_VV_IB = (shldith+d_vv_in) * 100.0D0   ! [cm] VV thickness
     alpha_BM_IB = fblhebmi * 100.0D0     ! [%] Helium fraction in the IB BM
     alpha_BP_IB = fblhebpi * 100.0D0     ! [%] Helium fraction in the IB BP
     chi_Be_BZ_IB = fblbe * 100.0D0       ! [%] Beryllium vol. frac. in IB BZ
@@ -978,7 +980,7 @@ contains
     t_BZ_OB = blbuoth * 100.0D0          ! [cm] BZ thickness
     t_BM_OB = blbmoth * 100.0D0          ! [cm] BM thickness
     t_BP_OB = blbpoth * 100.0D0          ! [cm] BP thickness
-    t_VV_OB = (shldoth+ddwi) * 100.0D0   ! [cm] VV thickness
+    t_VV_OB = (shldoth+d_vv_out) * 100.0D0   ! [cm] VV thickness
     alpha_BM_OB = fblhebmo * 100.0D0     ! [%] Helium fraction in the OB BM
     alpha_BP_OB = fblhebpo * 100.0D0     ! [%] Helium fraction in the OB BP
     chi_Be_BZ_OB = fblbe * 100.0D0       ! [%] Beryllium vol. frac. in OB BZ

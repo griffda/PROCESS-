@@ -203,7 +203,7 @@ subroutine output(outfile)
 
   ! Tight aspect ratio machine model !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  if (itart == 1) then
+  if (itart == 1 .and. i_tf_sup /= 1) then
     call cntrpst(outfile,1)
   end if
 

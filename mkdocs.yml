@@ -6,10 +6,11 @@ nav:
     - FORD docs: ford_site/ford.md
     - Cost Models: cost-models/cost-models.md
     - Development: 
-        - Tools: development/tools.md
         - Standards: development/standards.md
+        - Adding Variables & Constraints: development/add-vars.md
         - Continuous Integration: development/ci-guide.md
         - Unit Tests: development/unit-tests.md
+        - Tools: development/tools.md   
     - Engineering Models:
         - Machine Build: eng-models/machine-build.md
         - Structural Components: eng-models/structural-components.md

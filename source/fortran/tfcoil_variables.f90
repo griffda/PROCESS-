@@ -84,8 +84,28 @@ module tfcoil_variables
   real(dp) :: t_conductor
   !! Conductor (cable + steel conduit) area averaged dimension [m]
   
-  real(dp) :: t_turn
-  !! WP turn squared dimensions [m]
+  real(dp) :: t_turn_tf
+  !! TF turn edge length including turn insulation [m]
+  !!   If the turn is not a square (i_tf_turns_integer = 1) a squared turn of 
+  !!   equivelent size is use to calculated this quantity
+  !!   If the t_turn_tf is non zero, cpttf is calculated
+
+  logical :: t_turn_tf_is_input
+  !! Boolean switch to activated when the user set the TF turn dimensions
+  !! Not an input
+
+  real(dp) :: f_t_turn_tf
+  !! f-value for TF turn edge length constraint 
+  !!  If the turn is not a square (i_tf_turns_integer = 1) a squared turn of 
+  !!  equivelent size is use for this constraint
+  !!  iteration variable ixc = 175
+  !!  constraint equation icc = 86
+
+  real(dp) :: t_turn_tf_max
+  !! TF turn edge length including turn insulation upper limit [m] 
+  !! If the turn is not a square (i_tf_turns_integer = 1) a squared turn of 
+  !! equivelent size is use for this constraint
+  !! constraint equation icc = 86
 
   real(dp) :: acs
   !! Area of space inside conductor (m2)
@@ -738,9 +758,12 @@ module tfcoil_variables
     casthi_fraction = 0.05D0
     casthi_is_fraction = .false.
     casths = 0.0D0
-    casths_fraction = 0.03D0
+    casths_fraction = 0.06D0
     t_conductor = 0.0D0
-    t_turn = 0.0D0
+    t_turn_tf = 0.0D0
+    t_turn_tf_is_input = .false.
+    f_t_turn_tf = 1.0D0
+    t_turn_tf_max = 0.05
     acs = 0.0D0
     cdtfleg = 0.0D0
     cforce = 0.0D0

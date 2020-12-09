@@ -764,7 +764,7 @@ def create_plots():
     # create radial build plot
     # TODO: non-hard coded list needed
     radial_build = ["bore", "ohcth", "precomp", "gapoh", "tfcth", "deltf", "thshield", 
-         "gapds", "ddwi", "shldith", "vvblgap", "blnkith", "fwith", "scrapli", "rminor"]
+         "gapds", "d_vv_in", "shldith", "vvblgap", "blnkith", "fwith", "scrapli", "rminor"]
     radial_bar_plot(radial_build, MFILE, show=False, save=True, save_path=save_p)
 
     # create plasma profiles plot

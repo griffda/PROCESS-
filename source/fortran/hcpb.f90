@@ -493,8 +493,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables, only: hmax, vgap2, ddwi, scrapli, scraplo, fwith, &
-      fwoth, blnktth, shldtth
+    use build_variables, only: hmax, vgap2, d_vv_bot, d_vv_top, &
+      scrapli, scraplo, fwith, fwoth, blnktth, shldtth
     use physics_variables, only: idivrt, rminor, kappa
 
     implicit none
@@ -505,12 +505,12 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Calculate vacuum vessel internal lower half-height (m)
-    hbot = hmax - vgap2 - ddwi
+    hbot = hmax - vgap2 - d_vv_bot
 
     ! Calculate vacuum vessel internal upper half-height (m)
     ! if a double null machine then symmetric otherwise asymmetric
     if (idivrt == 2) then
-       htop = hbot
+       htop = hmax - vgap2 - d_vv_top
     else
        htop = rminor*kappa + 0.5D0*(scrapli+scraplo + fwith+fwoth) &
             + blnktth + shldtth
@@ -610,7 +610,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables, only: rsldi, rsldo, ddwi
+    use build_variables, only: rsldi, rsldo, d_vv_in, d_vv_out, &
+                               d_vv_top, d_vv_bot
     use fwbs_variables, only: vdewin, fvoldw
     use maths_library, only: dshellvol
 
@@ -635,7 +636,8 @@ contains
     r2 = rsldo - r1
 
     ! Calculate volume, assuming 100% coverage
-    call dshellvol(r1, r2, hvv, ddwi, ddwi, ddwi, v1, v2, vdewin)
+    call dshellvol(r1, r2, hvv, d_vv_in, d_vv_out, &
+                  (d_vv_top+d_vv_bot)/2, v1, v2, vdewin)
 
     ! Apply area coverage factor
     vdewin = fvoldw*vdewin
@@ -745,7 +747,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables, only: rsldi, rsldo, ddwi
+    use build_variables, only: rsldi, rsldo, d_vv_in, d_vv_out, &
+                               d_vv_top, d_vv_bot
     use fwbs_variables, only: vdewin, fvoldw
     use physics_variables, only: rmajor, rminor, triang
     use maths_library, only: eshellarea, eshellvol
@@ -777,7 +780,8 @@ contains
     r3 = rsldo - r1
 
     ! Calculate volume, assuming 100% coverage
-    call eshellvol(r1, r2, r3, hvv, ddwi, ddwi, ddwi, v1, v2, vdewin)
+    call eshellvol(r1, r2, r3, hvv, d_vv_in, d_vv_out, &
+                  (d_vv_top+d_vv_bot)/2, v1, v2, vdewin)
 
     ! Apply area coverage factor
     vdewin = fvoldw*vdewin
@@ -885,8 +889,8 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use constants, only: pi
-    use build_variables, only: fwith, ddwi, fwoth, blnkith, blnkoth, shldith, &
-      shldoth
+    use build_variables, only: fwith, d_vv_in, d_vv_out, d_vv_top, d_vv_bot, &
+      fwoth, blnkith, blnkoth, shldith, shldoth
     use fwbs_variables, only: afw, pitch, denstl, whtblkt, volblkt, whtshld, &
       volshld, vvmass, vdewin, fw_armour_thickness, ptfnuc
     use physics_variables, only: powfmw, itart
@@ -910,6 +914,9 @@ contains
     real(dp) :: th_shield_av
     !! Average blanket thickness
 
+
+    ! largest vaccum vessel thickness
+    real(dp) :: d_vv_all
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -935,7 +942,12 @@ contains
     fw_density = denstl*(1.0D0-vffwm)
     blanket_density = whtblkt / volblkt
     shield_density = whtshld / volshld
-    if (ddwi>1.0D-6) then
+    ! Picking the largest value for VV thickness
+    d_vv_all = d_vv_in
+    if (d_vv_out > d_vv_all) then
+        d_vv_all = d_vv_out
+    end if
+    if (d_vv_all>1.0D-6) then
         vv_density = vvmass / vdewin
     else
         vv_density = 0.0D0
@@ -965,8 +977,8 @@ contains
               + blanket_density * th_blanket_av ) / 1000.0D0
 
     ! Shield exponent(/1000 for kg -> tonnes)
-    x_shield = (shield_density * th_shield_av &
-             + vv_density * ddwi) / 1000.D0
+    x_shield = (shield_density * th_shield_av + &
+              vv_density * (d_vv_in+d_vv_out)/2.0D0) / 1000.D0
 
     ! Nuclear heating in TF coil
     ! Unit heating (W/kg/GW of fusion power) x mass (kg)
@@ -3014,8 +3026,8 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use build_variables, only: fwith, fwoth, fwareaib, fwareaob, blareaib, &
-      blareaob, shareaib, shareaob, blbuith, blbmith, blbpith, shldith, ddwi, &
-      blbuoth, blbmoth, blbpoth, shldoth
+      blareaob, shareaib, shareaob, blbuith, blbmith, blbpith, shldith, d_vv_in, &
+      d_vv_out, blbuoth, blbmoth, blbpoth, shldoth
     use cost_variables, only: abktflnc, tlife, cfactr
     use fwbs_variables, only: afw, fw_wall, fwlife, coolwh, wallpf, fhcd, fdiv, &
       npdiv, nphcdin, nphcdout, hcdportsize, li6enrich, breedmat, densbreed, &
@@ -3102,7 +3114,7 @@ contains
     t_BZ_IB = blbuith * 100.0D0          ! [cm] BZ thickness
     t_BM_IB = blbmith * 100.0D0          ! [cm] BM thickness
     t_BP_IB = blbpith * 100.0D0          ! [cm] BP thickness
-    t_VV_IB = (shldith+ddwi) * 100.0D0   ! [cm] VV thickness
+    t_VV_IB = (shldith+d_vv_in) * 100.0D0 ! [cm] VV thickness
     alpha_BM_IB = fblhebmi * 100.0D0     ! [%] Helium fraction in the IB BM
     alpha_BP_IB = fblhebpi * 100.0D0     ! [%] Helium fraction in the IB BP
     chi_Be_BZ_IB = fblbe * 100.0D0       ! [%] Beryllium vol. frac. in IB BZ
@@ -3113,7 +3125,7 @@ contains
     t_BZ_OB = blbuoth * 100.0D0          ! [cm] BZ thickness
     t_BM_OB = blbmoth * 100.0D0          ! [cm] BM thickness
     t_BP_OB = blbpoth * 100.0D0          ! [cm] BP thickness
-    t_VV_OB = (shldoth+ddwi) * 100.0D0   ! [cm] VV thickness
+    t_VV_OB = (shldoth+d_vv_out) * 100.0D0 ! [cm] VV thickness
     alpha_BM_OB = fblhebmo * 100.0D0     ! [%] Helium fraction in the OB BM
     alpha_BP_OB = fblhebpo * 100.0D0     ! [%] Helium fraction in the OB BP
     chi_Be_BZ_OB = fblbe * 100.0D0       ! [%] Beryllium vol. frac. in OB BZ
@@ -3959,8 +3971,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables, only: hmax, vgap2, ddwi, scrapli, scraplo, fwith, &
-      fwoth, blnktth, shldtth
+    use build_variables, only: hmax, vgap2, d_vv_bot, d_vv_top, &
+      scrapli, scraplo, fwith, fwoth, blnktth, shldtth
     use physics_variables, only: idivrt, rminor, kappa
 
     implicit none
@@ -3969,7 +3981,7 @@ contains
     real(dp) :: hbot, htop
 
     ! Calculate vacuum vessel internal lower half-height (m)
-    hbot = hmax - vgap2 - ddwi
+    hbot = hmax - vgap2 - d_vv_bot
 
     ! If a double null machine then symmetric
     ! Calculate vacuum vessel internal upper half-height (m)
@@ -4065,7 +4077,8 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use maths_library, only: dshellvol
-    use build_variables, only: rsldi, rsldo, ddwi
+    use build_variables, only: rsldi, rsldo, d_vv_in, d_vv_out, &
+                               d_vv_top, d_vv_bot
     use fwbs_variables, only: vdewin, fvoldw
 
     implicit none
@@ -4081,7 +4094,8 @@ contains
     r2 = rsldo - r1
 
     ! Calculate volume, assuming 100% coverage
-    call dshellvol(r1, r2, hvv, ddwi, ddwi, ddwi, v1, v2, vdewin)
+    call dshellvol(r1, r2, hvv, d_vv_in, d_vv_out, &
+                  (d_vv_top+d_vv_bot)/2, v1, v2, vdewin)
 
     ! Apply area coverage factor
     vdewin = fvoldw*vdewin
@@ -4174,7 +4188,8 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use maths_library, only: eshellvol
-    use build_variables, only: rsldi, rsldo, ddwi
+    use build_variables, only: rsldi, rsldo, d_vv_in, d_vv_out, &
+                               d_vv_top, d_vv_bot
     use fwbs_variables, only: vdewin, fvoldw
     use physics_variables, only: rmajor, rminor, triang
 
@@ -4194,7 +4209,8 @@ contains
     r3 = rsldo - r1
 
     ! Calculate volume, assuming 100% coverage
-    call eshellvol(r1, r2, r3, hvv, ddwi, ddwi, ddwi, v1, v2, vdewin)
+    call eshellvol(r1, r2, r3, hvv, d_vv_in, d_vv_out, &
+                  (d_vv_top+d_vv_bot)/2, v1, v2, vdewin)
 
     ! Apply area coverage factor
     vdewin = fvoldw*vdewin

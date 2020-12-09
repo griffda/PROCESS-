@@ -547,54 +547,54 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
                                           Thickness (m)    Radius (m)
  Device centreline                            0.000           0.000                       
- Machine bore                                 2.285           2.285   (bore)              
- Central solenoid                             0.541           2.826   (ohcth)             
- CS precompression                            0.061           2.887   (precomp)           
- Gap                                          0.080           2.967   (gapoh)             
- TF coil inboard leg                          1.730           4.696   (tfcth)             
- Gap                                          0.050           4.746   (tftsgap)           
- Thermal shield                               0.050           4.796   (thshield)          
- Gap                                          0.020           4.816   (gapds)             
- Vacuum vessel (and shielding)                0.600           5.416   (ddwi + shldith)    
- Gap                                          0.020           5.436   (vvblgap)           
- Inboard blanket                              0.755           6.191   (blnkith)           
- Inboard first wall                           0.018           6.209   (fwith)             
- Inboard scrape-off                           0.225           6.434   (scrapli)           
- Plasma geometric centre                      3.064           9.498   (rminor)            
- Plasma outboard edge                         3.064          12.562   (rminor)            
- Outboard scrape-off                          0.225          12.787   (scraplo)           
- Outboard first wall                          0.018          12.805   (fwoth)             
- Outboard blanket                             0.982          13.787   (blnkoth)           
- Gap                                          0.020          13.807   (vvblgap)           
- Vacuum vessel (and shielding)                1.100          14.907   (ddwi+shldoth)      
- Gap                                          1.760          16.667   (gapsto)            
- Thermal shield                               0.050          16.717   (thshield)          
- Gap                                          0.050          16.767   (tftsgap)           
- TF coil outboard leg                         1.730          18.496   (tfthko)            
+ Machine bore                                 2.315           2.315   (bore)              
+ Central solenoid                             0.533           2.848   (ohcth)             
+ CS precompression                            0.060           2.908   (precomp)           
+ Gap                                          0.080           2.988   (gapoh)             
+ TF coil inboard leg                          1.598           4.585   (tfcth)             
+ Gap                                          0.140           4.725   (deltf)             
+ Thermal shield                               0.050           4.775   (thshield)          
+ Gap                                          0.020           4.795   (gapds)             
+ Vacuum vessel (and shielding)                0.600           5.395   (d_vv_in + shldith) 
+ Gap                                          0.020           5.415   (vvblgap)           
+ Inboard blanket                              0.755           6.170   (blnkith)           
+ Inboard first wall                           0.018           6.188   (fwith)             
+ Inboard scrape-off                           0.225           6.413   (scrapli)           
+ Plasma geometric centre                      3.054           9.467   (rminor)            
+ Plasma outboard edge                         3.054          12.521   (rminor)            
+ Outboard scrape-off                          0.225          12.746   (scraplo)           
+ Outboard first wall                          0.018          12.764   (fwoth)             
+ Outboard blanket                             0.982          13.746   (blnkoth)           
+ Gap                                          0.020          13.766   (vvblgap)           
+ Vacuum vessel (and shielding)                1.100          14.866   (d_vv_out+shldoth)  
+ Gap                                          1.811          16.677   (gapsto)            
+ Thermal shield                               0.050          16.727   (thshield)          
+ Gap                                          0.050          16.777   (tftsgap)           
+ TF coil outboard leg                         1.598          18.374   (tfthko)            
  
  *********************************************** Vertical Build ***********************************************
  
  Single null case
                                           Thickness (m)    Height (m)
- TF coil                                      1.730          10.061   (tfcth)             
- Gap                                          0.050           8.332   (tftsgap)           
- Thermal shield                               0.050           8.282   (thshield)          
- Gap                                          0.163           8.232   (vgap2)             
- Vacuum vessel (and shielding)                0.900           8.069   (ddwi+shldtth)      
- Gap                                          0.020           7.169   (vvblgap)           
- Top blanket                                  0.869           7.149   (blnktth)           
- Top first wall                               0.018           6.280   (fwtth)             
- Top scrape-off                               0.600           6.262   (vgaptop)           
- Plasma top                                   5.662           5.662   (rminor*kappa)      
- Midplane                                     0.000          -0.000                       
- Plasma bottom                                5.662          -5.662   (rminor*kappa)      
- Lower scrape-off                             2.002          -7.664   (vgap)              
- Divertor structure                           0.621          -8.285   (divfix)            
- Vacuum vessel (and shielding)                1.000          -9.285   (ddwi+shldlth)      
- Gap                                          0.163          -9.448   (vgap2)             
- Thermal shield                               0.050          -9.498   (thshield)          
- Gap                                          0.050          -9.548   (tftsgap)           
- TF coil                                      1.730         -11.278   (tfcth)             
+ TF coil                                      1.598           9.911   (tfcth)             
+ Gap                                          0.050           8.313   (tftsgap)           
+ Thermal shield                               0.050           8.263   (thshield)          
+ Gap                                          0.163           8.213   (vgap2)             
+ Vacuum vessel (and shielding)                0.900           8.050   (d_vv_top+shldtth)  
+ Gap                                          0.020           7.150   (vvblgap)           
+ Top blanket                                  0.869           7.130   (blnktth)           
+ Top first wall                               0.018           6.262   (fwtth)             
+ Top scrape-off                               0.600           6.244   (vgaptop)           
+ Plasma top                                   5.644           5.644   (rminor*kappa)      
+ Midplane                                     0.000           0.000                       
+ Plasma bottom                                5.644          -5.644   (rminor*kappa)      
+ Lower scrape-off                             2.002          -7.646   (vgap)              
+ Divertor structure                           0.621          -8.267   (divfix)            
+ Vacuum vessel (and shielding)                1.000          -9.267   (d_vv_bot+shldlth)  
+ Gap                                          0.163          -9.430   (vgap2)             
+ Thermal shield                               0.050          -9.480   (thshield)          
+ Gap                                          0.050          -9.530   (tftsgap)           
+ TF coil                                      1.598         -11.128   (tfcth)             
  
  ************************************* Divertor build and plasma position *************************************
  
@@ -1809,7 +1809,16 @@ thshield = 0.050
 gapds = 0.02
 
 * Inboard vacuum vessel radial thickness [m]
-ddwi = 0.3
+d_vv_in  = 0.3
+
+* Outboard vacuum vessel radial thickness [m]
+d_vv_out = 0.3
+
+* Topside vacuum vessel radial thickness [m]
+d_vv_top = 0.3
+
+* Underside vacuum vessel radial thickness [m]
+d_vv_bot = 0.3
 
 * Inboard vacuum vessel thickness [m]
 shldith = 0.3

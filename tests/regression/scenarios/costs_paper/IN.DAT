@@ -9,6 +9,7 @@ icc = 2        * global power balance (consistency equation)
 icc = 5        * density upper limit
 icc = 7        * beam ion density (nbi) (consistency equation)
 icc = 8        * neutron wall load upper limit
+*icc = 10       * toroidal field 1/r (consistency equation)
 icc = 11       * radial build (consistency equation)
 icc = 13       * burn time lower limit (pulse)
 icc = 15       * l-h power threshold limit
@@ -59,6 +60,10 @@ boundu(9) = 1.2
 ixc = 10       * hfact * H factor on energy confinement times (iteration variable 10)
 boundl(10) = 0.1
 boundu(10) = 1.1
+
+*ixc = 12       * oacdcp * Overall current density in tf coil inboard legs (a/m2)
+*boundl(12) = 100000.0
+*boundu(12) = 150000000.0
 
 ixc = 13      * tfcth * Inboard tf coil thickness; (centrepost for st) (m)
 boundl(13) = 1.05
@@ -145,7 +150,7 @@ boundl(57) = 0.05
 boundu(57) = 1.0
 
 ixc = 58      * thwcndut * Tf coil conduit case thickness (m)
-boundl(58) = 0.003
+boundl(58) = 0.004
 boundu(58) = 1.0
 
 ixc = 59      * fcutfsu * Copper fraction of cable conductor (tf coils)
@@ -183,7 +188,10 @@ boundu(108) = 1.0
 *-----------------Build Variables------------------*
 bore = 2.354     * Central solenoid inboard radius (m)
 ddwex = 0.15     * Cryostat thickness (m)
-ddwi = 0.32      * Vacuum vessel thickness (tf coil / shield) (m)
+d_vv_in  = 0.32  * Inboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_out = 0.32  * Outboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_top = 0.32  * Topside vacuum vessel thickness (tf coil / shield) (m)
+d_vv_bot = 0.32  * Underside vacuum vessel thickness (tf coil / shield) (m)
 gapds = 0.12     * Gap between inboard vacuum vessel and tf coil (m)
 gapoh = 0.05     * Gap between central solenoid and tf coil
 gapomin = 0.2    * Minimum gap between outboard vacuum vessel and tf coil (m)

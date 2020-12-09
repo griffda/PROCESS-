@@ -14,10 +14,10 @@ module numerics
 
   public
 
-  integer, parameter :: ipnvars = 174
+  integer, parameter :: ipnvars = 175
   !!  ipnvars FIX : total number of variables available for iteration
 
-  integer, parameter :: ipeqns = 85
+  integer, parameter :: ipeqns = 86
   !!  ipeqns  FIX : number of constraint equations available
   
   integer, parameter :: ipnfoms = 19
@@ -182,10 +182,11 @@ module numerics
   !!  <LI> (79) Peak CS field upper limit (itv  149 fbmaxcs)
   !!  <LI> (80) Divertor power lower limit pdivt (itv  153 fpdivlim)
   !!  <LI> (81) Ne(0) > ne(ped) constraint (itv  154 fne0)</UL>
-  !!  <LI> (82) toroidalgap >  tftort constraint (itv  171 ftoroidalgap)</UL>
+  !!  <LI> (82) toroidalgap >  tftort constraint (itv  171 ftoroidalgap)
   !!  <LI> (83) Radial build consistency for stellarators (itv 172 f_avspace)
   !!  <LI> (84) Lower limit for beta (itv 173 fbetatry_lower)
-  !!  <LI> (85) Constraint for CP lifetime</UL>
+  !!  <LI> (85) Constraint for CP lifetime
+  !!  <LI> (86) Constraint for TF coil turn dimension</UL>
 
   integer, dimension(ipnvars) :: ixc
   
@@ -349,22 +350,23 @@ module numerics
   !! <LI> (156) rrin : Input IFE repetition rate (Hz) (ifedrv=3 only)
   !! <LI> (157) fvssu : F-value for available to required start up flux (con. 51)
   !! <LI> (158) croco_thick : Thickness of CroCo copper tube (m)
-  !! <LI> (159) DUMMY : Description
-  !! <LI> (160) DUMMY : Description
-  !! <LI> (161) DUMMY : Description
-  !! <LI> (162) DUMMY : Description
-  !! <LI> (163) DUMMY : Description
-  !! <LI> (164) DUMMY : Description
-  !! <LI> (165) DUMMY : Description
-  !! <LI> (166) DUMMY : Description
-  !! <LI> (167) DUMMY : Description
-  !! <LI> (168) DUMMY : Description
-  !! <LI> (169) DUMMY : Description
-  !! <LI> (170) DUMMY : Description
-  !! <LI> (171) ftoroidalgap : F-value for toroidalgap >  tftort constraint (con. 82)
-  !! <LI> (172) f_avspace (f-value for equation 83)
-  !! <LI> (173) fbetatry_lower (f-value for equation 84)
-  !! <LI> (174) r_cp_top : Top outer radius of the centropost (ST only) (m)</UL>
+  !! <LI> (159) ftoroidalgap : F-value for toroidalgap >  tftort constraint (con. 82)
+  !! <LI> (160) f_avspace (f-value for equation 83)
+  !! <LI> (161) fbetatry_lower (f-value for equation 84)
+  !! <LI> (162) r_cp_top : Top outer radius of the centropost (ST only) (m)
+  !! <LI> (163) f_t_turn_tf : f-value for TF coils WP trurn squared dimension constraint 
+  !! <LI> (164) EMPTY : Description
+  !! <LI> (165) EMPTY : Description
+  !! <LI> (166) EMPTY : Description
+  !! <LI> (167) EMPTY : Description
+  !! <LI> (168) EMPTY : Description
+  !! <LI> (169) EMPTY : Description
+  !! <LI> (170) EMPTY : Description
+  !! <LI> (171) EMPTY : Description
+  !! <LI> (172) EMPTY : Description
+  !! <LI> (173) EMPTY : Description
+  !! <LI> (174) EMPTY : Description
+  !! <LI> (175) EMPTY : Description
   ! Issue 287 iteration variables are now defined in module define_iteration_variables in iteration variables.f90
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -523,7 +525,8 @@ contains
       'toroidalgap >  tftort            ',   &
       'available_space > required_space ',   &
       'beta > betalim_lower             ',    &
-      'CP lifetime                      '    &
+      'CP lifetime                      ',    &
+      'TFC turn dimension               '    &
       /)
 
     ! Please note: All strings between '...' above must be exactly 33 chars long

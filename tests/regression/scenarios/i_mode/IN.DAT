@@ -30,6 +30,10 @@ beta = 0.03142
 *----------------------*
 icc = 2
 
+* Toroidal field 1/R consistency *
+*--------------------------------*
+*icc = 10
+
 * Radial build consistency *
 *--------------------------*
 icc = 11
@@ -202,8 +206,8 @@ psepbqarmax = 13.6
 *-----------------------*
 
 icc = 31 * TF coil case stress upper limit
-icc = 32 * TF coil conduit stress upper limit
 ixc = 48 * fstrcase
+icc = 32 * TF coil conduit stress upper limit
 ixc = 49 * fstrcond
 alstrtf = 6.6e8
 
@@ -311,7 +315,16 @@ thshield = 0.050
 gapds = 0.02
 
 * Inboard vacuum vessel radial thickness [m]
-ddwi = 0.3
+d_vv_in  = 0.3
+
+* Outboard vacuum vessel radial thickness [m]
+d_vv_out = 0.3
+
+* Topside vacuum vessel radial thickness [m]
+d_vv_top = 0.3
+
+* Underside vacuum vessel radial thickness [m]
+d_vv_bot = 0.3
 
 * Inboard vacuum vessel thickness [m]
 shldith = 0.3

@@ -19,7 +19,7 @@ from process_io_lib.mfile import MFile
 
 
 RADIAL_BUILD = ["bore", "ohcth", "gapoh", "tfcth", "gapds",
-                "ddwi", "shldith", "blnkith", "fwith", "scrapli",
+                "d_vv_in", "shldith", "blnkith", "fwith", "scrapli",
                 "rminor", "scraplo", "fwoth", "blnkoth", "shldoth",
                 "gapsto", "tfthko"]
 

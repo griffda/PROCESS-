@@ -46,6 +46,8 @@ OBS_VARS = {
     "leno":"t_turn",
     "conductor_width":"t_conductor",
     "deltf":"tftsgap",
+    "ddwi":"d_vv_out",
     "pnuccp":"pnuc_cp",
-    "nuc_pow_dep_tot":"pnuc_tot_blk_sector"
+    "nuc_pow_dep_tot":"pnuc_tot_blk_sector",
+    "t_turn:t_turn_tf"
 }
