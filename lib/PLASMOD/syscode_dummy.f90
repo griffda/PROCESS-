@@ -96,7 +96,7 @@
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
-!stop
+!stop 1
 !write(*,*) 'num',num
 !write(*,*) 'geom',geom
 write(*,*) 'comp',comp
@@ -126,7 +126,7 @@ enddo
 
 
 
-stop
+stop 1
 
 
 
@@ -135,7 +135,7 @@ stop
 
 
 
-stop
+stop 1
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
@@ -156,7 +156,7 @@ write(*,*) 'loss',loss
 write(*,*) ' '
 write(*,*) 'Pfus/V '
 write(*,*) loss%Pfus/mhd%vp
-stop
+stop 1
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
@@ -166,7 +166,7 @@ stop
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
 
-stop
+stop 1
 	! i_flag = 1 (OK) , 0 (crashed) , -1 (not converged, max iterations reached) , -2 (equilibrium not converged)
 write(*,*) 'second iteration',i_flag
 

@@ -1310,7 +1310,7 @@ contains
         write(*,*) 'afw = ', afw, '   bzfllengi =', bzfllengi
         write(*,*) 'mfblkti =',mfblkti,   'pnucblkti =', pnucblkti
         write(*,*) 'pnucblkt =',pnucblkt,   'volblkti =', volblkti
-        stop
+        stop 1
     end if
 
     mfblktpi = mfblkti / npblkti
@@ -1525,7 +1525,7 @@ contains
      ! Check that coolant density is within bounds and not a NaN/Inf
      if ((rhof>1.0d9).or.(rhof<=0.0d0).or.(rhof/=rhof)) then
          write(*,*)'Error in pumppower.  rhof = ', rhof
-         stop
+         stop 1
      end if
 
      ! Hydraulic diameter (circular channels assumed) (m)

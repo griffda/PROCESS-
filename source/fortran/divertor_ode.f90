@@ -704,7 +704,7 @@ do i = 2, nimp
 
                 write(*,*)'Kallenbach SOL model: vector of dependent variables Y'
                 write(*,'(10es12.3)') y
-                stop
+                stop 1
             endif
         endif  ! (step.ne.0)
 
@@ -1041,7 +1041,7 @@ do i = 2, nimp
             write(*,*) 'Square root of a negative number in divertor model'
             write(*,'(10a14)') 't', 'pressure', 'te', 'nv24', 'pressure**2', 'eightemi48*te*nv24**2', 'bracket'
             write(*,'(10es14.6)') t, pressure, te, nv24, pressure**2, eightemi48*te*nv24**2, bracket
-            stop
+            stop 1
         endif
 
     endif

@@ -1026,7 +1026,7 @@ contains
     if ((pnucfw<0.0d0).or.(pnucfw /= pnucfw)) then
         write(*,*)'Error in nuclear_heating_fw.  pnucfw = ', pnucfw, 'powfmw = ',&
           powfmw, 'fwmass = ', fwmass
-        stop
+        stop 1
     end if
 
   end subroutine nuclear_heating_fw
@@ -1072,7 +1072,7 @@ contains
         write(*,*)'Error in nuclear_heating_blanket. '
         write(*,*)'pnucblkt =', pnucblkt, ' exp_blanket =', exp_blanket
         write(*,*)'powfmw =', powfmw, ' mass =', mass
-        stop
+        stop 1
     end if
 
   end subroutine nuclear_heating_blanket
@@ -1396,7 +1396,7 @@ contains
             write(*,*) 'npblkti = ', npblkti, '   vfblkt =', vfblkt
             write(*,*) 'mfblkti =',mfblkti,   'pnucblkti =', pnucblkti
             write(*,*) 'pnucblkt =',pnucblkt,   'volblkti =', volblkti
-            stop
+            stop 1
         end if
 
         mfblktpi = mfblkti / npblkti
@@ -2310,7 +2310,7 @@ contains
     ! Check that coolant density is within bounds and not a NaN/Inf
     if ((rhof>1.0d9).or.(rhof<=0.0d0).or.(rhof/=rhof)) then
         write(*,*)'Error in pumppower.  rhof = ', rhof
-        stop
+        stop 1
     end if
 
     ! Hydraulic diameter (circular channels assumed) (m)

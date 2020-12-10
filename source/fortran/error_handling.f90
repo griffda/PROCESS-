@@ -250,7 +250,7 @@ contains
     if (error_status == ERROR_SEVERE) then
        call show_errors
        write(*,*) 'PROCESS stopping.'
-       stop
+       stop 1
     end if
 
   end subroutine report_error

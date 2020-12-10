@@ -5904,7 +5904,7 @@ contains
       error = .TRUE.
       solution = x(i-1)
       write(*,*)"Secant solver not converged.  solution", solution, "  residual",residual
-      !stop
+      !stop 1
 
   end subroutine secant_solve
 !---------------------------------------------------------------

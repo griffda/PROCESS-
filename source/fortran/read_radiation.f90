@@ -305,7 +305,7 @@ contains
 
       if(iostatus.ne.0)then
           write(*,*)'Problem in reading impurity data from file ',filename
-          stop
+          stop 1
       endif
 
     enddo
