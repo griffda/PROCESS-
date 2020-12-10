@@ -334,7 +334,7 @@ contains
     case (2)  !  fusion power / input power
         write(*,*) 'Figure of merit 2 (fusion power / input power) is not used.'
         write(*,*) 'Figure of merit 5 (fusion gain Q) is available.'
-        stop
+        stop 1
        ! fc = sgn * powfmw / (pinjmw + porbitlossmw + tfcpmw + ppump/1.0D6)
 
     case (3)  !  neutron wall load
@@ -372,11 +372,11 @@ contains
     case (12)  !  hydrogen production capital cost
        ! #506 OBSOLETE
        write(*,*) 'Figure of Merit 13 (Hydrogen production) is no longer supported.'
-       stop
+       stop 1
     case (13)  !  hydrogen production rate
        ! #506 OBSOLETE
        write(*,*) 'Figure of Merit 13 (Hydrogen production) is no longer supported.'
-       stop
+       stop 1
 
     case (14)  !  pulse length
        fc = sgn * tburn / 2.0D4

@@ -321,7 +321,7 @@ contains
     else
        write(*,*) "# Warning :  Cannot find impurity data please check path."
        write(*,*) "# Error   :  Current path is: ", impdir()
-       stop
+       stop 1
     end if
 
     !  Convert tabulated units if necessary

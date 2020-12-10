@@ -3381,7 +3381,7 @@ contains
 
     nvar = no_iteration
 
-    if (error .eqv. .True.) stop
+    if (error .eqv. .True.) stop 1
 
     ! MDK Try allocating here
     ! Guard against re-allocation
@@ -3560,7 +3560,7 @@ contains
        write(*,*) 'Name and description of variable: '
        write(*,*) varnam, description
        error = .True.
-       !stop
+       !stop 1
     end if
 
     !  Obtain the new value for the variable

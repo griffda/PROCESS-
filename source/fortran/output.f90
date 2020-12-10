@@ -73,7 +73,7 @@ contains
        write(*,*) 'Maximum width = ',maxwidth
        write(*,*) 'Requested width = ',width
        write(*,*) 'PROCESS stopping.'
-       stop
+       stop 1
     end if
 
     if (lh >= width) then
@@ -81,7 +81,7 @@ contains
        write(*,*) string
        write(*,*) 'This is too long to fit into ',width,' columns.'
        write(*,*) 'PROCESS stopping.'
-       stop
+       stop 1
     end if
 
     !  Number of stars to be printed on the left
@@ -304,7 +304,7 @@ contains
        write(*,*) 'Error in routine OCMMNT :'
        write(*,*) 'A zero-length string is not permitted.'
        write(*,*) 'PROCESS stopping.'
-       stop
+       stop 1
     end if
 
     if (lh >= maxwidth) then
@@ -313,7 +313,7 @@ contains
 !       write(*,*) 'This is too long to fit into ',maxwidth,' columns.'
        write(*, '(A,i3,A)') 'This is longer than ',maxwidth,' columns.'  ! MK 28/10/2016 Modified previous output to reflect warning message
        !write(*,*) 'PROCESS stopping.'
-       !stop
+       !stop 1
     end if
 !    dummy = trim(string)
     write(file,'(t2,a)') trim(string)
@@ -761,7 +761,7 @@ contains
 
     if ((i < 0).or.(i > 9)) then
        write(*,*) 'INT2CHAR: illegal argument'
-       stop
+       stop 1
     end if
 
     int2char = number(i+1:i+1)
@@ -803,7 +803,7 @@ contains
 
     if (i < 0) then
        write(*,*) 'INT_TO_STRING2: illegal argument'
-       stop
+       stop 1
     end if
 
     a0 = int2char(mod(i,10))
@@ -848,7 +848,7 @@ contains
 
     if (i < 0) then
        write(*,*) 'INT_TO_STRING3: illegal argument'
-       stop
+       stop 1
     end if
 
     a0 = int2char(mod(i,10))

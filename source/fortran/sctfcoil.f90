@@ -4226,7 +4226,7 @@ contains
 
         case (6) ! "REBCO" 2nd generation HTS superconductor in CrCo strand
             write(*,*)'ERROR: subroutine supercon has been called but i_tf_sc_mat=6'
-            stop
+            stop 1
         case default  !  Error condition
             idiags(1) = isumat ; call report_error(105)
 

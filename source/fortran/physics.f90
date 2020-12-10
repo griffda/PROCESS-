@@ -1873,7 +1873,7 @@ module physics_module
      write(*,*) 'Triangularity is negative without icurr = 8.'
      write(*,*) 'Please check and try again.'
      write(*,*) 'PROCESS stopping'
-     stop
+     stop 1
     end if
 
     select case (icurr)

@@ -512,7 +512,7 @@ end module torga_curgap_module
 !
       IF (n.lt.0) THEN
          WRITE(6,"(A)")'bad argument n in bessj'
-         STOP
+         STOP 1
       ENDIF
 !
       IF (n.eq.0) THEN

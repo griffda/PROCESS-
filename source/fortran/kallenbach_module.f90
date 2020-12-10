@@ -303,7 +303,7 @@ contains
         write(*,*)'Running kallenbach model for = netau_sol'
       case default
         write(*,*) "Kallenbach scan variable not recognised"
-        stop
+        stop 1
     end select
   
     step_value = (kallenbach_scan_end - kallenbach_scan_start)/kallenbach_scan_num

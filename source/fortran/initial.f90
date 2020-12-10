@@ -314,13 +314,13 @@ subroutine check
     if ( any(icc(1:neqns+nineqns) == 3) ) then
         call report_error(162)
         write(*,*) 'PROCESS stopping'
-        stop
+        stop 1
     end if
 
     if ( any(icc(1:neqns+nineqns) == 4) ) then
         call report_error(163)
         write(*,*) 'PROCESS stopping'
-        stop
+        stop 1
     end if
 
 
@@ -329,13 +329,13 @@ subroutine check
         write(*,*) 'Constraint 63 is requested without the correct vacuum model ("simple").'
         write(*,*) 'vacuum_model = ', vacuum_model
         write(*,*) 'PROCESS stopping'
-        stop
+        stop 1
     end if
 
     if ( any(icc(1:neqns+nineqns) == 74) ) then
         write(*,*)'Constraint 74 (TF coil quench temperature for Croco HTS conductor) is not yet implemented'
         write(*,*) 'PROCESS stopping'
-        stop
+        stop 1
     end if
 
     !  Fuel ion fractions must add up to 1.0
@@ -359,14 +359,14 @@ subroutine check
     ! Stop the run if the constraint 10 is used
     if ( any( icc == 10 ) ) then
         call report_error(236)
-        stop
+        stop 1
     end if
 
     ! Stop the run if oacdcp is used as an optimisation variable
     ! As the current density is now calculated from bt without constraint 10
     if ( any( ixc == 12 ) ) then
         call report_error(236)
-        stop
+        stop 1
     end if 
 
     !  Warn if ion power balance equation is being used with the new radiation model
@@ -803,7 +803,7 @@ subroutine check
          .and. ( any(icc == 31) .or. any(icc == 32) ) ) then                                                     ! Stress constraint (31) is used 
 
         call report_error(246)
-        stop
+        stop 1
     end if
      
     ! Make sure that plane stress model is not used for resistive magnets
@@ -852,7 +852,7 @@ subroutine check
     ! Cryo-plane efficiency must be in [0-1.0]
     else if ( eff_tf_cryo >  1.0D0 .or. eff_tf_cryo < 0.0D0 ) then
         call report_error(248)
-        stop
+        stop 1
     end if
     !-!  
 
@@ -860,7 +860,7 @@ subroutine check
     !-!
     if ( i_tf_sc_mat == 6 .and. i_tf_turns_integer == 1 ) then
         call report_error(254)
-        stop
+        stop 1
     end if
     !-!
 
