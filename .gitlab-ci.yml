@@ -50,7 +50,13 @@ stages:
 #-----------------
 #  Build
 #-----------------
-
+# TODO There are currently problems with freia-tagged runners. Jobs can fail due
+# to either failing to find cmake or failing to find the docker image. As this
+# isn't a problem on "ubuntu"-tagged runners, it is assumed this is a problem
+# with the Freia runners themselves. The Docker containers they run (if they 
+# can find it) aren't the same as the containers on the Ubuntu runners.
+# See #1202. Remove this "ubuntu" requirement once issue with runners is 
+# resolved.
 make:
   stage: build
   image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
@@ -64,6 +70,8 @@ make:
     - cmake --build build
     - python3 setup.py sdist -d process_dist
     - python3 setup.py bdist_wheel -d process_dist
+  tags:
+    - ubuntu
 
 #-----------------
 #  Testing
@@ -115,7 +123,6 @@ baseline_2019:
       -f tracking/baseline_2019/baseline_2019_MFILE.DAT tracking/baseline_2019/ref_baseline_2019_MFILE.DAT 
       --acc 10.0 
       --baseline
-
 
 baseline_2018:
   when: on_success
@@ -196,6 +203,7 @@ make_freia:
       - bin/libPROCESS_calc_engine.so
   tags:
     - freia
+    - higher-privacy
 
 make_dicts_freia:
   only:
@@ -210,6 +218,7 @@ make_dicts_freia:
     - cmake3 --build build --target dicts
   tags:
     - freia
+    - higher-privacy
 
 baseline_2019_freia:
   when: on_success
@@ -236,7 +245,8 @@ baseline_2019_freia:
       --acc 10.0 
       --baseline
   tags:
-   - freia
+    - freia
+    - higher-privacy
 
 baseline_2018_freia:
   when: on_success
@@ -264,6 +274,7 @@ baseline_2018_freia:
       --baseline
   tags:
     - freia
+    - higher-privacy
 
 
 #-----------------
