@@ -4164,16 +4164,16 @@ module build_variables
   !! Radial plasma facing side position of inboard neutronic shield [m]
 
   real(dp) :: r_tf_inboard_in = 0.0D0
-  !! Mid-plane Outer radius of inner of inboard TF leg (m)
+  !! Mid-plane inboard TF coil leg radius at the centre-machine side [m]
 
   real(dp) :: r_tf_inboard_mid = 0.0D0
-  !! Mid-plane Outer radius of centre of inboard TF leg (m)
+  !! Mid-plane inboard TF coil leg radius at middle of the coil [m]
        
   real(dp) :: r_tf_inboard_out = 0.0D0
-  !! Mid-plane Outer radius of centre of inboard TF leg (m)
+  !! Mid-plane inboard TF coil leg radius at the plasma side [m]
        
   real(dp) :: r_tf_outboard_mid = 0.0D0
-  !! Radius to the centre of the outboard TF coil leg (m)
+  !! Mid-plane outboard TF coil leg radius at the middle of the coil [m]
 
   integer :: i_r_cp_top = 0
   !! Switch selecting the he parametrization of the outer radius of the top of the CP part of the TF coil
