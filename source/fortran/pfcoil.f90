@@ -124,8 +124,6 @@ module pfcoil_module
  
      real(dp), dimension(ngc2) :: aturn
  
-     logical :: first_call = .true.
- 
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
      !  Toggle switch for ipfloc()=2 coils above/below midplane
