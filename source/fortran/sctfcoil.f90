@@ -1082,11 +1082,10 @@ subroutine tf_res_heating()
         if ( is_leg_cp_temp_same == 1 ) tlegav = -1.0D0  
 
         ! Centrepost resisitivity and conductor/insulation volume
-        call cpost( r_cp_top-casthi-tinstf, h_cp_top,                     & ! Inputs
-                    r_tf_inboard_out-casthi-tinstf, hmax+tfthko,          & ! Inputs
-                    ritfc, rhocp, fcoolcp, r_tf_inboard_in+thkcas+tinstf, & ! Inputs
-                    thicndut, tinstf, thkcas, casthi, n_tf*n_tf_turn,     & ! Inputs
-                    a_cp_cool, vol_cond_cp, prescp, &        ! Outputs
+        call cpost( r_tf_inboard_in, r_tf_inboard_out, r_cp_top, h_cp_top,    & ! Inputs 
+                    hmax+tfthko, thkcas, casthi, tinstf, thicndut, n_tf_turn, & ! Inputs 
+                    ritfc, rhocp, fcoolcp,                                    & ! Inputs
+                    a_cp_cool, vol_cond_cp, prescp,        & ! Outputs
                     vol_ins_cp, vol_case_cp, vol_gr_ins_cp ) ! Outputs
     end if
 
@@ -2047,8 +2046,11 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         a_wp_eff = (r_wp_outer**2 - r_wp_inner**2) * theta_coil
 
         ! Effective conductor region young modulus in the vertical direction [Pa]
-        eyoung_wp_z_eff = eyoung_ins * a_tf_ins / a_wp_eff &
-                        + eyoung_al * (1.0D0 - a_tf_ins / a_wp_eff) * (1.0D0 - fcoolcp)
+        eyoung_wp_z = eyoung_ins * a_tf_ins / a_wp_eff &
+                    + eyoung_al * (1.0D0 - a_tf_ins / a_wp_eff) * (1.0D0 - fcoolcp)
+
+        ! Effective young modulus used in stress calculations
+        eyoung_wp_z_eff = eyoung_wp_z
 
         ! Effect conductor layer inner/outer radius
         r_wp_inner_eff = r_wp_inner
@@ -2479,12 +2481,15 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             write(sig_file,'(t2, "WP"    ," smeared stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_wp_av_z*1.0D-6
         end if 
 
-        ! Other quantities (displacement strain, etc..)
-        call ovarre(outfile,'Maximum radial deflection at midplane (m)','(deflect)',&
-                            deflect(n_radial_array), 'OP ')
-        call ovarre(outfile,'Vertical strain on casing','(casestr)', casestr, 'OP ')
-        call ovarre(outfile,'Vertical strain on winding pack','(windstrain)', windstrain, 'OP ')
-        call ovarre(outfile,'Radial strain on insulator','(insstrain)', insstrain, 'OP ')
+        ! Quantities from the plane stress stress formulation (no resitive coil output)
+        if ( i_tf_plane_stress == 1 .and. i_tf_sup == 1 ) then
+            ! Other quantities (displacement strain, etc..)
+            call ovarre(outfile,'Maximum radial deflection at midplane (m)','(deflect)',&
+                                deflect(n_radial_array), 'OP ')     
+            call ovarre(outfile,'Vertical strain on casing','(casestr)', casestr, 'OP ')
+            call ovarre(outfile,'Vertical strain on winding pack','(windstrain)', windstrain, 'OP ')
+            call ovarre(outfile,'Radial strain on insulator','(insstrain)', insstrain, 'OP ')
+        end if
 
     end subroutine out_stress
 
@@ -3682,7 +3687,7 @@ subroutine outtf(outfile, peaktfflag)
         i_tf_sc_mat, voltfleg, vol_cond_cp, tflegres, tcpav, prescp, i_tf_sup, &
         cpttf, cdtfleg, whttflgs, whtcp, i_tf_bucking, tlegav, rhotfleg, rhocp, &
         presleg, i_tf_shape, fcoolcp, pres_joints, tmargtf, tmargmin_tf, &
-        f_vforce_inboard, vforce_outboard, acstf, t_turn_tf
+        f_vforce_inboard, vforce_outboard, acstf, t_turn_tf, eyoung_res_tf_buck
     use physics_variables, only: itart
     use constants, only: mfile, pi
     implicit none
@@ -3754,12 +3759,12 @@ subroutine outtf(outfile, peaktfflag)
         case (0)
             call ocmmnt(outfile,'  -> No support structure')
         case (1)
-            if ( i_tf_sup == 0 ) then
-                call ocmmnt(outfile,'  -> Steel bucking cylinder')
-            else if ( i_tf_sup == 1 ) then 
+            if ( i_tf_sup == 1 ) then
                 call ocmmnt(outfile,'  -> Steel casing')
+            else if ( abs( eyoung_res_tf_buck - 205.0D9 ) < epsilon(eyoung_res_tf_buck) ) then
+                call ocmmnt(outfile,'  -> Steel bucking cylinder')
             else 
-                call ocmmnt(outfile,'  -> Nibron special bucking cylinder')
+                call ocmmnt(outfile,'  -> Bucking cylinder')
             end if
         case (2,3)
             call ocmmnt(outfile,'  -> TF in contact with CS (bucked and weged design)')
@@ -3921,7 +3926,7 @@ subroutine outtf(outfile, peaktfflag)
         ! Turn info
         call osubhd(outfile,'Coil turn information:')
         call ovarre(outfile,'Number of turns per TF leg','(n_tf_turn)',n_tf_turn)
-        call ovarre(outfile,'Turn insulation thickness','(tinstf)',tinstf)
+        call ovarre(outfile,'Turn insulation thickness','(thicndut)',thicndut)
         call ovarre(outfile,'Mid-plane CP cooling fraction','(fcoolcp)',fcoolcp)
         call ovarre(outfile,'Outboard leg current per turn (A)','(cpttf)',cpttf)
         call ovarre(outfile,'Inboard leg conductor volume (m3)','(vol_cond_cp)',vol_cond_cp)
@@ -4946,8 +4951,9 @@ subroutine dtempbydtime ( qtime, qtemperature, derivative )
 end subroutine dtempbydtime
 
 !-----------------------------------------------------------------------
-subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! Inputs
-                  ins_th, gr_ins_th, cas_in_th, cas_out_th, n_turns_tot,   &  ! Inputs
+subroutine cpost( r_tf_inboard_in, r_tf_inboard_out, r_cp_top, ztop,          & ! Inputs
+                  hmaxi, cas_in_th, cas_out_th, gr_ins_th, ins_th, n_tf_turn, & ! Inputs                  
+                  curr, rho, fcool,                                           & ! Inputs
                   a_cp_cool, vol_cond_cp, respow,        & ! Outputs
                   vol_ins_cp, vol_case_cp, vol_gr_ins_cp ) ! Outputs
     !!  author: P J Knight, CCFE, Culham Science Centre
@@ -4979,23 +4985,35 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     ! ----------
     ! Inputs 
     ! ------
-    real(dp), intent(in) :: rtop
-    !! Conductor outer radius at CP top [m]
-    !! This includes the trun insulation by the exclude the ground one
-        
-    real(dp), intent(in) :: rmid
-    !! Conductor outer radius at CP mid-plane [m]
-    !! This includes the trun insulation by the exclude the ground one
+    real(dp), intent(in) :: r_tf_inboard_in
+    !! Mid-plane inboard TF coil leg radius at the centre-machine side [m]
+    
+    real(dp), intent(in) :: r_tf_inboard_out
+    !! Mid-plane inboard TF coil leg radius at the plasma side [m]
 
-    real(dp), intent(in) :: r_tfin_inleg
-    !! Conductor `WP` inner radius [m]
-    !! This includes the trun insulation by the exclude the ground one
+    real(dp), intent(in) :: r_cp_top
+    !! Top outer radius of the centropost TF coil (ST only) [m]
 
     real(dp), intent(in) :: ztop
     !! Top vertical position (z) of the CP curved section [m]
 
     real(dp), intent(in) :: hmaxi
     !! Total CP half vertical length [m]
+
+    real(dp), intent(in) :: cas_in_th
+    !! Inner casing (bucking cylinder) thickness [m]
+
+    real(dp), intent(in) :: cas_out_th
+    !! Outer casing (plasma side) thickness [m]
+
+    real(dp), intent(in) :: gr_ins_th
+    !! Ground insulation thickness [m]
+
+    real(dp), intent(in) :: ins_th
+    !! Turn insulation thickness [m]
+
+    real(dp), intent(in) :: n_tf_turn
+    !! Number of turns per TF coil
 
     real(dp), intent(in) :: curr
     !! CP total current [A]
@@ -5005,21 +5023,6 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     
     real(dp), intent(in) :: fcool
     !! Mid-plane CP conductor cooling fraction    
-
-    real(dp), intent(in) :: ins_th
-    !! Turn insulation thickness [m]
-
-    real(dp), intent(in) :: gr_ins_th
-    !! Ground insulation thickness [m]
-
-    real(dp), intent(in) :: cas_in_th
-    !! Inner casing (bucking cylinder) thickness [m]
-
-    real(dp), intent(in) :: cas_out_th
-    !! Outer casing (plasma side) thickness [m]
-
-    real(dp), intent(in) :: n_turns_tot
-    !! Total number of turns in CP 
     ! ------
 
 
@@ -5050,6 +5053,21 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     ! Internal variables
     ! ------------------
     real(dp) :: r1,z1,x,y,rc,dz,r,z, a_tfin_hole, res_cyl, res_taped
+
+    real(dp):: rtop
+    !! Conductor outer radius at CP top [m]
+    !! including the trun insulation and excluding the ground one
+
+    real(dp) :: rmid
+    !! Conductor outer radius at CP mid-plane [m]
+    !! including the trun insulation and excluding the ground one
+
+    real(dp) :: r_tfin_inleg
+    !! Conductor `WP` inner radius [m]
+    !! including the trun insulation and excluding the ground one
+
+    real(dp) :: n_turns_tot
+    !! Total number of turns in CP 
 
     real(dp) :: a_cond_midplane
     !! Mid-plane conductor area [m2]
@@ -5093,8 +5111,21 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     integer :: ii
     !! Loop iterator
     ! ------------------
-    ! ---
 
+
+    ! Conductor layer raddi 
+    ! including the trun insulation and excluding the ground one
+    !-!
+    ! Conductor outer radius at CP top [m]
+    rtop = r_cp_top - cas_out_th - gr_ins_th
+
+    ! Conductor outer radius at CP mid-plane [m]
+    rmid = r_tf_inboard_out - cas_out_th - gr_ins_th
+
+    ! Conductor inner radius [m]
+    r_tfin_inleg = r_tf_inboard_in + cas_in_th + gr_ins_th
+    !-!
+    
 
     !  Error traps
     ! ------------
@@ -5132,6 +5163,9 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
 
     ! Mid-plane area calculations
     ! ---------------------------
+    ! Total number of CP turns
+    n_turns_tot = n_tf * n_tf_turn
+
     ! Area of the innner TF central hole [m2]
     a_tfin_hole = pi * r_tfin_inleg**2
 

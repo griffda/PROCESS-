@@ -4182,7 +4182,7 @@ module build_variables
   !!  2 : `r_cp_top` is set using the CP top and midplane CP radius ratio 
 
   real(dp) :: r_cp_top = 0.0D0
-  !! Top outer radius of the centropost (ST only) (m)
+  !! Top outer radius of the centropost TF coil (ST only) (m)
 
   real(dp) :: f_r_cp = 1.4D0
   !! Ratio between the top and the midplane TF CP outer radius [-] 
