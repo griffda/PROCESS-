@@ -5300,9 +5300,10 @@ subroutine cpost( r_tf_inboard_in, r_tf_inboard_out, r_cp_top, ztop,          & 
                     - ( rmid + gr_ins_th )**2 )
 
     ! Centrepost volume (ignoring coolant fraction) [m3]
-    vol_cond_cp = 2.0D0*( sum1 + ( hmaxi - ztop ) &
-                               * ( pi*rtop**2 - a_tfin_hole - a_cp_ins - n_tf*a_cp_cool &
-                                 - 2.0D0*n_tf * gr_ins_th * ( rtop - r_tfin_inleg ) ) ) ! ground insulation separation
+    vol_cond_cp = 2.0D0 * sum1 &             ! Tapered section
+                + 2.0D0 * ( hmaxi - ztop ) & ! Straight section vertical height
+                * ( pi*rtop**2 - a_tfin_hole - a_cp_ins - n_tf*a_cp_cool &
+                  - 2.0D0*n_tf * gr_ins_th * ( rtop - r_tfin_inleg ) ) ! subtracting ground insulation wedge separation
 
     ! Resistive power losses in taped section (variable radius section) [W]
     res_taped = rho * curr**2 * sum2
