@@ -124,7 +124,7 @@ contains
 
     ! Lz data filename
     ! Beware: changing length can affect Kallenbach solutions / regression test
-    character(len=100) :: filename
+    character(len=300) :: filename
 
     ! Find the index of the element.  Exclude hydrogen by starting at 2 (Helium)
     do i = 2, nimp
