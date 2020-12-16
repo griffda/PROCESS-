@@ -12,16 +12,16 @@
  ************************************** Power Reactor Optimisation Code ***************************************
  **************************************************************************************************************
  
-   Program : ./process.exe
+   Program :
    Version : 1.0.17   Release Date :: 2020-02-25
-   Tag No. : 1.0.17-409-g7c7b1b4f
-    Branch : develop
-   Git log : Merge branch '1145-latest-markdown-version-breaks-ford-on-develop' int
- Date/time : 21 Oct 2020 16:16:22 +01:00(hh:mm) UTC
+   Tag No. : 1.0.17-722-g484ae96b code contains untracked changes
+    Branch : HEAD
+   Git log : Merge branch 'kzarebsk/1092-additional-tests' into '1092-convert-project-to-python-wrapped-fortran'
+ Date/time : 16 Dec 2020  8:55:39 +00:00(hh:mm) UTC
       User : jmaddock
   Computer : J0826UBUNTU
- Directory : /home/jmaddock/process/test_suite
-     Input : IN.DAT
+ Directory : /home/jmaddock/process
+     Input : /tmp/pytest-of-jmaddock/pytest-749/test_scenario_scenario1_0/IN.DAT
  Run title : IFE_001
   Run type : Reactor concept design: Inertial Fusion model, (c) CCFE
  
@@ -52,6 +52,8 @@
          icc            label
  
   1       16     Net electric power lower limit   
+ WARNING: The sweep variable is also an iteration variable.
+ The values of the sweep variable will be overwritten by the optimiser.
  
  ************************************************** Numerics **************************************************
  
@@ -426,6 +428,7 @@ pnetelin  = 1000.0     *Required net electric power (MW)
 IOPTIMZ   = -1         *Code operation switch (-1: No optimisation, HYBRD only)
 
 *------------------IFE Variables-------------------*
+ife         = 1        *Switch for Inertial Fusion Energy model
 ifetyp      = 1        *Switch for type of IFE device build (1: OSIRIS-like build)
 ifedrv      = 2        *Switch for type of IFE driver (2: Heavy ion beam driver based on OSIRIS)
 bldr        = 0.55     *Radial thickness of IFE blanket (m)
@@ -629,7 +632,7 @@ v3matf(27)  = 0.0000   *Void 3 material fraction (lower lithium)
 
 *------------------FWBS Variables------------------*
 emult       = 1.26     *Energy multiplication in blanket and shield
-fhole       = 0.0      *Area fraction taken up by other holes
+fhole       = 0.0      *Area fraction taken up by other holes 
 
 *-----------------Cost Variables-------------------*
 abktflnc    = 20.0     *Allowable first wall/blanket neutron fluence (MW-yr/m2)

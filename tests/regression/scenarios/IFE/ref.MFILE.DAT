@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "1.0.17   "
- Date_of_run_____________________________________________________________ (date)________________________     "21/10/2020"
- Time_of_run_____________________________________________________________ (time)________________________     "16:16"
+ Date_of_run_____________________________________________________________ (date)________________________     "16/12/2020"
+ Time_of_run_____________________________________________________________ (time)________________________     "08:55"
  User____________________________________________________________________ (username)____________________     "jmaddock"
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "IFE_001                                                                                            
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.17-409-g7c7b1b4f"                                                                              
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "develop"                                                                                           
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch '1145-latest-markdown-version-breaks-ford-on-develop' int"                            
- Input_filename__________________________________________________________ (fileprefix)__________________     "                                                                                                                                                                                                        "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.17-722-g484ae96b"                                                                              
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch 'kzarebsk/1092-additional-tests' into '1092-convert-project-to-python-wrapped-fortran'
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jmaddock/pytest-749/test_scenario_scenario1_0/IN.DAT                                                                                                                                     "
  # Numerics #
  HYBRD_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -204,8 +204,7 @@
  # End of PROCESS Output #
  # End of PROCESS Output #
  # Copy of PROCESS Input Follows #
-***********************************************
-*************************************************************************
+************************************************************************************************************************
 *****                                                               *****
 *****               OSIRIS Inertial Fusion Plant                    *****
 *****               Stuart Muldrew (01/08/2019)                     *****
@@ -232,6 +231,7 @@ pnetelin  = 1000.0     *Required net electric power (MW)
 IOPTIMZ   = -1         *Code operation switch (-1: No optimisation, HYBRD only)
 
 *------------------IFE Variables-------------------*
+ife         = 1        *Switch for Inertial Fusion Energy model
 ifetyp      = 1        *Switch for type of IFE device build (1: OSIRIS-like build)
 ifedrv      = 2        *Switch for type of IFE driver (2: Heavy ion beam driver based on OSIRIS)
 bldr        = 0.55     *Radial thickness of IFE blanket (m)
@@ -435,7 +435,7 @@ v3matf(27)  = 0.0000   *Void 3 material fraction (lower lithium)
 
 *------------------FWBS Variables------------------*
 emult       = 1.26     *Energy multiplication in blanket and shield
-fhole       = 0.0      *Area fraction taken up by other holes
+fhole       = 0.0      *Area fraction taken up by other holes 
 
 *-----------------Cost Variables-------------------*
 abktflnc    = 20.0     *Allowable first wall/blanket neutron fluence (MW-yr/m2)
