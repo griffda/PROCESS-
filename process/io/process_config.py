@@ -302,11 +302,12 @@ class ProcessConfig(object):
             subprocess.check_call(["process", "-i", str(input_path)], stdout=logfile,
                                 stderr=logfile)
         except subprocess.CalledProcessError as err:
-            print('\n Error: There was a problem with the PROCESS \
-                execution!', err, file=sys.stderr)
-            print('       Refer to the logfile for more information!',
-                file=sys.stderr)
-            exit()
+            # Process has exited with a non-zero exit code. This is likely to 
+            # be due to hitting a "stop 1" in the Fortran. Catch this exception
+            # to allow execution to continue without exiting
+            print('Error: There was a problem with the PROCESS execution!', \
+                err, file=sys.stderr)
+            print('Refer to the logfile for more information!', file=sys.stderr)
 
         logfile.close()
         print("finished.")
