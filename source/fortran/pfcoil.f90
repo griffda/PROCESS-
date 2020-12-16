@@ -2635,7 +2635,6 @@ module pfcoil_module
  
      integer :: k,nef
      character(len=2) :: intstring
-     logical :: CSlimit=.false.
  
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
