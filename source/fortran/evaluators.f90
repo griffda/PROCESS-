@@ -14,14 +14,22 @@ module function_evaluator
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  use iso_c_binding
   implicit none
 
   public
+  
+  logical :: first_call
+  !! First call flag for subroutine fcnvmc1
 
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine init_function_evaluator
+    !! Initialise module variables
+
+    first_call = .true.
+  end subroutine init_function_evaluator
 
   subroutine fcnhyb(n,xc,rc,iflag)
 
@@ -111,7 +119,6 @@ contains
     !  Local variables
 
     real(dp) :: summ,sqsumconfsq
-    logical :: first_call = .true.
     integer :: ii, loop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -271,7 +278,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine funfom(fc) bind(C, name="c_funfom")
+  subroutine funfom(fc)
 
     !! Objective function evaluator for VMCON
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -327,7 +334,7 @@ contains
     case (2)  !  fusion power / input power
         write(*,*) 'Figure of merit 2 (fusion power / input power) is not used.'
         write(*,*) 'Figure of merit 5 (fusion gain Q) is available.'
-        stop
+        stop 1
        ! fc = sgn * powfmw / (pinjmw + porbitlossmw + tfcpmw + ppump/1.0D6)
 
     case (3)  !  neutron wall load
@@ -365,11 +372,11 @@ contains
     case (12)  !  hydrogen production capital cost
        ! #506 OBSOLETE
        write(*,*) 'Figure of Merit 13 (Hydrogen production) is no longer supported.'
-       stop
+       stop 1
     case (13)  !  hydrogen production rate
        ! #506 OBSOLETE
        write(*,*) 'Figure of Merit 13 (Hydrogen production) is no longer supported.'
-       stop
+       stop 1
 
     case (14)  !  pulse length
        fc = sgn * tburn / 2.0D4

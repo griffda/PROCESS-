@@ -890,7 +890,7 @@
          WRITE(*,*) 'Error in routine FISPRO:'
          WRITE(*,*) 'FISPRO returns a value of WERRNM = ',WERRNM
          WRITE(*,*) 'PROCESS stopping.'
-         STOP
+         STOP 1
       END IF
 
       END
@@ -1027,7 +1027,7 @@
 
       IF (WREGN.LT.1.OR.WREGN.GT.999) THEN
          WERRNM = 4
-         STOP
+         STOP 1
       END IF
       CALL CNVNT(WREGN,NUMRGN)
 
@@ -1548,7 +1548,7 @@
 
       IF (WREGN.LT.1.OR.WREGN.GT.999) THEN
          WERRNM = 4
-         STOP
+         STOP 1
       END IF
       CALL CNVNT(WREGN,NUMRGN)
 
@@ -1701,7 +1701,7 @@
             WERRNM = 2
             WRITE(*,*) 'WERRNM = ',WERRNM
             WRITE(*,*) 'PROCESS stopping.'
-            STOP
+            STOP 1
          END IF
          KERROR = KERROR + 1
          GOTO 132
@@ -1724,7 +1724,7 @@
             WERRNM = 3
             WRITE(*,*) 'WERRNM = ',WERRNM
             WRITE(*,*) 'PROCESS stopping.'
-            STOP
+            STOP 1
          END IF
          KERROR = KERROR + 1
          GOTO 134
@@ -2560,7 +2560,7 @@
             WERRNM = 7
             WRITE(*,*) 'WERRNM = ',WERRNM
             WRITE(*,*) 'PROCESS stopping.'
-            STOP
+            STOP 1
          END IF
       END IF
 
@@ -2598,7 +2598,7 @@
          WRITE(*,*) 'Error in routine ENDFP:'
          WRITE(*,*) 'NUM = ',NUM,' in SEND section.'
          WRITE(*,*) 'PROCESS stopping.'
-         STOP
+         STOP 1
       END IF
       IF (MCO.LE.364) THEN
 !
@@ -2609,7 +2609,7 @@
             WRITE(*,*) 'Error in routine ENDFP:'
             WRITE(*,*) 'NUM = ',NUM,' in FEND section.'
             WRITE(*,*) 'PROCESS stopping.'
-            STOP
+            STOP 1
          END IF
          READ(23,99003) ZA,AWR,LIS,LISO,M1,NSP,MAT,MF,MT,NUM
          IF (MF.LE.0) GOTO 80
@@ -2771,7 +2771,7 @@
             WERRNM = 8
             WRITE(*,*) 'WERRNM = ',WERRNM
             WRITE(*,*) 'PROCESS stopping.'
-            STOP
+            STOP 1
 !
 ! **THIS SECTION CALCULATES MAX ENERGY OF GENERATED GAMMA SPECTRUM
 !
@@ -3169,7 +3169,7 @@
 !
       ELSE IF (WTYPE.EQ.1.OR.WTYPE.GE.4) THEN
          WERRNM = 5
-         STOP
+         STOP 1
       ELSE
          CONTINUE
       END IF
@@ -3225,7 +3225,7 @@
             WERRNM = 6
             WRITE(*,*) 'WERRNM = ',WERRNM
             WRITE(*,*) 'PROCESS stopping.'
-            STOP
+            STOP 1
          END IF
 !
 ! **TEST FOR ENDFB6 FORMAT DATA
@@ -3236,7 +3236,7 @@
                WRITE(*,*) 'Error in routine ENDFPR:'
                WRITE(*,*) 'ZA = ',ZA
                WRITE(*,*) 'PROCESS stopping.'
-               STOP
+               STOP 1
             END IF
          END IF
 
@@ -4039,7 +4039,7 @@
       WRITE(*,*) 'Error in routine INTEGS:'
       WRITE(*,*) 'Step length has become negligibly small, H = ',H
       WRITE(*,*) 'PROCESS stopping.'
-      STOP
+      STOP 1
 !
 ! STEPLE - ONE-STEP METHOD STEP LENGTH
 ! STEPLE SET FIRSTLY TO EXTRAPOLATION STEP (H)
@@ -4712,7 +4712,7 @@
       WRITE(*,*) 'Error in routine INTEGT:'
       WRITE(*,*) 'Step length has become negligibly small, H = ',H
       WRITE(*,*) 'PROCESS stopping.'
-      STOP
+      STOP 1
 !
 ! STEPLE - ONE-STEP METHOD STEP LENGTH
 ! STEPLE SET FIRSTLY TO EXTRAPOLATION STEP (H)
@@ -5667,7 +5667,7 @@
             WRITE(*,*) 'Extrapolation attempted : X = ',X
             WRITE(*,*) 'It should be in the range 51.5 cm -- 106.5 cm'
             WRITE(*,*) 'PROCESS stopping.'
-            STOP
+            STOP 1
          END IF
  60   CONTINUE
 
@@ -5756,7 +5756,7 @@
          WRITE(*,*) 'Error in routine TG01BD:'
          WRITE(*,*) 'N not in range 1-20, = ',N
          WRITE(*,*) 'PROCESS stopping.'
-         STOP
+         STOP 1
       END IF
 
 ! *** TEST WHETHER POINT IN RANGE.
@@ -5894,7 +5894,7 @@
          WRITE(*,*) 'Error in routine FD05AD:'
          WRITE(*,*) 'INUM not in range 1-5, = ',INUM
          WRITE(*,*) 'PROCESS stopping.'
-         STOP
+         STOP 1
       ELSE
          FD05AD = DC(INUM)
       END IF

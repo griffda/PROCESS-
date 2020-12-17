@@ -91,7 +91,7 @@ subroutine current_sharing_rebco(current_sharing_t, bfield, j)
     real(dp)::x1,x2         ! Initial guesses for temperature
     logical::error                   ! True if the solver does not converge
     real(dp)::residual      ! Residual current density error
-    real(dp)::opt_tol = 1d7 ! Tolerance in current density
+    real(dp), parameter ::opt_tol = 1d7 ! Tolerance in current density
 
     x1 = 4d0
     x2 = 20d0
@@ -668,7 +668,7 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
         jc3 = bred * (1.0D0-bred)
         if(variable_error(jc3))then
             write(*,'(a24, 8(a12,es12.3))')'jc3 jcrit is NaN.',' bred=',bred, ' bmax=',bmax, ' bcrit=',bcrit, ' t=',t
-            stop
+            stop 1
         end if
     end if
 
@@ -693,7 +693,7 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
         write(*,'(a24, 8(a12,es12.3))')'WST jcrit is NaN.',' jc1=',jc1, ' jc2=',jc2, ' jc3=',jc3, ' t=',t
         write(*,'(a24, 8(a12,es12.3))')'T=',T,' bmax=',bmax,' strain=',strain,' bc20max=',bc20max, &
                                        ' tc0max=',tc0max,'jcrit=',jcrit,' bcrit=',bcrit,' tcrit=', tcrit
-        stop
+        stop 1
     end if
 
 end subroutine wstsc

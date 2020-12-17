@@ -20,7 +20,8 @@
   call DGETRF(n, n, Ainv, n, ipiv, info)
 
   if (info /= 0) then
-     stop 'Matrix is numerically singular!'
+   write(*,*) 'Matrix is numerically singular!'
+   stop 1
   end if
 
   ! DGETRI computes the inverse of a matrix using the LU factorization
@@ -28,6 +29,7 @@
   call DGETRI(n, Ainv, n, ipiv, work, n, info)
 
   if (info /= 0) then
-     stop 'Matrix inversion failed!'
+   write(*,*) 'Matrix inversion failed!'
+   stop 1
   end if
 end 

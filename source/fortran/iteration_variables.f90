@@ -9,6 +9,13 @@ module define_iteration_variables
    real(dp) :: DUMMY
 
 contains
+
+  subroutine init_define_iteration_variables
+    !! Initialise module variables
+    implicit none
+
+    DUMMY = 0.0D0
+  end subroutine init_define_iteration_variables
    
   !! lablxc(ipnvars) : labels describing iteration variables<UL>
 
@@ -2671,13 +2678,13 @@ contains
   end subroutine init_itv_120
 
   real(kind(1.d0)) function itv_120()
-    use divertor_kallenbach_variables, only: ttarget
+    use div_kal_vars, only: ttarget
     implicit none
     itv_120 =  ttarget
   end function itv_120
 
   subroutine set_itv_120(ratio)
-    use divertor_kallenbach_variables, only: ttarget
+    use div_kal_vars, only: ttarget
     implicit none
     real(kind(1.d0)) :: ratio
     ttarget = ratio
@@ -2695,13 +2702,13 @@ contains
   end subroutine init_itv_121
 
   real(kind(1.d0)) function itv_121()
-    use divertor_kallenbach_variables, only: neratio
+    use div_kal_vars, only: neratio
     implicit none
     itv_121 =  neratio
   end function itv_121
 
   subroutine set_itv_121(ratio)
-    use divertor_kallenbach_variables, only: neratio
+    use div_kal_vars, only: neratio
     implicit none
     real(kind(1.d0)) :: ratio
     neratio = ratio
@@ -2767,13 +2774,13 @@ contains
   end subroutine init_itv_124
 
   real(kind(1.d0)) function itv_124()
-    use divertor_kallenbach_variables, only: qtargettotal
+    use div_kal_vars, only: qtargettotal
     implicit none
     itv_124 = qtargettotal 
   end function itv_124
 
   subroutine set_itv_124(ratio)
-    use divertor_kallenbach_variables, only: qtargettotal
+    use div_kal_vars, only: qtargettotal
     implicit none
     real(kind(1.d0)) :: ratio
     qtargettotal = ratio
@@ -3345,7 +3352,7 @@ contains
   end subroutine init_itv_148
 
   real(kind(1.d0)) function itv_148()
-    use divertor_kallenbach_variables, only: impurity_enrichment
+    use div_kal_vars, only: impurity_enrichment
     use impurity_radiation_module, only: impurity_arr
     use reinke_variables, only: impvardiv
     implicit none
@@ -3355,7 +3362,7 @@ contains
   end function itv_148
 
   subroutine set_itv_148(ratio)
-    use divertor_kallenbach_variables, only: impurity_enrichment
+    use div_kal_vars, only: impurity_enrichment
     use impurity_radiation_module, only: fimpvar, impurity_arr
     use reinke_variables, only: fzactual, impvardiv
     implicit none

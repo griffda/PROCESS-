@@ -15,12 +15,12 @@ module ccfe_hcpb_module
   implicit none
 
   private
-  public :: ccfe_hcpb, tbr_shimwell
+  public :: ccfe_hcpb, tbr_shimwell, init_ccfe_hcpb_module
 
   ! Variables for output to file
   integer, private :: ip, ofile
 
-  real(dp), private :: W_density = 19.25D0 * 1000.0D0
+  real(dp), private :: W_density
   !! Tungsten density [kg/m3]
 
   ! Smeared densities of build sections
@@ -139,6 +139,77 @@ module ccfe_hcpb_module
   !! Fractions of blanket by volume: steel, lithium orthosilicate, titanium beryllide
 
 contains
+
+  subroutine init_ccfe_hcpb_module
+    !! Initialise module variables
+    implicit none
+
+    W_density = 19.25D0 * 1000.0D0
+    ip = 0
+    ofile = 0
+    armour_density = 0.0D0
+    fw_density = 0.0D0
+    blanket_density = 0.0D0
+    shield_density = 0.0D0
+    vv_density = 0.0D0
+    volfw = 0.0D0
+    x_blanket = 0.0D0
+    x_shield = 0.0D0
+    tfc_nuc_heating = 0.0D0
+    fw_armour_u_nuc_heating = 0.0D0
+    shld_u_nuc_heating = 0.0D0
+    hblnkt = 0.0D0
+    hshld = 0.0D0
+    hcryopf = 0.0D0
+    hvv = 0.0D0
+    volshldi = 0.0D0
+    volshldo = 0.0D0
+    vffwi = 0.0D0
+    vffwo = 0.0D0
+    psurffwi = 0.0D0
+    psurffwo = 0.0D0
+    bldepti = 0.0D0
+    bldepto = 0.0D0
+    blwidti = 0.0D0
+    blwidto = 0.0D0
+    bllengi = 0.0D0
+    bllengo = 0.0D0
+    bzfllengi = 0.0D0
+    bzfllengo = 0.0D0
+    pnucfwi = 0.0D0
+    pnucfwo = 0.0D0
+    tpeakfwi = 0.0D0
+    tpeakfwo = 0.0D0
+    mffwi = 0.0D0
+    mffwo = 0.0D0
+    mffw = 0.0D0
+    npfwi = 0.0D0
+    npfwo = 0.0D0
+    mffwpi = 0.0D0
+    mffwpo = 0.0D0
+    pnucblkti = 0.0D0
+    pnucblkto = 0.0D0
+    mfblkti = 0.0D0
+    mfblkto = 0.0D0
+    mfblkt = 0.0D0
+    mftotal = 0.0D0
+    npblkti = 0.0D0
+    npblkto = 0.0D0
+    mfblktpi = 0.0D0
+    mfblktpo = 0.0D0
+    velblkti = 0.0D0
+    velblkto = 0.0D0
+    htpmw_fwi = 0.0D0
+    htpmw_fwo = 0.0D0
+    htpmw_blkti = 0.0D0
+    htpmw_blkto = 0.0D0
+    exp_blanket = 0.0D0
+    exp_shield1 = 0.0D0
+    exp_shield2 = 0.0D0
+    fblss_ccfe = 0.0D0
+    fblli2sio4 = 0.0D0
+    fbltibe12 = 0.0D0
+  end subroutine init_ccfe_hcpb_module
 
   subroutine ccfe_hcpb(outfile, iprint)
     !! author: J Morris (UKAEA)
@@ -955,7 +1026,7 @@ contains
     if ((pnucfw<0.0d0).or.(pnucfw /= pnucfw)) then
         write(*,*)'Error in nuclear_heating_fw.  pnucfw = ', pnucfw, 'powfmw = ',&
           powfmw, 'fwmass = ', fwmass
-        stop
+        stop 1
     end if
 
   end subroutine nuclear_heating_fw
@@ -1001,7 +1072,7 @@ contains
         write(*,*)'Error in nuclear_heating_blanket. '
         write(*,*)'pnucblkt =', pnucblkt, ' exp_blanket =', exp_blanket
         write(*,*)'powfmw =', powfmw, ' mass =', mass
-        stop
+        stop 1
     end if
 
   end subroutine nuclear_heating_blanket
@@ -1325,7 +1396,7 @@ contains
             write(*,*) 'npblkti = ', npblkti, '   vfblkt =', vfblkt
             write(*,*) 'mfblkti =',mfblkti,   'pnucblkti =', pnucblkti
             write(*,*) 'pnucblkt =',pnucblkt,   'volblkti =', volblkti
-            stop
+            stop 1
         end if
 
         mfblktpi = mfblkti / npblkti
@@ -2239,7 +2310,7 @@ contains
     ! Check that coolant density is within bounds and not a NaN/Inf
     if ((rhof>1.0d9).or.(rhof<=0.0d0).or.(rhof/=rhof)) then
         write(*,*)'Error in pumppower.  rhof = ', rhof
-        stop
+        stop 1
     end if
 
     ! Hydraulic diameter (circular channels assumed) (m)
@@ -2507,7 +2578,7 @@ module kit_hcpb_module
   implicit none
 
   private
-  public :: kit_hcpb
+  public :: kit_hcpb, init_kit_hcpb_module
 
   ! Variables for output to file
   integer, private :: ip, ofile
@@ -2537,68 +2608,68 @@ module kit_hcpb_module
   ! Constants and fixed coefficients used in the model
   ! Based on Helium-Cooled Pebble Beds (HCPB) configuration
   ! of the PPCS Model B design
-  real(dp) :: A_cov_PPCS = 1365.0D0
+  real(dp) :: A_cov_PPCS
   !! Total blanket coverage area [m^2]
 
-  real(dp) :: A_FW_PPCS = 1253.0D0
+  real(dp) :: A_FW_PPCS
   !! First wall area [m^2]
 
-  real(dp) :: NWL_av_PPCS = 1.94D0
+  real(dp) :: NWL_av_PPCS
   !! Average neutron wall load [MW/m^2]
 
-  real(dp) :: NWL_av_IB_PPCS = 1.73D0
+  real(dp) :: NWL_av_IB_PPCS
   !! Average IB wall load [MW/m^2]
 
-  real(dp) :: NWL_av_OB_PPCS = 1.92D0
+  real(dp) :: NWL_av_OB_PPCS
   !! Average OB wall load [MW/m^2]
 
-  real(dp) :: NWL_max_IB_PPCS = 1.99D0
+  real(dp) :: NWL_max_IB_PPCS
   !! Maximum IB wall load [MW/m^2]
 
-  real(dp) :: NWL_max_OB_PPCS = 2.41D0
+  real(dp) :: NWL_max_OB_PPCS
   !! Maximum OB wall load [MW/m^2]
 
   real(dp) :: CF_bl_PPCS
   !! Blanket coverage factor (calculated) [%]
 
   ! Power density pre-exponential terms and decay lengths
-  real(dp) :: q_0_BZ_breed_IB = 23.41D0
+  real(dp) :: q_0_BZ_breed_IB
   !! Pre-exp term in IB BZ breeder [W/cm^3]
 
-  real(dp) :: q_0_BZ_breed_OB = 28.16D0
+  real(dp) :: q_0_BZ_breed_OB
   !! Pre-exp term in OB BZ breeder [W/cm^3]
 
-  real(dp) :: lambda_q_BZ_breed_IB = 44.56D0
+  real(dp) :: lambda_q_BZ_breed_IB
   !! Decay length in IB BZ breeder [cm]
 
-  real(dp) :: lambda_q_BZ_breed_OB = 28.37D0
+  real(dp) :: lambda_q_BZ_breed_OB
   !! Decay length in OB BZ breeder [cm]
 
-  real(dp) :: q_0_BZ_Be_IB = 7.5D0
+  real(dp) :: q_0_BZ_Be_IB
   !! Pre-exp term in IB BZ Beryllium [W/cm^3]
 
-  real(dp) :: q_0_BZ_Be_OB = 8.85D0
+  real(dp) :: q_0_BZ_Be_OB
   !! Pre-exp term in OB BZ Beryllium [W/cm^3]
 
-  real(dp) :: lambda_q_BZ_Be_IB = 21.19D0
+  real(dp) :: lambda_q_BZ_Be_IB
   !! Decay length in IB BZ Beryllium [cm]
 
-  real(dp) :: lambda_q_BZ_Be_OB = 19.33D0
+  real(dp) :: lambda_q_BZ_Be_OB
   !! Decay length in OB BZ Beryllium [cm]
 
-  real(dp) :: q_0_BZ_steels_IB = 9.04D0
+  real(dp) :: q_0_BZ_steels_IB
   !! Pre-exp term in IB BZ steels [W/cm^3]
 
-  real(dp) :: q_0_BZ_steels_OB = 9.93D0
+  real(dp) :: q_0_BZ_steels_OB
   !! Pre-exp term in OB BZ steels [W/cm^3]
 
-  real(dp) :: lambda_q_BZ_steels_IB = 21.59D0
+  real(dp) :: lambda_q_BZ_steels_IB
   !! Decay length in IB BZ steels [cm]
 
-  real(dp) :: lambda_q_BZ_steels_OB = 20.61D0
+  real(dp) :: lambda_q_BZ_steels_OB
   !! Decay length in OB BZ steels [cm]
 
-  real(dp) :: lambda_EU = 11.57D0
+  real(dp) :: lambda_EU
   !! Decay length in EUROFER [cm]
 
   real(dp) :: lambda_q_BM_IB
@@ -2613,157 +2684,157 @@ module kit_hcpb_module
   real(dp) :: lambda_q_BP_OB
   !! Decay length in OB BP (calculated) [cm]
 
-  real(dp) :: lambda_q_VV = 6.92D0
+  real(dp) :: lambda_q_VV
   !! Decay length in Vacuum Vessel [cm]
 
   ! Fast neutron flux pre-exponential terms and decay lengths
-  real(dp) :: phi_0_n_BZ_IB = 5.12D14  
+  real(dp) :: phi_0_n_BZ_IB
   !! Pre-exp term in IB BZ [n/cm^2/sec]
 
-  real(dp) :: phi_0_n_BZ_OB = 5.655D14 
+  real(dp) :: phi_0_n_BZ_OB
   !! Pre-exp term in OB BZ [n/cm^2/sec]
 
-  real(dp) :: lambda_n_BZ_IB = 18.79D0 
+  real(dp) :: lambda_n_BZ_IB
   !! Decay length in IB BZ [cm]
 
-  real(dp) :: lambda_n_BZ_OB = 19.19D0 
+  real(dp) :: lambda_n_BZ_OB
   !! Decay length in OB BZ [cm]
 
-  real(dp) :: lambda_n_VV = 8.153D0    
+  real(dp) :: lambda_n_VV
   !! Decay length in VV [cm]
 
-  real(dp) :: phi_n_0_VV_ref = 2.0D10
+  real(dp) :: phi_n_0_VV_ref
   !! Reference fast neutron flux on VV inner side [Fish09] [n/cm^2/sec]
 
   ! Vacuum vessel helium production pre-exponential terms and decay lengths
-  real(dp) :: Gamma_He_0_ref = 1.8D-3
+  real(dp) :: Gamma_He_0_ref
   !! Pre-exp term [appm/yr]
 
-  real(dp) :: lambda_He_VV = 7.6002D0 
+  real(dp) :: lambda_He_VV
   !! Decay length [cm]
 
-  real(dp) :: D_EU_max = 60.0D0
+  real(dp) :: D_EU_max
   !! Allowable neutron damage to the FW EUROFER [dpa]
 
   ! Variables used in this module, ultimately to be set via the calling routine
   ! to values given by PROCESS variables
-  real(dp), public :: P_n = 2720.0D0
+  real(dp), public :: P_n
   !! Fusion neutron power [MW]
 
-  real(dp), public :: NWL_av = 1.94D0 
+  real(dp), public :: NWL_av
   !! Average neutron wall load [MW/m^2]
 
-  real(dp), public :: f_peak = 1.21D0 
+  real(dp), public :: f_peak
   !! NWL peaking factor [--]
 
-  real(dp), public :: t_FW_IB = 2.3D0 
+  real(dp), public :: t_FW_IB
   !! IB first wall thickness [cm]
 
-  real(dp), public :: t_FW_OB = 2.3D0
+  real(dp), public :: t_FW_OB
   !! OB first wall thickness [cm]
 
-  real(dp), public :: A_FW_IB = 3.5196D6
+  real(dp), public :: A_FW_IB
   !! IB first wall area [cm^2]
 
-  real(dp), public :: A_FW_OB = 9.0504D6
+  real(dp), public :: A_FW_OB
   !! OB first wall area [cm^2]
 
-  real(dp), public :: A_bl_IB = 3.4844D6
+  real(dp), public :: A_bl_IB
   !! IB blanket area [cm^2]
 
-  real(dp), public :: A_bl_OB = 8.9599D6
+  real(dp), public :: A_bl_OB
   !! OB blanket area [cm^2]
 
-  real(dp), public :: A_VV_IB = 3.8220D6
+  real(dp), public :: A_VV_IB
   !! IB shield/VV area [cm^2]
 
-  real(dp), public :: A_VV_OB = 9.8280D6
+  real(dp), public :: A_VV_OB
   !! OB shield/VV area [cm^2]
 
-  real(dp), public :: CF_bl = 91.7949D0
+  real(dp), public :: CF_bl
   !! Blanket coverage factor [%]
 
-  integer, public :: n_ports_div = 2    
+  integer, public :: n_ports_div
   !! Number of divertor ports [ports]
 
-  integer, public :: n_ports_H_CD_IB = 2
+  integer, public :: n_ports_H_CD_IB
   !! Number of IB H&CD ports [ports]
 
-  integer, public :: n_ports_H_CD_OB = 2
+  integer, public :: n_ports_H_CD_OB
   !! Number of OB H&CD ports [ports]
 
-  character(len=5), public :: H_CD_ports = 'small'
+  character(len=5), public :: H_CD_ports
   !! Type of H&CD ports (small or large)
 
-  real(dp), public :: e_Li = 60.0D0     
+  real(dp), public :: e_Li
   !! Lithium 6 enrichment [%]
   
-  real(dp), public :: t_plant = 40.0D0
+  real(dp), public :: t_plant
   !! Plant lifetime [FPY]
 
-  real(dp), public :: alpha_m = 0.75D0
+  real(dp), public :: alpha_m
   !! Availability factor [--]
 
-  real(dp), public :: alpha_puls = 1.0D0
+  real(dp), public :: alpha_puls
   !! Pulsed regime fraction [--]
 
-  character(len=20), public :: breeder = 'Orthosilicate'
+  character(len=20), public :: breeder
   !! Breeder type (allowed values are Orthosilicate, Metatitanate or Zirconate)
 
   ! Inboard parameters
-  real(dp), public :: t_BZ_IB = 36.5D0
+  real(dp), public :: t_BZ_IB
   !! BZ thickness [cm]
 
-  real(dp), public :: t_BM_IB = 17.0D0
+  real(dp), public :: t_BM_IB
   !! BM thickness [cm]
 
-  real(dp), public :: t_BP_IB = 30.0D0
+  real(dp), public :: t_BP_IB
   !! BP thickness [cm]
 
-  real(dp), public :: t_VV_IB = 35.0D0
+  real(dp), public :: t_VV_IB
   !! VV thickness [cm]
 
-  real(dp), public :: alpha_BM_IB = 40.0D0 
+  real(dp), public :: alpha_BM_IB
   !! Helium fraction in the IB BM [%]
 
-  real(dp), public :: alpha_BP_IB = 65.95D0
+  real(dp), public :: alpha_BP_IB
   !! Helium fraction in the IB BP [%]
 
-  real(dp), public :: chi_Be_BZ_IB = 69.2D0
+  real(dp), public :: chi_Be_BZ_IB
   !! Beryllium vol. frac. in IB BZ [%]
 
-  real(dp), public :: chi_breed_BZ_IB = 15.4D0
+  real(dp), public :: chi_breed_BZ_IB
   !! Breeder vol. frac. in IB BZ [%]
 
-  real(dp), public :: chi_steels_BZ_IB = 9.8D0
+  real(dp), public :: chi_steels_BZ_IB
   !! Steels vol. frac. in IB BZ [%]
 
   ! Outboard parameters
-  real(dp), public :: t_BZ_OB = 46.5D0
+  real(dp), public :: t_BZ_OB
   !! BZ thickness [cm]
 
-  real(dp), public :: t_BM_OB = 27.0D0
+  real(dp), public :: t_BM_OB
   !! BM thickness [cm]
 
-  real(dp), public :: t_BP_OB = 35.0D0
+  real(dp), public :: t_BP_OB
   !! BP thickness [cm]
 
-  real(dp), public :: t_VV_OB = 65.0D0
+  real(dp), public :: t_VV_OB
   !! VV thickness [cm]
 
-  real(dp), public :: alpha_BM_OB = 40.0D0 
+  real(dp), public :: alpha_BM_OB
   !! Helium fraction in the OB BM [%]
 
-  real(dp), public :: alpha_BP_OB = 67.13D0
+  real(dp), public :: alpha_BP_OB
   !! Helium fraction in the OB BP [%]
 
-  real(dp), public :: chi_Be_BZ_OB = 69.2D0
+  real(dp), public :: chi_Be_BZ_OB
   !! Beryllium vol. frac. in OB BZ [%]
 
-  real(dp), public :: chi_breed_BZ_OB = 15.4D0
+  real(dp), public :: chi_breed_BZ_OB
   !! Breeder vol. frac. in OB BZ [%]
 
-  real(dp), public :: chi_steels_BZ_OB = 9.8D0
+  real(dp), public :: chi_steels_BZ_OB
   !! Steels vol. frac. in OB BZ [%]
 
   ! Model outputs
@@ -2837,6 +2908,81 @@ contains
   ! #TODO : Output section for model!
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine init_kit_hcpb_module
+    !! Initialise module variables
+    implicit none
+
+    A_cov_PPCS = 1365.0D0
+    A_FW_PPCS = 1253.0D0
+    NWL_av_PPCS = 1.94D0
+    NWL_av_IB_PPCS = 1.73D0
+    NWL_av_OB_PPCS = 1.92D0
+    NWL_max_IB_PPCS = 1.99D0
+    NWL_max_OB_PPCS = 2.41D0
+    q_0_BZ_breed_IB = 23.41D0
+    q_0_BZ_breed_OB = 28.16D0
+    lambda_q_BZ_breed_IB = 44.56D0
+    lambda_q_BZ_breed_OB = 28.37D0
+    q_0_BZ_Be_IB = 7.5D0
+    q_0_BZ_Be_OB = 8.85D0
+    lambda_q_BZ_Be_IB = 21.19D0
+    lambda_q_BZ_Be_OB = 19.33D0
+    q_0_BZ_steels_IB = 9.04D0
+    q_0_BZ_steels_OB = 9.93D0
+    lambda_q_BZ_steels_IB = 21.59D0
+    lambda_q_BZ_steels_OB = 20.61D0
+    lambda_EU = 11.57D0
+    lambda_q_VV = 6.92D0
+    phi_0_n_BZ_IB = 5.12D14  
+    phi_0_n_BZ_OB = 5.655D14 
+    lambda_n_BZ_IB = 18.79D0 
+    lambda_n_BZ_OB = 19.19D0 
+    lambda_n_VV = 8.153D0    
+    phi_n_0_VV_ref = 2.0D10
+    Gamma_He_0_ref = 1.8D-3
+    lambda_He_VV = 7.6002D0 
+    D_EU_max = 60.0D0
+    P_n = 2720.0D0
+    NWL_av = 1.94D0 
+    f_peak = 1.21D0 
+    t_FW_IB = 2.3D0 
+    t_FW_OB = 2.3D0
+    A_FW_IB = 3.5196D6
+    A_FW_OB = 9.0504D6
+    A_bl_IB = 3.4844D6
+    A_bl_OB = 8.9599D6
+    A_VV_IB = 3.8220D6
+    A_VV_OB = 9.8280D6
+    CF_bl = 91.7949D0
+    n_ports_div = 2    
+    n_ports_H_CD_IB = 2
+    n_ports_H_CD_OB = 2
+    H_CD_ports = 'small'
+    e_Li = 60.0D0     
+    t_plant = 40.0D0
+    alpha_m = 0.75D0
+    alpha_puls = 1.0D0
+    breeder = 'Orthosilicate'
+    t_BZ_IB = 36.5D0
+    t_BM_IB = 17.0D0
+    t_BP_IB = 30.0D0
+    t_VV_IB = 35.0D0
+    alpha_BM_IB = 40.0D0 
+    alpha_BP_IB = 65.95D0
+    chi_Be_BZ_IB = 69.2D0
+    chi_breed_BZ_IB = 15.4D0
+    chi_steels_BZ_IB = 9.8D0
+    t_BZ_OB = 46.5D0
+    t_BM_OB = 27.0D0
+    t_BP_OB = 35.0D0
+    t_VV_OB = 65.0D0
+    alpha_BM_OB = 40.0D0 
+    alpha_BP_OB = 67.13D0
+    chi_Be_BZ_OB = 69.2D0
+    chi_breed_BZ_OB = 15.4D0
+    chi_steels_BZ_OB = 9.8D0
+  end subroutine init_kit_hcpb_module
 
   function f_alpha(alpha)
 

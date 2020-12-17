@@ -1,3 +1,4 @@
+
 module read_and_get_atomic_data
   !! Module for reading atomic data
   !! author: M Kovari, CCFE, Culham Science Centre
@@ -13,7 +14,28 @@ module read_and_get_atomic_data
   use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
+  ! Var for subroutine get_h_rates requiring re-initialisation on each new run
+  logical, save :: FirstCall
+
 contains
+  character(len=300) function hdatadir()
+        implicit none
+        character(len=200) :: process_dir
+        CALL get_environment_variable("PYTHON_PROCESS_ROOT", process_dir)
+        if (process_dir == "") then
+          hdatadir = INSTALLDIR//'/process/data/h_data/'
+        else
+          hdatadir = trim(process_dir)//'/data/h_data/' 
+        end if
+        
+  end function hdatadir
+
+  subroutine init_read_and_get_atomic_data
+    !! Initialise module variables
+    implicit none
+
+    FirstCall = .true.
+  end subroutine init_read_and_get_atomic_data
 
   subroutine get_h_rates(density, temperature, s, al, Rcx, plt, prb, mass, verbose)
     !! 
@@ -60,18 +82,9 @@ contains
 
     real(dp) :: logdens, logtemp
 
-    logical, save :: FirstCall = .true.
-
     logical :: iexist
 
     integer :: ine, ite
-
-    !  Obtain the root directory from the file 'root.dir'
-    ! The # character must be at the start of the line.
-    include "root.dir"
-
-    !    character(len=120), save :: hdatadir = trim(ROOTDIR//'/data/h_data/')
-    character(len=200), save :: hdatadir = trim(INSTALLDIR//'/data/h_data/')
 
     ! Maxima for log density and log temperature in each data file
     real(dp), save :: max_scd_d, max_scd_t
@@ -91,23 +104,23 @@ contains
 
       FirstCall=.false.
 
-      !  Add trailing / to hdatadir if necessary
-      ! if (index(hdatadir,'/',.true.) .ne. len(trim(hdatadir))) hdatadir = hdatadir//'/'
-      ! if (index(hdatadir,'\',.true.) .ne. len(trim(hdatadir))) hdatadir = hdatadir//'\'
+      !  Add trailing / to hdatadir() if necessary
+      ! if (index(hdatadir(),'/',.true.) .ne. len(trim(hdatadir()))) hdatadir() = hdatadir()//'/'
+      ! if (index(hdatadir(),'\',.true.) .ne. len(trim(hdatadir()))) hdatadir() = hdatadir()//'\'
 
-      acd_file = trim(hdatadir)//'acd96_h.dat'
-      scd_file = trim(hdatadir)//'scd96_h.dat'
-      plt_file = trim(hdatadir)//'plt96_h.dat'
-      prb_file = trim(hdatadir)//'prb96_h.dat'
+      acd_file = trim(hdatadir())//'acd96_h.dat'
+      scd_file = trim(hdatadir())//'scd96_h.dat'
+      plt_file = trim(hdatadir())//'plt96_h.dat'
+      prb_file = trim(hdatadir())//'prb96_h.dat'
 
       m = floor(mass+0.5)                     ! round to an integer
       ! Select the correct atomic species for the CX rates: H, D or T
       if      (m == 1) then
-          ccd_file = trim(hdatadir)//'ccd96_h.dat'
+          ccd_file = trim(hdatadir())//'ccd96_h.dat'
       elseif (m == 2) then
-          ccd_file = trim(hdatadir)//'ccd96_d.dat'
+          ccd_file = trim(hdatadir())//'ccd96_d.dat'
       elseif (m == 3) then
-          ccd_file = trim(hdatadir)//'ccd96_t.dat'
+          ccd_file = trim(hdatadir())//'ccd96_t.dat'
       else
           write(*,*) 'The atomic mass is ', m, '.  It must be in the range 1-3.'
       end if
@@ -277,10 +290,9 @@ contains
     real(dp):: lz_deuterium(3)
     real(dp):: dummy1, dummy2, dummy3, dummy4, dummy5
     integer::i,j
-    real(dp)::te(15)=(/1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,12.,14.,16.,18.,20./)
-    real(dp)::density(3)=(/1.e19,1.e20,1.e21/)
-    !  Obtain the root directory from the file 'root.dir'
-    ! The # character must be at the start of the line.
+    real(dp), parameter ::te(15)=(/1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,12.,14.,16.,18.,20./)
+    real(dp), parameter ::density(3)=(/1.e19,1.e20,1.e21/)
+
     open(unit=12,file='rate_coefficients.txt',status='replace')
     write(12,'(30a11)')'te [eV]','Rcx', 'ionis19', 'recomb19', 'line rad19', 'cont rad19', 'tot rad19',&
                                        'ionis20', 'recomb20', 'line rad20', 'cont rad20', 'tot rad20',&
