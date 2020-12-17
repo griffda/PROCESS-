@@ -20,6 +20,8 @@ nav:
         - TF Coil : eng-models/tf-coil.md
         - Shield : eng-models/shield.md
         - Divertor : eng-models/divertor.md
+    - Unique Models:
+        - Water Use: unique-models/water_use.md
     - Development: 
         Tools: development/tools.md
         Standards: development/standards.md
