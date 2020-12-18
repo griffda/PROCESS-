@@ -14,26 +14,7 @@ stages:
   - build
   - testing
   - quality
-  - freia
   - pages
-
-.before_script_template: &build-freia-setup
-  before_script:
-    - export LOGNAME=root
-    - source /etc/profile.d/modules.sh
-    - module use /usr/local/modules/default
-    - module unload python
-    - module load python/3.7
-    - module load texlive/2017
-    - module unload ifort 
-    - module load gfortran
-    - export GTEST=/home/PROCESS/testing_frameworks/googletest/googletest
-    - echo ld_library_path=$LD_LIBRARY_PATH
-    # Modify PATH so "ford" command can be found in cmake file
-    - export PATH=$PATH:~/.local/bin
-    # Python3 uses the locale to choose the file encoding it uses
-    # Without this it will use ASCII encoding and Ford will fail
-    - export LANG=en_GB.utf8
 
 .before_test_template: &test-setup
   image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
@@ -83,6 +64,8 @@ unit:
   <<: *test-setup
   script:
     - pytest tests/unit
+  tags:
+    - ubuntu
 
 integration:
   when: on_success
@@ -90,6 +73,8 @@ integration:
   <<: *test-setup
   script:
     - pytest tests/integration
+  tags:
+    - ubuntu
 
 unitfort:
   when: on_success
@@ -99,6 +84,8 @@ unitfort:
     - python3 -m pip install tabulate
     - pytest tests/ -m unitfort
     - python3 tests/uft_tests/coverage.py
+  tags:
+    - ubuntu
 
 regression:
   when: on_success
@@ -106,6 +93,8 @@ regression:
   <<: *test-setup
   script:
     - pytest tests/regression
+  tags:
+    - ubuntu
 
 baseline_2019:
   when: on_success
@@ -123,6 +112,8 @@ baseline_2019:
       -f tracking/baseline_2019/baseline_2019_MFILE.DAT tracking/baseline_2019/ref_baseline_2019_MFILE.DAT 
       --acc 10.0 
       --baseline
+  tags:
+    - ubuntu
 
 baseline_2018:
   when: on_success
@@ -140,6 +131,8 @@ baseline_2018:
       -f tracking/baseline_2018/baseline_2018_MFILE.DAT tracking/baseline_2018/ref_baseline_2018_MFILE.DAT 
       --acc 10.0 
       --baseline
+  tags:
+    - ubuntu
 
 step_input:
   when: on_success
@@ -164,6 +157,8 @@ step_input:
     - git commit -m "PROCESS commit - $MESSAGE"
     - git config --global push.default matching
     - git push origin
+  tags:
+    - ubuntu
 
 #-----------------
 #  Quality
@@ -176,106 +171,8 @@ line_length:
   script:
     - pwd
     - python3 utilities/line_length_standard.py
-
-#-----------------
-#  Freia
-#-----------------
-
-make_freia:
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - gcc --version
-    - ls -lah
-    - rm -rf build
-    - cmake3 -H. -Bbuild -DGTEST_INCLUDE_DIRS=$GTEST/include/ -DGTEST_LIBRARIES=$GTEST/lib/libgtest.a
-    - cmake3 --build build
-    - ls bin -lah
-    - echo "Test "
-  artifacts:
-    expire_in: 2 hrs
-    paths:
-      - bin/process.exe
-      - bin/process_GTest.exe
-      - bin/libPROCESS_calc_engine.so
   tags:
-    - freia
-    - higher-privacy
-
-make_dicts_freia:
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - gcc --version
-    - ls -lah
-    - cmake3 -H. -Bbuild -DGTEST_INCLUDE_DIRS=$GTEST/include/ -DGTEST_LIBRARIES=$GTEST/lib/libgtest.a
-    - cmake3 --build build --target dicts
-  tags:
-    - freia
-    - higher-privacy
-
-baseline_2019_freia:
-  when: on_success
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - cmake3 -H. -Bbuild -DGTEST_INCLUDE_DIRS=$GTEST/include/ -DGTEST_LIBRARIES=$GTEST/lib/libgtest.a
-    - cmake3 --build build
-    - cmake3 --build build --target dicts
-    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
-    - cd tracking/baseline_2019
-    - ./../../bin/process.exe baseline_2019_IN.DAT
-    - > 
-      python ../../utilities/mfile_comparison.py 
-      -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT 
-      --acc 1.0 
-      --baseline
-    - > 
-      python ../../utilities/mfile_comparison.py 
-      -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT 
-      --acc 10.0 
-      --baseline
-  tags:
-    - freia
-    - higher-privacy
-
-baseline_2018_freia:
-  when: on_success
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - cmake3 -H. -Bbuild -DGTEST_INCLUDE_DIRS=$GTEST/include/ -DGTEST_LIBRARIES=$GTEST/lib/libgtest.a
-    - cmake3 --build build
-    - cmake3 --build build --target dicts
-    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
-    - cd tracking/baseline_2018
-    - ./../../bin/process.exe baseline_2018_IN.DAT
-    - >
-      python ../../utilities/mfile_comparison.py 
-      -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT 
-      --acc 1.0 
-      --baseline
-    - > 
-      python ../../utilities/mfile_comparison.py 
-      -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT 
-      --acc 10.0 
-      --baseline
-  tags:
-    - freia
-    - higher-privacy
-
+    - ubuntu
 
 #-----------------
 #  Pages
@@ -327,6 +224,8 @@ pages:
     - ls ../public
     - du -shc ../public/*
     - du -shc ../public/ford_site/*
+  tags:
+    - ubuntu
     
   artifacts:
     expire_in: 1 week
