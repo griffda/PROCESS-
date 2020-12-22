@@ -10,6 +10,9 @@
 #
 #-----------------------------------------------------
 
+# All jobs are run on ubuntu-tagged runners; freia-tagged runners are not 
+# supported due to modifying the Docker containers used here after they are run
+
 stages:
   - build
   - testing
@@ -31,13 +34,6 @@ stages:
 #-----------------
 #  Build
 #-----------------
-# TODO There are currently problems with freia-tagged runners. Jobs can fail due
-# to either failing to find cmake or failing to find the docker image. As this
-# isn't a problem on "ubuntu"-tagged runners, it is assumed this is a problem
-# with the Freia runners themselves. The Docker containers they run (if they 
-# can find it) aren't the same as the containers on the Ubuntu runners.
-# See #1202. Remove this "ubuntu" requirement once issue with runners is 
-# resolved.
 make:
   stage: build
   image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
@@ -179,26 +175,17 @@ line_length:
 #-----------------
 
 pages:
-  before_script:
-    - "export LOGNAME=root"
-    - export LANG=C.UTF-8
-    - export LC_ALL=C.UTF-8
-    # Python3 uses the locale to choose the file encoding it uses
-    # Without this it will use ASCII encoding and Ford will fail
   when: on_success
   only:
     - develop
-    # Remove on merge to develop
-    - issue-vardes-to-gitpages
   stage: pages
   image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
   script:
     - pwd
     
     # FORD documentation
-    # Ensure FORD can find create_dicts.py inside Process
-    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
-    - python3 lib/ford/ford.py documentation/ford/index.md
+    - python3 -m pip install git+https://github.com/jonMaddockUkaea/ford
+    - ford documentation/ford/index.md
     
     # Build the MkDocs site (after FORD has been used to create the vardes)
     - mkdocs build
