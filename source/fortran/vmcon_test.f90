@@ -2,8 +2,7 @@ module vmcon_test
   !  Unit testing program for VMCON  
   !  MDK.  Changed from a "program" to a module.  Issue #1078
   !  Special compilation no longer required.
-  !#TODO Add "use onlys" for maths_library
-  use maths_library
+  use maths_library, only: nearly_equal
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 
   implicit none
