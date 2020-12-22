@@ -11,26 +11,26 @@
 #-----------------------------------------------------
 
 stages:
-  # - build
-  # - testing
-  # - quality
+  - build
+  - testing
+  - quality
   - pages
 
-# .before_test_template: &test-setup
-#   image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
-#   before_script:
-#     - export PATH=/root/.local/bin:${PATH}
-#     - pip3 install --upgrade pip
-#     - pip3 install virtualenv
-#     - virtualenv ~/testenv
-#     - source ~/testenv/bin/activate
-#     - python3 -m pip install -r requirements.txt
-#     - python3 -m pip install git+https://github.com/jonMaddockUkaea/ford
-#     - python3 -m pip install --find-links=process_dist process
+.before_test_template: &test-setup
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
+  before_script:
+    - export PATH=/root/.local/bin:${PATH}
+    - pip3 install --upgrade pip
+    - pip3 install virtualenv
+    - virtualenv ~/testenv
+    - source ~/testenv/bin/activate
+    - python3 -m pip install -r requirements.txt
+    - python3 -m pip install git+https://github.com/jonMaddockUkaea/ford
+    - python3 -m pip install --find-links=process_dist process
 
-# #-----------------
-# #  Build
-# #-----------------
+#-----------------
+#  Build
+#-----------------
 # TODO There are currently problems with freia-tagged runners. Jobs can fail due
 # to either failing to find cmake or failing to find the docker image. As this
 # isn't a problem on "ubuntu"-tagged runners, it is assumed this is a problem
@@ -38,159 +38,167 @@ stages:
 # can find it) aren't the same as the containers on the Ubuntu runners.
 # See #1202. Remove this "ubuntu" requirement once issue with runners is 
 # resolved.
-# make:
-#   stage: build
-#   image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
-#   artifacts:
-#     paths:
-#       - process_dist/process-*.tar.gz
-#       - process_dist/process-*.whl
-#     expire_in: 1 week
-#   script:
-#     - cmake -H. -Bbuild
-#     - cmake --build build
-#     - python3 setup.py sdist -d process_dist
-#     - python3 setup.py bdist_wheel -d process_dist
-#   tags:
-#     - ubuntu
+make:
+  stage: build
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
+  artifacts:
+    paths:
+      - process_dist/process-*.tar.gz
+      - process_dist/process-*.whl
+    expire_in: 1 week
+  script:
+    - cmake -H. -Bbuild
+    - cmake --build build
+    - python3 setup.py sdist -d process_dist
+    - python3 setup.py bdist_wheel -d process_dist
+  tags:
+    - ubuntu
 
-# #-----------------
-# #  Testing
-# #-----------------
+#-----------------
+#  Testing
+#-----------------
 
-# unit:
-#   when: on_success
-#   stage: testing
-#   <<: *test-setup
-#   script:
-#     - pytest tests/unit
-#   tags:
-#     - ubuntu
+unit:
+  when: on_success
+  stage: testing
+  <<: *test-setup
+  script:
+    - pytest tests/unit
+  tags:
+    - ubuntu
 
-# integration:
-#   when: on_success
-#   stage: testing
-#   <<: *test-setup
-#   script:
-#     - pytest tests/integration
-#   tags:
-#     - ubuntu
+integration:
+  when: on_success
+  stage: testing
+  <<: *test-setup
+  script:
+    - pytest tests/integration
+  tags:
+    - ubuntu
 
-# unitfort:
-#   when: on_success
-#   stage: testing
-#   <<: *test-setup
-#   script:
-#     - python3 -m pip install tabulate
-#     - pytest tests/ -m unitfort
-#     - python3 tests/uft_tests/coverage.py
-#   tags:
-#     - ubuntu
+unitfort:
+  when: on_success
+  stage: testing
+  <<: *test-setup
+  script:
+    - python3 -m pip install tabulate
+    - pytest tests/ -m unitfort
+    - python3 tests/uft_tests/coverage.py
+  tags:
+    - ubuntu
 
-# regression:
-#   when: on_success
-#   stage: testing
-#   <<: *test-setup
-#   script:
-#     - pytest tests/regression
-#   tags:
-#     - ubuntu
+regression:
+  when: on_success
+  stage: testing
+  <<: *test-setup
+  script:
+    - pytest tests/regression
+  tags:
+    - ubuntu
 
-# baseline_2019:
-#   when: on_success
-#   stage: testing
-#   <<: *test-setup
-#   script:
-#     - process -i tracking/baseline_2019/baseline_2019_IN.DAT
-#     - > 
-#       python3 process/io/mfile_comparison.py
-#       -f tracking/baseline_2019/baseline_2019_MFILE.DAT tracking/baseline_2019/ref_baseline_2019_MFILE.DAT 
-#       --acc 1.0 
-#       --baseline
-#     - > 
-#       python3 process/io/mfile_comparison.py
-#       -f tracking/baseline_2019/baseline_2019_MFILE.DAT tracking/baseline_2019/ref_baseline_2019_MFILE.DAT 
-#       --acc 10.0 
-#       --baseline
-#   tags:
-#     - ubuntu
+baseline_2019:
+  when: on_success
+  stage: testing
+  <<: *test-setup
+  script:
+    - process -i tracking/baseline_2019/baseline_2019_IN.DAT
+    - > 
+      python3 process/io/mfile_comparison.py
+      -f tracking/baseline_2019/baseline_2019_MFILE.DAT tracking/baseline_2019/ref_baseline_2019_MFILE.DAT 
+      --acc 1.0 
+      --baseline
+    - > 
+      python3 process/io/mfile_comparison.py
+      -f tracking/baseline_2019/baseline_2019_MFILE.DAT tracking/baseline_2019/ref_baseline_2019_MFILE.DAT 
+      --acc 10.0 
+      --baseline
+  tags:
+    - ubuntu
 
-# baseline_2018:
-#   when: on_success
-#   stage: testing
-#   <<: *test-setup
-#   script:
-#     - process -i tracking/baseline_2018/baseline_2018_IN.DAT
-#     - > 
-#       python3 process/io/mfile_comparison.py
-#       -f tracking/baseline_2018/baseline_2018_MFILE.DAT tracking/baseline_2018/ref_baseline_2018_MFILE.DAT 
-#       --acc 1.0 
-#       --baseline
-#     - > 
-#       python3 process/io/mfile_comparison.py
-#       -f tracking/baseline_2018/baseline_2018_MFILE.DAT tracking/baseline_2018/ref_baseline_2018_MFILE.DAT 
-#       --acc 10.0 
-#       --baseline
-#   tags:
-#     - ubuntu
+baseline_2018:
+  when: on_success
+  stage: testing
+  <<: *test-setup
+  script:
+    - process -i tracking/baseline_2018/baseline_2018_IN.DAT
+    - > 
+      python3 process/io/mfile_comparison.py
+      -f tracking/baseline_2018/baseline_2018_MFILE.DAT tracking/baseline_2018/ref_baseline_2018_MFILE.DAT 
+      --acc 1.0 
+      --baseline
+    - > 
+      python3 process/io/mfile_comparison.py
+      -f tracking/baseline_2018/baseline_2018_MFILE.DAT tracking/baseline_2018/ref_baseline_2018_MFILE.DAT 
+      --acc 10.0 
+      --baseline
+  tags:
+    - ubuntu
 
-# step_input:
-#   when: on_success
-#   only: 
-#     - develop
-#   stage: testing
-#   image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
-#   script:
-#     - git config --global user.email "james.morris2@ukaea.uk"
-#     - git config --global user.name "James Morris"
-#     - git log -1 --format=oneline >> commit_msg.txt
-#     - MESSAGE=$(git describe)
-#     - echo $MESSAGE
-#     - pwd
-#     - cat commit_msg.txt
-#     - git clone https://gitlab-ci-token:${STP_CI_API_TOKEN}@git.ccfe.ac.uk/smuldrew/process-step.git
-#     - cp commit_msg.txt process-step
-#     - cd process-step
-#     - ls
-#     - date >> date_of_push.txt
-#     - git add commit_msg.txt date_of_push.txt
-#     - git commit -m "PROCESS commit - $MESSAGE"
-#     - git config --global push.default matching
-#     - git push origin
-#   tags:
-#     - ubuntu
+step_input:
+  when: on_success
+  only: 
+    - develop
+  stage: testing
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
+  script:
+    - git config --global user.email "james.morris2@ukaea.uk"
+    - git config --global user.name "James Morris"
+    - git log -1 --format=oneline >> commit_msg.txt
+    - MESSAGE=$(git describe)
+    - echo $MESSAGE
+    - pwd
+    - cat commit_msg.txt
+    - git clone https://gitlab-ci-token:${STP_CI_API_TOKEN}@git.ccfe.ac.uk/smuldrew/process-step.git
+    - cp commit_msg.txt process-step
+    - cd process-step
+    - ls
+    - date >> date_of_push.txt
+    - git add commit_msg.txt date_of_push.txt
+    - git commit -m "PROCESS commit - $MESSAGE"
+    - git config --global push.default matching
+    - git push origin
+  tags:
+    - ubuntu
 
-# #-----------------
-# #  Quality
-# #-----------------
+#-----------------
+#  Quality
+#-----------------
 
-# line_length:
-#   when: on_success
-#   stage: quality
-#   image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
-#   script:
-#     - pwd
-#     - python3 utilities/line_length_standard.py
-#   tags:
-#     - ubuntu
+line_length:
+  when: on_success
+  stage: quality
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
+  script:
+    - pwd
+    - python3 utilities/line_length_standard.py
+  tags:
+    - ubuntu
 
 #-----------------
 #  Pages
 #-----------------
 
 pages:
-  # TODO Add back in once tested
-  # when: on_success
-  # only:
-  #   - develop
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
+  before_script:
+    - "export LOGNAME=root"
+    - export LANG=C.UTF-8
+    - export LC_ALL=C.UTF-8
+    # Python3 uses the locale to choose the file encoding it uses
+    # Without this it will use ASCII encoding and Ford will fail
+  when: on_success
+  only:
+    - develop
+    # Remove on merge to develop
+    - issue-vardes-to-gitpages
   stage: pages
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
   script:
     - pwd
     
     # FORD documentation
-    - python3 -m pip install git+https://github.com/jonMaddockUkaea/ford
-    - ford documentation/ford/index.md
+    # Ensure FORD can find create_dicts.py inside Process
+    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
+    - python3 lib/ford/ford.py documentation/ford/index.md
     
     # Build the MkDocs site (after FORD has been used to create the vardes)
     - mkdocs build
