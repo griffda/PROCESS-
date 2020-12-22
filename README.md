@@ -497,9 +497,8 @@ updated upon compilation. This way each output file is trackable to a specific c
 
 ## Unit Tests
 
-The PROCESS code uses Googletest framework for unit 
-testing. The instructions for adding unit tests is in the 
-repository file `unit-testing-guide.md` ([here](https://git.ccfe.ac.uk/process/process/blob/develop/unit-testing-guide.md))
+The PROCESS code uses PyTest for its unit testing framework. See the `tests` folder in 
+the repository.
 
 ## Profiling
 
@@ -583,6 +582,8 @@ If you encounter issues with file line endings when working between Windows and 
 ## Contacts
 
 [James Morris](james.morris2@ukaea.uk)
+
+[Jonathan Maddock](jonathan.maddock@ukaea.uk)
 
 [Michael Kovari](michael.kovari@ukaea.uk)
 
