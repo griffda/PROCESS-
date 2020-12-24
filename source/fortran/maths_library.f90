@@ -1,16 +1,3 @@
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!  To perform standalone tests of vmcon:
-!  1) Compile code as normal using 'make'
-!  2) Uncomment #define line below
-!  3) Re-compile using pre-processor:
-!     ifort -cpp -c maths_library.f90
-!     ifort -o vmcon_test maths_library.o numerics.o global_variables.o
-!
-!  Don't forget to comment the line below again afterwards!!!
-
-!#define unit_test
-
 module maths_library
 
   !! Library of mathematical and numerical routines
@@ -28,7 +15,7 @@ module maths_library
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  ! MDK Remove this dependency, as iotty is now defined in global variables.
+ 
   !use process_output
 
   implicit none
@@ -2096,10 +2083,15 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   recursive subroutine vmcon( &
-       fcnvmc1,fcnvmc2,mode,n,m,meq,x,objf,fgrd,conf,cnorm,lcnorm, &
-       b,lb,tol,maxfev,info,nfev,niter,vlam,glag,vmu,cm,glaga,gamma,eta, &
-       xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa,liwa,ilower, &
-       iupper,bndl,bndu, sum)
+       fcnvmc1,fcnvmc2,mode,n,m,&
+       meq,x,objf,fgrd,conf,&
+       cnorm,lcnorm,b,lb,tol,&
+       maxfev,info,nfev,niter,vlam,& 
+       glag,vmu,cm,glaga,gamma,&
+       eta,xa,bdelta,delta,ldel,&
+       gm,bdl,bdu,h,lh,&
+       wa,lwa,iwa,liwa,ilower, &
+       iupper,bndl,bndu,sum)
 
     !! Calculates the least value of a function of several variables
     !! subject to linear and/or nonlinear equality and inequality
@@ -2233,8 +2225,6 @@ contains
     real(dp), intent(out) :: objf
     real(dp), intent(in) :: tol
     real(dp), dimension(n), intent(inout) :: x
-    real(dp), dimension(n) :: best_solution_vector
-    real(dp), dimension(n) :: delta_var           ! For opt data extraction only
     real(dp), dimension(n), intent(in) :: bndl,bndu
     real(dp), dimension(n), intent(out) :: fgrd
     real(dp), dimension(m), intent(out) :: conf
@@ -2247,8 +2237,10 @@ contains
     real(dp), dimension(lb,lb), intent(inout) :: b
     real(dp), dimension(*), intent(out) :: vlam,vmu,gm,bdl,bdu
     real(dp), intent(out), optional :: sum
-    !  Local variables
 
+    !  Local variables
+    real(dp), dimension(n) :: best_solution_vector
+    real(dp), dimension(n) :: delta_var           ! For opt data extraction only
     integer :: i,j,k,mact,nfinit,nls,np1,np1j,npp,nqp,nsix,nsixi
     integer :: inx,ki,ml,mlp1,mcon,mp1,mpn,mpnpp1,mpnppn
 
@@ -2499,7 +2491,8 @@ contains
        do i = 1, n
          delta_var(i) = delta(i)
        end do
-       write(opt_file, '(I5,E28.10,*(E18.10))') niter+1, abs(objf), sum, sqsumsq, conf, x, delta_var
+      ! Comment in to write optional optimisation information output file
+      !  write(opt_file, '(I5,E28.10,*(E18.10))') niter+1, abs(objf), sum, sqsumsq, conf, x, delta_var
 
        !  Exit if both convergence criteria are satisfied
        !  (the original criterion, plus constraint residuals below the tolerance level)
@@ -2568,6 +2561,7 @@ contains
                 !  Error return because uphill search direction was calculated
                 info = 4
                 ! Issue #601 Return the best value of the solution vector - not the last value. MDK
+                write(*,*) 'info = 4'
                 x = best_solution_vector
                 sum = best_sum_so_far
                 write(*,*)
@@ -5932,518 +5926,3 @@ contains
   end subroutine test_secant_solve
 
 end module maths_library
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-module testdata
-  use, intrinsic :: iso_fortran_env, only: dp=>real64
-  implicit none
-
-  integer :: nfun !  function call counter
-
-  !  Choose test to run by changing itest in main program below.
-  !  1 to 3 are recommended, others are included to probe the code's
-  !  behaviour with different initial guesses for the solution vector x
-
-  integer :: itest
-
-  !  Expected answers for tests 1 to 3 are given in
-  !  VMCON documentation ANL-80-64
-
-  real(dp), dimension(2) :: x_exp
-  real(dp), dimension(2) :: c_exp, vlam_exp
-  real(dp) :: objf_exp, errlg_exp, errlm_exp
-  real(dp) :: errcom_exp, errcon_exp
-  integer :: ifail_exp
-
-contains
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine init_testdata
-    !! Initialise module variables
-    implicit none
-
-    nfun = 0
-    itest = 1
-  end subroutine init_testdata
-
-  subroutine inittest(nvar,neqns,nineqns,x,ilower,iupper,bndl,bndu)
-
-    implicit none
-
-    integer, intent(out) :: nvar
-    integer, intent(out) :: neqns
-    integer, intent(out) :: nineqns
-    real(dp), dimension(:), intent(out) :: x
-    integer, dimension(:), intent(out) :: ilower, iupper
-    real(dp), dimension(:), intent(out) :: bndl, bndu
-
-    select case (itest)
-
-    case (1)
-
-       !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-       !  subject to the following constraints:
-       !  c1(x1,x2) = x1 - 2*x2 + 1 = 0
-       !  c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-       !
-       !  VMCON documentation ANL-80-64
-
-       nvar = 2
-       neqns = 1
-       nineqns = 1
-       x(1) = 2.0D0 ; x(2) = 2.0D0
-
-       !  No bounds on x values set
-       ilower(1) = 0 ; ilower(2) = 0
-       iupper(1) = 0 ; iupper(2) = 0
-       bndl(:) = 0.0D0 ; bndu(:) = 0.0D0
-
-       x_exp(1) = 8.2287565553287513D-01
-       x_exp(2) = 9.1143782776643764D-01
-       objf_exp = 1.3934649806878849D0
-       c_exp(1) = 1.3877787807814457D-17
-       c_exp(2) = -7.6716411001598317D-13
-       vlam_exp(1) = -1.5944911182523063D0
-       vlam_exp(2) = 1.8465914396061125D0
-       errlg_exp = 3.3450880954077888D-12
-       errlm_exp = 0.0D0
-       errcom_exp = 1.4166608063379568D-12
-       errcon_exp = 7.6717798780379098D-13
-       ifail_exp = 1
-
-    case (2)
-
-       !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-       !  subject to the following constraints:
-       !  c1(x1,x2) = x1 - 2*x2 + 1 >= 0
-       !  c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-       !
-       !  VMCON documentation ANL-80-64
-
-       nvar = 2
-       neqns = 0
-       nineqns = 2
-       x(1) = 2.0D0 ; x(2) = 2.0D0
-
-       !  No bounds on x values set
-       ilower(1) = 0 ; ilower(2) = 0
-       iupper(1) = 0 ; iupper(2) = 0
-       bndl(:) = 0.0D0 ; bndu(:) = 0.0D0
-
-       x_exp(1) = 1.6649685472365443D0
-       x_exp(2) = 5.5404867491788852D-01
-       objf_exp = 3.1111865868328270D-01
-       c_exp(1) = 1.5568711974007674D0
-       c_exp(2) = -1.0214051826551440D-14
-       vlam_exp(1) = 0.0D0
-       vlam_exp(2) = 8.0489557193146243D-01
-       errlg_exp = 2.3433338602885101D-11
-       errlm_exp = 0.0D0
-       errcom_exp = 8.2212450866697197D-15
-       errcon_exp = 1.0214051826551440D-14
-       ifail_exp = 1
-
-    case (3)
-
-       !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-       !  subject to the following constraints:
-       !  c1(x1,x2) = x1 + x2 - 3 = 0
-       !  c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-       !
-       !  Note that this test is supposed to fail with ifail=5
-       !  as there is no feasible solution
-       !
-       !  VMCON documentation ANL-80-64
-
-       nvar = 2
-       neqns = 1
-       nineqns = 1
-       x(1) = 2.0D0 ; x(2) = 2.0D0
-
-       !  No bounds on x values set
-       ilower(1) = 0 ; ilower(2) = 0
-       iupper(1) = 0 ; iupper(2) = 0
-       bndl(:) = 0.0D0 ; bndu(:) = 0.0D0
-
-       x_exp(1) = 2.3999994310874733D0
-       x_exp(2) = 6.0000056891252611D-01
-       objf_exp = 3.1999908974060504D-01
-       c_exp(1) = -6.6613381477509392D-16
-       c_exp(2) = -8.000000000004035D-01
-       vlam_exp(1) = 0.0D0
-       vlam_exp(2) = 0.0D0
-       errlg_exp = 1.599997724349894D0
-       errlm_exp = 0.0D0
-       errcom_exp = 0.0D0
-       errcon_exp = 8.0000000000040417D-01
-       ifail_exp = 5
-
-    case (4)
-
-       !  Maximise f(x1,x2) = x1 + x2
-       !  subject to the following constraint:
-       !  c1(x1,x2) = x1**2 + x2**2 - 1 = 0
-       !
-       !  http://en.wikipedia.org/wiki/Lagrange_multiplier
-
-       nvar = 2
-       neqns = 1
-       nineqns = 0
-
-       !  N.B. results can flip to minimum instead of maximum
-       !  if x(1), x(2) are initialised at different points...
-       x(1) = 1.0D0 ; x(2) = 1.0D0
-
-       !  No bounds on x values set
-       ilower(1) = 0 ; ilower(2) = 0
-       iupper(1) = 0 ; iupper(2) = 0
-       bndl(:) = 0.0D0 ; bndu(:) = 0.0D0
-
-       x_exp(1) = 0.5D0*sqrt(2.0D0)
-       x_exp(2) = 0.5D0*sqrt(2.0D0)
-       objf_exp = sqrt(2.0D0)
-       c_exp(1) = 0.0D0
-       vlam_exp(1) = 1.0D0/sqrt(2.0D0)
-       errlg_exp = 0.0D0
-       errlm_exp = 0.0D0
-       errcom_exp = 0.0D0
-       errcon_exp = 0.0D0
-       ifail_exp = 1
-
-    case (5)
-
-       !  Intersection of parabola x^2 with straight line 2x+3
-       !  Unorthodox (and not recommended) method to find the root
-       !  of an equation.
-       !
-       !  Maximise f(x1) = x1**2
-       !  subject to the following constraint:
-       !  c1(x1) = x1**2 - 2.0D0*x1 - 3 = 0
-       !
-       !  Solutions to c1(x1) are x1 = -1 and x1 = 3, and depending on
-       !  the initial guess for x1 either (or neither...) solution might
-       !  be found. Since there is one constraint equation with one unknown
-       !  the code cannot optimise properly.
-
-       nvar = 1
-       neqns = 1
-       nineqns = 0
-
-       x(1) = 5.0D0  !  Try different values, e.g. 5.0, 2.0, 1.0, 0.0...
-
-       !  No bounds on x values set
-       ilower(1) = 0
-       iupper(1) = 0
-       bndl(:) = 0.0D0 ; bndu(:) = 0.0D0
-
-       x_exp(1) = 3.0
-       objf_exp = 9.0D0
-       c_exp(1) = 0.0D0
-       vlam_exp(1) = 1.5D0
-       errlg_exp = 0.0D0
-       errlm_exp = 0.0D0
-       errcom_exp = 0.0D0
-       errcon_exp = 0.0D0
-       ifail_exp = 1
-
-    end select
-
-  end subroutine inittest
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine objfn(n,m,x,objf,conf,ifail)
-
-    implicit none
-
-    !  Arguments
-
-    integer, intent(in) :: n,m
-    real(dp), dimension(n), intent(in) :: x
-    real(dp), intent(out) :: objf
-    real(dp), dimension(m), intent(out) :: conf
-    integer, intent(inout) :: ifail
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    write(*,*)'subroutine objfn called, in module testdata, maths_library.f90'
-
-    select case (itest)
-
-    case (1,2)
-
-       !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-       !  subject to the following constraints:
-       !  c1(x1,x2) = x1 - 2*x2 + 1 = 0  (itest = 1)
-       !  c1(x1,x2) = x1 - 2*x2 + 1 >= 0 (itest = 2)
-       !  c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-
-       objf = (x(1) - 2.0D0)**2 + (x(2) - 1.0D0)**2
-
-       conf(1) = x(1) - 2.0D0*x(2) + 1.0D0
-       conf(2) = -0.25D0*x(1)**2 - x(2)*x(2) + 1.0D0
-
-    case (3)
-
-       !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-       !  subject to the following constraints:
-       !  c1(x1,x2) = x1 + x2 - 3 = 0
-       !  c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-
-       objf = (x(1) - 2.0D0)**2 + (x(2) - 1.0D0)**2
-
-       conf(1) = x(1) + x(2) - 3.0D0
-       conf(2) = -0.25D0*x(1)**2 - x(2)*x(2) + 1.0D0
-
-    case (4)
-
-       !  From Wikipedia: Lagrange Multiplier article
-       !  Maximise f(x1,x2) = x1 + x2
-       !  subject to the following constraint:
-       !  c1(x1,x2) = x1**2 + x2**2 - 1 = 0
-
-       objf = x(1) + x(2)
-
-       conf(1) = x(1)*x(1) + x(2)*x(2) - 1.0D0
-
-    case (5)
-
-       !  Intersection of parabola x^2 with straight line 2x+3
-       !  Maximise f(x1) = x1**2
-       !  subject to the following constraint:
-       !  c1(x1) = x1**2 - 2.0D0*x1 - 3 = 0
-
-       objf = x(1)*x(1)
-
-       conf(1) = x(1)*x(1) - 2.0D0*x(1) - 3.0D0
-
-    end select
-
-    nfun = nfun + 1
-
-  end subroutine objfn
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine dobjfn(n,m,x,fgrd,cnorm,lcnorm,ifail)
-
-    implicit none
-
-    !  Arguments
-
-    integer, intent(in) :: n,m,lcnorm
-    real(dp), dimension(n), intent(in) :: x
-    real(dp), dimension(n), intent(out) :: fgrd
-    real(dp), dimension(lcnorm,m), intent(out) :: cnorm
-    integer, intent(inout) :: ifail
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  fgrd(1...n) are the gradients of the objective function f
-    !  with respect to x1...xn
-
-    !  cnorm(1...n, 1...m) are the gradients of the constraints 1...m
-    !  with respect to x1...xn
-
-    select case (itest)
-
-    case (1,2)
-
-       !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-       !  subject to the following constraints:
-       !  c1(x1,x2) = x1 - 2*x2 + 1 = 0  (itest = 1)
-       !  c1(x1,x2) = x1 - 2*x2 + 1 >= 0 (itest = 2)
-       !  c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-
-       fgrd(1) = 2.0D0*(x(1) - 2.0D0)
-       fgrd(2) = 2.0D0*(x(2) - 1.0D0)
-
-       cnorm(1,1) = 1.0D0
-       cnorm(2,1) = -2.0D0
-       cnorm(1,2) = -0.5D0*x(1)
-       cnorm(2,2) = -2.0D0*x(2)
-
-    case (3)
-
-       !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-       !  subject to the following constraints:
-       !  c1(x1,x2) = x1 + x2 - 3 = 0
-       !  c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-
-       fgrd(1) = 2.0D0
-       fgrd(2) = 2.0D0*(x(2) - 1.0D0)
-
-       cnorm(1,1) = 1.0D0
-       cnorm(2,1) = 1.0D0
-       cnorm(1,2) = -0.5D0*x(1)
-       cnorm(2,2) = -2.0D0*x(2)
-
-    case (4)
-
-       !  From Wikipedia: Lagrange Multiplier article
-       !  Maximise f(x1,x2) = x1 + x2
-       !  subject to the following constraint:
-       !  c1(x1,x2) = x1**2 + x2**2 - 1 = 0
-
-       fgrd(1) = 1.0D0
-       fgrd(2) = 1.0D0
-
-       cnorm(1,1) = 2.0D0*x(1)
-       cnorm(2,1) = 2.0D0*x(2)
-
-    case (5)
-
-       !  Intersection of parabola x^2 with straight line 2x+3
-       !  Maximise f(x1) = x1**2
-       !  subject to the following constraint:
-       !  c1(x1) = x1**2 - 2.0D0*x1 - 3 = 0
-
-       fgrd(1) = 2.0D0*x(1)
-
-       cnorm(1,1) = 2.0D0*x(1) - 2.0D0
-
-    end select
-
-  end subroutine dobjfn
-
-end module testdata
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-! program test
-
-!   !  Unit testing program for VMCON
-
-!   use maths_library
-!   use numerics
-!   use testdata
-!   use global_variables, only: maxcal
-
-!   implicit none
-
-!   integer :: ifail = 1
-!   real(dp) :: objf
-
-!   integer :: ii,jj,lb,lcnorm,ldel,lh,liwa,lwa,m,meq,mode,n
-!   integer, parameter :: ippn1  = ipnvars+1
-!   integer, parameter :: ipldel = 7*ippn1
-!   integer, parameter :: iplh   = 2*ippn1
-!   integer, parameter :: ipvmu  = ipeqns+2*ipnvars+1
-!   integer, parameter :: ipliwa = 6*ippn1+ipeqns
-!   integer, dimension(ipliwa) :: iwa
-!   integer, dimension(ipnvars) :: ilower,iupper
-
-!   real(dp) :: xtol
-!   real(dp), dimension(ipnvars) :: bdelta,bndl,bndu,etav,fgrd, &
-!        gammv,glag,glaga,xa,xv
-!   real(dp), dimension(ipeqns) :: cm,conf
-!   real(dp), dimension(ippn1) :: bdl,bdu,gm
-!   real(dp), dimension(ipvmu) :: vmu
-!   real(dp), dimension(ipldel) :: delta
-!   real(dp), dimension(iplh) :: wa
-!   real(dp), dimension(ippn1,ipeqns) :: cnorm
-!   real(dp), dimension(ippn1,ippn1) :: b
-!   real(dp), dimension(iplh,iplh) :: h
-
-!   real(dp) :: summ,errlg,errlm,errcom,errcon
-
-!   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!   !  Change the test being run by modifying the value of itest
-!   !  (defaults to 1)
-
-!   itest = 1
-
-!   call inittest(nvar,neqns,nineqns,xv,ilower,iupper,bndl,bndu)
-
-!   epsvmc = 1.0D-8
-
-!   n = nvar
-!   m = neqns+nineqns
-!   meq = neqns
-!   xtol = epsvmc
-!   mode = 0
-!   lb = ippn1
-!   lcnorm = ippn1
-!   ldel = ipldel
-!   lh = iplh
-!   lwa = iplh
-!   liwa = ipliwa
-
-!   write(*,*) 'Initial solution estimate:'
-!   do ii = 1,n
-!      write(*,*) 'x(',ii,') = ',xv(ii)
-!   end do
-!   write(*,*)
-
-!   call vmcon(objfn,dobjfn,mode,n,m,meq,xv,objf,fgrd,conf,cnorm, &
-!        lcnorm,b,lb,xtol,maxcal,ifail,nfev2,nviter,vlam,glag,vmu,cm,glaga, &
-!        gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &
-!        liwa,ilower,iupper,bndl,bndu)
-
-!   write(*,*) 'ifail = ', ifail, '(expected value = ',ifail_exp,')'
-!   write(*,*) 'Number of function evaluations = ',nfun
-!   write(*,*)
-
-!   write(*,*) 'Final solution estimate: calculated vs expected'
-!   do ii = 1,n
-!      write(*,*) 'x(',ii,') = ',xv(ii),x_exp(ii)
-!   end do
-!   write(*,*)
-
-!   write(*,*) 'Final objective function value: calculated vs expected'
-!   write(*,*) 'f(x) = ',objf,objf_exp
-!   write(*,*)
-
-!   write(*,*) 'Constraints evaluated at x: calculated vs expected'
-!   do ii = 1,m
-!      write(*,*) conf(ii), c_exp(ii)
-!   end do
-!   write(*,*)
-
-!   write(*,*) 'Lagrange multiplier estimates: calculated vs expected'
-!   do ii = 1,m
-!      write(*,*) vlam(ii), vlam_exp(ii)
-!   end do
-!   write(*,*)
-
-!   write(*,*) 'Lagrangian gradient error: calculated vs expected'
-!   errlg = 0.0D0
-!   do ii = 1,n
-!      summ = fgrd(ii)
-!      do jj = 1,m
-!         summ = summ - vlam(jj)*cnorm(ii,jj)
-!      end do
-!      errlg = errlg + abs(summ)
-!   end do
-!   write(*,*) errlg, errlg_exp
-!   write(*,*)
-
-!   write(*,*) 'Lagrange multiplier error: calculated vs expected'
-!   errlm = 0.0D0
-!   do ii = 1,m
-!      if ((ii <= meq).or.(vlam(ii) >= 0.0D0)) cycle
-!      errlm = errlm + abs(vlam(ii))
-!   end do
-!   write(*,*) errlm, errlm_exp
-!   write(*,*)
-
-!   write(*,*) 'Complementarity error: calculated vs expected'
-!   errcom = 0.0D0
-!   do ii = 1,m
-!      errcom = errcom + abs(vlam(ii)*conf(ii))
-!   end do
-!   write(*,*) errcom, errcom_exp
-!   write(*,*)
-
-!   write(*,*) 'Constraint error: calculated vs expected'
-!   errcon = 0.0D0
-!   do ii = 1,m
-!      if ((ii > meq).and.(conf(ii) >= 0.0D0)) cycle
-!      errcon = errcon + abs(conf(ii))
-!   end do
-!   write(*,*) errcon, errcon_exp
-!   write(*,*)
-
-! end program test

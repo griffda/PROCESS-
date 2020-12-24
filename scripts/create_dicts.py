@@ -321,6 +321,10 @@ class DefaultValues(ProjectDictionary):
                             break
                         except ValueError:
                             pass
+                        except TypeError:
+                            # var.initial likely to be None: caused by arrays
+                            # with calculated sizes
+                            pass
 
             # If size_arg doesn't match a var.name or var.initial can't be
             # converted to int: they probably aren't a numerical value and 

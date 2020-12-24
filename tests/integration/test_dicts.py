@@ -194,7 +194,10 @@ def test_default(ref_dicts, new_dicts):
         "v1matf",
         "v2matf",
         "v3matf",
-        "lablcc"
+        "lablcc",
+        "ipvlam",
+        "maxcal",
+        "nvar"
     ]
     """
     Ignore calltree_data: removed. ctfile, current, error_head, error_tail
@@ -228,6 +231,10 @@ def test_default(ref_dicts, new_dicts):
     functions: was str, is now list
 
     lablcc used to contain &nbsps, and now has spaces stripped
+
+    ipvlam is defined both as module and local var
+
+    maxcal, nvar are initialised differently in two different modules
     """
 
     # One difference is due to "null" in ref_dicts now being "0.0" or "" in 
