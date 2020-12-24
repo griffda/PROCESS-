@@ -14,36 +14,49 @@ PROCESS was originally a Fortran code, but is now Python-wrapped Fortran. In ord
 *It is highly recommended users create a Python virtual environment in order to use the PROCESS Python package, as this ensures that installations of required package versions don't affect other packages that require different versions in your environment. It isn't necessary, however.*
 *Please note due to bugs in f90wrap, Python3.9 is not yet supported. Running with Python3.9 will cause syntax errors to be raised when running f2py on the f90wrap outputs.*
 
-If you have modified your `$PYTHONPATH` environment variable to include `process/utilities`, perhaps in your `~/.bashrc` file, then please remove this modification. Re-start your terminal for the changes to take effect, and check this is not on your `$PYTHONPATH` with:
+This installation is known to work on Ubuntu 20 (under Windows Subsystem for Linux or not). For Mac, see below.
+
+If you have previously modified your `$PYTHONPATH` environment variable to include `process/utilities`, perhaps in your `~/.bashrc` file, then please remove this modification. Re-start your terminal for the changes to take effect, and check this is not on your `$PYTHONPATH` with:
 ```bash
 echo $PYTHONPATH
 ```
 
-This modification shouldn't be required to run Process now, and it may result in Ford failing during the build process otherwise.
+This modification is not required to run Process now, and it may result in Ford failing during the build process otherwise.
 
-Clone the PROCESS repository from Gitlab, and navigate into the resulting directory.
+Firstly, install cmake, gfortran and pip:
+```bash
+sudo apt update
+sudo apt install cmake
+sudo apt install gfortran
+sudo apt install python3-pip
+```
+
+Clone the PROCESS repository from Gitlab, and navigate into the resulting directory:
 ```bash
 git clone git@git.ccfe.ac.uk:process/process.git
 cd process
 ```
 
-Activate your virtual environment if you'd like to use one. It is no longer necessary to install the requirements from `requirements.txt` as this is part of the CMake installation procedure, however you may do so in advance if you wish.
-
-Now we need to compile the Fortran and create the Python interface. This is done using CMake to configure the build and then make to build it, from within the root folder of the repository run:
-
+Create and activate a virtual environment if you'd like to use one:
 ```bash
-cmake -H. -Bbuild
+python3 -m venv env
+source env/bin/activate
 ```
 
-this should set up the build and also give information on the system in which PROCESS is being installed. Finally start the build process:
-
+Then install numpy; this is explicitly required due to it being a pre-requisite in f90wrap's setup.py file.
 ```bash
+pip3 install numpy
+```
+
+Now we need to compile the Fortran and create the Python interface. This is done using cmake to configure the build and then make to build it. Finally start the build process:
+```bash
+cmake -S . -B build
 cmake --build build
 ```
 
-The build step may take some time when run for the first time (~3 mins) as the Fortran code is compiled and then wrapped using `f90wrap` and `f2py` to create the Python libraries. Once this is completed the Process Python package is then automatically installed using `pip` and should be ready to use on Linux.
+The build step may take some time when run for the first time (~3 mins) as the Fortran code is compiled and then wrapped using `f90wrap` and `f2py` to create the Python libraries. Once this is completed the Process Python package is then automatically installed using `pip` and should be ready to use on Linux. If the installation was successful the command `process` should be available on the command line.
 
-If the installation was successful the command `process` should be available on the command line.
+To rebuild, for example after making a change to the Fortran source, run `cmake --build build` again.
 
 #### macOS Installation
 
