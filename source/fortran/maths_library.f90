@@ -2491,7 +2491,8 @@ contains
        do i = 1, n
          delta_var(i) = delta(i)
        end do
-       write(opt_file, '(I5,E28.10,*(E18.10))') niter+1, abs(objf), sum, sqsumsq, conf, x, delta_var
+      ! Comment in to write optional optimisation information output file
+      !  write(opt_file, '(I5,E28.10,*(E18.10))') niter+1, abs(objf), sum, sqsumsq, conf, x, delta_var
 
        !  Exit if both convergence criteria are satisfied
        !  (the original criterion, plus constraint residuals below the tolerance level)

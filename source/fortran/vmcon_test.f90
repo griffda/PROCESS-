@@ -384,14 +384,14 @@ contains
 
   end subroutine dobjfn
 
-  subroutine run_vmcon_test(test_index)
-    
+  subroutine run_vmcon_test(test_index, pass)
+    !  Change the test being run by modifying the value of test_index
     implicit none  
-    integer, intent(in) :: test_index          !  Change the test being run by modifying the value of test_index
-                                              ! itest is a module level variable.
+    integer, intent(in) :: test_index
+    logical, intent(out) :: pass
+    
     integer :: ifail = 1
     real(dp) :: objf
-
     integer :: ii,jj,lb,lcnorm,ldel,lh,liwa,lwa,m,meq,mode,n
     integer, parameter :: ippn1 = ipnvars+1
     integer, parameter :: ipldel = 7*ippn1
@@ -414,8 +414,8 @@ contains
     real(dp), dimension(iplh,iplh) :: h
     real(dp) :: summ,errlg,errlm,errcom,errcon
     real(dp), dimension(ipvlam) :: vlam
-    logical :: pass=.true.
     
+    ! itest is a module level variable
     itest = test_index
     call inittest(nvar,neqns,nineqns,xv,ilower,iupper,bndl,bndu)
 
