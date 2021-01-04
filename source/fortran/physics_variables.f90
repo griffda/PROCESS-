@@ -323,7 +323,7 @@ module physics_variables
   !!
   !! - =0 use original parabolic profiles
   !! - =1 use pedestal profile
-  !! - =2 use pedestal profiles and run PLASMOD on final outpu
+  !! - =2 use pedestal profiles and run PLASMOD on final output
   !! - =3 use PLASMOD transport model only to calculate pedestal profiles
 
   integer :: ips
