@@ -999,7 +999,8 @@ subroutine res_tf_internal_geom()
     ! Insulation fraction [-]
     f_tf_ins = n_tf * a_tf_ins / tfareain 
 
-    ! Total cross-sectional area of surrounding case per coil [m2]
+    ! Total cross-sectional area of the bucking cylindre and the outer support
+    ! support structure per coil [m2] 
     ! itart = 1 : Only valid at mid-plane
     acasetf = ( tfareain / n_tf ) - awpc 
 
