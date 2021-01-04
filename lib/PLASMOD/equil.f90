@@ -29,7 +29,8 @@ subroutine compute_equil( &
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-  !  Local variables!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !  Local variables
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   integer :: na,diagz,nxtemp,redo
   real(kind(1.0D0)) :: dpsidt, Epar, Ibs, fb, yb, C1
   real(kind(1.0d0)) :: gpp4,gp2,yro,hro,yda,TIME,alfa,areat
@@ -76,7 +77,7 @@ pres_fac=1.d0
 
 	if (pres_fac.lt.0.001) then !stop if pressure goes to 0
 		write(*,*) 'equilibrium not possible',pres_fac
-		stop
+		stop 1
 		endif
 	if (isnan(palph(1))) pressure=0.d0
 	if (isnan(te(1))) pressure=0.d0
@@ -308,18 +309,25 @@ subroutine ADDITIONAL_CALCS( &
 !choose
   if (jiter .ne. 0) then  !if iterations already ongoing, use real calculation
      dV=vprime*(x(2)-x(1))*rmin ! dV/dr
-     jpol = ipol/(R*btor) ! R*Bphi normalized to reference B*R
+     jpol = ipol/(R*btor)
+ ! R*Bphi normalized to reference B*R
 
 !calculation of currents
-     kerncur = cc/ipol**2.*dV 
-     Ibs = sum(cubb/ipol**2.*dV)*ipol(nx)*btor/(2.*pi) !integrated bootstrap in MA
-     Icd = sum(jcdr/ipol**2.*dV)*ipol(nx)*btor/(2.*pi) !integrated CD
+     kerncur = cc/ipol**2.*dV
+ 
+     Ibs = sum(cubb/ipol**2.*dV)*ipol(nx)*btor/(2.*pi)
+ !integrated bootstrap in MA
+     Icd = sum(jcdr/ipol**2.*dV)*ipol(nx)*btor/(2.*pi)
+ !integrated CD
 
-     Epar = (Ip - Ibs-Icd)/(ipol(nx)*btor/(2.*pi)*trapz(kerncur)) !electric field
+     Epar = (Ip - Ibs-Icd)/(ipol(nx)*btor/(2.*pi)*trapz(kerncur))
+ !electric field
 
-     jpar = cc*Epar + cubb+jcdr !parallel current density of the plasma
+     jpar = cc*Epar + cubb+jcdr
+ !parallel current density of the plasma
 					
-     Vloop = Epar * 2. * pi * btor/(ipol(nx) * G3(nx)) !loop voltage
+     Vloop = Epar * 2. * pi * btor/(ipol(nx) * G3(nx))
+ !loop voltage
 					
 !calculation of safety factor
      kerncur = jpar/ipol**2.*dV
@@ -358,9 +366,11 @@ subroutine ADDITIONAL_CALCS( &
 	ALFA = .00001
 	call SMAP(ALFA,nx,x,nx,x,q)
 
-     qedge=q(nx) !edge q
+     qedge=q(nx)
+ !edge q
 					
-     psi = integrcc(nx,phi,1.d0/q) !compute Psi in Wb
+     psi = integrcc(nx,phi,1.d0/q)
+ !compute Psi in Wb
 					
      toleq = maxval(abs(q-q0)/q0) !tolerance of q
 					

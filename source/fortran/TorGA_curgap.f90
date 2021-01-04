@@ -1,3 +1,20 @@
+module torga_curgap_module
+  implicit none
+
+  ! First run flag for subroutine green_func_emp, which requires re-initialising
+  ! on each new run
+  logical :: green_func_emp_first
+
+  contains
+
+  subroutine init_torga_curgap_module
+    !! Initialise module variables
+    implicit none
+
+    green_func_emp_first = .true.
+  end subroutine init_torga_curgap_module
+end module torga_curgap_module
+
 !-----------------------------------------------------------------------&
       subroutine TorGA_curgap(rjpd,rjpd0,ratjpd,denom,eps,npara,nperp   &
      &,omode,cefldx,cefldy,cefldz,tebulk,thtc,thetap,yy,lh,zeffin,model &
@@ -495,7 +512,7 @@
 !
       IF (n.lt.0) THEN
          WRITE(6,"(A)")'bad argument n in bessj'
-         STOP
+         STOP 1
       ENDIF
 !
       IF (n.eq.0) THEN
@@ -1065,6 +1082,7 @@
 ! NM
  USE green_func_ext, ONLY: wp_, mc2_, Setup_SpitzFunc, SpitzFuncCoeff, &
   GenSpitzFunc
+  use torga_curgap_module, only: green_func_emp_first
 !---
  IMPLICIT NONE
 !--- remove it later! ---
@@ -1077,7 +1095,6 @@
  REAL(wp_) :: SS1,ne1,Te1,Zeff1,fc1,u1,q1,gam1
  REAL(wp_) :: K1,dKdu1
  CHARACTER(Len=1) :: adj_appr(6)
- LOGICAL, SAVE :: first =.true.
 !=======================================================================
 !--- Spitzer function definitions ---
  adj_appr(1) = 'l'         ! collisionless limit
@@ -1101,9 +1118,9 @@
  u1    = u/sqrt(2*Te/mc2_)
  gam1  = gam
 !---
- IF (first) THEN
+ IF (green_func_emp_first) THEN
    CALL Setup_SpitzFunc(adj_appr)
-   first =.false.
+   green_func_emp_first =.false.
  ENDIF
 !---
  CALL SpitzFuncCoeff(Te1,Zeff1,fc1)

@@ -23,7 +23,103 @@ real(dp) :: b
 
 ## Naming conventions
 
-Please see <a href="https://git.ccfe.ac.uk/process/process/-/issues/939">issue 939</a>.
+
+### Case
+
+All variables should be lower case.
+
+### Length
+
+Try to keep variable names to a sensible length. Abbreviations of some parts of the name are suitable e.g. div for divertor. Use underscores to separate words.
+
+### Physical Type
+
+The physical type of the variable should form the first part of the variable name, e.g. for plasma resistance the variable should be named:
+
+```fortran
+res_plasma = 1.0
+```
+
+Another example would be pulse length
+
+```fortran
+time_pulse_length = 7200.0
+```
+
+### Units
+
+Inside PROCESS all variables should be in SI units unless otherwise stated. For example:
+
+```fortran
+! Fusion power [W]
+p_fusion = 1000.0d6
+
+! Fusion power [MW]
+p_fusion_mw = 1000.0d0
+```
+
+### Coordinates and dimensions
+
+Coordinates should be defined as
+
+```fortran
+r_plasma_centre = 9.0d0
+
+z_plasma_centre = 0.0d0
+
+theta_ = 
+```
+
+For dimensions
+
+```fortran
+dr_cs = 
+
+dz_cs = 
+
+dtheta_description =
+```
+
+### Loop order
+
+Loop variables that use I, j etc. should use
+
+```fortran
+ii
+    jj
+        kk
+            mm
+```
+
+### Examples
+
+| Variable name | Description | Units |
+| ------------- | ----------- | :---: |
+| `i_plasma`    | Plasma current | A |
+| `i_plasma_ma` | Plasma current | MA |
+| `b_t_onaxis`  | Toroidal field on-axis | T |
+| `b_t_max`     | Max toroidal field | T |
+| `n_electron_vol` | Volume average electron density | m-3 |
+| `t_electron_vol_ev` | Volume avgerage electron temperature | eV |
+| `m_steel` | Mass of steel | kg |
+| `m_steel_tonne` | Mass of steel | tonne |
+| `e_neutron_ev` | Energy of neutron | eV |
+| `e_neutron_mev` | Energy of neutron | MeV |
+| `v_tf_dump` | TF dump voltage | V |
+| `time_plant_life` | Plant lifetime | s |
+| `time_plant_life_yrs` | Plant lifetime | years |
+| `dr_tf_inboard_leg` | TF coil inboard leg radial thickness | m |
+| `dr_blanket_inboard` | Inboard blanket thickness | m |
+| `velocity_coolant` | TF centrepost coolant velocity | m/s |
+| `vol_plasma` | Plasma volume | m3 |
+| `a_plasma` | Plasma area | m2 |
+| `angle_div_target` | Divertor target angle | radians |
+| `angle_div_target_deg` | Divertor target angle | deg |
+| `sig_tf_r` | TF radial stress  | Pa |
+| `` |  |  |
+
+Please see <a href="https://git.ccfe.ac.uk/process/process/-/issues/939">issue 939 to discuss 
+new conventions.</a>.
 
 # Code Documentation Using FORD
 

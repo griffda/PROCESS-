@@ -9,8 +9,6 @@ subroutine initial
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use stellarator_module, only: stinit
-    use stellarator_variables, only: istell
     use define_iteration_variables, only: init_itv_1, init_itv_2, init_itv_3, &
         init_itv_4, init_itv_5, init_itv_6, init_itv_7, init_itv_8, init_itv_9, &
         init_itv_10, init_itv_11, init_itv_12, init_itv_13, init_itv_14, init_itv_15, &
@@ -50,10 +48,6 @@ subroutine initial
     !  Local variables
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  See which type of device is being modelled
-
-    call devtyp
 
     !! boundl(ipnvars) /../ : lower bounds on iteration variables 
     !! boundu(ipnvars) /../ : upper bounds on iteration variables 
@@ -234,84 +228,8 @@ subroutine initial
     call init_itv_174
     call init_itv_175
 
-    !  Initialise stellarator parameters if necessary
-    !  This overrides some of the bounds of the tokamak parameters.
-    if (istell /= 0) call stinit
 
 end subroutine initial
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine devtyp
-
-    !! Routine to determine which type of device is to be modelled
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! None
-    !! This routine uses the contents of an input file,
-    !! <CODE>device.dat</CODE>, to determine which type of device
-    !! is to be modelled. If the file is not present in the current
-    !! directory, a standard tokamak model is assumed.
-    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use error_handling, only: report_error
-    use global_variables, only: icase
-    use ife_variables, only: ife
-    use stellarator_variables, only: istell
-
-    implicit none
-
-    !  Local variables
-
-    integer :: idev
-    integer :: iost
-    logical :: iexist
-    character(len = 20) :: devFile
-    character(len = 5) :: line
-    line = ' '
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    devFile = 'device.dat'
-    istell = 0
-    ife    = 0
-    idev   = 0      ! Default value MK
-
-    !  Read a second input file. If the file does not exist or
-    !  blank, then the standard tokamak option is assumed.
-
-    inquire(file = devFile, exist = iexist)
-
-    if (iexist) then
-        open(unit = 101, file = 'device.dat', status = 'old')
-        DO
-            read(101,'(A)', IOSTAT = iost) line
-            read(line, '(I2)') idev
-            if(iost < 0 .or. idev > 0) exit
-        END DO
-        close(unit = 101)
-
-        !  Set relevant switch
-
-        select case (idev)
-
-        case (1)  !  Stellarator model
-            istell = 1
-
-        case (2)  !  ! ISSUE #508 Remove RFP option
-            call report_error(228)
-        case (3)  !  Inertial Fusion Energy model
-            ife = 1
-            icase = 'Inertial Fusion model'
-
-        case default  !  Tokamak model
-            continue
-
-        end select
-    end if
-
-end subroutine devtyp
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine check
 
@@ -330,7 +248,7 @@ subroutine check
         i_r_cp_top, r_cp_top
     use buildings_variables, only: esbldgm3, triv
     use current_drive_variables, only: gamcd, iefrf, irfcd
-    use divertor_kallenbach_variables, only: impurity_enrichment, kallenbach_switch
+    use div_kal_vars, only: impurity_enrichment, kallenbach_switch
     use error_handling, only: errors_on, idiags, fdiags, report_error
     use fwbs_variables, only: breeder_multiplier, iblanket, vfcblkt, vfpblkt, &
         iblnkith
@@ -396,13 +314,13 @@ subroutine check
     if ( any(icc(1:neqns+nineqns) == 3) ) then
         call report_error(162)
         write(*,*) 'PROCESS stopping'
-        stop
+        stop 1
     end if
 
     if ( any(icc(1:neqns+nineqns) == 4) ) then
         call report_error(163)
         write(*,*) 'PROCESS stopping'
-        stop
+        stop 1
     end if
 
 
@@ -411,13 +329,13 @@ subroutine check
         write(*,*) 'Constraint 63 is requested without the correct vacuum model ("simple").'
         write(*,*) 'vacuum_model = ', vacuum_model
         write(*,*) 'PROCESS stopping'
-        stop
+        stop 1
     end if
 
     if ( any(icc(1:neqns+nineqns) == 74) ) then
         write(*,*)'Constraint 74 (TF coil quench temperature for Croco HTS conductor) is not yet implemented'
         write(*,*) 'PROCESS stopping'
-        stop
+        stop 1
     end if
 
     !  Fuel ion fractions must add up to 1.0
@@ -441,14 +359,14 @@ subroutine check
     ! Stop the run if the constraint 10 is used
     if ( any( icc == 10 ) ) then
         call report_error(236)
-        stop
+        stop 1
     end if
 
     ! Stop the run if oacdcp is used as an optimisation variable
     ! As the current density is now calculated from bt without constraint 10
     if ( any( ixc == 12 ) ) then
         call report_error(236)
-        stop
+        stop 1
     end if 
 
     !  Warn if ion power balance equation is being used with the new radiation model
@@ -885,7 +803,7 @@ subroutine check
          .and. ( any(icc == 31) .or. any(icc == 32) ) ) then                                                     ! Stress constraint (31) is used 
 
         call report_error(246)
-        stop
+        stop 1
     end if
      
     ! Make sure that plane stress model is not used for resistive magnets
@@ -934,7 +852,7 @@ subroutine check
     ! Cryo-plane efficiency must be in [0-1.0]
     else if ( eff_tf_cryo >  1.0D0 .or. eff_tf_cryo < 0.0D0 ) then
         call report_error(248)
-        stop
+        stop 1
     end if
     !-!  
 
@@ -942,7 +860,7 @@ subroutine check
     !-!
     if ( i_tf_sc_mat == 6 .and. i_tf_turns_integer == 1 ) then
         call report_error(254)
-        stop
+        stop 1
     end if
     !-!
 

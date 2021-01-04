@@ -20,7 +20,6 @@ sudo apt-get install -y --fix-missing\
     cmake \
     gcc  \
     g++  \
-    libgtest-dev \
     git \
     python3 \
     binutils \

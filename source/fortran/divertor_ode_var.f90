@@ -21,4 +21,11 @@ module divertor_ode_var
   real(dp), public :: impurity_concs(nimp)
 contains
 
+  subroutine init_divertor_ode_var
+    !! Initialise module variables
+    implicit none
+
+    impurity_concs = 0.0D0
+  end subroutine init_divertor_ode_var
+
 end module divertor_ode_var

@@ -5,30 +5,171 @@
 PROCESS is the reactor systems code at [CCFE](www.ccfe.ac.uk). More information on PROCESS
 can be found on the PROCESS [webpage](http://www.ccfe.ac.uk/powerplants.aspx).
 
-## Install
+## Getting Started
 
-To install PROCESS you will need CMake v3.5 or later. Clone the repository and within
-the main folder run:
+PROCESS was originally a Fortran code, but is now Python-wrapped Fortran. In order to use PROCESS, the Fortran must be compiled and a Python-Fortran interface generated for the Python to import. Once built, it can be installed and run as a Python package. The following steps guide you through this process.
 
+### Installation
+
+*It is highly recommended users create a Python virtual environment in order to use the PROCESS Python package, as this ensures that installations of required package versions don't affect other packages that require different versions in your environment. It isn't necessary, however.*
+*Please note due to bugs in f90wrap, Python3.9 is not yet supported. Running with Python3.9 will cause syntax errors to be raised when running f2py on the f90wrap outputs.*
+
+This installation is known to work on Ubuntu 20 (under Windows Subsystem for Linux or not). For Mac, see below.
+
+If you have previously modified your `$PYTHONPATH` environment variable to include `process/utilities`, perhaps in your `~/.bashrc` file, then please remove this modification. Re-start your terminal for the changes to take effect, and check this is not on your `$PYTHONPATH` with:
 ```bash
-cmake -H. -Bbuild
+echo $PYTHONPATH
+```
+
+This modification is not required to run Process now, and it may result in Ford failing during the build process otherwise.
+
+Firstly, install cmake, gfortran and pip:
+```bash
+sudo apt update
+sudo apt install cmake
+sudo apt install gfortran
+sudo apt install python3-pip
+```
+
+Clone the PROCESS repository from Gitlab, and navigate into the resulting directory:
+```bash
+git clone git@git.ccfe.ac.uk:process/process.git
+cd process
+```
+
+Create and activate a virtual environment if you'd like to use one:
+```bash
+python3 -m venv env
+source env/bin/activate
+```
+
+Then install numpy; this is explicitly required due to it being a pre-requisite in f90wrap's setup.py file.
+```bash
+pip3 install numpy
+```
+
+Now we need to compile the Fortran and create the Python interface. This is done using cmake to configure the build and then make to build it. Finally start the build process:
+```bash
+cmake -S . -B build
 cmake --build build
 ```
 
-if you wish to also run the included test you will need to have an installation of GTest
-available. If your copy of GTest is not found in the default installation locations
-(e.g. `/usr/local/lib`, `/usr/lib`) you will need to manually specify the locations of the include
-directory and library file with the `GTEST_LIBRARIES` and `GTEST_INCLUDE_DIRS` variables before building.
-On Linux this would be:
+The build step may take some time when run for the first time (~3 mins) as the Fortran code is compiled and then wrapped using `f90wrap` and `f2py` to create the Python libraries. Once this is completed the Process Python package is then automatically installed using `pip` and should be ready to use on Linux. If the installation was successful the command `process` should be available on the command line.
 
-```bash
-cmake -H. -Bbuild -DGTEST_INCLUDE_DIRS=<googletest-folder>/include -DGTEST_LIBRARIES=<googletest-folder>/lib/libgtest.a
+To rebuild, for example after making a change to the Fortran source, run `cmake --build build` again.
+
+#### macOS Installation
+
+For macOS users it is highly recommended you install GCC using Homebrew. This version of PROCESS searches for the `libgfortran` library by using GCC and the build has been proven to work using this compiler. By default, mac will build with Apple Clang which is the default binary when running the `gcc` command. You will need to either specify the compiler when running CMake:
+
+```
+cmake -H. -Bbuild -DCMAKE_C_COMPILER=/path/to/gcc/binary
 ```
 
-You can then install the Python modules by running:
+or set your GCC installation to be at the front of the `PATH` variable, e.g. if your installation is in `/usr/local/bin`:
+
+```
+export PATH=/usr/local/bin:$PATH
+```
+
+Furthermore an additional step is required post-build in which the shared object produced by `f2py` needs to be editted to change the library links using `image_name_tool`, a script has been provided to automate this process. Upon completion of the PROCESS installation Mac users should run:
 
 ```bash
-pip3 install -U -e .
+bash scripts/macos_update_shared_objects.sh
+```
+
+### Testing
+As a first basic test that the setup has been successful try importing the package from outside of the repository folder in a Python interactive interpreter:
+```bash
+cd
+python3
+```
+
+... to move to your home directory and start the Python interpreter. Then:
+```python
+import process
+process
+```
+
+... should output:
+```bash
+<module 'process' from '/home/jmaddock/process/process/__init__.py'>
+```
+
+This indicates that the Process Python package has been installed.
+
+For thorough testing, the test suite needs to be run. The included tests are run using PyTest, and requirements for the tests are installed by running:
+```BASH
+pip install .[test]
+```
+
+PyTest can then be run on the tests folder:
+```BASH
+pytest tests
+```
+
+### Prepare Release
+
+It is possible to build a standalone module which can be distributed without the need for the source code. This exists as a pippable "wheels" module which is build by running:
+
+```BASH
+mkdir process_dist
+python setup.py bdist_wheel -d process_dist
+```
+
+this will produce a `.whl` file within the folder `process_dist` which can be installed from by running:
+
+```BASH
+pip install --find-links=process_dist/ process
+```
+
+Alternatively the module can be packaged into an archive in the same location by running:
+
+```BASH
+python setup.py sdist
+```
+
+### Running Process
+Process can be run in two main modes, SingleRun (where Process runs once) and VaryRun (where Process runs multiple times, varying iteration parameters until a solution is found (what used to be run_process.py)).
+
+For a SingleRun:
+```bash
+# Use an IN.DAT file in the current directory
+process
+
+# Use an IN.DAT file outside of the current directory
+process -i path/to/IN.DAT 
+```
+
+For a VaryRun:
+```bash
+# Use a configuration file called run_process.conf in the current directory
+process -v
+
+# Use a conf file outside of the current directory
+process -v -c path/to/my_conf_file.conf
+```
+
+The available arguments are:
+```bash
+process [--input, -i input_file_path] [--varyiterparams, -v] [--varyiterparamsconfig, -c config_file_path] [--help, -h]
+```
+
+Help is available with:
+```bash
+process --help
+```
+
+## Running Basic Utilities
+### plot_proc
+`plot_proc` is used for plotting an MFILE. It can be run using its own CLI:
+```bash
+python process/io/plot_proc.py -f path/to/MFILE.DAT
+```
+
+or through Process's main CLI (working, but still in development):
+```bash
+process -i path/to/IN.DAT --plot --mfile path/to/MFILE.DAT
 ```
 
 ## Documentation
@@ -285,11 +426,7 @@ When you have finished making a major change on a new branch, you will need to m
 - Merge develop into your branch `git merge develop`
 - If there are conflicts check the files listed for the following:
 ```
-<<<<<<< HEAD
-This line was edited in dev_mynewmodel branch
-=======
 This line was edited in develop branch
->>>>>>> develop
 ```
 
 - Resolve any conflicts then `git add file_1 file_2` where file_1 and file_2 are
@@ -373,9 +510,8 @@ updated upon compilation. This way each output file is trackable to a specific c
 
 ## Unit Tests
 
-The PROCESS code uses Googletest framework for unit 
-testing. The instructions for adding unit tests is in the 
-repository file `unit-testing-guide.md` ([here](https://git.ccfe.ac.uk/process/process/blob/develop/unit-testing-guide.md))
+The PROCESS code uses PyTest for its unit testing framework. See the `tests` folder in 
+the repository.
 
 ## Profiling
 
@@ -460,7 +596,8 @@ If you encounter issues with file line endings when working between Windows and 
 
 [James Morris](james.morris2@ukaea.uk)
 
+[Jonathan Maddock](jonathan.maddock@ukaea.uk)
+
 [Michael Kovari](michael.kovari@ukaea.uk)
 
 [Stuart Muldrew](stuart.muldrew@ukaea.uk)
-

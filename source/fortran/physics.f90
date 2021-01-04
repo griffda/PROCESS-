@@ -15,7 +15,11 @@ module physics_module
 
   private
   public :: bpol,fhfac,igmarcal,outplas,outtim,pcond,phyaux, &
-       physics,plasma_composition,pohm, rether, subr
+    physics,plasma_composition,pohm, rether, subr, &
+    diamagnetic_fraction_hender, diamagnetic_fraction_scene, &
+    ps_fraction_scene, init_physics_module
+    ! diamagnetic_fraction_hender, diamagnetic_fraction_scene,
+    ! ps_fraction_scene made public for testing via interface
 
   !  Module-level variables
 
@@ -32,8 +36,42 @@ module physics_module
   real(dp) :: beta_mcdonald
   real(dp) :: itart_r
 
+  ! Var in subroutine plasma_composition which requires re-initialisation on
+  ! each new run
+  integer :: first_call
+
   contains
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine init_physics_module
+    !! Initialise module variables
+    implicit none
+
+    first_call = 1
+    iscz = 0
+    err242 = 0
+    err243 = 0
+    rad_fraction_core = 0.0D0
+    total_plasma_internal_energy = 0.0D0
+    total_loss_power = 0.0D0
+    total_energy_conf_time = 0.0D0
+    ptarmw = 0.0D0
+    lambdaio = 0.0D0
+    drsep = 0.0D0
+    fio = 0.0D0
+    fLI = 0.0D0
+    fLO = 0.0D0
+    fUI = 0.0D0
+    fUO = 0.0D0
+    pLImw = 0.0D0
+    pLOmw = 0.0D0
+    pUImw = 0.0D0
+    pUOmw = 0.0D0
+    rho_star   = 0.0D0
+    nu_star   = 0.0D0
+    beta_mcdonald = 0.0D0
+    itart_r = 0.0D0
+  end subroutine init_physics_module
+
   subroutine subr(a, b)
      implicit none
      real, intent(in) :: a
@@ -55,7 +93,7 @@ module physics_module
     !! DEMO Tokamak' Document, March 2012, EFDA Report
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    use divertor_kallenbach_variables, only: impurity_enrichment, netau_sol
+    use div_kal_vars, only: impurity_enrichment, netau_sol
 
     use build_variables, only: fwarea
     use constraint_variables, only: peakradwallload, flhthresh, peakfactrad
@@ -1554,7 +1592,7 @@ module physics_module
 
       real(dp) :: eps,epseff,g,s,zz
 
-      integer :: fit = ASTRA
+      integer, parameter :: fit = ASTRA
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1680,8 +1718,7 @@ module physics_module
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine diamagnetic_fraction_hender(beta,diacf) &
-           bind(C,name="c_diamagnetic_fraction_hender")
+  subroutine diamagnetic_fraction_hender(beta,diacf)
 
     !! author: S.I. Muldrew, CCFE, Culham Science Centre
     !! Diamagnetic contribution at tight aspect ratio.
@@ -1705,8 +1742,7 @@ module physics_module
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine diamagnetic_fraction_scene(beta,q95,q0,diacf) &
-                  bind(C,name="c_diamagnetic_fraction_scene")
+  subroutine diamagnetic_fraction_scene(beta,q95,q0,diacf)
 
     !! author: S.I. Muldrew, CCFE, Culham Science Centre
     !! Diamagnetic fraction based on SCENE fit by Tim Hender
@@ -1729,8 +1765,7 @@ module physics_module
 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine ps_fraction_scene(beta,pscf) &
-          bind(C,name="c_ps_fraction_scene")
+  subroutine ps_fraction_scene(beta,pscf)
 
     !! author: S.I. Muldrew, CCFE, Culham Science Centre
     !! Pfirsch-Schlüter fraction based on SCENE fit by Tim Hender
@@ -1838,7 +1873,7 @@ module physics_module
      write(*,*) 'Triangularity is negative without icurr = 8.'
      write(*,*) 'Please check and try again.'
      write(*,*) 'PROCESS stopping'
-     stop
+     stop 1
     end if
 
     select case (icurr)
@@ -2263,7 +2298,6 @@ module physics_module
 
     real(dp) :: znimp, pc, znfuel
     integer :: imp
-    integer :: first_call = 1
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3640,9 +3674,9 @@ module physics_module
 
     !  Local variables
 
-    real(dp) :: abserr = 0.003D0  !  numerical tolerance
-    real(dp) :: xlow = 0.01D0     !  minimum bound on H-factor
-    real(dp) :: xhigh = 100.0D0   !  maximum bound on H-factor
+    real(dp), parameter :: abserr = 0.003D0  !  numerical tolerance
+    real(dp), parameter :: xlow = 0.01D0     !  minimum bound on H-factor
+    real(dp), parameter :: xhigh = 100.0D0   !  maximum bound on H-factor
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

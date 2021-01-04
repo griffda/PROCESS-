@@ -46,22 +46,27 @@ subroutine trmodel(i_modeltype,nx,nxt, nchan, & !input
 !below: choice of model
 
 
-  if (i_modeltype.eq.1.or.i_modeltype.eq.555) then !this model assumes that H factor is give. Shape of coefficients is similar to TGLF, however can be improved a bit
+  if (i_modeltype.eq.1.or.i_modeltype.eq.555) then
+ !this model assumes that H factor is give. Shape of coefficients is similar to TGLF, however can be improved a bit
 
 	cgbohm=3.236*y0(:,2)**(1.5d0)*sqrt(AMJ)/(btor**2.*rmajor) !gB factor
 
 	chie = 0.01d0 + 1.05d0*cgbohm*(3.13+(xtr/amin)**0.3d0)*(max(0.,rlx(:,2)-5.))**1.d0*q_tr**2.  !electron chi
 
 	if (i_modeltype.eq.1) then
-		chii = 2.*chie !ion chi
+		chii = 2.*chie
+ !ion chi
 	else
-		chii = xihepalmod*chie !ion chi
+		chii = xihepalmod*chie
+ !ion chi
 	endif
 
-	Dn = 0.5d0 * (chii+chie) * 0.8d0 !particle D
+	Dn = 0.5d0 * (chii+chie) * 0.8d0
+ !particle D
 
 	if (i_modeltype.eq.1) then
-		Vn = -Dn/rmajor * (0.25d0*rlx(:,2)+0.5) * sqrt(xtr/amin) !particle V
+		Vn = -Dn/rmajor * (0.25d0*rlx(:,2)+0.5) * sqrt(xtr/amin)
+ !particle V
 	else
 		Vn = -Dn/rmajor * npikpalmod * & 
 		& sqrt(xtr/amin)/sqrt(xtr(nint((0.0001+nxt)/2.))/amin)
@@ -85,9 +90,10 @@ subroutine trmodel(i_modeltype,nx,nxt, nchan, & !input
 
 
 
-  if (i_modeltype.eq.111) then !this model is a trial on gB transport
+  if (i_modeltype.eq.111) then
+ !this model is a trial on gB transport
 !write(*,*) y0(:,2)**1.5d0,(0.03+(xtr/amin)**3.d0)
-!stop
+!stop 1
 	cgbohm=3.236*y0(:,2)**(1.5d0)*sqrt(AMJ)/(btor**2.*rmajor)
 
      chie = 0.01d0 + 0.25d0*cgbohm*(3.13+(xtr/amin)**0.3d0)*(rlx(:,2)/10.d0)**1.d0*q_tr**1. 
@@ -113,9 +119,10 @@ subroutine trmodel(i_modeltype,nx,nxt, nchan, & !input
 
 
 
-  if (i_modeltype.eq.2) then !another crappy model
+  if (i_modeltype.eq.2) then
+ !another crappy model
 !write(*,*) y0(:,2)**1.5d0,(0.03+(xtr/amin)**3.d0)
-!stop
+!stop 1
 	cgbohm=3.236*y0(:,2)**(1.5d0)*sqrt(AMJ)/(btor**2.*rmajor)
 
      chie = 0.01d0 + 1.05d0*cgbohm*(0.03+(xtr/amin)**0.3d0)*(max(0.d0,rlx(:,2)-7.d0))**4.d0*q_tr**2. 

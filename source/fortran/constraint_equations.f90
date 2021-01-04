@@ -2363,7 +2363,7 @@ contains
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !! psep_kallenbach : input real : Power conducted through the separatrix, as calculated by the divertor model [W]
       !! pdivt : input real :  power to conducted to the divertor region (MW)
-      use divertor_kallenbach_variables, only: psep_kallenbach
+      use div_kal_vars, only: psep_kallenbach
       use physics_variables, only: pdivt
       implicit none
       type (constraint_args_type), intent(out) :: args
@@ -2388,7 +2388,7 @@ contains
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !! teomp : input real : Separatrix temperature calculated by the Kallenbach divertor model [eV]
       !! tesep : input real : Electron temperature at separatrix [keV]
-      use divertor_kallenbach_variables, only: teomp
+      use div_kal_vars, only: teomp
       use  physics_variables, only: tesep
       implicit none
       type (constraint_args_type), intent(out) :: args
@@ -2414,7 +2414,7 @@ contains
       !! neomp : input real : Mean SOL density at OMP calculated by the Kallenbach divertor model [m-3]
       !! nesep : input real :  electron density at separatrix [m-3] (ipedestal=1,2, calculated if 3)
       !! neratio : input real : Ratio of mean SOL density at OMP to separatrix density at OMP (iteration variable 121)
-      use divertor_kallenbach_variables, only: neomp, neratio
+      use div_kal_vars, only: neomp, neratio
       use physics_variables, only: nesep
       implicit none
       type (constraint_args_type), intent(out) :: args

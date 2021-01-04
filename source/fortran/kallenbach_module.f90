@@ -26,7 +26,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use process_output, only: ocmmnt, osubhd
     use constants, only: opt_file, vfile, iotty
-    use divertor_kallenbach_variables, only: kallenbach_test_option, &
+    use div_kal_vars, only: kallenbach_test_option, &
       kallenbach_tests
     implicit none
     
@@ -62,7 +62,7 @@ contains
       ovarin, ovarre, ovarrf, ovarst
     use physics_variables, only: tesep
 		use constants, only: iotty
-		use divertor_kallenbach_variables, only: target_spread, lambda_q_omp, &
+		use div_kal_vars, only: target_spread, lambda_q_omp, &
       netau_sol, lcon_factor 
     use divertor_ode_var, only: impurity_arr
     implicit none
@@ -156,7 +156,7 @@ contains
     use physics_module, only: bpol
     use plasma_geometry_module, only: xparam
 		use constants, only: mfile, vfile, nout, nplot, opt_file
-    use divertor_kallenbach_variables, only: kallenbach_tests, &
+    use div_kal_vars, only: kallenbach_tests, &
       kallenbach_scan_switch, target_spread, lambda_q_omp, &
       netau_sol, ttarget, qtargettotal, targetangle
     implicit none
@@ -238,10 +238,10 @@ contains
                               ovarin, ovarre, ovarrf, ovarst
     use physics_variables, only: rmajor, rminor, bt, plascur, q, aspect, &
                                  pperim, itart, kappa, triang
-    use divertor_kallenbach_variables, only: ttarget, qtargettotal, targetangle
+    use div_kal_vars, only: ttarget, qtargettotal, targetangle
     use physics_module, only: bpol
     use plasma_geometry_module, only: xparam
-		use divertor_kallenbach_variables, only: lambda_q_omp, netau_sol, &
+		use div_kal_vars, only: lambda_q_omp, netau_sol, &
       kallenbach_scan_var, target_spread, kallenbach_scan_start, &
       kallenbach_scan_end, kallenbach_scan_num 
     implicit none
@@ -303,7 +303,7 @@ contains
         write(*,*)'Running kallenbach model for = netau_sol'
       case default
         write(*,*) "Kallenbach scan variable not recognised"
-        stop
+        stop 1
     end select
   
     step_value = (kallenbach_scan_end - kallenbach_scan_start)/kallenbach_scan_num

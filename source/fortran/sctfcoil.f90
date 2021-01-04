@@ -18,7 +18,8 @@ use resistive_materials, only: resistive_material, volume_fractions, &
 implicit none
 
 private
-public :: outtf, sctfcoil, stresscl, tfcind, tfspcall, initialise_cables
+public :: outtf, sctfcoil, stresscl, tfcind, tfspcall, initialise_cables, &
+  init_sctfcoil_module
 
 ! Module variables
 !-----------------
@@ -145,7 +146,62 @@ real(dp):: T1, time2, tau2, estotft
 ! (OBSOLETE, but leave for moment)
 ! real (kind(1.0D0)) ::croco_quench_factor
 ! real(dp):: jwdgpro_1, jwdgpro_2,  etamax
+
+! Var in tf_res_heating requiring re-initialisation on each new run
+! Not sure what is really doing --> to be checked
+integer :: is_leg_cp_temp_same
+
 contains
+
+  subroutine init_sctfcoil_module
+    !! Initialise module variables
+    implicit none
+
+    is_leg_cp_temp_same = 0
+    tf_fit_t = 0.0D0
+    tf_fit_z = 0.0D0
+    tf_fit_y = 0.0D0
+    tfc_current = 0.0D0
+    awpc = 0.0D0
+    awptf = 0.0D0
+    a_tf_steel = 0.0D0
+    a_tf_ins = 0.0D0
+    f_tf_steel = 0.0D0
+    f_tf_ins = 0.0D0
+    h_cp_top = 0.0D0
+    r_tf_outboard_in = 0.0D0
+    r_tf_outboard_out = 0.0D0
+    r_wp_inner = 0.0D0
+    r_wp_outer = 0.0D0
+    r_wp_centre = 0.0D0
+    dr_tf_wp_top = 0.0D0
+    vol_ins_cp = 0.0d0
+    vol_gr_ins_cp = 0.0D0
+    vol_case_cp = 0.0D0
+    t_wp_toroidal = 0.0D0
+    t_wp_toroidal_av = 0.0D0
+    t_lat_case_av = 0.0D0
+    a_case_front = 0.0D0
+    a_case_nose = 0.0D0
+    a_ground_ins = 0.0D0
+    a_leg_ins = 0.0D0
+    a_leg_gr_ins = 0.0D0
+    a_leg_cond = 0.0D0
+    theta_coil = 0.0D0
+    tan_theta_coil = 0.0D0
+    t_conductor_radial = 0.0D0
+    t_conductor_toroidal = 0.0D0
+    t_cable_radial = 0.0D0
+    t_cable_toroidal = 0.0D0
+    t_turn_radial = 0.0D0
+    t_turn_toroidal = 0.0D0
+    t_cable = 0.0D0
+    vforce_inboard_tot = 0.0D0
+    T1 = 0.0D0
+    time2 = 0.0D0
+    tau2 = 0.0D0
+    estotft = 0.0D0
+  end subroutine init_sctfcoil_module
 
 ! --------------------------------------------------------------------------
 subroutine initialise_cables()
@@ -1063,9 +1119,6 @@ subroutine tf_res_heating()
 
     integer :: n_contact_tot
     !! Total number of contact area (4 joints section per legs)
-
-    integer :: is_leg_cp_temp_same = 0
-    ! Not sure what it actually does --> to be understood !!
     ! ---
 
         
@@ -1324,6 +1377,18 @@ subroutine tf_coil_area_and_masses()
     !! Outboard leg conductor insulator volume [m3]
     ! ---------------
 
+    ! Initialization
+    ! ---
+    cplen = 0.0D0
+    wbtf = 0.0D0
+    vol_case = 0.0D0
+    vol_ins = 0.0D0
+    vol_gr_ins = 0.0D0 
+    vol_cond = 0.0D0
+    vol_ins_leg = 0.0D0    
+    vol_gr_ins_leg = 0.0D0
+    vol_cond_leg = 0.0D0
+    ! ---
 
     ! Surface areas (for cryo system) [m2]
     ! tfsai, tfsao are retained for the (obsolescent) TF coil nuclear heating calculation
@@ -2589,8 +2654,8 @@ subroutine plane_stress( nu, rad, ey, j,          & ! Inputs
     real(dp) :: inner_layer_curr
     real(dp) :: rad_c
 
-    integer :: ii = 0
-    integer :: jj = 0
+    integer :: ii
+    integer :: jj
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Layer parameterisation
@@ -2878,8 +2943,8 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     real(dp), dimension(2) :: strain_z_calc
       
     ! Indexes
-    integer :: ii = 0  ! Line in the aa matrix
-    integer :: jj = 0  ! Collumn in the aa matrix 
+    integer :: ii  ! Line in the aa matrix
+    integer :: jj  ! Collumn in the aa matrix 
     ! ---    
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -4362,7 +4427,7 @@ contains
 
         case (6) ! "REBCO" 2nd generation HTS superconductor in CrCo strand
             write(*,*)'ERROR: subroutine supercon has been called but i_tf_sc_mat=6'
-            stop
+            stop 1
         case default  !  Error condition
             idiags(1) = isumat ; call report_error(105)
 
@@ -4849,7 +4914,8 @@ subroutine croco_quench(conductor)
 
 
     real(dp)::tout     !for the phase 2
-    real(dp)::relerr= 0.01d0, abserr= 0.01d0
+    real(dp), parameter :: relerr= 0.01d0
+    real(dp), parameter :: abserr= 0.01d0
 
     integer(kind=4), parameter :: neqn = 1
     integer(kind=4) :: iflag

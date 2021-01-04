@@ -35,6 +35,10 @@ RUN apt-get install -y texlive-latex-extra
 RUN apt-get install -y texlive-font-utils 
 RUN apt-get install -y pandoc 
 
+# Check versions and link gfortran-8
+RUN cmake --version
+RUN gfortran-4.8 --version
+RUN ln -sf /usr/bin/gfortran-4.8 /usr/bin/gfortran
 # Symlink g++
 RUN ln -s /usr/bin/g++-10 /usr/bin/g++
 

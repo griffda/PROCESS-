@@ -1,5 +1,5 @@
 *.o
-*.so
+*.so*
 *.html
 *.x
 *.mod
@@ -73,4 +73,8 @@ test_suite/REBCO_JC.DAT
 test_suite/quench_data.DAT
 test_suite/OPT.DAT
 *.egg-info
+fortran.py
+.coverage
+dist/*
+python_fortran_dicts.json
 documentation/proc-pages/vardes.md

@@ -1,23 +1,23 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module pfcoil_module
-
-   !! Module containing PF coil routines
-   !! author: P J Knight, CCFE, Culham Science Centre
-   !! author: R Kemp, CCFE, Culham Science Centre
-   !! N/A
-   !! This module contains routines for calculating the
-   !! parameters of the PF coil systems for a fusion power plant.
-   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-   !
-   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !! Module containing PF coil routines
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! author: R Kemp, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains routines for calculating the
+  !! parameters of the PF coil systems for a fusion power plant.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    use, intrinsic :: iso_fortran_env, only: dp=>real64
    use resistive_materials, only: volume_fractions, supercon_strand
    use pfcoil_variables, only: nfixmx, ngrpmx, nclsmx, ngc2
    implicit none
  
    private
-   public :: pfcoil, outpf, outvolt, induct, vsec, bfield, brookscoil
+   public :: pfcoil, outpf, outvolt, induct, vsec, bfield, brookscoil, &
+     init_pfcoil_module
  
    !  Local variables
  
@@ -30,12 +30,42 @@ module pfcoil_module
    real(dp), dimension(ngc2) :: bpf2
    real(dp), dimension(ngc2,3) :: vsdum
  
+   ! pfcoil subroutine var requiring re-initialisation before each new run
+   logical :: first_call
+   ! outpf subroutine var requiring re-initialisation before each new run
+   logical :: CSlimit
+ 
    type(volume_fractions):: conductorpf
    type(supercon_strand)::croco_strand
  
  contains
  
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ 
+   subroutine init_pfcoil_module
+     !! Initialise module variables
+     implicit none
+ 
+     first_call = .true.
+     CSlimit = .false.
+     nef = 0
+     nfxf = 0
+     ricpf = 0.0D0
+     ssq0 = 0.0D0
+     sig_axial = 0.0D0
+     sig_hoop = 0D0
+     axial_force = 0D0
+     rfxf = 0.0D0
+     zfxf = 0.0D0
+     cfxf = 0.0D0
+     xind = 0.0D0
+     rcls = 0.0D0
+     zcls = 0.0D0
+     ccls = 0.0D0
+     ccl0 = 0.0D0
+     bpf2 = 0.0D0
+     vsdum = 0.0D0
+   end subroutine init_pfcoil_module
  
    subroutine pfcoil
  
@@ -93,8 +123,6 @@ module pfcoil_module
      real(dp), dimension(2) :: signn
  
      real(dp), dimension(ngc2) :: aturn
- 
-     logical :: first_call = .true.
  
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
@@ -2607,7 +2635,6 @@ module pfcoil_module
  
      integer :: k,nef
      character(len=2) :: intstring
-     logical :: CSlimit=.false.
  
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
