@@ -72,6 +72,10 @@ real(dp), private :: r_wp_outer
 real(dp), private :: r_wp_centre
 !! Radial position of centre and centre of winding pack [m]
 
+real(dp), private :: dr_tf_wp_top
+!! Conductor layer radial thickness at centercollumn top [m]
+!! Ground insulation layer included, only defined for itart = 1
+
 real(dp), private :: vol_ins_cp
 !! CP turn insulation volume [m3]
 
@@ -952,7 +956,8 @@ subroutine res_tf_internal_geom()
     use tfcoil_variables, only: n_tf_turn, thicndut, thkcas, dr_tf_wp, tftort,   &
         tfareain, ritfc, oacdcp, fcoolcp, cpttf, cdtfleg, casthi, aiwp, acasetf, &
         tinstf, n_tf
-    use build_variables, only: tfthko, r_tf_inboard_in, r_tf_inboard_out
+    use build_variables, only: tfthko, r_tf_inboard_in, r_tf_inboard_out, r_cp_top
+    use physics_variables, only: itart
     use constants, only: pi
 
     implicit none
@@ -967,6 +972,11 @@ subroutine res_tf_internal_geom()
     ! Radial position of inner/outer edge of winding pack [m]
     r_wp_inner = r_tf_inboard_in  + thkcas 
     r_wp_outer = r_tf_inboard_out - casthi 
+
+    ! Conductor layer radial thickness at centercollumn top [m]
+    if ( itart == 1 ) then 
+        dr_tf_wp_top = r_cp_top - casthi - thkcas - r_tf_inboard_in
+    end if 
 
     ! Number of turns
     ! Set by user (no turn structure by default, i.e. n_tf_turn = 1 ) 
@@ -3700,7 +3710,12 @@ subroutine outtf(outfile, peaktfflag)
     !  Local variables
 
     integer :: ii
-    real(dp) :: ap, radius
+
+    real(dp) :: ap
+    
+    real(dp) :: radius
+    !! Local variable used for the radial build [m]
+
     character(len=1) :: intstring
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3922,6 +3937,10 @@ subroutine outtf(outfile, peaktfflag)
             ,'(awpc))',awpc)
         call ovarre(outfile,'Inboard TFC conductor sector area (per leg) (m2)','(aswp)',awptf )
         call ovarre(outfile,'Inboard conductor sector radial thickness (m)','(dr_tf_wp)',dr_tf_wp )
+        if ( itart == 1 ) then 
+            call ovarre(outfile,'Central collumn top conductor sector radial thickness (m)',&
+                '(dr_tf_wp_top)',dr_tf_wp_top )
+        end if
         call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)', tinstf )
        
         ! Turn info
@@ -4049,61 +4068,63 @@ subroutine outtf(outfile, peaktfflag)
 
     radius = r_tf_inboard_in
     call obuild(outfile,'Innermost edge of TF coil',radius,radius)
-
-    radius = radius + thkcas
-    call obuild(outfile,'Coil case ("nose")',thkcas,radius,'(thkcas)')
-        
+    
+    ! Radial build for SC TF coils
     if ( i_tf_sup == 1 ) then
+
+        radius = radius + thkcas
+        call obuild(outfile,'Coil case ("nose")',thkcas,radius,'(thkcas)')
+
         radius = radius + tfinsgap
         call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
-    end if
 
-    radius = radius + tinstf
-    if ( i_tf_sup == 1 ) then
+        radius = radius + tinstf
         call obuild(outfile,'Winding pack ground insulation',tinstf,radius,'(tinstf)')
-    else
-        call obuild(outfile,'Conductor ground insulation',tinstf,radius,'(tinstf)')
-    end if
-
-    if ( i_tf_sup == 1 ) then
+        
         radius = radius + 0.5D0*dr_tf_wp - tinstf - tfinsgap
         call obuild(outfile,'Winding - first half', dr_tf_wp/2d0-tinstf-tfinsgap, & 
-            radius, '(dr_tf_wp/2-tinstf)')
-    else
+            radius, '(dr_tf_wp/2-tinstf-tfinsgap)')
+
+        radius = radius + 0.5D0*dr_tf_wp - tinstf - tfinsgap
+        call obuild(outfile,'Winding - second half',dr_tf_wp/2d0-tinstf-tfinsgap, &
+            radius,'(dr_tf_wp/2-tinstf-tfinsgap)')
+            
+        radius = radius + tinstf
+        call obuild(outfile,'Winding pack insulation',tinstf,radius,'(tinstf)')
+        
+        radius = radius + tfinsgap
+        call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
+        
+        radius = radius + casthi
+        call obuild(outfile,'Plasma side case min radius',casthi,radius,'(casthi)')
+        
+        radius = radius / cos(pi/n_tf)
+        call obuild(outfile,'Plasma side case max radius', r_tf_inboard_out, radius,'(r_tf_inboard_out)')
+
+
+    ! Radial build for restive coil
+    else    
+        radius = radius + thkcas
+        call obuild(outfile,'Coil bucking cylindre',thkcas,radius,'(thkcas)')
+
+        radius = radius + tinstf
+        call obuild(outfile,'Conductor ground insulation',tinstf,radius,'(tinstf)')
+        
         radius = radius + 0.5D0*dr_tf_wp - tinstf
         call obuild(outfile,'Conductor - first half', dr_tf_wp/2d0 - tinstf, radius, &
             '(dr_tf_wp/2-tinstf)')
-    end if
-        
-    if ( i_tf_sup == 1 ) then
-        radius = radius + 0.5D0*dr_tf_wp - tinstf - tfinsgap
-        call obuild(outfile,'Winding - second half',dr_tf_wp/2d0-tinstf-tfinsgap, &
-            radius,'(dr_tf_wp/2-tinstf)')
-    else
+
         radius = radius + 0.5D0*dr_tf_wp - tinstf
         call obuild(outfile,'Conductor - second half',dr_tf_wp/2d0-tinstf, &
             radius,'(dr_tf_wp/2-tinstf)')
-    end if
-        
-    radius = radius + tinstf
-    if ( i_tf_sup == 1 ) then
-        call obuild(outfile,'Winding pack insulation',tinstf,radius,'(tinstf)')
-    else 
+
+        radius = radius + tinstf
         call obuild(outfile,'Conductor ground insulation',tinstf,radius,'(tinstf)')
-    end if
         
-    if ( i_tf_sup == 1 ) then
-        radius = radius + tfinsgap
-        call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
+        radius = radius + casthi
+        call obuild(outfile,'Plasma side TF coil support',casthi,radius,'(casthi)')
     end if
 
-    radius = radius + casthi
-    call obuild(outfile,'Plasma side case min radius',casthi,radius,'(casthi)')
-
-    if ( i_tf_sup == 1 ) then
-        radius = radius / cos(pi/n_tf)
-        call obuild(outfile,'Plasma side case max radius', r_tf_inboard_out, radius,'(r_tf_inboard_out)')
-    end if
 
     ! Radial build consistency check
     if ( abs( radius - r_tf_inboard_in - tfcth ) < 10.0D0 * epsilon(radius) ) then
@@ -4113,6 +4134,46 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'Radius of plasma-facing side of inner leg SHOULD BE [m]','',r_tf_inboard_in + tfcth)
         call ovarre(outfile,'Inboard TF coil radial thickness [m]','(tfcth)',tfcth)
         call oblnkl(outfile)
+    end if
+
+    ! Top section TF coil radial build (itart = 1 only)
+    if ( itart == 1 .and. i_tf_sup /= 1 ) then 
+
+        call osubhd(outfile,'Radial build of TF coil at central collumn top :')
+        write(outfile,5)
+
+        ! Restart the radial build at bucking cylindre inner radius
+        radius = r_tf_inboard_in
+        call obuild(outfile,'Innermost edge of TF coil',radius,radius)
+    
+        radius = radius + thkcas
+        call obuild(outfile,'Coil bucking cylindre',thkcas,radius,'(thkcas)')
+
+        radius = radius + tinstf
+        call obuild(outfile,'Conductor ground insulation',tinstf,radius,'(tinstf)')
+        
+        radius = radius + 0.5D0*dr_tf_wp_top - tinstf
+        call obuild(outfile,'Conductor - first half', 0.5D0*dr_tf_wp_top - tinstf,&
+             radius, '(dr_tf_wp_top/2-tinstf)')
+
+        radius = radius + 0.5D0*dr_tf_wp_top - tinstf
+        call obuild(outfile,'Conductor - second half', 0.5D0*dr_tf_wp_top - tinstf, &
+            radius,'(dr_tf_wp_top/2-tinstf)')
+
+        radius = radius + tinstf
+        call obuild(outfile,'Conductor ground insulation',tinstf,radius,'(tinstf)')
+            
+        radius = radius + casthi
+        call obuild(outfile,'Plasma side TF coil support',casthi,radius,'(casthi)')
+
+        ! Consistency check
+        if ( abs( radius - r_cp_top ) < epsilon(radius) ) then
+            call ocmmnt(outfile,'Top TF coil dimensions are consistent')
+        else 
+            call ocmmnt(outfile,'ERROR: TF coil dimensions are NOT consistent:')
+            call ovarre(outfile,'Radius of plasma-facing side of inner leg SHOULD BE [m]','',r_cp_top)
+            call oblnkl(outfile)
+        end if
     end if
 
 end subroutine outtf
