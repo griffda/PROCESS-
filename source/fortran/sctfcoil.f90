@@ -392,7 +392,8 @@ subroutine tf_current()
     !! Calculation of the maximum B field and the corresponding TF current
     use tfcoil_variables, only: casthi, ritfc, rbmax, i_tf_sup, casths_fraction, &
         tinstf, tftort, bmaxtf, tfinsgap, tfc_sidewall_is_fraction, casths, &
-        casthi_is_fraction, casthi_fraction, n_tf, thicndut, thkcas
+        casthi_is_fraction, casthi_fraction, n_tf, thicndut, thkcas, oacdcp, &
+        tfareain
     use build_variables, only: r_tf_inboard_out, r_tf_inboard_in, tfcth
     use physics_variables, only: bt, rmajor
     use constants, only: pi
@@ -427,6 +428,9 @@ subroutine tf_current()
 
     ! Current per TF coil [A]
     tfc_current = ritfc/n_tf
+
+    ! Global inboard leg average current in TF coils [A/m2]
+    oacdcp = ritfc / tfareain
 
 end subroutine tf_current
 
@@ -988,11 +992,8 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
         !! Author : S. Kahn, CCFE
         !! Turn engineering turn currents/densities
 
-        use tfcoil_variables, only: ritfc, tfareain, n_tf, oacdcp
+        use tfcoil_variables, only: ritfc, n_tf
         implicit none
-
-        ! Global inboard leg average current in TF coils [A/m2]
-        oacdcp = ritfc / tfareain
     
         ! Winding pack current density (forced to be positive) [A/m2]
         jwptf = max(1.0D0, ritfc/(n_tf*awptf))
@@ -1010,8 +1011,8 @@ subroutine res_tf_internal_geom()
     use error_handling, only: fdiags, report_error 
     use numerics, only: nvar, ixc
     use tfcoil_variables, only: n_tf_turn, thicndut, thkcas, dr_tf_wp, tftort,   &
-        tfareain, ritfc, oacdcp, fcoolcp, cpttf, cdtfleg, casthi, aiwp, acasetf, &
-        tinstf, n_tf
+        tfareain, ritfc, fcoolcp, cpttf, cdtfleg, casthi, aiwp, acasetf, tinstf, &
+        n_tf
     use build_variables, only: tfthko, r_tf_inboard_in, r_tf_inboard_out, r_cp_top
     use physics_variables, only: itart
     use constants, only: pi
@@ -1072,9 +1073,6 @@ subroutine res_tf_internal_geom()
 
     ! Current per turn 
     cpttf = ritfc / ( n_tf_turn * n_tf )
-
-    ! Exact current density on the mid-plane conductors  
-    oacdcp = ritfc / ( awptf * n_tf * n_tf_turn ) 
 
     ! Exact current density on TF oubard legs
     cdtfleg = ritfc / ( ( 1.0D0 - fcoolcp )  &
@@ -1287,6 +1285,10 @@ subroutine tf_field_and_force()
         r_in_outwp = r_tf_outboard_in + tinstf
     end if
     
+    ! If the TF coil has no bore it would induce division by 0.
+    ! In this situation, the bore radius is set to a very small value : 1.0D-9 m
+    if ( abs(r_in_wp) < epsilon(r_in_wp) ) r_in_wp = 1.0D-9
+
     ! May the force be with you
     vforce_tot = 0.5D0 * ( bt * rmajor * ritfc ) / ( n_tf * dr_wp**2 ) &
                * ( r_out_wp**2 * log( r_out_wp / r_in_wp )             &
@@ -1301,9 +1303,6 @@ subroutine tf_field_and_force()
     ! Rem SK : casing/insulation thickness not subtracted as part of the CP is genuinely connected to the legs..
     if ( itart == 1 .and. i_cp_joints == 1 ) then
         
-        ! Tricky trick to avoid dividing by 0 if the TF has no hole in it
-        if ( abs(r_in_wp) < epsilon(r_in_wp) ) r_in_wp = 1.0D-9
-
         ! CP vertical tension [N]
         vforce = 0.25D0 * (bt * rmajor * ritfc) / (n_tf * dr_wp**2) & 
                * ( 2.0D0 * r_out_wp**2 * log(r_out_wp / r_in_wp )   &
@@ -1404,9 +1403,6 @@ subroutine tf_coil_area_and_masses()
     ! in subroutine cryo - not done at present.)
     tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(r_tf_inboard_mid+r_tf_outboard_mid)
 
-    ! Mass of ground-wall insulation [kg]
-    ! (assumed to be same density/material as turn insulation)
-    whtgw = tfleng * (awpc-awptf) * dcondins
 
     ! Superconductor coil design specific calculation
     ! ---
@@ -1414,6 +1410,11 @@ subroutine tf_coil_area_and_masses()
 
         ! Mass of case [kg]
         ! ***
+
+        ! Mass of ground-wall insulation [kg]
+        ! (assumed to be same density/material as turn insulation)
+        whtgw = tfleng * (awpc-awptf) * dcondins
+        
         ! The length of the vertical section is that of the first (inboard) segment
         cplen = 2.0D0*(radctf(1) + 0.5D0*tfcth) * dthet(1)
         
@@ -3887,9 +3888,9 @@ subroutine outtf(outfile, peaktfflag)
 
     ! CP tapering geometry
     if ( itart == 1 .and. i_tf_sup /= 1 ) then
-        call osubhd(outfile,'Tapered Centrepost Dimensions:')
-        call ovarre(outfile,'Radius of the centrepost at the midplane (m)','(r_tf_inboard_out)',r_tf_inboard_out)
-        call ovarre(outfile,'Radius of the ends of the centrepost (m)','(r_cp_top)',r_cp_top)
+        call osubhd(outfile,'Tapered Centrepost TF coil Dimensions:')
+        call ovarre(outfile,'TF coil centrepost outer radius at midplane (m)','(r_tf_inboard_out)',r_tf_inboard_out)
+        call ovarre(outfile,'TF coil centrepost outer radius at its top (m)','(r_cp_top)',r_cp_top)
         call ovarre(outfile,'Top/miplane TF CP radius ratio (-)','(f_r_cp)', f_r_cp)
         call ovarre(outfile,'Distance from the midplane to the top of the tapered section (m)','(h_cp_top)',h_cp_top)
         call ovarre(outfile,'Distance from the midplane to the top of the centrepost (m)','(hmax + tfthko)',hmax + tfthko)
@@ -3916,7 +3917,7 @@ subroutine outtf(outfile, peaktfflag)
 
         ! Winding pack structure
         call osubhd(outfile,'TF winding pack (WP) geometry:')
-        call ovarre(outfile,'WP cross section area with insulation and insertion (per coil) (m2)','(awpc))',awpc)
+        call ovarre(outfile,'WP cross section area with insulation and insertion (per coil) (m2)','(awpc)',awpc)
         call ovarre(outfile,'WP cross section area (per coil) (m2)','(aswp)', awptf)
         call ovarre(outfile,'Winding pack radial thickness (m)','(dr_tf_wp)',dr_tf_wp, 'OP ')
         if (  i_tf_turns_integer == 1 ) then
@@ -4023,7 +4024,9 @@ subroutine outtf(outfile, peaktfflag)
     call ovarre(outfile,'Copper mass per coil (kg)','(whtconcu)',whtconcu, 'OP ')
     call ovarre(outfile,'Steel conduit mass per coil (kg)','(whtconsh)',whtconsh, 'OP ')
     call ovarre(outfile,'Conduit insulation mass per coil (kg)','(whtconin)',whtconin, 'OP ')
-    call ovarre(outfile,'Total conductor mass per coil (kg)','(whtcon)',whtcon, 'OP ')
+    if ( i_tf_sup == 1 ) then
+        call ovarre(outfile,'Total conduit mass per coil (kg)','(whtcon)',whtcon, 'OP ')
+    end if
     if ( itart ==  1 ) then
         call ovarre(outfile,'Mass of inboard legs (kg)','(whtcp)',whtcp)
         call ovarre(outfile,'Mass of outboard legs (kg)','(whttflgs)',whttflgs)
