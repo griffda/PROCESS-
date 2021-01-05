@@ -1289,12 +1289,12 @@ subroutine tf_field_and_force()
     
     ! May the force be with you
     vforce_tot = 0.5D0 * ( bt * rmajor * ritfc ) / ( n_tf * dr_wp**2 ) &
-               * ( r_out_wp**2 * log( r_out_wp / r_in_wp )  &
+               * ( r_out_wp**2 * log( r_out_wp / r_in_wp )             &
                  + r_in_outwp**2 * log( (r_in_outwp + dr_wp) / r_in_outwp ) &
-                 + dr_wp**2         * log( (r_in_outwp + dr_wp) / r_in_wp )             &
-                 - dr_wp            * ( r_out_wp + r_in_outwp )                         &
-                 + 2.0D0 * dr_wp * ( r_out_wp     * log(r_in_wp / r_out_wp)                   &
-                                   + r_in_outwp * log((r_in_outwp + dr_wp)        &
+                 + dr_wp**2         * log( (r_in_outwp + dr_wp) / r_in_wp ) &
+                 - dr_wp            * ( r_out_wp + r_in_outwp )             &
+                 + 2.0D0 * dr_wp * ( r_out_wp     * log(r_in_wp / r_out_wp) &
+                                   + r_in_outwp * log((r_in_outwp + dr_wp)  &
                                    / r_in_outwp))) 
 
     ! Case of a centrepost (itart == 1) with sliding joints (the CP vertical are separated from the leg ones)
@@ -1380,7 +1380,6 @@ subroutine tf_coil_area_and_masses()
     ! Initialization
     ! ---
     cplen = 0.0D0
-    wbtf = 0.0D0
     vol_case = 0.0D0
     vol_ins = 0.0D0
     vol_gr_ins = 0.0D0 
