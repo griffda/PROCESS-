@@ -11,11 +11,7 @@ module kallenbach_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   !---------------------------------------------------------------------------
 
-  use process_output
-  use output_module
-  use constants
-  use divertor_kallenbach_variables
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
 contains
 
   !---------------------------------------------------------------------------
@@ -28,7 +24,12 @@ contains
     !! 
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use process_output, only: ocmmnt, osubhd
+    use constants, only: opt_file, vfile, iotty
+    use div_kal_vars, only: kallenbach_test_option, &
+      kallenbach_tests
+    implicit none
+    
     call osubhd(iotty,'# Running test of Kallenbach divertor model')
     select case (kallenbach_test_option)
         case (0)
@@ -58,16 +59,19 @@ contains
     use read_radiation
     use constants
     use process_output, only: oblnkl, obuild, ocentr, ocmmnt, oheadr, osubhd, &
-                              ovarin, ovarre, ovarrf, ovarst
+      ovarin, ovarre, ovarrf, ovarst
     use physics_variables, only: tesep
-
+		use constants, only: iotty
+		use div_kal_vars, only: target_spread, lambda_q_omp, &
+      netau_sol, lcon_factor 
+    use divertor_ode_var, only: impurity_arr
     implicit none
 
     integer :: i
 
-    real(kind(1.0D0)):: rmajor, rminor, bt, plascur, q, t_target, &
+    real(dp):: rmajor, rminor, bt, plascur, q, t_target, &
                         q_target_total, target_angle, b_pol
-    real(kind(1.0D0)):: dummy, dummy2, dummy3
+    real(dp):: dummy, dummy2, dummy3
 
     ! This section just for reproducing the original numbers
     rmajor = 8.0D0
@@ -149,17 +153,19 @@ contains
                               ovarin, ovarre, ovarrf, ovarst
     use physics_variables, only: rmajor, rminor, bt, plascur, q, aspect, &
                                  pperim, itart, kappa, triang
-    use divertor_kallenbach_variables, only: ttarget, qtargettotal, targetangle
     use physics_module, only: bpol
     use plasma_geometry_module, only: xparam
-
+		use constants, only: mfile, vfile, nout, nplot, opt_file
+    use div_kal_vars, only: kallenbach_tests, &
+      kallenbach_scan_switch, target_spread, lambda_q_omp, &
+      netau_sol, ttarget, qtargettotal, targetangle
     implicit none
 
-    real(kind(1.0D0)):: b_pol
+    real(dp):: b_pol
 
-    real(kind(1.0D0)):: dummy, dummy2, dummy3
+    real(dp):: dummy, dummy2, dummy3
 
-    real(kind(1.0D0)) :: xi, thetai, xo, thetao
+    real(dp) :: xi, thetai, xo, thetao
 
     ! Calculate plasma geometry
     rminor = rmajor/aspect
@@ -232,19 +238,21 @@ contains
                               ovarin, ovarre, ovarrf, ovarst
     use physics_variables, only: rmajor, rminor, bt, plascur, q, aspect, &
                                  pperim, itart, kappa, triang
-    use divertor_kallenbach_variables, only: ttarget, qtargettotal, targetangle
+    use div_kal_vars, only: ttarget, qtargettotal, targetangle
     use physics_module, only: bpol
     use plasma_geometry_module, only: xparam
-
+		use div_kal_vars, only: lambda_q_omp, netau_sol, &
+      kallenbach_scan_var, target_spread, kallenbach_scan_start, &
+      kallenbach_scan_end, kallenbach_scan_num 
     implicit none
 
     integer :: i
 
-    real(kind(1.0D0)):: b_pol, step_value
+    real(dp):: b_pol, step_value
 
-    real(kind(1.0D0)):: dummy, dummy2, dummy3
+    real(dp):: dummy, dummy2, dummy3
 
-    real(kind(1.0D0)) :: xi, thetai, xo, thetao
+    real(dp) :: xi, thetai, xo, thetao
 
     ! Calculate plasma geometry
     rminor = rmajor/aspect
@@ -295,7 +303,7 @@ contains
         write(*,*)'Running kallenbach model for = netau_sol'
       case default
         write(*,*) "Kallenbach scan variable not recognised"
-        stop
+        stop 1
     end select
   
     step_value = (kallenbach_scan_end - kallenbach_scan_start)/kallenbach_scan_num

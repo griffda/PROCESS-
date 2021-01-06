@@ -1,4 +1,24 @@
+#ifndef COMMSG
+#error COMMSG not defined!
+#endif
+
+#ifndef tagno
+#error tagno not defined!
+#endif
+
+#ifndef branch_name
+#error branch_name not defined!
+#endif
+
+#ifndef untracked
+#error untracked not defined!
+#endif
+
 module main_module
+
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+
+  implicit none
 
 contains
 
@@ -16,6 +36,7 @@ subroutine inform(progid)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants, only: nout
   implicit none
 
   !  Arguments
@@ -25,7 +46,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=98) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '1.0.16   Release Date :: 2019-07-15'
+       '1.0.17   Release Date :: 2020-02-25'
   character(len = 50) :: dt_time
   character(len=72), dimension(10) :: id
 
@@ -71,10 +92,13 @@ subroutine run_summary
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use global_variables
-  use numerics
-  use process_output
-
+  use constants, only: nout, mfile, iotty, mfile
+  use maths_library, only: integer2string, integer3string
+  use global_variables, only: maxcal, fileprefix, icase, runtitle
+  use numerics, only: nvar, neqns, ioptimz, nineqns, epsvmc, minmax, icc, &
+    lablcc, lablmm
+  use process_output, only: ocentr, oblnkl, ocmmnt, ostars, ovarst
+  use physics_variables, only: te 
   implicit none
 
   !  Local variables
@@ -92,10 +116,6 @@ subroutine run_summary
   character(len = 14)  :: minmax_string
   character(len = 10)  :: eps_string
   character :: minmax_sign
-  include "com.msg"
-  include "tag.num"
-  include "branch.name"
-  include "untracked.info"
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -241,12 +261,16 @@ subroutine eqslv(ifail)
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use constraints
-  use process_output
-  use numerics
-  use function_evaluator
-
+  use constants, only: nout, mfile, iotty
+  use constraints, only: constraint_eqns
+  use function_evaluator, only: fcnhyb
+  use error_handling, only: idiags, fdiags, errors_on, report_error
+  use numerics, only: ipeqns, epsfcn, factor, ftol, iptnt, ncalls, ioptimz, &
+    neqns, nfev1, nfev2, sqsumsq, xcm, rcm, xcs, resdl, scafc, ixc, lablxc, &
+    icc, lablcc, eqsolv
+  use process_output, only: ovarin, oblnkl, ocmmnt, oheadr, osubhd, &
+    ovarre, int_to_string3
+  use physics_variables, only: bt, aspect, rmajor, powfmw, wallmw 
   implicit none
 
   !  Arguments
@@ -254,10 +278,10 @@ subroutine eqslv(ifail)
 
   !  Local variables
   integer :: inn,nprint,nx
-  real(kind(1.0D0)) :: sumsq
-!  real(kind(1.0D0)), dimension(iptnt) :: wa
-  real(kind(1.0D0)) :: wa(iptnt)
-  real(kind(1.0D0)), dimension(ipeqns) :: con1, con2, err
+  real(dp) :: sumsq
+!  real(dp), dimension(iptnt) :: wa
+  real(dp) :: wa(iptnt)
+  real(dp), dimension(ipeqns) :: con1, con2, err
   character(len = 1), dimension(ipeqns) :: sym
   character(len = 10), dimension(ipeqns) :: lab
 
@@ -393,8 +417,8 @@ subroutine herror(ifail)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use process_output
-
+  use constants, only: nout, iotty
+  use process_output, only: oblnkl, ocmmnt
   implicit none
 
   !  Arguments
@@ -483,8 +507,8 @@ subroutine verror(ifail)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use process_output
-
+  use constants, only: nout, iotty
+  use process_output, only: ocmmnt, oblnkl
   implicit none
 
   !  Arguments
@@ -595,17 +619,15 @@ end subroutine verror
 
 
 subroutine runtests
-  use maths_library
-  use global_variables
-  use numerics
-  use process_output
-  use pfcoil_module
-  use superconductors
-  use reinke_module
-  use hare, only:hare_calc
-
+  use hare, only: hare_calc
+  use constants, only: nout
+  use maths_library, only: nearly_equal, binomial, test_secant_solve
+  use process_output, only: ocmmnt, ovarre
+  use pfcoil_module, only: brookscoil
+  use superconductors, only: test_quench
+  use reinke_module, only: test_reinke
   implicit none
-  real(kind(1.0D0)) :: fshift, xf, enpa,ftherm,fpp,cdeff, ampperwatt
+  real(dp) :: fshift, xf, enpa,ftherm,fpp,cdeff, ampperwatt
   logical :: Temperature_capped
   call ovarre(nout,'Binomial coefficients C(5,0): 1', '(binomial(5,0))', binomial(5,0))
   call ovarre(nout,'Binomial coefficients C(5,1): 5', '(binomial(5,1))', binomial(5,1))

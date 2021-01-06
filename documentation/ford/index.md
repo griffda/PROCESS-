@@ -12,7 +12,7 @@ display: public
 fpp_extensions: f90
 graph: true
 source: true
-search: true
+search: false
 author: UKAEA
 
 During the course of studies into a proposed fusion power plant, there

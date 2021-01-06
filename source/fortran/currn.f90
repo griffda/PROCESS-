@@ -14,15 +14,68 @@ subroutine currn(om,zacosarg,xk0,xnpa,enpep,angnb,op,oc,ocmax,ocmin, &
     !     zconv1 is the constant that converts from (statamps*cm) divided
     !          by (ergs/sec) to (amps*cm) divided by watts, i.e., zconvr/e4
 
-    !use t4_mod_tprof
-    use param  !pi,c   !EXTERNAL
-    use machin !EXTERNAL
-    use bsquar !EXTERNAL
-    use mode   !EXTERNAL
-    use linliu !EXTERNAL
-    use abs_cd !EXTERNAL
-    implicit real*8 (a-h,o-z)
-    COMPLEX CEFLDX, CEFLDY, CEFLDZ
+    use abs_cd, only: cdroutine
+    use param, only: pi
+    use bsquar, only: conf, conf2
+    use mode, only: imod
+    use mod_f90_kind, only: rkind
+    implicit none
+
+    ! Parameters
+    ! It is unknown what the intents of these parameters are; guess inout
+    real(kind(1.0D0)), intent(inout) :: om
+    real(kind(1.0D0)), intent(inout) :: zacosarg
+    real(kind(1.0D0)), intent(inout) :: xk0
+    real(kind(1.0D0)), intent(inout) :: xnpa
+    real(kind(1.0D0)), intent(inout) :: enpep
+    real(kind(1.0D0)), intent(inout) :: angnb
+    real(kind(1.0D0)), intent(inout) :: op
+    real(kind(1.0D0)), intent(inout) :: oc
+    real(kind(1.0D0)), intent(inout) :: ocmax
+    real(kind(1.0D0)), intent(inout) :: ocmin
+    real(kind(1.0D0)), intent(inout) :: te
+    real(kind(1.0D0)), intent(inout) :: zeff
+    real(kind(1.0D0)), intent(inout) :: cdeff
+    integer, intent(inout) :: lh
+    complex, intent(inout) :: cefldx
+    complex, intent(inout) :: cefldy
+    complex, intent(inout) :: cefldz
+    real(kind(1.0D0)), intent(inout) :: cdharm
+
+    ! Local variables
+    real(kind(1.0D0)) :: aspct
+    real(kind(1.0D0)) :: coverw
+    real(kind(1.0D0)) :: denom
+    real(kind(1.0D0)) :: elomom
+    real(kind(1.0D0)) :: eltmp
+    real(kind(1.0D0)) :: enpa
+    real(kind(1.0D0)) :: ezeff
+    integer :: ig
+    integer :: modelc
+    integer :: ngauss
+    real(kind(1.0D0)) :: ratjpd
+    real(kind(1.0D0)) :: rbeta
+    real(kind(1.0D0)) :: rjpd
+    real(kind(1.0D0)) :: rjpd0
+    real(kind(1.0D0)) :: rjpd0h
+    real(kind(1.0D0)) :: rjpdh
+    real(kind(1.0D0)) :: theta
+    real(kind(1.0D0)) :: thprnt
+    real(kind(1.0D0)) :: thtc
+    real(kind(1.0D0)) :: tolcur
+    real(kind(1.0D0)) :: xnperp
+    real(kind(1.0D0)) :: zb
+    real(kind(1.0D0)) :: zbmax
+    real(kind(1.0D0)) :: zbmin
+    real(kind(1.0D0)) :: zconst
+    real(kind(1.0D0)) :: zconv1
+    real(kind(1.0D0)) :: zconvr
+    real(kind(1.0D0)) :: zelchg
+    real(kind(1.0D0)) :: zfac
+    real(kind(1.0D0)) :: zfac1
+    real(kind(1.0D0)) :: zfac2
+    real(kind(1.0D0)) :: zfac3
+    real(kind(1.0D0)) :: zralfa
 
     DATA &
     zelchg /4.8032d-10/, &

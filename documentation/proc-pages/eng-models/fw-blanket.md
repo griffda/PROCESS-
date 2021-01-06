@@ -108,11 +108,11 @@ sub-assembly values if `blktmodel > 0`, rather than being input parameters.
 
 Low Temperature Shield and Vacuum Vessel (lumped together for these 
 calculations), with radial thicknesses (inboard and outboard, respectively) 
-`shldith + ddwi`, `shldoth + ddwi` and **water** coolant fraction `vfshld` (the 
-rest being assumed to be steel for its mass calculation; the neutronics model 
-assumes that the shield contains 2% boron  as a neutron absorber, but this 
-material is not explicitly mentioned elsewhere in the code -- so its cost is 
-not calculated, for example).
+`shldith + d_vv_in`, `shldoth + d_vv_out` and **water** coolant fraction 
+`vfshld` (the rest being assumed to be steel for its mass calculation; the 
+neutronics model assumes that the shield contains 2% boron  as a neutron absorber, 
+but this material is not explicitly mentioned elsewhere in the code -- so 
+its cost is not calculated, for example).
 
 !!! Note "Note" 
     The fact that water is assumed to be the coolant in the shield, whereas 

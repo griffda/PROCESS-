@@ -15,7 +15,6 @@ icc = 5             *Density limit
 icc = 7             *Beam ion density (NBI)
 icc = 8             *Neutron wall load upper limit
 icc = 9             *Fusion power upper limit
-*icc = 10            *Toroidal field 1/R (consistency equation)
 icc = 11            *Radial build (consistency equation)
 icc = 15            *LH power threshold limit
 icc = 17            *Radiation fraction upper limit
@@ -28,52 +27,43 @@ icc = 56            *Pseparatrix / Rmajor upper limit
 
 *---------------Iteration Variables----------------*
 
-*ixc = 3             *rmajor
-rmajor = 1.7        *Plasma major radius (m)
-*boundl(3) = 1.69
-*boundu(3) = 1.7
-
 ixc = 4             *te
-te = 7.4358         *Volume averaged electron temperature (keV)
+te = 5.7900         *Volume averaged electron temperature (keV)
 boundl(4) = 3.0
 
 ixc = 5             *beta
-beta = 0.13905      *total plasma beta
+beta = 0.14470      *total plasma beta
 
 ixc = 6             *dene
-dene = 2.5682E20    *Electron density (/m3)
+dene = 2.3125E20    *Electron density (/m3)
 
 ixc = 7             *rnbeam
-rnbeam = 0.0065156  *Hot beam density / n_e
+rnbeam = 0.0066126  *Hot beam density / n_e
 
 ixc = 9             *fdene
-fdene = 0.75        *f-value for density limit (constraint equation 5)
+fdene = 0.77146     *f-value for density limit (constraint equation 5)
 
 ixc = 10            *hfact
-hfact = 1.3      *H factor on energy confinement times
-
-* ixc = 12            *oacdcp
-* oacdcp = 68522000.0 *Overall current density in TF coil inboard legs (A/m2)
+hfact = 1.5483      *H factor on energy confinement times
 
 ixc = 13            *tfcth
-tfcth = 0.36444     *Inboard TF coil thickness (centrepost for ST) (m)
+tfcth = 0.15483     *Inboard TF coil thickness (centrepost for ST) (m)
 boundl(13) = 0.3
 
 ixc = 14            *fwalld
-fwalld = 0.10188    *f-value for maximum wall load
+fwalld = 0.10180    *f-value for maximum wall load
 
 ixc = 18            *q
-*q = 7.3424          *Safety factor 'near' plasma edge
-q=8.0
+q = 6.1865          * Safety factor 'near' plasma edge
 boundl(18) = 6.1
 
 ixc = 20            *tcpav
-tcpav = 313.903     *Average temp of TF coil inboard leg conductor (C) (resistive coils)
+tcpav = 347.13      *Average temp of TF coil inboard leg conductor (C) (resistive coils)
 boundl(20) = 303.15
 boundu(20) = 373.15
 
 ixc = 23            *fcoolcp
-fcoolcp = 0.41433   *Coolant fraction of TF coil inboard legs
+fcoolcp = 0.12725   *Coolant fraction of TF coil inboard legs
 boundl(23) = 0.05
 
 ixc = 26            *ffuspow
@@ -81,29 +71,29 @@ ffuspow = 1.0       *f-value for maximum fusion power
 boundu(26) = 1.0
 
 ixc = 28            *fradpwr
-fradpwr = 0.35505   *f-value for core radiation power limit
+fradpwr = 0.84588   *f-value for core radiation power limit
 
 ixc = 36            *fbetatry
-fbetatry = 1.0      *f-value for beta limit
+fbetatry = 0.74945  *f-value for beta limit
 
 ixc = 72            *fipir
-fipir = 0.47963     *f-value for Ip/Irod limit
+fipir = 0.48294     *f-value for Ip/Irod limit
 
 ixc = 73            *scrapli
-scrapli = 0.0010022 *Gap between plasma and first wall inboard side (m)
+scrapli = 0.095950  *Gap between plasma and first wall inboard side (m)
 boundu(73) = 0.12
 
 ixc = 97             *fpsepr
-fpsepr = 0.9         *f-value for maximum Psep/R limit (constraint equation 56)
+fpsepr = 0.50247     *f-value for maximum Psep/R limit (constraint equation 56)
 boundl(97) = 0.001
 boundu(97) = 1.0
 
 ixc = 103           *flhthresh
-flhthresh = 4.3153  *f-value for L-H power threshold
+flhthresh = 1.0     *f-value for L-H power threshold
 
 ixc = 135           *fimp(13)
 fimp(13) = 0.00044  *Xenon
-boundl(135) = 0.0003891
+boundl(135) = 0.00038910
 
 *-----------------Global Variables-----------------*
 
@@ -112,7 +102,7 @@ runtitle = FNSF (Menard et al. 2016)
 
 *---------------Numerics Variables-----------------*
 
-epsvmc   = 1.0E-6   *Error tolerance for VMCON
+epsvmc   = 1.0E-7   *Error tolerance for VMCON
 ioptimz  = 1        *Code operation switch (VMCON only)
 minmax   = -5       *Switch for figure-of-merit (5: fusion gain Q)
 
@@ -143,12 +133,14 @@ igeom    = 0        *Switch for plasma geometry calculation (0: original method)
 iohcl    = 0        *Switch for existence of central solenoid
 iprofile = 0        *Switch for current profile consistency (0: use input values for alphaj rli dnbeta)
 ips      = 1        *Switch for Pfirsch-Schlüter current scaling (1: SCENE scaling)
+ishape   = 8        *Switch for plasma cross-sectional shape calculation (8: FIESTA fit)
+i_single_null = 0   *Switch for divertor configuration (0: double null)
 itart    = 1        *Switch for spherical tokamak (ST) models (1: use spherical tokamak models)
 kappa    = 2.75     *Plasma separatrix elongation
 q0       = 2.0      *Safety factor on axis
 ralpne   = 0.08     *Thermal alpha density / electron density
 rli      = 0.65     *Plasma normalised internal inductance
-i_single_null    = 0        *Switch for divertor configuration (0: double null)
+rmajor   = 1.7      *Plasma major radius (m)
 ssync    = 0.7      *Synchrotron wall reflectivity factor
 tratio   = 1.35     *Ion temperature / electron temperature
 triang   = 0.5      *Plasma separatrix triangularity triang
@@ -174,9 +166,13 @@ tdwell   = 100.0    *Time between pulses in a pulsed reactor (s)
 bore     = 0.0      *central solenoid inboard radius (m)
 gapoh    = 0.0      *gap between central solenoid and TF coil (m)
 ohcth    = 0.0      *central solenoid thickness (m)
+thkcas   = 0.0      *Inboard TF coil case outer (non-plasma side) thickness (m)
 blnkith  = 0.0      *Inboard blanket thickness (m)
 blnkoth  = 0.7      *Outboard blanket thickness (m)
-ddwi     = 0.0      *Vacuum vessel thickness (m)
+d_vv_in  = 0.0      *Inboard vacuum vessel thickness (m)
+d_vv_out = 0.3      *Outboard vacuum vessel thickness (m)
+d_vv_top = 0.3      *Topside vacuum vessel thickness (m)
+d_vv_bot = 0.3      *Underside vacuum vessel thickness (m)
 gapds    = 0.0      *Gap between inboard vacuum vessel and thermal shield (m)
 gapomin  = 0.0      *Minimum gap between outboard vacuum vessel and TF coil (m)
 iprecomp = 0        *Switch for existence of central solenoid pre-compression structure (0: no pre-compression structure)
@@ -192,7 +188,8 @@ vvblgap  = 0.0      *Gap between vacuum vessel and blanket (m)
 *Iteration variables: scrapli tfcth
 
 *-----------------TF Coil Variables----------------*
-tinstf   = 0.0     *Centrepost insulation thickness (no inusltion in this case)
+tinstf   = 0.0      *Centrepost insulation thickness (no inusltion in this case)
+casthi   = 0.0      *inboard TF coil case outer (non-plasma side) thickness (m)
 frhocp   = 1.0      *Centrepost resistivity enhancement factor 
 i_tf_sup = 0        *Switch for TF coil conductor model (0: copper) 
 ptempalw = 473.15   *Maximum peak centrepost temperature (C) (constraint equation 44)
@@ -201,6 +198,7 @@ ripmax   = 1.0      *Maximum allowable toroidal field ripple amplitude at plasma
 n_tf     = 12       *Number of TF coil  
 vcool    = 5.0      *Max centrepost coolant flow speed at midplane (m/s)
 vftf     = 0.2      *Coolant fraction of TFC 'cable' (i_tf_sup=1) or of TFC leg (i_tf_sup=0)
+i_tf_plane_stress = 0 
 *Iteration variables: cdtfleg fcoolcp oacdcp tcpav
 
 *-------------Current Drive Variables--------------*

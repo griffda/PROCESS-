@@ -154,15 +154,21 @@
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables
-    use constants
-    use fispact_variables
-    use fwbs_variables
-    use heat_transport_variables
-    use pfcoil_variables
-    use physics_variables
-    use process_output
-    use tfcoil_variables
+    use build_variables, only: blnkith, blnkoth, bore, ddwex, d_vv_in, d_vv_out, &
+      fmsbl, fmsdwe, fmsdwi, fmsfw, fmsoh, fmssh, fmstf, fwith, fwoth, gapds, &
+      gapoh, gapsto, iohcl, ohcth, precomp, scrapli, scraplo, shldith, shldoth, &
+      tfcth, tfootfi, tfthko, tftsgap, thshield, vvblgap
+    use fispact_variables, only: fwtemp, blihkw, fwihkw, fwohkw, blohkw
+    use fwbs_variables, only: blkttype, denstl, fblbe, fblli, fblli2o, &
+      fbllipb, fblss, fblvd, fwclfr, vfblkt, vfshld
+    use heat_transport_variables, only: ipowerflow
+    use pfcoil_variables, only: fcuohsu, ipfres, isumatoh, nohc, vfohc, zl, &
+      rpf, zh, wts, ra, rb
+    use physics_variables, only: rminor
+    use process_output, only: oheadr, ovarre
+    use tfcoil_variables, only: acasetf, acond, aswp, avwp, fcoolcp, fcutfsu, &
+      i_tf_sup, n_tf, vftf, i_tf_sc_mat
+    use constants, only: pi
 
     implicit none
 
@@ -171,8 +177,6 @@
     integer, intent(in) :: iprint,outfile
 
     !  Local variables
-    real(kind(1.0D0)) :: rbldtotf ! Radial build to tfcoil
-    real(kind(1.0D0)) :: deltf    ! TF - thermal shield gap due to flat surfaces of TF
     real(kind(1.0D0)) :: ac,as,av,a1
     integer :: i,k,ibc,itf,ioh
 
@@ -228,21 +232,9 @@
     radmin(5) = radpls(4)
     radpls(5) = radmin(5) + tfcth
 
-    ! Inner TF - thermal shield gap
-    ! ******
-    ! Radial build to tfcoil
-    rbldtotf = bore + ohcth + precomp + gapoh + tfcth
-    
-    ! Additional gap spacing due to flat surfaces of TF
-    if ( i_tf_sup == 1 ) then
-       deltf = rbldtotf * ((1.0d0 / cos(pi/n_tf)) - 1.0d0) + tftsgap
-    else
-       deltf = tftsgap
-    end if 
-
-    radmin(6) = radpls(5) + deltf
+    ! Inner TF - thermal shield gap    
+    radmin(6) = radpls(5) + tftsgap
     radpls(6) = radmin(6)
-    ! ******
 
     ! Inner thermal shield 
     radmin(7) = radpls(6)
@@ -254,7 +246,7 @@
 
     ! Inner Vaccum vessel
     radmin(9) = radpls(8)
-    radpls(9) = radmin(9) + ddwi
+    radpls(9) = radmin(9) + d_vv_in
 
     ! Inner neutron shield
     radmin(10) = radpls(9)
@@ -294,7 +286,7 @@
 
     ! Outer VV
     radmin(19) = radpls(18)
-    radpls(19) = radmin(19) + ddwi
+    radpls(19) = radmin(19) + d_vv_out
 
     ! Outer VV - thermal shield gap 
     radmin(20) = radpls(19) + gapsto
@@ -421,7 +413,7 @@
       matfrc(5,5) = avwp / a1
       matfrc(5,7) = acond / a1 * fcutfsu
 
-      if (isumattf /= 3) then  !  treat generic superconductors like Nb3Sn
+      if (i_tf_sc_mat /= 3) then  !  treat generic superconductors like Nb3Sn
          matfrc(5,12) = acond / a1 * (1.0D0 - fcutfsu)
       else
          matfrc(5,13) = acond / a1 * (1.0D0 - fcutfsu)
@@ -553,7 +545,7 @@
        matfrc(23,5) = avwp / a1
        matfrc(23,7) = acond / a1 * fcutfsu
 
-       if (isumattf /= 3) then  !  treat generic superconductors like Nb3Sn
+       if (i_tf_sc_mat /= 3) then  !  treat generic superconductors like Nb3Sn
           matfrc(23,12) = acond / a1 * (1.0D0 - fcutfsu)
        else
           matfrc(23,13) = acond / a1 * (1.0D0 - fcutfsu)

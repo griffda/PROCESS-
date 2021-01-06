@@ -1,4 +1,5 @@
 # Unit Tests
+[PDF of webpage](../pdf/unit-tests.pdf)
 
 The PROCESS code uses Googletest framework for unit testing. The following 
 instructions show how to implement a test.
@@ -11,7 +12,7 @@ This will outline the procedure for adding a new basic test. The FORTRAN functio
 \binom{n}{k} = \frac{n!}{k!(n-k)!}
 ```
 
-This function is defined in `maths_library.f90` as
+This function is defined in `maths_library.f90` as:
 
 ```fortran
 real(kind(1.0D0))  function binomial(n,k) result(coefficient) &
@@ -99,13 +100,13 @@ c = c_binomial(&n, &k);
 
 The two local variables `n` and `k` are passed by reference so hence the `&` before the name.
 
-The last part of the test performs the check against the expected value
+The last part of the test performs the check against the expected value:
 
 ```c++
 EXPECT_EQ(1.0, c);
 ```
 
-This asserts that we expect the outcome
+This asserts that we expect the outcome:
 
 ```math
 \binom{1}{1} = 1
@@ -133,7 +134,7 @@ extern "C"
 }
 ```
 
-The final line
+The final line:
 
 ```c++
 double c_binomial(int *, int *);
@@ -146,7 +147,7 @@ Tells the Googletest C++ framework about the binomial function, referring to the
 To run the test, run the PROCESS compilation again `cmake --build build`.
 This will create an executable file in `/bin/` called `process_GTest.exe`
 
-Run the unit test executable with 
+Run the unit test executable with:
 
 ```bash
 ./bin/process_GTest.exe
@@ -179,7 +180,7 @@ The example test being added is for the subroutine `calc_u_unplanned_bop` which 
 
 ## calc_u_unplanned_bop
 
-The subroutine is declared as
+The subroutine is declared as:
 
 ```fortran
 subroutine calc_u_unplanned_bop(outfile, iprint, u_unplanned_bop) &
@@ -195,14 +196,14 @@ real(kind(1.0D0)), intent(out) :: u_unplanned_bop
 
 The two inputs are to configure the PROCESS code output and where it is written (they are both integers). The output is a real.
 
-The subroutine also uses some local variables, declared as
+The subroutine also uses some local variables, declared as:
 
 ```fortran
 real(kind(1.0D0)) :: bop_fail_rate, bop_mttr
 integer :: bop_num_failures
 ```
 
-The calculation for the subroutine is given below
+The calculation for the subroutine is given below:
 
 ```fortran
 ! Balance of plant failure rate (failures per hour)
@@ -224,14 +225,14 @@ You will notice that there is a variable used in the calculation that is not def
 
 ## t_operation - global variable
 
-Searching inside the code, one should find the declaration of `t_operation` in `global_variables.f90` 
+Searching inside the code, one should find the declaration of `t_operation` in `global_variables.f90`:
 
 ```fortran
 !+ad_vars  t_operation : Operational time (yrs)
 real(kind(1.0D0)) :: t_operation = 0.0D0
 ```
 
-To add a C binding this should become
+To add a C binding this should become:
 
 ```fortran
 !+ad_vars  t_operation : Operational time (yrs)
@@ -266,7 +267,7 @@ TEST(Availability, calc_u_unplanned_bop) {
 
 ## test_functions.h
 
-And add an entry in `test_functions.h` as before
+And add an entry in `test_functions.h` as before:
 
 ```c++
 void c_calc_u_unplanned_bop(int *, int *, double *);

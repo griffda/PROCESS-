@@ -12,11 +12,7 @@ module plasma_geometry_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use build_variables
-  use constants
-  use physics_variables
-
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   private
@@ -44,13 +40,18 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: scraplo, scrapli
+    use constants, only: twopi, pi
+    use physics_variables, only: eps, pperim, sareao, rminor, kappa95, sarea, &
+      triang95, fkzohm, vol, ishape, xarea, igeom, qlim, sf, iscrp, triang, &
+      cvol, rmajor, kappa, aspect
     implicit none
 
     !  Arguments
 
     !  Local variables
 
-    real(kind(1.0D0)) :: sa,so,xsi,xso,thetai,thetao,xi,xo
+    real(dp) :: sa,so,xsi,xso,thetai,thetao,xi,xo
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -66,8 +67,10 @@ contains
     case (0)  !  Use input kappa, triang values
 
        !  Rough estimate of 95% values
-       !  Hartmann and Zohm suggestion for kappa95 (close to previous estimate
-       !  of (kappa - 0.04) / 1.1 over a large kappa range)
+       !  ITER Physics Design Guidlines: 1989 (Uckan et al. 1990)
+       !  (close to previous estimate of (kappa - 0.04) / 1.1 
+       !  over a large kappa range)
+       !  Recommended by Hartmann & Zohm
 
        kappa95 = kappa / 1.12D0
        triang95 = triang / 1.50D0
@@ -79,27 +82,56 @@ contains
        kappa = 2.05D0 * (1.0D0 + 0.44D0 * eps**2.1D0)
        triang = 0.53D0 * (1.0D0 + 0.77D0 * eps**3)
 
-       kappa95 = kappa / 1.12D0  !  Hartmann and Zohm
-       triang95 = triang / 1.50D0
+       !  SIM 10/09/2020: Switched to FIESTA ST scaling  from IPDG89
+       kappa95 = (kappa - 0.39467D0) / 0.90698D0 !  Fit to FIESTA (Issue #1086)
+       triang95 = (triang - 0.048306D0) / 1.3799D0
 
     case (2)  !  Zohm et al. ITER scaling for elongation, input triang
 
        kappa = fkzohm * min(2.0D0, 1.5D0 + 0.5D0/(aspect-1.0D0))
 
-       kappa95 = kappa / 1.12D0  !  Hartmann and Zohm
+       !  ITER Physics Design Guidlines: 1989 (Uckan et al. 1990)
+       kappa95 = kappa / 1.12D0
        triang95 = triang / 1.50D0
 
     case (3)  !  Zohm et al. ITER scaling for elongation, input triang95
 
        kappa = fkzohm * min(2.0D0, 1.5D0 + 0.5D0/(aspect-1.0D0))
+       
+       !  ITER Physics Design Guidlines: 1989 (Uckan et al. 1990)
        triang = 1.5D0 * triang95
 
-       kappa95 = kappa / 1.12D0  !  Hartmann and Zohm
+       kappa95 = kappa / 1.12D0 
 
     case (4)  !  Use input kappa95, triang95 values
 
-       kappa = 1.12D0 * kappa95  !  Hartmann and Zohm
+       !  ITER Physics Design Guidlines: 1989 (Uckan et al. 1990)
+       kappa = 1.12D0 * kappa95 
        triang = 1.5D0 * triang95
+
+    case (5)  !  Use input kappa95, triang95 values
+
+       !  Fit to MAST data (Issue #1086)
+       kappa = 0.91300D0 * kappa95 + 0.38654D0 
+       triang = 0.77394D0 * triang95 + 0.18515D0
+
+    case (6)  !  Use input kappa, triang values
+
+       !  Fit to MAST data (Issue #1086)
+       kappa95 = (kappa - 0.38654D0) / 0.91300D0 
+       triang95 = (triang - 0.18515D0) / 0.77394D0
+
+    case (7)  !  Use input kappa95, triang95 values
+
+       !  Fit to FIESTA (Issue #1086)
+       kappa = 0.90698D0 * kappa95 + 0.39467D0
+       triang = 1.3799D0 * triang95 + 0.048306D0
+
+    case (8)  !  Use input kappa, triang values
+
+       !  Fit to FIESTA (Issue #1086)
+       kappa95 = (kappa - 0.39467D0) / 0.90698D0 
+       triang95 = (triang - 0.048306D0) / 1.3799D0
 
     end select
 
@@ -173,12 +205,12 @@ contains
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: a,r,k,d
-      real(kind(1.0D0)), intent(out) :: sa,so
+      real(dp), intent(in) :: a,r,k,d
+      real(dp), intent(out) :: sa,so
 
       !  Local variables
 
-      real(kind(1.0D0)) :: b,radci,radco,si,thti,thto
+      real(dp) :: b,radci,radco,si,thti,thto
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -222,16 +254,16 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: xsect0
+      real(dp) :: xsect0
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: a,kap,tri
+      real(dp), intent(in) :: a,kap,tri
 
       !  Local variables
 
-      real(kind(1.0D0)) :: denomi,denomo,thetai,thetao,xli,xlo
-      real(kind(1.0D0)) :: cti,sti,cto,sto
+      real(dp) :: denomi,denomo,thetai,thetao,xli,xlo
+      real(dp) :: cti,sti,cto,sto
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -281,15 +313,15 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: fvol
+      real(dp) :: fvol
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: r,a,kap,tri
+      real(dp), intent(in) :: r,a,kap,tri
 
       !  Local variables
 
-      real(kind(1.0D0)) :: c1,c2,rc2,rc1,vin,vout,zn
+      real(dp) :: c1,c2,rc2,rc1,vin,vout,zn
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -333,11 +365,11 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: xsecta
+      real(dp) :: xsecta
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: xi,thetai,xo,thetao
+      real(dp), intent(in) :: xi,thetai,xo,thetao
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -368,15 +400,15 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: xvol
+      real(dp) :: xvol
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: rmajor,rminor,xi,thetai,xo,thetao
+      real(dp), intent(in) :: rmajor,rminor,xi,thetai,xo,thetao
 
       !  Local variables
 
-      real(kind(1.0D0)) :: rc,third,vin,vout
+      real(dp) :: rc,third,vin,vout
 
       !--End of preamble--CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
@@ -428,12 +460,12 @@ contains
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: rmajor,rminor,xi,thetai,xo,thetao
-      real(kind(1.0D0)), intent(out) :: xsi,xso
+      real(dp), intent(in) :: rmajor,rminor,xi,thetai,xo,thetao
+      real(dp), intent(out) :: xsi,xso
 
       !  Local variables
 
-      real(kind(1.0D0)) :: fourpi,rc
+      real(dp) :: fourpi,rc
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -468,15 +500,15 @@ contains
 
     implicit none
 
-    real(kind(1.0D0)) :: perim
+    real(dp) :: perim
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: a,kap,tri
+    real(dp), intent(in) :: a,kap,tri
 
     !  Local variables
 
-    real(kind(1.0D0)) :: denomi,denomo,thetai,thetao,xli,xlo
+    real(dp) :: denomi,denomo,thetai,thetao,xli,xlo
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -523,12 +555,12 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: a,kap,tri
-    real(kind(1.0D0)), intent(out) :: xi,thetai,xo,thetao
+    real(dp), intent(in) :: a,kap,tri
+    real(dp), intent(out) :: xi,thetai,xo,thetao
 
     !  Local variables
 
-    real(kind(1.0D0)) :: denomi,denomo,n,t
+    real(dp) :: denomi,denomo,n,t
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

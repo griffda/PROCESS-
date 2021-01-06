@@ -13,30 +13,23 @@ module function_evaluator
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use constraints
-  use cost_variables
-  use current_drive_variables
-  use divertor_variables
-  use error_handling
-  use heat_transport_variables
-
-  use numerics
-  use physics_variables
-  use pf_power_variables
-  use process_output
-  use stellarator_variables
-  use tfcoil_variables
-  use times_variables
-
-  use iso_c_binding
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   public
+  
+  logical :: first_call
+  !! First call flag for subroutine fcnvmc1
 
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine init_function_evaluator
+    !! Initialise module variables
+
+    first_call = .true.
+  end subroutine init_function_evaluator
 
   subroutine fcnhyb(n,xc,rc,iflag)
 
@@ -55,13 +48,15 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constraints, only: constraint_eqns 
+    use numerics, only: neqns 
     implicit none
 
     !  Arguments
 
     integer, intent(in) :: n
-    real(kind(1.0D0)), dimension(n), intent(inout) :: xc
-    real(kind(1.0D0)), dimension(n), intent(out) :: rc
+    real(dp), dimension(n), intent(inout) :: xc
+    real(dp), dimension(n), intent(out) :: rc
     integer, intent(inout) :: iflag
 
     !  Local variables
@@ -103,20 +98,27 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use global_variables, only: vlabel, icase, verbose
+		use constants, only: nout, iotty, vfile
+		use constraints, only: constraint_eqns 
+		use cost_variables, only: coe 
+		use numerics, only: nviter 
+		use physics_variables, only: te ,rmajor ,powfmw ,bt 
+		use stellarator_variables, only: istell 
+		use times_variables, only: tburn0, tburn
     implicit none
 
     !  Arguments
 
     integer, intent(in) :: n,m
-    real(kind(1.0D0)), dimension(n), intent(in) :: xv
-    real(kind(1.0D0)), intent(out) :: objf
-    real(kind(1.0D0)), dimension(m), intent(out) :: conf
+    real(dp), dimension(n), intent(in) :: xv
+    real(dp), intent(out) :: objf
+    real(dp), dimension(m), intent(out) :: conf
     integer, intent(inout) :: ifail
 
     !  Local variables
 
-    real(kind(1.0D0)) :: summ,sqsumconfsq
-    logical :: first_call = .true.
+    real(dp) :: summ,sqsumconfsq
     integer :: ii, loop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -203,21 +205,26 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use global_variables, only: icase
+		use constraints, only: constraint_eqns 
+		use error_handling, only: report_error, idiags, fdiags, errors_on 
+		use numerics, only: ipnvars, epsfcn 
+		use process_output, only: int_to_string3 
     implicit none
 
     !  Arguments
 
     integer, intent(in) :: n,m,lcnorm
-    real(kind(1.0D0)), dimension(n), intent(in) :: xv
-    real(kind(1.0D0)), dimension(n), intent(out) :: fgrd
-    real(kind(1.0D0)), dimension(lcnorm,m), intent(out) :: cnorm
+    real(dp), dimension(n), intent(in) :: xv
+    real(dp), dimension(n), intent(out) :: fgrd
+    real(dp), dimension(lcnorm,m), intent(out) :: cnorm
     integer, intent(inout) :: ifail
 
     !  Local variables
 
     integer :: i,j
-    real(kind(1.0D0)) :: fbac,ffor
-    real(kind(1.0D0)), dimension(ipnvars) :: xfor,xbac,cfor,cbac
+    real(dp) :: fbac,ffor
+    real(dp), dimension(ipnvars) :: xfor,xbac,cfor,cbac
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -271,7 +278,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine funfom(fc) bind(C, name="c_funfom")
+  subroutine funfom(fc)
 
     !! Objective function evaluator for VMCON
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -285,16 +292,30 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use global_variables, only: xlabel, iscan_global
+		use constants, only: nout, iotty, mfile
+		use constraints, only: constraint_eqns 
+		use cost_variables, only: concost, cfactr, cdirt, ireactor, iavail, coe 
+		use current_drive_variables, only: bigq, porbitlossmw, pinjmw
+		use divertor_variables, only: hldiv
+		use error_handling, only: idiags, fdiags, errors_on, report_error
+		use heat_transport_variables, only: pnetelmw 
+    use numerics, only: minmax 
+		use physics_variables, only: powfmw, bt, rmajor, wallmw, aspect, pohmmw
+		use pf_power_variables, only: srcktpm 
+		use process_output, only: int_to_string3 
+		use tfcoil_variables, only: tfcmw 
+		use times_variables, only: tburn
     implicit none
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(out) :: fc
+    real(dp), intent(out) :: fc
 !    real(c_double), intent(out) :: fc
     !  Local variables
 
     integer :: iab
-    real(kind(1.0D0)) :: sgn
+    real(dp) :: sgn
 
 !        write(*,*) 'Figure of merit 2 (fusion power / input power) is not used.'
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -313,7 +334,7 @@ contains
     case (2)  !  fusion power / input power
         write(*,*) 'Figure of merit 2 (fusion power / input power) is not used.'
         write(*,*) 'Figure of merit 5 (fusion gain Q) is available.'
-        stop
+        stop 1
        ! fc = sgn * powfmw / (pinjmw + porbitlossmw + tfcpmw + ppump/1.0D6)
 
     case (3)  !  neutron wall load
@@ -351,11 +372,11 @@ contains
     case (12)  !  hydrogen production capital cost
        ! #506 OBSOLETE
        write(*,*) 'Figure of Merit 13 (Hydrogen production) is no longer supported.'
-       stop
+       stop 1
     case (13)  !  hydrogen production rate
        ! #506 OBSOLETE
        write(*,*) 'Figure of Merit 13 (Hydrogen production) is no longer supported.'
-       stop
+       stop 1
 
     case (14)  !  pulse length
        fc = sgn * tburn / 2.0D4

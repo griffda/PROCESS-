@@ -1,18 +1,13 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module constraints
-  !! Module defining the constraint equations
-  !! author: P J Knight, CCFE, Culham Science Centre
-  !! N/A
-  !! This module contains the routine that evaluates the constraint
-  !! equations.
-  !! None
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !! author: J Morris
+  !!
+  !! Module defining the constraint equations and the routine that evaluates the 
+  !! constraint equations.
 
-  ! Import modules !
-  ! !!!!!!!!!!!!!!!!!
-
+  ! Import modules
+  use, intrinsic :: iso_fortran_env, only : dp=>real64
   use error_handling, only: report_error, idiags, fdiags
   
   implicit none
@@ -20,437 +15,455 @@ module constraints
   public :: constraint_eqns
 
   type constraint_args_type
-    real(kind(1.0D0)) :: cc
-    real(kind(1.0D0)) :: con
-    real(kind(1.0D0)) :: err
+    real(dp) :: cc
+    !! Residual error in constraint equation
+    real(dp) :: con
+    !! constraint value for constraint equation in physical units
+    real(dp) :: err
+    !! residual error in constraint equation in physical units
     character(len=1)  :: symbol
+    !! `=<`, `>`, `<` symbol for constraint equation denoting its type
     character(len=10) :: units
+    !! constraint units in constraint equation
   end type
 
 contains
 
    subroutine constraint_eqns(m,cc,ieqn,con,err,symbol,units)
-     !! Routine that formulates the constraint equations
-     !! author: P J Knight, CCFE, Culham Science Centre
-     !! author: J Morris, CCFE, Culham Science Centre
-     !! m : input integer : Number of constraint equations to solve
-     !! cc(m) : output real array : Residual error in equation i
-     !! ieqn : input integer : Switch for constraint equations to evaluate;
-     !! if <CODE>ieqn</CODE> is zero or negative, evaluate
-     !! all the constraint equations, otherwise
-     !! evaluate only the <CODE>ieqn</CODE>th equation
-     !! con(m) : optional output real array : constraint value for equation i
-     !! in physical units
-     !! err(m) : optional output real array : residual error in equation i
-     !! in physical units
-     !! symbol(m) : optional output character array : <CODE>=</CODE>, <CODE>&gt;</CODE>
-     !! or <CODE>&lt;</CODE> symbol for equation i, denoting its type
-     !! units(m) : optional output character array : constraint units in equation i
-     !! This routine formulates the constraint equations.
-     !! The code attempts to make cc(i) = 0 for all i=1 to m equations.
-     !! All relevant consistency equations should be active in order
-     !! to make a self-consistent machine.
-     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-     !
-     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !! Routine that formulates the constraint equations
+    !!
+    !! **author: P J Knight** (UKAEA)
+    !! 
+    !! **author: J Morris** (UKAEA)
+    !!
+    !! if `ieqn` is zero or negative, evaluate all the constraint equations, otherwise 
+    !! evaluate only the `ieqn`th equation. The code attempts to make \( cc(i) = 0 \) for all 
+    !! \( i \in \{1,\cdots,m\} \) equations. All relevant consistency equations should be active in 
+    !! order to make a self-consistent machine.
+    !!
+    !! **References**
+    !!
+    !! 1. AEA FUS 251: A User's Guide to the PROCESS Systems Code
   
-     use numerics, only: icc
-     use maths_library, only: variable_error
+    use numerics, only: icc
+    use maths_library, only: variable_error
 
-     implicit none
+    implicit none
 
-     ! Arguments !
-     ! !!!!!!!!!!!!
+    integer, intent(in) :: m
+    !! Number of constraint equations to solve
 
-     integer, intent(in) :: m, ieqn
-     real(kind(1.0D0)),           dimension(m), intent(out) :: cc
-     real(kind(1.0D0)), optional, dimension(m), intent(out) :: con
-     real(kind(1.0D0)), optional, dimension(m), intent(out) :: err
-     character(len=1),  optional, dimension(m), intent(out) :: symbol
-     character(len=10), optional, dimension(m), intent(out) :: units
+    integer, intent(in) :: ieqn
+    !! Switch for constraint equations to evaluate;
+
+    real(dp), dimension(m), intent(out) :: cc
+    !! Residual error in equation i
+
+    real(dp), optional, dimension(m), intent(out) :: con
+    !! constraint value for equation i in physical units
+    
+    real(dp), optional, dimension(m), intent(out) :: err
+    !! residual error in equation i in physical units
+
+    character(len=1),  optional, dimension(m), intent(out) :: symbol
+    !! `=<`, `>`, `<` symbol for equation i denoting its type
+
+    character(len=10), optional, dimension(m), intent(out) :: units
+    !! constraint units in equation i
 	
-     ! Local variables !
-     ! !!!!!!!!!!!!!!!!!!
-	
-     integer :: i,i1,i2
-     real(kind(1.0D0)) :: cratmx,pdenom,pnumerator,pradmaxpv
-     real(kind(1.0D0)) :: pscaling,rcw,totmva
+    ! Local variables
+    integer :: i, i1, i2
 
-     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    type(constraint_args_type) :: args
+    
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    ! If ieqn is positive, only evaluate the 'ieqn'th constraint residue,
+    ! otherwise evaluate all m constraint residues
+    if (ieqn > 0) then
+      i1 = ieqn ; i2 = ieqn
+    else
+      i1 = 1 ; i2 = m
+    end if
 
-     type (constraint_args_type) args
-	
-     ! If ieqn is positive, only evaluate the 'ieqn'th constraint residue,
-     ! otherwise evaluate all m constraint residues
-     if (ieqn > 0) then
-       i1 = ieqn ; i2 = ieqn
-     else
-       i1 = 1 ; i2 = m
-     end if
-
-     ! Consistency (equality) constraints should converge to zero.
-     do i = i1,i2
+    ! Consistency (equality) constraints should converge to zero.
+    do i = i1,i2
 	   
-       ! The constraint value in physical units is
-       ! a) for consistency equations, the quantity to be equated, or
-       ! b) for limit equations, the limiting value.
-       ! The symbol is = for a consistency equation, < for an upper limit
-       ! or > for a lower limit.
-       select case (icc(i))
+      ! The constraint value in physical units is
+      ! a) for consistency equations, the quantity to be equated, or
+      ! b) for limit equations, the limiting value.
+      ! The symbol is = for a consistency equation, < for an upper limit
+      ! or > for a lower limit.
+      select case (icc(i))
 
 	      ! Relationship between beta, temperature (keV) and density
-         case (1); call constraint_eqn_001(args)
+        case (1); call constraint_eqn_001(args)
 	      ! Global plasma power balance equation
-         case (2); call constraint_eqn_002(args)
+        case (2); call constraint_eqn_002(args)
 	      ! Global power balance equation for ions
-         case (3); call constraint_eqn_003(args)
+        case (3); call constraint_eqn_003(args)
 	      ! Global power balance equation for electrons
-         case (4); call constraint_eqn_004(args)
+        case (4); call constraint_eqn_004(args)
 	      ! Equation for density upper limit
-         case (5); call constraint_eqn_005(args)
+        case (5); call constraint_eqn_005(args)
 	      ! Equation for epsilon beta-poloidal upper limit
-         case (6); call constraint_eqn_006(args)
+        case (6); call constraint_eqn_006(args)
 	      ! Equation for hot beam ion density
-         case (7); call constraint_eqn_007(args)
+        case (7); call constraint_eqn_007(args)
 	      ! Equation for neutron wall load upper limit
-         case (8); call constraint_eqn_008(args)
+        case (8); call constraint_eqn_008(args)
 	      ! Equation for fusion power upper limit
-         case (9); call constraint_eqn_009(args)
-	      ! Equation for field at TF coil
-         case (10); call constraint_eqn_010(args)
+        case (9); call constraint_eqn_009(args)
+	      ! Obsolete 
+        case (10); call constraint_eqn_010(args)
 	      ! Equation for radial build
-         case (11); call constraint_eqn_011(args)
+        case (11); call constraint_eqn_011(args)
 	      ! Equation for volt-second capability lower limit
-         case (12); call constraint_eqn_012(args)
+        case (12); call constraint_eqn_012(args)
 	      ! Equation for burn time lower limit
-         case (13); call constraint_eqn_013(args)
+        case (13); call constraint_eqn_013(args)
 	      ! Equation to fix number of NBI decay lengths to plasma centre
-         case (14); call constraint_eqn_014(args)
+        case (14); call constraint_eqn_014(args)
 	      ! Equation for L-H power threshold limit
-         case (15); call constraint_eqn_015(args)
+        case (15); call constraint_eqn_015(args)
 	      ! Equation for net electric power lower limit
-         case (16); call constraint_eqn_016(args)
+        case (16); call constraint_eqn_016(args)
 	      ! Equation for radiation power upper limit
-         case (17); call constraint_eqn_017(args)
+        case (17); call constraint_eqn_017(args)
 	      ! Equation for divertor heat load upper limit
-         case (18); call constraint_eqn_018(args)
+        case (18); call constraint_eqn_018(args)
 	      ! Equation for MVA upper limit
-         case (19); call constraint_eqn_019(args)
+        case (19); call constraint_eqn_019(args)
 	      ! Equation for neutral beam tangency radius upper limit
-         case (20); call constraint_eqn_020(args)
+        case (20); call constraint_eqn_020(args)
 	      ! Equation for minor radius lower limit
-         case (21); call constraint_eqn_021(args)
+        case (21); call constraint_eqn_021(args)
 	      ! Equation for divertor collision/connection length ratio upper limit
-         case (22); call constraint_eqn_022(args)
+        case (22); call constraint_eqn_022(args)
 	      ! Equation for conducting shell radius / rminor upper limit
-         case (23); call constraint_eqn_023(args)
+        case (23); call constraint_eqn_023(args)
 	      ! Equation for beta upper limit
-         case (24); call constraint_eqn_024(args)
+        case (24); call constraint_eqn_024(args)
 	      ! Equation for peak toroidal field upper limit
-         case (25); call constraint_eqn_025(args)
+        case (25); call constraint_eqn_025(args)
 	      ! Equation for Central Solenoid current density upper limit at EOF
-         case (26); call constraint_eqn_026(args)
+        case (26); call constraint_eqn_026(args)
 	      ! Equation for Central Solenoid current density upper limit at BOP
-         case (27); call constraint_eqn_027(args)
+        case (27); call constraint_eqn_027(args)
 	      ! Equation for fusion gain (big Q) lower limit
-         case (28); call constraint_eqn_028(args)
+        case (28); call constraint_eqn_028(args)
 	      ! Equation for inboard major radius
-         case (29); call constraint_eqn_029(args)
+        case (29); call constraint_eqn_029(args)
 	      ! Equation for injection power upper limit
-         case (30); call constraint_eqn_030(args)
+        case (30); call constraint_eqn_030(args)
 	      ! Equation for TF coil case stress upper limit (SCTF)
-         case (31); call constraint_eqn_031(args)
+        case (31); call constraint_eqn_031(args)
 	      ! Equation for TF coil conduit stress upper limit (SCTF)
-         case (32); call constraint_eqn_032(args)
+        case (32); call constraint_eqn_032(args)
 	      ! Equation for TF coil operating/critical J upper limit (SCTF)
-         case (33); call constraint_eqn_033(args)
+        case (33); call constraint_eqn_033(args)
 	      ! Equation for TF coil dump voltage upper limit (SCTF)
-         case (34); call constraint_eqn_034(args)
+        case (34); call constraint_eqn_034(args)
 	      ! Equation for TF coil J_wp/J_prot upper limit (SCTF)
-         case (35); call constraint_eqn_035(args)
+        case (35); call constraint_eqn_035(args)
 	      ! Equation for TF coil s/c temperature margin lower limit (SCTF)
-         case (36); call constraint_eqn_036(args)
+        case (36); call constraint_eqn_036(args)
 	      ! Equation for current drive gamma upper limit
-         case (37); call constraint_eqn_037(args)
+        case (37); call constraint_eqn_037(args)
 	      ! Equation for first wall temperature upper limit
-         case (39); call constraint_eqn_039(args)
+        case (39); call constraint_eqn_039(args)
 	      ! Equation for auxiliary power lower limit
-         case (40); call constraint_eqn_040(args)
+        case (40); call constraint_eqn_040(args)
 	      ! Equation for plasma current ramp-up time lower limit
-         case (41); call constraint_eqn_041(args)
+        case (41); call constraint_eqn_041(args)
 	      ! Equation for cycle time lower limit
-         case (42); call constraint_eqn_042(args)
+        case (42); call constraint_eqn_042(args)
 	      ! Equation for average centrepost temperature
-         case (43); call constraint_eqn_043(args)
+        case (43); call constraint_eqn_043(args)
 	      ! Equation for centrepost temperature upper limit (TART)
-         case (44); call constraint_eqn_044(args)
+        case (44); call constraint_eqn_044(args)
 	      ! Equation for edge safety factor lower limit (TART)
-         case (45); call constraint_eqn_045(args)
+        case (45); call constraint_eqn_045(args)
 	      ! Equation for Ip/Irod upper limit (TART)
-         case (46); call constraint_eqn_046(args)  
+        case (46); call constraint_eqn_046(args)  
 	      ! Equation for TF coil toroidal thickness upper limit
-         case (47); call constraint_eqn_047(args)  
+        case (47); call constraint_eqn_047(args)  
 	      ! Equation for poloidal beta upper limit
-         case (48); call constraint_eqn_048(args)  
+        case (48); call constraint_eqn_048(args)  
 	      ! Issue #508 Remove RFP option Equation to ensure reversal parameter F is negative
-         case (49); call constraint_eqn_049(args)
-         ! IFE option: Equation for repetition rate upper limit
-         case (50); call constraint_eqn_050(args)
+        case (49); call constraint_eqn_049(args)
+        ! IFE option: Equation for repetition rate upper limit
+        case (50); call constraint_eqn_050(args)
 	      ! Equation to enforce startup flux = available startup flux
-         case (51); call constraint_eqn_051(args)  
+        case (51); call constraint_eqn_051(args)  
 	      ! Equation for tritium breeding ratio lower limit
-         case (52); call constraint_eqn_052(args)  
+        case (52); call constraint_eqn_052(args)  
 	      ! Equation for fast neutron fluence on TF coil upper limit
-         case (53); call constraint_eqn_053(args)  
+        case (53); call constraint_eqn_053(args)  
 	      ! Equation for peak TF coil nuclear heating upper limit
-         case (54); call constraint_eqn_054(args)  
+        case (54); call constraint_eqn_054(args)  
 	      ! Equation for helium concentration in vacuum vessel upper limit
-         case (55); call constraint_eqn_055(args)  
+        case (55); call constraint_eqn_055(args)  
 	      ! Equation for power through separatrix / major radius upper limit
-         case (56); call constraint_eqn_056(args)  
-         ! Obsolete
-         case (57); call constraint_eqn_057(args)
-         ! Obsolete
-         case (58); call constraint_eqn_058(args)
+        case (56); call constraint_eqn_056(args)  
+        ! Obsolete
+        case (57); call constraint_eqn_057(args)
+        ! Obsolete
+        case (58); call constraint_eqn_058(args)
 	      ! Equation for neutral beam shine-through fraction upper limit
-         case (59); call constraint_eqn_059(args)  
+        case (59); call constraint_eqn_059(args)  
 	      ! Equation for Central Solenoid s/c temperature margin lower limit
-         case (60); call constraint_eqn_060(args)  
+        case (60); call constraint_eqn_060(args)  
 	      ! Equation for availability limit
-         case (61); call constraint_eqn_061(args)  
+        case (61); call constraint_eqn_061(args)  
 	      ! Lower limit on taup/taueff the ratio of alpha particle to energy confinement times
-         case (62); call constraint_eqn_062(args)  
+        case (62); call constraint_eqn_062(args)  
 	      ! Upper limit on niterpump (vacuum_model = simple)
-         case (63); call constraint_eqn_063(args)  
-         ! Upper limit on Zeff
-         case (64); call constraint_eqn_064(args)  
-         ! Limit TF dump time to calculated quench time
-         case (65); call constraint_eqn_065(args)
-         ! Limit on rate of change of energy in poloidal field
-         case (66); call constraint_eqn_066(args)
-         ! Simple upper limit on radiation wall load
-         case (67); call constraint_eqn_067(args)
-         ! New Psep scaling (PsepB/qAR)
-         case (68); call constraint_eqn_068(args)
-         ! Ensure separatrix power is less than value from Kallenbach divertor 
-         case (69); call constraint_eqn_069(args)
-         ! Separatrix temperature consistency
-         case (70); call constraint_eqn_070(args)
-         ! Separatrix density consistency
-         case (71); call constraint_eqn_071(args)
+        case (63); call constraint_eqn_063(args)  
+        ! Upper limit on Zeff
+        case (64); call constraint_eqn_064(args)  
+        ! Limit TF dump time to calculated quench time
+        case (65); call constraint_eqn_065(args)
+        ! Limit on rate of change of energy in poloidal field
+        case (66); call constraint_eqn_066(args)
+        ! Simple upper limit on radiation wall load
+        case (67); call constraint_eqn_067(args)
+        ! New Psep scaling (PsepB/qAR)
+        case (68); call constraint_eqn_068(args)
+        ! Ensure separatrix power is less than value from Kallenbach divertor 
+        case (69); call constraint_eqn_069(args)
+        ! Separatrix temperature consistency
+        case (70); call constraint_eqn_070(args)
+        ! Separatrix density consistency
+        case (71); call constraint_eqn_071(args)
 	      ! Central Solenoid Tresca stress limit
-         case (72); call constraint_eqn_072(args)
-         ! ensure separatrix power is greater than the L-H power + auxiliary power
-         case (73); call constraint_eqn_073(args)
-         ! ensure TF coil quench temperature < tmax_croco   
-         case (74); call constraint_eqn_074(args)
-	      ! ensure that TF coil current / copper area < Maximum value ONLY used for croco HTS coil
-         case (75); call constraint_eqn_075(args)
-         ! Eich critical separatrix density model
-         case (76); call constraint_eqn_076(args)
-         ! Equation for maximum TF current per turn upper limit
-         case (77); call constraint_eqn_077(args)
-	  	   ! Equation for Reinke criterion, divertor impurity fraction lower limit
-         case (78); call constraint_eqn_078(args)
-         ! Equation for maximum CS field
-         case (79); call constraint_eqn_079(args)
-         ! Lower limit pdivt
-         case (80); call constraint_eqn_080(args)
-         ! Constraint equation making sure that ne(0) > ne(ped)
-         case (81); call constraint_eqn_081(args)
-         
+        case (72); call constraint_eqn_072(args)
+        ! ensure separatrix power is greater than the L-H power + auxiliary power
+        case (73); call constraint_eqn_073(args)
+        ! ensure TF coil quench temperature < tmax_croco   
+        case (74); call constraint_eqn_074(args)
+	     ! ensure that TF coil current / copper area < Maximum value ONLY used for croco HTS coil
+        case (75); call constraint_eqn_075(args)
+        ! Eich critical separatrix density model
+        case (76); call constraint_eqn_076(args)
+        ! Equation for maximum TF current per turn upper limit
+        case (77); call constraint_eqn_077(args)
+	  	  ! Equation for Reinke criterion, divertor impurity fraction lower limit
+        case (78); call constraint_eqn_078(args)
+        ! Equation for maximum CS field
+        case (79); call constraint_eqn_079(args)
+        ! Lower limit pdivt
+        case (80); call constraint_eqn_080(args)
+        ! Constraint equation making sure that ne(0) > ne(ped)
+        case (81); call constraint_eqn_081(args)
+        ! Constraint equation making sure that stellarator coils dont touch in toroidal direction
+        case (82); call constraint_eqn_082(args)
+        ! Constraint ensuring radial build consistency for stellarators
+        case (83); call constraint_eqn_083(args)
+        ! Constraint for lower limit of beta
+        case (84); call constraint_eqn_084(args)
+         ! Constraint for CP lifetime
+        case (85); call constraint_eqn_085(args)
+         ! Constraint for turn dimension
+        case (86); call constraint_eqn_086(args)
        case default
 
-         idiags(1) = icc(i)
-         call report_error(13)
-         args = constraint_args_type(0.0D0, 0.0D0, 0.0D0, '', '')	  
+        idiags(1) = icc(i)
+        call report_error(13)
+        args = constraint_args_type(0.0D0, 0.0D0, 0.0D0, '', '')	  
       
-       end select
+      end select
 
-       cc(i) = args%cc
-       if (present(con)) then
-         con(i) = args%con
-         if (present(err))    err(i)    = args%err
-         if (present(symbol)) symbol(i) = args%symbol
-         if (present(units))  units(i)  = args%units
-       end if
+      cc(i) = args%cc
+      if (present(con)) then
+        con(i) = args%con
+        if (present(err))    err(i)    = args%err
+        if (present(symbol)) symbol(i) = args%symbol
+        if (present(units))  units(i)  = args%units
+      end if
 
-       ! Crude method of catching NaN errors
-       !if ((abs(cc(i)) > 9.99D99).or.(cc(i) /= cc(i))) then
-       if (variable_error(cc(i))) then
+      ! Crude method of catching NaN errors
+      !if ((abs(cc(i)) > 9.99D99).or.(cc(i) /= cc(i))) then
+      if (variable_error(cc(i))) then
 
-         ! Add debugging lines as appropriate...
-         select case (icc(i))
+        ! Add debugging lines as appropriate...
+        select case (icc(i))
 
-            ! Relationship between beta, temperature (keV) and density (consistency equation)
-            case (1); call constraint_err_001()
-            ! Equation for net electric power lower limit
-            case (16); call constraint_err_016()
-            ! Equation for injection power upper limit
-            case (30); call constraint_err_030()
-            ! Limit on rate of change of energy in poloidal field
-            case (66); call constraint_err_066()
+          ! Relationship between beta, temperature (keV) and density (consistency equation)
+          case (1); call constraint_err_001()
+          ! Equation for net electric power lower limit
+          case (16); call constraint_err_016()
+          ! Equation for injection power upper limit
+          case (30); call constraint_err_030()
+          ! Limit on rate of change of energy in poloidal field
+          case (66); call constraint_err_066()
 
-         end select
+        end select
 
-         idiags(1) = icc(i) ; fdiags(1) = cc(i)
-         call report_error(14)
+        idiags(1) = icc(i) ; fdiags(1) = cc(i)
+        call report_error(14)
 
-       end if
+      end if
 
-     end do
-     ! Issue 505 Reverse the sign so it works as an inequality constraint (cc(i) > 0)
-     ! This will have no effect if it is used as an equality constraint because it will be squared.
-     cc = -cc
+    end do
+    ! Issue 505 Reverse the sign so it works as an inequality constraint (cc(i) > 0)
+    ! This will have no effect if it is used as an equality constraint because it will be squared.
+    cc = -cc
 
    end subroutine constraint_eqns
 
    !--- Error-handling routines
   
    subroutine constraint_err_001()
-     !! Error in: Relationship between beta, temperature (keV) and density (consistency equation)
-     !! author: P B Lloyd, CCFE, Culham Science Centre
-     use physics_variables, only: betaft, betanb, dene, ten, dnitot, tin, btot, beta
-     write(*,*) 'betaft = ', betaft
-     write(*,*) 'betanb = ', betanb
-     write(*,*) 'dene = ', dene
-     write(*,*) 'ten = ', ten
-     write(*,*) 'dnitot = ', dnitot
-     write(*,*) 'tin = ', tin
-     write(*,*) 'btot = ',btot
-     write(*,*) 'beta = ', beta
+    !! Error in: Relationship between beta, temperature (keV) and density (consistency equation)
+    !! author: P B Lloyd, CCFE, Culham Science Centre
+    use physics_variables, only: betaft, betanb, dene, ten, dnitot, tin, btot, beta
+    write(*,*) 'betaft = ', betaft
+    write(*,*) 'betanb = ', betanb
+    write(*,*) 'dene = ', dene
+    write(*,*) 'ten = ', ten
+    write(*,*) 'dnitot = ', dnitot
+    write(*,*) 'tin = ', tin
+    write(*,*) 'btot = ',btot
+    write(*,*) 'beta = ', beta
    end subroutine
    
    subroutine constraint_err_016()
-     !! Error in: Equation for net electric power lower limit
-     !! author: P B Lloyd, CCFE, Culham Science Centre
-     use constraint_variables, only: fpnetel, pnetelin
-     use heat_transport_variables, only: pnetelmw
-     implicit none
-     write(*,*) 'fpnetel = ', fpnetel
-     write(*,*) 'pnetelmw = ', pnetelmw
-     write(*,*) 'pnetelin = ', pnetelin
+    !! Error in: Equation for net electric power lower limit
+    !! author: P B Lloyd, CCFE, Culham Science Centre
+    use constraint_variables, only: fpnetel, pnetelin
+    use heat_transport_variables, only: pnetelmw
+    implicit none
+    write(*,*) 'fpnetel = ', fpnetel
+    write(*,*) 'pnetelmw = ', pnetelmw
+    write(*,*) 'pnetelin = ', pnetelin
    end subroutine
  
    subroutine constraint_err_030()
-     !! Error in: Equation for injection power upper limit
-     !! author: P B Lloyd, CCFE, Culham Science Centre
-     use current_drive_variables, only: pinjmw, pinjalw
-     use constraint_variables, only: fpinj
-     implicit none
-     write(*,*) 'fpinj = ', fpinj
-     write(*,*) 'pinjalw = ', pinjalw
-     write(*,*) 'pinjmw = ', pinjmw
+    !! Error in: Equation for injection power upper limit
+    !! author: P B Lloyd, CCFE, Culham Science Centre
+    use current_drive_variables, only: pinjmw, pinjalw
+    use constraint_variables, only: fpinj
+    implicit none
+    write(*,*) 'fpinj = ', fpinj
+    write(*,*) 'pinjalw = ', pinjalw
+    write(*,*) 'pinjmw = ', pinjmw
    end subroutine
     
    subroutine constraint_err_066()
-     !! Error in: Limit on rate of change of energy in poloidal field
-     !! author: P B Lloyd, CCFE, Culham Science Centre
-     use constraint_variables, only: fpoloidalpower 
-     use pf_power_variables, only: maxpoloidalpower, peakpoloidalpower
-     implicit none
-     write(*,*) 'fpoloidalpower = ', fpoloidalpower
-     write(*,*) 'maxpoloidalpower = ', maxpoloidalpower
-     write(*,*) 'peakpoloidalpower = ', peakpoloidalpower
+    !! Error in: Limit on rate of change of energy in poloidal field
+    !! author: P B Lloyd, CCFE, Culham Science Centre
+    use constraint_variables, only: fpoloidalpower 
+    use pf_power_variables, only: maxpoloidalpower, peakpoloidalpower
+    implicit none
+    write(*,*) 'fpoloidalpower = ', fpoloidalpower
+    write(*,*) 'maxpoloidalpower = ', maxpoloidalpower
+    write(*,*) 'peakpoloidalpower = ', peakpoloidalpower
    end subroutine constraint_err_066
 
    !---
 
    subroutine constraint_eqn_001(args)
-      !! Relationship between beta, temperature (keV) and density
-      !! author: P B Lloyd, CCFE, Culham Science Centre
-      !! args : output structure : residual error; constraint value; 
-      !! residual error in physical units; output string; units string
-      !! Relationship between beta, temperature (keV) and density
-      !! #=# physics
-      !! #=#=# consistency
-      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !! betaft : input real : fast alpha beta component
-      !! betanb : input real : neutral beam beta component
-      !! dene : input real : electron density (/m3) (iteration variable 6)
-      !! ten : input real : density weighted average electron temperature (keV)
-      !! dnitot : input real : total ion density (/m3)
-      !! tin : input real : density weighted average ion temperature (keV)
-      !! btot : input real : total toroidal + poloidal field (T)
-      !! beta : input real : total plasma beta (iteration variable 5) (calculated if ipedestal =3)
-      !! echarge : input real : FIX : electron charge (C)
-      !! rmu0 : input real : FIX : permeability of free space, 4.pi x 10^(-7) H/m
-      use physics_variables, only: betaft, betanb, dene, ten, dnitot, tin, btot, beta
-      use constants, only: echarge,rmu0
-      implicit none
-      type (constraint_args_type), intent(out) :: args
+    !! author: J Morris
+    !! category: equality constraint
+    !!
+    !! Relationship between beta, temperature (keV) and density
+    !!
+    !! \begin{equation} 
+    !! c_i = 1 - \frac{1}{\beta}\left( \beta_{ft} + \beta_{NBI} + 2 \times 10^3 \mu_0 e
+    !! \left( \frac{n_e T_e + n_i T_i}{B_{tot}^2} \right) \right)
+    !! \end{equation}
+    !!
+    !! - \( \beta \) -- total plasma beta
+    !! - \( \beta_{ft} \) -- fast alpha beta component
+    !! - \( \beta_{NBI} \) -- neutral beam beta component
+    !! - \( n_e \) -- electron density [m\(^3\)]
+    !! - \( n_i \) -- total ion density [m\(^3\)]
+    !! - \( T_e \) -- density weighted average electron temperature [keV]
+    !! - \( T_i \) -- density weighted average ion temperature [keV]
+    !! - \( B_{tot} \) -- total toroidal + poloidal field [T]
 
-      args%cc =  1.0D0 - (betaft + betanb + 2.0D3*rmu0*echarge * (dene*ten + dnitot*tin)/btot**2 )/beta
-      args%con    = beta * (1.0D0 - args%cc)
-      args%err    = beta * args%cc
+    use physics_variables, only: betaft, betanb, dene, ten, dnitot, tin, btot, beta
+    use constants, only: echarge,rmu0
+
+    implicit none
+
+    type(constraint_args_type), intent(out) :: args
+    !! constraint derived type
+
+      args%cc = 1.0D0 - (betaft + betanb + &
+        2.0D3*rmu0*echarge * (dene*ten + dnitot*tin)/btot**2 )/beta
+      args%con = beta * (1.0D0 - args%cc)
+      args%err = beta * args%cc
       args%symbol = '='
       args%units  = ''
 
    end subroutine constraint_eqn_001
 
    subroutine constraint_eqn_002(args)
-      !! Global plasma power balance equation
-      !! author: P B Lloyd, CCFE, Culham Science Centre
-      !! args : output structure : residual error; constraint value; 
-      !! residual error in physical units; output string; units string
-      !! Global plasma power balance equation
-      !! This is a consistency equation
-      !! N.B. This constraint is currently NOT RECOMMENDED for use.
-      !! #=# physics
-      !! #=#=# consistency
-      !! and hence also optional here.
-      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !! iradloss : input integer : switch for radiation loss term usage in power balance (see User Guide):<UL>
-      !! <LI> = 0 total power lost is scaling power plus radiation (needed for ipedestal=2,3)
-      !! <LI> = 1 total power lost is scaling power plus core radiation only
-      !! <LI> = 2 total power lost is scaling power only, with no additional
-      !! allowance for radiation. This is not recommended for power plant models.</UL>
-      !! ignite : input integer : switch for ignition assumption:<UL>
-      !! <LI> = 0 do not assume plasma ignition;
-      !! <LI> = 1 assume ignited (but include auxiliary power in costs)</UL>
-      !! ptrepv : input real : electron transport power per volume (MW/m3)
-      !! ptripv : input real :  ion transport power per volume (MW/m3)
-      !! pradpv : input real : total radiation power per volume (MW/m3)
-      !! pcoreradpv : input real : total core radiation power per volume (MW/m3)
-      !! falpha : input real : fraction of alpha power deposited in plasma
-      !! palppv : input real : alpha power per volume (MW/m3)
-      !! pchargepv : input real : non-alpha charged particle fusion power per volume (MW/m3)
-      !! pohmpv : input real : ohmic heating power per volume (MW/m3)
-      !! pinjmw : input real : total auxiliary injected power (MW)
-      !! vol : input real : plasma volume (m3)
-      use physics_variables, only: iradloss, ignite, ptrepv, ptripv, pradpv, & 
-                                   pcoreradpv, falpha, palppv, pchargepv, &
-                                   pohmpv, vol
-      use current_drive_variables, only: pinjmw
-      implicit none
-      type (constraint_args_type), intent(out) :: args
+    !! author: J. Morris
+    !! category: equality constraint
+    !!
+    !! Global plasma power balance equation
+    !! 
+    !! \begin{equation} c_i = 
+    !! \end{equation}
+    !!
+    !! iradloss : input integer : switch for radiation loss term usage in power balance (see User Guide):<UL>
+    !! <LI> = 0 total power lost is scaling power plus radiation (needed for ipedestal=2,3)
+    !! <LI> = 1 total power lost is scaling power plus core radiation only
+    !! <LI> = 2 total power lost is scaling power only, with no additional
+    !! allowance for radiation. This is not recommended for power plant models.</UL>
+    !! ignite : input integer : switch for ignition assumption:<UL>
+    !! <LI> = 0 do not assume plasma ignition;
+    !! <LI> = 1 assume ignited (but include auxiliary power in costs)</UL>
+    !! ptrepv : input real : electron transport power per volume (MW/m3)
+    !! ptripv : input real :  ion transport power per volume (MW/m3)
+    !! pradpv : input real : total radiation power per volume (MW/m3)
+    !! pcoreradpv : input real : total core radiation power per volume (MW/m3)
+    !! falpha : input real : fraction of alpha power deposited in plasma
+    !! palppv : input real : alpha power per volume (MW/m3)
+    !! pchargepv : input real : non-alpha charged particle fusion power per volume (MW/m3)
+    !! pohmpv : input real : ohmic heating power per volume (MW/m3)
+    !! pinjmw : input real : total auxiliary injected power (MW)
+    !! vol : input real : plasma volume (m3)
+    
+    use physics_variables, only: iradloss, ignite, ptrepv, ptripv, pradpv, & 
+                                  pcoreradpv, falpha, palppv, pchargepv, &
+                                  pohmpv, vol
+    use current_drive_variables, only: pinjmw
 
-      ! pscaling : Local real : total transport power per volume (MW/m3)
-      real(kind(1.0D0)) :: pscaling
-      real(kind(1.0D0)) :: pnumerator, pdenom
-      pscaling = ptrepv + ptripv
-	   ! Total power lost is scaling power plus radiation:
-      if (iradloss == 0) then
-         pnumerator = pscaling + pradpv
-      else if (iradloss == 1) then 		 
-         pnumerator = pscaling + pcoreradpv
-      else
-         pnumerator = pscaling	  
-      end if
+    implicit none
 
-      ! if plasma not ignited include injected power
-      if (ignite == 0) then
-         pdenom = falpha*palppv + pchargepv + pohmpv + pinjmw/vol
-      else
+    type (constraint_args_type), intent(out) :: args
+    !! constraint derived type
+
+    ! pscaling : Local real : total transport power per volume (MW/m3)
+    real(dp) :: pscaling
+    real(dp) :: pnumerator, pdenom
+    pscaling = ptrepv + ptripv
+    ! Total power lost is scaling power plus radiation:
+    if (iradloss == 0) then
+        pnumerator = pscaling + pradpv
+    else if (iradloss == 1) then 		 
+        pnumerator = pscaling + pcoreradpv
+    else
+        pnumerator = pscaling	  
+    end if
+
+    ! if plasma not ignited include injected power
+    if (ignite == 0) then
+      pdenom = falpha*palppv + pchargepv + pohmpv + pinjmw/vol
+    else
       ! if plasma ignited
-         pdenom = falpha*palppv + pchargepv + pohmpv
-      end if
+      pdenom = falpha*palppv + pchargepv + pohmpv
+    end if
 
-      args%cc = 1.0D0 - pnumerator / pdenom
-      args%con = pdenom * (1.0D0 - args%cc)
-      args%err = pdenom * args%cc
-      args%symbol = '='
-      args%units = 'MW/m3'
+    args%cc = 1.0D0 - pnumerator / pdenom
+    args%con = pdenom * (1.0D0 - args%cc)
+    args%err = pdenom * args%cc
+    args%symbol = '='
+    args%units = 'MW/m3'
 
    end subroutine constraint_eqn_002
 
@@ -531,8 +544,8 @@ contains
       type (constraint_args_type), intent(out) :: args
 
       ! pscaling : Local real : total transport power per volume (MW/m3)
-      real(kind(1.0D0)) :: pscaling
-      real(kind(1.0D0)) :: pnumerator, pdenom
+      real(dp) :: pscaling
+      real(dp) :: pnumerator, pdenom
       pscaling = ptrepv
 	   ! Total power lost is scaling power plus radiation:
       if (iradloss == 0) then
@@ -720,30 +733,31 @@ contains
    end subroutine constraint_eqn_009
 
    subroutine constraint_eqn_010(args)
-      !! Equation for field at TF coil
       !! author: P B Lloyd, CCFE, Culham Science Centre
-      !! args : output structure : residual error; constraint value; 
-      !! residual error in physical units; output string; units string
       !! Equation for field at TF coil
-      !! (This is a consistency equation.)
+      !! This is a consistency equation
+      !! (do not use for stellarators)
       !! #=# tfcoil
       !! #=#=# consistency
-      !! and hence also optional here.
-      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !! rmajor : input real : plasma major radius (m) 
-      !! bt : input real : toroidal field on axis (T)
-      !! rbmax : input real : radius of maximum TF B-field (m)
-      !! bmaxtf : input real : mean peak field at TF coil (T)
-      use physics_variables, only: rmajor, bt
-      use tfcoil_variables, only: rbmax, bmaxtf
-      implicit none
-      type (constraint_args_type), intent(out) :: args
+      !! rmajor |  plasma major radius (m)
+      !! bt     |  toroidal field on axis (T)
+      !! rbmax  |  radius of maximum toroidal field (m)
+      !! bmaxtf |  peak field at toroidal field coil (T)
+ 
+      !! This constraint is depreciated
 
-      args%cc =  1.0D0 - (rmajor*bt)/(rbmax*bmaxtf)
-      args%con = (rbmax*bmaxtf) * (1.0D0 - args%cc)
-      args%err = (rbmax*bmaxtf) * args%cc
+      implicit none
+
+      type (constraint_args_type), intent(out) :: args
+      !! Constraints output
+
+      ! This constraint is depreciated
+      call report_error(236)
+
+      args%con = 1.0D0
+      args%err = 0.0D0
       args%symbol = '='
-      args%units = 'T.m'
+      args%units = ''
 
    end subroutine constraint_eqn_010
 
@@ -932,8 +946,9 @@ contains
       implicit none
       type (constraint_args_type), intent(out) :: args
 
-      ! pradmaxpv : local real :  the maximum possible power/vol that can be radiated
-      real(kind(1.0D0)) pradmaxpv
+      real(dp) :: pradmaxpv
+      !! Maximum possible power/vol that can be radiated (local)
+
       pradmaxpv = pinjmw/vol + palppv*falpha + pchargepv + pohmpv
       args%cc =  1.0D0 - fradpwr * pradmaxpv / pradpv
       args%con = pradmaxpv * (1.0D0 - args%cc)
@@ -988,7 +1003,7 @@ contains
       implicit none
       type (constraint_args_type), intent(out) :: args
       ! totmva : local real : total MVA in TF coil (MW)
-      real(kind(1.0D0)) totmva
+      real(dp) :: totmva
 
       totmva = tfcpmw + tflegmw
       args%cc =  1.0D0 - fmva * mvalim/totmva
@@ -1100,7 +1115,7 @@ contains
       implicit none
       type (constraint_args_type), intent(out) :: args
       ! rcw : local real : conducting shell radius (m)
-      real(kind(1.0D0)) rcw
+      real(dp) :: rcw
 
       rcw = rminor + scraplo + fwoth + blnkoth
       args%cc =  1.0D0 - fcwr * cwrmax*rminor / rcw
@@ -1349,13 +1364,13 @@ contains
       !! alstrtf : input real : allowable Tresca stress in TF coil structural material (Pa)
       !! strtf2 : input real : Constrained stress in TF coil case (Pa) 
       use constraint_variables, only: fstrcase
-      use tfcoil_variables, only: alstrtf, strtf2
+      use tfcoil_variables, only: alstrtf, strtf1
       implicit none
       type (constraint_args_type), intent(out) :: args
 
-      args%cc =  1.0D0 - fstrcase * alstrtf/strtf2
+      args%cc =  1.0D0 - fstrcase * alstrtf/strtf1
       args%con = alstrtf
-      args%err = alstrtf - strtf2 / fstrcase
+      args%err = alstrtf - strtf1 / fstrcase
       args%symbol = '<'
       args%units = 'Pa'
 
@@ -1375,13 +1390,13 @@ contains
       !! alstrtf : input real : allowable Tresca stress in TF coil structural material (Pa)
       !! strtf1 : input real : Constrained Tresca stress in TF conductor conduit (Pa) 
       use constraint_variables, only: fstrcond
-      use tfcoil_variables, only: alstrtf, strtf1
+      use tfcoil_variables, only: alstrtf, strtf2
       implicit none
       type (constraint_args_type), intent(out) :: args
 
-      args%cc =  1.0D0 - fstrcond * alstrtf/strtf1
+      args%cc =  1.0D0 - fstrcond * alstrtf/strtf2
       args%con = alstrtf
-      args%err = alstrtf - strtf1 / fstrcond
+      args%err = alstrtf - strtf2 / fstrcond
       args%symbol = '<'
       args%units = 'Pa'
 
@@ -1786,7 +1801,7 @@ contains
       use tfcoil_variables, only: ritfc
       implicit none
       ! cratmx : local real : maximum ratio of plasma current to centrepost current
-      real(kind(1.0D0)) :: cratmx
+      real(dp) :: cratmx
       type (constraint_args_type), intent(out) :: args
 
       ! if the machine isn't a ST then report error
@@ -2348,7 +2363,7 @@ contains
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !! psep_kallenbach : input real : Power conducted through the separatrix, as calculated by the divertor model [W]
       !! pdivt : input real :  power to conducted to the divertor region (MW)
-      use divertor_kallenbach_variables, only: psep_kallenbach
+      use div_kal_vars, only: psep_kallenbach
       use physics_variables, only: pdivt
       implicit none
       type (constraint_args_type), intent(out) :: args
@@ -2373,7 +2388,7 @@ contains
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !! teomp : input real : Separatrix temperature calculated by the Kallenbach divertor model [eV]
       !! tesep : input real : Electron temperature at separatrix [keV]
-      use divertor_kallenbach_variables, only: teomp
+      use div_kal_vars, only: teomp
       use  physics_variables, only: tesep
       implicit none
       type (constraint_args_type), intent(out) :: args
@@ -2399,7 +2414,7 @@ contains
       !! neomp : input real : Mean SOL density at OMP calculated by the Kallenbach divertor model [m-3]
       !! nesep : input real :  electron density at separatrix [m-3] (ipedestal=1,2, calculated if 3)
       !! neratio : input real : Ratio of mean SOL density at OMP to separatrix density at OMP (iteration variable 121)
-      use divertor_kallenbach_variables, only: neomp, neratio
+      use div_kal_vars, only: neomp, neratio
       use physics_variables, only: nesep
       implicit none
       type (constraint_args_type), intent(out) :: args
@@ -2418,8 +2433,15 @@ contains
       !! args : output structure : residual error; constraint value; 
       !! residual error in physical units; output string; units string
       !! Central Solenoid Tresca stress limit
-      !! #=# tfcoil
+      !! #=# pfcoil
       !! #=#=# foh_stress, alstroh
+      !! In the case if the bucked and wedged option ( i_tf_bucking >= 2 ) the constrained
+      !! stress is the largest the largest stress of the
+      !!  - CS stress at maximum current (conservative as the TF inward pressure is not taken 
+      !!    into account)
+      !!  - CS stress at flux swing (no current in CS) from the TF inward pressure
+      !! This allow to cover the 2 worst stress scenario in the bucked and wedged design
+      !! Otherwise (free standing TF), the stress limits are only set by the CS stress at max current
       !! Reverse the sign so it works as an inequality constraint (args%cc > 0)
       !! This will have no effect if it is used as an equality constraint because it will be squared.
       !! and hence also optional here.
@@ -2427,14 +2449,27 @@ contains
       !! foh_stress : input real : f-value for Tresca stress limit in Central Solenoid
       !! alstroh : input real :  allowable hoop stress in Central Solenoid structural material (Pa)
       !! s_tresca_oh : input real : Tresca stress coils/central solenoid (Pa)
+      !! strtf0 : input real : Tresca stress in CS case at flux swing (no current in CS)
+      !!                       can be significant for the bucked and weged design
+      !! i_tf_bucking : input integer : switch for TF structure design 
       use constraint_variables, only: foh_stress
       use pfcoil_variables, only: alstroh, s_tresca_oh
+      use tfcoil_variables, only: strtf0, i_tf_bucking
       implicit none
       type (constraint_args_type), intent(out) :: args
 
-      args%cc = 1.0d0 - foh_stress * alstroh / s_tresca_oh
+      ! bucked and wedged desing (see subroutine comment)
+      if ( i_tf_bucking >= 2 ) then
+         args%cc = 1.0d0 - foh_stress * alstroh / max(s_tresca_oh, strtf0)
+         args%err = alstroh - max(s_tresca_oh, strtf0)
+      
+      ! Free standing CS
+      else 
+         args%cc = 1.0d0 - foh_stress * alstroh / s_tresca_oh
+         args%err = alstroh - s_tresca_oh
+      end if
+
       args%con = alstroh
-      args%err = alstroh - s_tresca_oh
       args%symbol = '<'
       args%units = 'Pa'
 
@@ -2530,8 +2565,8 @@ contains
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !! alpha_crit : output real : critical ballooning parameter value
       !! nesep_crit : output real : critical electron density at separatrix [m-3]
-      !! kappa : input real : plasma separatrix elongation (calculated if ishape > 0)
-      !! triang : input real : plasma separatrix triangularity (calculated if ishape=1, 3 or 4)
+      !! kappa : input real : plasma separatrix elongation (calculated if ishape = 1-5 or 7)
+      !! triang : input real : plasma separatrix triangularity (calculated if ishape = 1, 3-5 or 7)
       !! aspect : input real : aspect ratio (iteration variable 1)
       !! pdivt : input real : power to conducted to the divertor region (MW)
       !! dlimit(7) : input real array : density limit (/m3) as calculated using various models
@@ -2687,5 +2722,153 @@ contains
 
    end subroutine constraint_eqn_081
    
+   subroutine constraint_eqn_082(args)
+      !! Equation for toroidal consistency of stellarator build
+      !! author: J Lion, IPP Greifswald
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! toroidalgap > tftort
+      !! #=# tfcoil
+      !! #=#=# tftort, ftoroidalgap
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! ftoroidalgap : input real : f-value for constraint toroidalgap > tftort
+      !! toroidalgap : input real :  minimal gap between two stellarator coils
+      !! tftort : input real :  total toroidal width of a tf coil
+      use tfcoil_variables, only: tftort,ftoroidalgap,toroidalgap
+      implicit none
+      type (constraint_args_type), intent(out) :: args
+
+      args%cc =  1.0D0 - ftoroidalgap * toroidalgap/tftort
+      args%con = toroidalgap
+      args%err = toroidalgap - tftort/ftoroidalgap
+      args%symbol = '<'
+      args%units = 'm'
+
+   end subroutine constraint_eqn_082
+
+   subroutine constraint_eqn_083(args)
+      !! Equation for radial consistency of stellarator build
+      !! author: J Lion, IPP Greifswald
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! available_radial_space > required_radial_space
+      !! #=# build
+      !! #=#=# tftort, ftoroidalgap
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! f_avspace : input real : f-value for constraint toroidalgap > tftort
+      !! available_radial_space : input real :  avaible space in radial direction as given by each s.-configuration
+      !! required_radial_space : input real :  required space in radial direction
+      use build_variables, only: available_radial_space, required_radial_space, f_avspace
+      implicit none
+      type (constraint_args_type), intent(out) :: args
+
+      args%cc =  1.0D0 - f_avspace  * available_radial_space/required_radial_space
+      args%con = available_radial_space * (1.0D0 - args%cc)
+      args%err = required_radial_space * args%cc
+      args%symbol = '<'
+      args%units = 'm'
+   end subroutine constraint_eqn_083
+
+   subroutine constraint_eqn_084(args)
+      !! Equation for the lower limit of beta
+      !! author: J Lion, IPP Greifswald
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !!  (beta-betaft) > betalim_lower
+      !! #=# tfcoil
+      !! #=#=# tftort, ftoroidalgap
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! fbetatry_lower : input real : f-value for constraint toroidalgap > tftort
+      !! betalim_lower : input real :  Lower limit for beta
+      !! beta : input real :  plasma beta
+      !! betaft : input real : Alpha particle beta
+
+      use physics_variables, only: betalim_lower, beta, betaft
+      use constraint_variables, only: fbetatry_lower
+      implicit none
+      type (constraint_args_type), intent(out) :: args
+
+
+      args%cc = 1.0D0 - fbetatry_lower * (beta-betaft)/betalim_lower
+      args%con = betalim_lower * (1.0D0 - args%cc)
+      args%err = (beta-betaft) * args%cc
+      args%symbol = '>'
+      args%units = ''
+
+
+   end subroutine constraint_eqn_084
+
+   subroutine constraint_eqn_085(args)
+      !! Author : S Kahn
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation constraining the centerpost (CP) lifetime
+      !! Depending on the chosen option : i_cp_lifetime
+      !!  - 0 : The CP full power year lifelime is set by the user (cplife_input)
+      !!  - 1 : The CP lifelime is equal to the divertor one
+      !!  - 2 : The CP lifetime is equal to the breeding blankets one
+      !!  - 3 : The CP lifetime is equal to the plant one
+      !! #=# availability
+      !! #=#=# consistency
+      !! Logic change during pre-factoring: err, symbol, units will be assigned 
+      !! only if present.
+      !! cplife : input real : calculated CP full power year lifetime (years)
+      !! bktlife : input real : calculated first wall/blanket power year lifetime (years)
+      !! divlife : input real : calculated divertor  power year lifetime (years)
+      !! i_cp_lifetime : input integer : switch chosing which plant element the CP
+      !!                                 the CP lifetime must equate  
+      use cost_variables, only : cplife, divlife, cplife_input, &
+         tlife, i_cp_lifetime
+      use fwbs_variables, only : bktlife
+
+      implicit none
+
+      type (constraint_args_type), intent(out) :: args
+      !! Constraints output
+
+
+      ! The CP lifetime is equal to the the divertor one
+      if  ( i_cp_lifetime == 0 ) then
+         args%cc = 1.0D0 - cplife/cplife_input
+
+      else if ( i_cp_lifetime == 1 ) then 
+         args%cc = 1.0D0 - cplife/divlife
+
+      ! The CP lifetime is equal to the tritium breeding blankets / FW one
+      else if ( i_cp_lifetime == 2 ) then
+         args%cc = 1.0D0 - cplife/bktlife
+         
+      ! The CP lifetime is equal to the 
+      else if ( i_cp_lifetime == 3 ) then
+         args%cc = 1.0D0 - cplife/tlife
+      end if
+
+      args%con = divlife * (1.0D0 - args%cc)
+      args%err = divlife * args%cc
+      args%symbol = '='
+      args%units = 'years'
+
+   end subroutine constraint_eqn_085
+
+   subroutine constraint_eqn_086(args)
+      !! Author : S Kahn
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; 
+      !! 
+      use tfcoil_variables, only : t_turn_tf, f_t_turn_tf, t_turn_tf_max
+
+      implicit none
+
+      type (constraint_args_type), intent(out) :: args
+      
+      !! Constraints output
+      args%cc = 1.0D0 - t_turn_tf / ( f_t_turn_tf * t_turn_tf_max )
+      args%con = t_turn_tf_max * (1.0D0 - args%cc)
+      args%err = t_turn_tf_max * args%cc
+      args%symbol = '<'
+      args%units = 'm'
+
+   end subroutine constraint_eqn_086
+
 end module constraints
 

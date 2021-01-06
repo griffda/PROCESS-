@@ -11,14 +11,7 @@ module divertor_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use build_variables
-  use constants
-  use divertor_variables
-  use tfcoil_variables, only : drtop
-  use error_handling
-  use physics_variables
-  use process_output
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   private
@@ -42,6 +35,15 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: plsepo, vgap, rspo, scrapli
+    use constants, only: pi 
+    use divertor_variables, only: prn1, rlclolcn, c6div, c5div, ksic, omegan, &
+      rconl, minstang, hldiv, rsrd, xparain, divdum, tsep, &
+      densin, zeffdiv, xpertin, fgamp, adas, tconl, c4div, dendiv, tdiv, frrp, &
+      c3div, fififi, ptpdiv , ppdivr, c2div, fdfs , delld, omlarg, c1div, &
+      anginc, lamp 
+    use physics_variables, only: dene, itart, triang, bp, zeff, q, sarea, &
+      sareao, bt, afuel, rminor, aspect, rmajor, pdivt
     implicit none
 
     !  Arguments
@@ -50,7 +52,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: aionso,bpstk,btstk,dconl,delne, &
+    real(dp) :: aionso,bpstk,btstk,dconl,delne, &
          delta,delw,diva,dtheta,frgd,gamdt,pdiv,plsep, &
          ppdiv,pwr,qdiv,rbpbt,rnull,xpara,xperp,zeffso
 
@@ -276,26 +278,27 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: pi 
     implicit none
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: adas,aion,anginc,c1div,c2div,c3div, &
+    real(dp), intent(in) :: adas,aion,anginc,c1div,c2div,c3div, &
          c4div,c5div,delld,delne,fdfs,fififi,frgd,frrp,minstang,omegan, &
          qdiv,pdiv,rbpbt,rconl,rmaj,rsrd,tconl,xpara,xperp
 
-    real(kind(1.0D0)), intent(out) :: delta,delw,dendiv,densin,gamdt, &
+    real(dp), intent(out) :: delta,delw,dendiv,densin,gamdt, &
          lamp,omlarg,ppdiv,ppdivr,ptpdiv,tdiv,tsep
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: c27 = 0.2857143D0
-    real(kind(1.0D0)), parameter :: ei = 13.6D0
-    real(kind(1.0D0)), parameter :: epsilon = 0.001D0
-    real(kind(1.0D0)), parameter :: relerr = 1.0D-9
+    real(dp), parameter :: c27 = 0.2857143D0
+    real(dp), parameter :: ei = 13.6D0
+    real(dp), parameter :: epsilon = 0.001D0
+    real(dp), parameter :: relerr = 1.0D-9
 
     integer :: i
-    real(kind(1.0D0)) :: angle,coefl,cp,ct,deltx,delty,deltdiv, &
+    real(dp) :: angle,coefl,cp,ct,deltx,delty,deltdiv, &
          deltpts,denom,eier,facdenom,fprime,f1,f1dx,f1dy,f2,f2dx,f2dy, &
          gamdiv,tdivges,tdivp,tpts,tptsges,tptsp
 
@@ -409,15 +412,15 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: erprcy
+      real(dp) :: erprcy
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: ndiv,tdiv
+      real(dp), intent(in) :: ndiv,tdiv
 
       !  Local variables
 
-      real(kind(1.0D0)) :: ans
+      real(dp) :: ans
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -455,16 +458,16 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: ftdiv
+      real(dp) :: ftdiv
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: aion,coefl,delne,fififi,omegan,omlarg,qdiv, &
+      real(dp), intent(in) :: aion,coefl,delne,fififi,omegan,omlarg,qdiv, &
            tconl,xpara,xperp,xx,yy
 
       !  Local variables
 
-      real(kind(1.0D0)) :: c27,dendiv,eier,ff,gamdiv,xxs,yys
+      real(dp) :: c27,dendiv,eier,ff,gamdiv,xxs,yys
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -515,16 +518,16 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: ftpts
+      real(dp) :: ftpts
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: aion,coefl,delne,fififi,omegan, &
+      real(dp), intent(in) :: aion,coefl,delne,fififi,omegan, &
            omlarg,qdiv,tconl,xpara,xperp,xx,yy
 
       !  Local variables
 
-      real(kind(1.0D0)) :: dendiv,eier,ff,gamdiv,xxs,yys
+      real(dp) :: dendiv,eier,ff,gamdiv,xxs,yys
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -563,11 +566,11 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: gammash
+      real(dp) :: gammash
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: gcoef,tdiv
+      real(dp), intent(in) :: gcoef,tdiv
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -602,17 +605,21 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: pi 
+    use error_handling, only: fdiags, report_error
+    use tfcoil_variables, only: drtop
+    use process_output, only: ocmmnt, osubhd, ovarre, oblnkl
     implicit none
 
     !  Arguments
 
     integer, intent(in) :: iprint, outfile
-    real(kind(1.0D0)), intent(in) :: rmajor,rminor,triang,scrapli,vgap,pdivt
-    real(kind(1.0D0)), intent(out) :: hldiv
+    real(dp), intent(in) :: rmajor,rminor,triang,scrapli,vgap,pdivt
+    real(dp), intent(out) :: hldiv
 
     !  Local variables
 
-    real(kind(1.0D0)) :: r1,r2,a1,a2,a3,theta,areadv
+    real(dp) :: r1,r2,a1,a2,a3,theta,areadv
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

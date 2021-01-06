@@ -1,4 +1,9 @@
 module output_module
+
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+
+  implicit none
+
 contains
 
 subroutine output(outfile)
@@ -13,49 +18,48 @@ subroutine output(outfile)
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use availability_module
-  use build_module
-  use buildings_module
-  use costs_module
-  use costs_2015_module
-  use costs_step_module
-  use cost_variables
-  use current_drive_module
-  use divertor_kallenbach_variables
-  use divertor_ode 
-  ! , only: divertor_kallenbach
-  use divertor_module
-  use error_handling
-  use fwbs_module
-  use fwbs_variables
-  use ife_module
-  use ife_variables
-  use pfcoil_module
-  use physics_module
-  use physics_variables
-  use plasmod_module
-  !use plasmod_variables
-  use power_module
-  use pulse_module
-  use sctfcoil_module
-  use startup_module
-  use stellarator_module
-  use stellarator_variables
-  use structure_module
-  use tfcoil_module
-  use vacuum_module
-
-  ! Import blanket modules
-  use ccfe_hcpb_module
-  use kit_hcpb_module
-  use kit_hcll_module
-
+  use availability_module, only: avail_2, avail
+  use build_module, only: radialb, vbuild
+  use buildings_module, only: bldgcall
+  use costs_module, only: costs
+  use costs_2015_module, only: costs_2015
+  use costs_step_module, only: costs_step
+  use cost_variables, only: iavail, cost_model
+  use current_drive_module, only: cudriv
+  use divertor_ode, only: divertor_Kallenbach
+  use divertor_module, only: divcall
+  use error_handling, only: errors_on
+  use fwbs_variables, only: tbr, iblanket, li6enrich, iblanket_thickness, &
+    breeder_f
+  use ife_module, only: ifeout
+  use ife_variables, only: ife
+  use pfcoil_module, only: outpf, outvolt, induct
+  use physics_module, only: igmarcal, outtim, outplas
+  use physics_variables, only: ipedestal, q, plascur, itart, rminor, bp, &
+    rmajor, bt
+  use plasmod_module, only: outputplasmod
+  use power_module, only: pfpwr, acpow, power2, tfpwr, power3
+  use pulse_module, only: pulse
+  use sctfcoil_module, only: tfspcall
+  use stellarator_module, only: stout
+  use stellarator_variables, only: istell
+  use structure_module, only: strucall
+  use tfcoil_module, only: tfcoil, cntrpst
+  use vacuum_module, only: vaccall
+  use ccfe_hcpb_module, only: tbr_shimwell, ccfe_hcpb
+  use kit_hcpb_module, only: kit_hcpb
+  use kit_hcll_module, only: kit_hcll
+  use tfcoil_variables, only: i_tf_sup
+  use global_variables, only: verbose
+  use process_output, only: ovarin
+  use constants, only: mfile, nout
+  use div_kal_vars, only: kallenbach_switch, neomp, &
+    ttarget, targetangle, psep_kallenbach, qtargettotal, teomp
   implicit none
-
+  
   ! Arguments
   integer, intent(in) :: outfile
-
+  
   ! Local variables
   logical :: verbose_logical
 
@@ -199,7 +203,7 @@ subroutine output(outfile)
 
   ! Tight aspect ratio machine model !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  if (itart == 1) then
+  if (itart == 1 .and. i_tf_sup /= 1) then
     call cntrpst(outfile,1)
   end if
 

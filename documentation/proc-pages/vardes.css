@@ -1,0 +1,63 @@
+div.wy-nav-content {
+    width: 100%;
+    max-width: 1400px;
+}
+
+table {
+    /* border-spacing: 10px; */
+    border-collapse: collapse;
+}
+
+table.vardes {
+    table-layout: fixed;
+    width: 100%;
+    overflow-wrap: anywhere;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+}
+
+.vardes tbody {
+    display: table;
+    width: 100%;
+}
+
+.vardes .col1 {
+    width: 20%;
+}
+
+.vardes .col2 {
+    width: 12%;
+}
+
+.vardes .col3 {
+    width: 13%;
+}
+
+.vardes .col4 {
+    width: 45%;
+}
+
+/*-------------------- IMAGES --------------------*/
+
+.logo {
+    width:200px;
+}
+
+@media only screen and (max-width: 767px) {
+    .logo {
+        width:35%;
+    }
+  }
+
+  .image {
+    width:75%;
+}
+
+@media only screen and (max-width: 767px) {
+    .image {
+        width:100%;
+    }
+  }
