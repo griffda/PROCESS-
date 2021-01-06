@@ -1225,7 +1225,7 @@ subroutine tf_field_and_force()
         r_tf_inboard_mid, r_cp_top
     use tfcoil_variables, only: vforce, n_tf, taucq, sigvvall, cforce, &
         ritfc, bmaxtf, rbmax, i_tf_sup, f_vforce_inboard, vforce_outboard, &
-        tinstf, thicndut, dr_tf_wp, tfinsgap, i_cp_joints
+        tinstf, thicndut, dr_tf_wp, tfinsgap, i_cp_joints, casthi
 
     implicit none
 
@@ -1280,7 +1280,7 @@ subroutine tf_field_and_force()
     !-!
     ! Ouboard leg WP plasma side radius without ground insulation/insertion gat [m]
     if ( i_tf_sup == 1 ) then
-        r_in_outwp = r_tf_outboard_in + tinstf + tfinsgap    
+        r_in_outwp = r_tf_outboard_in + casthi + tinstf + tfinsgap
     else
         r_in_outwp = r_tf_outboard_in + tinstf
     end if
