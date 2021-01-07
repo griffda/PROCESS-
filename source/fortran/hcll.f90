@@ -389,15 +389,24 @@ contains
     bzfllengi = 0.0D0
     bzfllengo = 0.0D0
     cf = 0.0D0
-    cp_he = 0.0D0
-    denhe = 0.0D0
-    denpbli = 0.0D0
+    
+    ! Specific heat at constant pressure for He at 8 MPa and 400C (kJ/kg/K)
+    cp_he = 5.190D0
+    
+    ! Density of Helium (kg/m3 at 8MPa, 400 C)
+    denhe = 5.4D0
+
+    ! Density of lead lithium (kg/m3)
+    denpbli = 9839.0D0
+
     dp_bb_ib = 0.0D0
-    dp_bb_ib_max = 0.0D0
     dp_bb_ob = 0.0D0
-    dp_bb_ob_max = 0.0D0
+
+    ! Max allowed (from Maintainance) Poloidal thickness of inboard blanket module (m)
+    dp_bb_ib_max = 2.0D0
+    dp_bb_ob_max = 2.0D0
+
     dp_bu_ib = 0.0D0
-    dp_bu_max = 0.0D0
     dp_bu_ob = 0.0D0
     dp_bz_ib = 0.0D0
     dp_bz_ob = 0.0D0
@@ -410,30 +419,55 @@ contains
     dr_mf_ib = 0.0D0
     dr_mf_ob = 0.0D0
     dt_bb_ib = 0.0D0
-    dt_bb_ib_max = 0.0D0
     dt_bb_ob = 0.0D0
-    dt_bb_ob_max = 0.0D0
+
+    ! Max allowed (from RH) toroidal thickness of inboard/outboard blanket module (m)
+    dt_bb_ib_max = 1.5D0
+    dt_bb_ob_max = 1.5D0
+
     dt_bu_ib = 0.0D0
-    dt_bu_max = 0.0D0
+    
+    ! Max allowed toroidal/poloidal dimension of BU (m)
+    dt_bu_max = 0.2D0
+    dp_bu_max = 0.2D0
+
     dt_bu_ob = 0.0D0
     dt_bz_ib = 0.0D0
     dt_bz_ob = 0.0D0
     dt_mf_ib = 0.0D0
     dt_mf_ob = 0.0D0
-    emult_all = 0.0D0
-    ff_ib = 0.0D0
-    ff_ob = 0.0D0
+    emult_all = 1.17D0
+    
+    ! TBR Formula correction Factors
+    ff_ib = 0.8572D0
+    ff_ob = 0.8026D0
+
     frac_div_ib = 0.0D0
     frac_div_ob = 0.0D0
-    frac_vol_he_bz = 0.0D0
-    frac_vol_he_fw = 0.0D0
+
+    ! Volume fraction of He in BZ (%)
+    frac_vol_he_bz = 7.0D0
+    
+    ! volume fraction of helium in the FW (calculated in the CEA version) (%)
+    frac_vol_he_fw = 26.3D0
+
     frac_vol_he_mf = 0.0D0
     frac_vol_pbli_bz = 0.0D0
-    frac_vol_pbli_mf = 0.0D0
-    frac_vol_steel_bz = 0.0D0
+    
+    ! Volume fraction of PbLi in manifold region (%)
+    frac_vol_pbli_mf = 6.8D0
+    
+    ! Volume fraction of steel in BZ (%)
+    frac_vol_steel_bz = 14.7D0
+
     frac_vol_steel_fw = 0.0D0
-    frac_vol_steel_mf = 0.0D0
-    frac_vol_w_fw = 0.0D0
+    
+    ! Volume of steel in the manifold region (%)
+    frac_vol_steel_mf = 42.0D0
+    
+    ! Volume fraction of tungsten in the FW (%)
+    frac_vol_w_fw = 4.8D0
+
     h_ib = 0.0D0
     h_ob = 0.0D0
     hblnkt = 0.0D0
@@ -442,8 +476,11 @@ contains
     htpmw_fwi = 0.0D0
     htpmw_fwo = 0.0D0
     ip = 0
-    j_plus_ib = 0.0D0
-    j_plus_ob = 0.0D0
+
+    ! Fraction of neutronic current going towards inboard/outboard blankts (%)
+    j_plus_ib = 0.237D0
+    j_plus_ob = 0.686D0
+
     len_act_ib = 0.0D0
     len_act_ob = 0.0D0
     len_ib = 0.0D0
@@ -488,8 +525,13 @@ contains
     npfwi = 0.0D0
     npfwo = 0.0D0
     ofile = 0
-    P_pump_0 = 0.0D0
-    P_th_0 = 0.0D0
+
+    ! Reference He pumping power, DEMO 2007 (MW)
+    P_pump_0 = 245.0D0
+    
+    ! Reference thermal blanket power, DEMO 2007 (MW)
+    P_th_0 = 2394.0D0
+    
     phi_tfc_ib = 0.0D0
     phi_tfc_ob = 0.0D0
     pnuc_bkt_ratio = 0.0D0
@@ -504,22 +546,34 @@ contains
     r_ob = 0.0D0
     rad_ib = 0.0D0
     rad_ob = 0.0D0
-    T_he_in = 0.0D0
-    T_He_out = 0.0D0
+
+    ! Set the blanket inlet and outlet temperatures (K)
+    T_he_in = 300.0D0
+    T_he_out = 500.0D0
+    
     TBR_ib = 0.0D0
     TBR_ob = 0.0D0
     thick_bp_ib = 0.0D0
     thick_bp_ob = 0.0D0
-    thick_bss_ib = 0.0D0
-    thick_bss_ob = 0.0D0
+
+    ! Inboard/outboard back supporting structure radial thickness (m)
+    thick_bss_ib = 0.111D0
+    thick_bss_ob = 0.322D0
+
     thick_bz_ib = 0.0D0
     thick_bz_ob = 0.0D0
-    thick_cap_ib = 0.0D0
-    thick_cap_ob = 0.0D0
+    
+    ! Inboard/outboard blanket module cap thickness (m)
+    thick_cap_ib = 0.025D0
+    thick_cap_ob = 0.025D0
+    
     thick_fw_ib = 0.0D0
     thick_fw_ob = 0.0D0
-    thick_sw_ib = 0.0D0
-    thick_sw_ob = 0.0D0
+    
+    ! Inboard/outboard blanket module side wall thickness
+    thick_sw_ib = 0.025D0
+    thick_sw_ob = 0.025D0
+
     tpeakfwi = 0.0D0
     tpeakfwo = 0.0D0
     TPR_ib = 0.0D0
@@ -620,83 +674,11 @@ contains
 
     implicit none
 
-    ! Set the blanket inlet and outlet temperatures (K)
-    T_he_in = 300.0D0
-    T_he_out = 500.0D0
-
     ! Energy multiplication in blanket + vv + divertor
     ! (emult = 1.17 for blanket + vv + divertor)
     emult = 1.12D0
-    emult_all = 1.17D0
-
-    ! Density of lead lithium (kg/m3)
-    denpbli = 9839.0D0
-
-    ! Density of Helium (kg/m3 at 8MPa, 400 C)
-    denhe = 5.4D0
-
     ! Coverage factor (%)
     cf = 1.0D0-fdiv-fhcd
-
-    ! TBR Formula correction Factors
-    ff_ib = 0.8572D0
-    ff_ob = 0.8026D0
-
-    ! Fraction of neutronic current going towards inboard/outboard blankts (%)
-    j_plus_ib = 0.237D0
-    j_plus_ob = 0.686D0
-
-    ! Specific heat at constant pressure for He at 8 MPa and 400C (kJ/kg/K)
-    cp_he = 5.190D0
-
-    ! Reference thermal blanket power, DEMO 2007 (MW)
-    P_th_0 = 2394.0D0
-
-    ! Reference He pumping power, DEMO 2007 (MW)
-    P_pump_0 = 245.0D0
-
-    ! Max allowed (from Maintainance) Poloidal thickness of inboard blanket module (m)
-    dp_bb_ib_max = 2.0D0
-    dp_bb_ob_max = 2.0D0
-
-    ! Max allowed (from RH) toroidal thickness of inboard/outboard blanket module (m)
-    dt_bb_ib_max = 1.5D0
-    dt_bb_ob_max = 1.5D0
-
-    ! Inboard/outboard blanket module side wall thickness
-    thick_sw_ib = 0.025D0
-    thick_sw_ob = 0.025D0
-
-    ! Inboard/outboard blanket module cap thickness (m)
-    thick_cap_ib = 0.025D0
-    thick_cap_ob = 0.025D0
-
-    ! Max allowed toroidal/poloidal dimension of BU (m)
-    dt_bu_max = 0.2D0
-    dp_bu_max = 0.2D0
-
-    ! Inboard/outboard back supporting structure radial thickness (m)
-    thick_bss_ib = 0.111D0
-    thick_bss_ob = 0.322D0
-
-    ! volume fraction of helium in the FW (calculated in the CEA version) (%)
-    frac_vol_he_fw = 26.3D0
-
-    ! Volume fraction of tungsten in the FW (%)
-    frac_vol_w_fw = 4.8D0
-
-    ! Volume fraction of He in BZ (%)
-    frac_vol_he_bz = 7.0D0
-
-    ! Volume fraction of steel in BZ (%)
-    frac_vol_steel_bz = 14.7D0
-
-    ! Volume fraction of PbLi in manifold region (%)
-    frac_vol_pbli_mf = 6.8D0
-
-    ! Volume of steel in the manifold region (%)
-    frac_vol_steel_mf = 42.0D0
-
     ! Set first wall inboard/outboard thickness (m)
     fwith = 2*afw + 2*fw_wall
     fwoth = fwith
