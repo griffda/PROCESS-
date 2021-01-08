@@ -29,6 +29,8 @@ if __name__ == '__main__':
                          help="Axis label font size selection (default=18)", type=int )
     parser.add_argument('-out', '--term_output', action="store_true",
                         help="Option to show stress on terminal output" )
+    parser.add_argument('-f'   , '--input_file' , default='../bin/SIG_TF.DAT',
+                        help="specify input file path (default = ../bin/SIG_TF.DAT)")
 
     # Option argument extraction
     # --------------------------
@@ -94,7 +96,7 @@ if __name__ == '__main__':
    
     # Opening the pandora box
     data = list()
-    with open('../bin/SIG_TF.DAT', 'r') as sig_data :
+    with open(args.input_file, 'r') as sig_data :
    
         ii = 0
         sig_data_lines = sig_data.readlines()
