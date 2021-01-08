@@ -964,15 +964,30 @@ def plot_radprofile(prof, mfile_data, scan, impp, demo_ranges):
         rhosep = np.linspace(rhoped, 1)
         rho = np.append(rhocore, rhosep)
         
-        # The density profile
-        ncore = neped + (ne0-neped) * (1-rhocore**2/rhopedn**2)**alphan
-        nsep = nesep + (neped-nesep) * (1-rhosep)/(1-min(0.9999, rhopedn))
-        ne = np.append(ncore, nsep)
+        # The density and temperature profile
+        # done in such away as to allow for plotting pedestals 
+        # with different rhopedn and rhopedt
+        ne = np.zeros(rho.shape[0])
+        te = np.zeros(rho.shape[0])
+        for q in range(rho.shape[0]): 
+            if rho[q] <= rhopedn:
+                ne[q] = neped + (ne0-neped) * (1-rho[q]**2/rhopedn**2)**alphan
+            else:
+                ne[q] = nesep + (neped-nesep) * (1-rho[q])/(1-min(0.9999, rhopedn))
+
+            if rho[q] <= rhopedt:
+                te[q] = teped + (te0-teped) * (1-(rho[q]/rhopedt)**tbeta)**alphat
+            else:
+                te[q] = tesep + (teped-tesep)* (1-rho[q])/(1-min(0.9999,rhopedt))
+        
+        #ncore = neped + (ne0-neped) * (1-rhocore**2/rhopedn**2)**alphan
+        #nsep = nesep + (neped-nesep) * (1-rhosep)/(1-min(0.9999, rhopedn))
+        #ne = np.append(ncore, nsep)
         
         # The temperatue profile
-        tcore = teped + (te0-teped) * (1-(rhocore/rhopedt)**tbeta)**alphat
-        tsep = tesep + (teped-tesep)* (1-rhosep)/(1-min(0.9999,rhopedt))
-        te = np.append(tcore,tsep)
+        #tcore = teped + (te0-teped) * (1-(rhocore/rhopedt)**tbeta)**alphat
+        #tsep = tesep + (teped-tesep)* (1-rhosep)/(1-min(0.9999,rhopedt))
+        #te = np.append(tcore,tsep)
 
     # Intailise the radiation profile arrays
     pimpden = np.zeros([imp_data.shape[0],te.shape[0]])
