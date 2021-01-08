@@ -200,6 +200,7 @@ def test_default(ref_dicts, new_dicts):
         "nvar",
         "zero",
         "delta"
+        "cp_he"
     ]
     """
     Ignore calltree_data: removed. ctfile, current, error_head, error_tail
@@ -236,8 +237,8 @@ def test_default(ref_dicts, new_dicts):
 
     ipvlam is defined both as module and local var
 
-    maxcal, nvar, zero, delta are initialised differently in two different 
-    modules
+    maxcal, nvar, zero, delta, cp_he are initialised differently in two 
+    different modules
     """
 
     # One difference is due to "null" in ref_dicts now being "0.0" or "" in 
