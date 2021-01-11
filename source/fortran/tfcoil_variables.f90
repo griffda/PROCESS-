@@ -770,6 +770,8 @@ module tfcoil_variables
     casths = 0.0D0
     casths_fraction = 0.06D0
     t_conductor = 0.0D0
+    t_cable_tf = 0.0D0
+    t_cable_tf_is_input = .false.
     t_turn_tf = 0.0D0
     t_turn_tf_is_input = .false.
     f_t_turn_tf = 1.0D0
