@@ -14,14 +14,14 @@
  
    Program :
    Version : 1.0.17   Release Date :: 2020-02-25
-   Tag No. : 1.0.17-722-g484ae96b code contains untracked changes
-    Branch : HEAD
-   Git log : Merge branch 'kzarebsk/1092-additional-tests' into '1092-convert-project-to-python-wrapped-fortran'
- Date/time : 16 Dec 2020  8:56:27 +00:00(hh:mm) UTC
-      User : jmaddock
-  Computer : J0826UBUNTU
- Directory : /home/jmaddock/process
-     Input : /tmp/pytest-of-jmaddock/pytest-760/test_scenario_scenario4_0/IN.DAT
+   Tag No. : 1.0.17-919-g783b4651
+    Branch : issue-1122-res-TF-coil-ground-ins
+   Git log : Merge branch 'develop' into issue-1122-res-TF-coil-ground-ins
+ Date/time :  6 Jan 2021 16:45:24 +00:00(hh:mm) UTC
+      User : skahn
+  Computer : J0320
+ Directory : /tmp/pytest-of-skahn/pytest-111/test_solver0
+     Input : /tmp/pytest-of-skahn/pytest-111/test_scenario_scenario5_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -105,18 +105,18 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
     1  Beta consistency                      =  1.4470E-01             -3.2618E-07                 2.2541E-06
     2  Global power balance consistency      =  1.5068E+00 MW/m3        8.0468E-06 MW/m3          -5.3404E-06
-    3  Density upper limit                   <  2.4404E+20 /m3          1.2917E+08 /m3             5.2935E-13
+    3  Density upper limit                   <  2.4404E+20 /m3          1.2878E+08 /m3             5.2780E-13
     4  Beam ion density consistency          =  1.5292E+18 /m3         -3.4171E+13 /m3             2.2346E-05
     5  Neutron wall load upper limit         <  1.0180E+00 MW/m2       -4.0227E-06 MW/m2          -3.9515E-06
     6  Fusion power upper limit              <  1.6200E+02 MW           6.3981E-04 MW             -3.9494E-06
     7  Radial build consistency              =  1.7000E+00 m            0.0000E+00 m              -0.0000E+00
     8  L-H power threshold limit             <  1.7084E+01 MW          -1.9097E-03 MW              1.1177E-04
     9  Radiation fraction upper limit        <  1.5068E+00 MW/m3       -2.1957E-05 MW/m3           1.7227E-05
-   10  Beta upper limit                      <  1.9308E-01              2.5469E-13                 1.3192E-12
+   10  Beta upper limit                      <  1.9308E-01              2.5457E-13                 1.3185E-12
    11  Injection power upper limit           <  8.0000E+01 MW          -1.7881E-03 MW              2.2351E-05
    12  Average centrepost temperature        =  7.3753E+01 deg C        6.6915E-06 deg C          -9.0728E-08
    13  Peak centrepost temp. upper limit     <  2.0000E+02 deg C        1.1895E-05 deg C          -1.1895E-07
-   14  Ip/Irod upper limit                   <  7.6151E-01              8.1661E-17                -2.2204E-16
+   14  Ip/Irod upper limit                   <  7.6151E-01             -1.6332E-16                 4.4409E-16
    15  Psep / R upper limit                  <  1.9998E+01 MW/m         1.1234E-03 MW/m           -1.1178E-04
  
  ******************************************** Final Feasible Point ********************************************
@@ -579,23 +579,32 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
    4          4.109         -4.421
    5          0.786         -4.421
  
- Tapered Centrepost Dimensions:
+ Tapered Centrepost TF coil Dimensions:
  
- Radius of the centrepost at the midplane (m)                             (r_tf_inboard_out)        5.406E-01     
- Radius of the ends of the centrepost (m)                                 (r_cp_top)                7.863E-01     
+ TF coil centrepost outer radius at midplane (m)                          (r_tf_inboard_out)        5.406E-01     
+ TF coil centrepost outer radius at its top (m)                           (r_cp_top)                7.863E-01     
  Top/miplane TF CP radius ratio (-)                                       (f_r_cp)                  1.455E+00     
  Distance from the midplane to the top of the tapered section (m)         (h_cp_top)                2.671E+00     
  Distance from the midplane to the top of the centrepost (m)              (hmax + tfthko)           4.962E+00     
  
  Bucking cylinder information:
  
+ Casing cross section area (per leg) (m2)                                 (acasetf)                 7.459E-03     
  Inboard leg case plasma side wall thickness (m)                          (casthi)                  2.703E-02     
  Inboard leg bucking cylinder thickness (m)                               (thkcas)                  0.000E+00     
+ 
+ Inboard TFC conductor sector geometry:
+ 
+ Inboard TFC conductor sector area with gr insulation (per leg) (m2)      (awpc))                   6.904E-02     
+ Inboard TFC conductor sector area (per leg) (m2)                         (aswp)                    6.904E-02     
+ Inboard conductor sector radial thickness (m)                            (dr_tf_wp)                5.135E-01     
+ Central collumn top conductor sector radial thickness (m)                (dr_tf_wp_top)            7.593E-01     
+ Ground wall insulation thickness (m)                                     (tinstf)                  0.000E+00     
  
  Coil turn information:
  
  Number of turns per TF leg                                               (n_tf_turn)               1.000E+00     
- Turn insulation thickness                                                (tinstf)                  0.000E+00     
+ Turn insulation thickness                                                (thicndut)                8.000E-04     
  Mid-plane CP cooling fraction                                            (fcoolcp)                 1.453E-01  ITV
  Outboard leg current per turn (A)                                        (cpttf)                   2.125E+06     
  Inboard leg conductor volume (m3)                                        (vol_cond_cp)             1.299E+01     
@@ -606,26 +615,25 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Superconductor mass per coil (kg)                                        (whtconsc)                0.000E+00  OP 
  Copper mass per coil (kg)                                                (whtconcu)                3.542E+04  OP 
  Steel conduit mass per coil (kg)                                         (whtconsh)                0.000E+00  OP 
- Conduit insulation mass per coil (kg)                                    (whtconin)                0.000E+00  OP 
- Total conductor mass per coil (kg)                                       (whtcon)                  0.000E+00  OP 
- Mass of inboard legs (kg)                                                (whtcp)                   1.249E+05     
+ Conduit insulation mass per coil (kg)                                    (whtconin)                6.929E+01  OP 
+ Mass of inboard legs (kg)                                                (whtcp)                   1.234E+05     
  Mass of outboard legs (kg)                                               (whttflgs)                3.099E+05     
- Mass of each TF coil (kg)                                                (whttf/n_tf)              3.624E+04  OP 
- Total TF coil mass (kg)                                                  (whttf)                   4.348E+05     
+ Mass of each TF coil (kg)                                                (whttf/n_tf)              3.611E+04  OP 
+ Total TF coil mass (kg)                                                  (whttf)                   4.333E+05     
  
  Maximum B field and currents:
  
  Nominal peak field assuming toroidal symmetry (T)                        (bmaxtf)                  9.947E+00  OP 
  Total current in all TF coils (MA)                                       (ritfc/1.D6)              2.550E+01  OP 
  TF coil current (summed over all coils) (A)                              (ritfc)                   2.550E+07     
- Inboard leg mid-plane conductor current density (A/m2)                   (oacdcp)                  3.656E+07     
+ Inboard leg mid-plane conductor current density (A/m2)                   (oacdcp)                  2.778E+07     
  Outboard leg conductor current density (A/m2)                            (cdtfleg)                 1.365E+08     
  Total stored energy in TF coils (GJ)                                     (estotftgj)               1.797E+00  OP 
  
  TF Forces:
  
  Inboard vertical tension per coil (N)                                    (vforce)                  5.018E+06  OP 
- Outboard vertical tension per coil (N)                                   (vforce_outboard)         9.179E+06  OP 
+ Outboard vertical tension per coil (N)                                   (vforce_outboard)         9.180E+06  OP 
  inboard vertical tension fraction (-)                                    (f_vforce_inboard)        3.534E-01  OP 
  Centring force per coil (N/m)                                            (cforce)                  1.057E+07  OP 
  
@@ -647,19 +655,29 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Ripple at plasma edge (%)                                                (ripple)                  4.899E-01     
    Ripple calculation to be re-defined for picure frame coils
  
- Energy and Forces :
+ Radial build of TF coil centre-line :
  
+                                          Thickness (m)    Outer radius (m)
+ Innermost edge of TF coil                    0.000           0.000                       
+ Coil bucking cylindre                        0.000           0.000   (thkcas)            
+ Conductor ground insulation                  0.000           0.000   (tinstf)            
+ Conductor - first half                       0.257           0.257   (dr_tf_wp/2-tinstf) 
+ Conductor - second half                      0.257           0.514   (dr_tf_wp/2-tinstf) 
+ Conductor ground insulation                  0.000           0.514   (tinstf)            
+ Plasma side TF coil support                  0.027           0.541   (casthi)            
+ TF coil dimensions are consistent
  
- TF coil inner surface shape is given by a rectangle with the
- following inner points (Note that this does not account
- for the ST tapered centrepost):
+ Radial build of TF coil at central collumn top :
  
- point         x(m)           y(m)
-   1          0.786          4.421
-   2          4.109          4.421
-   3          4.109          0.000
-   4          4.109         -4.421
-   5          0.786         -4.421
+                                          Thickness (m)    Outer radius (m)
+ Innermost edge of TF coil                    0.000           0.000                       
+ Coil bucking cylindre                        0.000           0.000   (thkcas)            
+ Conductor ground insulation                  0.000           0.000   (tinstf)            
+ Conductor - first half                       0.380           0.380   (dr_tf_wp_top/2-tins
+ Conductor - second half                      0.380           0.759   (dr_tf_wp_top/2-tins
+ Conductor ground insulation                  0.000           0.759   (tinstf)            
+ Plasma side TF coil support                  0.027           0.786   (casthi)            
+ Top TF coil dimensions are consistent
  
  *************************************** Centrepost Coolant Parameters ****************************************
  
@@ -825,10 +843,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Outer PF coil fence mass (kg)                                            (fncmass)                 8.388E+03  OP 
  Intercoil support structure mass (kg)                                    (aintmass)                1.989E+05  OP 
  Mass of cooled components (kg)                                           (coldmass)                0.000E+00  OP 
- Gravity support structure mass (kg)                                      (clgsmass)                1.494E+04  OP 
+ Gravity support structure mass (kg)                                      (clgsmass)                1.492E+04  OP 
  Torus leg support mass (kg)                                              (gsm1)                    5.040E+03  OP 
- Ring beam mass (kg)                                                      (gsm2)                    2.367E+04  OP 
- Ring legs mass (kg)                                                      (gsm3)                    1.570E+04  OP 
+ Ring beam mass (kg)                                                      (gsm2)                    2.365E+04  OP 
+ Ring legs mass (kg)                                                      (gsm3)                    1.568E+04  OP 
  
  ******************************************** PF Coil Inductances *********************************************
  
@@ -998,7 +1016,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  ST centrepost TF heating (MW)                                            (pnuc_cp_tf)              6.367E+00  OP 
  ST centrepost shield heating (MW)                                        (pnuc_cp_sh)              9.386E+00  OP 
  ST centrepost total heating (MW)                                         (pnuc_cp)                 6.367E+00  OP 
- Total nuclear heating in TF+PF coils (CS is negligible) (MW)             (ptfnuc)                  1.494E-03  OP 
+ Total nuclear heating in TF+PF coils (CS is negligible) (MW)             (ptfnuc)                  1.488E-03  OP 
  Total nuclear heating in FW (MW)                                         (pnucfw)                  2.606E+00  OP 
  Total nuclear heating in the blanket (including emult) (MW)              (pnucblkt)                1.039E+02  OP 
  (Note: emult is fixed for this model inside the code)
@@ -1294,7 +1312,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Heat extracted from shield  (MW)                                         (pthermshld)                  9.500  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                  68.802  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
- Total (MW)                                                                                           258.879  OP 
+ Total (MW)                                                                                           258.880  OP 
  
  WARNING: Power balance for reactor is in error by more than 5 MW.
  Electrical Power Balance :

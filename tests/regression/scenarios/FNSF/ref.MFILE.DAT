@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "1.0.17   "
- Date_of_run_____________________________________________________________ (date)________________________     "16/12/2020"
- Time_of_run_____________________________________________________________ (time)________________________     "08:56"
- User____________________________________________________________________ (username)____________________     "jmaddock"
+ Date_of_run_____________________________________________________________ (date)________________________     "06/01/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "16:45"
+ User____________________________________________________________________ (username)____________________     "skahn"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "FNSF (Menard et al. 2016)                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.17-722-g484ae96b"                                                                              
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch 'kzarebsk/1092-additional-tests' into '1092-convert-project-to-python-wrapped-fortran'
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jmaddock/pytest-760/test_scenario_scenario4_0/IN.DAT                                                                                                                                     "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.17-919-g783b4651"                                                                              
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "issue-1122-res-TF-coil-ground-ins"                                                                 
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch 'develop' into issue-1122-res-TF-coil-ground-ins"                                     
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-skahn/pytest-111/test_scenario_scenario5_0/IN.DAT                                                                                                                                        "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -80,18 +80,18 @@
  fimp(13)_(range_normalised)_____________________________________________ (nitvar019)___________________      0.0000E+00    
  Beta_consistency__________________normalised_residue____________________ (normres001)__________________      2.2541E-06    
  Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -5.3404E-06    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      5.2935E-13    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      5.2780E-13    
  Beam_ion_density_consistency______normalised_residue____________________ (normres004)__________________      2.2346E-05    
  Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres005)__________________     -3.9515E-06    
  Fusion_power_upper_limit__________normalised_residue____________________ (normres006)__________________     -3.9494E-06    
  Radial_build_consistency__________normalised_residue____________________ (normres007)__________________     -0.0000E+00    
  L-H_power_threshold_limit_________normalised_residue____________________ (normres008)__________________      1.1177E-04    
  Radiation_fraction_upper_limit____normalised_residue____________________ (normres009)__________________      1.7227E-05    
- Beta_upper_limit__________________normalised_residue____________________ (normres010)__________________      1.3192E-12    
+ Beta_upper_limit__________________normalised_residue____________________ (normres010)__________________      1.3185E-12    
  Injection_power_upper_limit_______normalised_residue____________________ (normres011)__________________      2.2351E-05    
  Average_centrepost_temperature____normalised_residue____________________ (normres012)__________________     -9.0728E-08    
  Peak_centrepost_temp._upper_limit_normalised_residue____________________ (normres013)__________________     -1.1895E-07    
- Ip/Irod_upper_limit_______________normalised_residue____________________ (normres014)__________________     -2.2204E-16    
+ Ip/Irod_upper_limit_______________normalised_residue____________________ (normres014)__________________      4.4409E-16    
  Psep_/_R_upper_limit______________normalised_residue____________________ (normres015)__________________     -1.1178E-04    
  # Final Feasible Point #
  # Plant Availability #
@@ -423,15 +423,21 @@
  TF_coil_arc_point_4_Z_(m)_______________________________________________ (yarc(4))_____________________     -4.4214E+00    
  TF_coil_arc_point_5_R_(m)_______________________________________________ (xarc(5))_____________________      7.8629E-01    
  TF_coil_arc_point_5_Z_(m)_______________________________________________ (yarc(5))_____________________     -4.4214E+00    
- Radius_of_the_centrepost_at_the_midplane_(m)____________________________ (r_tf_inboard_out)____________      5.4057E-01    
- Radius_of_the_ends_of_the_centrepost_(m)________________________________ (r_cp_top)____________________      7.8629E-01    
+ TF_coil_centrepost_outer_radius_at_midplane_(m)_________________________ (r_tf_inboard_out)____________      5.4057E-01    
+ TF_coil_centrepost_outer_radius_at_its_top_(m)__________________________ (r_cp_top)____________________      7.8629E-01    
  Top/miplane_TF_CP_radius_ratio_(-)______________________________________ (f_r_cp)______________________      1.4545E+00    
  Distance_from_the_midplane_to_the_top_of_the_tapered_section_(m)________ (h_cp_top)____________________      2.6714E+00    
  Distance_from_the_midplane_to_the_top_of_the_centrepost_(m)_____________ (hmax_+_tfthko)_______________      4.9620E+00    
+ Casing_cross_section_area_(per_leg)_(m2)________________________________ (acasetf)_____________________      7.4590E-03    
  Inboard_leg_case_plasma_side_wall_thickness_(m)_________________________ (casthi)______________________      2.7029E-02    
  Inboard_leg_bucking_cylinder_thickness_(m)______________________________ (thkcas)______________________      0.0000E+00    
+ Inboard_TFC_conductor_sector_area_with_gr_insulation_(per_leg)_(m2)_____ (awpc))_______________________      6.9043E-02    
+ Inboard_TFC_conductor_sector_area_(per_leg)_(m2)________________________ (aswp)________________________      6.9043E-02    
+ Inboard_conductor_sector_radial_thickness_(m)___________________________ (dr_tf_wp)____________________      5.1354E-01    
+ Central_collumn_top_conductor_sector_radial_thickness_(m)_______________ (dr_tf_wp_top)________________      7.5926E-01    
+ Ground_wall_insulation_thickness_(m)____________________________________ (tinstf)______________________      0.0000E+00    
  Number_of_turns_per_TF_leg______________________________________________ (n_tf_turn)___________________      1.0000E+00    
- Turn_insulation_thickness_______________________________________________ (tinstf)______________________      0.0000E+00    
+ Turn_insulation_thickness_______________________________________________ (thicndut)____________________      8.0000E-04    
  Mid-plane_CP_cooling_fraction___________________________________________ (fcoolcp)_____________________      1.4531E-01 ITV
  Outboard_leg_current_per_turn_(A)_______________________________________ (cpttf)_______________________      2.1250E+06    
  Inboard_leg_conductor_volume_(m3)_______________________________________ (vol_cond_cp)_________________      1.2994E+01    
@@ -439,21 +445,20 @@
  Superconductor_mass_per_coil_(kg)_______________________________________ (whtconsc)____________________      0.0000E+00 OP 
  Copper_mass_per_coil_(kg)_______________________________________________ (whtconcu)____________________      3.5417E+04 OP 
  Steel_conduit_mass_per_coil_(kg)________________________________________ (whtconsh)____________________      0.0000E+00 OP 
- Conduit_insulation_mass_per_coil_(kg)___________________________________ (whtconin)____________________      0.0000E+00 OP 
- Total_conductor_mass_per_coil_(kg)______________________________________ (whtcon)______________________      0.0000E+00 OP 
- Mass_of_inboard_legs_(kg)_______________________________________________ (whtcp)_______________________      1.2494E+05    
+ Conduit_insulation_mass_per_coil_(kg)___________________________________ (whtconin)____________________      6.9295E+01 OP 
+ Mass_of_inboard_legs_(kg)_______________________________________________ (whtcp)_______________________      1.2345E+05    
  Mass_of_outboard_legs_(kg)______________________________________________ (whttflgs)____________________      3.0989E+05    
- Mass_of_each_TF_coil_(kg)_______________________________________________ (whttf/n_tf)__________________      3.6236E+04 OP 
- Total_TF_coil_mass_(kg)_________________________________________________ (whttf)_______________________      4.3483E+05    
+ Mass_of_each_TF_coil_(kg)_______________________________________________ (whttf/n_tf)__________________      3.6112E+04 OP 
+ Total_TF_coil_mass_(kg)_________________________________________________ (whttf)_______________________      4.3334E+05    
  Nominal_peak_field_assuming_toroidal_symmetry_(T)_______________________ (bmaxtf)______________________      9.9465E+00 OP 
  Total_current_in_all_TF_coils_(MA)______________________________________ (ritfc/1.D6)__________________      2.5500E+01 OP 
  TF_coil_current_(summed_over_all_coils)_(A)_____________________________ (ritfc)_______________________      2.5500E+07    
- Inboard_leg_mid-plane_conductor_current_density_(A/m2)__________________ (oacdcp)______________________      3.6558E+07    
+ Inboard_leg_mid-plane_conductor_current_density_(A/m2)__________________ (oacdcp)______________________      2.7777E+07    
  Outboard_leg_conductor_current_density_(A/m2)___________________________ (cdtfleg)_____________________      1.3654E+08    
  Total_stored_energy_in_TF_coils_(GJ)____________________________________ (estotftgj)___________________      1.7974E+00 OP 
- Inboard_vertical_tension_per_coil_(N)___________________________________ (vforce)______________________      5.0178E+06 OP 
- Outboard_vertical_tension_per_coil_(N)__________________________________ (vforce_outboard)_____________      9.1794E+06 OP 
- inboard_vertical_tension_fraction_(-)___________________________________ (f_vforce_inboard)____________      3.5343E-01 OP 
+ Inboard_vertical_tension_per_coil_(N)___________________________________ (vforce)______________________      5.0177E+06 OP 
+ Outboard_vertical_tension_per_coil_(N)__________________________________ (vforce_outboard)_____________      9.1801E+06 OP 
+ inboard_vertical_tension_fraction_(-)___________________________________ (f_vforce_inboard)____________      3.5341E-01 OP 
  Centring_force_per_coil_(N/m)___________________________________________ (cforce)______________________      1.0568E+07 OP 
  CP_resistivity_(ohm.m)__________________________________________________ (rhocp)_______________________      2.1822E-08    
  Leg_resistivity_(ohm.m)_________________________________________________ (rhotfleg)____________________      2.1822E-08    
@@ -465,16 +470,6 @@
  Average_leg_temperature_(K)_____________________________________________ (tlegav)______________________     -1.0000E+00    
  Max_allowed_ripple_amplitude_at_plasma_(%)______________________________ (ripmax)______________________      1.0000E+00    
  Ripple_at_plasma_edge_(%)_______________________________________________ (ripple)______________________      4.8992E-01    
- TF_coil_arc_point_1_R_(m)_______________________________________________ (xarc(1))_____________________      7.8629E-01    
- TF_coil_arc_point_1_Z_(m)_______________________________________________ (yarc(1))_____________________      4.4214E+00    
- TF_coil_arc_point_2_R_(m)_______________________________________________ (xarc(2))_____________________      4.1094E+00    
- TF_coil_arc_point_2_Z_(m)_______________________________________________ (yarc(2))_____________________      4.4214E+00    
- TF_coil_arc_point_3_R_(m)_______________________________________________ (xarc(3))_____________________      4.1094E+00    
- TF_coil_arc_point_3_Z_(m)_______________________________________________ (yarc(3))_____________________      0.0000E+00    
- TF_coil_arc_point_4_R_(m)_______________________________________________ (xarc(4))_____________________      4.1094E+00    
- TF_coil_arc_point_4_Z_(m)_______________________________________________ (yarc(4))_____________________     -4.4214E+00    
- TF_coil_arc_point_5_R_(m)_______________________________________________ (xarc(5))_____________________      7.8629E-01    
- TF_coil_arc_point_5_Z_(m)_______________________________________________ (yarc(5))_____________________     -4.4214E+00    
  # Centrepost Coolant Parameters #
  Centrepost_coolant_fraction_____________________________________________ (fcoolcp)_____________________      1.4531E-01 ITV
  Average_coolant_channel_diameter_(m)____________________________________ (dcool)_______________________      6.0000E-03    
@@ -573,10 +568,10 @@
  Outer_PF_coil_fence_mass_(kg)___________________________________________ (fncmass)_____________________      8.3877E+03 OP 
  Intercoil_support_structure_mass_(kg)___________________________________ (aintmass)____________________      1.9891E+05 OP 
  Mass_of_cooled_components_(kg)__________________________________________ (coldmass)____________________      0.0000E+00 OP 
- Gravity_support_structure_mass_(kg)_____________________________________ (clgsmass)____________________      1.4935E+04 OP 
+ Gravity_support_structure_mass_(kg)_____________________________________ (clgsmass)____________________      1.4924E+04 OP 
  Torus_leg_support_mass_(kg)_____________________________________________ (gsm1)________________________      5.0402E+03 OP 
- Ring_beam_mass_(kg)_____________________________________________________ (gsm2)________________________      2.3670E+04 OP 
- Ring_legs_mass_(kg)_____________________________________________________ (gsm3)________________________      1.5700E+04 OP 
+ Ring_beam_mass_(kg)_____________________________________________________ (gsm2)________________________      2.3653E+04 OP 
+ Ring_legs_mass_(kg)_____________________________________________________ (gsm3)________________________      1.5678E+04 OP 
  # PF Coil Inductances #
  # Heat transfer parameters at the coolant outlet: Inboard first wall #
  Radius_of_coolant_channel_(m)___________________________________________ (afw)_________________________      6.0000E-03    
@@ -702,7 +697,7 @@
  ST_centrepost_TF_heating_(MW)___________________________________________ (pnuc_cp_tf)__________________      6.3675E+00 OP 
  ST_centrepost_shield_heating_(MW)_______________________________________ (pnuc_cp_sh)__________________      9.3864E+00 OP 
  ST_centrepost_total_heating_(MW)________________________________________ (pnuc_cp)_____________________      6.3675E+00 OP 
- Total_nuclear_heating_in_TF+PF_coils_(CS_is_negligible)_(MW)____________ (ptfnuc)______________________      1.4936E-03 OP 
+ Total_nuclear_heating_in_TF+PF_coils_(CS_is_negligible)_(MW)____________ (ptfnuc)______________________      1.4885E-03 OP 
  Total_nuclear_heating_in_FW_(MW)________________________________________ (pnucfw)______________________      2.6057E+00 OP 
  Total_nuclear_heating_in_the_blanket_(including_emult)_(MW)_____________ (pnucblkt)____________________      1.0390E+02 OP 
  Total_nuclear_heating_in_the_shield_(MW)________________________________ (pnucshld)____________________      6.6666E-02 OP 

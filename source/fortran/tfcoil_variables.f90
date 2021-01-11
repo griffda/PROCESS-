@@ -33,7 +33,7 @@ module tfcoil_variables
   !! single turn insulation area (m2)
 
   real(dp) :: aiwp
-  !! winding pack insulation area (m2)
+  !! winding pack turn insulation area per coil (m2)
 
   real(dp) :: alstrtf
   !! Allowable Tresca stress in TF coil structural material (Pa)
@@ -675,7 +675,7 @@ module tfcoil_variables
   !! coolant fraction of TF coil inboard legs (`iteration variable 23`)
 
   real(dp) :: fcoolleg
-  !! coolant fraction of TF coil inboard legs
+  !! coolant fraction of TF coil outboard legs
   
   real(dp) :: a_cp_cool
   !! Centrepost cooling area toroidal cross-section (constant over the whole CP)
