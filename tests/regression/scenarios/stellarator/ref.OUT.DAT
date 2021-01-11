@@ -12,16 +12,16 @@
  ************************************** Power Reactor Optimisation Code ***************************************
  **************************************************************************************************************
  
-   Program : ./process.exe
+   Program :
    Version : 1.0.17   Release Date :: 2020-02-25
-   Tag No. : 1.0.17-409-g7c7b1b4f
-    Branch : develop
-   Git log : Merge branch '1145-latest-markdown-version-breaks-ford-on-develop' int
- Date/time : 21 Oct 2020 16:16:59 +01:00(hh:mm) UTC
-      User : jmaddock
-  Computer : J0826UBUNTU
- Directory : /home/jmaddock/process/test_suite
-     Input : IN.DAT
+   Tag No. : 1.0.17-919-g783b4651
+    Branch : issue-1122-res-TF-coil-ground-ins
+   Git log : Merge branch 'develop' into issue-1122-res-TF-coil-ground-ins
+ Date/time :  6 Jan 2021 16:46:25 +00:00(hh:mm) UTC
+      User : skahn
+  Computer : J0320
+ Directory : /tmp/pytest-of-skahn/pytest-111/test_scenario_scenario17_0
+     Input : /tmp/pytest-of-skahn/pytest-111/test_scenario_scenario19_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  
@@ -1048,9 +1048,9 @@ aspect   = 12.22        *Aspect ratio
 bt       = 5.5          *Toroidal field on axis (T)
 ifispact = 0            *Switch for neutronics calculations (0: Off)
 ignite   = 1            *Switch for ignition assumption (1: Ignited)
-iinvqd   = 1            *Switch for inverse quadrature in L-mode scaling laws 5 and 9 (1: Inverse quadrature with Neo-Alcator tau-
+iinvqd   = 1            *Switch for inverse quadrature in L-mode scaling laws 5 and 9 (1: Inverse quadrature with Neo-Alcator tau-E used)
 ipedestal = 0           *Switch for pedestal profiles (0: Parabolic Profiles)
-iradloss = 1            *Switch for radiation loss term usage in power balance (1: Total power lost is scaling power plus core rad
+iradloss = 1            *Switch for radiation loss term usage in power balance (1: Total power lost is scaling power plus core radiation only)
 isc      = 38           *Switch for energy confinement time scaling law (38: ISS04)
 kappa    = 1.001        *Plasma separatrix elongation
 rmajor   = 22.0         *Plasma major radius (m)
@@ -1061,6 +1061,7 @@ tratio   = 0.95         *Ion temperature / electron temperature
 
 *--------------Stellarator Variables---------------*
 
+istell   = 1            *Switch for stellarator option
 bmn      = 0.001        *Relative radial field perturbation
 f_asym   = 1.1          *Divertor heat load peaking factor
 f_rad    = 0.85         *Radiated power fraction in sol
@@ -1162,11 +1163,11 @@ runtitle = HELIAS-5B
 
 fcutfsu  = 0.69         *Copper fraction of cable conductor (TF coils)
 i_tf_sc_mat = 1         *Switch for superconductor material in tf coils (1: ITER Nb3Sn)
-tftmp    = 4.2          *Peak helium coolant temperature in TF coils and PF coils (k)
-t_turn   = 0.056        *Dimension conductor area including steel and insulation.
-thicndut = 0.002        *Conduit insulation thickness (m)
-thwcndut = 0.0012       *TF coil conduit case thickness (m)
-vftf     = 0.3          *Coolant fraction of TF coil leg (i_tf_sup=0)
+tftmp     = 4.2         *Peak helium coolant temperature in TF coils and PF coils (k)
+t_turn_tf = 0.056       *Dimension conductor area including steel and insulation.
+thicndut  = 0.002       *Conduit insulation thickness (m)
+thwcndut  = 0.0012      *TF coil conduit case thickness (m)
+vftf      = 0.3         *Coolant fraction of TF coil leg (i_tf_sup=0)
 
 *-----------------Pfcoil Variables-----------------*
 
@@ -1200,4 +1201,3 @@ tlife    = 40.0         *Plant life (years)
 ucblvd   = 280.0        *Unit cost for blanket vanadium ($/kg)
 ucdiv    = 5.0E5        *Cost of divertor blade ($)
 ucme     = 3.0E8        *Unit cost of maintenance equipment ($)
-

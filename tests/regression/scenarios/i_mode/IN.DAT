@@ -222,7 +222,7 @@ bt = 5.7
 ixc = 3
 boundl(3) = 7.0
 boundu(3) = 12.0
-rmajor = 8.9
+rmajor = 9.
 
 * te [keV]
 ixc = 4
