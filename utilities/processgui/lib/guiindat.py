@@ -22,10 +22,6 @@ OMISSIONS = list()
 ioptimz_des = {"-1": "for no optimisation HYBRD only",
                "0": "for HYBRD and VMCON (not recommended)",
                "1": "for optimisation VMCON only"}
-<<<<<<< HEAD
-=======
-
->>>>>>> 24e4d72793ba597a813007586f1440fcc3fd81f8
 
 class BColours:
     HEADER = '\033[95m'
