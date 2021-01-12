@@ -231,10 +231,10 @@ def cumulative_radial_build(section, mfile_data, scan):
             cumulative_build += mfile_data.data["d_vv_in"].get_scan(scan)
         elif "d_vv_out" in item:
             cumulative_build += mfile_data.data["d_vv_out"].get_scan(scan)
-        elif "d_vv_top" in item:
-            cumulative_build += mfile_data.data["d_vv_top"].get_scan(scan)
-        elif "d_vv_bot" in item:
-            cumulative_build += mfile_data.data["d_vv_bot"].get_scan(scan)
+        #elif "d_vv_top" in item:
+        #    cumulative_build += mfile_data.data["d_vv_top"].get_scan(scan)
+        #elif "d_vv_bot" in item:
+        #    cumulative_build += mfile_data.data["d_vv_bot"].get_scan(scan)
         else:
             cumulative_build += mfile_data.data[item].get_scan(scan)
         if item == section:
@@ -1112,9 +1112,9 @@ def plot_vacuum_vessel(axis, mfile_data, scan):
 
     # Inner side (nearest to the plasma)
     radx = (cumulative_radial_build("shldoth", mfile_data, scan)
-            + cumulative_radial_build("d_vv_out", mfile_data, scan)) / 2.0
+            + cumulative_radial_build("d_vv_in", mfile_data, scan)) / 2.0
     rminx = (cumulative_radial_build("shldoth", mfile_data, scan)
-             - cumulative_radial_build("d_vv_out", mfile_data, scan)) / 2.0
+             - cumulative_radial_build("d_vv_in", mfile_data, scan)) / 2.0
 
     if i_single_null==1:
         kapx = (cumulative_upper['d_vv_top'] - upper["d_vv_top"]) / rminx
@@ -1155,9 +1155,9 @@ def plot_shield(axis, mfile_data, scan):
 
     # Side furthest from plasma
     radx = (cumulative_radial_build("shldoth", mfile_data, scan)
-            + cumulative_radial_build("d_vv_out", mfile_data, scan)) / 2.0
+            + cumulative_radial_build("d_vv_in", mfile_data, scan)) / 2.0
     rminx = (cumulative_radial_build("shldoth", mfile_data, scan)
-             - cumulative_radial_build("d_vv_out", mfile_data, scan)) / 2.0
+             - cumulative_radial_build("d_vv_in", mfile_data, scan)) / 2.0
 
     if i_single_null==1:
         kapx = cumulative_upper['shldtth'] / rminx
