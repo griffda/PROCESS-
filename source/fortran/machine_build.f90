@@ -68,7 +68,7 @@ contains
       rminor, rmajor
     use process_output, only: ocmmnt, oheadr, ovarre, ovarin, obuild, oblnkl
     use tfcoil_variables, only: ripple, tinstf, wwp1, drtop, i_tf_sup, n_tf, &
-      dr_tf_wp, ripmax, thkcas, tfinsgap, casthi
+      dr_tf_wp, ripmax, thkcas, casthi
     implicit none
 
     !  Arguments

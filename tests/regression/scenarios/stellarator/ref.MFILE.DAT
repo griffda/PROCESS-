@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "1.0.17   "
- Date_of_run_____________________________________________________________ (date)________________________     "21/10/2020"
- Time_of_run_____________________________________________________________ (time)________________________     "16:16"
- User____________________________________________________________________ (username)____________________     "jmaddock"
+ Date_of_run_____________________________________________________________ (date)________________________     "06/01/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "16:46"
+ User____________________________________________________________________ (username)____________________     "skahn"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "HELIAS-5B                                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.17-409-g7c7b1b4f"                                                                              
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "develop"                                                                                           
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch '1145-latest-markdown-version-breaks-ford-on-develop' int"                            
- Input_filename__________________________________________________________ (fileprefix)__________________     "                                                                                                                                                                                                        "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.17-919-g783b4651"                                                                              
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "issue-1122-res-TF-coil-ground-ins"                                                                 
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch 'develop' into issue-1122-res-TF-coil-ground-ins"                                     
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-skahn/pytest-111/test_scenario_scenario19_0/IN.DAT                                                                                                                                       "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -329,10 +329,7 @@
  Machine_bore_(m)________________________________________________________ (bore)________________________      1.7808E+01 ITV
  Coil_inboard_leg_(m)____________________________________________________ (deltf)_______________________      7.4864E-01    
  Gap_(m)_________________________________________________________________ (gapds)_______________________      2.5000E-02    
- Inboard_Vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_in)_____________________      3.5000E-01    
- Outboard_vacuum_vessel_radial_thickness_(m)_____________________________ (d_vv_out)____________________      3.5000E-01    
- Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.5000E-01    
- Underside_vacuum_vessel_radial_thickness_(m)____________________________ (d_vv_bot)____________________      3.5000E-01    
+ Vacuum_vessel_radial_thickness_(m)______________________________________ (d_vv_in)_____________________      3.5000E-01    
  Inner_radiation_shield_radial_thickness_(m)_____________________________ (shldith)_____________________      4.0000E-01    
  Inboard_blanket_radial_thickness_(m)____________________________________ (blnkith)_____________________      7.0000E-01    
  Inboard_first_wall_radial_thickness_(m)_________________________________ (fwith)_______________________      1.8000E-02    
@@ -611,8 +608,7 @@
  # End of PROCESS Output #
  # End of PROCESS Output #
  # Copy of PROCESS Input Follows #
-***********************************************
-*************************************************************************
+************************************************************************************************************************
 *****                                                               *****
 *****                        HELIAS-5B                              *****
 *****               Stuart Muldrew (17/01/2019)                     *****
@@ -675,9 +671,9 @@ aspect   = 12.22        *Aspect ratio
 bt       = 5.5          *Toroidal field on axis (T)
 ifispact = 0            *Switch for neutronics calculations (0: Off)
 ignite   = 1            *Switch for ignition assumption (1: Ignited)
-iinvqd   = 1            *Switch for inverse quadrature in L-mode scaling laws 5 and 9 (1: Inverse quadrature with Neo-Alcator tau-
+iinvqd   = 1            *Switch for inverse quadrature in L-mode scaling laws 5 and 9 (1: Inverse quadrature with Neo-Alcator tau-E used)
 ipedestal = 0           *Switch for pedestal profiles (0: Parabolic Profiles)
-iradloss = 1            *Switch for radiation loss term usage in power balance (1: Total power lost is scaling power plus core rad
+iradloss = 1            *Switch for radiation loss term usage in power balance (1: Total power lost is scaling power plus core radiation only)
 isc      = 38           *Switch for energy confinement time scaling law (38: ISS04)
 kappa    = 1.001        *Plasma separatrix elongation
 rmajor   = 22.0         *Plasma major radius (m)
@@ -688,6 +684,7 @@ tratio   = 0.95         *Ion temperature / electron temperature
 
 *--------------Stellarator Variables---------------*
 
+istell   = 1            *Switch for stellarator option
 bmn      = 0.001        *Relative radial field perturbation
 f_asym   = 1.1          *Divertor heat load peaking factor
 f_rad    = 0.85         *Radiated power fraction in sol
@@ -789,11 +786,11 @@ runtitle = HELIAS-5B
 
 fcutfsu  = 0.69         *Copper fraction of cable conductor (TF coils)
 i_tf_sc_mat = 1         *Switch for superconductor material in tf coils (1: ITER Nb3Sn)
-tftmp    = 4.2          *Peak helium coolant temperature in TF coils and PF coils (k)
-t_turn   = 0.056        *Dimension conductor area including steel and insulation.
-thicndut = 0.002        *Conduit insulation thickness (m)
-thwcndut = 0.0012       *TF coil conduit case thickness (m)
-vftf     = 0.3          *Coolant fraction of TF coil leg (i_tf_sup=0)
+tftmp     = 4.2         *Peak helium coolant temperature in TF coils and PF coils (k)
+t_turn_tf = 0.056       *Dimension conductor area including steel and insulation.
+thicndut  = 0.002       *Conduit insulation thickness (m)
+thwcndut  = 0.0012      *TF coil conduit case thickness (m)
+vftf      = 0.3         *Coolant fraction of TF coil leg (i_tf_sup=0)
 
 *-----------------Pfcoil Variables-----------------*
 
@@ -827,4 +824,3 @@ tlife    = 40.0         *Plant life (years)
 ucblvd   = 280.0        *Unit cost for blanket vanadium ($/kg)
 ucdiv    = 5.0E5        *Cost of divertor blade ($)
 ucme     = 3.0E8        *Unit cost of maintenance equipment ($)
-
