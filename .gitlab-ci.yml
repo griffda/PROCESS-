@@ -108,6 +108,10 @@ baseline_2019:
       -f tracking/baseline_2019/baseline_2019_MFILE.DAT tracking/baseline_2019/ref_baseline_2019_MFILE.DAT 
       --acc 10.0 
       --baseline
+  artifacts:
+    paths:
+      - tracking/baseline_2019/baseline_2019_MFILE.DAT
+    expire_in: 1 week
   tags:
     - ubuntu
 
@@ -127,6 +131,10 @@ baseline_2018:
       -f tracking/baseline_2018/baseline_2018_MFILE.DAT tracking/baseline_2018/ref_baseline_2018_MFILE.DAT 
       --acc 10.0 
       --baseline
+  artifacts:
+    paths:
+      - tracking/baseline_2018/baseline_2018_MFILE.DAT
+    expire_in: 1 week
   tags:
     - ubuntu
 
