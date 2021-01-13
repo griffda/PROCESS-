@@ -20,6 +20,14 @@ module heat_transport_variables
     real(dp) :: crypmw
     !! cryogenic plant power (MW)
   
+    real(dp) :: crypmw_max
+    !! Maximum cryogenic plant power (MW)
+
+    real(dp) :: f_crypmw
+    !! f-value for maximum cryogenic plant power
+    !! Iteration variable ixc = 164
+    !! Constraint equation icc = 87
+
     real(dp) :: etatf
     !! AC to resistive power conversion for TF coils
   
@@ -176,6 +184,8 @@ module heat_transport_variables
 
       baseel = 5.0D6
       crypmw = 0.0D0
+      crypmw_max = 50.0D0
+      f_crypmw = 1.0D0
       etatf = 0.9D0
       etath = 0.35D0
       fachtmw = 0.0D0

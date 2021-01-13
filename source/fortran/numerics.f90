@@ -17,7 +17,7 @@ module numerics
   integer, parameter :: ipnvars = 175
   !!  ipnvars FIX : total number of variables available for iteration
 
-  integer, parameter :: ipeqns = 86
+  integer, parameter :: ipeqns = 87
   !!  ipeqns  FIX : number of constraint equations available
   
   integer, parameter :: ipnfoms = 19
@@ -186,7 +186,8 @@ module numerics
   !!  <LI> (83) Radial build consistency for stellarators (itv 172 f_avspace)
   !!  <LI> (84) Lower limit for beta (itv 173 fbetatry_lower)
   !!  <LI> (85) Constraint for CP lifetime
-  !!  <LI> (86) Constraint for TF coil turn dimension</UL>
+  !!  <LI> (86) Constraint for TF coil turn dimension
+  !!  <LI> (87) Constraint for TF coil cryogenic power (itv 164 f_crypmw)</UL>
 
   integer, dimension(ipnvars) :: ixc
   
@@ -355,7 +356,7 @@ module numerics
   !! <LI> (161) fbetatry_lower (f-value for equation 84)
   !! <LI> (162) r_cp_top : Top outer radius of the centropost (ST only) (m)
   !! <LI> (163) f_t_turn_tf : f-value for TF coils WP trurn squared dimension constraint 
-  !! <LI> (164) EMPTY : Description
+  !! <LI> (164) f_crypmw : f-value for cryogenic plant power
   !! <LI> (165) EMPTY : Description
   !! <LI> (166) EMPTY : Description
   !! <LI> (167) EMPTY : Description
@@ -524,9 +525,10 @@ contains
       'ne0 > neped                      ',   &
       'toroidalgap >  tftort            ',   &
       'available_space > required_space ',   &
-      'beta > betalim_lower             ',    &
-      'CP lifetime                      ',    &
-      'TFC turn dimension               '    &
+      'beta > betalim_lower             ',   &
+      'CP lifetime                      ',   &
+      'TFC turn dimension               ',   &
+      'TF coil cryogenic plane power    '    &
       /)
 
     ! Please note: All strings between '...' above must be exactly 33 chars long

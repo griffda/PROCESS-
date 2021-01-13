@@ -259,7 +259,7 @@ contains
     use heat_transport_variables, only: htpmw_fw, baseel, fmgdmw, htpmw_div, &
       pwpm2, etath, vachtmw, iprimshld, fpumpdiv, pinjmax, htpmw_blkt, etatf, &
       htpmw_min, fpumpblkt, ipowerflow, htpmw_shld, fpumpshld, trithtmw, &
-      iprimnloss, fpumpfw 
+      iprimnloss, fpumpfw, crypmw_max, f_crypmw
     use ife_variables, only: bldzu, etali, sombdr, gainve, cdriv0, v1dzl, &
       bldrc, fauxbop, pfusife, dcdrv0, fwdr, pdrive, mcdriv, ucconc, shdr, &
       v3dzu, bldzl, rrin, maxmat, shmatf, fwmatf, drveff, flirad, shdzu, v2dzu, &
@@ -439,7 +439,6 @@ contains
                'Switch for running built-in tests')
 
           !  Numerical solver settings
-
        case ('boundl')
           call parse_real_array('boundl', boundl, isub1, ipnvars, &
                'Iteration variable lower bound', icode)
@@ -2513,6 +2512,12 @@ contains
        case ('baseel')
           call parse_real_variable('baseel', baseel, 1.0D6, 1.0D10, &
                'Base plant electric load (W)')
+       case ('crypmw_max')
+          call parse_real_variable('crypmw_max', crypmw_max, 0.01D0, 200.0D0, &
+               ' Maximum cryogenic plant power (MW)')
+       case ('f_crypmw')
+          call parse_real_variable('f_crypmw', f_crypmw, 0.0D0, 100.0D0, &
+              ' f-value for cryogenic plant power (ixc = 87, ixx = 164)')
        case ('etahtp')
           call parse_real_variable('etahtp', etahtp, 0.1D0, 1.0D0, &
                'Coolant pump electrical efficiency')
