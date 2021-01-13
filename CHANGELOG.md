@@ -1,9 +1,65 @@
+# 2.0
+
+## Bug Fixes
+- Issue 1029 compiler warning on n contact tot (#1029)
+- Fixed bug in TorGA interface which breaks under GFortran-10 (#?)
+- Handle zero value in IN.DAT writer (#1101)
+- Latest markdown version breaks Ford on develop (#1145)
+- CMakeLists.txt not working with ; in commit message (#1089)
+- HTML introduced into IN.DAT comments (#1124)
+- Fixes Failing Tests on Freia (#?)
+
+## Features
+- Connecting process output with other codes using json files (#1017)
+- Allow Process to be installed as a Python package (#1013)
+- Cryo-aluminium magnet model updates (#1016)
+- Issue 1021 install script (#1021)
+- Issue 999 New coil module for stellarator.f90 (#999)
+- Issue 1015 costing (#1015)
+- Issue 1010 LH (#1010)
+- Issue 1035 JSON DN (#1035)
+- Issue 1031 bucked and wedged (#1031)
+- Issue 1044 wp geometry (#1044)
+- Durham Nb-Ti model based on Ginsburg-Landau theory (#?)
+- Issue 1053 resistive magnet updates (#1053)
+- Issue 1063 ip warn (#1063)
+- Issue 1054 sc cp neutronic shielding (#1054)
+- Issue 1086 Elongation and Triangularity (#1086)
+- Add Steady-State DEMO documentation and test suite (#?)
+- Issue-1114 (#1114)
+- Issue 1132 resistive model stability (#1132)
+- Issue 1085 durham rebco v1 (#1085)
+- Issue 1168 plot proc with rebco (#1168)
+- issue-1171 : Adding the shield (#1171)
+- Issue 1167 cost model 2 scalings (#1167)
+- Adding a line setting the TF coil (#1165)
+- Issue 866 ripple for resistive TF coils & 1143 sidewall thickness parametrization (#866)
+- Convert project to Python-wrapped Fortran (#1092)
+
+## Minor Changes
+- Real declarations in PROCESS (#1027)
+- Make subroutines/functions explicitly use module variables (#980)
+- Updated base docker image Dockerfile for PROCESS (#1108)
+- Use find_package macro to locate GTest, removing need for GTEST_DIR Env variable (#?)
+- Issue 1175 (#1175)
+- Issue 899 error handling (and other issues detailed on commit messages) (#899)
+
+## Documentation updates
+- Tidy docstrings to Ford format (#1026)
+- Issue 944 updating gitpages (#944)
+- Issue 1002 pl scenario docs (#1002)
+- Get variable descriptions from inside the Ford site to display in gitlab pages (#948)
+- Remove unwanted and empty modules from vardes (#1040)
+- Issue 944 updating gitpages (#944)
+- Large commented section in `initial.f90` (#1103)
+- Issue 1125 st documentation update (#1125)
+- Correcting relative path for included image (#1163)
+- Issue 1173 update developper documentation (#1173)
+- Issue 1179 update tf ripple doc (#1179)
+
 # 1.0.17
 
-> next release
-> 
 ## Bug Fixes
- 
 
 ## Features
 - Restored IFE (Issue #901)
