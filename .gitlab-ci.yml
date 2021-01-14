@@ -30,6 +30,8 @@ stages:
     - python3 -m pip install -r requirements.txt
     - python3 -m pip install git+https://github.com/jonMaddockUkaea/ford
     - python3 -m pip install --find-links=process_dist process
+    - apt update && apt upgrade -y
+    - apt install lcov -y
 
 #-----------------
 #  Build
@@ -41,6 +43,8 @@ make:
     paths:
       - process_dist/process-*.tar.gz
       - process_dist/process-*.whl
+      - build/CMakeFiles/process.dir/source/fortran/*.gcno
+      - lcov_results
     expire_in: 1 week
   script:
     - cmake -H. -Bbuild
@@ -48,7 +52,7 @@ make:
     - python3 setup.py sdist -d process_dist
     - python3 setup.py bdist_wheel -d process_dist
   tags:
-    - ubuntu
+    - ubuntu   
 
 #-----------------
 #  Testing
@@ -67,8 +71,13 @@ integration:
   when: on_success
   stage: testing
   <<: *test-setup
+  artifacts:
+    when: on_failure
+    paths:
+      - tests/integration/pytest.log
+    expire_in: 1 week
   script:
-    - pytest tests/integration
+    - pytest -v tests/integration/ -s | tee tests/integration/pytest.log
   tags:
     - ubuntu
 
@@ -85,10 +94,22 @@ unitfort:
 
 regression:
   when: on_success
+  only:
+    - develop
+    - sgadgil/f2py_wrapped_coverage
   stage: testing
   <<: *test-setup
+  artifacts:
+    paths: 
+      - lcov_results
+      - tests/regression/pytest.log
+    expire_in: 1 week
   script:
-    - pytest tests/regression
+    - pytest -v tests/regression -s | tee tests/regression/pytest.log
+    - lcov --gcov-tool gcov --capture --directory build/CMakeFiles/process.dir/source/fortran/ --output-file lcov_results/coverage.info
+    - genhtml --output-directory lcov_results/html lcov_results/coverage.info
+  dependencies:
+    - make
   tags:
     - ubuntu
 

@@ -23,12 +23,13 @@ echo $PYTHONPATH
 
 This modification is not required to run Process now, and it may result in Ford failing during the build process otherwise.
 
-Firstly, install cmake, gfortran and pip:
+Firstly, install cmake, gfortran and pip, lcov:
 ```bash
 sudo apt update
 sudo apt install cmake
 sudo apt install gfortran
 sudo apt install python3-pip
+sudo apt install lcov
 ```
 
 Clone the PROCESS repository from Gitlab, and navigate into the resulting directory:
