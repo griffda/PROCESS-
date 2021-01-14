@@ -22,6 +22,7 @@ module heat_transport_variables
   
     real(dp) :: crypmw_max
     !! Maximum cryogenic plant power (MW)
+    !! Constraint equation icc = 87
 
     real(dp) :: f_crypmw
     !! f-value for maximum cryogenic plant power
