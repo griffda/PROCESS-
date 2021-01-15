@@ -288,16 +288,8 @@ contains
     allocate(delta_var(n))
 
     ! Run vmcon
-    ! Check exit code after each subroutine call; may need to return early
-    ! from vmcon()
-    exit_code = 0
+    call run()
     
-    call vmcon1()
-    if (exit_code.eq.0) call fcnvmc1()
-    if (exit_code.eq.0) call vmcon2()
-    if (exit_code.eq.0) call fcnvmc2()
-    if (exit_code.eq.0) call vmcon3()
-
     ! Output
     ! Set inout arguments to values of module variables
     x_ = x
@@ -359,6 +351,21 @@ contains
     deallocate(delta_var)
   end subroutine vmcon
   
+  subroutine run()
+    ! Call subroutines to actually run vmcon
+    implicit none
+    
+    ! Check exit code after each subroutine call; may need to return early
+    ! from vmcon
+    exit_code = 0
+    
+    call vmcon1()
+    if (exit_code.eq.0) call fcnvmc1()
+    if (exit_code.eq.0) call vmcon2()
+    if (exit_code.eq.0) call fcnvmc2()
+    if (exit_code.eq.0) call vmcon3()
+  end subroutine run
+
   subroutine vmcon1()
     implicit none
     
