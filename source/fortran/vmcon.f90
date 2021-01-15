@@ -42,32 +42,36 @@ module vmcon_module
   ! Var from subroutine vmcon requiring re-initialisation on each new run
   real(dp) :: best_sum_so_far
   
+  ! Exit code for module subroutines: determines when to return completely from 
+  ! subroutine vmcon
+  integer :: exit_code
+  
   ! Abstract interfaces to allow pointers to external subroutines
   abstract interface
-    subroutine fcnvmc1(n,m,xv,objf,conf,ifail)
+    subroutine fcnvmc1_int(n,m,xv,objf,conf,ifail)
       use, intrinsic :: iso_fortran_env, only: dp=>real64
       integer, intent(in) :: n,m
       real(dp), dimension(n), intent(in) :: xv
       real(dp), intent(out) :: objf
       real(dp), dimension(m), intent(out) :: conf
       integer, intent(inout) :: ifail
-    end subroutine fcnvmc1
+    end subroutine fcnvmc1_int
   end interface
     
   abstract interface
-    subroutine fcnvmc2(n,m,xv,fgrd,cnorm,lcnorm,ifail)
+    subroutine fcnvmc2_int(n,m,xv,fgrd,cnorm,lcnorm,ifail)
       use, intrinsic :: iso_fortran_env, only: dp=>real64
       integer, intent(in) :: n,m,lcnorm
       real(dp), dimension(n), intent(in) :: xv
       real(dp), dimension(n), intent(out) :: fgrd
       real(dp), dimension(lcnorm,m), intent(out) :: cnorm
       integer, intent(inout) :: ifail
-    end subroutine fcnvmc2
+    end subroutine fcnvmc2_int
   end interface
     
   ! Pointers to objfn and dobjfn
-  procedure(fcnvmc1), pointer :: fcnvmc1_ptr
-  procedure(fcnvmc2), pointer :: fcnvmc2_ptr
+  procedure(fcnvmc1_int), pointer :: fcnvmc1_ptr
+  procedure(fcnvmc2_int), pointer :: fcnvmc2_ptr
     
 contains
   subroutine init_vmcon_module
@@ -284,7 +288,13 @@ contains
     allocate(delta_var(n))
 
     ! Run vmcon
-    call run_vmcon()
+    ! Check exit code after each subroutine call; may need to return early
+    ! from vmcon()
+    exit_code = 0
+    
+    call vmcon1()
+    if (exit_code.eq.0) call fcnvmc1()
+    if (exit_code.eq.0) call vmcon2()
 
     ! Output
     ! Set inout arguments to values of module variables
@@ -347,10 +357,7 @@ contains
     deallocate(delta_var)
   end subroutine vmcon
   
-  subroutine run_vmcon()
-    use global_variables, only: maxcal, verbose
-    use constants, only: iotty
-    use maths_library, only: qpsub
+  subroutine vmcon1()
     implicit none
     
     lowest_valid_fom = 999d0
@@ -371,7 +378,10 @@ contains
       (lh < (2*(n+1)))  .or. &
       (lwa < (2*(n+1))) .or. &
       (liwa < (6*(n+1)+m)) &
-      ) return
+      ) then
+      exit_code = 1
+      return
+    endif
     
     !  Set the initial elements of b and vmu. vmu is the weighting
     !  vector to be used in the line search.
@@ -418,12 +428,32 @@ contains
     nsix = 6*np1
     nqp = 0
     niter = 0
-    
-    ! Calculate the initial functions and gradients
+  end subroutine vmcon1
+
+  subroutine fcnvmc1()
+    ! Calculate the initial functions
+    implicit none
+
     call fcnvmc1_ptr(n,m,x,objf,conf,info)
-    if (info < 0) return
+  end subroutine fcnvmc1
+
+  subroutine vmcon2()
+    use constants, only: iotty
+    use global_variables, only: verbose, maxcal
+    use maths_library, only: qpsub
+    implicit none
+
+    if (info < 0) then
+      exit_code = 1
+      return
+    endif
+
+    ! Calculate the initial gradients
     call fcnvmc2_ptr(n,m,x,fgrd,cnorm,lcnorm,info)
-    if (info < 0) return
+    if (info < 0) then
+      exit_code = 1
+      return
+    endif
     
     !  Setup line overwrite for VMCON iterations output
     open(unit=iotty)
@@ -460,6 +490,7 @@ contains
         write(*,*)
         write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
 20      format(a,1pe10.3)
+        exit_code = 1        
         return
       end if
       
@@ -591,6 +622,7 @@ contains
           write(*,*) 'Convergence parameter < convergence criterion (epsvmc)'
           write(*,*) 'Root of sum of squares of residuals < tolerance (sqsumsq_tol)'
         end if
+        exit_code = 1
         return
       end if
       
@@ -650,6 +682,7 @@ contains
             sum = best_sum_so_far
             write(*,*)
             write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
+            exit_code = 1
             return
           end if
 
@@ -688,7 +721,7 @@ contains
                 x(i) = xa(i)
             end do
             nfev = nfev + 1
-            call fcnvmc1_ptr(n,m,x,objf,conf,info)
+            call fcnvmc1()
             if (info >= 0) info = 3
             ! Error return because line search required 10 calls of fcnvmc1
             ! Issue #601 Return the best value of the solution vector - not the last value. MDK
@@ -696,6 +729,7 @@ contains
             sum = best_sum_so_far
             write(*,*)
             write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
+            exit_code = 1
             return
           end if
 
@@ -729,20 +763,27 @@ contains
           sum = best_sum_so_far
           write(*,*)
           write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
+          exit_code = 1
           return
         end if
         
         nfev = nfev + 1
         
-        call fcnvmc1_ptr(n,m,x,objf,conf,info)
-        if (info < 0) return
+        call fcnvmc1()
+        if (info < 0) then
+          exit_code = 1
+          return
+        endif
       end do line_search
       
       !  Line search is complete. Calculate gradient of Lagrangian
       !  function for use in updating hessian of Lagrangian
-      call fcnvmc1_ptr(n,m,x,objf,conf,info)
+      call fcnvmc1()
       call fcnvmc2_ptr(n,m,x,fgrd,cnorm,lcnorm,info)
-      if (info < 0) return
+      if (info < 0) then
+        exit_code = 1
+        return
+      endif
 
       do i = 1, n
         glag(i) = fgrd(i)
@@ -806,5 +847,5 @@ contains
         end do
       end do
     end do iteration
-  end subroutine run_vmcon
+  end subroutine vmcon2
 end module vmcon_module
