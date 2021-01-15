@@ -199,7 +199,7 @@ def test_default(ref_dicts, new_dicts):
         "maxcal",
         "nvar",
         "zero",
-        "delta"
+        "delta",
         "cp_he"
     ]
     """
