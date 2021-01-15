@@ -160,7 +160,7 @@ After following the instruction to add an input variable, you can make the varia
     Update the `scan_select` subroutine in the `scan.f90` source file by adding a new case statement connecting the vaiable to the scan integer switch, a short variable desciption `vlab` (the variable name) and a more explicit variable description `xlab`. Don't forget to add the `use only` statment at the beginning of `scan_select`.
   </p>
 4. <p style='text-align: justify;'>
-    Add a comment in the `global_variables.f90` description indicating the scan switch number.
+    Add a comment in the `XX_variables.f90` variable description indicating the scan switch number.
   </p>
 
 `nsweep` comment example:
