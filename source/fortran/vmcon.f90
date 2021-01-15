@@ -295,6 +295,8 @@ contains
     call vmcon1()
     if (exit_code.eq.0) call fcnvmc1()
     if (exit_code.eq.0) call vmcon2()
+    if (exit_code.eq.0) call fcnvmc2()
+    if (exit_code.eq.0) call vmcon3()
 
     ! Output
     ! Set inout arguments to values of module variables
@@ -438,18 +440,26 @@ contains
   end subroutine fcnvmc1
 
   subroutine vmcon2()
-    use constants, only: iotty
-    use global_variables, only: verbose, maxcal
-    use maths_library, only: qpsub
     implicit none
-
+    
     if (info < 0) then
       exit_code = 1
       return
     endif
-
+    
+  end subroutine vmcon2
+  
+  subroutine fcnvmc2()
     ! Calculate the initial gradients
+    implicit none
+    
     call fcnvmc2_ptr(n,m,x,fgrd,cnorm,lcnorm,info)
+  end subroutine fcnvmc2
+  
+  subroutine vmcon3
+    use constants, only: iotty
+    use global_variables, only: verbose, maxcal
+    use maths_library, only: qpsub
     if (info < 0) then
       exit_code = 1
       return
@@ -779,7 +789,7 @@ contains
       !  Line search is complete. Calculate gradient of Lagrangian
       !  function for use in updating hessian of Lagrangian
       call fcnvmc1()
-      call fcnvmc2_ptr(n,m,x,fgrd,cnorm,lcnorm,info)
+      call fcnvmc2()
       if (info < 0) then
         exit_code = 1
         return
@@ -847,5 +857,5 @@ contains
         end do
       end do
     end do iteration
-  end subroutine vmcon2
+  end subroutine vmcon3
 end module vmcon_module
