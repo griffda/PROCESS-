@@ -144,7 +144,7 @@ module numerics
   !!            (TART) (consistency equation) (itv 13,20,69,70)
   !!  <LI> (44) Peak centrepost temperature upper limit (TART) (itv 68,69,70)
   !!  <LI> (45) Edge safety factor lower limit (TART) (itv 71,1,2,3)
-  !!  <LI> (46) Ip/Irod upper limit (TART) (itv 72,2,60)
+  !!  <LI> (46) Equation for plasma over central collumn current upper limit (TART) (itv 72,2,60)
   !!  <LI> (47) NOT USED
   !!  <LI> (48) Poloidal beta upper limit (itv 79,2,3,18)
   !!  <LI> (49) NOT USED
@@ -187,7 +187,7 @@ module numerics
   !!  <LI> (84) Lower limit for beta (itv 173 fbetatry_lower)
   !!  <LI> (85) Constraint for CP lifetime
   !!  <LI> (86) Constraint for TF coil turn dimension
-  !!  <LI> (87) Constraint for TF coil cryogenic power (itv 164 f_crypmw)</UL>
+  !!  <LI> (87) Constraint for cryogenic power (itv 164 f_crypmw)</UL>
 
   integer, dimension(ipnvars) :: ixc
   
@@ -487,7 +487,7 @@ contains
       'Average centrepost temperature   ', &
       'Peak centrepost temp. upper limit', &
       'Edge safety factor lower limit   ', &
-      'Ip/Irod upper limit              ', &
+      'Ip/I_centrepost upper limit      ', &
       'TF coil tor. thickness upper lim ', &
       'Poloidal beta upper limit        ', &
       'RFP reversal parameter < 0       ', &
@@ -528,7 +528,7 @@ contains
       'beta > betalim_lower             ',   &
       'CP lifetime                      ',   &
       'TFC turn dimension               ',   &
-      'TF coil cryogenic plane power    '    &
+      'Cryogenic plant power            '    &
       /)
 
     ! Please note: All strings between '...' above must be exactly 33 chars long

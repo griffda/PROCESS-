@@ -868,7 +868,7 @@ contains
                'F-value for current drive gamma')
        case ('fipir')
           call parse_real_variable('fipir', fipir, 0.001D0, 10.0D0, &
-               'F-value for Ip/Irod')
+               'F-value plasma over central collumn current')
        case ('fjohc')
           call parse_real_variable('fjohc', fjohc, 0.001D0, 10.0D0, &
                'F-value for Central Solenoid current at EOF')
@@ -2517,7 +2517,7 @@ contains
                ' Maximum cryogenic plant power (MW)')
        case ('f_crypmw')
           call parse_real_variable('f_crypmw', f_crypmw, 0.0D0, 100.0D0, &
-              ' f-value for cryogenic plant power (ixc = 87, ixx = 164)')
+              ' f-value for cryogenic plant power (icc = 87, c = 164)')
        case ('etahtp')
           call parse_real_variable('etahtp', etahtp, 0.1D0, 1.0D0, &
                'Coolant pump electrical efficiency')

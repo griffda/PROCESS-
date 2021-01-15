@@ -224,10 +224,14 @@ module build_variables
   !! TF coil vertical inner bore (m)
 
   real(dp) :: scrapli
-  !! Gap between plasma and first wall, inboard side (m) (if `iscrp=1`) (`iteration variable 73`)
+  !! Gap between plasma and first wall, inboard side (m) (if `iscrp=1`) 
+  !! Iteration variable: ixc = 73
+  !! Scan variable: nsweep = 58
 
   real(dp) :: scraplo
-  !! gap between plasma and first wall, outboard side (m) (if `iscrp=1`) (`iteration variable 74`)
+  !! Gap between plasma and first wall, outboard side (m) (if `iscrp=1`)
+  !! Iteration variable ixc = 74
+  !! Scan variable: nsweep = 58
 
   real(dp) :: sharea
   !! shield total surface area (m2)

@@ -184,7 +184,7 @@ contains
         case (44); call constraint_eqn_044(args)
 	      ! Equation for edge safety factor lower limit (TART)
         case (45); call constraint_eqn_045(args)
-	      ! Equation for Ip/Irod upper limit (TART)
+	      ! Equation for plasma over central collumn current upper limit (TART)
         case (46); call constraint_eqn_046(args)  
 	      ! Equation for TF coil toroidal thickness upper limit
         case (47); call constraint_eqn_047(args)  
@@ -266,7 +266,7 @@ contains
         case (85); call constraint_eqn_085(args)
          ! Constraint for turn dimension
         case (86); call constraint_eqn_086(args)
-         ! Constraint for turn dimension
+         ! Constraint for cryogenic power
         case (87); call constraint_eqn_087(args)
        case default
 
@@ -1782,18 +1782,18 @@ contains
    end subroutine constraint_eqn_045
 
    subroutine constraint_eqn_046(args)
-      !! Equation for Ip/Irod upper limit (TART)
+      !! Equation for plasma over central collumn current upper limit (TART)
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
       !! residual error in physical units; output string; units string
-      !! Equation for Ip/Irod upper limit (TART)
+      !! Equation for plasma over central collumn current upper limit (TART)
       !! #=# tfcoil
       !! #=#=# fipir, cratmx
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !! eps : input real :  inverse aspect ratio
-      !! fipir : input real :  f-value for Ip/Irod limit
-      !! ritfc : input real :  total (summed) current in TF coils (A)
+      !! fipir : input real : f-value for Equation for plasma over central collumn current upper limit
+      !! ritfc : input real : total (summed) current in TF coils (A)
       !! plascur : input real :  plasma current (A)
       !! itart : input integer : switch for spherical tokamak (ST) models:<UL>
       !! <LI> = 0 use conventional aspect ratio models;
