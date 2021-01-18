@@ -203,12 +203,19 @@ pages:
     - mv site public
     - mv ford_site public
 
+    # Install requirements for Code Quality
+    - python3 -m pip install flinter
+    - apt-get install bc -y
+
     # Setup badges
     - git clone https://github.com/jmorris-uk/anybadge.git
     - TAG=$(git describe --abbrev=0)
     - VERSION=$(git describe)
     - declare -i CONTRIBUTORS=$(git shortlog -s -n --all | wc -l)
     - echo $CONTRIBUTORS
+    - bash scripts/code_quality.sh source/fortran/ anybadge/
+    - cp quality.svg public/
+    - cp -r code_quality public/
     - cd anybadge
     - python3 anybadge.py -v $TAG -l tag -c blue -f tag.svg
     - python3 anybadge.py -v $VERSION -l version -c blue -f version.svg
