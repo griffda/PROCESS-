@@ -20,57 +20,83 @@ stages:
   - pages
 
 .before_test_template: &test-setup
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9_pyenv
   before_script:
-    - export PATH=/root/.local/bin:${PATH}
-    - pip3 install --upgrade pip
-    - pip3 install virtualenv
-    - virtualenv ~/testenv
-    - source ~/testenv/bin/activate
-    - python3 -m pip install -r requirements.txt
-    - python3 -m pip install git+https://github.com/jonMaddockUkaea/ford
-    - python3 -m pip install --find-links=process_dist process
+    - source ~/.venv_$PY_VERSION/bin/activate
+    - python -m pip install --upgrade pip
+    - python -m pip install -r requirements.txt
+    - python -m pip install git+https://github.com/jonMaddockUkaea/ford
+    - python -m pip install --find-links=process_dist_$PY_VERSION process
     - apt update && apt upgrade -y
     - apt install lcov -y
+
+.before_test_template-py38: &test-setup-py38
+  variables:
+    PY_VERSION: py38
+  <<: *test-setup
+
+.before_test_template-py36: &test-setup-py36
+  variables:
+    PY_VERSION: py36
+  <<: *test-setup
 
 #-----------------
 #  Build
 #-----------------
-make:
+.make:
   stage: build
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9_pyenv
   artifacts:
     paths:
-      - process_dist/process-*.tar.gz
-      - process_dist/process-*.whl
+      - process_dist_$PY_VERSION/process-*.tar.gz
+      - process_dist_$PY_VERSION/process-*.whl
       - build/CMakeFiles/process.dir/source/fortran/*.gcno
       - lcov_results
     expire_in: 1 week
   script:
+    - source ~/.venv_$PY_VERSION/bin/activate
+    - python -m pip install --upgrade pip
+    - python -m pip install -r requirements.txt
     - cmake -H. -Bbuild
     - cmake --build build
-    - python3 setup.py sdist -d process_dist
-    - python3 setup.py bdist_wheel -d process_dist
+    - python3 setup.py sdist -d process_dist_$PY_VERSION
+    - python3 setup.py bdist_wheel -d process_dist_$PY_VERSION
   tags:
-    - ubuntu   
+    - ubuntu
+
+make-py38:
+  extends: ".make"
+  variables:
+    PY_VERSION: py38
+
+make-py36:
+  extends: ".make"
+  variables:
+    PY_VERSION: py36
 
 #-----------------
 #  Testing
 #-----------------
 
-unit:
+.unit:
   when: on_success
   stage: testing
-  <<: *test-setup
   script:
     - pytest tests/unit
   tags:
     - ubuntu
 
-integration:
+unit-py38:
+  extends: ".unit"
+  <<: *test-setup-py38
+
+unit-py36:
+  extends: ".unit"
+  <<: *test-setup-py36
+
+.integration:
   when: on_success
   stage: testing
-  <<: *test-setup
   artifacts:
     when: on_failure
     paths:
@@ -81,10 +107,17 @@ integration:
   tags:
     - ubuntu
 
-unitfort:
+integration-py38:
+  extends: ".integration"
+  <<: *test-setup-py38
+
+integration-py36:
+  extends: ".integration"
+  <<: *test-setup-py36
+
+.unitfort:
   when: on_success
   stage: testing
-  <<: *test-setup
   script:
     - python3 -m pip install tabulate
     - pytest tests/ -m unitfort
@@ -92,13 +125,20 @@ unitfort:
   tags:
     - ubuntu
 
-regression:
+unitfort-py38:
+  extends: ".unitfort"
+  <<: *test-setup-py38
+
+unitfort-py36:
+  extends: ".unitfort"
+  <<: *test-setup-py36
+
+.regression:
   when: on_success
   only:
     - develop
     - sgadgil/f2py_wrapped_coverage
   stage: testing
-  <<: *test-setup
   artifacts:
     paths: 
       - lcov_results
@@ -108,15 +148,24 @@ regression:
     - pytest -v tests/regression -s | tee tests/regression/pytest.log
     - lcov --gcov-tool gcov --capture --directory build/CMakeFiles/process.dir/source/fortran/ --output-file lcov_results/coverage.info
     - genhtml --output-directory lcov_results/html lcov_results/coverage.info
-  dependencies:
-    - make
   tags:
     - ubuntu
 
-baseline_2019:
+regression-py38:
+  extends: ".regression"
+  <<: *test-setup-py38
+  dependencies:
+    - make-py38
+
+regression-py36:
+  extends: ".regression"
+  <<: *test-setup-py36
+  dependencies:
+    - make-py36
+
+.baseline_2019:
   when: on_success
   stage: testing
-  <<: *test-setup
   script:
     - process -i tracking/baseline_2019/baseline_2019_IN.DAT
     - > 
@@ -136,10 +185,17 @@ baseline_2019:
   tags:
     - ubuntu
 
-baseline_2018:
+baseline_2019-py38:
+  extends: ".baseline_2019"
+  <<: *test-setup-py38
+
+baseline_2019-py36:
+  extends: ".baseline_2019"
+  <<: *test-setup-py36
+
+.baseline_2018:
   when: on_success
   stage: testing
-  <<: *test-setup
   script:
     - process -i tracking/baseline_2018/baseline_2018_IN.DAT
     - > 
@@ -158,6 +214,14 @@ baseline_2018:
     expire_in: 1 week
   tags:
     - ubuntu
+
+baseline_2018-py38:
+  extends: ".baseline_2018"
+  <<: *test-setup-py38
+
+baseline_2018-py36:
+  extends: ".baseline_2018"
+  <<: *test-setup-py36
 
 step_input:
   when: on_success
