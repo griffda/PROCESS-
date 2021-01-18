@@ -731,7 +731,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
         use error_handling, only: fdiags, report_error
         use constants, only: pi
         use tfcoil_variables, only : layer_ins, t_conductor, t_turn_tf, &
-            t_turn_tf_is_input, cpttf
+            t_turn_tf_is_input, cpttf, t_cable_tf, t_cable_tf_is_input
         
         implicit none
 
@@ -780,7 +780,20 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
 
         ! Turn dimension is a an input
         if ( t_turn_tf_is_input ) then 
-            ! Turn dimension [m2]
+
+            ! Turn area [m2]
+            a_turn = t_turn_tf**2
+
+            ! Current per turn [A]
+            cpttf = a_turn * jwptf
+
+        ! Turn cable dimension is an input
+        else if ( t_cable_tf_is_input ) then
+
+            ! Turn squared dimension [m]
+            t_turn_tf = t_cable_tf + 2.0D0 * ( thicndut + thwcndut )
+
+            ! Turn area [m2]
             a_turn = t_turn_tf**2
 
             ! Current per turn [A]
@@ -788,7 +801,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
 
         ! Current per turn is an input
         else                         
-            ! Turn dimension [m2]
+            ! Turn area [m2]
             ! Allow for additional inter-layer insulation MDK 13/11/18
             ! Area of turn including conduit and inter-layer insulation
             a_turn = cpttf / jwptf

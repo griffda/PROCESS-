@@ -6711,6 +6711,8 @@
         "t_bl_y": 0.0,
         "t_cable": 0.0,
         "t_cable_radial": 0.0,
+        "t_cable_tf": 0.0,
+        "t_cable_tf_is_input": ".false.",
         "t_cable_toroidal": 0.0,
         "t_conductor": 0.0,
         "t_conductor_radial": 0.0,
@@ -9819,6 +9821,8 @@
         "t_bl_y": "blanket lifetime in calendar years [y]",
         "t_cable": "Cable area averaged dimension (square shape) [m]",
         "t_cable_radial": "Cable area radial and toroidal dimension (integer turn only) [m]",
+        "t_cable_tf": "TF coil superconducting cable squared/rounded dimensions [m]\n   If the turn is not a square (i_tf_turns_integer = 1) a squared cable of \n   equivelent size is use to calculated this quantity\n   If the t_cable_tf is non zero, cpttf is calculated",
+        "t_cable_tf_is_input": "Boolean switch to activated when the user set the TF coil cable dimensions\n Not an input",
         "t_cable_toroidal": "Cable area radial and toroidal dimension (integer turn only) [m]",
         "t_conductor": "Conductor (cable + steel conduit) area averaged dimension [m]",
         "t_conductor_radial": "Conductor area radial and toroidal dimension (integer turn only) [m]",
@@ -9830,8 +9834,8 @@
         "t_out_bb": "temperature in FW and blanket coolant at blanket exit (`primary_pumping=3`) [K]",
         "t_plant": "Plant lifetime [FPY]",
         "t_turn_radial": "Turn radial and toroidal dimension (integer turn only) [m]",
-        "t_turn_tf": "TF turn edge length including turn insulation [m]\n   If the turn is not a square (i_tf_turns_integer = 1) a squared turn of \n   equivelent size is use to calculated this quantity\n   If the t_turn_tf is non zero, cpttf is calculated",
-        "t_turn_tf_is_input": "Boolean switch to activated when the user set the TF turn dimensions\n Not an input",
+        "t_turn_tf": "TF coil turn edge length including turn insulation [m]\n   If the turn is not a square (i_tf_turns_integer = 1) a squared turn of \n   equivelent size is use to calculated this quantity\n   If the t_turn_tf is non zero, cpttf is calculated",
+        "t_turn_tf_is_input": "Boolean switch to activated when the user set the TF coil turn dimensions\n Not an input",
         "t_turn_tf_max": "TF turn edge length including turn insulation upper limit [m] \n If the turn is not a square (i_tf_turns_integer = 1) a squared turn of \n equivelent size is use for this constraint\n constraint equation icc = 86",
         "t_turn_toroidal": "Turn radial and toroidal dimension (integer turn only) [m]",
         "t_wp_toroidal": "Minimal toroidal thickness of of winding pack [m]",
@@ -13216,6 +13220,10 @@
         "strncon_tf": {
             "lb": -0.02,
             "ub": 0.02
+        },
+        "t_cable_tf": {
+            "lb": 0.0,
+            "ub": 0.1
         },
         "t_crit_nbti": {
             "lb": 0.0,
@@ -18211,6 +18219,8 @@
             "t_turn_tf_is_input",
             "f_t_turn_tf",
             "t_turn_tf_max",
+            "t_cable_tf",
+            "t_cable_tf_is_input",
             "acs",
             "cdtfleg",
             "cforce",
@@ -19246,6 +19256,7 @@
         "strncon_tf": "real_variable",
         "sweep": "real_array",
         "sweep_2": "real_array",
+        "t_cable_tf": "real_variable",
         "t_crit_nbti": "real_variable",
         "t_turn_tf": "real_variable",
         "t_turn_tf_max": "real_variable",
