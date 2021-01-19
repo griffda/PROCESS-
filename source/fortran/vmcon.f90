@@ -364,6 +364,17 @@ contains
     if (exit_code.eq.0) call vmcon2()
     if (exit_code.eq.0) call fcnvmc2()
     if (exit_code.eq.0) call vmcon3()
+    
+    if (exit_code.eq.0) then
+      iteration: do
+        if (exit_code.eq.0) then
+          call vmcon4()
+        else
+          exit
+        endif
+      end do iteration
+    end if
+
   end subroutine run
 
   subroutine vmcon1()
@@ -465,8 +476,6 @@ contains
   
   subroutine vmcon3
     use constants, only: iotty
-    use global_variables, only: verbose, maxcal
-    use maths_library, only: qpsub
     if (info < 0) then
       exit_code = 1
       return
@@ -476,108 +485,198 @@ contains
     open(unit=iotty)
     write(*,*) ""
     
+  end subroutine vmcon3
+  
+  subroutine vmcon4()
     !  Start the iteration by calling the quadratic programming
     !  subroutine
-    iteration: do
-      !  Increment the quadratic subproblem counter
-      nqp = nqp + 1
-      niter = nqp
-      
-      !  Set the linear term of the quadratic problem objective function
-      !  to the negative gradient of objf
-      do i = 1, n
-        gm(i) = -fgrd(i)
-      end do
-      do i = 1, mpnppn
-        vlam(i) = zero
-      end do
-      
-      call qpsub( &
-        n,m,meq,conf,cnorm,lcnorm,b,lb,gm,bdl,bdu,info,x,delta, &
-        ldel,cm,h,lh,mact,wa,lwa,iwa,liwa,ilower,iupper, &
-        bndl,bndu)
-      
-      !  The following return is made if the quadratic problem solver
-      !  failed to find a feasible point, if an artificial bound was
-      !  active, or if a singular matrix was detected
-      if ((info == 5).or.(info == 6)) then
-        ! Issue #601 Return the best value of the solution vector - not the last value. MDK
-        x = best_solution_vector
-        sum = best_sum_so_far
-        write(*,*)
-        write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
+    use global_variables, only: verbose, maxcal
+    use maths_library, only: qpsub
+    use constants, only: iotty
+
+    !  Increment the quadratic subproblem counter
+    nqp = nqp + 1
+    niter = nqp
+    
+    !  Set the linear term of the quadratic problem objective function
+    !  to the negative gradient of objf
+    do i = 1, n
+      gm(i) = -fgrd(i)
+    end do
+    do i = 1, mpnppn
+      vlam(i) = zero
+    end do
+    
+    call qpsub( &
+      n,m,meq,conf,cnorm,lcnorm,b,lb,gm,bdl,bdu,info,x,delta, &
+      ldel,cm,h,lh,mact,wa,lwa,iwa,liwa,ilower,iupper, &
+      bndl,bndu)
+    
+    !  The following return is made if the quadratic problem solver
+    !  failed to find a feasible point, if an artificial bound was
+    !  active, or if a singular matrix was detected
+    if ((info == 5).or.(info == 6)) then
+      ! Issue #601 Return the best value of the solution vector - not the last value. MDK
+      x = best_solution_vector
+      sum = best_sum_so_far
+      write(*,*)
+      write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
 20      format(a,1pe10.3)
-        exit_code = 1        
-        return
-      end if
-      
-      !  Initialize the line search iteration counter
-      nls = 0
-      
-      !  Calculate the Lagrange multipliers
-      do j = 1, mact
-        k = iwa(j) - npp
-        if (k > 0) goto 59
-        ki = iwa(j)
-        k = ki + m
-        if (ki > np1) goto 58
-        if (ki == np1) cycle
-        if (ilower(ki) == 1) goto 59
-        cycle
+      exit_code = 1
+      return
+    end if
+    
+    !  Initialize the line search iteration counter
+    nls = 0
+    
+    !  Calculate the Lagrange multipliers
+    do j = 1, mact
+      k = iwa(j) - npp
+      if (k > 0) goto 59
+      ki = iwa(j)
+      k = ki + m
+      if (ki > np1) goto 58
+      if (ki == np1) cycle
+      if (ilower(ki) == 1) goto 59
+      cycle
 58      continue
-        ki = iwa(j) - np1
-        k = ki + m + np1
-        if (ki == np1) cycle
-        if (iupper(ki) == 1) goto 59
-        cycle
+      ki = iwa(j) - np1
+      k = ki + m + np1
+      if (ki == np1) cycle
+      if (iupper(ki) == 1) goto 59
+      cycle
 59      continue
+      do i = 1, n
+        np1j = np1 + j
+        nsixi = nsix + i
+        vlam(k) = vlam(k) + h(np1j,i)*delta(nsixi)
+      end do
+    end do
+    
+    !  Calculate the gradient of the Lagrangian function
+    !  nfinit is the value of nfev at the start of an iteration
+    nfinit = nfev
+    do i = 1, n
+      glag(i) = fgrd(i)
+    end do
+    do k = 1, m
+      if (vlam(k) /= zero) then
         do i = 1, n
-          np1j = np1 + j
-          nsixi = nsix + i
-          vlam(k) = vlam(k) + h(np1j,i)*delta(nsixi)
+          glag(i) = glag(i) - cnorm(i,k)*vlam(k)
         end do
-      end do
-      
-      !  Calculate the gradient of the Lagrangian function
-      !  nfinit is the value of nfev at the start of an iteration
-      nfinit = nfev
-      do i = 1, n
-        glag(i) = fgrd(i)
-      end do
-      do k = 1, m
-        if (vlam(k) /= zero) then
-          do i = 1, n
-            glag(i) = glag(i) - cnorm(i,k)*vlam(k)
-          end do
-        end if
-      end do
-      do k = mp1, mpn
-        if (vlam(k) /= zero) then
+      end if
+    end do
+    do k = mp1, mpn
+      if (vlam(k) /= zero) then
+        inx = k - m
+        if (ilower(inx) /= 0) glag(inx) = glag(inx) - vlam(k)
+      end if
+    end do
+    do k = mpnpp1, mpnppn
+      if (vlam(k) /= zero) then
+        inx = k - m - np1
+        if (iupper(inx) /= 0) glag(inx) = glag(inx) + vlam(k)
+      end if
+    end do
+    
+    !  Set spgdel to the scalar product of fgrd and delta
+    !  Store the elements of glag and x
+    spgdel = zero
+    do i = 1, n
+      spgdel = spgdel + fgrd(i)*delta(i)
+      glaga(i) = glag(i)
+      xa(i) = x(i)
+    end do
+    
+    !  Revise the vector vmu and test for convergence
+    sum = abs(spgdel)
+    do k = 1, mpnppn
+      aux = abs(vlam(k))
+      vmu(k) = max(aux,cp5*(aux + vmu(k)))
+      temp = 0.0D0
+      if (k <= m) then
+        temp = conf(k)
+      else
+        if (k <= mpn) then
           inx = k - m
-          if (ilower(inx) /= 0) glag(inx) = glag(inx) - vlam(k)
-        end if
-      end do
-      do k = mpnpp1, mpnppn
-        if (vlam(k) /= zero) then
+          if (ilower(inx) == 0) cycle
+          temp = x(inx) - bndl(inx)
+        else
           inx = k - m - np1
-          if (iupper(inx) /= 0) glag(inx) = glag(inx) + vlam(k)
+          if ((inx == 0) .or. (inx > n)) cycle
+          if (iupper(inx) == 0) cycle
+          temp = bndu(inx) - x(inx)
         end if
-      end do
-      
-      !  Set spgdel to the scalar product of fgrd and delta
-      !  Store the elements of glag and x
-      spgdel = zero
-      do i = 1, n
-        spgdel = spgdel + fgrd(i)*delta(i)
-        glaga(i) = glag(i)
-        xa(i) = x(i)
-      end do
-      
-      !  Revise the vector vmu and test for convergence
-      sum = abs(spgdel)
+      end if
+      sum = sum + abs(vlam(k)*temp)
+    end do
+    
+    !  Check convergence of constraint residuals
+    summ = 0.0D0
+    !do i = 1,m
+    ! This only includes the equality constraints Issue #505
+    do i = 1,meq
+      summ = summ + conf(i)*conf(i)
+    end do
+    sqsumsq = sqrt(summ)
+    
+    !  Output to terminal number of VMCON iterations
+    iteration_progress = repeat("=", floor(((niter+1)/FLOAT(maxcal))*20.0D0))
+    
+    write(iotty, '("==>", I5, "  vmcon iterations. Normalised FoM =", &
+    &  f8.4, "  Residuals (sqsumsq) =", 1pe8.1, "  Convergence param =", 1pe8.1, a1)', &
+    ADVANCE="NO") niter+1, max(objf, -objf), sqsumsq, sum, achar(13)
+    
+    if (verbose == 1) then
+      write(*,'(a,es13.5,a,es13.5)') &
+        'Constraint residuals (sqsumsq) = ',sqsumsq, &
+        ' Convergence parameter = ',sum
+    end if
+    
+    ! Writting the step results in OPT.DAT file
+    do i = 1, n
+      delta_var(i) = delta(i)
+    end do
+
+    ! Comment in to write optional optimisation information output file
+    !  write(opt_file, '(I5,E28.10,*(E18.10))') niter+1, abs(objf), sum, sqsumsq, conf, x, delta_var
+    
+    !  Exit if both convergence criteria are satisfied
+    !  (the original criterion, plus constraint residuals below the tolerance level)
+    !  Temporarily set the two tolerances equal (should perhaps be an input parameter)
+    sqsumsq_tol = tol
+    
+    ! Store the lowest valid FoM (ie where constraints are satisfied)
+    if (sqsumsq < sqsumsq_tol)  lowest_valid_fom = min(lowest_valid_fom, objf)
+    
+    if ((sum <= tol).and.(sqsumsq < sqsumsq_tol)) then
+      if (verbose == 1) then
+        write(*,*) 'Convergence parameter < convergence criterion (epsvmc)'
+        write(*,*) 'Root of sum of squares of residuals < tolerance (sqsumsq_tol)'
+      end if
+      exit_code = 1
+      return
+    end if
+    
+    ! The convergence criteria are not yet satisfied.
+    ! Store the best value of the convergence parameter achieved
+    if(sum < best_sum_so_far) then
+      best_sum_so_far = sum
+      best_solution_vector = x
+    end if
+
+    !  Set sum to the weighted sum of infeasibilities
+    !  Set fls to the line search objective function
+
+    line_search: do
+
+      !  Increment the line search iteration counter
+
+      nls = nls + 1
+      sum = zero
       do k = 1, mpnppn
-        aux = abs(vlam(k))
-        vmu(k) = max(aux,cp5*(aux + vmu(k)))
+        aux = 0.0D0
+        if (k <= meq) aux = conf(k)
         temp = 0.0D0
         if (k <= m) then
           temp = conf(k)
@@ -593,188 +692,70 @@ contains
             temp = bndu(inx) - x(inx)
           end if
         end if
-        sum = sum + abs(vlam(k)*temp)
+        sum = sum + vmu(k)*max(aux,-temp)
       end do
+      fls = objf + sum
       
-      !  Check convergence of constraint residuals
-      summ = 0.0D0
-      !do i = 1,m
-      ! This only includes the equality constraints Issue #505
-      do i = 1,meq
-        summ = summ + conf(i)*conf(i)
-      end do
-      sqsumsq = sqrt(summ)
-      
-      !  Output to terminal number of VMCON iterations
-      iteration_progress = repeat("=", floor(((niter+1)/FLOAT(maxcal))*20.0D0))
-      
-      write(iotty, '("==>", I5, "  vmcon iterations. Normalised FoM =", &
-      &  f8.4, "  Residuals (sqsumsq) =", 1pe8.1, "  Convergence param =", 1pe8.1, a1)', &
-      ADVANCE="NO") niter+1, max(objf, -objf), sqsumsq, sum, achar(13)
-      
-      if (verbose == 1) then
-        write(*,'(a,es13.5,a,es13.5)') &
-          'Constraint residuals (sqsumsq) = ',sqsumsq, &
-          ' Convergence parameter = ',sum
-      end if
-      
-      ! Writting the step results in OPT.DAT file
-      do i = 1, n
-        delta_var(i) = delta(i)
-      end do
+      if (nfev == nfinit) then
 
-      ! Comment in to write optional optimisation information output file
-      !  write(opt_file, '(I5,E28.10,*(E18.10))') niter+1, abs(objf), sum, sqsumsq, conf, x, delta_var
-      
-      !  Exit if both convergence criteria are satisfied
-      !  (the original criterion, plus constraint residuals below the tolerance level)
-      !  Temporarily set the two tolerances equal (should perhaps be an input parameter)
-      sqsumsq_tol = tol
-      
-      ! Store the lowest valid FoM (ie where constraints are satisfied)
-      if (sqsumsq < sqsumsq_tol)  lowest_valid_fom = min(lowest_valid_fom, objf)
-      
-      if ((sum <= tol).and.(sqsumsq < sqsumsq_tol)) then
-        if (verbose == 1) then
-          write(*,*) 'Convergence parameter < convergence criterion (epsvmc)'
-          write(*,*) 'Root of sum of squares of residuals < tolerance (sqsumsq_tol)'
-        end if
-        exit_code = 1
-        return
-      end if
-      
-      ! The convergence criteria are not yet satisfied.
-      ! Store the best value of the convergence parameter achieved
-      if(sum < best_sum_so_far) then
-        best_sum_so_far = sum
-        best_solution_vector = x
-      end if
+        !  Set the initial conditions for the line search
+        !  flsa is the initial value of the line search function
+        !  dflsa is its first derivative (if delta(np1) = 1)
+        !  alpha is the next reduction in the step-length
 
-      !  Set sum to the weighted sum of infeasibilities
-      !  Set fls to the line search objective function
-
-      line_search: do
-
-        !  Increment the line search iteration counter
-
-        nls = nls + 1
-        sum = zero
-        do k = 1, mpnppn
-          aux = 0.0D0
-          if (k <= meq) aux = conf(k)
-          temp = 0.0D0
-          if (k <= m) then
-            temp = conf(k)
-          else
-            if (k <= mpn) then
-              inx = k - m
-              if (ilower(inx) == 0) cycle
-              temp = x(inx) - bndl(inx)
-            else
-              inx = k - m - np1
-              if ((inx == 0) .or. (inx > n)) cycle
-              if (iupper(inx) == 0) cycle
-              temp = bndu(inx) - x(inx)
-            end if
-          end if
-          sum = sum + vmu(k)*max(aux,-temp)
-        end do
-        fls = objf + sum
-        
-        if (nfev == nfinit) then
-
-          !  Set the initial conditions for the line search
-          !  flsa is the initial value of the line search function
-          !  dflsa is its first derivative (if delta(np1) = 1)
-          !  alpha is the next reduction in the step-length
-
-          flsa = fls
-          dflsa = spgdel - delta(np1)*sum
-          if (dflsa >= zero) then
-            !  Error return because uphill search direction was calculated
-            info = 4
-            ! Issue #601 Return the best value of the solution vector - not the last value. MDK
-            write(*,*) 'info = 4'
-            x = best_solution_vector
-            sum = best_sum_so_far
-            write(*,*)
-            write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
-            exit_code = 1
-            return
-          end if
-
-          !  Set initial multiplying factor for stepsize
-          !  Set initial value of stepsize for output
-
-          alpha = one
-          calpha = one
-
-        else
-
-          !  Test whether line search is complete
-
-          aux = fls - flsa
-
-          !  Exit line search if function difference is small
-
-          if (aux <= (cp1*dflsa)) exit line_search
-
-          !  Escape from the line search if the line search function is increasing
-          !  Outer loop is forced to repeat
-
-          info = 1  !  reset on each iteration
-          if (aux > 0.0D0) then
-            if (verbose == 1) then
-              write(*,*) 'VMCON optimiser line search attempt failed - retrying...'
-            end if
-            info = 7
-            exit line_search
-          end if
-
-          !  Exit if the line search requires ten or more function evaluations
-
-          if (nfev >= (nfinit + 10)) then
-            do i = 1, n
-                x(i) = xa(i)
-            end do
-            nfev = nfev + 1
-            call fcnvmc1()
-            if (info >= 0) info = 3
-            ! Error return because line search required 10 calls of fcnvmc1
-            ! Issue #601 Return the best value of the solution vector - not the last value. MDK
-            x = best_solution_vector
-            sum = best_sum_so_far
-            write(*,*)
-            write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
-            exit_code = 1
-            return
-          end if
-
-          !  Calculate next reduction in the line step assuming
-          !  a quadratic fit
-
-          alpha = max(cp1,cp5*dflsa/(dflsa - aux))
-
+        flsa = fls
+        dflsa = spgdel - delta(np1)*sum
+        if (dflsa >= zero) then
+          !  Error return because uphill search direction was calculated
+          info = 4
+          ! Issue #601 Return the best value of the solution vector - not the last value. MDK
+          write(*,*) 'info = 4'
+          x = best_solution_vector
+          sum = best_sum_so_far
+          write(*,*)
+          write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
+          exit_code = 1
+          return
         end if
 
-        !  Multiply delta by alpha and calculate the new x
+        !  Set initial multiplying factor for stepsize
+        !  Set initial value of stepsize for output
 
-        calpha = alpha*calpha
-        do i = 1, n
-          delta(i) = alpha*delta(i)
-          x(i) = xa(i) + delta(i)
-        end do
+        alpha = one
+        calpha = one
 
-        dflsa = alpha*dflsa
+      else
 
-        !  Test nfev against maxfev, call fcnvmc1 and resume line search
+        !  Test whether line search is complete
 
-        if (nfev >= maxfev) then
+        aux = fls - flsa
+
+        !  Exit line search if function difference is small
+
+        if (aux <= (cp1*dflsa)) exit line_search
+
+        !  Escape from the line search if the line search function is increasing
+        !  Outer loop is forced to repeat
+
+        info = 1  !  reset on each iteration
+        if (aux > 0.0D0) then
+          if (verbose == 1) then
+            write(*,*) 'VMCON optimiser line search attempt failed - retrying...'
+          end if
+          info = 7
+          exit line_search
+        end if
+
+        !  Exit if the line search requires ten or more function evaluations
+
+        if (nfev >= (nfinit + 10)) then
           do i = 1, n
-            x(i) = xa(i)
+              x(i) = xa(i)
           end do
-          !  Error return because there have been maxfev calls of fcnvmc1
-          info = 2
+          nfev = nfev + 1
+          call fcnvmc1()
+          if (info >= 0) info = 3
+          ! Error return because line search required 10 calls of fcnvmc1
           ! Issue #601 Return the best value of the solution vector - not the last value. MDK
           x = best_solution_vector
           sum = best_sum_so_far
@@ -783,86 +764,119 @@ contains
           exit_code = 1
           return
         end if
-        
-        nfev = nfev + 1
-        
-        call fcnvmc1()
-        if (info < 0) then
-          exit_code = 1
-          return
-        endif
-      end do line_search
+
+        !  Calculate next reduction in the line step assuming
+        !  a quadratic fit
+
+        alpha = max(cp1,cp5*dflsa/(dflsa - aux))
+
+      end if
+
+      !  Multiply delta by alpha and calculate the new x
+
+      calpha = alpha*calpha
+      do i = 1, n
+        delta(i) = alpha*delta(i)
+        x(i) = xa(i) + delta(i)
+      end do
+
+      dflsa = alpha*dflsa
+
+      !  Test nfev against maxfev, call fcnvmc1 and resume line search
+
+      if (nfev >= maxfev) then
+        do i = 1, n
+          x(i) = xa(i)
+        end do
+        !  Error return because there have been maxfev calls of fcnvmc1
+        info = 2
+        ! Issue #601 Return the best value of the solution vector - not the last value. MDK
+        x = best_solution_vector
+        sum = best_sum_so_far
+        write(*,*)
+        write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
+        exit_code = 1
+        return
+      end if
       
-      !  Line search is complete. Calculate gradient of Lagrangian
-      !  function for use in updating hessian of Lagrangian
+      nfev = nfev + 1
+      
       call fcnvmc1()
-      call fcnvmc2()
       if (info < 0) then
         exit_code = 1
         return
       endif
+    end do line_search
+    
+    !  Line search is complete. Calculate gradient of Lagrangian
+    !  function for use in updating hessian of Lagrangian
+    call fcnvmc1()
+    call fcnvmc2()
+    if (info < 0) then
+      exit_code = 1
+      return
+    endif
 
-      do i = 1, n
-        glag(i) = fgrd(i)
-      end do
-      do k = 1, m
-        if (vlam(k) /= zero) then
-          do i = 1, n
-          glag(i) = glag(i) - cnorm(i,k)*vlam(k)
-          end do
-        end if
-      end do
-      do k = mp1, mpn
-        if (vlam(k) /= zero) then
-          inx = k - m
-          if (ilower(inx) /= 0) glag(inx) = glag(inx) - vlam(k)
-        end if
-      end do
-      do k = mpnpp1, mpnppn
-        if (vlam(k) /= zero) then
-          inx = k - m - np1
-          if (iupper(inx) /= 0) glag(inx) = glag(inx) + vlam(k)
-        end if
-      end do
-
-      !  Calculate gamma and bdelta in order to revise b
-      !  Set dg to the scalar product of delta and gamma
-      !  Set dbd to the scalar product of delta and bdelta
-
-      dg = zero
-      dbd = zero
-      do i = 1, n
-        gamma(i) = glag(i) - glaga(i)
-        bdelta(i) = zero
-        do j = 1, n
-          bdelta(i) = bdelta(i) + b(i,j)*delta(j)
+    do i = 1, n
+      glag(i) = fgrd(i)
+    end do
+    do k = 1, m
+      if (vlam(k) /= zero) then
+        do i = 1, n
+        glag(i) = glag(i) - cnorm(i,k)*vlam(k)
         end do
-        dg = dg + delta(i)*gamma(i)
-        dbd = dbd + delta(i)*bdelta(i)
+      end if
+    end do
+    do k = mp1, mpn
+      if (vlam(k) /= zero) then
+        inx = k - m
+        if (ilower(inx) /= 0) glag(inx) = glag(inx) - vlam(k)
+      end if
+    end do
+    do k = mpnpp1, mpnppn
+      if (vlam(k) /= zero) then
+        inx = k - m - np1
+        if (iupper(inx) /= 0) glag(inx) = glag(inx) + vlam(k)
+      end if
+    end do
+
+    !  Calculate gamma and bdelta in order to revise b
+    !  Set dg to the scalar product of delta and gamma
+    !  Set dbd to the scalar product of delta and bdelta
+
+    dg = zero
+    dbd = zero
+    do i = 1, n
+      gamma(i) = glag(i) - glaga(i)
+      bdelta(i) = zero
+      do j = 1, n
+        bdelta(i) = bdelta(i) + b(i,j)*delta(j)
       end do
+      dg = dg + delta(i)*gamma(i)
+      dbd = dbd + delta(i)*bdelta(i)
+    end do
 
-      !  Calculate the vector eta for the b-f-g-s formula
-      !  replace dg by the scalar product of delta and eta
+    !  Calculate the vector eta for the b-f-g-s formula
+    !  replace dg by the scalar product of delta and eta
 
-      aux = cp2*dbd
-      theta = one
-      if (dg < aux) theta = (dbd - aux)/(dbd - dg)
-      thcomp = one - theta
-      do i = 1, n
-        eta(i) = theta*gamma(i) + thcomp*bdelta(i)
+    aux = cp2*dbd
+    theta = one
+    if (dg < aux) theta = (dbd - aux)/(dbd - dg)
+    thcomp = one - theta
+    do i = 1, n
+      eta(i) = theta*gamma(i) + thcomp*bdelta(i)
+    end do
+    if (dg < aux) dg = aux
+
+    !  Revise the matrix b and begin new iteration
+
+    do i = 1, n
+      aux = bdelta(i)/dbd
+      auxa = eta(i)/dg
+      do j = i, n
+        b(i,j) = b(i,j) - aux*bdelta(j) + auxa*eta(j)
+        b(j,i) = b(i,j)
       end do
-      if (dg < aux) dg = aux
-
-      !  Revise the matrix b and begin new iteration
-
-      do i = 1, n
-        aux = bdelta(i)/dbd
-        auxa = eta(i)/dg
-        do j = i, n
-          b(i,j) = b(i,j) - aux*bdelta(j) + auxa*eta(j)
-          b(j,i) = b(i,j)
-        end do
-      end do
-    end do iteration
-  end subroutine vmcon3
+    end do
+  end subroutine vmcon4
 end module vmcon_module
