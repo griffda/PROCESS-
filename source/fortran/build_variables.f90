@@ -231,7 +231,7 @@ module build_variables
   real(dp) :: scraplo
   !! Gap between plasma and first wall, outboard side (m) (if `iscrp=1`)
   !! Iteration variable ixc = 74
-  !! Scan variable: nsweep = 58
+  !! Scan variable: nsweep = 59
 
   real(dp) :: sharea
   !! shield total surface area (m2)
