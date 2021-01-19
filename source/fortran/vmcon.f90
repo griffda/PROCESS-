@@ -372,9 +372,15 @@ contains
 
     iteration: do
       if (exit_code.ne.0) exit
-        call vmcon4()
+      call vmcon4()
+      if (exit_code.ne.0) exit
+      
+      !  Line search is complete. Calculate gradient of Lagrangian
+      !  function for use in updating hessian of Lagrangian
+      call fcnvmc1()
+      if (exit_code.ne.0) exit
+      call vmcon5()
     end do iteration
-
   end subroutine run
 
   subroutine vmcon1()
@@ -807,10 +813,11 @@ contains
         return
       endif
     end do line_search
-    
-    !  Line search is complete. Calculate gradient of Lagrangian
-    !  function for use in updating hessian of Lagrangian
-    call fcnvmc1()
+  end subroutine vmcon4
+
+  subroutine vmcon5()
+    implicit none
+
     call fcnvmc2()
     if (info < 0) then
       exit_code = 1
@@ -878,5 +885,5 @@ contains
         b(j,i) = b(i,j)
       end do
     end do
-  end subroutine vmcon4
+  end subroutine vmcon5
 end module vmcon_module
