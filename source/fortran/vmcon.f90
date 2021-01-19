@@ -360,20 +360,20 @@ contains
     exit_code = 0
     
     call vmcon1()
-    if (exit_code.eq.0) call fcnvmc1()
-    if (exit_code.eq.0) call vmcon2()
-    if (exit_code.eq.0) call fcnvmc2()
-    if (exit_code.eq.0) call vmcon3()
-    
-    if (exit_code.eq.0) then
-      iteration: do
-        if (exit_code.eq.0) then
-          call vmcon4()
-        else
-          exit
-        endif
-      end do iteration
-    end if
+    if (exit_code.ne.0) return
+    call fcnvmc1()
+    if (exit_code.ne.0) return
+    call vmcon2()
+    if (exit_code.ne.0) return
+    call fcnvmc2()
+    if (exit_code.ne.0) return
+    call vmcon3()
+    if (exit_code.ne.0) return
+
+    iteration: do
+      if (exit_code.ne.0) exit
+        call vmcon4()
+    end do iteration
 
   end subroutine run
 
