@@ -13,39 +13,8 @@ module stellarator_configuration
     implicit none
 
 
-    character (len=35), parameter :: keys(27) = [Character(len=35):: "name",&
-                                            "symmetry",&
-                                            "coilspermodule",&
-                                            "rmajor_ref",&
-                                            "rminor_ref",&
-                                            "coil_rmajor",&
-                                            "coil_rminor",&
-                                            "aspect_ref",&
-                                            "bt_ref",&
-                                            "WP_area",&
-                                            "WP_bmax",&
-                                            "i0",&
-                                            "a1",&
-                                            "a2",&
-                                            "dmin",&
-                                            "inductance",&
-                                            "coilsurface",&
-                                            "coillength",&
-                                            "max_portsize_width",&
-                                            "maximal_coil_height",&
-                                            "min_plasma_coil_distance",&
-                                            "plasma_volume",&
-                                            "plasma_surface",&
-                                            "WP_ratio",&
-                                            "max_force_density",&
-                                            "max_force_density_MNm",&
-                                            "min_bend_radius"]
 
-
-
- 
     type :: stella_config
-       
        character (len = 20) :: name
        ! Name of the configuration
  

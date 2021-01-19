@@ -4289,7 +4289,7 @@ module stellarator_variables
   real(dp) :: max_gyrotron_frequency = 170.0d9
   !! max_gyrotron_frequency /170d9/ : Maximal available gyrotron frequency [Hz]
   real(dp) :: te0_ecrh_achievable = 7.0d0
-  !! te0_ecrh_achievable /170d9/ : Maximal achievable peak electron temperature [keV]
+  !! te0_ecrh_achievable /170d9/ : Maximal achievable peak electron temperature [keV] (itv 175)
   real(dp) :: f_asym = 1.0D0
   !! f_asym /1.0/ : divertor heat load peaking factor
   real(dp) :: f_rad = 0.85D0

@@ -2598,7 +2598,7 @@ contains
     integer, intent(in) :: outfile,iprint
 
 
-    real(dp) :: r_coil_major, r_coil_minor, case_thickness_constant, coilcurrent
+    real(dp) :: r_coil_major, r_coil_minor, case_thickness_constant, coilcurrent, inductance
 
     real(dp), allocatable, dimension(:) ::   jcrit_vector,RHS,LHS,wp_width_r, B_max_k
 
@@ -2661,7 +2661,7 @@ contains
        B_max_k(k) = bmax_from_awp(wp_width_r(k),coilcurrent)
  
        ! jcrit for this bmax:
-       jcrit_vector(k) = jcrit_frommaterial(B_max_k(k),tftmp+1.5) ! Get here a temperature margin of 1.5K.
+       jcrit_vector(k) = jcrit_frommaterial(B_max_k(k),tftmp) ! Get here a temperature margin of 1.5K.
  
      end do
  
@@ -2790,6 +2790,7 @@ contains
                                                           ! useful for stellarators
  
      ! This uses the reference value for the inductance and scales it with a^2/R (toroid inductance scaling)
+     inductance = (config%inductance/f_r*(r_coil_minor/config%coil_rminor)**2*f_n**2)
      estotftgj = 0.5D0 * (config%inductance/f_r*(r_coil_minor/config%coil_rminor)**2*f_n**2)&
                    * (ritfc/n_tf)**2 * 1.0D-9             ! [GJ] Total magnetic energy
   
@@ -2853,11 +2854,8 @@ contains
      radvv = rmajor - rminor - scrapli - fwith - blnkith - vvblgap - shldith
  
      ! Quench time [s]
-     taucq = (bt * ritfc * rminor * rminor) / (radvv * sigvvall)
- 
-     ! Here we do a slight modification now. we constrain it by the maximum force density.
-
-
+     taucq = (bt * ritfc * rminor * rminor) / (radvv * sigvvall) ! (assumes tokamak reference value)
+     
      ! the conductor fraction is meant of the cable space!
      ! This is the old routine which is being replaced for now by the new one below
      !    protect(aio,  tfes,               acs,       aturn,   tdump,  fcond,  fcu,   tba,  tmax   ,ajwpro, vd)
@@ -3379,6 +3377,7 @@ contains
       call ovarre(outfile,'Overall current density (A/m2)','(oacdcp)',oacdcp)
       call ovarre(outfile,'Maximum field on superconductor (T)','(bmaxtf)',bmaxtf)
       call ovarre(outfile,'Total Stored energy (GJ)','(estotftgj)',estotftgj)
+      call ovarre(outfile,'Inductance of TF Coils (H)','(inductance)',inductance)
       call ovarre(outfile,'Total mass of coils (kg)','(whttf)',whttf)
   
       call osubhd(outfile,'Coil Geometry :')
@@ -3426,8 +3425,8 @@ contains
       call ovarre(outfile,'Maximal radial force density (MN/m3)','(max_radial_force_density)',max_radial_force_density)
 
       call ovarre(outfile,'Max. centering force (coil) (MN)','(centering_force_max_MN)',centering_force_max_MN)
-      call ovarre(outfile,'Min. centering force (coil) (MN)','(centering_force_max_MN)',centering_force_min_MN)
-      call ovarre(outfile,'Avg. centering force per coil (MN)','(centering_force_max_MN)',centering_force_avg_MN)
+      call ovarre(outfile,'Min. centering force (coil) (MN)','(centering_force_min_MN)',centering_force_min_MN)
+      call ovarre(outfile,'Avg. centering force per coil (MN)','(centering_force_avg_MN)',centering_force_avg_MN)
       
       call osubhd(outfile,'Quench Restrictions :')
       call ovarre(outfile,'Allowable stress in vacuum vessel (VV) due to quench (Pa)','(sigvvall)',sigvvall)

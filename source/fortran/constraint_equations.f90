@@ -1469,8 +1469,8 @@ contains
       type (constraint_args_type), intent(out) :: args
 
       args%cc =  1.0D0 - fjprot * jwdgpro/jwptf
-      args%con = jwdgpro
-      args%err = jwdgpro - jwptf/jwdgpro
+      args%con = jwptf * (1.0D0 - args%cc)
+      args%err = jwdgpro - jwptf
       args%symbol = '<'
       args%units = 'A/m2'
 
@@ -2752,8 +2752,8 @@ contains
       !! args : output structure : residual error; constraint value; 
       !! residual error in physical units; output string; units string
       !!  (beta-betaft) > betalim_lower
-      !! #=# tfcoil
-      !! #=#=# tftort, fbetatry_lower
+      !! #=# physics
+      !! #=#=# betaft, beta, fbetatry_lower
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !! fbetatry_lower : input real : f-value for constraint beta-betaft > betalim_lower
       !! betalim_lower : input real :  Lower limit for beta
@@ -2782,8 +2782,8 @@ contains
       !! args : output structure : residual error; constraint value; 
       !! residual error in physical units; output string; units string
       !!  te0_ecrh_achievable > te_ECRH_needed
-      !! #=# tfcoil
-      !! #=#=# fecrh_ignition
+      !! #=# physics
+      !! #=#=# fecrh_ignition, powerht_local, powerscaling
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !! fecrh_ignition : input real : f-value for constraint te0_ecrh_achievable > te_ECRH_needed
       !! bt : input real :  Lower limit for beta

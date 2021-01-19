@@ -328,8 +328,7 @@ contains
 
       
       fint = 2.0D0 * rho * sigv * nprofsq
-
-      ! For stellarators (and in principle also tokamaks) this is not correct. The jacobi determinant should be included here.
+      ! For stellarators (and in principle also tokamaks) this is inaccurate The jacobi determinant should be included here.
 
     end function fint
 
