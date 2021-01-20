@@ -482,6 +482,8 @@ contains
   
   subroutine vmcon3
     use constants, only: iotty
+    implicit none
+
     if (info < 0) then
       exit_code = 1
       return
@@ -499,6 +501,7 @@ contains
     use global_variables, only: verbose, maxcal
     use maths_library, only: qpsub
     use constants, only: iotty
+    implicit none
 
     !  Increment the quadratic subproblem counter
     nqp = nqp + 1
