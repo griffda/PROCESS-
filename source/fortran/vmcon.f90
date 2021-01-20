@@ -72,7 +72,10 @@ module vmcon_module
   ! Pointers to objfn and dobjfn
   procedure(fcnvmc1_int), pointer :: fcnvmc1_ptr
   procedure(fcnvmc2_int), pointer :: fcnvmc2_ptr
-    
+
+  ! Format string
+  character(len=20), parameter :: fmt_str = "(a,1pe10.3)"
+
 contains
   subroutine init_vmcon_module
     !! Initialise module variables
@@ -529,8 +532,7 @@ contains
       x = best_solution_vector
       sum = best_sum_so_far
       write(*,*)
-      write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
-20      format(a,1pe10.3)
+      write(*,fmt_str)'Best solution vector will be output. Convergence parameter = ', sum
       exit_code = 1
       return
     end if
@@ -722,7 +724,7 @@ contains
           x = best_solution_vector
           sum = best_sum_so_far
           write(*,*)
-          write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
+          write(*,fmt_str)'Best solution vector will be output. Convergence parameter = ', sum
           exit_code = 1
           return
         end if
@@ -769,7 +771,7 @@ contains
           x = best_solution_vector
           sum = best_sum_so_far
           write(*,*)
-          write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
+          write(*,fmt_str)'Best solution vector will be output. Convergence parameter = ', sum
           exit_code = 1
           return
         end if
@@ -803,7 +805,7 @@ contains
         x = best_solution_vector
         sum = best_sum_so_far
         write(*,*)
-        write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
+        write(*,fmt_str)'Best solution vector will be output. Convergence parameter = ', sum
         exit_code = 1
         return
       end if
