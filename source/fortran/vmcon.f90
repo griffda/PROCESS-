@@ -374,15 +374,17 @@ contains
     if (exit_code.ne.0) return
 
     iteration: do
-      if (exit_code.ne.0) exit
       call vmcon4()
-      if (exit_code.ne.0) exit
+      if (exit_code.ne.0) return
+      call vmcon5()
+      if (exit_code.ne.0) return
       
       !  Line search is complete. Calculate gradient of Lagrangian
       !  function for use in updating hessian of Lagrangian
       call fcnvmc1()
-      if (exit_code.ne.0) exit
-      call vmcon5()
+      if (exit_code.ne.0) return
+      call vmcon6()
+      if (exit_code.ne.0) return
     end do iteration
   end subroutine run
 
@@ -675,10 +677,13 @@ contains
       best_sum_so_far = sum
       best_solution_vector = x
     end if
+  end subroutine vmcon4
 
+  subroutine vmcon5()
+    use global_variables, only: verbose
+    implicit none
     !  Set sum to the weighted sum of infeasibilities
     !  Set fls to the line search objective function
-
     line_search: do
 
       !  Increment the line search iteration counter
@@ -818,9 +823,9 @@ contains
         return
       endif
     end do line_search
-  end subroutine vmcon4
+  end subroutine vmcon5
 
-  subroutine vmcon5()
+  subroutine vmcon6()
     implicit none
 
     call fcnvmc2()
@@ -890,5 +895,5 @@ contains
         b(j,i) = b(i,j)
       end do
     end do
-  end subroutine vmcon5
+  end subroutine vmcon6
 end module vmcon_module
