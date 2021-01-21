@@ -15,7 +15,11 @@ module physics_module
 
   private
   public :: bpol,fhfac,igmarcal,outplas,outtim,pcond,phyaux, &
-       physics,plasma_composition,pohm, rether, subr
+    physics,plasma_composition,pohm, rether, subr, &
+    diamagnetic_fraction_hender, diamagnetic_fraction_scene, &
+    ps_fraction_scene, init_physics_module
+    ! diamagnetic_fraction_hender, diamagnetic_fraction_scene,
+    ! ps_fraction_scene made public for testing via interface
 
   !  Module-level variables
 
@@ -32,8 +36,42 @@ module physics_module
   real(dp) :: beta_mcdonald
   real(dp) :: itart_r
 
+  ! Var in subroutine plasma_composition which requires re-initialisation on
+  ! each new run
+  integer :: first_call
+
   contains
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine init_physics_module
+    !! Initialise module variables
+    implicit none
+
+    first_call = 1
+    iscz = 0
+    err242 = 0
+    err243 = 0
+    rad_fraction_core = 0.0D0
+    total_plasma_internal_energy = 0.0D0
+    total_loss_power = 0.0D0
+    total_energy_conf_time = 0.0D0
+    ptarmw = 0.0D0
+    lambdaio = 0.0D0
+    drsep = 0.0D0
+    fio = 0.0D0
+    fLI = 0.0D0
+    fLO = 0.0D0
+    fUI = 0.0D0
+    fUO = 0.0D0
+    pLImw = 0.0D0
+    pLOmw = 0.0D0
+    pUImw = 0.0D0
+    pUOmw = 0.0D0
+    rho_star   = 0.0D0
+    nu_star   = 0.0D0
+    beta_mcdonald = 0.0D0
+    itart_r = 0.0D0
+  end subroutine init_physics_module
+
   subroutine subr(a, b)
      implicit none
      real, intent(in) :: a
@@ -55,7 +93,7 @@ module physics_module
     !! DEMO Tokamak' Document, March 2012, EFDA Report
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    use divertor_kallenbach_variables, only: impurity_enrichment, netau_sol
+    use div_kal_vars, only: impurity_enrichment, netau_sol
 
     use build_variables, only: fwarea
     use constraint_variables, only: peakradwallload, flhthresh, peakfactrad
@@ -405,7 +443,7 @@ module physics_module
 
        !  Calculate L- to H-mode power threshold for different scalings
 
-       call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
+       call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,aspect,pthrmw)
 
        !  Enforced L-H power threshold value (if constraint 15 is turned on)
 
@@ -1556,7 +1594,7 @@ module physics_module
 
       real(dp) :: eps,epseff,g,s,zz
 
-      integer :: fit = ASTRA
+      integer, parameter :: fit = ASTRA
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1682,8 +1720,7 @@ module physics_module
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine diamagnetic_fraction_hender(beta,diacf) &
-           bind(C,name="c_diamagnetic_fraction_hender")
+  subroutine diamagnetic_fraction_hender(beta,diacf)
 
     !! author: S.I. Muldrew, CCFE, Culham Science Centre
     !! Diamagnetic contribution at tight aspect ratio.
@@ -1707,8 +1744,7 @@ module physics_module
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine diamagnetic_fraction_scene(beta,q95,q0,diacf) &
-                  bind(C,name="c_diamagnetic_fraction_scene")
+  subroutine diamagnetic_fraction_scene(beta,q95,q0,diacf)
 
     !! author: S.I. Muldrew, CCFE, Culham Science Centre
     !! Diamagnetic fraction based on SCENE fit by Tim Hender
@@ -1731,8 +1767,7 @@ module physics_module
 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine ps_fraction_scene(beta,pscf) &
-          bind(C,name="c_ps_fraction_scene")
+  subroutine ps_fraction_scene(beta,pscf)
 
     !! author: S.I. Muldrew, CCFE, Culham Science Centre
     !! Pfirsch-Schlüter fraction based on SCENE fit by Tim Hender
@@ -1840,7 +1875,7 @@ module physics_module
      write(*,*) 'Triangularity is negative without icurr = 8.'
      write(*,*) 'Please check and try again.'
      write(*,*) 'PROCESS stopping'
-     stop
+     stop 1
     end if
 
     select case (icurr)
@@ -2265,7 +2300,6 @@ module physics_module
 
     real(dp) :: znimp, pc, znfuel
     integer :: imp
-    integer :: first_call = 1
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3641,9 +3675,9 @@ module physics_module
 
     !  Local variables
 
-    real(dp) :: abserr = 0.003D0  !  numerical tolerance
-    real(dp) :: xlow = 0.01D0     !  minimum bound on H-factor
-    real(dp) :: xhigh = 100.0D0   !  maximum bound on H-factor
+    real(dp), parameter :: abserr = 0.003D0  !  numerical tolerance
+    real(dp), parameter :: xlow = 0.01D0     !  minimum bound on H-factor
+    real(dp), parameter :: xhigh = 100.0D0   !  maximum bound on H-factor
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3829,48 +3863,48 @@ module physics_module
     if (istell == 0) then
 
        select case (ishape)
-       case (0)
-          call ovarrf(outfile,'Elongation, X-point (input value used)', '(kappa)',kappa)
+       case (0,6,8)
+          call ovarrf(outfile,'Elongation, X-point (input value used)', '(kappa)',kappa, 'IP ')
        case (1)
           call ovarrf(outfile,'Elongation, X-point (TART scaling)', '(kappa)',kappa, 'OP ')
        case (2,3)
           call ovarrf(outfile,'Elongation, X-point (Zohm scaling)', '(kappa)',kappa, 'OP ')
           call ovarrf(outfile,'Zohm scaling adjustment factor', '(fkzohm)',fkzohm)
-       case (4)
+       case (4,5,7)
           call ovarrf(outfile,'Elongation, X-point (calculated from kappa95)', '(kappa)',kappa, 'OP ')
        case default
           idiags(1) = ishape ; call report_error(86)
        end select
 
        select case (ishape)
-       case (4)
+       case (4,5,7)
           call ovarrf(outfile,'Elongation, 95% surface (input value used)', &
-               '(kappa95)',kappa95)
+               '(kappa95)',kappa95, 'IP ')
        case default
-          call ovarrf(outfile,'Elongation, 95% surface (kappa/1.12)', &
+          call ovarrf(outfile,'Elongation, 95% surface (calculated from kappa)', &
                '(kappa95)',kappa95, 'OP ')
        end select
 
        call ovarrf(outfile,'Elongation, area ratio calc.','(kappaa)',kappaa, 'OP ')
 
        select case (ishape)
-       case (0,2)
+       case (0,2,6,8)
           call ovarrf(outfile,'Triangularity, X-point (input value used)', &
-               '(triang)',triang)
+               '(triang)',triang, 'IP ')
        case (1)
           call ovarrf(outfile,'Triangularity, X-point (TART scaling)', &
                '(triang)',triang, 'OP ')
-       case (3,4)
+       case (3,4,5,7)
           call ovarrf(outfile,'Triangularity, X-point (calculated from triang95)', &
                '(triang)',triang, 'OP ')
        end select
 
        select case (ishape)
-       case (3,4)
+       case (3,4,5,7)
           call ovarrf(outfile,'Triangularity, 95% surface (input value used)', &
-               '(triang95)',triang95)
+               '(triang95)',triang95, 'IP ')
        case default
-          call ovarrf(outfile,'Triangularity, 95% surface (triang/1.5)', &
+          call ovarrf(outfile,'Triangularity, 95% surface (calculated from triang)', &
                '(triang95)',triang95, 'OP ')
        end select
 
@@ -4256,6 +4290,9 @@ module physics_module
        call ovarre(outfile,'Hubbard 2012 L-I threshold - lower bound (MW)', '(pthrmw(16))',pthrmw(16), 'OP ')
        call ovarre(outfile,'Hubbard 2012 L-I threshold - upper bound (MW)', '(pthrmw(17))',pthrmw(17), 'OP ')
        call ovarre(outfile,'Hubbard 2017 L-I threshold', '(pthrmw(18))',pthrmw(18), 'OP ')
+       call ovarre(outfile,'Martin 2008 aspect ratio corrected scaling: nominal (MW)', '(pthrmw(19))',pthrmw(19), 'OP ')
+       call ovarre(outfile,'Martin 2008 aspect ratio corrected scaling: 95% upper bound (MW)', '(pthrmw(20))',pthrmw(20), 'OP ')
+       call ovarre(outfile,'Martin 2008 aspect ratio corrected scaling: 95% lower bound (MW)', '(pthrmw(21))',pthrmw(21), 'OP ')
        call oblnkl(outfile)
        if ((ilhthresh.eq.9).or.(ilhthresh.eq.10).or.(ilhthresh.eq.11)) then
            if ((bt < 0.78D0).or.(bt > 7.94D0)) then

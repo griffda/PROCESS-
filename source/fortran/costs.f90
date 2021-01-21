@@ -11,23 +11,19 @@ module costs_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-  use iso_c_binding
   implicit none
 
-  private
-  public :: costs
-
   !  Various cost account values (M$)
-  real(dp), public, bind(C) :: c228, c229, c23, c25, c26, cindrt, ccont
+  real(dp) :: c228, c229, c23, c25, c26, cindrt, ccont
 
   !  Account 226 - Heat transport system 
-  real(dp), protected, public, bind(C) :: c226, c2261, c2262, c2263
+  real(dp) :: c226, c2261, c2262, c2263
 
   !  Account 227 - Fuel handling
-  real(dp), public, bind(C) :: c227, c2271, c2272, c2273, c2274
+  real(dp) :: c227, c2271, c2272, c2273, c2274
 
   !  Account 24 - electrical plant equipment
-  real(dp), public, bind(C) :: c24, c241, c242, c243, c244, c245
+  real(dp) :: c24, c241, c242, c243, c244, c245
 
 
   real(dp) :: &
@@ -41,6 +37,107 @@ module costs_module
        c22527,c2253,chx,cpp,cppa, c22128
 
 contains
+
+   subroutine init_costs_module
+      !! Initialise module variables
+      implicit none
+      
+      c228 = 0.0D0
+      c229 = 0.0D0
+      c23 = 0.0D0
+      c25 = 0.0D0
+      c26 = 0.0D0
+      cindrt = 0.0D0
+      ccont = 0.0D0
+      c226 = 0.0D0
+      c2261 = 0.0D0
+      c2262 = 0.0D0
+      c2263 = 0.0D0
+      c227 = 0.0D0
+      c2271 = 0.0D0
+      c2272 = 0.0D0
+      c2273 = 0.0D0
+      c2274 = 0.0D0
+      c24 = 0.0D0
+      c241 = 0.0D0
+      c242 = 0.0D0
+      c243 = 0.0D0
+      c244 = 0.0D0
+      c245 = 0.0D0
+      c21 = 0.0D0
+      c211 = 0.0D0
+      c212 = 0.0D0
+      c213 = 0.0D0
+      c214 = 0.0D0
+      c2141 = 0.0D0
+      c2142 = 0.0D0
+      c215 = 0.0D0
+      c216 = 0.0D0
+      c217 = 0.0D0
+      c2171 = 0.0D0
+      c2172 = 0.0D0
+      c2173 = 0.0D0
+      c2174 = 0.0D0
+      c22 = 0.0D0
+      c2211 = 0.0D0
+      c2212 = 0.0D0
+      c22121 = 0.0D0
+      c22122 = 0.0D0
+      c22123 = 0.0D0
+      c22124 = 0.0D0
+      c22125 = 0.0D0
+      c22126 = 0.0D0
+      c22127 = 0.0D0
+      c2213 = 0.0D0
+      c22131 = 0.0D0
+      c22132 = 0.0D0
+      c2214 = 0.0D0
+      c2215 = 0.0D0
+      c2221 = 0.0D0
+      c22211 = 0.0D0
+      c22212 = 0.0D0
+      c22213 = 0.0D0
+      c22214 = 0.0D0
+      c22215 = 0.0D0
+      c2222 = 0.0D0
+      c22221 = 0.0D0
+      c22222 = 0.0D0
+      c22223 = 0.0D0
+      c22224 = 0.0D0
+      c2223 = 0.0D0
+      c223 = 0.0D0
+      c2231 = 0.0D0
+      c2232 = 0.0D0
+      c2233 = 0.0D0
+      c2234 = 0.0D0
+      c224 = 0.0D0
+      c2241 = 0.0D0
+      c2242 = 0.0D0
+      c2243 = 0.0D0
+      c2244 = 0.0D0
+      c2245 = 0.0D0
+      c2246 = 0.0D0
+      c225 = 0.0D0
+      c2251 = 0.0D0
+      c22511 = 0.0D0
+      c22512 = 0.0D0
+      c22513 = 0.0D0
+      c22514 = 0.0D0
+      c22515 = 0.0D0
+      c2252 = 0.0D0
+      c22521 = 0.0D0
+      c22522 = 0.0D0
+      c22523 = 0.0D0
+      c22524 = 0.0D0
+      c22525 = 0.0D0
+      c22526 = 0.0D0
+      c22527 = 0.0D0
+      c2253 = 0.0D0
+      chx = 0.0D0
+      cpp = 0.0D0
+      cppa = 0.0D0
+      c22128 = 0.0D0
+   end subroutine init_costs_module
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -173,6 +270,12 @@ contains
 20     format(t2, &
             'First wall, total blanket and divertor direct costs',/, &
             t2,'are zero as they are assumed to be fuel costs.')
+    elseif (ifueltyp == 2) then 
+         call oblnkl(outfile)
+         write(outfile,31)
+21     format(t2, &
+            'Initial First wall, total blanket and divertor direct costs',/,&
+            t2,'are in capital and replacemnet are in cost of electricity')
     end if
 
     call oblnkl(outfile)
@@ -213,6 +316,12 @@ contains
 30        format(t2, &
                'Centrepost direct cost is zero, as it ', &
                'is assumed to be a fuel cost.')
+       elseif ((itart == 1).and.(ifueltyp == 2)) then
+          call oblnkl(outfile)
+          write(outfile,31)
+31        format(t2, &
+               'Initial centrepost direct cost in included in capital ', &
+               'cost and replacements are assumed to be a fuel cost.')
        end if
 
        call oblnkl(outfile)
@@ -362,7 +471,9 @@ contains
 		use heat_transport_variables, only: pnetelmw 
 		use physics_variables, only: itart, wtgpd, fhe3
 		use process_output, only: oheadr, osubhd, ovarrf, oshead 
-		use times_variables, only: tcycle, tburn
+      use times_variables, only: tcycle, tburn
+      use constants, only: n_day_year
+
     implicit none
 
     !  Arguments
@@ -382,9 +493,9 @@ contains
     !  Number of kWh generated each year
 
     if (ife == 1) then
-       kwhpy = 1.0D3 * pnetelmw * (24.0D0*365.0D0) * cfactr
+       kwhpy = 1.0D3 * pnetelmw * (24.0D0*n_day_year) * cfactr
     else
-       kwhpy = 1.0D3 * pnetelmw * (24.0D0*365.0D0) * cfactr * tburn/tcycle
+       kwhpy = 1.0D3 * pnetelmw * (24.0D0*n_day_year) * cfactr * tburn/tcycle
     end if
 
     !  Costs due to reactor plant
@@ -431,7 +542,9 @@ contains
     annfwbl = (fwallcst + blkcst) * &
          (1.0D0+cfind(lsa)) * fcap0cp * crffwbl
 
-
+    if (ifueltyp == 2) then
+      annfwbl = annfwbl * ( 1.0d0 - fwbllife / tlife)
+    end if
 
     !  Cost of electricity due to first wall/blanket replacements
 
@@ -460,6 +573,10 @@ contains
 
        !  Cost of electricity due to divertor replacements
 
+         if (ifueltyp == 2) then
+            anndiv = anndiv * (1.0d0 - divlife / tlife)
+         end if
+
        coediv = 1.0D9 * anndiv / kwhpy
 
     end if
@@ -483,6 +600,10 @@ contains
             (1.0D0+cfind(lsa)) * fcap0cp * crfcp
 
        !  Cost of electricity due to centrepost replacements
+         if (ifueltyp == 2) then
+            anncp = anncp * (1.0d0 - cplife / tlife)
+         end if
+
 
        coecp = 1.0D9 * anncp / kwhpy
 
@@ -560,7 +681,7 @@ contains
     if (ife /= 1) then
        !  Sum D-T fuel cost and He3 fuel cost
        annfuel = ucfuel * pnetelmw/1200.0D0 + &
-            1.0D-6 * fhe3 * wtgpd * 1.0D-3 * uche3 * 365.0D0 * cfactr
+            1.0D-6 * fhe3 * wtgpd * 1.0D-3 * uche3 * n_day_year * cfactr
     else
        annfuel = 1.0D-6 * uctarg * reprat * 3.1536D7 * cfactr
     end if
@@ -860,6 +981,8 @@ contains
     !! and divertor plates.
     !! <P>If ifueltyp = 1, the first wall, blanket and divertor costs are
     !! treated as fuel costs, rather than as capital costs.
+    !! <P>If ifueltyp = 2, the initial first wall, blanket and divertor costs are
+    !! treated as capital costs, and replacemnts are included as fuel costs.
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -910,6 +1033,8 @@ contains
     !! The first wall cost is scaled linearly with surface area from TFCX.
     !! If ifueltyp = 1, the first wall cost is treated as a fuel cost,
     !! rather than as a capital cost.
+    !! If ifueltyp = 2, inital first wall is included as a capital cost,
+    !! and the replacement first wall cost is treated as a fuel costs.
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -955,6 +1080,8 @@ contains
     if (ifueltyp == 1) then
        fwallcst = c2211
        c2211 = 0.0D0
+    elseif (ifueltyp == 2) then
+       fwallcst = c2211
     else
        fwallcst = 0.0D0
     end if
@@ -971,6 +1098,8 @@ contains
     !! This routine evaluates the Account 221.2 (blanket) costs.
     !! If ifueltyp = 1, the blanket cost is treated as a fuel cost,
     !! rather than as a capital cost.
+    !! If ifueltyp = 2, the initial blanket is included as a capital cost
+    !! and the replacement blanket costs are treated as a fuel cost.
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1062,6 +1191,8 @@ contains
     if (ifueltyp == 1) then
        blkcst = c2212
        c2212 = 0.0D0
+    elseif (ifueltyp == 2) then
+       blkcst = c2212
     else
        blkcst = 0.0D0
     end if
@@ -1181,6 +1312,8 @@ contains
     !! Tenth-of-a-kind engineering and installation is assumed.
     !! <P>If ifueltyp = 1, the divertor cost is treated as a fuel cost,
     !! rather than as a capital cost.
+    !! <P>If ifueltyp = 2, the initial divertor is included as a capital cost
+    !! and the replacement divertor costs ae treated as a fuel cost,
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1199,6 +1332,8 @@ contains
        if (ifueltyp == 1) then
           divcst = c2215
           c2215 = 0.0D0
+       elseif (ifueltyp == 2) then
+          divcst = c2215 
        else
           divcst = 0.0D0
        end if
@@ -1267,6 +1402,8 @@ contains
     !! by R. Hancox under contract to Culham Laboratory, Jan/Feb 1994.
     !! If ifueltyp = 1, the TART centrepost cost is treated as a fuel
     !! cost, rather than as a capital cost.
+    !! If ifueltyp = 2, the  initial centrepost is included as a capital cost
+    !! and the replacement TART centrepost costs are treated as a fuel
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1276,7 +1413,7 @@ contains
 		use physics_variables, only: itart 
 		use structure_variables, only: clgsmass, aintmass 
 		use tfcoil_variables, only: whtconcu, whtconsc, whtcas, n_tf, whttflgs, &
-      whtcp, i_tf_sup, turnstf, tfleng, i_tf_sc_mat
+      whtcp, i_tf_sup, n_tf_turn, tfleng, i_tf_sc_mat
     implicit none
 
     !  Arguments
@@ -1306,6 +1443,8 @@ contains
        if ((itart == 1).and.(ifueltyp == 1)) then
           cpstcst = c22211
           c22211 = 0.0D0
+       elseif ((itart == 1).and.(ifueltyp == 2)) then
+          cpstcst = c22211
        end if
 
        !  Account 222.1.2 : Outboard TF coil legs
@@ -1323,11 +1462,11 @@ contains
 
        !  Superconductor ($/m)
 
-       costtfsc = ucsc(i_tf_sc_mat) * whtconsc / (tfleng*turnstf)
+       costtfsc = ucsc(i_tf_sc_mat) * whtconsc / (tfleng*n_tf_turn)
 
        !  Copper ($/m)
 
-       costtfcu = uccu * whtconcu / (tfleng*turnstf)
+       costtfcu = uccu * whtconcu / (tfleng*n_tf_turn)
 
        !  Total cost/metre of superconductor and copper wire
 
@@ -1339,12 +1478,12 @@ contains
 
        !  Total conductor costs
 
-       c22211 = 1.0D-6 * ctfconpm * n_tf * tfleng * turnstf
+       c22211 = 1.0D-6 * ctfconpm * n_tf * tfleng * n_tf_turn
        c22211 = fkind * c22211 * cmlsa(lsa)
 
        !  Account 222.1.2 : Winding
 
-       c22212 = 1.0D-6 * ucwindtf * n_tf * tfleng * turnstf
+       c22212 = 1.0D-6 * ucwindtf * n_tf * tfleng * n_tf_turn
        c22212 = fkind * c22212 * cmlsa(lsa)
 
        !  Account 222.1.3 : Case
@@ -1391,13 +1530,13 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use build_variables, only: iohcl 
-		use constants, only: twopi 
+		use constants, only: twopi, dcopper
 		use cost_variables, only: uccase, uccu, cconshpf, ucfnc, cconfix, ucsc, &
       ucwindpf, lsa, fkind
 		use pfcoil_variables, only: rjconpf, ipfres, vfohc, nohc, turns, isumatpf, &
       whtpfs, ric, rpf, isumatoh, fcupfsu, fcuohsu, vf, awpoh 
 		use structure_variables, only: fncmass 
-		use tfcoil_variables, only: dcond, dcopper 
+		use tfcoil_variables, only: dcond
     implicit none
 
     !  Arguments
@@ -2099,7 +2238,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2261() bind(C, name="c_acc2261")
+  subroutine acc2261()
     !! Account 2261 : Reactor cooling system
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2144,7 +2283,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2262() bind(C, name="c_acc2262")
+  subroutine acc2262()
     !! Account 2262 : Auxiliary component cooling
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2187,7 +2326,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2263() bind(C, name="c_acc2263")
+  subroutine acc2263()
     !! Account 2263 : Cryogenic system
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2241,7 +2380,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2271() bind(C, name="c_acc2271")
+  subroutine acc2271()
     !! Account 2271 : Fuelling system
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2267,7 +2406,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2272() bind(C, name="c_acc2272")
+  subroutine acc2272()
     !! Account 2272 : Fuel processing and purification
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2308,7 +2447,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2273() bind(C, name="c_acc2273")
+  subroutine acc2273()
     !! Account 2273 : Atmospheric recovery systems
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2345,7 +2484,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2274() bind(C, name="c_acc2274")
+  subroutine acc2274()
     !! Account 2274 : Nuclear building ventilation
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2368,7 +2507,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc228() bind(C, name="c_acc228")
+  subroutine acc228()
     !! Account 228 : Instrumentation and control
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
@@ -2390,7 +2529,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc229() bind(C, name="c_acc229")
+  subroutine acc229()
     !! Account 229 : Maintenance equipment
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
@@ -2410,7 +2549,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc23() bind(C, name="c_acc23")
+  subroutine acc23()
     !! Account 23 : Turbine plant equipment
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
@@ -2439,7 +2578,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc24() bind(C, name="costs_1990_acc24")
+  subroutine acc24()
     !! Account 24 : Electric plant equipment
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
@@ -2458,7 +2597,7 @@ contains
  
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc241() bind(C, name="c_acc241")
+  subroutine acc241()
     !! Account 241 : Electric plant equipment - switchyard
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2489,7 +2628,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc242() bind(C, name="c_acc242")
+  subroutine acc242()
     !! Account 242 : Electric plant equipment - Transformers
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2525,7 +2664,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc243() bind(C, name="c_acc243")
+  subroutine acc243()
     !! Account 243 : Electric plant equipment - Low voltage
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2558,7 +2697,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc244() bind(C, name="c_acc244")
+  subroutine acc244()
     !! Account 244 : Electric plant equipment - Diesel generators
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2589,7 +2728,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc245() bind(C, name="c_acc245")
+  subroutine acc245()
     !! Account 245 : Electric plant equipment - Aux facility power
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -2620,7 +2759,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc25() bind(C, name="c_acc25")
+  subroutine acc25()
     !! Account 25 : Miscellaneous plant equipment
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
@@ -2653,7 +2792,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc26() bind(C, name="c_acc26")
+  subroutine acc26()
     !! Account 26 : Heat rejection system
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
@@ -2700,7 +2839,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc9() bind(C, name="c_acc9")
+  subroutine acc9()
     !! Account 9 : Indirect cost and contingency allowances
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre

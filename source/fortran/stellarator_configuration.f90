@@ -113,15 +113,15 @@ module stellarator_configuration
 
        real(dp) centering_force_avg_MN
        !  Average centering force the coils in the coil set [MN/coil]
+ 
+       real(dp) :: neutron_peakfactor
+       !  The neutron peaking factor determined through inhomogeneities on the stellarator wall (qmax/qavg)
 
        real(dp), dimension(:), allocatable :: D11_star_mono_input
        !  The monoenergetic radial transport coefficients normalized by the plateau value.
 
        real(dp), dimension(:), allocatable :: nu_star_mono_input
        !  The monoenergetic radial transport coefficients normalized by the plateau value.
- 
-       real(dp) :: neutron_peakfactor
-       !  The neutron peaking factor determined through inhomogeneities on the stellarator wall (qmax/qavg)
 
 
 
@@ -492,10 +492,6 @@ module stellarator_configuration
 
         real(dp), dimension(:), allocatable :: nustar,d11,d13
         !type(stella_config), allocatable, dimension(:) :: stella_json
-
-        ! Obtain the root directory
-        ! I don't know why but this #include needs to tabbed to the very left of the line.
-#include "root.dir"
     
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     

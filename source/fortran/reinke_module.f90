@@ -11,6 +11,12 @@ module reinke_module
 
 contains
 
+  subroutine init_reinke_module
+    !! Initialise module variables
+    implicit none
+
+    vcritx = 0.0D0
+  end subroutine init_reinke_module
 
   function reinke_fzmin(bt, flh, qstar, rmajor, eps, fsep, fgw, kappa, lhat, &
     netau, tesep, impvardiv, impurity_arr, impurity_enrichment)
@@ -37,7 +43,7 @@ contains
     !! M.L. Reinke 2017 Nucl. Fusion 57 034004
        
     ! use divertor_ode, only: impurity_concs
-    ! use divertor_kallenbach_variables, only: impurity_enrichment
+    ! use div_kal_vars, only: impurity_enrichment
     use divertor_ode_var, only: impurity_concs
     use impurity_radiation_module, only: imp_dat
     use reinke_variables, only: reinke_mode
@@ -52,7 +58,7 @@ contains
     real(dp), dimension(14) :: impurity_enrichment
     integer(kind=4) :: impvardiv
 
-    integer(kind=4) :: N = 100
+    integer(kind=4), parameter :: N = 100
     integer(kind=4) :: i, j
     real(dp) :: binWidth, te
 
@@ -150,7 +156,7 @@ contains
     implicit none
     real(dp) :: reinke_tsep
     real(dp) :: bt, flh, qstar, rmajor, eps, fgw, kappa, lhat
-    real(dp) :: kappa_0 = 2D3 !Stangeby W/m/eV^(7/2)
+    real(dp), parameter :: kappa_0 = 2D3 !Stangeby W/m/eV^(7/2)
 
     reinke_tsep = bt**0.72 * flh**0.29 * fgw**0.21 * qstar**0.08 * rmajor**0.33
     !reinke_tsep = bt**0.72 * flh**0.2857 * fgw**0.2057 * qstar**0.08 * rmajor**0.3314
@@ -171,7 +177,7 @@ contains
 
     real(dp) :: testResult_fZ_DEMOBASE, testResult_fZ_ASDEXBASE, testInput_tsep
     integer :: i, j
-    real(dp) :: test_Bt = 5.8547
+    real(dp), parameter :: test_Bt = 5.8547
     type(imp_dat),  dimension(14), save :: test_imp_arr
     real(dp), dimension(14) :: impurity_enrichment
 

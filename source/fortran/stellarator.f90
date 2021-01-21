@@ -1,6 +1,3 @@
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
 module stellarator_module
 
   !! Module containing stellarator routines
@@ -26,11 +23,30 @@ module stellarator_module
 
 
   logical :: first_call = .true.
+  logical :: first_call_stfwbs = .true.
 
   private :: config
   public :: stcall, stinit, stout
 
 contains
+
+  subroutine init_stellarator_module
+    !! Initialise module variables
+    implicit none
+
+    first_call = .true.
+    first_call_stfwbs = .true.
+    ! Init blank stellarator configuration
+    config = stella_config("", 0, 0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
+      0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
+      0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
+      0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, [0.0D0], [0.0D0])
+    f_n = 0.0D0
+    f_r = 0.0D0
+    f_a = 0.0D0
+    f_b = 0.0D0
+    f_i = 0.0D0
+  end subroutine init_stellarator_module
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -133,9 +149,6 @@ contains
     boundu(3) = 30.0D0
     boundu(29) = 20.0D0
 
-    icase = 'Stellarator model'
-
-
     !  These lines switch off tokamak specifics (solenoid, pf coils, pulses etc.).
     !  Are they still up to date? (11/03/20 JL)
     !  Build quantities
@@ -149,8 +162,6 @@ contains
     !  Physics quantities
 
     dnbeta = 0.0D0
-    rmajor = 20.0D0
-    kappa = 1.0D0
     kappa95 = 1.0D0
     triang = 0.0D0
     q = 1.03D0
@@ -340,10 +351,11 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use build_variables, only: blbmith, blbmoth, blbpith, blbpoth, blbuith, &
-      blbuoth, blnkith, blnkoth, blnktth, bore, ddwi, fwarea, fwith, fwoth, &
-      gapds, gapoh, gapomin, gapsto, hmax, ohcth, r_tf_outboard_mid, rbld, &
-      rsldi, rsldo, rspo, scrapli, scraplo, shldith, shldoth, shldtth, tfcth, &
-      tfthko, available_radial_space, f_avspace, required_radial_space
+      blbuoth, blnkith, blnkoth, blnktth, bore, d_vv_in, d_vv_out, fwarea, &
+      fwith, fwoth, gapds, gapoh, gapomin, gapsto, hmax, ohcth, &
+      r_tf_outboard_mid, rbld, rsldi, rsldo, rspo, scrapli, scraplo, shldith, &
+      shldoth, shldtth, tfcth, tfthko, available_radial_space, f_avspace, &
+      required_radial_space
     use fwbs_variables, only: afw, blktmodel, fdiv, fhcd, fhole, fw_wall
     use heat_transport_variables, only: ipowerflow
     use physics_variables, only: rmajor, rminor, sarea
@@ -381,18 +393,18 @@ contains
 
 
     bore = rmajor - (ohcth + gapoh + tfcth + gapds + &
-    ddwi + shldith + blnkith + fwith + scrapli + rminor)
+         d_vv_in + shldith + blnkith + fwith + scrapli + rminor)
 
     !  Radial build to centre of plasma (should be equal to rmajor)
     rbld = bore + ohcth + gapoh + tfcth + gapds + &
-         ddwi + shldith + blnkith + fwith + scrapli + rminor
+         d_vv_in + shldith + blnkith + fwith + scrapli + rminor
 
 
       
 
     ! Bc stellarators cannot scale rminor reasonably well an additional constraint equation is required,
     ! that ensures that there is enough space between coils and plasma.
-    required_radial_space = (tfcth/2.0D0 + gapds + ddwi + shldith + blnkith + fwith + scrapli)
+    required_radial_space = (tfcth/2.0D0 + gapds + d_vv_in + shldith + blnkith + fwith + scrapli)
 
     available_radial_space = f_r*(config%rminor_ref+config%min_plasma_coil_distance) - rminor
 
@@ -413,15 +425,15 @@ contains
     !  Radius to centre of outboard TF coil legs
 
     gapsto = gapomin
-    r_tf_outboard_mid = rsldo + ddwi + gapsto + 0.5D0*tfthko
+    r_tf_outboard_mid = rsldo + d_vv_out + gapsto + 0.5D0*tfthko
 
     !  Height to inside edge of TF coil
     !  Roughly equal to average of (inboard build from TF coil to plasma
     !  centre) and (outboard build from plasma centre to TF coil)
 
     hmax = 0.5D0 * ( &
-         (gapds+ddwi+shldith+blnkith+fwith+scrapli+rminor) + &
-         (rminor+scraplo+fwoth+blnkoth+shldoth+ddwi+gapsto) )
+         (gapds+d_vv_in+shldith+blnkith+fwith+scrapli+rminor) + &
+         (rminor+scraplo+fwoth+blnkoth+shldoth+d_vv_out+gapsto) )
 
     !  Outer divertor strike point radius, set equal to major radius
 
@@ -471,9 +483,9 @@ contains
     call obuild(outfile,'Gap',gapds,radius,'(gapds)')
     call ovarre(mfile,'Gap (m)','(gapds)',gapds)
 
-    radius = radius + ddwi
-    call obuild(outfile,'Vacuum vessel',ddwi,radius,'(ddwi)')
-    call ovarre(mfile,'Vacuum vessel radial thickness (m)','(ddwi)',ddwi)
+    radius = radius + d_vv_in
+    call obuild(outfile,'Vacuum vessel',d_vv_in,radius,'(d_vv_in)')
+    call ovarre(mfile,'Vacuum vessel radial thickness (m)','(d_vv_in)',d_vv_in)
 
     radius = radius + shldith
     call obuild(outfile,'Inboard shield',shldith,radius,'(shldith)')
@@ -513,8 +525,8 @@ contains
     call obuild(outfile,'Outboard shield',shldoth,radius,'(shldoth)')
     call ovarre(mfile,'Outer radiation shield radial thickness (m)','(shldoth)',shldoth)
 
-    radius = radius + ddwi
-    call obuild(outfile,'Vacuum vessel',ddwi,radius,'(ddwi)')
+    radius = radius + d_vv_out
+    call obuild(outfile,'Vacuum vessel',d_vv_out,radius,'(d_vv_out)')
 
     radius = radius + gapsto
     call obuild(outfile,'Gap',gapsto,radius,'(gapsto)')
@@ -649,7 +661,7 @@ contains
       pscalingmw, psolradmw, psyncpv, ptremw, ptrepv, ptrimw, ptripv, q, q95, &
       qfuel, qstar, rad_fraction, rmajor, rminor, rndfuel, sarea, tauee, &
       taueff, tauei, taup, te, ten, ti, tin, vol, wallmw, xarea, zeff, zeffai, &
-      ffwal, palpnb, palppv, pchargepv, drhodt_max,drhodn_max,rho_max_dt, rho_max_dn
+      ffwal, palpnb, palppv, pchargepv, dtdrho_max,dndrho_max,rho_max_dt, rho_max_dn
     use profiles_module, only: plasma_profiles
     use stellarator_variables, only: f_rad, iotabar
     use physics_functions_module, only: radpwr
@@ -867,8 +879,8 @@ contains
 
          call ovarre(outfile,'Radius of Maximum ne gradient (m)','(r_max_dn)',rho_max_dn*rminor)
          call ovarre(outfile,'Radius of Maximum te gradient (m)','(r_max_dt)',rho_max_dt*rminor)
-         call ovarre(outfile,'Maxium ne gradient (/m4)','(drdn_max)',drhodn_max/rminor)
-         call ovarre(outfile,'Maxium te gradient (keV/m)','(drdt_max)',drhodt_max/rminor)
+         call ovarre(outfile,'Maxium ne gradient (/m4)','(drdn_max)',dndrho_max/rminor)
+         call ovarre(outfile,'Maxium te gradient (keV/m)','(drdt_max)',dtdrho_max/rminor)
 
          call ovarre(outfile,'Total 0D heat flux (r=rhocore) (MW/m2)','(q_PROCESS)',q_PROCESS)
          call ovarre(outfile,'Total neoclassical flux (r=rhocore) (MW/m2)','(total_q_neo)',total_q_neo)
@@ -1223,10 +1235,10 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use build_variables, only: blarea, blareaib, blbmith, blbmoth, blbpith, &
-      blbpoth, blbuith, blbuoth, blnkith, blnkoth, blnktth, ddwex, ddwi, &
-      fwarea, fwareaib, fwareaob, fwith, fwoth, r_tf_outboard_mid, scrapli, &
-      scraplo, sharea, shareaib, shareaob, shldith, shldoth, shldtth, tfthko, &
-      blareaob
+      blbpoth, blbuith, blbuoth, blnkith, blnkoth, blnktth, ddwex, d_vv_in, &
+      d_vv_out, fwarea, fwareaib, fwareaob, fwith, fwoth, r_tf_outboard_mid, &
+      scrapli, scraplo, sharea, shareaib, shareaob, shldith, shldoth, shldtth, &
+      tfthko, blareaob
     use cost_variables, only: abktflnc, tlife
     use current_drive_variables, only: porbitlossmw
     use divertor_variables, only: divclfr, divdens, divmas, divplt, divsur
@@ -1237,7 +1249,7 @@ contains
       densbreed, denstl, dewmkg, emult, emultmw, fblbe, fblbreed, fblhebmi, &
       fblhebmo, fblli, fbllipb, fblss, fblvd, fdiv, fhcd, fhole, fvoldw, &
       fvolso, fwclfr, fwlife, fwmass, hcdportsize, li6enrich, nflutf, &
-      npdiv, nphcdin, nphcdout, outlet_temp, pnucblkt, pnuccp, pnucdiv, &
+      npdiv, nphcdin, nphcdout, outlet_temp, pnucblkt, pnuc_cp, pnucdiv, &
       pnucdiv, pnucfw, pnuchcd, pnucloss, pnucshld, praddiv, pradfw, pradhcd, &
       pradloss, primary_pumping, ptfnuc, rdewex, rpf2dewar, secondary_cycle, &
       tbr, tritprate, vdewex, vdewin, vfblkt, vfshld, volblkt, volblkti, &
@@ -1270,7 +1282,6 @@ contains
          pnucso,psurffwi,psurffwo,ptfiwp,ptfowp,r1,raddose,vffwi,vffwo, &
          volshldi,volshldo
 
-    logical :: first_call = .true.
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1353,15 +1364,15 @@ contains
 
     else
 
-       pnuccp = 0.0D0
+       pnuc_cp = 0.0D0
 
        if (ipowerflow == 0) then
 
           !  Energy-multiplied neutron power
 
-          pneut2 = (pneutmw - pnucloss - pnuccp) * emult
+          pneut2 = (pneutmw - pnucloss - pnuc_cp) * emult
 
-          emultmw = pneut2 - (pneutmw - pnucloss - pnuccp)
+          emultmw = pneut2 - (pneutmw - pnucloss - pnuc_cp)
 
           !  Nuclear heating in the blanket
 
@@ -1388,7 +1399,7 @@ contains
 
           !  Neutron power deposited in first wall, blanket and shield (MW)
 
-          pnucfwbs = pneutmw - pnucdiv - pnucloss - pnuccp - pnuchcd
+          pnucfwbs = pneutmw - pnucdiv - pnucloss - pnuc_cp - pnuchcd
 
           !  Split between inboard and outboard by first wall area fractions
 
@@ -1553,9 +1564,9 @@ contains
     !  N.B. divsur is calculated in stdiv after this point, so will
     !  be zero on first lap, hence the initial approximation
 
-    if (first_call) then
+    if (first_call_stfwbs) then
        divsur = 50.0D0
-       first_call = .false.
+       first_call_stfwbs = .false.
     end if
 
     divmas = divsur * divdens * (1.0D0 - divclfr) * divplt
@@ -1682,7 +1693,7 @@ contains
 
     r1 = rminor + 0.5D0*(scrapli+fwith+blnkith+shldith &
          + scraplo+fwoth+blnkoth+shldoth)
-    vdewin = ddwi * sarea * r1/rminor * fvoldw
+    vdewin = (d_vv_in+d_vv_out)/2.0D0 * sarea * r1/rminor * fvoldw
 
     !  Vacuum vessel mass
 
@@ -2567,7 +2578,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables, only: blnkith, blnkoth, ddwi, dh_tf_inner_bore, &
+    use build_variables, only: blnkith, blnkoth, dh_tf_inner_bore, &
       dr_tf_inner_bore, fwith, fwoth, gapds, gapsto, hmax, r_tf_outboard_mid, &
       r_tf_outboard_mid, scrapli, scraplo, shldith, shldoth, tfcth, tfthko, &
       r_tf_inboard_mid, vvblgap
@@ -2578,15 +2589,15 @@ contains
       vportamax, vportpmax, vporttmax
     use structure_variables, only: aintmass
     use tfcoil_variables, only: acasetf, acndttf, acond, acstf, aiwp, arealeg, &
-      aswp, avwp, bmaxtf, casthi, casths, cpttf, dcase, dcopper, estotftgj, &
+      aswp, avwp, bmaxtf, casthi, casths, cpttf, dcase, estotftgj, &
       fcutfsu, jwptf, n_tf, oacdcp, rbmax, ritfc, tfareain, &
       tfcryoarea, tficrn, tfleng, tfocrn, tfsai, tfsao, tftmp, tftort, &
-      thicndut, thkcas, thkwp, thwcndut, tinstf, turnstf, vftf, whtcas, whtgw,&
+      thicndut, thkcas, dr_tf_wp, thwcndut, tinstf, n_tf_turn, vftf, whtcas, whtgw, &
       whtcon, whtconcu, whtconsc, whtconsh, whttf, wwp1, dcond, awphec, dcondins, &
-      i_tf_sc_mat, jwdgpro, leni, leno, max_force_density, sigvvall, strtf2, taucq, &
+      i_tf_sc_mat, jwdgpro, max_force_density, sigvvall, strtf2, taucq, &
       tdmptf, tmaxpro, toroidalgap, vtfkv, whtconin, wwp2, vdalw, bcritsc, fhts, &
-      tcritsc, vtfskv
-		use constants, only: rmu0, twopi, pi
+      tcritsc, vtfskv, t_turn_tf
+		use constants, only: rmu0, twopi, pi, dcopper
 		use maths_library, only: find_y_nonuniform_x, tril, sumup3, ellipke
     use superconductors, only : jcrit_rebco, jcrit_nbti, bi2212, itersc, wstsc
     use rebco_variables, only: copperA_m2, copperA_m2_max
@@ -2598,7 +2609,8 @@ contains
     integer, intent(in) :: outfile,iprint
 
 
-    real(dp) :: r_coil_major, r_coil_minor, case_thickness_constant, coilcurrent, inductance
+    real(kind(1.0D0)) :: r_coil_major, r_coil_minor, case_thickness_constant, coilcurrent
+    real(kind(1.0D0)) :: t_cable, inductance
 
     real(dp), allocatable, dimension(:) ::   jcrit_vector,RHS,LHS,wp_width_r, B_max_k
 
@@ -2626,14 +2638,12 @@ contains
      !       
      ! [m] Dimension of square cable space inside insulation
      !     and case of the conduit of each turn
-     leni = leno - 2.0D0 * (thwcndut + thicndut)  !  leni = t_w
-
-     if(leni<0) print *, "leni is negative. Check leno, thwcndut and thicndut."
+     t_cable = t_turn_tf - 2.0D0 * (thwcndut + thicndut)  !  t_cable = t_w
+     if(t_cable<0) print *, "t_cable is negative. Check t_turn, thwcndut and thicndut."
      ! [m^2] Cross-sectional area of cable space per turn
-     acstf = 0.9D0 * leni**2 ! 0.9 to include some rounded corners. (acstf = pi (leni/2)**2 = pi/4 *leni**2 for perfect round conductor). This factor depends on how round the corners are.
+     acstf = 0.9D0 * t_cable**2 ! 0.9 to include some rounded corners. (acstf = pi (t_cable/2)**2 = pi/4 *t_cable**2 for perfect round conductor). This factor depends on how round the corners are.
      ! [m^2] Cross-sectional area of conduit case per turn
-     acndttf = (leni + 2.0D0*thwcndut)**2 - acstf
-     !
+     acndttf = (t_cable + 2.0D0*thwcndut)**2 - acstf
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -2669,7 +2679,7 @@ contains
      LHS = fiooic * jcrit_vector 
      
      ! Conduct fraction of conduit * Superconductor fraction in conductor
-     f_scu = (acstf*(1.0D0-vftf))/(leno**2)*(1.0D0-fcutfsu) !fraction that is SC of wp.
+     f_scu = (acstf*(1.0D0-vftf))/(t_turn_tf**2)*(1.0D0-fcutfsu) !fraction that is SC of wp.
      !print *, "f_scu. ",f_scu,"Awp min: ",Awp(1)
  
      RHS = coilcurrent/(wp_width_r(:)**2/config%WP_ratio*f_scu) ! f_scu should be the fraction of the sc that is in the winding pack.
@@ -2681,7 +2691,7 @@ contains
      call intersect(wp_width_r,LHS,N_it,wp_width_r,RHS,N_it,wp_width_r_min)
  
      ! Maximum field at superconductor surface (T)
-     wp_width_r_min = Max(leno**2,wp_width_r_min)
+     wp_width_r_min = Max(t_turn_tf**2,wp_width_r_min)
  
      ! Recalculate bmaxtf at the found awp_min:
      bmaxtf = bmax_from_awp(wp_width_r_min,coilcurrent)
@@ -2692,24 +2702,24 @@ contains
  
      wwp1 = awp_tor                ! [m] toroidal thickness of winding pack
      wwp2 = awp_tor                ! [m] toroidal thickness of winding pack (region in front)
-     thkwp = awp_rad               ! [m] radial thickness of winding pack
+     dr_tf_wp = awp_rad               ! [m] radial thickness of winding pack
  
      !  [m^2] winding-pack cross sectional area including insulation (not global)
-     awpc = (thkwp + 2.0D0*tinstf)*(wwp1 + 2.0D0*tinstf)
+     awpc = (dr_tf_wp + 2.0D0*tinstf)*(wwp1 + 2.0D0*tinstf)
  
 
      awptf = awp_tor*awp_rad                 ! [m^2] winding-pack cross sectional area
      jwptf = coilcurrent*1.0D6/awptf         ! [A/m^2] winding pack current density
-     turnstf = awptf / (leno**2)             !  estimated number of turns for a given turn size (not global). Take at least 1.
-     cpttf = coilcurrent*1.0D6 / turnstf     ! [A] current per turn - estimation
+     n_tf_turn = awptf / (t_turn_tf**2)           !  estimated number of turns for a given turn size (not global). Take at least 1.
+     cpttf = coilcurrent*1.0D6 / n_tf_turn     ! [A] current per turn - estimation
      ! [m^2] Total conductor cross-sectional area, taking account of void area
-     acond = acstf*turnstf * (1.0D0-vftf)
+     acond = acstf*n_tf_turn * (1.0D0-vftf)
      ! [m^2] Void area in cable, for He
-     avwp = acstf*turnstf*vftf
+     avwp = acstf*n_tf_turn*vftf
      ! [m^2] Insulation area (not including ground-wall)
-     aiwp = turnstf * (leno**2 - acndttf - acstf)
+     aiwp = n_tf_turn * (t_turn_tf**2 - acndttf - acstf)
      ! [m^2] Structure area for cable
-     aswp = turnstf*acndttf
+     aswp = n_tf_turn*acndttf
    ! End of winding pack calculations
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2761,8 +2771,10 @@ contains
    !  General Coil Geometry values
    !  
      tftort = wwp1 + 2.0D0*casths+ 2.0D0*tinstf     ! [m] Thickness of inboard leg in toroidal direction
-     tfcth = 2.0D0*thkcas + thkwp + casthi+ 2.0D0*tinstf  ! [m] Thickness of inboard leg in radial direction
-     tfthko = 2.0D0*thkcas + thkwp + casthi+ 2.0D0*tinstf ! [m] Thickness of outboard leg in radial direction (same as inboard)
+
+     !? There was a factor of 2 in fron of thkcas. Is this right now (jlion, 21/01/2021)
+     tfcth = thkcas + dr_tf_wp + casthi+ 2.0D0*tinstf  ! [m] Thickness of inboard leg in radial direction
+     tfthko = thkcas + dr_tf_wp + casthi+ 2.0D0*tinstf ! [m] Thickness of outboard leg in radial direction (same as inboard)
      arealeg = tfcth*tftort                         ! [m^2] overall coil cross-sectional area (assuming inboard and 
                                                     !       outboard leg are the same)
      acasetf = (tfcth*tftort)-awpc                  ! [m^2] Cross-sectional area of surrounding case
@@ -2811,7 +2823,7 @@ contains
      tfcryoarea = config%coilsurface * f_r**2 *1.1D0 !1.1 to scale it out a bit. Should be coupled to winding pack maybe.
  
      ! Minimal bending radius:
-     min_bending_radius = config%min_bend_radius * f_r * 1/(1-thkwp/(2*r_coil_minor))
+     min_bending_radius = config%min_bend_radius * f_r * 1/(1-dr_tf_wp/(2*r_coil_minor))
 
    ! End of general coil geometry values
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2828,15 +2840,15 @@ contains
     ! (assumed to be same density/material as conduit insulation)
     whtgw = tfleng * (awpc-awptf) * dcondins
      ! [kg] mass of Superconductor
-    whtconsc = (tfleng * turnstf * acstf*(1.0D0-vftf) * (1.0D0-fcutfsu) - tfleng*awphec) &
+    whtconsc = (tfleng * n_tf_turn * acstf*(1.0D0-vftf) * (1.0D0-fcutfsu) - tfleng*awphec) &
                *dcond(i_tf_sc_mat) !awphec is 0 for a stellarator. but keep this term for now.
       ! [kg] mass of Copper in conductor
-    whtconcu =  (tfleng * turnstf * acstf*(1.0D0-vftf) * fcutfsu - tfleng*awphec) * dcopper
+    whtconcu =  (tfleng * n_tf_turn * acstf*(1.0D0-vftf) * fcutfsu - tfleng*awphec) * dcopper
       ! [kg] mass of Steel conduit (sheath)
-    whtconsh = tfleng*turnstf*acndttf * denstl
+    whtconsh = tfleng*n_tf_turn*acndttf * denstl
     !if (i_tf_sc_mat==6)   whtconsh = fcondsteel * awptf *tfleng* denstl
       ! Conduit insulation mass [kg]
-    ! (aiwp already contains turnstf)
+    ! (aiwp already contains n_tf_turn)
     whtconin = tfleng * aiwp * dcondins
       ! [kg] Total conductor mass
     whtcon = whtconsc + whtconcu + whtconsh + whtconin
@@ -2859,12 +2871,12 @@ contains
      ! the conductor fraction is meant of the cable space!
      ! This is the old routine which is being replaced for now by the new one below
      !    protect(aio,  tfes,               acs,       aturn,   tdump,  fcond,  fcu,   tba,  tmax   ,ajwpro, vd)
-     !call protect(cpttf,estotftgj/n_tf*1.0D9,acstf,   leno**2   ,tdmptf,1-vftf,fcutfsu,tftmp,tmaxpro,jwdgpro2,vd)
+     !call protect(cpttf,estotftgj/n_tf*1.0D9,acstf,   t_turn_tf**2   ,tdmptf,1-vftf,fcutfsu,tftmp,tmaxpro,jwdgpro2,vd)
 
      vd = u_max_protect_V(estotftgj/n_tf*1.0D9,tdmptf,cpttf)
 
      ! comparison
-     jwdgpro = j_max_protect_Am2(tdmptf,0.0d0,fcutfsu,1-vftf,tftmp,acstf,leno**2)
+     jwdgpro = j_max_protect_Am2(tdmptf,0.0d0,fcutfsu,1-vftf,tftmp,acstf,t_turn_tf**2)
 
      !print *, "Jmax, comparison: ", jwdgpro, "  ", jwdgpro2,"  ",jwptf/jwdgpro, "   , tdmptf: ",tdmptf, " fcutfsu: ",fcutfsu
      !print *, "acstf: ", acstf
@@ -2893,7 +2905,7 @@ contains
 
     ! Approximate, very simple maximum stress: (needed for limitation of icc 32)
     ! This should be the stress on the ground insulation
-    strtf2 = max_force_density *thkwp *1.0D6 ! in Pa
+    strtf2 = max_force_density *dr_tf_wp *1.0D6 ! in Pa
     !
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3229,9 +3241,10 @@ contains
 
       real(dp), intent(inout) :: x
 
-      real(dp) :: dx,xmin,xmax,ymin,ymax
-      real(dp) :: y01,y02,y,yleft,yright,epsy
-      integer :: i, nmax = 100
+      real(kind(1.0D0)) :: dx,xmin,xmax,ymin,ymax
+      real(kind(1.0D0)) :: y01,y02,y,yleft,yright,epsy
+      integer :: i
+      integer, parameter :: nmax = 100
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3335,8 +3348,8 @@ contains
          vportamax, vportpmax, vporttmax
       use tfcoil_variables, only: acasetf, acond, acasetf, aiwp, aswp, bmaxtf, &
          casthi, casths, cpttf, estotftgj, fcutfsu, jwptf, jwdgpro, n_tf, oacdcp, ritfc, &
-         tfareain, tficrn, tfleng, tfocrn, tftort, thicndut, thkcas, thkwp, &
-         thwcndut, turnstf, turnstf, vftf, whtcas, whtcon, whtconcu, whtconsc, &
+         tfareain, tficrn, tfleng, tfocrn, tftort, thicndut, thkcas, dr_tf_wp, &
+         thwcndut, n_tf_turn, n_tf_turn, vftf, whtcas, whtcon, whtconcu, whtconsc, &
          whtconsh, whttf, wwp1, acstf, avwp, tinstf
       implicit none
   
@@ -3405,11 +3418,11 @@ contains
       call ovarre(outfile,'Structure fraction of winding pack','(aswp/ap)',aswp/ap)
       call ovarre(outfile,'Insulator fraction of winding pack','(aiwp/ap)',aiwp/ap)
       call ovarre(outfile,'Helium fraction of winding pack','(avwp/ap)',avwp/ap)
-      call ovarre(outfile,'Winding radial thickness (m)','(thkwp)',thkwp)
+      call ovarre(outfile,'Winding radial thickness (m)','(dr_tf_wp)',dr_tf_wp)
       call ovarre(outfile,'Winding toroidal thickness (m)','(wwp1)',wwp1)
       call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)',tinstf)
-      call ovarre(outfile,'Number of turns per coil','(turnstf)',turnstf)
-      call ovarre(outfile,'Width of each turn (incl. insulation) (m)','(leno)',leno)
+      call ovarre(outfile,'Number of turns per coil','(n_tf_turn)',n_tf_turn)
+      call ovarre(outfile,'Width of each turn (incl. insulation) (m)','(t_turn_tf)',t_turn_tf)
       call ovarre(outfile,'Current per turn (A)','(cpttf)',cpttf)
       call ovarre(outfile,'jop/jcrit','(fiooic)',fiooic)
       call ovarre(outfile,'Current density in conductor area (A/m2)','(ritfc/acond)',1.0D-6*ritfc/n_tf/acond)

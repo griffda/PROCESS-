@@ -3,191 +3,232 @@
 #
 #  J. Morris
 #  M. Kumar
+#  K. Zarebski
 #
 #  UKAEA
-#  29/07/19
+#  02/12/2020
 #
 #-----------------------------------------------------
+
+# All jobs are run on ubuntu-tagged runners; freia-tagged runners are not 
+# supported due to modifying the Docker containers used here after they are run
 
 stages:
   - build
   - testing
   - quality
-  - freia
   - pages
 
-.before_script_template: &build-freia-setup
+.before_test_template: &test-setup
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9_pyenv
   before_script:
-    - export LOGNAME=root
-    - source /etc/profile.d/modules.sh
-    - module use /usr/local/modules/default
-    - module unload python
-    - module load python/3.7
-    - module load texlive/2017
-    - module unload ifort 
-    - module load gfortran
-    - export GTEST=/home/PROCESS/testing_frameworks/googletest/googletest
-    - echo ld_library_path=$LD_LIBRARY_PATH
-    # Modify PATH so "ford" command can be found in cmake file
-    - export PATH=$PATH:~/.local/bin
-    # Python3 uses the locale to choose the file encoding it uses
-    # Without this it will use ASCII encoding and Ford will fail
-    - export LANG=en_GB.utf8
+    - source ~/.venv_$PY_VERSION/bin/activate
+    - python -m pip install --upgrade pip
+    - python -m pip install -r requirements.txt
+    - python -m pip install git+https://github.com/jonMaddockUkaea/ford
+    - python -m pip install --find-links=process_dist_$PY_VERSION process
+    - apt update && apt upgrade -y
+    - apt install lcov -y
 
-.before_script_template: &build-ubuntu-setup
-  before_script:
-    # Modify PATH so "ford" command can be found in cmake file
-    - export PATH=$PATH:~/.local/bin
-    - export LANG=C.UTF-8
-    - pwd
-    - gcc --version
-    - ls -lah
-    - cmake -H. -Bbuild
+.before_test_template-py38: &test-setup-py38
+  variables:
+    PY_VERSION: py38
+  <<: *test-setup
+
+.before_test_template-py36: &test-setup-py36
+  variables:
+    PY_VERSION: py36
+  <<: *test-setup
 
 #-----------------
 #  Build
 #-----------------
-
-make:
+.make:
   stage: build
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9_pyenv
+  artifacts:
+    paths:
+      - process_dist_$PY_VERSION/process-*.tar.gz
+      - process_dist_$PY_VERSION/process-*.whl
+      - build/CMakeFiles/process.dir/source/fortran/*.gcno
+      - lcov_results
+    expire_in: 1 week
   script:
+    - source ~/.venv_$PY_VERSION/bin/activate
+    - python -m pip install --upgrade pip
+    - python -m pip install -r requirements.txt
+    - cmake -H. -Bbuild
     - cmake --build build
+    - python3 setup.py sdist -d process_dist_$PY_VERSION
+    - python3 setup.py bdist_wheel -d process_dist_$PY_VERSION
+  tags:
+    - ubuntu
 
+make-py38:
+  extends: ".make"
+  variables:
+    PY_VERSION: py38
 
-make_dicts:
-  stage: build
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
-  script:
-    - cmake --build build --target dicts
-
-
-make_developerguide:
-  stage: build
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
-  script:
-    - cmake --build build --target developerguide
-
-
-make_utilitiesdoc:
-  stage: build
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
-  script:
-    - cmake --build build --target utilitiesdoc
-
-
-make_optsolverdoc:
-  stage: build
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
-  script:
-    - cmake --build build --target optsolverdoc
-
-
-make_tfdoc:
-  stage: build
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
-  script:
-    - cmake --build build --target tfdoc
-
-# install:
-#   stage: build
-#   only:
-#     - develop
-#   image: ubuntu
-#   script:
-#     - export LOGNAME=root
-#     - ls -lah
-#     - apt-get update
-#     - apt-get -y install sudo
-#     - sudo bash install.sh
-#     - process --help
+make-py36:
+  extends: ".make"
+  variables:
+    PY_VERSION: py36
 
 #-----------------
 #  Testing
 #-----------------
 
-unit_tests:
+.unit:
   when: on_success
   stage: testing
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   script:
-    - cmake --build build
-    - ls bin/
-    - ./bin/process_GTest.exe
+    - pytest tests/unit
+  tags:
+    - ubuntu
 
+unit-py38:
+  extends: ".unit"
+  <<: *test-setup-py38
 
-test_suite:
+unit-py36:
+  extends: ".unit"
+  <<: *test-setup-py36
+
+.integration:
   when: on_success
   stage: testing
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  artifacts:
+    when: on_failure
+    paths:
+      - tests/integration/pytest.log
+    expire_in: 1 week
   script:
-    - cmake --build build
-    - cmake --build build --target dicts
-    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
-    - cd test_suite
-    - python3 test_suite.py 
+    - pytest -v tests/integration/ -s | tee tests/integration/pytest.log
+  tags:
+    - ubuntu
 
+integration-py38:
+  extends: ".integration"
+  <<: *test-setup-py38
 
-baseline_2019:
+integration-py36:
+  extends: ".integration"
+  <<: *test-setup-py36
+
+.unitfort:
   when: on_success
   stage: testing
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   script:
-    - cmake --build build
-    - cmake --build build --target dicts
-    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
-    - cd tracking/baseline_2019
-    - ./../../bin/process.exe baseline_2019_IN.DAT
+    - python3 -m pip install tabulate
+    - pytest tests/ -m unitfort
+    - python3 tests/uft_tests/coverage.py
+  tags:
+    - ubuntu
+
+unitfort-py38:
+  extends: ".unitfort"
+  <<: *test-setup-py38
+
+unitfort-py36:
+  extends: ".unitfort"
+  <<: *test-setup-py36
+
+.regression:
+  when: on_success
+  only:
+    - develop
+    - sgadgil/f2py_wrapped_coverage
+  stage: testing
+  artifacts:
+    paths: 
+      - lcov_results
+      - tests/regression/pytest.log
+    expire_in: 1 week
+  script:
+    - pytest -v tests/regression -s | tee tests/regression/pytest.log
+    - lcov --gcov-tool gcov --capture --directory build/CMakeFiles/process.dir/source/fortran/ --output-file lcov_results/coverage.info
+    - genhtml --output-directory lcov_results/html lcov_results/coverage.info
+  tags:
+    - ubuntu
+
+regression-py38:
+  extends: ".regression"
+  <<: *test-setup-py38
+  dependencies:
+    - make-py38
+
+regression-py36:
+  extends: ".regression"
+  <<: *test-setup-py36
+  dependencies:
+    - make-py36
+
+.baseline_2019:
+  when: on_success
+  stage: testing
+  script:
+    - process -i tracking/baseline_2019/baseline_2019_IN.DAT
     - > 
-      python3 ../../utilities/mfile_comparison.py 
-      -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT 
+      python3 process/io/mfile_comparison.py
+      -f tracking/baseline_2019/baseline_2019_MFILE.DAT tracking/baseline_2019/ref_baseline_2019_MFILE.DAT 
       --acc 1.0 
       --baseline
     - > 
-      python3 ../../utilities/mfile_comparison.py 
-      -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT 
+      python3 process/io/mfile_comparison.py
+      -f tracking/baseline_2019/baseline_2019_MFILE.DAT tracking/baseline_2019/ref_baseline_2019_MFILE.DAT 
       --acc 10.0 
       --baseline
+  artifacts:
+    paths:
+      - tracking/baseline_2019/baseline_2019_MFILE.DAT
+    expire_in: 1 week
+  tags:
+    - ubuntu
 
+baseline_2019-py38:
+  extends: ".baseline_2019"
+  <<: *test-setup-py38
 
-baseline_2018:
+baseline_2019-py36:
+  extends: ".baseline_2019"
+  <<: *test-setup-py36
+
+.baseline_2018:
   when: on_success
   stage: testing
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   script:
-    - cmake --build build
-    - cmake --build build --target dicts
-    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
-    - cd tracking/baseline_2018
-    - ./../../bin/process.exe baseline_2018_IN.DAT
-    - >
-      python3 ../../utilities/mfile_comparison.py 
-      -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT 
+    - process -i tracking/baseline_2018/baseline_2018_IN.DAT
+    - > 
+      python3 process/io/mfile_comparison.py
+      -f tracking/baseline_2018/baseline_2018_MFILE.DAT tracking/baseline_2018/ref_baseline_2018_MFILE.DAT 
       --acc 1.0 
       --baseline
     - > 
-      python3 ../../utilities/mfile_comparison.py 
-      -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT 
+      python3 process/io/mfile_comparison.py
+      -f tracking/baseline_2018/baseline_2018_MFILE.DAT tracking/baseline_2018/ref_baseline_2018_MFILE.DAT 
       --acc 10.0 
       --baseline
+  artifacts:
+    paths:
+      - tracking/baseline_2018/baseline_2018_MFILE.DAT
+    expire_in: 1 week
+  tags:
+    - ubuntu
+
+baseline_2018-py38:
+  extends: ".baseline_2018"
+  <<: *test-setup-py38
+
+baseline_2018-py36:
+  extends: ".baseline_2018"
+  <<: *test-setup-py36
 
 step_input:
   when: on_success
   only: 
     - develop
   stage: testing
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
-  stage: pages
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
   script:
     - git config --global user.email "james.morris2@ukaea.uk"
     - git config --global user.name "James Morris"
@@ -196,7 +237,7 @@ step_input:
     - echo $MESSAGE
     - pwd
     - cat commit_msg.txt
-    - git clone https://smuldrew:Lxf8sdD9uvMxfdU6UEYS@git.ccfe.ac.uk/smuldrew/process-step.git
+    - git clone https://gitlab-ci-token:${STP_CI_API_TOKEN}@git.ccfe.ac.uk/smuldrew/process-step.git
     - cp commit_msg.txt process-step
     - cd process-step
     - ls
@@ -205,6 +246,8 @@ step_input:
     - git commit -m "PROCESS commit - $MESSAGE"
     - git config --global push.default matching
     - git push origin
+  tags:
+    - ubuntu
 
 #-----------------
 #  Quality
@@ -213,231 +256,41 @@ step_input:
 line_length:
   when: on_success
   stage: quality
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
   script:
     - pwd
     - python3 utilities/line_length_standard.py
-
-#-----------------
-#  Freia
-#-----------------
-
-make_freia:
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - gcc --version
-    - ls -lah
-    - rm -rf build
-    - cmake3 -H. -Bbuild
-    - cmake3 --build build
-    - ls bin -lah
-    - echo "Test "
-  artifacts:
-    expire_in: 2 hrs
-    paths:
-      - bin/process.exe
-      - bin/process_GTest.exe
-      - bin/libPROCESS_calc_engine.so
   tags:
-    - freia
-
-make_dicts_freia:
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - gcc --version
-    - ls -lah
-    - cmake3 -H. -Bbuild
-    - cmake3 --build build --target dicts
-  tags:
-    - freia
-
-make_developerguide_freia:
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - gcc --version
-    - ls -lah
-    - cmake3 -H. -Bbuild
-    - cmake3 --build build --target developerguide
-  tags:
-    - freia
-
-make_utilitiesdoc_freia:
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - gcc --version
-    - ls -lah
-    - cmake3 -H. -Bbuild
-    - cmake3 --build build --target utilitiesdoc
-  tags:
-    - freia
-
-make_optsolverdoc_friea:
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - gcc --version
-    - ls -lah
-    - cmake3 -H. -Bbuild
-    - cmake3 --build build --target optsolverdoc
-  tags:
-    - freia
-
-make_tfdoc_freia:
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - gcc --version
-    - ls -lah
-    - cmake3 -H. -Bbuild
-    - cmake3 --build build --target tfdoc
-  tags:
-    - freia
-
-unit_tests_freia:
-  when: on_success
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - gcc --version
-    - ls -lah
-    - rm -rf build
-    - cmake3 -H. -Bbuild
-    - cmake3 --build build
-    - ls bin/
-    - ./bin/process_GTest.exe
-  tags:
-    - freia
-
-test_suite_freia:
-  when: on_success
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - cmake3 -H. -Bbuild
-    - cmake3 --build build
-    - cmake3 --build build --target dicts
-    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
-    - cd test_suite
-    - python test_suite.py
-  tags:
-    - freia
-
-
-baseline_2019_freia:
-  when: on_success
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - cmake3 -H. -Bbuild
-    - cmake3 --build build
-    - cmake3 --build build --target dicts
-    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
-    - cd tracking/baseline_2019
-    - ./../../bin/process.exe baseline_2019_IN.DAT
-    - > 
-      python ../../utilities/mfile_comparison.py 
-      -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT 
-      --acc 1.0 
-      --baseline
-    - > 
-      python ../../utilities/mfile_comparison.py 
-      -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT 
-      --acc 10.0 
-      --baseline
-  tags:
-   - freia
-
-baseline_2018_freia:
-  when: on_success
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - cmake3 -H. -Bbuild
-    - cmake3 --build build
-    - cmake3 --build build --target dicts
-    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
-    - cd tracking/baseline_2018
-    - ./../../bin/process.exe baseline_2018_IN.DAT
-    - >
-      python ../../utilities/mfile_comparison.py 
-      -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT 
-      --acc 1.0 
-      --baseline
-    - > 
-      python ../../utilities/mfile_comparison.py 
-      -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT 
-      --acc 10.0 
-      --baseline
-  tags:
-    - freia
-
+    - ubuntu
 
 #-----------------
 #  Pages
 #-----------------
 
 pages:
-  before_script:
-    - "export LOGNAME=root"
-    - export LANG=C.UTF-8
-    - export LC_ALL=C.UTF-8
-    # Python3 uses the locale to choose the file encoding it uses
-    # Without this it will use ASCII encoding and Ford will fail
   when: on_success
   only:
     - develop
   stage: pages
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
   script:
     - pwd
-    - cmake -H. -Bbuild
+    
+    # FORD documentation
+    - python3 -m pip install git+https://github.com/jonMaddockUkaea/ford
+    - ford documentation/ford/index.md
+    
+    # Build the MkDocs site (after FORD has been used to create the vardes)
     - mkdocs build
-   
-    # # FORD documentation
-    # # Ensure FORD can find create_dicts.py inside Process
-    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
-    - python3 lib/ford/ford.py documentation/ford/index.md
-
-    # # Publish the MkDocs and FORD sites
+    
+    # Publish the MkDocs and FORD sites
     - ls site
     - mv site public
     - mv ford_site public
+
+    # Install requirements for Code Quality
+    - python3 -m pip install flinter
+    - apt-get install bc -y
 
     # Setup badges
     - git clone https://github.com/jmorris-uk/anybadge.git
@@ -445,6 +298,9 @@ pages:
     - VERSION=$(git describe)
     - declare -i CONTRIBUTORS=$(git shortlog -s -n --all | wc -l)
     - echo $CONTRIBUTORS
+    - bash scripts/code_quality.sh source/fortran/ anybadge/
+    - cp quality.svg public/
+    - cp -r code_quality public/
     - cd anybadge
     - python3 anybadge.py -v $TAG -l tag -c blue -f tag.svg
     - python3 anybadge.py -v $VERSION -l version -c blue -f version.svg
@@ -453,7 +309,12 @@ pages:
     - cp version.svg ../public
     - cp contributors.svg ../public
     - ls ../public
+    - du -shc ../public/*
+    - du -shc ../public/ford_site/*
+  tags:
+    - ubuntu
     
   artifacts:
+    expire_in: 1 week
     paths:
     - public

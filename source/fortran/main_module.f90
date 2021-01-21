@@ -1,3 +1,19 @@
+#ifndef COMMSG
+#error COMMSG not defined!
+#endif
+
+#ifndef tagno
+#error tagno not defined!
+#endif
+
+#ifndef branch_name
+#error branch_name not defined!
+#endif
+
+#ifndef untracked
+#error untracked not defined!
+#endif
+
 module main_module
 
   use, intrinsic :: iso_fortran_env, only: dp=>real64
@@ -30,7 +46,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=98) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '1.0.17   Release Date :: 2020-02-25'
+       '2.0.0   Release Date :: 2020-12-17'
   character(len = 50) :: dt_time
   character(len=72), dimension(10) :: id
 
@@ -100,10 +116,6 @@ subroutine run_summary
   character(len = 14)  :: minmax_string
   character(len = 10)  :: eps_string
   character :: minmax_sign
-  include "com.msg"
-  include "tag.num"
-  include "branch.name"
-  include "untracked.info"
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

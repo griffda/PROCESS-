@@ -43,6 +43,23 @@ module costs_2015_module
 
 contains
 
+  subroutine init_costs_2015
+    !! Initialise module variables
+    implicit none
+
+    ip = 0
+    ofile = 0
+    total_costs = 0.0D0
+    mean_electric_output = 0.0D0
+    annual_electric_output = 0.0D0
+    maintenance = 0.0D0
+    ip = 0.0D0
+    ofile = 0.0D0
+    total_costs = 0.0D0
+    ! Re-initialise entire array
+    s = scl('not used', 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0)
+  end subroutine init_costs_2015
+
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine costs_2015(outfile,iprint)
@@ -330,7 +347,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use tfcoil_variables, only: n_tf, tfleng, turnstf, whtconcu, whtconsc
+    use tfcoil_variables, only: n_tf, tfleng, n_tf_turn, whtconcu, whtconsc
     use cost_variables, only: cost_factor_tf_coils, costexp
 
     implicit none
@@ -359,7 +376,7 @@ contains
     ! ITER winding cost (2014 $)
     s(16)%cref = 414.0D6
     ! Scale with the total turn length (m)
-    s(16)%k = n_tf * tfleng * turnstf
+    s(16)%k = n_tf * tfleng * n_tf_turn
     s(16)%kref = 82249.0D0
     s(16)%cost = s(16)%cost_factor * s(16)%cref * (s(16)%k / s(16)%kref)**costexp
 
@@ -392,7 +409,7 @@ contains
     ! ITER cabling and jacketing costs (2014 $)
     s(20)%cref = 81.0D6
     ! Scale with total turn length.
-    s(20)%k = n_tf * tfleng * turnstf
+    s(20)%k = n_tf * tfleng * n_tf_turn
     s(20)%kref = 82249.0D0
     s(20)%cost = s(20)%cost_factor * s(20)%cref * (s(20)%k / s(20)%kref)**costexp
 
@@ -639,7 +656,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables, only: rsldo, ddwi
+    use build_variables, only: rsldo, d_vv_out
     use heat_transport_variables, only: helpow
     use cost_variables, only: cost_factor_vv, costexp
 
@@ -658,7 +675,7 @@ contains
     !  ITER reference vacuum vessel cost (2014 $)
     s(32)%cref = 537.0D6
     !  Scale with outermost midplane radius of vacuum vessel squared (m2)
-    s(32)%k = (rsldo + ddwi)**2
+    s(32)%k = (rsldo + d_vv_out)**2
     s(32)%kref = 94.09D0
     s(32)%cost = s(32)%cost_factor * s(32)%cref * (s(32)%k / s(32)%kref)**costexp
 

@@ -39,7 +39,7 @@ contains
 
     use constraint_variables, only: psepbqarmax, pseprmax
     use current_drive_variables, only: fpion, pinjalw, pheat, gamcd
-    use divertor_kallenbach_variables, only: impurity_enrichment
+    use div_kal_vars, only: impurity_enrichment
     use error_handling, only: report_error
     use impurity_radiation_module, only: coreradiationfraction, &
         impurity_arr, coreradius
@@ -288,8 +288,8 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use current_drive_variables, only: pinjimw, bootipf, pinjemw, pinjmw, &
-        ftritbm
-		use divertor_kallenbach_variables, only: netau_sol
+        ftritbm, plasipf
+		use div_kal_vars, only: netau_sol
 		use error_handling, only: idiags, fdiags, report_error
     use impurity_radiation_module, only: impurity_arr, nimp, element2index, &
         zav_of_te
@@ -577,6 +577,7 @@ contains
     !------------------------------------------------
     !replacing parametrised bootstrap models
     bootipf= mhd%fbs
+    plasipf = bootipf
 
     !See #645 for discussion on fvsbrnni
     fvsbrnni = mhd%f_ni

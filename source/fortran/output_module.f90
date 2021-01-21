@@ -53,7 +53,7 @@ subroutine output(outfile)
   use global_variables, only: verbose
   use process_output, only: ovarin
   use constants, only: mfile, nout
-  use divertor_kallenbach_variables, only: kallenbach_switch, neomp, &
+  use div_kal_vars, only: kallenbach_switch, neomp, &
     ttarget, targetangle, psep_kallenbach, qtargettotal, teomp
   implicit none
   
@@ -203,7 +203,7 @@ subroutine output(outfile)
 
   ! Tight aspect ratio machine model !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  if (itart == 1) then
+  if (itart == 1 .and. i_tf_sup /= 1) then
     call cntrpst(outfile,1)
   end if
 

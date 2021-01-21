@@ -1,15 +1,15 @@
-
 # Style Guide
-
-## Line Length
-
-
+[PDF of webpage](../pdf/standards.pdf)
 
 # Coding Standards
 
+## Line Length
+
+For optimal readability, a limit of 100 characters for maximum line length has been set. This is below the maximum line length of 132 characters for Fortran (to prevent compilation errors) and prevents long lines that run on past the edge of the screen wasting programmers time with scrolling.
+
 ## Double declarations
 
-PROCESS uses the Fortran 2008+ intrinsic precision module as shown in the example below. The 
+PROCESS uses the Fortran 2008+ intrinsic precision module as shown in the example below. The
 use statement will need to be at the module level. See the 
 [fortran wiki](http://fortranwiki.org/fortran/show/Real+precision) for more information.
 
@@ -17,12 +17,112 @@ use statement will need to be at the module level. See the
 use, intrinsic :: iso_fortran_env, only: dp=>real64
 
 real(dp) :: b
+!! Variable description
 
 ```
 
 ## Naming conventions
 
+
+### Case
+
+All variables should be lower case.
+
+### Length
+
+Try to keep variable names to a sensible length. Abbreviations of some parts of the name are suitable e.g. div for divertor. Use underscores to separate words.
+
+### Physical Type
+
+The physical type of the variable should form the first part of the variable name, e.g. for plasma resistance the variable should be named:
+
+```fortran
+res_plasma = 1.0
+```
+
+Another example would be pulse length
+
+```fortran
+time_pulse_length = 7200.0
+```
+
+### Units
+
+Inside PROCESS all variables should be in SI units unless otherwise stated. For example:
+
+```fortran
+! Fusion power [W]
+p_fusion = 1000.0d6
+
+! Fusion power [MW]
+p_fusion_mw = 1000.0d0
+```
+
+### Coordinates and dimensions
+
+Coordinates should be defined as
+
+```fortran
+r_plasma_centre = 9.0d0
+
+z_plasma_centre = 0.0d0
+
+theta_ = 
+```
+
+For dimensions
+
+```fortran
+dr_cs = 
+
+dz_cs = 
+
+dtheta_description =
+```
+
+### Loop order
+
+Loop variables that use I, j etc. should use
+
+```fortran
+ii
+    jj
+        kk
+            mm
+```
+
+### Examples
+
+| Variable name | Description | Units |
+| ------------- | ----------- | :---: |
+| `i_plasma`    | Plasma current | A |
+| `i_plasma_ma` | Plasma current | MA |
+| `b_t_onaxis`  | Toroidal field on-axis | T |
+| `b_t_max`     | Max toroidal field | T |
+| `n_electron_vol` | Volume average electron density | m-3 |
+| `t_electron_vol_ev` | Volume avgerage electron temperature | eV |
+| `m_steel` | Mass of steel | kg |
+| `m_steel_tonne` | Mass of steel | tonne |
+| `e_neutron_ev` | Energy of neutron | eV |
+| `e_neutron_mev` | Energy of neutron | MeV |
+| `v_tf_dump` | TF dump voltage | V |
+| `time_plant_life` | Plant lifetime | s |
+| `time_plant_life_yrs` | Plant lifetime | years |
+| `dr_tf_inboard_leg` | TF coil inboard leg radial thickness | m |
+| `dr_blanket_inboard` | Inboard blanket thickness | m |
+| `velocity_coolant` | TF centrepost coolant velocity | m/s |
+| `vol_plasma` | Plasma volume | m3 |
+| `a_plasma` | Plasma area | m2 |
+| `angle_div_target` | Divertor target angle | radians |
+| `angle_div_target_deg` | Divertor target angle | deg |
+| `sig_tf_r` | TF radial stress  | Pa |
+| `` |  |  |
+
+Please see <a href="https://git.ccfe.ac.uk/process/process/-/issues/939">issue 939 to discuss 
+new conventions.</a>.
+
 # Code Documentation Using FORD
+
 PROCESS uses FORD (FORtran Documentation) to automatically generate documentation from comments 
 in the FORTRAN code. FORD parses FORTRAN source to understand the structure of the project as well 
 as picking up "docmarked" comments in the source to create the documentation.
@@ -36,8 +136,10 @@ The "!!" docmark goes after the statement it documents. For example, to document
 ```fortran
 real(kind(1.0D0)) :: alphan = 0.25D0
 !! Density profile index
+
 real(kind(1.0D0)) :: alphap = 0.0D0
 !! Pressure profile index
+
 real(kind(1.0D0)) :: alpharate = 0.0D0
 !! Alpha particle production rate (particles/m3/sec)
 ```
@@ -63,7 +165,7 @@ The FORD project on github can be found [here](https://github.com/Fortran-FOSS-P
 
 ## Example of FORD documentation for a subroutine (constraint equation)
 
-```fortran 
+```fortran
 
 subroutine constraint_eqn_001(args)
   !! author: J Morris
@@ -104,6 +206,10 @@ end subroutine constraint_eqn_001
 
 ```
 
-Creates
+Creates:
 
-<img src="../../img/ford_example_1.png" alt="alt text" width="650" height="200">
+<img
+    src="../../images/ford_example_1.png"
+    alt="alt text"
+    width="700px"
+    >

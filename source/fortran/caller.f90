@@ -20,7 +20,7 @@ subroutine caller(xc,nvars)
   use costs_step_module, only: costs_step
   use divertor_module, only: divcall
   use divertor_ode, only: divertor_Kallenbach
-  use divertor_Kallenbach_variables, only: kallenbach_switch, ttarget, qtargettotal, &
+  use div_kal_vars, only: kallenbach_switch, ttarget, qtargettotal, &
     targetangle, psep_kallenbach, teomp, neomp
   use fwbs_variables, only: iblanket, breeder_f, li6enrich, iblanket_thickness, tbr
   use ife_module, only: ifecll
@@ -198,7 +198,7 @@ subroutine caller(xc,nvars)
   ! Tight aspect ratio machine model !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  if (itart == 1) then
+  if ( itart == 1 .and. i_tf_sup /= 1 ) then
      call cntrpst(nout,0)
   end if
 

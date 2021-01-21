@@ -19,19 +19,19 @@ module scan_module
   integer, parameter :: ipnscns = 1000
   !! ipnscns /1000/ FIX : maximum number of scan points
 
-  integer, parameter :: ipnscnv = 53
+  integer, parameter :: ipnscnv = 55
   !! ipnscnv /45/ FIX : number of available scan variables
 
-  integer :: scan_dim = 1
+  integer :: scan_dim
   !! scan_dim /1/ : 1-D or 2-D scan switch (1=1D, 2=2D)
 
-  integer :: isweep = 0
+  integer :: isweep
   !! isweep /0/ : number of scan points to calculate
 
-  integer :: isweep_2 = 0
+  integer :: isweep_2
   !! isweep_2 /0/ : number of 2D scan points to calculate
 
-  integer :: nsweep = 1
+  integer :: nsweep
   !! nsweep /1/ : switch denoting quantity to scan:<UL>
   !!         <LI> 1  aspect
   !!         <LI> 2  hldivlim
@@ -84,18 +84,40 @@ module scan_module
   !!         <LI> 49 TF coil - n_layer (integer turn winding pack)
   !!         <LI> 50 Xenon fraction fimp(13)
   !!         <LI> 51 Power fraction to lower DN Divertor ftar
-  !!         <LI> 52 SoL radiation fraction </UL>
+  !!         <LI> 52 SoL radiation fraction
+  !!         <LI> 54 GL_nbti upper critical field at 0 Kelvin
+  !!         <LI> 55 `shldith` : Inboard neutron shield thickness </UL>
 
-  integer :: nsweep_2 = 3
+  integer :: nsweep_2
   !! nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
 
-  real(dp), dimension(ipnscns) :: sweep = 0.0D0
+  real(dp), dimension(ipnscns) :: sweep
   !! sweep(ipnscns) /../: actual values to use in scan
 
-  real(dp), dimension(ipnscns) :: sweep_2 = 0.0D0
+  real(dp), dimension(ipnscns) :: sweep_2
   !! sweep_2(ipnscns) /../: actual values to use in 2D scan
 
+  ! Vars in subroutines scan_1d and scan_2d requiring re-initialising before 
+  ! each new run
+  logical :: first_call_1d
+  logical :: first_call_2d
+
 contains
+
+  subroutine init_scan_module
+    !! Initialise module variables
+    implicit none
+
+    scan_dim = 1
+    isweep = 0
+    isweep_2 = 0
+    nsweep = 1
+    nsweep_2 = 3
+    sweep = 0.0D0
+    sweep_2 = 0.0D0
+    first_call_1d = .true.
+    first_call_2d = .true.
+  end subroutine init_scan_module
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -164,9 +186,9 @@ contains
     use numerics, only: sqsumsq
     use tfcoil_variables, only: tfareain, wwp2, strtf2, tfcmw, tcpmax, oacdcp, &
       tfcpmw, fcutfsu, acond, fcoolcp, rcool, whttf, ppump, vcool, wwp1, n_tf, &
-		  thkwp
+		  dr_tf_wp, b_crit_upper_nbti
 		use fwbs_variables, only: tpeak
-    use divertor_kallenbach_variables, only: totalpowerlost, pressure0, &
+    use div_kal_vars, only: totalpowerlost, pressure0, &
       ttarget, neratio, qtargettotal, neomp, psep_kallenbach, fmom
 		use final_module, only: final
     use physics_variables, only: q, aspect, pradmw, dene, powfmw, btot, tesep, &
@@ -179,12 +201,11 @@ contains
 
     ! Local variables
     character(len=48) :: tlabel
-    integer, parameter :: noutvars = 83
+    integer, parameter :: noutvars = 84
     integer, parameter :: width = 110
     character(len=25), dimension(noutvars), save :: plabel
     real(dp), dimension(noutvars,ipnscns) :: outvar
     integer :: ifail, iscan, ivar
-    logical :: first_call = .TRUE.
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -193,7 +214,7 @@ contains
     !  Set up labels for plotting output
     !  Use underscores instead of spaces
 
-    if (first_call) then
+    if (first_call_1d) then
        plabel( 1) = 'Ifail____________________'
        plabel( 2) = 'Sqsumsq__________________'
        plabel( 3) = 'Electric_cost_(mil/kwh)__'
@@ -277,11 +298,12 @@ contains
        plabel(81) = 'Xe_concentration_________'
        plabel(82) = 'W__concentration_________'
        plabel(83) = 'teped____________________'
+       plabel(84) = 'Max_field_on_TF_coil_____'
 
        call ovarin(mfile,'Number of scan points','(isweep)',isweep)
        call ovarin(mfile,'Scanning variable number','(nsweep)',nsweep)
 
-       first_call = .false.
+       first_call_1d = .false.
     end if
 
     do iscan = 1,isweep
@@ -373,7 +395,7 @@ contains
         outvar(52,iscan) = pradmw
         outvar(53,iscan) = tpeak
         outvar(54,iscan) = fcutfsu
-        outvar(55,iscan) = (wwp1+wwp2)*thkwp
+        outvar(55,iscan) = (wwp1+wwp2)*dr_tf_wp
         outvar(56,iscan) = acond
         outvar(57,iscan) = tfareain/n_tf
         outvar(58,iscan) = taulimit
@@ -436,9 +458,9 @@ contains
     use process_output, only: oblnkl, ostars, ovarin
     use tfcoil_variables, only: tfareain, wwp2, strtf2, tfcmw, tcpmax, oacdcp, &
       tfcpmw, fcutfsu, acond, fcoolcp, rcool, whttf, ppump, vcool, wwp1, n_tf, &
-		  thkwp
+		  dr_tf_wp, b_crit_upper_nbti
 		use fwbs_variables, only: tpeak
-    use divertor_kallenbach_variables, only: totalpowerlost, pressure0, &
+    use div_kal_vars, only: totalpowerlost, pressure0, &
       ttarget, neratio, qtargettotal, neomp, psep_kallenbach, fmom
 		use final_module, only: final
     use physics_variables, only: q, aspect, pradmw, dene, powfmw, btot, tesep, &
@@ -453,12 +475,11 @@ contains
 
     !  Local variables
     character(len=48) :: tlabel
-    integer, parameter :: noutvars = 83
+    integer, parameter :: noutvars = 84
     integer, parameter :: width = 110
     character(len=25), dimension(noutvars), save :: plabel
     real(dp), dimension(noutvars,ipnscns) :: outvar
     integer :: ifail, iscan, ivar, iscan_1, iscan_2, iscan_R
-    logical :: first_call = .TRUE.
     real(dp), dimension(ipnscns) :: sweep_1_vals, sweep_2_vals
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -468,7 +489,7 @@ contains
     !  Set up labels for plotting output
     !  Use underscores instead of spaces
 
-    if (first_call) then
+    if (first_call_2d) then
         plabel( 1) = 'Ifail____________________'
         plabel( 2) = 'Sqsumsq__________________'
         plabel( 3) = 'Electric_cost_(mil/kwh)__'
@@ -552,11 +573,12 @@ contains
         plabel(81) = 'Xe_concentration_________'
         plabel(82) = 'W__concentration_________'
         plabel(83) = 'teped____________________'
+        plabel(84) = 'Max_field_on_TF_coil_____'
 
         call ovarin(mfile,'Number of scan points','(isweep)',isweep)
         call ovarin(mfile,'Scanning variable number','(nsweep)',nsweep)
 
-        first_call = .false.
+        first_call_2d = .false.
     end if
 
     iscan = 1
@@ -661,7 +683,7 @@ contains
             outvar(52,iscan) = pradmw
             outvar(53,iscan) = tpeak
             outvar(54,iscan) = fcutfsu
-            outvar(55,iscan) = (wwp1+wwp2)*thkwp
+            outvar(55,iscan) = (wwp1+wwp2)*dr_tf_wp
             outvar(56,iscan) = acond
             outvar(57,iscan) = tfareain/n_tf
             outvar(58,iscan) = taulimit
@@ -717,20 +739,20 @@ contains
     !! author: J Morris, UKAEA, Culham Science Centre
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use build_variables, only: blnkoth
+	use build_variables, only: blnkoth, shldith
     use constraint_variables, only: fiooic, walalw, bmxlim, fqval, taulimit, &
-      gammax, tbrnmn, tbrmin, fjprot, pnetelin, powfmax
-		use cost_variables, only: cfactr, iavail
-		use current_drive_variables, only: rho_ecrh, bscfmax
-		use divertor_variables, only: hldivlim
-		use error_handling, only: idiags, report_error
-		use impurity_radiation_module, only: fimp, fimpvar, coreradius, impurity_arr
+        gammax, tbrnmn, tbrmin, fjprot, pnetelin, powfmax
+	use cost_variables, only: cfactr, iavail
+	use current_drive_variables, only: rho_ecrh, bscfmax
+	use divertor_variables, only: hldivlim
+	use error_handling, only: idiags, report_error
+	use impurity_radiation_module, only: fimp, fimpvar, coreradius, impurity_arr
     use physics_variables, only: kappa, dnbeta, te, aspect, ftar, bt, &
-      rad_fraction_sol, triang, rmajor, beamfus0, hfact
+        rad_fraction_sol, triang, rmajor, beamfus0, hfact
     use numerics, only: epsvmc, boundu, boundl
     use tfcoil_variables, only: tmargmin_tf, alstrtf, n_pancake, oacdcp, &
-      n_layer
-    use divertor_kallenbach_variables, only: lcon_factor, impurity_enrichment, &
+      n_layer, b_crit_upper_nbti
+    use div_kal_vars, only: lcon_factor, impurity_enrichment, &
       target_spread, lambda_q_omp, qtargettotal, ttarget
     implicit none
 
@@ -907,6 +929,12 @@ contains
         case (53)
             boundu(157) = swp(iscn)
             vlab = 'boundu(157)' ; xlab = 'Max allowable fvssu'
+        case (54)
+            b_crit_upper_nbti = swp(iscn)
+            vlab = 'Bc2(0K)' ; xlab = 'GL_NbTi Bc2(0K)'
+        case(55)
+            shldith = swp(iscn)
+            vlab = 'shldith' ; xlab = 'Inboard neutronic shield'
         case default
             idiags(1) = nwp ; call report_error(96)
 

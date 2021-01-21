@@ -306,7 +306,7 @@ contains
 
       real(dp), dimension(2) :: xfor,xbac,cfor,cbac
       real(dp) :: ffor,fbac
-      real(dp) :: epsfcn = 1.0D-3
+      real(dp), parameter :: epsfcn = 1.0D-3
       integer :: i,j
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

@@ -16,7 +16,7 @@ module power_module
   implicit none
 
   private
-  public :: tfpwr, pfpwr, acpow, power1, power2, power3
+  public :: tfpwr, pfpwr, acpow, power1, power2, power3, init_power_module
 
   !  Precision variable
   integer, parameter :: double = 8
@@ -30,7 +30,35 @@ module power_module
   !  Primary power to divertor factor
   integer, private :: iprimdiv
 
+  ! Var in subroutine power1 requiring re-initialisation on each new run
+  real(dp) :: p_tf_cryoal_cryo
+
 contains
+
+  subroutine init_power_module
+    !! Initialise module variables
+    implicit none
+
+    p_tf_cryoal_cryo = 0.0D0
+    qmisc = 0.0D0
+    qac = 0.0D0
+    qcl = 0.0D0
+    qss = 0.0D0
+    htpmwe_shld = 0.0d0
+    htpmwe_div = 0.0d0
+    htpmw_mech = 0.0d0
+    pthermfw_blkt = 0.0d0
+    htpmwe_fw_blkt = 0.0d0
+    pthermdiv = 0.0d0
+    pthermfw = 0.0d0
+    pthermblkt = 0.0d0
+    pthermshld = 0.0d0
+    ppumpmw = 0.0d0
+    pcoresystems = 0.0d0
+    pdivfraction = 0.0d0
+    delta_eta = 0.0d0
+    iprimdiv = 0.0d0
+  end subroutine init_power_module
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -53,9 +81,9 @@ contains
     use process_output, only: oheadr, ovarre
     use tfcoil_variables, only: tflegmw, estotftgj, tfcpmw, rhotfleg, &
         tflegres, vtfskv, jbus, tfbusl, tfbusmas, tfcmw, vtfkv, i_tf_sup, &
-        tfckw, presleg, dcopper, ritfc, cpttf, prescp, n_tf, rhotfbus, tfjtsmw, &
-        pres_joints
-    use constants, only: pi
+        tfckw, presleg, ritfc, cpttf, prescp, n_tf, rhotfbus, tfjtsmw, &
+        pres_joints, i_cp_joints
+    use constants, only: pi, dcopper
     implicit none
 
     !  Arguments
@@ -137,6 +165,9 @@ contains
     call ovarre(outfile,'Power dissipation in TF coil set: inboard legs (MW)', '(tfcpmw)',tfcpmw, 'OP ')
     call ovarre(outfile,'Power dissipation in TF coil set: outboard legs (MW)', '(tflegmw)',tflegmw, 'OP ')
     call ovarre(outfile,'Power dissipation in TF coil set: buses','(tfbusmw)', tfbusmw, 'OP ')
+    if (i_cp_joints/=0) then 
+        call ovarre(outfile,'Power dissipation in TF coil set: joints','(tfjtsmw)', tfjtsmw, 'OP ')
+    end if
     ! Reactive poower has been set to zero.
     !call ovarre(outfile,'TF coil reactive power (MW)','(tfreacmw)', tfreacmw)
 
@@ -664,11 +695,6 @@ contains
     ! Total mean wall plug power dissipated in PFC and CS power supplies.  Issue #713
     pfwpmw = wall_plug_ohmicmw + pfpowermw    
 
-    ! Waste heat generated in PFC and CS power supplies (MW),
-    ! classed as "secondary waste heat"
-    ! pfsec = pfwpmw - pohmmw
-    ! pfsec = pfwpmw
-
     !  Output Section
     if (iprint == 0) return
 
@@ -833,8 +859,8 @@ contains
 
     use current_drive_variables, only: pinjmw, porbitlossmw, nbshinemw
     use fwbs_variables, only: pnucblkt, pradfw, etahtp, praddiv, &
-        secondary_cycle, pnuccp, primary_pumping, ptfnuc, pnucshld, pradhcd, &
-        pnucdiv, pnucfw, pnuchcd
+        secondary_cycle, pnuc_cp_tf, primary_pumping, ptfnuc, pnucshld, pradhcd, &
+        pnucdiv, pnucfw, pnuchcd, pnuc_cp_sh
     use heat_transport_variables, only: htpmw_shld, htpsecmw, pfwdiv, &
         psecshld, crypmw, htpmw_min, nphx, htpmw_div, psechcd, helpow, &
         htpmw_fw, pinjwp, pthermmw, psecdiv, etath, pinjht, iprimshld, htpmw, &
@@ -850,7 +876,6 @@ contains
     use constants, only: rmu0, pi
     implicit none
 
-    real(dp) :: p_tf_cryoal_cryo = 0.0D0
     !! Cryo-aluminium cryoplant power consumption
     
     !------------------------------------------------------------------------------------
@@ -859,7 +884,7 @@ contains
 
     ! Combine fw and blanket for convenience
     ! Already combined if primary_pumping=3
-    if(primary_pumping/=3) htpmw_fw_blkt = htpmw_fw + htpmw_blkt
+    if ( primary_pumping /= 3 ) htpmw_fw_blkt = htpmw_fw + htpmw_blkt
 
     !  Account for pump electrical inefficiencies. The coolant pumps are not assumed to be
     !  100% efficient so the electric power to run them is greater than the power deposited
@@ -892,7 +917,7 @@ contains
     end if
 
     !  Total power deposited in shield coolant (MW)
-    pthermshld = pnucshld + htpmw_shld
+    pthermshld = pnuc_cp_sh + pnucshld + htpmw_shld
 
     !  Total thermal power deposited in divertor coolant (MW)
     !  = (conduction to divertor, less radiation) + (neutron and radiation power)
@@ -962,6 +987,7 @@ contains
     
     ! Superconductors TF/PF cryogenic cooling
     if ( i_tf_sup == 1 .or. ipfres == 0 ) then
+
         ! helpow calculation
         call cryo(i_tf_sup, tfsai, coldmass, ptfnuc, ensxpfm, tpulse, cpttf, n_tf, helpow)
 
@@ -969,16 +995,17 @@ contains
         ! Rem SK : This ITER efficiency is very low compare to the Strowbridge curve
         !          any reasons why? 
         crypmw = 1.0D-6 * (293.0D0 - tmpcry)/(eff_tf_cryo*tmpcry) * helpow   
+    
     end if
 
-    ! Cryogenic aluminium 
+    ! Cryogenic alumimium
     ! Rem : The carnot efficiency is assumed at 40% as this is a conservative assumption since a 50%
     !       has been deduced from detailed studies
     ! Rem : Nuclear heating on the outer legs assumed to be negligible
     ! Rem : To be updated with 2 cooling loops for TART designs
     if ( i_tf_sup == 2 ) then
         p_tf_cryoal_cryo = (293.0D0 - tcoolin)/(eff_tf_cryo*tcoolin) * &
-                           ( prescp + presleg + pres_joints + pnuccp * 1.0D6 )
+                           ( prescp + presleg + pres_joints + pnuc_cp_tf * 1.0D6 )
         crypmw = crypmw + 1.0D-6 * p_tf_cryoal_cryo
     end if
 
@@ -1005,7 +1032,7 @@ contains
     use cost_variables, only: ipnet, ireactor
     use current_drive_variables, only: pinjmw
     use fwbs_variables, only: emultmw, inuclear, pnucblkt, pradfw, qnuc, &
-        etahtp, emult, praddiv, fdiv, fhcd, secondary_cycle, pnuccp, pnucdiv, &
+        etahtp, emult, praddiv, fdiv, fhcd, secondary_cycle, pnuc_cp, pnucdiv, &
         primary_pumping, ptfnuc, pnuchcd, pnucshld, pradhcd, pnucfw
     use heat_transport_variables, only: htpmw_shld, htpmw_blkt, psecshld, &
         fpumpshld, tturb, pnetelmw, fpumpdiv, fpumpblkt, vachtmw, htpmw_div, &
@@ -1271,14 +1298,14 @@ contains
     if (itart == 1) then
         call oblnkl(outfile)
         write(outfile,'(t10,a)') 'TART centrepost:'
-        write(outfile,10) 0.0D0, pnuccp, pnuccp
+        write(outfile,10) 0.0D0, pnuc_cp, pnuc_cp
         write(outfile,20) 0.0D0, 0.0D0, 0.0D0
         write(outfile,30) 0.0D0, 0.0D0, 0.0D0
         write(outfile,40) 0.0D0, ppumpmw, ppumpmw  !  check
     end if
 
     primsum = primsum
-    secsum = secsum + pnuccp + ppumpmw
+    secsum = secsum + pnuc_cp + ppumpmw
 
     call oblnkl(outfile)
     write(outfile,'(t10,a)') 'TF coil:'
@@ -1708,7 +1735,7 @@ contains
     if ( i_tf_sup == 1 ) qss = qss + 2.0D0*tfsai
 
     !  Nuclear heating of TF coils (W) (zero if resistive)
-    if( inuclear == 0 .and. i_tf_sup == 1) qnuc = 1.0D6 * ptfnuc
+    if( inuclear == 0 .and. i_tf_sup == 1 ) qnuc = 1.0D6 * ptfnuc
     ! Issue #511: if inuclear = 1 then qnuc is input.
 
     !  AC losses

@@ -120,7 +120,7 @@
   real(kind(1.0d0)) :: xb,teb,tib,neb,zmain,amain,toleq,fuelmix,fuelhe3
   real(kind(1.0d0)) :: roc,vloop,fbs,qf,qf0,sfus_he,sfus_he3,sfus_p,fcd,qdivt,q_heat,q_cd,q_fus,q_95,qtote,qtoti,w_e,w_i
   real(kind(1.0d0)) :: lambda_q,lparsep,ldiv,qpar,fx, t_plate,pres_fac,areat,plinexe,psepxe
-  real(kind(1.0d0)) :: ne_av,nela,PLH_th(18)
+  real(kind(1.0d0)) :: ne_av,nela,PLH_th(21)
   real(kind(1.0d0)), dimension(num%nx) :: theta_perim,dtheta,f_perim,p_dd
   real(kind(1.0d0)), dimension(num%nx) :: x, tepr, tipr, nepr, qinit, xr, Peaux, Piaux, nHe,nwol,nprot,nhe3, nXe, nNe, prxe, prne
   real(kind(1.0d0)), dimension(num%nx) :: prwol,snebm
@@ -745,7 +745,7 @@ if (num%iprocess.eq.0) then
 	nions = ndeut + ntrit + nNe + nXe + nHe + nhe3 + nprot+nwol
 !	write(*,*) 'ndeut',ndeut(1),nepr(1),nhe(1),fuelmix,nne(1),nxe(1),nprot(1),nwol(1),che3fus
 !	write(*,*) 'ndeut',cprot,comp%protium
-!	stop
+!	stop 1
 !Z effective
 	zepff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*(nHe+nhe3)+zavne**2*nNe+ &
 	& zavxe**2*nXe+nprot+zavwol**2.d0*nwol)
@@ -895,7 +895,7 @@ yllama=1.d0
 !add sawtooth transport
 	if(j_sawpos.gt.size(j_points)) then
 		write(*,*) size(j_points),j_sawpos,inp0%chisawpos,j_qeq1,nint(inp0%chisawpos/dx),'*',qprf
-!		stop
+!		stop 1
 		endif
 	if (j_sawpos.gt.0) then
 	if (j_points(j_sawpos).ge.1.and.j_points(j_sawpos).le.nxt) then
@@ -910,7 +910,7 @@ yllama=1.d0
 !include "neo_inc.f90"
 !include "tglf_inc.f90"
 !include "tglf_inc_parallel.f90"
-!stop
+!stop 1
 
 	endif
 
@@ -949,7 +949,7 @@ yllama=1.d0
 !	& interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[b(1,1),b(:,1),0.d0],xr)
 
 
-!if (jiter.eq.20) stop
+!if (jiter.eq.20) stop 1
 
 !after transport computation, update plasma profiles, ne te ti
   call update_profiles(dx, nxt, nchannels, gy, y0, rpmajor, y, N_e(1:nxt), T_e(1:nxt), T_i(1:nxt))
@@ -1385,7 +1385,7 @@ if (inp0%contrpovr.gt.0.) inp0%q_control=inp0%contrpovr*geom%r
 !PROCESS function
 	ne_av = trapz(nepr*dv)/v(nx)*1.d19
 	nela=sum(nepr)/nx*1.d19
-	call pthresh(ne_av,nela,btor,rpmajor,elong,vprime(nx)*gradro(nx),amain,PLH_th) !PROCESS function
+	call pthresh(ne_av,nela,btor,rpmajor,elong,vprime(nx)*gradro(nx),amain,asppect,PLH_th) !PROCESS function
 !!!
 
 !PLASMOD function
@@ -1422,7 +1422,7 @@ dum2=min(dum2,comp%psep_r*rpmajor)
 	if (PLH.gt.dum2) then
 	write(*,*) 'PLH, Psepcrit',plh,dum2
 	 write(*,*) 'PLH > Psep crit, not possible, stop, increase psepbqar or psepr'
-		stop
+		stop 1
 	endif
 
 
@@ -1933,10 +1933,10 @@ endif
 
 !	write(*,*) 'iter uloop',ip,fbs,fcd,2.15e-3*(4.3-0.6/geom%a)*radp%zeff*ip*(1.-fbs-fcd)* &
 	 & !rpmajor/(rpminor**2.*geom%k95)/(radp%av_Ten/10.d0)**1.5,mhd%vloop,radp%zeff,mhd%f_ni
-!stop
+!stop 1
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!	stop
+!	stop 1
 
 end subroutine plasmod_EF
 

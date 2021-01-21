@@ -1,3 +1,20 @@
+module torga_curgap_module
+  implicit none
+
+  ! First run flag for subroutine green_func_emp, which requires re-initialising
+  ! on each new run
+  logical :: green_func_emp_first
+
+  contains
+
+  subroutine init_torga_curgap_module
+    !! Initialise module variables
+    implicit none
+
+    green_func_emp_first = .true.
+  end subroutine init_torga_curgap_module
+end module torga_curgap_module
+
 !-----------------------------------------------------------------------&
       subroutine TorGA_curgap(rjpd,rjpd0,ratjpd,denom,eps,npara,nperp   &
      &,omode,cefldx,cefldy,cefldz,tebulk,thtc,thetap,yy,lh,zeffin,model &
@@ -18,9 +35,8 @@
       REAL(p_) zrtmp, fctmp
       common /dumm/zrtmp, fctmp
 
-      REAL(p_) TorGa_zgauleg
-      EXTERNAL TorGa_zgauleg
-      EXTERNAL TorGa_funxjs,TorGa_funxjz,TorGa_alpha
+      REAL(p_), EXTERNAL :: TorGa_zgauleg
+      REAL(p_), EXTERNAL :: TorGa_funxjs,TorGa_funxjz,TorGa_alpha
 !------------------------------------------------------------------------
 !     CURGAP(version 1.0) Y.R. Lin-Liu, 08/16/04
 !     This routine is an improved version and the replacement of CURGAC.
@@ -487,8 +503,7 @@
       REAL(p_) TorGA_bessj,x,BIGNO,BIGNI
       PARAMETER (IACC=40,BIGNO=1.E10_p_,BIGNI=1.E-10_p_)
 !     USES bessj0,bessj1
-      REAL(P_) TorGA_bessj0,TorGA_bessj1
-      EXTERNAL TorGA_bessj0,TorGA_bessj1
+      REAL(P_), EXTERNAL :: TorGA_bessj0,TorGA_bessj1
 !-----------------------------------------------------------------------&
 !234567890123456789012345678901234567890123456789012345678901234567890123
 !-----------------------------------------------------------------------&
@@ -497,7 +512,7 @@
 !
       IF (n.lt.0) THEN
          WRITE(6,"(A)")'bad argument n in bessj'
-         STOP
+         STOP 1
       ENDIF
 !
       IF (n.eq.0) THEN
@@ -713,7 +728,7 @@
       parameter (tolft=1.e-6_p_)
       REAL(p_) ap,ss
       integer jromb
-      external TorGa_qftint
+      REAL(p_), EXTERNAL :: TorGa_qftint
 !
       hbar=hav
       c2=cxi2
@@ -738,7 +753,7 @@
 !----------------------------------------------------------------------------
       REAL(p_) z,s,ss,ap
       integer jromb
-      external TorGa_hcapint
+      REAL(p_), EXTERNAL :: TorGa_hcapint
 ! DMC bugfix: prevent the first arg from reaching or exceeding 1.0
       z=min(0.9999999_p_,z_in)
       s=z*(1._p_-hav)/(1._p_-z*hav)
@@ -786,7 +801,7 @@
       REAL(p_) uv,rhocap,gamma,ss
       integer jromb
       common /cmbqfc/uv,rhocap,gamma
-      external TorGa_fcapint
+      REAL(p_), EXTERNAL :: TorGa_fcapint
 !
       if (u .le. 0._p_)then
          fcap=0._p_
@@ -922,7 +937,7 @@
       INTEGER JMAX,JMAXP,K,KM
       REAL(p_) a,b,ss, eps
       integer jt
-      EXTERNAL func
+      REAL(p_), EXTERNAL :: func
       PARAMETER (JMAX=200, JMAXP=JMAX+1, K=5, KM=K-1)
 !CU    USES TorGa_polint,trapzd
       INTEGER j
@@ -1067,6 +1082,7 @@
 ! NM
  USE green_func_ext, ONLY: wp_, mc2_, Setup_SpitzFunc, SpitzFuncCoeff, &
   GenSpitzFunc
+  use torga_curgap_module, only: green_func_emp_first
 !---
  IMPLICIT NONE
 !--- remove it later! ---
@@ -1079,7 +1095,6 @@
  REAL(wp_) :: SS1,ne1,Te1,Zeff1,fc1,u1,q1,gam1
  REAL(wp_) :: K1,dKdu1
  CHARACTER(Len=1) :: adj_appr(6)
- LOGICAL, SAVE :: first =.true.
 !=======================================================================
 !--- Spitzer function definitions ---
  adj_appr(1) = 'l'         ! collisionless limit
@@ -1103,9 +1118,9 @@
  u1    = u/sqrt(2*Te/mc2_)
  gam1  = gam
 !---
- IF (first) THEN
+ IF (green_func_emp_first) THEN
    CALL Setup_SpitzFunc(adj_appr)
-   first =.false.
+   green_func_emp_first =.false.
  ENDIF
 !---
  CALL SpitzFuncCoeff(Te1,Zeff1,fc1)

@@ -1267,7 +1267,8 @@ module fson_library
 
   private
 
-  public :: fson_parse, fson_value, fson_get, fson_print, fson_destroy
+  public :: fson_parse, fson_value, fson_get, fson_print, fson_destroy, &
+    init_fson_library
 
   ! FILE IOSTAT CODES
   integer, parameter :: end_of_file = -1
@@ -1280,11 +1281,18 @@ module fson_library
   integer, parameter :: STATE_IN_PAIR_VALUE = 4
 
   ! POP/PUSH CHARACTER
-  integer :: pushed_index = 0
+  integer :: pushed_index
   character (len = 10) :: pushed_char
 
 contains
 
+  subroutine init_fson_library
+    !! Initialise fson library module variables
+    implicit none
+
+    pushed_index = 0
+  end subroutine init_fson_library
+  
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   !
   ! FSON PARSE

@@ -1,25 +1,28 @@
 # 
 #  PROCESS CI Docker File
 #  J. Morris
-#  11.02.20
+#  K. Zarebski
+#  11.09.20
 #
 
 # start by building the basic container
-FROM ubuntu:18.04
-LABEL James Morris <james.morris2@ukaea.uk>
+FROM ubuntu:latest
+LABEL James Morris <james.morris2@ukaea.uk>, Kristian Zarebski <kristian.zarebski@ukaea.uk>
 
 # Initial update
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update -y
 RUN apt-get update
+RUN apt-get upgrade -y
 
 # add gfortran, debugging tools and make
-RUN apt-get install -y gfortran-4.8 
+RUN apt-get install -y --no-install-recommends apt-utils
+RUN apt-get install -y gfortran-10
 RUN apt-get install -y gdb
 RUN apt-get install -y make
 RUN apt-get install -y cmake
-RUN apt-get install -y gcc 
-RUN apt-get install -y g++ 
+RUN apt-get install -y gcc-10
+RUN apt-get install -y g++-10
 RUN apt-get install -y libgtest-dev
 RUN apt-get install -y git
 RUN apt-get install -y python3
@@ -32,16 +35,25 @@ RUN apt-get install -y texlive-latex-extra
 RUN apt-get install -y texlive-font-utils 
 RUN apt-get install -y pandoc 
 
+# Check versions and link gfortran-8
+RUN cmake --version
+RUN gfortran-4.8 --version
+RUN ln -sf /usr/bin/gfortran-4.8 /usr/bin/gfortran
+# Symlink g++
+RUN ln -s /usr/bin/g++-10 /usr/bin/g++
+
 # Compile googletests
-RUN cd /usr/src/gtest && cmake CMakeLists.txt && make && cp *.a /usr/lib
+RUN cmake -H/usr/src/gtest -B/usr/src/gtest/build
+RUN cmake --build /usr/src/gtest/build
+RUN mkdir -p /usr/src/googletest/googletest/lib/
 ENV GTEST /usr/src/googletest/googletest/
-RUN cd /usr/src/googletest/googletest/ && mkdir lib && cd lib && cp /usr/src/gtest/*.a .
+RUN cp /usr/src/gtest/build/lib/*.a /usr/src/googletest/googletest/lib/
 
 # Check versions and link gfortran-8
 RUN cmake --version
 RUN g++ --version
-RUN gfortran-4.8 --version
-RUN ln -sf /usr/bin/gfortran-4.8 /usr/bin/gfortran
+RUN gfortran-10 --version
+RUN ln -sf /usr/bin/gfortran-10 /usr/bin/gfortran
 
 # Libraries for MKdocs
 RUN apt-get install -y python-dev 

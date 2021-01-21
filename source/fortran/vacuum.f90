@@ -32,7 +32,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables, only: ddwi, gapds, rsldi, scrapli, scraplo, shldith, &
+    use build_variables, only: d_vv_in, gapds, rsldi, scrapli, scraplo, shldith, &
       shldoth, tfcth
     use physics_variables, only: dene, idivrt, powfmw, qfuel, rmajor, rminor, &
       sarea, vol, afuel
@@ -65,7 +65,7 @@ contains
 
     if (vacuum_model == 'old') then
         call vacuum(powfmw,rmajor,rminor,0.5D0*(scrapli+scraplo),sarea,vol, &
-         shldoth,shldith,tfcth,rsldi-gapds-ddwi,n_tf,tdwell,dene,idivrt, &
+         shldoth,shldith,tfcth,rsldi-gapds-d_vv_in,n_tf,tdwell,dene,idivrt, &
          qtorus,gasld,pumpn,nvduct,dlscal,vacdshm,vcdimax,iprint,outfile)
         ! MDK pumpn is real: convert to integer by rounding.
         vpumpn = floor(pumpn+0.5D0)

@@ -36,8 +36,8 @@ contains
     use maths_library, only: gamfun, sumup3
     use physics_variables, only: rhopedt, ten, tin, alphap, tbeta, te0, p0, &
       nesep, tesep, pcoef, ipedestal, ni0, ne0, ti0, tratio, dnla, alphat, &
-      dnitot, neped, ti, rhopedn, dene, teped, alphan, te, drhodn_max, rho_max_dn, &
-      rho_max_dt, drhodt_max
+      dnitot, neped, ti, rhopedn, dene, teped, alphan, te, dndrho_max, rho_max_dn, &
+      rho_max_dt, dtdrho_max
     implicit none
 
     !  Arguments
@@ -158,8 +158,9 @@ contains
     ! The gradient information for ipedestal = 0:
     if (ipedestal == 0) then
       if(alphat > 1.0) then
+         ! Rho (normalized radius), where temperature derivative is largest
          rho_max_dt = 1.0d0/sqrt(-1.0d0 +2.0d0 * alphat)
-         drhodt_max = -2.0**alphat*(-1.0 + alphat)**(-1.0 + alphat)*alphat*(-1.0 + &
+         dtdrho_max = -2.0**alphat*(-1.0 + alphat)**(-1.0 + alphat)*alphat*(-1.0 + &
                      2.0 * alphat)**(0.5 - alphat)
 
       elseif (alphat .le. 1.0 .and. alphaT > 0.0) then
@@ -167,7 +168,7 @@ contains
          ! The gradient diverges here at the edge so define some 'wrong' value of 0.99
          ! to approximate the gradient
          rho_max_dt = 0.99
-         drhodt_max = -100.0*0.02**alphat*alphat
+         dtdrho_max = -100.0*0.02**alphat*alphat
 
       else
          print *, "ERROR: alphat is negative!"
@@ -177,7 +178,7 @@ contains
       ! Same for density
       if(alphan > 1.0) then
          rho_max_dn = 1.0d0/sqrt(-1.0d0 +2.0d0 * alphan)
-         drhodn_max = -2.0**alphan*(-1.0 + alphan)**(-1.0 + alphan)*alphan*(-1.0 + &
+         dndrho_max = -2.0**alphan*(-1.0 + alphan)**(-1.0 + alphan)*alphan*(-1.0 + &
                      2.0 * alphan)**(0.5 - alphan)
 
       elseif (alphan .le. 1.0 .and. alphan > 0.0) then
@@ -185,7 +186,7 @@ contains
          ! The gradient diverges here at the edge so define some 'wrong' value of 0.99
          ! to approximate the gradient
          rho_max_dn = 0.99
-         drhodn_max = -100.0*0.02**alphan*alphan
+         dndrho_max = -100.0*0.02**alphan*alphan
 
       else
          print *, "ERROR: alphan is negative!"
