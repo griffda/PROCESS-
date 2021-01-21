@@ -387,10 +387,13 @@ contains
       ! Set fls to the line search objective function
       line_search: do
         call vmcon5()
+        call vmcon6()
         if (exit_code.eq.1) return
         if (exit_code.eq.2) exit
+        call vmcon7()
+        if (exit_code.eq.1) return
         call fcnvmc1()
-        call vmcon6()
+        call vmcon8()
         if (exit_code.eq.1) return
       end do line_search
      
@@ -401,7 +404,7 @@ contains
       ! function for use in updating hessian of Lagrangian
       call fcnvmc1()
       if (exit_code.ne.0) return
-      call vmcon7()
+      call vmcon9()
       if (exit_code.ne.0) return
     end do iteration
   end subroutine run
@@ -698,7 +701,6 @@ contains
   end subroutine vmcon4
 
   subroutine vmcon5()
-    use global_variables, only: verbose
     implicit none
 
     !  Increment the line search iteration counter
@@ -725,7 +727,12 @@ contains
       sum = sum + vmu(k)*max(aux,-temp)
     end do
     fls = objf + sum
-    
+  end subroutine vmcon5
+
+  subroutine vmcon6
+    use global_variables, only: verbose
+    implicit none
+
     if (nfev == nfinit) then
 
       !  Set the initial conditions for the line search
@@ -798,13 +805,18 @@ contains
         exit_code = 1
         return
       end if
-
+      
+      
       !  Calculate next reduction in the line step assuming
       !  a quadratic fit
-
+      
       alpha = max(cp1,cp5*dflsa/(dflsa - aux))
-
+      
     end if
+  end subroutine vmcon6
+
+  subroutine vmcon7
+    implicit none
 
     !  Multiply delta by alpha and calculate the new x
 
@@ -834,18 +846,18 @@ contains
     end if
     
     nfev = nfev + 1
-  end subroutine vmcon5
+  end subroutine vmcon7
 
-  subroutine vmcon6()
+  subroutine vmcon8()
     implicit none
 
     if (info < 0) then
       exit_code = 1
       return
     endif
-  end subroutine vmcon6
+  end subroutine vmcon8
 
-  subroutine vmcon7()
+  subroutine vmcon9()
     implicit none
 
     call fcnvmc2()
@@ -915,5 +927,5 @@ contains
         b(j,i) = b(i,j)
       end do
     end do
-  end subroutine vmcon7
+  end subroutine vmcon9
 end module vmcon_module
