@@ -389,6 +389,9 @@ contains
         call vmcon5()
         if (exit_code.eq.1) return
         if (exit_code.eq.2) exit
+        call fcnvmc1()
+        call vmcon6()
+        if (exit_code.eq.1) return
       end do line_search
      
       ! Reset exit_code; must be 2 to exit line_search
@@ -398,7 +401,7 @@ contains
       ! function for use in updating hessian of Lagrangian
       call fcnvmc1()
       if (exit_code.ne.0) return
-      call vmcon6()
+      call vmcon7()
       if (exit_code.ne.0) return
     end do iteration
   end subroutine run
@@ -831,15 +834,18 @@ contains
     end if
     
     nfev = nfev + 1
-    
-    call fcnvmc1()
+  end subroutine vmcon5
+
+  subroutine vmcon6()
+    implicit none
+
     if (info < 0) then
       exit_code = 1
       return
     endif
-  end subroutine vmcon5
+  end subroutine vmcon6
 
-  subroutine vmcon6()
+  subroutine vmcon7()
     implicit none
 
     call fcnvmc2()
@@ -909,5 +915,5 @@ contains
         b(j,i) = b(i,j)
       end do
     end do
-  end subroutine vmcon6
+  end subroutine vmcon7
 end module vmcon_module
