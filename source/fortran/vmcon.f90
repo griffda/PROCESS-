@@ -387,13 +387,19 @@ contains
       ! Set fls to the line search objective function
       line_search: do
         call vmcon5()
-        call vmcon6()
+
+        if (nfev == nfinit) then
+          call vmcon6()
+        else
+          call vmcon7()
+        endif
         if (exit_code.eq.1) return
         if (exit_code.eq.2) exit
-        call vmcon7()
+
+        call vmcon8()
         if (exit_code.eq.1) return
         call fcnvmc1()
-        call vmcon8()
+        call vmcon9()
         if (exit_code.eq.1) return
       end do line_search
      
@@ -404,7 +410,7 @@ contains
       ! function for use in updating hessian of Lagrangian
       call fcnvmc1()
       if (exit_code.ne.0) return
-      call vmcon9()
+      call vmcon10()
       if (exit_code.ne.0) return
     end do iteration
   end subroutine run
@@ -732,90 +738,88 @@ contains
   subroutine vmcon6
     use global_variables, only: verbose
     implicit none
+    !  Set the initial conditions for the line search
+    !  flsa is the initial value of the line search function
+    !  dflsa is its first derivative (if delta(np1) = 1)
+    !  alpha is the next reduction in the step-length
 
-    if (nfev == nfinit) then
-
-      !  Set the initial conditions for the line search
-      !  flsa is the initial value of the line search function
-      !  dflsa is its first derivative (if delta(np1) = 1)
-      !  alpha is the next reduction in the step-length
-
-      flsa = fls
-      dflsa = spgdel - delta(np1)*sum
-      if (dflsa >= zero) then
-        !  Error return because uphill search direction was calculated
-        info = 4
-        ! Issue #601 Return the best value of the solution vector - not the last value. MDK
-        write(*,*) 'info = 4'
-        x = best_solution_vector
-        sum = best_sum_so_far
-        write(*,*)
-        write(*,fmt_str)'Best solution vector will be output. Convergence parameter = ', sum
-        exit_code = 1
-        return
-      end if
-
-      !  Set initial multiplying factor for stepsize
-      !  Set initial value of stepsize for output
-
-      alpha = one
-      calpha = one
-
-    else
-
-      !  Test whether line search is complete
-
-      aux = fls - flsa
-
-      !  Exit line search if function difference is small
-
-      if (aux <= (cp1*dflsa)) then
-        exit_code = 2
-        return
-      endif
-
-      !  Escape from the line search if the line search function is increasing
-      !  Outer loop is forced to repeat
-
-      info = 1  !  reset on each iteration
-      if (aux > 0.0D0) then
-        if (verbose == 1) then
-          write(*,*) 'VMCON optimiser line search attempt failed - retrying...'
-        end if
-        info = 7
-        exit_code = 2
-        return
-      end if
-
-      !  Exit if the line search requires ten or more function evaluations
-
-      if (nfev >= (nfinit + 10)) then
-        do i = 1, n
-            x(i) = xa(i)
-        end do
-        nfev = nfev + 1
-        call fcnvmc1()
-        if (info >= 0) info = 3
-        ! Error return because line search required 10 calls of fcnvmc1
-        ! Issue #601 Return the best value of the solution vector - not the last value. MDK
-        x = best_solution_vector
-        sum = best_sum_so_far
-        write(*,*)
-        write(*,fmt_str)'Best solution vector will be output. Convergence parameter = ', sum
-        exit_code = 1
-        return
-      end if
-      
-      
-      !  Calculate next reduction in the line step assuming
-      !  a quadratic fit
-      
-      alpha = max(cp1,cp5*dflsa/(dflsa - aux))
-      
+    flsa = fls
+    dflsa = spgdel - delta(np1)*sum
+    if (dflsa >= zero) then
+      !  Error return because uphill search direction was calculated
+      info = 4
+      ! Issue #601 Return the best value of the solution vector - not the last value. MDK
+      write(*,*) 'info = 4'
+      x = best_solution_vector
+      sum = best_sum_so_far
+      write(*,*)
+      write(*,fmt_str)'Best solution vector will be output. Convergence parameter = ', sum
+      exit_code = 1
+      return
     end if
+
+    !  Set initial multiplying factor for stepsize
+    !  Set initial value of stepsize for output
+
+    alpha = one
+    calpha = one
   end subroutine vmcon6
 
-  subroutine vmcon7
+  subroutine vmcon7()
+    use global_variables, only: verbose
+    implicit none
+
+    !  Test whether line search is complete
+
+    aux = fls - flsa
+
+    !  Exit line search if function difference is small
+
+    if (aux <= (cp1*dflsa)) then
+      exit_code = 2
+      return
+    endif
+
+    !  Escape from the line search if the line search function is increasing
+    !  Outer loop is forced to repeat
+
+    info = 1  !  reset on each iteration
+    if (aux > 0.0D0) then
+      if (verbose == 1) then
+        write(*,*) 'VMCON optimiser line search attempt failed - retrying...'
+      end if
+      info = 7
+      exit_code = 2
+      return
+    end if
+
+    !  Exit if the line search requires ten or more function evaluations
+
+    if (nfev >= (nfinit + 10)) then
+      do i = 1, n
+          x(i) = xa(i)
+      end do
+      nfev = nfev + 1
+      call fcnvmc1()
+      if (info >= 0) info = 3
+      ! Error return because line search required 10 calls of fcnvmc1
+      ! Issue #601 Return the best value of the solution vector - not the last value. MDK
+      x = best_solution_vector
+      sum = best_sum_so_far
+      write(*,*)
+      write(*,fmt_str)'Best solution vector will be output. Convergence parameter = ', sum
+      exit_code = 1
+      return
+    end if
+    
+    
+    !  Calculate next reduction in the line step assuming
+    !  a quadratic fit
+    
+    alpha = max(cp1,cp5*dflsa/(dflsa - aux))
+  end subroutine vmcon7
+
+  subroutine vmcon8
     implicit none
 
     !  Multiply delta by alpha and calculate the new x
@@ -846,18 +850,18 @@ contains
     end if
     
     nfev = nfev + 1
-  end subroutine vmcon7
+  end subroutine vmcon8
 
-  subroutine vmcon8()
+  subroutine vmcon9()
     implicit none
 
     if (info < 0) then
       exit_code = 1
       return
     endif
-  end subroutine vmcon8
+  end subroutine vmcon9
 
-  subroutine vmcon9()
+  subroutine vmcon10()
     implicit none
 
     call fcnvmc2()
@@ -927,5 +931,5 @@ contains
         b(j,i) = b(i,j)
       end do
     end do
-  end subroutine vmcon9
+  end subroutine vmcon10
 end module vmcon_module
