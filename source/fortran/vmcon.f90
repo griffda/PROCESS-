@@ -369,19 +369,19 @@ contains
     exit_code = 0
     
     call vmcon1()
-    if (exit_code.ne.0) return
+    if (exit_code.eq.1) return
     call fcnvmc1()
-    if (exit_code.ne.0) return
+    if (exit_code.eq.1) return
     call vmcon2()
-    if (exit_code.ne.0) return
+    if (exit_code.eq.1) return
     call fcnvmc2()
-    if (exit_code.ne.0) return
+    if (exit_code.eq.1) return
     call vmcon3()
-    if (exit_code.ne.0) return
+    if (exit_code.eq.1) return
 
     iteration: do
       call vmcon4()
-      if (exit_code.ne.0) return
+      if (exit_code.eq.1) return
       
       ! Set sum to the weighted sum of infeasibilities
       ! Set fls to the line search objective function
@@ -419,10 +419,10 @@ contains
       ! Line search is complete. Calculate gradient of Lagrangian
       ! function for use in updating hessian of Lagrangian
       call fcnvmc1()
-      if (exit_code.ne.0) return
+      if (exit_code.eq.1) return
       call fcnvmc2()
       call vmcon13()
-      if (exit_code.ne.0) return
+      if (exit_code.eq.1) return
     end do iteration
   end subroutine run
 
