@@ -420,6 +420,7 @@ contains
       ! function for use in updating hessian of Lagrangian
       call fcnvmc1()
       if (exit_code.ne.0) return
+      call fcnvmc2()
       call vmcon13()
       if (exit_code.ne.0) return
     end do iteration
@@ -879,7 +880,6 @@ contains
   subroutine vmcon13()
     implicit none
 
-    call fcnvmc2()
     if (info < 0) then
       exit_code = 1
       return
