@@ -325,7 +325,7 @@ contains
       poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact,&
       i_tf_plane_stress, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
       i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti, &
-      i_cp_joints, n_tf_turn, f_t_turn_tf, t_turn_tf_max
+      i_cp_joints, n_tf_turn, f_t_turn_tf, t_turn_tf_max, t_cable_tf
 
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
@@ -2054,6 +2054,9 @@ contains
        case ('t_turn_tf_max')
           call parse_real_variable('t_turn_tf_max', t_turn_tf_max, 0.0D0, 1.D0, &
                 'TF coils WP turn squared dimension upper limit (m)')
+       case ('t_cable_tf')
+          call parse_real_variable('t_cable_tf', t_cable_tf, 0.0D0, 0.1D0, &
+               'TF coil cable square/rounded dimensions (m)')
        case ('thicndut')
           call parse_real_variable('thicndut', thicndut, 0.0D0, 0.1D0, &
                'Conduit insulation thickness (m)')

@@ -369,16 +369,17 @@ module fwbs_variables
   !! first wall coolant fraction (calculated if `lpulse=1` or `ipowerflow=1`)
 
   real(dp) :: praddiv
-  !! radiation power incident on the divertor (MW)
+  !! Radiation power incident on the divertor (MW)
 
   real(dp) :: pradfw
-  !! radiation power incident on the divertor (MW)
+  !! Radiation power incident on the first wall (MW)
 
   real(dp) :: pradhcd
-  !! radiation power incident on the divertor (MW)
+  !! Radiation power incident on the heating and current drive system (MW)
 
   real(dp) :: pradloss
-  !! radiation power incident on the divertor (MW)
+  !! Radiation power lost through holes (eventually hits shield) (MW)
+  !! Only used for stellarator
 
   real(dp) :: ptfnuc
   !! nuclear heating in the TF coil (MW)

@@ -24,7 +24,10 @@ import math
 from matplotlib.path import Path
 import matplotlib.patches as patches
 import numpy as np
-from importlib import resources
+if sys.version_info >= (3, 7):
+    from importlib import resources
+else:
+    import importlib_resources as resources
 
 from process.io.python_fortran_dicts import get_dicts
 

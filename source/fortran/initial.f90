@@ -273,7 +273,7 @@ subroutine check
         n_tf_graded_layers, n_tf_stress_layers, tlegav,  i_tf_plane_stress, &
         i_tf_sc_mat, i_tf_wp_geom, i_tf_turns_integer, tinstf, thwcndut, &
         tfinsgap, rcool, dhecoil, thicndut, i_cp_joints, t_turn_tf_is_input, &
-        t_turn_tf, tftmp
+        t_turn_tf, tftmp, t_cable_tf, t_cable_tf_is_input
     use stellarator_variables, only: istell
     use sctfcoil_module, only: initialise_cables
     use vacuum_variables, only: vacuum_model
@@ -905,14 +905,14 @@ subroutine check
 
             ! Steel conduit thickness (can be an iteration variable)
             if ( any(ixc(1:nvar) == 58 ) ) then
-                dr_tf_wp_min = dr_tf_wp_min + boundl(58)
+                dr_tf_wp_min = dr_tf_wp_min + 2.0D0 * boundl(58)
             else 
-                dr_tf_wp_min = dr_tf_wp_min + thwcndut
+                dr_tf_wp_min = dr_tf_wp_min + 2.0D0 * thwcndut
             end if 
 
         ! Minimal conductor layer thickness
         else if ( i_tf_sup == 0 .or. i_tf_sup == 2 ) then
-            dr_tf_wp_min = 2.0D0 * thicndut + 4.0D0 * rcool
+            dr_tf_wp_min = 2.0D0 * ( thicndut + tinstf ) + 4.0D0 * rcool
         end if
 
         if ( boundl(140) < dr_tf_wp_min ) then
@@ -932,6 +932,23 @@ subroutine check
     if ( t_turn_tf_is_input .and. i_tf_turns_integer == 1 ) then
         call report_error(269) 
     end if 
+
+    ! Setting t_cable_tf_is_input to true if t_cable_tf is an input
+    if ( abs(t_cable_tf) < epsilon(t_cable_tf) ) then
+        t_cable_tf_is_input = .false.
+    else
+        t_cable_tf_is_input = .true.
+    end if
+
+    ! Impossible to set the cable size of integer turn option
+    if ( t_cable_tf_is_input .and. i_tf_turns_integer == 1 ) then
+        call report_error(269) 
+    end if 
+
+    ! Impossible to set both the TF coil turn and the cable dimension
+    if ( t_turn_tf_is_input .and. t_cable_tf_is_input ) then
+        call report_error(271)
+    end if
 
     ! Checking the SC temperature for LTS
     if ( ( i_tf_sc_mat == 1 .or. &

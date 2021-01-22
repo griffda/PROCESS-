@@ -14,14 +14,14 @@
  
    Program :
    Version : 1.0.17   Release Date :: 2020-02-25
-   Tag No. : 1.0.17-722-g484ae96b code contains untracked changes
-    Branch : HEAD
-   Git log : Merge branch 'kzarebsk/1092-additional-tests' into '1092-convert-project-to-python-wrapped-fortran'
- Date/time : 16 Dec 2020  8:55:39 +00:00(hh:mm) UTC
-      User : jmaddock
-  Computer : J0826UBUNTU
- Directory : /home/jmaddock/process
-     Input : /tmp/pytest-of-jmaddock/pytest-749/test_scenario_scenario1_0/IN.DAT
+   Tag No. : 1.0.17-919-g783b4651
+    Branch : issue-1122-res-TF-coil-ground-ins
+   Git log : Merge branch 'develop' into issue-1122-res-TF-coil-ground-ins
+ Date/time :  6 Jan 2021 16:45:45 +00:00(hh:mm) UTC
+      User : skahn
+  Computer : J0320
+ Directory : /tmp/pytest-of-skahn/pytest-111/test_solver0
+     Input : /tmp/pytest-of-skahn/pytest-111/test_scenario_scenario10_0/IN.DAT
  Run title : IFE_001
   Run type : Reactor concept design: Inertial Fusion model, (c) CCFE
  

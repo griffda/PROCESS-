@@ -28,7 +28,7 @@ INCLUDE(${CMAKE_SOURCE_DIR}/cmake/gfortranlibs.cmake)
 # Retrieve and set information for preprocessor
 FindPreprocessingVars()
 
-SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -fPIC")
+SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -fPIC -ftest-coverage -fprofile-arcs")
 
 # Get System information, log as much information as we can
 # for ease later on when debugging system specific issues
@@ -173,3 +173,20 @@ ADD_CUSTOM_TARGET(install_process ALL
 )
 
 ADD_DEPENDENCIES(install_process ${PIP_NAME} ${F90WRAP_NAME} ${F2PY_NAME} ${FORD_NAME} ${DICTS_NAME} ${GFORTLIB_NAME})
+
+# Post install regression test coverage check
+if (EXISTS ${CMAKE_SOURCE_DIR}/lcov_results)
+  execute_process(COMMAND echo "Delete existing lcov_coverage directory...")
+  execute_process(COMMAND cmake -E remove_directory ${CMAKE_SOURCE_DIR}/lcov_results)
+  execute_process(COMMAND mkdir ${CMAKE_SOURCE_DIR}/lcov_results)
+elseif (NOT EXISTS ${CMAKE_SOURCE_DIR}/lcov_results)
+  execute_process(COMMAND echo "Create lcov_coverage directory...")
+  execute_process(COMMAND mkdir ${CMAKE_SOURCE_DIR}/lcov_results)
+endif()
+
+add_custom_target(coverage
+  COMMAND pytest -v tests/regression/ > tests/regression/pytest.log
+  COMMAND lcov --gcov-tool gcov --capture --directory build/CMakeFiles/process.dir/source/fortran/ --output-file lcov_results/coverage.info
+  COMMAND genhtml --output-directory lcov_results/html lcov_results/coverage.info
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
