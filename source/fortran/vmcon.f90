@@ -390,16 +390,19 @@ contains
 
         if (nfev == nfinit) then
           call vmcon6()
+          if (exit_code.eq.1) return
         else
           call vmcon7()
+          if (exit_code.eq.2) exit
+          call vmcon8()
+          if (exit_code.eq.1) return
+          call vmcon9()
         endif
-        if (exit_code.eq.1) return
-        if (exit_code.eq.2) exit
 
-        call vmcon8()
+        call vmcon10()
         if (exit_code.eq.1) return
         call fcnvmc1()
-        call vmcon9()
+        call vmcon11()
         if (exit_code.eq.1) return
       end do line_search
      
@@ -410,7 +413,7 @@ contains
       ! function for use in updating hessian of Lagrangian
       call fcnvmc1()
       if (exit_code.ne.0) return
-      call vmcon10()
+      call vmcon12()
       if (exit_code.ne.0) return
     end do iteration
   end subroutine run
@@ -736,7 +739,6 @@ contains
   end subroutine vmcon5
 
   subroutine vmcon6
-    use global_variables, only: verbose
     implicit none
     !  Set the initial conditions for the line search
     !  flsa is the initial value of the line search function
@@ -792,9 +794,11 @@ contains
       exit_code = 2
       return
     end if
+  end subroutine vmcon7
 
+  subroutine vmcon8()
+    implicit none
     !  Exit if the line search requires ten or more function evaluations
-
     if (nfev >= (nfinit + 10)) then
       do i = 1, n
           x(i) = xa(i)
@@ -811,15 +815,17 @@ contains
       exit_code = 1
       return
     end if
+  end subroutine vmcon8
     
-    
+  subroutine vmcon9
+    implicit none
     !  Calculate next reduction in the line step assuming
     !  a quadratic fit
     
     alpha = max(cp1,cp5*dflsa/(dflsa - aux))
-  end subroutine vmcon7
+  end subroutine vmcon9
 
-  subroutine vmcon8
+  subroutine vmcon10
     implicit none
 
     !  Multiply delta by alpha and calculate the new x
@@ -850,18 +856,18 @@ contains
     end if
     
     nfev = nfev + 1
-  end subroutine vmcon8
+  end subroutine vmcon10
 
-  subroutine vmcon9()
+  subroutine vmcon11()
     implicit none
 
     if (info < 0) then
       exit_code = 1
       return
     endif
-  end subroutine vmcon9
+  end subroutine vmcon11
 
-  subroutine vmcon10()
+  subroutine vmcon12()
     implicit none
 
     call fcnvmc2()
@@ -931,5 +937,5 @@ contains
         b(j,i) = b(i,j)
       end do
     end do
-  end subroutine vmcon10
+  end subroutine vmcon12
 end module vmcon_module
