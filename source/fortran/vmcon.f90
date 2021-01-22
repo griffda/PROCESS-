@@ -394,8 +394,13 @@ contains
         else
           call vmcon7()
           if (exit_code.eq.2) exit
-          call vmcon8()
-          if (exit_code.eq.1) return
+          
+          ! Exit if the line search requires ten or more function evaluations
+          if (nfev >= (nfinit + 10)) then
+            call vmcon8()
+            if (exit_code.eq.1) return
+          endif
+          
           call vmcon9()
         endif
 
@@ -798,23 +803,21 @@ contains
 
   subroutine vmcon8()
     implicit none
-    !  Exit if the line search requires ten or more function evaluations
-    if (nfev >= (nfinit + 10)) then
-      do i = 1, n
-          x(i) = xa(i)
-      end do
-      nfev = nfev + 1
-      call fcnvmc1()
-      if (info >= 0) info = 3
-      ! Error return because line search required 10 calls of fcnvmc1
-      ! Issue #601 Return the best value of the solution vector - not the last value. MDK
-      x = best_solution_vector
-      sum = best_sum_so_far
-      write(*,*)
-      write(*,fmt_str)'Best solution vector will be output. Convergence parameter = ', sum
-      exit_code = 1
-      return
-    end if
+
+    do i = 1, n
+        x(i) = xa(i)
+    end do
+    nfev = nfev + 1
+    call fcnvmc1()
+    if (info >= 0) info = 3
+    ! Error return because line search required 10 calls of fcnvmc1
+    ! Issue #601 Return the best value of the solution vector - not the last value. MDK
+    x = best_solution_vector
+    sum = best_sum_so_far
+    write(*,*)
+    write(*,fmt_str)'Best solution vector will be output. Convergence parameter = ', sum
+    exit_code = 1
+    return
   end subroutine vmcon8
     
   subroutine vmcon9
