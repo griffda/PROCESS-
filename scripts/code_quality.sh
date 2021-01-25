@@ -4,11 +4,7 @@ SOURCE_FOLDER=$PWD/source/fortran/
 FLINTER_EXE=$(which flint)
 BADGE_LABEL="Code Quality"
 ANYBADGE_EXE=$(which anybadge)
-QUALITY_LOG_DIR=$PWD/code_quality
-SUMMARY_OUTPUT_FILE=$QUALITY_LOG_DIR/quality_summary.log
-
-mkdir -p ${QUALITY_LOG_DIR}
-
+CODE_QUALITY_FILE=$PWD/code_quality.yml
 
 # Check options and if flinter and anybadge are available
 if [ -z "${FLINTER_EXE}" ]
@@ -33,23 +29,14 @@ then
     SOURCE_FOLDER=$1
 fi
 
-
 # Run the Linter on the PROCESS Source code
 echo "Running flinter on Directory: ${SOURCE_FOLDER}"
 
-${FLINTER_EXE} all-files ${SOURCE_FOLDER} | tee ${SUMMARY_OUTPUT_FILE}
-
-SCORE=$(cat ${SUMMARY_OUTPUT_FILE} | tail -n 2 | cut -d ' ' -f 7 | cut -d '/' -f 1)
+SCORE=$(${FLINTER_EXE} score -d 0 ${SOURCE_FOLDER} | cut -d '|' -f 2)
 SCORE_INT=$(echo ${SCORE} | cut -d '.' -f 1)
 SCORE_PERC=$(bc -l <<<"${SCORE}*10")
 
-for file in $(ls ${SOURCE_FOLDER}); do
-    echo "Running Flinter on file '${SOURCE_FOLDER}/${file}' in format mode..."
-    LABEL=$(echo ${file} | cut -d '.' -f 1)
-    ${FLINTER_EXE} fmt ${SOURCE_FOLDER}/${file} >> ${QUALITY_LOG_DIR}/${LABEL}_code_quality_fmt.log
-    echo "Running Flinter on file '${SOURCE_FOLDER}/${file}' in pep8 style mode..."
-    ${FLINTER_EXE} pep8 ${SOURCE_FOLDER}/${file} >> ${QUALITY_LOG_DIR}/${LABEL}_code_quality_pep8.log
-done
+${FLINTER_EXE} dump ${SOURCE_FOLDER} ${CODE_QUALITY_FILE}
 
 # Get Badge Colour Based on Score
 
