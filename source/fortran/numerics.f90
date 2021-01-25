@@ -181,15 +181,18 @@ module numerics
   !!  <LI> (78) Reinke criterion impurity fraction lower limit (itv  147 freinke)
   !!  <LI> (79) Peak CS field upper limit (itv  149 fbmaxcs)
   !!  <LI> (80) Divertor power lower limit pdivt (itv  153 fpdivlim)
-  !!  <LI> (81) Ne(0) > ne(ped) constraint (itv  154 fne0)</UL>
+  !!  <LI> (81) Ne(0) > ne(ped) constraint (itv  154 fne0)
   !!  <LI> (82) toroidalgap >  tftort constraint (itv  171 ftoroidalgap)
   !!  <LI> (83) Radial build consistency for stellarators (itv 172 f_avspace)
   !!  <LI> (84) Lower limit for beta (itv 173 fbetatry_lower)
   !!  <LI> (85) Constraint for CP lifetime
   !!  <LI> (86) Constraint for TF coil turn dimension
-  !!  <LI> (87) Constraint for cryogenic power (itv 164 f_crypmw)</UL>
+  !!  <LI> (87) Constraint for cryogenic power</UL>
 
-  integer, dimension(ipnvars) :: ixc
+  integer, dimension(ipnvars) :: ixc 
+  !!  ixc(ipnvars) /0/ :
+  !!               array defining which iteration variables to activate
+  !!               (see lablxc for descriptions)
   
   character(len=14), dimension(ipnvars) :: lablxc
   !! lablxc(ipnvars) : labels describing iteration variables<UL>
@@ -502,33 +505,33 @@ contains
       'TF coil leg rad width lower limit', &
       'NB shine-through frac upper limit', &
       'CS temperature margin lower limit', &
-      'Minimum availability value       ',  &
+      'Minimum availability value       ', &
       'taup/taueff                      ', &
-      'number of ITER-like vacuum pumps ',  &
-      'Zeff limit                       ',  &
-      'Dump time set by VV stress       ',   &
-      'Rate of change of energy in field',   &
-      'Upper Lim. on Radiation Wall load',   &
-      'Upper Lim. on Psep * Bt / q A R  ',   &
-      'pdivt < psep_kallenbach divertor ',   &
-      'Separatrix temp consistency      ',   &
-      'Separatrix density consistency   ',    &
-      'CS Tresca stress limit           ',    &
-      'Psep >= Plh + Paux               ',   &
-      'TFC quench < tmax_croco          ',    &
-      'TFC current/copper area < Max    ',    &
-      'Eich critical separatrix density ',   &
-      'TFC current per turn upper limit ',    &
-      'Reinke criterion fZ lower limit  ',   &
-      'Peak CS field upper limit        ',   &
-      'pdivt lower limit                ',   &
-      'ne0 > neped                      ',   &
-      'toroidalgap >  tftort            ',   &
-      'available_space > required_space ',   &
-      'beta > betalim_lower             ',   &
-      'CP lifetime                      ',   &
-      'TFC turn dimension               ',   &
-      'Cryogenic plant power            '    &
+      'number of ITER-like vacuum pumps ', &
+      'Zeff limit                       ', &
+      'Dump time set by VV stress       ', &
+      'Rate of change of energy in field', &
+      'Upper Lim. on Radiation Wall load', &
+      'Upper Lim. on Psep * Bt / q A R  ', &
+      'pdivt < psep_kallenbach divertor ', &
+      'Separatrix temp consistency      ', &
+      'Separatrix density consistency   ', &
+      'CS Tresca stress limit           ', &
+      'Psep >= Plh + Paux               ', &
+      'TFC quench < tmax_croco          ', &
+      'TFC current/copper area < Max    ', &
+      'Eich critical separatrix density ', &
+      'TFC current per turn upper limit ', &
+      'Reinke criterion fZ lower limit  ', &
+      'Peak CS field upper limit        ', &
+      'pdivt lower limit                ', &
+      'ne0 > neped                      ', &
+      'toroidalgap >  tftort            ', &
+      'available_space > required_space ', &
+      'beta > betalim_lower             ', &
+      'CP lifetime                      ', &
+      'TFC turn dimension               ', &
+      'Cryogenic plant power            '  &
       /)
 
     ! Please note: All strings between '...' above must be exactly 33 chars long
@@ -536,9 +539,6 @@ contains
     ! The last ad_varc line ends with the html tag "</UL>".
 
     ! Issue #495.  Remove default iteration variables
-    !!  ixc(ipnvars) /0/ :
-    !!               array defining which iteration variables to activate
-    !!               (see lablxc for descriptions)
     ixc = 0
     
     ! WARNING These labels are used as variable names by write_new_in_dat.py, and possibly

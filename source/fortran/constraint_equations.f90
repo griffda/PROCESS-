@@ -2874,8 +2874,10 @@ contains
 
    
    subroutine constraint_eqn_087(args)
-      !! Equation for TF coil cryogenic power upper limit
       !! author: S. Kahn, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for TF coil cryogenic power upper limit
       
       use heat_transport_variables, only: crypmw, crypmw_max, f_crypmw
       implicit none
