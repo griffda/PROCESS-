@@ -308,7 +308,7 @@ subroutine itersc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
   !  Reduced magnetic field at zero temperature
   !  Should remain < 1 for bmax < 0.83*bc20max (i.e. 27 tesla for i_tf_sc_mat=1)
 
-  if (bmax/bc20eps >= 1.0D0) then
+  if (bmax/bc20eps >= 1.0D0 .and. istell==0) then
      fdiags(1) = bmax ; fdiags(2) = bc20eps
      call report_error(160)
   end if
@@ -567,6 +567,7 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
 
     use error_handling, only: fdiags, report_error
     use maths_library, only: variable_error
+    use stellarator_variables, only: istell
     implicit none
 
     ! Arguments
@@ -614,7 +615,7 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
     !  Reduced temperature
     !  Should remain < 1 for temperature < 0.94*tc0max (i.e. 15 kelvin for i_tf_sc_mat=1)
 
-    if (temperature/tc0eps >= 1.0D0) then
+    if (temperature/tc0eps >= 1.0D0 .and. istell==0) then
         fdiags(1) = temperature ; fdiags(2) = tc0eps
         call report_error(159)
     end if
@@ -624,7 +625,7 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
     !  Reduced magnetic field at zero temperature
     !  Should remain < 1 for bmax < 0.83*bc20max (i.e. 27 tesla for i_tf_sc_mat=1)
 
-    if (bmax/bc20eps >= 1.0D0) then
+    if (bmax/bc20eps >= 1.0D0 .and. istell==0) then
         fdiags(1) = bmax ; fdiags(2) = bc20eps
         call report_error(160)
     end if
@@ -653,7 +654,7 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
     end if
 
     !  Reduced magnetic field, restricted to be < 1
-    if (bmax/bcrit >= 1.0D0) then
+    if (bmax/bcrit >= 1.0D0 .and. istell==0) then
         fdiags(1) = bmax ; fdiags(2) = bcrit
         call report_error(161)
     end if
