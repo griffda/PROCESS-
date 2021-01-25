@@ -290,7 +290,7 @@ pages:
 
     # Install requirements for Code Quality
     - python3 -m pip install flinter
-    - apt-get install bc -y
+    - apt-get install bc python3-tk -y
 
     # Setup badges
     - git clone https://github.com/jmorris-uk/anybadge.git
@@ -300,7 +300,7 @@ pages:
     - echo $CONTRIBUTORS
     - bash scripts/code_quality.sh source/fortran/ anybadge/
     - cp quality.svg public/
-    - cp -r code_quality public/
+    - cp code_quality.yml public/
     - cd anybadge
     - python3 anybadge.py -v $TAG -l tag -c blue -f tag.svg
     - python3 anybadge.py -v $VERSION -l version -c blue -f version.svg
