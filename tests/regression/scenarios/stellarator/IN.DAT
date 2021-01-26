@@ -98,14 +98,10 @@ shear    = 0.5          *Magnetic shear, derivative of iotabar
 blnkith  = 0.6          *Inboard blanket thickness (m)
 blnkoth  = 0.7          *Outboard blanket thickness (m)
 ddwex    = 0.15         *Cryostat thickness (m)
-<<<<<<< HEAD:test_suite/test_files/stellarator/IN.DAT
-ddwi     = 0.25         *Vacuum vessel thickness (TF coil / shield) (m)
-=======
 d_vv_in  = 0.35         *Inboard vacuum vessel thickness (tf coil / shield) (m)
 d_vv_out = 0.35         *Outboard vacuum vessel thickness (tf coil / shield) (m)
 d_vv_top = 0.35         *Topside vacuum vessel thickness (tf coil / shield) (m)
 d_vv_bot = 0.35         *Underside vacuum vessel thickness (tf coil / shield) (m)
->>>>>>> develop:tests/regression/scenarios/stellarator/IN.DAT
 gapds    = 0.025        *Gap between inboard vacuum vessel and tf coil (m)
 gapomin  = 0.025        *Minimum gap between outboard vacuum vessel and TF coil (m)
 scrapli  = 0.15         *Gap between plasma and first wall; inboard side (m)
@@ -189,21 +185,12 @@ runtitle = HELIAS-5B
 
 fcutfsu  = 0.69         *Copper fraction of cable conductor (TF coils)
 i_tf_sc_mat = 1         *Switch for superconductor material in tf coils (1: ITER Nb3Sn)
-<<<<<<< HEAD:test_suite/test_files/stellarator/IN.DAT
-tftmp    = 4.2          *Peak helium coolant temperature in TF coils and PF coils (k)
-leno     = 0.056        *Dimension conductor area including steel and insulation.
-thicndut = 0.0015        *Conduit insulation thickness (m)
-thwcndut = 0.004        *TF coil conduit case thickness (m)
-tinstf   = 0.00         *TF coil insulation thickness (m)
-vftf     = 0.3          *Coolant fraction of TF coil leg (i_tf_sup=0)
-thkcas   = 0.05          *Thickness of the case (for stellarators this is input value)
-=======
 tftmp     = 4.2         *Peak helium coolant temperature in TF coils and PF coils (k)
 t_turn_tf = 0.056       *Dimension conductor area including steel and insulation.
 thicndut  = 0.002       *Conduit insulation thickness (m)
 thwcndut  = 0.0012      *TF coil conduit case thickness (m)
 vftf      = 0.3         *Coolant fraction of TF coil leg (i_tf_sup=0)
->>>>>>> develop:tests/regression/scenarios/stellarator/IN.DAT
+thkcas   = 0.05          *Thickness of the case (for stellarators this is input value)
 
 *-----------------Pfcoil Variables-----------------*
 

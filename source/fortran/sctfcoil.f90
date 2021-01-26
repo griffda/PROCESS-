@@ -286,7 +286,6 @@ subroutine sctfcoil(outfile,iprint)
     ! TF coil inductance
     ! ---
     if ( itart == 0 .and. i_tf_shape == 1 ) then 
-        print *,"Proper inductance calculation"
         call tfcind(tfcth)
     else 
        tfind = ( hmax + tfthko ) * rmu0/pi * log(r_tf_outboard_mid/r_tf_inboard_mid)
@@ -294,7 +293,6 @@ subroutine sctfcoil(outfile,iprint)
 
     ! Total TF coil stored magnetic energy [J]
     estotft = 0.5D0*tfind * ritfc**2
-    print*,"tfind",tfind
 
     ! Total TF coil stored magnetic energy [Gigajoule]
     estotftgj = 1.0D-9 * estotft
