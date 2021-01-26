@@ -270,7 +270,7 @@ contains
     implicit none
 
     config = new_stella_config(istell)
-    
+
     ! If aspect ratio is not in ixc set it to default value
     ! Or when you call it the first time
     if(all(ixc .ne. 1) .or. first_call) then
@@ -407,7 +407,6 @@ contains
     required_radial_space = (tfcth/2.0D0 + gapds + d_vv_in + shldith + blnkith + fwith + scrapli)
 
     available_radial_space = f_r*(config%rminor_ref+config%min_plasma_coil_distance) - rminor
-
 
 
     !  Radius to inner edge of inboard shield
@@ -571,18 +570,15 @@ contains
     
     ! Check if the ECRH Calculation is in the icc vector.
     ! If yes: Calculate heating power at ECRH operatable point. Otherwise don't calculate it
-    if ( any(icc == 85) ) then
+    if ( any(icc == 87) ) then
       if (isthtr .ne. 1) then
          ! ECRH constraint called without indicated ECRH as heating scheme
          write(*,*) 'Warning in routine STOPT:'
-         write(*,*) 'isthtr is not set to 1 but icc=85 (ECRH) was called.'
+         write(*,*) 'isthtr is not set to 1 but icc=87 (ECRH) was called.'
       end if
 
       !call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht_local,pscalingmw_local)
     end if
-
-
-
 
 
     if (iprint == 1) call stopt_output(outfile)
@@ -877,22 +873,17 @@ contains
 
          call oheadr(outfile,'Stellarator Specific Physics:')
 
-         call ovarre(outfile,'Radius of Maximum ne gradient (m)','(r_max_dn)',rho_max_dn*rminor)
-         call ovarre(outfile,'Radius of Maximum te gradient (m)','(r_max_dt)',rho_max_dt*rminor)
-         call ovarre(outfile,'Maxium ne gradient (/m4)','(drdn_max)',dndrho_max/rminor)
-         call ovarre(outfile,'Maxium te gradient (keV/m)','(drdt_max)',dtdrho_max/rminor)
-
          call ovarre(outfile,'Total 0D heat flux (r=rhocore) (MW/m2)','(q_PROCESS)',q_PROCESS)
-         call ovarre(outfile,'Total neoclassical flux (r=rhocore) (MW/m2)','(total_q_neo)',total_q_neo)
+         !call ovarre(outfile,'Total neoclassical flux (r=rhocore) (MW/m2)','(total_q_neo)',total_q_neo)
          call ovarre(outfile,'Total neoclassical flux from 4*q_e (r=rhocore) (MW/m2)','(total_q_neo_e)',total_q_neo_e)
-         call ovarre(outfile,'Total turbulence flux from 2*q_e (r=rhocore) (MW/m2)','(total_q_turb)',total_q_turb)
+         !call ovarre(outfile,'Total turbulence flux from 2*q_e (r=rhocore) (MW/m2)','(total_q_turb)',total_q_turb)
 
-         call ovarre(outfile,'Total heat flux due to neoclassical energy transport (MW/m2): ','(q_neo)',q_neo)
-         call ovarre(outfile,'Total heat flux due to neoclassical particle transport (MW/m2): ','(gamma_neo)',gamma_neo)
-         call ovarre(outfile,'Total fuel (DT) particle flux due to neoclassical particle transport (1/s): ',&
-                                 '(dndt_neo_fuel)',dndt_neo_fuel)
-         call ovarre(outfile,'Total fuel (DT) mass flux due to neoclassical particle transport (mg/s): ', &
-                                 '(dmdt_neo_fuel)',dmdt_neo_fuel)
+         !call ovarre(outfile,'Total heat flux due to neoclassical energy transport (MW/m2): ','(q_neo)',q_neo)
+         !call ovarre(outfile,'Total heat flux due to neoclassical particle transport (MW/m2): ','(gamma_neo)',gamma_neo)
+         !call ovarre(outfile,'Total fuel (DT) particle flux due to neoclassical particle transport (1/s): ',&
+         !                        '(dndt_neo_fuel)',dndt_neo_fuel)
+         !call ovarre(outfile,'Total fuel (DT) mass flux due to neoclassical particle transport (mg/s): ', &
+         !                        '(dmdt_neo_fuel)',dmdt_neo_fuel)
          call ovarre(outfile,'Total fuel (DT) mass flux by using 4 * neoclassical e transport (mg/s): ', &
                                  '(dmdt_neo_fuel_from_e)',dmdt_neo_fuel_from_e)
          call ovarre(outfile,'Considered Heatflux by LCFS heat flux ratio (1)','(q_PROCESS/q_PROCESS_r1)',q_PROCESS/q_PROCESS_r1)
@@ -901,21 +892,24 @@ contains
          call ovarre(outfile,'Neoclassical electron effective chi (r=rhocore): ','(chi_neo_e)',chi_neo_e)
 
          call ovarre(outfile,'Heat flux due to neoclassical energy transport (e) (MW/m2): ','(q_neo_e)',q_neo_e)
-         call ovarre(outfile,'Heat flux due to neoclassical energy transport (D) (MW/m2): ','(q_neo_D)',q_neo_D)
-         call ovarre(outfile,'Heat flux due to neoclassical energy transport (T) (MW/m2): ','(q_neo_T)',q_neo_T)
-         call ovarre(outfile,'Heat flux due to neoclassical energy transport (a) (MW/m2): ','(q_neo_a)',q_neo_a)
+         !call ovarre(outfile,'Heat flux due to neoclassical energy transport (D) (MW/m2): ','(q_neo_D)',q_neo_D)
+         !call ovarre(outfile,'Heat flux due to neoclassical energy transport (T) (MW/m2): ','(q_neo_T)',q_neo_T)
+         !call ovarre(outfile,'Heat flux due to neoclassical energy transport (a) (MW/m2): ','(q_neo_a)',q_neo_a)
 
          call ovarre(outfile,'Heat flux due to neoclassical particle transport (e) (MW/m2): ','(g_neo_e)',g_neo_e)
-         call ovarre(outfile,'Heat flux due to neoclassical particle transport (D) (MW/m2): ','(g_neo_D)',g_neo_D)
-         call ovarre(outfile,'Heat flux due to neoclassical particle transport (T) (MW/m2): ','(g_neo_T)',g_neo_T)
-         call ovarre(outfile,'Heat flux due to neoclassical particle transport (a) (MW/m2): ','(g_neo_a)',g_neo_a)
+         !call ovarre(outfile,'Heat flux due to neoclassical particle transport (D) (MW/m2): ','(g_neo_D)',g_neo_D)
+         !call ovarre(outfile,'Heat flux due to neoclassical particle transport (T) (MW/m2): ','(g_neo_T)',g_neo_T)
+         !call ovarre(outfile,'Heat flux due to neoclassical particle transport (a) (MW/m2): ','(g_neo_a)',g_neo_a)
 
          call ovarre(outfile,'Particle flux due to neoclassical particle transport (e) (1/m2/s): ','(dndt_neo_e)',dndt_neo_e)
-         call ovarre(outfile,'Particle flux due to neoclassical particle transport (D) (1/m2/s): ','(dndt_neo_D)',dndt_neo_D)
-         call ovarre(outfile,'Particle flux due to neoclassical particle transport (T) (1/m2/s): ','(dndt_neo_T)',dndt_neo_T)
-         call ovarre(outfile,'Particle flux due to neoclassical particle transport (a) (1/m2/s): ','(dndt_neo_a)',dndt_neo_a)
+         !call ovarre(outfile,'Particle flux due to neoclassical particle transport (D) (1/m2/s): ','(dndt_neo_D)',dndt_neo_D)
+         !call ovarre(outfile,'Particle flux due to neoclassical particle transport (T) (1/m2/s): ','(dndt_neo_T)',dndt_neo_T)
+         !call ovarre(outfile,'Particle flux due to neoclassical particle transport (a) (1/m2/s): ','(dndt_neo_a)',dndt_neo_a)
 
-
+         call ovarre(outfile,'Radius of Maximum ne gradient (m)','(r_max_dn)',rho_max_dn*rminor)
+         call ovarre(outfile,'Radius of Maximum te gradient (m)','(r_max_dt)',rho_max_dt*rminor)
+         call ovarre(outfile,'Maxium ne gradient (/m4)','(drdn_max)',dndrho_max/rminor)
+         call ovarre(outfile,'Maxium te gradient (keV/m)','(drdt_max)',dtdrho_max/rminor)
 
       end subroutine stphys_output
 
@@ -1999,7 +1993,7 @@ contains
    gyro_frequency = min(1.76d11 * bt_input,gyro_frequency_max * 2.0d0*pi)
 
    ! Restrict b field to the maximal available gyrotron frequency
-   bt_max = min(bt_input,gyro_frequency/1.76d11)
+   bt_max = (gyro_frequency_max * 2.0d0*pi)/1.76d11
 
    !                      me*e0/e^2       * w^2
    ne0_max = max(0.0d0, 3.142077d-4 * gyro_frequency**2)
@@ -2138,7 +2132,6 @@ contains
    ! Volume averaged te from te0_achievable
    te = te0_available/(1.0D0+alphat)
    call stdlim_ecrh(gyro_frequency_max, bt,ne0_max,bt_ecrh_max)
-
    ! Now go to Ignition point where ECRH is still available
    ! In density..
    dene_old = dene

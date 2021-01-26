@@ -3,7 +3,8 @@ module neoclassics_module
 
     !! Module containing neoclassical computations
     !! author: J Lion, IPP Greifswald
-    !! N/A
+    !! Formulas used are described in:
+    !! Beidler (2013), https://doi.org/10.1088/0029-5515/51/7/076001
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -103,51 +104,23 @@ module neoclassics_module
 
 
 
-    type, public :: profiles
-        character, dimension(4) :: species = (/"e","D","T","a"/)
-        !  Species that are considered
-        real(dp), dimension(:,:),allocatable :: densities
-        !  Densities of the species that are considered
-        real(dp), dimension(:,:),allocatable :: temperatures
-        !  Densities of the species that are considered
-    end type profiles
-
-
-    ! Overwrite implicit fortran constructors
-    !interface profiles ! Ignore the warning here
-    !   procedure :: init_profiles_from_PROCESS
-    !end interface profiles
-
-    !interface profile_values ! Ignore the warning here
-    !   procedure :: init_profile_values_from_PROCESS
-    !end interface profile_values
-
-    !interface create_neoclassics ! Ignore the warning here
-    !   procedure :: init_neoclassics
-    !end interface create_neoclassics
-
-
-
-
-
 contains
 
 
-    type(neoclassics) function init_neoclassics(r_eff,eps_eff,iota)!,D11_star_mono_input,nu_star_mono_input,D13_star_mono_input)
+    type(neoclassics) function init_neoclassics(r_eff,eps_eff,iota)
+        !! Constructor of the neoclassics object from the effective radius,
+        !! epsilon effective and iota only.
+        !
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
         real(dp), intent(in) :: r_eff,eps_eff,iota
         type(neoclassics) :: myneo
         real(dp), dimension(4,no_roots) :: mynu
-        !real(dp), dimension(:) :: D11_star_mono_input, nu_star_mono_input, D13_star_mono_input
 
-
-        !allocate(myneo%D11_star_mono_input(size(D11_star_mono_input)))
-        !allocate(myneo%D13_star_mono_input(size(D13_star_mono_input)))
-        !allocate(myneo%nu_star_mono_input(size(nu_star_mono_input)))
         !! This should be called as the standard constructor
         myneo = neoclassics(gauss_laguerre = gauss_laguerre_30(), &
                             profiles = init_profile_values_from_PROCESS(r_eff), &
-                            eps_eff = eps_eff, iota = iota)!, D11_star_mono_input = D11_star_mono_input) &
-                            !nu_star_mono_input = nu_star_mono_input, D13_star_mono_input = D13_star_mono_input)
+                            eps_eff = eps_eff, iota = iota)
 
         mynu = neoclassics_calc_nu(myneo)
 
@@ -161,7 +134,6 @@ contains
         myneo%D11_mono = myneo%calc_D11_mono() !for using epseff
         !alternatively use:  = myneo%interpolate_D11_mono() !
 
-        !print *, "Check: ",myneo%D11_mono
         myneo%D111 = myneo%calc_D111()
 
         myneo%D112 = myneo%calc_D112()
@@ -170,13 +142,15 @@ contains
         myneo%Gamma_flux = myneo%calc_Gamma_flux()
         myneo%q_flux = myneo%calc_q_flux()
 
-
+        ! Return:
         init_neoclassics = myneo
     end function init_neoclassics
 
     function neoclassics_calc_KT(self) result(KK)
-        ! Calculates the drift velocities
-
+        !! Calculates the energy on the given grid
+        !! which is given by the gauss laguerre roots.
+        !
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         use const_and_precisions, only: e_,c_,me_,mp_,keV_
 
         class(neoclassics), intent(in) :: self
@@ -185,21 +159,21 @@ contains
 
         K = self%gauss_laguerre%roots/keV_
 
-        KK(1,:) = K * self%profiles%temperatures(1)
-        KK(2,:) = K * self%profiles%temperatures(2)
-        KK(3,:) = K * self%profiles%temperatures(3)
-        KK(4,:) = K * self%profiles%temperatures(4)
-
+        KK(1,:) = K * self%profiles%temperatures(1) ! electrons
+        KK(2,:) = K * self%profiles%temperatures(2) ! deuterium
+        KK(3,:) = K * self%profiles%temperatures(3) ! tritium
+        KK(4,:) = K * self%profiles%temperatures(4) ! helium
 
     end function neoclassics_calc_KT
 
     function neoclassics_calc_Gamma_flux(self)
-        ! Calculates the Energy flux by particle transport
+        !! Calculates the Energy flux by neoclassicsal particle transport
+        !
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
         class(neoclassics), intent(in) :: self
         
-        
         real(dp),dimension(4) :: neoclassics_calc_Gamma_flux,densities, temps, dr_temps, dr_densities, z
-
 
         densities = self%profiles%densities
         temps = self%profiles%temperatures
@@ -214,7 +188,9 @@ contains
     end function neoclassics_calc_Gamma_flux
 
     function neoclassics_calc_q_flux(self)
-        ! Calculates the Energy flux by neocl. energy transport
+        !! Calculates the Energy flux by neoclassicsal energy transport
+        !
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         class(neoclassics), intent(in) :: self
         real(dp),dimension(4) :: q_flux, densities, temps, dr_temps, dr_densities, z, neoclassics_calc_q_flux
@@ -234,18 +210,24 @@ contains
     end function neoclassics_calc_q_flux
 
     function neoclassics_calc_D11_mono(self) result(D11_mono)
+        !! Calculates the monoenergetic radial transport coefficients
+        !! using epsilon effective.
+        !
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         use const_and_precisions, only: pi
 
         class(neoclassics), intent(in) :: self
         real(dp),dimension(4,no_roots) :: D11_mono
 
-     
         D11_mono = 4.0d0/(9.0d0*pi) * (2.0d0 * self%eps_eff)**(3.0d0/2.0d0) &
                     * self%vd**2/self%nu
 
     end function neoclassics_calc_D11_mono
 
     function neoclassics_calc_D11_plateau(self) result(D11_plateau)
+        !! Calculates the plateau transport coefficients (D11_star sometimes)
+        !
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         use const_and_precisions, only: pi, me_, mp_, c_
         use physics_variables, only: rmajor
 
@@ -260,12 +242,16 @@ contains
         v(3,:) = c_ * sqrt(1.0d0-(self%KT(3,:)/(mass(3) * c_**2)+1)**(-1))
         v(4,:) = c_ * sqrt(1.0d0-(self%KT(4,:)/(mass(4) * c_**2)+1)**(-1))
 
-
         D11_plateau = pi/4.0 * self%vd**2 * rmajor/ self%iota / v
 
     end function neoclassics_calc_D11_plateau
 
     function neoclassics_interpolate_D11_mono(self) result(D11_mono)
+        !! Interpolates the D11 coefficients on the Gauss laguerre grid
+        !! (This method is unused as of now, but is needed when taking D11 explicitely as input)
+        !
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
         use const_and_precisions, only: pi
         use maths_library, only: find_y_nonuniform_x
         ! use grad_func, only: interp1_ef
@@ -273,9 +259,6 @@ contains
         class(neoclassics), intent(in) :: self
         real(dp),dimension(4,no_roots) :: D11_mono
         integer :: ii,jj
-
-
-
 
         do ii = 1,4
             do jj = 1,no_roots
@@ -285,12 +268,12 @@ contains
             end do
         end do
 
-     
-
     end function neoclassics_interpolate_D11_mono
 
     function neoclassics_calc_vd(self)
-        ! Calculates the drift velocities
+        !! Calculates the drift velocities
+        !
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         use const_and_precisions, only: e_
         use physics_variables, only: rmajor, bt
@@ -315,7 +298,9 @@ contains
     end function neoclassics_calc_vd
 
     function neoclassics_calc_nu_star(self) result(nu_star)
-        ! Calculates the drift velocities
+        !! Calculates the normalized collision frequency
+        !
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         use const_and_precisions, only: e_,c_,me_,mp_
         use physics_variables, only: rmajor
@@ -341,10 +326,14 @@ contains
 
         nu_star = rmajor * self%nu/(self%iota*v)
 
-
     end function neoclassics_calc_nu_star
 
     function neoclassics_calc_D111(self)
+        !! Calculates the integrated radial transport coefficients (index 1)
+        !! It uses Gauss laguerre integration
+        !! https://en.wikipedia.org/wiki/Gauss%E2%80%93Laguerre_quadrature
+        !
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         use const_and_precisions, only: pi
 
         class(neoclassics), intent(in) :: self
@@ -365,6 +354,11 @@ contains
     end function neoclassics_calc_D111
 
     function neoclassics_calc_D112(self)
+        !! Calculates the integrated radial transport coefficients (index 2)
+        !! It uses Gauss laguerre integration
+        !! https://en.wikipedia.org/wiki/Gauss%E2%80%93Laguerre_quadrature
+        !
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         use const_and_precisions, only: pi
 
         class(neoclassics), intent(in) :: self
@@ -385,6 +379,11 @@ contains
     end function neoclassics_calc_D112
 
     function neoclassics_calc_D113(self)
+        !! Calculates the integrated radial transport coefficients (index 3)
+        !! It uses Gauss laguerre integration
+        !! https://en.wikipedia.org/wiki/Gauss%E2%80%93Laguerre_quadrature
+        !
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         use const_and_precisions, only: pi
 
         class(neoclassics), intent(in) :: self
@@ -404,6 +403,9 @@ contains
     end function neoclassics_calc_D113
 
     function neoclassics_calc_nu(self)
+        !! Calculates the collision frequency
+        !
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         use const_and_precisions, only: pi, me_, mp_, eps0_,e_
 
         real(dp),dimension(4,no_roots) :: neoclassics_calc_nu
@@ -411,14 +413,12 @@ contains
         real(dp) :: t,erfn,phixmgx,expxk,xk, lnlambda,x,v
         real(dp),dimension(4) :: temp, mass,density,z
 
-
         integer :: jj,ii,kk
-
 
         temp = self%profiles%temperatures
         density = self%profiles%densities
 
-        !          e      D      T         a
+        !          e      D      T         a (He)
         mass = (/me_,mp_*2.0d0,mp_*3.0d0,mp_*4.0d0/)
         z = (/-1.0d0,1.0d0,1.0d0,2.0d0/) * e_
 
@@ -447,47 +447,11 @@ contains
         enddo
     end function neoclassics_calc_nu
 
-    type(profiles) function init_profiles_from_PROCESS(no_r)
-        use physics_variables, only: ne0,te0,alphan,&
-                                     alphat,ti0,ni0,fdeut, dnalp
-
-        integer, intent(in) :: no_r
-
-        integer :: i
-        real(dp),dimension(4,no_r) :: dens,temp
-        real(dp),dimension(no_r) :: rlist, dense, densD,densT,densa, &
-                                    tempD,tempT,tempa,tempe
-
-        rlist = (/(real(i,dp)/no_r, i=0,no_r-1, 1)/)
-
-        tempe = te0 * (1-rlist**2)**alphat
-
-        tempT = ti0 * (1-rlist**2)**alphat
-        tempD = ti0 * (1-rlist**2)**alphat
-        tempa = ti0 * (1-rlist**2)**alphat
-
-        dense = ne0 * (1-rlist**2)**alphan
-
-        densT = (1-fdeut) * ni0 * (1-rlist**2)**alphan
-        densD = fdeut *ni0 * (1-rlist**2)**alphan
-        densa = dnalp*(1+alphan) * (1-rlist**2)**alphan
-
-        dens(1,:) = dense
-        dens(2,:) = densD
-        dens(3,:) = densT
-        dens(4,:) = densa
-
-        temp(1,:) = tempe
-        temp(2,:) = tempD
-        temp(3,:) = tempT
-        temp(4,:) = tempa
-
-        init_profiles_from_PROCESS%densities = dens
-        init_profiles_from_PROCESS%temperatures = temp
-
-    end function init_profiles_from_PROCESS
-
     type(profile_values) function init_profile_values_from_PROCESS(rho)
+        !! Initializes the profile_values object from PROCESS' parabolic profiles
+        !
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
         use physics_variables, only: ne0,te0,alphan,&
                                      alphat,ti0,ni0,fdeut, dnalp, rminor
         use const_and_precisions, only: keV_
@@ -552,8 +516,10 @@ contains
     end function init_profile_values_from_PROCESS
 
     type(gauss_laguerre) function gauss_laguerre_30()
-        ! Sets the gauss Laguerre roots and weights for 30 
-        ! discretization points. Used for integration in this module
+        !! Sets the gauss Laguerre roots and weights for 30 
+        !! discretization points. Used for integration in this module.
+        !
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
         gauss_laguerre_30%roots = (/4.740718054080526184d-02,&
                                     2.499239167531593919d-01,&
@@ -620,8 +586,6 @@ contains
                             
 
     end function gauss_laguerre_30
-
-
 
 
 end module neoclassics_module
