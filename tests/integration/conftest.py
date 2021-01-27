@@ -6,6 +6,7 @@ import pytest
 from pathlib import Path
 from shutil import copy
 import os
+from pkg_resources import resource_filename
 
 @pytest.fixture
 def temp_data(tmp_path):
@@ -52,3 +53,20 @@ def mfile_name():
     :rtype: str
     """
     return "baseline_2018_MFILE.DAT"
+
+@pytest.fixture(scope="session", autouse=True)
+def overwrite_ref_dicts(request):
+    """Overwrite reference Python-Fortan dictionaries if CLI option supplied.
+
+    Updates the dicts in the test suite with the dicts in the package. Runs
+    once at the start of the test session.
+    :param request: fixture to provide access to pytest CLI options
+    :type request: pytest.fixture.SubRequest
+    """
+    if request.config.getoption("--overwrite"):
+        # Get the dicts filename from the package data
+        dicts_fn = resource_filename("process", "io/python_fortran_dicts.json")
+
+        src_path = Path(dicts_fn)
+        dst_path = Path(__file__).parent / "ref_dicts.json"
+        copy(src_path, dst_path)
