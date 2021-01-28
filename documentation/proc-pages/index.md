@@ -94,7 +94,7 @@ Engineering, Kovari et al. (2016)](https://www.sciencedirect.com/science/article
 - ["PROCESS": Systems studies of spherical tokamaks; Muldrew et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0920379620300788)
 - [Implementation and verification of a HELIAS module for the systems code PROCESS; Warmer et al. (2015)](https://www.sciencedirect.com/science/article/pii/S0920379614006656?via%3Dihub)
 - [Radiation and confinement in 0D fusion systems codes; Lux et al. (2016)](https://iopscience.iop.org/article/10.1088/0741-3335/58/7/075001)
-- [Time-dependent power requirements for pulsed fusion reactors in systems codes; Morris & Kovari (2017)](https://www.sciencedirect.com/science/article/pii/S0920379617304362)
+- [Time-dependent power requirements for pulsed fusion reactors in systems codes; Morris & Kovari (2017)](https://www.sciencedirect.com/science/article/pii/S0920379617304362) 
 
 A full list of publications using PROCESS can be found [here](./publications.md).
 <br><br>
