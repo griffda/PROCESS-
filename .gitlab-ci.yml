@@ -135,9 +135,6 @@ unitfort-py36:
 
 .regression:
   when: on_success
-  only:
-    - develop
-    - sgadgil/f2py_wrapped_coverage
   stage: testing
   artifacts:
     paths: 
