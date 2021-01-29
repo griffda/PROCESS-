@@ -23,8 +23,8 @@ The sheet will be created if it does not exist.
 
 import os
 import argparse
-import process_io_lib.mfile as mf
-from process_io_lib.mfile import make_plot_dat
+import process.io.mfile as mf
+from process.io.mfile import make_plot_dat
 from openpyxl import Workbook, styles, load_workbook
 from openpyxl.styles import  Font, Border, Side
 
