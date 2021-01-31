@@ -220,15 +220,14 @@ end subroutine initialise_cables
 
 subroutine sctfcoil(outfile,iprint)
 
-    !! Superconducting TF coil module
+    !! TF coil module
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Galambos, FEDC/ORNL
     !! author: R Kemp, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
     !! author: S Kahn, CCFE, Culham Science Centre
-    !! This subroutine calculates various parameters for a superconducting
-    !! TF coil set. The primary outputs are coil size, shape, stress,
-    !! and fields.
+    !! This subroutine calculates various parameters for a TF coil set.
+    !! The primary outputs are coil size, shape, weight, stress and and fields.
     !! It is a variant from the original FEDC/Tokamak systems code.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
