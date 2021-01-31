@@ -315,6 +315,7 @@ module physics_module
     if (ipedestal .ne. 3) then
        if (bscfmax < 0.0D0) then
           bootipf = abs(bscfmax)
+          plasipf = bootipf
        else
           if (ibss == 1) then
              bootipf = bscf_iter89

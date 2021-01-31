@@ -85,23 +85,18 @@ to anyone using PROCESS outputs or models based on them.
 
 ## References
 
-Below is a list of PROCESS publications and reference material links:
+Below is a list of PROCESS publications describing the models:
 
-- [M. Kovari et al., PROCESS: a systems code for fusion power plants - Part 1: 
-  Physics](http://www.sciencedirect.com/science/article/pii/S0920379614005961)
-- [M. Kovari et al., PROCESS: a systems code for fusion power plants - Part 2: 
-Engineering](https://www.sciencedirect.com/science/article/pii/S0920379616300072)
-- [H. Lux et al., Implications of uncertainties on European DEMO design, Nuc. Fus. 59 
-  (2019)](https://iopscience.iop.org/article/10.1088/1741-4326/ab13e2/meta)
-- [J. Morris, at al., Validation and sensitivity of CFETR design using EU systems 
-  codes, FED 2019 in press corrected proof](https://www.sciencedirect.com/science/article/pii/S0920379619300341)
-- [S.I. Muldrew et al., Uncertainty analysis of an SST-2 fusion reactor design. 
-  FED, 2019 in press corrected proof](https://www.sciencedirect.com/science/article/pii/S0920379618308317)
-- [S.B.L Chislett-McDonald et al., Could high H98-factor commercial tokamak power plants 
-  use Nb–Ti toroidal field coils?, IEEE Transactions on Applied Superconductivity 29 (2019) 
-  ](https://ieeexplore.ieee.org/abstract/document/8630091)
+- ["PROCESS": A systems code for fusion power plants - Part 1: 
+  Physics; Kovari et al. (2014)](http://www.sciencedirect.com/science/article/pii/S0920379614005961)
+- ["PROCESS": A systems code for fusion power plants - Part 2: 
+Engineering, Kovari et al. (2016)](https://www.sciencedirect.com/science/article/pii/S0920379616300072)
+- ["PROCESS": Systems studies of spherical tokamaks; Muldrew et al. (2020)](https://www.sciencedirect.com/science/article/pii/S0920379620300788)
+- [Implementation and verification of a HELIAS module for the systems code PROCESS; Warmer et al. (2015)](https://www.sciencedirect.com/science/article/pii/S0920379614006656?via%3Dihub)
+- [Radiation and confinement in 0D fusion systems codes; Lux et al. (2016)](https://iopscience.iop.org/article/10.1088/0741-3335/58/7/075001)
+- [Time-dependent power requirements for pulsed fusion reactors in systems codes; Morris & Kovari (2017)](https://www.sciencedirect.com/science/article/pii/S0920379617304362) 
 
-A list of publications using PROCESS can be found [here](./publications.md).
+A full list of publications using PROCESS can be found [here](./publications.md).
 <br><br>
   
 [^1]: R. L. Reid et al., “ETR/ITER Systems Code”, Oak Ridge Report ORNL/FEDC-87/7 (1988)
