@@ -322,6 +322,9 @@ module cost_variables
   real(dp) :: step_con
   !! Contingency Percentage
 
+  real(dp) :: step_rh_cost
+  !! Remote Handling Percentage
+  
   real(dp), dimension(68) :: step_ref
   !! Reference values for cost model 2
 
@@ -676,6 +679,7 @@ module cost_variables
     output_costs = 1
     ratecdol = 0.0435D0
     step_con = 1.5D-1
+    step_rh_cost = 7.5D-2
     step_ref = &
       (/ 3.0D0, 3.0D-1, 1.115D1, 1.5744D2, 3.592D1, 7.96D0, 9.16D0, 3.26D0, 5.369D1, &
       1.88D0, 6.6D-1, 8.63D0, 3.1D0, 2.05D0, 8.7D-1, 8.7D-1, 9.1D-1, 3.1D-1, 1.81D0, &

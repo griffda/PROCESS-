@@ -381,7 +381,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
     use process_output, only: oshead, ocosts, oblnkl
-    use cost_variables, only: output_costs, step_con
+    use cost_variables, only: output_costs, step_con, step_rh_cost
 
     implicit none
   
@@ -389,12 +389,13 @@ contains
     integer, intent(in) :: iprint,outfile
   
     ! Local variables
-    real(dp):: step2298, step2299
+    real(dp):: step2297, step2298, step2299
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
     ! Initialise as zero
     step22 = 0.0D0
+    step2297 = 0.0D0   ! Remote Handling
     step2298 = 0.0D0   ! Contingency
   
     if ((iprint==1).and.(output_costs == 1)) then
@@ -422,6 +423,11 @@ contains
     !  Account 22.07 : Instrumentation and Control
     call step_a2207(outfile,iprint)
 
+    ! 22.97 Remote Handling
+    ! From RACE report
+    step2297 = step_rh_cost * step22
+    step22 = step22 + step2297
+
     ! 22.98 Spares
     ! STARFIRE percentage of components
     step22 = step22 + step2298
@@ -434,6 +440,7 @@ contains
     ! Output costs
     if ((iprint==1).and.(output_costs == 1)) then
       write(outfile,*) '******************* '
+      call ocosts(outfile,'(step2297)', 'Remote Handling (M$)', step2297)
       call ocosts(outfile,'(step2298)','Spares (M$)', step2298)
       call ocosts(outfile,'(step2299)','Contingency (M$)', step2299)
       call oblnkl(outfile)
