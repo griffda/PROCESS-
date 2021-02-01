@@ -19,10 +19,6 @@ from scenario import Scenario
 # customisation?
 logger = logging.getLogger(__name__)
 
-# Crude switch to overwrite reference MFILE and OUT files
-# TODO: Do this properly with a command-line arg
-OVERWRITE_REF = False
-
 def get_scenarios():
     """Generator to yield the scenarios that need to be tested.
 
@@ -66,7 +62,7 @@ def scenario(scenarios_run, request):
     scenario = request.param
     return scenario
 
-def test_scenario(scenario, tmp_path):
+def test_scenario(scenario, tmp_path, overwrite_refs_opt):
     """Test a scenario in a temporary directory.
 
     A scenario is an input file and its expected outputs from Process. This
@@ -78,6 +74,8 @@ def test_scenario(scenario, tmp_path):
     :type scenario: object
     :param tmp_path: temporary path fixture
     :type tmp_path: object
+    :param overwrite_refs_opt: option to overwrite reference MFILE and OUT.DAT
+    :type tmp_path: bool
     """
     tolerance = None
     # The percentage tolerance used when comparing observed and expected values
@@ -99,6 +97,15 @@ def test_scenario(scenario, tmp_path):
     # in the temporary test directory
     # Assert the run doesn't throw any errors
     assert scenario.run(tmp_path) == True
+    
+    # Overwrite reference MFILE and OUT files (ref.MFILE.DAT and ref.OUT.DAT)
+    # If overwriting refs, don't bother asserting anything else and return
+    if overwrite_refs_opt:
+        logger.info(
+            f"Overwriting reference MFILE.DAT and OUT.DAT for {scenario.name}"
+        )
+        scenario.overwrite_ref_files()
+        return
 
     # Assert mfile contains something
     assert scenario.check_mfile_length() == True
@@ -139,10 +146,6 @@ def test_scenario(scenario, tmp_path):
     # Log summary result of test
     scenario.log_summary()
 
-    # Overwrite reference MFILE and OUT files (ref.MFILE.DAT and ref.OUT.DAT)
-    if OVERWRITE_REF:
-        scenario.overwrite_ref_files()
-
     # Check no diffs outside the tolerance have been found
     assert len(scenario.get_diff_items()) == 0
             
@@ -160,9 +163,6 @@ def test_scenario(scenario, tmp_path):
 
 # parser.add_argument("--debug", help="Use debugging reference cases (cases "
 #                     "beginning with 'error_').", action="store_true")
-
-# parser.add_argument("--overwrite", help="Overwrite reference cases with"
-#                     "new output. USE WITH CAUTION.", action="store_true")
 
 # parser.add_argument("-r", "--ref", help="Set reference folder. Default ="
 #                     "test_files", type=str, default="test_files")
