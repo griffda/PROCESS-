@@ -5,8 +5,9 @@ Defines fixtures that will be shared across all test modules.
 import pytest
 
 def pytest_addoption(parser):
-    """Add a regression tolerance CLI option to pytest.
-
+    """Add custom CLI options to pytest.
+    
+    Add regression tolerance and overwrite options to pytest.
     :param parser: pytest's CLI arg parser
     :type parser: _pytest.config.argparsing.Parser
     """
@@ -15,6 +16,12 @@ def pytest_addoption(parser):
         default=0.0,
         type=float,
         help="Percentage tolerance for regression tests"
+    )
+    parser.addoption(
+        "--overwrite",
+        action="store_true",
+        default=False,
+        help="Overwrite test references"
     )
 
 @pytest.fixture
@@ -29,3 +36,15 @@ def reg_tolerance(request):
     :rtype: float
     """
     return request.config.getoption("--reg-tolerance")
+
+@pytest.fixture
+def overwrite_refs_opt(request):
+    """Return the value of the --overwrite CLI option.
+
+    e.g. "pytest --overwrite" returns True here.
+    :param request: request fixture to access CLI args
+    :type request: SubRequest
+    :return: True if --overwrite option present
+    :rtype: bool
+    """
+    return request.config.getoption("--overwrite")
