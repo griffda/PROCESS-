@@ -575,8 +575,10 @@ contains
         plabel(83) = 'teped____________________'
         plabel(84) = 'Max_field_on_TF_coil_____'
 
-        call ovarin(mfile,'Number of scan points','(isweep)',isweep)
-        call ovarin(mfile,'Scanning variable number','(nsweep)',nsweep)
+        call ovarin(mfile,'Number of first variable scan points','(isweep)',isweep)
+        call ovarin(mfile,'Number of second variable scan points','(isweep_2)',isweep_2)
+        call ovarin(mfile,'Scanning first variable number','(nsweep)',nsweep)
+        call ovarin(mfile,'Scanning second variable number','(nsweep_2)',nsweep_2)     
 
         first_call_2d = .false.
     end if
