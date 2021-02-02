@@ -1,13 +1,13 @@
 """
-    Python utility plotting the output of a PROCESS scan
+    Python utility for plotting the output of a PROCESS scan
 
-    Depending of the type of scans, different actions will be taken
+    Depending of the type of scans, different actions will be taken:
      - 1D SCANS: a simple graph using the scanned variable for x axis
-       and the selected variable on the y. Here are the use
+       and the selected variable on the y axis. 
         * Any number of output variables can be selected, a plot will be
           made for each
         * Several inputs files can be used at the same time if the same variable
-          is scanned. The the different runs results will be plotte in the same
+          is scanned. The the different runs results will be plotted in the same
           graph.
         * If several inputs are used, the folder name or the file is used as 
           a legend
@@ -16,9 +16,9 @@
         * Only one 2D scan can be ploted at once.
     
     Performed checks:
-     - Non converging points are not plotted
-     - Only outputs existing in the MFILES.DAT are plotted
-     - A LaTeX label dicts is integraged, there is a check if the requested
+     - Non converged points are not plotted
+     - Only outputs existing in the MFILE.DAT are plotted
+     - A LaTeX label dicts is integrated, there is a check if the requested
        variable is set. Otherwise the sad and gloomy PROCESS name is used
      - No plot is made if the MFILE does not exists
      - If the file is a folder, the contained MFILE is used as an input.
@@ -45,16 +45,22 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser( description='Plot optimization information', formatter_class=RawTextHelpFormatter )
     
     parser.add_argument('-f', '--input_files' , default='MFILE.DAT',
-                        help="specify input file(s) path(s) (default = MFILE.DAT) \nMore than one input file can be used ex: -f 'A_MFILE.DAT B_MFILE.DAT'.\nYou can only specify the folder containing the MFILE.\nThe different files scan will be plotted on the same graph.\nThe scans must use the same scan variation.")
+                        help="Specify input file(s) path(s) (default = MFILE.DAT) \n
+                        More than one input file can be used eg: -f 'A_MFILE.DAT B_MFILE.DAT'.\n 
+                        You can only specify the folder containing the MFILE.\n
+                        The different files scan will be plotted on the same graph.\n
+                        The scans must use the same scan variation.")
 
     parser.add_argument('-yv', '--y_vars' , default='None',
-                        help="Select the output variables (default = None) \nMore than one output can be plotted ex: -yv 'var1 var2'\nA separate plot will be created for each inputs")
+                        help="Select the output variables (default = None) \n
+                        More than one output can be plotted eg: -yv 'var1 var2'\n
+                        A separate plot will be created for each inputs")
           
     parser.add_argument('-out', '--term_output', action="store_true",
                         help="Option to show scans values on terminal" )
                         
     parser.add_argument('-sf' , '--save_format'    , nargs='?', default='pdf', 
-                        help="output format (default='pdf') " )
+                        help="Output format (default='pdf') " )
 
     parser.add_argument('-as' , '--axis_font_size' , nargs='?', default=18   ,
                          help="Axis label font size selection (default=18)", type=int )
