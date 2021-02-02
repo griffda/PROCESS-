@@ -1,12 +1,27 @@
 """
-    Python utility taking the output of one or several scans and plotting 
-    any PROCESS outputs on an 1D plots (one line per output)
-    
-    The utility will produce a folder containing the requested plots.
-    Any number PROCESS outputs can be plotted after the 
+    Python utility plotting the output of a PROCESS scan
 
-    Several checks are integrated such as the existence of the MFILE, the
-    existence of the requested output vari
+    Depending of the type of scans, different actions will be taken
+     - 1D SCANS: a simple graph using the scanned variable for x axis
+       and the selected variable on the y. Here are the use
+        * Any number of output variables can be selected, a plot will be
+          made for each
+        * Several inputs files can be used at the same time if the same variable
+          is scanned. The the different runs results will be plotte in the same
+          graph.
+        * If several inputs are used, the folder name or the file is used as 
+          a legend
+     - 2D SCANS: n_scan_1 graph will be plotted using the second scanned variable
+       as x axis and the selected output as y axis
+        * Only one 2D scan can be ploted at once.
+    
+    Performed checks:
+     - Non converging points are not plotted
+     - Only outputs existing in the MFILES.DAT are plotted
+     - A LaTeX label dicts is integraged, there is a check if the requested
+       variable is set. Otherwise the sad and gloomy PROCESS name is used
+     - No plot is made if the MFILE does not exists
+     - If the file is a folder, the contained MFILE is used as an input.
 """
 
 import matplotlib
@@ -209,19 +224,33 @@ if __name__ == '__main__':
         print("ERROR : Please update the 'nsweep_dict' dict" )
         exit()
 
+    # Check if the scan variable is present in the 
+    if not scan_var_name in m_file.data.keys():
+        print("ERROR : `{}` does not exist in PROCESS dicts".format(scan_var_name))
+        print("ERROR : The scan variable is probably an upper/lower boundary")
+        print("ERROR : Please modify 'nsweep_dict' dict with the constrained var")
+        exit()
+
     # Check if the (first) scan variable LaTeX label is set 
     if not scan_var_name in labels : 
-        print("The {} variable LaTeX label is not defined".format(scan_var_name))
-        print("Please update the 'label' dict")
+        print("WARNING: The {} variable LaTeX label is not defined".format(scan_var_name))
+        print("WARNING: Please update the 'label' dict")
         labels[scan_var_name] = scan_var_name
 
-    # Check if the second scan variable LaTeX label is set 
     if is_2D_scan :
+        # Check if the second scan variable is present in the 
+        if not scan_2_var_name in m_file.data.keys():
+            print("ERROR : `{}` does not exist in PROCESS dicts".format(scan_2_var_name))
+            print("ERROR : The scan variable is probably an upper/lower boundary")
+            print("ERROR : Please modify 'nsweep_dict' dict with the constrained var")
+            exit()
+    
+        # Check if the second scan variable LaTeX label is set 
         if not scan_2_var_name in labels : 
             print("The {} variable LaTeX label is not defined".format(scan_2_var_name))
             print("Please update the 'label' dict")
             labels[scan_var_name] = scan_var_name
-
+        
     # Only one imput must be used for a 2D scan
     if is_2D_scan and len(input_files) > 1:
         print("ERROR : Only one input file can be used for 2D scans")
