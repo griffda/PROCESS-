@@ -137,7 +137,6 @@ unitfort-py36:
   when: on_success
   only:
     - develop
-    - sgadgil/f2py_wrapped_coverage
   stage: testing
   artifacts:
     paths: 
@@ -271,6 +270,7 @@ pages:
   when: on_success
   only:
     - develop
+    - kzarebsk/coverage-badge
   stage: pages
   image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
   script:
@@ -298,6 +298,8 @@ pages:
     - VERSION=$(git describe)
     - declare -i CONTRIBUTORS=$(git shortlog -s -n --all | wc -l)
     - echo $CONTRIBUTORS
+    - bash scripts/coverage_badge.sh source/fortran/ anybadge/
+    - cp coverage.svg public/
     - bash scripts/code_quality.sh source/fortran/ anybadge/
     - cp quality.svg public/
     - cp -r code_quality public/
