@@ -2,10 +2,13 @@ site_name: PROCESS
 docs_dir: "documentation/proc-pages/"
 nav:
     - Home: index.md
+    - Installation Guide: installation.md
+    - Usage Guide: usage.md
     - Getting Started: getting-started.md
     - FORD docs: ford_site/ford.md
     - Cost Models: cost-models/cost-models.md
     - Development: 
+        - git Usage: development/git-usage.md
         - Standards: development/standards.md
         - Adding Variables & Constraints: development/add-vars.md
         - Continuous Integration: development/ci-guide.md
