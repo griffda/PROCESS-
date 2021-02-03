@@ -125,11 +125,11 @@ integration-py36:
   tags:
     - ubuntu
 
-unitfort-py38:
+.unitfort-py38:
   extends: ".unitfort"
   <<: *test-setup-py38
 
-unitfort-py36:
+.unitfort-py36:
   extends: ".unitfort"
   <<: *test-setup-py36
 
