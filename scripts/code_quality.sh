@@ -2,7 +2,7 @@
 
 SOURCE_FOLDER=$PWD/source/fortran/
 FLINTER_EXE=$(which flint)
-BADGE_LABEL="Code Quality"
+BADGE_LABEL="FORTRAN Code Quality"
 ANYBADGE_EXE=$(which anybadge)
 QUALITY_LOG_DIR=$PWD/code_quality
 SUMMARY_OUTPUT_FILE=$QUALITY_LOG_DIR/quality_summary.log
@@ -19,6 +19,7 @@ fi
 
 if [ $# -eq 2 ]
 then
+    SOURCE_FOLDER=$1
     ANYBADGE_EXE="python3 $2/anybadge.py"
 fi
 
@@ -70,4 +71,4 @@ else
 fi
 
 # Generate the badge
-${ANYBADGE_EXE} --label="FORTRAN Code Quality" --value="${SCORE_PERC}%" --file=quality.svg --color=${BADGE_COLOR}
+${ANYBADGE_EXE} --label="${BADGE_LABEL}" --value="${SCORE_PERC}%" --file=quality.svg --color=${BADGE_COLOR}

@@ -169,6 +169,7 @@ SET(PROCESS_MODULE_DIST ${CMAKE_SOURCE_DIR}/process_dist)
 
 # Run the Pip Install
 ADD_CUSTOM_TARGET(install_process ALL
+    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/scripts/f90wrap_patch.py ${CMAKE_SOURCE_DIR}/process/fortran.py
     COMMAND ${PYTHON_EXECUTABLE} -m pip install --no-cache-dir ${CMAKE_SOURCE_DIR}
 )
 
