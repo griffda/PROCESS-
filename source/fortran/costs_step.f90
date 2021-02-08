@@ -130,6 +130,9 @@ contains
     ! Total plant direct cost
     cdirt = step20 + step21 + step22 + step23 + step24 + step25
 
+    ! Account 27 : Remote Handling (7.5%)
+    step27 = 7.5D-2 * cdirt
+
     ! Account 91 : Construction Facilities, Equipment and Services (10%)
     step91 = 1.0D-1 * cdirt
 
@@ -140,7 +143,7 @@ contains
     step93 = 5.0D-2 * cdirt
 
     ! Constructed cost
-    concost = cdirt + step91 + step92 + step93
+    concost = cdirt + step27 + step91 + step92 + step93
 
     ! Output costs
     if ((iprint==1).and.(output_costs == 1)) then
@@ -395,7 +398,6 @@ contains
   
     ! Initialise as zero
     step22 = 0.0D0
-    step2297 = 0.0D0   ! Remote Handling
     step2298 = 0.0D0   ! Contingency
   
     if ((iprint==1).and.(output_costs == 1)) then
@@ -423,11 +425,6 @@ contains
     !  Account 22.07 : Instrumentation and Control
     call step_a2207(outfile,iprint)
 
-    ! 22.97 Remote Handling
-    ! From RACE report
-    step2297 = step_rh_cost * step22
-    step22 = step22 + step2297
-
     ! 22.98 Spares
     ! STARFIRE percentage of components
     step22 = step22 + step2298
@@ -440,7 +437,6 @@ contains
     ! Output costs
     if ((iprint==1).and.(output_costs == 1)) then
       write(outfile,*) '******************* '
-      call ocosts(outfile,'(step2297)', 'Remote Handling (M$)', step2297)
       call ocosts(outfile,'(step2298)','Spares (M$)', step2298)
       call ocosts(outfile,'(step2299)','Contingency (M$)', step2299)
       call oblnkl(outfile)
