@@ -75,7 +75,7 @@ contains
 
     use constants, only: pi
     use build_variables, only: r_tf_outboard_mid, tfthko, hpfu, hmax, tfcth
-    use cost_variables, only: output_costs, cdirt, concost
+    use cost_variables, only: output_costs, cdirt, concost, ireactor, ipnet
     use fwbs_variables, only: emultmw
     use heat_transport_variables, only: pinjwp
     use physics_variables, only: powfmw
@@ -164,8 +164,9 @@ contains
     end if
 
     !  Cost of electricity
-    if ((ireactor == 1).and.(ipnet == 0)) call coelc_step(outfile,iprint)
-
+    if ((ireactor == 1).and.(ipnet == 0)) then 
+      call coelc_step(outfile,iprint) 
+    end if 
   end subroutine costs_step
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
