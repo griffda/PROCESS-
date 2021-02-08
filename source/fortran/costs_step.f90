@@ -164,7 +164,7 @@ contains
     end if
 
     !  Cost of electricity
-    ! if ((ireactor == 1).and.(ipnet == 0)) call coelc_step(outfile,iprint)
+    if ((ireactor == 1).and.(ipnet == 0)) call coelc_step(outfile,iprint)
 
   end subroutine costs_step
 
