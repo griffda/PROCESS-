@@ -22,7 +22,7 @@ module costs_step_module
 
   !  Various cost account values (M$)
   real(dp) :: step20, step21, step22, step23, step24, step25, &
-  step91, step92, step93, fwblkcost
+  step27, step91, step92, step93, fwblkcost
 
   ! Scaling Properties
   real(dp) :: vfi, vfi_star, ptherm_star, pinjmw_star, fwarea_star, &
@@ -40,6 +40,7 @@ contains
     step23 = 0.0D0
     step24 = 0.0D0
     step25 = 0.0D0
+    step27 = 0.0D0
     step91 = 0.0D0
     step92 = 0.0D0
     step93 = 0.0D0
@@ -106,7 +107,7 @@ contains
     ! Output header
     if ((iprint==1).and.(output_costs == 1)) then
       call oheadr(outfile,'STEP Costing Model (1980 US$)')
-      call oheadr(outfile,'!!WARNING - Under development!! DO NOT USE!')
+      !call oheadr(outfile,'!!WARNING - Under development!! DO NOT USE!')
     end if
     
     ! Account 20 : Land and Rights
@@ -127,11 +128,14 @@ contains
     ! Account 25 : Miscellaneous Plant Equipment
     call step_a25(outfile,iprint)
 
-    ! Total plant direct cost
+    ! Total plant direct cost without remote handling
     cdirt = step20 + step21 + step22 + step23 + step24 + step25
 
-    ! Account 27 : Remote Handling (7.5%)
-    step27 = 7.5D-2 * cdirt
+    ! Account 27 : Remote Handling
+    call step_a27(outfile,iprint) 
+
+    ! Total plant direct cost with remote handling
+    cdirt = cdirt + step27
 
     ! Account 91 : Construction Facilities, Equipment and Services (10%)
     step91 = 1.0D-1 * cdirt
@@ -143,7 +147,7 @@ contains
     step93 = 5.0D-2 * cdirt
 
     ! Constructed cost
-    concost = cdirt + step27 + step91 + step92 + step93
+    concost = cdirt + step91 + step92 + step93
 
     ! Output costs
     if ((iprint==1).and.(output_costs == 1)) then
@@ -193,12 +197,12 @@ contains
     ! Initialise as zero
     step20 = 0.0D0
    
-    ! 21.01 Land
+    ! 20.01 Land
     ! Original STARFIRE value, scaling with thermal power
     step2001 = step_ref(1) * (pth / ptherm_star)**0.6D0
     step20 = step20 + step2001
 
-    ! 21.02 Site Preparation
+    ! 20.02 Site Preparation
     ! Original STARFIRE value, scaling with thermal power
     step2002 = step_ref(2) * (pth / ptherm_star)**0.6D0
     step20 = step20 + step2002
@@ -870,7 +874,8 @@ contains
      
     ! 22.06.01 Maintenance Equipment
     ! Original STARFIRE value, scaling with fusion island volume
-    step220601 = step_ref(42) * (vfi / vfi_star)**(2.0D0/3.0D0)
+    ! Depreciated by the remote handling scaling in cost account 27. 
+    step220601 = 0.0 ! step_ref(42) * (vfi / vfi_star)**(2.0D0/3.0D0)
     step2206 = step2206 + step220601
     ! STARFIRE percentage for spares
     step2298 = step2298 + 4.308D-1 * step220601
@@ -1244,6 +1249,51 @@ contains
   end subroutine step_a25
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine step_a27(outfile,iprint)
+
+    !! Account 27 : Remote Handling
+    !! author: A J Pearce, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 27 (Remote Handling)
+    !! costs.
+    !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use cost_variables, only: output_costs, cdirt
+    use process_output, only: oshead, ocosts, oblnkl
+
+    implicit none
+
+    ! Arguments
+    integer, intent(in) :: iprint,outfile
+
+    ! Local variables
+    real(dp):: step2701
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    ! Initialise as zero
+    step27 = 0.0D0
+   
+    ! 27.01 Remote Handling (7.5%)
+    ! From Report by T. Hender, scales with direct constrcuton costs
+    step2701 = 7.5D-2 * cdirt 
+    
+    step27 = step2701
+
+    ! Output costs
+    if ((iprint==1).and.(output_costs == 1)) then
+      call oshead(outfile,'27. Remote Handling')
+      call ocosts(outfile,'(step2701)','Remote Handing (M$)', step2701)
+      call oblnkl(outfile)
+      call ocosts(outfile,'(step27)','Total Account 27 Cost (M$)', step27)
+    end if
+
+  end subroutine step_a27
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine coelc_step(outfile,iprint)
 
