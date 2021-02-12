@@ -62,7 +62,7 @@ def scenario(scenarios_run, request):
     scenario = request.param
     return scenario
 
-def test_scenario(scenario, tmp_path, overwrite_refs_opt):
+def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
     """Test a scenario in a temporary directory.
 
     A scenario is an input file and its expected outputs from Process. This
@@ -74,17 +74,16 @@ def test_scenario(scenario, tmp_path, overwrite_refs_opt):
     :type scenario: object
     :param tmp_path: temporary path fixture
     :type tmp_path: object
+    :param reg_tolerance: percentage tolerance when comparing observed and 
+    expected values
+    :type reg_tolerance: float
     :param overwrite_refs_opt: option to overwrite reference MFILE and OUT.DAT
     :type tmp_path: bool
     """
-    tolerance = None
-    # The percentage tolerance used when comparing observed and expected values
-    # TODO Remove hardcoding: should be a command-line argument
-
     logger.info(f"Starting test for {scenario.name}")
 
     # TODO Should only be logged once, not for every test
-    logger.info(f"Tolerance set to {tolerance}%")
+    logger.info(f"Tolerance set to {reg_tolerance}%")
 
     # Copy the scenario's reference dir files into the tmp_dir to prevent 
     # modifications
@@ -130,7 +129,7 @@ def test_scenario(scenario, tmp_path, overwrite_refs_opt):
         # failing entire test on first AssertionError
         try:
             # Assert with a relative tolerance
-            assert exp == approx(obs, rel=tolerance)
+            assert exp == approx(obs, rel=reg_tolerance)
             # Within tolerance
             # If different but within tolerance, log
             # If the same, ignore
@@ -153,10 +152,6 @@ def test_scenario(scenario, tmp_path, overwrite_refs_opt):
 
 # TODO Old CLI arguments: how to convert this functionality to pytest?
 # Can pass CLI args to pytest...
-# parser.add_argument("-d", "--diff", help="Set allowed tolerance between "
-#                                          "two files in percentage terms.",
-#                                          type=float, default=5.0)
-
 # parser.add_argument("-s", "--save", help="Save outputs to new folders for"
 #                     "reference case for this version of PROCESS.",
 #                     action="store_true")
