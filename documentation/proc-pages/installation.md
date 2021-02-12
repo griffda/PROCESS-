@@ -1,4 +1,7 @@
 # Installation
+## Supported environments
+PROCESS is supported on Ubuntu 20, Mac and Windows 10 (via Windows Subsystem for Linux). It is not supported natively in Windows (through MinGW for example). It is not currently supported on the Freia or Heimdal clusters.
+
 ## Ubuntu and Windows (using Windows Subsystem for Linux)
 *It is highly recommended users create a Python virtual environment in order to use the PROCESS Python package, as this ensures that installations of required package versions don't affect other packages that require different versions in your environment. It isn't necessary, however.*
 *Please note due to bugs in f90wrap, Python3.9 is not yet supported. Running with Python3.9 will cause syntax errors to be raised when running f2py on the f90wrap outputs.*

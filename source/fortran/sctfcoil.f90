@@ -1902,6 +1902,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(dp) :: vforce_eff
     !! Effective vertical tension used in stess calculation [N]
 
+    real(dp) :: eyoung_cond
+    !! Resistive conductors Young modulus [Pa]
+
     real(dp) :: eyoung_wp_t_eff
     !! WP young modulus in toroidal direction with lateral casing effect [Pa]
 
@@ -2054,28 +2057,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !       the underlying assumption of our models is the anisotropy
     !       of the material. A good assumption for resistive magnets
     !       but a doggy one for SC
-
-
-    ! Resistive coil
-    if ( i_tf_sup == 0 ) then
-
-        ! No vertical force is assumed to be on the plasma side TF tube 
-        f_vforce_case = 1.0D0
-
-        ! Effective WP young modulus in the toroidal direction [Pa]
-        ! Rem : effect of cooling pipes not taken into account for now
-        eyoung_wp_t_eff = eyoung_copper
-        eyoung_wp_t = eyoung_copper
-
-        ! Effective conductor region young modulus in the vertical direction [Pa]
-        eyoung_wp_z_eff = eyoung_copper * (1.0D0 - fcoolcp)
-
-        ! Effect conductor layer inner/outer radius
-        r_wp_inner_eff = r_wp_inner
-        r_wp_outer_eff = r_wp_outer
-
     ! SC coil
-    else if ( i_tf_sup == 1 ) then
+    if ( i_tf_sup == 1 ) then
 
         ! Inner/outer radii of the layer representing the WP in stress calculations [m2]
         r_wp_inner_eff = r_wp_inner * sqrt( tan_theta_coil / theta_coil )
@@ -2118,8 +2101,15 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         eyoung_wp_z_eff = ( eyoung_steel * a_wp_steel_eff + eyoung_ins * a_tf_ins ) &
                         / a_wp_eff 
 
-    ! Aluminium coil
-    else if ( i_tf_sup == 2 ) then
+    ! Resistive coil
+    else
+
+        ! Picking the conductor material Young's modulus
+        if ( i_tf_sup == 0 ) then
+            eyoung_cond = eyoung_copper
+        else if ( i_tf_sup == 2 ) then
+            eyoung_cond = eyoung_al
+        end if
 
         ! No vertical force is assumed to be on the plasma side TF tube 
         f_vforce_case = 1.0D0
@@ -2127,15 +2117,15 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! Effective WP young modulus in the toroidal direction [Pa]
         ! Rem : effect of cooling pipes and insulation not taken into account 
         !       for now as it needs a radially dependent Young modulus
-        eyoung_wp_t_eff = eyoung_al
-        eyoung_wp_t = eyoung_al
+        eyoung_wp_t_eff = eyoung_cond
+        eyoung_wp_t = eyoung_cond
 
         ! WP area using the stress model circular geometry (per coil) [m2]
         a_wp_eff = (r_wp_outer**2 - r_wp_inner**2) * theta_coil
 
         ! Effective conductor region young modulus in the vertical direction [Pa]
         eyoung_wp_z = eyoung_ins * a_tf_ins / a_wp_eff &
-                    + eyoung_al * (1.0D0 - a_tf_ins / a_wp_eff) * (1.0D0 - fcoolcp)
+                    + eyoung_cond * (1.0D0 - a_tf_ins / a_wp_eff) * (1.0D0 - fcoolcp)
 
         ! Effective young modulus used in stress calculations
         eyoung_wp_z_eff = eyoung_wp_z

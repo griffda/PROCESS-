@@ -135,8 +135,6 @@ integration-py36:
 
 .regression:
   when: on_success
-  only:
-    - develop
   stage: testing
   artifacts:
     paths: 
@@ -161,6 +159,17 @@ regression-py36:
   <<: *test-setup-py36
   dependencies:
     - make-py36
+
+regression-py38-5-percent:
+  extends: ".regression"
+  <<: *test-setup-py38
+  dependencies:
+    - make-py38
+  artifacts:
+    paths:
+      - tests/regression/pytest_5_percent.log
+  script:
+    - pytest -v tests/regression -s --reg-tolerance=5 | tee tests/regression/pytest_5_percent.log
 
 .baseline_2019:
   when: on_success
