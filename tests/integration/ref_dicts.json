@@ -8979,8 +8979,8 @@
         "idia": "switch for diamagnetic current scaling\n<ul>\n<li>=0 Do not calculate</li>\n<li>=1 Use original TART scaling</li>\n<li>=2 Use SCENE scaling</li>\n</ul>",
         "idiags": "",
         "idivrt": "number of divertors (calculated from `i_single_null`)",
-        "iefrf": "Switch for current drive efficiency model:\n<ul>\n<li>=1 Fenstermacher Lower Hybrid</li>\n<li>=2 Ion Cyclotron current drive</li>\n<li>=3 Fenstermacher ECH</li>\n<li>=4 Ehst Lower Hybrid</li>\n<li>=5 ITER Neutral Beam</li>\n<li>=6 new Culham Lower Hybrid model</li>\n<li>=7 new Culham ECCD model</li>\n<li>=8 new Culham Neutral Beam model</li>\n<li>=9 Simple NBI model (see SYCOMORE HELIOS paper)</li>\n<li>=10 ECRH user input gamma</li>\n<li>=11 ECRH \"HARE\" model (E. Poli, Physics of Plasmas 2019)</li>\n<li>=12 Simple NBI model</li>\n</ul>",
-        "iefrffix": "Switch for 2nd current drive efficiency model:\n<ul>\n<li>=0 No fixed current drive</li>\n<li>=1 Fenstermacher Lower Hybrid</li>\n<li>=2 Ion Cyclotron current drive</li>\n<li>=3 Fenstermacher ECH</li>\n<li>=4 Ehst Lower Hybrid</li>\n<li>=5 ITER Neutral Beam</li>\n<li>=6 new Culham Lower Hybrid model</li>\n<li>=7 new Culham ECCD model</li>\n<li>=8 new Culham Neutral Beam model</li>\n<li>=9 Simple NBI model (see SYCOMORE HELIOS paper)</li>\n<li>=10 ECRH user input gamma</li>\n<li>=11 ECRH \"HARE\" model (E. Poli, Physics of Plasmas 2019)</li>\n</ul>",
+        "iefrf": "Switch for current drive efficiency model:\n<ul>\n<li>=1 Fenstermacher Lower Hybrid</li>\n<li>=2 Ion Cyclotron current drive</li>\n<li>=3 Fenstermacher ECH</li>\n<li>=4 Ehst Lower Hybrid</li>\n<li>=5 ITER Neutral Beam</li>\n<li>=6 new Culham Lower Hybrid model</li>\n<li>=7 new Culham ECCD model</li>\n<li>=8 new Culham Neutral Beam model</li>\n<li>=9 RFP option removed in PROCESS (issue #508)</li>\n<li>=10 ECRH user input gamma</li>\n<li>=11 ECRH \"HARE\" model (E. Poli, Physics of Plasmas 2019)</li>\n<li>=12 EBW scaling (S. Freethy)</li>\n</ul>",
+        "iefrffix": "Switch for 2nd current drive efficiency model:\n<ul>\n<li>=0 No fixed current drive</li>\n<li>=1 Fenstermacher Lower Hybrid</li>\n<li>=2 Ion Cyclotron current drive</li>\n<li>=3 Fenstermacher ECH</li>\n<li>=4 Ehst Lower Hybrid</li>\n<li>=5 ITER Neutral Beam</li>\n<li>=6 new Culham Lower Hybrid model</li>\n<li>=7 new Culham ECCD model</li>\n<li>=8 new Culham Neutral Beam model</li>\n<li>=9 RFP option removed in PROCESS (issue #508)</li>\n<li>=10 ECRH user input gamma</li>\n<li>=11 ECRH \"HARE\" model (E. Poli, Physics of Plasmas 2019)</li>\n<li>=12 EBW scaling (S. Freethy)</li>\n</ul>",
         "ieped": "switch for scaling pedestal-top temperature with plasma parameters (issue #730):\n<ul>\n<li>=0 set pedestal-top temperature manually using teped</li>\n<li>=1 set pedestal-top temperature using EPED scaling (PLASMOD implementation \n   of scaling within PLASMOD, `ipedestal =2,3 (ttps://idm.euro-fusion.org/?uid=2MSZ4T)</li>\n</ul>",
         "ifail_exp": "",
         "ifalphap": "switch for fast alpha pressure calculation\n<ul>\n<li>=0 ITER physics rules (Uckan) fit</li>\n<li>=1 Modified fit (D. Ward) - better at high temperature</li>\n</ul>",
@@ -12195,11 +12195,11 @@
         },
         "iefrf": {
             "lb": 1,
-            "ub": 11
+            "ub": 12
         },
         "iefrffix": {
             "lb": 0,
-            "ub": 11
+            "ub": 12
         },
         "ieped": {
             "lb": 0,
