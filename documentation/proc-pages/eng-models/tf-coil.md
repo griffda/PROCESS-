@@ -1383,6 +1383,7 @@ Another subroutine, `tfspcall` is called outside `stfcoil` to estimate to check 
 | `n_layer` | Number of turns in the radial direction (`i_tf_turns_integer = 1` only) | - | 20 | - |
 | `n_pancake` | Number of turns in the toroidal direction (`i_tf_turns_integer = 1` only) | - | 10 | - |
 | `t_turn_tf` | TF turn squared size | - | No default | m |
+| `t_cable_tf` | TF cable diameter size | - | No default | m |
 | `f_t_turn_tf` | f-value for TF turn squared size constraint (icc = 86) | 175 | 1. | m |
 | `t_turn_tf_max` | Maximum turn squared size for constraint (icc = 86) | - | 0.05 | m |
 | `cpttf` | Current per turn <br> Overwitten if `t_turn_tf` is set by the user | ixc = 60 | $70.10^3$ | A |
