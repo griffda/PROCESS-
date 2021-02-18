@@ -504,7 +504,13 @@ class DefaultValues(ProjectDictionary):
                         if mod_var.dimension:
                             # The var has a dimension, so needs to be 
                             # initialised as a list
-                            if type(value) is list and mod_var.dimension == len(value):
+                            if type(value) is list:
+                                assert mod_var.dimension == len(value), ("Array"
+                                    f" {var} has length {mod_var.dimension} "
+                                    f"according to Ford, but {len(value)} "
+                                    "in the init subroutine. Perhaps the "
+                                    "ford_project.pickle needs to be updated?"
+                                )
                                 # The value list length and Ford variable dimension 
                                 # match; just use the list in value
                                 # Update Ford project var and self.dict value

@@ -734,7 +734,7 @@ contains
     use global_variables, only: maxcal, convergence_parameter, iscan_global, &
       xlabel_2
 		use constants, only: mfile, nplot, nout, pi, opt_file
-		use maths_library, only: vmcon
+		use vmcon_module, only: vmcon
 		use plasmod_variables, only: plasmod_i_impmodel
     implicit none
 
