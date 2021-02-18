@@ -222,7 +222,7 @@ contains
       cost_factor_buildings, favail, cconfix, ucblli2o, abktflnc, ucf1, ucfnc, &
       ucpfps, iavail, ucpfbk, cost_factor_tf_coils, costexp_pebbles, ucmisc, &
       cpstflnc, uccryo, costexp, fwbs_nu, ucpfic, ucblbreed, tcomrepl, uufuel, &
-      ucdiv, uccpcl1, ratecdol, uctfbr, uccpclb, ucoam, div_prob_fail, ucnbi, &
+      ucdiv, uccpcl1, discount_rate, uctfbr, uccpclb, ucoam, div_prob_fail, ucnbi, &
       uccu, ucwst, cfactr, div_nref, amortization, ucwindtf, ucme, csi, cowner, &
       cost_factor_misc, fcr0, cturbb, lsa, fcap0, output_costs, &
       cost_factor_land, redun_vacp, ucrb, uctfbus, num_rh_systems, fkind, &
@@ -2624,8 +2624,8 @@ contains
        case ('output_costs')
           call parse_int_variable('output_costs', output_costs, 0, 1, &
                'Switch for writing costs to file')
-       case ('ratecdol')
-          call parse_real_variable('ratecdol', ratecdol, 0.0D0, 0.5D0, &
+       case ('discount_rate')
+          call parse_real_variable('discount_rate', discount_rate, 0.0D0, 0.5D0, &
                'Effective cost of money')
 
           !  Unit cost settings

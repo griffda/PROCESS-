@@ -1311,7 +1311,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use cost_variables, only: output_costs, ratecdol, tlife, ucfuel, uche3, cdcost, &
+    use cost_variables, only: output_costs, discount_rate, tlife, ucfuel, uche3, cdcost, &
       divcst, fcdfuel, ifueltyp, moneyint, lsa, ucwst, ucoam, fwallcst, fcr0, fcap0cp, &
       cfind, fcap0, dtlife, divlife, dintrt, decomf, cpstcst, cplife, concost, coeoam, &
       coefuelt, coecap, coe, cfactr, cdrlife, capcost
@@ -1361,10 +1361,10 @@ contains
     fwbllife = bktlife
 
     ! Compound interest factor
-    feffwbl = (1.0D0 + ratecdol)**fwbllife
+    feffwbl = (1.0D0 + discount_rate)**fwbllife
 
     ! Capital recovery factor
-    crffwbl = (feffwbl*ratecdol) / (feffwbl-1.0D0)
+    crffwbl = (feffwbl*discount_rate) / (feffwbl-1.0D0)
 
     ! Annual cost of replacements
     annfwbl = fwblkcost * (1.0D0+cfind(lsa)) * fcap0cp * crffwbl
@@ -1376,10 +1376,10 @@ contains
     ! =============================
 
     ! Compound interest factor
-    fefdiv = (1.0D0 + ratecdol)**divlife
+    fefdiv = (1.0D0 + discount_rate)**divlife
 
     ! Capital recovery factor
-    crfdiv = (fefdiv*ratecdol) / (fefdiv-1.0D0)
+    crfdiv = (fefdiv*discount_rate) / (fefdiv-1.0D0)
 
     ! Annual cost of replacements
     anndiv = divcst * (1.0D0+cfind(lsa)) * fcap0cp * crfdiv
@@ -1392,10 +1392,10 @@ contains
 
     if (itart == 1) then
       ! Compound interest factor
-      fefcp = (1.0D0 + ratecdol)**cplife
+      fefcp = (1.0D0 + discount_rate)**cplife
 
       ! Capital recovery factor
-      crfcp = (fefcp*ratecdol) / (fefcp-1.0D0)
+      crfcp = (fefcp*discount_rate) / (fefcp-1.0D0)
 
       ! Annual cost of replacements
       anncp = cpstcst * (1.0D0+cfind(lsa)) * fcap0cp * crfcp
@@ -1411,10 +1411,10 @@ contains
     ! =================================================
 
     ! Compound interest factor
-    fefcdr = (1.0D0 + ratecdol)**cdrlife
+    fefcdr = (1.0D0 + discount_rate)**cdrlife
 
     ! Capital recovery factor
-    crfcdr = (fefcdr*ratecdol) / (fefcdr-1.0D0)
+    crfcdr = (fefcdr*discount_rate) / (fefcdr-1.0D0)
 
     ! Annual cost of replacements
     if (ifueltyp == 0) then
@@ -1491,7 +1491,7 @@ contains
   !  Difference (dintrt) between borrowing and saving interest rates is
   !  included, along with the possibility of completing the fund dtlife
   !  years before the end of the plant's lifetime
-  anndecom = decomf * concost * fcr0 / (1.0D0+ratecdol-dintrt)**(tlife-dtlife)
+  anndecom = decomf * concost * fcr0 / (1.0D0+discount_rate-dintrt)**(tlife-dtlife)
 
   !  Cost of electricity due to decommissioning fund
   coedecom = 1.0D9 * anndecom / kwhpy

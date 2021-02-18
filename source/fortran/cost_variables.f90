@@ -316,7 +316,7 @@ module cost_variables
   !! - =0 do not write cost-related outputs to file
   !! - =1 write cost-related outputs to file
 
-  real(dp) :: ratecdol
+  real(dp) :: discount_rate
   !! effective cost of money in constant dollars
 
   real(dp) :: step_con
@@ -677,7 +677,7 @@ module cost_variables
     lsa = 4
     moneyint = 0.0D0
     output_costs = 1
-    ratecdol = 0.0435D0
+    discount_rate = 0.0435D0
     step_con = 1.5D-1
     step_rh_cost = 7.5D-2
     step_ref = &
