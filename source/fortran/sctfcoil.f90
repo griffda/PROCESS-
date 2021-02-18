@@ -1195,14 +1195,14 @@ subroutine tf_res_heating()
         ! ---
         if ( i_cp_joints /= 0 ) then
 
-            ! Total number of contact area (4 joints section per legs)
-            n_contact_tot = 4 * n_tf_joints_contact* n_tf_joints * nint(n_tf_turn) * nint(n_tf)
+            ! Number of contact area per joint (all legs)
+            n_contact_tot = n_tf_joints_contact * nint(n_tf_turn) * nint(n_tf)
             
-            ! Total area of joint contact
+            ! Area of joint contact (all legs)
             a_joints = tfthko * th_joint_contact * dble(n_contact_tot)
 
-            ! joints resistive power losses
-            pres_joints = rho_tf_joints * ritfc**2 / a_joints
+            ! Total joints resistive power losses
+            pres_joints = dble(n_tf_joints) * rho_tf_joints * ritfc**2 / a_joints
         else 
             ! Joints resistance to be evaluated for SC
             pres_joints = 0.0D0

@@ -480,10 +480,11 @@ module tfcoil_variables
   !! TF joints surfacic resistivity [ohm.m]. Feldmetal joints assumed.
 
   integer :: n_tf_joints_contact
-  !! Number of contact per sliding joint
+  !! Number of contact per turn
 
   integer :: n_tf_joints
-  !! Number of joint per turn
+  !! Number of joints
+  !! Ex: n_tf_joints = 2 for top and bottom CP joints
 
   real(dp) :: th_joint_contact
   !! TF sliding joints contact pad width [m]
