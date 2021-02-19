@@ -19,10 +19,6 @@ from scenario import Scenario
 # customisation?
 logger = logging.getLogger(__name__)
 
-# Crude switch to overwrite reference MFILE and OUT files
-# TODO: Do this properly with a command-line arg
-OVERWRITE_REF = False
-
 def get_scenarios():
     """Generator to yield the scenarios that need to be tested.
 
@@ -66,7 +62,7 @@ def scenario(scenarios_run, request):
     scenario = request.param
     return scenario
 
-def test_scenario(scenario, tmp_path):
+def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
     """Test a scenario in a temporary directory.
 
     A scenario is an input file and its expected outputs from Process. This
@@ -78,15 +74,16 @@ def test_scenario(scenario, tmp_path):
     :type scenario: object
     :param tmp_path: temporary path fixture
     :type tmp_path: object
+    :param reg_tolerance: percentage tolerance when comparing observed and 
+    expected values
+    :type reg_tolerance: float
+    :param overwrite_refs_opt: option to overwrite reference MFILE and OUT.DAT
+    :type tmp_path: bool
     """
-    tolerance = None
-    # The percentage tolerance used when comparing observed and expected values
-    # TODO Remove hardcoding: should be a command-line argument
-
     logger.info(f"Starting test for {scenario.name}")
 
     # TODO Should only be logged once, not for every test
-    logger.info(f"Tolerance set to {tolerance}%")
+    logger.info(f"Tolerance set to {reg_tolerance}%")
 
     # Copy the scenario's reference dir files into the tmp_dir to prevent 
     # modifications
@@ -99,6 +96,15 @@ def test_scenario(scenario, tmp_path):
     # in the temporary test directory
     # Assert the run doesn't throw any errors
     assert scenario.run(tmp_path) == True
+    
+    # Overwrite reference MFILE and OUT files (ref.MFILE.DAT and ref.OUT.DAT)
+    # If overwriting refs, don't bother asserting anything else and return
+    if overwrite_refs_opt:
+        logger.info(
+            f"Overwriting reference MFILE.DAT and OUT.DAT for {scenario.name}"
+        )
+        scenario.overwrite_ref_files()
+        return
 
     # Assert mfile contains something
     assert scenario.check_mfile_length() == True
@@ -123,7 +129,7 @@ def test_scenario(scenario, tmp_path):
         # failing entire test on first AssertionError
         try:
             # Assert with a relative tolerance
-            assert exp == approx(obs, rel=tolerance)
+            assert exp == approx(obs, rel=reg_tolerance)
             # Within tolerance
             # If different but within tolerance, log
             # If the same, ignore
@@ -139,10 +145,6 @@ def test_scenario(scenario, tmp_path):
     # Log summary result of test
     scenario.log_summary()
 
-    # Overwrite reference MFILE and OUT files (ref.MFILE.DAT and ref.OUT.DAT)
-    if OVERWRITE_REF:
-        scenario.overwrite_ref_files()
-
     # Check no diffs outside the tolerance have been found
     assert len(scenario.get_diff_items()) == 0
             
@@ -150,19 +152,12 @@ def test_scenario(scenario, tmp_path):
 
 # TODO Old CLI arguments: how to convert this functionality to pytest?
 # Can pass CLI args to pytest...
-# parser.add_argument("-d", "--diff", help="Set allowed tolerance between "
-#                                          "two files in percentage terms.",
-#                                          type=float, default=5.0)
-
 # parser.add_argument("-s", "--save", help="Save outputs to new folders for"
 #                     "reference case for this version of PROCESS.",
 #                     action="store_true")
 
 # parser.add_argument("--debug", help="Use debugging reference cases (cases "
 #                     "beginning with 'error_').", action="store_true")
-
-# parser.add_argument("--overwrite", help="Overwrite reference cases with"
-#                     "new output. USE WITH CAUTION.", action="store_true")
 
 # parser.add_argument("-r", "--ref", help="Set reference folder. Default ="
 #                     "test_files", type=str, default="test_files")

@@ -1,6 +1,25 @@
-# 2.0
+# Changelog
+All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Bug Fixes
+## [Unreleased]
+
+## [2.1] - 2021-01-25
+### Added
+- VMCON unit tests now run in test suite (#1077)
+- Added ground insulation layer to resistive magnets (#1122)
+- Implemented code coverage reporting for the regression tests (#?)
+- Python 3.6 CI test jobs added (#1223)
+- Added Flinter FORTRAN Code Quality Scoring (#?)
+
+### Changed
+- Inboard and outboard vacuum vessel thickness variables changed (#433)
+- New fixed turn cable size formulation (#1182)
+
+### Removed
+- Removed Freia support: now untested in CI (#1211)
+
+## [2.0] - 2020-12-17
+### Bug Fixes
 - Issue 1029 compiler warning on n contact tot (#1029)
 - Fixed bug in TorGA interface which breaks under GFortran-10 (#?)
 - Handle zero value in IN.DAT writer (#1101)
@@ -9,7 +28,7 @@
 - HTML introduced into IN.DAT comments (#1124)
 - Fixes Failing Tests on Freia (#?)
 
-## Features
+### Features
 - Connecting process output with other codes using json files (#1017)
 - Allow Process to be installed as a Python package (#1013)
 - Cryo-aluminium magnet model updates (#1016)
@@ -36,7 +55,7 @@
 - Issue 866 ripple for resistive TF coils & 1143 sidewall thickness parametrization (#866)
 - Convert project to Python-wrapped Fortran (#1092)
 
-## Minor Changes
+### Minor Changes
 - Real declarations in PROCESS (#1027)
 - Make subroutines/functions explicitly use module variables (#980)
 - Updated base docker image Dockerfile for PROCESS (#1108)
@@ -44,7 +63,7 @@
 - Issue 1175 (#1175)
 - Issue 899 error handling (and other issues detailed on commit messages) (#899)
 
-## Documentation updates
+### Documentation updates
 - Tidy docstrings to Ford format (#1026)
 - Issue 944 updating gitpages (#944)
 - Issue 1002 pl scenario docs (#1002)
@@ -57,32 +76,32 @@
 - Issue 1173 update developper documentation (#1173)
 - Issue 1179 update tf ripple doc (#1179)
 
-# 1.0.17
+## 1.0.17
 
-## Bug Fixes
+### Bug Fixes
 
-## Features
+### Features
 - Restored IFE (Issue #901)
 - GitLab pages now hosts the autodoc html output (only develop) (issue #418)
 - Git branch now in output file (#912)
 - CI jobs now run for cmake custom targets
 - Added diamagnetic and Pfirsch-Schlüter current scalings #992
 
-## Minor Changes
+### Minor Changes
 - Renamed 'test_files' to 'unit_tests' #972
 
-## Documentation update
+### Documentation update
 
 
-# 1.0.16
+## 1.0.16
 
-## Bug Fixes
+### Bug Fixes
  
 - Fixed units issue with Lang et al. (2012) confinement scaling (#821)
 - Fixed issue with error numbering (#826)
 - Fixed issue with costing of TF coil dump resistors (#847)
 
-## Features
+### Features
 
 - new command line argument `./process.exe help` provides help info
 - new CMake option `-Ddll=ON/OFF`. Default is `ON`. Useful for profiling with gprof 
@@ -96,26 +115,26 @@
 - CI now runs on all branches named "issue-*"
 - Unit tests incorporated into main branch
 
-## Minor Changes
+### Minor Changes
 
 - Increased the number of scan points to 1000 (issue #809)
 - For issue #379 constraint 52 now gives warning for iblanket=1
 - Updated FNSF test case (#822)
 - Removed obsolete variable estotf (#199 #847)
 
-## Documentation update
+### Documentation update
 
 - Developper documentation update (code description/compilation/git instructions) 
 
-# 1.0.15
+## 1.0.15
 
-## Bug Fixes
+### Bug Fixes
 - Added emultmw calculation to stellarator and fixed power balance errors (Issue #783)
 - Amended fpump* output to match with primary_pumping options.
 - Corrected power crossing the separatrix for stellarators (Issue #787)
 - Changed Connor-Hastie plasma current model to kappa95 and triang95% (Issue #791)
 
-## Features
+### Features
 - HTS REBCO model final version implemented
 - Can now limit the CS peak field to be below set maximum
 - Added Hubbard 2012 and 2017 I-mode threshold scaling
@@ -129,14 +148,14 @@
 - New scan variables - `impurity_ratio(9)` and `fgwsep`.
 - New constraint on CS peak field.
 
-## Minor Changes
+### Minor Changes
 - Explicitly state 1990 $ for old cost model
 - Made photon_wall and rad_fraction global variables, and added calculations to stellarator. 
 - TF coil documentation now in repository and makefile target `tfdoc`.
 
-# 1.0.14
+## 1.0.14
 
-## Bug Fixes
+### Bug Fixes
 
 - Wrong pedestal position used in plot_proc temperature plot (Issue #653) ([957f94a7](https://git.ccfe.ac.uk/process/process/commit/957f94a723b026f67544fa46548bc8a1be062d35))
 - Removed hardwired Martin scaling for L-H threshold in plot_proc.py (Issue #679 and #680)
@@ -155,7 +174,7 @@
 - Corrected ztot calculation in tfpwr subroutine for resistive TF coils (#773)
 - Corrected deltf in sctfcoil.f90 (#779)
 
-## Features
+### Features
 
 PLASMOD
  - PLASMOD is a 1D transport model which replaces many of the plasma physics calculations in PROCESS. The previous set up remains available.
@@ -193,7 +212,7 @@ Miscellaneous
 - Output to MFILE variable names for cost models
 - Added [Reinke detachment criterion](http://iopscience.iop.org/article/10.1088/1741-4326/aa5145/meta) as constraint equation and formula for tesep (Issue #707)
 
-## Minor changes
+### Minor changes
 
 - Changed upper bound on `coheof` from 1.0e8 to 5.0e8 (Issue #668).
 - A number of changes to `plot_proc.py` and outputs in the fortran associated 

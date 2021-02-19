@@ -18,8 +18,8 @@
 """
 
 import argparse
-import process_io_lib.mfile as mf
-import process_io_lib.in_dat as in_dat
+import process.io.mfile as mf
+import process.io.in_dat as in_dat
 
 def feasible_point(filename, position):
     """Function to check for feasible solution before creating new IN.DAT, or to determine the first or last feasible point in a scan

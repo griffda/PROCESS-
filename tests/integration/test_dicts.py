@@ -198,6 +198,8 @@ def test_default(ref_dicts, new_dicts):
         "ipvlam",
         "maxcal",
         "nvar",
+        "zero",
+        "delta",
         "cp_he"
     ]
     """
@@ -235,7 +237,8 @@ def test_default(ref_dicts, new_dicts):
 
     ipvlam is defined both as module and local var
 
-    maxcal, nvar, cp_he are initialised differently in two different modules
+    maxcal, nvar, zero, delta, cp_he are initialised differently in two 
+    different modules
     """
 
     # One difference is due to "null" in ref_dicts now being "0.0" or "" in 
