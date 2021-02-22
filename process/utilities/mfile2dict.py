@@ -51,7 +51,7 @@ class MFILEParser(abc.MutableMapping):
             if key in self._mfile_data[group]:
                 return self._mfile_data[group][key]['value']
         raise KeyError(
-            "No variable '{key}' found."
+            f"No variable '{key}' found."
         )
 
     def get_info_dict(self):
@@ -71,7 +71,7 @@ class MFILEParser(abc.MutableMapping):
                 del self._mfile_data[group][key]
                 return
         raise KeyError(
-            "No variable '{key}' found."
+            f"No variable '{key}' found."
         )
 
     def __setitem__(self, key, value):
@@ -80,7 +80,7 @@ class MFILEParser(abc.MutableMapping):
                 self._mfile_data[group][key]['value'] = value
                 return
         raise KeyError(
-            "No variable '{key}' found."
+            f"No variable '{key}' found."
         )
 
     def get_parameter_value(self, param_name: str) -> Any:
@@ -88,7 +88,7 @@ class MFILEParser(abc.MutableMapping):
             if param_name in group:
                 return self._mfile_data[group][param_name]['value']
         raise KeyError(
-            "No variable '{key}' found."
+            f"No variable '{param_name}' found."
         )
 
     def _line_string_search(self, lines: List[str],
