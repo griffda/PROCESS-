@@ -307,20 +307,24 @@ class MFILEParser:
                 "Failed to extract data from given MFILE"
             )
 
-        _first_key = list(self._mfile_data.keys())[0]
-        _second_key = list(self._mfile_data.keys())[1]
-        _second_key_fp = list(self._mfile_data[_second_key])[8]
-        _iscan_arr = self._mfile_data[_first_key]['iscan']['value']
-        _test_param = self._mfile_data[_second_key][_second_key_fp]['value']
-        if not len(_test_param) == _iscan_arr[-1]:
-            print(_test_param)
-            raise AssertionError(
-                "Failed to retrieve all parameter sweep values, "
-                "expected {} values for '{}:{}' and got {}".format(
-                    _iscan_arr[-1], _second_key, _second_key_fp,
-                    len(_test_param)
+        # Only run iscan check if iscan exists
+        try:
+            _first_key = list(self._mfile_data.keys())[0]
+            _second_key = list(self._mfile_data.keys())[1]
+            _second_key_fp = list(self._mfile_data[_second_key])[8]
+            _iscan_arr = self._mfile_data[_first_key]['iscan']['value']
+            _test_param = self._mfile_data[_second_key][_second_key_fp]['value']
+            if not len(_test_param) == _iscan_arr[-1]:
+                print(_test_param)
+                raise AssertionError(
+                    "Failed to retrieve all parameter sweep values, "
+                    "expected {} values for '{}:{}' and got {}".format(
+                        _iscan_arr[-1], _second_key, _second_key_fp,
+                        len(_test_param)
+                    )
                 )
-            )
+        except KeyError:
+            pass
 
         self._logger.info("Extraction completed successfully")
         return self._mfile_data
