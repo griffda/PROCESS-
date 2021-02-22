@@ -85,7 +85,7 @@ class MFILEParser(abc.MutableMapping):
 
     def get_parameter_value(self, param_name: str) -> Any:
         for group in self._mfile_data:
-            if param_name in group:
+            if param_name in self._mfile_data[group]:
                 return self._mfile_data[group][param_name]['value']
         raise KeyError(
             f"No variable '{param_name}' found."
