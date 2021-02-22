@@ -1,85 +1,80 @@
-###############################################################################
-#                                                                             #
-#                      MFILE to Python Dictionary Conversion                  #
-#                                                                             #
-#   Converts data from a PROCESS MFILE to a Python Dictionary with the        #
-#   option to then write the result to a file. The format of the output is    #
-#   determined by the specified file type which can be JSON, TOML, YAML or    #
-#   a Pickle file. If TOMLKit is available the output contains docstrings.    #
-#                                                                             #
-#   @author :   K. Zarebski <kristian.zarebski@ukaea.uk>                      #
-#   @date   :   last modified 2021-02-19                                      #
-#                                                                             #
-###############################################################################
-import os
-import re
-from typing import Dict, Any, List, Union
+from typing import Dict, List, Any
 from collections import OrderedDict
+import re
+import logging
+import os
 
-PROCESS_START = 'Power Reactor Optimisation Code'   # Start of output statement
-PROCESS_END = 'End of PROCESS Output'               # End of output statement
+
+MFILE_END = '# Copy of PROCESS Input Follows #'
+VETO_LIST = [
+    ' # PROCESS found a feasible solution #'
+]
+HEADER_MAPPING = {
+    'Power Reactor Optimisation Code': 'metadata'
+}
 
 
 class MFILEParser:
-    def __init__(self, mfile_input: str = None) -> None:
-        self._input_file = mfile_input
-        self._mfile_data: OrderedDict = OrderedDict()
-        if self._input_file:
-            self.parse(self._input_file)
-
-    def _find_var_val_from_str(self, value_str: str) -> Any:
-        """Convert a string variable to float, int etc.
-
-        This function parsers values given within the MFILE removing other
-        unneeded information such as the specific typing in PROCESS
+    def __init__(self, input_mfile: str = ""):
+        """Parse an MFILE and extract output values.
 
         Parameters
         ----------
-        value_str : str
-            value as a string
-
-        Returns
-        -------
-        Any
-            the value in the appropriate form
+        input_mfile : str, optional
+            MFILE to search, by default ""
         """
-        for type_str in ['OP', 'IP', 'ITV']:
-            value_str = value_str.replace(type_str, '')
-        try:
-            return int(value_str)
-        except ValueError:
-            pass
-        try:
-            return float(value_str)
-        except ValueError:
-            return value_str
+        self._input_file = input_mfile
+        self._mfile_data: OrderedDict = OrderedDict()
+        self._logger = logging.getLogger(self.__class__.__name__)
+        self._logger.setLevel(logging.INFO)
+        if self._input_file:
+            self.parse(self._input_file)
 
-    def _fuzzy_line_search(self, lines: List[str], search_str: str,
-                           result_n: int = None) -> Union[List[int], int]:
-        """Search lines for a string.
+
+    def _line_string_search(self, lines: List[str],
+                            search_str: str) -> List[int]:
+        """Search for substring in file lines.
 
         Parameters
         ----------
         lines : List[str]
-            list of lines to search through
+            list of file lines to search
         search_str : str
-            substring to look for in lines
-        result_n : int, optional
-            specify which result to return, 1st, 2nd etc.
+            search term to look for
 
         Returns
         -------
-        int, List[int]
-            index/indices of line match
+        List[int]
+            list of indexes for matching lines
         """
-        _results = [
-            i for i, line in enumerate(lines) if search_str in line
-        ]
+        return [i for i, line in enumerate(lines) if search_str in line]
 
-        if result_n is not None:
-            return _results[result_n]
-        else:
-            return _results
+    def _find_var_val_from_str(self, value_str: str) -> Any:
+            """Convert a string variable to float, int etc.
+
+            This function parsers values given within the MFILE removing other
+            unneeded information such as the specific typing in PROCESS
+
+            Parameters
+            ----------
+            value_str : str
+                value as a string
+
+            Returns
+            -------
+            Any
+                the value in the appropriate form
+            """
+            for type_str in ['OP', 'IP', 'ITV']:
+                value_str = value_str.replace(type_str, '')
+            try:
+                return int(value_str)
+            except ValueError:
+                pass
+            try:
+                return float(value_str)
+            except ValueError:
+                return value_str
 
     def _get_values(self, lines: List[str]) -> Dict[str, Any]:
         """Extracts value, description and variable name from MFILE lines.
@@ -157,6 +152,14 @@ class MFILEParser:
                 _vars_dict[_var_key]['value'].append(
                     self._find_var_val_from_str(_value)
                 )
+            elif _var_key in _vars_dict:
+                if not isinstance(_vars_dict[_var_key], list):
+                    _vars_dict[_var_key]['value'] = [
+                        _vars_dict[_var_key]['value']
+                    ]
+                _vars_dict[_var_key]['value'].append(
+                    self._find_var_val_from_str(_value)
+                )
             else:
                 _vars_dict[_var_key] = {
                     'description': _desc,
@@ -165,161 +168,161 @@ class MFILEParser:
 
         return _vars_dict
 
-    def parse(self, input_mfile: str) -> Dict[str, Any]:
-        """Parse an MFILE into a Python Dictionary and dump if output specified.
+    def parse(self, mfile_addr: str) -> Dict:
+        """Parse an MFILE and extract output values.
 
         Parameters
         ----------
-        input_mfile : str
-            MFILE to be parsed
+        mfile_addr : str
+            address of MFILE to parse
 
         Returns
         -------
-        Dict[str, Any]
-            dictionary containing the extracted MFILE PROCESS output
+        Dict
+            dictionary of output values
 
         Raises
         ------
         FileNotFoundError
-            if the specified MFILE does not exist
+            if the input file does not exist
         """
-        if not os.path.exists(input_mfile):
+        if not os.path.exists(mfile_addr):
             raise FileNotFoundError(
-                f"Could not load MFILE '{input_mfile}'"
-                ", file not found."
+                "Could not open MFILE '{}', "
+                "file does not exist.".format(mfile_addr)
             )
 
-        with open(input_mfile) as f:
+        self._logger.info(
+            "Parsing MFILE: %s",
+            mfile_addr
+        )
+
+        with open(mfile_addr) as f:
             _lines = f.readlines()
 
-        # Search for various lines within the MFILE as indexes
-        _start_statement_i = self._fuzzy_line_search(_lines, PROCESS_START, -1)
-        _end_statement_i = self._fuzzy_line_search(_lines, PROCESS_END, -1)
-        _err_warn_i = self._fuzzy_line_search(_lines, 'Errors and Warnings', -1)
-        _numerics_i = self._fuzzy_line_search(_lines, '# Numerics #', -1)
-        _ffp_i = self._fuzzy_line_search(_lines, '# Final Feasible Point #', -1)
-        _pa_i = self._fuzzy_line_search(_lines, '# Plant Availability #', -1)
-        _plasma_i = self._fuzzy_line_search(_lines, '# Plasma #', -1)
-        _plasmod_i = self._fuzzy_line_search(_lines, '# PLASMOD #', -1)
-        _e_confine_i = self._fuzzy_line_search(
-            _lines, 'Energy confinement times, and required H-factors :', -1
-        )
-        _cds_i = self._fuzzy_line_search(_lines, '# Current Drive System #', -1)
-        _times_i = self._fuzzy_line_search(_lines, '# Times #', -1)
-        _divkal_i = self._fuzzy_line_search(
-            _lines, '# Divertor: Kallenbach 1D Model #', -1
-        )
-        _rad_i = self._fuzzy_line_search(_lines, '# Radial Build #', -1)
-        _vert_i = self._fuzzy_line_search(_lines, '# Vertical Build #', -1)
-        _divbuild_i = self._fuzzy_line_search(
-            _lines, "# Divertor build and plasma position #", -1
-        )
-        _tfcoil_i = self._fuzzy_line_search(_lines, '# TF coils  #', -1)
-        _sctfcoil_i = self._fuzzy_line_search(
-            _lines, '# Superconducting TF Coils #', -1
-        )
-        _cs_i = self._fuzzy_line_search(
-            _lines, '# Central Solenoid and PF Coils #', -1
-        )
-        _vsc_i = self._fuzzy_line_search(_lines, '# Volt Second Consumption #', -1)
-        _wf_i = self._fuzzy_line_search(_lines, '# Waveforms #', -1)
-        _pfwav_i = self._fuzzy_line_search(
-            _lines, '# PF Circuit Waveform Data #', -1
-        )
-        _sup_i = self._fuzzy_line_search(_lines, '# Support Structure #', -1)
-        _pfcind_i = self._fuzzy_line_search(_lines, '# PF Coil Inductances #', -1)
-        _prpump_i = self._fuzzy_line_search(
-            _lines, '# Pumping for primary coolant (helium) #', -1
-        )
-        _fwb_i = self._fuzzy_line_search(
-            _lines, '# First wall and blanket : CCFE HCPB model #', -1
-        )
-        _sctfcpc_i = self._fuzzy_line_search(
-            _lines, '# Superconducting TF Coil Power Conversion #', -1
-        )
-        _pfcs_pe_i = self._fuzzy_line_search(
-            _lines, '# PF Coils and Central Solenoid: Power and Energy #', -1
-        )
-        _vacsys_i = self._fuzzy_line_search(
-            _lines, '# Vacuum System #', -1
-        )
-        _pbs_i = self._fuzzy_line_search(
-            _lines, '# Plant Buildings System #', -1
-        )
-        _elec_pr_i = self._fuzzy_line_search(
-            _lines, '# Electric Power Requirements #', -1
-        )
-        _cryo_i = self._fuzzy_line_search(
-            _lines, '# Cryogenics #', -1
-        )
-        _pphb_i = self._fuzzy_line_search(
-            _lines, '# Plant Power / Heat Transport Balance #', -1
-        )
+        _end_of_output = self._line_string_search(_lines, MFILE_END)[0]
 
-        # Use the indexes to define subblocks in the MFILE variable output
-        _meta_data_block = _lines[_start_statement_i+1:_numerics_i]
-        _numerics_block = _lines[_numerics_i+1:_ffp_i]
-        _p_availability_block = _lines[_pa_i+1:_plasma_i]
-        _plasma_block = _lines[_plasma_i+1:_plasmod_i]
-        _plasmod_block = _lines[_plasmod_i+1:_e_confine_i]
-        _cds_block = _lines[_cds_i+1:_times_i]
-        _times_block = _lines[_times_i+1:_divkal_i]
-        _divkal_block = _lines[_divkal_i+1:_rad_i]
-        _radbuild_block = _lines[_rad_i+1:_vert_i]
-        _vertbuild_block = _lines[_vert_i+1:_divbuild_i]
-        _divbuild_block = _lines[_divbuild_i+1:_tfcoil_i]
-        _tfcoil_block = _lines[_tfcoil_i+1:_sctfcoil_i]
-        _sctf_block = _lines[_sctfcoil_i+1:_cs_i]
-        _cs_block = _lines[_cs_i+1:_vsc_i]
-        _voltsec_block = _lines[_vsc_i+1:_wf_i]
-        _waveform_block = _lines[_wf_i+1:_pfwav_i]
-        _pfwave_block = _lines[_pfwav_i+1:_sup_i]
-        _support_block = _lines[_sup_i+1:_pfcind_i]
-        _pump_block = _lines[_prpump_i+1:_fwb_i]
-        _fwb_block = _lines[_fwb_i+1:_sctfcpc_i]
-        _sctfcpc_block = _lines[_sctfcpc_i+1:_pfcs_pe_i]
-        _pccspe_block = _lines[_pfcs_pe_i+1:_vacsys_i]
-        _vacsys_block = _lines[_vacsys_i+1:_pbs_i]
-        _pbs_block = _lines[_pbs_i+1:_elec_pr_i]
-        _elec_pr_block = _lines[_elec_pr_i+1:_cryo_i]
-        _cryo_block = _lines[_cryo_i+1:_pphb_i]
-        _pphb_block = _lines[_pphb_i+1:_err_warn_i]
-        _err_warn_block = _lines[_err_warn_i+1:_end_statement_i]
+        self._logger.info("Extracting file headers")
+        _header_indexes = [
+            i for i, line in enumerate(_lines)
+            if line.strip() and i < _end_of_output
+        ]
 
-        # Process each subblock and add the result to a dictionary
-        self._mfile_data['metadata'] = self._get_values(_meta_data_block)
-        self._mfile_data['numerics'] = self._get_values(_numerics_block)
-        self._mfile_data['plant_availability'] = self._get_values(_p_availability_block)
-        self._mfile_data['plasma'] = self._get_values(_plasma_block)
-        self._mfile_data['plasmod'] = self._get_values(_plasmod_block)
-        self._mfile_data['current_drive_system'] = self._get_values(_cds_block)
-        self._mfile_data['times'] = self._get_values(_times_block)
-        self._mfile_data['divertor_kallenbach'] = self._get_values(_divkal_block)
-        self._mfile_data['radial_build'] = self._get_values(_radbuild_block)
-        self._mfile_data['vertical_build'] = self._get_values(_vertbuild_block)
-        self._mfile_data['divertor_build'] = self._get_values(_divbuild_block)
-        self._mfile_data['tfcoils'] = self._get_values(_tfcoil_block)
-        self._mfile_data['sctfcoils'] = self._get_values(_sctf_block)
-        self._mfile_data['central_solenoid_pf_coils'] = self._get_values(_cs_block)
-        self._mfile_data['volt_second_consumption'] = self._get_values(_voltsec_block)
-        self._mfile_data['waveforms'] = self._get_values(_waveform_block)
-        self._mfile_data['pf_circuit_waveform'] = self._get_values(_pfwave_block)
-        self._mfile_data['support_structure'] = self._get_values(_support_block)
-        self._mfile_data['coolant_pumping'] = self._get_values(_pump_block)
-        self._mfile_data['first_wall_blanket_hcpb'] = self._get_values(_fwb_block)
-        self._mfile_data['sctf_power_conversion'] = self._get_values(_sctfcpc_block)
-        self._mfile_data['pfcoil_cs_power_energy'] = self._get_values(_pccspe_block)
-        self._mfile_data['vacuum_system'] = self._get_values(_vacsys_block)
-        self._mfile_data['plant_buildings_system'] = self._get_values(_pbs_block)
-        self._mfile_data[
-            'electric_power_requirements'
-        ] = self._get_values(_elec_pr_block)
-        self._mfile_data['cryogenics'] = self._get_values(_cryo_block)
-        self._mfile_data['plant_power_heat_transfer_balance'] = self._get_values(
-            _pphb_block
-        )
-        self._mfile_data['errors_warnings'] = self._get_values(_err_warn_block)
+        _header_indexes = [
+            i for i in _header_indexes
+            if _lines[i].strip()[0] == '#'
+            and not any(k in _lines[i] for k in VETO_LIST)
+        ]
 
+        # Gets rid of multi-headers, taking the last one
+        _header_indexes = [
+            i for i in _header_indexes
+            if i+1 not in _header_indexes
+        ]
+
+        self._logger.info("Retrieving output variable values")
+        # Iterate through the file headers processing the "block" between them
+        # extracting variable values. Where duplicate headers are found assume
+        # that a parameter sweep is occuring and append values in lists
+        for i in range(len(_header_indexes)-1):
+            _key = _lines[_header_indexes[i]].replace('#', '').strip()
+
+            _new_vals = self._get_values(
+                _lines[_header_indexes[i]+1:_header_indexes[i+1]]
+            )
+
+            # The iscan variable is always present at start of sweep
+            # no matter what the first header in an iteration is
+            # need to move it into metadata
+            _first_key = _lines[_header_indexes[0]]
+            _check_iscan = self._mfile_data and 'iscan' in _new_vals
+            _check_iscan = _check_iscan and _key != _first_key
+            if _check_iscan:
+                _first_key = _first_key.replace('#', '').strip()
+                _iscan_var = self._mfile_data[_first_key]['iscan']['value']
+                if not isinstance(_iscan_var, list):
+                    self._mfile_data[_first_key]['iscan']['value'] = [
+                        _iscan_var
+                    ]
+                self._mfile_data[_first_key]['iscan']['value'].append(
+                    _new_vals['iscan']['value']
+                )
+                del _new_vals['iscan']
+
+            # Add header to dictionary of not present
+            if _key not in self._mfile_data:
+                self._mfile_data[_key] = _new_vals
+
+            # If header already present, iterate through member parameters
+            # appending the new values to each
+            else:
+                for param, var_dict in self._mfile_data[_key].items():
+                    if param not in _new_vals:
+                        self._logger.warning(
+                            "Expected parameter '{}' in sweep, "
+                            "but could not find entry"
+                            " for this iteration".format(param)
+                        )
+                        continue
+                    _value = _new_vals[param]['value']
+                    if not isinstance(var_dict['value'], list):
+                        self._mfile_data[_key][param]['value'] = [
+                            self._mfile_data[_key][param]['value'],
+                            _value
+                        ]
+                    else:
+                        # Need to check if the find variables function
+                        # returned a single value for the parameter or multiple
+                        # and handle the cases
+                        if not isinstance(_new_vals[param]['value'], list):
+                            self._mfile_data[_key][param]['value'].append(
+                                _value
+                            )
+                        else:
+                            self._mfile_data[_key][param]['value'] += _value
+
+        self._logger.info("Creating output dictionaries")
+        # Remove any cases where there are no parameters under a given header
+        self._mfile_data = {
+            k: v for k, v in self._mfile_data.items() if v
+        }
+
+        # Use underscore keys and tidy them to be more computationally friendly
+        def _key_update(key):
+            _key = key.lower()
+            _key = _key.replace(' ', '_')
+            for sym in [':', '(', ')', '/']:
+                _key = _key.replace(sym, '')
+            return _key.replace('__', '_')
+
+        # Apply header mappings and tidy headers
+        self._mfile_data = {
+            _key_update(k)
+            if k not in HEADER_MAPPING else HEADER_MAPPING[k]: v
+            for k, v in self._mfile_data.items()
+        }
+
+        if not self._mfile_data or len(self._mfile_data) == 0:
+            raise AssertionError(
+                "Failed to extract data from given MFILE"
+            )
+
+        _first_key = list(self._mfile_data.keys())[0]
+        _second_key = list(self._mfile_data.keys())[1]
+        _second_key_fp = list(self._mfile_data[_second_key])[8]
+        _iscan_arr = self._mfile_data[_first_key]['iscan']['value']
+        _test_param = self._mfile_data[_second_key][_second_key_fp]['value']
+        if not len(_test_param) == _iscan_arr[-1]:
+            print(_test_param)
+            raise AssertionError(
+                "Failed to retrieve all parameter sweep values, "
+                "expected {} values for '{}:{}' and got {}".format(
+                    _iscan_arr[-1], _second_key, _second_key_fp,
+                    len(_test_param)
+                )
+            )
+
+        self._logger.info("Extraction completed successfully")
         return self._mfile_data
 
     def write(self, output_filename: str) -> None:
@@ -331,19 +334,28 @@ class MFILEParser:
             path of output file, file type is determined from the type and can
             be '.toml', '.yml', '.pckl', '.json'
         """
+        self._logger.info("Writing to output file '%s'", output_filename)
+
         _suffix = os.path.splitext(output_filename)[1].lower()
 
         if _suffix == '.toml':
+            self._logger.info(
+                "Output will be TOML file."
+            )
             try:
                 import tomlkit
             except ImportError:
+                # If file suffix is TOML but TOMLKit is not installed
                 import toml
                 print(
                     "WARNING: Python module 'tomlkit' not found, "
                     "file comments will not be written to created TOML file"
                 )
-                toml.dump(self._mfile_data, open(_args.output_file, 'w'))
+                toml.dump(self._mfile_data, open(output_filename, 'w'))
                 exit(0)
+
+            # If TOMLKit is present, write TOML file as normal but add in
+            # descriptions as docstrings instead and format
             _doc = tomlkit.document()
             _doc.add(tomlkit.comment('PROCESS Run Output'))
             for group_name, data in self._mfile_data.items():
@@ -365,34 +377,46 @@ class MFILEParser:
                         self._mfile_data[group_name][var_name]['description']
                     )
 
-            with open(_args.output_file, 'w') as f:
+            with open(output_filename, 'w') as f:
                 f.write(tomlkit.dumps(_doc))
         elif _suffix == '.json':
+            # If file suffix is JSON
+            self._logger.info(
+                "Output will be JSON file."
+            )
             import json
-            json.dump(self._mfile_data, open(_args.output_file, 'w'))
+            json.dump(self._mfile_data, open(output_filename, 'w'))
         elif _suffix in ['.yml', '.yaml']:
+            self._logger.info(
+                "Output will be YAML file."
+            )
+            # If file suffix is YAML
             import yaml
-            yaml.dump(self._mfile_data, open(_args.output_file, 'w'))
+            yaml.dump(self._mfile_data, open(output_filename, 'w'))
         elif _suffix == '.pckl':
+            self._logger.info(
+                "Output will be Pickle file."
+            )
+            # If file suffix is Pickle
             import pickle
-            pickle.dump(self._mfile_data, open(_args.output_file, 'wb'))
+            pickle.dump(self._mfile_data, open(output_filename, 'wb'))
         else:
-            print(
+            raise RuntimeError(
                 f"Unrecognised file format '{_suffix}'"
             )
+        
+        self._logger.info("File was written successfully.")
 
 
 if __name__ in "__main__":
     import argparse
 
-    _parser = argparse.ArgumentParser('MFILE2Dict')
-    _parser.add_argument('input_mfile', help='Input MFILE to parse')
-    _parser.add_argument(
-        'output_file',
-        help='Output filename, can be JSON, YAML, Pickle or TOML'
-    )
+    parser = argparse.ArgumentParser()
 
-    _args = _parser.parse_args()
+    parser.add_argument('input_mfile')
+    parser.add_argument('output_file')
 
-    _mfile_parser = MFILEParser(_args.input_mfile)
-    _mfile_parser.write(_args.output_file)
+    args = parser.parse_args()
+
+    parser = MFILEParser(args.input_mfile)
+    parser.write(args.output_file)
