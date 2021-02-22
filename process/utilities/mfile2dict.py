@@ -1,5 +1,6 @@
 from typing import Dict, List, Any
 from collections import OrderedDict
+from collections import abc
 import re
 import logging
 import os
@@ -14,7 +15,7 @@ HEADER_MAPPING = {
 }
 
 
-class MFILEParser:
+class MFILEParser(abc.MutableMapping):
     def __init__(self, input_mfile: str = ""):
         """Parse an MFILE and extract output values.
 
@@ -30,6 +31,65 @@ class MFILEParser:
         if self._input_file:
             self.parse(self._input_file)
 
+    def __iter__(self):
+        for group in self._mfile_data:
+            for param in self._mfile_data[group]:
+                yield param
+
+    def __len__(self):
+        return sum(
+            [len(self._mfile_data[g]) for g in self._mfile_data]
+        )
+
+    def items(self):
+        for group in self._mfile_data:
+            for param, value in self._mfile_data[group].items():
+                yield param, value['value']
+
+    def __getitem__(self, key):
+        for group in self._mfile_data:
+            if key in self._mfile_data[group]:
+                return self._mfile_data[group][key]['value']
+        raise KeyError(
+            "No variable '{key}' found."
+        )
+
+    def get_info_dict(self):
+        """Get complete information dictionary.
+
+        Returns
+        -------
+        Dict[str, Dict[str, Any]]
+            retrieve the full information dictionary containing values and
+            descriptions of extracted parameters
+        """
+        return self._mfile_data
+
+    def __delitem__(self, key):
+        for group in self._mfile_data:
+            if key in self._mfile_data[group]:
+                del self._mfile_data[group][key]
+                return
+        raise KeyError(
+            "No variable '{key}' found."
+        )
+
+    def __setitem__(self, key, value):
+        for group in self._mfile_data:
+            if key in self._mfile_data[group]:
+                self._mfile_data[group][key]['value'] = value
+                return
+        raise KeyError(
+            "No variable '{key}' found."
+        )
+
+    def get_parameter_value(self, param_name: str) -> Any:
+        for group in self._mfile_data:
+            if param_name in group:
+                return self._mfile_data[group][param_name]['value']
+        raise KeyError(
+            "No variable '{key}' found."
+        )
 
     def _line_string_search(self, lines: List[str],
                             search_str: str) -> List[int]:
@@ -50,31 +110,31 @@ class MFILEParser:
         return [i for i, line in enumerate(lines) if search_str in line]
 
     def _find_var_val_from_str(self, value_str: str) -> Any:
-            """Convert a string variable to float, int etc.
+        """Convert a string variable to float, int etc.
 
-            This function parsers values given within the MFILE removing other
-            unneeded information such as the specific typing in PROCESS
+        This function parsers values given within the MFILE removing other
+        unneeded information such as the specific typing in PROCESS
 
-            Parameters
-            ----------
-            value_str : str
-                value as a string
+        Parameters
+        ----------
+        value_str : str
+            value as a string
 
-            Returns
-            -------
-            Any
-                the value in the appropriate form
-            """
-            for type_str in ['OP', 'IP', 'ITV']:
-                value_str = value_str.replace(type_str, '')
-            try:
-                return int(value_str)
-            except ValueError:
-                pass
-            try:
-                return float(value_str)
-            except ValueError:
-                return value_str
+        Returns
+        -------
+        Any
+            the value in the appropriate form
+        """
+        for type_str in ['OP', 'IP', 'ITV']:
+            value_str = value_str.replace(type_str, '')
+        try:
+            return int(value_str)
+        except ValueError:
+            pass
+        try:
+            return float(value_str)
+        except ValueError:
+            return value_str
 
     def _get_values(self, lines: List[str]) -> Dict[str, Any]:
         """Extracts value, description and variable name from MFILE lines.
