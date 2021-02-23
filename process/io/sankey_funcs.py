@@ -98,7 +98,7 @@ def plot_full_sankey(mfilename="MFILE.DAT",): # Plots the power flow from PROCES
         plt.rcParams.update({"font.size": 9})
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1, xticks=[], yticks=[], frameon=False)
-        sankey = Sankey(ax=ax, unit="MW", margin=0.5, format="%1.0f", scale = 1./(totalplasma))
+        sankey = Sankey(ax=ax, unit="MW", margin=0.5, format="%1.2f", scale = 1./(totalplasma))
 
 
         # --------------------------------------- PLASMA - 0 --------------------------------------
@@ -532,7 +532,7 @@ def plot_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow Sankey Diag
         plt.rcParams.update({'font.size': 9}) # Setting font size to 9
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1, xticks=[], yticks=[], frameon=False)
-        sankey = Sankey(ax=ax, unit='MW', margin=0.0, format='%1.0f',scale = 1./(totalplasma))
+        sankey = Sankey(ax=ax, unit='MW', margin=0.0, format='%1.2f',scale = 1./(totalplasma))
 
 
         # --------------------------------------- PLASMA - 0 --------------------------------------
@@ -563,10 +563,10 @@ def plot_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow Sankey Diag
         # -------------------------------------- BLANKET - 2 --------------------------------------
 
         # Blanket deposited power, blanket energy multiplication, - primary heat
-        BLANKETSETC = [totalblktetc + totaldivetc + totalcpetc, emultmw, -pthermmw_p - totaldivetc - totalcpetc ]
+        BLANKETSETC = [totalblktetc+totaldivetc+totalcpetc,emultmw,-pthermmw_p-totaldivetc-totalcpetc-pnucshld]
         #Check if difference >2 between primary heat and blanket + blanket multiplication
         if _ == 1 and sqrt(sum(BLANKETSETC)**2) > 2:
-            print("blankets etc. power balance", totalblktetc + emultmw, -pthermmw_p)
+            print("blankets etc. power balance",totalblktetc+emultmw,-pthermmw_p-pnucshld)
         sankey.add(flows=BLANKETSETC,
                    orientations=[0, -1, 0], # [right(in), down(in), right(out)]
                    prior=1, # DEPOSITION
@@ -578,7 +578,7 @@ def plot_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow Sankey Diag
         # ------------------------------------- HEAT LOSS - 3 -------------------------------------
 
         # Primary heat, -Gross electric power, -difference (loss)
-        PRIMARY = [pthermmw_p + totaldivetc + totalcpetc, -pgrossmw, -pthermmw_p+pgrossmw-totaldivetc-totalcpetc]
+        PRIMARY = [pthermmw_p+totaldivetc+totalcpetc+pnucshld,-pgrossmw,-pthermmw_p+pgrossmw-totaldivetc-totalcpetc-pnucshld]
         sankey.add(flows=PRIMARY,
                    orientations=[0, -1, 0], # [right(in), down(out), right(out)]
                    prior=2, # BLANKETSETC
@@ -613,10 +613,10 @@ def plot_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow Sankey Diag
         # -------------------------------- RECIRCULATING POWER - 5 --------------------------------
 
         # Recirculated power, -Core Systems, -Heating System
-        RECIRC = [precircmw, -pcoresystems-htpmw, -pinjwp]
+        RECIRC = [precircmw, -pcoresystems-htpmw, -pinjwp+ppumpmw]
         # Check if difference >2 between recirculated power and the output sum
         if sum(RECIRC)**2 > 2:
-            print('Recirc. Power Balance', precircmw, -pcoresystems-pinjwp-htpmw)
+            print('Recirc. Power Balance', precircmw, -pcoresystems+ppumpmw-pinjwp-htpmw)
         sankey.add(flows=RECIRC,
                    orientations=[0, 1, 0], # [left(in), down(out), left(out)]
                    prior=4, # NET
@@ -628,7 +628,7 @@ def plot_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow Sankey Diag
         # --------------------------------------- LOSSES - 6 --------------------------------------
 
         # HCD: Heating system, -Plasma heating, -losses
-        HCD = [pinjwp,-pinjmw,-pinjwp+pinjmw]
+        HCD = [pinjwp-ppumpmw,-pinjmw,-pinjwp+pinjmw+ppumpmw]
         sankey.add(flows=HCD,
                    orientations=[0, -1, 0], # [left(in), up(out), left(out)]
                    prior=5, # RECIRC
