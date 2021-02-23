@@ -15,6 +15,10 @@ MACRO(FORD)
     ADD_CUSTOM_COMMAND(
         OUTPUT ${FORD_OUTPUT}
         COMMAND ${FORD_NAME} ${FORD_INDEX_INPUT}
+        # Custom command needs to re-run whenever the Fortran add_library target
+        # detects changes and is recompiled (e.g. Fortran changes are detected)
+        # This keeps the dictionaries up-to-date with the Fortran source
+        DEPENDS ${PROJECT_NAME}
     )
     ADD_DEPENDENCIES(${FORD_NAME} ${PIP_NAME})
 ENDMACRO(FORD)
@@ -33,6 +37,10 @@ MACRO(DICTS)
         COMMAND ${PYTHON_EXECUTABLE} ${CREATE_DICTS_SCRIPT} ${PROCESS_SRC_DIR} ${FORD_OUTPUT}
         ${DICTS_OUTPUT_FILE}
         COMMAND ${CMAKE_COMMAND} -E copy ${DICTS_OUTPUT_FILE} ${DICTS_PYTHON_OUT}
+        # Custom command needs to re-run whenever the Fortran add_library target
+        # detects changes and is recompiled (e.g. Fortran changes are detected)
+        # This keeps the dictionaries up-to-date with the Fortran source
+        DEPENDS ${PROJECT_NAME}
     )
 
     ADD_DEPENDENCIES(${DICTS_NAME} ${FORD_NAME})

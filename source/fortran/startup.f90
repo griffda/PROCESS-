@@ -83,7 +83,7 @@ contains
       rtaue, gtaue
 
     
-		use maths_library, only: vmcon
+		use vmcon_module, only: vmcon
     implicit none
 
     !  Arguments
