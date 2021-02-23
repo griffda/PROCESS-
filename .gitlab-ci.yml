@@ -125,19 +125,16 @@ integration-py36:
   tags:
     - ubuntu
 
-unitfort-py38:
+.unitfort-py38:
   extends: ".unitfort"
   <<: *test-setup-py38
 
-unitfort-py36:
+.unitfort-py36:
   extends: ".unitfort"
   <<: *test-setup-py36
 
 .regression:
   when: on_success
-  only:
-    - develop
-    - sgadgil/f2py_wrapped_coverage
   stage: testing
   artifacts:
     paths: 
@@ -162,6 +159,17 @@ regression-py36:
   <<: *test-setup-py36
   dependencies:
     - make-py36
+
+regression-py38-5-percent:
+  extends: ".regression"
+  <<: *test-setup-py38
+  dependencies:
+    - make-py38
+  artifacts:
+    paths:
+      - tests/regression/pytest_5_percent.log
+  script:
+    - pytest -v tests/regression -s --reg-tolerance=5 | tee tests/regression/pytest_5_percent.log
 
 .baseline_2019:
   when: on_success
@@ -271,6 +279,7 @@ pages:
   when: on_success
   only:
     - develop
+    - kzarebsk/coverage-badge
   stage: pages
   image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
   script:
@@ -298,6 +307,8 @@ pages:
     - VERSION=$(git describe)
     - declare -i CONTRIBUTORS=$(git shortlog -s -n --all | wc -l)
     - echo $CONTRIBUTORS
+    - bash scripts/coverage_badge.sh source/fortran/ anybadge/
+    - cp coverage.svg public/
     - bash scripts/code_quality.sh source/fortran/ anybadge/
     - cp quality.svg public/
     - cp -r code_quality public/

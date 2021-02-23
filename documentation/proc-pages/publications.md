@@ -1,6 +1,9 @@
 # PROCESS Publications
 [PDF of webpage](pdf/publications.pdf)
 
+## Physics and Engineering Model Papers
+The [physics](http://www.sciencedirect.com/science/article/pii/S0920379614005961) and [engineering](http://www.euro-fusionscipub.org/wp-content/uploads/2015/08/WPPMIPR1505.pdf) papers outline the physics and engineering models in PROCESS, both published in Fusion Engineering and Design.
+
 Below is a list of publications using PROCESS by year:
 
 ## 2020
