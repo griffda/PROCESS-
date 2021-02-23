@@ -477,20 +477,18 @@ def plot_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow Sankey Diag
     palpfwmw = palpmw*(1-falpha) # Alpha power hitting 1st wall (MW)
     itart = m_file.data['itart'].get_scan(-1) # switch for spherical tokamak (ST) models
     
+    # Power deposited on divertor (MW)
+    totaldivetc = pdivt + pnucdiv + praddiv    
+    # Power deposited on Blanket (MW)
+    totalblktetc = pnucfw + pnucblkt + pnucshld + pradfw + palpfwmw - emultmw
+    
     if itart == 0:
-        # Power deposited on divertor (MW)
-        totaldivetc = pdivt + pnucdiv + praddiv
-        # Power deposited on Blanket (MW)
-        totalblktetc = pnucfw + pnucblkt + pnucshld + pradfw + palpfwmw - emultmw
         # Power deposited in CP (MW) (None here)
         totalcpetc = 0.0
     elif itart == 1:
-        # Power deposited on divertor (MW)
-        totaldivetc = pdivt + pnucdiv + praddiv
-        # Power deposited on Blanket (MW)
-        totalblktetc = pnucfw + pnucblkt + pnucshld + pradfw + palpfwmw - emultmw
         # Power deposited in CP (MW)
         totalcpetc = pnuc_cp_sh
+
 
     # Used in [BLANKETSETC]
     pthermfw_blkt = m_file.data['pthermfw_blkt'].get_scan(-1) # Heat for electricity (MW)
@@ -511,15 +509,15 @@ def plot_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow Sankey Diag
     trithtmw = m_file.data['trithtmw'].get_scan(-1) # power required for tritium processing (MW)
     vachtmw = m_file.data['vachtmw'].get_scan(-1) # vacuum pump power (MW)
     pfwpmw = m_file.data['pfwpmw'].get_scan(-1) # Total mean wall plug power for PFC & CS (MW)
-    # Energy requires for rest of power plant (MW)
-    pcoresystems = crypmw + fachtmw + tfacpd + trithtmw + vachtmw + pfwpmw
+    ppump = m_file.data['ppump'].get_scan(-1)   
+    ppumpmw = m_file.data['ppump'].get_scan(-1)/1e6 # Set pumping power to MW by dividing by 1e6
+    
+    # Energy required for rest of power plant (MW)
+    pcoresystems = crypmw + fachtmw + tfacpd + trithtmw + vachtmw + pfwpmw + ppumpmw
     pinjwp = m_file.data['pinjwp'].get_scan(-1) # injector wall plug power (MW)
     htpmw = m_file.data['htpmw'].get_scan(-1) # heat transport system electrical pump power (MW)
-    if itart == 1 : # If Spherical Tokamak add centre post coolant pumping to core systems
-        ppumpmw = m_file.data['ppump'].get_scan(-1)/1e6 # Set pumping power to 1e-6
-        pcoresystems = pcoresystems + ppumpmw     
-   
-    
+
+
     # Initialising x and y variables for adjusting 'Plasma Heating' branch tip location
     x_adj, y_adj = 0,0
 
