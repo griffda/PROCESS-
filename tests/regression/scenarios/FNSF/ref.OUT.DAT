@@ -13,15 +13,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 1.0.17   Release Date :: 2020-02-25
-   Tag No. : 1.0.17-919-g783b4651
-    Branch : issue-1122-res-TF-coil-ground-ins
-   Git log : Merge branch 'develop' into issue-1122-res-TF-coil-ground-ins
- Date/time :  6 Jan 2021 16:45:24 +00:00(hh:mm) UTC
-      User : skahn
-  Computer : J0320
- Directory : /tmp/pytest-of-skahn/pytest-111/test_solver0
-     Input : /tmp/pytest-of-skahn/pytest-111/test_scenario_scenario5_0/IN.DAT
+   Version : 2.1.0   Release Date :: 2021-01-25
+   Tag No. : v2.1-76-g92e0728b
+    Branch : issue-1217-plot-ploc-plotting
+   Git log : update pytest regressions
+ Date/time : 23 Feb 2021 13:21:00 +00:00(hh:mm) UTC
+      User : apearce
+  Computer : H0892
+ Directory : /tmp/pytest-of-apearce/pytest-18/test_solver0
+     Input : /tmp/pytest-of-apearce/pytest-18/test_scenario_scenario5_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -537,15 +537,23 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Double null case
                                           Thickness (m)    Height (m)
- Midplane                                     0.000           0.000                       
+ TF coil                                      0.541           4.562   (tfcth)             
+ Gap                                          0.050           4.021   (tftsgap)           
+ Thermal shield                               0.000           3.971   (thshield)          
+ Gap                                          0.000           3.971   (vgap2)             
+ Vacuum vessel (and shielding)                0.500           3.971   (d_vv_top+shldtth)  
+ Divertor structure                           0.200           3.471   (divfix)            
+ Top scrape-off                               0.600           3.271   (vgaptop)           
  Plasma top                                   2.671           2.671   (rminor*kappa)      
- Top scrape-off                               0.500           3.171   (vgap)              
- Divertor structure                           0.200           3.371   (divfix)            
- Vacuum vessel (and shielding)                1.000           4.371   (d_vv_bot+shldlth)  
- Gap                                          0.000           4.371   (vgap2)             
- Thermal shield                               0.000           4.371   (thshield)          
- Gap                                          0.050           4.421   (tftsgap)           
- TF coil                                      0.541           4.962   (tfcth)             
+ Midplane                                     0.000          -0.000                       
+ Plasma bottom                                2.671          -2.671   (rminor*kappa)      
+ Lower scrape-off                             0.500          -3.171   (vgap)              
+ Divertor structure                           0.200          -3.371   (divfix)            
+ Vacuum vessel (and shielding)                1.000          -4.371   (d_vv_bot+shldlth)  
+ Gap                                          0.000          -4.371   (vgap2)             
+ Thermal shield                               0.000          -4.371   (thshield)          
+ Gap                                          0.050          -4.421   (tftsgap)           
+ TF coil                                      0.541          -4.962   (tfcth)             
  
  TF design
  
