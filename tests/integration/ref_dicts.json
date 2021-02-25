@@ -1477,7 +1477,7 @@
         "degrad": 0.01745329251,
         "degree": "pi/180.0D0",
         "delld": 1.0,
-        "delta": 0.0001,
+        "delta": null,
         "delta_eta": 0.0,
         "dendiv": 0.0,
         "dene": 9.8e+19,

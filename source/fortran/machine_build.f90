@@ -453,38 +453,76 @@ contains
        write(outfile,20)
        20 format(t43,'Thickness (m)',t60,'Height (m)')
 
-       vbuild = 0.0D0
-       call obuild(outfile,'Midplane',0.0D0,vbuild)
+       vbuild =  tfcth + tftsgap + thshield + vgap2 + d_vv_top + &
+                 shldtth + divfix + vgaptop + rminor*kappa
 
-       vbuild = vbuild + rminor * kappa
-       call obuild(outfile,'Plasma top',rminor*kappa,vbuild,'(rminor*kappa)')
-       call ovarre(mfile,'Plasma half-height (m)','(rminor*kappa)',rminor*kappa)
+       ! To calculate vertical offset between TF coil centre and plasma centre
+       vbuild1 = vbuild
 
-       vbuild = vbuild + vgap
-       call obuild(outfile,'Top scrape-off',vgap,vbuild,'(vgap)')
-       call ovarre(mfile,'Top scrape-off vertical thickness (m)','(vgap)',vgap)
+       call obuild(outfile,'TF coil',tfcth,vbuild,'(tfcth)')
+       vbuild = vbuild - tfcth
 
-       vbuild = vbuild + divfix
-       call obuild(outfile,'Divertor structure',divfix,vbuild,'(divfix)')
-       call ovarre(mfile,'Divertor structure vertical thickness (m)','(divfix)',divfix)
+       call obuild(outfile,'Gap',tftsgap,vbuild,'(tftsgap)')
+       vbuild = vbuild - tftsgap
 
-       vbuild = vbuild + shldlth + d_vv_bot
-       call obuild(outfile,'Vacuum vessel (and shielding)',d_vv_bot+shldlth,vbuild,'(d_vv_bot+shldlth)')
-       call ovarre(mfile,'Underside vacuum vessel radial thickness (m)','(d_vv_bot)',d_vv_bot)
-       call ovarre(mfile,'Bottom radiation shield thickness (m)','(shldlth)',shldlth)
+       call obuild(outfile,'Thermal shield',thshield,vbuild,'(thshield)')
+       vbuild = vbuild - thshield
 
-       vbuild = vbuild + vgap2
        call obuild(outfile,'Gap',vgap2,vbuild,'(vgap2)')
        call ovarre(mfile,'Vessel - TF coil vertical gap (m)','(vgap2)',vgap2)
+       vbuild = vbuild - vgap2
 
-       vbuild = vbuild + thshield
+       call obuild(outfile,'Vacuum vessel (and shielding)',d_vv_top+shldtth,vbuild,'(d_vv_top+shldtth)')
+       vbuild = vbuild - d_vv_top - shldtth
+       call ovarre(mfile,'Topside vacuum vessel radial thickness (m)','(d_vv_top)',d_vv_top)
+       call ovarre(mfile,'Top radiation shield thickness (m)','(shldtth)',shldtth)
+
+       call obuild(outfile,'Divertor structure',divfix,vbuild,'(divfix)')
+       call ovarre(mfile,'Divertor structure vertical thickness (m)','(divfix)',divfix)
+       vbuild = vbuild - divfix
+
+       call obuild(outfile,'Top scrape-off',vgaptop,vbuild,'(vgaptop)')
+       call ovarre(mfile,'Top scrape-off vertical thickness (m)', 'vgaptop', vgaptop)
+       vbuild = vbuild - vgaptop
+
+       call obuild(outfile,'Plasma top',rminor*kappa,vbuild,'(rminor*kappa)')
+       call ovarre(mfile,'Plasma half-height (m)','(rminor*kappa)',rminor*kappa)
+       vbuild = vbuild - rminor*kappa
+
+       call obuild(outfile,'Midplane',0.0D0,vbuild)
+
+       vbuild = vbuild - rminor*kappa
+       call obuild(outfile,'Plasma bottom',rminor*kappa,vbuild,'(rminor*kappa)')
+
+       vbuild = vbuild - vgap
+       call obuild(nout,'Lower scrape-off',vgap,vbuild,'(vgap)')
+       call ovarre(mfile,'Bottom scrape-off vertical thickness (m)','(vgap)',vgap)
+
+       vbuild = vbuild - divfix
+       call obuild(outfile,'Divertor structure',divfix,vbuild,'(divfix)')
+       call ovarre(mfile,'Divertor structure vertical thickness (m)', '(divfix)',divfix)
+
+       vbuild = vbuild - shldlth
+
+       vbuild = vbuild - d_vv_bot
+       call obuild(nout,'Vacuum vessel (and shielding)',d_vv_bot+shldlth,vbuild,'(d_vv_bot+shldlth)')
+       call ovarre(mfile,'Bottom radiation shield thickness (m)','(shldlth)',shldlth)
+       call ovarre(mfile,'Underside vacuum vessel radial thickness (m)','(d_vv_bot)',d_vv_bot)
+
+       vbuild = vbuild - vgap2
+       call obuild(nout,'Gap',vgap2,vbuild,'(vgap2)')
+
+       vbuild = vbuild - thshield
        call obuild(outfile,'Thermal shield',thshield,vbuild,'(thshield)')
-
-       vbuild = vbuild + tftsgap
+       
+       vbuild = vbuild - tftsgap
        call obuild(outfile,'Gap',tftsgap,vbuild,'(tftsgap)')
+       
+       vbuild = vbuild - tfcth
+       call obuild(nout,'TF coil',tfcth,vbuild,'(tfcth)')
 
-       vbuild = vbuild + tfcth
-       call obuild(outfile,'TF coil',tfcth,vbuild,'(tfcth)')
+       ! To calculate vertical offset between TF coil centre and plasma centre
+       tfoffset = (vbuild1 + vbuild) / 2.0d0
 
        ! end of Double null case
     else
