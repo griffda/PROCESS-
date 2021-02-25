@@ -98,7 +98,7 @@ def plot_full_sankey(mfilename="MFILE.DAT",): # Plots the power flow from PROCES
         plt.rcParams.update({"font.size": 9})
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1, xticks=[], yticks=[], frameon=False)
-        sankey = Sankey(ax=ax, unit="MW", margin=0.5, format="%1.2f", scale = 1./(totalplasma))
+        sankey = Sankey(ax=ax, unit="MW", margin=0.5, format="%1.0f", scale = 1./(totalplasma))
 
 
         # --------------------------------------- PLASMA - 0 --------------------------------------
