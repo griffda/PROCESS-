@@ -842,7 +842,7 @@ contains
             vlab = 'cfactr' ; xlab = 'Plant_availability_factor'
         case (23)
             boundu(72) = swp(iscn)
-            vlab = 'boundu(72)' ; xlab = 'Ip/I_centrepost upper bound'
+            vlab = 'boundu(72)' ; xlab = 'Ip/Irod_upper_bound'
         case (24)
             powfmax = swp(iscn)
             vlab = 'powfmax' ; xlab = 'Fusion_power_limit_(MW)'
