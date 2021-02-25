@@ -4,13 +4,13 @@
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.0   R"
  Date_of_run_____________________________________________________________ (date)________________________     "25/02/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "11:27"
+ Time_of_run_____________________________________________________________ (time)________________________     "15:41"
  User____________________________________________________________________ (username)____________________     "apearce" 
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "starfire                                                                                           
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-91-g349f51d0"                                                                                 
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-93-gba5ce99e"                                                                                 
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "cost_model_2_remote_handling"                                                                      
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch 'develop' into cost_model_2_remote_handling"                                          
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-apearce/pytest-25/test_scenario_scenario17_0/IN.DAT                                                                                                                                      "
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "update regession for changes to cost model"                                                        
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-apearce/pytest-29/test_scenario_scenario17_0/IN.DAT                                                                                                                                      "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -227,7 +227,7 @@
  # Cost of Electricity (1980 US$) #
  First_wall_/_blanket_life_(years)_______________________________________ (fwbllife)____________________      5.3433E+00    
  Divertor_life_(years)___________________________________________________ (divlife.)____________________      2.8556E-01    
- Cost_of_electricity_(m$/kWh)____________________________________________ (coe)_________________________      3.1384E+01    
+ Cost_of_electricity_(m$/kWh)____________________________________________ (coe)_________________________      3.1228E+01    
  # Plant Availability #
  Allowable_blanket_neutron_fluence_(MW-yr/m2)____________________________ (abktflnc)____________________      1.5000E+01    
  Allowable_divertor_heat_fluence_(MW-yr/m2)______________________________ (adivflnc)____________________      2.0000E+01    
@@ -1206,10 +1206,12 @@ fcap0cp  = 1.06 * average cost of money for replaceable components assuming lead
 fcontng  = 0.15 * project contingency factor
 fcr0     = 0.065 * fixed charge rate during construction
 fkind    = 1.0 * multiplier for Nth of a kind costs
+frh      = 0.075 * fraction of capital cost for remote handling
 iavail   = 0 * Switch for plant availability model;
 ifueltyp = 0 * Switch for fuel type;
 lsa      = 2 * Level of safety assurance switch (generally; use 3 or 4);
 output_costs = 1 * Switch for costs output;
+discount_rate = 0.06 * effective cost of money in constant dollars
 tlife    = 40 * Full power year plant lifetime (years)
 ucblvd   = 280.0 * unit cost for blanket vanadium ($/kg)
 ucdiv    = 5.0d5 * cost of divertor blade ($)

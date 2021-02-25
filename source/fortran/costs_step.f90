@@ -1262,7 +1262,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use cost_variables, only: output_costs, cdirt
+    use cost_variables, only: output_costs, cdirt, frh
     use process_output, only: oshead, ocosts, oblnkl
 
     implicit none
@@ -1278,9 +1278,9 @@ contains
     ! Initialise as zero
     step27 = 0.0D0
    
-    ! 27.01 Remote Handling (7.5%)
-    ! From Report by T. Hender, scales with direct constrcuton costs
-    step2701 = 7.5D-2 * cdirt 
+    ! 27.01 Remote Handling 
+    ! From Report by T. Hender CD-STEP-01030, scales with direct constrcuton costs
+    step2701 = frh * cdirt 
     
     step27 = step2701
 

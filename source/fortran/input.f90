@@ -224,7 +224,7 @@ contains
       cpstflnc, uccryo, costexp, fwbs_nu, ucpfic, ucblbreed, tcomrepl, uufuel, &
       ucdiv, uccpcl1, discount_rate, uctfbr, uccpclb, ucoam, div_prob_fail, ucnbi, &
       uccu, ucwst, cfactr, div_nref, amortization, ucwindtf, ucme, csi, cowner, &
-      cost_factor_misc, fcr0, cturbb, lsa, fcap0, output_costs, &
+      cost_factor_misc, fcr0, frh, cturbb, lsa, fcap0, output_costs, &
       cost_factor_land, redun_vacp, ucrb, uctfbus, num_rh_systems, fkind, &
       fwbs_umain_time, uchrs, avail_min, uciac, step_ref, ucshld, tdivrepl, &
       ucblli, ucpfcb, tlife, ipnet, fcdfuel, ucbus, ucpfb, uchts, &
@@ -2606,6 +2606,9 @@ contains
        case ('fkind')
           call parse_real_variable('fkind', fkind, 0.5D0, 1.0D0, &
                'Multiplier for Nth of a kind costs')
+       case ('frh')
+          call parse_real_variable('frh', frh, 0.0D0, 1.0D0, &
+               'fraction of capital cost for remote handling')
        case ('i_cp_lifetime')
          call parse_int_variable('i_cp_lifetime', i_cp_lifetime, 0, 3, &
               'Switch for ST centrepost lifetime contraint (10) setting')

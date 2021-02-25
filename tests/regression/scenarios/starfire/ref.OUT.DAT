@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.0   Release Date :: 2021-01-25
-   Tag No. : v2.1-91-g349f51d0 code contains untracked changes
+   Tag No. : v2.1-93-gba5ce99e code contains untracked changes
     Branch : cost_model_2_remote_handling
-   Git log : Merge branch 'develop' into cost_model_2_remote_handling
- Date/time : 25 Feb 2021 11:27:19 +00:00(hh:mm) UTC
+   Git log : update regession for changes to cost model
+ Date/time : 25 Feb 2021 15:41:04 +00:00(hh:mm) UTC
       User : apearce
   Computer : H0892
- Directory : /tmp/pytest-of-apearce/pytest-25/test_scenario_scenario17_0
-     Input : /tmp/pytest-of-apearce/pytest-25/test_scenario_scenario17_0/IN.DAT
+ Directory : /tmp/pytest-of-apearce/pytest-29/test_scenario_scenario17_0
+     Input : /tmp/pytest-of-apearce/pytest-29/test_scenario_scenario17_0/IN.DAT
  Run title : starfire
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -288,7 +288,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  First wall / blanket life (years)                                        (fwbllife)                    5.343     
  Divertor life (years)                                                    (divlife.)                    0.286     
- Cost of electricity (m$/kWh)                                             (coe)                        31.384     
+ Cost of electricity (m$/kWh)                                             (coe)                        31.228     
  
  Power Generation Costs :
  
@@ -296,7 +296,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
 
  Capital Investment                                                                163.33               21.22
  Operation & Maintenance                                                            68.29                8.87
- Decommissioning Fund                                                                2.59                0.34
+ Decommissioning Fund                                                                1.38                0.18
  Fuel Charge Breakdown
 
      Blanket & first wall                                                    0.00                0.00
@@ -307,7 +307,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
      Waste Disposal                                                          3.91                0.51
  Total Fuel Cost                                                                     7.31                0.95
 
- Total Cost                                                                        241.51               31.38
+ Total Cost                                                                        240.30               31.23
  
  ********************************************* Plant Availability *********************************************
  
@@ -1755,10 +1755,12 @@ fcap0cp  = 1.06 * average cost of money for replaceable components assuming lead
 fcontng  = 0.15 * project contingency factor
 fcr0     = 0.065 * fixed charge rate during construction
 fkind    = 1.0 * multiplier for Nth of a kind costs
+frh      = 0.075 * fraction of capital cost for remote handling
 iavail   = 0 * Switch for plant availability model;
 ifueltyp = 0 * Switch for fuel type;
 lsa      = 2 * Level of safety assurance switch (generally; use 3 or 4);
 output_costs = 1 * Switch for costs output;
+discount_rate = 0.06 * effective cost of money in constant dollars
 tlife    = 40 * Full power year plant lifetime (years)
 ucblvd   = 280.0 * unit cost for blanket vanadium ($/kg)
 ucdiv    = 5.0d5 * cost of divertor blade ($)

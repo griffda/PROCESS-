@@ -1903,6 +1903,7 @@
         "fradwall": 1.0,
         "frbeam": 1.05,
         "freinke": 1.0,
+        "frh": 0.0,
         "frhocp": 1.0,
         "frholeg": 1.0,
         "frminor": 1.0,
@@ -8921,6 +8922,7 @@
         "fradwall": "f-value for upper limit on radiation wall load (`constr. equ. 67`, `iteration variable 116`)",
         "frbeam": "R_tangential / R_major for neutral beam injection",
         "freinke": "f-value for Reinke detachment criterion (`constr. equ. 78`, `iteration variable 147`)",
+        "frh": "fraction of capital cost for remote handling",
         "frhocp": "Centrepost resistivity enhancement factor. For `itart=0`, this factor \n is used for the whole magnet ",
         "frholeg": "Ouboard legs resistivity enhancement factor. Only used for `itart=1`.",
         "frminor": "f-value for minor radius limit (`constraint equation 21`, `iteration variable 32`)",
@@ -11999,6 +12001,10 @@
         },
         "freinke": {
             "lb": 0.001,
+            "ub": 1.0
+        },
+        "frh": {
+            "lb": 0.0,
             "ub": 1.0
         },
         "frhocp": {
@@ -16339,6 +16345,7 @@
             "fcontng",
             "fcr0",
             "fkind",
+            "frh",
             "fwallcst",
             "iavail",
             "avail_min",
@@ -19145,6 +19152,7 @@
         "fradwall": "real_variable",
         "frbeam": "real_variable",
         "freinke": "real_variable",
+        "frh": "real_variable",
         "frhocp": "real_variable",
         "frholeg": "real_variable",
         "frminor": "real_variable",

@@ -187,6 +187,9 @@ module cost_variables
   real(dp) :: fkind
   !! multiplier for Nth of a kind costs
 
+  real(dp) :: frh
+  !! fraction of capital cost for remote handling
+
   real(dp) :: fwallcst
   !! first wall cost (M$)
 
@@ -642,6 +645,7 @@ module cost_variables
     fcontng = 0.195D0
     fcr0 = 0.0966D0
     fkind = 1.0D0
+    frh = 0.0
     fwallcst = 0.0D0
     iavail= 2
     avail_min = 0.75D0
