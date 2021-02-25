@@ -868,7 +868,7 @@ contains
                'F-value for current drive gamma')
        case ('fipir')
           call parse_real_variable('fipir', fipir, 0.001D0, 10.0D0, &
-               'F-value plasma over central collumn current')
+               'F-value for Ip/Irod')
        case ('fjohc')
           call parse_real_variable('fjohc', fjohc, 0.001D0, 10.0D0, &
                'F-value for Central Solenoid current at EOF')
