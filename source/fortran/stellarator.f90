@@ -784,15 +784,14 @@ contains
        powht = powht + pinjmw ! if not ignited add the auxiliary power
     endif
 
-    
-
     ! Here the implementation sometimes leaves the accessible regime when pradmw> powht which is unphysical and
     ! is not taken care of by the rad module. We restrict the radiation power here by the heating power:
-    pradmw = max(pradmw, 0.0d0)  
-
+    !pradmw = min(pradmw, powht) 
+    pradmw = max(0.0d0,pradmw)
 
     !  Power to divertor, = (1-f_rad)*Psol
 
+    ! The SOL radiation needs to be smaller than the pradmw
     psolradmw = f_rad * powht
     pdivt = powht - psolradmw
 
