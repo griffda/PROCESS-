@@ -44,14 +44,17 @@ If the issue branch was merged to develop without merging develop into the branc
 
 The regression references will always need to be overwritten completely, and different versions of them shoudn't be merged together. Merging develop into the issue branch first avoids this.
 
-### Step 6: Running the test suite locally
+### Step 6: Re-building with changes from `develop`
+`process` now needs to be re-built to build and install the changes that have just been merged from `develop`. This means that when `pytest` is run, the latest `process` is used, rather than an out-of-date installed version.
+
+### Step 7: Running the test suite locally
 It is useful to see which tests fail before pushing to the remote, not least because it is faster to run them locally. If tests other than the Python-Fortran dictionary tests or the regression tests fail, then further work is needed to get those tests to pass, as updating the test references will not fix them.
 
-### Step 7: Pushing despite failing Python-Fortran dictionary and/or regression tests
+### Step 8: Pushing despite failing Python-Fortran dictionary and/or regression tests
 The purpose of this is to run the regression test job with 0 and 5% tolerances. The 0% job will fail, but the 5% job will only fail if there are any changes above 5%. This allows the reviewer to see only the significant changes in the 5% job trace. If there are any failures in the Python-Fortran dictionaries, these will also be clear.
 
-### Step 8: Overwriting the test references and committing them
+### Step 9: Overwriting the test references and committing them
 This allows the code changes and corresponding complete reference changes to be on the same branch and hence easily accountable. After the overwrite, the test suite should pass.
 
-### Step 9: Passing pipeline and merge request review
+### Step 10: Passing pipeline and merge request review
 The pipeline should now pass, and the significant reference changes should be clear to the reviewer by looking at the (possibly failed) 5% tolerance regression job.
