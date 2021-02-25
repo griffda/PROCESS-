@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.0   Release Date :: 2021-01-25
-   Tag No. : v2.1-76-g92e0728b
-    Branch : issue-1217-plot-ploc-plotting
-   Git log : update pytest regressions
- Date/time : 23 Feb 2021 13:21:56 +00:00(hh:mm) UTC
+   Tag No. : v2.1-91-g349f51d0 code contains untracked changes
+    Branch : cost_model_2_remote_handling
+   Git log : Merge branch 'develop' into cost_model_2_remote_handling
+ Date/time : 25 Feb 2021 11:27:19 +00:00(hh:mm) UTC
       User : apearce
   Computer : H0892
- Directory : /tmp/pytest-of-apearce/pytest-18/test_scenario_scenario17_0
-     Input : /tmp/pytest-of-apearce/pytest-18/test_scenario_scenario17_0/IN.DAT
+ Directory : /tmp/pytest-of-apearce/pytest-25/test_scenario_scenario17_0
+     Input : /tmp/pytest-of-apearce/pytest-25/test_scenario_scenario17_0/IN.DAT
  Run title : starfire
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -120,9 +120,6 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  *************************************** STEP Costing Model (1980 US$) ****************************************
  
  
- ******************************** !!WARNING - Under development!! DO NOT USE! *********************************
- 
- 
  ***************************** 20. Land and Rights ******************************
  
  (step2001)          Land (M$)                                                                                     3.08
@@ -199,7 +196,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  (step2205)          Total Account 22.05 Cost (M$)                                                                39.60
  
  ******************* 22.06 Other Reactor Plant Equipment
- (step220601)        Maintenance Equipment (M$)                                                                   35.30
+ (step220601)        Maintenance Equipment (M$)                                                                    0.00
  (step220602)        Special Heating Systems (M$)                                                                  0.00
  (step220603)        Coolant Storage (M$)                                                                          0.25
  (step220604)        Gas System (M$)                                                                               0.07
@@ -207,7 +204,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  (step220607)        Closed Loop Coolant System (M$)                                                               2.02
  (step220608)        Standby Cooling System (M$)                                                                   1.19
  
- (step2206)          Total Account 22.06 Cost (M$)                                                                40.89
+ (step2206)          Total Account 22.06 Cost (M$)                                                                 5.58
  
  ******************* 22.07 Instrumentation and Control
  (step2207)          Instrumentation and Control (M$)                                                             24.02
@@ -215,10 +212,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  (step2207)          Total Account 22.07 Cost (M$)                                                                24.02
  
  ******************* 
- (step2298)          Spares (M$)                                                                                  62.82
- (step2299)          Contingency (M$)                                                                            125.04
+ (step2298)          Spares (M$)                                                                                  47.61
+ (step2299)          Contingency (M$)                                                                            117.46
  
- (step22)            Total Account 22 Cost (M$)                                                                  958.62
+ (step22)            Total Account 22 Cost (M$)                                                                  900.53
  
  ************************* 23. Turbine Plant Equipment **************************
  
@@ -259,19 +256,58 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  (step25)            Total Account 25 Cost (M$)                                                                   41.83
  
+ ***************************** 27. Remote Handling ******************************
+ 
+ (step2701)          Remote Handing (M$)                                                                         123.93
+ 
+ (step27)            Total Account 27 Cost (M$)                                                                  123.93
+ 
  ****************************** Plant Direct Cost *******************************
  
- (cdirt)             Plant direct cost (M$)                                                                     1710.55
+ (cdirt)             Plant direct cost (M$)                                                                     1776.40
  
  ******************************** Indirect Cost *********************************
  
- (step91)            Construction Facilities, Equipment and Services (10%) (M$)                                  171.06
- (step92)            Engineering and Costruction Management Services (8%) (M$)                                   136.84
- (step93)            Other Costs (5%) (M$)                                                                        85.53
+ (step91)            Construction Facilities, Equipment and Services (10%) (M$)                                  177.64
+ (step92)            Engineering and Costruction Management Services (8%) (M$)                                   142.11
+ (step93)            Other Costs (5%) (M$)                                                                        88.82
  
  ******************************* Constructed Cost *******************************
  
- (concost)           Constructed Cost (M$)                                                                      2103.98
+ (concost)           Constructed Cost (M$)                                                                      2184.97
+ 
+ ************************* Interest during Construction *************************
+ 
+ (moneyint)          Interest during construction (M$)                                                           327.75
+ 
+ *************************** Total Capital Investment ***************************
+ 
+ (capcost)           Total capital investment (M$)                                                              2512.72
+ 
+ *************************************** Cost of Electricity (1980 US$) ***************************************
+ 
+ First wall / blanket life (years)                                        (fwbllife)                    5.343     
+ Divertor life (years)                                                    (divlife.)                    0.286     
+ Cost of electricity (m$/kWh)                                             (coe)                        31.384     
+ 
+ Power Generation Costs :
+ 
+                                                                           Annual Costs, M$       COE, m$/kWh
+
+ Capital Investment                                                                163.33               21.22
+ Operation & Maintenance                                                            68.29                8.87
+ Decommissioning Fund                                                                2.59                0.34
+ Fuel Charge Breakdown
+
+     Blanket & first wall                                                    0.00                0.00
+     Divertors                                                               0.00                0.00
+     Centrepost (TART only)                                                  0.00                0.00
+     Auxiliary Heating                                                       0.00                0.00
+     Actual Fuel                                                             3.40                0.44
+     Waste Disposal                                                          3.91                0.51
+ Total Fuel Cost                                                                     7.31                0.95
+
+ Total Cost                                                                        241.51               31.38
  
  ********************************************* Plant Availability *********************************************
  
@@ -1723,7 +1759,6 @@ iavail   = 0 * Switch for plant availability model;
 ifueltyp = 0 * Switch for fuel type;
 lsa      = 2 * Level of safety assurance switch (generally; use 3 or 4);
 output_costs = 1 * Switch for costs output;
-ratecdol = 0.06 * effective cost of money in constant dollars
 tlife    = 40 * Full power year plant lifetime (years)
 ucblvd   = 280.0 * unit cost for blanket vanadium ($/kg)
 ucdiv    = 5.0d5 * cost of divertor blade ($)
