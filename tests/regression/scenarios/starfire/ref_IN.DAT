@@ -149,7 +149,7 @@ abktflnc = 15 * allowable first wall/blanket neutron fluence (MW-yr/m2) (`blktmo
 adivflnc = 20.0 * allowable divertor heat fluence (MW-yr/m2)
 cfactr   = 0.75 * Total plant availability fraction; input if `iavail=0`
 cost_model = 2 * Switch for cost model;
-frh      = 0.075 * fraction of capital cost for remote handling
+step_rh_costfrac = 0.075 * fraction of capital cost for remote handling
 dintrt   = 0.00 * diff between borrowing and saving interest rates
 fcap0    = 1.15 * average cost of money for construction of plant assuming design/construction time of six years
 fcap0cp  = 1.06 * average cost of money for replaceable components assuming lead time for these of two years

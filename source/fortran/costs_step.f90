@@ -389,7 +389,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
     use process_output, only: oshead, ocosts, oblnkl
-    use cost_variables, only: output_costs, step_con, step_rh_cost
+    use cost_variables, only: output_costs, step_con, step_rh_costfrac
 
     implicit none
   
@@ -1262,7 +1262,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use cost_variables, only: output_costs, cdirt, frh
+    use cost_variables, only: output_costs, cdirt, step_rh_costfrac
     use process_output, only: oshead, ocosts, oblnkl
 
     implicit none
@@ -1280,7 +1280,7 @@ contains
    
     ! 27.01 Remote Handling 
     ! From Report by T. Hender CD-STEP-01030, scales with direct constrcuton costs
-    step2701 = frh * cdirt 
+    step2701 = step_rh_costfrac * cdirt 
     
     step27 = step2701
 

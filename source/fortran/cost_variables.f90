@@ -187,9 +187,6 @@ module cost_variables
   real(dp) :: fkind
   !! multiplier for Nth of a kind costs
 
-  real(dp) :: frh
-  !! fraction of capital cost for remote handling
-
   real(dp) :: fwallcst
   !! first wall cost (M$)
 
@@ -325,8 +322,8 @@ module cost_variables
   real(dp) :: step_con
   !! Contingency Percentage
 
-  real(dp) :: step_rh_cost
-  !! Remote Handling Percentage
+  real(dp) :: step_rh_costfrac
+  !! fraction of capital cost for remote handling (if cost_model = 2)
   
   real(dp), dimension(68) :: step_ref
   !! Reference values for cost model 2
@@ -645,7 +642,6 @@ module cost_variables
     fcontng = 0.195D0
     fcr0 = 0.0966D0
     fkind = 1.0D0
-    frh = 0.0
     fwallcst = 0.0D0
     iavail= 2
     avail_min = 0.75D0
@@ -683,7 +679,7 @@ module cost_variables
     output_costs = 1
     discount_rate = 0.0435D0
     step_con = 1.5D-1
-    step_rh_cost = 7.5D-2
+    step_rh_costfrac = 0.0D0
     step_ref = &
       (/ 3.0D0, 3.0D-1, 1.115D1, 1.5744D2, 3.592D1, 7.96D0, 9.16D0, 3.26D0, 5.369D1, &
       1.88D0, 6.6D-1, 8.63D0, 3.1D0, 2.05D0, 8.7D-1, 8.7D-1, 9.1D-1, 3.1D-1, 1.81D0, &

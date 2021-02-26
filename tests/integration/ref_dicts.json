@@ -1906,7 +1906,6 @@
         "fradwall": 1.0,
         "frbeam": 1.05,
         "freinke": 1.0,
-        "frh": 0.0,
         "frhocp": 1.0,
         "frholeg": 1.0,
         "frminor": 1.0,
@@ -4766,7 +4765,7 @@
             6.22,
             0.75
         ],
-        "step_rh_cost": 0.075,
+        "step_rh_costfrac": 0.0,
         "strncon_cs": -0.005,
         "strncon_pf": -0.005,
         "strncon_tf": -0.005,
@@ -8929,7 +8928,6 @@
         "fradwall": "f-value for upper limit on radiation wall load (`constr. equ. 67`, `iteration variable 116`)",
         "frbeam": "R_tangential / R_major for neutral beam injection",
         "freinke": "f-value for Reinke detachment criterion (`constr. equ. 78`, `iteration variable 147`)",
-        "frh": "fraction of capital cost for remote handling",
         "frhocp": "Centrepost resistivity enhancement factor. For `itart=0`, this factor \n is used for the whole magnet ",
         "frholeg": "Ouboard legs resistivity enhancement factor. Only used for `itart=1`.",
         "frminor": "f-value for minor radius limit (`constraint equation 21`, `iteration variable 32`)",
@@ -9969,7 +9967,7 @@
         "step93": "",
         "step_con": "Contingency Percentage",
         "step_ref": "Reference values for cost model 2",
-        "step_rh_cost": "Remote Handling Percentage",
+        "step_rh_costfrac": "fraction of capital cost for remote handling (if cost_model = 2)",
         "strncon_cs": "strain in CS superconductor material (used in Nb3Sn critical surface model `isumatoh=1,4,5`)",
         "strncon_pf": "strain in PF superconductor material (used in Nb3Sn critical surface model `isumatph=1,4,5`)",
         "strncon_tf": "strain in TF superconductor material (used in Nb3Sn critical surface model `i_tf_sc_mat=1,4,5`)",
@@ -12021,10 +12019,6 @@
             "lb": 0.001,
             "ub": 1.0
         },
-        "frh": {
-            "lb": 0.0,
-            "ub": 1.0
-        },
         "frhocp": {
             "lb": 0.01,
             "ub": 5.0
@@ -13408,6 +13402,10 @@
         "stcl": {
             "lb": 0.0,
             "ub": 10.0
+        },
+        "step_rh_costfrac": {
+            "lb": 0.0,
+            "ub": 1.0
         },
         "strncon_cs": {
             "lb": -0.02,
@@ -16371,7 +16369,6 @@
             "fcontng",
             "fcr0",
             "fkind",
-            "frh",
             "fwallcst",
             "iavail",
             "avail_min",
@@ -16409,7 +16406,7 @@
             "output_costs",
             "discount_rate",
             "step_con",
-            "step_rh_cost",
+            "step_rh_costfrac",
             "step_ref",
             "tlife",
             "ucad",
@@ -19188,7 +19185,6 @@
         "fradwall": "real_variable",
         "frbeam": "real_variable",
         "freinke": "real_variable",
-        "frh": "real_variable",
         "frhocp": "real_variable",
         "frholeg": "real_variable",
         "frminor": "real_variable",
@@ -19567,6 +19563,7 @@
         "ssync": "real_variable",
         "stcl": "real_variable",
         "step_ref": "real_array",
+        "step_rh_costfrac": "real_variable",
         "strncon_cs": "real_variable",
         "strncon_pf": "real_variable",
         "strncon_tf": "real_variable",
