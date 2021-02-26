@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.0   Release Date :: 2021-01-25
-   Tag No. : v2.1-76-g92e0728b
-    Branch : issue-1217-plot-ploc-plotting
-   Git log : update pytest regressions
- Date/time : 23 Feb 2021 13:21:59 +00:00(hh:mm) UTC
+   Tag No. : v2.1-91-g349f51d0 code contains untracked changes
+    Branch : cost_model_2_remote_handling
+   Git log : Merge branch 'develop' into cost_model_2_remote_handling
+ Date/time : 25 Feb 2021 11:27:22 +00:00(hh:mm) UTC
       User : apearce
   Computer : H0892
- Directory : /tmp/pytest-of-apearce/pytest-18/test_scenario_scenario17_0
-     Input : /tmp/pytest-of-apearce/pytest-18/test_scenario_scenario18_0/IN.DAT
+ Directory : /tmp/pytest-of-apearce/pytest-25/test_scenario_scenario17_0
+     Input : /tmp/pytest-of-apearce/pytest-25/test_scenario_scenario18_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -1671,7 +1671,7 @@ iavail   = 0 * Switch for plant availability model;
 ifueltyp = 1 * Switch for fuel type;
 lsa      = 2 * Level of safety assurance switch (generally; use 3 or 4);
 output_costs = 0 * Switch for costs output;
-ratecdol = 0.06 * effective cost of money in constant dollars
+discount_rate = 0.06 * effective cost of money in constant dollars
 tlife    = 40 * plant life (years)
 ucblvd   = 280.0 * unit cost for blanket vanadium ($/kg)
 ucdiv    = 5.0d5 * cost of divertor blade ($)

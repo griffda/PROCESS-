@@ -463,7 +463,7 @@ contains
 
 		use cost_variables, only: fcdfuel, uche3, tlife, ifueltyp, cpstcst, &
       coeoam, coecap, output_costs, coe, lsa, cfactr, divcst, ucfuel, divlife, &
-      coefuelt, moneyint, cdrlife, capcost, cplife, fwallcst, fcr0, ratecdol, &
+      coefuelt, moneyint, cdrlife, capcost, cplife, fwallcst, fcr0, discount_rate, &
       decomf, cdcost, fcap0, fcap0cp, ucwst, ucoam, dtlife, blkcst, dintrt, &
       concost, cfind 
 		use fwbs_variables, only: bktlife 
@@ -531,11 +531,11 @@ contains
 
     !  Compound interest factor
 
-    feffwbl = (1.0D0 + ratecdol)**fwbllife
+    feffwbl = (1.0D0 + discount_rate)**fwbllife
 
     !  Capital recovery factor
 
-    crffwbl = (feffwbl*ratecdol) / (feffwbl-1.0D0)
+    crffwbl = (feffwbl*discount_rate) / (feffwbl-1.0D0)
 
     !  Annual cost of replacements
 
@@ -560,11 +560,11 @@ contains
 
        !  Compound interest factor
 
-       fefdiv = (1.0D0 + ratecdol)**divlife
+       fefdiv = (1.0D0 + discount_rate)**divlife
 
        !  Capital recovery factor
 
-       crfdiv = (fefdiv*ratecdol) / (fefdiv-1.0D0)
+       crfdiv = (fefdiv*discount_rate) / (fefdiv-1.0D0)
 
        !  Annual cost of replacements
 
@@ -588,11 +588,11 @@ contains
 
        !  Compound interest factor
 
-       fefcp = (1.0D0 + ratecdol)**cplife
+       fefcp = (1.0D0 + discount_rate)**cplife
 
        !  Capital recovery factor
 
-       crfcp = (fefcp*ratecdol) / (fefcp-1.0D0)
+       crfcp = (fefcp*discount_rate) / (fefcp-1.0D0)
 
        !  Annual cost of replacements
 
@@ -617,11 +617,11 @@ contains
 
     !  Compound interest factor
 
-    fefcdr = (1.0D0 + ratecdol)**cdrlife
+    fefcdr = (1.0D0 + discount_rate)**cdrlife
 
     !  Capital recovery factor
 
-    crfcdr = (fefcdr*ratecdol) / (fefcdr-1.0D0)
+    crfcdr = (fefcdr*discount_rate) / (fefcdr-1.0D0)
 
     !  Annual cost of replacements
 
@@ -714,7 +714,7 @@ contains
     !  years before the end of the plant's lifetime
 
     anndecom = decomf * concost * fcr0 / &
-         (1.0D0+ratecdol-dintrt)**(tlife-dtlife)
+         (1.0D0+discount_rate-dintrt)**(tlife-dtlife)
 
     !  Cost of electricity due to decommissioning fund
 

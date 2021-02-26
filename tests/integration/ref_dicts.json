@@ -1518,6 +1518,7 @@
         "diacf_scene": 0.0,
         "diaipf": 0.0,
         "dintrt": 0.0,
+        "discount_rate": 0.0435,
         "div_nref": 7000.0,
         "div_nu": 14000.0,
         "div_prob_fail": 0.0002,
@@ -3626,7 +3627,6 @@
         "radp": null,
         "ralpne": 0.1,
         "rat": 1.3e-08,
-        "ratecdol": 0.0435,
         "rb": 0.0,
         "rbld": 0.0,
         "rbmax": 0.0,
@@ -4690,6 +4690,7 @@
         "step23": 0.0,
         "step24": 0.0,
         "step25": 0.0,
+        "step27": 0.0,
         "step91": 0.0,
         "step92": 0.0,
         "step93": 0.0,
@@ -4764,6 +4765,7 @@
             6.22,
             0.75
         ],
+        "step_rh_costfrac": 0.0,
         "strncon_cs": -0.005,
         "strncon_pf": -0.005,
         "strncon_tf": -0.005,
@@ -8598,6 +8600,7 @@
         "diacf_scene": "diamagnetic current fraction, SCENE fit",
         "diaipf": "diamagnetic current fraction",
         "dintrt": "diff between borrowing and saving interest rates",
+        "discount_rate": "effective cost of money in constant dollars",
         "div_nref": "Reference value for cycle cycle life of divertor",
         "div_nu": "The cycle when the divertor fails with 100% probability",
         "div_prob_fail": "Divertor probability of failure (per op day)",
@@ -9797,7 +9800,6 @@
         "radp": "Derived type containing all radial profile information for PLASMOD",
         "ralpne": "thermal alpha density/electron density (`iteration variable 109`) (calculated if `ipedestal=3`)",
         "rat": "plasma chamber wall outgassing rate (Pa-m/s)",
-        "ratecdol": "effective cost of money in constant dollars",
         "rb": "outer radius of coil i (m)",
         "rbld": "sum of thicknesses to the major radius (m)",
         "rbmax": "Radius of maximum TF B-field (m)",
@@ -9959,11 +9961,13 @@
         "step23": "",
         "step24": "",
         "step25": "",
+        "step27": "",
         "step91": "",
         "step92": "",
         "step93": "",
         "step_con": "Contingency Percentage",
         "step_ref": "Reference values for cost model 2",
+        "step_rh_costfrac": "fraction of capital cost for remote handling (if cost_model = 2)",
         "strncon_cs": "strain in CS superconductor material (used in Nb3Sn critical surface model `isumatoh=1,4,5`)",
         "strncon_pf": "strain in PF superconductor material (used in Nb3Sn critical surface model `isumatph=1,4,5`)",
         "strncon_tf": "strain in TF superconductor material (used in Nb3Sn critical surface model `i_tf_sc_mat=1,4,5`)",
@@ -11366,6 +11370,10 @@
         "dintrt": {
             "lb": 0.0,
             "ub": 0.1
+        },
+        "discount_rate": {
+            "lb": 0.0,
+            "ub": 0.5
         },
         "div_nref": {
             "lb": 1000.0,
@@ -13191,10 +13199,6 @@
             "lb": 1e-10,
             "ub": 1e-06
         },
-        "ratecdol": {
-            "lb": 0.0,
-            "ub": 0.5
-        },
         "rbrt": {
             "lb": 0.0,
             "ub": 10.0
@@ -13398,6 +13402,10 @@
         "stcl": {
             "lb": 0.0,
             "ub": 10.0
+        },
+        "step_rh_costfrac": {
+            "lb": 0.0,
+            "ub": 1.0
         },
         "strncon_cs": {
             "lb": -0.02,
@@ -16396,8 +16404,9 @@
             "lsa",
             "moneyint",
             "output_costs",
-            "ratecdol",
+            "discount_rate",
             "step_con",
+            "step_rh_costfrac",
             "step_ref",
             "tlife",
             "ucad",
@@ -16599,6 +16608,7 @@
             "step23",
             "step24",
             "step25",
+            "step27",
             "step91",
             "step92",
             "step93",
@@ -19011,6 +19021,7 @@
         "denw": "real_variable",
         "dhecoil": "real_variable",
         "dintrt": "real_variable",
+        "discount_rate": "real_variable",
         "div_nref": "real_variable",
         "div_nu": "real_variable",
         "div_prob_fail": "real_variable",
@@ -19498,7 +19509,6 @@
         "rad_fraction_sol": "real_variable",
         "ralpne": "real_variable",
         "rat": "real_variable",
-        "ratecdol": "real_variable",
         "rbrt": "real_variable",
         "rbvfac": "real_variable",
         "rbwt": "real_variable",
@@ -19553,6 +19563,7 @@
         "ssync": "real_variable",
         "stcl": "real_variable",
         "step_ref": "real_array",
+        "step_rh_costfrac": "real_variable",
         "strncon_cs": "real_variable",
         "strncon_pf": "real_variable",
         "strncon_tf": "real_variable",
