@@ -1279,7 +1279,7 @@ contains
     step27 = 0.0D0
    
     ! 27.01 Remote Handling 
-    ! From Report by T. Hender CD-STEP-01030, scales with direct constrcuton costs
+    ! From report by T. Hender CD-STEP-01030, scales with direct capital costs
     step2701 = step_rh_costfrac * cdirt 
     
     step27 = step2701
