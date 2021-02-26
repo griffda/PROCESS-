@@ -266,6 +266,8 @@ contains
         case (85); call constraint_eqn_085(args)
          ! Constraint for turn dimension
         case (86); call constraint_eqn_086(args)
+         ! Constraint for cryogenic power
+        case (87); call constraint_eqn_087(args)
        case default
 
         idiags(1) = icc(i)
@@ -1790,8 +1792,8 @@ contains
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !! eps : input real :  inverse aspect ratio
-      !! fipir : input real :  f-value for Ip/Irod limit
-      !! ritfc : input real :  total (summed) current in TF coils (A)
+      !! fipir : input real : f-value for Ip/Irod upper limit
+      !! ritfc : input real : total (summed) current in TF coils (A)
       !! plascur : input real :  plasma current (A)
       !! itart : input integer : switch for spherical tokamak (ST) models:<UL>
       !! <LI> = 0 use conventional aspect ratio models;
@@ -2869,6 +2871,24 @@ contains
       args%units = 'm'
 
    end subroutine constraint_eqn_086
+
+   
+   subroutine constraint_eqn_087(args)
+      !! author: S. Kahn, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for TF coil cryogenic power upper limit
+      
+      use heat_transport_variables, only: crypmw, crypmw_max, f_crypmw
+      implicit none
+      type (constraint_args_type), intent(out) :: args
+
+      args%cc =  1.0D0 - f_crypmw * crypmw_max/crypmw
+      args%con = crypmw_max * (1.0D0 - args%cc)
+      args%err = crypmw * args%cc
+      args%symbol = '<'
+      args%units = 'MW'
+   end subroutine constraint_eqn_087
 
 end module constraints
 

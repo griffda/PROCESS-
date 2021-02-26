@@ -77,7 +77,9 @@ module constraint_variables
   !! (`constraint equation 33`, `iteration variable 50`)
 
   real(dp) :: fipir
-  !! f-value for Ip/Irod limit (`constraint equation 46`, `iteration variable 72`)
+  !! f-value for Ip/Irod upper limit
+  !! constraint equation icc = 46
+  !! iteration variable ixc = 72
 
   real(dp) :: fjohc
   !! f-value for central solenoid current at end-of-flattop
