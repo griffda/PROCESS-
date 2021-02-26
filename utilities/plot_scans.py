@@ -45,16 +45,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser( description='Plot optimization information', formatter_class=RawTextHelpFormatter )
     
     parser.add_argument('-f', '--input_files' , default='MFILE.DAT',
-                        help="Specify input file(s) path(s) (default = MFILE.DAT) \n
-                        More than one input file can be used eg: -f 'A_MFILE.DAT B_MFILE.DAT'.\n 
-                        You can only specify the folder containing the MFILE.\n
-                        The different files scan will be plotted on the same graph.\n
-                        The scans must use the same scan variation.")
+                        help="Specify input file(s) path(s) (default = MFILE.DAT) \n More than one input file can be used eg: -f 'A_MFILE.DAT B_MFILE.DAT'.\n You can only specify the folder containing the MFILE.\n The different files scan will be plotted on the same graph.\n The scans must use the same scan variation.")
 
     parser.add_argument('-yv', '--y_vars' , default='None',
-                        help="Select the output variables (default = None) \n
-                        More than one output can be plotted eg: -yv 'var1 var2'\n
-                        A separate plot will be created for each inputs")
+                        help="Select the output variables (default = None) \n More than one output can be plotted eg: -yv 'var1 var2'\n A separate plot will be created for each inputs")
           
     parser.add_argument('-out', '--term_output', action="store_true",
                         help="Option to show scans values on terminal" )
@@ -136,6 +130,7 @@ if __name__ == '__main__':
     labels["hfact"] = r'$f_\mathrm{H}$'
     labels["kappa"] = r'$\kappa_\mathrm{sep}$'
     labels["triang"] = r'$\delta_\mathrm{sep}$'
+    labels["f_tf_steel"] = r'f_\mathrm{steel}^\mathrm{TF}'
     # ------------
 
     # nsweep varible dict
