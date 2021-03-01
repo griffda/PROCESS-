@@ -49,5 +49,6 @@ OBS_VARS = {
     "ddwi":"d_vv_out",
     "pnuccp":"pnuc_cp",
     "nuc_pow_dep_tot":"pnuc_tot_blk_sector",
-    "t_turn:t_turn_tf"
+    "t_turn:t_turn_tf",
+    "ratecdol:discount_rate"
 }

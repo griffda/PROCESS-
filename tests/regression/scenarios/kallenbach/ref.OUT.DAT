@@ -5,15 +5,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 1.0.17   Release Date :: 2020-02-25
-   Tag No. : 1.0.17-919-g783b4651
-    Branch : issue-1122-res-TF-coil-ground-ins
-   Git log : Merge branch 'develop' into issue-1122-res-TF-coil-ground-ins
- Date/time :  6 Jan 2021 16:45:59 +00:00(hh:mm) UTC
-      User : skahn
-  Computer : J0320
- Directory : /tmp/pytest-of-skahn/pytest-111/test_solver0
-     Input : /tmp/pytest-of-skahn/pytest-111/test_scenario_scenario12_0/IN.DAT
+   Version : 2.1.0   Release Date :: 2021-01-25
+   Tag No. : v2.1-91-g349f51d0 code contains untracked changes
+    Branch : cost_model_2_remote_handling
+   Git log : Merge branch 'develop' into cost_model_2_remote_handling
+ Date/time : 25 Feb 2021 11:27:00 +00:00(hh:mm) UTC
+      User : apearce
+  Computer : H0892
+ Directory : /tmp/pytest-of-apearce/pytest-25/test_solver0
+     Input : /tmp/pytest-of-apearce/pytest-25/test_scenario_scenario12_0/IN.DAT
  Run title : kallenbach divertor model
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  

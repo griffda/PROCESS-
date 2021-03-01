@@ -537,11 +537,8 @@ module tfcoil_variables
   
   real(dp) :: tinstf
   !! Thickness of the ground insulation layer surrounding (m) 
-  !! 
-  !!   - Superconductor TF (`i_tf_sup == 1`) : The TF Winding packs
-  !!   - Resistive magnets (`i_tf_sup /= 1`) : The TF turns
-  !!
-  !! Rem : The default value includes allowance for 10 mm insertion gap.
+  !!   - Superconductor TF (`i_tf_sup == 1`) : The TF coil Winding packs
+  !!   - Resistive magnets (`i_tf_sup /= 1`) : The TF coil wedges
   !! Rem : Thickness calculated for stellarators.
 
   real(dp) :: tmargmin_tf

@@ -3613,8 +3613,6 @@ contains
   end subroutine set_itv_158
 
   !---------------------------------
-  ! DUMMY variables below here
-  !---------------------------------
 
   subroutine init_itv_159
     !! <LI> (159) ftoroidalgap : F-value for toroidalgap >  tftort constraint (con. 82)
@@ -3733,25 +3731,29 @@ contains
   !---------------------------------
 
   subroutine init_itv_164
-    !! <LI> (164) DUMMY : Description
+    !! (164) f-value for maximum cryogenic plant power
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(164) = 'DUMMY         '
-    boundl(164) = 1.0d-99
-    boundu(164) = 1.0d99
+    lablxc(164) = 'f_crypmw         '
+    boundl(164) = 0.001D0 
+    boundu(164) = 1.000D0  
   end subroutine init_itv_164
 
   real(kind(1.d0)) function itv_164()
+    use heat_transport_variables, only: f_crypmw
     implicit none
-    itv_164 = DUMMY 
+    itv_164 = f_crypmw
   end function itv_164
 
   subroutine set_itv_164(ratio)
+    use heat_transport_variables, only: f_crypmw
     implicit none
     real(kind(1.d0)) :: ratio
-    DUMMY = ratio
+    f_crypmw = ratio
   end subroutine set_itv_164
 
+  !---------------------------------
+  ! DUMMY variables below here
   !---------------------------------
 
   subroutine init_itv_165
