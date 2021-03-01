@@ -123,54 +123,6 @@ contains
     first_call_2d = .true.
   end subroutine init_scan_module
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine scan
-    !! Routine to call the optimisation routine VMCON over
-    !! a range of values of one of the variables
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! None
-    !! This routine calls the optimisation routine VMCON
-    !! a number of times, by performing a sweep over a range of
-    !! values of a particular variable.
-    !! <P>A number of output variable values are written to the
-    !! <CODE>PLOT.DAT</CODE> file at each scan point, for
-    !! plotting or other post-processing purposes.
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use error_handling, only: idiags, errors_on, report_error
-    use final_module, only: final
-    use constants, only: nout
-    implicit none
-
-    ! Local variables
-    integer :: ifail
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    ! Turn off error reporting (until next output)
-    errors_on = .false.
-
-    if (isweep == 0) then
-       call doopt(ifail)
-       call final(ifail)
-       return
-    end if
-
-    if (isweep > ipnscns) then
-       idiags(1) = isweep ; idiags(2) = ipnscns
-       call report_error(94)
-    end if
-
-    if (scan_dim == 2) then
-        call scan_2d
-    else
-        call scan_1d
-    end if
-
-  end subroutine scan
-
   subroutine scan_1d
     !! Routine to call 1-D scan
     !! author: J Morris, UKAEA, Culham Science Centre
