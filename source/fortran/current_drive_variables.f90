@@ -128,10 +128,10 @@ module current_drive_variables
   !!  - =6 new Culham Lower Hybrid model
   !!  - =7 new Culham ECCD model
   !!  - =8 new Culham Neutral Beam model
-  !!  - =9 Simple NBI model (see SYCOMORE HELIOS paper)
+  !!  - =9 RFP option removed in PROCESS (issue #508)
   !!  - =10 ECRH user input gamma
   !!  - =11 ECRH "HARE" model (E. Poli, Physics of Plasmas 2019)
-  !!  - =12 Simple NBI model
+  !!  - =12 EBW scaling (S. Freethy)
 
   integer :: iefrffix
   !! Switch for 2nd current drive efficiency model:
@@ -145,9 +145,10 @@ module current_drive_variables
   !! - =6 new Culham Lower Hybrid model
   !! - =7 new Culham ECCD model
   !! - =8 new Culham Neutral Beam model
-  !! - =9 Simple NBI model (see SYCOMORE HELIOS paper)
+  !! - =9 RFP option removed in PROCESS (issue #508)
   !! - =10 ECRH user input gamma
   !! - =11 ECRH "HARE" model (E. Poli, Physics of Plasmas 2019)
+  !! - =12 EBW scaling (S. Freethy)
 
   integer :: irfcd
   !! Switch for current drive calculation:

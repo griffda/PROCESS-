@@ -1,12 +1,16 @@
 
-# Introduction
+# Plasma physics
 
-By default, the plasma is assumed to have an up-down asymmetric, single null
-configuration (although this can be changed with user inputs). A great number 
-of physics models are coded within PROCESS to describe the behaviour of the 
-plasma parameters such as its current, temperature, density, pressure, 
-confinement etc., and also the various limits that define the stable operating 
-domain.
+## Introduction
+
+<p style='text-align: justify;'>
+  By default, the plasma is assumed to have an up-down asymmetric, single null
+  configuration (although this can be changed with user inputs). A great number 
+  of physics models are coded within PROCESS to describe the behaviour of the 
+  plasma parameters such as its current, temperature, density, pressure, 
+  confinement etc., and also the various limits that define the stable operating 
+  domain.
+</p>
 
 ## Plasma Geometry
 
@@ -17,45 +21,60 @@ its last closed flux surface (LCFS) elongation $\kappa$ (`kappa`) and triangular
 $\delta$ (`triang`), which can be scaled automatically with the aspect ratio if 
 required using switch `ishape`:
 
-- `ishape = 0` -- the input values for `kappa` and `triang` are used directly. 
-   The values for the plasma shaping parameters at the 95% flux surface are 
-   calculated as follows [^8]:
-   $$
+- <p style='text-align: justify;'>
+    `ishape = 0` -- the input values for `kappa` and `triang` are used directly.
+  </p>
+  $$
    \kappa_{95} = \kappa / 1.12
-   $$
-   $$
+  $$
+  $$
    \delta_{95} = \delta / 1.5
-   $$
+  $$
+  <p style='text-align: justify;'>
+    The values for the plasma shaping parameters at the 95% flux surface are
+    calculated as follows [^8]:
+  </p>
 
-- `ishape = 1` -- the following scaling is used, which is suitable for low aspect 
-  ratio machines ($\epsilon = 1/A$) [^1]:
+- <p style='text-align: justify;'>
+    `ishape = 1` -- the following scaling is used, which is suitable for low aspect
+    ratio machines ($\epsilon = 1/A$) [^1]:
+  </p>
   $$
   \kappa = 2.05 \, (1 + 0.44 \, \epsilon^{2.1})
   $$
   $$
   \delta = 0.53 \, (1 + 0.77 \, \epsilon^3)
   $$
-  The values for the plasma shaping parameters at the 95% flux surface are calculated 
-  using a fit to FIESTA runs, equivalent to `ishape = 8`.
+  The values for the plasma shaping
+  parameters at the 95% flux surface are calculated using a fit to FIESTA runs,
+  equivalent to `ishape = 8`.
 
-- `ishape = 2` -- the Zohm ITER scaling [^2] is used to calculate the elongation:
+- <p style='text-align: justify;'>
+    `ishape = 2` -- the Zohm ITER scaling [^2] is used to calculate the elongation:
+  </p>
   $$
   \kappa = F_{kz} \, \times \, \mathrm{minimum} \left( 2.0, \, \, 1.5 + \frac{0.5}{A-1} \right)
   $$
   where input variable `fkzohm` $= F_{kz}$ may be used to adjust the
   scaling, while the input value of the triangularity is used unchanged.
 
-- `ishape = 3` -- the Zohm ITER scaling is used to calculate the elongation (as 
-  for `ishape = 2` above), but the triangularity at the 95% flux surface is 
-  input via variable `triang95`, and the LCFS triangularity `triang` is calculated
-  from it, rather than the other way round.
+- <p style='text-align: justify;'>
+    `ishape = 3` -- the Zohm ITER scaling is used to calculate the elongation (as 
+    for `ishape = 2` above), but the triangularity at the 95% flux surface is 
+    input via variable `triang95`, and the LCFS triangularity `triang` is calculated
+    from it, rather than the other way round.
+  </p>
 
-- `ishape = 4` -- the 95% flux surface values `kappa95` and `triang95` 
-  are both used as inputs, and the LCFS values are calculated from them by 
-  inverting ``ishape = 0``.
+- <p style='text-align: justify;'>
+    `ishape = 4` -- the 95% flux surface values `kappa95` and `triang95` 
+    are both used as inputs, and the LCFS values are calculated from them by 
+    inverting ``ishape = 0``.
+  </p>
 
-- `ishape = 5` -- the 95% flux surface values `kappa95` and `triang95` 
-  are both used as inputs and the LCFS values are calculated from a fit to MAST data:
+- <p style='text-align: justify;'>
+    `ishape = 5` -- the 95% flux surface values `kappa95` and `triang95` 
+    are both used as inputs and the LCFS values are calculated from a fit to MAST data:
+  </p>
   $$
   \kappa = 0.91 \kappa_{95} + 0.39
   $$
@@ -63,10 +82,14 @@ required using switch `ishape`:
   \delta = 0.77 \delta_{95} + 0.19 
   $$
 
-- `ishape = 6` -- the input values for `kappa` and `triang` are used directly and the 95% flux surface values are calculated using the MAST scaling from `ishape = 5`.
+- <p style='text-align: justify;'>
+    `ishape = 6` -- the input values for `kappa` and `triang` are used directly and the 95% flux surface values are calculated using the MAST scaling from `ishape = 5`.
+  </p>
 
-- `ishape = 7` -- the 95% flux surface values `kappa95` and `triang95` 
-  are both used as inputs and the LCFS values are calculated from a fit to FIESTA runs:
+- <p style='text-align: justify;'>
+    `ishape = 7` -- the 95% flux surface values `kappa95` and `triang95` 
+    are both used as inputs and the LCFS values are calculated from a fit to FIESTA runs:
+  </p>
   $$
   \kappa = 0.91 \kappa_{95} + 0.39
   $$
@@ -74,7 +97,9 @@ required using switch `ishape`:
   \delta = 1.38 \delta_{95} + 0.05 
   $$
 
-- `ishape = 8` -- the input values for `kappa` and `triang` are used directly and the 95% flux surface values are calculated using the FIESTA fit from `ishape = 7`.
+- <p style='text-align: justify;'>
+    `ishape = 8` -- the input values for `kappa` and `triang` are used directly and the 95% flux surface values are calculated using the FIESTA fit from `ishape = 7`.
+  </p>
 
 A constraint relating to the plasma's vertical stability may be turned on if
 required. In principle, the inner surface of the outboard shield could be used
@@ -96,25 +121,32 @@ based on a more recent derivation (`igeom = 1`).
 
 ## Fusion Reactions
 
+<p style='text-align: justify;'>
 The most likely fusion reaction to be utilised in a power plant is the
 deuterium-tritium reaction:
+</p>
 
 $$
 \mathrm{D + T} \Longrightarrow \mathrm{^{4}He + n + 17.6 \,MeV}
 $$
 
-20% of the energy produced is given to the alpha particles ($^4$He), a
-fraction of which remain (c.f. `falpha`) within the plasma and thermalise (slow 
+<p style='text-align: justify;'>
+20% of the energy produced is given to the alpha particles (\(^4\)He), a
+fraction of which remain (c.f. <em>falpha</em>) within the plasma and thermalise (slow 
 down) due to collisions, thus heating the plasma. The remaining 80% is carried 
 away by the neutrons, which deposit their energy within the blanket and shield.
+</p>
 
+<p style='text-align: justify;'>
 PROCESS can also model D-$^3$He power plants, which utilise the following 
 primary fusion reaction:
+</p>
 
 $$
 \mathrm{D + \text{$^3$He}} \Longrightarrow \mathrm{^{4}He + p + 18.3 \,MeV}
 $$
 
+<p style='text-align: justify;'>
 The fusion reaction rate is significantly different to that for D-T fusion,
 and the power flow from the plasma is modified since charged particles are
 produced rather than neutrons. Because only charged particles (which remain in
@@ -122,30 +154,39 @@ the plasma) are produced by this reaction, the whole of the fusion power is
 used to heat the plasma. Useful energy is extracted from the plasma since the
 radiation power produced is very high, and this can be converted to
 electricity in a number of ways.
+</p>
 
-Since the temperature required to ignite the D-$^3$He reaction is considerably
+<p style='text-align: justify;'>
+Since the temperature required to ignite the D-\(^3\)He reaction is considerably
 higher than that for D-T, it is necessary to take into account the following
 D-D reactions, which have significant reaction rates at such temperatures:
+</p>
 
 $$\begin{aligned}
 \mathrm{D + D}  & \Longrightarrow \mathrm{^{3}He + n + 3.27 \,MeV} \\
 \mathrm{D + D}  & \Longrightarrow \mathrm{T + p + 4.03 \,MeV}
 \end{aligned}$$
 
+<p style='text-align: justify;'>
 Also, as tritium is produced by the latter reaction, D-T fusion is also
 possible. As a result, there is still a small amount of neutron power
 extracted from the plasma.
+</p>
 
-Pure D-$^3$He tokamak power plants do not include blankets, because of the near
+<p style='text-align: justify;'>
+Pure D-\(^3\)He tokamak power plants do not include blankets, because of the near
 absence of neutrons leaving the plasma, and the fact that no tritium needs to
 be produced for fuel.
+</p>
 
+<p style='text-align: justify;'>
 The contributions from all four of the above fusion reactions are included in
 the total fusion power production calculation. The fusion reaction rates are
 calculated using the parameterizations in [^5], integrated over the plasma 
 profiles (correctly, with or without pedestals).
+</p>
 
-The fractional composition of the 'fuel' ions (D, T and $^3$He) is
+The fractional composition of the 'fuel' ions (D, T and \(^3\)He) is
 controlled using the three variables `fdeut`, `ftrit` and `fhe3`, respectively:
 
 $$\begin{aligned}
@@ -585,6 +626,35 @@ typically smaller than the diamagnetic current, but is negative.
 There is no ability to input the diamagnetic and Pfirsch-Schlüter current
 directly.  In this case, it is recommended to turn off these two scalings 
 and to use the method of fixing the bootstrap current fraction.
+
+## Heating current drive
+
+<p style='text-align: justify;'>
+  It is possible to setup two heating/current drive systems at the same time in
+  <em>PROCESS</em>. The first, potentually used as iteration variable for the
+  solver to close the current/energy steady state requirements. The second,
+  optional, is set to a fixed heating power only to simplify the plant
+  optimization procedure.
+</p>
+
+The integer switch `iefrf` and  `iefrffix` selects the primary and secondary 
+heating system, respectively:
+
+| `iefrf`/`iefrffix`| Description |
+| :-: | - | 
+| 1  | Fenstermacher Lower Hybrid |
+| 2  | Ion Cyclotron current drive |
+| 3  | Fenstermacher ECH |
+| 4  | Ehst Lower Hybrid |
+| 5  | ITER Neutral Beam |
+| 6  | new Culham Lower Hybrid model |
+| 7  | new Culham ECCD model |
+| 8  | new Culham Neutral Beam model |
+| 9  | RFP option removed in PROCESS (issue #508) |
+| 10 |  ECRH user input gamma |
+| 11 |  ECRH "HARE" model (E. Poli, Physics of Plasmas 2019) |
+| 12 |  EBW scaling (S. Freethy, PROCESS issue 1262) |
+
 
 ## L-H Power Threshold Scalings
 

@@ -1294,12 +1294,11 @@ contains
        case ('rho_ecrh')
           call parse_real_variable('rho_ecrh', rho_ecrh, 0.0D0, 1.0D0, &
                'normalised minor radius at which electron cyclotron current drive is maximum')
-
        case ('iefrf')
-          call parse_int_variable('iefrf', iefrf, 1, 11, &
+          call parse_int_variable('iefrf', iefrf, 1, 12, &
                'Switch for curr drive efficiency model')
        case ('iefrffix')
-          call parse_int_variable('iefrffix', iefrffix, 0, 11, &
+          call parse_int_variable('iefrffix', iefrffix, 0, 12, &
                'Switch for 2nd curr drive efficiency model')
        case ('irfcd')
           call parse_int_variable('irfcd', irfcd, 0, 1, &
