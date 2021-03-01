@@ -199,20 +199,7 @@ class MFILEParser(abc.MutableMapping):
             _desc = _desc.title().strip()
             _desc = _desc.replace('"', '')
             _desc = re.sub(r'\s{2,}', ' ', _desc)
-            if any(i in _var_key for i in ['(', '[']):
-                _index = re.findall(r'[\(\[]{1}(\d+)', _var_key)
-                if not _index:
-                    continue
-                _var_key = _var_key.split('(')[0].split('[')[0]
-                if _var_key not in _vars_dict:
-                    _vars_dict[_var_key] = {
-                        'description': _desc,
-                        'value': []
-                    }
-                _vars_dict[_var_key]['value'].append(
-                    self._find_var_val_from_str(_value)
-                )
-            elif _var_key in _vars_dict:
+            if _var_key in _vars_dict:
                 if not isinstance(_vars_dict[_var_key], list):
                     _vars_dict[_var_key]['value'] = [
                         _vars_dict[_var_key]['value']
