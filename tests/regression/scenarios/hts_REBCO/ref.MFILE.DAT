@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "23/02/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "13:21"
+ Date_of_run_____________________________________________________________ (date)________________________     "25/02/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "11:26"
  User____________________________________________________________________ (username)____________________     "apearce" 
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "hts model using "croco" conductor based on kit design                                              
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-76-g92e0728b"                                                                                 
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "issue-1217-plot-ploc-plotting"                                                                     
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "update pytest regressions"                                                                         
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-apearce/pytest-18/test_scenario_scenario8_0/IN.DAT                                                                                                                                       "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-91-g349f51d0"                                                                                 
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "cost_model_2_remote_handling"                                                                      
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch 'develop' into cost_model_2_remote_handling"                                          
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-apearce/pytest-25/test_scenario_scenario8_0/IN.DAT                                                                                                                                       "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -1213,7 +1213,7 @@ iavail   = 0 * iavail /2/ ; switch for plant availability model;<UL>
 ifueltyp = 1 * ifueltyp /0/ ; switch;<UL>
 lsa      = 2 * lsa /4/ ; level of safety assurance switch (generally; use 3 or 4);<UL>
 output_costs = 0 * output_costs /1/ ; switch for costs output;<UL>
-ratecdol = 0.06 * ratecdol /0;0435/ ; effective cost of money in constant dollars
+discount_rate = 0.06 * discount_rate /0;0435/ ; effective cost of money in constant dollars
 tlife    = 40 * tlife /30;0/ ; plant life (years)
 ucblvd   = 280.0 * ucblvd /200;0/ ; unit cost for blanket vanadium ($/kg)
 ucdiv    = 5.0d5 * ucdiv /2;8e5/ ; cost of divertor blade ($)

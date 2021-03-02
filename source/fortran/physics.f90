@@ -4032,7 +4032,7 @@ module physics_module
 
     call ovarre(outfile,'Ion density (/m3)','(dnitot)',dnitot, 'OP ')
     call ovarre(outfile,'Fuel density (/m3)','(deni)',deni, 'OP ')
-    call ovarre(outfile,'High Z impurity density (/m3)','(dnz)',dnz, 'OP ')
+    call ovarre(outfile,'Total impurity density with Z > 2 (no He) (/m3)','(dnz)',dnz, 'OP ')
     call ovarre(outfile,'Helium ion density (thermalised ions only) (/m3)','(dnalp)',dnalp, 'OP ')
     call ovarre(outfile,'Proton density (/m3)','(dnprot)',dnprot, 'OP ')
     if(protium > 1.0d-10)then

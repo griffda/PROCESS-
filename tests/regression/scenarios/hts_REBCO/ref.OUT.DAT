@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.0   Release Date :: 2021-01-25
-   Tag No. : v2.1-76-g92e0728b
-    Branch : issue-1217-plot-ploc-plotting
-   Git log : update pytest regressions
- Date/time : 23 Feb 2021 13:21:15 +00:00(hh:mm) UTC
+   Tag No. : v2.1-91-g349f51d0 code contains untracked changes
+    Branch : cost_model_2_remote_handling
+   Git log : Merge branch 'develop' into cost_model_2_remote_handling
+ Date/time : 25 Feb 2021 11:26:39 +00:00(hh:mm) UTC
       User : apearce
   Computer : H0892
- Directory : /tmp/pytest-of-apearce/pytest-18/test_solver0
-     Input : /tmp/pytest-of-apearce/pytest-18/test_scenario_scenario8_0/IN.DAT
+ Directory : /tmp/pytest-of-apearce/pytest-25/test_solver0
+     Input : /tmp/pytest-of-apearce/pytest-25/test_scenario_scenario8_0/IN.DAT
  Run title : hts model using "croco" conductor based on kit design
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -1672,7 +1672,7 @@ iavail   = 0 * iavail /2/ ; switch for plant availability model;<UL>
 ifueltyp = 1 * ifueltyp /0/ ; switch;<UL>
 lsa      = 2 * lsa /4/ ; level of safety assurance switch (generally; use 3 or 4);<UL>
 output_costs = 0 * output_costs /1/ ; switch for costs output;<UL>
-ratecdol = 0.06 * ratecdol /0;0435/ ; effective cost of money in constant dollars
+discount_rate = 0.06 * discount_rate /0;0435/ ; effective cost of money in constant dollars
 tlife    = 40 * tlife /30;0/ ; plant life (years)
 ucblvd   = 280.0 * ucblvd /200;0/ ; unit cost for blanket vanadium ($/kg)
 ucdiv    = 5.0d5 * ucdiv /2;8e5/ ; cost of divertor blade ($)

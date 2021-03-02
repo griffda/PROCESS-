@@ -1,0 +1,98 @@
+Variable                                	ref       	new       	diff (%)  	Jorrit comments
+----------------------------------------
+c2141                                   	54.2      	48.8      	10.01     	?
+c2142                                   	35.3      	31.9      	9.61      	?
+c2174                                   	7.38      	6.94      	5.87      	?
+c22211                                  	861       	753       	12.58     	?
+c22213                                  	213       	108       	49.14     	?
+c22214                                  	303       	140       	53.71     	?
+c2221                                   	1.48e+03  	1.13e+03  	23.15     	?
+c222                                    	1.94e+03  	1.6e+03   	17.61     	?
+c22511                                  	8.44      	7.93      	6.11      	?
+c22513                                  	26.9      	25.1      	6.78      	?
+c22515                                  	206       	187       	9.31      	?
+c2263                                   	177       	163       	7.79      	?
+c22                                     	4.18e+03  	3.94e+03  	5.65      	?
+crctcore                                	2.77e+03  	2.43e+03  	12.34     	check
+betap                                   	8.24      	0         	100.00    	ok
+eps*betap                               	0.674     	0         	100.00    	ok
+tfarea/n_tf                             	0.83      	0.722     	12.95     	check
+tficrn                                  	0.437     	0.382     	12.60     	check
+tfocrn                                  	0.437     	0.382     	12.60     	check
+tftort                                  	0.874     	0.764     	12.60     	ok because of changed jcrit (tokamak parametrization used now)
+estotftgj                               	153       	143       	6.81      	ok because calculated externally
+whttf                                   	9.64e+06  	7.31e+06  	24.14     	check
+whtconsc                                	2.57e+04  	2.22e+04  	13.30     	ok because of changed jcrit
+whtconcu                                	5.65e+04  	4.9e+04   	13.30     	ok because of changed jcrit
+acstf                                   	0.00271   	0.00221   	18.41     	check
+acond/ap                                	0.555     	0.494     	10.96     	check
+avwp/ap                                 	0.238     	0.212     	10.96     	check
+wwp1                                    	0.668     	0.608     	9.03      	check
+cpttf                                   	9.24e+04  	8.38e+04  	9.31      	check
+casthi                                  	0.0977    	0.06      	38.56     	ok because imposed and arbitrary
+thkcas                                  	0.146     	0.06      	59.04     	ok because imposed and arbitrary
+casths                                  	0.103     	0.06      	41.69     	ok because imposed and arbitrary
+acasetf                                 	0.358     	0.191     	46.79     	check
+whtcas                                  	1.01e+05  	5.13e+04  	49.14     	check
+vporttmax                               	2.02      	0.848     	57.95     	ok because needs to be determined better later anyway
+vportpmax                               	4.49      	1.7       	62.25     	ok because needs to be determined better later anyway
+vportamax                               	9.06      	1.44      	84.13     	ok because needs to be determined better later anyway
+hporttmax                               	2.02      	1.7       	15.91     	ok because needs to be determined better later anyway
+hportpmax                               	5.22      	3.39      	35.08     	ok because needs to be determined better later anyway
+hportamax                               	10.5      	5.75      	45.40     	ok because needs to be determined better later anyway
+aintmass                                	1.03e+07  	4.75e+06  	53.71     	ok because needs to be determined better later anyway
+coldmass                                	4.26e+07  	3.48e+07  	18.39     	ok because usage of a different model now
+itfka                                   	92.4      	83.8      	9.31      	?
+r1emj                                   	765       	713       	6.81      	?
+ttfsec                                  	inf       	10        	100.00    	?
+tfpska                                  	97        	88        	9.31      	?
+tfckw                                   	8.38e+04  	7.66e+04  	8.61      	?
+tfackw                                  	9.31e+04  	8.51e+04  	8.61      	?
+rpower                                  	54.8      	49.7      	9.31      	?
+xpower                                  	21.2      	19.8      	6.81      	?
+albusa                                  	739       	671       	9.31      	?
+albuswt                                 	3.61e+03  	3.28e+03  	9.31      	?
+xpwrmw                                  	23.6      	22        	6.81      	?
+tfacpd                                  	60.9      	55.2      	9.31      	?
+cryv                                    	1.91e+04  	1.8e+04   	5.87      	ok bc nearly the same
+crymw                                   	59.4      	52.6      	11.40     	?
+ptfmw                                   	60.9      	55.2      	9.31      	?
+qss/1.0d6                               	0.0199    	0.0162    	18.24     	?
+qcl/1.0d6                               	0.0628    	0.057     	9.31      	?
+qmisc/1.0d6                             	0.0374    	0.0331    	11.40     	?
+helpow/1.0d6                            	0.12      	0.107     	11.40     	?
+crypmw                                  	59.4      	52.6      	11.40     	?
+
+
+There are 4 variables in ref NOT IN new:
+
+ritfc/1.d6					renaming I think right?
+r_tf_inboard_mid
+dr_tf_inner_bore
+dh_tf_inner_bore
+
+
+There are 21 variables in new NOT IN ref:
+
+available_radial_space				new constraint
+required_radial_space				new constraint
+f_avspace					new constraint
+toroidalgap					new constraint
+ritfc						?
+ritfc/n_tf					?
+r_tf_inleg_mid					?
+tf_total_h_width				?
+tfborev							
+ap
+fiooic
+max_force_density
+strtf2
+sigvvall
+taucq
+tdmptf
+vdalw
+coppera_m2
+coppera_m2/coppera_m2_max
+empiricalmass
+clgsmass
+
