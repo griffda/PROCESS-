@@ -938,6 +938,7 @@ contains
   use plasmod_variables, only: ped, radp, num, mhd, inp0, loss, i_flag, geom, &
     comp
   use physics_variables, only: ipedestal
+  use define_iteration_variables, only: boundxc, loadxc
   implicit none
 
   !  Arguments
