@@ -1,3 +1,16 @@
+###############################################################################
+#                                                                             #
+#                      MFILE to Python Dictionary Conversion                  #
+#                                                                             #
+#   Converts data from a PROCESS MFILE to a Python Dictionary with the        #
+#   option to then write the result to a file. The format of the output is    #
+#   determined by the specified file type which can be JSON, TOML, YAML or    #
+#   a Pickle file. If TOMLKit is available the output contains docstrings.    #
+#                                                                             #
+#   @author :   K. Zarebski <kristian.zarebski@ukaea.uk>                      #
+#   @date   :   last modified 2021-02-22                                      #
+#                                                                             #
+###############################################################################
 from typing import Dict, List, Any
 from collections import OrderedDict
 from collections import abc
