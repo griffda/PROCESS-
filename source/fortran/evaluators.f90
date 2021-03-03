@@ -98,8 +98,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use global_variables, only: vlabel, icase, verbose
-		use constants, only: nout, iotty, vfile
+		use global_variables, only: verbose
+		use constants, only: vfile
 		use constraints, only: constraint_eqns 
 		use cost_variables, only: coe 
 		use numerics, only: nviter 
@@ -205,11 +205,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use global_variables, only: icase
 		use constraints, only: constraint_eqns 
-		use error_handling, only: report_error, idiags, fdiags, errors_on 
-		use numerics, only: ipnvars, epsfcn 
-		use process_output, only: int_to_string3 
+		use numerics, only: ipnvars, epsfcn
     implicit none
 
     !  Arguments
