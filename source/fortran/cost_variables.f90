@@ -523,6 +523,9 @@ module cost_variables
   real(dp), dimension(7) :: ucsc
   !! cost of superconductor ($/kg)
 
+  real(dp) :: unit_cost_cryo_al
+  !! Unit cost of cryo aluminium ($/kg)
+
   real(dp), parameter :: ucsh = 115.0D0
   !! cost of shops and warehouses (M$/m3)
 
@@ -740,5 +743,6 @@ module cost_variables
     ucwst = (/0.0D0, 3.94D0, 5.91D0, 7.88D0/)
     i_cp_lifetime = 0
     cplife_input = 2.0D0
+    unit_cost_cryo_al = 10.0D0
   end subroutine init_cost_variables
 end module cost_variables

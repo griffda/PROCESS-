@@ -464,10 +464,12 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use build_variables, only: fwarea
-    use cost_variables, only: output_costs, step_ref, ifueltyp, fcdfuel, divcst, cdcost
+    use cost_variables, only: output_costs, step_ref, ifueltyp, fcdfuel, &
+      divcst, cdcost, unit_cost_cryo_al
     use current_drive_variables, only: pinjmw
     use physics_variables, only: rmajor, rminor
     use process_output, only: ocosts, oblnkl
+    use tfcoil_variables, only: i_tf_sup, whttf
     
     implicit none
   
@@ -505,6 +507,14 @@ contains
     ! 22.01.03.01 TF Coils
     ! Original STARFIRE value, scaling with fusion island volume
     step22010301 = step_ref(22) * (vfi / vfi_star)
+    
+    ! Cost of cryo-ali here?
+    ! If using cryo-ali tfcoil model, just add cost of aluminium
+    if (i_tf_sup == 2) then
+      step22010301 = step22010301 + (whttf * unit_cost_cryo_al)
+      ! Uses whttf, total mass of TF coils. Is this all aluminium?
+    endif
+
     step2201 = step2201 + step22010301
 
     ! 22.01.03.02 PF Coils
