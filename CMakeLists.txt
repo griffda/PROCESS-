@@ -119,6 +119,8 @@ LIST(APPEND PROCESS_SRCS
     buildings_variables.f90
     maths_library.f90
     vmcon_test.f90
+    iteration_variables.f90
+    optimiz_module.f90
 )
 
 # Install all requirements in the current Python environment
