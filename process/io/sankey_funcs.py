@@ -509,7 +509,7 @@ def plot_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow Sankey Diag
     trithtmw = m_file.data['trithtmw'].get_scan(-1) # power required for tritium processing (MW)
     vachtmw = m_file.data['vachtmw'].get_scan(-1) # vacuum pump power (MW)
     pfwpmw = m_file.data['pfwpmw'].get_scan(-1) # Total mean wall plug power for PFC & CS (MW)
-    ppump = m_file.data['ppump'].get_scan(-1)   
+    #ppump = m_file.data['ppump'].get_scan(-1)   
     ppumpmw = m_file.data['ppump'].get_scan(-1)/1e6 # Set pumping power to MW by dividing by 1e6
     
     # Energy required for rest of power plant (MW)
