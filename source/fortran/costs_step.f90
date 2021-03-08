@@ -22,7 +22,7 @@ module costs_step_module
 
   !  Various cost account values (M$)
   real(dp) :: step20, step21, step22, step23, step24, step25, &
-  step91, step92, step93, fwblkcost
+  step27, step91, step92, step93, fwblkcost
 
   ! Scaling Properties
   real(dp) :: vfi, vfi_star, ptherm_star, pinjmw_star, fwarea_star, &
@@ -40,6 +40,7 @@ contains
     step23 = 0.0D0
     step24 = 0.0D0
     step25 = 0.0D0
+    step27 = 0.0D0
     step91 = 0.0D0
     step92 = 0.0D0
     step93 = 0.0D0
@@ -74,7 +75,7 @@ contains
 
     use constants, only: pi
     use build_variables, only: r_tf_outboard_mid, tfthko, hpfu, hmax, tfcth
-    use cost_variables, only: output_costs, cdirt, concost
+    use cost_variables, only: output_costs, cdirt, concost, ireactor, ipnet
     use fwbs_variables, only: emultmw
     use heat_transport_variables, only: pinjwp
     use physics_variables, only: powfmw
@@ -106,7 +107,7 @@ contains
     ! Output header
     if ((iprint==1).and.(output_costs == 1)) then
       call oheadr(outfile,'STEP Costing Model (1980 US$)')
-      call oheadr(outfile,'!!WARNING - Under development!! DO NOT USE!')
+      !call oheadr(outfile,'!!WARNING - Under development!! DO NOT USE!')
     end if
     
     ! Account 20 : Land and Rights
@@ -127,8 +128,14 @@ contains
     ! Account 25 : Miscellaneous Plant Equipment
     call step_a25(outfile,iprint)
 
-    ! Total plant direct cost
+    ! Total plant direct cost without remote handling
     cdirt = step20 + step21 + step22 + step23 + step24 + step25
+
+    ! Account 27 : Remote Handling
+    call step_a27(outfile,iprint) 
+
+    ! Total plant direct cost with remote handling
+    cdirt = cdirt + step27
 
     ! Account 91 : Construction Facilities, Equipment and Services (10%)
     step91 = 1.0D-1 * cdirt
@@ -157,8 +164,9 @@ contains
     end if
 
     !  Cost of electricity
-    ! if ((ireactor == 1).and.(ipnet == 0)) call coelc_step(outfile,iprint)
-
+    if ((ireactor == 1).and.(ipnet == 0)) then 
+      call coelc_step(outfile,iprint) 
+    end if 
   end subroutine costs_step
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -190,12 +198,12 @@ contains
     ! Initialise as zero
     step20 = 0.0D0
    
-    ! 21.01 Land
+    ! 20.01 Land
     ! Original STARFIRE value, scaling with thermal power
     step2001 = step_ref(1) * (pth / ptherm_star)**0.6D0
     step20 = step20 + step2001
 
-    ! 21.02 Site Preparation
+    ! 20.02 Site Preparation
     ! Original STARFIRE value, scaling with thermal power
     step2002 = step_ref(2) * (pth / ptherm_star)**0.6D0
     step20 = step20 + step2002
@@ -381,7 +389,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
     use process_output, only: oshead, ocosts, oblnkl
-    use cost_variables, only: output_costs, step_con
+    use cost_variables, only: output_costs, step_con, step_rh_costfrac
 
     implicit none
   
@@ -389,7 +397,7 @@ contains
     integer, intent(in) :: iprint,outfile
   
     ! Local variables
-    real(dp):: step2298, step2299
+    real(dp):: step2297, step2298, step2299
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -867,7 +875,8 @@ contains
      
     ! 22.06.01 Maintenance Equipment
     ! Original STARFIRE value, scaling with fusion island volume
-    step220601 = step_ref(42) * (vfi / vfi_star)**(2.0D0/3.0D0)
+    ! Depreciated by the remote handling scaling in cost account 27. 
+    step220601 = 0.0 ! step_ref(42) * (vfi / vfi_star)**(2.0D0/3.0D0)
     step2206 = step2206 + step220601
     ! STARFIRE percentage for spares
     step2298 = step2298 + 4.308D-1 * step220601
@@ -1242,6 +1251,51 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  subroutine step_a27(outfile,iprint)
+
+    !! Account 27 : Remote Handling
+    !! author: A J Pearce, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 27 (Remote Handling)
+    !! costs.
+    !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use cost_variables, only: output_costs, cdirt, step_rh_costfrac
+    use process_output, only: oshead, ocosts, oblnkl
+
+    implicit none
+
+    ! Arguments
+    integer, intent(in) :: iprint,outfile
+
+    ! Local variables
+    real(dp):: step2701
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    ! Initialise as zero
+    step27 = 0.0D0
+   
+    ! 27.01 Remote Handling 
+    ! From report by T. Hender CD-STEP-01030, scales with direct capital costs
+    step2701 = step_rh_costfrac * cdirt 
+    
+    step27 = step2701
+
+    ! Output costs
+    if ((iprint==1).and.(output_costs == 1)) then
+      call oshead(outfile,'27. Remote Handling')
+      call ocosts(outfile,'(step2701)','Remote Handing (M$)', step2701)
+      call oblnkl(outfile)
+      call ocosts(outfile,'(step27)','Total Account 27 Cost (M$)', step27)
+    end if
+
+  end subroutine step_a27
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   subroutine coelc_step(outfile,iprint)
 
     !! Routine to calculate the cost of electricity for a fusion power plant
@@ -1257,7 +1311,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use cost_variables, only: output_costs, ratecdol, tlife, ucfuel, uche3, cdcost, &
+    use cost_variables, only: output_costs, discount_rate, tlife, ucfuel, uche3, cdcost, &
       divcst, fcdfuel, ifueltyp, moneyint, lsa, ucwst, ucoam, fwallcst, fcr0, fcap0cp, &
       cfind, fcap0, dtlife, divlife, dintrt, decomf, cpstcst, cplife, concost, coeoam, &
       coefuelt, coecap, coe, cfactr, cdrlife, capcost
@@ -1307,10 +1361,10 @@ contains
     fwbllife = bktlife
 
     ! Compound interest factor
-    feffwbl = (1.0D0 + ratecdol)**fwbllife
+    feffwbl = (1.0D0 + discount_rate)**fwbllife
 
     ! Capital recovery factor
-    crffwbl = (feffwbl*ratecdol) / (feffwbl-1.0D0)
+    crffwbl = (feffwbl*discount_rate) / (feffwbl-1.0D0)
 
     ! Annual cost of replacements
     annfwbl = fwblkcost * (1.0D0+cfind(lsa)) * fcap0cp * crffwbl
@@ -1322,10 +1376,10 @@ contains
     ! =============================
 
     ! Compound interest factor
-    fefdiv = (1.0D0 + ratecdol)**divlife
+    fefdiv = (1.0D0 + discount_rate)**divlife
 
     ! Capital recovery factor
-    crfdiv = (fefdiv*ratecdol) / (fefdiv-1.0D0)
+    crfdiv = (fefdiv*discount_rate) / (fefdiv-1.0D0)
 
     ! Annual cost of replacements
     anndiv = divcst * (1.0D0+cfind(lsa)) * fcap0cp * crfdiv
@@ -1338,10 +1392,10 @@ contains
 
     if (itart == 1) then
       ! Compound interest factor
-      fefcp = (1.0D0 + ratecdol)**cplife
+      fefcp = (1.0D0 + discount_rate)**cplife
 
       ! Capital recovery factor
-      crfcp = (fefcp*ratecdol) / (fefcp-1.0D0)
+      crfcp = (fefcp*discount_rate) / (fefcp-1.0D0)
 
       ! Annual cost of replacements
       anncp = cpstcst * (1.0D0+cfind(lsa)) * fcap0cp * crfcp
@@ -1357,10 +1411,10 @@ contains
     ! =================================================
 
     ! Compound interest factor
-    fefcdr = (1.0D0 + ratecdol)**cdrlife
+    fefcdr = (1.0D0 + discount_rate)**cdrlife
 
     ! Capital recovery factor
-    crfcdr = (fefcdr*ratecdol) / (fefcdr-1.0D0)
+    crfcdr = (fefcdr*discount_rate) / (fefcdr-1.0D0)
 
     ! Annual cost of replacements
     if (ifueltyp == 0) then
@@ -1437,7 +1491,7 @@ contains
   !  Difference (dintrt) between borrowing and saving interest rates is
   !  included, along with the possibility of completing the fund dtlife
   !  years before the end of the plant's lifetime
-  anndecom = decomf * concost * fcr0 / (1.0D0+ratecdol-dintrt)**(tlife-dtlife)
+  anndecom = decomf * concost * fcr0 / (1.0D0+discount_rate-dintrt)**(tlife-dtlife)
 
   !  Cost of electricity due to decommissioning fund
   coedecom = 1.0D9 * anndecom / kwhpy

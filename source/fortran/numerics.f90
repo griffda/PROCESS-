@@ -144,7 +144,7 @@ module numerics
   !!            (TART) (consistency equation) (itv 13,20,69,70)
   !!  <LI> (44) Peak centrepost temperature upper limit (TART) (itv 68,69,70)
   !!  <LI> (45) Edge safety factor lower limit (TART) (itv 71,1,2,3)
-  !!  <LI> (46) Equation for plasma over central collumn current upper limit (TART) (itv 72,2,60)
+  !!  <LI> (46) Equation for Ip/Irod upper limit (TART) (itv 72,2,60)
   !!  <LI> (47) NOT USED
   !!  <LI> (48) Poloidal beta upper limit (itv 79,2,3,18)
   !!  <LI> (49) NOT USED
@@ -490,7 +490,7 @@ contains
       'Average centrepost temperature   ', &
       'Peak centrepost temp. upper limit', &
       'Edge safety factor lower limit   ', &
-      'Ip/I_centrepost upper limit      ', &
+      'Ip/Irod upper limit              ', &
       'TF coil tor. thickness upper lim ', &
       'Poloidal beta upper limit        ', &
       'RFP reversal parameter < 0       ', &

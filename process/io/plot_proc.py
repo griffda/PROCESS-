@@ -234,10 +234,10 @@ def cumulative_radial_build(section, mfile_data, scan):
             cumulative_build += mfile_data.data["d_vv_in"].get_scan(scan)
         elif "d_vv_out" in item:
             cumulative_build += mfile_data.data["d_vv_out"].get_scan(scan)
-        elif "d_vv_top" in item:
-            cumulative_build += mfile_data.data["d_vv_top"].get_scan(scan)
-        elif "d_vv_bot" in item:
-            cumulative_build += mfile_data.data["d_vv_bot"].get_scan(scan)
+        #elif "d_vv_top" in item:
+        #    cumulative_build += mfile_data.data["d_vv_top"].get_scan(scan)
+        #elif "d_vv_bot" in item:
+        #    cumulative_build += mfile_data.data["d_vv_bot"].get_scan(scan)
         else:
             cumulative_build += mfile_data.data[item].get_scan(scan)
         if item == section:
@@ -967,15 +967,30 @@ def plot_radprofile(prof, mfile_data, scan, impp, demo_ranges):
         rhosep = np.linspace(rhoped, 1)
         rho = np.append(rhocore, rhosep)
         
-        # The density profile
-        ncore = neped + (ne0-neped) * (1-rhocore**2/rhopedn**2)**alphan
-        nsep = nesep + (neped-nesep) * (1-rhosep)/(1-min(0.9999, rhopedn))
-        ne = np.append(ncore, nsep)
+        # The density and temperature profile
+        # done in such away as to allow for plotting pedestals 
+        # with different rhopedn and rhopedt
+        ne = np.zeros(rho.shape[0])
+        te = np.zeros(rho.shape[0])
+        for q in range(rho.shape[0]): 
+            if rho[q] <= rhopedn:
+                ne[q] = neped + (ne0-neped) * (1-rho[q]**2/rhopedn**2)**alphan
+            else:
+                ne[q] = nesep + (neped-nesep) * (1-rho[q])/(1-min(0.9999, rhopedn))
+
+            if rho[q] <= rhopedt:
+                te[q] = teped + (te0-teped) * (1-(rho[q]/rhopedt)**tbeta)**alphat
+            else:
+                te[q] = tesep + (teped-tesep)* (1-rho[q])/(1-min(0.9999,rhopedt))
+        
+        #ncore = neped + (ne0-neped) * (1-rhocore**2/rhopedn**2)**alphan
+        #nsep = nesep + (neped-nesep) * (1-rhosep)/(1-min(0.9999, rhopedn))
+        #ne = np.append(ncore, nsep)
         
         # The temperatue profile
-        tcore = teped + (te0-teped) * (1-(rhocore/rhopedt)**tbeta)**alphat
-        tsep = tesep + (teped-tesep)* (1-rhosep)/(1-min(0.9999,rhopedt))
-        te = np.append(tcore,tsep)
+        #tcore = teped + (te0-teped) * (1-(rhocore/rhopedt)**tbeta)**alphat
+        #tsep = tesep + (teped-tesep)* (1-rhosep)/(1-min(0.9999,rhopedt))
+        #te = np.append(tcore,tsep)
 
     # Intailise the radiation profile arrays
     pimpden = np.zeros([imp_data.shape[0],te.shape[0]])
@@ -1100,9 +1115,9 @@ def plot_vacuum_vessel(axis, mfile_data, scan):
 
     # Inner side (nearest to the plasma)
     radx = (cumulative_radial_build("shldoth", mfile_data, scan)
-            + cumulative_radial_build("d_vv_out", mfile_data, scan)) / 2.0
+            + cumulative_radial_build("d_vv_in", mfile_data, scan)) / 2.0
     rminx = (cumulative_radial_build("shldoth", mfile_data, scan)
-             - cumulative_radial_build("d_vv_out", mfile_data, scan)) / 2.0
+             - cumulative_radial_build("d_vv_in", mfile_data, scan)) / 2.0
 
     if i_single_null==1:
         kapx = (cumulative_upper['d_vv_top'] - upper["d_vv_top"]) / rminx
@@ -1143,9 +1158,9 @@ def plot_shield(axis, mfile_data, scan):
 
     # Side furthest from plasma
     radx = (cumulative_radial_build("shldoth", mfile_data, scan)
-            + cumulative_radial_build("d_vv_out", mfile_data, scan)) / 2.0
+            + cumulative_radial_build("d_vv_in", mfile_data, scan)) / 2.0
     rminx = (cumulative_radial_build("shldoth", mfile_data, scan)
-             - cumulative_radial_build("d_vv_out", mfile_data, scan)) / 2.0
+             - cumulative_radial_build("d_vv_in", mfile_data, scan)) / 2.0
 
     if i_single_null==1:
         kapx = cumulative_upper['shldtth'] / rminx

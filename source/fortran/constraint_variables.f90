@@ -77,7 +77,7 @@ module constraint_variables
   !! (`constraint equation 33`, `iteration variable 50`)
 
   real(dp) :: fipir
-  !! f-value for  Equation for plasma over central collumn current upper limit
+  !! f-value for Ip/Irod upper limit
   !! constraint equation icc = 46
   !! iteration variable ixc = 72
 

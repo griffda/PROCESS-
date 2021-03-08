@@ -222,9 +222,9 @@ contains
       cost_factor_buildings, favail, cconfix, ucblli2o, abktflnc, ucf1, ucfnc, &
       ucpfps, iavail, ucpfbk, cost_factor_tf_coils, costexp_pebbles, ucmisc, &
       cpstflnc, uccryo, costexp, fwbs_nu, ucpfic, ucblbreed, tcomrepl, uufuel, &
-      ucdiv, uccpcl1, ratecdol, uctfbr, uccpclb, ucoam, div_prob_fail, ucnbi, &
+      ucdiv, uccpcl1, discount_rate, uctfbr, uccpclb, ucoam, div_prob_fail, ucnbi, &
       uccu, ucwst, cfactr, div_nref, amortization, ucwindtf, ucme, csi, cowner, &
-      cost_factor_misc, fcr0, cturbb, lsa, fcap0, output_costs, &
+      cost_factor_misc, fcr0, step_rh_costfrac, cturbb, lsa, fcap0, output_costs, &
       cost_factor_land, redun_vacp, ucrb, uctfbus, num_rh_systems, fkind, &
       fwbs_umain_time, uchrs, avail_min, uciac, step_ref, ucshld, tdivrepl, &
       ucblli, ucpfcb, tlife, ipnet, fcdfuel, ucbus, ucpfb, uchts, &
@@ -868,7 +868,7 @@ contains
                'F-value for current drive gamma')
        case ('fipir')
           call parse_real_variable('fipir', fipir, 0.001D0, 10.0D0, &
-               'F-value plasma over central collumn current')
+               'F-value for Ip/Irod')
        case ('fjohc')
           call parse_real_variable('fjohc', fjohc, 0.001D0, 10.0D0, &
                'F-value for Central Solenoid current at EOF')
@@ -1294,12 +1294,11 @@ contains
        case ('rho_ecrh')
           call parse_real_variable('rho_ecrh', rho_ecrh, 0.0D0, 1.0D0, &
                'normalised minor radius at which electron cyclotron current drive is maximum')
-
        case ('iefrf')
-          call parse_int_variable('iefrf', iefrf, 1, 11, &
+          call parse_int_variable('iefrf', iefrf, 1, 12, &
                'Switch for curr drive efficiency model')
        case ('iefrffix')
-          call parse_int_variable('iefrffix', iefrffix, 0, 11, &
+          call parse_int_variable('iefrffix', iefrffix, 0, 12, &
                'Switch for 2nd curr drive efficiency model')
        case ('irfcd')
           call parse_int_variable('irfcd', irfcd, 0, 1, &
@@ -2611,6 +2610,9 @@ contains
        case ('fkind')
           call parse_real_variable('fkind', fkind, 0.5D0, 1.0D0, &
                'Multiplier for Nth of a kind costs')
+       case ('step_rh_costfrac')
+          call parse_real_variable('step_rh_costfrac', step_rh_costfrac, 0.0D0, 1.0D0, &
+               'fraction of capital cost for remote handling')
        case ('i_cp_lifetime')
          call parse_int_variable('i_cp_lifetime', i_cp_lifetime, 0, 3, &
               'Switch for ST centrepost lifetime contraint (10) setting')
@@ -2629,8 +2631,8 @@ contains
        case ('output_costs')
           call parse_int_variable('output_costs', output_costs, 0, 1, &
                'Switch for writing costs to file')
-       case ('ratecdol')
-          call parse_real_variable('ratecdol', ratecdol, 0.0D0, 0.5D0, &
+       case ('discount_rate')
+          call parse_real_variable('discount_rate', discount_rate, 0.0D0, 0.5D0, &
                'Effective cost of money')
 
           !  Unit cost settings
