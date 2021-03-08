@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.0   Release Date :: 2021-01-25
-   Tag No. : v2.1-91-g349f51d0 code contains untracked changes
-    Branch : cost_model_2_remote_handling
-   Git log : Merge branch 'develop' into cost_model_2_remote_handling
- Date/time : 25 Feb 2021 11:27:22 +00:00(hh:mm) UTC
-      User : apearce
-  Computer : H0892
- Directory : /tmp/pytest-of-apearce/pytest-25/test_scenario_scenario17_0
-     Input : /tmp/pytest-of-apearce/pytest-25/test_scenario_scenario18_0/IN.DAT
+   Tag No. : v2.1-147-g3a766c4a code contains untracked changes
+    Branch : issue-1264-joints-heating-error
+   Git log : Merge branch 'develop' into issue-1264-joints-heating-error
+ Date/time :  8 Mar 2021 18:34:23 +00:00(hh:mm) UTC
+      User : skahn
+  Computer : J0320
+ Directory : /tmp/pytest-of-skahn/pytest-113/test_scenario_scenario17_0
+     Input : /tmp/pytest-of-skahn/pytest-113/test_scenario_scenario18_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -238,7 +238,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Line-averaged electron density / Greenwald density                       (dnla_gw)                 1.200E+00  OP 
  Ion density (/m3)                                                        (dnitot)                  5.377E+19  OP 
  Fuel density (/m3)                                                       (deni)                    4.762E+19  OP 
- High Z impurity density (/m3)                                            (dnz)                     8.716E+16  OP 
+ Total impurity density with Z > 2 (no He) (/m3)                          (dnz)                     8.716E+16  OP 
  Helium ion density (thermalised ions only) (/m3)                         (dnalp)                   6.034E+18  OP 
  Proton density (/m3)                                                     (dnprot)                  2.216E+16  OP 
  Hot beam density (/m3)                                                   (dnbeam)                  0.000E+00  OP 

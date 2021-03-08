@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.1.0   Release Date :: 2021-01-25
-   Tag No. : v2.1-91-g349f51d0 code contains untracked changes
-    Branch : cost_model_2_remote_handling
-   Git log : Merge branch 'develop' into cost_model_2_remote_handling
- Date/time : 25 Feb 2021 11:26:25 +00:00(hh:mm) UTC
-      User : apearce
-  Computer : H0892
- Directory : /tmp/pytest-of-apearce/pytest-25/test_solver0
-     Input : /tmp/pytest-of-apearce/pytest-25/test_scenario_scenario5_0/IN.DAT
+   Tag No. : v2.1-147-g3a766c4a code contains untracked changes
+    Branch : issue-1264-joints-heating-error
+   Git log : Merge branch 'develop' into issue-1264-joints-heating-error
+ Date/time :  8 Mar 2021 18:30:52 +00:00(hh:mm) UTC
+      User : skahn
+  Computer : J0320
+ Directory : /tmp/pytest-of-skahn/pytest-113/test_solver0
+     Input : /tmp/pytest-of-skahn/pytest-113/test_scenario_scenario5_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -203,7 +203,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Line-averaged electron density / Greenwald density                       (dnla_gw)                 7.715E-01  OP 
  Ion density (/m3)                                                        (dnitot)                  2.084E+20  OP 
  Fuel density (/m3)                                                       (deni)                    1.882E+20  OP 
- High Z impurity density (/m3)                                            (dnz)                     1.015E+17  OP 
+ Total impurity density with Z > 2 (no He) (/m3)                          (dnz)                     1.015E+17  OP 
  Helium ion density (thermalised ions only) (/m3)                         (dnalp)                   1.850E+19  OP 
  Proton density (/m3)                                                     (dnprot)                  4.041E+16  OP 
  Hot beam density (/m3)                                                   (dnbeam)                  1.529E+18  OP 
@@ -652,7 +652,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Leg resistivity (ohm.m)                                                  (rhotfleg)                2.182E-08     
  CP resistive power loss (W)                                              (prescp)                  1.206E+08     
  Leg resitive power loss, (per leg) (W)                                   (presleg)                 1.121E+08     
- joints resistive power loss (W)                                          (pres_joints)             8.701E+03     
+ joints resistive power loss (W)                                          (pres_joints)             5.569E+05     
  Outboard leg resistance per coil (ohm)                                   (tflegres)                2.069E-06     
  Average CP temperature (K)                                               (tcpav)                   3.469E+02  ITV
  Average leg temperature (K)                                              (tlegav)                 -1.000E+00     
@@ -1069,11 +1069,11 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Bus mass (kg)                                                            (tfbusmas)                4.539E+06  OP 
  Total resistance for TF coil set (ohm)                                   (ztot)                    2.886E-05  OP 
  Steady-state voltage per coil (kV)                                       (vtfkv)                   5.111E-03  OP 
- Total power dissipation in TF coil set (MW)                              (tfcmw..)                 2.500E+02  OP 
+ Total power dissipation in TF coil set (MW)                              (tfcmw..)                 2.506E+02  OP 
  Power dissipation in TF coil set: inboard legs (MW)                      (tfcpmw)                  1.206E+02  OP 
  Power dissipation in TF coil set: outboard legs (MW)                     (tflegmw)                 1.121E+02  OP 
  Power dissipation in TF coil set: buses                                  (tfbusmw)                 1.740E+01  OP 
- Power dissipation in TF coil set: joints                                 (tfjtsmw)                 8.701E-03  OP 
+ Power dissipation in TF coil set: joints                                 (tfjtsmw)                 5.569E-01  OP 
  
  ****************************** PF Coils and Central Solenoid: Power and Energy *******************************
  
@@ -1170,12 +1170,12 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Cryoplant electric power (MW)                                            (crymw)                   0.000E+00  OP 
  Primary coolant pumps (MW)                                               (htpmw..)                 6.716E-01  OP 
  PF coil power supplies (MW)                                              (ppfmw)                   3.920E+02  OP 
- TF coil power supplies (MW)                                              (ptfmw)                   2.778E+02  OP 
+ TF coil power supplies (MW)                                              (ptfmw)                   2.784E+02  OP 
  Plasma heating supplies (MW)                                             (pheatingmw)              2.667E+02  OP 
  Tritium processing (MW)                                                  (trithtmw..)              1.500E+01     
  Vacuum pumps  (MW)                                                       (vachtmw..)               5.000E-01     
  
- Total pulsed power (MW)                                                  (pacpmw)                  9.762E+02  OP 
+ Total pulsed power (MW)                                                  (pacpmw)                  9.768E+02  OP 
  Total base power required at all times (MW)                              (fcsht)                   2.347E+01  OP 
  
  ************************************************* Cryogenics *************************************************
@@ -1285,9 +1285,9 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Heat removal from injection power (MW)                                   (pinjht)                    186.671  OP 
  Heat removal from tritium plant (MW)                                     (trithtmw)                   15.000  OP 
  Heat removal from vacuum pumps (MW)                                      (vachtmw)                     0.500  OP 
- TF coil resistive power (MW)                                             (tfcmw)                     250.048  OP 
+ TF coil resistive power (MW)                                             (tfcmw)                     250.597  OP 
  
- Total low-grade thermal power (MW)                                       (psechtmw)                  572.952  OP 
+ Total low-grade thermal power (MW)                                       (psechtmw)                  573.561  OP 
  Total High-grade thermal power (MW)                                      (pthermmw)                  190.077  OP 
  
  Number of primary heat exchangers                                        (nphx)                            1  OP 
@@ -1325,14 +1325,14 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  WARNING: Power balance for reactor is in error by more than 5 MW.
  Electrical Power Balance :
  --------------------------
- Net electric power output(MW)                                            (pnetelmw.)                -506.667  OP 
+ Net electric power output(MW)                                            (pnetelmw.)                -507.276  OP 
  Required Net electric power output(MW)                                   (pnetelin)                 1000.000     
  Electric power for heating and current drive (MW)                        (pinjwp)                    266.673  OP 
  Electric power for primary coolant pumps (MW)                            (htpmw)                       0.672  OP 
  Electric power for vacuum pumps (MW)                                     (vachtmw)                     0.500     
  Electric power for tritium plant (MW)                                    (trithtmw)                   15.000     
  Electric power for cryoplant (MW)                                        (crypmw)                      0.000  OP 
- Electric power for TF coils (MW)                                         (tfacpd)                    277.831  OP 
+ Electric power for TF coils (MW)                                         (tfacpd)                    278.441  OP 
  Electric power for PF coils (MW)                                         (pfwpmw)                      0.099  OP 
  All other internal electric power requirements (MW)                      (fachtmw)                    23.472  OP 
  Total (MW)                                                                                            77.581  OP 
@@ -1346,20 +1346,20 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                    22.592  OP 
  Total (MW)                                                                                           184.593  OP 
  
- Net electrical output (MW)	                                              (pnetelmw)                 -506.667  OP 
+ Net electrical output (MW)	                                              (pnetelmw)                 -507.276  OP 
  Heat rejected by main power conversion circuit (MW)                      (rejected_main)             111.955  OP 
- Heat rejected by other cooling circuits (MW)                             (psechtmw)                  572.952  OP 
+ Heat rejected by other cooling circuits (MW)                             (psechtmw)                  573.561  OP 
  Total (MW)                                                                                           178.241  OP 
  
  WARNING: Power balance for power plant is in error by more than 5 MW.
  
  Plant efficiency measures :
  
- Net electric power / total nuclear power (%)                             (pnetelmw/(powfmw+em       -274.478  OP 
- Net electric power / total fusion power (%)                              (pnetelmw/powfmw)          -312.756  OP 
+ Net electric power / total nuclear power (%)                             (pnetelmw/(powfmw+em       -274.808  OP 
+ Net electric power / total fusion power (%)                              (pnetelmw/powfmw)          -313.132  OP 
  Gross electric power* / high grade heat (%)                              (etath)                      41.100     
  (*Power for pumps in secondary circuit already subtracted)
- Recirculating power fraction                                             (cirpowfr)                    7.486  OP 
+ Recirculating power fraction                                             (cirpowfr)                    7.493  OP 
  
  Time-dependent power usage
  
@@ -1378,10 +1378,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
                               Cyroplant    0.00      0.00      0.00      0.00      0.00      0.00
                                  Vacuum    0.50      0.50      0.50      0.50      0.50      0.50
                                 Tritium   15.00     15.00     15.00     15.00     15.00     15.00
-                                     TF  277.83    277.83    277.83    277.83    277.83    277.83
+                                     TF  278.44    278.44    278.44    278.44    278.44    278.44
                              Facilities   23.47     23.47     23.47     23.47     23.47     23.47
                                  ------   -----      ----     -----     -----     -----    ------
-                                  Total  317.48    317.48    317.48    317.48    317.48    317.48
+                                  Total  318.08    318.08    318.08    318.08    318.08    318.08
                                  ------   -----      ----     -----     -----     -----    ------
  
          Intermittent power usage [MWe]:
@@ -1399,7 +1399,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
                                           tramp      tohs     theat     tburn     tqnch    tdwell       avg
                                           -----      ----     -----     -----     -----    ------       ---
                             Gross power    0.00      0.00      0.00     78.12      0.00      0.00
-                              Net power -317.48   -741.29   -717.48   -506.03   -693.66   -317.48   -495.44
+                              Net power -318.08   -741.90   -718.08   -506.64   -694.27   -318.08   -496.05
                                  ------   -----      ----     -----     -----     -----    ------
  
  
