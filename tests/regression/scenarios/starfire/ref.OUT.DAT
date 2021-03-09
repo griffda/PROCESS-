@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.0   Release Date :: 2021-01-25
-   Tag No. : v2.1-130-g050375ac code contains untracked changes
-    Branch : cost_model_2_remote_handling
-   Git log : Merge branch 'develop' into cost_model_2_remote_handling
- Date/time : 26 Feb 2021 15:24:45 +00:00(hh:mm) UTC
-      User : apearce
-  Computer : H0892
- Directory : /tmp/pytest-of-apearce/pytest-31/test_scenario_scenario17_0
-     Input : /tmp/pytest-of-apearce/pytest-31/test_scenario_scenario17_0/IN.DAT
+   Tag No. : v2.1-147-g3a766c4a code contains untracked changes
+    Branch : issue-1264-joints-heating-error
+   Git log : Merge branch 'develop' into issue-1264-joints-heating-error
+ Date/time :  8 Mar 2021 18:34:13 +00:00(hh:mm) UTC
+      User : skahn
+  Computer : J0320
+ Directory : /tmp/pytest-of-skahn/pytest-113/test_scenario_scenario17_0
+     Input : /tmp/pytest-of-skahn/pytest-113/test_scenario_scenario17_0/IN.DAT
  Run title : starfire
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
