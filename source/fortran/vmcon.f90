@@ -46,33 +46,6 @@ module vmcon_module
   ! subroutine vmcon
   integer :: exit_code
   
-  ! Abstract interfaces to allow pointers to external subroutines
-  abstract interface
-    subroutine fcnvmc1_int(n,m,xv,objf,conf,ifail)
-      use, intrinsic :: iso_fortran_env, only: dp=>real64
-      integer, intent(in) :: n,m
-      real(dp), dimension(n), intent(in) :: xv
-      real(dp), intent(out) :: objf
-      real(dp), dimension(m), intent(out) :: conf
-      integer, intent(inout) :: ifail
-    end subroutine fcnvmc1_int
-  end interface
-    
-  abstract interface
-    subroutine fcnvmc2_int(n,m,xv,fgrd,cnorm,lcnorm,ifail)
-      use, intrinsic :: iso_fortran_env, only: dp=>real64
-      integer, intent(in) :: n,m,lcnorm
-      real(dp), dimension(n), intent(in) :: xv
-      real(dp), dimension(n), intent(out) :: fgrd
-      real(dp), dimension(lcnorm,m), intent(out) :: cnorm
-      integer, intent(inout) :: ifail
-    end subroutine fcnvmc2_int
-  end interface
-    
-  ! Pointers to objfn and dobjfn
-  procedure(fcnvmc1_int), pointer :: fcnvmc1_ptr
-  procedure(fcnvmc2_int), pointer :: fcnvmc2_ptr
-
   ! Format string
   character(len=20), parameter :: fmt_str = "(a,1pe10.3)"
 
@@ -84,7 +57,7 @@ contains
     best_sum_so_far = 999d0
   end subroutine init_vmcon_module
 
-  subroutine vmcon(fcnvmc1_,fcnvmc2_,mode_,n_,m_,&
+  subroutine vmcon(mode_,n_,m_,&
     meq_,x_,objf_,fgrd_,conf_,&
     cnorm_,lcnorm_,b_,lb_,tol_,&
     maxfev_,info_,nfev_,niter_,vlam_,& 
@@ -100,10 +73,6 @@ contains
     !! author: J Galambos, FEDC/ORNL
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: M D Kovari, CCFE, Culham Science Centre
-    !! fcnvmc1_ : external subroutine : routine to calculate the
-    !! objective and constraint functions
-    !! fcnvmc2_ : external subroutine : routine to calculate the
-    !! gradients of the objective and constraint functions
     !! mode_ : input integer : 1 if B is provided by the user,
     !! 0 if B is to be initialized to
     !! the identity matrix
@@ -234,9 +203,6 @@ contains
     real(dp), dimension(:), intent(out) :: vlam_,vmu_,gm_,bdl_,bdu_
     real(dp), intent(out), optional :: sum_
 
-    ! External subroutines
-    external :: fcnvmc1_,fcnvmc2_
-    
     ! Input
     ! Initialise module variables with their respective input arguments
     ! This allows vmcon to be called as before, but allows these variables to
@@ -261,11 +227,6 @@ contains
     ! Inout argument initialisations
     x = x_
     b = b_
-    
-    ! Assign external subroutine input arguments to module variable pointers
-    ! Allows module-wide calling of these input argument subroutines
-    fcnvmc1_ptr => fcnvmc1_
-    fcnvmc2_ptr => fcnvmc2_
     
     ! Array allocation: only allocate what hasn't already been allocated by 
     ! assignment
@@ -356,6 +317,7 @@ contains
   
   subroutine run()
     ! Call subroutines to actually run vmcon
+    use function_evaluator, only: fcnvmc1, fcnvmc2
     implicit none
     
     ! exit_code is used to handle exits and returns in previous vmcon() 
@@ -370,11 +332,14 @@ contains
     
     call vmcon1()
     if (exit_code.eq.1) return
-    call fcnvmc1()
+    ! fcnvmc1: routine to calculate the objective and constraint functions
+    call fcnvmc1(n,m,x,objf,conf,info)
     if (exit_code.eq.1) return
     call vmcon2()
     if (exit_code.eq.1) return
-    call fcnvmc2()
+    ! fcnvmc2: routine to calculate the gradients of the objective and 
+    ! constraint functions
+    call fcnvmc2(n,m,x,fgrd,cnorm,lcnorm,info)
     if (exit_code.eq.1) return
     call vmcon3()
     if (exit_code.eq.1) return
@@ -398,7 +363,7 @@ contains
           ! Exit if the line search requires ten or more function evaluations
           if (nfev >= (nfinit + 10)) then
             call vmcon8()
-            call fcnvmc1()
+            call fcnvmc1(n,m,x,objf,conf,info)
             call vmcon9()
             if (exit_code.eq.1) return
           endif
@@ -408,7 +373,7 @@ contains
 
         call vmcon11()
         if (exit_code.eq.1) return
-        call fcnvmc1()
+        call fcnvmc1(n,m,x,objf,conf,info)
         call vmcon12()
         if (exit_code.eq.1) return
       end do line_search
@@ -418,9 +383,9 @@ contains
 
       ! Line search is complete. Calculate gradient of Lagrangian
       ! function for use in updating hessian of Lagrangian
-      call fcnvmc1()
+      call fcnvmc1(n,m,x,objf,conf,info)
       if (exit_code.eq.1) return
-      call fcnvmc2()
+      call fcnvmc2(n,m,x,fgrd,cnorm,lcnorm,info)
       call vmcon13()
       if (exit_code.eq.1) return
     end do iteration
@@ -499,13 +464,6 @@ contains
     niter = 0
   end subroutine vmcon1
 
-  subroutine fcnvmc1()
-    ! Calculate the initial functions
-    implicit none
-
-    call fcnvmc1_ptr(n,m,x,objf,conf,info)
-  end subroutine fcnvmc1
-
   subroutine vmcon2()
     implicit none
     
@@ -515,13 +473,6 @@ contains
     endif
     
   end subroutine vmcon2
-  
-  subroutine fcnvmc2()
-    ! Calculate the initial gradients
-    implicit none
-    
-    call fcnvmc2_ptr(n,m,x,fgrd,cnorm,lcnorm,info)
-  end subroutine fcnvmc2
   
   subroutine vmcon3
     use constants, only: iotty

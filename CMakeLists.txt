@@ -120,6 +120,7 @@ LIST(APPEND PROCESS_SRCS
     maths_library.f90
     iteration_variables.f90
     optimiz_module.f90
+    vmcon.f90
 )
 
 # Install all requirements in the current Python environment

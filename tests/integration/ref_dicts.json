@@ -1754,8 +1754,6 @@
         "fcap0cp": 1.08,
         "fcdfuel": 0.1,
         "fce1_": "wce1_/(2*pi)",
-        "fcnvmc1_ptr": null,
-        "fcnvmc2_ptr": null,
         "fcohbof": 0.0,
         "fcohbop": 0.9,
         "fcontng": 0.195,
@@ -8791,8 +8789,6 @@
         "fcap0cp": "average cost of money for replaceable components assuming lead time for these of two years",
         "fcdfuel": "fraction of current drive cost treated as fuel (if `ifueltyp = 1`)",
         "fce1_": "",
-        "fcnvmc1_ptr": "",
-        "fcnvmc2_ptr": "",
         "fcohbof": "ratio of central solenoid overall current density at beginning of flat-top / end of flat-top",
         "fcohbop": "ratio of central solenoid overall current density at beginning of pulse / end of flat-top\n (`iteration variable 41`)",
         "fcontng": "project contingency factor",
@@ -18721,8 +18717,6 @@
             "iteration_progress",
             "best_sum_so_far",
             "exit_code",
-            "fcnvmc1_ptr",
-            "fcnvmc2_ptr",
             "fmt_str"
         ]
     },
