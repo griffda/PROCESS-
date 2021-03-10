@@ -469,7 +469,7 @@ contains
     use current_drive_variables, only: pinjmw
     use physics_variables, only: rmajor, rminor
     use process_output, only: ocosts, oblnkl
-    use tfcoil_variables, only: i_tf_sup, whttf
+    use tfcoil_variables, only: i_tf_sup, whtconal, n_tf
     
     implicit none
   
@@ -516,10 +516,11 @@ contains
       step22010301 = step_ref(22) * (vfi / vfi_star)
     endif
     
-    ! Cryogenic aluminium coils: just add cost of aluminium
+    ! Cryogenic aluminium coils
     if (i_tf_sup == 2) then
-      step22010301 = step22010301 + (whttf * unit_cost_cryo_al)
-      ! Uses whttf, total mass of TF coils. Is this all aluminium?
+      ! Cost approximated as purely the material cost of conducting Al
+      ! Al conductor mass per coil * number of coils * cost per kilo
+      step22010301 = whtconal * n_tf * unit_cost_cryo_al
     endif
 
     ! step22010301 is cost of TF coils; add to total step2201
