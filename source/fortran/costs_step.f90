@@ -505,16 +505,24 @@ contains
     step2298 = step2298 + 9.985D-2 *  step220102
   
     ! 22.01.03.01 TF Coils
-    ! Original STARFIRE value, scaling with fusion island volume
-    step22010301 = step_ref(22) * (vfi / vfi_star)
+    ! Copper coils: guard against undefined cost
+    if (i_tf_sup == 0) then
+      step22010301 = 0
+    endif
     
-    ! Cost of cryo-ali here?
-    ! If using cryo-ali tfcoil model, just add cost of aluminium
+    ! Superconducting coils
+    if (i_tf_sup == 1) then
+      ! Original STARFIRE value, scaling with fusion island volume
+      step22010301 = step_ref(22) * (vfi / vfi_star)
+    endif
+    
+    ! Cryogenic aluminium coils: just add cost of aluminium
     if (i_tf_sup == 2) then
       step22010301 = step22010301 + (whttf * unit_cost_cryo_al)
       ! Uses whttf, total mass of TF coils. Is this all aluminium?
     endif
 
+    ! step22010301 is cost of TF coils; add to total step2201
     step2201 = step2201 + step22010301
 
     ! 22.01.03.02 PF Coils
