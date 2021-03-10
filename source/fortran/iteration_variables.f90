@@ -27,7 +27,7 @@ contains
     implicit none
     lablxc(1) = 'aspect        '
     boundl(1) = 1.100D0
-    boundu(1) = 10.00D0 
+    boundu(1) = 40.00D0 
   end subroutine init_itv_1
 
   real(kind(1.d0)) function itv_1()
@@ -3734,7 +3734,7 @@ contains
     !! <LI> (164) f-value for maximum cryogenic plant power
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(164) = 'f_crypmw         '
+    lablxc(164) = 'f_crypmw           '
     boundl(164) = 0.001D0 
     boundu(164) = 1.000D0  
   end subroutine init_itv_164
@@ -3757,10 +3757,9 @@ contains
 
   subroutine init_itv_165
     !! <LI> (165) fecrh_ignition (f-value for equation 88)
-    use constraint_variables, only: fecrh_ignition
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(165) = 'fecrh_ignition'
+    lablxc(165) = 'fecrh_ignition     '
     boundl(165) = 0.010D0
     boundu(165) = 2.000D0
   end subroutine init_itv_165
@@ -3778,31 +3777,33 @@ contains
   end subroutine set_itv_165
 
   !---------------------------------
-  ! DUMMY variables below here
-  !---------------------------------
-
-  !---------------------------------
 
   subroutine init_itv_166
-    !! <LI> (166) DUMMY : Description
+    !! <LI> (166) te0_ecrh_achievable
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(166) = 'DUMMY         '
-    boundl(166) = 1.0d-99
-    boundu(166) = 1.0d99
+    lablxc(166) = 'te0_ecrh_achievable'
+    boundl(166) = 5.0d0
+    boundu(166) = 40.0d0
   end subroutine init_itv_166
 
   real(kind(1.d0)) function itv_166()
+  use stellarator_variables, only: te0_ecrh_achievable
     implicit none
-    itv_166 = DUMMY 
+    itv_166 = te0_ecrh_achievable 
   end function itv_166
 
   subroutine set_itv_166(ratio)
+    use stellarator_variables, only: te0_ecrh_achievable
     implicit none
     real(kind(1.d0)) :: ratio
-    DUMMY = ratio
+    te0_ecrh_achievable = ratio
   end subroutine set_itv_166
 
+  !---------------------------------
+
+  !---------------------------------
+  ! DUMMY variables below here
   !---------------------------------
 
   subroutine init_itv_167

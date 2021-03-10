@@ -19,28 +19,28 @@ module stellarator_configuration
        ! Name of the configuration
  
        integer symmetry
-       !  Number of coils
+       !  Number of coils [1]
  
        integer coilspermodule
-       !  Coils per module
+       !  Coils per module [1]
  
        real(dp)  rmajor_ref
-       !  Reference Point for major radius where all the other variables are determined
+       !  Reference Point for major radius where all the other variables are determined [m]
  
        real(dp)  rminor_ref
-       !  Reference Point for minor radius where all the other variables are determined
+       !  Reference Point for minor radius where all the other variables are determined [m]
  
        real(dp)  coil_rmajor
-       !  Reference Point for coil major radius
+       !  Reference Point for coil major radius [m]
  
        real(dp)  coil_rminor
-       !  Reference Point for coil minor radius
+       !  Reference Point for coil minor radius [m]
  
        real(dp)  aspect_ref
-       !  Reference Point for aspect ratio where all the other variables are determined
+       !  Reference Point for aspect ratio where all the other variables are determined [1]
  
        real(dp)  bt_ref
-       !  Reference Point for toroidal b where all the other variables are determined
+       !  Reference Point for toroidal b where all the other variables are determined [T]
        
        real(dp) WP_area
        !  Winding pack area at the reference point [m^2]
@@ -49,35 +49,38 @@ module stellarator_configuration
        !  The maximal magnetic field in the winding pack at the reference size of the winding pack [T]
  
        real(dp) i0
-       !  Coil current needed for b0 at the reference point
+       !  Coil current needed for b0 at the reference point [MA]
        
        real(dp) a1
-       !  Magnetic field fit parameter a1 (for the maximal field on the coils)
+       !  Magnetic field fit parameter a1 (for the maximal field on the coils) [1]
        
        real(dp) a2
-       !  Magnetic field fit parameter a2
+       !  Magnetic field fit parameter a2 [1]
  
        real(dp) dmin
-       !  Minimal intercoil distance at the reference point
+       !  Minimal intercoil distance at the reference point [m]
        
        real(dp) inductance
-       !  inductance at the reference point
+       !  inductance at the reference point [H]
  
        real(dp) coilsurface
-       !  Coil surface at the reference point
+       !  Coil surface at the reference point [m2]
  
        real(dp) coillength
-       !  Total coil length at the reference point
+       !  Total coil length at the reference point [m]
        
        real(dp) max_portsize_width
-       !  Port size in toroidal direction at the reference point
+       !  Port size in toroidal direction at the reference point [m]
  
        real(dp) maximal_coil_height
-       !  The maximal coil height at reference point.
+       !  The maximal coil height at reference point. [m]
  
        real(dp) min_plasma_coil_distance
-       !  The minimal distance between coil and plasma at the reference point
+       !  The minimal distance between coil and plasma at the reference point [m]
  
+       real(dp) derivative_min_LCFS_coils_dist
+       !  The derivative of min_plasma_coil_distance wrt to the minor plasma radius at the reference point [1]
+
        real(dp) plasma_volume
        !  The plasma volume at the reference point. Scales as a*R^2. [m^3]
  
@@ -115,7 +118,7 @@ module stellarator_configuration
        !  Average centering force the coils in the coil set [MN/coil]
  
        real(dp) :: neutron_peakfactor
-       !  The neutron peaking factor determined through inhomogeneities on the stellarator wall (qmax/qavg)
+       !  The neutron peaking factor determined through inhomogeneities on the stellarator wall (qmax/qavg) [1]
 
        real(dp), dimension(:), allocatable :: D11_star_mono_input
        !  The monoenergetic radial transport coefficients normalized by the plateau value.
@@ -203,6 +206,7 @@ module stellarator_configuration
              output_config%centering_force_avg_MN = 93.0d0
  
              output_config%min_plasma_coil_distance = 1.9d0
+             output_config%derivative_min_LCFS_coils_dist = -1.0d0 ! this is approximated for now
  
              output_config%min_bend_radius = 1.0 ! [m]
 
@@ -268,6 +272,7 @@ module stellarator_configuration
              output_config%centering_force_avg_MN = 125.8d0
  
              output_config%min_plasma_coil_distance = 1.7d0
+             output_config%derivative_min_LCFS_coils_dist = -1.0d0 ! this is approximated for now
  
              output_config%min_bend_radius = 0.86 ! [m]
  
@@ -329,6 +334,7 @@ module stellarator_configuration
              output_config%centering_force_avg_MN = 240.9d0
  
              output_config%min_plasma_coil_distance = 1.78d0
+             output_config%derivative_min_LCFS_coils_dist = -1.0d0 ! this is approximated for now
  
              output_config%min_bend_radius = 1.145 ! [m]
  
@@ -386,7 +392,8 @@ module stellarator_configuration
              output_config%centering_force_min_MN = -2.15d0
              output_config%centering_force_avg_MN = 3.46d0
  
-             output_config%min_plasma_coil_distance = 0.45D0 
+             output_config%min_plasma_coil_distance = 0.45D0
+             output_config%derivative_min_LCFS_coils_dist = -1.0d0 ! this is approximated for now 
  
              output_config%min_bend_radius = 0.186 ! [m]
  
@@ -444,6 +451,7 @@ module stellarator_configuration
              output_config%centering_force_avg_MN = 1.61d0
  
              output_config%min_plasma_coil_distance = 0.39D0
+             output_config%derivative_min_LCFS_coils_dist = -1.0d0 ! this is approximated for now
  
              output_config%min_bend_radius = 0.39 ! [m]
  
@@ -524,6 +532,7 @@ module stellarator_configuration
         call fson_get(stellafile, "max_portsize_width", output_config%max_portsize_width)
         call fson_get(stellafile, "maximal_coil_height", output_config%maximal_coil_height)
         call fson_get(stellafile, "min_plasma_coil_distance", output_config%min_plasma_coil_distance)
+        call fson_get(stellafile, "derivative_min_LCFS_coils_dist", output_config%derivative_min_LCFS_coils_dist)
         call fson_get(stellafile, "plasma_volume", output_config%plasma_volume)
         call fson_get(stellafile, "plasma_surface", output_config%plasma_surface)
         call fson_get(stellafile, "WP_ratio", output_config%WP_ratio)

@@ -30,7 +30,7 @@ module vmcon_test
   integer :: nviter    !  number of VMCON iterations performed 
   integer :: ipvlam
   integer, parameter :: ipnvars = 175   ! Local variable
-  integer, parameter :: ipeqns = 87     ! Local variable
+  integer, parameter :: ipeqns = 88     ! Local variable
 
 contains
 

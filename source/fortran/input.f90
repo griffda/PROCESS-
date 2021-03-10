@@ -501,7 +501,7 @@ contains
           call parse_real_variable('alphat', alphat, 0.0D0, 10.0D0, &
                'Temperature profile factor')
        case ('aspect')
-          call parse_real_variable('aspect', aspect, 1.001D0, 20.0D0, &
+          call parse_real_variable('aspect', aspect, 1.001D0, 40.0D0, &
                'Aspect ratio')
        case ('beamfus0')
           call parse_real_variable('beamfus0', beamfus0, 0.01D0, 10.0D0, &

@@ -40,7 +40,7 @@ contains
     config = stella_config("", 0, 0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
       0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
       0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
-      0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, [0.0D0], [0.0D0])
+      0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, [0.0D0], [0.0D0])
     f_n = 0.0D0
     f_r = 0.0D0
     f_a = 0.0D0
@@ -143,11 +143,11 @@ contains
 
     !  Numerics quantities
 
-    boundl(1) = 5.0D0
+    !boundl(1) = 5.0D0
 
-    boundu(1) = 20.0D0
-    boundu(3) = 30.0D0
-    boundu(29) = 20.0D0
+    !boundu(1) = 40.0D0
+    !boundu(3) = 30.0D0
+    !boundu(29) = 20.0D0
 
     !  These lines switch off tokamak specifics (solenoid, pf coils, pulses etc.).
     !  Are they still up to date? (11/03/20 JL)
@@ -387,7 +387,6 @@ contains
     blnktth = 0.5D0*(blnkith+blnkoth)
 
     ! First Wall
-
     fwith = 2.0D0*afw + 2.0D0*fw_wall
     fwoth = fwith
 
@@ -406,19 +405,17 @@ contains
     ! that ensures that there is enough space between coils and plasma.
     required_radial_space = (tfcth/2.0D0 + gapds + d_vv_in + shldith + blnkith + fwith + scrapli)
 
-    available_radial_space = f_r*(config%rminor_ref+config%min_plasma_coil_distance) - rminor
-
+    ! 
+    ! available_radial_space = f_r*(config%rminor_ref+config%min_plasma_coil_distance) - rminor
+    available_radial_space = f_r*(config%derivative_min_LCFS_coils_dist*config%rminor_ref*(1/f_aspect-1) + config%min_plasma_coil_distance)
 
     !  Radius to inner edge of inboard shield
-
     rsldi = rmajor - rminor - scrapli - fwith - blnkith - shldith
 
     !  Radius to outer edge of outboard shield
-
     rsldo = rmajor + rminor + scraplo + fwoth + blnkoth + shldoth
 
     !  Thickness of outboard TF coil legs
-
     tfthko = tfcth
 
     !  Radius to centre of outboard TF coil legs
@@ -570,11 +567,11 @@ contains
     
     ! Check if the ECRH Calculation is in the icc vector.
     ! If yes: Calculate heating power at ECRH operatable point. Otherwise don't calculate it
-    if ( any(icc == 87) ) then
+    if ( any(icc == 88) ) then
       if (isthtr .ne. 1) then
          ! ECRH constraint called without indicated ECRH as heating scheme
          write(*,*) 'Warning in routine STOPT:'
-         write(*,*) 'isthtr is not set to 1 but icc=87 (ECRH) was called.'
+         write(*,*) 'isthtr is not set to 1 but icc=88 (ECRH) was called.'
       end if
 
       !call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht_local,pscalingmw_local)
