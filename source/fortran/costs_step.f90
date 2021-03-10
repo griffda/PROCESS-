@@ -22,7 +22,7 @@ module costs_step_module
 
   !  Various cost account values (M$)
   real(dp) :: step20, step21, step22, step23, step24, step25, &
-  step27, step91, step92, step93, fwblkcost
+  step27, step91, step92, step93, fwblkcost, step22010302
 
   ! Scaling Properties
   real(dp) :: vfi, vfi_star, ptherm_star, pinjmw_star, fwarea_star, &
@@ -75,7 +75,7 @@ contains
 
     use constants, only: pi
     use build_variables, only: r_tf_outboard_mid, tfthko, hpfu, hmax, tfcth
-    use cost_variables, only: output_costs, cdirt, concost, ireactor, ipnet
+    use cost_variables, only: output_costs, cdirt, concost, ireactor, ipnet, step_ref
     use fwbs_variables, only: emultmw
     use heat_transport_variables, only: pinjwp
     use physics_variables, only: powfmw
@@ -105,9 +105,13 @@ contains
     rminor_star = rmajor_star / 3.6D0   ! Minor Radius (m)
 
     ! Output header
-    if ((iprint==1).and.(output_costs == 1)) then
+    if ((iprint==1).and.(output_costs == 1).and.(step_ref(1)==3.0D0)) then
       call oheadr(outfile,'STEP Costing Model (1980 US$)')
       !call oheadr(outfile,'!!WARNING - Under development!! DO NOT USE!')
+    end if
+
+    if ((iprint==1).and.(output_costs == 1).and.(step_ref(1) /= 3.0D0)) then
+      call oheadr(outfile,'STEP Costing Model (2017 US$)')
     end if
     
     ! Account 20 : Land and Rights
@@ -509,7 +513,8 @@ contains
 
     ! 22.01.03.02 PF Coils
     ! Original STARFIRE value, scaling with fusion island volume
-    step22010302 = step_ref(23) * (vfi / vfi_star)
+    ! step22010302 = step_ref(23) * (vfi / vfi_star)
+    call step_a22010302
     step2201 = step2201 + step22010302
     ! STARFIRE percentage for spares
     step2298 = step2298 + 3.269D-1 * step22010302
@@ -617,6 +622,175 @@ contains
   end subroutine step_a2201
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine step_a22010302
+
+    !! Account 22.01.03.02 PF Coils : PF magnet assemblies
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 222.2 (PF magnet) costs.
+    !! Conductor costs previously used an algorithm devised by R. Hancox,
+    !! January 1994, under contract to Culham, which took into
+    !! account the fact that the superconductor/copper ratio in
+    !! the conductor is proportional to the maximum field that
+    !! each coil will experience. Now, the input copper fractions
+    !! are used instead.
+    !! Maximum values for current, current density and field
+    !! are used.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+		use build_variables, only: iohcl 
+		use constants, only: twopi, dcopper
+		use cost_variables, only: step_uccase, step_uccu, step_cconshpf, step_ucfnc, &
+      step_cconfix, step_ucsc, step_ucwindpf, lsa, fkind
+		use pfcoil_variables, only: rjconpf, ipfres, vfohc, nohc, turns, isumatpf, &
+      whtpfs, ric, rpf, isumatoh, fcupfsu, fcuohsu, vf, awpoh 
+		use structure_variables, only: fncmass 
+		use tfcoil_variables, only: dcond
+    implicit none
+
+    !  Arguments
+     
+    !  Local variables
+
+    real(dp) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
+         pfwndl, step2201030201, step2201030202, step2201030203, step2201030204
+    real(dp), dimension(4) :: cmlsa
+    integer :: i,npf
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Cost multiplier for Level of Safety Assurance
+
+    cmlsa(1) = 0.6900D0
+    cmlsa(2) = 0.8450D0
+    cmlsa(3) = 0.9225D0
+    cmlsa(4) = 1.0000D0
+
+    !  Total length of PF coil windings (m)
+
+    pfwndl = 0.0D0
+    do i = 1,nohc
+       pfwndl = pfwndl + twopi*rpf(i)*turns(i)
+    end do
+
+    !  Account 22.01.03.02.01 : Conductor
+
+    !  The following lines take care of resistive coils.
+    !  costpfsh is the cost per metre of the steel conduit/sheath around
+    !  each superconducting cable (so is zero for resistive coils)
+
+    if (ipfres == 1) then
+       costpfsh = 0.0D0
+    else
+       costpfsh = step_cconshpf
+    end if
+
+    !  Non-Central Solenoid coils
+
+    if (iohcl == 1) then
+       npf = nohc-1
+    else
+       npf = nohc
+    end if
+    
+    step2201030201 = 0.0D0
+    do i = 1,npf
+
+       !  Superconductor ($/m)
+       if (ipfres == 0) then
+          costpfsc = step_ucsc(isumatpf) * (1.0D0-fcupfsu)*(1.0D0-vf(i)) * &
+               abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcond(isumatpf)
+       else
+          costpfsc = 0.0D0
+       end if
+
+       !  Copper ($/m)
+       if (ipfres == 0) then
+          costpfcu = step_uccu * fcupfsu*(1.0D0-vf(i)) * &
+               abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcopper
+       else
+          costpfcu = step_uccu * (1.0D0-vf(i)) * &
+               abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcopper
+       end if
+
+       !  Total cost/metre of superconductor and copper wire
+
+       costwire = costpfsc + costpfcu
+
+       !  Total cost/metre of conductor (including sheath and fixed costs)
+
+       cpfconpm = costwire + costpfsh + step_cconfix
+
+       !  Total account 222.2.1 (PF coils excluding Central Solenoid)
+
+       step2201030201 = step2201030201 + (1.0D-6 * twopi * rpf(i) * turns(i) * &
+            cpfconpm)
+
+    end do
+
+    !  Central Solenoid
+
+    !if (iohcl == 1) then
+
+       !  Superconductor ($/m)
+       !  Issue #328  Use CS conductor cross-sectional area (m2)
+    !   if (ipfres == 0) then
+    !      costpfsc = step_ucsc(isumatoh) * awpoh*(1-vfohc)*(1-fcuohsu)/turns(nohc) * dcond(isumatoh)
+    !   else
+    !      costpfsc = 0.0D0
+    !   end if
+
+       !  Copper ($/m)
+
+    !   if (ipfres == 0) then
+    !      costpfcu = step_uccu * awpoh*(1-vfohc)*fcuohsu/turns(nohc) * dcopper
+    !   else
+          ! MDK I don't know if this is ccorrect as we never use the resistive model
+    !      costpfcu = step_uccu * awpoh*(1-vfohc)/turns(nohc) * dcopper
+    !   end if
+
+       !  Total cost/metre of superconductor and copper wire (Central Solenoid)
+
+    !   costwire = costpfsc + costpfcu
+
+       !  Total cost/metre of conductor (including sheath and fixed costs)
+
+    !   cpfconpm = costwire + costpfsh + step_cconfix
+
+       !  Total account 222.2.1 (PF+Central Solenoid coils)
+
+    !   step_a2201030201 = step_a2201030201 + (1.0D-6 * twopi * rpf(nohc) * turns(nohc) * &
+    !        cpfconpm)
+
+    !end if
+
+    step2201030201 = fkind * step2201030201 * cmlsa(lsa)
+
+    !  Account 22.01.03.02.02 : Winding
+
+    step2201030202 = 1.0D-6 * step_ucwindpf * pfwndl
+    step2201030202 = fkind * step2201030202 * cmlsa(lsa)
+
+    !  Account 22.01.03.02.03 : Steel case - will be zero for resistive coils
+
+    step2201030203 = 1.0D-6 * step_uccase * whtpfs
+    step2201030203 = fkind * step2201030203 * cmlsa(lsa)
+
+    !  Account 22.01.03.02.04 : Support structure
+
+    step2201030204 = 1.0D-6 * step_ucfnc * fncmass
+    step2201030204 = fkind * step2201030204 * cmlsa(lsa)
+
+    !  Total account 22.01.03.02
+
+    step22010302 = step2201030201 + step2201030202 + step2201030203 + step2201030204
+
+  end subroutine step_a22010302
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine step_a2202(outfile,iprint)
 
@@ -1314,7 +1488,7 @@ contains
     use cost_variables, only: output_costs, discount_rate, tlife, ucfuel, uche3, cdcost, &
       divcst, fcdfuel, ifueltyp, moneyint, lsa, ucwst, ucoam, fwallcst, fcr0, fcap0cp, &
       cfind, fcap0, dtlife, divlife, dintrt, decomf, cpstcst, cplife, concost, coeoam, &
-      coefuelt, coecap, coe, cfactr, cdrlife, capcost
+      coefuelt, coecap, coe, cfactr, cdrlife, capcost, step_ref
     use fwbs_variables, only: bktlife
     use heat_transport_variables, only: pnetelmw
     use physics_variables, only: fhe3, itart, wtgpd
@@ -1519,7 +1693,12 @@ contains
   call oshead(outfile,'Total Capital Investment')
   call ocosts(outfile,'(capcost)','Total capital investment (M$)',capcost)
 
-  call oheadr(outfile,'Cost of Electricity (1980 US$)')
+  if (step_ref(1) == 3.0D0) then
+    call oheadr(outfile,'Cost of Electricity (1980 US$)')
+  end if
+  if (step_ref(1) /= 3.0D0) then
+    call oheadr(outfile,'Cost of Electricity (2017 US$)')
+  end if
   call ovarrf(outfile,'First wall / blanket life (years)','(fwbllife)',fwbllife)
   call ovarrf(outfile,'Divertor life (years)','(divlife.)',divlife)
   if (itart == 1) then

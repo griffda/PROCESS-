@@ -322,6 +322,27 @@ module cost_variables
   real(dp) :: step_con
   !! Contingency Percentage
 
+  real(dp) :: step_cconfix 
+  !! fixed cost of superconducting cable ($/m) (if cost model = 2) 
+
+  real(dp) :: step_cconshpf
+  !! cost of PF coil steel conduit/sheath ($/m) (if cost model = 2) 
+
+  real(dp) :: step_uccase
+  !! cost of superconductor case ($/kg) (if cost model = 2)
+
+  real(dp) :: step_uccu
+  !! unit cost for copper in superconducting cable ($/kg) (if cost model = 2)
+
+  real(dp), dimension(7) :: step_ucsc
+  !! cost of superconductor ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucfnc
+  !! outer PF coil fence support cost ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucwindpf 
+  !! cost of PF coil superconductor windings ($/m) (if cost model = 2)
+
   real(dp) :: step_rh_costfrac
   !! fraction of capital cost for remote handling (if cost_model = 2)
   
@@ -679,6 +700,13 @@ module cost_variables
     output_costs = 1
     discount_rate = 0.0435D0
     step_con = 1.5D-1
+    step_cconfix = 0.0D0
+    step_cconshpf = 0.0D0
+    step_uccase = 0.0D0
+    step_uccu = 0.0D0
+    step_ucsc = (/ 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0 /)
+    step_ucfnc = 0.0D0
+    step_ucwindpf = 0.0D0
     step_rh_costfrac = 0.0D0
     step_ref = &
       (/ 3.0D0, 3.0D-1, 1.115D1, 1.5744D2, 3.592D1, 7.96D0, 9.16D0, 3.26D0, 5.369D1, &
