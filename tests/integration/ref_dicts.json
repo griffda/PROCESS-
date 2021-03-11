@@ -4687,6 +4687,7 @@
         "step20": 0.0,
         "step21": 0.0,
         "step22": 0.0,
+        "step22010302": null,
         "step23": 0.0,
         "step24": 0.0,
         "step25": 0.0,
@@ -4694,6 +4695,8 @@
         "step91": 0.0,
         "step92": 0.0,
         "step93": 0.0,
+        "step_cconfix": 0.0,
+        "step_cconshpf": 0.0,
         "step_con": 0.15,
         "step_ref": [
             3.0,
@@ -4766,6 +4769,19 @@
             0.75
         ],
         "step_rh_costfrac": 0.0,
+        "step_uccase": 0.0,
+        "step_uccu": 0.0,
+        "step_ucfnc": 0.0,
+        "step_ucsc": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        "step_ucwindpf": 0.0,
         "strncon_cs": -0.005,
         "strncon_pf": -0.005,
         "strncon_tf": -0.005,
@@ -9958,6 +9974,7 @@
         "step20": "",
         "step21": "",
         "step22": "",
+        "step22010302": "",
         "step23": "",
         "step24": "",
         "step25": "",
@@ -9965,9 +9982,16 @@
         "step91": "",
         "step92": "",
         "step93": "",
+        "step_cconfix": "fixed cost of superconducting cable ($/m) (if cost model = 2) ",
+        "step_cconshpf": "cost of PF coil steel conduit/sheath ($/m) (if cost model = 2) ",
         "step_con": "Contingency Percentage",
         "step_ref": "Reference values for cost model 2",
         "step_rh_costfrac": "fraction of capital cost for remote handling (if cost_model = 2)",
+        "step_uccase": "cost of superconductor case ($/kg) (if cost model = 2)",
+        "step_uccu": "unit cost for copper in superconducting cable ($/kg) (if cost model = 2)",
+        "step_ucfnc": "outer PF coil fence support cost ($/kg) (if cost model = 2)",
+        "step_ucsc": "cost of superconductor ($/kg) (if cost model = 2)",
+        "step_ucwindpf": "cost of PF coil superconductor windings ($/m) (if cost model = 2)",
         "strncon_cs": "strain in CS superconductor material (used in Nb3Sn critical surface model `isumatoh=1,4,5`)",
         "strncon_pf": "strain in PF superconductor material (used in Nb3Sn critical surface model `isumatph=1,4,5`)",
         "strncon_tf": "strain in TF superconductor material (used in Nb3Sn critical surface model `i_tf_sc_mat=1,4,5`)",
@@ -13403,9 +13427,33 @@
             "lb": 0.0,
             "ub": 10.0
         },
+        "step_cconfix": {
+            "lb": 0.0,
+            "ub": 300.0
+        },
+        "step_cconshpf": {
+            "lb": 0.0,
+            "ub": 300.0
+        },
+        "step_con": {
+            "lb": 0.0,
+            "ub": 1.0
+        },
         "step_rh_costfrac": {
             "lb": 0.0,
             "ub": 1.0
+        },
+        "step_uccase": {
+            "lb": 0.0,
+            "ub": 300.0
+        },
+        "step_uccu": {
+            "lb": 0.0,
+            "ub": 300.0
+        },
+        "step_ucfnc": {
+            "lb": 0.0,
+            "ub": 300.0
         },
         "strncon_cs": {
             "lb": -0.02,
@@ -16406,6 +16454,13 @@
             "output_costs",
             "discount_rate",
             "step_con",
+            "step_cconfix",
+            "step_cconshpf",
+            "step_uccase",
+            "step_uccu",
+            "step_ucsc",
+            "step_ucfnc",
+            "step_ucwindpf",
             "step_rh_costfrac",
             "step_ref",
             "tlife",
@@ -16613,6 +16668,7 @@
             "step92",
             "step93",
             "fwblkcost",
+            "step22010302",
             "vfi",
             "vfi_star",
             "ptherm_star",
@@ -19562,8 +19618,15 @@
         "somtdr": "real_variable",
         "ssync": "real_variable",
         "stcl": "real_variable",
+        "step_cconfix": "real_variable",
+        "step_cconshpf": "real_variable",
+        "step_con": "real_variable",
         "step_ref": "real_array",
         "step_rh_costfrac": "real_variable",
+        "step_uccase": "real_variable",
+        "step_uccu": "real_variable",
+        "step_ucfnc": "real_variable",
+        "step_ucsc": "real_array",
         "strncon_cs": "real_variable",
         "strncon_pf": "real_variable",
         "strncon_tf": "real_variable",
