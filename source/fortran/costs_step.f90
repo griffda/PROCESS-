@@ -505,6 +505,7 @@ contains
     step2298 = step2298 + 9.985D-2 *  step220102
   
     ! 22.01.03.01 TF Coils
+    ! step22010301 is cost of TF coils in M$
     ! Copper coils: guard against undefined cost
     if (i_tf_sup == 0) then
       step22010301 = 0
@@ -512,7 +513,7 @@ contains
     
     ! Superconducting coils
     if (i_tf_sup == 1) then
-      ! Original STARFIRE value, scaling with fusion island volume
+      ! Original STARFIRE value in M$, scaling with fusion island volume
       step22010301 = step_ref(22) * (vfi / vfi_star)
     endif
     
@@ -520,10 +521,11 @@ contains
     if (i_tf_sup == 2) then
       ! Cost approximated as purely the material cost of conducting Al
       ! Al conductor mass per coil * number of coils * cost per kilo
-      step22010301 = whtconal * n_tf * unit_cost_cryo_al
+      ! Then convert to M$
+      step22010301 = (whtconal * n_tf * unit_cost_cryo_al) * 1.0D-6
     endif
 
-    ! step22010301 is cost of TF coils; add to total step2201
+    ! Add to total cost, step2201, in M$
     step2201 = step2201 + step22010301
 
     ! 22.01.03.02 PF Coils
