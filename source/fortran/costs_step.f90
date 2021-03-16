@@ -465,7 +465,7 @@ contains
 
     use build_variables, only: fwarea
     use cost_variables, only: output_costs, step_ref, ifueltyp, fcdfuel, &
-      divcst, cdcost, unit_cost_cryo_al
+      divcst, cdcost, unit_cost_cryo_al, man_cost_cryo_al_per
     use current_drive_variables, only: pinjmw
     use physics_variables, only: rmajor, rminor
     use process_output, only: ocosts, oblnkl
@@ -519,10 +519,13 @@ contains
     
     ! Cryogenic aluminium coils
     if (i_tf_sup == 2) then
-      ! Cost approximated as purely the material cost of conducting Al
-      ! Al conductor mass per coil * number of coils * cost per kilo
-      ! Then convert to M$
-      step22010301 = (whtconal * n_tf * unit_cost_cryo_al) * 1.0D-6
+      ! Cost approximated as the material cost of conducting Al * a 
+      ! manufacturing cost factor
+      ! Al conductor mass per coil * number of coils * cost per kilo *
+      ! manufacturing cost factor, converted to M$
+      ! man_cost_cryo_al_per = 20.0: 20% manufacturing cost
+      step22010301 = (whtconal * n_tf * unit_cost_cryo_al) * &
+        ((man_cost_cryo_al_per / 100.0) + 1) * 1.0D-6
     endif
 
     ! Add to total cost, step2201, in M$

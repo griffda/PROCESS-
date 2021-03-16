@@ -526,6 +526,10 @@ module cost_variables
   real(dp) :: unit_cost_cryo_al
   !! Unit cost of cryo aluminium ($/kg)
 
+  real(dp) :: man_cost_cryo_al_per
+  !! Manufacturing cost percentage for cryo aluminium (%). 20.0 means a 20%
+  !! manufacturing cost
+
   real(dp), parameter :: ucsh = 115.0D0
   !! cost of shops and warehouses (M$/m3)
 
@@ -744,5 +748,6 @@ module cost_variables
     i_cp_lifetime = 0
     cplife_input = 2.0D0
     unit_cost_cryo_al = 10.0D0
+    man_cost_cryo_al_per = 20.0D0
   end subroutine init_cost_variables
 end module cost_variables
