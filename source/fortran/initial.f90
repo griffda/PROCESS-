@@ -9,11 +9,37 @@ subroutine initial
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use process_output
-    use stellarator_module
-    use stellarator_variables
-    use numerics
-    use define_iteration_variables
+    use define_iteration_variables, only: init_itv_1, init_itv_2, init_itv_3, &
+        init_itv_4, init_itv_5, init_itv_6, init_itv_7, init_itv_8, init_itv_9, &
+        init_itv_10, init_itv_11, init_itv_12, init_itv_13, init_itv_14, init_itv_15, &
+        init_itv_16, init_itv_17, init_itv_18, init_itv_19, init_itv_20, init_itv_21, &
+        init_itv_23, init_itv_25, init_itv_26, init_itv_27, init_itv_28, init_itv_29, &
+        init_itv_30, init_itv_31, init_itv_32, init_itv_33, init_itv_34, init_itv_35, &
+        init_itv_36, init_itv_37, init_itv_38, init_itv_39, init_itv_40, init_itv_41, &
+        init_itv_42, init_itv_44, init_itv_45, init_itv_46, init_itv_47, init_itv_48, &
+        init_itv_49, init_itv_50, init_itv_51, init_itv_52, init_itv_53, init_itv_54, &
+        init_itv_56, init_itv_57, init_itv_58, init_itv_59, init_itv_60, init_itv_61, &
+        init_itv_62, init_itv_63, init_itv_64, init_itv_65, init_itv_66, init_itv_67, &
+        init_itv_68, init_itv_69, init_itv_70, init_itv_71, init_itv_72, init_itv_73, &
+        init_itv_74, init_itv_75, init_itv_79, init_itv_81, init_itv_82, init_itv_83, &
+        init_itv_84, init_itv_85, init_itv_86, init_itv_89, init_itv_90, init_itv_91, &
+        init_itv_92, init_itv_93, init_itv_94, init_itv_95, init_itv_96, init_itv_97, &
+        init_itv_98, init_itv_102, init_itv_103, init_itv_104, init_itv_105, &
+        init_itv_106, init_itv_107, init_itv_108, init_itv_109, init_itv_110, &
+        init_itv_111, init_itv_112, init_itv_113, init_itv_114, init_itv_115, &
+        init_itv_116, init_itv_117, init_itv_118, init_itv_119, init_itv_120, &
+        init_itv_121, init_itv_122, init_itv_123, init_itv_124, init_itv_125, &
+        init_itv_126, init_itv_127, init_itv_128, init_itv_129, init_itv_130, &
+        init_itv_131, init_itv_132, init_itv_133, init_itv_134, init_itv_135, &
+        init_itv_136, init_itv_137, init_itv_138, init_itv_139, init_itv_140, &
+        init_itv_141, init_itv_142, init_itv_143, init_itv_144, init_itv_145, &
+        init_itv_146, init_itv_147, init_itv_148, init_itv_149, init_itv_150, &
+        init_itv_151, init_itv_152, init_itv_153, init_itv_154, init_itv_155, &
+        init_itv_156, init_itv_157, init_itv_158, init_itv_159, init_itv_160, &
+        init_itv_161, init_itv_162, init_itv_163, init_itv_164, init_itv_165, &
+        init_itv_166, init_itv_167, init_itv_168, init_itv_169, init_itv_170, &
+        init_itv_171, init_itv_172, init_itv_173, init_itv_174, init_itv_175
+    use, intrinsic :: iso_fortran_env, only: dp=>real64
 
     implicit none
 
@@ -22,10 +48,6 @@ subroutine initial
     !  Local variables
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  See which type of device is being modelled
-
-    call devtyp
 
     !! boundl(ipnvars) /../ : lower bounds on iteration variables 
     !! boundu(ipnvars) /../ : upper bounds on iteration variables 
@@ -106,6 +128,7 @@ subroutine initial
     call init_itv_73
     call init_itv_74
     call init_itv_75
+
     
     
     
@@ -199,381 +222,14 @@ subroutine initial
     call init_itv_168
     call init_itv_169
     call init_itv_170
+    call init_itv_171
+    call init_itv_172
+    call init_itv_173
+    call init_itv_174
+    call init_itv_175
 
-
-    !    call init_itv_1
-    !    !!  <LI> ( 1) aspect!!!
-    !    call init_itv_2  
-    !    !!  <LI> ( 2) bt!!!!
-    !    call init_itv_3
-    !    !!  <LI> ( 3) rmajor
-    !    call init_itv_4
-    !    !!  <LI> ( 4) te
-    !    call init_itv_5
-    !    !!  <LI> ( 5) beta
-    !    call init_itv_6
-    !    !!  <LI> ( 6) dene
-    !    call init_itv_7
-    !    !!  <LI> ( 7) rnbeam
-    !    call init_itv_8  
-    !    !!  <LI> ( 8) fbeta (f-value for equation 6)
-    !    call init_itv_9 
-    !    !!  <LI> ( 9) fdene (f-value for equation 5)
-    !    lablxc(10) = 'hfact         '; boundl(10) = 0.100D0 ; boundu(10) = 3.000D0  
-    !    !!  <LI> (10) hfact
-    !    lablxc(11) = 'pheat         '; boundl(11) = 1.00D-3 ; boundu(11) = 1.000D3  
-    !    !!  <LI> (11) pheat
-    !    lablxc(12) = 'oacdcp        '; boundl(12) = 1.000D5 ; boundu(12) =  1.500D8 
-    !    !!  <LI> (12) oacdcp
-    !    lablxc(13) = 'tfcth         '; boundl(13) = 0.100D0 ; boundu(13) = 5.000D0
-    !    !!  <LI> (13) tfcth (NOT RECOMMENDED)
-    !    lablxc(14) = 'fwalld        '; boundl(14) = 0.001D0 ; boundu(14) = 1.000D0
-    !    !!  <LI> (14) fwalld (f-value for equation 8)
-    !    lablxc(15) = 'fvs           '; boundl(15) = 0.001D0 ; boundu(15) = 1.000D0
-    !    !!  <LI> (15) fvs (f-value for equation 12)
-    !    lablxc(16) = 'ohcth         '; boundl(16) = 0.010D0 ; boundu(16) = 10.00D0
-    !    !!  <LI> (16) ohcth
-    !    lablxc(17) = 'tdwell        '; boundl(17) = 0.100D0 ; boundu(17) = 1.000D8
-    !    !!  <LI> (17) tdwell
-    !    lablxc(18) = 'q             '; boundl(18) = 2.000D0 ; boundu(18) = 50.00D0
-    !    !!  <LI> (18) q
-    !    lablxc(19) = 'enbeam        '; boundl(19) = 1.000D0 ; boundu(19) = 1.000D6
-    !    !!  <LI> (19) enbeam
-    !    lablxc(20) = 'tcpav         '; boundl(20) = 40.00D0 ; boundu(20) = 3.000D2
-    !    !!  <LI> (20) tcpav
-    !    lablxc(21) = 'ftburn        '; boundl(21) = 0.001D0 ; boundu(21) = 1.000D0
-    !    !!  <LI> (21) ftburn (f-value for equation 13)
-    !    !!  <LI> (23) fcoolcp
-    !    !!  <LI> (22) NOT USED
-    !    lablxc(23) = 'fcoolcp       '; boundl(23) = 0.100D0 ; boundu(23) = 0.500D0
-    !    !!  <LI> (25) fpnetel (f-value for equation 16)
-    !    !!  <LI> (24) NOT USED
-    !    lablxc(25) = 'fpnetel       '; boundl(25) = 0.001D0; boundu(25) = 1.000D0
-    !    lablxc(26) = 'ffuspow       '; boundl(26) = 0.001D0; boundu(26) = 1.000D0
-    !    !!  <LI> (26) ffuspow (f-value for equation 9)
-    !    lablxc(27) = 'fhldiv        ';  boundl(27) = 0.001D0; boundu(27) = 1.000D0
-    !    !!  <LI> (27) fhldiv (f-value for equation 18)
-    !    lablxc(28) = 'fradpwr       '; boundl(28) = 0.001D0; boundu(28) = 0.990D0
-    !    !!  <LI> (28) fradpwr (f-value for equation 17), total radiation fraction
-    !    lablxc(29) = 'bore          '; boundl(29) = 0.100D0; boundu(29) = 10.00D0
-    !    !!  <LI> (29) bore
-    !    lablxc(30) = 'fmva          '; boundl(30) = 0.010D0; boundu(30) = 1.000D0
-    !    !!  <LI> (30) fmva (f-value for equation 19)
-    !    lablxc(31) = 'gapomin       '; boundl(31) = 0.001D0; boundu(31) = 1.000D1
-    !    !!  <LI> (31) gapomin
-    !    lablxc(32) = 'frminor       '; boundl(32) = 0.001D0; boundu(32) = 1.000D0
-    !    !!  <LI> (32) frminor (f-value for equation 21)
-    !    lablxc(33) = 'fportsz       '; boundl(33) = 0.001D0; boundu(33) = 1.000D0
-    !    !!  <LI> (33) fportsz (f-value for equation 20)
-    !    lablxc(34) = 'fdivcol       '; boundl(34) = 0.001D0; boundu(34) = 1.000D0
-    !    !!  <LI> (34) fdivcol (f-value for equation 22)
-    !    lablxc(35) = 'fpeakb        '; boundl(35) = 0.001D0; boundu(35) = 1.000D0
-    !    !!  <LI> (35) fpeakb (f-value for equation 25)
-    !    lablxc(36) = 'fbetatry      '; boundl(36) = 0.001D0; boundu(36) = 1.000D0
-    !    !!  <LI> (36) fbetatry (f-value for equation 24)
-    !    lablxc(37) = 'coheof        '; boundl(37) = 1.000D5; boundu(37) = 1.000D8
-    !    !!  <LI> (37) coheof
-    !    lablxc(38) = 'fjohc         '; boundl(38) = 0.010D0; boundu(38) = 1.000D0
-    !    !!  <LI> (38) fjohc (f-value for equation 26)
-    !    lablxc(39) = 'fjohc0        '; boundl(39) = 0.001D0; boundu(39) = 1.000D0
-    !    !!  <LI> (39) fjohc0 (f-value for equation 27)
-    !    lablxc(40) = 'fgamcd        '; boundl(40) = 0.001D0; boundu(40) = 1.000D0
-    !    !!  <LI> (40) fgamcd (f-value for equation 37)
-    !    lablxc(41) = 'fcohbop       '; boundl(41) = 0.001D0; boundu(41) = 1.000D0
-    !    !!  <LI> (41) fcohbop
-    !    lablxc(42) = 'gapoh         '; boundl(42) = 0.001D0; boundu(42) = 10.00D0
-    !    !!  <LI> (42) gapoh
-    !    !!  <LI> (44) fvsbrnni
-    !    !!  <LI> (43) NOT USED
-    !    lablxc(44) = 'fvsbrnni      '; boundl(44) = 0.001D0; boundu(44) = 1.000D0
-    !    lablxc(45) = 'fqval         '; boundl(45) = 0.001D0; boundu(45) = 1.000D0
-    !    !!  <LI> (45) fqval (f-value for equation 28)
-    !    lablxc(46) = 'fpinj         '; boundl(46) = 0.001D0; boundu(46) = 1.000D0
-    !    !!  <LI> (46) fpinj (f-value for equation 30)
-    !    lablxc(47) = 'feffcd        '; boundl(47) = 0.001D0; boundu(47) = 1.000D0
-    !    !!  <LI> (47) feffcd
-    !    lablxc(48) = 'fstrcase      '; boundl(48) = 0.001D0; boundu(48) = 1.000D0
-    !    !!  <LI> (48) fstrcase (f-value for equation 31)
-    !    lablxc(49) = 'fstrcond      '; boundl(49) = 0.001D0; boundu(49) = 1.000D0
-    !    !!  <LI> (49) fstrcond (f-value for equation 32)
-    !    lablxc(50) = 'fiooic        '; boundl(50) = 0.001D0; boundu(50) = 1.000D0
-    !    !!  <LI> (50) fiooic (f-value for equation 33)
-    !    lablxc(51) = 'fvdump        '; boundl(51) = 0.001D0; boundu(51) = 1.000D0
-    !    !!  <LI> (51) fvdump (f-value for equation 34)
-    !    lablxc(52) = 'vdalw         '; boundl(52) = 0.001D0; boundu(52) = 1.000D6
-    !    !!  <LI> (52) vdalw
-    !    lablxc(53) = 'fjprot        '; boundl(53) = 0.001D0; boundu(53) = 1.000D0
-    !    !!  <LI> (53) fjprot (f-value for equation 35)
-    !    lablxc(54) = 'ftmargtf      '; boundl(54) = 0.001D0; boundu(54) = 1.000D0
-    !    !!  <LI> (54) ftmargtf (f-value for equation 36)
-    !    !!  <LI> (56) tdmptf
-    !    !!  <LI> (55) obsolete
-    !    lablxc(56) = 'tdmptf        '; boundl(56) = 0.100D0; boundu(56) = 100.0D0
-    !    lablxc(57) = 'thkcas        '; boundl(57) = 0.050D0; boundu(57) = 1.000D0
-    !    !!  <LI> (57) thkcas
-    !    lablxc(58) = 'thwcndut      '; boundl(58) = 0.001D0; boundu(58) = 0.100D0
-    !    !!  <LI> (58) thwcndut
-    !    lablxc(59) = 'fcutfsu       '; boundl(59) = 0.001D0; boundu(59) = 1.000D0
-    !    !!  <LI> (59) fcutfsu
-    !    lablxc(60) = 'cpttf         '; boundl(60) = 0.001D0; boundu(60) = 4.000D4
-    !    !!  <LI> (60) cpttf
-    !    lablxc(61) = 'gapds         '; boundl(61) = 0.001D0; boundu(61) = 10.00D0
-    !    !!  <LI> (61) gapds
-    !    lablxc(62) = 'fdtmp         '; boundl(62) = 0.001D0; boundu(62) = 1.000D0
-    !    !!  <LI> (62) fdtmp (f-value for equation 38)
-    !    lablxc(63) = 'ftpeak        '; boundl(63) = 0.001D0; boundu(63) = 1.000D0
-    !    !!  <LI> (63) ftpeak (f-value for equation 39)
-    !    lablxc(64) = 'fauxmn        '; boundl(64) = 0.001D0; boundu(64) = 1.000D0
-    !    !!  <LI> (64) fauxmn (f-value for equation 40)
-    !    lablxc(65) = 'tohs          '; boundl(65) = 0.100D0; boundu(65) = 1.000D3
-    !    !!  <LI> (65) tohs
-    !    lablxc(66) = 'ftohs         '; boundl(66) = 0.001D0; boundu(66) = 1.000D0
-    !    !!  <LI> (66) ftohs (f-value for equation 41)
-    !    lablxc(67) = 'ftcycl        '; boundl(67) = 0.001D0; boundu(67) = 1.000D0
-    !    !!  <LI> (67) ftcycl (f-value for equation 42)
-    !    lablxc(68) = 'fptemp        '; boundl(68) = 0.001D0; boundu(68) = 1.000D0
-    !    !!  <LI> (68) fptemp (f-value for equation 44)
-    !    lablxc(69) = 'rcool         '; boundl(69) = 0.001D0; boundu(69) = 0.010D0
-    !    !!  <LI> (69) rcool
-    !    lablxc(70) = 'vcool         '; boundl(70) = 1.000D0; boundu(70) = 1.000D2
-    !    !!  <LI> (70) vcool
-    !    lablxc(71) = 'fq            '; boundl(71) = 0.001D0; boundu(71) = 1.000D0
-    !    !!  <LI> (71) fq (f-value for equation 45)
-    !    lablxc(72) = 'fipir         '; boundl(72) = 0.001D0; boundu(72) = 1.000D0
-    !    !!  <LI> (72) fipir (f-value for equation 46)
-    !    lablxc(73) = 'scrapli       '; boundl(73) = 0.001D0; boundu(73) = 10.00D0
-    !    !!  <LI> (73) scrapli
-    !    lablxc(74) = 'scraplo       '; boundl(74) = 0.001D0; boundu(74) = 10.00D0
-    !    !!  <LI> (74) scraplo
-    !    lablxc(75) = 'tfootfi       '; boundl(75) = 0.200D0; boundu(75) = 5.000D0
-    !    !!  <LI> (75) tfootfi
-    !    !!  <LI> (77) NOT USED
-    !    !!  <LI> (76) NOT USED
-    !    !!  <LI> (78) NOT USED
-    !    !!  <LI> (79) fbetap (f-value for equation 48)
-    !    lablxc(79) = 'fbetap        '; boundl(79) = 0.001D0; boundu(79) = 1.000D0
-    !    !!  <LI> (81) NOT USED
-    !    !!  <LI> (80) NOT USED
-    !    !!  <LI> (82) NOT USED
-    !    !!  <LI> (83) NOT USED
-    !    !!  <LI> (84) NOT USED
-    !    !!  <LI> (85) NOT USED
-    !    !!  <LI> (86) NOT USED
-    !    !!  <LI> (87) NOT USED
-    !    !!  <LI> (88) NOT USED
-    !    !!  <LI> (89) ftbr (f-value for equation 52)
-    !    lablxc(89) = 'ftbr          '; boundl(89) = 0.001D0; boundu(89) = 1.000D0
-    !    lablxc(90) = 'blbuith       '; boundl(90) = 0.001D0; boundu(90) = 2.000D0
-    !    !!  <LI> (90) blbuith
-    !    lablxc(91) = 'blbuoth       '; boundl(91) = 0.001D0; boundu(91) = 2.000D0
-    !    !!  <LI> (91) blbuoth
-    !    lablxc(92) = 'fflutf        '; boundl(92) = 0.001D0; boundu(92) = 1.000D0
-    !    !!  <LI> (92) fflutf (f-value for equation 53)
-    !    lablxc(93) = 'shldith       '; boundl(93) = 0.001D0; boundu(93) = 10.00D0
-    !    !!  <LI> (93) shldith
-    !    lablxc(94) = 'shldoth       '; boundl(94) = 0.001D0; boundu(94) = 10.00D0
-    !    !!  <LI> (94) shldoth
-    !    lablxc(95) = 'fptfnuc       '; boundl(95) = 0.001D0; boundu(95) = 1.000D0
-    !    !!  <LI> (95) fptfnuc (f-value for equation 54)
-    !    lablxc(96) = 'fvvhe         '; boundl(96) = 0.001D0; boundu(96) = 1.000D0
-    !    !!  <LI> (96) fvvhe (f-value for equation 55)
-    !    lablxc(97) = 'fpsepr        '; boundl(97) = 0.001D0; boundu(97) = 1.000D0
-    !    !!  <LI> (97) fpsepr (f-value for equation 56)
-    !    lablxc(98) = 'li6enrich     '; boundl(98) = 10.00D0; boundu(98) = 100.0D0
-    !    !!  <LI> (98) li6enrich
-    !    !!  <LI> (100) NOT USED
-    !    !!  <LI> (99) NOT USED
-    !    !!  <LI> (101) NOT USED
-    !    !!  <LI> (102) fimpvar
-    !    lablxc(102) = 'fimpvar       '; boundl(102) = 1.00D-6; boundu(102) = 0.010D0
-    !    lablxc(103) = 'flhthresh     '; boundl(103) = 1.000D0; boundu(103) = 1.000D6
-    !    !!  <LI> (103) flhthresh (f-value for equation 15)
-    !    lablxc(104) = 'fcwr          '; boundl(104) = 0.001D0; boundu(104) = 1.000D0
-    !    !!  <LI> (104) fcwr (f-value for equation 23)
-    !    lablxc(105) = 'fnbshinef     '; boundl(105) = 0.001D0; boundu(105) = 1.000D0
-    !    !!  <LI> (105) fnbshinef (f-value for equation 59)
-    !    lablxc(106) = 'ftmargoh      '; boundl(106) = 0.001D0; boundu(106) = 1.000D0
-    !    !!  <LI> (106) ftmargoh (f-value for equation 60)
-    !    lablxc(107) = 'favail        '; boundl(107) = 0.001D0; boundu(107) = 1.000D0
-    !    !!  <LI> (107) favail (f-value for equation 61)
-    !    lablxc(108) = 'breeder_f     '; boundl(108) = 0.060D0; boundu(108) = 1.000D0
-    !    !!  <LI> (108) breeder_f: Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)
-    !    lablxc(109) = 'ralpne        '; boundl(109) = 0.050D0; boundu(109) = 0.150D0
-    !    !!  <LI> (109) ralpne: thermal alpha density / electron density
-    !    !!       to energy confinement times (f-value for equation 62)
-    !    !!  <LI> (110) ftaulimit: Lower limit on taup/taueff the ratio of alpha particle
-    !    lablxc(110) = 'ftaulimit     '; boundl(110) = 0.001D0; boundu(110) = 1.000D0
-    !    !!       number of vacuum pumps <  TF coils (f-value for equation 63)
-    !    !!  <LI> (111) fniterpump: f-value for constraint that
-    !    lablxc(111) = 'fniterpump    '; boundl(111) = 0.001D0; boundu(111) = 1.000D0
-    !    lablxc(112) = 'fzeffmax      '; boundl(112) = 0.001D0; boundu(112) = 1.000D0
-    !    !!  <LI> (112) fzeffmax: f-value for max Zeff (f-value for equation 64)
-    !    lablxc(113) = 'ftaucq        '; boundl(113) = 0.001D0; boundu(113) = 1.000D0
-    !    !!  <LI> (113) ftaucq: f-value for minimum quench time (f-value for equation 65)
-    !    lablxc(114) = 'fw_channel_l  '; boundl(114) = 0.001D0; boundu(114) = 1.000D3
-    !    !!  <LI> (114) fw_channel_length: Length of a single first wall channel
-    !    !!             (f-value for equation 66)
-    !    !!  <LI> (115) fpoloidalpower: f-value for max rate of change of energy in poloidal field
-    !    lablxc(115) = 'fpoloidalpower'; boundl(26) = 0.001D0; boundu(26) = 1.000D0
-    !    lablxc(116) = 'fradwall      '; boundl(116) = 0.001D0; boundu(116) = 1.000D0
-    !    !!  <LI> (116) fradwall: f-value for radiation wall load limit (eq. 67)
-    !    lablxc(117) = 'fpsepbqar     '; boundl(117) = 0.001D0; boundu(117) = 1.000D0
-    !    !!  <LI> (117) fpsepbqar: f-value for  Psep*Bt/qar upper limit (eq. 68)
-    !    !!            (f-value for equation 69)
-    !    !!  <LI> (118) fpsep: f-value to ensure separatrix power is less than value from Kallenbach divertor
-    !    lablxc(118) = 'fpsep         '; boundl(118) = 0.001D0; boundu(118) = 1.000D0
-    !    lablxc(119) = 'tesep         '; boundl(119) = 0.000D0; boundu(119) = 1.000D1
-    !    !!  <LI> (119) tesep:  separatrix temperature calculated by the Kallenbach divertor model
-    !    lablxc(120) = 'ttarget       '; boundl(120) = 1.000D0; boundu(120) = 1.000D4
-    !    !!  <LI> (120) ttarget: Plasma temperature adjacent to divertor sheath [eV]
-    !    lablxc(121) = 'neratio       '; boundl(121) = 0.001D0; boundu(121) = 1.000D0
-    !    !!  <LI> (121) neratio: ratio of mean SOL density at OMP to separatrix density at OMP
-    !    lablxc(122) = 'oh_steel_frac '; boundl(122) = 0.001D0; boundu(122) = 0.950D0
-    !    !!  <LI> (122) oh_steel_frac : streel fraction of Central Solenoid
-    !    lablxc(123) = 'foh_stress    '; boundl(123) = 0.001D0; boundu(123) = 1.000D0
-    !    !!  <LI> (123) foh_stress : f-value for CS coil Tresca stress limit (f-value for eq. 72)
-    !    lablxc(124) = 'qtargettotal  '; boundl(124) = 0.001D0; boundu(124) = 1.000D7
-    !    !!  <LI> (124) qtargettotal : Power density on target including surface recombination [W/m2]
-    !    lablxc(125) = 'fimp(03)      '; boundl(125) = 1.00D-8; boundu(125) = 0.010D0
-    !    !!  <LI> (125) fimp(3) :  Beryllium density fraction relative to electron density
-    !    lablxc(126) = 'fimp(04)      '; boundl(126) = 1.00D-8; boundu(126) = 0.010D0
-    !    !!  <LI> (126) fimp(4) :  Carbon density fraction relative to electron density
-    !    lablxc(127) = 'fimp(05)      '; boundl(127) = 1.00D-8; boundu(127) = 0.010D0
-    !    !!  <LI> (127) fimp(5) :  Nitrogen fraction relative to electron density
-    !    lablxc(128) = 'fimp(06)      '; boundl(128) = 1.00D-8; boundu(128) = 0.010D0
-    !    !!  <LI> (128) fimp(6) :  Oxygen density fraction relative to electron density
-    !    lablxc(129) = 'fimp(07)      '; boundl(129) = 1.00D-8; boundu(129) = 0.010D0
-    !    !!  <LI> (129) fimp(7) :  Neon density fraction relative to electron density
-    !    lablxc(130) = 'fimp(08)      '; boundl(130) = 1.00D-8; boundu(130) = 0.010D0
-    !    !!  <LI> (130) fimp(8) :  Silicon density fraction relative to electron density
-    !    lablxc(131) = 'fimp(09)      '; boundl(131) = 1.00D-8; boundu(131) = 0.010D0
-    !    !!  <LI> (131) fimp(9) :  Argon density fraction relative to electron density
-    !    lablxc(132) = 'fimp(10)      '; boundl(132) = 1.00D-8; boundu(132) = 0.010D0
-    !    !!  <LI> (132) fimp(10) :  Iron density fraction relative to electron density
-    !    lablxc(133) = 'fimp(11)      '; boundl(133) = 1.00D-8; boundu(133) = 0.010D0
-    !    !!  <LI> (133) fimp(11) :  Nickel density fraction relative to electron density
-    !    lablxc(134) = 'fimp(12)      '; boundl(134) = 1.00D-8; boundu(134) = 0.010D0
-    !    !!  <LI> (134) fimp(12) :  Krypton density fraction relative to electron density
-    !    lablxc(135) = 'fimp(13)      '; boundl(135) = 1.00D-8; boundu(135) = 0.010D0
-    !    !!  <LI> (135) fimp(13) :  Xenon density fraction relative to electron density
-    !    lablxc(136) = 'fimp(14)      '; boundl(136) = 1.00D-8; boundu(136) = 0.010D0
-    !    !!  <LI> (136) fimp(14) :  Tungsten density fraction relative to electron density
-    !    lablxc(137) = 'fplhsep       '; boundl(137) = 0.001D0; boundu(137) = 1.000D0
-    !    !!  <LI> (137) fplhsep (f-value for equation 73)
-    !    lablxc(138) = 'rebco_thicknes'; boundl(138) = 0.01D-6; boundu(138) = 100.0D-6
-    !    !!  <LI> (138) rebco_thickness : thickness of REBCO layer in tape (m)
-    !    lablxc(139) = 'copper_thick  '; boundl(139) = 1.00D-6; boundu(139) = 1.00D-3
-    !    !!  <LI> (139) copper_thick : thickness of copper layer in tape (m)
-    !    lablxc(140) = 'thkwp         '; boundl(140) = 0.001D0; boundu(140) = 2.000D0
-    !    !!  <LI> (140) thkwp : radial thickness of TFC winding pack (m)
-    !    lablxc(141) = 'fcqt          '; boundl(141) = 0.001D0; boundu(141) = 1.000D0
-    !    !!  <LI> (141) fcqt : TF coil quench temperature < tmax_croco (f-value for equation 74)
-    !    lablxc(142) = 'nesep         '; boundl(142) = 1.00D17; boundu(142) = 1.00D20
-    !    !!  <LI> (142) nesep : electron density at separatrix [m-3]
-    !    lablxc(143) = 'f_coppera_m2  '; boundl(143) = 0.001D0; boundu(143) = 1.000D0
-    !    !!  <LI> (143) f_coppera_m2 : TF coil current / copper area < Maximum value (f-value for equation 75)
-    !    lablxc(144) = 'fnesep        '; boundl(144) = 0.001D0; boundu(144) = 1.000D0
-    !    !!  <LI> (144) fnesep : Eich critical electron density at separatrix (f-value for constraint equation 76) [m-3]
-    !    lablxc(145) = 'fgwped        '; boundl(145) = 0.500D0; boundu(145) = 1.000D0
-    !    !!  <LI> (145) fgwped :  fraction of Greenwald density to set as pedestal-top density
-    !    lablxc(146) = 'fcpttf        '; boundl(146) = 0.001D0; boundu(146) = 1.000D0
-    !    !!  <LI> (146) fcpttf : F-value for TF coil current per turn limit (constraint equation 77)
-    !    lablxc(147) = 'freinke       '; boundl(147) = 0.001D0; boundu(147) = 1.000D0
-    !    !!  <LI> (147) freinke : F-value for Reinke detachment criterion (constraint equation 78)
-    !    lablxc(148) = 'fzactual      '; boundl(148) = 1.00D-8; boundu(148) = 1.000D0
-    !    !!  <LI> (148) fzactual : fraction of impurity at SOL with Reinke detachment criterion
-    !    lablxc(149) = 'fbmaxcs       '; boundl(149) = 0.001D0; boundu(149) = 1.000D0
-    !    !!  <LI> (149) fbmaxcs : F-value for max peak CS field (con. 79, itvar 149)
-    !    lablxc(150) = 'plasmod_fcdp  '; boundl(150) = 0.000D0; boundu(150) = 1.000D0
-    !     !!  <LI> (150) plasmod_fcdp : (P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power
-    !    lablxc(151) = 'plasmod_fradc '; boundl(151) = 0.001D0; boundu(151) = 1.000D0
-    !    !!  <LI> (151) plasmod_fradc : Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad)
-    !    lablxc(152) = 'fgwsep        '; boundl(152) = 0.001D0; boundu(152) = 1.000D0
-    !    !!  <LI> (152) fbmaxcs : Ratio of separatrix density to Greenwald density
-    !    lablxc(153) = 'fpdivlim      '; boundl(153) = 0.001D0; boundu(153) = 1.000D0
-    !    !!  <LI> (153) fpdivlim : F-value for minimum pdivt (con. 80)
-    !    lablxc(154) = 'fpdivlim      '; boundl(154) = 0.001D0; boundu(154) = 1.000D0
-    !    !!  <LI> (154) fne0 : F-value for ne(0) > ne(ped) (con. 81)</UL>
-
-
-    !  Initialise stellarator parameters if necessary
-    !  This overrides some of the bounds of the tokamak parameters.
-    if (istell /= 0) call stinit
 
 end subroutine initial
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine devtyp
-
-    !! Routine to determine which type of device is to be modelled
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! None
-    !! This routine uses the contents of an input file,
-    !! <CODE>device.dat</CODE>, to determine which type of device
-    !! is to be modelled. If the file is not present in the current
-    !! directory, a standard tokamak model is assumed.
-    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use error_handling
-    use global_variables
-    use ife_variables
-    use stellarator_variables
-
-    implicit none
-
-    !  Local variables
-
-    integer :: idev
-    integer :: iost
-    logical :: iexist
-    character(len = 20) :: devFile
-    character(len = 5) :: line
-    line = ' '
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    devFile = 'device.dat'
-    istell = 0
-    ife    = 0
-    idev   = 0      ! Default value MK
-
-    !  Read a second input file. If the file does not exist or
-    !  blank, then the standard tokamak option is assumed.
-
-    inquire(file = devFile, exist = iexist)
-
-    if (iexist) then
-        open(unit = 101, file = 'device.dat', status = 'old')
-        DO
-            read(101,'(A)', IOSTAT = iost) line
-            read(line, '(I2)') idev
-            if(iost < 0 .or. idev > 0) exit
-        END DO
-        close(unit = 101)
-
-        !  Set relevant switch
-
-        select case (idev)
-
-        case (1)  !  Stellarator model
-            istell = 1
-
-        case (2)  !  ! ISSUE #508 Remove RFP option
-            call report_error(228)
-        case (3)  !  Inertial Fusion Energy model
-            ife = 1
-            icase = 'Inertial Fusion model'
-
-        case default  !  Tokamak model
-            continue
-
-        end select
-    end if
-
-end subroutine devtyp
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine check
 
@@ -588,35 +244,50 @@ subroutine check
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables
-    use buildings_variables
-    use current_drive_variables
-    use divertor_kallenbach_variables
-    use error_handling
-    use fwbs_variables
-    use global_variables
-    use heat_transport_variables
-    use ife_variables
-    use impurity_radiation_module
-    use numerics
-    use pfcoil_variables
-    use physics_variables
-    use plasmod_variables
-    use process_output
-    use pulse_variables
-    use reinke_variables
-    use tfcoil_variables
-    use stellarator_variables
-    use sctfcoil_module
-    use vacuum_variables
+    use build_variables, only: blnkith, bore, gapoh, ohcth, precomp, iprecomp, &
+        i_r_cp_top, r_cp_top
+    use buildings_variables, only: esbldgm3, triv
+    use current_drive_variables, only: gamcd, iefrf, irfcd
+    use div_kal_vars, only: impurity_enrichment, kallenbach_switch
+    use error_handling, only: errors_on, idiags, fdiags, report_error
+    use fwbs_variables, only: breeder_multiplier, iblanket, vfcblkt, vfpblkt, &
+        iblnkith
+    use global_variables, only: icase
+    use heat_transport_variables, only: trithtmw
+    use ife_variables, only: ife
+    use impurity_radiation_module, only: nimp, impurity_arr, fimp
+    use numerics, only: ixc, icc, ioptimz, neqns, nineqns, nvar, boundl, &
+        boundu
+    use pfcoil_variables, only: ipfres, ngrp, pfclres, ipfloc, ncls, isumatoh
+    use physics_variables, only: aspect, eped_sf, fdeut, fgwped, fhe3, &
+        fgwsep, ftrit, ibss, i_single_null, icurr, ieped, idivrt, ishape, &
+        iradloss, isc, ipedestal, ilhthresh, itart, nesep, rhopedn, rhopedt, &
+        rnbeam, ifispact, neped, te, tauee_in, tesep, teped
+    use plasmod_variables, only: plasmod_contrpovr, plasmod_i_equiltype, &
+        plasmod_i_modeltype, plasmod_contrpovs
+    use pulse_variables, only: lpulse
+    use reinke_variables, only: fzactual, impvardiv
+    use tfcoil_variables, only: casthi, casthi_is_fraction, casths, i_tf_sup, &
+        tcoolin, tcpav, tfc_sidewall_is_fraction, tmargmin, tmargmin_cs, &
+        tmargmin_tf, eff_tf_cryo, eyoung_ins, i_tf_bucking, i_tf_shape, &
+        n_tf_graded_layers, n_tf_stress_layers, tlegav,  i_tf_plane_stress, &
+        i_tf_sc_mat, i_tf_wp_geom, i_tf_turns_integer, tinstf, thwcndut, &
+        tfinsgap, rcool, dhecoil, thicndut, i_cp_joints, t_turn_tf_is_input, &
+        t_turn_tf, tftmp, t_cable_tf, t_cable_tf_is_input
+    use stellarator_variables, only: istell
+    use sctfcoil_module, only: initialise_cables
+    use vacuum_variables, only: vacuum_model
+    use, intrinsic :: iso_fortran_env, only: dp=>real64
 
     implicit none
 
     !  Local variables
 
     integer :: i,j,k,imp
-    real(kind(1.0D0)) :: fsum
+    real(dp) :: fsum
 
+    real(dp) :: dr_tf_wp_min
+    !! Minimal WP or conductor layer thickness [m]
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     errors_on = .true.
@@ -643,13 +314,13 @@ subroutine check
     if ( any(icc(1:neqns+nineqns) == 3) ) then
         call report_error(162)
         write(*,*) 'PROCESS stopping'
-        stop
+        stop 1
     end if
 
     if ( any(icc(1:neqns+nineqns) == 4) ) then
         call report_error(163)
         write(*,*) 'PROCESS stopping'
-        stop
+        stop 1
     end if
 
 
@@ -658,13 +329,13 @@ subroutine check
         write(*,*) 'Constraint 63 is requested without the correct vacuum model ("simple").'
         write(*,*) 'vacuum_model = ', vacuum_model
         write(*,*) 'PROCESS stopping'
-        stop
+        stop 1
     end if
 
     if ( any(icc(1:neqns+nineqns) == 74) ) then
         write(*,*)'Constraint 74 (TF coil quench temperature for Croco HTS conductor) is not yet implemented'
         write(*,*) 'PROCESS stopping'
-        stop
+        stop 1
     end if
 
     !  Fuel ion fractions must add up to 1.0
@@ -688,14 +359,14 @@ subroutine check
     ! Stop the run if the constraint 10 is used
     if ( any( icc == 10 ) ) then
         call report_error(236)
-        stop
+        stop 1
     end if
 
     ! Stop the run if oacdcp is used as an optimisation variable
     ! As the current density is now calculated from bt without constraint 10
     if ( any( ixc == 12 ) ) then
         call report_error(236)
-        stop
+        stop 1
     end if 
 
     !  Warn if ion power balance equation is being used with the new radiation model
@@ -993,8 +664,8 @@ subroutine check
         end if
 
         ! Location of the TF coils 
-        ! 2 : PF coil on top of TF coil;
-        ! 3 : PF coil outside of TF coil</UL>
+        ! 2 : PF coil on top of TF coil
+        ! 3 : PF coil outside of TF coil
         ipfloc(1) = 2
         ipfloc(2) = 3
         ipfloc(3) = 3
@@ -1015,7 +686,7 @@ subroutine check
         else if ( i_tf_sup == 1 ) then 
             call report_error(233)
 
-        ! Helium cooled cryogenic aluminium magnets initalisation / checks
+        ! Aluminium magnets initalisation / checks
         ! Initialize the CP conductor temperature to cryogenic temperature for cryo-al magnets (20 K)
         else  if ( i_tf_sup == 2 ) then
 
@@ -1042,6 +713,29 @@ subroutine check
 
         ! Set the TF coil shape to picture frame (if default value)
         if ( i_tf_shape == 0 ) i_tf_shape = 2
+
+        ! Warning stating that the CP fast neutron fluence calculation 
+        ! is not addapted for cryoaluminium calculations yet
+        if ( i_tf_sup == 2 .and. any( icc == 85 ) .and. itart == 1 ) then
+            call report_error(260)
+        end if
+
+        ! Setting the CP joints default options : 
+        !  0 : No joints for superconducting magents (i_tf_sup = 1)
+        !  1 : Sliding joints for resistive magnets (i_tf_sup = 0, 2)  
+        if ( i_cp_joints == -1 ) then
+            if ( i_tf_sup == 1 ) then 
+                i_cp_joints = 0
+            else 
+                i_cp_joints = 1
+            end if 
+        end if
+
+        ! Checking the CP TF top radius
+        if ( ( abs(r_cp_top) > epsilon(r_cp_top) .or. any(ixc(1:nvar) == 174) ) &
+            .and. i_r_cp_top /= 1 ) then
+             call report_error(267)
+        end if
     ! --------------------------------
 
     
@@ -1078,6 +772,9 @@ subroutine check
         if (k > 2) call report_error(43)
         if ((i_single_null == 1).and.(j < 2)) call report_error(44)
 
+        ! Constraint 10 is dedicated to ST designs with demountable joints
+        if ( any(icc(1:neqns+nineqns) == 10 ) ) call report_error(259)
+
     end if
     ! ------------------------------------
 
@@ -1094,10 +791,7 @@ subroutine check
         call report_error(164)
     end if
 
-    !  Ensure that if TF coils are non-superconducting,
-    !  only simple stress calculations are performed
-    ! See Issue #781
-    ! if (i_tf_sup /= 1) tfc_model = 0
+
 
     ! TF coil
     ! -------
@@ -1105,25 +799,168 @@ subroutine check
     ! -> If bore + gapoh + ohcth = 0 and fixed and stress constraint is used
     !    Generate a lvl 3 error proposing not to use any stress constraints
     if (       ( .not. ( any(ixc == 16 ) .or. any(ixc == 29 ) .or. any(ixc == 42 ) ) ) & ! No bore,gapoh, ohcth iteration  
-         .and. ( abs(bore + gapoh + ohcth) < epsilon(bore) )                           & ! bore + gapoh + ohcth = 0
-         .and. any(icc == 31) ) then                                                     ! Stress constraint (31) is used 
+         .and. ( abs(bore + gapoh + ohcth + precomp) < epsilon(bore) )                 & ! bore + gapoh + ohcth = 0
+         .and. ( any(icc == 31) .or. any(icc == 32) ) ) then                                                     ! Stress constraint (31) is used 
 
         call report_error(246)
-        stop
+        stop 1
     end if
      
+    ! Make sure that plane stress model is not used for resistive magnets
+    if ( i_tf_plane_stress == 1 .and. i_tf_sup /= 1 ) call report_error(253)
+     
+    ! bucking cylinder default option setting
+    !  - bucking (casing) for SC i_tf_bucking ( i_tf_bucking = 1 )
+    !  - No bucking for copper magnets ( i_tf_bucking = 0 )
+    !  - Bucking for aluminium magnets ( i_tf_bucking = 1 )
+    if ( i_tf_bucking == -1 ) then
+        if ( i_tf_sup == 0 ) then
+            i_tf_bucking = 0
+        else
+            i_tf_bucking = 1
+        end if
+    end if 
+
+    ! Ensure that no pre-compression structure 
+    ! is used for bucked and wedged design
+    if ( i_tf_bucking >= 2 .and. iprecomp == 1 ) then
+        call report_error(252)
+    end if
+
+    ! Number of stress calculation layers
+    n_tf_stress_layers = i_tf_bucking + n_tf_graded_layers
 
     ! If TFC sidewall has not been set by user
-    if(casths<0.1d-10) tfc_sidewall_is_fraction = .true.
+    if ( casths < 0.1d-10 ) tfc_sidewall_is_fraction = .true.
+
     ! If inboard TF coil case plasma side thickness has not been set by user
-    if(casthi<0.1d-10) casthi_is_fraction = .true.
+    if( casthi < 0.1d-10 ) casthi_is_fraction = .true.
 
-    ! Issue #514 Radial dimensions of inboard leg
-    ! Ensure that tfcth is defined if thkwp is an iteration variable (140)
-    ! if (any(ixc(1:nvar) == 140) ) then
-    !     tfcth = thkwp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
-    ! endif
+    ! Setting the default cryo-plants efficiencies
+    !-!
+    if ( abs(eff_tf_cryo + 1.0D0) < epsilon(eff_tf_cryo) ) then 
+        
+        ! The ITER cyoplant efficiency is used for SC
+        if ( i_tf_sup == 1 ) then
+            eff_tf_cryo = 0.13D0
 
+        ! Strawbrige plot extrapolation is used for Cryo-Al
+        else if ( i_tf_sup == 2 ) then
+            eff_tf_cryo = 0.40D0
+        end if
+    
+    ! Cryo-plane efficiency must be in [0-1.0]
+    else if ( eff_tf_cryo >  1.0D0 .or. eff_tf_cryo < 0.0D0 ) then
+        call report_error(248)
+        stop 1
+    end if
+    !-!  
+
+    ! Integer turns option not yet available for REBCO taped turns
+    !-!
+    if ( i_tf_sc_mat == 6 .and. i_tf_turns_integer == 1 ) then
+        call report_error(254)
+        stop 1
+    end if
+    !-!
+
+
+    ! Setting up insulation layer young modulae default values [Pa]
+    !-!
+    if ( abs(eyoung_ins - 1.0D8 ) < epsilon(eyoung_ins) ) then
+
+        ! Copper magnets, no insulation material defined
+        ! But use the ITER design by default
+        if ( i_tf_sup == 0 ) then
+            eyoung_ins = 20.0D9
+
+        ! SC magnets 
+        ! Value from DDD11-2 v2 2 (2009)
+        else if ( i_tf_sup == 1 ) then
+            eyoung_ins = 20.0D9
+        
+        ! Cryo-aluminum magnets (Kapton polymer)
+        else if ( i_tf_sup == 2 ) then
+            eyoung_ins = 2.5D9
+        end if
+    end if
+    !-!
+
+    !-! Setting the default WP geometry
+    !-!
+    if ( i_tf_wp_geom == -1 ) then
+        if ( i_tf_turns_integer == 0 ) i_tf_wp_geom = 1
+        if ( i_tf_turns_integer == 1 ) i_tf_wp_geom = 0
+    end if 
+    !-!
+    
+    ! Check if the WP/conductor radial thickness (dr_tf_wp) is large enough
+    ! To contains the insulation, cooling and the support structure
+    ! Rem : Only verified if the WP thickness is used
+    if ( any(ixc(1:nvar) == 140) ) then
+
+        ! Minimal WP thickness
+        if ( i_tf_sup == 1 ) then
+            dr_tf_wp_min = 2.0D0 * ( tinstf + tfinsgap + thicndut + dhecoil )
+
+            ! Steel conduit thickness (can be an iteration variable)
+            if ( any(ixc(1:nvar) == 58 ) ) then
+                dr_tf_wp_min = dr_tf_wp_min + 2.0D0 * boundl(58)
+            else 
+                dr_tf_wp_min = dr_tf_wp_min + 2.0D0 * thwcndut
+            end if 
+
+        ! Minimal conductor layer thickness
+        else if ( i_tf_sup == 0 .or. i_tf_sup == 2 ) then
+            dr_tf_wp_min = 2.0D0 * ( thicndut + tinstf ) + 4.0D0 * rcool
+        end if
+
+        if ( boundl(140) < dr_tf_wp_min ) then
+            fdiags(1) = dr_tf_wp_min
+            call report_error(255) 
+        end if 
+    end if
+
+    ! Setting t_turn_tf_is_input to true if t_turn_tf is an input
+    if ( abs(t_turn_tf) < epsilon(t_turn_tf) ) then
+        t_turn_tf_is_input = .false.
+    else
+        t_turn_tf_is_input = .true.
+    end if
+
+    ! Impossible to set the turn size of integer turn option
+    if ( t_turn_tf_is_input .and. i_tf_turns_integer == 1 ) then
+        call report_error(269) 
+    end if 
+
+    ! Setting t_cable_tf_is_input to true if t_cable_tf is an input
+    if ( abs(t_cable_tf) < epsilon(t_cable_tf) ) then
+        t_cable_tf_is_input = .false.
+    else
+        t_cable_tf_is_input = .true.
+    end if
+
+    ! Impossible to set the cable size of integer turn option
+    if ( t_cable_tf_is_input .and. i_tf_turns_integer == 1 ) then
+        call report_error(269) 
+    end if 
+
+    ! Impossible to set both the TF coil turn and the cable dimension
+    if ( t_turn_tf_is_input .and. t_cable_tf_is_input ) then
+        call report_error(271)
+    end if
+
+    ! Checking the SC temperature for LTS
+    if ( ( i_tf_sc_mat == 1 .or. &
+           i_tf_sc_mat == 3 .or. &
+           i_tf_sc_mat == 4 .or. &
+           i_tf_sc_mat == 5 ) .and. tftmp > 10.0D0 ) then
+        call report_error(270)
+    end if 
+    ! -------
+
+
+    
     !  PF coil resistivity is zero if superconducting
     if (ipfres == 0) pfclres = 0.0D0
 
@@ -1216,6 +1053,16 @@ subroutine check
     end if
 
     errors_on = .false.
+
+    ! Cannot use temperature margin constraint with REBCO TF coils
+    if(any(icc == 36) .and. (i_tf_sc_mat == 8)) then
+        call report_error(265)
+    endif
+
+    ! Cannot use temperature margin constraint with REBCO CS coils
+    if(any(icc == 60) .and. (isumatoh == 8)) then
+        call report_error(264)
+    endif
 
 
 end subroutine check

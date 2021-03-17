@@ -1,5 +1,9 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+#ifndef INSTALLDIR
+#error INSTALLDIR not defined!
+#endif
+
 module error_handling
 
   !! Error handling module for PROCESS
@@ -24,22 +28,20 @@ module error_handling
   !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use fson_library
-  use process_output
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   private
   public :: errors_on, error_status, idiags, fdiags
-  public :: initialise_error_list, report_error, show_errors
+  public :: initialise_error_list, report_error, show_errors, &
+    init_error_handling
 
   !  Switch to turn error handling on
   !  Error reporting is turned off, until either a severe error is found, or
   !  during an output step.  Warnings during intermediate iteration steps
   !  may be premature and might clear themselves at the final converged point.
 
-  logical :: errors_on = .false.
+  logical :: errors_on
 
   !  Levels of severity
 
@@ -48,12 +50,12 @@ module error_handling
   integer, parameter :: ERROR_WARN = 2
   integer, parameter :: ERROR_SEVERE = 3
 
-  integer :: error_id = 0
+  integer :: error_id
   !! error_id : identifier for final message encountered
 
   !  Overall status
 
-  integer :: error_status = ERROR_OKAY
+  integer :: error_status
   !! error_status : overall status flag for a run; on exit:<UL>
   !!                 <LI> 0  all okay
   !!                 <LI> 1  informational messages have been encountered
@@ -61,12 +63,12 @@ module error_handling
   !!                 <LI> 3  severe (fatal) errors have occurred</UL>
 
   integer, parameter :: INT_DEFAULT = -999999
-  real(kind(1.0D0)), parameter :: FLT_DEFAULT = real(INT_DEFAULT, kind(1.0D0))
+  real(dp), parameter :: FLT_DEFAULT = real(INT_DEFAULT, kind(1.0D0))
 
   !  Arrays for diagnostic output
 
-  integer, dimension(8) :: idiags = INT_DEFAULT
-  real(kind(1.0D0)), dimension(8) :: fdiags = FLT_DEFAULT
+  integer, dimension(8) :: idiags
+  real(dp), dimension(8) :: fdiags
 
   !  Individual error item
   !  int and float arrays may be useful to provide diagnostic information
@@ -75,7 +77,7 @@ module error_handling
      integer            :: level    !  severity level
      character(len=200) :: message  !  information string
      integer, dimension(8) :: idiags = INT_DEFAULT
-     real(kind(1.0D0)), dimension(8) :: fdiags = FLT_DEFAULT
+     real(dp), dimension(8) :: fdiags = FLT_DEFAULT
   end type error
 
   !  Individual element in an error list
@@ -88,8 +90,8 @@ module error_handling
 
   !  Pointers to head and tail of the error list
 
-  type (error_list_item), pointer :: error_head => null()
-  type (error_list_item), pointer :: error_tail => null()
+  type (error_list_item), pointer :: error_head
+  type (error_list_item), pointer :: error_tail
 
   !  List of messages
 
@@ -98,6 +100,19 @@ module error_handling
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine init_error_handling
+    !! Initialise the error_handling module variables
+    implicit none
+    
+    errors_on = .false.
+    error_id = 0
+    error_status = ERROR_OKAY
+    idiags = INT_DEFAULT
+    fdiags = FLT_DEFAULT
+    error_head => null()
+    error_tail => null()
+  end subroutine init_error_handling
 
   subroutine initialise_error_list
 
@@ -112,6 +127,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use fson_library, only: fson_parse, fson_value, fson_get, fson_destroy 
     implicit none
 
     !  Arguments
@@ -122,20 +138,24 @@ contains
     character(len=180) :: filename
     type(fson_value), pointer :: errorfile
 
-    !  Obtain the root directory
-
-#include "root.dir"
-
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Parse the json file
-
-    filename = INSTALLDIR//'/utilities/errorlist.json'
+    character(len=200) :: process_dir
+    CALL get_environment_variable("PYTHON_PROCESS_ROOT", process_dir)
+    if (process_dir == "") then
+      filename = INSTALLDIR//'/process//utilities/errorlist.json'
+    else
+      filename = trim(process_dir)//'/utilities/errorlist.json'
+    end if
     errorfile => fson_parse(trim(filename))
 
     !  Allocate memory for error_type array contents
 
     call fson_get(errorfile, "n_errortypes", n_errortypes)
+    
+    ! Guard against re-allocation
+    if (allocated(error_type)) deallocate(error_type)
     allocate(error_type(n_errortypes))
 
     error_type(:)%level = ERROR_OKAY
@@ -230,7 +250,7 @@ contains
     if (error_status == ERROR_SEVERE) then
        call show_errors
        write(*,*) 'PROCESS stopping.'
-       stop
+       stop 1
     end if
 
   end subroutine report_error
@@ -248,7 +268,8 @@ contains
     !! McGraw-Hill, ISBN 0-07-115896-0
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use constants, only: iotty, nout
+    use process_output, only: oblnkl, oheadr, ocmmnt, ovarin 
     implicit none
 
     !  Arguments

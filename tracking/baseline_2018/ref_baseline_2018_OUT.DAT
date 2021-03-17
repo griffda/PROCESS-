@@ -487,7 +487,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Gap                                          0.136           4.501   (deltf)             
  Thermal shield                               0.050           4.551   (thshield)          
  Gap                                          0.020           4.571   (gapds)             
- Vacuum vessel (and shielding)                0.600           5.171   (ddwi + shldith)    
+ Vacuum vessel (and shielding)                0.600           5.171   (d_vv_in + shldith) 
  Gap                                          0.020           5.191   (vvblgap)           
  Inboard blanket                              0.755           5.946   (blnkith)           
  Inboard first wall                           0.018           5.964   (fwith)             
@@ -498,7 +498,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Outboard first wall                          0.018          12.327   (fwoth)             
  Outboard blanket                             0.982          13.309   (blnkoth)           
  Gap                                          0.020          13.329   (vvblgap)           
- Vacuum vessel (and shielding)                1.100          14.429   (ddwi+shldoth)      
+ Vacuum vessel (and shielding)                1.100          14.429   (d_vv_out+shldoth)  
  Gap                                          1.756          16.185   (gapsto)            
  Thermal shield                               0.050          16.235   (thshield)          
  Gap                                          0.050          16.285   (tftsgap)           
@@ -512,7 +512,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Gap                                          0.050           7.703   (tftsgap)           
  Thermal shield                               0.050           7.653   (thshield)          
  Gap                                          0.050           7.603   (vgap2)             
- Vacuum vessel (and shielding)                0.600           7.553   (ddwi+shldtth)      
+ Vacuum vessel (and shielding)                0.600           7.553   (d_vv_top+shldtth)  
  Gap                                          0.020           6.953   (vvblgap)           
  Top blanket                                  0.869           6.933   (blnktth)           
  Top first wall                               0.018           6.065   (fwtth)             
@@ -522,7 +522,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Plasma bottom                                5.447          -5.447   (rminor*kappa)      
  Lower scrape-off                             2.002          -7.449   (vgap)              
  Divertor structure                           0.621          -8.070   (divfix)            
- Vacuum vessel (and shielding)                1.000          -9.070   (ddwi+shldlth)      
+ Vacuum vessel (and shielding)                1.000          -9.070   (d_vv_bot+shldlth)  
  Gap                                          0.050          -9.120   (vgap2)             
  Thermal shield                               0.050          -9.170   (thshield)          
  Gap                                          0.050          -9.220   (tftsgap)           
@@ -566,7 +566,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ************************************************** TF Coils **************************************************
  
  Superconducting TF coils
- TF coil superconductor material                                          (isumattf)                        5     
+ TF coil superconductor material                                          (i_tf_sc_mat)                        5     
   (WST Nb3Sn)
  Current Density :
  
@@ -642,7 +642,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Copper fraction of conductor                                             (fcutfsu)                 8.263E-01  ITV
  Superconductor fraction of conductor                                     (1-fcutfsu)               1.737E-01     
  Check total area fractions in winding pack = 1                                                         1.000     
- Winding radial thickness (m)                                             (thkwp)                   9.136E-01  OP 
+ Winding radial thickness (m)                                             (dr_tf_wp)                9.136E-01  OP 
  Winding toroidal width (m)                                               (wwp1)                    1.224E+00  OP 
  Ground wall insulation thickness (m)                                     (tinstf)                  8.000E-03     
  Winding pack insertion gap (m)                                           (tfinsgap)                1.000E-02     
@@ -664,8 +664,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Coil case ("nose")                           0.390           3.356   (thkcas)            
  Insertion gap for winding pack               0.010           3.366   (tfinsgap)          
  Winding pack insulation                      0.008           3.374   (tinstf)            
- Winding - first half                         0.457           3.831   (thkwp/2 - tinstf)  
- Winding - second half                        0.457           4.288   (thkwp/2 - tinstf)  
+ Winding - first half                         0.457           3.831   (dr_tf_wp/2 - tinstf)  
+ Winding - second half                        0.457           4.288   (dr_tf_wp/2 - tinstf)  
  Winding pack insulation                      0.008           4.296   (tinstf)            
  Insertion gap for winding pack               0.010           4.306   (tfinsgap)          
  Coil case (plasma side)                      0.060           4.366   (casthi)            
@@ -1484,7 +1484,10 @@ blnkith  = 0.755 * Inboard blanket thickness (m);
 blnkoth  = 0.982 * Outboard blanket thickness (m)
 bore     = 2.483 * Central solenoid inboard radius (m)
 ddwex    = 0.15 * Cryostat thickness (m)
-ddwi     = 0.30 * Vacuum vessel thickness (tf coil / shield) (m)
+d_vv_in  = 0.30 * Inboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_out = 0.30 * Outboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_top = 0.30 * Topside vacuum vessel thickness (tf coil / shield) (m)
+d_vv_bot = 0.30 * Underside vacuum vessel thickness (tf coil / shield) (m)
 gapds    = 0.12 * Gap between inboard vacuum vessel and tf coil (m)
 gapoh    = 0.05 * Gap between central solenoid and tf coil (m)
 gapomin  = 0.20 * Minimum gap between outboard vacuum vessel and tf coil (m)
@@ -1536,7 +1539,7 @@ fkind    = 1.0 * Multiplier for nth of a kind costs
 iavail   = 0 * Switch for plant availability model;
 ifueltyp = 1 * Switch;
 lsa      = 2 * Level of safety assurance switch (generally; use 3 or 4);
-ratecdol = 0.06 * Effective cost of money in constant dollars
+discount_rate = 0.06 * Effective cost of money in constant dollars
 tlife    = 40 * Plant life (years)
 ucblvd   = 280.0 * Unit cost for blanket vanadium ($/kg)
 ucdiv    = 5.0d5 * Cost of divertor blade ($)
@@ -1700,7 +1703,7 @@ tinstf   = 0.008 * Ground insulation thickness surrounding winding pack (m)
 tmargmin = 1.500 * Minimum allowable temperature margin (cs and tf coils) (k)
 vdalw    = 10.00 * Max voltage across tf coil during quench (kv)
 vftf     = 0.300 * Coolant fraction of tfc 'cable' (i_tf_sup=1); or of tfc leg (i_tf_sup=0)
-isumattf = 5
+i_tf_sc_mat = 5
 *strncon = -0.0066
 
 n_pancake = 20

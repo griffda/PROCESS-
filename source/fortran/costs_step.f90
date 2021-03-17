@@ -14,39 +14,46 @@ module costs_step_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use build_variables
-  use buildings_variables
-  use constants
-  use cost_variables
-  use current_drive_variables
-  use divertor_variables
-  use error_handling
-  use fwbs_variables
-  use heat_transport_variables
-  use pfcoil_variables
-  use physics_variables
-  use pf_power_variables
-  use process_output
-  use pulse_variables
-  use structure_variables
-  use tfcoil_variables
-  use times_variables
-  use vacuum_variables
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   private
-  public :: costs_step
+  public :: costs_step, init_costs_step
 
   !  Various cost account values (M$)
-  real(kind(1.0D0)) :: step20, step21, step22, step23, step24, step25, &
-  step91, step92, step93, fwblkcost
+  real(dp) :: step20, step21, step22, step23, step24, step25, &
+  step27, step91, step92, step93, fwblkcost
 
   ! Scaling Properties
-  real(kind(1.0D0)) :: vfi, vfi_star, ptherm_star, pinjmw_star, fwarea_star, &
+  real(dp) :: vfi, vfi_star, ptherm_star, pinjmw_star, fwarea_star, &
   rmajor_star, rminor_star, pth
 
 contains
+
+  subroutine init_costs_step
+    !! Initialise module variables
+    implicit none
+
+    step20 = 0.0D0
+    step21 = 0.0D0
+    step22 = 0.0D0
+    step23 = 0.0D0
+    step24 = 0.0D0
+    step25 = 0.0D0
+    step27 = 0.0D0
+    step91 = 0.0D0
+    step92 = 0.0D0
+    step93 = 0.0D0
+    fwblkcost = 0.0D0
+    vfi = 0.0D0
+    vfi_star = 0.0D0
+    ptherm_star = 0.0D0
+    pinjmw_star = 0.0D0
+    fwarea_star = 0.0D0
+    rmajor_star = 0.0D0
+    rminor_star = 0.0D0
+    pth = 0.0D0
+  end subroutine init_costs_step
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -65,6 +72,14 @@ contains
     !! Sheffield & Milora (2016), Fusion Science and Technology, 70, 14
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use constants, only: pi
+    use build_variables, only: r_tf_outboard_mid, tfthko, hpfu, hmax, tfcth
+    use cost_variables, only: output_costs, cdirt, concost, ireactor, ipnet
+    use fwbs_variables, only: emultmw
+    use heat_transport_variables, only: pinjwp
+    use physics_variables, only: powfmw
+    use process_output, only: oshead, ocosts, oheadr
 
     implicit none
 
@@ -92,7 +107,7 @@ contains
     ! Output header
     if ((iprint==1).and.(output_costs == 1)) then
       call oheadr(outfile,'STEP Costing Model (1980 US$)')
-      call oheadr(outfile,'!!WARNING - Under development!! DO NOT USE!')
+      !call oheadr(outfile,'!!WARNING - Under development!! DO NOT USE!')
     end if
     
     ! Account 20 : Land and Rights
@@ -113,8 +128,14 @@ contains
     ! Account 25 : Miscellaneous Plant Equipment
     call step_a25(outfile,iprint)
 
-    ! Total plant direct cost
+    ! Total plant direct cost without remote handling
     cdirt = step20 + step21 + step22 + step23 + step24 + step25
+
+    ! Account 27 : Remote Handling
+    call step_a27(outfile,iprint) 
+
+    ! Total plant direct cost with remote handling
+    cdirt = cdirt + step27
 
     ! Account 91 : Construction Facilities, Equipment and Services (10%)
     step91 = 1.0D-1 * cdirt
@@ -143,8 +164,9 @@ contains
     end if
 
     !  Cost of electricity
-    ! if ((ireactor == 1).and.(ipnet == 0)) call coelc_step(outfile,iprint)
-
+    if ((ireactor == 1).and.(ipnet == 0)) then 
+      call coelc_step(outfile,iprint) 
+    end if 
   end subroutine costs_step
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -160,27 +182,30 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use cost_variables, only: output_costs, step_ref
+    use process_output, only: oshead, ocosts, oblnkl
+
     implicit none
 
     ! Arguments
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(kind(1.0D0)):: step2001, step2002
+    real(dp):: step2001, step2002
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Initialise as zero
     step20 = 0.0D0
    
-    ! 21.01 Land
-    ! Original STARFIRE value, no scaling
-    step2001 = step_ref(1)
+    ! 20.01 Land
+    ! Original STARFIRE value, scaling with thermal power
+    step2001 = step_ref(1) * (pth / ptherm_star)**0.6D0
     step20 = step20 + step2001
 
-    ! 21.02 Site Preparation
-    ! Original STARFIRE value, no scaling
-    step2002 = step_ref(2)
+    ! 20.02 Site Preparation
+    ! Original STARFIRE value, scaling with thermal power
+    step2002 = step_ref(2) * (pth / ptherm_star)**0.6D0
     step20 = step20 + step2002
 
     ! Output costs
@@ -207,13 +232,16 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use cost_variables, only: output_costs, step_con, step_ref
+    use process_output, only: oshead, ocosts, oblnkl
+
     implicit none
 
     ! Arguments
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(kind(1.0D0)):: &
+    real(dp):: &
     step2101, step2102, step2103, step2104, step2105, step2106, &
     step2107, step2108, step2109, step2110, step2111, step2112, &
     step2113, step2114, step2115, step2116, step2117, step2198, &
@@ -225,8 +253,8 @@ contains
     step21 = 0.0D0
    
     ! 21.01 Site Improvements
-    ! Original STARFIRE value, no scaling
-    step2101 = step_ref(3)
+    ! Original STARFIRE value, scaling with thermal power
+    step2101 = step_ref(3) * (pth / ptherm_star)**0.6D0
     step21 = step21 + step2101
 
     ! 21.02 Reactor Building
@@ -275,18 +303,18 @@ contains
     step21 = step21 + step2110
 
     ! 21.11 Control Room
-    ! Original STARFIRE value, no scaling
-    step2111 = step_ref(13) 
+    ! Original STARFIRE value, scaling with thermal power
+    step2111 = step_ref(13) * (pth / ptherm_star)**0.6D0
     step21 = step21 + step2111
 
     ! 21.12 AC Power Supply Building
-    ! Original STARFIRE value, no scaling
-    step2112 = step_ref(14)
+    ! Original STARFIRE value, scaling with thermal power
+    step2112 = step_ref(14) * (pth / ptherm_star)**0.6D0
     step21 = step21 + step2112
 
     ! 21.13 Admin Building
-    ! Original STARFIRE value, no scaling
-    step2113 = step_ref(15)
+    ! Original STARFIRE value, scaling with thermal power
+    step2113 = step_ref(15) * (pth / ptherm_star)**0.6D0
     step21 = step21 + step2113
 
     ! 21.14 Site Service
@@ -295,13 +323,13 @@ contains
     step21 = step21 + step2114
 
     ! 21.15 Cryogenics and Inert Gas Storage Building
-    ! Original STARFIRE value, no scaling
-    step2115 = step_ref(17)
+    ! Original STARFIRE value, scaling with thermal power
+    step2115 = step_ref(17) * (pth / ptherm_star)**0.6D0
     step21 = step21 + step2115
 
     ! 21.16 Security Building
-    ! Original STARFIRE value, no scaling
-    step2116 = step_ref(18)
+    ! Original STARFIRE value, scaling with thermal power
+    step2116 = step_ref(18) * (pth / ptherm_star)**0.6D0  
     step21 = step21 + step2116
 
     ! 21.17 Ventilation Stack
@@ -359,14 +387,17 @@ contains
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+    
+    use process_output, only: oshead, ocosts, oblnkl
+    use cost_variables, only: output_costs, step_con, step_rh_costfrac
+
     implicit none
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
   
     ! Local variables
-    real(kind(1.0D0)):: step2298, step2299
+    real(dp):: step2297, step2298, step2299
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -431,15 +462,21 @@ contains
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
+    use build_variables, only: fwarea
+    use cost_variables, only: output_costs, step_ref, ifueltyp, fcdfuel, divcst, cdcost
+    use current_drive_variables, only: pinjmw
+    use physics_variables, only: rmajor, rminor
+    use process_output, only: ocosts, oblnkl
+    
     implicit none
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
-    real(kind(1.0D0)), intent(inout) :: step2298
+    real(dp), intent(inout) :: step2298
   
     ! Local variables
-    real(kind(1.0D0)):: &
+    real(dp):: &
     step220101, step220102, step220104, step220105, step220106, &
     step220107, step220108, step220109, step220110, step2201, &
     step22010301, step22010302, step22010303, step22010304
@@ -503,22 +540,22 @@ contains
     step2298 = step2298 + 2.335D-1 * step220104
   
     ! 22.01.05 Primary Structure and Support
-    ! Original STARFIRE value, no scaling
-    step220105 = step_ref(27)
+    ! Original STARFIRE value, scaling with fusion island volume
+    step220105 = step_ref(27) * (vfi / vfi_star)
     step2201 = step2201 + step220105
     ! STARFIRE percentage for spares
     step2298 = step2298 + 6.824D-2 * step220105
   
     ! 22.01.06 Reactor Vacuum System
-    ! Original STARFIRE value, no scaling
-    step220106 = step_ref(28)
+    ! Original STARFIRE value, scaling with fusion island volume
+    step220106 = step_ref(28) * (vfi / vfi_star)**(2.0D0/3.0D0)
     step2201 = step2201 + step220106
     ! STARFIRE percentage for spares
     step2298 = step2298 + 1.893D-1 * step220106
   
     ! 22.01.07 Power Supplies
-    ! Original STARFIRE value, no scaling
-    step220107 = step_ref(29)
+    ! Original STARFIRE value, scaling with fusion island volume
+    step220107 = step_ref(29) * (vfi / vfi_star)**(2.0D0/3.0D0)
     step2201 = step2201 + step220107
   
     ! 22.01.08 Impurity Control
@@ -592,13 +629,16 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
+    use cost_variables, only: output_costs, step_ref
+    use process_output, only: ocosts, oblnkl
+
     implicit none
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
   
     ! Local variables
-    real(kind(1.0D0)):: step2202
+    real(dp):: step2202
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -636,13 +676,16 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
+    use cost_variables, only: output_costs, step_ref
+    use process_output, only: ocosts, oblnkl
+
     implicit none
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
   
     ! Local variables
-    real(kind(1.0D0)):: &
+    real(dp):: &
     step220301, step220302, step220303, step220304, step2203
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -651,23 +694,23 @@ contains
     step2203 = 0.0D0
      
     ! 22.03.01 Helium Refrigerator
-    ! Original STARFIRE value, no scaling
-    step220301 = step_ref(34)
+    ! Original STARFIRE value, scaling with fusion island volume
+    step220301 = step_ref(34) * (vfi / vfi_star)**(2.0D0/3.0D0)
     step2203 = step2203 + step220301
   
     ! 22.03.02 Liquid Helium Transfer and Storage
-    ! Original STARFIRE value, no scaling
-    step220302 = step_ref(35)
+    ! Original STARFIRE value, scaling with fusion island volume
+    step220302 = step_ref(35) * (vfi / vfi_star)**(2.0D0/3.0D0)
     step2203 = step2203 + step220302
   
     ! 22.03.03 Gas Helium Storage
-    ! Original STARFIRE value, no scaling
-    step220303 = step_ref(36)
+    ! Original STARFIRE value, scaling with fusion island volume
+    step220303 = step_ref(36) * (vfi / vfi_star)**(2.0D0/3.0D0)
     step2203 = step2203 + step220303
   
     ! 22.03.04 Liquid Nitrogen Storage
-    ! Original STARFIRE value, no scaling
-    step220304 = step_ref(37)
+    ! Original STARFIRE value, scaling with fusion island volume
+    step220304 = step_ref(37) * (vfi / vfi_star)**(2.0D0/3.0D0)
     step2203 = step2203 + step220304
   
     ! Add to Account 22 total
@@ -700,13 +743,16 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
+    use cost_variables, only: output_costs, step_ref
+    use process_output, only: ocosts, oblnkl
+
     implicit none
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
   
     ! Local variables
-    real(kind(1.0D0)):: &
+    real(dp):: &
     step220401, step220402, step220403, step2204
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -758,14 +804,17 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
+    use cost_variables, only: output_costs, step_ref
+    use process_output, only: ocosts, oblnkl
+
     implicit none
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
-    real(kind(1.0D0)), intent(inout) :: step2298
+    real(dp), intent(inout) :: step2298
   
     ! Local variables
-    real(kind(1.0D0)):: step2205
+    real(dp):: step2205
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -773,9 +822,9 @@ contains
     step2205 = 0.0D0
      
     ! 22.05 Fuel Handling and Storage
-    ! Original STARFIRE value, no scaling
-    step2205 = step_ref(41) 
-  
+    ! Original STARFIRE value, scaling with thermal power
+    step2205 = step_ref(41) * (pth / ptherm_star)**0.6D0 
+
     ! Add to Account 22 total
     step22 = step22 + step2205
     ! STARFIRE percentage for spares
@@ -804,15 +853,18 @@ contains
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+    
+    use cost_variables, only: output_costs, step_ref
+    use process_output, only: ocosts, oblnkl
+
     implicit none
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
-    real(kind(1.0D0)), intent(inout) :: step2298
+    real(dp), intent(inout) :: step2298
   
     ! Local variables
-    real(kind(1.0D0)):: &
+    real(dp):: &
     step220601, step220602, step220603, step220604, step220605, &
     step220606, step220607, step220608, step2206
   
@@ -823,14 +875,15 @@ contains
      
     ! 22.06.01 Maintenance Equipment
     ! Original STARFIRE value, scaling with fusion island volume
-    step220601 = step_ref(42) * (vfi / vfi_star)
+    ! Depreciated by the remote handling scaling in cost account 27. 
+    step220601 = 0.0 ! step_ref(42) * (vfi / vfi_star)**(2.0D0/3.0D0)
     step2206 = step2206 + step220601
     ! STARFIRE percentage for spares
     step2298 = step2298 + 4.308D-1 * step220601
   
     ! 22.06.02 Special Heating Systems
-    ! Original STARFIRE value, no scaling
-    step220602 = step_ref(43)
+    ! Original STARFIRE value, scaling with thermal power
+    step220602 = step_ref(43) * (pth / ptherm_star)**0.6D0
     step2206 = step2206 + step220602
   
     ! 22.06.03 Coolant Storage
@@ -840,17 +893,17 @@ contains
   
     ! 22.06.04 Gas System
     ! Original STARFIRE value, scaling with fusion island volume
-    step220604 = step_ref(45) * (vfi / vfi_star)
+    step220604 = step_ref(45) * (vfi / vfi_star)**(2.0D0/3.0D0)
     step2206 = step2206 + step220604
   
     ! 22.06.05 Inert Atmosphere System
-    ! Original STARFIRE value, no scaling
-    step220605 = step_ref(46)
+    ! Original STARFIRE value, scaling with thermal power
+    step220605 = step_ref(46) * (pth / ptherm_star)**0.6D0
     step2206 = step2206 + step220605
   
     ! 22.06.06 Fluid Leak Detection
-    ! Original STARFIRE value, no scaling
-    step220606 = step_ref(47)
+    ! Original STARFIRE value, scaling with thermal power
+    step220606 = step_ref(47) * (pth / ptherm_star)**0.6D0
     step2206 = step2206 + step220606
   
     ! 22.06.07 Closed Loop Coolant System
@@ -899,13 +952,16 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
+    use cost_variables, only: output_costs,step_ref
+    use process_output, only: ocosts, oblnkl
+
     implicit none
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(kind(1.0D0)):: step2207
+    real(dp):: step2207
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -913,8 +969,8 @@ contains
     step2207 = 0.0D0
      
     ! 22.07 Instrumentation and Control
-    ! Original STARFIRE value, no scaling
-    step2207 = step_ref(50)
+    ! Original STARFIRE value, scaling with thermal power
+    step2207 = step_ref(50) * (pth / ptherm_star)**0.6D0
   
     ! Add to Account 22 total
     step22 = step22 + step2207
@@ -943,13 +999,16 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use cost_variables, only: output_costs, step_con, step_ref
+    use process_output, only: oshead, ocosts, oblnkl
+
     implicit none
 
     ! Arguments
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(kind(1.0D0)):: &
+    real(dp):: &
     step2301, step2302, step2303, step2304, step2305, step2306, &
     step2307, step2398, step2399
 
@@ -989,8 +1048,8 @@ contains
     step23 = step23 + step2306
 
     ! 23.07 Instrumentation and Control
-    ! Original STARFIRE value, no scaling
-    step2307 = step_ref(57)
+    ! Original STARFIRE value, scaling with thermal power
+    step2307 = step_ref(57) * (pth / ptherm_star)**0.6D0 
     step23 = step23 + step2307
 
     ! 23.98 Spares
@@ -1034,13 +1093,16 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use cost_variables, only: output_costs, step_con, step_ref
+    use process_output, only: oshead, ocosts, oblnkl
+
     implicit none
 
     ! Arguments
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(kind(1.0D0)):: &
+    real(dp):: &
     step2401, step2402, step2403, step2404, step2405, step2406, &
     step2407, step2498, step2499
 
@@ -1050,38 +1112,38 @@ contains
     step24 = 0.0D0
    
     ! 24.01 Switch Gear
-    ! Original STARFIRE value, no scaling
-    step2401 = step_ref(58)
+    ! Original STARFIRE value, scaling with thermal power
+    step2401 = step_ref(58)  * (pth / ptherm_star)**0.6D0
     step24 = step24 + step2401
 
     ! 24.02 Station Service Equipment
-    ! Original STARFIRE value, no scaling
-    step2402 = step_ref(59)
+    ! Original STARFIRE value, scaling with thermal power
+    step2402 = step_ref(59)  * (pth / ptherm_star)**0.6D0
     step24 = step24 + step2402
 
     ! 24.03 Switchboards
-    ! Original STARFIRE value, no scaling
-    step2403 = step_ref(60)
+    ! Original STARFIRE value, scaling with thermal power
+    step2403 = step_ref(60)  * (pth / ptherm_star)**0.6D0
     step24 = step24 + step2403
 
     ! 24.04 Protective Equipment
-    ! Original STARFIRE value, no scaling
-    step2404 = step_ref(61)
+    ! Original STARFIRE value, scaling with thermal power
+    step2404 = step_ref(61)  * (pth / ptherm_star)**0.6D0
     step24 = step24 + step2404
 
     ! 24.05 Electrical Structures
-    ! Original STARFIRE value, no scaling
-    step2405 = step_ref(62)
+    ! Original STARFIRE value, scaling with thermal power
+    step2405 = step_ref(62) * (pth / ptherm_star)**0.6D0
     step24 = step24 + step2405
 
     ! 24.06 Power and Control Wiring
-    ! Original STARFIRE value, no scaling
-    step2406 = step_ref(63)
+    ! Original STARFIRE value, scaling with thermal power
+    step2406 = step_ref(63) * (pth / ptherm_star)**0.6D0
     step24 = step24 + step2406
 
     ! 24.07 Electric Lighting
-    ! Original STARFIRE value, no scaling
-    step2407 = step_ref(64)
+    ! Original STARFIRE value, scaling with thermal power
+    step2407 = step_ref(64) * (pth / ptherm_star)**0.6D0
     step24 = step24 + step2407
 
     ! 24.98 Spares
@@ -1125,13 +1187,16 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-     implicit none
+    use cost_variables, only: output_costs, step_con, step_ref
+    use process_output, only: oshead, ocosts, oblnkl
+
+    implicit none
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
   
     ! Local variables
-    real(kind(1.0D0)):: &
+    real(dp):: &
     step2501, step2502, step2503, step2504, step2598, step2599
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1144,27 +1209,27 @@ contains
     step2501 = step_ref(65) * (pth / ptherm_star)**0.6D0
     step25 = step25 + step2501
   
-    ! 24.02 Air and Water Service System
+    ! 25.02 Air and Water Service System
     ! Original STARFIRE value, scaling with thermal power
     step2502 = step_ref(66) * (pth / ptherm_star)**0.6D0
     step25 = step25 + step2502
   
-    ! 24.03 Communications Equipment
-    ! Original STARFIRE value, no scaling
-    step2503 = step_ref(67)
+    ! 25.03 Communications Equipment
+    ! Original STARFIRE value, scaling with thermal power
+    step2503 = step_ref(67) * (pth / ptherm_star)**0.6D0
     step25 = step25 + step2503
   
-    ! 24.04 Furnishing and Fixtures
-    ! Original STARFIRE value, no scaling
-    step2504 = step_ref(68)
+    ! 25.04 Furnishing and Fixtures
+    ! Original STARFIRE value, scaling with thermal power
+    step2504 = step_ref(68) * (pth / ptherm_star)**0.6D0
     step25 = step25 + step2504
   
-    ! 24.98 Spares
+    ! 25.98 Spares
     ! Original STARFIRE value, no scaling
     step2598 = 1.286D-2 * step25
     step25 = step25 + step2598
   
-    ! 24.99 Contingency
+    ! 25.99 Contingency
     ! STARFIRE 15%
     step2599 = step_con * step25
     step25 = step25 + step2599
@@ -1186,6 +1251,51 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  subroutine step_a27(outfile,iprint)
+
+    !! Account 27 : Remote Handling
+    !! author: A J Pearce, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 27 (Remote Handling)
+    !! costs.
+    !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use cost_variables, only: output_costs, cdirt, step_rh_costfrac
+    use process_output, only: oshead, ocosts, oblnkl
+
+    implicit none
+
+    ! Arguments
+    integer, intent(in) :: iprint,outfile
+
+    ! Local variables
+    real(dp):: step2701
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    ! Initialise as zero
+    step27 = 0.0D0
+   
+    ! 27.01 Remote Handling 
+    ! From report by T. Hender CD-STEP-01030, scales with direct capital costs
+    step2701 = step_rh_costfrac * cdirt 
+    
+    step27 = step2701
+
+    ! Output costs
+    if ((iprint==1).and.(output_costs == 1)) then
+      call oshead(outfile,'27. Remote Handling')
+      call ocosts(outfile,'(step2701)','Remote Handing (M$)', step2701)
+      call oblnkl(outfile)
+      call ocosts(outfile,'(step27)','Total Account 27 Cost (M$)', step27)
+    end if
+
+  end subroutine step_a27
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   subroutine coelc_step(outfile,iprint)
 
     !! Routine to calculate the cost of electricity for a fusion power plant
@@ -1201,13 +1311,24 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use cost_variables, only: output_costs, discount_rate, tlife, ucfuel, uche3, cdcost, &
+      divcst, fcdfuel, ifueltyp, moneyint, lsa, ucwst, ucoam, fwallcst, fcr0, fcap0cp, &
+      cfind, fcap0, dtlife, divlife, dintrt, decomf, cpstcst, cplife, concost, coeoam, &
+      coefuelt, coecap, coe, cfactr, cdrlife, capcost
+    use fwbs_variables, only: bktlife
+    use heat_transport_variables, only: pnetelmw
+    use physics_variables, only: fhe3, itart, wtgpd
+    use times_variables, only: tburn, tcycle
+    use process_output, only: oshead, ocosts, oblnkl,  ovarrf, osubhd, oheadr
+    use constants, only: n_day_year
+
     implicit none
 
     ! Arguments
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(kind(1.0D0)) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
+    real(dp) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
          annfuelt,annfwbl,annoam,anntot,annwst,coecdr, &
          coecp,coedecom,coediv,coefuel,coefwbl,coewst,crfcdr,crfcp, &
          crfdiv,crffwbl,fefcdr,fefcp,fefdiv,feffwbl,fwbllife,kwhpy
@@ -1216,7 +1337,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Number of kWh generated each year
-    kwhpy = 1.0D3 * pnetelmw * (24.0D0*365.0D0) * cfactr * tburn/tcycle
+    kwhpy = 1.0D3 * pnetelmw * (24.0D0*n_day_year) * cfactr * tburn/tcycle
 
     ! Costs due to reactor plant
     ! ==========================
@@ -1240,10 +1361,10 @@ contains
     fwbllife = bktlife
 
     ! Compound interest factor
-    feffwbl = (1.0D0 + ratecdol)**fwbllife
+    feffwbl = (1.0D0 + discount_rate)**fwbllife
 
     ! Capital recovery factor
-    crffwbl = (feffwbl*ratecdol) / (feffwbl-1.0D0)
+    crffwbl = (feffwbl*discount_rate) / (feffwbl-1.0D0)
 
     ! Annual cost of replacements
     annfwbl = fwblkcost * (1.0D0+cfind(lsa)) * fcap0cp * crffwbl
@@ -1255,10 +1376,10 @@ contains
     ! =============================
 
     ! Compound interest factor
-    fefdiv = (1.0D0 + ratecdol)**divlife
+    fefdiv = (1.0D0 + discount_rate)**divlife
 
     ! Capital recovery factor
-    crfdiv = (fefdiv*ratecdol) / (fefdiv-1.0D0)
+    crfdiv = (fefdiv*discount_rate) / (fefdiv-1.0D0)
 
     ! Annual cost of replacements
     anndiv = divcst * (1.0D0+cfind(lsa)) * fcap0cp * crfdiv
@@ -1271,10 +1392,10 @@ contains
 
     if (itart == 1) then
       ! Compound interest factor
-      fefcp = (1.0D0 + ratecdol)**cplife
+      fefcp = (1.0D0 + discount_rate)**cplife
 
       ! Capital recovery factor
-      crfcp = (fefcp*ratecdol) / (fefcp-1.0D0)
+      crfcp = (fefcp*discount_rate) / (fefcp-1.0D0)
 
       ! Annual cost of replacements
       anncp = cpstcst * (1.0D0+cfind(lsa)) * fcap0cp * crfcp
@@ -1290,10 +1411,10 @@ contains
     ! =================================================
 
     ! Compound interest factor
-    fefcdr = (1.0D0 + ratecdol)**cdrlife
+    fefcdr = (1.0D0 + discount_rate)**cdrlife
 
     ! Capital recovery factor
-    crfcdr = (fefcdr*ratecdol) / (fefcdr-1.0D0)
+    crfcdr = (fefcdr*discount_rate) / (fefcdr-1.0D0)
 
     ! Annual cost of replacements
     if (ifueltyp == 0) then
@@ -1345,7 +1466,7 @@ contains
   !  Annual cost of fuel
 
   !  Sum D-T fuel cost and He3 fuel cost
-  annfuel = ucfuel * pnetelmw/1200.0D0 + 1.0D-6 * fhe3 * wtgpd * 1.0D-3 * uche3 * 365.0D0 * cfactr
+  annfuel = ucfuel * pnetelmw/1200.0D0 + 1.0D-6 * fhe3 * wtgpd * 1.0D-3 * uche3 * n_day_year * cfactr
 
   !  Cost of electricity due to reactor fuel
   coefuel = 1.0D9 * annfuel / kwhpy
@@ -1370,7 +1491,7 @@ contains
   !  Difference (dintrt) between borrowing and saving interest rates is
   !  included, along with the possibility of completing the fund dtlife
   !  years before the end of the plant's lifetime
-  anndecom = decomf * concost * fcr0 / (1.0D0+ratecdol-dintrt)**(tlife-dtlife)
+  anndecom = decomf * concost * fcr0 / (1.0D0+discount_rate-dintrt)**(tlife-dtlife)
 
   !  Cost of electricity due to decommissioning fund
   coedecom = 1.0D9 * anndecom / kwhpy

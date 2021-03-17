@@ -1,16 +1,3 @@
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!  To perform standalone tests of vmcon:
-!  1) Compile code as normal using 'make'
-!  2) Uncomment #define line below
-!  3) Re-compile using pre-processor:
-!     ifort -cpp -c maths_library.f90
-!     ifort -o vmcon_test maths_library.o numerics.o global_variables.o
-!
-!  Don't forget to comment the line below again afterwards!!!
-
-!#define unit_test
-
 module maths_library
 
   !! Library of mathematical and numerical routines
@@ -27,9 +14,8 @@ module maths_library
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use global_variables, only: verbose, maxcal
-  use constants
-  ! MDK Remove this dependency, as iotty is now defined in global variables.
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+ 
   !use process_output
 
   implicit none
@@ -40,7 +26,7 @@ module maths_library
   private
 
   public :: ellipke,find_y_nonuniform_x,gamfun,hybrd,linesolv,qpsub, &
-       quanc8,sumup3,svd,tril,vmcon,zeroin, eshellvol, dshellvol, &
+       quanc8,sumup3,svd,tril,zeroin, eshellvol, dshellvol, &
        eshellarea, dshellarea, binomial, binarysearch, interpolate, &
        secant_solve, test_secant_solve, nearly_equal
   public::variable_error
@@ -69,14 +55,14 @@ contains
 
     implicit none
 
-    real(kind(1.0D0)) :: find_y_nonuniform_x
+    real(dp) :: find_y_nonuniform_x
 
     !  Arguments
 
     integer, intent(in) :: n
-    real(kind(1.0D0)), intent(in) :: x0
-    real(kind(1.0D0)), dimension(n), intent(in) :: x
-    real(kind(1.0D0)), dimension(n), intent(in) :: y
+    real(dp), intent(in) :: x0
+    real(dp), dimension(n), intent(in) :: x
+    real(dp), dimension(n), intent(in) :: y
 
     !  Local variables
     integer :: i,j
@@ -152,16 +138,16 @@ contains
     !  Arguments
 
     integer, intent(in) :: n
-    real(kind(1.0D0)), intent(in) :: dx
-    real(kind(1.0D0)), intent(in), dimension(n) :: y
-    real(kind(1.0D0)), intent(inout), dimension(n) :: inty
+    real(dp), intent(in) :: dx
+    real(dp), intent(in), dimension(n) :: y
+    real(dp), intent(inout), dimension(n) :: inty
 
     !  Local variables
 
     integer :: ix
-    real(kind(1.0D0)), parameter :: third = 1.0D0/3.0D0
-    real(kind(1.0D0)) :: thirddx
-    real(kind(1.0D0)), allocatable, dimension(:) :: yhalf
+    real(dp), parameter :: third = 1.0D0/3.0D0
+    real(dp) :: thirddx
+    real(dp), allocatable, dimension(:) :: yhalf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -207,15 +193,15 @@ contains
     !  Arguments
 
     integer, intent(in) :: n
-    real(kind(1.0D0)), intent(in) :: dx
-    real(kind(1.0D0)), intent(in), dimension(n) :: y
-    real(kind(1.0D0)), intent(out) :: integral
+    real(dp), intent(in) :: dx
+    real(dp), intent(in), dimension(n) :: y
+    real(dp), intent(out) :: integral
 
     !  Local variables
 
     integer :: ix
-    real(kind(1.0D0)) :: sum1
-    real(kind(1.0D0)), allocatable, dimension(:) :: inty
+    real(dp) :: sum1
+    real(dp), allocatable, dimension(:) :: inty
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -264,8 +250,8 @@ contains
     !  Arguments
 
     integer, intent(in) :: n
-    real(kind(1.0D0)), dimension(n,n), intent(in) :: a
-    real(kind(1.0D0)), dimension(n,n), intent(out) :: alower
+    real(dp), dimension(n,n), intent(in) :: a
+    real(dp), dimension(n,n), intent(out) :: alower
 
     !  Local variables
 
@@ -305,12 +291,12 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: sqk
-    real(kind(1.0D0)), intent(out) :: kk,ek
+    real(dp), intent(in) :: sqk
+    real(dp), intent(out) :: kk,ek
 
     !  Local variables
 
-    real(kind(1.0D0)) :: a,b,d,e
+    real(dp) :: a,b,d,e
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -338,8 +324,7 @@ contains
   end subroutine ellipke
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  real(kind(1.0D0))  function binomial(n,k) result(coefficient) &
-  bind (C, name="c_binomial")
+  real(dp)  function binomial(n,k) result(coefficient)
     ! This outputs a real approximation to the coefficient
     ! http://en.wikipedia.org/wiki/Binomial_coefficient#Multiplicative_formula
     implicit none
@@ -357,7 +342,7 @@ contains
   end function binomial
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  recursive real(kind(1.0D0)) function gamfun(x) result(gamma)
+  recursive real(dp) function gamfun(x) result(gamma)
 
     !! Calculates the gamma function for arbitrary real x
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -373,16 +358,16 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: x
+    real(dp), intent(in) :: x
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: sqtwopi = 2.5066282746310005D0
-    real(kind(1.0D0)), parameter :: c1 = 8.3333333333333333D-2  !  1/12
-    real(kind(1.0D0)), parameter :: c2 = 3.4722222222222222D-3  !  1/288
-    real(kind(1.0D0)), parameter :: c3 = 2.6813271604938272D-3  !  139/51840
-    real(kind(1.0D0)), parameter :: c4 = 2.2947209362139918D-4  !  571/2488320
-    real(kind(1.0D0)) :: summ, denom
+    real(dp), parameter :: sqtwopi = 2.5066282746310005D0
+    real(dp), parameter :: c1 = 8.3333333333333333D-2  !  1/12
+    real(dp), parameter :: c2 = 3.4722222222222222D-3  !  1/288
+    real(dp), parameter :: c3 = 2.6813271604938272D-3  !  139/51840
+    real(dp), parameter :: c4 = 2.2947209362139918D-4  !  571/2488320
+    real(dp) :: summ, denom
     integer :: i,n
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -423,12 +408,12 @@ contains
 
     implicit none
     integer, intent(in) :: length
-    real(kind(1.0D0)), dimension(length), intent(in) :: array
-    real(kind(1.0D0)), intent(in) :: value
-    real(kind(1.0D0)), intent(in), optional :: delta
+    real(dp), dimension(length), intent(in) :: array
+    real(dp), intent(in) :: value
+    real(dp), intent(in), optional :: delta
     integer :: binarysearch
     integer :: left, middle, right
-    real(kind(1.0D0)) :: d
+    real(dp) :: d
 
     if (present(delta) .eqv. .true.) then
         d = delta
@@ -456,7 +441,7 @@ contains
 
   end function binarysearch
 
-  real(kind(1.0D0)) function interpolate(x_len, x_array, y_len, y_array, f, x, y)
+  real(dp) function interpolate(x_len, x_array, y_len, y_array, f, x, y)
     ! This function uses bilinear interpolation to estimate the value
     ! of a function f at point (x,y)
     ! f is assumed to be sampled on a regular grid, with the grid x values specified
@@ -464,11 +449,11 @@ contains
     ! Reference: http://en.wikipedia.org/wiki/Bilinear_interpolation
     implicit none
     integer, intent(in) :: x_len, y_len
-    real(kind(1.0D0)), dimension(x_len), intent(in) :: x_array
-    real(kind(1.0D0)), dimension(y_len), intent(in) :: y_array
-    real(kind(1.0D0)), dimension(x_len, y_len), intent(in) :: f
-    real(kind(1.0D0)), intent(in) :: x,y
-    real(kind(1.0D0)) :: denom, x1, x2, y1, y2
+    real(dp), dimension(x_len), intent(in) :: x_array
+    real(dp), dimension(y_len), intent(in) :: y_array
+    real(dp), dimension(x_len, y_len), intent(in) :: f
+    real(dp), intent(in) :: x,y
+    real(dp) :: denom, x1, x2, y1, y2
     integer :: i,j
 
     i = binarysearch(x_len, x_array, x)
@@ -526,20 +511,28 @@ contains
 
     implicit none
 
+    interface
+      function fun(rho)
+        use, intrinsic :: iso_fortran_env, only: dp=>real64
+        real(dp), intent(in) :: rho
+        real(dp) :: fint
+      end function fun
+    end interface
+
     !  Arguments
 
-    real(kind(1.0D0)), external :: fun
-    real(kind(1.0D0)), intent(in) :: a, b, abserr, relerr
-    real(kind(1.0D0)), intent(out) :: result, errest, flag
+    real(dp), external :: fun
+    real(dp), intent(in) :: a, b, abserr, relerr
+    real(dp), intent(out) :: result, errest, flag
     integer, intent(out) :: nofun
 
     !  Local variables
 
-    real(kind(1.0D0)) :: w0,w1,w2,w3,w4,area,x0,f0,stone,step,cor11,temp
-    real(kind(1.0D0)) :: qprev,qnow,qdiff,qleft,esterr,tolerr
-    real(kind(1.0D0)), dimension(31) :: qright
-    real(kind(1.0D0)), dimension(16) :: f, x
-    real(kind(1.0D0)), dimension(8,30) :: fsave, xsave
+    real(dp) :: w0,w1,w2,w3,w4,area,x0,f0,stone,step,cor11,temp
+    real(dp) :: qprev,qnow,qdiff,qleft,esterr,tolerr
+    real(dp), dimension(31) :: qright
+    real(dp), dimension(16) :: f, x
+    real(dp), dimension(8,30) :: fsave, xsave
 
     integer :: levmin,levmax,levout,nomax,nofin,lev,nim,i,j
 
@@ -739,16 +732,24 @@ contains
 
     implicit none
 
-    real(kind(1.0D0)) :: zeroin
+    interface
+      function fhz(hhh)
+        use, intrinsic :: iso_fortran_env, only: dp=>real64
+        real(dp), intent(in) :: hhh
+        real(dp) :: fhz
+      end function fhz
+    end interface
+
+    real(dp) :: zeroin
 
     !  Arguments
 
-    real(kind(1.0D0)), external :: fhz
-    real(kind(1.0D0)), intent(in) :: ax,bx,tol
+    external :: fhz
+    real(dp), intent(in) :: ax,bx,tol
 
     !  Local variables
 
-    real(kind(1.0D0)) :: a,b,c,d,e,eps,fa,fb,fc,tol1,xm,p,q,r,s
+    real(dp) :: a,b,c,d,e,eps,fa,fb,fc,tol1,xm,p,q,r,s
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -875,8 +876,8 @@ contains
     !  Arguments
 
     integer, intent(in) :: ndim
-    real(kind(1.0D0)), dimension(ndim,ndim), intent(inout) :: a
-    real(kind(1.0D0)), dimension(ndim), intent(inout) :: b, x
+    real(dp), dimension(ndim,ndim), intent(inout) :: a
+    real(dp), dimension(ndim), intent(inout) :: b, x
 
     !  Local variables
 
@@ -914,7 +915,7 @@ contains
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use global_variables, only: verbose
     implicit none
 
     !  Arguments
@@ -922,11 +923,11 @@ contains
     integer, intent(in) :: ih, n
     integer, intent(out) :: info
     integer, dimension(n), intent(out) :: ipvt
-    real(kind(1.0D0)), dimension(ih,ih), intent(inout) :: h
+    real(dp), dimension(ih,ih), intent(inout) :: h
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(2) :: det
+    real(dp), dimension(2) :: det
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -979,14 +980,14 @@ contains
     !  Arguments
 
     integer, intent(in) :: ix,iy,n,iflag
-    real(kind(1.0D0)), dimension(ix*n), intent(in) :: x
-    real(kind(1.0D0)), dimension(iy*n), intent(in) :: y
-    real(kind(1.0D0)), intent(in) :: c
-    real(kind(1.0D0)), intent(out) :: total
+    real(dp), dimension(ix*n), intent(in) :: x
+    real(dp), dimension(iy*n), intent(in) :: y
+    real(dp), intent(in) :: c
+    real(dp), intent(out) :: total
 
     !  Local variables
 
-    real(kind(1.0D0)) :: prod
+    real(dp) :: prod
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1033,13 +1034,13 @@ contains
 
     integer, intent(in) :: lda,n,job
     integer, dimension(n), intent(in) :: ipvt
-    real(kind(1.0D0)), dimension(lda,n), intent(in) :: a
-    real(kind(1.0D0)), dimension(n), intent(inout) :: b
+    real(dp), dimension(lda,n), intent(in) :: a
+    real(dp), dimension(n), intent(inout) :: b
 
     !  Local variables
 
     integer :: k,kb,l,nm1
-    real(kind(1.0D0)) :: t
+    real(dp) :: t
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1121,7 +1122,7 @@ contains
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use global_variables, only: verbose
     implicit none
 
     !  Arguments
@@ -1129,12 +1130,12 @@ contains
     integer, intent(in) :: lda,n
     integer, intent(out) :: info
     integer, dimension(n), intent(out) :: ipvt
-    real(kind(1.0D0)), dimension(lda,n), intent(inout) :: a
+    real(dp), dimension(lda,n), intent(inout) :: a
 
     !  Local variables
 
     integer :: j,k,kp1,l,nm1
-    real(kind(1.0D0)) :: t
+    real(dp) :: t
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1245,15 +1246,15 @@ contains
 
     integer, intent(in) :: lda,n,job
     integer, dimension(n), intent(in) :: ipvt
-    real(kind(1.0D0)), dimension(lda,n), intent(inout) :: a
+    real(dp), dimension(lda,n), intent(inout) :: a
 
     !  Local variables
 
     integer :: i,j,k,kk,kb,kp1,l,nm1
-    real(kind(1.0D0)), parameter :: ten = 10.0D0
-    real(kind(1.0D0)) :: t
-    real(kind(1.0D0)), dimension(2) :: det
-    real(kind(1.0D0)), dimension(n) :: work
+    real(dp), parameter :: ten = 10.0D0
+    real(dp) :: t
+    real(dp), dimension(2) :: det
+    real(dp), dimension(n) :: work
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1354,8 +1355,8 @@ contains
     !  Arguments
 
     integer, intent(in) :: n, incx
-    real(kind(1.0D0)), intent(in) :: sa
-    real(kind(1.0D0)), dimension(n*incx), intent(inout) :: sx
+    real(dp), intent(in) :: sa
+    real(dp), dimension(n*incx), intent(inout) :: sx
 
     !  Local variables
 
@@ -1422,9 +1423,9 @@ contains
     !  Arguments
 
     integer, intent(in) :: n,incx,incy
-    real(kind(1.0D0)), intent(in) :: sa
-    real(kind(1.0D0)), dimension(n*incx), intent(in) :: sx
-    real(kind(1.0D0)), dimension(n*incy), intent(inout) :: sy
+    real(dp), intent(in) :: sa
+    real(dp), dimension(n*incx), intent(in) :: sx
+    real(dp), dimension(n*incy), intent(inout) :: sy
 
     !  Local variables
 
@@ -1490,13 +1491,13 @@ contains
     !  Arguments
 
     integer, intent(in) :: n, incx, incy
-    real(kind(1.0D0)), dimension(n*incx), intent(inout) :: sx
-    real(kind(1.0D0)), dimension(n*incy), intent(inout) :: sy
+    real(dp), dimension(n*incx), intent(inout) :: sx
+    real(dp), dimension(n*incy), intent(inout) :: sy
 
     !  Local variables
 
     integer :: i,ix,iy,m,mp1
-    real(kind(1.0D0)) :: stemp
+    real(dp) :: stemp
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1564,18 +1565,18 @@ contains
 
     implicit none
 
-    real(kind(1.0D0)) :: sdot
+    real(dp) :: sdot
 
     !  Arguments
 
     integer, intent(in) :: n,incx,incy
-    real(kind(1.0D0)), dimension(n*incx), intent(in) :: sx
-    real(kind(1.0D0)), dimension(n*incy), intent(in) :: sy
+    real(dp), dimension(n*incx), intent(in) :: sx
+    real(dp), dimension(n*incy), intent(in) :: sy
 
     !  Local variables
 
     integer :: ix,i,iy
-    real(kind(1.0D0)) :: sw
+    real(dp) :: sw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1616,12 +1617,12 @@ contains
     !  Arguments
 
     integer, intent(in) :: n, incx
-    real(kind(1.0D0)), dimension(n*incx), intent(in) :: sx
+    real(dp), dimension(n*incx), intent(in) :: sx
 
     !  Local variables
 
     integer :: i,ix
-    real(kind(1.0D0)) :: smax
+    real(dp) :: smax
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1709,15 +1710,15 @@ contains
 
     integer, intent(in) :: nm, m, n
     logical, intent(in) :: matu, matv
-    real(kind(1.0D0)), dimension(nm,n), intent(inout) :: a
-    real(kind(1.0D0)), dimension(nm,n), intent(out) :: u, v
-    real(kind(1.0D0)), dimension(n), intent(out) :: w, rv1
+    real(dp), dimension(nm,n), intent(inout) :: a
+    real(dp), dimension(nm,n), intent(out) :: u, v
+    real(dp), dimension(n), intent(out) :: w, rv1
     integer, intent(out) :: ierr
 
     !  Local variables
 
     integer :: i,j,k,l,ii,i1,kk,k1,ll,l1,mn,its
-    real(kind(1.0D0)) :: c,f,g,h,s,x,y,z,scale,anorm
+    real(dp) :: c,f,g,h,s,x,y,z,scale,anorm
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2071,635 +2072,6 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  recursive subroutine vmcon( &
-       fcnvmc1,fcnvmc2,mode,n,m,meq,x,objf,fgrd,conf,cnorm,lcnorm, &
-       b,lb,tol,maxfev,info,nfev,niter,vlam,glag,vmu,cm,glaga,gamma,eta, &
-       xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa,liwa,ilower, &
-       iupper,bndl,bndu, sum)
-
-    !! Calculates the least value of a function of several variables
-    !! subject to linear and/or nonlinear equality and inequality
-    !! constraints
-    !! author: R L Crane, K E Hillstrom, M Minkoff, Argonne National Lab
-    !! author: J Galambos, FEDC/ORNL
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! author: M D Kovari, CCFE, Culham Science Centre
-    !! fcnvmc1 : external subroutine : routine to calculate the
-    !! objective and constraint functions
-    !! fcnvmc2 : external subroutine : routine to calculate the
-    !! gradients of the objective and constraint functions
-    !! mode : input integer : 1 if B is provided by the user,
-    !! 0 if B is to be initialized to
-    !! the identity matrix
-    !! n : input integer : number of variables
-    !! m : input integer : number of constraints
-    !! meq : input integer : number of equality constraints
-    !! x(n) : input/output real array : initial/final estimates of
-    !! solution vector
-    !! objf : output real : objective function at output X
-    !! fgrd(n) : output real array : components of the gradient of
-    !! the objective function at output X
-    !! conf(m) : output real array : values of the constraint
-    !! functions at output X (equality constraints must precede
-    !! the inequality constraints)
-    !! cnorm(lcnorm,m) : output real array : constraint normals at
-    !! output X
-    !! lcnorm : input integer : array dimension, >= n+1
-    !! b(lb,lb) : input/output real array : approximation to the
-    !! second derivative matrix of the Lagrangian function.
-    !! Often, an adequate initial B matrix can be obtained by
-    !! approximating the hessian of the objective function.
-    !! On input, the approximation is provided by the user if
-    !! MODE = 1 and is set to the identity matrix if MODE = 0.
-    !! lb : input integer : array dimension, >= n+1
-    !! tol : input real : A normal return occurs when the
-    !! objective function plus suitably weighted multiples
-    !! of the constraint functions are predicted to differ from
-    !! their optimal values by at most TOL.
-    !! maxfev : input integer : maximum number of calls to FCNVMC1
-    !! info : output integer : error flag<BR>
-    !! INFO < 0 : user termination<BR>
-    !! INFO = 0 : improper input parameters<BR>
-    !! INFO = 1 : normal return<BR>
-    !! INFO = 2 : number of calls to FCNVMC1 is at least MAXFEV<BR>
-    !! INFO = 3 : line search required ten calls of FCNVMC1<BR>
-    !! INFO = 4 : uphill search direction was calculated<BR>
-    !! INFO = 5 : quadratic programming technique was unable to find
-    !! a feasible point<BR>
-    !! INFO = 6 : quadratic programming technique was restricted by
-    !! an artificial bound or failed due to a singular
-    !! matrix
-    !! INFO = 7 : line search has been aborted
-    !! nfev : output integer : number of calls to FCNVMC1
-    !! niter : output integer : number of iterations
-    !! vlam(m+2n+1) : output real array : Lagrange multipliers at output X.
-    !! The Lagrange multipliers provide the sensitivity of the objective
-    !! function to changes in the constraint functions.
-    !! Note that VLAM(M+I), I=1,...,N gives the multipliers for
-    !! the lower bound constraints.  VLAM(M+N+1+I), I=1,...,N
-    !! gives the multipliers for the upper bound constraints.
-    !! glag(n) : output real array : components of the gradient of
-    !! the Lagrangian function at the output X.
-    !! cm(m) : output real array : work array
-    !! vmu(m+2n+1) : output real array : work array
-    !! glaga(n) : output real array : work array
-    !! gamma(n) : output real array : work array
-    !! eta(n) : output real array : work array
-    !! xa(n) : output real array : work array
-    !! bdelta(n) : output real array : work array
-    !! delta(ldel) : output real array : work array
-    !! ldel : input integer : array dimension, >= max(7*(N+1),4*(N+1)+M)
-    !! gm(n+1) : output real array : work array
-    !! bdl(n+1) : output real array : work array
-    !! bdu(n+1) : output real array : work array
-    !! h(lh,lh) : output real array : work array
-    !! lh : input integer : array dimension, >= 2*(N+1)
-    !! wa(lwa) : output real array : work array
-    !! lwa : input integer : array dimension, >= 2*(N+1)
-    !! iwa(liwa) : output integer array : work array
-    !! liwa : input integer : array dimension, >= 6*(N+1) + M
-    !! ilower(n) : input integer array : If X(I) has a lower bound,
-    !! ILOWER(I) is set to 1 on input, otherwise 0
-    !! bndl(n) : input real array : lower bound of X(I)
-    !! iupper(n) : input integer array : If X(I) has an upper bound,
-    !! IUPPER(I) is set to 1 on input, otherwise 0
-    !! bndu(n) : input real array : upper bound of X(I)
-    !! This subroutine calculates the least value of a function of
-    !! several variables subject to linear and/or nonlinear equality
-    !! and inequality constraints.
-    !! <P>More particularly, it solves the problem
-    !! <PRE>
-    !! Minimize f(x)
-    !! subject to c (x) =  0.0 ,  i = 1,...,meq
-    !! i
-    !! and c (x) >= 0.0 ,  i = meq+1,...,m
-    !! i
-    !! and l <= x <= u  ,  i = 1,...,n
-    !! i    i    i
-    !! </PRE>
-    !! The subroutine implements a variable metric method for
-    !! constrained optimization developed by M.J.D. Powell.
-    !! ANL-80-64: Solution of the General Nonlinear Programming Problem
-    !! with Subroutine VMCON, Roger L Crane, Kenneth E Hillstrom and
-    !! Michael Minkoff, Argonne National Laboratory, 1980
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    integer, intent(in) :: mode,n,m,meq,lcnorm,lb,maxfev,ldel,lh,lwa,liwa
-    integer, intent(out) :: info,nfev,niter
-
-    integer, dimension(liwa), intent(out) :: iwa
-    integer, dimension(n), intent(in) :: ilower,iupper
-    real(kind(1.0D0)), intent(out) :: objf
-    real(kind(1.0D0)), intent(in) :: tol
-    real(kind(1.0D0)), dimension(n), intent(inout) :: x
-    real(kind(1.0D0)), dimension(n) :: best_solution_vector
-    real(kind(1.0D0)), dimension(n) :: delta_var           ! For opt data extraction only
-    real(kind(1.0D0)), dimension(n), intent(in) :: bndl,bndu
-    real(kind(1.0D0)), dimension(n), intent(out) :: fgrd
-    real(kind(1.0D0)), dimension(m), intent(out) :: conf
-    real(kind(1.0D0)), dimension(n), intent(out) :: glag,glaga,gamma,eta,xa,bdelta
-    real(kind(1.0D0)), dimension(m), intent(out) :: cm
-    real(kind(1.0D0)), dimension(ldel), intent(out) :: delta
-    real(kind(1.0D0)), dimension(lwa), intent(out) :: wa
-    real(kind(1.0D0)), dimension(lcnorm,m), intent(out) :: cnorm
-    real(kind(1.0D0)), dimension(lh,lh), intent(out) :: h
-    real(kind(1.0D0)), dimension(lb,lb), intent(inout) :: b
-    real(kind(1.0D0)), dimension(*), intent(out) :: vlam,vmu,gm,bdl,bdu
-    real(kind(1.0D0)), intent(out), optional :: sum
-    !  Local variables
-
-    integer :: i,j,k,mact,nfinit,nls,np1,np1j,npp,nqp,nsix,nsixi
-    integer :: inx,ki,ml,mlp1,mcon,mp1,mpn,mpnpp1,mpnppn
-
-    real(kind(1.0D0)) :: alpha,aux,auxa,calpha,dbd,dflsa,dg, &
-         fls,flsa,spgdel,temp,thcomp,theta
-    real(kind(1.0D0)) :: best_sum_so_far = 999d0
-    real(kind(1.0D0)) :: summ, sqsumsq, sqsumsq_tol
-    real(kind(1.0D0)) :: lowest_valid_fom    
-    real(kind(1.0D0)), parameter :: zero = 0.0D0
-    real(kind(1.0D0)), parameter :: cp1 = 0.1D0
-    real(kind(1.0D0)), parameter :: cp2 = 0.2D0
-    real(kind(1.0D0)), parameter :: cp5 = 0.5D0
-    real(kind(1.0D0)), parameter :: one = 1.0D0
-
-    character(len=20) :: iteration_progress
-
-    !  External routines
-
-    external :: fcnvmc1,fcnvmc2
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    lowest_valid_fom = 999d0
-    best_solution_vector = x
-
-    np1 = n + 1
-    npp = 2*np1
-    info = 0
-
-    !  Check input parameters for errors
-
-    if ( &
-         (n <= 0)           .or. &
-         (m <= 0)           .or. &
-         (meq > n)         .or. &
-         (lcnorm < (n+1))  .or. &
-         (lb < (n+1))      .or. &
-         (tol < zero)      .or. &
-         (ldel < max(7*(n+1),4*(n+1)+m)).or. &
-         (lh < (2*(n+1)))  .or. &
-         (lwa < (2*(n+1))) .or. &
-         (liwa < (6*(n+1)+m)) &
-         ) return
-
-    !  Set the initial elements of b and vmu. vmu is the weighting
-    !  vector to be used in the line search.
-    !  Use hessian estimate provided by user if mode = 1 on input
-
-    if (mode /= 1) then
-       !  Use identity matrix for hessian estimate
-       do j = 1, n
-          do i = 1, n
-             b(i,j) = zero
-          end do
-          b(j,j) = one
-       end do
-    end if
-
-    mp1 = m + 1
-    mpn = m + n
-    mpnpp1 = m + np1 + 1
-    mpnppn = m + np1 + n
-
-    !  Set mcon to total number of actual constraints
-
-    mcon = m
-    do i = 1,n
-       if (ilower(i) == 1) mcon = mcon + 1
-    end do
-
-    !  Set ml to m + number of lower bounds
-
-    ml = mcon
-
-    !  Set mlp1 to ml + 1
-
-    mlp1 = ml + 1
-    do i = 1, n
-       if (iupper(i) == 1) mcon = mcon + 1
-    end do
-    do k = 1, mpnppn
-       vmu(k) = zero
-    end do
-
-    !  Set initial values of some variables
-    !  nfev is the number of calls of fcnvmc1
-    !  nsix is the length of an array
-    !  nqp is the number of quadratic subproblems (= number of iterations)
-
-    nfev = 1
-    nsix = 6*np1
-    nqp = 0 ; niter = 0
-
-    !  Calculate the initial functions and gradients
-
-    call fcnvmc1(n,m,x,objf,conf,info)
-    if (info < 0) return
-
-    call fcnvmc2(n,m,x,fgrd,cnorm,lcnorm,info)
-    if (info < 0) return
-
-    !  Setup line overwrite for VMCON iterations output
-    open(unit=iotty)
-    write(*,*) ""
-
-    !  Start the iteration by calling the quadratic programming
-    !  subroutine
-
-    iteration: do
-
-       !  Increment the quadratic subproblem counter
-       nqp = nqp + 1
-       niter = nqp
-
-       !  Set the linear term of the quadratic problem objective function
-       !  to the negative gradient of objf
-       do i = 1, n
-          gm(i) = -fgrd(i)
-       end do
-       do i = 1, mpnppn
-          vlam(i) = zero
-       end do
-
-       call qpsub( &
-            n,m,meq,conf,cnorm,lcnorm,b,lb,gm,bdl,bdu,info,x,delta, &
-            ldel,cm,h,lh,mact,wa,lwa,iwa,liwa,ilower,iupper, &
-            bndl,bndu)
-
-       !  The following return is made if the quadratic problem solver
-       !  failed to find a feasible point, if an artificial bound was
-       !  active, or if a singular matrix was detected
-       if ((info == 5).or.(info == 6)) then
-           ! Issue #601 Return the best value of the solution vector - not the last value. MDK
-           x = best_solution_vector
-           sum = best_sum_so_far
-           write(*,*)
-           write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
-20         format(a,1pe10.3)
-           return
-       end if
-
-       !  Initialize the line search iteration counter
-       nls = 0
-
-       !  Calculate the Lagrange multipliers
-       do j = 1, mact
-          k = iwa(j) - npp
-          if (k > 0) goto 59
-          ki = iwa(j)
-          k = ki + m
-          if (ki > np1) goto 58
-          if (ki == np1) cycle
-          if (ilower(ki) == 1) goto 59
-          cycle
-58        continue
-          ki = iwa(j) - np1
-          k = ki + m + np1
-          if (ki == np1) cycle
-          if (iupper(ki) == 1) goto 59
-          cycle
-59        continue
-          do i = 1, n
-             np1j = np1 + j
-             nsixi = nsix + i
-             vlam(k) = vlam(k) + h(np1j,i)*delta(nsixi)
-          end do
-       end do
-
-       !  Calculate the gradient of the Lagrangian function
-       !  nfinit is the value of nfev at the start of an iteration
-       nfinit = nfev
-       do i = 1, n
-          glag(i) = fgrd(i)
-       end do
-       do k = 1, m
-          if (vlam(k) /= zero) then
-             do i = 1, n
-                glag(i) = glag(i) - cnorm(i,k)*vlam(k)
-             end do
-          end if
-       end do
-       do k = mp1, mpn
-          if (vlam(k) /= zero) then
-             inx = k - m
-             if (ilower(inx) /= 0) glag(inx) = glag(inx) - vlam(k)
-          end if
-       end do
-       do k = mpnpp1, mpnppn
-          if (vlam(k) /= zero) then
-             inx = k - m - np1
-             if (iupper(inx) /= 0) glag(inx) = glag(inx) + vlam(k)
-          end if
-       end do
-
-       !  Set spgdel to the scalar product of fgrd and delta
-       !  Store the elements of glag and x
-       spgdel = zero
-       do i = 1, n
-          spgdel = spgdel + fgrd(i)*delta(i)
-          glaga(i) = glag(i)
-          xa(i) = x(i)
-       end do
-
-       !  Revise the vector vmu and test for convergence
-       sum = abs(spgdel)
-       do k = 1, mpnppn
-          aux = abs(vlam(k))
-          vmu(k) = max(aux,cp5*(aux + vmu(k)))
-          temp = 0.0D0
-          if (k <= m) then
-             temp = conf(k)
-          else
-             if (k <= mpn) then
-                inx = k - m
-                if (ilower(inx) == 0) cycle
-                temp = x(inx) - bndl(inx)
-             else
-                inx = k - m - np1
-                if ((inx == 0) .or. (inx > n)) cycle
-                if (iupper(inx) == 0) cycle
-                temp = bndu(inx) - x(inx)
-             end if
-          end if
-          sum = sum + abs(vlam(k)*temp)
-       end do
-
-       !  Check convergence of constraint residuals
-       summ = 0.0D0
-       !do i = 1,m
-       ! This only includes the equality constraints Issue #505
-       do i = 1,meq
-          summ = summ + conf(i)*conf(i)
-       end do
-       sqsumsq = sqrt(summ)
-
-       !  Output to terminal number of VMCON iterations
-       iteration_progress = repeat("=", floor(((niter+1)/FLOAT(maxcal))*20.0D0))
-
-       write(iotty, '("==>", I5, "  vmcon iterations. Normalised FoM =", &
-           &  f8.4, "  Residuals (sqsumsq) =", 1pe8.1, "  Convergence param =", 1pe8.1, a1)', &
-           ADVANCE="NO") niter+1, max(objf, -objf), sqsumsq, sum, achar(13)
-
-       if (verbose == 1) then
-          write(*,'(a,es13.5,a,es13.5)') &
-               'Constraint residuals (sqsumsq) = ',sqsumsq, &
-               ' Convergence parameter = ',sum
-       end if
-
-       ! Writting the step results in OPT.DAT file
-       do i = 1, n
-         delta_var(i) = delta(i)
-       end do
-       write(opt_file, '(I5,E28.10,*(E18.10))') niter+1, abs(objf), sum, sqsumsq, conf, x, delta_var
-
-       !  Exit if both convergence criteria are satisfied
-       !  (the original criterion, plus constraint residuals below the tolerance level)
-       !  Temporarily set the two tolerances equal (should perhaps be an input parameter)
-       sqsumsq_tol = tol
-
-       ! Store the lowest valid FoM (ie where constraints are satisfied)
-       if (sqsumsq < sqsumsq_tol)  lowest_valid_fom = min(lowest_valid_fom, objf)
-
-       if ((sum <= tol).and.(sqsumsq < sqsumsq_tol)) then
-          if (verbose == 1) then
-             write(*,*) 'Convergence parameter < convergence criterion (epsvmc)'
-             write(*,*) 'Root of sum of squares of residuals < tolerance (sqsumsq_tol)'
-          end if
-          return
-       end if
-
-       ! The convergence criteria are not yet satisfied.
-       ! Store the best value of the convergence parameter achieved
-       if(sum < best_sum_so_far)then
-           best_sum_so_far = sum
-           best_solution_vector = x
-       end if
-
-       !  Set sum to the weighted sum of infeasibilities
-       !  Set fls to the line search objective function
-
-       line_search: do
-
-          !  Increment the line search iteration counter
-
-          nls = nls + 1
-          sum = zero
-          do k = 1, mpnppn
-             aux = 0.0D0
-             if (k <= meq) aux = conf(k)
-             temp = 0.0D0
-             if (k <= m) then
-                temp = conf(k)
-             else
-                if (k <= mpn) then
-                   inx = k - m
-                   if (ilower(inx) == 0) cycle
-                   temp = x(inx) - bndl(inx)
-                else
-                   inx = k - m - np1
-                   if ((inx == 0) .or. (inx > n)) cycle
-                   if (iupper(inx) == 0) cycle
-                   temp = bndu(inx) - x(inx)
-                end if
-             end if
-             sum = sum + vmu(k)*max(aux,-temp)
-          end do
-          fls = objf + sum
-
-          if (nfev == nfinit) then
-
-             !  Set the initial conditions for the line search
-             !  flsa is the initial value of the line search function
-             !  dflsa is its first derivative (if delta(np1) = 1)
-             !  alpha is the next reduction in the step-length
-
-             flsa = fls
-             dflsa = spgdel - delta(np1)*sum
-             if (dflsa >= zero) then
-                !  Error return because uphill search direction was calculated
-                info = 4
-                ! Issue #601 Return the best value of the solution vector - not the last value. MDK
-                x = best_solution_vector
-                sum = best_sum_so_far
-                write(*,*)
-                write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
-                return
-             end if
-
-             !  Set initial multiplying factor for stepsize
-             !  Set initial value of stepsize for output
-
-             alpha = one
-             calpha = one
-
-          else
-
-             !  Test whether line search is complete
-
-             aux = fls - flsa
-
-             !  Exit line search if function difference is small
-
-             if (aux <= (cp1*dflsa)) exit line_search
-
-             !  Escape from the line search if the line search function is increasing
-             !  Outer loop is forced to repeat
-
-             info = 1  !  reset on each iteration
-             if (aux > 0.0D0) then
-                if (verbose == 1) then
-                   write(*,*) 'VMCON optimiser line search attempt failed - retrying...'
-                end if
-                info = 7
-                exit line_search
-             end if
-
-             !  Exit if the line search requires ten or more function evaluations
-
-             if (nfev >= (nfinit + 10)) then
-                do i = 1, n
-                   x(i) = xa(i)
-                end do
-                nfev = nfev + 1
-                call fcnvmc1(n,m,x,objf,conf,info)
-                if (info >= 0) info = 3
-                ! Error return because line search required 10 calls of fcnvmc1
-                ! Issue #601 Return the best value of the solution vector - not the last value. MDK
-                x = best_solution_vector
-                sum = best_sum_so_far
-                write(*,*)
-                write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
-                return
-             end if
-
-             !  Calculate next reduction in the line step assuming
-             !  a quadratic fit
-
-             alpha = max(cp1,cp5*dflsa/(dflsa - aux))
-
-          end if
-
-          !  Multiply delta by alpha and calculate the new x
-
-          calpha = alpha*calpha
-          do i = 1, n
-             delta(i) = alpha*delta(i)
-             x(i) = xa(i) + delta(i)
-          end do
-
-          dflsa = alpha*dflsa
-
-          !  Test nfev against maxfev, call fcnvmc1 and resume line search
-
-          if (nfev >= maxfev) then
-             do i = 1, n
-                x(i) = xa(i)
-             end do
-             !  Error return because there have been maxfev calls of fcnvmc1
-             info = 2
-             ! Issue #601 Return the best value of the solution vector - not the last value. MDK
-             x = best_solution_vector
-             sum = best_sum_so_far
-             write(*,*)
-             write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
-             return
-          end if
-
-          nfev = nfev + 1
-
-          call fcnvmc1(n,m,x,objf,conf,info)
-          if (info < 0) return
-
-       end do line_search
-
-       !  Line search is complete. Calculate gradient of Lagrangian
-       !  function for use in updating hessian of Lagrangian
-
-       call fcnvmc1(n,m,x,objf,conf,info)
-       call fcnvmc2(n,m,x,fgrd,cnorm,lcnorm,info)
-       if (info < 0) return
-
-       do i = 1, n
-          glag(i) = fgrd(i)
-       end do
-       do k = 1, m
-          if (vlam(k) /= zero) then
-             do i = 1, n
-                glag(i) = glag(i) - cnorm(i,k)*vlam(k)
-             end do
-          end if
-       end do
-       do k = mp1, mpn
-          if (vlam(k) /= zero) then
-             inx = k - m
-             if (ilower(inx) /= 0) glag(inx) = glag(inx) - vlam(k)
-          end if
-       end do
-       do k = mpnpp1, mpnppn
-          if (vlam(k) /= zero) then
-             inx = k - m - np1
-             if (iupper(inx) /= 0) glag(inx) = glag(inx) + vlam(k)
-          end if
-       end do
-
-       !  Calculate gamma and bdelta in order to revise b
-       !  Set dg to the scalar product of delta and gamma
-       !  Set dbd to the scalar product of delta and bdelta
-
-       dg = zero
-       dbd = zero
-       do i = 1, n
-          gamma(i) = glag(i) - glaga(i)
-          bdelta(i) = zero
-          do j = 1, n
-             bdelta(i) = bdelta(i) + b(i,j)*delta(j)
-          end do
-          dg = dg + delta(i)*gamma(i)
-          dbd = dbd + delta(i)*bdelta(i)
-       end do
-
-       !  Calculate the vector eta for the b-f-g-s formula
-       !  replace dg by the scalar product of delta and eta
-
-       aux = cp2*dbd
-       theta = one
-       if (dg < aux) theta = (dbd - aux)/(dbd - dg)
-       thcomp = one - theta
-       do i = 1, n
-          eta(i) = theta*gamma(i) + thcomp*bdelta(i)
-       end do
-       if (dg < aux) dg = aux
-
-       !  Revise the matrix b and begin new iteration
-
-       do i = 1, n
-          aux = bdelta(i)/dbd
-          auxa = eta(i)/dg
-          do j = i, n
-             b(i,j) = b(i,j) - aux*bdelta(j) + auxa*eta(j)
-             b(j,i) = b(i,j)
-          end do
-       end do
-    end do iteration
-
-  end subroutine vmcon
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   SUBROUTINE QPSUB( &
        n,m,meq,conf,cnorm,lcnorm,b,lb,gm,bdl,bdu,info, &
        x,delta,ldel,cm,h,lh,mact,wa,lwa,iwa,liwa, &
@@ -2817,7 +2189,7 @@ contains
     !  instead of through COMMON, J. Galambos, (5/21/91)
 
     !  25/02/14 PJK Diagnostic output added
-
+    use global_variables, only: verbose
     IMPLICIT NONE
 
     INTEGER n,m,meq,lcnorm,lb,info,ldel,lh,mact,lwa,liwa
@@ -2825,10 +2197,10 @@ contains
     INTEGER i,iflag,j,k,mode,mtotal,np1,npp
     INTEGER inx
 
-    real(kind(1.0D0)) conf(m),cnorm(lcnorm,m),b(lb,lb),gm(*),bdl(*), &
+    real(dp) conf(m),cnorm(lcnorm,m),b(lb,lb),gm(*),bdl(*), &
          bdu(*),delta(ldel),cm(m),h(lh,lh),wa(lwa)
-    real(kind(1.0D0)) x(n),bndu(n),bndl(n)
-    real(kind(1.0D0)) cd6,cdm6,cp9,one,zero
+    real(dp) x(n),bndu(n),bndl(n)
+    real(dp) cd6,cdm6,cp9,one,zero
 
     !+**PJK 24/05/06 Added SAVE command (as a number of variables are
     !+**PJK 24/05/06 initialised only if info=0)
@@ -3054,7 +2426,7 @@ contains
     !+**PJK 02/11/92 error but beware of future modifications.
 
     !  25/02/14 PJK Diagnostic output added
-
+    use global_variables, only: verbose
     IMPLICIT NONE
 
     INTEGER n,m,ia,ic,k,ke,ih,mode,info
@@ -3062,11 +2434,11 @@ contains
     INTEGER i, ial, ib, ii, j, li, ni, nk, nn, n3,n4,n5,n6
     INTEGER i0,i1,i2,i3
 
-    real(kind(1.0D0)) a(ia,*),b(*),c(ic,*),d(*),bdl(*),bdu(*),x(*), &
+    real(dp) a(ia,*),b(*),c(ic,*),d(*),bdl(*),bdu(*),x(*), &
          h(ih,*),wa(*)
-    real(kind(1.0D0)) alpha, cac, cc, chc, ghc, y, z, zz
-    real(kind(1.0D0)) r0
-    real(kind(1.0D0)), dimension(2) :: det
+    real(dp) alpha, cac, cc, chc, ghc, y, z, zz
+    real(dp) r0
+    real(dp), dimension(2) :: det
 
     LOGICAL retest,passiv,postiv
 
@@ -3591,10 +2963,10 @@ contains
     INTEGER iwa(*), lt(*)
     INTEGER i0,i1,i2,i3
 
-    real(kind(1.0D0)) c(ic,*),d(*),bdl(*),bdu(*),x(*),h(ih,*)
-    real(kind(1.0D0)) wa(*)
-    real(kind(1.0D0)) alpha, beta, y, z, zz
-    real(kind(1.0D0)) r0
+    real(dp) c(ic,*),d(*),bdl(*),bdu(*),x(*),h(ih,*)
+    real(dp) wa(*)
+    real(dp) alpha, beta, y, z, zz
+    real(dp) r0
 
     i0 = 0
     i1 = 1
@@ -4130,16 +3502,26 @@ contains
 
     IMPLICIT NONE
 
+    interface
+      subroutine fcnhyb(n, x, fvec, iflag)
+        use, intrinsic :: iso_fortran_env, only: dp=>real64
+        integer, intent(in) :: n
+        real(dp), dimension(n), intent(inout) :: x
+        real(dp), dimension(n), intent(out) :: fvec
+        integer, intent(inout) :: iflag
+      end subroutine fcnhyb
+    end interface
+
     INTEGER n,maxfev,ml,mu,mode,nprint,info,nfev,ldfjac,lr,irr
     INTEGER i,iflag,iter,j,jm1,l,msum,ncfail,ncsuc,nslow1,nslow2
 
     !+**PJK 08/10/92 Possible problems with the following declaration:
     INTEGER iwa(1)
 
-    real(kind(1.0D0)) xtol,epsfcn,factor
-    real(kind(1.0D0)) x(n),fvec(n),diag(n),fjac(ldfjac,n),r(lr), &
+    real(dp) xtol,epsfcn,factor
+    real(dp) x(n),fvec(n),diag(n),fjac(ldfjac,n),r(lr), &
          qtf(n),wa1(n),wa2(n),wa3(n),wa4(n),resdl(n)
-    real(kind(1.0D0)) actred,delta,epsmch,fnorm,fnorm1,one,pnorm, &
+    real(dp) actred,delta,epsmch,fnorm,fnorm1,one,pnorm, &
          prered,p1,p5,p001,p0001,ratio,sum,temp,xnorm,zero
     logical jeval,sing
 
@@ -4517,9 +3899,9 @@ contains
 
     INTEGER n,lr,i,j,jj,jp1,k,l
 
-    real(kind(1.0D0)) delta
-    real(kind(1.0D0)) r(lr),diag(n),qtb(n),x(n),wa1(n),wa2(n)
-    real(kind(1.0D0)) alpha,bnorm,epsmch,gnorm,one,qnorm,sgnorm, &
+    real(dp) delta
+    real(dp) r(lr),diag(n),qtb(n),x(n),wa1(n),wa2(n)
+    real(dp) alpha,bnorm,epsmch,gnorm,one,qnorm,sgnorm, &
          sum,temp,zero
 
     one = 1.0D0
@@ -4640,7 +4022,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  real(kind(1.0D0)) FUNCTION ENORM(n,x)
+  real(dp) FUNCTION ENORM(n,x)
 
     !  Given an N-vector X, this function calculates the
     !  Euclidean norm of X.
@@ -4674,8 +4056,8 @@ contains
 
     INTEGER n,i
 
-    real(kind(1.0D0)) x(n)
-    real(kind(1.0D0)) agiant,floatn,one,rdwarf,rgiant,s1,s2,s3,xabs, &
+    real(dp) x(n)
+    real(dp) agiant,floatn,one,rdwarf,rgiant,s1,s2,s3,xabs, &
          x1max,x3max,zero
 
     one = 1.0D0
@@ -4838,9 +4220,9 @@ contains
 
     INTEGER n,ldfjac,iflag,ml,mu,i,j,k,msum
 
-    real(kind(1.0D0)) epsfcn
-    real(kind(1.0D0)) x(n),fvec(n),fjac(ldfjac,n),wa1(n),wa2(n)
-    real(kind(1.0D0)) eps,epsmch,h,temp,zero
+    real(dp) epsfcn
+    real(dp) x(n),fvec(n),fjac(ldfjac,n),wa1(n),wa2(n)
+    real(dp) eps,epsmch,h,temp,zero
 
     EXTERNAL  fcnhyb
 
@@ -4939,8 +4321,8 @@ contains
 
     INTEGER m,n,ldq,i,j,jm1,k,l,minmn,np1
 
-    real(kind(1.0D0)) q(ldq,m),wa(m)
-    real(kind(1.0D0)) one,sum,temp,zero
+    real(dp) q(ldq,m),wa(m)
+    real(dp) one,sum,temp,zero
 
     one = 1.0D0
     zero = 0.0D0
@@ -5072,8 +4454,8 @@ contains
 
     LOGICAL pivot
 
-    real(kind(1.0D0)) a(lda,n),rdiag(n),acnorm(n),wa(n)
-    real(kind(1.0D0)) ajnorm,epsmch,one,p05,sum,temp,zero
+    real(dp) a(lda,n),rdiag(n),acnorm(n),wa(n)
+    real(dp) ajnorm,epsmch,one,p05,sum,temp,zero
 
     one = 1.0D0
     p05 = 0.05D0
@@ -5208,8 +4590,8 @@ contains
 
     INTEGER m,n,lda,i,j,nmj,nm1
 
-    real(kind(1.0D0)) a(lda,n),v(n),w(n)
-    real(kind(1.0D0)) cos1,one,sin1,temp
+    real(dp) a(lda,n),v(n),w(n)
+    real(dp) cos1,one,sin1,temp
 
     one = 1.0D0
 
@@ -5316,8 +4698,8 @@ contains
 
     LOGICAL sing
 
-    real(kind(1.0D0)) s(ls),u(m),v(n),w(m),cos1,cotan,giant,one
-    real(kind(1.0D0)) p5,p25,sin1,tan1,tau,temp,zero
+    real(dp) s(ls),u(m),v(n),w(m),cos1,cotan,giant,one
+    real(dp) p5,p25,sin1,tan1,tau,temp,zero
 
     one = 1.0D0
     p5 = 0.5D0
@@ -5485,7 +4867,7 @@ contains
 
     implicit none
 
-    real(kind(1.0D0)) :: spmpar
+    real(dp) :: spmpar
 
     !  Arguments
 
@@ -5493,7 +4875,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(3) :: rmach
+    real(dp), dimension(3) :: rmach
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -5542,7 +4924,7 @@ contains
     !! Surface Area and Volume Calculations for Toroidal Shells
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use constants, only: pi, twopi
     implicit none
 
     !  Arguments
@@ -5555,6 +4937,10 @@ contains
     !  Global shared variables
     !  Input: pi,twopi
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    ! #TODO - Review both equations containing dz and attempt to separate
+    !         top and bottom of vacuum vessel thickness
+    !         See issue #433 for explanation
 
     !  Inboard section
 
@@ -5620,7 +5006,7 @@ contains
     !! Surface Area and Volume Calculations for Toroidal Shells
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use constants, only: pi, twopi
     implicit none
 
     !  Arguments
@@ -5633,6 +5019,10 @@ contains
     !  Global shared variables
     !  Input: pi,twopi
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    ! #TODO - Review both equations containing dz and attempt to separate
+    !         top and bottom of vacuum vessel thickness
+    !         See issue #433 for explanation
 
     !  Volume of inboard cylindrical shell
     vin = 2.0D0*(zminor+dz) * pi*(rmajor**2 - (rmajor-drin)**2)
@@ -5679,7 +5069,7 @@ contains
     !! Surface Area and Volume Calculations for Toroidal Shells
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use constants, only: pi, twopi
     implicit none
 
     !  Arguments
@@ -5726,7 +5116,7 @@ contains
     !! Surface Area and Volume Calculations for Toroidal Shells
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use constants, only: pi, twopi
     implicit none
 
     !  Arguments
@@ -5753,7 +5143,7 @@ contains
 
   ! ------------------------------------------------------------------------
   pure function variable_error(variable)
-      real(kind(1.0D0)), intent(in) ::variable
+      real(dp), intent(in) ::variable
       logical::variable_error
 
       if((variable/=variable).or.(variable<-9.99D99).or.(variable>9.99D99))then
@@ -5766,9 +5156,9 @@ contains
 
   ! ------------------------------------------------------------------------
   pure function nearly_equal(variable1, variable2,tol)
-      real(kind(1.0D0)), intent(in) ::variable1, variable2
-      real(kind(1.0D0)), intent(in), optional :: tol
-      real(kind(1.0D0)) :: tolerance
+      real(dp), intent(in) ::variable1, variable2
+      real(dp), intent(in), optional :: tol
+      real(dp) :: tolerance
       logical::nearly_equal
       if(present(tol))then
           tolerance = tol
@@ -5807,14 +5197,23 @@ contains
       ! https://en.wikipedia.org/wiki/Secant_method
       ! Requires two initial values, x0 and x1, which should ideally be chosen to lie close to the root.
       !external:: f
-      real(kind(1.0D0))::f
-      real(kind(1.0D0)), intent(out) ::solution, residual
-      real(kind(1.0D0)), intent(in) ::x1,x2
-      real(kind(1.0D0)), intent(in), optional ::opt_tol
-      real(kind(1.0D0)),dimension(20) ::x
+      
+      interface
+        function f(x)
+          use, intrinsic :: iso_fortran_env, only: dp=>real64
+          real(dp), intent(in) :: x
+          real(dp) :: f
+        end function f
+      end interface
+
+      external :: f
+      real(dp), intent(out) ::solution, residual
+      real(dp), intent(in) ::x1,x2
+      real(dp), intent(in), optional ::opt_tol
+      real(dp),dimension(20) ::x
       integer :: i
       logical, intent(out)::error
-      real(kind(1.0D0))::mean, tol,fximinus1, fximinus2
+      real(dp)::mean, tol,fximinus1, fximinus2
       error = .FALSE.
       tol=0.001d0; if (present(opt_tol)) tol=opt_tol
 
@@ -5842,14 +5241,14 @@ contains
       error = .TRUE.
       solution = x(i-1)
       write(*,*)"Secant solver not converged.  solution", solution, "  residual",residual
-      !stop
+      !stop 1
 
   end subroutine secant_solve
 !---------------------------------------------------------------
 
   subroutine test_secant_solve()
-      real(kind(1.0D0)) ::solution
-      real(kind(1.0D0)) ::residual
+      real(dp) ::solution
+      real(dp) ::residual
       logical::error
       !external:: f
 
@@ -5863,517 +5262,10 @@ contains
 
   contains
       function dummy(x)
-          real(kind(1.0D0))::dummy,x
+          real(dp), intent(in) :: x
+          real(dp) :: dummy
           dummy = x**2 - 612.d0
       end function
   end subroutine test_secant_solve
 
 end module maths_library
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-#ifdef unit_test
-
-module testdata
-
-  integer :: nfun = 0  !  function call counter
-
-  !  Choose test to run by changing itest in main program below.
-  !  1 to 3 are recommended, others are included to probe the code's
-  !  behaviour with different initial guesses for the solution vector x
-
-  integer :: itest = 1
-
-  !  Expected answers for tests 1 to 3 are given in
-  !  VMCON documentation ANL-80-64
-
-  real(kind(1.0D0)), dimension(2) :: x_exp
-  real(kind(1.0D0)), dimension(2) :: c_exp, vlam_exp
-  real(kind(1.0D0)) :: objf_exp, errlg_exp, errlm_exp
-  real(kind(1.0D0)) :: errcom_exp, errcon_exp
-  integer :: ifail_exp
-
-contains
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine inittest(nvar,neqns,nineqns,x,ilower,iupper,bndl,bndu)
-
-    implicit none
-
-    integer, intent(out) :: nvar
-    integer, intent(out) :: neqns
-    integer, intent(out) :: nineqns
-    real(kind(1.0D0)), dimension(:), intent(out) :: x
-    integer, dimension(:), intent(out) :: ilower, iupper
-    real(kind(1.0D0)), dimension(:), intent(out) :: bndl, bndu
-
-    select case (itest)
-
-    case (1)
-
-       !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-       !  subject to the following constraints:
-       !  c1(x1,x2) = x1 - 2*x2 + 1 = 0
-       !  c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-       !
-       !  VMCON documentation ANL-80-64
-
-       nvar = 2
-       neqns = 1
-       nineqns = 1
-       x(1) = 2.0D0 ; x(2) = 2.0D0
-
-       !  No bounds on x values set
-       ilower(1) = 0 ; ilower(2) = 0
-       iupper(1) = 0 ; iupper(2) = 0
-       bndl(:) = 0.0D0 ; bndu(:) = 0.0D0
-
-       x_exp(1) = 8.2287565553287513D-01
-       x_exp(2) = 9.1143782776643764D-01
-       objf_exp = 1.3934649806878849D0
-       c_exp(1) = 1.3877787807814457D-17
-       c_exp(2) = -7.6716411001598317D-13
-       vlam_exp(1) = -1.5944911182523063D0
-       vlam_exp(2) = 1.8465914396061125D0
-       errlg_exp = 3.3450880954077888D-12
-       errlm_exp = 0.0D0
-       errcom_exp = 1.4166608063379568D-12
-       errcon_exp = 7.6717798780379098D-13
-       ifail_exp = 1
-
-    case (2)
-
-       !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-       !  subject to the following constraints:
-       !  c1(x1,x2) = x1 - 2*x2 + 1 >= 0
-       !  c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-       !
-       !  VMCON documentation ANL-80-64
-
-       nvar = 2
-       neqns = 0
-       nineqns = 2
-       x(1) = 2.0D0 ; x(2) = 2.0D0
-
-       !  No bounds on x values set
-       ilower(1) = 0 ; ilower(2) = 0
-       iupper(1) = 0 ; iupper(2) = 0
-       bndl(:) = 0.0D0 ; bndu(:) = 0.0D0
-
-       x_exp(1) = 1.6649685472365443D0
-       x_exp(2) = 5.5404867491788852D-01
-       objf_exp = 3.1111865868328270D-01
-       c_exp(1) = 1.5568711974007674D0
-       c_exp(2) = -1.0214051826551440D-14
-       vlam_exp(1) = 0.0D0
-       vlam_exp(2) = 8.0489557193146243D-01
-       errlg_exp = 2.3433338602885101D-11
-       errlm_exp = 0.0D0
-       errcom_exp = 8.2212450866697197D-15
-       errcon_exp = 1.0214051826551440D-14
-       ifail_exp = 1
-
-    case (3)
-
-       !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-       !  subject to the following constraints:
-       !  c1(x1,x2) = x1 + x2 - 3 = 0
-       !  c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-       !
-       !  Note that this test is supposed to fail with ifail=5
-       !  as there is no feasible solution
-       !
-       !  VMCON documentation ANL-80-64
-
-       nvar = 2
-       neqns = 1
-       nineqns = 1
-       x(1) = 2.0D0 ; x(2) = 2.0D0
-
-       !  No bounds on x values set
-       ilower(1) = 0 ; ilower(2) = 0
-       iupper(1) = 0 ; iupper(2) = 0
-       bndl(:) = 0.0D0 ; bndu(:) = 0.0D0
-
-       x_exp(1) = 2.3999994310874733D0
-       x_exp(2) = 6.0000056891252611D-01
-       objf_exp = 3.1999908974060504D-01
-       c_exp(1) = -6.6613381477509392D-16
-       c_exp(2) = -8.000000000004035D-01
-       vlam_exp(1) = 0.0D0
-       vlam_exp(2) = 0.0D0
-       errlg_exp = 1.599997724349894D0
-       errlm_exp = 0.0D0
-       errcom_exp = 0.0D0
-       errcon_exp = 8.0000000000040417D-01
-       ifail_exp = 5
-
-    case (4)
-
-       !  Maximise f(x1,x2) = x1 + x2
-       !  subject to the following constraint:
-       !  c1(x1,x2) = x1**2 + x2**2 - 1 = 0
-       !
-       !  http://en.wikipedia.org/wiki/Lagrange_multiplier
-
-       nvar = 2
-       neqns = 1
-       nineqns = 0
-
-       !  N.B. results can flip to minimum instead of maximum
-       !  if x(1), x(2) are initialised at different points...
-       x(1) = 1.0D0 ; x(2) = 1.0D0
-
-       !  No bounds on x values set
-       ilower(1) = 0 ; ilower(2) = 0
-       iupper(1) = 0 ; iupper(2) = 0
-       bndl(:) = 0.0D0 ; bndu(:) = 0.0D0
-
-       x_exp(1) = 0.5D0*sqrt(2.0D0)
-       x_exp(2) = 0.5D0*sqrt(2.0D0)
-       objf_exp = sqrt(2.0D0)
-       c_exp(1) = 0.0D0
-       vlam_exp(1) = 1.0D0/sqrt(2.0D0)
-       errlg_exp = 0.0D0
-       errlm_exp = 0.0D0
-       errcom_exp = 0.0D0
-       errcon_exp = 0.0D0
-       ifail_exp = 1
-
-    case (5)
-
-       !  Intersection of parabola x^2 with straight line 2x+3
-       !  Unorthodox (and not recommended) method to find the root
-       !  of an equation.
-       !
-       !  Maximise f(x1) = x1**2
-       !  subject to the following constraint:
-       !  c1(x1) = x1**2 - 2.0D0*x1 - 3 = 0
-       !
-       !  Solutions to c1(x1) are x1 = -1 and x1 = 3, and depending on
-       !  the initial guess for x1 either (or neither...) solution might
-       !  be found. Since there is one constraint equation with one unknown
-       !  the code cannot optimise properly.
-
-       nvar = 1
-       neqns = 1
-       nineqns = 0
-
-       x(1) = 5.0D0  !  Try different values, e.g. 5.0, 2.0, 1.0, 0.0...
-
-       !  No bounds on x values set
-       ilower(1) = 0
-       iupper(1) = 0
-       bndl(:) = 0.0D0 ; bndu(:) = 0.0D0
-
-       x_exp(1) = 3.0
-       objf_exp = 9.0D0
-       c_exp(1) = 0.0D0
-       vlam_exp(1) = 1.5D0
-       errlg_exp = 0.0D0
-       errlm_exp = 0.0D0
-       errcom_exp = 0.0D0
-       errcon_exp = 0.0D0
-       ifail_exp = 1
-
-    end select
-
-  end subroutine inittest
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine objfn(n,m,x,objf,conf,ifail)
-
-    implicit none
-
-    !  Arguments
-
-    integer, intent(in) :: n,m
-    real(kind(1.0D0)), dimension(n), intent(in) :: x
-    real(kind(1.0D0)), intent(out) :: objf
-    real(kind(1.0D0)), dimension(m), intent(out) :: conf
-    integer, intent(inout) :: ifail
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    write(*,*)'subroutine objfn called, in module testdata, maths_library.f90'
-
-    select case (itest)
-
-    case (1,2)
-
-       !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-       !  subject to the following constraints:
-       !  c1(x1,x2) = x1 - 2*x2 + 1 = 0  (itest = 1)
-       !  c1(x1,x2) = x1 - 2*x2 + 1 >= 0 (itest = 2)
-       !  c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-
-       objf = (x(1) - 2.0D0)**2 + (x(2) - 1.0D0)**2
-
-       conf(1) = x(1) - 2.0D0*x(2) + 1.0D0
-       conf(2) = -0.25D0*x(1)**2 - x(2)*x(2) + 1.0D0
-
-    case (3)
-
-       !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-       !  subject to the following constraints:
-       !  c1(x1,x2) = x1 + x2 - 3 = 0
-       !  c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-
-       objf = (x(1) - 2.0D0)**2 + (x(2) - 1.0D0)**2
-
-       conf(1) = x(1) + x(2) - 3.0D0
-       conf(2) = -0.25D0*x(1)**2 - x(2)*x(2) + 1.0D0
-
-    case (4)
-
-       !  From Wikipedia: Lagrange Multiplier article
-       !  Maximise f(x1,x2) = x1 + x2
-       !  subject to the following constraint:
-       !  c1(x1,x2) = x1**2 + x2**2 - 1 = 0
-
-       objf = x(1) + x(2)
-
-       conf(1) = x(1)*x(1) + x(2)*x(2) - 1.0D0
-
-    case (5)
-
-       !  Intersection of parabola x^2 with straight line 2x+3
-       !  Maximise f(x1) = x1**2
-       !  subject to the following constraint:
-       !  c1(x1) = x1**2 - 2.0D0*x1 - 3 = 0
-
-       objf = x(1)*x(1)
-
-       conf(1) = x(1)*x(1) - 2.0D0*x(1) - 3.0D0
-
-    end select
-
-    nfun = nfun + 1
-
-  end subroutine objfn
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine dobjfn(n,m,x,fgrd,cnorm,lcnorm,ifail)
-
-    implicit none
-
-    !  Arguments
-
-    integer, intent(in) :: n,m,lcnorm
-    real(kind(1.0D0)), dimension(n), intent(in) :: x
-    real(kind(1.0D0)), dimension(n), intent(out) :: fgrd
-    real(kind(1.0D0)), dimension(lcnorm,m), intent(out) :: cnorm
-    integer, intent(inout) :: ifail
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  fgrd(1...n) are the gradients of the objective function f
-    !  with respect to x1...xn
-
-    !  cnorm(1...n, 1...m) are the gradients of the constraints 1...m
-    !  with respect to x1...xn
-
-    select case (itest)
-
-    case (1,2)
-
-       !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-       !  subject to the following constraints:
-       !  c1(x1,x2) = x1 - 2*x2 + 1 = 0  (itest = 1)
-       !  c1(x1,x2) = x1 - 2*x2 + 1 >= 0 (itest = 2)
-       !  c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-
-       fgrd(1) = 2.0D0*(x(1) - 2.0D0)
-       fgrd(2) = 2.0D0*(x(2) - 1.0D0)
-
-       cnorm(1,1) = 1.0D0
-       cnorm(2,1) = -2.0D0
-       cnorm(1,2) = -0.5D0*x(1)
-       cnorm(2,2) = -2.0D0*x(2)
-
-    case (3)
-
-       !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-       !  subject to the following constraints:
-       !  c1(x1,x2) = x1 + x2 - 3 = 0
-       !  c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-
-       fgrd(1) = 2.0D0
-       fgrd(2) = 2.0D0*(x(2) - 1.0D0)
-
-       cnorm(1,1) = 1.0D0
-       cnorm(2,1) = 1.0D0
-       cnorm(1,2) = -0.5D0*x(1)
-       cnorm(2,2) = -2.0D0*x(2)
-
-    case (4)
-
-       !  From Wikipedia: Lagrange Multiplier article
-       !  Maximise f(x1,x2) = x1 + x2
-       !  subject to the following constraint:
-       !  c1(x1,x2) = x1**2 + x2**2 - 1 = 0
-
-       fgrd(1) = 1.0D0
-       fgrd(2) = 1.0D0
-
-       cnorm(1,1) = 2.0D0*x(1)
-       cnorm(2,1) = 2.0D0*x(2)
-
-    case (5)
-
-       !  Intersection of parabola x^2 with straight line 2x+3
-       !  Maximise f(x1) = x1**2
-       !  subject to the following constraint:
-       !  c1(x1) = x1**2 - 2.0D0*x1 - 3 = 0
-
-       fgrd(1) = 2.0D0*x(1)
-
-       cnorm(1,1) = 2.0D0*x(1) - 2.0D0
-
-    end select
-
-  end subroutine dobjfn
-
-end module testdata
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-program test
-
-  !  Unit testing program for VMCON
-
-  use maths_library
-  use numerics
-  use testdata
-
-  implicit none
-
-  integer :: ifail = 1
-  real(kind(1.0D0)) :: objf
-
-  integer :: ii,jj,lb,lcnorm,ldel,lh,liwa,lwa,m,meq,mode,n
-  integer, parameter :: ippn1  = ipnvars+1
-  integer, parameter :: ipldel = 7*ippn1
-  integer, parameter :: iplh   = 2*ippn1
-  integer, parameter :: ipvmu  = ipeqns+2*ipnvars+1
-  integer, parameter :: ipliwa = 6*ippn1+ipeqns
-  integer, dimension(ipliwa) :: iwa
-  integer, dimension(ipnvars) :: ilower,iupper
-
-  real(kind(1.0D0)) :: xtol
-  real(kind(1.0D0)), dimension(ipnvars) :: bdelta,bndl,bndu,etav,fgrd, &
-       gammv,glag,glaga,xa,xv
-  real(kind(1.0D0)), dimension(ipeqns) :: cm,conf
-  real(kind(1.0D0)), dimension(ippn1) :: bdl,bdu,gm
-  real(kind(1.0D0)), dimension(ipvmu) :: vmu
-  real(kind(1.0D0)), dimension(ipldel) :: delta
-  real(kind(1.0D0)), dimension(iplh) :: wa
-  real(kind(1.0D0)), dimension(ippn1,ipeqns) :: cnorm
-  real(kind(1.0D0)), dimension(ippn1,ippn1) :: b
-  real(kind(1.0D0)), dimension(iplh,iplh) :: h
-
-  real(kind(1.0D0)) :: summ,errlg,errlm,errcom,errcon
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !  Change the test being run by modifying the value of itest
-  !  (defaults to 1)
-
-  itest = 1
-
-  call inittest(nvar,neqns,nineqns,xv,ilower,iupper,bndl,bndu)
-
-  epsvmc = 1.0D-8
-
-  n = nvar
-  m = neqns+nineqns
-  meq = neqns
-  xtol = epsvmc
-  mode = 0
-  lb = ippn1
-  lcnorm = ippn1
-  ldel = ipldel
-  lh = iplh
-  lwa = iplh
-  liwa = ipliwa
-
-  write(*,*) 'Initial solution estimate:'
-  do ii = 1,n
-     write(*,*) 'x(',ii,') = ',xv(ii)
-  end do
-  write(*,*)
-
-  call vmcon(objfn,dobjfn,mode,n,m,meq,xv,objf,fgrd,conf,cnorm, &
-       lcnorm,b,lb,xtol,maxcal,ifail,nfev2,nviter,vlam,glag,vmu,cm,glaga, &
-       gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &
-       liwa,ilower,iupper,bndl,bndu)
-
-  write(*,*) 'ifail = ', ifail, '(expected value = ',ifail_exp,')'
-  write(*,*) 'Number of function evaluations = ',nfun
-  write(*,*)
-
-  write(*,*) 'Final solution estimate: calculated vs expected'
-  do ii = 1,n
-     write(*,*) 'x(',ii,') = ',xv(ii),x_exp(ii)
-  end do
-  write(*,*)
-
-  write(*,*) 'Final objective function value: calculated vs expected'
-  write(*,*) 'f(x) = ',objf,objf_exp
-  write(*,*)
-
-  write(*,*) 'Constraints evaluated at x: calculated vs expected'
-  do ii = 1,m
-     write(*,*) conf(ii), c_exp(ii)
-  end do
-  write(*,*)
-
-  write(*,*) 'Lagrange multiplier estimates: calculated vs expected'
-  do ii = 1,m
-     write(*,*) vlam(ii), vlam_exp(ii)
-  end do
-  write(*,*)
-
-  write(*,*) 'Lagrangian gradient error: calculated vs expected'
-  errlg = 0.0D0
-  do ii = 1,n
-     summ = fgrd(ii)
-     do jj = 1,m
-        summ = summ - vlam(jj)*cnorm(ii,jj)
-     end do
-     errlg = errlg + abs(summ)
-  end do
-  write(*,*) errlg, errlg_exp
-  write(*,*)
-
-  write(*,*) 'Lagrange multiplier error: calculated vs expected'
-  errlm = 0.0D0
-  do ii = 1,m
-     if ((ii <= meq).or.(vlam(ii) >= 0.0D0)) cycle
-     errlm = errlm + abs(vlam(ii))
-  end do
-  write(*,*) errlm, errlm_exp
-  write(*,*)
-
-  write(*,*) 'Complementarity error: calculated vs expected'
-  errcom = 0.0D0
-  do ii = 1,m
-     errcom = errcom + abs(vlam(ii)*conf(ii))
-  end do
-  write(*,*) errcom, errcom_exp
-  write(*,*)
-
-  write(*,*) 'Constraint error: calculated vs expected'
-  errcon = 0.0D0
-  do ii = 1,m
-     if ((ii > meq).and.(conf(ii) >= 0.0D0)) cycle
-     errcon = errcon + abs(conf(ii))
-  end do
-  write(*,*) errcon, errcon_exp
-  write(*,*)
-
-end program test
-
-#endif

@@ -1,5 +1,4 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 module impurity_radiation_module
 
   !! Module for new impurity radiation calculations
@@ -17,16 +16,12 @@ module impurity_radiation_module
   !! Kallenbach et al., Plasma Phys. Control. Fus. 55(2013) 124041
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use constants
-  use error_handling
-  use profiles_module
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   private
   public :: initialise_imprad, impradprofile, z2index, element2index, fradcore
-  public :: imp_dat, Zav_of_te
+  public :: imp_dat, Zav_of_te, init_impurity_radiation_module, impdir
 
 
   !! (It is recommended to turn on
@@ -35,65 +30,42 @@ module impurity_radiation_module
   integer, public, parameter :: nimp = 14
   !! nimp /14/ FIX : number of ion species in impurity radiation model
 
-  real(kind(1.0D0)), public :: coreradius = 0.6D0
+  real(dp), public :: coreradius
   !! coreradius /0.6/ : normalised radius defining the 'core' region
 
-  real(kind(1.0D0)), public :: coreradiationfraction = 1.0D0
+  real(dp), public :: coreradiationfraction
   !! coreradiationfraction /1.0/ : fraction of radiation from 'core' region that is subtracted from the loss power
 
   !! fimp(nimp) /1.0,0.1,0.02,0.0,0.0,0.0,0.0,0.0,0.0016,0.0,0.0,0.0,0.0,0.0/ :
   !!        impurity number density fractions relative to electron density
   !!        (iteration variable 102 is fimp(impvar))
-  real(kind(1.0D0)), public, dimension(nimp) :: fimp = &
-       (/ 1.0D0, 0.1D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
-       0.0D0, 0.00D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0 /)
-       character(len=2), public, dimension(nimp) :: imp_label = (/ &
-       !! imp_label(nimp) : impurity ion species names:<UL>
-       'H_', &
-       !! <LI> ( 1)  Hydrogen  (fraction calculated by code)
-       'He', &
-       !! <LI> ( 2)  Helium
-       'Be', &
-       !! <LI> ( 3)  Beryllium
-       'C_', &
-       !! <LI> ( 4)  Carbon
-       'N_', &
-       !! <LI> ( 5)  Nitrogen
-       'O_', &
-       !! <LI> ( 6)  Oxygen
-       'Ne', &
-       !! <LI> ( 7)  Neon
-       'Si', &
-       !! <LI> ( 8)  Silicon
-       'Ar', &
-       !! <LI> ( 9)  Argon
-       'Fe', &
-       !! <LI> (10)  Iron
-       'Ni', &
-       !! <LI> (11)  Nickel
-       'Kr', &
-       !! <LI> (12)  Krypton
-       'Xe', &
-       !! <LI> (13)  Xenon
-       'W_'/)
-       !! <LI> (14)  Tungsten</UL>
+  real(dp), public, dimension(nimp) :: fimp
 
-       !! fimpvar /1.0e-3/ : impurity fraction to be used as fimp(impvar)
-       !!                    (iteration variable 102)
+  character(len=2), public, dimension(nimp) :: imp_label
+  !! imp_label(nimp) : impurity ion species names:<UL>
+  !! <LI> ( 1)  Hydrogen  (fraction calculated by code)
+  !! <LI> ( 2)  Helium
+  !! <LI> ( 3)  Beryllium
+  !! <LI> ( 4)  Carbon
+  !! <LI> ( 5)  Nitrogen
+  !! <LI> ( 6)  Oxygen
+  !! <LI> ( 7)  Neon
+  !! <LI> ( 8)  Silicon
+  !! <LI> ( 9)  Argon
+  !! <LI> (10)  Iron
+  !! <LI> (11)  Nickel
+  !! <LI> (12)  Krypton
+  !! <LI> (13)  Xenon
+  !! <LI> (14)  Tungsten</UL>
+
+  !! fimpvar /1.0e-3/ : impurity fraction to be used as fimp(impvar)
+  !!                    (iteration variable 102)
   ! Deprecated
-  real(kind(1.0D0)), public :: fimpvar = 1.0D-3
-
-    !  Obtain the root directory
-
-  include "root.dir"
-
-  !! impdir /'/home/PROCESS/[branch]/impuritydata'/ :
-  !!          Directory containing impurity radiation data files
-  character(len=200), public :: impdir = INSTALLDIR//'/data/impuritydata/'
+  real(dp), public :: fimpvar
 
   !! impvar : impurity to be iterated (deprecated)
   !!                      variable number 102 is turned on
-  integer, public :: impvar = 9
+  integer, public :: impvar
 
   !  Declare impurity data type
 
@@ -101,23 +73,67 @@ module impurity_radiation_module
 
      character(len=2)  :: Label    !  Element name
      integer           :: Z        !  Charge number
-     real(kind(1.0D0)) :: amass    !  Atomic mass
-     real(kind(1.0D0)) :: frac     !  Number density fraction (relative to ne)
+     real(dp) :: amass    !  Atomic mass
+     real(dp) :: frac     !  Number density fraction (relative to ne)
      integer           :: len_tab  !  Length of temperature vs. Lz table
      !  Table of temperature values
-     real(kind(1.0D0)), allocatable, dimension(:) :: Temp_keV
+     real(dp), allocatable, dimension(:) :: Temp_keV
      !  Table of corresponding Lz values
-     real(kind(1.0D0)), allocatable, dimension(:) :: Lz_Wm3
+     real(dp), allocatable, dimension(:) :: Lz_Wm3
      !  Table of corresponding average atomic charge values
-     real(kind(1.0D0)), allocatable, dimension(:) :: Zav
+     real(dp), allocatable, dimension(:) :: Zav
 
   end type imp_dat
 
   type(imp_dat),  dimension(nimp), save, public :: impurity_arr
 
+  logical :: toolow
+  !! Used for reporting error in function pimpden
+
 contains
 
+  character(len=300) function impdir()
+      implicit none
+      character(len=200) :: process_dir
+      CALL get_environment_variable("PYTHON_PROCESS_ROOT", process_dir)
+      if (process_dir == "") then
+         impdir = INSTALLDIR//'/process/data/impuritydata/'
+      else
+         impdir = trim(process_dir)//'/data/impuritydata/'
+      end if
+  end function impdir
+
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine init_impurity_radiation_module
+    !! Initialise module variables
+    implicit none
+
+    coreradius = 0.6D0
+    coreradiationfraction = 1.0D0
+    fimp = (/ 1.0D0, 0.1D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
+      0.0D0, 0.00D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0 /)
+    imp_label = (/ &
+      'H_', &
+      'He', &
+      'Be', &
+      'C_', &
+      'N_', &
+      'O_', &
+      'Ne', &
+      'Si', &
+      'Ar', &
+      'Fe', &
+      'Ni', &
+      'Kr', &
+      'Xe', &
+      'W_'/)
+      fimpvar = 1.0D-3
+      impvar = 9
+      toolow = .false.
+      impurity_arr = imp_dat("  ", 0, 0.0D0, 0.0D0, 0)
+      ! Re-initialise entire array
+  end subroutine init_impurity_radiation_module
 
   subroutine initialise_imprad
 
@@ -134,7 +150,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: tmult, lzmult, frac
+    real(dp) :: tmult, lzmult, frac
     integer :: table_length, errorflag
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -237,6 +253,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use error_handling, only: idiags, report_error
     implicit none
 
     !  Arguments
@@ -244,10 +261,10 @@ contains
     integer, intent(in)           :: no
     character(len=2), intent(in)  :: label
     integer, intent(in)           :: Z
-    real(kind(1.0D0)), intent(in) :: amass
-    real(kind(1.0D0)), intent(in) :: frac
+    real(dp), intent(in) :: amass
+    real(dp), intent(in) :: frac
     integer, intent(in)           :: len_tab
-    real(kind(1.0D0)), intent(in) :: TinkeV, LzinWm3
+    real(dp), intent(in) :: TinkeV, LzinWm3
 
     integer, intent(inout) :: error
 
@@ -273,6 +290,10 @@ contains
     impurity_arr(no)%frac    = frac
     impurity_arr(no)%len_tab = len_tab
 
+    ! Guard against re-allocation
+    if (allocated(impurity_arr(no)%Temp_keV)) deallocate(impurity_arr(no)%Temp_keV)
+    if (allocated(impurity_arr(no)%Lz_Wm3)) deallocate(impurity_arr(no)%Lz_Wm3)
+    if (allocated(impurity_arr(no)%Zav)) deallocate(impurity_arr(no)%Zav)
     allocate( &
          impurity_arr(no)%Temp_keV(len_tab), &
          impurity_arr(no)%Lz_Wm3(len_tab), &
@@ -287,10 +308,10 @@ contains
 
     filename = label // 'Lzdata.dat'
 
-    if (index(impdir,'/',.true.) == len(trim(impdir))) then
-       fullpath = trim(impdir)//trim(filename)
+    if (index(impdir(),'/',.true.) == len(trim(impdir()))) then
+       fullpath = trim(impdir())//trim(filename)
     else
-       fullpath = trim(impdir)//'/'//trim(filename)
+       fullpath = trim(impdir())//'/'//trim(filename)
     end if
 
     inquire(file=trim(fullpath), exist=iexist)
@@ -299,8 +320,8 @@ contains
             impurity_arr(no)%Temp_keV, impurity_arr(no)%Lz_Wm3, impurity_arr(no)%Zav)
     else
        write(*,*) "# Warning :  Cannot find impurity data please check path."
-       write(*,*) "# Error   :  Current path is: ", impdir
-       stop
+       write(*,*) "# Error   :  Current path is: ", impdir()
+       stop 1
     end if
 
     !  Convert tabulated units if necessary
@@ -331,13 +352,14 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: idiags, report_error
     implicit none
 
     !  Arguments
 
     character(len=128), intent(in) :: filename
     integer, intent(in) :: nlines
-    real(kind(1.0D0)), dimension(nlines), intent(out) :: col1, col2, col3
+    real(dp), dimension(nlines), intent(out) :: col1, col2, col3
     integer, optional, intent(in) :: skiprows
     character(len=128), optional, intent(in) :: fmt
 
@@ -346,7 +368,7 @@ contains
     integer :: iostat, i, local_skip
     integer, parameter :: unit = 18
     character(len=25) :: buffer
-    real(kind(1.0D0)) :: in1, in2, in3
+    real(dp) :: in1, in2, in3
     character(len=128) :: local_fmt
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -411,6 +433,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: idiags, report_error
     implicit none
 
     integer :: z2index
@@ -452,6 +475,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: report_error 
     implicit none
 
     integer :: element2index
@@ -508,8 +532,8 @@ contains
     !  Arguments
 
     type(imp_dat), intent(in) :: imp_element
-    real(kind(1.0D0)), intent(in) :: ne, te
-    real(kind(1.0D0)), intent(out) :: pimp, pbrem, pline
+    real(dp), intent(in) :: ne, te
+    real(dp), intent(out) :: pimp, pbrem, pline
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -549,12 +573,12 @@ contains
 
     implicit none
 
-    real(kind(1.0D0)) :: pbremden
+    real(dp) :: pbremden
 
     !  Arguments
 
     type(imp_dat),  intent(in) :: imp_element
-    real(kind(1.0D0)), intent(in) :: ne, te
+    real(dp), intent(in) :: ne, te
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -582,20 +606,20 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: fdiags, report_error
     implicit none
 
-    real(kind(1.0D0)) :: pimpden
+    real(dp) :: pimpden
 
     !  Arguments
 
     type(imp_dat),  intent(in) :: imp_element
-    real(kind(1.0D0)), intent(in) :: ne, te
+    real(dp), intent(in) :: ne, te
 
     !  Local variables
 
     integer :: i
-    real(kind(1.0D0)) :: xi, yi, c, lz
-    logical :: toolow = .false.
+    real(dp) :: xi, yi, c, lz
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -663,13 +687,13 @@ contains
 
     implicit none
 
-    real(kind(1.0D0)) :: fradcore
+    real(dp) :: fradcore
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: rho
-    real(kind(1.0D0)), intent(in) :: coreradius
-    real(kind(1.0D0)), intent(in) :: coreradiationfraction
+    real(dp), intent(in) :: rho
+    real(dp), intent(in) :: coreradius
+    real(dp), intent(in) :: coreradiationfraction
 
     !  Local variables
 
@@ -699,17 +723,17 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
        implicit none
 
-    real(kind(1.0D0)) :: Zav_of_te
+    real(dp) :: Zav_of_te
 
     !  Arguments
 
     type(imp_dat),  intent(in) :: imp_element
-    real(kind(1.0D0)), intent(in) :: te
+    real(dp), intent(in) :: te
 
     !  Local variables
 
     integer :: i
-    real(kind(1.0D0)) :: xi, yi, c
+    real(dp) :: xi, yi, c
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

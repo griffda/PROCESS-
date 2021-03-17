@@ -1,7 +1,6 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module costs_2015_module
-
   !! Module containing fusion power plant costing algorithms
   !! author: J Morris, CCFE, Culham Science Centre
   !! N/A
@@ -11,31 +10,8 @@ module costs_2015_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  ! Import modules !
-  ! !!!!!!!!!!!!!!!!!
-
-  use constants
-  use cost_variables
-  use current_drive_variables
-  use build_variables
-  use fwbs_variables
-  use tfcoil_variables
-  use physics_variables
-  use divertor_variables
-  use pfcoil_variables
-  use process_output
-  use structure_variables
-  use vacuum_variables
-  use pf_power_variables
-  use heat_transport_variables
-  use times_variables
-  use buildings_variables
-  use pulse_variables
-  use global_variables
-  use availability_module
-  use buildings_module
-  use ccfe_hcpb_module
-
+  ! Import modules
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   ! Precision variable
@@ -67,10 +43,26 @@ module costs_2015_module
 
 contains
 
+  subroutine init_costs_2015
+    !! Initialise module variables
+    implicit none
+
+    ip = 0
+    ofile = 0
+    total_costs = 0.0D0
+    mean_electric_output = 0.0D0
+    annual_electric_output = 0.0D0
+    maintenance = 0.0D0
+    ip = 0.0D0
+    ofile = 0.0D0
+    total_costs = 0.0D0
+    ! Re-initialise entire array
+    s = scl('not used', 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0)
+  end subroutine init_costs_2015
+
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine costs_2015(outfile,iprint)
-
     !! Cost accounting for a fusion power plant
     !! author: J Morris, CCFE, Culham Science Centre
     !! outfile : input integer : output file unit
@@ -80,11 +72,13 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use heat_transport_variables, only: pnetelmw
+    use cost_variables, only: concost, cpfact, maintenance_fwbs, maintenance_gen, &
+      amortization, output_costs, coe
+
     implicit none
 
-    ! Arguments !
-    ! !!!!!!!!!!!!
-
+    ! Arguments
     integer, intent(in) :: iprint, outfile
 
     ! Assign module private variables to iprint and outfile
@@ -175,11 +169,18 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: pi
+    use current_drive_variables, only: pwpnb
+    use pfcoil_variables, only: pfrmax
+    use heat_transport_variables, only: pthermmw, psechtmw, helpow
+    use tfcoil_variables, only: ritfc, n_tf, estotftgj
+    use fwbs_variables, only: rdewex, zdewex
+    use cost_variables, only: cost_factor_buildings, light_build_cost_per_vol, &
+      tok_build_cost_per_vol
+
     implicit none
 
-    ! Local Variables !
-    ! !!!!!!!!!!!!!!!!!!
-
+    ! Local Variables
     integer :: i, j
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -270,11 +271,14 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: pi
+    use build_variables, only: dr_tf_inner_bore, dh_tf_inner_bore, tfcth
+    use fwbs_variables, only: rdewex
+    use cost_variables, only: cost_factor_land, costexp
+
     implicit none
 
-    ! Local Variables !
-    ! !!!!!!!!!!!!!!!!!!
-
+    ! Local Variables
     integer :: i, j
     real(kind=double) :: ITER_total_land_area
     real(kind=double) :: ITER_key_buildings_land_area
@@ -343,11 +347,12 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use tfcoil_variables, only: n_tf, tfleng, n_tf_turn, whtconcu, whtconsc
+    use cost_variables, only: cost_factor_tf_coils, costexp
+
     implicit none
 
-    ! Local Variables !
-    ! !!!!!!!!!!!!!!!!!!
-
+    ! Local Variables
     integer :: i, j
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -371,7 +376,7 @@ contains
     ! ITER winding cost (2014 $)
     s(16)%cref = 414.0D6
     ! Scale with the total turn length (m)
-    s(16)%k = n_tf * tfleng * turnstf
+    s(16)%k = n_tf * tfleng * n_tf_turn
     s(16)%kref = 82249.0D0
     s(16)%cost = s(16)%cost_factor * s(16)%cref * (s(16)%k / s(16)%kref)**costexp
 
@@ -404,7 +409,7 @@ contains
     ! ITER cabling and jacketing costs (2014 $)
     s(20)%cref = 81.0D6
     ! Scale with total turn length.
-    s(20)%k = n_tf * tfleng * turnstf
+    s(20)%k = n_tf * tfleng * n_tf_turn
     s(20)%kref = 82249.0D0
     s(20)%cost = s(20)%cost_factor * s(20)%cref * (s(20)%k / s(20)%kref)**costexp
 
@@ -428,25 +433,30 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: fwarea
+    use global_variables, only: run_tests
+    use process_output, only: ocmmnt
+    use fwbs_variables, only: li6enrich, whtblli4sio4, whtbltibe12, fw_armour_thickness, &
+      whtblss, whtshld
+    use cost_variables, only: cost_factor_fwbs, costexp, costexp_pebbles
+
     implicit none
 
-    ! Local Variables !
-    ! !!!!!!!!!!!!!!!!!!
-
+    ! Local Variables
     integer :: i, j
 
     ! Enrichment variables
-    real(kind(1.0D0)) :: product_li6
-    real(kind(1.0D0)) :: feed_li6
-    real(kind(1.0D0)) :: tail_li6
-    real(kind(1.0D0)) :: feed_to_product_mass_ratio
-    real(kind(1.0D0)) :: tail_to_product_mass_ratio
-    real(kind(1.0D0)) :: p_v, f_v, t_v
-    real(kind(1.0D0)) :: swu, total_swu
-    real(kind(1.0D0)) :: mass_li
+    real(dp) :: product_li6
+    real(dp) :: feed_li6
+    real(dp) :: tail_li6
+    real(dp) :: feed_to_product_mass_ratio
+    real(dp) :: tail_to_product_mass_ratio
+    real(dp) :: p_v, f_v, t_v
+    real(dp) :: swu, total_swu
+    real(dp) :: mass_li
 
     ! First wall W coating variables
-    real(kind(1.0D0)) :: W_density
+    real(dp) :: W_density
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -471,29 +481,29 @@ contains
 
     ! Built-in test
     if ((ip == 1).and.(run_tests == 1)) then
-        product_li6 = 0.3
-        feed_to_product_mass_ratio = (product_li6 - tail_li6) / (feed_li6 - tail_li6)
-        tail_to_product_mass_ratio = (product_li6 - feed_li6) / (feed_li6 - tail_li6)
-        call value_function(product_li6, p_v)
-        call value_function(tail_li6, t_v)
-        call value_function(feed_li6, f_v)
-        swu = p_v + tail_to_product_mass_ratio * t_v - feed_to_product_mass_ratio * f_v
-        if (abs(swu-2.66D0) < 2.0D-2) then
-            call ocmmnt(ofile, "SWU for default 30% enrichment.  Should = 2.66. CORRECT")
-        else
-            call ocmmnt(ofile, "SWU for default 30% enrichment.  Should = 2.66. ERROR")
-        end if
-        ! Reference cost
-        s(22)%label = "Lithium enrichment"
-        s(22)%cref = 0.1D6
-        s(22)%k =  64.7D0
-        s(22)%kref = 64.7D0
-        s(22)%cost = s(22)%cost_factor * s(22)%cref * (s(22)%k / s(22)%kref)**costexp
-        if (abs(s(22)%cost-0.1D6)/0.1D6 < 1.0D-3) then
-            call ocmmnt(ofile, "Reference cost for enrichment CORRECT")
-        else
-            call ocmmnt(ofile, "Reference cost for enrichment ERROR")
-        end if
+      product_li6 = 0.3
+      feed_to_product_mass_ratio = (product_li6 - tail_li6) / (feed_li6 - tail_li6)
+      tail_to_product_mass_ratio = (product_li6 - feed_li6) / (feed_li6 - tail_li6)
+      call value_function(product_li6, p_v)
+      call value_function(tail_li6, t_v)
+      call value_function(feed_li6, f_v)
+      swu = p_v + tail_to_product_mass_ratio * t_v - feed_to_product_mass_ratio * f_v
+      if (abs(swu-2.66D0) < 2.0D-2) then
+        call ocmmnt(ofile, "SWU for default 30% enrichment.  Should = 2.66. CORRECT")
+      else
+        call ocmmnt(ofile, "SWU for default 30% enrichment.  Should = 2.66. ERROR")
+      end if
+      ! Reference cost
+      s(22)%label = "Lithium enrichment"
+      s(22)%cref = 0.1D6
+      s(22)%k =  64.7D0
+      s(22)%kref = 64.7D0
+      s(22)%cost = s(22)%cost_factor * s(22)%cref * (s(22)%k / s(22)%kref)**costexp
+      if (abs(s(22)%cost-0.1D6)/0.1D6 < 1.0D-3) then
+        call ocmmnt(ofile, "Reference cost for enrichment CORRECT")
+      else
+        call ocmmnt(ofile, "Reference cost for enrichment ERROR")
+      end if
     end if
 
     ! Lithium 6 enrichment cost ($)
@@ -501,38 +511,38 @@ contains
 
     ! Zero cost for natural enrichment
     if (li6enrich <= 7.42D0) then
-        s(22)%cost = 0.0D0
+      s(22)%cost = 0.0D0
     else
-        ! Percentage of lithium 6 in the product
-        product_li6 = min(li6enrich,99.99D0) / 100.0D0
-        ! SWU will be calculated for a unit mass of product (P=1)
+      ! Percentage of lithium 6 in the product
+      product_li6 = min(li6enrich,99.99D0) / 100.0D0
+      ! SWU will be calculated for a unit mass of product (P=1)
 
-        ! Feed to product mass ratio
-        feed_to_product_mass_ratio = (product_li6 - tail_li6) / (feed_li6 - tail_li6)
+      ! Feed to product mass ratio
+      feed_to_product_mass_ratio = (product_li6 - tail_li6) / (feed_li6 - tail_li6)
 
-        ! Tail to product mass ratio
-        tail_to_product_mass_ratio = (product_li6 - feed_li6) / (feed_li6 - tail_li6)
+      ! Tail to product mass ratio
+      tail_to_product_mass_ratio = (product_li6 - feed_li6) / (feed_li6 - tail_li6)
 
-        ! Calculate value functions
-        call value_function(product_li6, p_v)
-        call value_function(tail_li6, t_v)
-        call value_function(feed_li6, f_v)
+      ! Calculate value functions
+      call value_function(product_li6, p_v)
+      call value_function(tail_li6, t_v)
+      call value_function(feed_li6, f_v)
 
-        ! Calculate separative work units per kg
-        swu = p_v + tail_to_product_mass_ratio * t_v - feed_to_product_mass_ratio * f_v
+      ! Calculate separative work units per kg
+      swu = p_v + tail_to_product_mass_ratio * t_v - feed_to_product_mass_ratio * f_v
 
-        ! Mass of lithium (kg).  Lithium orthosilicate is 22% lithium by mass.
-        mass_li = whtblli4sio4 * 0.22
+      ! Mass of lithium (kg).  Lithium orthosilicate is 22% lithium by mass.
+      mass_li = whtblli4sio4 * 0.22
 
-        ! Total swu for lithium in blanket
-        total_swu = swu * mass_li
+      ! Total swu for lithium in blanket
+      total_swu = swu * mass_li
 
-        ! Reference cost for lithium enrichment (2014 $)
-        s(22)%cref = 0.1D6
-        ! Reference case of lithium SWU
-        s(22)%k =  total_swu
-        s(22)%kref = 64.7D0
-        s(22)%cost = s(22)%cost_factor * s(22)%cref * (s(22)%k / s(22)%kref)**costexp
+      ! Reference cost for lithium enrichment (2014 $)
+      s(22)%cref = 0.1D6
+      ! Reference case of lithium SWU
+      s(22)%k =  total_swu
+      s(22)%kref = 64.7D0
+      s(22)%cost = s(22)%cost_factor * s(22)%cref * (s(22)%k / s(22)%kref)**costexp
     end if
 
     s(23)%label = "Lithium orthosilicate pebble manufacturing"
@@ -588,18 +598,21 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use fwbs_variables, only: armour_fw_bl_mass
+    use cost_variables, only: cost_factor_rh, costexp, num_rh_systems
+
     implicit none
 
     !  Local Variables
     integer :: i
 
     !  Divertor RH system variables
-    !real(kind(1.0D0)) :: ITER_num_div_rh_systems
-    !real(kind(1.0D0)) :: div_num_rh_systems_ratio
+    !real(dp) :: ITER_num_div_rh_systems
+    !real(dp) :: div_num_rh_systems_ratio
 
     !  First wall and blanket RH system variables
-    !real(kind(1.0D0)) :: ITER_num_blanket_rh_systems
-    !real(kind(1.0D0)) :: blanket_num_rh_systems_ratio
+    !real(dp) :: ITER_num_blanket_rh_systems
+    !real(dp) :: blanket_num_rh_systems_ratio
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -643,6 +656,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: rsldo, d_vv_out
+    use heat_transport_variables, only: helpow
+    use cost_variables, only: cost_factor_vv, costexp
+
     implicit none
 
     !  Local Variables
@@ -658,7 +675,7 @@ contains
     !  ITER reference vacuum vessel cost (2014 $)
     s(32)%cref = 537.0D6
     !  Scale with outermost midplane radius of vacuum vessel squared (m2)
-    s(32)%k = (rsldo + ddwi)**2
+    s(32)%k = (rsldo + d_vv_out)**2
     s(32)%kref = 94.09D0
     s(32)%cost = s(32)%cost_factor * s(32)%cref * (s(32)%k / s(32)%kref)**costexp
 
@@ -690,6 +707,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use heat_transport_variables, only: pgrossmw
+    use cost_variables, only: cost_factor_bop, costexp
+
     implicit none
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -716,6 +736,15 @@ contains
     !! PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use constants, only: pi
+    use current_drive_variables, only: pinjmw
+    use physics_variables, only: pdivt, powfmw, res_time
+    use pfcoil_variables, only: itr_sum
+    use pf_power_variables, only: ensxpfm
+    use heat_transport_variables, only: pthermmw, psechtmw, helpow
+    use fwbs_variables, only: vvmass, rdewex, zdewex
+    use cost_variables, only: cost_factor_misc, costexp
 
     implicit none
 
@@ -932,6 +961,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use heat_transport_variables, only: pnetelmw
+    use process_output, only: oheadr, oshead, ocosts, oblnkl, ovarrf
+    use cost_variables, only: coe, cpfact
+		use constants, only: mfile
     implicit none
 
     !  Local Variables
@@ -991,9 +1024,7 @@ contains
 
   end subroutine write_costs_to_output
 
-
   subroutine value_function(x, v)
-
     !! Value function
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
@@ -1005,8 +1036,8 @@ contains
     implicit none
 
     !  Arguments
-    real(kind(1.0D0)), intent(in) :: x
-    real(kind(1.0D0)), intent(out) :: v
+    real(dp), intent(in) :: x
+    real(dp), intent(out) :: v
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1014,12 +1045,12 @@ contains
 
   end subroutine value_function
 
-
-subroutine ocost(file,descr,n,value)
-
+  subroutine ocost(file,descr,n,value)
     !! Routine to print out the code, description and value
     !! of a cost item from array s in costs_2015
 
+    use process_output, only: ovarrf
+		use constants, only: mfile
     implicit none
 
     !  Arguments
@@ -1027,7 +1058,7 @@ subroutine ocost(file,descr,n,value)
     integer :: n
     character(len=*), intent(in) :: descr
     character(len=5) :: vname
-    real(kind(1.0D0)), intent(in) :: value
+    real(dp), intent(in) :: value
     !  Local variables
     character(len=70) :: dum70
 
@@ -1036,7 +1067,7 @@ subroutine ocost(file,descr,n,value)
     !  Replace descr with dummy string of the correct length.
     dum70 = descr
     write(file,10) dum70, value, ' '
-10  format(1x,a,t73,f10.0, tl1, a)
+    10  format(1x,a,t73,f10.0, tl1, a)
     ! Create variable name of format s + array entry
     write(vname,"(A2,I2.2,A1)") '(s', n, ')'
 
@@ -1045,17 +1076,18 @@ subroutine ocost(file,descr,n,value)
   end subroutine ocost
 
   subroutine ocost_vname(file,descr,vname,value)
-
     !! Routine to print out the code, description and value
     !! of a cost item not in the array s in costs_2015
 
+    use process_output, only: ovarrf
+		use constants, only: mfile
     implicit none
 
     !  Arguments
     integer, intent(in) :: file
     character(len=*), intent(in) :: descr
     character(len=*), intent(in) :: vname
-    real(kind(1.0D0)), intent(in) :: value
+    real(dp), intent(in) :: value
     !  Local variables
     character(len=70) :: dum70
 
@@ -1064,7 +1096,7 @@ subroutine ocost(file,descr,n,value)
     !  Replace descr with dummy string of the correct length.
     dum70 = descr
     write(file,10) dum70, value, ' '
-10  format(1x,a,t73,f10.0, tl1, a)
+    10  format(1x,a,t73,f10.0, tl1, a)
 
     call ovarrf(mfile,descr,vname,value)
 

@@ -11,12 +11,7 @@ module profiles_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use constants
-  use divertor_variables
-  use error_handling
-  use maths_library
-  use physics_variables
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   private
   public :: plasma_profiles, ncore, nprofile, tcore, tprofile
 
@@ -36,6 +31,12 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: echarge
+    use divertor_variables, only: prn1
+    use maths_library, only: gamfun, sumup3
+    use physics_variables, only: rhopedt, ten, tin, alphap, tbeta, te0, p0, &
+      nesep, tesep, pcoef, ipedestal, ni0, ne0, ti0, tratio, dnla, alphat, &
+      dnitot, neped, ti, rhopedn, dene, teped, alphan, te
     implicit none
 
     !  Arguments
@@ -44,8 +45,8 @@ contains
 
     integer, parameter :: nrho = 501
     integer :: irho
-    real(kind(1.0D0)) :: drho, rho, integ1, integ2, dens, temp
-    real(kind(1.0D0)), dimension(nrho) :: arg1, arg2, arg3
+    real(dp) :: drho, rho, integ1, integ2, dens, temp
+    real(dp), dimension(nrho) :: arg1, arg2, arg3
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -174,18 +175,20 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use constants, only: pi
+		use maths_library, only: gamfun
     implicit none
 
-    real(kind(1.0D0)) :: tcore
+    real(dp) :: tcore
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: rhopedt, tped, tsep, tav, alphat, tbeta
+    real(dp), intent(in) :: rhopedt, tped, tsep, tav, alphat, tbeta
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: numacc = 1.0D-7
-    real(kind(1.0D0)) :: gamfac
+    real(dp), parameter :: numacc = 1.0D-7
+    real(dp) :: gamfac
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -233,13 +236,15 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: fdiags, report_error
+		use physics_variables, only: ipedestal
     implicit none
 
-    real(kind(1.0D0)) :: tprofile
+    real(dp) :: tprofile
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: rho, rhopedt, t0, tped, tsep, alphat, tbeta
+    real(dp), intent(in) :: rho, rhopedt, t0, tped, tsep, alphat, tbeta
 
     !  Local variables
 
@@ -286,13 +291,14 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: report_error
     implicit none
 
-    real(kind(1.0D0)) :: ncore
+    real(dp) :: ncore
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: rhopedn, nped, nsep, nav, alphan
+    real(dp), intent(in) :: rhopedn, nped, nsep, nav, alphan
  
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -333,13 +339,15 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: fdiags, report_error
+		use physics_variables, only: ipedestal
     implicit none
 
-    real(kind(1.0D0)) :: nprofile
+    real(dp) :: nprofile
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: rho, rhopedn, n0,  nped, nsep, alphan
+    real(dp), intent(in) :: rho, rhopedn, n0,  nped, nsep, alphan
 
     !  Local variables
 

@@ -1,9 +1,25 @@
+module torga_curgap_module
+  implicit none
+
+  ! First run flag for subroutine green_func_emp, which requires re-initialising
+  ! on each new run
+  logical :: green_func_emp_first
+
+  contains
+
+  subroutine init_torga_curgap_module
+    !! Initialise module variables
+    implicit none
+
+    green_func_emp_first = .true.
+  end subroutine init_torga_curgap_module
+end module torga_curgap_module
+
 !-----------------------------------------------------------------------&
       subroutine TorGA_curgap(rjpd,rjpd0,ratjpd,denom,eps,npara,nperp   &
      &,omode,cefldx,cefldy,cefldz,tebulk,thtc,thetap,yy,lh,zeffin,model &
      &,tol,ngauss,ig,cdharm)
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       REAL(p_) rjpd,rjpd0,ratjpd,denom
@@ -19,9 +35,8 @@
       REAL(p_) zrtmp, fctmp
       common /dumm/zrtmp, fctmp
 
-      REAL(p_) TorGa_zgauleg
-      EXTERNAL TorGa_zgauleg
-      EXTERNAL TorGa_funxjs,TorGa_funxjz,TorGa_alpha
+      REAL(p_), EXTERNAL :: TorGa_zgauleg
+      REAL(p_), EXTERNAL :: TorGa_funxjs,TorGa_funxjz,TorGa_alpha
 !------------------------------------------------------------------------
 !     CURGAP(version 1.0) Y.R. Lin-Liu, 08/16/04
 !     This routine is an improved version and the replacement of CURGAC.
@@ -245,8 +260,7 @@
       end
       FUNCTION TorGa_alpha(x)
 !
-      USE precision_mod
-      USE real_mod
+      USE precision_mod, ONLY: p_
       IMPLICIT NONE
       REAL(p_) TorGa_alpha, x
       REAL(p_) TorGa_bessj
@@ -293,9 +307,8 @@
 
       function TorGa_funxjz(x)
 
-      use precision_mod
-      use real_mod
-      use abs_cd  !EXTERNAL
+      use precision_mod, only: p_
+      use abs_cd, only: cdroutine !EXTERNAL
       implicit none
       REAL(p_) TorGa_funxjz, x
       REAL(p_) TorGa_alpha
@@ -345,9 +358,8 @@
 
       function TorGa_funxjs(x)
 
-      use precision_mod
-      use real_mod
-      use abs_cd  !EXTERNAL
+      use precision_mod, only: p_
+      use abs_cd, only: cdroutine  !EXTERNAL
       implicit none
 
       REAL(p_) TorGa_funxjs,x
@@ -394,7 +406,7 @@
       end
 
       FUNCTION TorGA_bessj0(x)
-      USE precision_mod
+      USE precision_mod, ONLY: p_
       IMPLICIT NONE
 !
       REAL(p_) TorGA_bessj0,x
@@ -439,8 +451,7 @@
       RETURN
       END FUNCTION TorGA_bessj0
       FUNCTION TorGA_bessj1(x)
-      USE precision_mod
-      USE real_mod
+      USE precision_mod, ONLY: p_
       IMPLICIT NONE
 !
       REAL(p_) TorGA_bessj1,x
@@ -485,16 +496,14 @@
       RETURN
       END FUNCTION TorGA_bessj1
       FUNCTION TorGA_bessj(n,x)
-      USE precision_mod
-      USE real_mod
+      USE precision_mod, ONLY: p_
       IMPLICIT NONE
 !
       INTEGER n,IACC
       REAL(p_) TorGA_bessj,x,BIGNO,BIGNI
       PARAMETER (IACC=40,BIGNO=1.E10_p_,BIGNI=1.E-10_p_)
 !     USES bessj0,bessj1
-      REAL(P_) TorGA_bessj0,TorGA_bessj1
-      EXTERNAL TorGA_bessj0,TorGA_bessj1
+      REAL(P_), EXTERNAL :: TorGA_bessj0,TorGA_bessj1
 !-----------------------------------------------------------------------&
 !234567890123456789012345678901234567890123456789012345678901234567890123
 !-----------------------------------------------------------------------&
@@ -503,7 +512,7 @@
 !
       IF (n.lt.0) THEN
          WRITE(6,"(A)")'bad argument n in bessj'
-         STOP
+         STOP 1
       ENDIF
 !
       IF (n.eq.0) THEN
@@ -566,8 +575,7 @@
 !     Gauss Legendre package
 !--------------------------------------------------------------------------
       subroutine TorGa_mgauleg (x, w, n)
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
       integer n
       REAL(p_) x(n),w(n)
@@ -608,8 +616,7 @@
 !
       function TorGa_zgauleg (func, a, b, n, multi, ifail)
 
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       REAL(p_) TorGa_zgauleg,func,a,b
@@ -677,8 +684,7 @@
       end
       subroutine TorGa_ceqmdl(eps,thetap)
 
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       REAL(p_) eps,thetap
@@ -707,8 +713,7 @@
 
       subroutine TorGa_getftrap
 
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       include 'globcd.h'
@@ -723,7 +728,7 @@
       parameter (tolft=1.e-6_p_)
       REAL(p_) ap,ss
       integer jromb
-      external TorGa_qftint
+      REAL(p_), EXTERNAL :: TorGa_qftint
 !
       hbar=hav
       c2=cxi2
@@ -740,8 +745,7 @@
       end
       subroutine TorGa_gethcap(z_in,hcap,hprime)
 
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       REAL(p_) z_in,hcap,hprime
@@ -749,7 +753,7 @@
 !----------------------------------------------------------------------------
       REAL(p_) z,s,ss,ap
       integer jromb
-      external TorGa_hcapint
+      REAL(p_), EXTERNAL :: TorGa_hcapint
 ! DMC bugfix: prevent the first arg from reaching or exceeding 1.0
       z=min(0.9999999_p_,z_in)
       s=z*(1._p_-hav)/(1._p_-z*hav)
@@ -766,8 +770,7 @@
 !---------------------------------------------------------------------------
       function TorGa_hcapint(s)
 
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       REAL(p_) TorGa_hcapint,s
@@ -784,8 +787,7 @@
 
       subroutine TorGa_getfcap(u,fcap,fprime)
 
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       REAL(p_) u,tol
@@ -799,7 +801,7 @@
       REAL(p_) uv,rhocap,gamma,ss
       integer jromb
       common /cmbqfc/uv,rhocap,gamma
-      external TorGa_fcapint
+      REAL(p_), EXTERNAL :: TorGa_fcapint
 !
       if (u .le. 0._p_)then
          fcap=0._p_
@@ -826,8 +828,7 @@
 !-------------------------------------------------------------------------
       function TorGa_fcapint(y)
 
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       REAL(p_) TorGa_fcapint,y
@@ -844,8 +845,7 @@
       end
       subroutine TorGa_getlims(etmax,epst1,epst2)
 
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       REAL(p_) etmax,epst1,epst2
@@ -893,8 +893,7 @@
 
       subroutine TorGa_gamsrc(gam1,gam2,xisq)
 
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       REAL(p_) gam1,gam2
@@ -932,14 +931,13 @@
       return
       end
       SUBROUTINE TorGa_mqromb1(func,a,b,ss,eps,jt)
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       INTEGER JMAX,JMAXP,K,KM
       REAL(p_) a,b,ss, eps
       integer jt
-      EXTERNAL func
+      REAL(p_), EXTERNAL :: func
       PARAMETER (JMAX=200, JMAXP=JMAX+1, K=5, KM=K-1)
 !CU    USES TorGa_polint,trapzd
       INTEGER j
@@ -964,8 +962,7 @@
       END
 !------------------------------------------------------------------------
       SUBROUTINE TorGa_trapzd(func,a,b,s,n)
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       INTEGER n
@@ -992,8 +989,7 @@
       END
       function TorGa_qftint(s)
 
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       REAL(p_) TorGa_qftint,s
@@ -1008,8 +1004,7 @@
       return
       end
       SUBROUTINE TorGa_polint(xa,ya,n,x,y,dy)
-      use precision_mod
-      use real_mod
+      use precision_mod, only: p_
       implicit none
 
       INTEGER n,NMAX
@@ -1057,7 +1052,6 @@
 
 !#######################################################################
  !INCLUDE 'const_and_precisions.f90'
- !INCLUDE 'config_ext.f90'
  !INCLUDE 'green_func_ext.f90'
 !#######################################################################
 
@@ -1085,8 +1079,10 @@
 ! USE precision_mod         ! emp
 ! USE real_mod              ! emp
 !---
- USE const_and_precisions  ! NM
- USE green_func_ext        ! NM
+! NM
+ USE green_func_ext, ONLY: wp_, mc2_, Setup_SpitzFunc, SpitzFuncCoeff, &
+  GenSpitzFunc
+  use torga_curgap_module, only: green_func_emp_first
 !---
  IMPLICIT NONE
 !--- remove it later! ---
@@ -1099,7 +1095,6 @@
  REAL(wp_) :: SS1,ne1,Te1,Zeff1,fc1,u1,q1,gam1
  REAL(wp_) :: K1,dKdu1
  CHARACTER(Len=1) :: adj_appr(6)
- LOGICAL, SAVE :: first =.true.
 !=======================================================================
 !--- Spitzer function definitions ---
  adj_appr(1) = 'l'         ! collisionless limit
@@ -1123,9 +1118,9 @@
  u1    = u/sqrt(2*Te/mc2_)
  gam1  = gam
 !---
- IF (first) THEN
+ IF (green_func_emp_first) THEN
    CALL Setup_SpitzFunc(adj_appr)
-   first =.false.
+   green_func_emp_first =.false.
  ENDIF
 !---
  CALL SpitzFuncCoeff(Te1,Zeff1,fc1)

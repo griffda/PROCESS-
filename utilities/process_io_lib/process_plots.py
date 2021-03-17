@@ -389,7 +389,7 @@ if __name__ == "__main__":
     mf = mfile.MFile(filename="MFILE.DAT")
     plot_pulse_timings(mf, save=True, show=False, save_path="figures/")
     radial_build = ["bore", "ohcth", "precomp", "gapoh", "tfcth", "deltf", "thshield", 
-        "gapds", "ddwi", "shldith", "vvblgap", "blnkith", "fwith", "scrapli", "rminor"]
+        "gapds", "d_vv_in", "shldith", "vvblgap", "blnkith", "fwith", "scrapli", "rminor"]
     radial_bar_plot(radial_build, mf, show=False, save=True)
     plasma_profiles_plot(mf, show=False, save=True)
     

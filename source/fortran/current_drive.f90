@@ -1,7 +1,6 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module current_drive_module
-
   !! Module containing current drive system routines
   !! author: P J Knight, CCFE, Culham Science Centre
   !! N/A
@@ -11,20 +10,8 @@ module current_drive_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  ! Import modules !
-  ! !!!!!!!!!!!!!!!!!
-  use iso_c_binding
-
-  use constraint_variables
-  use constants
-  use current_drive_variables
-  use error_handling
-  use profiles_module
-  use physics_variables
-  use process_output
-  use heat_transport_variables
-  use hare, only:hare_calc
-
+  ! Import modules
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   private
@@ -47,25 +34,41 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use error_handling, only: idiags, report_error
+    use profiles_module, only: tprofile, nprofile
+    use process_output, only: oblnkl, ocmmnt, ovarin, ovarre, ovarrf, osubhd, &
+      oheadr
+    use heat_transport_variables, only: pinjwpfix, pinjwp
+    use current_drive_variables, only: echpwr, pnbeam, plhybd, cnbeam, porbitlossmw, &
+      iefrf, iefrffix, pheat, pheatfix, pinjfixmw, irfcd, feffcd, fpion, nbshinef, &
+      gamcd, gamma_ecrh, rho_ecrh, etalh, etacd, etacdfix, etaech, forbitloss, &
+      pinjmw, pwpnb, etanbi, enbeam, effcd, pwplh, echwpow, pnbitot, nbshinemw, &
+      pinjemw, pinjimw, bigq, bootipf, bscfmax, taubeam, pinjalw, nbshield, &
+      frbeam, rtanbeam, rtanmax, diaipf, psipf, plasipf
+    use physics_variables, only: dene, te, rmajor, ten, zeff, dlamee, beta, &
+      rhopedt, rhopedn, te0, teped, tesep, alphat, alphan, ne0, nesep, neped, &
+      bt, rminor, tbeta, plascur, ipedestal, faccd, ignite, pohmmw, powfmw, &
+      facoh, fvsbrnni
+    use constants, only: nout, echarge, pi
+    use hare, only: hare_calc
+
     implicit none
 
-    ! Arguments !
-    ! !!!!!!!!!!!!
-
+    ! Arguments
     integer, intent(in) :: iprint, outfile
 
     ! Local variables !
     ! !!!!!!!!!!!!!!!!!!
 
-    real(kind(1.0D0)) :: dene20, effnbss, effrfss, gamnb, gamrf, power1
-    real(kind(1.0D0)) :: effcdfix, effrfssfix, effnbssfix, pinjwp1
-    real(kind(1.0D0)) :: pnbitotfix, nbshinemwfix, porbitlossmwfix, cnbeamfix
-    real(kind(1.0D0)) :: pinjimw1, pinjemw1, pinjimwfix, pinjemwfix, pinjmw1, pinjmwfix 
-    real(kind(1.0D0)) :: auxiliary_cdfix, faccdfix, gamcdfix
-    real(kind(1.0D0)) :: fshift, xf, enpa,ftherm,fpp,cdeff, ampperwatt
-    real(kind(1.0D0)) :: dens_at_rho, te_at_rho
+    real(dp) :: dene20, effnbss, effrfss, gamnb, gamrf, power1
+    real(dp) :: effcdfix, effrfssfix, effnbssfix, pinjwp1
+    real(dp) :: pnbitotfix, nbshinemwfix, porbitlossmwfix, cnbeamfix
+    real(dp) :: pinjimw1, pinjemw1, pinjimwfix, pinjemwfix, pinjmw1, pinjmwfix 
+    real(dp) :: auxiliary_cdfix, faccdfix, gamcdfix
+    real(dp) :: fshift, xf, enpa,ftherm,fpp,cdeff, ampperwatt
+    real(dp) :: dens_at_rho, te_at_rho
     logical :: Temperature_capped
-    real(kind(1.0D0)) :: auxiliary_cd
+    real(dp) :: auxiliary_cd
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -167,9 +170,11 @@ contains
 
        case (10)  ! ECRH user input gamma
 
+          !  Normalised current drive efficiency gamma
           gamcd = gamma_ecrh
+
+          ! Absolute current drive efficiency
           effrfssfix = gamcd / (dene20 * rmajor)
-          !etacd = etaech
           effcdfix = effrfssfix
 
        case (11)  ! ECRH Poli model "HARE"
@@ -186,6 +191,15 @@ contains
           gamcd = effcdfix * dene20 * rmajor
           effrfssfix = effcdfix
 
+       case (12)  ! ECRH user input gamma
+
+            !  Normalised current drive efficiency gamma
+            gamcd = 0.03058D0 * te
+ 
+            ! Absolute current drive efficiency
+            effrfssfix = gamcd / (dene20 * rmajor)
+            effcdfix = effrfssfix
+
        case default
           idiags(1) = iefrffix
           call report_error(126)
@@ -201,22 +215,32 @@ contains
 
           !  Injected power
           pinjemwfix = pinjfixmw
+
           !  Wall plug power
           pinjwpfix = pinjfixmw / etalh
+
           !  Wall plug to injector efficiency
           etacdfix = etalh
+
           !  Normalised current drive efficiency gamma
           gamcdfix = effrfssfix * (dene20 * rmajor)
+
           ! the fixed auxiliary current
           auxiliary_cdfix = effrfssfix * ( pinjfixmw - pheatfix) * 1.0d6
           faccdfix = auxiliary_cdfix / plascur
 
-       case (3,7,10,11)  ! ECCD
+       case (3,7,10,11,12)  ! ECCD
 
-          pinjimwfix = 0.0D0
+          !  Injected power
           pinjemwfix = pinjfixmw
+          
+          !  Wall plug power
           pinjwpfix = pinjfixmw / etaech
+
+          !  Wall plug to injector efficiency
           etacdfix = etaech
+          
+          ! the fixed auxiliary current
           auxiliary_cdfix = effrfssfix * ( pinjfixmw - pheatfix) * 1.0d6
           faccdfix = auxiliary_cdfix / plascur
 
@@ -227,7 +251,7 @@ contains
           ! This includes a second order term in shinethrough*(first orbit loss)
           forbitloss = min(0.999,forbitloss) ! Should never be needed
 
-          if(ipedestal.ne.3)then  ! When not using PLASMOD
+          if(ipedestal.ne.3) then  ! When not using PLASMOD
              pnbitotfix = pinjfixmw / (1.0D0-forbitloss+forbitloss*nbshinef)
           else
              ! Netural beam power calculated by PLASMOD
@@ -316,8 +340,9 @@ contains
        case (10)  ! ECRH user input gamma
 
           gamcd = gamma_ecrh
+          
+          ! Absolute current drive efficiency
           effrfss = gamcd / (dene20 * rmajor)
-          !etacd = etaech
           effcd = effrfss
 
        case (11)  ! ECRH Poli model "HARE"
@@ -334,6 +359,18 @@ contains
           effcd = ampperwatt
           gamcd = effcd * dene20 * rmajor
           effrfss = effcd
+
+       ! EBW scaling
+       ! Scaling author Simon Freethy
+       ! Ref : PROCESS issue 1262
+       case (12)  
+
+         !  Normalised current drive efficiency gamma
+         gamcd = 0.03058D0 * te
+         
+         ! Absolute current drive efficiency
+         effrfss = gamcd / (dene20 * rmajor)
+         effcd = effrfss
 
        case default
           idiags(1) = iefrf
@@ -363,12 +400,16 @@ contains
           gamrf = effrfss * (dene20 * rmajor)
           gamcd = gamrf
 
-       case (3,7,10,11)  ! ECCD
+       case (3,7,10,11,12)  ! ECCD
 
+          !  Injected power (set to close to close the Steady-state current equilibrium)
           echpwr = 1.0D-6 * (faccd - faccdfix) * plascur / effrfss + pheat
-          pinjimw1 = 0.0D0
           pinjemw1 = echpwr
+          
+          !  Wall plug power
           echwpow = echpwr / etaech
+          
+          !  Wall plug to injector efficiency
           pinjwp1 = echwpow
           etacd = etaech
 
@@ -455,7 +496,7 @@ contains
        call ocmmnt(outfile,'Lower Hybrid Current Drive')
     case (2)
        call ocmmnt(outfile,'Ion Cyclotron Current Drive')
-    case (3,7,11)
+    case (3,7)
        call ocmmnt(outfile,'Electron Cyclotron Current Drive')
     case (5,8)
        call ocmmnt(outfile,'Neutral Beam Current Drive')
@@ -463,6 +504,10 @@ contains
        ! RFP option removed in PROCESS (issue #508)
     case (10)
        call ocmmnt(outfile,'Electron Cyclotron Current Drive (user input gamma_CD)')
+    case (11)
+       call ocmmnt(outfile,'Electron Cyclotron Current Drive (HARE)')
+    case (12)
+       call ocmmnt(outfile,'EBW current drive')
     end select
 
     call ovarin(outfile,'Current drive efficiency model','(iefrf)',iefrf)
@@ -484,6 +529,8 @@ contains
           call ocmmnt(outfile,'Electron Cyclotron Current Drive (user input gamma_CD)')
       case(11)
           call ocmmnt(outfile,'Electron Cyclotron Current Drive (HARE)')
+      case (12)
+          call ocmmnt(outfile,'EBW current drive')
       end select
 
       call ovarin(outfile,'Secondary current drive efficiency model','(iefrffix)',iefrffix)
@@ -652,7 +699,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine iternb(effnbss,fpion,fshine) bind(C, name="c_iternb")
+  subroutine iternb(effnbss,fpion,fshine)
 
     !! Routine to calculate ITER Neutral Beam current drive parameters
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -667,17 +714,22 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use error_handling, only: fdiags, idiags, report_error
+    use current_drive_variables, only: frbeam, enbeam, taubeam, ftritbm
+    use physics_variables, only: eps, rmajor, abeam, te, dene, ralpne, rncne, &
+      rnone, rnfene, deni, ten, zeffai, dlamie, alphan, alphat, aspect, zeff
+		use constants, only: rmu0
     implicit none
 
     ! Arguments !
     ! !!!!!!!!!!!!
 
-    real(kind(1.0D0)), intent(out) :: effnbss,fpion,fshine
+    real(dp), intent(out) :: effnbss,fpion,fshine
 
     ! Local variables !
     ! !!!!!!!!!!!!!!!!!!
 
-    real(kind(1.0D0)) :: dend,dent,dpath,sigstop
+    real(dp) :: dend,dent,dpath,sigstop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -739,18 +791,18 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: etanb
+      real(dp) :: etanb
 
       ! Arguments !
       ! !!!!!!!!!!!!
 
-      real(kind(1.0D0)), intent(in) :: abeam,alphan,alphat,aspect,dene, &
+      real(dp), intent(in) :: abeam,alphan,alphat,aspect,dene, &
            ebeam,rmajor,ten,zeff
 
       ! Local variables !
       ! !!!!!!!!!!!!!!!!!!
 
-      real(kind(1.0D0)) :: abd,bbd,dene20,dum,epseff,ffac,gfac,rjfunc, &
+      real(dp) :: abd,bbd,dene20,dum,epseff,ffac,gfac,rjfunc, &
            xj,xjs,yj,zbeam
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -789,7 +841,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine cfnbi(afast,efast,te,ne,nd,nt,zeffai,xlmbda,fpion) bind(C, name="c_cfnbi")
+  subroutine cfnbi(afast,efast,te,ne,nd,nt,zeffai,xlmbda,fpion)
 
     !! Routine to calculate the fraction of the fast particle energy
     !! coupled to the ions
@@ -809,25 +861,27 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: mproton, pi, echarge
+
     implicit none
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: afast,efast,te,ne,nd,nt,zeffai,xlmbda
-    real(kind(1.0D0)), intent(out) :: fpion
+    real(dp), intent(in) :: afast,efast,te,ne,nd,nt,zeffai,xlmbda
+    real(dp), intent(out) :: fpion
 
     !  Local variables
 
-    real(kind(1.0D0)) :: ans,ecritfi,ecritfix,sum,sumln,thx,t1,t2,ve,x, &
+    real(dp) :: ans,ecritfi,ecritfix,sum,sumln,thx,t1,t2,ve,x, &
          xlbd,xlbt,xlmbdai,xlnrat
 
-    real(kind(1.0D0)), parameter :: atmd = 2.0D0
-    real(kind(1.0D0)), parameter :: atmdt = 2.5D0
-    real(kind(1.0D0)), parameter :: atmt = 3.0D0
-    real(kind(1.0D0)), parameter :: c = 3.0D8
-    real(kind(1.0D0)), parameter :: me = 9.1D-31
-    real(kind(1.0D0)), parameter :: zd = 1.0D0
-    real(kind(1.0D0)), parameter :: zt = 1.0D0
+    real(dp), parameter :: atmd = 2.0D0
+    real(dp), parameter :: atmdt = 2.5D0
+    real(dp), parameter :: atmt = 3.0D0
+    real(dp), parameter :: c = 3.0D8
+    real(dp), parameter :: me = 9.1D-31
+    real(dp), parameter :: zd = 1.0D0
+    real(dp), parameter :: zt = 1.0D0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -874,15 +928,15 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: xlmbdabi
+      real(dp) :: xlmbdabi
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: mb,mth,eb,t,nelec
+      real(dp), intent(in) :: mb,mth,eb,t,nelec
 
       !  Local variables
 
-      real(kind(1.0D0)) :: ans,x1,x2
+      real(dp) :: ans,x1,x2
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -918,18 +972,18 @@ contains
 
     implicit none
 
-    real(kind(1.0D0)) :: sigbeam
+    real(dp) :: sigbeam
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: eb,te,ne,rnhe,rnc,rno,rnfe
+    real(dp), intent(in) :: eb,te,ne,rnhe,rnc,rno,rnfe
 
     !  Local variables
 
-    real(kind(1.0D0)) :: ans,nen,sz,s1
-    real(kind(1.0D0)), dimension(2,3,2) :: a
-    real(kind(1.0D0)), dimension(3,2,2,4) :: b
-    real(kind(1.0D0)), dimension(4) :: nn,z
+    real(dp) :: ans,nen,sz,s1
+    real(dp), dimension(2,3,2) :: a
+    real(dp), dimension(3,2,2,4) :: b
+    real(dp), dimension(4) :: nn,z
 
     integer :: i,is,j,k
 
@@ -998,15 +1052,20 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use error_handling, only: fdiags, idiags, report_error
+    use profiles_module, only: nprofile, tprofile
+    use physics_variables, only: rminor, rhopedn, ne0, neped, nesep, alphan, &
+      rhopedt, te0, tesep, teped, alphat, tbeta, bt, rmajor, zeff
+
     implicit none
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(out) :: effrfss
+    real(dp), intent(out) :: effrfss
 
     !  Local variables
 
-    real(kind(1.0D0)) :: blocal,dlocal,epslh,frac,gamlh,nplacc,rpenet, &
+    real(dp) :: blocal,dlocal,epslh,frac,gamlh,nplacc,rpenet, &
          rratio,term01,term02,term03,term04,tlocal,x
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1071,11 +1130,11 @@ contains
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(out) :: rratio
+      real(dp), intent(out) :: rratio
 
       !  Local variables
 
-      real(kind(1.0D0)) :: dgdr,drfind,g0,g1,g2,rat0,rat1,r1,r2
+      real(dp) :: dgdr,drfind,g0,g1,g2,rat0,rat1,r1,r2
       integer :: lapno
       integer, parameter :: maxlap = 100
 
@@ -1169,12 +1228,12 @@ contains
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: drfind,rratio
-      real(kind(1.0D0)), intent(out) :: ediff
+      real(dp), intent(in) :: drfind,rratio
+      real(dp), intent(out) :: ediff
 
       !  Local variables
 
-      real(kind(1.0D0)) :: blocal,dlocal,e1,e2,frac,nplacc,refind,tlocal
+      real(dp) :: blocal,dlocal,e1,e2,frac,nplacc,refind,tlocal
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1230,60 +1289,53 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use profiles_module, only: tprofile, nprofile
+    use physics_variables, only: rhopedt, te0, teped, tesep, alphat, tbeta, &
+      rhopedn, ne0, nesep, neped, alphan, rminor, rmajor, zeff
+
     implicit none
 
-    !  Arguments
-
-    real(kind(1.0D0)), intent(out) :: effrfss
+    real(dp), intent(out) :: effrfss
 
     !  Local variables
 
-    real(kind(1.0D0)) :: cosang,coulog,dlocal,ecgam,ecgam1,ecgam2,ecgam3,ecgam4, &
+    real(dp) :: cosang,coulog,dlocal,ecgam,ecgam1,ecgam2,ecgam3,ecgam4, &
          epsloc,rrr,tlocal,zlocal
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Local plasma parameters : take r = a/3
-
     rrr = 1.0D0/3.0D0
 
     !  Temperature
-
     tlocal = tprofile(rrr,rhopedt,te0,teped,tesep,alphat,tbeta)
 
     !  Density (10**20 m**-3)
-
     dlocal = 1.0D-20 * nprofile(rrr,rhopedn,ne0,neped,nesep,alphan)
 
     !  Inverse aspect ratio
-
     epsloc = rrr * rminor/rmajor
 
     !  Effective charge (use average value)
-
     zlocal = zeff
 
     !  Coulomb logarithm for ion-electron collisions
     !  (From J. A. Wesson, 'Tokamaks', Clarendon Press, Oxford, p.293)
-
     coulog = 15.2D0 - 0.5D0*log(dlocal) + log(tlocal)
 
     !  Calculate normalised current drive efficiency at four different
     !  poloidal angles, and average.
     !  cosang = cosine of the poloidal angle at which ECCD takes place
     !         = +1 outside, -1 inside.
-
     cosang =  1.0D0 ; call eccdef(tlocal,epsloc,zlocal,cosang,coulog,ecgam1)
     cosang =  0.5D0 ; call eccdef(tlocal,epsloc,zlocal,cosang,coulog,ecgam2)
     cosang = -0.5D0 ; call eccdef(tlocal,epsloc,zlocal,cosang,coulog,ecgam3)
     cosang = -1.0D0 ; call eccdef(tlocal,epsloc,zlocal,cosang,coulog,ecgam4)
 
     !  Normalised current drive efficiency (A/W m**-2)
-
     ecgam = 0.25D0 * (ecgam1+ecgam2+ecgam3+ecgam4)
 
     !  Current drive efficiency (A/W)
-
     effrfss = ecgam/(dlocal*rmajor)
 
   contains
@@ -1319,16 +1371,18 @@ contains
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+      use error_handling, only: report_error
+
       implicit none
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: tlocal,epsloc,zlocal,cosang,coulog
-      real(kind(1.0D0)), intent(out) :: ecgam
+      real(dp), intent(in) :: tlocal,epsloc,zlocal,cosang,coulog
+      real(dp), intent(out) :: ecgam
 
       !  Local variables
 
-      real(kind(1.0D0)) :: f,facm,fp,h,hp,lam,lams,mcsq,palpha,palphap,palphaps, &
+      real(dp) :: f,facm,fp,h,hp,lam,lams,mcsq,palpha,palphap,palphaps, &
            palphas,y
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1401,16 +1455,16 @@ contains
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+      use error_handling, only: fdiags, idiags, report_error
+
       implicit none
 
-      !  Arguments
-
-      real(kind(1.0D0)), intent(in) :: zlocal,arg
-      real(kind(1.0D0)), intent(out) ::  palpha,palphap
+      real(dp), intent(in) :: zlocal,arg
+      real(dp), intent(out) ::  palpha,palphap
 
       !  Local variables
 
-      real(kind(1.0D0)) :: arg2,pold,poldp,pterm,sinsq,term1,term2,xisq
+      real(dp) :: arg2,pold,poldp,pterm,sinsq,term1,term2,xisq
       integer :: n
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1478,15 +1532,19 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use error_handling, only: fdiags, idiags, report_error
+    use current_drive_variables, only: enbeam, frbeam, taubeam, ftritbm
+    use physics_variables, only: eps, rmajor, abeam, te, dene, ralpne, rncne, &
+      rnone, rnfene, dnla, deni, ten, zeffai, dlamie, alphan, alphat, aspect, &
+      rminor, zeff
+
     implicit none
 
-    !  Arguments
-
-    real(kind(1.0D0)), intent(out) :: effnbss,fpion,fshine
+    real(dp), intent(out) :: effnbss,fpion,fshine
 
     !  Local variables
 
-    real(kind(1.0D0)) :: dend,dent,dpath,sigstop
+    real(dp) :: dend,dent,dpath,sigstop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1533,8 +1591,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     function etanb2(abeam,alphan,alphat,aspect,dene,dnla,enbeam,frbeam, &
-         fshine,rmajor,rminor,ten,zeff)
-
+      fshine,rmajor,rminor,ten,zeff)
       !! Routine to find neutral beam current drive efficiency
       !! using the ITER 1990 formulation, plus correction terms
       !! outlined in Culham Report AEA FUS 172
@@ -1565,82 +1622,69 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: etanb2
+      real(dp) :: etanb2
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: abeam,alphan,alphat,aspect,dene,dnla, &
+      real(dp), intent(in) :: abeam,alphan,alphat,aspect,dene,dnla, &
            enbeam,frbeam,fshine,rmajor,rminor,ten,zeff
 
       !  Local variables
 
-      real(kind(1.0D0)) :: abd,bbd,d,dene20,dnla20,dnorm,ebmev,ebnorm, &
+      real(dp) :: abd,bbd,d,dene20,dnla20,dnorm,ebmev,ebnorm, &
            ecrit,epseff,epsitr,eps1,ffac,gamnb,gfac,j0,nnorm,r,xj, &
            xjs,yj,zbeam
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       !  Charge of beam ions
-
       zbeam = 1.0D0
 
       !  Fitting factor (IPDG89)
-
       bbd = 1.0D0
 
       !  Volume averaged electron density (10**20 m**-3)
-
       dene20 = dene/1.0D20
 
       !  Line averaged electron density (10**20 m**-3)
-
       dnla20 = dnla/1.0D20
 
       !  Critical energy (MeV) (power to electrons = power to ions) (IPDG89)
       !  N.B. ten is in keV
-
       ecrit = 0.01D0 * abeam * ten
 
       !  Beam energy in MeV
-
       ebmev = enbeam/1.0D3
 
       !  x and y coefficients of function J0(x,y) (IPDG89)
-
       xjs = ebmev/(bbd*ecrit)
       xj = sqrt(xjs)
 
       yj = 0.8D0 * zeff/abeam
 
       !  Fitting function J0(x,y)
-
       j0 = xjs / (4.0D0 + 3.0D0*yj + xjs *(xj + 1.39D0 + &
            0.61D0 * yj**0.7D0))
 
       !  Effective inverse aspect ratio, with a limit on its maximum value
-
       epseff = min(0.2D0, (0.5D0/aspect))
 
       !  Reduction in the reverse electron current
       !  due to neoclassical effects
-
       gfac = (1.55D0 + 0.85D0/zeff)*sqrt(epseff) - &
            (0.2D0 + 1.55D0/zeff)*epseff
 
       !  Reduction in the net beam driven current
       !  due to the reverse electron current
-
       ffac = 1.0D0 - (zbeam/zeff) * (1.0D0 - gfac)
 
       !  Normalisation to allow results to be valid for
       !  non-ITER plasma size and density:
 
       !  Line averaged electron density (10**20 m**-3) normalised to ITER
-
       nnorm = 1.0D0
 
       !  Distance along beam to plasma centre
-
       r = max(rmajor,rmajor*frbeam)
       eps1 = rminor/r
 
@@ -1653,27 +1697,22 @@ contains
 
       !  Distance along beam to plasma centre for ITER
       !  assuming a tangency radius equal to the major radius
-
       epsitr = 2.15D0/6.0D0
       dnorm = 6.0D0 * sqrt(2.0D0*epsitr + epsitr**2)
 
       !  Normalisation to beam energy (assumes a simplified formula for
       !  the beam stopping cross-section)
-
       ebnorm = ebmev * ( (nnorm*dnorm)/(dnla20*d) )**(1.0D0/0.78D0)
 
       !  A_bd fitting coefficient, after normalisation with ebnorm
-
       abd = 0.107D0 * (1.0D0 - 0.35D0*alphan + 0.14D0*alphan**2) * &
            (1.0D0 - 0.21D0*alphat) * (1.0D0 - 0.2D0*ebnorm + 0.09D0*ebnorm**2)
 
       !  Normalised current drive efficiency (A/W m**-2) (IPDG89)
-
       gamnb = 5.0D0 * abd * 0.1D0*ten * (1.0D0-fshine) * frbeam * &
            j0/0.2D0 * ffac
 
       !  Current drive efficiency (A/W)
-
       etanb2 = gamnb / (dene20*rmajor)
 
     end function etanb2

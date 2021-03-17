@@ -127,6 +127,7 @@ if __name__ == '__main__':
 
     ## Step 1 : Data extraction
     # ----------------------------------------------------------------------------------------------
+    plot_indexes          = list()
     vmcon_indexes         = list()
     figures_of_merit      = list()
     vmcon_convergence     = list()
@@ -153,6 +154,9 @@ if __name__ == '__main__':
         
         # Number of VMCON iterations
         n_vmcon = int(len(opt_data_lines) - 15)
+
+        # Plot indexes
+        plot_indexes = [ ii+1 for ii in range(n_vmcon) ]
         # ------------------------------------------
 
 
@@ -215,7 +219,7 @@ if __name__ == '__main__':
     if plot_FoM :
 
         # Plot
-        plt.plot( vmcon_indexes, figures_of_merit, 'g-' )
+        plt.plot( plot_indexes, figures_of_merit, 'g-' )
 
         # Range
         max_FoM     = max(figures_of_merit)
@@ -248,9 +252,9 @@ if __name__ == '__main__':
         y_max = 1.
 
         # Plot
-        plt.plot( vmcon_indexes, vmcon_convergence     , 'b-', label='VMCON conv')
-        plt.plot( vmcon_indexes, constraints_quad_sum  , 'c-', label='const quad sum')
-        plt.plot( vmcon_indexes, convergence_parameter , 'k:', label='final conv    ')
+        plt.plot( plot_indexes, vmcon_convergence     , 'b-', label='VMCON conv')
+        plt.plot( plot_indexes, constraints_quad_sum  , 'c-', label='const quad sum')
+        plt.plot( plot_indexes, convergence_parameter , 'k:', label='final conv    ')
         plt.plot( [x_min,x_max], [tolerance, tolerance], 'k-')
 
         # Cosmetics
@@ -315,9 +319,9 @@ if __name__ == '__main__':
                 constraint_name = constraint_name.replace('Central solenoid', 'CS').replace('central solenoid', 'CS')
                 constraint_name = constraint_name[:17] 
 
-            plt.plot( vmcon_indexes, constraints[dominant_constaints_indexes[ii]], plot_opt[ii], label=str(ii+1)+': '+constraint_name+' ('+str(constraints_indexes[dominant_constaints_indexes[ii]])+')')
-        plt.plot( vmcon_indexes, dominant_quad_sum     , 'k--', label='dominant const quad sum ' )
-        plt.plot( vmcon_indexes, constraints_quad_sum  , 'k:' , label='total const quad sum' )
+            plt.plot( plot_indexes, constraints[dominant_constaints_indexes[ii]], plot_opt[ii], label=str(ii+1)+': '+constraint_name+' ('+str(constraints_indexes[dominant_constaints_indexes[ii]])+')')
+        plt.plot( plot_indexes, dominant_quad_sum     , 'k--', label='dominant const quad sum ' )
+        plt.plot( plot_indexes, constraints_quad_sum  , 'k:' , label='total const quad sum' )
         plt.plot( [x_min,x_max], [tolerance, tolerance], 'k-' )
 
         # Actions if the legend gets too big
@@ -358,8 +362,8 @@ if __name__ == '__main__':
         y_max = 1.
 
         # Plot
-        plt.plot( vmcon_indexes, constraints[ii_constraint], 'r-', label=constraint_name)
-        plt.plot( vmcon_indexes, constraints_quad_sum  , 'k:' , label='total const quad sum' )
+        plt.plot( plot_indexes, constraints[ii_constraint], 'r-', label=constraint_name)
+        plt.plot( plot_indexes, constraints_quad_sum  , 'k:' , label='total const quad sum' )
         plt.plot( [x_min,x_max], [tolerance, tolerance], 'k-' )
 
         # Cosmetics
@@ -399,7 +403,7 @@ if __name__ == '__main__':
         # Plot
         for ii in range(0, n_var_plots):
             leg_label = '{} : {} ({})'.format(ii+1, p_dicts['DICT_IXC_SIMPLE'][str(variables_indexes[ranked_variables_index[ii]])], variables_indexes[ranked_variables_index[ii]])
-            plt.plot( vmcon_indexes, variables[ranked_variables_index[ii]], plot_opt[ii], label=leg_label)
+            plt.plot( plot_indexes, variables[ranked_variables_index[ii]], plot_opt[ii], label=leg_label)
 
         # Action if the legend gets too big ...
         if n_var_plots > 6 :
@@ -460,11 +464,11 @@ if __name__ == '__main__':
             variable_name = p_dicts['DICT_IXC_SIMPLE'][str(variables_indexes[ii])]
             variable_name = variable_name.replace('(','').replace(')','')
         
-            plt.plot( vmcon_indexes, variable, 'k-' )
+            plt.plot( plot_indexes, variable, 'k-' )
             plt.xlabel( '$VMCON$ iteration', fontsize = axis_font_size )
             plt.ylabel( variable_name      , fontsize = axis_font_size )
             plt.grid(True)
-           plt.tight_layout()
+            plt.tight_layout()
             plt.savefig('OPT_plots/All_Var/{}_evolution.{}'.format(variable_name, save_format), format=save_format)    
             plt.close()
             ii += 1
@@ -488,8 +492,8 @@ if __name__ == '__main__':
         for constraint in constraints :
 
             constraint_name = p_dicts['DICT_ICC_FULL'][str(constraints_indexes[ii])]['name']
-            plt.plot( vmcon_indexes, constraint            , 'r-' , label=constraint_name )
-            plt.plot( vmcon_indexes, constraints_quad_sum  , 'k--', label='const quad sum' )
+            plt.plot( plot_indexes, constraint            , 'r-' , label=constraint_name )
+            plt.plot( plot_indexes, constraints_quad_sum  , 'k--', label='const quad sum' )
         
             # Cosmetics
             plt.xlabel( '$VMCON$ iteration', fontsize = axis_font_size )

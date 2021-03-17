@@ -2,35 +2,66 @@ site_name: PROCESS
 docs_dir: "documentation/proc-pages/"
 nav:
     - Home: index.md
-    - Publications: publications.md
+    - Installation Guide: installation.md
+    - Usage Guide: usage.md
     - Getting Started: getting-started.md
-    - I/O: 
-        - Input: io/input-guide.md
-        - Output: io/output-guide.md
-        - Utilities: io/utilities-guide.md
-        - Python Libraries: io/python-lib-guide.md
-        - Variable Descriptions: vardes.md
-    - Solver: solver-guide.md
-    - Physics Models:
-        - Plasma: physics-models/plasma.md
-        - PLASMOD: physics-models/plasmod.md
+    - FORD docs: ford_site/ford.md
+    - Cost Models: cost-models/cost-models.md
+    - Development: 
+        - git Usage: development/git-usage.md
+        - Standards: development/standards.md
+        - Adding Variables & Constraints: development/add-vars.md
+        - Continuous Integration: development/ci-guide.md
+        - Unit Tests: development/unit-tests.md
+        - Tools: development/tools.md
+        - Versioning: development/versioning.md
     - Engineering Models:
         - Machine Build: eng-models/machine-build.md
+        - Structural Components: eng-models/structural-components.md
+        - Buildings: eng-models/buildings.md
         - First Wall/Blanket: eng-models/fw-blanket.md
         - TF Coil : eng-models/tf-coil.md
+        - PF Coil : eng-models/pf-coil.md
+        - Central Solenoid : eng-models/central-solenoid.md
         - Shield : eng-models/shield.md
         - Divertor : eng-models/divertor.md
-    - Development: 
-        Tools: development/tools.md
-        Standards: development/standards.md
-        Continuous Integration: development/ci-guide.md
-        Unit Tests: development/unit-tests.md
-    - FORD docs: ford_site/index.html
+        - Power conversion and heat dissipation systems: eng-models/power-conversion-and-heat-dissipation-systems.md
+        - Auxiliary Power Systems: eng-models/auxiliary-power-systems.md
+        - Cryostat and vacuum system: eng-models/cryostat-and-vacuum-system.md
+        - Plant Availability: eng-models/plant.md
+    - Fusion Devices:
+        - Spherical Tokamak: fusion-devices/spherical-tokamak.md
+        - Stellarator Model: fusion-devices/stellarator.md
+        - Inertial Fusion Energy Model: fusion-devices/inertial.md
+    - I/O:
+        - Input: io/input-guide.md
+        - Output: io/output-guide.md
+        - Python Libraries: io/python-lib-guide.md
+        - Test suite: io/test-suite.md
+        - Utilities: io/utilities-guide.md
+        - Variable Descriptions: vardes.md
+    - Physics Models:
+        - Electron Cyclotron Current Drive: physics-models/CD.md
+        - Plasma: physics-models/plasma.md
+        - PLASMOD: physics-models/plasmod.md
+        - Pulsed Plant Operation: physics-models/pulsed-plant.md
+        - Safety and Environment Models: physics-models/safety.md
+    - Plasma Scenarios:
+        - I Mode: plasma/i-mode.md
+        - QH Mode: plasma/qh-mode.md
+        - L Mode: plasma/l-mode.md
+        - Hybrid Scenario: plasma/hybrid-scenario.md 
+    - Solver:
+        - Solver Guide: solver/solver-guide.md
+        - VMCON Optimisation Solver Explained: solver/optsolverdoc.md
+        - Equation Solvers: solver/equation-solver.md
+    - Publications: publications.md
+    - PDF pages: pdf/pdf.md
 
 repo_url: https://git.ccfe.ac.uk/process/process.git
 
 theme: 
-    # name: material
+    #name: material
     name: readthedocs
 
 extra_javascript:
@@ -54,3 +85,5 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
+
+extra_css: [vardes.css]

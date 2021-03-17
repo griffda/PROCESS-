@@ -30,10 +30,6 @@ beta = 0.03142
 *----------------------*
 icc = 2
 
-* Toroidal field 1/R consistency *
-*--------------------------------*
-icc = 10
-
 * Radial build consistency *
 *--------------------------*
 icc = 11
@@ -229,10 +225,6 @@ ixc = 4
 boundu(4) = 150.0
 te = 12.33
 
-* oacdcp [A/m2]
-ixc = 12
-oacdcp = 8.67E6
-
 * tfcth [m]
 ixc = 13
 boundl(13) = 0.75
@@ -297,7 +289,7 @@ fimp(13) = 0.00038
 * TF winding pack thickness [m]
 ixc = 140
 boundl(140) = 0.5
-thkwp = 0.5
+dr_tf_wp = 0.5
 
 * fgwped - ratio of pedestal density to GW limit
 ixc = 145
@@ -315,7 +307,16 @@ thshield = 0.050
 gapds = 0.02
 
 * Inboard vacuum vessel radial thickness [m]
-ddwi = 0.3
+d_vv_in  = 0.30
+
+* Outboard vacuum vessel radial thickness [m]
+d_vv_out  = 0.30
+
+* Topside vacuum vessel radial thickness [m]
+d_vv_top  = 0.30
+
+* Underside vacuum vessel radial thickness [m]
+d_vv_bot  = 0.30
 
 * Inboard vacuum vessel thickness [m]
 shldith = 0.3
@@ -441,7 +442,7 @@ isc = 34
 q0 = 1.0
 
 * Switch for single null / double null plasma
-snull = 1
+i_single_null = 1
 
 * Synchrotron wall reflectivity factor
 ssync = 0.6
@@ -607,7 +608,7 @@ casths = 0.05
 ripmax = 0.6
 
 * Number of TF coils
-tfno = 16
+n_tf = 16
 
 * Groundwall insulation thickness [m]
 tinstf = 0.008
@@ -622,7 +623,7 @@ tftmp = 4.75
 vftf = 0.3
 
 * Conductor type switch (WST Nb3Sn)
-isumattf = 5
+i_tf_sc_mat = 5
 
 * Number of pancakes in winding pack
 n_pancake = 20

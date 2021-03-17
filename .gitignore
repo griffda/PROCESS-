@@ -1,13 +1,13 @@
 *.o
-*.so
+*.so*
 *.html
 *.x
 *.mod
 *.exe
-*.pdf
 *.aux
 *.log
 *.lof
+*.pdf
 *.dat
 *.dylib
 *.13
@@ -72,3 +72,10 @@ test_suite/FZMIN_TEST.DAT
 test_suite/REBCO_JC.DAT
 test_suite/quench_data.DAT
 test_suite/OPT.DAT
+*.egg-info
+fortran.py
+.coverage
+dist/*
+process/io/python_fortran_dicts.json
+documentation/proc-pages/vardes.md
+lcov_results/

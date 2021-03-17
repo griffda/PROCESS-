@@ -10,8 +10,7 @@ module process_output
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  use global_variables
-  use numerics
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
   public
@@ -36,6 +35,16 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: active_constraints, ncalls, ipnvars, ioptimz
+    use global_variables, only: run_tests, verbose, output_prefix
+		use constants, only: mfile
+    use maths_library, only: secant_solve
+    use vmcon_module, only: vmcon
+    use plasmod_variables, only: plasmod_nchannels, numerics_transp, & 
+      plasmod_chisawpos, plasmod_x_heat, geom, plasmod_psepplh_sup, &
+      plasmod_pfus, plasmod_dx_heat, plasmod_maxpauxor, plasmod_dtinc, num, &
+      plasmod_test, plasmod_ainc, plasmod_dt, inp0, plasmod_dtmaxmax, &
+      plasmod_tolmin, plasmod_dx_control, comp
     implicit none
 
     !  Arguments
@@ -65,7 +74,7 @@ contains
        write(*,*) 'Maximum width = ',maxwidth
        write(*,*) 'Requested width = ',width
        write(*,*) 'PROCESS stopping.'
-       stop
+       stop 1
     end if
 
     if (lh >= width) then
@@ -73,7 +82,7 @@ contains
        write(*,*) string
        write(*,*) 'This is too long to fit into ',width,' columns.'
        write(*,*) 'PROCESS stopping.'
-       stop
+       stop 1
     end if
 
     !  Number of stars to be printed on the left
@@ -105,6 +114,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use global_variables, only: output_prefix, fileprefix
+		use constants, only: mfile
+		use plasmod_variables, only: comp, inp0, num
     implicit none
 
     !  Arguments
@@ -139,6 +151,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: active_constraints, sqsumsq, ioptimz
+    use global_variables, only: vlabel, run_tests, verbose
+		use constants, only: rmu0, pi
+		use plasmod_variables, only: geom, comp, inp0, num
     implicit none
 
     !  Arguments
@@ -173,6 +189,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use global_variables, only: icase
+		use constants, only: pi
+		use plasmod_variables, only: comp, inp0, ped, geom, mhd
     implicit none
 
     !  Arguments
@@ -204,6 +223,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use constants, only: pi, nout
+		use plasmod_variables, only: comp, inp0, geom, ped
     implicit none
 
     !  Arguments
@@ -230,6 +251,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use constants, only: iotty, nout
+		use plasmod_variables, only: inp0, loss
     implicit none
 
     !  Arguments
@@ -258,6 +281,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: boundl, boundu, sqsumsq
+		use global_variables, only: icase, vlabel, iscan_global
+		use constants, only: rmu0
+		use plasmod_variables, only: radp, ped, mhd, i_flag, geom, inp0
     implicit none
 
     !  Arguments
@@ -278,7 +305,7 @@ contains
        write(*,*) 'Error in routine OCMMNT :'
        write(*,*) 'A zero-length string is not permitted.'
        write(*,*) 'PROCESS stopping.'
-       stop
+       stop 1
     end if
 
     if (lh >= maxwidth) then
@@ -287,7 +314,7 @@ contains
 !       write(*,*) 'This is too long to fit into ',maxwidth,' columns.'
        write(*, '(A,i3,A)') 'This is longer than ',maxwidth,' columns.'  ! MK 28/10/2016 Modified previous output to reflect warning message
        !write(*,*) 'PROCESS stopping.'
-       !stop
+       !stop 1
     end if
 !    dummy = trim(string)
     write(file,'(t2,a)') trim(string)
@@ -313,13 +340,18 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: name_xc
+		use global_variables, only: verbose
+		use constants, only: pi, mfile, nplot, echarge
+    use plasmod_variables, only: power_losses, geom, i_flag, comp, ped, radp, &
+      plasmod_i_impmodel
     implicit none
 
     !  Arguments
 
     integer, intent(in) :: file
     character(len=*), intent(in) :: descr, varnam
-    real(kind(1.0D0)), intent(in) :: value
+    real(dp), intent(in) :: value
     character(len=3), intent(in), optional :: output_flag
 
     !  Local variables
@@ -382,13 +414,18 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: name_xc
+		use global_variables, only: icase, vlabel
+		use constants, only: mfile, nout
+		use maths_library, only: variable_error
+		use plasmod_variables, only: radp, geom, mhd, loss, ped
     implicit none
 
     !  Arguments
 
     integer, intent(in) :: file
     character(len=*), intent(in) :: descr, varnam
-    real(kind(1.0D0)), intent(in) :: value
+    real(dp), intent(in) :: value
     character(len=3), intent(in), optional :: output_flag
 
     !  Local variables
@@ -448,6 +485,11 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: name_xc, icc, ioptimz
+		use global_variables, only: xlabel_2, iscan_global
+		use constants, only: mfile, nout
+		use maths_library, only: variable_error
+		use plasmod_variables, only: plasmod_i_impmodel, mhd, loss
     implicit none
 
     !  Arguments
@@ -512,6 +554,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use numerics, only: sqsumsq
+		use constants, only: mfile
+    use plasmod_variables, only: radp, loss, comp, i_flag, &
+      plasmod_i_equiltype, geom, mhd
     implicit none
 
     !  Arguments
@@ -562,13 +608,16 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use constants, only: pi, mfile, nplot, twopi
+		use maths_library, only: variable_error
+		use plasmod_variables, only: radp, ped, num, mhd, loss, comp, inp0
     implicit none
 
     !  Arguments
 
     integer, intent(in) :: file
     character(len=*), intent(in) :: ccode, descr
-    real(kind(1.0D0)), intent(in) :: value
+    real(dp), intent(in) :: value
 
     !  Local variables
 
@@ -608,6 +657,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: boundl, boundu
+		use constants, only: echarge
+		use maths_library, only: variable_error
+		use plasmod_variables, only: radp, geom, loss
     implicit none
 
     !  Arguments
@@ -615,7 +668,7 @@ contains
     integer, intent(in) :: file
     character(len=*), intent(in) :: descr
     character(len=*), optional :: variable_name
-    real(kind(1.0D0)), intent(in) :: thick, total
+    real(dp), intent(in) :: thick, total
 
     !  Local variables
 
@@ -653,6 +706,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use numerics, only: active_constraints, boundu, boundl
+		use constants, only: echarge
     implicit none
 
     !  Arguments
@@ -688,6 +743,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: epsvmc, boundu
+		use constants, only: rmu0
+		use plasmod_variables, only: i_flag
     implicit none
 
     character(len=1) :: int2char
@@ -698,13 +756,13 @@ contains
 
     !  Local variables
 
-    character(len=10) :: number = '0123456789'
+    character(len=10), parameter :: number = '0123456789'
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     if ((i < 0).or.(i > 9)) then
        write(*,*) 'INT2CHAR: illegal argument'
-       stop
+       stop 1
     end if
 
     int2char = number(i+1:i+1)
@@ -727,6 +785,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use numerics, only: boundu
+		use constants, only: pi
+		use plasmod_variables, only: inp0
     implicit none
 
     character(len=2) :: int_to_string2
@@ -743,7 +804,7 @@ contains
 
     if (i < 0) then
        write(*,*) 'INT_TO_STRING2: illegal argument'
-       stop
+       stop 1
     end if
 
     a0 = int2char(mod(i,10))
@@ -769,6 +830,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use numerics, only: boundu
+		use constants, only: pi
+		use plasmod_variables, only: radp
     implicit none
 
     character(len=3) :: int_to_string3
@@ -785,7 +849,7 @@ contains
 
     if (i < 0) then
        write(*,*) 'INT_TO_STRING3: illegal argument'
-       stop
+       stop 1
     end if
 
     a0 = int2char(mod(i,10))
