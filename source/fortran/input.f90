@@ -2827,7 +2827,7 @@ contains
                'Cost of superconductor ($/kg)', icode)
        case ('unit_cost_cryo_al')
           call parse_real_variable('unit_cost_cryo_al', unit_cost_cryo_al, &
-            1.0D0, 100.0D0, 'Cost of cryo aluminium ($/kg)')
+            5.0D1, 5.0D3, 'Cost of cryo aluminium ($/kg)')
        case ('man_cost_cryo_al_per')
           call parse_real_variable('man_cost_cryo_al_per', &
             man_cost_cryo_al_per, 0.0D0, 100.0D0, &
