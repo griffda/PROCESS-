@@ -747,7 +747,7 @@ module cost_variables
     ucwst = (/0.0D0, 3.94D0, 5.91D0, 7.88D0/)
     i_cp_lifetime = 0
     cplife_input = 2.0D0
-    unit_cost_cryo_al = 1200.0D0
+    unit_cost_cryo_al = 105.0D0 ! Laurand price 105 $/kg for 5N purity
     man_cost_cryo_al_per = 20.0D0
   end subroutine init_cost_variables
 end module cost_variables
