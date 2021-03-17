@@ -700,13 +700,13 @@ module cost_variables
     output_costs = 1
     discount_rate = 0.0435D0
     step_con = 1.5D-1
-    step_cconfix = 0.0D0
-    step_cconshpf = 0.0D0
-    step_uccase = 0.0D0
-    step_uccu = 0.0D0
-    step_ucsc = (/ 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0 /)
-    step_ucfnc = 0.0D0
-    step_ucwindpf = 0.0D0
+    step_cconfix = 80.0D0
+    step_cconshpf = 70.0D0
+    step_uccase = 50.0D0
+    step_uccu = 75.0D0
+    step_ucsc = (/ 600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0, 300.0D0 /)
+    step_ucfnc = 35.0D0
+    step_ucwindpf = 465.0D0
     step_rh_costfrac = 0.0D0
     step_ref = &
       (/ 3.0D0, 3.0D-1, 1.115D1, 1.5744D2, 3.592D1, 7.96D0, 9.16D0, 3.26D0, 5.369D1, &
