@@ -13,7 +13,8 @@ nav:
         - Adding Variables & Constraints: development/add-vars.md
         - Continuous Integration: development/ci-guide.md
         - Unit Tests: development/unit-tests.md
-        - Tools: development/tools.md   
+        - Tools: development/tools.md
+        - Versioning: development/versioning.md
     - Engineering Models:
         - Machine Build: eng-models/machine-build.md
         - Structural Components: eng-models/structural-components.md
