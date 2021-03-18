@@ -707,7 +707,7 @@ module cost_variables
     step_ucsc = (/ 600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0, 300.0D0 /)
     step_ucfnc = 35.0D0
     step_ucwindpf = 465.0D0
-    step_rh_costfrac = 0.0D0
+    step_rh_costfrac = 5.0D-2
     step_ref = &
       (/ 3.0D0, 3.0D-1, 1.115D1, 1.5744D2, 3.592D1, 7.96D0, 9.16D0, 3.26D0, 5.369D1, &
       1.88D0, 6.6D-1, 8.63D0, 3.1D0, 2.05D0, 8.7D-1, 8.7D-1, 9.1D-1, 3.1D-1, 1.81D0, &
