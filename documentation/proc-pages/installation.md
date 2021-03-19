@@ -46,6 +46,16 @@ Now we need to compile the Fortran and create the Python interface. This is done
 cmake -S . -B build
 cmake --build build
 ```
+CMake needs to be at least version `3.13.0`. This is so that the command `cmake -S . -B build` executes correctly. Running this command on an earlier CMake version results in:
+```bash
+CMake Error: The source directory "/home/process/build" does not exist.
+Specify --help for usage, or press the help button on the CMake GUI.
+``` 
+subsequently making the `build` directory and running the command again results in:
+```bash
+CMake Error: The source directory "/home/process/build" does not appear to contain CMakeLists.txt.
+Specify --help for usage, or press the help button on the CMake GUI.
+```
 
 The build step may take some time when run for the first time (~3 mins) as the Fortran code is compiled and then wrapped using `f90wrap` and `f2py` to create the Python libraries. Once this is completed the Process Python package is then automatically installed using `pip` and should be ready to use on Linux. If the installation was successful the command `process` should be available on the command line.
 

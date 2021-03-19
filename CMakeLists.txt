@@ -4,7 +4,7 @@
 
 # Specify the minimum version for CMake
 # 3.12 is required due to use of list TRANSFORM commands
-CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.13)
 
 # Ensure python3 interpreter is used
 if(CMAKE_HOST_APPLE)
