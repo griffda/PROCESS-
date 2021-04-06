@@ -200,7 +200,8 @@ contains
     real(dp), dimension(lwa_), intent(out) :: wa_
     real(dp), dimension(lcnorm_,m_), intent(out) :: cnorm_
     real(dp), dimension(lh_,lh_), intent(out) :: h_
-    real(dp), dimension(:), intent(out) :: vlam_,vmu_,gm_,bdl_,bdu_
+    real(dp), dimension(m_+2*n_+1), intent(out) :: vlam_, vmu_
+    real(dp), dimension(n_+1), intent(out) :: gm_, bdl_, bdu_
     real(dp), intent(out), optional :: sum_
 
     ! Input

@@ -1,7 +1,30 @@
 # Changelog
-All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.1.1] - 2021-03-17
+### Added
+Adding the EBW scaling (#1262)
+Cost model 2 adds remote handing costs
+Cryopower constraint (#1120)
+Find a way to only review regression test diffs >5% (#1242)
+Adding the insulation effect to the Young modulus smearing in the vertical direction
+Adding the scan plot utility
+Create tool for updating test references (#1239)
+
+### Changed
+Move to semantic versioning (#1241)
+Move obsolete_vars.py into Python package for Blueprint use (#1279)
+Joints heating error (#1264)
+Corrected some power accounting issues in creating the sankey diagram (#1265)
+Plot ploc plotting (#1217)
+Break vmcon into smaller subroutines (#1078)
+Python-Fortran dictionaries not updating (#1235)
+Updated core references in documentation (#1247)
 
 ## [2.1] - 2021-01-25
 ### Added
