@@ -2660,7 +2660,7 @@ contains
        B_max_k(k) = bmax_from_awp(wp_width_r(k),coilcurrent)
  
        ! jcrit for this bmax:
-       jcrit_vector(k) = jcrit_frommaterial(B_max_k(k),tftmp) ! Get here a temperature margin of 1.5K.
+       jcrit_vector(k) = jcrit_frommaterial(B_max_k(k),tftmp+1.5) ! Get here a temperature margin of 1.5K.
  
      end do
  
