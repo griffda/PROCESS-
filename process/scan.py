@@ -2,7 +2,6 @@ from process.fortran import error_handling
 from process.fortran import final_module
 from process.fortran import scan_module
 from process.fortran import numerics
-from process.fortran import define_iteration_variables
 from process.optimiser import Optimiser
 import numpy as np
 
@@ -26,7 +25,7 @@ class Scan():
 
         if scan_module.isweep == 0:
             self.doopt()
-            final_module.final(self.optimiser.ifail)
+            final_module.final(self.optimiser.vmcon.ifail)
             return
 
         if scan_module.isweep > scan_module.ipnscns:
@@ -45,14 +44,8 @@ class Scan():
         if numerics.ioptimz < 0:
             return
 
-        # Set up variables to be iterated
-        # MDK Allocating here doesn't work if there is a scan
-        # allocate(name_xc(nvar))
-        define_iteration_variables.loadxc()
-        define_iteration_variables.boundxc()
-
         self.optimiser.run()
-        scan_module.post_optimise(self.optimiser.ifail)
+        scan_module.post_optimise(self.optimiser.vmcon.ifail)
 
     def scan_1d(self):
         """Run a 1-D scan."""
@@ -69,7 +62,7 @@ class Scan():
             self.doopt()
 
             # outvar is an intent(out) of scan_1d_store_output()
-            scan_module.scan_1d_store_output(iscan, self.optimiser.ifail, outvar)
+            scan_module.scan_1d_store_output(iscan, self.optimiser.vmcon.ifail, outvar)
 
         # outvar now contains results
         scan_module.scan_1d_write_plot(iscan, outvar)
@@ -97,7 +90,7 @@ class Scan():
                 )
                 self.doopt()
                 
-                scan_module.scan_2d_store_output(self.optimiser.ifail, iscan_1,
+                scan_module.scan_2d_store_output(self.optimiser.vmcon.ifail, iscan_1,
                     iscan_R, iscan, outvar, sweep_1_vals, sweep_2_vals
                 )
 

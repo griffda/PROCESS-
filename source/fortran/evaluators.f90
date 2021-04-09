@@ -79,7 +79,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine fcnvmc1(n,m,xv,objf,conf,ifail)
+  subroutine fcnvmc1(n,m,xv,objf,conf,ifail_in, ifail_out)
     !! Function evaluator for VMCON
     !! author: P J Knight, CCFE, Culham Science Centre
     !! n       : input integer     : number of variables
@@ -87,7 +87,8 @@ contains
     !! xv(n)   : input real array  : scaled variable values
     !! objf    : output real       : objective function
     !! conf(m) : output real array : constraint functions
-    !! ifail   : input/output integer  : error flag, if < 0 stops calculation
+    !! ifail_in: input integer     : error flag, if < 0 stops calculation
+    !! ifail_out: output integer   : error flag, if < 0 stops calculation
     !! This routine is the function evaluator for the VMCON
     !! maximisation/minimisation routine.
     !! <P>It calculates the objective and constraint functions at the
@@ -114,7 +115,8 @@ contains
     real(dp), dimension(n), intent(in) :: xv
     real(dp), intent(out) :: objf
     real(dp), dimension(m), intent(out) :: conf
-    integer, intent(inout) :: ifail
+    integer, intent(in) :: ifail_in
+    integer, intent(out) :: ifail_out
 
     !  Local variables
 
@@ -163,8 +165,8 @@ contains
     call constraint_eqns(m,conf,-1)
 
     !  To stop the program, set ifail < 0 here.
-
-    ifail = 1 * ifail
+    ! #TODO Not sure this serves any purpose
+    ifail_out = 1 * ifail_in
 
     !  Verbose diagnostics
 
@@ -174,7 +176,7 @@ contains
           summ = summ + conf(ii)*conf(ii)
        end do
        sqsumconfsq = sqrt(summ)
-       write(vfile,'(3i13,100es13.5)') nviter, (1-mod(ifail,7))-1, &
+       write(vfile,'(3i13,100es13.5)') nviter, (1-mod(ifail_out,7))-1, &
             mod(nviter,2)-1,te,coe,rmajor,powfmw,bt,tburn,sqsumconfsq,xv
     end if
 
@@ -182,7 +184,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine fcnvmc2(n,m,xv,fgrd,cnorm,lcnorm,ifail)
+  subroutine fcnvmc2(n,m,xv,fgrd,cnorm,lcnorm, ifail_in, ifail_out)
 
     !! Gradient function evaluator for VMCON
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -193,7 +195,8 @@ contains
     !! cnorm(lcnorm,m) : output real array : constraint gradients, i.e.
     !! cnorm(i,j) is the derivative of constraint j w.r.t. variable i
     !! lcnorm  : input integer     : number of columns in cnorm
-    !! ifail   : input/output integer  : error flag, if < 0 stops calculation
+    !! ifail_in: input integer     : error flag, if < 0 stops calculation
+    !! ifail_out: output integer   : error flag, if < 0 stops calculation
     !! This routine is the gradient function evaluator for the VMCON
     !! maximisation/minimisation routine.
     !! <P>It calculates the gradients of the objective and constraint
@@ -215,7 +218,8 @@ contains
     real(dp), dimension(n), intent(in) :: xv
     real(dp), dimension(n), intent(out) :: fgrd
     real(dp), dimension(lcnorm,m), intent(out) :: cnorm
-    integer, intent(inout) :: ifail
+    integer, intent(in) :: ifail_in
+    integer, intent(out) :: ifail_out
 
     !  Local variables
 
@@ -269,7 +273,8 @@ contains
 
     !  To stop the program, set ifail < 0 here.
 
-    ifail = 1 * ifail
+    ! #TODO Not sure this serves any purpose
+    ifail_out = 1 * ifail_in
 
   end subroutine fcnvmc2
 

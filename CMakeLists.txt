@@ -121,6 +121,7 @@ LIST(APPEND PROCESS_SRCS
     iteration_variables.f90
     optimiz_module.f90
     vmcon.f90
+    evaluators.f90
 )
 
 # Install all requirements in the current Python environment
