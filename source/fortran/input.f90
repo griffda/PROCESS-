@@ -623,7 +623,7 @@ contains
           call parse_int_variable('ibss', ibss, 1, 4, &
                'Switch for bootstrap scaling')
        case ('iculbl')
-          call parse_int_variable('iculbl', iculbl, 0, 2, &
+          call parse_int_variable('iculbl', iculbl, 0, 3, &
                'Switch for beta limit scaling')
        case ('iculdl')
           write(outfile,*) ' '
