@@ -251,6 +251,7 @@ module physics_variables
   !! - =0 apply limit to total beta
   !! - =1 apply limit to thermal beta
   !! - =2 apply limit to thermal + neutral beam beta
+  !! - =3 apply limit to toroidal beta
 
   integer :: icurr
   !! switch for plasma current scaling to use

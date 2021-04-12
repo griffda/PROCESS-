@@ -1731,7 +1731,7 @@ def plot_physics_info(axis, mfile_data, scan):
             ("q95", "$q_{\mathrm{95}}$", ""),
             ("normalised_thermal_beta", r"$\beta_N$, thermal",
              "% m T MA$^{-1}$"),
-            ("normalised_total_beta", r"$\beta_N$, total", "% m T MA$^{-1}$"),
+            ("normalised_toroidal_beta", r"$\beta_N$, toroidal", "% m T MA$^{-1}$"),
             ("thermal_poloidal_beta", r"$\beta_P$, thermal", ""),
             ("betap", r"$\beta_P$, total", ""),
             ("te", r"$< t_e >$", "keV"),
