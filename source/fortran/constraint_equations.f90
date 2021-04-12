@@ -1142,7 +1142,7 @@ contains
       !! <LI> = 0 apply limit to total beta;
       !! <LI> = 1 apply limit to thermal beta;
       !! <LI> = 2 apply limit to thermal + neutral beam beta
-      !! <LI> = 0 apply limit to toroidal beta </UL>
+      !! <LI> = 3 apply limit to toroidal beta </UL>
       !! istell : input integer : switch for stellarator option (set via <CODE>device.dat</CODE>):<UL>
       !! <LI> = 0 use tokamak model;
       !! <LI> = 1 use stellarator model</UL>
