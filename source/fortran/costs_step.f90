@@ -75,7 +75,8 @@ contains
 
     use constants, only: pi
     use build_variables, only: r_tf_outboard_mid, tfthko, hpfu, hmax, tfcth
-    use cost_variables, only: output_costs, cdirt, concost, ireactor, ipnet, step_ref
+    use cost_variables, only: output_costs, cdirt, concost, ireactor, ipnet, &
+             step_ref, step_currency
     use fwbs_variables, only: emultmw
     use heat_transport_variables, only: pinjwp
     use physics_variables, only: powfmw
@@ -85,6 +86,7 @@ contains
 
     ! Arguments
     integer, intent(in) :: iprint,outfile
+    character(len=80) :: title
 
     ! Local variables
 
@@ -105,13 +107,9 @@ contains
     rminor_star = rmajor_star / 3.6D0   ! Minor Radius (m)
 
     ! Output header
-    if ((iprint==1).and.(output_costs == 1).and.(step_ref(1)==3.0D0)) then
-      call oheadr(outfile,'STEP Costing Model (1980 US$)')
-      !call oheadr(outfile,'!!WARNING - Under development!! DO NOT USE!')
-    end if
-
-    if ((iprint==1).and.(output_costs == 1).and.(step_ref(1) /= 3.0D0)) then
-      call oheadr(outfile,'STEP Costing Model (2017 US$)')
+    if ((iprint==1).and.(output_costs == 1)) then
+      title = 'STEP Costing Model ('// trim(step_currency) // ')'
+      call oheadr(outfile,trim(title))
     end if
     
     ! Account 20 : Land and Rights
@@ -648,7 +646,7 @@ contains
 		use pfcoil_variables, only: rjconpf, ipfres, vfohc, nohc, turns, isumatpf, &
       whtpfs, ric, rpf, isumatoh, fcupfsu, fcuohsu, vf, awpoh 
 		use structure_variables, only: fncmass 
-		use tfcoil_variables, only: dcond
+    use tfcoil_variables, only: dcond
     implicit none
 
     !  Arguments

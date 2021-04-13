@@ -328,6 +328,9 @@ module cost_variables
   real(dp) :: step_cconshpf
   !! cost of PF coil steel conduit/sheath ($/m) (if cost model = 2) 
 
+  character(len=50) :: step_currency
+  !! description of the constant dollar year used
+
   real(dp) :: step_uccase
   !! cost of superconductor case ($/kg) (if cost model = 2)
 
@@ -702,6 +705,7 @@ module cost_variables
     step_con = 1.5D-1
     step_cconfix = 80.0D0
     step_cconshpf = 70.0D0
+    step_currency = "1980 US$"
     step_uccase = 50.0D0
     step_uccu = 75.0D0
     step_ucsc = (/ 600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0, 300.0D0 /)

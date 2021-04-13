@@ -230,7 +230,8 @@ contains
       ucblli, ucpfcb, tlife, ipnet, fcdfuel, ucbus, ucpfb, uchts, &
       maintenance_fwbs, fwbs_prob_fail, uclh, ucblss, ucblvd, ucsc, ucturb, &
       ucpens, cland, ucwindpf, i_cp_lifetime, cplife_input, step_con, &
-      step_cconfix, step_cconshpf, step_uccase, step_uccu, step_ucsc, step_ucfnc
+      step_cconfix, step_cconshpf, step_currency, step_uccase, step_uccu, &
+      step_ucsc, step_ucfnc
     use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
@@ -2623,6 +2624,9 @@ contains
        case('step_cconshpf')
           call parse_real_variable('step_cconshpf', step_cconshpf, 0.0D0, 3.0D2, &
                'cost of PF coil steel conduit/sheath ($/m) (if cost model = 2)' )
+       case ('step_currency')
+               call parse_string_variable('step_currency', step_currency, &
+                    'description of the constant dollar year used')
        case('step_uccase')
          call parse_real_variable('step_uccase', step_uccase, 0.0D0, 3.0D2, &
                'cost of superconductor case ($/kg) (if cost model = 2)' )
