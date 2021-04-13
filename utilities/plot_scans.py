@@ -131,6 +131,7 @@ if __name__ == '__main__':
     labels["kappa"] = r'$\kappa_\mathrm{sep}$'
     labels["triang"] = r'$\delta_\mathrm{sep}$'
     labels["f_tf_steel"] = r'f_\mathrm{steel}^\mathrm{TF}'
+    labels["plascur/1d6"] = r'$I_{\mathrm{p}}$[$MA$]'
     # ------------
 
     # nsweep varible dict
@@ -395,7 +396,10 @@ if __name__ == '__main__':
             plt.xticks( size = axis_tick_size )
             plt.yticks( size = axis_tick_size )
             plt.tight_layout()
-            plt.savefig( '{}/scan_{}_vs_{}.{}'.format(outdir, scan_var_name, output_name, save_format) )
+            if output_name == 'plascur/1d6':
+                plt.savefig( '{}/scan_{}_vs_{}.{}'.format(outdir, scan_var_name, 'plascur', save_format) )
+            else:
+                plt.savefig( '{}/scan_{}_vs_{}.{}'.format(outdir, scan_var_name, output_name, save_format) )
             plt.clf()
             plt.cla()
         # ------------
