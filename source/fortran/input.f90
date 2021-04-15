@@ -2639,6 +2639,18 @@ contains
        case('step_ucfnc')
          call parse_real_variable('step_ucfnc', step_ucfnc, 0.0D0, 3.0D2, &
                'outer PF coil fence support cost ($/kg) (if cost model = 2)' )
+       case ('step_ucblbe')
+         call parse_real_variable('ucblbe', ucblbe, 1.0D0, 1.0D3, &
+               'Unit cost for blanket Be ($/kg) (if cost model =2)')
+       case ('step_ucblbreed')
+         call parse_real_variable('ucblbreed', ucblbreed, 1.0D0, 1.0D3, &
+               'Unit cost for blanket breeder material ($/kg)')
+       case ('step_ucblss')
+          call parse_real_variable('ucblss', ucblss, 10.0D0, 1.0D3, &
+               'Unit cost for blanket st.steel ($/kg) (if cost model =2)')
+       case ('step_ucblvd')
+          call parse_real_variable('ucblvd', ucblvd, 100.0D0, 1.0D3, &
+               'Unit cost for blanket Vd ($/kg) (if cost model =2)')
        case ('i_cp_lifetime')
          call parse_int_variable('i_cp_lifetime', i_cp_lifetime, 0, 3, &
               'Switch for ST centrepost lifetime contraint (10) setting')

@@ -22,7 +22,7 @@ module costs_step_module
 
   !  Various cost account values (M$)
   real(dp) :: step20, step21, step22, step23, step24, step25, &
-  step27, step91, step92, step93, fwblkcost, step22010302
+  step27, step91, step92, step93, fwblkcost, step22010302, step220101
 
   ! Scaling Properties
   real(dp) :: vfi, vfi_star, ptherm_star, pinjmw_star, fwarea_star, &
@@ -490,7 +490,8 @@ contains
      
     ! 22.01.01 Blanket and First Wall
     ! Original STARFIRE value, scaling with first wall area
-    step220101 = step_ref(20) * (fwarea / fwarea_star)
+    !step220101 = step_ref(20) * (fwarea / fwarea_star)
+    call step_a220101
     if (ifueltyp==1) then
       fwblkcost = step220101
       step220101 = 0.0D0
@@ -618,6 +619,135 @@ contains
     end if
   
   end subroutine step_a2201
+
+  subroutine step_a220101
+
+    !! Account 22.01.01 : Blanket and First Wall 
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 22.01.01 (BB+FW) costs.
+    !! If ifueltyp = 1, the blanket cost is treated as a fuel cost,
+    !! rather than as a capital cost.
+    !! If ifueltyp = 2, the initial blanket is included as a capital cost
+    !! and the replacement blanket costs are treated as a fuel cost.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+		use cost_variables, only: step_ucblss, step_ucblbreed, step_ucblbe, ucblli, &
+      step_ucblvd, ucblli2o, blkcst, ucbllipb, ifueltyp, lsa, fkind, ucfws, &
+      fwallcst, ucfwps, ucfwa
+		use fwbs_variables, only: blktmodel, whtblli, blkttype, wtblli2o, &
+      whtblbreed, whtblvd, whtblbe, whtblss, wtbllipb 
+    use build_variables, only: fwarea 
+		use heat_transport_variables, only: ipowerflow 
+    
+    implicit none
+
+    !  Arguments
+
+    !  Local variables
+
+    real(dp) :: step22010101, step22010102, step2201010201, step2201010202, step2201010203, &
+                step2201010204, step2201010205, step2201010206, step2201010207
+    real(dp), dimension(4) :: cmlsa
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Cost multiplier for Level of Safety Assurance
+
+    cmlsa(1) = 0.5000D0
+    cmlsa(2) = 0.7500D0
+    cmlsa(3) = 0.8750D0
+    cmlsa(4) = 1.0000D0
+
+    !! Account 22.01.01.01 : First wall
+    
+    step22010101 = 1.0D-6 * cmlsa(lsa) * ((ucfwa+ucfws)*fwarea + ucfwps)
+
+    step22010101 = fkind * step22010101
+
+    if (ifueltyp == 1) then
+       fwallcst = step22010101
+       step22010101 = 0.0D0
+    elseif (ifueltyp == 2) then
+       fwallcst = step22010101
+    else
+       fwallcst = 0.0D0
+    end if
+
+    !! Account 22.01.01.02 : Breeder Blanket
+
+    if (ipowerflow == 0) then
+      
+      !! Account 22.01.01.02.01 : Blanket Multiplier Material 
+      step2201010201 = 1.0D-6 * whtblbe * step_ucblbe
+          
+      !! Account 22.01.01.02.02 : Blanket Breeder Material
+      if (blktmodel == 0) then
+             step2201010202 = 1.0D-6 * wtblli2o * ucblli2o
+      else
+             step2201010202 = 1.0D-6 * whtblbreed * step_ucblbreed
+      end if
+    else
+      if ((blkttype == 1).or.(blkttype == 2)) then
+         !  Liquid blanket (LiPb + Li)
+         !! Account 22.01.01.02.01 : Blanket Multiplier Material 
+        step2201010201 = 1.0D-6 * wtbllipb * ucbllipb
+         !! Account 22.01.01.02.02 : Blanket Breeder Material 
+        step2201010202 = 1.0D-6 * whtblli * ucblli
+      else
+         !  Solid blanket (Li2O + Be)
+         !! Account 22.01.01.02.01 : Blanket Multiplier Material 
+        step2201010201 = 1.0D-6 * whtblbe * step_ucblbe
+         !! Account 22.01.01.02.02 : Blanket Breeder Material
+        step2201010202 = 1.0D-6 * wtblli2o * ucblli2o
+      end if
+    end if
+
+    step2201010201 = fkind * step2201010201 * cmlsa(lsa)
+    step2201010202 = fkind * step2201010202 * cmlsa(lsa)
+
+    !! Account 22.01.01.02.03 : Blanket Steel Costs
+    step2201010203 = 1.0D-6 * whtblss * step_ucblss
+    step2201010203 = fkind * step2201010203 * cmlsa(lsa)
+    
+    !! Account 22.01.01.02.04 : Blanket Vanadium Costs
+    step2201010204 = 1.0D-6 * whtblvd * step_ucblvd
+    step2201010204 = fkind * step2201010204 * cmlsa(lsa)
+       
+    !! Account 22.01.01.02.05 : Blanket Carbon Cloth Costs
+    step2201010205 = 0.0D0
+    step2201010205 = fkind * step2201010205 * cmlsa(lsa)
+       
+    !! Account 22.01.01.02.06 : Blanket Concrete Costs
+    step2201010206 = 0.0D0
+    step2201010206 = fkind * step2201010206 * cmlsa(lsa)
+
+    !! Account 22.01.01.02.07 : Blanket FLiBe Costs
+    step2201010207 = 0.0D0
+    step2201010207 = fkind * step2201010207 * cmlsa(lsa)
+
+    step22010102 = step2201010201 + step2201010202 + step2201010203 + step2201010204 &
+     + step2201010205 + step2201010206 + step2201010207
+
+    if (ifueltyp == 1) then
+       blkcst = step22010102
+       step22010102 = 0.0D0
+    elseif (ifueltyp == 2) then
+       blkcst = step22010102
+    else
+       blkcst = 0.0D0
+    end if
+
+    !! Total for Account 22.01.01
+
+    step220101 = step22010101 + step22010102 
+
+  end subroutine step_a220101
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

@@ -331,6 +331,18 @@ module cost_variables
   character(len=50) :: step_currency
   !! description of the constant dollar year used
 
+  real(dp) :: step_ucblbe
+  !! unit cost for blanket Be ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucblbreed 
+  !! unit cost for blanket breeder material ($/kg) (if cost model = 2) 
+
+  real(dp) :: step_ucblss
+  !! unit cost for blanket stainless steel ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucblvd 
+  !! Unit cost for blanket Vd ($/kg) (if cost model = 2)
+
   real(dp) :: step_uccase
   !! cost of superconductor case ($/kg) (if cost model = 2)
 
@@ -706,6 +718,10 @@ module cost_variables
     step_cconfix = 80.0D0
     step_cconshpf = 70.0D0
     step_currency = "1980 US$"
+    step_ucblbe = 260.0D0
+    step_ucblbreed = 875.0D0
+    step_ucblss = 90.0D0
+    step_ucblvd = 200.0D0
     step_uccase = 50.0D0
     step_uccu = 75.0D0
     step_ucsc = (/ 600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0, 300.0D0 /)
