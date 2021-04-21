@@ -465,11 +465,12 @@ contains
 
     use build_variables, only: fwarea
     use cost_variables, only: output_costs, step_ref, ifueltyp, fcdfuel, &
-      divcst, cdcost, unit_cost_cryo_al, man_cost_cryo_al_per
+      divcst, cdcost, unit_cost_cryo_al, man_cost_cryo_al_per, uccpcl1, &
+      uccpclb, cpstcst, fkind, lsa, cfind
     use current_drive_variables, only: pinjmw
-    use physics_variables, only: rmajor, rminor
+    use physics_variables, only: rmajor, rminor, itart
     use process_output, only: ocosts, oblnkl
-    use tfcoil_variables, only: i_tf_sup, whtconal, n_tf
+    use tfcoil_variables, only: i_tf_sup, whtconal, n_tf, whttflgs, whtcp
     
     implicit none
   
@@ -482,11 +483,17 @@ contains
     step220101, step220102, step220104, step220105, step220106, &
     step220107, step220108, step220109, step220110, step2201, &
     step22010301, step22010302, step22010303, step22010304
-  
+    real(dp) :: c_tf_inboard_legs
+    !! Cost of TF coil inboard legs in M$
+    real(dp) :: c_tf_outboard_legs
+    !! Cost of TF coil outboard legs in M$
+
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
     ! Initialise as zero
     step2201 = 0.0D0
+    c_tf_inboard_legs = 0.0D0
+    c_tf_outboard_legs = 0.0D0
      
     ! 22.01.01 Blanket and First Wall
     ! Original STARFIRE value, scaling with first wall area
@@ -506,10 +513,30 @@ contains
   
     ! 22.01.03.01 TF Coils
     ! step22010301 is cost of TF coils in M$
-    ! Copper coils: guard against undefined cost
+    ! Copper coils
     if (i_tf_sup == 0) then
-      step22010301 = 0
-    endif
+      ! Calculation taken from cost model 0: simply the cost of copper conductor
+      ! masses
+      ! Inboard TF coil legs
+      c_tf_inboard_legs = 1.0D-6 * whtcp * uccpcl1 * cfind(lsa)
+      c_tf_inboard_legs = fkind * c_tf_inboard_legs
+
+      ! cpstcst used later in coelc_step()
+      cpstcst = 0.0D0  !  TART centrepost
+      if ((itart == 1).and.(ifueltyp == 1)) then
+         cpstcst = c_tf_inboard_legs
+         c_tf_inboard_legs = 0.0D0
+      elseif ((itart == 1).and.(ifueltyp == 2)) then
+         cpstcst = c_tf_inboard_legs
+      end if
+
+      ! Outboard TF coil legs
+      c_tf_outboard_legs = 1.0D-6 * whttflgs * uccpclb * cfind(lsa)
+      c_tf_outboard_legs = fkind * c_tf_outboard_legs
+
+      ! Total TF coil cost
+      step22010301 = c_tf_inboard_legs + c_tf_outboard_legs
+   endif
     
     ! Superconducting coils
     if (i_tf_sup == 1) then
