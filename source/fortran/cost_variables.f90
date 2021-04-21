@@ -13,6 +13,9 @@ module cost_variables
 
   public
 
+  real(dp), parameter :: COST_MODEL_DEFAULT = 1.0D0
+  !! Default value for sensitive costings, overwritten as required by input file
+  
   real(dp) :: abktflnc
   !! allowable first wall/blanket neutron fluence (MW-yr/m2) (`blktmodel=0`)
 
@@ -747,7 +750,7 @@ module cost_variables
     ucwst = (/0.0D0, 3.94D0, 5.91D0, 7.88D0/)
     i_cp_lifetime = 0
     cplife_input = 2.0D0
-    unit_cost_cryo_al = 105.0D0 ! Laurand price 105 $/kg for 5N purity
+    unit_cost_cryo_al = COST_MODEL_DEFAULT
     man_cost_cryo_al_per = 20.0D0
   end subroutine init_cost_variables
 end module cost_variables
