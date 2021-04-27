@@ -137,14 +137,14 @@ contains
     ! Total plant direct cost with remote handling
     cdirt = cdirt + step27
 
-    ! Account 91 : Construction Facilities, Equipment and Services (10%)
-    step91 = 1.0D-1 * cdirt
+    ! Account 91 : Construction Facilities, Equipment and Services (30%)
+    step91 = 3.0D-1 * cdirt
 
-    ! Account 92 : Engineering and Costruction Management Services (8%)
-    step92 = 8.0D-2 * cdirt
+    ! Account 92 : Engineering and Costruction Management Services (32.5%)
+    step92 = 3.25D-1 * cdirt
 
     ! Account 93 : Other Costs (5%)
-    step93 = 5.0D-2 * cdirt
+    step93 = 1.5D-1 * cdirt
 
     ! Constructed cost
     concost = cdirt + step91 + step92 + step93
@@ -155,9 +155,9 @@ contains
       call ocosts(outfile,'(cdirt)','Plant direct cost (M$)',cdirt)
 
       call oshead(outfile,'Indirect Cost')
-      call ocosts(outfile,'(step91)','Construction Facilities, Equipment and Services (10%) (M$)',step91)
-      call ocosts(outfile,'(step92)','Engineering and Costruction Management Services (8%) (M$)',step92)
-      call ocosts(outfile,'(step93)','Other Costs (5%) (M$)',step93)
+      call ocosts(outfile,'(step91)','Construction Facilities, Equipment and Services (30%) (M$)',step91)
+      call ocosts(outfile,'(step92)','Engineering and Costruction Management Services (32.5%) (M$)',step92)
+      call ocosts(outfile,'(step93)','Other Costs (15%) (M$)',step93)
 
       call oshead(outfile,'Constructed Cost')
       call ocosts(outfile,'(concost)','Constructed Cost (M$)',concost)
