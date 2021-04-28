@@ -465,7 +465,7 @@ contains
 
     use build_variables, only: fwarea
     use cost_variables, only: output_costs, step_ref, ifueltyp, fcdfuel, &
-      divcst, cdcost, unit_cost_cryo_al, man_cost_cryo_al_per, uccpcl1, &
+      divcst, cdcost, uc_cryo_al, mc_cryo_al_per, uccpcl1, &
       uccpclb, cpstcst, fkind, lsa, cfind
     use current_drive_variables, only: pinjmw
     use physics_variables, only: rmajor, rminor, itart
@@ -550,9 +550,9 @@ contains
       ! manufacturing cost factor
       ! Al conductor mass per coil * number of coils * cost per kilo *
       ! manufacturing cost factor, converted to M$
-      ! man_cost_cryo_al_per = 20.0: 20% manufacturing cost
-      step22010301 = (whtconal * n_tf * unit_cost_cryo_al) * &
-        ((man_cost_cryo_al_per / 100.0) + 1) * 1.0D-6
+      ! mc_cryo_al_per = 20.0: 20% manufacturing cost
+      step22010301 = (whtconal * n_tf * uc_cryo_al) * &
+        ((mc_cryo_al_per / 100.0) + 1) * 1.0D-6
     endif
 
     ! Add to total cost, step2201, in M$

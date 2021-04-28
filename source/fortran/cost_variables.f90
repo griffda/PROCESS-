@@ -526,10 +526,10 @@ module cost_variables
   real(dp), dimension(7) :: ucsc
   !! cost of superconductor ($/kg)
 
-  real(dp) :: unit_cost_cryo_al
+  real(dp) :: uc_cryo_al
   !! Unit cost of cryo aluminium ($/kg)
 
-  real(dp) :: man_cost_cryo_al_per
+  real(dp) :: mc_cryo_al_per
   !! Manufacturing cost percentage for cryo aluminium (%). 20.0 means a 20%
   !! manufacturing cost
 
@@ -750,7 +750,7 @@ module cost_variables
     ucwst = (/0.0D0, 3.94D0, 5.91D0, 7.88D0/)
     i_cp_lifetime = 0
     cplife_input = 2.0D0
-    unit_cost_cryo_al = COST_MODEL_DEFAULT
-    man_cost_cryo_al_per = 20.0D0
+    uc_cryo_al = COST_MODEL_DEFAULT
+    mc_cryo_al_per = 20.0D0
   end subroutine init_cost_variables
 end module cost_variables

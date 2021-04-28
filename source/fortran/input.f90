@@ -229,8 +229,8 @@ contains
       fwbs_umain_time, uchrs, avail_min, uciac, step_ref, ucshld, tdivrepl, &
       ucblli, ucpfcb, tlife, ipnet, fcdfuel, ucbus, ucpfb, uchts, &
       maintenance_fwbs, fwbs_prob_fail, uclh, ucblss, ucblvd, ucsc, ucturb, &
-      ucpens, cland, ucwindpf, i_cp_lifetime, cplife_input, unit_cost_cryo_al, &
-      man_cost_cryo_al_per
+      ucpens, cland, ucwindpf, i_cp_lifetime, cplife_input, uc_cryo_al, &
+      mc_cryo_al_per
     use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
@@ -2825,12 +2825,12 @@ contains
        case ('ucsc')
           call parse_real_array('ucsc', ucsc, isub1, 5, &
                'Cost of superconductor ($/kg)', icode)
-       case ('unit_cost_cryo_al')
-          call parse_real_variable('unit_cost_cryo_al', unit_cost_cryo_al, &
+       case ('uc_cryo_al')
+          call parse_real_variable('uc_cryo_al', uc_cryo_al, &
             5.0D1, 5.0D3, 'Cost of cryo aluminium ($/kg)')
-       case ('man_cost_cryo_al_per')
-          call parse_real_variable('man_cost_cryo_al_per', &
-            man_cost_cryo_al_per, 0.0D0, 100.0D0, &
+       case ('mc_cryo_al_per')
+          call parse_real_variable('mc_cryo_al_per', &
+            mc_cryo_al_per, 0.0D0, 100.0D0, &
             'Manufacturing cost percentage for cryo aluminium')
        case ('ucshld')
           call parse_real_variable('ucshld', ucshld, 1.0D0, 100.0D0, &
