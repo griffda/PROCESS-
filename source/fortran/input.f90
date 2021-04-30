@@ -231,7 +231,7 @@ contains
       maintenance_fwbs, fwbs_prob_fail, uclh, ucblss, ucblvd, ucsc, ucturb, &
       ucpens, cland, ucwindpf, i_cp_lifetime, cplife_input, step_con, &
       step_cconfix, step_cconshpf, step_currency, step_uccase, step_uccu, &
-      step_ucsc, step_ucfnc
+      step_ucsc, step_ucfnc, step_ucfwa, step_ucfws, step_ucfwps
     use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
@@ -2633,6 +2633,15 @@ contains
        case('step_uccu') 
          call parse_real_variable('step_uccu', step_uccu, 0.0D0, 3.0D2, &
                'unit cost for copper in superconducting cable ($/kg) (if cost model = 2)' ) 
+       case ('step_ucfwa')
+         call parse_real_variable('step_ucfwa', step_ucfwa, 0.0D0, 1.0D5, &
+         'first wall armour cost ($/m2) (if cost model = 2)' ) 
+      case ('step_ucfws')
+         call parse_real_variable('step_ucfws', step_ucfws, 0.0D0, 1.0D5, &
+         'first wall structure cost ($/m2) (if cost model = 2)' ) 
+      case ('step_ucfwps')
+         call parse_real_variable('step_ucfwps', step_ucfwps, 0.0D0, 1.0D9, &
+         'first wall passive stabiliser cost ($) (if cost model = 2)' ) 
        case('step_ucsc') 
          call parse_real_array('step_ucsc', step_ucsc, isub1, 7, &
               'cost of superconductor ($/kg) (if cost model = 2)', icode)

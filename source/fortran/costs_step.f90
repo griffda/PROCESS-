@@ -635,8 +635,8 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use cost_variables, only: step_ucblss, step_ucblbreed, step_ucblbe, ucblli, &
-      step_ucblvd, ucblli2o, blkcst, ucbllipb, ifueltyp, lsa, fkind, ucfws, &
-      fwallcst, ucfwps, ucfwa
+      step_ucblvd, ucblli2o, blkcst, ucbllipb, ifueltyp, lsa, fkind, step_ucfws, &
+      fwallcst, step_ucfwps, step_ucfwa
 		use fwbs_variables, only: blktmodel, whtblli, blkttype, wtblli2o, &
       whtblbreed, whtblvd, whtblbe, whtblss, wtbllipb 
     use build_variables, only: fwarea 
@@ -663,7 +663,7 @@ contains
 
     !! Account 22.01.01.01 : First wall
     
-    step22010101 = 1.0D-6 * cmlsa(lsa) * ((ucfwa+ucfws)*fwarea + ucfwps)
+    step22010101 = 1.0D-6 * cmlsa(lsa) * ((step_ucfwa+step_ucfws)*fwarea + step_ucfwps)
 
     step22010101 = fkind * step22010101
 

@@ -349,6 +349,15 @@ module cost_variables
   real(dp) :: step_uccu
   !! unit cost for copper in superconducting cable ($/kg) (if cost model = 2)
 
+  real(dp) :: step_ucfwa 
+  !! first wall armour cost ($/m2) (if cost model = 2)
+
+  real(dp) :: step_ucfws 
+  !! first wall structure cost ($/m2) (if cost model = 2)
+
+  real(dp) :: step_ucfwps 
+  !! first wall passive stabiliser cost ($) (if cost model = 2)
+
   real(dp), dimension(7) :: step_ucsc
   !! cost of superconductor ($/kg) (if cost model = 2)
 
@@ -718,12 +727,15 @@ module cost_variables
     step_cconfix = 217.0D0  
     step_cconshpf = 91.0D0
     step_currency = "2017 US$"
-    step_ucblbe = 260.0D0
-    step_ucblbreed = 875.0D0
-    step_ucblss = 90.0D0
-    step_ucblvd = 200.0D0
+    step_ucblbe = 260.0D0 ! needs update
+    step_ucblbreed = 875.0D0 ! needs update
+    step_ucblss = 90.0D0 ! needs update
+    step_ucblvd = 200.0D0 ! needs update
     step_uccase = 0.0D0
     step_uccu = 82.0D0
+    step_ucfwa = 6.0D4 ! needs update
+    step_ucfws = 5.3D4 ! needs update
+    step_ucfwps = 1.0D7 ! needs update
     step_ucsc = (/ 600.0D0, 600.0D0, 443.0D0, 600.0D0, 600.0D0, 600.0D0, 300.0D0 /)
     step_ucfnc = 104.3D0 
     step_ucwindpf = 465.0D0
