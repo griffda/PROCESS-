@@ -17,9 +17,6 @@ module costs_step_module
   use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
-  private
-  public :: costs_step, init_costs_step
-
   !  Various cost account values (M$)
   real(dp) :: step20, step21, step22, step23, step24, step25, &
   step27, step91, step92, step93, fwblkcost
