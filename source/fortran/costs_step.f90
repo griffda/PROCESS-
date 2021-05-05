@@ -17,9 +17,6 @@ module costs_step_module
   use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
-  private
-  public :: costs_step, init_costs_step
-
   !  Various cost account values (M$)
   real(dp) :: step20, step21, step22, step23, step24, step25, &
   step27, step91, step92, step93, fwblkcost
@@ -136,29 +133,17 @@ contains
 
     ! Total plant direct cost with remote handling
     cdirt = cdirt + step27
-
-    ! Account 91 : Construction Facilities, Equipment and Services (30%)
-    step91 = 3.0D-1 * cdirt
-
-    ! Account 92 : Engineering and Costruction Management Services (32.5%)
-    step92 = 3.25D-1 * cdirt
-
-    ! Account 93 : Other Costs (5%)
-    step93 = 1.5D-1 * cdirt
-
-    ! Constructed cost
-    concost = cdirt + step91 + step92 + step93
-
-    ! Output costs
     if ((iprint==1).and.(output_costs == 1)) then
       call oshead(outfile,'Plant Direct Cost')
       call ocosts(outfile,'(cdirt)','Plant direct cost (M$)',cdirt)
+    endif
 
-      call oshead(outfile,'Indirect Cost')
-      call ocosts(outfile,'(step91)','Construction Facilities, Equipment and Services (30%) (M$)',step91)
-      call ocosts(outfile,'(step92)','Engineering and Costruction Management Services (32.5%) (M$)',step92)
-      call ocosts(outfile,'(step93)','Other Costs (15%) (M$)',step93)
+    ! Accounts 91-93: Indirect costs
+    call step_indirect_costs(outfile, iprint)
 
+    ! Constructed cost
+    concost = cdirt + step91 + step92 + step93
+    if ((iprint==1).and.(output_costs == 1)) then
       call oshead(outfile,'Constructed Cost')
       call ocosts(outfile,'(concost)','Constructed Cost (M$)',concost)
     end if
@@ -1294,7 +1279,32 @@ contains
 
   end subroutine step_a27
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  subroutine step_indirect_costs(outfile, iprint)
+    !! Accounts 91-93: Indirect costs
+    !! Calculate the indirect costs and print
+    use cost_variables, only: cdirt, output_costs
+    use process_output, only: oshead, ocosts
+    implicit none
+
+    ! Arguments
+    integer, intent(in) :: outfile, iprint
+
+    ! Account 91 : Construction Facilities, Equipment and Services (30%)
+    step91 = 3.0D-1 * cdirt
+
+    ! Account 92 : Engineering and Costruction Management Services (32.5%)
+    step92 = 3.25D-1 * cdirt
+
+    ! Account 93 : Other Costs (5%)
+    step93 = 1.5D-1 * cdirt
+
+    if ((iprint==1).and.(output_costs == 1)) then
+      call oshead(outfile,'Indirect Cost')
+      call ocosts(outfile,'(step91)','Construction Facilities, Equipment and Services (30%) (M$)',step91)
+      call ocosts(outfile,'(step92)','Engineering and Costruction Management Services (32.5%) (M$)',step92)
+      call ocosts(outfile,'(step93)','Other Costs (15%) (M$)',step93)
+    endif
+  end subroutine step_indirect_costs
 
   subroutine coelc_step(outfile,iprint)
 
