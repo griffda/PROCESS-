@@ -17,9 +17,6 @@ module costs_step_module
   use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
-  private
-  public :: costs_step, init_costs_step
-
   !  Various cost account values (M$)
   real(dp) :: step20, step21, step22, step23, step24, step25, &
   step27, step91, step92, step93, fwblkcost
@@ -231,9 +228,13 @@ contains
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    ! #TODO Add reference for STEP cost values
     use cost_variables, only: output_costs, step_con, step_ref
     use process_output, only: oshead, ocosts, oblnkl
+    use buildings_variables, only: efloor
+    ! efloor is effective floor area in m^2
+    use heat_transport_variables, only: pgrossmw
+    ! pgrossmw is gross electric power of the plant in MW
 
     implicit none
 
@@ -256,80 +257,66 @@ contains
     ! Original STARFIRE value, scaling with thermal power
     step2101 = step_ref(3) * (pth / ptherm_star)**0.6D0
     step21 = step21 + step2101
-
+    
     ! 21.02 Reactor Building
-    ! Original STARFIRE value, scaling with fusion island volume
-    step2102 = step_ref(4) * (vfi / vfi_star)**(2.0D0/3.0D0)
+    step2102 = 8665 * efloor**1.2132 * 1.0e-6
+    ! * 1.0e-6 converts to M$
     step21 = step21 + step2102
-
+    
     ! 21.03 Turbine Building
-    ! Original STARFIRE value, scaling with thermal power
-    step2103 = step_ref(5) * (pth / ptherm_star)**0.6D0
+    step2103 = 314310 * pgrossmw * 1.0e-6
     step21 = step21 + step2103
 
     ! 21.04 Cooling System Structures
-    ! Original STARFIRE value, scaling with thermal power
-    step2104 = step_ref(6) * (pth / ptherm_star)**0.6D0
+    step2104 = 108155 * pgrossmw * 1.0e-6
     step21 = step21 + step2104
 
     ! 21.05 Electrical Equipment and Power Supply Building
-    ! Original STARFIRE value, scaling with thermal power
-    step2105 = step_ref(7) * (pth / ptherm_star)**0.6D0
+    step2105 = ((4688 * efloor) + 3185967) * 1.0e-6
     step21 = step21 + step2105
 
     ! 21.06 Auxiliary Services Building
-    ! Original STARFIRE value, scaling with thermal power
-    step2106 = step_ref(8) * (pth / ptherm_star)**0.6D0  
+    step2106 = ((3107 * efloor) + 1206225) * 1.0e-6
     step21 = step21 + step2106
 
     ! 21.07 Hot Cell
-    ! Original STARFIRE value, scaling with fusion island volume
-    step2107 = step_ref(9) * (vfi / vfi_star)**(2.0D0/3.0D0)
+    step2107 = ((19773 * efloor) + 5975425) * 1.0e-6
     step21 = step21 + step2107
 
     ! 21.08 Reactor Service Building
-    ! Original STARFIRE value, scaling with fusion island volume
-    step2108 = step_ref(10) * (vfi / vfi_star)**(2.0D0/3.0D0)
+    step2108 = ((8563 * efloor) + 3657324) * 1.0e-6
     step21 = step21 + step2108
 
     ! 21.09 Service Water Building
-    ! Original STARFIRE value, scaling with thermal power
-    step2109 = step_ref(11) * (pth / ptherm_star)**0.6D0  
+    step2109 = ((3288 * efloor) + 319189) * 1.0e-6
     step21 = step21 + step2109
 
     ! 21.10 Fuel Handling and Storage Building
-    ! Original STARFIRE value, scaling with thermal power
-    step2110 = step_ref(12) * (pth / ptherm_star)**0.6D0  
+    step2110 = ((31528 * efloor) + 9181501) * 1.0e-6
     step21 = step21 + step2110
 
     ! 21.11 Control Room
-    ! Original STARFIRE value, scaling with thermal power
-    step2111 = step_ref(13) * (pth / ptherm_star)**0.6D0
+    step2111 = ((12393 * efloor) + 1924890) * 1.0e-6
     step21 = step21 + step2111
 
     ! 21.12 AC Power Supply Building
-    ! Original STARFIRE value, scaling with thermal power
-    step2112 = step_ref(14) * (pth / ptherm_star)**0.6D0
+    step2112 = ((49755 * efloor) + 11591271) * 1.0e-6
     step21 = step21 + step2112
 
     ! 21.13 Admin Building
-    ! Original STARFIRE value, scaling with thermal power
-    step2113 = step_ref(15) * (pth / ptherm_star)**0.6D0
+    step2113 = ((3417 * efloor) + 3017077) * 1.0e-6
     step21 = step21 + step2113
 
     ! 21.14 Site Service
-    ! Original STARFIRE value, scaling with thermal power
-    step2114 = step_ref(16) * (pth / ptherm_star)**0.6D0  
+    step2114 = ((7305 * pgrossmw * 3842 * efloor) + 1193549) * 1.0e-6
     step21 = step21 + step2114
 
     ! 21.15 Cryogenics and Inert Gas Storage Building
-    ! Original STARFIRE value, scaling with thermal power
-    step2115 = step_ref(17) * (pth / ptherm_star)**0.6D0
+    step2115 = ((1017 * pgrossmw * 7031 * efloor) + 819004) * 1.0e-6
     step21 = step21 + step2115
 
     ! 21.16 Security Building
-    ! Original STARFIRE value, scaling with thermal power
-    step2116 = step_ref(18) * (pth / ptherm_star)**0.6D0  
+    step2116 = ((9190 * pgrossmw * 3227 * efloor) + 206804) * 1.0e-6
     step21 = step21 + step2116
 
     ! 21.17 Ventilation Stack
