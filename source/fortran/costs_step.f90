@@ -308,15 +308,15 @@ contains
     step21 = step21 + step2113
 
     ! 21.14 Site Service
-    step2114 = ((7305 * pgrossmw * 3842 * efloor) + 1193549) * 1.0e-6
+    step2114 = ((3842 * efloor) + 1193549) * 1.0e-6
     step21 = step21 + step2114
 
     ! 21.15 Cryogenics and Inert Gas Storage Building
-    step2115 = ((1017 * pgrossmw * 7031 * efloor) + 819004) * 1.0e-6
+    step2115 = ((7031 * efloor) + 819004) * 1.0e-6
     step21 = step21 + step2115
 
     ! 21.16 Security Building
-    step2116 = ((9190 * pgrossmw * 3227 * efloor) + 206804) * 1.0e-6
+    step2116 = ((3227 * efloor) + 206804) * 1.0e-6
     step21 = step21 + step2116
 
     ! 21.17 Ventilation Stack

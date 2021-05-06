@@ -109,6 +109,6 @@ def test_step_a21(monkeypatch, shared_cost_vars):
 
     # Run and assert result in M$
     cs.step_a21(0, 0)
-    exp = 3.75459189e8
+    exp = 2.76647e3
     obs = cs.step21
     assert pytest.approx(obs) == exp
