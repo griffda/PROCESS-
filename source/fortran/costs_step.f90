@@ -1301,9 +1301,9 @@ contains
 
     if ((iprint==1).and.(output_costs == 1)) then
       call oshead(outfile,'Indirect Cost')
-      call ocosts(outfile,'(step91)','Construction Facilities, Equipment and Services (default 30%) (M$)',step91)
-      call ocosts(outfile,'(step92)','Engineering and Costruction Management Services (default 32.5%) (M$)',step92)
-      call ocosts(outfile,'(step93)','Other Costs (default 15%) (M$)',step93)
+      call ocosts(outfile,'(step91)','Construction Facilities, Equipment and Services (M$)',step91)
+      call ocosts(outfile,'(step92)','Engineering and Costruction Management Services (M$)',step92)
+      call ocosts(outfile,'(step93)','Other Costs (M$)',step93)
     endif
   end subroutine step_indirect_costs
 
