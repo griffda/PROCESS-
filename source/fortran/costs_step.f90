@@ -1284,25 +1284,26 @@ contains
     !! Calculate the indirect costs and print
     use cost_variables, only: cdirt, output_costs
     use process_output, only: oshead, ocosts
+    use cost_variables, only: step91_per, step92_per, step93_per
     implicit none
 
     ! Arguments
     integer, intent(in) :: outfile, iprint
 
-    ! Account 91 : Construction Facilities, Equipment and Services (30%)
-    step91 = 3.0D-1 * cdirt
+    ! Account 91 : Construction Facilities, Equipment and Services (default 30%)
+    step91 = step91_per * cdirt
 
-    ! Account 92 : Engineering and Costruction Management Services (32.5%)
-    step92 = 3.25D-1 * cdirt
+    ! Account 92 : Engineering and Costruction Management Services (default 32.5%)
+    step92 = step92_per * cdirt
 
-    ! Account 93 : Other Costs (5%)
-    step93 = 1.5D-1 * cdirt
+    ! Account 93 : Other Costs (default 5%)
+    step93 = step93_per * cdirt
 
     if ((iprint==1).and.(output_costs == 1)) then
       call oshead(outfile,'Indirect Cost')
-      call ocosts(outfile,'(step91)','Construction Facilities, Equipment and Services (30%) (M$)',step91)
-      call ocosts(outfile,'(step92)','Engineering and Costruction Management Services (32.5%) (M$)',step92)
-      call ocosts(outfile,'(step93)','Other Costs (15%) (M$)',step93)
+      call ocosts(outfile,'(step91)','Construction Facilities, Equipment and Services (default 30%) (M$)',step91)
+      call ocosts(outfile,'(step92)','Engineering and Costruction Management Services (default 32.5%) (M$)',step92)
+      call ocosts(outfile,'(step93)','Other Costs (default 15%) (M$)',step93)
     endif
   end subroutine step_indirect_costs
 
