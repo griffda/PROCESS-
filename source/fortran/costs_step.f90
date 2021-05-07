@@ -259,64 +259,64 @@ contains
     step21 = step21 + step2101
     
     ! 21.02 Reactor Building
-    step2102 = 8665 * efloor**1.2132 * 1.0D-6
+    step2102 = 8.665D3 * efloor**1.2132 * 1.0D-6
     ! * 1.0D-6 converts to M$
     step21 = step21 + step2102
     
     ! 21.03 Turbine Building
-    step2103 = 314310 * pgrossmw * 1.0D-6
+    step2103 = 3.14310D5 * pgrossmw * 1.0D-6
     step21 = step21 + step2103
 
     ! 21.04 Cooling System Structures
-    step2104 = 108155 * pgrossmw * 1.0D-6
+    step2104 = 1.08155D5 * pgrossmw * 1.0D-6
     step21 = step21 + step2104
 
     ! 21.05 Electrical Equipment and Power Supply Building
-    step2105 = ((4688 * efloor) + 3185967) * 1.0D-6
+    step2105 = ((4.688D3 * efloor) + 3.185967D6) * 1.0D-6
     step21 = step21 + step2105
 
     ! 21.06 Auxiliary Services Building
-    step2106 = ((3107 * efloor) + 1206225) * 1.0D-6
+    step2106 = ((3.107D3 * efloor) + 1.206225D6) * 1.0D-6
     step21 = step21 + step2106
 
     ! 21.07 Hot Cell
-    step2107 = ((19773 * efloor) + 5975425) * 1.0D-6
+    step2107 = ((1.9773D4 * efloor) + 5.975425D6) * 1.0D-6
     step21 = step21 + step2107
 
     ! 21.08 Reactor Service Building
-    step2108 = ((8563 * efloor) + 3657324) * 1.0D-6
+    step2108 = ((8.563D3 * efloor) + 3.657324D6) * 1.0D-6
     step21 = step21 + step2108
 
     ! 21.09 Service Water Building
-    step2109 = ((3288 * efloor) + 319189) * 1.0D-6
+    step2109 = ((3.288D3 * efloor) + 3.19189D5) * 1.0D-6
     step21 = step21 + step2109
 
     ! 21.10 Fuel Handling and Storage Building
-    step2110 = ((31528 * efloor) + 9181501) * 1.0D-6
+    step2110 = ((3.1528D4 * efloor) + 9.181501D6) * 1.0D-6
     step21 = step21 + step2110
 
     ! 21.11 Control Room
-    step2111 = ((12393 * efloor) + 1924890) * 1.0D-6
+    step2111 = ((1.2393D4 * efloor) + 1.924890D6) * 1.0D-6
     step21 = step21 + step2111
 
     ! 21.12 AC Power Supply Building
-    step2112 = ((49755 * efloor) + 11591271) * 1.0D-6
+    step2112 = ((4.9755D4 * efloor) + 1.1591271D7) * 1.0D-6
     step21 = step21 + step2112
 
     ! 21.13 Admin Building
-    step2113 = ((3417 * efloor) + 3017077) * 1.0D-6
+    step2113 = ((3.417D3 * efloor) + 3.017077D6) * 1.0D-6
     step21 = step21 + step2113
 
     ! 21.14 Site Service
-    step2114 = ((3842 * efloor) + 1193549) * 1.0D-6
+    step2114 = ((3.842D3 * efloor) + 1.193549D6) * 1.0D-6
     step21 = step21 + step2114
 
     ! 21.15 Cryogenics and Inert Gas Storage Building
-    step2115 = ((7031 * efloor) + 819004) * 1.0D-6
+    step2115 = ((7.031D3 * efloor) + 8.19004D5) * 1.0D-6
     step21 = step21 + step2115
 
     ! 21.16 Security Building
-    step2116 = ((3227 * efloor) + 206804) * 1.0D-6
+    step2116 = ((3.227D3 * efloor) + 2.06804D5) * 1.0D-6
     step21 = step21 + step2116
 
     ! 21.17 Ventilation Stack
@@ -636,7 +636,7 @@ contains
      
     ! 22.02 Heat Transfer System
     ! #TODO Needs reference for values
-    step2202 = 92238 * pgrossmw * 1.0D-6
+    step2202 = 9.2238D4 * pgrossmw * 1.0D-6
     ! Converted to M$
   
     ! Add to Account 22 total
@@ -1013,13 +1013,13 @@ contains
     ! 23.06 Other Turbine Equipment
     ! 23.07 Instrumentation and Control
     ! The above accounts total:
-    generator_sys = 555440 * pgrossmw * 1.0D-6
+    generator_sys = 5.55440D5 * pgrossmw * 1.0D-6
     ! #TODO Should this have its own account, now the others have been combined?
     ! These accounts should be tidied up
     step23 = step23 + generator_sys
 
     ! 23.03 Heat Rejection
-    step2303 = ((80437 * pgrossmw) + 22264895) * 1.0D-6
+    step2303 = ((8.0437D4 * pgrossmw) + 2.2264895D7) * 1.0D-6
     step23 = step23 + step2303
 
     ! 23.98 Spares
@@ -1077,31 +1077,31 @@ contains
     step24 = 0.0D0
     
     ! 24.01 Switch Gear
-    step2401 = 18906 * pgrossmw * 1.0D-6
+    step2401 = 1.8906D4 * pgrossmw * 1.0D-6
     step24 = step24 + step2401
     
     ! 24.02 Station Service Equipment
-    step2402 = 51412 * pgrossmw * 1.0D-6
+    step2402 = 5.1412D4 * pgrossmw * 1.0D-6
     step24 = step24 + step2402
     
     ! 24.03 Switchboards
-    step2403 = 2985 * pgrossmw * 1.0D-6
+    step2403 = 2.985D3 * pgrossmw * 1.0D-6
     step24 = step24 + step2403
     
     ! 24.04 Protective Equipment
-    step2404 = ((30500 * (pgrossmw / 1200) * 18) + (4000000 * 1 * (pgrossmw / 1200))) * 1.0D-6
+    step2404 = ((3.05D4 * (pgrossmw / 1.2D3) * 18.0D0) + (4.0D6 * (pgrossmw / 1.2D3))) * 1.0D-6
     step24 = step24 + step2404
     
     ! 24.05 Electrical Structures
-    step2405 = ((30500 * (pgrossmw / 1200) * 130) + (4000000 * 9 * (pgrossmw / 1200))) * 1.0D-6
+    step2405 = ((3.05D4 * (pgrossmw / 1.2D3) * 1.3D2) + (4.0D6 * 9.0D0 * (pgrossmw / 1.2D3))) * 1.0D-6
     step24 = step24 + step2405
     
     ! 24.06 Power and Control Wiring
-    step2406 = 28989 * pgrossmw * 1.0D-6
+    step2406 = 2.8989D4 * pgrossmw * 1.0D-6
     step24 = step24 + step2406
     
     ! 24.07 Electric Lighting
-    step2407 = ((30500 * (pgrossmw / 1200) * 200) + (4000000 * 4 * (pgrossmw / 1200))) * 1.0D-6
+    step2407 = ((3.05D4 * (pgrossmw / 1.2D3) * 2.0D2) + (4.0D6 * 4.0D0 * (pgrossmw / 1.2D3))) * 1.0D-6
     step24 = step24 + step2407
 
     ! 24.98 Spares
@@ -1165,21 +1165,21 @@ contains
     step25 = 0.0D0
     
     ! 25.01 Transport and Lifting Equipment
-    step2501 = ((38005 * (wgt / 1000)) + 1529727) * 1.0D-6
+    step2501 = ((3.8005D4 * (wgt / 1.0D3)) + 1.529727D6) * 1.0D-6
     ! wgt is reactor building crane capacity (kg)
     ! #TODO Check that wgt is the correct variable to use here
     step25 = step25 + step2501
     
     ! 25.02 Air and Water Service System
-    step2502 = 120689 * pgrossmw * 1.0D-6
+    step2502 = 1.20689D5 * pgrossmw * 1.0D-6
     step25 = step25 + step2502
     
     ! 25.03 Communications Equipment
-    step2503 = ((30500 * (pgrossmw / 1200) * 218) + (4000000 * 3 * (pgrossmw / 1200))) * 1.0D-6
+    step2503 = ((3.05D4 * (pgrossmw / 1.2D3) * 2.18D2) + (4.0D6 * 3.0D0 * (pgrossmw / 1.2D3))) * 1.0D-6
     step25 = step25 + step2503
     
     ! 25.04 Furnishing and Fixtures
-    step2504 = 3000 * pgrossmw * 1.0D-6
+    step2504 = 3.0D3 * pgrossmw * 1.0D-6
     step25 = step25 + step2504
   
     ! 25.98 Spares
