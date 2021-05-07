@@ -618,7 +618,7 @@ contains
     !! 22.01.03.01 TF Coils
     !! Returns cost of TF coils
     use cost_variables, only: step_ref, cpstcst, fkind, lsa, cfind, ifueltyp, &
-      uc_cryo_al, mc_cryo_al_per, uccpcl1, uccpclb
+      step_uc_cryo_al, step_mc_cryo_al_per, uccpcl1, uccpclb
     use tfcoil_variables, only: i_tf_sup, whtconal, n_tf, whttflgs, whtcp
     use physics_variables, only: itart
     implicit none
@@ -674,9 +674,9 @@ contains
       ! manufacturing cost factor
       ! Al conductor mass per coil * number of coils * cost per kilo *
       ! manufacturing cost factor, converted to M$
-      ! mc_cryo_al_per = 20.0: 20% manufacturing cost
-      step22010301 = (whtconal * n_tf * uc_cryo_al) * &
-        ((mc_cryo_al_per / 100.0) + 1) * 1.0D-6
+      ! step_mc_cryo_al_per = 20.0: 20% manufacturing cost
+      step22010301 = (whtconal * n_tf * step_uc_cryo_al) * &
+        ((step_mc_cryo_al_per / 100.0) + 1) * 1.0D-6
     endif
   end function step_a22010301
 

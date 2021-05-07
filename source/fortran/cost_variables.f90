@@ -523,12 +523,12 @@ module cost_variables
   real(dp), dimension(7) :: ucsc
   !! cost of superconductor ($/kg)
 
-  real(dp) :: uc_cryo_al
-  !! Unit cost of cryo aluminium ($/kg)
+  real(dp) :: step_uc_cryo_al
+  !! Unit cost of cryo aluminium ($/kg). Only used in costs_step_module
 
-  real(dp) :: mc_cryo_al_per
+  real(dp) :: step_mc_cryo_al_per
   !! Manufacturing cost percentage for cryo aluminium (%). 20.0 means a 20%
-  !! manufacturing cost
+  !! manufacturing cost. Only used in costs_step_module
 
   real(dp), parameter :: ucsh = 115.0D0
   !! cost of shops and warehouses (M$/m3)
@@ -747,7 +747,7 @@ module cost_variables
     ucwst = (/0.0D0, 3.94D0, 5.91D0, 7.88D0/)
     i_cp_lifetime = 0
     cplife_input = 2.0D0
-    uc_cryo_al = 81.0D0
-    mc_cryo_al_per = 20.0D0
+    step_uc_cryo_al = 81.0D0
+    step_mc_cryo_al_per = 20.0D0
   end subroutine init_cost_variables
 end module cost_variables
