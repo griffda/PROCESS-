@@ -178,3 +178,19 @@ def test_step_a24(monkeypatch, shared_cost_vars):
     cs.step_a24(0, 0)
     obs = cs.step24
     assert pytest.approx(obs) == exp
+
+def test_step_a25(monkeypatch, shared_cost_vars):
+    """Validate sum of cost account 25.
+
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
+    :param shared_cost_vars: fixture to mock commonly-used cost vars
+    :type shared_cost_vars: Fixture
+    """
+    # Mock module var set in subroutine
+    monkeypatch.setattr(cs, "step25", 0.0)
+
+    exp = 1.050024e2
+    cs.step_a25(0, 0)
+    obs = cs.step25
+    assert pytest.approx(obs) == exp

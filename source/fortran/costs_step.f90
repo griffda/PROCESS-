@@ -1144,42 +1144,42 @@ contains
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+    ! #TODO Need to add reference for cost calculations
     use cost_variables, only: output_costs, step_con, step_ref
     use process_output, only: oshead, ocosts, oblnkl
-
+    use heat_transport_variables, only: pgrossmw
+    use buildings_variables, only: wgt
+    
     implicit none
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
-  
+    
     ! Local variables
     real(dp):: &
     step2501, step2502, step2503, step2504, step2598, step2599
-  
+    
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+    
     ! Initialise as zero
     step25 = 0.0D0
-     
+    
     ! 25.01 Transport and Lifting Equipment
-    ! Original STARFIRE value, scaling with thermal power
-    step2501 = step_ref(65) * (pth / ptherm_star)**0.6D0
+    step2501 = ((38005 * (wgt / 1000)) + 1529727) * 1.0D-6
+    ! wgt is reactor building crane capacity (kg)
+    ! #TODO Check that wgt is the correct variable to use here
     step25 = step25 + step2501
-  
+    
     ! 25.02 Air and Water Service System
-    ! Original STARFIRE value, scaling with thermal power
-    step2502 = step_ref(66) * (pth / ptherm_star)**0.6D0
+    step2502 = 120689 * pgrossmw * 1.0D-6
     step25 = step25 + step2502
-  
+    
     ! 25.03 Communications Equipment
-    ! Original STARFIRE value, scaling with thermal power
-    step2503 = step_ref(67) * (pth / ptherm_star)**0.6D0
+    step2503 = ((30500 * (pgrossmw / 1200) * 218) + (4000000 * 3 * (pgrossmw / 1200))) * 1.0D-6
     step25 = step25 + step2503
-  
+    
     ! 25.04 Furnishing and Fixtures
-    ! Original STARFIRE value, scaling with thermal power
-    step2504 = step_ref(68) * (pth / ptherm_star)**0.6D0
+    step2504 = 3000 * pgrossmw * 1.0D-6
     step25 = step25 + step2504
   
     ! 25.98 Spares
