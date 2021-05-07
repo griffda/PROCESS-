@@ -1013,13 +1013,13 @@ contains
     ! 23.06 Other Turbine Equipment
     ! 23.07 Instrumentation and Control
     ! The above accounts total:
-    generator_sys = 555440 * pgrossmw
+    generator_sys = 555440 * pgrossmw * 1.0D-6
     ! #TODO Should this have its own account, now the others have been combined?
     ! These accounts should be tidied up
     step23 = step23 + generator_sys
 
     ! 23.03 Heat Rejection
-    step2303 = (80437 * pgrossmw) + 22264895
+    step2303 = ((80437 * pgrossmw) + 22264895) * 1.0D-6
     step23 = step23 + step2303
 
     ! 23.98 Spares

@@ -160,7 +160,7 @@ def test_step_a23(monkeypatch, shared_cost_vars):
     # Mock module var set in subroutine
     monkeypatch.setattr(cs, "step23", 0.0)
 
-    exp = 3.967150e8
+    exp = 3.967150e2
     cs.step_a23(0, 0)
     obs = cs.step23
     assert pytest.approx(obs) == exp
