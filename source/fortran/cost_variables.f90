@@ -747,7 +747,7 @@ module cost_variables
     ucwst = (/0.0D0, 3.94D0, 5.91D0, 7.88D0/)
     i_cp_lifetime = 0
     cplife_input = 2.0D0
-    step_uc_cryo_al = 81.0D0
-    step_mc_cryo_al_per = 20.0D0
+    step_uc_cryo_al = 8.1D1
+    step_mc_cryo_al_per = 2.0D1
   end subroutine init_cost_variables
 end module cost_variables
