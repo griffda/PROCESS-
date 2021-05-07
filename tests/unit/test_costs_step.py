@@ -6,7 +6,7 @@ from process.fortran import heat_transport_variables as htv
 import numpy as np
 import pytest
 
-# step_ref cost array values taken from cost_variables.f90
+# step_ref cost array values taken from cost_variables_module
 step_ref = np.array(
     [
         3.0,
@@ -84,12 +84,16 @@ step_ref = np.array(
 def shared_cost_vars(monkeypatch):
     """Fixture to mock commonly used dependencies in cost subroutines.
 
+    The values are intended to be realistic.
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     """
     monkeypatch.setattr(cv, "step_ref", step_ref)
     monkeypatch.setattr(bv, "efloor", 1e4)
     monkeypatch.setattr(htv, "pgrossmw", 5e2)
+    monkeypatch.setattr(cs, "vfi", 6.737e3)
+    monkeypatch.setattr(cs, "vfi_star", 6.737e3)
+    # vfi values taken from Starfire reference in costs_step_module
 
 def test_step_a21(monkeypatch, shared_cost_vars):
     """Validate sum of cost account 21.
@@ -114,10 +118,33 @@ def test_step_a21(monkeypatch, shared_cost_vars):
     assert pytest.approx(obs) == exp
 
 def test_step_a2202(monkeypatch, shared_cost_vars):
-    # Mock module var set in subroutine
+    """Validate sum of cost account 22.02.
+
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
+    :param shared_cost_vars: fixture to mock commonly-used cost vars
+    :type shared_cost_vars: Fixture
+    """
+    # Mock module var set in subroutine: increase is value of step2202
     monkeypatch.setattr(cs, "step22", 0.0)
     
     exp = 4.611899e1
     cs.step_a2202(0, 0)
+    obs = cs.step22
+    assert pytest.approx(obs) == exp
+
+def test_step_a2203(monkeypatch, shared_cost_vars):
+    """Validate sum of cost account 22.03.
+
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
+    :param shared_cost_vars: fixture to mock commonly-used cost vars
+    :type shared_cost_vars: Fixture
+    """
+    # Mock module var set in subroutine: increase is value of step2203
+    monkeypatch.setattr(cs, "step22", 0.0)
+
+    exp = 1.490e1
+    cs.step_a2203(0, 0)
     obs = cs.step22
     assert pytest.approx(obs) == exp
