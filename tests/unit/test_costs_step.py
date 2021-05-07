@@ -112,3 +112,12 @@ def test_step_a21(monkeypatch, shared_cost_vars):
     exp = 2.76647e3
     obs = cs.step21
     assert pytest.approx(obs) == exp
+
+def test_step_a2202(monkeypatch, shared_cost_vars):
+    # Mock module var set in subroutine
+    monkeypatch.setattr(cs, "step22", 0.0)
+    
+    exp = 4.611899e1
+    cs.step_a2202(0, 0)
+    obs = cs.step22
+    assert pytest.approx(obs) == exp

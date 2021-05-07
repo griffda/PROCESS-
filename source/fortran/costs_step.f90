@@ -616,8 +616,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-    use cost_variables, only: output_costs, step_ref
+    use cost_variables, only: output_costs
     use process_output, only: ocosts, oblnkl
+    use heat_transport_variables, only: pgrossmw
+    ! pgrossmw is gross electric power of the plant in MW
 
     implicit none
   
@@ -633,8 +635,9 @@ contains
     step2202 = 0.0D0
      
     ! 22.02 Heat Transfer System
-    ! Original STARFIRE value, scaling with first wall area
-    step2202 = step_ref(33) * (pth / ptherm_star)**0.6D0  
+    ! #TODO Needs reference for values
+    step2202 = 92238 * pgrossmw * 1.0D-6
+    ! Converted to M$
   
     ! Add to Account 22 total
     step22 = step22 + step2202
