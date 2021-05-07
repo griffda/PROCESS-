@@ -1059,6 +1059,7 @@ contains
 
     use cost_variables, only: output_costs, step_con, step_ref
     use process_output, only: oshead, ocosts, oblnkl
+    use heat_transport_variables, only: pgrossmw
 
     implicit none
 
@@ -1072,42 +1073,35 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! Initialise as zero
+    ! Initialise as zero M$
     step24 = 0.0D0
-   
+    
     ! 24.01 Switch Gear
-    ! Original STARFIRE value, scaling with thermal power
-    step2401 = step_ref(58)  * (pth / ptherm_star)**0.6D0
+    step2401 = 18906 * pgrossmw * 1.0D-6
     step24 = step24 + step2401
-
+    
     ! 24.02 Station Service Equipment
-    ! Original STARFIRE value, scaling with thermal power
-    step2402 = step_ref(59)  * (pth / ptherm_star)**0.6D0
+    step2402 = 51412 * pgrossmw * 1.0D-6
     step24 = step24 + step2402
-
+    
     ! 24.03 Switchboards
-    ! Original STARFIRE value, scaling with thermal power
-    step2403 = step_ref(60)  * (pth / ptherm_star)**0.6D0
+    step2403 = 2985 * pgrossmw * 1.0D-6
     step24 = step24 + step2403
-
+    
     ! 24.04 Protective Equipment
-    ! Original STARFIRE value, scaling with thermal power
-    step2404 = step_ref(61)  * (pth / ptherm_star)**0.6D0
+    step2404 = ((30500 * (pgrossmw / 1200) * 18) + (4000000 * 1 * (pgrossmw / 1200))) * 1.0D-6
     step24 = step24 + step2404
-
+    
     ! 24.05 Electrical Structures
-    ! Original STARFIRE value, scaling with thermal power
-    step2405 = step_ref(62) * (pth / ptherm_star)**0.6D0
+    step2405 = ((30500 * (pgrossmw / 1200) * 130) + (4000000 * 9 * (pgrossmw / 1200))) * 1.0D-6
     step24 = step24 + step2405
-
+    
     ! 24.06 Power and Control Wiring
-    ! Original STARFIRE value, scaling with thermal power
-    step2406 = step_ref(63) * (pth / ptherm_star)**0.6D0
+    step2406 = 28989 * pgrossmw * 1.0D-6
     step24 = step24 + step2406
-
+    
     ! 24.07 Electric Lighting
-    ! Original STARFIRE value, scaling with thermal power
-    step2407 = step_ref(64) * (pth / ptherm_star)**0.6D0
+    step2407 = ((30500 * (pgrossmw / 1200) * 200) + (4000000 * 4 * (pgrossmw / 1200))) * 1.0D-6
     step24 = step24 + step2407
 
     ! 24.98 Spares

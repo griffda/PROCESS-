@@ -89,6 +89,7 @@ def shared_cost_vars(monkeypatch):
     :type monkeypatch: MonkeyPatch
     """
     monkeypatch.setattr(cv, "step_ref", step_ref)
+    monkeypatch.setattr(cv, "step_con", 1.5e-1)
     monkeypatch.setattr(bv, "efloor", 1e4)
     monkeypatch.setattr(htv, "pgrossmw", 5e2)
     monkeypatch.setattr(cs, "vfi", 6.737e3)
@@ -103,9 +104,6 @@ def test_step_a21(monkeypatch, shared_cost_vars):
     :param shared_cost_vars: fixture to mock commonly-used cost vars
     :type shared_cost_vars: Fixture
     """
-    # Mock dependencies
-    monkeypatch.setattr(cv, "step_con", 1.5e-1)
-    
     # Mock module vars
     monkeypatch.setattr(cs, "pth", 4.15e3)
     monkeypatch.setattr(cs, "ptherm_star", 4.15e3)
@@ -163,4 +161,20 @@ def test_step_a23(monkeypatch, shared_cost_vars):
     exp = 3.967150e2
     cs.step_a23(0, 0)
     obs = cs.step23
+    assert pytest.approx(obs) == exp
+
+def test_step_a24(monkeypatch, shared_cost_vars):
+    """Validate sum of cost account 24.
+
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
+    :param shared_cost_vars: fixture to mock commonly-used cost vars
+    :type shared_cost_vars: Fixture
+    """
+    # Mock module var set in subroutine
+    monkeypatch.setattr(cs, "step24", 0.0)
+
+    exp = 9.168104e1
+    cs.step_a24(0, 0)
+    obs = cs.step24
     assert pytest.approx(obs) == exp
