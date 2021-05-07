@@ -991,6 +991,7 @@ contains
 
     use cost_variables, only: output_costs, step_con, step_ref
     use process_output, only: oshead, ocosts, oblnkl
+    use heat_transport_variables, only: pgrossmw
 
     implicit none
 
@@ -998,9 +999,7 @@ contains
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(dp):: &
-    step2301, step2302, step2303, step2304, step2305, step2306, &
-    step2307, step2398, step2399
+    real(dp):: generator_sys, step2303, step2398, step2399
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1008,39 +1007,20 @@ contains
     step23 = 0.0D0
    
     ! 23.01 Turbine Generators
-    ! Original STARFIRE value, scaling with thermal power
-    step2301 = step_ref(51) * (pth / ptherm_star)**0.6D0
-    step23 = step23 + step2301
-
     ! 23.02 Steam System
-    ! Original STARFIRE value, scaling with thermal power
-    step2302 = step_ref(52) * (pth / ptherm_star)**0.6D0
-    step23 = step23 + step2302
+    ! 23.04 Condensing System
+    ! 23.05 Feedwater Heating System
+    ! 23.06 Other Turbine Equipment
+    ! 23.07 Instrumentation and Control
+    ! The above accounts total:
+    generator_sys = 555440 * pgrossmw
+    ! #TODO Should this have its own account, now the others have been combined?
+    ! These accounts should be tidied up
+    step23 = step23 + generator_sys
 
     ! 23.03 Heat Rejection
-    ! Original STARFIRE value, scaling with thermal power
-    step2303 = step_ref(53) * (pth / ptherm_star)**0.6D0
+    step2303 = (80437 * pgrossmw) + 22264895
     step23 = step23 + step2303
-
-    ! 23.04 Condensing System
-    ! Original STARFIRE value, scaling with thermal power
-    step2304 = step_ref(54) * (pth / ptherm_star)**0.6D0
-    step23 = step23 + step2304
-
-    ! 23.05 Feedwater Heating System
-    ! Original STARFIRE value, scaling with thermal power
-    step2305 = step_ref(55) * (pth / ptherm_star)**0.6D0
-    step23 = step23 + step2305
-
-    ! 23.06 Other Turbine Equipment
-    ! Original STARFIRE value, scaling with thermal power
-    step2306 = step_ref(56) * (pth / ptherm_star)**0.6D0  
-    step23 = step23 + step2306
-
-    ! 23.07 Instrumentation and Control
-    ! Original STARFIRE value, scaling with thermal power
-    step2307 = step_ref(57) * (pth / ptherm_star)**0.6D0 
-    step23 = step23 + step2307
 
     ! 23.98 Spares
     ! STARFIRE percentage
@@ -1055,19 +1035,13 @@ contains
     ! Output costs
     if ((iprint==1).and.(output_costs == 1)) then
       call oshead(outfile,'23. Turbine Plant Equipment')
-      call ocosts(outfile,'(step2301)','Turbine Generators (M$)', step2301)
-      call ocosts(outfile,'(step2302)','Steam System (M$)', step2302)
+      call ocosts(outfile,'(generator_sys)','Generator system (M$)', generator_sys)
       call ocosts(outfile,'(step2303)','Heat Rejection (M$)', step2303)
-      call ocosts(outfile,'(step2304)','Condensing System (M$)', step2304)
-      call ocosts(outfile,'(step2305)','Feedwater Heating System (M$)', step2305)
-      call ocosts(outfile,'(step2306)','Other Turbine Equipment (M$)', step2306)
-      call ocosts(outfile,'(step2307)','Instrumentation and Control (M$)', step2307)
       call ocosts(outfile,'(step2398)','Spares (M$)', step2398)
       call ocosts(outfile,'(step2399)','Contingency (M$)', step2399)
       call oblnkl(outfile)
       call ocosts(outfile,'(step23)','Total Account 23 Cost (M$)', step23)
     end if
-
   end subroutine step_a23
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
