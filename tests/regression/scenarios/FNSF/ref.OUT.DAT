@@ -13,15 +13,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.0   Release Date :: 2021-01-25
-   Tag No. : v2.1-147-g3a766c4a code contains untracked changes
-    Branch : issue-1264-joints-heating-error
-   Git log : Merge branch 'develop' into issue-1264-joints-heating-error
- Date/time :  8 Mar 2021 18:30:52 +00:00(hh:mm) UTC
-      User : skahn
-  Computer : J0320
- Directory : /tmp/pytest-of-skahn/pytest-113/test_solver0
-     Input : /tmp/pytest-of-skahn/pytest-113/test_scenario_scenario5_0/IN.DAT
+   Version : 2.1.1   Release Date :: 2021-03-17
+   Tag No. : v2.1-184-g273a1ff8 code contains untracked changes
+    Branch : 1296-update-indirect-costs-in-cost-model-2
+   Git log : COMMIT_MSG
+ Date/time : 10 May 2021 15:34:17 +01:00(hh:mm) UTC
+      User : jmaddock
+  Computer : J0826UBUNTU
+ Directory : /tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario2_0
+     Input : /tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario4_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -185,7 +185,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Beta g coefficient                                                       (dnbeta)                      6.000     
  Normalised thermal beta                                                                                3.879  OP 
  Normalised total beta                                                                                  4.497  OP 
- Normalised thermal toroidal beta                                                                       4.995  OP 
+ Normalised toroidal beta                                                                               4.995  OP 
  Limit on total beta                                                      (betalim)                     0.193  OP 
  Plasma thermal energy (J)                                                                          5.479E+07  OP 
  Total plasma internal energy (J)                                         (total_plasma_internal_en 6.351E+07  OP 
