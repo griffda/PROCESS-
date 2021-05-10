@@ -23,6 +23,8 @@ module costs_step_module
   !  Various cost account values (M$)
   real(dp) :: step20, step21, step22, step23, step24, step25, &
   step27, step91, step92, step93, fwblkcost, step22010302, step220101
+  real(dp) :: step22010101, step22010102, step2201010201, step2201010202, step2201010203, &
+                step2201010204, step2201010205, step2201010206, step2201010207
 
   ! Scaling Properties
   real(dp) :: vfi, vfi_star, ptherm_star, pinjmw_star, fwarea_star, &
@@ -44,6 +46,17 @@ contains
     step91 = 0.0D0
     step92 = 0.0D0
     step93 = 0.0D0
+    step220101 = 0.0D0
+    step22010101 = 0.0D0
+    step22010102 = 0.0D0
+    step2201010201 = 0.0D0
+    step2201010202 = 0.0D0
+    step2201010203 = 0.0D0
+    step2201010204 = 0.0D0
+    step2201010205 = 0.0D0
+    step2201010206 = 0.0D0
+    step2201010207 = 0.0D0
+    step22010302 = 0.0D0
     fwblkcost = 0.0D0
     vfi = 0.0D0
     vfi_star = 0.0D0
@@ -479,7 +492,7 @@ contains
   
     ! Local variables
     real(dp):: &
-    step220101, step220102, step220104, step220105, step220106, &
+    step220102, step220104, step220105, step220106, &
     step220107, step220108, step220109, step220110, step2201, &
     step22010301, step22010303, step22010304
   
@@ -492,10 +505,6 @@ contains
     ! Original STARFIRE value, scaling with first wall area
     !step220101 = step_ref(20) * (fwarea / fwarea_star)
     call step_a220101
-    if (ifueltyp==1) then
-      fwblkcost = step220101
-      step220101 = 0.0D0
-    end if
     step2201 = step2201 + step220101
 
     ! 22.01.02 Shield
@@ -511,8 +520,6 @@ contains
     step2201 = step2201 + step22010301
 
     ! 22.01.03.02 PF Coils
-    ! Original STARFIRE value, scaling with fusion island volume
-    ! step22010302 = step_ref(23) * (vfi / vfi_star)
     call step_a22010302
     step2201 = step2201 + step22010302
     ! STARFIRE percentage for spares
@@ -593,7 +600,20 @@ contains
     if ((iprint==1).and.(output_costs == 1)) then
       write(outfile,*) '******************* 22.01 Reactor Equipment'
       if (ifueltyp==0)then
-        call ocosts(outfile,'(step220101)','Blanket and First Wall (M$)', step220101)
+        write(outfile,*) '******************* 22.01.01 Blanket and First Wall Equipment'
+        call ocosts(outfile,'(step22010101)','Total First Wall Cost (M$)', step22010101)
+        call oblnkl(outfile)
+        call ocosts(outfile,'(step2201010201)','Blanket Multiplier Material (M$)', step2201010201)
+        call ocosts(outfile,'(step2201010202)','Blanket Breeder Material (M$)', step2201010202)
+        call ocosts(outfile,'(step2201010203)','Blanket Steel Costs (M$)', step2201010203)
+        call ocosts(outfile,'(step2201010204)','Blanket Vanadium Costs (M$)', step2201010204)
+        !call ocosts(outfile,'(step2201010205)','Blanket Carbon Cloth Costs (M$)', step2201010205)
+        !call ocosts(outfile,'(step2201010206)','Blanket Concrete Costs (M$)', step2201010206)
+        !call ocosts(outfile,'(step2201010207)','Blanket FLiBe Costs (M$)', step2201010207)
+        call ocosts(outfile,'(step22010102)','Total Blanket Cost (M$)', step22010102)
+        call oblnkl(outfile)
+        call ocosts(outfile,'(step220101)','Total Account 22.01.01 Cost (M$)', step220101)
+        call oblnkl(outfile)
       else if (ifueltyp==1)then
         call ocosts(outfile,'(step220101)','Blanket and First Wall (Treated as Fuel) (M$)', step220101)
       end if
@@ -638,7 +658,7 @@ contains
       step_ucblvd, ucblli2o, blkcst, ucbllipb, ifueltyp, lsa, fkind, step_ucfws, &
       fwallcst, step_ucfwps, step_ucfwa
 		use fwbs_variables, only: blktmodel, whtblli, blkttype, wtblli2o, &
-      whtblbreed, whtblvd, whtblbe, whtblss, wtbllipb 
+      whtblbreed, whtblvd, whtblbe, whtblss, wtbllipb, fw_armour_mass, fwmass 
     use build_variables, only: fwarea 
 		use heat_transport_variables, only: ipowerflow 
     
@@ -648,8 +668,8 @@ contains
 
     !  Local variables
 
-    real(dp) :: step22010101, step22010102, step2201010201, step2201010202, step2201010203, &
-                step2201010204, step2201010205, step2201010206, step2201010207
+    !real(dp) :: step22010101, step22010102, step2201010201, step2201010202, step2201010203, &
+    !            step2201010204, step2201010205, step2201010206, step2201010207
     real(dp), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -662,8 +682,8 @@ contains
     cmlsa(4) = 1.0000D0
 
     !! Account 22.01.01.01 : First wall
-    
-    step22010101 = 1.0D-6 * cmlsa(lsa) * ((step_ucfwa+step_ucfws)*fwarea + step_ucfwps)
+    !step22010101 = 1.0D-6 * cmlsa(lsa) * ((step_ucfwa+step_ucfws)*fwarea + step_ucfwps)
+    step22010101 = 1.0D-6 * cmlsa(lsa) * (fw_armour_mass * step_ucfwa + fwmass * step_ucfws) 
 
     step22010101 = fkind * step22010101
 

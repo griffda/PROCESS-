@@ -2635,10 +2635,10 @@ contains
                'unit cost for copper in superconducting cable ($/kg) (if cost model = 2)' ) 
        case ('step_ucfwa')
          call parse_real_variable('step_ucfwa', step_ucfwa, 0.0D0, 1.0D5, &
-         'first wall armour cost ($/m2) (if cost model = 2)' ) 
+         'first wall armour cost ($/kg) (if cost model = 2)' ) 
       case ('step_ucfws')
          call parse_real_variable('step_ucfws', step_ucfws, 0.0D0, 1.0D5, &
-         'first wall structure cost ($/m2) (if cost model = 2)' ) 
+         'first wall structure cost ($/kg) (if cost model = 2)' ) 
       case ('step_ucfwps')
          call parse_real_variable('step_ucfwps', step_ucfwps, 0.0D0, 1.0D9, &
          'first wall passive stabiliser cost ($) (if cost model = 2)' ) 
@@ -2649,14 +2649,14 @@ contains
          call parse_real_variable('step_ucfnc', step_ucfnc, 0.0D0, 3.0D2, &
                'outer PF coil fence support cost ($/kg) (if cost model = 2)' )
        case ('step_ucblbe')
-         call parse_real_variable('ucblbe', ucblbe, 1.0D0, 1.0D3, &
-               'Unit cost for blanket Be ($/kg) (if cost model =2)')
+         call parse_real_variable('ucblbe', ucblbe, 1.0D0, 1.0D4, &
+               'Unit cost for blanket Be ($/kg) (if cost model = 2)')
        case ('step_ucblbreed')
-         call parse_real_variable('ucblbreed', ucblbreed, 1.0D0, 1.0D3, &
-               'Unit cost for blanket breeder material ($/kg)')
+         call parse_real_variable('ucblbreed', ucblbreed, 1.0D0, 1.0D4, &
+               'Unit cost for blanket breeder material ($/kg) (if cost model = 2)')
        case ('step_ucblss')
           call parse_real_variable('ucblss', ucblss, 10.0D0, 1.0D3, &
-               'Unit cost for blanket st.steel ($/kg) (if cost model =2)')
+               'Unit cost for blanket st.steel ($/kg) (if cost model = 2)')
        case ('step_ucblvd')
           call parse_real_variable('ucblvd', ucblvd, 100.0D0, 1.0D3, &
                'Unit cost for blanket Vd ($/kg) (if cost model =2)')

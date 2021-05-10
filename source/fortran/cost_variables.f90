@@ -350,10 +350,10 @@ module cost_variables
   !! unit cost for copper in superconducting cable ($/kg) (if cost model = 2)
 
   real(dp) :: step_ucfwa 
-  !! first wall armour cost ($/m2) (if cost model = 2)
+  !! first wall armour cost ($/kg) (if cost model = 2)
 
   real(dp) :: step_ucfws 
-  !! first wall structure cost ($/m2) (if cost model = 2)
+  !! first wall structure cost ($/kg) (if cost model = 2)
 
   real(dp) :: step_ucfwps 
   !! first wall passive stabiliser cost ($) (if cost model = 2)
@@ -727,15 +727,24 @@ module cost_variables
     step_cconfix = 217.0D0  
     step_cconshpf = 91.0D0
     step_currency = "2017 US$"
-    step_ucblbe = 260.0D0 ! needs update
-    step_ucblbreed = 875.0D0 ! needs update
-    step_ucblss = 90.0D0 ! needs update
-    step_ucblvd = 200.0D0 ! needs update
+    step_ucblbe = 2994.9D0!8400.4D0!9702.2D0 ! blanket Be - QAF(3) * 576 euro/kg + 6858 euro/kg
+    ! step_ucblbe = 1.0 * 576 * 1.13 + 6858 * 1.13 = 8400.4 $/kg ! much larger than cost model
+    ! what about if you reduce module cost from the manifacturiung cost?
+    ! step_ucblbe = 1.0 * 576 * 1.13 + 1977 * 1.13 = 2994.9
+    step_ucblbreed = 802.2D0 ! blanket breeder material - lithium - 175 euro/kg + 3849 euro/kg
+    ! what is the correct enrichment level? - PROCESS li6enrich in 2017 HCPB DEMO work 60% enrichemnt is used
+    ! step_ucblbreed = 175.0 * 1.13 + 3849 * 1.13 * 0.6 * 0.231662 = 802.3 $/kg
+    step_ucblss = 488.3D0 ! blanket stainless steel - QAF(2.48) * 40 euro/kg + 333 euro/kg 
+    ! step_ucblss = 2.48 * 40 * 1.13 + 333 * 1.13 = 488.3 $/kg
+    step_ucblvd = 200.0D0 ! blanket Vd - think we might remove this from the model for set the fraction of Vd to zero
     step_uccase = 0.0D0
     step_uccu = 82.0D0
-    step_ucfwa = 6.0D4 ! needs update
-    step_ucfws = 5.3D4 ! needs update
-    step_ucfwps = 1.0D7 ! needs update
+    step_ucfwa = 774.05D0 ! first wall armour - tungsten - we haven't pulled these numbers out yet - convert to area 
+    ! 298 1.13 + 387 * 1.13 = 774.05 $/kg
+    step_ucfws = 5115.7D0 ! first wall structure ! QAF(2.48) * 40 euro/kg + 4428 euro/kg - convert to area... what year of euro?
+    ! euro to dollar in 2017 1.13
+    ! step_ucfws = 2.48 * 40 * 1.13 + 4428 * 1.13 = 5115.7 $/kg
+    step_ucfwps = 1.0D7 ! first wall passive stabiliser - do we include this is model 2?
     step_ucsc = (/ 600.0D0, 600.0D0, 443.0D0, 600.0D0, 600.0D0, 600.0D0, 300.0D0 /)
     step_ucfnc = 104.3D0 
     step_ucwindpf = 465.0D0
