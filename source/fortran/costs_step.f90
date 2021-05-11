@@ -647,23 +647,14 @@ contains
       c_tf_inboard_legs = 1.0D-6 * whtcp * uccpcl1 * cfind(lsa) * 2.99D0
       c_tf_inboard_legs = fkind * c_tf_inboard_legs
       
-      ! cpstcst used later in coelc_step()
-      cpstcst = 0.0D0  !  TART centrepost
-      if ((itart == 1).and.(ifueltyp == 1)) then
-        cpstcst = c_tf_inboard_legs
-        c_tf_inboard_legs = 0.0D0
-        elseif ((itart == 1).and.(ifueltyp == 2)) then
-          cpstcst = c_tf_inboard_legs
-        end if
-        
-        ! Outboard TF coil legs
-        c_tf_outboard_legs = 1.0D-6 * whttflgs * uccpclb * cfind(lsa) * 2.99D0
-        c_tf_outboard_legs = fkind * c_tf_outboard_legs
-        
-        ! Total TF coil cost
-        step22010301 = c_tf_inboard_legs + c_tf_outboard_legs
+      ! Outboard TF coil legs
+      c_tf_outboard_legs = 1.0D-6 * whttflgs * uccpclb * cfind(lsa) * 2.99D0
+      c_tf_outboard_legs = fkind * c_tf_outboard_legs
+      
+      ! Total TF coil cost
+      step22010301 = c_tf_inboard_legs + c_tf_outboard_legs
     endif
-    
+      
     ! Superconducting coils
     if (i_tf_sup == 1) then
       ! Original STARFIRE value in M$, scaling with fusion island volume
@@ -679,6 +670,23 @@ contains
       ! step_mc_cryo_al_per = 20.0: 20% manufacturing cost
       step22010301 = (whtconal * n_tf * step_uc_cryo_al) * &
         ((step_mc_cryo_al_per / 100.0) + 1) * 1.0D-6
+    endif
+
+    ! ifueltyp: consider centrepost cost as fuel, capital or both?
+    ! cpstcst used later in coelc_step()
+    cpstcst = 0.0D0  ! TART centrepost
+    if (itart == 1) then
+      if (ifueltyp == 1) then
+        ! Treat centrepost cost as fuel cost
+        cpstcst = c_tf_inboard_legs
+        if (i_tf_sup == 0) then
+          ! Subtract from capital cost
+          step22010301 = step22010301 - c_tf_inboard_legs
+        endif
+      elseif (ifueltyp == 2) then
+        ! Treat centrepost cost as capital and fuel cost
+        cpstcst = c_tf_inboard_legs
+      end if
     endif
   end function step_a22010301
 
