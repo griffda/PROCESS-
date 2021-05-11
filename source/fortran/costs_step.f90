@@ -667,9 +667,9 @@ contains
       ! manufacturing cost factor
       ! Al conductor mass per coil * number of coils * cost per kilo *
       ! manufacturing cost factor, converted to M$
-      ! step_mc_cryo_al_per = 20.0: 20% manufacturing cost
+      ! step_mc_cryo_al_per = 0.2: 20% manufacturing cost
       step22010301 = (whtconal * n_tf * step_uc_cryo_al) * &
-        ((step_mc_cryo_al_per / 100.0) + 1) * 1.0D-6
+        (step_mc_cryo_al_per + 1.0D0) * 1.0D-6
     endif
 
     ! ifueltyp: consider centrepost cost as fuel, capital or both?

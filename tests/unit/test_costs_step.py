@@ -23,7 +23,7 @@ def test_step_a22010301(monkeypatch):
     cv.cfind[3] = 0.29
     monkeypatch.setattr(cv, "ifueltyp", 0)
     monkeypatch.setattr(cv, "step_uc_cryo_al", 81.0)
-    monkeypatch.setattr(cv, "step_mc_cryo_al_per", 20.0)
+    monkeypatch.setattr(cv, "step_mc_cryo_al_per", 0.2)
     monkeypatch.setattr(cv, "uccpcl1", 250.0)
     monkeypatch.setattr(cv, "uccpclb", 150.0)
     monkeypatch.setattr(tfv, "whtconal", 1.0e4)

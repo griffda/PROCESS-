@@ -2830,7 +2830,7 @@ contains
             5.0D1, 5.0D3, 'Cost of cryo aluminium ($/kg)')
        case ('step_mc_cryo_al_per')
           call parse_real_variable('step_mc_cryo_al_per', &
-            step_mc_cryo_al_per, 0.0D0, 100.0D0, &
+            step_mc_cryo_al_per, 0.0D0, 1.0D0, &
             'Manufacturing cost percentage for cryo aluminium')
        case ('ucshld')
           call parse_real_variable('ucshld', ucshld, 1.0D0, 100.0D0, &
