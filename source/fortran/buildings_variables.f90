@@ -13,6 +13,9 @@ module buildings_variables
   
     public
   
+    real(dp), parameter :: a_default_bldg = 1.0D3
+    !! Default building floor area in m^2
+
     real(dp) :: admv
     !! administration building volume (m3)
   
@@ -123,7 +126,46 @@ module buildings_variables
   
     real(dp) :: wsvol
     !! volume of warm shop building (m3)
-  
+
+    real(dp) :: a_reactor_bldg
+    !! Floor area of reactor building in m^2
+
+    real(dp) :: a_ee_ps_bldg
+    !! Floor area of electrical equipment and power supply building in m^2
+
+    real(dp) :: a_aux_services_bldg
+    !! Floor area of auxiliary services building in m^2
+
+    real(dp) :: a_hot_cell_bldg
+    !! Floor area of hot cell building in m^2
+
+    real(dp) :: a_reactor_service_bldg
+    !! Floor area of reactor service building in m^2
+
+    real(dp) :: a_service_water_bldg
+    !! Floor area of service water building in m^2
+
+    real(dp) :: a_fuel_handling_bldg
+    !! Floor area of fuel handling and storage building in m^2
+
+    real(dp) :: a_control_room_bldg
+    !! Floor area of controlroom building in m^2
+
+    real(dp) :: a_ac_ps_bldg
+    !! Floor area of AC power supply building in m^2
+
+    real(dp) :: a_admin_bldg
+    !! Floor area of admin building in m^2
+
+    real(dp) :: a_site_service_bldg
+    !! Floor area of site service building in m^2
+
+    real(dp) :: a_cryo_inert_gas_bldg
+    !! Floor area of cryogenics and inert gas storage building in m^2
+
+    real(dp) :: a_security_bldg
+    !! Floor area of security building in m^2
+
     contains
 
     subroutine init_buildings_variables
@@ -167,6 +209,18 @@ module buildings_variables
       wrbi = 0.0D0
       wsvfac = 1.9D0
       wsvol = 0.0D0
+      a_reactor_bldg = a_default_bldg
+      a_ee_ps_bldg = a_default_bldg
+      a_aux_services_bldg = a_default_bldg
+      a_hot_cell_bldg = a_default_bldg
+      a_reactor_service_bldg = a_default_bldg
+      a_service_water_bldg = a_default_bldg
+      a_fuel_handling_bldg = a_default_bldg
+      a_control_room_bldg = a_default_bldg
+      a_ac_ps_bldg = a_default_bldg
+      a_admin_bldg = a_default_bldg
+      a_site_service_bldg = a_default_bldg
+      a_cryo_inert_gas_bldg = a_default_bldg
+      a_security_bldg = a_default_bldg
     end subroutine init_buildings_variables
-
   end module buildings_variables

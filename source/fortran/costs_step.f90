@@ -231,8 +231,12 @@ contains
     ! #TODO Add reference for STEP cost values
     use cost_variables, only: output_costs, step_con, step_ref
     use process_output, only: oshead, ocosts, oblnkl
-    use buildings_variables, only: efloor
-    ! efloor is effective floor area in m^2
+    use buildings_variables, only: a_reactor_bldg, a_ee_ps_bldg, &
+      a_aux_services_bldg, a_hot_cell_bldg, a_reactor_service_bldg, &
+      a_service_water_bldg, a_fuel_handling_bldg, a_control_room_bldg, &
+      a_ac_ps_bldg, a_admin_bldg, a_site_service_bldg, a_cryo_inert_gas_bldg, &
+      a_security_bldg
+    ! Floor areas in m^2 for buildings
     use heat_transport_variables, only: pgrossmw
     ! pgrossmw is gross electric power of the plant in MW
 
@@ -259,7 +263,7 @@ contains
     step21 = step21 + step2101
     
     ! 21.02 Reactor Building
-    step2102 = 8.665D3 * efloor**1.2132 * 1.0D-6
+    step2102 = 8.665D3 * a_reactor_bldg**1.2132 * 1.0D-6
     ! * 1.0D-6 converts to M$
     step21 = step21 + step2102
     
@@ -272,51 +276,51 @@ contains
     step21 = step21 + step2104
 
     ! 21.05 Electrical Equipment and Power Supply Building
-    step2105 = ((4.688D3 * efloor) + 3.185967D6) * 1.0D-6
+    step2105 = ((4.688D3 * a_ee_ps_bldg) + 3.185967D6) * 1.0D-6
     step21 = step21 + step2105
 
     ! 21.06 Auxiliary Services Building
-    step2106 = ((3.107D3 * efloor) + 1.206225D6) * 1.0D-6
+    step2106 = ((3.107D3 * a_aux_services_bldg) + 1.206225D6) * 1.0D-6
     step21 = step21 + step2106
 
     ! 21.07 Hot Cell
-    step2107 = ((1.9773D4 * efloor) + 5.975425D6) * 1.0D-6
+    step2107 = ((1.9773D4 * a_hot_cell_bldg) + 5.975425D6) * 1.0D-6
     step21 = step21 + step2107
 
     ! 21.08 Reactor Service Building
-    step2108 = ((8.563D3 * efloor) + 3.657324D6) * 1.0D-6
+    step2108 = ((8.563D3 * a_reactor_service_bldg) + 3.657324D6) * 1.0D-6
     step21 = step21 + step2108
 
     ! 21.09 Service Water Building
-    step2109 = ((3.288D3 * efloor) + 3.19189D5) * 1.0D-6
+    step2109 = ((3.288D3 * a_service_water_bldg) + 3.19189D5) * 1.0D-6
     step21 = step21 + step2109
 
     ! 21.10 Fuel Handling and Storage Building
-    step2110 = ((3.1528D4 * efloor) + 9.181501D6) * 1.0D-6
+    step2110 = ((3.1528D4 * a_fuel_handling_bldg) + 9.181501D6) * 1.0D-6
     step21 = step21 + step2110
 
     ! 21.11 Control Room
-    step2111 = ((1.2393D4 * efloor) + 1.924890D6) * 1.0D-6
+    step2111 = ((1.2393D4 * a_control_room_bldg) + 1.924890D6) * 1.0D-6
     step21 = step21 + step2111
 
     ! 21.12 AC Power Supply Building
-    step2112 = ((4.9755D4 * efloor) + 1.1591271D7) * 1.0D-6
+    step2112 = ((4.9755D4 * a_ac_ps_bldg) + 1.1591271D7) * 1.0D-6
     step21 = step21 + step2112
 
     ! 21.13 Admin Building
-    step2113 = ((3.417D3 * efloor) + 3.017077D6) * 1.0D-6
+    step2113 = ((3.417D3 * a_admin_bldg) + 3.017077D6) * 1.0D-6
     step21 = step21 + step2113
 
     ! 21.14 Site Service
-    step2114 = ((3.842D3 * efloor) + 1.193549D6) * 1.0D-6
+    step2114 = ((3.842D3 * a_site_service_bldg) + 1.193549D6) * 1.0D-6
     step21 = step21 + step2114
 
     ! 21.15 Cryogenics and Inert Gas Storage Building
-    step2115 = ((7.031D3 * efloor) + 8.19004D5) * 1.0D-6
+    step2115 = ((7.031D3 * a_cryo_inert_gas_bldg) + 8.19004D5) * 1.0D-6
     step21 = step21 + step2115
 
     ! 21.16 Security Building
-    step2116 = ((3.227D3 * efloor) + 2.06804D5) * 1.0D-6
+    step2116 = ((3.227D3 * a_security_bldg) + 2.06804D5) * 1.0D-6
     step21 = step21 + step2116
 
     ! 21.17 Ventilation Stack
