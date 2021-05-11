@@ -641,8 +641,10 @@ contains
     if (i_tf_sup == 0) then
       ! Calculation taken from cost model 0: simply the cost of copper conductor
       ! masses
+      ! Inflating from 1990 $ to 2017 $ at nuclear rate equates to a factor of 
+      ! 2.99
       ! Inboard TF coil legs
-      c_tf_inboard_legs = 1.0D-6 * whtcp * uccpcl1 * cfind(lsa)
+      c_tf_inboard_legs = 1.0D-6 * whtcp * uccpcl1 * cfind(lsa) * 2.99D0
       c_tf_inboard_legs = fkind * c_tf_inboard_legs
       
       ! cpstcst used later in coelc_step()
@@ -655,7 +657,7 @@ contains
         end if
         
         ! Outboard TF coil legs
-        c_tf_outboard_legs = 1.0D-6 * whttflgs * uccpclb * cfind(lsa)
+        c_tf_outboard_legs = 1.0D-6 * whttflgs * uccpclb * cfind(lsa) * 2.99D0
         c_tf_outboard_legs = fkind * c_tf_outboard_legs
         
         ! Total TF coil cost

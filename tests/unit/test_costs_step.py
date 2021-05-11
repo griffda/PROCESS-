@@ -36,7 +36,7 @@ def test_step_a22010301(monkeypatch):
     
     # Copper coils
     monkeypatch.setattr(tfv, "i_tf_sup", 0)
-    expected = 0.725
+    expected = 2.16775
     observed = cs.step_a22010301()
     assert pytest.approx(observed) == expected
 
