@@ -1483,6 +1483,7 @@
             9000.0,
             9000.0,
             9000.0,
+            9000.0,
             9000.0
         ],
         "dcondins": 1800.0,
@@ -1496,7 +1497,7 @@
         "degrad": 0.01745329251,
         "degree": "pi/180.0D0",
         "delld": 1.0,
-        "delta": null,
+        "delta": 0.0001,
         "delta_eta": 0.0,
         "delta_var": null,
         "dendiv": 0.0,
@@ -1835,7 +1836,7 @@
         "fio": 0.0,
         "fiooic": 0.5,
         "fipir": 1.0,
-        "first_call": ".true.",
+        "first_call": 1.0,
         "first_call_1d": ".true.",
         "first_call_2d": ".true.",
         "first_call_stfwbs": ".true.",
@@ -4693,8 +4694,11 @@
         "step25": 0.0,
         "step27": 0.0,
         "step91": 0.0,
+        "step91_per": 0.3,
         "step92": 0.0,
+        "step92_per": 0.325,
         "step93": 0.0,
+        "step93_per": 0.15,
         "step_con": 0.15,
         "step_ref": [
             3.0,
@@ -9088,7 +9092,7 @@
         "i_tf_bucking": "Switch for TF inboard suport structure design:\nDefault setting for backward compatibility\n     - if copper resistive TF (i_tf_sup = 0) : Free standing TF without bucking structure \n     - if Superconducting TF  (i_tf_sup = 1) : Free standing TF with a steel casing<br>\n     - if aluminium  TF       (i_tf_sup = 2) : Free standing TF with a bucking structure\n     Rem : the case is a bucking structure\n - =0 : Free standing TF without case/bucking cyliner (only a conductor layer)\n - =1 : Free standing TF with a case/bucking cylinder made of \n     - if copper resistive     TF (i_tf_sup = 0) : used defined bucking cylinder\n     - if Superconducting      TF (i_tf_sup = 1) : Steel casing\n     - if aluminium resisitive TF (i_tf_sup = 2) : used defined bucking cylinder\n - =2 : The TF is in contact with the CS : \"bucked and weged design\"\n       Fast version : thin TF-CS interface neglected in the stress calculations (3 layers)\n - =3 : The TF is in contact with the CS : \"bucked and weged design\"\n       Full version : thin TF-CS Kapton interface introduced in the stress calculations (4 layers)",
         "i_tf_case_geom": "Switch for TF case geometry selection\n   0 : Circular front case (ITER design)\n   1 : Straight front case",
         "i_tf_plane_stress": "Switch for the TF coil stress model\n   0 : New generalized plane strain formulation \n   1 : Old plane stress model (only for SC)",
-        "i_tf_sc_mat": "Switch for superconductor material in TF coils:\n<ul>\n<li>=1 ITER Nb3Sn critical surface model with standard\n   ITER parameters</li>\n<li>=2 Bi-2212 high temperature superconductor (range of\n   validity T < 20K, adjusted field b < 104 T, B > 6 T)</li>\n<li>=3 NbTi</li>\n<li>=4 ITER Nb3Sn model with user-specified parameters</li>\n<li>=5 WST Nb3Sn parameterisation</li>\n<li>=6 REBCO HTS tape in CroCo strand</li>\n</ul>",
+        "i_tf_sc_mat": "Switch for superconductor material in TF coils:\n<ul>\n<li>=1 ITER Nb3Sn critical surface model with standard\n   ITER parameters</li>\n<li>=2 Bi-2212 high temperature superconductor (range of\n   validity T < 20K, adjusted field b < 104 T, B > 6 T)</li>\n<li>=3 NbTi</li>\n<li>=4 ITER Nb3Sn model with user-specified parameters</li>\n<li>=5 WST Nb3Sn parameterisation</li>\n<li>=6 REBCO HTS tape in CroCo strand</li>\n<li>=7 Durham Ginzburg-Landau critical surface model for Nb-Ti</li>\n<li>=8 Durham Ginzburg-Landau critical surface model for REBCO</li>\n</ul>",
         "i_tf_shape": "Switch for TF coil toroidal shape:\n<ul>\n<li>=0  Default value : Picture frame coil for TART / PROCESS D-shape for non itart</li>\n<li>=1  PROCESS D-shape : parametrise with 2 arcs </li>\n<li>=2  Picture frame coils </li>\n</ul>",
         "i_tf_sup": "Switch for TF coil conductor model:\n<ul>\n<li>=0 copper</li>\n<li>=1 superconductor</li>\n<li>=2 Cryogenic aluminium</li>\n</ul>",
         "i_tf_tresca": "Switch for TF coil conduit Tresca stress criterion:\n   0 : Tresca (no adjustment);\n   1 : Tresca with CEA adjustment factors (radial+2%, vertical+60%) </UL>",
@@ -9103,7 +9107,7 @@
         "icase": "power plant type",
         "icc": "",
         "icode": "",
-        "iculbl": "switch for beta limit scaling (`constraint equation 24`)\n<ul>\n<li>=0 apply limit to total beta</li>\n<li>=1 apply limit to thermal beta</li>\n<li>=2 apply limit to thermal + neutral beam beta</li>\n</ul>",
+        "iculbl": "switch for beta limit scaling (`constraint equation 24`)\n<ul>\n<li>=0 apply limit to total beta</li>\n<li>=1 apply limit to thermal beta</li>\n<li>=2 apply limit to thermal + neutral beam beta</li>\n<li>=3 apply limit to toroidal beta</li>\n</ul>",
         "icurr": "switch for plasma current scaling to use\n<ul>\n<li>=1 Peng analytic fit</li>\n<li>=2 Peng double null divertor scaling (ST)</li>\n<li>=3 simple ITER scaling (k = 2.2, d = 0.6)</li>\n<li>=4 later ITER scaling, a la Uckan</li>\n<li>=5 Todd empirical scaling I</li>\n<li>=6 Todd empirical scaling II</li>\n<li>=7 Connor-Hastie model</li>\n<li>=8 Sauter scaling allowing negative triangularity</li>\n<li>=9 FIESTA ST fit</li>\n</ul>",
         "idensl": "switch for density limit to enforce (`constraint equation 5`)\n<ul>\n<li>=1 old ASDEX</li>\n<li>=2 Borrass model for ITER (I)</li>\n<li>=3 Borrass model for ITER (II)</li>\n<li>=4 JET edge radiation</li>\n<li>=5 JET simplified</li>\n<li>=6 Hugill-Murakami Mq limit</li>\n<li>=7 Greenwald limit</li>\n</ul>",
         "idia": "switch for diamagnetic current scaling\n<ul>\n<li>=0 Do not calculate</li>\n<li>=1 Use original TART scaling</li>\n<li>=2 Use SCENE scaling</li>\n</ul>",
@@ -9964,8 +9968,11 @@
         "step25": "",
         "step27": "",
         "step91": "",
+        "step91_per": "Percentage of cdirt used in calculating step91 (3.0D-1 = 30%)",
         "step92": "",
+        "step92_per": "Percentage of cdirt used in calculating step92 (3.0D-1 = 30%)",
         "step93": "",
+        "step93_per": "Percentage of cdirt used in calculating step93 (3.0D-1 = 30%)",
         "step_con": "Contingency Percentage",
         "step_ref": "Reference values for cost model 2",
         "step_rh_costfrac": "fraction of capital cost for remote handling (if cost_model = 2)",
@@ -12378,7 +12385,7 @@
         },
         "iculbl": {
             "lb": 0,
-            "ub": 2
+            "ub": 3
         },
         "icurr": {
             "lb": 1,
@@ -13403,6 +13410,18 @@
         "stcl": {
             "lb": 0.0,
             "ub": 10.0
+        },
+        "step91_per": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "step92_per": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "step93_per": {
+            "lb": 1.0,
+            "ub": 100.0
         },
         "step_rh_costfrac": {
             "lb": 0.0,
@@ -16409,6 +16428,9 @@
             "step_con",
             "step_rh_costfrac",
             "step_ref",
+            "step91_per",
+            "step92_per",
+            "step93_per",
             "tlife",
             "ucad",
             "ucaf",
@@ -19563,6 +19585,9 @@
         "somtdr": "real_variable",
         "ssync": "real_variable",
         "stcl": "real_variable",
+        "step91_per": "real_variable",
+        "step92_per": "real_variable",
+        "step93_per": "real_variable",
         "step_ref": "real_array",
         "step_rh_costfrac": "real_variable",
         "strncon_cs": "real_variable",

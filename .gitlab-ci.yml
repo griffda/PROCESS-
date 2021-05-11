@@ -6,7 +6,7 @@
 #  K. Zarebski
 #
 #  UKAEA
-#  02/12/2020
+#  11/03/2021
 #
 #-----------------------------------------------------
 
@@ -24,7 +24,11 @@ stages:
   before_script:
     - source ~/.venv_$PY_VERSION/bin/activate
     - python -m pip install --upgrade pip
-    - python -m pip install -r requirements.txt
+    # Manually install numpy as including it in requirements doesnt install it
+    # It is a pre-requisite to f90wrap install, although requirements in image
+    # always want latest to detect any immediate future problems
+    - python -m pip install --ignore-installed numpy
+    - python -m pip install --ignore-installed -r requirements.txt
     - python -m pip install git+https://github.com/jonMaddockUkaea/ford
     - python -m pip install --find-links=process_dist_$PY_VERSION process
     - apt update && apt upgrade -y
@@ -52,15 +56,18 @@ stages:
       - process_dist_$PY_VERSION/process-*.whl
       - build/CMakeFiles/process.dir/source/fortran/*.gcno
       - lcov_results
+      - python_modules.txt
     expire_in: 1 week
   script:
     - source ~/.venv_$PY_VERSION/bin/activate
     - python -m pip install --upgrade pip
-    - python -m pip install -r requirements.txt
+    - python -m pip install --ignore-installed numpy
+    - python -m pip install --ignore-installed -r requirements.txt
     - cmake -H. -Bbuild
     - cmake --build build
     - python3 setup.py sdist -d process_dist_$PY_VERSION
     - python3 setup.py bdist_wheel -d process_dist_$PY_VERSION
+    - python -m pip freeze > python_modules.txt
   tags:
     - ubuntu
 

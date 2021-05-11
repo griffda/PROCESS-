@@ -229,7 +229,8 @@ contains
       fwbs_umain_time, uchrs, avail_min, uciac, step_ref, ucshld, tdivrepl, &
       ucblli, ucpfcb, tlife, ipnet, fcdfuel, ucbus, ucpfb, uchts, &
       maintenance_fwbs, fwbs_prob_fail, uclh, ucblss, ucblvd, ucsc, ucturb, &
-      ucpens, cland, ucwindpf, i_cp_lifetime, cplife_input
+      ucpens, cland, ucwindpf, i_cp_lifetime, cplife_input, step91_per, &
+      step92_per, step93_per
     use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
@@ -624,7 +625,7 @@ contains
           call parse_int_variable('ibss', ibss, 1, 4, &
                'Switch for bootstrap scaling')
        case ('iculbl')
-          call parse_int_variable('iculbl', iculbl, 0, 2, &
+          call parse_int_variable('iculbl', iculbl, 0, 3, &
                'Switch for beta limit scaling')
        case ('iculdl')
           write(outfile,*) ' '
@@ -2711,6 +2712,15 @@ contains
        case ('step_ref')
           call parse_real_array('step_ref', step_ref, isub1, 68, &
                'Reference values for cost model 2', icode)
+       case ('step91_per')
+          call parse_real_variable('step91_per', step91_per, 1.0D0, 1.0D2, &
+               'Percentage of cdirt used in calculating step91 (3.0D-1 = 30%)')
+       case ('step92_per')
+          call parse_real_variable('step92_per', step92_per, 1.0D0, 1.0D2, &
+               'Percentage of cdirt used in calculating step92 (3.0D-1 = 30%)')
+       case ('step93_per')
+          call parse_real_variable('step93_per', step93_per, 1.0D0, 1.0D2, &
+               'Percentage of cdirt used in calculating step93 (3.0D-1 = 30%)')
        case ('ucblbe')
           call parse_real_variable('ucblbe', ucblbe, 1.0D0, 1.0D3, &
                'Unit cost for blanket Be ($/kg)')

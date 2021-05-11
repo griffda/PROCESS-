@@ -360,13 +360,14 @@ contains
           gamcd = effcd * dene20 * rmajor
           effrfss = effcd
 
+
+       case (12)  
        ! EBW scaling
        ! Scaling author Simon Freethy
        ! Ref : PROCESS issue 1262
-       case (12)  
 
          !  Normalised current drive efficiency gamma
-         gamcd = 0.03058D0 * te
+         gamcd = (0.43D0/32.7D0) * te
          
          ! Absolute current drive efficiency
          effrfss = gamcd / (dene20 * rmajor)

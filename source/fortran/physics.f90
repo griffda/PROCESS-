@@ -3998,10 +3998,7 @@ module physics_module
        call ovarrf(outfile,'Normalised thermal beta',' ',1.0D8*betath*rminor*bt/plascur, 'OP ')
        !call ovarrf(outfile,'Normalised total beta',' ',1.0D8*beta*rminor*bt/plascur, 'OP ')
        call ovarrf(outfile,'Normalised total beta',' ',normalised_total_beta, 'OP ')
-    end if
-
-    if (itart == 1) then
-       call ovarrf(outfile,'Normalised thermal toroidal beta', ' ',fbetatry*dnbeta*btot**2/bt**2, 'OP ')
+       call ovarrf(outfile,'Normalised toroidal beta',' ',normalised_total_beta*(btot/bt)**2, 'OP ')
     end if
 
     if (iculbl == 0) then

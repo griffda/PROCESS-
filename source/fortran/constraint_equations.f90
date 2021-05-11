@@ -1143,7 +1143,8 @@ contains
       !! iculbl : input integer : switch for beta limit scaling (constraint equation  24):<UL>
       !! <LI> = 0 apply limit to total beta;
       !! <LI> = 1 apply limit to thermal beta;
-      !! <LI> = 2 apply limit to thermal + neutral beam beta</UL>
+      !! <LI> = 2 apply limit to thermal + neutral beam beta
+      !! <LI> = 3 apply limit to toroidal beta </UL>
       !! istell : input integer : switch for stellarator option (set via <CODE>device.dat</CODE>):<UL>
       !! <LI> = 0 use tokamak model;
       !! <LI> = 1 use stellarator model</UL>
@@ -1152,7 +1153,9 @@ contains
       !! beta : input real : total plasma beta (calculated if ipedestal =3)
       !! betaft : input real : fast alpha beta component
       !! betanb : input real : neutral beam beta component
-      use physics_variables, only: iculbl, betalim, beta, betanb, betaft
+      !! bt : input real : toroidal field
+      !! btot : input real : total field
+      use physics_variables, only: iculbl, betalim, beta, betanb, betaft, bt, btot
       use stellarator_variables, only: istell
       use constraint_variables, only: fbetatry
       implicit none
@@ -1173,10 +1176,17 @@ contains
          args%symbol = '<'
          args%units = ''
       ! Beta limit applies to thermal + neutral beam: components of the total beta, i.e. excludes alphas
-      else ! iculbl == 2
+      else if (iculbl == 2) then
          args%cc = 1.0D0 - fbetatry * betalim/(beta-betaft)
          args%con = betalim * (1.0D0 - args%cc)
          args%err = (beta-betaft) * args%cc
+         args%symbol = '<'
+         args%units = ''
+      ! Beta limit applies to toroidal beta
+      else if (iculbl == 3) then
+         args%cc =  1.0D0 - fbetatry * betalim/(beta*(btot/bt)**2)
+         args%con = betalim
+         args%err = betalim - (beta*(btot/bt)**2) / fbetatry
          args%symbol = '<'
          args%units = ''
       end if 
