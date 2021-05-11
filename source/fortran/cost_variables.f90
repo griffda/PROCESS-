@@ -328,6 +328,15 @@ module cost_variables
   real(dp), dimension(68) :: step_ref
   !! Reference values for cost model 2
 
+  real(dp) :: step91_per
+  !! Percentage of cdirt used in calculating step91 (3.0D-1 = 30%)
+  
+  real(dp) :: step92_per
+  !! Percentage of cdirt used in calculating step92 (3.0D-1 = 30%)
+  
+  real(dp) :: step93_per
+  !! Percentage of cdirt used in calculating step93 (3.0D-1 = 30%)
+
   real(dp) :: tlife
   !! Full power year plant lifetime (years)
 
@@ -695,6 +704,9 @@ module cost_variables
       1.8D0, 1.3D0, 3.86D1, 3.83D1, 0.0D0, 2.4D-1, 8.0D-2, 0.0D0, 2.0D0, 1.97D0, 1.16D0, &
       2.341D1, 7.733D1, 4.37D0, 4.434D1, 1.918D1, 9.39D0, 5.084D1, 8.7D0, 1.239D1, &
       1.704D1, 7.8D0, 2.11D0, 1.74D1, 3.599D1, 8.2D0, 1.568D1, 1.235D1, 6.22D0, 7.5D-1 /)
+    step91_per = 3.0D-1
+    step92_per = 3.25D-1
+    step93_per = 1.5D-1
     tlife = 30.0D0
     ucblbe = 260.0D0
     ucblbreed = 875.0D0
