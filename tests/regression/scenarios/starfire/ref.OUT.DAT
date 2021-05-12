@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.1   Release Date :: 2021-03-17
-   Tag No. : v2.1-184-g273a1ff8 code contains untracked changes
-    Branch : 1296-update-indirect-costs-in-cost-model-2
+   Tag No. : v2.1-192-gd7443eaa
+    Branch : issue-1309
    Git log : COMMIT_MSG
- Date/time : 10 May 2021 15:34:09 +01:00(hh:mm) UTC
+ Date/time : 12 May 2021 11:51:59 +01:00(hh:mm) UTC
       User : jmaddock
   Computer : J0826UBUNTU
- Directory : /tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario2_0
-     Input : /tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario2_0/IN.DAT
+ Directory : /tmp/pytest-of-jmaddock/pytest-0/test_scenario_scenario2_0
+     Input : /tmp/pytest-of-jmaddock/pytest-0/test_scenario_scenario2_0/IN.DAT
  Run title : starfire
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -1682,7 +1682,7 @@ bore     = 2.1201269689496494 * central solenoid inboard radius (m) (`iteration 
 ddwex    = 0.15 * cryostat thickness (m)
 d_vv_in  = 0.30 * vacuum vessel inboard thickness (TF coil / shield) (m)
 d_vv_out = 0.30 * vacuum vessel outboard thickness (TF coil / shield) (m)
-d_vv_top = 0.30 * vacuum vessel topside thickness (TF coil / shield) (m)
+d_vv_top = 0.30 * vacuum vessel topside thickness (TF coil / shield) (m) (= d_vv_bot if double-null)
 d_vv_bot = 0.30 * vacuum vessel underside thickness (TF coil / shield) (m)
 gapds    = 0.15003399049211447 * gap between inboard vacuum vessel and thermal shield (m) (`iteration variable 61`)
 gapoh    = 0.06541854755255866 * gap between central solenoid and TF coil (m) (`iteration variable 42`)
@@ -1693,7 +1693,7 @@ scrapli  = 0.2 * Gap between plasma and first wall; inboard side (m) (if `iscrp=
 scraplo  = 0.2 * Gap between plasma and first wall; outboard side (m) (if `iscrp=1`)
 shldith  = 0.30 * inboard shield thickness (m) (`iteration variable 93`)
 shldoth  = 0.80 * outboard shield thickness (m) (`iteration variable 94`)
-shldtth  = 0.30 * upper/lower shield thickness (m); calculated if `blktmodel > 0`
+shldtth  = 0.30 * upper/lower shield thickness (m); calculated if `blktmodel > 0` (= shldlth if double-null)
 tfcth    = 0.4686248306578002 * inboard TF coil thickness; (centrepost for ST) (m)
 tftsgap  = 0.05 * Minimum metal-to-metal gap between TF coil and thermal shield (m)
 vgap2    = 0.05 * vertical gap between vacuum vessel and thermal shields (m)
