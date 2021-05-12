@@ -2,15 +2,15 @@
  # Power Reactor Optimisation Code #
  # PROCESS #
  # Power Reactor Optimisation Code #
- PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "08/03/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "18:34"
- User____________________________________________________________________ (username)____________________     "skahn"   
+ PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.1   R"
+ Date_of_run_____________________________________________________________ (date)________________________     "10/05/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "15:34"
+ User____________________________________________________________________ (username)____________________     "jmaddock"
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "starfire                                                                                           
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-147-g3a766c4a"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "issue-1264-joints-heating-error"                                                                   
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch 'develop' into issue-1264-joints-heating-error"                                       
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-skahn/pytest-113/test_scenario_scenario17_0/IN.DAT                                                                                                                                       "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-184-g273a1ff8"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1296-update-indirect-costs-in-cost-model-2"                                                        
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario2_0/IN.DAT                                                                                                                                       "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -215,19 +215,19 @@
  # Plant Direct Cost #
  Plant_direct_cost_(M$)__________________________________________________ (cdirt)_______________________      1.7764E+03    
  # Indirect Cost #
- Construction_Facilities,_Equipment_and_Services_(10%)_(M$)______________ (step91)______________________      1.7764E+02    
- Engineering_and_Costruction_Management_Services_(8%)_(M$)_______________ (step92)______________________      1.4211E+02    
- Other_Costs_(5%)_(M$)___________________________________________________ (step93)______________________      8.8820E+01    
+ Construction_Facilities,_Equipment_and_Services_(M$)____________________ (step91)______________________      5.3292E+02    
+ Engineering_and_Costruction_Management_Services_(M$)____________________ (step92)______________________      5.7733E+02    
+ Other_Costs_(M$)________________________________________________________ (step93)______________________      2.6646E+02    
  # Constructed Cost #
- Constructed_Cost_(M$)___________________________________________________ (concost)_____________________      2.1850E+03    
+ Constructed_Cost_(M$)___________________________________________________ (concost)_____________________      3.1531E+03    
  # Interest during Construction #
- Interest_during_construction_(M$)_______________________________________ (moneyint)____________________      3.2775E+02    
+ Interest_during_construction_(M$)_______________________________________ (moneyint)____________________      4.7297E+02    
  # Total Capital Investment #
- Total_capital_investment_(M$)___________________________________________ (capcost)_____________________      2.5127E+03    
+ Total_capital_investment_(M$)___________________________________________ (capcost)_____________________      3.6261E+03    
  # Cost of Electricity (1980 US$) #
  First_wall_/_blanket_life_(years)_______________________________________ (fwbllife)____________________      5.3433E+00    
  Divertor_life_(years)___________________________________________________ (divlife.)____________________      2.8556E-01    
- Cost_of_electricity_(m$/kWh)____________________________________________ (coe)_________________________      3.1228E+01    
+ Cost_of_electricity_(m$/kWh)____________________________________________ (coe)_________________________      4.0711E+01    
  # Plant Availability #
  Allowable_blanket_neutron_fluence_(MW-yr/m2)____________________________ (abktflnc)____________________      1.5000E+01    
  Allowable_divertor_heat_fluence_(MW-yr/m2)______________________________ (adivflnc)____________________      2.0000E+01    
@@ -275,6 +275,7 @@
  Beta_g_coefficient______________________________________________________ (dnbeta)______________________      6.0000E+00    
  Normalised_thermal_beta_________________________________________________ ______________________________      3.8186E+00    
  Normalised_total_beta___________________________________________________ ______________________________      4.5819E+00    
+ Normalised_toroidal_beta________________________________________________ ______________________________      4.7709E+00    
  Limit_on_thermal_beta___________________________________________________ (betalim)_____________________      7.9845E-02    
  Plasma_thermal_energy_(J)_______________________________________________ ______________________________      8.3373E+08 OP 
  Total_plasma_internal_energy_(J)________________________________________ (total_plasma_internal_energy)      1.0004E+09 OP 

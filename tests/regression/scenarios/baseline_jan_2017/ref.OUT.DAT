@@ -6,15 +6,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.0   Release Date :: 2021-01-25
-   Tag No. : v2.1-147-g3a766c4a code contains untracked changes
-    Branch : issue-1264-joints-heating-error
-   Git log : Merge branch 'develop' into issue-1264-joints-heating-error
- Date/time :  8 Mar 2021 18:30:19 +00:00(hh:mm) UTC
-      User : skahn
-  Computer : J0320
- Directory : /tmp/pytest-of-skahn/pytest-113/test_solver0
-     Input : /tmp/pytest-of-skahn/pytest-113/test_scenario_scenario1_0/IN.DAT
+   Version : 2.1.1   Release Date :: 2021-03-17
+   Tag No. : v2.1-184-g273a1ff8 code contains untracked changes
+    Branch : 1296-update-indirect-costs-in-cost-model-2
+   Git log : COMMIT_MSG
+ Date/time : 10 May 2021 15:34:29 +01:00(hh:mm) UTC
+      User : jmaddock
+  Computer : J0826UBUNTU
+ Directory : /tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario2_0
+     Input : /tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario8_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -201,6 +201,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Beta g coefficient                                                       (dnbeta)                      4.383  OP 
  Normalised thermal beta                                                                                2.279  OP 
  Normalised total beta                                                                                  2.568  OP 
+ Normalised toroidal beta                                                                               2.654  OP 
  Limit on thermal beta                                                    (betalim)                     0.056  OP 
  Plasma thermal energy (J)                                                                          1.505E+09  OP 
  Total plasma internal energy (J)                                         (total_plasma_internal_en 1.696E+09  OP 
