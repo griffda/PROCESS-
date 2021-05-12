@@ -22,13 +22,11 @@ module costs_step_module
 
   !  Various cost account values (M$)
   real(dp) :: step20, step21, step22, step23, step24, step25, &
-  step27, step91, step92, step93, fwblkcost, step22010302, step220101
-  real(dp) :: step22010101, step22010102, step2201010201, step2201010202, step2201010203, &
-                step2201010204, step2201010205, step2201010206, step2201010207
+              step27, step91, step92, step93, fwblkcost
 
   ! Scaling Properties
   real(dp) :: vfi, vfi_star, ptherm_star, pinjmw_star, fwarea_star, &
-  rmajor_star, rminor_star, pth
+              rmajor_star, rminor_star, pth
 
 contains
 
@@ -46,17 +44,6 @@ contains
     step91 = 0.0D0
     step92 = 0.0D0
     step93 = 0.0D0
-    step220101 = 0.0D0
-    step22010101 = 0.0D0
-    step22010102 = 0.0D0
-    step2201010201 = 0.0D0
-    step2201010202 = 0.0D0
-    step2201010203 = 0.0D0
-    step2201010204 = 0.0D0
-    step2201010205 = 0.0D0
-    step2201010206 = 0.0D0
-    step2201010207 = 0.0D0
-    step22010302 = 0.0D0
     fwblkcost = 0.0D0
     vfi = 0.0D0
     vfi_star = 0.0D0
@@ -489,12 +476,13 @@ contains
     ! Arguments
     integer, intent(in) :: iprint,outfile
     real(dp), intent(inout) :: step2298
-  
+
     ! Local variables
-    real(dp):: &
-    step220102, step220104, step220105, step220106, &
-    step220107, step220108, step220109, step220110, step2201, &
-    step22010301, step22010303, step22010304
+    real(dp):: step2201, step220101, step22010101, step22010102, step2201010201, &
+               step2201010202, step2201010203, step220102, step22010301, &
+               step22010302, step22010303, step22010304, step220104, &
+               step220105, step220106, step220107, step220108, step220109, &
+               step220110
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -502,9 +490,8 @@ contains
     step2201 = 0.0D0
      
     ! 22.01.01 Blanket and First Wall
-    ! Original STARFIRE value, scaling with first wall area
-    !step220101 = step_ref(20) * (fwarea / fwarea_star)
-    call step_a220101
+    call step_a220101(step220101, step22010101, step22010102, step2201010201, &
+                      step2201010202, step2201010203)
     step2201 = step2201 + step220101
 
     ! 22.01.02 Shield
@@ -520,7 +507,7 @@ contains
     step2201 = step2201 + step22010301
 
     ! 22.01.03.02 PF Coils
-    call step_a22010302
+    step22010302 = step_a22010302()
     step2201 = step2201 + step22010302
     ! STARFIRE percentage for spares
     step2298 = step2298 + 3.269D-1 * step22010302
@@ -606,10 +593,6 @@ contains
         call ocosts(outfile,'(step2201010201)','Blanket Multiplier Material (M$)', step2201010201)
         call ocosts(outfile,'(step2201010202)','Blanket Breeder Material (M$)', step2201010202)
         call ocosts(outfile,'(step2201010203)','Blanket Steel Costs (M$)', step2201010203)
-        call ocosts(outfile,'(step2201010204)','Blanket Vanadium Costs (M$)', step2201010204)
-        !call ocosts(outfile,'(step2201010205)','Blanket Carbon Cloth Costs (M$)', step2201010205)
-        !call ocosts(outfile,'(step2201010206)','Blanket Concrete Costs (M$)', step2201010206)
-        !call ocosts(outfile,'(step2201010207)','Blanket FLiBe Costs (M$)', step2201010207)
         call ocosts(outfile,'(step22010102)','Total Blanket Cost (M$)', step22010102)
         call oblnkl(outfile)
         call ocosts(outfile,'(step220101)','Total Account 22.01.01 Cost (M$)', step220101)
@@ -640,7 +623,8 @@ contains
   
   end subroutine step_a2201
 
-  subroutine step_a220101
+  subroutine step_a220101(step220101, step22010101, step22010102, step2201010201, &
+                          step2201010202, step2201010203)
 
     !! Account 22.01.01 : Blanket and First Wall 
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -655,7 +639,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use cost_variables, only: step_ucblss, step_ucblbreed, step_ucblbe, ucblli, &
-      step_ucblvd, ucblli2o, blkcst, ucbllipb, ifueltyp, lsa, fkind, step_ucfws, &
+      step_ucblvd, ucblli2o, blkcst, ucbllipb, ifueltyp, lsa, step_ucfws, &
       fwallcst, step_ucfwps, step_ucfwa
 		use fwbs_variables, only: blktmodel, whtblli, blkttype, wtblli2o, &
       whtblbreed, whtblvd, whtblbe, whtblss, wtbllipb, fw_armour_mass, fwmass 
@@ -663,14 +647,12 @@ contains
 		use heat_transport_variables, only: ipowerflow 
     
     implicit none
-
-    !  Arguments
+    real(dp), intent(inout) :: step220101, step22010101, step22010102, step2201010201, &
+                               step2201010202, step2201010203
 
     !  Local variables
-
-    !real(dp) :: step22010101, step22010102, step2201010201, step2201010202, step2201010203, &
-    !            step2201010204, step2201010205, step2201010206, step2201010207
     real(dp), dimension(4) :: cmlsa
+    real(dp) :: step2201010204, step2201010205, step2201010206, step2201010207
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -682,10 +664,7 @@ contains
     cmlsa(4) = 1.0000D0
 
     !! Account 22.01.01.01 : First wall
-    !step22010101 = 1.0D-6 * cmlsa(lsa) * ((step_ucfwa+step_ucfws)*fwarea + step_ucfwps)
     step22010101 = 1.0D-6 * cmlsa(lsa) * (fw_armour_mass * step_ucfwa + fwmass * step_ucfws) 
-
-    step22010101 = fkind * step22010101
 
     if (ifueltyp == 1) then
        fwallcst = step22010101
@@ -725,28 +704,28 @@ contains
       end if
     end if
 
-    step2201010201 = fkind * step2201010201 * cmlsa(lsa)
-    step2201010202 = fkind * step2201010202 * cmlsa(lsa)
+    step2201010201 = step2201010201 * cmlsa(lsa)
+    step2201010202 = step2201010202 * cmlsa(lsa)
 
     !! Account 22.01.01.02.03 : Blanket Steel Costs
     step2201010203 = 1.0D-6 * whtblss * step_ucblss
-    step2201010203 = fkind * step2201010203 * cmlsa(lsa)
+    step2201010203 = step2201010203 * cmlsa(lsa)
     
     !! Account 22.01.01.02.04 : Blanket Vanadium Costs
     step2201010204 = 1.0D-6 * whtblvd * step_ucblvd
-    step2201010204 = fkind * step2201010204 * cmlsa(lsa)
+    step2201010204 = step2201010204 * cmlsa(lsa)
        
     !! Account 22.01.01.02.05 : Blanket Carbon Cloth Costs
     step2201010205 = 0.0D0
-    step2201010205 = fkind * step2201010205 * cmlsa(lsa)
+    step2201010205 = step2201010205 * cmlsa(lsa)
        
     !! Account 22.01.01.02.06 : Blanket Concrete Costs
     step2201010206 = 0.0D0
-    step2201010206 = fkind * step2201010206 * cmlsa(lsa)
+    step2201010206 = step2201010206 * cmlsa(lsa)
 
     !! Account 22.01.01.02.07 : Blanket FLiBe Costs
     step2201010207 = 0.0D0
-    step2201010207 = fkind * step2201010207 * cmlsa(lsa)
+    step2201010207 = step2201010207 * cmlsa(lsa)
 
     step22010102 = step2201010201 + step2201010202 + step2201010203 + step2201010204 &
      + step2201010205 + step2201010206 + step2201010207
@@ -761,7 +740,6 @@ contains
     end if
 
     !! Total for Account 22.01.01
-
     step220101 = step22010101 + step22010102 
 
   end subroutine step_a220101
@@ -771,7 +749,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine step_a22010302
+  function step_a22010302() result(step22010302)
 
     !! Account 22.01.03.02 PF Coils : PF magnet assemblies
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -792,17 +770,17 @@ contains
 		use build_variables, only: iohcl 
 		use constants, only: twopi, dcopper
 		use cost_variables, only: step_uccase, step_uccu, step_cconshpf, step_ucfnc, &
-      step_cconfix, step_ucsc, step_ucwindpf, lsa, fkind
+      step_cconfix, step_ucsc, step_ucwindpf, lsa
 		use pfcoil_variables, only: rjconpf, ipfres, vfohc, nohc, turns, isumatpf, &
       whtpfs, ric, rpf, isumatoh, fcupfsu, fcuohsu, vf, awpoh 
 		use structure_variables, only: fncmass 
     use tfcoil_variables, only: dcond
     implicit none
 
-    !  Arguments
+    !  Result
+    real(dp) :: step22010302
      
     !  Local variables
-
     real(dp) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
          pfwndl, step2201030201, step2201030202, step2201030203, step2201030204
     real(dp), dimension(4) :: cmlsa
@@ -865,78 +843,32 @@ contains
        end if
 
        !  Total cost/metre of superconductor and copper wire
-
        costwire = costpfsc + costpfcu
 
        !  Total cost/metre of conductor (including sheath and fixed costs)
-
        cpfconpm = costwire + costpfsh + step_cconfix
 
        !  Total account 222.2.1 (PF coils excluding Central Solenoid)
-
        step2201030201 = step2201030201 + (1.0D-6 * twopi * rpf(i) * turns(i) * &
             cpfconpm)
 
     end do
 
-    !  Central Solenoid
-
-    !if (iohcl == 1) then
-
-       !  Superconductor ($/m)
-       !  Issue #328  Use CS conductor cross-sectional area (m2)
-    !   if (ipfres == 0) then
-    !      costpfsc = step_ucsc(isumatoh) * awpoh*(1-vfohc)*(1-fcuohsu)/turns(nohc) * dcond(isumatoh)
-    !   else
-    !      costpfsc = 0.0D0
-    !   end if
-
-       !  Copper ($/m)
-
-    !   if (ipfres == 0) then
-    !      costpfcu = step_uccu * awpoh*(1-vfohc)*fcuohsu/turns(nohc) * dcopper
-    !   else
-          ! MDK I don't know if this is ccorrect as we never use the resistive model
-    !      costpfcu = step_uccu * awpoh*(1-vfohc)/turns(nohc) * dcopper
-    !   end if
-
-       !  Total cost/metre of superconductor and copper wire (Central Solenoid)
-
-    !   costwire = costpfsc + costpfcu
-
-       !  Total cost/metre of conductor (including sheath and fixed costs)
-
-    !   cpfconpm = costwire + costpfsh + step_cconfix
-
-       !  Total account 222.2.1 (PF+Central Solenoid coils)
-
-    !   step_a2201030201 = step_a2201030201 + (1.0D-6 * twopi * rpf(nohc) * turns(nohc) * &
-    !        cpfconpm)
-
-    !end if
-
-    step2201030201 = fkind * step2201030201 * cmlsa(lsa)
+    step2201030201 = step2201030201 * cmlsa(lsa)
 
     !  Account 22.01.03.02.02 : Winding
-
-    step2201030202 = 1.0D-6 * step_ucwindpf * pfwndl
-    step2201030202 = fkind * step2201030202 * cmlsa(lsa)
-
+    step2201030202 = 1.0D-6 * step_ucwindpf * pfwndl * cmlsa(lsa)
+ 
     !  Account 22.01.03.02.03 : Steel case - will be zero for resistive coils
-
-    step2201030203 = 1.0D-6 * step_uccase * whtpfs
-    step2201030203 = fkind * step2201030203 * cmlsa(lsa)
-
+    step2201030203 = 1.0D-6 * step_uccase * whtpfs * cmlsa(lsa)
+ 
     !  Account 22.01.03.02.04 : Support structure
-
-    step2201030204 = 1.0D-6 * step_ucfnc * fncmass
-    step2201030204 = fkind * step2201030204 * cmlsa(lsa)
+    step2201030204 = 1.0D-6 * step_ucfnc * fncmass * cmlsa(lsa)
 
     !  Total account 22.01.03.02
-
     step22010302 = step2201030201 + step2201030202 + step2201030203 + step2201030204
 
-  end subroutine step_a22010302
+    end function step_a22010302
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
