@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.1   Release Date :: 2021-03-17
-   Tag No. : v2.1-184-g273a1ff8 code contains untracked changes
-    Branch : 1296-update-indirect-costs-in-cost-model-2
+   Tag No. : v2.1-192-gd7443eaa
+    Branch : issue-1309
    Git log : COMMIT_MSG
- Date/time : 10 May 2021 15:34:32 +01:00(hh:mm) UTC
+ Date/time : 12 May 2021 11:52:23 +01:00(hh:mm) UTC
       User : jmaddock
   Computer : J0826UBUNTU
- Directory : /tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario2_0
-     Input : /tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario10_0/IN.DAT
+ Directory : /tmp/pytest-of-jmaddock/pytest-0/test_scenario_scenario2_0
+     Input : /tmp/pytest-of-jmaddock/pytest-0/test_scenario_scenario10_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
