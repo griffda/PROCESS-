@@ -605,7 +605,7 @@ contains
   function step_a22010301() result(step22010301)
     !! 22.01.03.01 TF Coils
     !! Returns cost of TF coils
-    use cost_variables, only: step_ref, cpstcst, fkind, lsa, cfind, ifueltyp, &
+    use cost_variables, only: step_ref, cpstcst, lsa, cfind, ifueltyp, &
       step_uc_cryo_al, step_mc_cryo_al_per, uccpcl1, uccpclb
     use tfcoil_variables, only: i_tf_sup, whtconal, n_tf, whttflgs, whtcp
     use physics_variables, only: itart
@@ -633,11 +633,9 @@ contains
       ! 2.99
       ! Inboard TF coil legs
       c_tf_inboard_legs = 1.0D-6 * whtcp * uccpcl1 * cfind(lsa) * 2.99D0
-      c_tf_inboard_legs = fkind * c_tf_inboard_legs
       
       ! Outboard TF coil legs
       c_tf_outboard_legs = 1.0D-6 * whttflgs * uccpclb * cfind(lsa) * 2.99D0
-      c_tf_outboard_legs = fkind * c_tf_outboard_legs
       
       ! Total TF coil cost
       step22010301 = c_tf_inboard_legs + c_tf_outboard_legs
