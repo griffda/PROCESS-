@@ -1003,7 +1003,7 @@ contains
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(dp):: turbine_sys_total, step2303, step2398, step2399
+    real(dp):: step23_turbine_plant_only, step2303, step2398, step2399
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1016,10 +1016,10 @@ contains
     ! 23.05 Feedwater Heating System
     ! 23.06 Other Turbine Equipment
     ! 23.07 Instrumentation and Control
-    ! turbine_sys_total is the sum of the above accounts: total turbine system
+    ! step23_turbine_plant_only is the sum of the above accounts: total turbine system
     ! cost, not treating cooling towers as part of the turbine system
-    turbine_sys_total = 5.55440D5 * pgrossmw * 1.0D-6
-    step23 = step23 + turbine_sys_total
+    step23_turbine_plant_only = 5.55440D5 * pgrossmw * 1.0D-6
+    step23 = step23 + step23_turbine_plant_only
 
     ! 23.03 Heat Rejection
     step2303 = ((8.0437D4 * pgrossmw) + 2.2264895D7) * 1.0D-6
@@ -1038,7 +1038,7 @@ contains
     ! Output costs
     if ((iprint==1).and.(output_costs == 1)) then
       call oshead(outfile,'23. Turbine Plant Equipment')
-      call ocosts(outfile,'(turbine_sys_total)','Turbine system (M$)', turbine_sys_total)
+      call ocosts(outfile,'(step23_turbine_plant_only)','Turbine system (M$)', step23_turbine_plant_only)
       call ocosts(outfile,'(step2303)','Heat Rejection (M$)', step2303)
       call ocosts(outfile,'(step2398)','Spares (M$)', step2398)
       call ocosts(outfile,'(step2399)','Contingency (M$)', step2399)
