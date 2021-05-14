@@ -5,15 +5,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.0   Release Date :: 2021-01-25
-   Tag No. : v2.1-147-g3a766c4a code contains untracked changes
-    Branch : issue-1264-joints-heating-error
-   Git log : Merge branch 'develop' into issue-1264-joints-heating-error
- Date/time :  8 Mar 2021 18:34:02 +00:00(hh:mm) UTC
-      User : skahn
-  Computer : J0320
- Directory : /tmp/pytest-of-skahn/pytest-113/test_solver0
-     Input : /tmp/pytest-of-skahn/pytest-113/test_scenario_scenario16_0/IN.DAT
+   Version : 2.1.1   Release Date :: 2021-03-17
+   Tag No. : v2.1-192-gd7443eaa
+    Branch : issue-1309
+   Git log : COMMIT_MSG
+ Date/time : 12 May 2021 11:52:23 +01:00(hh:mm) UTC
+      User : jmaddock
+  Computer : J0826UBUNTU
+ Directory : /tmp/pytest-of-jmaddock/pytest-0/test_scenario_scenario2_0
+     Input : /tmp/pytest-of-jmaddock/pytest-0/test_scenario_scenario10_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -213,6 +213,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Beta g coefficient                                                       (dnbeta)                      4.980  OP 
  Normalised thermal beta                                                                                2.193  OP 
  Normalised total beta                                                                                  2.569  OP 
+ Normalised toroidal beta                                                                               2.630  OP 
  Limit on thermal beta                                                    (betalim)                     0.055  OP 
  Plasma thermal energy (J)                                                                          1.411E+09  OP 
  Total plasma internal energy (J)                                         (total_plasma_internal_en 1.653E+09  OP 

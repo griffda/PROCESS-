@@ -6,15 +6,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.0   Release Date :: 2021-01-25
-   Tag No. : v2.1-147-g3a766c4a code contains untracked changes
-    Branch : issue-1264-joints-heating-error
-   Git log : Merge branch 'develop' into issue-1264-joints-heating-error
- Date/time :  8 Mar 2021 18:33:28 +00:00(hh:mm) UTC
-      User : skahn
-  Computer : J0320
- Directory : /tmp/pytest-of-skahn/pytest-113/test_solver0
-     Input : /tmp/pytest-of-skahn/pytest-113/test_scenario_scenario13_0/IN.DAT
+   Version : 2.1.1   Release Date :: 2021-03-17
+   Tag No. : v2.1-192-gd7443eaa
+    Branch : issue-1309
+   Git log : COMMIT_MSG
+ Date/time : 12 May 2021 11:52:10 +01:00(hh:mm) UTC
+      User : jmaddock
+  Computer : J0826UBUNTU
+ Directory : /tmp/pytest-of-jmaddock/pytest-0/test_scenario_scenario2_0
+     Input : /tmp/pytest-of-jmaddock/pytest-0/test_scenario_scenario5_0/IN.DAT
  Run title : Michael's test file
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -214,6 +214,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Beta g coefficient                                                       (dnbeta)                      4.383490  OP 
  Normalised thermal beta                                                                                2.402951  OP 
  Normalised total beta                                                                                  2.835042  OP 
+ Normalised toroidal beta                                                                               2.929501  OP 
  Limit on thermal beta                                                    (betalim)                     0.056067  OP 
  Plasma thermal energy (J)                                                                          1.673E+09  OP 
  Total plasma internal energy (J)                                         (total_plasma_internal_en 1.974E+09  OP 

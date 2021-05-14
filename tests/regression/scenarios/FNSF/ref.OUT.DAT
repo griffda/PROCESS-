@@ -13,15 +13,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.0   Release Date :: 2021-01-25
-   Tag No. : v2.1-147-g3a766c4a code contains untracked changes
-    Branch : issue-1264-joints-heating-error
-   Git log : Merge branch 'develop' into issue-1264-joints-heating-error
- Date/time :  8 Mar 2021 18:30:52 +00:00(hh:mm) UTC
-      User : skahn
-  Computer : J0320
- Directory : /tmp/pytest-of-skahn/pytest-113/test_solver0
-     Input : /tmp/pytest-of-skahn/pytest-113/test_scenario_scenario5_0/IN.DAT
+   Version : 2.1.1   Release Date :: 2021-03-17
+   Tag No. : v2.1-192-gd7443eaa
+    Branch : issue-1309
+   Git log : COMMIT_MSG
+ Date/time : 12 May 2021 11:52:07 +01:00(hh:mm) UTC
+      User : jmaddock
+  Computer : J0826UBUNTU
+ Directory : /tmp/pytest-of-jmaddock/pytest-0/test_scenario_scenario2_0
+     Input : /tmp/pytest-of-jmaddock/pytest-0/test_scenario_scenario4_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -185,7 +185,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Beta g coefficient                                                       (dnbeta)                      6.000     
  Normalised thermal beta                                                                                3.879  OP 
  Normalised total beta                                                                                  4.497  OP 
- Normalised thermal toroidal beta                                                                       4.995  OP 
+ Normalised toroidal beta                                                                               4.995  OP 
  Limit on total beta                                                      (betalim)                     0.193  OP 
  Plasma thermal energy (J)                                                                          5.479E+07  OP 
  Total plasma internal energy (J)                                         (total_plasma_internal_en 6.351E+07  OP 
@@ -537,15 +537,15 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Double null case
                                           Thickness (m)    Height (m)
- TF coil                                      0.541           4.562   (tfcth)             
- Gap                                          0.050           4.021   (tftsgap)           
- Thermal shield                               0.000           3.971   (thshield)          
- Gap                                          0.000           3.971   (vgap2)             
- Vacuum vessel (and shielding)                0.500           3.971   (d_vv_top+shldtth)  
- Divertor structure                           0.200           3.471   (divfix)            
- Top scrape-off                               0.600           3.271   (vgaptop)           
+ TF coil                                      0.541           4.962   (tfcth)             
+ Gap                                          0.050           4.421   (tftsgap)           
+ Thermal shield                               0.000           4.371   (thshield)          
+ Gap                                          0.000           4.371   (vgap2)             
+ Vacuum vessel (and shielding)                1.000           4.371   (d_vv_top+shldtth)  
+ Divertor structure                           0.200           3.371   (divfix)            
+ Top scrape-off                               0.500           3.171   (vgaptop)           
  Plasma top                                   2.671           2.671   (rminor*kappa)      
- Midplane                                     0.000          -0.000                       
+ Midplane                                     0.000           0.000                       
  Plasma bottom                                2.671          -2.671   (rminor*kappa)      
  Lower scrape-off                             0.500          -3.171   (vgap)              
  Divertor structure                           0.200          -3.371   (divfix)            
@@ -852,9 +852,9 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Intercoil support structure mass (kg)                                    (aintmass)                1.989E+05  OP 
  Mass of cooled components (kg)                                           (coldmass)                0.000E+00  OP 
  Gravity support structure mass (kg)                                      (clgsmass)                1.492E+04  OP 
- Torus leg support mass (kg)                                              (gsm1)                    5.040E+03  OP 
- Ring beam mass (kg)                                                      (gsm2)                    2.365E+04  OP 
- Ring legs mass (kg)                                                      (gsm3)                    1.568E+04  OP 
+ Torus leg support mass (kg)                                              (gsm1)                    6.774E+03  OP 
+ Ring beam mass (kg)                                                      (gsm2)                    2.490E+04  OP 
+ Ring legs mass (kg)                                                      (gsm3)                    1.738E+04  OP 
  
  ******************************************** PF Coil Inductances *********************************************
  
@@ -870,7 +870,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Radius of coolant channel (m)                                            (afw)                     6.000E-03     
  Mean surface heat flux on first wall (W/m2)                              (qpp)                     6.630E+05  OP 
- Mean nuclear power deposited in first wall per unit area (W/m2)                                    2.393E+04  OP 
+ Mean nuclear power deposited in first wall per unit area (W/m2)                                    2.391E+04  OP 
  Ratio of peak local heat load (surface and nuclear) to mean              (peaking_factor)          1.000E+00     
  Length of a single coolant channel (all in parallel) (m)                 (fw_channel_length)       4.000E+00     
  Pitch of coolant channels (m)                                            (pitch)                   2.000E-02     
@@ -880,7 +880,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Coolant velocity (m/s)                                                   (velocity)                4.227E+01  OP 
  Outlet temperature of first wall coolant (K)                             (fwoutlet)                8.230E+02     
  Heat transfer coefficient                                                (hcoeff)                  5.167E+03  OP 
- Temperature drop in the wall material (simple model)                     (deltat_solid)            1.348E+02  OP 
+ Temperature drop in the wall material (simple model)                     (deltat_solid)            1.347E+02  OP 
  Temperature drop in the coolant (wall to bulk)                           (deltat_coolant)          7.052E+01  OP 
  First wall temperature (excluding armour) (K)                            (tpeakfw)                 1.028E+03  OP 
  Temperature drop in the wall material: 1D estimate                       (deltat_solid_1D)         1.019E+02  OP 
@@ -908,7 +908,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Radius of coolant channel (m)                                            (afw)                     6.000E-03     
  Mean surface heat flux on first wall (W/m2)                              (qpp)                     6.807E+05  OP 
- Mean nuclear power deposited in first wall per unit area (W/m2)                                    2.393E+04  OP 
+ Mean nuclear power deposited in first wall per unit area (W/m2)                                    2.391E+04  OP 
  Ratio of peak local heat load (surface and nuclear) to mean              (peaking_factor)          1.000E+00     
  Length of a single coolant channel (all in parallel) (m)                 (fw_channel_length)       4.000E+00     
  Pitch of coolant channels (m)                                            (pitch)                   2.000E-02     
@@ -946,19 +946,19 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Viscosity (Pa.s)                                                         (viscf)                   3.604E-05  OP 
  Density (kg/m3)                                                          (rhof)                    1.041E+01  OP 
- Velocity (m/s)                                                           (vv)                      1.745E+00  OP 
- Reynolds number                                                          (reyn)                    6.046E+03  OP 
- Darcy friction factor                                                    (lambda)                  3.578E-02  OP 
+ Velocity (m/s)                                                           (vv)                      1.744E+00  OP 
+ Reynolds number                                                          (reyn)                    6.043E+03  OP 
+ Darcy friction factor                                                    (lambda)                  3.579E-02  OP 
  Channel length                                                           (flleng)                  3.824E+00  OP 
- Pressure drop (Pa)                                                       (deltap)                  2.036E+02  OP 
+ Pressure drop (Pa)                                                       (deltap)                  2.035E+02  OP 
  This is the sum of the following:
-             Straight sections (Pa)                                       (pdropstraight)           1.807E+02  OP 
-             90 degree bends (Pa)                                         (pdrop90)                 1.623E+01  OP 
-             180 degree bends (Pa)                                        (pdrop180)                6.719E+00  OP 
+             Straight sections (Pa)                                       (pdropstraight)           1.805E+02  OP 
+             90 degree bends (Pa)                                         (pdrop90)                 1.621E+01  OP 
+             180 degree bends (Pa)                                        (pdrop180)                6.713E+00  OP 
  Inlet pressure (Pa)                                                      (coolpin)                 1.550E+07  OP 
- Total coolant mass flow rate in (kg/s)                                   (mf)                      8.016E+01  OP 
- Coolant mass flow rate in one channel (kg/s)                             (mfp)                     2.054E-03  OP 
- Pumping power (MW)                                                       (pumppower)               1.526E-03  OP 
+ Total coolant mass flow rate in (kg/s)                                   (mf)                      8.012E+01  OP 
+ Coolant mass flow rate in one channel (kg/s)                             (mfp)                     2.053E-03  OP 
+ Pumping power (MW)                                                       (pumppower)               1.524E-03  OP 
  Additional information is printed when verbose = 1
  
  ****************************** First wall and blanket thermohydraulics: Summary ******************************
@@ -973,17 +973,17 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Inlet temperature of blanket coolant (K)                                 (inlet_temp)                573.000     
  Outlet temperature of blanket coolant (K)                                (outlet_temp)               823.000     
  First wall coolant mass flow rate (kg/s)                                 (mffw)                    5.896E+01  OP 
- Blanket coolant mass flow rate (kg/s)                                    (mfblkt)                  8.016E+01  OP 
+ Blanket coolant mass flow rate (kg/s)                                    (mfblkt)                  8.012E+01  OP 
  Total coolant mass flow rate(kg/s)                                       (mftotal)                 1.391E+02  OP 
  First wall coolant pressure (Pa)                                         (fwpressure)              1.550E+07     
  Blanket coolant pressure (Pa)                                            (blpressure)              1.550E+07     
  Allowable temperature of first wall material, excluding armour (K)       (tfwmatmax)                 823.000     
  Actual peak temperature of first wall material (K)                       (tpeak)                    1032.160  OP 
  Mechanical pumping power for FW (MW)                                     (htpmw_fw)                2.470E-01  OP 
- Mechanical pumping power for blanket (MW)                                (htpmw_blkt)              1.526E-03  OP 
+ Mechanical pumping power for blanket (MW)                                (htpmw_blkt)              1.524E-03  OP 
  Pumping power for divertor (MW)                                          (htpmw_div)               3.423E-01  OP 
- Pumping power for shield and vacuum vessel (MW)                          (htpmw_shld)              4.727E-02  OP 
- Total primary coolant pumping power (MW)                                 (htpmw)                   6.716E-01  OP 
+ Pumping power for shield and vacuum vessel (MW)                          (htpmw_shld)              4.753E-02  OP 
+ Total primary coolant pumping power (MW)                                 (htpmw)                   6.719E-01  OP 
  
  ********************************** First wall and blanket : CCFE HCPB model **********************************
  
@@ -1001,7 +1001,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  First Wall Armour Volume (m3)                                            (fw_armour_vol)               0.585  OP 
  First Wall Volume (m3)                                                   (volfw)                       1.344  OP 
  Blanket Volume (m3)                                                      (volblkt)                    67.516  OP 
- Shield Volume (m3)                                                       (volshld)                    24.648  OP 
+ Shield Volume (m3)                                                       (volshld)                    44.018  OP 
  Vacuum vessel volume (m3)                                                (vdewin)                    109.222  OP 
  
  Component Masses :
@@ -1013,7 +1013,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
      Blanket Mass - Li2SiO4 (kg)                                          (whtblli4sio4)            6.076E+04  OP 
      Blanket Mass - Steel (kg)                                            (whtblss)                 5.111E+04  OP 
  Total mass of armour, first wall and blanket (kg)                        (armour_fw_bl_mass)       1.908E+05  OP 
- Shield Mass (kg)                                                         (whtshld)                 1.442E+05  OP 
+ Shield Mass (kg)                                                         (whtshld)                 2.575E+05  OP 
  Vacuum vessel mass (kg)                                                  (vvmass)                  8.519E+05  OP 
  
  Nuclear heating :
@@ -1025,10 +1025,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  ST centrepost shield heating (MW)                                        (pnuc_cp_sh)              9.386E+00  OP 
  ST centrepost total heating (MW)                                         (pnuc_cp)                 6.367E+00  OP 
  Total nuclear heating in TF+PF coils (CS is negligible) (MW)             (ptfnuc)                  1.488E-03  OP 
- Total nuclear heating in FW (MW)                                         (pnucfw)                  2.606E+00  OP 
+ Total nuclear heating in FW (MW)                                         (pnucfw)                  2.604E+00  OP 
  Total nuclear heating in the blanket (including emult) (MW)              (pnucblkt)                1.039E+02  OP 
  (Note: emult is fixed for this model inside the code)
- Total nuclear heating in the shield (MW)                                 (pnucshld)                6.667E-02  OP 
+ Total nuclear heating in the shield (MW)                                 (pnucshld)                1.190E-01  OP 
  Total nuclear heating in the divertor (MW)                               (pnucdiv)                 2.981E+01  OP 
  
   Diagostic output for nuclear heating :
@@ -1041,10 +1041,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  First wall coolant pressure (Pa)                                         (fwpressure)              1.550E+07     
  Blanket coolant pressure (Pa)                                            (blpressure)              1.550E+07     
  Mechanical pumping power for first wall (MW)                             (htpmw_fw)                2.470E-01  OP 
- Mechanical pumping power for blanket (MW)                                (htpmw_blkt)              1.526E-03  OP 
+ Mechanical pumping power for blanket (MW)                                (htpmw_blkt)              1.524E-03  OP 
  Mechanical pumping power for divertor (MW)                               (htpmw_div)               3.423E-01  OP 
- Mechanical pumping power for shield and vacuum vessel (MW)               (htpmw_shld)              4.727E-02  OP 
- Total electrical coolant pumping power: first wall, blanket, shield and  (htpmw)                   6.716E-01  OP 
+ Mechanical pumping power for shield and vacuum vessel (MW)               (htpmw_shld)              4.753E-02  OP 
+ Total electrical coolant pumping power: first wall, blanket, shield and  (htpmw)                   6.719E-01  OP 
  Allowable nominal neutron fluence at first wall (MW.year/m2)             (abktflnc)                2.000E+01     
  No of inboard blanket modules poloidally                                 (nblktmodpi)                      7     
  No of inboard blanket modules toroidally                                 (nblktmodti)                     32     
@@ -1168,7 +1168,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Facility base load (MW)                                                  (basemw)                  5.000E+00     
  Divertor coil power supplies (MW)                                        (bdvmw)                   0.000E+00     
  Cryoplant electric power (MW)                                            (crymw)                   0.000E+00  OP 
- Primary coolant pumps (MW)                                               (htpmw..)                 6.716E-01  OP 
+ Primary coolant pumps (MW)                                               (htpmw..)                 6.719E-01  OP 
  PF coil power supplies (MW)                                              (ppfmw)                   3.920E+02  OP 
  TF coil power supplies (MW)                                              (ptfmw)                   2.784E+02  OP 
  Plasma heating supplies (MW)                                             (pheatingmw)              2.667E+02  OP 
@@ -1204,16 +1204,16 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Switch for pumping of primary coolant                                    (primary_pumping)                 2     
  Mechanical pumping power is calculated for FW and blanket
  Mechanical pumping power for FW cooling loop including heat exchanger (M (htpmw_fw)                2.470E-01  OP 
- Mechanical pumping power for blanket cooling loop including heat exchang (htpmw_blkt)              1.526E-03  OP 
+ Mechanical pumping power for blanket cooling loop including heat exchang (htpmw_blkt)              1.524E-03  OP 
  Mechanical pumping power for FW and blanket cooling loop including heat  (htpmw_fw_blkt)           2.485E-01  OP 
  Mechanical pumping power for FW (MW)                                     (htpmw_fw)                2.470E-01  OP 
- Mechanical pumping power for blanket (MW)                                (htpmw_blkt)              1.526E-03  OP 
+ Mechanical pumping power for blanket (MW)                                (htpmw_blkt)              1.524E-03  OP 
  Mechanical pumping power for divertor (MW)                               (htpmw_div)               3.423E-01  OP 
- Mechanical pumping power for shield and vacuum vessel (MW)               (htpmw_shld)              4.727E-02  OP 
+ Mechanical pumping power for shield and vacuum vessel (MW)               (htpmw_shld)              4.753E-02  OP 
  Electrical pumping power for FW and blanket (MW)                         (htpmwe_fw_blkt)          2.616E-01  OP 
- Electrical pumping power for shield (MW)                                 (htpmwe_shld)             4.975E-02  OP 
+ Electrical pumping power for shield (MW)                                 (htpmwe_shld)             5.003E-02  OP 
  Electrical pumping power for divertor (MW)                               (htpmwe_div)              3.603E-01  OP 
- Total electrical pumping power for primary coolant (MW)                  (htpmw)                   6.716E-01  OP 
+ Total electrical pumping power for primary coolant (MW)                  (htpmw)                   6.719E-01  OP 
  Coolant pump power / non-pumping thermal power in shield                 (fpumpshld)               5.000E-03     
  Coolant pump power / non-pumping thermal power in divertor               (fpumpdiv)                5.000E-03     
  Electrical efficiency of heat transport coolant pumps                    (etahtp)                  9.500E-01     
@@ -1231,19 +1231,19 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
                                             High-grade             Low-grade              Total
                                              thermal power (MW)     thermal power (MW)      (MW)
          First wall:
-                               neutrons              2.61                0.00                2.61
+                               neutrons              2.60                0.00                2.60
              charged particle transport              1.62                0.00                1.62
                               radiation             72.20                0.00               72.20
                         coolant pumping              0.25                0.00                0.25
  
          Blanket:
-                               neutrons            103.90                0.00              103.90
+                               neutrons            103.85                0.00              103.85
              charged particle transport              0.00                0.00                0.00
                               radiation              0.00                0.00                0.00
                         coolant pumping              0.00                0.00                0.00
  
          Shield:
-                               neutrons              0.07                0.00                0.07
+                               neutrons              0.12                0.00                0.12
              charged particle transport              0.00                0.00                0.00
                               radiation              0.00                0.00                0.00
                         coolant pumping              0.05                0.00                0.05
@@ -1275,7 +1275,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
          ----------------------------------------------------------------------------------------
                                  Totals            180.69               75.71              256.40
  
- Total power leaving reactor (across vacuum vessel boundary) (MW)                                     256.404  OP 
+ Total power leaving reactor (across vacuum vessel boundary) (MW)                                     256.405  OP 
  
  Other secondary thermal power constituents :
  
@@ -1316,8 +1316,8 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                  0.638  OP 
  Total (MW)                                                                                           265.233  OP 
  
- Heat extracted from first wall and blanket (MW)                          (pthermfw_blkt)             180.577  OP 
- Heat extracted from shield  (MW)                                         (pthermshld)                  9.500  OP 
+ Heat extracted from first wall and blanket (MW)                          (pthermfw_blkt)             180.524  OP 
+ Heat extracted from shield  (MW)                                         (pthermshld)                  9.553  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                  68.802  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
  Total (MW)                                                                                           258.880  OP 
@@ -1347,7 +1347,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Total (MW)                                                                                           184.593  OP 
  
  Net electrical output (MW)	                                              (pnetelmw)                 -507.276  OP 
- Heat rejected by main power conversion circuit (MW)                      (rejected_main)             111.955  OP 
+ Heat rejected by main power conversion circuit (MW)                      (rejected_main)             111.956  OP 
  Heat rejected by other cooling circuits (MW)                             (psechtmw)                  573.561  OP 
  Total (MW)                                                                                           178.241  OP 
  
@@ -1410,6 +1410,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  PROCESS error status flag                                                (error_status)                    2     
 150     2   CHECK: Lower limit of volume averaged electron temperature (te) has been raised 
 155     2   CHECK: dene used as iteration variable without constraint 81 (neped<ne0)        
+272     2   Double-null: Upper vertical build forced to match lower                         
  62     1   RADIALB: Ripple result may be inaccurate, as the fit has been extrapolated      
 143     1   RADIALB: (TF coil ripple calculation) (R+a)/rtot out of fitted range            
 245     2   [sctfcoil] Invalid stress model (r_tf_inboard = 0), stress constraint switched o

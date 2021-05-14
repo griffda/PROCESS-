@@ -5,15 +5,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.0   Release Date :: 2021-01-25
-   Tag No. : v2.1-147-g3a766c4a code contains untracked changes
-    Branch : issue-1264-joints-heating-error
-   Git log : Merge branch 'develop' into issue-1264-joints-heating-error
- Date/time :  8 Mar 2021 18:34:13 +00:00(hh:mm) UTC
-      User : skahn
-  Computer : J0320
- Directory : /tmp/pytest-of-skahn/pytest-113/test_scenario_scenario17_0
-     Input : /tmp/pytest-of-skahn/pytest-113/test_scenario_scenario17_0/IN.DAT
+   Version : 2.1.1   Release Date :: 2021-03-17
+   Tag No. : v2.1-192-gd7443eaa
+    Branch : issue-1309
+   Git log : COMMIT_MSG
+ Date/time : 12 May 2021 11:51:59 +01:00(hh:mm) UTC
+      User : jmaddock
+  Computer : J0826UBUNTU
+ Directory : /tmp/pytest-of-jmaddock/pytest-0/test_scenario_scenario2_0
+     Input : /tmp/pytest-of-jmaddock/pytest-0/test_scenario_scenario2_0/IN.DAT
  Run title : starfire
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -268,35 +268,35 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ******************************** Indirect Cost *********************************
  
- (step91)            Construction Facilities, Equipment and Services (10%) (M$)                                  177.64
- (step92)            Engineering and Costruction Management Services (8%) (M$)                                   142.11
- (step93)            Other Costs (5%) (M$)                                                                        88.82
+ (step91)            Construction Facilities, Equipment and Services (M$)                                        532.92
+ (step92)            Engineering and Costruction Management Services (M$)                                        577.33
+ (step93)            Other Costs (M$)                                                                            266.46
  
  ******************************* Constructed Cost *******************************
  
- (concost)           Constructed Cost (M$)                                                                      2184.97
+ (concost)           Constructed Cost (M$)                                                                      3153.11
  
  ************************* Interest during Construction *************************
  
- (moneyint)          Interest during construction (M$)                                                           327.75
+ (moneyint)          Interest during construction (M$)                                                           472.97
  
  *************************** Total Capital Investment ***************************
  
- (capcost)           Total capital investment (M$)                                                              2512.72
+ (capcost)           Total capital investment (M$)                                                              3626.08
  
  *************************************** Cost of Electricity (1980 US$) ***************************************
  
  First wall / blanket life (years)                                        (fwbllife)                    5.343     
  Divertor life (years)                                                    (divlife.)                    0.286     
- Cost of electricity (m$/kWh)                                             (coe)                        31.228     
+ Cost of electricity (m$/kWh)                                             (coe)                        40.711     
  
  Power Generation Costs :
  
                                                                            Annual Costs, M$       COE, m$/kWh
 
- Capital Investment                                                                163.33               21.22
+ Capital Investment                                                                235.70               30.63
  Operation & Maintenance                                                            68.29                8.87
- Decommissioning Fund                                                                1.38                0.18
+ Decommissioning Fund                                                                1.99                0.26
  Fuel Charge Breakdown
 
      Blanket & first wall                                                    0.00                0.00
@@ -307,7 +307,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
      Waste Disposal                                                          3.91                0.51
  Total Fuel Cost                                                                     7.31                0.95
 
- Total Cost                                                                        240.30               31.23
+ Total Cost                                                                        313.29               40.71
  
  ********************************************* Plant Availability *********************************************
  
@@ -371,6 +371,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Beta g coefficient                                                       (dnbeta)                      6.000     
  Normalised thermal beta                                                                                3.819  OP 
  Normalised total beta                                                                                  4.582  OP 
+ Normalised toroidal beta                                                                               4.771  OP 
  Limit on thermal beta                                                    (betalim)                     0.080  OP 
  Plasma thermal energy (J)                                                                          8.337E+08  OP 
  Total plasma internal energy (J)                                         (total_plasma_internal_en 1.000E+09  OP 
@@ -1681,7 +1682,7 @@ bore     = 2.1201269689496494 * central solenoid inboard radius (m) (`iteration 
 ddwex    = 0.15 * cryostat thickness (m)
 d_vv_in  = 0.30 * vacuum vessel inboard thickness (TF coil / shield) (m)
 d_vv_out = 0.30 * vacuum vessel outboard thickness (TF coil / shield) (m)
-d_vv_top = 0.30 * vacuum vessel topside thickness (TF coil / shield) (m)
+d_vv_top = 0.30 * vacuum vessel topside thickness (TF coil / shield) (m) (= d_vv_bot if double-null)
 d_vv_bot = 0.30 * vacuum vessel underside thickness (TF coil / shield) (m)
 gapds    = 0.15003399049211447 * gap between inboard vacuum vessel and thermal shield (m) (`iteration variable 61`)
 gapoh    = 0.06541854755255866 * gap between central solenoid and TF coil (m) (`iteration variable 42`)
@@ -1692,7 +1693,7 @@ scrapli  = 0.2 * Gap between plasma and first wall; inboard side (m) (if `iscrp=
 scraplo  = 0.2 * Gap between plasma and first wall; outboard side (m) (if `iscrp=1`)
 shldith  = 0.30 * inboard shield thickness (m) (`iteration variable 93`)
 shldoth  = 0.80 * outboard shield thickness (m) (`iteration variable 94`)
-shldtth  = 0.30 * upper/lower shield thickness (m); calculated if `blktmodel > 0`
+shldtth  = 0.30 * upper/lower shield thickness (m); calculated if `blktmodel > 0` (= shldlth if double-null)
 tfcth    = 0.4686248306578002 * inboard TF coil thickness; (centrepost for ST) (m)
 tftsgap  = 0.05 * Minimum metal-to-metal gap between TF coil and thermal shield (m)
 vgap2    = 0.05 * vertical gap between vacuum vessel and thermal shields (m)
