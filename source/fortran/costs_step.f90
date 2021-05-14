@@ -1026,7 +1026,7 @@ contains
     ! Output costs
     if ((iprint==1).and.(output_costs == 1)) then
       call oshead(outfile,'23. Turbine Plant Equipment')
-      call ocosts(outfile,'(step23_turbine_plant_only)','Turbine system (M$)', step23_turbine_plant_only)
+      call ocosts(outfile,'(step23_turbine_plant_only)','Turbine System (M$)', step23_turbine_plant_only)
       call ocosts(outfile,'(step2303)','Heat Rejection (M$)', step2303)
       call ocosts(outfile,'(step2398)','Spares (M$)', step2398)
       call ocosts(outfile,'(step2399)','Contingency (M$)', step2399)
