@@ -627,9 +627,10 @@ contains
                           step2201010202, step2201010203)
 
     !! Account 22.01.01 : Blanket and First Wall 
-    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: A J Pearce, CCFE, Culham Science Centre
     !! None
     !! This routine evaluates the Account 22.01.01 (BB+FW) costs.
+    !! If ifueltyp = 0, the blanket cost is treated as capital cost
     !! If ifueltyp = 1, the blanket cost is treated as a fuel cost,
     !! rather than as a capital cost.
     !! If ifueltyp = 2, the initial blanket is included as a capital cost
@@ -651,20 +652,12 @@ contains
                                step2201010202, step2201010203
 
     !  Local variables
-    real(dp), dimension(4) :: cmlsa
     real(dp) :: step2201010204, step2201010205, step2201010206, step2201010207
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Cost multiplier for Level of Safety Assurance
-
-    cmlsa(1) = 0.5000D0
-    cmlsa(2) = 0.7500D0
-    cmlsa(3) = 0.8750D0
-    cmlsa(4) = 1.0000D0
-
     !! Account 22.01.01.01 : First wall
-    step22010101 = 1.0D-6 * cmlsa(lsa) * (fw_armour_mass * step_ucfwa + fwmass * step_ucfws) 
+    step22010101 = 1.0D-6 * (fw_armour_mass * step_ucfwa + fwmass * step_ucfws) 
 
     if (ifueltyp == 1) then
        fwallcst = step22010101
@@ -704,28 +697,20 @@ contains
       end if
     end if
 
-    step2201010201 = step2201010201 * cmlsa(lsa)
-    step2201010202 = step2201010202 * cmlsa(lsa)
-
     !! Account 22.01.01.02.03 : Blanket Steel Costs
     step2201010203 = 1.0D-6 * whtblss * step_ucblss
-    step2201010203 = step2201010203 * cmlsa(lsa)
     
     !! Account 22.01.01.02.04 : Blanket Vanadium Costs
     step2201010204 = 1.0D-6 * whtblvd * step_ucblvd
-    step2201010204 = step2201010204 * cmlsa(lsa)
        
     !! Account 22.01.01.02.05 : Blanket Carbon Cloth Costs
     step2201010205 = 0.0D0
-    step2201010205 = step2201010205 * cmlsa(lsa)
        
     !! Account 22.01.01.02.06 : Blanket Concrete Costs
     step2201010206 = 0.0D0
-    step2201010206 = step2201010206 * cmlsa(lsa)
 
     !! Account 22.01.01.02.07 : Blanket FLiBe Costs
     step2201010207 = 0.0D0
-    step2201010207 = step2201010207 * cmlsa(lsa)
 
     step22010102 = step2201010201 + step2201010202 + step2201010203 + step2201010204 &
      + step2201010205 + step2201010206 + step2201010207
@@ -752,9 +737,9 @@ contains
   function step_a22010302() result(step22010302)
 
     !! Account 22.01.03.02 PF Coils : PF magnet assemblies
-    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: A J Pearce, CCFE, Culham Science Centre
     !! None
-    !! This routine evaluates the Account 222.2 (PF magnet) costs.
+    !! This routine evaluates the Account 22.01.03.02 (PF magnet) costs.
     !! Conductor costs previously used an algorithm devised by R. Hancox,
     !! January 1994, under contract to Culham, which took into
     !! account the fact that the superconductor/copper ratio in
@@ -762,8 +747,7 @@ contains
     !! each coil will experience. Now, the input copper fractions
     !! are used instead.
     !! Maximum values for current, current density and field
-    !! are used.
-    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! are used. 
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -783,17 +767,9 @@ contains
     !  Local variables
     real(dp) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
          pfwndl, step2201030201, step2201030202, step2201030203, step2201030204
-    real(dp), dimension(4) :: cmlsa
     integer :: i,npf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Cost multiplier for Level of Safety Assurance
-
-    cmlsa(1) = 0.6900D0
-    cmlsa(2) = 0.8450D0
-    cmlsa(3) = 0.9225D0
-    cmlsa(4) = 1.0000D0
 
     !  Total length of PF coil windings (m)
 
@@ -854,16 +830,14 @@ contains
 
     end do
 
-    step2201030201 = step2201030201 * cmlsa(lsa)
-
     !  Account 22.01.03.02.02 : Winding
-    step2201030202 = 1.0D-6 * step_ucwindpf * pfwndl * cmlsa(lsa)
+    step2201030202 = 1.0D-6 * step_ucwindpf * pfwndl
  
     !  Account 22.01.03.02.03 : Steel case - will be zero for resistive coils
-    step2201030203 = 1.0D-6 * step_uccase * whtpfs * cmlsa(lsa)
+    step2201030203 = 1.0D-6 * step_uccase * whtpfs
  
     !  Account 22.01.03.02.04 : Support structure
-    step2201030204 = 1.0D-6 * step_ucfnc * fncmass * cmlsa(lsa)
+    step2201030204 = 1.0D-6 * step_ucfnc * fncmass
 
     !  Total account 22.01.03.02
     step22010302 = step2201030201 + step2201030202 + step2201030203 + step2201030204
@@ -1568,7 +1542,7 @@ contains
     use cost_variables, only: output_costs, discount_rate, tlife, ucfuel, uche3, cdcost, &
       divcst, fcdfuel, ifueltyp, moneyint, lsa, ucwst, ucoam, fwallcst, fcr0, fcap0cp, &
       cfind, fcap0, dtlife, divlife, dintrt, decomf, cpstcst, cplife, concost, coeoam, &
-      coefuelt, coecap, coe, cfactr, cdrlife, capcost, step_ref
+      coefuelt, coecap, coe, cfactr, cdrlife, capcost, step_ref, step_currency
     use fwbs_variables, only: bktlife
     use heat_transport_variables, only: pnetelmw
     use physics_variables, only: fhe3, itart, wtgpd
@@ -1586,6 +1560,7 @@ contains
          annfuelt,annfwbl,annoam,anntot,annwst,coecdr, &
          coecp,coedecom,coediv,coefuel,coefwbl,coewst,crfcdr,crfcp, &
          crfdiv,crffwbl,fefcdr,fefcp,fefdiv,feffwbl,fwbllife,kwhpy
+    character(len=80) :: title
          ! annoam1,
          
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1773,12 +1748,9 @@ contains
   call oshead(outfile,'Total Capital Investment')
   call ocosts(outfile,'(capcost)','Total capital investment (M$)',capcost)
 
-  if (step_ref(1) == 3.0D0) then
-    call oheadr(outfile,'Cost of Electricity (1980 US$)')
-  end if
-  if (step_ref(1) /= 3.0D0) then
-    call oheadr(outfile,'Cost of Electricity (2017 US$)')
-  end if
+  title = 'Cost of Electricity ('// trim(step_currency) // ')'
+  call oheadr(outfile,trim(title))
+
   call ovarrf(outfile,'First wall / blanket life (years)','(fwbllife)',fwbllife)
   call ovarrf(outfile,'Divertor life (years)','(divlife.)',divlife)
   if (itart == 1) then
