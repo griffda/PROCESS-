@@ -17,9 +17,6 @@ def test_step_a22010301(monkeypatch):
     # Only mock used array elements
     cv.step_ref[21] = 1.2572e2
     monkeypatch.setattr(cv, "cpstcst", 0.0)
-    monkeypatch.setattr(cv, "fkind", 1.0)
-    monkeypatch.setattr(cv, "lsa", 4)
-    monkeypatch.setattr(cv, "cfind", np.zeros(4, order="F"))
     cv.cfind[3] = 0.29
     monkeypatch.setattr(cv, "ifueltyp", 0)
     monkeypatch.setattr(cv, "step_uc_cryo_al", 81.0)
