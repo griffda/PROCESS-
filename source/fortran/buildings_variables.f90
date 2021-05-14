@@ -209,18 +209,18 @@ module buildings_variables
       wrbi = 0.0D0
       wsvfac = 1.9D0
       wsvol = 0.0D0
-      a_reactor_bldg = a_default_bldg
-      a_ee_ps_bldg = a_default_bldg
+      a_reactor_bldg = 1.076D4
+      a_ee_ps_bldg = 2.133D4
       a_aux_services_bldg = a_default_bldg
-      a_hot_cell_bldg = a_default_bldg
+      a_hot_cell_bldg = 8.43D3
       a_reactor_service_bldg = a_default_bldg
       a_service_water_bldg = a_default_bldg
-      a_fuel_handling_bldg = a_default_bldg
-      a_control_room_bldg = a_default_bldg
-      a_ac_ps_bldg = a_default_bldg
-      a_admin_bldg = a_default_bldg
-      a_site_service_bldg = a_default_bldg
-      a_cryo_inert_gas_bldg = a_default_bldg
-      a_security_bldg = a_default_bldg
+      a_fuel_handling_bldg = 1.67D3
+      a_control_room_bldg = 2.88D3
+      a_ac_ps_bldg = 6.423D3
+      a_admin_bldg = 2.5674D4
+      a_site_service_bldg = 8.3D3
+      a_cryo_inert_gas_bldg = 1.838D4
+      a_security_bldg = 4.552D3
     end subroutine init_buildings_variables
   end module buildings_variables
