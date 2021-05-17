@@ -4787,6 +4787,8 @@
             18.5,
             2.23
         ],
+        "step_rh_costfrac": 0.075,
+        "step_uc_cryo_al": 81.0,
         "step_ucblbe": 8400.4,
         "step_ucblbreed": 802.2,
         "step_ucblss": 488.3,
@@ -4807,8 +4809,6 @@
             300.0
         ],
         "step_ucwindpf": 465.0,
-        "step_rh_costfrac": 0.0,
-        "step_uc_cryo_al": 81.0,
         "strncon_cs": -0.005,
         "strncon_pf": -0.005,
         "strncon_tf": -0.005,
