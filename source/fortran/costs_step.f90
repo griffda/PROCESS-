@@ -449,7 +449,8 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use build_variables, only: fwarea
-    use cost_variables, only: output_costs, step_ref, ifueltyp, fcdfuel, divcst, cdcost
+    use cost_variables, only: output_costs, step_ref, ifueltyp, fcdfuel, &
+      divcst, cdcost
     use current_drive_variables, only: pinjmw
     use physics_variables, only: rmajor, rminor
     use process_output, only: ocosts, oblnkl
@@ -465,7 +466,7 @@ contains
     step220101, step220102, step220104, step220105, step220106, &
     step220107, step220108, step220109, step220110, step2201, &
     step22010301, step22010302, step22010303, step22010304
-  
+
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
     ! Initialise as zero
@@ -488,8 +489,8 @@ contains
     step2298 = step2298 + 9.985D-2 *  step220102
   
     ! 22.01.03.01 TF Coils
-    ! Original STARFIRE value, scaling with fusion island volume
-    step22010301 = step_ref(22) * (vfi / vfi_star)
+    step22010301 = step_a22010301()
+    ! Add TF coil cost to total cost, step2201, in M$
     step2201 = step2201 + step22010301
 
     ! 22.01.03.02 PF Coils
@@ -601,7 +602,79 @@ contains
   
   end subroutine step_a2201
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  function step_a22010301() result(step22010301)
+    !! 22.01.03.01 TF Coils
+    !! Returns cost of TF coils
+    use cost_variables, only: step_ref, cpstcst, ifueltyp, step_uc_cryo_al, &
+      step_mc_cryo_al_per, uccpcl1, uccpclb
+    use tfcoil_variables, only: i_tf_sup, whtconal, n_tf, whttflgs, whtcp
+    use physics_variables, only: itart
+    implicit none
+
+    ! Result
+    real(dp) :: step22010301
+    !! Cost of TF coils in M$
+    
+    ! Declare local vars
+    real(dp) :: c_tf_inboard_legs
+    !! Cost of TF coil inboard legs in M$
+    real(dp) :: c_tf_outboard_legs
+    !! Cost of TF coil outboard legs in M$
+    
+    ! Initialise local vars
+    c_tf_inboard_legs = 0.0D0
+    c_tf_outboard_legs = 0.0D0
+    
+    ! Copper coils
+    if (i_tf_sup == 0) then
+      ! Calculation taken from cost model 0: simply the cost of copper conductor
+      ! masses
+      ! Inflating from 1990 $ to 2017 $ at nuclear rate equates to a factor of 
+      ! 2.99
+      ! Inboard TF coil legs
+      c_tf_inboard_legs = 1.0D-6 * whtcp * uccpcl1 * 2.99D0
+      
+      ! Outboard TF coil legs
+      c_tf_outboard_legs = 1.0D-6 * whttflgs * uccpclb * 2.99D0
+      
+      ! Total TF coil cost
+      step22010301 = c_tf_inboard_legs + c_tf_outboard_legs
+    endif
+      
+    ! Superconducting coils
+    if (i_tf_sup == 1) then
+      ! Original STARFIRE value in M$, scaling with fusion island volume
+      step22010301 = step_ref(22) * (vfi / vfi_star)
+    endif
+    
+    ! Cryogenic aluminium coils
+    if (i_tf_sup == 2) then
+      ! Cost approximated as the material cost of conducting Al * a 
+      ! manufacturing cost factor
+      ! Al conductor mass per coil * number of coils * cost per kilo *
+      ! manufacturing cost factor, converted to M$
+      ! step_mc_cryo_al_per = 0.2: 20% manufacturing cost
+      step22010301 = (whtconal * n_tf * step_uc_cryo_al) * &
+        (step_mc_cryo_al_per + 1.0D0) * 1.0D-6
+    endif
+
+    ! ifueltyp: consider centrepost cost as fuel, capital or both?
+    ! cpstcst used later in coelc_step()
+    cpstcst = 0.0D0  ! TART centrepost
+    if (itart == 1) then
+      if (ifueltyp == 1) then
+        ! Treat centrepost cost as fuel cost
+        cpstcst = c_tf_inboard_legs
+        if (i_tf_sup == 0) then
+          ! Subtract from capital cost
+          step22010301 = step22010301 - c_tf_inboard_legs
+        endif
+      elseif (ifueltyp == 2) then
+        ! Treat centrepost cost as capital and fuel cost
+        cpstcst = c_tf_inboard_legs
+      end if
+    endif
+  end function step_a22010301
 
   subroutine step_a2202(outfile,iprint)
 
