@@ -218,9 +218,17 @@ contains
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    ! #TODO Add reference for STEP cost values
     use cost_variables, only: output_costs, step_con, step_ref
     use process_output, only: oshead, ocosts, oblnkl
+    use buildings_variables, only: a_reactor_bldg, a_ee_ps_bldg, &
+      a_aux_services_bldg, a_hot_cell_bldg, a_reactor_service_bldg, &
+      a_service_water_bldg, a_fuel_handling_bldg, a_control_room_bldg, &
+      a_ac_ps_bldg, a_admin_bldg, a_site_service_bldg, a_cryo_inert_gas_bldg, &
+      a_security_bldg
+    ! Floor areas in m^2 for buildings
+    use heat_transport_variables, only: pgrossmw
+    ! pgrossmw is gross electric power of the plant in MW
 
     implicit none
 
@@ -243,80 +251,66 @@ contains
     ! Original STARFIRE value, scaling with thermal power
     step2101 = step_ref(3) * (pth / ptherm_star)**0.6D0
     step21 = step21 + step2101
-
+    
     ! 21.02 Reactor Building
-    ! Original STARFIRE value, scaling with fusion island volume
-    step2102 = step_ref(4) * (vfi / vfi_star)**(2.0D0/3.0D0)
+    step2102 = 8.665D3 * a_reactor_bldg**1.2132 * 1.0D-6
+    ! * 1.0D-6 converts to M$
     step21 = step21 + step2102
-
+    
     ! 21.03 Turbine Building
-    ! Original STARFIRE value, scaling with thermal power
-    step2103 = step_ref(5) * (pth / ptherm_star)**0.6D0
+    step2103 = 3.14310D5 * pgrossmw * 1.0D-6
     step21 = step21 + step2103
 
     ! 21.04 Cooling System Structures
-    ! Original STARFIRE value, scaling with thermal power
-    step2104 = step_ref(6) * (pth / ptherm_star)**0.6D0
+    step2104 = 1.08155D5 * pgrossmw * 1.0D-6
     step21 = step21 + step2104
 
     ! 21.05 Electrical Equipment and Power Supply Building
-    ! Original STARFIRE value, scaling with thermal power
-    step2105 = step_ref(7) * (pth / ptherm_star)**0.6D0
+    step2105 = ((4.688D3 * a_ee_ps_bldg) + 3.185967D6) * 1.0D-6
     step21 = step21 + step2105
 
     ! 21.06 Auxiliary Services Building
-    ! Original STARFIRE value, scaling with thermal power
-    step2106 = step_ref(8) * (pth / ptherm_star)**0.6D0  
+    step2106 = ((3.107D3 * a_aux_services_bldg) + 1.206225D6) * 1.0D-6
     step21 = step21 + step2106
 
     ! 21.07 Hot Cell
-    ! Original STARFIRE value, scaling with fusion island volume
-    step2107 = step_ref(9) * (vfi / vfi_star)**(2.0D0/3.0D0)
+    step2107 = ((1.9773D4 * a_hot_cell_bldg) + 5.975425D6) * 1.0D-6
     step21 = step21 + step2107
 
     ! 21.08 Reactor Service Building
-    ! Original STARFIRE value, scaling with fusion island volume
-    step2108 = step_ref(10) * (vfi / vfi_star)**(2.0D0/3.0D0)
+    step2108 = ((8.563D3 * a_reactor_service_bldg) + 3.657324D6) * 1.0D-6
     step21 = step21 + step2108
 
     ! 21.09 Service Water Building
-    ! Original STARFIRE value, scaling with thermal power
-    step2109 = step_ref(11) * (pth / ptherm_star)**0.6D0  
+    step2109 = ((3.288D3 * a_service_water_bldg) + 3.19189D5) * 1.0D-6
     step21 = step21 + step2109
 
     ! 21.10 Fuel Handling and Storage Building
-    ! Original STARFIRE value, scaling with thermal power
-    step2110 = step_ref(12) * (pth / ptherm_star)**0.6D0  
+    step2110 = ((3.1528D4 * a_fuel_handling_bldg) + 9.181501D6) * 1.0D-6
     step21 = step21 + step2110
 
     ! 21.11 Control Room
-    ! Original STARFIRE value, scaling with thermal power
-    step2111 = step_ref(13) * (pth / ptherm_star)**0.6D0
+    step2111 = ((1.2393D4 * a_control_room_bldg) + 1.924890D6) * 1.0D-6
     step21 = step21 + step2111
 
     ! 21.12 AC Power Supply Building
-    ! Original STARFIRE value, scaling with thermal power
-    step2112 = step_ref(14) * (pth / ptherm_star)**0.6D0
+    step2112 = ((4.9755D4 * a_ac_ps_bldg) + 1.1591271D7) * 1.0D-6
     step21 = step21 + step2112
 
     ! 21.13 Admin Building
-    ! Original STARFIRE value, scaling with thermal power
-    step2113 = step_ref(15) * (pth / ptherm_star)**0.6D0
+    step2113 = ((3.417D3 * a_admin_bldg) + 3.017077D6) * 1.0D-6
     step21 = step21 + step2113
 
     ! 21.14 Site Service
-    ! Original STARFIRE value, scaling with thermal power
-    step2114 = step_ref(16) * (pth / ptherm_star)**0.6D0  
+    step2114 = ((3.842D3 * a_site_service_bldg) + 1.193549D6) * 1.0D-6
     step21 = step21 + step2114
 
     ! 21.15 Cryogenics and Inert Gas Storage Building
-    ! Original STARFIRE value, scaling with thermal power
-    step2115 = step_ref(17) * (pth / ptherm_star)**0.6D0
+    step2115 = ((7.031D3 * a_cryo_inert_gas_bldg) + 8.19004D5) * 1.0D-6
     step21 = step21 + step2115
 
     ! 21.16 Security Building
-    ! Original STARFIRE value, scaling with thermal power
-    step2116 = step_ref(18) * (pth / ptherm_star)**0.6D0  
+    step2116 = ((3.227D3 * a_security_bldg) + 2.06804D5) * 1.0D-6
     step21 = step21 + step2116
 
     ! 21.17 Ventilation Stack
@@ -916,8 +910,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-    use cost_variables, only: output_costs, step_ref
+    use cost_variables, only: output_costs
     use process_output, only: ocosts, oblnkl
+    use heat_transport_variables, only: pgrossmw
+    ! pgrossmw is gross electric power of the plant in MW
 
     implicit none
   
@@ -933,8 +929,9 @@ contains
     step2202 = 0.0D0
      
     ! 22.02 Heat Transfer System
-    ! Original STARFIRE value, scaling with first wall area
-    step2202 = step_ref(33) * (pth / ptherm_star)**0.6D0  
+    ! #TODO Needs reference for values
+    step2202 = 9.2238D4 * pgrossmw * 1.0D-6
+    ! Converted to M$
   
     ! Add to Account 22 total
     step22 = step22 + step2202
@@ -1288,6 +1285,7 @@ contains
 
     use cost_variables, only: output_costs, step_con, step_ref
     use process_output, only: oshead, ocosts, oblnkl
+    use heat_transport_variables, only: pgrossmw
 
     implicit none
 
@@ -1295,9 +1293,7 @@ contains
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(dp):: &
-    step2301, step2302, step2303, step2304, step2305, step2306, &
-    step2307, step2398, step2399
+    real(dp):: step23a, step2303, step2398, step2399
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1305,39 +1301,19 @@ contains
     step23 = 0.0D0
    
     ! 23.01 Turbine Generators
-    ! Original STARFIRE value, scaling with thermal power
-    step2301 = step_ref(51) * (pth / ptherm_star)**0.6D0
-    step23 = step23 + step2301
-
     ! 23.02 Steam System
-    ! Original STARFIRE value, scaling with thermal power
-    step2302 = step_ref(52) * (pth / ptherm_star)**0.6D0
-    step23 = step23 + step2302
+    ! 23.04 Condensing System
+    ! 23.05 Feedwater Heating System
+    ! 23.06 Other Turbine Equipment
+    ! 23.07 Instrumentation and Control
+    ! step23a is the sum of the above accounts: total turbine system
+    ! cost, not treating cooling towers as part of the turbine system
+    step23a = 5.55440D5 * pgrossmw * 1.0D-6
+    step23 = step23 + step23a
 
     ! 23.03 Heat Rejection
-    ! Original STARFIRE value, scaling with thermal power
-    step2303 = step_ref(53) * (pth / ptherm_star)**0.6D0
+    step2303 = ((8.0437D4 * pgrossmw) + 2.2264895D7) * 1.0D-6
     step23 = step23 + step2303
-
-    ! 23.04 Condensing System
-    ! Original STARFIRE value, scaling with thermal power
-    step2304 = step_ref(54) * (pth / ptherm_star)**0.6D0
-    step23 = step23 + step2304
-
-    ! 23.05 Feedwater Heating System
-    ! Original STARFIRE value, scaling with thermal power
-    step2305 = step_ref(55) * (pth / ptherm_star)**0.6D0
-    step23 = step23 + step2305
-
-    ! 23.06 Other Turbine Equipment
-    ! Original STARFIRE value, scaling with thermal power
-    step2306 = step_ref(56) * (pth / ptherm_star)**0.6D0  
-    step23 = step23 + step2306
-
-    ! 23.07 Instrumentation and Control
-    ! Original STARFIRE value, scaling with thermal power
-    step2307 = step_ref(57) * (pth / ptherm_star)**0.6D0 
-    step23 = step23 + step2307
 
     ! 23.98 Spares
     ! STARFIRE percentage
@@ -1352,19 +1328,13 @@ contains
     ! Output costs
     if ((iprint==1).and.(output_costs == 1)) then
       call oshead(outfile,'23. Turbine Plant Equipment')
-      call ocosts(outfile,'(step2301)','Turbine Generators (M$)', step2301)
-      call ocosts(outfile,'(step2302)','Steam System (M$)', step2302)
+      call ocosts(outfile,'(step23a)','Turbine System (M$)', step23a)
       call ocosts(outfile,'(step2303)','Heat Rejection (M$)', step2303)
-      call ocosts(outfile,'(step2304)','Condensing System (M$)', step2304)
-      call ocosts(outfile,'(step2305)','Feedwater Heating System (M$)', step2305)
-      call ocosts(outfile,'(step2306)','Other Turbine Equipment (M$)', step2306)
-      call ocosts(outfile,'(step2307)','Instrumentation and Control (M$)', step2307)
       call ocosts(outfile,'(step2398)','Spares (M$)', step2398)
       call ocosts(outfile,'(step2399)','Contingency (M$)', step2399)
       call oblnkl(outfile)
       call ocosts(outfile,'(step23)','Total Account 23 Cost (M$)', step23)
     end if
-
   end subroutine step_a23
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1382,6 +1352,7 @@ contains
 
     use cost_variables, only: output_costs, step_con, step_ref
     use process_output, only: oshead, ocosts, oblnkl
+    use heat_transport_variables, only: pgrossmw
 
     implicit none
 
@@ -1395,42 +1366,35 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! Initialise as zero
+    ! Initialise as zero M$
     step24 = 0.0D0
-   
+    
     ! 24.01 Switch Gear
-    ! Original STARFIRE value, scaling with thermal power
-    step2401 = step_ref(58)  * (pth / ptherm_star)**0.6D0
+    step2401 = 1.8906D4 * pgrossmw * 1.0D-6
     step24 = step24 + step2401
-
+    
     ! 24.02 Station Service Equipment
-    ! Original STARFIRE value, scaling with thermal power
-    step2402 = step_ref(59)  * (pth / ptherm_star)**0.6D0
+    step2402 = 5.1412D4 * pgrossmw * 1.0D-6
     step24 = step24 + step2402
-
+    
     ! 24.03 Switchboards
-    ! Original STARFIRE value, scaling with thermal power
-    step2403 = step_ref(60)  * (pth / ptherm_star)**0.6D0
+    step2403 = 2.985D3 * pgrossmw * 1.0D-6
     step24 = step24 + step2403
-
+    
     ! 24.04 Protective Equipment
-    ! Original STARFIRE value, scaling with thermal power
-    step2404 = step_ref(61)  * (pth / ptherm_star)**0.6D0
+    step2404 = ((3.05D4 * (pgrossmw / 1.2D3) * 18.0D0) + (4.0D6 * (pgrossmw / 1.2D3))) * 1.0D-6
     step24 = step24 + step2404
-
+    
     ! 24.05 Electrical Structures
-    ! Original STARFIRE value, scaling with thermal power
-    step2405 = step_ref(62) * (pth / ptherm_star)**0.6D0
+    step2405 = ((3.05D4 * (pgrossmw / 1.2D3) * 1.3D2) + (4.0D6 * 9.0D0 * (pgrossmw / 1.2D3))) * 1.0D-6
     step24 = step24 + step2405
-
+    
     ! 24.06 Power and Control Wiring
-    ! Original STARFIRE value, scaling with thermal power
-    step2406 = step_ref(63) * (pth / ptherm_star)**0.6D0
+    step2406 = 2.8989D4 * pgrossmw * 1.0D-6
     step24 = step24 + step2406
-
+    
     ! 24.07 Electric Lighting
-    ! Original STARFIRE value, scaling with thermal power
-    step2407 = step_ref(64) * (pth / ptherm_star)**0.6D0
+    step2407 = ((3.05D4 * (pgrossmw / 1.2D3) * 2.0D2) + (4.0D6 * 4.0D0 * (pgrossmw / 1.2D3))) * 1.0D-6
     step24 = step24 + step2407
 
     ! 24.98 Spares
@@ -1473,42 +1437,42 @@ contains
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+    ! #TODO Need to add reference for cost calculations
     use cost_variables, only: output_costs, step_con, step_ref
     use process_output, only: oshead, ocosts, oblnkl
-
+    use heat_transport_variables, only: pgrossmw
+    use buildings_variables, only: wgt
+    
     implicit none
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
-  
+    
     ! Local variables
     real(dp):: &
     step2501, step2502, step2503, step2504, step2598, step2599
-  
+    
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+    
     ! Initialise as zero
     step25 = 0.0D0
-     
+    
     ! 25.01 Transport and Lifting Equipment
-    ! Original STARFIRE value, scaling with thermal power
-    step2501 = step_ref(65) * (pth / ptherm_star)**0.6D0
+    step2501 = ((3.8005D4 * (wgt / 1.0D3)) + 1.529727D6) * 1.0D-6
+    ! wgt is reactor building crane capacity (kg)
+    ! #TODO Check that wgt is the correct variable to use here
     step25 = step25 + step2501
-  
+    
     ! 25.02 Air and Water Service System
-    ! Original STARFIRE value, scaling with thermal power
-    step2502 = step_ref(66) * (pth / ptherm_star)**0.6D0
+    step2502 = 1.20689D5 * pgrossmw * 1.0D-6
     step25 = step25 + step2502
-  
+    
     ! 25.03 Communications Equipment
-    ! Original STARFIRE value, scaling with thermal power
-    step2503 = step_ref(67) * (pth / ptherm_star)**0.6D0
+    step2503 = ((3.05D4 * (pgrossmw / 1.2D3) * 2.18D2) + (4.0D6 * 3.0D0 * (pgrossmw / 1.2D3))) * 1.0D-6
     step25 = step25 + step2503
-  
+    
     ! 25.04 Furnishing and Fixtures
-    ! Original STARFIRE value, scaling with thermal power
-    step2504 = step_ref(68) * (pth / ptherm_star)**0.6D0
+    step2504 = 3.0D3 * pgrossmw * 1.0D-6
     step25 = step25 + step2504
   
     ! 25.98 Spares
