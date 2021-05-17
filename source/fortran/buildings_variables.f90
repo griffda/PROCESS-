@@ -209,12 +209,12 @@ module buildings_variables
       wrbi = 0.0D0
       wsvfac = 1.9D0
       wsvol = 0.0D0
-      a_reactor_bldg = 1.076D4
+      a_reactor_bldg = 8.32D3
       a_ee_ps_bldg = 2.133D4
       a_aux_services_bldg = a_default_bldg
       a_hot_cell_bldg = 8.43D3
-      a_reactor_service_bldg = a_default_bldg
-      a_service_water_bldg = a_default_bldg
+      a_reactor_service_bldg = 2.44D3
+      a_service_water_bldg = 1.567D3
       a_fuel_handling_bldg = 1.67D3
       a_control_room_bldg = 2.88D3
       a_ac_ps_bldg = 6.423D3
