@@ -312,8 +312,9 @@ coefficient $g$ is set using input parameter `dnbeta`. To apply the beta limit,
 constraint equation no. 24 should be turned on with iteration variable no. 36
 (`fbetatry`). The limit can be applied to either the total plasma beta, in 
 which case switch `iculbl` should be set to 0, to only the thermal component of 
-the plasma beta, in which case `iculbl` should be set to 1, or to the thermal 
-plus neutral beam components, in which case `iculbl` should be set to 2.
+the plasma beta, in which case `iculbl` should be set to 1, to the thermal 
+plus neutral beam components, in which case `iculbl` should be set to 2 or to toroidal beta,
+in which case `iculbl` should be set to 3.
 
 ### Aspect ratio scaling of beta $g$ coefficient
 

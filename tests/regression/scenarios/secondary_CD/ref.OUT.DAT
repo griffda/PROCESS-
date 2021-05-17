@@ -5,15 +5,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.0   Release Date :: 2021-01-25
-   Tag No. : v2.1-91-g349f51d0 code contains untracked changes
-    Branch : cost_model_2_remote_handling
-   Git log : Merge branch 'develop' into cost_model_2_remote_handling
- Date/time : 25 Feb 2021 11:27:15 +00:00(hh:mm) UTC
-      User : apearce
-  Computer : H0892
- Directory : /tmp/pytest-of-apearce/pytest-25/test_solver0
-     Input : /tmp/pytest-of-apearce/pytest-25/test_scenario_scenario16_0/IN.DAT
+   Version : 2.1.1   Release Date :: 2021-03-17
+   Tag No. : v2.1-192-gd7443eaa
+    Branch : issue-1309
+   Git log : COMMIT_MSG
+ Date/time : 12 May 2021 11:52:23 +01:00(hh:mm) UTC
+      User : jmaddock
+  Computer : J0826UBUNTU
+ Directory : /tmp/pytest-of-jmaddock/pytest-0/test_scenario_scenario2_0
+     Input : /tmp/pytest-of-jmaddock/pytest-0/test_scenario_scenario10_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -213,6 +213,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Beta g coefficient                                                       (dnbeta)                      4.980  OP 
  Normalised thermal beta                                                                                2.193  OP 
  Normalised total beta                                                                                  2.569  OP 
+ Normalised toroidal beta                                                                               2.630  OP 
  Limit on thermal beta                                                    (betalim)                     0.055  OP 
  Plasma thermal energy (J)                                                                          1.411E+09  OP 
  Total plasma internal energy (J)                                         (total_plasma_internal_en 1.653E+09  OP 
@@ -230,7 +231,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Line-averaged electron density / Greenwald density                       (dnla_gw)                 1.200E+00  OP 
  Ion density (/m3)                                                        (dnitot)                  6.679E+19  OP 
  Fuel density (/m3)                                                       (deni)                    5.907E+19  OP 
- High Z impurity density (/m3)                                            (dnz)                     3.719E+16  OP 
+ Total impurity density with Z > 2 (no He) (/m3)                          (dnz)                     3.719E+16  OP 
  Helium ion density (thermalised ions only) (/m3)                         (dnalp)                   7.282E+18  OP 
  Proton density (/m3)                                                     (dnprot)                  2.186E+16  OP 
  Hot beam density (/m3)                                                   (dnbeam)                  3.795E+17  OP 

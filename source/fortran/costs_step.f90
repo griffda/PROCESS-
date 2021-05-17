@@ -17,9 +17,6 @@ module costs_step_module
   use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
-  private
-  public :: costs_step, init_costs_step
-
   !  Various cost account values (M$)
   real(dp) :: step20, step21, step22, step23, step24, step25, &
               step27, step91, step92, step93, fwblkcost
@@ -138,29 +135,17 @@ contains
 
     ! Total plant direct cost with remote handling
     cdirt = cdirt + step27
-
-    ! Account 91 : Construction Facilities, Equipment and Services (10%)
-    step91 = 1.0D-1 * cdirt
-
-    ! Account 92 : Engineering and Costruction Management Services (8%)
-    step92 = 8.0D-2 * cdirt
-
-    ! Account 93 : Other Costs (5%)
-    step93 = 5.0D-2 * cdirt
-
-    ! Constructed cost
-    concost = cdirt + step91 + step92 + step93
-
-    ! Output costs
     if ((iprint==1).and.(output_costs == 1)) then
       call oshead(outfile,'Plant Direct Cost')
       call ocosts(outfile,'(cdirt)','Plant direct cost (M$)',cdirt)
+    endif
 
-      call oshead(outfile,'Indirect Cost')
-      call ocosts(outfile,'(step91)','Construction Facilities, Equipment and Services (10%) (M$)',step91)
-      call ocosts(outfile,'(step92)','Engineering and Costruction Management Services (8%) (M$)',step92)
-      call ocosts(outfile,'(step93)','Other Costs (5%) (M$)',step93)
+    ! Accounts 91-93: Indirect costs
+    call step_indirect_costs(outfile, iprint)
 
+    ! Constructed cost
+    concost = cdirt + step91 + step92 + step93
+    if ((iprint==1).and.(output_costs == 1)) then
       call oshead(outfile,'Constructed Cost')
       call ocosts(outfile,'(concost)','Constructed Cost (M$)',concost)
     end if
@@ -466,7 +451,8 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use build_variables, only: fwarea
-    use cost_variables, only: output_costs, step_ref, ifueltyp, fcdfuel, divcst, cdcost
+    use cost_variables, only: output_costs, step_ref, ifueltyp, fcdfuel, &
+      divcst, cdcost
     use current_drive_variables, only: pinjmw
     use physics_variables, only: rmajor, rminor
     use process_output, only: ocosts, oblnkl
@@ -502,8 +488,8 @@ contains
     step2298 = step2298 + 9.985D-2 *  step220102
   
     ! 22.01.03.01 TF Coils
-    ! Original STARFIRE value, scaling with fusion island volume
-    step22010301 = step_ref(22) * (vfi / vfi_star)
+    step22010301 = step_a22010301()
+    ! Add TF coil cost to total cost, step2201, in M$
     step2201 = step2201 + step22010301
 
     ! 22.01.03.02 PF Coils
@@ -730,6 +716,79 @@ contains
   end subroutine step_a220101
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  function step_a22010301() result(step22010301)
+    !! 22.01.03.01 TF Coils
+    !! Returns cost of TF coils
+    use cost_variables, only: step_ref, cpstcst, ifueltyp, step_uc_cryo_al, &
+      step_mc_cryo_al_per, uccpcl1, uccpclb
+    use tfcoil_variables, only: i_tf_sup, whtconal, n_tf, whttflgs, whtcp
+    use physics_variables, only: itart
+    implicit none
+
+    ! Result
+    real(dp) :: step22010301
+    !! Cost of TF coils in M$
+    
+    ! Declare local vars
+    real(dp) :: c_tf_inboard_legs
+    !! Cost of TF coil inboard legs in M$
+    real(dp) :: c_tf_outboard_legs
+    !! Cost of TF coil outboard legs in M$
+    
+    ! Initialise local vars
+    c_tf_inboard_legs = 0.0D0
+    c_tf_outboard_legs = 0.0D0
+    
+    ! Copper coils
+    if (i_tf_sup == 0) then
+      ! Calculation taken from cost model 0: simply the cost of copper conductor
+      ! masses
+      ! Inflating from 1990 $ to 2017 $ at nuclear rate equates to a factor of 
+      ! 2.99
+      ! Inboard TF coil legs
+      c_tf_inboard_legs = 1.0D-6 * whtcp * uccpcl1 * 2.99D0
+      
+      ! Outboard TF coil legs
+      c_tf_outboard_legs = 1.0D-6 * whttflgs * uccpclb * 2.99D0
+      
+      ! Total TF coil cost
+      step22010301 = c_tf_inboard_legs + c_tf_outboard_legs
+    endif
+      
+    ! Superconducting coils
+    if (i_tf_sup == 1) then
+      ! Original STARFIRE value in M$, scaling with fusion island volume
+      step22010301 = step_ref(22) * (vfi / vfi_star)
+    endif
+    
+    ! Cryogenic aluminium coils
+    if (i_tf_sup == 2) then
+      ! Cost approximated as the material cost of conducting Al * a 
+      ! manufacturing cost factor
+      ! Al conductor mass per coil * number of coils * cost per kilo *
+      ! manufacturing cost factor, converted to M$
+      ! step_mc_cryo_al_per = 0.2: 20% manufacturing cost
+      step22010301 = (whtconal * n_tf * step_uc_cryo_al) * &
+        (step_mc_cryo_al_per + 1.0D0) * 1.0D-6
+    endif
+
+    ! ifueltyp: consider centrepost cost as fuel, capital or both?
+    ! cpstcst used later in coelc_step()
+    cpstcst = 0.0D0  ! TART centrepost
+    if (itart == 1) then
+      if (ifueltyp == 1) then
+        ! Treat centrepost cost as fuel cost
+        cpstcst = c_tf_inboard_legs
+        if (i_tf_sup == 0) then
+          ! Subtract from capital cost
+          step22010301 = step22010301 - c_tf_inboard_legs
+        endif
+      elseif (ifueltyp == 2) then
+        ! Treat centrepost cost as capital and fuel cost
+        cpstcst = c_tf_inboard_legs
+      end if
+    endif
+  end function step_a22010301
 
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1522,7 +1581,33 @@ contains
 
   end subroutine step_a27
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  subroutine step_indirect_costs(outfile, iprint)
+    !! Accounts 91-93: Indirect costs
+    !! Calculate the indirect costs and print
+    use cost_variables, only: cdirt, output_costs
+    use process_output, only: oshead, ocosts
+    use cost_variables, only: step91_per, step92_per, step93_per
+    implicit none
+
+    ! Arguments
+    integer, intent(in) :: outfile, iprint
+
+    ! Account 91 : Construction Facilities, Equipment and Services (default 30%)
+    step91 = step91_per * cdirt
+
+    ! Account 92 : Engineering and Costruction Management Services (default 32.5%)
+    step92 = step92_per * cdirt
+
+    ! Account 93 : Other Costs (default 5%)
+    step93 = step93_per * cdirt
+
+    if ((iprint==1).and.(output_costs == 1)) then
+      call oshead(outfile,'Indirect Cost')
+      call ocosts(outfile,'(step91)','Construction Facilities, Equipment and Services (M$)',step91)
+      call ocosts(outfile,'(step92)','Engineering and Costruction Management Services (M$)',step92)
+      call ocosts(outfile,'(step93)','Other Costs (M$)',step93)
+    endif
+  end subroutine step_indirect_costs
 
   subroutine coelc_step(outfile,iprint)
 

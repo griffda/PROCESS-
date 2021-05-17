@@ -373,6 +373,15 @@ module cost_variables
   real(dp), dimension(68) :: step_ref
   !! Reference values for cost model 2
 
+  real(dp) :: step91_per
+  !! Percentage of cdirt used in calculating step91 (3.0D-1 = 30%)
+  
+  real(dp) :: step92_per
+  !! Percentage of cdirt used in calculating step92 (3.0D-1 = 30%)
+  
+  real(dp) :: step93_per
+  !! Percentage of cdirt used in calculating step93 (3.0D-1 = 30%)
+
   real(dp) :: tlife
   !! Full power year plant lifetime (years)
 
@@ -568,6 +577,13 @@ module cost_variables
   real(dp), dimension(7) :: ucsc
   !! cost of superconductor ($/kg)
 
+  real(dp) :: step_uc_cryo_al
+  !! Unit cost of cryo aluminium ($/kg). Only used in costs_step_module
+
+  real(dp) :: step_mc_cryo_al_per
+  !! Manufacturing cost percentage for cryo aluminium (%). 0.2 means a 20%
+  !! manufacturing cost. Only used in costs_step_module
+
   real(dp), parameter :: ucsh = 115.0D0
   !! cost of shops and warehouses (M$/m3)
 
@@ -748,6 +764,9 @@ module cost_variables
       1.465D1, 1.058D1, 3.1413D2, 0.0D0, 0.0D0, 1.95D0, 6.5D-2, 0.0D0, 1.628D1, 1.603D1, 9.44D0, &
       1.9051D2, 1.9585D2, 1.107D1, 1.319D2, 4.858D1, 2.793D1, 1.2876D2, 2.588D1, 3.01D1, &
       4.14D1, 1.895D1, 5.13D0, 4.228D1, 8.744D1, 1.992D1, 4.664D1, 3.674D1, 1.85D1, 2.23D0 /)
+    step91_per = 3.0D-1
+    step92_per = 3.25D-1
+    step93_per = 1.5D-1
     tlife = 30.0D0
     ucblbe = 260.0D0
     ucblbreed = 875.0D0
@@ -800,5 +819,7 @@ module cost_variables
     ucwst = (/0.0D0, 3.94D0, 5.91D0, 7.88D0/)
     i_cp_lifetime = 0
     cplife_input = 2.0D0
+    step_uc_cryo_al = 8.1D1
+    step_mc_cryo_al_per = 2.0D-1
   end subroutine init_cost_variables
 end module cost_variables

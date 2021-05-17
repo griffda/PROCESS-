@@ -2,15 +2,15 @@
  # Power Reactor Optimisation Code #
  # PROCESS #
  # Power Reactor Optimisation Code #
- PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "11/03/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "11:18"
- User____________________________________________________________________ (username)____________________     "apearce" 
+ PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.1   R"
+ Date_of_run_____________________________________________________________ (date)________________________     "12/05/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "11:51"
+ User____________________________________________________________________ (username)____________________     "jmaddock"
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "starfire                                                                                           
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-139-g8f535a45"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "pf_coil_cost"                                                                                      
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "correct new varible inputs"                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-apearce/pytest-35/test_scenario_scenario17_0/IN.DAT                                                                                                                                      "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-192-gd7443eaa"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "issue-1309"                                                                                        
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jmaddock/pytest-0/test_scenario_scenario2_0/IN.DAT                                                                                                                                       "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -215,19 +215,19 @@
  # Plant Direct Cost #
  Plant_direct_cost_(M$)__________________________________________________ (cdirt)_______________________      9.8087E+03    
  # Indirect Cost #
- Construction_Facilities,_Equipment_and_Services_(10%)_(M$)______________ (step91)______________________      9.8087E+02    
- Engineering_and_Costruction_Management_Services_(8%)_(M$)_______________ (step92)______________________      7.8470E+02    
- Other_Costs_(5%)_(M$)___________________________________________________ (step93)______________________      4.9044E+02    
+ Construction_Facilities,_Equipment_and_Services_(M$)____________________ (step91)______________________      5.3292E+02    
+ Engineering_and_Costruction_Management_Services_(M$)____________________ (step92)______________________      5.7733E+02    
+ Other_Costs_(M$)________________________________________________________ (step93)______________________      2.6646E+02    
  # Constructed Cost #
- Constructed_Cost_(M$)___________________________________________________ (concost)_____________________      1.2065E+04    
+ Constructed_Cost_(M$)___________________________________________________ (concost)_____________________      3.1531E+03    
  # Interest during Construction #
- Interest_during_construction_(M$)_______________________________________ (moneyint)____________________      1.8097E+03    
+ Interest_during_construction_(M$)_______________________________________ (moneyint)____________________      4.7297E+02    
  # Total Capital Investment #
- Total_capital_investment_(M$)___________________________________________ (capcost)_____________________      1.3874E+04    
- # Cost of Electricity (2017 US$) #
+ Total_capital_investment_(M$)___________________________________________ (capcost)_____________________      3.6261E+03    
+ # Cost of Electricity (1980 US$) #
  First_wall_/_blanket_life_(years)_______________________________________ (fwbllife)____________________      5.3433E+00    
  Divertor_life_(years)___________________________________________________ (divlife.)____________________      2.8556E-01    
- Cost_of_electricity_(m$/kWh)____________________________________________ (coe)_________________________      1.2801E+02    
+ Cost_of_electricity_(m$/kWh)____________________________________________ (coe)_________________________      4.0711E+01    
  # Plant Availability #
  Allowable_blanket_neutron_fluence_(MW-yr/m2)____________________________ (abktflnc)____________________      1.5000E+01    
  Allowable_divertor_heat_fluence_(MW-yr/m2)______________________________ (adivflnc)____________________      2.0000E+01    
@@ -275,6 +275,7 @@
  Beta_g_coefficient______________________________________________________ (dnbeta)______________________      6.0000E+00    
  Normalised_thermal_beta_________________________________________________ ______________________________      3.8186E+00    
  Normalised_total_beta___________________________________________________ ______________________________      4.5819E+00    
+ Normalised_toroidal_beta________________________________________________ ______________________________      4.7709E+00    
  Limit_on_thermal_beta___________________________________________________ (betalim)_____________________      7.9845E-02    
  Plasma_thermal_energy_(J)_______________________________________________ ______________________________      8.3373E+08 OP 
  Total_plasma_internal_energy_(J)________________________________________ (total_plasma_internal_energy)      1.0004E+09 OP 
@@ -1132,7 +1133,7 @@ bore     = 2.1201269689496494 * central solenoid inboard radius (m) (`iteration 
 ddwex    = 0.15 * cryostat thickness (m)
 d_vv_in  = 0.30 * vacuum vessel inboard thickness (TF coil / shield) (m)
 d_vv_out = 0.30 * vacuum vessel outboard thickness (TF coil / shield) (m)
-d_vv_top = 0.30 * vacuum vessel topside thickness (TF coil / shield) (m)
+d_vv_top = 0.30 * vacuum vessel topside thickness (TF coil / shield) (m) (= d_vv_bot if double-null)
 d_vv_bot = 0.30 * vacuum vessel underside thickness (TF coil / shield) (m)
 gapds    = 0.15003399049211447 * gap between inboard vacuum vessel and thermal shield (m) (`iteration variable 61`)
 gapoh    = 0.06541854755255866 * gap between central solenoid and TF coil (m) (`iteration variable 42`)
@@ -1143,7 +1144,7 @@ scrapli  = 0.2 * Gap between plasma and first wall; inboard side (m) (if `iscrp=
 scraplo  = 0.2 * Gap between plasma and first wall; outboard side (m) (if `iscrp=1`)
 shldith  = 0.30 * inboard shield thickness (m) (`iteration variable 93`)
 shldoth  = 0.80 * outboard shield thickness (m) (`iteration variable 94`)
-shldtth  = 0.30 * upper/lower shield thickness (m); calculated if `blktmodel > 0`
+shldtth  = 0.30 * upper/lower shield thickness (m); calculated if `blktmodel > 0` (= shldlth if double-null)
 tfcth    = 0.4686248306578002 * inboard TF coil thickness; (centrepost for ST) (m)
 tftsgap  = 0.05 * Minimum metal-to-metal gap between TF coil and thermal shield (m)
 vgap2    = 0.05 * vertical gap between vacuum vessel and thermal shields (m)

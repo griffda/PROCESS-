@@ -72,7 +72,7 @@ module build_variables
   !! vacuum vessel outboard thickness (TF coil / shield) (m)
 
   real(dp) :: d_vv_top
-  !! vacuum vessel topside thickness (TF coil / shield) (m)
+  !! vacuum vessel topside thickness (TF coil / shield) (m) (= d_vv_bot if double-null)
 
   real(dp) :: d_vv_bot
   !! vacuum vessel underside thickness (TF coil / shield) (m)
@@ -252,7 +252,7 @@ module build_variables
   !! outboard shield thickness (m) (`iteration variable 94`)
 
   real(dp) :: shldtth
-  !! upper/lower shield thickness (m); calculated if `blktmodel > 0`
+  !! upper/lower shield thickness (m); calculated if `blktmodel > 0` (= shldlth if double-null)
 
   real(dp) :: sigallpc
   !! allowable stress in CSpre-compression structure (Pa)
@@ -285,7 +285,7 @@ module build_variables
   !! vertical gap between x-point and divertor (m) (if = 0, it is calculated)
 
   real(dp) :: vgaptop
-  !! vertical gap between top of plasma and first wall (m)
+  !! vertical gap between top of plasma and first wall (m) (= vgap if double-null)
 
   real(dp) :: vvblgap
   !! gap between vacuum vessel and blanket (m)

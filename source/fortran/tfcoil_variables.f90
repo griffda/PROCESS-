@@ -137,7 +137,7 @@ module tfcoil_variables
   real(dp) :: dcase
   !! density of coil case (kg/m3)
 
-  real(dp), dimension(7) :: dcond
+  real(dp), dimension(8) :: dcond
   !! density of superconductor type given by i_tf_sc_mat/isumatoh/isumatpf (kg/m3)
   
   real(dp) :: dcondins
@@ -209,6 +209,8 @@ module tfcoil_variables
   !! - =4 ITER Nb3Sn model with user-specified parameters
   !! - =5 WST Nb3Sn parameterisation
   !! - =6 REBCO HTS tape in CroCo strand
+  !! - =7 Durham Ginzburg-Landau critical surface model for Nb-Ti
+  !! - =8 Durham Ginzburg-Landau critical surface model for REBCO
 
   integer :: i_tf_sup
   !! Switch for TF coil conductor model:
@@ -480,10 +482,11 @@ module tfcoil_variables
   !! TF joints surfacic resistivity [ohm.m]. Feldmetal joints assumed.
 
   integer :: n_tf_joints_contact
-  !! Number of contact per sliding joint
+  !! Number of contact per turn
 
   integer :: n_tf_joints
-  !! Number of joint per turn
+  !! Number of joints
+  !! Ex: n_tf_joints = 2 for top and bottom CP joints
 
   real(dp) :: th_joint_contact
   !! TF sliding joints contact pad width [m]
