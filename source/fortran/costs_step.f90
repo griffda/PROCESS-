@@ -657,7 +657,7 @@ contains
           
       !! Account 22.01.01.02.02 : Blanket Breeder Material
       if (blktmodel == 0) then
-             step2201010202 = 1.0D-6 * wtblli2o * ucblli2o
+             step2201010202 = 1.0D-6 * wtblli2o * ucblli2o * 2.99D0
       else
              step2201010202 = 1.0D-6 * whtblbreed * step_ucblbreed
       end if
@@ -665,15 +665,15 @@ contains
       if ((blkttype == 1).or.(blkttype == 2)) then
          !  Liquid blanket (LiPb + Li)
          !! Account 22.01.01.02.01 : Blanket Multiplier Material 
-        step2201010201 = 1.0D-6 * wtbllipb * ucbllipb
+        step2201010201 = 1.0D-6 * wtbllipb * ucbllipb * 2.99D0
          !! Account 22.01.01.02.02 : Blanket Breeder Material 
-        step2201010202 = 1.0D-6 * whtblli * ucblli
+        step2201010202 = 1.0D-6 * whtblli * ucblli * 2.99D0
       else
          !  Solid blanket (Li2O + Be)
          !! Account 22.01.01.02.01 : Blanket Multiplier Material 
         step2201010201 = 1.0D-6 * whtblbe * step_ucblbe
          !! Account 22.01.01.02.02 : Blanket Breeder Material
-        step2201010202 = 1.0D-6 * wtblli2o * ucblli2o
+        step2201010202 = 1.0D-6 * wtblli2o * ucblli2o * 2.99D0
       end if
     end if
 
