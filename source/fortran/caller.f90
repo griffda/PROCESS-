@@ -253,6 +253,11 @@ subroutine caller(xc,nvars)
     call avail(nout,0)    ! Taylor and Ward model (1999)
   end if
 
+  ! Water usage in secondary cooling system !
+  ! !!!!!!!!!!!!!!!!!!!!!
+
+  call waterusecall(nout,0)
+
   ! Costs model !
   ! !!!!!!!!!!!!!!
 
