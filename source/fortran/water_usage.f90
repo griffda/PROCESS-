@@ -1,9 +1,8 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-program water_use_module
-!! *RMC testing
-!gfortran -o water_usage_test.exe water_usage.f90
-!module water_use_module
+!program water_use_module
+!! *RMC testing  !! gfortran -o water_usage_test.exe water_usage.f90
+module water_use_module
 
   !! Module containing calculations for water usage in secondary cooling.
   !!
@@ -25,21 +24,21 @@ program water_use_module
   use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
   
-  ! private
-  ! public :: watusecall
+  private
+  public :: watusecall
 
   real(dp), parameter :: secday = 86400.0D0
   !! seconds in a day, s
 
-!  call watusecall(outfile,iprint)
-  call watusecall
+  call waterusecall(outfile,iprint)
+!  call waterusecall
 
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !subroutine watusecall(outfile,iprint)
-  subroutine watusecall
+  subroutine waterusecall(outfile,iprint)
+  !subroutine waterusecall
 
     !! Routine to call the water usage calculation routines.
     !! author: R Chapman, UKAEA
@@ -55,14 +54,14 @@ contains
 
     !  Arguments
 
-    !integer, intent(in) :: outfile, iprint
+    integer, intent(in) :: outfile, iprint
 
     !  Local variables
 
     integer :: icool   
     !! switch between different water-body cooling options
     real(dp) :: pthermmw    !   *RMC testing
-    real(dp) :: wastetherm
+    real(dp) :: wastethermeng
     !! waste thermal energy to be rejected per [time], MJ
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -70,31 +69,37 @@ contains
     !!!! might actually need rejected_main!!
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    wastetherm = pthermmw * secday
+    wastethermeng = pthermmw * secday
 
-    !! call subroutines for cooling mechanisms
+    !  Write header and note to output file
+    call oheadr(outfile,'Water usage during plant operation (secondary cooling)')
+    call ocmmnt(outfile,'Estimated water evaporated through different cooling system options:')
+    call ocmmnt(outfile,'1. Cooling towers')
+    call ocmmnt(outfile,'2a. Cooling pond, 2b. Cooling lake, 2c. Cooling river')
+
+    !! call subroutines for cooling mechanisms:
 
     ! cooling towers 
-    !call cooling_towers(outfile,iprint,wastetherm)
-    call cooling_towers(wastetherm)
+    call cooling_towers(outfile,iprint,wastetherm)
+    !call cooling_towers(wastethermeng)
 
     ! water-body cooling
     icool = 1  ! small pond as a cooling body
-    !call cooling_water_body(outfile,iprint,icool,wastetherm)
-    call cooling_water_body(icool,wastetherm)
+    call cooling_water_body(outfile,iprint,icool,wastetherm)
+    !call cooling_water_body(icool,wastethermeng)
     icool = 2  ! large lake or reservoir as a cooling body
-   ! call cooling_water_body(outfile,iprint,icool,wastetherm)
-    call cooling_water_body(icool,wastetherm)
+    call cooling_water_body(outfile,iprint,icool,wastetherm)
+    !call cooling_water_body(icool,wastethermeng)
     icool = 3  ! stream or river as a cooling body
-   ! call cooling_water_body(outfile,iprint,icool,wastetherm)
-    call cooling_water_body(icool,wastetherm)
+    call cooling_water_body(outfile,iprint,icool,wastetherm)
+    !call cooling_water_body(icool,wastethermeng)
 
-  end subroutine watusecall
+  end subroutine waterusecall
 
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !subroutine cooling_towers(outfile,iprint,wastetherm)
-  subroutine cooling_towers(wastetherm)
+  subroutine cooling_towers(outfile,iprint,wastetherm)
+  !subroutine cooling_towers(wastetherm)
    
     !! Water use in cooling towers
     !! author: R Chapman, UKAEA
@@ -102,38 +107,34 @@ contains
     !! iprint : input integer : Switch to write output (1=yes)
     !! wastetherm : input real : thermal energy (MJ) to be cooled by this system
    
-    !use water_usage_variables, only: *RMC    
+    use water_usage_variables, only: airtemp, waterdens, latentheat, &
+      volheat, evapratio, evapvol, energypervol, volperenergy
+    use process_output, only: oheadr, ovarre 
     implicit none
 
     !  Arguments
-    !integer, intent(in) :: outfile, iprint
+    integer, intent(in) :: outfile, iprint
     real(dp), intent(in) :: wastetherm
 
     !  Local variables
-    ! *RMC testing - actually should be read from water_usage_variables
-    real(dp) :: airtemp, waterdens, latentheat
-    real(dp) :: volheat
-    !! volumetric heat of vaporization, J/m3
-    real(dp) :: evapratio
-    !! evaporation ratio: ratio of the heat used to evaporate water 
-    !!   to the total heat discharged through the tower
-    real(dp) :: evapvol
-    !! evaporated volume of water, m3
-    real(dp) :: energypervol
-    !! input waste (heat) energy cooled per evaporated volume, J/m3
-    real(dp) :: volperenergy
-    !! volume evaporated by units of heat energy, m3/MJ
-    ! *RMC testing
+    ! ! - actually should be read from water_usage_variables
+    ! real(dp) :: airtemp, waterdens, latentheat
+    ! real(dp) :: volheat
+    ! !! volumetric heat of vaporization, J/m3
+    ! real(dp) :: evapratio
+    ! !! evaporation ratio: ratio of the heat used to evaporate water 
+    ! !!   to the total heat discharged through the tower
+    ! real(dp) :: evapvol
+    ! !! evaporated volume of water, m3
+    ! real(dp) :: energypervol
+    ! !! input waste (heat) energy cooled per evaporated volume, J/m3
+    ! real(dp) :: volperenergy
+    ! !! volume evaporated by units of heat energy, m3/MJ
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-        ! *RMC testing - actually should be read from water_usage_variables
-    airtemp = 15.0D0
-    waterdens = 998.23D0
-    latentheat = 2257000.0D0
-           ! *RMC testing
-
-
+    !! find evaporation ratio: ratio of the heat used to evaporate water 
+    !   to the total heat discharged through the tower
     evapratio = 1 - ( (-0.000279*airtemp**3 &
        + 0.00109*airtemp**2 &
        - 0.345*airtemp &
@@ -150,15 +151,14 @@ contains
 
     !  Output section
     print *, "Volume evaporated in cooling tower:", evapvol, "m3 per day"
-
-!    call ovarre(outfile,'Plasma fuelling rate (nucleus-pairs/s)','(qfuel)',qfuel, 'OP ')
+    call ovarre(outfile,'Volume evaporated in cooling tower (m3/day)','(evapvol)',evapvol, 'OP ')
  
   end subroutine cooling_towers
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !subroutine cooling_water_body(outfile,iprint,icool,wastetherm)
-  subroutine cooling_water_body(icool,wastetherm)
+  subroutine cooling_water_body(outfile,iprint,icool,wastetherm)
+  !subroutine cooling_water_body(icool,wastetherm)
    
    !! Water use in cooling through water bodies
    !! based on spreadsheet from Diehl et al. USGS Report 2013–5188, which includes 
@@ -171,30 +171,31 @@ contains
    !! iprint : input integer : Switch to write output (1=yes)
    !! icool: input integer : switch between different water-body cooling options
    !! wastetherm : input real : thermal energy (MJ) to be cooled by this system
-  
-   !use water_usage_variables, only: *RMC    
+     
+   use water_usage_variables, only: watertemp, windspeed, waterdens, latentheat, &
+      volheat, evapratio, evapvol, energypervol, volperenergy 
+   use process_output, only: oheadr, ovarre
    implicit none
 
    !  Arguments
-   !integer, intent(in) :: outfile, iprint
+   integer, intent(in) :: outfile, iprint
    integer, intent(in) :: icool
    real(dp), intent(in) :: wastetherm
 
    !  Local variables
-   ! *RMC testing - actually should be read from water_usage_variables
-   real(dp) :: watertemp, windspeed, waterdens, latentheat
-   real(dp) :: volheat
-   !! volumetric heat of vaporization, J/m3
-   real(dp) :: evapratio
-   !! evaporation ratio: ratio of the heat used to evaporate water 
-   !!   to the total heat discharged through the tower
-   real(dp) :: evapvol
-   !! evaporated volume of water, m3
-   real(dp) :: energypervol
-   !! input waste (heat) energy cooled per evaporated volume, J/m3
-   real(dp) :: volperenergy
-   !! volume evaporated by units of heat energy, m3/MJ
-   ! *RMC testing
+  !  ! - actually should be read from water_usage_variables
+  !  real(dp) :: watertemp, windspeed, waterdens, latentheat
+  !  real(dp) :: volheat
+  !  !! volumetric heat of vaporization, J/m3
+  !  real(dp) :: evapratio
+  !  !! evaporation ratio: ratio of the heat used to evaporate water 
+  !  !!   to the total heat discharged through the tower
+  !  real(dp) :: evapvol
+  !  !! evaporated volume of water, m3
+  !  real(dp) :: energypervol
+  !  !! input waste (heat) energy cooled per evaporated volume, J/m3
+  !  real(dp) :: volperenergy
+  !  !! volume evaporated by units of heat energy, m3/MJ
 
    real(dp) :: heatload, heatloadmet, a, b, c, d, e, f, g, h, i, j
    real(dp) :: windspeedmph, heatloadimp, satvapdelta
@@ -214,13 +215,10 @@ contains
 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-           ! *RMC testing - actually should be read from water_usage_variables
-   watertemp = 5.0D0
-   windspeed = 4.0D0
-   waterdens = 998.23D0
-   latentheat = 2257000.0D0
-          ! *RMC testing
-
+  !  watertemp = 5.0D0
+  !  windspeed = 4.0D0
+  !  waterdens = 998.23D0
+  !  latentheat = 2257000.0D0
 
    if ( icool == 1 ) then
       ! small pond as a cooling body
@@ -279,7 +277,8 @@ contains
 
    !! Unfortunately, the source spreadsheet was from the US, so the fits for 
    !!   water body heating due to heat loading and the cooling wind functions
-   !!   are in non-metric units, hence the conversions required here:
+   !!   are in non-metric units, hence the conversions required here.
+   !! Limitations: maximum wind speed of ~5 m/s; initial watertemp < 25 degC
 
    ! convert windspeed to mph
    windspeedmph = windspeed * 2.237D0
@@ -308,6 +307,8 @@ contains
    ! convert heat loading to J/(m2.day)
    heatloadmet = heatload * 1000000D0 / 4046.85642D0 * secday
 
+   !! find evaporation ratio: ratio of the heat used to evaporate water 
+   !   to the total heat discharged through the tower
    evapratio = deltaE / heatloadmet
    !! Diehl et al. USGS Report 2013–5188, http://dx.doi.org/10.3133/sir20135188
 
@@ -322,13 +323,16 @@ contains
    !  Output section
    if ( icool == 1 ) then
       print *, "Volume evaporated from cooling pond:", evapvol, "m3 per day"
+      call ovarre(outfile,'Volume evaporated from cooling pond (m3/day)','(evapvol)',evapvol, 'OP ')
    else if ( icool == 2 ) then
       print *, "Volume evaporated from cooling lake:", evapvol, "m3 per day"
+      call ovarre(outfile,'Volume evaporated from cooling lake (m3/day)','(evapvol)',evapvol, 'OP ')
    else if ( icool == 3 ) then
       print *, "Volume evaporated from cooling river:", evapvol, "m3 per day"
+      call ovarre(outfile,'Volume evaporated from cooling river (m3/day)','(evapvol)',evapvol, 'OP ')
    end if
 
   end subroutine cooling_water_body
 
-!end module water_use_module
-end program water_use_module
+end module water_use_module
+!end program water_use_module
