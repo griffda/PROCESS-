@@ -1,7 +1,7 @@
-module water_useage_variables
+module water_usage_variables
   !! author: R Chapman (UKAEA)
   !!
-  !! Module containing global variables relating to the water useage
+  !! Module containing global variables relating to the water usage
   !!
   !!### References
   !!
@@ -65,4 +65,4 @@ module water_useage_variables
       
   end subroutine init_watuse_variables
 
-end module water_useage_variables
+end module water_usage_variables
