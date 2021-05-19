@@ -45,7 +45,6 @@ contains
 
     use heat_transport_variables, only: pthermmw, etath
     !! need local plant_power variable rejected_main; can find from pthermmw & etath
-    use process_output, only: oheadr, ocmmnt 
     implicit none
 
     !  Arguments
@@ -70,14 +69,6 @@ contains
 
     wastethermeng = rejected_heat * secday
 
-    !  Write header and note to output file
-    !print *, "pthermmw", pthermmw, "etath", etath !RMCtesting
-    !print *, "rejected_heat", rejected_heat !RMCtesting
-    call oheadr(outfile,'Water usage during plant operation (secondary cooling)')
-    call ocmmnt(outfile,'Estimated water evaporated through different cooling system options:')
-    call ocmmnt(outfile,'1. Cooling towers')
-    call ocmmnt(outfile,'2a. Cooling pond, 2b. Cooling lake, 2c. Cooling river')
-
     !! call subroutines for cooling mechanisms:
 
     ! cooling towers 
@@ -91,13 +82,14 @@ contains
     icool = 3  ! stream or river as a cooling body
     call cooling_water_body(outfile,iprint,icool,wastethermeng)
 
+
   end subroutine waterusecall
 
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine cooling_towers(outfile,iprint,wastetherm)
    
-    !! Water use in cooling towers
+    !! Water evaporated in cooling towers
     !! author: R Chapman, UKAEA
     !! outfile : input integer : Fortran output unit identifier
     !! iprint : input integer : Switch to write output (1=yes)
@@ -105,7 +97,7 @@ contains
    
     use water_usage_variables, only: airtemp, waterdens, latentheat, &
       volheat, evapratio, evapvol, energypervol, volperenergy
-    use process_output, only: ovarre 
+    use process_output, only: oheadr, ocmmnt, ovarre
     implicit none
 
     !  Arguments
@@ -133,18 +125,22 @@ contains
     evapvol = wastetherm * volperenergy
 
     !  Output section
-    print *, "Volume evaporated in cooling tower:", evapvol, "m3 per day" !RMCtesting
+    if (iprint == 0) return
+    call oheadr(outfile,'Water usage during plant operation (secondary cooling)')
+    call ocmmnt(outfile,'Estimated amount of water evaporated through different cooling system options:')
+    call ocmmnt(outfile,'1. Cooling towers')
+    call ocmmnt(outfile,'2. Water bodies: a) pond, b) lake, c) river')
     call ovarre(outfile,'Volume evaporated in cooling tower (m3/day)','(evapvol)',evapvol, 'OP ')
+
  
   end subroutine cooling_towers
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine cooling_water_body(outfile,iprint,icool,wastetherm)
-  !subroutine cooling_water_body(icool,wastetherm)
    
-   !! Water use in cooling through water bodies
-   !! based on spreadsheet from Diehl et al. USGS Report 2013–5188, which includes 
+   !! Water evaporated in cooling through water bodies
+   !! Based on spreadsheet from Diehl et al. USGS Report 2013–5188, which includes 
    !! cooling coefficients found through fits across a dataset containing a wide range of 
    !! temperatures, windspeeds, and heat loading: 
    !! http://pubs.usgs.gov/sir/2013/5188/appendix/sir2013-5188_appendix4_fews_version_3.104.xlsx
@@ -286,14 +282,12 @@ contains
    evapvol = wastetherm * volperenergy
 
    !  Output section
+   if (iprint == 0) return
    if ( icool == 1 ) then
-      print *, "Volume evaporated from cooling pond:", evapvol, "m3 per day" !RMCtesting
       call ovarre(outfile,'Volume evaporated from cooling pond (m3/day)','(evapvol)',evapvol, 'OP ')
    else if ( icool == 2 ) then
-      print *, "Volume evaporated from cooling lake:", evapvol, "m3 per day" !RMCtesting
       call ovarre(outfile,'Volume evaporated from cooling lake (m3/day)','(evapvol)',evapvol, 'OP ')
    else if ( icool == 3 ) then
-      print *, "Volume evaporated from cooling river:", evapvol, "m3 per day" !RMCtesting
       call ovarre(outfile,'Volume evaporated from cooling river (m3/day)','(evapvol)',evapvol, 'OP ')
    end if
 
