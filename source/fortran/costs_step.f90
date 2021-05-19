@@ -19,11 +19,11 @@ module costs_step_module
 
   !  Various cost account values (M$)
   real(dp) :: step20, step21, step22, step23, step24, step25, &
-  step27, step91, step92, step93, fwblkcost
+              step27, step91, step92, step93, fwblkcost
 
   ! Scaling Properties
   real(dp) :: vfi, vfi_star, ptherm_star, pinjmw_star, fwarea_star, &
-  rmajor_star, rminor_star, pth
+              rmajor_star, rminor_star, pth
 
 contains
 
@@ -72,7 +72,8 @@ contains
 
     use constants, only: pi
     use build_variables, only: r_tf_outboard_mid, tfthko, hpfu, hmax, tfcth
-    use cost_variables, only: output_costs, cdirt, concost, ireactor, ipnet
+    use cost_variables, only: output_costs, cdirt, concost, ireactor, ipnet, &
+             step_ref, step_currency
     use fwbs_variables, only: emultmw
     use heat_transport_variables, only: pinjwp
     use physics_variables, only: powfmw
@@ -82,6 +83,7 @@ contains
 
     ! Arguments
     integer, intent(in) :: iprint,outfile
+    character(len=80) :: title
 
     ! Local variables
 
@@ -103,8 +105,8 @@ contains
 
     ! Output header
     if ((iprint==1).and.(output_costs == 1)) then
-      call oheadr(outfile,'STEP Costing Model (1980 US$)')
-      !call oheadr(outfile,'!!WARNING - Under development!! DO NOT USE!')
+      title = 'STEP Costing Model ('// trim(step_currency) // ')'
+      call oheadr(outfile,trim(title))
     end if
     
     ! Account 20 : Land and Rights
@@ -454,25 +456,22 @@ contains
     ! Arguments
     integer, intent(in) :: iprint,outfile
     real(dp), intent(inout) :: step2298
-  
-    ! Local variables
-    real(dp):: &
-    step220101, step220102, step220104, step220105, step220106, &
-    step220107, step220108, step220109, step220110, step2201, &
-    step22010301, step22010302, step22010303, step22010304
 
+    ! Local variables
+    real(dp):: step2201, step220101, step22010101, step22010102, step2201010201, &
+               step2201010202, step2201010203, step220102, step22010301, &
+               step22010302, step22010303, step22010304, step220104, &
+               step220105, step220106, step220107, step220108, step220109, &
+               step220110
+  
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
     ! Initialise as zero
     step2201 = 0.0D0
      
     ! 22.01.01 Blanket and First Wall
-    ! Original STARFIRE value, scaling with first wall area
-    step220101 = step_ref(20) * (fwarea / fwarea_star)
-    if (ifueltyp==1) then
-      fwblkcost = step220101
-      step220101 = 0.0D0
-    end if
+    call step_a220101(step220101, step22010101, step22010102, step2201010201, &
+                      step2201010202, step2201010203)
     step2201 = step2201 + step220101
 
     ! 22.01.02 Shield
@@ -488,8 +487,7 @@ contains
     step2201 = step2201 + step22010301
 
     ! 22.01.03.02 PF Coils
-    ! Original STARFIRE value, scaling with fusion island volume
-    step22010302 = step_ref(23) * (vfi / vfi_star)
+    step22010302 = step_a22010302()
     step2201 = step2201 + step22010302
     ! STARFIRE percentage for spares
     step2298 = step2298 + 3.269D-1 * step22010302
@@ -569,7 +567,16 @@ contains
     if ((iprint==1).and.(output_costs == 1)) then
       write(outfile,*) '******************* 22.01 Reactor Equipment'
       if (ifueltyp==0)then
-        call ocosts(outfile,'(step220101)','Blanket and First Wall (M$)', step220101)
+        write(outfile,*) '******************* 22.01.01 Blanket and First Wall Equipment'
+        call ocosts(outfile,'(step22010101)','Total First Wall Cost (M$)', step22010101)
+        call oblnkl(outfile)
+        call ocosts(outfile,'(step2201010201)','Blanket Multiplier Material (M$)', step2201010201)
+        call ocosts(outfile,'(step2201010202)','Blanket Breeder Material (M$)', step2201010202)
+        call ocosts(outfile,'(step2201010203)','Blanket Steel Costs (M$)', step2201010203)
+        call ocosts(outfile,'(step22010102)','Total Blanket Cost (M$)', step22010102)
+        call oblnkl(outfile)
+        call ocosts(outfile,'(step220101)','Total Account 22.01.01 Cost (M$)', step220101)
+        call oblnkl(outfile)
       else if (ifueltyp==1)then
         call ocosts(outfile,'(step220101)','Blanket and First Wall (Treated as Fuel) (M$)', step220101)
       end if
@@ -596,6 +603,113 @@ contains
   
   end subroutine step_a2201
 
+  subroutine step_a220101(step220101, step22010101, step22010102, step2201010201, &
+                          step2201010202, step2201010203)
+
+    !! Account 22.01.01 : Blanket and First Wall 
+    !! author: A J Pearce, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 22.01.01 (BB+FW) costs.
+    !! If ifueltyp = 0, the blanket cost is treated as capital cost
+    !! If ifueltyp = 1, the blanket cost is treated as a fuel cost,
+    !! rather than as a capital cost.
+    !! If ifueltyp = 2, the initial blanket is included as a capital cost
+    !! and the replacement blanket costs are treated as a fuel cost.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+		use cost_variables, only: step_ucblss, step_ucblbreed, step_ucblbe, ucblli, &
+      step_ucblvd, ucblli2o, blkcst, ucbllipb, ifueltyp, lsa, step_ucfws, &
+      fwallcst, step_ucfwps, step_ucfwa
+		use fwbs_variables, only: blktmodel, whtblli, blkttype, wtblli2o, &
+      whtblbreed, whtblvd, whtblbe, whtblss, wtbllipb, fw_armour_mass, fwmass 
+    use build_variables, only: fwarea 
+		use heat_transport_variables, only: ipowerflow 
+    
+    implicit none
+    real(dp), intent(inout) :: step220101, step22010101, step22010102, step2201010201, &
+                               step2201010202, step2201010203
+
+    !  Local variables
+    real(dp) :: step2201010204, step2201010205, step2201010206, step2201010207
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !! Account 22.01.01.01 : First wall
+    step22010101 = 1.0D-6 * (fw_armour_mass * step_ucfwa + fwmass * step_ucfws) 
+
+    if (ifueltyp == 1) then
+       fwallcst = step22010101
+       step22010101 = 0.0D0
+    elseif (ifueltyp == 2) then
+       fwallcst = step22010101
+    else
+       fwallcst = 0.0D0
+    end if
+
+    !! Account 22.01.01.02 : Breeder Blanket
+
+    if (ipowerflow == 0) then
+      
+      !! Account 22.01.01.02.01 : Blanket Multiplier Material 
+      step2201010201 = 1.0D-6 * whtblbe * step_ucblbe
+          
+      !! Account 22.01.01.02.02 : Blanket Breeder Material
+      if (blktmodel == 0) then
+             step2201010202 = 1.0D-6 * wtblli2o * step_ucblbreed
+      else
+             step2201010202 = 1.0D-6 * whtblbreed * step_ucblbreed
+      end if
+    else
+      if ((blkttype == 1).or.(blkttype == 2)) then
+         !  Liquid blanket (LiPb + Li)
+         !! Account 22.01.01.02.01 : Blanket Multiplier Material 
+        step2201010201 = 1.0D-6 * wtbllipb * ucbllipb * 2.99D0
+         !! Account 22.01.01.02.02 : Blanket Breeder Material 
+        step2201010202 = 1.0D-6 * whtblli * ucblli * 2.99D0
+      else
+         !  Solid blanket (Li2O + Be)
+         !! Account 22.01.01.02.01 : Blanket Multiplier Material 
+        step2201010201 = 1.0D-6 * whtblbe * step_ucblbe
+         !! Account 22.01.01.02.02 : Blanket Breeder Material
+        step2201010202 = 1.0D-6 * wtblli2o * step_ucblbreed
+      end if
+    end if
+
+    !! Account 22.01.01.02.03 : Blanket Steel Costs
+    step2201010203 = 1.0D-6 * whtblss * step_ucblss
+    
+    !! Account 22.01.01.02.04 : Blanket Vanadium Costs
+    step2201010204 = 1.0D-6 * whtblvd * step_ucblvd
+       
+    !! Account 22.01.01.02.05 : Blanket Carbon Cloth Costs
+    step2201010205 = 0.0D0
+       
+    !! Account 22.01.01.02.06 : Blanket Concrete Costs
+    step2201010206 = 0.0D0
+
+    !! Account 22.01.01.02.07 : Blanket FLiBe Costs
+    step2201010207 = 0.0D0
+
+    step22010102 = step2201010201 + step2201010202 + step2201010203 + step2201010204 &
+     + step2201010205 + step2201010206 + step2201010207
+
+    if (ifueltyp == 1) then
+       blkcst = step22010102
+       step22010102 = 0.0D0
+    elseif (ifueltyp == 2) then
+       blkcst = step22010102
+    else
+       blkcst = 0.0D0
+    end if
+
+    !! Total for Account 22.01.01
+    step220101 = step22010101 + step22010102 
+
+  end subroutine step_a220101
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   function step_a22010301() result(step22010301)
     !! 22.01.03.01 TF Coils
     !! Returns cost of TF coils
@@ -669,6 +783,121 @@ contains
       end if
     endif
   end function step_a22010301
+
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function step_a22010302() result(step22010302)
+
+    !! Account 22.01.03.02 PF Coils : PF magnet assemblies
+    !! author: A J Pearce, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 22.01.03.02 (PF magnet) costs.
+    !! Conductor costs previously used an algorithm devised by R. Hancox,
+    !! January 1994, under contract to Culham, which took into
+    !! account the fact that the superconductor/copper ratio in
+    !! the conductor is proportional to the maximum field that
+    !! each coil will experience. Now, the input copper fractions
+    !! are used instead.
+    !! Maximum values for current, current density and field
+    !! are used. 
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+		use build_variables, only: iohcl 
+		use constants, only: twopi, dcopper
+		use cost_variables, only: step_uccase, step_uccu, step_cconshpf, step_ucfnc, &
+      step_cconfix, step_ucsc, step_ucwindpf, lsa
+		use pfcoil_variables, only: rjconpf, ipfres, vfohc, nohc, turns, isumatpf, &
+      whtpfs, ric, rpf, isumatoh, fcupfsu, fcuohsu, vf, awpoh 
+		use structure_variables, only: fncmass 
+    use tfcoil_variables, only: dcond
+    implicit none
+
+    !  Result
+    real(dp) :: step22010302
+     
+    !  Local variables
+    real(dp) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
+         pfwndl, step2201030201, step2201030202, step2201030203, step2201030204
+    integer :: i,npf
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Total length of PF coil windings (m)
+
+    pfwndl = 0.0D0
+    do i = 1,nohc
+       pfwndl = pfwndl + twopi*rpf(i)*turns(i)
+    end do
+
+    !  Account 22.01.03.02.01 : Conductor
+
+    !  The following lines take care of resistive coils.
+    !  costpfsh is the cost per metre of the steel conduit/sheath around
+    !  each superconducting cable (so is zero for resistive coils)
+
+    if (ipfres == 1) then
+       costpfsh = 0.0D0
+    else
+       costpfsh = step_cconshpf
+    end if
+
+    !  Non-Central Solenoid coils
+
+    if (iohcl == 1) then
+       npf = nohc-1
+    else
+       npf = nohc
+    end if
+    
+    step2201030201 = 0.0D0
+    do i = 1,npf
+
+       !  Superconductor ($/m)
+       if (ipfres == 0) then
+          costpfsc = step_ucsc(isumatpf) * (1.0D0-fcupfsu)*(1.0D0-vf(i)) * &
+               abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcond(isumatpf)
+       else
+          costpfsc = 0.0D0
+       end if
+
+       !  Copper ($/m)
+       if (ipfres == 0) then
+          costpfcu = step_uccu * fcupfsu*(1.0D0-vf(i)) * &
+               abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcopper
+       else
+          costpfcu = step_uccu * (1.0D0-vf(i)) * &
+               abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcopper
+       end if
+
+       !  Total cost/metre of superconductor and copper wire
+       costwire = costpfsc + costpfcu
+
+       !  Total cost/metre of conductor (including sheath and fixed costs)
+       cpfconpm = costwire + costpfsh + step_cconfix
+
+       !  Total account 222.2.1 (PF coils excluding Central Solenoid)
+       step2201030201 = step2201030201 + (1.0D-6 * twopi * rpf(i) * turns(i) * &
+            cpfconpm)
+
+    end do
+
+    !  Account 22.01.03.02.02 : Winding
+    step2201030202 = 1.0D-6 * step_ucwindpf * pfwndl
+ 
+    !  Account 22.01.03.02.03 : Steel case - will be zero for resistive coils
+    step2201030203 = 1.0D-6 * step_uccase * whtpfs
+ 
+    !  Account 22.01.03.02.04 : Support structure
+    step2201030204 = 1.0D-6 * step_ucfnc * fncmass
+
+    !  Total account 22.01.03.02
+    step22010302 = step2201030201 + step2201030202 + step2201030203 + step2201030204
+
+    end function step_a22010302
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine step_a2202(outfile,iprint)
 
@@ -1362,7 +1591,7 @@ contains
     use cost_variables, only: output_costs, discount_rate, tlife, ucfuel, uche3, cdcost, &
       divcst, fcdfuel, ifueltyp, moneyint, lsa, ucwst, ucoam, fwallcst, fcr0, fcap0cp, &
       cfind, fcap0, dtlife, divlife, dintrt, decomf, cpstcst, cplife, concost, coeoam, &
-      coefuelt, coecap, coe, cfactr, cdrlife, capcost
+      coefuelt, coecap, coe, cfactr, cdrlife, capcost, step_ref, step_currency
     use fwbs_variables, only: bktlife
     use heat_transport_variables, only: pnetelmw
     use physics_variables, only: fhe3, itart, wtgpd
@@ -1380,6 +1609,7 @@ contains
          annfuelt,annfwbl,annoam,anntot,annwst,coecdr, &
          coecp,coedecom,coediv,coefuel,coefwbl,coewst,crfcdr,crfcp, &
          crfdiv,crffwbl,fefcdr,fefcp,fefdiv,feffwbl,fwbllife,kwhpy
+    character(len=80) :: title
          ! annoam1,
          
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1567,7 +1797,9 @@ contains
   call oshead(outfile,'Total Capital Investment')
   call ocosts(outfile,'(capcost)','Total capital investment (M$)',capcost)
 
-  call oheadr(outfile,'Cost of Electricity (1980 US$)')
+  title = 'Cost of Electricity ('// trim(step_currency) // ')'
+  call oheadr(outfile,trim(title))
+
   call ovarrf(outfile,'First wall / blanket life (years)','(fwbllife)',fwbllife)
   call ovarrf(outfile,'Divertor life (years)','(divlife.)',divlife)
   if (itart == 1) then

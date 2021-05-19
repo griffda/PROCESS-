@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.1   R"
- Date_of_run_____________________________________________________________ (date)________________________     "17/05/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "12:32"
- User____________________________________________________________________ (username)____________________     "jmaddock"
+ Date_of_run_____________________________________________________________ (date)________________________     "18/05/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "16:58"
+ User____________________________________________________________________ (username)____________________     "apearce" 
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "starfire                                                                                           
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-215-g99e2f1db"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1295-bop-cost-for-cost-model-2-2"                                                                  
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-265-gdad13992"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "pf_coil_cost"                                                                                      
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario2_0/IN.DAT                                                                                                                                       "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-apearce/pytest-45/test_scenario_scenario17_0/IN.DAT                                                                                                                                      "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -112,13 +112,13 @@
  TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres011)__________________     -9.1693E-13    
  Dump_time_set_by_VV_stress________normalised_residue____________________ (normres012)__________________     -1.4544E-14    
  # Final Feasible Point #
- # STEP Costing Model (1980 US$) #
+ # STEP Costing Model (2017 US$) #
  # 20. Land and Rights #
- Land_(M$)_______________________________________________________________ (step2001)____________________      3.0779E+00    
- Site_Preparation_(M$)___________________________________________________ (step2002)____________________      3.0779E-01    
- Total_Account_20_Cost_(M$)______________________________________________ (step20)______________________      3.3857E+00    
+ Land_(M$)_______________________________________________________________ (step2001)____________________      9.1517E+00    
+ Site_Preparation_(M$)___________________________________________________ (step2002)____________________      9.1312E-01    
+ Total_Account_20_Cost_(M$)______________________________________________ (step20)______________________      1.0065E+01    
  # 21. Building and Site Service Infrastructure #
- Site_Improvements_(M$)__________________________________________________ (step2101)____________________      1.1440E+01    
+ Site_Improvements_(M$)__________________________________________________ (step2101)____________________      3.4032E+01    
  Reactor_Building_(M$)___________________________________________________ (step2102)____________________      4.9393E+02    
  Turbine_Building_(M$)___________________________________________________ (step2103)____________________      5.3609E+02    
  Cooling_System_Structures_(M$)__________________________________________ (step2104)____________________      1.8447E+02    
@@ -134,51 +134,56 @@
  Site_Service_(M$)_______________________________________________________ (step2114)____________________      3.3082E+01    
  Cryogenics_and_Inert_Gas_Storage_Building_(M$)__________________________ (step2115)____________________      1.3005E+02    
  Security_Building_(M$)__________________________________________________ (step2116)____________________      1.4896E+01    
- Ventilation_Stack_(M$)__________________________________________________ (step2117)____________________      1.8570E+00    
- Spares_(M$)_____________________________________________________________ (step2198)____________________      1.4635E+01    
- Contingency_(M$)________________________________________________________ (step2199)____________________      3.3780E+02    
- Total_Account_21_Cost_(M$)______________________________________________ (step21)______________________      2.5898E+03    
+ Ventilation_Stack_(M$)__________________________________________________ (step2117)____________________      8.7823E+00    
+ Spares_(M$)_____________________________________________________________ (step2198)____________________      1.4828E+01    
+ Contingency_(M$)________________________________________________________ (step2199)____________________      3.4225E+02    
+ Total_Account_21_Cost_(M$)______________________________________________ (step21)______________________      2.6239E+03    
  # 22. Reactor Plant Equipment #
- Blanket_and_First_Wall_(M$)_____________________________________________ (step220101)__________________      8.2435E+01    
- Shield_(M$)_____________________________________________________________ (step220102)__________________      1.8624E+02    
- TF_Coils_(M$)___________________________________________________________ (step22010301)________________      1.1126E+02    
- PF_Coils_(M$)___________________________________________________________ (step22010302)________________      3.0620E+01    
- Central_Solenoid_(M$)___________________________________________________ (step22010303)________________      6.4160E+00    
- Control_Coils_(M$)______________________________________________________ (step22010304)________________      3.5399E+00    
- Auxiliary_Heating_and_Current_Drive_(M$)________________________________ (step220104)__________________      3.3490E+01    
- Primary_Structure_and_Support_(M$)______________________________________ (step220105)__________________      4.6673E+01    
- Reactor_Vacuum_System_(M$)______________________________________________ (step220106)__________________      4.4798E+00    
- Power_Supplies_(M$)_____________________________________________________ (step220107)__________________      4.8761E+01    
- Impurity_Control_(M$)___________________________________________________ (step220108)__________________      2.4500E+00    
- ECRH_Plasma_Breakdown_(M$)______________________________________________ (step220109)__________________      2.8200E+00    
- Divertor_(M$)___________________________________________________________ (step220110)__________________      1.6760E+01    
- Total_Account_22.01_Cost_(M$)___________________________________________ (step2201)____________________      5.7594E+02    
+ Total_First_Wall_Cost_(M$)______________________________________________ (step22010101)________________      5.1584E+02    
+ Blanket_Multiplier_Material_(M$)________________________________________ (step2201010201)______________      1.8184E+03    
+ Blanket_Breeder_Material_(M$)___________________________________________ (step2201010202)______________      1.8441E+02    
+ Blanket_Steel_Costs_(M$)________________________________________________ (step2201010203)______________      9.4414E+01    
+ Total_Blanket_Cost_(M$)_________________________________________________ (step22010102)________________      2.0973E+03    
+ Total_Account_22.01.01_Cost_(M$)________________________________________ (step220101)__________________      2.6131E+03    
+ Shield_(M$)_____________________________________________________________ (step220102)__________________      1.5156E+03    
+ TF_Coils_(M$)___________________________________________________________ (step22010301)________________      9.0534E+02    
+ PF_Coils_(M$)___________________________________________________________ (step22010302)________________      6.2522E+02    
+ Central_Solenoid_(M$)___________________________________________________ (step22010303)________________      5.2213E+01    
+ Control_Coils_(M$)______________________________________________________ (step22010304)________________      2.8797E+01    
+ Auxiliary_Heating_and_Current_Drive_(M$)________________________________ (step220104)__________________      2.7254E+02    
+ Primary_Structure_and_Support_(M$)______________________________________ (step220105)__________________      3.7983E+02    
+ Reactor_Vacuum_System_(M$)______________________________________________ (step220106)__________________      3.6456E+01    
+ Power_Supplies_(M$)_____________________________________________________ (step220107)__________________      3.9682E+02    
+ Impurity_Control_(M$)___________________________________________________ (step220108)__________________      1.9940E+01    
+ ECRH_Plasma_Breakdown_(M$)______________________________________________ (step220109)__________________      2.2950E+01    
+ Divertor_(M$)___________________________________________________________ (step220110)__________________      1.3640E+02    
+ Total_Account_22.01_Cost_(M$)___________________________________________ (step2201)____________________      7.0052E+03    
  Heat_Transfer_System_(M$)_______________________________________________ (step2202)____________________      1.5732E+02    
  Total_Account_22.02_Cost_(M$)___________________________________________ (step2202)____________________      1.5732E+02    
- Helium_Refrigerator_(M$)________________________________________________ (step220301)__________________      7.0976E+00    
- Liquid_Helium_Transfer_and_Storage_(M$)_________________________________ (step220302)__________________      3.3183E+00    
- Gas_Helium_Storage_(M$)_________________________________________________ (step220303)__________________      2.5809E+00    
- Liquid_Nitrogen_Storage_(M$)____________________________________________ (step220304)__________________      7.3741E-01    
- Total_Account_22.03_Cost_(M$)___________________________________________ (step2203)____________________      1.3734E+01    
- Liquid_Waste_(M$)_______________________________________________________ (step220401)__________________      1.7442E+00    
- Gaseous_Waste_(M$)______________________________________________________ (step220402)__________________      1.8468E+00    
- Solid_Waste_(M$)________________________________________________________ (step220403)__________________      1.3338E+00    
- Total_Account_22.04_Cost_(M$)___________________________________________ (step2204)____________________      4.9247E+00    
- Fuel_Handling_and_Storage_(M$)__________________________________________ (step2205)____________________      3.9603E+01    
- Total_Account_22.05_Cost_(M$)___________________________________________ (step2205)____________________      3.9603E+01    
+ Helium_Refrigerator_(M$)________________________________________________ (step220301)__________________      3.3580E+01    
+ Liquid_Helium_Transfer_and_Storage_(M$)_________________________________ (step220302)__________________      1.5698E+01    
+ Gas_Helium_Storage_(M$)_________________________________________________ (step220303)__________________      1.2213E+01    
+ Liquid_Nitrogen_Storage_(M$)____________________________________________ (step220304)__________________      3.4935E+00    
+ Total_Account_22.03_Cost_(M$)___________________________________________ (step2203)____________________      6.4984E+01    
+ Liquid_Waste_(M$)_______________________________________________________ (step220401)__________________      1.4189E+01    
+ Gaseous_Waste_(M$)______________________________________________________ (step220402)__________________      1.5030E+01    
+ Solid_Waste_(M$)________________________________________________________ (step220403)__________________      1.0855E+01    
+ Total_Account_22.04_Cost_(M$)___________________________________________ (step2204)____________________      4.0074E+01    
+ Fuel_Handling_and_Storage_(M$)__________________________________________ (step2205)____________________      3.2229E+02    
+ Total_Account_22.05_Cost_(M$)___________________________________________ (step2205)____________________      3.2229E+02    
  Maintenance_Equipment_(M$)______________________________________________ (step220601)__________________      0.0000E+00    
  Special_Heating_Systems_(M$)____________________________________________ (step220602)__________________      0.0000E+00    
- Coolant_Storage_(M$)____________________________________________________ (step220603)__________________      2.4623E-01    
- Gas_System_(M$)_________________________________________________________ (step220604)__________________      7.3741E-02    
- Fluid_Leak_Detection_(M$)_______________________________________________ (step220606)__________________      2.0519E+00    
- Closed_Loop_Coolant_System_(M$)_________________________________________ (step220607)__________________      2.0212E+00    
- Standby_Cooling_System_(M$)_____________________________________________ (step220608)__________________      1.1901E+00    
- Total_Account_22.06_Cost_(M$)___________________________________________ (step2206)____________________      5.5832E+00    
- Instrumentation_and_Control_(M$)________________________________________ (step2207)____________________      2.4018E+01    
- Total_Account_22.07_Cost_(M$)___________________________________________ (step2207)____________________      2.4018E+01    
- Spares_(M$)_____________________________________________________________ (step2298)____________________      4.7610E+01    
- Contingency_(M$)________________________________________________________ (step2299)____________________      1.3031E+02    
- Total_Account_22_Cost_(M$)______________________________________________ (step22)______________________      9.9905E+02    
+ Coolant_Storage_(M$)____________________________________________________ (step220603)__________________      2.0006E+00    
+ Gas_System_(M$)_________________________________________________________ (step220604)__________________      5.9915E-02    
+ Fluid_Leak_Detection_(M$)_______________________________________________ (step220606)__________________      1.6703E+01    
+ Closed_Loop_Coolant_System_(M$)_________________________________________ (step220607)__________________      1.6446E+01    
+ Standby_Cooling_System_(M$)_____________________________________________ (step220608)__________________      9.6852E+00    
+ Total_Account_22.06_Cost_(M$)___________________________________________ (step2206)____________________      4.4895E+01    
+ Instrumentation_and_Control_(M$)________________________________________ (step2207)____________________      1.9546E+02    
+ Total_Account_22.07_Cost_(M$)___________________________________________ (step2207)____________________      1.9546E+02    
+ Spares_(M$)_____________________________________________________________ (step2298)____________________      5.0430E+02    
+ Contingency_(M$)________________________________________________________ (step2299)____________________      1.2502E+03    
+ Total_Account_22_Cost_(M$)______________________________________________ (step22)______________________      9.5847E+03    
  # 23. Turbine Plant Equipment #
  Turbine_System_(M$)_____________________________________________________ (step23a)_____________________      9.4736E+02    
  Heat_Rejection_(M$)_____________________________________________________ (step2303)____________________      1.5946E+02    
@@ -205,24 +210,24 @@
  Contingency_(M$)________________________________________________________ (step2599)____________________      3.9198E+01    
  Total_Account_25_Cost_(M$)______________________________________________ (step25)______________________      3.0052E+02    
  # 27. Remote Handling #
- Remote_Handing_(M$)_____________________________________________________ (step2701)____________________      4.1221E+02    
- Total_Account_27_Cost_(M$)______________________________________________ (step27)______________________      4.1221E+02    
+ Remote_Handing_(M$)_____________________________________________________ (step2701)____________________      1.0592E+03    
+ Total_Account_27_Cost_(M$)______________________________________________ (step27)______________________      1.0592E+03    
  # Plant Direct Cost #
- Plant_direct_cost_(M$)__________________________________________________ (cdirt)_______________________      5.9084E+03    
+ Plant_direct_cost_(M$)__________________________________________________ (cdirt)_______________________      1.5182E+04    
  # Indirect Cost #
- Construction_Facilities,_Equipment_and_Services_(M$)____________________ (step91)______________________      1.7725E+03    
- Engineering_and_Costruction_Management_Services_(M$)____________________ (step92)______________________      1.9202E+03    
- Other_Costs_(M$)________________________________________________________ (step93)______________________      8.8626E+02    
+ Construction_Facilities,_Equipment_and_Services_(M$)____________________ (step91)______________________      4.5546E+03    
+ Engineering_and_Costruction_Management_Services_(M$)____________________ (step92)______________________      4.9341E+03    
+ Other_Costs_(M$)________________________________________________________ (step93)______________________      2.2773E+03    
  # Constructed Cost #
- Constructed_Cost_(M$)___________________________________________________ (concost)_____________________      1.0487E+04    
+ Constructed_Cost_(M$)___________________________________________________ (concost)_____________________      2.6948E+04    
  # Interest during Construction #
- Interest_during_construction_(M$)_______________________________________ (moneyint)____________________      1.5731E+03    
+ Interest_during_construction_(M$)_______________________________________ (moneyint)____________________      4.0422E+03    
  # Total Capital Investment #
- Total_capital_investment_(M$)___________________________________________ (capcost)_____________________      1.2060E+04    
- # Cost of Electricity (1980 US$) #
+ Total_capital_investment_(M$)___________________________________________ (capcost)_____________________      3.0990E+04    
+ # Cost of Electricity (2017 US$) #
  First_wall_/_blanket_life_(years)_______________________________________ (fwbllife)____________________      5.3433E+00    
  Divertor_life_(years)___________________________________________________ (divlife.)____________________      2.8556E-01    
- Cost_of_electricity_(m$/kWh)____________________________________________ (coe)_________________________      1.1256E+02    
+ Cost_of_electricity_(m$/kWh)____________________________________________ (coe)_________________________      2.7380E+02    
  # Plant Availability #
  Allowable_blanket_neutron_fluence_(MW-yr/m2)____________________________ (abktflnc)____________________      1.5000E+01    
  Allowable_divertor_heat_fluence_(MW-yr/m2)______________________________ (adivflnc)____________________      2.0000E+01    
@@ -1044,8 +1049,7 @@
  # End of PROCESS Output #
  # End of PROCESS Output #
  # Copy of PROCESS Input Follows #
-***********************************************
-*--------------------------------------------------*
+************************************************--------------------------------------------------*
 
 
 *---------------Constraint Equations---------------*
@@ -1128,18 +1132,18 @@ bore     = 2.1201269689496494 * central solenoid inboard radius (m) (`iteration 
 ddwex    = 0.15 * cryostat thickness (m)
 d_vv_in  = 0.30 * vacuum vessel inboard thickness (TF coil / shield) (m)
 d_vv_out = 0.30 * vacuum vessel outboard thickness (TF coil / shield) (m)
-d_vv_top = 0.30 * vacuum vessel topside thickness (TF coil / shield) (m) (= d_vv_bot if double-null)
+d_vv_top = 0.30 * vacuum vessel topside thickness (TF coil / shield) (m)
 d_vv_bot = 0.30 * vacuum vessel underside thickness (TF coil / shield) (m)
 gapds    = 0.15003399049211447 * gap between inboard vacuum vessel and thermal shield (m) (`iteration variable 61`)
 gapoh    = 0.06541854755255866 * gap between central solenoid and TF coil (m) (`iteration variable 42`)
 gapomin  = 0.20 * minimum gap between outboard vacuum vessel and TF coil (m) (`iteration variable 31`)
 iohcl    = 1 * Switch for existence of central solenoid;
 ohcth    = 0.6 * Central solenoid thickness (m) (`iteration variable 16`)
-scrapli  = 0.2 * Gap between plasma and first wall; inboard side (m) (if `iscrp=1`) 
-scraplo  = 0.2 * Gap between plasma and first wall; outboard side (m) (if `iscrp=1`)
+scrapli  = 0.2 * Gap between plasma and first wall; inboard side (m) (if `iscrp=1`) (`iteration variable 73`)
+scraplo  = 0.2 * gap between plasma and first wall; outboard side (m) (if `iscrp=1`) (`iteration variable 74`)
 shldith  = 0.30 * inboard shield thickness (m) (`iteration variable 93`)
 shldoth  = 0.80 * outboard shield thickness (m) (`iteration variable 94`)
-shldtth  = 0.30 * upper/lower shield thickness (m); calculated if `blktmodel > 0` (= shldlth if double-null)
+shldtth  = 0.30 * upper/lower shield thickness (m); calculated if `blktmodel > 0`
 tfcth    = 0.4686248306578002 * inboard TF coil thickness; (centrepost for ST) (m)
 tftsgap  = 0.05 * Minimum metal-to-metal gap between TF coil and thermal shield (m)
 vgap2    = 0.05 * vertical gap between vacuum vessel and thermal shields (m)
@@ -1196,6 +1200,7 @@ abktflnc = 15 * allowable first wall/blanket neutron fluence (MW-yr/m2) (`blktmo
 adivflnc = 20.0 * allowable divertor heat fluence (MW-yr/m2)
 cfactr   = 0.75 * Total plant availability fraction; input if `iavail=0`
 cost_model = 2 * Switch for cost model;
+step_rh_costfrac = 0.075 * fraction of capital cost for remote handling
 dintrt   = 0.00 * diff between borrowing and saving interest rates
 fcap0    = 1.15 * average cost of money for construction of plant assuming design/construction time of six years
 fcap0cp  = 1.06 * average cost of money for replaceable components assuming lead time for these of two years
@@ -1207,11 +1212,11 @@ ifueltyp = 0 * Switch for fuel type;
 lsa      = 2 * Level of safety assurance switch (generally; use 3 or 4);
 output_costs = 1 * Switch for costs output;
 discount_rate = 0.06 * effective cost of money in constant dollars
-step_rh_costfrac = 0.075 * fraction of capital cost for remote handling (if cost_model = 2)
 tlife    = 40 * Full power year plant lifetime (years)
 ucblvd   = 280.0 * unit cost for blanket vanadium ($/kg)
 ucdiv    = 5.0d5 * cost of divertor blade ($)
 ucme     = 3.0d8 * cost of maintenance equipment ($)
+
 
 *----------------Costs 2015 Module-----------------*
 
@@ -1547,6 +1552,9 @@ lpulse   = 0 * Switch for reactor model;
 *-----------------Superconductors------------------*
 
 
+*---------------------Testdata---------------------*
+
+
 *------------------Tfcoil Module-------------------*
 
 
@@ -1588,11 +1596,4 @@ tramp    = 400.0 * initial PF coil charge time (s); if pulsed; = tohs
 
 
 *-----------------Vacuum Variables-----------------*
-
-
-*-------------------Vmcon Module-------------------*
-
-gamma    = 0.3 * Ejima coefficient for resistive startup V-s formula
-
-*--------------------Vmcon Test--------------------*
 

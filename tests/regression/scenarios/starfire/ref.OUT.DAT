@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.1   Release Date :: 2021-03-17
-   Tag No. : v2.1-215-g99e2f1db code contains untracked changes
-    Branch : 1295-bop-cost-for-cost-model-2-2
+   Tag No. : v2.1-265-gdad13992 code contains untracked changes
+    Branch : pf_coil_cost
    Git log : COMMIT_MSG
- Date/time : 17 May 2021 12:32:01 +01:00(hh:mm) UTC
-      User : jmaddock
-  Computer : J0826UBUNTU
- Directory : /tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario2_0
-     Input : /tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario2_0/IN.DAT
+ Date/time : 18 May 2021 16:58:42 +01:00(hh:mm) UTC
+      User : apearce
+  Computer : H0892
+ Directory : /tmp/pytest-of-apearce/pytest-45/test_solver0
+     Input : /tmp/pytest-of-apearce/pytest-45/test_scenario_scenario17_0/IN.DAT
  Run title : starfire
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -117,19 +117,19 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  ******************************************** Final Feasible Point ********************************************
  
  
- *************************************** STEP Costing Model (1980 US$) ****************************************
+ *************************************** STEP Costing Model (2017 US$) ****************************************
  
  
  ***************************** 20. Land and Rights ******************************
  
- (step2001)          Land (M$)                                                                                     3.08
- (step2002)          Site Preparation (M$)                                                                         0.31
+ (step2001)          Land (M$)                                                                                     9.15
+ (step2002)          Site Preparation (M$)                                                                         0.91
  
- (step20)            Total Account 20 Cost (M$)                                                                    3.39
+ (step20)            Total Account 20 Cost (M$)                                                                   10.06
  
  ***************** 21. Building and Site Service Infrastructure *****************
  
- (step2101)          Site Improvements (M$)                                                                       11.44
+ (step2101)          Site Improvements (M$)                                                                       34.03
  (step2102)          Reactor Building (M$)                                                                       493.93
  (step2103)          Turbine Building (M$)                                                                       536.09
  (step2104)          Cooling System Structures (M$)                                                              184.47
@@ -145,30 +145,39 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  (step2114)          Site Service (M$)                                                                            33.08
  (step2115)          Cryogenics and Inert Gas Storage Building (M$)                                              130.05
  (step2116)          Security Building (M$)                                                                       14.90
- (step2117)          Ventilation Stack (M$)                                                                        1.86
- (step2198)          Spares (M$)                                                                                  14.63
- (step2199)          Contingency (M$)                                                                            337.80
+ (step2117)          Ventilation Stack (M$)                                                                        8.78
+ (step2198)          Spares (M$)                                                                                  14.83
+ (step2199)          Contingency (M$)                                                                            342.25
  
- (step21)            Total Account 21 Cost (M$)                                                                 2589.78
+ (step21)            Total Account 21 Cost (M$)                                                                 2623.95
  
  ************************* 22. Reactor Plant Equipment **************************
  
  ******************* 22.01 Reactor Equipment
- (step220101)        Blanket and First Wall (M$)                                                                  82.44
- (step220102)        Shield (M$)                                                                                 186.24
- (step22010301)      TF Coils (M$)                                                                               111.26
- (step22010302)      PF Coils (M$)                                                                                30.62
- (step22010303)      Central Solenoid (M$)                                                                         6.42
- (step22010304)      Control Coils (M$)                                                                            3.54
- (step220104)        Auxiliary Heating and Current Drive (M$)                                                     33.49
- (step220105)        Primary Structure and Support (M$)                                                           46.67
- (step220106)        Reactor Vacuum System (M$)                                                                    4.48
- (step220107)        Power Supplies (M$)                                                                          48.76
- (step220108)        Impurity Control (M$)                                                                         2.45
- (step220109)        ECRH Plasma Breakdown (M$)                                                                    2.82
- (step220110)        Divertor (M$)                                                                                16.76
+ ******************* 22.01.01 Blanket and First Wall Equipment
+ (step22010101)      Total First Wall Cost (M$)                                                                  515.84
  
- (step2201)          Total Account 22.01 Cost (M$)                                                               575.94
+ (step2201010201)    Blanket Multiplier Material (M$)                                                           1818.44
+ (step2201010202)    Blanket Breeder Material (M$)                                                               184.41
+ (step2201010203)    Blanket Steel Costs (M$)                                                                     94.41
+ (step22010102)      Total Blanket Cost (M$)                                                                    2097.26
+ 
+ (step220101)        Total Account 22.01.01 Cost (M$)                                                           2613.10
+ 
+ (step220102)        Shield (M$)                                                                                1515.62
+ (step22010301)      TF Coils (M$)                                                                               905.34
+ (step22010302)      PF Coils (M$)                                                                               625.22
+ (step22010303)      Central Solenoid (M$)                                                                        52.21
+ (step22010304)      Control Coils (M$)                                                                           28.80
+ (step220104)        Auxiliary Heating and Current Drive (M$)                                                    272.54
+ (step220105)        Primary Structure and Support (M$)                                                          379.83
+ (step220106)        Reactor Vacuum System (M$)                                                                   36.46
+ (step220107)        Power Supplies (M$)                                                                         396.82
+ (step220108)        Impurity Control (M$)                                                                        19.94
+ (step220109)        ECRH Plasma Breakdown (M$)                                                                   22.95
+ (step220110)        Divertor (M$)                                                                               136.40
+ 
+ (step2201)          Total Account 22.01 Cost (M$)                                                              7005.24
  
  ******************* 22.02 Heat Transfer System
  (step2202)          Heat Transfer System (M$)                                                                   157.32
@@ -176,46 +185,46 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  (step2202)          Total Account 22.02 Cost (M$)                                                               157.32
  
  ******************* 22.03 Cryogenic Cooling System
- (step220301)        Helium Refrigerator (M$)                                                                      7.10
- (step220302)        Liquid Helium Transfer and Storage (M$)                                                       3.32
- (step220303)        Gas Helium Storage (M$)                                                                       2.58
- (step220304)        Liquid Nitrogen Storage (M$)                                                                  0.74
+ (step220301)        Helium Refrigerator (M$)                                                                     33.58
+ (step220302)        Liquid Helium Transfer and Storage (M$)                                                      15.70
+ (step220303)        Gas Helium Storage (M$)                                                                      12.21
+ (step220304)        Liquid Nitrogen Storage (M$)                                                                  3.49
  
- (step2203)          Total Account 22.03 Cost (M$)                                                                13.73
+ (step2203)          Total Account 22.03 Cost (M$)                                                                64.98
  
  ******************* 22.04 Waste Treatment and Disposal
- (step220401)        Liquid Waste (M$)                                                                             1.74
- (step220402)        Gaseous Waste (M$)                                                                            1.85
- (step220403)        Solid Waste (M$)                                                                              1.33
+ (step220401)        Liquid Waste (M$)                                                                            14.19
+ (step220402)        Gaseous Waste (M$)                                                                           15.03
+ (step220403)        Solid Waste (M$)                                                                             10.85
  
- (step2204)          Total Account 22.04 Cost (M$)                                                                 4.92
+ (step2204)          Total Account 22.04 Cost (M$)                                                                40.07
  
  ******************* 22.05 Fuel Handling and Storage
- (step2205)          Fuel Handling and Storage (M$)                                                               39.60
+ (step2205)          Fuel Handling and Storage (M$)                                                              322.29
  
- (step2205)          Total Account 22.05 Cost (M$)                                                                39.60
+ (step2205)          Total Account 22.05 Cost (M$)                                                               322.29
  
  ******************* 22.06 Other Reactor Plant Equipment
  (step220601)        Maintenance Equipment (M$)                                                                    0.00
  (step220602)        Special Heating Systems (M$)                                                                  0.00
- (step220603)        Coolant Storage (M$)                                                                          0.25
- (step220604)        Gas System (M$)                                                                               0.07
- (step220606)        Fluid Leak Detection (M$)                                                                     2.05
- (step220607)        Closed Loop Coolant System (M$)                                                               2.02
- (step220608)        Standby Cooling System (M$)                                                                   1.19
+ (step220603)        Coolant Storage (M$)                                                                          2.00
+ (step220604)        Gas System (M$)                                                                               0.06
+ (step220606)        Fluid Leak Detection (M$)                                                                    16.70
+ (step220607)        Closed Loop Coolant System (M$)                                                              16.45
+ (step220608)        Standby Cooling System (M$)                                                                   9.69
  
- (step2206)          Total Account 22.06 Cost (M$)                                                                 5.58
+ (step2206)          Total Account 22.06 Cost (M$)                                                                44.89
  
  ******************* 22.07 Instrumentation and Control
- (step2207)          Instrumentation and Control (M$)                                                             24.02
+ (step2207)          Instrumentation and Control (M$)                                                            195.46
  
- (step2207)          Total Account 22.07 Cost (M$)                                                                24.02
+ (step2207)          Total Account 22.07 Cost (M$)                                                               195.46
  
  ******************* 
- (step2298)          Spares (M$)                                                                                  47.61
- (step2299)          Contingency (M$)                                                                            130.31
+ (step2298)          Spares (M$)                                                                                 504.30
+ (step2299)          Contingency (M$)                                                                           1250.18
  
- (step22)            Total Account 22 Cost (M$)                                                                  999.05
+ (step22)            Total Account 22 Cost (M$)                                                                 9584.74
  
  ************************* 23. Turbine Plant Equipment **************************
  
@@ -253,45 +262,45 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ***************************** 27. Remote Handling ******************************
  
- (step2701)          Remote Handing (M$)                                                                         412.21
+ (step2701)          Remote Handing (M$)                                                                        1059.20
  
- (step27)            Total Account 27 Cost (M$)                                                                  412.21
+ (step27)            Total Account 27 Cost (M$)                                                                 1059.20
  
  ****************************** Plant Direct Cost *******************************
  
- (cdirt)             Plant direct cost (M$)                                                                     5908.37
+ (cdirt)             Plant direct cost (M$)                                                                    15181.90
  
  ******************************** Indirect Cost *********************************
  
- (step91)            Construction Facilities, Equipment and Services (M$)                                       1772.51
- (step92)            Engineering and Costruction Management Services (M$)                                       1920.22
- (step93)            Other Costs (M$)                                                                            886.26
+ (step91)            Construction Facilities, Equipment and Services (M$)                                       4554.57
+ (step92)            Engineering and Costruction Management Services (M$)                                       4934.12
+ (step93)            Other Costs (M$)                                                                           2277.28
  
  ******************************* Constructed Cost *******************************
  
- (concost)           Constructed Cost (M$)                                                                     10487.36
+ (concost)           Constructed Cost (M$)                                                                     26947.87
  
  ************************* Interest during Construction *************************
  
- (moneyint)          Interest during construction (M$)                                                          1573.10
+ (moneyint)          Interest during construction (M$)                                                          4042.18
  
  *************************** Total Capital Investment ***************************
  
- (capcost)           Total capital investment (M$)                                                             12060.46
+ (capcost)           Total capital investment (M$)                                                             30990.05
  
- *************************************** Cost of Electricity (1980 US$) ***************************************
+ *************************************** Cost of Electricity (2017 US$) ***************************************
  
  First wall / blanket life (years)                                        (fwbllife)                    5.343     
  Divertor life (years)                                                    (divlife.)                    0.286     
- Cost of electricity (m$/kWh)                                             (coe)                       112.557     
+ Cost of electricity (m$/kWh)                                             (coe)                       273.803     
  
  Power Generation Costs :
  
                                                                            Annual Costs, M$       COE, m$/kWh
 
- Capital Investment                                                                783.93              101.87
+ Capital Investment                                                               2014.35              261.77
  Operation & Maintenance                                                            68.29                8.87
- Decommissioning Fund                                                                6.63                0.86
+ Decommissioning Fund                                                               17.03                2.21
  Fuel Charge Breakdown
 
      Blanket & first wall                                                    0.00                0.00
@@ -302,7 +311,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
      Waste Disposal                                                          3.91                0.51
  Total Fuel Cost                                                                     7.31                0.95
 
- Total Cost                                                                        866.15              112.56
+ Total Cost                                                                       2106.98              273.80
  
  ********************************************* Plant Availability *********************************************
  
@@ -1593,7 +1602,6 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  *************************************** Copy of PROCESS Input Follows ****************************************
  
-
 *--------------------------------------------------*
 
 
@@ -1677,18 +1685,18 @@ bore     = 2.1201269689496494 * central solenoid inboard radius (m) (`iteration 
 ddwex    = 0.15 * cryostat thickness (m)
 d_vv_in  = 0.30 * vacuum vessel inboard thickness (TF coil / shield) (m)
 d_vv_out = 0.30 * vacuum vessel outboard thickness (TF coil / shield) (m)
-d_vv_top = 0.30 * vacuum vessel topside thickness (TF coil / shield) (m) (= d_vv_bot if double-null)
+d_vv_top = 0.30 * vacuum vessel topside thickness (TF coil / shield) (m)
 d_vv_bot = 0.30 * vacuum vessel underside thickness (TF coil / shield) (m)
 gapds    = 0.15003399049211447 * gap between inboard vacuum vessel and thermal shield (m) (`iteration variable 61`)
 gapoh    = 0.06541854755255866 * gap between central solenoid and TF coil (m) (`iteration variable 42`)
 gapomin  = 0.20 * minimum gap between outboard vacuum vessel and TF coil (m) (`iteration variable 31`)
 iohcl    = 1 * Switch for existence of central solenoid;
 ohcth    = 0.6 * Central solenoid thickness (m) (`iteration variable 16`)
-scrapli  = 0.2 * Gap between plasma and first wall; inboard side (m) (if `iscrp=1`) 
-scraplo  = 0.2 * Gap between plasma and first wall; outboard side (m) (if `iscrp=1`)
+scrapli  = 0.2 * Gap between plasma and first wall; inboard side (m) (if `iscrp=1`) (`iteration variable 73`)
+scraplo  = 0.2 * gap between plasma and first wall; outboard side (m) (if `iscrp=1`) (`iteration variable 74`)
 shldith  = 0.30 * inboard shield thickness (m) (`iteration variable 93`)
 shldoth  = 0.80 * outboard shield thickness (m) (`iteration variable 94`)
-shldtth  = 0.30 * upper/lower shield thickness (m); calculated if `blktmodel > 0` (= shldlth if double-null)
+shldtth  = 0.30 * upper/lower shield thickness (m); calculated if `blktmodel > 0`
 tfcth    = 0.4686248306578002 * inboard TF coil thickness; (centrepost for ST) (m)
 tftsgap  = 0.05 * Minimum metal-to-metal gap between TF coil and thermal shield (m)
 vgap2    = 0.05 * vertical gap between vacuum vessel and thermal shields (m)
@@ -1745,6 +1753,7 @@ abktflnc = 15 * allowable first wall/blanket neutron fluence (MW-yr/m2) (`blktmo
 adivflnc = 20.0 * allowable divertor heat fluence (MW-yr/m2)
 cfactr   = 0.75 * Total plant availability fraction; input if `iavail=0`
 cost_model = 2 * Switch for cost model;
+step_rh_costfrac = 0.075 * fraction of capital cost for remote handling
 dintrt   = 0.00 * diff between borrowing and saving interest rates
 fcap0    = 1.15 * average cost of money for construction of plant assuming design/construction time of six years
 fcap0cp  = 1.06 * average cost of money for replaceable components assuming lead time for these of two years
@@ -1756,11 +1765,11 @@ ifueltyp = 0 * Switch for fuel type;
 lsa      = 2 * Level of safety assurance switch (generally; use 3 or 4);
 output_costs = 1 * Switch for costs output;
 discount_rate = 0.06 * effective cost of money in constant dollars
-step_rh_costfrac = 0.075 * fraction of capital cost for remote handling (if cost_model = 2)
 tlife    = 40 * Full power year plant lifetime (years)
 ucblvd   = 280.0 * unit cost for blanket vanadium ($/kg)
 ucdiv    = 5.0d5 * cost of divertor blade ($)
 ucme     = 3.0d8 * cost of maintenance equipment ($)
+
 
 *----------------Costs 2015 Module-----------------*
 
@@ -2096,6 +2105,9 @@ lpulse   = 0 * Switch for reactor model;
 *-----------------Superconductors------------------*
 
 
+*---------------------Testdata---------------------*
+
+
 *------------------Tfcoil Module-------------------*
 
 
@@ -2137,11 +2149,4 @@ tramp    = 400.0 * initial PF coil charge time (s); if pulsed; = tohs
 
 
 *-----------------Vacuum Variables-----------------*
-
-
-*-------------------Vmcon Module-------------------*
-
-gamma    = 0.3 * Ejima coefficient for resistive startup V-s formula
-
-*--------------------Vmcon Test--------------------*
 
