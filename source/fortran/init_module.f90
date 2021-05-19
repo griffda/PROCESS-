@@ -74,7 +74,7 @@ subroutine init_all_module_vars
   use define_iteration_variables, only: init_define_iteration_variables
   use physics_functions_module, only: init_physics_functions
   use reinke_module, only: init_reinke_module
-  use water_useage_variables, only: init_watuse_variables
+  use water_usage_variables, only: init_watuse_variables
 
   call init_numerics
   call init_input

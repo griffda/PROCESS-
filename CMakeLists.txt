@@ -121,6 +121,7 @@ LIST(APPEND PROCESS_SRCS
     maths_library.f90
     vmcon_test.f90
     costs_step.f90
+    water_usage_variables.f90
 )
 
 # Install all requirements in the current Python environment

@@ -55,6 +55,7 @@ subroutine output(outfile)
   use constants, only: mfile, nout
   use div_kal_vars, only: kallenbach_switch, neomp, &
     ttarget, targetangle, psep_kallenbach, qtargettotal, teomp
+  use water_use_module, only: waterusecall
   implicit none
   
   ! Arguments
@@ -276,6 +277,12 @@ subroutine output(outfile)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   call power2(outfile,1)
   call power3(nout,1)
+
+  ! Water usage in secondary cooling system !
+  ! !!!!!!!!!!!!!!!!!!!!!
+
+  call waterusecall(outfile,1)
+
 
 end subroutine output
 

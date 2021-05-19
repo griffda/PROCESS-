@@ -25,13 +25,12 @@ module water_use_module
   implicit none
   
   private
-  public :: watusecall
+  public :: waterusecall
 
   real(dp), parameter :: secday = 86400.0D0
   !! seconds in a day, s
 
-  call waterusecall(outfile,iprint)
-!  call waterusecall
+  !  call waterusecall
 
 contains
 
@@ -50,6 +49,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !   use pthermmw *RMC testing
+    use process_output, only: oheadr, ocmmnt 
     implicit none
 
     !  Arguments
@@ -80,18 +80,18 @@ contains
     !! call subroutines for cooling mechanisms:
 
     ! cooling towers 
-    call cooling_towers(outfile,iprint,wastetherm)
+    call cooling_towers(outfile,iprint,wastethermeng)
     !call cooling_towers(wastethermeng)
 
     ! water-body cooling
     icool = 1  ! small pond as a cooling body
-    call cooling_water_body(outfile,iprint,icool,wastetherm)
+    call cooling_water_body(outfile,iprint,icool,wastethermeng)
     !call cooling_water_body(icool,wastethermeng)
     icool = 2  ! large lake or reservoir as a cooling body
-    call cooling_water_body(outfile,iprint,icool,wastetherm)
+    call cooling_water_body(outfile,iprint,icool,wastethermeng)
     !call cooling_water_body(icool,wastethermeng)
     icool = 3  ! stream or river as a cooling body
-    call cooling_water_body(outfile,iprint,icool,wastetherm)
+    call cooling_water_body(outfile,iprint,icool,wastethermeng)
     !call cooling_water_body(icool,wastethermeng)
 
   end subroutine waterusecall
@@ -109,7 +109,7 @@ contains
    
     use water_usage_variables, only: airtemp, waterdens, latentheat, &
       volheat, evapratio, evapvol, energypervol, volperenergy
-    use process_output, only: oheadr, ovarre 
+    use process_output, only: ovarre 
     implicit none
 
     !  Arguments
@@ -150,7 +150,7 @@ contains
     evapvol = wastetherm * volperenergy
 
     !  Output section
-    print *, "Volume evaporated in cooling tower:", evapvol, "m3 per day"
+    !print *, "Volume evaporated in cooling tower:", evapvol, "m3 per day"
     call ovarre(outfile,'Volume evaporated in cooling tower (m3/day)','(evapvol)',evapvol, 'OP ')
  
   end subroutine cooling_towers
@@ -174,7 +174,7 @@ contains
      
    use water_usage_variables, only: watertemp, windspeed, waterdens, latentheat, &
       volheat, evapratio, evapvol, energypervol, volperenergy 
-   use process_output, only: oheadr, ovarre
+   use process_output, only: ovarre
    implicit none
 
    !  Arguments
@@ -322,13 +322,13 @@ contains
 
    !  Output section
    if ( icool == 1 ) then
-      print *, "Volume evaporated from cooling pond:", evapvol, "m3 per day"
+      !print *, "Volume evaporated from cooling pond:", evapvol, "m3 per day"
       call ovarre(outfile,'Volume evaporated from cooling pond (m3/day)','(evapvol)',evapvol, 'OP ')
    else if ( icool == 2 ) then
-      print *, "Volume evaporated from cooling lake:", evapvol, "m3 per day"
+      !print *, "Volume evaporated from cooling lake:", evapvol, "m3 per day"
       call ovarre(outfile,'Volume evaporated from cooling lake (m3/day)','(evapvol)',evapvol, 'OP ')
    else if ( icool == 3 ) then
-      print *, "Volume evaporated from cooling river:", evapvol, "m3 per day"
+      !print *, "Volume evaporated from cooling river:", evapvol, "m3 per day"
       call ovarre(outfile,'Volume evaporated from cooling river (m3/day)','(evapvol)',evapvol, 'OP ')
    end if
 
