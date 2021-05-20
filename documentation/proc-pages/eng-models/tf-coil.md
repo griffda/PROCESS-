@@ -189,24 +189,40 @@ The winding pack is assumed to be made of \(N_\mathrm{turn} \) (`n_tf_turn`)
 turns. The number of turns can be parametrized in three different ways :
 
 - <p style='text-align: justify;'>
-    **Current per turn parametrization (defaut):** `i_tf_turns_integer = 0` the
+    **Current per turn parametrization (default):** `i_tf_turns_integer = 0` the
     user sets the value of the current flowing in each turns `cpttf`. The number
     of turns necessary to carry the total TF coil current is then deduced from
-    `cpttf`. There is no guarantee to have an integer number of turn using this
-    parametrization. If the turn thickness `t_turn_tf` is defined by the user,
-    this parametrization is not selected.
-</p> 
+    `cpttf`. There is no guarantee that a realistic turn configuration (with all
+    the turn geometrically fitting in the allocated space) or even have an
+    integer number of turn is used with this parametrization. If the turn
+    thickness `t_turn_tf` or the cable thickness `t_cable_tf` is defined by
+    the user, this parametrization is not selected.
+  </p> 
 - <p style='text-align: justify;'>
-    **Turn size parametrization:** `i_tf_turns_integer = 0` the dimension of the
-    turn `t_turn_tf` is set by the user. The area of the corresponding squared
-    turn and the number of turns necessary to fill the WP area is deduced. There
-    is also no guarantee to have an integer number of turn using this
-    parametrization.
+    **Turn size parametrization:** the dimension of the turn `t_turn_tf` can be
+    set by the user. To do so, the user just have to select the following option:
+    `i_tf_turns_integer = 0` and to set a value to the variable `t_turn_tf`. The
+    area of the corresponding squared turn and the number of turns necessary to
+    fill the WP area is deduced. There is no guarantee that a realistic turn
+    configuration (with all the turn geometrically fitting in the allocated
+    space) or even have an integer number of turns is used with this parametrization.
+    The current per turn `cpttf` will be overwitten.
   </p>
+- <p style='text-align: justify;'>
+    **Cable size parametrization:** the dimension of the SC cable `t_cable_tf`
+    can be set by the user. To do so, the user just have to select the following
+    option: `i_tf_turns_integer = 0` and to set a value to the variable
+    `t_cable_tf`. The area of the corresponding squared turn is deduced adding
+    the steel conduit structure and the turn insulation. The number of turns
+    necessary to fill the WP area is then deduced. There is no guarantee that a
+    realistic turn configuration (with all the turn geometrically fitting in the
+    allocated space) or even have an integer number of turns is used with this
+    parametrization. The current per turn `cpttf` will be overwitten.
+  </p> 
 - <p style='text-align: justify;'> 
     **Integer turn parametrization:** `i_tf_turns_integer = 1` the user sets the
     number of turn layer in the radial (`n_layer`) and in the toroidal direction
-    (`n_pancake`). Using this parametrization an integer number of turn is 
+    (`n_pancake`). Using this parametrization an integer number of turns is
     obtained. As the turn toroidal and radial dimensions are set independently
     form the WP ones, the turn shape is not always squared introducing different
     WP structural properties (Young modulus) on the radial and the toroidal
@@ -214,7 +230,7 @@ turns. The number of turns can be parametrized in three different ways :
   </p>
 
 <p style='text-align: justify;'>  
-  The turn internal structure, illustrated in <em>Figure 4</em>, is inspired 
+  The turn internal structure, illustrated in <em>Figure 4</em>, is inspired
   from the cable-in-conduit-conductor (CICC) design, with the main different
   being that a rounded squared cable space is used (grey area in <em>Figure 4
   </em>). The rounding curve radius is take as 0.75 of the steel conduit 
@@ -311,11 +327,11 @@ turns. The number of turns can be parametrized in three different ways :
     <br><br>
     <figcaption><i>
       <p style='text-align: center;'>
-        Figure 6: Resistive TF coil inboard leg structure at mid-plane. Each
-        turn is wrapped with an insulation layer and cooling channels. The
-        position and the number of cooling shown is not representative of a
-        <em>PROCESS</em> design choice as averaged cooling fraction to 
-        parametrize the cooling.
+        Figure 6: Resistive TF coil inboard leg structure at mid-plane. The
+        disjoint steel case (no lateral case) are shown in light grey. The
+        ground insulation wrapping the turns is shown in grey and the conductor
+        region containing the turns in light blue. The dotted blue illustrate 
+        the location of the 6 coils turn.
       </p>
     </i></figcaption>
     <br>
@@ -325,21 +341,25 @@ turns. The number of turns can be parametrized in three different ways :
 <p style='text-align: justify;'>
   The conductor layer is made of \(N_\mathrm{turn}\) turns per coils, set by the
   <em>n_tf_turn</em> user input (one turn per coil is used by default). Each
-  turn is made of a conductor wrapped in a turn insulation with a thickness set
-  with the <em>thicndut</em> user input. The conductor is cooled using a fraction
-  of the mid-plane cross-section are set by the <em>fcoolcp</em> (iteration
-  variable 23).
+  CP section corresponding to an outer leg is wrapped with ground insulation
+  of thickness <em>tinstf</em>. Inside, the ground insulation, each turn is made
+  of a conductor wrapped in a turn insulation with a thickness set with the
+  <em>thicndut</em> user input. The conductor is cooled using a fraction of the
+  mid-plane cross-section are set by the <em>fcoolcp</em> (iteration variable 23).
 </p>
 
 <figure>
     <center>
     <img src="../../images/tfcoil_res_turn.png" alt="Res_geom" 
     title="Schematic diagram of TART tokamak TF coil" 
-    width="200" height="200" />
+    width="650" height="100" />
     <br><br>
     <figcaption><i>
       <p style='text-align: center;'>
-        Figure 7: Schematic view of a four resistive TF coil turns. 
+        Figure 7: Schematic view of a four resistive TF coil turns. The
+        position and the number of cooling channels shown is not representative
+        of a <em>PROCESS</em> design as no cooling channel position is specified
+        in PROCESS (the cooling fraction and pipe diameters are the inputs).
       </p>
     </i></figcaption>
     <br>
@@ -530,7 +550,7 @@ $$
    \frac{B_\mathrm{T} R_\mathrm{maj}}{2 {\Delta R_\mathrm{cond}}^2}  
     & \left[{R_\mathrm{out}}^2 \ln\left( \frac{R_\mathrm{out} + \Delta R_\mathrm{cond}}{R_\mathrm{out}} \right)  + {R_\mathrm{in}}^2 \ln\left( \frac{R_\mathrm{in} }{R_\mathrm{out} - \Delta R_\mathrm{cond}} \right) \right.  \\
 	& \qquad \left. {} + {\Delta R_\mathrm{cond}}^2 \ln\left( \frac{R_\mathrm{out} + \Delta R_\mathrm{cond} }{R_\mathrm{in} - \Delta R_\mathrm{cond}} \right)  - \Delta R_\mathrm{cond}\left( R_\mathrm{in} + R_\mathrm{out} \right)   \right.\nonumber \\
-	& \qquad \left. {}  2\Delta R_\mathrm{cond} \left\{ R_\mathrm{in}\ln\left(\frac{R_\mathrm{in}-\Delta R_\mathrm{cond}}{R_\mathrm{in}} \right) + R_\mathrm{out}\ln\left(\frac{R_\mathrm{out}+ \Delta R_\mathrm{cond}}{R_\mathrm{out}} + \right)   \right\}  \right] \nonumber
+	& \qquad \left. {} + 2\Delta R_\mathrm{cond} \left\{ R_\mathrm{in}\ln\left(\frac{R_\mathrm{in}-\Delta R_\mathrm{cond}}{R_\mathrm{in}} \right) + R_\mathrm{out}\ln\left(\frac{R_\mathrm{out}+ \Delta R_\mathrm{cond}}{R_\mathrm{out}}  \right)   \right\}  \right] \nonumber
 \end{align}
 $$
 
@@ -1363,6 +1383,7 @@ Another subroutine, `tfspcall` is called outside `stfcoil` to estimate to check 
 | `n_layer` | Number of turns in the radial direction (`i_tf_turns_integer = 1` only) | - | 20 | - |
 | `n_pancake` | Number of turns in the toroidal direction (`i_tf_turns_integer = 1` only) | - | 10 | - |
 | `t_turn_tf` | TF turn squared size | - | No default | m |
+| `t_cable_tf` | TF cable diameter size | - | No default | m |
 | `f_t_turn_tf` | f-value for TF turn squared size constraint (icc = 86) | 175 | 1. | m |
 | `t_turn_tf_max` | Maximum turn squared size for constraint (icc = 86) | - | 0.05 | m |
 | `cpttf` | Current per turn <br> Overwitten if `t_turn_tf` is set by the user | ixc = 60 | $70.10^3$ | A |

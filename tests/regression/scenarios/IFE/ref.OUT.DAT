@@ -13,15 +13,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 1.0.17   Release Date :: 2020-02-25
-   Tag No. : 1.0.17-722-g484ae96b code contains untracked changes
-    Branch : HEAD
-   Git log : Merge branch 'kzarebsk/1092-additional-tests' into '1092-convert-project-to-python-wrapped-fortran'
- Date/time : 16 Dec 2020  8:55:39 +00:00(hh:mm) UTC
+   Version : 2.1.1   Release Date :: 2021-03-17
+   Tag No. : v2.1-215-g99e2f1db code contains untracked changes
+    Branch : 1295-bop-cost-for-cost-model-2-2
+   Git log : COMMIT_MSG
+ Date/time : 17 May 2021 12:32:00 +01:00(hh:mm) UTC
       User : jmaddock
   Computer : J0826UBUNTU
- Directory : /home/jmaddock/process
-     Input : /tmp/pytest-of-jmaddock/pytest-749/test_scenario_scenario1_0/IN.DAT
+ Directory : /tmp/pytest-of-jmaddock/pytest-1/test_solver0
+     Input : /tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario1_0/IN.DAT
  Run title : IFE_001
   Run type : Reactor concept design: Inertial Fusion model, (c) CCFE
  

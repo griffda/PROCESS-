@@ -28,7 +28,7 @@ INCLUDE(${CMAKE_SOURCE_DIR}/cmake/gfortranlibs.cmake)
 # Retrieve and set information for preprocessor
 FindPreprocessingVars()
 
-SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -fPIC")
+SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -fPIC -ftest-coverage -fprofile-arcs -fbounds-check")
 
 # Get System information, log as much information as we can
 # for ease later on when debugging system specific issues
@@ -120,6 +120,7 @@ LIST(APPEND PROCESS_SRCS
     maths_library.f90
     vmcon_test.f90
     water_usage_variables.f90
+    costs_step.f90
 )
 
 # Install all requirements in the current Python environment
@@ -168,9 +169,37 @@ GET_GFORTRANLIBS()
 
 SET(PROCESS_MODULE_DIST ${CMAKE_SOURCE_DIR}/process_dist)
 
+# Delete any existing .gcda files
+ADD_CUSTOM_TARGET(coverage_cleanup 
+    COMMAND echo "-- Deleting any existing .gcda coverage files..."
+    COMMAND find ${CMAKE_SOURCE_DIR}/build/ -name \"*.gcda\" -exec rm -rf {} \\\;
+)
+
 # Run the Pip Install
 ADD_CUSTOM_TARGET(install_process ALL
+    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/scripts/f90wrap_patch.py ${CMAKE_SOURCE_DIR}/process/fortran.py
     COMMAND ${PYTHON_EXECUTABLE} -m pip install --no-cache-dir ${CMAKE_SOURCE_DIR}
 )
 
-ADD_DEPENDENCIES(install_process ${PIP_NAME} ${F90WRAP_NAME} ${F2PY_NAME} ${FORD_NAME} ${DICTS_NAME} ${GFORTLIB_NAME})
+ADD_DEPENDENCIES(install_process ${PIP_NAME} ${F90WRAP_NAME} ${F2PY_NAME} ${FORD_NAME} ${DICTS_NAME} ${GFORTLIB_NAME} coverage_cleanup)
+
+if (EXISTS ${CMAKE_SOURCE_DIR}/lcov_results)
+  execute_process(COMMAND echo "-- Delete existing lcov_coverage directory...")
+  execute_process(COMMAND cmake -E remove_directory ${CMAKE_SOURCE_DIR}/lcov_results)
+  execute_process(COMMAND mkdir ${CMAKE_SOURCE_DIR}/lcov_results)
+elseif (NOT EXISTS ${CMAKE_SOURCE_DIR}/lcov_results)
+  execute_process(COMMAND echo "-- Create lcov_coverage directory...")
+  execute_process(COMMAND mkdir ${CMAKE_SOURCE_DIR}/lcov_results)
+endif()
+
+# Custom target to run the regression tests and generate coverage report
+ADD_CUSTOM_TARGET(regression
+    COMMAND pytest -v tests/regression/ -s | tee tests/regression/pytest.log
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
+
+ADD_CUSTOM_TARGET(coverage
+  COMMAND lcov --gcov-tool gcov --capture --directory build/CMakeFiles/process.dir/source/fortran/ --output-file lcov_results/coverage.info
+  COMMAND genhtml --output-directory lcov_results/html lcov_results/coverage.info
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)

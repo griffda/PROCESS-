@@ -17,22 +17,22 @@ module scan_module
   public
 
   integer, parameter :: ipnscns = 1000
-  !! ipnscns /1000/ FIX : maximum number of scan points
+  !! Maximum number of scan points
 
-  integer, parameter :: ipnscnv = 55
-  !! ipnscnv /45/ FIX : number of available scan variables
+  integer, parameter :: ipnscnv = 59
+  !! Number of available scan variables
 
   integer :: scan_dim
-  !! scan_dim /1/ : 1-D or 2-D scan switch (1=1D, 2=2D)
+  !! 1-D or 2-D scan switch (1=1D, 2=2D)
 
   integer :: isweep
-  !! isweep /0/ : number of scan points to calculate
+  !! Number of scan points to calculate
 
   integer :: isweep_2
-  !! isweep_2 /0/ : number of 2D scan points to calculate
+  !! Number of 2D scan points to calculate
 
   integer :: nsweep
-  !! nsweep /1/ : switch denoting quantity to scan:<UL>
+  !! Switch denoting quantity to scan:<UL>
   !!         <LI> 1  aspect
   !!         <LI> 2  hldivlim
   !!         <LI> 3  pnetelin
@@ -86,7 +86,11 @@ module scan_module
   !!         <LI> 51 Power fraction to lower DN Divertor ftar
   !!         <LI> 52 SoL radiation fraction
   !!         <LI> 54 GL_nbti upper critical field at 0 Kelvin
-  !!         <LI> 55 `shldith` : Inboard neutron shield thickness </UL>
+  !!         <LI> 55 `shldith` : Inboard neutron shield thickness
+  !!         <LI> 56 crypmw_max: Maximum cryogenic power (ixx=164, ixc=87)
+  !!         <LI> 57 `bt` lower boundary 
+  !!         <LI> 58 `scrapli` : Inboard plasma-first wall gap
+  !!         <LI> 59 `scraplo` : Outboard plasma-first wall gap  </UL>
 
   integer :: nsweep_2
   !! nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
@@ -575,8 +579,10 @@ contains
         plabel(83) = 'teped____________________'
         plabel(84) = 'Max_field_on_TF_coil_____'
 
-        call ovarin(mfile,'Number of scan points','(isweep)',isweep)
-        call ovarin(mfile,'Scanning variable number','(nsweep)',nsweep)
+        call ovarin(mfile,'Number of first variable scan points','(isweep)',isweep)
+        call ovarin(mfile,'Number of second variable scan points','(isweep_2)',isweep_2)
+        call ovarin(mfile,'Scanning first variable number','(nsweep)',nsweep)
+        call ovarin(mfile,'Scanning second variable number','(nsweep_2)',nsweep_2)     
 
         first_call_2d = .false.
     end if
@@ -739,7 +745,7 @@ contains
     !! author: J Morris, UKAEA, Culham Science Centre
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	use build_variables, only: blnkoth, shldith
+	use build_variables, only: blnkoth, shldith, scrapli, scraplo
     use constraint_variables, only: fiooic, walalw, bmxlim, fqval, taulimit, &
         gammax, tbrnmn, tbrmin, fjprot, pnetelin, powfmax
 	use cost_variables, only: cfactr, iavail
@@ -754,6 +760,7 @@ contains
       n_layer, b_crit_upper_nbti
     use div_kal_vars, only: lcon_factor, impurity_enrichment, &
       target_spread, lambda_q_omp, qtargettotal, ttarget
+    use heat_transport_variables, only: crypmw_max 
     implicit none
 
     ! Arguments
@@ -935,6 +942,18 @@ contains
         case(55)
             shldith = swp(iscn)
             vlab = 'shldith' ; xlab = 'Inboard neutronic shield'
+        case(56)
+            crypmw_max = swp(iscn)
+            vlab = 'crypmw_max' ; xlab = 'max allowable crypmw'
+        case(57)
+            boundl(2) = swp(iscn)
+            vlab = 'boundl(2)' ; xlab = 'bt minimum'
+        case(58)
+            scrapli = swp(iscn)
+            vlab = 'scrapli' ; xlab = 'Inboard FW-plasma sep gap'
+        case(59)
+            scraplo = swp(iscn)
+            vlab = 'scraplo' ; xlab = 'Outboard FW-plasma sep gap'
         case default
             idiags(1) = nwp ; call report_error(96)
 

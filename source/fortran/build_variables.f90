@@ -72,7 +72,7 @@ module build_variables
   !! vacuum vessel outboard thickness (TF coil / shield) (m)
 
   real(dp) :: d_vv_top
-  !! vacuum vessel topside thickness (TF coil / shield) (m)
+  !! vacuum vessel topside thickness (TF coil / shield) (m) (= d_vv_bot if double-null)
 
   real(dp) :: d_vv_bot
   !! vacuum vessel underside thickness (TF coil / shield) (m)
@@ -193,16 +193,16 @@ module build_variables
   !! Radial plasma facing side position of inboard neutronic shield [m]
 
   real(dp) :: r_tf_inboard_in
-  !! Mid-plane Outer radius of inner of inboard TF leg (m)
+ 	!! Mid-plane inboard TF coil leg radius at the centre-machine side [m]
 
   real(dp) :: r_tf_inboard_mid
-  !! Mid-plane Outer radius of centre of inboard TF leg (m)
+  !! Mid-plane inboard TF coil leg radius at middle of the coil [m]
 
   real(dp) :: r_tf_inboard_out
-  !! Mid-plane Outer radius of centre of inboard TF leg (m)
+  !! Mid-plane inboard TF coil leg radius at the plasma side [m]
 
   real(dp) :: r_tf_outboard_mid
-  !! radius to the centre of the outboard TF coil leg (m)
+  !! Mid-plane outboard TF coil leg radius at the middle of the coil [m]
 
   integer :: i_r_cp_top
   !! Switch selecting the he parametrization of the outer radius of the top of the CP part of the TF coil
@@ -224,10 +224,14 @@ module build_variables
   !! TF coil vertical inner bore (m)
 
   real(dp) :: scrapli
-  !! Gap between plasma and first wall, inboard side (m) (if `iscrp=1`) (`iteration variable 73`)
+  !! Gap between plasma and first wall, inboard side (m) (if `iscrp=1`) 
+  !! Iteration variable: ixc = 73
+  !! Scan variable: nsweep = 58
 
   real(dp) :: scraplo
-  !! gap between plasma and first wall, outboard side (m) (if `iscrp=1`) (`iteration variable 74`)
+  !! Gap between plasma and first wall, outboard side (m) (if `iscrp=1`)
+  !! Iteration variable: ixc = 74
+  !! Scan variable: nsweep = 59
 
   real(dp) :: sharea
   !! shield total surface area (m2)
@@ -248,7 +252,7 @@ module build_variables
   !! outboard shield thickness (m) (`iteration variable 94`)
 
   real(dp) :: shldtth
-  !! upper/lower shield thickness (m); calculated if `blktmodel > 0`
+  !! upper/lower shield thickness (m); calculated if `blktmodel > 0` (= shldlth if double-null)
 
   real(dp) :: sigallpc
   !! allowable stress in CSpre-compression structure (Pa)
@@ -281,7 +285,7 @@ module build_variables
   !! vertical gap between x-point and divertor (m) (if = 0, it is calculated)
 
   real(dp) :: vgaptop
-  !! vertical gap between top of plasma and first wall (m)
+  !! vertical gap between top of plasma and first wall (m) (= vgap if double-null)
 
   real(dp) :: vvblgap
   !! gap between vacuum vessel and blanket (m)

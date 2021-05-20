@@ -170,9 +170,11 @@ contains
 
        case (10)  ! ECRH user input gamma
 
+          !  Normalised current drive efficiency gamma
           gamcd = gamma_ecrh
+
+          ! Absolute current drive efficiency
           effrfssfix = gamcd / (dene20 * rmajor)
-          !etacd = etaech
           effcdfix = effrfssfix
 
        case (11)  ! ECRH Poli model "HARE"
@@ -189,6 +191,15 @@ contains
           gamcd = effcdfix * dene20 * rmajor
           effrfssfix = effcdfix
 
+       case (12)  ! ECRH user input gamma
+
+            !  Normalised current drive efficiency gamma
+            gamcd = 0.03058D0 * te
+ 
+            ! Absolute current drive efficiency
+            effrfssfix = gamcd / (dene20 * rmajor)
+            effcdfix = effrfssfix
+
        case default
           idiags(1) = iefrffix
           call report_error(126)
@@ -204,22 +215,32 @@ contains
 
           !  Injected power
           pinjemwfix = pinjfixmw
+
           !  Wall plug power
           pinjwpfix = pinjfixmw / etalh
+
           !  Wall plug to injector efficiency
           etacdfix = etalh
+
           !  Normalised current drive efficiency gamma
           gamcdfix = effrfssfix * (dene20 * rmajor)
+
           ! the fixed auxiliary current
           auxiliary_cdfix = effrfssfix * ( pinjfixmw - pheatfix) * 1.0d6
           faccdfix = auxiliary_cdfix / plascur
 
-       case (3,7,10,11)  ! ECCD
+       case (3,7,10,11,12)  ! ECCD
 
-          pinjimwfix = 0.0D0
+          !  Injected power
           pinjemwfix = pinjfixmw
+          
+          !  Wall plug power
           pinjwpfix = pinjfixmw / etaech
+
+          !  Wall plug to injector efficiency
           etacdfix = etaech
+          
+          ! the fixed auxiliary current
           auxiliary_cdfix = effrfssfix * ( pinjfixmw - pheatfix) * 1.0d6
           faccdfix = auxiliary_cdfix / plascur
 
@@ -230,7 +251,7 @@ contains
           ! This includes a second order term in shinethrough*(first orbit loss)
           forbitloss = min(0.999,forbitloss) ! Should never be needed
 
-          if(ipedestal.ne.3)then  ! When not using PLASMOD
+          if(ipedestal.ne.3) then  ! When not using PLASMOD
              pnbitotfix = pinjfixmw / (1.0D0-forbitloss+forbitloss*nbshinef)
           else
              ! Netural beam power calculated by PLASMOD
@@ -319,8 +340,9 @@ contains
        case (10)  ! ECRH user input gamma
 
           gamcd = gamma_ecrh
+          
+          ! Absolute current drive efficiency
           effrfss = gamcd / (dene20 * rmajor)
-          !etacd = etaech
           effcd = effrfss
 
        case (11)  ! ECRH Poli model "HARE"
@@ -337,6 +359,19 @@ contains
           effcd = ampperwatt
           gamcd = effcd * dene20 * rmajor
           effrfss = effcd
+
+
+       case (12)  
+       ! EBW scaling
+       ! Scaling author Simon Freethy
+       ! Ref : PROCESS issue 1262
+
+         !  Normalised current drive efficiency gamma
+         gamcd = (0.43D0/32.7D0) * te
+         
+         ! Absolute current drive efficiency
+         effrfss = gamcd / (dene20 * rmajor)
+         effcd = effrfss
 
        case default
           idiags(1) = iefrf
@@ -366,12 +401,16 @@ contains
           gamrf = effrfss * (dene20 * rmajor)
           gamcd = gamrf
 
-       case (3,7,10,11)  ! ECCD
+       case (3,7,10,11,12)  ! ECCD
 
+          !  Injected power (set to close to close the Steady-state current equilibrium)
           echpwr = 1.0D-6 * (faccd - faccdfix) * plascur / effrfss + pheat
-          pinjimw1 = 0.0D0
           pinjemw1 = echpwr
+          
+          !  Wall plug power
           echwpow = echpwr / etaech
+          
+          !  Wall plug to injector efficiency
           pinjwp1 = echwpow
           etacd = etaech
 
@@ -458,7 +497,7 @@ contains
        call ocmmnt(outfile,'Lower Hybrid Current Drive')
     case (2)
        call ocmmnt(outfile,'Ion Cyclotron Current Drive')
-    case (3,7,11)
+    case (3,7)
        call ocmmnt(outfile,'Electron Cyclotron Current Drive')
     case (5,8)
        call ocmmnt(outfile,'Neutral Beam Current Drive')
@@ -466,6 +505,10 @@ contains
        ! RFP option removed in PROCESS (issue #508)
     case (10)
        call ocmmnt(outfile,'Electron Cyclotron Current Drive (user input gamma_CD)')
+    case (11)
+       call ocmmnt(outfile,'Electron Cyclotron Current Drive (HARE)')
+    case (12)
+       call ocmmnt(outfile,'EBW current drive')
     end select
 
     call ovarin(outfile,'Current drive efficiency model','(iefrf)',iefrf)
@@ -487,6 +530,8 @@ contains
           call ocmmnt(outfile,'Electron Cyclotron Current Drive (user input gamma_CD)')
       case(11)
           call ocmmnt(outfile,'Electron Cyclotron Current Drive (HARE)')
+      case (12)
+          call ocmmnt(outfile,'EBW current drive')
       end select
 
       call ovarin(outfile,'Secondary current drive efficiency model','(iefrffix)',iefrffix)

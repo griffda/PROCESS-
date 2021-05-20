@@ -33,7 +33,7 @@ module tfcoil_variables
   !! single turn insulation area (m2)
 
   real(dp) :: aiwp
-  !! winding pack insulation area (m2)
+  !! winding pack turn insulation area per coil (m2)
 
   real(dp) :: alstrtf
   !! Allowable Tresca stress in TF coil structural material (Pa)
@@ -85,13 +85,13 @@ module tfcoil_variables
   !! Conductor (cable + steel conduit) area averaged dimension [m]
   
   real(dp) :: t_turn_tf
-  !! TF turn edge length including turn insulation [m]
+  !! TF coil turn edge length including turn insulation [m]
   !!   If the turn is not a square (i_tf_turns_integer = 1) a squared turn of 
   !!   equivelent size is use to calculated this quantity
   !!   If the t_turn_tf is non zero, cpttf is calculated
 
   logical :: t_turn_tf_is_input
-  !! Boolean switch to activated when the user set the TF turn dimensions
+  !! Boolean switch to activated when the user set the TF coil turn dimensions
   !! Not an input
 
   real(dp) :: f_t_turn_tf
@@ -106,6 +106,16 @@ module tfcoil_variables
   !! If the turn is not a square (i_tf_turns_integer = 1) a squared turn of 
   !! equivelent size is use for this constraint
   !! constraint equation icc = 86
+
+  real(dp) :: t_cable_tf
+  !! TF coil superconducting cable squared/rounded dimensions [m]
+  !!   If the turn is not a square (i_tf_turns_integer = 1) a squared cable of 
+  !!   equivelent size is use to calculated this quantity
+  !!   If the t_cable_tf is non zero, cpttf is calculated
+
+  logical :: t_cable_tf_is_input
+  !! Boolean switch to activated when the user set the TF coil cable dimensions
+  !! Not an input
 
   real(dp) :: acs
   !! Area of space inside conductor (m2)
@@ -127,7 +137,7 @@ module tfcoil_variables
   real(dp) :: dcase
   !! density of coil case (kg/m3)
 
-  real(dp), dimension(7) :: dcond
+  real(dp), dimension(8) :: dcond
   !! density of superconductor type given by i_tf_sc_mat/isumatoh/isumatpf (kg/m3)
   
   real(dp) :: dcondins
@@ -199,6 +209,8 @@ module tfcoil_variables
   !! - =4 ITER Nb3Sn model with user-specified parameters
   !! - =5 WST Nb3Sn parameterisation
   !! - =6 REBCO HTS tape in CroCo strand
+  !! - =7 Durham Ginzburg-Landau critical surface model for Nb-Ti
+  !! - =8 Durham Ginzburg-Landau critical surface model for REBCO
 
   integer :: i_tf_sup
   !! Switch for TF coil conductor model:
@@ -470,10 +482,11 @@ module tfcoil_variables
   !! TF joints surfacic resistivity [ohm.m]. Feldmetal joints assumed.
 
   integer :: n_tf_joints_contact
-  !! Number of contact per sliding joint
+  !! Number of contact per turn
 
   integer :: n_tf_joints
-  !! Number of joint per turn
+  !! Number of joints
+  !! Ex: n_tf_joints = 2 for top and bottom CP joints
 
   real(dp) :: th_joint_contact
   !! TF sliding joints contact pad width [m]
@@ -527,11 +540,8 @@ module tfcoil_variables
   
   real(dp) :: tinstf
   !! Thickness of the ground insulation layer surrounding (m) 
-  !! 
-  !!   - Superconductor TF (`i_tf_sup == 1`) : The TF Winding packs
-  !!   - Resistive magnets (`i_tf_sup /= 1`) : The TF turns
-  !!
-  !! Rem : The default value includes allowance for 10 mm insertion gap.
+  !!   - Superconductor TF (`i_tf_sup == 1`) : The TF coil Winding packs
+  !!   - Resistive magnets (`i_tf_sup /= 1`) : The TF coil wedges
   !! Rem : Thickness calculated for stellarators.
 
   real(dp) :: tmargmin_tf
@@ -675,7 +685,7 @@ module tfcoil_variables
   !! coolant fraction of TF coil inboard legs (`iteration variable 23`)
 
   real(dp) :: fcoolleg
-  !! coolant fraction of TF coil inboard legs
+  !! coolant fraction of TF coil outboard legs
   
   real(dp) :: a_cp_cool
   !! Centrepost cooling area toroidal cross-section (constant over the whole CP)
@@ -760,6 +770,8 @@ module tfcoil_variables
     casths = 0.0D0
     casths_fraction = 0.06D0
     t_conductor = 0.0D0
+    t_cable_tf = 0.0D0
+    t_cable_tf_is_input = .false.
     t_turn_tf = 0.0D0
     t_turn_tf_is_input = .false.
     f_t_turn_tf = 1.0D0

@@ -251,6 +251,7 @@ module physics_variables
   !! - =0 apply limit to total beta
   !! - =1 apply limit to thermal beta
   !! - =2 apply limit to thermal + neutral beam beta
+  !! - =3 apply limit to toroidal beta
 
   integer :: icurr
   !! switch for plasma current scaling to use
@@ -323,7 +324,7 @@ module physics_variables
   !!
   !! - =0 use original parabolic profiles
   !! - =1 use pedestal profile
-  !! - =2 use pedestal profiles and run PLASMOD on final outpu
+  !! - =2 use pedestal profiles and run PLASMOD on final output
   !! - =3 use PLASMOD transport model only to calculate pedestal profiles
 
   integer :: ips

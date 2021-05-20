@@ -17,7 +17,7 @@ module numerics
   integer, parameter :: ipnvars = 175
   !!  ipnvars FIX : total number of variables available for iteration
 
-  integer, parameter :: ipeqns = 86
+  integer, parameter :: ipeqns = 87
   !!  ipeqns  FIX : number of constraint equations available
   
   integer, parameter :: ipnfoms = 19
@@ -144,7 +144,7 @@ module numerics
   !!            (TART) (consistency equation) (itv 13,20,69,70)
   !!  <LI> (44) Peak centrepost temperature upper limit (TART) (itv 68,69,70)
   !!  <LI> (45) Edge safety factor lower limit (TART) (itv 71,1,2,3)
-  !!  <LI> (46) Ip/Irod upper limit (TART) (itv 72,2,60)
+  !!  <LI> (46) Equation for Ip/Irod upper limit (TART) (itv 72,2,60)
   !!  <LI> (47) NOT USED
   !!  <LI> (48) Poloidal beta upper limit (itv 79,2,3,18)
   !!  <LI> (49) NOT USED
@@ -181,14 +181,18 @@ module numerics
   !!  <LI> (78) Reinke criterion impurity fraction lower limit (itv  147 freinke)
   !!  <LI> (79) Peak CS field upper limit (itv  149 fbmaxcs)
   !!  <LI> (80) Divertor power lower limit pdivt (itv  153 fpdivlim)
-  !!  <LI> (81) Ne(0) > ne(ped) constraint (itv  154 fne0)</UL>
+  !!  <LI> (81) Ne(0) > ne(ped) constraint (itv  154 fne0)
   !!  <LI> (82) toroidalgap >  tftort constraint (itv  171 ftoroidalgap)
   !!  <LI> (83) Radial build consistency for stellarators (itv 172 f_avspace)
   !!  <LI> (84) Lower limit for beta (itv 173 fbetatry_lower)
   !!  <LI> (85) Constraint for CP lifetime
-  !!  <LI> (86) Constraint for TF coil turn dimension</UL>
+  !!  <LI> (86) Constraint for TF coil turn dimension
+  !!  <LI> (87) Constraint for cryogenic power</UL>
 
-  integer, dimension(ipnvars) :: ixc
+  integer, dimension(ipnvars) :: ixc 
+  !!  ixc(ipnvars) /0/ :
+  !!               array defining which iteration variables to activate
+  !!               (see lablxc for descriptions)
   
   character(len=14), dimension(ipnvars) :: lablxc
   !! lablxc(ipnvars) : labels describing iteration variables<UL>
@@ -355,7 +359,7 @@ module numerics
   !! <LI> (161) fbetatry_lower (f-value for equation 84)
   !! <LI> (162) r_cp_top : Top outer radius of the centropost (ST only) (m)
   !! <LI> (163) f_t_turn_tf : f-value for TF coils WP trurn squared dimension constraint 
-  !! <LI> (164) EMPTY : Description
+  !! <LI> (164) f_crypmw : f-value for cryogenic plant power
   !! <LI> (165) EMPTY : Description
   !! <LI> (166) EMPTY : Description
   !! <LI> (167) EMPTY : Description
@@ -501,32 +505,33 @@ contains
       'TF coil leg rad width lower limit', &
       'NB shine-through frac upper limit', &
       'CS temperature margin lower limit', &
-      'Minimum availability value       ',  &
+      'Minimum availability value       ', &
       'taup/taueff                      ', &
-      'number of ITER-like vacuum pumps ',  &
-      'Zeff limit                       ',  &
-      'Dump time set by VV stress       ',   &
-      'Rate of change of energy in field',   &
-      'Upper Lim. on Radiation Wall load',   &
-      'Upper Lim. on Psep * Bt / q A R  ',   &
-      'pdivt < psep_kallenbach divertor ',   &
-      'Separatrix temp consistency      ',   &
-      'Separatrix density consistency   ',    &
-      'CS Tresca stress limit           ',    &
-      'Psep >= Plh + Paux               ',   &
-      'TFC quench < tmax_croco          ',    &
-      'TFC current/copper area < Max    ',    &
-      'Eich critical separatrix density ',   &
-      'TFC current per turn upper limit ',    &
-      'Reinke criterion fZ lower limit  ',   &
-      'Peak CS field upper limit        ',   &
-      'pdivt lower limit                ',   &
-      'ne0 > neped                      ',   &
-      'toroidalgap >  tftort            ',   &
-      'available_space > required_space ',   &
-      'beta > betalim_lower             ',    &
-      'CP lifetime                      ',    &
-      'TFC turn dimension               '    &
+      'number of ITER-like vacuum pumps ', &
+      'Zeff limit                       ', &
+      'Dump time set by VV stress       ', &
+      'Rate of change of energy in field', &
+      'Upper Lim. on Radiation Wall load', &
+      'Upper Lim. on Psep * Bt / q A R  ', &
+      'pdivt < psep_kallenbach divertor ', &
+      'Separatrix temp consistency      ', &
+      'Separatrix density consistency   ', &
+      'CS Tresca stress limit           ', &
+      'Psep >= Plh + Paux               ', &
+      'TFC quench < tmax_croco          ', &
+      'TFC current/copper area < Max    ', &
+      'Eich critical separatrix density ', &
+      'TFC current per turn upper limit ', &
+      'Reinke criterion fZ lower limit  ', &
+      'Peak CS field upper limit        ', &
+      'pdivt lower limit                ', &
+      'ne0 > neped                      ', &
+      'toroidalgap >  tftort            ', &
+      'available_space > required_space ', &
+      'beta > betalim_lower             ', &
+      'CP lifetime                      ', &
+      'TFC turn dimension               ', &
+      'Cryogenic plant power            '  &
       /)
 
     ! Please note: All strings between '...' above must be exactly 33 chars long
@@ -534,9 +539,6 @@ contains
     ! The last ad_varc line ends with the html tag "</UL>".
 
     ! Issue #495.  Remove default iteration variables
-    !!  ixc(ipnvars) /0/ :
-    !!               array defining which iteration variables to activate
-    !!               (see lablxc for descriptions)
     ixc = 0
     
     ! WARNING These labels are used as variable names by write_new_in_dat.py, and possibly
@@ -732,7 +734,7 @@ contains
     use global_variables, only: maxcal, convergence_parameter, iscan_global, &
       xlabel_2
 		use constants, only: mfile, nplot, nout, pi, opt_file
-		use maths_library, only: vmcon
+		use vmcon_module, only: vmcon
 		use plasmod_variables, only: plasmod_i_impmodel
     implicit none
 

@@ -1,3 +1,4 @@
+importlib-resources==5.0.0 ; python_version < '3.7'
 mkdocs>=1.1
 mkdocs-material>=4.6.3
 pymdown-extensions>=6.3
@@ -9,5 +10,7 @@ pillow>=5.1.0
 Markdown>=3.2.2
 toposort>=1.5
 pytest>=5.4.1
-f90wrap>=0.2.3
+#TODO: Temporary fix using commit id whilst awaiting a tagged release for f90wrap
+git+https://github.com/jameskermode/f90wrap.git@78918e84
 netCDF4>=1.5.4
+wheel>=0.36.2

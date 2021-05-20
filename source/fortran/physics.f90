@@ -315,6 +315,7 @@ module physics_module
     if (ipedestal .ne. 3) then
        if (bscfmax < 0.0D0) then
           bootipf = abs(bscfmax)
+          plasipf = bootipf
        else
           if (ibss == 1) then
              bootipf = bscf_iter89
@@ -3996,10 +3997,7 @@ module physics_module
        call ovarrf(outfile,'Normalised thermal beta',' ',1.0D8*betath*rminor*bt/plascur, 'OP ')
        !call ovarrf(outfile,'Normalised total beta',' ',1.0D8*beta*rminor*bt/plascur, 'OP ')
        call ovarrf(outfile,'Normalised total beta',' ',normalised_total_beta, 'OP ')
-    end if
-
-    if (itart == 1) then
-       call ovarrf(outfile,'Normalised thermal toroidal beta', ' ',fbetatry*dnbeta*btot**2/bt**2, 'OP ')
+       call ovarrf(outfile,'Normalised toroidal beta',' ',normalised_total_beta*(btot/bt)**2, 'OP ')
     end if
 
     if (iculbl == 0) then
@@ -4030,7 +4028,7 @@ module physics_module
 
     call ovarre(outfile,'Ion density (/m3)','(dnitot)',dnitot, 'OP ')
     call ovarre(outfile,'Fuel density (/m3)','(deni)',deni, 'OP ')
-    call ovarre(outfile,'High Z impurity density (/m3)','(dnz)',dnz, 'OP ')
+    call ovarre(outfile,'Total impurity density with Z > 2 (no He) (/m3)','(dnz)',dnz, 'OP ')
     call ovarre(outfile,'Helium ion density (thermalised ions only) (/m3)','(dnalp)',dnalp, 'OP ')
     call ovarre(outfile,'Proton density (/m3)','(dnprot)',dnprot, 'OP ')
     if(protium > 1.0d-10)then
