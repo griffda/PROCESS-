@@ -51,24 +51,42 @@ The build step may take some time when run for the first time (~3 mins) as the F
 
 To rebuild, for example after making a change to the Fortran source, run `cmake --build build` again.
 
-## macOS Installation
-For macOS users it is highly recommended you install GCC using Homebrew. This version of PROCESS searches for the `libgfortran` library by using GCC and the build has been proven to work using this compiler. By default, mac will build with Apple Clang which is the default binary when running the `gcc` command. You will need to either specify the compiler when running CMake:
+## macOS Installation (Docker container)
+Process can be run on a Mac inside a Docker container. The Process repository, including source and build directories, remain in the host filesystem, but the building and running of Process is performed inside the container. This ensures that Process produces the same results on Mac as in other environments, such as the CI system. The Ubuntu-based development image used is similar to the one used on the CI system, but it is designed to work immediately with no further installations.
 
+Install Docker ([Docker Desktop](https://docs.docker.com/docker-for-mac/install/)), or by using `homebrew`:
 ```
-cmake -H. -Bbuild -DCMAKE_C_COMPILER=/path/to/gcc/binary
-```
-
-or set your GCC installation to be at the front of the `PATH` variable, e.g. if your installation is in `/usr/local/bin`:
-
-```
-export PATH=/usr/local/bin:$PATH
+brew cask install docker
 ```
 
-Furthermore an additional step is required post-build in which the shared object produced by `f2py` needs to be editted to change the library links using `image_name_tool`, a script has been provided to automate this process. Upon completion of the PROCESS installation Mac users should run:
-
-```bash
-bash scripts/macos_update_shared_objects.sh
+Then download the Docker image from the Process Gitlab container registry:
 ```
+docker pull git.ccfe.ac.uk:4567/process/process/dev
+```
+Running `docker image ls` should show the image in your local Docker image repository. Optionally, you can change the image name to something more manageable:
+```
+docker tag git.ccfe.ac.uk:4567/process/process/dev process-dev
+```
+to rename the image to "process-dev" with the "latest" tag: "process:latest".
+
+Now run the container:
+```
+docker run -it -v ~/process:/root/process process-dev
+```
+This runs a container which is an instance of the process-dev image. `-it` runs the container in interactive mode (`-i`, allows `stdin`) with a terminal (`-t`, allows bash-like interaction). `-v` specifies the bind mount to use; mount the host `~/process` directory to the `/root/process` directory in the container. This means that the container has read and write access to the `process` project directory on the host filesystem and will stay in sync with it.
+
+Now the container is running, configure, clean and build from the project root directory inside the container:
+```
+cd ~/process
+cmake -S . -B build
+cmake --build build --target clean
+cmake --build build
+```
+The clean step is required to remove any build targets or caches from previous host builds to ensure a completely fresh build from inside the container. This is only required when using the container for the first time.
+
+Once Process has built inside the container, it can be tested (as in the following section) by running `pytest`. Once the test suite passes, this confirms that your Docker container runs Process with the same results as the CI system. Process can now be developed and run as before, with the build and running taking place inside the container.
+
+There is also a helpful VS Code extension for Docker containers that may be helpful.
 
 ## Testing
 As a first basic test that the setup has been successful try importing the package from outside of the repository folder in a Python interactive interpreter:
