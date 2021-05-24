@@ -11,9 +11,13 @@ module water_use_module
   !! i.e. post electricity generation. This water usage depends largely on the 
   !! heat involved, and is thus based upon standard thermoelectric power plant operation.
   !! 
-  !! Reference: Diehl et al. Methods for estimating water consumption for thermoelectric
+  !! References: 
+  !! Diehl et al. Methods for estimating water consumption for thermoelectric
   !! power plants in the United States: U.S. Geological Survey Scientific
   !! Investigations Report 2013–5188, 78 p. http://dx.doi.org/10.3133/sir20135188
+  !! Diehl et al. Withdrawal and consumption of water by thermoelectric power 
+  !! plants in the United States, 2010: U.S. Geological Survey Scientific 
+  !! Investigations Report 2014–5184, 28 p., http://dx.doi.org/10.3133/sir20145184
   !!
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -45,6 +49,7 @@ contains
 
     use heat_transport_variables, only: pthermmw, etath
     !! need local plant_power variable rejected_main; can find from pthermmw & etath
+    use process_output, only: oheadr, ocmmnt
     implicit none
 
     !  Arguments
@@ -53,8 +58,6 @@ contains
 
     !  Local variables
 
-    integer :: icool   
-    !! switch between different water-body cooling options
     real(dp) :: rejected_heat
     !! heat rejected by main power conversion circuit (MW)
     real(dp) :: wastethermeng
@@ -62,12 +65,19 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   !  !! From plan_power.f90:
+   !  !! From plant_power:
    !  ! Heat rejected by main power conversion circuit (MW)
    !  rejected_main = pthermmw * (1 - etath)
     rejected_heat = pthermmw * (1 - etath)
 
     wastethermeng = rejected_heat * secday
+
+    if (iprint == 1) then
+      call oheadr(outfile,'Water usage during plant operation (secondary cooling)')
+      call ocmmnt(outfile,'Estimated amount of water used through different cooling system options:')
+      call ocmmnt(outfile,'1. Cooling towers')
+      call ocmmnt(outfile,'2. Water bodies (pond, lake, river): a) recirculating, b) once-through')
+    endif
 
     !! call subroutines for cooling mechanisms:
 
@@ -75,13 +85,7 @@ contains
     call cooling_towers(outfile,iprint,wastethermeng)
 
     ! water-body cooling
-    icool = 1  ! small pond as a cooling body
-    call cooling_water_body(outfile,iprint,icool,wastethermeng)
-    icool = 2  ! large lake or reservoir as a cooling body
-    call cooling_water_body(outfile,iprint,icool,wastethermeng)
-    icool = 3  ! stream or river as a cooling body
-    call cooling_water_body(outfile,iprint,icool,wastethermeng)
-
+    call cooling_water_body(outfile,iprint,wastethermeng)
 
   end subroutine waterusecall
 
@@ -89,15 +93,16 @@ contains
 
   subroutine cooling_towers(outfile,iprint,wastetherm)
    
-    !! Water evaporated in cooling towers
+    !! Water used in cooling towers
     !! author: R Chapman, UKAEA
     !! outfile : input integer : Fortran output unit identifier
     !! iprint : input integer : Switch to write output (1=yes)
     !! wastetherm : input real : thermal energy (MJ) to be cooled by this system
    
     use water_usage_variables, only: airtemp, waterdens, latentheat, &
-      volheat, evapratio, evapvol, energypervol, volperenergy
-    use process_output, only: oheadr, ocmmnt, ovarre
+      volheat, evapratio, evapvol, energypervol, volperenergy, withdrawvol, &
+      waterusetower
+    use process_output, only: ovarre
     implicit none
 
     !  Arguments
@@ -110,34 +115,38 @@ contains
 
     !! find evaporation ratio: ratio of the heat used to evaporate water 
     !   to the total heat discharged through the tower
-    evapratio = 1 - ( (-0.000279*airtemp**3 &
-       + 0.00109*airtemp**2 &
-       - 0.345*airtemp &
-       + 26.7) /100)
+    evapratio = 1.0D0 - ( (-0.000279D0*airtemp**3 &
+       + 0.00109D0*airtemp**2 &
+       - 0.345D0*airtemp &
+       + 26.7D0) /100.0D0)
     !! Diehl et al. USGS Report 2013–5188, http://dx.doi.org/10.3133/sir20135188
 
     volheat = waterdens * latentheat
 
     energypervol = volheat / evapratio
 
-    volperenergy = 1 / energypervol * 1000000
+    volperenergy = 1.0D0 / energypervol * 1000000.0D0
     
     evapvol = wastetherm * volperenergy
 
+    !! find water withdrawn from external source (for replacement, etc)
+    withdrawvol = 1.5D0 * evapvol
+    ! Estimated as a ratio to evaporated water (averaged across obervered dataset)
+    !  as per Diehl et al. USGS Report 2014–5184, http://dx.doi.org/10.3133/sir20145184
+
+    !! total water consumption = evaporation + withdrawal
+    waterusetower = evapvol + withdrawvol
+
     !  Output section
     if (iprint == 0) return
-    call oheadr(outfile,'Water usage during plant operation (secondary cooling)')
-    call ocmmnt(outfile,'Estimated amount of water evaporated through different cooling system options:')
-    call ocmmnt(outfile,'1. Cooling towers')
-    call ocmmnt(outfile,'2. Water bodies: a) pond, b) lake, c) river')
-    call ovarre(outfile,'Volume evaporated in cooling tower (m3/day)','(evapvol)',evapvol, 'OP ')
+    call ovarre(outfile,'Volume used in cooling tower (m3/day)','(waterusetower)',waterusetower, 'OP ')
 
  
   end subroutine cooling_towers
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine cooling_water_body(outfile,iprint,icool,wastetherm)
+  subroutine cooling_water_body(outfile,iprint,wastetherm)
    
    !! Water evaporated in cooling through water bodies
    !! Based on spreadsheet from Diehl et al. USGS Report 2013–5188, which includes 
@@ -152,19 +161,24 @@ contains
    !! wastetherm : input real : thermal energy (MJ) to be cooled by this system
      
    use water_usage_variables, only: watertemp, windspeed, waterdens, latentheat, &
-      volheat, evapratio, evapvol, energypervol, volperenergy 
+      volheat, evapratio, evapvol, energypervol, volperenergy, withdrawvol, &
+      wateruserecirc, waterusethru
    use process_output, only: ovarre
    implicit none
 
    !  Arguments
    integer, intent(in) :: outfile, iprint
-   integer, intent(in) :: icool
+   ! integer, intent(in) :: icool
    real(dp), intent(in) :: wastetherm
 
    !  Local variables
 
+   integer :: icool
+   !! switch between different water-body cooling options
+
    real(dp) :: heatload, heatloadmet, a, b, c, d, e, f, g, h, i, j
-   real(dp) :: windspeedmph, heatloadimp, satvapdelta
+   real(dp) :: windspeedmph, heatloadimp, satvapdelta, evapsum, evapmean, &
+      withdrawvolr, withdrawvolo
    !! coefficients and intermediate calculation variables
 
    real(dp) :: heatratio
@@ -181,115 +195,138 @@ contains
 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   if ( icool == 1 ) then
-      ! small pond as a cooling body
-      ! heat loading, MW/acre, based on estimations from US power plants
-      heatload = 0.35D0
-      ! coefficients as per Brady et al. 1969:
-      ! wind function coefficients
-      a = 2.47D0
-      b = 0D0
-      c = 0.12D0
-      ! fitted coefficients of heat loading
-      d = 3061.331D0
-      e = -48.810D0
-      f = -78.559D0
-      g = -291.820D0
-      h = 0.267D0
-      i = -0.610D0
-      j = 33.497D0
+   evapsum = 0.0D0
 
-   else if ( icool == 2 ) then
-      ! large lake or reservoir as a cooling body
-      ! heat loading, MW/acre, based on estimations from US power plants
-      heatload = 0.10D0
-      ! coefficients as per Webster et al. 1995:
-      ! wind function coefficients
-      a = 1.04D0
-      b = 1.05D0
-      c = 0.0D0
-      ! fitted coefficients of heat loading
-      d = 3876.843D0
-      e = -49.071D0
-      f = -295.246D0
-      g = -327.935D0
-      h = 0.260D0
-      i = 10.528D0
-      j = 40.188D0
+   do icool = 1, 3
+
+      if ( icool == 1 ) then
+         ! small pond as a cooling body
+         ! heat loading, MW/acre, based on estimations from US power plants
+         heatload = 0.35D0
+         ! coefficients as per Brady et al. 1969:
+         ! wind function coefficients
+         a = 2.47D0
+         b = 0D0
+         c = 0.12D0
+         ! fitted coefficients of heat loading
+         d = 3061.331D0
+         e = -48.810D0
+         f = -78.559D0
+         g = -291.820D0
+         h = 0.267D0
+         i = -0.610D0
+         j = 33.497D0
+
+      else if ( icool == 2 ) then
+         ! large lake or reservoir as a cooling body
+         ! heat loading, MW/acre, based on estimations from US power plants
+         heatload = 0.10D0
+         ! coefficients as per Webster et al. 1995:
+         ! wind function coefficients
+         a = 1.04D0
+         b = 1.05D0
+         c = 0.0D0
+         ! fitted coefficients of heat loading
+         d = 3876.843D0
+         e = -49.071D0
+         f = -295.246D0
+         g = -327.935D0
+         h = 0.260D0
+         i = 10.528D0
+         j = 40.188D0
+         
+      else if ( icool == 3 ) then
+         ! stream or river as a cooling body
+         ! heat loading, MW/acre, based on estimations from US power plants
+         heatload = 0.20D0
+         ! coefficients as per Gulliver et al. 1986:
+         ! wind function coefficients
+         a = 2.96D0
+         b = 0.64D0
+         c = 0.0D0
+         ! fitted coefficients of heat loading
+         d = 2565.009D0
+         e = -43.636D0
+         f = -93.834D0
+         g = -203.767D0
+         h = 0.257D0
+         i = 2.408D0
+         j = 20.596D0
+      end if
+
+      !! Unfortunately, the source spreadsheet was from the US, so the fits for 
+      !!   water body heating due to heat loading and the cooling wind functions
+      !!   are in non-metric units, hence the conversions required here.
+      !! Limitations: maximum wind speed of ~5 m/s; initial watertemp < 25 degC
+
+      ! convert windspeed to mph
+      windspeedmph = windspeed * 2.237D0
+
+      ! convert heat loading into cal/(cm2.sec)
+      heatloadimp = heatload * 1000000.0D0 * 0.239D0 / 40469000.0D0
       
-   else if ( icool == 3 ) then
-      ! stream or river as a cooling body
-      ! heat loading, MW/acre, based on estimations from US power plants
-      heatload = 0.20D0
-      ! coefficients as per Gulliver et al. 1986:
-      ! wind function coefficients
-      a = 2.96D0
-      b = 0.64D0
-      c = 0.0D0
-      ! fitted coefficients of heat loading
-      d = 2565.009D0
-      e = -43.636D0
-      f = -93.834D0
-      g = -203.767D0
-      h = 0.257D0
-      i = 2.408D0
-      j = 20.596D0
-   end if
+      ! estimate how heat loading will raise temperature, for this water body 
+      heatratio = d + (e * watertemp) + (f * windspeedmph) + (g * heatload) &
+         + (h * watertemp**2) + (i * windspeedmph**2) + (j * heatload**2)
 
-   !! Unfortunately, the source spreadsheet was from the US, so the fits for 
-   !!   water body heating due to heat loading and the cooling wind functions
-   !!   are in non-metric units, hence the conversions required here.
-   !! Limitations: maximum wind speed of ~5 m/s; initial watertemp < 25 degC
+      ! estimate resultant heated water temperature
+      watertempheated = watertemp + (heatloadimp * heatratio)
 
-   ! convert windspeed to mph
-   windspeedmph = windspeed * 2.237D0
+      ! find wind function, m/(day.kPa), applicable to this water body:
+      windfunction = ( a + (b * windspeed) + (c * windspeed**2) ) / 1000.0D0
 
-   ! convert heat loading into cal/(cm2.sec)
-   heatloadimp = heatload * 1000000.0D0 * 0.239D0 / 40469000.0D0
-   
-   ! estimate how heat loading will raise temperature, for this water body 
-   heatratio = d + (e * watertemp) + (f * windspeedmph) + (g * heatload) &
-      + (h * watertemp**2) + (i * windspeedmph**2) + (j * heatload**2)
+      ! difference in saturation vapour pressure (Clausius-Clapeyron approximation)
+      satvapdelta = ( &
+         (0.611D0 * exp( (17.27D0 * watertempheated)/(237.3D0 + watertempheated) )) &
+         - (0.611D0 * exp( (17.27D0 * watertemp)/(237.3D0 + watertemp) )) )
 
-   ! estimate resultant heated water temperature
-   watertempheated = watertemp + (heatloadimp * heatratio)
+      ! find 'forced evaporation' driven by heat inserted into system
+      deltaE = waterdens * latentheat * windfunction * satvapdelta
+      
+      ! convert heat loading to J/(m2.day)
+      heatloadmet = heatload * 1000000.0D0 / 4046.85642D0 * secday
 
-   ! find wind function, m/(day.kPa), applicable to this water body:
-   windfunction = ( a + (b * windspeed) + (c * windspeed**2) ) / 1000.0D0
+      !! find evaporation ratio: ratio of the heat used to evaporate water 
+      !   to the total heat discharged through the tower
+      evapratio = deltaE / heatloadmet
+      !! Diehl et al. USGS Report 2013–5188, http://dx.doi.org/10.3133/sir20135188
 
-   ! difference in saturation vapour pressure (Clausius-Clapeyron approximation)
-   satvapdelta = ( &
-      (0.611D0 * exp( (17.27D0 * watertempheated)/(237.3D0 + watertempheated) )) &
-      - (0.611D0 * exp( (17.27D0 * watertemp)/(237.3D0 + watertemp) )) )
+      volheat = waterdens * latentheat
 
-   ! find 'forced evaporation' driven by heat inserted into system
-   deltaE = waterdens * latentheat * windfunction * satvapdelta
-   
-   ! convert heat loading to J/(m2.day)
-   heatloadmet = heatload * 1000000D0 / 4046.85642D0 * secday
+      energypervol = volheat / evapratio
 
-   !! find evaporation ratio: ratio of the heat used to evaporate water 
-   !   to the total heat discharged through the tower
-   evapratio = deltaE / heatloadmet
-   !! Diehl et al. USGS Report 2013–5188, http://dx.doi.org/10.3133/sir20135188
+      volperenergy = 1.0D0 / energypervol * 1000000.0D0
+      
+      evapvol = wastetherm * volperenergy
 
-   volheat = waterdens * latentheat
 
-   energypervol = volheat / evapratio
+      !! using this method the estimates for pond, lake and river evaporation produce similar results,
+      !   the average will be taken and used in the next stage of calculation
+      evapsum = evapsum + evapvol
 
-   volperenergy = 1 / energypervol * 1000000
-   
-   evapvol = wastetherm * volperenergy
+   end do 
+
+   evapmean = evapsum / 3.0D0
+
+   !! water volume withdrawn from external source depends on recirculation or 'once-through' system choice
+   !   Estimated as a ratio to evaporated water (averaged across obervered dataset)
+   !   as per Diehl et al. USGS Report 2014–5184, http://dx.doi.org/10.3133/sir20145184
+
+   ! recirculating water system:
+   withdrawvolr = 1.0D0 * evapvol
+   ! total water consumption = evaporation + withdrawal
+   wateruserecirc = evapmean + withdrawvolr
+
+   ! once-through water system:
+   withdrawvolo = 100.0D0 * evapvol
+   ! total water consumption = evaporation + withdrawal
+   waterusethru = evapmean + withdrawvolo
+
 
    !  Output section
    if (iprint == 0) return
-   if ( icool == 1 ) then
-      call ovarre(outfile,'Volume evaporated from cooling pond (m3/day)','(evapvol)',evapvol, 'OP ')
-   else if ( icool == 2 ) then
-      call ovarre(outfile,'Volume evaporated from cooling lake (m3/day)','(evapvol)',evapvol, 'OP ')
-   else if ( icool == 3 ) then
-      call ovarre(outfile,'Volume evaporated from cooling river (m3/day)','(evapvol)',evapvol, 'OP ')
-   end if
+   call ovarre(outfile,'Volume used in recirculating water system (m3/day)','(wateruserecirc)',wateruserecirc, 'OP ')
+   call ovarre(outfile,'Volume used in once-through water system (m3/day)','(waterusethru)',waterusethru, 'OP ')
 
   end subroutine cooling_water_body
 
