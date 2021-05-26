@@ -319,6 +319,9 @@ module cost_variables
   real(dp) :: discount_rate
   !! effective cost of money in constant dollars
 
+  real(dp) :: sitecost
+  !! fixed value for site cost (2017 US$)
+
   real(dp) :: step_con
   !! Contingency Percentage
 
@@ -821,5 +824,7 @@ module cost_variables
     cplife_input = 2.0D0
     step_uc_cryo_al = 8.1D1
     step_mc_cryo_al_per = 2.0D-1
+    sitecost = 1.0D8
+
   end subroutine init_cost_variables
 end module cost_variables
