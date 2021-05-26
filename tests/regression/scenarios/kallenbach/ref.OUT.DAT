@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.1   Release Date :: 2021-03-17
-   Tag No. : v2.1-215-g99e2f1db code contains untracked changes
-    Branch : 1295-bop-cost-for-cost-model-2-2
+   Tag No. : v2.1-271-g946465bd
+    Branch : 1321-reduce-intermittent-failures-in-regression-tests
    Git log : COMMIT_MSG
- Date/time : 17 May 2021 12:32:27 +01:00(hh:mm) UTC
+ Date/time : 26 May 2021 16:07:39 +01:00(hh:mm) UTC
       User : jmaddock
   Computer : J0826UBUNTU
- Directory : /tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario2_0
-     Input : /tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario11_0/IN.DAT
+ Directory : /tmp/pytest-of-jmaddock/pytest-105/test_solver0
+     Input : /tmp/pytest-of-jmaddock/pytest-105/test_scenario_scenario12_0/IN.DAT
  Run title : kallenbach divertor model
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -54,8 +54,8 @@
  Number of constraints (total)                                            (neqns+nineqns)                  23     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          1     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 1.481E-06  OP 
- VMCON convergence parameter                                              (convergence_parameter)   1.141E-07  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 5.175E-07  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   9.628E-08  OP 
  Number of VMCON iterations                                               (nviter)                         16  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit          MAJOR RADIUS.
@@ -102,7 +102,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    13                  bore             2.2010E+00     0.9982
    14                  fbetatry         5.5056E-01     0.9439
    15                  coheof           1.5517E+07     1.1773
-   16                  fcohbop          9.2944E-01     1.0112
+   16                  fcohbop          9.2944E-01     1.0113
    17                  gapoh            5.0000E-02     1.0000
    18                  fvsbrnni         4.7891E-01     0.9390
    19                  fpinj            1.0000E+00     1.0000
@@ -134,29 +134,29 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.5592E-02             -5.6143E-14                 1.5774E-12
-    2  Global power balance consistency      =  1.7996E-01 MW/m3       -8.0915E-14 MW/m3           4.4964E-13
-    3  Density upper limit                   <  8.5534E+19 /m3          1.5106E+07 /m3             1.7653E-13
-    4  Neutron wall load upper limit         <  1.0537E+00 MW/m2       -8.0942E-12 MW/m2          -7.6814E-12
-    5  Radial build consistency              =  8.9180E+00 m            7.9009E-13 m              -8.8596E-14
-    6  Burn time lower limit                 >  7.1856E+03 sec          3.1215E-04 sec            -4.3441E-08
-    7  L-H power threshold limit             >  1.0691E+02 MW           2.0852E-09 MW             -1.9504E-11
-    8  Net electric power lower limit        >  5.0000E+02 MW           2.2052E-03 MW              4.4104E-06
-    9  Beta upper limit                      <  5.6067E-02              8.4870E-14                 1.5137E-12
-   10  Injection power upper limit           <  5.0000E+01 MW           1.5383E-11 MW             -3.0764E-13
-   11  TF coil case stress upper limit       <  6.0000E+08 Pa          -3.0565E-04 Pa             -5.0948E-13
-   12  TF coil conduit stress upper lim      <  6.0000E+08 Pa          -1.6475E-04 Pa             -2.7456E-13
-   13  Dump voltage upper limit              <  1.0000E+01 V           -1.5474E-11 V              -1.5472E-12
-   14  J_winding pack/J_protection limit     <  2.1980E+07 A/m2         0.0000E+00 A/m2           -6.7946E-14
-   15  TF coil temp. margin lower limit      >  1.5000E+00 K            5.0338E-11 K              -3.3558E-11
-   16  CS temperature margin lower limit     >  1.5000E+00 K            2.2158E-06 K              -1.4772E-06
-   17  taup/taueff                           >  5.0000E+00              5.2629E-11                -1.0526E-11
-   18  Dump time set by VV stress            >  2.1446E+01 s            2.1412E-11 s              -9.9842E-13
-   19  Rate of change of energy in field     <  3.0000E+02 MW           2.1949E-08 MW             -7.3164E-11
-   20  pdivt < psep_kallenbach divertor      =  1.3347E+02 MW          -1.2276E-05 MW              9.1980E-08
-   21  Separatrix temp consistency           =  2.4514E+02 eV          -4.1981E-06 eV              1.7125E-08
-   22  Separatrix density consistency        =  3.2075E+19 m-3          5.4885E+11 m-3            -1.7111E-08
-   23  CS Tresca stress limit                <  6.0000E+08 Pa           1.0771E-03 Pa              1.7948E-12
+    1  Beta consistency                      =  3.5592E-02             -2.4089E-14                 6.7679E-13
+    2  Global power balance consistency      =  1.7996E-01 MW/m3       -5.9837E-13 MW/m3           3.3251E-12
+    3  Density upper limit                   <  8.5534E+19 /m3          2.7476E+07 /m3             3.2130E-13
+    4  Neutron wall load upper limit         <  1.0537E+00 MW/m2        2.1152E-12 MW/m2           2.0073E-12
+    5  Radial build consistency              =  8.9180E+00 m            1.4762E-12 m              -1.6553E-13
+    6  Burn time lower limit                 >  7.1856E+03 sec          5.8159E-04 sec            -8.0938E-08
+    7  L-H power threshold limit             >  1.0691E+02 MW           5.9752E-09 MW             -5.5890E-11
+    8  Net electric power lower limit        >  5.0000E+02 MW           2.2101E-03 MW              4.4201E-06
+    9  Beta upper limit                      <  5.6067E-02              2.1594E-14                 3.8525E-13
+   10  Injection power upper limit           <  5.0000E+01 MW           1.9234E-11 MW             -3.8436E-13
+   11  TF coil case stress upper limit       <  6.0000E+08 Pa          -5.7459E-04 Pa             -9.5768E-13
+   12  TF coil conduit stress upper lim      <  6.0000E+08 Pa          -3.0279E-04 Pa             -5.0471E-13
+   13  Dump voltage upper limit              <  1.0000E+01 V           -3.0029E-11 V              -3.0029E-12
+   14  J_winding pack/J_protection limit     <  2.1980E+07 A/m2         0.0000E+00 A/m2           -3.3540E-13
+   15  TF coil temp. margin lower limit      >  1.5000E+00 K            8.2867E-11 K              -5.5245E-11
+   16  CS temperature margin lower limit     >  1.5000E+00 K           -5.8245E-07 K               3.8830E-07
+   17  taup/taueff                           >  5.0000E+00              5.4037E-11                -1.0807E-11
+   18  Dump time set by VV stress            >  2.1446E+01 s            4.2718E-11 s              -1.9919E-12
+   19  Rate of change of energy in field     <  3.0000E+02 MW           4.1003E-08 MW             -1.3668E-10
+   20  pdivt < psep_kallenbach divertor      =  1.3347E+02 MW          -4.2932E-05 MW              3.2166E-07
+   21  Separatrix temp consistency           =  2.4514E+02 eV          -1.4441E-05 eV              5.8910E-08
+   22  Separatrix density consistency        =  3.2075E+19 m-3          1.8870E+12 m-3            -5.8832E-08
+   23  CS Tresca stress limit                <  6.0000E+08 Pa           2.1311E-03 Pa              3.5516E-12
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -600,7 +600,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power lost due to charge exchange  [W]                                   (exchangepowerlost)       3.682E+06  OP 
  Power lost due to electron impact ionisation [W]                         (ionisationpowerlost)     4.607E+06  OP 
  Total power lost due to radiation, ionisation and recombination [W]      (totalpowerlost)          4.767E+07  OP 
- Power balance error [W]                                                  (balance)                -1.118E-08  OP 
+ Power balance error [W]                                                  (balance)                -2.608E-08  OP 
  The following impurities are used in the divertor model:
                         He       Be       C_       N_       O_       Ne       Si       Ar       Fe       Ni       Kr       Xe       W_
   Fraction in SOL  7.0E-02  0.0E+00  0.0E+00  0.0E+00  0.0E+00  0.0E+00  0.0E+00  0.0E+00  0.0E+00  0.0E+00  0.0E+00  2.3E-03  2.5E-04
@@ -669,7 +669,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Plasma geometric centre, vertical (m)                                    (0.0)                         0.000  OP 
  Plasma lower triangularity                                               (tril)                        0.500  OP 
  Plasma elongation                                                        (kappa.)                      1.781  OP 
- TF coil vertical offset (m)                                              (tfoffset)                   -0.258  OP 
+ TF coil vertical offset (m)                                              (tfoffset)                   -0.259  OP 
  Plasma outer arc radius of curvature (m)                                 (rco)                         5.198  OP 
  Plasma inner arc radius of curvature (m)                                 (rci)                         9.841  OP 
  Plasma lower X-pt, radial (m)                                            (rxpt)                        7.480  OP 
@@ -917,7 +917,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  CS conductor+void cross-sectional area (m2)                              (awpoh)                   5.433E+00  OP 
     CS conductor cross-sectional area (m2)                                (awpoh*(1-vfohc))         3.803E+00  OP 
     CS void cross-sectional area (m2)                                     (awpoh*vfohc)             1.630E+00  OP 
- CS steel cross-sectional area (m2)                                       (areaoh-awpoh)            6.321E+00  OP 
+ CS steel cross-sectional area (m2)                                       (areaoh-awpoh)            6.322E+00  OP 
  CS steel area fraction                                                   (oh_steel_frac)           5.378E-01  ITV
  Only hoop stress considered
  Switch for CS stress calculation                                         (i_cs_stress)                     0     
@@ -953,7 +953,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
   PF4           18.41       -2.88        1.22        1.22      210.64        0.10
   PF5           16.80        8.05        0.81        0.81      122.15        0.07
   PF6           16.80       -8.05        0.81        0.81      122.15        0.07
-  CS             2.60        0.00        0.80       14.69     4241.53        0.22
+  CS             2.60        0.00        0.80       14.69     4241.52        0.22
  Plasma          8.92        0.00        5.75       10.25        1.00
  
  PF Coil Information at Peak Current:
@@ -992,7 +992,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  circuit       BOP            BOF            EOF
  
-     1       45.432         47.097         -8.270
+     1       45.433         47.097         -8.270
      2       46.287         46.017        -10.392
      3       11.386        -65.451        -79.327
      4       11.386        -65.451        -79.327
@@ -1019,7 +1019,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Plasma (A)  0.000E+00  0.000E+00  1.853E+07  1.853E+07  1.853E+07  0.000E+00
  
  This consists of: CS coil field balancing:
-   1         0.000E+00  1.945E+07  2.776E+06  2.776E+06 -2.093E+07  0.000E+00
+   1         0.000E+00  1.945E+07  2.777E+06  2.777E+06 -2.093E+07  0.000E+00
    2         0.000E+00  2.160E+07  3.083E+06  3.083E+06 -2.323E+07  0.000E+00
    3        -0.000E+00  1.276E+06  1.821E+05  1.821E+05 -1.373E+06 -0.000E+00
    4        -0.000E+00  1.276E+06  1.821E+05  1.821E+05 -1.373E+06 -0.000E+00
@@ -1034,7 +1034,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -7.516E+06 -7.516E+06 -7.516E+06  0.000E+00
    5         0.000E+00  0.000E+00 -5.139E+06 -5.139E+06 -5.139E+06  0.000E+00
    6         0.000E+00  0.000E+00 -5.139E+06 -5.139E+06 -5.139E+06  0.000E+00
-   7         0.000E+00  0.000E+00  3.858E-09  3.858E-09 -3.086E-08  0.000E+00
+   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.294E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.327E-01  OP 
@@ -1312,7 +1312,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Divertor coil power supplies (MW)                                        (bdvmw)                   0.000E+00     
  Cryoplant electric power (MW)                                            (crymw)                   4.117E+01  OP 
  Primary coolant pumps (MW)                                               (htpmw..)                 1.550E+02  OP 
- PF coil power supplies (MW)                                              (ppfmw)                   5.115E+01  OP 
+ PF coil power supplies (MW)                                              (ppfmw)                   5.114E+01  OP 
  TF coil power supplies (MW)                                              (ptfmw)                   9.458E+00  OP 
  Plasma heating supplies (MW)                                             (pheatingmw)              1.250E+02  OP 
  Tritium processing (MW)                                                  (trithtmw..)              1.500E+01     
