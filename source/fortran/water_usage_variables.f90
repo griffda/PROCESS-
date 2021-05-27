@@ -46,16 +46,13 @@ module water_usage_variables
   real(dp) :: volperenergy
   !! volume evaporated by units of heat energy, m3/MJ
 
-  real(dp) :: withdrawvol
-  !! volume of water withdrawn from source, m3
-
   real(dp) :: waterusetower
   !! total volume of water used in cooling tower, m3
 
   real(dp) :: wateruserecirc
   !! total volume of water used in recirculating system, m3
 
-  real(dp) :: waterusethru
+  real(dp) :: wateruseonethru
   !! total volume of water used in once-through system, m3
 
   contains
@@ -74,10 +71,9 @@ module water_usage_variables
     evapvol = 0.0D0
     energypervol = 0.0D0
     volperenergy = 0.0D0
-    withdrawvol = 0.0D0
     waterusetower = 0.0D0
     wateruserecirc = 0.0D0
-    waterusethru = 0.0D0
+    wateruseonethru = 0.0D0
       
   end subroutine init_watuse_variables
 
