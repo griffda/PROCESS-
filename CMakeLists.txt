@@ -28,7 +28,7 @@ INCLUDE(${CMAKE_SOURCE_DIR}/cmake/gfortranlibs.cmake)
 # Retrieve and set information for preprocessor
 FindPreprocessingVars()
 
-SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -fPIC -ftest-coverage -fprofile-arcs -fbounds-check")
+SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -fPIC -ftest-coverage -fprofile-arcs -fcheck=bounds -finit-local-zero")
 
 # Get System information, log as much information as we can
 # for ease later on when debugging system specific issues
@@ -122,6 +122,7 @@ LIST(APPEND PROCESS_SRCS
     optimiz_module.f90
     vmcon.f90
     evaluators.f90
+    costs_step.f90
 )
 
 # Install all requirements in the current Python environment

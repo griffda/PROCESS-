@@ -229,7 +229,10 @@ contains
       fwbs_umain_time, uchrs, avail_min, uciac, step_ref, ucshld, tdivrepl, &
       ucblli, ucpfcb, tlife, ipnet, fcdfuel, ucbus, ucpfb, uchts, &
       maintenance_fwbs, fwbs_prob_fail, uclh, ucblss, ucblvd, ucsc, ucturb, &
-      ucpens, cland, ucwindpf, i_cp_lifetime, cplife_input
+      ucpens, cland, ucwindpf, i_cp_lifetime, cplife_input, step_con, &
+      step_cconfix, step_cconshpf, step_currency, step_uccase, step_uccu, &
+      step_ucsc, step_ucfnc, step_ucfwa, step_ucfws, step_ucfwps, step91_per, &
+      step92_per, step93_per, step_uc_cryo_al, step_mc_cryo_al_per
     use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
@@ -623,7 +626,7 @@ contains
           call parse_int_variable('ibss', ibss, 1, 4, &
                'Switch for bootstrap scaling')
        case ('iculbl')
-          call parse_int_variable('iculbl', iculbl, 0, 2, &
+          call parse_int_variable('iculbl', iculbl, 0, 3, &
                'Switch for beta limit scaling')
        case ('iculdl')
           write(outfile,*) ' '
@@ -2613,6 +2616,51 @@ contains
        case ('step_rh_costfrac')
           call parse_real_variable('step_rh_costfrac', step_rh_costfrac, 0.0D0, 1.0D0, &
                'fraction of capital cost for remote handling')
+       case ('step_con')
+          call parse_real_variable('step_con', step_con, 0.0D0, 1.0D0, &
+               'Contingency Percentage')
+       case('step_cconfix')
+          call parse_real_variable('step_cconfix', step_cconfix, 0.0D0, 3.0D2, &
+               'fixed cost of superconducting cable ($/m) (if cost model = 2)' )
+       case('step_cconshpf')
+          call parse_real_variable('step_cconshpf', step_cconshpf, 0.0D0, 3.0D2, &
+               'cost of PF coil steel conduit/sheath ($/m) (if cost model = 2)' )
+       case ('step_currency')
+               call parse_string_variable('step_currency', step_currency, &
+                    'description of the constant dollar year used')
+       case('step_uccase')
+         call parse_real_variable('step_uccase', step_uccase, 0.0D0, 3.0D2, &
+               'cost of superconductor case ($/kg) (if cost model = 2)' )
+       case('step_uccu') 
+         call parse_real_variable('step_uccu', step_uccu, 0.0D0, 3.0D2, &
+               'unit cost for copper in superconducting cable ($/kg) (if cost model = 2)' ) 
+       case ('step_ucfwa')
+         call parse_real_variable('step_ucfwa', step_ucfwa, 0.0D0, 1.0D5, &
+         'first wall armour cost ($/kg) (if cost model = 2)' ) 
+      case ('step_ucfws')
+         call parse_real_variable('step_ucfws', step_ucfws, 0.0D0, 1.0D5, &
+         'first wall structure cost ($/kg) (if cost model = 2)' ) 
+      case ('step_ucfwps')
+         call parse_real_variable('step_ucfwps', step_ucfwps, 0.0D0, 1.0D9, &
+         'first wall passive stabiliser cost ($) (if cost model = 2)' ) 
+       case('step_ucsc') 
+         call parse_real_array('step_ucsc', step_ucsc, isub1, 7, &
+              'cost of superconductor ($/kg) (if cost model = 2)', icode)
+       case('step_ucfnc')
+         call parse_real_variable('step_ucfnc', step_ucfnc, 0.0D0, 3.0D2, &
+               'outer PF coil fence support cost ($/kg) (if cost model = 2)' )
+       case ('step_ucblbe')
+         call parse_real_variable('ucblbe', ucblbe, 1.0D0, 1.0D4, &
+               'Unit cost for blanket Be ($/kg) (if cost model = 2)')
+       case ('step_ucblbreed')
+         call parse_real_variable('ucblbreed', ucblbreed, 1.0D0, 1.0D4, &
+               'Unit cost for blanket breeder material ($/kg) (if cost model = 2)')
+       case ('step_ucblss')
+          call parse_real_variable('ucblss', ucblss, 10.0D0, 1.0D3, &
+               'Unit cost for blanket st.steel ($/kg) (if cost model = 2)')
+       case ('step_ucblvd')
+          call parse_real_variable('ucblvd', ucblvd, 100.0D0, 1.0D3, &
+               'Unit cost for blanket Vd ($/kg) (if cost model =2)')
        case ('i_cp_lifetime')
          call parse_int_variable('i_cp_lifetime', i_cp_lifetime, 0, 3, &
               'Switch for ST centrepost lifetime contraint (10) setting')
@@ -2707,6 +2755,15 @@ contains
        case ('step_ref')
           call parse_real_array('step_ref', step_ref, isub1, 68, &
                'Reference values for cost model 2', icode)
+       case ('step91_per')
+          call parse_real_variable('step91_per', step91_per, 1.0D0, 1.0D2, &
+               'Percentage of cdirt used in calculating step91 (3.0D-1 = 30%)')
+       case ('step92_per')
+          call parse_real_variable('step92_per', step92_per, 1.0D0, 1.0D2, &
+               'Percentage of cdirt used in calculating step92 (3.0D-1 = 30%)')
+       case ('step93_per')
+          call parse_real_variable('step93_per', step93_per, 1.0D0, 1.0D2, &
+               'Percentage of cdirt used in calculating step93 (3.0D-1 = 30%)')
        case ('ucblbe')
           call parse_real_variable('ucblbe', ucblbe, 1.0D0, 1.0D3, &
                'Unit cost for blanket Be ($/kg)')
@@ -2824,6 +2881,13 @@ contains
        case ('ucsc')
           call parse_real_array('ucsc', ucsc, isub1, 5, &
                'Cost of superconductor ($/kg)', icode)
+       case ('step_uc_cryo_al')
+          call parse_real_variable('step_uc_cryo_al', step_uc_cryo_al, &
+            5.0D1, 5.0D3, 'Cost of cryo aluminium ($/kg)')
+       case ('step_mc_cryo_al_per')
+          call parse_real_variable('step_mc_cryo_al_per', &
+            step_mc_cryo_al_per, 0.0D0, 1.0D0, &
+            'Manufacturing cost percentage for cryo aluminium')
        case ('ucshld')
           call parse_real_variable('ucshld', ucshld, 1.0D0, 100.0D0, &
                'Cost of shield structural steel ($/kg)')

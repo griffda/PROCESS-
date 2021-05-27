@@ -6,15 +6,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.0   Release Date :: 2021-01-25
-   Tag No. : v2.1-147-g3a766c4a code contains untracked changes
-    Branch : issue-1264-joints-heating-error
-   Git log : Merge branch 'develop' into issue-1264-joints-heating-error
- Date/time :  8 Mar 2021 18:31:01 +00:00(hh:mm) UTC
-      User : skahn
-  Computer : J0320
- Directory : /tmp/pytest-of-skahn/pytest-113/test_solver0
-     Input : /tmp/pytest-of-skahn/pytest-113/test_scenario_scenario6_0/IN.DAT
+   Version : 2.1.1   Release Date :: 2021-03-17
+   Tag No. : v2.1-271-g946465bd
+    Branch : 1321-reduce-intermittent-failures-in-regression-tests
+   Git log : COMMIT_MSG
+ Date/time : 26 May 2021 16:07:00 +01:00(hh:mm) UTC
+      User : jmaddock
+  Computer : J0826UBUNTU
+ Directory : /tmp/pytest-of-jmaddock/pytest-105/test_solver0
+     Input : /tmp/pytest-of-jmaddock/pytest-105/test_scenario_scenario6_0/IN.DAT
  Run title : TF coil testing
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -430,6 +430,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Beta g coefficient                                                       (dnbeta)                      3.961  OP 
  Normalised thermal beta                                                                                3.668  OP 
  Normalised total beta                                                                                  4.149  OP 
+ Normalised toroidal beta                                                                               4.574  OP 
  Limit on thermal beta                                                    (betalim)                     0.095  OP 
  Plasma thermal energy (J)                                                                          2.001E+09  OP 
  Total plasma internal energy (J)                                         (total_plasma_internal_en 2.264E+09  OP 
@@ -2045,6 +2046,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Beta g coefficient                                                       (dnbeta)                      3.953  OP 
  Normalised thermal beta                                                                                3.677  OP 
  Normalised total beta                                                                                  4.160  OP 
+ Normalised toroidal beta                                                                               4.593  OP 
  Limit on thermal beta                                                    (betalim)                     0.095  OP 
  Plasma thermal energy (J)                                                                          2.015E+09  OP 
  Total plasma internal energy (J)                                         (total_plasma_internal_en 2.279E+09  OP 
@@ -3660,6 +3662,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Beta g coefficient                                                       (dnbeta)                      3.969  OP 
  Normalised thermal beta                                                                                3.659  OP 
  Normalised total beta                                                                                  4.139  OP 
+ Normalised toroidal beta                                                                               4.556  OP 
  Limit on thermal beta                                                    (betalim)                     0.094  OP 
  Plasma thermal energy (J)                                                                          1.988E+09  OP 
  Total plasma internal energy (J)                                         (total_plasma_internal_en 2.249E+09  OP 
@@ -5275,6 +5278,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Beta g coefficient                                                       (dnbeta)                      3.985  OP 
  Normalised thermal beta                                                                                3.641  OP 
  Normalised total beta                                                                                  4.119  OP 
+ Normalised toroidal beta                                                                               4.520  OP 
  Limit on thermal beta                                                    (betalim)                     0.093  OP 
  Plasma thermal energy (J)                                                                          1.962E+09  OP 
  Total plasma internal energy (J)                                         (total_plasma_internal_en 2.220E+09  OP 

@@ -2,15 +2,15 @@
  # Power Reactor Optimisation Code #
  # PROCESS #
  # Power Reactor Optimisation Code #
- PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "08/03/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "18:30"
- User____________________________________________________________________ (username)____________________     "skahn"   
+ PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.1   R"
+ Date_of_run_____________________________________________________________ (date)________________________     "26/05/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "16:06"
+ User____________________________________________________________________ (username)____________________     "jmaddock"
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "FNSF (Menard et al. 2016)                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-147-g3a766c4a"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "issue-1264-joints-heating-error"                                                                   
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch 'develop' into issue-1264-joints-heating-error"                                       
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-skahn/pytest-113/test_scenario_scenario5_0/IN.DAT                                                                                                                                        "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-271-g946465bd"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1321-reduce-intermittent-failures-in-regression-tests"                                             
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jmaddock/pytest-105/test_scenario_scenario5_0/IN.DAT                                                                                                                                     "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -142,7 +142,7 @@
  Beta_g_coefficient______________________________________________________ (dnbeta)______________________      6.0000E+00    
  Normalised_thermal_beta_________________________________________________ ______________________________      3.8789E+00    
  Normalised_total_beta___________________________________________________ ______________________________      4.4967E+00    
- Normalised_thermal_toroidal_beta________________________________________ ______________________________      4.9945E+00    
+ Normalised_toroidal_beta________________________________________________ ______________________________      4.9945E+00    
  Limit_on_total_beta_____________________________________________________ (betalim)_____________________      1.9308E-01    
  Plasma_thermal_energy_(J)_______________________________________________ ______________________________      5.4787E+07 OP 
  Total_plasma_internal_energy_(J)________________________________________ (total_plasma_internal_energy)      6.3514E+07 OP 
@@ -394,9 +394,9 @@
  Divertor_null_switch____________________________________________________ (i_single_null)_______________              0    
  Vessel_-_TF_coil_vertical_gap_(m)_______________________________________ (vgap2)_______________________      0.0000E+00    
  Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.0000E-01    
- Top_radiation_shield_thickness_(m)______________________________________ (shldtth)_____________________      2.0000E-01    
+ Top_radiation_shield_thickness_(m)______________________________________ (shldtth)_____________________      7.0000E-01    
  Divertor_structure_vertical_thickness_(m)_______________________________ (divfix)______________________      2.0000E-01    
- Top_scrape-off_vertical_thickness_(m)___________________________________ vgaptop_______________________      6.0000E-01    
+ Top_scrape-off_vertical_thickness_(m)___________________________________ vgaptop_______________________      5.0000E-01    
  Plasma_half-height_(m)__________________________________________________ (rminor*kappa)________________      2.6714E+00    
  Bottom_scrape-off_vertical_thickness_(m)________________________________ (vgap)________________________      5.0000E-01    
  Divertor_structure_vertical_thickness_(m)_______________________________ (divfix)______________________      2.0000E-01    
@@ -573,23 +573,23 @@
  Intercoil_support_structure_mass_(kg)___________________________________ (aintmass)____________________      1.9891E+05 OP 
  Mass_of_cooled_components_(kg)__________________________________________ (coldmass)____________________      0.0000E+00 OP 
  Gravity_support_structure_mass_(kg)_____________________________________ (clgsmass)____________________      1.4924E+04 OP 
- Torus_leg_support_mass_(kg)_____________________________________________ (gsm1)________________________      5.0402E+03 OP 
- Ring_beam_mass_(kg)_____________________________________________________ (gsm2)________________________      2.3653E+04 OP 
- Ring_legs_mass_(kg)_____________________________________________________ (gsm3)________________________      1.5678E+04 OP 
+ Torus_leg_support_mass_(kg)_____________________________________________ (gsm1)________________________      6.7740E+03 OP 
+ Ring_beam_mass_(kg)_____________________________________________________ (gsm2)________________________      2.4904E+04 OP 
+ Ring_legs_mass_(kg)_____________________________________________________ (gsm3)________________________      1.7381E+04 OP 
  # PF Coil Inductances #
  # Heat transfer parameters at the coolant outlet: Inboard first wall #
  Radius_of_coolant_channel_(m)___________________________________________ (afw)_________________________      6.0000E-03    
  Mean_surface_heat_flux_on_first_wall_(W/m2)_____________________________ (qpp)_________________________      6.6296E+05 OP 
- Mean_nuclear_power_deposited_in_first_wall_per_unit_area_(W/m2)_________ ______________________________      2.3927E+04 OP 
+ Mean_nuclear_power_deposited_in_first_wall_per_unit_area_(W/m2)_________ ______________________________      2.3915E+04 OP 
  Ratio_of_peak_local_heat_load_(surface_and_nuclear)_to_mean_____________ (peaking_factor)______________      1.0000E+00    
  Length_of_a_single_coolant_channel_(all_in_parallel)_(m)________________ (fw_channel_length)___________      4.0000E+00    
  Pitch_of_coolant_channels_(m)___________________________________________ (pitch)_______________________      2.0000E-02    
  Thermal_conductivity_of_first_wall_material_(W/K/m)_____________________ (tkfw)________________________      3.2837E+01 OP 
  Coolant_density_(kg/m3)_________________________________________________ (rhofo)_______________________      8.8677E+00 OP 
- Coolant_mass_flow_rate_in_one_channel_(kg/s)____________________________ (massrate)____________________      4.2394E-02 OP 
- Coolant_velocity_(m/s)__________________________________________________ (velocity)____________________      4.2271E+01 OP 
+ Coolant_mass_flow_rate_in_one_channel_(kg/s)____________________________ (massrate)____________________      4.2393E-02 OP 
+ Coolant_velocity_(m/s)__________________________________________________ (velocity)____________________      4.2270E+01 OP 
  Outlet_temperature_of_first_wall_coolant_(K)____________________________ (fwoutlet)____________________      8.2300E+02    
- Heat_transfer_coefficient_______________________________________________ (hcoeff)______________________      5.1675E+03 OP 
+ Heat_transfer_coefficient_______________________________________________ (hcoeff)______________________      5.1674E+03 OP 
  Temperature_drop_in_the_wall_material_(simple_model)____________________ (deltat_solid)________________      1.3475E+02 OP 
  Temperature_drop_in_the_coolant_(wall_to_bulk)__________________________ (deltat_coolant)______________      7.0519E+01 OP 
  First_wall_temperature_(excluding_armour)_(K)___________________________ (tpeakfw)_____________________      1.0283E+03 OP 
@@ -597,31 +597,31 @@
  # Pumping power for Inboard first wall #
  Viscosity_(Pa.s)________________________________________________________ (viscf)_______________________      3.6045E-05 OP 
  Density_(kg/m3)_________________________________________________________ (rhof)________________________      1.0406E+01 OP 
- Velocity_(m/s)__________________________________________________________ (vv)__________________________      3.6023E+01 OP 
+ Velocity_(m/s)__________________________________________________________ (vv)__________________________      3.6022E+01 OP 
  Reynolds_number_________________________________________________________ (reyn)________________________      1.2479E+05 OP 
  Darcy_friction_factor___________________________________________________ (lambda)______________________      1.7893E-02 OP 
  Channel_length__________________________________________________________ (flleng)______________________      4.0000E+00 OP 
- Pressure_drop_(Pa)______________________________________________________ (deltap)______________________      4.3155E+04 OP 
- ____________Straight_sections_(Pa)______________________________________ (pdropstraight)_______________      4.0269E+04 OP 
- ____________90_degree_bends_(Pa)________________________________________ (pdrop90)_____________________      2.8861E+03 OP 
+ Pressure_drop_(Pa)______________________________________________________ (deltap)______________________      4.3153E+04 OP 
+ ____________Straight_sections_(Pa)______________________________________ (pdropstraight)_______________      4.0267E+04 OP 
+ ____________90_degree_bends_(Pa)________________________________________ (pdrop90)_____________________      2.8860E+03 OP 
  ____________180_degree_bends_(Pa)_______________________________________ (pdrop180)____________________      0.0000E+00 OP 
  Inlet_pressure_(Pa)_____________________________________________________ (coolpin)_____________________      1.5543E+07 OP 
- Total_coolant_mass_flow_rate_in_(kg/s)__________________________________ (mf)__________________________      9.3722E+00 OP 
- Coolant_mass_flow_rate_in_one_channel_(kg/s)____________________________ (mfp)_________________________      4.2394E-02 OP 
- Pumping_power_(MW)______________________________________________________ (pumppower)___________________      3.7731E-02 OP 
+ Total_coolant_mass_flow_rate_in_(kg/s)__________________________________ (mf)__________________________      9.3721E+00 OP 
+ Coolant_mass_flow_rate_in_one_channel_(kg/s)____________________________ (mfp)_________________________      4.2393E-02 OP 
+ Pumping_power_(MW)______________________________________________________ (pumppower)___________________      3.7730E-02 OP 
  # Heat transfer parameters at the coolant outlet: Outboard first wall #
  Radius_of_coolant_channel_(m)___________________________________________ (afw)_________________________      6.0000E-03    
  Mean_surface_heat_flux_on_first_wall_(W/m2)_____________________________ (qpp)_________________________      6.8071E+05 OP 
- Mean_nuclear_power_deposited_in_first_wall_per_unit_area_(W/m2)_________ ______________________________      2.3927E+04 OP 
+ Mean_nuclear_power_deposited_in_first_wall_per_unit_area_(W/m2)_________ ______________________________      2.3915E+04 OP 
  Ratio_of_peak_local_heat_load_(surface_and_nuclear)_to_mean_____________ (peaking_factor)______________      1.0000E+00    
  Length_of_a_single_coolant_channel_(all_in_parallel)_(m)________________ (fw_channel_length)___________      4.0000E+00    
  Pitch_of_coolant_channels_(m)___________________________________________ (pitch)_______________________      2.0000E-02    
  Thermal_conductivity_of_first_wall_material_(W/K/m)_____________________ (tkfw)________________________      3.2837E+01 OP 
  Coolant_density_(kg/m3)_________________________________________________ (rhofo)_______________________      8.8677E+00 OP 
- Coolant_mass_flow_rate_in_one_channel_(kg/s)____________________________ (massrate)____________________      4.3489E-02 OP 
- Coolant_velocity_(m/s)__________________________________________________ (velocity)____________________      4.3363E+01 OP 
+ Coolant_mass_flow_rate_in_one_channel_(kg/s)____________________________ (massrate)____________________      4.3488E-02 OP 
+ Coolant_velocity_(m/s)__________________________________________________ (velocity)____________________      4.3362E+01 OP 
  Outlet_temperature_of_first_wall_coolant_(K)____________________________ (fwoutlet)____________________      8.2300E+02    
- Heat_transfer_coefficient_______________________________________________ (hcoeff)______________________      5.2773E+03 OP 
+ Heat_transfer_coefficient_______________________________________________ (hcoeff)______________________      5.2772E+03 OP 
  Temperature_drop_in_the_wall_material_(simple_model)____________________ (deltat_solid)________________      1.3832E+02 OP 
  Temperature_drop_in_the_coolant_(wall_to_bulk)__________________________ (deltat_coolant)______________      7.0836E+01 OP 
  First_wall_temperature_(excluding_armour)_(K)___________________________ (tpeakfw)_____________________      1.0322E+03 OP 
@@ -631,31 +631,31 @@
  Density_(kg/m3)_________________________________________________________ (rhof)________________________      1.0406E+01 OP 
  Velocity_(m/s)__________________________________________________________ (vv)__________________________      3.6953E+01 OP 
  Reynolds_number_________________________________________________________ (reyn)________________________      1.2802E+05 OP 
- Darcy_friction_factor___________________________________________________ (lambda)______________________      1.7818E-02 OP 
+ Darcy_friction_factor___________________________________________________ (lambda)______________________      1.7819E-02 OP 
  Channel_length__________________________________________________________ (flleng)______________________      4.0000E+00 OP 
- Pressure_drop_(Pa)______________________________________________________ (deltap)______________________      4.5234E+04 OP 
- ____________Straight_sections_(Pa)______________________________________ (pdropstraight)_______________      4.2199E+04 OP 
- ____________90_degree_bends_(Pa)________________________________________ (pdrop90)_____________________      3.0346E+03 OP 
+ Pressure_drop_(Pa)______________________________________________________ (deltap)______________________      4.5232E+04 OP 
+ ____________Straight_sections_(Pa)______________________________________ (pdropstraight)_______________      4.2198E+04 OP 
+ ____________90_degree_bends_(Pa)________________________________________ (pdrop90)_____________________      3.0345E+03 OP 
  ____________180_degree_bends_(Pa)_______________________________________ (pdrop180)____________________      0.0000E+00 OP 
  Inlet_pressure_(Pa)_____________________________________________________ (coolpin)_____________________      1.5545E+07 OP 
  Total_coolant_mass_flow_rate_in_(kg/s)__________________________________ (mf)__________________________      4.9587E+01 OP 
- Coolant_mass_flow_rate_in_one_channel_(kg/s)____________________________ (mfp)_________________________      4.3489E-02 OP 
- Pumping_power_(MW)______________________________________________________ (pumppower)___________________      2.0923E-01 OP 
+ Coolant_mass_flow_rate_in_one_channel_(kg/s)____________________________ (mfp)_________________________      4.3488E-02 OP 
+ Pumping_power_(MW)______________________________________________________ (pumppower)___________________      2.0922E-01 OP 
  # Pumping power for Outboard blanket #
  Viscosity_(Pa.s)________________________________________________________ (viscf)_______________________      3.6045E-05 OP 
  Density_(kg/m3)_________________________________________________________ (rhof)________________________      1.0406E+01 OP 
- Velocity_(m/s)__________________________________________________________ (vv)__________________________      1.7452E+00 OP 
- Reynolds_number_________________________________________________________ (reyn)________________________      6.0459E+03 OP 
- Darcy_friction_factor___________________________________________________ (lambda)______________________      3.5782E-02 OP 
+ Velocity_(m/s)__________________________________________________________ (vv)__________________________      1.7443E+00 OP 
+ Reynolds_number_________________________________________________________ (reyn)________________________      6.0429E+03 OP 
+ Darcy_friction_factor___________________________________________________ (lambda)______________________      3.5787E-02 OP 
  Channel_length__________________________________________________________ (flleng)______________________      3.8239E+00 OP 
- Pressure_drop_(Pa)______________________________________________________ (deltap)______________________      2.0363E+02 OP 
- ____________Straight_sections_(Pa)______________________________________ (pdropstraight)_______________      1.8069E+02 OP 
- ____________90_degree_bends_(Pa)________________________________________ (pdrop90)_____________________      1.6227E+01 OP 
- ____________180_degree_bends_(Pa)_______________________________________ (pdrop180)____________________      6.7192E+00 OP 
+ Pressure_drop_(Pa)______________________________________________________ (deltap)______________________      2.0346E+02 OP 
+ ____________Straight_sections_(Pa)______________________________________ (pdropstraight)_______________      1.8053E+02 OP 
+ ____________90_degree_bends_(Pa)________________________________________ (pdrop90)_____________________      1.6212E+01 OP 
+ ____________180_degree_bends_(Pa)_______________________________________ (pdrop180)____________________      6.7128E+00 OP 
  Inlet_pressure_(Pa)_____________________________________________________ (coolpin)_____________________      1.5500E+07 OP 
- Total_coolant_mass_flow_rate_in_(kg/s)__________________________________ (mf)__________________________      8.0160E+01 OP 
- Coolant_mass_flow_rate_in_one_channel_(kg/s)____________________________ (mfp)_________________________      2.0539E-03 OP 
- Pumping_power_(MW)______________________________________________________ (pumppower)___________________      1.5256E-03 OP 
+ Total_coolant_mass_flow_rate_in_(kg/s)__________________________________ (mf)__________________________      8.0121E+01 OP 
+ Coolant_mass_flow_rate_in_one_channel_(kg/s)____________________________ (mfp)_________________________      2.0529E-03 OP 
+ Pumping_power_(MW)______________________________________________________ (pumppower)___________________      1.5236E-03 OP 
  # First wall and blanket thermohydraulics: Summary #
  Blanket_coolant_type_(1=He,_2=H20)______________________________________ (coolwh)______________________              1    
  First_wall_coolant_type_________________________________________________ (fwcoolant)___________________     "helium"
@@ -666,18 +666,18 @@
  Outlet_temperature_of_first_wall_coolant_(K)____________________________ (fwoutlet)____________________      8.2300E+02    
  Inlet_temperature_of_blanket_coolant_(K)________________________________ (inlet_temp)__________________      5.7300E+02    
  Outlet_temperature_of_blanket_coolant_(K)_______________________________ (outlet_temp)_________________      8.2300E+02    
- First_wall_coolant_mass_flow_rate_(kg/s)________________________________ (mffw)________________________      5.8960E+01 OP 
- Blanket_coolant_mass_flow_rate_(kg/s)___________________________________ (mfblkt)______________________      8.0160E+01 OP 
- Total_coolant_mass_flow_rate(kg/s)______________________________________ (mftotal)_____________________      1.3912E+02 OP 
+ First_wall_coolant_mass_flow_rate_(kg/s)________________________________ (mffw)________________________      5.8959E+01 OP 
+ Blanket_coolant_mass_flow_rate_(kg/s)___________________________________ (mfblkt)______________________      8.0121E+01 OP 
+ Total_coolant_mass_flow_rate(kg/s)______________________________________ (mftotal)_____________________      1.3908E+02 OP 
  First_wall_coolant_pressure_(Pa)________________________________________ (fwpressure)__________________      1.5500E+07    
  Blanket_coolant_pressure_(Pa)___________________________________________ (blpressure)__________________      1.5500E+07    
  Allowable_temperature_of_first_wall_material,_excluding_armour_(K)______ (tfwmatmax)___________________      8.2300E+02    
  Actual_peak_temperature_of_first_wall_material_(K)______________________ (tpeak)_______________________      1.0322E+03    
- Mechanical_pumping_power_for_FW_(MW)____________________________________ (htpmw_fw)____________________      2.4696E-01 OP 
- Mechanical_pumping_power_for_blanket_(MW)_______________________________ (htpmw_blkt)__________________      1.5256E-03 OP 
+ Mechanical_pumping_power_for_FW_(MW)____________________________________ (htpmw_fw)____________________      2.4695E-01 OP 
+ Mechanical_pumping_power_for_blanket_(MW)_______________________________ (htpmw_blkt)__________________      1.5236E-03 OP 
  Pumping_power_for_divertor_(MW)_________________________________________ (htpmw_div)___________________      3.4230E-01 OP 
- Pumping_power_for_shield_and_vacuum_vessel_(MW)_________________________ (htpmw_shld)__________________      4.7265E-02 OP 
- Total_primary_coolant_pumping_power_(MW)________________________________ (htpmw)_______________________      6.7164E-01 OP 
+ Pumping_power_for_shield_and_vacuum_vessel_(MW)_________________________ (htpmw_shld)__________________      4.7527E-02 OP 
+ Total_primary_coolant_pumping_power_(MW)________________________________ (htpmw)_______________________      6.7190E-01 OP 
  # First wall and blanket : CCFE HCPB model #
  Titanium_beryllide_fraction_____________________________________________ (fbltibe12)___________________      3.7500E-01    
  Lithium_orthosilicate_fraction__________________________________________ (fblli2sio4)__________________      3.7500E-01    
@@ -687,7 +687,7 @@
  First_Wall_Armour_Volume_(m3)___________________________________________ (fw_armour_vol)_______________      5.8531E-01    
  First_Wall_Volume_(m3)__________________________________________________ (volfw)_______________________      1.3444E+00    
  Blanket_Volume_(m3)_____________________________________________________ (volblkt)_____________________      6.7516E+01    
- Shield_Volume_(m3)______________________________________________________ (volshld)_____________________      2.4648E+01    
+ Shield_Volume_(m3)______________________________________________________ (volshld)_____________________      4.4018E+01    
  Vacuum_vessel_volume_(m3)_______________________________________________ (vdewin)______________________      1.0922E+02    
  First_Wall_Armour_Mass_(kg)_____________________________________________ (fw_armour_mass)______________      1.1267E+04 OP 
  First_Wall_Mass,_excluding_armour_(kg)__________________________________ (fwmass)______________________      1.0487E+04 OP 
@@ -696,15 +696,15 @@
  ____Blanket_Mass_-_Li2SiO4_(kg)_________________________________________ (whtblli4sio4)________________      6.0765E+04 OP 
  ____Blanket_Mass_-_Steel_(kg)___________________________________________ (whtblss)_____________________      5.1109E+04 OP 
  Total_mass_of_armour,_first_wall_and_blanket_(kg)_______________________ (armour_fw_bl_mass)___________      1.9085E+05 OP 
- Shield_Mass_(kg)________________________________________________________ (whtshld)_____________________      1.4419E+05 OP 
+ Shield_Mass_(kg)________________________________________________________ (whtshld)_____________________      2.5751E+05 OP 
  Vacuum_vessel_mass_(kg)_________________________________________________ (vvmass)______________________      8.5193E+05 OP 
  ST_centrepost_TF_heating_(MW)___________________________________________ (pnuc_cp_tf)__________________      6.3675E+00 OP 
  ST_centrepost_shield_heating_(MW)_______________________________________ (pnuc_cp_sh)__________________      9.3864E+00 OP 
  ST_centrepost_total_heating_(MW)________________________________________ (pnuc_cp)_____________________      6.3675E+00 OP 
- Total_nuclear_heating_in_TF+PF_coils_(CS_is_negligible)_(MW)____________ (ptfnuc)______________________      1.4885E-03 OP 
- Total_nuclear_heating_in_FW_(MW)________________________________________ (pnucfw)______________________      2.6057E+00 OP 
- Total_nuclear_heating_in_the_blanket_(including_emult)_(MW)_____________ (pnucblkt)____________________      1.0390E+02 OP 
- Total_nuclear_heating_in_the_shield_(MW)________________________________ (pnucshld)____________________      6.6666E-02 OP 
+ Total_nuclear_heating_in_TF+PF_coils_(CS_is_negligible)_(MW)____________ (ptfnuc)______________________      1.4878E-03 OP 
+ Total_nuclear_heating_in_FW_(MW)________________________________________ (pnucfw)______________________      2.6044E+00 OP 
+ Total_nuclear_heating_in_the_blanket_(including_emult)_(MW)_____________ (pnucblkt)____________________      1.0385E+02 OP 
+ Total_nuclear_heating_in_the_shield_(MW)________________________________ (pnucshld)____________________      1.1900E-01 OP 
  Total_nuclear_heating_in_the_divertor_(MW)______________________________ (pnucdiv)_____________________      2.9808E+01 OP 
  Blanket_exponential_factor______________________________________________ (exp_blanket)_________________      3.4208E-01 OP 
  Shield:_first_exponential_______________________________________________ (exp_shield1)_________________      5.4303E-03 OP 
@@ -713,11 +713,11 @@
  Switch_for_plant_secondary_cycle________________________________________ (secondary_cycle)_____________              0    
  First_wall_coolant_pressure_(Pa)________________________________________ (fwpressure)__________________      1.5500E+07    
  Blanket_coolant_pressure_(Pa)___________________________________________ (blpressure)__________________      1.5500E+07    
- Mechanical_pumping_power_for_first_wall_(MW)____________________________ (htpmw_fw)____________________      2.4696E-01 OP 
- Mechanical_pumping_power_for_blanket_(MW)_______________________________ (htpmw_blkt)__________________      1.5256E-03 OP 
+ Mechanical_pumping_power_for_first_wall_(MW)____________________________ (htpmw_fw)____________________      2.4695E-01 OP 
+ Mechanical_pumping_power_for_blanket_(MW)_______________________________ (htpmw_blkt)__________________      1.5236E-03 OP 
  Mechanical_pumping_power_for_divertor_(MW)______________________________ (htpmw_div)___________________      3.4230E-01 OP 
- Mechanical_pumping_power_for_shield_and_vacuum_vessel_(MW)______________ (htpmw_shld)__________________      4.7265E-02 OP 
- Total_electrical_coolant_pumping_power:_first_wall,_blanket,_shield_and_ (htpmw)_______________________      6.7164E-01 OP 
+ Mechanical_pumping_power_for_shield_and_vacuum_vessel_(MW)______________ (htpmw_shld)__________________      4.7527E-02 OP 
+ Total_electrical_coolant_pumping_power:_first_wall,_blanket,_shield_and_ (htpmw)_______________________      6.7190E-01 OP 
  Allowable_nominal_neutron_fluence_at_first_wall_(MW.year/m2)____________ (abktflnc)____________________      2.0000E+01    
  No_of_inboard_blanket_modules_poloidally________________________________ (nblktmodpi)__________________              7    
  No_of_inboard_blanket_modules_toroidally________________________________ (nblktmodti)__________________             32    
@@ -799,7 +799,7 @@
  Facility_base_load_(MW)_________________________________________________ (basemw)______________________      5.0000E+00    
  Divertor_coil_power_supplies_(MW)_______________________________________ (bdvmw)_______________________      0.0000E+00    
  Cryoplant_electric_power_(MW)___________________________________________ (crymw)_______________________      0.0000E+00 OP 
- Primary_coolant_pumps_(MW)______________________________________________ (htpmw..)_____________________      6.7164E-01 OP 
+ Primary_coolant_pumps_(MW)______________________________________________ (htpmw..)_____________________      6.7190E-01 OP 
  PF_coil_power_supplies_(MW)_____________________________________________ (ppfmw)_______________________      3.9204E+02 OP 
  TF_coil_power_supplies_(MW)_____________________________________________ (ptfmw)_______________________      2.7844E+02 OP 
  Plasma_heating_supplies_(MW)____________________________________________ (pheatingmw)__________________      2.6667E+02 OP 
@@ -823,17 +823,17 @@
  H/CD_apparatus_+_diagnostics_area_fraction______________________________ (fhcd)________________________      0.0000E+00    
  First_wall_area_fraction________________________________________________ (1-2*fdiv-fhcd)_______________      7.7000E-01    
  Switch_for_pumping_of_primary_coolant___________________________________ (primary_pumping)_____________              2    
- Mechanical_pumping_power_for_FW_cooling_loop_including_heat_exchanger_(M (htpmw_fw)____________________      2.4696E-01 OP 
- Mechanical_pumping_power_for_blanket_cooling_loop_including_heat_exchang (htpmw_blkt)__________________      1.5256E-03 OP 
- Mechanical_pumping_power_for_FW_and_blanket_cooling_loop_including_heat_ (htpmw_fw_blkt)_______________      2.4849E-01 OP 
- Mechanical_pumping_power_for_FW_(MW)____________________________________ (htpmw_fw)____________________      2.4696E-01 OP 
- Mechanical_pumping_power_for_blanket_(MW)_______________________________ (htpmw_blkt)__________________      1.5256E-03 OP 
+ Mechanical_pumping_power_for_FW_cooling_loop_including_heat_exchanger_(M (htpmw_fw)____________________      2.4695E-01 OP 
+ Mechanical_pumping_power_for_blanket_cooling_loop_including_heat_exchang (htpmw_blkt)__________________      1.5236E-03 OP 
+ Mechanical_pumping_power_for_FW_and_blanket_cooling_loop_including_heat_ (htpmw_fw_blkt)_______________      2.4847E-01 OP 
+ Mechanical_pumping_power_for_FW_(MW)____________________________________ (htpmw_fw)____________________      2.4695E-01 OP 
+ Mechanical_pumping_power_for_blanket_(MW)_______________________________ (htpmw_blkt)__________________      1.5236E-03 OP 
  Mechanical_pumping_power_for_divertor_(MW)______________________________ (htpmw_div)___________________      3.4230E-01 OP 
- Mechanical_pumping_power_for_shield_and_vacuum_vessel_(MW)______________ (htpmw_shld)__________________      4.7265E-02 OP 
- Electrical_pumping_power_for_FW_and_blanket_(MW)________________________ (htpmwe_fw_blkt)______________      2.6157E-01 OP 
- Electrical_pumping_power_for_shield_(MW)________________________________ (htpmwe_shld)_________________      4.9753E-02 OP 
+ Mechanical_pumping_power_for_shield_and_vacuum_vessel_(MW)______________ (htpmw_shld)__________________      4.7527E-02 OP 
+ Electrical_pumping_power_for_FW_and_blanket_(MW)________________________ (htpmwe_fw_blkt)______________      2.6155E-01 OP 
+ Electrical_pumping_power_for_shield_(MW)________________________________ (htpmwe_shld)_________________      5.0028E-02 OP 
  Electrical_pumping_power_for_divertor_(MW)______________________________ (htpmwe_div)__________________      3.6032E-01 OP 
- Total_electrical_pumping_power_for_primary_coolant_(MW)_________________ (htpmw)_______________________      6.7164E-01 OP 
+ Total_electrical_pumping_power_for_primary_coolant_(MW)_________________ (htpmw)_______________________      6.7190E-01 OP 
  Coolant_pump_power_/_non-pumping_thermal_power_in_shield________________ (fpumpshld)___________________      5.0000E-03    
  Coolant_pump_power_/_non-pumping_thermal_power_in_divertor______________ (fpumpdiv)____________________      5.0000E-03    
  Electrical_efficiency_of_heat_transport_coolant_pumps___________________ (etahtp)______________________      9.5000E-01    
@@ -841,7 +841,7 @@
  Total_power_leaving_reactor_(across_vacuum_vessel_boundary)_(MW)________ ______________________________      2.5640E+02    
  Heat_removal_from_cryogenic_plant_(MW)__________________________________ (crypmw)______________________      0.0000E+00    
  Heat_removal_from_facilities_(MW)_______________________________________ (fachtmw)_____________________      2.3472E+01    
- Coolant_pumping_efficiency_losses_(MW)__________________________________ (htpsecmw)____________________      3.3582E-02    
+ Coolant_pumping_efficiency_losses_(MW)__________________________________ (htpsecmw)____________________      3.3595E-02    
  Heat_removal_from_injection_power_(MW)__________________________________ (pinjht)______________________      1.8667E+02    
  Heat_removal_from_tritium_plant_(MW)____________________________________ (trithtmw)____________________      1.5000E+01    
  Heat_removal_from_vacuum_pumps_(MW)_____________________________________ (vachtmw)_____________________      5.0000E-01    
@@ -861,17 +861,17 @@
  Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      2.2592E+01    
  Injected_power_(MW)_____________________________________________________ (pinjmw.)_____________________      8.0002E+01    
  Ohmic_power_(MW)________________________________________________________ (pohmmw.)_____________________      1.8021E-10    
- Power_deposited_in_primary_coolant_by_pump_(MW)_________________________ (htpmw_mech)__________________      6.3805E-01    
+ Power_deposited_in_primary_coolant_by_pump_(MW)_________________________ (htpmw_mech)__________________      6.3830E-01    
  Total_(MW)______________________________________________________________ ______________________________      2.6523E+02    
- Heat_extracted_from_first_wall_and_blanket_(MW)_________________________ (pthermfw_blkt)_______________      1.8058E+02    
- Heat_extracted_from_shield__(MW)________________________________________ (pthermshld)__________________      9.5003E+00    
+ Heat_extracted_from_first_wall_and_blanket_(MW)_________________________ (pthermfw_blkt)_______________      1.8052E+02    
+ Heat_extracted_from_shield__(MW)________________________________________ (pthermshld)__________________      9.5529E+00    
  Heat_extracted_from_divertor_(MW)_______________________________________ (pthermdiv)___________________      6.8802E+01    
  Nuclear_and_photon_power_lost_to_H/CD_system_(MW)_______________________ (psechcd)_____________________      0.0000E+00    
  Total_(MW)______________________________________________________________ ______________________________      2.5888E+02    
  Net_electric_power_output(MW)___________________________________________ (pnetelmw.)___________________     -5.0728E+02    
  Required_Net_electric_power_output(MW)__________________________________ (pnetelin)____________________      1.0000E+03    
  Electric_power_for_heating_and_current_drive_(MW)_______________________ (pinjwp)______________________      2.6667E+02    
- Electric_power_for_primary_coolant_pumps_(MW)___________________________ (htpmw)_______________________      6.7164E-01    
+ Electric_power_for_primary_coolant_pumps_(MW)___________________________ (htpmw)_______________________      6.7190E-01    
  Electric_power_for_vacuum_pumps_(MW)____________________________________ (vachtmw)_____________________      5.0000E-01    
  Electric_power_for_tritium_plant_(MW)___________________________________ (trithtmw)____________________      1.5000E+01    
  Electric_power_for_cryoplant_(MW)_______________________________________ (crypmw)______________________      0.0000E+00    

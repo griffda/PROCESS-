@@ -5,15 +5,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.0   Release Date :: 2021-01-25
-   Tag No. : v2.1-147-g3a766c4a code contains untracked changes
-    Branch : issue-1264-joints-heating-error
-   Git log : Merge branch 'develop' into issue-1264-joints-heating-error
- Date/time :  8 Mar 2021 18:33:45 +00:00(hh:mm) UTC
-      User : skahn
-  Computer : J0320
- Directory : /tmp/pytest-of-skahn/pytest-113/test_solver0
-     Input : /tmp/pytest-of-skahn/pytest-113/test_scenario_scenario15_0/IN.DAT
+   Version : 2.1.1   Release Date :: 2021-03-17
+   Tag No. : v2.1-271-g946465bd
+    Branch : 1321-reduce-intermittent-failures-in-regression-tests
+   Git log : COMMIT_MSG
+ Date/time : 26 May 2021 16:07:51 +01:00(hh:mm) UTC
+      User : jmaddock
+  Computer : J0826UBUNTU
+ Directory : /tmp/pytest-of-jmaddock/pytest-105/test_solver0
+     Input : /tmp/pytest-of-jmaddock/pytest-105/test_scenario_scenario15_0/IN.DAT
  Run title : Example QH-mode plasma scenario
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -219,6 +219,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Beta g coefficient                                                       (dnbeta)                      4.852  OP 
  Normalised thermal beta                                                                                2.354  OP 
  Normalised total beta                                                                                  2.829  OP 
+ Normalised toroidal beta                                                                               2.903  OP 
  Limit on thermal beta                                                    (betalim)                     0.056  OP 
  Plasma thermal energy (J)                                                                          1.164E+09  OP 
  Total plasma internal energy (J)                                         (total_plasma_internal_en 1.399E+09  OP 

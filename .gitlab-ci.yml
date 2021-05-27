@@ -77,6 +77,9 @@ make-py38:
     PY_VERSION: py38
 
 make-py36:
+  only:
+    - master
+    - develop
   extends: ".make"
   variables:
     PY_VERSION: py36
@@ -98,6 +101,9 @@ unit-py38:
   <<: *test-setup-py38
 
 unit-py36:
+  only:
+    - master
+    - develop
   extends: ".unit"
   <<: *test-setup-py36
 
@@ -119,6 +125,9 @@ integration-py38:
   <<: *test-setup-py38
 
 integration-py36:
+  only:
+    - master
+    - develop
   extends: ".integration"
   <<: *test-setup-py36
 
@@ -137,6 +146,9 @@ integration-py36:
   <<: *test-setup-py38
 
 .unitfort-py36:
+  only:
+    - master
+    - develop
   extends: ".unitfort"
   <<: *test-setup-py36
 
@@ -162,6 +174,9 @@ regression-py38:
     - make-py38
 
 regression-py36:
+  only:
+    - master
+    - develop
   extends: ".regression"
   <<: *test-setup-py36
   dependencies:
@@ -205,6 +220,9 @@ baseline_2019-py38:
   <<: *test-setup-py38
 
 baseline_2019-py36:
+  only:
+    - master
+    - develop
   extends: ".baseline_2019"
   <<: *test-setup-py36
 
@@ -235,6 +253,9 @@ baseline_2018-py38:
   <<: *test-setup-py38
 
 baseline_2018-py36:
+  only:
+    - master
+    - develop
   extends: ".baseline_2018"
   <<: *test-setup-py36
 
@@ -286,7 +307,6 @@ pages:
   when: on_success
   only:
     - develop
-    - kzarebsk/coverage-badge
   stage: pages
   image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
   script:
