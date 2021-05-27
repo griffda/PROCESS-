@@ -15,14 +15,14 @@
  
    Program :
    Version : 2.1.1   Release Date :: 2021-03-17
-   Tag No. : v2.1-270-g0342a07d
-    Branch : 1317-site-costs-should-be-fixed-input-and-not-scale
+   Tag No. : v2.1-271-g946465bd
+    Branch : 1321-reduce-intermittent-failures-in-regression-tests
    Git log : COMMIT_MSG
- Date/time : 27 May 2021 13:24:59 +01:00(hh:mm) UTC
-      User : rhicha
-  Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-5/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-5/test_scenario_scenario3_0/IN.DAT
+ Date/time : 26 May 2021 16:06:53 +01:00(hh:mm) UTC
+      User : jmaddock
+  Computer : J0826UBUNTU
+ Directory : /tmp/pytest-of-jmaddock/pytest-105/test_solver0
+     Input : /tmp/pytest-of-jmaddock/pytest-105/test_scenario_scenario3_0/IN.DAT
  Run title : "CFETR small (5.7m) reference file"
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  

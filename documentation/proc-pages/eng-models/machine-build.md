@@ -1,4 +1,3 @@
-
 # Radial and Vertical Build
 
 The figure below shows schematically the layout of a typical tokamak
@@ -7,7 +6,7 @@ relative locations of the major components is shown below.
 
 <img
     title="Machine build for D-shaped major components"
-    src="/../images/build_d.png"
+    src="../../images/build_d.png"
     alt="tokamak-layout-d"
     width="650px"
     >
@@ -16,7 +15,7 @@ Figure 1: *Machine build for D-shaped major components*
 
 <img
     title="Machine build for elliptical major components"
-    src="/../images/build_e.png"
+    src="../../images/build_e.png"
     alt="tokamak-layout-e"
     width="650px"
     >
