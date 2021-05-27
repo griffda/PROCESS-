@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.1.1   Release Date :: 2021-03-17
-   Tag No. : v2.1-215-g99e2f1db code contains untracked changes
-    Branch : 1295-bop-cost-for-cost-model-2-2
+   Tag No. : v2.1-271-g946465bd
+    Branch : 1321-reduce-intermittent-failures-in-regression-tests
    Git log : COMMIT_MSG
- Date/time : 17 May 2021 12:32:33 +01:00(hh:mm) UTC
+ Date/time : 26 May 2021 16:08:05 +01:00(hh:mm) UTC
       User : jmaddock
   Computer : J0826UBUNTU
- Directory : /tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario2_0
-     Input : /tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario12_0/IN.DAT
+ Directory : /tmp/pytest-of-jmaddock/pytest-105/test_solver0
+     Input : /tmp/pytest-of-jmaddock/pytest-105/test_scenario_scenario19_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  
