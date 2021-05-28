@@ -112,6 +112,35 @@ contains
     real(dp), dimension(n_), intent(in) :: x_
     real(dp), dimension(lb_,lb_), intent(in) :: b_
 
+    ! Ensure all allocatable arrays are deallocated
+    if (allocated(iwa)) deallocate(iwa)
+    if (allocated(ilower)) deallocate(ilower)
+    if (allocated(iupper)) deallocate(iupper)
+    if (allocated(x)) deallocate(x)
+    if (allocated(bndl)) deallocate(bndl)
+    if (allocated(bndu)) deallocate(bndu)
+    if (allocated(fgrd)) deallocate(fgrd)
+    if (allocated(conf)) deallocate(conf)
+    if (allocated(glag)) deallocate(glag)
+    if (allocated(glaga)) deallocate(glaga)
+    if (allocated(gamma)) deallocate(gamma)
+    if (allocated(eta)) deallocate(eta)
+    if (allocated(xa)) deallocate(xa)
+    if (allocated(bdelta)) deallocate(bdelta)
+    if (allocated(cm)) deallocate(cm)
+    if (allocated(delta)) deallocate(delta)
+    if (allocated(wa)) deallocate(wa)
+    if (allocated(cnorm)) deallocate(cnorm)
+    if (allocated(h)) deallocate(h)
+    if (allocated(b)) deallocate(b)
+    if (allocated(vlam)) deallocate(vlam)
+    if (allocated(vmu)) deallocate(vmu)
+    if (allocated(gm)) deallocate(gm)
+    if (allocated(bdl)) deallocate(bdl)
+    if (allocated(bdu)) deallocate(bdu)
+    if (allocated(best_solution_vector)) deallocate(best_solution_vector)
+    if (allocated(delta_var)) deallocate(delta_var)
+
     ! Input
     ! Initialise module variables with their respective input arguments
     ! This allows vmcon to be called as before, but allows these variables to
@@ -136,7 +165,7 @@ contains
     b = b_
     
     ! Array allocation: only allocate what hasn't already been allocated by 
-    ! assignment
+    ! assignment above
     allocate(vmu(m+2*n+1))
     allocate(vlam(m+2*n+1))
     allocate(gm(n+1))
@@ -157,6 +186,27 @@ contains
     allocate(wa(lwa))
     allocate(h(lh,lh))
     allocate(delta_var(n))
+
+    vmu = 0.0D0
+    vlam = 0.0D0
+    gm = 0.0D0
+    bdl = 0.0D0
+    bdu = 0.0D0
+    conf = 0.0D0
+    fgrd = 0.0D0
+    cnorm = 0.0D0
+    iwa = 0
+    glag = 0.0D0
+    glaga = 0.0D0
+    gamma = 0.0D0
+    eta = 0.0D0
+    xa = 0.0D0
+    bdelta = 0.0D0
+    cm = 0.0D0
+    delta = 0.0D0
+    wa = 0.0D0
+    h = 0.0D0
+    delta_var = 0.0D0
   end subroutine load
 
   subroutine unload(info_, nfev_, niter_, objf_, x_, b_, iwa_, fgrd_, conf_, &
