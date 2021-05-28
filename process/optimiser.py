@@ -18,10 +18,7 @@ class Optimiser():
 
     def run(self):
         """Run vmcon solver and retry if it fails in certain ways."""
-        # Re-create Vmcon instance for new optimiser run
-        # TODO Investigate why this is required to pass all regression scenarios
-        # A Vmcon instance already exists
-        self.vmcon = Vmcon()
+        self.vmcon.load_iter_vars()
         # Write basic info to OPT.DAT, then run vmcon solver
         optimiz_module.write_out(self.vmcon.n, self.vmcon.m)
         self.vmcon.run()

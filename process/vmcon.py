@@ -76,10 +76,9 @@ class Vmcon():
             self.ilower[i] = 1
             self.iupper[i] = 1
 
-        self.load_iter_vars()
-
     def load_iter_vars(self):
         """Load Fortran iteration variables, then initialise Python arrays."""
+        # Set up variables to be iterated
         define_iteration_variables.loadxc()
         define_iteration_variables.boundxc()
         
