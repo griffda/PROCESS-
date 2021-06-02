@@ -396,9 +396,15 @@ def test_descriptions(ref_dicts, new_dicts):
     for old_key, old_value in ref_des.items():
         if old_key in EXCLUSIONS:
             continue
-        # Remove spaces for comparison; not concerned about space diffs
-        new_value = new_des[old_key].replace(" ", "")
-        old_value = old_value.replace(" ", "")
+
+        new_value = new_des[old_key]
+        
+        # Remove spaces and newlines for comparison; bizarrely these change 
+        # based on the local environment so ignore any diffs
+        for char in [" ", "\n"]:
+            new_value = new_value.replace(char, "")
+            old_value = old_value.replace(char, "")
+
         assert old_value == new_value
 
 def test_icc_full(ref_dicts, new_dicts):
