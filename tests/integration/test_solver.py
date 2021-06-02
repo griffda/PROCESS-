@@ -1,9 +1,6 @@
 """Tests for the Process solver."""
 import time
-import sys
 from numpy import histogram
-import argparse
-import subprocess
 from process.io.mfile import MFile
 from process.io.python_fortran_dicts import get_dicts
 from process.io.process_config import TestProcessConfig
@@ -13,7 +10,7 @@ from process.io.process_funcs import get_neqns_itervars,\
     get_solution_from_mfile,\
     process_warnings
 
-
+# Required to prevent pytest collecting this as a test
 TestProcessConfig.__test__ = False
 
 # Load dicts from dicts JSON file
