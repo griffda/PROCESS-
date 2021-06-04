@@ -76,6 +76,9 @@ class Vmcon():
             self.ilower[i] = 1
             self.iupper[i] = 1
 
+        # Counter for fcnvmc1 calls
+        self.fcnvmc1_calls = 0
+
     def load_iter_vars(self):
         """Load Fortran iteration variables, then initialise Python arrays."""
         # Set up variables to be iterated
@@ -154,7 +157,7 @@ class Vmcon():
             return
             
         # fcnvmc1: routine to calculate the objective and constraint functions
-        self.fcnvmc1()
+        self.fcnvmc1_wrapper()
         if vmcon_module.exit_code == 1:
             return
         
@@ -164,7 +167,7 @@ class Vmcon():
 
         # fcnvmc2: routine to calculate the gradients of the objective and 
         # constraint functions
-        self.fcnvmc2()
+        self.fcnvmc2_wrapper()
         if vmcon_module.exit_code == 1:
             return
 
@@ -196,7 +199,7 @@ class Vmcon():
                     # Exit if the line search requires ten or more function evaluations
                     if vmcon_module.nfev >= (vmcon_module.nfinit + 10):
                         vmcon_module.vmcon8()
-                        self.fcnvmc1()
+                        self.fcnvmc1_wrapper()
                         vmcon_module.vmcon9()
                         if vmcon_module.exit_code == 1:
                             return
@@ -207,7 +210,7 @@ class Vmcon():
                 if vmcon_module.exit_code == 1:
                     return
 
-                self.fcnvmc1()
+                self.fcnvmc1_wrapper()
                 vmcon_module.vmcon12()
                 if vmcon_module.exit_code == 1:
                     return
@@ -218,17 +221,17 @@ class Vmcon():
 
             # Line search is complete. Calculate gradient of Lagrangian
             # function for use in updating hessian of Lagrangian
-            self.fcnvmc1()
+            self.fcnvmc1_wrapper()
             if vmcon_module.exit_code == 1:
                 return
             
-            self.fcnvmc2()
+            self.fcnvmc2_wrapper()
             vmcon_module.vmcon13()
             if vmcon_module.exit_code == 1:
                 return
             # End of iteration loop
 
-    def fcnvmc1(self):
+    def fcnvmc1_wrapper(self):
         """Call fcnvmc1, synchronising variables before and after.
         
         Update Python Vmcon object from the vmcon Fortran module, run fcnvmc1()
@@ -251,16 +254,24 @@ class Vmcon():
         self.x[0:vmcon_module.x.size] = vmcon_module.x
         self.ifail = vmcon_module.info
 
-        self.objf, self.ifail = function_evaluator.fcnvmc1(self.n, self.m, 
-            self.x, self.conf, self.ifail
-        )
+        self.fcnvmc1()
+        self.fcnvmc1_calls += 1
 
         # Update Fortran vmcon module from self
         vmcon_module.objf = self.objf
         vmcon_module.conf = self.conf[0:vmcon_module.conf.size]
         vmcon_module.info = self.ifail
 
-    def fcnvmc2(self):
+    def fcnvmc1(self):
+        """Call the function evaluator for Vmcon.
+
+        Calculates the objective and constraint functions.
+        """
+        self.objf, self.ifail = function_evaluator.fcnvmc1(self.n, self.m, 
+            self.x, self.conf, self.ifail
+        )
+    
+    def fcnvmc2_wrapper(self):
         """Call fcnvmc2, synchronising variables before and after.
         
         Update Python Vmcon object from the vmcon Fortran module, run fcnvmc2()
@@ -273,10 +284,17 @@ class Vmcon():
         self.x[0:vmcon_module.x.size] = vmcon_module.x
         self.ifail = vmcon_module.info
         
-        self.ifail = function_evaluator.fcnvmc2(self.n, self.m, self.x,
-            self.fgrd, self.cnorm, self.lcnorm, self.ifail
-        )
+        self.fcnvmc2()
 
         vmcon_module.fgrd = self.fgrd[0:vmcon_module.fgrd.size]
         vmcon_module.cnorm = self.cnorm[:, 0:vmcon_module.cnorm.shape[1]]
         vmcon_module.info = self.ifail
+        
+    def fcnvmc2(self):
+        """Call the gradient function evaluator for Vmcon.
+
+        Calculates the gradients of the objective and constraint functions.
+        """
+        self.ifail = function_evaluator.fcnvmc2(self.n, self.m, self.x,
+            self.fgrd, self.cnorm, self.lcnorm, self.ifail
+        )
