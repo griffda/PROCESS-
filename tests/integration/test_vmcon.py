@@ -5,6 +5,7 @@ from process.vmcon import Vmcon
 import pytest
 import numpy as np
 import logging
+from abc import ABC, abstractmethod
 
 # Debug-level terminal output logging
 logger = logging.getLogger(__name__)
@@ -341,7 +342,36 @@ class ExpectedResult():
         self.errcon = None
         self.ifail = None
 
-class Vmcon1(Vmcon):
+class VmconTest(ABC, Vmcon):
+    """Testing class for Vmcon.
+
+    :param ABC: abstract base class
+    :type ABC: abc.ABC
+    :param Vmcon: Vmcon class
+    :type Vmcon: Vmcon
+    """
+    def __init__(self):
+        """Initialise attributes common to Vmcon test sub-classes."""
+        # Instantiate Vmcon
+        super().__init__()
+        
+        # No bounds on x values set
+        self.ilower[0:2] = 0.0
+        self.iupper[0:2] = 0.0
+        self.bndl[:] = 0.0
+        self.bndu[:] = 0.0
+
+    @abstractmethod
+    def fcnvmc1(self):
+        """Function evaluator."""
+        pass
+
+    @abstractmethod
+    def fcnvmc2(self):
+        """Gradient function evaluator."""
+        pass
+
+class Vmcon1(VmconTest):
     """Override fcnvmc1 and 2 methods for test case 1.
 
     This allows a test to be run using custom function and gradient function
@@ -351,8 +381,8 @@ class Vmcon1(Vmcon):
     subject to the following constraints:
     c1(x1,x2) = x1 - 2*x2 + 1 = 0 
     c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-    :param Vmcon: base Vmcon class
-    :type Vmcon: Vmcon
+    :param VmconTest: testing class for Vmcon
+    :type VmconTest: VmconTest
     """
     def fcnvmc1(self):
         """Function evaluator."""
@@ -394,12 +424,6 @@ def get_case1():
     case.vmcon.xtol = 1.0e-8
     case.vmcon.x[0:2] = 2.0e0
 
-    # No bounds on x values set
-    case.vmcon.ilower[0:2] = 0.0
-    case.vmcon.iupper[0:2] = 0.0
-    case.vmcon.bndl[:] = 0.0
-    case.vmcon.bndu[:] = 0.0
-
     # Expected values
     case.exp.x = np.array([8.228756e-1, 9.114378e-1])
     case.exp.objf = 1.393464
@@ -413,15 +437,15 @@ def get_case1():
 
     return case
 
-class Vmcon2(Vmcon):
+class Vmcon2(VmconTest):
     """Override fcnvmc1 and 2 methods for test case 2.
         
     Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
     subject to the following constraints:
     c1(x1,x2) = x1 - 2*x2 + 1 >= 0
     c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-    :param Vmcon: base Vmcon class
-    :type Vmcon: Vmcon
+    :param VmconTest: testing class for Vmcon
+    :type VmconTest: VmconTest
     """
     def fcnvmc1(self):
         """Function evaluator."""
@@ -461,12 +485,6 @@ def get_case2():
     case.vmcon.meq = neqns
     case.vmcon.x[0:2] = 2.0e0
     case.vmcon.xtol = 1.0e-8
-
-    # No bounds on x values set
-    case.vmcon.ilower[0:2] = 0.0
-    case.vmcon.iupper[0:2] = 0.0
-    case.vmcon.bndl[:] = 0.0
-    case.vmcon.bndu[:] = 0.0
 
     # Expected values
     case.exp.x = np.array([1.664968, 5.540486e-1])
