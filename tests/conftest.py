@@ -5,7 +5,7 @@ Defines fixtures that will be shared across all test modules.
 import pytest
 
 # Exclude utf_tests from collection until side-effect bugs fixed
-collect_ignore_glob = ["uft_tests*", "*/test_vmcon.py"]
+collect_ignore_glob = ["uft_tests*"]
 
 def pytest_addoption(parser):
     """Add custom CLI options to pytest.
