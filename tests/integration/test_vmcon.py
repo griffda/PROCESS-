@@ -72,39 +72,6 @@ def reinit():
 #   end subroutine init_vmcon_test
 
 #   subroutine inittest(nvar,neqns,nineqns,x,ilower,iupper,bndl,bndu)
-
-#     case (2)
-
-#         !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-#         !  subject to the following constraints:
-#         !  c1(x1,x2) = x1 - 2*x2 + 1 >= 0
-#         !  c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-#         !
-#         !  VMCON documentation ANL-80-64
-
-#         nvar = 2
-#         neqns = 0
-#         nineqns = 2
-#         x(1) = 2.0D0 ; x(2) = 2.0D0
-
-#         !  No bounds on x values set
-#         ilower(1) = 0 ; ilower(2) = 0
-#         iupper(1) = 0 ; iupper(2) = 0
-#         bndl(:) = 0.0D0 ; bndu(:) = 0.0D0
-
-#         x_exp(1) = 1.6649685472365443D0
-#         x_exp(2) = 5.5404867491788852D-01
-#         objf_exp = 3.1111865868328270D-01
-#         c_exp(1) = 1.5568711974007674D0
-#         c_exp(2) = -1.0214051826551440D-14
-#         vlam_exp(1) = 0.0D0
-#         vlam_exp(2) = 8.0489557193146243D-01
-#         errlg_exp = 2.3433338602885101D-11
-#         errlm_exp = 0.0D0
-#         errcom_exp = 8.2212450866697197D-15
-#         errcon_exp = 1.0214051826551440D-14
-#         ifail_exp = 1
-
 #     case (3)
 
 #         !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
@@ -228,19 +195,6 @@ def reinit():
 #     ! when calling vmcon with objfn as an argument
 #     select case (itest)
 
-#     case (1,2)
-
-#         !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-#         !  subject to the following constraints:
-#         !  c1(x1,x2) = x1 - 2*x2 + 1 = 0  (itest = 1)
-#         !  c1(x1,x2) = x1 - 2*x2 + 1 >= 0 (itest = 2)
-#         !  c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-
-#         objf = (x(1) - 2.0D0)**2 + (x(2) - 1.0D0)**2
-
-#         conf(1) = x(1) - 2.0D0*x(2) + 1.0D0
-#         conf(2) = -0.25D0*x(1)**2 - x(2)*x(2) + 1.0D0
-
 #     case (3)
 
 #         !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
@@ -305,21 +259,6 @@ def reinit():
 #     !  with respect to x1...xn
 
 #     select case (itest)
-
-#     case (1,2)
-#         !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-#         !  subject to the following constraints:
-#         !  c1(x1,x2) = x1 - 2*x2 + 1 = 0  (itest = 1)
-#         !  c1(x1,x2) = x1 - 2*x2 + 1 >= 0 (itest = 2)
-#         !  c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-
-#         fgrd(1) = 2.0D0*(x(1) - 2.0D0)
-#         fgrd(2) = 2.0D0*(x(2) - 1.0D0)
-
-#         cnorm(1,1) = 1.0D0
-#         cnorm(2,1) = -2.0D0
-#         cnorm(1,2) = -0.5D0*x(1)
-#         cnorm(2,2) = -2.0D0*x(2)
 
 #     case (3)
 #         !  Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
@@ -479,13 +418,85 @@ class Case1(Case):
         self.exp.errcon = 7.671779e-13
         self.exp.ifail = 1
 
+class Vmcon2(Vmcon):
+    """Override fcnvmc1 and 2 methods for test case 2.
+        
+    Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
+    subject to the following constraints:
+    c1(x1,x2) = x1 - 2*x2 + 1 >= 0
+    c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
+    :param Vmcon: base Vmcon class
+    :type Vmcon: Vmcon
+    """
+    def fcnvmc1(self):
+        """Function evaluator."""
+        self.objf = (self.x[0] - 2.0)**2 + (self.x[1] - 1.0)**2
+        self.conf[0] = self.x[0] - 2.0 * self.x[1] + 1.0
+        self.conf[1] = -0.25 * self.x[0]**2 - self.x[1] * self.x[1] + 1.0
+    
+    def fcnvmc2(self):
+        """Gradient function evaluator."""
+        self.fgrd[0] = 2.0 * (self.x[0] - 2.0)
+        self.fgrd[1] = 2.0 * (self.x[1] - 1.0)
+
+        self.cnorm[0, 0] = 1.0
+        self.cnorm[1, 0] = -2.0
+        self.cnorm[0, 1] = -0.5 * self.x[0]
+        self.cnorm[1, 1] = -2.0 * self.x[1]
+
+class Case2(Case):
+    """Test case 2 for Vmcon.
+
+    Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
+    subject to the following constraints:
+    c1(x1,x2) = x1 - 2*x2 + 1 >= 0
+    c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
+    
+    VMCON documentation ANL-80-64
+    :param Case: base Case class
+    :type Case: Case
+    """
+    def __init__(self):
+        """Set up vmcon for the run and define the expected result."""
+        super().__init__("2", Vmcon2())
+
+        # Vmcon values for this case
+        neqns = 0
+        nineqns = 2
+        self.vmcon.n = 2
+        self.vmcon.m = neqns + nineqns
+        self.vmcon.meq = neqns
+        self.vmcon.x[0:2] = 2.0e0
+        self.vmcon.xtol = 1.0e-8
+
+        # No bounds on x values set
+        self.vmcon.ilower[0:2] = 0.0
+        self.vmcon.iupper[0:2] = 0.0
+        self.vmcon.bndl[:] = 0.0
+        self.vmcon.bndu[:] = 0.0
+
+        # Expected values
+        self.exp.x = np.array([1.664968, 5.540486e-1])
+        self.exp.objf = 3.111186e-1
+        self.exp.c = np.array([1.556871, -1.021405e-14])
+        self.exp.vlam = np.array([0.0, 8.048955e-1])
+        self.exp.errlg = 2.343333e-11
+        self.exp.errlm = 0.0
+        self.exp.errcom = 8.221245e-15
+        self.exp.errcon = 1.021405e-14
+        self.exp.ifail = 1
+
 def get_cases():
     """Create list of test cases to run.
 
     :return: list of Case-derived objects
     :rtype: list
     """
-    return [Case1()]
+    cases = [
+        Case1(),
+        Case2()
+    ]
+    return cases
 
 @pytest.fixture(params=get_cases())
 def case(request):
