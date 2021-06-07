@@ -5,7 +5,6 @@ from process.vmcon import Vmcon
 import pytest
 import numpy as np
 import logging
-from abc import ABC
 
 # Debug-level terminal output logging
 logger = logging.getLogger(__name__)
@@ -301,12 +300,8 @@ def reinit():
 
 #   end subroutine dobjfn
 
-class Case(ABC):
-    """Abstract base class for a Vmcon test case.
-
-    :param ABC: abstract base class
-    :type ABC: abc.ABC
-    """
+class Case():
+    """A Vmcon test case."""
     def __init__(self, name, vmcon):
         """Initialise name, Vmcon and expected result objects.
 
@@ -375,48 +370,48 @@ class Vmcon1(Vmcon):
         self.cnorm[0, 1] = -0.5 * self.x[0]
         self.cnorm[1, 1] = -2.0 * self.x[1]
 
-class Case1(Case):
-    """Test case 1 for Vmcon.
+def get_case1():
+    """Create test case 1 for Vmcon.
     
+    Set up vmcon for the run and define the expected result.
+
     Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
     subject to the following constraints:
     c1(x1,x2) = x1 - 2*x2 + 1 = 0
     c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
     
     VMCON documentation ANL-80-64
-    :param Case: base Case class
-    :type Case: Case
     """
-    def __init__(self):
-        """Set up vmcon for the run and define the expected result."""
-        # Create test-specific Vmcon object with overridden fcnvmc1 and 2
-        super().__init__("1", Vmcon1())
-        
-        # Set up vmcon values for this case
-        neqns = 1
-        nineqns = 1
-        self.vmcon.n = 2
-        self.vmcon.m = neqns + nineqns
-        self.vmcon.meq = neqns
-        self.vmcon.xtol = 1.0e-8
-        self.vmcon.x[0:2] = 2.0e0
+    # Create a case-specific Vmcon object with overridden fcnvmc1 and 2
+    case = Case("1", Vmcon1())
+    
+    # Set up vmcon values for this case
+    neqns = 1
+    nineqns = 1
+    case.vmcon.n = 2
+    case.vmcon.m = neqns + nineqns
+    case.vmcon.meq = neqns
+    case.vmcon.xtol = 1.0e-8
+    case.vmcon.x[0:2] = 2.0e0
 
-        # No bounds on x values set
-        self.vmcon.ilower[0:2] = 0.0
-        self.vmcon.iupper[0:2] = 0.0
-        self.vmcon.bndl[:] = 0.0
-        self.vmcon.bndu[:] = 0.0
+    # No bounds on x values set
+    case.vmcon.ilower[0:2] = 0.0
+    case.vmcon.iupper[0:2] = 0.0
+    case.vmcon.bndl[:] = 0.0
+    case.vmcon.bndu[:] = 0.0
 
-        # Expected values
-        self.exp.x = np.array([8.228756e-1, 9.114378e-1])
-        self.exp.objf = 1.393464
-        self.exp.c = np.array([1.387778e-17, -7.671641e-13])
-        self.exp.vlam = np.array([-1.594491, 1.846591])
-        self.exp.errlg = 3.345088e-12
-        self.exp.errlm = 0.0
-        self.exp.errcom = 1.416660e-12
-        self.exp.errcon = 7.671779e-13
-        self.exp.ifail = 1
+    # Expected values
+    case.exp.x = np.array([8.228756e-1, 9.114378e-1])
+    case.exp.objf = 1.393464
+    case.exp.c = np.array([1.387778e-17, -7.671641e-13])
+    case.exp.vlam = np.array([-1.594491, 1.846591])
+    case.exp.errlg = 3.345088e-12
+    case.exp.errlm = 0.0
+    case.exp.errcom = 1.416660e-12
+    case.exp.errcon = 7.671779e-13
+    case.exp.ifail = 1
+
+    return case
 
 class Vmcon2(Vmcon):
     """Override fcnvmc1 and 2 methods for test case 2.
@@ -444,47 +439,47 @@ class Vmcon2(Vmcon):
         self.cnorm[0, 1] = -0.5 * self.x[0]
         self.cnorm[1, 1] = -2.0 * self.x[1]
 
-class Case2(Case):
-    """Test case 2 for Vmcon.
+def get_case2():
+    """Create test case 2 for Vmcon.
 
+    Set up vmcon for the run and define the expected result.
+    
     Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
     subject to the following constraints:
     c1(x1,x2) = x1 - 2*x2 + 1 >= 0
     c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
     
     VMCON documentation ANL-80-64
-    :param Case: base Case class
-    :type Case: Case
     """
-    def __init__(self):
-        """Set up vmcon for the run and define the expected result."""
-        super().__init__("2", Vmcon2())
+    case = Case("2", Vmcon2())
 
-        # Vmcon values for this case
-        neqns = 0
-        nineqns = 2
-        self.vmcon.n = 2
-        self.vmcon.m = neqns + nineqns
-        self.vmcon.meq = neqns
-        self.vmcon.x[0:2] = 2.0e0
-        self.vmcon.xtol = 1.0e-8
+    # Vmcon values for this case
+    neqns = 0
+    nineqns = 2
+    case.vmcon.n = 2
+    case.vmcon.m = neqns + nineqns
+    case.vmcon.meq = neqns
+    case.vmcon.x[0:2] = 2.0e0
+    case.vmcon.xtol = 1.0e-8
 
-        # No bounds on x values set
-        self.vmcon.ilower[0:2] = 0.0
-        self.vmcon.iupper[0:2] = 0.0
-        self.vmcon.bndl[:] = 0.0
-        self.vmcon.bndu[:] = 0.0
+    # No bounds on x values set
+    case.vmcon.ilower[0:2] = 0.0
+    case.vmcon.iupper[0:2] = 0.0
+    case.vmcon.bndl[:] = 0.0
+    case.vmcon.bndu[:] = 0.0
 
-        # Expected values
-        self.exp.x = np.array([1.664968, 5.540486e-1])
-        self.exp.objf = 3.111186e-1
-        self.exp.c = np.array([1.556871, -1.021405e-14])
-        self.exp.vlam = np.array([0.0, 8.048955e-1])
-        self.exp.errlg = 2.343333e-11
-        self.exp.errlm = 0.0
-        self.exp.errcom = 8.221245e-15
-        self.exp.errcon = 1.021405e-14
-        self.exp.ifail = 1
+    # Expected values
+    case.exp.x = np.array([1.664968, 5.540486e-1])
+    case.exp.objf = 3.111186e-1
+    case.exp.c = np.array([1.556871, -1.021405e-14])
+    case.exp.vlam = np.array([0.0, 8.048955e-1])
+    case.exp.errlg = 2.343333e-11
+    case.exp.errlm = 0.0
+    case.exp.errcom = 8.221245e-15
+    case.exp.errcon = 1.021405e-14
+    case.exp.ifail = 1
+
+    return case
 
 def get_cases():
     """Create list of test cases to run.
@@ -493,8 +488,8 @@ def get_cases():
     :rtype: list
     """
     cases = [
-        Case1(),
-        Case2()
+        get_case1(),
+        get_case2()
     ]
     return cases
 
