@@ -30,7 +30,9 @@ def get_scenarios():
     # Path object for the scenarios directory (all scenarios dir)
 
     scenario_dirs = [x for x in p.iterdir() if x.is_dir()]
-    # List of scenario directory Path objects (individual scenario dirs)
+    scenario_dirs.sort(key=lambda scenario_dir: scenario_dir.name.lower())
+    # Sorted list of scenario directory Path objects (individual scenario dirs)
+    # Maintains order scenarios are run in
 
     # Create a Scenario object for each scenario dir and yield
     for scenario_dir in scenario_dirs:

@@ -4,7 +4,7 @@
 
 # Specify the minimum version for CMake
 # 3.12 is required due to use of list TRANSFORM commands
-CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.13)
 
 # Ensure python3 interpreter is used
 if(CMAKE_HOST_APPLE)
@@ -28,7 +28,7 @@ INCLUDE(${CMAKE_SOURCE_DIR}/cmake/gfortranlibs.cmake)
 # Retrieve and set information for preprocessor
 FindPreprocessingVars()
 
-SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -fPIC -ftest-coverage -fprofile-arcs -fbounds-check")
+SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -fPIC -ftest-coverage -fprofile-arcs -fcheck=bounds -finit-local-zero")
 
 # Get System information, log as much information as we can
 # for ease later on when debugging system specific issues

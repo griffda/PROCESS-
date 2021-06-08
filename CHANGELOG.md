@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 Option to use toroidal beta in beta limit (#1290)
+Enforced up/down symmetry in the vertical build for double-null (#1309)
 ## [2.1.1] - 2021-03-17
 ### Added
 Adding the EBW scaling (#1262)
