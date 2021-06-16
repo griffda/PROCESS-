@@ -191,14 +191,17 @@ contains
           gamcd = effcdfix * dene20 * rmajor
           effrfssfix = effcdfix
 
-       case (12)  ! ECRH user input gamma
+       case (12)
+       ! EBW scaling
+       ! Scaling author Simon Freethy
+       ! Ref : PROCESS issue 1262
 
-            !  Normalised current drive efficiency gamma
-            gamcd = 0.03058D0 * te
+          !  Normalised current drive efficiency gamma
+          gamcd = (0.43D0/32.7D0) * te
  
-            ! Absolute current drive efficiency
-            effrfssfix = gamcd / (dene20 * rmajor)
-            effcdfix = effrfssfix
+          ! Absolute current drive efficiency
+          effrfssfix = gamcd / (dene20 * rmajor)
+          effcdfix = effrfssfix
 
        case default
           idiags(1) = iefrffix
@@ -360,18 +363,17 @@ contains
           gamcd = effcd * dene20 * rmajor
           effrfss = effcd
 
-
        case (12)  
        ! EBW scaling
        ! Scaling author Simon Freethy
        ! Ref : PROCESS issue 1262
 
-         !  Normalised current drive efficiency gamma
-         gamcd = (0.43D0/32.7D0) * te
+          !  Normalised current drive efficiency gamma
+          gamcd = (0.43D0/32.7D0) * te
          
-         ! Absolute current drive efficiency
-         effrfss = gamcd / (dene20 * rmajor)
-         effcd = effrfss
+          ! Absolute current drive efficiency
+          effrfss = gamcd / (dene20 * rmajor)
+          effcd = effrfss
 
        case default
           idiags(1) = iefrf
