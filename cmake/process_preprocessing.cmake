@@ -42,16 +42,11 @@ MACRO(FindPreprocessingVars)
     )
     STRING(STRIP ${CMAKE_Fortran_VERSION} CMAKE_Fortran_VERSION)
 
-    STRING(LENGTH ${CMAKE_Fortran_VERSION} CMAKE_Fortran_VERSION_Length)
-    MATH(EXPR LAST_CHARS_FORTRAN_VERSION "${CMAKE_Fortran_VERSION_Length} - 5")
-    
-    # Full GFortran version number: eg. 8.4.0 or 9.3.0
-    STRING(SUBSTRING "${CMAKE_Fortran_VERSION}" "${LAST_CHARS_FORTRAN_VERSION}" "5" CMAKE_Fortran_VERSION_NUMBER)
-    # Main GFortran version number: eg. 8 or 9
-    STRING(SUBSTRING "${CMAKE_Fortran_VERSION_NUMBER}" "0" "1" CMAKE_Fortran_MAIN_VERSION_NUM)
-
-    IF (CMAKE_Fortran_MAIN_VERSION_NUM LESS 9)
-        MESSAGE(FATAL_ERROR "GFortran version 9 or above required")
+    # gfortran >= 9 required: differing regression test results with lower
+    # versions. Reason unknown
+    # The CMAKE_Fortran_COMPILER_VERSION can differ from "gfortran --version"
+    if(CMAKE_Fortran_COMPILER_VERSION VERSION_LESS 9.0.0)
+        MESSAGE(FATAL_ERROR "gfortran version 9 or above required")
     ENDIF()
 
     FOREACH(VAR COMMIT_MSG GIT_DIFF GIT_TAG GIT_BRANCH CMAKE_Fortran_COMPILER CMAKE_Fortran_VERSION)
@@ -73,7 +68,7 @@ MACRO(FindPreprocessingVars)
     MESSAGE(STATUS "\tbranch_name : ${GIT_BRANCH}")
     MESSAGE(STATUS "\ttagno : ${GIT_TAG}")
     MESSAGE(STATUS "\tuntracked : ${GIT_DIFF}")
-    MESSAGE(STATUS "\tGFortran_Version : ${CMAKE_Fortran_VERSION_NUMBER}")
+    MESSAGE(STATUS "\tFortran compiler version : ${CMAKE_Fortran_COMPILER_VERSION}")
     # ------------------------------------------------------------ #
     ADD_DEFINITIONS(-DINSTALLDIR="${CMAKE_SOURCE_DIR}")
     ADD_DEFINITIONS(-DCOMMSG="${COMMIT_MSG}")
