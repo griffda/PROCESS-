@@ -49,7 +49,7 @@ contains
       rhopedt, rhopedn, te0, teped, tesep, alphat, alphan, ne0, nesep, neped, &
       bt, rminor, tbeta, plascur, ipedestal, faccd, ignite, pohmmw, powfmw, &
       facoh, fvsbrnni
-    use constants, only: nout, echarge, pi
+    use constants, only: nout, echarge, emass, pi, epsilon0
     use hare, only: hare_calc
 
     implicit none
@@ -69,6 +69,7 @@ contains
     real(dp) :: dens_at_rho, te_at_rho
     logical :: Temperature_capped
     real(dp) :: auxiliary_cd
+    real(dp) :: harnum, a, fc, fp, density_factor
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -360,18 +361,32 @@ contains
           gamcd = effcd * dene20 * rmajor
           effrfss = effcd
 
-
        case (12)  
        ! EBW scaling
        ! Scaling author Simon Freethy
        ! Ref : PROCESS issue 1262
 
-         !  Normalised current drive efficiency gamma
-         gamcd = (0.43D0/32.7D0) * te
+          !  Normalised current drive efficiency gamma
+          gamcd = (0.43D0/32.7D0) * te
          
-         ! Absolute current drive efficiency
-         effrfss = gamcd / (dene20 * rmajor)
-         effcd = effrfss
+          ! Absolute current drive efficiency
+          effrfss = gamcd / (dene20 * rmajor)
+          effcd = effrfss
+
+          ! EBWs can only couple to plasma if cyclotron harmonic is above plasma density cut-off;
+          !  this behaviour is captured in the following function (ref issue #1262):
+          ! harmonic number (using fundamental as default)
+          harnum = 1.0D0
+          ! contant 'a' controls sharpness of transition
+          a = 0.1D0
+
+          fc = 1.0D0/(2.0D0*pi) * harnum * echarge * bt / emass
+          fp = 1.0D0/(2.0D0*pi) * sqrt( dene * echarge**2 / ( emass * epsilon0 ) )
+          
+          density_factor = 0.5D0 * ( 1.0D0 + tanh( (2.0D0/a) * ( ( fp - fc )/fp - a) ) )
+
+          effcd = effcd * density_factor
+          
 
        case default
           idiags(1) = iefrf
