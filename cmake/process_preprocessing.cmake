@@ -30,23 +30,31 @@ MACRO(FindPreprocessingVars)
     )
     STRING(STRIP ${GIT_BRANCH} GIT_BRANCH)
 
+    # CMake uses f95 (rather than gfortran) by default. However, this is usually
+    # a symbolic link to gfortran. Set CMAKE_Fortran_COMPILER to the actual
+    # location of gfortran for clarity 
     EXECUTE_PROCESS (
     COMMAND bash -c "which gfortran | tr -d '[:space:]'"
     OUTPUT_VARIABLE CMAKE_Fortran_COMPILER
     )
     STRING(STRIP ${CMAKE_Fortran_COMPILER} CMAKE_Fortran_COMPILER)
 
+    # The CMAKE_Fortran_COMPILER_VERSION can differ from "gfortran --version"
+    # if gfortran has been updated, perhaps due to the f95 linking. Set
+    # CMAKE_Fortran_COMPILER_VERSION to the actual gfortran version
     EXECUTE_PROCESS(
-    COMMAND bash -c "echo \"$(gfortran --version | head -n 1)\"|tr '\n' ' '"
-    OUTPUT_VARIABLE CMAKE_Fortran_VERSION
+    COMMAND bash -c "gfortran -dumpversion"
+    OUTPUT_VARIABLE CMAKE_Fortran_COMPILER_VERSION
     )
-    STRING(STRIP ${CMAKE_Fortran_VERSION} CMAKE_Fortran_VERSION)
+    STRING(STRIP ${CMAKE_Fortran_COMPILER_VERSION} CMAKE_Fortran_COMPILER_VERSION)
 
     # gfortran >= 9 required: differing regression test results with lower
     # versions. Reason unknown
-    # The CMAKE_Fortran_COMPILER_VERSION can differ from "gfortran --version"
-    if(CMAKE_Fortran_COMPILER_VERSION VERSION_LESS 9.0.0)
-        MESSAGE(FATAL_ERROR "gfortran version 9 or above required")
+    if(CMAKE_Fortran_COMPILER_VERSION VERSION_LESS 9)
+        MESSAGE(STATUS "Fortran Compiler: ${CMAKE_Fortran_COMPILER}")
+        MESSAGE(STATUS "Fortran Compiler ID: ${CMAKE_Fortran_COMPILER_ID}")
+        MESSAGE(STATUS "Fortran Compiler Version: ${CMAKE_Fortran_COMPILER_VERSION}")    
+        MESSAGE(FATAL_ERROR "cmake detected gfortran version is " ${CMAKE_Fortran_COMPILER_VERSION} ". 9 or above required")
     ENDIF()
 
     FOREACH(VAR COMMIT_MSG GIT_DIFF GIT_TAG GIT_BRANCH CMAKE_Fortran_COMPILER CMAKE_Fortran_VERSION)
