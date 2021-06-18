@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.1   R"
- Date_of_run_____________________________________________________________ (date)________________________     "17/05/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "12:32"
+ Date_of_run_____________________________________________________________ (date)________________________     "26/05/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "16:07"
  User____________________________________________________________________ (username)____________________     "jmaddock"
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-215-g99e2f1db"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1295-bop-cost-for-cost-model-2-2"                                                                  
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-271-g946465bd"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1321-reduce-intermittent-failures-in-regression-tests"                                             
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario9_0/IN.DAT                                                                                                                                       "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jmaddock/pytest-105/test_scenario_scenario9_0/IN.DAT                                                                                                                                     "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #

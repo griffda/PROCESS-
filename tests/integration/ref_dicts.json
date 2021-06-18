@@ -4680,6 +4680,7 @@
         "sigpfcf": 0.666,
         "sigvvall": 93000000.0,
         "single": "selected_real_kind(6, 37)",
+        "sitecost": 100000000.0,
         "skind": 512.0,
         "sol_broadening": 0.0,
         "solder": null,
@@ -9993,6 +9994,7 @@
         "sigpfcf": "fraction of JxB hoop force supported by steel case for superconducting PF coils (`ipfres=0`)",
         "sigvvall": "allowable stress from TF quench in vacuum vessel (Pa)",
         "single": "",
+        "sitecost": "fixed value for site cost (2017 US$)",
         "skind": "",
         "sol_broadening": "",
         "solder": "",
@@ -13464,6 +13466,10 @@
             "lb": 100000.0,
             "ub": 500000000.0
         },
+        "sitecost": {
+            "lb": 0.0,
+            "ub": 1000000000.0
+        },
         "sombdr": {
             "lb": 0.0,
             "ub": 10.0
@@ -16544,6 +16550,7 @@
             "moneyint",
             "output_costs",
             "discount_rate",
+            "sitecost",
             "step_con",
             "step_cconfix",
             "step_cconshpf",
@@ -19718,6 +19725,7 @@
         "sigpfcalw": "real_variable",
         "sigpfcf": "real_variable",
         "sigvvall": "real_variable",
+        "sitecost": "real_variable",
         "sombdr": "real_variable",
         "somtdr": "real_variable",
         "ssync": "real_variable",

@@ -169,7 +169,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use cost_variables, only: output_costs, step_ref
+    use cost_variables, only: output_costs, step_ref, sitecost
     use process_output, only: oshead, ocosts, oblnkl
 
     implicit none
@@ -184,15 +184,15 @@ contains
 
     ! Initialise as zero
     step20 = 0.0D0
-   
+
     ! 20.01 Land
-    ! Original STARFIRE value, scaling with thermal power
-    step2001 = step_ref(1) * (pth / ptherm_star)**0.6D0
+    ! Fixed site cost (2017 M$); read from input, default = 100 M$
+    step2001 = sitecost / 1.0D6
     step20 = step20 + step2001
 
     ! 20.02 Site Preparation
-    ! Original STARFIRE value, scaling with thermal power
-    step2002 = step_ref(2) * (pth / ptherm_star)**0.6D0
+    ! Original STARFIRE value
+    step2002 = step_ref(2)
     step20 = step20 + step2002
 
     ! Output costs
@@ -248,8 +248,8 @@ contains
     step21 = 0.0D0
    
     ! 21.01 Site Improvements
-    ! Original STARFIRE value, scaling with thermal power
-    step2101 = step_ref(3) * (pth / ptherm_star)**0.6D0
+    ! Original STARFIRE value
+    step2101 = step_ref(3)
     step21 = step21 + step2101
     
     ! 21.02 Reactor Building
