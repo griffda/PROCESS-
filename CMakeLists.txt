@@ -43,7 +43,8 @@ MESSAGE(STATUS "[PROCESS Build Information]: ")
 MESSAGE(STATUS "\tPython Binary: ${PYTHON_EXECUTABLE}")
 MESSAGE(STATUS "\tBinary Location: ${CMAKE_BINARY_DIR}")
 MESSAGE(STATUS "\tFortran Compiler: ${CMAKE_Fortran_COMPILER}")
-MESSAGE(STATUS "\tFortran Compiler Version: ${CMAKE_Fortran_VERSION}")
+MESSAGE(STATUS "\tFortran Compiler ID: ${CMAKE_Fortran_COMPILER_ID}")
+MESSAGE(STATUS "\tFortran Compiler Version: ${CMAKE_Fortran_COMPILER_VERSION}")
 MESSAGE(STATUS "\tPROCESS Module Installation Directory: ${PROCESS_MODULE_INSTALL_LOCATION}")
 
 # Define various addresses for locations of files
