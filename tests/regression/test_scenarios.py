@@ -49,7 +49,18 @@ def scenarios_run():
     logger.info("End of scenarios regression run")
     # TODO Need to log summary result of all tests
 
-@pytest.fixture(params=get_scenarios())
+def get_scenario_id(scenario):
+    """Return the name of the scenario.
+
+    Used for getting the IDs for a fixture parameterised with scenarios.
+    :param scenario: Scenario object parameterising a fixture
+    :type scenario: scenario.Scenario
+    :return: scenario name
+    :rtype: str
+    """
+    return scenario.name
+
+@pytest.fixture(params=get_scenarios(), ids=get_scenario_id)
 def scenario(scenarios_run, request):
     """Scenario fixture, parameterised with different scenarios.
 
