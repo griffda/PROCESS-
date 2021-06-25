@@ -73,38 +73,6 @@ def reinit():
 
 #   subroutine inittest(nvar,neqns,nineqns,x,ilower,iupper,bndl,bndu)
 
-#     case (4)
-
-#         !  Maximise f(x1,x2) = x1 + x2
-#         !  subject to the following constraint:
-#         !  c1(x1,x2) = x1**2 + x2**2 - 1 = 0
-#         !
-#         !  http://en.wikipedia.org/wiki/Lagrange_multiplier
-
-#         nvar = 2
-#         neqns = 1
-#         nineqns = 0
-
-#         !  N.B. results can flip to minimum instead of maximum
-#         !  if x(1), x(2) are initialised at different points...
-#         x(1) = 1.0D0 ; x(2) = 1.0D0
-
-#         !  No bounds on x values set
-#         ilower(1) = 0 ; ilower(2) = 0
-#         iupper(1) = 0 ; iupper(2) = 0
-#         bndl(:) = 0.0D0 ; bndu(:) = 0.0D0
-
-#         x_exp(1) = 0.5D0*sqrt(2.0D0)
-#         x_exp(2) = 0.5D0*sqrt(2.0D0)
-#         objf_exp = sqrt(2.0D0)
-#         c_exp(1) = 0.0D0
-#         vlam_exp(1) = 1.0D0/sqrt(2.0D0)
-#         errlg_exp = 0.0D0
-#         errlm_exp = 0.0D0
-#         errcom_exp = 0.0D0
-#         errcon_exp = 0.0D0
-#         ifail_exp = 1
-
 #     case (5)
 
 #         !  Intersection of parabola x^2 with straight line 2x+3
@@ -161,16 +129,6 @@ def reinit():
 #     ! when calling vmcon with objfn as an argument
 #     select case (itest)
 
-#     case (4)
-
-#         !  From Wikipedia: Lagrange Multiplier article
-#         !  Maximise f(x1,x2) = x1 + x2
-#         !  subject to the following constraint:
-#         !  c1(x1,x2) = x1**2 + x2**2 - 1 = 0
-
-#         objf = x(1) + x(2)
-
-#         conf(1) = x(1)*x(1) + x(2)*x(2) - 1.0D0
 
 #     case (5)
 
@@ -213,21 +171,6 @@ def reinit():
 #     !  with respect to x1...xn
 
 #     select case (itest)
-
-
-
-#     case (4)
-#         !  From Wikipedia: Lagrange Multiplier article
-#         !  Maximise f(x1,x2) = x1 + x2
-#         !  subject to the following constraint:
-#         !  c1(x1,x2) = x1**2 + x2**2 - 1 = 0
-
-#         fgrd(1) = 1.0D0
-#         fgrd(2) = 1.0D0
-
-#         cnorm(1,1) = 2.0D0*x(1)
-#         cnorm(2,1) = 2.0D0*x(2)
-
 #     case (5)
 
 #         !  Intersection of parabola x^2 with straight line 2x+3
@@ -394,6 +337,29 @@ class Vmcon3(VmconTest):
         self.cnorm[0, 1] = -0.5 * self.x[0]
         self.cnorm[1, 1] = -2.0 * self.x[1]
 
+class Vmcon4(VmconTest):
+    """Override fcnvmc1 and 2 methods for test case 4.
+
+    From Wikipedia: Lagrange Multiplier article
+    Maximise f(x1,x2) = x1 + x2
+    subject to the following constraint:
+    c1(x1,x2) = x1**2 + x2**2 - 1 = 0
+
+    :param VmconTest: testing class for Vmcon
+    :type VmconTest: VmconTest
+    """
+    def fcnvmc1(self):
+        """Function evaluator."""
+        self.objf = self.x[0] + self.x[1]
+        self.conf[0] = self.x[0] * self.x[0] + self.x[1] * self.x[1] - 1.0
+
+    def fcnvmc2(self):
+        """Gradient function evaluator."""
+        self.fgrd[0] = 1.0
+        self.fgrd[1] = 1.0
+        self.cnorm[0, 0] = 2.0 * self.x[0]
+        self.cnorm[1, 0] = 2.0 * self.x[1]
+
 def get_case1():
     """Create test case 1 for Vmcon.
     
@@ -506,6 +472,44 @@ def get_case3():
 
     return case
 
+def get_case4():
+        """Create test case 4 for Vmcon.
+
+        Set up vmcon for the run and define the expected result.
+        
+        Maximise f(x1,x2) = x1 + x2
+        subject to the following constraint:
+        c1(x1,x2) = x1**2 + x2**2 - 1 = 0
+        
+        http://en.wikipedia.org/wiki/Lagrange_multiplier
+        """
+        # Create a case-specific Vmcon object with overridden fcnvmc1 and 2
+        case = Case("4", Vmcon4())
+
+        # Set up vmcon values for this case
+        neqns = 1
+        nineqns = 0
+        case.vmcon.n = 2
+        case.vmcon.m = neqns + nineqns
+        case.vmcon.meq = neqns
+        case.vmcon.xtol = 2.0e-8
+        case.vmcon.x[0:2] = 1.0e0
+        # N.B. results can flip to minimum instead of maximum
+        # if x(1), x(2) are initialised at different points...
+
+        # Expected values
+        case.exp.x = np.array([0.5 * 2.0**(1/2), 0.5 * 2.0**(1/2)])
+        case.exp.objf = 2.0**(1/2)
+        case.exp.c = np.array([0.0])
+        case.exp.vlam = np.array([1.0 * 2.0**(1/2)])
+        case.exp.errlg = 0.0
+        case.exp.errlm = 0.0
+        case.exp.errcom = 0.0
+        case.exp.errcon = 0.0
+        case.exp.ifail = 1
+
+        return case
+
 def get_cases():
     """Create list of test cases to run.
 
@@ -515,7 +519,8 @@ def get_cases():
     cases = [
         get_case1(),
         get_case2(),
-        get_case3()
+        get_case3(),
+        get_case4()
     ]
     return cases
 
