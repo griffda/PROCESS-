@@ -15,14 +15,14 @@
  
    Program :
    Version : 2.1.1   Release Date :: 2021-03-17
-   Tag No. : v2.1-271-g946465bd
-    Branch : 1321-reduce-intermittent-failures-in-regression-tests
+   Tag No. : v2.1-299-g48aef294
+    Branch : 1332-additional-waste-facilities-building-costs
    Git log : COMMIT_MSG
- Date/time : 26 May 2021 16:06:53 +01:00(hh:mm) UTC
-      User : jmaddock
-  Computer : J0826UBUNTU
- Directory : /tmp/pytest-of-jmaddock/pytest-105/test_solver0
-     Input : /tmp/pytest-of-jmaddock/pytest-105/test_scenario_scenario3_0/IN.DAT
+ Date/time : 28 Jun 2021 17:41:16 +01:00(hh:mm) UTC
+      User : rhicha
+  Computer : l0500
+ Directory : /tmp/pytest-of-rhicha/pytest-15/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-15/test_scenario_CFETR_small_0/IN.DAT
  Run title : "CFETR small (5.7m) reference file"
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
