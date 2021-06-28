@@ -510,37 +510,38 @@ def get_case4():
 
         return case
 
-def get_cases():
-    """Create list of test cases to run.
+def get_case_fns():
+    """Create a list of test case getter functions to run.
 
-    :return: list of Case-derived objects
+    :return: list of functions to return individual test cases
     :rtype: list
     """
-    cases = [
-        get_case1(),
-        get_case2(),
-        get_case3(),
-        get_case4()
+    case_fns = [
+        get_case1,
+        get_case2,
+        get_case3,
+        get_case4
     ]
-    return cases
 
-@pytest.fixture(params=get_cases())
+    return case_fns
+
+@pytest.fixture(params=get_case_fns())
 def case(request):
     """Parameterised fixture for providing Vmcon test cases to run.
 
-    :param request: provides access to different parameterised test cases
+    :param request: provides access to various test case functions
     :type request: SubRequest
     :return: Vmcon scenario to run and its expected result
-    :rtype: Case
+    :rtype: test_vmcon.Case
     """
-    case = request.param
-    return case
+    case_fn = request.param
+    return case_fn()
 
 def test_vmcon(case):
     """Integration test for Vmcon.
 
     :param case: a Vmcon scenario and its expected result
-    :type case: Case
+    :type case: test_vmcon.Case
     """
     logger.debug("Initial solution estimate:")
     for i in range(case.vmcon.n):
