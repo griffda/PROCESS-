@@ -324,74 +324,74 @@ def get_case3():
     return case
 
 def get_case4():
-        """Create test case 4 for Vmcon.
+    """Create test case 4 for Vmcon.
 
-        Set up vmcon for the run and define the expected result.
-        
-        Maximise f(x1,x2) = x1 + x2
-        subject to the following constraint:
-        c1(x1,x2) = x1**2 + x2**2 - 1 = 0
-        
-        http://en.wikipedia.org/wiki/Lagrange_multiplier
-        """
-        # Create a case-specific Vmcon object with overridden fcnvmc1 and 2
-        case = Case("4", Vmcon4())
+    Set up vmcon for the run and define the expected result.
+    
+    Maximise f(x1,x2) = x1 + x2
+    subject to the following constraint:
+    c1(x1,x2) = x1**2 + x2**2 - 1 = 0
+    
+    http://en.wikipedia.org/wiki/Lagrange_multiplier
+    """
+    # Create a case-specific Vmcon object with overridden fcnvmc1 and 2
+    case = Case("4", Vmcon4())
 
-        # Set up vmcon values for this case
-        neqns = 1
-        nineqns = 0
-        case.vmcon.n = 2
-        case.vmcon.m = neqns + nineqns
-        case.vmcon.meq = neqns
-        case.vmcon.xtol = 2.0e-8
-        case.vmcon.x[0:2] = 1.0e0
-        # N.B. results can flip to minimum instead of maximum
-        # if x(1), x(2) are initialised at different points...
+    # Set up vmcon values for this case
+    neqns = 1
+    nineqns = 0
+    case.vmcon.n = 2
+    case.vmcon.m = neqns + nineqns
+    case.vmcon.meq = neqns
+    case.vmcon.xtol = 2.0e-8
+    case.vmcon.x[0:2] = 1.0e0
+    # N.B. results can flip to minimum instead of maximum
+    # if x(1), x(2) are initialised at different points...
 
-        # Expected values
-        case.exp.x = np.array([0.5 * 2.0**(1/2), 0.5 * 2.0**(1/2)])
-        case.exp.objf = 2.0**(1/2)
-        case.exp.c = np.array([0.0])
-        case.exp.vlam = np.array([1.0 * 2.0**(1/2)])
+    # Expected values
+    case.exp.x = np.array([0.5 * 2.0**(1/2), 0.5 * 2.0**(1/2)])
+    case.exp.objf = 2.0**(1/2)
+    case.exp.c = np.array([0.0])
+    case.exp.vlam = np.array([1.0 * 2.0**(1/2)])
 
-        return case
+    return case
 
 def get_case5():
-        """Create test case 5 for Vmcon.
+    """Create test case 5 for Vmcon.
 
-        Set up vmcon for the run and define the expected result.
+    Set up vmcon for the run and define the expected result.
 
-        Intersection of parabola x^2 with straight line 2x+3
-        Unorthodox (and not recommended) method to find the root
-        of an equation.
-        
-        Maximise f(x1) = x1**2
-        subject to the following constraint:
-        c1(x1) = x1**2 - 2.0D0*x1 - 3 = 0
+    Intersection of parabola x^2 with straight line 2x+3
+    Unorthodox (and not recommended) method to find the root
+    of an equation.
+    
+    Maximise f(x1) = x1**2
+    subject to the following constraint:
+    c1(x1) = x1**2 - 2.0D0*x1 - 3 = 0
 
-        Solutions to c1(x1) are x1 = -1 and x1 = 3, and depending on
-        the initial guess for x1 either (or neither...) solution might
-        be found. Since there is one constraint equation with one unknown
-        the code cannot optimise properly.
-        """
-        # Create a case-specific Vmcon object with overridden fcnvmc1 and 2
-        case = Case("5", Vmcon5())
+    Solutions to c1(x1) are x1 = -1 and x1 = 3, and depending on
+    the initial guess for x1 either (or neither...) solution might
+    be found. Since there is one constraint equation with one unknown
+    the code cannot optimise properly.
+    """
+    # Create a case-specific Vmcon object with overridden fcnvmc1 and 2
+    case = Case("5", Vmcon5())
 
-        # Set up vmcon values for this case
-        neqns = 1
-        nineqns = 0
-        case.vmcon.n = 1
-        case.vmcon.m = neqns + nineqns
-        case.vmcon.meq = neqns
-        case.vmcon.x[0] = 5.0e0 # Try different values, e.g. 5.0, 2.0, 1.0, 0.0...
+    # Set up vmcon values for this case
+    neqns = 1
+    nineqns = 0
+    case.vmcon.n = 1
+    case.vmcon.m = neqns + nineqns
+    case.vmcon.meq = neqns
+    case.vmcon.x[0] = 5.0e0 # Try different values, e.g. 5.0, 2.0, 1.0, 0.0...
 
-        # Expected values
-        case.exp.x = np.array([3.0])
-        case.exp.objf = 9.0
-        case.exp.c = np.array([0.0])
-        case.exp.vlam = np.array([1.5])
+    # Expected values
+    case.exp.x = np.array([3.0])
+    case.exp.objf = 9.0
+    case.exp.c = np.array([0.0])
+    case.exp.vlam = np.array([1.5])
 
-        return case
+    return case
 
 def get_case_fns():
     """Create a list of test case getter functions to run.
