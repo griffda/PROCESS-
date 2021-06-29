@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.1.1   Release Date :: 2021-03-17
-   Tag No. : v2.1-271-g946465bd
-    Branch : 1321-reduce-intermittent-failures-in-regression-tests
+   Tag No. : v2.1-299-g48aef294
+    Branch : 1332-additional-waste-facilities-building-costs
    Git log : COMMIT_MSG
- Date/time : 26 May 2021 16:07:45 +01:00(hh:mm) UTC
-      User : jmaddock
-  Computer : J0826UBUNTU
- Directory : /tmp/pytest-of-jmaddock/pytest-105/test_solver0
-     Input : /tmp/pytest-of-jmaddock/pytest-105/test_scenario_scenario13_0/IN.DAT
+ Date/time : 28 Jun 2021 17:42:10 +01:00(hh:mm) UTC
+      User : rhicha
+  Computer : l0500
+ Directory : /tmp/pytest-of-rhicha/pytest-15/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-15/test_scenario_kit_blanket_0/IN.DAT
  Run title : Michael's test file
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  

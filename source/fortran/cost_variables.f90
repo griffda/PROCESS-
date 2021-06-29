@@ -646,6 +646,9 @@ module cost_variables
 
   real(dp), dimension(4) :: ucwst
   !! cost of waste disposal (M$/y/1200MW)
+
+  real(dp) :: wfbuilding
+  !! fixed value for waste facility buildings (2017 US$)
   
   contains
 
@@ -825,6 +828,7 @@ module cost_variables
     step_uc_cryo_al = 8.1D1
     step_mc_cryo_al_per = 2.0D-1
     sitecost = 1.0D8
+    wfbuilding = 1.0D8
 
   end subroutine init_cost_variables
 end module cost_variables

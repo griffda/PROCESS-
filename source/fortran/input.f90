@@ -232,7 +232,8 @@ contains
       ucpens, cland, ucwindpf, i_cp_lifetime, cplife_input, step_con, &
       step_cconfix, step_cconshpf, step_currency, step_uccase, step_uccu, &
       step_ucsc, step_ucfnc, step_ucfwa, step_ucfws, step_ucfwps, step91_per, &
-      step92_per, step93_per, step_uc_cryo_al, step_mc_cryo_al_per, sitecost
+      step92_per, step93_per, step_uc_cryo_al, step_mc_cryo_al_per, sitecost, &
+      wfbuilding
     use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
@@ -2682,9 +2683,12 @@ contains
        case ('discount_rate')
           call parse_real_variable('discount_rate', discount_rate, 0.0D0, 0.5D0, &
                'Effective cost of money')
-      case ('sitecost')
-           call parse_real_variable('sitecost', sitecost, 0.0D0, 1.0D9, &
-                'Fixed site cost ($)')
+       case ('sitecost')
+          call parse_real_variable('sitecost', sitecost, 0.0D0, 1.0D9, &
+               'Fixed site cost ($)')
+       case ('wfbuilding')
+          call parse_real_variable('wfbuilding', wfbuilding, 0.0D0, 1.0D9, &
+               'Fixed cost Waste Facility buildings ($)')
 
           !  Unit cost settings
 
