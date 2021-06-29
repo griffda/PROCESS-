@@ -1,4 +1,10 @@
-"""Integration tests for VMCON."""
+"""Integration tests for VMCON.
+
+Cases 1 to 3 are recommended, others are included to probe the code's
+behaviour with different initial guesses for the solution vector x
+Expected answers for tests 1 to 3 are given in
+VMCON documentation ANL-80-64
+"""
 from process.fortran import init_module
 from process.fortran import error_handling
 from process.vmcon import Vmcon
@@ -21,170 +27,6 @@ error_handling.initialise_error_list()
 def reinit():
     """Re-initialise Fortran module variables before each test is run."""
     init_module.init_all_module_vars()
-
-# TODO vmcon_test commented out pending conversion to Python. vmcon_test
-# depends on passing subroutine arguments to vmcon, which cannot be done now
-# that vmcon is called from Python in optimiser.py (without subroutine args).
-# Once a Python Vmcon class is created, these custom test subroutines (objfn
-# and dobjfn) will be able to be called again, and this test reinstated in a
-# partially Python form.
-
-#   integer :: nfun ! function call counter
-#   integer :: itest
-
-#   !  Choose test to run by changing itest in main program below.
-#   !  1 to 3 are recommended, others are included to probe the code's
-#   !  behaviour with different initial guesses for the solution vector x
-#   !  Expected answers for tests 1 to 3 are given in
-#   !  VMCON documentation ANL-80-64
-
-#   real(dp), dimension(2) :: x_exp
-#   real(dp), dimension(2) :: c_exp, vlam_exp
-#   real(dp) :: objf_exp, errlg_exp, errlm_exp
-#   real(dp) :: errcom_exp, errcon_exp
-#   integer :: ifail_exp
-#   integer, parameter :: maxcal = 100
-#   integer :: neqns
-#   integer :: nfev2     ! number of calls to FCNVMC1 (VMCON function caller) made
-#   integer :: nineqns   !  number of inequality constraints VMCON must satisfy
-#   integer :: nvar      !  number of iteration variables to use
-#   integer :: nviter    !  number of VMCON iterations performed 
-#   integer :: ipvlam
-#   integer, parameter :: ipnvars = 175   ! Local variable
-#   integer, parameter :: ipeqns = 87     ! Local variable
-
-# contains
-
-#   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-#   subroutine init_vmcon_test
-#     !! Initialise module variables
-#     implicit none
-
-#     nfun = 0
-#     itest = 1
-#     neqns = 0
-#     nfev2 = 0
-#     nineqns = 0
-#     nvar = 0
-#     nviter = 0
-#     ipvlam = 0
-#   end subroutine init_vmcon_test
-
-#   subroutine inittest(nvar,neqns,nineqns,x,ilower,iupper,bndl,bndu)
-
-#     case (5)
-
-#         !  Intersection of parabola x^2 with straight line 2x+3
-#         !  Unorthodox (and not recommended) method to find the root
-#         !  of an equation.
-#         !
-#         !  Maximise f(x1) = x1**2
-#         !  subject to the following constraint:
-#         !  c1(x1) = x1**2 - 2.0D0*x1 - 3 = 0
-#         !
-#         !  Solutions to c1(x1) are x1 = -1 and x1 = 3, and depending on
-#         !  the initial guess for x1 either (or neither...) solution might
-#         !  be found. Since there is one constraint equation with one unknown
-#         !  the code cannot optimise properly.
-
-#         nvar = 1
-#         neqns = 1
-#         nineqns = 0
-
-#         x(1) = 5.0D0  !  Try different values, e.g. 5.0, 2.0, 1.0, 0.0...
-
-#         !  No bounds on x values set
-#         ilower(1) = 0
-#         iupper(1) = 0
-#         bndl(:) = 0.0D0 ; bndu(:) = 0.0D0
-
-#         x_exp(1) = 3.0
-#         objf_exp = 9.0D0
-#         c_exp(1) = 0.0D0
-#         vlam_exp(1) = 1.5D0
-#         errlg_exp = 0.0D0
-#         errlm_exp = 0.0D0
-#         errcom_exp = 0.0D0
-#         errcon_exp = 0.0D0
-#         ifail_exp = 1
-
-#     end select
-
-#   end subroutine inittest
-
-#   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-#   subroutine objfn(n,m,x,objf,conf, ifail)
-#       ! variable itest cannot be passed here as the argument format is fixed by VMCON.
-#       ! itest is a module-level variable.
-
-#     implicit none
-#     integer, intent(in) :: n,m
-#     real(dp), dimension(n), intent(in) :: x
-#     real(dp), intent(out) :: objf
-#     real(dp), dimension(m), intent(out) :: conf
-#     integer, intent(inout) :: ifail
-#     ! ifail is not used here, but is required to avoid an interface mismatch
-#     ! when calling vmcon with objfn as an argument
-#     select case (itest)
-
-
-#     case (5)
-
-#         !  Intersection of parabola x^2 with straight line 2x+3
-#         !  Maximise f(x1) = x1**2
-#         !  subject to the following constraint:
-#         !  c1(x1) = x1**2 - 2.0D0*x1 - 3 = 0
-
-#         objf = x(1)*x(1)
-
-#         conf(1) = x(1)*x(1) - 2.0D0*x(1) - 3.0D0
-
-#     end select
-
-#     nfun = nfun + 1
-
-#   end subroutine objfn
-
-#   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-#   subroutine dobjfn(n,m,x,fgrd,cnorm,lcnorm,ifail)
-
-#     implicit none
-
-#     !  Arguments
-
-#     integer, intent(in) :: n,m,lcnorm
-#     real(dp), dimension(n), intent(in) :: x
-#     real(dp), dimension(n), intent(out) :: fgrd
-#     real(dp), dimension(lcnorm,m), intent(out) :: cnorm
-#     integer, intent(inout) :: ifail
-#     ifail = 0
-
-#     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-#     !  fgrd(1...n) are the gradients of the objective function f
-#     !  with respect to x1...xn
-
-#     !  cnorm(1...n, 1...m) are the gradients of the constraints 1...m
-#     !  with respect to x1...xn
-
-#     select case (itest)
-#     case (5)
-
-#         !  Intersection of parabola x^2 with straight line 2x+3
-#         !  Maximise f(x1) = x1**2
-#         !  subject to the following constraint:
-#         !  c1(x1) = x1**2 - 2.0D0*x1 - 3 = 0
-
-#         fgrd(1) = 2.0D0*x(1)
-
-#         cnorm(1,1) = 2.0D0*x(1) - 2.0D0
-
-#     end select
-
-#   end subroutine dobjfn
 
 class Case():
     """A Vmcon test case."""
@@ -360,6 +202,22 @@ class Vmcon4(VmconTest):
         self.cnorm[0, 0] = 2.0 * self.x[0]
         self.cnorm[1, 0] = 2.0 * self.x[1]
 
+class Vmcon5(VmconTest):
+    """Override fcnvmc1 and 2 methods for test case 5.
+
+    :param VmconTest: testing class for Vmcon
+    :type VmconTest: VmconTest
+    """
+    def fcnvmc1(self):
+        """Function evaluator."""
+        self.objf = self.x[0]**2
+        self.conf[0] = self.x[0]**2 - 2.0 * self.x[0] - 3.0
+
+    def fcnvmc2(self):
+        """Gradient function evaluator."""
+        self.fgrd[0] = 2.0 * self.x[0]
+        self.cnorm[0, 0] = 2.0 * self.x[0] - 2.0
+
 def get_case1():
     """Create test case 1 for Vmcon.
     
@@ -510,6 +368,49 @@ def get_case4():
 
         return case
 
+def get_case5():
+        """Create test case 5 for Vmcon.
+
+        Set up vmcon for the run and define the expected result.
+
+        Intersection of parabola x^2 with straight line 2x+3
+        Unorthodox (and not recommended) method to find the root
+        of an equation.
+        
+        Maximise f(x1) = x1**2
+        subject to the following constraint:
+        c1(x1) = x1**2 - 2.0D0*x1 - 3 = 0
+
+        Solutions to c1(x1) are x1 = -1 and x1 = 3, and depending on
+        the initial guess for x1 either (or neither...) solution might
+        be found. Since there is one constraint equation with one unknown
+        the code cannot optimise properly.
+        """
+        # Create a case-specific Vmcon object with overridden fcnvmc1 and 2
+        case = Case("5", Vmcon5())
+
+        # Set up vmcon values for this case
+        neqns = 1
+        nineqns = 0
+        case.vmcon.n = 1
+        case.vmcon.m = neqns + nineqns
+        case.vmcon.meq = neqns
+        case.vmcon.xtol = 1.0e-8
+        case.vmcon.x[0] = 5.0e0 # Try different values, e.g. 5.0, 2.0, 1.0, 0.0...
+
+        # Expected values
+        case.exp.x = np.array([3.0])
+        case.exp.objf = 9.0
+        case.exp.c = np.array([0.0])
+        case.exp.vlam = np.array([1.5])
+        case.exp.errlg = 0.0
+        case.exp.errlm = 0.0
+        case.exp.errcom = 0.0
+        case.exp.errcon = 0.0
+        case.exp.ifail = 1
+
+        return case
+
 def get_case_fns():
     """Create a list of test case getter functions to run.
 
@@ -520,7 +421,8 @@ def get_case_fns():
         get_case1,
         get_case2,
         get_case3,
-        get_case4
+        get_case4,
+        get_case5
     ]
 
     return case_fns
