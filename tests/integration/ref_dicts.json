@@ -7465,6 +7465,7 @@
         "wallpf": 1.21,
         "waves": 0.0,
         "wce1_": "e_/me_",
+        "wfbuilding": 100000000.0,
         "wgt": 500000.0,
         "wgt2": 100000.0,
         "whtblbe": 0.0,
@@ -10507,6 +10508,7 @@
         "wallpf": "neutron wall load peaking factor (`iblanket=2` (KIT HCPB))",
         "waves": "used in current waveform of PF coils/central solenoid",
         "wce1_": "",
+        "wfbuilding": "fixed value for waste facility buildings (2017 US$)",
         "wgt": "reactor building crane capacity (kg) (calculated if 0 is input)",
         "wgt2": "hot cell crane capacity (kg) (calculated if 0 is input)",
         "whtblbe": "mass of blanket - beryllium part (kg)",
@@ -14136,6 +14138,10 @@
             "lb": 1.0,
             "ub": 2.0
         },
+        "wfbuilding": {
+            "lb": 0.0,
+            "ub": 1000000000.0
+        },
         "wgt": {
             "lb": 10000.0,
             "ub": 1000000.0
@@ -16660,7 +16666,8 @@
             "ucwindpf",
             "ucwindtf",
             "ucws",
-            "ucwst"
+            "ucwst",
+            "wfbuilding"
         ],
         "costs_2015_module": [
             "double",
@@ -19908,6 +19915,7 @@
         "vvhealw": "real_variable",
         "walalw": "real_variable",
         "wallpf": "real_variable",
+        "wfbuilding": "real_variable",
         "wgt": "real_variable",
         "wgt2": "real_variable",
         "wsvfac": "real_variable",
