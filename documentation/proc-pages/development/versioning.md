@@ -14,12 +14,27 @@ To upversion Process:
 1. Create a branch from `develop` and merge request for the upversion
 2. Increment the version in `setup.py` according to the semver rules
 3. Similarly increment the version in `main_module.f90`:`inform()`. This Fortran version step will be removed in time as the Python conversion progresses
-4. Add an entry to the `CHANGELOG.md` for all notable changes since the previous version. Looking at merge commits or merged merge requests since the previous version increment is a good way to do this
+4. Add an entry to the `CHANGELOG.md` for all notable changes since the previous version. Looking at merge commits (see "Extracting merge commits from git log" below) or merged merge requests since the previous version is a good way to do this
 5. Push and merge into `develop`
 6. Create a merge request to merge `develop` into `master`. Add a release note to the merge request, which should be a user-friendly summary of the changes in this version
 7. Merge `develop` into `master`
 8. Pull `master`, then tag the merge commit with `git tag -a vX.Y.Z -m "Version X.Y.Z"` (note the "v": see "Tagging a commit" below)
 9. Push the tag to `master` with `git push origin vX.Y.Z`
+
+### Extracting merge commits from git log
+A useful command for getting merge commits from git log for writing the changelog is:
+```bash
+git log v2.1..HEAD --merges --first-parent develop --pretty=format:%Cblue%B%n >> mergeCommits.log
+```
+`v2.1..HEAD` is the log range: from the last tag (`v2.1`) to `HEAD`
+
+`--merges` filters for merge commits
+
+`--first-parent develop` filters for the branch you're merging into (`develop`): i.e. only include merges into `develop`
+
+`%B` is subject and body together: full merge commit content
+
+`>> mergeCommits.log` output to file (optional)
 
 ## Tags
 ### Tagging a commit
