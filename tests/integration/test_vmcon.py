@@ -62,11 +62,11 @@ class ExpectedResult():
         self.c = []
         self.vlam = []
         self.objf = None
-        self.errlg = None
-        self.errlm = None
-        self.errcom = None
-        self.errcon = None
-        self.ifail = None
+        self.errlg = 0.0
+        self.errlm = 0.0
+        self.errcom = 0.0
+        self.errcon = 0.0
+        self.ifail = 1
 
 class VmconTest(ABC, Vmcon):
     """Testing class for Vmcon.
@@ -86,6 +86,8 @@ class VmconTest(ABC, Vmcon):
         self.iupper[0:2] = 0.0
         self.bndl[:] = 0.0
         self.bndu[:] = 0.0
+
+        self.xtol = 1.0e-8
 
     @abstractmethod
     def fcnvmc1(self):
@@ -239,7 +241,6 @@ def get_case1():
     case.vmcon.n = 2
     case.vmcon.m = neqns + nineqns
     case.vmcon.meq = neqns
-    case.vmcon.xtol = 1.0e-8
     case.vmcon.x[0:2] = 2.0e0
 
     # Expected values
@@ -248,10 +249,8 @@ def get_case1():
     case.exp.c = np.array([1.387778e-17, -7.671641e-13])
     case.exp.vlam = np.array([-1.594491, 1.846591])
     case.exp.errlg = 3.345088e-12
-    case.exp.errlm = 0.0
     case.exp.errcom = 1.416660e-12
     case.exp.errcon = 7.671779e-13
-    case.exp.ifail = 1
 
     return case
 
@@ -276,7 +275,6 @@ def get_case2():
     case.vmcon.m = neqns + nineqns
     case.vmcon.meq = neqns
     case.vmcon.x[0:2] = 2.0e0
-    case.vmcon.xtol = 1.0e-8
 
     # Expected values
     case.exp.x = np.array([1.664968, 5.540486e-1])
@@ -284,10 +282,8 @@ def get_case2():
     case.exp.c = np.array([1.556871, -1.021405e-14])
     case.exp.vlam = np.array([0.0, 8.048955e-1])
     case.exp.errlg = 2.343333e-11
-    case.exp.errlm = 0.0
     case.exp.errcom = 8.221245e-15
     case.exp.errcon = 1.021405e-14
-    case.exp.ifail = 1
 
     return case
 
@@ -314,7 +310,6 @@ def get_case3():
     case.vmcon.n = 2
     case.vmcon.m = neqns + nineqns
     case.vmcon.meq = neqns
-    case.vmcon.xtol = 1.0e-8
     case.vmcon.x[0:2] = 2.0e0
     
     # Expected values
@@ -323,8 +318,6 @@ def get_case3():
     case.exp.c = np.array([-6.6613381477509392e-16, -8.000000000004035e-01])
     case.exp.vlam = np.array([0.0, 0.0])
     case.exp.errlg = 1.599997724349894
-    case.exp.errlm = 0.0
-    case.exp.errcom = 0.0
     case.exp.errcon = 8.0000000000040417e-01
     case.exp.ifail = 5
 
@@ -360,11 +353,6 @@ def get_case4():
         case.exp.objf = 2.0**(1/2)
         case.exp.c = np.array([0.0])
         case.exp.vlam = np.array([1.0 * 2.0**(1/2)])
-        case.exp.errlg = 0.0
-        case.exp.errlm = 0.0
-        case.exp.errcom = 0.0
-        case.exp.errcon = 0.0
-        case.exp.ifail = 1
 
         return case
 
@@ -395,7 +383,6 @@ def get_case5():
         case.vmcon.n = 1
         case.vmcon.m = neqns + nineqns
         case.vmcon.meq = neqns
-        case.vmcon.xtol = 1.0e-8
         case.vmcon.x[0] = 5.0e0 # Try different values, e.g. 5.0, 2.0, 1.0, 0.0...
 
         # Expected values
@@ -403,11 +390,6 @@ def get_case5():
         case.exp.objf = 9.0
         case.exp.c = np.array([0.0])
         case.exp.vlam = np.array([1.5])
-        case.exp.errlg = 0.0
-        case.exp.errlm = 0.0
-        case.exp.errcom = 0.0
-        case.exp.errcon = 0.0
-        case.exp.ifail = 1
 
         return case
 
