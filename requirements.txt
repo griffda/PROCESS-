@@ -10,7 +10,6 @@ pillow>=5.1.0
 Markdown>=3.2.2
 toposort>=1.5
 pytest>=5.4.1
-#TODO: Temporary fix using commit id whilst awaiting a tagged release for f90wrap
-git+https://github.com/jameskermode/f90wrap.git@78918e84
+f90wrap>=0.2.6
 netCDF4>=1.5.4
 wheel>=0.36.2
