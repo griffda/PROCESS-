@@ -7,45 +7,39 @@
 #   TODO: Ideally we do not want to do this (likely be removed
 #   when f90wrap is dropped)
 
-
 MACRO(GET_GFORTRANLIBS)
-    SET(GFORTLIB_NAME "libgfortran")
+    MESSAGE(STATUS "[gfortran libraries]")
+
+    SET(LIBGFORTRAN_NAME "libgfortran")
+    
+    # Get the path of libgfortran.so
     EXECUTE_PROCESS(
-        COMMAND bash -c "$(which gcc) -lgfortran -c -v 2>&1 >/dev/null | grep COMPILER_PATH | cut -d '=' -f 2 "
-        OUTPUT_VARIABLE GFORTRAN_LIBRARY_DIRS
+        COMMAND bash -c "gfortran --print-file-name ${LIBGFORTRAN_NAME}${LIBRARY_OUTPUT_SUFFIX}"
+        # Returns just "libgfortran.so" rather than full path if not found
+        OUTPUT_VARIABLE LIBGFORTRAN_PATH
     )
-    STRING(REGEX MATCHALL "([^\:])+\/lib\/" LIB_LOCS "${GFORTRAN_LIBRARY_DIRS}")
-    LIST(REMOVE_DUPLICATES LIB_LOCS)
-    FOREACH(LOC ${LIB_LOCS})
-        FILE(GLOB_RECURSE GFORTSEARCH ${LOC}libgfortran*${LIBRARY_OUTPUT_SUFFIX})
-        LIST(LENGTH GFORTSEARCH NRES)
-        IF(GFORTSEARCH)
-            IF(NRES GREATER 1)
-                LIST(GET GFORTSEARCH 1 GFORTRAN_LIBRARY)
-            ELSE()
-                SET(GFORTRAN_LIBRARY ${GFORTSEARCH})
-            ENDIF()
-            BREAK()
-        ENDIF()
-    ENDFOREACH()
-        
-    IF(NOT GFORTRAN_LIBRARY)
-        MESSAGE(FATAL_ERROR "Could not retrieve location of GFortran Libraries from 'gcc -lgfortran'")
+    STRING(REGEX REPLACE "\n" "" LIBGFORTRAN_PATH ${LIBGFORTRAN_PATH})
+    
+    # Error if gfortran library path not found
+    IF(LIBGFORTRAN_PATH STREQUAL ${LIBGFORTRAN_NAME}${LIBRARY_OUTPUT_SUFFIX})
+        MESSAGE(FATAL_ERROR "Could not retrieve location of gfortran library")
     ENDIF()
+    MESSAGE(STATUS "\tlibgfortran path: ${LIBGFORTRAN_PATH}")
 
-    GET_FILENAME_COMPONENT(GFORTLIB_FILE_NAME ${GFORTRAN_LIBRARY} NAME)
-    SET(GFORTLIB_OUTPUT ${PYTHON_LIBS_DIR}/${GFORTLIB_FILE_NAME})
+    # Define copy destination for gfortran library
+    GET_FILENAME_COMPONENT(LIBGFORTRAN_FILE_NAME ${LIBGFORTRAN_PATH} NAME)
+    SET(LIBGFORTRAN_OUTPUT ${PYTHON_LIBS_DIR}/${LIBGFORTRAN_FILE_NAME})
 
+    # Target to copy gfortran library into Python package
     ADD_CUSTOM_TARGET(
-        ${GFORTLIB_NAME}
-        DEPENDS ${GFORTLIB_OUTPUT}
+        ${LIBGFORTRAN_NAME}
+        DEPENDS ${LIBGFORTRAN_OUTPUT}
     )
 
     ADD_CUSTOM_COMMAND(
-        OUTPUT ${GFORTLIB_OUTPUT}
-        COMMAND ${CMAKE_COMMAND} -E copy ${GFORTRAN_LIBRARY} ${GFORTLIB_OUTPUT}
+        OUTPUT ${LIBGFORTRAN_OUTPUT}
+        COMMAND ${CMAKE_COMMAND} -E copy ${LIBGFORTRAN_PATH} ${LIBGFORTRAN_OUTPUT}
     )
 
-    ADD_DEPENDENCIES(${GFORTLIB_NAME} ${F2PY_NAME})
-
+    ADD_DEPENDENCIES(${LIBGFORTRAN_NAME} ${F2PY_NAME})
 ENDMACRO(GET_GFORTRANLIBS)

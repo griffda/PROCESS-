@@ -24,15 +24,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.0   Release Date :: 2021-01-25
-   Tag No. : v2.1-147-g3a766c4a code contains untracked changes
-    Branch : issue-1264-joints-heating-error
-   Git log : Merge branch 'develop' into issue-1264-joints-heating-error
- Date/time :  8 Mar 2021 18:32:14 +00:00(hh:mm) UTC
-      User : skahn
-  Computer : J0320
- Directory : /tmp/pytest-of-skahn/pytest-113/test_solver0
-     Input : /tmp/pytest-of-skahn/pytest-113/test_scenario_scenario11_0/IN.DAT
+   Version : 2.1.1   Release Date :: 2021-03-17
+   Tag No. : v2.1-304-gca9897d9
+    Branch : 1333-costs-and-temperature-margin-missing-from-durham-rebco-model
+   Git log : COMMIT_MSG
+ Date/time : 29 Jun 2021 12:33:41 +01:00(hh:mm) UTC
+      User : schislett
+  Computer : LAPTOP-4TE2HACQ
+ Directory : /tmp/pytest-of-schislett/pytest-40/test_solver0
+     Input : /tmp/pytest-of-schislett/pytest-40/test_scenario_i_mode_0/IN.DAT
  Run title : I-mode 2019 PMU
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -249,6 +249,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Beta g coefficient                                                       (dnbeta)                      4.977  OP 
  Normalised thermal beta                                                                                1.237  OP 
  Normalised total beta                                                                                  1.420  OP 
+ Normalised toroidal beta                                                                               1.454  OP 
  Limit on thermal beta                                                    (betalim)                     0.055  OP 
  Plasma thermal energy (J)                                                                          9.205E+08  OP 
  Total plasma internal energy (J)                                         (total_plasma_internal_en 1.057E+09  OP 

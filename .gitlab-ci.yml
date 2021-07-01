@@ -6,7 +6,7 @@
 #  K. Zarebski
 #
 #  UKAEA
-#  02/12/2020
+#  11/03/2021
 #
 #-----------------------------------------------------
 
@@ -24,7 +24,11 @@ stages:
   before_script:
     - source ~/.venv_$PY_VERSION/bin/activate
     - python -m pip install --upgrade pip
-    - python -m pip install -r requirements.txt
+    # Manually install numpy as including it in requirements doesnt install it
+    # It is a pre-requisite to f90wrap install, although requirements in image
+    # always want latest to detect any immediate future problems
+    - python -m pip install --ignore-installed numpy
+    - python -m pip install --ignore-installed -r requirements.txt
     - python -m pip install git+https://github.com/jonMaddockUkaea/ford
     - python -m pip install --find-links=process_dist_$PY_VERSION process
     - apt update && apt upgrade -y
@@ -52,15 +56,18 @@ stages:
       - process_dist_$PY_VERSION/process-*.whl
       - build/CMakeFiles/process.dir/source/fortran/*.gcno
       - lcov_results
+      - python_modules.txt
     expire_in: 1 week
   script:
     - source ~/.venv_$PY_VERSION/bin/activate
     - python -m pip install --upgrade pip
-    - python -m pip install -r requirements.txt
+    - python -m pip install --ignore-installed numpy
+    - python -m pip install --ignore-installed -r requirements.txt
     - cmake -H. -Bbuild
     - cmake --build build
     - python3 setup.py sdist -d process_dist_$PY_VERSION
     - python3 setup.py bdist_wheel -d process_dist_$PY_VERSION
+    - python -m pip freeze > python_modules.txt
   tags:
     - ubuntu
 
@@ -70,6 +77,9 @@ make-py38:
     PY_VERSION: py38
 
 make-py36:
+  only:
+    - master
+    - develop
   extends: ".make"
   variables:
     PY_VERSION: py36
@@ -91,6 +101,9 @@ unit-py38:
   <<: *test-setup-py38
 
 unit-py36:
+  only:
+    - master
+    - develop
   extends: ".unit"
   <<: *test-setup-py36
 
@@ -112,6 +125,9 @@ integration-py38:
   <<: *test-setup-py38
 
 integration-py36:
+  only:
+    - master
+    - develop
   extends: ".integration"
   <<: *test-setup-py36
 
@@ -130,6 +146,9 @@ integration-py36:
   <<: *test-setup-py38
 
 .unitfort-py36:
+  only:
+    - master
+    - develop
   extends: ".unitfort"
   <<: *test-setup-py36
 
@@ -155,6 +174,9 @@ regression-py38:
     - make-py38
 
 regression-py36:
+  only:
+    - master
+    - develop
   extends: ".regression"
   <<: *test-setup-py36
   dependencies:
@@ -198,6 +220,9 @@ baseline_2019-py38:
   <<: *test-setup-py38
 
 baseline_2019-py36:
+  only:
+    - master
+    - develop
   extends: ".baseline_2019"
   <<: *test-setup-py36
 
@@ -228,6 +253,9 @@ baseline_2018-py38:
   <<: *test-setup-py38
 
 baseline_2018-py36:
+  only:
+    - master
+    - develop
   extends: ".baseline_2018"
   <<: *test-setup-py36
 
@@ -279,7 +307,6 @@ pages:
   when: on_success
   only:
     - develop
-    - kzarebsk/coverage-badge
   stage: pages
   image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
   script:
