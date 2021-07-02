@@ -119,7 +119,10 @@ LIST(APPEND PROCESS_SRCS
     buildings.f90
     buildings_variables.f90
     maths_library.f90
-    vmcon_test.f90
+    iteration_variables.f90
+    optimiz_module.f90
+    vmcon.f90
+    evaluators.f90
     costs_step.f90
 )
 

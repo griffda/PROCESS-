@@ -43,6 +43,7 @@ Box file T&amp;M/PKNIGHT/PROCESS (from 24/01/12)
 """
 from process import fortran
 from process.io import plot_proc
+from process.scan import Scan
 import argparse
 from pathlib import Path
 import sys
@@ -283,7 +284,7 @@ class SingleRun():
         self.kallenbach_tests()
         self.kallenbach_scan()
         self.call_solver()
-        self.scan()
+        self.run_scan()
         self.show_errors()
         self.finish()
         self.append_input()
@@ -364,10 +365,10 @@ class SingleRun():
         """Call the equation solver (HYBRD)."""
         self.ifail = fortran.main_module.eqslv()
 
-    def scan(self):
-        """Call scan routine if required."""
+    def run_scan(self):
+        """Create scan object if required."""
         if fortran.numerics.ioptimz >= 0:
-            fortran.scan_module.scan()
+            self.scan = Scan()
         else:
             fortran.final_module.final(self.ifail)
 
