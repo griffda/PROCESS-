@@ -30,7 +30,9 @@ def get_scenarios():
     # Path object for the scenarios directory (all scenarios dir)
 
     scenario_dirs = [x for x in p.iterdir() if x.is_dir()]
-    # List of scenario directory Path objects (individual scenario dirs)
+    scenario_dirs.sort(key=lambda scenario_dir: scenario_dir.name.lower())
+    # Sorted list of scenario directory Path objects (individual scenario dirs)
+    # Maintains order scenarios are run in
 
     # Create a Scenario object for each scenario dir and yield
     for scenario_dir in scenario_dirs:
@@ -47,7 +49,18 @@ def scenarios_run():
     logger.info("End of scenarios regression run")
     # TODO Need to log summary result of all tests
 
-@pytest.fixture(params=get_scenarios())
+def get_scenario_id(scenario):
+    """Return the name of the scenario.
+
+    Used for getting the IDs for a fixture parameterised with scenarios.
+    :param scenario: Scenario object parameterising a fixture
+    :type scenario: scenario.Scenario
+    :return: scenario name
+    :rtype: str
+    """
+    return scenario.name
+
+@pytest.fixture(params=get_scenarios(), ids=get_scenario_id)
 def scenario(scenarios_run, request):
     """Scenario fixture, parameterised with different scenarios.
 

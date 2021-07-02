@@ -39,7 +39,6 @@ contains
     use global_variables, only: run_tests, verbose, output_prefix
 		use constants, only: mfile
     use maths_library, only: secant_solve
-    use vmcon_module, only: vmcon
     use plasmod_variables, only: plasmod_nchannels, numerics_transp, & 
       plasmod_chisawpos, plasmod_x_heat, geom, plasmod_psepplh_sup, &
       plasmod_pfus, plasmod_dx_heat, plasmod_maxpauxor, plasmod_dtinc, num, &

@@ -169,7 +169,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use cost_variables, only: output_costs, step_ref
+    use cost_variables, only: output_costs, step_ref, sitecost
     use process_output, only: oshead, ocosts, oblnkl
 
     implicit none
@@ -184,15 +184,15 @@ contains
 
     ! Initialise as zero
     step20 = 0.0D0
-   
+
     ! 20.01 Land
-    ! Original STARFIRE value, scaling with thermal power
-    step2001 = step_ref(1) * (pth / ptherm_star)**0.6D0
+    ! Fixed site cost (2017 M$); read from input, default = 100 M$
+    step2001 = sitecost / 1.0D6
     step20 = step20 + step2001
 
     ! 20.02 Site Preparation
-    ! Original STARFIRE value, scaling with thermal power
-    step2002 = step_ref(2) * (pth / ptherm_star)**0.6D0
+    ! Original STARFIRE value
+    step2002 = step_ref(2)
     step20 = step20 + step2002
 
     ! Output costs
@@ -219,7 +219,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ! #TODO Add reference for STEP cost values
-    use cost_variables, only: output_costs, step_con, step_ref
+    use cost_variables, only: output_costs, step_con, step_ref, wfbuilding
     use process_output, only: oshead, ocosts, oblnkl
     use buildings_variables, only: a_reactor_bldg, a_ee_ps_bldg, &
       a_aux_services_bldg, a_hot_cell_bldg, a_reactor_service_bldg, &
@@ -239,8 +239,8 @@ contains
     real(dp):: &
     step2101, step2102, step2103, step2104, step2105, step2106, &
     step2107, step2108, step2109, step2110, step2111, step2112, &
-    step2113, step2114, step2115, step2116, step2117, step2198, &
-    step2199
+    step2113, step2114, step2115, step2116, step2117, step2118, &
+    step2198, step2199
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -248,8 +248,8 @@ contains
     step21 = 0.0D0
    
     ! 21.01 Site Improvements
-    ! Original STARFIRE value, scaling with thermal power
-    step2101 = step_ref(3) * (pth / ptherm_star)**0.6D0
+    ! Original STARFIRE value
+    step2101 = step_ref(3)
     step21 = step21 + step2101
     
     ! 21.02 Reactor Building
@@ -318,6 +318,11 @@ contains
     step2117 = step_ref(19) * (pth / ptherm_star)**0.6D0  
     step21 = step21 + step2117
 
+    ! 21.18 Waste Facilities Buildings
+    ! Fixed cost (2017 M$); read from input, default = 100 M$
+    step2118 = wfbuilding / 1.0D6
+    step21 = step21 + step2118
+
     ! 21.98 Spares
     ! STARFIRE percentage
     step2198 = 6.541D-3 * step21
@@ -348,6 +353,7 @@ contains
       call ocosts(outfile,'(step2115)','Cryogenics and Inert Gas Storage Building (M$)', step2115)
       call ocosts(outfile,'(step2116)','Security Building (M$)', step2116)
       call ocosts(outfile,'(step2117)','Ventilation Stack (M$)', step2117)
+      call ocosts(outfile,'(step2118)','Waste Facilities Buildings (M$)', step2118)
       call ocosts(outfile,'(step2198)','Spares (M$)', step2198)
       call ocosts(outfile,'(step2199)','Contingency (M$)', step2199)
       call oblnkl(outfile)

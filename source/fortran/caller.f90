@@ -43,6 +43,7 @@ subroutine caller(xc,nvars)
   use cost_variables, only: iavail, cost_model
   use constants, only: nout
   use global_variables, only: verbose
+  use define_iteration_variables, only: convxc
 
   ! Import blanket modules
   use ccfe_hcpb_module, only: ccfe_hcpb, tbr_shimwell

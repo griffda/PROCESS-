@@ -8,6 +8,8 @@ PROCESS is supported on Ubuntu 20, Mac and Windows 10 (via Windows Subsystem for
 
 This installation is known to work on Ubuntu 20 (under Windows Subsystem for Linux or not). For Mac, see below.
 
+GFortran version 9 or above is needed for successful installation and execution of PROCESS. Versions below GFortran-9 will be rejected by CMake by default since, while PROCESS might compile successfully with lower GFortran versions, other aspects of PROCESS (tests, coverage, etc.) will fail.
+
 If you have previously modified your `$PYTHONPATH` environment variable to include `process/utilities`, perhaps in your `~/.bashrc` file, then please remove this modification. Re-start your terminal for the changes to take effect, and check this is not on your `$PYTHONPATH` with:
 ```bash
 echo $PYTHONPATH
@@ -45,6 +47,16 @@ Now we need to compile the Fortran and create the Python interface. This is done
 ```bash
 cmake -S . -B build
 cmake --build build
+```
+CMake needs to be at least version `3.13.0`. This is so that the command `cmake -S . -B build` executes correctly. Running this command on an earlier CMake version results in:
+```bash
+CMake Error: The source directory "/home/process/build" does not exist.
+Specify --help for usage, or press the help button on the CMake GUI.
+``` 
+subsequently making the `build` directory and running the command again results in:
+```bash
+CMake Error: The source directory "/home/process/build" does not appear to contain CMakeLists.txt.
+Specify --help for usage, or press the help button on the CMake GUI.
 ```
 
 The build step may take some time when run for the first time (~3 mins) as the Fortran code is compiled and then wrapped using `f90wrap` and `f2py` to create the Python libraries. Once this is completed the Process Python package is then automatically installed using `pip` and should be ready to use on Linux. If the installation was successful the command `process` should be available on the command line.

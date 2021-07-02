@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.1   Release Date :: 2021-03-17
-   Tag No. : v2.1-215-g99e2f1db code contains untracked changes
-    Branch : 1295-bop-cost-for-cost-model-2-2
+   Tag No. : v2.1-304-gca9897d9
+    Branch : 1333-costs-and-temperature-margin-missing-from-durham-rebco-model
    Git log : COMMIT_MSG
- Date/time : 17 May 2021 12:34:31 +01:00(hh:mm) UTC
-      User : jmaddock
-  Computer : J0826UBUNTU
- Directory : /tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario2_0
-     Input : /tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario20_0/IN.DAT
+ Date/time : 29 Jun 2021 12:34:11 +01:00(hh:mm) UTC
+      User : schislett
+  Computer : LAPTOP-4TE2HACQ
+ Directory : /tmp/pytest-of-schislett/pytest-40/test_solver0
+     Input : /tmp/pytest-of-schislett/pytest-40/test_scenario_L_mode_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  

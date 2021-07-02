@@ -6,6 +6,16 @@ The [physics](http://www.sciencedirect.com/science/article/pii/S0920379614005961
 
 Below is a list of publications using PROCESS by year:
 
+## 2021
+
+[Design uncertainty for a HELIAS 5-B stellarator fusion power plant](https://www.sciencedirect.com/science/article/pii/S0920379621004841)   
+S.I. Muldrew, F. Warmer, J. Lion, H. Lux    
+Fusion Engineering and Design (2021) in press   
+
+[Feasibility of D-D start-up under realistic technological assumptions for EU-DEMO](https://www.sciencedirect.com/science/article/pii/S0920379621003306)   
+M. Siccinio, P. Chiovaro, F. Cismondi, M. Coleman, C. Day, E. Fable, G. Federici, T. Härtl, J. Schwenzer, G.A. Spagnuolo   
+Fusion Engineering and Design 171 (2021) 112554  
+
 ## 2020
 
 [DEMO physics challenges beyond ITER](https://www.sciencedirect.com/science/article/pii/S0920379620301514)   
@@ -14,7 +24,7 @@ Fusion Engineering and Design 156 (2020) 111603
 
 [Summary of the 3rd IAEA technical meeting on divertor concepts](https://iopscience.iop.org/article/10.1088/1741-4326/ab9a0c/meta)   
 M. Barbarino, A.W. Leonard, N. Asakura, M. Jakubowski, M. Kobayashi, B. Lipschultz, R. Neu, L. Wang, M. Wischmeier   
-Nuclear Fusion (2020) in press   
+Nuclear Fusion 60 (2020) 097001   
 
 [Assessment of alternative divertor configurations as an exhaust solution for DEMO](https://iopscience.iop.org/article/10.1088/1741-4326/ab8a6a)   
 H. Reimerdes, R. Ambrosino, P. Innocente, A. Castaldo, P. Chmielewski, G. Di Gironimo, S. Merriman, V. Pericoli-Ridolfini, L. Aho-Mantilla, R. Albanese, H. Bufferand, G. Calabro, G. Ciraolo, D. Coster, N. Fedorczak, S. Ha, R. Kembleton, K. Lackner, V.P. Loschiavo, T. Lunt, D. Marzullo, R. Maurizio, F. Militello, G. Ramogida, F. Subba, S. Varoutis, R. Zagórski, H. Zohm   

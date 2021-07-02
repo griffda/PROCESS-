@@ -4,7 +4,7 @@
 
 # Specify the minimum version for CMake
 # 3.12 is required due to use of list TRANSFORM commands
-CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.13)
 
 # Ensure python3 interpreter is used
 if(CMAKE_HOST_APPLE)
@@ -28,7 +28,7 @@ INCLUDE(${CMAKE_SOURCE_DIR}/cmake/gfortranlibs.cmake)
 # Retrieve and set information for preprocessor
 FindPreprocessingVars()
 
-SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -fPIC -ftest-coverage -fprofile-arcs -fbounds-check")
+SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -fPIC -ftest-coverage -fprofile-arcs -fcheck=bounds -finit-local-zero")
 
 # Get System information, log as much information as we can
 # for ease later on when debugging system specific issues
@@ -43,7 +43,8 @@ MESSAGE(STATUS "[PROCESS Build Information]: ")
 MESSAGE(STATUS "\tPython Binary: ${PYTHON_EXECUTABLE}")
 MESSAGE(STATUS "\tBinary Location: ${CMAKE_BINARY_DIR}")
 MESSAGE(STATUS "\tFortran Compiler: ${CMAKE_Fortran_COMPILER}")
-MESSAGE(STATUS "\tFortran Compiler Version: ${CMAKE_Fortran_VERSION}")
+MESSAGE(STATUS "\tFortran Compiler ID: ${CMAKE_Fortran_COMPILER_ID}")
+MESSAGE(STATUS "\tFortran Compiler Version: ${CMAKE_Fortran_COMPILER_VERSION}")
 MESSAGE(STATUS "\tPROCESS Module Installation Directory: ${PROCESS_MODULE_INSTALL_LOCATION}")
 
 # Define various addresses for locations of files
@@ -118,7 +119,10 @@ LIST(APPEND PROCESS_SRCS
     buildings.f90
     buildings_variables.f90
     maths_library.f90
-    vmcon_test.f90
+    iteration_variables.f90
+    optimiz_module.f90
+    vmcon.f90
+    evaluators.f90
     water_usage_variables.f90
     costs_step.f90
 )

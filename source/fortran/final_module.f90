@@ -25,7 +25,8 @@ subroutine final(ifail)
   use numerics, only: nfev1, ncalls, xcm, ioptimz, icc, nineqns, nviter, &
     ipeqns, nvar, neqns, lablcc, rcm
   use output_module, only: output 
-  use constraints, only: constraint_eqns 
+  use constraints, only: constraint_eqns
+  use define_iteration_variables, only: loadxc
   implicit none
 
   !  Arguments
