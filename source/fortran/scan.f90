@@ -470,29 +470,6 @@ contains
 
   subroutine scan_2d_store_output(ifail, iscan_1, iscan_R, iscan, outvar, &
     sweep_1_vals, sweep_2_vals)
-    use constraint_variables, only: taulimit
-    use cost_variables, only: cdirt, coe, coeoam, coefuelt, c222, ireactor, &
-      capcost, coecap, c221
-		use current_drive_variables, only: pheat, pinjmw, bootipf, enbeam, bigq
-		use divertor_variables, only: hldiv
-		use error_handling, only: errors_on
-		use heat_transport_variables, only: pgrossmw, pinjwp, pnetelmw
-		use impurity_radiation_module, only: fimp
-		use pfcoil_variables, only: whtpf
-		use pf_power_variables, only: srcktpm
-    use numerics, only: sqsumsq
-    use process_output, only: oblnkl, ostars
-    use tfcoil_variables, only: tfareain, wwp2, strtf2, tfcmw, tcpmax, oacdcp, &
-      tfcpmw, fcutfsu, acond, fcoolcp, rcool, whttf, ppump, vcool, wwp1, n_tf, &
-		  dr_tf_wp, b_crit_upper_nbti
-		use fwbs_variables, only: tpeak
-    use div_kal_vars, only: totalpowerlost, pressure0, &
-      ttarget, neratio, qtargettotal, neomp, psep_kallenbach, fmom
-		use final_module, only: final
-    use physics_variables, only: q, aspect, pradmw, dene, powfmw, btot, tesep, &
-      pdivt, ralpne, ten, betap, hfac, teped, palpnb, qlim, rmajor, wallmw, &
-      beta, betalim, bt, plascur
-    use constants, only: nout, mfile, nplot
     implicit none
 
     integer, intent(in) :: ifail
@@ -502,100 +479,7 @@ contains
     real(dp), dimension(noutvars,ipnscns), intent(out) :: outvar
     real(dp), dimension(ipnscns), intent(out) :: sweep_1_vals, sweep_2_vals
 
-    call final(ifail)
-
-    ! Turn off error reporting (until next output)
-    errors_on = .false.
-
-    ! Store values for PLOT.DAT output
-    outvar( 1,iscan) = dble(ifail)
-    outvar( 2,iscan) = sqsumsq
-    outvar( 3,iscan) = coe
-    outvar( 4,iscan) = coecap
-    outvar( 5,iscan) = coefuelt
-    outvar( 6,iscan) = coeoam
-    outvar( 7,iscan) = capcost
-    outvar( 8,iscan) = c221 + c222
-    outvar( 9,iscan) = cdirt / 1.0D3
-    outvar(10,iscan) = rmajor
-    outvar(11,iscan) = aspect
-    outvar(12,iscan) = 1.0D-6 * plascur
-    outvar(13,iscan) = bt
-    outvar(14,iscan) = btot
-    outvar(15,iscan) = q
-    outvar(16,iscan) = qlim
-    outvar(17,iscan) = beta
-    outvar(18,iscan) = betalim
-    outvar(19,iscan) = betap / aspect
-    outvar(20,iscan) = ten/10.0D0
-    outvar(21,iscan) = dene/1.0D20
-    outvar(22,iscan) = hfac(6)
-    outvar(23,iscan) = hfac(7)
-    outvar(24,iscan) = powfmw
-    outvar(25,iscan) = palpnb * 5.0D0
-    outvar(26,iscan) = wallmw
-    outvar(27,iscan) = pinjmw
-    outvar(28,iscan) = pinjwp
-    outvar(29,iscan) = pheat
-    outvar(30,iscan) = pinjmw - pheat
-    outvar(31,iscan) = bigq
-    outvar(32,iscan) = bootipf
-    outvar(33,iscan) = enbeam/1.0D3
-    outvar(34,iscan) = hldiv
-    outvar(35,iscan) = tfcmw
-    outvar(36,iscan) = whttf
-    outvar(37,iscan) = strtf2
-    outvar(38,iscan) = oacdcp/1.0D6
-    outvar(39,iscan) = tcpmax
-    outvar(40,iscan) = tfcpmw
-    outvar(41,iscan) = fcoolcp
-    outvar(42,iscan) = rcool
-    outvar(43,iscan) = vcool
-    outvar(44,iscan) = ppump/1.0D6
-    outvar(45,iscan) = 1.0D-3 * srcktpm
-    outvar(46,iscan) = whtpf
-    outvar(47,iscan) = pgrossmw
-    outvar(48,iscan) = pnetelmw
-    if (ireactor == 1) then
-        outvar(49,iscan) = (pgrossmw-pnetelmw) / pgrossmw
-    else
-        outvar(49,iscan) = 0.0D0
-    end if
-    outvar(50,iscan) = pdivt/rmajor
-    !outvar(51,iscan) = fimpvar
-    outvar(51,iscan) = 0.0d0
-    outvar(52,iscan) = pradmw
-    outvar(53,iscan) = tpeak
-    outvar(54,iscan) = fcutfsu
-    outvar(55,iscan) = (wwp1+wwp2)*dr_tf_wp
-    outvar(56,iscan) = acond
-    outvar(57,iscan) = tfareain/n_tf
-    outvar(58,iscan) = taulimit
-    outvar(59,iscan) = tesep
-    outvar(60,iscan) = neomp
-    outvar(61,iscan) = psep_kallenbach
-    outvar(62,iscan) = neratio
-    outvar(63,iscan) = qtargettotal
-    outvar(64,iscan) = pressure0
-    outvar(65,iscan) = ttarget
-    outvar(66,iscan) = ralpne
-    outvar(67,iscan) = fmom
-    outvar(68,iscan) = totalpowerlost
-    outvar(69,iscan) = fimp(1)
-    outvar(70,iscan) = fimp(2)
-    outvar(71,iscan) = fimp(3)
-    outvar(72,iscan) = fimp(4)
-    outvar(73,iscan) = fimp(5)
-    outvar(74,iscan) = fimp(6)
-    outvar(75,iscan) = fimp(7)
-    outvar(76,iscan) = fimp(8)
-    outvar(77,iscan) = fimp(9)
-    outvar(78,iscan) = fimp(10)
-    outvar(79,iscan) = fimp(11)
-    outvar(80,iscan) = fimp(12)
-    outvar(81,iscan) = fimp(13)
-    outvar(82,iscan) = fimp(14)
-    outvar(83,iscan) = teped
+    call scan_1d_store_output(iscan, ifail, outvar)
 
     sweep_1_vals(iscan) = sweep(iscan_1)
     sweep_2_vals(iscan) = sweep_2(iscan_R)
