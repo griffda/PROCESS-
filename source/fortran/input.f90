@@ -236,7 +236,7 @@ contains
     use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
-      etalh, frbeam 
+      etalh, frbeam, harnum 
     use div_kal_vars, only: kallenbach_test_option, &
       relerr_sol, kallenbach_scan_switch, lcon_factor, kallenbach_scan_num, &
       kallenbach_scan_end, kallenbach_scan_start, target_spread, &
@@ -1294,6 +1294,9 @@ contains
        case ('gamma_ecrh')
           call parse_real_variable('gamma_ecrh', gamma_ecrh, 0.0D0, 1.0D0, &
                'User input ECRH gamma_CD')
+       case ('harnum')
+          call parse_real_variable('harnum', harnum, 1.0D0, 10.0D0, &
+               'cyclotron harmonic frequency number')
        case ('rho_ecrh')
           call parse_real_variable('rho_ecrh', rho_ecrh, 0.0D0, 1.0D0, &
                'normalised minor radius at which electron cyclotron current drive is maximum')
