@@ -361,7 +361,7 @@ contains
     real(dp) :: lchodura
     real(dp),parameter :: squareroot6 = sqrt(6d0)
 
-    character(len=100) :: filename
+    character(len=200) :: filename
     ! Angle between B and the surface normal (deg)
     real(dp) :: psi
     ! Poloidal flux through flux tube at OMP, target 2018/6/15

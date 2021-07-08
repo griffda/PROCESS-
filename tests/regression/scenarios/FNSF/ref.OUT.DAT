@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.1.1   Release Date :: 2021-03-17
-   Tag No. : v2.1-271-g946465bd
-    Branch : 1321-reduce-intermittent-failures-in-regression-tests
+   Tag No. : v2.1-304-gca9897d9
+    Branch : 1333-costs-and-temperature-margin-missing-from-durham-rebco-model
    Git log : COMMIT_MSG
- Date/time : 26 May 2021 16:06:58 +01:00(hh:mm) UTC
-      User : jmaddock
-  Computer : J0826UBUNTU
- Directory : /tmp/pytest-of-jmaddock/pytest-105/test_solver0
-     Input : /tmp/pytest-of-jmaddock/pytest-105/test_scenario_scenario5_0/IN.DAT
+ Date/time : 29 Jun 2021 12:33:08 +01:00(hh:mm) UTC
+      User : schislett
+  Computer : LAPTOP-4TE2HACQ
+ Directory : /tmp/pytest-of-schislett/pytest-40/test_solver0
+     Input : /tmp/pytest-of-schislett/pytest-40/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  

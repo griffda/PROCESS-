@@ -4,6 +4,7 @@ from process.main import Process
 from process.main import SingleRun
 from process.main import VaryRun
 from process import fortran
+from process import scan
 import pytest
 from pathlib import Path
 import argparse
@@ -256,14 +257,14 @@ def test_scan(single_run, monkeypatch):
     """
     # Mock ioptimz value and check scan can run
     monkeypatch.setattr(fortran.numerics, "ioptimz", 0)
-    monkeypatch.setattr(fortran.scan_module, "scan", lambda: None)
-    single_run.scan()
+    monkeypatch.setattr(scan.Scan, "__init__", mock_init)
+    single_run.run_scan()
 
     # If ioptimz < 0, mock call to final
     monkeypatch.setattr(fortran.numerics, "ioptimz", -1)
     monkeypatch.setattr(single_run, "ifail", 0, raising=False)
     monkeypatch.setattr(fortran.final_module, "final", lambda x: None)
-    single_run.scan()
+    single_run.run_scan()
 
 def test_set_mfile(single_run, monkeypatch):
     """Check the mfile filename is being stored correctly.

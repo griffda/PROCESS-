@@ -43,7 +43,8 @@ MESSAGE(STATUS "[PROCESS Build Information]: ")
 MESSAGE(STATUS "\tPython Binary: ${PYTHON_EXECUTABLE}")
 MESSAGE(STATUS "\tBinary Location: ${CMAKE_BINARY_DIR}")
 MESSAGE(STATUS "\tFortran Compiler: ${CMAKE_Fortran_COMPILER}")
-MESSAGE(STATUS "\tFortran Compiler Version: ${CMAKE_Fortran_VERSION}")
+MESSAGE(STATUS "\tFortran Compiler ID: ${CMAKE_Fortran_COMPILER_ID}")
+MESSAGE(STATUS "\tFortran Compiler Version: ${CMAKE_Fortran_COMPILER_VERSION}")
 MESSAGE(STATUS "\tPROCESS Module Installation Directory: ${PROCESS_MODULE_INSTALL_LOCATION}")
 
 # Define various addresses for locations of files
@@ -118,7 +119,10 @@ LIST(APPEND PROCESS_SRCS
     buildings.f90
     buildings_variables.f90
     maths_library.f90
-    vmcon_test.f90
+    iteration_variables.f90
+    optimiz_module.f90
+    vmcon.f90
+    evaluators.f90
     costs_step.f90
 )
 

@@ -46,7 +46,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=98) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '2.1.1   Release Date :: 2021-03-17'
+       '2.1.2   Release Date :: 2021-07-01'
   character(len = 50) :: dt_time
   character(len=72), dimension(10) :: id
 
@@ -270,7 +270,8 @@ subroutine eqslv(ifail)
     icc, lablcc, eqsolv
   use process_output, only: ovarin, oblnkl, ocmmnt, oheadr, osubhd, &
     ovarre, int_to_string3
-  use physics_variables, only: bt, aspect, rmajor, powfmw, wallmw 
+  use physics_variables, only: bt, aspect, rmajor, powfmw, wallmw
+  use define_iteration_variables, only: loadxc
   implicit none
 
   !  Arguments
