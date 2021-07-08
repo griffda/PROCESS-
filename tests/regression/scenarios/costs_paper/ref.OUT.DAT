@@ -7,15 +7,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.1   Release Date :: 2021-03-17
-   Tag No. : v2.1-304-gca9897d9
-    Branch : 1333-costs-and-temperature-margin-missing-from-durham-rebco-model
+   Version : 2.1.2   Release Date :: 2021-07-01
+   Tag No. : v2.1-342-gf44c2b28
+    Branch : 1262-ebw-heating-system
    Git log : COMMIT_MSG
- Date/time : 29 Jun 2021 12:33:05 +01:00(hh:mm) UTC
-      User : schislett
-  Computer : LAPTOP-4TE2HACQ
- Directory : /tmp/pytest-of-schislett/pytest-40/test_solver0
-     Input : /tmp/pytest-of-schislett/pytest-40/test_scenario_costs_paper_0/IN.DAT
+ Date/time :  8 Jul 2021 17:51:55 +01:00(hh:mm) UTC
+      User : rhicha
+  Computer : l0500
+ Directory : /tmp/pytest-of-rhicha/pytest-18/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-18/test_scenario_costs_paper_0/IN.DAT
  Run title : demo 1 model for cost paper
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
