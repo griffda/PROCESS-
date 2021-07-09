@@ -192,17 +192,33 @@ contains
           gamcd = effcdfix * dene20 * rmajor
           effrfssfix = effcdfix
 
-       case (12)
+       case (12)  
        ! EBW scaling
        ! Scaling author Simon Freethy
        ! Ref : PROCESS issue 1262
-
+   
           !  Normalised current drive efficiency gamma
           gamcd = (0.43D0/32.7D0) * te
- 
+            
           ! Absolute current drive efficiency
           effrfssfix = gamcd / (dene20 * rmajor)
           effcdfix = effrfssfix
+   
+          ! EBWs can only couple to plasma if cyclotron harmonic is above plasma density cut-off;
+          !  this behaviour is captured in the following function (ref issue #1262):
+          ! harnum = cyclotron harmonic number (fundamental used as default)
+          ! contant 'a' controls sharpness of transition
+          a = 0.1D0
+   
+          fc = 1.0D0/(2.0D0*pi) * harnum * echarge * bt / emass
+          fp = 1.0D0/(2.0D0*pi) * sqrt( dene * echarge**2 / ( emass * epsilon0 ) )
+            
+          density_factor = 0.5D0 * ( 1.0D0 + tanh( (2.0D0/a) * ( ( fp - fc )/fp - a) ) )
+   
+          effcdfix = effcdfix * density_factor
+   
+          effrfssfix = effrfssfix * density_factor
+
 
        case default
           idiags(1) = iefrffix
