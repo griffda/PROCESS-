@@ -339,6 +339,7 @@ contains
     use rebco_variables, only: hastelloy_thickness, f_coppera_m2, &
       rebco_thickness, copper_rrr, coppera_m2_max, croco_thick, copper_thick 
     use reinke_variables, only: reinke_mode, fzactual, impvardiv, lhat 
+    use water_usage_variables, only: airtemp, watertemp, windspeed
     implicit none
 
     !  Arguments
@@ -3426,6 +3427,17 @@ contains
           call parse_real_array('v3matf', v3matf, isub1, 3*(maxmat+1), &
                     'IFE void 3 material fraction', icode)
      
+       ! Water usage settings
+
+       case ('airtemp')
+          call parse_real_variable('airtemp', airtemp, -15.0D0, 40.0D0, &
+               'ambient air temperature (degrees C)')
+       case ('watertemp')
+          call parse_real_variable('watertemp', watertemp, 0.0D0, 25.0D0, &
+               'water temperature (degrees C)')
+       case ('windspeed')
+          call parse_real_variable('windspeed', windspeed, 0.0D0, 10.0D0, &
+               'wind speed (m/s)')
 
        case default
           error_message = 'Unknown variable in input file: '//varnam(1:varlen)
