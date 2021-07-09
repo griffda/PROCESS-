@@ -2,15 +2,15 @@
  # Power Reactor Optimisation Code #
  # PROCESS #
  # Power Reactor Optimisation Code #
- PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.1   R"
- Date_of_run_____________________________________________________________ (date)________________________     "29/06/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "12:33"
- User____________________________________________________________________ (username)____________________     "schislet"
+ PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
+ Date_of_run_____________________________________________________________ (date)________________________     "08/07/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "17:52"
+ User____________________________________________________________________ (username)____________________     "rhicha"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-304-gca9897d9"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1333-costs-and-temperature-margin-missing-from-durham-rebco-model"                                 
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-342-gf44c2b28"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1262-ebw-heating-system"                                                                           
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-schislett/pytest-40/test_scenario_HARE_0/IN.DAT                                                                                                                                          "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-18/test_scenario_HARE_0/IN.DAT                                                                                                                                             "
  Binomial_coefficients_C(5,0):_1_________________________________________ (binomial(5,0))_______________      1.0000E+00    
  Binomial_coefficients_C(5,1):_5_________________________________________ (binomial(5,1))_______________      5.0000E+00    
  Binomial_coefficients_C(5,2):_10________________________________________ (binomial(5,2))_______________      1.0000E+01    
@@ -19,8 +19,6 @@
  Binomial_coefficients_C(5,5):_1_________________________________________ (binomial(5,5))_______________      1.0000E+00    
  Self-inductance_of_1m_Brooks_coil:_standard_formula_____________________ (l)___________________________      2.5491E-06 OP 
  Self-inductance_of_1m_Brooks_coil:_PROCESS_formula______________________ (lp)__________________________      2.6028E-06 OP 
- Number_of_scan_points___________________________________________________ (isweep)______________________              7    
- Scanning_variable_number________________________________________________ (nsweep)______________________             43    
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              1    
  # Numerics #
@@ -6762,6 +6760,8 @@
  Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________      2.4533E+01    
  Gross_electric_power*_/_high_grade_heat_(%)_____________________________ (etath)_______________________      4.1100E+01    
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.5836E-01    
+ Number_of_scan_points___________________________________________________ (isweep)______________________              7    
+ Scanning_variable_number________________________________________________ (nsweep)______________________             43    
  # Errors and Warnings #
  # Errors and Warnings #
  PROCESS_error_status_flag_______________________________________________ (error_status)________________              2    

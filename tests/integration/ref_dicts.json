@@ -1631,6 +1631,7 @@
         "eightemi48": 0.0,
         "elEion": 0.0,
         "elevol": 0.0,
+        "emass": 9.1093837e-31,
         "emult": 1.269,
         "emult_all": 1.17,
         "emultmw": 0.0,
@@ -2088,6 +2089,7 @@
         "h_cp_top": 0.0,
         "h_ib": 0.0,
         "h_ob": 0.0,
+        "harnum": 1.0,
         "hastelloy": null,
         "hastelloy_area": null,
         "hastelloy_thickness": 5e-05,
@@ -8735,6 +8737,7 @@
         "eightemi48": "",
         "elEion": "",
         "elevol": "volume of electrical equipment building (m3)",
+        "emass": "electron mass [kg]",
         "emult": "energy multiplication in blanket and shield",
         "emult_all": "",
         "emultmw": "power due to energy multiplication in blanket and shield [MW]",
@@ -9078,6 +9081,7 @@
         "h_cp_top": "Vertical distance from the midplane to the top of the tapered section [m]",
         "h_ib": "",
         "h_ob": "",
+        "harnum": "cyclotron harmonic frequency number, used in EBW cut-off",
         "hastelloy": "",
         "hastelloy_area": "",
         "hastelloy_thickness": "thickness of Hastelloy layer in tape (m)",
@@ -12311,6 +12315,10 @@
         "gtscale": {
             "lb": 0,
             "ub": 1
+        },
+        "harnum": {
+            "lb": 1.0,
+            "ub": 10.0
         },
         "hastelloy_thickness": {
             "lb": 1e-08,
@@ -16343,6 +16351,7 @@
             "sig_file",
             "degrad",
             "echarge",
+            "emass",
             "mproton",
             "pi",
             "rmu0",
@@ -16793,6 +16802,7 @@
             "echpwr",
             "echwpow",
             "effcd",
+            "harnum",
             "enbeam",
             "etacd",
             "etacdfix",
@@ -19377,6 +19387,7 @@
         "gapoh": "real_variable",
         "gapomin": "real_variable",
         "gtscale": "int_variable",
+        "harnum": "real_variable",
         "hastelloy_thickness": "real_variable",
         "hccl": "real_variable",
         "hcdportsize": "int_variable",
