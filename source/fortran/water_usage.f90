@@ -19,8 +19,6 @@ module water_use_module
    !! plants in the United States, 2010: U.S. Geological Survey Scientific 
    !! Investigations Report 2014–5184, 28 p., http://dx.doi.org/10.3133/sir20145184
    !!
-   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-   !
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
    use, intrinsic :: iso_fortran_env, only: dp=>real64
@@ -76,7 +74,7 @@ module water_use_module
        call oheadr(outfile,'Water usage during plant operation (secondary cooling)')
        call ocmmnt(outfile,'Estimated amount of water used through different cooling system options:')
        call ocmmnt(outfile,'1. Cooling towers')
-       call ocmmnt(outfile,'2. Water bodies (pond, lake, river): a) recirculating, b) once-through')
+       call ocmmnt(outfile,'2. Water bodies (pond, lake, river): recirculating or once-through')
      endif
  
      !! call subroutines for cooling mechanisms:
@@ -137,7 +135,6 @@ module water_use_module
      !  Output section
      if (iprint == 0) return
      call ovarre(outfile,'Volume used in cooling tower (m3/day)','(waterusetower)',waterusetower, 'OP ')
- 
   
    end subroutine cooling_towers
  
@@ -186,7 +183,7 @@ module water_use_module
     !! strongly influences evaporation; various, all found through experimentation
    
     real(dp) :: deltaE
-    !! difference in evaporative heat loss due to heating of water, J/(m2.day)
+    !! difference in evaporative heat loss due to heating of water (J/(m2.day))
  
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
