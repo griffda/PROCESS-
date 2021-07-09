@@ -2,17 +2,15 @@
  # Power Reactor Optimisation Code #
  # PROCESS #
  # Power Reactor Optimisation Code #
- PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.1   R"
- Date_of_run_____________________________________________________________ (date)________________________     "26/05/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "16:08"
- User____________________________________________________________________ (username)____________________     "jmaddock"
+ PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
+ Date_of_run_____________________________________________________________ (date)________________________     "08/07/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "17:53"
+ User____________________________________________________________________ (username)____________________     "rhicha"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "demo 1 vacuum model test                                                                           
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-271-g946465bd"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1321-reduce-intermittent-failures-in-regression-tests"                                             
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-342-gf44c2b28"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1262-ebw-heating-system"                                                                           
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jmaddock/pytest-105/test_scenario_scenario20_0/IN.DAT                                                                                                                                    "
- Number_of_scan_points___________________________________________________ (isweep)______________________              1    
- Scanning_variable_number________________________________________________ (nsweep)______________________              3    
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-18/test_scenario_vacuum_model_0/IN.DAT                                                                                                                                     "
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              1    
  # Numerics #
@@ -60,7 +58,7 @@
  ohcth_(range_normalised)________________________________________________ (nitvar011)___________________      2.2612E-01    
  q_______________________________________________________________________ (itvar012)____________________      3.0000E+00    
  q_(final_value/initial_value)___________________________________________ (xcm012)______________________      9.8361E-01    
- q_(range_normalised)____________________________________________________ (nitvar012)___________________      4.3228E-17    
+ q_(range_normalised)____________________________________________________ (nitvar012)___________________      0.0000E+00    
  ftburn__________________________________________________________________ (itvar013)____________________      1.0000E+00    
  ftburn_(final_value/initial_value)______________________________________ (xcm013)______________________      3.3343E+00    
  ftburn_(range_normalised)_______________________________________________ (nitvar013)___________________      1.0000E+00    
@@ -144,18 +142,18 @@
  fniterpump_(range_normalised)___________________________________________ (nitvar039)___________________      7.8215E-01    
  Beta_consistency__________________normalised_residue____________________ (normres001)__________________     -4.5747E-10    
  Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________      1.1270E-09    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      3.4537E-10    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      3.4536E-10    
  Beam_ion_density_consistency______normalised_residue____________________ (normres004)__________________      1.0560E-09    
  Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres005)__________________      2.3099E-09    
  Radial_build_consistency__________normalised_residue____________________ (normres006)__________________      2.3171E-10    
  Burn_time_lower_limit_____________normalised_residue____________________ (normres007)__________________      5.1185E-06    
- L-H_power_threshold_limit_________normalised_residue____________________ (normres008)__________________     -1.0812E-08    
+ L-H_power_threshold_limit_________normalised_residue____________________ (normres008)__________________     -1.0811E-08    
  Net_electric_power_lower_limit____normalised_residue____________________ (normres009)__________________     -3.7146E-06    
  Radiation_fraction_upper_limit____normalised_residue____________________ (normres010)__________________     -4.7461E-09    
- Beta_upper_limit__________________normalised_residue____________________ (normres011)__________________     -2.4659E-10    
+ Beta_upper_limit__________________normalised_residue____________________ (normres011)__________________     -2.4660E-10    
  CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres012)__________________      7.8542E-06    
  CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres013)__________________      7.4918E-06    
- Injection_power_upper_limit_______normalised_residue____________________ (normres014)__________________      8.7695E-10    
+ Injection_power_upper_limit_______normalised_residue____________________ (normres014)__________________      8.7694E-10    
  TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres015)__________________     -6.9852E-07    
  TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres016)__________________      2.5190E-06    
  I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres017)__________________     -1.8746E-05    
@@ -163,7 +161,7 @@
  J_winding_pack/J_protection_limit_normalised_residue____________________ (normres019)__________________     -1.8247E-05    
  Tritium_breeding_ratio_lower_lim__normalised_residue____________________ (normres020)__________________     -3.2929E-07    
  Psep_/_R_upper_limit______________normalised_residue____________________ (normres021)__________________      1.0755E-08    
- number_of_ITER-like_vacuum_pumps__normalised_residue____________________ (normres022)__________________     -1.1102E-16    
+ number_of_ITER-like_vacuum_pumps__normalised_residue____________________ (normres022)__________________     -2.2204E-16    
  # Final Feasible Point #
  # Estimate of "overnight" capital cost for a first of kind power plant (2014 M$) #
  # Buildings (M$) #
@@ -1181,6 +1179,8 @@
  Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________      2.5558E+01    
  Gross_electric_power*_/_high_grade_heat_(%)_____________________________ (etath)_______________________      3.6910E+01    
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.3448E-01    
+ Number_of_scan_points___________________________________________________ (isweep)______________________              1    
+ Scanning_variable_number________________________________________________ (nsweep)______________________              3    
  # Errors and Warnings #
  # Errors and Warnings #
  PROCESS_error_status_flag_______________________________________________ (error_status)________________              2    

@@ -46,33 +46,6 @@ module vmcon_module
   ! subroutine vmcon
   integer :: exit_code
   
-  ! Abstract interfaces to allow pointers to external subroutines
-  abstract interface
-    subroutine fcnvmc1_int(n,m,xv,objf,conf,ifail)
-      use, intrinsic :: iso_fortran_env, only: dp=>real64
-      integer, intent(in) :: n,m
-      real(dp), dimension(n), intent(in) :: xv
-      real(dp), intent(out) :: objf
-      real(dp), dimension(m), intent(out) :: conf
-      integer, intent(inout) :: ifail
-    end subroutine fcnvmc1_int
-  end interface
-    
-  abstract interface
-    subroutine fcnvmc2_int(n,m,xv,fgrd,cnorm,lcnorm,ifail)
-      use, intrinsic :: iso_fortran_env, only: dp=>real64
-      integer, intent(in) :: n,m,lcnorm
-      real(dp), dimension(n), intent(in) :: xv
-      real(dp), dimension(n), intent(out) :: fgrd
-      real(dp), dimension(lcnorm,m), intent(out) :: cnorm
-      integer, intent(inout) :: ifail
-    end subroutine fcnvmc2_int
-  end interface
-    
-  ! Pointers to objfn and dobjfn
-  procedure(fcnvmc1_int), pointer :: fcnvmc1_ptr
-  procedure(fcnvmc2_int), pointer :: fcnvmc2_ptr
-
   ! Format string
   character(len=20), parameter :: fmt_str = "(a,1pe10.3)"
 
@@ -84,44 +57,25 @@ contains
     best_sum_so_far = 999d0
   end subroutine init_vmcon_module
 
-  subroutine vmcon(fcnvmc1_,fcnvmc2_,mode_,n_,m_,&
-    meq_,x_,objf_,fgrd_,conf_,&
-    cnorm_,lcnorm_,b_,lb_,tol_,&
-    maxfev_,info_,nfev_,niter_,vlam_,& 
-    glag_,vmu_,cm_,glaga_,gamma_,&
-    eta_,xa_,bdelta_,delta_,ldel_,&
-    gm_,bdl_,bdu_,h_,lh_,&
-    wa_,lwa_,iwa_,liwa_,ilower_,&
-    iupper_,bndl_,bndu_,sum_)
-    !! Calculates the least value of a function of several variables
-    !! subject to linear and/or nonlinear equality and inequality
-    !! constraints
-    !! author: R L Crane, K E Hillstrom, M Minkoff, Argonne National Lab
-    !! author: J Galambos, FEDC/ORNL
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! author: M D Kovari, CCFE, Culham Science Centre
-    !! fcnvmc1_ : external subroutine : routine to calculate the
-    !! objective and constraint functions
-    !! fcnvmc2_ : external subroutine : routine to calculate the
-    !! gradients of the objective and constraint functions
+  subroutine load(mode_, n_, m_, meq_, x_, lcnorm_, b_, lb_, tol_, &
+    maxfev_, ldel_, lh_, lwa_, liwa_, ilower_, iupper_, bndl_, bndu_ &
+  )
+    !! Loads the vmcon input arguments into module variables. This allows them
+    !! to be shared by other subroutines in this module. The unload subroutine
+    !! performs the reverse, returning certain module variables as subroutine
+    !! arguments.
+    !!
     !! mode_ : input integer : 1 if B is provided by the user,
     !! 0 if B is to be initialized to
     !! the identity matrix
     !! n_ : input integer : number of variables
     !! m_ : input integer : number of constraints
     !! meq_ : input integer : number of equality constraints
-    !! x_(n) : input/output real array : initial/final estimates of
+    !! x_(n) : input real array : initial/final estimates of
     !! solution vector
-    !! objf_ : output real : objective function at output X
-    !! fgrd_(n) : output real array : components of the gradient of
-    !! the objective function at output X
-    !! conf_(m) : output real array : values of the constraint
-    !! functions at output X (equality constraints must precede
-    !! the inequality constraints)
-    !! cnorm_(lcnorm,m) : output real array : constraint normals at
-    !! output X
+    
     !! lcnorm_ : input integer : array dimension, >= n+1
-    !! b_(lb,lb) : input/output real array : approximation to the
+    !! b_(lb,lb) : input real array : approximation to the
     !! second derivative matrix of the Lagrangian function.
     !! Often, an adequate initial B matrix can be obtained by
     !! approximating the hessian of the objective function.
@@ -133,46 +87,10 @@ contains
     !! of the constraint functions are predicted to differ from
     !! their optimal values by at most TOL.
     !! maxfev_ : input integer : maximum number of calls to FCNVMC1
-    !! info_ : output integer : error flag<BR>
-    !! INFO < 0 : user termination<BR>
-    !! INFO = 0 : improper input parameters<BR>
-    !! INFO = 1 : normal return<BR>
-    !! INFO = 2 : number of calls to FCNVMC1 is at least MAXFEV<BR>
-    !! INFO = 3 : line search required ten calls of FCNVMC1<BR>
-    !! INFO = 4 : uphill search direction was calculated<BR>
-    !! INFO = 5 : quadratic programming technique was unable to find
-    !! a feasible point<BR>
-    !! INFO = 6 : quadratic programming technique was restricted by
-    !! an artificial bound or failed due to a singular
-    !! matrix
-    !! INFO = 7 : line search has been aborted
-    !! nfev_ : output integer : number of calls to FCNVMC1
-    !! niter_ : output integer : number of iterations
-    !! vlam_(m+2n+1) : output real array : Lagrange multipliers at output X.
-    !! The Lagrange multipliers provide the sensitivity of the objective
-    !! function to changes in the constraint functions.
-    !! Note that VLAM(M+I), I=1,...,N gives the multipliers for
-    !! the lower bound constraints.  VLAM(M+N+1+I), I=1,...,N
-    !! gives the multipliers for the upper bound constraints.
-    !! glag_(n) : output real array : components of the gradient of
-    !! the Lagrangian function at the output X.
-    !! cm_(m) : output real array : work array
-    !! vmu_(m+2n+1) : output real array : work array
-    !! glaga_(n) : output real array : work array
-    !! gamma_(n) : output real array : work array
-    !! eta_(n) : output real array : work array
-    !! xa_(n) : output real array : work array
-    !! bdelta_(n) : output real array : work array
-    !! delta_(ldel) : output real array : work array
     !! ldel_ : input integer : array dimension, >= max(7*(N+1),4*(N+1)+M)
-    !! gm_(n+1) : output real array : work array
-    !! bdl_(n+1) : output real array : work array
-    !! bdu_(n+1) : output real array : work array
-    !! h_(lh,lh) : output real array : work array
+
     !! lh_ : input integer : array dimension, >= 2*(N+1)
-    !! wa_(lwa) : output real array : work array
     !! lwa_ : input integer : array dimension, >= 2*(N+1)
-    !! iwa_(liwa) : output integer array : work array
     !! liwa_ : input integer : array dimension, >= 6*(N+1) + M
     !! ilower_(n) : input integer array : If X(I) has a lower bound,
     !! ILOWER(I) is set to 1 on input, otherwise 0
@@ -180,26 +98,6 @@ contains
     !! iupper_(n) : input integer array : If X(I) has an upper bound,
     !! IUPPER(I) is set to 1 on input, otherwise 0
     !! bndu_(n) : input real array : upper bound of X(I)
-    !! This subroutine calculates the least value of a function of
-    !! several variables subject to linear and/or nonlinear equality
-    !! and inequality constraints.
-    !! <P>More particularly, it solves the problem
-    !! <PRE>
-    !! Minimize f(x)
-    !! subject to c (x) =  0.0 ,  i = 1,...,meq
-    !! i
-    !! and c (x) >= 0.0 ,  i = meq+1,...,m
-    !! i
-    !! and l <= x <= u  ,  i = 1,...,n
-    !! i    i    i
-    !! </PRE>
-    !! The subroutine implements a variable metric method for
-    !! constrained optimization developed by M.J.D. Powell.
-    !! ANL-80-64: Solution of the General Nonlinear Programming Problem
-    !! with Subroutine VMCON, Roger L Crane, Kenneth E Hillstrom and
-    !! Michael Minkoff, Argonne National Laboratory, 1980
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use constants, only: opt_file
     implicit none
 
@@ -211,33 +109,38 @@ contains
     integer, dimension(n_), intent(in) :: ilower_,iupper_
     real(dp), intent(in) :: tol_
     real(dp), dimension(n_), intent(in) :: bndl_,bndu_
+    real(dp), dimension(n_), intent(in) :: x_
+    real(dp), dimension(lb_,lb_), intent(in) :: b_
 
-    ! Input/output arguments, which are assigned to module variables initially
-    ! and then the final values of the module variables are assigned back to
-    ! them at the end of the subroutine
-    real(dp), dimension(n_), intent(inout) :: x_
-    real(dp), dimension(lb_,lb_), intent(inout) :: b_
+    ! Ensure all allocatable arrays are deallocated
+    if (allocated(iwa)) deallocate(iwa)
+    if (allocated(ilower)) deallocate(ilower)
+    if (allocated(iupper)) deallocate(iupper)
+    if (allocated(x)) deallocate(x)
+    if (allocated(bndl)) deallocate(bndl)
+    if (allocated(bndu)) deallocate(bndu)
+    if (allocated(fgrd)) deallocate(fgrd)
+    if (allocated(conf)) deallocate(conf)
+    if (allocated(glag)) deallocate(glag)
+    if (allocated(glaga)) deallocate(glaga)
+    if (allocated(gamma)) deallocate(gamma)
+    if (allocated(eta)) deallocate(eta)
+    if (allocated(xa)) deallocate(xa)
+    if (allocated(bdelta)) deallocate(bdelta)
+    if (allocated(cm)) deallocate(cm)
+    if (allocated(delta)) deallocate(delta)
+    if (allocated(wa)) deallocate(wa)
+    if (allocated(cnorm)) deallocate(cnorm)
+    if (allocated(h)) deallocate(h)
+    if (allocated(b)) deallocate(b)
+    if (allocated(vlam)) deallocate(vlam)
+    if (allocated(vmu)) deallocate(vmu)
+    if (allocated(gm)) deallocate(gm)
+    if (allocated(bdl)) deallocate(bdl)
+    if (allocated(bdu)) deallocate(bdu)
+    if (allocated(best_solution_vector)) deallocate(best_solution_vector)
+    if (allocated(delta_var)) deallocate(delta_var)
 
-    ! Output arguments which module variables are assigned to at the end of the
-    ! subroutine
-    integer, intent(out) :: info_,nfev_,niter_
-    integer, dimension(liwa_), intent(out) :: iwa_
-    real(dp), intent(out) :: objf_
-    real(dp), dimension(n_), intent(out) :: fgrd_
-    real(dp), dimension(m_), intent(out) :: conf_
-    real(dp), dimension(n_), intent(out) :: glag_,glaga_,gamma_,eta_,xa_,bdelta_
-    real(dp), dimension(m_), intent(out) :: cm_
-    real(dp), dimension(ldel_), intent(out) :: delta_
-    real(dp), dimension(lwa_), intent(out) :: wa_
-    real(dp), dimension(lcnorm_,m_), intent(out) :: cnorm_
-    real(dp), dimension(lh_,lh_), intent(out) :: h_
-    real(dp), dimension(m_+2*n_+1), intent(out) :: vlam_, vmu_
-    real(dp), dimension(n_+1), intent(out) :: gm_, bdl_, bdu_
-    real(dp), intent(out), optional :: sum_
-
-    ! External subroutines
-    external :: fcnvmc1_,fcnvmc2_
-    
     ! Input
     ! Initialise module variables with their respective input arguments
     ! This allows vmcon to be called as before, but allows these variables to
@@ -258,18 +161,11 @@ contains
     iupper = iupper_
     bndl = bndl_
     bndu = bndu_
-
-    ! Inout argument initialisations
     x = x_
     b = b_
     
-    ! Assign external subroutine input arguments to module variable pointers
-    ! Allows module-wide calling of these input argument subroutines
-    fcnvmc1_ptr => fcnvmc1_
-    fcnvmc2_ptr => fcnvmc2_
-    
     ! Array allocation: only allocate what hasn't already been allocated by 
-    ! assignment
+    ! assignment above
     allocate(vmu(m+2*n+1))
     allocate(vlam(m+2*n+1))
     allocate(gm(n+1))
@@ -291,14 +187,110 @@ contains
     allocate(h(lh,lh))
     allocate(delta_var(n))
 
-    ! Run vmcon
-    call run()
-    
-    ! Output
-    ! Set inout arguments to values of module variables
-    x_ = x
-    b_ = b
+    vmu = 0.0D0
+    vlam = 0.0D0
+    gm = 0.0D0
+    bdl = 0.0D0
+    bdu = 0.0D0
+    conf = 0.0D0
+    fgrd = 0.0D0
+    cnorm = 0.0D0
+    iwa = 0
+    glag = 0.0D0
+    glaga = 0.0D0
+    gamma = 0.0D0
+    eta = 0.0D0
+    xa = 0.0D0
+    bdelta = 0.0D0
+    cm = 0.0D0
+    delta = 0.0D0
+    wa = 0.0D0
+    h = 0.0D0
+    delta_var = 0.0D0
+  end subroutine load
 
+  subroutine unload(info_, nfev_, niter_, objf_, x_, b_, iwa_, fgrd_, conf_, &
+    glag_, glaga_, gamma_, eta_, xa_, bdelta_, cm_, delta_, wa_, cnorm_, h_, &
+    vlam_, vmu_, gm_, bdl_, bdu_, sum_ &
+  )
+    !! After a vmcon run, assign module variables to output arguments so the
+    !! values can be returned by this subroutine.
+    implicit none
+
+    ! Output arguments which module variables are assigned to at the end of the
+    ! subroutine
+    integer, intent(out) :: info_,nfev_,niter_
+    real(dp), intent(out) :: objf_
+    real(dp), dimension(n), intent(out) :: x_
+    real(dp), dimension(lb,lb), intent(out) :: b_
+    integer, dimension(liwa), intent(out) :: iwa_
+    real(dp), dimension(n), intent(out) :: fgrd_
+    real(dp), dimension(m), intent(out) :: conf_
+    real(dp), dimension(n), intent(out) :: glag_,glaga_,gamma_,eta_,xa_,bdelta_
+    real(dp), dimension(m), intent(out) :: cm_
+    real(dp), dimension(ldel), intent(out) :: delta_
+    real(dp), dimension(lwa), intent(out) :: wa_
+    real(dp), dimension(lcnorm,m), intent(out) :: cnorm_
+    real(dp), dimension(lh,lh), intent(out) :: h_
+    real(dp), dimension(m+(2*n)+1), intent(out) :: vlam_, vmu_
+    real(dp), dimension(n+1), intent(out) :: gm_, bdl_, bdu_
+    real(dp), intent(out) :: sum_
+    
+    
+    !! info_ : output integer : error flag<BR>
+    !! INFO < 0 : user termination<BR>
+    !! INFO = 0 : improper input parameters<BR>
+    !! INFO = 1 : normal return<BR>
+    !! INFO = 2 : number of calls to FCNVMC1 is at least MAXFEV<BR>
+    !! INFO = 3 : line search required ten calls of FCNVMC1<BR>
+    !! INFO = 4 : uphill search direction was calculated<BR>
+    !! INFO = 5 : quadratic programming technique was unable to find
+    !! a feasible point<BR>
+    !! INFO = 6 : quadratic programming technique was restricted by
+    !! an artificial bound or failed due to a singular
+    !! matrix
+    !! INFO = 7 : line search has been aborted
+    !! nfev_ : output integer : number of calls to FCNVMC1
+    !! niter_ : output integer : number of iterations
+    !! objf_ : output real : objective function at output X
+    !! x_(n) : output real array : initial/final estimates of
+    !! solution vector
+    !! b_(lb,lb) : output real array : approximation to the
+    !! second derivative matrix of the Lagrangian function.
+    !! Often, an adequate initial B matrix can be obtained by
+    !! approximating the hessian of the objective function.
+    !! On input, the approximation is provided by the user if
+    !! MODE = 1 and is set to the identity matrix if MODE = 0.
+    !! iwa_(liwa) : output integer array : work array
+    !! fgrd_(n) : output real array : components of the gradient of
+    !! the objective function at output X
+    !! conf_(m) : output real array : values of the constraint
+    !! functions at output X (equality constraints must precede
+    !! the inequality constraints)
+    !! glag_(n) : output real array : components of the gradient of
+    !! the Lagrangian function at the output X.
+    !! glaga_(n) : output real array : work array
+    !! gamma_(n) : output real array : work array
+    !! eta_(n) : output real array : work array
+    !! xa_(n) : output real array : work array
+    !! bdelta_(n) : output real array : work array
+    !! cm_(m) : output real array : work array
+    !! delta_(ldel) : output real array : work array
+    !! wa_(lwa) : output real array : work array
+    !! cnorm_(lcnorm,m) : output real array : constraint normals at
+    !! output X
+    !! h_(lh,lh) : output real array : work array
+    !! vlam_(m+2n+1) : output real array : Lagrange multipliers at output X.
+    !! The Lagrange multipliers provide the sensitivity of the objective
+    !! function to changes in the constraint functions.
+    !! Note that VLAM(M+I), I=1,...,N gives the multipliers for
+    !! the lower bound constraints.  VLAM(M+N+1+I), I=1,...,N
+    !! gives the multipliers for the upper bound constraints.
+    !! vmu_(m+2n+1) : output real array : work array
+    !! gm_(n+1) : output real array : work array
+    !! bdl_(n+1) : output real array : work array
+    !! bdu_(n+1) : output real array : work array
+    
     ! Set output arguments to values of module variables
     info_= info
     nfev_ = nfev
@@ -324,6 +316,8 @@ contains
     bdl_ = bdl
     bdu_ = bdu
     sum_ = sum
+    x_ = x
+    b_ = b
 
     ! Deallocate all allocatable arrays
     deallocate(iwa)
@@ -353,80 +347,8 @@ contains
     deallocate(bdu)
     deallocate(best_solution_vector)
     deallocate(delta_var)
-  end subroutine vmcon
+  end subroutine unload
   
-  subroutine run()
-    ! Call subroutines to actually run vmcon
-    implicit none
-    
-    ! exit_code is used to handle exits and returns in previous vmcon() 
-    ! subroutine, which is now broken up into smaller subroutines.
-    ! #TODO This could be improved with further refactoring once smaller 
-    ! subroutines are in place.
-    ! Checked after each subroutine call:
-    ! 0: OK, continue
-    ! 1: return from run() and then vmcon()
-    ! 2: exit the current loop
-    exit_code = 0
-    
-    call vmcon1()
-    if (exit_code.eq.1) return
-    call fcnvmc1()
-    if (exit_code.eq.1) return
-    call vmcon2()
-    if (exit_code.eq.1) return
-    call fcnvmc2()
-    if (exit_code.eq.1) return
-    call vmcon3()
-    if (exit_code.eq.1) return
-
-    iteration: do
-      call vmcon4()
-      if (exit_code.eq.1) return
-      
-      ! Set sum to the weighted sum of infeasibilities
-      ! Set fls to the line search objective function
-      line_search: do
-        call vmcon5()
-
-        if (nfev == nfinit) then
-          call vmcon6()
-          if (exit_code.eq.1) return
-        else
-          call vmcon7()
-          if (exit_code.eq.2) exit
-          
-          ! Exit if the line search requires ten or more function evaluations
-          if (nfev >= (nfinit + 10)) then
-            call vmcon8()
-            call fcnvmc1()
-            call vmcon9()
-            if (exit_code.eq.1) return
-          endif
-          
-          call vmcon10()
-        endif
-
-        call vmcon11()
-        if (exit_code.eq.1) return
-        call fcnvmc1()
-        call vmcon12()
-        if (exit_code.eq.1) return
-      end do line_search
-     
-      ! Reset exit_code; must be 2 to exit line_search
-      exit_code = 0
-
-      ! Line search is complete. Calculate gradient of Lagrangian
-      ! function for use in updating hessian of Lagrangian
-      call fcnvmc1()
-      if (exit_code.eq.1) return
-      call fcnvmc2()
-      call vmcon13()
-      if (exit_code.eq.1) return
-    end do iteration
-  end subroutine run
-
   subroutine vmcon1()
     implicit none
     
@@ -500,13 +422,6 @@ contains
     niter = 0
   end subroutine vmcon1
 
-  subroutine fcnvmc1()
-    ! Calculate the initial functions
-    implicit none
-
-    call fcnvmc1_ptr(n,m,x,objf,conf,info)
-  end subroutine fcnvmc1
-
   subroutine vmcon2()
     implicit none
     
@@ -516,13 +431,6 @@ contains
     endif
     
   end subroutine vmcon2
-  
-  subroutine fcnvmc2()
-    ! Calculate the initial gradients
-    implicit none
-    
-    call fcnvmc2_ptr(n,m,x,fgrd,cnorm,lcnorm,info)
-  end subroutine fcnvmc2
   
   subroutine vmcon3
     use constants, only: iotty
