@@ -1,6 +1,6 @@
 # Installation
 ## Supported environments
-PROCESS is supported on Ubuntu 20, Mac and Windows 10 (via Windows Subsystem for Linux). It is not supported natively in Windows (through MinGW for example). It is not currently supported on the Freia or Heimdal clusters.
+PROCESS is supported on Ubuntu 20 and Windows 10 (via Windows Subsystem for Linux). It is not supported natively in Windows (through MinGW for example). It can be run on Mac or in other environments via a Docker container. It is not currently supported on the Freia or Heimdal clusters.
 
 ## Ubuntu and Windows (using Windows Subsystem for Linux)
 *It is highly recommended users create a Python virtual environment in order to use the PROCESS Python package, as this ensures that installations of required package versions don't affect other packages that require different versions in your environment. It isn't necessary, however.*
@@ -51,10 +51,10 @@ The build step may take some time when run for the first time (~3 mins) as the F
 
 To rebuild, for example after making a change to the Fortran source, run `cmake --build build` again.
 
-## macOS Installation (Docker container)
-Process can be run on a Mac inside a Docker container. The Process repository, including source and build directories, remain in the host filesystem, but the building and running of Process is performed inside the container. This ensures that Process produces the same results on Mac as in other environments, such as the CI system. The Ubuntu-based development image used is similar to the one used on the CI system, but it is designed to work immediately with no further installations.
+## Docker container
+Process can be run on Mac or in other environments inside a Docker container. The Process repository, including source and build directories, remain in the host filesystem, but the building and running of Process is performed inside the container. This ensures that Process produces the same results as in other fully-supported environments, such as the CI system. The Ubuntu-based development image used is similar to the one used on the CI system, but it is designed to work immediately with no further installations.
 
-Install Docker ([Docker Desktop](https://docs.docker.com/docker-for-mac/install/)), or by using `homebrew`:
+Firstly, [install Docker](https://docs.docker.com/get-docker/). On Mac, this can be accomplished using `homebrew`:
 ```
 brew cask install docker
 ```
@@ -91,7 +91,7 @@ The clean step is required to remove any build targets or caches from previous h
 
 Once Process has built inside the container, it can be tested (as in the following section) by running `pytest`. Once the test suite passes, this confirms that your Docker container runs Process with the same results as the CI system. Process can now be developed and run as before, with the build and running taking place inside the container.
 
-There is also a helpful VS Code extension for Docker containers that may be helpful.
+There is also a VS Code extension for Docker containers that may be helpful.
 
 ## Testing
 As a first basic test that the setup has been successful try importing the package from outside of the repository folder in a Python interactive interpreter:
@@ -123,7 +123,7 @@ PyTest can then be run on the tests folder:
 pytest tests
 ```
 
-If everything passes, this indicates a successful installation.
+If everything passes, this indicates a successful installation. If anything fails, this indicates that your environment produces different results to what is expected. You might consider creating an issue in Gitlab, or trying out the Docker container instead.
 
 ### Prepare Release (not required)
 It is possible to build a standalone module which can be distributed without the need for the source code. This exists as a pippable "wheels" module which is build by running:
