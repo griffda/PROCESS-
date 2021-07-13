@@ -59,6 +59,11 @@ Install Docker ([Docker Desktop](https://docs.docker.com/docker-for-mac/install/
 brew cask install docker
 ```
 
+Then login to the Gitlab container registry:
+```
+docker login git.ccfe.ac.uk:4567
+```
+
 Then download the Docker image from the Process Gitlab container registry:
 ```
 docker pull git.ccfe.ac.uk:4567/process/process/dev
