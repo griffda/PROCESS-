@@ -956,64 +956,33 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine step_a2203(outfile,iprint)
-
     !! Account 22.03 : Cryogenic Cooling System
-    !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 22.03 (Cryogenic Cooling
     !! System) costs.
-    !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-    use cost_variables, only: output_costs, step_ref
+    use cost_variables, only: output_costs
     use process_output, only: ocosts, oblnkl
-
+    use heat_transport_variables, only: helpow
     implicit none
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
   
     ! Local variables
-    real(dp):: &
-    step220301, step220302, step220303, step220304, step2203
-  
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    real(dp):: step2203
   
     ! Initialise as zero
     step2203 = 0.0D0
-     
-    ! 22.03.01 Helium Refrigerator
-    ! Original STARFIRE value, scaling with fusion island volume
-    step220301 = step_ref(34) * (vfi / vfi_star)**(2.0D0/3.0D0)
-    step2203 = step2203 + step220301
-  
-    ! 22.03.02 Liquid Helium Transfer and Storage
-    ! Original STARFIRE value, scaling with fusion island volume
-    step220302 = step_ref(35) * (vfi / vfi_star)**(2.0D0/3.0D0)
-    step2203 = step2203 + step220302
-  
-    ! 22.03.03 Gas Helium Storage
-    ! Original STARFIRE value, scaling with fusion island volume
-    step220303 = step_ref(36) * (vfi / vfi_star)**(2.0D0/3.0D0)
-    step2203 = step2203 + step220303
-  
-    ! 22.03.04 Liquid Nitrogen Storage
-    ! Original STARFIRE value, scaling with fusion island volume
-    step220304 = step_ref(37) * (vfi / vfi_star)**(2.0D0/3.0D0)
-    step2203 = step2203 + step220304
-  
+
+    ! Cryo system cost in 2017 M$
+    ! Scale with the total heat load on the cryoplant at ~4.5K (kW)
+    step2203 = 6.14 * (helpow / 1.0D3)**0.63
+    
     ! Add to Account 22 total
     step22 = step22 + step2203
 
     ! Output costs
     if ((iprint==1).and.(output_costs == 1)) then
       write(outfile,*) '******************* 22.03 Cryogenic Cooling System'
-      call ocosts(outfile,'(step220301)','Helium Refrigerator (M$)', step220301)
-      call ocosts(outfile,'(step220302)','Liquid Helium Transfer and Storage (M$)', step220302)
-      call ocosts(outfile,'(step220303)','Gas Helium Storage (M$)', step220303)
-      call ocosts(outfile,'(step220304)','Liquid Nitrogen Storage (M$)', step220304)
-      call oblnkl(outfile)
       call ocosts(outfile,'(step2203)','Total Account 22.03 Cost (M$)', step2203)
       call oblnkl(outfile)
     end if

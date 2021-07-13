@@ -141,10 +141,12 @@ def test_step_a2203(monkeypatch, shared_cost_vars):
     :param shared_cost_vars: fixture to mock commonly-used cost vars
     :type shared_cost_vars: Fixture
     """
-    # Mock module var set in subroutine: increase is value of step2203
+    # Mock module var step22 set in subroutine: increase is value of step2203
     monkeypatch.setattr(cs, "step22", 0.0)
+    # Mock heat removal at cryogenic temperatures (W)
+    monkeypatch.setattr(htv, "helpow", 1.0e6)
 
-    exp = 1.490e1
+    exp = 4.766157e2
     cs.step_a2203(0, 0)
     obs = cs.step22
     assert pytest.approx(obs) == exp
