@@ -15,14 +15,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-347-gd3adc853
+   Tag No. : v2.1-357-g4ce9844c
     Branch : 1324-secondary-ebw-heating-missing
    Git log : COMMIT_MSG
- Date/time :  9 Jul 2021 15:31:46 +01:00(hh:mm) UTC
+ Date/time : 20 Jul 2021 10:58:59 +01:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-20/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-20/test_scenario_CFETR_small_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-36/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-36/test_scenario_CFETR_small_0/IN.DAT
  Run title : "CFETR small (5.7m) reference file"
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  

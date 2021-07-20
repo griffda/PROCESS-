@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-347-gd3adc853
+   Tag No. : v2.1-357-g4ce9844c
     Branch : 1324-secondary-ebw-heating-missing
    Git log : COMMIT_MSG
- Date/time :  9 Jul 2021 15:32:35 +01:00(hh:mm) UTC
+ Date/time : 20 Jul 2021 11:01:00 +01:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-20/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-20/test_scenario_IFE_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-36/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-36/test_scenario_IFE_0/IN.DAT
  Run title : IFE_001
   Run type : Reactor concept design: Inertial Fusion model, (c) CCFE
  

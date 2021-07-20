@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-347-gd3adc853
+   Tag No. : v2.1-357-g4ce9844c
     Branch : 1324-secondary-ebw-heating-missing
    Git log : COMMIT_MSG
- Date/time :  9 Jul 2021 15:32:42 +01:00(hh:mm) UTC
+ Date/time : 20 Jul 2021 11:01:09 +01:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-20/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-20/test_scenario_kit_blanket_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-36/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-36/test_scenario_kit_blanket_0/IN.DAT
  Run title : Michael's test file
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
