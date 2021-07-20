@@ -70,7 +70,7 @@ class Scan():
     def scan_2d(self):
         """Run a 2-D scan."""
         # Initialise intent(out) arrays
-        outvar = np.ndarray((scan_module.noutvars, scan_module.ipnscns), 
+        outvar = np.zeros((scan_module.noutvars, scan_module.ipnscns), 
             dtype=np.float64, order="F"
         )
         sweep_1_vals = np.ndarray(scan_module.ipnscns, dtype=np.float64, 
