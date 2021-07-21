@@ -3468,9 +3468,10 @@ contains
     if (error .eqv. .True.) stop 1
 
     ! MDK Try allocating here
-    ! Guard against re-allocation
     if (allocated(name_xc)) deallocate(name_xc)
     allocate(name_xc(nvar))
+    ! Ensure array is initialised
+    name_xc = ""
 
   end subroutine parse_input_file
 
