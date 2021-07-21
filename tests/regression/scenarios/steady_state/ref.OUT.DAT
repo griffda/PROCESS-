@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-342-gf44c2b28
-    Branch : 1262-ebw-heating-system
+   Tag No. : v2.1-363-g0f5a5cf0
+    Branch : 1324-secondary-ebw-heating-missing
    Git log : COMMIT_MSG
- Date/time :  8 Jul 2021 17:53:06 +01:00(hh:mm) UTC
+ Date/time : 21 Jul 2021 11:11:16 +01:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-18/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-18/test_scenario_steady_state_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-39/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-39/test_scenario_steady_state_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
