@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
- Date_of_run_____________________________________________________________ (date)________________________     "20/07/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "10:59"
+ Date_of_run_____________________________________________________________ (date)________________________     "21/07/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "11:09"
  User____________________________________________________________________ (username)____________________     "rhicha"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "FNSF (Menard et al. 2016)                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-357-g4ce9844c"                                                                                
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-363-g0f5a5cf0"                                                                                
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1324-secondary-ebw-heating-missing"                                                                
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-36/test_scenario_FNSF_0/IN.DAT                                                                                                                                             "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-39/test_scenario_FNSF_0/IN.DAT                                                                                                                                             "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -18,8 +18,8 @@
  Number_of_constraints_(total)___________________________________________ (neqns+nineqns)_______________             15    
  Optimisation_switch_____________________________________________________ (ioptimz)_____________________              1    
  Figure_of_merit_switch__________________________________________________ (minmax)______________________             -5    
- Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      3.5833E-08 OP 
- VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      1.2912E-08 OP 
+ Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      1.4032E-08 OP 
+ VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      1.2778E-08 OP 
  Number_of_VMCON_iterations______________________________________________ (nviter)______________________             25 OP 
  te______________________________________________________________________ (itvar001)____________________      5.7900E+00    
  te_(final_value/initial_value)__________________________________________ (xcm001)______________________      1.0000E+00    
@@ -78,21 +78,21 @@
  fimp(13)________________________________________________________________ (itvar019)____________________      3.8910E-04    
  fimp(13)_(final_value/initial_value)____________________________________ (xcm019)______________________      8.8432E-01    
  fimp(13)_(range_normalised)_____________________________________________ (nitvar019)___________________      0.0000E+00    
- Beta_consistency__________________normalised_residue____________________ (normres001)__________________      2.2541E-06    
- Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -5.3404E-06    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      5.2780E-13    
- Beam_ion_density_consistency______normalised_residue____________________ (normres004)__________________      2.2346E-05    
- Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres005)__________________     -3.9515E-06    
- Fusion_power_upper_limit__________normalised_residue____________________ (normres006)__________________     -3.9494E-06    
+ Beta_consistency__________________normalised_residue____________________ (normres001)__________________      2.2535E-06    
+ Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -5.3389E-06    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      8.4022E-13    
+ Beam_ion_density_consistency______normalised_residue____________________ (normres004)__________________      2.2340E-05    
+ Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres005)__________________     -3.9504E-06    
+ Fusion_power_upper_limit__________normalised_residue____________________ (normres006)__________________     -3.9483E-06    
  Radial_build_consistency__________normalised_residue____________________ (normres007)__________________     -0.0000E+00    
- L-H_power_threshold_limit_________normalised_residue____________________ (normres008)__________________      1.1177E-04    
- Radiation_fraction_upper_limit____normalised_residue____________________ (normres009)__________________      1.7227E-05    
- Beta_upper_limit__________________normalised_residue____________________ (normres010)__________________      1.3185E-12    
- Injection_power_upper_limit_______normalised_residue____________________ (normres011)__________________      2.2351E-05    
- Average_centrepost_temperature____normalised_residue____________________ (normres012)__________________     -9.0728E-08    
- Peak_centrepost_temp._upper_limit_normalised_residue____________________ (normres013)__________________     -1.1895E-07    
- Ip/Irod_upper_limit_______________normalised_residue____________________ (normres014)__________________      4.4409E-16    
- Psep_/_R_upper_limit______________normalised_residue____________________ (normres015)__________________     -1.1178E-04    
+ L-H_power_threshold_limit_________normalised_residue____________________ (normres008)__________________      1.1174E-04    
+ Radiation_fraction_upper_limit____normalised_residue____________________ (normres009)__________________      1.7222E-05    
+ Beta_upper_limit__________________normalised_residue____________________ (normres010)__________________      9.4302E-13    
+ Injection_power_upper_limit_______normalised_residue____________________ (normres011)__________________      2.2345E-05    
+ Average_centrepost_temperature____normalised_residue____________________ (normres012)__________________     -9.0702E-08    
+ Peak_centrepost_temp._upper_limit_normalised_residue____________________ (normres013)__________________     -1.1891E-07    
+ Ip/Irod_upper_limit_______________normalised_residue____________________ (normres014)__________________      6.6613E-16    
+ Psep_/_R_upper_limit______________normalised_residue____________________ (normres015)__________________     -1.1174E-04    
  # Final Feasible Point #
  # Plant Availability #
  Allowable_blanket_neutron_fluence_(MW-yr/m2)____________________________ (abktflnc)____________________      2.0000E+01    
