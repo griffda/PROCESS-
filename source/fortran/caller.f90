@@ -39,6 +39,7 @@ subroutine caller(xc,nvars)
   use tfcoil_module, only: tfcoil, cntrpst
   use tfcoil_variables, only: i_tf_sup
   use vacuum_module, only: vaccall
+  use water_use_module, only: waterusecall
   use cost_variables, only: iavail, cost_model
   use constants, only: nout
   use global_variables, only: verbose
@@ -253,6 +254,11 @@ subroutine caller(xc,nvars)
   else
     call avail(nout,0)    ! Taylor and Ward model (1999)
   end if
+
+  ! Water usage in secondary cooling system !
+  ! !!!!!!!!!!!!!!!!!!!!!
+
+  call waterusecall(nout,0)
 
   ! Costs model !
   ! !!!!!!!!!!!!!!

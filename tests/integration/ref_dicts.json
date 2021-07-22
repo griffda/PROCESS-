@@ -224,6 +224,7 @@
         "afwo": 0.008,
         "aintmass": 0.0,
         "aion": 0.0,
+        "airtemp": 15.0,
         "aiwp": 0.0,
         "alam": null,
         "alfapf": 5e-10,
@@ -1638,6 +1639,7 @@
         "enbeam": 1000.0,
         "end_of_file": -1.0,
         "end_of_record": -2.0,
+        "energypervol": 0.0,
         "ensxpfm": 0.0,
         "epbetmax": 1.38,
         "eped_sf": 1.0,
@@ -1685,6 +1687,8 @@
             0.055,
             0.051
         ],
+        "evapratio": 0.0,
+        "evapvol": 0.0,
         "ex": [
             "unit",
             "zero",
@@ -3014,6 +3018,7 @@
         "lambda_q_omp": 0.002,
         "lambdaio": 0.0,
         "lamp": 0.0,
+        "latentheat": 2257000.0,
         "layer_ins": 0.0,
         "lb": null,
         "lcnorm": null,
@@ -4599,6 +4604,7 @@
         "scan_dim": 1.0,
         "scrapli": 0.14,
         "scraplo": 0.15,
+        "secday": 86400.0,
         "secondary_cycle": 0.0,
         "seppowerratio": 2.3,
         "sf": 0.0,
@@ -7407,7 +7413,9 @@
         "volblkti": 0.0,
         "volblkto": 0.0,
         "volfw": 0.0,
+        "volheat": 0.0,
         "volnucb": 0.0,
+        "volperenergy": 0.0,
         "volrci": 0.0,
         "volshld": 0.0,
         "volshldi": 0.0,
@@ -7454,6 +7462,11 @@
         "walalw": 1.0,
         "wallmw": 0.0,
         "wallpf": 1.21,
+        "waterdens": 998.02,
+        "watertemp": 5.0,
+        "wateruseonethru": 0.0,
+        "wateruserecirc": 0.0,
+        "waterusetower": 0.0,
         "waves": 0.0,
         "wce1_": "e_/me_",
         "wfbuilding": 100000000.0,
@@ -7482,6 +7495,7 @@
         "whttf": 0.0,
         "whttflgs": 0.0,
         "width": 110.0,
+        "windspeed": 4.0,
         "windstrain": 0.0,
         "wp_": "dp_",
         "wpe12_": "wpe1_**2",
@@ -8210,6 +8224,7 @@
         "afwo": "inner radius of outboard first wall/blanket coolant channels (stellarator only) (m)",
         "aintmass": "intercoil structure mass (kg)",
         "aion": "average mass of all ions (amu)",
+        "airtemp": "ambient air temperature (degrees Celsius)",
         "aiwp": "winding pack turn insulation area per coil (m2)",
         "alam": "",
         "alfapf": "smoothing parameter used in PF coil current calculation at the beginning of pulse (BoP)",
@@ -8744,6 +8759,7 @@
         "enbeam": "neutral beam energy (keV) (`iteration variable 19`)",
         "end_of_file": "",
         "end_of_record": "",
+        "energypervol": "input waste (heat) energy cooled per evaporated volume (J/m3)",
         "ensxpfm": "maximum stored energy in the PF circuits (MJ)",
         "epbetmax": "maximum (eps*beta_poloidal) (`constraint equation 6`). Note: revised issue #346\n \"Operation at the tokamak equilibrium poloidal beta-limit in TFTR\", 1992 Nucl. Fusion 32 1468",
         "eped_sf": "Adjustment factor for EPED scaling to reduce pedestal temperature or pressure \n to mitigate or prevent ELMs",
@@ -8780,6 +8796,8 @@
         "etatf": "AC to resistive power conversion for TF coils",
         "etath": "thermal to electric conversion efficiency if `secondary_cycle=2`; otherwise calculated.",
         "etave": "IFE driver efficiency vs driver energy (`ifedrv=-1`)",
+        "evapratio": "evaporation ratio: ratio of the heat used to evaporate water \n   to the total heat discharged through the tower",
+        "evapvol": "evaporated volume of water (m3)",
         "ex": "",
         "exchangepowerlost": "Power lost due to charge exchange  [W]",
         "exit_code": "",
@@ -9302,6 +9320,7 @@
         "lambda_q_omp": "SOL power fall-off length at the outer midplane, perpendicular to field [m]",
         "lambdaio": "",
         "lamp": "power flow width (m)",
+        "latentheat": "latent heat of vaporization (J/kg)\n   for simplicity, set to static value applicable at 1 atm (100 kPa) air pressure",
         "layer_ins": "Additional insulation thickness between layers (m)",
         "lb": "",
         "lcnorm": "",
@@ -9939,6 +9958,7 @@
         "scan_dim": "1-D or 2-D scan switch (1=1D, 2=2D)",
         "scrapli": "Gap between plasma and first wall, inboard side (m) (if `iscrp=1`) \n Iteration variable: ixc = 73\n Scan variable: nsweep = 58",
         "scraplo": "Gap between plasma and first wall, outboard side (m) (if `iscrp=1`)\n Iteration variable: ixc = 74\n Scan variable: nsweep = 59",
+        "secday": "seconds in a day, s",
         "secondary_cycle": "Switch for power conversion cycle:\n<ul>\n<li>=0 Set efficiency for chosen blanket, from detailed models (divertor heat not used)</li>\n<li>=1 Set efficiency for chosen blanket, from detailed models (divertor heat used)</li>\n<li>=2 user input thermal-electric efficiency (etath)</li>\n<li>=3 steam Rankine cycle</li>\n<li>=4 supercritical CO2 cycle</li>\n</ul>",
         "seppowerratio": "",
         "sf": "shape factor = plasma poloidal perimeter / (2.pi.rminor)",
@@ -10441,7 +10461,9 @@
         "volblkti": "volume of inboard blanket (m3)",
         "volblkto": "volume of outboard blanket (m3)",
         "volfw": "First wall volume [m3]",
+        "volheat": "volumetric heat of vaporization (J/m3)",
         "volnucb": "sum of nuclear buildings volumes (m3)",
+        "volperenergy": "volume evaporated by units of heat energy (m3/MJ)",
         "volrci": "internal volume of reactor building (m3)",
         "volshld": "volume of shield (m3)",
         "volshldi": "Volume of inboard and outboard shield (m3)",
@@ -10488,6 +10510,11 @@
         "walalw": "allowable neutron wall-load (MW/m2) (`constraint equation 8`)",
         "wallmw": "average neutron wall load (MW/m2)",
         "wallpf": "neutron wall load peaking factor (`iblanket=2` (KIT HCPB))",
+        "waterdens": "density of water (kg/m3)\n   for simplicity, set to static value applicable to water at 21 degC",
+        "watertemp": "water temperature (degrees Celsius)",
+        "wateruseonethru": "total volume of water used in once-through system (m3)",
+        "wateruserecirc": "total volume of water used in recirculating system (m3)",
+        "waterusetower": "total volume of water used in cooling tower (m3)",
         "waves": "used in current waveform of PF coils/central solenoid",
         "wce1_": "",
         "wfbuilding": "fixed value for waste facility buildings (2017 US$)",
@@ -10516,6 +10543,7 @@
         "whttf": "total mass of the TF coils (kg)",
         "whttflgs": "mass of the TF coil legs (kg)",
         "width": "",
+        "windspeed": "wind speed (m/s)",
         "windstrain": "longitudinal strain in winding pack",
         "wp_": "",
         "wpe12_": "",
@@ -10899,6 +10927,10 @@
         "afwo": {
             "lb": 0.001,
             "ub": 0.05
+        },
+        "airtemp": {
+            "lb": -15.0,
+            "ub": 40.0
         },
         "alfapf": {
             "lb": 1e-12,
@@ -14124,6 +14156,10 @@
             "lb": 1.0,
             "ub": 2.0
         },
+        "watertemp": {
+            "lb": 0.0,
+            "ub": 25.0
+        },
         "wfbuilding": {
             "lb": 0.0,
             "ub": 1000000000.0
@@ -14135,6 +14171,10 @@
         "wgt2": {
             "lb": 10000.0,
             "ub": 1000000.0
+        },
+        "windspeed": {
+            "lb": 0.0,
+            "ub": 10.0
         },
         "wsvfac": {
             "lb": 0.9,
@@ -18903,6 +18943,24 @@
             "best_sum_so_far",
             "exit_code",
             "fmt_str"
+        ],
+        "water_usage_variables": [
+            "airtemp",
+            "watertemp",
+            "windspeed",
+            "waterdens",
+            "latentheat",
+            "volheat",
+            "evapratio",
+            "evapvol",
+            "energypervol",
+            "volperenergy",
+            "waterusetower",
+            "wateruserecirc",
+            "wateruseonethru"
+        ],
+        "water_use_module": [
+            "secday"
         ]
     },
     "DICT_NSWEEP2IXC": {
@@ -19022,6 +19080,7 @@
         "afw": "real_variable",
         "afwi": "real_variable",
         "afwo": "real_variable",
+        "airtemp": "real_variable",
         "alfapf": "real_variable",
         "alphaj": "real_variable",
         "alphan": "real_variable",
@@ -19882,9 +19941,11 @@
         "vvhealw": "real_variable",
         "walalw": "real_variable",
         "wallpf": "real_variable",
+        "watertemp": "real_variable",
         "wfbuilding": "real_variable",
         "wgt": "real_variable",
         "wgt2": "real_variable",
+        "windspeed": "real_variable",
         "wsvfac": "real_variable",
         "xparain": "real_variable",
         "xpertin": "real_variable",
