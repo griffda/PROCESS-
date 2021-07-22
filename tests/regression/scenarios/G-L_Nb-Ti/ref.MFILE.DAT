@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
- Date_of_run_____________________________________________________________ (date)________________________     "21/07/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "11:09"
+ Date_of_run_____________________________________________________________ (date)________________________     "22/07/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "13:06"
  User____________________________________________________________________ (username)____________________     "rhicha"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "TF coil testing                                                                                    
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-363-g0f5a5cf0"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1324-secondary-ebw-heating-missing"                                                                
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-397-gad7f2a48"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "issue-935-power-plant-water-use"                                                                   
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-39/test_scenario_G_L_Nb_Ti_0/IN.DAT                                                                                                                                        "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-45/test_scenario_G_L_Nb_Ti_0/IN.DAT                                                                                                                                        "
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              1    
  # Numerics #
@@ -1116,6 +1116,10 @@
  Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________      2.3328E+01    
  Gross_electric_power*_/_high_grade_heat_(%)_____________________________ (etath)_______________________      4.1100E+01    
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.8349E-01    
+ # Water usage during plant operation (secondary cooling) #
+ Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      5.8980E+04 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.9743E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.9348E+06 OP 
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              2    
  # Numerics #
@@ -2221,6 +2225,10 @@
  Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________      2.3329E+01    
  Gross_electric_power*_/_high_grade_heat_(%)_____________________________ (etath)_______________________      4.1100E+01    
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.8340E-01    
+ # Water usage during plant operation (secondary cooling) #
+ Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      5.8970E+04 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.9740E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.9345E+06 OP 
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              3    
  # Numerics #
@@ -3326,6 +3334,10 @@
  Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________      2.3326E+01    
  Gross_electric_power*_/_high_grade_heat_(%)_____________________________ (etath)_______________________      4.1100E+01    
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.8358E-01    
+ # Water usage during plant operation (secondary cooling) #
+ Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      5.8990E+04 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.9747E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.9352E+06 OP 
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              4    
  # Numerics #
@@ -4431,6 +4443,10 @@
  Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________      2.3321E+01    
  Gross_electric_power*_/_high_grade_heat_(%)_____________________________ (etath)_______________________      4.1100E+01    
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.8380E-01    
+ # Water usage during plant operation (secondary cooling) #
+ Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      5.9015E+04 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.9755E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.9360E+06 OP 
  Number_of_scan_points___________________________________________________ (isweep)______________________              4    
  Scanning_variable_number________________________________________________ (nsweep)______________________             54    
  # Errors and Warnings #
