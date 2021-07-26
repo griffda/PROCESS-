@@ -137,7 +137,7 @@ module tfcoil_variables
   real(dp) :: dcase
   !! density of coil case (kg/m3)
 
-  real(dp), dimension(8) :: dcond
+  real(dp), dimension(9) :: dcond
   !! density of superconductor type given by i_tf_sc_mat/isumatoh/isumatpf (kg/m3)
   
   real(dp) :: dcondins
@@ -211,6 +211,7 @@ module tfcoil_variables
   !! - =6 REBCO HTS tape in CroCo strand
   !! - =7 Durham Ginzburg-Landau critical surface model for Nb-Ti
   !! - =8 Durham Ginzburg-Landau critical surface model for REBCO
+  !! - =9 Hazelton experimental data + Zhai conceptual model for REBCO
 
   integer :: i_tf_sup
   !! Switch for TF coil conductor model:

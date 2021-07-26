@@ -856,7 +856,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
             acndttf = t_conductor**2 - acstf
 
         ! REBCO turn structure
-        else if (i_tf_sc_mat == 6 ) then  
+        else if ( i_tf_sc_mat == 6 ) then  
 
             ! Diameter of circular cable space inside conduit [m]
             t_cable = t_conductor - 2.0D0*thwcndut
@@ -3824,6 +3824,9 @@ subroutine outtf(outfile, peaktfflag)
             case (8)
                 call ocmmnt(outfile, & 
                     '  ->  Durham Ginzburg-Landau critical surface model for REBCO')
+            case (9)
+                call ocmmnt(outfile, & 
+                    '  ->  Hazelton experimental data + Zhai conceptual model for REBCO')
         end select
     end if
 
@@ -3969,7 +3972,7 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'Inter-turn insulation thickness (m)','(thicndut)',thicndut)
 
         select case (i_tf_sc_mat)
-        case (1,2,3,4,5,7,8)
+        case (1,2,3,4,5,7,8,9)
             call osubhd(outfile,'Conductor information:')
             call ovarre(outfile,'Diameter of central helium channel in cable','(dhecoil)',dhecoil)
             call ocmmnt(outfile,'Fractions by area')
@@ -4456,7 +4459,24 @@ contains
             if (strncon_tf > 0.7D-2 .or. strncon_tf < -0.7D-2) then
                 fdiags(1) = strncon_tf ; call report_error(261)
             end if
+
+        case (9) ! High Current Density REBCO tape ! rmc
+            bc20m = 138
+            tc0m = 92
+            ! 'high current density' as per parameterisation described in Wolf, 
+            !  and based on Hazelton experimental data and Zhai conceptual model;
+            !  see subroutine for full references
+            call HIJC_REBCO(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
             
+            jcritstr = jcritsc * (1.0D0-fcu)
+            !  Critical current in cable (copper added at this stage in HTS cables)
+            icrit = jcritstr * acs * fcond 
+            
+            !REBCO fractures in strains above ~+/- 0.7%
+            if (strncon_tf > 0.7D-2 .or. strncon_tf < -0.7D-2) then
+                fdiags(1) = strncon_tf ; call report_error(261)
+            end if
+
         end select
 
         ! Critical current density in winding pack
@@ -4482,7 +4502,7 @@ contains
         end if
 
         !  Temperature margin (already calculated in bi2212 for isumat=2)
-        if ((isumat == 1).or.(isumat == 4).or.(isumat == 3).or.(isumat == 5).or.(isumat == 7).or.(isumat == 8)) then
+        if ((isumat == 1).or.(isumat == 3).or.(isumat == 4).or.(isumat == 5).or.(isumat == 7).or.(isumat == 8).or.(isumat == 9)) then
 
             !  Newton-Raphson method; start approx at requested minimum temperature margin
             ttest = thelium + tmargmin_tf + 0.001d0
@@ -4526,6 +4546,11 @@ contains
                     if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
                     call GL_REBCO(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
                     call GL_REBCO(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
+                case (9)
+                    call HIJC_REBCO(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+                    if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
+                    call HIJC_REBCO(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
+                    call HIJC_REBCO(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
                 end select
                 ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)
             end do solve_for_tmarg
@@ -4584,6 +4609,11 @@ contains
         case (8)
             call ocmmnt(outfile,'Superconductor used: REBCO')
             call ocmmnt(outfile, ' (Durham Ginzburg-Landau critical surface model)')
+            call ovarre(outfile,'Critical field at zero temperature and strain (T)','(bc20m)',bc20m)
+            call ovarre(outfile,'Critical temperature at zero field and strain (K)', '(tc0m)',tc0m)
+        case (9)
+            call ocmmnt(outfile,'Superconductor used: REBCO')
+            call ocmmnt(outfile, ' (Hazelton experimental data + Zhai conceptual model)')
             call ovarre(outfile,'Critical field at zero temperature and strain (T)','(bc20m)',bc20m)
             call ovarre(outfile,'Critical temperature at zero field and strain (K)', '(tc0m)',tc0m)
         end select ! isumat

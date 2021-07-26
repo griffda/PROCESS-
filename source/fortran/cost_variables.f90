@@ -361,7 +361,7 @@ module cost_variables
   real(dp) :: step_ucfwps 
   !! first wall passive stabiliser cost ($) (if cost model = 2)
 
-  real(dp), dimension(8) :: step_ucsc
+  real(dp), dimension(9) :: step_ucsc
   !! cost of superconductor ($/kg) (if cost model = 2)
 
   real(dp) :: step_ucfnc
@@ -577,7 +577,7 @@ module cost_variables
   real(dp) :: ucrb
   !! cost of reactor building (M$/m3)
 
-  real(dp), dimension(8) :: ucsc
+  real(dp), dimension(9) :: ucsc
   !! cost of superconductor ($/kg)
 
   real(dp) :: step_uc_cryo_al
@@ -758,7 +758,9 @@ module cost_variables
     step_ucfwa = 774.05D0
     step_ucfws = 5115.7D0 
     step_ucfwps = 0.0D0
-    step_ucsc = (/ 600.0D0, 600.0D0, 443.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0,1200.0D0 /)
+    step_ucsc = &
+      (/ 600.0D0, 600.0D0, 443.0D0, 600.0D0, 600.0D0, 600.0D0, 300.0D0, 1200.0D0, &
+      1200.0D0 /)
     step_ucfnc = 104.3D0 
     step_ucwindpf = 465.0D0
     step_rh_costfrac = 7.5D-2
@@ -812,8 +814,9 @@ module cost_variables
     ucpfic = 1.0D4
     ucpfps = 3.5D4
     ucrb = 400.0D0
-    ucsc = &
-      (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0,1200.0D0/)
+    ucsc = & 
+      (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0, 300.0D0, 1200.0D0, &
+      1200.0D0/)
     ucshld = 32.0D0
     uctfbr = 1.22D0
     uctfbus = 100.0D0
