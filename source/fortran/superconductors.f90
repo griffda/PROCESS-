@@ -773,9 +773,88 @@ subroutine GL_REBCO(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit) !SCM add
   !  Critical current density (A/m2)
   jcrit = A_e * (T_e*(1-t_reduced**2))**2 * bcrit**(n-3) * b_reduced**(p-1) * (1 - b_reduced)**q 
 
-
-
 end subroutine GL_REBCO
+
+!--------------------------------------------------------------------------
+
+subroutine HIJC_REBCO(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit) 
+
+    !! Implementation of High Current Density REBCO tape
+    !! author: R Chapman, UKAEA
+    !! thelium : input real : SC temperature (K)
+    !! bmax : input real : Magnetic field at conductor (T)
+    !! strain : input real : Strain in superconductor
+    !! bc20max : input real : Upper critical field (T) for superconductor
+    !! at zero temperature and strain
+    !! t_c0 : input real : Critical temperature (K) at zero field and strain
+    !! jcrit : output real : Critical current density in superconductor (A/m2)
+    !! bcrit : output real : Critical field (T)
+    !! tcrit : output real : Critical temperature (K)
+    !!
+    !! Returns the critical current of a REBCO tape based on a critical surface  
+    !! (field, temperature) parameterization. Based in part on the parameterization 
+    !! described in: M. J. Wolf, N. Bagrets, W. H. Fietz, C. Lange and K. Weiss, 
+    !! "Critical Current Densities of 482 A/mm2 in HTS CrossConductors at 4.2 K and 12 T," 
+    !! in IEEE Transactions on Applied Superconductivity, vol. 28, no. 4, pp. 1-4, 
+    !! June 2018, Art no. 4802404, doi: 10.1109/TASC.2018.2815767. And on the experimental 
+    !! data presented here: "2G HTS Wire Development at SuperPower", Drew W. Hazelton, 
+    !! February 16, 2017 https://indico.cern.ch/event/588810/contributions/2473740/
+    !! The high Ic parameterization is a result of modifications based on Ic values 
+    !! observed in: "Conceptual design of HTS magnets for fusion nuclear science facility", 
+    !! Yuhu Zhai, Danko van der Laan, Patrick Connolly, Charles Kessel, 2021, 
+    !! https://doi.org/10.1016/j.fusengdes.2021.112611
+    !! The parameter A is transformed into a function A(T) based on a Newton polynomial fit 
+    !! considering A(4.2 K) = 2.2e8, A(20 K) = 2.3e8 and A(65 K) = 3.5e8. These values were 
+    !! selected manually. A good fit to the pubished data can be seen in the 4-10 T range 
+    !! but the fit deviates at very low or very high field.
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+  
+    !  Arguments
+    real(dp), intent(in) :: thelium, bmax, strain, bc20max, t_c0
+    real(dp), intent(out) :: jcrit, tcrit, bcrit
+
+    !  Local variables
+    real(dp) :: B_c, A_e, t_reduced, strain_func, s
+    real(dp), parameter :: a = 1.4D0
+    real(dp), parameter :: b = 2.005D0
+    !critical current density prefactor
+    real(dp), parameter :: A_0 = 2.2D8
+    !flux pinning field scaling parameters
+    real(dp), parameter :: p = 0.39D0
+    real(dp), parameter :: q = 0.9D0
+    !strain conversion parameters
+    real(dp), parameter :: u = 33450.0D0
+    real(dp), parameter :: v = -176577.0D0
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    B_c = bc20max * (1.0D0 - thelium/t_c0)**a
+
+    A_e = A_0 + ( u * thelium**2 ) + ( v * thelium)
+
+    ! Critical temperature (K)  
+    !  scaled to match behaviour in GL_REBCO routine,
+    !  ONLY TO BE USED until a better suggestion is received
+    tcrit = 0.999965D0 * t_c0
+
+    ! Critical Field (T)
+    !  scaled to match behaviour in GL_REBCO routine,
+    !  ONLY TO BE USED until a better suggestion is received
+    bcrit = 0.548894D0 * bc20max
+
+    ! Critical current density (A/m2)
+    jcrit = ( A_e / bmax ) * B_c**b * ( bmax / B_c )**p * (1 - bmax/B_c)**q
+    !! Jc times HTS area: area is width 4mm * HTS layer thickness 1 um
+    !jcrit = jcrit * 4.0D-3 * 1.0D-6
+    ! Jc times HTS area: area is width 4mm times HTS layer thickness 1 um, 
+    ! divided by the tape area to provide engineering Jc per tape, then multiplied by fraction 0.4
+    ! to reach the level of current density expected in the space where the tapes are wound in A/m^2!
+    jcrit = jcrit * (4.0D-3 * 1.0D-6) / (4.0D-3 * 6.5D-5) * 0.4D0
+
+end subroutine HIJC_REBCO
 
 !----------------------------------------------------------------
 

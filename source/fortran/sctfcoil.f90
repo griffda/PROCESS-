@@ -4265,8 +4265,8 @@ subroutine tfspcall(outfile,iprint)
         tmargtf, thwcndut, t_conductor, fcutfsu, jwdgcrt, tdmptf, cpttf, &
         ritfc, jwptf, bmaxtfrp, tcritsc, acstf, strncon_tf, fhts, bcritsc, &
         i_tf_sc_mat, b_crit_upper_nbti, t_crit_nbti
-    use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, jcrit_nbti, croco, bi2212,&
-    GL_nbti, GL_REBCO
+    use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, &
+        jcrit_nbti, croco, bi2212, GL_nbti, GL_REBCO, HIJC_REBCO
     use global_variables, only: run_tests
     use constants, only: pi
     implicit none
@@ -4457,7 +4457,6 @@ contains
                 fdiags(1) = strncon_tf ; call report_error(261)
             end if
             
-
         end select
 
         ! Critical current density in winding pack
@@ -4605,6 +4604,8 @@ contains
         call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcu)
         call ovarre(outfile,'Strain on superconductor','(strncon_tf)',strncon_tf)
         call ovarre(outfile,'Critical current density in superconductor (A/m2)','(jcritsc)',jcritsc, 'OP ')
+        call ovarre(outfile,'Critical temp in superconductor (RMC test)','(tcrit)',tcrit, 'OP ')
+        call ovarre(outfile,'Critical field in superconductor (RMC test)','(bcrit)',bcrit, 'OP ')
         call ovarre(outfile,'Critical current density in strand (A/m2)','(jcritstr)',jcritstr, 'OP ')
         call ovarre(outfile,'Critical current density in winding pack (A/m2)', '(jwdgcrt)',jwdgcrt, 'OP ')
         call ovarre(outfile,'Actual current density in winding pack (A/m2)','(jwdgop)',jwdgop, 'OP ')
