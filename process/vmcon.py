@@ -1,9 +1,13 @@
+from logging import getLogger
 from process.fortran import vmcon_module
 from process.fortran import function_evaluator
 from process.fortran import numerics
 from process.fortran import global_variables
 from process.fortran import define_iteration_variables
+from process import evaluators
 import numpy as np
+
+logger = getLogger(__name__)
 
 class Vmcon():
     """Driver for Fortran vmcon module."""
@@ -78,6 +82,7 @@ class Vmcon():
 
         # Counter for fcnvmc1 calls
         self.fcnvmc1_calls = 0
+        self.fcnvmc1_first_call = True
 
     def load_iter_vars(self):
         """Load Fortran iteration variables, then initialise Python arrays."""
@@ -259,7 +264,7 @@ class Vmcon():
 
         # Update Fortran vmcon module from self
         vmcon_module.objf = self.objf
-        vmcon_module.conf = self.conf[0:vmcon_module.conf.size]
+        vmcon_module.conf = self.conf[0:self.m]
         vmcon_module.info = self.ifail
 
     def fcnvmc1(self):
@@ -267,9 +272,14 @@ class Vmcon():
 
         Calculates the objective and constraint functions.
         """
-        self.objf, self.ifail = function_evaluator.fcnvmc1(self.n, self.m, 
-            self.x, self.conf, self.ifail
+        self.objf, self.conf[0:self.m], self.ifail = evaluators.fcnvmc1(self.n, self.m, 
+            self.x, self.ifail, self.fcnvmc1_first_call
         )
+        # Again, beware different lengths of conf in Vmcon and 
+        # evaluators.fcnvmc1()
+
+        if self.fcnvmc1_first_call == True:
+            self.fcnvmc1_first_call = False
     
     def fcnvmc2_wrapper(self):
         """Call fcnvmc2, synchronising variables before and after.

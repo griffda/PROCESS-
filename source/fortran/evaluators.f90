@@ -18,18 +18,9 @@ module function_evaluator
 
   public
   
-  logical :: first_call
-  !! First call flag for subroutine fcnvmc1
-
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine init_function_evaluator
-    !! Initialise module variables
-
-    first_call = .true.
-  end subroutine init_function_evaluator
 
   subroutine fcnhyb(n,xc,rc,iflag)
 
@@ -77,114 +68,6 @@ contains
     iflag = 1 * iflag
 
   end subroutine fcnhyb
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine fcnvmc1(n,m,xv,objf,conf,ifail_in, ifail_out)
-    !! Function evaluator for VMCON
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! n       : input integer     : number of variables
-    !! m       : input integer     : number of constraints
-    !! xv(n)   : input real array  : scaled variable values
-    !! objf    : output real       : objective function
-    !! conf(m) : output real array : constraint functions
-    !! ifail_in: input integer     : error flag, if < 0 stops calculation
-    !! ifail_out: output integer   : error flag, if < 0 stops calculation
-    !! This routine is the function evaluator for the VMCON
-    !! maximisation/minimisation routine.
-    !! <P>It calculates the objective and constraint functions at the
-    !! n-dimensional point of interest <CODE>xv</CODE>.
-    !! Note that the equality constraints must precede the inequality
-    !! constraints in <CODE>conf</CODE>.
-    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-		use global_variables, only: verbose
-		use constants, only: vfile
-		use constraints, only: constraint_eqns 
-		use cost_variables, only: coe 
-		use numerics, only: nviter 
-		use physics_variables, only: te ,rmajor ,powfmw ,bt 
-		use stellarator_variables, only: istell 
-		use times_variables, only: tburn0, tburn
-      use caller_module, only: caller
-    implicit none
-
-    !  Arguments
-
-    integer, intent(in) :: n,m
-    real(dp), dimension(n), intent(in) :: xv
-    real(dp), intent(out) :: objf
-    real(dp), dimension(m), intent(out) :: conf
-    integer, intent(in) :: ifail_in
-    integer, intent(out) :: ifail_out
-
-    !  Local variables
-
-    real(dp) :: summ,sqsumconfsq
-    integer :: ii, loop
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Evaluate machine parameters at xv
-
-    call caller(xv,n)
-
-    !  To ensure that, at the start of a run, all physics/engineering
-    !  variables are fully initialised with consistent values, we perform
-    !  a second evaluation call here
-
-    if (first_call) then
-       call caller(xv,n)
-       first_call = .false.
-    end if
-
-    !  Convergence loop to ensure burn time consistency
-
-    if (istell == 0) then
-       loop = 0
-       do while ( (loop < 10).and. &
-            (abs((tburn-tburn0)/max(tburn,0.01D0)) > 0.001D0) )
-          loop = loop+1
-          call caller(xv,n)
-          if (verbose == 1) then
-              write(*, '(a, 2e10.3)') 'Internal tburn consistency check: ',tburn,tburn0
-          end if
-       end do
-       if (loop >= 10) then
-            write(*,*) 'Burn time values are not consistent in iteration: ', nviter
-            write(*,*) 'tburn,tburn0: ',tburn,tburn0
-       end if
-    end if
-
-    !  Evaluate figure of merit (objective function)
-
-    call funfom(objf)
-
-    !  Evaluate constraint equations
-
-    call constraint_eqns(m,conf,-1)
-
-    !  To stop the program, set ifail < 0 here.
-    ! #TODO Not sure this serves any purpose
-    ifail_out = 1 * ifail_in
-
-    !  Verbose diagnostics
-
-    if (verbose == 1) then
-       summ = 0.0D0
-       do ii = 1,m
-          summ = summ + conf(ii)*conf(ii)
-       end do
-       sqsumconfsq = sqrt(summ)
-       write(vfile,'(3i13,100es13.5)') nviter, (1-mod(ifail_out,7))-1, &
-            mod(nviter,2)-1,te,coe,rmajor,powfmw,bt,tburn,sqsumconfsq,xv
-    end if
-
-  end subroutine fcnvmc1
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine fcnvmc2(n,m,xv,fgrd,cnorm,lcnorm, ifail_in, ifail_out)
 
