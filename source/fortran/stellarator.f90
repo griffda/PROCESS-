@@ -64,7 +64,9 @@ contains
 
     use availability_module, only: avail
     use buildings_module, only: bldgcall
+    use cost_variables, only: cost_model
     use costs_module, only: costs
+    use costs_2015_module, only: costs_2015
     use power_module, only: tfpwr, power1, acpow, power2
     use vacuum_module, only: vaccall
     use constants, only: nout
@@ -96,7 +98,12 @@ contains
     call acpow(nout,0)
     call power2(nout,0)
     call avail(nout,0)
-    call costs(nout,0)
+
+    if (cost_model == 0) then
+      call costs(nout,0)
+    else if (cost_model == 1) then
+      call costs_2015(0,0)
+    endif
 
 
     ! set first call variable to false:
@@ -2570,7 +2577,7 @@ contains
     use build_variables, only: blnkith, blnkoth, dh_tf_inner_bore, &
       dr_tf_inner_bore, fwith, fwoth, gapds, gapsto, hmax, r_tf_outboard_mid, &
       r_tf_outboard_mid, scrapli, scraplo, shldith, shldoth, tfcth, tfthko, &
-      r_tf_inboard_mid, vvblgap
+      r_tf_inboard_mid, vvblgap, d_vv_in, d_vv_out
     use fwbs_variables, only: denstl
     use error_handling, only: report_error, fdiags, idiags
     use physics_variables, only: bt, rmajor, rminor, aspect
@@ -2585,10 +2592,10 @@ contains
       whtcon, whtconcu, whtconsc, whtconsh, whttf, wwp1, dcond, awphec, dcondins, &
       i_tf_sc_mat, jwdgpro, max_force_density, sigvvall, strtf2, taucq, &
       tdmptf, tmaxpro, toroidalgap, vtfkv, whtconin, wwp2, vdalw, bcritsc, fhts, &
-      tcritsc, vtfskv, t_turn_tf
+      tcritsc, vtfskv, t_turn_tf, b_crit_upper_nbti, t_crit_nbti
 		use constants, only: rmu0, twopi, pi, dcopper
 		use maths_library, only: find_y_nonuniform_x, tril, sumup3, ellipke
-    use superconductors, only : jcrit_rebco, jcrit_nbti, bi2212, itersc, wstsc
+    use superconductors, only : jcrit_rebco, jcrit_nbti, bi2212, itersc, wstsc, GL_nbti, GL_REBCO
     use rebco_variables, only: copperA_m2, copperA_m2_max
     use constraint_variables, only: fiooic
     implicit none
@@ -2608,7 +2615,7 @@ contains
                tfborev, min_bending_radius, jwdgpro2, coilcoilgap, &
                max_lateral_force_density, max_radial_force_density, &
                centering_force_max_MN, centering_force_min_MN, centering_force_avg_MN, &
-               max_force_density_MNm
+               max_force_density_MNm, f_VV_actual
 
     integer :: N_it,k
 
@@ -2855,8 +2862,18 @@ contains
      radvv = rmajor - rminor - scrapli - fwith - blnkith - vvblgap - shldith
  
      ! Quench time [s]
-     taucq = (bt * ritfc * rminor * rminor) / (radvv * sigvvall) ! (assumes tokamak reference value)
+     taucq = (bt * ritfc * rminor**2) / (radvv * sigvvall) ! (assumes tokamak reference value)
      
+     ! Actual VV force density
+     ! Based on reference values from W-7X:
+     ! Bref = 3;
+     ! Iref = 1.3*50;
+     ! aref = 0.92;
+     ! \[Tau]ref = 1.;
+     ! Rref = 5.2;
+     ! dref = 14*10^-3;
+     f_VV_actual = 2.54D6*(3*1.3*50*0.92**2)/(1*5.2*0.014)*(bt*ritfc*rminor**2/((d_vv_in+d_vv_out)/2*taucq*radvv))**(-1)
+
      ! the conductor fraction is meant of the cable space!
      ! This is the old routine which is being replaced for now by the new one below
      !    protect(aio,  tfes,               acs,       aturn,   tdump,  fcond,  fcu,   tba,  tmax   ,ajwpro, vd)
@@ -3020,11 +3037,24 @@ contains
               jcritstr = jcritsc * (1.0D0-fcu)
   
         case (6) ! "REBCO" 2nd generation HTS superconductor in CrCo strand
-           call jcrit_rebco(thelium,bmax,jcritsc,validity,0)
-           !call supercon_croco(t_w_i**2,bmax,cpttf,tftmp, &
-           !iprint, outfile, jcritsc,tcrit)
-           ! this call might not be consistent with fcu and fhe.
-           jcritsc = Max(1.0D-9,jcritsc)
+            call jcrit_rebco(thelium,bmax,jcritsc,validity,0)
+            jcritsc = Max(1.0D-9,jcritsc)
+            jcritstr = jcritsc * (1.0D0-fcu)
+      
+        case (7) ! Durham Ginzburg-Landau Nb-Ti parameterisation
+            bc20m = b_crit_upper_nbti
+            tc0m = t_crit_nbti 
+            call GL_nbti(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
+            jcritstr = jcritsc  * (1.0D0-fcu)
+      
+        case (8) ! Branch YCBO model fit to Tallahassee data
+            bc20m = 429D0
+            tc0m = 185D0
+            call GL_REBCO(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit) 
+            ! A0 calculated for tape cross section already
+            jcritstr = jcritsc * (1.0D0-fcu)
+
+
         case default  !  Error condition
            idiags(1) = i_tf_sc_mat ; call report_error(156)
   
@@ -3353,9 +3383,6 @@ contains
       call osubhd(outfile,'General Coil Parameters :')
   
 
-
-
-
       call ovarre(outfile,'Number of modular coils','(n_tf)',n_tf)
       call ovarre(outfile,'Av. coil major radius','(coil_r)',config%coil_rmajor*f_r)
       call ovarre(outfile,'Av. coil minor radius','(coil_a)',config%coil_rminor*f_r)
@@ -3434,6 +3461,7 @@ contains
       call ovarre(outfile,'Allowable stress in vacuum vessel (VV) due to quench (Pa)','(sigvvall)',sigvvall)
       call ovarre(outfile,'Minimum allowed quench time due to stress in VV (s)','(taucq)',taucq, 'OP ')
       call ovarre(outfile,'Actual quench time (or time constant) (s)','(tdmptf)',tdmptf)
+      call ovarre(outfile,'Actual quench vaccuum vessel force density (MN/m^3)','(f_vv_actual)',f_vv_actual)
       call ovarre(outfile,'Maximum allowed voltage during quench due to insulation (kV)', '(vdalw)', vdalw)
       call ovarre(outfile,'Actual quench voltage (kV)','(vtfskv)',vtfskv, 'OP ')
       call ovarre(outfile,'Current (A) per mm^2 copper (A/mm2)','(coppera_m2)',coppera_m2*1.0D-6)

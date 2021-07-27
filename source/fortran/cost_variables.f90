@@ -529,7 +529,7 @@ module cost_variables
   real(dp) :: ucrb
   !! cost of reactor building (M$/m3)
 
-  real(dp), dimension(7) :: ucsc
+  real(dp), dimension(8) :: ucsc
   !! cost of superconductor ($/kg)
 
   real(dp), parameter :: ucsh = 115.0D0
@@ -740,7 +740,7 @@ module cost_variables
     ucpfps = 3.5D4
     ucrb = 400.0D0
     ucsc = &
-      (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0/)
+      (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0, 300.0D0, 600.0D0/)
     ucshld = 32.0D0
     uctfbr = 1.22D0
     uctfbus = 100.0D0
