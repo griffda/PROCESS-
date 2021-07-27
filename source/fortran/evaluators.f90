@@ -50,6 +50,7 @@ contains
 
     use constraints, only: constraint_eqns 
     use numerics, only: neqns 
+    use caller_module, only: caller
     implicit none
 
     !  Arguments
@@ -107,6 +108,7 @@ contains
 		use physics_variables, only: te ,rmajor ,powfmw ,bt 
 		use stellarator_variables, only: istell 
 		use times_variables, only: tburn0, tburn
+      use caller_module, only: caller
     implicit none
 
     !  Arguments
@@ -210,6 +212,7 @@ contains
 
 		use constraints, only: constraint_eqns 
 		use numerics, only: ipnvars, epsfcn
+      use caller_module, only: caller
     implicit none
 
     !  Arguments
