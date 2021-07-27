@@ -5,15 +5,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.1   Release Date :: 2021-03-17
-   Tag No. : v2.1-271-g946465bd
-    Branch : 1321-reduce-intermittent-failures-in-regression-tests
+   Version : 2.1.2   Release Date :: 2021-07-01
+   Tag No. : v2.1-397-gad7f2a48
+    Branch : issue-935-power-plant-water-use
    Git log : COMMIT_MSG
- Date/time : 26 May 2021 16:07:58 +01:00(hh:mm) UTC
-      User : jmaddock
-  Computer : J0826UBUNTU
- Directory : /tmp/pytest-of-jmaddock/pytest-105/test_solver0
-     Input : /tmp/pytest-of-jmaddock/pytest-105/test_scenario_scenario17_0/IN.DAT
+ Date/time : 22 Jul 2021 13:08:04 +01:00(hh:mm) UTC
+      User : rhicha
+  Computer : l0500
+ Directory : /tmp/pytest-of-rhicha/pytest-45/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-45/test_scenario_starfire_0/IN.DAT
  Run title : starfire
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -146,10 +146,11 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  (step2115)          Cryogenics and Inert Gas Storage Building (M$)                                              130.05
  (step2116)          Security Building (M$)                                                                       14.90
  (step2117)          Ventilation Stack (M$)                                                                        8.78
- (step2198)          Spares (M$)                                                                                  14.82
- (step2199)          Contingency (M$)                                                                            342.12
+ (step2118)          Waste Facilities Buildings (M$)                                                             100.00
+ (step2198)          Spares (M$)                                                                                  15.48
+ (step2199)          Contingency (M$)                                                                            357.22
  
- (step21)            Total Account 21 Cost (M$)                                                                 2622.95
+ (step21)            Total Account 21 Cost (M$)                                                                 2738.70
  
  ************************* 22. Reactor Plant Equipment **************************
  
@@ -262,45 +263,45 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ***************************** 27. Remote Handling ******************************
  
- (step2701)          Remote Handing (M$)                                                                        1065.94
+ (step2701)          Remote Handing (M$)                                                                        1074.62
  
- (step27)            Total Account 27 Cost (M$)                                                                 1065.94
+ (step27)            Total Account 27 Cost (M$)                                                                 1074.62
  
  ****************************** Plant Direct Cost *******************************
  
- (cdirt)             Plant direct cost (M$)                                                                    15278.46
+ (cdirt)             Plant direct cost (M$)                                                                    15402.90
  
  ******************************** Indirect Cost *********************************
  
- (step91)            Construction Facilities, Equipment and Services (M$)                                       4583.54
- (step92)            Engineering and Costruction Management Services (M$)                                       4965.50
- (step93)            Other Costs (M$)                                                                           2291.77
+ (step91)            Construction Facilities, Equipment and Services (M$)                                       4620.87
+ (step92)            Engineering and Costruction Management Services (M$)                                       5005.94
+ (step93)            Other Costs (M$)                                                                           2310.43
  
  ******************************* Constructed Cost *******************************
  
- (concost)           Constructed Cost (M$)                                                                     27119.27
+ (concost)           Constructed Cost (M$)                                                                     27340.14
  
  ************************* Interest during Construction *************************
  
- (moneyint)          Interest during construction (M$)                                                          4067.89
+ (moneyint)          Interest during construction (M$)                                                          4101.02
  
  *************************** Total Capital Investment ***************************
  
- (capcost)           Total capital investment (M$)                                                             31187.16
+ (capcost)           Total capital investment (M$)                                                             31441.16
  
  *************************************** Cost of Electricity (2017 US$) ***************************************
  
  First wall / blanket life (years)                                        (fwbllife)                    5.343     
  Divertor life (years)                                                    (divlife.)                    0.286     
- Cost of electricity (m$/kWh)                                             (coe)                       275.482     
+ Cost of electricity (m$/kWh)                                             (coe)                       277.645     
  
  Power Generation Costs :
  
                                                                            Annual Costs, M$       COE, m$/kWh
 
- Capital Investment                                                               2027.17              263.43
+ Capital Investment                                                               2043.68              265.58
  Operation & Maintenance                                                            68.29                8.87
- Decommissioning Fund                                                               17.14                2.23
+ Decommissioning Fund                                                               17.28                2.25
  Fuel Charge Breakdown
 
      Blanket & first wall                                                    0.00                0.00
@@ -311,7 +312,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
      Waste Disposal                                                          3.91                0.51
  Total Fuel Cost                                                                     7.31                0.95
 
- Total Cost                                                                       2119.90              275.48
+ Total Cost                                                                       2136.55              277.65
  
  ********************************************* Plant Availability *********************************************
  
@@ -1585,6 +1586,15 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
                               Net power -811.23   -512.19   -573.15   1182.07     -8.08   -369.76   1165.83
                                  ------   -----      ----     -----     -----     -----    ------
  
+ 
+ *************************** Water usage during plant operation (secondary cooling) ***************************
+ 
+ Estimated amount of water used through different cooling system options:
+ 1. Cooling towers
+ 2. Water bodies (pond, lake, river): recirculating or once-through
+ Volume used in cooling tower (m3/day)                                    (waterusetower)           1.209E+05  OP 
+ Volume used in recirculating water system (m3/day)                       (wateruserecirc)          4.046E+04  OP 
+ Volume used in once-through water system (m3/day)                        (wateruseonethru)         3.965E+06  OP 
  
  ******************************************** Errors and Warnings *********************************************
  

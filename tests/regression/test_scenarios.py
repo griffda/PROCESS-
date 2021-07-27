@@ -49,7 +49,18 @@ def scenarios_run():
     logger.info("End of scenarios regression run")
     # TODO Need to log summary result of all tests
 
-@pytest.fixture(params=get_scenarios())
+def get_scenario_id(scenario):
+    """Return the name of the scenario.
+
+    Used for getting the IDs for a fixture parameterised with scenarios.
+    :param scenario: Scenario object parameterising a fixture
+    :type scenario: scenario.Scenario
+    :return: scenario name
+    :rtype: str
+    """
+    return scenario.name
+
+@pytest.fixture(params=get_scenarios(), ids=get_scenario_id)
 def scenario(scenarios_run, request):
     """Scenario fixture, parameterised with different scenarios.
 
@@ -82,6 +93,10 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
     :param overwrite_refs_opt: option to overwrite reference MFILE and OUT.DAT
     :type tmp_path: bool
     """
+    # TODO The memory errors need to be investigated and the tests re-instated
+    if scenario.name in ["2D_scan", "kit_blanket"]:
+        pytest.skip("2D scan and kit_blanket currently introduce memory errors")
+
     logger.info(f"Starting test for {scenario.name}")
 
     # TODO Should only be logged once, not for every test

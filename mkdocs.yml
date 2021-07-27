@@ -46,6 +46,8 @@ nav:
         - PLASMOD: physics-models/plasmod.md
         - Pulsed Plant Operation: physics-models/pulsed-plant.md
         - Safety and Environment Models: physics-models/safety.md
+    - Unique Models:
+        - Water Use: unique-models/water_use.md
     - Plasma Scenarios:
         - I Mode: plasma/i-mode.md
         - QH Mode: plasma/qh-mode.md

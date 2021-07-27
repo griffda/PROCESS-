@@ -14,15 +14,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.1   Release Date :: 2021-03-17
-   Tag No. : v2.1-271-g946465bd
-    Branch : 1321-reduce-intermittent-failures-in-regression-tests
+   Version : 2.1.2   Release Date :: 2021-07-01
+   Tag No. : v2.1-397-gad7f2a48
+    Branch : issue-935-power-plant-water-use
    Git log : COMMIT_MSG
- Date/time : 26 May 2021 16:06:53 +01:00(hh:mm) UTC
-      User : jmaddock
-  Computer : J0826UBUNTU
- Directory : /tmp/pytest-of-jmaddock/pytest-105/test_solver0
-     Input : /tmp/pytest-of-jmaddock/pytest-105/test_scenario_scenario3_0/IN.DAT
+ Date/time : 22 Jul 2021 13:06:51 +01:00(hh:mm) UTC
+      User : rhicha
+  Computer : l0500
+ Directory : /tmp/pytest-of-rhicha/pytest-45/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-45/test_scenario_CFETR_small_0/IN.DAT
  Run title : "CFETR small (5.7m) reference file"
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -1585,6 +1585,15 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                               Net power -552.39   -378.56   -482.77   -299.73     84.70    -82.77   -163.39
                                  ------   -----      ----     -----     -----     -----    ------
  
+ 
+ *************************** Water usage during plant operation (secondary cooling) ***************************
+ 
+ Estimated amount of water used through different cooling system options:
+ 1. Cooling towers
+ 2. Water bodies (pond, lake, river): recirculating or once-through
+ Volume used in cooling tower (m3/day)                                    (waterusetower)           6.832E+03  OP 
+ Volume used in recirculating water system (m3/day)                       (wateruserecirc)          2.287E+03  OP 
+ Volume used in once-through water system (m3/day)                        (wateruseonethru)         2.241E+05  OP 
  
  ******************************************** Errors and Warnings *********************************************
  

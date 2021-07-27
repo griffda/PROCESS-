@@ -232,11 +232,12 @@ contains
       ucpens, cland, ucwindpf, i_cp_lifetime, cplife_input, step_con, &
       step_cconfix, step_cconshpf, step_currency, step_uccase, step_uccu, &
       step_ucsc, step_ucfnc, step_ucfwa, step_ucfws, step_ucfwps, step91_per, &
-      step92_per, step93_per, step_uc_cryo_al, step_mc_cryo_al_per, sitecost
+      step92_per, step93_per, step_uc_cryo_al, step_mc_cryo_al_per, sitecost, &
+      wfbuilding
     use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
-      etalh, frbeam 
+      etalh, frbeam, harnum 
     use div_kal_vars, only: kallenbach_test_option, &
       relerr_sol, kallenbach_scan_switch, lcon_factor, kallenbach_scan_num, &
       kallenbach_scan_end, kallenbach_scan_start, target_spread, &
@@ -339,6 +340,7 @@ contains
     use rebco_variables, only: hastelloy_thickness, f_coppera_m2, &
       rebco_thickness, copper_rrr, coppera_m2_max, croco_thick, copper_thick 
     use reinke_variables, only: reinke_mode, fzactual, impvardiv, lhat 
+    use water_usage_variables, only: airtemp, watertemp, windspeed
     implicit none
 
     !  Arguments
@@ -1298,6 +1300,9 @@ contains
        case ('gamma_ecrh')
           call parse_real_variable('gamma_ecrh', gamma_ecrh, 0.0D0, 1.0D0, &
                'User input ECRH gamma_CD')
+       case ('harnum')
+          call parse_real_variable('harnum', harnum, 1.0D0, 10.0D0, &
+               'cyclotron harmonic frequency number')
        case ('rho_ecrh')
           call parse_real_variable('rho_ecrh', rho_ecrh, 0.0D0, 1.0D0, &
                'normalised minor radius at which electron cyclotron current drive is maximum')
@@ -2686,9 +2691,12 @@ contains
        case ('discount_rate')
           call parse_real_variable('discount_rate', discount_rate, 0.0D0, 0.5D0, &
                'Effective cost of money')
-      case ('sitecost')
-           call parse_real_variable('sitecost', sitecost, 0.0D0, 1.0D9, &
-                'Fixed site cost ($)')
+       case ('sitecost')
+          call parse_real_variable('sitecost', sitecost, 0.0D0, 1.0D9, &
+               'Fixed site cost ($)')
+       case ('wfbuilding')
+          call parse_real_variable('wfbuilding', wfbuilding, 0.0D0, 1.0D9, &
+               'Fixed cost Waste Facility buildings ($)')
 
           !  Unit cost settings
 
@@ -3429,6 +3437,17 @@ contains
           call parse_real_array('v3matf', v3matf, isub1, 3*(maxmat+1), &
                     'IFE void 3 material fraction', icode)
      
+       ! Water usage settings
+
+       case ('airtemp')
+          call parse_real_variable('airtemp', airtemp, -15.0D0, 40.0D0, &
+               'ambient air temperature (degrees C)')
+       case ('watertemp')
+          call parse_real_variable('watertemp', watertemp, 0.0D0, 25.0D0, &
+               'water temperature (degrees C)')
+       case ('windspeed')
+          call parse_real_variable('windspeed', windspeed, 0.0D0, 10.0D0, &
+               'wind speed (m/s)')
 
        case default
           error_message = 'Unknown variable in input file: '//varnam(1:varlen)
@@ -3471,9 +3490,10 @@ contains
     if (error .eqv. .True.) stop 1
 
     ! MDK Try allocating here
-    ! Guard against re-allocation
     if (allocated(name_xc)) deallocate(name_xc)
     allocate(name_xc(nvar))
+    ! Ensure array is initialised
+    name_xc = ""
 
   end subroutine parse_input_file
 
