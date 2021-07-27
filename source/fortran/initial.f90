@@ -245,7 +245,7 @@ subroutine check
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use build_variables, only: blnkith, bore, gapoh, ohcth, precomp, iprecomp, &
-        i_r_cp_top, r_cp_top
+        i_r_cp_top, r_cp_top, vgaptop, vgap, shldtth, shldlth, d_vv_top, d_vv_bot
     use buildings_variables, only: esbldgm3, triv
     use current_drive_variables, only: gamcd, iefrf, irfcd
     use div_kal_vars, only: impurity_enrichment, kallenbach_switch
@@ -646,6 +646,16 @@ subroutine check
         impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
      endif
 
+     if (i_single_null == 0) then
+         idivrt = 2
+         vgaptop = vgap
+         shldtth = shldlth
+         d_vv_top = d_vv_bot
+         call report_error(272)
+     else  !  i_single_null == 1
+         idivrt = 1
+     end if
+
 
     !  Tight aspect ratio options (ST)
     ! --------------------------------
@@ -744,12 +754,6 @@ subroutine check
     else
 
         if (icurr == 2 .or. icurr == 9) call report_error(40)
-
-        if (i_single_null == 0) then
-            idivrt = 2
-        else  !  i_single_null == 1
-            idivrt = 1
-        end if
 
         ! Set the TF coil shape to PROCESS D-shape (if default value)
         if ( i_tf_shape == 0 ) i_tf_shape = 1

@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.1.1   Release Date :: 2021-03-17
-   Tag No. : v2.1-184-g273a1ff8 code contains untracked changes
-    Branch : 1296-update-indirect-costs-in-cost-model-2
+   Tag No. : v2.1-271-g946465bd
+    Branch : 1321-reduce-intermittent-failures-in-regression-tests
    Git log : COMMIT_MSG
- Date/time : 10 May 2021 15:34:08 +01:00(hh:mm) UTC
+ Date/time : 26 May 2021 16:07:39 +01:00(hh:mm) UTC
       User : jmaddock
   Computer : J0826UBUNTU
- Directory : /tmp/pytest-of-jmaddock/pytest-1/test_solver0
-     Input : /tmp/pytest-of-jmaddock/pytest-1/test_scenario_scenario1_0/IN.DAT
+ Directory : /tmp/pytest-of-jmaddock/pytest-105/test_solver0
+     Input : /tmp/pytest-of-jmaddock/pytest-105/test_scenario_scenario11_0/IN.DAT
  Run title : IFE_001
   Run type : Reactor concept design: Inertial Fusion model, (c) CCFE
  

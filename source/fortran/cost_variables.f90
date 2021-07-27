@@ -319,8 +319,56 @@ module cost_variables
   real(dp) :: discount_rate
   !! effective cost of money in constant dollars
 
+  real(dp) :: sitecost
+  !! fixed value for site cost (2017 US$)
+
   real(dp) :: step_con
   !! Contingency Percentage
+
+  real(dp) :: step_cconfix 
+  !! fixed cost of superconducting cable ($/m) (if cost model = 2) 
+
+  real(dp) :: step_cconshpf
+  !! cost of PF coil steel conduit/sheath ($/m) (if cost model = 2) 
+
+  character(len=50) :: step_currency
+  !! description of the constant dollar year used
+
+  real(dp) :: step_ucblbe
+  !! unit cost for blanket Be ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucblbreed 
+  !! unit cost for blanket breeder material ($/kg) (if cost model = 2) 
+
+  real(dp) :: step_ucblss
+  !! unit cost for blanket stainless steel ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucblvd 
+  !! Unit cost for blanket Vd ($/kg) (if cost model = 2)
+
+  real(dp) :: step_uccase
+  !! cost of superconductor case ($/kg) (if cost model = 2)
+
+  real(dp) :: step_uccu
+  !! unit cost for copper in superconducting cable ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucfwa 
+  !! first wall armour cost ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucfws 
+  !! first wall structure cost ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucfwps 
+  !! first wall passive stabiliser cost ($) (if cost model = 2)
+
+  real(dp), dimension(7) :: step_ucsc
+  !! cost of superconductor ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucfnc
+  !! outer PF coil fence support cost ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucwindpf 
+  !! cost of PF coil superconductor windings ($/m) (if cost model = 2)
 
   real(dp) :: step_rh_costfrac
   !! fraction of capital cost for remote handling (if cost_model = 2)
@@ -532,6 +580,13 @@ module cost_variables
   real(dp), dimension(8) :: ucsc
   !! cost of superconductor ($/kg)
 
+  real(dp) :: step_uc_cryo_al
+  !! Unit cost of cryo aluminium ($/kg). Only used in costs_step_module
+
+  real(dp) :: step_mc_cryo_al_per
+  !! Manufacturing cost percentage for cryo aluminium (%). 0.2 means a 20%
+  !! manufacturing cost. Only used in costs_step_module
+
   real(dp), parameter :: ucsh = 115.0D0
   !! cost of shops and warehouses (M$/m3)
 
@@ -688,15 +743,30 @@ module cost_variables
     output_costs = 1
     discount_rate = 0.0435D0
     step_con = 1.5D-1
-    step_rh_costfrac = 0.0D0
+    step_cconfix = 217.0D0  
+    step_cconshpf = 91.0D0
+    step_currency = "2017 US$"
+    step_ucblbe = 8400.4D0
+    step_ucblbreed = 802.2D0 
+    step_ucblss = 488.3D0 
+    step_ucblvd = 200.0D0 
+    step_uccase = 0.0D0
+    step_uccu = 82.0D0
+    step_ucfwa = 774.05D0
+    step_ucfws = 5115.7D0 
+    step_ucfwps = 0.0D0
+    step_ucsc = (/ 600.0D0, 600.0D0, 443.0D0, 600.0D0, 600.0D0, 600.0D0, 300.0D0 /)
+    step_ucfnc = 104.3D0 
+    step_ucwindpf = 465.0D0
+    step_rh_costfrac = 7.5D-2
     step_ref = &
-      (/ 3.0D0, 3.0D-1, 1.115D1, 1.5744D2, 3.592D1, 7.96D0, 9.16D0, 3.26D0, 5.369D1, &
-      1.88D0, 6.6D-1, 8.63D0, 3.1D0, 2.05D0, 8.7D-1, 8.7D-1, 9.1D-1, 3.1D-1, 1.81D0, &
-      8.236D1, 1.8607D2, 1.2572D2, 3.46D1, 7.25D0, 4.0D0, 3.349D1, 5.274D1, 4.86D0, &
-      5.29D1, 2.45D0, 2.82D0, 1.676D1, 6.984D1, 7.7D0, 3.6D0, 2.8D0, 8.0D-1, 1.7D0, &
-      1.8D0, 1.3D0, 3.86D1, 3.83D1, 0.0D0, 2.4D-1, 8.0D-2, 0.0D0, 2.0D0, 1.97D0, 1.16D0, &
-      2.341D1, 7.733D1, 4.37D0, 4.434D1, 1.918D1, 9.39D0, 5.084D1, 8.7D0, 1.239D1, &
-      1.704D1, 7.8D0, 2.11D0, 1.74D1, 3.599D1, 8.2D0, 1.568D1, 1.235D1, 6.22D0, 7.5D-1 /)
+      (/ 8.92D0, 8.9D-1, 3.317D1, 7.4491D2, 1.0685D2, 2.368D1, 2.725D1, 9.7D0, 2.5403D2, &
+      8.9D0, 1.96D0, 4.083D1, 1.467D1, 6.1D0, 2.59D0, 2.59D0, 2.71D0, 9.2D-1, 8.56D0, &
+      6.7025D2, 1.51424D3, 1.02302D3, 2.8154D2, 5.9D1, 3.254D1, 2.7254D2, 4.292D2, 3.955D1, &
+      4.305D2, 1.994D1, 2.295D1, 1.364D2, 5.6836D2, 3.643D1, 1.703D1, 1.325D1, 3.79D0, 1.383D1, &
+      1.465D1, 1.058D1, 3.1413D2, 0.0D0, 0.0D0, 1.95D0, 6.5D-2, 0.0D0, 1.628D1, 1.603D1, 9.44D0, &
+      1.9051D2, 1.9585D2, 1.107D1, 1.319D2, 4.858D1, 2.793D1, 1.2876D2, 2.588D1, 3.01D1, &
+      4.14D1, 1.895D1, 5.13D0, 4.228D1, 8.744D1, 1.992D1, 4.664D1, 3.674D1, 1.85D1, 2.23D0 /)
     step91_per = 3.0D-1
     step92_per = 3.25D-1
     step93_per = 1.5D-1
@@ -752,5 +822,9 @@ module cost_variables
     ucwst = (/0.0D0, 3.94D0, 5.91D0, 7.88D0/)
     i_cp_lifetime = 0
     cplife_input = 2.0D0
+    step_uc_cryo_al = 8.1D1
+    step_mc_cryo_al_per = 2.0D-1
+    sitecost = 1.0D8
+
   end subroutine init_cost_variables
 end module cost_variables

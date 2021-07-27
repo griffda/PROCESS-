@@ -166,6 +166,7 @@ ucblvd   = 280.0 * unit cost for blanket vanadium ($/kg)
 ucdiv    = 5.0d5 * cost of divertor blade ($)
 ucme     = 3.0d8 * cost of maintenance equipment ($)
 
+
 *----------------Costs 2015 Module-----------------*
 
 
