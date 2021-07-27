@@ -264,7 +264,21 @@ class Vmcon():
 
         # Update Fortran vmcon module from self
         vmcon_module.objf = self.objf
-        vmcon_module.conf = self.conf[0:self.m]
+
+        try:
+            vmcon_module.conf = self.conf[0:self.m]
+        except ValueError:
+            # Sometimes there's a size mismatch here: was hidden previously
+            # by implicit Fortran array argument size coercion
+            # vmcon_module.conf can be 1 element larger than self.m; this is
+            # likely to be due to an intermittent memory error
+            # TODO Investigate
+            logger.warning(f"conf array size mismatch: attempted to broadcast "
+                f"size {self.m} into {vmcon_module.conf.size}"
+            )
+            # Only assign range m
+            vmcon_module.conf[0:self.m] = self.conf[0:self.m]
+
         vmcon_module.info = self.ifail
 
     def fcnvmc1(self):
