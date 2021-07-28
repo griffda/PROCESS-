@@ -310,7 +310,29 @@ class Vmcon():
         
         self.fcnvmc2()
 
-        vmcon_module.fgrd = self.fgrd[0:self.n]
+        try:
+            vmcon_module.fgrd = self.fgrd[0:self.n]
+        except ValueError:
+            # Sometimes there's a size mismatch here: same as fcnvmc1_wrapper()
+            # comment. This appears to be due to serious underlying memory
+            # problems concerning assumed-size (*) arrays which change size
+            # from what they were allocated originally without error.
+            # The symptoms are treated below; this replicates the array size
+            # coercion in Fortran, which bizarrely passes the regression tests.
+            # The root cause of these memory errors needs to be found urgently.
+            # TODO Investigate
+            logger.warning(f"fgrd array size mismatch: attempted to broadcast "
+                f"size {self.n} into {vmcon_module.fgrd.size}"
+            )
+            # vmcon_module.fgrd should be of length n
+            # If larger, then only assign a slice of length n
+            # If smaller, assign as big a slice as possible
+            # This is required, and does work
+            if vmcon_module.fgrd.size > self.fgrd.size:
+                vmcon_module.fgrd[0:self.n] = self.fgrd[0:self.n]
+            else:
+                vmcon_module.fgrd = self.fgrd[0:vmcon_module.fgrd.size]
+
         vmcon_module.cnorm = self.cnorm[0:self.lcnorm, 0:self.m]
         vmcon_module.info = self.ifail
         
