@@ -101,3 +101,79 @@ def fcnvmc1(n, m, xv, ifail_in, first_call):
         )
 
     return objf, conf, ifail_out
+
+
+def fcnvmc2(n, m, xv, lcnorm, ifail_in):
+    """Gradient function evaluator for VMCON.
+
+    This routine is the gradient function evaluator for the VMCON
+    maximisation/minimisation routine. It calculates the gradients of the 
+    objective and constraint functions at the n-dimensional point of interest 
+    xv. Note that the equality constraints must precede the inequality 
+    constraints in conf. The constraint gradients or normals are returned as the
+    columns of cnorm.
+
+    AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    :param n: number of variables
+    :type n: int
+    :param m: number of constraints
+    :type m: int
+    :param xv: scaled variable names, size n
+    :type xv: numpy.array
+    :param lcnorm: number of columns in cnorm
+    :type lcnorm: int
+    :param ifail_in: error flag, <0 stops calculation
+    :type ifail_in: int
+    :return: fgrdm (numpy.array (n)) gradient of the objective function
+    cnorm (numpy.array (lcnorm, m)) constraint gradients, i.e. cnorm[i, j] is 
+    the derivative of constraint j w.r.t. variable i
+    ifail_out (int), <0 stops calculation
+    :rtype: tuple
+    """
+    xfor = np.zeros(numerics.ipnvars, dtype=np.float64, order="F")
+    xbac = np.zeros(numerics.ipnvars, dtype=np.float64, order="F")
+    cfor = np.zeros(numerics.ipnvars, dtype=np.float64, order="F")
+    cbac = np.zeros(numerics.ipnvars, dtype=np.float64, order="F")
+    fgrd = np.zeros(n, dtype=np.float64, order="F")
+    cnorm = np.zeros((lcnorm, m), dtype=np.float64, order="F")
+
+    ffor = 0.0
+    fbac = 0.0
+
+    for i in range(n):
+        for j in range(n):
+            xfor[j] = xv[j]
+            xbac[j] = xv[j]
+            if i == j:
+                xfor[i] = xv[j] * (1.0 + numerics.epsfcn)
+                xbac[i] = xv[j] * (1.0 - numerics.epsfcn)
+
+        # Evaluate at (x+dx)
+        caller_module.caller(xfor, n)
+        ffor = function_evaluator.funfom()
+        constraints.constraint_eqns(m, cfor, -1)
+
+        # Evaluate at (x-dx)
+        caller_module.caller(xbac, n)
+        fbac = function_evaluator.funfom()
+        constraints.constraint_eqns(m, cbac, -1)
+
+        # Calculate finite difference gradients
+        fgrd[i] = (ffor - fbac) / (xfor[i] - xbac[i])
+
+        for j in range(m):
+            cnorm[i, j] = (cfor[j] - cbac[j]) / (xfor[i] - xbac[i])
+
+    # Additional evaluation call to ensure that final result is consistent
+    # with the correct iteration variable values.
+    # If this is not done, the value of the nth (i.e. final) iteration
+    # variable in the solution vector is inconsistent with its value
+    # shown elsewhere in the output file, which is a factor (1-epsfcn)
+    # smaller (i.e. its xbac value above).
+    caller_module.caller(xv, n)
+
+    # To stop the program, set ifail < 0 here.
+    # TODO Not sure this serves any purpose
+    ifail_out = 1 * ifail_in
+
+    return fgrd, cnorm, ifail_out

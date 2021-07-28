@@ -285,12 +285,12 @@ class Vmcon():
         """Call the function evaluator for Vmcon.
 
         Calculates the objective and constraint functions.
+
+        See comments on differing array sizes in fcnvmc1_wrapper().
         """
         self.objf, self.conf[0:self.m], self.ifail = evaluators.fcnvmc1(self.n, self.m, 
             self.x, self.ifail, self.fcnvmc1_first_call
         )
-        # Again, beware different lengths of conf in Vmcon and 
-        # evaluators.fcnvmc1()
 
         if self.fcnvmc1_first_call == True:
             self.fcnvmc1_first_call = False
@@ -303,22 +303,26 @@ class Vmcon():
         Input/output variables used by fcnvmc2() are kept in sync in both Python
         and Fortran.
 
-        See comments on array sizes in fcnvmc1().
+        See comments on differing array sizes in fcnvmc1_wrapper().
         """
         self.x[0:vmcon_module.x.size] = vmcon_module.x
         self.ifail = vmcon_module.info
         
         self.fcnvmc2()
 
-        vmcon_module.fgrd = self.fgrd[0:vmcon_module.fgrd.size]
-        vmcon_module.cnorm = self.cnorm[:, 0:vmcon_module.cnorm.shape[1]]
+        vmcon_module.fgrd = self.fgrd[0:self.n]
+        vmcon_module.cnorm = self.cnorm[0:self.lcnorm, 0:self.m]
         vmcon_module.info = self.ifail
         
     def fcnvmc2(self):
         """Call the gradient function evaluator for Vmcon.
 
         Calculates the gradients of the objective and constraint functions.
+
+        See comments on differing array sizes in fcnvmc1_wrapper().
         """
-        self.ifail = function_evaluator.fcnvmc2(self.n, self.m, self.x,
-            self.fgrd, self.cnorm, self.lcnorm, self.ifail
-        )
+        (
+            self.fgrd[0:self.n],
+            self.cnorm[0:self.lcnorm, 0:self.m],
+            self.ifail,
+        ) = evaluators.fcnvmc2(self.n, self.m, self.x, self.lcnorm, self.ifail)
