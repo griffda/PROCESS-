@@ -65,6 +65,9 @@ module current_drive_variables
   real(dp) :: effcd
   !! current drive efficiency (A/W)
 
+  real(dp) :: harnum
+  !! cyclotron harmonic frequency number, used in EBW cut-off
+
   real(dp) :: enbeam
   !! neutral beam energy (keV) (`iteration variable 19`)
 
@@ -238,6 +241,7 @@ module current_drive_variables
     echpwr = 0.0D0  
     echwpow = 0.0D0  
     effcd = 0.0D0  
+    harnum = 1.0D0
     enbeam = 1.0D3  
     etacd = 0.0D0  
     etacdfix = 0.0D0  

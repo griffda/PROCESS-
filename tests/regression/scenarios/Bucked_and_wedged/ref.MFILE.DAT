@@ -2,15 +2,15 @@
  # Power Reactor Optimisation Code #
  # PROCESS #
  # Power Reactor Optimisation Code #
- PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.1   R"
- Date_of_run_____________________________________________________________ (date)________________________     "29/06/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "12:32"
- User____________________________________________________________________ (username)____________________     "schislet"
+ PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
+ Date_of_run_____________________________________________________________ (date)________________________     "22/07/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "13:06"
+ User____________________________________________________________________ (username)____________________     "rhicha"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-304-gca9897d9"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1333-costs-and-temperature-margin-missing-from-durham-rebco-model"                                 
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-397-gad7f2a48"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "issue-935-power-plant-water-use"                                                                   
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-schislett/pytest-40/test_scenario_Bucked_and_wedge0/IN.DAT                                                                                                                               "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-45/test_scenario_Bucked_and_wedge0/IN.DAT                                                                                                                                  "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -1011,6 +1011,10 @@
  Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________      2.5116E+01    
  Gross_electric_power*_/_high_grade_heat_(%)_____________________________ (etath)_______________________      3.7500E+01    
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.9190E-01    
+ # Water usage during plant operation (secondary cooling) #
+ Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      6.9728E+04 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      2.3341E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      2.2874E+06 OP 
  # Errors and Warnings #
  # Errors and Warnings #
  PROCESS_error_status_flag_______________________________________________ (error_status)________________              2    

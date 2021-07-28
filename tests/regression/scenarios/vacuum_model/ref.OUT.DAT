@@ -6,15 +6,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.1   Release Date :: 2021-03-17
-   Tag No. : v2.1-304-gca9897d9
-    Branch : 1333-costs-and-temperature-margin-missing-from-durham-rebco-model
+   Version : 2.1.2   Release Date :: 2021-07-01
+   Tag No. : v2.1-397-gad7f2a48
+    Branch : issue-935-power-plant-water-use
    Git log : COMMIT_MSG
- Date/time : 29 Jun 2021 12:34:33 +01:00(hh:mm) UTC
-      User : schislett
-  Computer : LAPTOP-4TE2HACQ
- Directory : /tmp/pytest-of-schislett/pytest-40/test_solver0
-     Input : /tmp/pytest-of-schislett/pytest-40/test_scenario_vacuum_model_0/IN.DAT
+ Date/time : 22 Jul 2021 13:08:17 +01:00(hh:mm) UTC
+      User : rhicha
+  Computer : l0500
+ Directory : /tmp/pytest-of-rhicha/pytest-45/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-45/test_scenario_vacuum_model_0/IN.DAT
  Run title : demo 1 vacuum model test
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -132,18 +132,18 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
     1  Beta consistency                      =  3.4726E-02              1.5886E-11                -4.5747E-10
     2  Global power balance consistency      =  1.6955E-01 MW/m3       -1.9108E-10 MW/m3           1.1270E-09
-    3  Density upper limit                   <  8.7046E+19 /m3          3.0063E+10 /m3             3.4537E-10
+    3  Density upper limit                   <  8.7046E+19 /m3          3.0063E+10 /m3             3.4536E-10
     4  Beam ion density consistency          =  1.2420E+17 /m3         -1.3115E+08 /m3             1.0560E-09
     5  Neutron wall load upper limit         <  1.0085E+00 MW/m2        2.3296E-09 MW/m2           2.3099E-09
     6  Radial build consistency              =  9.0688E+00 m           -2.1013E-09 m               2.3171E-10
     7  Burn time lower limit                 >  7.2000E+03 sec         -3.6853E-02 sec             5.1185E-06
-    8  L-H power threshold limit             >  1.1327E+02 MW           1.2246E-06 MW             -1.0812E-08
+    8  L-H power threshold limit             >  1.1327E+02 MW           1.2246E-06 MW             -1.0811E-08
     9  Net electric power lower limit        >  5.0000E+02 MW          -1.8573E-03 MW             -3.7146E-06
    10  Radiation fraction upper limit        <  1.6955E-01 MW/m3        5.1189E-10 MW/m3          -4.7461E-09
-   11  Beta upper limit                      <  5.6067E-02             -1.3826E-11                -2.4659E-10
+   11  Beta upper limit                      <  5.6067E-02             -1.3826E-11                -2.4660E-10
    12  CS coil EOF current density limit     <  6.6552E+07 A/m2         5.2271E+02 A/m2            7.8542E-06
    13  CS coil BOP current density limit     <  6.2158E+07 A/m2         4.6567E+02 A/m2            7.4918E-06
-   14  Injection power upper limit           <  5.0000E+01 MW          -4.3847E-08 MW              8.7695E-10
+   14  Injection power upper limit           <  5.0000E+01 MW          -4.3847E-08 MW              8.7694E-10
    15  TF coil case stress upper limit       <  5.5000E+08 Pa          -3.8419E+02 Pa             -6.9852E-07
    16  TF coil conduit stress upper lim      <  5.5000E+08 Pa           1.3854E+03 Pa              2.5190E-06
    17  I_op / I_critical (TF coil)           <  4.4200E+07 A/m2         4.1430E+02 A/m2           -1.8746E-05
@@ -151,7 +151,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    19  J_winding pack/J_protection limit     <  2.2100E+07 A/m2         0.0000E+00 A/m2           -1.8247E-05
    20  Tritium breeding ratio lower lim      >  1.1500E+00              3.7869E-07                -3.2929E-07
    21  Psep / R upper limit                  <  1.7000E+01 MW/m        -1.8283E-07 MW/m            1.0755E-08
-   22  number of ITER-like vacuum pumps      <  1.8000E+01              1.9984E-15                -1.1102E-16
+   22  number of ITER-like vacuum pumps      <  1.8000E+01              3.9968E-15                -2.2204E-16
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -685,7 +685,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Plasma geometric centre, vertical (m)                                    (0.0)                         0.000  OP 
  Plasma lower triangularity                                               (tril)                        0.500  OP 
  Plasma elongation                                                        (kappa.)                      1.781  OP 
- TF coil vertical offset (m)                                              (tfoffset)                   -0.617  OP 
+ TF coil vertical offset (m)                                              (tfoffset)                   -0.616  OP 
  Plasma outer arc radius of curvature (m)                                 (rco)                         5.286  OP 
  Plasma inner arc radius of curvature (m)                                 (rci)                        10.007  OP 
  Plasma lower X-pt, radial (m)                                            (rxpt)                        7.606  OP 
@@ -1050,7 +1050,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -7.737E+06 -7.737E+06 -7.737E+06  0.000E+00
    5         0.000E+00  0.000E+00 -5.031E+06 -5.031E+06 -5.031E+06  0.000E+00
    6         0.000E+00  0.000E+00 -5.031E+06 -5.031E+06 -5.031E+06  0.000E+00
-   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00
+   7         0.000E+00  0.000E+00 -1.667E-09 -1.667E-09  2.667E-08  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.340E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -9.437E-02  OP 
@@ -1663,6 +1663,15 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                               Net power-1186.12   -180.85   -557.65    499.15    554.55   -257.65    440.40
                                  ------   -----      ----     -----     -----     -----    ------
  
+ 
+ *************************** Water usage during plant operation (secondary cooling) ***************************
+ 
+ Estimated amount of water used through different cooling system options:
+ 1. Cooling towers
+ 2. Water bodies (pond, lake, river): recirculating or once-through
+ Volume used in cooling tower (m3/day)                                    (waterusetower)           6.425E+04  OP 
+ Volume used in recirculating water system (m3/day)                       (wateruserecirc)          2.151E+04  OP 
+ Volume used in once-through water system (m3/day)                        (wateruseonethru)         2.108E+06  OP 
  
  ******************************************** Errors and Warnings *********************************************
  

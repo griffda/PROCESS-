@@ -53,7 +53,7 @@ class Scan():
         # defined in Python and passed in as an argument, in similar style to
         # an intent(inout) argument. They are modified, but not returned.
         # Initialise intent(out) array outvar
-        outvar = np.ndarray((scan_module.noutvars, scan_module.ipnscns), 
+        outvar = np.zeros((scan_module.noutvars, scan_module.ipnscns), 
             dtype=np.float64, order="F"
         )
 
@@ -70,7 +70,7 @@ class Scan():
     def scan_2d(self):
         """Run a 2-D scan."""
         # Initialise intent(out) arrays
-        outvar = np.ndarray((scan_module.noutvars, scan_module.ipnscns), 
+        outvar = np.zeros((scan_module.noutvars, scan_module.ipnscns), 
             dtype=np.float64, order="F"
         )
         sweep_1_vals = np.ndarray(scan_module.ipnscns, dtype=np.float64, 

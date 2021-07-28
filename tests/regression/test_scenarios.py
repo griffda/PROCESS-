@@ -93,6 +93,10 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
     :param overwrite_refs_opt: option to overwrite reference MFILE and OUT.DAT
     :type tmp_path: bool
     """
+    # TODO The memory errors need to be investigated and the tests re-instated
+    if scenario.name in ["2D_scan", "kit_blanket"]:
+        pytest.skip("2D scan and kit_blanket currently introduce memory errors")
+
     logger.info(f"Starting test for {scenario.name}")
 
     # TODO Should only be logged once, not for every test

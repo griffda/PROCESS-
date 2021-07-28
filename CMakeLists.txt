@@ -123,6 +123,7 @@ LIST(APPEND PROCESS_SRCS
     optimiz_module.f90
     vmcon.f90
     evaluators.f90
+    water_usage_variables.f90
     costs_step.f90
 )
 
