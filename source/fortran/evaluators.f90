@@ -21,53 +21,60 @@ module function_evaluator
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! fcnhyb() is commented out temporarily. It calls the caller() subroutine, which
+! is being moved to Python. fcnhyb() is passed into maths_library.hybrd() as an
+! external subroutine argument, which calls fcnhyb() within a goto block. This 
+! is difficult to unravel when converting to Python (so that caller() is called
+! from Python), so it has been decided to comment out hybrd() and fcnhyb() 
+! temporarily, disabling the non-optimising solver, to allow Python conversion 
+! work using the optimising solver (vmcon()) to continue.
 
-  subroutine fcnhyb(n,xc,rc,iflag)
+!   subroutine fcnhyb(n,xc,rc,iflag)
 
-    !! Function evaluator for EQSOLV
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! n : input integer : Number of equations and unknowns
-    !! xc(n) : input/output real array : On input XC must contain
-    !! an initial estimate of the solution vector. On output XC
-    !! contains the final estimate of the solution vector.
-    !! rc(n) : output real array : Functions evaluated at the output XC
-    !! iflag : input/output integer : Terminate execution of EQSOLV
-    !! by setting IFLAG to a negative integer.
-    !! This subroutine is the function evaluator for
-    !! <A HREF="eqsolv.html">EQSOLV</A> (q.v.).
-    !! None
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!     !! Function evaluator for EQSOLV
+!     !! author: P J Knight, CCFE, Culham Science Centre
+!     !! n : input integer : Number of equations and unknowns
+!     !! xc(n) : input/output real array : On input XC must contain
+!     !! an initial estimate of the solution vector. On output XC
+!     !! contains the final estimate of the solution vector.
+!     !! rc(n) : output real array : Functions evaluated at the output XC
+!     !! iflag : input/output integer : Terminate execution of EQSOLV
+!     !! by setting IFLAG to a negative integer.
+!     !! This subroutine is the function evaluator for
+!     !! <A HREF="eqsolv.html">EQSOLV</A> (q.v.).
+!     !! None
+!     !
+!     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use constraints, only: constraint_eqns 
-    use numerics, only: neqns 
-    use caller_module, only: caller
-    implicit none
+!     use constraints, only: constraint_eqns 
+!     use numerics, only: neqns 
+!     use caller_module, only: caller
+!     implicit none
 
-    !  Arguments
+!     !  Arguments
 
-    integer, intent(in) :: n
-    real(dp), dimension(n), intent(inout) :: xc
-    real(dp), dimension(n), intent(out) :: rc
-    integer, intent(inout) :: iflag
+!     integer, intent(in) :: n
+!     real(dp), dimension(n), intent(inout) :: xc
+!     real(dp), dimension(n), intent(out) :: rc
+!     integer, intent(inout) :: iflag
 
-    !  Local variables
+!     !  Local variables
 
-    integer :: ncon, nvars
+!     integer :: ncon, nvars
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    nvars = neqns
-    ncon = neqns
+!     nvars = neqns
+!     ncon = neqns
 
-    call caller(xc,nvars)
-    call constraint_eqns(ncon,rc,-1)
+!     call caller(xc,nvars)
+!     call constraint_eqns(ncon,rc,-1)
 
-    !  Set iflag < 0 if program is to be terminated here.
+!     !  Set iflag < 0 if program is to be terminated here.
 
-    iflag = 1 * iflag
+!     iflag = 1 * iflag
 
-  end subroutine fcnhyb
+!   end subroutine fcnhyb
 
   subroutine funfom(fc)
 
