@@ -4460,7 +4460,7 @@ contains
                 fdiags(1) = strncon_tf ; call report_error(261)
             end if
 
-        case (9) ! High Current Density REBCO tape ! rmc
+        case (9) ! High Current Density REBCO tape
             bc20m = 138
             tc0m = 92
             ! 'high current density' as per parameterisation described in Wolf, 
@@ -4634,8 +4634,6 @@ contains
         call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcu)
         call ovarre(outfile,'Strain on superconductor','(strncon_tf)',strncon_tf)
         call ovarre(outfile,'Critical current density in superconductor (A/m2)','(jcritsc)',jcritsc, 'OP ')
-        call ovarre(outfile,'Critical temp in superconductor (RMC test)','(tcrit)',tcrit, 'OP ')
-        call ovarre(outfile,'Critical field in superconductor (RMC test)','(bcrit)',bcrit, 'OP ')
         call ovarre(outfile,'Critical current density in strand (A/m2)','(jcritstr)',jcritstr, 'OP ')
         call ovarre(outfile,'Critical current density in winding pack (A/m2)', '(jwdgcrt)',jwdgcrt, 'OP ')
         call ovarre(outfile,'Actual current density in winding pack (A/m2)','(jwdgop)',jwdgop, 'OP ')
