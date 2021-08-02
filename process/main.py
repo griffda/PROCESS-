@@ -44,6 +44,7 @@ Box file T&amp;M/PKNIGHT/PROCESS (from 24/01/12)
 from process import fortran
 from process.io import plot_proc
 from process.scan import Scan
+from process import final
 import argparse
 from pathlib import Path
 import sys
@@ -370,7 +371,7 @@ class SingleRun():
         if fortran.numerics.ioptimz >= 0:
             self.scan = Scan()
         else:
-            fortran.final_module.final(self.ifail)
+            final.finalise(self.ifail)
 
     def show_errors(self):
         """Report all informational/error messages encountered."""

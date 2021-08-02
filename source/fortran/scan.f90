@@ -176,7 +176,6 @@ contains
     use fwbs_variables, only: tpeak
     use div_kal_vars, only: totalpowerlost, pressure0, &
       ttarget, neratio, qtargettotal, neomp, psep_kallenbach, fmom
-    use final_module, only: final
     use physics_variables, only: q, aspect, pradmw, dene, powfmw, btot, tesep, &
       pdivt, ralpne, ten, betap, hfac, teped, palpnb, qlim, rmajor, wallmw, &
       beta, betalim, bt, plascur
@@ -187,8 +186,6 @@ contains
     integer, intent(in) :: iscan
     integer, intent(in) :: ifail
     real(dp), dimension(noutvars,ipnscns), intent(out) :: outvar
-
-    call final(ifail)
 
     ! Turn off error reporting (until next output)
     errors_on = .false.
