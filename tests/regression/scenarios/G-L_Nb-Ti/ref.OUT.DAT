@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-408-g3ad03b43
+   Tag No. : v2.1-412-g47bc6331
     Branch : 1328-process-tf-geometry-output-issue
    Git log : COMMIT_MSG
- Date/time :  2 Aug 2021  8:27:51 +01:00(hh:mm) UTC
+ Date/time :  3 Aug 2021 14:38:35 +01:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-60/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-60/test_scenario_G_L_Nb_Ti_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-85/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-85/test_scenario_G_L_Nb_Ti_0/IN.DAT
  Run title : TF coil testing
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
