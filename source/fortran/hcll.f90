@@ -50,7 +50,7 @@ module kit_hcll_module
   ! Fraction of neutronic current going towards inboard/outboard blankets (%)
   real(dp), private :: j_plus_ib, j_plus_ob
 
-  ! Specific heat at constant pressure for He at 8 MPa and 400C (kJ/kg/K)
+  ! Specific heat at constant pressure for He at 8 MPa and 400C (J/kg/K)
   real(dp),private :: cp_he
 
   ! Reference thermal blanket power, DEMO 2007 (MW)
@@ -390,8 +390,8 @@ contains
     bzfllengo = 0.0D0
     cf = 0.0D0
     
-    ! Specific heat at constant pressure for He at 8 MPa and 400C (kJ/kg/K)
-    cp_he = 5.190D0
+    ! Specific heat at constant pressure for He at 8 MPa and 400C (J/kg/K)
+    cp_he = 5.19D3
     
     ! Density of Helium (kg/m3 at 8MPa, 400 C)
     denhe = 5.4D0
@@ -1164,7 +1164,7 @@ contains
       htpmw_shld = fpumpshld * 0.0D0
 
       ! He mass flow rate (kg/s)
-      w_he = pnucblkt*1.0E6/(cp_he*1.0E3*(T_he_out - T_he_in))
+      w_he = pnucblkt*1.0E6/(cp_he*(T_he_out - T_he_in))
 
       ! Blanket He pumping power (MW)
       ! TODO - keep this instead of more detailed calculation?
