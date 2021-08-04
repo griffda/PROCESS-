@@ -18,8 +18,6 @@ def system_compatible():
     major = ldd_version_array[0]
     minor = ldd_version_array[1]
 
-    print(major, minor)
-
     if int(major) < 2 or (int(major) == 2 and int(minor) < 31):
         return False
     
