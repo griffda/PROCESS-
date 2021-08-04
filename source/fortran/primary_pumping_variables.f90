@@ -17,9 +17,6 @@ module primary_pumping_variables
   real(dp), parameter :: gamma_he = 1.667D0
   !! ratio of specific heats for helium (`primary_pumping=3`)
 
-  real(dp), parameter :: cp_he = 5195.0D0
-  !! specific heat capacity at constant pressure: helium (`primary_pumping=3`) [J/(kg.K)]
-
   real(dp), parameter :: t_in_bb =573.13D0
   !! temperature in FW and blanket coolant at blanket entrance (`primary_pumping=3`) [K]
 
