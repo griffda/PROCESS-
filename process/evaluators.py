@@ -1,4 +1,4 @@
-from process.fortran import caller_module
+from process.caller import caller
 from process.fortran import global_variables as gv
 from process.fortran import constraints
 from process.fortran import cost_variables as cv
@@ -46,13 +46,13 @@ def fcnvmc1(n, m, xv, ifail_in, first_call):
     conf = np.zeros(m, dtype=np.float64, order="F")
 
     # Evaluate machine parameters at xv
-    caller_module.caller(xv, n)
+    caller(xv, n)
 
     # To ensure that, at the start of a run, all physics/engineering
     # variables are fully initialised with consistent values, we perform
     # a second evaluation call here
     if first_call:
-        caller_module.caller(xv, n)
+        caller(xv, n)
 
     # Convergence loop to ensure burn time consistency
     if sv.istell == 0:
@@ -61,7 +61,7 @@ def fcnvmc1(n, m, xv, ifail_in, first_call):
             abs((tv.tburn - tv.tburn0) / max(tv.tburn, 0.01)) > 0.001
         ):
             loop += 1
-            caller_module.caller(xv, n)
+            caller(xv, n)
             if gv.verbose == 1:
                 print("Internal tburn consistency check: ", tv.tburn, tv.tburn0)
 
@@ -149,12 +149,12 @@ def fcnvmc2(n, m, xv, lcnorm, ifail_in):
                 xbac[i] = xv[j] * (1.0 - numerics.epsfcn)
 
         # Evaluate at (x+dx)
-        caller_module.caller(xfor, n)
+        caller(xfor, n)
         ffor = function_evaluator.funfom()
         constraints.constraint_eqns(m, cfor, -1)
 
         # Evaluate at (x-dx)
-        caller_module.caller(xbac, n)
+        caller(xbac, n)
         fbac = function_evaluator.funfom()
         constraints.constraint_eqns(m, cbac, -1)
 
@@ -170,7 +170,7 @@ def fcnvmc2(n, m, xv, lcnorm, ifail_in):
     # variable in the solution vector is inconsistent with its value
     # shown elsewhere in the output file, which is a factor (1-epsfcn)
     # smaller (i.e. its xbac value above).
-    caller_module.caller(xv, n)
+    caller(xv, n)
 
     # To stop the program, set ifail < 0 here.
     # TODO Not sure this serves any purpose

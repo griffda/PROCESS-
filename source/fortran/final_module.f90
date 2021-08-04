@@ -72,7 +72,6 @@ module final_module
       nvar
     use output_module, only: output 
     use define_iteration_variables, only: loadxc
-    use caller_module, only: caller
     implicit none
     
     call output(nout)
