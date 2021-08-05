@@ -5,6 +5,7 @@ from process.main import SingleRun
 from process.main import VaryRun
 from process import fortran
 from process import scan
+from process import final
 import pytest
 from pathlib import Path
 import argparse
@@ -234,18 +235,21 @@ def test_kallenbach_scan(single_run, monkeypatch):
         single_run.kallenbach_scan()
 
 def test_call_solver(single_run, monkeypatch):
-    """Check that the solver is called with the ifail integer.
+    """Attempt to call the hybrd() non-optimising solver.
 
     :param single_run: single_run fixture
     :type single_run: SingleRun
     :param monkeypatch: monkeypatch fixture
     :type monkeypatch: object
     """
-    # Mock the ifail value returned by the solver as 1
-    expected = 1
-    monkeypatch.setattr(fortran.main_module, "eqslv", lambda: expected)
+    # No hybrd() call required
+    monkeypatch.setattr(fortran.numerics, "ioptimz", 1)
     single_run.call_solver()
-    assert single_run.ifail == expected
+
+    # Attempt to use hybrd()
+    monkeypatch.setattr(fortran.numerics, "ioptimz", -1)
+    with pytest.raises(NotImplementedError):
+        single_run.call_solver()
 
 def test_scan(single_run, monkeypatch):
     """Test if scan routine runs based on ioptimz value.
@@ -263,7 +267,7 @@ def test_scan(single_run, monkeypatch):
     # If ioptimz < 0, mock call to final
     monkeypatch.setattr(fortran.numerics, "ioptimz", -1)
     monkeypatch.setattr(single_run, "ifail", 0, raising=False)
-    monkeypatch.setattr(fortran.final_module, "final", lambda x: None)
+    monkeypatch.setattr(final, "finalise", lambda x: None)
     single_run.run_scan()
 
 def test_set_mfile(single_run, monkeypatch):
