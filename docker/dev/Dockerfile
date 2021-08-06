@@ -1,10 +1,10 @@
-# Development image for Process, used in challenging environments (Mac) to give
+# Development image for Process, used in challenging environments (Mac M1 only) to give
 # identical results to CI or to quickly provide a working environment to a 
 # casual user. Differs from CI image by not using virtual environments for 
 # differt Python versions and doesn't require the CI script to perform extra
 # installations
 FROM ubuntu:20.04
-LABEL description="Process development image"
+LABEL description="Process Mac M1 development image"
 
 # Required to get around interactive timezone prompt
 ENV DEBIAN_FRONTEND=noninteractive
@@ -19,7 +19,10 @@ RUN apt-get update && apt-get install -y \
     liblapack-dev \
     liblapack3 \
     python3-pip \
-    python-is-python3
+    python-is-python3 \
+    libhdf5-serial-dev \
+    netcdf-bin \
+    libnetcdf-dev
 
 # Install Python packages into a virtual environment
 # Use virtualenv to prevent "running pip as root" warnings
