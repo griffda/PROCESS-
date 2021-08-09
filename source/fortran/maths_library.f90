@@ -2197,8 +2197,8 @@ contains
     INTEGER i,iflag,j,k,mode,mtotal,np1,npp
     INTEGER inx
 
-    real(dp) conf(m),cnorm(lcnorm,m),b(lb,lb),gm(*),bdl(*), &
-         bdu(*),delta(ldel),cm(m),h(lh,lh),wa(lwa)
+    real(dp) conf(m),cnorm(lcnorm,m),b(lb,lb),gm(:),bdl(:), &
+         bdu(:),delta(ldel),cm(m),h(lh,lh),wa(lwa)
     real(dp) x(n),bndu(n),bndl(n)
     real(dp) cd6,cdm6,cp9,one,zero
 
