@@ -1,10 +1,15 @@
 """Unit tests for costs_step.f90."""
+from process import fortran
 from process.fortran import costs_step_module as cs
 from process.fortran import tfcoil_variables as tfv
 from process.fortran import cost_variables as cv
 from process.fortran import buildings_variables as bv
 from process.fortran import heat_transport_variables as htv
 from process.fortran import physics_variables as pv
+
+from process.fortran import cost_variables as costvar
+
+
 import numpy as np
 import pytest
 
@@ -96,7 +101,55 @@ def shared_cost_vars(monkeypatch):
     monkeypatch.setattr(htv, "pgrossmw", 5e2)
     monkeypatch.setattr(cs, "vfi", 6.737e3)
     monkeypatch.setattr(cs, "vfi_star", 6.737e3)
+    monkeypatch.setattr(cs, "pth", 4.15e3)
+    monkeypatch.setattr(cs, "ptherm_star", 4.15e3)
     # vfi values taken from Starfire reference in costs_step_module
+
+
+def test_init_costs_step():
+    """Test initialisation of variables"""
+    #Assert module vars are initialised correctly
+    assert cs.step20 == 0
+    assert cs.step21 == 0
+    assert cs.step22 == 0
+    assert cs.step23 == 0
+    assert cs.step24 == 0
+    assert cs.step25 == 0
+    assert cs.step27 == 0
+    assert cs.step91 == 0
+    assert cs.step92 == 0
+    assert cs.step93 == 0
+    assert cs.fwblkcost == 0
+    assert cs.vfi == 0
+    assert cs.vfi_star == 0
+    assert cs.ptherm_star == 0
+    assert cs.pinjmw_star == 0
+    assert cs.fwarea_star == 0
+    assert cs.rmajor_star == 0
+    assert cs.rminor_star == 0
+    assert cs.pth == 0
+
+
+
+def test_step_a20(monkeypatch, shared_cost_vars):
+    """Validate sum of cost account 20.
+
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
+    :param shared_cost_vars: fixture to mock commonly-used cost vars
+    :type shared_cost_vars: Fixture
+    """
+    # Mock module vars
+
+    monkeypatch.setattr(cs, "step21", 0.0)
+
+    # Run and assert result in M$
+    cs.step_a20(0, 0)
+    exp = 1.003e2
+    obs = cs.step20
+    assert pytest.approx(obs) == exp
+
+
 
 def test_step_a21(monkeypatch, shared_cost_vars):
     """Validate sum of cost account 21.
@@ -107,8 +160,7 @@ def test_step_a21(monkeypatch, shared_cost_vars):
     :type shared_cost_vars: Fixture
     """
     # Mock module vars
-    monkeypatch.setattr(cs, "pth", 4.15e3)
-    monkeypatch.setattr(cs, "ptherm_star", 4.15e3)
+
     monkeypatch.setattr(cs, "step21", 0.0)
 
     # Run and assert result in M$
@@ -116,6 +168,54 @@ def test_step_a21(monkeypatch, shared_cost_vars):
     exp = 2.115588e3
     obs = cs.step21
     assert pytest.approx(obs) == exp
+
+
+
+def test_step_a22010301(monkeypatch):
+    """Cost of TF coils for different materials (22.01.03.01).
+
+    :param monkeypatch: fixture for mocking variables
+    :type monkeypatch: MonkeyPatch
+    """
+    # Mock dependencies with realistic values
+    monkeypatch.setattr(cv, "step_ref", np.zeros(68, order="F"))
+    # Only mock used array elements
+    cv.step_ref[21] = 1.2572e2
+    monkeypatch.setattr(cv, "cpstcst", 0.0)
+    cv.cfind[3] = 0.29
+    monkeypatch.setattr(cv, "ifueltyp", 0)
+    monkeypatch.setattr(cv, "step_uc_cryo_al", 81.0)
+    monkeypatch.setattr(cv, "step_mc_cryo_al_per", 0.2)
+    monkeypatch.setattr(cv, "uccpcl1", 250.0)
+    monkeypatch.setattr(cv, "uccpclb", 150.0)
+    monkeypatch.setattr(tfv, "whtconal", 1.0e4)
+    monkeypatch.setattr(tfv, "n_tf", 16.0)
+    monkeypatch.setattr(tfv, "whttflgs", 0.0)
+    monkeypatch.setattr(tfv, "whtcp", 1.0e4)
+    monkeypatch.setattr(pv, "itart", 0)
+    monkeypatch.setattr(cs, "vfi", 5e3)
+    monkeypatch.setattr(cs, "vfi_star", 6.737e3)
+    
+    # Copper coils
+    monkeypatch.setattr(tfv, "i_tf_sup", 0)
+    expected = 7.475000
+    observed = cs.step_a22010301()
+    assert pytest.approx(observed) == expected
+
+    # Superconducting coils
+    monkeypatch.setattr(tfv, "i_tf_sup", 1)
+    expected = 93.30563
+    observed = cs.step_a22010301()
+    assert pytest.approx(observed) == expected
+
+    # Cryo-aluminium coils
+    monkeypatch.setattr(tfv, "i_tf_sup", 2)
+    expected = 15.552
+    observed = cs.step_a22010301()
+    assert pytest.approx(observed) == expected
+
+
+
 
 def test_step_a2202(monkeypatch, shared_cost_vars):
     """Validate sum of cost account 22.02.
@@ -133,6 +233,7 @@ def test_step_a2202(monkeypatch, shared_cost_vars):
     obs = cs.step22
     assert pytest.approx(obs) == exp
 
+
 def test_step_a2203(monkeypatch, shared_cost_vars):
     """Validate sum of cost account 22.03.
 
@@ -148,6 +249,73 @@ def test_step_a2203(monkeypatch, shared_cost_vars):
     cs.step_a2203(0, 0)
     obs = cs.step22
     assert pytest.approx(obs) == exp
+
+
+def test_step_a2204(monkeypatch, shared_cost_vars):
+    """Validate sum of cost account 22.04.
+
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
+    :param shared_cost_vars: fixture to mock commonly-used cost vars
+    :type shared_cost_vars: Fixture
+    """
+    # Mock module var set in subroutine: increase is value of step2204
+    monkeypatch.setattr(cs, "step22", 0.0)
+   
+    cs.step_a2204(0, 0)
+    exp = 4.8e0
+    obs = cs.step22
+    assert pytest.approx(obs) == exp
+
+def test_step_a2205(monkeypatch, shared_cost_vars):
+    """Validate sum of cost account 22.05.
+
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
+    :param shared_cost_vars: fixture to mock commonly-used cost vars
+    :type shared_cost_vars: Fixture
+    """
+    # Mock module var set in subroutine: increase is value of step2205
+    monkeypatch.setattr(cs, "step22", 0.0)
+ 
+    cs.step_a2205(0, 0, 0)
+    exp = 3.86e1
+    obs = cs.step22
+    assert pytest.approx(obs) == exp
+
+def test_step_a2206(monkeypatch, shared_cost_vars):
+    """Validate sum of cost account 22.06.
+
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
+    :param shared_cost_vars: fixture to mock commonly-used cost vars
+    :type shared_cost_vars: Fixture
+    """
+    # Mock module var set in subroutine: increase is value of step2206
+    monkeypatch.setattr(cs, "step22", 0.0)
+
+    cs.step_a2206(0, 0, 0)
+    exp = 5.45e0
+    obs = cs.step22
+    assert pytest.approx(obs) == exp
+
+
+def test_step_a2207(monkeypatch, shared_cost_vars):
+    """Validate sum of cost account 22.07.
+
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
+    :param shared_cost_vars: fixture to mock commonly-used cost vars
+    :type shared_cost_vars: Fixture
+    """
+    # Mock module var set in subroutine: increase is value of step2207
+    monkeypatch.setattr(cs, "step22", 0.0)
+
+    cs.step_a2207(0, 0)
+    exp = 2.341e1
+    obs = cs.step22
+    assert pytest.approx(obs) == exp
+
 
 def test_step_a23(monkeypatch, shared_cost_vars):
     """Validate sum of cost account 23.
@@ -197,48 +365,22 @@ def test_step_a25(monkeypatch, shared_cost_vars):
     obs = cs.step25
     assert pytest.approx(obs) == exp
 
-def test_step_a22010301(monkeypatch):
-    """Cost of TF coils for different materials (22.01.03.01).
+def test_step_a27(monkeypatch):
+    """Validate sum of cost account 27.
 
-    :param monkeypatch: fixture for mocking variables
+    :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     """
-    # Mock dependencies with realistic values
-    monkeypatch.setattr(cv, "step_ref", np.zeros(68, order="F"))
-    # Only mock used array elements
-    cv.step_ref[21] = 1.2572e2
-    monkeypatch.setattr(cv, "cpstcst", 0.0)
-    cv.cfind[3] = 0.29
-    monkeypatch.setattr(cv, "ifueltyp", 0)
-    monkeypatch.setattr(cv, "step_uc_cryo_al", 81.0)
-    monkeypatch.setattr(cv, "step_mc_cryo_al_per", 0.2)
-    monkeypatch.setattr(cv, "uccpcl1", 250.0)
-    monkeypatch.setattr(cv, "uccpclb", 150.0)
-    monkeypatch.setattr(tfv, "whtconal", 1.0e4)
-    monkeypatch.setattr(tfv, "n_tf", 16.0)
-    monkeypatch.setattr(tfv, "whttflgs", 0.0)
-    monkeypatch.setattr(tfv, "whtcp", 1.0e4)
-    monkeypatch.setattr(pv, "itart", 0)
-    monkeypatch.setattr(cs, "vfi", 5e3)
-    monkeypatch.setattr(cs, "vfi_star", 6.737e3)
-    
-    # Copper coils
-    monkeypatch.setattr(tfv, "i_tf_sup", 0)
-    expected = 7.475000
-    observed = cs.step_a22010301()
-    assert pytest.approx(observed) == expected
+    # Mock module var set in subroutine
+    monkeypatch.setattr(cs, "step27", 0.0)
+    monkeypatch.setattr(cv, "step_rh_costfrac", 5.0)
+    monkeypatch.setattr(cv, "cdirt", 2.0)
 
-    # Superconducting coils
-    monkeypatch.setattr(tfv, "i_tf_sup", 1)
-    expected = 93.30563
-    observed = cs.step_a22010301()
-    assert pytest.approx(observed) == expected
+    exp = 10.0
+    cs.step_a27(0, 0)
+    obs = cs.step27
 
-    # Cryo-aluminium coils
-    monkeypatch.setattr(tfv, "i_tf_sup", 2)
-    expected = 15.552
-    observed = cs.step_a22010301()
-    assert pytest.approx(observed) == expected
+    assert pytest.approx(obs) == exp    
 
 def test_step_indirect_costs(monkeypatch):
     """Test indirect cost calculations.
@@ -257,3 +399,5 @@ def test_step_indirect_costs(monkeypatch):
     assert cs.step91 == 300
     assert cs.step92 == 325
     assert cs.step93 == 150
+
+
