@@ -101,6 +101,8 @@ def shared_cost_vars(monkeypatch):
     monkeypatch.setattr(htv, "pgrossmw", 5e2)
     monkeypatch.setattr(cs, "vfi", 6.737e3)
     monkeypatch.setattr(cs, "vfi_star", 6.737e3)
+    monkeypatch.setattr(cs, "pth", 4.15e3)
+    monkeypatch.setattr(cs, "ptherm_star", 4.15e3)
     # vfi values taken from Starfire reference in costs_step_module
 
 
@@ -138,8 +140,7 @@ def test_step_a20(monkeypatch, shared_cost_vars):
     :type shared_cost_vars: Fixture
     """
     # Mock module vars
-    monkeypatch.setattr(cs, "pth", 4.15e3)
-    monkeypatch.setattr(cs, "ptherm_star", 4.15e3)
+
     monkeypatch.setattr(cs, "step21", 0.0)
 
     # Run and assert result in M$
@@ -159,8 +160,7 @@ def test_step_a21(monkeypatch, shared_cost_vars):
     :type shared_cost_vars: Fixture
     """
     # Mock module vars
-    monkeypatch.setattr(cs, "pth", 4.15e3)
-    monkeypatch.setattr(cs, "ptherm_star", 4.15e3)
+
     monkeypatch.setattr(cs, "step21", 0.0)
 
     # Run and assert result in M$
@@ -261,8 +261,7 @@ def test_step_a2204(monkeypatch, shared_cost_vars):
     """
     # Mock module var set in subroutine: increase is value of step2204
     monkeypatch.setattr(cs, "step22", 0.0)
-    monkeypatch.setattr(cs, "pth", 4.15e3)
-    monkeypatch.setattr(cs, "ptherm_star", 4.15e3)      
+   
     cs.step_a2204(0, 0)
     exp = 4.8e0
     obs = cs.step22
@@ -278,8 +277,7 @@ def test_step_a2205(monkeypatch, shared_cost_vars):
     """
     # Mock module var set in subroutine: increase is value of step2205
     monkeypatch.setattr(cs, "step22", 0.0)
-    monkeypatch.setattr(cs, "pth", 4.15e3)
-    monkeypatch.setattr(cs, "ptherm_star", 4.15e3)      
+ 
     cs.step_a2205(0, 0, 0)
     exp = 3.86e1
     obs = cs.step22
@@ -295,8 +293,7 @@ def test_step_a2206(monkeypatch, shared_cost_vars):
     """
     # Mock module var set in subroutine: increase is value of step2206
     monkeypatch.setattr(cs, "step22", 0.0)
-    monkeypatch.setattr(cs, "pth", 4.15e3)
-    monkeypatch.setattr(cs, "ptherm_star", 4.15e3)  
+
     cs.step_a2206(0, 0, 0)
     exp = 5.45e0
     obs = cs.step22
@@ -313,8 +310,7 @@ def test_step_a2207(monkeypatch, shared_cost_vars):
     """
     # Mock module var set in subroutine: increase is value of step2207
     monkeypatch.setattr(cs, "step22", 0.0)
-    monkeypatch.setattr(cs, "pth", 4.15e3)
-    monkeypatch.setattr(cs, "ptherm_star", 4.15e3)   
+
     cs.step_a2207(0, 0)
     exp = 2.341e1
     obs = cs.step22
