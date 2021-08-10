@@ -370,8 +370,6 @@ def test_step_a27(monkeypatch):
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param shared_cost_vars: fixture to mock commonly-used cost vars
-    :type shared_cost_vars: Fixture
     """
     # Mock module var set in subroutine
     monkeypatch.setattr(cs, "step27", 0.0)
