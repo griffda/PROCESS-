@@ -2430,12 +2430,12 @@ contains
     IMPLICIT NONE
 
     INTEGER n,m,ia,ic,k,ke,ih,mode,info
-    INTEGER iwa(*),lt(*)
+    INTEGER iwa(*),lt(:)
     INTEGER i, ial, ib, ii, j, li, ni, nk, nn, n3,n4,n5,n6
     INTEGER i0,i1,i2,i3
 
-    real(dp) a(ia,*),b(*),c(ic,*),d(*),bdl(*),bdu(*),x(*), &
-         h(ih,*),wa(*)
+    real(dp) a(ia,*),b(:),c(ic,*),d(:),bdl(:),bdu(:),x(*), &
+         h(ih,*),wa(:)
     real(dp) alpha, cac, cc, chc, ghc, y, z, zz
     real(dp) r0
     real(dp), dimension(2) :: det
