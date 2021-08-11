@@ -2,15 +2,15 @@
  # Power Reactor Optimisation Code #
  # PROCESS #
  # Power Reactor Optimisation Code #
- PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.1   R"
- Date_of_run_____________________________________________________________ (date)________________________     "29/06/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "12:33"
- User____________________________________________________________________ (username)____________________     "schislet"
+ PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
+ Date_of_run_____________________________________________________________ (date)________________________     "11/08/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "16:40"
+ User____________________________________________________________________ (username)____________________     "cjwg"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-304-gca9897d9"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1333-costs-and-temperature-margin-missing-from-durham-rebco-model"                                 
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-337-g5d3d529d"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1371-add-xi_ebw-as-an-input-for-the-ebw-scaling-of-the-heating-of-the-plasma-in-develop-stable"    
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-schislett/pytest-40/test_scenario_HARE_0/IN.DAT                                                                                                                                          "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cjwg/pytest-131/test_scenario_HARE_0/IN.DAT                                                                                                                                              "
  Binomial_coefficients_C(5,0):_1_________________________________________ (binomial(5,0))_______________      1.0000E+00    
  Binomial_coefficients_C(5,1):_5_________________________________________ (binomial(5,1))_______________      5.0000E+00    
  Binomial_coefficients_C(5,2):_10________________________________________ (binomial(5,2))_______________      1.0000E+01    
@@ -984,6 +984,10 @@
  Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________      2.4590E+01    
  Gross_electric_power*_/_high_grade_heat_(%)_____________________________ (etath)_______________________      4.1100E+01    
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.5758E-01    
+ # Water usage during plant operation (secondary cooling) #
+ Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      5.6162E+04 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8800E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8424E+06 OP 
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              2    
  # Numerics #
@@ -1947,6 +1951,10 @@
  Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________      2.4583E+01    
  Gross_electric_power*_/_high_grade_heat_(%)_____________________________ (etath)_______________________      4.1100E+01    
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.5767E-01    
+ # Water usage during plant operation (secondary cooling) #
+ Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      5.6171E+04 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8803E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8427E+06 OP 
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              3    
  # Numerics #
@@ -2910,6 +2918,10 @@
  Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________      2.4578E+01    
  Gross_electric_power*_/_high_grade_heat_(%)_____________________________ (etath)_______________________      4.1100E+01    
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.5774E-01    
+ # Water usage during plant operation (secondary cooling) #
+ Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      5.6180E+04 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8806E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8430E+06 OP 
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              4    
  # Numerics #
@@ -3873,6 +3885,10 @@
  Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________      2.4567E+01    
  Gross_electric_power*_/_high_grade_heat_(%)_____________________________ (etath)_______________________      4.1100E+01    
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.5789E-01    
+ # Water usage during plant operation (secondary cooling) #
+ Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      5.6195E+04 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8811E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8435E+06 OP 
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              5    
  # Numerics #
@@ -4836,6 +4852,10 @@
  Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________      2.4556E+01    
  Gross_electric_power*_/_high_grade_heat_(%)_____________________________ (etath)_______________________      4.1100E+01    
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.5804E-01    
+ # Water usage during plant operation (secondary cooling) #
+ Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      5.6210E+04 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8816E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8440E+06 OP 
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              6    
  # Numerics #
@@ -5799,6 +5819,10 @@
  Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________      2.4544E+01    
  Gross_electric_power*_/_high_grade_heat_(%)_____________________________ (etath)_______________________      4.1100E+01    
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.5819E-01    
+ # Water usage during plant operation (secondary cooling) #
+ Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      5.6226E+04 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8821E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8445E+06 OP 
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              7    
  # Numerics #
@@ -6762,6 +6786,10 @@
  Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________      2.4533E+01    
  Gross_electric_power*_/_high_grade_heat_(%)_____________________________ (etath)_______________________      4.1100E+01    
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.5836E-01    
+ # Water usage during plant operation (secondary cooling) #
+ Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      5.6243E+04 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8827E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8451E+06 OP 
  # Errors and Warnings #
  # Errors and Warnings #
  PROCESS_error_status_flag_______________________________________________ (error_status)________________              2    
