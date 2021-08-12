@@ -44,7 +44,7 @@ contains
       gamcd, gamma_ecrh, rho_ecrh, etalh, etacd, etacdfix, etaech, forbitloss, &
       pinjmw, pwpnb, etanbi, enbeam, effcd, pwplh, echwpow, pnbitot, nbshinemw, &
       pinjemw, pinjimw, bigq, bootipf, bscfmax, taubeam, pinjalw, nbshield, &
-      frbeam, rtanbeam, rtanmax, diaipf, psipf, plasipf, harnum
+      frbeam, rtanbeam, rtanmax, diaipf, psipf, plasipf, harnum, xi_ebw
     use physics_variables, only: dene, te, rmajor, ten, zeff, dlamee, beta, &
       rhopedt, rhopedn, te0, teped, tesep, alphat, alphan, ne0, nesep, neped, &
       bt, rminor, tbeta, plascur, ipedestal, faccd, ignite, pohmmw, powfmw, &
@@ -198,7 +198,7 @@ contains
        ! Ref : PROCESS issue 1262
    
           !  Normalised current drive efficiency gamma
-          gamcd = (0.43D0/32.7D0) * te
+          gamcd = (xi_ebw/32.7D0) * te
             
           ! Absolute current drive efficiency
           effrfssfix = gamcd / (dene20 * rmajor)
@@ -386,7 +386,7 @@ contains
        ! Ref : PROCESS issue 1262
 
           !  Normalised current drive efficiency gamma
-          gamcd = (0.43D0/32.7D0) * te
+          gamcd = (xi_ebw/32.7D0) * te
          
           ! Absolute current drive efficiency
           effrfss = gamcd / (dene20 * rmajor)

@@ -237,7 +237,7 @@ contains
     use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
-      etalh, frbeam, harnum 
+      etalh, frbeam, harnum, xi_ebw
     use div_kal_vars, only: kallenbach_test_option, &
       relerr_sol, kallenbach_scan_switch, lcon_factor, kallenbach_scan_num, &
       kallenbach_scan_end, kallenbach_scan_start, target_spread, &
@@ -1302,6 +1302,9 @@ contains
        case ('rho_ecrh')
           call parse_real_variable('rho_ecrh', rho_ecrh, 0.0D0, 1.0D0, &
                'normalised minor radius at which electron cyclotron current drive is maximum')
+       case ('xi_ebw')
+	  call parse_real_variable('xi_ebw', xi_ebw, 0.0D0, 1.0D0, &
+               'User input EBW scaling for Plasma Heating')
        case ('iefrf')
           call parse_int_variable('iefrf', iefrf, 1, 12, &
                'Switch for curr drive efficiency model')

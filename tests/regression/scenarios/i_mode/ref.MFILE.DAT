@@ -2,15 +2,15 @@
  # Power Reactor Optimisation Code #
  # PROCESS #
  # Power Reactor Optimisation Code #
- PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.1   R"
- Date_of_run_____________________________________________________________ (date)________________________     "29/06/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "12:33"
- User____________________________________________________________________ (username)____________________     "schislet"
+ PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
+ Date_of_run_____________________________________________________________ (date)________________________     "11/08/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "16:41"
+ User____________________________________________________________________ (username)____________________     "cjwg"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "I-mode 2019 PMU                                                                                    
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-304-gca9897d9"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1333-costs-and-temperature-margin-missing-from-durham-rebco-model"                                 
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-337-g5d3d529d"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1371-add-xi_ebw-as-an-input-for-the-ebw-scaling-of-the-heating-of-the-plasma-in-develop-stable"    
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-schislett/pytest-40/test_scenario_i_mode_0/IN.DAT                                                                                                                                        "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cjwg/pytest-131/test_scenario_i_mode_0/IN.DAT                                                                                                                                            "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -1018,6 +1018,10 @@
  Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________      1.7269E+01    
  Gross_electric_power*_/_high_grade_heat_(%)_____________________________ (etath)_______________________      3.7500E+01    
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      6.5252E-01    
+ # Water usage during plant operation (secondary cooling) #
+ Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      4.4862E+04 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.5017E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.4717E+06 OP 
  # Errors and Warnings #
  # Errors and Warnings #
  PROCESS_error_status_flag_______________________________________________ (error_status)________________              2    
