@@ -3566,7 +3566,7 @@ subroutine coilshap
             aa = tfa(ii) + 0.5D0*tfcth
             bb = tfb(ii) + 0.5D0*tfcth
             tfleng = tfleng + 0.25d0 * circumference(aa,bb)
-            ! note: final tfleng includes centrepost length; eq(22)
+            ! note: final tfleng includes inboard leg length; eq(22)
         end do
 
 
@@ -3869,9 +3869,9 @@ subroutine outtf(outfile, peaktfflag)
     call ovarre(outfile,'Outboard leg toroidal thickness (m)','(tftort)',tftort, 'OP ')
     call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax, 'OP ')
     if ( itart == 1 ) then
-        call ovarre(outfile,'Mean coil circumference (centrepost length not included) (m)','(tfleng)',tfleng, 'OP ')
+        call ovarre(outfile,'Mean coil circumference (inboard leg not included) (m)','(tfleng)',tfleng, 'OP ')
     else
-        call ovarre(outfile,'Mean coil circumference (including centrepost length) (m)','(tfleng)',tfleng, 'OP ')
+        call ovarre(outfile,'Mean coil circumference (including inboard leg length) (m)','(tfleng)',tfleng, 'OP ')
     end if
     
     ! Vertical shape
