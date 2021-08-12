@@ -2668,10 +2668,10 @@ contains
                'Unit cost for blanket Vd ($/kg) (if cost model =2)')
        case ('step_ucoam')
          call parse_real_variable('step_ucoam', step_ucoam, 1.0D0, 1.0D3, &
-               'Annual cost of operation and maintenance (M$/yr) (if cost model = 2)')
+               'Annual cost of operation and maintenance (M$/year/1200MW**0.5) (if cost model = 2)')
        case ('step_ucwst')
          call parse_real_variable('step_ucwst', step_ucwst, 0.1D0, 100.0D0, &
-               'Annual cost of waste disposal (M$/yr) (if cost model = 2)')
+               'Annual cost of waste disposal (M$/yr/1200MW) (if cost model = 2)')
        case ('i_cp_lifetime')
          call parse_int_variable('i_cp_lifetime', i_cp_lifetime, 0, 3, &
               'Switch for ST centrepost lifetime contraint (10) setting')
