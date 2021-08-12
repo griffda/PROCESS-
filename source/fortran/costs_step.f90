@@ -420,7 +420,7 @@ contains
     ! 22.98 Spares
     ! STARFIRE percentage of components
     step22 = step22 + step2298
-  
+
     ! 21.99 Contingency
     ! STARFIRE 15%
     step2299 = step_con * step22
@@ -1257,11 +1257,10 @@ contains
   
     ! Initialise as zero
     step2207 = 0.0D0
-     
+
     ! 22.07 Instrumentation and Control
     ! Original STARFIRE value, scaling with thermal power
     step2207 = step_ref(50) * (pth / ptherm_star)**0.6D0
-  
     ! Add to Account 22 total
     step22 = step22 + step2207
 

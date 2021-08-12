@@ -97,6 +97,14 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
     if scenario.name in ["2D_scan", "kit_blanket"]:
         pytest.skip("2D scan and kit_blanket currently introduce memory errors")
 
+    # hybrd() has been temporarily commented out. Please see the comment in
+    # function_evaluator.fcnhyb() for an explanation.
+    # TODO Re-implement the IFE test using vmcon
+    if scenario.name == "IFE":
+        pytest.skip("IFE currently uses the hybrd non-optimising solver, which "
+            "is currently not implemented"
+        )
+
     logger.info(f"Starting test for {scenario.name}")
 
     # TODO Should only be logged once, not for every test

@@ -2434,7 +2434,7 @@ contains
     real(dp), intent(in) :: breeder_f, li6enrich
 
     ! outputs
-    real(dp) :: tbr
+    real(dp), intent(out) :: tbr
 
     ! Local variables
 
