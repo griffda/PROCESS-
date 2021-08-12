@@ -44,7 +44,9 @@ Box file T&amp;M/PKNIGHT/PROCESS (from 24/01/12)
 from process import fortran
 from process.io import plot_proc
 from process.scan import Scan
+from process import final
 import argparse
+
 from pathlib import Path
 import sys
 import os
@@ -83,7 +85,8 @@ class Process():
         :param args: Arguments to parse
         :type args: list
         """
-        parser = argparse.ArgumentParser(description=("PROCESS\n"
+        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, 
+                                         description=("PROCESS\n"
             "Power Reactor Optimisation Code\n"
             "Usage\n"
             "Running code with IN.DAT        : ./<path_to_executable/process.exe\n"
@@ -318,6 +321,7 @@ class SingleRun():
             self.input_path = input_path
             # Set input as Path object
         else:
+            print("-- Info -- run `process --help` for usage")
             raise FileNotFoundError("Input file not found on this path. There "
                 "is no input file named", self.input_file, "in the analysis "
                 "folder")
@@ -363,14 +367,24 @@ class SingleRun():
 
     def call_solver(self):
         """Call the equation solver (HYBRD)."""
-        self.ifail = fortran.main_module.eqslv()
+        # If no HYBRD (non-optimisation) runs are required, return
+        if (fortran.numerics.ioptimz > 0) or (fortran.numerics.ioptimz == -2):
+            return
+        else:
+            # eqslv() has been temporarily commented out. Please see the comment
+            # in fortran.function_evaluator.fcnhyb() for an explanation.
+            # Original call:
+            # self.ifail = fortran.main_module.eqslv()
+            raise NotImplementedError("HYBRD non-optimisation solver is not "
+                "implemented"
+            )
 
     def run_scan(self):
         """Create scan object if required."""
         if fortran.numerics.ioptimz >= 0:
             self.scan = Scan()
         else:
-            fortran.final_module.final(self.ifail)
+            final.finalise(self.ifail)
 
     def show_errors(self):
         """Report all informational/error messages encountered."""

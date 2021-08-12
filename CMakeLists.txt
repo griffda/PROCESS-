@@ -98,6 +98,7 @@ LIST(APPEND PROCESS_SRCS
     superconductors.f90
     plasma_geometry.f90
     stellarator_fwbs.f90
+    stellarator_variables.f90
     plant_power.f90
     final_module.f90
     error_handling.f90
@@ -125,6 +126,17 @@ LIST(APPEND PROCESS_SRCS
     evaluators.f90
     water_usage_variables.f90
     costs_step.f90
+    constraint_equations.f90
+    stellarator.f90
+    machine_build.f90
+    tfcoil.f90
+    pulse.f90
+    divertor_ode.f90
+    constants.f90
+    structure.f90
+    vacuum.f90
+    water_usage.f90
+    hcll.f90
 )
 
 # Install all requirements in the current Python environment

@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
- Date_of_run_____________________________________________________________ (date)________________________     "03/08/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "14:39"
+ Date_of_run_____________________________________________________________ (date)________________________     "02/08/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "16:13"
  User____________________________________________________________________ (username)____________________     "rhicha"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-412-g47bc6331"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1328-process-tf-geometry-output-issue"                                                             
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-407-g54745850"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1361-remove-cost-model-2-link-to-lsa"                                                              
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-85/test_scenario_steady_state_0/IN.DAT                                                                                                                                     "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-63/test_scenario_steady_state_0/IN.DAT                                                                                                                                     "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #

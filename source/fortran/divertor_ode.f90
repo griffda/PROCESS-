@@ -176,13 +176,13 @@ contains
     ! real(dp), optional, intent(in) :: abserrset
 
     ! Average poloidal field (T)
-    real(dp), optional, intent(in) :: bp
+    real(dp), intent(in) :: bp
 
     ! Power conducted through the separatrix, calculated by divertor model [W]
-    real(dp), optional, intent(out) :: psep_kallenbach
+    real(dp), intent(out) :: psep_kallenbach
 
     ! Temperature (eV) and density (1/m3) at outboard midplane
-    real(dp), optional, intent(out) :: teomp, neomp
+    real(dp), intent(out) :: teomp, neomp
 
     ! Btheta, Bphi and Btotal at OMP (equation 1 of Kallenbach)
     real(dp) :: Bp_omp, Bt_omp, Btotal_omp
