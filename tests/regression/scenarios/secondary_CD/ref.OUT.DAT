@@ -672,7 +672,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Total outboard leg radial thickness (m)                                  (tfthko)                  1.501E+00     
  Outboard leg toroidal thickness (m)                                      (tftort)                  1.764E+00  OP 
  Maximum inboard edge height (m)                                          (hmax)                    9.281E+00  OP 
- Mean coil circumference (m)                                              (tfleng)                  5.240E+01  OP 
+ Mean coil circumference (including centrepost length) (m)                (tfleng)                  5.240E+01  OP 
  Vertical TF shape                                                        (i_tf_shape)                      1     
  
  D-shape coil, inner surface shape approximated by
