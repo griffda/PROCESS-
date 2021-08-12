@@ -2303,7 +2303,9 @@ contains
 100 continue
 
     call harwqp(np1,mtotal,b,lb,gm,cnorm,lcnorm,cm,bdl,bdu,delta, &
-         mact,meq,h,lh,iwa,wa,iwa(4*(n+1)+m+1),mode,info)
+         mact,meq,h,lh,iwa,wa,iwa(4*(n+1)+m+1:),mode,info)
+    ! Pass a slice of iwa ending at its upper bound, rather than just the
+    ! starting element: helps catch array out-of-bounds errors
 
     if (info /= 1) then
        if (verbose == 1) then
@@ -2417,6 +2419,7 @@ contains
     !  normal return and set to two when a singular matrix is detected
     !  in HINV.  All other entries in the calling sequence are as
     !  described in the Harwell documentation.
+    !  https://www.hsl.rl.ac.uk/archive/specs/ve02.pdf
     !
     !  Modified 5/22/91 to use implicit none (J. Galambos)
     !
@@ -2430,7 +2433,7 @@ contains
     IMPLICIT NONE
 
     INTEGER n,m,ia,ic,k,ke,ih,mode,info
-    INTEGER iwa(*),lt(:)
+    INTEGER iwa(:),lt(:)
     INTEGER i, ial, ib, ii, j, li, ni, nk, nn, n3,n4,n5,n6
     INTEGER i0,i1,i2,i3
 
