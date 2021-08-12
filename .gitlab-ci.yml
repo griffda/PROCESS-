@@ -160,9 +160,10 @@ integration-py36:
     paths: 
       - lcov_results
       - tests/regression/pytest.log
+      - tests/regression/scenarios/starfire/out.MFILE.DAT
     expire_in: 1 week
   script:
-    - pytest -v tests/regression -s | tee tests/regression/pytest.log
+    - pytest -v tests/regression -s --keep=starfire | tee tests/regression/pytest.log
     - lcov --gcov-tool gcov --capture --directory build/CMakeFiles/process.dir/source/fortran/ --output-file lcov_results/coverage.info
     - genhtml --output-directory lcov_results/html lcov_results/coverage.info
   tags:
