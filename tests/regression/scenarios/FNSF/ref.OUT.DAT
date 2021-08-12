@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-397-gad7f2a48
-    Branch : issue-935-power-plant-water-use
+   Tag No. : v2.1-407-g54745850 code contains untracked changes
+    Branch : 1361-remove-cost-model-2-link-to-lsa
    Git log : COMMIT_MSG
- Date/time : 22 Jul 2021 13:06:56 +01:00(hh:mm) UTC
+ Date/time :  2 Aug 2021 16:11:52 +01:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-45/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-45/test_scenario_FNSF_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-63/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-63/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -58,8 +58,8 @@
  Number of constraints (total)                                            (neqns+nineqns)                  15     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                         -5     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 3.583E-08  OP 
- VMCON convergence parameter                                              (convergence_parameter)   1.291E-08  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 1.403E-08  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   1.278E-08  OP 
  Number of VMCON iterations                                               (nviter)                         25  OP 
  
 PROCESS has successfully optimised the iteration variables to maximise the figure of merit           FUSION GAIN.
@@ -103,21 +103,21 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  1.4470E-01             -3.2618E-07                 2.2541E-06
-    2  Global power balance consistency      =  1.5068E+00 MW/m3        8.0468E-06 MW/m3          -5.3404E-06
-    3  Density upper limit                   <  2.4404E+20 /m3          1.2878E+08 /m3             5.2780E-13
-    4  Beam ion density consistency          =  1.5292E+18 /m3         -3.4171E+13 /m3             2.2346E-05
-    5  Neutron wall load upper limit         <  1.0180E+00 MW/m2       -4.0227E-06 MW/m2          -3.9515E-06
-    6  Fusion power upper limit              <  1.6200E+02 MW           6.3981E-04 MW             -3.9494E-06
+    1  Beta consistency                      =  1.4470E-01             -3.2608E-07                 2.2535E-06
+    2  Global power balance consistency      =  1.5068E+00 MW/m3        8.0445E-06 MW/m3          -5.3389E-06
+    3  Density upper limit                   <  2.4404E+20 /m3          2.0503E+08 /m3             8.4022E-13
+    4  Beam ion density consistency          =  1.5292E+18 /m3         -3.4162E+13 /m3             2.2340E-05
+    5  Neutron wall load upper limit         <  1.0180E+00 MW/m2       -4.0215E-06 MW/m2          -3.9504E-06
+    6  Fusion power upper limit              <  1.6200E+02 MW           6.3963E-04 MW             -3.9483E-06
     7  Radial build consistency              =  1.7000E+00 m            0.0000E+00 m              -0.0000E+00
-    8  L-H power threshold limit             <  1.7084E+01 MW          -1.9097E-03 MW              1.1177E-04
-    9  Radiation fraction upper limit        <  1.5068E+00 MW/m3       -2.1957E-05 MW/m3           1.7227E-05
-   10  Beta upper limit                      <  1.9308E-01              2.5457E-13                 1.3185E-12
-   11  Injection power upper limit           <  8.0000E+01 MW          -1.7881E-03 MW              2.2351E-05
-   12  Average centrepost temperature        =  7.3753E+01 deg C        6.6915E-06 deg C          -9.0728E-08
-   13  Peak centrepost temp. upper limit     <  2.0000E+02 deg C        1.1895E-05 deg C          -1.1895E-07
-   14  Ip/Irod upper limit                   <  7.6151E-01             -1.6332E-16                 4.4409E-16
-   15  Psep / R upper limit                  <  1.9998E+01 MW/m         1.1234E-03 MW/m           -1.1178E-04
+    8  L-H power threshold limit             <  1.7084E+01 MW          -1.9091E-03 MW              1.1174E-04
+    9  Radiation fraction upper limit        <  1.5068E+00 MW/m3       -2.1950E-05 MW/m3           1.7222E-05
+   10  Beta upper limit                      <  1.9308E-01              1.8208E-13                 9.4302E-13
+   11  Injection power upper limit           <  8.0000E+01 MW          -1.7876E-03 MW              2.2345E-05
+   12  Average centrepost temperature        =  7.3753E+01 deg C        6.6896E-06 deg C          -9.0702E-08
+   13  Peak centrepost temp. upper limit     <  2.0000E+02 deg C        1.1891E-05 deg C          -1.1891E-07
+   14  Ip/Irod upper limit                   <  7.6151E-01             -2.4498E-16                 6.6613E-16
+   15  Psep / R upper limit                  <  1.9998E+01 MW/m         1.1231E-03 MW/m           -1.1174E-04
  
  ******************************************** Final Feasible Point ********************************************
  

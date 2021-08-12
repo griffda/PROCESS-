@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-397-gad7f2a48
-    Branch : issue-935-power-plant-water-use
+   Tag No. : v2.1-407-g54745850 code contains untracked changes
+    Branch : 1361-remove-cost-model-2-link-to-lsa
    Git log : COMMIT_MSG
- Date/time : 22 Jul 2021 13:08:04 +01:00(hh:mm) UTC
+ Date/time :  2 Aug 2021 16:12:57 +01:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-45/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-45/test_scenario_starfire_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-63/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-63/test_scenario_starfire_0/IN.DAT
  Run title : starfire
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -293,14 +293,14 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  First wall / blanket life (years)                                        (fwbllife)                    5.343     
  Divertor life (years)                                                    (divlife.)                    0.286     
- Cost of electricity (m$/kWh)                                             (coe)                       277.645     
+ Cost of electricity (m$/kWh)                                             (coe)                       278.876     
  
  Power Generation Costs :
  
                                                                            Annual Costs, M$       COE, m$/kWh
 
  Capital Investment                                                               2043.68              265.58
- Operation & Maintenance                                                            68.29                8.87
+ Operation & Maintenance                                                            73.85                9.60
  Decommissioning Fund                                                               17.28                2.25
  Fuel Charge Breakdown
 
@@ -309,10 +309,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
      Centrepost (TART only)                                                  0.00                0.00
      Auxiliary Heating                                                       0.00                0.00
      Actual Fuel                                                             3.40                0.44
-     Waste Disposal                                                          3.91                0.51
- Total Fuel Cost                                                                     7.31                0.95
+     Waste Disposal                                                          7.82                1.02
+ Total Fuel Cost                                                                    11.22                1.46
 
- Total Cost                                                                       2136.55              277.65
+ Total Cost                                                                       2146.02              278.88
  
  ********************************************* Plant Availability *********************************************
  

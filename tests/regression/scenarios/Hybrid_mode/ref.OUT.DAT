@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-397-gad7f2a48
-    Branch : issue-935-power-plant-water-use
+   Tag No. : v2.1-407-g54745850 code contains untracked changes
+    Branch : 1361-remove-cost-model-2-link-to-lsa
    Git log : COMMIT_MSG
- Date/time : 22 Jul 2021 13:07:21 +01:00(hh:mm) UTC
+ Date/time :  2 Aug 2021 16:12:19 +01:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-45/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-45/test_scenario_Hybrid_mode_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-63/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-63/test_scenario_Hybrid_mode_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
