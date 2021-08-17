@@ -43,3 +43,5 @@ RUN python -m pip install --upgrade pip && \
     #TODO: Temporary fix for numpy-f90wrap bug using commit id whilst awaiting 
     # a tagged release for f90wrap
     python -m pip install git+https://github.com/jameskermode/f90wrap.git@78918e84
+
+ENV FC=gfortran
