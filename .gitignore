@@ -80,4 +80,3 @@ process/io/python_fortran_dicts.json
 documentation/proc-pages/vardes.md
 lcov_results/
 env/
-*.sif
