@@ -2963,11 +2963,11 @@ contains
 
     INTEGER n,m,ic,k,ke,ih,info
     INTEGER i, ial, ib, ii, j, jj, kv, li, ni, nj, nn, n3
-    INTEGER iwa(*), lt(*)
+    INTEGER iwa(:), lt(:)
     INTEGER i0,i1,i2,i3
 
-    real(dp) c(ic,*),d(*),bdl(*),bdu(*),x(*),h(ih,*)
-    real(dp) wa(*)
+    real(dp) c(:,:),h(:,:)
+    real(dp) wa(:), d(:), bdu(:), x(:), bdl(:)
     real(dp) alpha, beta, y, z, zz
     real(dp) r0
 
@@ -3055,7 +3055,7 @@ contains
     !  Form m = (vtranspose.v)(-1)
     do i = 1,k
        do j = i,k
-          call dotpmc(h(1,n+i),i1,h(1,n+j),i1,r0,h(i,j),n,i0)
+          call dotpmc(h(:,n+i),i1,h(:,n+j),i1,r0,h(i,j),n,i0)
           h(j,i) = h(i,j)
        end do
     end do
@@ -3076,14 +3076,14 @@ contains
           x(n+j) = h(i,j)
        end do
        do j = 1,n
-          call dotpmc(x(n+1),i1,h(j,n+1),ih,r0,h(i,j),k,i0)
+          call dotpmc(x(n+1:),i1,h(j:,n+1),ih,r0,h(i,j),k,i0)
        end do
     end do
 
     !  Set up diagonal elements of the projection matrix  p = v.vplus
 
     do i = 1,n
-       call dotpmc(h(1,i),i1,h(i,n+1),ih,r0,x(n+i),k,i0)
+       call dotpmc(h(:,i),i1,h(i:,n+1),ih,r0,x(n+i),k,i0)
     end do
     do i = 1,n
        lt(n+i) = 0
@@ -3120,7 +3120,7 @@ contains
 30  continue
     do i = 1,n
        if (lt(n+i) == 1) goto 31
-       call dotpmc(h(i,n+1),ih,x(nn+1),i1,r0,x(n3+i),kv,i3)
+       call dotpmc(h(i:,n+1),ih,x(nn+1:),i1,r0,x(n3+i),kv,i3)
 31     continue
     end do
     do i = 1,n
@@ -3176,7 +3176,7 @@ contains
     !  Calculate position of vertex
 
     do i = 1,n
-       call dotpmc(h(1,i),i1,x(n+1),i1,r0,x(i),n,i0)
+       call dotpmc(h(:,i),i1,x(n+1:),i1,r0,x(i),n,i0)
     end do
 
     !  Calculate the constraint residuals, the number of violated
@@ -3200,7 +3200,7 @@ contains
 
 54     continue
        j = i-nn
-       call dotpmc(c(1,j),i1,x(1),i1,d(j),z,n,i2)
+       call dotpmc(c(:,j),i1,x(:),i1,d(j),z,n,i2)
 
 55     continue
        x(nn+i) = z
@@ -3232,7 +3232,7 @@ contains
     z = 0.0D0
     do i = 1,n
        if (lt(nn+lt(i)) == -1) goto 64
-       call dotpmc(h(i,1),ih,x(n+1),i1,r0,y,n,i0)
+       call dotpmc(h(i:,1),ih,x(n+1:),i1,r0,y,n,i0)
        if (y <= z) goto 64
        z = y
        ii = i
@@ -3265,7 +3265,7 @@ contains
 
 74     continue
        jj = i-nn
-       call dotpmc(x(n+1),i1,c(1,jj),i1,r0,z,n,i3)
+       call dotpmc(x(n+1:),i1,c(:,jj),i1,r0,z,n,i3)
 
 75     continue
        if (lt(nn+i) == 2) goto 76
@@ -3317,7 +3317,7 @@ contains
        x(n3+i) = c(i,ib)
     end do
     do i = 1,n
-       call dotpmc(h(i,1),ih,x(n3+1),i1,r0,x(nn+i),n,i0)
+       call dotpmc(h(i:,1),ih,x(n3+1:),i1,r0,x(nn+i),n,i0)
     end do
 
 90  continue
