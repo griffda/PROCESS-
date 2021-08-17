@@ -2437,8 +2437,8 @@ contains
     INTEGER i, ial, ib, ii, j, li, ni, nk, nn, n3,n4,n5,n6
     INTEGER i0,i1,i2,i3
 
-    real(dp) a(ia,*),b(:),c(ic,*),d(:),bdl(:),bdu(:),x(*), &
-         h(ih,*),wa(:)
+    real(dp) a(:,:), c(:,:), h(:,:)
+    real(dp) b(:), d(:), bdl(:), bdu(:), x(:), wa(:)
     real(dp) alpha, cac, cc, chc, ghc, y, z, zz
     real(dp) r0
     real(dp), dimension(2) :: det
@@ -2576,7 +2576,7 @@ contains
 
 118 continue
     do i = 1,n
-       call dotpmc(h(1,i),i1,x(n+1),i1,r0,x(i),nk,i0)
+       call dotpmc(h(:,i),i1,x(n+1:),i1,r0,x(i),nk,i0)
     end do
 
     !  Check feasibility, if not exit to 8
@@ -2594,7 +2594,7 @@ contains
 
 112    continue
        j = i-nn
-       call dotpmc(c(1,j),i1,x(1),i1,d(j),z,n,i2)
+       call dotpmc(c(:,j),i1,x(:),i1,d(j),z,n,i2)
 
 114    continue
        if (z < 0.0D0) goto 8
@@ -2607,7 +2607,7 @@ contains
     !  Find largest multiplier,  exit if not positive
 
     do i = 1,n
-       call dotpmc(a(i,1),ia,x(1),i1,b(i),x(n6+i),n,i2)
+       call dotpmc(a(i:,1),ia,x(:),i1,b(i),x(n6+i),n,i2)
     end do
     if (k == 0) goto 1000
 
@@ -2615,7 +2615,7 @@ contains
     z = -1.0D99
     do i = 1,k
        if (lt(nn+lt(i)) == -1) goto 122
-       call dotpmc(h(n+i,1),ih,x(n6+1),i1,r0,zz,n,i3)
+       call dotpmc(h(n+i:,1),ih,x(n6+1:),i1,r0,zz,n,i3)
        if (zz <= z) goto 122
        z = zz
        ii = i
@@ -2640,9 +2640,9 @@ contains
 
 136 continue
     do i = 1,n
-       call dotpmc(a(i,1),ia,x(nn+1),i1,r0,x(n+i),n,i0)
+       call dotpmc(a(i:,1),ia,x(nn+1:),i1,r0,x(n+i),n,i0)
     end do
-    call dotpmc(x(nn+1),i1,x(n+1),i1,r0,cac,n,i0)
+    call dotpmc(x(nn+1:),i1,x(n+1:),i1,r0,cac,n,i0)
     if (cac > 0.0D0) goto 134
     postiv = .false.
     y = 1.0D0
@@ -2682,9 +2682,9 @@ contains
 
 142    continue
        j = i-nn
-       call dotpmc(c(1,j),i1,x(n5+1),i1,r0,zz,n,i0)
+       call dotpmc(c(:,j),i1,x(n5+1:),i1,r0,zz,n,i0)
        if (zz >= 0.0D0) goto 140
-       call dotpmc(c(1,j),i1,x(1),i1,d(j),cc,n,i1)
+       call dotpmc(c(:,j),i1,x(:),i1,d(j),cc,n,i1)
        cc = cc/zz
 
 143    continue
@@ -2729,9 +2729,9 @@ contains
        x(n5+i) = c(i,ib)
     end do
     do i = j,nk
-       call dotpmc(h(i,1),ih,x(n5+1),i1,r0,x(n3+i),n,i0)
+       call dotpmc(h(i:,1),ih,x(n5+1:),i1,r0,x(n3+i),n,i0)
     end do
-    if (k /= n) call dotpmc(x(n5+1),i1,x(n3+1),i1,r0,chc,n,i0)
+    if (k /= n) call dotpmc(x(n5+1:),i1,x(n3+1:),i1,r0,chc,n,i0)
 
 151 continue
     lt(nn+ial) = 0
@@ -2780,17 +2780,17 @@ contains
     !  the constraint is being removed from augmented basis
 
     do i=1,n
-       call dotpmc(a(i,1),ia,x(1),i1,b(i),x(n6+i),n,i2)
+       call dotpmc(a(i:,1),ia,x(:),i1,b(i),x(n6+i),n,i2)
        x(nn+i) = h(n+ii,i)
     end do
-    call dotpmc(x(n6+1),i1,x(nn+1),i1,r0,z,n,i3)
+    call dotpmc(x(n6+1:),i1,x(nn+1:),i1,r0,z,n,i3)
     if (z == 0.0D0) goto 178
     goto 136
 
 160 continue
     cc = x(n4+ii)
     y = chc*cac+cc**2
-    call dotpmc(x(n6+1),i1,x(n3+1),i1,r0,ghc,n,i0)
+    call dotpmc(x(n6+1:),i1,x(n3+1:),i1,r0,ghc,n,i0)
     if ((alpha*y) < (chc*(z-alpha*cac)+ghc*cc)) goto 156
 
     !  Apply formula for exchanging new constraint
@@ -2798,7 +2798,7 @@ contains
 
     do i = 1,k
        ni = n+i
-       call dotpmc(h(ni,1),ih,x(n+1),i1,r0,x(n5+i),n,i0)
+       call dotpmc(h(ni:,1),ih,x(n+1:),i1,r0,x(n5+i),n,i0)
     end do
     do i = 1,n
        x(n+i) = (chc*x(nn+i)-cc*x(n3+i))/y
@@ -2825,11 +2825,11 @@ contains
     !  Calculate g,  new search direction is -h.g
 
     do i = 1,n
-       call dotpmc(a(i,1),ia,x(1),i1,b(i),x(n+i),n,i2)
+       call dotpmc(a(i:,1),ia,x(:),i1,b(i),x(n+i),n,i2)
     end do
     z = 0.0D0
     do i = 1,n
-       call dotpmc(h(i,1),ih,x(n+1),i1,r0,x(n5+i),n,i3)
+       call dotpmc(h(i:,1),ih,x(n+1:),i1,r0,x(n5+i),n,i3)
        if (x(n5+i) /= 0.0D0) z = 1.0D0
     end do
     passiv = .false.
@@ -2870,7 +2870,7 @@ contains
     k = k-1
     do i = 1,k
        ni = n+i
-       call dotpmc(h(ni,1),ih,x(n+1),i1,r0,x(n3+i),n,i0)
+       call dotpmc(h(ni:,1),ih,x(n+1:),i1,r0,x(n3+i),n,i0)
     end do
     do i = 1,k
        alpha = x(n3+i)/cac
