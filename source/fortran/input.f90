@@ -308,7 +308,10 @@ contains
       plasmod_globtau, plasmod_pfus, plasmod_nbi_energy, plasmod_nxt, &
       plasmod_x_cd, plasmod_chisawpos, plasmod_cxe_psepfac, plasmod_dx_control, &
       plasmod_car_qdivt 
-    use pulse_variables, only: lpulse, dtstor, itcycl, istore, bctmp 
+    use pulse_variables, only: lpulse, dtstor, itcycl, istore, bctmp
+    
+    use primary_pumping_variables, only: t_in_bb, t_out_bb, dp_he, p_he, gamma_he 
+    
     use scan_module, only: isweep_2, nsweep, isweep, scan_dim, nsweep_2, &
       sweep_2, sweep, ipnscns, ipnscnv 
     use stellarator_variables, only: f_asym, isthtr, n_res, iotabar, fdivwet, &
@@ -2576,6 +2579,24 @@ contains
        case ('vachtmw')
           call parse_real_variable('vachtmw', vachtmw, 0.0D0, 100.0D0, &
                'Vacuum pump power (MW)')
+
+       case ('t_in_bb')
+          call parse_real_variable('t_in_bb', t_in_bb, 200.0D0, 1000.0D0, &
+               'Helium or Gas Inlet Temperature (K)')
+       case ('t_out_bb')
+          call parse_real_variable('t_out_bb', t_out_bb, 200.0D0, 1000.0D0, &
+              'Helium or Gas Outlet Temperature (K)')
+       case ('dp_he')
+          call parse_real_variable('dp_he', dp_he, 0.0D0, 10.0D6, &
+              'Helium Pressure drop or Gas Pressure drop (Pa)')
+       case ('p_he')
+          call parse_real_variable('p_he', p_he, 0.0D0, 100.0D6, &
+              'Pressure in FW and blanket coolant at pump exit')	      
+      
+       case ('gamma_he')
+          call parse_real_variable('gamma_he', gamma_he, 1.0D0, 2.0D0, &
+              'Ratio of specific heats for helium or for another Gas')
+
 
           !  Cost information settings
 
