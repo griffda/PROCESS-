@@ -12,7 +12,6 @@ from pytest import approx
 import logging
 import shutil
 from pathlib import Path
-import warnings
 
 from scenario import Scenario
 
