@@ -119,8 +119,7 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
 
     # Run the scenario: use the scenario method to run Process on the input file
     # in the temporary test directory
-    # Assert the run doesn't throw any errors
-    assert scenario.run(tmp_path) == True
+    scenario.run(tmp_path)
     
     # Overwrite reference MFILE and OUT files (ref.MFILE.DAT and ref.OUT.DAT)
     # If overwriting refs, don't bother asserting anything else and return
