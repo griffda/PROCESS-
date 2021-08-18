@@ -1,4 +1,4 @@
-# Development image for Process, used in challenging environments (Mac) to give
+# Development image for Process, used in challenging environments to give
 # identical results to CI or to quickly provide a working environment to a 
 # casual user. Differs from CI image by not using virtual environments for 
 # differt Python versions and doesn't require the CI script to perform extra
@@ -19,7 +19,10 @@ RUN apt-get update && apt-get install -y \
     liblapack-dev \
     liblapack3 \
     python3-pip \
-    python-is-python3
+    python-is-python3 \
+    libhdf5-serial-dev \
+    netcdf-bin \
+    libnetcdf-dev
 
 # Install Python packages into a virtual environment
 # Use virtualenv to prevent "running pip as root" warnings
