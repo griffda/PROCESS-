@@ -368,6 +368,8 @@ tracking_hook:
   only: 
     - develop
     - 1344-tracking-for-cost-model # Remove before merge
+  allow_failure: true
   trigger:
     project: tnunn/process-rtv
+    strategy: depend
   stage: tracking
