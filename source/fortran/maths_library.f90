@@ -922,8 +922,8 @@ contains
 
     integer, intent(in) :: ih, n
     integer, intent(out) :: info
-    integer, dimension(n), intent(out) :: ipvt
-    real(dp), dimension(ih,ih), intent(inout) :: h
+    integer, dimension(:), intent(out) :: ipvt
+    real(dp), dimension(:,:), intent(inout) :: h
 
     !  Local variables
 
