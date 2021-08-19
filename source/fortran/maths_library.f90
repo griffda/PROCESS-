@@ -980,8 +980,8 @@ contains
     !  Arguments
 
     integer, intent(in) :: ix,iy,n,iflag
-    real(dp), dimension(ix*n), intent(in) :: x
-    real(dp), dimension(iy*n), intent(in) :: y
+    real(dp), dimension(:), intent(in) :: x
+    real(dp), dimension(:), intent(in) :: y
     real(dp), intent(in) :: c
     real(dp), intent(out) :: total
 
