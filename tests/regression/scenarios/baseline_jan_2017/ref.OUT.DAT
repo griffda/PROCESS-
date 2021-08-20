@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-337-g5d3d529d code contains untracked changes
-    Branch : 1371-add-xi_ebw-as-an-input-for-the-ebw-scaling-of-the-heating-of-the-plasma-in-develop-stable
+   Tag No. : v2.1-343-g41d9c2c2
+    Branch : 1375-change-the-formulae-for-the-dittus-boelter-eqn-in-tfcoil-f90-as-it-is-wrong-in-develop-stable-2
    Git log : COMMIT_MSG
- Date/time : 11 Aug 2021 16:40:37 +01:00(hh:mm) UTC
+ Date/time : 18 Aug 2021 13:53:51 +01:00(hh:mm) UTC
       User : cjwg
   Computer : K1370
- Directory : /tmp/pytest-of-cjwg/pytest-131/test_solver0
-     Input : /tmp/pytest-of-cjwg/pytest-131/test_scenario_baseline_jan_2010/IN.DAT
+ Directory : /tmp/pytest-of-cjwg/pytest-141/test_solver0
+     Input : /tmp/pytest-of-cjwg/pytest-141/test_scenario_baseline_jan_2010/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
