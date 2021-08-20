@@ -3810,7 +3810,7 @@ module physics_module
 
     !  Local variables
 
-    real(dp) :: betath
+    real(dp) :: betath, tot_power_plasma, normalised_toroidal_beta
     ! pinj
     integer :: imp
     character(len=30) :: tauelaw
@@ -3997,7 +3997,9 @@ module physics_module
        call ovarrf(outfile,'Normalised thermal beta',' ',1.0D8*betath*rminor*bt/plascur, 'OP ')
        !call ovarrf(outfile,'Normalised total beta',' ',1.0D8*beta*rminor*bt/plascur, 'OP ')
        call ovarrf(outfile,'Normalised total beta',' ',normalised_total_beta, 'OP ')
-       call ovarrf(outfile,'Normalised toroidal beta',' ',normalised_total_beta*(btot/bt)**2, 'OP ')
+       !call ovarrf(outfile,'Normalised toroidal beta',' ',normalised_total_beta*(btot/bt)**2, 'OP ')
+       normalised_toroidal_beta=normalised_total_beta*(btot/bt)**2
+       call ovarrf(outfile,'Normalised toroidal beta','(normalised_toroidal_beta)',normalised_toroidal_beta, 'OP ')       
     end if
 
     if (iculbl == 0) then
@@ -4162,7 +4164,9 @@ module physics_module
     call ovarre(outfile,'Alpha power: beam-plasma (MW)','(palpnb)',palpnb, 'OP ')
     call ovarre(outfile,'Neutron power (MW)','(pneutmw)',pneutmw, 'OP ')
     call ovarre(outfile,'Charged particle power (excluding alphas) (MW)', '(pchargemw)',pchargemw, 'OP ')
-    call ovarre(outfile,'Total power deposited in plasma (MW)','()',falpha*palpmw+pchargemw+pohmmw+pinjmw, 'OP ')
+    tot_power_plasma=falpha*palpmw+pchargemw+pohmmw+pinjmw
+    call ovarre(outfile,'Total power deposited in plasma (MW)','(tot_power_plasma)',tot_power_plasma, 'OP ')
+    !call ovarre(outfile,'Total power deposited in plasma (MW)','()',falpha*palpmw+pchargemw+pohmmw+pinjmw, 'OP ')
 
     call osubhd(outfile,'Radiation Power (excluding SOL):')
     call ovarre(outfile,'Bremsstrahlung radiation power (MW)','(pbrempv*vol)', pbrempv*vol, 'OP ')

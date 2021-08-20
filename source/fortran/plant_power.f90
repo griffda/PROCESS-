@@ -1056,7 +1056,7 @@ contains
 
     !  Local variables
 
-    real(dp) :: cirpowfr, primsum, pinj, secsum, rejected_main, sum
+    real(dp) :: cirpowfr, primsum, pinj, secsum, rejected_main, sum, tot_plant_power
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1448,6 +1448,8 @@ contains
     call ovarrf(outfile,'Electric power for PF coils (MW)','(pfwpmw)', pfwpmw, 'OP ')
     call ovarrf(outfile,'All other internal electric power requirements (MW)','(fachtmw)', fachtmw, 'OP ')
     sum = pnetelmw+pinjwp+htpmw+vachtmw+trithtmw+crypmw+tfacpd+fachtmw+pfwpmw
+    tot_plant_power=sum
+    call ovarrf(outfile,'Total (MW)','(tot_plant_power)',tot_plant_power, 'OP ')    
     call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
     call oblnkl(outfile)
     call ovarrf(outfile,'Gross electrical output* (MW)','(pgrossmw)',pgrossmw, 'OP ')
