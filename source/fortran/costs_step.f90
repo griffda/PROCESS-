@@ -634,8 +634,9 @@ contains
 		use heat_transport_variables, only: ipowerflow 
     
     implicit none
-    real(dp), intent(inout) :: step220101, step22010101, step22010102, step2201010201, &
+    real(dp), intent(inout) :: step22010101, step22010102, step2201010201, &
                                step2201010202, step2201010203
+    real(dp), intent(out) :: step220101
 
     !  Local variables
     real(dp) :: step2201010204, step2201010205, step2201010206, step2201010207
