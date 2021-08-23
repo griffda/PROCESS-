@@ -6,8 +6,11 @@ from process.fortran import cost_variables as cv
 from process.fortran import buildings_variables as bv
 from process.fortran import heat_transport_variables as htv
 from process.fortran import physics_variables as pv
-
-from process.fortran import cost_variables as costvar
+from process.fortran import build_variables as buildvar
+from process.fortran import current_drive_variables as cdv
+from process.fortran import fwbs_variables as fwbs
+from process.fortran import pfcoil_variables as pfv
+from process.fortran import times_variables as tv
 
 
 import numpy as np
@@ -109,6 +112,7 @@ def shared_cost_vars(monkeypatch):
 def test_init_costs_step():
     """Test initialisation of variables"""
     #Assert module vars are initialised correctly
+    cs.init_costs_step()
     assert cs.step20 == 0
     assert cs.step21 == 0
     assert cs.step22 == 0
@@ -129,6 +133,55 @@ def test_init_costs_step():
     assert cs.rminor_star == 0
     assert cs.pth == 0
 
+def test_costs_step(monkeypatch, shared_cost_vars):
+    """Test the costs_step subroutine
+    
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
+    :param shared_cost_vars: fixture to mock commonly-used cost vars
+    :type shared_cost_vars: Fixture
+    """
+    
+    #Mock module vars
+    monkeypatch.setattr(cv, "cdirt", 0.0)
+    monkeypatch.setattr(cv, "concost", 0.0)
+    monkeypatch.setattr(buildvar, "r_tf_outboard_mid", 10.0)
+    monkeypatch.setattr(buildvar, "tfthko", 10.0)
+    monkeypatch.setattr(buildvar, "hpfu", 10.0)
+    monkeypatch.setattr(buildvar, "hmax", 10.0)
+    monkeypatch.setattr(buildvar, "tfcth", 10.0)
+    monkeypatch.setattr(pv, "powfmw", 10.0)
+    monkeypatch.setattr(fwbs, "emultmw", 10.0)
+    monkeypatch.setattr(htv, "pinjwp", 10.0)
+
+    cs.costs_step(0,0)
+
+    #Test that module variables are calculated correctly
+    obs_vfi = cs.vfi
+    exp_vfi = 2.120575e4
+    assert pytest.approx(obs_vfi) == exp_vfi
+    obs_pth = cs.pth
+    exp_pth = 30.0
+    assert pytest.approx(obs_pth) == exp_pth
+
+    #Test that module variables are assigned correctly
+    assert cs.vfi_star == 6.737e3 
+    assert cs.ptherm_star == 4.15e3
+    assert cs.pinjmw_star == 9.04e1
+    assert cs.fwarea_star == 9.42e2
+    assert cs.rmajor_star == 7.0e0
+    assert cs.rminor_star == 7.0/3.6
+
+    #Total plant direct cost with remote handling
+    exp = 4.052943e3
+    obs = cv.cdirt
+    assert pytest.approx(obs) == exp
+
+    #Constructed cost
+    exp_concost = 7.1939739e3
+    obs_concost = cv.concost
+    assert pytest.approx(obs_concost) == exp_concost
+
 
 
 def test_step_a20(monkeypatch, shared_cost_vars):
@@ -140,7 +193,6 @@ def test_step_a20(monkeypatch, shared_cost_vars):
     :type shared_cost_vars: Fixture
     """
     # Mock module vars
-
     monkeypatch.setattr(cs, "step21", 0.0)
 
     # Run and assert result in M$
@@ -169,6 +221,91 @@ def test_step_a21(monkeypatch, shared_cost_vars):
     obs = cs.step21
     assert pytest.approx(obs) == exp
 
+
+def test_step_a22(monkeypatch, shared_cost_vars):
+    """Validate sum of cost account 22.
+
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
+    :param shared_cost_vars: fixture to mock commonly-used cost vars
+    :type shared_cost_vars: Fixture
+    """
+    # Mock module vars
+    monkeypatch.setattr(cs, "step22", 0.0)
+    monkeypatch.setattr(buildvar, "fwarea", 9.42e2)
+    monkeypatch.setattr(cs, "fwarea_star", 9.42e2)
+    monkeypatch.setattr(pv, "rmajor", 1e2)
+    monkeypatch.setattr(pv, "rmajor", 1e1)
+    monkeypatch.setattr(cdv, "pinjmw", 4.15e3)
+    monkeypatch.setattr(cs, "pinjmw_star", 9.04e1)
+    monkeypatch.setattr(cs, "rmajor_star", 1e3)
+    monkeypatch.setattr(cs, "rminor_star", 1e3)
+    # Run and assert result in M$
+    cs.step_a22(0, 0)
+    exp = 2.87413124e3
+    obs = cs.step22
+    assert pytest.approx(obs) == exp
+
+def test_step_a2201(monkeypatch, shared_cost_vars):
+    """Validate sum of cost account 22.01.
+
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
+    :param shared_cost_vars: fixture to mock commonly-used cost vars
+    :type shared_cost_vars: Fixture
+    """
+    # Mock module var set in subroutine: increase is value of step2201
+    monkeypatch.setattr(cs, "step22", 0.0)
+    monkeypatch.setattr(buildvar, "fwarea", 9.42e2)
+    monkeypatch.setattr(cs, "fwarea_star", 9.42e2)
+    monkeypatch.setattr(pv, "rmajor", 1e2)
+    monkeypatch.setattr(pv, "rmajor", 1e1)
+    monkeypatch.setattr(cdv, "pinjmw", 4.15e3)
+    monkeypatch.setattr(cs, "pinjmw_star", 9.04e1)
+    monkeypatch.setattr(cs, "rmajor_star", 1e3)
+    monkeypatch.setattr(cs, "rminor_star", 1e3)
+    cs.step_a2201(0, 0, 0)
+    exp = 1.9762381e3
+    obs = cs.step22
+    assert pytest.approx(obs) == exp
+
+def test_step_a220101(monkeypatch):
+    """Validate sum of cost account 22.01.01.
+
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
+    """
+    monkeypatch.setattr(cv, "fwallcst", 0.0)
+    monkeypatch.setattr(fwbs, "fw_armour_mass", 5.0)
+    monkeypatch.setattr(cv, "step_ucfwa", 5.0)
+    monkeypatch.setattr(fwbs, "fwmass", 5.0)
+    monkeypatch.setattr(cv, "step_ucfws", 5.0)
+    monkeypatch.setattr(cv, "ifueltyp", 2)
+    monkeypatch.setattr(htv, "ipowerflow", 1)
+    monkeypatch.setattr(fwbs, "blkttype", 3)
+    monkeypatch.setattr(fwbs, "whtblbe", 10.0)
+    monkeypatch.setattr(cv, "step_ucblbe", 8000)
+    monkeypatch.setattr(fwbs, "wtblli2o", 10.0)
+    monkeypatch.setattr(cv, "step_ucblbreed", 800)
+    monkeypatch.setattr(fwbs, "whtblss", 10.0)
+    monkeypatch.setattr(cv, "step_ucblss", 500)
+    monkeypatch.setattr(fwbs, "whtblvd", 10.0)
+    monkeypatch.setattr(cv, "step_ucblvd", 200)
+
+    #Account 22.01.01.01 : First wall
+    cs.step_a220101(0, 0, 0, 0, 0)
+    expected_fwallcst = 5.0e-5
+    observed_fwallcst = cv.fwallcst
+    assert pytest.approx(observed_fwallcst) == expected_fwallcst
+
+    #Test blkcst is correct
+    exp = 0.095
+    obs = cv.blkcst
+    assert pytest.approx(obs) == exp
+
+    #Test that the value of step220101 is calculated correctly
+    step220101 = cs.step_a220101(0, 0, 0, 0, 0)
+    assert pytest.approx(step220101) == 0.09505
 
 
 def test_step_a22010301(monkeypatch):
@@ -214,7 +351,27 @@ def test_step_a22010301(monkeypatch):
     observed = cs.step_a22010301()
     assert pytest.approx(observed) == expected
 
+def test_step_a22010302(monkeypatch):
+    """Test evaluation of account 22.01.03.02 (PF magnet) costs
+    :param monkeypatch: fixture for mocking variables
+    :type monkeypatch: MonkeyPatch
+    """
 
+    #Mock module vars used in subroutine
+
+    monkeypatch.setattr(pfv, "nohc", 2.0)
+    monkeypatch.setattr(pfv, "turns", np.full(18, 5.0, order="F"))
+    monkeypatch.setattr(pfv, "rpf", np.full(18, 5.0, order="F"))
+    monkeypatch.setattr(pfv, "ipfres", 1.0)
+    monkeypatch.setattr(buildvar, "iohcl", 0.0)
+    monkeypatch.setattr(cv, "step_uccu", 82.0)
+    monkeypatch.setattr(pfv, "vf", np.full(18, 0.5, order="F"))
+    monkeypatch.setattr(pfv, "ric", np.full(18, 5.0, order="F"))
+    monkeypatch.setattr(pfv, "rjconpf", np.full(18, 1.0e7, order="F"))
+
+    exp = 1.167792821192398e1 
+    obs = cs.step_a22010302()
+    assert pytest.approx(obs) == exp
 
 
 def test_step_a2202(monkeypatch, shared_cost_vars):
@@ -293,7 +450,6 @@ def test_step_a2206(monkeypatch, shared_cost_vars):
     """
     # Mock module var set in subroutine: increase is value of step2206
     monkeypatch.setattr(cs, "step22", 0.0)
-
     cs.step_a2206(0, 0, 0)
     exp = 5.45e0
     obs = cs.step22
@@ -310,7 +466,6 @@ def test_step_a2207(monkeypatch, shared_cost_vars):
     """
     # Mock module var set in subroutine: increase is value of step2207
     monkeypatch.setattr(cs, "step22", 0.0)
-
     cs.step_a2207(0, 0)
     exp = 2.341e1
     obs = cs.step22
@@ -399,5 +554,48 @@ def test_step_indirect_costs(monkeypatch):
     assert cs.step91 == 300
     assert cs.step92 == 325
     assert cs.step93 == 150
+
+def test_coelc_step(monkeypatch):
+    """Test electricity cost calculations
+    :param monkeypatch: fixture for mocking
+    :type monkeypatch: MonkeyPatch
+    """
+    #Mock module vars
+    monkeypatch.setattr(cv, "coecap", 0.0)
+    monkeypatch.setattr(htv, "pnetelmw", 10.0)
+    monkeypatch.setattr(cv, "cfactr", 10.0)
+    monkeypatch.setattr(tv, "tburn", 10.0)
+    monkeypatch.setattr(tv, "tcycle", 5.0)
+    monkeypatch.setattr(cv, "concost", 10.0)
+    monkeypatch.setattr(cv, "fcap0", 10.0)
+    monkeypatch.setattr(cv, "fcr0", 10.0)
+    monkeypatch.setattr(fwbs, "bktlife", 10.0)
+    monkeypatch.setattr(cs, "fwblkcost", 10.0)
+    monkeypatch.setattr(cv, "fcap0cp", 10.0)
+    monkeypatch.setattr(cv, "divlife", 2.0)
+    monkeypatch.setattr(cv, "divcst", 2.0)
+    monkeypatch.setattr(pv, "itart", 0.0)
+    monkeypatch.setattr(cv, "cdrlife", 5.0)
+    monkeypatch.setattr(cv, "fcdfuel", 10.0)
+    monkeypatch.setattr(htv, "pnetelmw", 1e5)
+    monkeypatch.setattr(cv, "ucfuel", 3.45)
+    monkeypatch.setattr(pv, "fhe3", 0.2)
+    monkeypatch.setattr(pv, "wtgpd", 10.0)
+    monkeypatch.setattr(cv, "uche3", 1,0e6)
+    monkeypatch.setattr(cv, "dintrt", 0.0)
+    monkeypatch.setattr(cv, "decomf", 0.1)
+    monkeypatch.setattr(cv, "tlife", 30.0)
+    monkeypatch.setattr(cv, "dtlife", 1.0)
+    monkeypatch.setattr(cv, "lsa", 4)
+    monkeypatch.setattr(cv, "cfind", np.zeros(4, order="F"))
+    cv.cfind[3] = 5.0
+    monkeypatch.setattr(cv, "ucwst", np.zeros(4, order="F"))
+    cv.ucwst[3] = 5.0
+
+    #Test that coe is calculated correctly
+    cs.coelc_step(0, 0)
+    expected_coe = 1.2288868669688922e-1
+    observed_coe = cv.coe
+    assert pytest.approx(observed_coe) == expected_coe
 
 
