@@ -1694,7 +1694,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         r_tf_inboard_in
     use tfcoil_variables, only: eyzwp, casestr, windstrain, n_tf_turn, &
         dr_tf_wp, i_tf_tresca, acstf, vforce, &
-        ritfc, jwptf, strtf0, sig_tf_case, sig_tf_wp, &
+        ritfc, jwptf, sig_tf_cs_bucked, sig_tf_case, sig_tf_wp, &
         thwcndut, insstrain, vforce, tinstf, &
         acstf, jwptf, insstrain, &
         rbmax, thicndut, acndttf, tfinsgap, &
@@ -2416,7 +2416,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! Constrains equation TRESCA stress values
     sig_tf_wp = sig_tf_tresca_max(n_tf_bucking + 1) ! Maximum assumed in the first graded layer
     if ( i_tf_bucking >= 1 ) sig_tf_case = sig_tf_tresca_max(n_tf_bucking)
-    if ( i_tf_bucking >= 2 ) strtf0 = sig_tf_tresca_max(1)
+    if ( i_tf_bucking >= 2 ) sig_tf_cs_bucked = sig_tf_tresca_max(1)
     ! ----------------
 
     if ( iprint == 1 ) call out_stress
@@ -2446,16 +2446,13 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         end if
 
         call ovarre(outfile, 'Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)','(sig_tf_case_max)',sig_tf_case_max)
-        if ( i_tf_tresca == 1  .and. i_tf_sup == 1) then
-            call ocmmnt(outfile, 'WP case TRESCA stress corrected using CEA formula (i_tf_tresca = 1)')
-        end if
         
         call ovarre(outfile, 'Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)','(sig_tf_wp_max)',sig_tf_wp_max)
         if ( i_tf_tresca == 1  .and. i_tf_sup == 1) then
             call ocmmnt(outfile, 'WP conduit TRESCA stress corrected using CEA formula (i_tf_tresca = 1)')
         end if
 
-        if ( i_tf_bucking >= 2) then
+        if ( i_tf_bucking >= 3) then
             call ocmmnt(outfile, 'No stress limit imposed on the TF-CS interface layer')
             call ocmmnt(outfile, '  -> Too much unknow on it material choice/properties')
         end if 

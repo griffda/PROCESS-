@@ -361,7 +361,7 @@ module tfcoil_variables
   real(dp), dimension(2*n_radial_array) :: sig_tf_tresca
   !! TF Inboard leg TRESCA stress in steel r distribution at mid-plane [Pa]
 
-  real(dp) :: strtf0
+  real(dp) :: sig_tf_cs_bucked
   !! Maximum TRESCA stress in CS structures at CS flux swing [Pa]:
   !!
   !!  - If superconducting CS (ipfres = 0): turn steel conduits TRESCA stress
@@ -841,7 +841,7 @@ module tfcoil_variables
     sig_tf_z = 0.0D0
     sig_tf_vmises = 0.0D0
     sig_tf_tresca = 0.0D0 
-    strtf0 = 0.0D0
+    sig_tf_cs_bucked = 0.0D0
     sig_tf_case = 0.0D0
     sig_tf_wp = 0.0D0
     sigvvall = 9.3D7
