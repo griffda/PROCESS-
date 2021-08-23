@@ -2044,7 +2044,7 @@ contains
       tfcryoarea, tficrn, tfleng, tfocrn, tfsai, tfsao, tftmp, tftort, &
       thicndut, thkcas, dr_tf_wp, thwcndut, tinstf, n_tf_turn, vftf, whtcas, &
       whtcon, whtconcu, whtconsc, whtconsh, whttf, wwp1, dcond, awphec, dcondins, &
-      i_tf_sc_mat, jwdgpro, max_force_density, sigvvall, strtf2, taucq, &
+      i_tf_sc_mat, jwdgpro, max_force_density, sigvvall, sig_tf_wp, taucq, &
       tdmptf, tmaxpro, toroidalgap, vtfkv, whtconin, wwp2, vdalw, bcritsc, fhts, &
       tcritsc, vtfskv, t_turn_tf
 		use constants, only: rmu0, twopi, pi, dcopper
@@ -2317,7 +2317,7 @@ contains
     max_force_density = config%max_force_density *(ritfc*1.0D-6/n_tf) * bmaxtf / awptf
 
     ! Approximate, very simple maxiumum stress: (needed for limitation of icc 32)
-    strtf2 = max_force_density * dr_tf_wp *1.0D6 ! in Pa
+    sig_tf_wp = max_force_density * dr_tf_wp *1.0D6 ! in Pa
 
 
     if (iprint == 1) call stcoil_output(outfile)
@@ -2766,7 +2766,7 @@ contains
   
       call osubhd(outfile,'Forces and Stress :')
       call ovarre(outfile,'Maximal force density (MN/m3)','(max_force_density)',max_force_density)
-      call ovarre(outfile,'Maximal stress (approx.) (MPa)','(strtf2)',strtf2*1.0D-6)
+      call ovarre(outfile,'Maximal stress (approx.) (MPa)','(sig_tf_wp)',sig_tf_wp*1.0D-6)
   
       call osubhd(outfile,'Quench Restrictions :')
       call ovarre(outfile,'Allowable stress in vacuum vessel (VV) due to quench (Pa)','(sigvvall)',sigvvall)
