@@ -562,39 +562,42 @@ def test_coelc_step(monkeypatch):
     """
     #Mock module vars
     monkeypatch.setattr(cv, "coecap", 0.0)
-    monkeypatch.setattr(htv, "pnetelmw", 10.0)
+    monkeypatch.setattr(cv, "coefuelt", 0.0)
+    monkeypatch.setattr(cv, "coeoam", 0.0)
+    monkeypatch.setattr(htv, "pnetelmw", 1e5)
     monkeypatch.setattr(cv, "cfactr", 10.0)
     monkeypatch.setattr(tv, "tburn", 10.0)
     monkeypatch.setattr(tv, "tcycle", 5.0)
     monkeypatch.setattr(cv, "concost", 10.0)
     monkeypatch.setattr(cv, "fcap0", 10.0)
     monkeypatch.setattr(cv, "fcr0", 10.0)
+    monkeypatch.setattr(cv, "discount_rate", 0.5)
     monkeypatch.setattr(fwbs, "bktlife", 10.0)
     monkeypatch.setattr(cs, "fwblkcost", 10.0)
     monkeypatch.setattr(cv, "fcap0cp", 10.0)
     monkeypatch.setattr(cv, "divlife", 2.0)
     monkeypatch.setattr(cv, "divcst", 2.0)
-    monkeypatch.setattr(pv, "itart", 0.0)
+    monkeypatch.setattr(pv, "itart", 1.0)
+    monkeypatch.setattr(cv, "cplife", 3.0)
+    monkeypatch.setattr(cv, "cpstcst", 10.0)
     monkeypatch.setattr(cv, "cdrlife", 5.0)
-    monkeypatch.setattr(cv, "fcdfuel", 10.0)
-    monkeypatch.setattr(htv, "pnetelmw", 1e5)
-    monkeypatch.setattr(cv, "ucfuel", 3.45)
-    monkeypatch.setattr(pv, "fhe3", 0.2)
-    monkeypatch.setattr(pv, "wtgpd", 10.0)
-    monkeypatch.setattr(cv, "uche3", 1,0e6)
-    monkeypatch.setattr(cv, "dintrt", 0.0)
-    monkeypatch.setattr(cv, "decomf", 0.1)
-    monkeypatch.setattr(cv, "tlife", 30.0)
-    monkeypatch.setattr(cv, "dtlife", 1.0)
-    monkeypatch.setattr(cv, "lsa", 4)
-    monkeypatch.setattr(cv, "cfind", np.zeros(4, order="F"))
-    cv.cfind[3] = 5.0
-    monkeypatch.setattr(cv, "ucwst", np.zeros(4, order="F"))
-    cv.ucwst[3] = 5.0
+    monkeypatch.setattr(cv, "ifueltyp", 1.0)
+    monkeypatch.setattr(cv, "cdcost", 5.0)
+    monkeypatch.setattr(cv, "fcdfuel", 0.5)
+    monkeypatch.setattr(cv, "step_ucoam", 10.0)
+    monkeypatch.setattr(cv, "ucfuel", 5.0)
+    monkeypatch.setattr(pv, "fhe3", 5.0)
+    monkeypatch.setattr(pv, "wtgpd", 5.0)
+    monkeypatch.setattr(cv, "uche3", 5.0)
+    monkeypatch.setattr(cv, "step_ucwst", 10.0)
+    monkeypatch.setattr(cv, "decomf", 0.5)
+    monkeypatch.setattr(cv, "dintrt", 5.0)
+    monkeypatch.setattr(cv, "tlife", 10.0)
+    monkeypatch.setattr(cv, "dtlife", 10.0)
 
     #Test that coe is calculated correctly
     cs.coelc_step(0, 0)
-    expected_coe = 1.2288868669688922e-1
+    expected_coe = 1.0369639053239339e-1
     observed_coe = cv.coe
     assert pytest.approx(observed_coe) == expected_coe
 
