@@ -123,7 +123,7 @@ subroutine init_all_module_vars
   call init_reinke_variables
   call init_costs_module
   call init_costs_2015
-  call init_costs_step
+  ! call init_costs_step
   call init_divertor_ode_var
   call init_green_func_ext
   call init_kit_hcll_module

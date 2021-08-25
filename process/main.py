@@ -46,6 +46,7 @@ from process.io import plot_proc
 from process.scan import Scan
 from process import final
 import argparse
+from process import costs_step
 
 from pathlib import Path
 import sys
@@ -299,6 +300,7 @@ class SingleRun():
         new run doesn't have any side-effects from previous runs.
         """
         fortran.init_module.init_all_module_vars()
+        self.costs_step = costs_step.CostsStep()
 
     def set_filenames(self):
         """Validate the input filename and create other filenames from it."""
