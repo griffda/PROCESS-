@@ -1076,7 +1076,7 @@ contains
        !  First solve  transp(u)*y = b
 
        do k = 1, n
-          t = sdot(k-1,a(1,k),1,b(1),1)
+          t = sdot(k-1,a(:,k),1,b(:),1)
           b(k) = (b(k) - t)/a(k,k)
        end do
 
@@ -1085,7 +1085,7 @@ contains
        if (nm1 >= 1) then
           do kb = 1, nm1
              k = n - kb
-             b(k) = b(k) + sdot(n-k,a(k+1,k),1,b(k+1),1)
+             b(k) = b(k) + sdot(n-k,a(k+1:,k),1,b(k+1:),1)
              l = ipvt(k)
              if (l /= k) then
                 t = b(l)
@@ -1570,8 +1570,8 @@ contains
     !  Arguments
 
     integer, intent(in) :: n,incx,incy
-    real(dp), dimension(n*incx), intent(in) :: sx
-    real(dp), dimension(n*incy), intent(in) :: sy
+    real(dp), dimension(:), intent(in) :: sx
+    real(dp), dimension(:), intent(in) :: sy
 
     !  Local variables
 
