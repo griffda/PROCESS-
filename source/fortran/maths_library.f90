@@ -2607,7 +2607,7 @@ contains
     !  Find largest multiplier,  exit if not positive
 
     do i = 1,n
-       call dotpmc(a(i:,1),ia,x(:),i1,b(i),x(n6+i),n,i2)
+       call dotpmc(a(i,:),i1,x(:),i1,b(i),x(n6+i),n,i2)
     end do
     if (k == 0) goto 1000
 
@@ -2615,7 +2615,7 @@ contains
     z = -1.0D99
     do i = 1,k
        if (lt(nn+lt(i)) == -1) goto 122
-       call dotpmc(h(n+i:,1),ih,x(n6+1:),i1,r0,zz,n,i3)
+       call dotpmc(h(n+i,:),i1,x(n6+1:),i1,r0,zz,n,i3)
        if (zz <= z) goto 122
        z = zz
        ii = i
@@ -2640,7 +2640,7 @@ contains
 
 136 continue
     do i = 1,n
-       call dotpmc(a(i:,1),ia,x(nn+1:),i1,r0,x(n+i),n,i0)
+       call dotpmc(a(i,:),i1,x(nn+1:),i1,r0,x(n+i),n,i0)
     end do
     call dotpmc(x(nn+1:),i1,x(n+1:),i1,r0,cac,n,i0)
     if (cac > 0.0D0) goto 134
@@ -2729,7 +2729,7 @@ contains
        x(n5+i) = c(i,ib)
     end do
     do i = j,nk
-       call dotpmc(h(i:,1),ih,x(n5+1:),i1,r0,x(n3+i),n,i0)
+       call dotpmc(h(i,:),i1,x(n5+1:),i1,r0,x(n3+i),n,i0)
     end do
     if (k /= n) call dotpmc(x(n5+1:),i1,x(n3+1:),i1,r0,chc,n,i0)
 
@@ -2780,7 +2780,7 @@ contains
     !  the constraint is being removed from augmented basis
 
     do i=1,n
-       call dotpmc(a(i:,1),ia,x(:),i1,b(i),x(n6+i),n,i2)
+       call dotpmc(a(i,:),i1,x(:),i1,b(i),x(n6+i),n,i2)
        x(nn+i) = h(n+ii,i)
     end do
     call dotpmc(x(n6+1:),i1,x(nn+1:),i1,r0,z,n,i3)
@@ -2798,7 +2798,7 @@ contains
 
     do i = 1,k
        ni = n+i
-       call dotpmc(h(ni:,1),ih,x(n+1:),i1,r0,x(n5+i),n,i0)
+       call dotpmc(h(ni,:),i1,x(n+1:),i1,r0,x(n5+i),n,i0)
     end do
     do i = 1,n
        x(n+i) = (chc*x(nn+i)-cc*x(n3+i))/y
@@ -2825,11 +2825,11 @@ contains
     !  Calculate g,  new search direction is -h.g
 
     do i = 1,n
-       call dotpmc(a(i:,1),ia,x(:),i1,b(i),x(n+i),n,i2)
+       call dotpmc(a(i,:),i1,x(:),i1,b(i),x(n+i),n,i2)
     end do
     z = 0.0D0
     do i = 1,n
-       call dotpmc(h(i:,1),ih,x(n+1:),i1,r0,x(n5+i),n,i3)
+       call dotpmc(h(i,:),i1,x(n+1:),i1,r0,x(n5+i),n,i3)
        if (x(n5+i) /= 0.0D0) z = 1.0D0
     end do
     passiv = .false.
@@ -2870,7 +2870,7 @@ contains
     k = k-1
     do i = 1,k
        ni = n+i
-       call dotpmc(h(ni:,1),ih,x(n+1:),i1,r0,x(n3+i),n,i0)
+       call dotpmc(h(ni,:),i1,x(n+1:),i1,r0,x(n3+i),n,i0)
     end do
     do i = 1,k
        alpha = x(n3+i)/cac
