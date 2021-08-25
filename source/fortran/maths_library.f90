@@ -2193,13 +2193,13 @@ contains
     IMPLICIT NONE
 
     INTEGER n,m,meq,lcnorm,lb,info,ldel,lh,mact,lwa,liwa
-    INTEGER iwa(liwa),ilower(n),iupper(n)
+    INTEGER iwa(:),ilower(:),iupper(:)
     INTEGER i,iflag,j,k,mode,mtotal,np1,npp
     INTEGER inx
 
-    real(dp) conf(m),cnorm(lcnorm,m),b(lb,lb),gm(:),bdl(:), &
-         bdu(:),delta(ldel),cm(m),h(lh,lh),wa(lwa)
-    real(dp) x(n),bndu(n),bndl(n)
+    real(dp) conf(:),cnorm(:,:),b(:,:),gm(:),bdl(:), &
+         bdu(:),delta(:),cm(:),h(:,:),wa(:)
+    real(dp) x(:),bndu(:),bndl(:)
     real(dp) cd6,cdm6,cp9,one,zero
 
     !+**PJK 24/05/06 Added SAVE command (as a number of variables are
