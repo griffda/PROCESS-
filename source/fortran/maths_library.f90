@@ -3076,14 +3076,14 @@ contains
           x(n+j) = h(i,j)
        end do
        do j = 1,n
-          call dotpmc(x(n+1:),i1,h(j:,n+1),ih,r0,h(i,j),k,i0)
+          call dotpmc(x(n+1:),i1,h(j,n+1:),i1,r0,h(i,j),k,i0)
        end do
     end do
 
     !  Set up diagonal elements of the projection matrix  p = v.vplus
 
     do i = 1,n
-       call dotpmc(h(:,i),i1,h(i:,n+1),ih,r0,x(n+i),k,i0)
+       call dotpmc(h(:,i),i1,h(i,n+1:),i1,r0,x(n+i),k,i0)
     end do
     do i = 1,n
        lt(n+i) = 0
@@ -3120,7 +3120,7 @@ contains
 30  continue
     do i = 1,n
        if (lt(n+i) == 1) goto 31
-       call dotpmc(h(i:,n+1),ih,x(nn+1:),i1,r0,x(n3+i),kv,i3)
+       call dotpmc(h(i,n+1:),i1,x(nn+1:),i1,r0,x(n3+i),kv,i3)
 31     continue
     end do
     do i = 1,n
@@ -3232,7 +3232,7 @@ contains
     z = 0.0D0
     do i = 1,n
        if (lt(nn+lt(i)) == -1) goto 64
-       call dotpmc(h(i:,1),ih,x(n+1:),i1,r0,y,n,i0)
+       call dotpmc(h(i,:),i1,x(n+1:),i1,r0,y,n,i0)
        if (y <= z) goto 64
        z = y
        ii = i
@@ -3317,7 +3317,7 @@ contains
        x(n3+i) = c(i,ib)
     end do
     do i = 1,n
-       call dotpmc(h(i:,1),ih,x(n3+1:),i1,r0,x(nn+i),n,i0)
+       call dotpmc(h(i,:),i1,x(n3+1:),i1,r0,x(nn+i),n,i0)
     end do
 
 90  continue
