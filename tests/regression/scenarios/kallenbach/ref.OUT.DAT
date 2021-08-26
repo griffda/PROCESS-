@@ -9,11 +9,11 @@
    Tag No. : v2.1-357-g1e04141c
     Branch : 1327-develop-stable-separate-TF-stress
    Git log : COMMIT_MSG
- Date/time : 26 Aug 2021 12:15:36 -04:00(hh:mm) UTC
+ Date/time : 26 Aug 2021 13:07:28 -04:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-5/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-5/test_scenario_kallenbach_0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-7/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-7/test_scenario_kallenbach_0/IN.DAT
  Run title : kallenbach divertor model
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -761,7 +761,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF cross-section (total) (m2)                                            (tfareain)                2.643E+01     
  Total steel cross-section (m2)                                           (a_tf_steel*n_tf)         1.975E+01     
  Total steel TF fraction                                                  (f_tf_steel)              7.471E-01     
- Total Insulation cross-section (total) (m2)                              (a_tf_ins*n_tf)           1.975E+01     
+ Total Insulation cross-section (total) (m2)                              (a_tf_ins*n_tf)           1.484E+00     
  Total Insulation fraction                                                (f_tf_ins)                5.614E-02     
  
  External steel Case Information :

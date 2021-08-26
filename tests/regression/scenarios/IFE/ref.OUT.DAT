@@ -17,11 +17,11 @@
    Tag No. : v2.1-357-g1e04141c
     Branch : 1327-develop-stable-separate-TF-stress
    Git log : COMMIT_MSG
- Date/time : 26 Aug 2021 12:15:36 -04:00(hh:mm) UTC
+ Date/time : 26 Aug 2021 13:07:28 -04:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-5/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-5/test_scenario_IFE_0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-7/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-7/test_scenario_IFE_0/IN.DAT
  Run title : IFE_001
   Run type : Reactor concept design: Inertial Fusion model, (c) CCFE
  

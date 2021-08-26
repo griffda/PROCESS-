@@ -4,13 +4,13 @@
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
  Date_of_run_____________________________________________________________ (date)________________________     "26/08/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "12:15"
+ Time_of_run_____________________________________________________________ (time)________________________     "13:06"
  User____________________________________________________________________ (username)____________________     "cswan"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
  PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-357-g1e04141c"                                                                                
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1327-develop-stable-separate-TF-stress"                                                            
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-5/test_scenario_HARE_0/IN.DAT                                                                                                                                               "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-7/test_scenario_HARE_0/IN.DAT                                                                                                                                               "
  Binomial_coefficients_C(5,0):_1_________________________________________ (binomial(5,0))_______________      1.0000E+00    
  Binomial_coefficients_C(5,1):_5_________________________________________ (binomial(5,1))_______________      5.0000E+00    
  Binomial_coefficients_C(5,2):_10________________________________________ (binomial(5,2))_______________      1.0000E+01    
@@ -527,7 +527,7 @@
  TF_cross-section_(total)_(m2)___________________________________________ (tfareain)____________________      3.2913E+01    
  Total_steel_cross-section_(m2)__________________________________________ (a_tf_steel*n_tf)_____________      2.3647E+01    
  Total_steel_TF_fraction_________________________________________________ (f_tf_steel)__________________      7.1846E-01    
- Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      2.3647E+01    
+ Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      1.8745E+00    
  Total_Insulation_fraction_______________________________________________ (f_tf_ins)____________________      5.6953E-02    
  Casing_cross_section_area_(per_leg)_(m2)________________________________ (acasetf)_____________________      1.1355E+00    
  Inboard_leg_case_plasma_side_wall_thickness_(m)_________________________ (casthi)______________________      7.0000E-02    
@@ -1496,7 +1496,7 @@
  TF_cross-section_(total)_(m2)___________________________________________ (tfareain)____________________      3.2936E+01    
  Total_steel_cross-section_(m2)__________________________________________ (a_tf_steel*n_tf)_____________      2.3666E+01    
  Total_steel_TF_fraction_________________________________________________ (f_tf_steel)__________________      7.1853E-01    
- Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      2.3666E+01    
+ Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      1.8756E+00    
  Total_Insulation_fraction_______________________________________________ (f_tf_ins)____________________      5.6948E-02    
  Casing_cross_section_area_(per_leg)_(m2)________________________________ (acasetf)_____________________      1.1363E+00    
  Inboard_leg_case_plasma_side_wall_thickness_(m)_________________________ (casthi)______________________      7.0000E-02    
@@ -2465,7 +2465,7 @@
  TF_cross-section_(total)_(m2)___________________________________________ (tfareain)____________________      3.2956E+01    
  Total_steel_cross-section_(m2)__________________________________________ (a_tf_steel*n_tf)_____________      2.3682E+01    
  Total_steel_TF_fraction_________________________________________________ (f_tf_steel)__________________      7.1859E-01    
- Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      2.3682E+01    
+ Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      1.8766E+00    
  Total_Insulation_fraction_______________________________________________ (f_tf_ins)____________________      5.6944E-02    
  Casing_cross_section_area_(per_leg)_(m2)________________________________ (acasetf)_____________________      1.1371E+00    
  Inboard_leg_case_plasma_side_wall_thickness_(m)_________________________ (casthi)______________________      7.0000E-02    
@@ -3434,7 +3434,7 @@
  TF_cross-section_(total)_(m2)___________________________________________ (tfareain)____________________      3.2992E+01    
  Total_steel_cross-section_(m2)__________________________________________ (a_tf_steel*n_tf)_____________      2.3712E+01    
  Total_steel_TF_fraction_________________________________________________ (f_tf_steel)__________________      7.1871E-01    
- Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      2.3712E+01    
+ Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      1.8785E+00    
  Total_Insulation_fraction_______________________________________________ (f_tf_ins)____________________      5.6937E-02    
  Casing_cross_section_area_(per_leg)_(m2)________________________________ (acasetf)_____________________      1.1384E+00    
  Inboard_leg_case_plasma_side_wall_thickness_(m)_________________________ (casthi)______________________      7.0000E-02    
@@ -4403,7 +4403,7 @@
  TF_cross-section_(total)_(m2)___________________________________________ (tfareain)____________________      3.3029E+01    
  Total_steel_cross-section_(m2)__________________________________________ (a_tf_steel*n_tf)_____________      2.3742E+01    
  Total_steel_TF_fraction_________________________________________________ (f_tf_steel)__________________      7.1882E-01    
- Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      2.3742E+01    
+ Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      1.8803E+00    
  Total_Insulation_fraction_______________________________________________ (f_tf_ins)____________________      5.6931E-02    
  Casing_cross_section_area_(per_leg)_(m2)________________________________ (acasetf)_____________________      1.1397E+00    
  Inboard_leg_case_plasma_side_wall_thickness_(m)_________________________ (casthi)______________________      7.0000E-02    
@@ -5372,7 +5372,7 @@
  TF_cross-section_(total)_(m2)___________________________________________ (tfareain)____________________      3.3066E+01    
  Total_steel_cross-section_(m2)__________________________________________ (a_tf_steel*n_tf)_____________      2.3772E+01    
  Total_steel_TF_fraction_________________________________________________ (f_tf_steel)__________________      7.1894E-01    
- Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      2.3772E+01    
+ Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      1.8823E+00    
  Total_Insulation_fraction_______________________________________________ (f_tf_ins)____________________      5.6924E-02    
  Casing_cross_section_area_(per_leg)_(m2)________________________________ (acasetf)_____________________      1.1411E+00    
  Inboard_leg_case_plasma_side_wall_thickness_(m)_________________________ (casthi)______________________      7.0000E-02    
@@ -6341,7 +6341,7 @@
  TF_cross-section_(total)_(m2)___________________________________________ (tfareain)____________________      3.3105E+01    
  Total_steel_cross-section_(m2)__________________________________________ (a_tf_steel*n_tf)_____________      2.3805E+01    
  Total_steel_TF_fraction_________________________________________________ (f_tf_steel)__________________      7.1906E-01    
- Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      2.3805E+01    
+ Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      1.8843E+00    
  Total_Insulation_fraction_______________________________________________ (f_tf_ins)____________________      5.6917E-02    
  Casing_cross_section_area_(per_leg)_(m2)________________________________ (acasetf)_____________________      1.1425E+00    
  Inboard_leg_case_plasma_side_wall_thickness_(m)_________________________ (casthi)______________________      7.0000E-02    
