@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
- Date_of_run_____________________________________________________________ (date)________________________     "18/08/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "13:55"
- User____________________________________________________________________ (username)____________________     "cjwg"    
+ Date_of_run_____________________________________________________________ (date)________________________     "26/08/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "12:15"
+ User____________________________________________________________________ (username)____________________     "cswan"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-343-g41d9c2c2"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1375-change-the-formulae-for-the-dittus-boelter-eqn-in-tfcoil-f90-as-it-is-wrong-in-develop-stable-
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-357-g1e04141c"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1327-develop-stable-separate-TF-stress"                                                            
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cjwg/pytest-141/test_scenario_secondary_CD_0/IN.DAT                                                                                                                                      "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-5/test_scenario_secondary_CD_0/IN.DAT                                                                                                                                       "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -513,7 +513,8 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -7.2488E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      2.0024E+00    
  # TF coils  #
- Allowable_Tresca_stress_limit_(Pa)______________________________________ (alstrtf)_____________________      6.6000E+08    
+ Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.6000E+08    
+ Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.6000E+08    
  WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      7.1987E+01 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      8.5926E+01 OP 
  Radial____stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_r_max(1))_____________      2.4424E-08    
@@ -992,6 +993,7 @@
  Heat_extracted_from_shield__(MW)________________________________________ (pthermshld)__________________      1.7131E+00    
  Heat_extracted_from_divertor_(MW)_______________________________________ (pthermdiv)___________________      4.1505E+02    
  Nuclear_and_photon_power_lost_to_H/CD_system_(MW)_______________________ (psechcd)_____________________      0.0000E+00    
+ Nuclear_power_lost_to_TF_(MW)___________________________________________ (ptfnuc)______________________      7.7653E-02    
  Total_(MW)______________________________________________________________ ______________________________      3.0280E+03    
  Net_electric_power_output(MW)___________________________________________ (pnetelmw.)___________________      5.0000E+02    
  Required_Net_electric_power_output(MW)__________________________________ (pnetelin)____________________      5.0000E+02    
@@ -1364,7 +1366,8 @@ lpulse   = 1 * Switch for reactor model;
 
 *-----------------Tfcoil Variables-----------------*
 
-alstrtf  = 6.6e8 * Allowable tresca stress in tf coil structural material (pa)
+sig_tf_case_max  = 6.6E8 * Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+sig_tf_wp_max    = 6.6E8 * Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
 casthi   = 0.06 * Either; inboard tf coil case plasma side thickness (m)
 casths   = 0.05 * Either; inboard tf coil sidewall case thickness (m)
 cpttf    = 90000.0 * Tf coil current per turn (a);

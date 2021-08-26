@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-343-g41d9c2c2
-    Branch : 1375-change-the-formulae-for-the-dittus-boelter-eqn-in-tfcoil-f90-as-it-is-wrong-in-develop-stable-2
+   Tag No. : v2.1-357-g1e04141c
+    Branch : 1327-develop-stable-separate-TF-stress
    Git log : COMMIT_MSG
- Date/time : 18 Aug 2021 13:54:09 +01:00(hh:mm) UTC
-      User : cjwg
-  Computer : K1370
- Directory : /tmp/pytest-of-cjwg/pytest-141/test_solver0
-     Input : /tmp/pytest-of-cjwg/pytest-141/test_scenario_HARE_0/IN.DAT
+ Date/time : 26 Aug 2021 12:15:05 -04:00(hh:mm) UTC
+      User : cswan
+  Computer : cswan-2017-desktop
+ Directory : /tmp/pytest-of-cswan/pytest-5/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-5/test_scenario_HARE_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -616,7 +616,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF Coil Stresses (CCFE model) :
  
  Plane stress model with smeared properties
- Allowable Tresca stress limit (Pa)                                       (alstrtf)                 6.600E+08     
+ Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)   (sig_tf_case_max)         6.600E+08     
+ Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa (sig_tf_wp_max)           6.600E+08     
  Structural materal stress of the point of maximum TRESCA stress per layer
  Please use utility/plot_TF_stress.py for radial plots plots summary
  Layers                   Steel case         WP
@@ -1372,7 +1373,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heat extracted from shield  (MW)                                         (pthermshld)                  0.600  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                 383.723  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
- Total (MW)                                                                                          2626.522  OP 
+ Nuclear power lost to TF (MW)                                            (ptfnuc)                      0.020  OP 
+ Total (MW)                                                                                          2626.541  OP 
  
  Electrical Power Balance :
  --------------------------
@@ -2026,7 +2028,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF Coil Stresses (CCFE model) :
  
  Plane stress model with smeared properties
- Allowable Tresca stress limit (Pa)                                       (alstrtf)                 6.600E+08     
+ Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)   (sig_tf_case_max)         6.600E+08     
+ Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa (sig_tf_wp_max)           6.600E+08     
  Structural materal stress of the point of maximum TRESCA stress per layer
  Please use utility/plot_TF_stress.py for radial plots plots summary
  Layers                   Steel case         WP
@@ -2782,7 +2785,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heat extracted from shield  (MW)                                         (pthermshld)                  0.601  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                 384.025  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
- Total (MW)                                                                                          2627.189  OP 
+ Nuclear power lost to TF (MW)                                            (ptfnuc)                      0.020  OP 
+ Total (MW)                                                                                          2627.209  OP 
  
  Electrical Power Balance :
  --------------------------
@@ -3436,7 +3440,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF Coil Stresses (CCFE model) :
  
  Plane stress model with smeared properties
- Allowable Tresca stress limit (Pa)                                       (alstrtf)                 6.600E+08     
+ Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)   (sig_tf_case_max)         6.600E+08     
+ Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa (sig_tf_wp_max)           6.600E+08     
  Structural materal stress of the point of maximum TRESCA stress per layer
  Please use utility/plot_TF_stress.py for radial plots plots summary
  Layers                   Steel case         WP
@@ -4192,7 +4197,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heat extracted from shield  (MW)                                         (pthermshld)                  0.602  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                 384.289  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
- Total (MW)                                                                                          2627.776  OP 
+ Nuclear power lost to TF (MW)                                            (ptfnuc)                      0.020  OP 
+ Total (MW)                                                                                          2627.796  OP 
  
  Electrical Power Balance :
  --------------------------
@@ -4846,7 +4852,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF Coil Stresses (CCFE model) :
  
  Plane stress model with smeared properties
- Allowable Tresca stress limit (Pa)                                       (alstrtf)                 6.600E+08     
+ Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)   (sig_tf_case_max)         6.600E+08     
+ Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa (sig_tf_wp_max)           6.600E+08     
  Structural materal stress of the point of maximum TRESCA stress per layer
  Please use utility/plot_TF_stress.py for radial plots plots summary
  Layers                   Steel case         WP
@@ -5602,7 +5609,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heat extracted from shield  (MW)                                         (pthermshld)                  0.604  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                 384.766  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
- Total (MW)                                                                                          2628.861  OP 
+ Nuclear power lost to TF (MW)                                            (ptfnuc)                      0.020  OP 
+ Total (MW)                                                                                          2628.881  OP 
  
  Electrical Power Balance :
  --------------------------
@@ -6256,7 +6264,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF Coil Stresses (CCFE model) :
  
  Plane stress model with smeared properties
- Allowable Tresca stress limit (Pa)                                       (alstrtf)                 6.600E+08     
+ Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)   (sig_tf_case_max)         6.600E+08     
+ Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa (sig_tf_wp_max)           6.600E+08     
  Structural materal stress of the point of maximum TRESCA stress per layer
  Please use utility/plot_TF_stress.py for radial plots plots summary
  Layers                   Steel case         WP
@@ -7012,7 +7021,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heat extracted from shield  (MW)                                         (pthermshld)                  0.605  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                 385.246  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
- Total (MW)                                                                                          2629.961  OP 
+ Nuclear power lost to TF (MW)                                            (ptfnuc)                      0.020  OP 
+ Total (MW)                                                                                          2629.981  OP 
  
  Electrical Power Balance :
  --------------------------
@@ -7666,7 +7676,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF Coil Stresses (CCFE model) :
  
  Plane stress model with smeared properties
- Allowable Tresca stress limit (Pa)                                       (alstrtf)                 6.600E+08     
+ Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)   (sig_tf_case_max)         6.600E+08     
+ Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa (sig_tf_wp_max)           6.600E+08     
  Structural materal stress of the point of maximum TRESCA stress per layer
  Please use utility/plot_TF_stress.py for radial plots plots summary
  Layers                   Steel case         WP
@@ -8422,7 +8433,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heat extracted from shield  (MW)                                         (pthermshld)                  0.607  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                 385.741  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
- Total (MW)                                                                                          2631.096  OP 
+ Nuclear power lost to TF (MW)                                            (ptfnuc)                      0.020  OP 
+ Total (MW)                                                                                          2631.116  OP 
  
  Electrical Power Balance :
  --------------------------
@@ -9076,7 +9088,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF Coil Stresses (CCFE model) :
  
  Plane stress model with smeared properties
- Allowable Tresca stress limit (Pa)                                       (alstrtf)                 6.600E+08     
+ Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)   (sig_tf_case_max)         6.600E+08     
+ Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa (sig_tf_wp_max)           6.600E+08     
  Structural materal stress of the point of maximum TRESCA stress per layer
  Please use utility/plot_TF_stress.py for radial plots plots summary
  Layers                   Steel case         WP
@@ -9832,7 +9845,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heat extracted from shield  (MW)                                         (pthermshld)                  0.609  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                 386.260  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
- Total (MW)                                                                                          2632.286  OP 
+ Nuclear power lost to TF (MW)                                            (ptfnuc)                      0.020  OP 
+ Total (MW)                                                                                          2632.306  OP 
  
  Electrical Power Balance :
  --------------------------
@@ -10292,7 +10306,8 @@ ripmax   = 0.6 * Maximum allowable toroidal field ripple amplitude
 tdmptf   = 30.0 * Dump time for tf coil (s)
 
 n_tf     = 16 * Number of tf coils (default = 50 for stellarators)
-alstrtf = 6.6D8 * allowable von Mises stress in TF coil structural material (Pa )
+sig_tf_case_max  = 6.6E8 * Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+sig_tf_wp_max    = 6.6E8 * Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
 
 tftmp    = 4.75 * Peak helium coolant temperature in tf coils and pf coils (k)
 thicndut = 1.5d-3 * Conduit insulation thickness (m)

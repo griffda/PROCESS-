@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-343-g41d9c2c2
-    Branch : 1375-change-the-formulae-for-the-dittus-boelter-eqn-in-tfcoil-f90-as-it-is-wrong-in-develop-stable-2
+   Tag No. : v2.1-357-g1e04141c
+    Branch : 1327-develop-stable-separate-TF-stress
    Git log : COMMIT_MSG
- Date/time : 18 Aug 2021 13:55:13 +01:00(hh:mm) UTC
-      User : cjwg
-  Computer : K1370
- Directory : /tmp/pytest-of-cjwg/pytest-141/test_solver0
-     Input : /tmp/pytest-of-cjwg/pytest-141/test_scenario_vacuum_model_0/IN.DAT
+ Date/time : 26 Aug 2021 12:15:59 -04:00(hh:mm) UTC
+      User : cswan
+  Computer : cswan-2017-desktop
+ Directory : /tmp/pytest-of-cswan/pytest-5/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-5/test_scenario_vacuum_model_0/IN.DAT
  Run title : demo 1 vacuum model test
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -718,7 +718,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF Coil Stresses (CCFE model) :
  
  Plane stress model with smeared properties
- Allowable Tresca stress limit (Pa)                                       (alstrtf)                 5.500E+08     
+ Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)   (sig_tf_case_max)         5.500E+08     
+ Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa (sig_tf_wp_max)           5.500E+08     
  Structural materal stress of the point of maximum TRESCA stress per layer
  Please use utility/plot_TF_stress.py for radial plots plots summary
  Layers                   Steel case         WP
@@ -1583,7 +1584,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heat extracted from shield  (MW)                                         (pthermshld)                  2.384  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                 380.483  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
- Total (MW)                                                                                          2395.431  OP 
+ Nuclear power lost to TF (MW)                                            (ptfnuc)                      0.060  OP 
+ Total (MW)                                                                                          2395.491  OP 
  
  Electrical Power Balance :
  --------------------------
@@ -2295,7 +2297,8 @@ sweep    = 500 * sweep(ipnscns) /;;/; actual values to use in scan
 
 *-----------------tfcoil_variables-----------------*
 
-alstrtf  = 5.5d8 * alstrtf /6;0D8/ ; allowable Tresca stress in TF coil structural material (Pa)
+sig_tf_case_max  = 5.5E8 * Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+sig_tf_wp_max    = 5.5E8 * Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
 casths   = 0.1 * casths /0;0/ ; EITHER; inboard TF coil sidewall case thickness (m)
 cpttf    = 65000.0 * cpttf /7;0e4/ ; TF coil current per turn (A);
 fcutfsu  = 0.9337536028978365 * fcutfsu /0;69/ ; copper fraction of cable conductor (TF coils)

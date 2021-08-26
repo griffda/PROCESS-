@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-349-ga936588d
-    Branch : 1331-develop-stable-centrepost-pnuc
+   Tag No. : v2.1-357-g1e04141c
+    Branch : 1327-develop-stable-separate-TF-stress
    Git log : COMMIT_MSG
- Date/time : 23 Aug 2021 12:42:53 -04:00(hh:mm) UTC
+ Date/time : 26 Aug 2021 12:14:59 -04:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-1/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-1/test_scenario_FNSF_0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-5/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-5/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  

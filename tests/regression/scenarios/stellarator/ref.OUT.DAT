@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-343-g41d9c2c2
-    Branch : 1375-change-the-formulae-for-the-dittus-boelter-eqn-in-tfcoil-f90-as-it-is-wrong-in-develop-stable-2
+   Tag No. : v2.1-357-g1e04141c
+    Branch : 1327-develop-stable-separate-TF-stress
    Git log : COMMIT_MSG
- Date/time : 18 Aug 2021 13:55:13 +01:00(hh:mm) UTC
-      User : cjwg
-  Computer : K1370
- Directory : /tmp/pytest-of-cjwg/pytest-141/test_solver0
-     Input : /tmp/pytest-of-cjwg/pytest-141/test_scenario_stellarator_0/IN.DAT
+ Date/time : 26 Aug 2021 12:15:59 -04:00(hh:mm) UTC
+      User : cswan
+  Computer : cswan-2017-desktop
+ Directory : /tmp/pytest-of-cswan/pytest-5/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-5/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  
@@ -600,7 +600,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Forces and Stress :
  
  Maximal force density (MN/m3)                                            (max_force_density)       2.398E+02     
- Maximal stress (approx.) (MPa)                                           (strtf2)                  1.421E+02     
+ Maximal stress (approx.) (MPa)                                           (sig_tf_wp)               1.421E+02     
  
  Quench Restrictions :
  
@@ -933,6 +933,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heat extracted from shield  (MW)                                         (pthermshld)                  0.098  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                 429.597  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
+ Nuclear power lost to TF (MW)                                            (ptfnuc)                      0.000  OP 
  Total (MW)                                                                                          3667.451  OP 
  
  Electrical Power Balance :
