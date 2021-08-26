@@ -1460,6 +1460,12 @@ subroutine tf_coil_area_and_masses()
     
         ! Total TF coil mass [kg] (all coils)
         whttf = (whtcas + whtcon + whtgw) * n_tf
+        
+        ! If spherical tokamak, distribute between centrepost and outboard legs
+        if ( itart == 1 ) then
+            whtcp = whttf * cplen / tfleng
+            whttflgs = whttf * (tfleng - cplen) / tfleng
+        end if
 
     ! Resitivive magnets weights
     ! ---
