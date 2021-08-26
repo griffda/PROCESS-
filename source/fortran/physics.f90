@@ -3932,7 +3932,7 @@ module physics_module
 
     if (istell == 0) then
        call ovarrf(outfile,'Plasma current (MA)','(plascur/1D6)',plascur/1.0D6, 'OP ')
-       call ovarrf(outfile,'Plasma current (A)','(plascur)',plascur, 'OP ')
+       !call ovarrf(outfile,'Plasma current (A)','(plascur)',plascur, 'OP ')
        if (iprofile == 1) then
             call ovarrf(outfile,'Current density profile factor','(alphaj)',alphaj, 'OP ')
        else
