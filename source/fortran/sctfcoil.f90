@@ -3915,7 +3915,7 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'TF cross-section (total) (m2)','(tfareain)', tfareain)
         call ovarre(outfile,'Total steel cross-section (m2)','(a_tf_steel*n_tf)',a_tf_steel*n_tf)
         call ovarre(outfile,'Total steel TF fraction','(f_tf_steel)',f_tf_steel)
-        call ovarre(outfile,'Total Insulation cross-section (total) (m2)','(a_tf_ins*n_tf)',a_tf_steel*n_tf)
+        call ovarre(outfile,'Total Insulation cross-section (total) (m2)','(a_tf_ins*n_tf)',a_tf_ins*n_tf)
         call ovarre(outfile,'Total Insulation fraction','(f_tf_ins)',f_tf_ins)
         
         ! External casing
