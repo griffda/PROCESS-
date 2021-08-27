@@ -8,13 +8,13 @@
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
    Tag No. : v2.1-343-g41d9c2c2
-    Branch : 1375-change-the-formulae-for-the-dittus-boelter-eqn-in-tfcoil-f90-as-it-is-wrong-in-develop-stable-2
+    Branch : 1376-add-extra-output-in-the-mfile-for-ease-of-extraction-to-a-spreadsheet-in-develop-stable
    Git log : COMMIT_MSG
- Date/time : 18 Aug 2021 13:53:51 +01:00(hh:mm) UTC
+ Date/time : 27 Aug 2021 14:16:09 +01:00(hh:mm) UTC
       User : cjwg
   Computer : K1370
- Directory : /tmp/pytest-of-cjwg/pytest-141/test_solver0
-     Input : /tmp/pytest-of-cjwg/pytest-141/test_scenario_baseline_jan_2010/IN.DAT
+ Directory : /tmp/pytest-of-cjwg/pytest-155/test_solver0
+     Input : /tmp/pytest-of-cjwg/pytest-155/test_scenario_baseline_jan_2010/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -201,7 +201,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Beta g coefficient                                                       (dnbeta)                      4.383  OP 
  Normalised thermal beta                                                                                2.279  OP 
  Normalised total beta                                                                                  2.568  OP 
- Normalised toroidal beta                                                                               2.654  OP 
+ Normalised toroidal beta                                                 (normalised_toroidal          2.654  OP 
  Limit on thermal beta                                                    (betalim)                     0.056  OP 
  Plasma thermal energy (J)                                                                          1.505E+09  OP 
  Total plasma internal energy (J)                                         (total_plasma_internal_en 1.696E+09  OP 
@@ -287,7 +287,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Alpha power: beam-plasma (MW)                                            (palpnb)                  0.000E+00  OP 
  Neutron power (MW)                                                       (pneutmw)                 1.625E+03  OP 
  Charged particle power (excluding alphas) (MW)                           (pchargemw)               1.667E+00  OP 
- Total power deposited in plasma (MW)                                     ()                        4.386E+02  OP 
+ Total power deposited in plasma (MW)                                     (tot_power_plasma)        4.386E+02  OP 
  
  Radiation Power (excluding SOL):
  
@@ -454,11 +454,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  and non-inductive means.
  Auxiliary power used for plasma heating only (MW)                        (pheat)                   0.000E+00     
  Power injected for current drive (MW)                                    (pcurrentdrivemw)         5.000E+01     
+ Maximum Allowed Bootstrap current fraction                               (bscfmax)                 9.900E-01     
  Fusion gain factor Q                                                     (bigq)                    3.979E+01  OP 
  Auxiliary current drive (A)                                              (auxiliary_cd)            2.107E+06  OP 
  Current drive efficiency (A/W)                                           (effcd)                   4.214E-02  OP 
  Normalised current drive efficiency, gamma (10^20 A/W-m2)                (gamcd)                   3.000E-01  OP 
  Wall plug to injector efficiency                                         (etacd)                   4.000E-01     
+ ECRH plasma heating efficiency                                           (gamma_ecrh)              3.000E-01     
  
  Fractions of current drive :
  
@@ -1338,7 +1340,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heat extracted from shield  (MW)                                         (pthermshld)                  0.600  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                 383.692  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
- Total (MW)                                                                                          2626.451  OP 
+ Nuclear power lost to TF (MW)                                            (ptfnuc)                      0.020  OP 
+ Total (MW)                                                                                          2626.471  OP 
  
  Electrical Power Balance :
  --------------------------
@@ -1352,6 +1355,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electric power for TF coils (MW)                                         (tfacpd)                      8.492  OP 
  Electric power for PF coils (MW)                                         (pfwpmw)                      1.770  OP 
  All other internal electric power requirements (MW)                      (fachtmw)                    68.491  OP 
+ Total (MW)                                                               (tot_plant_power)           921.774  OP 
  Total (MW)                                                                                           921.774  OP 
  
  Gross electrical output* (MW)                                            (pgrossmw)                  921.774  OP 

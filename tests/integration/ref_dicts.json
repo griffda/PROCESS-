@@ -11536,6 +11536,10 @@
             "lb": 0.0,
             "ub": 20.0
         },
+        "dp_he": {
+            "lb": 0.0,
+            "ub": 10000000.0
+        },
         "dr_tf_wp": {
             "lb": 0.0,
             "ub": 10.0
@@ -12352,6 +12356,10 @@
             "lb": 0.0,
             "ub": 1.0
         },
+        "gamma_he": {
+            "lb": 1.0,
+            "ub": 2.0
+        },
         "gammax": {
             "lb": 0.01,
             "ub": 10.0
@@ -12947,6 +12955,10 @@
         "output_costs": {
             "lb": 0,
             "ub": 1
+        },
+        "p_he": {
+            "lb": 0.0,
+            "ub": 100000000.0
         },
         "pbase": {
             "lb": 1e-08,
@@ -13603,6 +13615,14 @@
         "t_crit_nbti": {
             "lb": 0.0,
             "ub": 15.0
+        },
+        "t_in_bb": {
+            "lb": 200.0,
+            "ub": 1000.0
+        },
+        "t_out_bb": {
+            "lb": 200.0,
+            "ub": 1000.0
         },
         "t_turn_tf": {
             "lb": 0.0,
@@ -19283,6 +19303,7 @@
         "divfix": "real_variable",
         "divplt": "real_variable",
         "dnbeta": "real_variable",
+        "dp_he": "real_variable",
         "dr_tf_wp": "real_variable",
         "drtop": "real_variable",
         "drveff": "real_variable",
@@ -19491,6 +19512,7 @@
         "gainve": "real_array",
         "gamma": "real_variable",
         "gamma_ecrh": "real_variable",
+        "gamma_he": "real_variable",
         "gammax": "real_variable",
         "gapds": "real_variable",
         "gapoh": "real_variable",
@@ -19657,6 +19679,7 @@
         "outgasindex": "real_variable",
         "outlet_temp": "real_variable",
         "output_costs": "int_variable",
+        "p_he": "real_variable",
         "pbase": "real_variable",
         "pdivtlim": "real_variable",
         "pdrive": "real_variable",
@@ -19838,6 +19861,8 @@
         "sweep_2": "real_array",
         "t_cable_tf": "real_variable",
         "t_crit_nbti": "real_variable",
+        "t_in_bb": "real_variable",
+        "t_out_bb": "real_variable",
         "t_turn_tf": "real_variable",
         "t_turn_tf_max": "real_variable",
         "tape_width": "real_variable",
