@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-361-g32784a3f
+   Tag No. : v2.1-357-g1e04141c
     Branch : 1327-develop-stable-separate-TF-stress
    Git log : COMMIT_MSG
- Date/time : 27 Aug 2021 13:07:38 +00:00(hh:mm) UTC
-      User : root
-  Computer : d17a0f615f71
- Directory : /tmp/pytest-of-root/pytest-1/test_solver0
-     Input : /tmp/pytest-of-root/pytest-1/test_scenario_stellarator_0/IN.DAT
+ Date/time : 27 Aug 2021 11:27:34 -04:00(hh:mm) UTC
+      User : cswan
+  Computer : cswan-2017-desktop
+ Directory : /tmp/pytest-of-cswan/pytest-10/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-10/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  
@@ -406,7 +406,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Alpha power: beam-plasma (MW)                                            (palpnb)                  0.000E+00  OP 
  Neutron power (MW)                                                       (pneutmw)                 2.520E+03  OP 
  Charged particle power (excluding alphas) (MW)                           (pchargemw)               2.235E+00  OP 
- Total power deposited in plasma (MW)                                     ()                        6.004E+02  OP 
+ Total power deposited in plasma (MW)                                     (tot_power_plasma)        6.004E+02  OP 
  
  Radiation Power (excluding SOL):
  
@@ -948,6 +948,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electric power for TF coils (MW)                                         (tfacpd)                     98.046  OP 
  Electric power for PF coils (MW)                                         (pfwpmw)                      0.000  OP 
  All other internal electric power requirements (MW)                      (fachtmw)                    81.795  OP 
+ Total (MW)                                                               (tot_plant_power)          1466.980  OP 
  Total (MW)                                                                                          1466.980  OP 
  
  Gross electrical output* (MW)                                            (pgrossmw)                 1466.980  OP 

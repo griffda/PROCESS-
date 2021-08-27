@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-361-g32784a3f
+   Tag No. : v2.1-357-g1e04141c
     Branch : 1327-develop-stable-separate-TF-stress
    Git log : COMMIT_MSG
- Date/time : 27 Aug 2021 13:07:26 +00:00(hh:mm) UTC
-      User : root
-  Computer : d17a0f615f71
- Directory : /tmp/pytest-of-root/pytest-1/test_solver0
-     Input : /tmp/pytest-of-root/pytest-1/test_scenario_secondary_CD_0/IN.DAT
+ Date/time : 27 Aug 2021 11:27:26 -04:00(hh:mm) UTC
+      User : cswan
+  Computer : cswan-2017-desktop
+ Directory : /tmp/pytest-of-cswan/pytest-10/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-10/test_scenario_secondary_CD_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -213,7 +213,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Beta g coefficient                                                       (dnbeta)                      4.980  OP 
  Normalised thermal beta                                                                                2.193  OP 
  Normalised total beta                                                                                  2.569  OP 
- Normalised toroidal beta                                                                               2.630  OP 
+ Normalised toroidal beta                                                 (normalised_toroidal          2.630  OP 
  Limit on thermal beta                                                    (betalim)                     0.055  OP 
  Plasma thermal energy (J)                                                                          1.411E+09  OP 
  Total plasma internal energy (J)                                         (total_plasma_internal_en 1.653E+09  OP 
@@ -300,7 +300,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Alpha power: beam-plasma (MW)                                            (palpnb)                  3.784E+00  OP 
  Neutron power (MW)                                                       (pneutmw)                 1.824E+03  OP 
  Charged particle power (excluding alphas) (MW)                           (pchargemw)               1.916E+00  OP 
- Total power deposited in plasma (MW)                                     ()                        5.108E+02  OP 
+ Total power deposited in plasma (MW)                                     (tot_power_plasma)        5.108E+02  OP 
  
  Radiation Power (excluding SOL):
  
@@ -469,6 +469,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  and non-inductive means.
  Auxiliary power used for plasma heating only (MW)                        (pheat)                   4.000E+01     
  Power injected for current drive (MW)                                    (pcurrentdrivemw)         3.500E+01     
+ Maximum Allowed Bootstrap current fraction                               (bscfmax)                 9.900E-01     
  Power injected for main current drive (MW)                               (pcurrentdrivemw1)        3.000E+01     
  Power injected for secondary current drive (MW)                          (pcurrentdrivemw2)        5.000E+00     
  Fusion gain factor Q                                                     (bigq)                    3.007E+01  OP 
@@ -1407,6 +1408,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electric power for TF coils (MW)                                         (tfacpd)                     10.696  OP 
  Electric power for PF coils (MW)                                         (pfwpmw)                      1.729  OP 
  All other internal electric power requirements (MW)                      (fachtmw)                    66.089  OP 
+ Total (MW)                                                               (tot_plant_power)          1135.483  OP 
  Total (MW)                                                                                          1135.483  OP 
  
  Gross electrical output* (MW)                                            (pgrossmw)                 1135.483  OP 

@@ -20055,7 +20055,7 @@
         "pnetelmw",
         "te",
         "pdivt",
-        "strtf1",
-        "strtf2"
+        "sig_tf_case",
+        "sig_tf_wp"
     ]
 }
