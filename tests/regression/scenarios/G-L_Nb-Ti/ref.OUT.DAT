@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-357-g1e04141c
+   Tag No. : v2.1-361-g32784a3f
     Branch : 1327-develop-stable-separate-TF-stress
    Git log : COMMIT_MSG
- Date/time : 26 Aug 2021 13:06:50 -04:00(hh:mm) UTC
-      User : cswan
-  Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-7/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-7/test_scenario_G_L_Nb_Ti_0/IN.DAT
+ Date/time : 27 Aug 2021 13:06:14 +00:00(hh:mm) UTC
+      User : root
+  Computer : d17a0f615f71
+ Directory : /tmp/pytest-of-root/pytest-1/test_solver0
+     Input : /tmp/pytest-of-root/pytest-1/test_scenario_G_L_Nb_Ti_0/IN.DAT
  Run title : TF coil testing
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
