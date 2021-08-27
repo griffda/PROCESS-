@@ -195,98 +195,6 @@ regression-py38-5-percent:
   script:
     - pytest -v tests/regression -s --reg-tolerance=5 | tee tests/regression/pytest_5_percent.log
 
-.baseline_2019:
-  when: on_success
-  stage: testing
-  script:
-    - process -i tracking/baseline_2019/baseline_2019_IN.DAT
-    - > 
-      python3 process/io/mfile_comparison.py
-      -f tracking/baseline_2019/baseline_2019_MFILE.DAT tracking/baseline_2019/ref_baseline_2019_MFILE.DAT 
-      --acc 1.0 
-      --baseline
-    - > 
-      python3 process/io/mfile_comparison.py
-      -f tracking/baseline_2019/baseline_2019_MFILE.DAT tracking/baseline_2019/ref_baseline_2019_MFILE.DAT 
-      --acc 10.0 
-      --baseline
-  artifacts:
-    paths:
-      - tracking/baseline_2019/baseline_2019_MFILE.DAT
-    expire_in: 1 week
-  tags:
-    - ubuntu
-
-baseline_2019-py38:
-  extends: ".baseline_2019"
-  <<: *test-setup-py38
-
-baseline_2019-py36:
-  only:
-    - master
-    - develop
-  extends: ".baseline_2019"
-  <<: *test-setup-py36
-
-.baseline_2018:
-  when: on_success
-  stage: testing
-  script:
-    - process -i tracking/baseline_2018/baseline_2018_IN.DAT
-    - > 
-      python3 process/io/mfile_comparison.py
-      -f tracking/baseline_2018/baseline_2018_MFILE.DAT tracking/baseline_2018/ref_baseline_2018_MFILE.DAT 
-      --acc 1.0 
-      --baseline
-    - > 
-      python3 process/io/mfile_comparison.py
-      -f tracking/baseline_2018/baseline_2018_MFILE.DAT tracking/baseline_2018/ref_baseline_2018_MFILE.DAT 
-      --acc 10.0 
-      --baseline
-  artifacts:
-    paths:
-      - tracking/baseline_2018/baseline_2018_MFILE.DAT
-    expire_in: 1 week
-  tags:
-    - ubuntu
-
-baseline_2018-py38:
-  extends: ".baseline_2018"
-  <<: *test-setup-py38
-
-baseline_2018-py36:
-  only:
-    - master
-    - develop
-  extends: ".baseline_2018"
-  <<: *test-setup-py36
-
-step_input:
-  when: on_success
-  only: 
-    - develop
-  stage: testing
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
-  script:
-    - git config --global user.email "james.morris2@ukaea.uk"
-    - git config --global user.name "James Morris"
-    - git log -1 --format=oneline >> commit_msg.txt
-    - MESSAGE=$(git describe)
-    - echo $MESSAGE
-    - pwd
-    - cat commit_msg.txt
-    - git clone https://gitlab-ci-token:${STP_CI_API_TOKEN}@git.ccfe.ac.uk/smuldrew/process-step.git
-    - cp commit_msg.txt process-step
-    - cd process-step
-    - ls
-    - date >> date_of_push.txt
-    - git add commit_msg.txt date_of_push.txt
-    - git commit -m "PROCESS commit - $MESSAGE"
-    - git config --global push.default matching
-    - git push origin
-  tags:
-    - ubuntu
-
 #-----------------
 #  Quality
 #-----------------
@@ -363,12 +271,52 @@ pages:
 #  Tracking
 #-----------------
 
-tracking_hook:
+step_trigger:
   when: on_success
+  image: git.ccfe.ac.uk:4567/tnunn/gitlab-multi-project-pipeline/trigger:latest
   only: 
     - develop
-  allow_failure: true
-  trigger:
-    project: tnunn/process-rtv
-    strategy: depend
   stage: tracking
+  allow_failure: true
+  script:
+    - trigger -u https://git.ccfe.ac.uk/api/v4/projects/4023 -b master -T $CI_JOB_TOKEN -P $CI_JOB_PRIVATE_TOKEN
+
+baseline_2019-py38:
+  when: on_success
+  only:
+    - develop
+  stage: tracking
+  <<: *test-setup-py38
+  script:
+    - process -i tracking/baseline_2019/baseline_2019_IN.DAT
+  artifacts:
+    paths:
+      - tracking/baseline_2019/baseline_2019_MFILE.DAT
+    expire_in: 1 week
+  tags:
+    - ubuntu
+
+baseline_2018-py38:
+  when: on_success
+  only:
+    - develop
+  stage: tracking
+  <<: *test-setup-py38
+  script:
+    - process -i tracking/baseline_2018/baseline_2018_IN.DAT
+  artifacts:
+    paths:
+      - tracking/baseline_2018/baseline_2018_MFILE.DAT
+    expire_in: 1 week
+  tags:
+    - ubuntu
+
+rtv_trigger:
+  when: on_success
+  image: git.ccfe.ac.uk:4567/tnunn/gitlab-multi-project-pipeline/trigger:latest
+  only: 
+    - develop
+  stage: tracking
+  allow_failure: true
+  script:
+    - trigger -u https://git.ccfe.ac.uk/api/v4/projects/5447 -b master -T $CI_JOB_TOKEN -P $CI_JOB_PRIVATE_TOKEN
