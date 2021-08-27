@@ -90,7 +90,8 @@ module scan_module
   !!         <LI> 56 crypmw_max: Maximum cryogenic power (ixx=164, ixc=87)
   !!         <LI> 57 `bt` lower boundary 
   !!         <LI> 58 `scrapli` : Inboard plasma-first wall gap
-  !!         <LI> 59 `scraplo` : Outboard plasma-first wall gap  </UL>
+  !!         <LI> 59 `scraplo` : Outboard plasma-first wall gap
+  !!         <Li> 60 Allowable stress in TF Coil conduit (Tresca) </UL>
 
   integer :: nsweep_2
   !! nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
