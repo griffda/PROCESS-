@@ -15,13 +15,13 @@
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
    Tag No. : v2.1-343-g41d9c2c2
-    Branch : 1375-change-the-formulae-for-the-dittus-boelter-eqn-in-tfcoil-f90-as-it-is-wrong-in-develop-stable-2
+    Branch : 1376-add-extra-output-in-the-mfile-for-ease-of-extraction-to-a-spreadsheet-in-develop-stable
    Git log : COMMIT_MSG
- Date/time : 18 Aug 2021 13:55:13 +01:00(hh:mm) UTC
+ Date/time : 27 Aug 2021 14:17:37 +01:00(hh:mm) UTC
       User : cjwg
   Computer : K1370
- Directory : /tmp/pytest-of-cjwg/pytest-141/test_solver0
-     Input : /tmp/pytest-of-cjwg/pytest-141/test_scenario_stellarator_0/IN.DAT
+ Directory : /tmp/pytest-of-cjwg/pytest-155/test_solver0
+     Input : /tmp/pytest-of-cjwg/pytest-155/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  
@@ -406,7 +406,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Alpha power: beam-plasma (MW)                                            (palpnb)                  0.000E+00  OP 
  Neutron power (MW)                                                       (pneutmw)                 2.520E+03  OP 
  Charged particle power (excluding alphas) (MW)                           (pchargemw)               2.235E+00  OP 
- Total power deposited in plasma (MW)                                     ()                        6.004E+02  OP 
+ Total power deposited in plasma (MW)                                     (tot_power_plasma)        6.004E+02  OP 
  
  Radiation Power (excluding SOL):
  
@@ -933,6 +933,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heat extracted from shield  (MW)                                         (pthermshld)                  0.098  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                 429.597  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
+ Nuclear power lost to TF (MW)                                            (ptfnuc)                      0.000  OP 
  Total (MW)                                                                                          3667.451  OP 
  
  Electrical Power Balance :
@@ -947,6 +948,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electric power for TF coils (MW)                                         (tfacpd)                     98.046  OP 
  Electric power for PF coils (MW)                                         (pfwpmw)                      0.000  OP 
  All other internal electric power requirements (MW)                      (fachtmw)                    81.795  OP 
+ Total (MW)                                                               (tot_plant_power)          1466.980  OP 
  Total (MW)                                                                                          1466.980  OP 
  
  Gross electrical output* (MW)                                            (pgrossmw)                 1466.980  OP 
