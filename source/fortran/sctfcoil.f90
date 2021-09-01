@@ -3862,7 +3862,11 @@ subroutine outtf(outfile, peaktfflag)
     call ovarre(outfile,'Total outboard leg radial thickness (m)','(tfthko)',tfthko)
     call ovarre(outfile,'Outboard leg toroidal thickness (m)','(tftort)',tftort, 'OP ')
     call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax, 'OP ')
-    call ovarre(outfile,'Mean coil circumference (m)','(tfleng)',tfleng, 'OP ')
+    if ( i_tf_shape == 2 .and. itart == 1  ) then
+        call ovarre(outfile,'Mean coil circumference (centrepost length not included) (m)','(tfleng)',tfleng, 'OP ')
+    else
+        call ovarre(outfile,'Mean coil circumference (m)','(tfleng)',tfleng, 'OP ')
+    end if
     
     ! Vertical shape
     call ovarin(outfile,'Vertical TF shape','(i_tf_shape)',i_tf_shape)
