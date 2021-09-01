@@ -16,6 +16,7 @@
 stages:
   - build
   - testing
+  - step
   - quality
   - pages
   - tracking
@@ -268,7 +269,7 @@ pages:
     - public
 
 #-----------------
-#  Tracking
+#  STEP
 #-----------------
 
 step_trigger:
@@ -276,10 +277,14 @@ step_trigger:
   image: git.ccfe.ac.uk:4567/tnunn/gitlab-multi-project-pipeline/trigger:latest
   only: 
     - develop
-  stage: tracking
+  stage: step
   allow_failure: true
   script:
     - trigger -u https://git.ccfe.ac.uk/api/v4/projects/4023 -b master -T $CI_JOB_TOKEN -P $CI_JOB_PRIVATE_TOKEN
+
+#-----------------
+#  Tracking
+#-----------------
 
 baseline_2019-py38:
   when: on_success
@@ -320,3 +325,6 @@ rtv_trigger:
   allow_failure: true
   script:
     - trigger -u https://git.ccfe.ac.uk/api/v4/projects/5447 -b master -T $CI_JOB_TOKEN -P $CI_JOB_PRIVATE_TOKEN
+  needs:
+    - job: step_trigger
+      artifacts: false
