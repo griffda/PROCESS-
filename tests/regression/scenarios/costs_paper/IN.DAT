@@ -375,7 +375,8 @@ sweep = 500.0    * Actual values to use in scan
 *-----------------Tfcoil Variables-----------------*
 casths = 0.1     * Inboard tf coil sidewall case thickness (m)
 cpttf = 65000.0  * Tf coil current per turn (a)
-alstrtf = 5.5D8  * allowable von Mises stress in TF coil structural material (Pa)
+sig_tf_case_max  = 5.5E8 * Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+sig_tf_wp_max    = 5.5E8 * Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
 alstroh = 5.5D8  * allowable von Mises stress in CS structural material (Pa)
 fcutfsu = 0.6667  * Copper fraction of cable conductor (tf coils)
 oacdcp = 10547000.0  * Overall current density in tf coil inboard legs (a/m2)

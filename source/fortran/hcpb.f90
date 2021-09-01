@@ -340,12 +340,12 @@ contains
     pnucblkt = ( pnucblkt / pnuc_tot_blk_sector ) * emult  * f_geom_blanket * pneutmw
     
     ! Power to the shield(MW)
-    ! The power deposited in the CP shield is added back 
+    ! The power deposited in the CP shield is added back in powerflow_calc
     pnucshld = ( pnucshld / pnuc_tot_blk_sector ) * emult * f_geom_blanket * pneutmw
 
     ! Power to the TF coils (MW)
-    ! The power deposited in the CP shield is added back 
-    ptfnuc = ( ptfnuc / pnuc_tot_blk_sector ) * emult * f_geom_blanket * pneutmw
+    ! The power deposited in the CP conductor is added back here
+    ptfnuc = ( ptfnuc / pnuc_tot_blk_sector ) * emult * f_geom_blanket * pneutmw + pnuc_cp_tf
 
     ! Power deposited in the CP
     pnuc_cp_sh = f_geom_cp * pneutmw - pnuc_cp_tf
@@ -895,7 +895,7 @@ contains
       volshld, vvmass, vdewin, fw_armour_thickness, ptfnuc
     use physics_variables, only: powfmw, itart
     use process_output, only: oheadr, ovarre
-    use tfcoil_variables, only: whttf
+    use tfcoil_variables, only: whttf, whttflgs
     use global_variables, only: verbose
 
     implicit none
@@ -979,10 +979,21 @@ contains
     ! Shield exponent(/1000 for kg -> tonnes)
     x_shield = (shield_density * th_shield_av + &
               vv_density * (d_vv_in+d_vv_out)/2.0D0) / 1000.D0
+              
+    ! If spherical tokamak, this is outboard only. pnuc_cp_tf is evaluated separately
+    if (itart == 1) then
+    
+        ! Nuclear heating in outobard TF coil legs (whttflgs)
+        ! Unit heating (W/kg/GW of fusion power) x legs mass only (kg)
+        tfc_nuc_heating = e*exp(-a*x_blanket)*exp(-b*x_shield) * whttflgs
+    
+    else
 
-    ! Nuclear heating in TF coil
-    ! Unit heating (W/kg/GW of fusion power) x mass (kg)
-    tfc_nuc_heating = e*exp(-a*x_blanket)*exp(-b*x_shield) * whttf
+        ! Nuclear heating in TF coil
+        ! Unit heating (W/kg/GW of fusion power) x total mass (kg)
+        tfc_nuc_heating = e*exp(-a*x_blanket)*exp(-b*x_shield) * whttf
+    
+    end if
 
     ! Total heating (MW)
     ptfnuc = tfc_nuc_heating * (powfmw / 1000.0D0) / 1.0D6

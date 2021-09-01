@@ -308,7 +308,10 @@ contains
       plasmod_globtau, plasmod_pfus, plasmod_nbi_energy, plasmod_nxt, &
       plasmod_x_cd, plasmod_chisawpos, plasmod_cxe_psepfac, plasmod_dx_control, &
       plasmod_car_qdivt 
-    use pulse_variables, only: lpulse, dtstor, itcycl, istore, bctmp 
+    use pulse_variables, only: lpulse, dtstor, itcycl, istore, bctmp
+    
+    use primary_pumping_variables, only: t_in_bb, t_out_bb, dp_he, p_he, gamma_he 
+    
     use scan_module, only: isweep_2, nsweep, isweep, scan_dim, nsweep_2, &
       sweep_2, sweep, ipnscns, ipnscnv 
     use stellarator_variables, only: f_asym, isthtr, n_res, iotabar, fdivwet, &
@@ -317,7 +320,7 @@ contains
       quench_detection_ef, fhts, dr_tf_wp, rcool, rhotfleg, thkcas, &
       casthi, n_pancake, bcritsc, i_tf_sup, strncon_pf, thwcndut, farc4tf, &
       thicndut, tftmp, oacdcp, tmax_croco, ptempalw, tmargmin_tf, tmpcry, &
-      alstrtf, dztop, dcond, strncon_cs, etapump, drtop, vcool, dcondins, &
+      sig_tf_case_max, dztop, dcond, strncon_cs, etapump, drtop, vcool, dcondins, &
       i_tf_tresca, dhecoil, tmaxpro, strncon_tf, n_tf, tcpav, fcutfsu, jbus, &
       casthi_fraction, tmargmin_cs, sigvvall, vdalw, dcase, t_turn_tf,&
       cpttf_max, tdmptf, casths, i_tf_turns_integer, quench_model, &
@@ -330,7 +333,7 @@ contains
       i_tf_plane_stress, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
       i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti, &
       i_cp_joints, n_tf_turn, f_t_turn_tf, t_turn_tf_max, t_cable_tf, &
-      hts_tape_width, hts_tape_thickness
+      sig_tf_wp_max, hts_tape_width, hts_tape_thickness
 
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
@@ -1818,9 +1821,14 @@ contains
           call parse_real_variable('cpttf_max', cpttf_max, 1.0D0, 1.0D6, &
                     'Maximum allowable TF coil leg current per turn (A) (constraint equation 77)')
 
-       case ('alstrtf')
-          call parse_real_variable('alstrtf', alstrtf, 1.0D6, 1.0D11, &
-               'Allowable Tresca stress in TF coil structural material (Pa)')
+       case ('sig_tf_case_max')
+          call parse_real_variable('sig_tf_case_max', sig_tf_case_max, 1.0D6, 1.0D11, &
+               'Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)')
+               
+       case ('sig_tf_wp_max')
+          call parse_real_variable('sig_tf_wp_max', sig_tf_wp_max, 1.0D6, 1.0D11, &
+               'Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)')
+               
        case ('alstroh')
           call parse_real_variable('alstroh', alstroh, 1.0D6, 1.0D11, &
                'Allowable hoop stress in Central Solenoid structural material (Pa)')
@@ -2583,6 +2591,24 @@ contains
        case ('vachtmw')
           call parse_real_variable('vachtmw', vachtmw, 0.0D0, 100.0D0, &
                'Vacuum pump power (MW)')
+
+       case ('t_in_bb')
+          call parse_real_variable('t_in_bb', t_in_bb, 200.0D0, 1000.0D0, &
+               'Helium or Gas Inlet Temperature (K)')
+       case ('t_out_bb')
+          call parse_real_variable('t_out_bb', t_out_bb, 200.0D0, 1000.0D0, &
+              'Helium or Gas Outlet Temperature (K)')
+       case ('dp_he')
+          call parse_real_variable('dp_he', dp_he, 0.0D0, 10.0D6, &
+              'Helium Pressure drop or Gas Pressure drop (Pa)')
+       case ('p_he')
+          call parse_real_variable('p_he', p_he, 0.0D0, 100.0D6, &
+              'Pressure in FW and blanket coolant at pump exit')	      
+      
+       case ('gamma_he')
+          call parse_real_variable('gamma_he', gamma_he, 1.0D0, 2.0D0, &
+              'Ratio of specific heats for helium or for another Gas')
+
 
           !  Cost information settings
 

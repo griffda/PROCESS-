@@ -35,8 +35,11 @@ module tfcoil_variables
   real(dp) :: aiwp
   !! winding pack turn insulation area per coil (m2)
 
-  real(dp) :: alstrtf
-  !! Allowable Tresca stress in TF coil structural material (Pa)
+  real(dp) :: sig_tf_case_max
+  !! Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+
+  real(dp) :: sig_tf_wp_max
+  !! Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
 
   real(dp) :: arealeg
   !! outboard TF leg area (m2)
@@ -365,7 +368,7 @@ module tfcoil_variables
   real(dp), dimension(2*n_radial_array) :: sig_tf_tresca
   !! TF Inboard leg TRESCA stress in steel r distribution at mid-plane [Pa]
 
-  real(dp) :: strtf0
+  real(dp) :: sig_tf_cs_bucked
   !! Maximum TRESCA stress in CS structures at CS flux swing [Pa]:
   !!
   !!  - If superconducting CS (ipfres = 0): turn steel conduits TRESCA stress
@@ -374,11 +377,12 @@ module tfcoil_variables
   !! Quantity only computed for bucked and wedged design (`i_tf_bucking >= 2`)
   !! Def : CS Flux swing, instant when the current changes sign in CS (null current) 
 
-  real(dp) :: strtf1
+  real(dp) :: sig_tf_case
   !! Maximum TRESCA stress in TF casing steel structures (Pa)
   
-  real(dp) :: strtf2
+  real(dp) :: sig_tf_wp
   !! Maximum TRESCA stress in TF WP conduit steel structures (Pa)
+  !! This is the TF stress condition used in the case of stellarators
   
   real(dp) :: sigvvall
   !! allowable stress from TF quench in vacuum vessel (Pa)
@@ -762,7 +766,8 @@ module tfcoil_variables
     acstf = 0.0D0
     insulation_area = 0.0D0
     aiwp = 0.0D0
-    alstrtf = 6.0D8
+    sig_tf_case_max = 6.0D8
+    sig_tf_wp_max = 6.0D8
     arealeg = 0.0D0
     aswp = 0.0D0
     avwp = 0.0D0
@@ -845,9 +850,9 @@ module tfcoil_variables
     sig_tf_z = 0.0D0
     sig_tf_vmises = 0.0D0
     sig_tf_tresca = 0.0D0 
-    strtf0 = 0.0D0
-    strtf1 = 0.0D0
-    strtf2 = 0.0D0
+    sig_tf_cs_bucked = 0.0D0
+    sig_tf_case = 0.0D0
+    sig_tf_wp = 0.0D0
     sigvvall = 9.3D7
     strncon_cs = -0.005D0
     strncon_pf = -0.005D0
