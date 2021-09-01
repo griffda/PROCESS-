@@ -818,7 +818,7 @@ subroutine HIJC_REBCO(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit)
     real(dp), intent(out) :: jcrit, tcrit, bcrit
 
     !  Local variables
-    real(dp) :: B_c, A_e, t_reduced, strain_func, s
+    real(dp) :: A_t
     real(dp), parameter :: a = 1.4D0
     real(dp), parameter :: b = 2.005D0
     !critical current density prefactor
@@ -832,23 +832,22 @@ subroutine HIJC_REBCO(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit)
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    B_c = bc20max * (1.0D0 - thelium/t_c0)**a
-
-    A_e = A_0 + ( u * thelium**2 ) + ( v * thelium)
+    ! Critical Field (T)
+    !  B_crit(T) calculated using temperature and critical temperature
+    bcrit = bc20max * (1.0D0 - thelium/t_c0)**a
 
     ! Critical temperature (K)  
     !  scaled to match behaviour in GL_REBCO routine,
     !  ONLY TO BE USED until a better suggestion is received
     tcrit = 0.999965D0 * t_c0
 
-    ! Critical Field (T)
-    !  scaled to match behaviour in GL_REBCO routine,
-    !  ONLY TO BE USED until a better suggestion is received
-    bcrit = 0.548894D0 * bc20max
+    ! finding A(T); constants based on a Newton polynomial fit to pubished data
+    A_t = A_0 + ( u * thelium**2 ) + ( v * thelium )
 
     ! Critical current density (A/m2)
-    jcrit = ( A_e / bmax ) * B_c**b * ( bmax / B_c )**p * (1 - bmax/B_c)**q
-    
+
+    jcrit = ( A_t / bmax ) * bcrit**b * ( bmax / bcrit )**p * ( 1 - bmax/bcrit )**q
+
     ! Jc times HTS area: default area is width 4mm times HTS layer thickness 1 um, 
     ! divided by the tape area to provide engineering Jc per tape, then multiplied by fraction 0.4
     ! to reach the level of current density expected in the space where the tapes are wound in A/m^2!
