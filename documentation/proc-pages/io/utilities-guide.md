@@ -116,11 +116,11 @@ Below is an example of the JSON reference file. The PARAMS dictionary takes just
 
     "LIMITS":
         {
-            "alstrtf" :
+            "sig_tf_wp_max" :
                 {
                     "limit": 600.0e6,
                     "type": "-",
-                    "parameter": "strtf2"
+                    "parameter": "sig_tf_wp"
                 },
             "pseprmax" :
                 {
@@ -1115,8 +1115,8 @@ powfmw
 pnetelmw
 te
 pdivt
-strtf1
-strtf2
+sig_tf_case
+sig_tf_wp
 ```
 
 ## Plot scan results

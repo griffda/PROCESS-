@@ -4,13 +4,13 @@
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
  Date_of_run_____________________________________________________________ (date)________________________     "27/08/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "14:17"
- User____________________________________________________________________ (username)____________________     "cjwg"    
+ Time_of_run_____________________________________________________________ (time)________________________     "11:27"
+ User____________________________________________________________________ (username)____________________     "cswan"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "HELIAS-5B                                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-343-g41d9c2c2"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1376-add-extra-output-in-the-mfile-for-ease-of-extraction-to-a-spreadsheet-in-develop-stable"      
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-357-g1e04141c"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1327-develop-stable-separate-TF-stress"                                                            
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cjwg/pytest-155/test_scenario_stellarator_0/IN.DAT                                                                                                                                       "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-10/test_scenario_stellarator_0/IN.DAT                                                                                                                                       "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -383,7 +383,7 @@
  Current_per_turn_(A)____________________________________________________ (cpttf)_______________________      1.4889E+05    
  jop/jcrit_______________________________________________________________ (fiooic)______________________      5.7520E-01 ITV
  Maximal_force_density_(MN/m3)___________________________________________ (max_force_density)___________      2.3980E+02    
- Maximal_stress_(approx.)_(MPa)__________________________________________ (strtf2)______________________      1.4212E+02    
+ Maximal_stress_(approx.)_(MPa)__________________________________________ (sig_tf_wp)___________________      1.4212E+02    
  Allowable_stress_in_vacuum_vessel_(VV)_due_to_quench_(Pa)_______________ (sigvvall)____________________      9.3000E+07    
  Minimum_allowed_quench_time_due_to_stress_in_VV_(s)_____________________ (taucq)_______________________      6.5107E+00 OP 
  Actual_quench_time_(or_time_constant)_(s)_______________________________ (tdmptf)______________________      1.0000E+01    

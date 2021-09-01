@@ -4,13 +4,13 @@
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
  Date_of_run_____________________________________________________________ (date)________________________     "27/08/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "14:16"
- User____________________________________________________________________ (username)____________________     "cjwg"    
+ Time_of_run_____________________________________________________________ (time)________________________     "11:26"
+ User____________________________________________________________________ (username)____________________     "cswan"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "hts model using "croco" conductor based on kit design                                              
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-343-g41d9c2c2"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1376-add-extra-output-in-the-mfile-for-ease-of-extraction-to-a-spreadsheet-in-develop-stable"      
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-357-g1e04141c"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1327-develop-stable-separate-TF-stress"                                                            
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cjwg/pytest-155/test_scenario_hts_REBCO_0/IN.DAT                                                                                                                                         "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-10/test_scenario_hts_REBCO_0/IN.DAT                                                                                                                                         "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -499,7 +499,8 @@
  Lower_outer_plate_bottom,_vertical_(m)__________________________________ (zplbo)_______________________     -6.9015E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      2.0211E+00    
  # TF coils  #
- Allowable_Tresca_stress_limit_(Pa)______________________________________ (alstrtf)_____________________      6.0000E+08    
+ Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.0000E+08    
+ Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.0000E+08    
  WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      4.9097E+01 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      9.4021E+01 OP 
  Radial____stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_r_max(1))_____________      2.4424E-08    
@@ -542,7 +543,7 @@
  TF_cross-section_(total)_(m2)___________________________________________ (tfareain)____________________      2.7997E+01    
  Total_steel_cross-section_(m2)__________________________________________ (a_tf_steel*n_tf)_____________      2.1704E+01    
  Total_steel_TF_fraction_________________________________________________ (f_tf_steel)__________________      7.7522E-01    
- Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      2.1704E+01    
+ Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      1.8958E+00    
  Total_Insulation_fraction_______________________________________________ (f_tf_ins)____________________      6.7715E-02    
  Casing_cross_section_area_(per_leg)_(m2)________________________________ (acasetf)_____________________      1.0446E+00    
  Inboard_leg_case_plasma_side_wall_thickness_(m)_________________________ (casthi)______________________      6.0000E-02    
@@ -1583,7 +1584,8 @@ f_coppera_m2 = 1 * f_copperA_m2 /1/ ; f-value for constraint 75; TF coil current
 
 *-----------------tfcoil_variables-----------------*
 
-alstrtf  = 6.0e8 * alstrtf /6;0D8/ ; allowable Tresca stress in TF coil structural material (Pa)
+sig_tf_case_max  = 6.0E8 * Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+sig_tf_wp_max    = 6.0E8 * Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
 casthi   = 0.06 * casthi /0;0/ ; EITHER; inboard TF coil case plasma side thickness (m)
 casths   = 0.05 * casths /0;0/ ; EITHER; inboard TF coil sidewall case thickness (m)
 cpttf    = 62598.39441806726 * cpttf /7;0e4/ ; TF coil current per turn (A);

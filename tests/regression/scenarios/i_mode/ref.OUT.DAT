@@ -25,14 +25,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-343-g41d9c2c2
-    Branch : 1376-add-extra-output-in-the-mfile-for-ease-of-extraction-to-a-spreadsheet-in-develop-stable
+   Tag No. : v2.1-357-g1e04141c
+    Branch : 1327-develop-stable-separate-TF-stress
    Git log : COMMIT_MSG
- Date/time : 27 Aug 2021 14:16:48 +01:00(hh:mm) UTC
-      User : cjwg
-  Computer : K1370
- Directory : /tmp/pytest-of-cjwg/pytest-155/test_solver0
-     Input : /tmp/pytest-of-cjwg/pytest-155/test_scenario_i_mode_0/IN.DAT
+ Date/time : 27 Aug 2021 11:26:56 -04:00(hh:mm) UTC
+      User : cswan
+  Computer : cswan-2017-desktop
+ Directory : /tmp/pytest-of-cswan/pytest-10/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-10/test_scenario_i_mode_0/IN.DAT
  Run title : I-mode 2019 PMU
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -642,7 +642,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF Coil Stresses (CCFE model) :
  
  Plane stress model with smeared properties
- Allowable Tresca stress limit (Pa)                                       (alstrtf)                 6.600E+08     
+ Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)   (sig_tf_case_max)         6.600E+08     
+ Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa (sig_tf_wp_max)           6.600E+08     
  Structural materal stress of the point of maximum TRESCA stress per layer
  Please use utility/plot_TF_stress.py for radial plots plots summary
  Layers                   Steel case         WP
@@ -700,7 +701,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF cross-section (total) (m2)                                            (tfareain)                4.164E+01     
  Total steel cross-section (m2)                                           (a_tf_steel*n_tf)         3.185E+01     
  Total steel TF fraction                                                  (f_tf_steel)              7.648E-01     
- Total Insulation cross-section (total) (m2)                              (a_tf_ins*n_tf)           3.185E+01     
+ Total Insulation cross-section (total) (m2)                              (a_tf_ins*n_tf)           1.384E+00     
  Total Insulation fraction                                                (f_tf_ins)                3.325E-02     
  
  External steel Case Information :
@@ -1719,7 +1720,8 @@ icc = 31 * TF coil case stress upper limit
 ixc = 48 * fstrcase
 icc = 32 * TF coil conduit stress upper limit
 ixc = 49 * fstrcond
-alstrtf = 6.6e8
+sig_tf_case_max  = 6.6E8 * Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+sig_tf_wp_max    = 6.6E8 * Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
 
 * Iteration Variables *
 ***********************

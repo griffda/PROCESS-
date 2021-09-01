@@ -4,13 +4,13 @@
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
  Date_of_run_____________________________________________________________ (date)________________________     "27/08/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "14:16"
- User____________________________________________________________________ (username)____________________     "cjwg"    
+ Time_of_run_____________________________________________________________ (time)________________________     "11:26"
+ User____________________________________________________________________ (username)____________________     "cswan"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "TF coil testing                                                                                    
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-343-g41d9c2c2"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1376-add-extra-output-in-the-mfile-for-ease-of-extraction-to-a-spreadsheet-in-develop-stable"      
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-357-g1e04141c"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1327-develop-stable-separate-TF-stress"                                                            
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cjwg/pytest-155/test_scenario_G_L_Nb_Ti_0/IN.DAT                                                                                                                                         "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-10/test_scenario_G_L_Nb_Ti_0/IN.DAT                                                                                                                                         "
  Number_of_scan_points___________________________________________________ (isweep)______________________              4    
  Scanning_variable_number________________________________________________ (nsweep)______________________             54    
  
@@ -615,7 +615,8 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -9.3218E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      1.9715E+00    
  # TF coils  #
- Allowable_Tresca_stress_limit_(Pa)______________________________________ (alstrtf)_____________________      6.6000E+08    
+ Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.6000E+08    
+ Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.6000E+08    
  WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      6.4975E+01 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      8.2227E+01 OP 
  Radial____stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_r_max(1))_____________      0.0000E+00    
@@ -658,7 +659,7 @@
  TF_cross-section_(total)_(m2)___________________________________________ (tfareain)____________________      1.2223E+01    
  Total_steel_cross-section_(m2)__________________________________________ (a_tf_steel*n_tf)_____________      7.5012E+00    
  Total_steel_TF_fraction_________________________________________________ (f_tf_steel)__________________      6.1367E-01    
- Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      7.5012E+00    
+ Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      1.0436E+00    
  Total_Insulation_fraction_______________________________________________ (f_tf_ins)____________________      8.5374E-02    
  Casing_cross_section_area_(per_leg)_(m2)________________________________ (acasetf)_____________________      2.5047E-01    
  Inboard_leg_case_plasma_side_wall_thickness_(m)_________________________ (casthi)______________________      7.0000E-02    
@@ -1728,7 +1729,8 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -9.3796E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      1.9706E+00    
  # TF coils  #
- Allowable_Tresca_stress_limit_(Pa)______________________________________ (alstrtf)_____________________      6.6000E+08    
+ Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.6000E+08    
+ Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.6000E+08    
  WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      6.4345E+01 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      8.1466E+01 OP 
  Radial____stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_r_max(1))_____________      2.4424E-08    
@@ -1771,7 +1773,7 @@
  TF_cross-section_(total)_(m2)___________________________________________ (tfareain)____________________      1.2079E+01    
  Total_steel_cross-section_(m2)__________________________________________ (a_tf_steel*n_tf)_____________      7.3991E+00    
  Total_steel_TF_fraction_________________________________________________ (f_tf_steel)__________________      6.1255E-01    
- Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      7.3991E+00    
+ Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      1.0330E+00    
  Total_Insulation_fraction_______________________________________________ (f_tf_ins)____________________      8.5520E-02    
  Casing_cross_section_area_(per_leg)_(m2)________________________________ (acasetf)_____________________      2.4889E-01    
  Inboard_leg_case_plasma_side_wall_thickness_(m)_________________________ (casthi)______________________      7.0000E-02    
@@ -2841,7 +2843,8 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -9.2667E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      1.9724E+00    
  # TF coils  #
- Allowable_Tresca_stress_limit_(Pa)______________________________________ (alstrtf)_____________________      6.6000E+08    
+ Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.6000E+08    
+ Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.6000E+08    
  WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      6.5578E+01 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      8.2955E+01 OP 
  Radial____stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_r_max(1))_____________      4.8849E-08    
@@ -2884,7 +2887,7 @@
  TF_cross-section_(total)_(m2)___________________________________________ (tfareain)____________________      1.2365E+01    
  Total_steel_cross-section_(m2)__________________________________________ (a_tf_steel*n_tf)_____________      7.6013E+00    
  Total_steel_TF_fraction_________________________________________________ (f_tf_steel)__________________      6.1476E-01    
- Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      7.6013E+00    
+ Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      1.0539E+00    
  Total_Insulation_fraction_______________________________________________ (f_tf_ins)____________________      8.5232E-02    
  Casing_cross_section_area_(per_leg)_(m2)________________________________ (acasetf)_____________________      2.5201E-01    
  Inboard_leg_case_plasma_side_wall_thickness_(m)_________________________ (casthi)______________________      7.0000E-02    
@@ -3954,7 +3957,8 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -9.1563E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      1.9741E+00    
  # TF coils  #
- Allowable_Tresca_stress_limit_(Pa)______________________________________ (alstrtf)_____________________      6.6000E+08    
+ Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.6000E+08    
+ Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.6000E+08    
  WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      6.6787E+01 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      8.4414E+01 OP 
  Radial____stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_r_max(1))_____________      0.0000E+00    
@@ -3997,7 +4001,7 @@
  TF_cross-section_(total)_(m2)___________________________________________ (tfareain)____________________      1.2658E+01    
  Total_steel_cross-section_(m2)__________________________________________ (a_tf_steel*n_tf)_____________      7.8096E+00    
  Total_steel_TF_fraction_________________________________________________ (f_tf_steel)__________________      6.1698E-01    
- Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      7.8096E+00    
+ Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      1.0751E+00    
  Total_Insulation_fraction_______________________________________________ (f_tf_ins)____________________      8.4939E-02    
  Casing_cross_section_area_(per_leg)_(m2)________________________________ (acasetf)_____________________      2.5523E-01    
  Inboard_leg_case_plasma_side_wall_thickness_(m)_________________________ (casthi)______________________      7.0000E-02    
@@ -4862,7 +4866,8 @@ ripmax   = 0.6 * Maximum allowable toroidal field ripple amplitude (nominally 0.
 tdmptf   = 30.0 * Dump time for tf coil (s)
 
 n_tf     = 18 * Number of tf coils (default = 50 for stellarators)
-alstrtf = 6.6D8 * allowable von Mises stress in TF coil structural material (Pa )
+sig_tf_case_max  = 6.6E8 * Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+sig_tf_wp_max    = 6.6E8 * Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
 
 thicndut = 1.5d-3 * Conduit insulation thickness (m)
 tinstf   = 0.008 * Ground insulation thickness surrounding winding pack (m)

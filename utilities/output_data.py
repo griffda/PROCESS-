@@ -214,9 +214,10 @@ def main(mfile_data, output_file, scan=-1):
             ("bmaxtf", "Peak field at conductor"),
             ("iooic", "I/I$_{\mathrm{crit}}$"),
             ("tmarg", "Temperature margin"),
-            ("strtf1", "Conduit Von Mises stress"),
-            ("strtf2", "Case Von Mises stress"),
-            ("alstrtf", "Allowable stress")]    
+            ("sig_tf_case", "TF case maximum shear stress (Tresca criterion)"),
+            ("sig_tf_wp", "TF conduit maximum shear stress (Tresca criterion)"),
+            ("sig_tf_case_max", "Allowable maximum shear stress in the TF case (Tresca criterion)"),
+            ("sig_tf_wp_max", "Allowable maximum shear stress in the TF conduit (Tresca criterion)")]
     
     COSTS = [("coe", "Cost of electricity")]
     

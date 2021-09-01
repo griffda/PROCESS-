@@ -1369,20 +1369,20 @@ contains
       !! residual error in physical units; output string; units string
       !! Equation for TF coil case stress upper limit (SCTF)
       !! #=# tfcoil
-      !! #=#=# fstrcase, alstrtf
+      !! #=#=# fstrcase, sig_tf_case_max
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !! fstrcase : input real : f-value for TF coil case stress
-      !! alstrtf : input real : allowable Tresca stress in TF coil structural material (Pa)
-      !! strtf2 : input real : Constrained stress in TF coil case (Pa) 
+      !! sig_tf_case_max : input real : Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+      !! sig_tf_case : input real : Constrained stress in TF coil case (Pa) 
       use constraint_variables, only: fstrcase
-      use tfcoil_variables, only: alstrtf, strtf1
+      use tfcoil_variables, only: sig_tf_case_max, sig_tf_case
       implicit none
       type (constraint_args_type), intent(out) :: args
 
-      args%cc =  1.0D0 - fstrcase * alstrtf/strtf1
-      args%con = alstrtf
-      args%err = alstrtf - strtf1 / fstrcase
+      args%cc =  1.0D0 - fstrcase * sig_tf_case_max/sig_tf_case
+      args%con = sig_tf_case_max
+      args%err = sig_tf_case_max - sig_tf_case / fstrcase
       args%symbol = '<'
       args%units = 'Pa'
 
@@ -1395,20 +1395,20 @@ contains
       !! residual error in physical units; output string; units string
       !! Equation for TF coil conduit stress upper limit (SCTF)
       !! #=# tfcoil
-      !! #=#=# fstrcond, alstrtf
+      !! #=#=# fstrcond, sig_tf_wp_max
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !! fstrcond : input real : f-value for TF coil conduit stress
-      !! alstrtf : input real : allowable Tresca stress in TF coil structural material (Pa)
-      !! strtf1 : input real : Constrained Tresca stress in TF conductor conduit (Pa) 
+      !! sig_tf_wp_max : input real : Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
+      !! sig_tf_wp : input real : Constrained stress in TF conductor conduit (Pa) 
       use constraint_variables, only: fstrcond
-      use tfcoil_variables, only: alstrtf, strtf2
+      use tfcoil_variables, only: sig_tf_wp_max, sig_tf_wp
       implicit none
       type (constraint_args_type), intent(out) :: args
 
-      args%cc =  1.0D0 - fstrcond * alstrtf/strtf2
-      args%con = alstrtf
-      args%err = alstrtf - strtf2 / fstrcond
+      args%cc =  1.0D0 - fstrcond * sig_tf_wp_max/sig_tf_wp
+      args%con = sig_tf_wp_max
+      args%err = sig_tf_wp_max - sig_tf_wp / fstrcond
       args%symbol = '<'
       args%units = 'Pa'
 
@@ -2461,19 +2461,19 @@ contains
       !! foh_stress : input real : f-value for Tresca stress limit in Central Solenoid
       !! alstroh : input real :  allowable hoop stress in Central Solenoid structural material (Pa)
       !! s_tresca_oh : input real : Tresca stress coils/central solenoid (Pa)
-      !! strtf0 : input real : Tresca stress in CS case at flux swing (no current in CS)
+      !! sig_tf_cs_bucked : input real : Tresca stress in CS case at flux swing (no current in CS)
       !!                       can be significant for the bucked and weged design
       !! i_tf_bucking : input integer : switch for TF structure design 
       use constraint_variables, only: foh_stress
       use pfcoil_variables, only: alstroh, s_tresca_oh
-      use tfcoil_variables, only: strtf0, i_tf_bucking
+      use tfcoil_variables, only: sig_tf_cs_bucked, i_tf_bucking
       implicit none
       type (constraint_args_type), intent(out) :: args
 
       ! bucked and wedged desing (see subroutine comment)
       if ( i_tf_bucking >= 2 ) then
-         args%cc = 1.0d0 - foh_stress * alstroh / max(s_tresca_oh, strtf0)
-         args%err = alstroh - max(s_tresca_oh, strtf0)
+         args%cc = 1.0d0 - foh_stress * alstroh / max(s_tresca_oh, sig_tf_cs_bucked)
+         args%err = alstroh - max(s_tresca_oh, sig_tf_cs_bucked)
       
       ! Free standing CS
       else 
