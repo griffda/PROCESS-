@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
- Date_of_run_____________________________________________________________ (date)________________________     "11/08/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "16:41"
- User____________________________________________________________________ (username)____________________     "cjwg"    
+ Date_of_run_____________________________________________________________ (date)________________________     "27/08/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "11:26"
+ User____________________________________________________________________ (username)____________________     "cswan"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-337-g5d3d529d"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1371-add-xi_ebw-as-an-input-for-the-ebw-scaling-of-the-heating-of-the-plasma-in-develop-stable"    
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-357-g1e04141c"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1327-develop-stable-separate-TF-stress"                                                            
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cjwg/pytest-131/test_scenario_Hybrid_mode_0/IN.DAT                                                                                                                                       "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-10/test_scenario_Hybrid_mode_0/IN.DAT                                                                                                                                       "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -216,7 +216,7 @@
  Beta_g_coefficient______________________________________________________ (dnbeta)______________________      5.6514E+00    
  Normalised_thermal_beta_________________________________________________ ______________________________      2.1566E+00    
  Normalised_total_beta___________________________________________________ ______________________________      2.7287E+00    
- Normalised_toroidal_beta________________________________________________ ______________________________      2.7717E+00    
+ Normalised_toroidal_beta________________________________________________ (normalised_toroidal_beta)____      2.7717E+00    
  Limit_on_thermal_beta___________________________________________________ (betalim)_____________________      5.0969E-02    
  Plasma_thermal_energy_(J)_______________________________________________ ______________________________      1.5186E+09 OP 
  Total_plasma_internal_energy_(J)________________________________________ (total_plasma_internal_energy)      1.9215E+09 OP 
@@ -284,7 +284,7 @@
  Alpha_power:_beam-plasma_(MW)___________________________________________ (palpnb)______________________      1.1166E+01 OP 
  Neutron_power_(MW)______________________________________________________ (pneutmw)_____________________      1.6870E+03 OP 
  Charged_particle_power_(excluding_alphas)_(MW)__________________________ (pchargemw)___________________      1.8114E+00 OP 
- Total_power_deposited_in_plasma_(MW)____________________________________ ()____________________________      5.2793E+02 OP 
+ Total_power_deposited_in_plasma_(MW)____________________________________ (tot_power_plasma)____________      5.2793E+02 OP 
  Bremsstrahlung_radiation_power_(MW)_____________________________________ (pbrempv*vol)_________________      6.9570E+01 OP 
  Line_radiation_power_(MW)_______________________________________________ (plinepv*vol)_________________      1.8232E+02 OP 
  Synchrotron_radiation_power_(MW)________________________________________ (psyncpv*vol)_________________      5.9849E+01 OP 
@@ -393,6 +393,7 @@
  Current_drive_efficiency_model__________________________________________ (iefrf)_______________________              8    
  Auxiliary_power_used_for_plasma_heating_only_(MW)_______________________ (pheat)_______________________      5.0000E+01    
  Power_injected_for_current_drive_(MW)___________________________________ (pcurrentdrivemw)_____________      7.5418E+01    
+ Maximum_Allowed_Bootstrap_current_fraction______________________________ (bscfmax)_____________________      9.9000E-01    
  Fusion_gain_factor_Q____________________________________________________ (bigq)________________________      1.6791E+01 OP 
  Auxiliary_current_drive_(A)_____________________________________________ (auxiliary_cd)________________      4.0894E+06 OP 
  Current_drive_efficiency_(A/W)__________________________________________ (effcd)_______________________      5.4132E-02 OP 
@@ -509,7 +510,8 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -7.7700E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      2.0024E+00    
  # TF coils  #
- Allowable_Tresca_stress_limit_(Pa)______________________________________ (alstrtf)_____________________      5.8000E+08    
+ Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      5.8000E+08    
+ Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      5.8000E+08    
  WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      3.1588E+01 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      7.5105E+01 OP 
  Radial____stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_r_max(1))_____________      4.8849E-08    
@@ -552,7 +554,7 @@
  TF_cross-section_(total)_(m2)___________________________________________ (tfareain)____________________      4.2859E+01    
  Total_steel_cross-section_(m2)__________________________________________ (a_tf_steel*n_tf)_____________      3.1514E+01    
  Total_steel_TF_fraction_________________________________________________ (f_tf_steel)__________________      7.3530E-01    
- Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      3.1514E+01    
+ Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      2.3511E+00    
  Total_Insulation_fraction_______________________________________________ (f_tf_ins)____________________      5.4857E-02    
  Casing_cross_section_area_(per_leg)_(m2)________________________________ (acasetf)_____________________      1.5823E+00    
  Inboard_leg_case_plasma_side_wall_thickness_(m)_________________________ (casthi)______________________      6.0000E-02    
@@ -992,7 +994,8 @@
  Heat_extracted_from_shield__(MW)________________________________________ (pthermshld)__________________      1.8003E+00    
  Heat_extracted_from_divertor_(MW)_______________________________________ (pthermdiv)___________________      4.4841E+02    
  Nuclear_and_photon_power_lost_to_H/CD_system_(MW)_______________________ (psechcd)_____________________      0.0000E+00    
- Total_(MW)______________________________________________________________ ______________________________      2.8552E+03    
+ Nuclear_power_lost_to_TF_(MW)___________________________________________ (ptfnuc)______________________      9.0330E-02    
+ Total_(MW)______________________________________________________________ ______________________________      2.8553E+03    
  Net_electric_power_output(MW)___________________________________________ (pnetelmw.)___________________      2.5000E+02    
  Required_Net_electric_power_output(MW)__________________________________ (pnetelin)____________________      2.5000E+02    
  Electric_power_for_heating_and_current_drive_(MW)_______________________ (pinjwp)______________________      4.1848E+02    
@@ -1003,6 +1006,7 @@
  Electric_power_for_TF_coils_(MW)________________________________________ (tfacpd)______________________      1.2697E+01    
  Electric_power_for_PF_coils_(MW)________________________________________ (pfwpmw)______________________      7.8272E-01    
  All_other_internal_electric_power_requirements_(MW)_____________________ (fachtmw)_____________________      7.3822E+01    
+ Total_(MW)______________________________________________________________ (tot_plant_power)_____________      1.0707E+03    
  Total_(MW)______________________________________________________________ ______________________________      1.0707E+03    
  Gross_electrical_output*_(MW)___________________________________________ (pgrossmw)____________________      1.0707E+03    
  Fusion_power_(MW)_______________________________________________________ (powfmw.)_____________________      2.1103E+03    
@@ -1587,7 +1591,8 @@ lpulse   = 1 * Switch for reactor model;
 
 *-----------------Tfcoil Variables-----------------*
 
-alstrtf  = 5.8e8 * Allowable Tresca stress in TF coil structural material (Pa)
+sig_tf_case_max  = 5.8E8 * Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+sig_tf_wp_max    = 5.8E8 * Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
 casthi   = 0.06 * inboard TF coil case plasma side thickness (m) (calculated for stellarators)
 casths   = 0.05 * inboard TF coil sidewall case thickness (m) (calculated for stellarators)
 cpttf    = 88743.0 * TF coil current per turn (A); (calculated for stellarators) (calculated for 

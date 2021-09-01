@@ -52,5 +52,9 @@ OBS_VARS = {
     "pnuccp": "pnuc_cp",
     "nuc_pow_dep_tot": "pnuc_tot_blk_sector",
     "t_turn": "t_turn_tf",
-    "ratecdol": "discount_rate"
+    "ratecdol": "discount_rate",
+    "strtf1": "sig_tf_case",
+    "strtf2": "sig_tf_wp",
+    "alstrtf": "sig_tf_case_max",
+    "strtf0": "sig_tf_cs_bucked"
 }

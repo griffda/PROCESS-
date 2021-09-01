@@ -288,7 +288,8 @@ runtitle = "CFETR small (5.7m) reference file"
 
 bmxlim = 12.0       * Max TF field on coil (T)
 cpttf   = 67.4e3     * TF coil current per turn (A)
-alstrtf = 592.0e6    * Allowable von Mises stress in TF coil structural material (Pa)
+sig_tf_case_max  = 5.92E8 * Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+sig_tf_wp_max    = 5.92E8 * Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
 tftmp   = 4.5        * Temperature for superconductor (K)
 tmargmin = 2.0       * Minimum temperature margin (K)
 tinstf = 0.005   * Ground wall insulation thickness (m)
