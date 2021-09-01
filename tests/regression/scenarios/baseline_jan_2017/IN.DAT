@@ -351,7 +351,8 @@ ripmax   = 0.6 * Maximum allowable toroidal field ripple amplitude
 tdmptf   = 30.0 * Dump time for tf coil (s)
 
 n_tf     = 16 * Number of tf coils (default = 50 for stellarators)
-alstrtf = 6.6D8 * allowable von Mises stress in TF coil structural material (Pa )
+sig_tf_case_max  = 6.6E8 * Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+sig_tf_wp_max    = 6.6E8 * Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
 
 tftmp    = 4.75 * Peak helium coolant temperature in tf coils and pf coils (k)
 thicndut = 1.5d-3 * Conduit insulation thickness (m)

@@ -1460,6 +1460,12 @@ subroutine tf_coil_area_and_masses()
     
         ! Total TF coil mass [kg] (all coils)
         whttf = (whtcas + whtcon + whtgw) * n_tf
+        
+        ! If spherical tokamak, distribute between centrepost and outboard legs
+        if ( itart == 1 ) then
+            whtcp = whttf * cplen / tfleng
+            whttflgs = whttf * (tfleng - cplen) / tfleng
+        end if
 
     ! Resitivive magnets weights
     ! ---
@@ -1694,14 +1700,14 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         r_tf_inboard_in
     use tfcoil_variables, only: eyzwp, casestr, windstrain, n_tf_turn, &
         dr_tf_wp, i_tf_tresca, acstf, vforce, &
-        ritfc, jwptf, strtf0, strtf1, strtf2, &
-        thwcndut, insstrain, strtf2, vforce, tinstf, &
+        ritfc, jwptf, sig_tf_cs_bucked, sig_tf_case, sig_tf_wp, &
+        thwcndut, insstrain, vforce, tinstf, &
         acstf, jwptf, insstrain, &
-        strtf1, rbmax, thicndut, acndttf, tfinsgap, &
-        acasetf, alstrtf, poisson_steel, poisson_copper, poisson_al, &
+        rbmax, thicndut, acndttf, tfinsgap, &
+        acasetf, sig_tf_case_max, poisson_steel, poisson_copper, poisson_al, &
         n_tf_graded_layers, i_tf_sup, i_tf_bucking, fcoolcp, eyoung_winding, &
         eyoung_steel, eyoung_res_tf_buck, eyoung_ins, eyoung_al, eyoung_copper, &
-        aiwp, aswp, cpttf, n_tf, i_tf_plane_stress
+        aiwp, aswp, cpttf, n_tf, i_tf_plane_stress, sig_tf_wp_max
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
         cohbop, ncls, cptdin
     use constants, only: pi, sig_file
@@ -1923,8 +1929,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! Rem SK : Can be easily ameneded playing around the boundary conditions
     if ( abs(r_tf_inboard_in) < epsilon(r_tf_inboard_in) ) then
         call report_error(245)
-        strtf1 = 0.0D0
-        strtf2 = 0.0D0
+        sig_tf_case = 0.0D0
+        sig_tf_wp = 0.0D0
         return
     end if
 
@@ -2414,9 +2420,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     end do
 
     ! Constrains equation TRESCA stress values
-    strtf2 = sig_tf_tresca_max(n_tf_bucking + 1) ! Maximum assumed in the first graded layer
-    if ( i_tf_bucking >= 1 ) strtf1 = sig_tf_tresca_max(n_tf_bucking)
-    if ( i_tf_bucking >= 2 ) strtf0 = sig_tf_tresca_max(1)
+    sig_tf_wp = sig_tf_tresca_max(n_tf_bucking + 1) ! Maximum assumed in the first graded layer
+    if ( i_tf_bucking >= 1 ) sig_tf_case = sig_tf_tresca_max(n_tf_bucking)
+    if ( i_tf_bucking >= 2 ) sig_tf_cs_bucked = sig_tf_tresca_max(1)
     ! ----------------
 
     if ( iprint == 1 ) call out_stress
@@ -2445,12 +2451,14 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             call ocmmnt(outfile, 'Generalized plane strain model')
         end if
 
-        call ovarre(outfile, 'Allowable Tresca stress limit (Pa)','(alstrtf)',alstrtf)
+        call ovarre(outfile, 'Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)','(sig_tf_case_max)',sig_tf_case_max)
+        
+        call ovarre(outfile, 'Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)','(sig_tf_wp_max)',sig_tf_wp_max)
         if ( i_tf_tresca == 1  .and. i_tf_sup == 1) then
             call ocmmnt(outfile, 'WP conduit TRESCA stress corrected using CEA formula (i_tf_tresca = 1)')
         end if
 
-        if ( i_tf_bucking >= 2) then
+        if ( i_tf_bucking >= 3) then
             call ocmmnt(outfile, 'No stress limit imposed on the TF-CS interface layer')
             call ocmmnt(outfile, '  -> Too much unknow on it material choice/properties')
         end if 
@@ -3766,12 +3774,13 @@ subroutine outtf(outfile, peaktfflag)
         tficrn, n_layer, tfleng, thwcndut, casthi, sigvvall, &
         thkcas, casths, vforce, n_pancake, aswp, aiwp, tfareain, acasetf, &
         vftf, eyzwp, thicndut, dhecoil, insstrain, taucq, ripmax, &
-        whtconsc, alstrtf, bmaxtfrp, vdalw, dr_tf_wp, whtcas, whtcon, &
+        whtconsc, sig_tf_case_max, bmaxtfrp, vdalw, dr_tf_wp, whtcas, whtcon, &
         ripple, i_tf_tresca, bmaxtf, awphec, avwp, aiwp, acond, acndttf, &
         i_tf_sc_mat, voltfleg, vol_cond_cp, tflegres, tcpav, prescp, i_tf_sup, &
         cpttf, cdtfleg, whttflgs, whtcp, i_tf_bucking, tlegav, rhotfleg, rhocp, &
         presleg, i_tf_shape, fcoolcp, pres_joints, tmargtf, tmargmin_tf, &
-        f_vforce_inboard, vforce_outboard, acstf, t_turn_tf, eyoung_res_tf_buck
+        f_vforce_inboard, vforce_outboard, acstf, t_turn_tf, eyoung_res_tf_buck, &
+        sig_tf_wp_max
     use physics_variables, only: itart
     use constants, only: mfile, pi
     implicit none
@@ -3916,7 +3925,7 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'TF cross-section (total) (m2)','(tfareain)', tfareain)
         call ovarre(outfile,'Total steel cross-section (m2)','(a_tf_steel*n_tf)',a_tf_steel*n_tf)
         call ovarre(outfile,'Total steel TF fraction','(f_tf_steel)',f_tf_steel)
-        call ovarre(outfile,'Total Insulation cross-section (total) (m2)','(a_tf_ins*n_tf)',a_tf_steel*n_tf)
+        call ovarre(outfile,'Total Insulation cross-section (total) (m2)','(a_tf_ins*n_tf)',a_tf_ins*n_tf)
         call ovarre(outfile,'Total Insulation fraction','(f_tf_ins)',f_tf_ins)
         
         ! External casing

@@ -554,7 +554,8 @@ f_coppera_m2 = 1 * f_copperA_m2 /1/ ; f-value for constraint 75; TF coil current
 
 *-----------------tfcoil_variables-----------------*
 
-alstrtf  = 6.0e8 * alstrtf /6;0D8/ ; allowable Tresca stress in TF coil structural material (Pa)
+sig_tf_case_max  = 6.0E8 * Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+sig_tf_wp_max    = 6.0E8 * Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
 casthi   = 0.06 * casthi /0;0/ ; EITHER; inboard TF coil case plasma side thickness (m)
 casths   = 0.05 * casths /0;0/ ; EITHER; inboard TF coil sidewall case thickness (m)
 cpttf    = 62598.39441806726 * cpttf /7;0e4/ ; TF coil current per turn (A);
