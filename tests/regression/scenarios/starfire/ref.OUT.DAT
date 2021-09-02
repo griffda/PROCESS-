@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-357-g1e04141c
-    Branch : 1327-develop-stable-separate-TF-stress
+   Tag No. : v2.1-374-g1aaba1cd
+    Branch : 1303-divertor-costs-into-cost-model-2-stable
    Git log : COMMIT_MSG
- Date/time : 27 Aug 2021 11:27:27 -04:00(hh:mm) UTC
-      User : cswan
-  Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-10/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-10/test_scenario_starfire_0/IN.DAT
+ Date/time :  2 Sep 2021 16:53:32 +01:00(hh:mm) UTC
+      User : rhicha
+  Computer : l0500
+ Directory : /tmp/pytest-of-rhicha/pytest-101/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-101/test_scenario_starfire_0/IN.DAT
  Run title : starfire
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -176,9 +176,9 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  (step220107)        Power Supplies (M$)                                                                         396.82
  (step220108)        Impurity Control (M$)                                                                        19.94
  (step220109)        ECRH Plasma Breakdown (M$)                                                                   22.95
- (step220110)        Divertor (M$)                                                                               136.40
+ (step220110)        Divertor (M$)                                                                               749.15
  
- (step2201)          Total Account 22.01 Cost (M$)                                                              7005.24
+ (step2201)          Total Account 22.01 Cost (M$)                                                              7617.98
  
  ******************* 22.02 Heat Transfer System
  (step2202)          Heat Transfer System (M$)                                                                   157.32
@@ -223,9 +223,9 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ******************* 
  (step2298)          Spares (M$)                                                                                 504.30
- (step2299)          Contingency (M$)                                                                           1250.18
+ (step2299)          Contingency (M$)                                                                           1342.10
  
- (step22)            Total Account 22 Cost (M$)                                                                 9584.74
+ (step22)            Total Account 22 Cost (M$)                                                                10289.40
  
  ************************* 23. Turbine Plant Equipment **************************
  
@@ -263,45 +263,45 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ***************************** 27. Remote Handling ******************************
  
- (step2701)          Remote Handing (M$)                                                                        1074.62
+ (step2701)          Remote Handing (M$)                                                                        1127.47
  
- (step27)            Total Account 27 Cost (M$)                                                                 1074.62
+ (step27)            Total Account 27 Cost (M$)                                                                 1127.47
  
  ****************************** Plant Direct Cost *******************************
  
- (cdirt)             Plant direct cost (M$)                                                                    15402.90
+ (cdirt)             Plant direct cost (M$)                                                                    16160.40
  
  ******************************** Indirect Cost *********************************
  
- (step91)            Construction Facilities, Equipment and Services (M$)                                       4620.87
- (step92)            Engineering and Costruction Management Services (M$)                                       5005.94
- (step93)            Other Costs (M$)                                                                           2310.43
+ (step91)            Construction Facilities, Equipment and Services (M$)                                       4848.12
+ (step92)            Engineering and Costruction Management Services (M$)                                       5252.13
+ (step93)            Other Costs (M$)                                                                           2424.06
  
  ******************************* Constructed Cost *******************************
  
- (concost)           Constructed Cost (M$)                                                                     27340.14
+ (concost)           Constructed Cost (M$)                                                                     28684.72
  
  ************************* Interest during Construction *************************
  
- (moneyint)          Interest during construction (M$)                                                          4101.02
+ (moneyint)          Interest during construction (M$)                                                          4302.71
  
  *************************** Total Capital Investment ***************************
  
- (capcost)           Total capital investment (M$)                                                             31441.16
+ (capcost)           Total capital investment (M$)                                                             32987.42
  
  *************************************** Cost of Electricity (2017 US$) ***************************************
  
  First wall / blanket life (years)                                        (fwbllife)                    5.343     
  Divertor life (years)                                                    (divlife.)                    0.286     
- Cost of electricity (m$/kWh)                                             (coe)                       277.645     
+ Cost of electricity (m$/kWh)                                             (coe)                       290.817     
  
  Power Generation Costs :
  
                                                                            Annual Costs, M$       COE, m$/kWh
 
- Capital Investment                                                               2043.68              265.58
+ Capital Investment                                                               2144.18              278.64
  Operation & Maintenance                                                            68.29                8.87
- Decommissioning Fund                                                               17.28                2.25
+ Decommissioning Fund                                                               18.13                2.36
  Fuel Charge Breakdown
 
      Blanket & first wall                                                    0.00                0.00
@@ -312,7 +312,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
      Waste Disposal                                                          3.91                0.51
  Total Fuel Cost                                                                     7.31                0.95
 
- Total Cost                                                                       2136.55              277.65
+ Total Cost                                                                       2237.91              290.82
  
  ********************************************* Plant Availability *********************************************
  

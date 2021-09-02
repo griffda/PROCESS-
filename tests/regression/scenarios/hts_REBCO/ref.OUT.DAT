@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-357-g1e04141c
-    Branch : 1327-develop-stable-separate-TF-stress
+   Tag No. : v2.1-374-g1aaba1cd
+    Branch : 1303-divertor-costs-into-cost-model-2-stable
    Git log : COMMIT_MSG
- Date/time : 27 Aug 2021 11:26:47 -04:00(hh:mm) UTC
-      User : cswan
-  Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-10/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-10/test_scenario_hts_REBCO_0/IN.DAT
+ Date/time :  2 Sep 2021 16:52:33 +01:00(hh:mm) UTC
+      User : rhicha
+  Computer : l0500
+ Directory : /tmp/pytest-of-rhicha/pytest-101/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-101/test_scenario_hts_REBCO_0/IN.DAT
  Run title : hts model using "croco" conductor based on kit design
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
