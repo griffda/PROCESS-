@@ -451,10 +451,12 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use build_variables, only: fwarea
+    use constants, only: pi
     use cost_variables, only: output_costs, step_ref, ifueltyp, fcdfuel, &
       divcst, cdcost
     use current_drive_variables, only: pinjmw
-    use physics_variables, only: rmajor, rminor
+    use divertor_variables, only: divleg_profile_inner, divleg_profile_outer
+    use physics_variables, only: rmajor, rminor, idivrt
     use process_output, only: ocosts, oblnkl
     
     implicit none
@@ -468,7 +470,8 @@ contains
                step2201010202, step2201010203, step220102, step22010301, &
                step22010302, step22010303, step22010304, step220104, &
                step220105, step220106, step220107, step220108, step220109, &
-               step220110
+               step220110, &
+               div_profile_length, div_sarea
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -552,20 +555,38 @@ contains
     step220109 = step_ref(31) 
     step2201 = step2201 + step220109
 
+
     ! 22.01.10 Divertor
-    ! Cost Model 0 cost for STARFIRE sized device
-    ! 58.62% increase between 1980 and 1990 
-    ! http://www.in2013dollars.com/1980-dollars-in-1990
-    ! Scaling with product of rmajor and rminor
-    step220110 = step_ref(32) * ((rmajor*rminor)/(rmajor_star*rminor_star)) 
+    ! Caveat: rough estimate, using rmajor (rather than e.g. rnull).
+    ! Greater precision in geometry would provide more accurate results, 
+    ! but (at the time of writing) the divertor design is not yet 
+    ! advanced enough to warrant such precision.
+    ! Reference cost and area values are for ITER. 
+
+    ! Use 2D profile of divertor legs to estimate surface area (m2)
+    div_profile_length = divleg_profile_inner + divleg_profile_outer
+    if (idivrt == 2) then
+      ! double-null = double divertor length
+      div_profile_length = div_profile_length * 2.0D0
+    end if    
+    div_sarea = 2.0D0 * pi * rmajor * div_profile_length
+
+    ! divertor cost = ref * (div area / ref area)**0.8
+    step220110 = step_ref(32) * (div_sarea / 60.0D0)**0.8D0
+    ! adjust to 2017$ (from 2014$) using CPI index
+    step220110 = step220110 * (229.0D0/228.0D0)
+
     if (ifueltyp == 1) then
+      ! include divertor cost in fuel cost instead of capital
       divcst = step220110
       step220110 = 0.0D0
     else
       divcst = 0.0D0
     end if
+
     step2201 = step2201 + step220110
-  
+
+
     ! Add to Account 22 total
     step22 = step22 + step2201
 
