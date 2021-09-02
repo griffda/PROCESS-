@@ -1433,7 +1433,7 @@ subroutine tf_coil_area_and_masses()
         ! The 2.2 factor is used as a scaling factor to fit
         ! to the ITER-FDR value of 450 tonnes; see CCFE note T&M/PKNIGHT/PROCESS/026
         if ( itart == 1 ) then
-            ! tfleng does not include centrepost length in TART
+            ! tfleng does not include inboard leg ('centrepost') length in TART
             whtcas = 2.2D0 * dcase * (cplen * acasetf + tfleng * acasetfo)
         else
             whtcas = 2.2D0 * dcase * (cplen * acasetf + (tfleng-cplen) * acasetfo)
