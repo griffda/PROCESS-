@@ -716,13 +716,20 @@ contains
   end subroutine step_a220101
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   function step_a22010301() result(step22010301)
     !! 22.01.03.01 TF Coils
     !! Returns cost of TF coils
-    use cost_variables, only: step_ref, cpstcst, ifueltyp, step_uc_cryo_al, &
-      step_mc_cryo_al_per, uccpcl1, uccpclb
-    use tfcoil_variables, only: i_tf_sup, whtconal, n_tf, whttflgs, whtcp
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use cost_variables, only: step_ref, step_uc_cryo_al, step_mc_cryo_al_per, step_ucsc, &
+      uccpcl1, uccpclb, ucwindtf, uccase, ucint, uccu, ucgss, cpstcst, cconshtf, cconfix, &
+      ifueltyp, fkind, lsa
+    use tfcoil_variables, only: i_tf_sup, i_tf_sc_mat, n_tf, n_tf_turn, tfleng, &
+      whtconal, whttflgs, whtcp, whtconsc, whtcas, whtconcu
     use physics_variables, only: itart
+    use structure_variables, only: clgsmass, aintmass 
+
     implicit none
 
     ! Result
@@ -734,17 +741,45 @@ contains
     !! Cost of TF coil inboard legs in M$
     real(dp) :: c_tf_outboard_legs
     !! Cost of TF coil outboard legs in M$
+    real(dp) :: costtfsc
+    !! Superconductor material cost ($/m)
+    real(dp) :: costtfcu
+    !! Copper material cost ($/m)
+    real(dp) :: ctfconpm
+    !! Cost/metre of whole conductor
+    real(dp) :: ctfcontot
+    !! Conductor cost, all TF coils (M$)
+    real(dp) :: costtfwind
+    !! Winding cost, all TF coils (M$)
+    real(dp) :: costtfcas
+    !! Case cost, all TF coils (M$)
+    real(dp) :: costtfint
+    !! Intercoil structure (M$)
+    real(dp) :: costtfgss
+    !! Gravity support structure (M$)
+    real(dp), dimension(4) :: cmlsa
+    !! Cost multiplier for Level of Safety Assurance
     
     ! Initialise local vars
     c_tf_inboard_legs = 0.0D0
     c_tf_outboard_legs = 0.0D0
-    
+    costtfsc = 0.0D0
+    costtfcu = 0.0D0
+    ctfconpm = 0.0D0
+    ctfcontot = 0.0D0
+    costtfwind = 0.0D0
+    costtfcas = 0.0D0
+    costtfint = 0.0D0
+    costtfgss = 0.0D0
+    cmlsa = (/ 0.6900D0, 0.8450D0, 0.9225D0, 1.0000D0/)
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     ! Copper coils
     if (i_tf_sup == 0) then
-      ! Calculation taken from cost model 0: simply the cost of copper conductor
-      ! masses
-      ! Inflating from 1990 $ to 2017 $ at nuclear rate equates to a factor of 
-      ! 2.99
+      ! Calculation taken from cost model 0: simply the cost of copper conductor masses.
+      ! Inflating from 1990 $ to 2017 $ at nuclear rate equates to a factor of 2.99.
+      
       ! Inboard TF coil legs
       c_tf_inboard_legs = 1.0D-6 * whtcp * uccpcl1 * 2.99D0
       
@@ -757,8 +792,49 @@ contains
       
     ! Superconducting coils
     if (i_tf_sup == 1) then
-      ! Original STARFIRE value in M$, scaling with fusion island volume
-      step22010301 = step_ref(22) * (vfi / vfi_star)
+      ! Calculation taken from cost model 0:
+      ! Superconductor magnets are costed using a method devised by R. Hancox, 1994. 
+    
+      ! Conductor
+
+      ! Superconductor material cost ($/m)
+      costtfsc = step_ucsc(i_tf_sc_mat) * whtconsc / (tfleng*n_tf_turn) 
+      
+      ! Copper material cost ($/m)
+      costtfcu = uccu * whtconcu / (tfleng*n_tf_turn)
+
+      ! Cost/metre of whole conductor: superconductor + copper + sheath + fixed costs
+      ctfconpm = costtfsc + costtfcu + cconshtf + cconfix
+
+      ! Total conductor costs (M$)
+      ctfcontot = 1.0D-6 * ctfconpm * n_tf * tfleng * n_tf_turn
+      ! scale by costs for Nth of a kind and Level of Safety Assurance
+      ctfcontot = fkind * ctfcontot * cmlsa(lsa)
+
+      ! Winding (M$)
+
+      costtfwind = 1.0D-6 * ucwindtf * n_tf * tfleng * n_tf_turn
+      costtfwind = fkind * costtfwind * cmlsa(lsa)
+
+      ! Case (M$)
+
+      costtfcas = 1.0D-6 * (whtcas * uccase) * n_tf
+      costtfcas = fkind * costtfcas * cmlsa(lsa)   
+
+      ! Intercoil structure (M$)
+
+      costtfint = 1.0D-6 * aintmass * ucint
+      costtfint = fkind * costtfint * cmlsa(lsa)
+
+      ! Gravity support structure (M$)
+
+      costtfgss = 1.0D-6 * clgsmass * ucgss
+      costtfgss = fkind * costtfgss * cmlsa(lsa)
+
+      ! Total superconducting TF coil costs
+
+      step22010301 = ctfcontot + costtfwind + costtfcas + costtfint + costtfgss
+ 
     endif
     
     ! Cryogenic aluminium coils
