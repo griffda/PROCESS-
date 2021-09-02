@@ -557,7 +557,8 @@ contains
 
 
     ! 22.01.10 Divertor
-    ! Caveat: rough estimate, using rmajor (rather than e.g. rnull).
+    ! Caveat: rough estimate, using rmajor (rather than e.g. rnull) and 
+    ! treating the divertor limbs as vertically oriented cylinders.
     ! Greater precision in geometry would provide more accurate results, 
     ! but (at the time of writing) the divertor design is not yet 
     ! advanced enough to warrant such precision.

@@ -73,11 +73,11 @@ module divertor_variables
 
   real(dp) :: divleg_profile_inner
   !! length of 2D profile of inner leg surface (m)
-  !! estimated from side-view strawperson diagram, August 2021
+  !! default value = estimated from side-view strawperson diagram, August 2021
 
   real(dp) :: divleg_profile_outer
   !! length of 2D profile of outer leg surface (m)
-  !! estimated from side-view strawperson diagram, August 2021
+  !! default value = estimated from side-view strawperson diagram, August 2021
 
   real(dp) :: divmas
   !! divertor plate mass (kg)
