@@ -626,7 +626,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use cost_variables, only: step_ucblss, step_ucblbreed, step_ucblbe, ucblli, &
-      step_ucblvd, ucblli2o, blkcst, ucbllipb, ifueltyp, lsa, step_ucfws, &
+      step_ucblvd, ucblli2o, blkcst, ucbllipb, ifueltyp, step_ucfws, &
       fwallcst, step_ucfwps, step_ucfwa
 		use fwbs_variables, only: blktmodel, whtblli, blkttype, wtblli2o, &
       whtblbreed, whtblvd, whtblbe, whtblss, wtbllipb, fw_armour_mass, fwmass 
@@ -722,9 +722,10 @@ contains
     !! Returns cost of TF coils
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use cost_variables, only: step_ref, step_uc_cryo_al, step_mc_cryo_al_per, step_ucsc, &
-      uccpcl1, uccpclb, ucwindtf, uccase, ucint, uccu, ucgss, cpstcst, cconshtf, cconfix, &
-      ifueltyp, fkind, lsa
+    use cost_variables, only: step_ref, step_uc_cryo_al, step_mc_cryo_al_per, &
+      step_ucsc, step_uccu, step_uccase, step_cconfix, &
+      uccpcl1, uccpclb, ucwindtf, ucint, ucgss, cpstcst, cconshtf, &
+      ifueltyp
     use tfcoil_variables, only: i_tf_sup, i_tf_sc_mat, n_tf, n_tf_turn, tfleng, &
       whtconal, whttflgs, whtcp, whtconsc, whtcas, whtconcu
     use physics_variables, only: itart
@@ -757,8 +758,6 @@ contains
     !! Intercoil structure (M$)
     real(dp) :: costtfgss
     !! Gravity support structure (M$)
-    real(dp), dimension(4) :: cmlsa
-    !! Cost multiplier for Level of Safety Assurance
     
     ! Initialise local vars
     c_tf_inboard_legs = 0.0D0
@@ -771,7 +770,6 @@ contains
     costtfcas = 0.0D0
     costtfint = 0.0D0
     costtfgss = 0.0D0
-    cmlsa = (/ 0.6900D0, 0.8450D0, 0.9225D0, 1.0000D0/)
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -796,43 +794,28 @@ contains
       ! Superconductor magnets are costed using a method devised by R. Hancox, 1994. 
     
       ! Conductor
-
       ! Superconductor material cost ($/m)
-      costtfsc = step_ucsc(i_tf_sc_mat) * whtconsc / (tfleng*n_tf_turn) 
-      
+      costtfsc = step_ucsc(i_tf_sc_mat) * whtconsc / (tfleng*n_tf_turn)       
       ! Copper material cost ($/m)
-      costtfcu = uccu * whtconcu / (tfleng*n_tf_turn)
-
+      costtfcu = step_uccu * whtconcu / (tfleng*n_tf_turn)
       ! Cost/metre of whole conductor: superconductor + copper + sheath + fixed costs
-      ctfconpm = costtfsc + costtfcu + cconshtf + cconfix
-
+      ctfconpm = costtfsc + costtfcu + cconshtf + step_cconfix
       ! Total conductor costs (M$)
       ctfcontot = 1.0D-6 * ctfconpm * n_tf * tfleng * n_tf_turn
-      ! scale by costs for Nth of a kind and Level of Safety Assurance
-      ctfcontot = fkind * ctfcontot * cmlsa(lsa)
 
       ! Winding (M$)
-
       costtfwind = 1.0D-6 * ucwindtf * n_tf * tfleng * n_tf_turn
-      costtfwind = fkind * costtfwind * cmlsa(lsa)
 
       ! Case (M$)
-
-      costtfcas = 1.0D-6 * (whtcas * uccase) * n_tf
-      costtfcas = fkind * costtfcas * cmlsa(lsa)   
+      costtfcas = 1.0D-6 * (whtcas * step_uccase) * n_tf
 
       ! Intercoil structure (M$)
-
       costtfint = 1.0D-6 * aintmass * ucint
-      costtfint = fkind * costtfint * cmlsa(lsa)
 
       ! Gravity support structure (M$)
-
       costtfgss = 1.0D-6 * clgsmass * ucgss
-      costtfgss = fkind * costtfgss * cmlsa(lsa)
 
       ! Total superconducting TF coil costs
-
       step22010301 = ctfcontot + costtfwind + costtfcas + costtfint + costtfgss
  
     endif
@@ -889,7 +872,7 @@ contains
 		use build_variables, only: iohcl 
 		use constants, only: twopi, dcopper
 		use cost_variables, only: step_uccase, step_uccu, step_cconshpf, step_ucfnc, &
-      step_cconfix, step_ucsc, step_ucwindpf, lsa
+      step_cconfix, step_ucsc, step_ucwindpf
 		use pfcoil_variables, only: rjconpf, ipfres, vfohc, nohc, turns, isumatpf, &
       whtpfs, ric, rpf, isumatoh, fcupfsu, fcuohsu, vf, awpoh 
 		use structure_variables, only: fncmass 
