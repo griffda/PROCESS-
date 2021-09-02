@@ -723,8 +723,8 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use cost_variables, only: step_ref, step_uc_cryo_al, step_mc_cryo_al_per, &
-      step_ucsc, step_uccu, step_uccase, step_cconfix, &
-      uccpcl1, uccpclb, ucwindtf, ucint, ucgss, cpstcst, cconshtf, &
+      step_ucsc, step_uccu, step_uccase, step_cconfix, step_ucwindtf, &
+      step_ucint, step_ucgss, step_cconshtf, uccpcl1, uccpclb, cpstcst, &
       ifueltyp
     use tfcoil_variables, only: i_tf_sup, i_tf_sc_mat, n_tf, n_tf_turn, tfleng, &
       whtconal, whttflgs, whtcp, whtconsc, whtcas, whtconcu
@@ -799,21 +799,21 @@ contains
       ! Copper material cost ($/m)
       costtfcu = step_uccu * whtconcu / (tfleng*n_tf_turn)
       ! Cost/metre of whole conductor: superconductor + copper + sheath + fixed costs
-      ctfconpm = costtfsc + costtfcu + cconshtf + step_cconfix
+      ctfconpm = costtfsc + costtfcu + step_cconshtf + step_cconfix
       ! Total conductor costs (M$)
       ctfcontot = 1.0D-6 * ctfconpm * n_tf * tfleng * n_tf_turn
 
       ! Winding (M$)
-      costtfwind = 1.0D-6 * ucwindtf * n_tf * tfleng * n_tf_turn
+      costtfwind = 1.0D-6 * step_ucwindtf * n_tf * tfleng * n_tf_turn
 
       ! Case (M$)
       costtfcas = 1.0D-6 * (whtcas * step_uccase) * n_tf
 
       ! Intercoil structure (M$)
-      costtfint = 1.0D-6 * aintmass * ucint
+      costtfint = 1.0D-6 * aintmass * step_ucint
 
       ! Gravity support structure (M$)
-      costtfgss = 1.0D-6 * clgsmass * ucgss
+      costtfgss = 1.0D-6 * clgsmass * step_ucgss
 
       ! Total superconducting TF coil costs
       step22010301 = ctfcontot + costtfwind + costtfcas + costtfint + costtfgss
