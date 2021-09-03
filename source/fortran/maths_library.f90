@@ -3094,6 +3094,7 @@ contains
 
 29  continue
     z = 1.0D0
+    ii = 1 ! reset ii value in case it is never reset
     do i = 1,n
        if (lt(n+i) == 1) goto 25
        if (x(n+i) >= z) goto 25
@@ -3102,6 +3103,7 @@ contains
 25     continue
     end do
     y = 1.0D0
+
     if ( (x(ii)-bdl(ii)) > (bdu(ii)-x(ii)) ) y = -1.0D0
 
     !  Calculate vectors vplus.e(i) and  u = e(i)-v.vplus.e(i)
