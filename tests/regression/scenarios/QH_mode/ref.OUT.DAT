@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-397-gad7f2a48
-    Branch : issue-935-power-plant-water-use
+   Tag No. : v2.1-438-g1b9a2c9f code contains untracked changes
+    Branch : 1365-investigate-memory-errors
    Git log : COMMIT_MSG
- Date/time : 22 Jul 2021 13:07:56 +01:00(hh:mm) UTC
-      User : rhicha
-  Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-45/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-45/test_scenario_QH_mode_0/IN.DAT
+ Date/time :  3 Sep 2021 15:02:02 +00:00(hh:mm) UTC
+      User : root
+  Computer : e61d66a53fa7
+ Directory : /root/process
+     Input : /tmp/pytest-of-root/pytest-21/test_scenario_QH_mode_0/IN.DAT
  Run title : Example QH-mode plasma scenario
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
