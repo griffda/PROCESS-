@@ -207,7 +207,7 @@ contains
           ! EBWs can only couple to plasma if cyclotron harmonic is above plasma density cut-off;
           !  this behaviour is captured in the following function (ref issue #1262):
           ! harnum = cyclotron harmonic number (fundamental used as default)
-          ! contant 'a' controls sharpness of transition
+          ! constant 'a' controls sharpness of transition
           a = 0.1D0
    
           fc = 1.0D0/(2.0D0*pi) * harnum * echarge * bt / emass
@@ -446,7 +446,7 @@ contains
           if(ipedestal.ne.3)then  ! When not using PLASMOD
              pnbitot = power1 / (1.0D0-forbitloss+forbitloss*nbshinef)
           else
-             ! Netural beam power calculated by PLASMOD
+             ! Neutral beam power calculated by PLASMOD
              pnbitot = pinjmw / (1.0D0-forbitloss+forbitloss*nbshinef)
           endif
 
@@ -569,10 +569,11 @@ contains
     end if
 
     call ovarre(outfile,'Auxiliary power used for plasma heating only (MW)', '(pheat)', pheat + pheatfix)
-    call ovarre(outfile,'Power injected for current drive (MW)','(pcurrentdrivemw)', pinjmw - pheat - pheatfix) 
+    call ovarre(outfile,'Power injected for current drive (MW)','(pcurrentdrivemw)', pinjmw - pheat - pheatfix)
+    call ovarre(outfile,'Maximum Allowed Bootstrap current fraction', '(bscfmax)', bscfmax)    
     if (iefrffix.NE.0) then
       call ovarre(outfile,'Power injected for main current drive (MW)','(pcurrentdrivemw1)', pinjmw1 - pheat) 
-      call ovarre(outfile,'Power injected for secondary current drive (MW)','(pcurrentdrivemw2)', pinjmwfix - pheatfix) 
+      call ovarre(outfile,'Power injected for secondary current drive (MW)','(pcurrentdrivemw2)', pinjmwfix - pheatfix)
     end if
     call ovarre(outfile,'Fusion gain factor Q','(bigq)',bigq, 'OP ')
     call ovarre(outfile,'Auxiliary current drive (A)','(auxiliary_cd)',auxiliary_cd, 'OP ')
@@ -583,6 +584,31 @@ contains
     call ovarre(outfile,'Normalised current drive efficiency, gamma (10^20 A/W-m2)', &
          '(gamcd)',gamcd, 'OP ')
     call ovarre(outfile,'Wall plug to injector efficiency','(etacd)',etacd)
+    
+    select case(iefrf) ! Select plasma heating choice for output in the mfile
+    ! Other heating cases to be added when necessary
+       
+    case(1,2,3,4)
+    
+    case(5,8) !NBI  case(5) and Case(8) NBI is covered elsewhere
+    
+    case(6,7,9,11)
+    
+    case(10) !ECRH/ECCD Heating of Plasma
+    
+          call ovarre(outfile,'ECRH plasma heating efficiency','(gamma_ecrh)',gamma_ecrh)
+	    
+    case(12) !EBW Heating of Plasma
+    
+          call ovarre(outfile,'EBW plasma heating efficiency','(xi_ebw)',xi_ebw)
+	    
+    case default
+          idiags(1) = iefrf
+          call report_error(126)
+
+    end select        
+    
+
     if (iefrffix.NE.0) then
       call ovarre(outfile,'Secondary current drive efficiency (A/W)','(effcdfix)',effcdfix, 'OP ')
       call ovarre(outfile,'Seconday wall plug to injector efficiency','(etacdfix)',etacdfix)

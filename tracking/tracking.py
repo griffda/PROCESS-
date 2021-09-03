@@ -35,9 +35,10 @@ TRACKING_LIST = [
     "blnkoth", "shldoth", "gapsto", "tftsgap", "tfthko",
     "etath", "pgrossmw", "pnetelmw", "pinjmw", "pheat", "bootipf", "faccd",
     "facoh", "gamnb", "enbeam", "powerht", "pdivr", "pdivnr", "flh", "hstar",
-    "vssoft", "vstot", "tburn", "bmaxtf", "iooic", "tmarg", "tftmp", "strtf1",
-    "strtf2", "alstrtf", "coe", "concost", "capcosts", "fmom", "qtarget",
-    "qtargetcomplete", "totalpowerlost"
+    "vssoft", "vstot", "tburn", "bmaxtf", "iooic", "tmarg", "tftmp", 
+    "sig_tf_case", "sig_tf_wp", "sig_tf_case_max", "sig_tf_wp_max", "coe", 
+    "concost", "capcosts", "fmom", "qtarget", "qtargetcomplete", 
+    "totalpowerlost"
 ]
 
 PLOT_CONFIG = OrderedDict({

@@ -37,7 +37,7 @@ IFAIL_SUCCESS = 1
 
 # default values for making a plot file from MFILE.DAT
 PARAMETER_DEFAULTS = ["rmajor", "aspect", "rminor", "bt", "powfmw",
-    "pnetelmw", "te", "pdivt", "strtf1", "strtf2"]
+    "pnetelmw", "te", "pdivt", "sig_tf_case", "sig_tf_wp"]
 
 # parameters that start with f, but are not f-values
 NON_F_VALUES = ['fcohbop', 'fvsbrnni', 'feffcd', 'fcutfsu', 'fimpvar']

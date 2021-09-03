@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-349-ga936588d
-    Branch : 1331-develop-stable-centrepost-pnuc
+   Tag No. : v2.1-357-g1e04141c
+    Branch : 1327-develop-stable-separate-TF-stress
    Git log : COMMIT_MSG
- Date/time : 23 Aug 2021 12:42:53 -04:00(hh:mm) UTC
+ Date/time : 27 Aug 2021 11:26:32 -04:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-1/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-1/test_scenario_FNSF_0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-10/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-10/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -185,7 +185,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Beta g coefficient                                                       (dnbeta)                      6.000     
  Normalised thermal beta                                                                                3.879  OP 
  Normalised total beta                                                                                  4.497  OP 
- Normalised toroidal beta                                                                               4.995  OP 
+ Normalised toroidal beta                                                 (normalised_toroidal          4.995  OP 
  Limit on total beta                                                      (betalim)                     0.193  OP 
  Plasma thermal energy (J)                                                                          5.479E+07  OP 
  Total plasma internal energy (J)                                         (total_plasma_internal_en 6.351E+07  OP 
@@ -271,7 +271,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Alpha power: beam-plasma (MW)                                            (palpnb)                  5.754E+00  OP 
  Neutron power (MW)                                                       (pneutmw)                 1.295E+02  OP 
  Charged particle power (excluding alphas) (MW)                           (pchargemw)               9.795E-02  OP 
- Total power deposited in plasma (MW)                                     ()                        1.109E+02  OP 
+ Total power deposited in plasma (MW)                                     (tot_power_plasma)        1.109E+02  OP 
  
  Radiation Power (excluding SOL):
  
@@ -441,6 +441,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Auxiliary power used for plasma heating only (MW)                        (pheat)                   0.000E+00     
  Power injected for current drive (MW)                                    (pcurrentdrivemw)         8.000E+01     
+ Maximum Allowed Bootstrap current fraction                               (bscfmax)                 8.800E-01     
  Fusion gain factor Q                                                     (bigq)                    2.025E+00  OP 
  Auxiliary current drive (A)                                              (auxiliary_cd)            3.989E+06  OP 
  Current drive efficiency (A/W)                                           (effcd)                   4.986E-02  OP 
@@ -1335,6 +1336,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Electric power for TF coils (MW)                                         (tfacpd)                    278.075  OP 
  Electric power for PF coils (MW)                                         (pfwpmw)                      0.099  OP 
  All other internal electric power requirements (MW)                      (fachtmw)                    23.472  OP 
+ Total (MW)                                                               (tot_plant_power)            77.589  OP 
  Total (MW)                                                                                            77.589  OP 
  
  Gross electrical output* (MW)                                            (pgrossmw)                   78.122  OP 
