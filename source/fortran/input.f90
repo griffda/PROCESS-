@@ -1577,6 +1577,11 @@ contains
          else
             call parse_real_variable('blnkith', blnkith, 0.0D0, 10.0D0, &
                 'Inboard blanket thickness (m)')
+	  ! Inboard blanket does not exist if the thickness is below a certain limit.  
+            if(blnkith>=0.0D00.and.blnkith<=1.0D-3) then
+              blnkith = 0.0D00 ! Inboard blanket thickness is zero
+	      iblnkith = 0     ! Inboard blanket does not exist
+            end if
           end if
        case ('blnkoth')
            if (iblanket == 3) then
