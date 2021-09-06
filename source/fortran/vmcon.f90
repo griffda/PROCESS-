@@ -173,7 +173,6 @@ contains
     allocate(bdu(n+1))
     allocate(conf(m))
     allocate(fgrd(n))
-    allocate(cnorm(lcnorm,m))
     allocate(iwa(liwa))
     allocate(glag(n))
     allocate(glaga(n))
@@ -186,6 +185,7 @@ contains
     allocate(wa(lwa))
     allocate(h(lh,lh))
     allocate(delta_var(n))
+    allocate(cnorm(lcnorm,m))
 
     vmu = 0.0D0
     vlam = 0.0D0
