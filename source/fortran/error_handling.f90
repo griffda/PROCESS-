@@ -70,17 +70,32 @@ module error_handling
   integer, dimension(8) :: idiags
   real(dp), dimension(8) :: fdiags
 
-
   !  Individual error item
   !  int and float arrays may be useful to provide diagnostic information
-  integer, allocatable, dimension(:) :: levels
-  character(len=200), allocatable, dimension(:) :: messages
-  integer, allocatable, dimension(:,:) :: store_idiags
-  real(dp), allocatable, dimension(:,:) :: store_fdiags
 
-  ! Errors
-  integer :: num_errors = 1
-  integer, allocatable, dimension(:) :: errors
+  type :: error
+     integer            :: level    !  severity level
+     character(len=200) :: message  !  information string
+     integer, dimension(8) :: idiags = INT_DEFAULT
+     real(dp), dimension(8) :: fdiags = FLT_DEFAULT
+  end type error
+
+  !  Individual element in an error list
+
+  type :: error_list_item
+     integer                         :: id    !  identifier
+     type (error)                    :: data  !  error details
+     type (error_list_item), pointer :: ptr   !  linked list pointer
+  end type error_list_item
+
+  !  Pointers to head and tail of the error list
+
+  type (error_list_item), pointer :: error_head
+  type (error_list_item), pointer :: error_tail
+
+  !  List of messages
+
+  type(error), allocatable, dimension(:) :: error_type
 
 contains
 
@@ -93,17 +108,10 @@ contains
     errors_on = .false.
     error_id = 0
     error_status = ERROR_OKAY
-   
-   ! initiate allocation at 10, can be changed later
-    if(allocated(errors)) deallocate(errors)
-    if(allocated(store_idiags)) deallocate(store_idiags)
-    if(allocated(store_fdiags)) deallocate(store_fdiags)
-    allocate(errors(10))
-    allocate(store_idiags(8,10))
-    allocate(store_fdiags(8,10))
-    errors = 0
-    store_idiags = 0
-    store_fdiags = 0
+    idiags = INT_DEFAULT
+    fdiags = FLT_DEFAULT
+    error_head => null()
+    error_tail => null()
   end subroutine init_error_handling
 
   subroutine initialise_error_list
@@ -146,22 +154,17 @@ contains
 
     call fson_get(errorfile, "n_errortypes", n_errortypes)
     
-   ! Guard against re-allocation
-   if (allocated(levels)) deallocate(levels)
-   if (allocated(messages)) deallocate(messages)
-   
-   allocate(levels(n_errortypes))
-   allocate(messages(n_errortypes))
+    ! Guard against re-allocation
+    if (allocated(error_type)) deallocate(error_type)
+    allocate(error_type(n_errortypes))
 
-   levels = ERROR_OKAY
-   messages = ' '
-   idiags = INT_DEFAULT
-   fdiags = FLT_DEFAULT
+    error_type(:)%level = ERROR_OKAY
+    error_type(:)%message = ' '
 
     !  Extract information arrays from the file
 
-    call fson_get(errorfile, "errors", "level", levels)
-    call fson_get(errorfile, "errors", "message", messages)
+    call fson_get(errorfile, "errors", "level", error_type%level)
+    call fson_get(errorfile, "errors", "message", error_type%message)
 
     !  Clean up
 
@@ -201,63 +204,48 @@ contains
     integer, intent(in) :: error_id
 
     !  Local variables
-    integer, allocatable, dimension(:) :: tmp
-    integer, allocatable, dimension(:,:) :: tmp_i
-    real(dp), allocatable, dimension(:,:) :: tmp_f
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Turn on error handling if a severe error has been encountered
 
-    if (levels(error_id) == ERROR_SEVERE) errors_on = .true.
+    if (error_type(error_id)%level == ERROR_SEVERE) errors_on = .true.
 
     !  Error handling is only turned on during an output step, not during
     !  intermediate iteration steps
-    if (num_errors == SIZE(errors)) then
-      if (allocated(tmp)) deallocate(tmp)
 
-      allocate(tmp(num_errors))
-      tmp(1:SIZE(errors)) = errors
-      deallocate(errors)
-      allocate(errors(num_errors+5))
-      errors(1:SIZE(tmp)) = tmp
-      errors(SIZE(tmp):SIZE(errors)) = 0
-      deallocate(tmp)
+    if (.not.errors_on) then
+       idiags = INT_DEFAULT
+       fdiags = FLT_DEFAULT
+       return
     end if
 
-    if (num_errors == SIZE(store_idiags,2)) then
-      if (allocated(tmp_i)) deallocate(tmp_i)
+    if (.not.associated(error_head)) then
+       allocate(error_head)
+       error_tail => error_head
+    else
 
-      allocate(tmp_i(8,num_errors))
-      tmp_i(:,1:SIZE(store_idiags,2)) = store_idiags
-      deallocate(store_idiags)
-      allocate(store_idiags(8,num_errors+5))
-      store_idiags(:,1:SIZE(tmp_i,2)) = tmp_i
-      store_idiags(:,SIZE(tmp_i,2):SIZE(store_idiags,2)) = 0
-      deallocate(tmp_i)
+! SJP Issue #867
+! Remove consecutive identical error messages
+
+       if (error_tail%id == error_id) return
+
+       allocate(error_tail%ptr)
+       error_tail => error_tail%ptr
     end if
 
-    if (num_errors == SIZE(store_fdiags,2)) then
-      if (allocated(tmp_f)) deallocate(tmp_f)
+    error_tail%id           = error_id
+    error_tail%data%level   = error_type(error_id)%level
+    error_tail%data%message = error_type(error_id)%message
+    error_tail%data%idiags = idiags ; idiags = INT_DEFAULT
+    error_tail%data%fdiags = fdiags ; fdiags = FLT_DEFAULT
 
-      allocate(tmp_f(8,num_errors))
-      tmp_f(:,1:SIZE(store_fdiags,2)) = store_fdiags
-      deallocate(store_fdiags)
-      allocate(store_fdiags(8,num_errors+5))
-      store_fdiags(:,1:SIZE(tmp_f,2)) = tmp_f
-      store_fdiags(:,SIZE(tmp_f,2):SIZE(store_fdiags,2)) = 0
-      deallocate(tmp_f)
-    end if
-
-    errors(num_errors) = error_id
-    store_idiags(:,num_errors) = idiags ; idiags = INT_DEFAULT
-    store_fdiags(:,num_errors) = fdiags ; fdiags = FLT_DEFAULT
-    num_errors = num_errors + 1
+    nullify (error_tail%ptr)
 
     !  Update the overall error status (highest severity level encountered)
     !  and stop the program if a severe error has occurred
 
-    error_status = max(error_status, levels(error_id))
+    error_status = max(error_status, error_type(error_id)%level)
 
     if (error_status == ERROR_SEVERE) then
        call show_errors
@@ -288,7 +276,8 @@ contains
 
     !  Local variables
 
-    integer :: i, j
+    type (error_list_item), pointer :: ptr
+    integer :: i
     character(len=50) :: status_message
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -315,46 +304,42 @@ contains
     call oblnkl(iotty)
     call ovarin(nout,'PROCESS error status flag','(error_status)',error_status)
 
-    if (num_errors == 1) then
+    ptr => error_head
+
+    if (.not.associated(ptr)) then
        call ovarin(nout,'Final error/warning identifier','(error_id)',error_id)
        return
     end if
 
     write(*,*) 'ID  LEVEL  MESSAGE'
 
-   do i=1,SIZE(errors)
-      if (errors(i) == 0) cycle
+    output: do
+       if (.not.associated(ptr)) exit output
 
-      error_id = errors(i)
+       error_id = ptr%id
+       write(nout,'(i3,t7,i3,t13,a80)') ptr%id,ptr%data%level,ptr%data%message
+       write(*,   '(i3,t7,i3,t13,a80)') ptr%id,ptr%data%level,ptr%data%message
 
-      write(nout,'(i3,t7,i3,t13,a80)') error_id,levels(error_id),messages(error_id)
-      write(*,   '(i3,t7,i3,t13,a80)') error_id,levels(error_id),messages(error_id)
+       if (any(ptr%data%idiags /= INT_DEFAULT)) then
+          write(*,*) 'Integer diagnostic values for this error:'
+          do i = 1,8
+             if (ptr%data%idiags(i) /= INT_DEFAULT) &
+                  write(*,'(i4,a,i14)') i,') ',ptr%data%idiags(i)
+          end do
+       end if
+       if (any(ptr%data%fdiags /= FLT_DEFAULT)) then
+          write(*,*) 'Floating point diagnostic values for this error:'
+          do i = 1,8
+             if (ptr%data%fdiags(i) /= FLT_DEFAULT) &
+                  write(*,'(i4,a,1pe14.5)') i,') ',ptr%data%fdiags(i)
+          end do
+       end if
+       write(*,*) ' '
 
-      if (any(store_idiags(:,i) /= INT_DEFAULT)) then
-         do j = 1,8
-            if (store_idiags(j,i) /= INT_DEFAULT) &
-               write(*,'(i4,a,i14)') j,') ',store_idiags(j,i)
-         end do
-      end if 
-
-      if (any(store_fdiags(:,i) /= FLT_DEFAULT)) then
-         do j = 1,8
-            if (store_fdiags(j,i) /= FLT_DEFAULT) &
-               write(*,'(i4,a,1pe14.5)') j,') ',store_fdiags(j,i)
-         end do
-      end if 
-
-      write(*,*) ' '
-    end do
+       ptr => ptr%ptr
+    end do output
 
     call ovarin(nout,'Final error identifier','(error_id)',error_id)
-    
-    num_errors = 1
-    if(allocated(levels)) deallocate(levels)
-    if(allocated(messages)) deallocate(messages)
-    if(allocated(messages)) deallocate(store_idiags)
-    if(allocated(messages)) deallocate(store_fdiags)
-    if(allocated(messages)) deallocate(errors)
 
   end subroutine show_errors
 
