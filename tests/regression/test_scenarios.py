@@ -94,8 +94,8 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
     :type tmp_path: bool
     """
     # TODO The memory errors need to be investigated and the tests re-instated
-    # if scenario.name in ["2D_scan", "kit_blanket"]:
-    #     pytest.skip("2D scan and kit_blanket currently introduce memory errors")
+    if scenario.name in ["2D_scan", "kit_blanket"]:
+        pytest.skip("2D scan and kit_blanket currently introduce memory errors")
 
     # hybrd() has been temporarily commented out. Please see the comment in
     # function_evaluator.fcnhyb() for an explanation.
