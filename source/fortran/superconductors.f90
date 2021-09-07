@@ -811,7 +811,7 @@ subroutine croco(jcritsc, croco_strand, &
     real(dp), intent(inout) :: conductor_rebco_area,  conductor_rebco_fraction
     real(dp), intent(inout) :: conductor_critical_current
     real(dp), intent(inout) :: conductor_acs                  
-    real(dp) :: conductor_area
+    real(dp), intent(in) :: conductor_area
 
     ! croco_strand
 
