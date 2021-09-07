@@ -7,12 +7,12 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-438-g1b9a2c9f code contains untracked changes
+   Tag No. : v2.1-440-g15a3060d code contains untracked changes
     Branch : 1365-investigate-memory-errors
    Git log : COMMIT_MSG
- Date/time :  3 Sep 2021 15:01:23 +00:00(hh:mm) UTC
+ Date/time :  7 Sep 2021 11:51:13 +00:00(hh:mm) UTC
       User : root
-  Computer : e61d66a53fa7
+  Computer : 9028c87c1f7f
  Directory : /root/process
      Input : /tmp/pytest-of-root/pytest-21/test_scenario_HARE_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
@@ -9929,6 +9929,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  PROCESS error status flag                                                (error_status)                    2     
 150     2   CHECK: Lower limit of volume averaged electron temperature (te) has been raised 
 155     2   CHECK: dene used as iteration variable without constraint 81 (neped<ne0)        
+ 93     2   BURN: Negative burn time available; reduce theat or raise PF coil V-s capability
+244     2   PHYSICS: Diamagnetic fraction is more than 1%, but not calculated. Consider usin
+244     2   PHYSICS: Diamagnetic fraction is more than 1%, but not calculated. Consider usin
+244     2   PHYSICS: Diamagnetic fraction is more than 1%, but not calculated. Consider usin
+244     2   PHYSICS: Diamagnetic fraction is more than 1%, but not calculated. Consider usin
+244     2   PHYSICS: Diamagnetic fraction is more than 1%, but not calculated. Consider usin
+244     2   PHYSICS: Diamagnetic fraction is more than 1%, but not calculated. Consider usin
 244     2   PHYSICS: Diamagnetic fraction is more than 1%, but not calculated. Consider usin
  Final error identifier                                                   (error_id)                      244     
  

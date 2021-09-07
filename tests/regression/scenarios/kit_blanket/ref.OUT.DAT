@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-397-gad7f2a48
-    Branch : issue-935-power-plant-water-use
+   Tag No. : v2.1-440-g15a3060d code contains untracked changes
+    Branch : 1365-investigate-memory-errors
    Git log : COMMIT_MSG
- Date/time : 22 Jul 2021 13:07:49 +01:00(hh:mm) UTC
-      User : rhicha
-  Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-45/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-45/test_scenario_kit_blanket_0/IN.DAT
+ Date/time :  7 Sep 2021 11:51:48 +00:00(hh:mm) UTC
+      User : root
+  Computer : 9028c87c1f7f
+ Directory : /root/process
+     Input : /tmp/pytest-of-root/pytest-21/test_scenario_kit_blanket_0/IN.DAT
  Run title : Michael's test file
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -1434,6 +1434,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  PROCESS status flag:   Warning messages
  PROCESS error status flag                                                (error_status)                    2     
 155     2   CHECK: dene used as iteration variable without constraint 81 (neped<ne0)        
+ 93     2   BURN: Negative burn time available; reduce theat or raise PF coil V-s capability
 244     2   PHYSICS: Diamagnetic fraction is more than 1%, but not calculated. Consider usin
  Final error identifier                                                   (error_id)                      244     
  
