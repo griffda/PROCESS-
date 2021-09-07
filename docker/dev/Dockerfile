@@ -8,6 +8,7 @@ LABEL description="Process development image"
 
 # Required to get around interactive timezone prompt
 ENV DEBIAN_FRONTEND=noninteractive
+ENV FC=gfortran
 
 # Install apt packages
 RUN apt-get update && apt-get install -y \
