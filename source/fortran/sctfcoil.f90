@@ -139,8 +139,20 @@ type(resistive_material):: hastelloy
 type(resistive_material):: solder
 type(resistive_material):: jacket
 type(resistive_material):: helium
-type(volume_fractions):: conductor
 type(supercon_strand)::croco_strand
+
+! conductor
+    real(dp) :: conductor_copper_area,  conductor_copper_fraction
+    real(dp) :: conductor_copper_bar_area
+    real(dp) :: conductor_hastelloy_area, conductor_hastelloy_fraction
+    real(dp) :: conductor_helium_area, conductor_helium_fraction
+    real(dp) :: conductor_solder_area, conductor_solder_fraction
+    real(dp) :: conductor_jacket_area, conductor_jacket_fraction
+    real(dp) :: conductor_rebco_area,  conductor_rebco_fraction
+    real(dp) :: conductor_critical_current
+    real(dp) :: conductor_acs
+    !! Area of cable space inside jacket
+    real(dp) :: conductor_area      
 
 real(dp):: T1, time2, tau2, estotft
 ! (OBSOLETE, but leave for moment)
@@ -4649,17 +4661,22 @@ contains
         ! acstf : Cable space - inside area (m2)
         ! Set new croco_od - allowing for scaling of croco_od
         croco_od = t_conductor / 3.0d0 - thwcndut * ( 2.0d0 / 3.0d0 )
-        conductor%acs =  9.d0/4.d0 * pi * croco_od**2
-        acstf = conductor%acs
-        conductor%area =  t_conductor**2 ! does this not assume it's a sqaure???
+        conductor_acs =  9.d0/4.d0 * pi * croco_od**2
+        acstf = conductor_acs
+        conductor_area =  t_conductor**2 ! does this not assume it's a sqaure???
 
-        conductor%jacket_area = conductor%area - conductor%acs
-        acndttf = conductor%jacket_area
+        conductor_jacket_area = conductor_area - conductor_acs
+        acndttf = conductor_jacket_area
         
-        conductor%jacket_fraction = conductor%jacket_area / conductor%area
-        call croco(jcritsc,croco_strand,conductor,croco_od,croco_thick)
-        copperA_m2 = iop / conductor%copper_area
-        icrit = conductor%critical_current
+        conductor_jacket_fraction = conductor_jacket_area / conductor_area
+        call croco(jcritsc, croco_strand, &
+            conductor_copper_area, conductor_copper_fraction, conductor_copper_bar_area, &
+            conductor_hastelloy_area, conductor_hastelloy_fraction, conductor_helium_area, &
+            conductor_helium_fraction, conductor_solder_area, conductor_solder_fraction, &
+            conductor_rebco_area, conductor_rebco_fraction, conductor_critical_current, &
+            conductor_area, croco_od,croco_thick)
+        copperA_m2 = iop / conductor_copper_area
+        icrit = conductor_critical_current
         jcritstr = croco_strand%critical_current / croco_strand%area
 
         ! Critical current density in winding pack
@@ -4680,8 +4697,8 @@ contains
 
         if (iprint == 0) return     ! Output ----------------------------------
 
-        total = conductor%copper_area+conductor%hastelloy_area+conductor%solder_area+ &
-        conductor%jacket_area+conductor%helium_area+conductor%rebco_area
+        total = conductor_copper_area+conductor_hastelloy_area+conductor_solder_area+ &
+        conductor_jacket_area+conductor_helium_area+conductor_rebco_area
 
         if (temp_margin <= 0.0D0) then
             write(*,*)'ERROR: Negative TFC temperature margin'
@@ -4724,21 +4741,21 @@ contains
         call ocmmnt(outfile,'Conductor information (includes jacket, not including insulation)')
         call ovarre(outfile,'Width of square conductor (cable + steel jacket) (m)', &
             '(t_conductor)', t_conductor , 'OP ')
-        call ovarre(outfile,'Area of conductor (m2)','(area)', conductor%area , 'OP ')
-        call ovarre(outfile,'REBCO area of conductor (mm2)','(rebco_area)',conductor%rebco_area , 'OP ')
-        call ovarre(outfile,'Area of central copper bar (mm2)', '(copper_bar_area)', conductor%copper_bar_area, 'OP ')
-        call ovarre(outfile,'Total copper area of conductor, total (mm2)','(copper_area)',conductor%copper_area, 'OP ')
-        call ovarre(outfile,'Hastelloy area of conductor (mm2)','(hastelloy_area)',conductor%hastelloy_area, 'OP ')
-        call ovarre(outfile,'Solder area of conductor (mm2)','(solder_area)',conductor%solder_area, 'OP ')
-        call ovarre(outfile,'Jacket area of conductor (mm2)','(jacket_area)',conductor%jacket_area, 'OP ')
-        call ovarre(outfile,'Helium area of conductor (mm2)','(helium_area)',conductor%helium_area, 'OP ')
-        if(abs(total-conductor%area)>1d-8) then
+        call ovarre(outfile,'Area of conductor (m2)','(area)', conductor_area , 'OP ')
+        call ovarre(outfile,'REBCO area of conductor (mm2)','(rebco_area)',conductor_rebco_area , 'OP ')
+        call ovarre(outfile,'Area of central copper bar (mm2)', '(copper_bar_area)', conductor_copper_bar_area, 'OP ')
+        call ovarre(outfile,'Total copper area of conductor, total (mm2)','(copper_area)',conductor_copper_area, 'OP ')
+        call ovarre(outfile,'Hastelloy area of conductor (mm2)','(hastelloy_area)',conductor_hastelloy_area, 'OP ')
+        call ovarre(outfile,'Solder area of conductor (mm2)','(solder_area)',conductor_solder_area, 'OP ')
+        call ovarre(outfile,'Jacket area of conductor (mm2)','(jacket_area)',conductor_jacket_area, 'OP ')
+        call ovarre(outfile,'Helium area of conductor (mm2)','(helium_area)',conductor_helium_area, 'OP ')
+        if(abs(total-conductor_area)>1d-8) then
             call ovarre(outfile, "ERROR: conductor areas do not add up:",'(total)',total , 'OP ')
         endif
         call ovarre(outfile,'Critical current of CroCo strand (A)','(croco_strand%critical_current)', &
         croco_strand%critical_current , 'OP ')
-        call ovarre(outfile,'Critical current of conductor (A) ','(conductor%critical_current)', &
-        conductor%critical_current , 'OP ')
+        call ovarre(outfile,'Critical current of conductor (A) ','(conductor_critical_current)', &
+        conductor_critical_current , 'OP ')
 
         if (run_tests==1) then
             call oblnkl(outfile)
