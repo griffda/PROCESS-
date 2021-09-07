@@ -4,13 +4,13 @@
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
  Date_of_run_____________________________________________________________ (date)________________________     "07/09/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "11:49"
+ Time_of_run_____________________________________________________________ (time)________________________     "13:58"
  User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-440-g15a3060d"                                                                                
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-450-g4091e822"                                                                                
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1365-investigate-memory-errors"                                                                    
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-21/test_scenario_2D_scan_0/IN.DAT                                                                                                                                            "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-40/test_scenario_2D_scan_0/IN.DAT                                                                                                                                            "
  Number_of_first_variable_scan_points____________________________________ (isweep)______________________              3    
  Number_of_second_variable_scan_points___________________________________ (isweep_2)____________________             13    
  Scanning_first_variable_number__________________________________________ (nsweep)______________________             17    
@@ -6104,7 +6104,7 @@
  # Errors and Warnings #
  # Errors and Warnings #
  PROCESS_error_status_flag_______________________________________________ (error_status)________________              2    
- Final_error_identifier__________________________________________________ (error_id)____________________             93    
+ Final_error_identifier__________________________________________________ (error_id)____________________            155    
  # End of PROCESS Output #
  # End of PROCESS Output #
  # Copy of PROCESS Input Follows #
