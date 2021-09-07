@@ -4673,8 +4673,7 @@ contains
             conductor_copper_area, conductor_copper_fraction, conductor_copper_bar_area, &
             conductor_hastelloy_area, conductor_hastelloy_fraction, conductor_helium_area, &
             conductor_helium_fraction, conductor_solder_area, conductor_solder_fraction, &
-            conductor_jacket_area, conductor_jacket_fraction, conductor_rebco_area, &
-            conductor_rebco_fraction, conductor_critical_current, &
+            conductor_rebco_area, conductor_rebco_fraction, conductor_critical_current, &
             conductor_area, croco_od,croco_thick)
         copperA_m2 = iop / conductor_copper_area
         icrit = conductor_critical_current
