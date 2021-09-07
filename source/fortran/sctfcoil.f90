@@ -139,8 +139,20 @@ type(resistive_material):: hastelloy
 type(resistive_material):: solder
 type(resistive_material):: jacket
 type(resistive_material):: helium
-type(volume_fractions):: conductor
 type(supercon_strand)::croco_strand
+
+! conductor
+    real(dp) :: conductor_copper_area,  conductor_copper_fraction
+    real(dp) :: conductor_copper_bar_area
+    real(dp) :: conductor_hastelloy_area, conductor_hastelloy_fraction
+    real(dp) :: conductor_helium_area, conductor_helium_fraction
+    real(dp) :: conductor_solder_area, conductor_solder_fraction
+    real(dp) :: conductor_jacket_area, conductor_jacket_fraction
+    real(dp) :: conductor_rebco_area,  conductor_rebco_fraction
+    real(dp) :: conductor_critical_current
+    real(dp) :: conductor_acs
+    !! Area of cable space inside jacket
+    real(dp) :: conductor_area      
 
 real(dp):: T1, time2, tau2, estotft
 ! (OBSOLETE, but leave for moment)
@@ -4649,17 +4661,23 @@ contains
         ! acstf : Cable space - inside area (m2)
         ! Set new croco_od - allowing for scaling of croco_od
         croco_od = t_conductor / 3.0d0 - thwcndut * ( 2.0d0 / 3.0d0 )
-        conductor%acs =  9.d0/4.d0 * pi * croco_od**2
-        acstf = conductor%acs
-        conductor%area =  t_conductor**2 ! does this not assume it's a sqaure???
+        conductor_acs =  9.d0/4.d0 * pi * croco_od**2
+        acstf = conductor_acs
+        conductor_area =  t_conductor**2 ! does this not assume it's a sqaure???
 
-        conductor%jacket_area = conductor%area - conductor%acs
-        acndttf = conductor%jacket_area
+        conductor_jacket_area = conductor_area - conductor_acs
+        acndttf = conductor_jacket_area
         
-        conductor%jacket_fraction = conductor%jacket_area / conductor%area
-        call croco(jcritsc,croco_strand,conductor,croco_od,croco_thick)
-        copperA_m2 = iop / conductor%copper_area
-        icrit = conductor%critical_current
+        conductor_jacket_fraction = conductor_jacket_area / conductor_area
+        call croco(jcritsc, croco_strand, &
+            conductor_copper_area, conductor_copper_fraction, conductor_copper_bar_area, &
+            conductor_hastelloy_area, conductor_hastelloy_fraction, conductor_helium_area, &
+            conductor_helium_fraction, conductor_solder_area, conductor_solder_fraction, &
+            conductor_jacket_area, conductor_jacket_fraction, conductor_rebco_area, &
+            conductor_rebco_fraction, conductor_critical_current, conductor_acs, &
+            conductor_area, croco_od,croco_thick)
+        copperA_m2 = iop / conductor_copper_area
+        icrit = conductor_critical_current
         jcritstr = croco_strand%critical_current / croco_strand%area
 
         ! Critical current density in winding pack
@@ -4683,8 +4701,8 @@ contains
 
         if (iprint == 0) return     ! Output ----------------------------------
 
-        total = conductor%copper_area+conductor%hastelloy_area+conductor%solder_area+ &
-        conductor%jacket_area+conductor%helium_area+conductor%rebco_area
+        total = conductor_copper_area+conductor_hastelloy_area+conductor_solder_area+ &
+        conductor_jacket_area+conductor_helium_area+conductor_rebco_area
 
         if (temp_margin <= 0.0D0) then
             write(*,*)'ERROR: Negative TFC temperature margin'
@@ -4727,21 +4745,21 @@ contains
         call ocmmnt(outfile,'Conductor information (includes jacket, not including insulation)')
         call ovarre(outfile,'Width of square conductor (cable + steel jacket) (m)', &
             '(t_conductor)', t_conductor , 'OP ')
-        call ovarre(outfile,'Area of conductor (m2)','(area)', conductor%area , 'OP ')
-        call ovarre(outfile,'REBCO area of conductor (mm2)','(rebco_area)',conductor%rebco_area , 'OP ')
-        call ovarre(outfile,'Area of central copper bar (mm2)', '(copper_bar_area)', conductor%copper_bar_area, 'OP ')
-        call ovarre(outfile,'Total copper area of conductor, total (mm2)','(copper_area)',conductor%copper_area, 'OP ')
-        call ovarre(outfile,'Hastelloy area of conductor (mm2)','(hastelloy_area)',conductor%hastelloy_area, 'OP ')
-        call ovarre(outfile,'Solder area of conductor (mm2)','(solder_area)',conductor%solder_area, 'OP ')
-        call ovarre(outfile,'Jacket area of conductor (mm2)','(jacket_area)',conductor%jacket_area, 'OP ')
-        call ovarre(outfile,'Helium area of conductor (mm2)','(helium_area)',conductor%helium_area, 'OP ')
-        if(abs(total-conductor%area)>1d-8) then
+        call ovarre(outfile,'Area of conductor (m2)','(area)', conductor_area , 'OP ')
+        call ovarre(outfile,'REBCO area of conductor (mm2)','(rebco_area)',conductor_rebco_area , 'OP ')
+        call ovarre(outfile,'Area of central copper bar (mm2)', '(copper_bar_area)', conductor_copper_bar_area, 'OP ')
+        call ovarre(outfile,'Total copper area of conductor, total (mm2)','(copper_area)',conductor_copper_area, 'OP ')
+        call ovarre(outfile,'Hastelloy area of conductor (mm2)','(hastelloy_area)',conductor_hastelloy_area, 'OP ')
+        call ovarre(outfile,'Solder area of conductor (mm2)','(solder_area)',conductor_solder_area, 'OP ')
+        call ovarre(outfile,'Jacket area of conductor (mm2)','(jacket_area)',conductor_jacket_area, 'OP ')
+        call ovarre(outfile,'Helium area of conductor (mm2)','(helium_area)',conductor_helium_area, 'OP ')
+        if(abs(total-conductor_area)>1d-8) then
             call ovarre(outfile, "ERROR: conductor areas do not add up:",'(total)',total , 'OP ')
         endif
         call ovarre(outfile,'Critical current of CroCo strand (A)','(croco_strand%critical_current)', &
         croco_strand%critical_current , 'OP ')
-        call ovarre(outfile,'Critical current of conductor (A) ','(conductor%critical_current)', &
-        conductor%critical_current , 'OP ')
+        call ovarre(outfile,'Critical current of conductor (A) ','(conductor_critical_current)', &
+        conductor_critical_current , 'OP ')
 
         if (run_tests==1) then
             call oblnkl(outfile)
@@ -4942,7 +4960,7 @@ subroutine croco_quench(conductor)
         ! T1 = Peak temperature of normal zone before quench is detected
 
         ! Obsolete but leave here for the moment
-        ! croco_quench_factor = conductor%copper_fraction / jwptf**2
+        ! croco_quench_factor = conductor_copper_fraction / jwptf**2
 
         if(T1>tmax_croco)write(*,*)'Phase 1 of quench is too hot: T1 = ',T1
     else
@@ -5004,7 +5022,7 @@ contains
         call jcrit_rebco(t1,bmaxtf,jcritsc,validity,iprint)
 
         ! Critical current density at specified temperature t1, operating maximum field bmaxtf
-        jc = jcritsc * conductor%rebco_fraction
+        jc = jcritsc * conductor_rebco_fraction
 
         ! By definition jc=0 below the critical temperature at operating field
         ! All the current flows in the copper
@@ -5013,7 +5031,7 @@ contains
         if(jc<0) jc = 0d0
 
         deltaj = (current_density_in_conductor - jc)
-        detection_field_error = deltaj * copper%resistivity / conductor%copper_fraction &
+        detection_field_error = deltaj * copper%resistivity / conductor_copper_fraction &
         - quench_detection_ef
     end function
 
@@ -5067,7 +5085,7 @@ subroutine dtempbydtime ( qtime, qtemperature, derivative )
 
     ! Critical current 'qj' given field and temperature
     call jcrit_rebco(qtemp,qbfield,qj,validity,0)
-    q_crit_current = conductor%rebco_area * qj
+    q_crit_current = conductor_rebco_area * qj
 
     ! The jacket is now included in the argument list
     qratio = resistivity_over_heat_capacity(qtemp,qbfield,copper,hastelloy,solder,helium,jacket)
@@ -5075,7 +5093,7 @@ subroutine dtempbydtime ( qtime, qtemperature, derivative )
     ! Derivatives
 
     derivative(1) = (qcurrent - q_crit_current)**2 * qratio / &
-    (conductor%copper_fraction * conductor%area**2)
+    (conductor_copper_fraction * conductor_area**2)
 
 
     !write(*,*)'subroutine dtempbydtime: derivative =',derivative(1)
@@ -5478,32 +5496,32 @@ function resistivity_over_heat_capacity(qtemp,qbfield,copper,hastelloy,solder,he
     sum = 0d0
     call copper_properties2(qtemp,qbfield, copper)
     if(present(copper))then
-        sum = sum + conductor%copper_fraction * copper%density * copper%cp
+        sum = sum + conductor_copper_fraction * copper%density * copper%cp
     end if
     if(present(hastelloy))then
         call hastelloy_properties(qtemp,hastelloy)
-        sum = sum + conductor%hastelloy_fraction * hastelloy%density * hastelloy%cp
+        sum = sum + conductor_hastelloy_fraction * hastelloy%density * hastelloy%cp
     end if
     if(present(solder))then
         call solder_properties(qtemp,solder)
-        sum = sum + conductor%solder_fraction    * solder%density * solder%cp
+        sum = sum + conductor_solder_fraction    * solder%density * solder%cp
     end if
     if(present(helium))then
         call helium_properties(qtemp,helium)
-        sum = sum + conductor%helium_fraction    * helium%cp_density
+        sum = sum + conductor_helium_fraction    * helium%cp_density
     end if
     if(present(jacket))then
         call jacket_properties(qtemp,jacket)
-        sum = sum + conductor%jacket_fraction    * jacket%density * jacket%cp
+        sum = sum + conductor_jacket_fraction    * jacket%density * jacket%cp
     end if
 
     resistivity_over_heat_capacity = copper%resistivity / sum
 
     ! write(*,'(10(1pe10.3), 1x)')qtemp, copper%resistivity, sum,resistivity_over_heat_capacity
-    ! write(*,'(10(1pe10.3), 1x)')conductor%copper_fraction    , copper%density ,copper%cp
-    ! write(*,'(10(1pe10.3), 1x)')conductor%hastelloy_fraction , hastelloy%density , hastelloy%cp
-    ! write(*,'(10(1pe10.3), 1x)')conductor%solder_fraction    , solder%density , solder%cp
-    ! write(*,'(10(1pe10.3), 1x)')conductor%helium_fraction    , helium%cp_density
+    ! write(*,'(10(1pe10.3), 1x)')conductor_copper_fraction    , copper%density ,copper%cp
+    ! write(*,'(10(1pe10.3), 1x)')conductor_hastelloy_fraction , hastelloy%density , hastelloy%cp
+    ! write(*,'(10(1pe10.3), 1x)')conductor_solder_fraction    , solder%density , solder%cp
+    ! write(*,'(10(1pe10.3), 1x)')conductor_helium_fraction    , helium%cp_density
 
 end function resistivity_over_heat_capacity
 !--------------------------------------------------------------
