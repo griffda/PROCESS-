@@ -4678,9 +4678,6 @@ contains
         tmarg = current_sharing_t - thelium
         temp_margin = tmarg         ! Only used in the availabilty routine - see comment to Issue #526
 
-        ! Quench thermal model not in use
-        ! call croco_quench(conductor)
-
         if (iprint == 0) return     ! Output ----------------------------------
 
         total = conductor%copper_area+conductor%hastelloy_area+conductor%solder_area+ &
@@ -4901,125 +4898,6 @@ function croco_voltage()
 
 end function croco_voltage
 
-! --------------------------------------------------------------------
-subroutine croco_quench(conductor)
-
-    !! Finds the current density limited by the maximum temperatures in quench
-    !! It also finds the dump voltage.
-    use tfcoil_variables, only: tmax_croco, bmaxtf, quench_detection_ef, &
-        tftmp, croco_quench_temperature, jwptf, t_conductor
-    use superconductors, only: copper_properties2, jcrit_rebco
-    use ode_mod, only: ode
-    use maths_library, only: secant_solve
-    implicit none
-
-    type(volume_fractions), intent(in)::conductor
-    real(dp):: current_density_in_conductor
-
-
-    real(dp)::tout     !for the phase 2
-    real(dp), parameter :: relerr= 0.01d0
-    real(dp), parameter :: abserr= 0.01d0
-
-    integer(kind=4), parameter :: neqn = 1
-    integer(kind=4) :: iflag
-    integer(kind=4) :: iwork(5)
-
-    real(dp) :: work(100+21*neqn)
-    real(dp) :: y(neqn)
-
-    real(dp)::residual, t
-    logical::error
-
-    if(quench_detection_ef>1d-10)then
-        ! Two-phase quench model is used.
-        ! Phase 1
-        ! Issue #548, or see K:\Power Plant Physics and Technology\PROCESS\HTS\
-        ! Solve for the temperature at which the quench detection field is reached.
-        ! secant_solve(f,x1,x2,solution,error,residual,opt_tol)
-        current_density_in_conductor = jwptf *  (t_cable / t_conductor)**2
-        call secant_solve(detection_field_error,5d0, 70d0,T1,error,residual)
-        ! T1 = Peak temperature of normal zone before quench is detected
-
-        ! Obsolete but leave here for the moment
-        ! croco_quench_factor = conductor%copper_fraction / jwptf**2
-
-        if(T1>tmax_croco)write(*,*)'Phase 1 of quench is too hot: T1 = ',T1
-    else
-        ! Quench is detected instantly - no phase 1.
-        T1 = tftmp
-    endif
-
-    ! vtfskv : voltage across a TF coil during quench (kV)
-    ! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s) (time-dump-TF)
-    ! For clarity I have copied this into 'time2' or 'tau2' depending on the model.
-
-    ! if(quench_model=='linear')then
-    !     time2 = tdmptf
-    !     vtfskv = 2.0D0/time2 * (estotft/n_tf) / cpttf
-    ! elseif(quench_model=='exponential')then
-    !     tau2 = tdmptf
-    !     vtfskv = 2.0D0/tau2 * (estotft/n_tf) / cpttf
-    ! endif
-
-    ! PHASE 2 OF QUENCH: fast discharge into resistor
-    ! The field declines in proportion to the current.
-    ! The operating current is iop.
-    ! The peak field at the operating current is bmaxtfrp
-    ! This is declared in global_variable.f90, so is in scope.
-    ! Solve the set of differential equations
-    ! subroutine ode ( f, neqn, y, t, tout, relerr, abserr, iflag, work, iwork )
-    ! See ode.f90 for details.
-    !    declare F in an external statement, supply the double precision
-    !      SUBROUTINE F ( T, Y, YP )
-    y(1) = T1
-    tout = 2.0d0 * tau2
-    iflag = 1
-    ! Starting time
-    t = 0d0
-    ! Remember that t will be set to the finish time by the ode solver!
-    ! ODE SOLVER
-    call ode(dtempbydtime, neqn, y, t, tout, relerr, abserr, iflag, work, iwork)
-    if(iflag /= 2)write(*,*)'ODE in subroutine croco_quench failed: iflag =', iflag
-
-    croco_quench_temperature = y(1)
-
-
-contains
-    function detection_field_error(t1)
-        ! Issue #548.
-        ! The difference beteween the actual voltage developed during the first
-        ! phase of the quench and the specified detection voltage
-
-        implicit none
-
-        real(dp)::detection_field_error, deltaj,jcritsc
-
-        real(dp), intent(in) :: t1
-        real(dp):: jc
-        logical :: validity
-        integer :: iprint
-
-        call copper_properties2(t1,bmaxtf,copper)
-        call jcrit_rebco(t1,bmaxtf,jcritsc,validity,iprint)
-
-        ! Critical current density at specified temperature t1, operating maximum field bmaxtf
-        jc = jcritsc * conductor%rebco_fraction
-
-        ! By definition jc=0 below the critical temperature at operating field
-        ! All the current flows in the copper
-        ! Note that the copper  resisitivity is a function of temperature, so it should still
-        ! be possible to solve for the correct detection voltage.
-        if(jc<0) jc = 0d0
-
-        deltaj = (current_density_in_conductor - jc)
-        detection_field_error = deltaj * copper%resistivity / conductor%copper_fraction &
-        - quench_detection_ef
-    end function
-
-end subroutine croco_quench
-
-!-------------------------------------------------------------------
 subroutine dtempbydtime ( qtime, qtemperature, derivative )
     !! Supplies the right hand side of the ODE for the croco quench phase 2 subroutine
     !! author: M Kovari, CCFE, Culham Science Centre
