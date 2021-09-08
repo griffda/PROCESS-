@@ -139,20 +139,23 @@ type(resistive_material):: hastelloy
 type(resistive_material):: solder
 type(resistive_material):: jacket
 type(resistive_material):: helium
-type(supercon_strand)::croco_strand
+
+! croco_strand
+real(dp) :: croco_strand_area
+real(dp) :: croco_strand_critical_current
 
 ! conductor
-    real(dp) :: conductor_copper_area,  conductor_copper_fraction
-    real(dp) :: conductor_copper_bar_area
-    real(dp) :: conductor_hastelloy_area, conductor_hastelloy_fraction
-    real(dp) :: conductor_helium_area, conductor_helium_fraction
-    real(dp) :: conductor_solder_area, conductor_solder_fraction
-    real(dp) :: conductor_jacket_area, conductor_jacket_fraction
-    real(dp) :: conductor_rebco_area,  conductor_rebco_fraction
-    real(dp) :: conductor_critical_current
-    real(dp) :: conductor_acs
-    !! Area of cable space inside jacket
-    real(dp) :: conductor_area      
+real(dp) :: conductor_copper_area,  conductor_copper_fraction
+real(dp) :: conductor_copper_bar_area
+real(dp) :: conductor_hastelloy_area, conductor_hastelloy_fraction
+real(dp) :: conductor_helium_area, conductor_helium_fraction
+real(dp) :: conductor_solder_area, conductor_solder_fraction
+real(dp) :: conductor_jacket_area, conductor_jacket_fraction
+real(dp) :: conductor_rebco_area,  conductor_rebco_fraction
+real(dp) :: conductor_critical_current
+real(dp) :: conductor_acs
+!! Area of cable space inside jacket
+real(dp) :: conductor_area      
 
 real(dp):: T1, time2, tau2, estotft
 ! (OBSOLETE, but leave for moment)
@@ -4669,7 +4672,7 @@ contains
         acndttf = conductor_jacket_area
         
         conductor_jacket_fraction = conductor_jacket_area / conductor_area
-        call croco(jcritsc, croco_strand, &
+        call croco(jcritsc, croco_strand_area, croco_strand_critical_current, &
             conductor_copper_area, conductor_copper_fraction, conductor_copper_bar_area, &
             conductor_hastelloy_area, conductor_hastelloy_fraction, conductor_helium_area, &
             conductor_helium_fraction, conductor_solder_area, conductor_solder_fraction, &
@@ -4677,7 +4680,7 @@ contains
             conductor_area, croco_od,croco_thick)
         copperA_m2 = iop / conductor_copper_area
         icrit = conductor_critical_current
-        jcritstr = croco_strand%critical_current / croco_strand%area
+        jcritstr = croco_strand_critical_current / croco_strand_area
 
         ! Critical current density in winding pack
         ! aturn : Area per turn (i.e. entire jacketed conductor with insulation) (m2)
@@ -4729,8 +4732,8 @@ contains
         call ovarre(outfile,'Area of copper in strand (m2)','(copper_area)',copper_area , 'OP ')
         call ovarre(outfile,'Area of hastelloy substrate in strand (m2) ','(hastelloy_area)',hastelloy_area , 'OP ')
         call ovarre(outfile,'Area of solder in strand (m2)  ','(solder_area)',solder_area , 'OP ')
-        call ovarre(outfile,'Total: area of CroCo strand (m2)  ','(croco_strand%area)',croco_strand%area , 'OP ')
-        if(abs(croco_strand%area-(rebco_area+copper_area+hastelloy_area+solder_area))>1d-6)then
+        call ovarre(outfile,'Total: area of CroCo strand (m2)  ','(croco_strand_area)',croco_strand_area , 'OP ')
+        if(abs(croco_strand_area-(rebco_area+copper_area+hastelloy_area+solder_area))>1d-6)then
             call ocmmnt(outfile, "ERROR: Areas in CroCo strand do not add up")
             write(*,*)'ERROR: Areas in CroCo strand do not add up - see OUT.DAT'
         endif
@@ -4755,8 +4758,8 @@ contains
         if(abs(total-conductor_area)>1d-8) then
             call ovarre(outfile, "ERROR: conductor areas do not add up:",'(total)',total , 'OP ')
         endif
-        call ovarre(outfile,'Critical current of CroCo strand (A)','(croco_strand%critical_current)', &
-        croco_strand%critical_current , 'OP ')
+        call ovarre(outfile,'Critical current of CroCo strand (A)','(croco_strand_critical_current)', &
+        croco_strand_critical_current , 'OP ')
         call ovarre(outfile,'Critical current of conductor (A) ','(conductor_critical_current)', &
         conductor_critical_current , 'OP ')
 

@@ -779,7 +779,7 @@ end subroutine GL_REBCO
 
 !----------------------------------------------------------------
 
-subroutine croco(jcritsc, croco_strand, &
+subroutine croco(jcritsc, croco_strand_area, croco_strand_critical_current, &
     conductor_copper_area, conductor_copper_fraction, conductor_copper_bar_area, &
     conductor_hastelloy_area, conductor_hastelloy_fraction, conductor_helium_area, &
     conductor_helium_fraction, conductor_solder_area, conductor_solder_fraction, &
@@ -797,7 +797,6 @@ subroutine croco(jcritsc, croco_strand, &
     use constants, only: pi
     implicit none
     real(dp), intent(in) ::jcritsc
-    type(supercon_strand), intent(inout)::croco_strand
     real(dp) :: d, scaling, croco_od, croco_thick
 
     ! conductor
@@ -811,6 +810,9 @@ subroutine croco(jcritsc, croco_strand, &
     real(dp), intent(in) :: conductor_area
 
     ! croco_strand
+    real(dp), intent(inout) :: croco_strand_area
+    real(dp), intent(inout) :: croco_strand_critical_current
+
 
     ! Define local alias
     d = croco_od
@@ -836,14 +838,14 @@ subroutine croco(jcritsc, croco_strand, &
     solder_area = pi / 4.0d0 * croco_id**2 - stack_thickness * tape_width
 
     rebco_area = rebco_thickness * tape_width * tapes
-    croco_strand%area =  pi / 4.0d0 * d**2
-    croco_strand%critical_current = jcritsc * rebco_area
+    croco_strand_area =  pi / 4.0d0 * d**2
+    croco_strand_critical_current = jcritsc * rebco_area
 
     ! Conductor properties
-    !conductor%number_croco = conductor%acs*(1d0-cable_helium_fraction-copper_bar)/croco_strand%area
-    conductor_critical_current = croco_strand%critical_current * 6.0d0
+    !conductor%number_croco = conductor%acs*(1d0-cable_helium_fraction-copper_bar)/croco_strand_area
+    conductor_critical_current = croco_strand_critical_current * 6.0d0
     ! Area of core = area of strand
-    conductor_copper_bar_area = croco_strand%area
+    conductor_copper_bar_area = croco_strand_area
     conductor_copper_area = copper_area * 6.0d0 + conductor_copper_bar_area
     conductor_copper_fraction = conductor_copper_area / conductor_area
 
