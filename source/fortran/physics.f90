@@ -594,7 +594,7 @@ module physics_module
        !calculate separatrix temperature, if Reinke criterion is used
        tesep = reinke_tsep(bt, flhthresh, q95, rmajor, eps, fgw, kappa, lhat)
        fzmin =  reinke_fzmin(bt, flhthresh, q95, rmajor, eps, fsep, fgw, kappa, lhat, &
-            netau_sol, tesep, impvardiv, impurity_arr, impurity_enrichment)
+            netau_sol, tesep, impvardiv, impurity_arr%frac, impurity_enrichment)
 
        if (fzmin >= 1.0D0) then
           call report_error(217)
