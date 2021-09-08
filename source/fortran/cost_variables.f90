@@ -56,7 +56,7 @@ module cost_variables
   !! Total plant capacity factor
   
   real(dp), dimension(4) :: cfind
-  !! indirect cost factor (func of lsa)
+  !! indirect cost factor (func of lsa) (cost model = 0)
 
   real(dp) :: cland
   !! cost of land (M$)
@@ -360,6 +360,12 @@ module cost_variables
 
   real(dp) :: step_ucfwps 
   !! first wall passive stabiliser cost ($) (if cost model = 2)
+
+  real(dp) :: step_ucoam
+  !! annual cost of operation and maintenance (M$/year/1200MW**0.5)
+
+  real(dp) :: step_ucwst
+  !! cost of waste disposal (M$/y/1200MW)
 
   real(dp), dimension(8) :: step_ucsc
   !! cost of superconductor ($/kg) (if cost model = 2)
@@ -760,6 +766,8 @@ module cost_variables
     step_ucfwps = 0.0D0
     step_ucsc = (/ 600.0D0, 600.0D0, 443.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0,1200.0D0 /)
     step_ucfnc = 104.3D0 
+    step_ucoam = 74.4D0
+    step_ucwst = 7.88D0
     step_ucwindpf = 465.0D0
     step_rh_costfrac = 7.5D-2
     step_ref = &

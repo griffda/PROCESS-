@@ -252,6 +252,16 @@ class Scenario():
             src_path = self.test_dir / (file + ".DAT")
             dst_path = self.ref_dir / ("ref." + file + ".DAT")
             shutil.copyfile(src_path, dst_path)
+    
+    def keep_mfile(self):
+        """Keep output MFile from test.
+
+        Keep a copy of the output MFile in the test folder.
+        Mainly used to save files as assets for the CI system.
+        """
+        src_path = self.test_dir / 'MFILE.DAT'
+        dst_path = self.ref_dir / 'out.MFILE.DAT'
+        shutil.copyfile(src_path, dst_path)
 
     def get_diff_items(self):
         """Return list of diffs that exceed the tolerance.

@@ -137,6 +137,10 @@ LIST(APPEND PROCESS_SRCS
     vacuum.f90
     water_usage.f90
     hcll.f90
+    build_variables.f90
+    current_drive_variables.f90
+    pfcoil_variables.f90
+    structure_variables.f90
 )
 
 # Install all requirements in the current Python environment

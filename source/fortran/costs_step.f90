@@ -420,7 +420,7 @@ contains
     ! 22.98 Spares
     ! STARFIRE percentage of components
     step22 = step22 + step2298
-  
+
     ! 21.99 Contingency
     ! STARFIRE 15%
     step2299 = step_con * step22
@@ -626,7 +626,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use cost_variables, only: step_ucblss, step_ucblbreed, step_ucblbe, ucblli, &
-      step_ucblvd, ucblli2o, blkcst, ucbllipb, ifueltyp, lsa, step_ucfws, &
+      step_ucblvd, ucblli2o, blkcst, ucbllipb, ifueltyp, step_ucfws, &
       fwallcst, step_ucfwps, step_ucfwa
 		use fwbs_variables, only: blktmodel, whtblli, blkttype, wtblli2o, &
       whtblbreed, whtblvd, whtblbe, whtblss, wtbllipb, fw_armour_mass, fwmass 
@@ -634,8 +634,9 @@ contains
 		use heat_transport_variables, only: ipowerflow 
     
     implicit none
-    real(dp), intent(inout) :: step220101, step22010101, step22010102, step2201010201, &
+    real(dp), intent(inout) :: step22010101, step22010102, step2201010201, &
                                step2201010202, step2201010203
+    real(dp), intent(out) :: step220101
 
     !  Local variables
     real(dp) :: step2201010204, step2201010205, step2201010206, step2201010207
@@ -813,7 +814,7 @@ contains
 		use build_variables, only: iohcl 
 		use constants, only: twopi, dcopper
 		use cost_variables, only: step_uccase, step_uccu, step_cconshpf, step_ucfnc, &
-      step_cconfix, step_ucsc, step_ucwindpf, lsa
+      step_cconfix, step_ucsc, step_ucwindpf
 		use pfcoil_variables, only: rjconpf, ipfres, vfohc, nohc, turns, isumatpf, &
       whtpfs, ric, rpf, isumatoh, fcupfsu, fcuohsu, vf, awpoh 
 		use structure_variables, only: fncmass 
@@ -1257,11 +1258,10 @@ contains
   
     ! Initialise as zero
     step2207 = 0.0D0
-     
+
     ! 22.07 Instrumentation and Control
     ! Original STARFIRE value, scaling with thermal power
     step2207 = step_ref(50) * (pth / ptherm_star)**0.6D0
-  
     ! Add to Account 22 total
     step22 = step22 + step2207
 
@@ -1595,9 +1595,10 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use cost_variables, only: output_costs, discount_rate, tlife, ucfuel, uche3, cdcost, &
-      divcst, fcdfuel, ifueltyp, moneyint, lsa, ucwst, ucoam, fwallcst, fcr0, fcap0cp, &
-      cfind, fcap0, dtlife, divlife, dintrt, decomf, cpstcst, cplife, concost, coeoam, &
-      coefuelt, coecap, coe, cfactr, cdrlife, capcost, step_ref, step_currency
+      divcst, fcdfuel, ifueltyp, moneyint, fwallcst, fcr0, fcap0cp, &
+      fcap0, dtlife, divlife, dintrt, decomf, cpstcst, cplife, concost, coeoam, &
+      coefuelt, coecap, coe, cfactr, cdrlife, capcost, step_ref, step_currency, &
+      step_ucoam, step_ucwst
     use fwbs_variables, only: bktlife
     use heat_transport_variables, only: pnetelmw
     use physics_variables, only: fhe3, itart, wtgpd
@@ -1651,7 +1652,7 @@ contains
     crffwbl = (feffwbl*discount_rate) / (feffwbl-1.0D0)
 
     ! Annual cost of replacements
-    annfwbl = fwblkcost * (1.0D0+cfind(lsa)) * fcap0cp * crffwbl
+    annfwbl = fwblkcost * fcap0cp * crffwbl
 
     ! Cost of electricity due to first wall/blanket replacements
     coefwbl = 1.0D9 * annfwbl / kwhpy
@@ -1666,7 +1667,7 @@ contains
     crfdiv = (fefdiv*discount_rate) / (fefdiv-1.0D0)
 
     ! Annual cost of replacements
-    anndiv = divcst * (1.0D0+cfind(lsa)) * fcap0cp * crfdiv
+    anndiv = divcst * fcap0cp * crfdiv
 
     ! Cost of electricity due to divertor replacements
     coediv = 1.0D9 * anndiv / kwhpy
@@ -1682,7 +1683,7 @@ contains
       crfcp = (fefcp*discount_rate) / (fefcp-1.0D0)
 
       ! Annual cost of replacements
-      anncp = cpstcst * (1.0D0+cfind(lsa)) * fcap0cp * crfcp
+      anncp = cpstcst * fcap0cp * crfcp
 
       ! Cost of electricity due to centrepost replacements
       coecp = 1.0D9 * anncp / kwhpy
@@ -1704,7 +1705,7 @@ contains
     if (ifueltyp == 0) then
       anncdr = 0.0D0
     else
-      anncdr = cdcost * fcdfuel/(1.0D0-fcdfuel) * (1.0D0+cfind(lsa)) * fcap0cp * crfcdr
+      anncdr = cdcost * fcdfuel/(1.0D0-fcdfuel) * fcap0cp * crfcdr
     end if
 
     ! Cost of electricity due to current drive system replacements
@@ -1714,7 +1715,7 @@ contains
     ! ======================================
 
     ! Annual cost of operation and maintenance
-    annoam = ucoam(lsa) * sqrt(pnetelmw/1200.0D0)
+    annoam = step_ucoam * sqrt(pnetelmw/1200.0D0)
 
   ! Additional cost due to pulsed reactor thermal storage
   ! See F/MPE/MOD/CAG/PROCESS/PULSE/0008
@@ -1759,7 +1760,7 @@ contains
   !  ===========================
 
   !  Annual cost of waste disposal
-  annwst = ucwst(lsa) * sqrt(pnetelmw/1200.0D0)
+  annwst = step_ucwst * sqrt(pnetelmw/1200.0D0)
 
   !  Cost of electricity due to waste disposal
   coewst = 1.0D9 * annwst / kwhpy

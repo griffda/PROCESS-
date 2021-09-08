@@ -46,6 +46,7 @@ from process.io import plot_proc
 from process.scan import Scan
 from process import final
 import argparse
+
 from pathlib import Path
 import sys
 import os
@@ -84,7 +85,8 @@ class Process():
         :param args: Arguments to parse
         :type args: list
         """
-        parser = argparse.ArgumentParser(description=("PROCESS\n"
+        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, 
+                                         description=("PROCESS\n"
             "Power Reactor Optimisation Code\n"
             "Usage\n"
             "Running code with IN.DAT        : ./<path_to_executable/process.exe\n"
@@ -319,6 +321,7 @@ class SingleRun():
             self.input_path = input_path
             # Set input as Path object
         else:
+            print("-- Info -- run `process --help` for usage")
             raise FileNotFoundError("Input file not found on this path. There "
                 "is no input file named", self.input_file, "in the analysis "
                 "folder")
