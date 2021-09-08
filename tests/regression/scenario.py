@@ -71,8 +71,6 @@ class Scenario():
 
         :param test_dir: temporary directory for running the test in
         :type test_dir: Path
-        :return: True if no exceptions thrown, False if not
-        :rtype: bool
         """
         self.test_dir = test_dir
         logger.info(f"Running scenario: {self.name}")
@@ -93,11 +91,10 @@ class Scenario():
         # directory, catching any errors
         try:
             main(args=args)
-            return True
         except:
             logger.exception(f"Process threw an exception when running "
-                "scenario: {self.name}")
-            return False
+                f"scenario: {self.name}")
+            raise
 
     def check_mfile_length(self):
         """Ensure there is something in the MFile.

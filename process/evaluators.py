@@ -83,13 +83,13 @@ def fcnvmc1(n, m, xv, ifail_in, first_call):
     if gv.verbose == 1:
         summ = 0.0
         for i in range(m):
-            summ = summ + conf(i) ** 2
+            summ = summ + conf[i] ** 2
 
         sqsumconfsq = math.sqrt(summ)
         logger.debug(
             numerics.nviter,
-            (1 - math.mod(ifail_out, 7)) - 1,
-            math.mod(numerics.nviter, 2) - 1,
+            (1 - (ifail_out % 7)) - 1,
+            (numerics.nviter % 2) - 1,
             pv.te,
             cv.coe,
             pv.rmajor,

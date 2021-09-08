@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-397-gad7f2a48
-    Branch : issue-935-power-plant-water-use
+   Tag No. : v2.1-450-g4091e822
+    Branch : 1365-investigate-memory-errors
    Git log : COMMIT_MSG
- Date/time : 22 Jul 2021 13:07:49 +01:00(hh:mm) UTC
-      User : rhicha
-  Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-45/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-45/test_scenario_kit_blanket_0/IN.DAT
+ Date/time :  7 Sep 2021 14:00:23 +00:00(hh:mm) UTC
+      User : root
+  Computer : 9028c87c1f7f
+ Directory : /root/process
+     Input : /tmp/pytest-of-root/pytest-40/test_scenario_kit_blanket_0/IN.DAT
  Run title : Michael's test file
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  

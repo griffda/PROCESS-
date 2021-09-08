@@ -922,8 +922,8 @@ contains
 
     integer, intent(in) :: ih, n
     integer, intent(out) :: info
-    integer, dimension(n), intent(out) :: ipvt
-    real(dp), dimension(ih,ih), intent(inout) :: h
+    integer, dimension(:), intent(out) :: ipvt
+    real(dp), dimension(:,:), intent(inout) :: h
 
     !  Local variables
 
@@ -980,8 +980,8 @@ contains
     !  Arguments
 
     integer, intent(in) :: ix,iy,n,iflag
-    real(dp), dimension(ix*n), intent(in) :: x
-    real(dp), dimension(iy*n), intent(in) :: y
+    real(dp), dimension(:), intent(in) :: x
+    real(dp), dimension(:), intent(in) :: y
     real(dp), intent(in) :: c
     real(dp), intent(out) :: total
 
@@ -1076,7 +1076,7 @@ contains
        !  First solve  transp(u)*y = b
 
        do k = 1, n
-          t = sdot(k-1,a(1,k),1,b(1),1)
+          t = sdot(k-1,a(:,k),1,b(:),1)
           b(k) = (b(k) - t)/a(k,k)
        end do
 
@@ -1085,7 +1085,7 @@ contains
        if (nm1 >= 1) then
           do kb = 1, nm1
              k = n - kb
-             b(k) = b(k) + sdot(n-k,a(k+1,k),1,b(k+1),1)
+             b(k) = b(k) + sdot(n-k,a(k+1:,k),1,b(k+1:),1)
              l = ipvt(k)
              if (l /= k) then
                 t = b(l)
@@ -1570,8 +1570,8 @@ contains
     !  Arguments
 
     integer, intent(in) :: n,incx,incy
-    real(dp), dimension(n*incx), intent(in) :: sx
-    real(dp), dimension(n*incy), intent(in) :: sy
+    real(dp), dimension(:), intent(in) :: sx
+    real(dp), dimension(:), intent(in) :: sy
 
     !  Local variables
 
@@ -2193,13 +2193,13 @@ contains
     IMPLICIT NONE
 
     INTEGER n,m,meq,lcnorm,lb,info,ldel,lh,mact,lwa,liwa
-    INTEGER iwa(liwa),ilower(n),iupper(n)
+    INTEGER iwa(:),ilower(:),iupper(:)
     INTEGER i,iflag,j,k,mode,mtotal,np1,npp
     INTEGER inx
 
-    real(dp) conf(m),cnorm(lcnorm,m),b(lb,lb),gm(*),bdl(*), &
-         bdu(*),delta(ldel),cm(m),h(lh,lh),wa(lwa)
-    real(dp) x(n),bndu(n),bndl(n)
+    real(dp) conf(:),cnorm(:,:),b(:,:),gm(:),bdl(:), &
+         bdu(:),delta(:),cm(:),h(:,:),wa(:)
+    real(dp) x(:),bndu(:),bndl(:)
     real(dp) cd6,cdm6,cp9,one,zero
 
     !+**PJK 24/05/06 Added SAVE command (as a number of variables are
@@ -2303,7 +2303,9 @@ contains
 100 continue
 
     call harwqp(np1,mtotal,b,lb,gm,cnorm,lcnorm,cm,bdl,bdu,delta, &
-         mact,meq,h,lh,iwa,wa,iwa(4*(n+1)+m+1),mode,info)
+         mact,meq,h,lh,iwa,wa,iwa(4*(n+1)+m+1:),mode,info)
+    ! Pass a slice of iwa ending at its upper bound, rather than just the
+    ! starting element: helps catch array out-of-bounds errors
 
     if (info /= 1) then
        if (verbose == 1) then
@@ -2417,6 +2419,7 @@ contains
     !  normal return and set to two when a singular matrix is detected
     !  in HINV.  All other entries in the calling sequence are as
     !  described in the Harwell documentation.
+    !  https://www.hsl.rl.ac.uk/archive/specs/ve02.pdf
     !
     !  Modified 5/22/91 to use implicit none (J. Galambos)
     !
@@ -2430,12 +2433,12 @@ contains
     IMPLICIT NONE
 
     INTEGER n,m,ia,ic,k,ke,ih,mode,info
-    INTEGER iwa(*),lt(*)
+    INTEGER iwa(:),lt(:)
     INTEGER i, ial, ib, ii, j, li, ni, nk, nn, n3,n4,n5,n6
     INTEGER i0,i1,i2,i3
 
-    real(dp) a(ia,*),b(*),c(ic,*),d(*),bdl(*),bdu(*),x(*), &
-         h(ih,*),wa(*)
+    real(dp) a(:,:), c(:,:), h(:,:)
+    real(dp) b(:), d(:), bdl(:), bdu(:), x(:), wa(:)
     real(dp) alpha, cac, cc, chc, ghc, y, z, zz
     real(dp) r0
     real(dp), dimension(2) :: det
@@ -2573,7 +2576,7 @@ contains
 
 118 continue
     do i = 1,n
-       call dotpmc(h(1,i),i1,x(n+1),i1,r0,x(i),nk,i0)
+       call dotpmc(h(:,i),i1,x(n+1:),i1,r0,x(i),nk,i0)
     end do
 
     !  Check feasibility, if not exit to 8
@@ -2591,7 +2594,7 @@ contains
 
 112    continue
        j = i-nn
-       call dotpmc(c(1,j),i1,x(1),i1,d(j),z,n,i2)
+       call dotpmc(c(:,j),i1,x(:),i1,d(j),z,n,i2)
 
 114    continue
        if (z < 0.0D0) goto 8
@@ -2604,7 +2607,7 @@ contains
     !  Find largest multiplier,  exit if not positive
 
     do i = 1,n
-       call dotpmc(a(i,1),ia,x(1),i1,b(i),x(n6+i),n,i2)
+       call dotpmc(a(i,:),i1,x(:),i1,b(i),x(n6+i),n,i2)
     end do
     if (k == 0) goto 1000
 
@@ -2612,7 +2615,7 @@ contains
     z = -1.0D99
     do i = 1,k
        if (lt(nn+lt(i)) == -1) goto 122
-       call dotpmc(h(n+i,1),ih,x(n6+1),i1,r0,zz,n,i3)
+       call dotpmc(h(n+i,:),i1,x(n6+1:),i1,r0,zz,n,i3)
        if (zz <= z) goto 122
        z = zz
        ii = i
@@ -2637,9 +2640,9 @@ contains
 
 136 continue
     do i = 1,n
-       call dotpmc(a(i,1),ia,x(nn+1),i1,r0,x(n+i),n,i0)
+       call dotpmc(a(i,:),i1,x(nn+1:),i1,r0,x(n+i),n,i0)
     end do
-    call dotpmc(x(nn+1),i1,x(n+1),i1,r0,cac,n,i0)
+    call dotpmc(x(nn+1:),i1,x(n+1:),i1,r0,cac,n,i0)
     if (cac > 0.0D0) goto 134
     postiv = .false.
     y = 1.0D0
@@ -2679,9 +2682,9 @@ contains
 
 142    continue
        j = i-nn
-       call dotpmc(c(1,j),i1,x(n5+1),i1,r0,zz,n,i0)
+       call dotpmc(c(:,j),i1,x(n5+1:),i1,r0,zz,n,i0)
        if (zz >= 0.0D0) goto 140
-       call dotpmc(c(1,j),i1,x(1),i1,d(j),cc,n,i1)
+       call dotpmc(c(:,j),i1,x(:),i1,d(j),cc,n,i1)
        cc = cc/zz
 
 143    continue
@@ -2726,9 +2729,9 @@ contains
        x(n5+i) = c(i,ib)
     end do
     do i = j,nk
-       call dotpmc(h(i,1),ih,x(n5+1),i1,r0,x(n3+i),n,i0)
+       call dotpmc(h(i,:),i1,x(n5+1:),i1,r0,x(n3+i),n,i0)
     end do
-    if (k /= n) call dotpmc(x(n5+1),i1,x(n3+1),i1,r0,chc,n,i0)
+    if (k /= n) call dotpmc(x(n5+1:),i1,x(n3+1:),i1,r0,chc,n,i0)
 
 151 continue
     lt(nn+ial) = 0
@@ -2777,17 +2780,17 @@ contains
     !  the constraint is being removed from augmented basis
 
     do i=1,n
-       call dotpmc(a(i,1),ia,x(1),i1,b(i),x(n6+i),n,i2)
+       call dotpmc(a(i,:),i1,x(:),i1,b(i),x(n6+i),n,i2)
        x(nn+i) = h(n+ii,i)
     end do
-    call dotpmc(x(n6+1),i1,x(nn+1),i1,r0,z,n,i3)
+    call dotpmc(x(n6+1:),i1,x(nn+1:),i1,r0,z,n,i3)
     if (z == 0.0D0) goto 178
     goto 136
 
 160 continue
     cc = x(n4+ii)
     y = chc*cac+cc**2
-    call dotpmc(x(n6+1),i1,x(n3+1),i1,r0,ghc,n,i0)
+    call dotpmc(x(n6+1:),i1,x(n3+1:),i1,r0,ghc,n,i0)
     if ((alpha*y) < (chc*(z-alpha*cac)+ghc*cc)) goto 156
 
     !  Apply formula for exchanging new constraint
@@ -2795,7 +2798,7 @@ contains
 
     do i = 1,k
        ni = n+i
-       call dotpmc(h(ni,1),ih,x(n+1),i1,r0,x(n5+i),n,i0)
+       call dotpmc(h(ni,:),i1,x(n+1:),i1,r0,x(n5+i),n,i0)
     end do
     do i = 1,n
        x(n+i) = (chc*x(nn+i)-cc*x(n3+i))/y
@@ -2822,11 +2825,11 @@ contains
     !  Calculate g,  new search direction is -h.g
 
     do i = 1,n
-       call dotpmc(a(i,1),ia,x(1),i1,b(i),x(n+i),n,i2)
+       call dotpmc(a(i,:),i1,x(:),i1,b(i),x(n+i),n,i2)
     end do
     z = 0.0D0
     do i = 1,n
-       call dotpmc(h(i,1),ih,x(n+1),i1,r0,x(n5+i),n,i3)
+       call dotpmc(h(i,:),i1,x(n+1:),i1,r0,x(n5+i),n,i3)
        if (x(n5+i) /= 0.0D0) z = 1.0D0
     end do
     passiv = .false.
@@ -2867,7 +2870,7 @@ contains
     k = k-1
     do i = 1,k
        ni = n+i
-       call dotpmc(h(ni,1),ih,x(n+1),i1,r0,x(n3+i),n,i0)
+       call dotpmc(h(ni,:),i1,x(n+1:),i1,r0,x(n3+i),n,i0)
     end do
     do i = 1,k
        alpha = x(n3+i)/cac
@@ -2960,11 +2963,11 @@ contains
 
     INTEGER n,m,ic,k,ke,ih,info
     INTEGER i, ial, ib, ii, j, jj, kv, li, ni, nj, nn, n3
-    INTEGER iwa(*), lt(*)
+    INTEGER iwa(:), lt(:)
     INTEGER i0,i1,i2,i3
 
-    real(dp) c(ic,*),d(*),bdl(*),bdu(*),x(*),h(ih,*)
-    real(dp) wa(*)
+    real(dp) c(:,:),h(:,:)
+    real(dp) wa(:), d(:), bdu(:), x(:), bdl(:)
     real(dp) alpha, beta, y, z, zz
     real(dp) r0
 
@@ -3052,7 +3055,7 @@ contains
     !  Form m = (vtranspose.v)(-1)
     do i = 1,k
        do j = i,k
-          call dotpmc(h(1,n+i),i1,h(1,n+j),i1,r0,h(i,j),n,i0)
+          call dotpmc(h(:,n+i),i1,h(:,n+j),i1,r0,h(i,j),n,i0)
           h(j,i) = h(i,j)
        end do
     end do
@@ -3073,14 +3076,14 @@ contains
           x(n+j) = h(i,j)
        end do
        do j = 1,n
-          call dotpmc(x(n+1),i1,h(j,n+1),ih,r0,h(i,j),k,i0)
+          call dotpmc(x(n+1:),i1,h(j,n+1:),i1,r0,h(i,j),k,i0)
        end do
     end do
 
     !  Set up diagonal elements of the projection matrix  p = v.vplus
 
     do i = 1,n
-       call dotpmc(h(1,i),i1,h(i,n+1),ih,r0,x(n+i),k,i0)
+       call dotpmc(h(:,i),i1,h(i,n+1:),i1,r0,x(n+i),k,i0)
     end do
     do i = 1,n
        lt(n+i) = 0
@@ -3091,6 +3094,7 @@ contains
 
 29  continue
     z = 1.0D0
+    ii = 1 ! reset ii value in case it is never reset
     do i = 1,n
        if (lt(n+i) == 1) goto 25
        if (x(n+i) >= z) goto 25
@@ -3099,6 +3103,7 @@ contains
 25     continue
     end do
     y = 1.0D0
+
     if ( (x(ii)-bdl(ii)) > (bdu(ii)-x(ii)) ) y = -1.0D0
 
     !  Calculate vectors vplus.e(i) and  u = e(i)-v.vplus.e(i)
@@ -3117,7 +3122,7 @@ contains
 30  continue
     do i = 1,n
        if (lt(n+i) == 1) goto 31
-       call dotpmc(h(i,n+1),ih,x(nn+1),i1,r0,x(n3+i),kv,i3)
+       call dotpmc(h(i,n+1:),i1,x(nn+1:),i1,r0,x(n3+i),kv,i3)
 31     continue
     end do
     do i = 1,n
@@ -3173,7 +3178,7 @@ contains
     !  Calculate position of vertex
 
     do i = 1,n
-       call dotpmc(h(1,i),i1,x(n+1),i1,r0,x(i),n,i0)
+       call dotpmc(h(:,i),i1,x(n+1:),i1,r0,x(i),n,i0)
     end do
 
     !  Calculate the constraint residuals, the number of violated
@@ -3197,7 +3202,7 @@ contains
 
 54     continue
        j = i-nn
-       call dotpmc(c(1,j),i1,x(1),i1,d(j),z,n,i2)
+       call dotpmc(c(:,j),i1,x(:),i1,d(j),z,n,i2)
 
 55     continue
        x(nn+i) = z
@@ -3229,7 +3234,7 @@ contains
     z = 0.0D0
     do i = 1,n
        if (lt(nn+lt(i)) == -1) goto 64
-       call dotpmc(h(i,1),ih,x(n+1),i1,r0,y,n,i0)
+       call dotpmc(h(i,:),i1,x(n+1:),i1,r0,y,n,i0)
        if (y <= z) goto 64
        z = y
        ii = i
@@ -3262,7 +3267,7 @@ contains
 
 74     continue
        jj = i-nn
-       call dotpmc(x(n+1),i1,c(1,jj),i1,r0,z,n,i3)
+       call dotpmc(x(n+1:),i1,c(:,jj),i1,r0,z,n,i3)
 
 75     continue
        if (lt(nn+i) == 2) goto 76
@@ -3314,7 +3319,7 @@ contains
        x(n3+i) = c(i,ib)
     end do
     do i = 1,n
-       call dotpmc(h(i,1),ih,x(n3+1),i1,r0,x(nn+i),n,i0)
+       call dotpmc(h(i,:),i1,x(n3+1:),i1,r0,x(nn+i),n,i0)
     end do
 
 90  continue
