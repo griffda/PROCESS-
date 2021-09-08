@@ -3516,6 +3516,9 @@ subroutine coilshap
     !! Calculates the shape of the INSIDE of the TF coil. The coil is
     !! approximated by a straight inboard section and four elliptical arcs
     !! This is a totally ad hoc model, with no physics or engineering basis.
+    !!
+    !! The referenced equations can be found in draft/unpublished document
+    !! attached in GitLab to issue #1328.
     use physics_variables, only: i_single_null, rminor, rmajor, itart
     use build_variables, only: hmax, hpfu, tfcth, r_tf_outboard_mid, &
         r_tf_inboard_mid, tfthko, r_cp_top, r_tf_inboard_out
@@ -3534,7 +3537,7 @@ subroutine coilshap
     if ( i_tf_shape == 1 .and. itart == 0 ) then
     ! PROCESS D-shape parametrisation
         
-        ! X position of the arcs, eq(15)
+        ! X position of the arcs, eq(21)
         ! The xarc/yarc are defined in the INSIDE part of the TF
         xarc(1) = r_tf_inboard_out
         xarc(2) = rmajor - 0.2D0*rminor
@@ -3571,27 +3574,29 @@ subroutine coilshap
             aa = tfa(ii) + 0.5D0*tfcth
             bb = tfb(ii) + 0.5D0*tfcth
             tfleng = tfleng + 0.25d0 * circumference(aa,bb)
+            ! note: final tfleng includes inboard leg length; eq(22)
         end do
+
 
     ! Centrepost with D-shaped
     ! ---
     else if ( i_tf_shape == 1 .and. itart == 1  ) then
         
-        ! X position of the arcs, eq(17) and text before it
+        ! X position of the arcs, eq(23) and text before it
         xarc(1) = r_cp_top
         xarc(2) = rmajor - 0.2D0*rminor
         xarc(3) = r_tf_outboard_in
         xarc(4) = xarc(2)
         xarc(5) = xarc(1)
 
-        ! Double null, eq(17) and text before it
+        ! Double null, eq(23) and text before it
         yarc(1) = hpfu - tfcth
         yarc(2) = hpfu - tfcth
         yarc(3) = 0
         yarc(4) = -hmax
         yarc(5) = -hmax
 
-        ! TF middle circumference, eq(18)
+        ! TF middle circumference
         tfleng = 2*(xarc(2) - xarc(1))
 
         do ii = 2, 3 
@@ -3602,6 +3607,7 @@ subroutine coilshap
            aa = tfa(ii) + 0.5D0 * tfthko
            bb = tfb(ii) + 0.5D0 * tfthko
            tfleng = tfleng + 0.25d0 * circumference(aa,bb)
+           ! IMPORTANT : THE CENTREPOST LENGTH IS NOT INCLUDED IN TFLENG FOR TART; eq(24)
         end do
     ! ---
 
@@ -3626,9 +3632,9 @@ subroutine coilshap
         yarc(5) = -hmax
 
         ! TF middle circumference
-        ! IMPORTANT : THE CENTREPOST LENGTH IS NOT INCLUDED FOR TART 
-        if ( itart == 0 ) tfleng = 2.0D0 * ( 2.0D0*hmax + tfcth  + r_tf_outboard_mid - r_tf_inboard_mid )    ! eq(19)
-        if ( itart == 1 ) tfleng = hmax + hpfu + 2.0D0 * ( r_tf_outboard_mid - r_cp_top ) ! eq(20)
+        ! IMPORTANT : THE CENTREPOST LENGTH IS NOT INCLUDED IN TFLENG FOR TART 
+        if ( itart == 0 ) tfleng = 2.0D0 * ( 2.0D0*hmax + tfcth  + r_tf_outboard_mid - r_tf_inboard_mid )  ! eq(25)
+        if ( itart == 1 ) tfleng = hmax + hpfu + 2.0D0 * ( r_tf_outboard_mid - r_cp_top )  ! eq(26)
     end if
     ! ---
 
@@ -3871,7 +3877,11 @@ subroutine outtf(outfile, peaktfflag)
     call ovarre(outfile,'Total outboard leg radial thickness (m)','(tfthko)',tfthko)
     call ovarre(outfile,'Outboard leg toroidal thickness (m)','(tftort)',tftort, 'OP ')
     call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax, 'OP ')
-    call ovarre(outfile,'Mean coil circumference (m)','(tfleng)',tfleng, 'OP ')
+    if ( itart == 1 ) then
+        call ovarre(outfile,'Mean coil circumference (inboard leg not included) (m)','(tfleng)',tfleng, 'OP ')
+    else
+        call ovarre(outfile,'Mean coil circumference (including inboard leg length) (m)','(tfleng)',tfleng, 'OP ')
+    end if
     
     ! Vertical shape
     call ovarin(outfile,'Vertical TF shape','(i_tf_shape)',i_tf_shape)
