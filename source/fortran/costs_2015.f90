@@ -21,13 +21,12 @@ module costs_2015_module
   integer :: ip, ofile
 
   ! Costs structure for scaling laws (scl)
-  ! Costs structure for scaling laws (scl)
-  character(len=80), save, dimension(100) :: s_label = 'not used'
-  real(kind=double), save, dimension(100) :: s_kref = 0.0D0
-  real(kind=double), save, dimension(100) :: s_k = 0.0D0
-  real(kind=double), save, dimension(100) :: s_cref = 0.0D0
-  real(kind=double), save, dimension(100) :: s_cost = 0.0D0
-  real(kind=double), save, dimension(100) :: s_cost_factor = 0.0D0
+  character(len=80), save, dimension(100) :: s_label = 'not used' ! Description, appears in OUT.DAT
+  real(kind=double), save, dimension(100) :: s_kref = 0.0D0 ! Reference value of scaling parameter
+  real(kind=double), save, dimension(100) :: s_k = 0.0D0 ! Actual value of scaling parameter K
+  real(kind=double), save, dimension(100) :: s_cref = 0.0D0 ! Reference cost $
+  real(kind=double), save, dimension(100) :: s_cost = 0.0D0 ! Actual cost $
+  real(kind=double), save, dimension(100) :: s_cost_factor = 0.0D0 ! Multiplier f
 
 
   ! Scaling law array (unused entries will be zeroes)
