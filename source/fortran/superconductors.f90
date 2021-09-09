@@ -186,11 +186,11 @@ subroutine test_quench()
     write(1,*)'Solids: Cp as a function of Temperature (J/kg/K), and Helium: Cp x density J/K/m3'
     write(1,30)'', 'solder', 'solder(B)','jacket', 'hastell', 'hastell(B)','copper', 'copper(B)', 'He Cp*rho'
     do i=1,297
-        call solder_properties(T,solder)
-        call jacket_properties(T, jacket)
-        call hastelloy_properties(T, hastelloy)
-        call copper_properties2(T,0.0d0, copper)
-        call helium_properties(T,helium)
+        call solder_properties(T, solder%cp)
+        call jacket_properties(T, jacket%cp)
+        call hastelloy_properties(T, hastelloy%cp)
+        call copper_properties(T,0.0d0, copper%resistivity, copper%rrr, copper%cp)
+        call helium_properties(T, helium%cp_density)
         hastelloyB = cHastelloyC276(T)
 
         write(1,20) T, solder%cp, cSn40Pb(sngl(T)), jacket%cp, hastelloy%cp, &
@@ -205,9 +205,9 @@ subroutine test_quench()
     RRR = copper%rrr
     write(1,30)'Temp (K)', '0 T', '10 T', '0 T (B)', '10 T (B)'
     do i=1,297
-        call copper_properties2(T,0.0d0, copper)
+        call copper_properties(T,0.0d0, copper%resistivity, copper%rrr, copper%cp)
         copper0 = copper%resistivity
-        call copper_properties2(T,10.0d0, copper)
+        call copper_properties(T,10.0d0, copper%resistivity, copper%rrr, copper%cp)
         copper10 = copper%resistivity
         copper0B = rCu(sngl(T),0.0,sngl(RRR))
         copper10B = rCu(sngl(T),10.0,sngl(RRR))
@@ -864,87 +864,20 @@ subroutine croco(jcritsc, croco_strand_area, croco_strand_critical_current, &
     conductor_rebco_fraction = conductor_rebco_area / conductor_area
 
 end subroutine croco
-!--------------------------------------------------------------------------
 
-subroutine copper_properties(T,copper)
-    ! RRR=100, B=12 T
-    ! Cryodata Software Package, CRYOCOMP, v 3.0, Florence, SC, 1997
-    ! Data are available up to 1000 K.
-    use resistive_materials, only: resistive_material
-    use constants, only: pi
-    implicit none
-
-    type(resistive_material)::copper
-    real(dp), intent(in) :: T   ! temperature
-
-    if(T<40.0d0)then
-        copper%cp = -1.6113+0.60915*T-0.07152*T**2+0.00398*T**3-4.07673E-5*T**4
-    else if((40.0d0<T).and.(T<300.0d0))then
-        copper%cp = -196.51325+7.84244*T-0.04493*T**2+1.24263E-4*T**3-1.33845E-7*T**4
-    else if((300.0d0<T).and.(T<1000.0d0))then
-        copper%cp = 274.99376+0.70709*T-0.0015*T**2+1.35186E-6*T**3-4.34609E-10*T**4
-    endif
-
-    if(T<70.0d0)then
-        copper%resistivity = 6.19659E-10+7.13979E-12*T-5.36171E-13*T**2+1.47182E-14*T**3-6.68583E-17*T**4
-    else if((70.0d0<T).and.(T<1000.0d0))then
-        copper%resistivity = -3.3449E-9 +7.6628E-11*T-3.94931E-14*T**2+6.36545E-17*T**3-2.87882E-20*T**4
-    endif
-
-end subroutine copper_properties
-!--------------------------------------------------------------------------
-! subroutine copper_properties_nist(T,B,copper)
-!     ! Properties of copper and copper alloys,
-!     ! N. J. Simon, E. S. Drexler, and R. P. Reed
-!     ! NIST Monograph 177 (1992)
-!     ! Note that some papers that copy this formula have confused the units.
-!     ! They also seem to have misread the sign in the exponent term "P2+P4".
-!     ! Unfortunately the NIST website doesn't seem to work, so it is hard to verify.
-!
-!     type(resistive_material)::copper
-!     real(dp), intent(in) :: T, B   ! temperature, field
-!     ! Fitting constants
-!     real(dp), parameter::P1 = 1.171d-17
-!     real(dp), parameter::P2 = 4.49
-!     real(dp), parameter::P3 = 3.841d10
-!     real(dp), parameter::P4 = 1.14
-!     real(dp), parameter::P5 = 50
-!     real(dp), parameter::P6 = 6.428
-!     real(dp), parameter::P7 = 0.4531
-!
-!     real(dp), parameter::a0 = -0.2662d0
-!     real(dp), parameter::a1 = 0.3168d0
-!     real(dp), parameter::a2 = 0.6229d0
-!     real(dp), parameter::a3 = -0.1839d0
-!     real(dp), parameter::a4 = 0.01827
-!
-!     real(dp)::rho0, rhoi, rhoi0    ! Resistivity terms (nano-ohm.m)
-!     real(dp)::denominator, x
-!
-!
-!     rho0 = 15.53 / copper%rrr
-!     denominator = 1 + P1*P3*T**(P2+P4)*exp(-(P5/T)**P6)
-!     rhoi = P1*T**P2 / denominator
-!     rhoi0 = P7*rhoi*rho0 / (rhoi+rho0)
-!     copper%resistivity = 1.0d-9*rhoi0
-!
-!     ! Effect of magnetic field
-!     x = 15.53 / copper%rrr
-! end subroutine copper_properties_nist
-! -------------------------------------------------------------------------
-
-subroutine copper_properties2(T,B, copper)
+subroutine copper_properties(T,B, copper_resistivity, copper_rrr, copper_cp)
     ! Review of ROXIE's Material Properties Database for Quench Simulation,
     ! Author: Giulio Manfreda, December 2011
     ! https://espace.cern.ch/roxie/Documentation/Materials.pdf
     ! Different models use different definitions for residual resistivity ratio RRR.
     ! CUDI: resistivity at 290 K / 4 K.
     ! The range of validity of this t is between 4 K and 300 K.
-    use resistive_materials, only: resistive_material
     implicit none
 
-    type(resistive_material)::copper
     real(dp), intent(in) :: T, B   ! temperature, field
+    real(dp), intent(out) :: copper_resistivity
+    real(dp), intent(in) :: copper_rrr
+    real(dp), intent(out) :: copper_cp
     real(dp):: bracket, logt, sum
     ! Fitting constants: resistivity
     real(dp), parameter:: t5 = 2.32547d9
@@ -970,22 +903,21 @@ subroutine copper_properties2(T,B, copper)
 
     bracket = 1d0 / (t5/T**5 + t3/T**3 + t1/T)
 
-    copper%resistivity = 1.d-8 * (a/copper%rrr + bracket) + mr*B
+    copper_resistivity = 1.d-8 * (a/copper_rrr + bracket) + mr*B
 
     ! Specific heat
     ! NIST typical polynomial interpolation, equation 4 page 3
     logt = log10(T)
     sum = a0 + a1*logt + a2*logt**2 + a3*logt**3 + a4*logt**4 + a5*logt**5 + a6*logt**6 +a7*logt**7
-    copper%cp = 10**sum
+    copper_cp = 10**sum
 
-end subroutine copper_properties2
+end subroutine copper_properties
 ! -------------------------------------------------------------------------
-subroutine hastelloy_properties(temperature,hastelloy)
-    use resistive_materials, only: resistive_material
+subroutine hastelloy_properties(temperature, hastelloy_cp)
     implicit none
 
-    type(resistive_material)::hastelloy
     real(dp), intent(in) :: temperature   ! temperature
+    real(dp), intent(out) :: hastelloy_cp
     real(dp) :: T
 
     T = temperature
@@ -997,9 +929,9 @@ subroutine hastelloy_properties(temperature,hastelloy)
     ! J. Appl. Phys. 103(6) 2008 064908
 
     if(T<42.2571d0)then
-        hastelloy%cp = 0.60796d0 + 0.15309d0*T - 0.00237d0*T**2 + 6.76732d-4*T**3
+        hastelloy_cp = 0.60796d0 + 0.15309d0*T - 0.00237d0*T**2 + 6.76732d-4*T**3
     else if(T.ge.42.2571d0)then
-        hastelloy%cp = -147.06251d0 + 5.43432d0*T - 0.01937d0*T**2 + 2.71669d-5*T**3   &
+        hastelloy_cp = -147.06251d0 + 5.43432d0*T - 0.01937d0*T**2 + 2.71669d-5*T**3   &
                        -8.12438d-9*T**4
     endif
 
@@ -1011,32 +943,30 @@ subroutine hastelloy_properties(temperature,hastelloy)
     ! endif
 end subroutine hastelloy_properties
 ! --------------------------------------------------------------------------
-subroutine solder_properties(T,solder)
-    use resistive_materials, only: resistive_material
+subroutine solder_properties(T, solder_cp)
     use constants, only: pi
     implicit none
 
-    type(resistive_material)::solder
     real(dp), intent(in) :: T   ! temperature
+    real(dp), intent(out) :: solder_cp
 
     ! Reinhard Heller: obtained by fitting data
     ! Material Database from Cryodata Software Package, CRYOCOMP, version 3.0, Florence, SC
 
     if(T<20.0d0)then
-        solder%cp = 4.88028d0 - 2.92865d0*T + 0.52736d0*T**2 - 0.01861d0*T**3 + 2.36019d-4*T**4
+        solder_cp = 4.88028d0 - 2.92865d0*T + 0.52736d0*T**2 - 0.01861d0*T**3 + 2.36019d-4*T**4
     else if((T.ge.20.0d0).and.(T<300.0d0))then
-        solder%cp = -10.15269d0 + 3.70087d0*T - 0.02947d0*T**2 + 1.02933d-4*T**3 - 1.29518d-7*T**4
+        solder_cp = -10.15269d0 + 3.70087d0*T - 0.02947d0*T**2 + 1.02933d-4*T**3 - 1.29518d-7*T**4
     else
-        solder%cp = 181.29d0
+        solder_cp = 181.29d0
     endif
 end subroutine solder_properties
 ! -------------------------------------------------------------------------
-subroutine jacket_properties(T, jacket)
-    use resistive_materials, only: resistive_material
+subroutine jacket_properties(T, jacket_cp)
     implicit none
 
-    type(resistive_material)::jacket
     real(dp), intent(in) :: T   ! temperature
+    real(dp), intent(out) :: jacket_cp
     real(dp):: logt, sum
     ! Fitting constants: specific heat (p.13)
     ! http://cryogenics.nist.gov/MPropsMAY/304Stainless/304Stainless_rev.htm
@@ -1053,12 +983,11 @@ subroutine jacket_properties(T, jacket)
     if(T>300) logt = log10(300d0)
     sum = a0 + a1*logt + a2*logt**2 + a3*logt**3 + a4*logt**4 + a5*logt**5 + &
                          a6*logt**6 + a7*logt**7
-    jacket%cp = 10**sum
+    jacket_cp = 10**sum
 
 end subroutine jacket_properties
 ! ----------------------------------------------------------------------------
-subroutine helium_properties(T,helium)
-    use resistive_materials, only: resistive_material
+subroutine helium_properties(T, helium_cp_density)
     implicit none
   
     ! Isobaric Data for P = 0.60000 MPa
@@ -1066,13 +995,13 @@ subroutine helium_properties(T,helium)
     ! See very approximate fits in quench_data.xlsx (Issue #522)
 
     real(dp), intent(in) :: T   ! temperature
-    type(resistive_material)::helium
+    real(dp), intent(out) :: helium_cp_density
     ! Cp x density J/K/m3
     if((T>=4d0).and.(T<10d0))then
-        helium%cp_density = 12.285d3*T**3 - 309.92d3*T**2 + 2394.6d3*T - 5044.8d3
+        helium_cp_density = 12.285d3*T**3 - 309.92d3*T**2 + 2394.6d3*T - 5044.8d3
     else if(T>=10d0)then
         ! This probably works OK for arbitrarily high temperature
-        helium%cp_density = 1745.1d3*T**(-1.031d0)
+        helium_cp_density = 1745.1d3*T**(-1.031d0)
     else
         write(*,*)'temperature is below the range of helium data fit (>4 K): ', T
     end if
