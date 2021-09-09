@@ -324,11 +324,12 @@ contains
   end subroutine ellipke
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  real(dp)  function binomial(n,k) result(coefficient)
+  function binomial(n,k) result(coefficient)
     ! This outputs a real approximation to the coefficient
     ! http://en.wikipedia.org/wiki/Binomial_coefficient#Multiplicative_formula
     implicit none
     integer, intent(in) :: n, k
+    real(dp) :: coefficient
     integer :: numerator, i
     if (k == 0) then
         coefficient = 1
@@ -342,7 +343,7 @@ contains
   end function binomial
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  recursive real(dp) function gamfun(x) result(gamma)
+  recursive function gamfun(x) result(gamma)
 
     !! Calculates the gamma function for arbitrary real x
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -359,6 +360,7 @@ contains
     !  Arguments
 
     real(dp), intent(in) :: x
+    real(dp) :: gamma
 
     !  Local variables
 
