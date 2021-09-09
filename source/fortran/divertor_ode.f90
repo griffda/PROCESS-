@@ -16,7 +16,7 @@ module divertor_ode
   ! Module-level declarations !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  logical, public, save :: impurities_present(nimp)
+  logical, public, save :: impurities_present(14)
 
   ! impurity element name - temporary
 
