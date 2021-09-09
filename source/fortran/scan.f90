@@ -185,7 +185,7 @@ contains
 
     integer, intent(in) :: iscan
     integer, intent(in) :: ifail
-    real(dp), dimension(noutvars,ipnscns), intent(out) :: outvar
+    real(dp), dimension(:,:), intent(out) :: outvar
 
     ! Turn off error reporting (until next output)
     errors_on = .false.
@@ -288,7 +288,7 @@ contains
     implicit none
 
     integer, intent(inout) :: iscan
-    real(dp), dimension(noutvars,ipnscns), intent(in) :: outvar
+    real(dp), dimension(:,:), intent(in) :: outvar
     
     character(len=48) :: tlabel
     integer :: ivar
@@ -473,8 +473,8 @@ contains
     integer, intent(in) :: iscan_1
     integer, intent(in) :: iscan_R
     integer, intent(in) :: iscan
-    real(dp), dimension(noutvars,ipnscns), intent(out) :: outvar
-    real(dp), dimension(ipnscns), intent(out) :: sweep_1_vals, sweep_2_vals
+    real(dp), dimension(:,:), intent(out) :: outvar
+    real(dp), dimension(:), intent(out) :: sweep_1_vals, sweep_2_vals
 
     call scan_1d_store_output(iscan, ifail, outvar)
 
@@ -488,8 +488,8 @@ contains
     implicit none
 
     integer, intent(inout) :: iscan
-    real(dp), dimension(noutvars,ipnscns), intent(in) :: outvar
-    real(dp), dimension(ipnscns), intent(in) :: sweep_1_vals, sweep_2_vals
+    real(dp), dimension(:,:), intent(in) :: outvar
+    real(dp), dimension(:), intent(in) :: sweep_1_vals, sweep_2_vals
 
     integer :: ivar
     character(len=48) :: tlabel
@@ -621,7 +621,7 @@ contains
 
     ! Arguments
     integer, intent(in) :: nwp, iscn
-    real(dp), intent(in), dimension(ipnscns) :: swp
+    real(dp), intent(in), dimension(:) :: swp
     character(len=25), intent(out) :: vlab, xlab
 
     select case (nwp)
