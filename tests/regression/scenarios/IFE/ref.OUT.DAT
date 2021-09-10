@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-378-gc572c4f5
+   Tag No. : v2.1-385-g8aac07e2
     Branch : 1350-higher-current-density-material-in-tf-coil
    Git log : COMMIT_MSG
- Date/time :  6 Sep 2021 13:10:56 +01:00(hh:mm) UTC
+ Date/time : 10 Sep 2021  9:32:55 +01:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-111/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-111/test_scenario_IFE_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-113/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-113/test_scenario_IFE_0/IN.DAT
  Run title : IFE_001
   Run type : Reactor concept design: Inertial Fusion model, (c) CCFE
  
