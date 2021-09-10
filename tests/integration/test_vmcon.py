@@ -78,8 +78,8 @@ class VmconTest(ABC, Vmcon):
     """
     def __init__(self):
         """Initialise attributes common to Vmcon test sub-classes."""
-        # Instantiate Vmcon
-        super().__init__()
+        # Instantiate Vmcon without a (physics and engineering) models object
+        super().__init__(None)
         
         # No bounds on x values set
         self.ilower[0:2] = 0.0

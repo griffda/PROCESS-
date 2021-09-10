@@ -7,9 +7,13 @@ import numpy as np
 
 class Scan():
     """Perform a parameter scan using the Fortran scan module."""
-    def __init__(self):
-        """Immediately run the run_scan() method."""
-        self.optimiser = Optimiser()
+    def __init__(self, models):
+        """Immediately run the run_scan() method.
+
+        :param models: physics and engineering model objects
+        :type models: process.main.Models
+        """
+        self.optimiser = Optimiser(models)
         self.run_scan()
 
     def run_scan(self):

@@ -120,7 +120,9 @@ def single_run(monkeypatch):
     :rtype: SingleRun
     """
     monkeypatch.setattr(SingleRun, "__init__", mock_init)
-    return SingleRun()
+    single_run = SingleRun()
+    single_run.models = None
+    return single_run
 
 def test_SingleRun(single_run):
     """Assert SingleRun objects can be created.

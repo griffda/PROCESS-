@@ -1,7 +1,6 @@
 """Final output at the end of a scan."""
 from process import fortran as ft
 from process.fortran import final_module as fm
-from process.caller import caller
 
 
 def finalise(ifail):
@@ -13,10 +12,8 @@ def finalise(ifail):
     """
     fm.final_header(ifail)
 
-    # If no optimisation will be done, compute the OP variables now
+    # Output relevant to no optimisation
     if ft.numerics.ioptimz == -2:
-        ft.define_iteration_variables.loadxc()
-        caller(ft.numerics.xcm, ft.numerics.nvar)
         fm.no_optimisation()
 
     fm.final_output()
