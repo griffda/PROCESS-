@@ -108,11 +108,18 @@ class Vmcon():
 
         (self.ifail, numerics.nfev2, numerics.nviter, self.objf, 
             global_variables.convergence_parameter
-        ) = vmcon_module.unload(self.x, self.b, self.iwa, self.fgrd, self.conf,
-            self.glag, self.glaga, self.gamma, self.eta, self.xa, self.bdelta,
-            self.cm, self.delta, self.wa, self.cnorm, self.h, numerics.vlam,
-            self.vmu, self.gm, self.bdl, self.bdu
+        ) = vmcon_module.unload(self.x[:self.n], self.b, self.iwa, 
+            self.fgrd[:self.n], self.conf[:self.m], self.glag[:self.n], 
+            self.glaga[:self.n], self.gamma[:self.n], self.eta[:self.n],
+            self.xa[:self.n], self.bdelta[:self.n], self.cm[:self.m], 
+            self.delta, self.wa, self.cnorm[:self.lcnorm, :self.m], self.h,
+            numerics.vlam[:self.m + (2 * self.n) + 1],
+            self.vmu[:self.m + (2 * self.n) + 1], self.gm[:self.n + 1],
+            self.bdl[:self.n + 1], self.bdu[:self.n + 1]
         )
+        # TODO Rather than passing slices of these arrays, it may be possible to
+        # simplify this by only creating the arrays at the required, rather
+        # than maximum possible, length now they are created in Python
 
     def run_vmcon(self):
         """Call Fortran subroutines to actually run vmcon.

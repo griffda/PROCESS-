@@ -221,19 +221,19 @@ contains
     ! subroutine
     integer, intent(out) :: info_,nfev_,niter_
     real(dp), intent(out) :: objf_
-    real(dp), dimension(n), intent(out) :: x_
-    real(dp), dimension(lb,lb), intent(out) :: b_
-    integer, dimension(liwa), intent(out) :: iwa_
-    real(dp), dimension(n), intent(out) :: fgrd_
-    real(dp), dimension(m), intent(out) :: conf_
-    real(dp), dimension(n), intent(out) :: glag_,glaga_,gamma_,eta_,xa_,bdelta_
-    real(dp), dimension(m), intent(out) :: cm_
-    real(dp), dimension(ldel), intent(out) :: delta_
-    real(dp), dimension(lwa), intent(out) :: wa_
-    real(dp), dimension(lcnorm,m), intent(out) :: cnorm_
-    real(dp), dimension(lh,lh), intent(out) :: h_
-    real(dp), dimension(m+(2*n)+1), intent(out) :: vlam_, vmu_
-    real(dp), dimension(n+1), intent(out) :: gm_, bdl_, bdu_
+    real(dp), dimension(:), intent(out) :: x_
+    real(dp), dimension(:,:), intent(out) :: b_
+    integer, dimension(:), intent(out) :: iwa_
+    real(dp), dimension(:), intent(out) :: fgrd_
+    real(dp), dimension(:), intent(out) :: conf_
+    real(dp), dimension(:), intent(out) :: glag_,glaga_,gamma_,eta_,xa_,bdelta_
+    real(dp), dimension(:), intent(out) :: cm_
+    real(dp), dimension(:), intent(out) :: delta_
+    real(dp), dimension(:), intent(out) :: wa_
+    real(dp), dimension(:,:), intent(out) :: cnorm_
+    real(dp), dimension(:,:), intent(out) :: h_
+    real(dp), dimension(:), intent(out) :: vlam_, vmu_
+    real(dp), dimension(:), intent(out) :: gm_, bdl_, bdu_
     real(dp), intent(out) :: sum_
     
     
