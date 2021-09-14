@@ -81,8 +81,6 @@ LIST(TRANSFORM REFPROP_SRCS PREPEND ${REFPROP_SRC_DIR}/ OUTPUT_VARIABLE REFPROP_
 # Define interface source filenames to wrap
 LIST(APPEND PROCESS_SRCS
     global_variables.f90
-    init_module.f90
-    main_module.f90
     div_kal_vars.f90
     kallenbach_module.f90
     numerics.f90
@@ -100,7 +98,6 @@ LIST(APPEND PROCESS_SRCS
     stellarator_variables.f90
     plant_power.f90
     final_module.f90
-    error_handling.f90
     availability.f90
     cost_variables.f90
     divertor.f90
@@ -148,6 +145,37 @@ LIST(APPEND PREPROCESS_SOURCES
     error_handling.f90
 )
 
+
+# MESSAGE(STATUS "Excluding init_module.f90 from the build")
+# LIST(FILTER PROCESS_SRC_PATHS EXCLUDE REGEX ".*init_module.f90$")
+
+# MESSAGE(STATUS "Excluding main_module.f90 from the build")
+# LIST(FILTER PROCESS_SRC_PATHS EXCLUDE REGEX ".*main_module.f90$")
+
+# MESSAGE(STATUS "Excluding error_handling.f90 from the build")
+# LIST(FILTER PROCESS_SRC_PATHS EXCLUDE REGEX ".*error_handling.f90$")
+
+
+
+#######
+# Preprocess necessary files
+SET(PPED_F2PY_SRC ${CMAKE_BINARY_DIR}/prepocessed.f90)
+# LIST(APPEND PROCESS_SRC_PATHS ${PPED_F2PY_SRC})
+MESSAGE(STATUS "\tPROCESS Source Files: ${PROCESS_SRC_PATHS}")
+SET(PREPROCESS_NAME "preprocessForF2Py")
+LIST(TRANSFORM PREPROCESS_SOURCES PREPEND ${PROCESS_SRC_DIR}/ OUTPUT_VARIABLE PREPROCESS_SOURCES_PATH)
+
+ADD_CUSTOM_TARGET(
+    ${PREPROCESS_NAME} 
+    DEPENDS ${PPED_F2PY_SRC}
+)
+
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${PPED_F2PY_SRC}
+    COMMAND gfortran -E -cpp -DINSTALLDIR="'${CMAKE_SOURCE_DIR}'" -DCOMMSG="'${COMMIT_MSG}'" -Dbranch_name="'${GIT_BRANCH}'" -Dtagno="'${GIT_TAG}'" -Duntracked="${GIT_DIFF}" ${PREPROCESS_SOURCES_PATH} > ${PPED_F2PY_SRC}
+)
+
+
 # Install all requirements in the current Python environment
 PIP_INSTALL()
 
@@ -164,7 +192,7 @@ IF(NOT CMAKE_HOST_APPLE)
         PROPERTIES BUILD_RPATH $ORIGIN
     )
 ENDIF()
-ADD_DEPENDENCIES(${PROJECT_NAME} ${PIP_NAME})
+ADD_DEPENDENCIES(${PROJECT_NAME} ${PIP_NAME} ${PREPROCESS_NAME})
 
 
 IF(CMAKE_HOST_APPLE)
@@ -174,19 +202,6 @@ ELSEIF(CMAKE_HOST_UNIX)
 ENDIF()
 
 # Stage 2: Generate preprocess files
-SET(PPED_F2PY_SRC ${CMAKE_BINARY_DIR}/prepocessed.f90)
-LIST(TRANSFORM PREPROCESS_SOURCES PREPEND ${PROCESS_SRC_DIR}/ OUTPUT_VARIABLE PREPROCESS_SOURCES_PATH)
-SET(PREPROCESS_NAME "preprocessForF2Py")
-
-ADD_CUSTOM_TARGET(
-    ${PREPROCESS_NAME}
-    DEPENDS ${PPED_F2PY_SRC}
-)
-
-ADD_CUSTOM_COMMAND(
-    OUTPUT ${PPED_F2PY_SRC}
-    COMMAND gfortran -E -cpp -DINSTALLDIR=${CMAKE_SOURCE_DIR} -DCOMMSG=${COMMIT_MSG} -Dbranch_name=${GIT_BRANCH} -Dtagno=${GIT_TAG} -Duntracked=${GIT_DIFF} ${PREPROCESS_SOURCES_PATH} > ${PPED_F2PY_SRC}
-)
 
 
 # Stage 3: Run f2py
@@ -207,7 +222,7 @@ SET(PROCESS_MODULE_DIST ${CMAKE_SOURCE_DIR}/process_dist)
 # Delete any existing .gcda files
 ADD_CUSTOM_TARGET(coverage_cleanup 
     COMMAND echo "-- Deleting any existing .gcda coverage files..."
-    COMMAND find ${CMAKE_SOURCE_DIR}/build/ -name \"*.gcda\" -exec rm -rf {} \\\;
+    COMMAND find ${CMAKE_SOURCE_DIR}/build/ -name '*.gcda' -exec rm -rf {} \\\;
 )
 
 # Run the Pip Install
