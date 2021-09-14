@@ -27,7 +27,7 @@ module water_use_module
    private
    public :: waterusecall
  
-   real(dp), parameter :: secday = 86400.0D0
+   real(8), parameter :: secday = 86400.0D0
    !! seconds in a day, s
  
  contains
@@ -56,9 +56,9 @@ module water_use_module
  
      !  Local variables
  
-     real(dp) :: rejected_heat
+     real(8) :: rejected_heat
      !! heat rejected by main power conversion circuit (MW)
-     real(dp) :: wastethermeng
+     real(8) :: wastethermeng
      !! waste thermal energy to be rejected per [time], MJ
  
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -105,7 +105,7 @@ module water_use_module
  
      !  Arguments
      integer, intent(in) :: outfile, iprint
-     real(dp), intent(in) :: wastetherm
+     real(8), intent(in) :: wastetherm
  
      !  Local variables
  
@@ -162,27 +162,27 @@ module water_use_module
  
     !  Arguments
     integer, intent(in) :: outfile, iprint
-    real(dp), intent(in) :: wastetherm
+    real(8), intent(in) :: wastetherm
  
     !  Local variables
  
     integer :: icool
     !! switch between different water-body cooling options
  
-    real(dp) :: heatload, heatloadmet, a, b, c, d, e, f, g, h, i, j
-    real(dp) :: windspeedmph, heatloadimp, satvapdelta, evapsum, evapmean
+    real(8) :: heatload, heatloadmet, a, b, c, d, e, f, g, h, i, j
+    real(8) :: windspeedmph, heatloadimp, satvapdelta, evapsum, evapmean
     !! coefficients and intermediate calculation variables
  
-    real(dp) :: heatratio
+    real(8) :: heatratio
     !! ratio of resultant water temperature increase to input heat loading
  
-    real(dp) :: watertempheated
+    real(8) :: watertempheated
     !! resultant temperature of the water, following waste heat introduction
  
-    real(dp) :: windfunction
+    real(8) :: windfunction
     !! strongly influences evaporation; various, all found through experimentation
    
-    real(dp) :: deltaE
+    real(8) :: deltaE
     !! difference in evaporative heat loss due to heating of water (J/(m2.day))
  
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

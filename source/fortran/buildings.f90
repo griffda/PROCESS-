@@ -41,10 +41,10 @@ contains
     integer, intent(in) :: outfile
     !! output file unit
 
-    real(dp) :: tfh
-    real(dp) :: tfmtn
-    real(dp) :: tfri
-    real(dp) :: tfro
+    real(8) :: tfh
+    real(8) :: tfmtn
+    real(8) :: tfri
+    real(8) :: tfro
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -118,16 +118,16 @@ contains
 
     ! Arguments
     integer, intent(in) :: iprint, outfile
-    real(dp), intent(inout) :: pfr
-    real(dp), intent(in) :: pfm,tfro,tfri,tfh,tfm,n_tf,shro, &
+    real(8), intent(inout) :: pfr
+    real(8), intent(in) :: pfm,tfro,tfri,tfh,tfm,n_tf,shro, &
          shri,shh,shm,crr,helpow
 
-    real(dp), intent(out) :: cryv,vrci,rbv,rmbv,wsv,elev
+    real(8), intent(out) :: cryv,vrci,rbv,rmbv,wsv,elev
 
     ! Local variables !
     ! !!!!!!!!!!!!!!!!!!
 
-    real(dp) :: ang, bmr, coill, crcl, cran, dcl,dcw, drbi, &
+    real(8) :: ang, bmr, coill, crcl, cran, dcl,dcw, drbi, &
          hcl, hcw, hrbi, hy, layl, rbh, rbl, rbw, rmbh, rmbl, rmbw, rwl, rww, &
          sectl, tch, tcl, tcw, wgts, wsa, wt
 

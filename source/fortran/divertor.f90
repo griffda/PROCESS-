@@ -52,7 +52,7 @@ contains
 
     !  Local variables
 
-    real(dp) :: aionso,bpstk,btstk,dconl,delne, &
+    real(8) :: aionso,bpstk,btstk,dconl,delne, &
          delta,delw,diva,dtheta,frgd,gamdt,pdiv,plsep, &
          ppdiv,pwr,qdiv,rbpbt,rnull,xpara,xperp,zeffso
 
@@ -283,22 +283,22 @@ contains
 
     !  Arguments
 
-    real(dp), intent(in) :: adas,aion,anginc,c1div,c2div,c3div, &
+    real(8), intent(in) :: adas,aion,anginc,c1div,c2div,c3div, &
          c4div,c5div,delld,delne,fdfs,fififi,frgd,frrp,minstang,omegan, &
          qdiv,pdiv,rbpbt,rconl,rmaj,rsrd,tconl,xpara,xperp
 
-    real(dp), intent(out) :: delta,delw,dendiv,densin,gamdt, &
+    real(8), intent(out) :: delta,delw,dendiv,densin,gamdt, &
          lamp,omlarg,ppdiv,ppdivr,ptpdiv,tdiv,tsep
 
     !  Local variables
 
-    real(dp), parameter :: c27 = 0.2857143D0
-    real(dp), parameter :: ei = 13.6D0
-    real(dp), parameter :: epsilon = 0.001D0
-    real(dp), parameter :: relerr = 1.0D-9
+    real(8), parameter :: c27 = 0.2857143D0
+    real(8), parameter :: ei = 13.6D0
+    real(8), parameter :: epsilon = 0.001D0
+    real(8), parameter :: relerr = 1.0D-9
 
     integer :: i
-    real(dp) :: angle,coefl,cp,ct,deltx,delty,deltdiv, &
+    real(8) :: angle,coefl,cp,ct,deltx,delty,deltdiv, &
          deltpts,denom,eier,facdenom,fprime,f1,f1dx,f1dy,f2,f2dx,f2dy, &
          gamdiv,tdivges,tdivp,tpts,tptsges,tptsp
 
@@ -412,15 +412,15 @@ contains
 
       implicit none
 
-      real(dp) :: erprcy
+      real(8) :: erprcy
 
       !  Arguments
 
-      real(dp), intent(in) :: ndiv,tdiv
+      real(8), intent(in) :: ndiv,tdiv
 
       !  Local variables
 
-      real(dp) :: ans
+      real(8) :: ans
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -458,16 +458,16 @@ contains
 
       implicit none
 
-      real(dp) :: ftdiv
+      real(8) :: ftdiv
 
       !  Arguments
 
-      real(dp), intent(in) :: aion,coefl,delne,fififi,omegan,omlarg,qdiv, &
+      real(8), intent(in) :: aion,coefl,delne,fififi,omegan,omlarg,qdiv, &
            tconl,xpara,xperp,xx,yy
 
       !  Local variables
 
-      real(dp) :: c27,dendiv,eier,ff,gamdiv,xxs,yys
+      real(8) :: c27,dendiv,eier,ff,gamdiv,xxs,yys
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -518,16 +518,16 @@ contains
 
       implicit none
 
-      real(dp) :: ftpts
+      real(8) :: ftpts
 
       !  Arguments
 
-      real(dp), intent(in) :: aion,coefl,delne,fififi,omegan, &
+      real(8), intent(in) :: aion,coefl,delne,fififi,omegan, &
            omlarg,qdiv,tconl,xpara,xperp,xx,yy
 
       !  Local variables
 
-      real(dp) :: dendiv,eier,ff,gamdiv,xxs,yys
+      real(8) :: dendiv,eier,ff,gamdiv,xxs,yys
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -566,11 +566,11 @@ contains
 
       implicit none
 
-      real(dp) :: gammash
+      real(8) :: gammash
 
       !  Arguments
 
-      real(dp), intent(in) :: gcoef,tdiv
+      real(8), intent(in) :: gcoef,tdiv
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -614,12 +614,12 @@ contains
     !  Arguments
 
     integer, intent(in) :: iprint, outfile
-    real(dp), intent(in) :: rmajor,rminor,triang,scrapli,vgap,pdivt
-    real(dp), intent(out) :: hldiv
+    real(8), intent(in) :: rmajor,rminor,triang,scrapli,vgap,pdivt
+    real(8), intent(out) :: hldiv
 
     !  Local variables
 
-    real(dp) :: r1,r2,a1,a2,a3,theta,areadv
+    real(8) :: r1,r2,a1,a2,a3,theta,areadv
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

@@ -28,7 +28,7 @@ module final_module
     implicit none
   
     integer :: inn
-    real(dp), dimension(ipeqns) :: con1, con2, err
+    real(8), dimension(ipeqns) :: con1, con2, err
     character(len=1), dimension(ipeqns) :: sym
     character(len=10), dimension(ipeqns) :: lab
   

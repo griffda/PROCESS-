@@ -15,11 +15,11 @@ module constraints
   public :: constraint_eqns
 
 !   type constraint_args_type
-!     real(dp) :: cc
+!     real(8) :: cc
 !     !! Residual error in constraint equation
-!     real(dp) :: con
+!     real(8) :: con
 !     !! constraint value for constraint equation in physical units
-!     real(dp) :: err
+!     real(8) :: err
 !     !! residual error in constraint equation in physical units
 !     character(len=1)  :: symbol
 !     !! `=<`, `>`, `<` symbol for constraint equation denoting its type
@@ -56,13 +56,13 @@ contains
     integer, intent(in) :: ieqn
     !! Switch for constraint equations to evaluate;
 
-    real(dp), dimension(m), intent(out) :: cc
+    real(8), dimension(m), intent(out) :: cc
     !! Residual error in equation i
 
-    real(dp), optional, dimension(m), intent(out) :: con
+    real(8), optional, dimension(m), intent(out) :: con
     !! constraint value for equation i in physical units
     
-    real(dp), optional, dimension(m), intent(out) :: err
+    real(8), optional, dimension(m), intent(out) :: err
     !! residual error in equation i in physical units
 
     character(len=1),  optional, dimension(m), intent(out) :: symbol
@@ -74,11 +74,11 @@ contains
     ! Local variables
     integer :: i, i1, i2
 
-    real(dp) :: tmp_cc = 0
+    real(8) :: tmp_cc = 0
     !! Residual error in constraint equation
-    real(dp) :: tmp_con = 0
+    real(8) :: tmp_con = 0
     !! constraint value for constraint equation in physical units
-    real(dp) :: tmp_err = 0
+    real(8) :: tmp_err = 0
     !! residual error in constraint equation in physical units
     character(len=1)  :: tmp_symbol = ''
     !! `=<`, `>`, `<` symbol for constraint equation denoting its type
@@ -405,9 +405,9 @@ contains
     implicit none
 
    !  type(constraint_args_type), intent(out) :: args
-      real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+      real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -457,16 +457,16 @@ contains
 
     implicit none
 
-          real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+          real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
     !! constraint derived type
 
     ! pscaling : Local real : total transport power per volume (MW/m3)
-    real(dp) :: pscaling
-    real(dp) :: pnumerator, pdenom
+    real(8) :: pscaling
+    real(8) :: pnumerator, pdenom
     pscaling = ptrepv + ptripv
     ! Total power lost is scaling power plus radiation:
     if (iradloss == 0) then
@@ -515,9 +515,9 @@ contains
       use physics_variables, only: ignite, ptripv, piepv, falpha, palpipv, vol
       use current_drive_variables, only: pinjimw
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -571,15 +571,15 @@ contains
                                  palpepv, piepv, vol, pradpv
       use current_drive_variables, only: pinjemw
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
       ! pscaling : Local real : total transport power per volume (MW/m3)
-      real(dp) :: pscaling
-      real(dp) :: pnumerator, pdenom
+      real(8) :: pscaling
+      real(8) :: pnumerator, pdenom
       pscaling = ptrepv
 	   ! Total power lost is scaling power plus radiation:
       if (iradloss == 0) then
@@ -631,9 +631,9 @@ contains
       use physics_variables, only: idensl, dnelimt, dnla, dene
       use constraint_variables, only: fdene
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -671,9 +671,9 @@ contains
       use physics_variables, only: epbetmax, eps, betap
       use constraint_variables, only: fbeta, fbeta
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -706,9 +706,9 @@ contains
       !! dnbeam : input real : hot beam ion density, variable (/m3)
       use physics_variables, only: ignite, dnbeam2, dnbeam
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -746,9 +746,9 @@ contains
       use constraint_variables, only: fwalld, walalw
       use physics_variables, only: wallmw
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -776,9 +776,9 @@ contains
       use constraint_variables, only: ffuspow, powfmax
       use physics_variables, only: powfmw
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -806,9 +806,9 @@ contains
 
       implicit none
 
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
       !! Constraints output
@@ -839,9 +839,9 @@ contains
       use build_variables, only: rbld
       use physics_variables, only: rmajor
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -871,9 +871,9 @@ contains
       use constraint_variables, only: fvs
       use pfcoil_variables, only: vstot
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -901,9 +901,9 @@ contains
       use constraint_variables, only: ftburn,tbrnmn
       use times_variables, only: tburn
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -930,9 +930,9 @@ contains
       !! tbeamin : input real : permitted neutral beam e-decay lengths to plasma centre
       use current_drive_variables, only: taubeam, tbeamin
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -960,9 +960,9 @@ contains
       use constraint_variables, only: flhthresh
       use physics_variables, only: plhthresh, pdivt
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -994,9 +994,9 @@ contains
       use constraint_variables, only: fpnetel, pnetelin
       use heat_transport_variables, only: pnetelmw
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1030,13 +1030,13 @@ contains
       use current_drive_variables, only: pinjmw
       use constraint_variables, only: fradpwr
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
-      real(dp) :: pradmaxpv
+      real(8) :: pradmaxpv
       !! Maximum possible power/vol that can be radiated (local)
 
       pradmaxpv = pinjmw/vol + palppv*falpha + pchargepv + pohmpv
@@ -1064,9 +1064,9 @@ contains
       use constraint_variables, only: fhldiv
       use divertor_variables, only: hldivlim, hldiv
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1095,13 +1095,13 @@ contains
       use tfcoil_variables, only: tfcpmw, tflegmw
       use constraint_variables, only: fmva, mvalim
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
       ! totmva : local real : total MVA in TF coil (MW)
-      real(dp) :: totmva
+      real(8) :: totmva
 
       totmva = tfcpmw + tflegmw
       tmp_cc =  1.0D0 - fmva * mvalim/totmva
@@ -1128,9 +1128,9 @@ contains
       use constraint_variables, only: fportsz
       use current_drive_variables, only: rtanmax, rtanbeam
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1159,9 +1159,9 @@ contains
       use physics_variables, only: rminor
       use build_variables, only: aplasmin 
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1189,9 +1189,9 @@ contains
       use constraint_variables, only: fdivcol
       use divertor_variables, only: rlenmax, rlclolcn
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1223,13 +1223,13 @@ contains
       use build_variables, only: scraplo, fwoth, blnkoth
       use constraint_variables, only: fcwr
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
       ! rcw : local real : conducting shell radius (m)
-      real(dp) :: rcw
+      real(8) :: rcw
 
       rcw = rminor + scraplo + fwoth + blnkoth
       tmp_cc =  1.0D0 - fcwr * cwrmax*rminor / rcw
@@ -1269,9 +1269,9 @@ contains
       use stellarator_variables, only: istell
       use constraint_variables, only: fbetatry
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1323,9 +1323,9 @@ contains
       use constraint_variables, only: fpeakb, bmxlim
       use tfcoil_variables, only: bmaxtf
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1353,9 +1353,9 @@ contains
       use constraint_variables, only: fjohc
       use pfcoil_variables, only: rjohc, coheof
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1383,9 +1383,9 @@ contains
       use constraint_variables, only: fjohc0
       use pfcoil_variables, only: rjohc0, cohbop
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1421,9 +1421,9 @@ contains
       use current_drive_variables, only: bigq
       use physics_variables, only: ignite
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1462,9 +1462,9 @@ contains
       use physics_variables, only: rmajor, rminor
       use build_variables, only: rinboard
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1492,9 +1492,9 @@ contains
       use current_drive_variables, only: pinjmw, pinjalw
       use constraint_variables, only: fpinj
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1522,9 +1522,9 @@ contains
       use constraint_variables, only: fstrcase
       use tfcoil_variables, only: alstrtf, strtf1
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1552,9 +1552,9 @@ contains
       use constraint_variables, only: fstrcond
       use tfcoil_variables, only: alstrtf, strtf2
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1582,9 +1582,9 @@ contains
       use constraint_variables, only: fiooic
       use tfcoil_variables, only: jwdgcrt, jwptf
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1612,9 +1612,9 @@ contains
       use constraint_variables, only: fvdump
       use tfcoil_variables, only: vdalw, vtfskv
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1642,9 +1642,9 @@ contains
       use constraint_variables, only: fjprot
       use tfcoil_variables, only: jwdgpro, jwptf
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1672,9 +1672,9 @@ contains
       use constraint_variables, only: ftmargtf
       use tfcoil_variables, only: tmargtf, tmargmin_tf
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1702,9 +1702,9 @@ contains
       use constraint_variables, only: fgamcd, gammax
       use current_drive_variables, only: gamcd
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1724,9 +1724,9 @@ contains
       !! #=#=# empty
       implicit none
 	   ! Dummy formal arguments, for compliance with interface
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1754,9 +1754,9 @@ contains
       use constraint_variables, only: ftpeak
       use fwbs_variables, only: tfwmatmax, tpeak
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1786,9 +1786,9 @@ contains
       use constraint_variables, only: fauxmn, auxmin
       use current_drive_variables, only: pinjmw
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1816,9 +1816,9 @@ contains
       use constraint_variables, only: ftohs, tohsmn
       use times_variables, only: tohs
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1846,9 +1846,9 @@ contains
       use constraint_variables, only: ftcycl, tcycmn
       use times_variables, only: tcycle
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1882,9 +1882,9 @@ contains
       use tfcoil_variables, only:  i_tf_sup
 
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1934,9 +1934,9 @@ contains
       use physics_variables, only: itart
       use tfcoil_variables, only:  i_tf_sup
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -1983,9 +1983,9 @@ contains
       use constraint_variables, only: fq
       use physics_variables, only: q, qlim, itart
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2021,10 +2021,10 @@ contains
       use tfcoil_variables, only: ritfc
       implicit none
       ! cratmx : local real : maximum ratio of plasma current to centrepost current
-      real(dp) :: cratmx
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+      real(8) :: cratmx
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2048,9 +2048,9 @@ contains
       !! #=#=# empty
       implicit none
       ! Dummy formal arguments, just to comply with the subroutine interface
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2078,9 +2078,9 @@ contains
       use constraint_variables, only: fbetap, betpmx
       use physics_variables, only: betap
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2099,9 +2099,9 @@ contains
       !! #=# empty
       !! #=#=# empty
       ! Dummy formal arguments, just to comply with the subroutine interface
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2122,9 +2122,9 @@ contains
       !! #=#=# frrmax, rrmax
       use ife_variables, only: frrmax, ife, rrmax, reprat
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2156,9 +2156,9 @@ contains
       use physics_variables, only: vsres, vsind
       use pfcoil_variables, only: vssu, fvssu
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2187,9 +2187,9 @@ contains
       use constraint_variables, only: ftbr, tbrmin
       use fwbs_variables, only: tbr
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2217,9 +2217,9 @@ contains
       use constraint_variables, only: fflutf, nflutfmax
       use fwbs_variables, only: nflutf
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2247,9 +2247,9 @@ contains
       use constraint_variables, only: fptfnuc, ptfnucmax
       use fwbs_variables, only: ptfnucpm3
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2282,9 +2282,9 @@ contains
       use constraint_variables, only: fvvhe, vvhealw
       use fwbs_variables, only: vvhemax, iblanket
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2322,9 +2322,9 @@ contains
       use constraint_variables, only: fpsepr, pseprmax
       use physics_variables, only: pdivt, rmajor
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2343,9 +2343,9 @@ contains
       !! #=# empty
       !! #=#=# empty
       ! Dummy formal arguments, just to comply with the subroutine interface
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2364,9 +2364,9 @@ contains
       !! #=# empty
       !! #=#=# empty
       ! Dummy formal arguments, just to comply with the subroutine interface
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2394,9 +2394,9 @@ contains
       use constraint_variables, only: fnbshinef, nbshinefmax
       use current_drive_variables, only: nbshinef
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
       tmp_cc = 1.0D0 - fnbshinef * nbshinefmax / nbshinef
@@ -2423,9 +2423,9 @@ contains
       use pfcoil_variables, only: tmargoh
       use tfcoil_variables, only: tmargmin_cs
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2452,9 +2452,9 @@ contains
       !! avail_min : input real : Minimum availability
       use cost_variables, only: favail, cfactr, avail_min
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2483,9 +2483,9 @@ contains
       use constraint_variables, only: ftaulimit, taulimit
       use physics_variables, only: taup, taueff
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2514,9 +2514,9 @@ contains
       use tfcoil_variables, only: n_tf
       use vacuum_variables, only: niterpump
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2544,9 +2544,9 @@ contains
       use constraint_variables, only: fzeffmax, zeffmax
       use physics_variables, only: zeff
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2574,9 +2574,9 @@ contains
       use constraint_variables, only: ftaucq
       use tfcoil_variables, only: tdmptf, taucq
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2604,9 +2604,9 @@ contains
       use constraint_variables, only: fpoloidalpower 
       use pf_power_variables, only: maxpoloidalpower, peakpoloidalpower
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2633,9 +2633,9 @@ contains
       !! peakradwallload : input real : Peak radiation wall load (MW/m^2)
       use constraint_variables, only: fradwall, maxradwallload, peakradwallload
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2668,9 +2668,9 @@ contains
       use constraint_variables, only: fpsepbqar, psepbqarmax
       use physics_variables, only: pdivt, bt, q95, aspect, rmajor
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2698,9 +2698,9 @@ contains
       use div_kal_vars, only: psep_kallenbach
       use physics_variables, only: pdivt
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2727,9 +2727,9 @@ contains
       use div_kal_vars, only: teomp
       use  physics_variables, only: tesep
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2757,9 +2757,9 @@ contains
       use div_kal_vars, only: neomp, neratio
       use physics_variables, only: nesep
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2800,9 +2800,9 @@ contains
       use pfcoil_variables, only: alstroh, s_tresca_oh
       use tfcoil_variables, only: strtf0, i_tf_bucking
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2840,9 +2840,9 @@ contains
       use physics_variables, only: fplhsep, plhthresh, pdivt
       use current_drive_variables, only: pinjmw
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2870,9 +2870,9 @@ contains
       use constraint_variables, only: fcqt
       use tfcoil_variables, only: croco_quench_temperature, tmax_croco
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2900,9 +2900,9 @@ contains
       !! f_coppera_m2 : input real : 
       use rebco_variables, only: copperA_m2, copperA_m2_max, f_coppera_m2
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2935,9 +2935,9 @@ contains
                                    aspect, pdivt, dlimit, nesep
       use constraint_variables, only: fnesep
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2968,9 +2968,9 @@ contains
       use constraint_variables, only: fcpttf 
       use tfcoil_variables, only: cpttf_max, cpttf
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -2998,9 +2998,9 @@ contains
       use constraint_variables, only: freinke
       use reinke_variables, only: fzactual, fzmin
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -3034,9 +3034,9 @@ contains
       !! (Note: original code has "bmaxoh/bmaxoh0 |  peak CS field [T]".)
       use pfcoil_variables, only: fbmaxcs, bmaxcs_lim, bmaxoh0, bmaxoh
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -3064,9 +3064,9 @@ contains
       use constraint_variables, only : pdivtlim
       implicit none
 
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
       tmp_cc     = 1.0D0 - fpdivlim * pdivt / pdivtlim
@@ -3093,9 +3093,9 @@ contains
       use physics_variables, only: ne0, fne0, neped
       implicit none
 
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
       tmp_cc     = 1.0D0 - fne0 * ne0/neped 
@@ -3120,9 +3120,9 @@ contains
       !! tftort : input real :  total toroidal width of a tf coil
       use tfcoil_variables, only: tftort,ftoroidalgap,toroidalgap
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -3148,9 +3148,9 @@ contains
       !! required_radial_space : input real :  required space in radial direction
       use build_variables, only: available_radial_space, required_radial_space, f_avspace
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -3178,9 +3178,9 @@ contains
       use physics_variables, only: betalim_lower, beta, betaft
       use constraint_variables, only: fbetatry_lower
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
@@ -3219,9 +3219,9 @@ contains
 
       implicit none
 
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
       !! Constraints output
@@ -3259,9 +3259,9 @@ contains
 
       implicit none
 
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
       
@@ -3283,9 +3283,9 @@ contains
       
       use heat_transport_variables, only: crypmw, crypmw_max, f_crypmw
       implicit none
-            real(dp), intent(out) :: tmp_cc
-      real(dp), intent(out) :: tmp_con
-      real(dp), intent(out) :: tmp_err
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 

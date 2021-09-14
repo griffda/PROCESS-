@@ -14,19 +14,19 @@ module costs_module
   implicit none
 
   !  Various cost account values (M$)
-  real(dp) :: c228, c229, c23, c25, c26, cindrt, ccont
+  real(8) :: c228, c229, c23, c25, c26, cindrt, ccont
 
   !  Account 226 - Heat transport system 
-  real(dp) :: c226, c2261, c2262, c2263
+  real(8) :: c226, c2261, c2262, c2263
 
   !  Account 227 - Fuel handling
-  real(dp) :: c227, c2271, c2272, c2273, c2274
+  real(8) :: c227, c2271, c2272, c2273, c2274
 
   !  Account 24 - electrical plant equipment
-  real(dp) :: c24, c241, c242, c243, c244, c245
+  real(8) :: c24, c241, c242, c243, c244, c245
 
 
-  real(dp) :: &
+  real(8) :: &
        c21,c211,c212,c213,c214,c2141,c2142,c215,c216,c217,c2171, &
        c2172,c2173,c2174,c22,c2211,c2212,c22121,c22122,c22123, &
        c22124,c22125,c22126,c22127,c2213,c22131,c22132,c2214,c2215, &
@@ -482,7 +482,7 @@ contains
 
     !  Local variables
 
-    real(dp) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
+    real(8) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
          annfuelt,annfwbl,annoam,anntot,annwst,coecdr, &
          coecp,coedecom,coediv,coefuel,coefwbl,coewst,crfcdr,crfcp, &
          crfdiv,crffwbl,fefcdr,fefcp,fefdiv,feffwbl,fwbllife,kwhpy
@@ -852,8 +852,8 @@ contains
 
     !  Local variables
 
-    real(dp), parameter :: exprb = 1.0D0
-    real(dp), dimension(4) :: cmlsa
+    real(8), parameter :: exprb = 1.0D0
+    real(8), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1049,7 +1049,7 @@ contains
 
     !  Local variables
 
-    real(dp), dimension(4) :: cmlsa
+    real(8), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1116,7 +1116,7 @@ contains
 
     !  Local variables
 
-    real(dp), dimension(4) :: cmlsa
+    real(8), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1220,7 +1220,7 @@ contains
 
     !  Local variables
 
-    real(dp), dimension(4) :: cmlsa
+    real(8), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1282,7 +1282,7 @@ contains
 
     !  Local variables
 
-    real(dp), dimension(4) :: cmlsa
+    real(8), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1420,8 +1420,8 @@ contains
 
     !  Local variables
 
-    real(dp) :: costtfsc,costtfcu,costwire,ctfconpm
-    real(dp), dimension(4) :: cmlsa
+    real(8) :: costtfsc,costtfcu,costwire,ctfconpm
+    real(8), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1543,9 +1543,9 @@ contains
 
     !  Local variables
 
-    real(dp) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
+    real(8) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
          pfwndl
-    real(dp), dimension(4) :: cmlsa
+    real(8), dimension(4) :: cmlsa
     integer :: i,npf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1698,7 +1698,7 @@ contains
 
     !  Local variables
 
-    real(dp), dimension(4) :: cmlsa
+    real(8), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1745,8 +1745,8 @@ contains
 
     !  Local variables
 
-    real(dp), parameter :: exprf = 1.0D0
-    real(dp) :: switch
+    real(8), parameter :: exprf = 1.0D0
+    real(8) :: switch
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1964,7 +1964,7 @@ contains
 
     !  Local variables
 
-    real(dp), parameter :: expel = 0.7D0
+    real(8), parameter :: expel = 0.7D0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2105,8 +2105,8 @@ contains
 
     !  Local variables
 
-    ! real(dp), parameter :: expes = 0.8D0
-    real(dp) :: shcss
+    ! real(8), parameter :: expes = 0.8D0
+    real(8) :: shcss
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2253,8 +2253,8 @@ contains
     implicit none
 
     !  Local variables
-    real(dp), parameter :: exphts = 0.7D0
-    real(dp), dimension(4) :: cmlsa
+    real(8), parameter :: exphts = 0.7D0
+    real(8), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2298,8 +2298,8 @@ contains
     implicit none 
 
     !  Local variables
-    real(dp), parameter :: exphts = 0.7D0
-    real(dp), dimension(4) :: cmlsa
+    real(8), parameter :: exphts = 0.7D0
+    real(8), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2341,8 +2341,8 @@ contains
     implicit none
 
     !  Local variables
-    real(dp), parameter :: expcry = 0.67D0
-    real(dp), dimension(4) :: cmlsa
+    real(8), parameter :: expcry = 0.67D0
+    real(8), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2421,7 +2421,7 @@ contains
 		use physics_variables, only: wtgpd, rndfuel, afuel
     implicit none
 
-    real(dp) targtm
+    real(8) targtm
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2463,7 +2463,7 @@ contains
 
     !  Local variables
 
-    real(dp) cfrht
+    real(8) cfrht
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2566,7 +2566,7 @@ contains
 
     !  Local variables
 
-    real(dp), parameter :: exptpe = 0.83D0
+    real(8), parameter :: exptpe = 0.83D0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2611,7 +2611,7 @@ contains
 
     !  Local variables
 
-    real(dp), dimension(4) :: cmlsa
+    real(8), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2643,8 +2643,8 @@ contains
 
     !  Local variables
 
-    real(dp), parameter :: expepe = 0.9D0
-    real(dp), dimension(4) :: cmlsa
+    real(8), parameter :: expepe = 0.9D0
+    real(8), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2679,7 +2679,7 @@ contains
 
     !  Local variables
 
-    real(dp), dimension(4) :: cmlsa
+    real(8), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2711,7 +2711,7 @@ contains
 
     !  Local variables
 
-    real(dp), dimension(4) :: cmlsa
+    real(8), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2742,7 +2742,7 @@ contains
 
     !  Local variables
 
-    real(dp), dimension(4) :: cmlsa
+    real(8), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2775,7 +2775,7 @@ contains
 
     !  Local variables
 
-    real(dp), dimension(4) :: cmlsa
+    real(8), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2813,8 +2813,8 @@ contains
 
     !  Local variables
 
-    real(dp) :: pwrrej
-    real(dp), dimension(4) :: cmlsa
+    real(8) :: pwrrej
+    real(8), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
