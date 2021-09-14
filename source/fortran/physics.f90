@@ -13,14 +13,6 @@ module physics_module
   use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
-  private
-  public :: bpol,fhfac,igmarcal,outplas,outtim,pcond,phyaux, &
-    physics,plasma_composition,pohm, rether, subr, &
-    diamagnetic_fraction_hender, diamagnetic_fraction_scene, &
-    ps_fraction_scene, init_physics_module
-    ! diamagnetic_fraction_hender, diamagnetic_fraction_scene,
-    ! ps_fraction_scene made public for testing via interface
-
   !  Module-level variables
 
   integer :: iscz

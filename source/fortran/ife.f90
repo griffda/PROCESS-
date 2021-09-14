@@ -12,10 +12,6 @@ module ife_module
   use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
-  private
-  public :: ifecll, ifeout, ifetgt
-  ! ifetgt made public for testing via interface
-
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

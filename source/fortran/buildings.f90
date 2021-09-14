@@ -14,10 +14,6 @@ module buildings_module
 
   implicit none
 
-  private
-
-  public :: bldgcall
-
 contains
 
   subroutine bldgcall(outfile, iprint)

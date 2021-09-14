@@ -17,9 +17,6 @@ module build_module
   use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
-  private
-  public :: radialb, vbuild, portsz, init_build_module
-
   ! Var for subroutine radialb requiring re-initialisation before new run
   integer :: ripflag
 

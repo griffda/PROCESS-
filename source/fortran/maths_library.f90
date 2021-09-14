@@ -23,15 +23,6 @@ module maths_library
   !  Precision variable
   integer, parameter :: double = 8
 
-  private
-
-  public :: ellipke,find_y_nonuniform_x,gamfun,linesolv,qpsub, &
-       quanc8,sumup3,svd,tril,zeroin, eshellvol, dshellvol, &
-       eshellarea, dshellarea, binomial, binarysearch, interpolate, &
-       secant_solve, test_secant_solve, nearly_equal
-  public::variable_error
-  public :: integer2string, integer3string
-
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

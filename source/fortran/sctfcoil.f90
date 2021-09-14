@@ -17,10 +17,6 @@ use resistive_materials, only: resistive_material, volume_fractions, &
     supercon_strand
 implicit none
 
-private
-public :: outtf, sctfcoil, stresscl, tfcind, tfspcall, initialise_cables, &
-  init_sctfcoil_module
-
 ! Module variables
 !-----------------
 

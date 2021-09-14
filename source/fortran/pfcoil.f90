@@ -15,10 +15,6 @@ module pfcoil_module
    use pfcoil_variables, only: nfixmx, ngrpmx, nclsmx, ngc2
    implicit none
  
-   private
-   public :: pfcoil, outpf, outvolt, induct, vsec, bfield, brookscoil, &
-     init_pfcoil_module
- 
    !  Local variables
  
    integer :: nef,nfxf

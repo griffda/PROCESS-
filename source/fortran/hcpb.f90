@@ -14,9 +14,6 @@ module ccfe_hcpb_module
 
   implicit none
 
-  private
-  public :: ccfe_hcpb, tbr_shimwell, init_ccfe_hcpb_module
-
   ! Variables for output to file
   integer, private :: ip, ofile
 
@@ -2576,9 +2573,6 @@ module kit_hcpb_module
   ! !!!!!!!!!!!!!!!!!!!!
   use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
-
-  private
-  public :: kit_hcpb, init_kit_hcpb_module
 
   ! Variables for output to file
   integer, private :: ip, ofile

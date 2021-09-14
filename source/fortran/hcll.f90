@@ -11,10 +11,6 @@ module kit_hcll_module
   use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
-  !  Subroutine declarations
-  private
-  public :: kit_hcll, init_kit_hcll_module
-
   !  Precision variable
   integer, parameter :: double = 8
 
