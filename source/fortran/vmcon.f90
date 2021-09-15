@@ -106,11 +106,11 @@ contains
     ! The trailing underscore denotes an argument
     ! e.g. input argument mode_ will be assigned to module variable mode
     integer, intent(in) :: mode_,n_,m_,meq_,lcnorm_,lb_,maxfev_,ldel_,lh_,lwa_,liwa_
-    integer, dimension(n_), intent(in) :: ilower_,iupper_
+    integer, dimension(:), intent(in) :: ilower_,iupper_
     real(8), intent(in) :: tol_
-    real(8), dimension(n_), intent(in) :: bndl_,bndu_
-    real(8), dimension(n_), intent(in) :: x_
-    real(8), dimension(lb_,lb_), intent(in) :: b_
+    real(8), dimension(:), intent(in) :: bndl_,bndu_
+    real(8), dimension(:), intent(in) :: x_
+    real(8), dimension(:,:), intent(in) :: b_
 
     ! Ensure all allocatable arrays are deallocated
     if (allocated(iwa)) deallocate(iwa)

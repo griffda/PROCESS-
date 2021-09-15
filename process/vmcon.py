@@ -25,6 +25,7 @@ class Vmcon():
         # Attributes used by vmcon
         self.mode = 0
         self.n = numerics.nvar
+        print(f'n: {self.n}')
         self.m = numerics.neqns + numerics.nineqns
         self.xtol = numerics.epsvmc
         self.lb = ippn1
@@ -52,12 +53,12 @@ class Vmcon():
         self.glaga = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.gamma = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.bdelta = np.zeros(ipnvars, dtype=np.float64, order="F")
-        self.bndl = np.zeros(ipnvars, dtype=np.float64, order="F")
-        self.bndu = np.zeros(ipnvars, dtype=np.float64, order="F")
+        self.bndl = np.zeros(self.n, dtype=np.float64, order="F")
+        self.bndu = np.zeros(self.n, dtype=np.float64, order="F")
         self.eta = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.xa = np.zeros(ipnvars, dtype=np.float64, order="F")
-        self.iupper = np.zeros(ipnvars, dtype=np.float64, order="F")
-        self.ilower = np.zeros(ipnvars, dtype=np.float64, order="F")
+        self.iupper = np.zeros(self.n, dtype=np.float64, order="F")
+        self.ilower = np.zeros(self.n, dtype=np.float64, order="F")
 
         self.bdl = np.zeros(ippn1, dtype=np.float64, order="F")
         self.bdu = np.zeros(ippn1, dtype=np.float64, order="F")
