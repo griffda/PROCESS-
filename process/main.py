@@ -45,6 +45,7 @@ from process import fortran
 from process.io import plot_proc
 from process.scan import Scan
 from process import final
+from process.utilities.f2py_string_patch import string_to_f2py_compatible, f2py_compatible_to_string
 import argparse
 
 from pathlib import Path
@@ -327,7 +328,7 @@ class SingleRun():
                 "folder")
 
         # Set the input file in the Fortran
-        fortran.global_variables.fileprefix = str(self.input_path.resolve())
+        fortran.global_variables.fileprefix = string_to_f2py_compatible(fortran.global_variables.fileprefix, str(self.input_path.resolve()))
 
     def set_output(self):
         """Set the output file name.
@@ -335,7 +336,7 @@ class SingleRun():
         Set Path object on the Process object, and set the prefix in the Fortran.
         """
         self.output_path = Path(self.filename_prefix + "OUT.DAT")
-        fortran.global_variables.output_prefix = self.filename_prefix
+        fortran.global_variables.output_prefix = string_to_f2py_compatible(fortran.global_variables.output_prefix, self.filename_prefix)
 
     def set_mfile(self):
         """Set the mfile filename."""
