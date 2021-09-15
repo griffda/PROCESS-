@@ -130,11 +130,11 @@ real(8), private :: t_cable
 real(8), private :: vforce_inboard_tot
 !! Total inboard vertical tension (all coils) [N] 
 
-type(resistive_material):: copper
-type(resistive_material):: hastelloy
-type(resistive_material):: solder
-type(resistive_material):: jacket
-type(resistive_material):: helium
+type(resistive_material), private :: copper
+type(resistive_material), private :: hastelloy
+type(resistive_material), private :: solder
+type(resistive_material), private :: jacket
+type(resistive_material), private :: helium
 
 ! croco_strand
 real(8) :: croco_strand_area

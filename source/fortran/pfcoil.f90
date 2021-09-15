@@ -14,25 +14,27 @@ module pfcoil_module
    use resistive_materials, only: volume_fractions, supercon_strand
    use pfcoil_variables, only: nfixmx, ngrpmx, nclsmx, ngc2
    implicit none
+
+   public
  
    !  Local variables
  
    integer :: nef,nfxf
    real(8) :: ricpf, ssq0, sig_axial, sig_hoop
    real(8) :: axial_force
-   real(8), dimension(nfixmx) :: rfxf,zfxf,cfxf,xind
-   real(8), dimension(ngrpmx,nclsmx) :: rcls,zcls
-   real(8), dimension(ngrpmx) :: ccls,ccl0
-   real(8), dimension(ngc2) :: bpf2
-   real(8), dimension(ngc2,3) :: vsdum
+   real(8), dimension(nfixmx), private :: rfxf,zfxf,cfxf,xind
+   real(8), dimension(ngrpmx,nclsmx), private :: rcls,zcls
+   real(8), dimension(ngrpmx), private :: ccls,ccl0
+   real(8), dimension(ngc2), private :: bpf2
+   real(8), dimension(ngc2,3), private :: vsdum
  
    ! pfcoil subroutine var requiring re-initialisation before each new run
    logical :: first_call
    ! outpf subroutine var requiring re-initialisation before each new run
    logical :: CSlimit
  
-   type(volume_fractions):: conductorpf
-   type(supercon_strand)::croco_strand
+   type(volume_fractions), private :: conductorpf
+   type(supercon_strand), private ::croco_strand
  
  contains
  
