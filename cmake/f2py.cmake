@@ -25,7 +25,8 @@ MACRO(F2PY)
     IF(NOT CMAKE_HOST_APPLE)
         ADD_CUSTOM_COMMAND(
             OUTPUT ${F2PY_TARGET} ${F2PY_OUTPUT}
-            COMMAND echo \"Running f2py:\"\; LDFLAGS=-Wl,-rpath=\\$$ORIGIN/lib ${F2PY_NAME} -c -L../process/lib/ -l${PROJECT_NAME} ${PROCESS_WRAP_SRC_PATHS} --build-dir ${CMAKE_BINARY_DIR} -m "fortran"
+            COMMAND echo \"Running f2py:\"\; LDFLAGS=-Wl,-rpath=\\$$ORIGIN/lib ${F2PY_NAME} -c -L../process/lib/ -l${PROJECT_NAME} ${PROCESS_WRAP_SRC_PATHS} --build-dir ${CMAKE_BINARY_DIR} -m fortran
+            # COMMAND echo \"Writing f2py signatures:\"\; ${F2PY_NAME} -h process.pyf ${PROCESS_WRAP_SRC_PATHS} --overwrite-signature
             COMMAND ${CMAKE_COMMAND} -E copy ${F2PY_TARGET} ${F2PY_OUTPUT}
         )
     ELSE()
