@@ -109,7 +109,7 @@ contains
         real(8), intent(in) :: temperature
         real(8)::deltaj_rebco, jcritical
         logical :: validity
-        integer :: iprint
+        integer :: iprint = 0
 
         call jcrit_rebco(temperature, bfield, jcritical, validity, iprint)
         deltaj_rebco = jcritical - j
@@ -124,7 +124,7 @@ function function_jcrit_rebco(temperature,b)
     real(8), intent(in) :: temperature, b
     real(8)::function_jcrit_rebco
     logical :: validity
-    integer :: iprint
+    integer :: iprint = 0
 
     call jcrit_rebco(temperature, b, function_jcrit_rebco, validity, iprint)
 end function function_jcrit_rebco
