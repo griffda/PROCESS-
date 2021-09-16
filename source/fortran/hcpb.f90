@@ -1276,8 +1276,10 @@ contains
           '(p_plasma)', p_plasma, 'OP ')
         call ovarre(ofile, 'Inlet temperature of FW & blanket coolant pump (K)', &
           '(t_in_compressor)', t_in_compressor, 'OP ')
-        call ovarre(ofile, 'Outlet temperature of FW & blanket coolant pump (K)', &
+        call ovarre(ofile, 'Coolant pump outlet/Inlet temperature of FW & blanket (K)', &
           '(t_in_bb)', t_in_bb)
+        call ovarre(ofile, 'Outlet temperature of FW & blanket (K)', &
+          '(t_out_bb)', t_out_bb)	  
         call ovarre(ofile, 'Mechanical pumping power for FW and blanket cooling loop &
           &including heat exchanger (MW)', '(htpmw_fw_blkt)', htpmw_fw_blkt, 'OP ')
         call ovarre(ofile, 'Mechanical pumping power for divertor (MW)', &
