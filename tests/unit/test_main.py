@@ -220,8 +220,8 @@ def test_kallenbach_tests(single_run, monkeypatch):
     """
     # TODO Currently only checking for no exceptions before Fortran mock called
     monkeypatch.setattr(fortran.div_kal_vars, "kallenbach_tests", 1)
-    monkeypatch.setattr(fortran.kallenbach_module, "kallenbach_testing", 
-        lambda: None)
+    # monkeypatch.setattr(fortran.kallenbach_module, "kallenbach_testing", 
+    #     lambda: None)
     # Expect a SystemExit, as the code is exited if the Kallenbach tests are run
     with pytest.raises(SystemExit):
         single_run.kallenbach_tests()
