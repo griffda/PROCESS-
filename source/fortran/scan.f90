@@ -1058,7 +1058,7 @@ contains
   call osubhd(nout, &
        'The following equality constraint residues should be close to zero :')
 
-  call constraint_eqns(neqns+nineqns,con1,-1,con2,err,sym,lab)
+  call constraint_eqns(neqns+nineqns,-1,con1,con2,err,sym,lab)
   write(nout,90)
 90 format(t48,'physical',t73,'constraint',t100,'normalised')
   write(nout,100)

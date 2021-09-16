@@ -29,7 +29,7 @@ module constraints
 
 contains
 
-   subroutine constraint_eqns(m,cc,ieqn,con,err,symbol,units)
+   subroutine constraint_eqns(m,ieqn,cc,con,err,symbol,units)
     !! Routine that formulates the constraint equations
     !!
     !! **author: P J Knight** (UKAEA)
@@ -68,7 +68,7 @@ contains
     character(len=1),  optional, dimension(m), intent(out) :: symbol
     !! `=<`, `>`, `<` symbol for equation i denoting its type
 
-    character(len=10), optional, dimension(m), intent(out) :: units
+    character*10, optional, dimension(m), intent(out) :: units
     !! constraint units in equation i
 	
     ! Local variables
@@ -80,9 +80,9 @@ contains
     !! constraint value for constraint equation in physical units
     real(8) :: tmp_err = 0
     !! residual error in constraint equation in physical units
-    character(len=1)  :: tmp_symbol = ''
+    character(len=1)  :: tmp_symbol = ' '
     !! `=<`, `>`, `<` symbol for constraint equation denoting its type
-    character(len=10) :: tmp_units = ''
+    character(len=10) :: tmp_units = ' '
     !! constraint units in constraint equation
 
     
@@ -285,11 +285,11 @@ contains
         tmp_cc = 0
         tmp_con = 0
         tmp_err = 0
-        tmp_symbol = ''
-        tmp_units = ''
+        tmp_symbol = ' '
+        tmp_units = ' '
       
       end select
-
+      
       cc(i) = tmp_cc
       if (present(con)) then
         con(i) = tmp_con

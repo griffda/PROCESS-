@@ -39,7 +39,7 @@ module final_module
     call oblnkl(nout)
     
     ! Print the residuals of the constraint equations
-    call constraint_eqns(neqns+nineqns,con1,-1,con2,err,sym,lab)
+    call constraint_eqns(neqns+nineqns,-1,con1,con2,err,sym,lab)
     write(nout,120)
     120 format(t48,'physical',t73,'constraint',t100,'normalised')
     write(nout,130)

@@ -25,7 +25,6 @@ class Vmcon():
         # Attributes used by vmcon
         self.mode = 0
         self.n = numerics.nvar
-        print(f'n: {self.n}')
         self.m = numerics.neqns + numerics.nineqns
         self.xtol = numerics.epsvmc
         self.lb = ippn1
