@@ -157,7 +157,7 @@ contains
 20     format(a,i2,a,4a,1pe10.3)
   end subroutine scan_1d_write_point_header
   
-  subroutine scan_1d_store_output(iscan, ifail, outvar)
+  subroutine scan_1d_store_output(iscan, ifail, noutvars_, ipnscns_, outvar)
     use constraint_variables, only: taulimit
     use cost_variables, only: cdirt, coe, coeoam, coefuelt, c222, ireactor, &
       capcost, coecap, c221
@@ -185,7 +185,9 @@ contains
 
     integer, intent(in) :: iscan
     integer, intent(in) :: ifail
-    real(8), dimension(:,:), intent(out) :: outvar
+    ! outvar
+    integer, intent(in) :: noutvars_, ipnscns_
+    real(8), dimension(noutvars_,ipnscns_), intent(out) :: outvar
 
     ! Turn off error reporting (until next output)
     errors_on = .false.
@@ -465,7 +467,7 @@ contains
             1pe10.3, ' and ', a, ', ', a, ' = ', 1pe10.3)
   end subroutine scan_2d_write_point_header
 
-  subroutine scan_2d_store_output(ifail, iscan_1, iscan_R, iscan, outvar, &
+  subroutine scan_2d_store_output(ifail, iscan_1, iscan_R, iscan, noutvars_, ipnscns_, outvar, &
     sweep_1_vals, sweep_2_vals)
     implicit none
 
@@ -473,10 +475,12 @@ contains
     integer, intent(in) :: iscan_1
     integer, intent(in) :: iscan_R
     integer, intent(in) :: iscan
-    real(8), dimension(:,:), intent(out) :: outvar
+    ! size of outvar
+    integer, intent(in) :: noutvars_, ipnscns_
+    real(8), dimension(noutvars_,ipnscns_), intent(out) :: outvar
     real(8), dimension(:), intent(out) :: sweep_1_vals, sweep_2_vals
 
-    call scan_1d_store_output(iscan, ifail, outvar)
+    call scan_1d_store_output(iscan, ifail, noutvars_, ipnscns_, outvar)
 
     sweep_1_vals(iscan) = sweep(iscan_1)
     sweep_2_vals(iscan) = sweep_2(iscan_R)
