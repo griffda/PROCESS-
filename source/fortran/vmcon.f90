@@ -209,7 +209,7 @@ contains
     delta_var = 0.0D0
   end subroutine load
 
-  subroutine unload(info_, nfev_, niter_, objf_, x_, b_, iwa_, fgrd_, conf_, &
+  subroutine unload(n_, m_, lcnorm_, lb_, ldel_, lh_, lwa_, liwa_, info_, nfev_, niter_, objf_, x_, b_, iwa_, fgrd_, conf_, &
     glag_, glaga_, gamma_, eta_, xa_, bdelta_, cm_, delta_, wa_, cnorm_, h_, &
     vlam_, vmu_, gm_, bdl_, bdu_, sum_ &
   )
@@ -219,21 +219,24 @@ contains
 
     ! Output arguments which module variables are assigned to at the end of the
     ! subroutine
+    ! All intent(in) variables define array shapes as f2py does not like
+    ! assumed shape arrays being returned
+    integer, intent(in) :: n_, m_, lcnorm_, lb_, ldel_, lh_, lwa_, liwa_
     integer, intent(out) :: info_,nfev_,niter_
     real(8), intent(out) :: objf_
-    real(8), dimension(:), intent(out) :: x_
-    real(8), dimension(:,:), intent(out) :: b_
-    integer, dimension(:), intent(out) :: iwa_
-    real(8), dimension(:), intent(out) :: fgrd_
-    real(8), dimension(:), intent(out) :: conf_
-    real(8), dimension(:), intent(out) :: glag_,glaga_,gamma_,eta_,xa_,bdelta_
-    real(8), dimension(:), intent(out) :: cm_
-    real(8), dimension(:), intent(out) :: delta_
-    real(8), dimension(:), intent(out) :: wa_
-    real(8), dimension(:,:), intent(out) :: cnorm_
-    real(8), dimension(:,:), intent(out) :: h_
-    real(8), dimension(:), intent(out) :: vlam_, vmu_
-    real(8), dimension(:), intent(out) :: gm_, bdl_, bdu_
+    real(8), dimension(n_), intent(out) :: x_
+    real(8), dimension(lb_,lb_), intent(out) :: b_
+    integer, dimension(liwa_), intent(out) :: iwa_
+    real(8), dimension(n_), intent(out) :: fgrd_
+    real(8), dimension(m_), intent(out) :: conf_
+    real(8), dimension(n_), intent(out) :: glag_,glaga_,gamma_,eta_,xa_,bdelta_
+    real(8), dimension(m_), intent(out) :: cm_
+    real(8), dimension(ldel_), intent(out) :: delta_
+    real(8), dimension(lwa_), intent(out) :: wa_
+    real(8), dimension(lcnorm_,m_), intent(out) :: cnorm_
+    real(8), dimension(lh_,lh_), intent(out) :: h_
+    real(8), dimension(m_+(2*n_)+1), intent(out) :: vlam_, vmu_
+    real(8), dimension(n_+1), intent(out) :: gm_, bdl_, bdu_
     real(8), intent(out) :: sum_
     
     
@@ -290,7 +293,7 @@ contains
     !! gm_(n+1) : output real array : work array
     !! bdl_(n+1) : output real array : work array
     !! bdu_(n+1) : output real array : work array
-    
+
     ! Set output arguments to values of module variables
     info_= info
     nfev_ = nfev

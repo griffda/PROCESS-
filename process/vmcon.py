@@ -106,17 +106,18 @@ class Vmcon():
 
         self.run_vmcon()
 
-        (self.ifail, numerics.nfev2, numerics.nviter, self.objf, 
-            global_variables.convergence_parameter
-        ) = vmcon_module.unload(self.x[:self.n], self.b, self.iwa, 
-            self.fgrd[:self.n], self.conf[:self.m], self.glag[:self.n], 
-            self.glaga[:self.n], self.gamma[:self.n], self.eta[:self.n],
-            self.xa[:self.n], self.bdelta[:self.n], self.cm[:self.m], 
-            self.delta, self.wa, self.cnorm[:self.lcnorm, :self.m], self.h,
-            numerics.vlam[:self.m + (2 * self.n) + 1],
-            self.vmu[:self.m + (2 * self.n) + 1], self.gm[:self.n + 1],
-            self.bdl[:self.n + 1], self.bdu[:self.n + 1]
-        )
+        self.ifail, numerics.nfev2, numerics.nviter, self.objf, self.x[:self.n], self.b, \
+            self.iwa, self.fgrd[:self.n], self.conf[:self.m], self.glag[:self.n], \
+            self.glaga[:self.n], self.gamma[:self.n], self.eta[:self.n], \
+            self.xa[:self.n], self.bdelta[:self.n], self.cm[:self.m],  \
+            self.delta, self.wa, self.cnorm[:self.lcnorm, :self.m], self.h, \
+            numerics.vlam[:self.m + (2 * self.n) + 1], \
+            self.vmu[:self.m + (2 * self.n) + 1], self.gm[:self.n + 1], \
+            self.bdl[:self.n + 1], self.bdu[:self.n + 1], sum \
+            = vmcon_module.unload(self.n, self.m, self.lcnorm, self.lb, self.ldel, self.lh, self.lwa, self.liwa)
+        
+        # TODO is sum used?
+        
         # TODO Rather than passing slices of these arrays, it may be possible to
         # simplify this by only creating the arrays at the required, rather
         # than maximum possible, length now they are created in Python
