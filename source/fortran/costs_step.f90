@@ -453,7 +453,7 @@ contains
     use build_variables, only: fwarea
     use cost_variables, only: output_costs, step_ref, ifueltyp, fcdfuel, &
       divcst, cdcost
-    use current_drive_variables, only: pinjmw
+    use current_drive_variables, only: pinjmw, echpwr, pnbitot
     use physics_variables, only: rmajor, rminor
     use process_output, only: ocosts, oblnkl
     
@@ -513,8 +513,20 @@ contains
     step2298 = step2298 + 1.075D-1 * step22010304
   
     ! 22.01.04 Auxiliary Heating and Current Drive
-    ! Original STARFIRE value, scaling with auxiliary power
-    step220104 = step_ref(26) * (pinjmw / pinjmw_star)
+    ! step220104 = cost per injected Watt of pwer * injected Watts
+    ! cost per Watt depends on technology/hardware used:
+    if ( pnbitot > 0.0D0 ) then
+       ! NBI case: use NBI cost per injected Watt
+       step220104 = pnbitot * step_ref(69)
+    else if ( echpwr > 0.0D0 ) then
+       ! EC or EBW: use EC cost per injected Watt
+       step220104 = echpwr * step_ref(70)
+    else 
+       ! use original STARFIRE value, scaling with auxiliary power
+       step220104 = step_ref(26) * (pinjmw / pinjmw_star)
+    end if
+    ! adjust for inflation (hardware is in 2020 prices):
+    step220104 = step220104 * (229.0D0/258.84D0)
     if (ifueltyp==1) then
       step220104 = (1.0D0-fcdfuel) * step220104 
       cdcost = step220104
@@ -572,6 +584,7 @@ contains
     ! Output costs
     if ((iprint==1).and.(output_costs == 1)) then
       write(outfile,*) '******************* 22.01 Reactor Equipment'
+      call ocosts(outfile,'(step_ref_26)','step_ref_26', step_ref(26)) !RMC
       if (ifueltyp==0)then
         write(outfile,*) '******************* 22.01.01 Blanket and First Wall Equipment'
         call ocosts(outfile,'(step22010101)','Total First Wall Cost (M$)', step22010101)
