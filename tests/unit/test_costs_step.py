@@ -5,6 +5,7 @@ from process.fortran import cost_variables as cv
 from process.fortran import buildings_variables as bv
 from process.fortran import heat_transport_variables as htv
 from process.fortran import physics_variables as pv
+from process.fortran import structure_variables as sv
 import numpy as np
 import pytest
 
@@ -208,29 +209,41 @@ def test_step_a22010301(monkeypatch):
     # Only mock used array elements
     cv.step_ref[21] = 1.2572e2
     monkeypatch.setattr(cv, "cpstcst", 0.0)
-    cv.cfind[3] = 0.29
     monkeypatch.setattr(cv, "ifueltyp", 0)
     monkeypatch.setattr(cv, "step_uc_cryo_al", 81.0)
     monkeypatch.setattr(cv, "step_mc_cryo_al_per", 0.2)
     monkeypatch.setattr(cv, "uccpcl1", 250.0)
     monkeypatch.setattr(cv, "uccpclb", 150.0)
+    monkeypatch.setattr(cv, "step_uccu", 82.0)
+    monkeypatch.setattr(cv, "step_uccase", 91.0)
+    monkeypatch.setattr(cv, "step_cconfix", 233.0)
+    monkeypatch.setattr(cv, "step_ucwindtf", 1520.0)
+    monkeypatch.setattr(cv, "step_ucint", 91.0)
+    monkeypatch.setattr(cv, "step_ucgss", 91.0)
+    monkeypatch.setattr(cv, "step_cconshtf", 91.0)
     monkeypatch.setattr(tfv, "whtconal", 1.0e4)
+    monkeypatch.setattr(tfv, "whtconsc", 2.868e3)
+    monkeypatch.setattr(tfv, "whtcas", 9.198e4)
+    monkeypatch.setattr(tfv, "whtconcu", 9.818e3)
+    monkeypatch.setattr(tfv, "i_tf_sc_mat", 8)
     monkeypatch.setattr(tfv, "n_tf", 16.0)
-    monkeypatch.setattr(tfv, "whttflgs", 0.0)
-    monkeypatch.setattr(tfv, "whtcp", 1.0e4)
+    monkeypatch.setattr(tfv, "n_tf_turn", 104.6)
+    monkeypatch.setattr(tfv, "tfleng", 34.63)
+    monkeypatch.setattr(tfv, "whttflgs", 1.403e6)
+    monkeypatch.setattr(tfv, "whtcp", 0.0)
     monkeypatch.setattr(pv, "itart", 0)
-    monkeypatch.setattr(cs, "vfi", 5e3)
-    monkeypatch.setattr(cs, "vfi_star", 6.737e3)
+    monkeypatch.setattr(sv, "clgsmass", 1.570e5)
+    monkeypatch.setattr(sv, "aintmass", 1.335e6)
     
     # Copper coils
     monkeypatch.setattr(tfv, "i_tf_sup", 0)
-    expected = 7.475000
+    expected = 629.24550
     observed = cs.step_a22010301()
     assert pytest.approx(observed) == expected
 
     # Superconducting coils
     monkeypatch.setattr(tfv, "i_tf_sup", 1)
-    expected = 93.30563
+    expected = 507.24287
     observed = cs.step_a22010301()
     assert pytest.approx(observed) == expected
 

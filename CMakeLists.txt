@@ -122,6 +122,7 @@ LIST(APPEND PROCESS_SRCS
     vmcon_test.f90
     costs_step.f90
     water_usage_variables.f90
+    structure_variables.f90
 )
 
 # Install all requirements in the current Python environment
