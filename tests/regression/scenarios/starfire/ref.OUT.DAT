@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-357-g1e04141c
-    Branch : 1327-develop-stable-separate-TF-stress
+   Tag No. : v2.1-378-g294e3fc3 code contains untracked changes
+    Branch : 1304-update-hcd-costs-in-cost-model-2
    Git log : COMMIT_MSG
- Date/time : 27 Aug 2021 11:27:27 -04:00(hh:mm) UTC
-      User : cswan
-  Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-10/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-10/test_scenario_starfire_0/IN.DAT
+ Date/time : 20 Sep 2021 11:06:27 +01:00(hh:mm) UTC
+      User : rhicha
+  Computer : l0500
+ Directory : /tmp/pytest-of-rhicha/pytest-128/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-128/test_scenario_starfire_0/IN.DAT
  Run title : starfire
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -155,6 +155,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  ************************* 22. Reactor Plant Equipment **************************
  
  ******************* 22.01 Reactor Equipment
+ (step_ref_26)       step_ref_26                                                                                 272.54
  ******************* 22.01.01 Blanket and First Wall Equipment
  (step22010101)      Total First Wall Cost (M$)                                                                  515.84
  
@@ -170,7 +171,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  (step22010302)      PF Coils (M$)                                                                               625.22
  (step22010303)      Central Solenoid (M$)                                                                        52.21
  (step22010304)      Control Coils (M$)                                                                           28.80
- (step220104)        Auxiliary Heating and Current Drive (M$)                                                    272.54
+ (step220104)        Auxiliary Heating and Current Drive (M$)                                                    241.12
  (step220105)        Primary Structure and Support (M$)                                                          379.83
  (step220106)        Reactor Vacuum System (M$)                                                                   36.46
  (step220107)        Power Supplies (M$)                                                                         396.82
@@ -178,7 +179,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  (step220109)        ECRH Plasma Breakdown (M$)                                                                   22.95
  (step220110)        Divertor (M$)                                                                               136.40
  
- (step2201)          Total Account 22.01 Cost (M$)                                                              7005.24
+ (step2201)          Total Account 22.01 Cost (M$)                                                              6973.82
  
  ******************* 22.02 Heat Transfer System
  (step2202)          Heat Transfer System (M$)                                                                   157.32
@@ -222,10 +223,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  (step2207)          Total Account 22.07 Cost (M$)                                                               195.46
  
  ******************* 
- (step2298)          Spares (M$)                                                                                 504.30
- (step2299)          Contingency (M$)                                                                           1250.18
+ (step2298)          Spares (M$)                                                                                 496.96
+ (step2299)          Contingency (M$)                                                                           1244.37
  
- (step22)            Total Account 22 Cost (M$)                                                                 9584.74
+ (step22)            Total Account 22 Cost (M$)                                                                 9540.17
  
  ************************* 23. Turbine Plant Equipment **************************
  
@@ -263,45 +264,45 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ***************************** 27. Remote Handling ******************************
  
- (step2701)          Remote Handing (M$)                                                                        1074.62
+ (step2701)          Remote Handing (M$)                                                                        1071.28
  
- (step27)            Total Account 27 Cost (M$)                                                                 1074.62
+ (step27)            Total Account 27 Cost (M$)                                                                 1071.28
  
  ****************************** Plant Direct Cost *******************************
  
- (cdirt)             Plant direct cost (M$)                                                                    15402.90
+ (cdirt)             Plant direct cost (M$)                                                                    15354.98
  
  ******************************** Indirect Cost *********************************
  
- (step91)            Construction Facilities, Equipment and Services (M$)                                       4620.87
- (step92)            Engineering and Costruction Management Services (M$)                                       5005.94
- (step93)            Other Costs (M$)                                                                           2310.43
+ (step91)            Construction Facilities, Equipment and Services (M$)                                       4606.50
+ (step92)            Engineering and Costruction Management Services (M$)                                       4990.37
+ (step93)            Other Costs (M$)                                                                           2303.25
  
  ******************************* Constructed Cost *******************************
  
- (concost)           Constructed Cost (M$)                                                                     27340.14
+ (concost)           Constructed Cost (M$)                                                                     27255.10
  
  ************************* Interest during Construction *************************
  
- (moneyint)          Interest during construction (M$)                                                          4101.02
+ (moneyint)          Interest during construction (M$)                                                          4088.26
  
  *************************** Total Capital Investment ***************************
  
- (capcost)           Total capital investment (M$)                                                             31441.16
+ (capcost)           Total capital investment (M$)                                                             31343.36
  
  *************************************** Cost of Electricity (2017 US$) ***************************************
  
  First wall / blanket life (years)                                        (fwbllife)                    5.343     
  Divertor life (years)                                                    (divlife.)                    0.286     
- Cost of electricity (m$/kWh)                                             (coe)                       277.645     
+ Cost of electricity (m$/kWh)                                             (coe)                       276.812     
  
  Power Generation Costs :
  
                                                                            Annual Costs, M$       COE, m$/kWh
 
- Capital Investment                                                               2043.68              265.58
+ Capital Investment                                                               2037.32              264.75
  Operation & Maintenance                                                            68.29                8.87
- Decommissioning Fund                                                               17.28                2.25
+ Decommissioning Fund                                                               17.22                2.24
  Fuel Charge Breakdown
 
      Blanket & first wall                                                    0.00                0.00
@@ -312,7 +313,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
      Waste Disposal                                                          3.91                0.51
  Total Fuel Cost                                                                     7.31                0.95
 
- Total Cost                                                                       2136.55              277.65
+ Total Cost                                                                       2130.14              276.81
  
  ********************************************* Plant Availability *********************************************
  
@@ -789,7 +790,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Total outboard leg radial thickness (m)                                  (tfthko)                  6.827E-01     
  Outboard leg toroidal thickness (m)                                      (tftort)                  2.032E+00  OP 
  Maximum inboard edge height (m)                                          (hmax)                    5.882E+00  OP 
- Mean coil circumference (m)                                              (tfleng)                  3.281E+01  OP 
+ Mean coil circumference (including inboard leg length) (m)               (tfleng)                  3.281E+01  OP 
  Vertical TF shape                                                        (i_tf_shape)                      1     
  
  D-shape coil, inner surface shape approximated by
