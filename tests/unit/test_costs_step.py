@@ -79,6 +79,8 @@ step_ref = np.array(
         1.235e1,
         6.22,
         7.5e-1,
+        19.21, 
+        12.85,
     ]
 )
 
@@ -204,7 +206,7 @@ def test_step_a22010301(monkeypatch):
     :type monkeypatch: MonkeyPatch
     """
     # Mock dependencies with realistic values
-    monkeypatch.setattr(cv, "step_ref", np.zeros(68, order="F"))
+    monkeypatch.setattr(cv, "step_ref", np.zeros(70, order="F"))
     # Only mock used array elements
     cv.step_ref[21] = 1.2572e2
     monkeypatch.setattr(cv, "cpstcst", 0.0)
