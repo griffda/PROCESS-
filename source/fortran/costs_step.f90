@@ -584,7 +584,6 @@ contains
     ! Output costs
     if ((iprint==1).and.(output_costs == 1)) then
       write(outfile,*) '******************* 22.01 Reactor Equipment'
-      call ocosts(outfile,'(step_ref_26)','step_ref_26', step_ref(26)) !RMC
       if (ifueltyp==0)then
         write(outfile,*) '******************* 22.01.01 Blanket and First Wall Equipment'
         call ocosts(outfile,'(step22010101)','Total First Wall Cost (M$)', step22010101)
