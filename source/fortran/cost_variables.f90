@@ -322,6 +322,9 @@ module cost_variables
   real(dp) :: sitecost
   !! fixed value for site cost (2017 US$)
 
+  real(dp), dimension(62) :: site_imp_uc
+  !! Unit costs for Site Improvement activities (cost model 2)
+
   real(dp) :: step_con
   !! Contingency Percentage
 
@@ -649,6 +652,9 @@ module cost_variables
 
   real(dp) :: wfbuilding
   !! fixed value for waste facility buildings (2017 US$)
+
+  real(dp) :: whole_site_area
+  !! area of entire plant site (m2); default 1.0E6 m2 (i.e. 1 km2)
   
   contains
 
@@ -745,6 +751,16 @@ module cost_variables
     moneyint = 0.0D0
     output_costs = 1
     discount_rate = 0.0435D0
+    site_imp_uc = &
+      (/ 6.0D0, 24.0D0, 60.0D0, 43.0D0, 14.915863D6, 20.882208D6, 671.214D3, 2.0D0, 12.0D0, &
+      400.938D3, 12.0D0, 38.0D0, 8.0D0, 5.0D0, 5.0D0, 2.0D0, 37.0D0, 4.0D0, 210.618026D6, &
+      1.283D3, 1.090D3, 6.156922D6, 6.285191D6, 1.410961D6, 3.848076D6, 38.0D0, 105.110266D6, &
+      4.758017D6, 11.932690D6, 20.285573D6, 131.259593D6, 21.478843D6, 8.949518D6, &
+      19.688939D6, 323.375907D6, 27.445188D6, 17.899035D6, 751.759D3, 2.231294D6, 1.746230D6, &
+      18.137689D6, 15.448657D6, 5.773513D6, 11.345602D6, 961.357D3, 536.971D3, 1.933096D6, &
+      238.236D3, 553.796D3, 85.199D3, 55.845D3, 1.774988D6, 97.737325D6, 44.111064D6, &
+      409.009163D6, 156.641807D6, 143.192283D6, 59.663451D6, 26.550236D6, 181.496219D6, &
+      93.074984D6, 77.562487D6/)
     step_con = 1.5D-1
     step_cconfix = 217.0D0  
     step_cconshpf = 91.0D0
@@ -829,6 +845,7 @@ module cost_variables
     step_mc_cryo_al_per = 2.0D-1
     sitecost = 1.0D8
     wfbuilding = 1.0D8
+    whole_site_area = 1.0D6
 
   end subroutine init_cost_variables
 end module cost_variables

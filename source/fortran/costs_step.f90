@@ -248,8 +248,7 @@ contains
     step21 = 0.0D0
    
     ! 21.01 Site Improvements
-    ! Original STARFIRE value
-    step2101 = step_ref(3)
+    call step_a2101(step2101, outfile, iprint)
     step21 = step21 + step2101
     
     ! 21.02 Reactor Building
@@ -361,6 +360,385 @@ contains
     end if
 
   end subroutine step_a21
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine step_a2101(step2101, outfile, iprint)
+
+    !! Account 21.01 : Site Improvements
+    !! Author: R Chapman, UKAEA
+    !! This routine evaluates the Account 21.01 (Site Improvements) costs,
+    !! following defined Cost Breakdown Structure.
+    !! Accounts are a mixture of unit costings that scale with site area 
+    !! and fixed provisional allowances, for which more precise costings 
+    !! should be completed following site selection.
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use cost_variables, only: site_imp_uc, whole_site_area
+    use heat_transport_variables, only: pthermmw
+
+    implicit none
+
+    ! Arguments
+    integer, intent(in) :: iprint, outfile
+    real(dp), intent(inout) :: step2101
+
+    ! Local variables
+    real(dp) :: step210101, &
+                step21010101, step21010102, step21010103, step21010104, &
+                step21010105, step2101010501, step2101010502, step2101010503, &
+                step21010106, step21010107, step2101010701, step2101010702, &
+                step21010108, step2101010801, step2101010802, &
+                step21010109, step2101010901, step2101010902, step2101010903, step2101010904, &
+                step21010110, step21010111, step21010112, &
+                step21010113, step21010114, step21010115, step21010116, &
+                step21010117, step21010118, step2101011801, step2101011802, step2101011803, &
+                step21010119, step21010120, step2101012001, step2101012002, &
+                step210102, step210103, step21010301, step21010302, step21010303, &
+                step210104, step21010401, step21010402, step21010403, &
+                step21010404, step2101040401, step2101040402, step21010405, &
+                step21010406, step2101040601, step2101040602, step2101040603, &
+                step21010407, step2101040701, step2101040702, step2101040703, step2101040704, &
+                step2101040705, step2101040706, step2101040707, step2101040708, &
+                step2101040709, step2101040710, step2101040711, step2101040712, &
+                step2101040713, step2101040714, &
+                step210105, step21010501, step2101050101, step2101050102, &
+                step21010502, step21010503, step21010504, & 
+                step210106, step21010601, step21010602, &
+                step210107, step21010701, step21010702, step21010703
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   
+    ! Initialise total Site Improvement costs
+    step2101 = 0.0D0
+
+
+    ! 21.01.01 Site Improvements - general
+    step210101 = 0.0D0
+    
+    ! 21.01.01.01 Grading to surface level
+    ! Movement of existing material around site to facilitate construction activities
+    ! (cost per m2) * (site area)
+    step21010101 = site_imp_uc(1) * whole_site_area
+    step210101 = step210101 + step21010101
+
+    ! 21.01.01.02 General Excavation
+    ! Excavation up to actual construction depth including transport on site 
+    ! and double handling material; assumed 1m depth excavation
+    ! (cost per m2) * (site area)
+    step21010102 = site_imp_uc(2) * whole_site_area
+    step210101 = step210101 + step21010102
+
+    ! 21.01.01.03 Soil treatment 
+    ! Soil treatment; remediation and contamination
+    ! Provisional allowance only; site specific
+    ! (cost per m2) * (site area)
+    step21010103 = site_imp_uc(3) * whole_site_area
+    step210101 = step210101 + step21010103
+
+    ! 21.01.01.04 Filling & backfill
+    ! Filling and backfill site-won material and imported granular fill; 
+    ! asssumed 2m deep average
+    ! (cost per m3) * (site area) * (2m depth)
+    step21010104 = site_imp_uc(4) * whole_site_area * 2.0D0
+    step210101 = step210101 + step21010104
+
+    ! 21.01.01.05 Disposal
+    ! Provisional allowance only; site specific; fixed cost    
+    ! 21.01.01.05.01 Allowance for disposal offsite, non-hazardous contaminated material    
+    step2101010501 = site_imp_uc(5)
+    ! 21.01.01.05.02 Allowance for disposal offsite, hazardous contaminated material
+    step2101010502 = site_imp_uc(6)
+    ! 21.01.01.05.03 Disposal off site inert and contaminated soil in excavation below 
+    ! actual construction depth as additional settlement mitigation
+    step2101010503 = site_imp_uc(7)
+    step21010105 = step2101010501 + step2101010502 + step2101010503 
+    step210101 = step210101 + step21010105
+    
+    ! 21.01.01.06 Site Clearance
+    ! (cost per m2) * (site area)
+    step21010106 = site_imp_uc(8) * whole_site_area
+    step210101 = step210101 + step21010106
+    
+    ! 21.01.01.07 Removal of Trees & Vegetation
+    ! Provisional allowance only; site specific
+    ! 21.01.01.07.01 Vegetation & tree clearance
+    ! (cost per m2) * (site area) * (proportion of site)
+    step2101010701 = site_imp_uc(9) * whole_site_area * 0.2D0
+    ! 21.01.01.07.02 Allowance for removal of trees
+    step2101010702 = site_imp_uc(10)
+    step21010107 = step2101010701 + step2101010702
+    step210101 = step210101 + step21010107
+    
+    ! 21.01.01.08 New Landscaping
+    ! (cost per m2) * (site area) * (proportion of site)
+    ! 21.01.01.08.01 Landscaping
+    step2101010801 = site_imp_uc(11) * whole_site_area * 0.2D0
+    ! 21.01.01.08.02 Hedges
+    step2101010802 = site_imp_uc(12) * whole_site_area * 2.3D-3
+    step21010108 = step2101010801 + step2101010802
+    step210101 = step210101 + step21010108
+    
+    ! 21.01.01.09 Constraints and Mitigation
+    ! Provisional allowance only; site specific 
+    ! (cost per m2) * (site area)
+    ! 21.01.01.09.01 Environmental
+    step2101010901 = site_imp_uc(13) * whole_site_area
+    ! 21.01.01.09.02 Unexploded Ordnance (UXO)
+    step2101010902 = site_imp_uc(14) * whole_site_area
+    ! 21.01.01.09.03 Archaeological 
+    step2101010903 = site_imp_uc(15) * whole_site_area
+    ! 21.01.01.09.04 Local Stakeholders (including landowners and rights of way etc.)
+    step2101010904 = site_imp_uc(16) * whole_site_area
+    step21010109 = step2101010901 + step2101010902 + step2101010903 + step2101010904
+    step210101 = step210101 + step21010109
+    
+    ! 21.01.01.10 Roads, pavements and parking areas (Main Site-wide road network)
+    ! Site internal access; Main road onsite including secondary roads, 
+    ! road surface water network and parking and utilities
+    ! (cost per m2) * (site area)
+    step21010110 = site_imp_uc(17) * whole_site_area
+    step210101 = step210101 + step21010110
+    
+    ! 21.01.01.11 External Lighting
+    ! Street lighting columns, including 44W and 67W LED street lighting luminaires, 
+    ! ducting, cables and excavation works, backfilling, pull pit chambers, 
+    ! feeder pillars, earth blocks and MCCBs to lighting circuits and columns
+    ! (cost per m2) * (site area)
+    step21010111 = site_imp_uc(18) * whole_site_area
+    step210101 = step210101 + step21010111
+    
+    ! 21.01.01.12 Connection to Electricity grid (outgoing)
+    ! Includes transformers, busbars, cabling installation, fire protection, earthing. 
+    ! Based upon a circa 3GW power production plant.
+    step21010112 = site_imp_uc(19)
+    step210101 = step210101 + step21010112
+    
+    ! 21.01.01.13 Retaining Walls
+    ! Site specific; retaining walls varying height from 1.2m to 3m high. 
+    ! Note: NOT sea defence solution.
+    ! (cost per m) * SQRT(site area)
+    step21010113 = site_imp_uc(20) * sqrt(whole_site_area)
+    step210101 = step210101 + step21010113
+    
+    ! 21.01.01.14 Fencing 
+    ! Acoustic Fencing, height 5m; Construction Fence 3m height with mesh panel frame, 
+    ! independent gate posts, post and rail type wooden fence; proposed CCTV cameras, 
+    ! card site access control posts for vehicles, pedestrians; hostile vehicle mitigation
+    ! (cost per m) * SQRT(site area)
+    step21010114 = site_imp_uc(21) * sqrt(whole_site_area)
+    step210101 = step210101 + step21010114
+    
+    ! 21.01.01.15 Railings
+    ! Excluded (no benchmark cost data available)
+    step21010115 = 0.0D0
+    step210101 = step210101 + step21010115
+    
+    ! 21.01.01.16 Gateways 
+    ! Excluded (no benchmark cost data available)
+    step21010116 = 0.0D0
+    step210101 = step210101 + step21010116
+    
+    ! 21.01.01.17 Sanitary Sewer System (Foul water system)
+    ! Foul water drainage network including 6 pumping stations (duty and standby), 
+    ! instrumentations and controls. Assumes local water authority has sufficient 
+    ! capacity to absorb effluent without need for additional reinforcement.
+    step21010117 = site_imp_uc(22)
+    step210101 = step210101 + step21010117
+    
+    ! 21.01.01.18 Yard Drainage and Storm Sewer System (Surface water system)
+    ! 21.01.01.18.01 Surface water system
+    ! Carrier drains, filter drains, excavations, bedding, manholes, swales to 
+    ! main areas of the site (excludes surface water to power station and buildings)
+    step2101011801 = site_imp_uc(23)
+    ! 21.01.01.18.02 Groundwater & surface water treatment buildings
+    ! Includes for groundwater treatment plant, surface water treatment plant, 
+    ! surface water pumping station and connection to existing system
+    step2101011802 = site_imp_uc(24)
+    ! 21.01.01.18.03 Allowance for a single Water Management Zone 
+    ! Provisional allowance
+    step2101011803 = site_imp_uc(25)
+    step21010118 = step2101011801 + step2101011802 + step2101011803
+    step210101 = step210101 + step21010118
+    
+    ! 21.01.01.19 Foundation Preparation for construction area
+    ! Geogrid Reinforcement, including geotextile separation layer 
+    ! & concrete hardstanding 0.5m thick
+    ! (cost per m2) * (site area)
+    step21010119 = site_imp_uc(26) * whole_site_area
+    step210101 = step210101 + step21010119
+    
+    ! 21.01.01.20 Diaphragm Wall
+    ! 21.01.01.20.01 Cut off Diaphragm Wall approx. 1,000m long, 52m deep, 1.5m thick
+    step2101012001 = site_imp_uc(27)
+    ! 21.01.01.20.02 Dewatering to cut off wall
+    step2101012002 = site_imp_uc(28)
+    step21010120 = step2101012001 + step2101012002
+    step210101 = step210101 + step21010120
+       
+    ! Running total (M$)
+    step2101 = step2101 + (step210101 / 1.0D6)
+
+
+    ! 21.01.02 Diversions
+    step210102 = 0.0D0
+
+    ! Running total (M$)
+    step2101 = step2101 + (step210102 / 1.0D6)
+
+
+    ! 21.01.03 Relocation of Buildings & services
+    ! 21.01.03.01 Demolition of existing buildings
+    step21010301 = site_imp_uc(29) 
+    ! 21.01.03.02 Access to site and internal transportation
+    ! Access road from existing highway; main road onsite & secondary roads
+    step21010302 = site_imp_uc(30)    
+    ! 21.01.03.03 Incoming utilities & construction site setup
+    ! Includes all incoming services for entire site
+    step21010303 = site_imp_uc(31)
+    step210103 = step21010301 + step21010302 + step21010303
+
+    ! Running total (M$)
+    step2101 = step2101 + (step210103 / 1.0D6)
+
+
+    ! 21.01.04 Associated developments
+    step210104 = 0.0D0 
+    
+    ! 21.01.04.01 Park & Ride facilities
+    ! Includes 2457 car park spaces, external works, services, landscaping, etc.
+    step21010401 = site_imp_uc(32)  
+    step210104 = step210104 + step21010401
+
+    ! 21.01.04.02 Other site facilities/activities
+    ! Include vehicle inspection areas, security facilities for lorry parking, etc.
+    step21010402 = site_imp_uc(33) 
+    step210104 = step210104 + step21010402
+
+    ! 21.01.04.03 Entrance Plaza
+    ! Site prep. & ext. works: hardstandings, gantries for freight management, bus stops.
+    step21010403 = site_imp_uc(34)
+    step210104 = step210104 + step21010403 
+
+    ! 21.01.04.04 Campus Accommodation
+    ! 21.01.04.04.01 Residential
+    ! Campus accommodation including canteen, shops, laundry, 
+    ! internal recreation facilities, medical centre and sports pitches.
+    step2101040401 = site_imp_uc(35)
+    ! 21.01.04.04.02 Bus service
+    ! Bus station building and site maintenance and services.
+    step2101040402 = site_imp_uc(36)
+    step210104 = step210104 + step2101040401 + step2101040402
+    
+    ! 21.01.04.05 Multi-storey Car parks
+    step21010405 = site_imp_uc(37)
+    step210104 = step210104 + step21010405
+
+    ! 21.01.04.06 Ancillary buildings
+    ! Generic costs from BCIS building rates
+    ! 21.01.04.06 Medical Centre​
+    step2101040601 = site_imp_uc(38)
+    ! 21.01.04.06 Public information centre
+    step2101040602 = site_imp_uc(39)
+    ! 21.01.04.06 Indoor sports and entertainment centre​
+    step2101040603 = site_imp_uc(40)
+    step210104 = step210104 + step2101040601 + step2101040602 + step2101040603
+    
+    ! 21.01.04.07 Permanent configuration buildings - ancillary
+    ! Generic costs from BCIS building rates
+    ! 21.01.04.07.01 Operation staff buildings/Archive and Documentation building/Ground samples Warehouse/Occupational  Medical Centre
+    step2101040701 = site_imp_uc(41)
+    ! 21.01.04.07.02 Main site office
+    step2101040702 = site_imp_uc(42)
+    ! 21.01.04.07.03 Fire Training Centre for Plant Staff
+    step2101040703 = site_imp_uc(43)
+    ! 21.01.04.07.04 Fire fighting Water building
+    step2101040704 = site_imp_uc(44)
+    ! 21.01.04.07.05 Fire and rescue centre
+    step2101040705 = site_imp_uc(45)
+    ! 21.01.04.07.06 Administrative Office Building/ Administrative warehouse/In-site Restaurant
+    step2101040706 = site_imp_uc(46)
+    ! 21.01.04.07.07 Maintenance Staff Office
+    step2101040707 = site_imp_uc(47)
+    ! 21.01.04.07.08 Meteorological station
+    step2101040708 = site_imp_uc(48)
+    ! 21.01.04.07.09 Goods Entry Relay Store
+    step2101040709 = site_imp_uc(49)
+    ! 21.01.04.07.10 Offsite Vehicle Search Area
+    step2101040710 = site_imp_uc(50)
+    ! 21.01.04.07.11 Vehicle Inspection Cabins
+    step2101040711 = site_imp_uc(51)
+    ! 21.01.04.07.12 Security search facility
+    step2101040712 = site_imp_uc(52)
+    ! 21.01.04.07.13 Service Water Pump Building
+    step2101040713 = site_imp_uc(53)
+    ! 21.01.04.07.14 Simulator Training Building
+    step2101040714 = site_imp_uc(54)
+
+    step21010407 = step2101040701 + step2101040702 + step2101040703 + step2101040704 + &
+                   step2101040705 + step2101040706 + step2101040707 + step2101040708 + &
+                   step2101040709 + step2101040710 + step2101040711 + step2101040712 + &
+                   step2101040713 + step2101040714
+
+    step210104 = step210104 + step21010407
+
+    ! Running total (M$)
+    step2101 = step2101 + (step210104 / 1.0D6)
+
+
+    ! 21.01.05 Waterfront Improvements
+    ! 21.01.05.01 Marine
+    ! 21.01.05.01.01 Cooling installations - offshore intake, discharge, fish return, heat sink.
+    ! (Scaling used relates to thermal power of Hinckley C)
+    step2101050101 = site_imp_uc(55) * pthermmw * (0.5D0 / 4524)
+    ! 21.01.05.01.02 Breakwater - harbour breakwater construction
+    step2101050102 = site_imp_uc(56)
+    step21010501 = step2101050101 + step2101050102 
+    ! 21.01.05.02 Material Offloading Facility
+    ! Marine transportation - jetty complete with conveyor (inc. dismantling at project end)
+    step21010502 = site_imp_uc(57)
+    ! 21.01.05.03 Sea Defence
+    ! Armour and mass fill to increase height of existing defences in line with flood analysis.
+    step21010503 = site_imp_uc(58)
+    ! 21.01.05.04 Other Waterfront Improvements
+    ! Excluded (no benchmark cost data available)
+    step21010504 = 0.0D0
+
+    step210105 = step21010501 + step21010502 + step21010503 + step21010504    
+
+    ! Running total (M$)
+    step2101 = step2101 + (step210105 / 1.0D6)
+
+
+    ! 21.01.06 Reinstatement & Landscaping
+    ! 21.01.06.01 Reinstatement of campus
+    step21010601 = site_imp_uc(59)
+    ! 21.01.06.02 Reinstatement of construction plot area
+    step21010602 = site_imp_uc(60)
+    step210106 = step21010601 + step21010602
+
+    ! Running total (M$)
+    step2101 = step2101 + (step210106 / 1.0D6)
+
+
+    ! 21.01.07 Transport access
+    ! 21.01.07.01 Highway Access - offsite highway improvements
+    ! Includes new roads & junctions, widening, upgrade, etc.
+    step21010701 = site_imp_uc(61)
+    ! 21.01.07.02 Rail Access
+    ! Includes new track and associated provisions, interface with existing rail
+    step21010702 = site_imp_uc(62)
+    ! 21.01.07.03 Air Access
+    ! Excluded (no benchmark cost data available)
+    step21010703 = 0.0D0
+    step210107 = step21010701 + step21010702 + step21010703
+
+    ! Running total (M$)
+    step2101 = step2101 + (step210107 / 1.0D6)
+
+
+  end subroutine step_a2101
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

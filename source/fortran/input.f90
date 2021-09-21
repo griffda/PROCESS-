@@ -233,7 +233,7 @@ contains
       step_cconfix, step_cconshpf, step_currency, step_uccase, step_uccu, &
       step_ucsc, step_ucfnc, step_ucfwa, step_ucfws, step_ucfwps, step91_per, &
       step92_per, step93_per, step_uc_cryo_al, step_mc_cryo_al_per, sitecost, &
-      wfbuilding
+      wfbuilding, whole_site_area, site_imp_uc
     use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
@@ -2723,6 +2723,9 @@ contains
        case ('wfbuilding')
           call parse_real_variable('wfbuilding', wfbuilding, 0.0D0, 1.0D9, &
                'Fixed cost Waste Facility buildings ($)')
+       case ('whole_site_area')
+          call parse_real_variable('whole_site_area', whole_site_area, 0.0D0, 1.0D9, &
+               'Area of whole plant site (m2)')
 
           !  Unit cost settings
 
@@ -2804,7 +2807,10 @@ contains
                'Percentage of cdirt used in calculating step92 (3.0D-1 = 30%)')
        case ('step93_per')
           call parse_real_variable('step93_per', step93_per, 1.0D0, 1.0D2, &
-               'Percentage of cdirt used in calculating step93 (3.0D-1 = 30%)')
+               'Percentage of cdirt used in calculating step93 (3.0D-1 = 30%)')              
+       case ('site_imp_uc')
+          call parse_real_array('site_imp_uc', site_imp_uc, isub1, 62, &
+               'Site improvement reference values for cost model 2', icode)
        case ('ucblbe')
           call parse_real_variable('ucblbe', ucblbe, 1.0D0, 1.0D3, &
                'Unit cost for blanket Be ($/kg)')
