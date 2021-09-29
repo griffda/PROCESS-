@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-407-g54745850 code contains untracked changes
-    Branch : 1361-remove-cost-model-2-link-to-lsa
+   Tag No. : v2.1-538-g66f889bd
+    Branch : 1397-remove-f90wrap-from-build-process-tim2
    Git log : COMMIT_MSG
- Date/time :  2 Aug 2021 16:12:55 +01:00(hh:mm) UTC
-      User : rhicha
-  Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-63/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-63/test_scenario_secondary_CD_0/IN.DAT
+ Date/time : 29 Sep 2021 10:38:54 +00:00(hh:mm) UTC
+      User : root
+  Computer : c510c7d65104
+ Directory : /root/process
+     Input : /tmp/pytest-of-root/pytest-10/test_scenario_secondary_CD_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -51,7 +51,7 @@
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          1     
  Square root of the sum of squares of the constraint residuals            (sqsumsq)                 3.018E-09  OP 
- VMCON convergence parameter                                              (convergence_parameter)   5.249E-10  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   0.000E+00  OP 
  Number of VMCON iterations                                               (nviter)                         21  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit          MAJOR RADIUS.
@@ -123,30 +123,30 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  2.8587E-02              7.4585E-16                -2.6090E-14
-    2  Global power balance consistency      =  1.8754E-01 MW/m3       -9.0364E-15 MW/m3           4.8184E-14
-    3  Density upper limit                   <  8.4059E+19 /m3         -1.4746E+05 /m3            -1.7764E-15
-    4  Neutron wall load upper limit         <  1.1072E+00 MW/m2        2.0450E-13 MW/m2           1.8474E-13
+    1  Beta consistency                      =  2.8587E-02              7.5220E-16                -2.6312E-14
+    2  Global power balance consistency      =  1.8754E-01 MW/m3       -9.2862E-15 MW/m3           4.9516E-14
+    3  Density upper limit                   <  8.4059E+19 /m3          1.6384E+04 /m3             2.2204E-16
+    4  Neutron wall load upper limit         <  1.1072E+00 MW/m2        2.0628E-13 MW/m2           1.8630E-13
     5  Radial build consistency              =  9.2396E+00 m            3.0774E-15 m              -3.3307E-16
-    6  Burn time lower limit                 >  7.2000E+03 sec          3.1530E-06 sec            -4.3792E-10
-    7  L-H power threshold limit             >  1.2883E+02 MW           7.0088E-11 MW             -5.4379E-13
-    8  Net electric power lower limit        >  5.0000E+02 MW           1.6431E-07 MW              3.2862E-10
-    9  Beta upper limit                      <  5.5423E-02             -1.5543E-15                -2.7978E-14
-   10  Peak toroidal field upper limit       <  1.2500E+01 T            5.5511E-15 T              -4.4409E-16
-   11  CS coil EOF current density limit     <  3.5820E+07 A/m2         9.7901E-06 A/m2            2.7334E-13
-   12  CS coil BOP current density limit     <  3.5865E+07 A/m2         8.3521E-06 A/m2            2.3292E-13
-   13  Injection power upper limit           <  7.5000E+01 MW           2.2737E-13 MW             -2.9976E-15
-   14  TF coil case stress upper limit       <  6.6000E+08 Pa          -4.1723E-06 Pa             -6.4393E-15
-   15  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -1.2159E-05 Pa             -1.8430E-14
-   16  I_op / I_critical (TF coil)           <  3.0939E+07 A/m2         1.1074E-07 A/m2           -5.8842E-15
-   17  Dump voltage upper limit              <  1.0000E+01 V           -5.5067E-14 V              -5.5511E-15
-   18  J_winding pack/J_protection limit     <  1.8819E+07 A/m2         0.0000E+00 A/m2           -7.3275E-15
-   19  TF coil temp. margin lower limit      >  1.5000E+00 K           -2.4869E-13 K               1.6587E-13
-   20  CS temperature margin lower limit     >  1.5000E+00 K            4.4523E-09 K              -2.9682E-09
-   21  taup/taueff                           >  5.0000E+00             -1.8005E-13                 2.8422E-14
-   22  Dump time set by VV stress            >  3.1020E+01 s            2.1316E-13 s              -6.8834E-15
-   23  Upper Lim. on Psep * Bt / q A R       <  9.2000E+00 MWT/m       -4.5404E-12 MWT/m           4.9361E-13
-   24  CS Tresca stress limit                <  6.6000E+08 Pa           5.0426E-05 Pa              7.6383E-14
+    6  Burn time lower limit                 >  7.2000E+03 sec          3.1524E-06 sec            -4.3783E-10
+    7  L-H power threshold limit             >  1.2883E+02 MW           7.0372E-11 MW             -5.4623E-13
+    8  Net electric power lower limit        >  5.0000E+02 MW           1.6450E-07 MW              3.2899E-10
+    9  Beta upper limit                      <  5.5423E-02             -1.5474E-15                -2.7867E-14
+   10  Peak toroidal field upper limit       <  1.2500E+01 T            1.3878E-14 T              -1.1102E-15
+   11  CS coil EOF current density limit     <  3.5820E+07 A/m2         1.0446E-05 A/m2            2.9154E-13
+   12  CS coil BOP current density limit     <  3.5865E+07 A/m2         8.9332E-06 A/m2            2.4913E-13
+   13  Injection power upper limit           <  7.5000E+01 MW           0.0000E+00 MW             -0.0000E+00
+   14  TF coil case stress upper limit       <  6.6000E+08 Pa           5.2452E-06 Pa              7.9936E-15
+   15  TF coil conduit stress upper lim      <  6.6000E+08 Pa           5.9605E-07 Pa              8.8818E-16
+   16  I_op / I_critical (TF coil)           <  3.0939E+07 A/m2         2.9878E-07 A/m2           -1.5876E-14
+   17  Dump voltage upper limit              <  1.0000E+01 V           -1.6520E-13 V              -1.6542E-14
+   18  J_winding pack/J_protection limit     <  1.8819E+07 A/m2         0.0000E+00 A/m2           -1.1324E-14
+   19  TF coil temp. margin lower limit      >  1.5000E+00 K           -2.1760E-13 K               1.4500E-13
+   20  CS temperature margin lower limit     >  1.5000E+00 K            4.4519E-09 K              -2.9679E-09
+   21  taup/taueff                           >  5.0000E+00             -1.7302E-13                 2.7311E-14
+   22  Dump time set by VV stress            >  3.1020E+01 s            2.5935E-13 s              -8.3267E-15
+   23  Upper Lim. on Psep * Bt / q A R       <  9.2000E+00 MWT/m       -4.5723E-12 MWT/m           4.9694E-13
+   24  CS Tresca stress limit                <  6.6000E+08 Pa           5.2094E-05 Pa              7.8826E-14
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -636,7 +636,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Structural materal stress of the point of maximum TRESCA stress per layer
  Please use utility/plot_TF_stress.py for radial plots plots summary
  Layers                   Steel case         WP
- Radial stress     (MPa)       0.000      -221.828
+ Radial stress     (MPa)      -0.000      -221.828
  toroidal stress   (MPa)    -335.132      -463.264
  Vertical stress   (MPa)     196.736       196.736
  Von-Mises stress  (MPa)     465.780       586.906
@@ -672,7 +672,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Total outboard leg radial thickness (m)                                  (tfthko)                  1.501E+00     
  Outboard leg toroidal thickness (m)                                      (tftort)                  1.764E+00  OP 
  Maximum inboard edge height (m)                                          (hmax)                    9.281E+00  OP 
- Mean coil circumference (including centrepost length) (m)                (tfleng)                  5.240E+01  OP 
+ Mean coil circumference (including inboard leg length) (m)               (tfleng)                  5.240E+01  OP 
  Vertical TF shape                                                        (i_tf_shape)                      1     
  
  D-shape coil, inner surface shape approximated by
@@ -964,7 +964,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -8.271E+06 -8.271E+06 -8.271E+06  0.000E+00
    5         0.000E+00  0.000E+00 -5.693E+06 -5.693E+06 -5.693E+06  0.000E+00
    6         0.000E+00  0.000E+00 -5.693E+06 -5.693E+06 -5.693E+06  0.000E+00
-   7         0.000E+00  0.000E+00 -2.024E-09 -2.024E-09  3.239E-08  0.000E+00
+   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.281E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -6.099E-02  OP 
