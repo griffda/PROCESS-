@@ -189,7 +189,6 @@ def test_initialise(single_run, monkeypatch):
     :type single_run: SingleRun
     """
     # Mock the init subroutine with a lambda function
-    # monkeypatch.setattr(fortran.init_module, "init", lambda: None)
     # Run initialise method; this will fail on a raised exception
     single_run.initialise()
 
@@ -207,7 +206,6 @@ def test_run_hare_tests(single_run, monkeypatch):
     # For now, just check that no exceptions are thrown before calling into 
     # the Fortran
     monkeypatch.setattr(fortran.global_variables, "run_tests", 1)
-    # monkeypatch.setattr(fortran.main_module, "runtests", lambda: None)
     single_run.run_hare_tests()
 
 def test_kallenbach_tests(single_run, monkeypatch):
@@ -220,8 +218,6 @@ def test_kallenbach_tests(single_run, monkeypatch):
     """
     # TODO Currently only checking for no exceptions before Fortran mock called
     monkeypatch.setattr(fortran.div_kal_vars, "kallenbach_tests", 1)
-    # monkeypatch.setattr(fortran.kallenbach_module, "kallenbach_testing", 
-    #     lambda: None)
     # Expect a SystemExit, as the code is exited if the Kallenbach tests are run
     with pytest.raises(SystemExit):
         single_run.kallenbach_tests()
@@ -235,8 +231,6 @@ def test_kallenbach_scan(single_run, monkeypatch):
     :type monkeypatch: object
     """
     monkeypatch.setattr(fortran.div_kal_vars, "kallenbach_scan_switch", 1)
-    # monkeypatch.setattr(fortran.kallenbach_module, "kallenbach_scan", lambda: 
-    #     None)
     # Catch a SystemExit after running the scan
     with pytest.raises(SystemExit):
         single_run.kallenbach_scan()
@@ -300,7 +294,6 @@ def test_show_errors(single_run, monkeypatch):
     :param monkeypatch: monkeypatch fixture
     :type monkeypatch: object
     """
-    # monkeypatch.setattr(fortran.error_handling, "show_errors", lambda: None)
     single_run.show_errors()
 
 def test_finish(single_run, monkeypatch):
@@ -311,7 +304,6 @@ def test_finish(single_run, monkeypatch):
     :param monkeypatch: monkeypatch fixture
     :type monkeypatch: object
     """
-    # monkeypatch.setattr(fortran.init_module, "finish", lambda: None)
     single_run.finish()
 
 @pytest.fixture
