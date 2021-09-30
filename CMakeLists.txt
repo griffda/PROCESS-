@@ -17,7 +17,7 @@ find_package(PythonInterp 3 REQUIRED)
 # Set project name
 PROJECT(process LANGUAGES Fortran)
 
-# Read in external CMake scripts for preprocessing, f2py, f90wrap, ford, etc.
+# Read in external CMake scripts for preprocessing, f2py, ford, etc.
 INCLUDE(${CMAKE_SOURCE_DIR}/cmake/pip.cmake)
 INCLUDE(${CMAKE_SOURCE_DIR}/cmake/process_preprocessing.cmake)
 INCLUDE(${CMAKE_SOURCE_DIR}/cmake/f2py.cmake)
@@ -145,23 +145,9 @@ LIST(APPEND PREPROCESS_SOURCES
     error_handling.f90
 )
 
-
-# MESSAGE(STATUS "Excluding init_module.f90 from the build")
-# LIST(FILTER PROCESS_SRC_PATHS EXCLUDE REGEX ".*init_module.f90$")
-
-# MESSAGE(STATUS "Excluding main_module.f90 from the build")
-# LIST(FILTER PROCESS_SRC_PATHS EXCLUDE REGEX ".*main_module.f90$")
-
-# MESSAGE(STATUS "Excluding error_handling.f90 from the build")
-# LIST(FILTER PROCESS_SRC_PATHS EXCLUDE REGEX ".*error_handling.f90$")
-
-
-
 #######
 # Preprocess necessary files
 SET(PPED_F2PY_SRC ${CMAKE_BINARY_DIR}/prepocessed.f90)
-# LIST(APPEND PROCESS_SRC_PATHS ${PPED_F2PY_SRC})
-MESSAGE(STATUS "\tPROCESS Source Files: ${PROCESS_SRC_PATHS}")
 SET(PREPROCESS_NAME "preprocessForF2Py")
 LIST(TRANSFORM PREPROCESS_SOURCES PREPEND ${PROCESS_SRC_DIR}/ OUTPUT_VARIABLE PREPROCESS_SOURCES_PATH)
 
@@ -200,9 +186,6 @@ IF(CMAKE_HOST_APPLE)
 ELSEIF(CMAKE_HOST_UNIX)
     SET(LIBRARY_OUTPUT_SUFFIX ".so")
 ENDIF()
-
-# Stage 2: Generate preprocess files
-
 
 # Stage 3: Run f2py
 # Builds every time to make sure the libprocess.so file is up-to-date

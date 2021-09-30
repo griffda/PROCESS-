@@ -17,7 +17,6 @@ MACRO(F2PY)
     SET(F2PY_NAME "f2py")
     MESSAGE(STATUS "[f2py]: ")
     MESSAGE(STATUS "\tTarget: ${F2PY_TARGET}")
-    MESSAGE(STATUS "\tf2py sources: ${PROCESS_WRAP_SRC_PATHS} ")
     ADD_CUSTOM_TARGET(
         ${F2PY_NAME}
         DEPENDS ${F2PY_TARGET} ${F2PY_OUTPUT} 
@@ -26,7 +25,6 @@ MACRO(F2PY)
         ADD_CUSTOM_COMMAND(
             OUTPUT ${F2PY_TARGET} ${F2PY_OUTPUT}
             COMMAND echo \"Running f2py:\"\; LDFLAGS=-Wl,-rpath=\\$$ORIGIN/lib ${F2PY_NAME} -c -L../process/lib/ -l${PROJECT_NAME} ${PROCESS_WRAP_SRC_PATHS} --build-dir ${CMAKE_BINARY_DIR} -m fortran
-            # COMMAND echo \"Writing f2py signatures:\"\; ${F2PY_NAME} -h process.pyf ${PROCESS_WRAP_SRC_PATHS} --overwrite-signature
             COMMAND ${CMAKE_COMMAND} -E copy ${F2PY_TARGET} ${F2PY_OUTPUT}
         )
     ELSE()
