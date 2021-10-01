@@ -52,6 +52,7 @@ contains
     !  Local variables
 
     real(dp) :: sa,so,xsi,xso,thetai,thetao,xi,xo
+    real(dp) :: m_s_limit, a, b, c, d, e, f 
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -140,7 +141,28 @@ contains
 
        kappa95 = kappa / 1.12D0
        triang95 = triang / 1.50D0
+
+    case (10)
+
+      ! kappa95 found from aspect ratio and stabilty margin
+      ! Based on fit to CREATE data. ref Issue #1399
+      ! valid for EU-DEMO ile machine - aspect ratio 2.6 - 3.6
+      m_s_limit = 0.3D0
+
+      a = 8.39148185D0
+      b = -0.17713049D0
+      c = 1.9031585D0
+      d = -37.17364535D0
+      e = -2.54598909D0
+      f = 38.75101822D0
+  
+      kappa95 = ( ( -d - c * aspect - sqrt( (c ** 2.0d0 - 4.0d0 * a * b) * aspect ** 2.0d0 &
+             + (2.0d0 * d * c - 4.0d0 * a * e) * aspect + d ** 2.0d0 - 4.0d0 * a * f &
+             + 4.0d0 * a * m_s_limit) ) / (2.0d0 * a) ) **0.98D0
       
+      kappa = 1.12d0 * kappa95
+      triang95 = triang / 1.50D0
+
     end select
 
     !  Scrape-off layer thicknesses
