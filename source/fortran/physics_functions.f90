@@ -8,7 +8,9 @@ module physics_functions_module
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#ifdef use_intrinsic
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
 
   public :: beamfus, palph, palph2

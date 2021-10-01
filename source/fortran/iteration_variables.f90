@@ -1,7 +1,9 @@
 module define_iteration_variables 
    !! Module to define iteration variables
 
-   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#ifdef use_intrinsic
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
    implicit none
 
    public

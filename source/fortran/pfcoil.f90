@@ -10,7 +10,9 @@ module pfcoil_module
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#ifdef use_intrinsic
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
    use resistive_materials, only: volume_fractions, supercon_strand
    use pfcoil_variables, only: nfixmx, ngrpmx, nclsmx, ngc2
    implicit none

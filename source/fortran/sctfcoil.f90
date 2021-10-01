@@ -12,7 +12,9 @@ module sctfcoil_module
 !
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-use, intrinsic :: iso_fortran_env, only: dp=>real64
+#ifdef use_intrinsic
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 use resistive_materials, only: resistive_material, volume_fractions, &
     supercon_strand
 implicit none

@@ -28,7 +28,9 @@ module error_handling
   !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#ifdef use_intrinsic
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
 
   private
@@ -63,12 +65,12 @@ module error_handling
   !!                 <LI> 3  severe (fatal) errors have occurred</UL>
 
   integer, parameter :: INT_DEFAULT = -999999
-  real(dp), parameter :: FLT_DEFAULT = real(INT_DEFAULT, kind(1.0D0))
+  real(8), parameter :: FLT_DEFAULT = real(INT_DEFAULT, kind(1.0D0))
 
   !  Arrays for diagnostic output
 
   integer, dimension(8) :: idiags
-  real(dp), dimension(8) :: fdiags
+  real(8), dimension(8) :: fdiags
 
   !  Individual error item
   !  int and float arrays may be useful to provide diagnostic information
@@ -77,7 +79,7 @@ module error_handling
      integer            :: level    !  severity level
      character(len=200) :: message  !  information string
      integer, dimension(8) :: idiags = INT_DEFAULT
-     real(dp), dimension(8) :: fdiags = FLT_DEFAULT
+     real(8), dimension(8) :: fdiags = FLT_DEFAULT
   end type error
 
   !  Individual element in an error list

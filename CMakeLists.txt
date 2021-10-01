@@ -158,7 +158,7 @@ ADD_CUSTOM_TARGET(
 
 ADD_CUSTOM_COMMAND(
     OUTPUT ${PPED_F2PY_SRC}
-    COMMAND gfortran -E -cpp -DINSTALLDIR="'${CMAKE_SOURCE_DIR}'" -DCOMMSG="'${COMMIT_MSG}'" -Dbranch_name="'${GIT_BRANCH}'" -Dtagno="'${GIT_TAG}'" -Duntracked="${GIT_DIFF}" ${PREPROCESS_SOURCES_PATH} > ${PPED_F2PY_SRC}
+    COMMAND gfortran -E -cpp -DINSTALLDIR="'${CMAKE_SOURCE_DIR}'" -DCOMMSG="'${COMMIT_MSG}'" -Dbranch_name="'${GIT_BRANCH}'" -Dtagno="'${GIT_TAG}'" -Duntracked="${GIT_DIFF}" -Duse_intrinsic="1" ${PREPROCESS_SOURCES_PATH} > ${PPED_F2PY_SRC}
 )
 
 

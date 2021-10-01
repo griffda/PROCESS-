@@ -7,7 +7,9 @@ module divertor_ode
   !! This module contains the PROCESS Kallenbach divertor model
   !! 
   
+#ifdef use_intrinsic
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   use divertor_ode_var, only: nimp
   use constants, only: pi

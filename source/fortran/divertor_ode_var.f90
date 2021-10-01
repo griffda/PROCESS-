@@ -11,7 +11,9 @@ module divertor_ode_var
   ! Using n as variable rather than Ptotal
   ! Y(5) = electron density (n) [1e20 m-3]
   ! yp(5) = dn/dx [1e20 m-3 m-1]
-  use, intrinsic :: iso_fortran_env, only: dp=>real64   
+#ifdef use_intrinsic
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   use impurity_radiation_module, only: nimp, imp_label, impurity_arr
   implicit none
 
