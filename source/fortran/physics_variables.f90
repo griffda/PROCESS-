@@ -548,6 +548,9 @@ module physics_variables
   real(dp) :: ni0
   !! central ion density (/m3)
 
+  real(dp) :: m_s_limit 
+  !! vertical stablity margin limit
+
   real(dp) :: p0
   !! central total plasma pressure (Pa)
 
@@ -992,6 +995,7 @@ module physics_variables
     kappaa_IPB = 0.d0  
     ne0 = 0.0D0  
     ni0 = 0.0D0  
+    m_s_limit = 0.3D0
     p0 = 0.0D0  
     palppv = 0.0D0    
     palpepv = 0.0D0  

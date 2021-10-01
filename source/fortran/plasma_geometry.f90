@@ -44,7 +44,7 @@ contains
     use constants, only: twopi, pi
     use physics_variables, only: eps, pperim, sareao, rminor, kappa95, sarea, &
       triang95, fkzohm, vol, ishape, xarea, igeom, qlim, sf, iscrp, triang, &
-      cvol, rmajor, kappa, aspect, rli
+      cvol, rmajor, kappa, aspect, rli, m_s_limit
     implicit none
 
     !  Arguments
@@ -52,7 +52,7 @@ contains
     !  Local variables
 
     real(dp) :: sa,so,xsi,xso,thetai,thetao,xi,xo
-    real(dp) :: m_s_limit, a, b, c, d, e, f 
+    real(dp) :: a, b, c, d, e, f 
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -147,8 +147,6 @@ contains
       ! kappa95 found from aspect ratio and stabilty margin
       ! Based on fit to CREATE data. ref Issue #1399
       ! valid for EU-DEMO ile machine - aspect ratio 2.6 - 3.6
-      m_s_limit = 0.3D0
-
       a = 8.39148185D0
       b = -0.17713049D0
       c = 1.9031585D0
