@@ -7,7 +7,9 @@ module constraints
   !! constraint equations.
 
   ! Import modules
-  use, intrinsic :: iso_fortran_env, only : dp=>real64
+#ifdef use_intrinsic
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   use error_handling, only: report_error, idiags, fdiags
   
   implicit none

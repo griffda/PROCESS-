@@ -11,7 +11,9 @@ module costs_2015_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   ! Import modules
+#ifdef use_intrinsic
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
 
   ! Precision variable
