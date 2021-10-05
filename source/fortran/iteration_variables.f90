@@ -4268,7 +4268,9 @@ contains
     use error_handling, only: idiags, fdiags, report_error
     use numerics, only: ipnvars, scale, ixc, lablxc
     use maths_library, only: variable_error
+#ifdef use_intrinsic
     use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   
     implicit none
   

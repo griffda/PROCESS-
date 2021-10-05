@@ -508,7 +508,9 @@ contains
 
     interface
       function fun(rho)
+#ifdef use_intrinsic
         use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
         real(8), intent(in) :: rho
         real(8) :: fint
       end function fun
@@ -729,7 +731,9 @@ contains
 
     interface
       function fhz(hhh)
+#ifdef use_intrinsic
         use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
         real(8), intent(in) :: hhh
         real(8) :: fhz
       end function fhz
@@ -5202,7 +5206,9 @@ contains
       
       interface
         function f(x)
+#ifdef use_intrinsic
           use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
           real(8), intent(in) :: x
           real(8) :: f
         end function f
