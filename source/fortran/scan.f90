@@ -98,10 +98,10 @@ module scan_module
   integer :: nsweep_2
   !! nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
 
-  real(dp), dimension(ipnscns) :: sweep
+  real(8), dimension(ipnscns) :: sweep
   !! sweep(ipnscns) /../: actual values to use in scan
 
-  real(dp), dimension(ipnscns) :: sweep_2
+  real(8), dimension(ipnscns) :: sweep_2
   !! sweep_2(ipnscns) /../: actual values to use in 2D scan
 
   ! Vars in subroutines scan_1d and scan_2d requiring re-initialising before 
@@ -157,7 +157,7 @@ contains
 20     format(a,i2,a,4a,1pe10.3)
   end subroutine scan_1d_write_point_header
   
-  subroutine scan_1d_store_output(iscan, ifail, outvar)
+  subroutine scan_1d_store_output(iscan, ifail, noutvars_, ipnscns_, outvar)
     use constraint_variables, only: taulimit
     use cost_variables, only: cdirt, coe, coeoam, coefuelt, c222, ireactor, &
       capcost, coecap, c221
@@ -185,7 +185,9 @@ contains
 
     integer, intent(in) :: iscan
     integer, intent(in) :: ifail
-    real(dp), dimension(noutvars,ipnscns), intent(out) :: outvar
+    ! outvar
+    integer, intent(in) :: noutvars_, ipnscns_
+    real(8), dimension(noutvars_,ipnscns_), intent(out) :: outvar
 
     ! Turn off error reporting (until next output)
     errors_on = .false.
@@ -288,7 +290,7 @@ contains
     implicit none
 
     integer, intent(inout) :: iscan
-    real(dp), dimension(noutvars,ipnscns), intent(in) :: outvar
+    real(8), dimension(:,:), intent(in) :: outvar
     
     character(len=48) :: tlabel
     integer :: ivar
@@ -465,7 +467,7 @@ contains
             1pe10.3, ' and ', a, ', ', a, ' = ', 1pe10.3)
   end subroutine scan_2d_write_point_header
 
-  subroutine scan_2d_store_output(ifail, iscan_1, iscan_R, iscan, outvar, &
+  subroutine scan_2d_store_output(ifail, iscan_1, iscan_R, iscan, noutvars_, ipnscns_, outvar, &
     sweep_1_vals, sweep_2_vals)
     implicit none
 
@@ -473,10 +475,12 @@ contains
     integer, intent(in) :: iscan_1
     integer, intent(in) :: iscan_R
     integer, intent(in) :: iscan
-    real(dp), dimension(noutvars,ipnscns), intent(out) :: outvar
-    real(dp), dimension(ipnscns), intent(out) :: sweep_1_vals, sweep_2_vals
+    ! size of outvar
+    integer, intent(in) :: noutvars_, ipnscns_
+    real(8), dimension(noutvars_,ipnscns_), intent(out) :: outvar
+    real(8), dimension(:), intent(out) :: sweep_1_vals, sweep_2_vals
 
-    call scan_1d_store_output(iscan, ifail, outvar)
+    call scan_1d_store_output(iscan, ifail, noutvars_, ipnscns_, outvar)
 
     sweep_1_vals(iscan) = sweep(iscan_1)
     sweep_2_vals(iscan) = sweep_2(iscan_R)
@@ -488,8 +492,8 @@ contains
     implicit none
 
     integer, intent(inout) :: iscan
-    real(dp), dimension(noutvars,ipnscns), intent(in) :: outvar
-    real(dp), dimension(ipnscns), intent(in) :: sweep_1_vals, sweep_2_vals
+    real(8), dimension(:,:), intent(in) :: outvar
+    real(8), dimension(:), intent(in) :: sweep_1_vals, sweep_2_vals
 
     integer :: ivar
     character(len=48) :: tlabel
@@ -621,7 +625,7 @@ contains
 
     ! Arguments
     integer, intent(in) :: nwp, iscn
-    real(dp), intent(in), dimension(ipnscns) :: swp
+    real(8), intent(in), dimension(:) :: swp
     character(len=25), intent(out) :: vlab, xlab
 
     select case (nwp)
@@ -846,8 +850,8 @@ contains
 
   !  Local variables
   integer :: ii,inn,iflag
-  real(dp) :: summ,xcval,xmaxx,xminn,f,xnorm
-  real(dp), dimension(ipeqns) :: con1, con2, err
+  real(8) :: summ,xcval,xmaxx,xminn,f,xnorm
+  real(8), dimension(ipeqns) :: con1, con2, err
   character(len=1), dimension(ipeqns) :: sym
   character(len=10), dimension(ipeqns) :: lab
   character(len=30) :: strfom
@@ -1058,7 +1062,7 @@ contains
   call osubhd(nout, &
        'The following equality constraint residues should be close to zero :')
 
-  call constraint_eqns(neqns+nineqns,con1,-1,con2,err,sym,lab)
+  call constraint_eqns(neqns+nineqns,-1,con1,con2,err,sym,lab)
   write(nout,90)
 90 format(t48,'physical',t73,'constraint',t100,'normalised')
   write(nout,100)

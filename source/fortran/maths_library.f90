@@ -23,15 +23,6 @@ module maths_library
   !  Precision variable
   integer, parameter :: double = 8
 
-  private
-
-  public :: ellipke,find_y_nonuniform_x,gamfun,linesolv,qpsub, &
-       quanc8,sumup3,svd,tril,zeroin, eshellvol, dshellvol, &
-       eshellarea, dshellarea, binomial, binarysearch, interpolate, &
-       secant_solve, test_secant_solve, nearly_equal
-  public::variable_error
-  public :: integer2string, integer3string
-
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -55,14 +46,14 @@ contains
 
     implicit none
 
-    real(dp) :: find_y_nonuniform_x
+    real(8) :: find_y_nonuniform_x
 
     !  Arguments
 
     integer, intent(in) :: n
-    real(dp), intent(in) :: x0
-    real(dp), dimension(n), intent(in) :: x
-    real(dp), dimension(n), intent(in) :: y
+    real(8), intent(in) :: x0
+    real(8), dimension(n), intent(in) :: x
+    real(8), dimension(n), intent(in) :: y
 
     !  Local variables
     integer :: i,j
@@ -138,16 +129,16 @@ contains
     !  Arguments
 
     integer, intent(in) :: n
-    real(dp), intent(in) :: dx
-    real(dp), intent(in), dimension(n) :: y
-    real(dp), intent(inout), dimension(n) :: inty
+    real(8), intent(in) :: dx
+    real(8), intent(in), dimension(n) :: y
+    real(8), intent(inout), dimension(n) :: inty
 
     !  Local variables
 
     integer :: ix
-    real(dp), parameter :: third = 1.0D0/3.0D0
-    real(dp) :: thirddx
-    real(dp), allocatable, dimension(:) :: yhalf
+    real(8), parameter :: third = 1.0D0/3.0D0
+    real(8) :: thirddx
+    real(8), allocatable, dimension(:) :: yhalf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -193,15 +184,15 @@ contains
     !  Arguments
 
     integer, intent(in) :: n
-    real(dp), intent(in) :: dx
-    real(dp), intent(in), dimension(n) :: y
-    real(dp), intent(out) :: integral
+    real(8), intent(in) :: dx
+    real(8), intent(in), dimension(n) :: y
+    real(8), intent(out) :: integral
 
     !  Local variables
 
     integer :: ix
-    real(dp) :: sum1
-    real(dp), allocatable, dimension(:) :: inty
+    real(8) :: sum1
+    real(8), allocatable, dimension(:) :: inty
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -250,8 +241,8 @@ contains
     !  Arguments
 
     integer, intent(in) :: n
-    real(dp), dimension(n,n), intent(in) :: a
-    real(dp), dimension(n,n), intent(out) :: alower
+    real(8), dimension(n,n), intent(in) :: a
+    real(8), dimension(n,n), intent(out) :: alower
 
     !  Local variables
 
@@ -291,12 +282,12 @@ contains
 
     !  Arguments
 
-    real(dp), intent(in) :: sqk
-    real(dp), intent(out) :: kk,ek
+    real(8), intent(in) :: sqk
+    real(8), intent(out) :: kk,ek
 
     !  Local variables
 
-    real(dp) :: a,b,d,e
+    real(8) :: a,b,d,e
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -324,11 +315,12 @@ contains
   end subroutine ellipke
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  real(dp)  function binomial(n,k) result(coefficient)
+  function binomial(n,k) result(coefficient)
     ! This outputs a real approximation to the coefficient
     ! http://en.wikipedia.org/wiki/Binomial_coefficient#Multiplicative_formula
     implicit none
     integer, intent(in) :: n, k
+    real(8) :: coefficient
     integer :: numerator, i
     if (k == 0) then
         coefficient = 1
@@ -342,7 +334,7 @@ contains
   end function binomial
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  recursive real(dp) function gamfun(x) result(gamma)
+  recursive function gamfun(x) result(gamma)
 
     !! Calculates the gamma function for arbitrary real x
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -358,16 +350,17 @@ contains
 
     !  Arguments
 
-    real(dp), intent(in) :: x
+    real(8), intent(in) :: x
+    real(8) :: gamma
 
     !  Local variables
 
-    real(dp), parameter :: sqtwopi = 2.5066282746310005D0
-    real(dp), parameter :: c1 = 8.3333333333333333D-2  !  1/12
-    real(dp), parameter :: c2 = 3.4722222222222222D-3  !  1/288
-    real(dp), parameter :: c3 = 2.6813271604938272D-3  !  139/51840
-    real(dp), parameter :: c4 = 2.2947209362139918D-4  !  571/2488320
-    real(dp) :: summ, denom
+    real(8), parameter :: sqtwopi = 2.5066282746310005D0
+    real(8), parameter :: c1 = 8.3333333333333333D-2  !  1/12
+    real(8), parameter :: c2 = 3.4722222222222222D-3  !  1/288
+    real(8), parameter :: c3 = 2.6813271604938272D-3  !  139/51840
+    real(8), parameter :: c4 = 2.2947209362139918D-4  !  571/2488320
+    real(8) :: summ, denom
     integer :: i,n
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -408,12 +401,12 @@ contains
 
     implicit none
     integer, intent(in) :: length
-    real(dp), dimension(length), intent(in) :: array
-    real(dp), intent(in) :: value
-    real(dp), intent(in), optional :: delta
+    real(8), dimension(length), intent(in) :: array
+    real(8), intent(in) :: value
+    real(8), intent(in), optional :: delta
     integer :: binarysearch
     integer :: left, middle, right
-    real(dp) :: d
+    real(8) :: d
 
     if (present(delta) .eqv. .true.) then
         d = delta
@@ -441,7 +434,7 @@ contains
 
   end function binarysearch
 
-  real(dp) function interpolate(x_len, x_array, y_len, y_array, f, x, y)
+  real(8) function interpolate(x_len, x_array, y_len, y_array, f, x, y)
     ! This function uses bilinear interpolation to estimate the value
     ! of a function f at point (x,y)
     ! f is assumed to be sampled on a regular grid, with the grid x values specified
@@ -449,11 +442,11 @@ contains
     ! Reference: http://en.wikipedia.org/wiki/Bilinear_interpolation
     implicit none
     integer, intent(in) :: x_len, y_len
-    real(dp), dimension(x_len), intent(in) :: x_array
-    real(dp), dimension(y_len), intent(in) :: y_array
-    real(dp), dimension(x_len, y_len), intent(in) :: f
-    real(dp), intent(in) :: x,y
-    real(dp) :: denom, x1, x2, y1, y2
+    real(8), dimension(x_len), intent(in) :: x_array
+    real(8), dimension(y_len), intent(in) :: y_array
+    real(8), dimension(x_len, y_len), intent(in) :: f
+    real(8), intent(in) :: x,y
+    real(8) :: denom, x1, x2, y1, y2
     integer :: i,j
 
     i = binarysearch(x_len, x_array, x)
@@ -514,25 +507,25 @@ contains
     interface
       function fun(rho)
         use, intrinsic :: iso_fortran_env, only: dp=>real64
-        real(dp), intent(in) :: rho
-        real(dp) :: fint
+        real(8), intent(in) :: rho
+        real(8) :: fint
       end function fun
     end interface
 
     !  Arguments
 
-    real(dp), external :: fun
-    real(dp), intent(in) :: a, b, abserr, relerr
-    real(dp), intent(out) :: result, errest, flag
+    real(8), external :: fun
+    real(8), intent(in) :: a, b, abserr, relerr
+    real(8), intent(out) :: result, errest, flag
     integer, intent(out) :: nofun
 
     !  Local variables
 
-    real(dp) :: w0,w1,w2,w3,w4,area,x0,f0,stone,step,cor11,temp
-    real(dp) :: qprev,qnow,qdiff,qleft,esterr,tolerr
-    real(dp), dimension(31) :: qright
-    real(dp), dimension(16) :: f, x
-    real(dp), dimension(8,30) :: fsave, xsave
+    real(8) :: w0,w1,w2,w3,w4,area,x0,f0,stone,step,cor11,temp
+    real(8) :: qprev,qnow,qdiff,qleft,esterr,tolerr
+    real(8), dimension(31) :: qright
+    real(8), dimension(16) :: f, x
+    real(8), dimension(8,30) :: fsave, xsave
 
     integer :: levmin,levmax,levout,nomax,nofin,lev,nim,i,j
 
@@ -735,21 +728,21 @@ contains
     interface
       function fhz(hhh)
         use, intrinsic :: iso_fortran_env, only: dp=>real64
-        real(dp), intent(in) :: hhh
-        real(dp) :: fhz
+        real(8), intent(in) :: hhh
+        real(8) :: fhz
       end function fhz
     end interface
 
-    real(dp) :: zeroin
+    real(8) :: zeroin
 
     !  Arguments
 
     external :: fhz
-    real(dp), intent(in) :: ax,bx,tol
+    real(8), intent(in) :: ax,bx,tol
 
     !  Local variables
 
-    real(dp) :: a,b,c,d,e,eps,fa,fb,fc,tol1,xm,p,q,r,s
+    real(8) :: a,b,c,d,e,eps,fa,fb,fc,tol1,xm,p,q,r,s
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -876,8 +869,8 @@ contains
     !  Arguments
 
     integer, intent(in) :: ndim
-    real(dp), dimension(ndim,ndim), intent(inout) :: a
-    real(dp), dimension(ndim), intent(inout) :: b, x
+    real(8), dimension(ndim,ndim), intent(inout) :: a
+    real(8), dimension(ndim), intent(inout) :: b, x
 
     !  Local variables
 
@@ -923,11 +916,11 @@ contains
     integer, intent(in) :: ih, n
     integer, intent(out) :: info
     integer, dimension(:), intent(out) :: ipvt
-    real(dp), dimension(:,:), intent(inout) :: h
+    real(8), dimension(:,:), intent(inout) :: h
 
     !  Local variables
 
-    real(dp), dimension(2) :: det
+    real(8), dimension(2) :: det
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -980,14 +973,14 @@ contains
     !  Arguments
 
     integer, intent(in) :: ix,iy,n,iflag
-    real(dp), dimension(:), intent(in) :: x
-    real(dp), dimension(:), intent(in) :: y
-    real(dp), intent(in) :: c
-    real(dp), intent(out) :: total
+    real(8), dimension(:), intent(in) :: x
+    real(8), dimension(:), intent(in) :: y
+    real(8), intent(in) :: c
+    real(8), intent(out) :: total
 
     !  Local variables
 
-    real(dp) :: prod
+    real(8) :: prod
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1034,13 +1027,13 @@ contains
 
     integer, intent(in) :: lda,n,job
     integer, dimension(n), intent(in) :: ipvt
-    real(dp), dimension(lda,n), intent(in) :: a
-    real(dp), dimension(n), intent(inout) :: b
+    real(8), dimension(lda,n), intent(in) :: a
+    real(8), dimension(n), intent(inout) :: b
 
     !  Local variables
 
     integer :: k,kb,l,nm1
-    real(dp) :: t
+    real(8) :: t
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1130,12 +1123,12 @@ contains
     integer, intent(in) :: lda,n
     integer, intent(out) :: info
     integer, dimension(n), intent(out) :: ipvt
-    real(dp), dimension(lda,n), intent(inout) :: a
+    real(8), dimension(lda,n), intent(inout) :: a
 
     !  Local variables
 
     integer :: j,k,kp1,l,nm1
-    real(dp) :: t
+    real(8) :: t
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1246,15 +1239,15 @@ contains
 
     integer, intent(in) :: lda,n,job
     integer, dimension(n), intent(in) :: ipvt
-    real(dp), dimension(lda,n), intent(inout) :: a
+    real(8), dimension(lda,n), intent(inout) :: a
 
     !  Local variables
 
     integer :: i,j,k,kk,kb,kp1,l,nm1
-    real(dp), parameter :: ten = 10.0D0
-    real(dp) :: t
-    real(dp), dimension(2) :: det
-    real(dp), dimension(n) :: work
+    real(8), parameter :: ten = 10.0D0
+    real(8) :: t
+    real(8), dimension(2) :: det
+    real(8), dimension(n) :: work
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1355,8 +1348,8 @@ contains
     !  Arguments
 
     integer, intent(in) :: n, incx
-    real(dp), intent(in) :: sa
-    real(dp), dimension(n*incx), intent(inout) :: sx
+    real(8), intent(in) :: sa
+    real(8), dimension(n*incx), intent(inout) :: sx
 
     !  Local variables
 
@@ -1423,9 +1416,9 @@ contains
     !  Arguments
 
     integer, intent(in) :: n,incx,incy
-    real(dp), intent(in) :: sa
-    real(dp), dimension(n*incx), intent(in) :: sx
-    real(dp), dimension(n*incy), intent(inout) :: sy
+    real(8), intent(in) :: sa
+    real(8), dimension(n*incx), intent(in) :: sx
+    real(8), dimension(n*incy), intent(inout) :: sy
 
     !  Local variables
 
@@ -1491,13 +1484,13 @@ contains
     !  Arguments
 
     integer, intent(in) :: n, incx, incy
-    real(dp), dimension(n*incx), intent(inout) :: sx
-    real(dp), dimension(n*incy), intent(inout) :: sy
+    real(8), dimension(n*incx), intent(inout) :: sx
+    real(8), dimension(n*incy), intent(inout) :: sy
 
     !  Local variables
 
     integer :: i,ix,iy,m,mp1
-    real(dp) :: stemp
+    real(8) :: stemp
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1565,18 +1558,18 @@ contains
 
     implicit none
 
-    real(dp) :: sdot
+    real(8) :: sdot
 
     !  Arguments
 
     integer, intent(in) :: n,incx,incy
-    real(dp), dimension(:), intent(in) :: sx
-    real(dp), dimension(:), intent(in) :: sy
+    real(8), dimension(:), intent(in) :: sx
+    real(8), dimension(:), intent(in) :: sy
 
     !  Local variables
 
     integer :: ix,i,iy
-    real(dp) :: sw
+    real(8) :: sw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1617,12 +1610,12 @@ contains
     !  Arguments
 
     integer, intent(in) :: n, incx
-    real(dp), dimension(n*incx), intent(in) :: sx
+    real(8), dimension(n*incx), intent(in) :: sx
 
     !  Local variables
 
     integer :: i,ix
-    real(dp) :: smax
+    real(8) :: smax
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1710,15 +1703,15 @@ contains
 
     integer, intent(in) :: nm, m, n
     logical, intent(in) :: matu, matv
-    real(dp), dimension(nm,n), intent(inout) :: a
-    real(dp), dimension(nm,n), intent(out) :: u, v
-    real(dp), dimension(n), intent(out) :: w, rv1
+    real(8), dimension(nm,n), intent(inout) :: a
+    real(8), dimension(nm,n), intent(out) :: u, v
+    real(8), dimension(n), intent(out) :: w, rv1
     integer, intent(out) :: ierr
 
     !  Local variables
 
     integer :: i,j,k,l,ii,i1,kk,k1,ll,l1,mn,its
-    real(dp) :: c,f,g,h,s,x,y,z,scale,anorm
+    real(8) :: c,f,g,h,s,x,y,z,scale,anorm
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2197,10 +2190,10 @@ contains
     INTEGER i,iflag,j,k,mode,mtotal,np1,npp
     INTEGER inx
 
-    real(dp) conf(:),cnorm(:,:),b(:,:),gm(:),bdl(:), &
+    real(8) conf(:),cnorm(:,:),b(:,:),gm(:),bdl(:), &
          bdu(:),delta(:),cm(:),h(:,:),wa(:)
-    real(dp) x(:),bndu(:),bndl(:)
-    real(dp) cd6,cdm6,cp9,one,zero
+    real(8) x(:),bndu(:),bndl(:)
+    real(8) cd6,cdm6,cp9,one,zero
 
     !+**PJK 24/05/06 Added SAVE command (as a number of variables are
     !+**PJK 24/05/06 initialised only if info=0)
@@ -2437,11 +2430,11 @@ contains
     INTEGER i, ial, ib, ii, j, li, ni, nk, nn, n3,n4,n5,n6
     INTEGER i0,i1,i2,i3
 
-    real(dp) a(:,:), c(:,:), h(:,:)
-    real(dp) b(:), d(:), bdl(:), bdu(:), x(:), wa(:)
-    real(dp) alpha, cac, cc, chc, ghc, y, z, zz
-    real(dp) r0
-    real(dp), dimension(2) :: det
+    real(8) a(:,:), c(:,:), h(:,:)
+    real(8) b(:), d(:), bdl(:), bdu(:), x(:), wa(:)
+    real(8) alpha, cac, cc, chc, ghc, y, z, zz
+    real(8) r0
+    real(8), dimension(2) :: det
 
     LOGICAL retest,passiv,postiv
 
@@ -2966,10 +2959,10 @@ contains
     INTEGER iwa(:), lt(:)
     INTEGER i0,i1,i2,i3
 
-    real(dp) c(:,:),h(:,:)
-    real(dp) wa(:), d(:), bdu(:), x(:), bdl(:)
-    real(dp) alpha, beta, y, z, zz
-    real(dp) r0
+    real(8) c(:,:),h(:,:)
+    real(8) wa(:), d(:), bdu(:), x(:), bdl(:)
+    real(8) alpha, beta, y, z, zz
+    real(8) r0
 
     i0 = 0
     i1 = 1
@@ -3513,8 +3506,8 @@ contains
 !       subroutine fcnhyb(n, x, fvec, iflag)
 !         use, intrinsic :: iso_fortran_env, only: dp=>real64
 !         integer, intent(in) :: n
-!         real(dp), dimension(n), intent(inout) :: x
-!         real(dp), dimension(n), intent(out) :: fvec
+!         real(8), dimension(n), intent(inout) :: x
+!         real(8), dimension(n), intent(out) :: fvec
 !         integer, intent(inout) :: iflag
 !       end subroutine fcnhyb
 !     end interface
@@ -3525,10 +3518,10 @@ contains
 !     !+**PJK 08/10/92 Possible problems with the following declaration:
 !     INTEGER iwa(1)
 
-!     real(dp) xtol,epsfcn,factor
-!     real(dp) x(n),fvec(n),diag(n),fjac(ldfjac,n),r(lr), &
+!     real(8) xtol,epsfcn,factor
+!     real(8) x(n),fvec(n),diag(n),fjac(ldfjac,n),r(lr), &
 !          qtf(n),wa1(n),wa2(n),wa3(n),wa4(n),resdl(n)
-!     real(dp) actred,delta,epsmch,fnorm,fnorm1,one,pnorm, &
+!     real(8) actred,delta,epsmch,fnorm,fnorm1,one,pnorm, &
 !          prered,p1,p5,p001,p0001,ratio,sum,temp,xnorm,zero
 !     logical jeval,sing
 
@@ -3906,9 +3899,9 @@ contains
 
     INTEGER n,lr,i,j,jj,jp1,k,l
 
-    real(dp) delta
-    real(dp) r(lr),diag(n),qtb(n),x(n),wa1(n),wa2(n)
-    real(dp) alpha,bnorm,epsmch,gnorm,one,qnorm,sgnorm, &
+    real(8) delta
+    real(8) r(lr),diag(n),qtb(n),x(n),wa1(n),wa2(n)
+    real(8) alpha,bnorm,epsmch,gnorm,one,qnorm,sgnorm, &
          sum,temp,zero
 
     one = 1.0D0
@@ -4029,7 +4022,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  real(dp) FUNCTION ENORM(n,x)
+  real(8) FUNCTION ENORM(n,x)
 
     !  Given an N-vector X, this function calculates the
     !  Euclidean norm of X.
@@ -4063,8 +4056,8 @@ contains
 
     INTEGER n,i
 
-    real(dp) x(n)
-    real(dp) agiant,floatn,one,rdwarf,rgiant,s1,s2,s3,xabs, &
+    real(8) x(n)
+    real(8) agiant,floatn,one,rdwarf,rgiant,s1,s2,s3,xabs, &
          x1max,x3max,zero
 
     one = 1.0D0
@@ -4227,9 +4220,9 @@ contains
 
     INTEGER n,ldfjac,iflag,ml,mu,i,j,k,msum
 
-    real(dp) epsfcn
-    real(dp) x(n),fvec(n),fjac(ldfjac,n),wa1(n),wa2(n)
-    real(dp) eps,epsmch,h,temp,zero
+    real(8) epsfcn
+    real(8) x(n),fvec(n),fjac(ldfjac,n),wa1(n),wa2(n)
+    real(8) eps,epsmch,h,temp,zero
 
     EXTERNAL  fcnhyb
 
@@ -4328,8 +4321,8 @@ contains
 
     INTEGER m,n,ldq,i,j,jm1,k,l,minmn,np1
 
-    real(dp) q(ldq,m),wa(m)
-    real(dp) one,sum,temp,zero
+    real(8) q(ldq,m),wa(m)
+    real(8) one,sum,temp,zero
 
     one = 1.0D0
     zero = 0.0D0
@@ -4461,8 +4454,8 @@ contains
 
     LOGICAL pivot
 
-    real(dp) a(lda,n),rdiag(n),acnorm(n),wa(n)
-    real(dp) ajnorm,epsmch,one,p05,sum,temp,zero
+    real(8) a(lda,n),rdiag(n),acnorm(n),wa(n)
+    real(8) ajnorm,epsmch,one,p05,sum,temp,zero
 
     one = 1.0D0
     p05 = 0.05D0
@@ -4597,8 +4590,8 @@ contains
 
     INTEGER m,n,lda,i,j,nmj,nm1
 
-    real(dp) a(lda,n),v(n),w(n)
-    real(dp) cos1,one,sin1,temp
+    real(8) a(lda,n),v(n),w(n)
+    real(8) cos1,one,sin1,temp
 
     one = 1.0D0
 
@@ -4705,8 +4698,8 @@ contains
 
     LOGICAL sing
 
-    real(dp) s(ls),u(m),v(n),w(m),cos1,cotan,giant,one
-    real(dp) p5,p25,sin1,tan1,tau,temp,zero
+    real(8) s(ls),u(m),v(n),w(m),cos1,cotan,giant,one
+    real(8) p5,p25,sin1,tan1,tau,temp,zero
 
     one = 1.0D0
     p5 = 0.5D0
@@ -4874,7 +4867,7 @@ contains
 
     implicit none
 
-    real(dp) :: spmpar
+    real(8) :: spmpar
 
     !  Arguments
 
@@ -4882,7 +4875,7 @@ contains
 
     !  Local variables
 
-    real(dp), dimension(3) :: rmach
+    real(8), dimension(3) :: rmach
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -5150,7 +5143,7 @@ contains
 
   ! ------------------------------------------------------------------------
   pure function variable_error(variable)
-      real(dp), intent(in) ::variable
+      real(8), intent(in) ::variable
       logical::variable_error
 
       if((variable/=variable).or.(variable<-9.99D99).or.(variable>9.99D99))then
@@ -5163,9 +5156,9 @@ contains
 
   ! ------------------------------------------------------------------------
   pure function nearly_equal(variable1, variable2,tol)
-      real(dp), intent(in) ::variable1, variable2
-      real(dp), intent(in), optional :: tol
-      real(dp) :: tolerance
+      real(8), intent(in) ::variable1, variable2
+      real(8), intent(in), optional :: tol
+      real(8) :: tolerance
       logical::nearly_equal
       if(present(tol))then
           tolerance = tol
@@ -5208,19 +5201,19 @@ contains
       interface
         function f(x)
           use, intrinsic :: iso_fortran_env, only: dp=>real64
-          real(dp), intent(in) :: x
-          real(dp) :: f
+          real(8), intent(in) :: x
+          real(8) :: f
         end function f
       end interface
 
       external :: f
-      real(dp), intent(out) ::solution, residual
-      real(dp), intent(in) ::x1,x2
-      real(dp), intent(in), optional ::opt_tol
-      real(dp),dimension(20) ::x
+      real(8), intent(out) ::solution, residual
+      real(8), intent(in) ::x1,x2
+      real(8), intent(in), optional ::opt_tol
+      real(8),dimension(20) ::x
       integer :: i
       logical, intent(out)::error
-      real(dp)::mean, tol,fximinus1, fximinus2
+      real(8)::mean, tol,fximinus1, fximinus2
       error = .FALSE.
       tol=0.001d0; if (present(opt_tol)) tol=opt_tol
 
@@ -5254,8 +5247,8 @@ contains
 !---------------------------------------------------------------
 
   subroutine test_secant_solve()
-      real(dp) ::solution
-      real(dp) ::residual
+      real(8) ::solution
+      real(8) ::residual
       logical::error
       !external:: f
 
@@ -5269,8 +5262,8 @@ contains
 
   contains
       function dummy(x)
-          real(dp), intent(in) :: x
-          real(dp) :: dummy
+          real(8), intent(in) :: x
+          real(8) :: dummy
           dummy = x**2 - 612.d0
       end function
   end subroutine test_secant_solve

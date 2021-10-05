@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
- Date_of_run_____________________________________________________________ (date)________________________     "02/08/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "16:11"
- User____________________________________________________________________ (username)____________________     "rhicha"  
+ Date_of_run_____________________________________________________________ (date)________________________     "29/09/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "10:37"
+ User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "demo 1 model for cost paper                                                                        
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-407-g54745850"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1361-remove-cost-model-2-link-to-lsa"                                                              
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-538-g66f889bd"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1397-remove-f90wrap-from-build-process-tim2"                                                       
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-63/test_scenario_costs_paper_0/IN.DAT                                                                                                                                      "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-10/test_scenario_costs_paper_0/IN.DAT                                                                                                                                        "
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              1    
  # Numerics #
@@ -21,7 +21,7 @@
  Optimisation_switch_____________________________________________________ (ioptimz)_____________________              1    
  Figure_of_merit_switch__________________________________________________ (minmax)______________________              7    
  Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      1.7748E-05 OP 
- VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      5.1591E-05 OP 
+ VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      0.0000E+00 OP 
  Number_of_VMCON_iterations______________________________________________ (nviter)______________________             12 OP 
  bt______________________________________________________________________ (itvar001)____________________      5.2117E+00    
  bt_(final_value/initial_value)__________________________________________ (xcm001)______________________      9.6820E-01    
@@ -58,7 +58,7 @@
  ohcth_(range_normalised)________________________________________________ (nitvar011)___________________      2.0233E-01    
  q_______________________________________________________________________ (itvar012)____________________      3.0000E+00    
  q_(final_value/initial_value)___________________________________________ (xcm012)______________________      9.2974E-01    
- q_(range_normalised)____________________________________________________ (nitvar012)___________________      5.5397E-17    
+ q_(range_normalised)____________________________________________________ (nitvar012)___________________      2.9545E-17    
  ftburn__________________________________________________________________ (itvar013)____________________      1.0000E+00    
  ftburn_(final_value/initial_value)______________________________________ (xcm013)______________________      1.0000E+00    
  ftburn_(range_normalised)_______________________________________________ (nitvar013)___________________      1.0000E+00    
@@ -140,7 +140,7 @@
  Beta_consistency__________________normalised_residue____________________ (normres001)__________________     -4.1686E-10    
  Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________      9.8534E-10    
  Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      2.4318E-10    
- Beam_ion_density_consistency______normalised_residue____________________ (normres004)__________________      1.3727E-10    
+ Beam_ion_density_consistency______normalised_residue____________________ (normres004)__________________      1.3726E-10    
  Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres005)__________________      3.0107E-09    
  Radial_build_consistency__________normalised_residue____________________ (normres006)__________________      2.0912E-10    
  Burn_time_lower_limit_____________normalised_residue____________________ (normres007)__________________     -5.4418E-06    
@@ -150,7 +150,7 @@
  Beta_upper_limit__________________normalised_residue____________________ (normres011)__________________     -4.0489E-10    
  CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres012)__________________      5.5914E-06    
  CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres013)__________________      5.3191E-06    
- Injection_power_upper_limit_______normalised_residue____________________ (normres014)__________________      2.8574E-10    
+ Injection_power_upper_limit_______normalised_residue____________________ (normres014)__________________      2.8575E-10    
  TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres015)__________________     -3.5548E-07    
  TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres016)__________________      1.1463E-06    
  I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres017)__________________     -8.8924E-06    
@@ -600,7 +600,7 @@
  Total_outboard_leg_radial_thickness_(m)_________________________________ (tfthko)______________________      1.2226E+00    
  Outboard_leg_toroidal_thickness_(m)_____________________________________ (tftort)______________________      1.5562E+00 OP 
  Maximum_inboard_edge_height_(m)_________________________________________ (hmax)________________________      8.6707E+00 OP 
- Mean_coil_circumference_(including_centrepost_length)_(m)_______________ (tfleng)______________________      4.8660E+01 OP 
+ Mean_coil_circumference_(including_inboard_leg_length)_(m)______________ (tfleng)______________________      4.8660E+01 OP 
  Vertical_TF_shape_______________________________________________________ (i_tf_shape)__________________              1    
  TF_coil_arc_point_1_R_(m)_______________________________________________ (xarc(1))_____________________      4.4810E+00    
  TF_coil_arc_point_1_Z_(m)_______________________________________________ (yarc(1))_____________________      4.4626E+00    

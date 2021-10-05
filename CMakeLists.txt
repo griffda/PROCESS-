@@ -17,10 +17,9 @@ find_package(PythonInterp 3 REQUIRED)
 # Set project name
 PROJECT(process LANGUAGES Fortran)
 
-# Read in external CMake scripts for preprocessing, f2py, f90wrap, ford, etc.
+# Read in external CMake scripts for preprocessing, f2py, ford, etc.
 INCLUDE(${CMAKE_SOURCE_DIR}/cmake/pip.cmake)
 INCLUDE(${CMAKE_SOURCE_DIR}/cmake/process_preprocessing.cmake)
-INCLUDE(${CMAKE_SOURCE_DIR}/cmake/f90wrap.cmake)
 INCLUDE(${CMAKE_SOURCE_DIR}/cmake/f2py.cmake)
 INCLUDE(${CMAKE_SOURCE_DIR}/cmake/ford.cmake)
 INCLUDE(${CMAKE_SOURCE_DIR}/cmake/gfortranlibs.cmake)
@@ -82,8 +81,6 @@ LIST(TRANSFORM REFPROP_SRCS PREPEND ${REFPROP_SRC_DIR}/ OUTPUT_VARIABLE REFPROP_
 # Define interface source filenames to wrap
 LIST(APPEND PROCESS_SRCS
     global_variables.f90
-    init_module.f90
-    main_module.f90
     div_kal_vars.f90
     kallenbach_module.f90
     numerics.f90
@@ -101,7 +98,6 @@ LIST(APPEND PROCESS_SRCS
     stellarator_variables.f90
     plant_power.f90
     final_module.f90
-    error_handling.f90
     availability.f90
     cost_variables.f90
     divertor.f90
@@ -143,6 +139,29 @@ LIST(APPEND PROCESS_SRCS
     structure_variables.f90
 )
 
+LIST(APPEND PREPROCESS_SOURCES
+    init_module.f90
+    main_module.f90
+    error_handling.f90
+)
+
+#######
+# Preprocess necessary files
+SET(PPED_F2PY_SRC ${CMAKE_BINARY_DIR}/prepocessed.f90)
+SET(PREPROCESS_NAME "preprocessForF2Py")
+LIST(TRANSFORM PREPROCESS_SOURCES PREPEND ${PROCESS_SRC_DIR}/ OUTPUT_VARIABLE PREPROCESS_SOURCES_PATH)
+
+ADD_CUSTOM_TARGET(
+    ${PREPROCESS_NAME} 
+    DEPENDS ${PPED_F2PY_SRC}
+)
+
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${PPED_F2PY_SRC}
+    COMMAND gfortran -E -cpp -DINSTALLDIR="'${CMAKE_SOURCE_DIR}'" -DCOMMSG="'${COMMIT_MSG}'" -Dbranch_name="'${GIT_BRANCH}'" -Dtagno="'${GIT_TAG}'" -Duntracked="${GIT_DIFF}" ${PREPROCESS_SOURCES_PATH} > ${PPED_F2PY_SRC}
+)
+
+
 # Install all requirements in the current Python environment
 PIP_INSTALL()
 
@@ -159,14 +178,8 @@ IF(NOT CMAKE_HOST_APPLE)
         PROPERTIES BUILD_RPATH $ORIGIN
     )
 ENDIF()
-ADD_DEPENDENCIES(${PROJECT_NAME} ${PIP_NAME})
+ADD_DEPENDENCIES(${PROJECT_NAME} ${PIP_NAME} ${PREPROCESS_NAME})
 
-# Stage 2: Run f90wrap
-
-# Run f90wrap for the above f90wrap target
-# This wraps the interface Fortran .f90 files to generate f90wrap_*.f90 files
-# It also creates the Fortran interface Python module (fortran.py)
-F90WRAP()
 
 IF(CMAKE_HOST_APPLE)
     SET(LIBRARY_OUTPUT_SUFFIX ".dylib")
@@ -192,16 +205,15 @@ SET(PROCESS_MODULE_DIST ${CMAKE_SOURCE_DIR}/process_dist)
 # Delete any existing .gcda files
 ADD_CUSTOM_TARGET(coverage_cleanup 
     COMMAND echo "-- Deleting any existing .gcda coverage files..."
-    COMMAND find ${CMAKE_SOURCE_DIR}/build/ -name \"*.gcda\" -exec rm -rf {} \\\;
+    COMMAND find ${CMAKE_SOURCE_DIR}/build/ -name '*.gcda' -exec rm -rf {} \\\;
 )
 
 # Run the Pip Install
 ADD_CUSTOM_TARGET(install_process ALL
-    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/scripts/f90wrap_patch.py ${CMAKE_SOURCE_DIR}/process/fortran.py
     COMMAND ${PYTHON_EXECUTABLE} -m pip install --no-cache-dir ${CMAKE_SOURCE_DIR}
 )
 
-ADD_DEPENDENCIES(install_process ${PIP_NAME} ${F90WRAP_NAME} ${F2PY_NAME} ${FORD_NAME} ${DICTS_NAME} ${GFORTLIB_NAME} coverage_cleanup)
+ADD_DEPENDENCIES(install_process ${PIP_NAME} ${F2PY_NAME} ${FORD_NAME} ${DICTS_NAME} ${GFORTLIB_NAME} coverage_cleanup)
 
 if (EXISTS ${CMAKE_SOURCE_DIR}/lcov_results)
   execute_process(COMMAND echo "-- Delete existing lcov_coverage directory...")

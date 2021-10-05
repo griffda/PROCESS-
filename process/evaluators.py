@@ -73,7 +73,7 @@ def fcnvmc1(n, m, xv, ifail_in, first_call):
     objf = function_evaluator.funfom()
 
     # Evaluate constraint equations
-    constraints.constraint_eqns(m, conf, -1)
+    conf, _, _, _, _ = constraints.constraint_eqns(m, -1)
 
     # To stop the program, set ifail < 0 here.
     # TODO Not sure this serves any purpose
@@ -151,12 +151,12 @@ def fcnvmc2(n, m, xv, lcnorm, ifail_in):
         # Evaluate at (x+dx)
         caller(xfor, n)
         ffor = function_evaluator.funfom()
-        constraints.constraint_eqns(m, cfor, -1)
+        cfor, _, _, _, _ = constraints.constraint_eqns(m, -1)
 
         # Evaluate at (x-dx)
         caller(xbac, n)
         fbac = function_evaluator.funfom()
-        constraints.constraint_eqns(m, cbac, -1)
+        cbac, _, _, _, _ = constraints.constraint_eqns(m, -1)
 
         # Calculate finite difference gradients
         fgrd[i] = (ffor - fbac) / (xfor[i] - xbac[i])

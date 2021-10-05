@@ -64,7 +64,8 @@ class Scan():
             final.finalise(self.optimiser.vmcon.ifail)
             
             # outvar is an intent(out) of scan_1d_store_output()
-            scan_module.scan_1d_store_output(iscan, self.optimiser.vmcon.ifail, outvar)
+            outvar = scan_module.scan_1d_store_output(iscan, self.optimiser.vmcon.ifail, \
+                scan_module.noutvars, scan_module.ipnscns)
 
         # outvar now contains results
         scan_module.scan_1d_write_plot(iscan, outvar)
@@ -93,7 +94,8 @@ class Scan():
                 self.doopt()
                 
                 scan_module.scan_2d_store_output(self.optimiser.vmcon.ifail, iscan_1,
-                    iscan_R, iscan, outvar, sweep_1_vals, sweep_2_vals
+                    iscan_R, iscan, scan_module.noutvars, scan_module.ipnscns, outvar, 
+                    sweep_1_vals, sweep_2_vals
                 )
 
                 iscan = iscan + 1
