@@ -4273,7 +4273,7 @@ contains
     !  Arguments
   
     integer, intent(in) :: nn
-    real(8), dimension(ipnvars), intent(in) :: xc
+    real(8), dimension(:), intent(in) :: xc
   
     !  Local variables
   
