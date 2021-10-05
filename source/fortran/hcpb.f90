@@ -10,7 +10,7 @@ module ccfe_hcpb_module
   !!
   !! - Kovari et al., Fusion Engineering and Design 104 (2016) 9-20  
   
-#ifdef use_intrinsic
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
 
@@ -2573,7 +2573,7 @@ module kit_hcpb_module
 
   ! Modules to import !
   ! !!!!!!!!!!!!!!!!!!!!
-#ifdef use_intrinsic
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
   implicit none

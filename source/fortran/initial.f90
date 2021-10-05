@@ -39,7 +39,7 @@ subroutine initial
         init_itv_161, init_itv_162, init_itv_163, init_itv_164, init_itv_165, &
         init_itv_166, init_itv_167, init_itv_168, init_itv_169, init_itv_170, &
         init_itv_171, init_itv_172, init_itv_173, init_itv_174, init_itv_175
-#ifdef use_intrinsic
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
 

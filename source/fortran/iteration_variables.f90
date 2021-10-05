@@ -1,7 +1,7 @@
 module define_iteration_variables 
    !! Module to define iteration variables
 
-#ifdef use_intrinsic
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
    implicit none
@@ -4268,7 +4268,7 @@ contains
     use error_handling, only: idiags, fdiags, report_error
     use numerics, only: ipnvars, scale, ixc, lablxc
     use maths_library, only: variable_error
-#ifdef use_intrinsic
+#ifndef dp
     use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
   

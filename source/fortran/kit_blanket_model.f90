@@ -15,7 +15,7 @@ module kit_blanket_model
     !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#ifdef use_intrinsic
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
     implicit none

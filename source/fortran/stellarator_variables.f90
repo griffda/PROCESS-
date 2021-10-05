@@ -9,7 +9,7 @@ module stellarator_variables
   !! - Stellarator Divertor Model for the Systems Code PROCESS, F. Warmer, 21/06/2013
   !! - Stellarator Coil Model for the Systems Code PROCESS, F. Warmer and F. Schauer, 07/10/2013
 
-#ifdef use_intrinsic
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
 

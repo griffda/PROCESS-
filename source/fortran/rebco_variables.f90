@@ -10,7 +10,7 @@ module rebco_variables
   !!
   !! - Updated 13/11/18 using data from Lewandowska et al 2018.
 
-#ifdef use_intrinsic
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
 

@@ -9,7 +9,7 @@ module water_usage_variables
   !! https://www.thermal-engineering.org/what-is-latent-heat-of-vaporization-definition/
   !! 
 
-#ifdef use_intrinsic
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
 

@@ -3,7 +3,7 @@ module resistive_materials
   !!  
   !! Variables relating to resistive materials in superconducting conductors
   
-#ifdef use_intrinsic
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
 

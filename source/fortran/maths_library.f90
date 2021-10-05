@@ -14,7 +14,7 @@ module maths_library
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-#ifdef use_intrinsic
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
  
@@ -508,7 +508,7 @@ contains
 
     interface
       function fun(rho)
-#ifdef use_intrinsic
+#ifndef dp
         use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
         real(dp), intent(in) :: rho
@@ -731,7 +731,7 @@ contains
 
     interface
       function fhz(hhh)
-#ifdef use_intrinsic
+#ifndef dp
         use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
         real(dp), intent(in) :: hhh
@@ -5206,7 +5206,7 @@ contains
       
       interface
         function f(x)
-#ifdef use_intrinsic
+#ifndef dp
           use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
           real(dp), intent(in) :: x

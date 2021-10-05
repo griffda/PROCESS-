@@ -8,7 +8,7 @@ module tfcoil_variables
   !! - AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !! - ITER Magnets design description document DDD11-2 v2 2 (2009)
 
-#ifdef use_intrinsic
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
 
