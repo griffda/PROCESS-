@@ -169,7 +169,7 @@ contains
 
     !  Local variables
 
-    real(8) :: aaion,bmax,dpp,dtheta,emitt,etai,lf,phi,qion, &
+    real(dp) :: aaion,bmax,dpp,dtheta,emitt,etai,lf,phi,qion, &
          sang,sigma,sigma0,tauf,theta,vi
     integer :: nbeams
 
@@ -333,21 +333,21 @@ contains
 
     !  Arguments
 
-    real(8), intent(in) :: aaion,bmax,dpp,dtheta,edrive,emitt,etai,lf,qion, &
+    real(dp), intent(in) :: aaion,bmax,dpp,dtheta,edrive,emitt,etai,lf,qion, &
          sigma,sigma0,tauf,theta,vi
     integer, intent(in) :: nbeams
-    real(8), intent(out) :: gain,etadrv
+    real(dp), intent(out) :: gain,etadrv
 
     !  Local variables
 
-    real(8), parameter :: c2 = 8.98755178737D16
+    real(dp), parameter :: c2 = 8.98755178737D16
     integer, parameter :: isimp = 1  !  Switch for simple model (1=yes)
 
-    real(8) :: ci,de,dgap,dlcore,drcore,e,eomc2,fins,floss, &
+    real(dp) :: ci,de,dgap,dlcore,drcore,e,eomc2,fins,floss, &
          ibf,ibfo,ibi,ibpc,lfocus,lpf,lpfo,lpi,lppc,lq,phif,phifo, &
          phii,phipc,rion,rs,rs1,rs2,rs3,rs4,sig,sig0,taufo,taui, &
          taupc,tbrad,vf,vfo,vpc,vs,vscore,vshe,vsle,vspc,xhe,xle,xpc
-    real(8), dimension(10) :: eve,gve
+    real(dp), dimension(10) :: eve,gve
     integer :: i,ie,j,nche,ncle,ncpc,nqarrs,nqle,nqpche,nquads
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -704,16 +704,16 @@ contains
 
       implicit none
 
-      real(8) :: cbeam
+      real(dp) :: cbeam
 
       !  Arguments
 
-      real(8), intent(in) :: etai,bmax,aaion,qion,sigma,sigma0, &
+      real(dp), intent(in) :: etai,bmax,aaion,qion,sigma,sigma0, &
            emitt,vi,eomc2
 
       !  Local variables
 
-      real(8) :: bbe
+      real(dp) :: bbe
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -750,15 +750,15 @@ contains
 
       implicit none
 
-      real(8) :: betgam
+      real(dp) :: betgam
 
       !  Arguments
 
-      real(8), intent(in) :: aaion,qion,v
+      real(dp), intent(in) :: aaion,qion,v
 
       !  Local variables
 
-      real(8), parameter :: c2 = 8.98755178737D16
+      real(dp), parameter :: c2 = 8.98755178737D16
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -792,13 +792,13 @@ contains
 
     !  Arguments
 
-    real(8), intent(in) :: edrive
-    real(8), intent(out) :: etadrv,gain
+    real(dp), intent(in) :: edrive
+    real(dp), intent(out) :: etadrv,gain
 
     !  Local variables
 
-    real(8) :: e,de
-    real(8), dimension(10) :: gve,eve
+    real(dp) :: e,de
+    real(dp), dimension(10) :: gve,eve
     integer :: ie
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -884,13 +884,13 @@ contains
 
     !  Arguments
 
-    real(8), intent(in) :: edrive
-    real(8), dimension(10), intent(in) :: etave,gainve
-    real(8), intent(out) :: etadrv,gain
+    real(dp), intent(in) :: edrive
+    real(dp), dimension(10), intent(in) :: etave,gainve
+    real(dp), intent(out) :: etadrv,gain
 
     !  Local variables
 
-    real(8) :: de,e
+    real(dp) :: de,e
     integer :: ie
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1190,7 +1190,7 @@ contains
      !  Local variables
 
      integer :: i,j
-     real(8), save :: g, vel, acurt, mdot, phi, sang, li_frac
+     real(dp), save :: g, vel, acurt, mdot, phi, sang, li_frac
 
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1540,8 +1540,8 @@ contains
 
       !  Local variables
 
-      real(8), parameter :: third  = 1.0D0/3.0D0
-      real(8) :: chcylh,ddz,dvol
+      real(dp), parameter :: third  = 1.0D0/3.0D0
+      real(dp) :: chcylh,ddz,dvol
       integer :: i,j
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1684,8 +1684,8 @@ contains
 
       !  Local variables
 
-      real(8), parameter :: third = 1.0D0/3.0D0
-      real(8) :: chcylh,ddz,dvol
+      real(dp), parameter :: third = 1.0D0/3.0D0
+      real(dp) :: chcylh,ddz,dvol
       integer :: i,j
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1872,8 +1872,8 @@ contains
 
     !  Local variables
 
-    real(8) :: den,life
-    real(8), dimension(0:maxmat) :: matden
+    real(dp) :: den,life
+    real(dp), dimension(0:maxmat) :: matden
     integer :: i,j
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2008,7 +2008,7 @@ contains
 
     !  Local variables
 
-    real(8) :: pdrvmw
+    real(dp) :: pdrvmw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2094,7 +2094,7 @@ contains
 
     !  Local variables
 
-    real(8), save :: basemw,pmwpm2
+    real(dp), save :: basemw,pmwpm2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2306,9 +2306,9 @@ contains
 
     !  Local variables
 
-    real(8) :: cran,dcl,dcw,fac2,fac3,hcl,hcw,hrbi,rbh,rbl,rbw, &
+    real(dp) :: cran,dcl,dcw,fac2,fac3,hcl,hcw,hrbi,rbh,rbl,rbw, &
          rmbh,rmbl,rmbw,rwl,rww,shh,tch,tcl,tcw,wgts,wsa
-    real(8), save :: cryv,elev,rbv,rmbv,vrci,wsv
+    real(dp), save :: cryv,elev,rbv,rmbv,vrci,wsv
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

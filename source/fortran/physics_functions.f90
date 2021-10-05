@@ -16,7 +16,7 @@ module physics_functions_module
   public :: beamfus, palph, palph2
 
   !  Module-level variables
-  real(8) :: vcritx
+  real(dp) :: vcritx
 
 contains
 
@@ -60,12 +60,12 @@ contains
 
     !  Arguments
 
-    real(8), intent(in) :: dene,dnla,bt,rmajor,kappa,sarea,aion,aspect
-    real(8), dimension(21), intent(out) :: pthrmw
+    real(dp), intent(in) :: dene,dnla,bt,rmajor,kappa,sarea,aion,aspect
+    real(dp), dimension(21), intent(out) :: pthrmw
 
     !  Local variables
 
-    real(8) :: dene20,dnla20,marterr
+    real(dp) :: dene20,dnla20,marterr
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -196,16 +196,16 @@ contains
 
     !  Arguments
 
-    real(8), intent(in) :: alphan, alphat, deni, fdeut, &
+    real(dp), intent(in) :: alphan, alphat, deni, fdeut, &
          fhe3, ftrit, ti
-    real(8), intent(out) :: palppv, pchargepv, pneutpv, sigvdt, &
+    real(dp), intent(out) :: palppv, pchargepv, pneutpv, sigvdt, &
          fusionrate, alpharate, protonrate, pdtpv, pdhe3pv, pddpv
 
     !  Local variables
 
     integer, parameter :: DT=1, DHE3=2, DD1=3, DD2=4
     integer :: ireaction,nofun
-    real(8) :: alow,arate,bhigh,epsq8,errest,etot,flag, &
+    real(dp) :: alow,arate,bhigh,epsq8,errest,etot,flag, &
          fpow,frate,pa,pc,pn,prate,sigmav
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -319,15 +319,15 @@ contains
       use profiles_module, only: tprofile, nprofile
       implicit none
 
-      real(8) :: fint
+      real(dp) :: fint
 
       !  Arguments
 
-      real(8), intent(in) :: rho
+      real(dp), intent(in) :: rho
 
       !  Local variables
 
-      real(8) :: nprof, nprofsq, sigv, tiofr
+      real(dp) :: nprof, nprofsq, sigv, tiofr
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -400,15 +400,15 @@ contains
     !  Arguments
 
     integer, intent(in) :: ifalphap
-    real(8), intent(in) :: bp, bt, dene, deni, dnitot, falpe, &
+    real(dp), intent(in) :: bp, bt, dene, deni, dnitot, falpe, &
          falpi, palpnb, pchargepv, ten, tin, vol
-    real(8), intent(inout) :: palppv, pneutpv
-    real(8), intent(out) :: palpmw, pneutmw, pchargemw, betaft, palpepv, &
+    real(dp), intent(inout) :: palppv, pneutpv
+    real(dp), intent(out) :: palpmw, pneutmw, pchargemw, betaft, palpepv, &
          palpipv, pfuscmw, powfmw
 
     !  Local variables
 
-    real(8) :: betath, fact, fact2, palppv_no_nb
+    real(dp) :: betath, fact, fact2, palppv_no_nb
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -492,19 +492,19 @@ contains
 
     implicit none
 
-    real(8) :: bosch_hale
+    real(dp) :: bosch_hale
 
     !  Arguments
 
-    real(8), intent(in) :: t
+    real(dp), intent(in) :: t
     integer, intent(in) :: reaction
 
     !  Local variables
 
     integer, parameter :: DT=1, DHE3=2, DD1=3, DD2=4
-    real(8) :: theta1, theta, xi
-    real(8), dimension(4) :: bg, mrc2
-    real(8), dimension(4,7) :: cc
+    real(dp) :: theta1, theta, xi
+    real(dp), dimension(4) :: bg, mrc2
+    real(dp), dimension(4,7) :: cc
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -612,14 +612,14 @@ contains
 
     !  Arguments
 
-    real(8), intent(in) :: beamfus0, betbm0, bp, bt, cnbeam, &
+    real(dp), intent(in) :: beamfus0, betbm0, bp, bt, cnbeam, &
          dene, deni, dlamie, ealphadt, enbeam, fdeut, ftrit, ftritbm, &
          sigvdt, ten, tin, vol, zeffai
-    real(8), intent(out) :: betanb, dnbeam2, palpnb
+    real(dp), intent(out) :: betanb, dnbeam2, palpnb
 
     !  Local variables
 
-    real(8) :: denid,denit,ecritd,ecritt,ehotnb,palpdb, &
+    real(dp) :: denid,denit,ecritd,ecritt,ehotnb,palpdb, &
          palptb,tausl
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -772,12 +772,12 @@ contains
 
             implicit none
 
-            real(8) :: xbrak
+            real(dp) :: xbrak
             
             ! Arguments
-            real(8), intent(in) :: e0, ec
+            real(dp), intent(in) :: e0, ec
 
-      real(8) :: ans,t1,t2,t3,t4,xarg,xc,xcs
+      real(dp) :: ans,t1,t2,t3,t4,xarg,xc,xcs
 
             ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -817,15 +817,15 @@ contains
 
       implicit none
 
-      real(8) :: palphabm
+      real(dp) :: palphabm
 
       !  Arguments
 
-      real(8), intent(in) :: ealphadt,nblk,nbm,sigv,svdt,ti,vol
+      real(dp), intent(in) :: ealphadt,nblk,nbm,sigv,svdt,ti,vol
 
       !  Local variables
 
-      real(8) :: ratio
+      real(dp) :: ratio
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -855,16 +855,16 @@ contains
 
       implicit none
 
-      real(8) :: sgvhot
+      real(dp) :: sgvhot
 
       !  Arguments
       integer, intent(in) :: iabm
-      real(8), intent(in) :: ebeam, vcrx
+      real(dp), intent(in) :: ebeam, vcrx
 
       !  Local variables
 
       integer :: nofun
-      real(8) :: abm,abserr,epsabs1,flag,svint,t1,t2, &
+      real(dp) :: abm,abserr,epsabs1,flag,svint,t1,t2, &
            vbeam,vbeams,xv
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -917,15 +917,15 @@ contains
     
     implicit none
 
-    real(8) :: fsv
+    real(dp) :: fsv
 
     !  Arguments
 
-    real(8), intent(in) :: u
+    real(dp), intent(in) :: u
 
     !  Local variables
 
-    real(8) :: t1,t2,xvc,xvcs
+    real(dp) :: t1,t2,xvc,xvcs
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -959,15 +959,15 @@ contains
 
       implicit none
 
-      real(8) :: sigbmfus
+      real(dp) :: sigbmfus
 
       !  Arguments
 
-      real(8), intent(in) :: vrelsq
+      real(dp), intent(in) :: vrelsq
 
       !  Local variables
 
-      real(8) :: a1,a2,a3,a4,a5,atmd,ebm,t1,t2
+      real(dp) :: a1,a2,a3,a4,a5,atmd,ebm,t1,t2
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1018,10 +1018,10 @@ contains
         normalised_total_beta, rminor, eped_sf
     implicit none
 
-    real(8) :: t_eped_scaling
+    real(dp) :: t_eped_scaling
 
     ! Scaling constant and exponents
-    real(8) :: c0, a_delta, a_ip, a_r, a_beta, a_kappa, a_a
+    real(dp) :: c0, a_delta, a_ip, a_r, a_beta, a_kappa, a_a
 
     c0 = 2.16d0
     a_delta = 0.82D0
@@ -1063,10 +1063,10 @@ contains
     use physics_variables, only: rmajor, rminor, eped_sf
     implicit none
 
-    real(8) :: p_eped_scaling !pressure in kev*10¹9*m¯3
+    real(dp) :: p_eped_scaling !pressure in kev*10¹9*m¯3
     ! Scaling constant and exponents
-    real(8) :: c0, a_delta, a_ip, a_r, a_beta, a_kappa, a_a
-    real(8) :: betan_pl,kappa_pl,delta_pl,ip_pl
+    real(dp) :: c0, a_delta, a_ip, a_r, a_beta, a_kappa, a_a
+    real(dp) :: betan_pl,kappa_pl,delta_pl,ip_pl
 
     c0 = 9.4d0
     a_delta = 0.82D0
@@ -1114,12 +1114,12 @@ contains
     implicit none
 
     !  Arguments
-    real(8), intent(out) :: pbrempv,plinepv,psyncpv,pcoreradpv, &
+    real(dp), intent(out) :: pbrempv,plinepv,psyncpv,pcoreradpv, &
          pedgeradpv,pradpv
 
     !  Local variables
 
-    real(8) :: pimpcore, pimptot
+    real(dp) :: pimpcore, pimptot
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1165,11 +1165,11 @@ contains
 
     !  Arguments
 
-    real(8), intent(out) :: psyncpv
+    real(dp), intent(out) :: psyncpv
 
     !  Local variables
 
-    real(8) :: de2o,dum,gfun,kap,kfun,pao,psync,rpow,tbet
+    real(dp) :: de2o,dum,gfun,kap,kfun,pao,psync,rpow,tbet
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1232,21 +1232,21 @@ contains
 
     implicit none
     
-    real(8), intent(out) :: radb
+    real(dp), intent(out) :: radb
     !! bremsstrahlung only [MW/m\(^3\)]
 
-    real(8), intent(out) :: radl
+    real(dp), intent(out) :: radl
     !! line radiation only [MW/m\(^3\)]
 
-    real(8), intent(out) :: radcore
+    real(dp), intent(out) :: radcore
     !! total impurity radiation from core [MW/m\(^3\)]
 
-    real(8), intent(out) :: radtot
+    real(dp), intent(out) :: radtot
     !! total impurity radiation [MW/m\(^3\)]
 
     ! Local variables
-    real(8) :: rho, drho, trho,  nrho
-    real(8) :: pimp, pbrem, pline
+    real(dp) :: rho, drho, trho,  nrho
+    real(dp) :: pimp, pbrem, pline
     integer :: i, imp, npts
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1305,7 +1305,7 @@ contains
     use physics_variables, only : vol, rminor, rmajor
     use constants, only : pi
 
-    real(8) :: plasma_elongation_IPB
+    real(dp) :: plasma_elongation_IPB
     !! Plasma elongation (IPB)
 
     plasma_elongation_IPB = vol / ( 2.0D0 * pi*pi * rminor*rminor * rmajor ) 
@@ -1328,7 +1328,7 @@ contains
     use physics_variables, only : bt, bp
 
      ! Return value
-     real(8) :: total_mag_field
+     real(dp) :: total_mag_field
 
     total_mag_field = sqrt(bt**2 + bp**2)
     !! \begin{equation} B_{tot} = \sqrt{B_T^2 + B_p^2} \end{equation}
@@ -1346,7 +1346,7 @@ contains
     use physics_variables, only : btot, bp, beta
 
      ! Return value
-     real(8) :: beta_poloidal
+     real(dp) :: beta_poloidal
 
     beta_poloidal = beta * ( btot/bp )**2
     !! \begin{equation} \beta_p = \beta \left( \frac{B_{tot}}{B_p} \right)^2 \end{equation}
@@ -1367,7 +1367,7 @@ contains
     use constants, only : rmu0
 
     ! Return value
-    real(8) :: res_diff_time
+    real(dp) :: res_diff_time
 
     res_diff_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
     !! Resistive diffusion time equals the current penetration time which is approximated by:

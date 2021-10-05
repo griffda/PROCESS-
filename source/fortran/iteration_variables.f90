@@ -8,7 +8,7 @@ module define_iteration_variables
 
    public
 
-   real(8) :: DUMMY
+   real(dp) :: DUMMY
 
 contains
 
@@ -4277,12 +4277,12 @@ contains
     !  Arguments
   
     integer, intent(in) :: nn
-    real(8), dimension(ipnvars), intent(in) :: xc
+    real(dp), dimension(ipnvars), intent(in) :: xc
   
     !  Local variables
   
     integer :: i
-    real(8)::ratio
+    real(dp)::ratio
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   

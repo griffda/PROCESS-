@@ -15,157 +15,157 @@ module buildings_variables
   
     public
   
-    real(8), parameter :: a_default_bldg = 1.0D3
+    real(dp), parameter :: a_default_bldg = 1.0D3
     !! Default building floor area in m^2
 
-    real(8) :: admv
+    real(dp) :: admv
     !! administration building volume (m3)
   
-    real(8) :: admvol
+    real(dp) :: admvol
     !! volume of administration buildings (m3)
   
-    real(8) :: clh1
+    real(dp) :: clh1
     !! vertical clearance from TF coil to cryostat (m) (calculated for tokamaks)
   
-    real(8) :: clh2
+    real(dp) :: clh2
     !! clearance beneath TF coil to foundation (including basement) (m)
   
-    real(8) :: conv
+    real(dp) :: conv
     !! control building volume (m3)
   
-    real(8) :: convol
+    real(dp) :: convol
     !! volume of control, protection and i&c building (m3)
   
-    real(8) :: cryvol
+    real(dp) :: cryvol
     !! volume of cryoplant building (m3)
   
-    real(8) :: efloor
+    real(dp) :: efloor
     !! effective total floor space (m2)
   
-    real(8) :: elevol
+    real(dp) :: elevol
     !! volume of electrical equipment building (m3)
   
-    real(8) :: esbldgm3
+    real(dp) :: esbldgm3
     !! volume of energy storage equipment building (m3) (not used if `lpulse=0`)
   
-    real(8) :: fndt
+    real(dp) :: fndt
     !! foundation thickness (m)
   
-    real(8) :: hccl
+    real(dp) :: hccl
     !! clearance around components in hot cell (m)
   
-    real(8) :: hcwt
+    real(dp) :: hcwt
     !! hot cell wall thickness (m)
   
-    real(8) :: mbvfac
+    real(dp) :: mbvfac
     !! maintenance building volume multiplication factor
   
-    real(8) :: pfbldgm3
+    real(dp) :: pfbldgm3
     !! volume of PF coil power supply building (m3)
   
-    real(8) :: pibv
+    real(dp) :: pibv
     !! power injection building volume (m3)
   
-    real(8) :: rbrt
+    real(dp) :: rbrt
     !! reactor building roof thickness (m)
   
-    real(8) :: rbvfac
+    real(dp) :: rbvfac
     !! reactor building volume multiplication factor
   
-    real(8) :: rbvol
+    real(dp) :: rbvol
     !! reactor building volume (m3)
   
-    real(8) :: rbwt
+    real(dp) :: rbwt
     !! reactor building wall thickness (m)
   
-    real(8) :: rmbvol
+    real(dp) :: rmbvol
     !! volume of maintenance and assembly building (m3)
   
-    real(8) :: row
+    real(dp) :: row
     !! clearance to building wall for crane operation (m)
   
-    real(8) :: rxcl
+    real(dp) :: rxcl
     !! clearance around reactor (m)
   
-    real(8) :: shmf
+    real(dp) :: shmf
     !! fraction of shield mass per TF coil to be moved in the maximum shield lift
   
-    real(8) :: shov
+    real(dp) :: shov
     !! shops and warehouse volume (m3)
   
-    real(8) :: shovol
+    real(dp) :: shovol
     !! volume of shops and buildings for plant auxiliaries (m3)
   
-    real(8) :: stcl
+    real(dp) :: stcl
     !! clearance above crane to roof (m)
   
-    real(8) :: tfcbv
+    real(dp) :: tfcbv
     !! volume of TF coil power supply building (m3) (calculated if TF coils are superconducting)
   
-    real(8) :: trcl
+    real(dp) :: trcl
     !! transportation clearance between components (m)
   
-    real(8) :: triv
+    real(dp) :: triv
     !! volume of tritium, fuel handling and health physics buildings (m3)
   
-    real(8) :: volnucb
+    real(dp) :: volnucb
     !! sum of nuclear buildings volumes (m3)
   
-    real(8) :: volrci
+    real(dp) :: volrci
     !! internal volume of reactor building (m3)
   
-    real(8) :: wgt
+    real(dp) :: wgt
     !! reactor building crane capacity (kg) (calculated if 0 is input)
   
-    real(8) :: wgt2
+    real(dp) :: wgt2
     !! hot cell crane capacity (kg) (calculated if 0 is input)
   
-    real(8) :: wrbi
+    real(dp) :: wrbi
     !! distance from centre of machine to building wall (m), i.e. reactor building half-width
   
-    real(8) :: wsvfac
+    real(dp) :: wsvfac
     !! warm shop building volume multiplication factor
   
-    real(8) :: wsvol
+    real(dp) :: wsvol
     !! volume of warm shop building (m3)
 
-    real(8) :: a_reactor_bldg
+    real(dp) :: a_reactor_bldg
     !! Floor area of reactor building in m^2
 
-    real(8) :: a_ee_ps_bldg
+    real(dp) :: a_ee_ps_bldg
     !! Floor area of electrical equipment and power supply building in m^2
 
-    real(8) :: a_aux_services_bldg
+    real(dp) :: a_aux_services_bldg
     !! Floor area of auxiliary services building in m^2
 
-    real(8) :: a_hot_cell_bldg
+    real(dp) :: a_hot_cell_bldg
     !! Floor area of hot cell building in m^2
 
-    real(8) :: a_reactor_service_bldg
+    real(dp) :: a_reactor_service_bldg
     !! Floor area of reactor service building in m^2
 
-    real(8) :: a_service_water_bldg
+    real(dp) :: a_service_water_bldg
     !! Floor area of service water building in m^2
 
-    real(8) :: a_fuel_handling_bldg
+    real(dp) :: a_fuel_handling_bldg
     !! Floor area of fuel handling and storage building in m^2
 
-    real(8) :: a_control_room_bldg
+    real(dp) :: a_control_room_bldg
     !! Floor area of controlroom building in m^2
 
-    real(8) :: a_ac_ps_bldg
+    real(dp) :: a_ac_ps_bldg
     !! Floor area of AC power supply building in m^2
 
-    real(8) :: a_admin_bldg
+    real(dp) :: a_admin_bldg
     !! Floor area of admin building in m^2
 
-    real(8) :: a_site_service_bldg
+    real(dp) :: a_site_service_bldg
     !! Floor area of site service building in m^2
 
-    real(8) :: a_cryo_inert_gas_bldg
+    real(dp) :: a_cryo_inert_gas_bldg
     !! Floor area of cryogenics and inert gas storage building in m^2
 
-    real(8) :: a_security_bldg
+    real(dp) :: a_security_bldg
     !! Floor area of security building in m^2
 
     contains

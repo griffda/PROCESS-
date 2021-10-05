@@ -94,7 +94,7 @@ contains
 
     !  Local variables
 
-    real(8) :: albusa,ioht1,ioht2,ipdot,loh,m,pfbusl,r,rho,v
+    real(dp) :: albusa,ioht1,ioht2,ipdot,loh,m,pfbusl,r,rho,v
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -188,7 +188,7 @@ contains
 
     !  Local variables
 
-    real(8) :: tb,vburn,vsmax,vssoft
+    real(dp) :: tb,vburn,vsmax,vssoft
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

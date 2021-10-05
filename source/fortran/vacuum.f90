@@ -48,7 +48,7 @@ contains
 
     !  Local variables
 
-    real(8) :: qtorus, gasld, pumpn
+    real(dp) :: qtorus, gasld, pumpn
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -97,8 +97,8 @@ contains
 
     !  Arguments
     integer, intent(in) :: iprint, outfile
-    real(8), intent(out) :: npump
-    real(8) :: pumpspeed, pumpdownspeed, npumpdown, niterpump, wallarea
+    real(dp), intent(out) :: npump
+    real(dp) :: pumpspeed, pumpdownspeed, npumpdown, niterpump, wallarea
     if (tdwell < 0.0d0) then
         write(*,*) 'Negative dwell time.  Reset tdwell = 100 seconds'
         tdwell = 100.0D0
@@ -193,22 +193,22 @@ contains
     !  Arguments
 
     integer, intent(in) :: ndiv, iprint, outfile
-    real(8), intent(in) :: pfusmw, r0, aw, dsol, plasma_sarea, plasma_vol
-    real(8), intent(in) :: thshldo, thshldi, thtf, ritf, n_tf, tdwell
-    real(8), intent(in) :: nplasma, qtorus, gasld
+    real(dp), intent(in) :: pfusmw, r0, aw, dsol, plasma_sarea, plasma_vol
+    real(dp), intent(in) :: thshldo, thshldi, thtf, ritf, n_tf, tdwell
+    real(dp), intent(in) :: nplasma, qtorus, gasld
     integer, intent(out) :: nduct
-    real(8), intent(out) :: pumpn, dlscalc, mvdsh, dimax
+    real(dp), intent(out) :: pumpn, dlscalc, mvdsh, dimax
 
     !  Local variables
 
-    real(8), parameter :: k = 1.38D-23  !  Boltzmann's constant (J/K)
+    real(dp), parameter :: k = 1.38D-23  !  Boltzmann's constant (J/K)
 
     integer :: i, imax, lap, ntf, nflag
-    real(8) :: a1,a1max,a2,a3,area,arsh,c1,c2,c3,cap,ccc, &
+    real(dp) :: a1,a1max,a2,a3,area,arsh,c1,c2,c3,cap,ccc, &
          ceff1,cmax,cnew,d1max,dc1,dc2,dc3,dcap,dd,densh,dnew,dout,dy, &
          fhe,frate,fsolid,k1,k2,k3,l1,l2,l3,ltot,ogas,pend,pfus,pstart, &
          pumpn1,pumpn2,source,sss,thcsh,thdsh,theta,volume,y,tpump
-    real(8), dimension(4) :: s, d, ceff, xmult, sp, snet
+    real(dp), dimension(4) :: s, d, ceff, xmult, sp, snet
     character(len=5) :: ipump
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

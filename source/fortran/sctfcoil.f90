@@ -22,114 +22,114 @@ implicit none
 ! Module variables
 !-----------------
 
-real(8), private :: tf_fit_t
+real(dp), private :: tf_fit_t
 !! Dimensionless winding pack width
 
-real(8), private :: tf_fit_z
+real(dp), private :: tf_fit_z
 !! Dimensionless winding pack radial thickness
 
-real(8), private :: tf_fit_y
+real(dp), private :: tf_fit_y
 !! Ratio of peak field with ripple to nominal axisymmetric peak field
 
-real(8) :: tfc_current
+real(dp) :: tfc_current
 !! Current in each TF coil
 
-real(8), private :: awpc
+real(dp), private :: awpc
 !! Total cross-sectional area of winding pack including
 !! GW insulation and insertion gap [m2]
 
-real(8), private :: awptf
+real(dp), private :: awptf
 !! Total cross-sectional area of winding pack [m2]
 
-real(8), private :: a_tf_steel
+real(dp), private :: a_tf_steel
 !! Inboard coil steel coil cross-sectional area [m2]
 
-real(8), private :: a_tf_ins
+real(dp), private :: a_tf_ins
 !! Inboard coil insulation cross-section per coil [m2]
 
-real(8), private :: f_tf_steel
+real(dp), private :: f_tf_steel
 !! Inboard coil steel fraction [-]
 
-real(8), private :: f_tf_ins
+real(dp), private :: f_tf_ins
 !! Inboard coil insulation fraction [-]
 
-real(8), private :: h_cp_top
+real(dp), private :: h_cp_top
 !! Vertical distance from the midplane to the top of the tapered section [m]
 
-real(8), private :: r_tf_outboard_in
+real(dp), private :: r_tf_outboard_in
 !! Radial position of plasma-facing edge of TF coil outboard leg [m]
 
-real(8), private :: r_tf_outboard_out
+real(dp), private :: r_tf_outboard_out
 !! Radial position of outer edge of TF coil inboard leg [m]
 
-real(8), private :: r_wp_inner
+real(dp), private :: r_wp_inner
 !! Radial position of inner edge and centre of winding pack [m]
 
-real(8), private :: r_wp_outer
+real(dp), private :: r_wp_outer
 !! Radial position of outer edge and centre of winding pack [m]
 
-real(8), private :: r_wp_centre
+real(dp), private :: r_wp_centre
 !! Radial position of centre and centre of winding pack [m]
 
-real(8), private :: dr_tf_wp_top
+real(dp), private :: dr_tf_wp_top
 !! Conductor layer radial thickness at centercollumn top [m]
 !! Ground insulation layer included, only defined for itart = 1
 
-real(8), private :: vol_ins_cp
+real(dp), private :: vol_ins_cp
 !! CP turn insulation volume [m3]
 
-real(8), private :: vol_gr_ins_cp
+real(dp), private :: vol_gr_ins_cp
 !! CP ground insulation volume [m3]
 
-real(8), private :: vol_case_cp
+real(dp), private :: vol_case_cp
 !! Volume of the CP outer casing cylinder
 
-real(8), private :: t_wp_toroidal
+real(dp), private :: t_wp_toroidal
 !! Minimal toroidal thickness of of winding pack [m]
 
-real(8), private :: t_wp_toroidal_av
+real(dp), private :: t_wp_toroidal_av
 !! Averaged toroidal thickness of of winding pack [m]
 
-real(8), private :: t_lat_case_av
+real(dp), private :: t_lat_case_av
 !! Average lateral casing thickness [m]
 
-real(8), private :: a_case_front
+real(dp), private :: a_case_front
 !! Front casing area [m2]
 
-real(8), private :: a_case_nose
+real(dp), private :: a_case_nose
 !! Nose casing area [m2]
 
-real(8), private :: a_ground_ins
+real(dp), private :: a_ground_ins
 !! Inboard mid-plane cross-section area of the WP ground insulation [m2]
 
-real(8), private :: a_leg_ins
+real(dp), private :: a_leg_ins
 !! TF ouboard leg turn insulation area per coil [m2]
 
-real(8), private :: a_leg_gr_ins
+real(dp), private :: a_leg_gr_ins
 !! TF outboard leg ground insulation area per coil [m2]
 
-real(8), private :: a_leg_cond
+real(dp), private :: a_leg_cond
 !! Exact TF ouboard leg conductor area [m2] 
 
-real(8), private :: theta_coil
+real(dp), private :: theta_coil
 !! Half toroidal angular extent of a single TF coil inboard leg
 
-real(8), private :: tan_theta_coil
+real(dp), private :: tan_theta_coil
 !! Tan half toroidal angular extent of a single TF coil inboard leg
 
-real(8), private :: t_conductor_radial, t_conductor_toroidal
+real(dp), private :: t_conductor_radial, t_conductor_toroidal
 !! Conductor area radial and toroidal dimension (integer turn only) [m]
 
-real(8), private :: t_cable_radial, t_cable_toroidal
+real(dp), private :: t_cable_radial, t_cable_toroidal
 !! Cable area radial and toroidal dimension (integer turn only) [m]
 
-real(8), private :: t_turn_radial, t_turn_toroidal
+real(dp), private :: t_turn_radial, t_turn_toroidal
 !! Turn radial and toroidal dimension (integer turn only) [m]
 
-real(8), private :: t_cable
+real(dp), private :: t_cable
 !! Cable area averaged dimension (square shape) [m]
 
-real(8), private :: vforce_inboard_tot
+real(dp), private :: vforce_inboard_tot
 !! Total inboard vertical tension (all coils) [N] 
 
 type(resistive_material), private :: copper
@@ -139,26 +139,26 @@ type(resistive_material), private :: jacket
 type(resistive_material), private :: helium
 
 ! croco_strand
-real(8) :: croco_strand_area
-real(8) :: croco_strand_critical_current
+real(dp) :: croco_strand_area
+real(dp) :: croco_strand_critical_current
 
 ! conductor
-real(8) :: conductor_copper_area,  conductor_copper_fraction
-real(8) :: conductor_copper_bar_area
-real(8) :: conductor_hastelloy_area, conductor_hastelloy_fraction
-real(8) :: conductor_helium_area, conductor_helium_fraction
-real(8) :: conductor_solder_area, conductor_solder_fraction
-real(8) :: conductor_jacket_area, conductor_jacket_fraction
-real(8) :: conductor_rebco_area,  conductor_rebco_fraction
-real(8) :: conductor_critical_current
-real(8) :: conductor_acs
+real(dp) :: conductor_copper_area,  conductor_copper_fraction
+real(dp) :: conductor_copper_bar_area
+real(dp) :: conductor_hastelloy_area, conductor_hastelloy_fraction
+real(dp) :: conductor_helium_area, conductor_helium_fraction
+real(dp) :: conductor_solder_area, conductor_solder_fraction
+real(dp) :: conductor_jacket_area, conductor_jacket_fraction
+real(dp) :: conductor_rebco_area,  conductor_rebco_fraction
+real(dp) :: conductor_critical_current
+real(dp) :: conductor_acs
 !! Area of cable space inside jacket
-real(8) :: conductor_area      
+real(dp) :: conductor_area      
 
-real(8):: T1, time2, tau2, estotft
+real(dp):: T1, time2, tau2, estotft
 ! (OBSOLETE, but leave for moment)
 ! real (kind(1.0D0)) ::croco_quench_factor
-! real(8):: jwdgpro_1, jwdgpro_2,  etamax
+! real(dp):: jwdgpro_1, jwdgpro_2,  etamax
 
 ! Var in tf_res_heating requiring re-initialisation on each new run
 ! Not sure what is really doing --> to be checked
@@ -552,7 +552,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
 
         ! Local variables
         ! ------
-        real(8) :: t_tf_at_wp
+        real(dp) :: t_tf_at_wp
         !! TF coil width at inner egde of winding pack toroidal direction [m]
         ! ------
     
@@ -752,39 +752,39 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
         integer, intent(in) :: i_tf_sc_mat
         !! Switch for superconductor material in TF coils
 
-        real(8), intent(in) :: jwptf
+        real(dp), intent(in) :: jwptf
         !! Winding pack engineering current density [A/m2]
 
-        real(8), intent(in) :: thwcndut
+        real(dp), intent(in) :: thwcndut
         !! Steel conduit thickness [m]
 
-        real(8), intent(in) :: thicndut
+        real(dp), intent(in) :: thicndut
         !! Turn insulation thickness [m]
         ! ------
 
 
         ! Outputs
         ! -------
-        real(8), intent(out) :: acstf
+        real(dp), intent(out) :: acstf
         !! Cable space area (per turn)  [m2]
 
-        real(8), intent(out) :: acndttf
+        real(dp), intent(out) :: acndttf
         !! Steel conduit area (per turn) [m2]
         
-        real(8), intent(out) :: insulation_area
+        real(dp), intent(out) :: insulation_area
         !! Turn insulation area (per turn) [m2]
 
-        real(8), intent(out) :: n_tf_turn
+        real(dp), intent(out) :: n_tf_turn
         !! Number of turns per WP (float)
         ! -------
 
 
         ! Local variables
         !----------------
-        real(8) :: a_turn
+        real(dp) :: a_turn
         !! Turn squared dimension [m2]
 
-        real(8) :: rbcndut
+        real(dp) :: rbcndut
         !! Radius of rounded corners of cable space inside conduit [m]
         !----------------
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -908,34 +908,34 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
         integer, intent(in) :: n_pancake
         !! Number of turns in the toroidal direction
 
-        real(8), intent(in) :: thwcndut
+        real(dp), intent(in) :: thwcndut
         !! Steel conduit thickness [m]
 
-        real(8), intent(in) :: thicndut
+        real(dp), intent(in) :: thicndut
         !! Turn insulation thickness [m]
         ! ------
 
         ! Outputs
         ! -------
-        real(8), intent(out) :: acstf
+        real(dp), intent(out) :: acstf
         !! Cable space area (per turn)  [m2]
 
-        real(8), intent(out) :: acndttf
+        real(dp), intent(out) :: acndttf
         !! Steel conduit area (per turn) [m2]
         
-        real(8), intent(out) :: insulation_area
+        real(dp), intent(out) :: insulation_area
         !! Turn insulation area (per turn) [m2]
 
-        real(8), intent(out) :: cpttf
+        real(dp), intent(out) :: cpttf
         !! TF turns current [A]
 
-        real(8), intent(out) :: n_tf_turn
+        real(dp), intent(out) :: n_tf_turn
         !! Number of turns
         ! -------
 
         ! Local variables
         ! ------
-        real(8) :: rbcndut
+        real(dp) :: rbcndut
         !! Radius of rounded corners of cable space inside conduit [m]
         ! ------
 
@@ -1046,7 +1046,7 @@ subroutine res_tf_internal_geom()
             
     ! Inernal variables
     ! -----------------
-    real(8) :: a_tf_cond
+    real(dp) :: a_tf_cond
     !! Exact mid-plane conductor cross-section area [m2]
     ! -----------------
 
@@ -1137,7 +1137,7 @@ subroutine tf_res_heating()
 
     ! Internal variable
     ! ---
-    real(8) :: a_joints
+    real(dp) :: a_joints
     !! Total area of joint contact [m2]
 
     integer :: n_contact_tot
@@ -1256,19 +1256,19 @@ subroutine tf_field_and_force()
 
     ! Local variables
     ! ---------------
-    real(8) :: r_in_wp
+    real(dp) :: r_in_wp
     !! Inner WP radius removing the insulation layer and the insertion gap [m]
 
-    real(8) :: r_out_wp
+    real(dp) :: r_out_wp
     !! Outer WP radius removing the insulation layer and the insertion gap [m]
 
-    real(8) :: dr_wp
+    real(dp) :: dr_wp
     !! WP radial thickness removing the insulation layer and the insertion gap [m]
 
-    real(8) :: vforce_tot
+    real(dp) :: vforce_tot
     !! Total vertical force : inboard + outbord [N] 
 
-    real(8) :: r_in_outwp
+    real(dp) :: r_in_outwp
     !! Plasma side radius of the outboard leg winding pack (at-midplane) [m]
     ! ---------------
 
@@ -1377,27 +1377,27 @@ subroutine tf_coil_area_and_masses()
 
     ! Local Variables
     ! ---------------
-    real(8) :: cplen, wbtf
+    real(dp) :: cplen, wbtf
 
-    real(8) :: vol_case
+    real(dp) :: vol_case
     !! Total TF case volume [m3]
 
-    real(8) :: vol_ins
+    real(dp) :: vol_ins
     !! Total leg turn insulation volume [m3]
     
-    real(8) :: vol_gr_ins
+    real(dp) :: vol_gr_ins
     !! Total leg turn insulation volume [m3]
     
-    real(8) :: vol_cond
+    real(dp) :: vol_cond
     !! Total conductor insulator volume [m3]
 
-    real(8) :: vol_ins_leg
+    real(dp) :: vol_ins_leg
     !! Outboard leg turn isulation volume [m3]
     
-    real(8) :: vol_gr_ins_leg
+    real(dp) :: vol_gr_ins_leg
     !! Outboard leg turn isulation volume [m3]
 
-    real(8) :: vol_cond_leg
+    real(dp) :: vol_cond_leg
     !! Outboard leg conductor insulator volume [m3]
     ! ---------------
 
@@ -1617,14 +1617,14 @@ subroutine peak_tf_with_ripple(n_tf,wwp1,dr_tf_wp,tfin,bmaxtf,bmaxtfrp,flag)
 
     !  Arguments
 
-    real(8), intent(in) :: n_tf,wwp1,dr_tf_wp,tfin,bmaxtf
-    real(8), intent(out) :: bmaxtfrp
+    real(dp), intent(in) :: n_tf,wwp1,dr_tf_wp,tfin,bmaxtf
+    real(dp), intent(out) :: bmaxtfrp
     integer, intent(out) :: flag
 
     !  Local variables
 
-    real(8) :: wmax
-    real(8), dimension(4) :: a
+    real(dp) :: wmax
+    real(dp), dimension(4) :: a
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1742,94 +1742,94 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     ! Internal parameters
     ! ---
-    real(8), dimension(n_tf_layer*n_radial_array) :: radial_array
+    real(dp), dimension(n_tf_layer*n_radial_array) :: radial_array
     !! Array refining the radii of the stress calculations arrays
     
-    real(8), dimension(n_tf_layer*n_radial_array) :: sig_tf_smeared_r
+    real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_smeared_r
     !! TF Inboard leg radial smeared stress r distribution at mid-plane [Pa]
     
-    real(8), dimension(n_tf_layer*n_radial_array) :: sig_tf_smeared_t
+    real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_smeared_t
     !! TF Inboard leg tangential smeared stress r distribution at mid-plane [Pa]
 
-    real(8), dimension(n_tf_layer*n_radial_array) :: sig_tf_smeared_z
+    real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_smeared_z
     !! TF Inboard leg vertical smeared stress r distribution at mid-plane [Pa]
     
-    real(8), dimension((n_tf_layer-i_tf_bucking)*n_radial_array) :: sig_tf_wp_av_z
+    real(dp), dimension((n_tf_layer-i_tf_bucking)*n_radial_array) :: sig_tf_wp_av_z
     !! TF Inboard leg WP smeared vertical stress r distribution at mid-plane [Pa]
 
-    real(8), dimension(n_tf_layer*n_radial_array) :: sig_tf_r
+    real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_r
     !! TF Inboard leg radial stress r distribution at mid-plane [Pa]
     
-    real(8), dimension(n_tf_layer*n_radial_array) :: sig_tf_t
+    real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_t
     !! TF Inboard leg tangential stress r distribution at mid-plane [Pa]
     
-    real(8), dimension(n_tf_layer*n_radial_array) :: sig_tf_z
+    real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_z
     !! TF Inboard leg vertical tensile stress at mid-plane [Pa]
     
-    real(8), dimension(n_tf_layer*n_radial_array) :: deflect
+    real(dp), dimension(n_tf_layer*n_radial_array) :: deflect
     !! TF coil radial deflection (displacement) radial distribution [m]
     
-    real(8), dimension(n_tf_layer*n_radial_array) :: sig_tf_vmises
+    real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_vmises
     !! TF Inboard leg Von-Mises stress r distribution at mid-plane [Pa]
         
-    real(8), dimension(n_tf_layer*n_radial_array) :: sig_tf_tresca 
+    real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_tresca 
     !! TF Inboard leg TRESCA stress r distribution at mid-plane [Pa]
     
-    real(8), dimension(n_tf_layer*n_radial_array) :: s_tresca_cond_cea
+    real(dp), dimension(n_tf_layer*n_radial_array) :: s_tresca_cond_cea
     !! Conduit Tresca stress with CEA adjustment factors [Pa]
     
-    real(8), dimension(n_tf_layer) :: sig_tf_r_max
+    real(dp), dimension(n_tf_layer) :: sig_tf_r_max
     !! Radial stress of the point of maximum TRESCA stress (for each layers) [Pa]
     
-    real(8), dimension(n_tf_layer) :: sig_tf_t_max 
+    real(dp), dimension(n_tf_layer) :: sig_tf_t_max 
     !! Toroidal stress of the point of maximum TRESCA stress (for each layers) [Pa]
     
-    real(8), dimension(n_tf_layer) :: sig_tf_z_max
+    real(dp), dimension(n_tf_layer) :: sig_tf_z_max
     !! Vertical stress of the point of maximum TRESCA stress (for each layers) [Pa]
     !! Rem : Currently constant but will be r dependent in the future
     
-    real(8), dimension(n_tf_layer) :: sig_tf_vmises_max 
+    real(dp), dimension(n_tf_layer) :: sig_tf_vmises_max 
     !! Von-Mises stress of the point of maximum TRESCA stress (for each layers) [Pa]
     
-    real(8), dimension(n_tf_layer) :: sig_tf_tresca_max
+    real(dp), dimension(n_tf_layer) :: sig_tf_tresca_max
     !! Maximum TRESCA stress (for each layers) [Pa]
     !! If the CEA correction is addopted, the CEA corrected value is used
     
-    real(8), dimension(n_tf_layer*n_radial_array) :: strain_tf_r
+    real(dp), dimension(n_tf_layer*n_radial_array) :: strain_tf_r
     !! Radial normal strain radial distribution
     
-    real(8), dimension(n_tf_layer*n_radial_array) :: strain_tf_t
+    real(dp), dimension(n_tf_layer*n_radial_array) :: strain_tf_t
     !! Toroidal normal strain radial distribution
      
-    real(8), dimension(n_tf_layer*n_radial_array) :: strain_tf_z
+    real(dp), dimension(n_tf_layer*n_radial_array) :: strain_tf_z
     !! Vertical normal strain radial distribution
 
-    real(8) :: eyoung_wp_t
+    real(dp) :: eyoung_wp_t
     !! Effective WP young modulus in the toroidal direction
 
-    real(8) :: eyoung_wp_z
+    real(dp) :: eyoung_wp_z
     !! Smeared WP young modulus in the vertical direction [Pa]
 
-    real(8) :: eyoung_wp_z_eff
+    real(dp) :: eyoung_wp_z_eff
     !! Effective WP young modulus used in the stress calculations [Pa]
 
-    real(8), dimension(n_tf_layer+1) :: radtf
+    real(dp), dimension(n_tf_layer+1) :: radtf
     !! Radii used to define the layers used in the stress models [m]
     !! Layers are labelled from inboard to outbard
     
-    real(8), dimension(n_tf_layer) :: eyoung_p
+    real(dp), dimension(n_tf_layer) :: eyoung_p
     !! Toroidal plan's Young modulae (one per layer) used in the stress models [Pa]
     
-    real(8), dimension(n_tf_layer) :: eyoung_z
+    real(dp), dimension(n_tf_layer) :: eyoung_z
     !! Vertical direction's Young modulae (one per layer) used in the stress models [Pa]
     
-    real(8), dimension(n_tf_layer) :: poisson_p
+    real(dp), dimension(n_tf_layer) :: poisson_p
     !! Toroidal plan's Poisson's ratio (one per layer) used in the stress models
     
-    real(8), dimension(n_tf_layer) :: poisson_z
+    real(dp), dimension(n_tf_layer) :: poisson_z
     !! Toroidal plan's Poisson's ratio (one per layer) used in the stress models
 
-    real(8), dimension(n_tf_layer) :: jeff
+    real(dp), dimension(n_tf_layer) :: jeff
     !! Effective current density [A/m2]
   
     integer :: n_tf_bucking
@@ -1841,93 +1841,93 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     integer :: ii_max
     !! Index of the maximum TRESCA stress
 
-    real(8) :: sig_max
+    real(dp) :: sig_max
     !! Working float to find maximum TRESCA stress index [Pa]
 
-    real(8) :: tcbs
+    real(dp) :: tcbs
     !! Radial cable dimension [m]
 
-    real(8) :: t_ins_eff
+    real(dp) :: t_ins_eff
     !! Effective insulation thickness (turn + ground insulation per turn) [m]
 
-    real(8) :: a_oh
+    real(dp) :: a_oh
     !! CS vertical cross-section area [m2]
 
-    real(8) :: curr_oh_max
+    real(dp) :: curr_oh_max
     !! Maximum CS current (absolute value) [A]
 
-    real(8) :: n_oh_turns
+    real(dp) :: n_oh_turns
     !! Number of CS turn (float ...)
 
-    real(8) :: a_oh_turn
+    real(dp) :: a_oh_turn
     !! CS turn vertica cross section area [m]
 
-    real(8) :: t_cond_oh
+    real(dp) :: t_cond_oh
     !! Central Solenoid (OH) conduit thickness assuming square conduit [m]
     !! Used only for bucked and wedged design
     
-    real(8) :: t_cable_oh
+    real(dp) :: t_cable_oh
     !! Central Solenoid (OH) turn cable thickness assming square conduit [m]
     !! Used only for bucked and wedged design
 
-    real(8) :: t_turn_oh
+    real(dp) :: t_turn_oh
     !! Central Solenoid (OH) turn dimension [m]
 
-    real(8) :: fac_sig_t
+    real(dp) :: fac_sig_t
     !! Toroidal WP steel conduit stress unsmearing factor
 
-    real(8) :: fac_sig_r
+    real(dp) :: fac_sig_r
     !! Radial WP steel conduit stress unsmearing factor
 
-    real(8) :: fac_sig_z
+    real(dp) :: fac_sig_z
     !! Vertical WP steel conduit stress unsmearing factor
 
-    real(8) :: fac_sig_z_wp_av
+    real(dp) :: fac_sig_z_wp_av
     !! WP averaged vertical stress unsmearing factor
 
-    real(8) :: fac_oh
+    real(dp) :: fac_oh
     !! Central Solenoid (OH) steel conduit stress unsmearing factor
 
-    real(8) :: svmxz
+    real(dp) :: svmxz
     !! Von-mises stress in steel setting the radial stress to 0
 
-    real(8) :: svmyz
+    real(dp) :: svmyz
     !! Von-mises stress in stell setting the toroidal stress to 0
 
-    real(8) :: dr_wp_layer
+    real(dp) :: dr_wp_layer
     !! Size of WP layer with homogeneous smeared property 
 
-    real(8) :: a_steel_eff
+    real(dp) :: a_steel_eff
     !! Effective coil steel area used in stress calculations [m2]
     !! defined as the total steel area - the front casing 
 
-    real(8) :: a_wp_steel_eff
+    real(dp) :: a_wp_steel_eff
     !! Winding pack stress layer effective steel area [m2] 
     !! WP steel + latera casing area
 
-    real(8) :: a_wp_eff
+    real(dp) :: a_wp_eff
     !! WP area using the stress model circular geometry [m2]
     !! WP + lateral casing area
 
-    real(8) :: f_vforce_case
+    real(dp) :: f_vforce_case
     !! Correction factor for plasma side case vertical stress contribution
 
-    real(8) :: vforce_eff
+    real(dp) :: vforce_eff
     !! Effective vertical tension used in stess calculation [N]
 
-    real(8) :: eyoung_cond
+    real(dp) :: eyoung_cond
     !! Resistive conductors Young modulus [Pa]
 
-    real(8) :: eyoung_wp_t_eff
+    real(dp) :: eyoung_wp_t_eff
     !! WP young modulus in toroidal direction with lateral casing effect [Pa]
 
-    real(8) :: r_wp_inner_eff
+    real(dp) :: r_wp_inner_eff
     !! Inner radius of the stress model effective WP layer [m]
     
-    real(8) :: r_wp_outer_eff
+    real(dp) :: r_wp_outer_eff
     !! Inner radius of the stress model effective WP layer [m]
 
-    real(8) :: dr_tf_wp_eff
+    real(dp) :: dr_tf_wp_eff
     !! Width of the effective WP layer used in the stress calculations [m] 
     ! ---
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2617,57 +2617,57 @@ subroutine plane_stress( nu, rad, ey, j,          & ! Inputs
     integer, intent(in) :: nlayers
     !! Number of layers considered in the stress model
 
-    real(8), dimension(nlayers), intent(in) :: nu
+    real(dp), dimension(nlayers), intent(in) :: nu
     !! Poisson's ratio
 
-    real(8), dimension(nlayers+1), intent(in) :: rad
+    real(dp), dimension(nlayers+1), intent(in) :: rad
     !! Layers delimitation radii [m]
     
-    real(8), dimension(nlayers), intent(in) :: ey
+    real(dp), dimension(nlayers), intent(in) :: ey
     !! Young modulae [Pa]
     
-    real(8), dimension(nlayers), intent(in) :: j
+    real(dp), dimension(nlayers), intent(in) :: j
     !! Layers effective current density [A/m2]
 
-    real(8), dimension(nlayers*n_radial_array), intent(out) :: sigr
+    real(dp), dimension(nlayers*n_radial_array), intent(out) :: sigr
     !! Radial stress radial distribution [Pa]
     
-    real(8), dimension(nlayers*n_radial_array), intent(out) :: sigt
+    real(dp), dimension(nlayers*n_radial_array), intent(out) :: sigt
     !! Toroidal stress radial distribution [Pa]
 
-    real(8), dimension(nlayers*n_radial_array), intent(out) :: r_deflect
+    real(dp), dimension(nlayers*n_radial_array), intent(out) :: r_deflect
     !! Radial deflection (displacement) radial distribution [m]
 
-    real(8), dimension(nlayers*n_radial_array), intent(out) :: rradius
+    real(dp), dimension(nlayers*n_radial_array), intent(out) :: rradius
     !! Radius array [m]
 
 
     ! Local variables
     ! ---
     ! Lorentz body force parametres
-    real(8), dimension(nlayers) :: alpha
-    real(8), dimension(nlayers) :: beta
+    real(dp), dimension(nlayers) :: alpha
+    real(dp), dimension(nlayers) :: beta
 
     ! Strain to stress hooke's law coeficient
-    real(8), dimension(nlayers) :: kk
+    real(dp), dimension(nlayers) :: kk
 
     ! Layer area
-    real(8), dimension(nlayers) :: area
+    real(dp), dimension(nlayers) :: area
     
     ! Matrix encoding the integration constant cc coeficients 
-    real(8), dimension(2*nlayers, 2*nlayers) :: aa
+    real(dp), dimension(2*nlayers, 2*nlayers) :: aa
     
     ! Vector encoding the alpha/beta (lorentz forces) contribution
-    real(8), dimension(2*nlayers) :: bb
+    real(dp), dimension(2*nlayers) :: bb
 
     ! Integration constants vector (solution)
-    real(8), dimension(2*nlayers) :: cc
-    real(8), dimension(nlayers) :: c1, c2
+    real(dp), dimension(2*nlayers) :: cc
+    real(dp), dimension(nlayers) :: c1, c2
 
     ! Variables used for radial stress distribution  
-    real(8) :: dradius
-    real(8) :: inner_layer_curr
-    real(8) :: rad_c
+    real(dp) :: dradius
+    real(dp) :: inner_layer_curr
+    real(dp) :: rad_c
 
     integer :: ii
     integer :: jj
@@ -2854,54 +2854,54 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     !!   2 : Bucked and wedged design
     !!   3 : Bucked and wedged design with CS-TF interlayer
 
-    real(8), dimension(nlayers), intent(in) :: nu_p
+    real(dp), dimension(nlayers), intent(in) :: nu_p
     !! Toroidal plan's Poisson's ratios 
 
-    real(8), dimension(nlayers), intent(in) :: nu_z
+    real(dp), dimension(nlayers), intent(in) :: nu_z
     !! Toroidal plan to vertical direction's Poisson's ratios 
 
-    real(8), dimension(nlayers), intent(in) :: ey_p
+    real(dp), dimension(nlayers), intent(in) :: ey_p
     !! Toroidal plan's Young modulae
 
-    real(8), dimension(nlayers), intent(in) :: ey_z
+    real(dp), dimension(nlayers), intent(in) :: ey_z
     !! Vertical direction's Young modulae
         
-    real(8), dimension(nlayers), intent(in) :: d_curr
+    real(dp), dimension(nlayers), intent(in) :: d_curr
     !! Layers current densities [A.m-2]
       
-    real(8), dimension(nlayers+1), intent(in) :: rad
+    real(dp), dimension(nlayers+1), intent(in) :: rad
     !! Radii of the layers boundaries [m], starting from the innermost
     !! i.e. the blking/casing cylinder
         
-    real(8), intent(in) :: v_force
+    real(dp), intent(in) :: v_force
     !! Electromecanical vertical forces
     ! ---
       
         
     ! Outputs
     ! ---
-    real(8), dimension(n_radial_array*nlayers), intent(out) :: sigr
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: sigr
     !! Stress distribution in the radial direction (r) [Pa]
 
-    real(8), dimension(n_radial_array*nlayers), intent(out) :: sigt
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: sigt
     !! Stress distribution in the toroidal direction (t) [Pa]
 
-    real(8), dimension(n_radial_array*nlayers), intent(out) :: sigz
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: sigz
     !! Stress distribution in the vertical direction (z)
 
-    real(8), dimension(n_radial_array*nlayers), intent(out) :: strain_r
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_r
     !! Strain distribution in the radial direction (r)
 
-    real(8), dimension(n_radial_array*nlayers), intent(out) :: strain_t
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_t
     !! Strain distribution in the toroidal direction (t)
           
-    real(8), dimension(n_radial_array*nlayers), intent(out) :: strain_z
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_z
     !! Uniform strain in the vertical direction (z)
 
-    real(8), dimension(n_radial_array*nlayers), intent(out) :: r_deflect
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: r_deflect
     !! Radial displacement radial distribution [m]
 
-    real(8), dimension(nlayers*n_radial_array), intent(out) :: rradius
+    real(dp), dimension(nlayers*n_radial_array), intent(out) :: rradius
     !! Radius array [m]
     ! ---
 
@@ -2909,53 +2909,53 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     ! Local variables
     ! ---
     ! Lorentz body force parametres
-    real(8), dimension(nlayers) :: alpha
-    real(8), dimension(nlayers) :: beta
+    real(dp), dimension(nlayers) :: alpha
+    real(dp), dimension(nlayers) :: beta
       
     ! Toroidal plane / vertical direction hooke's law coeficient
-    real(8), dimension(nlayers) :: kk_p
-    real(8), dimension(nlayers) :: kk_z
+    real(dp), dimension(nlayers) :: kk_p
+    real(dp), dimension(nlayers) :: kk_z
 
     ! Toroidal plan to vertical direction poisson's squared coefficient
-    real(8), dimension(nlayers) :: nu_z_eff2
+    real(dp), dimension(nlayers) :: nu_z_eff2
     
     ! Body force parameter in displacement differential equation
-    real(8), dimension(nlayers) :: fr_par
+    real(dp), dimension(nlayers) :: fr_par
 
     ! Radial/toroidal stress constant parameters
-    real(8), dimension(nlayers) :: cc_par_sig
-    real(8), dimension(nlayers) :: alpha_par_sigr
-    real(8), dimension(nlayers) :: alpha_par_sigt
-    real(8), dimension(nlayers) :: beta_par_sigr
-    real(8), dimension(nlayers) :: beta_par_sigt
+    real(dp), dimension(nlayers) :: cc_par_sig
+    real(dp), dimension(nlayers) :: alpha_par_sigr
+    real(dp), dimension(nlayers) :: alpha_par_sigt
+    real(dp), dimension(nlayers) :: beta_par_sigr
+    real(dp), dimension(nlayers) :: beta_par_sigt
 
     ! Layer area
-    real(8), dimension(nlayers) :: area
+    real(dp), dimension(nlayers) :: area
 
     ! Vertical strain parameters
-    real(8) :: sum_1
-    real(8) :: sum_2
-    real(8), dimension(nlayers) :: aleph
-    real(8), dimension(nlayers) :: beth
-    real(8), dimension(nlayers) :: par_1
-    real(8), dimension(nlayers) :: par_2
+    real(dp) :: sum_1
+    real(dp) :: sum_2
+    real(dp), dimension(nlayers) :: aleph
+    real(dp), dimension(nlayers) :: beth
+    real(dp), dimension(nlayers) :: par_1
+    real(dp), dimension(nlayers) :: par_2
 
     ! Matrix encoding the integration constant cc coeficients 
-    real(8), dimension(2*nlayers, 2*nlayers) :: aa
+    real(dp), dimension(2*nlayers, 2*nlayers) :: aa
 
     ! Vector encoding the alpha/beta (lorentz forces) contribution
-    real(8), dimension(2*nlayers) :: bb
+    real(dp), dimension(2*nlayers) :: bb
 
     ! Integration constants vector (solution)
-    real(8), dimension(2*nlayers) :: cc
-    real(8), dimension(nlayers) :: c1, c2
+    real(dp), dimension(2*nlayers) :: cc
+    real(dp), dimension(nlayers) :: c1, c2
 
     ! Variables used for radial stress distribution     
-    real(8) :: dradius  
-    real(8) :: inner_layer_curr
+    real(dp) :: dradius  
+    real(dp) :: inner_layer_curr
       
     ! Constraint strains for calculation (on for TF and CS systems)
-    real(8), dimension(2) :: strain_z_calc
+    real(dp), dimension(2) :: strain_z_calc
       
     ! Indexes
     integer :: ii  ! Line in the aa matrix
@@ -3304,30 +3304,30 @@ function eyngeff(estl,eins,tins,tstl,tcs)
 
     implicit none
 
-    real(8) :: eyngeff
+    real(dp) :: eyngeff
 
     !  Arguments
     ! ---
-    real(8), intent(in) :: estl
+    real(dp), intent(in) :: estl
     !! Young's modulus of steel (Pa)
 
-    real(8), intent(in) :: eins
+    real(dp), intent(in) :: eins
     !! Young's modulus of insulator (Pa)
 
-    real(8), intent(in) :: tins
+    real(dp), intent(in) :: tins
     !! Insulator wrap thickness (m)
 
-    real(8), intent(in) :: tstl
+    real(dp), intent(in) :: tstl
     !! Thickness of steel conduit (m)
 
-    real(8), intent(in) :: tcs
+    real(dp), intent(in) :: tcs
     !! Dimension of cable space area inside conduit (m)
 
     !  Local variables
     ! ---
-    real(8) :: ed
+    real(dp) :: ed
 
-    real(8) :: ttot
+    real(dp) :: ttot
     !!  Total turn thickness
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3357,26 +3357,26 @@ function edoeeff(estl,eins,tins,tstl,tcs)
     use maths_library, only: eshellvol
     implicit none
 
-    real(8) :: edoeeff
+    real(dp) :: edoeeff
 
     !  Arguments
-    real(8), intent(in) :: estl
+    real(dp), intent(in) :: estl
     !! Young's modulus of steel (Pa)
 
-    real(8), intent(in) :: eins
+    real(dp), intent(in) :: eins
     !! Young's modulus of insulator (Pa)
     
-    real(8), intent(in) :: tins
+    real(dp), intent(in) :: tins
     !! Insulator wrap thickness (m)
     
-    real(8), intent(in) :: tstl
+    real(dp), intent(in) :: tstl
     !! Thickness of steel conduit (m)
     
-    real(8), intent(in) :: tcs
+    real(dp), intent(in) :: tcs
     !! Dimension of cable space area inside conduit (m)
 
     !  Local variables
-    real(8) :: ed,ttot,eeff
+    real(dp) :: ed,ttot,eeff
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3406,30 +3406,30 @@ function eyngzwp(estl,eins,ewp,tins,tstl,tcs)
 
     implicit none
 
-    real(8) :: eyngzwp
+    real(dp) :: eyngzwp
 
     !  Arguments
 
-    real(8), intent(in) :: estl
+    real(dp), intent(in) :: estl
     !! Young's modulus of steel (Pa)
 
-    real(8), intent(in) :: eins
+    real(dp), intent(in) :: eins
     !! Young's modulus of insulator (Pa)
     
-    real(8), intent(in) :: ewp
+    real(dp), intent(in) :: ewp
     !! Young's modulus of windings (Pa)
     
-    real(8), intent(in) :: tins
+    real(dp), intent(in) :: tins
     !! insulator wrap thickness (m)
 
-    real(8), intent(in) :: tstl
+    real(dp), intent(in) :: tstl
     !! thickness of steel conduit (m)
 
-    real(8), intent(in) :: tcs
+    real(dp), intent(in) :: tcs
     !! dimension of cable space area inside conduit (m)
  
     !  Local variables
-    real(8) :: ttot
+    real(dp) :: ttot
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3453,16 +3453,16 @@ function sig_tresca(sx,sy,sz)
     implicit none
 
     ! OUTPUT
-    real(8) :: sig_tresca
+    real(dp) :: sig_tresca
 
     !  Arguments
-    real(8), intent(in) :: sx
+    real(dp), intent(in) :: sx
     !! In-plane stress in X direction [Pa]
 
-    real(8), intent(in) :: sy
+    real(dp), intent(in) :: sy
     !! In-plane stress in Y direction [Pa]
     
-    real(8), intent(in) :: sz
+    real(dp), intent(in) :: sz
     !! In-plane stress in Z direction [Pa]
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3485,25 +3485,25 @@ function sigvm(sx,sy,sz,txy,txz,tyz)
     implicit none
 
     ! OUTPUT
-    real(8) :: sigvm
+    real(dp) :: sigvm
 
     !  Arguments
-    real(8), intent(in) :: sx
+    real(dp), intent(in) :: sx
     !! In-plane stress in X direction [Pa]
 
-    real(8), intent(in) :: sy
+    real(dp), intent(in) :: sy
     !! In-plane stress in Y direction [Pa]
     
-    real(8), intent(in) :: sz
+    real(dp), intent(in) :: sz
     !! In-plane stress in Z direction [Pa]
     
-    real(8), intent(in) :: txy
+    real(dp), intent(in) :: txy
     !! Out of plane stress in X-Y plane [Pa]
     
-    real(8), intent(in) :: txz
+    real(dp), intent(in) :: txz
     !! Out of plane stress in X-Z plane [Pa]
     
-    real(8), intent(in) :: tyz
+    real(dp), intent(in) :: tyz
     !! Out of plane stress in Y-Z plane [Pa]
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3533,8 +3533,8 @@ subroutine coilshap
 
     !  Arguments
     !  Local variables
-    real(8), parameter :: fstraight = 0.6D0
-    real(8) :: aa, bb
+    real(dp), parameter :: fstraight = 0.6D0
+    real(dp) :: aa, bb
     integer :: ii
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3649,9 +3649,9 @@ subroutine coilshap
         !!  See https://www.johndcook.com/blog/2013/05/05/ramanujan-circumference-ellipse/
         !!  for a discussion of the precision of the formula 
 
-        real(8) :: circumference
-        real(8), intent(in) :: aaa, bbb
-        real(8) :: hh
+        real(dp) :: circumference
+        real(dp), intent(in) :: aaa, bbb
+        real(dp) :: hh
         hh = ( aaa - bbb )**2 / ( aaa + bbb )**2
         circumference = pi* ( aaa + bbb ) * ( 1.0D0 + (3.0D0*hh)/(10.0D0 + sqrt(4.0D0 - 3.0D0*hh)) )
 
@@ -3677,12 +3677,12 @@ subroutine tfcind(tfthk)
     use constants, only: pi, rmu0
     implicit none
     !  Arguments
-    real(8), intent(in) :: tfthk
+    real(dp), intent(in) :: tfthk
 
     !  Local variables
     integer, parameter :: nintervals = 100
     integer :: i
-    real(8) :: ai, ao, bi, bo, x0, y0, h_bore, h_thick, dr, r, b
+    real(dp) :: ai, ao, bi, bo, x0, y0, h_bore, h_thick, dr, r, b
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3797,9 +3797,9 @@ subroutine outtf(outfile, peaktfflag)
 
     integer :: ii
 
-    real(8) :: ap
+    real(dp) :: ap
     
-    real(8) :: radius
+    real(dp) :: radius
     !! Local variable used for the radial build [m]
 
     character(len=1) :: intstring
@@ -4296,7 +4296,7 @@ subroutine tfspcall(outfile,iprint)
     integer, intent(in) :: outfile, iprint
 
     !  Local variables
-    real(8) :: aturn, tfes, vdump
+    real(dp) :: aturn, tfes, vdump
 
     ! Simple model REMOVED Issue #781
     ! if (tfc_model == 0) then
@@ -4375,14 +4375,14 @@ contains
         implicit none
 
         integer, intent(in) :: isumat, iprint, outfile
-        real(8), intent(in) :: acs, aturn, bmax, fcu, fhe, fhts
-        real(8), intent(in) :: iop, jwp, strain, tdmptf, tfes, thelium, tmax, bcritsc, tcritsc
-        real(8), intent(out) :: jwdgcrt, vd, tmarg
+        real(dp), intent(in) :: acs, aturn, bmax, fcu, fhe, fhts
+        real(dp), intent(in) :: iop, jwp, strain, tdmptf, tfes, thelium, tmax, bcritsc, tcritsc
+        real(dp), intent(out) :: jwdgcrt, vd, tmarg
 
         !  Local variables
 
         integer :: lap
-        real(8) :: b,bc20m,bcrit,c0,delt,fcond,icrit,iooic, &
+        real(dp) :: b,bc20m,bcrit,c0,delt,fcond,icrit,iooic, &
         jcritsc,jcrit0,jcritm,jcritp,jcritstr,jsc,jstrand,jtol,jwdgop, &
         t,tc0m,tcrit,ttest,ttestm,ttestp, tdump, fhetot
 
@@ -4657,13 +4657,13 @@ contains
         
         implicit none
         
-        real(8), intent(in) :: aturn, bmax, iop, thelium
+        real(dp), intent(in) :: aturn, bmax, iop, thelium
         integer, intent(in) :: iprint, outfile
-        real(8), intent(out) :: jwdgcrt, tmarg
+        real(dp), intent(out) :: jwdgcrt, tmarg
 
         !  Local variables
-        real(8) :: icrit,iooic, jcritsc,jcritstr,jsc,jwdgop, total
-        real(8) :: current_sharing_t
+        real(dp) :: icrit,iooic, jcritsc,jcritstr,jsc,jwdgop, total
+        real(dp) :: current_sharing_t
         logical:: validity
 
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -4825,15 +4825,15 @@ contains
 
         !  Arguments
 
-        real(8), intent(in) :: aio, tfes, acs, aturn, tdump, fcond, &
+        real(dp), intent(in) :: aio, tfes, acs, aturn, tdump, fcond, &
         fcu,tba,tmax
-        real(8), intent(out) :: ajwpro, vd
+        real(dp), intent(out) :: ajwpro, vd
 
         !  Local variables
 
         integer :: no,np
-        real(8) :: aa,ai1,ai2,ai3,ajcp,bb,cc,dd,tav
-        real(8), dimension(11) :: p1, p2, p3
+        real(dp) :: aa,ai1,ai2,ai3,ajcp,bb,cc,dd,tav
+        real(dp), dimension(11) :: p1, p2, p3
 
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4914,7 +4914,7 @@ function croco_voltage()
 
     implicit none
 
-    real(8):: croco_voltage
+    real(dp):: croco_voltage
 
     if(quench_model=='linear')then
         time2 = tdmptf
@@ -4960,66 +4960,66 @@ subroutine cpost( r_tf_inboard_in, r_tf_inboard_out, r_cp_top, ztop,          & 
     ! ----------
     ! Inputs 
     ! ------
-    real(8), intent(in) :: r_tf_inboard_in
+    real(dp), intent(in) :: r_tf_inboard_in
     !! Mid-plane inboard TF coil leg radius at the centre-machine side [m]
     
-    real(8), intent(in) :: r_tf_inboard_out
+    real(dp), intent(in) :: r_tf_inboard_out
     !! Mid-plane inboard TF coil leg radius at the plasma side [m]
 
-    real(8), intent(in) :: r_cp_top
+    real(dp), intent(in) :: r_cp_top
     !! Top outer radius of the centropost TF coil (ST only) [m]
 
-    real(8), intent(in) :: ztop
+    real(dp), intent(in) :: ztop
     !! Top vertical position (z) of the CP curved section [m]
 
-    real(8), intent(in) :: hmaxi
+    real(dp), intent(in) :: hmaxi
     !! Total CP half vertical length [m]
 
-    real(8), intent(in) :: cas_in_th
+    real(dp), intent(in) :: cas_in_th
     !! Inner casing (bucking cylinder) thickness [m]
 
-    real(8), intent(in) :: cas_out_th
+    real(dp), intent(in) :: cas_out_th
     !! Outer casing (plasma side) thickness [m]
 
-    real(8), intent(in) :: gr_ins_th
+    real(dp), intent(in) :: gr_ins_th
     !! Ground insulation thickness [m]
 
-    real(8), intent(in) :: ins_th
+    real(dp), intent(in) :: ins_th
     !! Turn insulation thickness [m]
 
-    real(8), intent(in) :: n_tf_turn
+    real(dp), intent(in) :: n_tf_turn
     !! Number of turns per TF coil
 
-    real(8), intent(in) :: curr
+    real(dp), intent(in) :: curr
     !! CP total current [A]
     
-    real(8), intent(in) :: rho
+    real(dp), intent(in) :: rho
     !! CP conductor resistivity
     
-    real(8), intent(in) :: fcool
+    real(dp), intent(in) :: fcool
     !! Mid-plane CP conductor cooling fraction    
     ! ------
 
 
     ! Outputs
     ! -------
-    real(8), intent(out) :: respow
+    real(dp), intent(out) :: respow
     !! CP resistive power losses [W]
     
-    real(8), intent(out) :: vol_ins_cp
+    real(dp), intent(out) :: vol_ins_cp
     !! Total CP turn insulation volume [m3]
 
-    real(8), intent(out) :: vol_gr_ins_cp
+    real(dp), intent(out) :: vol_gr_ins_cp
     !! Total CP ground insulation volume [m3] 
     
-    real(8), intent(out) :: vol_case_cp
+    real(dp), intent(out) :: vol_case_cp
     !! Total CP outer layer case volume [m3]
 
-    real(8), intent(out) :: vol_cond_cp
+    real(dp), intent(out) :: vol_cond_cp
     !! Total conductor volume in the centrepost [m3]
     !! Rem : The cooling space is removed
 
-    real(8), intent(out) :: a_cp_cool
+    real(dp), intent(out) :: a_cp_cool
     !! Centrepost cooling area toroidal cross-section [m2]
     !! Rem : constant over the whole CP
     ! -------
@@ -5027,60 +5027,60 @@ subroutine cpost( r_tf_inboard_in, r_tf_inboard_out, r_cp_top, ztop,          & 
 
     ! Internal variables
     ! ------------------
-    real(8) :: r1,z1,x,y,rc,dz,r,z, a_tfin_hole, res_cyl, res_taped
+    real(dp) :: r1,z1,x,y,rc,dz,r,z, a_tfin_hole, res_cyl, res_taped
 
-    real(8):: rtop
+    real(dp):: rtop
     !! Conductor outer radius at CP top [m]
     !! including the trun insulation and excluding the ground one
 
-    real(8) :: rmid
+    real(dp) :: rmid
     !! Conductor outer radius at CP mid-plane [m]
     !! including the trun insulation and excluding the ground one
 
-    real(8) :: r_tfin_inleg
+    real(dp) :: r_tfin_inleg
     !! Conductor `WP` inner radius [m]
     !! including the trun insulation and excluding the ground one
 
-    real(8) :: n_turns_tot
+    real(dp) :: n_turns_tot
     !! Total number of turns in CP 
 
-    real(8) :: a_cond_midplane
+    real(dp) :: a_cond_midplane
     !! Mid-plane conductor area [m2]
     
-    real(8) :: a_casout
+    real(dp) :: a_casout
     !! Straight section (top) outter case area [m2] 
 
-    real(8) :: a_cp_ins
+    real(dp) :: a_cp_ins
     !! Straight section (top) turn insulation area [m2] 
 
-    real(8) :: a_cp_gr_ins
+    real(dp) :: a_cp_gr_ins
     !! Straight section (top) outter ground insulation area [m2] 
 
-    real(8) :: sum1
+    real(dp) :: sum1
     !! Exact conductor volume integration sum [m3]
 
-    real(8) :: sum2
+    real(dp) :: sum2
     !! Resistive heating integration sum [1/m2]
 
-    real(8) :: sum3
+    real(dp) :: sum3
     !! Turn insulation volume integration sum [m3]
     
-    real(8) :: sum4
+    real(dp) :: sum4
     !! Outter case volume integration sum [m3]
 
-    real(8) :: sum5
+    real(dp) :: sum5
     !! Outer ground insulation volume integration sum [m3]
 
-    real(8), dimension(0:100) :: yy_cond
+    real(dp), dimension(0:100) :: yy_cond
     !! Exact conductor area (to be integrated)
 
-    real(8), dimension(0:100) :: yy_ins
+    real(dp), dimension(0:100) :: yy_ins
     !! Turn insulation area (to be integrated)
 
-    real(8), dimension(0:100) :: yy_gr_ins
+    real(dp), dimension(0:100) :: yy_gr_ins
     !! Outter ground insulation area (to be integrated)
 
-    real(8), dimension(0:100) :: yy_casout
+    real(dp), dimension(0:100) :: yy_casout
     !! Outter case area (to be integrated)
 
     integer :: ii

@@ -48,7 +48,7 @@ contains
 
     !  Local variables
 
-    real(8) :: twhtpf
+    real(dp) :: twhtpf
 
     !  Total weight of the PF coil conductor and its structure
 
@@ -105,14 +105,14 @@ contains
     implicit none
 
     !  Arguments
-    real(8), intent(in) :: ai,r0,a,akappa,b0,tf_h_width,tfhmax, &
+    real(dp), intent(in) :: ai,r0,a,akappa,b0,tf_h_width,tfhmax, &
          shldmass,dvrtmass,pfmass,tfmass,fwmass,blmass,coolmass,dewmass
     integer, intent(in) :: outfile,iprint,i_tf_sup,ipfres
-    real(8), intent(out) :: fncmass,aintmass,clgsmass,coldmass,gsm
+    real(dp), intent(out) :: fncmass,aintmass,clgsmass,coldmass,gsm
 
     !  Local variables
 
-    real(8) :: dens,gsm1,gsm2,gsm3,sigal,ws1,ws2,coilmass
+    real(dp) :: dens,gsm1,gsm2,gsm3,sigal,ws1,ws2,coilmass
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

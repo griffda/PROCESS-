@@ -52,85 +52,85 @@ module div_kal_vars
   !! - =3 lambda_q_omp
   !! - =4 netau_sol
 
-  real(8) :: kallenbach_scan_start
+  real(dp) :: kallenbach_scan_start
   !! start value for kallenbach scan parameter
 
-  real(8) :: kallenbach_scan_end
+  real(dp) :: kallenbach_scan_end
   !! end value for kallenbach scan parameter
 
   integer :: kallenbach_scan_num
   !! number of scans for kallenbach scan test
 
-  real(8) :: target_spread
+  real(dp) :: target_spread
   !! increase in SOL power fall-off length due to spreading, mapped to OMP [m]
 
-  real(8) :: lambda_q_omp
+  real(dp) :: lambda_q_omp
   !! SOL power fall-off length at the outer midplane, perpendicular to field [m]
 
-  real(8) :: lcon_factor
+  real(dp) :: lcon_factor
   !! Correction factor for connection length from OMP to divertor = connection length/(pi*q*rmajor)
 
-  real(8) :: netau_sol
+  real(dp) :: netau_sol
   !! Parameter describing the departure from local ionisation equilibrium in the SOL. [ms.1e20/m3]
 
-  real(8) :: targetangle
+  real(dp) :: targetangle
   !! Angle between field-line and divertor target (degrees)
 
-  real(8) :: ttarget
+  real(dp) :: ttarget
   !! Plasma temperature adjacent to divertor sheath [eV] (`iteration variable 120`)
   !! Rem : 5 eV is the current limit for tungsten sputtering from argon impurity
 
-  real(8) :: qtargettotal
+  real(dp) :: qtargettotal
   !! Power density on target including surface recombination [W/m2] (`iteration variable 124`)
 
-  real(8), dimension(14) :: impurity_enrichment
+  real(dp), dimension(14) :: impurity_enrichment
   !! Ratio of each impurity concentration in SOL to confined plasma + the enrichment for Argon
   !! is also propagated for PLASMOD (`ipedestal=3`)
 
-  real(8) :: psep_kallenbach
+  real(dp) :: psep_kallenbach
   !! Power conducted through the separatrix, as calculated by the divertor model [W]
   !! Not equal to pdivt unless `constraint 69` is imposed.
 
-  real(8) :: teomp
+  real(dp) :: teomp
   !! separatrix temperature calculated by the Kallenbach divertor model [eV] (issue #457)
 
-  real(8) :: neomp
+  real(dp) :: neomp
   !! Mean SOL density at OMP calculated by the Kallenbach divertor model [m-3]
 
-  real(8) :: neratio
+  real(dp) :: neratio
   !! Ratio of mean SOL density at OMP to separatrix density at OMP (`iteration variable 121`)
 
-  real(8) :: pressure0
+  real(dp) :: pressure0
   !! Total plasma pressure near target (thermal+dynamic) [Pa]
 
-  real(8) :: fractionwidesol
+  real(dp) :: fractionwidesol
   !! Distance from target at which SOL gets broader as a fraction of connection length
 
-  real(8), public :: fmom
+  real(dp), public :: fmom
   !! momentum factor [-]
 
-  real(8), public :: totalpowerlost
+  real(dp), public :: totalpowerlost
   !! Total power lost due to radiation, ionisation and recombination [W]
 
-  real(8), public :: impuritypowerlost
+  real(dp), public :: impuritypowerlost
   !! Power lost due to impurity radiation [W]
 
-  real(8), public :: hydrogenicpowerlost
+  real(dp), public :: hydrogenicpowerlost
   !! Power lost due to hydrogenic radiation [W]
 
-  real(8), public :: exchangepowerlost
+  real(dp), public :: exchangepowerlost
   !! Power lost due to charge exchange  [W]
 
-  real(8), public :: ionisationpowerlost
+  real(dp), public :: ionisationpowerlost
   !! Power lost due to electron impact ionisation [W]
 
-  real(8), public :: abserr_sol
+  real(dp), public :: abserr_sol
   !! Absolute contribution to the error tolerance in the Kallenbach divertor model
 
-  real(8), public :: relerr_sol
+  real(dp), public :: relerr_sol
   !! Relative contribution to the error tolerance in the Kallenbach divertor model
 
-  real(8), public :: mach0
+  real(dp), public :: mach0
   !! Mach number at target (must be just less than 1)
 
   contains

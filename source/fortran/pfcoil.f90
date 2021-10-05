@@ -22,13 +22,13 @@ module pfcoil_module
    !  Local variables
  
    integer :: nef,nfxf
-   real(8) :: ricpf, ssq0, sig_axial, sig_hoop
-   real(8) :: axial_force
-   real(8), dimension(nfixmx), private :: rfxf,zfxf,cfxf,xind
-   real(8), dimension(ngrpmx,nclsmx), private :: rcls,zcls
-   real(8), dimension(ngrpmx), private :: ccls,ccl0
-   real(8), dimension(ngc2), private :: bpf2
-   real(8), dimension(ngc2,3), private :: vsdum
+   real(dp) :: ricpf, ssq0, sig_axial, sig_hoop
+   real(dp) :: axial_force
+   real(dp), dimension(nfixmx), private :: rfxf,zfxf,cfxf,xind
+   real(dp), dimension(ngrpmx,nclsmx), private :: rcls,zcls
+   real(dp), dimension(ngrpmx), private :: ccls,ccl0
+   real(dp), dimension(ngc2), private :: bpf2
+   real(dp), dimension(ngc2,3), private :: vsdum
  
    ! pfcoil subroutine var requiring re-initialisation before each new run
    logical :: first_call
@@ -110,19 +110,19 @@ module pfcoil_module
      integer, dimension(ngrpmx) :: pcls0
      integer, dimension(ngrpmx+2) :: ncls0
  
-     real(8) :: area,areaspf,bmax,bri,bro,bzi,bzo,ioheof, &
+     real(dp) :: area,areaspf,bmax,bri,bro,bzi,bzo,ioheof, &
           drpdz,drpt,dx,dz,forcepf,rclsnorm,respf,rll,rpt0,ssqef,volpf, &
           pfflux,csflux,dics,ddics,jstrand,jsc,tmarg
-     real(8), dimension(ngrpmx,nclsmx) :: rcls0,zcls0
-     real(8), dimension(ngrpmx/2) :: ccls0
-     real(8), dimension(ngrpmx) :: sigma,work2
-     real(8), dimension(nclsmx) :: rc,zc,cc,xc
-     real(8), dimension(nptsmx) :: brin,bzin,rpts,zpts
-     real(8), dimension(lrow1) :: bfix,bvec
-     real(8), dimension(lrow1,lcol1) :: gmat,umat,vmat
-     real(8), dimension(2) :: signn
+     real(dp), dimension(ngrpmx,nclsmx) :: rcls0,zcls0
+     real(dp), dimension(ngrpmx/2) :: ccls0
+     real(dp), dimension(ngrpmx) :: sigma,work2
+     real(dp), dimension(nclsmx) :: rc,zc,cc,xc
+     real(dp), dimension(nptsmx) :: brin,bzin,rpts,zpts
+     real(dp), dimension(lrow1) :: bfix,bvec
+     real(dp), dimension(lrow1,lcol1) :: gmat,umat,vmat
+     real(dp), dimension(2) :: signn
  
-     real(8), dimension(ngc2) :: aturn
+     real(dp), dimension(ngc2) :: aturn
  
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
@@ -717,7 +717,7 @@ module pfcoil_module
  
      integer :: timepoint
  
-     real(8) :: areaspf, bmaxoh2, bohci, bohco, bri, bro, &
+     real(dp) :: areaspf, bmaxoh2, bohci, bohco, bri, bro, &
           bzi, bzo, da, forcepf, hohc, jcritwp, sgn, tmarg1, tmarg2
  
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -949,22 +949,22 @@ module pfcoil_module
      integer, intent(in) :: ngrp,npts,nfix
      integer, dimension(ngrpmx+2), intent(in) :: ncls
  
-     real(8), intent(in) :: alfa
-     real(8), dimension(ngrpmx,nclsmx), intent(in) :: rcls,zcls
-     real(8), dimension(nptsmx), intent(in) :: brin,bzin,rpts,zpts
-     real(8), dimension(nfixmx), intent(in) :: rfix,zfix,cfix
+     real(dp), intent(in) :: alfa
+     real(dp), dimension(ngrpmx,nclsmx), intent(in) :: rcls,zcls
+     real(dp), dimension(nptsmx), intent(in) :: brin,bzin,rpts,zpts
+     real(dp), dimension(nfixmx), intent(in) :: rfix,zfix,cfix
  
-     real(8), dimension(lrow1), intent(inout) :: bfix,bvec
-     real(8), dimension(lrow1,lcol1), intent(inout) :: gmat,umat,vmat
-     real(8), dimension(ngrpmx), intent(inout) :: sigma,work2
-     real(8), dimension(nclsmx), intent(inout) :: rc,zc,cc,xc
+     real(dp), dimension(lrow1), intent(inout) :: bfix,bvec
+     real(dp), dimension(lrow1,lcol1), intent(inout) :: gmat,umat,vmat
+     real(dp), dimension(ngrpmx), intent(inout) :: sigma,work2
+     real(dp), dimension(nclsmx), intent(inout) :: rc,zc,cc,xc
  
-     real(8), intent(out) :: ssq
-     real(8), dimension(ngrpmx), intent(out) :: ccls
+     real(dp), intent(out) :: ssq
+     real(dp), dimension(ngrpmx), intent(out) :: ccls
  
      !  Local variables
  
-     real(8) :: brssq, brnrm, bzssq, bznrm
+     real(dp) :: brssq, brnrm, bzssq, bznrm
      integer :: nrws
  
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1047,20 +1047,20 @@ module pfcoil_module
  
        integer, intent(in) :: nptsmx, ngrpmx, nclsmx, lrow1, lcol1, npts, ngrp
        integer, dimension(ngrpmx+2), intent(in) :: ncls
-       real(8), intent(in) :: alfa
-       real(8), dimension(ngrpmx,nclsmx), intent(in) :: rcls, zcls
-       real(8), dimension(nptsmx), intent(in) :: brin, bzin, rpts, zpts
-       real(8), dimension(lrow1), intent(in) :: bfix
+       real(dp), intent(in) :: alfa
+       real(dp), dimension(ngrpmx,nclsmx), intent(in) :: rcls, zcls
+       real(dp), dimension(nptsmx), intent(in) :: brin, bzin, rpts, zpts
+       real(dp), dimension(lrow1), intent(in) :: bfix
  
        integer, intent(out) :: nrws
-       real(8), dimension(nclsmx), intent(out) :: rc, zc, cc, xc
-       real(8), dimension(lrow1), intent(out) :: bvec
-       real(8), dimension(lrow1,lcol1), intent(out) :: gmat
+       real(dp), dimension(nclsmx), intent(out) :: rc, zc, cc, xc
+       real(dp), dimension(lrow1), intent(out) :: bvec
+       real(dp), dimension(lrow1,lcol1), intent(out) :: gmat
  
        !  Local variables
  
        integer :: i, j, k, nc
-       real(8) brw, bzw, psw
+       real(dp) brw, bzw, psw
  
        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
@@ -1134,16 +1134,16 @@ module pfcoil_module
        !  Arguments
  
        integer, intent(in) :: ngrpmx,lrow1,lcol1,ngrp,nrws
-       real(8), dimension(lrow1), intent(inout) :: bvec
-       real(8), dimension(lrow1,lcol1), intent(inout) :: gmat
-       real(8), dimension(lrow1,lcol1), intent(out) :: umat,vmat
-       real(8), dimension(ngrpmx), intent(out) :: sigma, work2
-       real(8), dimension(ngrpmx), intent(out) :: ccls
+       real(dp), dimension(lrow1), intent(inout) :: bvec
+       real(dp), dimension(lrow1,lcol1), intent(inout) :: gmat
+       real(dp), dimension(lrow1,lcol1), intent(out) :: umat,vmat
+       real(dp), dimension(ngrpmx), intent(out) :: sigma, work2
+       real(dp), dimension(ngrpmx), intent(out) :: ccls
  
        !  Local variables
  
        integer :: i,j,ierr
-       real(8) :: zvec,eps
+       real(dp) :: zvec,eps
        logical :: truth
  
        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1217,17 +1217,17 @@ module pfcoil_module
  
        integer, intent(in) :: nptsmx,ngrpmx,lrow1,lcol1,npts,nfix,ngrp
  
-       real(8), dimension(ngrpmx), intent(in) :: ccls
-       real(8), dimension(nptsmx), intent(in) :: brin, bzin
-       real(8), dimension(lrow1), intent(in) :: bfix
-       real(8), dimension(lrow1,lcol1), intent(in) :: gmat
+       real(dp), dimension(ngrpmx), intent(in) :: ccls
+       real(dp), dimension(nptsmx), intent(in) :: brin, bzin
+       real(dp), dimension(lrow1), intent(in) :: bfix
+       real(dp), dimension(lrow1,lcol1), intent(in) :: gmat
  
-       real(8), intent(out) :: brssq,brnrm,bzssq,bznrm,ssq
+       real(dp), intent(out) :: brssq,brnrm,bzssq,bznrm,ssq
  
        !  Local variables
  
        integer :: i,j
-       real(8) :: svec,rvec
+       real(dp) :: svec,rvec
  
        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
@@ -1296,15 +1296,15 @@ module pfcoil_module
        !  Arguments
  
        integer, intent(in) :: nptsmx, nfixmx, lrow1, npts, nfix
-       real(8), dimension(nptsmx), intent(in) :: rpts, zpts
-       real(8), dimension(nfixmx), intent(in) :: rfix, zfix, cfix
-       real(8), dimension(lrow1), intent(out) :: bfix
+       real(dp), dimension(nptsmx), intent(in) :: rpts, zpts
+       real(dp), dimension(nfixmx), intent(in) :: rfix, zfix, cfix
+       real(dp), dimension(lrow1), intent(out) :: bfix
  
        !  Local variables
  
        integer :: i
-       real(8) brw,bzw,psw
-       real(8), dimension(nfixmx) :: work1
+       real(dp) brw,bzw,psw
+       real(dp), dimension(nfixmx) :: work1
  
        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
@@ -1358,16 +1358,16 @@ module pfcoil_module
      !  Arguments
  
      integer, intent(in) :: nc
-     real(8), intent(in) :: rp, zp
-     real(8), dimension(nc), intent(in) :: rc, zc, cc
-     real(8), dimension(nc), intent(out) :: xc
-     real(8), intent(out) :: br, bz, psi
+     real(dp), intent(in) :: rp, zp
+     real(dp), dimension(nc), intent(in) :: rc, zc, cc
+     real(dp), dimension(nc), intent(out) :: xc
+     real(dp), intent(out) :: br, bz, psi
  
      !  Local variables
  
      integer :: i
-     real(8) a0,a1,a2,a3,a4,b0,b1,b2,b3,b4,c1,c2,c3,c4,d1,d2,d3,d4
-     real(8) :: zs,dr,d,s,t,a,xk,xe,dz,sd,brx,bzx
+     real(dp) a0,a1,a2,a3,a4,b0,b1,b2,b3,b4,c1,c2,c3,c4,d1,d2,d3,d4
+     real(dp) :: zs,dr,d,s,t,a,xk,xe,dz,sd,brx,bzx
  
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
@@ -1468,12 +1468,12 @@ module pfcoil_module
  
      integer, intent(in) :: i,ii
      integer, intent(inout) :: it
-     real(8), intent(out) :: bri,bro,bzi,bzo
+     real(dp), intent(out) :: bri,bro,bzi,bzo
  
      !  Local variables
  
      integer :: iii,iohc,jj,jjj,kk,n
-     real(8) :: bpfin,bpfout,dzpf,psi,sgn
+     real(dp) :: bpfin,bpfout,dzpf,psi,sgn
  
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
@@ -1610,15 +1610,15 @@ module pfcoil_module
        use constants, only: rmu0
      implicit none
  
-     real(8) :: bfmax
+     real(dp) :: bfmax
  
      !  Arguments
  
-     real(8), intent(in) :: rj,a,b,h
+     real(dp), intent(in) :: rj,a,b,h
  
      !  Local variables
  
-     real(8) :: alpha,b0,b1,beta,f,rat
+     real(dp) :: alpha,b0,b1,beta,f,rat
  
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
@@ -1777,21 +1777,21 @@ module pfcoil_module
      !  Arguments
  
      integer, intent(in) :: isumat
-     real(8), intent(in) :: bmax, fcu, fhe, fhts, jwp, &
+     real(dp), intent(in) :: bmax, fcu, fhe, fhts, jwp, &
           strain, thelium, bcritsc, tcritsc
-     real(8), intent(out) :: jcritwp, jcritstr, jcritsc, tmarg
+     real(dp), intent(out) :: jcritwp, jcritstr, jcritsc, tmarg
      logical :: validity
  
      !  Local variables
  
      integer :: lap
-     real(8) :: b,bc20m,bcrit,c0,delt,jcrit0,jcritm, &
+     real(dp) :: b,bc20m,bcrit,c0,delt,jcrit0,jcritm, &
           jcritp,jsc,jstrand,jtol,t,tc0m,tcrit,ttest,ttestm,ttestp, icrit, iop
  
-     real(8) :: current_sharing_t
-     real(8)::x1,x2         ! Initial guesses for temperature
+     real(dp) :: current_sharing_t
+     real(dp)::x1,x2         ! Initial guesses for temperature
      logical::error                   ! True if the solver does not converge
-     real(8)::residual      ! Residual current density error
+     real(dp)::residual      ! Residual current density error
  
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
@@ -1995,8 +1995,8 @@ module pfcoil_module
      ! a function of one variable.
  
      function deltaj_nbti(temperature)
-         real(8), intent(in) :: temperature
-         real(8)::deltaj_nbti, jcrit0
+         real(dp), intent(in) :: temperature
+         real(dp)::deltaj_nbti, jcrit0
          call jcrit_nbti(temperature,bmax,c0,bc20m,tc0m,jcrit0,t)
          if(variable_error(jcrit0))then  ! jcrit_nbti has failed.
              write(*,'(a24, 10(a12,es12.3))')'jcrit_nbti: ', 'bmax=', bmax, '  temperature=', temperature, &
@@ -2006,8 +2006,8 @@ module pfcoil_module
      end function deltaj_nbti
  
      function deltaj_wst(temperature)
-         real(8), intent(in) :: temperature
-         real(8)::deltaj_wst, jcrit0
+         real(dp), intent(in) :: temperature
+         real(dp)::deltaj_wst, jcrit0
          call wstsc(temperature,bmax,strain,bc20m,tc0m,jcrit0,b,t)
          if(variable_error(jcrit0))then  ! wstsc has failed.
              write(*,'(a24, 10(a12,es12.3))')'deltaj_wst: ', 'bmax=', bmax, '  temperature=', temperature, &
@@ -2017,8 +2017,8 @@ module pfcoil_module
      end function deltaj_wst
  
      function deltaj_GL_nbti(temperature)
-       real(8), intent(in) :: temperature
-       real(8)::deltaj_Gl_nbti, jcrit0
+       real(dp), intent(in) :: temperature
+       real(dp)::deltaj_Gl_nbti, jcrit0
        call GL_nbti(temperature,bmax,strain,bc20m,tc0m,jcrit0,b,t)
        if(variable_error(jcrit0))then  ! GL_Nbti has failed.
          write(*,'(a24, 10(a12,es12.3))')'deltaj_GL_nbti: ', 'bmax=', bmax, '  temperature=', temperature, &
@@ -2028,8 +2028,8 @@ module pfcoil_module
    end function deltaj_GL_nbti
    
         function deltaj_GL_REBCO(temperature)
-        real(8), intent(in) :: temperature
-        real(8)::deltaj_Gl_REBCO, jcrit0
+        real(dp), intent(in) :: temperature
+        real(dp)::deltaj_Gl_REBCO, jcrit0
         call GL_REBCO(temperature,bmax,strain,bc20m,tc0m,jcrit0,b,t)
         if(variable_error(jcrit0))then  ! GL_REBCO has failed.
           write(*,'(a24, 10(a12,es12.3))')'deltaj_GL_REBCO: ', 'bmax=', bmax, '  temperature=', temperature, &
@@ -2136,15 +2136,15 @@ module pfcoil_module
      implicit none
  
      !  Arguments
-     real(8), intent(in) :: r
-     real(8), intent(out) :: s_hoop
+     real(dp), intent(in) :: r
+     real(dp), intent(out) :: s_hoop
  
      !  Local variables
-     real(8) :: K, M, a, b, B_a, B_b, alpha, epsilon, j
+     real(dp) :: K, M, a, b, B_a, B_b, alpha, epsilon, j
  
-     real(8) :: hp_term_1, hp_term_2, hp_term_3, hp_term_4
+     real(dp) :: hp_term_1, hp_term_2, hp_term_3, hp_term_4
  
-     real(8) :: s_hoop_nom
+     real(dp) :: s_hoop_nom
  
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
@@ -2212,16 +2212,16 @@ module pfcoil_module
      implicit none
  
      !  Arguments
-     real(8), intent(out) :: s_axial,axial_force
+     real(dp), intent(out) :: s_axial,axial_force
  
      !  Local variables
-     real(8) :: b, hl, ni, area_ax
+     real(dp) :: b, hl, ni, area_ax
  
-     real(8) :: kb2, k2b2, ekb2_1, ekb2_2, ek2b2_1, ek2b2_2
+     real(dp) :: kb2, k2b2, ekb2_1, ekb2_2, ek2b2_1, ek2b2_2
  
-     !real(8) :: kb, k2b
+     !real(dp) :: kb, k2b
  
-     real(8) :: axial_term_1, axial_term_2, axial_term_3
+     real(dp) :: axial_term_1, axial_term_2, axial_term_3
  
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
@@ -2296,11 +2296,11 @@ module pfcoil_module
      integer, parameter :: nohmax = 200 !  Maximum no. of segments for the Central Solenoid
      integer, parameter :: nplas = 1 !  Number of filaments describing the plasma
  
-     real(8), allocatable, dimension(:) :: roh,zoh
-     real(8), dimension(nplas) :: rplasma,zplasma
-     real(8), dimension(ngc2+nohmax) :: rc,zc,xc,cc,xcin,xcout
-     real(8) :: a,b,c,br,bz,deltar,delzoh,psi,reqv,rl,rp
-     real(8) :: xohpf,xohpl,xpfpl,zp
+     real(dp), allocatable, dimension(:) :: roh,zoh
+     real(dp), dimension(nplas) :: rplasma,zplasma
+     real(dp), dimension(ngc2+nohmax) :: rc,zc,xc,cc,xcin,xcout
+     real(dp) :: a,b,c,br,bz,deltar,delzoh,psi,reqv,rl,rp
+     real(dp) :: xohpf,xohpl,xpfpl,zp
      integer :: i,ig,ii,ij,j,jj,k,nc,ncoilj,ncoils,nef,noh
  
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2525,7 +2525,7 @@ module pfcoil_module
      implicit none
  
      ! Function declarations
-     real(8) :: a, b, c, N, selfinductance
+     real(dp) :: a, b, c, N, selfinductance
  
      ! Calculate self inductance
      selfinductance = (1.0d-6/0.0254d0)*a**2*N**2/(9.0d0*a + 10.0d0*b + 8.4d0*c + 3.2d0*c*b/a)
@@ -2538,7 +2538,7 @@ module pfcoil_module
      ! b = length of coil
      ! c = radial winding thickness
      ! N = number of turns
-     ! real(8) :: a,b,c, N, selfinductance, r, r2_16a2, x, x2, q, at, lambda, mu, p
+     ! real(dp) :: a,b,c, N, selfinductance, r, r2_16a2, x, x2, q, at, lambda, mu, p
  
      ! !  Equation 88, p. 137
      ! x = b/c
@@ -2572,7 +2572,7 @@ module pfcoil_module
      ! http://www.nessengr.com/techdata/brooks/brooks.html
        use process_output, only: ovarre, oblnkl, ocmmnt
      implicit none
-     real(8) :: a,b,c, N, l, lp
+     real(dp) :: a,b,c, N, l, lp
      character(len=10) :: test
      integer, intent(in) :: outfile
  

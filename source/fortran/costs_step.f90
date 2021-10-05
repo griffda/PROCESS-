@@ -20,11 +20,11 @@ module costs_step_module
   implicit none
 
   !  Various cost account values (M$)
-  real(8) :: step20, step21, step22, step23, step24, step25, &
+  real(dp) :: step20, step21, step22, step23, step24, step25, &
               step27, step91, step92, step93, fwblkcost
 
   ! Scaling Properties
-  real(8) :: vfi, vfi_star, ptherm_star, pinjmw_star, fwarea_star, &
+  real(dp) :: vfi, vfi_star, ptherm_star, pinjmw_star, fwarea_star, &
               rmajor_star, rminor_star, pth
 
 contains
@@ -180,7 +180,7 @@ contains
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(8):: step2001, step2002
+    real(dp):: step2001, step2002
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -238,7 +238,7 @@ contains
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(8):: &
+    real(dp):: &
     step2101, step2102, step2103, step2104, step2105, step2106, &
     step2107, step2108, step2109, step2110, step2111, step2112, &
     step2113, step2114, step2115, step2116, step2117, step2118, &
@@ -386,7 +386,7 @@ contains
     integer, intent(in) :: iprint,outfile
   
     ! Local variables
-    real(8):: step2297, step2298, step2299
+    real(dp):: step2297, step2298, step2299
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -463,10 +463,10 @@ contains
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
-    real(8), intent(inout) :: step2298
+    real(dp), intent(inout) :: step2298
 
     ! Local variables
-    real(8):: step2201, step220101, step22010101, step22010102, step2201010201, &
+    real(dp):: step2201, step220101, step22010101, step22010102, step2201010201, &
                step2201010202, step2201010203, step220102, step22010301, &
                step22010302, step22010303, step22010304, step220104, &
                step220105, step220106, step220107, step220108, step220109, &
@@ -636,12 +636,12 @@ contains
 		use heat_transport_variables, only: ipowerflow 
     
     implicit none
-    real(8), intent(inout) :: step22010101, step22010102, step2201010201, &
+    real(dp), intent(inout) :: step22010101, step22010102, step2201010201, &
                                step2201010202, step2201010203
-    real(8), intent(out) :: step220101
+    real(dp), intent(out) :: step220101
 
     !  Local variables
-    real(8) :: step2201010204, step2201010205, step2201010206, step2201010207
+    real(dp) :: step2201010204, step2201010205, step2201010206, step2201010207
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -729,13 +729,13 @@ contains
     implicit none
 
     ! Result
-    real(8) :: step22010301
+    real(dp) :: step22010301
     !! Cost of TF coils in M$
     
     ! Declare local vars
-    real(8) :: c_tf_inboard_legs
+    real(dp) :: c_tf_inboard_legs
     !! Cost of TF coil inboard legs in M$
-    real(8) :: c_tf_outboard_legs
+    real(dp) :: c_tf_outboard_legs
     !! Cost of TF coil outboard legs in M$
     
     ! Initialise local vars
@@ -824,10 +824,10 @@ contains
     implicit none
 
     !  Result
-    real(8) :: step22010302
+    real(dp) :: step22010302
      
     !  Local variables
-    real(8) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
+    real(dp) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
          pfwndl, step2201030201, step2201030202, step2201030203, step2201030204
     integer :: i,npf
 
@@ -930,7 +930,7 @@ contains
     integer, intent(in) :: iprint,outfile
   
     ! Local variables
-    real(8):: step2202
+    real(dp):: step2202
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -978,7 +978,7 @@ contains
     integer, intent(in) :: iprint,outfile
   
     ! Local variables
-    real(8):: &
+    real(dp):: &
     step220301, step220302, step220303, step220304, step2203
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1045,7 +1045,7 @@ contains
     integer, intent(in) :: iprint,outfile
   
     ! Local variables
-    real(8):: &
+    real(dp):: &
     step220401, step220402, step220403, step2204
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1104,10 +1104,10 @@ contains
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
-    real(8), intent(inout) :: step2298
+    real(dp), intent(inout) :: step2298
   
     ! Local variables
-    real(8):: step2205
+    real(dp):: step2205
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -1154,10 +1154,10 @@ contains
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
-    real(8), intent(inout) :: step2298
+    real(dp), intent(inout) :: step2298
   
     ! Local variables
-    real(8):: &
+    real(dp):: &
     step220601, step220602, step220603, step220604, step220605, &
     step220606, step220607, step220608, step2206
   
@@ -1254,7 +1254,7 @@ contains
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(8):: step2207
+    real(dp):: step2207
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -1301,7 +1301,7 @@ contains
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(8):: step23a, step2303, step2398, step2399
+    real(dp):: step23a, step2303, step2398, step2399
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1368,7 +1368,7 @@ contains
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(8):: &
+    real(dp):: &
     step2401, step2402, step2403, step2404, step2405, step2406, &
     step2407, step2498, step2499
 
@@ -1457,7 +1457,7 @@ contains
     integer, intent(in) :: iprint,outfile
     
     ! Local variables
-    real(8):: &
+    real(dp):: &
     step2501, step2502, step2503, step2504, step2598, step2599
     
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1530,7 +1530,7 @@ contains
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(8):: step2701
+    real(dp):: step2701
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1614,7 +1614,7 @@ contains
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(8) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
+    real(dp) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
          annfuelt,annfwbl,annoam,anntot,annwst,coecdr, &
          coecp,coedecom,coediv,coefuel,coefwbl,coewst,crfcdr,crfcp, &
          crfdiv,crffwbl,fefcdr,fefcp,fefdiv,feffwbl,fwbllife,kwhpy

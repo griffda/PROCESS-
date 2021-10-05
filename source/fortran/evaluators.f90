@@ -56,8 +56,8 @@ contains
 !     !  Arguments
 
 !     integer, intent(in) :: n
-!     real(8), dimension(n), intent(inout) :: xc
-!     real(8), dimension(n), intent(out) :: rc
+!     real(dp), dimension(n), intent(inout) :: xc
+!     real(dp), dimension(n), intent(out) :: rc
 !     integer, intent(inout) :: iflag
 
 !     !  Local variables
@@ -110,12 +110,12 @@ contains
 
     !  Arguments
 
-    real(8), intent(out) :: fc
+    real(dp), intent(out) :: fc
 !    real(c_double), intent(out) :: fc
     !  Local variables
 
     integer :: iab
-    real(8) :: sgn
+    real(dp) :: sgn
 
 !        write(*,*) 'Figure of merit 2 (fusion power / input power) is not used.'
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
