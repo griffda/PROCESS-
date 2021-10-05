@@ -1925,7 +1925,7 @@ contains
           call parse_real_variable('eff_tf_cryo', eff_tf_cryo, 0.0D0, 1.0D0, &
                'TF coil cryo-plane efficiency')  
        case ('i_tf_plane_stress')
-         call parse_int_variable('i_tf_plane_stress', i_tf_plane_stress, 0, 1, &
+         call parse_int_variable('i_tf_plane_stress', i_tf_plane_stress, 0, 2, &
                'Switch for the TF stress model')
        case ('i_tf_tresca')
           call parse_int_variable('i_tf_tresca', i_tf_tresca, 0, 1, &

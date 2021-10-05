@@ -176,6 +176,7 @@ module tfcoil_variables
   !! Switch for the TF coil stress model
   !!   0 : New generalized plane strain formulation 
   !!   1 : Old plane stress model (only for SC)
+  !!   2 : Newer axisymmetric extended plane strain formulation [TEMPORARY]
 
   integer :: i_tf_tresca
   !! Switch for TF coil conduit Tresca stress criterion:
