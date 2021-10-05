@@ -259,7 +259,7 @@ contains
       npdiv, peaking_factor, primary_pumping, rpf2dewar, secondary_cycle, &
       denstl, declfw, nphcdout, iblnkith, vfpblkt, fwinlet, wallpf, fblbe, &
       fhole, fwbsshape, coolp, tfwmatmax, irefprop, fw_channel_length, &
-      li6enrich, etaiso, nblktmodto, fvoldw 
+      li6enrich, etaiso, nblktmodto, fvoldw, i_shield_mat 
     use heat_transport_variables, only: htpmw_fw, baseel, fmgdmw, htpmw_div, &
       pwpm2, etath, vachtmw, iprimshld, fpumpdiv, pinjmax, htpmw_blkt, etatf, &
       htpmw_min, fpumpblkt, ipowerflow, htpmw_shld, fpumpshld, trithtmw, &
@@ -2302,6 +2302,9 @@ contains
        case ('htpmw_shld')
           call parse_real_variable('htpmw_shld', htpmw_shld, 0.0D0, 1.0D3, &
                'shield and vacuum vessel coolant mechanical pumping power (MW)')
+       case ('i_shield_mat')
+         call parse_int_variable('i_shield_mat', i_shield_mat, 0, 1, &
+               'Switch for shield material)')
 
 
        case ('secondary_cycle')
