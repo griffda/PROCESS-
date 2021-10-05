@@ -79,9 +79,6 @@ make-py38:
     PY_VERSION: py38
 
 make-py36:
-  only:
-    - master
-    - develop
   extends: ".make"
   variables:
     PY_VERSION: py36
