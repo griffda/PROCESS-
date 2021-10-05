@@ -132,6 +132,17 @@ Once Process has built inside the container, it can be tested (as in the followi
 
 There is also a VS Code extension for Docker containers that may be helpful.
 
+## Singularity container
+Singularity is a container environment similar to Docker. This means a user can run PROCESS with all required dependencies installed. Singularity, however, is designed to work with user-level permissions and, as such, is supported by many shared resource administrators (unlike Docker, which poses a security risk).
+ 
+Singularity can convert OCI compliant containers into the Singularity Image Format (SIF) to run the Docker container above. Download, and convert the Docker container by running: `singularity pull --docker-login process.sif docker://git.ccfe.ac.uk:4567/process/process/dev:latest`. Singularity will then ask for a username and password, your CCFE GitLab short username and password.
+ 
+Singularity will write the container into your current directory, it can then be moved or copied like any file.
+ 
+Running `singularity shell process.sif` will load a Singularity shell with the dependencies for PROCESS installed. Singularity will automatically mount your home (`$HOME`) directory into the container. Therefore, if PROCESS lives in `~/process` on your system, it will also live inside of `~/process` in the shell environment.
+ 
+It should also be noted that while the Singularity container has a Python 3.8 by default, it will be impossible to pip install any packages without getting a `Read-only file system` error. This is because you are treated as a non-admin user within the container, and, as such, you cannot update the system Python. For this reason, it is recommended that you still use a virtual environment within the Singularity container (as described above). `pip install <package> --user` will work; however, it will cause conflicts with existing Python packages you have installed outside of your container.
+
 ## Testing
 ### Check for a successful installation
 As a first basic test that the setup has been successful try importing the package from outside of the repository folder in a Python interactive interpreter:

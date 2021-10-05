@@ -4277,7 +4277,7 @@ contains
     !  Arguments
   
     integer, intent(in) :: nn
-    real(dp), dimension(ipnvars), intent(in) :: xc
+    real(dp), dimension(:), intent(in) :: xc
   
     !  Local variables
   

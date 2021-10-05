@@ -507,7 +507,7 @@ contains
     implicit none
 
     interface
-      function fun(rho)
+      function fun(rho) result(fint)
 #ifndef dp
         use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
@@ -518,7 +518,7 @@ contains
 
     !  Arguments
 
-    real(dp), external :: fun
+    external :: fun
     real(dp), intent(in) :: a, b, abserr, relerr
     real(dp), intent(out) :: result, errest, flag
     integer, intent(out) :: nofun

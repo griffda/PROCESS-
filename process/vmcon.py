@@ -113,10 +113,8 @@ class Vmcon():
             self.delta, self.wa, self.cnorm[:self.lcnorm, :self.m], self.h, \
             numerics.vlam[:self.m + (2 * self.n) + 1], \
             self.vmu[:self.m + (2 * self.n) + 1], self.gm[:self.n + 1], \
-            self.bdl[:self.n + 1], self.bdu[:self.n + 1], sum \
+            self.bdl[:self.n + 1], self.bdu[:self.n + 1], global_variables.convergence_parameter \
             = vmcon_module.unload(self.n, self.m, self.lcnorm, self.lb, self.ldel, self.lh, self.lwa, self.liwa)
-        
-        # TODO is sum used?
         
         # TODO Rather than passing slices of these arrays, it may be possible to
         # simplify this by only creating the arrays at the required, rather
