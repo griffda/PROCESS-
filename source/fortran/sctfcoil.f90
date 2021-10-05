@@ -3412,20 +3412,55 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     ! Local variables
     ! ---
     ! Charles Swanson version
-    ! 
+    ! Inner axial-slip layer parameters
+    integer :: nonslip_layer
+    !! Innermost layer which does not axially slip. All layers
+    !! inward of this have zero total axial force, like the CS.
+    
+    ! Stiffness form of compliance tensor
     real(dp), dimension(nlayers) :: nu_tz
     !! Transverse-axial Poisson's ratio
     !! (ratio of axial strain to transverse strain upon transverse stress) 
     real(dp), dimension(nlayers) :: ey_bar_z
-    !! Axial effective Young's modulus (zero cross-strains, not stresses)
+    !! Axial effective Young's modulus (zero cross-strains, not stresses) [Pa]
     real(dp), dimension(nlayers) :: ey_bar_t
-    !! Transverse effective Young's modulus
+    !! Transverse effective Young's modulus [Pa]
     real(dp), dimension(nlayers) :: nu_bar_t
     !! Transverse effective Poisson's ratio
     real(dp), dimension(nlayers) :: nu_bar_tz
     !! Transverse-axial effective Poisson's ratio
     real(dp), dimension(nlayers) :: nu_bar_zt
     !! Axial-transverse effective Poisson's ratio
+    real(dp) :: ey_fac
+    !! Ratio between Young's Modulus of different layers
+    
+    ! Lorentz force parameters
+    real(dp), dimension(nlayers) :: currents
+    !! Currents in each layer [A]
+    real(dp), dimension(nlayers) :: currents_enclosed
+    !! Currents enclosed by inner radius of each layer [A]
+    real(dp), dimension(nlayers) :: f_lin_fac
+    !! Factor that multiplies r linearly in the force density
+    real(dp), dimension(nlayers) :: f_rec_fac
+    !! Factor that multiplies r reciprocally in the force density
+    real(dp), dimension(nlayers) :: f_int_A
+    !! Force density integral that adds to Lame parameter A
+    real(dp), dimension(nlayers) :: f_int_B
+    !! Force density integral that adds to Lame parameter B
+    
+    ! Layer transfer matrices
+    real(dp), dimension(5, 5, nlayers) :: M_int
+    !! Matrix that transforms the Lame parmeter vector from the
+    !! outer radius to the inner radius of each layer
+    real(dp), dimension(5, 5, nlayers) :: M_ext
+    !! Matrix that transforms the Lame parmeter vector from the
+    !! inner radius of one layer to the outer radius of the 
+    !! next inner.
+    real(dp), dimension(5, 5, nlayers) :: M_tot
+    !! Matrix that transforms the Lame parmeter vector from the
+    !! outer radius of the outer layer to the inner radius of  
+    !! each.
+    
     
     ! Seb Kahn version
     ! Lorentz body force parametres
@@ -3478,8 +3513,9 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     real(dp), dimension(2) :: strain_z_calc
       
     ! Indexes
-    integer :: ii  ! Line in the aa matrix
-    integer :: jj  ! Collumn in the aa matrix 
+    integer :: ii  ! Line index in the matrix
+    integer :: jj  ! Column index in the matrix
+    integer :: kk  ! Depth index in the matrix
     ! ---    
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3521,8 +3557,20 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     end do
     print *, 'v_force is ',v_force
     
+    ! Inner slip layers parameters
+    ! Section 15 in the writeup
+    ! [EDIT: Make this more general]
+    ! Innermost layer that takes axial force. Layers inner of this
+    ! have zero net axial force, to include CS decoupling.
+    ! This configuration JUST HAPPENS to work out because of
+    ! the specific i_tf_bucking options; if those are changed, 
+    ! will need a switch here.
+    nonslip_layer = i_tf_bucking
+    
+    
     ! Stiffness tensor factors
-    ! Sections 3 and 12 in the writeup
+    ! Section 3 in the writeup
+    ! With Section 12 anisotropic materials properties
     ! ***
     ! Dependent Poisson's ratio: nu-transverse-axial 
     ! from nu-axial-transverse and the Young's moduli
@@ -3553,6 +3601,131 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     do ii = 1, nlayers
         print *, 'ey_bar_z(',ii,') is ',ey_bar_z(ii)
     end do  
+    
+    ! Lorentz force parameters
+    ! Section 13 in the writeup
+    ! ***
+    ! Currents in each layer [A]
+    currents = pi * d_curr * (rad(2:nlayers+1)**2 - rad(1:nlayers)**2)
+    ! Currents enclosed by inner radius of each layer [A]
+    currents_enclosed(1) = 0.0D0
+    do ii = 2, nlayers
+        currents_enclosed(ii) = currents_enclosed(ii-1) + currents(ii-1)
+    end do  
+    ! Factor that multiplies r linearly in the force density
+    f_lin_fac = rmu0/2.0D0 * d_curr**2
+    ! Factor that multiplies r reciprocally in the force density
+    f_rec_fac = rmu0/2.0D0 * (d_curr * currents_enclosed / pi - d_curr**2 * rad(1:nlayers)**2)
+    ! Force density integral that adds to Lame parameter A
+    f_int_A   = 0.5D0*f_lin_fac * (rad(2:nlayers+1)**2-rad(1:nlayers)**2) + f_rec_fac * log(rad(2:nlayers+1)/(rad(1:nlayers)))
+    ! Force density integral that adds to Lame parameter B
+    f_int_B   = 0.25D0*f_lin_fac * (rad(2:nlayers+1)**4-rad(1:nlayers)**4) + 0.5D0*f_rec_fac * (rad(2:nlayers+1)**2-rad(1:nlayers)**2)
+          
+    print *, 'Layer currents (currents) are'
+    do ii = 1, nlayers
+        print *, 'currents(',ii,') is ',currents(ii)
+    end do
+    print *, 'Currents within the ID of each layer (currents_enclosed) are'
+    do ii = 1, nlayers
+        print *, 'currents_enclosed(',ii,') is ',currents_enclosed(ii)
+    end do
+    print *, 'Body force factor (f_lin_fac) are'
+    do ii = 1, nlayers
+        print *, 'f_lin_fac(',ii,') is ',f_lin_fac(ii)
+    end do
+    print *, 'Body force factor (f_rec_fac) are'
+    do ii = 1, nlayers
+        print *, 'f_rec_fac(',ii,') is ',f_rec_fac(ii)
+    end do
+    print *, 'Body force integral (f_int_A) are'
+    do ii = 1, nlayers
+        print *, 'f_int_A(',ii,') is ',f_int_A(ii)
+    end do
+    print *, 'Body force integral (f_int_B) are'
+    do ii = 1, nlayers
+        print *, 'f_int_B(',ii,') is ',f_int_B(ii)
+    end do
+
+    ! Transformation matrix from outer to inner Lame parameters
+    ! Section 5 in the writeup
+    ! With Section 12 anisotropic materials properties
+    ! ***
+    ! M_int(kk) multiplies Lame parameter vector of layer kk (A,B,eps_z,1.0,eps_z_slip) 
+    ! and transforms the values at the outer radius to the values at the inner radius
+    do kk = 1, nlayers
+        M_int(1,1,kk) = 1.0D0
+        M_int(2,2,kk) = 1.0D0
+        M_int(3,3,kk) = 1.0D0
+        M_int(4,4,kk) = 1.0D0
+        M_int(5,5,kk) = 1.0D0
+        
+        M_int(1,4,kk) = -0.5D0 / ey_bar_t(kk) * f_int_A(kk);
+        M_int(2,4,kk) =  0.5D0 / ey_bar_t(kk) * f_int_B(kk);
+    end do
+    
+    print *, 'Internal transfer matrices (M_int) are'
+    do kk = 1, nlayers
+        print *, 'M_int(:,:,',kk,') is '
+        call Print5x5Matrix(M_int(:,:,kk))
+    end do
+    print *, 'M_int(1,4,5) is ', M_int(1,4,4)
+    print *, 'M_int(2,4,5) is ', M_int(2,4,4)
+
+    ! Transformation matrix between layers
+    ! Section 6 in the writeup
+    ! With Section 12 anisotropic materials properties
+    ! With Section 15 inner slip-decoupled layers
+    ! ***
+    ! M_ext(kk) multiplies Lame parameter vector of layer kk (A,B,eps_z,1.0,eps_z_slip) 
+    ! and transforms the values at the inner radius to the values at the outer radius
+    ! of layer kk-1
+    do kk = 2, nonslip_layer-1
+        ey_fac = ey_bar_t(kk)/ey_bar_t(kk-1)
+        M_ext(1,3,kk) = 0.0D0
+        M_ext(1,5,kk) = 0.5D0 * (ey_fac*nu_bar_zt(kk) - nu_bar_zt(kk-1))
+    end do
+    kk = nonslip_layer
+    ey_fac = ey_bar_t(kk)/ey_bar_t(kk-1)
+    M_ext(1,3,kk) = 0.5D0 * ey_fac * nu_bar_zt(kk)
+    M_ext(1,5,kk) = 0.5D0 * (-nu_bar_zt(kk-1))  
+    do kk = nonslip_layer+1, nlayers
+        ey_fac = ey_bar_t(kk)/ey_bar_t(kk-1)
+        M_ext(1,3,kk) = 0.5D0 * (ey_fac*nu_bar_zt(kk) - nu_bar_zt(kk-1))
+        M_ext(1,5,kk) = 0.0D0
+    end do
+    do kk = 2, nlayers
+        ey_fac = ey_bar_t(kk)/ey_bar_t(kk-1);
+        M_ext(1,1,kk) = 0.5D0*(ey_fac*(1+nu_bar_t(kk))+1-nu_bar_t(kk-1));
+        M_ext(1,2,kk) = 0.5D0/rad(kk)**2*(1-nu_bar_t(kk-1)-ey_fac*(1-nu_bar_t(kk)));
+        M_ext(2,1,kk) = rad(kk)**2*(1-M_ext(1,1,kk));
+        M_ext(2,2,kk) = (1-rad(kk)**2*M_ext(1,2,kk));
+        M_ext(2,3,kk) = -rad(kk)**2*M_ext(1,3,kk);
+        M_ext(2,5,kk) = -rad(kk)**2*M_ext(1,5,kk);
+        M_ext(3,3,kk) = 1.0D0;
+        M_ext(4,4,kk) = 1.0D0;
+        M_ext(5,5,kk) = 1.0D0;
+    end do
+    
+    print *, 'External transfer matrices (M_ext) are'
+    do kk = 1, nlayers
+        print *, 'M_ext(:,:,',kk,') is '
+        call Print5x5Matrix(M_ext(:,:,kk))
+    end do
+    
+    ! Total transformation matrix, from Lame parmeters at outside to
+    ! Lame parameters at inside of each layer
+    ! Section 7 in the writeup
+    ! ***
+    M_tot(:,:,nlayers) = M_int(:,:,nlayers)
+    do kk = nlayers-1, 1, -1
+        M_tot(:,:,kk) = matmul(M_int(:,:,kk),matmul(M_ext(:,:,kk+1),M_tot(:,:,kk+1)));
+    end do
+
+    print *, 'Total transfer matrices (M_tot) are'
+    do kk = 1, nlayers
+        print *, 'M_tot(:,:,',kk,') is '
+        call Print5x5Matrix(M_tot(:,:,kk))
+    end do
 
     ! Layer parameterisation
     ! ***
@@ -3871,6 +4044,17 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     ! ------     
 
 end subroutine extended_plane_strain     
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine Print5x5Matrix(theMatrix)
+	real(dp), dimension(5,5) :: theMatrix
+	integer :: ind1
+	do ind1 = 1,5
+		! As a real (f), use 8 digits to display each (8), with 3 digits after the decimal (.3). Leave 2 spaces between each (x2).
+		print '(2x,f8.3,2x,f8.3,2x,f8.3,2x,f8.3,2x,f8.3)', theMatrix(ind1,1), theMatrix(ind1,2), theMatrix(ind1,3), theMatrix(ind1,4), theMatrix(ind1,5)
+	end do
+end subroutine Print5x5Matrix
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
