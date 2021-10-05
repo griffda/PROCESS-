@@ -505,7 +505,7 @@ contains
     implicit none
 
     interface
-      function fun(rho)
+      function fun(rho) result(fint)
         use, intrinsic :: iso_fortran_env, only: dp=>real64
         real(8), intent(in) :: rho
         real(8) :: fint
@@ -514,7 +514,7 @@ contains
 
     !  Arguments
 
-    real(8), external :: fun
+    external :: fun
     real(8), intent(in) :: a, b, abserr, relerr
     real(8), intent(out) :: result, errest, flag
     integer, intent(out) :: nofun
