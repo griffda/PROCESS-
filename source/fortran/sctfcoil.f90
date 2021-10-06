@@ -3789,16 +3789,22 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     v_force_row(1,3) = v_force_row(1,3) + ey_bar_z_area
     
     ! Axial stiffness inner product, for layers which DON'T carry force
-    rad_row_helper(1,:) = (/rad(nonslip_layer)**2, 1D0, 0D0, 0D0, 0D0/)
-    v_force_row_slip = 2D0*pi*ey_bar_z(nonslip_layer-1)*nu_bar_tz(nonslip_layer-1)*matmul(rad_row_helper,M_tot(:,:,nonslip_layer-1))
-    rad_row_helper(1,:) = (/rad(1)**2, 1D0, 0D0, 0D0, 0D0/)
-    v_force_row_slip = v_force_row_slip - 2D0*pi*ey_bar_z(1)*nu_bar_tz(1)*matmul(rad_row_helper,M_tot(:,:,1))
-    do kk = 2, (nonslip_layer-1)
-        rad_row_helper(1,:) = (/rad(kk)**2, 1D0, 0D0, 0D0, 0D0/)
-        v_force_row_slip = v_force_row_slip + 2D0*pi*(ey_bar_z(kk-1)*nu_bar_tz(kk-1) - ey_bar_z(kk)*nu_bar_tz(kk))*matmul(rad_row_helper,M_tot(:,:,kk))
-    end do
-    ! Include the effect of axial stiffness
-    v_force_row_slip(1,5) = v_force_row_slip(1,5) + ey_bar_z_area_slip
+    if ( nonslip_layer > 1) then
+        rad_row_helper(1,:) = (/rad(nonslip_layer)**2, 1D0, 0D0, 0D0, 0D0/)
+        v_force_row_slip = 2D0*pi*ey_bar_z(nonslip_layer-1)*nu_bar_tz(nonslip_layer-1)*matmul(rad_row_helper,M_tot(:,:,nonslip_layer-1))
+        rad_row_helper(1,:) = (/rad(1)**2, 1D0, 0D0, 0D0, 0D0/)
+        v_force_row_slip = v_force_row_slip - 2D0*pi*ey_bar_z(1)*nu_bar_tz(1)*matmul(rad_row_helper,M_tot(:,:,1))
+        do kk = 2, (nonslip_layer-1)
+            rad_row_helper(1,:) = (/rad(kk)**2, 1D0, 0D0, 0D0, 0D0/)
+            v_force_row_slip = v_force_row_slip + 2D0*pi*(ey_bar_z(kk-1)*nu_bar_tz(kk-1) - ey_bar_z(kk)*nu_bar_tz(kk))*matmul(rad_row_helper,M_tot(:,:,kk))
+        end do
+        ! Include the effect of axial stiffness
+        v_force_row_slip(1,5) = v_force_row_slip(1,5) + ey_bar_z_area_slip
+    else
+        ! If there's no inner slip layer, still need a finite 5th 
+        ! element to ensure no singular matrix
+        v_force_row_slip(1,:) = (/ 0D0, 0D0, 0D0, 0D0, 1D0 /)
+    end if
 
     print *, 'ey_bar_z_area is ', ey_bar_z_area
     print *, 'ey_bar_z_area_slip is ', ey_bar_z_area_slip
@@ -3815,7 +3821,11 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     M_bc(1,:) = (/ (1D0+nu_bar_t(nlayers))*rad(nlayers+1)**2, -1D0+nu_bar_t(nlayers), nu_bar_zt(nlayers)*rad(nlayers+1)**2, 0D0, 0D0 /)
     ! Inner boundary condition row, zero radial stress
     ! or zero displacement if rad(1)=0
-    M_bc(2,:) = (/ (1D0+nu_bar_t(1))*rad(1)**2, -1D0+nu_bar_t(1), 0D0, 0D0, nu_bar_zt(1)*rad(1)**2 /)
+    if ( nonslip_layer > 1) then
+        M_bc(2,:) = (/ (1D0+nu_bar_t(1))*rad(1)**2, -1D0+nu_bar_t(1), 0D0, 0D0, nu_bar_zt(1)*rad(1)**2 /)
+    else
+        M_bc(2,:) = (/ (1D0+nu_bar_t(1))*rad(1)**2, -1D0+nu_bar_t(1), nu_bar_zt(1)*rad(1)**2, 0D0, 0D0 /)
+    end if
     M_bc(2,:) = matmul(M_bc(2,:),M_tot(:,:,1))
     ! Axial force boundary condition
     M_bc(3,:) = v_force_row(1,:)
