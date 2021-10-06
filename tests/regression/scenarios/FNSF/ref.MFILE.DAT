@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
- Date_of_run_____________________________________________________________ (date)________________________     "30/09/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "12:02"
- User____________________________________________________________________ (username)____________________     "rhicha"  
+ Date_of_run_____________________________________________________________ (date)________________________     "29/09/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "10:37"
+ User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "FNSF (Menard et al. 2016)                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-378-g8e646ccf"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1345-elongation-scaleable-with-aspect-ratio"                                                       
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-538-g66f889bd"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1397-remove-f90wrap-from-build-process-tim2"                                                       
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-130/test_scenario_FNSF_0/IN.DAT                                                                                                                                            "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-10/test_scenario_FNSF_0/IN.DAT                                                                                                                                               "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -18,8 +18,8 @@
  Number_of_constraints_(total)___________________________________________ (neqns+nineqns)_______________             15    
  Optimisation_switch_____________________________________________________ (ioptimz)_____________________              1    
  Figure_of_merit_switch__________________________________________________ (minmax)______________________             -5    
- Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      3.5159E-08 OP 
- VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      1.2822E-08 OP 
+ Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      3.5833E-08 OP 
+ VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      0.0000E+00 OP 
  Number_of_VMCON_iterations______________________________________________ (nviter)______________________             25 OP 
  te______________________________________________________________________ (itvar001)____________________      5.7900E+00    
  te_(final_value/initial_value)__________________________________________ (xcm001)______________________      1.0000E+00    
@@ -893,7 +893,7 @@
  Net_electric_power_/_total_nuclear_power_(%)____________________________ (pnetelmw/(powfmw+emultmw)____     -2.7461E+02    
  Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________     -3.1290E+02    
  Gross_electric_power*_/_high_grade_heat_(%)_____________________________ (etath)_______________________      4.1100E+01    
- Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      7.4886E+00    
+ Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      7.4934E+00    
  # Water usage during plant operation (secondary cooling) #
  Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      4.7598E+03 OP 
  Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.5933E+03 OP 

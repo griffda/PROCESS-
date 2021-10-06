@@ -23,11 +23,16 @@ module water_use_module
  
    use, intrinsic :: iso_fortran_env, only: dp=>real64
    implicit none
+<<<<<<< HEAD
    
    private
    public :: waterusecall
  
    real(dp), parameter :: secday = 86400.0D0
+=======
+ 
+   real(8), parameter :: secday = 86400.0D0
+>>>>>>> develop
    !! seconds in a day, s
  
  contains
@@ -56,9 +61,15 @@ module water_use_module
  
      !  Local variables
  
+<<<<<<< HEAD
      real(dp) :: rejected_heat
      !! heat rejected by main power conversion circuit (MW)
      real(dp) :: wastethermeng
+=======
+     real(8) :: rejected_heat
+     !! heat rejected by main power conversion circuit (MW)
+     real(8) :: wastethermeng
+>>>>>>> develop
      !! waste thermal energy to be rejected per [time], MJ
  
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -105,7 +116,11 @@ module water_use_module
  
      !  Arguments
      integer, intent(in) :: outfile, iprint
+<<<<<<< HEAD
      real(dp), intent(in) :: wastetherm
+=======
+     real(8), intent(in) :: wastetherm
+>>>>>>> develop
  
      !  Local variables
  
@@ -162,13 +177,18 @@ module water_use_module
  
     !  Arguments
     integer, intent(in) :: outfile, iprint
+<<<<<<< HEAD
     real(dp), intent(in) :: wastetherm
+=======
+    real(8), intent(in) :: wastetherm
+>>>>>>> develop
  
     !  Local variables
  
     integer :: icool
     !! switch between different water-body cooling options
  
+<<<<<<< HEAD
     real(dp) :: heatload, heatloadmet, a, b, c, d, e, f, g, h, i, j
     real(dp) :: windspeedmph, heatloadimp, satvapdelta, evapsum, evapmean
     !! coefficients and intermediate calculation variables
@@ -183,6 +203,22 @@ module water_use_module
     !! strongly influences evaporation; various, all found through experimentation
    
     real(dp) :: deltaE
+=======
+    real(8) :: heatload, heatloadmet, a, b, c, d, e, f, g, h, i, j
+    real(8) :: windspeedmph, heatloadimp, satvapdelta, evapsum, evapmean
+    !! coefficients and intermediate calculation variables
+ 
+    real(8) :: heatratio
+    !! ratio of resultant water temperature increase to input heat loading
+ 
+    real(8) :: watertempheated
+    !! resultant temperature of the water, following waste heat introduction
+ 
+    real(8) :: windfunction
+    !! strongly influences evaporation; various, all found through experimentation
+   
+    real(8) :: deltaE
+>>>>>>> develop
     !! difference in evaporative heat loss due to heating of water (J/(m2.day))
  
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

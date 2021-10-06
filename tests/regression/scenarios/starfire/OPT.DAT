@@ -1,0 +1,15 @@
+  number of constrains
+  12
+  
+  Constrains selection
+  1   2   9  11  30  31  32  33  34  35  36  65
+  
+  number of variables
+  26
+  
+  Variables selection
+  4   5   6   9  10  13  18  26  29  36  42  50  51  52  53  54  56  57  58  59  60  61 103 106 113 122
+  
+  
+  n VMCOM iter | Figure of merit | VMCON conv      | constrains quad sum |   residual,   input values and  FoM input gradients
+  niter          abs(objf)         sum                sqsumsq                  1                 2                 9                11                30                31                32                33                34                35                36                65                 4                 5                 6                 9                10                13                18                26                29                36                42                50                51                52                53                54                56                57                58                59                60                61               103               106               113               122                 4                 5                 6                 9                10                13                18                26                29                36                42                50                51                52                53                54                56                57                58                59                60                61               103               106               113               122

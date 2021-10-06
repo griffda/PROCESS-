@@ -73,7 +73,7 @@ def log_exception(value):
 
 def log_fortran():
     """Log a value obtained from the Fortran interface."""
-    ifail = fortran.main_module.eqslv()
+    ifail = fortran.vmcon_module.info
 
     # Log the Fortran value at the info level
     logger.info(f"The value of ifail is: {ifail}")
