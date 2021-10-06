@@ -3872,6 +3872,9 @@ module physics_module
           call ovarrf(outfile,'Zohm scaling adjustment factor', '(fkzohm)',fkzohm)
        case (4,5,7)
           call ovarrf(outfile,'Elongation, X-point (calculated from kappa95)', '(kappa)',kappa, 'OP ')
+       case (9)
+          call ovarrf(outfile,'Elongation, X-point (calculated from aspect ratio and li(3))', &
+               '(kappa)',kappa, 'OP ')
        case default
           idiags(1) = ishape ; call report_error(86)
        end select
@@ -3888,7 +3891,7 @@ module physics_module
        call ovarrf(outfile,'Elongation, area ratio calc.','(kappaa)',kappaa, 'OP ')
 
        select case (ishape)
-       case (0,2,6,8)
+       case (0,2,6,8,9)
           call ovarrf(outfile,'Triangularity, X-point (input value used)', &
                '(triang)',triang, 'IP ')
        case (1)

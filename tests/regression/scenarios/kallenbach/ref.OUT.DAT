@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-357-g1e04141c
-    Branch : 1327-develop-stable-separate-TF-stress
+   Tag No. : v2.1-378-g8e646ccf
+    Branch : 1345-elongation-scaleable-with-aspect-ratio
    Git log : COMMIT_MSG
- Date/time : 27 Aug 2021 11:27:11 -04:00(hh:mm) UTC
-      User : cswan
-  Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-10/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-10/test_scenario_kallenbach_0/IN.DAT
+ Date/time : 30 Sep 2021 12:03:10 +01:00(hh:mm) UTC
+      User : rhicha
+  Computer : l0500
+ Directory : /tmp/pytest-of-rhicha/pytest-130/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-130/test_scenario_kallenbach_0/IN.DAT
  Run title : kallenbach divertor model
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -745,7 +745,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Total outboard leg radial thickness (m)                                  (tfthko)                  1.143E+00     
  Outboard leg toroidal thickness (m)                                      (tftort)                  1.660E+00  OP 
  Maximum inboard edge height (m)                                          (hmax)                    8.163E+00  OP 
- Mean coil circumference (m)                                              (tfleng)                  4.893E+01  OP 
+ Mean coil circumference (including inboard leg length) (m)               (tfleng)                  4.893E+01  OP 
  Vertical TF shape                                                        (i_tf_shape)                      1     
  
  D-shape coil, inner surface shape approximated by

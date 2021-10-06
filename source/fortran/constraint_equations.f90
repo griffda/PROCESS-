@@ -2577,7 +2577,7 @@ contains
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !! alpha_crit : output real : critical ballooning parameter value
       !! nesep_crit : output real : critical electron density at separatrix [m-3]
-      !! kappa : input real : plasma separatrix elongation (calculated if ishape = 1-5 or 7)
+      !! kappa : input real : plasma separatrix elongation (calculated if ishape = 1-5, 7 or 9)
       !! triang : input real : plasma separatrix triangularity (calculated if ishape = 1, 3-5 or 7)
       !! aspect : input real : aspect ratio (iteration variable 1)
       !! pdivt : input real : power to conducted to the divertor region (MW)

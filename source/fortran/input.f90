@@ -726,7 +726,7 @@ contains
           call parse_int_variable('iscrp', iscrp, 0, 1, &
                'Switch for scrapeoff width')
        case ('ishape')
-          call parse_int_variable('ishape', ishape, 0, 8, &
+          call parse_int_variable('ishape', ishape, 0, 9, &
                'Switch for plasma shape vs. aspect')
        case ('itart')
           call parse_int_variable('itart', itart, 0, 1, &
@@ -1578,6 +1578,11 @@ contains
          else
             call parse_real_variable('blnkith', blnkith, 0.0D0, 10.0D0, &
                 'Inboard blanket thickness (m)')
+	  ! Inboard blanket does not exist if the thickness is below a certain limit.  
+            if(blnkith>=0.0D00.and.blnkith<=1.0D-3) then
+              blnkith = 0.0D00 ! Inboard blanket thickness is zero
+	      iblnkith = 0     ! Inboard blanket does not exist
+            end if
           end if
        case ('blnkoth')
            if (iblanket == 3) then
