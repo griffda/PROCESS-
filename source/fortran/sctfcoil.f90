@@ -3660,6 +3660,10 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     f_rec_fac = rmu0/2.0D0 * (d_curr * currents_enclosed / pi - d_curr**2 * rad(1:nlayers)**2)
     ! Force density integral that adds to Lame parameter A
     f_int_A   = 0.5D0*f_lin_fac * (rad(2:nlayers+1)**2-rad(1:nlayers)**2) + f_rec_fac * log(rad(2:nlayers+1)/(rad(1:nlayers)))
+    if ( f_rec_fac(1) == 0D0) then
+        print *, 'Alert! Encountered an rad(1) = 0 situation! Correcting for it.'
+        f_int_A(1) = 0.5D0*f_lin_fac(1) * (rad(2)**2-rad(1)**2)
+    end if
     ! Force density integral that adds to Lame parameter B
     f_int_B   = 0.25D0*f_lin_fac * (rad(2:nlayers+1)**4-rad(1:nlayers)**4) + 0.5D0*f_rec_fac * (rad(2:nlayers+1)**2-rad(1:nlayers)**2)
           
