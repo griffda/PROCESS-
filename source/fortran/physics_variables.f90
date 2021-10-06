@@ -842,13 +842,8 @@ module physics_variables
   real(8) :: triang
   !! plasma separatrix triangularity (calculated if `ishape = 1, 3-5 or 7`)
 
-<<<<<<< HEAD
-  real(dp) :: triang95
-  !! plasma triangularity at 95% surface (calculated if `ishape = 0-2, 6, 8 or 9`)
-=======
   real(8) :: triang95
-  !! plasma triangularity at 95% surface (calculated if `ishape = 0-2, 6 or 8`)
->>>>>>> develop
+  !! plasma triangularity at 95% surface (calculated if `ishape = 0-2, 6, 8 or 9`)
 
   real(8) :: vol
   !! plasma volume (m3)

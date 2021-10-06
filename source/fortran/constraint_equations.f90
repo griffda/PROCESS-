@@ -1558,19 +1558,11 @@ contains
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
-<<<<<<< HEAD
-      args%cc =  1.0D0 - fstrcond * sig_tf_wp_max/sig_tf_wp
-      args%con = sig_tf_wp_max
-      args%err = sig_tf_wp_max - sig_tf_wp / fstrcond
-      args%symbol = '<'
-      args%units = 'Pa'
-=======
-      tmp_cc =  1.0D0 - fstrcond * alstrtf/strtf2
-      tmp_con = alstrtf
-      tmp_err = alstrtf - strtf2 / fstrcond
+      tmp_cc =  1.0D0 - fstrcond * sig_tf_wp_max/sig_tf_wp
+      tmp_con = sig_tf_wp_max
+      tmp_err = sig_tf_wp_max - sig_tf_wp / fstrcond
       tmp_symbol = '<'
       tmp_units = 'Pa'
->>>>>>> develop
 
    end subroutine constraint_eqn_032
    
@@ -2816,13 +2808,8 @@ contains
 
       ! bucked and wedged desing (see subroutine comment)
       if ( i_tf_bucking >= 2 ) then
-<<<<<<< HEAD
-         args%cc = 1.0d0 - foh_stress * alstroh / max(s_tresca_oh, sig_tf_cs_bucked)
-         args%err = alstroh - max(s_tresca_oh, sig_tf_cs_bucked)
-=======
-         tmp_cc = 1.0d0 - foh_stress * alstroh / max(s_tresca_oh, strtf0)
-         tmp_err = alstroh - max(s_tresca_oh, strtf0)
->>>>>>> develop
+         tmp_cc = 1.0d0 - foh_stress * alstroh / max(s_tresca_oh, sig_tf_cs_bucked)
+         tmp_err = alstroh - max(s_tresca_oh, sig_tf_cs_bucked)
       
       ! Free standing CS
       else 

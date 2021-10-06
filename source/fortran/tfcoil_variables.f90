@@ -365,11 +365,10 @@ module tfcoil_variables
   real(8), dimension(2*n_radial_array) :: sig_tf_tresca
   !! TF Inboard leg TRESCA stress in steel r distribution at mid-plane [Pa]
 
-<<<<<<< HEAD
-  real(dp) :: sig_tf_cs_bucked
-=======
-  real(8) :: strtf0
->>>>>>> develop
+  real(8) :: sig_tf_cs_bucked
+
+  ! TODO is this needed?
+  ! real(8) :: strtf0
   !! Maximum TRESCA stress in CS structures at CS flux swing [Pa]:
   !!
   !!  - If superconducting CS (ipfres = 0): turn steel conduits TRESCA stress
@@ -378,19 +377,18 @@ module tfcoil_variables
   !! Quantity only computed for bucked and wedged design (`i_tf_bucking >= 2`)
   !! Def : CS Flux swing, instant when the current changes sign in CS (null current) 
 
-<<<<<<< HEAD
-  real(dp) :: sig_tf_case
+  real(8) :: sig_tf_case
   !! Maximum TRESCA stress in TF casing steel structures (Pa)
   
-  real(dp) :: sig_tf_wp
-=======
-  real(8) :: strtf1
-  !! Maximum TRESCA stress in TF casing steel structures (Pa)
+  real(8) :: sig_tf_wp
+
+  ! TODO is this needed?
+  ! real(8) :: strtf1
+  ! !! Maximum TRESCA stress in TF casing steel structures (Pa)
   
-  real(8) :: strtf2
->>>>>>> develop
-  !! Maximum TRESCA stress in TF WP conduit steel structures (Pa)
-  !! This is the TF stress condition used in the case of stellarators
+  ! real(8) :: strtf2
+  ! !! Maximum TRESCA stress in TF WP conduit steel structures (Pa)
+  ! !! This is the TF stress condition used in the case of stellarators
   
   real(8) :: sigvvall
   !! allowable stress from TF quench in vacuum vessel (Pa)
