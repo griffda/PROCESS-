@@ -2462,9 +2462,11 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             call ocmmnt(outfile, 'Generalized plane strain model')
         end if
 
-        call ovarre(outfile, 'Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)','(sig_tf_case_max)',sig_tf_case_max)
+        call ovarre(outfile, 'Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)', &
+        '(sig_tf_case_max)',sig_tf_case_max)
         
-        call ovarre(outfile, 'Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)','(sig_tf_wp_max)',sig_tf_wp_max)
+        call ovarre(outfile, 'Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)', &
+        '(sig_tf_wp_max)',sig_tf_wp_max)
         if ( i_tf_tresca == 1  .and. i_tf_sup == 1) then
             call ocmmnt(outfile, 'WP conduit TRESCA stress corrected using CEA formula (i_tf_tresca = 1)')
         end if
