@@ -3606,7 +3606,9 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     ! the specific i_tf_bucking options; if those are changed, 
     ! will need a switch here.
     nonslip_layer = i_tf_bucking
-    
+    if ( nonslip_layer < 1) then
+        nonslip_layer = 1
+    end if
     
     ! Stiffness tensor factors
     ! Section 3 in the writeup
@@ -3708,8 +3710,6 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
         print *, 'M_int(:,:,',kk,') is '
         call Print5x5Matrix(M_int(:,:,kk))
     end do
-    print *, 'M_int(1,4,5) is ', M_int(1,4,4)
-    print *, 'M_int(2,4,5) is ', M_int(2,4,4)
 
     ! Transformation matrix between layers
     ! Section 6 in the writeup
@@ -3724,10 +3724,12 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
         M_ext(1,3,kk) = 0.0D0
         M_ext(1,5,kk) = 0.5D0 * (ey_fac*nu_bar_zt(kk) - nu_bar_zt(kk-1))
     end do
-    kk = nonslip_layer
-    ey_fac = ey_bar_t(kk)/ey_bar_t(kk-1)
-    M_ext(1,3,kk) = 0.5D0 * ey_fac * nu_bar_zt(kk)
-    M_ext(1,5,kk) = 0.5D0 * (-nu_bar_zt(kk-1))  
+    if ( nonslip_layer > 1) then
+        kk = nonslip_layer
+        ey_fac = ey_bar_t(kk)/ey_bar_t(kk-1)
+        M_ext(1,3,kk) = 0.5D0 * ey_fac * nu_bar_zt(kk)
+        M_ext(1,5,kk) = 0.5D0 * (-nu_bar_zt(kk-1))  
+    end if
     do kk = nonslip_layer+1, nlayers
         ey_fac = ey_bar_t(kk)/ey_bar_t(kk-1)
         M_ext(1,3,kk) = 0.5D0 * (ey_fac*nu_bar_zt(kk) - nu_bar_zt(kk-1))
