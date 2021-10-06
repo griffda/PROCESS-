@@ -3461,6 +3461,22 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     !! outer radius of the outer layer to the inner radius of  
     !! each.
     
+    ! Axial force inner product
+    real(dp) :: ey_bar_z_area
+    !! Integral of effective axial Young's modulus with area
+    !! for those layers which carry finite axial force
+    real(dp) :: ey_bar_z_area_slip
+    !! Integral of effective axial Young's modulus with area
+    !! for those layers which DO NOT carry axial force
+    real(dp), dimension(1,5) :: v_force_row
+    !! Row vector (matrix multiplication is inner product) to
+    !! obtain the axial force from the force-carrying layers
+    real(dp), dimension(1,5) :: v_force_row_slip
+    !! Row vector (matrix multiplication is inner product) to
+    !! obtain the axial force inner slip layers (no net force)
+    real(dp), dimension(1,5) :: rad_row_helper
+    !! A helper variable to store [radius, 1, 0, 0, 0] in row
+    
     
     ! Seb Kahn version
     ! Lorentz body force parametres
@@ -3726,6 +3742,44 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
         print *, 'M_tot(:,:,',kk,') is '
         call Print5x5Matrix(M_tot(:,:,kk))
     end do
+    
+    ! Axial force inner product. Dot-product this with the 
+    ! Lame solution vector, (A,B,eps_z,1.0,eps_z_slip), to
+    ! obtain the axial force.
+    ! Section 8 in the writeup
+    ! ***
+    ! Axial stiffness products
+    ey_bar_z_area      = pi*sum(ey_bar_z(nonslip_layer:nlayers)*(rad(nonslip_layer+1:nlayers+1)**2 - rad(nonslip_layer:nlayers)**2))
+    ey_bar_z_area_slip = pi*sum(ey_bar_z(1:nonslip_layer-1)*(rad(2:nonslip_layer)**2 - rad(1:nonslip_layer-1)**2))
+    
+    ! Axial stiffness inner product, for layers which carry axial force
+    rad_row_helper(1,:) = (/rad(nlayers+1)**2, 1D0, 0D0, 0D0, 0D0/)
+    v_force_row = 2D0*pi*ey_bar_z(nlayers)*nu_bar_tz(nlayers)*rad_row_helper 
+    rad_row_helper(1,:) = (/rad(nonslip_layer)**2, 1D0, 0D0, 0D0, 0D0/)
+    v_force_row = v_force_row - 2D0*pi*ey_bar_z(nonslip_layer)*nu_bar_tz(nonslip_layer)*matmul(rad_row_helper,M_tot(:,:,nonslip_layer))
+    do kk = (nonslip_layer+1), nlayers
+        rad_row_helper(1,:) = (/rad(kk)**2, 1D0, 0D0, 0D0, 0D0/)
+        v_force_row = v_force_row + 2D0*pi*(ey_bar_z(kk-1)*nu_bar_tz(kk-1) - ey_bar_z(kk)*nu_bar_tz(kk))*matmul(rad_row_helper,M_tot(:,:,kk))
+    end do
+    ! Include the effect of axial stiffness
+    v_force_row(1,3) = v_force_row(1,3) + ey_bar_z_area
+    
+    ! Axial stiffness inner product, for layers which DON'T carry force
+    rad_row_helper(1,:) = (/rad(nonslip_layer)**2, 1D0, 0D0, 0D0, 0D0/)
+    v_force_row_slip = 2D0*pi*ey_bar_z(nonslip_layer-1)*nu_bar_tz(nonslip_layer-1)*matmul(rad_row_helper,M_tot(:,:,nonslip_layer-1))
+    rad_row_helper(1,:) = (/rad(1)**2, 1D0, 0D0, 0D0, 0D0/)
+    v_force_row_slip = v_force_row_slip - 2D0*pi*ey_bar_z(1)*nu_bar_tz(1)*matmul(rad_row_helper,M_tot(:,:,1))
+    do kk = 2, (nonslip_layer-1)
+        rad_row_helper(1,:) = (/rad(kk)**2, 1D0, 0D0, 0D0, 0D0/)
+        v_force_row_slip = v_force_row_slip + 2D0*pi*(ey_bar_z(kk-1)*nu_bar_tz(kk-1) - ey_bar_z(kk)*nu_bar_tz(kk))*matmul(rad_row_helper,M_tot(:,:,kk))
+    end do
+    ! Include the effect of axial stiffness
+    v_force_row_slip(1,5) = v_force_row_slip(1,5) + ey_bar_z_area_slip
+
+    print *, 'ey_bar_z_area is ', ey_bar_z_area
+    print *, 'ey_bar_z_area_slip is ', ey_bar_z_area_slip
+    print *, 'v_force_row is ', v_force_row(1,1), ', ', v_force_row(1,2), ', ', v_force_row(1,3), ', ', v_force_row(1,4), ', ', v_force_row(1,5)
+    print *, 'v_force_row_slip is ', v_force_row_slip(1,1), ', ', v_force_row_slip(1,2), ', ', v_force_row_slip(1,3), ', ', v_force_row_slip(1,4), ', ', v_force_row_slip(1,5)
 
     ! Layer parameterisation
     ! ***
