@@ -475,10 +475,10 @@ contains
     integer, intent(in) :: iscan_1
     integer, intent(in) :: iscan_R
     integer, intent(in) :: iscan
-    ! size of outvar
     integer, intent(in) :: noutvars_, ipnscns_
+    ! Required for shape of intent(out) arrays
     real(8), dimension(noutvars_,ipnscns_), intent(out) :: outvar
-    real(8), dimension(:), intent(out) :: sweep_1_vals, sweep_2_vals
+    real(8), dimension(ipnscns_), intent(out) :: sweep_1_vals, sweep_2_vals
 
     call scan_1d_store_output(iscan, ifail, noutvars_, ipnscns_, outvar)
 
