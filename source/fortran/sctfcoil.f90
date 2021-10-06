@@ -3477,6 +3477,20 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     real(dp), dimension(1,5) :: rad_row_helper
     !! A helper variable to store [radius, 1, 0, 0, 0] in row
     
+    ! Boundary condition matrix
+    real(dp), dimension(4,5) :: M_bc
+    !! Boundary condition matrix. Multiply this with the 
+    !! outermost solution vector, (A,B,eps_z,1.0,eps_z_slip), 
+    !! to obtain a zero vector.
+    real(dp), dimension(4,4) :: M_toinv
+    !! Matrix to invert to get the solution
+    real(dp), dimension(4) :: RHS_vec
+    !! Right-hand-side vector to divide M_toinv
+    real(dp), dimension(4) :: A_vec_solution
+    !! Solution vector, Lame parameters at outer radius, strain
+    !! of force-carrying layers, and strain of slip layers
+    !! (A,B,eps_z,eps_z_slip)
+    
     
     ! Seb Kahn version
     ! Lorentz body force parametres
@@ -3744,8 +3758,8 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     end do
     
     ! Axial force inner product. Dot-product this with the 
-    ! Lame solution vector, (A,B,eps_z,1.0,eps_z_slip), to
-    ! obtain the axial force.
+    ! outermost solution vector, (A,B,eps_z,1.0,eps_z_slip), 
+    ! to obtain the axial force.
     ! Section 8 in the writeup
     ! ***
     ! Axial stiffness products
@@ -3780,6 +3794,43 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     print *, 'ey_bar_z_area_slip is ', ey_bar_z_area_slip
     print *, 'v_force_row is ', v_force_row(1,1), ', ', v_force_row(1,2), ', ', v_force_row(1,3), ', ', v_force_row(1,4), ', ', v_force_row(1,5)
     print *, 'v_force_row_slip is ', v_force_row_slip(1,1), ', ', v_force_row_slip(1,2), ', ', v_force_row_slip(1,3), ', ', v_force_row_slip(1,4), ', ', v_force_row_slip(1,5)
+
+    ! Boundary condition matrix. Multiply this with the 
+    ! outermost solution vector, (A,B,eps_z,1.0,eps_z_slip), 
+    ! to obtain a zero vector. 
+    ! Solved to get the Lame parameters.
+    ! Section 9 in the writeup
+    ! ***
+    ! Outer boundary condition row, zero radial stress
+    M_bc(1,:) = (/ (1D0+nu_bar_t(nlayers))*rad(nlayers+1)**2, -1D0+nu_bar_t(nlayers), nu_bar_zt(nlayers)*rad(nlayers+1)**2, 0D0, 0D0 /)
+    ! Inner boundary condition row, zero radial stress
+    ! or zero displacement if rad(1)=0
+    M_bc(2,:) = (/ (1D0+nu_bar_t(1))*rad(1)**2, -1D0+nu_bar_t(1), 0D0, 0D0, nu_bar_zt(1)*rad(1)**2 /)
+    M_bc(2,:) = matmul(M_bc(2,:),M_tot(:,:,1))
+    ! Axial force boundary condition
+    M_bc(3,:) = v_force_row(1,:)
+    M_bc(3,4) = M_bc(3,4) - v_force
+    ! Axial force boundary condition of slip layers
+    M_bc(4,:) = v_force_row_slip(1,:)
+        
+    print *, 'Boundary condition matrix (M_bc) is'
+    call Print4x5Matrix(M_bc)
+
+    ! The solution, the outermost Lame parameters A,B
+    ! and the axial strains of the force-carrying and 
+    ! slip layers eps_z and eps_z_slip.
+    ! Section 10 in the writeup
+    ! ***
+    M_toinv = M_bc(:,(/1,2,3,5/))
+    RHS_vec = -M_bc(:,4)
+    call linesolv(M_toinv, 4, RHS_vec, A_vec_solution)
+
+    print *, 'Solution vector (A_vec_solution) are'
+    do ii = 1, 4
+        print *, 'A_vec_solution(',ii,') is ',A_vec_solution(ii)
+    end do
+    
+    
 
     ! Layer parameterisation
     ! ***
@@ -4109,6 +4160,17 @@ subroutine Print5x5Matrix(theMatrix)
 		print '(2x,f8.3,2x,f8.3,2x,f8.3,2x,f8.3,2x,f8.3)', theMatrix(ind1,1), theMatrix(ind1,2), theMatrix(ind1,3), theMatrix(ind1,4), theMatrix(ind1,5)
 	end do
 end subroutine Print5x5Matrix
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine Print4x5Matrix(theMatrix)
+	real(dp), dimension(4,5) :: theMatrix
+	integer :: ind1
+	do ind1 = 1,4
+		! As a real (f), use 8 digits to display each (8), with 3 digits after the decimal (.3). Leave 2 spaces between each (x2).
+		print '(2x,f8.3,2x,f8.3,2x,f8.3,2x,f8.3,2x,f8.3)', theMatrix(ind1,1), theMatrix(ind1,2), theMatrix(ind1,3), theMatrix(ind1,4), theMatrix(ind1,5)
+	end do
+end subroutine Print4x5Matrix
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
