@@ -14,22 +14,22 @@ module constraints
 
   public :: constraint_eqns
 
-  type constraint_args_type
-    real(dp) :: cc
-    !! Residual error in constraint equation
-    real(dp) :: con
-    !! constraint value for constraint equation in physical units
-    real(dp) :: err
-    !! residual error in constraint equation in physical units
-    character(len=1)  :: symbol
-    !! `=<`, `>`, `<` symbol for constraint equation denoting its type
-    character(len=10) :: units
-    !! constraint units in constraint equation
-  end type
+!   type constraint_args_type
+!     real(8) :: cc
+!     !! Residual error in constraint equation
+!     real(8) :: con
+!     !! constraint value for constraint equation in physical units
+!     real(8) :: err
+!     !! residual error in constraint equation in physical units
+!     character(len=1)  :: symbol
+!     !! `=<`, `>`, `<` symbol for constraint equation denoting its type
+!     character(len=10) :: units
+!     !! constraint units in constraint equation
+!   end type
 
 contains
 
-   subroutine constraint_eqns(m,cc,ieqn,con,err,symbol,units)
+   subroutine constraint_eqns(m,ieqn,cc,con,err,symbol,units)
     !! Routine that formulates the constraint equations
     !!
     !! **author: P J Knight** (UKAEA)
@@ -56,25 +56,35 @@ contains
     integer, intent(in) :: ieqn
     !! Switch for constraint equations to evaluate;
 
-    real(dp), dimension(m), intent(out) :: cc
+    real(8), dimension(m), intent(out) :: cc
     !! Residual error in equation i
 
-    real(dp), optional, dimension(m), intent(out) :: con
+    real(8), optional, dimension(m), intent(out) :: con
     !! constraint value for equation i in physical units
     
-    real(dp), optional, dimension(m), intent(out) :: err
+    real(8), optional, dimension(m), intent(out) :: err
     !! residual error in equation i in physical units
 
     character(len=1),  optional, dimension(m), intent(out) :: symbol
     !! `=<`, `>`, `<` symbol for equation i denoting its type
 
-    character(len=10), optional, dimension(m), intent(out) :: units
+    character*10, optional, dimension(m), intent(out) :: units
     !! constraint units in equation i
 	
     ! Local variables
     integer :: i, i1, i2
 
-    type(constraint_args_type) :: args
+    real(8) :: tmp_cc = 0
+    !! Residual error in constraint equation
+    real(8) :: tmp_con = 0
+    !! constraint value for constraint equation in physical units
+    real(8) :: tmp_err = 0
+    !! residual error in constraint equation in physical units
+    character(len=1)  :: tmp_symbol = ' '
+    !! `=<`, `>`, `<` symbol for constraint equation denoting its type
+    character(len=10) :: tmp_units = ' '
+    !! constraint units in constraint equation
+
     
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
@@ -97,191 +107,195 @@ contains
       select case (icc(i))
 
 	      ! Relationship between beta, temperature (keV) and density
-        case (1); call constraint_eqn_001(args)
+        case (1); call constraint_eqn_001(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Global plasma power balance equation
-        case (2); call constraint_eqn_002(args)
+        case (2); call constraint_eqn_002(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Global power balance equation for ions
-        case (3); call constraint_eqn_003(args)
+        case (3); call constraint_eqn_003(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Global power balance equation for electrons
-        case (4); call constraint_eqn_004(args)
+        case (4); call constraint_eqn_004(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for density upper limit
-        case (5); call constraint_eqn_005(args)
+        case (5); call constraint_eqn_005(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for epsilon beta-poloidal upper limit
-        case (6); call constraint_eqn_006(args)
+        case (6); call constraint_eqn_006(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for hot beam ion density
-        case (7); call constraint_eqn_007(args)
+        case (7); call constraint_eqn_007(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for neutron wall load upper limit
-        case (8); call constraint_eqn_008(args)
+        case (8); call constraint_eqn_008(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for fusion power upper limit
-        case (9); call constraint_eqn_009(args)
+        case (9); call constraint_eqn_009(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Obsolete 
-        case (10); call constraint_eqn_010(args)
+        case (10); call constraint_eqn_010(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for radial build
-        case (11); call constraint_eqn_011(args)
+        case (11); call constraint_eqn_011(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for volt-second capability lower limit
-        case (12); call constraint_eqn_012(args)
+        case (12); call constraint_eqn_012(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for burn time lower limit
-        case (13); call constraint_eqn_013(args)
+        case (13); call constraint_eqn_013(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation to fix number of NBI decay lengths to plasma centre
-        case (14); call constraint_eqn_014(args)
+        case (14); call constraint_eqn_014(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for L-H power threshold limit
-        case (15); call constraint_eqn_015(args)
+        case (15); call constraint_eqn_015(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for net electric power lower limit
-        case (16); call constraint_eqn_016(args)
+        case (16); call constraint_eqn_016(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for radiation power upper limit
-        case (17); call constraint_eqn_017(args)
+        case (17); call constraint_eqn_017(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for divertor heat load upper limit
-        case (18); call constraint_eqn_018(args)
+        case (18); call constraint_eqn_018(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for MVA upper limit
-        case (19); call constraint_eqn_019(args)
+        case (19); call constraint_eqn_019(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for neutral beam tangency radius upper limit
-        case (20); call constraint_eqn_020(args)
+        case (20); call constraint_eqn_020(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for minor radius lower limit
-        case (21); call constraint_eqn_021(args)
+        case (21); call constraint_eqn_021(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for divertor collision/connection length ratio upper limit
-        case (22); call constraint_eqn_022(args)
+        case (22); call constraint_eqn_022(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for conducting shell radius / rminor upper limit
-        case (23); call constraint_eqn_023(args)
+        case (23); call constraint_eqn_023(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for beta upper limit
-        case (24); call constraint_eqn_024(args)
+        case (24); call constraint_eqn_024(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for peak toroidal field upper limit
-        case (25); call constraint_eqn_025(args)
+        case (25); call constraint_eqn_025(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for Central Solenoid current density upper limit at EOF
-        case (26); call constraint_eqn_026(args)
+        case (26); call constraint_eqn_026(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for Central Solenoid current density upper limit at BOP
-        case (27); call constraint_eqn_027(args)
+        case (27); call constraint_eqn_027(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for fusion gain (big Q) lower limit
-        case (28); call constraint_eqn_028(args)
+        case (28); call constraint_eqn_028(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for inboard major radius
-        case (29); call constraint_eqn_029(args)
+        case (29); call constraint_eqn_029(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for injection power upper limit
-        case (30); call constraint_eqn_030(args)
+        case (30); call constraint_eqn_030(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for TF coil case stress upper limit (SCTF)
-        case (31); call constraint_eqn_031(args)
+        case (31); call constraint_eqn_031(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for TF coil conduit stress upper limit (SCTF)
-        case (32); call constraint_eqn_032(args)
+        case (32); call constraint_eqn_032(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for TF coil operating/critical J upper limit (SCTF)
-        case (33); call constraint_eqn_033(args)
+        case (33); call constraint_eqn_033(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for TF coil dump voltage upper limit (SCTF)
-        case (34); call constraint_eqn_034(args)
+        case (34); call constraint_eqn_034(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for TF coil J_wp/J_prot upper limit (SCTF)
-        case (35); call constraint_eqn_035(args)
+        case (35); call constraint_eqn_035(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for TF coil s/c temperature margin lower limit (SCTF)
-        case (36); call constraint_eqn_036(args)
+        case (36); call constraint_eqn_036(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for current drive gamma upper limit
-        case (37); call constraint_eqn_037(args)
+        case (37); call constraint_eqn_037(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for first wall temperature upper limit
-        case (39); call constraint_eqn_039(args)
+        case (39); call constraint_eqn_039(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for auxiliary power lower limit
-        case (40); call constraint_eqn_040(args)
+        case (40); call constraint_eqn_040(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for plasma current ramp-up time lower limit
-        case (41); call constraint_eqn_041(args)
+        case (41); call constraint_eqn_041(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for cycle time lower limit
-        case (42); call constraint_eqn_042(args)
+        case (42); call constraint_eqn_042(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for average centrepost temperature
-        case (43); call constraint_eqn_043(args)
+        case (43); call constraint_eqn_043(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for centrepost temperature upper limit (TART)
-        case (44); call constraint_eqn_044(args)
+        case (44); call constraint_eqn_044(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for edge safety factor lower limit (TART)
-        case (45); call constraint_eqn_045(args)
+        case (45); call constraint_eqn_045(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for Ip/Irod upper limit (TART)
-        case (46); call constraint_eqn_046(args)  
+        case (46); call constraint_eqn_046(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)  
 	      ! Equation for TF coil toroidal thickness upper limit
-        case (47); call constraint_eqn_047(args)  
+        case (47); call constraint_eqn_047(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)  
 	      ! Equation for poloidal beta upper limit
-        case (48); call constraint_eqn_048(args)  
+        case (48); call constraint_eqn_048(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)  
 	      ! Issue #508 Remove RFP option Equation to ensure reversal parameter F is negative
-        case (49); call constraint_eqn_049(args)
+        case (49); call constraint_eqn_049(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
         ! IFE option: Equation for repetition rate upper limit
-        case (50); call constraint_eqn_050(args)
+        case (50); call constraint_eqn_050(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation to enforce startup flux = available startup flux
-        case (51); call constraint_eqn_051(args)  
+        case (51); call constraint_eqn_051(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)  
 	      ! Equation for tritium breeding ratio lower limit
-        case (52); call constraint_eqn_052(args)  
+        case (52); call constraint_eqn_052(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)  
 	      ! Equation for fast neutron fluence on TF coil upper limit
-        case (53); call constraint_eqn_053(args)  
+        case (53); call constraint_eqn_053(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)  
 	      ! Equation for peak TF coil nuclear heating upper limit
-        case (54); call constraint_eqn_054(args)  
+        case (54); call constraint_eqn_054(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)  
 	      ! Equation for helium concentration in vacuum vessel upper limit
-        case (55); call constraint_eqn_055(args)  
+        case (55); call constraint_eqn_055(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)  
 	      ! Equation for power through separatrix / major radius upper limit
-        case (56); call constraint_eqn_056(args)  
+        case (56); call constraint_eqn_056(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)  
         ! Obsolete
-        case (57); call constraint_eqn_057(args)
+        case (57); call constraint_eqn_057(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
         ! Obsolete
-        case (58); call constraint_eqn_058(args)
+        case (58); call constraint_eqn_058(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Equation for neutral beam shine-through fraction upper limit
-        case (59); call constraint_eqn_059(args)  
+        case (59); call constraint_eqn_059(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)  
 	      ! Equation for Central Solenoid s/c temperature margin lower limit
-        case (60); call constraint_eqn_060(args)  
+        case (60); call constraint_eqn_060(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)  
 	      ! Equation for availability limit
-        case (61); call constraint_eqn_061(args)  
+        case (61); call constraint_eqn_061(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)  
 	      ! Lower limit on taup/taueff the ratio of alpha particle to energy confinement times
-        case (62); call constraint_eqn_062(args)  
+        case (62); call constraint_eqn_062(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)  
 	      ! Upper limit on niterpump (vacuum_model = simple)
-        case (63); call constraint_eqn_063(args)  
+        case (63); call constraint_eqn_063(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)  
         ! Upper limit on Zeff
-        case (64); call constraint_eqn_064(args)  
+        case (64); call constraint_eqn_064(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)  
         ! Limit TF dump time to calculated quench time
-        case (65); call constraint_eqn_065(args)
+        case (65); call constraint_eqn_065(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
         ! Limit on rate of change of energy in poloidal field
-        case (66); call constraint_eqn_066(args)
+        case (66); call constraint_eqn_066(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
         ! Simple upper limit on radiation wall load
-        case (67); call constraint_eqn_067(args)
+        case (67); call constraint_eqn_067(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
         ! New Psep scaling (PsepB/qAR)
-        case (68); call constraint_eqn_068(args)
+        case (68); call constraint_eqn_068(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
         ! Ensure separatrix power is less than value from Kallenbach divertor 
-        case (69); call constraint_eqn_069(args)
+        case (69); call constraint_eqn_069(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
         ! Separatrix temperature consistency
-        case (70); call constraint_eqn_070(args)
+        case (70); call constraint_eqn_070(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
         ! Separatrix density consistency
-        case (71); call constraint_eqn_071(args)
+        case (71); call constraint_eqn_071(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	      ! Central Solenoid Tresca stress limit
-        case (72); call constraint_eqn_072(args)
+        case (72); call constraint_eqn_072(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
         ! ensure separatrix power is greater than the L-H power + auxiliary power
-        case (73); call constraint_eqn_073(args)
+        case (73); call constraint_eqn_073(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
         ! ensure TF coil quench temperature < tmax_croco   
-        case (74); call constraint_eqn_074(args)
+        case (74); call constraint_eqn_074(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	     ! ensure that TF coil current / copper area < Maximum value ONLY used for croco HTS coil
-        case (75); call constraint_eqn_075(args)
+        case (75); call constraint_eqn_075(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
         ! Eich critical separatrix density model
-        case (76); call constraint_eqn_076(args)
+        case (76); call constraint_eqn_076(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
         ! Equation for maximum TF current per turn upper limit
-        case (77); call constraint_eqn_077(args)
+        case (77); call constraint_eqn_077(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
 	  	  ! Equation for Reinke criterion, divertor impurity fraction lower limit
-        case (78); call constraint_eqn_078(args)
+        case (78); call constraint_eqn_078(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
         ! Equation for maximum CS field
-        case (79); call constraint_eqn_079(args)
+        case (79); call constraint_eqn_079(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
         ! Lower limit pdivt
-        case (80); call constraint_eqn_080(args)
+        case (80); call constraint_eqn_080(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
         ! Constraint equation making sure that ne(0) > ne(ped)
-        case (81); call constraint_eqn_081(args)
+        case (81); call constraint_eqn_081(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
         ! Constraint equation making sure that stellarator coils dont touch in toroidal direction
-        case (82); call constraint_eqn_082(args)
+        case (82); call constraint_eqn_082(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
         ! Constraint ensuring radial build consistency for stellarators
-        case (83); call constraint_eqn_083(args)
+        case (83); call constraint_eqn_083(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
         ! Constraint for lower limit of beta
-        case (84); call constraint_eqn_084(args)
+        case (84); call constraint_eqn_084(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
          ! Constraint for CP lifetime
-        case (85); call constraint_eqn_085(args)
+        case (85); call constraint_eqn_085(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
          ! Constraint for turn dimension
-        case (86); call constraint_eqn_086(args)
+        case (86); call constraint_eqn_086(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
          ! Constraint for cryogenic power
-        case (87); call constraint_eqn_087(args)
+        case (87); call constraint_eqn_087(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
        case default
 
         idiags(1) = icc(i)
         call report_error(13)
-        args = constraint_args_type(0.0D0, 0.0D0, 0.0D0, '', '')	  
+        tmp_cc = 0
+        tmp_con = 0
+        tmp_err = 0
+        tmp_symbol = ' '
+        tmp_units = ' '
       
       end select
-
-      cc(i) = args%cc
+      
+      cc(i) = tmp_cc
       if (present(con)) then
-        con(i) = args%con
-        if (present(err))    err(i)    = args%err
-        if (present(symbol)) symbol(i) = args%symbol
-        if (present(units))  units(i)  = args%units
+        con(i) = tmp_con
+        if (present(err))    err(i)    = tmp_err
+        if (present(symbol)) symbol(i) = tmp_symbol
+        if (present(units))  units(i)  = tmp_units
       end if
 
       ! Crude method of catching NaN errors
@@ -365,7 +379,7 @@ contains
 
    !---
 
-   subroutine constraint_eqn_001(args)
+   subroutine constraint_eqn_001(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
     !! author: J Morris
     !! category: equality constraint
     !!
@@ -390,19 +404,25 @@ contains
 
     implicit none
 
-    type(constraint_args_type), intent(out) :: args
+   !  type(constraint_args_type), intent(out) :: args
+      real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
+
     !! constraint derived type
 
-      args%cc = 1.0D0 - (betaft + betanb + &
+      tmp_cc = 1.0D0 - (betaft + betanb + &
         2.0D3*rmu0*echarge * (dene*ten + dnitot*tin)/btot**2 )/beta
-      args%con = beta * (1.0D0 - args%cc)
-      args%err = beta * args%cc
-      args%symbol = '='
-      args%units  = ''
+      tmp_con = beta * (1.0D0 - tmp_cc)
+      tmp_err = beta * tmp_cc
+      tmp_symbol = '='
+      tmp_units  = ''
 
    end subroutine constraint_eqn_001
 
-   subroutine constraint_eqn_002(args)
+   subroutine constraint_eqn_002(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
     !! author: J. Morris
     !! category: equality constraint
     !!
@@ -437,12 +457,16 @@ contains
 
     implicit none
 
-    type (constraint_args_type), intent(out) :: args
+          real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
     !! constraint derived type
 
     ! pscaling : Local real : total transport power per volume (MW/m3)
-    real(dp) :: pscaling
-    real(dp) :: pnumerator, pdenom
+    real(8) :: pscaling
+    real(8) :: pnumerator, pdenom
     pscaling = ptrepv + ptripv
     ! Total power lost is scaling power plus radiation:
     if (iradloss == 0) then
@@ -461,15 +485,15 @@ contains
       pdenom = falpha*palppv + pchargepv + pohmpv
     end if
 
-    args%cc = 1.0D0 - pnumerator / pdenom
-    args%con = pdenom * (1.0D0 - args%cc)
-    args%err = pdenom * args%cc
-    args%symbol = '='
-    args%units = 'MW/m3'
+    tmp_cc = 1.0D0 - pnumerator / pdenom
+    tmp_con = pdenom * (1.0D0 - tmp_cc)
+    tmp_err = pdenom * tmp_cc
+    tmp_symbol = '='
+    tmp_units = 'MW/m3'
 
    end subroutine constraint_eqn_002
 
-   subroutine constraint_eqn_003(args)
+   subroutine constraint_eqn_003(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Global power balance equation for ions
       !! args : output structure : residual error; constraint value; 
       !! residual error in physical units; output string; units string
@@ -491,27 +515,31 @@ contains
       use physics_variables, only: ignite, ptripv, piepv, falpha, palpipv, vol
       use current_drive_variables, only: pinjimw
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
 	   ! No assume plasma ignition:
       if (ignite == 0) then
-         args%cc     = 1.0D0 - (ptripv + piepv) / (falpha*palpipv + pinjimw/vol)
-         args%con    = (falpha*palpipv + pinjimw/vol) * (1.0D0 - args%cc)
-         args%err    = (falpha*palpipv + pinjimw/vol) * args%cc
-         args%symbol = '='
-         args%units  = 'MW/m3'
+         tmp_cc     = 1.0D0 - (ptripv + piepv) / (falpha*palpipv + pinjimw/vol)
+         tmp_con    = (falpha*palpipv + pinjimw/vol) * (1.0D0 - tmp_cc)
+         tmp_err    = (falpha*palpipv + pinjimw/vol) * tmp_cc
+         tmp_symbol = '='
+         tmp_units  = 'MW/m3'
 	   ! Plasma ignited:
       else
-         args%cc     = 1.0D0 - (ptripv+piepv) / (falpha*palpipv)
-         args%con    = (falpha*palpipv) * (1.0D0 - args%cc)
-         args%err    = (falpha*palpipv) * args%cc
-         args%symbol = '='
-         args%units  = 'MW/m3'
+         tmp_cc     = 1.0D0 - (ptripv+piepv) / (falpha*palpipv)
+         tmp_con    = (falpha*palpipv) * (1.0D0 - tmp_cc)
+         tmp_err    = (falpha*palpipv) * tmp_cc
+         tmp_symbol = '='
+         tmp_units  = 'MW/m3'
       end if
 
    end subroutine constraint_eqn_003
 
-   subroutine constraint_eqn_004(args)
+   subroutine constraint_eqn_004(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Global power balance equation for electrons
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -543,11 +571,15 @@ contains
                                  palpepv, piepv, vol, pradpv
       use current_drive_variables, only: pinjemw
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
       ! pscaling : Local real : total transport power per volume (MW/m3)
-      real(dp) :: pscaling
-      real(dp) :: pnumerator, pdenom
+      real(8) :: pscaling
+      real(8) :: pnumerator, pdenom
       pscaling = ptrepv
 	   ! Total power lost is scaling power plus radiation:
       if (iradloss == 0) then
@@ -566,15 +598,15 @@ contains
          pdenom = falpha*palpepv + piepv
       end if
 
-      args%cc     = 1.0D0 - pnumerator / pdenom
-      args%con    = pdenom * (1.0D0 - args%cc)
-      args%err    = pdenom * args%cc
-      args%symbol = '='
-      args%units  = 'MW/m3'
+      tmp_cc     = 1.0D0 - pnumerator / pdenom
+      tmp_con    = pdenom * (1.0D0 - tmp_cc)
+      tmp_err    = pdenom * tmp_cc
+      tmp_symbol = '='
+      tmp_units  = 'MW/m3'
 
    end subroutine constraint_eqn_004
 
-   subroutine constraint_eqn_005(args)
+   subroutine constraint_eqn_005(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for density upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -599,26 +631,30 @@ contains
       use physics_variables, only: idensl, dnelimt, dnla, dene
       use constraint_variables, only: fdene
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
 	   ! Apply Greenwald limit to line-averaged density
       if (idensl == 7) then
-         args%cc     = 1.0D0 - fdene * dnelimt/dnla
-         args%con    = fdene * dnelimt
-         args%err    = fdene * dnelimt - dnla
-         args%symbol = '<'
-         args%units  = '/m3'
+         tmp_cc     = 1.0D0 - fdene * dnelimt/dnla
+         tmp_con    = fdene * dnelimt
+         tmp_err    = fdene * dnelimt - dnla
+         tmp_symbol = '<'
+         tmp_units  = '/m3'
       else
-         args%cc = 1.0D0 - fdene * dnelimt/dene
-         args%con    = dnelimt * (1.0D0 - args%cc)
-         args%err    = dene * args%cc
-         args%symbol = '<'
-         args%units  = '/m3'
+         tmp_cc = 1.0D0 - fdene * dnelimt/dene
+         tmp_con    = dnelimt * (1.0D0 - tmp_cc)
+         tmp_err    = dene * tmp_cc
+         tmp_symbol = '<'
+         tmp_units  = '/m3'
       end if
 
    end subroutine constraint_eqn_005
 
-   subroutine constraint_eqn_006(args)
+   subroutine constraint_eqn_006(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for epsilon beta-poloidal upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -635,17 +671,21 @@ contains
       use physics_variables, only: epbetmax, eps, betap
       use constraint_variables, only: fbeta, fbeta
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - fbeta * epbetmax/(eps*betap)
-      args%con = epbetmax * (1.0D0 - args%cc)
-      args%err = (eps*betap) * args%cc
-      args%symbol = '<'
-      args%units = ''
+      tmp_cc =  1.0D0 - fbeta * epbetmax/(eps*betap)
+      tmp_con = epbetmax * (1.0D0 - tmp_cc)
+      tmp_err = (eps*betap) * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = ''
 
    end subroutine constraint_eqn_006
 
-   subroutine constraint_eqn_007(args)
+   subroutine constraint_eqn_007(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for hot beam ion density
       !! args : output structure : residual error; constraint value; 
       !! residual error in physical units; output string; units string
@@ -666,23 +706,31 @@ contains
       !! dnbeam : input real : hot beam ion density, variable (/m3)
       use physics_variables, only: ignite, dnbeam2, dnbeam
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
 	   ! Do not assume plasma ignition:
       if (ignite == 0) then
-         args%cc     = 1.0D0 - dnbeam2/dnbeam
-         args%con    = dnbeam * (1.0D0 - args%cc)
-         args%err    = dnbeam * args%cc
-         args%symbol = '='
-         args%units  = '/m3'
+         tmp_cc     = 1.0D0 - dnbeam2/dnbeam
+         tmp_con    = dnbeam * (1.0D0 - tmp_cc)
+         tmp_err    = dnbeam * tmp_cc
+         tmp_symbol = '='
+         tmp_units  = '/m3'
       else
-         args = constraint_args_type(0.0D0, 0.0D0, 0.0D0, '', '')
+         tmp_cc = 0
+        tmp_con = 0
+        tmp_err = 0
+        tmp_symbol = ''
+        tmp_units = ''
          call report_error(1)
       end if
 
    end subroutine constraint_eqn_007
 
-   subroutine constraint_eqn_008(args)
+   subroutine constraint_eqn_008(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for neutron wall load upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -698,17 +746,21 @@ contains
       use constraint_variables, only: fwalld, walalw
       use physics_variables, only: wallmw
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - fwalld * walalw/wallmw
-      args%con = fwalld * walalw
-      args%err = fwalld * walalw - wallmw
-      args%symbol = '<'
-      args%units = 'MW/m2'
+      tmp_cc =  1.0D0 - fwalld * walalw/wallmw
+      tmp_con = fwalld * walalw
+      tmp_err = fwalld * walalw - wallmw
+      tmp_symbol = '<'
+      tmp_units = 'MW/m2'
 
    end subroutine constraint_eqn_008
 
-   subroutine constraint_eqn_009(args)
+   subroutine constraint_eqn_009(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for fusion power upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -724,17 +776,21 @@ contains
       use constraint_variables, only: ffuspow, powfmax
       use physics_variables, only: powfmw
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - ffuspow * powfmax/powfmw
-      args%con = powfmax * (1.0D0 - args%cc)
-      args%err = powfmw * args%cc
-      args%symbol = '<'
-      args%units = 'MW'
+      tmp_cc =  1.0D0 - ffuspow * powfmax/powfmw
+      tmp_con = powfmax * (1.0D0 - tmp_cc)
+      tmp_err = powfmw * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'MW'
 
    end subroutine constraint_eqn_009
 
-   subroutine constraint_eqn_010(args)
+   subroutine constraint_eqn_010(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! Equation for field at TF coil
       !! This is a consistency equation
@@ -750,20 +806,24 @@ contains
 
       implicit none
 
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
       !! Constraints output
 
       ! This constraint is depreciated
       call report_error(236)
 
-      args%con = 1.0D0
-      args%err = 0.0D0
-      args%symbol = '='
-      args%units = ''
+      tmp_con = 1.0D0
+      tmp_err = 0.0D0
+      tmp_symbol = '='
+      tmp_units = ''
 
    end subroutine constraint_eqn_010
 
-   subroutine constraint_eqn_011(args)
+   subroutine constraint_eqn_011(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for radial build
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -779,17 +839,21 @@ contains
       use build_variables, only: rbld
       use physics_variables, only: rmajor
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - rbld/rmajor
-      args%con = rmajor * (1.0D0 - args%cc)
-      args%err = rmajor * args%cc
-      args%symbol = '='
-      args%units = 'm'
+      tmp_cc =  1.0D0 - rbld/rmajor
+      tmp_con = rmajor * (1.0D0 - tmp_cc)
+      tmp_err = rmajor * tmp_cc
+      tmp_symbol = '='
+      tmp_units = 'm'
 
    end subroutine constraint_eqn_011
 
-   subroutine constraint_eqn_012(args)
+   subroutine constraint_eqn_012(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for volt-second capability lower limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -807,17 +871,21 @@ contains
       use constraint_variables, only: fvs
       use pfcoil_variables, only: vstot
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 + fvs * vstot/vsstt
-      args%con = vsstt * (1.0D0 - args%cc)
-      args%err = vsstt * args%cc
-      args%symbol = '>'
-      args%units = 'V.sec'
+      tmp_cc =  1.0D0 + fvs * vstot/vsstt
+      tmp_con = vsstt * (1.0D0 - tmp_cc)
+      tmp_err = vsstt * tmp_cc
+      tmp_symbol = '>'
+      tmp_units = 'V.sec'
 
    end subroutine constraint_eqn_012
 
-   subroutine constraint_eqn_013(args)
+   subroutine constraint_eqn_013(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for burn time lower limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -833,17 +901,21 @@ contains
       use constraint_variables, only: ftburn,tbrnmn
       use times_variables, only: tburn
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - ftburn * tburn/tbrnmn
-      args%con = tbrnmn / ftburn
-      args%err = tbrnmn / ftburn  - tburn
-      args%symbol = '>'
-      args%units = 'sec'
+      tmp_cc =  1.0D0 - ftburn * tburn/tbrnmn
+      tmp_con = tbrnmn / ftburn
+      tmp_err = tbrnmn / ftburn  - tburn
+      tmp_symbol = '>'
+      tmp_units = 'sec'
 
    end subroutine constraint_eqn_013
 
-   subroutine constraint_eqn_014(args)
+   subroutine constraint_eqn_014(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation to fix number of NBI decay lengths to plasma centre
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -858,17 +930,21 @@ contains
       !! tbeamin : input real : permitted neutral beam e-decay lengths to plasma centre
       use current_drive_variables, only: taubeam, tbeamin
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc = 1.0D0 - taubeam/tbeamin
-      args%con = tbeamin * (1.0D0 - args%cc)
-      args%err = tbeamin * args%cc
-      args%symbol = '='
-      args%units = ''
+      tmp_cc = 1.0D0 - taubeam/tbeamin
+      tmp_con = tbeamin * (1.0D0 - tmp_cc)
+      tmp_err = tbeamin * tmp_cc
+      tmp_symbol = '='
+      tmp_units = ''
 
    end subroutine constraint_eqn_014
 
-   subroutine constraint_eqn_015(args)
+   subroutine constraint_eqn_015(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for L-H power threshold limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -884,21 +960,25 @@ contains
       use constraint_variables, only: flhthresh
       use physics_variables, only: plhthresh, pdivt
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  -(1.0D0 - flhthresh * plhthresh / pdivt)
-      args%con = plhthresh
-      args%err = plhthresh - pdivt / flhthresh
+      tmp_cc =  -(1.0D0 - flhthresh * plhthresh / pdivt)
+      tmp_con = plhthresh
+      tmp_err = plhthresh - pdivt / flhthresh
       if (flhthresh > 1.0D0) then
-         args%symbol = '>'
+         tmp_symbol = '>'
       else
-         args%symbol = '<'
+         tmp_symbol = '<'
       end if
-      args%units = 'MW'
+      tmp_units = 'MW'
 
    end subroutine constraint_eqn_015
 
-   subroutine constraint_eqn_016(args)
+   subroutine constraint_eqn_016(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for net electric power lower limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -914,17 +994,21 @@ contains
       use constraint_variables, only: fpnetel, pnetelin
       use heat_transport_variables, only: pnetelmw
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - fpnetel * pnetelmw / pnetelin
-      args%con = pnetelin
-      args%err = pnetelmw - pnetelin / fpnetel
-      args%symbol = '>'
-      args%units = 'MW'
+      tmp_cc =  1.0D0 - fpnetel * pnetelmw / pnetelin
+      tmp_con = pnetelin
+      tmp_err = pnetelmw - pnetelin / fpnetel
+      tmp_symbol = '>'
+      tmp_units = 'MW'
 
    end subroutine constraint_eqn_016
 
-   subroutine constraint_eqn_017(args)
+   subroutine constraint_eqn_017(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for radiation power upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -946,21 +1030,25 @@ contains
       use current_drive_variables, only: pinjmw
       use constraint_variables, only: fradpwr
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      real(dp) :: pradmaxpv
+      real(8) :: pradmaxpv
       !! Maximum possible power/vol that can be radiated (local)
 
       pradmaxpv = pinjmw/vol + palppv*falpha + pchargepv + pohmpv
-      args%cc =  1.0D0 - fradpwr * pradmaxpv / pradpv
-      args%con = pradmaxpv * (1.0D0 - args%cc)
-      args%err = pradpv * args%cc
-      args%symbol = '<'
-      args%units = 'MW/m3'
+      tmp_cc =  1.0D0 - fradpwr * pradmaxpv / pradpv
+      tmp_con = pradmaxpv * (1.0D0 - tmp_cc)
+      tmp_err = pradpv * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'MW/m3'
 
    end subroutine constraint_eqn_017
 
-   subroutine constraint_eqn_018(args)
+   subroutine constraint_eqn_018(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for divertor heat load upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -976,17 +1064,21 @@ contains
       use constraint_variables, only: fhldiv
       use divertor_variables, only: hldivlim, hldiv
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - fhldiv * hldivlim/hldiv
-      args%con = hldivlim * (1.0D0 - args%cc)
-      args%err = hldiv * args%cc
-      args%symbol = '<'
-      args%units = 'MW/m2'
+      tmp_cc =  1.0D0 - fhldiv * hldivlim/hldiv
+      tmp_con = hldivlim * (1.0D0 - tmp_cc)
+      tmp_err = hldiv * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'MW/m2'
 
    end subroutine constraint_eqn_018
 
-   subroutine constraint_eqn_019(args)
+   subroutine constraint_eqn_019(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for MVA upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1003,20 +1095,24 @@ contains
       use tfcoil_variables, only: tfcpmw, tflegmw
       use constraint_variables, only: fmva, mvalim
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
       ! totmva : local real : total MVA in TF coil (MW)
-      real(dp) :: totmva
+      real(8) :: totmva
 
       totmva = tfcpmw + tflegmw
-      args%cc =  1.0D0 - fmva * mvalim/totmva
-      args%con = mvalim * (1.0D0 - args%cc)
-      args%err = totmva * args%cc
-      args%symbol = '<'
-      args%units = 'MVA'
+      tmp_cc =  1.0D0 - fmva * mvalim/totmva
+      tmp_con = mvalim * (1.0D0 - tmp_cc)
+      tmp_err = totmva * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'MVA'
 
    end subroutine constraint_eqn_019
 
-   subroutine constraint_eqn_020(args)
+   subroutine constraint_eqn_020(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for neutral beam tangency radius upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1032,17 +1128,21 @@ contains
       use constraint_variables, only: fportsz
       use current_drive_variables, only: rtanmax, rtanbeam
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - fportsz * rtanmax/rtanbeam
-      args%con = rtanmax * (1.0D0 - args%cc)
-      args%err = rtanbeam * args%cc
-      args%symbol = '<'
-      args%units = 'm'
+      tmp_cc =  1.0D0 - fportsz * rtanmax/rtanbeam
+      tmp_con = rtanmax * (1.0D0 - tmp_cc)
+      tmp_err = rtanbeam * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'm'
 
    end subroutine constraint_eqn_020
 
-   subroutine constraint_eqn_021(args)
+   subroutine constraint_eqn_021(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for minor radius lower limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1059,17 +1159,21 @@ contains
       use physics_variables, only: rminor
       use build_variables, only: aplasmin 
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - frminor * rminor/aplasmin
-      args%con = aplasmin * (1.0D0 - args%cc)
-      args%err = aplasmin * args%cc
-      args%symbol = '>'
-      args%units = ''
+      tmp_cc =  1.0D0 - frminor * rminor/aplasmin
+      tmp_con = aplasmin * (1.0D0 - tmp_cc)
+      tmp_err = aplasmin * tmp_cc
+      tmp_symbol = '>'
+      tmp_units = ''
 
    end subroutine constraint_eqn_021
 
-   subroutine constraint_eqn_022(args)
+   subroutine constraint_eqn_022(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for divertor collision/connection length ratio upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1085,17 +1189,21 @@ contains
       use constraint_variables, only: fdivcol
       use divertor_variables, only: rlenmax, rlclolcn
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - fdivcol * rlenmax / rlclolcn
-      args%con = rlenmax * (1.0D0 - args%cc)
-      args%err = rlclolcn * args%cc
-      args%symbol = '<'
-      args%units = ''
+      tmp_cc =  1.0D0 - fdivcol * rlenmax / rlclolcn
+      tmp_con = rlenmax * (1.0D0 - tmp_cc)
+      tmp_err = rlclolcn * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = ''
 
    end subroutine constraint_eqn_022
 
-   subroutine constraint_eqn_023(args)
+   subroutine constraint_eqn_023(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for conducting shell radius / rminor upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1115,20 +1223,24 @@ contains
       use build_variables, only: scraplo, fwoth, blnkoth
       use constraint_variables, only: fcwr
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
       ! rcw : local real : conducting shell radius (m)
-      real(dp) :: rcw
+      real(8) :: rcw
 
       rcw = rminor + scraplo + fwoth + blnkoth
-      args%cc =  1.0D0 - fcwr * cwrmax*rminor / rcw
-      args%con = cwrmax*rminor * (1.0D0 - args%cc)
-      args%err = rcw * args%cc
-      args%symbol = '<'
-      args%units = 'm'
+      tmp_cc =  1.0D0 - fcwr * cwrmax*rminor / rcw
+      tmp_con = cwrmax*rminor * (1.0D0 - tmp_cc)
+      tmp_err = rcw * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'm'
 
    end subroutine constraint_eqn_023
 
-   subroutine constraint_eqn_024(args)
+   subroutine constraint_eqn_024(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for beta upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1157,41 +1269,45 @@ contains
       use stellarator_variables, only: istell
       use constraint_variables, only: fbetatry
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
       ! Include all beta components: relevant for both tokamaks and stellarators
       if ((iculbl == 0).or.(istell /= 0)) then
-         args%cc =  1.0D0 - fbetatry * betalim/beta
-         args%con = betalim
-         args%err = betalim - beta / fbetatry
-         args%symbol = '<'
-         args%units = ''
+         tmp_cc =  1.0D0 - fbetatry * betalim/beta
+         tmp_con = betalim
+         tmp_err = betalim - beta / fbetatry
+         tmp_symbol = '<'
+         tmp_units = ''
       ! Here, the beta limit applies to only the thermal component, not the fast alpha or neutral beam parts
       else if (iculbl == 1) then
-         args%cc = 1.0D0 - fbetatry * betalim/(beta-betaft-betanb)
-         args%con = betalim
-         args%err = betalim - (beta-betaft-betanb) / fbetatry
-         args%symbol = '<'
-         args%units = ''
+         tmp_cc = 1.0D0 - fbetatry * betalim/(beta-betaft-betanb)
+         tmp_con = betalim
+         tmp_err = betalim - (beta-betaft-betanb) / fbetatry
+         tmp_symbol = '<'
+         tmp_units = ''
       ! Beta limit applies to thermal + neutral beam: components of the total beta, i.e. excludes alphas
       else if (iculbl == 2) then
-         args%cc = 1.0D0 - fbetatry * betalim/(beta-betaft)
-         args%con = betalim * (1.0D0 - args%cc)
-         args%err = (beta-betaft) * args%cc
-         args%symbol = '<'
-         args%units = ''
+         tmp_cc = 1.0D0 - fbetatry * betalim/(beta-betaft)
+         tmp_con = betalim * (1.0D0 - tmp_cc)
+         tmp_err = (beta-betaft) * tmp_cc
+         tmp_symbol = '<'
+         tmp_units = ''
       ! Beta limit applies to toroidal beta
       else if (iculbl == 3) then
-         args%cc =  1.0D0 - fbetatry * betalim/(beta*(btot/bt)**2)
-         args%con = betalim
-         args%err = betalim - (beta*(btot/bt)**2) / fbetatry
-         args%symbol = '<'
-         args%units = ''
+         tmp_cc =  1.0D0 - fbetatry * betalim/(beta*(btot/bt)**2)
+         tmp_con = betalim
+         tmp_err = betalim - (beta*(btot/bt)**2) / fbetatry
+         tmp_symbol = '<'
+         tmp_units = ''
       end if 
 
    end subroutine constraint_eqn_024
 
-   subroutine constraint_eqn_025(args)
+   subroutine constraint_eqn_025(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for peak toroidal field upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1207,17 +1323,21 @@ contains
       use constraint_variables, only: fpeakb, bmxlim
       use tfcoil_variables, only: bmaxtf
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - fpeakb * bmxlim/bmaxtf
-      args%con = bmxlim * (1.0D0 - args%cc)
-      args%err = bmaxtf * args%cc
-      args%symbol = '<'
-      args%units = 'T'
+      tmp_cc =  1.0D0 - fpeakb * bmxlim/bmaxtf
+      tmp_con = bmxlim * (1.0D0 - tmp_cc)
+      tmp_err = bmaxtf * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'T'
 
    end subroutine constraint_eqn_025
 
-   subroutine constraint_eqn_026(args)
+   subroutine constraint_eqn_026(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for Central Solenoid current density upper limit at EOF
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1233,17 +1353,21 @@ contains
       use constraint_variables, only: fjohc
       use pfcoil_variables, only: rjohc, coheof
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - fjohc * rjohc/coheof
-      args%con = rjohc
-      args%err = rjohc - coheof / fjohc
-      args%symbol = '<'
-      args%units = 'A/m2'
+      tmp_cc =  1.0D0 - fjohc * rjohc/coheof
+      tmp_con = rjohc
+      tmp_err = rjohc - coheof / fjohc
+      tmp_symbol = '<'
+      tmp_units = 'A/m2'
 
    end subroutine constraint_eqn_026
 
-   subroutine constraint_eqn_027(args)
+   subroutine constraint_eqn_027(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for Central Solenoid current density upper limit at BOP
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1259,17 +1383,21 @@ contains
       use constraint_variables, only: fjohc0
       use pfcoil_variables, only: rjohc0, cohbop
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - fjohc0 * rjohc0/cohbop
-      args%con = rjohc0
-      args%err = rjohc0 - cohbop / fjohc0
-      args%symbol = '<'
-      args%units = 'A/m2'
+      tmp_cc =  1.0D0 - fjohc0 * rjohc0/cohbop
+      tmp_con = rjohc0
+      tmp_err = rjohc0 - cohbop / fjohc0
+      tmp_symbol = '<'
+      tmp_units = 'A/m2'
 
    end subroutine constraint_eqn_027
 
-   subroutine constraint_eqn_028(args)
+   subroutine constraint_eqn_028(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for fusion gain (big Q) lower limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1293,24 +1421,32 @@ contains
       use current_drive_variables, only: bigq
       use physics_variables, only: ignite
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
       ! if plasma is not ignited ...
       if (ignite == 0) then
-         args%cc =  1.0D0 - fqval * bigq/bigqmin
-         args%con = bigqmin * (1.0D0 - args%cc)
-         args%err = bigqmin * args%cc
-         args%symbol = '>'
-         args%units = ''
+         tmp_cc =  1.0D0 - fqval * bigq/bigqmin
+         tmp_con = bigqmin * (1.0D0 - tmp_cc)
+         tmp_err = bigqmin * tmp_cc
+         tmp_symbol = '>'
+         tmp_units = ''
       ! if plasma is ignited report error
       else
-         args = constraint_args_type(0.0D0, 0.0D0, 0.0D0, '', '')
+         tmp_cc = 0
+        tmp_con = 0
+        tmp_err = 0
+        tmp_symbol = ''
+        tmp_units = ''
          call report_error(4)
       end if 
 
    end subroutine constraint_eqn_028
 
-   subroutine constraint_eqn_029(args)
+   subroutine constraint_eqn_029(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for inboard major radius: This is a consistency equation
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1326,17 +1462,21 @@ contains
       use physics_variables, only: rmajor, rminor
       use build_variables, only: rinboard
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - (rmajor - rminor) / rinboard
-      args%con = rinboard * (1.0D0 - args%cc)
-      args%err = rinboard * args%cc
-      args%symbol = '='
-      args%units = 'm'
+      tmp_cc =  1.0D0 - (rmajor - rminor) / rinboard
+      tmp_con = rinboard * (1.0D0 - tmp_cc)
+      tmp_err = rinboard * tmp_cc
+      tmp_symbol = '='
+      tmp_units = 'm'
 
    end subroutine constraint_eqn_029
 
-   subroutine constraint_eqn_030(args)
+   subroutine constraint_eqn_030(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for injection power upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1352,17 +1492,21 @@ contains
       use current_drive_variables, only: pinjmw, pinjalw
       use constraint_variables, only: fpinj
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - pinjmw / (fpinj * pinjalw)
-      args%con = pinjalw
-      args%err = pinjalw  - pinjmw * fpinj
-      args%symbol = '<'
-      args%units = 'MW'
+      tmp_cc =  1.0D0 - pinjmw / (fpinj * pinjalw)
+      tmp_con = pinjalw
+      tmp_err = pinjalw  - pinjmw * fpinj
+      tmp_symbol = '<'
+      tmp_units = 'MW'
 
    end subroutine constraint_eqn_030
 
-   subroutine constraint_eqn_031(args)
+   subroutine constraint_eqn_031(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for TF coil case stress upper limit (SCTF)
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1378,17 +1522,21 @@ contains
       use constraint_variables, only: fstrcase
       use tfcoil_variables, only: sig_tf_case_max, sig_tf_case
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - fstrcase * sig_tf_case_max/sig_tf_case
-      args%con = sig_tf_case_max
-      args%err = sig_tf_case_max - sig_tf_case / fstrcase
-      args%symbol = '<'
-      args%units = 'Pa'
+      tmp_cc =  1.0D0 - fstrcase * sig_tf_case_max/sig_tf_case
+      tmp_con = sig_tf_case_max
+      tmp_err = sig_tf_case_max - sig_tf_case / fstrcase
+      tmp_symbol = '<'
+      tmp_units = 'Pa'
 
    end subroutine constraint_eqn_031
 
-   subroutine constraint_eqn_032(args)
+   subroutine constraint_eqn_032(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for TF coil conduit stress upper limit (SCTF)
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1404,17 +1552,21 @@ contains
       use constraint_variables, only: fstrcond
       use tfcoil_variables, only: sig_tf_wp_max, sig_tf_wp
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - fstrcond * sig_tf_wp_max/sig_tf_wp
-      args%con = sig_tf_wp_max
-      args%err = sig_tf_wp_max - sig_tf_wp / fstrcond
-      args%symbol = '<'
-      args%units = 'Pa'
+      tmp_cc =  1.0D0 - fstrcond * sig_tf_wp_max/sig_tf_wp
+      tmp_con = sig_tf_wp_max
+      tmp_err = sig_tf_wp_max - sig_tf_wp / fstrcond
+      tmp_symbol = '<'
+      tmp_units = 'Pa'
 
    end subroutine constraint_eqn_032
    
-   subroutine constraint_eqn_033(args)
+   subroutine constraint_eqn_033(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for TF coil operating/critical J upper limit (SCTF)
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1430,17 +1582,21 @@ contains
       use constraint_variables, only: fiooic
       use tfcoil_variables, only: jwdgcrt, jwptf
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - fiooic * jwdgcrt/jwptf
-      args%con = jwdgcrt * (1.0D0 - args%cc)
-      args%err = jwptf * args%cc
-      args%symbol = '<'
-      args%units = 'A/m2'
+      tmp_cc =  1.0D0 - fiooic * jwdgcrt/jwptf
+      tmp_con = jwdgcrt * (1.0D0 - tmp_cc)
+      tmp_err = jwptf * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'A/m2'
 
    end subroutine constraint_eqn_033
    
-   subroutine constraint_eqn_034(args)
+   subroutine constraint_eqn_034(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for TF coil dump voltage upper limit (SCTF)
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1456,17 +1612,21 @@ contains
       use constraint_variables, only: fvdump
       use tfcoil_variables, only: vdalw, vtfskv
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - fvdump * vdalw/vtfskv
-      args%con = vdalw
-      args%err = vdalw - vtfskv
-      args%symbol = '<'
-      args%units = 'V'
+      tmp_cc =  1.0D0 - fvdump * vdalw/vtfskv
+      tmp_con = vdalw
+      tmp_err = vdalw - vtfskv
+      tmp_symbol = '<'
+      tmp_units = 'V'
 
    end subroutine constraint_eqn_034
 
-   subroutine constraint_eqn_035(args)
+   subroutine constraint_eqn_035(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for TF coil J_wp/J_prot upper limit (SCTF)
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1482,17 +1642,21 @@ contains
       use constraint_variables, only: fjprot
       use tfcoil_variables, only: jwdgpro, jwptf
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - fjprot * jwdgpro/jwptf
-      args%con = jwdgpro
-      args%err = jwptf - jwptf
-      args%symbol = '<'
-      args%units = 'A/m2'
+      tmp_cc =  1.0D0 - fjprot * jwdgpro/jwptf
+      tmp_con = jwdgpro
+      tmp_err = jwptf - jwptf
+      tmp_symbol = '<'
+      tmp_units = 'A/m2'
 
    end subroutine constraint_eqn_035
 
-   subroutine constraint_eqn_036(args)
+   subroutine constraint_eqn_036(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for TF coil s/c temperature margin lower limit (SCTF)
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1508,17 +1672,21 @@ contains
       use constraint_variables, only: ftmargtf
       use tfcoil_variables, only: tmargtf, tmargmin_tf
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - ftmargtf * tmargtf/tmargmin_tf
-      args%con = tmargmin_tf
-      args%err = tmargmin_tf - tmargtf
-      args%symbol = '>'
-      args%units = 'K'
+      tmp_cc =  1.0D0 - ftmargtf * tmargtf/tmargmin_tf
+      tmp_con = tmargmin_tf
+      tmp_err = tmargmin_tf - tmargtf
+      tmp_symbol = '>'
+      tmp_units = 'K'
 
    end subroutine constraint_eqn_036
 
-   subroutine constraint_eqn_037(args)
+   subroutine constraint_eqn_037(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for current drive gamma upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1534,17 +1702,21 @@ contains
       use constraint_variables, only: fgamcd, gammax
       use current_drive_variables, only: gamcd
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - fgamcd * gammax/gamcd
-      args%con = gammax * (1.0D0 - args%cc)
-      args%err = gamcd * args%cc
-      args%symbol = '<'
-      args%units = '1E20 A/Wm2'
+      tmp_cc =  1.0D0 - fgamcd * gammax/gamcd
+      tmp_con = gammax * (1.0D0 - tmp_cc)
+      tmp_err = gamcd * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = '1E20 A/Wm2'
 
    end subroutine constraint_eqn_037
 
-   subroutine constraint_eqn_038(args)
+   subroutine constraint_eqn_038(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Obsolete
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! Obsolete
@@ -1552,13 +1724,21 @@ contains
       !! #=#=# empty
       implicit none
 	   ! Dummy formal arguments, for compliance with interface
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args = constraint_args_type(0.0D0, 0.0D0, 0.0D0, '', '')
+      tmp_cc = 0
+        tmp_con = 0
+        tmp_err = 0
+        tmp_symbol = ''
+        tmp_units = ''
 
    end subroutine constraint_eqn_038
 
-   subroutine constraint_eqn_039(args)
+   subroutine constraint_eqn_039(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for first wall temperature upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1574,19 +1754,23 @@ contains
       use constraint_variables, only: ftpeak
       use fwbs_variables, only: tfwmatmax, tpeak
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
       ! If the temperature peak == 0 then report an error
       if (tpeak < 1.0D0) call report_error(5)
-      args%cc =  1.0D0 - ftpeak * tfwmatmax/tpeak
-      args%con = tfwmatmax * (1.0D0 - args%cc)
-      args%err = tpeak * args%cc
-      args%symbol = '<'
-      args%units = 'K'
+      tmp_cc =  1.0D0 - ftpeak * tfwmatmax/tpeak
+      tmp_con = tfwmatmax * (1.0D0 - tmp_cc)
+      tmp_err = tpeak * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'K'
 
    end subroutine constraint_eqn_039
 
-   subroutine constraint_eqn_040(args)
+   subroutine constraint_eqn_040(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for auxiliary power lower limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1602,17 +1786,21 @@ contains
       use constraint_variables, only: fauxmn, auxmin
       use current_drive_variables, only: pinjmw
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - fauxmn * pinjmw/auxmin
-      args%con = auxmin * (1.0D0 - args%cc)
-      args%err = auxmin * args%cc
-      args%symbol = '>'
-      args%units = 'MW'
+      tmp_cc =  1.0D0 - fauxmn * pinjmw/auxmin
+      tmp_con = auxmin * (1.0D0 - tmp_cc)
+      tmp_err = auxmin * tmp_cc
+      tmp_symbol = '>'
+      tmp_units = 'MW'
 
    end subroutine constraint_eqn_040
 
-   subroutine constraint_eqn_041(args)
+   subroutine constraint_eqn_041(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for plasma current ramp-up time lower limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1628,17 +1816,21 @@ contains
       use constraint_variables, only: ftohs, tohsmn
       use times_variables, only: tohs
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - ftohs * tohs/tohsmn
-      args%con = tohsmn * (1.0D0 - args%cc)
-      args%err = tohsmn * args%cc
-      args%symbol = '>'
-      args%units = 'sec'
+      tmp_cc =  1.0D0 - ftohs * tohs/tohsmn
+      tmp_con = tohsmn * (1.0D0 - tmp_cc)
+      tmp_err = tohsmn * tmp_cc
+      tmp_symbol = '>'
+      tmp_units = 'sec'
 
    end subroutine constraint_eqn_041
 
-   subroutine constraint_eqn_042(args)
+   subroutine constraint_eqn_042(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for cycle time lower limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1654,19 +1846,23 @@ contains
       use constraint_variables, only: ftcycl, tcycmn
       use times_variables, only: tcycle
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
       ! if the minimum cycle time == 0 report an error
       if (tcycmn < 1.0D0) call report_error(6)
-      args%cc =  1.0D0 - ftcycl * tcycle/tcycmn
-      args%con = tcycmn * (1.0D0 - args%cc)
-      args%err = tcycmn * args%cc
-      args%symbol = '>'
-      args%units = 'sec'
+      tmp_cc =  1.0D0 - ftcycl * tcycle/tcycmn
+      tmp_con = tcycmn * (1.0D0 - tmp_cc)
+      tmp_err = tcycmn * tmp_cc
+      tmp_symbol = '>'
+      tmp_units = 'sec'
 
    end subroutine constraint_eqn_042
 
-   subroutine constraint_eqn_043(args)
+   subroutine constraint_eqn_043(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for average centrepost temperature: This is a consistency equation (TART)
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1686,7 +1882,11 @@ contains
       use tfcoil_variables, only:  i_tf_sup
 
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
       ! if the machine isn't a ST then report error
       if (itart == 0) call report_error(7)
@@ -1697,11 +1897,11 @@ contains
          tcpav2 = tcpav2 - 273.15D0
       end if
 
-      args%cc =   1.0D0 - tcpav/tcpav2
-      args%con = tcpav2 * (1.0D0 - args%cc)
-      args%err = tcpav2 * args%cc
-      args%symbol = '='
-      args%units = 'deg C'
+      tmp_cc =   1.0D0 - tcpav/tcpav2
+      tmp_con = tcpav2 * (1.0D0 - tmp_cc)
+      tmp_err = tcpav2 * tmp_cc
+      tmp_symbol = '='
+      tmp_units = 'deg C'
 
       ! For some reasons these lines are needed to make VMCON CONVERGE ....
       if ( i_tf_sup == 0 ) then ! Copper case
@@ -1713,7 +1913,7 @@ contains
 
    end subroutine constraint_eqn_043
 
-   subroutine constraint_eqn_044(args)
+   subroutine constraint_eqn_044(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for centrepost temperature upper limit (TART)
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1734,7 +1934,11 @@ contains
       use physics_variables, only: itart
       use tfcoil_variables, only:  i_tf_sup
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
       ! if the machine isn't a ST then report error
       if (itart == 0) call report_error(8)
@@ -1745,11 +1949,11 @@ contains
          tcpmax = tcpmax - 273.15D0
       end if
 
-      args%cc =   1.0D0 - fptemp * ptempalw / tcpmax
-      args%con = ptempalw * (1.0D0 - args%cc)
-      args%err = tcpmax * args%cc
-      args%symbol = '<'
-      args%units = 'deg C'
+      tmp_cc =   1.0D0 - fptemp * ptempalw / tcpmax
+      tmp_con = ptempalw * (1.0D0 - tmp_cc)
+      tmp_err = tcpmax * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'deg C'
 
       ! For some reasons these lines are needed to make VMCON CONVERGE ....
       if ( i_tf_sup == 0 ) then ! Copper case
@@ -1759,7 +1963,7 @@ contains
 
    end subroutine constraint_eqn_044
 
-   subroutine constraint_eqn_045(args)
+   subroutine constraint_eqn_045(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for edge safety factor lower limit (TART)
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1779,19 +1983,23 @@ contains
       use constraint_variables, only: fq
       use physics_variables, only: q, qlim, itart
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
       ! if the machine isn't a ST then report error
       if (itart == 0) call report_error(9)
-      args%cc =   1.0D0 - fq * q/qlim
-      args%con = qlim * (1.0D0 - args%cc)
-      args%err = qlim * args%cc
-      args%symbol = '<'
-      args%units = ''
+      tmp_cc =   1.0D0 - fq * q/qlim
+      tmp_con = qlim * (1.0D0 - tmp_cc)
+      tmp_err = qlim * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = ''
 
    end subroutine constraint_eqn_045
 
-   subroutine constraint_eqn_046(args)
+   subroutine constraint_eqn_046(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for Ip/Irod upper limit (TART)
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1813,21 +2021,25 @@ contains
       use tfcoil_variables, only: ritfc
       implicit none
       ! cratmx : local real : maximum ratio of plasma current to centrepost current
-      real(dp) :: cratmx
-      type (constraint_args_type), intent(out) :: args
+      real(8) :: cratmx
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
       ! if the machine isn't a ST then report error
       if (itart == 0) call report_error(10)
       cratmx = 1.0D0 + 4.91D0*(eps-0.62D0)
-      args%cc =  1.0D0 - fipir * cratmx * ritfc/plascur
-      args%con = cratmx * (1.0D0 - args%cc)
-      args%err = plascur/ritfc * args%cc
-      args%symbol = '<'
-      args%units = ''
+      tmp_cc =  1.0D0 - fipir * cratmx * ritfc/plascur
+      tmp_con = cratmx * (1.0D0 - tmp_cc)
+      tmp_err = plascur/ritfc * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = ''
 
    end subroutine constraint_eqn_046
 
-   subroutine constraint_eqn_047(args)
+   subroutine constraint_eqn_047(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Issue #508 Remove RFP option: Relevant only to reversed field pinch devices
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! Issue #508 Remove RFP option: Relevant only to reversed field pinch devices
@@ -1836,13 +2048,21 @@ contains
       !! #=#=# empty
       implicit none
       ! Dummy formal arguments, just to comply with the subroutine interface
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args = constraint_args_type(0.0D0, 0.0D0, 0.0D0, '', '')
+      tmp_cc = 0
+        tmp_con = 0
+        tmp_err = 0
+        tmp_symbol = ''
+        tmp_units = ''
 
    end subroutine constraint_eqn_047
    
-   subroutine constraint_eqn_048(args)
+   subroutine constraint_eqn_048(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for poloidal beta upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1858,30 +2078,42 @@ contains
       use constraint_variables, only: fbetap, betpmx
       use physics_variables, only: betap
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - fbetap * betpmx/betap
-      args%con = betpmx * (1.0D0 - args%cc)
-      args%err = betap * args%cc
-      args%symbol = '<'
-      args%units = ''
+      tmp_cc =  1.0D0 - fbetap * betpmx/betap
+      tmp_con = betpmx * (1.0D0 - tmp_cc)
+      tmp_err = betap * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = ''
 
    end subroutine constraint_eqn_048
 
-   subroutine constraint_eqn_049(args)
+   subroutine constraint_eqn_049(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Issue #508 Remove IFE option: Equation for repetition rate upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! Issue #508 Remove IFE option: Equation for repetition rate upper limit
       !! #=# empty
       !! #=#=# empty
       ! Dummy formal arguments, just to comply with the subroutine interface
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args = constraint_args_type(0.0D0, 0.0D0, 0.0D0, '', '')
+      tmp_cc = 0
+        tmp_con = 0
+        tmp_err = 0
+        tmp_symbol = ''
+        tmp_units = ''
 
    end subroutine constraint_eqn_049
 
-   subroutine constraint_eqn_050(args)
+   subroutine constraint_eqn_050(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! IFE option: Equation for repetition rate upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! author: S I Muldrew, CCFE, Culham Science Centre
@@ -1890,21 +2122,25 @@ contains
       !! #=#=# frrmax, rrmax
       use ife_variables, only: frrmax, ife, rrmax, reprat
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
       if (ife /= 1) then
          call report_error(12)
       end if
 
-      args%cc =  1.0D0 - frrmax * rrmax/reprat
-      args%con = rrmax * (1.0D0 - args%cc)
-      args%err = reprat * args%cc
-      args%symbol = '<'
-      args%units = 'Hz'
+      tmp_cc =  1.0D0 - frrmax * rrmax/reprat
+      tmp_con = rrmax * (1.0D0 - tmp_cc)
+      tmp_err = reprat * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'Hz'
 
    end subroutine constraint_eqn_050
 
-   subroutine constraint_eqn_051(args)
+   subroutine constraint_eqn_051(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation to enforce startup flux = available startup flux
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1920,17 +2156,21 @@ contains
       use physics_variables, only: vsres, vsind
       use pfcoil_variables, only: vssu, fvssu
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - fvssu * abs((vsres+vsind) / vssu)
-      args%con = vssu * (1.0D0 - args%cc)
-      args%err = vssu * args%cc
-      args%symbol = '='
-      args%units = 'V.s'
+      tmp_cc =  1.0D0 - fvssu * abs((vsres+vsind) / vssu)
+      tmp_con = vssu * (1.0D0 - tmp_cc)
+      tmp_err = vssu * tmp_cc
+      tmp_symbol = '='
+      tmp_units = 'V.s'
 
    end subroutine constraint_eqn_051
 
-   subroutine constraint_eqn_052(args)
+   subroutine constraint_eqn_052(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for tritium breeding ratio lower limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1947,17 +2187,21 @@ contains
       use constraint_variables, only: ftbr, tbrmin
       use fwbs_variables, only: tbr
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - ftbr * tbr/tbrmin
-      args%con = tbrmin * (1.0D0 - args%cc)
-      args%err = tbrmin * args%cc
-      args%symbol = '>'
-      args%units = ''
+      tmp_cc =  1.0D0 - ftbr * tbr/tbrmin
+      tmp_con = tbrmin * (1.0D0 - tmp_cc)
+      tmp_err = tbrmin * tmp_cc
+      tmp_symbol = '>'
+      tmp_units = ''
 
    end subroutine constraint_eqn_052
 
-   subroutine constraint_eqn_053(args)
+   subroutine constraint_eqn_053(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for fast neutron fluence on TF coil upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1973,17 +2217,21 @@ contains
       use constraint_variables, only: fflutf, nflutfmax
       use fwbs_variables, only: nflutf
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - fflutf * nflutfmax/nflutf
-      args%con = nflutfmax * (1.0D0 - args%cc)
-      args%err = nflutf * args%cc
-      args%symbol = '<'
-      args%units = 'neutron/m2'
+      tmp_cc =  1.0D0 - fflutf * nflutfmax/nflutf
+      tmp_con = nflutfmax * (1.0D0 - tmp_cc)
+      tmp_err = nflutf * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'neutron/m2'
 
    end subroutine constraint_eqn_053
 
-   subroutine constraint_eqn_054(args)
+   subroutine constraint_eqn_054(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for peak TF coil nuclear heating upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -1999,17 +2247,21 @@ contains
       use constraint_variables, only: fptfnuc, ptfnucmax
       use fwbs_variables, only: ptfnucpm3
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc = 1.0D0 - fptfnuc * ptfnucmax/ptfnucpm3
-      args%con = ptfnucmax * (1.0D0 - args%cc)
-      args%err = ptfnucpm3 * args%cc
-      args%symbol = '<'
-      args%units = 'MW/m3'
+      tmp_cc = 1.0D0 - fptfnuc * ptfnucmax/ptfnucpm3
+      tmp_con = ptfnucmax * (1.0D0 - tmp_cc)
+      tmp_err = ptfnucpm3 * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'MW/m3'
 
    end subroutine constraint_eqn_054
 
-   subroutine constraint_eqn_055(args)
+   subroutine constraint_eqn_055(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for helium concentration in vacuum vessel upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2030,22 +2282,30 @@ contains
       use constraint_variables, only: fvvhe, vvhealw
       use fwbs_variables, only: vvhemax, iblanket
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
       if (iblanket == 2) then
-         args%cc = 1.0D0 - fvvhe * vvhealw/vvhemax
-         args%con = vvhealw * (1.0D0 - args%cc)
-         args%err = vvhemax * args%cc
-         args%symbol = '<'
-         args%units = 'appm'
+         tmp_cc = 1.0D0 - fvvhe * vvhealw/vvhemax
+         tmp_con = vvhealw * (1.0D0 - tmp_cc)
+         tmp_err = vvhemax * tmp_cc
+         tmp_symbol = '<'
+         tmp_units = 'appm'
       else ! iblanket /= 2
-         args = constraint_args_type(0.0D0, 0.0D0, 0.0D0, '', '')
+         tmp_cc = 0
+        tmp_con = 0
+        tmp_err = 0
+        tmp_symbol = ''
+        tmp_units = ''
          call report_error(173)
       end if
 
    end subroutine constraint_eqn_055
 
-   subroutine constraint_eqn_056(args)
+   subroutine constraint_eqn_056(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for power through separatrix / major radius upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2062,43 +2322,63 @@ contains
       use constraint_variables, only: fpsepr, pseprmax
       use physics_variables, only: pdivt, rmajor
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc = 1.0D0 - fpsepr * pseprmax / (pdivt/rmajor)
-      args%con = pseprmax * (1.0D0 - args%cc)
-      args%err = (pdivt/rmajor) * args%cc
-      args%symbol = '<'
-      args%units = 'MW/m'
+      tmp_cc = 1.0D0 - fpsepr * pseprmax / (pdivt/rmajor)
+      tmp_con = pseprmax * (1.0D0 - tmp_cc)
+      tmp_err = (pdivt/rmajor) * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'MW/m'
 
    end subroutine constraint_eqn_056
 
-   subroutine constraint_eqn_057(args)
+   subroutine constraint_eqn_057(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Obsolete
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! Obsolete
       !! #=# empty
       !! #=#=# empty
       ! Dummy formal arguments, just to comply with the subroutine interface
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args = constraint_args_type(0.0D0, 0.0D0, 0.0D0, '', '')
+      tmp_cc = 0
+        tmp_con = 0
+        tmp_err = 0
+        tmp_symbol = ''
+        tmp_units = ''
 
    end subroutine constraint_eqn_057
 
-   subroutine constraint_eqn_058(args)
+   subroutine constraint_eqn_058(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Obsolete
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! Obsolete
       !! #=# empty
       !! #=#=# empty
       ! Dummy formal arguments, just to comply with the subroutine interface
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args = constraint_args_type(0.0D0, 0.0D0, 0.0D0, '', '')
+      tmp_cc = 0
+        tmp_con = 0
+        tmp_err = 0
+        tmp_symbol = ''
+        tmp_units = ''
 
    end subroutine constraint_eqn_058
 
-   subroutine constraint_eqn_059(args)
+   subroutine constraint_eqn_059(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for neutral beam shine-through fraction upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2114,15 +2394,19 @@ contains
       use constraint_variables, only: fnbshinef, nbshinefmax
       use current_drive_variables, only: nbshinef
       implicit none
-      type (constraint_args_type), intent(out) :: args
-      args%cc = 1.0D0 - fnbshinef * nbshinefmax / nbshinef
-      args%con = nbshinefmax * (1.0D0 - args%cc)
-      args%err = nbshinef * args%cc
-      args%symbol = '<'
-      args%units = ''
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
+      tmp_cc = 1.0D0 - fnbshinef * nbshinefmax / nbshinef
+      tmp_con = nbshinefmax * (1.0D0 - tmp_cc)
+      tmp_err = nbshinef * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = ''
    end subroutine constraint_eqn_059
    
-   subroutine constraint_eqn_060(args)
+   subroutine constraint_eqn_060(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for Central Solenoid s/c temperature margin lower limi
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2139,17 +2423,21 @@ contains
       use pfcoil_variables, only: tmargoh
       use tfcoil_variables, only: tmargmin_cs
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc = 1.0D0 - ftmargoh * tmargoh/tmargmin_cs
-      args%con = tmargmin_cs
-      args%err = tmargmin_cs - tmargoh
-      args%symbol = '>'
-      args%units = 'K'
+      tmp_cc = 1.0D0 - ftmargoh * tmargoh/tmargmin_cs
+      tmp_con = tmargmin_cs
+      tmp_err = tmargmin_cs - tmargoh
+      tmp_symbol = '>'
+      tmp_units = 'K'
 
    end subroutine constraint_eqn_060
    
-   subroutine constraint_eqn_061(args)
+   subroutine constraint_eqn_061(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for availability limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2164,17 +2452,21 @@ contains
       !! avail_min : input real : Minimum availability
       use cost_variables, only: favail, cfactr, avail_min
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc = 1.0D0 - favail * cfactr / avail_min
-      args%con = avail_min * (1.0D0 - args%cc)
-      args%err = cfactr * args%cc
-      args%symbol = '>'
-      args%units = ''
+      tmp_cc = 1.0D0 - favail * cfactr / avail_min
+      tmp_con = avail_min * (1.0D0 - tmp_cc)
+      tmp_err = cfactr * tmp_cc
+      tmp_symbol = '>'
+      tmp_units = ''
 
    end subroutine constraint_eqn_061
 
-   subroutine constraint_eqn_062(args)
+   subroutine constraint_eqn_062(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Lower limit on taup/taueff the ratio of alpha particle to energy confinement times
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2191,17 +2483,21 @@ contains
       use constraint_variables, only: ftaulimit, taulimit
       use physics_variables, only: taup, taueff
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc = 1.0D0 - ftaulimit * (taup / taueff) / taulimit
-      args%con = taulimit
-      args%err = (taup / taueff) * args%cc
-      args%symbol = '>'
-      args%units = ''
+      tmp_cc = 1.0D0 - ftaulimit * (taup / taueff) / taulimit
+      tmp_con = taulimit
+      tmp_err = (taup / taueff) * tmp_cc
+      tmp_symbol = '>'
+      tmp_units = ''
 
    end subroutine constraint_eqn_062
 
-   subroutine constraint_eqn_063(args)
+   subroutine constraint_eqn_063(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Upper limit on niterpump (vacuum_model = simple)
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2218,17 +2514,21 @@ contains
       use tfcoil_variables, only: n_tf
       use vacuum_variables, only: niterpump
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc = 1.0D0 - fniterpump * n_tf / niterpump
-      args%con = n_tf
-      args%err = n_tf * args%cc
-      args%symbol = '<'
-      args%units = ''
+      tmp_cc = 1.0D0 - fniterpump * n_tf / niterpump
+      tmp_con = n_tf
+      tmp_err = n_tf * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = ''
 
    end subroutine constraint_eqn_063
 
-   subroutine constraint_eqn_064(args)
+   subroutine constraint_eqn_064(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Upper limit on Zeff
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2244,17 +2544,21 @@ contains
       use constraint_variables, only: fzeffmax, zeffmax
       use physics_variables, only: zeff
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc = 1.0D0 - fzeffmax * (zeffmax/zeff)
-      args%con = zeffmax
-      args%err = zeffmax * args%cc
-      args%symbol = '<'
-      args%units = ''
+      tmp_cc = 1.0D0 - fzeffmax * (zeffmax/zeff)
+      tmp_con = zeffmax
+      tmp_err = zeffmax * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = ''
 
    end subroutine constraint_eqn_064
 
-   subroutine constraint_eqn_065(args)
+   subroutine constraint_eqn_065(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Limit TF dump time to calculated quench time (IDM: 2MBSE3)
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2270,17 +2574,21 @@ contains
       use constraint_variables, only: ftaucq
       use tfcoil_variables, only: tdmptf, taucq
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0d0 - ftaucq * tdmptf / taucq
-      args%con = taucq
-      args%err = taucq - tdmptf
-      args%symbol = '>'
-      args%units = 's'
+      tmp_cc =  1.0d0 - ftaucq * tdmptf / taucq
+      tmp_con = taucq
+      tmp_err = taucq - tdmptf
+      tmp_symbol = '>'
+      tmp_units = 's'
 
    end subroutine constraint_eqn_065
 
-   subroutine constraint_eqn_066(args)
+   subroutine constraint_eqn_066(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Limit on rate of change of energy in poloidal field
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2296,17 +2604,21 @@ contains
       use constraint_variables, only: fpoloidalpower 
       use pf_power_variables, only: maxpoloidalpower, peakpoloidalpower
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc = 1.0d0 - fpoloidalpower * maxpoloidalpower / peakpoloidalpower
-      args%con = maxpoloidalpower
-      args%err = maxpoloidalpower * args%cc
-      args%symbol = '<'
-      args%units = 'MW'
+      tmp_cc = 1.0d0 - fpoloidalpower * maxpoloidalpower / peakpoloidalpower
+      tmp_con = maxpoloidalpower
+      tmp_err = maxpoloidalpower * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'MW'
 
    end subroutine constraint_eqn_066
 
-   subroutine constraint_eqn_067(args)
+   subroutine constraint_eqn_067(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Simple upper limit on radiation wall load
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2321,17 +2633,21 @@ contains
       !! peakradwallload : input real : Peak radiation wall load (MW/m^2)
       use constraint_variables, only: fradwall, maxradwallload, peakradwallload
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc = 1.0d0 - fradwall * maxradwallload / peakradwallload
-      args%con = maxradwallload
-      args%err =  maxradwallload * args%cc
-      args%symbol = '<'
-      args%units = 'MW/m^2'
+      tmp_cc = 1.0d0 - fradwall * maxradwallload / peakradwallload
+      tmp_con = maxradwallload
+      tmp_err =  maxradwallload * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'MW/m^2'
 
    end subroutine constraint_eqn_067
 
-   subroutine constraint_eqn_068(args)
+   subroutine constraint_eqn_068(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! New Psep scaling (PsepB/qAR)
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2352,17 +2668,21 @@ contains
       use constraint_variables, only: fpsepbqar, psepbqarmax
       use physics_variables, only: pdivt, bt, q95, aspect, rmajor
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc = 1.0d0 - fpsepbqar * psepbqarmax / ((pdivt*bt)/(q95*aspect*rmajor))
-      args%con = psepbqarmax
-      args%err = (pdivt*bt)/(q95*aspect*rmajor) - psepbqarmax
-      args%symbol = '<'
-      args%units = 'MWT/m'
+      tmp_cc = 1.0d0 - fpsepbqar * psepbqarmax / ((pdivt*bt)/(q95*aspect*rmajor))
+      tmp_con = psepbqarmax
+      tmp_err = (pdivt*bt)/(q95*aspect*rmajor) - psepbqarmax
+      tmp_symbol = '<'
+      tmp_units = 'MWT/m'
 
    end subroutine constraint_eqn_068
 
-   subroutine constraint_eqn_069(args)
+   subroutine constraint_eqn_069(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Ensure separatrix power is less than value from Kallenbach divertor
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2378,17 +2698,21 @@ contains
       use div_kal_vars, only: psep_kallenbach
       use physics_variables, only: pdivt
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc = 1.0d0 - (psep_kallenbach/1.0d6) / pdivt
-      args%con = psep_kallenbach/1.0d6
-      args%err = psep_kallenbach/1.0d6 * args%cc
-      args%symbol = '='
-      args%units = 'MW'
+      tmp_cc = 1.0d0 - (psep_kallenbach/1.0d6) / pdivt
+      tmp_con = psep_kallenbach/1.0d6
+      tmp_err = psep_kallenbach/1.0d6 * tmp_cc
+      tmp_symbol = '='
+      tmp_units = 'MW'
 
    end subroutine constraint_eqn_069
    
-   subroutine constraint_eqn_070(args)
+   subroutine constraint_eqn_070(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Separatrix density consistency
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2403,17 +2727,21 @@ contains
       use div_kal_vars, only: teomp
       use  physics_variables, only: tesep
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc = 1.0D0 - teomp/(1000.0D0*tesep)
-      args%con = teomp
-      args%err = teomp* args%cc
-      args%symbol = '='
-      args%units = 'eV'
+      tmp_cc = 1.0D0 - teomp/(1000.0D0*tesep)
+      tmp_con = teomp
+      tmp_err = teomp* tmp_cc
+      tmp_symbol = '='
+      tmp_units = 'eV'
 
    end subroutine constraint_eqn_070
 
-   subroutine constraint_eqn_071(args)
+   subroutine constraint_eqn_071(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Separatrix density consistency
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2429,17 +2757,21 @@ contains
       use div_kal_vars, only: neomp, neratio
       use physics_variables, only: nesep
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc = 1.0D0 - neomp/(nesep*neratio)
-      args%con = neomp
-      args%err = neomp* args%cc
-      args%symbol = '='
-      args%units = 'm-3'
+      tmp_cc = 1.0D0 - neomp/(nesep*neratio)
+      tmp_con = neomp
+      tmp_err = neomp* tmp_cc
+      tmp_symbol = '='
+      tmp_units = 'm-3'
 
    end subroutine constraint_eqn_071
 		   
-   subroutine constraint_eqn_072(args)
+   subroutine constraint_eqn_072(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Central Solenoid Tresca stress limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2454,7 +2786,7 @@ contains
       !!  - CS stress at flux swing (no current in CS) from the TF inward pressure
       !! This allow to cover the 2 worst stress scenario in the bucked and wedged design
       !! Otherwise (free standing TF), the stress limits are only set by the CS stress at max current
-      !! Reverse the sign so it works as an inequality constraint (args%cc > 0)
+      !! Reverse the sign so it works as an inequality constraint (tmp_cc > 0)
       !! This will have no effect if it is used as an equality constraint because it will be squared.
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
@@ -2468,26 +2800,30 @@ contains
       use pfcoil_variables, only: alstroh, s_tresca_oh
       use tfcoil_variables, only: sig_tf_cs_bucked, i_tf_bucking
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
       ! bucked and wedged desing (see subroutine comment)
       if ( i_tf_bucking >= 2 ) then
-         args%cc = 1.0d0 - foh_stress * alstroh / max(s_tresca_oh, sig_tf_cs_bucked)
-         args%err = alstroh - max(s_tresca_oh, sig_tf_cs_bucked)
+         tmp_cc = 1.0d0 - foh_stress * alstroh / max(s_tresca_oh, sig_tf_cs_bucked)
+         tmp_err = alstroh - max(s_tresca_oh, sig_tf_cs_bucked)
       
       ! Free standing CS
       else 
-         args%cc = 1.0d0 - foh_stress * alstroh / s_tresca_oh
-         args%err = alstroh - s_tresca_oh
+         tmp_cc = 1.0d0 - foh_stress * alstroh / s_tresca_oh
+         tmp_err = alstroh - s_tresca_oh
       end if
 
-      args%con = alstroh
-      args%symbol = '<'
-      args%units = 'Pa'
+      tmp_con = alstroh
+      tmp_symbol = '<'
+      tmp_units = 'Pa'
 
    end subroutine constraint_eqn_072
    
-   subroutine constraint_eqn_073(args)
+   subroutine constraint_eqn_073(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Ensure separatrix power is greater than the L-H power + auxiliary power
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2504,17 +2840,21 @@ contains
       use physics_variables, only: fplhsep, plhthresh, pdivt
       use current_drive_variables, only: pinjmw
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc = 1.0d0 - fplhsep * pdivt / (plhthresh+pinjmw)
-      args%con = pdivt
-      args%err = pdivt * args%cc
-      args%symbol = '>'
-      args%units = 'MW'
+      tmp_cc = 1.0d0 - fplhsep * pdivt / (plhthresh+pinjmw)
+      tmp_con = pdivt
+      tmp_err = pdivt * tmp_cc
+      tmp_symbol = '>'
+      tmp_units = 'MW'
 
    end subroutine constraint_eqn_073
 
-   subroutine constraint_eqn_074(args)
+   subroutine constraint_eqn_074(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Ensure TF coil quench temperature < tmax_croco ONLY used for croco HTS coil
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2530,17 +2870,21 @@ contains
       use constraint_variables, only: fcqt
       use tfcoil_variables, only: croco_quench_temperature, tmax_croco
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc = 1.0d0 - fcqt * tmax_croco / croco_quench_temperature 
-      args%con = croco_quench_temperature
-      args%err = croco_quench_temperature * args%cc
-      args%symbol = '<'
-      args%units = 'K'
+      tmp_cc = 1.0d0 - fcqt * tmax_croco / croco_quench_temperature 
+      tmp_con = croco_quench_temperature
+      tmp_err = croco_quench_temperature * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'K'
 
    end subroutine constraint_eqn_074
 
-   subroutine constraint_eqn_075(args)
+   subroutine constraint_eqn_075(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Ensure that TF coil current / copper area < Maximum value
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2556,17 +2900,21 @@ contains
       !! f_coppera_m2 : input real : 
       use rebco_variables, only: copperA_m2, copperA_m2_max, f_coppera_m2
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc = 1.0d0 - f_coppera_m2 * copperA_m2_max / copperA_m2
-      args%con = copperA_m2
-      args%err = copperA_m2 * args%cc
-      args%symbol = '<'
-      args%units = 'A/m2'
+      tmp_cc = 1.0d0 - f_coppera_m2 * copperA_m2_max / copperA_m2
+      tmp_con = copperA_m2
+      tmp_err = copperA_m2 * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'A/m2'
 
    end subroutine constraint_eqn_075
 
-   subroutine constraint_eqn_076(args)
+   subroutine constraint_eqn_076(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Eich critical separatrix density model: Added for issue 558
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2587,21 +2935,25 @@ contains
                                    aspect, pdivt, dlimit, nesep
       use constraint_variables, only: fnesep
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
       alpha_crit = (kappa ** 1.2D0) * (1.0D0 + 1.5D0 * triang)
       nesep_crit = 5.9D0 * alpha_crit * (aspect ** (-2.0D0/7.0D0)) * &
                 (((1.0D0 + (kappa ** 2.0D0)) / 2.0D0) ** (-6.0D0/7.0D0)) &
                 * ((pdivt* 1.0D6) ** (-11.0D0/70.0D0)) * dlimit(7)
-      args%cc = 1.0D0 - fnesep * nesep_crit/nesep
-      args%con = nesep
-      args%err = nesep * args%cc
-      args%symbol = '<'
-      args%units = 'm-3'
+      tmp_cc = 1.0D0 - fnesep * nesep_crit/nesep
+      tmp_con = nesep
+      tmp_err = nesep * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'm-3'
 
    end subroutine constraint_eqn_076
 		   
-   subroutine constraint_eqn_077(args)
+   subroutine constraint_eqn_077(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for maximum TF current per turn upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; residual error in physical units; output string; units string
@@ -2616,17 +2968,21 @@ contains
       use constraint_variables, only: fcpttf 
       use tfcoil_variables, only: cpttf_max, cpttf
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc = 1.0D0 - fcpttf * cpttf_max/cpttf
-      args%con = cpttf_max
-      args%err = cpttf_max * args%cc
-      args%symbol = '<'
-      args%units = 'A/turn'
+      tmp_cc = 1.0D0 - fcpttf * cpttf_max/cpttf
+      tmp_con = cpttf_max
+      tmp_err = cpttf_max * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'A/turn'
 
    end subroutine constraint_eqn_077
 
-   subroutine constraint_eqn_078(args)
+   subroutine constraint_eqn_078(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for Reinke criterion, divertor impurity fraction lower limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; residual error in physical units; output string; units string
@@ -2642,23 +2998,27 @@ contains
       use constraint_variables, only: freinke
       use reinke_variables, only: fzactual, fzmin
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
       ! write(*,*) 'freinke, fzact, fzmin = ', freinke, ', ', fzactual, ', ', fzmin
       !            1.0,    0.0,   value
-      args%cc = 1.0D0 - freinke *  fzactual/fzmin
+      tmp_cc = 1.0D0 - freinke *  fzactual/fzmin
       !The following two pre-existing lines are not understood:
       !KE note - cc is always 1, code never enters IF statement...
-      args%con = fzmin * (1.0D0 - args%cc)
-      args%err = fzmin * args%cc
-      args%symbol = '>'
-      args%units  = ''
-      ! write(*,*) 'cc, con = ', args%cc, ', ', args%con
+      tmp_con = fzmin * (1.0D0 - tmp_cc)
+      tmp_err = fzmin * tmp_cc
+      tmp_symbol = '>'
+      tmp_units  = ''
+      ! write(*,*) 'cc, con = ', tmp_cc, ', ', tmp_con
       ! write(*,*) 'freinke, fzactual, fzmin = ', freinke, ', ', fzactual, ', ', fzmin
 
    end subroutine constraint_eqn_078
 
-   subroutine constraint_eqn_079(args)
+   subroutine constraint_eqn_079(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for maximum CS field
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; residual error in physical units; output string; units string
@@ -2674,17 +3034,21 @@ contains
       !! (Note: original code has "bmaxoh/bmaxoh0 |  peak CS field [T]".)
       use pfcoil_variables, only: fbmaxcs, bmaxcs_lim, bmaxoh0, bmaxoh
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc     = 1.0D0 - fbmaxcs * bmaxcs_lim/max(bmaxoh, bmaxoh0)
-      args%con    = bmaxcs_lim
-      args%err    = max(bmaxoh, bmaxoh0) * args%cc
-      args%symbol = '<'
-      args%units  = 'A/turn'
+      tmp_cc     = 1.0D0 - fbmaxcs * bmaxcs_lim/max(bmaxoh, bmaxoh0)
+      tmp_con    = bmaxcs_lim
+      tmp_err    = max(bmaxoh, bmaxoh0) * tmp_cc
+      tmp_symbol = '<'
+      tmp_units  = 'A/turn'
 
    end subroutine constraint_eqn_079
 
-   subroutine constraint_eqn_080(args)
+   subroutine constraint_eqn_080(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for pdivt lower limit
       !! author: J Morris, Culham Science Centre
       !! args : output structure : residual error; constraint value; residual error in physical units; 
@@ -2700,16 +3064,20 @@ contains
       use constraint_variables, only : pdivtlim
       implicit none
 
-      type (constraint_args_type), intent(out) :: args
-      args%cc     = 1.0D0 - fpdivlim * pdivt / pdivtlim
-      args%con    = pdivtlim
-      args%err    = pdivt * args%cc
-      args%symbol = '>'
-      args%units  = 'MW'
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
+      tmp_cc     = 1.0D0 - fpdivlim * pdivt / pdivtlim
+      tmp_con    = pdivtlim
+      tmp_err    = pdivt * tmp_cc
+      tmp_symbol = '>'
+      tmp_units  = 'MW'
 
    end subroutine constraint_eqn_080
 
-   subroutine constraint_eqn_081(args)
+   subroutine constraint_eqn_081(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Make sure that the central density is larger that the pedestal one
       !! author: S Kahn, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
@@ -2725,16 +3093,20 @@ contains
       use physics_variables, only: ne0, fne0, neped
       implicit none
 
-      type (constraint_args_type), intent(out) :: args
-      args%cc     = 1.0D0 - fne0 * ne0/neped 
-      args%con    = fne0
-      args%err    = fne0 * args%cc
-      args%symbol = '>'
-      args%units  = '/m3'
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
+      tmp_cc     = 1.0D0 - fne0 * ne0/neped 
+      tmp_con    = fne0
+      tmp_err    = fne0 * tmp_cc
+      tmp_symbol = '>'
+      tmp_units  = '/m3'
 
    end subroutine constraint_eqn_081
    
-   subroutine constraint_eqn_082(args)
+   subroutine constraint_eqn_082(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for toroidal consistency of stellarator build
       !! author: J Lion, IPP Greifswald
       !! args : output structure : residual error; constraint value; 
@@ -2748,17 +3120,21 @@ contains
       !! tftort : input real :  total toroidal width of a tf coil
       use tfcoil_variables, only: tftort,ftoroidalgap,toroidalgap
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - ftoroidalgap * toroidalgap/tftort
-      args%con = toroidalgap
-      args%err = toroidalgap - tftort/ftoroidalgap
-      args%symbol = '<'
-      args%units = 'm'
+      tmp_cc =  1.0D0 - ftoroidalgap * toroidalgap/tftort
+      tmp_con = toroidalgap
+      tmp_err = toroidalgap - tftort/ftoroidalgap
+      tmp_symbol = '<'
+      tmp_units = 'm'
 
    end subroutine constraint_eqn_082
 
-   subroutine constraint_eqn_083(args)
+   subroutine constraint_eqn_083(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for radial consistency of stellarator build
       !! author: J Lion, IPP Greifswald
       !! args : output structure : residual error; constraint value; 
@@ -2772,16 +3148,20 @@ contains
       !! required_radial_space : input real :  required space in radial direction
       use build_variables, only: available_radial_space, required_radial_space, f_avspace
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - f_avspace  * available_radial_space/required_radial_space
-      args%con = available_radial_space * (1.0D0 - args%cc)
-      args%err = required_radial_space * args%cc
-      args%symbol = '<'
-      args%units = 'm'
+      tmp_cc =  1.0D0 - f_avspace  * available_radial_space/required_radial_space
+      tmp_con = available_radial_space * (1.0D0 - tmp_cc)
+      tmp_err = required_radial_space * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'm'
    end subroutine constraint_eqn_083
 
-   subroutine constraint_eqn_084(args)
+   subroutine constraint_eqn_084(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for the lower limit of beta
       !! author: J Lion, IPP Greifswald
       !! args : output structure : residual error; constraint value; 
@@ -2798,19 +3178,23 @@ contains
       use physics_variables, only: betalim_lower, beta, betaft
       use constraint_variables, only: fbetatry_lower
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
 
-      args%cc = 1.0D0 - fbetatry_lower * (beta-betaft)/betalim_lower
-      args%con = betalim_lower * (1.0D0 - args%cc)
-      args%err = (beta-betaft) * args%cc
-      args%symbol = '>'
-      args%units = ''
+      tmp_cc = 1.0D0 - fbetatry_lower * (beta-betaft)/betalim_lower
+      tmp_con = betalim_lower * (1.0D0 - tmp_cc)
+      tmp_err = (beta-betaft) * tmp_cc
+      tmp_symbol = '>'
+      tmp_units = ''
 
 
    end subroutine constraint_eqn_084
 
-   subroutine constraint_eqn_085(args)
+   subroutine constraint_eqn_085(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Author : S Kahn
       !! args : output structure : residual error; constraint value; 
       !! residual error in physical units; output string; units string
@@ -2835,34 +3219,38 @@ contains
 
       implicit none
 
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
       !! Constraints output
 
 
       ! The CP lifetime is equal to the the divertor one
       if  ( i_cp_lifetime == 0 ) then
-         args%cc = 1.0D0 - cplife/cplife_input
+         tmp_cc = 1.0D0 - cplife/cplife_input
 
       else if ( i_cp_lifetime == 1 ) then 
-         args%cc = 1.0D0 - cplife/divlife
+         tmp_cc = 1.0D0 - cplife/divlife
 
       ! The CP lifetime is equal to the tritium breeding blankets / FW one
       else if ( i_cp_lifetime == 2 ) then
-         args%cc = 1.0D0 - cplife/bktlife
+         tmp_cc = 1.0D0 - cplife/bktlife
          
       ! The CP lifetime is equal to the 
       else if ( i_cp_lifetime == 3 ) then
-         args%cc = 1.0D0 - cplife/tlife
+         tmp_cc = 1.0D0 - cplife/tlife
       end if
 
-      args%con = divlife * (1.0D0 - args%cc)
-      args%err = divlife * args%cc
-      args%symbol = '='
-      args%units = 'years'
+      tmp_con = divlife * (1.0D0 - tmp_cc)
+      tmp_err = divlife * tmp_cc
+      tmp_symbol = '='
+      tmp_units = 'years'
 
    end subroutine constraint_eqn_085
 
-   subroutine constraint_eqn_086(args)
+   subroutine constraint_eqn_086(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Author : S Kahn
       !! args : output structure : residual error; constraint value; 
       !! residual error in physical units; 
@@ -2871,19 +3259,23 @@ contains
 
       implicit none
 
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
       
       !! Constraints output
-      args%cc = 1.0D0 - t_turn_tf / ( f_t_turn_tf * t_turn_tf_max )
-      args%con = t_turn_tf_max * (1.0D0 - args%cc)
-      args%err = t_turn_tf_max * args%cc
-      args%symbol = '<'
-      args%units = 'm'
+      tmp_cc = 1.0D0 - t_turn_tf / ( f_t_turn_tf * t_turn_tf_max )
+      tmp_con = t_turn_tf_max * (1.0D0 - tmp_cc)
+      tmp_err = t_turn_tf_max * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'm'
 
    end subroutine constraint_eqn_086
 
    
-   subroutine constraint_eqn_087(args)
+   subroutine constraint_eqn_087(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! author: S. Kahn, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
       !! residual error in physical units; output string; units string
@@ -2891,13 +3283,17 @@ contains
       
       use heat_transport_variables, only: crypmw, crypmw_max, f_crypmw
       implicit none
-      type (constraint_args_type), intent(out) :: args
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
-      args%cc =  1.0D0 - f_crypmw * crypmw_max/crypmw
-      args%con = crypmw_max * (1.0D0 - args%cc)
-      args%err = crypmw * args%cc
-      args%symbol = '<'
-      args%units = 'MW'
+      tmp_cc =  1.0D0 - f_crypmw * crypmw_max/crypmw
+      tmp_con = crypmw_max * (1.0D0 - tmp_cc)
+      tmp_err = crypmw * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'MW'
    end subroutine constraint_eqn_087
 
 end module constraints

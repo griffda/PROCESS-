@@ -39,13 +39,13 @@ ER = 1 - ( (-0.000279*T_\mathrm{a}^3 + 0.00109*T_\mathrm{a}^2 - 0.345*T_\mathrm{
 ```
 
 <p style='text-align: justify;'>
+<<<<<<< HEAD
 The input waste heat and the evaporation ratio are used to calculate the amount of water evaporated during plant operation. The total amount of water used is then estimated as a ratio of the evaporated water, as per USGS Report 2014–5184:
 
 [^3] the mean of the observed ratios (1.4) is used here.</p>
+The input waste heat and the evaporation ratio are used to calculate the amount of water evaporated during plant operation. The total amount of water used is then estimated as a ratio of the evaporated water, as per USGS Report 2014–5184[^3]: the mean of the observed ratios (1.4) is used here.</p>
+>>>>>>> develop
 
-### Water Body Cooling
-
-<p style='text-align: justify;'>
 Cooling using water bodies is implemented through either a recirculating system (applicable for ponds and small lakes), or a once-through system (applicable for lakes and rivers).</p>
 
 Recirculating cooling system: A cooling system in which water is circulated through condensers, cooled, and then re-used in the same process.
@@ -65,13 +65,9 @@ In this estimation, the amount of evaporation from ponds, lakes and rivers is si
 As for cooling towers, the input waste heat and <em>ER</em> are used to calculate the amount of water evaporated, and the total amount of water used is then estimated as per USGS Report 2014–5184.
 
 [^3] For a recirculating water system the total water used was defined as equal to the amount evaporated. For a once-through water system the total amount of water used was estimated as a ratio of the evaporated water; the mean of the observed ratios (98.3) was used here.</p>
-
 ## Caveats and Limitations
 
 - For simplicity, the water density used in these calculations is set to a static value applicable to water at 21 degrees Celsius
-- For simplicity, the latent heat of vaporization used in these calculations is set to a static value applicable at 1 atm (100 kPa) air pressure
-- The cooling wind functions applied in the Water Body Cooling are applicable only up to a maximum wind speed of ~5 m/s and assume an initial water body temperature < 25 degrees Celsius
-
 ## References
 
 [^1]: J Macknick and R Newmark and G Heath and K C Hallett, Operational water consumption and withdrawal factors for electricity generating technologies: a review of existing literature, 2012, Environ. Res. Lett. 7 045802, https://doi.org/10.1088/1748-9326/7/4/045802

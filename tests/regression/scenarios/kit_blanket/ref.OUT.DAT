@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-378-g8e646ccf
-    Branch : 1345-elongation-scaleable-with-aspect-ratio
+   Tag No. : v2.1-450-g4091e822
+    Branch : 1365-investigate-memory-errors
    Git log : COMMIT_MSG
- Date/time : 30 Sep 2021 12:03:18 +01:00(hh:mm) UTC
-      User : rhicha
-  Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-130/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-130/test_scenario_kit_blanket_0/IN.DAT
+ Date/time :  7 Sep 2021 14:00:23 +00:00(hh:mm) UTC
+      User : root
+  Computer : 9028c87c1f7f
+ Directory : /root/process
+     Input : /tmp/pytest-of-root/pytest-40/test_scenario_kit_blanket_0/IN.DAT
  Run title : Michael's test file
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
