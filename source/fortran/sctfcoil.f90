@@ -1928,10 +1928,13 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! Stress model not valid the TF does not contain any hole
     ! Rem SK : Can be easily ameneded playing around the boundary conditions
     if ( abs(r_tf_inboard_in) < epsilon(r_tf_inboard_in) ) then
-        call report_error(245)
-        sig_tf_case = 0.0D0
-        sig_tf_wp = 0.0D0
-        return
+        ! New extended plane strain model can handle it
+        if ( i_tf_plane_stress /= 2 ) then
+            call report_error(245)
+            sig_tf_case = 0.0D0
+            sig_tf_wp = 0.0D0
+            return
+        end if
     end if
 
 
@@ -2195,8 +2198,11 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !                  to allow stress calculations 
     ! Rem SK : Can be easily ameneded playing around the boundary conditions
     if ( abs(radtf(1)) < epsilon(radtf(1)) ) then
-        call report_error(245)
-        radtf(1) = 1.0D-9
+        ! New extended plane strain model can handle it
+        if ( i_tf_plane_stress /= 2 ) then
+            call report_error(245)
+            radtf(1) = 1.0D-9
+        end if
     end if
     ! ---
 
@@ -2393,7 +2399,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! ----------------
     do ii = 1, n_tf_layer
         sig_max = 0.0D0
-        ii_max = 0
+        ii_max = 1
 
         do jj = (ii-1)*n_radial_array + 1, ii*n_radial_array
 
@@ -3503,54 +3509,8 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     
     
     ! Seb Kahn version
-    ! Lorentz body force parametres
-    real(dp), dimension(nlayers) :: alpha
-    real(dp), dimension(nlayers) :: beta
-      
-    ! Toroidal plane / vertical direction hooke's law coeficient
-    real(dp), dimension(nlayers) :: kk_p
-    real(dp), dimension(nlayers) :: kk_z
-
-    ! Toroidal plan to vertical direction poisson's squared coefficient
-    real(dp), dimension(nlayers) :: nu_z_eff2
-    
-    ! Body force parameter in displacement differential equation
-    real(dp), dimension(nlayers) :: fr_par
-
-    ! Radial/toroidal stress constant parameters
-    real(dp), dimension(nlayers) :: cc_par_sig
-    real(dp), dimension(nlayers) :: alpha_par_sigr
-    real(dp), dimension(nlayers) :: alpha_par_sigt
-    real(dp), dimension(nlayers) :: beta_par_sigr
-    real(dp), dimension(nlayers) :: beta_par_sigt
-
-    ! Layer area
-    real(dp), dimension(nlayers) :: area
-
-    ! Vertical strain parameters
-    real(dp) :: sum_1
-    real(dp) :: sum_2
-    real(dp), dimension(nlayers) :: aleph
-    real(dp), dimension(nlayers) :: beth
-    real(dp), dimension(nlayers) :: par_1
-    real(dp), dimension(nlayers) :: par_2
-
-    ! Matrix encoding the integration constant cc coeficients 
-    real(dp), dimension(2*nlayers, 2*nlayers) :: aa
-
-    ! Vector encoding the alpha/beta (lorentz forces) contribution
-    real(dp), dimension(2*nlayers) :: bb
-
-    ! Integration constants vector (solution)
-    real(dp), dimension(2*nlayers) :: cc
-    real(dp), dimension(nlayers) :: c1, c2
-
     ! Variables used for radial stress distribution     
     real(dp) :: dradius  
-    real(dp) :: inner_layer_curr
-      
-    ! Constraint strains for calculation (on for TF and CS systems)
-    real(dp), dimension(2) :: strain_z_calc
       
     ! Indexes
     integer :: ii  ! Line index in the matrix
@@ -3660,10 +3620,12 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     f_rec_fac = rmu0/2.0D0 * (d_curr * currents_enclosed / pi - d_curr**2 * rad(1:nlayers)**2)
     ! Force density integral that adds to Lame parameter A
     f_int_A   = 0.5D0*f_lin_fac * (rad(2:nlayers+1)**2-rad(1:nlayers)**2) + f_rec_fac * log(rad(2:nlayers+1)/(rad(1:nlayers)))
-    if ( f_rec_fac(1) == 0D0) then
-        print *, 'Alert! Encountered an rad(1) = 0 situation! Correcting for it.'
-        f_int_A(1) = 0.5D0*f_lin_fac(1) * (rad(2)**2-rad(1)**2)
-    end if
+    do ii = 1, nlayers
+        if ( f_rec_fac(ii) == 0D0) then
+            print *, 'Alert! Encountered an rad(1) = 0 situation! Correcting for it.'
+            f_int_A(ii) = 0.5D0*f_lin_fac(ii) * (rad(ii+1)**2-rad(ii)**2)
+        end if
+    end do
     ! Force density integral that adds to Lame parameter B
     f_int_B   = 0.25D0*f_lin_fac * (rad(2:nlayers+1)**4-rad(1:nlayers)**4) + 0.5D0*f_rec_fac * (rad(2:nlayers+1)**2-rad(1:nlayers)**2)
           
@@ -3742,7 +3704,9 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     do kk = 2, nlayers
         ey_fac = ey_bar_t(kk)/ey_bar_t(kk-1);
         M_ext(1,1,kk) = 0.5D0*(ey_fac*(1+nu_bar_t(kk))+1-nu_bar_t(kk-1));
-        M_ext(1,2,kk) = 0.5D0/rad(kk)**2*(1-nu_bar_t(kk-1)-ey_fac*(1-nu_bar_t(kk)));
+        if (rad(kk) > 0D0) then
+            M_ext(1,2,kk) = 0.5D0/rad(kk)**2*(1-nu_bar_t(kk-1)-ey_fac*(1-nu_bar_t(kk)));
+        end if
         M_ext(2,1,kk) = rad(kk)**2*(1-M_ext(1,1,kk));
         M_ext(2,2,kk) = (1-rad(kk)**2*M_ext(1,2,kk));
         M_ext(2,3,kk) = -rad(kk)**2*M_ext(1,3,kk);
