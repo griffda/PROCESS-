@@ -237,7 +237,7 @@
  Beta_g_coefficient______________________________________________________ (dnbeta)______________________      4.9766E+00    
  Normalised_thermal_beta_________________________________________________ ______________________________      1.2367E+00    
  Normalised_total_beta___________________________________________________ ______________________________      1.4203E+00    
- Normalised_toroidal_beta________________________________________________ ______________________________      1.4545E+00    
+ Normalised_toroidal_beta________________________________________________ (normalised_toroidal_beta)____      1.4545E+00    
  Limit_on_thermal_beta___________________________________________________ (betalim)_____________________      5.5444E-02    
  Plasma_thermal_energy_(J)_______________________________________________ ______________________________      9.2048E+08 OP 
  Total_plasma_internal_energy_(J)________________________________________ (total_plasma_internal_energy)      1.0571E+09 OP 
@@ -305,7 +305,7 @@
  Alpha_power:_beam-plasma_(MW)___________________________________________ (palpnb)______________________      0.0000E+00 OP 
  Neutron_power_(MW)______________________________________________________ (pneutmw)_____________________      1.0185E+03 OP 
  Charged_particle_power_(excluding_alphas)_(MW)__________________________ (pchargemw)___________________      9.7441E-01 OP 
- Total_power_deposited_in_plasma_(MW)____________________________________ ()____________________________      2.9452E+02 OP 
+ Total_power_deposited_in_plasma_(MW)____________________________________ (tot_power_plasma)____________      2.9452E+02 OP 
  Bremsstrahlung_radiation_power_(MW)_____________________________________ (pbrempv*vol)_________________      2.1783E+01 OP 
  Line_radiation_power_(MW)_______________________________________________ (plinepv*vol)_________________      9.7477E+00 OP 
  Synchrotron_radiation_power_(MW)________________________________________ (psyncpv*vol)_________________      2.2985E+01 OP 
@@ -414,11 +414,13 @@
  Current_drive_efficiency_model__________________________________________ (iefrf)_______________________             10    
  Auxiliary_power_used_for_plasma_heating_only_(MW)_______________________ (pheat)_______________________      5.0000E+01    
  Power_injected_for_current_drive_(MW)___________________________________ (pcurrentdrivemw)_____________      1.0859E+00    
+ Maximum_Allowed_Bootstrap_current_fraction______________________________ (bscfmax)_____________________      9.9000E-01    
  Fusion_gain_factor_Q____________________________________________________ (bigq)________________________      2.4611E+01 OP 
  Auxiliary_current_drive_(A)_____________________________________________ (auxiliary_cd)________________      5.9414E+04 OP 
  Current_drive_efficiency_(A/W)__________________________________________ (effcd)_______________________      5.4713E-02 OP 
  Normalised_current_drive_efficiency,_gamma_(10^20_A/W-m2)_______________ (gamcd)_______________________      3.0000E-01 OP 
  Wall_plug_to_injector_efficiency________________________________________ (etacd)_______________________      4.0000E-01    
+ ECRH_plasma_heating_efficiency__________________________________________ (gamma_ecrh)__________________      3.0000E-01    
  Bootstrap_fraction______________________________________________________ (bootipf)_____________________      2.1773E-01    
  Diamagnetic_fraction____________________________________________________ (diaipf)______________________      0.0000E+00    
  Pfirsch-Schlueter_fraction______________________________________________ (psipf)_______________________      0.0000E+00    
@@ -515,7 +517,8 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -7.4029E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      2.0024E+00    
  # TF coils  #
- Allowable_Tresca_stress_limit_(Pa)______________________________________ (alstrtf)_____________________      6.6000E+08    
+ Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.6000E+08    
+ Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.6000E+08    
  WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      1.2243E+02 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      1.1098E+02 OP 
  Radial____stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_r_max(1))_____________      2.4424E-08    
@@ -558,7 +561,7 @@
  TF_cross-section_(total)_(m2)___________________________________________ (tfareain)____________________      4.1638E+01    
  Total_steel_cross-section_(m2)__________________________________________ (a_tf_steel*n_tf)_____________      3.1845E+01    
  Total_steel_TF_fraction_________________________________________________ (f_tf_steel)__________________      7.6481E-01    
- Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      3.1845E+01    
+ Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      1.3844E+00    
  Total_Insulation_fraction_______________________________________________ (f_tf_ins)____________________      3.3249E-02    
  Casing_cross_section_area_(per_leg)_(m2)________________________________ (acasetf)_____________________      1.2863E+00    
  Inboard_leg_case_plasma_side_wall_thickness_(m)_________________________ (casthi)______________________      6.0000E-02    
@@ -994,7 +997,8 @@
  Heat_extracted_from_shield__(MW)________________________________________ (pthermshld)__________________      1.2264E+00    
  Heat_extracted_from_divertor_(MW)_______________________________________ (pthermdiv)___________________      3.6529E+02    
  Nuclear_and_photon_power_lost_to_H/CD_system_(MW)_______________________ (psechcd)_____________________      0.0000E+00    
- Total_(MW)______________________________________________________________ ______________________________      1.6883E+03    
+ Nuclear_power_lost_to_TF_(MW)___________________________________________ (ptfnuc)______________________      5.2644E-02    
+ Total_(MW)______________________________________________________________ ______________________________      1.6884E+03    
  Net_electric_power_output(MW)___________________________________________ (pnetelmw.)___________________      2.2000E+02    
  Required_Net_electric_power_output(MW)__________________________________ (pnetelin)____________________      2.2000E+02    
  Electric_power_for_heating_and_current_drive_(MW)_______________________ (pinjwp)______________________      1.2771E+02    
@@ -1005,6 +1009,7 @@
  Electric_power_for_TF_coils_(MW)________________________________________ (tfacpd)______________________      1.1581E+01    
  Electric_power_for_PF_coils_(MW)________________________________________ (pfwpmw)______________________      1.6502E+00    
  All_other_internal_electric_power_requirements_(MW)_____________________ (fachtmw)_____________________      6.9732E+01    
+ Total_(MW)______________________________________________________________ (tot_plant_power)_____________      6.3313E+02    
  Total_(MW)______________________________________________________________ ______________________________      6.3313E+02    
  Gross_electrical_output*_(MW)___________________________________________ (pgrossmw)____________________      6.3313E+02    
  Fusion_power_(MW)_______________________________________________________ (powfmw.)_____________________      1.2740E+03    
@@ -1240,7 +1245,8 @@ icc = 31 * TF coil case stress upper limit
 ixc = 48 * fstrcase
 icc = 32 * TF coil conduit stress upper limit
 ixc = 49 * fstrcond
-alstrtf = 6.6e8
+sig_tf_case_max  = 6.6E8 * Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+sig_tf_wp_max    = 6.6E8 * Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
 
 * Iteration Variables *
 ***********************

@@ -221,7 +221,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Beta g coefficient                                                       (dnbeta)                      4.691  OP 
  Normalised thermal beta                                                                                2.355  OP 
  Normalised total beta                                                                                  2.719  OP 
- Normalised toroidal beta                                                                               2.828  OP 
+ Normalised toroidal beta                                                 (normalised_toroidal          2.828  OP 
  Limit on thermal beta                                                    (betalim)                     0.067  OP 
  Plasma thermal energy (J)                                                                          1.263E+09  OP 
  Total plasma internal energy (J)                                         (total_plasma_internal_en 1.459E+09  OP 
@@ -311,7 +311,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Alpha power: beam-plasma (MW)                                            (palpnb)                  0.000E+00  OP 
  Neutron power (MW)                                                       (pneutmw)                 1.592E+03  OP 
  Charged particle power (excluding alphas) (MW)                           (pchargemw)               1.566E+00  OP 
- Total power deposited in plasma (MW)                                     ()                        4.311E+02  OP 
+ Total power deposited in plasma (MW)                                     (tot_power_plasma)        4.311E+02  OP 
  
  Radiation Power (excluding SOL):
  
@@ -478,11 +478,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  and non-inductive means.
  Auxiliary power used for plasma heating only (MW)                        (pheat)                   5.000E+01     
  Power injected for current drive (MW)                                    (pcurrentdrivemw)         1.000E+00     
+ Maximum Allowed Bootstrap current fraction                               (bscfmax)                 9.900E-01     
  Fusion gain factor Q                                                     (bigq)                    3.848E+01  OP 
  Auxiliary current drive (A)                                              (auxiliary_cd)            5.126E+04  OP 
  Current drive efficiency (A/W)                                           (effcd)                   5.126E-02  OP 
  Normalised current drive efficiency, gamma (10^20 A/W-m2)                (gamcd)                   3.000E-01  OP 
  Wall plug to injector efficiency                                         (etacd)                   4.000E-01     
+ ECRH plasma heating efficiency                                           (gamma_ecrh)              3.000E-01     
  
  Fractions of current drive :
  
@@ -612,7 +614,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF Coil Stresses (CCFE model) :
  
  Plane stress model with smeared properties
- Allowable Tresca stress limit (Pa)                                       (alstrtf)                 5.800E+08     
+ Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)   (sig_tf_case_max)         5.800E+08     
+ Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa (sig_tf_wp_max)           5.800E+08     
  No stress limit imposed on the TF-CS interface layer
    -> Too much unknow on it material choice/properties
  Structural materal stress of the point of maximum TRESCA stress per layer
@@ -672,7 +675,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF cross-section (total) (m2)                                            (tfareain)                1.810E+01     
  Total steel cross-section (m2)                                           (a_tf_steel*n_tf)         1.137E+01     
  Total steel TF fraction                                                  (f_tf_steel)              6.286E-01     
- Total Insulation cross-section (total) (m2)                              (a_tf_ins*n_tf)           1.137E+01     
+ Total Insulation cross-section (total) (m2)                              (a_tf_ins*n_tf)           1.885E+00     
  Total Insulation fraction                                                (f_tf_ins)                1.042E-01     
  
  External steel Case Information :
@@ -1377,7 +1380,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heat extracted from shield  (MW)                                         (pthermshld)                  1.489  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                 377.957  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
- Total (MW)                                                                                          2624.146  OP 
+ Nuclear power lost to TF (MW)                                            (ptfnuc)                      0.028  OP 
+ Total (MW)                                                                                          2624.174  OP 
  
  Electrical Power Balance :
  --------------------------
@@ -1391,6 +1395,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electric power for TF coils (MW)                                         (tfacpd)                      7.243  OP 
  Electric power for PF coils (MW)                                         (pfwpmw)                      1.525  OP 
  All other internal electric power requirements (MW)                      (fachtmw)                    64.527  OP 
+ Total (MW)                                                               (tot_plant_power)           984.055  OP 
  Total (MW)                                                                                           984.055  OP 
  
  Gross electrical output* (MW)                                            (pgrossmw)                  984.055  OP 
@@ -1800,7 +1805,8 @@ oacdcp   = 10050000.0 * Overall current density in tf coil inboard legs (a/m2)
 ripmax   = 0.6 * Maximum allowable toroidal field ripple amplitude
 tdmptf   = 30.0 * Dump time for tf coil (s)
 n_tf     = 16 * Number of tf coils (default = 50 for stellarators)
-alstrtf  = 5.8E8 * allowable stress in TF coil (Pa)
+sig_tf_case_max  = 5.8E8 * Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+sig_tf_wp_max    = 5.8E8 * Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
 dhecoil  = 0.010 * diameter of He coil in TF winding (m)
 tftmp    = 4.750 * Peak helium coolant temperature in tf coils and pf coils (k)
 thicndut = 2.0d-3 * Conduit insulation thickness (m)

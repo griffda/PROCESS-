@@ -1513,14 +1513,14 @@ contains
       !! residual error in physical units; output string; units string
       !! Equation for TF coil case stress upper limit (SCTF)
       !! #=# tfcoil
-      !! #=#=# fstrcase, alstrtf
+      !! #=#=# fstrcase, sig_tf_case_max
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !! fstrcase : input real : f-value for TF coil case stress
-      !! alstrtf : input real : allowable Tresca stress in TF coil structural material (Pa)
-      !! strtf2 : input real : Constrained stress in TF coil case (Pa) 
+      !! sig_tf_case_max : input real : Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+      !! sig_tf_case : input real : Constrained stress in TF coil case (Pa) 
       use constraint_variables, only: fstrcase
-      use tfcoil_variables, only: alstrtf, strtf1
+      use tfcoil_variables, only: sig_tf_case_max, sig_tf_case
       implicit none
             real(8), intent(out) :: tmp_cc
       real(8), intent(out) :: tmp_con
@@ -1528,9 +1528,9 @@ contains
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
-      tmp_cc =  1.0D0 - fstrcase * alstrtf/strtf1
-      tmp_con = alstrtf
-      tmp_err = alstrtf - strtf1 / fstrcase
+      tmp_cc =  1.0D0 - fstrcase * sig_tf_case_max/sig_tf_case
+      tmp_con = sig_tf_case_max
+      tmp_err = sig_tf_case_max - sig_tf_case / fstrcase
       tmp_symbol = '<'
       tmp_units = 'Pa'
 
@@ -1543,14 +1543,14 @@ contains
       !! residual error in physical units; output string; units string
       !! Equation for TF coil conduit stress upper limit (SCTF)
       !! #=# tfcoil
-      !! #=#=# fstrcond, alstrtf
+      !! #=#=# fstrcond, sig_tf_wp_max
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !! fstrcond : input real : f-value for TF coil conduit stress
-      !! alstrtf : input real : allowable Tresca stress in TF coil structural material (Pa)
-      !! strtf1 : input real : Constrained Tresca stress in TF conductor conduit (Pa) 
+      !! sig_tf_wp_max : input real : Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
+      !! sig_tf_wp : input real : Constrained stress in TF conductor conduit (Pa) 
       use constraint_variables, only: fstrcond
-      use tfcoil_variables, only: alstrtf, strtf2
+      use tfcoil_variables, only: sig_tf_wp_max, sig_tf_wp
       implicit none
             real(8), intent(out) :: tmp_cc
       real(8), intent(out) :: tmp_con
@@ -1558,9 +1558,9 @@ contains
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
-      tmp_cc =  1.0D0 - fstrcond * alstrtf/strtf2
-      tmp_con = alstrtf
-      tmp_err = alstrtf - strtf2 / fstrcond
+      tmp_cc =  1.0D0 - fstrcond * sig_tf_wp_max/sig_tf_wp
+      tmp_con = sig_tf_wp_max
+      tmp_err = sig_tf_wp_max - sig_tf_wp / fstrcond
       tmp_symbol = '<'
       tmp_units = 'Pa'
 
@@ -2793,12 +2793,12 @@ contains
       !! foh_stress : input real : f-value for Tresca stress limit in Central Solenoid
       !! alstroh : input real :  allowable hoop stress in Central Solenoid structural material (Pa)
       !! s_tresca_oh : input real : Tresca stress coils/central solenoid (Pa)
-      !! strtf0 : input real : Tresca stress in CS case at flux swing (no current in CS)
+      !! sig_tf_cs_bucked : input real : Tresca stress in CS case at flux swing (no current in CS)
       !!                       can be significant for the bucked and weged design
       !! i_tf_bucking : input integer : switch for TF structure design 
       use constraint_variables, only: foh_stress
       use pfcoil_variables, only: alstroh, s_tresca_oh
-      use tfcoil_variables, only: strtf0, i_tf_bucking
+      use tfcoil_variables, only: sig_tf_cs_bucked, i_tf_bucking
       implicit none
             real(8), intent(out) :: tmp_cc
       real(8), intent(out) :: tmp_con
@@ -2808,8 +2808,8 @@ contains
 
       ! bucked and wedged desing (see subroutine comment)
       if ( i_tf_bucking >= 2 ) then
-         tmp_cc = 1.0d0 - foh_stress * alstroh / max(s_tresca_oh, strtf0)
-         tmp_err = alstroh - max(s_tresca_oh, strtf0)
+         tmp_cc = 1.0d0 - foh_stress * alstroh / max(s_tresca_oh, sig_tf_cs_bucked)
+         tmp_err = alstroh - max(s_tresca_oh, sig_tf_cs_bucked)
       
       ! Free standing CS
       else 
@@ -2925,7 +2925,7 @@ contains
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !! alpha_crit : output real : critical ballooning parameter value
       !! nesep_crit : output real : critical electron density at separatrix [m-3]
-      !! kappa : input real : plasma separatrix elongation (calculated if ishape = 1-5 or 7)
+      !! kappa : input real : plasma separatrix elongation (calculated if ishape = 1-5, 7 or 9)
       !! triang : input real : plasma separatrix triangularity (calculated if ishape = 1, 3-5 or 7)
       !! aspect : input real : aspect ratio (iteration variable 1)
       !! pdivt : input real : power to conducted to the divertor region (MW)

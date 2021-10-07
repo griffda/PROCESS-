@@ -120,6 +120,9 @@ module current_drive_variables
   real(8) :: rho_ecrh
   !! normalised minor radius at which electron cyclotron current drive is maximum
 
+  real(dp) :: xi_ebw
+  !! User scaling input for EBW plasma heating. Default 0.43
+
   integer :: iefrf
   !! Switch for current drive efficiency model:
   !!
@@ -134,7 +137,7 @@ module current_drive_variables
   !!  - =9 RFP option removed in PROCESS (issue #508)
   !!  - =10 ECRH user input gamma
   !!  - =11 ECRH "HARE" model (E. Poli, Physics of Plasmas 2019)
-  !!  - =12 EBW scaling (S. Freethy)
+  !!  - =12 EBW user scaling input. Scaling (S. Freethy)
 
   integer :: iefrffix
   !! Switch for 2nd current drive efficiency model:
@@ -151,7 +154,7 @@ module current_drive_variables
   !! - =9 RFP option removed in PROCESS (issue #508)
   !! - =10 ECRH user input gamma
   !! - =11 ECRH "HARE" model (E. Poli, Physics of Plasmas 2019)
-  !! - =12 EBW scaling (S. Freethy)
+  !! - =12 EBW user scaling input. Scaling (S. Freethy)
 
   integer :: irfcd
   !! Switch for current drive calculation:
@@ -258,7 +261,8 @@ module current_drive_variables
     ftritbm = 1.0D-6  
     gamcd = 0.0D0  
     gamma_ecrh = 0.35D0  
-    rho_ecrh = 0.1D0  
+    rho_ecrh = 0.1D0 
+    xi_ebw = 0.43D0 
     iefrf = 5  
     iefrffix = 0   
     irfcd = 1  

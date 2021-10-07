@@ -44,7 +44,7 @@ contains
     use constants, only: twopi, pi
     use physics_variables, only: eps, pperim, sareao, rminor, kappa95, sarea, &
       triang95, fkzohm, vol, ishape, xarea, igeom, qlim, sf, iscrp, triang, &
-      cvol, rmajor, kappa, aspect
+      cvol, rmajor, kappa, aspect, rli
     implicit none
 
     !  Arguments
@@ -133,6 +133,14 @@ contains
        kappa95 = (kappa - 0.39467D0) / 0.90698D0 
        triang95 = (triang - 0.048306D0) / 1.3799D0
 
+    case (9)  !  Use input triang, rli values
+
+       ! kappa found from aspect ratio and plasma internal inductance li(3)
+       kappa = (1.09D0 + 0.26D0/rli) * (1.5D0 / aspect)**0.4D0
+
+       kappa95 = kappa / 1.12D0
+       triang95 = triang / 1.50D0
+      
     end select
 
     !  Scrape-off layer thicknesses

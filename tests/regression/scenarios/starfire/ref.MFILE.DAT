@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
- Date_of_run_____________________________________________________________ (date)________________________     "29/09/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "10:38"
+ Date_of_run_____________________________________________________________ (date)________________________     "06/10/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "09:34"
  User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "starfire                                                                                           
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-538-g66f889bd"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1397-remove-f90wrap-from-build-process-tim2"                                                       
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-630-g025c7ae7"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "develop-stable-remerge"                                                                            
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-10/test_scenario_starfire_0/IN.DAT                                                                                                                                           "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-8/test_scenario_starfire_0/IN.DAT                                                                                                                                            "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -19,7 +19,7 @@
  Optimisation_switch_____________________________________________________ (ioptimz)_____________________              1    
  Figure_of_merit_switch__________________________________________________ (minmax)______________________             -5    
  Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      1.5613E-09 OP 
- VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      0.0000E+00 OP 
+ VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      1.0937E-11 OP 
  Number_of_VMCON_iterations______________________________________________ (nviter)______________________             43 OP 
  te______________________________________________________________________ (itvar001)____________________      1.5414E+01    
  te_(final_value/initial_value)__________________________________________ (xcm001)______________________      1.6290E+00    
@@ -276,7 +276,7 @@
  Beta_g_coefficient______________________________________________________ (dnbeta)______________________      6.0000E+00    
  Normalised_thermal_beta_________________________________________________ ______________________________      3.8186E+00    
  Normalised_total_beta___________________________________________________ ______________________________      4.5819E+00    
- Normalised_toroidal_beta________________________________________________ ______________________________      4.7709E+00    
+ Normalised_toroidal_beta________________________________________________ (normalised_toroidal_beta)____      4.7709E+00    
  Limit_on_thermal_beta___________________________________________________ (betalim)_____________________      7.9845E-02    
  Plasma_thermal_energy_(J)_______________________________________________ ______________________________      8.3373E+08 OP 
  Total_plasma_internal_energy_(J)________________________________________ (total_plasma_internal_energy)      1.0004E+09 OP 
@@ -334,7 +334,7 @@
  Alpha_power:_beam-plasma_(MW)___________________________________________ (palpnb)______________________      0.0000E+00 OP 
  Neutron_power_(MW)______________________________________________________ (pneutmw)_____________________      2.8058E+03 OP 
  Charged_particle_power_(excluding_alphas)_(MW)__________________________ (pchargemw)___________________      3.1225E+00 OP 
- Total_power_deposited_in_plasma_(MW)____________________________________ ()____________________________      7.5950E+02 OP 
+ Total_power_deposited_in_plasma_(MW)____________________________________ (tot_power_plasma)____________      7.5950E+02 OP 
  Bremsstrahlung_radiation_power_(MW)_____________________________________ (pbrempv*vol)_________________      3.7279E+01 OP 
  Line_radiation_power_(MW)_______________________________________________ (plinepv*vol)_________________      6.4320E-01 OP 
  Synchrotron_radiation_power_(MW)________________________________________ (psyncpv*vol)_________________      1.4937E+01 OP 
@@ -442,6 +442,7 @@
  Current_drive_efficiency_model__________________________________________ (iefrf)_______________________              4    
  Auxiliary_power_used_for_plasma_heating_only_(MW)_______________________ (pheat)_______________________      0.0000E+00    
  Power_injected_for_current_drive_(MW)___________________________________ (pcurrentdrivemw)_____________      9.0400E+01    
+ Maximum_Allowed_Bootstrap_current_fraction______________________________ (bscfmax)_____________________      9.9000E-01    
  Fusion_gain_factor_Q____________________________________________________ (bigq)________________________      3.8827E+01 OP 
  Auxiliary_current_drive_(A)_____________________________________________ (auxiliary_cd)________________      4.7384E+06 OP 
  Current_drive_efficiency_(A/W)__________________________________________ (effcd)_______________________      5.2416E-02 OP 
@@ -541,7 +542,8 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -4.8059E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      2.0676E+00    
  # TF coils  #
- Allowable_Tresca_stress_limit_(Pa)______________________________________ (alstrtf)_____________________      6.0000E+08    
+ Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.0000E+08    
+ Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.0000E+08    
  WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      1.1807E+02 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________     -1.0503E+03 OP 
  Radial____stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_r_max(1))_____________     -2.4424E-08    
@@ -584,7 +586,7 @@
  TF_cross-section_(total)_(m2)___________________________________________ (tfareain)____________________      1.5377E+01    
  Total_steel_cross-section_(m2)__________________________________________ (a_tf_steel*n_tf)_____________      1.0116E+01    
  Total_steel_TF_fraction_________________________________________________ (f_tf_steel)__________________      6.5782E-01    
- Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      1.0116E+01    
+ Total_Insulation_cross-section_(total)_(m2)_____________________________ (a_tf_ins*n_tf)_______________      3.9482E-01    
  Total_Insulation_fraction_______________________________________________ (f_tf_ins)____________________      2.5676E-02    
  Casing_cross_section_area_(per_leg)_(m2)________________________________ (acasetf)_____________________      1.2104E+00    
  Inboard_leg_case_plasma_side_wall_thickness_(m)_________________________ (casthi)______________________      6.0000E-02    
@@ -817,7 +819,8 @@
  Fraction_of_FW_and_blanket_thermal_power_required_for_pumping___________ (fpump)_______________________      8.0517E-02 OP 
  Total_power_absorbed_by_FW_&_blanket_(MW)_______________________________ (p_plasma)____________________      3.1594E+03 OP 
  Inlet_temperature_of_FW_&_blanket_coolant_pump_(K)______________________ (t_in_compressor)_____________      5.5703E+02 OP 
- Outlet_temperature_of_FW_&_blanket_coolant_pump_(K)_____________________ (t_in_bb)_____________________      5.7313E+02    
+ Coolant_pump_outlet/Inlet_temperature_of_FW_&_blanket_(K)_______________ (t_in_bb)_____________________      5.7313E+02    
+ Outlet_temperature_of_FW_&_blanket_(K)__________________________________ (t_out_bb)____________________      7.7313E+02    
  Mechanical_pumping_power_for_FW_and_blanket_cooling_loop_including_heat_ (htpmw_fw_blkt)_______________      2.7666E+02 OP 
  Mechanical_pumping_power_for_divertor_(MW)______________________________ (htpmw_div)___________________      5.1782E+00 OP 
  Mechanical_pumping_power_for_shield_and_vacuum_vessel_(MW)______________ (htpmw_shld)__________________      3.5520E-01 OP 
@@ -1019,7 +1022,8 @@
  Heat_extracted_from_shield__(MW)________________________________________ (pthermshld)__________________      7.1396E+01    
  Heat_extracted_from_divertor_(MW)_______________________________________ (pthermdiv)___________________      1.0408E+03    
  Nuclear_and_photon_power_lost_to_H/CD_system_(MW)_______________________ (psechcd)_____________________      0.0000E+00    
- Total_(MW)______________________________________________________________ ______________________________      4.5483E+03    
+ Nuclear_power_lost_to_TF_(MW)___________________________________________ (ptfnuc)______________________      2.5332E+00    
+ Total_(MW)______________________________________________________________ ______________________________      4.5508E+03    
  Net_electric_power_output(MW)___________________________________________ (pnetelmw.)___________________      1.1822E+03    
  Required_Net_electric_power_output(MW)__________________________________ (pnetelin)____________________      1.2000E+03    
  Electric_power_for_heating_and_current_drive_(MW)_______________________ (pinjwp)______________________      1.5322E+02    
@@ -1030,6 +1034,7 @@
  Electric_power_for_TF_coils_(MW)________________________________________ (tfacpd)______________________      6.3262E+00    
  Electric_power_for_PF_coils_(MW)________________________________________ (pfwpmw)______________________      4.1755E-01    
  All_other_internal_electric_power_requirements_(MW)_____________________ (fachtmw)_____________________      3.8952E+01    
+ Total_(MW)______________________________________________________________ (tot_plant_power)_____________      1.7056E+03    
  Total_(MW)______________________________________________________________ ______________________________      1.7056E+03    
  Gross_electrical_output*_(MW)___________________________________________ (pgrossmw)____________________      1.7056E+03    
  Fusion_power_(MW)_______________________________________________________ (powfmw.)_____________________      3.5100E+03    
@@ -1565,7 +1570,8 @@ lpulse   = 0 * Switch for reactor model;
 
 *-----------------Tfcoil Variables-----------------*
 
-alstrtf  = 6.0e8 * Allowable Tresca stress in TF coil structural material (Pa)
+sig_tf_case_max  = 6.0E8 * Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+sig_tf_wp_max    = 6.0E8 * Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
 casthi   = 0.06 * inboard TF coil case plasma side thickness (m) (calculated for stellarators)
 casths   = 0.05 * inboard TF coil sidewall case thickness (m) (calculated for stellarators)
 cpttf    = 81204.51676358072 * TF coil current per turn (A); (calculated for stellarators) (calculated for 

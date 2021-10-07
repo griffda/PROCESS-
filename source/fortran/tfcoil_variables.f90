@@ -35,7 +35,14 @@ module tfcoil_variables
   real(8) :: aiwp
   !! winding pack turn insulation area per coil (m2)
 
-  real(8) :: alstrtf
+  real(8) :: sig_tf_case_max
+  !! Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+
+  real(8) :: sig_tf_wp_max
+  !! Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
+
+  ! TODO remove below IF not needed 
+  ! real(8) :: alstrtf
   !! Allowable Tresca stress in TF coil structural material (Pa)
 
   real(8) :: arealeg
@@ -358,7 +365,10 @@ module tfcoil_variables
   real(8), dimension(2*n_radial_array) :: sig_tf_tresca
   !! TF Inboard leg TRESCA stress in steel r distribution at mid-plane [Pa]
 
-  real(8) :: strtf0
+  real(8) :: sig_tf_cs_bucked
+
+  ! TODO is this needed?
+  ! real(8) :: strtf0
   !! Maximum TRESCA stress in CS structures at CS flux swing [Pa]:
   !!
   !!  - If superconducting CS (ipfres = 0): turn steel conduits TRESCA stress
@@ -367,11 +377,18 @@ module tfcoil_variables
   !! Quantity only computed for bucked and wedged design (`i_tf_bucking >= 2`)
   !! Def : CS Flux swing, instant when the current changes sign in CS (null current) 
 
-  real(8) :: strtf1
+  real(8) :: sig_tf_case
   !! Maximum TRESCA stress in TF casing steel structures (Pa)
   
-  real(8) :: strtf2
-  !! Maximum TRESCA stress in TF WP conduit steel structures (Pa)
+  real(8) :: sig_tf_wp
+
+  ! TODO is this needed?
+  ! real(8) :: strtf1
+  ! !! Maximum TRESCA stress in TF casing steel structures (Pa)
+  
+  ! real(8) :: strtf2
+  ! !! Maximum TRESCA stress in TF WP conduit steel structures (Pa)
+  ! !! This is the TF stress condition used in the case of stellarators
   
   real(8) :: sigvvall
   !! allowable stress from TF quench in vacuum vessel (Pa)
@@ -755,7 +772,8 @@ module tfcoil_variables
     acstf = 0.0D0
     insulation_area = 0.0D0
     aiwp = 0.0D0
-    alstrtf = 6.0D8
+    sig_tf_case_max = 6.0D8
+    sig_tf_wp_max = 6.0D8
     arealeg = 0.0D0
     aswp = 0.0D0
     avwp = 0.0D0
@@ -836,9 +854,9 @@ module tfcoil_variables
     sig_tf_z = 0.0D0
     sig_tf_vmises = 0.0D0
     sig_tf_tresca = 0.0D0 
-    strtf0 = 0.0D0
-    strtf1 = 0.0D0
-    strtf2 = 0.0D0
+    sig_tf_cs_bucked = 0.0D0
+    sig_tf_case = 0.0D0
+    sig_tf_wp = 0.0D0
     sigvvall = 9.3D7
     strncon_cs = -0.005D0
     strncon_pf = -0.005D0

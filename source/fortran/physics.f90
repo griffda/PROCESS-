@@ -3802,7 +3802,7 @@ module physics_module
 
     !  Local variables
 
-    real(8) :: betath
+    real(8) :: betath, tot_power_plasma, normalised_toroidal_beta
     ! pinj
     integer :: imp
     character(len=30) :: tauelaw
@@ -3864,6 +3864,9 @@ module physics_module
           call ovarrf(outfile,'Zohm scaling adjustment factor', '(fkzohm)',fkzohm)
        case (4,5,7)
           call ovarrf(outfile,'Elongation, X-point (calculated from kappa95)', '(kappa)',kappa, 'OP ')
+       case (9)
+          call ovarrf(outfile,'Elongation, X-point (calculated from aspect ratio and li(3))', &
+               '(kappa)',kappa, 'OP ')
        case default
           idiags(1) = ishape ; call report_error(86)
        end select
@@ -3880,7 +3883,7 @@ module physics_module
        call ovarrf(outfile,'Elongation, area ratio calc.','(kappaa)',kappaa, 'OP ')
 
        select case (ishape)
-       case (0,2,6,8)
+       case (0,2,6,8,9)
           call ovarrf(outfile,'Triangularity, X-point (input value used)', &
                '(triang)',triang, 'IP ')
        case (1)
@@ -3924,6 +3927,7 @@ module physics_module
 
     if (istell == 0) then
        call ovarrf(outfile,'Plasma current (MA)','(plascur/1D6)',plascur/1.0D6, 'OP ')
+       !call ovarrf(outfile,'Plasma current (A)','(plascur)',plascur, 'OP ')
        if (iprofile == 1) then
             call ovarrf(outfile,'Current density profile factor','(alphaj)',alphaj, 'OP ')
        else
@@ -3989,7 +3993,9 @@ module physics_module
        call ovarrf(outfile,'Normalised thermal beta',' ',1.0D8*betath*rminor*bt/plascur, 'OP ')
        !call ovarrf(outfile,'Normalised total beta',' ',1.0D8*beta*rminor*bt/plascur, 'OP ')
        call ovarrf(outfile,'Normalised total beta',' ',normalised_total_beta, 'OP ')
-       call ovarrf(outfile,'Normalised toroidal beta',' ',normalised_total_beta*(btot/bt)**2, 'OP ')
+       !call ovarrf(outfile,'Normalised toroidal beta',' ',normalised_total_beta*(btot/bt)**2, 'OP ')
+       normalised_toroidal_beta=normalised_total_beta*(btot/bt)**2
+       call ovarrf(outfile,'Normalised toroidal beta','(normalised_toroidal_beta)',normalised_toroidal_beta, 'OP ')       
     end if
 
     if (iculbl == 0) then
@@ -4154,7 +4160,9 @@ module physics_module
     call ovarre(outfile,'Alpha power: beam-plasma (MW)','(palpnb)',palpnb, 'OP ')
     call ovarre(outfile,'Neutron power (MW)','(pneutmw)',pneutmw, 'OP ')
     call ovarre(outfile,'Charged particle power (excluding alphas) (MW)', '(pchargemw)',pchargemw, 'OP ')
-    call ovarre(outfile,'Total power deposited in plasma (MW)','()',falpha*palpmw+pchargemw+pohmmw+pinjmw, 'OP ')
+    tot_power_plasma=falpha*palpmw+pchargemw+pohmmw+pinjmw
+    call ovarre(outfile,'Total power deposited in plasma (MW)','(tot_power_plasma)',tot_power_plasma, 'OP ')
+    !call ovarre(outfile,'Total power deposited in plasma (MW)','()',falpha*palpmw+pchargemw+pohmmw+pinjmw, 'OP ')
 
     call osubhd(outfile,'Radiation Power (excluding SOL):')
     call ovarre(outfile,'Bremsstrahlung radiation power (MW)','(pbrempv*vol)', pbrempv*vol, 'OP ')
