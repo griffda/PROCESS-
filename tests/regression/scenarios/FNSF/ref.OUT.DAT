@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-372-g033e9349
-    Branch : develop-stable
+   Tag No. : v2.1-390-g8c66dc66 code contains untracked changes
+    Branch : axisymmetric-extended-plane-strain
    Git log : COMMIT_MSG
- Date/time :  7 Oct 2021 11:01:57 -04:00(hh:mm) UTC
+ Date/time :  7 Oct 2021 11:49:00 -04:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
  Directory : /home/cswan/process/process
-     Input : /tmp/pytest-of-cswan/pytest-3/test_scenario_FNSF_0/IN.DAT
+     Input : /tmp/pytest-of-cswan/pytest-6/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  

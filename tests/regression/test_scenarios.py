@@ -75,7 +75,28 @@ def scenario(scenarios_run, request):
     scenario = request.param
     return scenario
 
-def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
+
+@pytest.fixture()
+def keep_mfile(request, scenario):
+    """Fixture to decide whether a scenarios MFile should
+    be kept or not. A list can be defined in --keep:
+    e.g. --keep=starfire,kallenbach
+
+    :param request: request fixture to access --keep flag
+    :type request: Fixture
+    :param scenario: scenario fixture for easy access to the scenario name
+    :type scenario: Fixture
+    """
+    keep_assets = request.config.getoption("--keep")
+    keep_assets_list = keep_assets.split(',') if keep_assets else []
+
+    if keep_assets_list and scenario.name in keep_assets_list:
+        return True
+
+    return False
+
+
+def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt, keep_mfile):
     """Test a scenario in a temporary directory.
 
     A scenario is an input file and its expected outputs from Process. This
@@ -93,6 +114,18 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
     :param overwrite_refs_opt: option to overwrite reference MFILE and OUT.DAT
     :type tmp_path: bool
     """
+    # TODO The memory errors need to be investigated and the tests re-instated
+    if scenario.name in ["2D_scan", "kit_blanket"]:
+        pytest.skip("2D scan and kit_blanket currently introduce memory errors")
+
+    # hybrd() has been temporarily commented out. Please see the comment in
+    # function_evaluator.fcnhyb() for an explanation.
+    # TODO Re-implement the IFE test using vmcon
+    if scenario.name == "IFE":
+        pytest.skip("IFE currently uses the hybrd non-optimising solver, which "
+            "is currently not implemented"
+        )
+
     logger.info(f"Starting test for {scenario.name}")
 
     # TODO Should only be logged once, not for every test
@@ -107,8 +140,7 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
 
     # Run the scenario: use the scenario method to run Process on the input file
     # in the temporary test directory
-    # Assert the run doesn't throw any errors
-    assert scenario.run(tmp_path) == True
+    scenario.run(tmp_path)
     
     # Overwrite reference MFILE and OUT files (ref.MFILE.DAT and ref.OUT.DAT)
     # If overwriting refs, don't bother asserting anything else and return
@@ -160,6 +192,11 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
 
     # Check no diffs outside the tolerance have been found
     assert len(scenario.get_diff_items()) == 0
+
+    # Check if mfile should be kept (copied back)
+    if keep_mfile:
+        scenario.keep_mfile()
+    
             
     # TODO Assert no unique vars found
 

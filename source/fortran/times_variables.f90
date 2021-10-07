@@ -13,31 +13,31 @@ module times_variables
 
   public
 
-  real(dp) :: pulsetimings
+  real(8) :: pulsetimings
   !! Switch for pulse timings (if lpulse=1):
   !!
   !! - =0, tohs = Ip(MA)/0.1 tramp, tqnch = input
   !! - =1, tohs = iteration var or input. tramp/tqnch max of input or tohs
 
-  real(dp) :: tburn
+  real(8) :: tburn
   !! burn time (s) (calculated if `lpulse=1`)
 
-  real(dp) :: tburn0
+  real(8) :: tburn0
   !! burn time (s) - used for internal consistency
 
-  real(dp) :: tcycle
+  real(8) :: tcycle
   !! full cycle time (s)
 
-  real(dp) :: tdown
+  real(8) :: tdown
   !! down time (s)
 
-  real(dp) :: tdwell
+  real(8) :: tdwell
   !! time between pulses in a pulsed reactor (s) (`iteration variable 17`)
 
-  real(dp) :: theat
+  real(8) :: theat
   !! heating time, after current ramp up (s)
 
-  real(dp), dimension(6) :: tim
+  real(8), dimension(6) :: tim
   !! array of time points during plasma pulse (s)
 
   character(len=11), dimension(6) :: timelabel
@@ -46,23 +46,23 @@ module times_variables
   character(len=11), dimension(5) :: intervallabel
   !! time intervals - as strings (s)
 
-  real(dp) :: tohs
+  real(8) :: tohs
   !! plasma current ramp-up time for current initiation (s) (calculated if `lpulse=0`)
   !! (`iteration variable 65`)
 
-  real(dp) :: tohsin
+  real(8) :: tohsin
   !! Switch for plasma current ramp-up time (if lpulse=0):
   !!
   !! - = 0, tohs = tramp = tqnch = Ip(MA)/0.5
   !! - <>0, tohs = tohsin; tramp, tqnch are input
 
-  real(dp) :: tpulse
+  real(8) :: tpulse
   !! pulse length = tohs + theat + tburn + tqnch
 
-  real(dp) :: tqnch
+  real(8) :: tqnch
   !! shut down time for PF coils (s); if pulsed, = tohs
 
-  real(dp) :: tramp
+  real(8) :: tramp
   !! initial PF coil charge time (s); if pulsed, = tohs
 
   contains

@@ -15,9 +15,6 @@ module power_module
   use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
-  private
-  public :: tfpwr, pfpwr, acpow, power1, power2, power3, init_power_module
-
   !  Precision variable
   integer, parameter :: double = 8
 
@@ -31,7 +28,7 @@ module power_module
   integer, private :: iprimdiv
 
   ! Var in subroutine power1 requiring re-initialisation on each new run
-  real(dp) :: p_tf_cryoal_cryo
+  real(8) :: p_tf_cryoal_cryo
 
 contains
 
@@ -90,7 +87,7 @@ contains
     integer, intent(in) :: outfile,iprint
 
     !  Local variables
-    real(dp) :: abus, tfbusres, ztot, tfbusmw, tfreacmw
+    real(8) :: abus, tfbusres, ztot, tfbusmw, tfreacmw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -197,7 +194,7 @@ contains
 
       !  Local variables
 
-      real(dp) :: drarea,ettfmj,itfka
+      real(8) :: drarea,ettfmj,itfka
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -243,44 +240,44 @@ contains
       integer, intent(in) :: iprint
       !! Switch for writing to output (1=yes)
 
-      real(dp), intent(in) :: ntfc
+      real(8), intent(in) :: ntfc
       !! Number of TF coils
       
-      real(dp), intent(in) :: ettfmj
+      real(8), intent(in) :: ettfmj
       !! Total stored energy of one TF coils [MJ]
 
-      real(dp), intent(in) :: itfka
+      real(8), intent(in) :: itfka
       !! Design current for the TF coils, kA
       
-      real(dp), intent(in) :: rptfc
+      real(8), intent(in) :: rptfc
       !! Resistance of a TF coil [ohm]
 
-      real(dp), intent(in) :: vtfskv
+      real(8), intent(in) :: vtfskv
       !! Allowable voltage across a TF coil during quench [kV]
 
-      real(dp), intent(in) :: rmajor
+      real(8), intent(in) :: rmajor
       !! Plasma major radius [m]
       ! ---
 
       ! Outputs
       ! ---
-      real(dp), intent(out) :: tfckw
+      real(8), intent(out) :: tfckw
       !! Available DC power for charging the TF coils [kW]
       
-      real(dp), intent(out) :: tfbusl
+      real(8), intent(out) :: tfbusl
       !! Total bus length of the TF coil system [m]
 
-      real(dp), intent(out) :: drarea
+      real(8), intent(out) :: drarea
       !! Approx. area needed for the energy dump resistors, [m2]
 
-      real(dp), intent(out) :: tfcbv
+      real(8), intent(out) :: tfcbv
       !! Approx. vol needed for the TF coil power supplies and DC circuit breakers [m3]
 
-      real(dp), intent(out) :: tfacpd
+      real(8), intent(out) :: tfacpd
       !! Steady state TF coil AC power demand, [MW]
 
       !  Local variables
-      real(dp) :: albusa,albuswt,djmka,fspc1,fspc2,fspc3,ettfc, &
+      real(8) :: albusa,albuswt,djmka,fspc1,fspc2,fspc3,ettfc, &
            ltfth,lptfcs,ncpbkr,ndumpr,nsptfc,ntfbkr,ntfpm,part1,part2, &
            part3,rcoils,rpower,rtfbus,rtfps,r1dump,r1emj,r1ppmw,tchghr, &
            tfackw,tfcfsp,tfcv,tfpmka,tfpmkw,tfpska,tfpsv,tfpmv,tftbv, &
@@ -503,15 +500,15 @@ contains
 
     !  Local variables
 
-    real(dp), dimension(ngc2) :: albusa,pfbusr,cktr, &
+    real(8), dimension(ngc2) :: albusa,pfbusr,cktr, &
          powpfii,vpfi,psmva,pfcr,rcktvm,rcktpm
-    real(dp) :: pfbusl,powpfr,cptburn,delktim,powpfi, &
+    real(8) :: pfbusl,powpfr,cptburn,delktim,powpfi, &
          powpfr2,ensxpf,engx,vpfij
         !  engxpc
-    real(dp), save :: pfbuspwr
-    real(dp), dimension(6) :: inductxcurrent,poloidalenergy
-    real(dp), dimension(5) :: pfdissipation
-    real(dp):: wall_plug_ohmicmw, pfpower, pfpowermw
+    real(8), save :: pfbuspwr
+    real(8), dimension(6) :: inductxcurrent,poloidalenergy
+    real(8), dimension(5) :: pfdissipation
+    real(8):: wall_plug_ohmicmw, pfpower, pfpowermw
     integer :: i,ic,ngrpt,ig,ipf,jjpf,jjpf2,jpf,time
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -772,7 +769,7 @@ contains
 
     !  Local variables
 
-    real(dp) :: basemw,bdvmw,crymw,pheatingmw,pkwpm2,ppfmw,ptfmw
+    real(8) :: basemw,bdvmw,crymw,pheatingmw,pkwpm2,ppfmw,ptfmw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1056,7 +1053,7 @@ contains
 
     !  Local variables
 
-    real(dp) :: cirpowfr, primsum, pinj, secsum, rejected_main, sum, tot_plant_power
+    real(8) :: cirpowfr, primsum, pinj, secsum, rejected_main, sum, tot_plant_power
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1517,47 +1514,47 @@ contains
     integer, intent(in) :: outfile, iprint
 
     ! Local variables
-    real(dp) :: t_cs, t_ip_up, t_heat, t_flat_top, t_ip_down, t_extra
+    real(8) :: t_cs, t_ip_up, t_heat, t_flat_top, t_ip_down, t_extra
 
     ! Total continuous power
-    real(dp), dimension(6) :: p_cont_tot
+    real(8), dimension(6) :: p_cont_tot
 
     ! Total intermittent power
-    real(dp), dimension(6) :: p_int_tot
+    real(8), dimension(6) :: p_int_tot
 
     ! Power arrays
     ! Primary cooling power array (MW)
-    real(dp), dimension(6) :: p_cooling
+    real(8), dimension(6) :: p_cooling
 
     ! Vacuum system power array (MW)
-    real(dp), dimension(6) :: p_vac
+    real(8), dimension(6) :: p_vac
 
     ! Cyroplant system power array (MW)
-    real(dp), dimension(6) :: p_cryo
+    real(8), dimension(6) :: p_cryo
 
     ! Heating and current drive power array (MW)
-    real(dp), dimension(6) :: p_hcd
+    real(8), dimension(6) :: p_hcd
 
     ! Tritium system power array (MW)
-    real(dp), dimension(6) :: p_tritium
+    real(8), dimension(6) :: p_tritium
 
     ! Facilities power array (MW)
-    real(dp), dimension(6) :: p_fac
+    real(8), dimension(6) :: p_fac
 
     ! TF coil system power array (MW)
-    real(dp), dimension(6) :: p_tf
+    real(8), dimension(6) :: p_tf
 
     ! PF coil system power array (MW)
-    real(dp), dimension(6) :: p_pf
+    real(8), dimension(6) :: p_pf
 
     ! Gross electric power array
-    real(dp), dimension(6) :: p_gross
+    real(8), dimension(6) :: p_gross
 
     ! Net electric power array
-    real(dp), dimension(6) :: p_net
+    real(8), dimension(6) :: p_net
 
     ! Net electric power average
-    real(dp) :: p_net_avg
+    real(8) :: p_net_avg
 
     ! Times
     ! Central solenoid pre-magnetisation time (s)
@@ -1722,13 +1719,13 @@ contains
     !  Arguments
 
     integer, intent(in) :: i_tf_sup
-    real(dp), intent(in) :: coldmass,cpttf,ensxpfm,ptfnuc,n_tf, &
+    real(8), intent(in) :: coldmass,cpttf,ensxpfm,ptfnuc,n_tf, &
          tfsai,tpulse
-    real(dp), intent(out) :: helpow
+    real(8), intent(out) :: helpow
 
     !  Local variables
 
-    !real(dp) :: qac,qcl,qnuc,qss
+    !real(8) :: qac,qcl,qnuc,qss
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

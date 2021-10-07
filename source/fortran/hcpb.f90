@@ -14,128 +14,125 @@ module ccfe_hcpb_module
 
   implicit none
 
-  private
-  public :: ccfe_hcpb, tbr_shimwell, init_ccfe_hcpb_module
-
   ! Variables for output to file
   integer, private :: ip, ofile
 
-  real(dp), private :: W_density
+  real(8), private :: W_density
   !! Tungsten density [kg/m3]
 
   ! Smeared densities of build sections
-  real(dp), private :: armour_density
+  real(8), private :: armour_density
   !! FW armour density [kg/m3]
 
-  real(dp), private :: fw_density
+  real(8), private :: fw_density
   !! FW density [kg/m3]
 
-  real(dp), private :: blanket_density
+  real(8), private :: blanket_density
   !! Blanket density [kg/m3]
 
-  real(dp), private :: shield_density
+  real(8), private :: shield_density
   !! Shield density [kg/m3]
 
-  real(dp), private :: vv_density
+  real(8), private :: vv_density
   !! Vacuum vessel density [kg/m3]
 
-  real(dp), private :: volfw
+  real(8), private :: volfw
   !! First wall volume [m3]
 
-  real(dp), private :: x_blanket
+  real(8), private :: x_blanket
   !! Blanket exponent (tonne/m2)
 
-  real(dp), private :: x_shield
+  real(8), private :: x_shield
   !! Shield exponent (tonne/m2)
 
-  real(dp), private :: tfc_nuc_heating
+  real(8), private :: tfc_nuc_heating
   !! Unit nuclear heating in TF coil (W per W of fusion power)
 
-  real(dp), private :: fw_armour_u_nuc_heating
+  real(8), private :: fw_armour_u_nuc_heating
   !! Unit heating of FW and armour in FW armour (W/kg per W of fusion power)
 
-  real(dp), private :: shld_u_nuc_heating
+  real(8), private :: shld_u_nuc_heating
   !! Unit nuclear heating in shield (W per W of fusion power)
 
-  real(dp), private :: hblnkt
+  real(8), private :: hblnkt
   !! Blanket internal half-height (m)
 
-  real(dp), private :: hshld
+  real(8), private :: hshld
   !! Shield internal half-height (m)
 
-  real(dp), private :: hcryopf
+  real(8), private :: hcryopf
   !! Clearance between uppermost PF coil and cryostat lid (m)
 
-  real(dp), private :: hvv
+  real(8), private :: hvv
   !! Vacuum vessel internal half-height (m)
 
-  real(dp), private :: volshldi, volshldo
+  real(8), private :: volshldi, volshldo
   !! Volume of inboard and outboard shield (m3)
 
-  real(dp), private :: vffwi, vffwo
+  real(8), private :: vffwi, vffwo
   !! Inboard/outboard FW coolant void fraction
 
-  real(dp), private :: psurffwi, psurffwo
+  real(8), private :: psurffwi, psurffwo
   !! Surface heat flux on first wall (MW) (sum = pradfw)
 
-  real(dp), private :: bldepti, bldepto
+  real(8), private :: bldepti, bldepto
   !! Inboard/outboard blanket coolant channel length (radial direction) (m)
 
-  real(dp), private :: blwidti, blwidto
+  real(8), private :: blwidti, blwidto
   !! Inboard/outboard blanket mid-plan toroidal circumference for segment (m)
 
-  real(dp), private :: bllengi, bllengo
+  real(8), private :: bllengi, bllengo
   !! Inboard/outboard blanket segment poloidal length (m)
 
-  real(dp), private :: bzfllengi, bzfllengo
+  real(8), private :: bzfllengi, bzfllengo
   !! Inboard/outboard blanket flow lengths (m)
 
-  real(dp), private :: pnucfwi, pnucfwo
+  real(8), private :: pnucfwi, pnucfwo
   !! Inboard/outboard first wall nuclear heating (MW)
 
-  real(dp), private :: tpeakfwi, tpeakfwo
+  real(8), private :: tpeakfwi, tpeakfwo
   !! Inboard/outboard first wall peak temperature (K)
 
-  real(dp), private :: mffwi, mffwo, mffw
+  real(8), private :: mffwi, mffwo, mffw
   !! Inboard/outboard total mass flow rate to remove inboard FW power (kg/s)
 
-  real(dp), private :: npfwi, npfwo
+  real(8), private :: npfwi, npfwo
   !! Inboard/utboard total number of pipes
 
-  real(dp), private :: mffwpi, mffwpo
+  real(8), private :: mffwpi, mffwpo
   !! Inboard/outboard mass flow rate per coolant pipe (kg/s)
 
-  real(dp), private :: pnucblkti, pnucblkto
+  real(8), private :: pnucblkti, pnucblkto
   !! Neutron power deposited inboard/outboard blanket blanket (MW)
 
-  real(dp), private :: mfblkti, mfblkto, mfblkt
+  real(8), private :: mfblkti, mfblkto, mfblkt
   !! Inboard/outboard blanket mass flow rate for coolant (kg/s)
 
-  real(dp), private :: mftotal
+  real(8), private :: mftotal
   !! Total mass flow rate for coolant (kg/s)
 
-  real(dp), private :: npblkti, npblkto
+  real(8), private :: npblkti, npblkto
   !! Inboard/outboard total num of pipes
 
-  real(dp), private :: mfblktpi, mfblktpo
+  real(8), private :: mfblktpi, mfblktpo
   !! Inboard/outboard mass flow rate per coolant pipe (kg/s)
 
-  real(dp), private :: velblkti, velblkto
+  real(8), private :: velblkti, velblkto
   !! Inboard/outboard coolant velocity in blanket (m/s)
 
-  real(dp), private :: htpmw_fwi, htpmw_fwo
+  real(8), private :: htpmw_fwi, htpmw_fwo
   !! Inboard/outboard first wall pumping power (MW)
 
-  real(dp), private :: htpmw_blkti, htpmw_blkto
+  real(8), private :: htpmw_blkti, htpmw_blkto
   !! Inboard/outboard blanket pumping power (MW)
 
-  real(dp), private :: pnuc_tot_blk_sector
+  real(8), private :: pnuc_tot_blk_sector
   !! Total nuclear power deposited in blanket covered sector (FW, BLKT, SHLD, TF) (MW)
 
-  real(dp), private :: exp_blanket, exp_shield1, exp_shield2
+  real(8), private :: exp_blanket, exp_shield1, exp_shield2
   !! Exponential factors in nuclear heating calcs
 
-  real(dp), private :: fblss_ccfe, fblli2sio4, fbltibe12
+  real(8), private :: fblss_ccfe, fblli2sio4, fbltibe12
   !! Fractions of blanket by volume: steel, lithium orthosilicate, titanium beryllide
 
 contains
@@ -237,17 +234,17 @@ contains
     integer, intent(in) :: outfile
     !! output file unit
 
-    real(dp) :: f_geom_blanket
+    real(8) :: f_geom_blanket
     !! Solid angle fraction covered by the breeding blankets
 
-    real(dp) :: f_geom_cp
+    real(8) :: f_geom_cp
     !! Solid angle fraction of neutrons that hit the centrepost shield [-]
 
-    real(dp) :: r_sh_inboard_out_top
+    real(8) :: r_sh_inboard_out_top
     !! CP radius at the point of maximum sield radius [m]
     !! The maximum shield radius is assumed to be at the X-point
 
-    real(dp) :: h_sh_max_r
+    real(8) :: h_sh_max_r
     !! Half height of the CP at the largest shield radius [m]
 
     ip = iprint
@@ -428,7 +425,7 @@ contains
     implicit none
 
     ! Blanket bottom/top half-height (m)
-    real(dp) :: hbot, htop
+    real(8) :: hbot, htop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -464,7 +461,7 @@ contains
     implicit none
 
     ! Shield bottom/top half-height (m)
-    real(dp) :: hbot, htop
+    real(8) :: hbot, htop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -500,7 +497,7 @@ contains
     implicit none
 
     ! Vacuum vessel bottom/top internal half-height (m)
-    real(dp) :: hbot, htop
+    real(8) :: hbot, htop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -539,11 +536,11 @@ contains
     implicit none
 
     ! Major radius to outer edge of inboard blanket (m)
-    real(dp) :: r1
+    real(8) :: r1
 
     ! Horizontal distance between inside edges of blanket (m)
     ! i.e. outer radius of inboard part to inner radius of outboard part
-    real(dp) :: r2
+    real(8) :: r2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -579,11 +576,11 @@ contains
     implicit none
 
     ! Major radius to outer edge of inboard shield (m)
-    real(dp) :: r1
+    real(8) :: r1
 
     ! Horizontal distance between inside edges of shield (m)
     ! i.e. outer radius of inboard part to inner radius of outboard part
-    real(dp) :: r2
+    real(8) :: r2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -618,13 +615,13 @@ contains
     implicit none
 
     ! Major radius to outer edge of inboard section (m)
-    real(dp) :: r1
+    real(8) :: r1
 
     ! Horizontal distance between inside edges (m)
-    real(dp) :: r2
+    real(8) :: r2
 
     ! Unused outputs from dshellvol
-    real(dp) :: v1, v2
+    real(8) :: v1, v2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -662,13 +659,13 @@ contains
     implicit none
 
     ! Major radius to centre of inboard and outboard ellipses (m)
-    real(dp) :: r1
+    real(8) :: r1
 
     ! Distance between r1 and outer edge of inboard blanket (m)
-    real(dp) :: r2
+    real(8) :: r2
 
     ! Distance between r1 and inner edge of outboard blanket (m)
-    real(dp) :: r3
+    real(8) :: r3
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -709,13 +706,13 @@ contains
     implicit none
 
     ! Major radius to centre of inboard and outboard ellipses (m)
-    real(dp) :: r1
+    real(8) :: r1
 
     ! Distance between r1 and outer edge of inboard shield (m)
-    real(dp) :: r2
+    real(8) :: r2
 
     ! Distance between r1 and inner edge of outboard shield (m)
-    real(dp) :: r3
+    real(8) :: r3
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -756,16 +753,16 @@ contains
     implicit none
 
     ! Major radius to centre of inboard and outboard ellipses (m)
-    real(dp) :: r1
+    real(8) :: r1
 
     ! Distance between r1 and outer edge of inboard section (m)
-    real(dp) :: r2
+    real(8) :: r2
 
     ! Distance between r1 and inner edge of outboard section (m)
-    real(dp) :: r3
+    real(8) :: r3
 
     ! Unused output from eshellvol
-    real(dp) :: v1, v2
+    real(8) :: v1, v2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -901,22 +898,22 @@ contains
     implicit none
 
     ! Model factors and coefficients
-    real(dp) :: a ! Exponential factor (m2/tonne)
-    real(dp) :: b ! Exponential factor (m2/tonne)
-    real(dp) :: e ! Pre-factor (1/kg). Corrected see issue #272
+    real(8) :: a ! Exponential factor (m2/tonne)
+    real(8) :: b ! Exponential factor (m2/tonne)
+    real(8) :: e ! Pre-factor (1/kg). Corrected see issue #272
 
-    real(dp) :: vffwm
+    real(8) :: vffwm
     !! mean FW coolant void fraction
     
-    real(dp) :: th_blanket_av
+    real(8) :: th_blanket_av
     !! Average blanket thickness
 
-    real(dp) :: th_shield_av
+    real(8) :: th_shield_av
     !! Average blanket thickness
 
 
     ! largest vaccum vessel thickness
-    real(dp) :: d_vv_all
+    real(8) :: d_vv_all
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1057,13 +1054,13 @@ contains
     implicit none
 
     ! Blanket nuclear heating coefficient
-    real(dp) :: a
+    real(8) :: a
 
     ! Blanket nuclear heating exponent (1/tonne)
-    real(dp) :: b
+    real(8) :: b
 
     ! Mass of the blanket (tonnes)
-    real(dp) :: mass
+    real(8) :: mass
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1105,16 +1102,16 @@ contains
 
     ! Local variables
 
-    real(dp) :: f
+    real(8) :: f
     !! Shield nuclear heating coefficient (W/kg/W)
 
-    real(dp) :: g, h
+    real(8) :: g, h
     !! Shield nuclear heating exponent m2/tonne
     
-    real(dp) :: y
+    real(8) :: y
     !! Decay "length" (kg/m2)
     
-    real(dp) :: th_shield_av
+    real(8) :: th_shield_av
     !! Neutron shield average thickness [m]
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1202,7 +1199,7 @@ contains
     use refprop_interface, only: tsat_refprop
 
     implicit none
-    real(dp):: t_in_compressor, dt_he, fpump, pfactor, p_plasma
+    real(8):: t_in_compressor, dt_he, fpump, pfactor, p_plasma
 
     ! Radiation power incident on divertor (MW)
     if (idivrt == 2) then
@@ -1276,8 +1273,10 @@ contains
           '(p_plasma)', p_plasma, 'OP ')
         call ovarre(ofile, 'Inlet temperature of FW & blanket coolant pump (K)', &
           '(t_in_compressor)', t_in_compressor, 'OP ')
-        call ovarre(ofile, 'Outlet temperature of FW & blanket coolant pump (K)', &
+        call ovarre(ofile, 'Coolant pump outlet/Inlet temperature of FW & blanket (K)', &
           '(t_in_bb)', t_in_bb)
+        call ovarre(ofile, 'Outlet temperature of FW & blanket (K)', &
+          '(t_out_bb)', t_out_bb)	  
         call ovarre(ofile, 'Mechanical pumping power for FW and blanket cooling loop &
           &including heat exchanger (MW)', '(htpmw_fw_blkt)', htpmw_fw_blkt, 'OP ')
         call ovarre(ofile, 'Mechanical pumping power for divertor (MW)', &
@@ -1314,10 +1313,10 @@ contains
     implicit none
 
     ! coolant specific heat capacity at constant pressure (J/kg/K)
-    real(dp) :: cf
+    real(8) :: cf
 
     ! coolant density (kg/m3)
-    real(dp) :: rhof
+    real(8) :: rhof
 
     ! Number of 90 degree angle turns in FW and blanket flow channels
     integer :: no90fw, no90bz
@@ -1548,7 +1547,7 @@ contains
     ! Local variables
 
     ! Coolant volume (m3)
-    real(dp) :: coolvol
+    real(8) :: coolvol
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1649,16 +1648,16 @@ contains
     ! Local variables
 
     ! Mid-plane distance from inboard to outboard side (m)
-    real(dp) :: a
+    real(8) :: a
 
     ! Internal half-height of blanket (m)
-    real(dp) :: b
+    real(8) :: b
 
     ! Calculate ellipse circumference using Ramanujan approximation (m)
-    real(dp) :: ptor
+    real(8) :: ptor
 
     ! Major radius where half-ellipses 'meet' (m)
-    real(dp) :: r1
+    real(8) :: r1
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1892,10 +1891,10 @@ contains
 
     ! Inputs
     ! ------
-    real(dp), intent(in) :: pneut
+    real(8), intent(in) :: pneut
     !! 14 MeV plasma neutron power generated by the plasma [MW]
   
-    real(dp), intent(in) :: sh_width
+    real(8), intent(in) :: sh_width
     !! Thickeness of the centrepost neutron shield [m]
     ! ------
 
@@ -1903,51 +1902,51 @@ contains
     ! Outputs
     ! -------
 
-    real(dp), intent(out) :: pnuc_cp_tf
+    real(8), intent(out) :: pnuc_cp_tf
     !! Nuclear nuclear heat deposited in the centrepost TF coil [MW]
 
-    real(dp), intent(out) :: pnuc_cp_sh
+    real(8), intent(out) :: pnuc_cp_sh
     !! Nuclear nuclear heat deposited in the centrepost shield [MW]
 
-    real(dp), intent(out) :: pnuc_cp
+    real(8), intent(out) :: pnuc_cp
     !! Total nuclear heat deposited in the centrepost shield [MW]
     ! -------
 
 
     ! Local variables
     ! ---------------
-    real(dp) :: pnuc_cp_wp_gam
+    real(8) :: pnuc_cp_wp_gam
     !! Nuclear power deposited in the CP winding pack by gammas [MW]
 
-    real(dp) :: pnuc_cp_wp_n
+    real(8) :: pnuc_cp_wp_n
     !! Nuclear power deposited in the CP winding pack by neutrons [MW]
 
-    real(dp) :: pnuc_cp_case_gam
+    real(8) :: pnuc_cp_case_gam
     !! Nuclear power deposited in the CP steel case by gammas [MW]
 
-    real(dp) :: pnuc_cp_case_n
+    real(8) :: pnuc_cp_case_n
     !! Nuclear power deposited in the CP steel case by neutrons [MW]
     
-    real(dp) :: pnuc_cp_sh_gam
+    real(8) :: pnuc_cp_sh_gam
     !! Nuclear power deposited in the CP steel case by gammas [MW]
 
-    real(dp) :: pnuc_cp_sh_n
+    real(8) :: pnuc_cp_sh_n
     !! Nuclear power deposited in the CP steel case by neutrons [MW]
 
-    real(dp) :: f_pnuc_cp_tf = 1.0D0
+    real(8) :: f_pnuc_cp_tf = 1.0D0
     !! Outer wall reflection TF nuclear heating enhancement factor [-] 
 
-    real(dp) :: f_pnuc_cp_sh = 1.7D0
+    real(8) :: f_pnuc_cp_sh = 1.7D0
     !! Outer wall reflection shield nuclear heating enhancement factor [-]
 
-    real(dp) :: f_wc_density = 2.0D0
+    real(8) :: f_wc_density = 2.0D0
     !! Tungsten density may vary with different manufacturing processes.
     !! Here is a factor to take this into account
 
-    real(dp) :: f_steel_struct = 0.1
+    real(8) :: f_steel_struct = 0.1
     !! Fraction of steel structures
 
-    real(dp) :: sh_width_eff
+    real(8) :: sh_width_eff
     !! Effecting shield width, removing steel structures  
     ! ---------------
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2065,30 +2064,30 @@ contains
 
     implicit none
     
-    real(dp), intent(in) :: pneutmw
+    real(8), intent(in) :: pneutmw
     !! neutron fusion power [MW]
 
-    real(dp), intent(in) :: sh_width
+    real(8), intent(in) :: sh_width
     !! Neutron shield width [m]
 
-    real(dp), intent(in) :: rmajor
+    real(8), intent(in) :: rmajor
     !! Plasma major radius [m]
 
-    real(dp), intent(out) :: neut_flux_cp
+    real(8), intent(out) :: neut_flux_cp
     !! CP fast neutron flux (E > 0.1 MeV) [m^{-2}.s^}{-1}]
 
     ! Internal variables
-    real(dp) :: f_neut_flux_out_wall = 1.0D0
+    real(8) :: f_neut_flux_out_wall = 1.0D0
     !! Fraction of fast neutrons originating from the outer wall reflection [-]
 
-    real(dp) :: f_wc_density = 2.0D0
+    real(8) :: f_wc_density = 2.0D0
     !! Tungsten density may vary with different manufacturing processes.
     !! Here is a factor to take this into account
 
-    real(dp) :: f_steel_struct = 0.1
+    real(8) :: f_steel_struct = 0.1
     !! Fraction of steel structures
 
-    real(dp) :: sh_width_eff
+    real(8) :: sh_width_eff
     !! Effecting shield width, removing steel structures    
 
     if ( i_tf_sup == 1 ) then 
@@ -2127,43 +2126,43 @@ contains
 
     ! Inputs
     ! ------
-    real(dp), intent(in) :: h_cp_top
+    real(8), intent(in) :: h_cp_top
     !! Centrepost shield half height [m] 
 
-    real(dp), intent(in) :: r_cp_top
+    real(8), intent(in) :: r_cp_top
     !! Centrepost top radius [m]
 
-    real(dp), intent(in) :: r_cp_mid
+    real(8), intent(in) :: r_cp_mid
     !! Centrepost mid-plane radius [m]
 
-    real(dp), intent(in) :: rmajor
+    real(8), intent(in) :: rmajor
     !! Plasma major radius [m]
     ! ------
 
     ! Output
     ! ------
-    real(dp), intent(out) :: f_geom_cp
+    real(8), intent(out) :: f_geom_cp
     !! Solid angle fraction covered by the CP [-]
     ! ------
     
     ! Local variables
     ! ---------------
-    real(dp) :: rho_maj
+    real(8) :: rho_maj
     !! Major radius normalized to the CP average radius [-]
 
-    real(dp) :: phy_cp
+    real(8) :: phy_cp
     !! Average CP extent in the toroidal plane [rad]
 
-    real(dp) :: d_phy_cp
+    real(8) :: d_phy_cp
     !! Toroidal plane infinitesimal angle used in the integral [rad]
 
-    real(dp) :: phy_cp_calc
+    real(8) :: phy_cp_calc
     !! Toroidal plane angles used in the integral [rad]
     
-    real(dp) :: cp_sol_angle
+    real(8) :: cp_sol_angle
     !! Centrepost solid angle coverage from plasma centre source [sterad]
 
-    real(dp) :: int_calc_1, int_calc_2, int_calc_3
+    real(8) :: int_calc_1, int_calc_2, int_calc_3
     !! Variables used in the trapezoidal integral
 
     integer :: n_integral = 10
@@ -2267,39 +2266,39 @@ contains
     implicit none
 
     ! Function return parameter: Calculated pumping power (MW)
-    real(dp) :: pumppower
+    real(8) :: pumppower
 
     ! Arguments !
     ! !!!!!!!!!!!!
 
-    real(dp), intent(in) :: flleng, rad, mf, mfp, etaiso
-    real(dp), intent(in) :: temp_in, temp_out, pressure
+    real(8), intent(in) :: flleng, rad, mf, mfp, etaiso
+    real(8), intent(in) :: temp_in, temp_out, pressure
     integer, intent(in) :: no90, no180, coolant
     character(len=*), intent(in) :: label
 
     ! Local variables
 
     ! Inlet pressure (Pa)
-    real(dp) :: coolpin
+    real(8) :: coolpin
 
     ! Coolant pressure drop (Pa)
-    real(dp) :: deltap
+    real(8) :: deltap
 
     ! Hydraulic diameter (circular channels assumed) (m)
-    real(dp) :: dh
+    real(8) :: dh
 
     ! Fluid specific enthalpy from refprop (J/kg)
-    real(dp) :: h1
+    real(8) :: h1
 
     ! enthalpy
-    !real(dp) ::
+    !real(8) ::
 
-    real(dp) :: h2, kelbwn, kelbwt, kstrght, &
+    real(8) :: h2, kelbwn, kelbwt, kstrght, &
          lambda, reyn, rhof, s1, s2, viscf, xifn, xift, ximn, ximt, vv, &
          temp_mean,pdropstraight, pdrop90, pdrop180
 
     ! TODO Variables that appear not to be used below. Check again before removing
-    !real(dp) :: cf
+    !real(8) :: cf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2442,17 +2441,17 @@ contains
 
     ! Inputs
     integer, intent(in) :: iprint, outfile, iblanket_thickness
-    real(dp), intent(in) :: breeder_f, li6enrich
+    real(8), intent(in) :: breeder_f, li6enrich
 
     ! outputs
-    real(dp) :: tbr
+    real(8), intent(out) :: tbr
 
     ! Local variables
 
     ! Fit expansion terms
-    real(dp), dimension(3) :: v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, &
+    real(8), dimension(3) :: v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, &
                                        v11, v12, v13, v14, v15, v16, v17, v18, v19
-    real(dp) :: x, y
+    real(8) :: x, y
     integer ::  i
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2588,181 +2587,178 @@ module kit_hcpb_module
   use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
-  private
-  public :: kit_hcpb, init_kit_hcpb_module
-
   ! Variables for output to file
   integer, private :: ip, ofile
 
   integer, parameter :: np = 2
   !! Array length
 
-  real(dp), dimension(np) :: x_BZ_IB, x_BM_IB, x_BP_IB, x_VV_IB
-  real(dp), dimension(np) :: x_BZ_OB, x_BM_OB, x_BP_OB, x_VV_OB
+  real(8), dimension(np) :: x_BZ_IB, x_BM_IB, x_BP_IB, x_VV_IB
+  real(8), dimension(np) :: x_BZ_OB, x_BM_OB, x_BP_OB, x_VV_OB
 
   ! Values shared between subroutines in this module
-  real(dp) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
-  real(dp) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
-  real(dp) :: phi_n_vv_IB_start,phi_n_vv_OB_start
+  real(8) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
+  real(8) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
+  real(8) :: phi_n_vv_IB_start,phi_n_vv_OB_start
 
   ! Universal constants
-  real(dp), parameter :: E_n = 14.1D0
+  real(8), parameter :: E_n = 14.1D0
   !! [MeV] Average neutron energy
 
-  real(dp), parameter :: PA_T = 3.0D0
+  real(8), parameter :: PA_T = 3.0D0
   !! [g/mol] Tritium atomic weight
 
-  real(dp), parameter :: N_Av = 6.02D23  
+  real(8), parameter :: N_Av = 6.02D23  
   !! [at/mol] Avogadro number
   !#TODO: move to constants
 
   ! Constants and fixed coefficients used in the model
   ! Based on Helium-Cooled Pebble Beds (HCPB) configuration
   ! of the PPCS Model B design
-  real(dp) :: A_cov_PPCS
+  real(8) :: A_cov_PPCS
   !! Total blanket coverage area [m^2]
 
-  real(dp) :: A_FW_PPCS
+  real(8) :: A_FW_PPCS
   !! First wall area [m^2]
 
-  real(dp) :: NWL_av_PPCS
+  real(8) :: NWL_av_PPCS
   !! Average neutron wall load [MW/m^2]
 
-  real(dp) :: NWL_av_IB_PPCS
+  real(8) :: NWL_av_IB_PPCS
   !! Average IB wall load [MW/m^2]
 
-  real(dp) :: NWL_av_OB_PPCS
+  real(8) :: NWL_av_OB_PPCS
   !! Average OB wall load [MW/m^2]
 
-  real(dp) :: NWL_max_IB_PPCS
+  real(8) :: NWL_max_IB_PPCS
   !! Maximum IB wall load [MW/m^2]
 
-  real(dp) :: NWL_max_OB_PPCS
+  real(8) :: NWL_max_OB_PPCS
   !! Maximum OB wall load [MW/m^2]
 
-  real(dp) :: CF_bl_PPCS
+  real(8) :: CF_bl_PPCS
   !! Blanket coverage factor (calculated) [%]
 
   ! Power density pre-exponential terms and decay lengths
-  real(dp) :: q_0_BZ_breed_IB
+  real(8) :: q_0_BZ_breed_IB
   !! Pre-exp term in IB BZ breeder [W/cm^3]
 
-  real(dp) :: q_0_BZ_breed_OB
+  real(8) :: q_0_BZ_breed_OB
   !! Pre-exp term in OB BZ breeder [W/cm^3]
 
-  real(dp) :: lambda_q_BZ_breed_IB
+  real(8) :: lambda_q_BZ_breed_IB
   !! Decay length in IB BZ breeder [cm]
 
-  real(dp) :: lambda_q_BZ_breed_OB
+  real(8) :: lambda_q_BZ_breed_OB
   !! Decay length in OB BZ breeder [cm]
 
-  real(dp) :: q_0_BZ_Be_IB
+  real(8) :: q_0_BZ_Be_IB
   !! Pre-exp term in IB BZ Beryllium [W/cm^3]
 
-  real(dp) :: q_0_BZ_Be_OB
+  real(8) :: q_0_BZ_Be_OB
   !! Pre-exp term in OB BZ Beryllium [W/cm^3]
 
-  real(dp) :: lambda_q_BZ_Be_IB
+  real(8) :: lambda_q_BZ_Be_IB
   !! Decay length in IB BZ Beryllium [cm]
 
-  real(dp) :: lambda_q_BZ_Be_OB
+  real(8) :: lambda_q_BZ_Be_OB
   !! Decay length in OB BZ Beryllium [cm]
 
-  real(dp) :: q_0_BZ_steels_IB
+  real(8) :: q_0_BZ_steels_IB
   !! Pre-exp term in IB BZ steels [W/cm^3]
 
-  real(dp) :: q_0_BZ_steels_OB
+  real(8) :: q_0_BZ_steels_OB
   !! Pre-exp term in OB BZ steels [W/cm^3]
 
-  real(dp) :: lambda_q_BZ_steels_IB
+  real(8) :: lambda_q_BZ_steels_IB
   !! Decay length in IB BZ steels [cm]
 
-  real(dp) :: lambda_q_BZ_steels_OB
+  real(8) :: lambda_q_BZ_steels_OB
   !! Decay length in OB BZ steels [cm]
 
-  real(dp) :: lambda_EU
+  real(8) :: lambda_EU
   !! Decay length in EUROFER [cm]
 
-  real(dp) :: lambda_q_BM_IB
+  real(8) :: lambda_q_BM_IB
   !! Decay length in IB BM (calculated) [cm]
 
-  real(dp) :: lambda_q_BM_OB
+  real(8) :: lambda_q_BM_OB
   !! Decay length in OB BM (calculated) [cm]
 
-  real(dp) :: lambda_q_BP_IB
+  real(8) :: lambda_q_BP_IB
   !! Decay length in IB BP (calculated) [cm]
 
-  real(dp) :: lambda_q_BP_OB
+  real(8) :: lambda_q_BP_OB
   !! Decay length in OB BP (calculated) [cm]
 
-  real(dp) :: lambda_q_VV
+  real(8) :: lambda_q_VV
   !! Decay length in Vacuum Vessel [cm]
 
   ! Fast neutron flux pre-exponential terms and decay lengths
-  real(dp) :: phi_0_n_BZ_IB
+  real(8) :: phi_0_n_BZ_IB
   !! Pre-exp term in IB BZ [n/cm^2/sec]
 
-  real(dp) :: phi_0_n_BZ_OB
+  real(8) :: phi_0_n_BZ_OB
   !! Pre-exp term in OB BZ [n/cm^2/sec]
 
-  real(dp) :: lambda_n_BZ_IB
+  real(8) :: lambda_n_BZ_IB
   !! Decay length in IB BZ [cm]
 
-  real(dp) :: lambda_n_BZ_OB
+  real(8) :: lambda_n_BZ_OB
   !! Decay length in OB BZ [cm]
 
-  real(dp) :: lambda_n_VV
+  real(8) :: lambda_n_VV
   !! Decay length in VV [cm]
 
-  real(dp) :: phi_n_0_VV_ref
+  real(8) :: phi_n_0_VV_ref
   !! Reference fast neutron flux on VV inner side [Fish09] [n/cm^2/sec]
 
   ! Vacuum vessel helium production pre-exponential terms and decay lengths
-  real(dp) :: Gamma_He_0_ref
+  real(8) :: Gamma_He_0_ref
   !! Pre-exp term [appm/yr]
 
-  real(dp) :: lambda_He_VV
+  real(8) :: lambda_He_VV
   !! Decay length [cm]
 
-  real(dp) :: D_EU_max
+  real(8) :: D_EU_max
   !! Allowable neutron damage to the FW EUROFER [dpa]
 
   ! Variables used in this module, ultimately to be set via the calling routine
   ! to values given by PROCESS variables
-  real(dp), public :: P_n
+  real(8), public :: P_n
   !! Fusion neutron power [MW]
 
-  real(dp), public :: NWL_av
+  real(8), public :: NWL_av
   !! Average neutron wall load [MW/m^2]
 
-  real(dp), public :: f_peak
+  real(8), public :: f_peak
   !! NWL peaking factor [--]
 
-  real(dp), public :: t_FW_IB
+  real(8), public :: t_FW_IB
   !! IB first wall thickness [cm]
 
-  real(dp), public :: t_FW_OB
+  real(8), public :: t_FW_OB
   !! OB first wall thickness [cm]
 
-  real(dp), public :: A_FW_IB
+  real(8), public :: A_FW_IB
   !! IB first wall area [cm^2]
 
-  real(dp), public :: A_FW_OB
+  real(8), public :: A_FW_OB
   !! OB first wall area [cm^2]
 
-  real(dp), public :: A_bl_IB
+  real(8), public :: A_bl_IB
   !! IB blanket area [cm^2]
 
-  real(dp), public :: A_bl_OB
+  real(8), public :: A_bl_OB
   !! OB blanket area [cm^2]
 
-  real(dp), public :: A_VV_IB
+  real(8), public :: A_VV_IB
   !! IB shield/VV area [cm^2]
 
-  real(dp), public :: A_VV_OB
+  real(8), public :: A_VV_OB
   !! OB shield/VV area [cm^2]
 
-  real(dp), public :: CF_bl
+  real(8), public :: CF_bl
   !! Blanket coverage factor [%]
 
   integer, public :: n_ports_div
@@ -2777,140 +2773,140 @@ module kit_hcpb_module
   character(len=5), public :: H_CD_ports
   !! Type of H&CD ports (small or large)
 
-  real(dp), public :: e_Li
+  real(8), public :: e_Li
   !! Lithium 6 enrichment [%]
   
-  real(dp), public :: t_plant
+  real(8), public :: t_plant
   !! Plant lifetime [FPY]
 
-  real(dp), public :: alpha_m
+  real(8), public :: alpha_m
   !! Availability factor [--]
 
-  real(dp), public :: alpha_puls
+  real(8), public :: alpha_puls
   !! Pulsed regime fraction [--]
 
   character(len=20), public :: breeder
   !! Breeder type (allowed values are Orthosilicate, Metatitanate or Zirconate)
 
   ! Inboard parameters
-  real(dp), public :: t_BZ_IB
+  real(8), public :: t_BZ_IB
   !! BZ thickness [cm]
 
-  real(dp), public :: t_BM_IB
+  real(8), public :: t_BM_IB
   !! BM thickness [cm]
 
-  real(dp), public :: t_BP_IB
+  real(8), public :: t_BP_IB
   !! BP thickness [cm]
 
-  real(dp), public :: t_VV_IB
+  real(8), public :: t_VV_IB
   !! VV thickness [cm]
 
-  real(dp), public :: alpha_BM_IB
+  real(8), public :: alpha_BM_IB
   !! Helium fraction in the IB BM [%]
 
-  real(dp), public :: alpha_BP_IB
+  real(8), public :: alpha_BP_IB
   !! Helium fraction in the IB BP [%]
 
-  real(dp), public :: chi_Be_BZ_IB
+  real(8), public :: chi_Be_BZ_IB
   !! Beryllium vol. frac. in IB BZ [%]
 
-  real(dp), public :: chi_breed_BZ_IB
+  real(8), public :: chi_breed_BZ_IB
   !! Breeder vol. frac. in IB BZ [%]
 
-  real(dp), public :: chi_steels_BZ_IB
+  real(8), public :: chi_steels_BZ_IB
   !! Steels vol. frac. in IB BZ [%]
 
   ! Outboard parameters
-  real(dp), public :: t_BZ_OB
+  real(8), public :: t_BZ_OB
   !! BZ thickness [cm]
 
-  real(dp), public :: t_BM_OB
+  real(8), public :: t_BM_OB
   !! BM thickness [cm]
 
-  real(dp), public :: t_BP_OB
+  real(8), public :: t_BP_OB
   !! BP thickness [cm]
 
-  real(dp), public :: t_VV_OB
+  real(8), public :: t_VV_OB
   !! VV thickness [cm]
 
-  real(dp), public :: alpha_BM_OB
+  real(8), public :: alpha_BM_OB
   !! Helium fraction in the OB BM [%]
 
-  real(dp), public :: alpha_BP_OB
+  real(8), public :: alpha_BP_OB
   !! Helium fraction in the OB BP [%]
 
-  real(dp), public :: chi_Be_BZ_OB
+  real(8), public :: chi_Be_BZ_OB
   !! Beryllium vol. frac. in OB BZ [%]
 
-  real(dp), public :: chi_breed_BZ_OB
+  real(8), public :: chi_breed_BZ_OB
   !! Breeder vol. frac. in OB BZ [%]
 
-  real(dp), public :: chi_steels_BZ_OB
+  real(8), public :: chi_steels_BZ_OB
   !! Steels vol. frac. in OB BZ [%]
 
   ! Model outputs
-  real(dp), public :: pnuctfi 
+  real(8), public :: pnuctfi 
   !! Nuclear heating on IB TF coil [MW/m3]
 
-  real(dp), public :: pnuctfo 
+  real(8), public :: pnuctfo 
   !! Nuclear heating on OB TF coil [MW/m3]
 
-  real(dp), public :: P_th_tot
+  real(8), public :: P_th_tot
   !! Nuclear power generated in blanket [MW]
 
-  real(dp), public :: pnucsh  
+  real(8), public :: pnucsh  
   !! Nuclear power generated in shield/VV [MW]
 
-  real(dp), public :: M_E     
+  real(8), public :: M_E     
   !! Energy multiplication factor [--]
 
-  real(dp), public :: tbratio 
+  real(8), public :: tbratio 
   !! Tritium breeding ratio [--]
 
-  real(dp), public :: G_tot   
+  real(8), public :: G_tot   
   !! Tritium production rate [g/day]
 
-  real(dp), public :: nflutfi 
+  real(8), public :: nflutfi 
   !! Fast neutron fluence on IB TF coil [n/cm2]
 
-  real(dp), public :: nflutfo 
+  real(8), public :: nflutfo 
   !! Fast neutron fluence on OB TF coil [n/cm2]
 
-  real(dp), public :: vvhemini
+  real(8), public :: vvhemini
   !! minimum final He. conc in IB VV [appm]
 
-  real(dp), public :: vvhemino
+  real(8), public :: vvhemino
   !! minimum final He. conc in OB VV [appm]
 
-  real(dp), public :: vvhemaxi
+  real(8), public :: vvhemaxi
   !! maximum final He. conc in IB VV [appm]
 
-  real(dp), public :: vvhemaxo
+  real(8), public :: vvhemaxo
   !! maximum final He. conc in OB VV [appm]
 
-  real(dp), public :: t_bl_fpy
+  real(8), public :: t_bl_fpy
   !! blanket lifetime in full power years [y]
 
-  real(dp), public :: t_bl_y  
+  real(8), public :: t_bl_y  
   !! blanket lifetime in calendar years [y]
 
-  real(dp), private :: vfblkti, vfblkto
+  real(8), private :: vfblkti, vfblkto
   !! Inboard/outboard void fraction of blanket
 
   ! Component volume info
-  real(dp), private :: hblnkt
+  real(8), private :: hblnkt
   !! Blanket internal half-height (m)
 
-  real(dp), private :: hshld
+  real(8), private :: hshld
   !! Shield internal half-height (m)
 
-  real(dp), private :: hcryopf
+  real(8), private :: hcryopf
   !! Clearance between uppermost PF coil and cryostat lid (m)
 
-  real(dp), private :: hvv
+  real(8), private :: hvv
   !! Vacuum vessel internal half-height (m)
 
-  real(dp), private :: volshldi, volshldo
+  real(8), private :: volshldi, volshldo
   !! Volume of inboard and outboard shield (m3)
 
 contains
@@ -3012,10 +3008,10 @@ contains
     implicit none
 
     ! Arguments
-    real(dp), intent(in) :: alpha
+    real(8), intent(in) :: alpha
 
     ! Local variables
-    real(dp) :: f_alpha
+    real(8) :: f_alpha
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3273,14 +3269,14 @@ contains
     implicit none
 
     ! Arguments
-    real(dp), intent(out) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
-    real(dp), intent(out) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
-    real(dp), intent(out) :: pnuctfi, pnuctfo
+    real(8), intent(out) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
+    real(8), intent(out) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
+    real(8), intent(out) :: pnuctfi, pnuctfo
 
     ! Local variables
-    real(dp), dimension(np) :: q_steels_BZ_IB, q_steels_BZ_OB
-    real(dp), dimension(np) :: q_BM_IB, q_BP_IB, q_VV_IB
-    real(dp), dimension(np) :: q_BM_OB, q_BP_OB, q_VV_OB
+    real(8), dimension(np) :: q_steels_BZ_IB, q_steels_BZ_OB
+    real(8), dimension(np) :: q_BM_IB, q_BP_IB, q_VV_IB
+    real(8), dimension(np) :: q_BM_OB, q_BP_OB, q_VV_OB
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3357,20 +3353,20 @@ contains
     implicit none
 
     ! Arguments
-    real(dp), intent(in) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
-    real(dp), intent(in) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
-    real(dp), intent(out) :: P_th_tot, M_E, pnucsh
+    real(8), intent(in) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
+    real(8), intent(in) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
+    real(8), intent(out) :: P_th_tot, M_E, pnucsh
 
     ! Local variables
-    real(dp) :: A_BZ_breed_IB, A_BZ_breed_OB, A_BZ_Be_IB, A_BZ_Be_OB
-    real(dp) :: A_BZ_steels_IB, A_BZ_steels_OB
-    real(dp) :: P_BZ_breed_IB, P_BZ_Be_IB, P_BZ_steels_IB
-    real(dp) :: P_BZ_IB, P_BM_IB, P_BP_IB, P_VV_IB
-    real(dp) :: P_BZ_breed_OB, P_BZ_Be_OB, P_BZ_steels_OB
-    real(dp) :: P_BZ_OB, P_BM_OB, P_BP_OB, P_VV_OB
-    real(dp) :: P_tot_IB, P_tot_OB, P_n_FW
+    real(8) :: A_BZ_breed_IB, A_BZ_breed_OB, A_BZ_Be_IB, A_BZ_Be_OB
+    real(8) :: A_BZ_steels_IB, A_BZ_steels_OB
+    real(8) :: P_BZ_breed_IB, P_BZ_Be_IB, P_BZ_steels_IB
+    real(8) :: P_BZ_IB, P_BM_IB, P_BP_IB, P_VV_IB
+    real(8) :: P_BZ_breed_OB, P_BZ_Be_OB, P_BZ_steels_OB
+    real(8) :: P_BZ_OB, P_BM_OB, P_BP_OB, P_VV_OB
+    real(8) :: P_tot_IB, P_tot_OB, P_n_FW
 
-    real(dp) :: nwl_ratio, nwl_IB_ratio_PPCS, nwl_OB_ratio_PPCS
+    real(8) :: nwl_ratio, nwl_IB_ratio_PPCS, nwl_OB_ratio_PPCS
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3503,12 +3499,12 @@ contains
 
     ! Arguments
 
-    real(dp), intent(out) :: tbr, g_tot
+    real(8), intent(out) :: tbr, g_tot
 
     ! Local variables
 
-    real(dp) :: wib, wob, eu_frac
-    real(dp), parameter :: wib_PPCS = 0.28D0, wob_PPCS = 0.72D0
+    real(8) :: wib, wob, eu_frac
+    real(8), parameter :: wib_PPCS = 0.28D0, wob_PPCS = 0.72D0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3551,11 +3547,11 @@ contains
       implicit none
 
       ! Arguments
-      real(dp), intent(in) :: e_Li
+      real(8), intent(in) :: e_Li
       character(len=*), intent(in) :: breeder
 
       ! Local variables
-      real(dp) :: TBR_breed
+      real(8) :: TBR_breed
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3604,7 +3600,7 @@ contains
       character(len=*), intent(in) :: H_CD_ports
 
       ! Local variables
-      real(dp) :: TBR_ports
+      real(8) :: TBR_ports
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3652,16 +3648,16 @@ contains
     implicit none
 
     ! Arguments
-    real(dp), intent(out) :: phi_n_VV_IB_start,phi_n_VV_OB_start
-    real(dp), intent(out) :: phi_n_IB_TFC, phi_n_OB_TFC
+    real(8), intent(out) :: phi_n_VV_IB_start,phi_n_VV_OB_start
+    real(8), intent(out) :: phi_n_IB_TFC, phi_n_OB_TFC
 
     ! Local variables
     integer, parameter :: K_tau = 31536000  ! [sec/yr] Number of seconds per year
-    real(dp), dimension(np) :: phi_n_BZ_IB, phi_n_BM_IB
-    real(dp), dimension(np) :: phi_n_BP_IB, phi_n_VV_IB
-    real(dp), dimension(np) :: phi_n_BZ_OB, phi_n_BM_OB
-    real(dp), dimension(np) :: phi_n_BP_OB, phi_n_VV_OB
-    real(dp) :: nwl_ratio
+    real(8), dimension(np) :: phi_n_BZ_IB, phi_n_BM_IB
+    real(8), dimension(np) :: phi_n_BP_IB, phi_n_VV_IB
+    real(8), dimension(np) :: phi_n_BZ_OB, phi_n_BM_OB
+    real(8), dimension(np) :: phi_n_BP_OB, phi_n_VV_OB
+    real(8) :: nwl_ratio
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3732,12 +3728,12 @@ contains
     implicit none
 
     ! Arguments
-    real(dp), intent(in) :: phi_n_VV_IB_start,phi_n_VV_OB_start
-    real(dp), intent(out) :: vvhemini,vvhemino,vvhemaxi,vvhemaxo
+    real(8), intent(in) :: phi_n_VV_IB_start,phi_n_VV_OB_start
+    real(8), intent(out) :: vvhemini,vvhemino,vvhemaxi,vvhemaxo
 
     ! Local variables
-    real(dp), dimension(np) :: Gamma_He_IB, Gamma_He_OB
-    real(dp), dimension(np) :: C_He_IB, C_He_OB
+    real(8), dimension(np) :: Gamma_He_IB, Gamma_He_OB
+    real(8), dimension(np) :: C_He_IB, C_He_OB
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3778,7 +3774,7 @@ contains
     implicit none
 
     ! Arguments
-    real(dp), intent(out) :: t_bl_FPY, t_bl_Y
+    real(8), intent(out) :: t_bl_FPY, t_bl_Y
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3921,7 +3917,7 @@ contains
     implicit none
 
     ! Local variables
-    real(dp) :: hbot, htop
+    real(8) :: hbot, htop
 
     ! Calculate blanket internal lower half-height (m)
     hbot = rminor*kappa + vgap + divfix - blnktth
@@ -3955,7 +3951,7 @@ contains
     implicit none
 
     ! Local variables
-    real(dp) :: hbot, htop
+    real(8) :: hbot, htop
 
     ! Calculate shield internal lower half-height (m)
     hbot = rminor*kappa + vgap + divfix
@@ -3989,7 +3985,7 @@ contains
     implicit none
 
     ! Local variables
-    real(dp) :: hbot, htop
+    real(8) :: hbot, htop
 
     ! Calculate vacuum vessel internal lower half-height (m)
     hbot = hmax - vgap2 - d_vv_bot
@@ -4026,7 +4022,7 @@ contains
     implicit none
 
     ! Local variables
-    real(dp) :: r1, r2
+    real(8) :: r1, r2
 
     ! Major radius to outer edge of inboard blanket (m)
     r1 = rsldi + shldith + blnkith
@@ -4061,7 +4057,7 @@ contains
     implicit none
 
     ! Local variables
-    real(dp) :: r1, r2
+    real(8) :: r1, r2
 
     ! Major radius to outer edge of inboard shield (m)
     r1 = rsldi + shldith
@@ -4095,7 +4091,7 @@ contains
     implicit none
 
     ! Local variables
-    real(dp) :: r1, r2, v1, v2
+    real(8) :: r1, r2, v1, v2
 
     ! Major radius to outer edge of inboard section (m)
     r1 = rsldi
@@ -4131,7 +4127,7 @@ contains
     implicit none
 
     ! Local variables
-    real(dp) :: r1, r2, r3
+    real(8) :: r1, r2, r3
 
     ! Major radius to centre of inboard and outboard ellipses (m)
     ! (coincident in radius with top of plasma)
@@ -4169,7 +4165,7 @@ contains
     implicit none
 
     ! Local variables
-    real(dp) :: r1, r2, r3
+    real(8) :: r1, r2, r3
 
     ! Major radius to centre of inboard and outboard ellipses (m)
     ! (coincident in radius with top of plasma)
@@ -4207,7 +4203,7 @@ contains
     implicit none
 
     ! Local variables
-    real(dp) :: r1, r2, r3, v1, v2
+    real(8) :: r1, r2, r3, v1, v2
 
     ! Major radius to centre of inboard and outboard ellipses (m)
     ! (coincident in radius with top of plasma)
