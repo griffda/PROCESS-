@@ -721,7 +721,7 @@ contains
     !! Returns cost of inboard shield
 
     use build_variables, only: rsldi, shldith, shldtth, vgap, &
-      scrapli, scraplo, fwith, fwoth, blnktth
+      scrapli, scraplo, fwith, fwoth, blnktth, d_vv_in
     use fwbs_variables, only: i_shield_mat, denw, denwc
     use divertor_variables, only: divfix
     use cost_variables, only: step_ucshw, step_ucshwc
@@ -735,7 +735,7 @@ contains
 
     ! Local variables
     real(dp):: inb_sh_v, r1, hbot, htop, hshld, &
-      inb_sh_v_mtl, inb_sh_m, sh_mtl_d, sh_mtl_c    
+      inb_sh_v_mtl, inb_sh_m, sh_mtl_d, sh_mtl_c, shldith_corr    
 
     ! Volume of inboard shield found using same method as in CCFE HCPB blanket model:
     ! inboard shield is assumed to be a cylinder of uniform thickness
@@ -744,17 +744,22 @@ contains
     hbot = rminor*kappa + vgap + divfix
     ! if a double null machine then symmetric otherwise asymmetric
     if ( idivrt == 2 ) then
-       htop = hbot
+      htop = hbot
     else
-       htop = rminor*kappa + 0.5D0*(scrapli+scraplo + fwith+fwoth) + blnktth
+      htop = rminor*kappa + 0.5D0*(scrapli+scraplo + fwith+fwoth) + blnktth
     end if
     ! Average of top and bottom (m)
     hshld = 0.5D0*(htop + hbot)
 
     ! Radius to outer edge of inboard shield (m)
     r1 = rsldi + shldith
+
+    ! Corrected shield thickness: allows for 300mm vacuum vessel
+    ! Justification: requirement from K. Taylor, neutronics
+    ! # TODO: replace this correction when valid (VV + shield) is used
+    shldith_corr = (d_vv_in + shldith) - 0.3D0
     ! Volume of inboard cylindrical shell (m3)
-    inb_sh_v = 2.0D0*(hshld+shldtth) * pi*(r1**2 - (r1-shldith)**2)
+    inb_sh_v = 2.0D0*(hshld+shldtth) * pi*(r1**2 - (r1-shldith_corr)**2)
 
     ! Scale shield material volume (allow for 10% volume coolant, 5% steel)
     inb_sh_v_mtl = 0.85D0 * inb_sh_v
