@@ -2213,7 +2213,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! Old generalized plane stress model
     ! ---
     if ( i_tf_plane_stress == 1 ) then
-        print *, 'plane stress subroutine about to be called. i_tf_plane_stress = 1'
 
         ! Plane stress calculation (SC) [Pa]
         call plane_stress( poisson_p, radtf, eyoung_p, jeff, & ! Inputs
@@ -2241,7 +2240,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! New generalized plane strain formulation
     ! ---
     else if ( i_tf_plane_stress == 0) then
-        print *, 'plane stress subroutine about to be called. i_tf_plane_stress = 0'
         ! Generalized plane strain calculation [Pa]
         call generalized_plane_strain( poisson_p, poisson_z, eyoung_p, eyoung_z,  & ! Inputs
                                        radtf, jeff, vforce_eff,                   & ! Inputs
@@ -2249,7 +2247,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                                        radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
                                        strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
     else if ( i_tf_plane_stress == 2) then
-        print *, 'plane stress subroutine about to be called. i_tf_plane_stress = 2'
         ! Extended plane strain calculation [Pa]
         call extended_plane_strain( poisson_p, poisson_z, eyoung_p, eyoung_z,  & ! Inputs
                                        radtf, jeff, vforce_eff,                   & ! Inputs
@@ -2830,7 +2827,7 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     !! Author : S. Kahn, CCFE
     !! Jan 2020
     !! This subroutine estimates the normal stresses/strains and radial displacement
-    !! radial distributions of a multilayer cylinder with forces at its ends,                                     
+    !! radial distributions of a multilayer cylinder with forces at its ends, 
     !! assuming the generalized plain strain formulation. This formlation relies
     !! on the fact that the vertical forces are applied far enough at the ends
     !! so that vertical strain can be approximated radially constant. 
@@ -2984,38 +2981,6 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     ! The problem is set as aa.cc = bb, cc being the constant we search
     ! ------
     
-    ! Charles Swanson diagnostic info
-    print *, 'subroutine generalized_plane_strain has been called!'
-    print *, 'n_radial_array is ',n_radial_array
-    print *, 'nlayers is ',nlayers
-    print *, 'i_tf_bucking is ',i_tf_bucking
-    print *, 'Toroidal poisson ratios (nu_p) are'
-    do ii = 1, nlayers
-        print *, 'nu_p(',ii,') is ',nu_p(ii)
-    end do 
-    print *, 'Axial poisson ratios (nu_z) are'
-    do ii = 1, nlayers
-        print *, 'nu_z(',ii,') is ',nu_z(ii)
-    end do    
-    print *, 'Toroidal Youngs moduli (ey_p) are'
-    do ii = 1, nlayers
-        print *, 'ey_p(',ii,') is ',ey_p(ii)
-    end do      
-    print *, 'Axial Youngs moduli (ey_z) are'
-    do ii = 1, nlayers
-        print *, 'ey_z(',ii,') is ',ey_z(ii)
-    end do        
-    print *, 'Current densities (d_curr) are'
-    do ii = 1, nlayers
-        print *, 'd_curr(',ii,') is ',d_curr(ii)
-    end do    
-    print *, 'Radii (rad) are'
-    do ii = 1, nlayers+1
-        print *, 'rad(',ii,') is ',rad(ii)
-    end do
-    print *, 'v_force is ',v_force
-
-
     ! Layer parameterisation
     ! ***
     ! Vertical poisson's squared coefficient (array equation)
@@ -3343,7 +3308,29 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
       
     !! Author : C. Swanson, PPPL and S. Kahn, CCFE
     !! September 2021
-    !! [EDIT: Write the intro!]
+    !! There is a writeup of the derivation of this model on the gitlab server.
+    !! This surboutine estimates the radial displacement, stresses, and strains of
+    !! the inboard midplane of the TF. It assumes that structures are axisymmetric
+    !! and long in the axial (z) direction, the "axisymmetric extended plane strain"
+    !! problem. The TF is assumed to be constructed from some number of layers, 
+    !! within which materials properties and current densities are uniform. 
+    !! The 1D radially-resolved solution is reduced to a 0D matrix inversion problem
+    !! using analytic solutions to Lame's thick cylinder problem. Materials may be
+    !! transverse-isotropic in Young's modulus and Poisson's ratio. The consraints
+    !! are: Either zero radial stress or zero radial displacement at the inner
+    !! surface (depending on whether the inner radius is zero), zero radial stress
+    !! at the outer surface, total axial force (tension) is equal to the input, 
+    !! and optionally the axial force of an inner subset of cylinders is zero (slip
+    !! conditions between the inner and outer subset). The matrix inversion / linear
+    !! solve is always 4x4, no matter how many layers there are. 
+    !! The problem is formulated around a solution vector (A,B,eps_z,1.0,eps_z_slip)
+    !! where A and B are the parameters in Lame's solution where u = A*r + B/r, u 
+    !! is the radial displacement. eps_z is the axial strain on the outer, force-
+    !! carrying layers. eps_z_slip is the axial strain on the inner, non-force-
+    !! carrying layers (optionally). The solution vector is A,B at the outermost
+    !! radius, and is transformed via matrix multiplication into those A,B 
+    !! values at other radii. The constraints are inner products with this vector, 
+    !! and so when stacked form a matrix to invert. 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use constants, only: rmu0, pi
     use maths_library, only: linesolv
@@ -3420,7 +3407,6 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
 
     ! Local variables
     ! ---
-    ! Charles Swanson version
     ! Inner axial-slip layer parameters
     integer :: nonslip_layer
     !! Innermost layer which does not axially slip. All layers
@@ -3509,9 +3495,6 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     !! outer radius to plotted radius 
     real(dp) :: A_layer,B_layer,A_plot,B_plot,f_int_A_plot,f_int_B_plot
     
-    
-    
-    ! Seb Kahn version
     ! Variables used for radial stress distribution     
     real(dp) :: dradius  
       
@@ -3528,37 +3511,6 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     ! radial stress and displacement between layers solved 
     ! The problem is set as aa.cc = bb, cc being the constant we search
     ! ------
-    
-    ! Charles Swanson diagnostic info
-    print *, 'subroutine extended_plane_strain has been called!'
-    print *, 'n_radial_array is ',n_radial_array
-    print *, 'nlayers is ',nlayers
-    print *, 'i_tf_bucking is ',i_tf_bucking
-    print *, 'Transverse Poisson''s ratios (nu_t) are'
-    do ii = 1, nlayers
-        print *, 'nu_t(',ii,') is ',nu_t(ii)
-    end do 
-    print *, 'Axial-transverse Poisson''s ratios (nu_zt) are'
-    do ii = 1, nlayers
-        print *, 'nu_zt(',ii,') is ',nu_zt(ii)
-    end do    
-    print *, 'Transverse Young''s moduli (ey_t) are'
-    do ii = 1, nlayers
-        print *, 'ey_t(',ii,') is ',ey_t(ii)
-    end do      
-    print *, 'Axial Young''s moduli (ey_z) are'
-    do ii = 1, nlayers
-        print *, 'ey_z(',ii,') is ',ey_z(ii)
-    end do        
-    print *, 'Current densities (d_curr) are'
-    do ii = 1, nlayers
-        print *, 'd_curr(',ii,') is ',d_curr(ii)
-    end do    
-    print *, 'Radii (rad) are'
-    do ii = 1, nlayers+1
-        print *, 'rad(',ii,') is ',rad(ii)
-    end do
-    print *, 'v_force is ',v_force
     
     ! Inner slip layers parameters
     ! Section 15 in the writeup
@@ -3589,24 +3541,6 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     nu_bar_tz = nu_tz / (1-nu_t)
     nu_bar_zt = nu_zt * (1+nu_t) / (1-nu_tz*nu_zt)
     
-    print *, 'Computed values!'
-    print *, 'Transverse-axial Poisson''s ratios (nu_tz) are'
-    do ii = 1, nlayers
-        print *, 'nu_tz(',ii,') is ',nu_tz(ii)
-    end do 
-    print *, 'Axial-transverse effective Poisson''s ratios (nu_bar_zt) are'
-    do ii = 1, nlayers
-        print *, 'nu_bar_zt(',ii,') is ',nu_bar_zt(ii)
-    end do    
-    print *, 'Transverse effective Young''s moduli (ey_bar_t) are'
-    do ii = 1, nlayers
-        print *, 'ey_bar_t(',ii,') is ',ey_bar_t(ii)
-    end do      
-    print *, 'Axial effective Young''s moduli (ey_bar_z) are'
-    do ii = 1, nlayers
-        print *, 'ey_bar_z(',ii,') is ',ey_bar_z(ii)
-    end do  
-    
     ! Lorentz force parameters
     ! Section 13 in the writeup
     ! ***
@@ -3624,37 +3558,11 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     ! Force density integral that adds to Lame parameter A
     f_int_A   = 0.5D0*f_lin_fac * (rad(2:nlayers+1)**2-rad(1:nlayers)**2) + f_rec_fac * log(rad(2:nlayers+1)/(rad(1:nlayers)))
     if ( f_rec_fac(1) == 0D0) then
-        print *, 'Alert! Encountered an rad(1) = 0 situation! Correcting for it.'
         f_int_A(1) = 0.5D0*f_lin_fac(1) * (rad(2)**2-rad(1)**2)
     end if
 
     ! Force density integral that adds to Lame parameter B
     f_int_B   = 0.25D0*f_lin_fac * (rad(2:nlayers+1)**4-rad(1:nlayers)**4) + 0.5D0*f_rec_fac * (rad(2:nlayers+1)**2-rad(1:nlayers)**2)
-          
-    print *, 'Layer currents (currents) are'
-    do ii = 1, nlayers
-        print *, 'currents(',ii,') is ',currents(ii)
-    end do
-    print *, 'Currents within the ID of each layer (currents_enclosed) are'
-    do ii = 1, nlayers
-        print *, 'currents_enclosed(',ii,') is ',currents_enclosed(ii)
-    end do
-    print *, 'Body force factor (f_lin_fac) are'
-    do ii = 1, nlayers
-        print *, 'f_lin_fac(',ii,') is ',f_lin_fac(ii)
-    end do
-    print *, 'Body force factor (f_rec_fac) are'
-    do ii = 1, nlayers
-        print *, 'f_rec_fac(',ii,') is ',f_rec_fac(ii)
-    end do
-    print *, 'Body force integral (f_int_A) are'
-    do ii = 1, nlayers
-        print *, 'f_int_A(',ii,') is ',f_int_A(ii)
-    end do
-    print *, 'Body force integral (f_int_B) are'
-    do ii = 1, nlayers
-        print *, 'f_int_B(',ii,') is ',f_int_B(ii)
-    end do
 
     ! Transformation matrix from outer to inner Lame parameters
     ! Section 5 in the writeup
@@ -3671,12 +3579,6 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
         
         M_int(1,4,kk) = -0.5D0 / ey_bar_t(kk) * f_int_A(kk);
         M_int(2,4,kk) =  0.5D0 / ey_bar_t(kk) * f_int_B(kk);
-    end do
-    
-    print *, 'Internal transfer matrices (M_int) are'
-    do kk = 1, nlayers
-        print *, 'M_int(:,:,',kk,') is '
-        call Print5x5Matrix(M_int(:,:,kk))
     end do
 
     ! Transformation matrix between layers
@@ -3718,12 +3620,6 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
         M_ext(5,5,kk) = 1.0D0;
     end do
     
-    print *, 'External transfer matrices (M_ext) are'
-    do kk = 1, nlayers
-        print *, 'M_ext(:,:,',kk,') is '
-        call Print5x5Matrix(M_ext(:,:,kk))
-    end do
-    
     ! Total transformation matrix, from Lame parmeters at outside to
     ! Lame parameters at inside of each layer
     ! Section 7 in the writeup
@@ -3731,12 +3627,6 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     M_tot(:,:,nlayers) = M_int(:,:,nlayers)
     do kk = nlayers-1, 1, -1
         M_tot(:,:,kk) = matmul(M_int(:,:,kk),matmul(M_ext(:,:,kk+1),M_tot(:,:,kk+1)));
-    end do
-
-    print *, 'Total transfer matrices (M_tot) are'
-    do kk = 1, nlayers
-        print *, 'M_tot(:,:,',kk,') is '
-        call Print5x5Matrix(M_tot(:,:,kk))
     end do
     
     ! Axial force inner product. Dot-product this with the 
@@ -3778,11 +3668,6 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
         v_force_row_slip(1,:) = (/ 0D0, 0D0, 0D0, 0D0, 1D0 /)
     end if
 
-    print *, 'ey_bar_z_area is ', ey_bar_z_area
-    print *, 'ey_bar_z_area_slip is ', ey_bar_z_area_slip
-    print *, 'v_force_row is ', v_force_row(1,1), ', ', v_force_row(1,2), ', ', v_force_row(1,3), ', ', v_force_row(1,4), ', ', v_force_row(1,5)
-    print *, 'v_force_row_slip is ', v_force_row_slip(1,1), ', ', v_force_row_slip(1,2), ', ', v_force_row_slip(1,3), ', ', v_force_row_slip(1,4), ', ', v_force_row_slip(1,5)
-
     ! Boundary condition matrix. Multiply this with the 
     ! outermost solution vector, (A,B,eps_z,1.0,eps_z_slip), 
     ! to obtain a zero vector. 
@@ -3804,9 +3689,6 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     M_bc(3,4) = M_bc(3,4) - v_force
     ! Axial force boundary condition of slip layers
     M_bc(4,:) = v_force_row_slip(1,:)
-        
-    print *, 'Boundary condition matrix (M_bc) is'
-    call Print4x5Matrix(M_bc)
 
     ! The solution, the outermost Lame parameters A,B
     ! and the axial strains of the force-carrying and 
@@ -3818,12 +3700,6 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     call linesolv(M_toinv, 4, RHS_vec, A_vec_solution)
     A_vec_solution(5) = A_vec_solution(4)
     A_vec_solution(4) = 1D0
-
-    print *, 'Solution vector (A_vec_solution) are'
-    do ii = 1, 5
-        print *, 'A_vec_solution(',ii,') is ',A_vec_solution(ii)
-    end do
-    
     
     ! Radial/toroidal/vertical stress radial distribution
     ! ------
@@ -3839,11 +3715,8 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     ! Radial displacement, stress and strain distributions
     A_vec_layer = A_vec_solution
     do ii = nlayers, 1, -1
-        print *, 'Now preparing plot values for layer ', ii
         A_layer = A_vec_layer(1)
         B_layer = A_vec_layer(2)
-        print *, 'For layer ', ii, ', A_layer (outer) is ',A_layer
-        print *, 'For layer ', ii, ', B_layer (outer) is ',B_layer
         
         dradius = (rad(ii+1) - rad(ii)) / dble(n_radial_array - 1 )
         do jj = (ii-1)*n_radial_array + 1, ii*n_radial_array
@@ -3886,28 +3759,6 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     ! ------     
 
 end subroutine extended_plane_strain     
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine Print5x5Matrix(theMatrix)
-	real(dp), dimension(5,5) :: theMatrix
-	integer :: ind1
-	do ind1 = 1,5
-		! As a real (f), use 8 digits to display each (8), with 3 digits after the decimal (.3). Leave 2 spaces between each (x2).
-		print '(2x,f8.3,2x,f8.3,2x,f8.3,2x,f8.3,2x,f8.3)', theMatrix(ind1,1), theMatrix(ind1,2), theMatrix(ind1,3), theMatrix(ind1,4), theMatrix(ind1,5)
-	end do
-end subroutine Print5x5Matrix
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine Print4x5Matrix(theMatrix)
-	real(dp), dimension(4,5) :: theMatrix
-	integer :: ind1
-	do ind1 = 1,4
-		! As a real (f), use 8 digits to display each (8), with 3 digits after the decimal (.3). Leave 2 spaces between each (x2).
-		print '(2x,f8.3,2x,f8.3,2x,f8.3,2x,f8.3,2x,f8.3)', theMatrix(ind1,1), theMatrix(ind1,2), theMatrix(ind1,3), theMatrix(ind1,4), theMatrix(ind1,5)
-	end do
-end subroutine Print4x5Matrix
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
