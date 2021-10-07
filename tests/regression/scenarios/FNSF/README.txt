@@ -21,3 +21,4 @@ Menard et al. (2016), Nucl. Fusion, 56, 106023
 14/05/2019 SIM  Reset after changes to the IPB98(y,2) scaling
 23/08/2019 SIM  Switched to icurr=9
 10/09/2020 SIM  Switched to ishape=8 and changed epsvmc=1.0E-7
+07/10/2021 CPS  Switched to i_tf_plane_stress = 2
