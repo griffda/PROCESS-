@@ -53,7 +53,7 @@ module global_variables
   integer :: iscan_global
   !! Makes iscan available globally.
 
-  real(dp) :: convergence_parameter
+  real(8) :: convergence_parameter
   !! VMCON convergence parameter "sum"
 
   contains

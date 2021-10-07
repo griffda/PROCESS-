@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-378-g8e646ccf
-    Branch : 1345-elongation-scaleable-with-aspect-ratio
+   Tag No. : v2.1-538-g66f889bd
+    Branch : 1397-remove-f90wrap-from-build-process-tim2
    Git log : COMMIT_MSG
- Date/time : 30 Sep 2021 12:03:39 +01:00(hh:mm) UTC
-      User : rhicha
-  Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-130/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-130/test_scenario_steady_state_0/IN.DAT
+ Date/time : 29 Sep 2021 10:39:01 +00:00(hh:mm) UTC
+      User : root
+  Computer : c510c7d65104
+ Directory : /root/process
+     Input : /tmp/pytest-of-root/pytest-10/test_scenario_steady_state_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -51,7 +51,7 @@
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          1     
  Square root of the sum of squares of the constraint residuals            (sqsumsq)                 1.968E-09  OP 
- VMCON convergence parameter                                              (convergence_parameter)   2.591E-10  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   0.000E+00  OP 
  Number of VMCON iterations                                               (nviter)                         19  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit          MAJOR RADIUS.
@@ -132,29 +132,29 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                               constraint                 residue                    residue
  
     1  Beta consistency                      =  6.7018E-02             -1.4464E-13                 2.1583E-12
-    2  Global power balance consistency      =  2.0815E-01 MW/m3        1.8626E-14 MW/m3          -8.9484E-14
-    3  Density upper limit                   <  7.1047E+19 /m3          2.1429E+08 /m3             3.0163E-12
-    4  Neutron wall load upper limit         <  1.2856E+00 MW/m2        3.2430E-12 MW/m2           2.5224E-12
-    5  Radial build consistency              =  8.7841E+00 m           -3.3353E-12 m               3.7970E-13
-    6  Volt second lower limit               >  4.0146E+02 V.sec       -3.0050E-10 V.sec           7.4851E-13
-    7  L-H power threshold limit             >  9.4519E+01 MW          -4.3546E-09 MW              4.6072E-11
-    8  Net electric power lower limit        >  5.0000E+02 MW          -4.7028E-09 MW             -9.4056E-12
-    9  Beta upper limit                      <  7.5333E-02              4.4659E-14                 5.9286E-13
-   10  Peak toroidal field upper limit       <  1.1200E+01 T           -1.1325E-11 T               1.0112E-12
-   11  CS coil EOF current density limit     <  4.4785E+07 A/m2         1.0631E-03 A/m2            2.3737E-11
-   12  CS coil BOP current density limit     <  4.2783E+07 A/m2        -1.0757E-04 A/m2           -2.5143E-12
-   13  Injection power upper limit           <  2.2500E+02 MW          -2.7287E-09 MW              1.2127E-11
-   14  TF coil case stress upper limit       <  5.8000E+08 Pa           2.3587E-03 Pa              4.0667E-12
-   15  TF coil conduit stress upper lim      <  5.8000E+08 Pa           2.4128E-03 Pa              4.1600E-12
-   16  I_op / I_critical (TF coil)           <  2.3198E+07 A/m2        -9.7994E-05 A/m2            6.4482E-12
+    2  Global power balance consistency      =  2.0815E-01 MW/m3        1.8395E-14 MW/m3          -8.8374E-14
+    3  Density upper limit                   <  7.1047E+19 /m3          2.1426E+08 /m3             3.0158E-12
+    4  Neutron wall load upper limit         <  1.2856E+00 MW/m2        3.2392E-12 MW/m2           2.5195E-12
+    5  Radial build consistency              =  8.7841E+00 m           -3.3334E-12 m               3.7947E-13
+    6  Volt second lower limit               >  4.0146E+02 V.sec       -3.0059E-10 V.sec           7.4873E-13
+    7  L-H power threshold limit             >  9.4519E+01 MW          -4.3549E-09 MW              4.6074E-11
+    8  Net electric power lower limit        >  5.0000E+02 MW          -4.7007E-09 MW             -9.4015E-12
+    9  Beta upper limit                      <  7.5333E-02              4.4603E-14                 5.9219E-13
+   10  Peak toroidal field upper limit       <  1.1200E+01 T           -1.1318E-11 T               1.0105E-12
+   11  CS coil EOF current density limit     <  4.4785E+07 A/m2         1.0630E-03 A/m2            2.3736E-11
+   12  CS coil BOP current density limit     <  4.2783E+07 A/m2        -1.0765E-04 A/m2           -2.5162E-12
+   13  Injection power upper limit           <  2.2500E+02 MW          -2.7284E-09 MW              1.2126E-11
+   14  TF coil case stress upper limit       <  5.8000E+08 Pa           2.3625E-03 Pa              4.0734E-12
+   15  TF coil conduit stress upper lim      <  5.8000E+08 Pa           2.4167E-03 Pa              4.1667E-12
+   16  I_op / I_critical (TF coil)           <  2.3198E+07 A/m2        -9.7943E-05 A/m2            6.4448E-12
    17  Dump voltage upper limit              <  1.0000E+01 V           -1.9588E-08 V              -1.9588E-09
-   18  J_winding pack/J_protection limit     <  1.5197E+07 A/m2         0.0000E+00 A/m2            3.2914E-12
-   19  TF coil temp. margin lower limit      >  1.5000E+00 K           -2.6138E-10 K               1.7425E-10
-   20  CS temperature margin lower limit     >  1.5000E+00 K           -5.0848E-12 K               3.3895E-12
-   21  taup/taueff                           >  5.0000E+00             -1.0852E-11                 2.1705E-12
-   22  Dump time set by VV stress            >  2.8464E+01 s           -4.2127E-01 s               5.4976E-12
-   23  Upper Lim. on Psep * Bt / q A R       <  9.2000E+00 MWT/m        4.6051E-10 MWT/m          -5.0055E-11
-   24  CS Tresca stress limit                <  6.6000E+08 Pa          -5.5552E-04 Pa             -8.4166E-13
+   18  J_winding pack/J_protection limit     <  1.5197E+07 A/m2         0.0000E+00 A/m2            3.2885E-12
+   19  TF coil temp. margin lower limit      >  1.5000E+00 K           -2.6137E-10 K               1.7425E-10
+   20  CS temperature margin lower limit     >  1.5000E+00 K           -5.0786E-12 K               3.3857E-12
+   21  taup/taueff                           >  5.0000E+00             -1.0837E-11                 2.1674E-12
+   22  Dump time set by VV stress            >  2.8464E+01 s           -4.2127E-01 s               5.4996E-12
+   23  Upper Lim. on Psep * Bt / q A R       <  9.2000E+00 MWT/m        4.6052E-10 MWT/m          -5.0056E-11
+   24  CS Tresca stress limit                <  6.6000E+08 Pa          -5.5587E-04 Pa             -8.4222E-13
  
  ******************************************** Final Feasible Point ********************************************
  
