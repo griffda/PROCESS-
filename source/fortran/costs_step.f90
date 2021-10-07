@@ -731,11 +731,11 @@ contains
     implicit none
 
     ! Result
-    real(dp) :: step220102
+    real(8) :: step220102
     !! Cost of inboard shield in M$
 
     ! Local variables
-    real(dp):: inb_sh_v, r1, hbot, htop, hshld, &
+    real(8):: inb_sh_v, r1, hbot, htop, hshld, &
       inb_sh_v_mtl, inb_sh_m, sh_mtl_d, sh_mtl_c, shldith_corr    
 
     ! Volume of inboard shield found using same method as in CCFE HCPB blanket model:

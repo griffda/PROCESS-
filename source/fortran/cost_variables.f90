@@ -361,10 +361,10 @@ module cost_variables
   real(8) :: step_ucfwps 
   !! first wall passive stabiliser cost ($) (if cost model = 2)
 
-  real(dp) :: step_ucshw
+  real(8) :: step_ucshw
   !! unit cost for shield tungsten ($/kg) (if cost model = 2)
 
-  real(dp) :: step_ucshwc
+  real(8) :: step_ucshwc
   !! unit cost for shield tungsten carbide ($/kg) (if cost model = 2)
 
   real(8) :: step_ucoam
