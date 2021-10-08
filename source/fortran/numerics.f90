@@ -375,34 +375,34 @@ module numerics
 
   character(len=14), dimension(:), allocatable :: name_xc
 
-  real(dp) :: sqsumsq
+  real(8) :: sqsumsq
   !!  sqsumsq : sqrt of the sum of the square of the constraint residuals
-  real(dp) :: epsfcn
+  real(8) :: epsfcn
   !!  epsfcn /1.0e-3/ : finite difference step length for HYBRD/VMCON derivatives
-  real(dp) :: epsvmc
+  real(8) :: epsvmc
   !!  epsvmc /1.0e-6/ : error tolerance for VMCON
-  real(dp) :: factor
+  real(8) :: factor
   !!  factor /0.1/ : used in HYBRD for first step size
-  real(dp) :: ftol
+  real(8) :: ftol
   !!  ftol /1.0e-4/ : error tolerance for HYBRD
 
-  real(dp), dimension(ipnvars) :: boundl
+  real(8), dimension(ipnvars) :: boundl
   !!  boundl(ipnvars) /../ : lower bounds used on ixc variables during
   !!                         VMCON optimisation runs
 
   ! Issue #287 These bounds now defined in initial.f90
-  real(dp), dimension(ipnvars) :: boundu
+  real(8), dimension(ipnvars) :: boundu
   ! !!  boundu(ipnvars) /../ : upper bounds used on ixc variables 
 
-  real(dp), dimension(ipnvars) :: bondl
-  real(dp), dimension(ipnvars) :: bondu
-  real(dp), dimension(ipnvars) :: rcm
-  real(dp), dimension(ipnvars) :: resdl
-  real(dp), dimension(ipnvars) :: scafc
-  real(dp), dimension(ipnvars) :: scale
-  real(dp), dimension(ipnvars) :: xcm
-  real(dp), dimension(ipnvars) :: xcs
-  real(dp), dimension(ipvlam)  :: vlam
+  real(8), dimension(ipnvars) :: bondl
+  real(8), dimension(ipnvars) :: bondu
+  real(8), dimension(ipnvars) :: rcm
+  real(8), dimension(ipnvars) :: resdl
+  real(8), dimension(ipnvars) :: scafc
+  real(8), dimension(ipnvars) :: scale
+  real(8), dimension(ipnvars) :: xcm
+  real(8), dimension(ipnvars) :: xcs
+  real(8), dimension(ipvlam)  :: vlam
 
 contains
 
@@ -656,8 +656,8 @@ contains
   !     subroutine fcnhyb(n, x, fvec, iflag)
   !       use, intrinsic :: iso_fortran_env, only: dp=>real64
   !       integer, intent(in) :: n
-  !       real(dp), dimension(n), intent(inout) :: x
-  !       real(dp), dimension(n), intent(out) :: fvec
+  !       real(8), dimension(n), intent(inout) :: x
+  !       real(8), dimension(n), intent(out) :: fvec
   !       integer, intent(inout) :: iflag
   !     end subroutine fcnhyb
   !   end interface
@@ -666,18 +666,18 @@ contains
 
   !   external :: fcnhyb
   !   integer, intent(in) :: n, nprint, lwa
-  !   real(dp), dimension(n), intent(inout) :: x
-  !   real(dp), dimension(n), intent(out) :: fvec, resdl
-  !   real(dp), dimension(lwa), intent(out) :: wa
-  !   real(dp), intent(in) :: tol, epsfcn, factor
+  !   real(8), dimension(n), intent(inout) :: x
+  !   real(8), dimension(n), intent(out) :: fvec, resdl
+  !   real(8), dimension(lwa), intent(out) :: wa
+  !   real(8), intent(in) :: tol, epsfcn, factor
   !   integer, intent(out) :: info, nfev
 
   !   !  Local variables
 
   !   integer :: n1,indx,lr,maxfev,ml,mode,mu
-  !   real(dp), parameter :: one = 1.0D0
-  !   real(dp), parameter :: zero = 0.0D0
-  !   real(dp) :: xtol
+  !   real(8), parameter :: one = 1.0D0
+  !   real(8), parameter :: zero = 0.0D0
+  !   real(8) :: xtol
 
   !   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

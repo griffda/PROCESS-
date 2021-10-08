@@ -57,12 +57,12 @@ class Vmcon():
         self.glaga = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.gamma = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.bdelta = np.zeros(ipnvars, dtype=np.float64, order="F")
-        self.bndl = np.zeros(ipnvars, dtype=np.float64, order="F")
-        self.bndu = np.zeros(ipnvars, dtype=np.float64, order="F")
+        self.bndl = np.zeros(self.n, dtype=np.float64, order="F")
+        self.bndu = np.zeros(self.n, dtype=np.float64, order="F")
         self.eta = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.xa = np.zeros(ipnvars, dtype=np.float64, order="F")
-        self.iupper = np.zeros(ipnvars, dtype=np.float64, order="F")
-        self.ilower = np.zeros(ipnvars, dtype=np.float64, order="F")
+        self.iupper = np.zeros(self.n, dtype=np.float64, order="F")
+        self.ilower = np.zeros(self.n, dtype=np.float64, order="F")
 
         self.bdl = np.zeros(ippn1, dtype=np.float64, order="F")
         self.bdu = np.zeros(ippn1, dtype=np.float64, order="F")
@@ -111,13 +111,19 @@ class Vmcon():
 
         self.run_vmcon()
 
-        (self.ifail, numerics.nfev2, numerics.nviter, self.objf, 
-            global_variables.convergence_parameter
-        ) = vmcon_module.unload(self.x, self.b, self.iwa, self.fgrd, self.conf,
-            self.glag, self.glaga, self.gamma, self.eta, self.xa, self.bdelta,
-            self.cm, self.delta, self.wa, self.cnorm, self.h, numerics.vlam,
-            self.vmu, self.gm, self.bdl, self.bdu
-        )
+        self.ifail, numerics.nfev2, numerics.nviter, self.objf, self.x[:self.n], self.b, \
+            self.iwa, self.fgrd[:self.n], self.conf[:self.m], self.glag[:self.n], \
+            self.glaga[:self.n], self.gamma[:self.n], self.eta[:self.n], \
+            self.xa[:self.n], self.bdelta[:self.n], self.cm[:self.m],  \
+            self.delta, self.wa, self.cnorm[:self.lcnorm, :self.m], self.h, \
+            numerics.vlam[:self.m + (2 * self.n) + 1], \
+            self.vmu[:self.m + (2 * self.n) + 1], self.gm[:self.n + 1], \
+            self.bdl[:self.n + 1], self.bdu[:self.n + 1], global_variables.convergence_parameter \
+            = vmcon_module.unload(self.n, self.m, self.lcnorm, self.lb, self.ldel, self.lh, self.lwa, self.liwa)
+        
+        # TODO Rather than passing slices of these arrays, it may be possible to
+        # simplify this by only creating the arrays at the required, rather
+        # than maximum possible, length now they are created in Python
 
     def run_vmcon(self):
         """Call Fortran subroutines to actually run vmcon.

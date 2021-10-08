@@ -19,7 +19,7 @@ module scan_module
   integer, parameter :: ipnscns = 1000
   !! Maximum number of scan points
 
-  integer, parameter :: ipnscnv = 59
+  integer, parameter :: ipnscnv = 60
   !! Number of available scan variables
 
   integer, parameter :: noutvars = 84
@@ -93,15 +93,17 @@ module scan_module
   !!         <LI> 56 crypmw_max: Maximum cryogenic power (ixx=164, ixc=87)
   !!         <LI> 57 `bt` lower boundary 
   !!         <LI> 58 `scrapli` : Inboard plasma-first wall gap
-  !!         <LI> 59 `scraplo` : Outboard plasma-first wall gap  </UL>
+  !!         <LI> 59 `scraplo` : Outboard plasma-first wall gap
+  !!         <Li> 60 Allowable stress in TF Coil conduit (Tresca) </UL>
+
 
   integer :: nsweep_2
   !! nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
 
-  real(dp), dimension(ipnscns) :: sweep
+  real(8), dimension(ipnscns) :: sweep
   !! sweep(ipnscns) /../: actual values to use in scan
 
-  real(dp), dimension(ipnscns) :: sweep_2
+  real(8), dimension(ipnscns) :: sweep_2
   !! sweep_2(ipnscns) /../: actual values to use in 2D scan
 
   ! Vars in subroutines scan_1d and scan_2d requiring re-initialising before 
@@ -157,7 +159,7 @@ contains
 20     format(a,i2,a,4a,1pe10.3)
   end subroutine scan_1d_write_point_header
   
-  subroutine scan_1d_store_output(iscan, ifail, outvar)
+  subroutine scan_1d_store_output(iscan, ifail, noutvars_, ipnscns_, outvar)
     use constraint_variables, only: taulimit
     use cost_variables, only: cdirt, coe, coeoam, coefuelt, c222, ireactor, &
       capcost, coecap, c221
@@ -170,7 +172,7 @@ contains
     use pf_power_variables, only: srcktpm
     use process_output, only: oblnkl
     use numerics, only: sqsumsq
-    use tfcoil_variables, only: tfareain, wwp2, strtf2, tfcmw, tcpmax, oacdcp, &
+    use tfcoil_variables, only: tfareain, wwp2, sig_tf_wp, tfcmw, tcpmax, oacdcp, &
       tfcpmw, fcutfsu, acond, fcoolcp, rcool, whttf, ppump, vcool, wwp1, n_tf, &
       dr_tf_wp, b_crit_upper_nbti
     use fwbs_variables, only: tpeak
@@ -185,7 +187,9 @@ contains
 
     integer, intent(in) :: iscan
     integer, intent(in) :: ifail
-    real(dp), dimension(noutvars,ipnscns), intent(out) :: outvar
+    ! outvar
+    integer, intent(in) :: noutvars_, ipnscns_
+    real(8), dimension(noutvars_,ipnscns_), intent(out) :: outvar
 
     ! Turn off error reporting (until next output)
     errors_on = .false.
@@ -227,7 +231,7 @@ contains
     outvar(34,iscan) = hldiv
     outvar(35,iscan) = tfcmw
     outvar(36,iscan) = whttf
-    outvar(37,iscan) = strtf2
+    outvar(37,iscan) = sig_tf_wp
     outvar(38,iscan) = oacdcp/1.0D6
     outvar(39,iscan) = tcpmax
     outvar(40,iscan) = tfcpmw
@@ -288,7 +292,7 @@ contains
     implicit none
 
     integer, intent(inout) :: iscan
-    real(dp), dimension(noutvars,ipnscns), intent(in) :: outvar
+    real(8), dimension(:,:), intent(in) :: outvar
     
     character(len=48) :: tlabel
     integer :: ivar
@@ -465,7 +469,7 @@ contains
             1pe10.3, ' and ', a, ', ', a, ' = ', 1pe10.3)
   end subroutine scan_2d_write_point_header
 
-  subroutine scan_2d_store_output(ifail, iscan_1, iscan_R, iscan, outvar, &
+  subroutine scan_2d_store_output(ifail, iscan_1, iscan_R, iscan, noutvars_, ipnscns_, outvar, &
     sweep_1_vals, sweep_2_vals)
     implicit none
 
@@ -473,10 +477,12 @@ contains
     integer, intent(in) :: iscan_1
     integer, intent(in) :: iscan_R
     integer, intent(in) :: iscan
-    real(dp), dimension(noutvars,ipnscns), intent(out) :: outvar
-    real(dp), dimension(ipnscns), intent(out) :: sweep_1_vals, sweep_2_vals
+    ! size of outvar
+    integer, intent(in) :: noutvars_, ipnscns_
+    real(8), dimension(noutvars_,ipnscns_), intent(out) :: outvar
+    real(8), dimension(:), intent(out) :: sweep_1_vals, sweep_2_vals
 
-    call scan_1d_store_output(iscan, ifail, outvar)
+    call scan_1d_store_output(iscan, ifail, noutvars_, ipnscns_, outvar)
 
     sweep_1_vals(iscan) = sweep(iscan_1)
     sweep_2_vals(iscan) = sweep_2(iscan_R)
@@ -488,8 +494,8 @@ contains
     implicit none
 
     integer, intent(inout) :: iscan
-    real(dp), dimension(noutvars,ipnscns), intent(in) :: outvar
-    real(dp), dimension(ipnscns), intent(in) :: sweep_1_vals, sweep_2_vals
+    real(8), dimension(:,:), intent(in) :: outvar
+    real(8), dimension(:), intent(in) :: sweep_1_vals, sweep_2_vals
 
     integer :: ivar
     character(len=48) :: tlabel
@@ -531,7 +537,7 @@ contains
     plabel(34) = 'Divertor_Heat_(MW/m^2)___'
     plabel(35) = 'TF_coil_Power_(MW)_______'
     plabel(36) = 'TF_coil_weight_(kg)______'
-    plabel(37) = 'vM_stress_in_TF_case_(Pa)'
+    plabel(37) = 'vM_stress_in_TF_cond_(Pa)'
     plabel(38) = 'J_TF_inboard_leg_(MA/m^2)'
     plabel(39) = 'Centrepost_max_T_(TART)__'
     plabel(40) = 'Res_TF_inbrd_leg_Pwr_(MW)'
@@ -612,8 +618,8 @@ contains
     use physics_variables, only: kappa, dnbeta, te, aspect, ftar, bt, &
         rad_fraction_sol, triang, rmajor, beamfus0, hfact
     use numerics, only: epsvmc, boundu, boundl
-    use tfcoil_variables, only: tmargmin_tf, alstrtf, n_pancake, oacdcp, &
-      n_layer, b_crit_upper_nbti
+    use tfcoil_variables, only: tmargmin_tf, sig_tf_case_max, n_pancake, oacdcp, &
+      n_layer, b_crit_upper_nbti, sig_tf_wp_max
     use div_kal_vars, only: lcon_factor, impurity_enrichment, &
       target_spread, lambda_q_omp, qtargettotal, ttarget
     use heat_transport_variables, only: crypmw_max 
@@ -621,7 +627,7 @@ contains
 
     ! Arguments
     integer, intent(in) :: nwp, iscn
-    real(dp), intent(in), dimension(ipnscns) :: swp
+    real(8), intent(in), dimension(:) :: swp
     character(len=25), intent(out) :: vlab, xlab
 
     select case (nwp)
@@ -762,8 +768,8 @@ contains
             rho_ecrh = swp(iscn)
             vlab = 'rho_ecrh' ; xlab = 'rho at which ECCD is max'
         case (44)
-            alstrtf = swp(iscn)
-            vlab = 'alstrtf' ; xlab = 'Allowable_tresca_stress_in_tf_coil_(pa)'
+            sig_tf_case_max = swp(iscn)
+            vlab = 'sig_tf_case_max' ; xlab = 'Allowable_stress_in_tf_coil_case_Tresca_(pa)'
         case (45)
             tmargmin_tf = swp(iscn)
             vlab = 'tmargmin_tf' ; xlab = 'Minimum_allowable_temperature_margin'
@@ -810,6 +816,9 @@ contains
         case(59)
             scraplo = swp(iscn)
             vlab = 'scraplo' ; xlab = 'Outboard FW-plasma sep gap'
+        case (60)
+            sig_tf_wp_max = swp(iscn)
+            vlab = 'sig_tf_wp_max' ; xlab = 'Allowable_stress_in_tf_coil_conduit_Tresca_(pa)'
         case default
             idiags(1) = nwp ; call report_error(96)
 
@@ -846,8 +855,8 @@ contains
 
   !  Local variables
   integer :: ii,inn,iflag
-  real(dp) :: summ,xcval,xmaxx,xminn,f,xnorm
-  real(dp), dimension(ipeqns) :: con1, con2, err
+  real(8) :: summ,xcval,xmaxx,xminn,f,xnorm
+  real(8), dimension(ipeqns) :: con1, con2, err
   character(len=1), dimension(ipeqns) :: sym
   character(len=10), dimension(ipeqns) :: lab
   character(len=30) :: strfom
@@ -1058,7 +1067,7 @@ contains
   call osubhd(nout, &
        'The following equality constraint residues should be close to zero :')
 
-  call constraint_eqns(neqns+nineqns,con1,-1,con2,err,sym,lab)
+  call constraint_eqns(neqns+nineqns,-1,con1,con2,err,sym,lab)
   write(nout,90)
 90 format(t48,'physical',t73,'constraint',t100,'normalised')
   write(nout,100)

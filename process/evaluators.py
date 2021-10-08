@@ -87,7 +87,7 @@ class Evaluators:
         objf = function_evaluator.funfom()
 
         # Evaluate constraint equations
-        constraints.constraint_eqns(m, conf, -1)
+        conf, _, _, _, _ = constraints.constraint_eqns(m, -1)
 
         # To stop the program, set ifail < 0 here.
         # TODO Not sure this serves any purpose
@@ -164,12 +164,12 @@ class Evaluators:
             # Evaluate at (x+dx)
             self.caller.call_models(xfor, n)
             ffor = function_evaluator.funfom()
-            constraints.constraint_eqns(m, cfor, -1)
+            cfor, _, _, _, _ = constraints.constraint_eqns(m, -1)
 
             # Evaluate at (x-dx)
             self.caller.call_models(xbac, n)
             fbac = function_evaluator.funfom()
-            constraints.constraint_eqns(m, cbac, -1)
+            cbac, _, _, _, _ = constraints.constraint_eqns(m, -1)
 
             # Calculate finite difference gradients
             fgrd[i] = (ffor - fbac) / (xfor[i] - xbac[i])
