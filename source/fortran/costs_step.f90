@@ -480,9 +480,11 @@ contains
                       step2201010202, step2201010203)
     step2201 = step2201 + step220101
 
-    ! 22.01.02 Inboard Shield
+    ! 22.01.02 Shield
+    ! Inboard shield costs:
     step220102 = step_a220102()
-    ! Add shield  cost to total cost, step2201, in M$
+    ! Note: outboard shield costs currently set to zero.
+    ! Add shield cost to total cost, step2201, in M$
     step2201 = step2201 + step220102
     ! STARFIRE percentage for spares
     step2298 = step2298 + 9.985D-2 *  step220102
@@ -720,6 +722,7 @@ contains
   function step_a220102() result(step220102)
     !! 22.01.02
     !! Returns cost of inboard shield
+    !! Note: outboard shield costs currently set to zero
 
     use build_variables, only: rsldi, shldith, shldtth, vgap, &
       scrapli, scraplo, fwith, fwoth, blnktth, d_vv_in
@@ -732,7 +735,7 @@ contains
 
     ! Result
     real(8) :: step220102
-    !! Cost of inboard shield in M$
+    !! Cost of shield in M$
 
     ! Local variables
     real(8):: inb_sh_v, r1, hbot, htop, hshld, &
@@ -781,6 +784,8 @@ contains
 
     ! Find inboard shield cost (converted to M$2017)
     step220102 = (inb_sh_m * sh_mtl_c) / 1.0D6*(229.0D0/264.71D0)
+
+    ! Note: outboard shield costs currently set to zero
 
   end function step_a220102
 
