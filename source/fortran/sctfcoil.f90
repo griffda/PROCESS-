@@ -2566,9 +2566,10 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             write(sig_file,'(t2, "vertical strain" ,t26, *(F11.8,3x))') strain_tf_z
         end if
 
-        if ( i_tf_sup == 1 ) then
-            write(sig_file,'(t2, "WP"    ," smeared stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_wp_av_z*1.0D-6
-        end if 
+        ! TODO sig_tf_wp_av_z is always undefined here. This needs correcting or removing
+        ! if ( i_tf_sup == 1 ) then
+            ! write(sig_file,'(t2, "WP"    ," smeared stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_wp_av_z*1.0D-6
+        ! end if
 
         ! Quantities from the plane stress stress formulation (no resitive coil output)
         if ( i_tf_plane_stress == 1 .and. i_tf_sup == 1 ) then
