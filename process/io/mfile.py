@@ -141,7 +141,14 @@ class MFileErrorClass(object):
     def get_error(self, *args, **kwargs):
         LOG.error("Key '{}' not in MFILE. KeyError! Check MFILE".
                   format(self.item))
-        return 0
+        
+        if self.item == "error_status":
+            # Missing error_status key means Process exited prematurely, usually
+            # due to a "STOP 1"
+            raise KeyError("error_status not found in MFILE. Process probably "
+                "exited prematurely")
+        else:
+            return 0
 
     @property
     def exists(self):

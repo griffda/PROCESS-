@@ -7,7 +7,7 @@ module reinke_module
   !  Module-level variables
 
   !integer ::
-  real(dp) :: vcritx
+  real(8) :: vcritx
 
 contains
 
@@ -19,7 +19,7 @@ contains
   end subroutine init_reinke_module
 
   function reinke_fzmin(bt, flh, qstar, rmajor, eps, fsep, fgw, kappa, lhat, &
-    netau, tesep, impvardiv, impurity_arr, impurity_enrichment)
+    netau, tesep, impvardiv, impurity_arr_frac, impurity_enrichment)
     !! Function for calculation of Reinke minimum impurity fraction
     !! author: H Lux, CCFE/UKAEA
     !! bt                  : input real : toroidal field on axis (T)
@@ -34,7 +34,7 @@ contains
     !! netau               : input real : "non-coronal parameter" for radiative loss func [ms.1e20/m3]
     !! tesep               : input real : temperature "upstream", i.e. at separatrix [eV]
     !! impvardiv           : input real : impurity index, e.g. 7 is Argon
-    !! impurity_arr        : input imp_dat array : impurity fractions
+    !! impurity_arr_frac   : input real array : impurity fractions
     !! impurity_enrichment : input real array : enrichment factors between SOL and core
     !! This function calculates the lower limit of the impurity fraction
     !! needed in the SOL for divertor protection. It has huge uncertainties in netau.
@@ -51,16 +51,16 @@ contains
     use impurity_radiation_module, only: nimp, imp_label
     
     implicit none
-    real(dp) :: reinke_fzmin
-    real(dp) :: bt, flh, qstar, rmajor, eps, fsep, fgw, kappa
-    real(dp) :: lhat, netau, tesep, ml_div, sum_fZ_ml_other, ml_z, lz
-    type(imp_dat), dimension(14) :: impurity_arr
-    real(dp), dimension(14) :: impurity_enrichment
+    real(8) :: reinke_fzmin
+    real(8) :: bt, flh, qstar, rmajor, eps, fsep, fgw, kappa
+    real(8) :: lhat, netau, tesep, ml_div, sum_fZ_ml_other, ml_z, lz
+    real(8), dimension(14) :: impurity_arr_frac
+    real(8), dimension(14) :: impurity_enrichment
     integer(kind=4) :: impvardiv
 
     integer(kind=4), parameter :: N = 100
     integer(kind=4) :: i, j
-    real(dp) :: binWidth, te
+    real(8) :: binWidth, te
 
     binWidth = tesep / N
     ! mL =1/tesep * \int_0^tesep L\(T) sqrt(T) dT using trapezoidal rule
@@ -83,14 +83,14 @@ contains
     ! Get impurity concentrations every time, as they can change
     do i = 2, nimp
        !concentration at SOL
-       impurity_concs(i)= impurity_arr(i)%frac * impurity_enrichment(i)
+       impurity_concs(i)= impurity_arr_frac(i) * impurity_enrichment(i)
     enddo
 
     ! \sum_Z fZ * mL(Z, netau)
     sum_fZ_ml_other = 0.0d0
 
     do i = 2, nimp
-       !write(*,*) 'impurity array : ', i, ', ', impurity_arr(i)%frac
+       !write(*,*) 'impurity array : ', i, ', ', impurity_arr_frac(i)
        if (i .ne. impvardiv) then
 
           ml_z = 0.0D0
@@ -154,9 +154,9 @@ contains
     !! M.L. Reinke 2017 Nucl. Fusion 57 034004
 
     implicit none
-    real(dp) :: reinke_tsep
-    real(dp) :: bt, flh, qstar, rmajor, eps, fgw, kappa, lhat
-    real(dp), parameter :: kappa_0 = 2D3 !Stangeby W/m/eV^(7/2)
+    real(8) :: reinke_tsep
+    real(8) :: bt, flh, qstar, rmajor, eps, fgw, kappa, lhat
+    real(8), parameter :: kappa_0 = 2D3 !Stangeby W/m/eV^(7/2)
 
     reinke_tsep = bt**0.72 * flh**0.29 * fgw**0.21 * qstar**0.08 * rmajor**0.33
     !reinke_tsep = bt**0.72 * flh**0.2857 * fgw**0.2057 * qstar**0.08 * rmajor**0.3314
@@ -175,11 +175,11 @@ contains
     use impurity_radiation_module, only: imp_dat, imp_label
     implicit none
 
-    real(dp) :: testResult_fZ_DEMOBASE, testResult_fZ_ASDEXBASE, testInput_tsep
+    real(8) :: testResult_fZ_DEMOBASE, testResult_fZ_ASDEXBASE, testInput_tsep
     integer :: i, j
-    real(dp), parameter :: test_Bt = 5.8547
+    real(8), parameter :: test_Bt = 5.8547
     type(imp_dat),  dimension(14), save :: test_imp_arr
-    real(dp), dimension(14) :: impurity_enrichment
+    real(8), dimension(14) :: impurity_enrichment
 
     do i=1,14
        test_imp_arr(i)%frac = 0.0d0
@@ -205,9 +205,9 @@ contains
     do j = 1,39
       testInput_tsep =0.02d0+0.02d0*j
       testResult_fZ_DEMOBASE = reinke_fzmin(test_Bt, 1.4114d0, 3.0d0, 9.0019d0, 0.3225d0, 0.5651d0, 0.8d0, 1.848d0, &
-         4.33d0, 0.1d0, testInput_tsep, 9, test_imp_arr, impurity_enrichment)
+         4.33d0, 0.1d0, testInput_tsep, 9, test_imp_arr%frac, impurity_enrichment)
       testResult_fZ_ASDEXBASE = reinke_fzmin(test_Bt, 1.0d0, 3.0d0, 1.65d0, 0.33d0, 1.0d0, 0.8d0, 1.7d0, &
-         4.33d0, 0.1d0, testInput_tsep, 9, test_imp_arr, impurity_enrichment)
+         4.33d0, 0.1d0, testInput_tsep, 9, test_imp_arr%frac, impurity_enrichment)
       write(1,*) testInput_tsep, testResult_fZ_DEMOBASE, testResult_fZ_ASDEXBASE, test_imp_arr(9)%frac
     end do
 
@@ -215,9 +215,9 @@ contains
    write(*,*) 'fz minium data written to FZMIN_TEST.DAT'
 
     !testResult_fZ = reinke_fzmin(test_Bt, 1.4114, 3.0d0, 9.0019d0, 0.3225d0, 1.0d0, 0.8d0, 1.848d0, &
-    !      4.33d0, 0.1d0, testInput_tsep, 9, test_imp_arr, impurity_enrichment)
+    !      4.33d0, 0.1d0, testInput_tsep, 9, test_imp_arr%frac, impurity_enrichment)
                                   !bt, flh, qstar, rmajor, eps, fsep, fgw, kappa,
-         !lhat, netau, impvardiv, impurity_arr, impurity_enrichment
+         !lhat, netau, impvardiv, impurity_arr%frac, impurity_enrichment
     !write(*,*) 'reinke_fzmin = ', testResult_fZ
 
     !if(testResult_fZ /= 1.4) then

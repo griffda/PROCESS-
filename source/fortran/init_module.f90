@@ -32,10 +32,8 @@ subroutine init_all_module_vars
   use heat_transport_variables, only: init_heat_transport_variables
   use ife_variables, only: init_ife_variables
   use impurity_radiation_module, only: init_impurity_radiation_module
-  use function_evaluator, only: init_function_evaluator
   use build_module, only: init_build_module
   use vmcon_module, only: init_vmcon_module
-  use vmcon_test, only: init_vmcon_test
   use pfcoil_module, only: init_pfcoil_module
   use physics_module, only: init_physics_module
   use physics_variables, only: init_physics_variables
@@ -92,10 +90,8 @@ subroutine init_all_module_vars
   call init_heat_transport_variables
   call init_ife_variables
   call init_impurity_radiation_module
-  call init_function_evaluator
   call init_build_module
   call init_vmcon_module
-  call init_vmcon_test
   call init_pfcoil_module
   call init_physics_module
   call init_physics_variables
