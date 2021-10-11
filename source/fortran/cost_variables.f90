@@ -361,6 +361,12 @@ module cost_variables
   real(8) :: step_ucfwps 
   !! first wall passive stabiliser cost ($) (if cost model = 2)
 
+  real(8) :: step_ucshw
+  !! unit cost for shield tungsten ($/kg) (if cost model = 2)
+
+  real(8) :: step_ucshwc
+  !! unit cost for shield tungsten carbide ($/kg) (if cost model = 2)
+
   real(8) :: step_ucoam
   !! annual cost of operation and maintenance (M$/year/1200MW**0.5)
 
@@ -764,6 +770,8 @@ module cost_variables
     step_ucfwa = 774.05D0
     step_ucfws = 5115.7D0 
     step_ucfwps = 0.0D0
+    step_ucshw = 269.638D0
+    step_ucshwc = 930.251D0
     step_ucsc = (/ 600.0D0, 600.0D0, 443.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0,1200.0D0 /)
     step_ucfnc = 104.3D0 
     step_ucoam = 74.4D0
