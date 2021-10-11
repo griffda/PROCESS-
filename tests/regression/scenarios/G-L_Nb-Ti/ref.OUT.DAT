@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-538-g66f889bd
-    Branch : 1397-remove-f90wrap-from-build-process-tim2
+   Tag No. : v2.1-646-g57e098e2
+    Branch : 1407-update-of-shield-cost-calculations
    Git log : COMMIT_MSG
- Date/time : 29 Sep 2021 10:37:15 +00:00(hh:mm) UTC
-      User : root
-  Computer : c510c7d65104
- Directory : /root/process
-     Input : /tmp/pytest-of-root/pytest-10/test_scenario_G_L_Nb_Ti_0/IN.DAT
+ Date/time : 11 Oct 2021 10:25:04 +01:00(hh:mm) UTC
+      User : rhicha
+  Computer : l0500
+ Directory : /tmp/pytest-of-rhicha/pytest-149/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-149/test_scenario_G_L_Nb_Ti_0/IN.DAT
  Run title : TF coil testing
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -56,7 +56,7 @@
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          6     
  Square root of the sum of squares of the constraint residuals            (sqsumsq)                 2.804E-11  OP 
- VMCON convergence parameter                                              (convergence_parameter)   0.000E+00  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   1.454E-10  OP 
  Number of VMCON iterations                                               (nviter)                         16  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit   COST OF ELECTRICITY.
@@ -1686,7 +1686,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          6     
  Square root of the sum of squares of the constraint residuals            (sqsumsq)                 6.488E-11  OP 
- VMCON convergence parameter                                              (convergence_parameter)   0.000E+00  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   3.362E-10  OP 
  Number of VMCON iterations                                               (nviter)                          8  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit   COST OF ELECTRICITY.
@@ -3316,7 +3316,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          6     
  Square root of the sum of squares of the constraint residuals            (sqsumsq)                 6.101E-11  OP 
- VMCON convergence parameter                                              (convergence_parameter)   0.000E+00  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   3.144E-10  OP 
  Number of VMCON iterations                                               (nviter)                          9  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit   COST OF ELECTRICITY.
@@ -4946,7 +4946,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          6     
  Square root of the sum of squares of the constraint residuals            (sqsumsq)                 5.463E-11  OP 
- VMCON convergence parameter                                              (convergence_parameter)   0.000E+00  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   2.798E-10  OP 
  Number of VMCON iterations                                               (nviter)                          9  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit   COST OF ELECTRICITY.
