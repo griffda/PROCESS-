@@ -233,11 +233,11 @@ contains
       step_cconfix, step_cconshpf, step_currency, step_uccase, step_uccu, &
       step_ucsc, step_ucfnc, step_ucfwa, step_ucfws, step_ucfwps, step91_per, &
       step92_per, step93_per, step_uc_cryo_al, step_mc_cryo_al_per, sitecost, &
-      wfbuilding
+      wfbuilding, step_ucoam, step_ucwst
     use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
-      etalh, frbeam, harnum 
+      etalh, frbeam, harnum, xi_ebw
     use div_kal_vars, only: kallenbach_test_option, &
       relerr_sol, kallenbach_scan_switch, lcon_factor, kallenbach_scan_num, &
       kallenbach_scan_end, kallenbach_scan_start, target_spread, &
@@ -308,7 +308,10 @@ contains
       plasmod_globtau, plasmod_pfus, plasmod_nbi_energy, plasmod_nxt, &
       plasmod_x_cd, plasmod_chisawpos, plasmod_cxe_psepfac, plasmod_dx_control, &
       plasmod_car_qdivt 
-    use pulse_variables, only: lpulse, dtstor, itcycl, istore, bctmp 
+    use pulse_variables, only: lpulse, dtstor, itcycl, istore, bctmp
+    
+    use primary_pumping_variables, only: t_in_bb, t_out_bb, dp_he, p_he, gamma_he 
+    
     use scan_module, only: isweep_2, nsweep, isweep, scan_dim, nsweep_2, &
       sweep_2, sweep, ipnscns, ipnscnv 
     use stellarator_variables, only: f_asym, isthtr, n_res, iotabar, fdivwet, &
@@ -317,7 +320,7 @@ contains
       quench_detection_ef, fhts, dr_tf_wp, rcool, rhotfleg, thkcas, &
       casthi, n_pancake, bcritsc, i_tf_sup, strncon_pf, thwcndut, farc4tf, &
       thicndut, tftmp, oacdcp, tmax_croco, ptempalw, tmargmin_tf, tmpcry, &
-      alstrtf, dztop, dcond, strncon_cs, etapump, drtop, vcool, dcondins, &
+      sig_tf_case_max, dztop, dcond, strncon_cs, etapump, drtop, vcool, dcondins, &
       i_tf_tresca, dhecoil, tmaxpro, strncon_tf, n_tf, tcpav, fcutfsu, jbus, &
       casthi_fraction, tmargmin_cs, sigvvall, vdalw, dcase, t_turn_tf,&
       cpttf_max, tdmptf, casths, i_tf_turns_integer, quench_model, &
@@ -329,7 +332,8 @@ contains
       poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact,&
       i_tf_plane_stress, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
       i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti, &
-      i_cp_joints, n_tf_turn, f_t_turn_tf, t_turn_tf_max, t_cable_tf
+      i_cp_joints, n_tf_turn, f_t_turn_tf, t_turn_tf_max, t_cable_tf, &
+      sig_tf_wp_max
 
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
@@ -339,6 +343,7 @@ contains
     use rebco_variables, only: hastelloy_thickness, f_coppera_m2, &
       rebco_thickness, copper_rrr, coppera_m2_max, croco_thick, copper_thick 
     use reinke_variables, only: reinke_mode, fzactual, impvardiv, lhat 
+    use water_usage_variables, only: airtemp, watertemp, windspeed
     implicit none
 
     !  Arguments
@@ -721,7 +726,7 @@ contains
           call parse_int_variable('iscrp', iscrp, 0, 1, &
                'Switch for scrapeoff width')
        case ('ishape')
-          call parse_int_variable('ishape', ishape, 0, 8, &
+          call parse_int_variable('ishape', ishape, 0, 9, &
                'Switch for plasma shape vs. aspect')
        case ('itart')
           call parse_int_variable('itart', itart, 0, 1, &
@@ -1301,6 +1306,9 @@ contains
        case ('rho_ecrh')
           call parse_real_variable('rho_ecrh', rho_ecrh, 0.0D0, 1.0D0, &
                'normalised minor radius at which electron cyclotron current drive is maximum')
+       case ('xi_ebw')
+	  call parse_real_variable('xi_ebw', xi_ebw, 0.0D0, 1.0D0, &
+               'User input EBW scaling for Plasma Heating')
        case ('iefrf')
           call parse_int_variable('iefrf', iefrf, 1, 12, &
                'Switch for curr drive efficiency model')
@@ -1570,6 +1578,11 @@ contains
          else
             call parse_real_variable('blnkith', blnkith, 0.0D0, 10.0D0, &
                 'Inboard blanket thickness (m)')
+	  ! Inboard blanket does not exist if the thickness is below a certain limit.  
+            if(blnkith>=0.0D00.and.blnkith<=1.0D-3) then
+              blnkith = 0.0D00 ! Inboard blanket thickness is zero
+	      iblnkith = 0     ! Inboard blanket does not exist
+            end if
           end if
        case ('blnkoth')
            if (iblanket == 3) then
@@ -1813,9 +1826,14 @@ contains
           call parse_real_variable('cpttf_max', cpttf_max, 1.0D0, 1.0D6, &
                     'Maximum allowable TF coil leg current per turn (A) (constraint equation 77)')
 
-       case ('alstrtf')
-          call parse_real_variable('alstrtf', alstrtf, 1.0D6, 1.0D11, &
-               'Allowable Tresca stress in TF coil structural material (Pa)')
+       case ('sig_tf_case_max')
+          call parse_real_variable('sig_tf_case_max', sig_tf_case_max, 1.0D6, 1.0D11, &
+               'Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)')
+               
+       case ('sig_tf_wp_max')
+          call parse_real_variable('sig_tf_wp_max', sig_tf_wp_max, 1.0D6, 1.0D11, &
+               'Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)')
+               
        case ('alstroh')
           call parse_real_variable('alstroh', alstroh, 1.0D6, 1.0D11, &
                'Allowable hoop stress in Central Solenoid structural material (Pa)')
@@ -2573,6 +2591,24 @@ contains
           call parse_real_variable('vachtmw', vachtmw, 0.0D0, 100.0D0, &
                'Vacuum pump power (MW)')
 
+       case ('t_in_bb')
+          call parse_real_variable('t_in_bb', t_in_bb, 200.0D0, 1000.0D0, &
+               'Helium or Gas Inlet Temperature (K)')
+       case ('t_out_bb')
+          call parse_real_variable('t_out_bb', t_out_bb, 200.0D0, 1000.0D0, &
+              'Helium or Gas Outlet Temperature (K)')
+       case ('dp_he')
+          call parse_real_variable('dp_he', dp_he, 0.0D0, 10.0D6, &
+              'Helium Pressure drop or Gas Pressure drop (Pa)')
+       case ('p_he')
+          call parse_real_variable('p_he', p_he, 0.0D0, 100.0D6, &
+              'Pressure in FW and blanket coolant at pump exit')	      
+      
+       case ('gamma_he')
+          call parse_real_variable('gamma_he', gamma_he, 1.0D0, 2.0D0, &
+              'Ratio of specific heats for helium or for another Gas')
+
+
           !  Cost information settings
 
        case ('abktflnc')
@@ -2665,6 +2701,12 @@ contains
        case ('step_ucblvd')
           call parse_real_variable('ucblvd', ucblvd, 100.0D0, 1.0D3, &
                'Unit cost for blanket Vd ($/kg) (if cost model =2)')
+       case ('step_ucoam')
+         call parse_real_variable('step_ucoam', step_ucoam, 1.0D0, 1.0D3, &
+               'Annual cost of operation and maintenance (M$/year/1200MW**0.5) (if cost model = 2)')
+       case ('step_ucwst')
+         call parse_real_variable('step_ucwst', step_ucwst, 0.1D0, 100.0D0, &
+               'Annual cost of waste disposal (M$/yr/1200MW) (if cost model = 2)')
        case ('i_cp_lifetime')
          call parse_int_variable('i_cp_lifetime', i_cp_lifetime, 0, 3, &
               'Switch for ST centrepost lifetime contraint (10) setting')
@@ -3426,6 +3468,17 @@ contains
           call parse_real_array('v3matf', v3matf, isub1, 3*(maxmat+1), &
                     'IFE void 3 material fraction', icode)
      
+       ! Water usage settings
+
+       case ('airtemp')
+          call parse_real_variable('airtemp', airtemp, -15.0D0, 40.0D0, &
+               'ambient air temperature (degrees C)')
+       case ('watertemp')
+          call parse_real_variable('watertemp', watertemp, 0.0D0, 25.0D0, &
+               'water temperature (degrees C)')
+       case ('windspeed')
+          call parse_real_variable('windspeed', windspeed, 0.0D0, 10.0D0, &
+               'wind speed (m/s)')
 
        case default
           error_message = 'Unknown variable in input file: '//varnam(1:varlen)
@@ -3468,9 +3521,10 @@ contains
     if (error .eqv. .True.) stop 1
 
     ! MDK Try allocating here
-    ! Guard against re-allocation
     if (allocated(name_xc)) deallocate(name_xc)
     allocate(name_xc(nvar))
+    ! Ensure array is initialised
+    name_xc = ""
 
   end subroutine parse_input_file
 

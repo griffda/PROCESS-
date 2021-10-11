@@ -1,9 +1,13 @@
+from logging import getLogger
 from process.fortran import vmcon_module
 from process.fortran import function_evaluator
 from process.fortran import numerics
 from process.fortran import global_variables
 from process.fortran import define_iteration_variables
+from process import evaluators
 import numpy as np
+
+logger = getLogger(__name__)
 
 class Vmcon():
     """Driver for Fortran vmcon module."""
@@ -48,12 +52,12 @@ class Vmcon():
         self.glaga = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.gamma = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.bdelta = np.zeros(ipnvars, dtype=np.float64, order="F")
-        self.bndl = np.zeros(ipnvars, dtype=np.float64, order="F")
-        self.bndu = np.zeros(ipnvars, dtype=np.float64, order="F")
+        self.bndl = np.zeros(self.n, dtype=np.float64, order="F")
+        self.bndu = np.zeros(self.n, dtype=np.float64, order="F")
         self.eta = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.xa = np.zeros(ipnvars, dtype=np.float64, order="F")
-        self.iupper = np.zeros(ipnvars, dtype=np.float64, order="F")
-        self.ilower = np.zeros(ipnvars, dtype=np.float64, order="F")
+        self.iupper = np.zeros(self.n, dtype=np.float64, order="F")
+        self.ilower = np.zeros(self.n, dtype=np.float64, order="F")
 
         self.bdl = np.zeros(ippn1, dtype=np.float64, order="F")
         self.bdu = np.zeros(ippn1, dtype=np.float64, order="F")
@@ -78,6 +82,7 @@ class Vmcon():
 
         # Counter for fcnvmc1 calls
         self.fcnvmc1_calls = 0
+        self.fcnvmc1_first_call = True
 
     def load_iter_vars(self):
         """Load Fortran iteration variables, then initialise Python arrays."""
@@ -101,13 +106,19 @@ class Vmcon():
 
         self.run_vmcon()
 
-        (self.ifail, numerics.nfev2, numerics.nviter, self.objf, 
-            global_variables.convergence_parameter
-        ) = vmcon_module.unload(self.x, self.b, self.iwa, self.fgrd, self.conf,
-            self.glag, self.glaga, self.gamma, self.eta, self.xa, self.bdelta,
-            self.cm, self.delta, self.wa, self.cnorm, self.h, numerics.vlam,
-            self.vmu, self.gm, self.bdl, self.bdu
-        )
+        self.ifail, numerics.nfev2, numerics.nviter, self.objf, self.x[:self.n], self.b, \
+            self.iwa, self.fgrd[:self.n], self.conf[:self.m], self.glag[:self.n], \
+            self.glaga[:self.n], self.gamma[:self.n], self.eta[:self.n], \
+            self.xa[:self.n], self.bdelta[:self.n], self.cm[:self.m],  \
+            self.delta, self.wa, self.cnorm[:self.lcnorm, :self.m], self.h, \
+            numerics.vlam[:self.m + (2 * self.n) + 1], \
+            self.vmu[:self.m + (2 * self.n) + 1], self.gm[:self.n + 1], \
+            self.bdl[:self.n + 1], self.bdu[:self.n + 1], global_variables.convergence_parameter \
+            = vmcon_module.unload(self.n, self.m, self.lcnorm, self.lb, self.ldel, self.lh, self.lwa, self.liwa)
+        
+        # TODO Rather than passing slices of these arrays, it may be possible to
+        # simplify this by only creating the arrays at the required, rather
+        # than maximum possible, length now they are created in Python
 
     def run_vmcon(self):
         """Call Fortran subroutines to actually run vmcon.
@@ -259,17 +270,36 @@ class Vmcon():
 
         # Update Fortran vmcon module from self
         vmcon_module.objf = self.objf
-        vmcon_module.conf = self.conf[0:vmcon_module.conf.size]
+
+        try:
+            vmcon_module.conf = self.conf[0:self.m]
+        except ValueError:
+            # Sometimes there's a size mismatch here: was hidden previously
+            # by implicit Fortran array argument size coercion
+            # vmcon_module.conf can be 1 element larger than self.m; this is
+            # likely to be due to an intermittent memory error
+            # TODO Investigate
+            logger.warning(f"conf array size mismatch: attempted to broadcast "
+                f"size {self.m} into {vmcon_module.conf.size}"
+            )
+            # Only assign range m
+            vmcon_module.conf[0:self.m] = self.conf[0:self.m]
+
         vmcon_module.info = self.ifail
 
     def fcnvmc1(self):
         """Call the function evaluator for Vmcon.
 
         Calculates the objective and constraint functions.
+
+        See comments on differing array sizes in fcnvmc1_wrapper().
         """
-        self.objf, self.ifail = function_evaluator.fcnvmc1(self.n, self.m, 
-            self.x, self.conf, self.ifail
+        self.objf, self.conf[0:self.m], self.ifail = evaluators.fcnvmc1(self.n, self.m, 
+            self.x, self.ifail, self.fcnvmc1_first_call
         )
+
+        if self.fcnvmc1_first_call == True:
+            self.fcnvmc1_first_call = False
     
     def fcnvmc2_wrapper(self):
         """Call fcnvmc2, synchronising variables before and after.
@@ -279,22 +309,48 @@ class Vmcon():
         Input/output variables used by fcnvmc2() are kept in sync in both Python
         and Fortran.
 
-        See comments on array sizes in fcnvmc1().
+        See comments on differing array sizes in fcnvmc1_wrapper().
         """
         self.x[0:vmcon_module.x.size] = vmcon_module.x
         self.ifail = vmcon_module.info
         
         self.fcnvmc2()
 
-        vmcon_module.fgrd = self.fgrd[0:vmcon_module.fgrd.size]
-        vmcon_module.cnorm = self.cnorm[:, 0:vmcon_module.cnorm.shape[1]]
+        try:
+            vmcon_module.fgrd = self.fgrd[0:self.n]
+        except ValueError:
+            # Sometimes there's a size mismatch here: same as fcnvmc1_wrapper()
+            # comment. This appears to be due to serious underlying memory
+            # problems concerning assumed-size (*) arrays which change size
+            # from what they were allocated originally without error.
+            # The symptoms are treated below; this replicates the array size
+            # coercion in Fortran, which bizarrely passes the regression tests.
+            # The root cause of these memory errors needs to be found urgently.
+            # TODO Investigate
+            logger.warning(f"fgrd array size mismatch: attempted to broadcast "
+                f"size {self.n} into {vmcon_module.fgrd.size}"
+            )
+            # vmcon_module.fgrd should be of length n
+            # If larger, then only assign a slice of length n
+            # If smaller, assign as big a slice as possible
+            # This is required, and does work
+            if vmcon_module.fgrd.size > self.fgrd.size:
+                vmcon_module.fgrd[0:self.n] = self.fgrd[0:self.n]
+            else:
+                vmcon_module.fgrd = self.fgrd[0:vmcon_module.fgrd.size]
+
+        vmcon_module.cnorm = self.cnorm[0:self.lcnorm, 0:self.m]
         vmcon_module.info = self.ifail
         
     def fcnvmc2(self):
         """Call the gradient function evaluator for Vmcon.
 
         Calculates the gradients of the objective and constraint functions.
+
+        See comments on differing array sizes in fcnvmc1_wrapper().
         """
-        self.ifail = function_evaluator.fcnvmc2(self.n, self.m, self.x,
-            self.fgrd, self.cnorm, self.lcnorm, self.ifail
-        )
+        (
+            self.fgrd[0:self.n],
+            self.cnorm[0:self.lcnorm, 0:self.m],
+            self.ifail,
+        ) = evaluators.fcnvmc2(self.n, self.m, self.x, self.lcnorm, self.ifail)

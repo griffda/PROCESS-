@@ -18,11 +18,11 @@ module costs_step_module
   implicit none
 
   !  Various cost account values (M$)
-  real(dp) :: step20, step21, step22, step23, step24, step25, &
+  real(8) :: step20, step21, step22, step23, step24, step25, &
               step27, step91, step92, step93, fwblkcost
 
   ! Scaling Properties
-  real(dp) :: vfi, vfi_star, ptherm_star, pinjmw_star, fwarea_star, &
+  real(8) :: vfi, vfi_star, ptherm_star, pinjmw_star, fwarea_star, &
               rmajor_star, rminor_star, pth
 
 contains
@@ -178,7 +178,7 @@ contains
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(dp):: step2001, step2002
+    real(8):: step2001, step2002
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -236,7 +236,7 @@ contains
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(dp):: &
+    real(8):: &
     step2101, step2102, step2103, step2104, step2105, step2106, &
     step2107, step2108, step2109, step2110, step2111, step2112, &
     step2113, step2114, step2115, step2116, step2117, step2118, &
@@ -384,7 +384,7 @@ contains
     integer, intent(in) :: iprint,outfile
   
     ! Local variables
-    real(dp):: step2297, step2298, step2299
+    real(8):: step2297, step2298, step2299
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -420,7 +420,7 @@ contains
     ! 22.98 Spares
     ! STARFIRE percentage of components
     step22 = step22 + step2298
-  
+
     ! 21.99 Contingency
     ! STARFIRE 15%
     step2299 = step_con * step22
@@ -461,10 +461,10 @@ contains
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
-    real(dp), intent(inout) :: step2298
+    real(8), intent(inout) :: step2298
 
     ! Local variables
-    real(dp):: step2201, step220101, step22010101, step22010102, step2201010201, &
+    real(8):: step2201, step220101, step22010101, step22010102, step2201010201, &
                step2201010202, step2201010203, step220102, step22010301, &
                step22010302, step22010303, step22010304, step220104, &
                step220105, step220106, step220107, step220108, step220109, &
@@ -626,7 +626,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use cost_variables, only: step_ucblss, step_ucblbreed, step_ucblbe, ucblli, &
-      step_ucblvd, ucblli2o, blkcst, ucbllipb, ifueltyp, lsa, step_ucfws, &
+      step_ucblvd, ucblli2o, blkcst, ucbllipb, ifueltyp, step_ucfws, &
       fwallcst, step_ucfwps, step_ucfwa
 		use fwbs_variables, only: blktmodel, whtblli, blkttype, wtblli2o, &
       whtblbreed, whtblvd, whtblbe, whtblss, wtbllipb, fw_armour_mass, fwmass 
@@ -634,11 +634,12 @@ contains
 		use heat_transport_variables, only: ipowerflow 
     
     implicit none
-    real(dp), intent(inout) :: step220101, step22010101, step22010102, step2201010201, &
+    real(8), intent(inout) :: step22010101, step22010102, step2201010201, &
                                step2201010202, step2201010203
+    real(8), intent(out) :: step220101
 
     !  Local variables
-    real(dp) :: step2201010204, step2201010205, step2201010206, step2201010207
+    real(8) :: step2201010204, step2201010205, step2201010206, step2201010207
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -726,13 +727,13 @@ contains
     implicit none
 
     ! Result
-    real(dp) :: step22010301
+    real(8) :: step22010301
     !! Cost of TF coils in M$
     
     ! Declare local vars
-    real(dp) :: c_tf_inboard_legs
+    real(8) :: c_tf_inboard_legs
     !! Cost of TF coil inboard legs in M$
-    real(dp) :: c_tf_outboard_legs
+    real(8) :: c_tf_outboard_legs
     !! Cost of TF coil outboard legs in M$
     
     ! Initialise local vars
@@ -813,7 +814,7 @@ contains
 		use build_variables, only: iohcl 
 		use constants, only: twopi, dcopper
 		use cost_variables, only: step_uccase, step_uccu, step_cconshpf, step_ucfnc, &
-      step_cconfix, step_ucsc, step_ucwindpf, lsa
+      step_cconfix, step_ucsc, step_ucwindpf
 		use pfcoil_variables, only: rjconpf, ipfres, vfohc, nohc, turns, isumatpf, &
       whtpfs, ric, rpf, isumatoh, fcupfsu, fcuohsu, vf, awpoh 
 		use structure_variables, only: fncmass 
@@ -821,10 +822,10 @@ contains
     implicit none
 
     !  Result
-    real(dp) :: step22010302
+    real(8) :: step22010302
      
     !  Local variables
-    real(dp) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
+    real(8) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
          pfwndl, step2201030201, step2201030202, step2201030203, step2201030204
     integer :: i,npf
 
@@ -927,7 +928,7 @@ contains
     integer, intent(in) :: iprint,outfile
   
     ! Local variables
-    real(dp):: step2202
+    real(8):: step2202
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -968,7 +969,10 @@ contains
     integer, intent(in) :: iprint,outfile
   
     ! Local variables
-    real(dp):: step2203
+    real(8):: &
+    step220301, step220302, step220303, step220304, step2203
+  
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
     ! Initialise as zero
     step2203 = 0.0D0
@@ -1011,7 +1015,7 @@ contains
     integer, intent(in) :: iprint,outfile
   
     ! Local variables
-    real(dp):: &
+    real(8):: &
     step220401, step220402, step220403, step2204
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1070,10 +1074,10 @@ contains
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
-    real(dp), intent(inout) :: step2298
+    real(8), intent(inout) :: step2298
   
     ! Local variables
-    real(dp):: step2205
+    real(8):: step2205
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -1120,10 +1124,10 @@ contains
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
-    real(dp), intent(inout) :: step2298
+    real(8), intent(inout) :: step2298
   
     ! Local variables
-    real(dp):: &
+    real(8):: &
     step220601, step220602, step220603, step220604, step220605, &
     step220606, step220607, step220608, step2206
   
@@ -1220,17 +1224,16 @@ contains
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(dp):: step2207
+    real(8):: step2207
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
     ! Initialise as zero
     step2207 = 0.0D0
-     
+
     ! 22.07 Instrumentation and Control
     ! Original STARFIRE value, scaling with thermal power
     step2207 = step_ref(50) * (pth / ptherm_star)**0.6D0
-  
     ! Add to Account 22 total
     step22 = step22 + step2207
 
@@ -1268,7 +1271,7 @@ contains
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(dp):: step23a, step2303, step2398, step2399
+    real(8):: step23a, step2303, step2398, step2399
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1335,7 +1338,7 @@ contains
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(dp):: &
+    real(8):: &
     step2401, step2402, step2403, step2404, step2405, step2406, &
     step2407, step2498, step2499
 
@@ -1424,7 +1427,7 @@ contains
     integer, intent(in) :: iprint,outfile
     
     ! Local variables
-    real(dp):: &
+    real(8):: &
     step2501, step2502, step2503, step2504, step2598, step2599
     
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1497,7 +1500,7 @@ contains
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(dp):: step2701
+    real(8):: step2701
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1564,9 +1567,10 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use cost_variables, only: output_costs, discount_rate, tlife, ucfuel, uche3, cdcost, &
-      divcst, fcdfuel, ifueltyp, moneyint, lsa, ucwst, ucoam, fwallcst, fcr0, fcap0cp, &
-      cfind, fcap0, dtlife, divlife, dintrt, decomf, cpstcst, cplife, concost, coeoam, &
-      coefuelt, coecap, coe, cfactr, cdrlife, capcost, step_ref, step_currency
+      divcst, fcdfuel, ifueltyp, moneyint, fwallcst, fcr0, fcap0cp, &
+      fcap0, dtlife, divlife, dintrt, decomf, cpstcst, cplife, concost, coeoam, &
+      coefuelt, coecap, coe, cfactr, cdrlife, capcost, step_ref, step_currency, &
+      step_ucoam, step_ucwst
     use fwbs_variables, only: bktlife
     use heat_transport_variables, only: pnetelmw
     use physics_variables, only: fhe3, itart, wtgpd
@@ -1580,7 +1584,7 @@ contains
     integer, intent(in) :: iprint,outfile
 
     ! Local variables
-    real(dp) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
+    real(8) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
          annfuelt,annfwbl,annoam,anntot,annwst,coecdr, &
          coecp,coedecom,coediv,coefuel,coefwbl,coewst,crfcdr,crfcp, &
          crfdiv,crffwbl,fefcdr,fefcp,fefdiv,feffwbl,fwbllife,kwhpy
@@ -1620,7 +1624,7 @@ contains
     crffwbl = (feffwbl*discount_rate) / (feffwbl-1.0D0)
 
     ! Annual cost of replacements
-    annfwbl = fwblkcost * (1.0D0+cfind(lsa)) * fcap0cp * crffwbl
+    annfwbl = fwblkcost * fcap0cp * crffwbl
 
     ! Cost of electricity due to first wall/blanket replacements
     coefwbl = 1.0D9 * annfwbl / kwhpy
@@ -1635,7 +1639,7 @@ contains
     crfdiv = (fefdiv*discount_rate) / (fefdiv-1.0D0)
 
     ! Annual cost of replacements
-    anndiv = divcst * (1.0D0+cfind(lsa)) * fcap0cp * crfdiv
+    anndiv = divcst * fcap0cp * crfdiv
 
     ! Cost of electricity due to divertor replacements
     coediv = 1.0D9 * anndiv / kwhpy
@@ -1651,7 +1655,7 @@ contains
       crfcp = (fefcp*discount_rate) / (fefcp-1.0D0)
 
       ! Annual cost of replacements
-      anncp = cpstcst * (1.0D0+cfind(lsa)) * fcap0cp * crfcp
+      anncp = cpstcst * fcap0cp * crfcp
 
       ! Cost of electricity due to centrepost replacements
       coecp = 1.0D9 * anncp / kwhpy
@@ -1673,7 +1677,7 @@ contains
     if (ifueltyp == 0) then
       anncdr = 0.0D0
     else
-      anncdr = cdcost * fcdfuel/(1.0D0-fcdfuel) * (1.0D0+cfind(lsa)) * fcap0cp * crfcdr
+      anncdr = cdcost * fcdfuel/(1.0D0-fcdfuel) * fcap0cp * crfcdr
     end if
 
     ! Cost of electricity due to current drive system replacements
@@ -1683,7 +1687,7 @@ contains
     ! ======================================
 
     ! Annual cost of operation and maintenance
-    annoam = ucoam(lsa) * sqrt(pnetelmw/1200.0D0)
+    annoam = step_ucoam * sqrt(pnetelmw/1200.0D0)
 
   ! Additional cost due to pulsed reactor thermal storage
   ! See F/MPE/MOD/CAG/PROCESS/PULSE/0008
@@ -1728,7 +1732,7 @@ contains
   !  ===========================
 
   !  Annual cost of waste disposal
-  annwst = ucwst(lsa) * sqrt(pnetelmw/1200.0D0)
+  annwst = step_ucwst * sqrt(pnetelmw/1200.0D0)
 
   !  Cost of electricity due to waste disposal
   coewst = 1.0D9 * annwst / kwhpy
