@@ -962,15 +962,17 @@ contains
     !! System) costs.
     use cost_variables, only: output_costs
     use process_output, only: ocosts, oblnkl
-    use heat_transport_variables, only: helpow
+    use heat_transport_variables, only: helpow, helpow_cryal
+    use tfcoil_variables, only: tcoolin, tmpcry
     implicit none
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
   
     ! Local variables
-    real(8):: &
-    step220301, step220302, step220303, step220304, step2203
+    real(8):: step220301, step220302, step220303, step220304, step2203
+    real(8) :: r
+    !! Total electric power for cryogenic plant at ~4.5K (kW)
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -978,8 +980,11 @@ contains
     step2203 = 0.0D0
 
     ! Cryo system cost in 2017 M$
-    ! Scale with the total heat load on the cryoplant at ~4.5K (kW)
-    step2203 = 6.14 * (helpow / 1.0D3)**0.63
+    ! Scale with r, the total electric power for cryogenic plant at ~4.5K (kW)
+    r = (helpow * (2.93D2 / tmpcry - 1) / (2.93D2 / 4.5D0 - 1) + &
+      helpow_cryal * (2.93D2 / tcoolin - 1) / (2.93D2 / 4.5D0 - 1)) * 1.0D-3
+
+    step2203 = 6.14D0 * r**6.3D-1
     
     ! Add to Account 22 total
     step22 = step22 + step2203
