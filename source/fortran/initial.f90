@@ -663,8 +663,8 @@ subroutine check
 
         icase  = 'Tight aspect ratio tokamak model'
 
-        ! Forcing that no inboard breeding blanket is used
-        iblnkith = 0
+        ! Disabled Forcing that no inboard breeding blanket is used 
+        ! Disabled iblnkith = 0
 
         ! Check if the choice of plasma current is addapted for ST
         ! 2 : Peng Ip scaling (See STAR code documentation)

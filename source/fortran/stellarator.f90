@@ -342,7 +342,6 @@ contains
     use physics_variables, only: rmajor, rminor, sarea
     use process_output, only: oheadr, obuild, ovarre
 		use constants, only: mfile
-		use maths_library, only: hybrd
     implicit none
 
     !  Arguments

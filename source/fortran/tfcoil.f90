@@ -84,114 +84,114 @@ module tfcoil_module
     integer, intent(in) :: outfile,iprint
 
     !  Local variables
-    real(dp) :: acool
+    real(8) :: acool
     !! Total CP cooling area [m2]
 
-    real(dp) :: acpav
+    real(8) :: acpav
     !! Average conductor layer area (including cooling area) [m2]
 
-    real(dp) :: dcool
+    real(8) :: dcool
     !! Cooling channel diamater [m]
 
-    real(dp) :: lcool
+    real(8) :: lcool
     !! Cooling channel (vertical) length [m]
 
-    real(dp) :: ro
+    real(8) :: ro
     !! Average radius covered by a cooling channel [m]
 
-    real(dp) :: dpres
+    real(8) :: dpres
     !! Pressure drop 
 
-    real(dp) :: dtcncpav
+    real(8) :: dtcncpav
     !! Average conductor temperature rise [K]
     
-    real(dp) :: dtconcpmx
+    real(8) :: dtconcpmx
     !! Peak conductop temperature rise [K]
     
-    real(dp) :: dtfilmav
+    real(8) :: dtfilmav
     !! Film temperature rise [K]
     
-    real(dp) :: fc
+    real(8) :: fc
     !! Parameter use in saturation pressure calculation
     
-    real(dp) :: fricfac
+    real(8) :: fricfac
     !! Friction factor
     
-    real(dp) :: h
+    real(8) :: h
     !! h factor used in film temperature rise calculation
     
-    real(dp) :: nuselt
+    real(8) :: nuselt
     !! Nusselt number used in film temperature rise calculation
     
-    real(dp) :: prndtl
+    real(8) :: prndtl
     !! Prandlt number used in film temperature rise calculation
     
-    real(dp) :: reyn
+    real(8) :: reyn
     !! Reynolds number used in film temperature rise calculation
     
-    real(dp) :: pcrt
+    real(8) :: pcrt
     !! Critical pressure in saturation pressure calculations [Pa]
     !! Rem : Currently only input for water 
     
-    real(dp) :: presin
+    real(8) :: presin
     !! Coolant pressure drop [Pa]
     
-    real(dp) :: psat
+    real(8) :: psat
     !! Saturation pressure [Pa]
     !! Rem : Calcultation to be revised for Helium cooling 
     
-    real(dp) :: ptot
+    real(8) :: ptot
     !! Total heating to be dissipated ( resistive + nuclear ) [W]
     
-    real(dp) :: dptot
+    real(8) :: dptot
     !! Ptot (total power to dissipte) increment used in the coolant temperature rise [W]
     
-    real(dp) :: roughrat
+    real(8) :: roughrat
     !! Roughting factor
     
-    real(dp) :: sum
+    real(8) :: sum
     !! A sum
     
-    real(dp) :: tclmx
+    real(8) :: tclmx
     !! Temperature used in staturation pressure calculation [K]
     
-    real(dp) :: tclmxs
+    real(8) :: tclmxs
     !! Temperature used in staturation pressure calculation [K]
     
-    real(dp) :: tcoolmx
+    real(8) :: tcoolmx
     !! Maximum coolant temperature [K]
     
-    real(dp) :: tmarg
+    real(8) :: tmarg
     !! Temperature margins used in saturation pressure calculation [K]
 
-    real(dp) :: cool_mass_flow
+    real(8) :: cool_mass_flow
     !! Coolant mass flow rate [kg/s]
 
-    real(dp) :: vcool_max
+    real(8) :: vcool_max
     !! Maximum coolant velocity [m/s]
 
-    real(dp) :: coolant_density
+    real(8) :: coolant_density
     !! Coolant density [kg/m3]
     
-    real(dp) :: coolant_th_cond
+    real(8) :: coolant_th_cond
     !! Coolant thermal conductivity [W/(m.K)]
     
-    real(dp) :: coolant_visco
+    real(8) :: coolant_visco
     !! Coolant viscosity [SA]
     
-    real(dp) :: coolant_cp
+    real(8) :: coolant_cp
     !! Coolant thermal capacity
     
-    real(dp) :: conductor_th_cond
+    real(8) :: conductor_th_cond
     !! Conductor thermal conductivity [W/(m.K)]
     
-    real(dp) :: tcool_calc
+    real(8) :: tcool_calc
     !! coolant temperature used in the temperature rise calculations (not an output) [K]
 
-    real(dp) :: tcool_av
+    real(8) :: tcool_av
     !! Average bulk coolant temperature (not an output) [K]
 
-    real(dp) :: tcool_film
+    real(8) :: tcool_film
     !! Coolant temperature at the pipe surface calculated from the average bulk
     !! temperature (not an output) [K]
 
@@ -441,10 +441,10 @@ module tfcoil_module
 
       ! Input / output
       ! --------------
-      real(dp), intent(in) :: temp
+      real(8), intent(in) :: temp
       !! Helium temperature [K]
 
-      real(dp), intent(out) :: density
+      real(8), intent(out) :: density
       !! Heliyn density [kg/m3]
       ! --------------
 
@@ -486,10 +486,10 @@ module tfcoil_module
 
       ! Input / output
       ! --------------
-      real(dp), intent(in) :: temp
+      real(8), intent(in) :: temp
       !! Helium temperature [K]
 
-      real(dp), intent(out) :: cp
+      real(8), intent(out) :: cp
       !! Themal capacity at constant pressure [K/(kg.K)]
       ! --------------
 
@@ -534,10 +534,10 @@ module tfcoil_module
 
       ! Input / output
       ! --------------
-      real(dp), intent(in) :: temp
+      real(8), intent(in) :: temp
       !! Helium temperature [K]
 
-      real(dp), intent(out) :: visco
+      real(8), intent(out) :: visco
       !! Themal capacity at constant pressure [Pa.s]
       ! --------------
 
@@ -578,10 +578,10 @@ module tfcoil_module
 
       ! Input / output
       ! --------------
-      real(dp), intent(in) :: temp
+      real(8), intent(in) :: temp
       !! Helium temperature [K]
 
-      real(dp), intent(out) :: th_cond
+      real(8), intent(out) :: th_cond
       !! Themal conductivity [W/(m.K)]
       ! --------------
 
@@ -629,10 +629,10 @@ module tfcoil_module
  
        ! Input / output
        ! --------------
-       real(dp), intent(in) :: temp
+       real(8), intent(in) :: temp
        !! Helium temperature [K]
  
-       real(dp), intent(out) :: th_cond
+       real(8), intent(out) :: th_cond
        !! Themal conductivity [W/(m.K)]
        ! --------------
 

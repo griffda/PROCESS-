@@ -589,7 +589,6 @@ module kit_blanket_model
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-          use maths_library, only: hybrd
       implicit none
   
       !  Arguments

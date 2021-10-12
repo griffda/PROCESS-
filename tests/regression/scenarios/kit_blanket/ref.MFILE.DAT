@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
- Date_of_run_____________________________________________________________ (date)________________________     "20/09/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "11:06"
+ Date_of_run_____________________________________________________________ (date)________________________     "11/10/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "10:26"
  User____________________________________________________________________ (username)____________________     "rhicha"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Michael's test file                                                                                
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-378-g294e3fc3"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1304-update-hcd-costs-in-cost-model-2"                                                             
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-646-g57e098e2"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1407-update-of-shield-cost-calculations"                                                           
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-128/test_scenario_kit_blanket_0/IN.DAT                                                                                                                                     "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-149/test_scenario_kit_blanket_0/IN.DAT                                                                                                                                     "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -140,19 +140,19 @@
  tohs_(range_normalised)_________________________________________________ (nitvar039)___________________      1.7660E-01    
  Beta_consistency__________________normalised_residue____________________ (normres001)__________________      3.5424E-10    
  Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -9.1948E-10    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________     -6.1943E-12    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________     -6.1929E-12    
  Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres004)__________________     -2.7011E-09    
- Radial_build_consistency__________normalised_residue____________________ (normres005)__________________     -4.6585E-13    
+ Radial_build_consistency__________normalised_residue____________________ (normres005)__________________     -4.6607E-13    
  Burn_time_lower_limit_____________normalised_residue____________________ (normres006)__________________     -1.0191E-06    
  Net_electric_power_lower_limit____normalised_residue____________________ (normres007)__________________      8.3258E-08    
  Beta_upper_limit__________________normalised_residue____________________ (normres008)__________________      4.2981E-10    
  CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres009)__________________      4.4349E-09    
  CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres010)__________________      4.1975E-09    
- Injection_power_upper_limit_______normalised_residue____________________ (normres011)__________________     -4.3591E-12    
- TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres012)__________________     -2.2505E-11    
- TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres013)__________________     -1.9142E-11    
- I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres014)__________________     -5.4073E-11    
- Dump_voltage_upper_limit__________normalised_residue____________________ (normres015)__________________     -2.5729E-11    
+ Injection_power_upper_limit_______normalised_residue____________________ (normres011)__________________     -4.3536E-12    
+ TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres012)__________________     -2.2560E-11    
+ TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres013)__________________     -1.9190E-11    
+ I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres014)__________________     -5.4074E-11    
+ Dump_voltage_upper_limit__________normalised_residue____________________ (normres015)__________________     -2.5733E-11    
  J_winding_pack/J_protection_limit_normalised_residue____________________ (normres016)__________________     -1.5087E-11    
  First_wall_peak_temperature_limit_normalised_residue____________________ (normres017)__________________     -0.0000E+00    
  L-H_power_threshold_limit_________normalised_residue____________________ (normres018)__________________      1.1408E-08    
@@ -506,7 +506,7 @@
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      5.5000E+08    
  WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      5.5845E+01 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      9.5246E+01 OP 
- Radial____stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_r_max(1))_____________      2.4424E-08    
+ Radial____stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_r_max(1))_____________      0.0000E+00    
  toroidal__stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_t_max(1))_____________     -3.6326E+08    
  Vertical__stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_z_max(1))_____________      1.8674E+08    
  Von-Mises_stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_vmises_max(1))________      4.8442E+08    
