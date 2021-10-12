@@ -87,7 +87,8 @@ module pfcoil_module
          ohhghf, ipfloc, wts, powpfres, nptsmx, curpfb, routr, ric, fcohbof, &
          rpf2, nfxfh, bpf, zl, wtc, vf, turns, curpfs, rpf, zref, &
          pfmmax, ipfres, alfapf, ncirt, pfclres, cpt, waves, sxlg, sigpfcalw, &
-         coheof, zh, fcohbof, ra, rb, isumatpf, whtpf, fcupfsu, cohbop, rjpfalw
+         coheof, zh, fcohbof, ra, rb, isumatpf, whtpf, fcupfsu, cohbop, &
+         rjpfalw, i_sup_pf_shape
      use physics_variables, only: bvert, kappa, rli, itartpf, vsres, plascur, &
          triang, rminor, vsind, aspect, itart, betap, rmajor
      use tfcoil_variables, only: tftmp, dcond, i_tf_sup, fhts, &
@@ -246,9 +247,13 @@ module pfcoil_module
               zcls(j,k) = rminor * zref(j) * signn(k)
               !  Coil radius follows TF coil curve for SC TF (D-shape)
               !  otherwise stacked for resistive TF (rectangle-shape)
-              if (i_tf_sup /= 1) then
+              if (i_tf_sup /= 1 .or. i_sup_pf_shape==1) then
+                  print *,'For coil ',k,', rectangular winding surface'
+                  print *,'i_tf_sup = ',i_tf_sup
+                  print *,'i_sup_pf_shape = ',i_sup_pf_shape
                   rcls(j,k) = rclsnorm
               else
+                  print *,'For coil ',k,', elliptical winding surface'
                   rcls(j,k) = sqrt(rclsnorm**2 - zcls(j,k)**2)
               end if
            end do

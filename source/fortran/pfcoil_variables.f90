@@ -140,6 +140,15 @@ module pfcoil_variables
   !! - =3 NbTi
   !! - =4 ITER Nb3Sn model with user-specified parameters
   !! - =5 WST Nb3Sn parameterisation
+  
+  integer :: i_sup_pf_shape
+  !! Switch for the placement of Group 3 (outboard) PF coils
+  !! when the TF coils are superconducting (i_tf_sup = 1)
+  !!
+  !! - =0 (Default) Outboard PF coils follow TF shape 
+  !!   in an elliptical winding surface
+  !! - =1 Outboard PF coils all have same radius, rectangular
+  !!   winding surface
 
   real(8) :: jscoh_bop
   !! central solenoid superconductor critical current density (A/m2) at beginning-of-pulse
@@ -361,6 +370,7 @@ module pfcoil_variables
     itr_sum = 0.0D0
     isumatoh = 1
     isumatpf = 1
+    i_sup_pf_shape = 0
     jscoh_bop = 0.0D0
     jscoh_eof = 0.0D0
     jstrandoh_bop = 0.0D0
