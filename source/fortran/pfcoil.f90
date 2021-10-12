@@ -88,7 +88,7 @@ module pfcoil_module
          rpf2, nfxfh, bpf, zl, wtc, vf, turns, curpfs, rpf, zref, &
          pfmmax, ipfres, alfapf, ncirt, pfclres, cpt, waves, sxlg, sigpfcalw, &
          coheof, zh, fcohbof, ra, rb, isumatpf, whtpf, fcupfsu, cohbop, &
-         rjpfalw, i_sup_pf_shape
+         rjpfalw, i_sup_pf_shape, rref
      use physics_variables, only: bvert, kappa, rli, itartpf, vsres, plascur, &
          triang, rminor, vsind, aspect, itart, betap, rmajor
      use tfcoil_variables, only: tftmp, dcond, i_tf_sup, fhts, &
@@ -254,6 +254,14 @@ module pfcoil_module
               end if
            end do
  
+        else if (ipfloc(j) == 4) then
+ 
+           !  PF coil is in general location
+           do k = 1,ncls(j)
+              zcls(j,k) = rminor * zref(j) * signn(k)
+              rcls(j,k) = rminor * rref(j) + rmajor
+           end do
+ 
         else
            idiags(1) = j ; idiags(2) = ipfloc(j)
            call report_error(67)
@@ -359,7 +367,15 @@ module pfcoil_module
            else if (ipfloc(i) == 3) then
  
               !  PF coil is radially outside the TF coil
-              !  This is a free current and must be solved for
+              !  This is an equilibrium coil, current must be solved for
+ 
+              ngrp0 = ngrp0 + 1
+              pcls0(ngrp0) = i
+              
+           else if (ipfloc(i) == 4) then
+ 
+              !  PF coil is generally placed
+              !  This is an equilibrium coil, current must be solved for
  
               ngrp0 = ngrp0 + 1
               pcls0(ngrp0) = i
@@ -397,7 +413,7 @@ module pfcoil_module
              sigma,work2,ssqef,ccls0)
  
         do ccount = 1,ngrp0
-           ccls(pcls0(ccount)) = ccls0(ccount)
+            ccls(pcls0(ccount)) = ccls0(ccount)
         end do
  
      end if
@@ -967,7 +983,7 @@ module pfcoil_module
      integer :: nrws
  
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
+      
      !  Calculate field from the fixed current loops
  
      call fixb(nptsmx,nfixmx,lrow1,npts,rpts,zpts,nfix,rfix,zfix,cfix,bfix)

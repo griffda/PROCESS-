@@ -280,7 +280,7 @@ contains
       coheof, sigpfcalw, alstroh, ipfres, fcupfsu, fvssu, etapsu, i_cs_stress, &
       fbmaxcs, ngc, rpf2, fcohbop, ohhghf, vfohc, isumatoh, ngrpmx, ngc2, rpf1, &
       ngrp, isumatpf, nfxfh, alfapf, routr, sigpfcf, pfclres, bmaxcs_lim, &
-      ncls, nfixmx, cptdin, ipfloc, i_sup_pf_shape
+      ncls, nfixmx, cptdin, ipfloc, i_sup_pf_shape, rref
     use physics_variables, only: ipedestal, taumax, i_single_null, fvsbrnni, &
       rhopedt, cvol, fdeut, ffwal, eped_sf, iculbl, itartpf, ilhthresh, &
       fpdivlim, epbetmax, isc, kappa95, aspect, cwrmax, nesep, csawth, dene, &
@@ -2212,10 +2212,13 @@ contains
                'Gap from outboard TFC leg for PFC')
        case ('rpf1')
           call parse_real_variable('rpf1', rpf1, 0.0D0, 3.0D0, &
-               'Radial offset for group 1 PF coils')
+               'Radial offset for location 1 PF coils')
        case ('rpf2')
           call parse_real_variable('rpf2', rpf2, -3.0D0, 3.0D0, &
-               'Radial offset for group 2 PF coils')
+               'Radial offset for location 2 PF coils')
+       case ('rref')
+          call parse_real_array('rref', rref, isub1, ngrpmx, &
+               'radius of location 4 coil groups, minor radii from major radius', icode)
        case ('sigpfcalw')
           call parse_real_variable('sigpfcalw', sigpfcalw, 1.0D0, 1.0D3, &
                'Allowable stress in the PF coil case (MPa)')
@@ -2230,7 +2233,7 @@ contains
                'Central Solenoid void fraction for coolant')
        case ('zref')
           call parse_real_array('zref', zref, isub1, ngrpmx, &
-               'height of coil group / minor radius', icode)
+               'height of location 3 and 4 coil groups / minor radius', icode)
 
        case ('afw')
           call parse_real_variable('afw', afw, 1.0D-3, 0.5D0, &
@@ -3764,7 +3767,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Check whether a subscript was found by the preceding call to GET_VARIABLE_NAME
-
+    
     if (subscript_present) then
 
        oldval = varval(isub1)

@@ -13,7 +13,7 @@ module pfcoil_variables
 
   public
 
-  integer, parameter :: ngrpmx = 8
+  integer, parameter :: ngrpmx = 10
   !! maximum number of groups of PF coils
 
   integer, parameter :: nclsmx = 2
@@ -103,11 +103,12 @@ module pfcoil_variables
   !! F-value for `constraint equation 51` 
 
   integer, dimension(ngc) :: ipfloc
-  !! switch for locating scheme of PF coil group i:
+  !! Switch for location of PF coil group i:
   !!
-  !! - =1 PF coil on top of central solenoid
-  !! - =2 PF coil on top of TF coil
-  !! - =3 PF coil outside of TF coil
+  !! - =1 PF coil on top of central solenoid (flux ramp only)
+  !! - =2 PF coil on top of TF coil (flux ramp only)
+  !! - =3 PF coil outside of TF coil (equilibrium coil)
+  !! - =4 PF coil, general location (equilibrium coil)
 
   integer :: ipfres
   !! switch for PF coil type:
@@ -142,7 +143,7 @@ module pfcoil_variables
   !! - =5 WST Nb3Sn parameterisation
   
   integer :: i_sup_pf_shape
-  !! Switch for the placement of Group 3 (outboard) PF coils
+  !! Switch for the placement of Location 3 (outboard) PF coils
   !! when the TF coils are superconducting (i_tf_sup = 1)
   !!
   !! - =0 (Default) Outboard PF coils follow TF shape 
@@ -243,6 +244,16 @@ module pfcoil_variables
   real(8) :: rpf2
   !! offset (m) of radial position of `ipfloc=2` PF coils from being at 
   !! rmajor (offset = rpf2*triang*rminor)
+  
+  real(8), dimension(ngrpmx) :: rref
+  !! PF coil radial positioning adjuster:
+  !!
+  !! - for groups j with ipfloc(j) = 1; rref(j) is ignored
+  !! - for groups j with ipfloc(j) = 2; rref(j) is ignored
+  !! - for groups j with ipfloc(j) = 3; rref(j) is ignored
+  !! - for groups j with ipfloc(j) = 4; rref(j) is radius of
+  !!   the coil in units of minor radii from the major radius
+  !!   (r = rmajor + rref*rminor)
 
   real(8) :: s_tresca_oh
   !! Tresca stress coils/central solenoid [MPa]
@@ -330,6 +341,8 @@ module pfcoil_variables
   !!   within the TF coil)
   !! - for groups j with ipfloc(j) = 3; zref(j) = ratio of
   !!   height of coil group j to plasma minor radius</UL>
+  !! - for groups j with ipfloc(j) = 4; zref(j) = ratio of
+  !!   height of coil group j to plasma minor radius</UL>
 
   real(8) :: bmaxcs_lim
   !! Central solenoid max field limit [T]
@@ -365,7 +378,7 @@ module pfcoil_variables
     fcuohsu = 0.7D0
     fcupfsu = 0.69D0
     fvssu = 1.0
-    ipfloc = (/2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0/)
+    ipfloc = (/2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0/)
     ipfres = 0
     itr_sum = 0.0D0
     isumatoh = 1
@@ -376,7 +389,7 @@ module pfcoil_variables
     jstrandoh_bop = 0.0D0
     jstrandoh_eof = 0.0D0
     ncirt = 0
-    ncls = (/1,1,2,0,0,0,0,0,0,0/)
+    ncls = (/1,1,2,0,0,0,0,0,0,0,0,0/)
     nfxfh = 7
     ngrp = 3
     nohc = 0
@@ -401,6 +414,8 @@ module pfcoil_variables
     rpf = 0.0D0
     rpf1 = 0.0D0
     rpf2 = -1.63D0
+    rref = (/7.0D0, 7.0D0, 7.0D0, &
+      7.0D0, 7.0D0, 7.0D0, 7.0D0, 7.0D0, 7.0D0, 7.0D0/)
     s_tresca_oh = 0.0D0
     sigpfcalw = 500.0D0
     sigpfcf = 0.666D0
@@ -427,7 +442,7 @@ module pfcoil_variables
     zl = 0.0D0
     zpf = 0.0D0
     zref = (/3.6D0, 1.2D0, 2.5D0, &
-      1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0/)
+      1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0/)
     bmaxcs_lim = 13.0
     fbmaxcs = 13.0
   end subroutine init_pfcoil_variables
