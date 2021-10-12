@@ -134,7 +134,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
     1  Beta consistency                      =  3.4725E-02              1.4475E-11                -4.1686E-10
     2  Global power balance consistency      =  1.6949E-01 MW/m3       -1.6700E-10 MW/m3           9.8534E-10
     3  Density upper limit                   <  8.7030E+19 /m3          2.1164E+10 /m3             2.4318E-10
-    4  Beam ion density consistency          =  1.2418E+17 /m3         -1.7046E+07 /m3             1.3727E-10
+    4  Beam ion density consistency          =  1.2418E+17 /m3         -1.7046E+07 /m3             1.3726E-10
     5  Neutron wall load upper limit         <  1.0082E+00 MW/m2        3.0354E-09 MW/m2           3.0107E-09
     6  Radial build consistency              =  9.0697E+00 m           -1.8966E-09 m               2.0912E-10
     7  Burn time lower limit                 >  7.2000E+03 sec          3.9181E-02 sec            -5.4418E-06
@@ -144,7 +144,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    11  Beta upper limit                      <  5.6067E-02             -2.2701E-11                -4.0489E-10
    12  CS coil EOF current density limit     <  7.0291E+07 A/m2         3.9302E+02 A/m2            5.5914E-06
    13  CS coil BOP current density limit     <  6.5596E+07 A/m2         3.4891E+02 A/m2            5.3191E-06
-   14  Injection power upper limit           <  5.0000E+01 MW          -1.4287E-08 MW              2.8574E-10
+   14  Injection power upper limit           <  5.0000E+01 MW          -1.4288E-08 MW              2.8575E-10
    15  TF coil case stress upper limit       <  5.5000E+08 Pa          -1.9551E+02 Pa             -3.5548E-07
    16  TF coil conduit stress upper lim      <  5.5000E+08 Pa           6.3049E+02 Pa              1.1463E-06
    17  I_op / I_critical (TF coil)           <  4.4048E+07 A/m2         1.9585E+02 A/m2           -8.8924E-06

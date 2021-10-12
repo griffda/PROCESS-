@@ -13,107 +13,107 @@ module cost_variables
 
   public
 
-  real(dp) :: abktflnc
+  real(8) :: abktflnc
   !! allowable first wall/blanket neutron fluence (MW-yr/m2) (`blktmodel=0`)
 
-  real(dp) :: adivflnc
+  real(8) :: adivflnc
   !! allowable divertor heat fluence (MW-yr/m2)
 
-  real(dp) :: blkcst
+  real(8) :: blkcst
   !! blanket direct cost (M$)
 
-  real(dp) :: c221
+  real(8) :: c221
   !! total account 221 cost (M$) - first wall, blanket, shield, support structure and div plates
 
-  real(dp) :: c222
+  real(8) :: c222
   !! total account 222 cost (M$) - TF coils + PF coils
 
-  real(dp) :: capcost
+  real(8) :: capcost
   !! total capital cost including interest (M$)
 
-  real(dp) :: cconfix
+  real(8) :: cconfix
   !! fixed cost of superconducting cable ($/m)
 
-  real(dp) :: cconshpf
+  real(8) :: cconshpf
   !! cost of PF coil steel conduit/sheath ($/m)
 
-  real(dp) :: cconshtf
+  real(8) :: cconshtf
   !! cost of TF coil steel conduit/sheath ($/m)
 
-  real(dp) :: cdcost
+  real(8) :: cdcost
   !! current drive direct costs (M$)
 
-  real(dp) :: cdirt
+  real(8) :: cdirt
   !! total plant direct cost (M$)
 
-  real(dp) :: cdrlife
+  real(8) :: cdrlife
   !! lifetime of heating/current drive system (y)
 
-  real(dp) :: cfactr
+  real(8) :: cfactr
   !! Total plant availability fraction; input if `iavail=0`
 
-  real(dp) :: cpfact
+  real(8) :: cpfact
   !! Total plant capacity factor
   
-  real(dp), dimension(4) :: cfind
-  !! indirect cost factor (func of lsa)
+  real(8), dimension(4) :: cfind
+  !! indirect cost factor (func of lsa) (cost model = 0)
 
-  real(dp) :: cland
+  real(8) :: cland
   !! cost of land (M$)
 
-  real(dp) :: coe
+  real(8) :: coe
   !! cost of electricity ($/MW-hr)
 
-  real(dp) :: coecap
+  real(8) :: coecap
   !! capital cost of electricity (m$/kW-hr)
 
-  real(dp) :: coefuelt
+  real(8) :: coefuelt
   !! 'fuel' (including replaceable components) contribution to cost of electricity (m$/kW-hr)
 
-  real(dp) :: coeoam
+  real(8) :: coeoam
   !! operation and maintenance contribution to cost of electricity (m$/kW-hr)
 
-  real(dp) :: concost
+  real(8) :: concost
   !! plant construction cost (M$)
 
-  real(dp) :: costexp
+  real(8) :: costexp
   !! cost exponent for scaling in 2015 costs model
 
-  real(dp) :: costexp_pebbles
+  real(8) :: costexp_pebbles
   !! cost exponent for pebbles in 2015 costs model
 
-  real(dp) :: cost_factor_buildings
+  real(8) :: cost_factor_buildings
   !! cost scaling factor for buildings
 
-  real(dp) :: cost_factor_land
+  real(8) :: cost_factor_land
   !! cost scaling factor for land
 
-  real(dp) :: cost_factor_tf_coils
+  real(8) :: cost_factor_tf_coils
   !! cost scaling factor for TF coils
 
-  real(dp) :: cost_factor_fwbs
+  real(8) :: cost_factor_fwbs
   !! cost scaling factor for fwbs
 
-  real(dp) :: cost_factor_rh
+  real(8) :: cost_factor_rh
   !! cost scaling factor for remote handling
 
-  real(dp) :: cost_factor_vv
+  real(8) :: cost_factor_vv
   !! cost scaling factor for vacuum vessel
 
-  real(dp) :: cost_factor_bop
+  real(8) :: cost_factor_bop
   !! cost scaling factor for energy conversion system
 
-  real(dp) :: cost_factor_misc
+  real(8) :: cost_factor_misc
   !! cost scaling factor for remaining subsystems
 
-  real(dp) :: maintenance_fwbs
+  real(8) :: maintenance_fwbs
   !! Maintenance cost factor: first wall, blanket, shield, divertor
 
-  real(dp) :: maintenance_gen
+  real(8) :: maintenance_gen
   !! Maintenance cost factor: All other components except coils, vacuum vessel, 
   !! thermal shield, cryostat, land
 
-  real(dp) :: amortization
+  real(8) :: amortization
   !! amortization factor (fixed charge factor) "A" (years)
 
   integer :: cost_model
@@ -130,64 +130,64 @@ module cost_variables
   !!  2 : The CP lifetime is equal to the breeding blankets lifetime
   !!  3 : The CP lifetime is equal to the plant lifetime
 
-  real(dp) :: cowner
+  real(8) :: cowner
   !! owner cost factor
 
-  real(dp) :: cplife_input
+  real(8) :: cplife_input
   !! User input full power year lifetime of the centrepost (years)
 
-  real(dp) :: cplife
+  real(8) :: cplife
   !! Calculated full power year lifetime of centrepost (years)
 
-  real(dp) :: cpstcst
+  real(8) :: cpstcst
   !! ST centrepost direct cost (M$)
 
-  real(dp) :: cpstflnc
+  real(8) :: cpstflnc
   !! allowable ST centrepost neutron fluence (MW-yr/m2)
 
-  real(dp) :: crctcore
+  real(8) :: crctcore
   !! reactor core costs (categories 221, 222 and 223)
 
-  real(dp) :: csi
+  real(8) :: csi
   !! allowance for site costs (M$)
 
-  real(dp) :: cturbb
+  real(8) :: cturbb
   !! cost of turbine building (M$)
 
-  real(dp) :: decomf
+  real(8) :: decomf
   !! proportion of constructed cost required for decommissioning fund
 
-  real(dp) :: dintrt
+  real(8) :: dintrt
   !! diff between borrowing and saving interest rates
 
-  real(dp) :: divcst
+  real(8) :: divcst
   !! divertor direct cost (M$)
 
-  real(dp) :: divlife
+  real(8) :: divlife
   !! Full power lifetime of divertor (y)
 
-  real(dp) :: dtlife
+  real(8) :: dtlife
   !! period prior to the end of the plant life that the decommissioning fund is used (years)
 
-  real(dp) :: fcap0
+  real(8) :: fcap0
   !! average cost of money for construction of plant assuming design/construction time of six years
 
-  real(dp) :: fcap0cp
+  real(8) :: fcap0cp
   !! average cost of money for replaceable components assuming lead time for these of two years
 
-  real(dp) :: fcdfuel
+  real(8) :: fcdfuel
   !! fraction of current drive cost treated as fuel (if `ifueltyp = 1`)
 
-  real(dp) :: fcontng
+  real(8) :: fcontng
   !! project contingency factor
 
-  real(dp) :: fcr0
+  real(8) :: fcr0
   !! fixed charge rate during construction
 
-  real(dp) :: fkind
+  real(8) :: fkind
   !! multiplier for Nth of a kind costs
 
-  real(dp) :: fwallcst
+  real(8) :: fwallcst
   !! first wall cost (M$)
 
   integer :: iavail
@@ -197,85 +197,85 @@ module cost_variables
   !! - =1 calculate cfactr using Taylor and Ward 1999 model
   !! - =2 calculate cfactr using new (2015) model
 
-  real(dp) :: avail_min
+  real(8) :: avail_min
   !! Minimum availability (`constraint equation 61`)
 
-  real(dp) :: tok_build_cost_per_vol
+  real(8) :: tok_build_cost_per_vol
   !! Unit cost for tokamak complex buildings, including building and site services ($/m3)
 
-  real(dp) :: light_build_cost_per_vol
+  real(8) :: light_build_cost_per_vol
   !! Unit cost for unshielded non-active buildings ($/m3)
 
-  real(dp) :: favail
+  real(8) :: favail
   !! F-value for minimum availability (`constraint equation 61`)
 
   integer :: num_rh_systems
   !! Number of remote handling systems (1-10)
 
-  real(dp) :: conf_mag
+  real(8) :: conf_mag
   !! c parameter, which determines the temperature margin at which magnet lifetime starts to decline
 
-  real(dp) :: div_prob_fail
+  real(8) :: div_prob_fail
   !! Divertor probability of failure (per op day)
 
-  real(dp) :: div_umain_time
+  real(8) :: div_umain_time
   !! Divertor unplanned maintenance time (years)
 
-  real(dp) :: div_nref
+  real(8) :: div_nref
   !! Reference value for cycle cycle life of divertor
 
-  real(dp) :: div_nu
+  real(8) :: div_nu
   !! The cycle when the divertor fails with 100% probability
 
-  real(dp) :: fwbs_nref
+  real(8) :: fwbs_nref
   !! Reference value for cycle life of blanket
 
-  real(dp) :: fwbs_nu
+  real(8) :: fwbs_nu
   !! The cycle when the blanket fails with 100% probability
 
-  real(dp) :: fwbs_prob_fail
+  real(8) :: fwbs_prob_fail
   !! Fwbs probability of failure (per op day)
 
-  real(dp) :: fwbs_umain_time
+  real(8) :: fwbs_umain_time
   !! Fwbs unplanned maintenance time (years)
 
-  real(dp) :: redun_vacp
+  real(8) :: redun_vacp
   !! Vacuum system pump redundancy level (%)
 
   integer :: redun_vac
   !! Number of redundant vacuum pumps
 
-  real(dp) :: t_operation
+  real(8) :: t_operation
   !! Operational time (yrs)
 
-  real(dp) :: tbktrepl
+  real(8) :: tbktrepl
   !! time taken to replace blanket (y) (`iavail=1`)
 
-  real(dp) :: tcomrepl
+  real(8) :: tcomrepl
   !! time taken to replace both blanket and divertor (y) (`iavail=1`)
 
-  real(dp) :: tdivrepl
+  real(8) :: tdivrepl
   !! time taken to replace divertor (y) (`iavail=1`)
 
-  real(dp) :: uubop
+  real(8) :: uubop
   !! unplanned unavailability factor for balance of plant (`iavail=1`)
 
-  real(dp) :: uucd
+  real(8) :: uucd
   !! unplanned unavailability factor for current drive (`iavail=1`)
 
-  real(dp) :: uudiv
+  real(8) :: uudiv
   !! unplanned unavailability factor for divertor (`iavail=1`)
 
-  real(dp) :: uufuel
+  real(8) :: uufuel
   !! unplanned unavailability factor for fuel system (`iavail=1`)
 
-  real(dp) :: uufw
+  real(8) :: uufw
   !! unplanned unavailability factor for first wall (`iavail=1`)
 
-  real(dp) :: uumag
+  real(8) :: uumag
   !! unplanned unavailability factor for magnets (`iavail=1`)
 
-  real(dp) :: uuves
+  real(8) :: uuves
   !! unplanned unavailability factor for vessel (`iavail=1`)
 
   integer :: ifueltyp
@@ -307,7 +307,7 @@ module cost_variables
   !! - =2,3 in-between
   !! - =4 like current fission plant
 
-  real(dp) :: moneyint
+  real(8) :: moneyint
   !! interest portion of capital cost (M$)
 
   integer :: output_costs
@@ -316,338 +316,350 @@ module cost_variables
   !! - =0 do not write cost-related outputs to file
   !! - =1 write cost-related outputs to file
 
-  real(dp) :: discount_rate
+  real(8) :: discount_rate
   !! effective cost of money in constant dollars
 
-  real(dp) :: sitecost
+  real(8) :: sitecost
   !! fixed value for site cost (2017 US$)
 
-  real(dp) :: step_con
+  real(8) :: step_con
   !! Contingency Percentage
 
-  real(dp) :: step_cconfix 
+  real(8) :: step_cconfix 
   !! fixed cost of superconducting cable ($/m) (if cost model = 2) 
 
-  real(dp) :: step_cconshpf
+  real(8) :: step_cconshpf
   !! cost of PF coil steel conduit/sheath ($/m) (if cost model = 2) 
 
   character(len=50) :: step_currency
   !! description of the constant dollar year used
 
-  real(dp) :: step_ucblbe
+  real(8) :: step_ucblbe
   !! unit cost for blanket Be ($/kg) (if cost model = 2)
 
-  real(dp) :: step_ucblbreed 
+  real(8) :: step_ucblbreed 
   !! unit cost for blanket breeder material ($/kg) (if cost model = 2) 
 
-  real(dp) :: step_ucblss
+  real(8) :: step_ucblss
   !! unit cost for blanket stainless steel ($/kg) (if cost model = 2)
 
-  real(dp) :: step_ucblvd 
+  real(8) :: step_ucblvd 
   !! Unit cost for blanket Vd ($/kg) (if cost model = 2)
 
-  real(dp) :: step_uccase
+  real(8) :: step_uccase
   !! cost of superconductor case ($/kg) (if cost model = 2)
 
-  real(dp) :: step_uccu
+  real(8) :: step_uccu
   !! unit cost for copper in superconducting cable ($/kg) (if cost model = 2)
 
-  real(dp) :: step_ucfwa 
+  real(8) :: step_ucfwa 
   !! first wall armour cost ($/kg) (if cost model = 2)
 
-  real(dp) :: step_ucfws 
+  real(8) :: step_ucfws 
   !! first wall structure cost ($/kg) (if cost model = 2)
 
-  real(dp) :: step_ucfwps 
+  real(8) :: step_ucfwps 
   !! first wall passive stabiliser cost ($) (if cost model = 2)
 
-  real(dp), dimension(9) :: step_ucsc
-  !! cost of superconductor ($/kg) (if cost model = 2)
+  real(8) :: step_ucshw
+  !! unit cost for shield tungsten ($/kg) (if cost model = 2)
 
-  real(dp) :: step_ucfnc
-  !! outer PF coil fence support cost ($/kg) (if cost model = 2)
+  real(8) :: step_ucshwc
+  !! unit cost for shield tungsten carbide ($/kg) (if cost model = 2)
 
-  real(dp) :: step_ucwindpf 
-  !! cost of PF coil superconductor windings ($/m) (if cost model = 2)
-
-  real(dp) :: step_rh_costfrac
-  !! fraction of capital cost for remote handling (if cost_model = 2)
-  
-  real(dp), dimension(68) :: step_ref
-  !! Reference values for cost model 2
-
-  real(dp) :: step91_per
-  !! Percentage of cdirt used in calculating step91 (3.0D-1 = 30%)
-  
-  real(dp) :: step92_per
-  !! Percentage of cdirt used in calculating step92 (3.0D-1 = 30%)
-  
-  real(dp) :: step93_per
-  !! Percentage of cdirt used in calculating step93 (3.0D-1 = 30%)
-
-  real(dp) :: tlife
-  !! Full power year plant lifetime (years)
-
-  real(dp), parameter :: ucad = 180.0D0
-  !! unit cost for administration buildings (M$/m3)
-
-  real(dp), parameter :: ucaf = 1.5D6
-  !! unit cost for aux facility power equipment ($)
-
-  real(dp), parameter :: ucahts = 31.0D0
-  !! unit cost for aux heat transport equipment ($/W**exphts)
-
-  real(dp), parameter :: ucap = 17.0D0
-  !! unit cost of auxiliary transformer ($/kVA)
-
-  real(dp) :: ucblbe
-  !! unit cost for blanket beryllium ($/kg)
-
-  real(dp) :: ucblbreed
-  !! unit cost for breeder material ($/kg) (`blktmodel>0`)
-
-  real(dp) :: ucblli
-  !! unit cost for blanket lithium ($/kg) (30% Li6)
-
-  real(dp) :: ucblli2o
-  !! unit cost for blanket Li_2O ($/kg)
-
-  real(dp) :: ucbllipb
-  !! unit cost for blanket Li-Pb ($/kg) (30% Li6)
-
-  real(dp) :: ucblss
-  !! unit cost for blanket stainless steel ($/kg)
-
-  real(dp) :: ucblvd
-  !! unit cost for blanket vanadium ($/kg)
-
-  real(dp), parameter :: ucbpmp = 2.925D5
-  !! vacuum system backing pump cost ($)
-
-  real(dp) :: ucbus
-  !! cost of aluminium bus for TF coil ($/A-m)
-
-  real(dp) :: uccase
-  !! cost of superconductor case ($/kg)
-
-  real(dp), parameter :: ucco = 350.0D0
-  !! unit cost for control buildings (M$/m3)
-
-  real(dp) :: uccpcl1
-  !! cost of high strength tapered copper ($/kg)
-
-  real(dp) :: uccpclb
-  !! cost of TF outboard leg plate coils ($/kg)
-
-  real(dp), parameter :: uccpmp = 3.9D5
-  !! vacuum system cryopump cost ($)
-
-  real(dp), parameter :: uccr = 460.0D0
-  !! unit cost for cryogenic building (M$/vol)
-
-  real(dp) :: uccry
-  !! heat transport system cryoplant costs ($/W**expcry)
-
-  real(dp) :: uccryo
-  !! unit cost for vacuum vessel ($/kg)
-
-  real(dp) :: uccu
-  !! unit cost for copper in superconducting cable ($/kg)
-
-  real(dp), parameter :: ucdgen = 1.7D6
-  !! cost per 8 MW diesel generator ($)
-
-  real(dp) :: ucdiv
-  !! cost of divertor blade ($)
-
-  real(dp), parameter :: ucdtc = 13.0D0
-  !! detritiation, air cleanup cost ($/10000m3/hr)
-
-  real(dp), parameter :: ucduct = 4.225D4
-  !! vacuum system duct cost ($/m)
-
-  real(dp) :: ucech
-  !! ECH system cost ($/W)
-
-  real(dp), parameter :: ucel = 380.0D0
-  !! unit cost for electrical equipment building (M$/m3)
-
-  real(dp), parameter :: uces1 = 3.2D4
-  !! MGF (motor-generator flywheel) cost factor ($/MVA**0.8)
-  
-  real(dp), parameter :: uces2 = 8.8D3
-  !! MGF (motor-generator flywheel) cost factor ($/MJ**0.8)
-
-  real(dp) :: ucf1
-  !! cost of fuelling system ($)
-
-  real(dp) :: ucfnc
-  !! outer PF coil fence support cost ($/kg)
-
-  real(dp), parameter :: ucfpr = 4.4D7
-  !! cost of 60g/day tritium processing unit ($)
-
-  real(dp) :: ucfuel
-  !! unit cost of D-T fuel (M$/year/1200MW)
-
-  real(dp), parameter :: ucfwa = 6.0D4
-  !! first wall armour cost ($/m2)
-
-  real(dp), parameter :: ucfwps = 1.0D7
-  !! first wall passive stabiliser cost ($)
-
-  real(dp), parameter :: ucfws = 5.3D4
-  !! first wall structure cost ($/m2)
-  
-  real(dp), parameter :: ucgss = 35.0D0
-  !! cost of reactor structure ($/kg)
-
-  real(dp) :: uche3
-  !! cost of helium-3 ($/kg)
-
-  real(dp) :: uchrs
-  !! cost of heat rejection system ($)
-
-  real(dp), dimension(2) :: uchts
-  !! cost of heat transport system equipment per loop ($/W); dependent on coolant type (coolwh)
-
-  real(dp) :: uciac
-  !! cost of instrumentation, control & diagnostics ($)
-
-  real(dp) :: ucich
-  !! ICH system cost ($/W)
-
-  real(dp), parameter :: ucint = 35.0D0
-  !! superconductor intercoil structure cost ($/kg)
-
-  real(dp) :: uclh
-  !! lower hybrid system cost ($/W)
-
-  real(dp), parameter :: uclv = 16.0D0
-  !! low voltage system cost ($/kVA)
-
-  real(dp), parameter :: ucmb = 260.0D0
-  !! unit cost for reactor maintenance building (M$/m3)
-
-  real(dp) :: ucme
-  !! cost of maintenance equipment ($)
-
-  real(dp) :: ucmisc
-  !! miscellaneous plant allowance ($)
-
-  real(dp) :: ucnbi
-  !! NBI system cost ($/W)
-
-  real(dp), parameter :: ucnbv = 1000.0D0
-  !! cost of nuclear building ventilation ($/m3)
-
-  real(dp), dimension(4) :: ucoam
+  real(8) :: step_ucoam
   !! annual cost of operation and maintenance (M$/year/1200MW**0.5)
 
-  real(dp) :: ucpens
+  real(8) :: step_ucwst
+  !! cost of waste disposal (M$/y/1200MW)
+
+  real(8), dimension(9) :: step_ucsc
+  !! cost of superconductor ($/kg) (if cost model = 2)
+
+  real(8) :: step_ucfnc
+  !! outer PF coil fence support cost ($/kg) (if cost model = 2)
+
+  real(8) :: step_ucwindpf 
+  !! cost of PF coil superconductor windings ($/m) (if cost model = 2)
+
+  real(8) :: step_rh_costfrac
+  !! fraction of capital cost for remote handling (if cost_model = 2)
+  
+  real(8), dimension(68) :: step_ref
+  !! Reference values for cost model 2
+
+  real(8) :: step91_per
+  !! Percentage of cdirt used in calculating step91 (3.0D-1 = 30%)
+  
+  real(8) :: step92_per
+  !! Percentage of cdirt used in calculating step92 (3.0D-1 = 30%)
+  
+  real(8) :: step93_per
+  !! Percentage of cdirt used in calculating step93 (3.0D-1 = 30%)
+
+  real(8) :: tlife
+  !! Full power year plant lifetime (years)
+
+  real(8), parameter :: ucad = 180.0D0
+  !! unit cost for administration buildings (M$/m3)
+
+  real(8), parameter :: ucaf = 1.5D6
+  !! unit cost for aux facility power equipment ($)
+
+  real(8), parameter :: ucahts = 31.0D0
+  !! unit cost for aux heat transport equipment ($/W**exphts)
+
+  real(8), parameter :: ucap = 17.0D0
+  !! unit cost of auxiliary transformer ($/kVA)
+
+  real(8) :: ucblbe
+  !! unit cost for blanket beryllium ($/kg)
+
+  real(8) :: ucblbreed
+  !! unit cost for breeder material ($/kg) (`blktmodel>0`)
+
+  real(8) :: ucblli
+  !! unit cost for blanket lithium ($/kg) (30% Li6)
+
+  real(8) :: ucblli2o
+  !! unit cost for blanket Li_2O ($/kg)
+
+  real(8) :: ucbllipb
+  !! unit cost for blanket Li-Pb ($/kg) (30% Li6)
+
+  real(8) :: ucblss
+  !! unit cost for blanket stainless steel ($/kg)
+
+  real(8) :: ucblvd
+  !! unit cost for blanket vanadium ($/kg)
+
+  real(8), parameter :: ucbpmp = 2.925D5
+  !! vacuum system backing pump cost ($)
+
+  real(8) :: ucbus
+  !! cost of aluminium bus for TF coil ($/A-m)
+
+  real(8) :: uccase
+  !! cost of superconductor case ($/kg)
+
+  real(8), parameter :: ucco = 350.0D0
+  !! unit cost for control buildings (M$/m3)
+
+  real(8) :: uccpcl1
+  !! cost of high strength tapered copper ($/kg)
+
+  real(8) :: uccpclb
+  !! cost of TF outboard leg plate coils ($/kg)
+
+  real(8), parameter :: uccpmp = 3.9D5
+  !! vacuum system cryopump cost ($)
+
+  real(8), parameter :: uccr = 460.0D0
+  !! unit cost for cryogenic building (M$/vol)
+
+  real(8) :: uccry
+  !! heat transport system cryoplant costs ($/W**expcry)
+
+  real(8) :: uccryo
+  !! unit cost for vacuum vessel ($/kg)
+
+  real(8) :: uccu
+  !! unit cost for copper in superconducting cable ($/kg)
+
+  real(8), parameter :: ucdgen = 1.7D6
+  !! cost per 8 MW diesel generator ($)
+
+  real(8) :: ucdiv
+  !! cost of divertor blade ($)
+
+  real(8), parameter :: ucdtc = 13.0D0
+  !! detritiation, air cleanup cost ($/10000m3/hr)
+
+  real(8), parameter :: ucduct = 4.225D4
+  !! vacuum system duct cost ($/m)
+
+  real(8) :: ucech
+  !! ECH system cost ($/W)
+
+  real(8), parameter :: ucel = 380.0D0
+  !! unit cost for electrical equipment building (M$/m3)
+
+  real(8), parameter :: uces1 = 3.2D4
+  !! MGF (motor-generator flywheel) cost factor ($/MVA**0.8)
+  
+  real(8), parameter :: uces2 = 8.8D3
+  !! MGF (motor-generator flywheel) cost factor ($/MJ**0.8)
+
+  real(8) :: ucf1
+  !! cost of fuelling system ($)
+
+  real(8) :: ucfnc
+  !! outer PF coil fence support cost ($/kg)
+
+  real(8), parameter :: ucfpr = 4.4D7
+  !! cost of 60g/day tritium processing unit ($)
+
+  real(8) :: ucfuel
+  !! unit cost of D-T fuel (M$/year/1200MW)
+
+  real(8), parameter :: ucfwa = 6.0D4
+  !! first wall armour cost ($/m2)
+
+  real(8), parameter :: ucfwps = 1.0D7
+  !! first wall passive stabiliser cost ($)
+
+  real(8), parameter :: ucfws = 5.3D4
+  !! first wall structure cost ($/m2)
+  
+  real(8), parameter :: ucgss = 35.0D0
+  !! cost of reactor structure ($/kg)
+
+  real(8) :: uche3
+  !! cost of helium-3 ($/kg)
+
+  real(8) :: uchrs
+  !! cost of heat rejection system ($)
+
+  real(8), dimension(2) :: uchts
+  !! cost of heat transport system equipment per loop ($/W); dependent on coolant type (coolwh)
+
+  real(8) :: uciac
+  !! cost of instrumentation, control & diagnostics ($)
+
+  real(8) :: ucich
+  !! ICH system cost ($/W)
+
+  real(8), parameter :: ucint = 35.0D0
+  !! superconductor intercoil structure cost ($/kg)
+
+  real(8) :: uclh
+  !! lower hybrid system cost ($/W)
+
+  real(8), parameter :: uclv = 16.0D0
+  !! low voltage system cost ($/kVA)
+
+  real(8), parameter :: ucmb = 260.0D0
+  !! unit cost for reactor maintenance building (M$/m3)
+
+  real(8) :: ucme
+  !! cost of maintenance equipment ($)
+
+  real(8) :: ucmisc
+  !! miscellaneous plant allowance ($)
+
+  real(8) :: ucnbi
+  !! NBI system cost ($/W)
+
+  real(8), parameter :: ucnbv = 1000.0D0
+  !! cost of nuclear building ventilation ($/m3)
+
+  real(8), dimension(4) :: ucoam
+  !! annual cost of operation and maintenance (M$/year/1200MW**0.5)
+
+  real(8) :: ucpens
   !! penetration shield cost ($/kg)
 
-  real(dp) :: ucpfb
+  real(8) :: ucpfb
   !! cost of PF coil buses ($/kA-m)
 
-  real(dp) :: ucpfbk
+  real(8) :: ucpfbk
   !! cost of PF coil DC breakers ($/MVA**0.7)
 
-  real(dp) :: ucpfbs
+  real(8) :: ucpfbs
   !! cost of PF burn power supplies ($/kW**0.7)
 
-  real(dp) :: ucpfcb
+  real(8) :: ucpfcb
   !! cost of PF coil AC breakers ($/circuit)
 
-  real(dp) :: ucpfdr1
+  real(8) :: ucpfdr1
   !! cost factor for dump resistors ($/MJ)
 
-  real(dp) :: ucpfic
+  real(8) :: ucpfic
   !! cost of PF instrumentation and control ($/channel)
 
-  real(dp) :: ucpfps
+  real(8) :: ucpfps
   !! cost of PF coil pulsed power supplies ($/MVA)
 
-  real(dp), parameter :: ucphx = 15.0D0
+  real(8), parameter :: ucphx = 15.0D0
   !! primary heat transport cost ($/W**exphts)
 
-  real(dp), parameter :: ucpp = 48.0D0
+  real(8), parameter :: ucpp = 48.0D0
   !! cost of primary power transformers ($/kVA**0.9)
 
-  real(dp) :: ucrb
+  real(8) :: ucrb
   !! cost of reactor building (M$/m3)
 
-  real(dp), dimension(9) :: ucsc
+  real(8), dimension(9) :: ucsc
   !! cost of superconductor ($/kg)
 
-  real(dp) :: step_uc_cryo_al
+  real(8) :: step_uc_cryo_al
   !! Unit cost of cryo aluminium ($/kg). Only used in costs_step_module
 
-  real(dp) :: step_mc_cryo_al_per
+  real(8) :: step_mc_cryo_al_per
   !! Manufacturing cost percentage for cryo aluminium (%). 0.2 means a 20%
   !! manufacturing cost. Only used in costs_step_module
 
-  real(dp), parameter :: ucsh = 115.0D0
+  real(8), parameter :: ucsh = 115.0D0
   !! cost of shops and warehouses (M$/m3)
 
-  real(dp) :: ucshld
+  real(8) :: ucshld
   !! cost of shield structural steel ($/kg)
 
-  real(dp), parameter :: ucswyd = 1.84D7
+  real(8), parameter :: ucswyd = 1.84D7
   !! switchyard equipment costs ($)
 
-  real(dp) :: uctfbr
+  real(8) :: uctfbr
   !! cost of TF coil breakers ($/W**0.7)
 
-  real(dp) :: uctfbus
+  real(8) :: uctfbus
   !! cost of TF coil bus ($/kg)
 
-  real(dp), parameter :: uctfdr = 1.75D-4
+  real(8), parameter :: uctfdr = 1.75D-4
   !! cost of TF coil dump resistors ($/J)
 
-  real(dp), parameter :: uctfgr = 5000.0D0
+  real(8), parameter :: uctfgr = 5000.0D0
   !! additional cost of TF coil dump resistors ($/coil)
 
-  real(dp), parameter :: uctfic = 1.0D4
+  real(8), parameter :: uctfic = 1.0D4
   !! cost of TF coil instrumentation and control ($/coil/30)
 
-  real(dp) :: uctfps
+  real(8) :: uctfps
   !! cost of TF coil power supplies ($/W**0.7)
 
-  real(dp) :: uctfsw
+  real(8) :: uctfsw
   !! cost of TF coil slow dump switches ($/A)
 
-  real(dp), parameter :: uctpmp = 1.105D5
+  real(8), parameter :: uctpmp = 1.105D5
   !! cost of turbomolecular pump ($)
 
-  real(dp), parameter :: uctr = 370.0D0
+  real(8), parameter :: uctr = 370.0D0
   !! cost of tritium building ($/m3)
 
-  real(dp), dimension(2) :: ucturb
+  real(8), dimension(2) :: ucturb
   !! cost of turbine plant equipment ($) (dependent on coolant type coolwh)
 
-  real(dp), parameter :: ucvalv = 3.9D5
+  real(8), parameter :: ucvalv = 3.9D5
   !! vacuum system valve cost ($)
 
-  real(dp), parameter :: ucvdsh = 26.0D0
+  real(8), parameter :: ucvdsh = 26.0D0
   !! vacuum duct shield cost ($/kg)
 
-  real(dp), parameter :: ucviac = 1.3D6
+  real(8), parameter :: ucviac = 1.3D6
   !! vacuum system instrumentation and control cost ($)
 
-  real(dp) :: ucwindpf
+  real(8) :: ucwindpf
   !! cost of PF coil superconductor windings ($/m)
 
-  real(dp) :: ucwindtf
+  real(8) :: ucwindtf
   !! cost of TF coil superconductor windings ($/m)
 
-  real(dp), parameter :: ucws = 460.0D0
+  real(8), parameter :: ucws = 460.0D0
   !! cost of active assembly shop ($/m3)
 
-  real(dp), dimension(4) :: ucwst
+  real(8), dimension(4) :: ucwst
   !! cost of waste disposal (M$/y/1200MW)
 
-  real(dp) :: wfbuilding
+  real(8) :: wfbuilding
   !! fixed value for waste facility buildings (2017 US$)
   
   contains
@@ -761,7 +773,11 @@ module cost_variables
     step_ucsc = &
       (/ 600.0D0, 600.0D0, 443.0D0, 600.0D0, 600.0D0, 600.0D0, 300.0D0, 1200.0D0, &
       1200.0D0 /)
+    ! step_ucshw = 269.638D0
+    ! step_ucshwc = 930.251D0
     step_ucfnc = 104.3D0 
+    step_ucoam = 74.4D0
+    step_ucwst = 7.88D0
     step_ucwindpf = 465.0D0
     step_rh_costfrac = 7.5D-2
     step_ref = &

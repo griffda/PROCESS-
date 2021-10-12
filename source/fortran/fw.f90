@@ -36,13 +36,13 @@ contains
 
     implicit none
 
-    real(dp), intent(in) :: reynolds
-    real(dp), intent(out) :: darcy_friction
+    real(8), intent(in) :: reynolds
+    real(8), intent(out) :: darcy_friction
 
     ! Local variables !
     ! !!!!!!!!!!!!!!!!!!
 
-    real(dp) :: bracket
+    real(8) :: bracket
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -76,47 +76,47 @@ contains
     ! Arguments
 
     ! Function output: Heat transfer coefficient (W/m2K)
-    real(dp) :: heat_transfer
+    real(8) :: heat_transfer
 
     ! Coolant mass flux in a single channel (kg/m2/s)
-    real(dp) :: masflx
+    real(8) :: masflx
 
     ! Coolant density (average of inlet and outlet) (kg/m3)
-    real(dp) :: rhof
+    real(8) :: rhof
 
     ! Coolant pipe radius (m)
-    real(dp) :: radius
+    real(8) :: radius
 
     ! Coolant specific heat capacity (average of inlet and outlet) (J/K)
-    real(dp) :: cf
+    real(8) :: cf
 
     ! Coolant viscosity (average of inlet and outlet) (Pa.s)
-    real(dp) :: viscf
+    real(8) :: viscf
 
     ! Thermal conductivity of coolant (average of inlet and outlet) (W/m.K)
-    real(dp) :: kf
+    real(8) :: kf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Local variables
 
     ! Calculate flow velocity (m/s)
-    real(dp) :: velocity
+    real(8) :: velocity
 
     ! Reynolds number
-    real(dp) :: reynolds
+    real(8) :: reynolds
 
     ! Prandtl number
-    real(dp) :: pr
+    real(8) :: pr
 
     ! Darcy friction factor
-    real(dp) :: f
+    real(8) :: f
 
     ! Nusselt number
-    real(dp) :: nusselt
+    real(8) :: nusselt
 
     ! Pipe diameter (m)
-    real(dp) ::diameter
+    real(8) ::diameter
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -169,12 +169,12 @@ contains
     implicit none
 
     ! Function return value: thermal conductivity of first wall (W/m.K)
-    real(dp) :: fw_thermal_conductivity
+    real(8) :: fw_thermal_conductivity
 
     ! Arguments !
     ! !!!!!!!!!!!!
 
-    real(dp), intent(in) :: t
+    real(8), intent(in) :: t
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -229,89 +229,89 @@ contains
 
     ! Arguments
     integer, intent(in) :: ip, ofile
-    real(dp), intent(in) :: pnuc_deposited, afw, thickness, area, prad_incident
-    real(dp), intent(out) ::  tpeakfw, cfmean, rhofmean, massrate
+    real(8), intent(in) :: pnuc_deposited, afw, thickness, area, prad_incident
+    real(8), intent(out) ::  tpeakfw, cfmean, rhofmean, massrate
     character(len=*) :: label
 
     ! Local variables
     integer :: coolant
 
     ! FW volume (inboard or outboard depending on arguments) (m3)
-    real(dp) :: fwvol
+    real(8) :: fwvol
 
     ! Heat transfer coefficient (W/m2K)
-    real(dp) :: hcoeff
+    real(8) :: hcoeff
 
     ! thermal conductivity of inlet coolant, outlet coolant and mean (W/m.K)
-    real(dp) :: kfi, kfo, kfmean
+    real(8) :: kfi, kfo, kfmean
 
     ! Heat flux incident on the first wall surface (W/m2)
-    real(dp) :: qpp
+    real(8) :: qpp
 
     ! Heat generation in the first wall due to neutron flux deposited in the material (W/m3)
-    real(dp) :: qppp
+    real(8) :: qppp
 
     ! Mean temperature of the wall material on the plasma side of the coolant (K)
-    real(dp) :: temp_k
+    real(8) :: temp_k
 
     ! Viscosity of the inlet coolant, outlet coolant and average coolant (Pa.s)
-    real(dp) :: viscfi, viscfo, viscfmean
+    real(8) :: viscfi, viscfo, viscfmean
 
     ! Heat load per unit length of one first wall pipe (MW/m)
-    real(dp) :: load
+    real(8) :: load
 
     ! Thermal conductivity of first wall material (W/m.K)
-    real(dp) :: tkfw
+    real(8) :: tkfw
 
     ! Temperature drop in first-wall material (K)
-    real(dp) :: deltat_solid
+    real(8) :: deltat_solid
 
     ! Temperature drop between channel inner wall and bulk coolant. (K)
-    real(dp) :: deltat_coolant
+    real(8) :: deltat_coolant
 
     ! First wall channel cross-sectional area (m2)
-    real(dp) :: channel_area
+    real(8) :: channel_area
 
     ! Specific heat capacity for inlet and outlet coolant (J/K)
-    real(dp) :: cfi, cfo
+    real(8) :: cfi, cfo
 
     ! Density of inlet and outlet coolant (kg/m3)
-    real(dp) :: rhofi, rhofo
+    real(8) :: rhofi, rhofo
 
     ! Outlet coolant velocity (m/s)
-    real(dp) :: velocity
+    real(8) :: velocity
 
     ! Temperature drop in first-wall material (Model B)
-    real(dp) :: deltat_solid_1D
+    real(8) :: deltat_solid_1D
 
     ! Worst case load (as above) per unit length in 1-D calculation (Model B)
-    real(dp) :: onedload
+    real(8) :: onedload
 
     ! Effective area for heat transfer (m2)
-    real(dp) :: effective_area_for_heat_transfer
+    real(8) :: effective_area_for_heat_transfer
 
     ! Maximum distance travelled by surface heat load (m)
-    real(dp) :: diagonal
+    real(8) :: diagonal
 
     ! Mean distance travelled by surface heat (m)
-    real(dp) :: mean_distance
+    real(8) :: mean_distance
 
     ! Mean heat spread width (m)
-    real(dp) :: mean_width
+    real(8) :: mean_width
 
     ! Coolant mass flux in a single channel (kg/m2/s)
-    real(dp) :: masflx
+    real(8) :: masflx
 
     ! Mean nuclear power deposited in first wall per unit area (W/m2)
-    real(dp) :: nuclear_heat_per_area
+    real(8) :: nuclear_heat_per_area
 
     ! TODO sort out these variables and model A, B, C order and labels.
     ! Variables for the old FW temperature model (LeClaire)
-    ! real(dp) :: tmthet
+    ! real(8) :: tmthet
     ! first wall pipe outer radius (m)
-    ! real(dp) :: bfw
+    ! real(8) :: bfw
     ! Coolant viscosity (Pa.s)
-    ! real(dp) :: viscf
+    ! real(8) :: viscf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
