@@ -248,12 +248,8 @@ module pfcoil_module
               !  Coil radius follows TF coil curve for SC TF (D-shape)
               !  otherwise stacked for resistive TF (rectangle-shape)
               if (i_tf_sup /= 1 .or. i_sup_pf_shape==1) then
-                  print *,'For coil ',k,', rectangular winding surface'
-                  print *,'i_tf_sup = ',i_tf_sup
-                  print *,'i_sup_pf_shape = ',i_sup_pf_shape
                   rcls(j,k) = rclsnorm
               else
-                  print *,'For coil ',k,', elliptical winding surface'
                   rcls(j,k) = sqrt(rclsnorm**2 - zcls(j,k)**2)
               end if
            end do
