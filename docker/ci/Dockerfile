@@ -1,4 +1,4 @@
-# For Python conversion work on 1092 branch
+# Docker image for CI system
 FROM ubuntu:latest
 LABEL Kristian Zarebski <kristian.zarebski@ukaea.uk>
 

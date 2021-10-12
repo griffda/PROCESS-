@@ -13,19 +13,19 @@ module structure_variables
 
   public
 
-  real(dp) :: aintmass
+  real(8) :: aintmass
   !! intercoil structure mass (kg)
 
-  real(dp) :: clgsmass
+  real(8) :: clgsmass
   !! gravity support structure for TF coil, PF coil and intercoil support systems (kg)
 
-  real(dp) :: coldmass
+  real(8) :: coldmass
   !! total mass of components at cryogenic temperatures (kg)
 
-  real(dp) :: fncmass
+  real(8) :: fncmass
   !! PF coil outer support fence mass (kg)
 
-  real(dp) :: gsmass
+  real(8) :: gsmass
   !! reactor core gravity support mass (kg)
 
   contains
