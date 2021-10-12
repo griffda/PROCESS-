@@ -121,7 +121,7 @@ def assert_fortran_value():
     of detecting when something's gone wrong and hence catching Fortran bugs
     closer to the source of the problem.
     """
-    ifail = fortran.main_module.eqslv()
+    ifail = fortran.vmcon_module.info
     # ifail should be 0; raise an AssertionError with a message if not
     assert ifail == 0, "ifail isn't 0!"
 

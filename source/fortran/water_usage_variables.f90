@@ -15,46 +15,46 @@ module water_usage_variables
 
   public
 
-  real(dp) :: airtemp
+  real(8) :: airtemp
   !! ambient air temperature (degrees Celsius)
 
-  real(dp) :: watertemp
+  real(8) :: watertemp
   !! water temperature (degrees Celsius)
   
-  real(dp) :: windspeed
+  real(8) :: windspeed
   !! wind speed (m/s)
   
-  real(dp) :: waterdens
+  real(8) :: waterdens
   !! density of water (kg/m3)
   !!   for simplicity, set to static value applicable to water at 21 degC
 
-  real(dp) :: latentheat
+  real(8) :: latentheat
   !! latent heat of vaporization (J/kg)
   !!   for simplicity, set to static value applicable at 1 atm (100 kPa) air pressure
 
-  real(dp) :: volheat
+  real(8) :: volheat
   !! volumetric heat of vaporization (J/m3)
   
-  real(dp) :: evapratio
+  real(8) :: evapratio
   !! evaporation ratio: ratio of the heat used to evaporate water 
   !!   to the total heat discharged through the tower
   
-  real(dp) :: evapvol
+  real(8) :: evapvol
   !! evaporated volume of water (m3)
   
-  real(dp) :: energypervol
+  real(8) :: energypervol
   !! input waste (heat) energy cooled per evaporated volume (J/m3)
   
-  real(dp) :: volperenergy
+  real(8) :: volperenergy
   !! volume evaporated by units of heat energy (m3/MJ)
 
-  real(dp) :: waterusetower
+  real(8) :: waterusetower
   !! total volume of water used in cooling tower (m3)
 
-  real(dp) :: wateruserecirc
+  real(8) :: wateruserecirc
   !! total volume of water used in recirculating system (m3)
 
-  real(dp) :: wateruseonethru
+  real(8) :: wateruseonethru
   !! total volume of water used in once-through system (m3)
 
   contains

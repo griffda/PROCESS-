@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-378-g8e646ccf
-    Branch : 1345-elongation-scaleable-with-aspect-ratio
+   Tag No. : v2.1-646-g57e098e2
+    Branch : 1407-update-of-shield-cost-calculations
    Git log : COMMIT_MSG
- Date/time : 30 Sep 2021 12:03:45 +01:00(hh:mm) UTC
+ Date/time : 11 Oct 2021 10:26:22 +01:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-130/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-130/test_scenario_stellarator_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-149/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-149/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  

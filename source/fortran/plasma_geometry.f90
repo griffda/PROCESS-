@@ -51,8 +51,8 @@ contains
 
     !  Local variables
 
-    real(dp) :: sa,so,xsi,xso,thetai,thetao,xi,xo
-    real(dp) :: a, b, c, d, e, f 
+    real(8) :: sa,so,xsi,xso,thetai,thetao,xi,xo
+    real(8) :: a, b, c, d, e, f 
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -233,12 +233,12 @@ contains
 
       !  Arguments
 
-      real(dp), intent(in) :: a,r,k,d
-      real(dp), intent(out) :: sa,so
+      real(8), intent(in) :: a,r,k,d
+      real(8), intent(out) :: sa,so
 
       !  Local variables
 
-      real(dp) :: b,radci,radco,si,thti,thto
+      real(8) :: b,radci,radco,si,thti,thto
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -282,16 +282,16 @@ contains
 
       implicit none
 
-      real(dp) :: xsect0
+      real(8) :: xsect0
 
       !  Arguments
 
-      real(dp), intent(in) :: a,kap,tri
+      real(8), intent(in) :: a,kap,tri
 
       !  Local variables
 
-      real(dp) :: denomi,denomo,thetai,thetao,xli,xlo
-      real(dp) :: cti,sti,cto,sto
+      real(8) :: denomi,denomo,thetai,thetao,xli,xlo
+      real(8) :: cti,sti,cto,sto
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -341,15 +341,15 @@ contains
 
       implicit none
 
-      real(dp) :: fvol
+      real(8) :: fvol
 
       !  Arguments
 
-      real(dp), intent(in) :: r,a,kap,tri
+      real(8), intent(in) :: r,a,kap,tri
 
       !  Local variables
 
-      real(dp) :: c1,c2,rc2,rc1,vin,vout,zn
+      real(8) :: c1,c2,rc2,rc1,vin,vout,zn
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -393,11 +393,11 @@ contains
 
       implicit none
 
-      real(dp) :: xsecta
+      real(8) :: xsecta
 
       !  Arguments
 
-      real(dp), intent(in) :: xi,thetai,xo,thetao
+      real(8), intent(in) :: xi,thetai,xo,thetao
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -428,15 +428,15 @@ contains
 
       implicit none
 
-      real(dp) :: xvol
+      real(8) :: xvol
 
       !  Arguments
 
-      real(dp), intent(in) :: rmajor,rminor,xi,thetai,xo,thetao
+      real(8), intent(in) :: rmajor,rminor,xi,thetai,xo,thetao
 
       !  Local variables
 
-      real(dp) :: rc,third,vin,vout
+      real(8) :: rc,third,vin,vout
 
       !--End of preamble--CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
@@ -488,12 +488,12 @@ contains
 
       !  Arguments
 
-      real(dp), intent(in) :: rmajor,rminor,xi,thetai,xo,thetao
-      real(dp), intent(out) :: xsi,xso
+      real(8), intent(in) :: rmajor,rminor,xi,thetai,xo,thetao
+      real(8), intent(out) :: xsi,xso
 
       !  Local variables
 
-      real(dp) :: fourpi,rc
+      real(8) :: fourpi,rc
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -528,15 +528,15 @@ contains
 
     implicit none
 
-    real(dp) :: perim
+    real(8) :: perim
 
     !  Arguments
 
-    real(dp), intent(in) :: a,kap,tri
+    real(8), intent(in) :: a,kap,tri
 
     !  Local variables
 
-    real(dp) :: denomi,denomo,thetai,thetao,xli,xlo
+    real(8) :: denomi,denomo,thetai,thetao,xli,xlo
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -583,12 +583,12 @@ contains
 
     !  Arguments
 
-    real(dp), intent(in) :: a,kap,tri
-    real(dp), intent(out) :: xi,thetai,xo,thetao
+    real(8), intent(in) :: a,kap,tri
+    real(8), intent(out) :: xi,thetai,xo,thetao
 
     !  Local variables
 
-    real(dp) :: denomi,denomo,n,t
+    real(8) :: denomi,denomo,n,t
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
