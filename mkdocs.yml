@@ -18,6 +18,7 @@ nav:
     - Development: 
         - Version Control (Git): development/git-usage.md
         - Standards: development/standards.md
+        - F2Py Standards: development/f2py-standards.md
         - Adding Variables & Constraints: development/add-vars.md
         - Continuous Integration: development/ci-guide.md
         - Testing: development/testing.md
