@@ -76,19 +76,19 @@ contains
 
     !  Local variables
 
-    real(dp), dimension(5) :: fact
-    real(dp), dimension(5,2) :: coef
-    real(dp), dimension(7,2) :: decay
+    real(8), dimension(5) :: fact
+    real(8), dimension(5,2) :: coef
+    real(8), dimension(7,2) :: decay
 
     integer, parameter :: ishmat = 1  !  stainless steel coil casing is assumed
 
-    real(dp) :: coilhtmx,decaybl,dpacop,dshieq,dshoeq, &
+    real(8) :: coilhtmx,decaybl,dpacop,dshieq,dshoeq, &
          fpsdt,frachit,hbot,hblnkt,hcryopf,hecan,hshld,htop,htheci,hvv, &
          pheci,pheco, fpydt, pneut2,ptfi,ptfiwp,ptfo,ptfowp,r1,r2,r3, &
          raddose,v1,v2,volshldi,volshldo,wpthk,zdewex,coolvol
 
-    real(dp) :: pnucfwbs,pnucbs,pnucs
-    real(dp) :: fwthick,decayfw,decaysh
+    real(8) :: pnucfwbs,pnucbs,pnucs
+    real(8) :: fwthick,decayfw,decaysh
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1040,15 +1040,15 @@ contains
 
     implicit none
 
-    real(dp) :: tsat
+    real(8) :: tsat
 
     !  Arguments
 
-    real(dp), intent(in) :: p
+    real(8), intent(in) :: p
 
     !  Local variables
 
-    real(dp) :: ta1,ta2,ta3,ta4,ta5,ta6,ta7
+    real(8) :: ta1,ta2,ta3,ta4,ta5,ta6,ta7
 
     !  Global shared variables
 
@@ -1119,17 +1119,17 @@ contains
 
     !  Arguments
 
-    real(dp), intent(out) :: coilhtmx,dpacop,htheci,nflutf, &
+    real(8), intent(out) :: coilhtmx,dpacop,htheci,nflutf, &
          pheci,pheco,ptfiwp,ptfowp,raddose,ptfnuc
 
     !  Local variables
 
     integer, parameter :: ishmat = 1  !  stainless steel coil casing is assumed
 
-    real(dp), dimension(5) :: fact
-    real(dp), dimension(5,2) :: coef
-    real(dp), dimension(7,2) :: decay
-    real(dp) :: dshieq,dshoeq,fpsdt,fpydt,ptfi,ptfo,wpthk
+    real(8), dimension(5) :: fact
+    real(8), dimension(5,2) :: coef
+    real(8), dimension(7,2) :: decay
+    real(8) :: dshieq,dshoeq,fpsdt,fpydt,ptfi,ptfo,wpthk
 
     !  Global shared variables
 

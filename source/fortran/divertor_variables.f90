@@ -13,52 +13,52 @@ module divertor_variables
 
   public
 
-  real(dp) :: adas
+  real(8) :: adas
   !! area divertor / area main plasma (along separatrix)
 
-  real(dp) :: anginc
+  real(8) :: anginc
   !! angle of incidence of field line on plate (rad)
 
-  real(dp) :: betai
+  real(8) :: betai
   !! poloidal plane angle between divertor plate and leg, inboard (rad)
 
-  real(dp) :: betao
+  real(8) :: betao
   !! poloidal plane angle between divertor plate and leg, outboard (rad)
 
-  real(dp) :: bpsout
+  real(8) :: bpsout
   !! reference B_p at outboard divertor strike point (T)
 
-  real(dp) :: c1div
+  real(8) :: c1div
   !! fitting coefficient to adjust ptpdiv, ppdiv
 
-  real(dp) :: c2div
+  real(8) :: c2div
   !! fitting coefficient to adjust ptpdiv, ppdiv
 
-  real(dp) :: c3div
+  real(8) :: c3div
   !! fitting coefficient to adjust ptpdiv, ppdiv
 
-  real(dp) :: c4div
+  real(8) :: c4div
   !! fitting coefficient to adjust ptpdiv, ppdiv
 
-  real(dp) :: c5div
+  real(8) :: c5div
   !! fitting coefficient to adjust ptpdiv, ppdiv
 
-  real(dp) :: c6div
+  real(8) :: c6div
   !! fitting coefficient to adjust ptpdiv, ppdiv
 
-  real(dp) :: delld
+  real(8) :: delld
   !! coeff for power distribution along main plasma
 
-  real(dp) :: dendiv
+  real(8) :: dendiv
   !! plasma density at divertor (10**20 /m3)
 
-  real(dp) :: densin
+  real(8) :: densin
   !! density at plate (on separatrix) (10**20 /m3)
 
-  real(dp) :: divclfr
+  real(8) :: divclfr
   !! divertor coolant fraction
 
-  real(dp) :: divdens
+  real(8) :: divdens
   !! divertor structure density (kg/m3)
 
   integer :: divdum
@@ -68,103 +68,103 @@ module divertor_variables
   !! - =1 input
   !#TODO: switch name should be changed to i_<something>
 
-  real(dp) :: divfix
+  real(8) :: divfix
   !! divertor structure vertical thickness (m)
 
-  real(dp) :: divleg_profile_inner
+  real(8) :: divleg_profile_inner
   !! length of 2D profile of inner leg surface (m)
   !! default value = estimated from side-view strawperson diagram, August 2021
 
-  real(dp) :: divleg_profile_outer
+  real(8) :: divleg_profile_outer
   !! length of 2D profile of outer leg surface (m)
   !! default value = estimated from side-view strawperson diagram, August 2021
 
-  real(dp) :: divmas
+  real(8) :: divmas
   !! divertor plate mass (kg)
 
-  real(dp) :: divplt
+  real(8) :: divplt
   !! divertor plate thickness (m) (from Spears, Sept 1990)
 
-  real(dp) :: divsur
+  real(8) :: divsur
   !! divertor surface area (m2)
 
-  real(dp) :: fdfs
+  real(8) :: fdfs
   !! radial gradient ratio
 
-  real(dp) :: fdiva
+  real(8) :: fdiva
   !! divertor area fudge factor (for ITER, Sept 1990)
 
-  real(dp) :: fgamp
+  real(8) :: fgamp
   !! sheath potential factor (not used)
 
-  real(dp) :: fhout
+  real(8) :: fhout
   !! fraction of power to outboard divertor (for single null)
 
-  real(dp) :: fififi
+  real(8) :: fififi
   !! coefficient for gamdiv
   !#TODO: what the hell is this variable name...
 
-  real(dp) :: frrp
+  real(8) :: frrp
   !! fraction of radiated power to plate
 
-  real(dp) :: hldiv
+  real(8) :: hldiv
   !! divertor heat load (MW/m2)
 
-  real(dp) :: hldivlim
+  real(8) :: hldivlim
   !! heat load limit (MW/m2)
 
-  real(dp) :: ksic
+  real(8) :: ksic
   !! power fraction for outboard double-null scrape-off plasma
 
-  real(dp) :: lamp
+  real(8) :: lamp
   !! power flow width (m)
 
-  real(dp) :: minstang
+  real(8) :: minstang
   !! minimum strike angle for heat flux calculation
 
-  real(dp) :: omegan
+  real(8) :: omegan
   !! pressure ratio (nT)_plasma / (nT)_scrape-off
 
-  real(dp) :: omlarg
+  real(8) :: omlarg
   !! power spillage to private flux factor
 
-  real(dp) :: ppdivr
+  real(8) :: ppdivr
   !! peak heat load at plate (with radiation) (MW/m2)
 
-  real(dp) :: prn1
+  real(8) :: prn1
   !! n-scrape-off / n-average plasma; (input for `ipedestal=0`, = nesep/dene if `ipedestal>=1`)
   
-  real(dp) :: ptpdiv
+  real(8) :: ptpdiv
   !! peak temperature at the plate (eV)
 
-  real(dp) :: rconl
+  real(8) :: rconl
   !! connection length ratio, outboard side
 
-  real(dp) :: rlclolcn
+  real(8) :: rlclolcn
   !! ratio of collision length / connection length
 
-  real(dp) :: rlenmax
+  real(8) :: rlenmax
   !! maximum value for length ratio (rlclolcn) (`constraintg eqn 22`)
 
-  real(dp) :: rsrd
+  real(8) :: rsrd
   !! effective separatrix/divertor radius ratio
 
-  real(dp) :: tconl
+  real(8) :: tconl
   !! main plasma connection length (m)
 
-  real(dp) :: tdiv
+  real(8) :: tdiv
   !! temperature at divertor (eV) (input for stellarator only, calculated for tokamaks)
 
-  real(dp) :: tsep
+  real(8) :: tsep
   !! temperature at the separatrix (eV)
 
-  real(dp) :: xparain
+  real(8) :: xparain
   !! parallel heat transport coefficient (m2/s)
 
-  real(dp) :: xpertin
+  real(8) :: xpertin
   !! perpendicular heat transport coefficient (m2/s)
 
-  real(dp) :: zeffdiv
+  real(8) :: zeffdiv
   !! Zeff in the divertor region (if `divdum/=0`)
   
   contains
