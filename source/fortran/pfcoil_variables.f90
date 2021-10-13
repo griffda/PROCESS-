@@ -142,6 +142,13 @@ module pfcoil_variables
   !! - =4 ITER Nb3Sn model with user-specified parameters
   !! - =5 WST Nb3Sn parameterisation
   
+  integer :: i_pf_current
+  !! Switch for controlling the current of the PF coils:
+  !!
+  !! - =1 SVD targets zero field across midplane (flux swing 
+  !!   coils) and the correct vertical field at the plasma
+  !!   center (equilibrium coils)
+  
   integer :: i_sup_pf_shape
   !! Switch for the placement of Location 3 (outboard) PF coils
   !! when the TF coils are superconducting (i_tf_sup = 1)
@@ -383,6 +390,7 @@ module pfcoil_variables
     itr_sum = 0.0D0
     isumatoh = 1
     isumatpf = 1
+    i_pf_current = 1
     i_sup_pf_shape = 0
     jscoh_bop = 0.0D0
     jscoh_eof = 0.0D0

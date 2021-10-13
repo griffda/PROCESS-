@@ -280,7 +280,7 @@ contains
       coheof, sigpfcalw, alstroh, ipfres, fcupfsu, fvssu, etapsu, i_cs_stress, &
       fbmaxcs, ngc, rpf2, fcohbop, ohhghf, vfohc, isumatoh, ngrpmx, ngc2, rpf1, &
       ngrp, isumatpf, nfxfh, alfapf, routr, sigpfcf, pfclres, bmaxcs_lim, &
-      ncls, nfixmx, cptdin, ipfloc, i_sup_pf_shape, rref
+      ncls, nfixmx, cptdin, ipfloc, i_sup_pf_shape, rref, i_pf_current
     use physics_variables, only: ipedestal, taumax, i_single_null, fvsbrnni, &
       rhopedt, cvol, fdeut, ffwal, eped_sf, iculbl, itartpf, ilhthresh, &
       fpdivlim, epbetmax, isc, kappa95, aspect, cwrmax, nesep, csawth, dene, &
@@ -2186,6 +2186,9 @@ contains
        case ('isumatpf')
           call parse_int_variable('isumatpf', isumatpf, 1, 8, &
                'PF coil superconductor material')
+       case ('i_pf_current')
+          call parse_int_variable('i_pf_current', i_pf_current, 0, 2, &
+               'Switch for controlling the current of the PF coils')
        case ('i_sup_pf_shape')
           call parse_int_variable('i_sup_pf_shape', i_sup_pf_shape, 0, 1, &
                'Switch to place outboard PF coils when TF superconducting')

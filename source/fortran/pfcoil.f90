@@ -88,7 +88,7 @@ module pfcoil_module
          rpf2, nfxfh, bpf, zl, wtc, vf, turns, curpfs, rpf, zref, &
          pfmmax, ipfres, alfapf, ncirt, pfclres, cpt, waves, sxlg, sigpfcalw, &
          coheof, zh, fcohbof, ra, rb, isumatpf, whtpf, fcupfsu, cohbop, &
-         rjpfalw, i_sup_pf_shape, rref
+         rjpfalw, i_sup_pf_shape, rref, i_pf_current
      use physics_variables, only: bvert, kappa, rli, itartpf, vsres, plascur, &
          triang, rminor, vsind, aspect, itart, betap, rmajor
      use tfcoil_variables, only: tftmp, dcond, i_tf_sup, fhts, &
@@ -206,6 +206,8 @@ module pfcoil_module
      signn(2) = -1.0D0
      rclsnorm = r_tf_outboard_mid + 0.5D0*tfthko + routr
  
+     !! Place the PF coils: 
+     
      !  N.B. Problems here if k=ncls(group) is greater than 2.
      do j = 1,ngrp
  
@@ -296,128 +298,133 @@ module pfcoil_module
              work2,ssq0,ccl0)
  
      end if
+
+      !! Allocate current to the PF coils:
+    
+      !  PF coil currents determined by SVD targeting B
+      if (i_pf_current==1) then
+         !  Simple coil current scaling for STs (good only for A < about 1.8)
+         if (itart==1.and.itartpf==0) then
  
-     !  Simple coil current scaling for STs (good only for A < about 1.8)
-     if (itart==1.and.itartpf==0) then
+           do i = 1,ngrp
  
-        do i = 1,ngrp
+              if (ipfloc(i) == 1) then
  
-           if (ipfloc(i) == 1) then
+                 !  PF coil is stacked on top of the Central Solenoid
+                 ccls(i) = 0.0D0
+                 idiags(1) = i ; call report_error(69)
  
-              !  PF coil is stacked on top of the Central Solenoid
-              ccls(i) = 0.0D0
-              idiags(1) = i ; call report_error(69)
+              else if (ipfloc(i) == 2) then
  
-           else if (ipfloc(i) == 2) then
+                 !  PF coil is on top of the TF coil
+                 ccls(i) = 0.3D0 * aspect**1.6D0 * plascur
  
-              !  PF coil is on top of the TF coil
-              ccls(i) = 0.3D0 * aspect**1.6D0 * plascur
+              else if (ipfloc(i) == 3) then
  
-           else if (ipfloc(i) == 3) then
+                 !  PF coil is radially outside the TF coil
+                 ccls(i) = -0.4D0 * plascur
  
-              !  PF coil is radially outside the TF coil
-              ccls(i) = -0.4D0 * plascur
+              else
+                 idiags(1) = i ; idiags(2) = ipfloc(i)
+                 call report_error(70)
+              end if
  
-           else
-              idiags(1) = i ; idiags(2) = ipfloc(i)
-              call report_error(70)
-           end if
+           end do
  
-        end do
+           !  Vertical field (T)
+           bvert = -1.0D-7 * plascur/rmajor * &
+                (log(8.0D0*aspect) + betap + (rli/2.0D0) - 1.5D0)
  
-        !  Vertical field (T)
-        bvert = -1.0D-7 * plascur/rmajor * &
-             (log(8.0D0*aspect) + betap + (rli/2.0D0) - 1.5D0)
+        else
  
-     else
+           !  Conventional aspect ratio scaling
+           nfxf0 = 0 ; ngrp0 = 0 ; nocoil = 0
+           do i = 1,ngrp
+    
+              if (ipfloc(i) == 1) then
+    
+                 !  PF coil is stacked on top of the Central Solenoid
+                 !  This coil is to balance Central Solenoid flux and should not be involved
+                 !  in equilibrium calculation -- RK 07/12
+                 ccls(i) = 0.0D0
+                 nfxf0 = nfxf0 + ncls(i)
+                 do ccount = 1,ncls(i)
+                    nocoil = nocoil + 1
+                    rfxf(nocoil) = rcls(i, ccount)
+                    zfxf(nocoil) = zcls(i, ccount)
+                    cfxf(nocoil) = ccls(i)
+                 end do
+    
+              else if (ipfloc(i) == 2) then
+    
+                 !  PF coil is on top of the TF coil; divertor coil
+                 !  This is a fixed current for this calculation -- RK 07/12   
+                  
+                 ccls(i) = plascur * 2.0D0 * &
+                      ( 1.0D0 - (kappa * rminor)/abs(zcls(i,1)) )
+                 nfxf0 = nfxf0 + ncls(i)
+                 do ccount = 1, ncls(i)
+                    nocoil = nocoil + 1
+                    rfxf(nocoil) = rcls(i, ccount)
+                    zfxf(nocoil) = zcls(i, ccount)
+                    cfxf(nocoil) = ccls(i)
+                 end do
+    
+              else if (ipfloc(i) == 3) then
+    
+                 !  PF coil is radially outside the TF coil
+                 !  This is an equilibrium coil, current must be solved for
+    
+                 ngrp0 = ngrp0 + 1
+                 pcls0(ngrp0) = i
+                 
+              else if (ipfloc(i) == 4) then
+    
+                 !  PF coil is generally placed
+                 !  This is an equilibrium coil, current must be solved for
+    
+                 ngrp0 = ngrp0 + 1
+                 pcls0(ngrp0) = i
+    
+              else
+                 idiags(1) = i ; idiags(2) = ipfloc(i)
+                 call report_error(70)
+              end if
+    
+           end do
+    
+           do ccount = 1, ngrp0
+              ncls0(ccount) = 2
+              rcls0(ccount,1) = rcls(pcls0(ccount),1)
+              rcls0(ccount,2) = rcls(pcls0(ccount),2)
+              zcls0(ccount,1) = zcls(pcls0(ccount),1)
+              zcls0(ccount,2) = zcls(pcls0(ccount),2)
+           end do
+    
+           npts0 = 1
+           rpts(1) = rmajor
+           zpts(1) = 0.0D0
+           brin(1) = 0.0D0
+    
+           !  Added rli term correctly -- RK 07/12
+    
+           bzin(1) = -1.0D-7 * plascur/rmajor * &
+                (log(8.0D0*aspect) + betap + (rli/2.0D0) - 1.5D0)
+    
+           bvert = bzin(1)
+    
+           call efc(ngrpmx,nclsmx,nptsmx,nfixmx,lrow1,lcol1,npts0, &
+                rpts,zpts,brin,bzin,nfxf0,rfxf,zfxf,cfxf,ngrp0,ncls0, &   
+                rcls0,zcls0,alfapf,bfix,gmat,bvec,rc,zc,cc,xc,umat,vmat, &   
+                sigma,work2,ssqef,ccls0)
  
-        !  Conventional aspect ratio scaling
-        nfxf0 = 0 ; ngrp0 = 0 ; nocoil = 0
-        do i = 1,ngrp
+           do ccount = 1,ngrp0
+               ccls(pcls0(ccount)) = ccls0(ccount)
+           end do
  
-           if (ipfloc(i) == 1) then
- 
-              !  PF coil is stacked on top of the Central Solenoid
-              !  This coil is to balance Central Solenoid flux and should not be involved
-              !  in equilibrium calculation -- RK 07/12
-              ccls(i) = 0.0D0
-              nfxf0 = nfxf0 + ncls(i)
-              do ccount = 1,ncls(i)
-                 nocoil = nocoil + 1
-                 rfxf(nocoil) = rcls(i, ccount)
-                 zfxf(nocoil) = zcls(i, ccount)
-                 cfxf(nocoil) = ccls(i)
-              end do
- 
-           else if (ipfloc(i) == 2) then
- 
-              !  PF coil is on top of the TF coil; divertor coil
-              !  This is a fixed current for this calculation -- RK 07/12
- 
-              ccls(i) = plascur * 2.0D0 * &
-                   ( 1.0D0 - (kappa * rminor)/abs(zcls(i,1)) )
-              nfxf0 = nfxf0 + ncls(i)
-              do ccount = 1, ncls(i)
-                 nocoil = nocoil + 1
-                 rfxf(nocoil) = rcls(i, ccount)
-                 zfxf(nocoil) = zcls(i, ccount)
-                 cfxf(nocoil) = ccls(i)
-              end do
- 
-           else if (ipfloc(i) == 3) then
- 
-              !  PF coil is radially outside the TF coil
-              !  This is an equilibrium coil, current must be solved for
- 
-              ngrp0 = ngrp0 + 1
-              pcls0(ngrp0) = i
-              
-           else if (ipfloc(i) == 4) then
- 
-              !  PF coil is generally placed
-              !  This is an equilibrium coil, current must be solved for
- 
-              ngrp0 = ngrp0 + 1
-              pcls0(ngrp0) = i
- 
-           else
-              idiags(1) = i ; idiags(2) = ipfloc(i)
-              call report_error(70)
-           end if
- 
-        end do
- 
-        do ccount = 1, ngrp0
-           ncls0(ccount) = 2
-           rcls0(ccount,1) = rcls(pcls0(ccount),1)
-           rcls0(ccount,2) = rcls(pcls0(ccount),2)
-           zcls0(ccount,1) = zcls(pcls0(ccount),1)
-           zcls0(ccount,2) = zcls(pcls0(ccount),2)
-        end do
- 
-        npts0 = 1
-        rpts(1) = rmajor
-        zpts(1) = 0.0D0
-        brin(1) = 0.0D0
- 
-        !  Added rli term correctly -- RK 07/12
- 
-        bzin(1) = -1.0D-7 * plascur/rmajor * &
-             (log(8.0D0*aspect) + betap + (rli/2.0D0) - 1.5D0)
- 
-        bvert = bzin(1)
- 
-        call efc(ngrpmx,nclsmx,nptsmx,nfixmx,lrow1,lcol1,npts0, &
-             rpts,zpts,brin,bzin,nfxf0,rfxf,zfxf,cfxf,ngrp0,ncls0, &
-             rcls0,zcls0,alfapf,bfix,gmat,bvec,rc,zc,cc,xc,umat,vmat, &
-             sigma,work2,ssqef,ccls0)
- 
-        do ccount = 1,ngrp0
-            ccls(pcls0(ccount)) = ccls0(ccount)
-        end do
- 
+        end if
      end if
- 
+      
      !  Flux swing from vertical field
  
      !  If this is the first visit to the routine the inductance matrix
