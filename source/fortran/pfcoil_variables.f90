@@ -147,8 +147,8 @@ module pfcoil_variables
   !! when the TF coils are superconducting (i_tf_sup = 1)
   !!
   !! - =0 (Default) Outboard PF coils follow TF shape 
-  !!   in an elliptical winding surface
-  !! - =1 Outboard PF coils all have same radius, rectangular
+  !!   in an ellipsoidal winding surface
+  !! - =1 Outboard PF coils all have same radius, cylindrical
   !!   winding surface
 
   real(8) :: jscoh_bop
