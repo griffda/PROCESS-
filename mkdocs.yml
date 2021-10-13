@@ -5,7 +5,7 @@ nav:
     - Installation Guide: installation.md
     - Usage Guide: usage.md
     - Getting Started: getting-started.md
-    - FORD docs: ford_site/ford.md
+    - FORD docs: ford_site
     - Cost Models: cost-models/cost-models.md
     - Development: 
         - git Usage: development/git-usage.md
