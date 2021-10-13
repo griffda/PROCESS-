@@ -93,9 +93,11 @@ To rebuild, for example after making a change to the Fortran source, run `cmake 
 ## Docker container
 Process can be run on Mac or in other environments inside a Docker container. The Process repository, including source and build directories, remain in the host filesystem, but the building and running of Process is performed inside the container. This ensures that Process produces the same results as in other fully-supported environments, such as the CI system. The Ubuntu-based development image used is similar to the one used on the CI system, but it is designed to work immediately with no further installations.
 
+*Please note due to recent changes in the Docker Desktop ToS, you will require either a Docker Desktop license to run on Mac, or you will require a Linux environment by other means, such as a virtual machine.
+
 Firstly, [install Docker](https://docs.docker.com/get-docker/). On Mac, this can be accomplished using `homebrew`:
 ```
-brew cask install docker
+brew --cask install docker
 ```
 
 Then login to the Gitlab container registry:
@@ -123,8 +125,7 @@ Now the container is running, configure, clean and build from the project root d
 ```
 cd ~/process
 cmake -S . -B build
-cmake --build build --target clean
-cmake --build build
+cmake --build build --clean-first
 ```
 The clean step is required to remove any build targets or caches from previous host builds to ensure a completely fresh build from inside the container. This is only required when using the container for the first time.
 
