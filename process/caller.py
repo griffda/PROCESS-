@@ -206,9 +206,7 @@ class Caller:
         elif ft.cost_variables.cost_model == 1:
             ft.costs_2015_module.costs_2015(0, 0)
         elif ft.cost_variables.cost_model == 2:
-            ft.costs_step_module.costs_step(ft.constants.nout, 0)
-            # TODO Change costs_step() to call Python model object's method
-            # e.g. self.models.costs_step.run()
+            self.models.costs_step.run()
 
         # FISPACT and LOCA model (not used)
         # if ft.physics_variables.ifispact == 1:
