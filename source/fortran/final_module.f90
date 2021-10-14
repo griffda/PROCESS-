@@ -67,14 +67,11 @@ module final_module
   end subroutine no_optimisation
 
   subroutine final_output()
-    use constants, only: nout, iotty
+    use constants, only: iotty
     use numerics, only: nfev1, ncalls, xcm, ioptimz, nviter, &
       nvar
-    use output_module, only: output 
     use define_iteration_variables, only: loadxc
     implicit none
-    
-    call output(nout)
     
     if (nfev1 == 0) then  !  no HYBRD call
       !if (nviter == 1) then

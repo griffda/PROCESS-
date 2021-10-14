@@ -1,6 +1,7 @@
 """Final output at the end of a scan."""
 from process import fortran as ft
 from process.fortran import final_module as fm
+from process import output
 
 
 def finalise(ifail):
@@ -15,5 +16,8 @@ def finalise(ifail):
     # Output relevant to no optimisation
     if ft.numerics.ioptimz == -2:
         fm.no_optimisation()
+
+    # Write output to OUT.DAT
+    output.write(ft.constants.nout)
 
     fm.final_output()
