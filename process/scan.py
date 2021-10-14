@@ -13,6 +13,7 @@ class Scan():
         :param models: physics and engineering model objects
         :type models: process.main.Models
         """
+        self.models = models
         self.optimiser = Optimiser(models)
         self.run_scan()
 
@@ -29,7 +30,7 @@ class Scan():
 
         if scan_module.isweep == 0:
             self.doopt()
-            final.finalise(self.optimiser.vmcon.ifail)
+            final.finalise(self.models, self.optimiser.vmcon.ifail)
             return
 
         if scan_module.isweep > scan_module.ipnscns:
@@ -65,7 +66,7 @@ class Scan():
             scan_module.scan_1d_write_point_header(iscan)
             self.doopt()
 
-            final.finalise(self.optimiser.vmcon.ifail)
+            final.finalise(self.models, self.optimiser.vmcon.ifail)
             
             # outvar is an intent(out) of scan_1d_store_output()
             outvar = scan_module.scan_1d_store_output(iscan, self.optimiser.vmcon.ifail, \

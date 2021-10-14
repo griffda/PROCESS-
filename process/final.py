@@ -4,10 +4,12 @@ from process.fortran import final_module as fm
 from process import output
 
 
-def finalise(ifail):
+def finalise(models, ifail):
     """Routine to print out the final point in the scan.
 
     AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    :param models: physics and engineering model objects
+    :type models: process.main.Models
     :param ifail: error flag
     :type ifail: int
     """
@@ -18,6 +20,6 @@ def finalise(ifail):
         fm.no_optimisation()
 
     # Write output to OUT.DAT
-    output.write(ft.constants.nout)
+    output.write(models, ft.constants.nout)
 
     fm.final_output()

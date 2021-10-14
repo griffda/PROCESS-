@@ -12,3 +12,7 @@ class CostsStep:
     def run(self):
         """Run main costs_step subroutine."""
         cs.costs_step(ft.constants.nout, 0)
+
+    def output(self):
+        """Run main costs_step subroutine and write output."""
+        cs.costs_step(ft.constants.nout, 1)

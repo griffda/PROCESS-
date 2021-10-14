@@ -400,7 +400,7 @@ class SingleRun():
                 fortran.define_iteration_variables.loadxc()
                 caller.call_models(fortran.numerics.xcm, fortran.numerics.nvar)
             
-            final.finalise(self.ifail)
+            final.finalise(self.models, self.ifail)
 
     def show_errors(self):
         """Report all informational/error messages encountered."""

@@ -1,12 +1,14 @@
 from process import fortran as ft
 
 
-def write(outfile):
+def write(models, outfile):
     """Write the results to the main output file (OUT.DAT).
 
     Write the program results to a file, in a tidy format.
 
     AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    :param models: physics and engineering model objects
+    :type models: process.main.Models
     :param outfile: Fortran output unit identifier
     :type outfile: int
     """
@@ -38,7 +40,7 @@ def write(outfile):
     elif ft.cost_variables.cost_model == 1:
         ft.costs_2015_module.costs_2015(outfile, 1)
     elif ft.cost_variables.cost_model == 2:
-        ft.costs_step_module.costs_step(outfile, 1)
+        models.costs_step.output()
 
     # Availability model
     # Availability switch values
