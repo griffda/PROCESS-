@@ -280,7 +280,8 @@ contains
       coheof, sigpfcalw, alstroh, ipfres, fcupfsu, fvssu, etapsu, i_cs_stress, &
       fbmaxcs, ngc, rpf2, fcohbop, ohhghf, vfohc, isumatoh, ngrpmx, ngc2, rpf1, &
       ngrp, isumatpf, nfxfh, alfapf, routr, sigpfcf, pfclres, bmaxcs_lim, &
-      ncls, nfixmx, cptdin, ipfloc, i_sup_pf_shape, rref, i_pf_current
+      ncls, nfixmx, cptdin, ipfloc, i_sup_pf_shape, rref, i_pf_current, &
+      ccl0_MA, ccls_MA
     use physics_variables, only: ipedestal, taumax, i_single_null, fvsbrnni, &
       rhopedt, cvol, fdeut, ffwal, eped_sf, iculbl, itartpf, ilhthresh, &
       fpdivlim, epbetmax, isc, kappa95, aspect, cwrmax, nesep, csawth, dene, &
@@ -2222,6 +2223,12 @@ contains
        case ('rref')
           call parse_real_array('rref', rref, isub1, ngrpmx, &
                'radius of location 4 coil groups, minor radii from major radius', icode)
+       case ('ccl0_ma')
+          call parse_real_array('ccl0_ma', ccl0_ma, isub1, ngrpmx, &
+               'Flux-swing cancel current of PF coil groups, MA', icode)
+       case ('ccls_ma')
+          call parse_real_array('ccls_ma', ccls_ma, isub1, ngrpmx, &
+               'Equilibrium current of PF coil groups, MA', icode)
        case ('sigpfcalw')
           call parse_real_variable('sigpfcalw', sigpfcalw, 1.0D0, 1.0D3, &
                'Allowable stress in the PF coil case (MPa)')

@@ -88,7 +88,7 @@ module pfcoil_module
          rpf2, nfxfh, bpf, zl, wtc, vf, turns, curpfs, rpf, zref, &
          pfmmax, ipfres, alfapf, ncirt, pfclres, cpt, waves, sxlg, sigpfcalw, &
          coheof, zh, fcohbof, ra, rb, isumatpf, whtpf, fcupfsu, cohbop, &
-         rjpfalw, i_sup_pf_shape, rref, i_pf_current
+         rjpfalw, i_sup_pf_shape, rref, i_pf_current, ccl0_ma, ccls_ma
      use physics_variables, only: bvert, kappa, rli, itartpf, vsres, plascur, &
          triang, rminor, vsind, aspect, itart, betap, rmajor
      use tfcoil_variables, only: tftmp, dcond, i_tf_sup, fhts, &
@@ -481,15 +481,21 @@ module pfcoil_module
            zpf(ncl) = zcls(nng,ng2)
  
            !  Currents at different times:
- 
+           
+           !  If PF coil currents are computed, not input via ccl0_ma, ccls_ma:
+           if (i_pf_current/=0) then
+              ccl0_ma(nng) = 1.0D-6 * ccl0(nng)
+              ccls_ma(nng) = 1.0D-6 * ccls(nng)
+           end if
+           
            !  Beginning of pulse: t = tramp
-           curpfs(ncl) = 1.0D-6 * ccl0(nng)
+           curpfs(ncl) = ccl0_ma(nng)
  
            !  Beginning of flat-top: t = tramp+tohs
-           curpff(ncl) = 1.0D-6 * (ccls(nng) - (ccl0(nng) * fcohbof/fcohbop))
+           curpff(ncl) = ccls_ma(nng) - (ccl0_ma(nng) * fcohbof/fcohbop)
  
            !  End of flat-top: t = tramp+tohs+theat+tburn
-           curpfb(ncl) = 1.0D-6 * (ccls(nng) - (ccl0(nng) * (1.0D0/fcohbop)))
+           curpfb(ncl) = ccls_ma(nng) - (ccl0_ma(nng) * (1.0D0/fcohbop))
         end do
      end do
  

@@ -62,6 +62,14 @@ module pfcoil_variables
   real(8), dimension(ngc2) :: bpf
   !! peak field at coil i (T)
   
+  real(8), dimension(ngrpmx) :: ccl0_ma
+  !! PF group current array, flux-swing cancellation current (MA)
+  !! Input if i_pf_current=0, computed otherwise
+  
+  real(8), dimension(ngrpmx) :: ccls_ma
+  !! PF group current array, equilibrium current (MA)
+  !! Input if i_pf_current=0, computed otherwise
+  
   real(8) :: cohbop
   !! Central solenoid overall current density at beginning of pulse (A/m2)
   
@@ -75,13 +83,16 @@ module pfcoil_variables
   !! peak current per turn input for PF coil i (A)
 
   real(8), dimension(ngc2) :: curpfb
-  !! PF coil current work array beginning of pulse
+  !! PF coil current array, at beginning of pulse (MA)
+  !! Indexed by coil number, not group number
 
   real(8), dimension(ngc2) :: curpff
-  !! PF coil current work array flat top
+  !! PF coil current array, at flat top (MA)
+  !! Indexed by coil number, not group number
 
   real(8), dimension(ngc2) :: curpfs
-  !! PF coil current work array end of pulse
+  !! PF coil current array, at end of pulse (MA)
+  !! Indexed by coil number, not group number
 
   real(8) :: etapsu
   !! Efficiency of transfer of PF stored energy into or out of storage.
@@ -145,6 +156,7 @@ module pfcoil_variables
   integer :: i_pf_current
   !! Switch for controlling the current of the PF coils:
   !!
+  !! - =0 Input via the variables curpfb, curpff, curpfs
   !! - =1 SVD targets zero field across midplane (flux swing 
   !!   coils) and the correct vertical field at the plasma
   !!   center (equilibrium coils)
@@ -372,6 +384,10 @@ module pfcoil_variables
     bmaxoh = 0.0D0
     bmaxoh0 = 0.0D0
     bpf = 0.0D0
+    ccl0_ma = (/0.0D0, 0.0D0, 0.0D0, &
+      0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0/)
+    ccls_ma = (/0.0D0, 0.0D0, 0.0D0, &
+      0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0/)
     cohbop = 0.0D0
     coheof = 1.85D7
     cpt = 0.0D0
