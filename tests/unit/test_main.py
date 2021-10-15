@@ -254,25 +254,6 @@ def test_call_solver(single_run, monkeypatch):
     with pytest.raises(NotImplementedError):
         single_run.call_solver()
 
-def test_scan(single_run, monkeypatch):
-    """Test if scan routine runs based on ioptimz value.
-
-    :param single_run: single_run fixture
-    :type single_run: SingleRun
-    :param monkeypatch: monkeypatch fixture
-    :type monkeypatch: object
-    """
-    # Mock ioptimz value and check scan can run
-    monkeypatch.setattr(fortran.numerics, "ioptimz", 0)
-    monkeypatch.setattr(scan.Scan, "__init__", mock_init)
-    single_run.run_scan()
-
-    # If ioptimz < 0, mock call to final
-    monkeypatch.setattr(fortran.numerics, "ioptimz", -1)
-    monkeypatch.setattr(single_run, "ifail", 0, raising=False)
-    monkeypatch.setattr(final, "finalise", lambda x: None)
-    single_run.run_scan()
-
 def test_set_mfile(single_run, monkeypatch):
     """Check the mfile filename is being stored correctly.
 
