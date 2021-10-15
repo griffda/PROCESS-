@@ -360,14 +360,14 @@ def test_step_a22010302(monkeypatch):
     #Mock module vars used in subroutine
 
     monkeypatch.setattr(pfv, "nohc", 2.0)
-    monkeypatch.setattr(pfv, "turns", np.full(18, 5.0, order="F"))
-    monkeypatch.setattr(pfv, "rpf", np.full(18, 5.0, order="F"))
+    monkeypatch.setattr(pfv, "turns", np.full(22, 5.0, order="F"))
+    monkeypatch.setattr(pfv, "rpf", np.full(22, 5.0, order="F"))
     monkeypatch.setattr(pfv, "ipfres", 1.0)
     monkeypatch.setattr(buildvar, "iohcl", 0.0)
     monkeypatch.setattr(cv, "step_uccu", 82.0)
-    monkeypatch.setattr(pfv, "vf", np.full(18, 0.5, order="F"))
-    monkeypatch.setattr(pfv, "ric", np.full(18, 5.0, order="F"))
-    monkeypatch.setattr(pfv, "rjconpf", np.full(18, 1.0e7, order="F"))
+    monkeypatch.setattr(pfv, "vf", np.full(22, 0.5, order="F"))
+    monkeypatch.setattr(pfv, "ric", np.full(22, 5.0, order="F"))
+    monkeypatch.setattr(pfv, "rjconpf", np.full(22, 1.0e7, order="F"))
 
     exp = 1.167792821192398e1 
     obs = cs.step_a22010302()
