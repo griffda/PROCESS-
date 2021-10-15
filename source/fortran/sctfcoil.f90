@@ -1718,7 +1718,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         acasetf, sig_tf_case_max, poisson_steel, poisson_copper, poisson_al, &
         n_tf_graded_layers, i_tf_sup, i_tf_bucking, fcoolcp, eyoung_winding, &
         eyoung_steel, eyoung_res_tf_buck, eyoung_ins, eyoung_al, eyoung_copper, &
-        aiwp, aswp, cpttf, n_tf, i_tf_plane_stress, sig_tf_wp_max
+        aiwp, aswp, cpttf, n_tf, i_tf_plane_stress, sig_tf_wp_max, &
+        i_tf_turns_integer
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
         cohbop, ncls, cptdin
     use constants, only: pi, sig_file
@@ -1876,6 +1877,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     real(8) :: t_turn_oh
     !! Central Solenoid (OH) turn dimension [m]
+
+    real(8) :: t_cable_eyng
+    !! Cable area radial dimension, as passed into YM calculation [m]
 
     real(8) :: fac_sig_t
     !! Toroidal WP steel conduit stress unsmearing factor
@@ -2103,8 +2107,15 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! The toroidal property drives the stress calculation (J. Last report no 4)
         ! Hence, the radial direction is relevant for the property smearing 
         ! Rem : This assumption might be re-defined for bucked and wedged design
+        if ( i_tf_turns_integer == 0 ) then 
+            ! Non-integer number of turns
+            t_cable_eyng = t_cable
+        else 
+            ! Integer number of turns
+            t_cable_eyng = t_cable_radial
+        end if         
         eyoung_wp_t = eyngeff( eyoung_steel, eyoung_ins, &
-                               t_ins_eff, thwcndut, t_cable_radial )
+                               t_ins_eff, thwcndut, t_cable_eyng )
         
         ! Lateral casing correction (serie)
         eyoung_wp_t_eff = ( 2.0D0 * t_lat_case_av + t_wp_toroidal_av ) &
