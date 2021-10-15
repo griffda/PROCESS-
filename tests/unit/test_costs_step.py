@@ -1,5 +1,5 @@
 """Unit tests for costs_step.f90."""
-from process import fortran
+from process.costs_step import CostsStep
 from process.fortran import costs_step_module as cs
 from process.fortran import tfcoil_variables as tfv
 from process.fortran import cost_variables as cv
@@ -141,7 +141,8 @@ def test_costs_step(monkeypatch, shared_cost_vars):
     :param shared_cost_vars: fixture to mock commonly-used cost vars
     :type shared_cost_vars: Fixture
     """
-    
+    costs_step = CostsStep()
+
     #Mock module vars
     monkeypatch.setattr(cv, "cdirt", 0.0)
     monkeypatch.setattr(cv, "concost", 0.0)
@@ -154,7 +155,7 @@ def test_costs_step(monkeypatch, shared_cost_vars):
     monkeypatch.setattr(fwbs, "emultmw", 10.0)
     monkeypatch.setattr(htv, "pinjwp", 10.0)
 
-    cs.costs_step(0,0)
+    costs_step.run()
 
     #Test that module variables are calculated correctly
     obs_vfi = cs.vfi
