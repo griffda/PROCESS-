@@ -14,17 +14,21 @@ class CostsStep:
 
     def __init__(self):
         """Initialise Fortran module variables."""
+        self.outfile = ft.constants.nout # output file unit
+        self.iprint = 0 # switch for writing to output file (1=yes)
         cs.init_costs_step()
 
     def run(self):
         """Run main costs_step subroutine."""
-        self.costs_step(ft.constants.nout, 0)
+        self.iprint = 0
+        self.costs_step()
 
     def output(self):
         """Run main costs_step subroutine and write output."""
-        self.costs_step(ft.constants.nout, 1)
+        self.iprint = 1
+        self.costs_step()
 
-    def costs_step(self, outfile, iprint):
+    def costs_step(self):
         """STEP cost accounting for a fusion power plant.
 
         This method performs the cost accounting for a fusion power plant.
@@ -35,10 +39,6 @@ class CostsStep:
         STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
         Sheffield et al. (1986), Fusion Technology, 9, 199
         Sheffield & Milora (2016), Fusion Science and Technology, 70, 14
-        :param outfile: output file unit
-        :type outfile: int
-        :param iprint: switch for writing to output file (1=yes)
-        :type iprint: int
         """
         # Fusion Island Volume as defined by Sheffield & Milora (2016)
         cs.vfi = (
@@ -59,53 +59,53 @@ class CostsStep:
         cs.rminor_star = cs.rmajor_star / 3.6  # Minor Radius (m)
 
         # Output header
-        if iprint == 1 and cv.output_costs == 1:
+        if self.iprint == 1 and cv.output_costs == 1:
             title = "STEP Costing Model (" + str(cv.step_currency).strip() + ")"
-            process_output.oheadr(outfile, title.strip())
+            process_output.oheadr(self.outfile, title.strip())
 
         # Account 20 : Land and Rights
-        cs.step_a20(outfile, iprint)
+        cs.step_a20(self.outfile, self.iprint)
 
         # Account 21 : Building and Site Service Infrastructure
-        cs.step_a21(outfile, iprint)
+        cs.step_a21(self.outfile, self.iprint)
 
         # Account 22 : Reactor Plant Equipment
-        cs.step_a22(outfile, iprint)
+        cs.step_a22(self.outfile, self.iprint)
 
         # Account 23 : Turbine Plant Equipment
-        cs.step_a23(outfile, iprint)
+        cs.step_a23(self.outfile, self.iprint)
 
         # Account 24 : Electric Plant Equipment
-        cs.step_a24(outfile, iprint)
+        cs.step_a24(self.outfile, self.iprint)
 
         # Account 25 : Miscellaneous Plant Equipment
-        cs.step_a25(outfile, iprint)
+        cs.step_a25(self.outfile, self.iprint)
 
         # Total plant direct cost without remote handling
         cv.cdirt = cs.step20 + cs.step21 + cs.step22 + cs.step23 + cs.step24 + cs.step25
 
         # Account 27 : Remote Handling
-        cs.step_a27(outfile, iprint)
+        cs.step_a27(self.outfile, self.iprint)
 
         # Total plant direct cost with remote handling
         cv.cdirt = cv.cdirt + cs.step27
-        if iprint == 1 and cv.output_costs == 1:
-            process_output.oshead(outfile, "Plant Direct Cost")
+        if self.iprint == 1 and cv.output_costs == 1:
+            process_output.oshead(self.outfile, "Plant Direct Cost")
             process_output.ocosts(
-                outfile, "(cdirt)", "Plant direct cost (M$)", cv.cdirt
+                self.outfile, "(cdirt)", "Plant direct cost (M$)", cv.cdirt
             )
 
         # Accounts 91-93: Indirect costs
-        cs.step_indirect_costs(outfile, iprint)
+        cs.step_indirect_costs(self.outfile, self.iprint)
 
         # Constructed cost
         cv.concost = cv.cdirt + cs.step91 + cs.step92 + cs.step93
-        if iprint == 1 and cv.output_costs == 1:
-            process_output.oshead(outfile, "Constructed Cost")
+        if self.iprint == 1 and cv.output_costs == 1:
+            process_output.oshead(self.outfile, "Constructed Cost")
             process_output.ocosts(
-                outfile, "(concost)", "Constructed Cost (M$)", cv.concost
+                self.outfile, "(concost)", "Constructed Cost (M$)", cv.concost
             )
 
         #  Cost of electricity
         if cv.ireactor == 1 and cv.ipnet == 0:
-            cs.coelc_step(outfile, iprint)
+            cs.coelc_step(self.outfile, self.iprint)
