@@ -350,7 +350,7 @@ contains
 
     integer, intent(in) :: file
     character(len=*), intent(in) :: descr, varnam
-    real(dp), intent(in) :: value
+    real(8), intent(in) :: value
     character(len=3), intent(in), optional :: output_flag
 
     !  Local variables
@@ -424,7 +424,7 @@ contains
 
     integer, intent(in) :: file
     character(len=*), intent(in) :: descr, varnam
-    real(dp), intent(in) :: value
+    real(8), intent(in) :: value
     character(len=3), intent(in), optional :: output_flag
 
     !  Local variables
@@ -616,7 +616,7 @@ contains
 
     integer, intent(in) :: file
     character(len=*), intent(in) :: ccode, descr
-    real(dp), intent(in) :: value
+    real(8), intent(in) :: value
 
     !  Local variables
 
@@ -667,7 +667,7 @@ contains
     integer, intent(in) :: file
     character(len=*), intent(in) :: descr
     character(len=*), optional :: variable_name
-    real(dp), intent(in) :: thick, total
+    real(8), intent(in) :: thick, total
 
     !  Local variables
 
