@@ -281,7 +281,7 @@ contains
       fbmaxcs, ngc, rpf2, fcohbop, ohhghf, vfohc, isumatoh, ngrpmx, ngc2, rpf1, &
       ngrp, isumatpf, nfxfh, alfapf, routr, sigpfcf, pfclres, bmaxcs_lim, &
       ncls, nfixmx, cptdin, ipfloc, i_sup_pf_shape, rref, i_pf_current, &
-      ccl0_MA, ccls_MA
+      ccl0_ma, ccls_ma
     use physics_variables, only: ipedestal, taumax, i_single_null, fvsbrnni, &
       rhopedt, cvol, fdeut, ffwal, eped_sf, iculbl, itartpf, ilhthresh, &
       fpdivlim, epbetmax, isc, kappa95, aspect, cwrmax, nesep, csawth, dene, &
@@ -2176,7 +2176,7 @@ contains
           call parse_real_variable('fcupfsu', fcupfsu, 0.0D0, 1.0D0, &
                'Cu fraction of PF cable conductor')
        case ('ipfloc')
-          call parse_int_array('ipfloc', ipfloc, isub1, ngc, &
+          call parse_int_array('ipfloc', ipfloc, isub1, ngrpmx, &
                'PF coil location', icode)
        case ('ipfres')
           call parse_int_variable('ipfres', ipfres, 0, 1, &
@@ -2194,7 +2194,7 @@ contains
           call parse_int_variable('i_sup_pf_shape', i_sup_pf_shape, 0, 1, &
                'Switch to place outboard PF coils when TF superconducting')
        case ('ncls')
-          call parse_int_array('ncls', ncls, isub1, ngrpmx, &
+          call parse_int_array('ncls', ncls, isub1, ngrpmx+2, &
                'No of coils in PF group', icode)
        case ('nfxfh')
           call parse_int_variable('nfxfh', nfxfh, 1, nfixmx/2, &

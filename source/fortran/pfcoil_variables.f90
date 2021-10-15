@@ -113,7 +113,7 @@ module pfcoil_variables
   real(8) :: fvssu
   !! F-value for `constraint equation 51` 
 
-  integer, dimension(ngc) :: ipfloc
+  integer, dimension(ngrpmx) :: ipfloc
   !! Switch for location of PF coil group i:
   !!
   !! - =1 PF coil on top of central solenoid (flux ramp only)
@@ -401,7 +401,7 @@ module pfcoil_variables
     fcuohsu = 0.7D0
     fcupfsu = 0.69D0
     fvssu = 1.0
-    ipfloc = (/2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0/)
+    ipfloc = (/2,2,3,0,0,0,0,0,0,0/)
     ipfres = 0
     itr_sum = 0.0D0
     isumatoh = 1

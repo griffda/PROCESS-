@@ -483,19 +483,25 @@ module pfcoil_module
            !  Currents at different times:
            
            !  If PF coil currents are computed, not input via ccl0_ma, ccls_ma:
+           !  Then set ccl0_ma,ccls_ma from the computed ccl0,ccls
            if (i_pf_current/=0) then
               ccl0_ma(nng) = 1.0D-6 * ccl0(nng)
               ccls_ma(nng) = 1.0D-6 * ccls(nng)
+           else
+           !  Otherwise set ccl0,ccls via the input ccl0_ma and ccls_ma
+              ccl0(nng) = 1.0D6 * ccl0_ma(nng)
+              ccls(nng) = 1.0D6 * ccls_ma(nng)
            end if
            
            !  Beginning of pulse: t = tramp
-           curpfs(ncl) = ccl0_ma(nng)
+           curpfs(ncl) = 1.0D-6 * ccl0(nng)
  
            !  Beginning of flat-top: t = tramp+tohs
-           curpff(ncl) = ccls_ma(nng) - (ccl0_ma(nng) * fcohbof/fcohbop)
- 
+           curpff(ncl) = 1.0D-6 * (ccls(nng) - (ccl0(nng) * fcohbof/fcohbop))
+           
            !  End of flat-top: t = tramp+tohs+theat+tburn
-           curpfb(ncl) = ccls_ma(nng) - (ccl0_ma(nng) * (1.0D0/fcohbop))
+           curpfb(ncl) = 1.0D-6 * (ccls(nng) - (ccl0(nng) * (1.0D0/fcohbop)))
+           
         end do
      end do
  
