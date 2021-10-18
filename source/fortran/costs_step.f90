@@ -323,8 +323,8 @@ contains
     step21 = step21 + step2118
 
     ! 21.98 Spares
-    ! STARFIRE percentage
-    step2198 = 6.541D-3 * step21
+    ! 2% as per Atkins estimation
+    step2198 = 0.02D0 * step21
     step21 = step21 + step2198
 
     ! 21.99 Contingency
@@ -582,6 +582,7 @@ contains
 
 
     ! 21.01.02 Diversions
+    ! Awaiting appropriate estimate
     step210102 = 0.0D0
 
     ! Running total (M$)
