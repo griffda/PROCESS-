@@ -79,43 +79,37 @@ contains
     step20 = step20 + step2002
   end subroutine step_a20
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a21(outfile,iprint)
-
+  subroutine step_a21(step_ref, step_con, wfbuilding, a_reactor_bldg, &
+    a_ee_ps_bldg, a_aux_services_bldg, a_hot_cell_bldg, &
+    a_reactor_service_bldg, a_service_water_bldg, a_fuel_handling_bldg, &
+    a_control_room_bldg, a_ac_ps_bldg, a_admin_bldg, a_site_service_bldg, &
+    a_cryo_inert_gas_bldg, a_security_bldg, pgrossmw, &
+    pth, ptherm_star, &
+    step2101, step2102, step2103, step2104, step2105, &
+    step2106, step2107, step2108,  step2109, step2110, step2111, step2112, &
+    step2113, step2114, step2115, step2116, step2117, step2118, step2198, &
+    step2199, step21)
     !! Account 21 : Building and Site Service Infrastructure
     !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 21 (Building and Site
     !! Service Infrastructure) costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ! #TODO Add reference for STEP cost values
-    use cost_variables, only: output_costs, step_con, step_ref, wfbuilding
-    use process_output, only: oshead, ocosts, oblnkl
-    use buildings_variables, only: a_reactor_bldg, a_ee_ps_bldg, &
-      a_aux_services_bldg, a_hot_cell_bldg, a_reactor_service_bldg, &
-      a_service_water_bldg, a_fuel_handling_bldg, a_control_room_bldg, &
-      a_ac_ps_bldg, a_admin_bldg, a_site_service_bldg, a_cryo_inert_gas_bldg, &
-      a_security_bldg
     ! Floor areas in m^2 for buildings
-    use heat_transport_variables, only: pgrossmw
     ! pgrossmw is gross electric power of the plant in MW
-
     implicit none
 
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-
-    ! Local variables
-    real(8):: &
-    step2101, step2102, step2103, step2104, step2105, step2106, &
-    step2107, step2108, step2109, step2110, step2111, step2112, &
-    step2113, step2114, step2115, step2116, step2117, step2118, &
-    step2198, step2199
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: step_con, wfbuilding, a_reactor_bldg, &
+      a_ee_ps_bldg, a_aux_services_bldg, a_hot_cell_bldg, &
+      a_reactor_service_bldg, a_service_water_bldg, a_fuel_handling_bldg, &
+      a_control_room_bldg, a_ac_ps_bldg, a_admin_bldg, a_site_service_bldg, &
+      a_cryo_inert_gas_bldg, a_security_bldg, pgrossmw, pth, ptherm_star
+    real(8), intent(out) :: step2101, step2102, step2103, step2104, step2105, &
+      step2106, step2107, step2108, step2109, step2110, step2111, step2112, &
+      step2113, step2114, step2115, step2116, step2117, step2118, step2198, &
+      step2199, step21
 
     ! Initialise as zero
     step21 = 0.0D0
@@ -205,34 +199,6 @@ contains
     ! STARFIRE 15%
     step2199 = step_con * step21
     step21 = step21 + step2199
-
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      call oshead(outfile,'21. Building and Site Service Infrastructure')
-      call ocosts(outfile,'(step2101)','Site Improvements (M$)', step2101)
-      call ocosts(outfile,'(step2102)','Reactor Building (M$)', step2102)
-      call ocosts(outfile,'(step2103)','Turbine Building (M$)', step2103)
-      call ocosts(outfile,'(step2104)','Cooling System Structures (M$)', step2104)
-      call ocosts(outfile,'(step2105)','Electrical Equipment and Power Supply Building (M$)', step2105)
-      call ocosts(outfile,'(step2106)','Auxiliary Services Building (M$)', step2106)
-      call ocosts(outfile,'(step2107)','Hot Cell (M$)', step2107)
-      call ocosts(outfile,'(step2108)','Reactor Service Building (M$)', step2108)
-      call ocosts(outfile,'(step2109)','Service Water Building (M$)', step2109)
-      call ocosts(outfile,'(step2110)','Fuel Handling and Storage Building (M$)', step2110)
-      call ocosts(outfile,'(step2111)','Control Room (M$)', step2111)
-      call ocosts(outfile,'(step2112)','AC Power Supply Building (M$)', step2112)
-      call ocosts(outfile,'(step2113)','Admin Building (M$)', step2113)
-      call ocosts(outfile,'(step2114)','Site Service (M$)', step2114)
-      call ocosts(outfile,'(step2115)','Cryogenics and Inert Gas Storage Building (M$)', step2115)
-      call ocosts(outfile,'(step2116)','Security Building (M$)', step2116)
-      call ocosts(outfile,'(step2117)','Ventilation Stack (M$)', step2117)
-      call ocosts(outfile,'(step2118)','Waste Facilities Buildings (M$)', step2118)
-      call ocosts(outfile,'(step2198)','Spares (M$)', step2198)
-      call ocosts(outfile,'(step2199)','Contingency (M$)', step2199)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step21)','Total Account 21 Cost (M$)', step21)
-    end if
-
   end subroutine step_a21
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

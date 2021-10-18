@@ -7,6 +7,7 @@ from process.fortran import fwbs_variables as fwbsv
 from process.fortran import heat_transport_variables as htv
 from process.fortran import physics_variables as pv
 from process.fortran import process_output as po
+from process.fortran import buildings_variables as bldgsv
 
 
 class CostsStep:
@@ -67,7 +68,7 @@ class CostsStep:
         self.step_a20()
 
         # Account 21 : Building and Site Service Infrastructure
-        cs.step_a21(self.outfile, self.iprint)
+        self.step_a21()
 
         # Account 22 : Reactor Plant Equipment
         cs.step_a22(self.outfile, self.iprint)
@@ -117,3 +118,102 @@ class CostsStep:
             po.ocosts(self.outfile, "(step2002)", "Site Preparation (M$)", step2002)
             po.oblnkl(self.outfile)
             po.ocosts(self.outfile, "(step20)", "Total Account 20 Cost (M$)", cs.step20)
+
+    def step_a21(self):
+        """Account 21 : Building and Site Service Infrastructure."""
+        (
+            step2101,
+            step2102,
+            step2103,
+            step2104,
+            step2105,
+            step2106,
+            step2107,
+            step2108,
+            step2109,
+            step2110,
+            step2111,
+            step2112,
+            step2113,
+            step2114,
+            step2115,
+            step2116,
+            step2117,
+            step2118,
+            step2198,
+            step2199,
+            cs.step21,
+        ) = cs.step_a21(
+            cv.step_ref,
+            cv.step_con,
+            cv.wfbuilding,
+            bldgsv.a_reactor_bldg,
+            bldgsv.a_ee_ps_bldg,
+            bldgsv.a_aux_services_bldg,
+            bldgsv.a_hot_cell_bldg,
+            bldgsv.a_reactor_service_bldg,
+            bldgsv.a_service_water_bldg,
+            bldgsv.a_fuel_handling_bldg,
+            bldgsv.a_control_room_bldg,
+            bldgsv.a_ac_ps_bldg,
+            bldgsv.a_admin_bldg,
+            bldgsv.a_site_service_bldg,
+            bldgsv.a_cryo_inert_gas_bldg,
+            bldgsv.a_security_bldg,
+            htv.pgrossmw,
+            cs.pth,
+            cs.ptherm_star,
+        )
+
+        # Output costs
+        if self.iprint == 1 and cv.output_costs == 1:
+            po.oshead(self.outfile, "21. Building and Site Service Infrastructure")
+            po.ocosts(self.outfile, "(step2101)", "Site Improvements (M$)", step2101)
+            po.ocosts(self.outfile, "(step2102)", "Reactor Building (M$)", step2102)
+            po.ocosts(self.outfile, "(step2103)", "Turbine Building (M$)", step2103)
+            po.ocosts(
+                self.outfile, "(step2104)", "Cooling System Structures (M$)", step2104
+            )
+            po.ocosts(
+                self.outfile,
+                "(step2105)",
+                "Electrical Equipment and Power Supply Building (M$)",
+                step2105,
+            )
+            po.ocosts(
+                self.outfile, "(step2106)", "Auxiliary Services Building (M$)", step2106
+            )
+            po.ocosts(self.outfile, "(step2107)", "Hot Cell (M$)", step2107)
+            po.ocosts(
+                self.outfile, "(step2108)", "Reactor Service Building (M$)", step2108
+            )
+            po.ocosts(
+                self.outfile, "(step2109)", "Service Water Building (M$)", step2109
+            )
+            po.ocosts(
+                self.outfile,
+                "(step2110)",
+                "Fuel Handling and Storage Building (M$)",
+                step2110,
+            )
+            po.ocosts(self.outfile, "(step2111)", "Control Room (M$)", step2111)
+            po.ocosts(
+                self.outfile, "(step2112)", "AC Power Supply Building (M$)", step2112
+            )
+            po.ocosts(self.outfile, "(step2113)", "Admin Building (M$)", step2113)
+            po.ocosts(self.outfile, "(step2114)", "Site Service (M$)", step2114)
+            po.ocosts(
+                self.outfile,
+                "(step2115)",
+                "Cryogenics and Inert Gas Storage Building (M$)",
+                step2115,
+            )
+            po.ocosts(self.outfile, "(step2116)", "Security Building (M$)", step2116)
+            po.ocosts(self.outfile, "(step2117)", "Ventilation Stack (M$)", step2117)
+            po.ocosts(
+                self.outfile, "(step2118)", "Waste Facilities Buildings (M$)", step2118
+            )
+            po.ocosts(self.outfile, "(step2198)", "Spares (M$)", step2198)
+            po.ocosts(self.outfile, "(step2199)", "Contingency (M$)", step2199)
+            po.oblnkl(self.outfile)
+            po.ocosts(self.outfile, "(step21)", "Total Account 21 Cost (M$)", cs.step21)
