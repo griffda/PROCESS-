@@ -706,6 +706,7 @@ module pfcoil_module
          wtc, zl, turns, wts, a_oh_turn
      use tfcoil_variables, only: dcond, tftmp, tcritsc, strncon_cs, &
         fhts, bcritsc,b_crit_upper_nbti, t_crit_nbti
+     use CS_fatigue_variables, only: N_cycle, residual_sig_hoop, z_crack_size, r_crack_size
      use constants, only: pi, dcopper
      implicit none
  
@@ -802,6 +803,9 @@ module pfcoil_module
         !  Allowable (hoop) stress (Pa) alstroh
         ! Now a user input
         ! alstroh = min( (2.0D0*csytf/3.0D0), (0.5D0*csutf) )
+
+        ! Calculation of CS fatigue
+        call Ncycle(N_cycle, sig_hoop,residual_sig_hoop, z_crack_size, r_crack_size)
  
         ! Now steel area fraction is iteration variable and constraint
         ! equation is used for Central Solenoid stress
@@ -2622,6 +2626,9 @@ module pfcoil_module
      use tfcoil_variables, only: tmargmin_cs, strncon_cs, tftmp, b_crit_upper_nbti,&
        t_crit_nbti, strncon_pf
      use numerics, only: boundu
+     use CS_fatigue_variables, only: residual_sig_hoop, r_crack_size, z_crack_size, &
+         N_cycle
+ 
        use constants, only: mfile
      implicit none
  
@@ -2735,6 +2742,14 @@ module pfcoil_module
                 '(tmargoh)',tmargoh, 'OP ')
            call ovarre(outfile,'Minimum permitted temperature margin (K)', &
                 '(tmargmin_cs)',tmargmin_cs)
+           call ovarre(outfile, 'residual hoop stress in CS Steel', &
+                '(residual_sig_hoop)', residual_sig_hoop)
+           call ovarre(outfile, 'Initial vertical crack size', &
+                '(z_crack_size)', z_crack_size)
+           call ovarre(outfile, 'Initial radial crack size', &
+                '(r_crack_size)', r_crack_size)
+           call ovarre(outfile, 'Number of cycles till CS fracture', &
+                '(N_cycle)', N_cycle, 'OP')
            ! Check whether CS coil is hitting any limits
            ! iteration variable (39) fjohc0
            ! iteration variable(38) fjohc

@@ -13,57 +13,64 @@ module CS_fatigue
 
 contains
 
-subroutine Ncycle(max_hoop_stress_MPa,residual_stress_MPa,a)
+subroutine Ncycle(N_cycle, max_hoop_stress,residual_stress,z_crack_size, r_crack_size)
 
     use constants, only: pi
     implicit none
 
     ! Arguments
-    real(8), intent(in) :: max_hoop_stress, residual_stress_MPa, a
-    real(8), intent(out) :: N
+    real(8), intent(in) :: max_hoop_stress, residual_stress, z_crack_size
+    real(8), intent(inout) :: N_cycle, r_crack_size
 
     ! local variables
-    real(8) :: C, m, t, w, R, delta, deltaN 
-    real(8) :: Kmax, Ka, Kc
+    real(8) :: Const, C0, m, t, w, R, delta, deltaN 
+    real(8) :: Kmax, Ka, Kc, a, c
+    real(8) :: max_hoop_stress_MPa, residual_stress_MPa
 
 
     ! Set material parameters
-    C = 1.75D-13
+    Const = 1.75D-13
     m = 3.7D0
 
     ! Set segment size
     t = 0.022D0
     w = 0.07D0
 
+    ! Set units to MPa
+    max_hoop_stress_MPa = max_hoop_stress / 1.0D6
+    residual_stress_MPa = residual_stress / 1.0D6
+
     ! Set intial crack size
-    c = 3.0D0 * a  
+    r_crack_size = 3.0D0 * z_crack_size  
+    a = z_crack_size
+    c = r_crack_size
 
     !mean stress ratio
     R = residual_stress_MPa / (max_hoop_stress_MPa + residual_stress_MPa)
-    ! mean stress corrected C - using walker equaution
-    C0 = 1.0 !* 0.9 ** (m * 0.5) * (1 - R ) ** (m * -0.5)
-
+    ! mean stress corrected C - using walker equaution !* 0.9 ** (m * 0.5) * (1 - R ) ** (m * -0.5)
+    C0 = 1.0 
+    
     ! select given increase in crack (area or length?) 
     delta = 1.0D-4
 
     !Initialise number of cycles
-    N = 0.0
+    N_cycle = 0.0
     Kmax = 0.0
 
     do while ((a.le.t/2.0D0).and.(c.le.w/2.0D0).and.(Kmax.le.1.0D2))
         ! find SIF max from SIF_a and SIF_c
         ! what is the difference - phi ???
-        Ka = surface_stress_intensity_factor(max_hoop_stress_MPa, t, w, a, c, pi/2.0)
-        Kc = surface_stress_intensity_factor(max_hoop_stress_MPa, t, w, a, c, 0.0)
+        Ka = surface_stress_intensity_factor(max_hoop_stress_MPa, t, w, a, c, pi/2.0D0)
+        Kc = surface_stress_intensity_factor(max_hoop_stress_MPa, t, w, a, c, 0.0D0)
         Kmax = max(Ka,Kc)
 
         ! run euler_method and find number of cycles needed to give crack increase
-        deltaN = delta / (C0 * C * Kmax ** m)
+        deltaN = delta / (C0 * Const * Kmax ** m)
 
         ! update a and c, N
         a = a + delta * (Ka / Kmax) ** m
-        c = c + delta * (Ka / Kmax) ** m 
-        N = N + deltaN
+        c = c + delta * (Kc / Kmax) ** m 
+        N_cycle = N_cycle + deltaN
     end do
 
 end subroutine Ncycle
@@ -86,10 +93,10 @@ function embedded_stress_intensity_factor(hoop_stress, t, w, a, c, phi) result(K
 
     ! Arguments
     real(8), intent(in) :: hoop_stress, t, w, a, c, phi
-    real(8), intent(out) :: K
+    real(8) :: K
 
     ! local variables
-    real(8) :: Q, m1, m2, m3, g, f_phi, f_w
+    real(8) :: Q, m1, m2, m3, g, f_phi, f_w, F
 
 
     if (a<=c) then
@@ -97,7 +104,7 @@ function embedded_stress_intensity_factor(hoop_stress, t, w, a, c, phi) result(K
         m1 = 1.0D0 
         m2 = 0.05D0 / (0.11D0 + (a/c)**(3.0D0/2.0D0) )
         m3 = 0.29D0 / (0.23D0 + (a/c)**(3.0D0/2.0D0) )
-        g = 1.0D0 - ( (a/t)**4.0D0*sqrt(2.6D0-(2.0D0*a/t)) / (1.0D0+4.0D0*(a/c)) ) * abs(np.cos(phi))
+        g = 1.0D0 - ( (a/t)**4.0D0*sqrt(2.6D0-(2.0D0*a/t)) / (1.0D0+4.0D0*(a/c)) ) * abs(cos(phi))
         f_phi = ((a/c)**2.0D0*(cos(phi))**2.0D0+(sin(phi)**2.0))**(1.0D0/4.0D0)
         f_w = sqrt(1.0D0/cos(sqrt(a/t)*pi*c/(2.0D0*w)))
     else if (a>c) then
@@ -105,9 +112,9 @@ function embedded_stress_intensity_factor(hoop_stress, t, w, a, c, phi) result(K
         m1 = sqrt(c/a) 
         m2 = 0.05D0 / (0.11D0 + (a/c)**(3.0D0/2.0D0) )
         m3 = 0.29D0 / (0.23D0 + (a/c)**(3.0D0/2.0D0) )
-        g = 1.0D0 - ( (a/t)**4.0D0*sqrt(2.6D0-(2.0D0*a/t)) / (1.0D0+4.0D0*(a/c)) )  * abs(np.cos(phi))
+        g = 1.0D0 - ( (a/t)**4.0D0*sqrt(2.6D0-(2.0D0*a/t)) / (1.0D0+4.0D0*(a/c)) )  * abs(cos(phi))
         f_phi = ((c/a)**2.0D0*(sin(phi))**2.0D0+(cos(phi)**2.0D0))**(1.0D0/4.0D0)
-        f_w = sqrt(1.0D0/cos(np.sqrt(a/t)*pi*c/(2.0D0*w)))
+        f_w = sqrt(1.0D0/cos(sqrt(a/t)*pi*c/(2.0D0*w)))
     end if
 
     ! compute the unitless geometric correction 
@@ -136,11 +143,11 @@ function surface_stress_intensity_factor(hoop_stress, t, w, a, c, phi) result(K)
 
     ! Arguments
     real(8), intent(in) :: hoop_stress, t, w, a, c, phi
-    real(8), intent(out) :: K
+    real(8) :: K
 
     ! local variables
     real(8) :: Q, m1, m2, m3, g, f_phi, f_w, bending_stress
-    real(8) :: p, Hs, H1, H2, G11, G12, G21, G22
+    real(8) :: p, Hs, H1, H2, G11, G12, G21, G22, F
 
     bending_stress = 0.0D0! * 3.0 * M / (w*d**2.0)
 
