@@ -6,7 +6,7 @@ from process.fortran import cost_variables as cv
 from process.fortran import fwbs_variables as fwbsv
 from process.fortran import heat_transport_variables as htv
 from process.fortran import physics_variables as pv
-from process.fortran import process_output
+from process.fortran import process_output as po
 
 
 class CostsStep:
@@ -61,7 +61,7 @@ class CostsStep:
         # Output header
         if self.iprint == 1 and cv.output_costs == 1:
             title = "STEP Costing Model (" + str(cv.step_currency).strip() + ")"
-            process_output.oheadr(self.outfile, title.strip())
+            po.oheadr(self.outfile, title.strip())
 
         # Account 20 : Land and Rights
         self.step_a20()
@@ -90,10 +90,8 @@ class CostsStep:
         # Total plant direct cost with remote handling
         cv.cdirt = cv.cdirt + cs.step27
         if self.iprint == 1 and cv.output_costs == 1:
-            process_output.oshead(self.outfile, "Plant Direct Cost")
-            process_output.ocosts(
-                self.outfile, "(cdirt)", "Plant direct cost (M$)", cv.cdirt
-            )
+            po.oshead(self.outfile, "Plant Direct Cost")
+            po.ocosts(self.outfile, "(cdirt)", "Plant direct cost (M$)", cv.cdirt)
 
         # Accounts 91-93: Indirect costs
         cs.step_indirect_costs(self.outfile, self.iprint)
@@ -101,10 +99,8 @@ class CostsStep:
         # Constructed cost
         cv.concost = cv.cdirt + cs.step91 + cs.step92 + cs.step93
         if self.iprint == 1 and cv.output_costs == 1:
-            process_output.oshead(self.outfile, "Constructed Cost")
-            process_output.ocosts(
-                self.outfile, "(concost)", "Constructed Cost (M$)", cv.concost
-            )
+            po.oshead(self.outfile, "Constructed Cost")
+            po.ocosts(self.outfile, "(concost)", "Constructed Cost (M$)", cv.concost)
 
         #  Cost of electricity
         if cv.ireactor == 1 and cv.ipnet == 0:
@@ -112,6 +108,12 @@ class CostsStep:
 
     def step_a20(self):
         """Account 20: Land and Rights."""
-        cs.step20 = cs.step_a20(
-            self.outfile, self.iprint, cv.output_costs, cv.step_ref, cv.sitecost
-        )
+        step2001, step2002, cs.step20 = cs.step_a20(cv.step_ref, cv.sitecost)
+
+        # Write output
+        if self.iprint == 1 and cv.output_costs == 1:
+            po.oshead(self.outfile, "20. Land and Rights")
+            po.ocosts(self.outfile, "(step2001)", "Land (M$)", step2001)
+            po.ocosts(self.outfile, "(step2002)", "Site Preparation (M$)", step2002)
+            po.oblnkl(self.outfile)
+            po.ocosts(self.outfile, "(step20)", "Total Account 20 Cost (M$)", cs.step20)
