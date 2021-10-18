@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-646-g57e098e2
-    Branch : 1407-update-of-shield-cost-calculations
+   Tag No. : v2.1-652-gfe87a7d4
+    Branch : 1367-add-site-preparation-costs-into-model-2
    Git log : COMMIT_MSG
- Date/time : 11 Oct 2021 10:25:04 +01:00(hh:mm) UTC
+ Date/time : 18 Oct 2021 14:12:36 +01:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-149/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-149/test_scenario_G_L_Nb_Ti_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-156/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-156/test_scenario_G_L_Nb_Ti_0/IN.DAT
  Run title : TF coil testing
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
