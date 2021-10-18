@@ -91,13 +91,19 @@ step_ref = np.array(
 )
 
 @pytest.fixture
-def shared_cost_vars(monkeypatch):
+def costs_step(monkeypatch):
     """Fixture to mock commonly used dependencies in cost subroutines.
 
+    Create CostsStep instance and mock Fortran module variables to aid testing.
     The values are intended to be realistic.
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
+    :return: CostsStep model object
+    :rtype: process.costs_step.CostsStep
     """
+    costs_step = CostsStep()
+
+    # Mock commonly-used Fortran module vars for testing
     monkeypatch.setattr(cv, "step_ref", step_ref)
     monkeypatch.setattr(cv, "step_con", 1.5e-1)
     monkeypatch.setattr(bv, "efloor", 1e4)
@@ -107,6 +113,8 @@ def shared_cost_vars(monkeypatch):
     monkeypatch.setattr(cs, "pth", 4.15e3)
     monkeypatch.setattr(cs, "ptherm_star", 4.15e3)
     # vfi values taken from Starfire reference in costs_step_module
+
+    return costs_step
 
 
 def test_init_costs_step():
@@ -133,16 +141,14 @@ def test_init_costs_step():
     assert cs.rminor_star == 0
     assert cs.pth == 0
 
-def test_costs_step(monkeypatch, shared_cost_vars):
+def test_costs_step(monkeypatch, costs_step):
     """Test the costs_step subroutine
     
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param shared_cost_vars: fixture to mock commonly-used cost vars
-    :type shared_cost_vars: Fixture
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
-    costs_step = CostsStep()
-
     #Mock module vars
     monkeypatch.setattr(cv, "cdirt", 0.0)
     monkeypatch.setattr(cv, "concost", 0.0)
@@ -185,13 +191,13 @@ def test_costs_step(monkeypatch, shared_cost_vars):
 
 
 
-def test_step_a20(monkeypatch, shared_cost_vars):
+def test_step_a20(monkeypatch, costs_step):
     """Validate sum of cost account 20.
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param shared_cost_vars: fixture to mock commonly-used cost vars
-    :type shared_cost_vars: Fixture
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
     costs_step = CostsStep()
     
@@ -206,16 +212,15 @@ def test_step_a20(monkeypatch, shared_cost_vars):
 
 
 
-def test_step_a21(monkeypatch, shared_cost_vars):
+def test_step_a21(monkeypatch, costs_step):
     """Validate sum of cost account 21.
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param shared_cost_vars: fixture to mock commonly-used cost vars
-    :type shared_cost_vars: Fixture
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
     # Mock module vars
-
     monkeypatch.setattr(cs, "step21", 0.0)
 
     # Run and assert result in M$
@@ -225,13 +230,13 @@ def test_step_a21(monkeypatch, shared_cost_vars):
     assert pytest.approx(obs) == exp
 
 
-def test_step_a22(monkeypatch, shared_cost_vars):
+def test_step_a22(monkeypatch, costs_step):
     """Validate sum of cost account 22.
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param shared_cost_vars: fixture to mock commonly-used cost vars
-    :type shared_cost_vars: Fixture
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
     # Mock module vars
     monkeypatch.setattr(cs, "step22", 0.0)
@@ -249,13 +254,13 @@ def test_step_a22(monkeypatch, shared_cost_vars):
     obs = cs.step22
     assert pytest.approx(obs) == exp
 
-def test_step_a2201(monkeypatch, shared_cost_vars):
+def test_step_a2201(monkeypatch, costs_step):
     """Validate sum of cost account 22.01.
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param shared_cost_vars: fixture to mock commonly-used cost vars
-    :type shared_cost_vars: Fixture
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
     # Mock module var set in subroutine: increase is value of step2201
     monkeypatch.setattr(cs, "step22", 0.0)
@@ -377,13 +382,13 @@ def test_step_a22010302(monkeypatch):
     assert pytest.approx(obs) == exp
 
 
-def test_step_a2202(monkeypatch, shared_cost_vars):
+def test_step_a2202(monkeypatch, costs_step):
     """Validate sum of cost account 22.02.
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param shared_cost_vars: fixture to mock commonly-used cost vars
-    :type shared_cost_vars: Fixture
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
     # Mock module var set in subroutine: increase is value of step2202
     monkeypatch.setattr(cs, "step22", 0.0)
@@ -394,13 +399,13 @@ def test_step_a2202(monkeypatch, shared_cost_vars):
     assert pytest.approx(obs) == exp
 
 
-def test_step_a2203(monkeypatch, shared_cost_vars):
+def test_step_a2203(monkeypatch, costs_step):
     """Validate sum of cost account 22.03.
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param shared_cost_vars: fixture to mock commonly-used cost vars
-    :type shared_cost_vars: Fixture
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
     # Mock module var set in subroutine: increase is value of step2203
     monkeypatch.setattr(cs, "step22", 0.0)
@@ -411,13 +416,13 @@ def test_step_a2203(monkeypatch, shared_cost_vars):
     assert pytest.approx(obs) == exp
 
 
-def test_step_a2204(monkeypatch, shared_cost_vars):
+def test_step_a2204(monkeypatch, costs_step):
     """Validate sum of cost account 22.04.
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param shared_cost_vars: fixture to mock commonly-used cost vars
-    :type shared_cost_vars: Fixture
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
     # Mock module var set in subroutine: increase is value of step2204
     monkeypatch.setattr(cs, "step22", 0.0)
@@ -427,13 +432,13 @@ def test_step_a2204(monkeypatch, shared_cost_vars):
     obs = cs.step22
     assert pytest.approx(obs) == exp
 
-def test_step_a2205(monkeypatch, shared_cost_vars):
+def test_step_a2205(monkeypatch, costs_step):
     """Validate sum of cost account 22.05.
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param shared_cost_vars: fixture to mock commonly-used cost vars
-    :type shared_cost_vars: Fixture
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
     # Mock module var set in subroutine: increase is value of step2205
     monkeypatch.setattr(cs, "step22", 0.0)
@@ -443,13 +448,13 @@ def test_step_a2205(monkeypatch, shared_cost_vars):
     obs = cs.step22
     assert pytest.approx(obs) == exp
 
-def test_step_a2206(monkeypatch, shared_cost_vars):
+def test_step_a2206(monkeypatch, costs_step):
     """Validate sum of cost account 22.06.
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param shared_cost_vars: fixture to mock commonly-used cost vars
-    :type shared_cost_vars: Fixture
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
     # Mock module var set in subroutine: increase is value of step2206
     monkeypatch.setattr(cs, "step22", 0.0)
@@ -459,13 +464,13 @@ def test_step_a2206(monkeypatch, shared_cost_vars):
     assert pytest.approx(obs) == exp
 
 
-def test_step_a2207(monkeypatch, shared_cost_vars):
+def test_step_a2207(monkeypatch, costs_step):
     """Validate sum of cost account 22.07.
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param shared_cost_vars: fixture to mock commonly-used cost vars
-    :type shared_cost_vars: Fixture
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
     # Mock module var set in subroutine: increase is value of step2207
     monkeypatch.setattr(cs, "step22", 0.0)
@@ -475,13 +480,13 @@ def test_step_a2207(monkeypatch, shared_cost_vars):
     assert pytest.approx(obs) == exp
 
 
-def test_step_a23(monkeypatch, shared_cost_vars):
+def test_step_a23(monkeypatch, costs_step):
     """Validate sum of cost account 23.
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param shared_cost_vars: fixture to mock commonly-used cost vars
-    :type shared_cost_vars: Fixture
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
     # Mock module var set in subroutine
     monkeypatch.setattr(cs, "step23", 0.0)
@@ -491,13 +496,13 @@ def test_step_a23(monkeypatch, shared_cost_vars):
     obs = cs.step23
     assert pytest.approx(obs) == exp
 
-def test_step_a24(monkeypatch, shared_cost_vars):
+def test_step_a24(monkeypatch, costs_step):
     """Validate sum of cost account 24.
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param shared_cost_vars: fixture to mock commonly-used cost vars
-    :type shared_cost_vars: Fixture
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
     # Mock module var set in subroutine
     monkeypatch.setattr(cs, "step24", 0.0)
@@ -507,13 +512,13 @@ def test_step_a24(monkeypatch, shared_cost_vars):
     obs = cs.step24
     assert pytest.approx(obs) == exp
 
-def test_step_a25(monkeypatch, shared_cost_vars):
+def test_step_a25(monkeypatch, costs_step):
     """Validate sum of cost account 25.
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param shared_cost_vars: fixture to mock commonly-used cost vars
-    :type shared_cost_vars: Fixture
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
     # Mock module var set in subroutine
     monkeypatch.setattr(cs, "step25", 0.0)
