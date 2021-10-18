@@ -193,11 +193,13 @@ def test_step_a20(monkeypatch, shared_cost_vars):
     :param shared_cost_vars: fixture to mock commonly-used cost vars
     :type shared_cost_vars: Fixture
     """
+    costs_step = CostsStep()
+    
     # Mock module vars
-    monkeypatch.setattr(cs, "step21", 0.0)
+    monkeypatch.setattr(cs, "step20", 0.0)
 
     # Run and assert result in M$
-    cs.step_a20(0, 0)
+    costs_step.step_a20()
     exp = 1.003e2
     obs = cs.step20
     assert pytest.approx(obs) == exp

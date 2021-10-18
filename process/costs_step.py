@@ -14,8 +14,8 @@ class CostsStep:
 
     def __init__(self):
         """Initialise Fortran module variables."""
-        self.outfile = ft.constants.nout # output file unit
-        self.iprint = 0 # switch for writing to output file (1=yes)
+        self.outfile = ft.constants.nout  # output file unit
+        self.iprint = 0  # switch for writing to output file (1=yes)
         cs.init_costs_step()
 
     def run(self):
@@ -64,7 +64,7 @@ class CostsStep:
             process_output.oheadr(self.outfile, title.strip())
 
         # Account 20 : Land and Rights
-        cs.step_a20(self.outfile, self.iprint)
+        self.step_a20()
 
         # Account 21 : Building and Site Service Infrastructure
         cs.step_a21(self.outfile, self.iprint)
@@ -109,3 +109,9 @@ class CostsStep:
         #  Cost of electricity
         if cv.ireactor == 1 and cv.ipnet == 0:
             cs.coelc_step(self.outfile, self.iprint)
+
+    def step_a20(self):
+        """Account 20: Land and Rights."""
+        cs.step20 = cs.step_a20(
+            self.outfile, self.iprint, cv.output_costs, cv.step_ref, cv.sitecost
+        )

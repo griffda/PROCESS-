@@ -52,24 +52,23 @@ contains
     pth = 0.0D0
   end subroutine init_costs_step
 
-  subroutine step_a20(outfile,iprint)
-
+  subroutine step_a20(outfile, iprint, output_costs, step_ref, sitecost, step20)
     !! Account 20 : Land and Rights
     !! author: S I Muldrew, CCFE, Culham Science Centre
     !! None
     !! This routine evaluates the Account 20 (Land and Rights)
     !! costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use cost_variables, only: output_costs, step_ref, sitecost
     use process_output, only: oshead, ocosts, oblnkl
 
     implicit none
 
     ! Arguments
-    integer, intent(in) :: iprint,outfile
+    integer, intent(in) :: iprint, outfile
+    real(8), intent(in) :: output_costs
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: sitecost
+    real(8), intent(out) :: step20
 
     ! Local variables
     real(8):: step2001, step2002
