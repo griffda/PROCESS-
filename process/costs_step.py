@@ -80,7 +80,7 @@ class CostsStep:
         self.step_a24()
 
         # Account 25 : Miscellaneous Plant Equipment
-        cs.step_a25(self.outfile, self.iprint)
+        self.step_a25()
 
         # Total plant direct cost without remote handling
         cv.cdirt = cs.step20 + cs.step21 + cs.step22 + cs.step23 + cs.step24 + cs.step25
@@ -286,3 +286,41 @@ class CostsStep:
             po.ocosts(self.outfile, "(step2499)", "Contingency (M$)", step2499)
             po.oblnkl(self.outfile)
             po.ocosts(self.outfile, "(step24)", "Total Account 24 Cost (M$)", cs.step24)
+
+    def step_a25(self):
+        """Account 25 : Miscellaneous Plant Equipment."""
+        (
+            step2501,
+            step2502,
+            step2503,
+            step2504,
+            step2598,
+            step2599,
+            cs.step25,
+        ) = cs.step_a25(cv.step_ref, cv.step_con, htv.pgrossmw, bldgsv.wgt)
+
+        # Output costs
+        if self.iprint == 1 and cv.output_costs == 1:
+            po.oshead(self.outfile, "25. Miscellaneous Plant Equipment")
+            po.ocosts(
+                self.outfile,
+                "(step2501)",
+                "Transport and Lifting Equipment (M$)",
+                step2501,
+            )
+            po.ocosts(
+                self.outfile,
+                "(step2502)",
+                "Air and Water Service System (M$)",
+                step2502,
+            )
+            po.ocosts(
+                self.outfile, "(step2503)", "Communications Equipment (M$)", step2503
+            )
+            po.ocosts(
+                self.outfile, "(step2504)", "Furnishing and Fixtures (M$)", step2504
+            )
+            po.ocosts(self.outfile, "(step2598)", "Spares (M$)", step2598)
+            po.ocosts(self.outfile, "(step2599)", "Contingency (M$)", step2599)
+            po.oblnkl(self.outfile)
+            po.ocosts(self.outfile, "(step25)", "Total Account 25 Cost (M$)", cs.step25)
