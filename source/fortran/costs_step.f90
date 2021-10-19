@@ -201,60 +201,43 @@ contains
     step21 = step21 + step2199
   end subroutine step_a21
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a22(outfile,iprint)
-
+  subroutine step_a22(outfile, iprint, step_con, step2298, step2299, step22)
     !! Account 22 : Reactor Plant Equipment
     !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 22 (Reactor Plant Equipment)
     !! costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
-    use process_output, only: oshead, ocosts, oblnkl
-    use cost_variables, only: output_costs, step_con, step_rh_costfrac
-
     implicit none
-  
+
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-  
-    ! Local variables
-    real(8):: step2297, step2298, step2299
-  
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    integer, intent(in) :: outfile, iprint
+    real(8), intent(in) :: step_con
+    real(8), intent(out) :: step2298, step2299, step22
   
     ! Initialise as zero
     step22 = 0.0D0
     step2298 = 0.0D0   ! Contingency
   
-    if ((iprint==1).and.(output_costs == 1)) then
-      call oshead(outfile,'22. Reactor Plant Equipment')
-    end if
-
     !  Account 22.01 : Reactor Equipment
-    call step_a2201(step2298,outfile,iprint)
+    call step_a2201(step2298,outfile,iprint, step22)
 
     !  Account 22.02 : Heat Transfer Systems
-    call step_a2202(outfile,iprint)
+    call step_a2202(outfile,iprint, step22)
 
     !  Account 22.03 : Cryogenic Cooling System
-    call step_a2203(outfile,iprint)
+    call step_a2203(outfile,iprint, step22)
 
     !  Account 22.04 : Waste Treatment and Disposal
-    call step_a2204(outfile,iprint)
+    call step_a2204(outfile,iprint, step22)
 
     !  Account 22.05 : Fuel Handling and Storage
-    call step_a2205(step2298,outfile,iprint)
+    call step_a2205(step2298,outfile,iprint, step22)
 
     !  Account 22.06 : Other Reactor Plant Equipment
-    call step_a2206(step2298,outfile,iprint)
+    call step_a2206(step2298,outfile,iprint, step22)
 
     !  Account 22.07 : Instrumentation and Control
-    call step_a2207(outfile,iprint)
+    call step_a2207(outfile,iprint, step22)
 
     ! 22.98 Spares
     ! STARFIRE percentage of components
@@ -264,21 +247,11 @@ contains
     ! STARFIRE 15%
     step2299 = step_con * step22
     step22 = step22 + step2299
-
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      write(outfile,*) '******************* '
-      call ocosts(outfile,'(step2298)','Spares (M$)', step2298)
-      call ocosts(outfile,'(step2299)','Contingency (M$)', step2299)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step22)','Total Account 22 Cost (M$)', step22)
-    end if
-  
   end subroutine step_a22
   
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine step_a2201(step2298,outfile,iprint)
+  subroutine step_a2201(step2298,outfile,iprint, step22)
 
     !! Account 22.01 : Reactor Equipment
     !! author: S I Muldrew, CCFE, Culham Science Centre
@@ -301,6 +274,7 @@ contains
     ! Arguments
     integer, intent(in) :: iprint,outfile
     real(8), intent(inout) :: step2298
+    real(8), intent(out) :: step22
 
     ! Local variables
     real(8):: step2201, step220101, step22010101, step22010102, step2201010201, &
@@ -745,7 +719,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine step_a2202(outfile,iprint)
+  subroutine step_a2202(outfile,iprint, step22)
 
     !! Account 22.02 : Heat Transfer System
     !! author: S I Muldrew, CCFE, Culham Science Centre
@@ -765,6 +739,7 @@ contains
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
+    real(8), intent(out) :: step22
   
     ! Local variables
     real(8):: step2202
@@ -795,7 +770,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine step_a2203(outfile,iprint)
+  subroutine step_a2203(outfile,iprint, step22)
 
     !! Account 22.03 : Cryogenic Cooling System
     !! author: S I Muldrew, CCFE, Culham Science Centre
@@ -813,6 +788,7 @@ contains
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
+    real(8), intent(out) :: step22
   
     ! Local variables
     real(8):: &
@@ -862,7 +838,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine step_a2204(outfile,iprint)
+  subroutine step_a2204(outfile,iprint, step22)
 
     !! Account 22.04 : Waste Treatment and Disposal
     !! author: S I Muldrew, CCFE, Culham Science Centre
@@ -880,6 +856,7 @@ contains
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
+    real(8), intent(out) :: step22
   
     ! Local variables
     real(8):: &
@@ -923,7 +900,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine step_a2205(step2298,outfile,iprint)
+  subroutine step_a2205(step2298,outfile,iprint, step22)
 
     !! Account 22.05 : Fuel Handling and Storage
     !! author: S I Muldrew, CCFE, Culham Science Centre
@@ -942,6 +919,7 @@ contains
     ! Arguments
     integer, intent(in) :: iprint,outfile
     real(8), intent(inout) :: step2298
+    real(8), intent(out) :: step22
   
     ! Local variables
     real(8):: step2205
@@ -973,7 +951,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine step_a2206(step2298,outfile,iprint)
+  subroutine step_a2206(step2298,outfile,iprint, step22)
 
     !! Account 22.06 : Other Reactor Plant Equipment
     !! author: S I Muldrew, CCFE, Culham Science Centre
@@ -992,6 +970,7 @@ contains
     ! Arguments
     integer, intent(in) :: iprint,outfile
     real(8), intent(inout) :: step2298
+    real(8), intent(out) :: step22
   
     ! Local variables
     real(8):: &
@@ -1071,7 +1050,7 @@ contains
  
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine step_a2207(outfile,iprint)
+  subroutine step_a2207(outfile,iprint, step22)
 
     !! Account 22.07 : Instrumentation and Control
     !! author: S I Muldrew, CCFE, Culham Science Centre
@@ -1089,6 +1068,7 @@ contains
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
+    real(8), intent(out) :: step22
 
     ! Local variables
     real(8):: step2207

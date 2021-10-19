@@ -248,8 +248,9 @@ def test_step_a22(monkeypatch, costs_step):
     monkeypatch.setattr(cs, "pinjmw_star", 9.04e1)
     monkeypatch.setattr(cs, "rmajor_star", 1e3)
     monkeypatch.setattr(cs, "rminor_star", 1e3)
+    
     # Run and assert result in M$
-    cs.step_a22(0, 0)
+    costs_step.step_a22()
     exp = 2.87413124e3
     obs = cs.step22
     assert pytest.approx(obs) == exp
