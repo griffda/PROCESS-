@@ -706,6 +706,7 @@ module pfcoil_module
          wtc, zl, turns, wts, a_oh_turn
      use tfcoil_variables, only: dcond, tftmp, tcritsc, strncon_cs, &
          fhts, bcritsc,b_crit_upper_nbti, t_crit_nbti
+     use CS_fatigue, only: Ncycle
      use CS_fatigue_variables, only: N_cycle, residual_sig_hoop, t_crack_vertical, &
          t_crack_radial, t_structural_vertical, t_structural_radial
      use constants, only: pi, dcopper
@@ -2755,7 +2756,7 @@ module pfcoil_module
            call ovarre(outfile, 'CS structural radial thickness', &
                 '(t_structural_radial)', t_structural_radial)
            call ovarre(outfile, 'Number of cycles till CS fracture', &
-                '(N_cycle)', N_cycle, 'OP')
+                '(N_cycle)', N_cycle, 'OP ')
            ! Check whether CS coil is hitting any limits
            ! iteration variable (39) fjohc0
            ! iteration variable(38) fjohc
