@@ -1268,16 +1268,15 @@ contains
     step27 = step2701
   end subroutine step_a27
 
-  subroutine step_indirect_costs(outfile, iprint)
+  subroutine step_indirect_costs(cdirt, step91_per, step92_per, step93_per, &
+    step91, step92, step93)
     !! Accounts 91-93: Indirect costs
     !! Calculate the indirect costs and print
-    use cost_variables, only: cdirt, output_costs
-    use process_output, only: oshead, ocosts
-    use cost_variables, only: step91_per, step92_per, step93_per
     implicit none
-
+    
     ! Arguments
-    integer, intent(in) :: outfile, iprint
+    real(8), intent(in) :: cdirt, step91_per, step92_per, step93_per
+    real(8), intent(out) :: step91, step92, step93
 
     ! Account 91 : Construction Facilities, Equipment and Services (default 30%)
     step91 = step91_per * cdirt
@@ -1287,13 +1286,6 @@ contains
 
     ! Account 93 : Other Costs (default 5%)
     step93 = step93_per * cdirt
-
-    if ((iprint==1).and.(output_costs == 1)) then
-      call oshead(outfile,'Indirect Cost')
-      call ocosts(outfile,'(step91)','Construction Facilities, Equipment and Services (M$)',step91)
-      call ocosts(outfile,'(step92)','Engineering and Costruction Management Services (M$)',step92)
-      call ocosts(outfile,'(step93)','Other Costs (M$)',step93)
-    endif
   end subroutine step_indirect_costs
 
   subroutine coelc_step(outfile,iprint)

@@ -95,7 +95,7 @@ class CostsStep:
             po.ocosts(self.outfile, "(cdirt)", "Plant direct cost (M$)", cv.cdirt)
 
         # Accounts 91-93: Indirect costs
-        cs.step_indirect_costs(self.outfile, self.iprint)
+        self.step_indirect_costs()
 
         # Constructed cost
         cv.concost = cv.cdirt + cs.step91 + cs.step92 + cs.step93
@@ -335,3 +335,25 @@ class CostsStep:
             po.ocosts(self.outfile, "(step2701)", "Remote Handing (M$)", step2701)
             po.oblnkl(self.outfile)
             po.ocosts(self.outfile, "(step27)", "Total Account 27 Cost (M$)", cs.step27)
+
+    def step_indirect_costs(self):
+        """Accounts 91-93: Indirect costs."""
+        cs.step91, cs.step92, cs.step93 = cs.step_indirect_costs(
+            cv.cdirt, cv.step91_per, cv.step92_per, cv.step93_per
+        )
+
+        if self.iprint == 1 and cv.output_costs == 1:
+            po.oshead(self.outfile, "Indirect Cost")
+            po.ocosts(
+                self.outfile,
+                "(step91)",
+                "Construction Facilities, Equipment and Services (M$)",
+                cs.step91,
+            )
+            po.ocosts(
+                self.outfile,
+                "(step92)",
+                "Engineering and Costruction Management Services (M$)",
+                cs.step92,
+            )
+            po.ocosts(self.outfile, "(step93)", "Other Costs (M$)", cs.step93)

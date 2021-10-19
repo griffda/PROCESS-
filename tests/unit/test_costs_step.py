@@ -500,6 +500,8 @@ def test_step_a27(monkeypatch, costs_step):
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
     # Mock module vars passed as subroutine arguments
     monkeypatch.setattr(cs, "step27", 0.0)
@@ -512,20 +514,22 @@ def test_step_a27(monkeypatch, costs_step):
 
     assert pytest.approx(obs) == exp    
 
-def test_step_indirect_costs(monkeypatch):
+def test_step_indirect_costs(monkeypatch, costs_step):
     """Test indirect cost calculations.
 
     :param monkeypatch: fixture for mocking
     :type monkeypatch: MonkeyPatch
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
-    # Mock cdirt and module vars being set
+    # Mock module vars passed and being set
     monkeypatch.setattr(cv, "cdirt", 1.0e3)
     monkeypatch.setattr(cs, "step91", 0.0)
     monkeypatch.setattr(cs, "step92", 0.0)
     monkeypatch.setattr(cs, "step93", 0.0)
     
     # Run and assert module vars for costs
-    cs.step_indirect_costs(0, 0)
+    costs_step.step_indirect_costs()
     assert cs.step91 == 300
     assert cs.step92 == 325
     assert cs.step93 == 150
