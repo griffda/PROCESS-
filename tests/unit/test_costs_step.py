@@ -475,7 +475,7 @@ def test_step_a24(monkeypatch, costs_step):
     monkeypatch.setattr(cs, "step24", 0.0)
 
     exp = 9.168104e1
-    cs.step_a24(0, 0)
+    costs_step.step_a24()
     obs = cs.step24
     assert pytest.approx(obs) == exp
 

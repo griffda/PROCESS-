@@ -1139,34 +1139,21 @@ contains
     step23 = step23 + step2399
   end subroutine step_a23
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a24(outfile,iprint)
-
+  subroutine step_a24(step_ref, step_con, pgrossmw, step2401, step2402, &
+    step2403, step2404, step2405, step2406, step2407, step2498, step2499, &
+    step24)
     !! Account 24 : Electric Plant Equipment
     !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 24 (Electric Plant 
     !! Equipment) costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use cost_variables, only: output_costs, step_con, step_ref
-    use process_output, only: oshead, ocosts, oblnkl
-    use heat_transport_variables, only: pgrossmw
-
     implicit none
 
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-
-    ! Local variables
-    real(8):: &
-    step2401, step2402, step2403, step2404, step2405, step2406, &
-    step2407, step2498, step2499
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: step_con, pgrossmw
+    real(8), intent(out) :: step2401, step2402, step2403, step2404, step2405, &
+    step2406, step2407, step2498, step2499, step24
 
     ! Initialise as zero M$
     step24 = 0.0D0
@@ -1208,23 +1195,6 @@ contains
     ! STARFIRE 15%
     step2499 = step_con * step24
     step24 = step24 + step2499
-
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      call oshead(outfile,'24. Electric Plant Equipment')
-      call ocosts(outfile,'(step2401)','Switch Gear (M$)', step2401)
-      call ocosts(outfile,'(step2402)','Station Service Equipment (M$)', step2402)
-      call ocosts(outfile,'(step2403)','Switchboards (M$)', step2403)
-      call ocosts(outfile,'(step2404)','Protective Equipment (M$)', step2404)
-      call ocosts(outfile,'(step2405)','Electrical Structures (M$)', step2405)
-      call ocosts(outfile,'(step2406)','Power and Control Wiring (M$)', step2406)
-      call ocosts(outfile,'(step2407)','Electric Lighting (M$)', step2407)
-      call ocosts(outfile,'(step2498)','Spares (M$)', step2498)
-      call ocosts(outfile,'(step2499)','Contingency (M$)', step2499)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step24)','Total Account 24 Cost (M$)', step24)
-    end if
-
   end subroutine step_a24
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

@@ -77,7 +77,7 @@ class CostsStep:
         self.step_a23()
 
         # Account 24 : Electric Plant Equipment
-        cs.step_a24(self.outfile, self.iprint)
+        self.step_a24()
 
         # Account 25 : Miscellaneous Plant Equipment
         cs.step_a25(self.outfile, self.iprint)
@@ -250,3 +250,39 @@ class CostsStep:
             po.ocosts(self.outfile, "(step2399)", "Contingency (M$)", step2399)
             po.oblnkl(self.outfile)
             po.ocosts(self.outfile, "(step23)", "Total Account 23 Cost (M$)", cs.step23)
+
+    def step_a24(self):
+        """Account 24 : Electric Plant Equipment."""
+        (
+            step2401,
+            step2402,
+            step2403,
+            step2404,
+            step2405,
+            step2406,
+            step2407,
+            step2498,
+            step2499,
+            cs.step24,
+        ) = cs.step_a24(cv.step_ref, cv.step_con, htv.pgrossmw)
+
+        # Output costs
+        if self.iprint == 1 and cv.output_costs == 1:
+            po.oshead(self.outfile, "24. Electric Plant Equipment")
+            po.ocosts(self.outfile, "(step2401)", "Switch Gear (M$)", step2401)
+            po.ocosts(
+                self.outfile, "(step2402)", "Station Service Equipment (M$)", step2402
+            )
+            po.ocosts(self.outfile, "(step2403)", "Switchboards (M$)", step2403)
+            po.ocosts(self.outfile, "(step2404)", "Protective Equipment (M$)", step2404)
+            po.ocosts(
+                self.outfile, "(step2405)", "Electrical Structures (M$)", step2405
+            )
+            po.ocosts(
+                self.outfile, "(step2406)", "Power and Control Wiring (M$)", step2406
+            )
+            po.ocosts(self.outfile, "(step2407)", "Electric Lighting (M$)", step2407)
+            po.ocosts(self.outfile, "(step2498)", "Spares (M$)", step2498)
+            po.ocosts(self.outfile, "(step2499)", "Contingency (M$)", step2499)
+            po.oblnkl(self.outfile)
+            po.ocosts(self.outfile, "(step24)", "Total Account 24 Cost (M$)", cs.step24)
