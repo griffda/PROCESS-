@@ -74,7 +74,7 @@ class CostsStep:
         self.step_a22()
 
         # Account 23 : Turbine Plant Equipment
-        cs.step_a23(self.outfile, self.iprint)
+        self.step_a23()
 
         # Account 24 : Electric Plant Equipment
         cs.step_a24(self.outfile, self.iprint)
@@ -219,7 +219,7 @@ class CostsStep:
             po.ocosts(self.outfile, "(step21)", "Total Account 21 Cost (M$)", cs.step21)
 
     def step_a22(self):
-        # Account 22 : Reactor Plant Equipment
+        """Account 22 : Reactor Plant Equipment."""
         if self.iprint == 1 and cv.output_costs == 1:
             po.oshead(self.outfile, "22. Reactor Plant Equipment")
 
@@ -234,3 +234,19 @@ class CostsStep:
             po.ocosts(self.outfile, "(step2299)", "Contingency (M$)", step2299)
             po.oblnkl(self.outfile)
             po.ocosts(self.outfile, "(step22)", "Total Account 22 Cost (M$)", cs.step22)
+
+    def step_a23(self):
+        """Account 23 : Turbine Plant Equipment."""
+        step23a, step2303, step2398, step2399, cs.step23 = cs.step_a23(
+            cv.step_ref, cv.step_con, htv.pgrossmw
+        )
+
+        # Output costs
+        if self.iprint == 1 and cv.output_costs == 1:
+            po.oshead(self.outfile, "23. Turbine Plant Equipment")
+            po.ocosts(self.outfile, "(step23a)", "Turbine System (M$)", step23a)
+            po.ocosts(self.outfile, "(step2303)", "Heat Rejection (M$)", step2303)
+            po.ocosts(self.outfile, "(step2398)", "Spares (M$)", step2398)
+            po.ocosts(self.outfile, "(step2399)", "Contingency (M$)", step2399)
+            po.oblnkl(self.outfile)
+            po.ocosts(self.outfile, "(step23)", "Total Account 23 Cost (M$)", cs.step23)

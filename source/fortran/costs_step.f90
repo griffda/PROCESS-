@@ -1095,32 +1095,20 @@ contains
   
   end subroutine step_a2207
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a23(outfile,iprint)
-
+  subroutine step_a23(step_ref, step_con, pgrossmw, step23a, step2303, &
+    step2398, step2399, step23)
     !! Account 23 : Turbine Plant Equipment
     !! author: S I Muldrew, CCFE, Culham Science Centre
     !! None
     !! This routine evaluates the Account 23 (Turbine Plant Equipment)
     !! costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use cost_variables, only: output_costs, step_con, step_ref
-    use process_output, only: oshead, ocosts, oblnkl
-    use heat_transport_variables, only: pgrossmw
-
     implicit none
 
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-
-    ! Local variables
-    real(8):: step23a, step2303, step2398, step2399
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: step_con, pgrossmw
+    real(8), intent(out) :: step23a, step2303, step2398, step2399, step23
 
     ! Initialise as zero
     step23 = 0.0D0
@@ -1149,17 +1137,6 @@ contains
     ! STARFIRE 15%
     step2399 = step_con * step23
     step23 = step23 + step2399
-
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      call oshead(outfile,'23. Turbine Plant Equipment')
-      call ocosts(outfile,'(step23a)','Turbine System (M$)', step23a)
-      call ocosts(outfile,'(step2303)','Heat Rejection (M$)', step2303)
-      call ocosts(outfile,'(step2398)','Spares (M$)', step2398)
-      call ocosts(outfile,'(step2399)','Contingency (M$)', step2399)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step23)','Total Account 23 Cost (M$)', step23)
-    end if
   end subroutine step_a23
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
