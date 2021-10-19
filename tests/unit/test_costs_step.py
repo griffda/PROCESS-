@@ -273,9 +273,9 @@ def test_step_a2201(monkeypatch, costs_step):
     monkeypatch.setattr(cs, "pinjmw_star", 9.04e1)
     monkeypatch.setattr(cs, "rmajor_star", 1e3)
     monkeypatch.setattr(cs, "rminor_star", 1e3)
-    cs.step_a2201(0, 0, 0)
+    
     exp = 1.9762381e3
-    obs = cs.step22
+    obs = cs.step_a2201(0, 0, 0)
     assert pytest.approx(obs) == exp
 
 def test_step_a220101(monkeypatch):
@@ -383,101 +383,67 @@ def test_step_a22010302(monkeypatch):
     assert pytest.approx(obs) == exp
 
 
-def test_step_a2202(monkeypatch, costs_step):
+def test_step_a2202(costs_step):
     """Validate sum of cost account 22.02.
 
-    :param monkeypatch: mocking fixture
-    :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
     :type costs_step: process.costs_step.CostsStep
     """
-    # Mock module var set in subroutine: increase is value of step2202
-    monkeypatch.setattr(cs, "step22", 0.0)
-    
     exp = 4.611899e1
-    cs.step_a2202(0, 0)
-    obs = cs.step22
+    obs = cs.step_a2202(0, 0)
     assert pytest.approx(obs) == exp
 
 
-def test_step_a2203(monkeypatch, costs_step):
+def test_step_a2203(costs_step):
     """Validate sum of cost account 22.03.
 
-    :param monkeypatch: mocking fixture
-    :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
     :type costs_step: process.costs_step.CostsStep
     """
-    # Mock module var set in subroutine: increase is value of step2203
-    monkeypatch.setattr(cs, "step22", 0.0)
-
     exp = 1.490e1
-    cs.step_a2203(0, 0)
-    obs = cs.step22
+    obs = cs.step_a2203(0, 0)
     assert pytest.approx(obs) == exp
 
 
-def test_step_a2204(monkeypatch, costs_step):
+def test_step_a2204(costs_step):
     """Validate sum of cost account 22.04.
 
-    :param monkeypatch: mocking fixture
-    :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
     :type costs_step: process.costs_step.CostsStep
     """
-    # Mock module var set in subroutine: increase is value of step2204
-    monkeypatch.setattr(cs, "step22", 0.0)
-   
-    cs.step_a2204(0, 0)
     exp = 4.8e0
-    obs = cs.step22
+    obs = cs.step_a2204(0, 0)
     assert pytest.approx(obs) == exp
 
-def test_step_a2205(monkeypatch, costs_step):
+def test_step_a2205(costs_step):
     """Validate sum of cost account 22.05.
 
-    :param monkeypatch: mocking fixture
-    :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
     :type costs_step: process.costs_step.CostsStep
     """
-    # Mock module var set in subroutine: increase is value of step2205
-    monkeypatch.setattr(cs, "step22", 0.0)
- 
-    cs.step_a2205(0, 0, 0)
+    obs = cs.step_a2205(0, 0, 0)
     exp = 3.86e1
-    obs = cs.step22
     assert pytest.approx(obs) == exp
 
-def test_step_a2206(monkeypatch, costs_step):
+def test_step_a2206(costs_step):
     """Validate sum of cost account 22.06.
 
-    :param monkeypatch: mocking fixture
-    :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
     :type costs_step: process.costs_step.CostsStep
     """
-    # Mock module var set in subroutine: increase is value of step2206
-    monkeypatch.setattr(cs, "step22", 0.0)
-    cs.step_a2206(0, 0, 0)
     exp = 5.45e0
-    obs = cs.step22
+    obs = cs.step_a2206(0, 0, 0)
     assert pytest.approx(obs) == exp
 
 
-def test_step_a2207(monkeypatch, costs_step):
+def test_step_a2207(costs_step):
     """Validate sum of cost account 22.07.
 
-    :param monkeypatch: mocking fixture
-    :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
     :type costs_step: process.costs_step.CostsStep
     """
-    # Mock module var set in subroutine: increase is value of step2207
-    monkeypatch.setattr(cs, "step22", 0.0)
-    cs.step_a2207(0, 0)
     exp = 2.341e1
-    obs = cs.step22
+    obs = cs.step_a2207(0, 0)
     assert pytest.approx(obs) == exp
 
 
