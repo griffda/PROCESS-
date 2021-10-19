@@ -2745,15 +2745,15 @@ module pfcoil_module
                 '(tmargoh)',tmargoh, 'OP ')
            call ovarre(outfile,'Minimum permitted temperature margin (K)', &
                 '(tmargmin_cs)',tmargmin_cs)
-           call ovarre(outfile, 'residual hoop stress in CS Steel', &
+           call ovarre(outfile, 'residual hoop stress in CS Steel (Pa)', &
                 '(residual_sig_hoop)', residual_sig_hoop)
-           call ovarre(outfile, 'Initial vertical crack size', &
+           call ovarre(outfile, 'Initial vertical crack size (m)', &
                 '(t_crack_vertical)', t_crack_vertical)
-           call ovarre(outfile, 'Initial radial crack size', &
+           call ovarre(outfile, 'Initial radial crack size (m)', &
                 '(t_crack_radial)', t_crack_radial)
-           call ovarre(outfile, 'CS structural vertical thickness', &
+           call ovarre(outfile, 'CS structural vertical thickness (m)', &
                 '(t_structural_vertical)', t_structural_vertical)
-           call ovarre(outfile, 'CS structural radial thickness', &
+           call ovarre(outfile, 'CS structural radial thickness (m)', &
                 '(t_structural_radial)', t_structural_radial)
            call ovarre(outfile, 'Number of cycles till CS fracture', &
                 '(N_cycle)', N_cycle, 'OP ')

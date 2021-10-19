@@ -132,6 +132,8 @@ if __name__ == '__main__':
     labels["triang"] = r'$\delta_\mathrm{sep}$'
     labels["f_tf_steel"] = r'f_\mathrm{steel}^\mathrm{TF}'
     labels["plascur/1d6"] = r'$I_{\mathrm{p}}$[$MA$]'
+    labels["n_cycle"] = r'$N_{\mathrm{cycle}}$'
+    labels['alstroh'] = r'$\sigma_{\mathrm{oh}}^{\mathrm{max}}$[$Pa$]'
     # ------------
 
     # nsweep varible dict
@@ -198,6 +200,8 @@ if __name__ == '__main__':
     nsweep_dict[57] = "bt"    # Genuinly bt lower bound 
     nsweep_dict[58] = "scrapli"
     nsweep_dict[59] = "scraplo"
+    nsweep_dict[60] = 'sig_tf_wp_max'
+    nsweep_dict[61] = 'alstroh'
     # -------------------
     
 
