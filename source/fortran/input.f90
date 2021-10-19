@@ -344,6 +344,8 @@ contains
       rebco_thickness, copper_rrr, coppera_m2_max, croco_thick, copper_thick 
     use reinke_variables, only: reinke_mode, fzactual, impvardiv, lhat 
     use water_usage_variables, only: airtemp, watertemp, windspeed
+    use CS_fatigue_variables, only: residual_sig_hoop, t_crack_radial, t_crack_vertical, &
+      t_structural_vertical, t_structural_radial 
     implicit none
 
     !  Arguments
@@ -3483,6 +3485,24 @@ contains
           call parse_real_variable('windspeed', windspeed, 0.0D0, 10.0D0, &
                'wind speed (m/s)')
 
+      ! CS fatigue settings
+
+       case('residual_sig_hoop')
+          call parse_real_variable('residual_sig_hoop',residual_sig_hoop, 0.0D0, 1.0D9, &
+               'residual hoop stress in strucutal material (Pa) ')
+       case('t_crack_radial')
+          call parse_real_variable('t_crack_radial',t_crack_radial, 1.0D-3, 1.0D0, &
+               'Inital radial crack size (m)')
+       case('t_crack_vertical')
+          call parse_real_variable('t_crack_vertical',t_crack_vertical, 1.0D-3, 1.0D0, &
+               'Inital vertical crack size (m)')
+       case('t_structural_radial')
+         call parse_real_variable('t_structural_radial',t_structural_radial, 1.0D-3, 1.0D0, &
+            'CS structural radial thickness (m)')
+       case('t_structural_vertical')
+         call parse_real_variable('t_structural_vertical',t_structural_vertical, 1.0D-3, 1.0D0, &
+            'CS structural vertical thickness (m)')
+ 
        case default
           error_message = 'Unknown variable in input file: '//varnam(1:varlen)
           write(*,*) error_message

@@ -12,11 +12,17 @@ module CS_fatigue_variables
   real(8) :: N_cycle
   !! Number of cycles till CS fracture
   
-  real(8) :: r_crack_size
+  real(8) :: t_crack_radial
   !! Inital radial crack size (m)
 
-  real(8) :: z_crack_size
+  real(8) :: t_crack_vertical
   !! Inital vertical crack size (m)
+
+  real(8) :: t_structural_radial
+  !! CS structural radial thickness (m)
+  
+  real(8) :: t_structural_vertical
+  !! CS structural vertical thickness (m)
 
   contains
 
@@ -25,9 +31,11 @@ module CS_fatigue_variables
     implicit none
     
     residual_sig_hoop = 2.4D8
-    r_crack_size = 2.0D-3
-    z_crack_size = 6.0D-3
+    t_crack_radial = 6.0D-3
+    t_crack_vertical = 2.0D-3
     N_cycle = 0.0D0
+    t_structural_vertical = 0.022D0 
+    t_structural_radial = 0.07D0 
       
   end subroutine init_watuse_variables
 

@@ -13,17 +13,18 @@ module CS_fatigue
 
 contains
 
-subroutine Ncycle(N_cycle, max_hoop_stress,residual_stress,z_crack_size, r_crack_size)
+subroutine Ncycle(N_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_crack_radial,t_structural_vertical,t_structural_radial)
 
     use constants, only: pi
     implicit none
 
     ! Arguments
-    real(8), intent(in) :: max_hoop_stress, residual_stress, z_crack_size
-    real(8), intent(inout) :: N_cycle, r_crack_size
+    real(8), intent(in) :: max_hoop_stress, residual_stress
+    real(8), intent(in) :: t_crack_vertical, t_structural_vertical, t_structural_radial
+    real(8), intent(inout) :: N_cycle, t_crack_radial
 
     ! local variables
-    real(8) :: Const, C0, m, t, w, R, delta, deltaN 
+    real(8) :: Const, C0, m, R, delta, deltaN 
     real(8) :: Kmax, Ka, Kc, a, c
     real(8) :: max_hoop_stress_MPa, residual_stress_MPa
 
@@ -32,18 +33,14 @@ subroutine Ncycle(N_cycle, max_hoop_stress,residual_stress,z_crack_size, r_crack
     Const = 1.75D-13
     m = 3.7D0
 
-    ! Set segment size
-    t = 0.022D0
-    w = 0.07D0
-
     ! Set units to MPa
     max_hoop_stress_MPa = max_hoop_stress / 1.0D6
     residual_stress_MPa = residual_stress / 1.0D6
 
     ! Set intial crack size
-    r_crack_size = 3.0D0 * z_crack_size  
-    a = z_crack_size
-    c = r_crack_size
+    t_crack_radial = 3.0D0 * t_crack_vertical  
+    a = t_crack_vertical
+    c = t_crack_radial
 
     !mean stress ratio
     R = residual_stress_MPa / (max_hoop_stress_MPa + residual_stress_MPa)
@@ -57,11 +54,11 @@ subroutine Ncycle(N_cycle, max_hoop_stress,residual_stress,z_crack_size, r_crack
     N_cycle = 0.0
     Kmax = 0.0
 
-    do while ((a.le.t/2.0D0).and.(c.le.w/2.0D0).and.(Kmax.le.1.0D2))
+    do while ((a.le.t_structural_vertical/2.0D0).and.(c.le.t_structural_radial/2.0D0).and.(Kmax.le.1.0D2))
         ! find SIF max from SIF_a and SIF_c
         ! what is the difference - phi ???
-        Ka = surface_stress_intensity_factor(max_hoop_stress_MPa, t, w, a, c, pi/2.0D0)
-        Kc = surface_stress_intensity_factor(max_hoop_stress_MPa, t, w, a, c, 0.0D0)
+        Ka = surface_stress_intensity_factor(max_hoop_stress_MPa, t_structural_vertical, t_structural_radial, a, c, pi/2.0D0)
+        Kc = surface_stress_intensity_factor(max_hoop_stress_MPa, t_structural_vertical, t_structural_radial, a, c, 0.0D0)
         Kmax = max(Ka,Kc)
 
         ! run euler_method and find number of cycles needed to give crack increase
