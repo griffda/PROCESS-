@@ -26,7 +26,7 @@ module CS_fatigue_variables
 
   contains
 
-  subroutine init_watuse_variables
+  subroutine init_CS_fatigue_variables
     !! Initialise module variables
     implicit none
     
@@ -37,6 +37,6 @@ module CS_fatigue_variables
     t_structural_vertical = 0.022D0 
     t_structural_radial = 0.07D0 
       
-  end subroutine init_watuse_variables
+  end subroutine init_CS_fatigue_variables
 
 end module CS_fatigue_variables
