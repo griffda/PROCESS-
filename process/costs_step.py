@@ -86,7 +86,7 @@ class CostsStep:
         cv.cdirt = cs.step20 + cs.step21 + cs.step22 + cs.step23 + cs.step24 + cs.step25
 
         # Account 27 : Remote Handling
-        cs.step_a27(self.outfile, self.iprint)
+        self.step_a27()
 
         # Total plant direct cost with remote handling
         cv.cdirt = cv.cdirt + cs.step27
@@ -324,3 +324,14 @@ class CostsStep:
             po.ocosts(self.outfile, "(step2599)", "Contingency (M$)", step2599)
             po.oblnkl(self.outfile)
             po.ocosts(self.outfile, "(step25)", "Total Account 25 Cost (M$)", cs.step25)
+
+    def step_a27(self):
+        """Account 27: Remote Handling."""
+        step2701, cs.step27 = cs.step_a27(cv.cdirt, cv.step_rh_costfrac)
+
+        # Output costs
+        if self.iprint == 1 and cv.output_costs == 1:
+            po.oshead(self.outfile, "27. Remote Handling")
+            po.ocosts(self.outfile, "(step2701)", "Remote Handing (M$)", step2701)
+            po.oblnkl(self.outfile)
+            po.ocosts(self.outfile, "(step27)", "Total Account 27 Cost (M$)", cs.step27)

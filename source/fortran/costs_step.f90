@@ -1246,31 +1246,17 @@ contains
     step25 = step25 + step2599
   end subroutine step_a25
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a27(outfile,iprint)
-
+  subroutine step_a27(cdirt, step_rh_costfrac, step2701, step27)
     !! Account 27 : Remote Handling
     !! author: A J Pearce, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 27 (Remote Handling)
     !! costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use cost_variables, only: output_costs, cdirt, step_rh_costfrac
-    use process_output, only: oshead, ocosts, oblnkl
-
     implicit none
 
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-
-    ! Local variables
-    real(8):: step2701
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    real(8), intent(in) :: cdirt, step_rh_costfrac
+    real(8), intent(out) :: step2701, step27
 
     ! Initialise as zero
     step27 = 0.0D0
@@ -1280,15 +1266,6 @@ contains
     step2701 = step_rh_costfrac * cdirt 
     
     step27 = step2701
-
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      call oshead(outfile,'27. Remote Handling')
-      call ocosts(outfile,'(step2701)','Remote Handing (M$)', step2701)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step27)','Total Account 27 Cost (M$)', step27)
-    end if
-
   end subroutine step_a27
 
   subroutine step_indirect_costs(outfile, iprint)

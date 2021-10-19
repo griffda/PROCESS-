@@ -495,19 +495,19 @@ def test_step_a25(monkeypatch, costs_step):
     obs = cs.step25
     assert pytest.approx(obs) == exp
 
-def test_step_a27(monkeypatch):
+def test_step_a27(monkeypatch, costs_step):
     """Validate sum of cost account 27.
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     """
-    # Mock module var set in subroutine
+    # Mock module vars passed as subroutine arguments
     monkeypatch.setattr(cs, "step27", 0.0)
     monkeypatch.setattr(cv, "step_rh_costfrac", 5.0)
     monkeypatch.setattr(cv, "cdirt", 2.0)
 
     exp = 10.0
-    cs.step_a27(0, 0)
+    costs_step.step_a27()
     obs = cs.step27
 
     assert pytest.approx(obs) == exp    
