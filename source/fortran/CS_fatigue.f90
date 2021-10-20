@@ -30,6 +30,8 @@ subroutine Ncycle(N_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_cr
 
 
     ! Set material parameters
+    ! X. Sarasola et al, IEEE Transactions on Applied Superconductivity, 
+    ! vol. 30,  no. 4, pp. 1-5, June 2020
     Const = 1.75D-13
     m = 3.7D0
 
@@ -44,7 +46,7 @@ subroutine Ncycle(N_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_cr
 
     !mean stress ratio
     R = residual_stress_MPa / (max_hoop_stress_MPa + residual_stress_MPa)
-    ! mean stress corrected C - using walker equaution !* 0.9 ** (m * 0.5) * (1 - R ) ** (m * -0.5)
+    ! mean stress corrected C - without using walker equaution 
     C0 = 1.0 
     
     ! select given increase in crack (area or length?) 
@@ -54,9 +56,10 @@ subroutine Ncycle(N_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_cr
     N_cycle = 0.0
     Kmax = 0.0
 
+    ! factor 2 taken as saftey factors in the crack sizes
+    ! CS steel undergoes fast fracture when SIF > 200 MPa, under a saftey factor 2 we use 100MPa 
     do while ((a.le.t_structural_vertical/2.0D0).and.(c.le.t_structural_radial/2.0D0).and.(Kmax.le.1.0D2))
         ! find SIF max from SIF_a and SIF_c
-        ! what is the difference - phi ???
         Ka = surface_stress_intensity_factor(max_hoop_stress_MPa, t_structural_vertical, t_structural_radial, a, c, pi/2.0D0)
         Kc = surface_stress_intensity_factor(max_hoop_stress_MPa, t_structural_vertical, t_structural_radial, a, c, 0.0D0)
         Kmax = max(Ka,Kc)
