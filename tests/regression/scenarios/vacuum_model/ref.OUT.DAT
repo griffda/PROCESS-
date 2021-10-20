@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-385-g8aac07e2
+   Tag No. : v2.1-661-g3493036b
     Branch : 1350-higher-current-density-material-in-tf-coil
    Git log : COMMIT_MSG
- Date/time : 10 Sep 2021  9:33:31 +01:00(hh:mm) UTC
+ Date/time : 20 Oct 2021 14:11:12 +01:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-113/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-113/test_scenario_vacuum_model_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-171/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-171/test_scenario_vacuum_model_0/IN.DAT
  Run title : demo 1 vacuum model test
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
