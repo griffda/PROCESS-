@@ -2,11 +2,18 @@ import datetime
 import warnings
 import os
 import json
+import itertools
 import pandas as pd
+import inspect
 from bokeh.plotting import figure, output_file, save
-from bokeh.models import ColumnDataSource
+from bokeh.models import ColumnDataSource, HoverTool
+from bokeh.layouts import gridplot
+from bokeh.models.widgets import Panel, Tabs
+from bokeh.transform import factor_cmap
+from bokeh.palettes import inferno, Spectral6
 
 from process.io import mfile as mf
+from process import fortran
 
 
 class TrackingFile:
@@ -24,24 +31,22 @@ class DataDoesNotExist:
 
 class ProcessTrackerGenerator:
     meta_variables = {"commsg", "date", "time"}
-    # tracking_variables = {
-    #     "pheat", "bootipf", "pinjmw", "shldith", "fwith", 
-    #     "fwoth", "thshield", "tftsgap", "bore", "ohcth", 
-    #     "scrapli", "blnkoth", "precomp", "tfthko", "blnkith", 
-    #     "vvblgap", "scraplo", "gapoh", "gapsto", "shldoth", 
-    #     "tfcth", "gapds", "pnucshld", "pnucblkt", "triang", 
-    #     "triang95", "pcoreradmw", "tesep", "ralpne", "ieped", 
-    #     "wallmw", "aspect", "rminor", "rmajor", "q95", "te", 
-    #     "beta", "facoh", "zeff", "bt", "hfact", "kappa", "powfmw", 
-    #     "teped", "powerht", "kappa95", "neped", "dene", "pradmw", 
-    #     "ne0", "faccd", "dnz", "taueff", "te0", "pdivt", "nesep", 
-    #     "vol", "sarea", "pnetelmw", "etath", "pgrossmw", "tftmp", 
-    #     "n_tf", "bmaxtf", "vstot", "dnitot", "tburn", "divlife", 
-    #     "step20", "step21", "step2101", "step2202", "step2203", 
-    #     "step22", "step23", "step24", "step25", "cdirt", "concost"
-    # }
-
-    tracking_variables = {"pheat", "triang95"}
+    tracking_variables = {
+        "pheat", "bootipf", "pinjmw", "shldith", "fwith", 
+        "fwoth", "thshield", "tftsgap", "bore", "ohcth", 
+        "scrapli", "blnkoth", "precomp", "tfthko", "blnkith", 
+        "vvblgap", "scraplo", "gapoh", "gapsto", "shldoth", 
+        "tfcth", "gapds", "pnucshld", "pnucblkt", "triang", 
+        "triang95", "pcoreradmw", "tesep", "ralpne", "ieped", 
+        "wallmw", "aspect", "rminor", "rmajor", "q95", "te", 
+        "beta", "facoh", "zeff", "bt", "hfact", "kappa", "powfmw", 
+        "teped", "powerht", "kappa95", "neped", "dene", "pradmw", 
+        "ne0", "faccd", "dnz", "taueff", "te0", "pdivt", "nesep", 
+        "vol", "sarea", "pnetelmw", "etath", "pgrossmw", "tftmp", 
+        "n_tf", "bmaxtf", "vstot", "dnitot", "tburn", "divlife", 
+        "step20", "step21", "step2101", "step2202", "step2203", 
+        "step22", "step23", "step24", "step25", "cdirt", "concost"
+    }
 
 
     def __init__(self, mfile: str, database: str = None) -> None:
@@ -71,7 +76,7 @@ class ProcessTrackerGenerator:
             data = self.mfile.data.get(var,DataDoesNotExist())
 
             if isinstance(data, DataDoesNotExist):
-                warnings.warn(f'{var} is not present in the MFile and will be skipped.')
+                print(f'{var} is not present in the MFile and will be skipped.')
                 continue
             
             self.tracking_file.meta[var] = data.get_scan(1)
@@ -84,7 +89,7 @@ class ProcessTrackerGenerator:
                 continue
 
             if data.get_number_of_scans() > 1:
-                warnings.warn(f'Only scan 1 will be tracked, but {var} has {data.get_number_of_scans()} scans.')
+                print(f'Only scan 1 will be tracked, but {var} has {data.get_number_of_scans()} scans.')
             
             self.tracking_file.tracking[var] = data.get_scan(1)
     
@@ -150,21 +155,112 @@ class TrackedData:
 def plot_tracking_data(database):
     data = TrackedData(database)
 
-    figures = []
+    figures = {}
 
     for k, v in data.tracked_variables.items():
         df = v.as_dataframe()
         source = ColumnDataSource(df)
-        fig = figure()
-        fig.scatter(x='date', y='value', source=source)
-        figures.append(fig)
 
-        output_file(filename=f'{k}.html')
-        save(fig)
+        parent = PythonFortranInterfaceVariables.parent_module(k)
+
+        if figures.get(parent) is None:
+            figures[parent] = []
         
+        titles = list(df['title'].to_numpy())
+
+        figur = figure(title=k, 
+            x_axis_type='datetime',
+            plot_width=600,
+            plot_height=600
+        )
+
+        figur.scatter(x='date', 
+            y='value', 
+            source=source, 
+            legend_field='title',
+            color=factor_cmap(field_name='title', 
+            palette=Spectral6, 
+            factors=titles)
+        )
+
+        colours = itertools.cycle(inferno(len(titles)))
+
+        for t in titles:
+            subdf = df[df['title'] == t]
+            subsource = ColumnDataSource(subdf)
+            colour = next(colours)
+
+            figur.line(x='date', 
+            y='value', 
+            source=subsource, 
+            # legend_field='title',
+            color=colour,
+            line_color=colour)
+
+        hovertool = HoverTool(
+            tooltips=[
+                ('Date', '@date{%Y-%m-%d %H:%M:%S}'),
+                ('Commit', '@annotation')
+            ],
+            formatters={
+                '@date': 'datetime',
+                '@annotation': 'printf'
+            },
+        )
+
+        figur.add_tools(hovertool)
+
+        figures[parent].append(figur)
+    
+    panels = []
+
+    for grp, fig in figures.items():
+        gplot = gridplot([fig[i:i+2] for i in range(0, len(fig), 2)])
+        panels.append(Panel(child=gplot, title=grp))
+    
+
+    tabs = Tabs(tabs=panels)
+    output_file('plot.html')
+
+    save(tabs)
 
 
+class PythonFortranInterfaceVariables:
 
+    tree = {}
+    
+    @classmethod
+    def populate_classes(cls):
+        classes = {}
+
+        for name, module in inspect.getmembers(fortran):
+            if type(module) == type(fortran.main_module):
+                classes[name] = cls._get_variables(module)
+        
+        cls.tree = classes
+
+
+    @classmethod
+    def _get_variables(cls, fortran_module):
+        functions = []
+
+        for name, function in inspect.getmembers(fortran_module):
+            if type(fortran_module) == type(fortran.main_module.inform) and function.__doc__ is None:
+                functions.append(name)
+        
+        return functions
+    
+
+    @classmethod
+    def parent_module(cls, var: str):
+        if not cls.tree:
+            cls.populate_classes()
+
+        for mod, functions in cls.tree.items():
+            if var in functions:
+                return mod
+        
+        return None
 
 
 if __name__ == '__main__':
