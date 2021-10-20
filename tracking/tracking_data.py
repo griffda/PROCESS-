@@ -174,7 +174,7 @@ def plot_tracking_data(database):
             plot_height=600
         )
 
-        colours = itertools.cycle(Bokeh[len(titles)])
+        colours = itertools.cycle(Bokeh[8]) # hardcode at 8 because no 2
 
         for t in titles:
             subdf = df[df['title'] == t]
@@ -275,8 +275,6 @@ def track_entrypoint(arguments):
        raise ValueError('track requires --db and --mfile be set')
 
     ProcessTrackerGenerator(mfile=arguments.mfile, database=arguments.db)
-    
-
 
 
 def plot_entrypoint(arguments):
