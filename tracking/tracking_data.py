@@ -9,8 +9,7 @@ from bokeh.plotting import figure, output_file, save
 from bokeh.models import ColumnDataSource, HoverTool
 from bokeh.layouts import gridplot
 from bokeh.models.widgets import Panel, Tabs
-from bokeh.transform import factor_cmap
-from bokeh.palettes import inferno, Spectral6
+from bokeh.palettes import Bokeh
 
 from process.io import mfile as mf
 from process import fortran
@@ -159,7 +158,6 @@ def plot_tracking_data(database):
 
     for k, v in data.tracked_variables.items():
         df = v.as_dataframe()
-        source = ColumnDataSource(df)
 
         parent = PythonFortranInterfaceVariables.parent_module(k)
 
@@ -174,37 +172,39 @@ def plot_tracking_data(database):
             plot_height=600
         )
 
-        figur.scatter(x='date', 
-            y='value', 
-            source=source, 
-            legend_field='title',
-            color=factor_cmap(field_name='title', 
-            palette=Spectral6, 
-            factors=titles)
-        )
-
-        colours = itertools.cycle(inferno(len(titles)))
+        colours = itertools.cycle(Bokeh[len(titles)])
 
         for t in titles:
             subdf = df[df['title'] == t]
             subsource = ColumnDataSource(subdf)
             colour = next(colours)
 
+            figur.scatter(x='date', 
+            y='value', 
+            source=subsource, 
+            legend_label=t,
+            color=colour
+        )
+
             figur.line(x='date', 
             y='value', 
             source=subsource, 
-            # legend_field='title',
+            legend_label=t,
             color=colour,
             line_color=colour)
 
+        figur.legend.click_policy="hide"
+
         hovertool = HoverTool(
             tooltips=[
-                ('Date', '@date{%Y-%m-%d %H:%M:%S}'),
-                ('Commit', '@annotation')
+                ('Title', '@title'),
+                ('Commit', '@annotation'),
+                ('Date', '@date{%Y-%m-%d %H:%M}'),
             ],
             formatters={
+                '@title': 'printf',
                 '@date': 'datetime',
-                '@annotation': 'printf'
+                '@annotation': 'printf',
             },
         )
 
@@ -265,6 +265,6 @@ class PythonFortranInterfaceVariables:
 
 if __name__ == '__main__':
     x = ProcessTrackerGenerator('/root/process/tracking/baseline_2018/baseline_2018_MFILE.DAT', '/root/process/tracking/db/')
-    x = ProcessTrackerGenerator('/root/process/tracking/baseline_2018/ref_baseline_2018_MFILE.DAT', '/root/process/tracking/db/')
+    x = ProcessTrackerGenerator('/root/process/tracking/baseline_2019/baseline_2019_MFILE.DAT', '/root/process/tracking/db/')
 
     plot_tracking_data('/root/process/tracking/db/')
