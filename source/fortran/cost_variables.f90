@@ -773,8 +773,8 @@ module cost_variables
     step_ucsc = &
       (/ 600.0D0, 600.0D0, 443.0D0, 600.0D0, 600.0D0, 600.0D0, 300.0D0, 1200.0D0, &
       1200.0D0 /)
-    ! step_ucshw = 269.638D0
-    ! step_ucshwc = 930.251D0
+    step_ucshw = 269.638D0
+    step_ucshwc = 930.251D0
     step_ucfnc = 104.3D0 
     step_ucoam = 74.4D0
     step_ucwst = 7.88D0
