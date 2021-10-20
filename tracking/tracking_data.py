@@ -1,15 +1,17 @@
 import datetime
-import warnings
 import os
 import json
 import itertools
 import pandas as pd
 import inspect
-from bokeh.plotting import figure, output_file, save
+import argparse
+from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, HoverTool
 from bokeh.layouts import gridplot
 from bokeh.models.widgets import Panel, Tabs
 from bokeh.palettes import Bokeh
+from bokeh.resources import CDN
+from bokeh.embed import file_html
 
 from process.io import mfile as mf
 from process import fortran
@@ -220,10 +222,15 @@ def plot_tracking_data(database):
     
 
     tabs = Tabs(tabs=panels)
-    output_file('plot.html')
+    
+    return file_html(tabs, CDN, 'PROCESS Regression Testing Visualisation')
 
-    save(tabs)
 
+def write_tracking_html_file(database, output):
+    tracking_html = plot_tracking_data(database)
+
+    with open(output, 'w') as f:
+        f.write(tracking_html)
 
 class PythonFortranInterfaceVariables:
 
@@ -263,8 +270,33 @@ class PythonFortranInterfaceVariables:
         return None
 
 
-if __name__ == '__main__':
-    x = ProcessTrackerGenerator('/root/process/tracking/baseline_2018/baseline_2018_MFILE.DAT', '/root/process/tracking/db/')
-    x = ProcessTrackerGenerator('/root/process/tracking/baseline_2019/baseline_2019_MFILE.DAT', '/root/process/tracking/db/')
+def track_entrypoint(arguments):
+    if not arguments.db or not arguments.mfile:
+       raise ValueError('track requires --db and --mfile be set')
 
-    plot_tracking_data('/root/process/tracking/db/')
+    ProcessTrackerGenerator(mfile=arguments.mfile, database=arguments.db)
+    
+
+
+
+def plot_entrypoint(arguments):
+    if not arguments.db or not arguments.out:
+       raise ValueError('plot requires --db and --out be set')
+
+    write_tracking_html_file(database=arguments.db, output=arguments.out)
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('mode', type=str, choices=['track', 'plot'])
+
+    parser.add_argument('-d','--db', type=str, default=None)
+    parser.add_argument('-o','--out', type=str, default=None)
+    parser.add_argument('-m','--mfile', type=str, default=None)
+
+    arguments = parser.parse_args()
+
+    if arguments.mode == 'track':
+        track_entrypoint(arguments)
+    elif arguments.mode == 'plot':
+        plot_entrypoint(arguments)
