@@ -259,6 +259,8 @@ module pfcoil_module
         else if (ipfloc(j) == 4) then
  
            !  PF coil is in general location
+           !  See issue 1418
+           !  https://git.ccfe.ac.uk/process/process/-/issues/1418
            do k = 1,ncls(j)
               zcls(j,k) = rminor * zref(j) * signn(k)
               rcls(j,k) = rminor * rref(j) + rmajor
@@ -270,7 +272,17 @@ module pfcoil_module
         end if
  
      end do
+     
+     !! Allocate current to the PF coils:
+     !  "Flux swing coils" participate in cancellation of the CS 
+     !  field during a flux swing. "Equilibrium coils" are varied
+     !  to create the equilibrium field, targeting the correct 
+     !  vertical field
+     !  As implemented, all coils are flux swing coils
+     !  As implemented, Location 3 and 4 coils are equilibrium
+     !  coils.
  
+     !  Flux swing coils:
      if (cohbop /= 0.0D0) then
  
         !  Find currents for plasma initiation to null field across plasma
@@ -299,11 +311,11 @@ module pfcoil_module
  
      end if
 
-      !! Allocate current to the PF coils:
     
-      !  PF coil currents determined by SVD targeting B
+      !  Equilibrium coil currents determined by SVD targeting B
       if (i_pf_current==1) then
          !  Simple coil current scaling for STs (good only for A < about 1.8)
+         !  Bypasses SVD solver
          if (itart==1.and.itartpf==0) then
  
            do i = 1,ngrp
@@ -381,6 +393,8 @@ module pfcoil_module
               else if (ipfloc(i) == 4) then
     
                  !  PF coil is generally placed
+                 !  See issue 1418
+                 !  https://git.ccfe.ac.uk/process/process/-/issues/1418
                  !  This is an equilibrium coil, current must be solved for
     
                  ngrp0 = ngrp0 + 1
