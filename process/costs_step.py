@@ -8,6 +8,8 @@ from process.fortran import heat_transport_variables as htv
 from process.fortran import physics_variables as pv
 from process.fortran import process_output as po
 from process.fortran import buildings_variables as bldgsv
+from process.fortran import times_variables as tv
+from process.utilities.f2py_string_patch import f2py_compatible_to_string
 
 
 class CostsStep:
@@ -103,9 +105,9 @@ class CostsStep:
             po.oshead(self.outfile, "Constructed Cost")
             po.ocosts(self.outfile, "(concost)", "Constructed Cost (M$)", cv.concost)
 
-        #  Cost of electricity
+        # Cost of electricity
         if cv.ireactor == 1 and cv.ipnet == 0:
-            cs.coelc_step(self.outfile, self.iprint)
+            self.coelc_step()
 
     def step_a20(self):
         """Account 20: Land and Rights."""
@@ -357,3 +359,157 @@ class CostsStep:
                 cs.step92,
             )
             po.ocosts(self.outfile, "(step93)", "Other Costs (M$)", cs.step93)
+
+    def coelc_step(self):
+        """Cost of electricity."""
+        (
+            anncap,
+            anncdr,
+            anncp,
+            anndecom,
+            anndiv,
+            annfuel,
+            annfuelt,
+            annfwbl,
+            annoam,
+            anntot,
+            annwst,
+            coecdr,
+            coecp,
+            coedecom,
+            coediv,
+            coefuel,
+            coefwbl,
+            coewst,
+            crfcdr,
+            crfcp,
+            crfdiv,
+            crffwbl,
+            fefcdr,
+            fefcp,
+            fefdiv,
+            feffwbl,
+            fwbllife,
+            kwhpy,
+            cv.moneyint,
+            cv.capcost,
+            cv.coecap,
+            cv.coeoam,
+            cv.coefuelt,
+            cv.coe,
+            title,
+        ) = cs.coelc_step(
+            cv.discount_rate,
+            cv.tlife,
+            cv.ucfuel,
+            cv.uche3,
+            cv.cdcost,
+            cv.divcst,
+            cv.fcdfuel,
+            cv.ifueltyp,
+            cv.fwallcst,
+            cv.fcr0,
+            cv.fcap0cp,
+            cv.fcap0,
+            cv.dtlife,
+            cv.divlife,
+            cv.dintrt,
+            cv.decomf,
+            cv.cpstcst,
+            cv.cplife,
+            cv.concost,
+            cv.cfactr,
+            cv.cdrlife,
+            cv.step_ref,
+            cv.step_currency,
+            cv.step_ucoam,
+            cv.step_ucwst,
+            fwbsv.bktlife,
+            htv.pnetelmw,
+            pv.fhe3,
+            pv.itart,
+            pv.wtgpd,
+            tv.tburn,
+            tv.tcycle,
+            constants.n_day_year,
+        )
+
+        if self.iprint == 0 or cv.output_costs == 0:
+            return
+
+        # Output section
+        po.oshead(self.outfile, "Interest during Construction")
+        po.ocosts(
+            self.outfile, "(moneyint)", "Interest during construction (M$)", cv.moneyint
+        )
+        po.oshead(self.outfile, "Total Capital Investment")
+        po.ocosts(
+            self.outfile, "(capcost)", "Total capital investment (M$)", cv.capcost
+        )
+
+        title = "Cost of Electricity, " + f2py_compatible_to_string(cv.step_currency)
+        po.oheadr(self.outfile, title)
+
+        po.ovarrf(
+            self.outfile, "First wall / blanket life (years)", "(fwbllife)", fwbllife
+        )
+        po.ovarrf(self.outfile, "Divertor life (years)", "(divlife.)", cv.divlife)
+        if pv.itart == 1:
+            po.ovarrf(self.outfile, "Centrepost life (years)", "(cplife.)", cv.cplife)
+
+        po.ovarrf(self.outfile, "Cost of electricity (m$/kWh)", "(coe)", cv.coe)
+        po.osubhd(self.outfile, "Power Generation Costs :")
+
+        if annfwbl != annfwbl or annfwbl > 1.0e10 or annfwbl < 0.0:
+            po.ocmmnt(self.outfile, "Problem with annfwbl")
+            po.ocmmnt(self.outfile, "fwblkcost=", cv.fwallcst)
+            po.ocmmnt(self.outfile, "crffwbl=", crffwbl, "  fcap0cp=", cv.fcap0cp)
+            po.ocmmnt(self.outfile, "feffwbl=", feffwbl, "  fwbllife=", fwbllife)
+
+        po.write(
+            self.outfile, "\t" * 36 + "Annual Costs, M$" + "\t" * 6 + "COE, m$/kWh"
+        )
+        po.dblcol(self.outfile, "Capital Investment", anncap, cv.coecap)
+        po.dblcol(self.outfile, "Operation & Maintenance", annoam, cv.coeoam)
+        po.dblcol(self.outfile, "Decommissioning Fund", anndecom, coedecom)
+        po.write(self.outfile, "Fuel Charge Breakdown")
+        po.dblcol(self.outfile, "\tBlanket & first wall", annfwbl, coefwbl)
+        po.dblcol(self.outfile, "\tDivertors", anndiv, coediv)
+        po.dblcol(self.outfile, "\tCentrepost (TART only)", anncp, coecp)
+        po.dblcol(self.outfile, "\tAuxiliary Heating", anncdr, coecdr)
+        po.dblcol(self.outfile, "\tActual Fuel", annfuel, coefuel)
+        po.dblcol(self.outfile, "\tWaste Disposal", annwst, coewst)
+        po.dblcol(self.outfile, "Total Fuel Cost", annfuelt, cv.coefuelt)
+        po.dblcol(self.outfile, "Total Cost", anntot, cv.coe)
+
+        if cv.ifueltyp == 1:
+            po.oshead(self.outfile, "Replaceable Components Direct Capital Cost")
+            po.ovarrf(
+                self.outfile,
+                "First wall and Blanket direct capital cost (M$)",
+                "(fwblkcost)",
+                cv.fwblkcost,
+            )
+            po.ovarrf(
+                self.outfile, "Divertor direct capital cost (M$)", "(divcst)", cv.divcst
+            )
+            if pv.itart == 1:
+                po.ovarrf(
+                    self.outfile,
+                    "Centrepost direct capital cost (M$)",
+                    "(cpstcst)",
+                    cv.cpstcst,
+                )
+
+            po.ovarrf(
+                self.outfile,
+                "Plasma heating/CD system cap cost (M$)",
+                "",
+                cv.cdcost * cv.fcdfuel / (1.0e0 - cv.fcdfuel),
+            )
+            po.ovarrf(
+                self.outfile,
+                "Fraction of CD cost --> fuel cost",
+                "(fcdfuel)",
+                cv.fcdfuel,
+            )

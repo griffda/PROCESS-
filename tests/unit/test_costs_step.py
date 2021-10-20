@@ -534,10 +534,12 @@ def test_step_indirect_costs(monkeypatch, costs_step):
     assert cs.step92 == 325
     assert cs.step93 == 150
 
-def test_coelc_step(monkeypatch):
+def test_coelc_step(monkeypatch, costs_step):
     """Test electricity cost calculations
     :param monkeypatch: fixture for mocking
     :type monkeypatch: MonkeyPatch
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
     #Mock module vars
     monkeypatch.setattr(cv, "coecap", 0.0)
@@ -574,8 +576,8 @@ def test_coelc_step(monkeypatch):
     monkeypatch.setattr(cv, "tlife", 10.0)
     monkeypatch.setattr(cv, "dtlife", 10.0)
 
-    #Test that coe is calculated correctly
-    cs.coelc_step(0, 0)
+    # Test that coe is calculated correctly
+    costs_step.coelc_step()
     expected_coe = 1.0369639053239339e-1
     observed_coe = cv.coe
     assert pytest.approx(observed_coe) == expected_coe

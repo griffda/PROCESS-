@@ -1288,48 +1288,42 @@ contains
     step93 = step93_per * cdirt
   end subroutine step_indirect_costs
 
-  subroutine coelc_step(outfile,iprint)
-
+  subroutine coelc_step(discount_rate, tlife, ucfuel, uche3, cdcost, &
+    divcst, fcdfuel, ifueltyp, fwallcst, fcr0, fcap0cp, &
+    fcap0, dtlife, divlife, dintrt, decomf, cpstcst, cplife, concost, &
+    cfactr, cdrlife, step_ref, step_currency, &
+    step_ucoam, step_ucwst, bktlife, pnetelmw, fhe3, itart, wtgpd, tburn, &
+    tcycle, n_day_year, &
+    anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
+    annfuelt, annfwbl, annoam, anntot, annwst, coecdr,  &
+    coecp, coedecom, coediv, coefuel, coefwbl, coewst, crfcdr, crfcp, &
+    crfdiv, crffwbl, fefcdr, fefcp, fefdiv, feffwbl, fwbllife, kwhpy, &
+    moneyint, capcost, coecap, coeoam, coefuelt, coe, title)
     !! Routine to calculate the cost of electricity for a fusion power plant
-    !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! outfile : input integer : output file unit
-    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! author: S I Muldrew,  CCFE, Culham Science Centre
     !! This routine performs the calculation of the cost of electricity
     !! for a fusion power plant.
-    !! <P>Annual costs are in megadollars/year, electricity costs are in
+    !! Annual costs are in megadollars/year, electricity costs are in
     !! millidollars/kWh, while other costs are in megadollars.
     !! All values are based on 1980 dollars.
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use cost_variables, only: output_costs, discount_rate, tlife, ucfuel, uche3, cdcost, &
-      divcst, fcdfuel, ifueltyp, moneyint, fwallcst, fcr0, fcap0cp, &
-      fcap0, dtlife, divlife, dintrt, decomf, cpstcst, cplife, concost, coeoam, &
-      coefuelt, coecap, coe, cfactr, cdrlife, capcost, step_ref, step_currency, &
-      step_ucoam, step_ucwst
-    use fwbs_variables, only: bktlife
-    use heat_transport_variables, only: pnetelmw
-    use physics_variables, only: fhe3, itart, wtgpd
-    use times_variables, only: tburn, tcycle
-    use process_output, only: oshead, ocosts, oblnkl,  ovarrf, osubhd, oheadr
-    use constants, only: n_day_year
-
     implicit none
 
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-
-    ! Local variables
-    real(8) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
-         annfuelt,annfwbl,annoam,anntot,annwst,coecdr, &
-         coecp,coedecom,coediv,coefuel,coefwbl,coewst,crfcdr,crfcp, &
-         crfdiv,crffwbl,fefcdr,fefcp,fefdiv,feffwbl,fwbllife,kwhpy
-    character(len=80) :: title
-         ! annoam1,
+    real(8), intent(in) :: discount_rate, tlife, ucfuel, uche3, cdcost, &
+      divcst, fcdfuel, ifueltyp, fwallcst, fcr0, fcap0cp, &
+      fcap0, dtlife, divlife, dintrt, decomf, cpstcst, cplife, concost, &
+      cfactr, cdrlife, step_ref, &
+      step_ucoam, step_ucwst, bktlife, pnetelmw, fhe3, itart, wtgpd, tburn, &
+      tcycle, n_day_year
+    character(len=50), intent(in) :: step_currency
+    real(8), intent(out) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
+      annfuelt,annfwbl,annoam,anntot,annwst,coecdr, &
+      coecp,coedecom,coediv,coefuel,coefwbl,coewst,crfcdr,crfcp, &
+      crfdiv,crffwbl,fefcdr,fefcp,fefdiv,feffwbl,fwbllife,kwhpy,moneyint, &
+      capcost, coecap, coeoam, coefuelt, coe
+    character(len=80), intent(out) :: title
          
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
     ! Number of kWh generated each year
     kwhpy = 1.0D3 * pnetelmw * (24.0D0*n_day_year) * cfactr * tburn/tcycle
 
@@ -1504,74 +1498,5 @@ contains
 
   !  Total cost of electricity
   coe = coecap + coefuelt + coeoam + coedecom
-
-  if ((iprint == 0).or.(output_costs == 0)) return
-  
-  !  Output section
-  call oshead(outfile,'Interest during Construction')
-  call ocosts(outfile,'(moneyint)','Interest during construction (M$)',moneyint)
-  call oshead(outfile,'Total Capital Investment')
-  call ocosts(outfile,'(capcost)','Total capital investment (M$)',capcost)
-
-  title = 'Cost of Electricity ('// trim(step_currency) // ')'
-  call oheadr(outfile,trim(title))
-
-  call ovarrf(outfile,'First wall / blanket life (years)','(fwbllife)',fwbllife)
-  call ovarrf(outfile,'Divertor life (years)','(divlife.)',divlife)
-  if (itart == 1) then
-    call ovarrf(outfile,'Centrepost life (years)','(cplife.)',cplife)
-  end if
-  call ovarrf(outfile,'Cost of electricity (m$/kWh)','(coe)',coe)
-  call osubhd(outfile,'Power Generation Costs :')
-
-  if ((annfwbl /= annfwbl).or.(annfwbl > 1.0D10).or.(annfwbl < 0.0D0)) then
-    write(outfile,*)'Problem with annfwbl'
-    write(outfile,*)'fwblkcost=', fwallcst
-    write(outfile,*)'crffwbl=', crffwbl,   '  fcap0cp=', fcap0cp
-    write(outfile,*)'feffwbl=', feffwbl,   '  fwbllife=', fwbllife
-  end if
-
-  write(outfile,200) &
-        anncap,coecap, &
-        annoam,coeoam, &
-        anndecom,coedecom, &
-        annfwbl,coefwbl, &
-        anndiv,coediv, &
-        anncp,coecp, &
-        anncdr,coecdr, &
-        annfuel,coefuel, &
-        annwst,coewst, &
-        annfuelt,coefuelt, &
-        anntot,coe
-
-  200 format( &
-        t76,'Annual Costs, M$       COE, m$/kWh'// &
-        1x,'Capital Investment',t80,f10.2,10x,f10.2/ &
-        1x,'Operation & Maintenance',t80,f10.2,10x,f10.2/ &
-        1x,'Decommissioning Fund',t80,f10.2,10x,f10.2/ &
-        1x,'Fuel Charge Breakdown'// &
-        5x,'Blanket & first wall',t72,f10.2,10x,f10.2/ &
-        5x,'Divertors',t72,f10.2,10x,f10.2/ &
-        5x,'Centrepost (TART only)',t72,f10.2,10x,f10.2/ &
-        5x,'Auxiliary Heating',t72,f10.2,10x,f10.2/ &
-        5x,'Actual Fuel',t72,f10.2,10x,f10.2/ &
-        5x,'Waste Disposal',t72,f10.2,10x,f10.2/ &
-        1x,'Total Fuel Cost',t80,f10.2,10x,f10.2// &
-        1x,'Total Cost',t80,f10.2,10x,f10.2 )
-
-  if (ifueltyp == 1) then
-    call oshead(outfile,'Replaceable Components Direct Capital Cost')
-    call ovarrf(outfile,'First wall and Blanket direct capital cost (M$)','(fwblkcost)',fwblkcost)
-
-    call ovarrf(outfile,'Divertor direct capital cost (M$)','(divcst)',divcst)
-    if (itart == 1) then
-      call ovarrf(outfile,'Centrepost direct capital cost (M$)','(cpstcst)',cpstcst)
-    end if
-    call ovarrf(outfile,'Plasma heating/CD system cap cost (M$)','',cdcost*fcdfuel/(1.0D0-fcdfuel))
-    call ovarrf(outfile,'Fraction of CD cost --> fuel cost','(fcdfuel)',fcdfuel)
-
-  end if
-
   end subroutine coelc_step
-
 end module costs_step_module
