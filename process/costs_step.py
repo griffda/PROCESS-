@@ -221,13 +221,54 @@ class CostsStep:
             po.ocosts(self.outfile, "(step21)", "Total Account 21 Cost (M$)", cs.step21)
 
     def step_a22(self):
-        """Account 22 : Reactor Plant Equipment."""
+        """Account 22 : Reactor Plant Equipment.
+        
+        author: S I Muldrew, CCFE, Culham Science Centre
+        This routine evaluates the Account 22 (Reactor Plant Equipment)
+        costs.
+        STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+        """
         if self.iprint == 1 and cv.output_costs == 1:
             po.oshead(self.outfile, "22. Reactor Plant Equipment")
 
-        step2298, step2299, cs.step22 = cs.step_a22(
-            self.outfile, self.iprint, cv.step_con
-        )
+        cs.step22 = 0.0
+        step2298 = 0.0
+    
+        # Account 22.01 : Reactor Equipment
+        step2201, spares = cs.step_a2201(self.outfile,self.iprint)
+        cs.step22 += step2201
+        step2298 += spares
+
+        #  Account 22.02 : Heat Transfer Systems
+        cs.step22 += cs.step_a2202(self.outfile,self.iprint)
+
+        #  Account 22.03 : Cryogenic Cooling System
+        cs.step22 += cs.step_a2203(self.outfile,self.iprint)
+
+        #  Account 22.04 : Waste Treatment and Disposal
+        cs.step22 += cs.step_a2204(self.outfile,self.iprint)
+
+        #  Account 22.05 : Fuel Handling and Storage
+        step2205, spares = cs.step_a2205(self.outfile,self.iprint)
+        cs.step22 += step2205
+        step2298 += spares
+
+        #  Account 22.06 : Other Reactor Plant Equipment
+        step2206, spares = cs.step_a2206(self.outfile,self.iprint)
+        cs.step22 += step2206
+        step2298 += spares
+
+        #  Account 22.07 : Instrumentation and Control
+        cs.step22 += cs.step_a2207(self.outfile,self.iprint)
+
+        # 22.98 Spares
+        # STARFIRE percentage of components
+        cs.step22 += step2298
+
+        # 21.99 Contingency
+        # STARFIRE 15%
+        step2299 = cv.step_con * cs.step22
+        cs.step22 += step2299
 
         # Output costs
         if self.iprint == 1 and cv.output_costs == 1:

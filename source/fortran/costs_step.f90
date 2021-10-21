@@ -201,57 +201,7 @@ contains
     step21 = step21 + step2199
   end subroutine step_a21
 
-  subroutine step_a22(outfile, iprint, step_con, step2298, step2299, step22)
-    !! Account 22 : Reactor Plant Equipment
-    !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! This routine evaluates the Account 22 (Reactor Plant Equipment)
-    !! costs.
-    !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    implicit none
-
-    ! Arguments
-    integer, intent(in) :: outfile, iprint
-    real(8), intent(in) :: step_con
-    real(8), intent(out) :: step2298, step2299, step22
-  
-    ! Initialise as zero
-    step22 = 0.0D0
-    step2298 = 0.0D0   ! Contingency
-  
-    !  Account 22.01 : Reactor Equipment
-    call step_a2201(step2298,outfile,iprint, step22)
-
-    !  Account 22.02 : Heat Transfer Systems
-    call step_a2202(outfile,iprint, step22)
-
-    !  Account 22.03 : Cryogenic Cooling System
-    call step_a2203(outfile,iprint, step22)
-
-    !  Account 22.04 : Waste Treatment and Disposal
-    call step_a2204(outfile,iprint, step22)
-
-    !  Account 22.05 : Fuel Handling and Storage
-    call step_a2205(step2298,outfile,iprint, step22)
-
-    !  Account 22.06 : Other Reactor Plant Equipment
-    call step_a2206(step2298,outfile,iprint, step22)
-
-    !  Account 22.07 : Instrumentation and Control
-    call step_a2207(outfile,iprint, step22)
-
-    ! 22.98 Spares
-    ! STARFIRE percentage of components
-    step22 = step22 + step2298
-
-    ! 21.99 Contingency
-    ! STARFIRE 15%
-    step2299 = step_con * step22
-    step22 = step22 + step2299
-  end subroutine step_a22
-  
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a2201(step2298,outfile,iprint, step22)
+  subroutine step_a2201(outfile,iprint, step2201, spares)
 
     !! Account 22.01 : Reactor Equipment
     !! author: S I Muldrew, CCFE, Culham Science Centre
@@ -273,11 +223,11 @@ contains
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
-    real(8), intent(inout) :: step2298
-    real(8), intent(out) :: step22
+    real(8), intent(out) :: step2201
+    real(8), intent(out) :: spares
 
     ! Local variables
-    real(8):: step2201, step220101, step22010101, step22010102, step2201010201, &
+    real(8):: step220101, step22010101, step22010102, step2201010201, &
                step2201010202, step2201010203, step220102, step22010301, &
                step22010302, step22010303, step22010304, step220104, &
                step220105, step220106, step220107, step220108, step220109, &
@@ -287,7 +237,8 @@ contains
   
     ! Initialise as zero
     step2201 = 0.0D0
-     
+    spares = 0.0D0
+
     ! 22.01.01 Blanket and First Wall
     call step_a220101(step220101, step22010101, step22010102, step2201010201, &
                       step2201010202, step2201010203)
@@ -298,7 +249,7 @@ contains
     step220102 = step_ref(21) * (fwarea / fwarea_star)
     step2201 = step2201 + step220102
     ! STARFIRE percentage for spares
-    step2298 = step2298 + 9.985D-2 *  step220102
+    spares = 9.985D-2 *  step220102
   
     ! 22.01.03.01 TF Coils
     step22010301 = step_a22010301()
@@ -309,21 +260,21 @@ contains
     step22010302 = step_a22010302()
     step2201 = step2201 + step22010302
     ! STARFIRE percentage for spares
-    step2298 = step2298 + 3.269D-1 * step22010302
+    spares = spares + 3.269D-1 * step22010302
 
     ! 22.01.03.03 Central Solenoid
     ! Original STARFIRE value, scaling with fusion island volume
     step22010303 = step_ref(24) * (vfi / vfi_star)
     step2201 = step2201 + step22010303
     ! STARFIRE percentage for spares
-    step2298 = step2298 + 6.124D-1 * step22010303
+    spares = spares + 6.124D-1 * step22010303
 
     ! 22.01.03.04 Control Coils
     ! Original STARFIRE value, scaling with fusion island volume
     step22010304 = step_ref(25) * (vfi / vfi_star)
     step2201 = step2201 + step22010304
     ! STARFIRE percentage for spares
-    step2298 = step2298 + 1.075D-1 * step22010304
+    spares = spares + 1.075D-1 * step22010304
   
     ! 22.01.04 Auxiliary Heating and Current Drive
     ! Original STARFIRE value, scaling with auxiliary power
@@ -334,21 +285,21 @@ contains
     end if
     step2201 = step2201 + step220104
     ! STARFIRE percentage for spares
-    step2298 = step2298 + 2.335D-1 * step220104
+    spares = spares + 2.335D-1 * step220104
   
     ! 22.01.05 Primary Structure and Support
     ! Original STARFIRE value, scaling with fusion island volume
     step220105 = step_ref(27) * (vfi / vfi_star)
     step2201 = step2201 + step220105
     ! STARFIRE percentage for spares
-    step2298 = step2298 + 6.824D-2 * step220105
+    spares = spares + 6.824D-2 * step220105
   
     ! 22.01.06 Reactor Vacuum System
     ! Original STARFIRE value, scaling with fusion island volume
     step220106 = step_ref(28) * (vfi / vfi_star)**(2.0D0/3.0D0)
     step2201 = step2201 + step220106
     ! STARFIRE percentage for spares
-    step2298 = step2298 + 1.893D-1 * step220106
+    spares = spares + 1.893D-1 * step220106
   
     ! 22.01.07 Power Supplies
     ! Original STARFIRE value, scaling with fusion island volume
@@ -379,9 +330,6 @@ contains
     end if
     step2201 = step2201 + step220110
   
-    ! Add to Account 22 total
-    step22 = step22 + step2201
-
     ! Output costs
     if ((iprint==1).and.(output_costs == 1)) then
       write(outfile,*) '******************* 22.01 Reactor Equipment'
@@ -719,7 +667,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine step_a2202(outfile,iprint, step22)
+  subroutine step_a2202(outfile,iprint, step2202)
 
     !! Account 22.02 : Heat Transfer System
     !! author: S I Muldrew, CCFE, Culham Science Centre
@@ -739,12 +687,7 @@ contains
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
-    real(8), intent(out) :: step22
-  
-    ! Local variables
-    real(8):: step2202
-  
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    real(8), intent(out) :: step2202
   
     ! Initialise as zero
     step2202 = 0.0D0
@@ -754,9 +697,6 @@ contains
     step2202 = 9.2238D4 * pgrossmw * 1.0D-6
     ! Converted to M$
   
-    ! Add to Account 22 total
-    step22 = step22 + step2202
-
     ! Output costs
     if ((iprint==1).and.(output_costs == 1)) then
       write(outfile,*) '******************* 22.02 Heat Transfer System'
@@ -765,12 +705,9 @@ contains
       call ocosts(outfile,'(step2202)','Total Account 22.02 Cost (M$)', step2202)
       call oblnkl(outfile)
     end if
-  
   end subroutine step_a2202
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a2203(outfile,iprint, step22)
+  subroutine step_a2203(outfile,iprint, step2203)
 
     !! Account 22.03 : Cryogenic Cooling System
     !! author: S I Muldrew, CCFE, Culham Science Centre
@@ -788,13 +725,11 @@ contains
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
-    real(8), intent(out) :: step22
+    real(8), intent(out) :: step2203
   
     ! Local variables
     real(8):: &
-    step220301, step220302, step220303, step220304, step2203
-  
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    step220301, step220302, step220303, step220304
   
     ! Initialise as zero
     step2203 = 0.0D0
@@ -819,9 +754,6 @@ contains
     step220304 = step_ref(37) * (vfi / vfi_star)**(2.0D0/3.0D0)
     step2203 = step2203 + step220304
   
-    ! Add to Account 22 total
-    step22 = step22 + step2203
-
     ! Output costs
     if ((iprint==1).and.(output_costs == 1)) then
       write(outfile,*) '******************* 22.03 Cryogenic Cooling System'
@@ -833,12 +765,9 @@ contains
       call ocosts(outfile,'(step2203)','Total Account 22.03 Cost (M$)', step2203)
       call oblnkl(outfile)
     end if
-  
   end subroutine step_a2203
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a2204(outfile,iprint, step22)
+  subroutine step_a2204(outfile,iprint, step2204)
 
     !! Account 22.04 : Waste Treatment and Disposal
     !! author: S I Muldrew, CCFE, Culham Science Centre
@@ -856,13 +785,11 @@ contains
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
-    real(8), intent(out) :: step22
+    real(8), intent(out) :: step2204
   
     ! Local variables
     real(8):: &
-    step220401, step220402, step220403, step2204
-  
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    step220401, step220402, step220403
   
     ! Initialise as zero
     step2204 = 0.0D0
@@ -882,9 +809,6 @@ contains
     step220403 = step_ref(40) * (pth / ptherm_star)**0.6D0 
     step2204 = step2204 + step220403
   
-    ! Add to Account 22 total
-    step22 = step22 + step2204
-
     ! Output costs
     if ((iprint==1).and.(output_costs == 1)) then
       write(outfile,*) '******************* 22.04 Waste Treatment and Disposal'
@@ -895,12 +819,9 @@ contains
       call ocosts(outfile,'(step2204)','Total Account 22.04 Cost (M$)', step2204)
       call oblnkl(outfile)
     end if
-  
   end subroutine step_a2204
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a2205(step2298,outfile,iprint, step22)
+  subroutine step_a2205(outfile,iprint, step2205, spares)
 
     !! Account 22.05 : Fuel Handling and Storage
     !! author: S I Muldrew, CCFE, Culham Science Centre
@@ -918,25 +839,18 @@ contains
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
-    real(8), intent(inout) :: step2298
-    real(8), intent(out) :: step22
-  
-    ! Local variables
-    real(8):: step2205
-  
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    real(8), intent(out) :: step2205, spares
   
     ! Initialise as zero
     step2205 = 0.0D0
+    spares = 0.0D0
      
     ! 22.05 Fuel Handling and Storage
     ! Original STARFIRE value, scaling with thermal power
     step2205 = step_ref(41) * (pth / ptherm_star)**0.6D0 
 
-    ! Add to Account 22 total
-    step22 = step22 + step2205
     ! STARFIRE percentage for spares
-    step2298 = step2298 + 5.026D-2 * step2205
+    spares = spares + 5.026D-2 * step2205
 
     ! Output costs
     if ((iprint==1).and.(output_costs == 1)) then
@@ -946,12 +860,9 @@ contains
       call ocosts(outfile,'(step2205)','Total Account 22.05 Cost (M$)', step2205)
       call oblnkl(outfile)
     end if
-  
   end subroutine step_a2205
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a2206(step2298,outfile,iprint, step22)
+  subroutine step_a2206(outfile,iprint, step2206, spares)
 
     !! Account 22.06 : Other Reactor Plant Equipment
     !! author: S I Muldrew, CCFE, Culham Science Centre
@@ -969,18 +880,16 @@ contains
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
-    real(8), intent(inout) :: step2298
-    real(8), intent(out) :: step22
+    real(8), intent(out) :: step2206, spares
   
     ! Local variables
     real(8):: &
     step220601, step220602, step220603, step220604, step220605, &
-    step220606, step220607, step220608, step2206
-  
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    step220606, step220607, step220608
   
     ! Initialise as zero
     step2206 = 0.0D0
+    spares = 0.0D0
      
     ! 22.06.01 Maintenance Equipment
     ! Original STARFIRE value, scaling with fusion island volume
@@ -988,7 +897,7 @@ contains
     step220601 = 0.0 ! step_ref(42) * (vfi / vfi_star)**(2.0D0/3.0D0)
     step2206 = step2206 + step220601
     ! STARFIRE percentage for spares
-    step2298 = step2298 + 4.308D-1 * step220601
+    spares = spares + 4.308D-1 * step220601
   
     ! 22.06.02 Special Heating Systems
     ! Original STARFIRE value, scaling with thermal power
@@ -1020,16 +929,13 @@ contains
     step220607 = step_ref(48) * (pth / ptherm_star)**0.6D0
     step2206 = step2206 + step220607
     ! STARFIRE percentage for spares
-    step2298 = step2298 + 8.3D-1 * (pth / ptherm_star)**0.6D0
+    spares = spares + 8.3D-1 * (pth / ptherm_star)**0.6D0
   
     ! 22.06.08 Standby Cooling System
     ! Original STARFIRE value, scaling with thermal power
     step220608 = step_ref(49) * (pth / ptherm_star)**0.6D0
     step2206 = step2206 + step220608
   
-    ! Add to Account 22 total
-    step22 = step22 + step2206
-
     ! Output costs
     if ((iprint==1).and.(output_costs == 1)) then
       write(outfile,*) '******************* 22.06 Other Reactor Plant Equipment'
@@ -1045,12 +951,9 @@ contains
       call ocosts(outfile,'(step2206)','Total Account 22.06 Cost (M$)', step2206)
       call oblnkl(outfile)
     end if
-  
   end subroutine step_a2206
  
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a2207(outfile,iprint, step22)
+  subroutine step_a2207(outfile,iprint, step2207)
 
     !! Account 22.07 : Instrumentation and Control
     !! author: S I Muldrew, CCFE, Culham Science Centre
@@ -1068,21 +971,14 @@ contains
   
     ! Arguments
     integer, intent(in) :: iprint,outfile
-    real(8), intent(out) :: step22
+    real(8), intent(out) :: step2207
 
-    ! Local variables
-    real(8):: step2207
-  
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
     ! Initialise as zero
     step2207 = 0.0D0
 
     ! 22.07 Instrumentation and Control
     ! Original STARFIRE value, scaling with thermal power
     step2207 = step_ref(50) * (pth / ptherm_star)**0.6D0
-    ! Add to Account 22 total
-    step22 = step22 + step2207
 
     ! Output costs
     if ((iprint==1).and.(output_costs == 1)) then
@@ -1092,7 +988,6 @@ contains
       call ocosts(outfile,'(step2207)','Total Account 22.07 Cost (M$)', step2207)
       call oblnkl(outfile)
     end if
-  
   end subroutine step_a2207
 
   subroutine step_a23(step_ref, step_con, pgrossmw, step23a, step2303, &

@@ -274,9 +274,11 @@ def test_step_a2201(monkeypatch, costs_step):
     monkeypatch.setattr(cs, "rmajor_star", 1e3)
     monkeypatch.setattr(cs, "rminor_star", 1e3)
     
-    exp = 1.9762381e3
-    obs = cs.step_a2201(0, 0, 0)
-    assert pytest.approx(obs) == exp
+    exp1 = 1.9762381e3
+    exp2 = 3.86957425e2
+    step2201, spares = cs.step_a2201(0, 0)
+    assert pytest.approx(step2201) == exp1
+    assert pytest.approx(spares) == exp2
 
 def test_step_a220101(monkeypatch):
     """Validate sum of cost account 22.01.01.
@@ -421,9 +423,11 @@ def test_step_a2205(costs_step):
     :param costs_step: fixture to mock commonly-used cost vars
     :type costs_step: process.costs_step.CostsStep
     """
-    obs = cs.step_a2205(0, 0, 0)
-    exp = 3.86e1
-    assert pytest.approx(obs) == exp
+    exp1 = 3.86e1
+    exp2 = 1.940036
+    step2205, spares = cs.step_a2205(0, 0)
+    assert pytest.approx(step2205) == exp1
+    assert pytest.approx(spares) == exp2
 
 def test_step_a2206(costs_step):
     """Validate sum of cost account 22.06.
@@ -431,9 +435,11 @@ def test_step_a2206(costs_step):
     :param costs_step: fixture to mock commonly-used cost vars
     :type costs_step: process.costs_step.CostsStep
     """
-    exp = 5.45e0
-    obs = cs.step_a2206(0, 0, 0)
-    assert pytest.approx(obs) == exp
+    exp1 = 5.45e0
+    exp2 = 8.3e-1
+    step2206, spares = cs.step_a2206(0, 0)
+    assert pytest.approx(step2206) == exp1
+    assert pytest.approx(spares) == exp2
 
 
 def test_step_a2207(costs_step):
