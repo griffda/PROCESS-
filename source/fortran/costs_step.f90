@@ -201,39 +201,31 @@ contains
     step21 = step21 + step2199
   end subroutine step_a21
 
-  subroutine step_a2201(outfile,iprint, step2201, spares)
-
+  subroutine step_a2201(step_ref, fwarea, ifueltyp, fcdfuel, &
+    pinjmw, rmajor, rminor, step2201, spares, divcst, cdcost, step220101, &
+    step22010101, step22010102, step2201010201, &
+    step2201010202, step2201010203, step220102, step22010301, &
+    step22010302, step22010303, step22010304, step220104, &
+    step220105, step220106, step220107, step220108, step220109, &
+    step220110)
     !! Account 22.01 : Reactor Equipment
     !! author: S I Muldrew, CCFE, Culham Science Centre
     !! None
     !! This routine evaluates the Account 22.01 (Reactor Equipment)
     !! costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use build_variables, only: fwarea
-    use cost_variables, only: output_costs, step_ref, ifueltyp, fcdfuel, &
-      divcst, cdcost
-    use current_drive_variables, only: pinjmw
-    use physics_variables, only: rmajor, rminor
-    use process_output, only: ocosts, oblnkl
-    
     implicit none
   
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-    real(8), intent(out) :: step2201
-    real(8), intent(out) :: spares
-
-    ! Local variables
-    real(8):: step220101, step22010101, step22010102, step2201010201, &
-               step2201010202, step2201010203, step220102, step22010301, &
-               step22010302, step22010303, step22010304, step220104, &
-               step220105, step220106, step220107, step220108, step220109, &
-               step220110
-  
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: fwarea, ifueltyp, fcdfuel, &
+      pinjmw, rmajor, rminor
+    real(8), intent(out) :: step2201, spares, divcst, cdcost, step220101, &
+      step22010101, step22010102, step2201010201, &
+      step2201010202, step2201010203, step220102, step22010301, &
+      step22010302, step22010303, step22010304, step220104, &
+      step220105, step220106, step220107, step220108, step220109, &
+      step220110
   
     ! Initialise as zero
     step2201 = 0.0D0
@@ -329,45 +321,6 @@ contains
       divcst = 0.0D0
     end if
     step2201 = step2201 + step220110
-  
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      write(outfile,*) '******************* 22.01 Reactor Equipment'
-      if (ifueltyp==0)then
-        write(outfile,*) '******************* 22.01.01 Blanket and First Wall Equipment'
-        call ocosts(outfile,'(step22010101)','Total First Wall Cost (M$)', step22010101)
-        call oblnkl(outfile)
-        call ocosts(outfile,'(step2201010201)','Blanket Multiplier Material (M$)', step2201010201)
-        call ocosts(outfile,'(step2201010202)','Blanket Breeder Material (M$)', step2201010202)
-        call ocosts(outfile,'(step2201010203)','Blanket Steel Costs (M$)', step2201010203)
-        call ocosts(outfile,'(step22010102)','Total Blanket Cost (M$)', step22010102)
-        call oblnkl(outfile)
-        call ocosts(outfile,'(step220101)','Total Account 22.01.01 Cost (M$)', step220101)
-        call oblnkl(outfile)
-      else if (ifueltyp==1)then
-        call ocosts(outfile,'(step220101)','Blanket and First Wall (Treated as Fuel) (M$)', step220101)
-      end if
-      call ocosts(outfile,'(step220102)','Shield (M$)', step220102)
-      call ocosts(outfile,'(step22010301)','TF Coils (M$)', step22010301)
-      call ocosts(outfile,'(step22010302)','PF Coils (M$)', step22010302)
-      call ocosts(outfile,'(step22010303)','Central Solenoid (M$)', step22010303)
-      call ocosts(outfile,'(step22010304)','Control Coils (M$)', step22010304)
-      if (ifueltyp==0)then
-        call ocosts(outfile,'(step220104)','Auxiliary Heating and Current Drive (M$)', step220104)
-      else if (ifueltyp==1)then
-        call ocosts(outfile,'(step220104)','Auxiliary Heating and Current Drive (Fraction as Fuel) (M$)', step220104)
-      end if
-      call ocosts(outfile,'(step220105)','Primary Structure and Support (M$)', step220105)
-      call ocosts(outfile,'(step220106)','Reactor Vacuum System (M$)', step220106)
-      call ocosts(outfile,'(step220107)','Power Supplies (M$)', step220107)
-      call ocosts(outfile,'(step220108)','Impurity Control (M$)', step220108)
-      call ocosts(outfile,'(step220109)','ECRH Plasma Breakdown (M$)', step220109)
-      call ocosts(outfile,'(step220110)','Divertor (M$)', step220110)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step2201)','Total Account 22.01 Cost (M$)', step2201)
-      call oblnkl(outfile)
-    end if
-  
   end subroutine step_a2201
 
   subroutine step_a220101(step220101, step22010101, step22010102, step2201010201, &

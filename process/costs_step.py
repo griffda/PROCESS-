@@ -10,6 +10,7 @@ from process.fortran import process_output as po
 from process.fortran import buildings_variables as bldgsv
 from process.fortran import times_variables as tv
 from process.utilities.f2py_string_patch import f2py_compatible_to_string
+from process.fortran import current_drive_variables as cdv
 
 
 class CostsStep:
@@ -222,7 +223,7 @@ class CostsStep:
 
     def step_a22(self):
         """Account 22 : Reactor Plant Equipment.
-        
+
         author: S I Muldrew, CCFE, Culham Science Centre
         This routine evaluates the Account 22 (Reactor Plant Equipment)
         costs.
@@ -233,9 +234,9 @@ class CostsStep:
 
         cs.step22 = 0.0
         step2298 = 0.0
-    
+
         # Account 22.01 : Reactor Equipment
-        step2201, spares = cs.step_a2201(self.outfile,self.iprint)
+        step2201, spares = self.step_a2201()
         cs.step22 += step2201
         step2298 += spares
 
@@ -554,3 +555,145 @@ class CostsStep:
                 "(fcdfuel)",
                 cv.fcdfuel,
             )
+
+    def step_a2201(self):
+        """Account 22.01 : Reactor Equipment.
+
+        :return: 2201 cost and spares
+        :rtype: tuple[float, float]
+        """
+        (
+            step2201,
+            spares,
+            cv.divcst,
+            cv.cdcost,
+            step220101,
+            step22010101,
+            step22010102,
+            step2201010201,
+            step2201010202,
+            step2201010203,
+            step220102,
+            step22010301,
+            step22010302,
+            step22010303,
+            step22010304,
+            step220104,
+            step220105,
+            step220106,
+            step220107,
+            step220108,
+            step220109,
+            step220110,
+        ) = cs.step_a2201(
+            cv.step_ref,
+            bv.fwarea,
+            cv.ifueltyp,
+            cv.fcdfuel,
+            cdv.pinjmw,
+            pv.rmajor,
+            pv.rminor,
+        )
+
+        # Output costs
+        if (self.iprint == 1) and (cv.output_costs == 1):
+            po.write(self.outfile, "******************* 22.01 Reactor Equipment")
+            if cv.ifueltyp == 0:
+                po.write(
+                    self.outfile,
+                    "******************* 22.01.01 Blanket and First Wall Equipment",
+                )
+                po.ocosts(
+                    self.outfile,
+                    "(step22010101)",
+                    "Total First Wall Cost (M$)",
+                    step22010101,
+                )
+                po.oblnkl(self.outfile)
+                po.ocosts(
+                    self.outfile,
+                    "(step2201010201)",
+                    "Blanket Multiplier Material (M$)",
+                    step2201010201,
+                )
+                po.ocosts(
+                    self.outfile,
+                    "(step2201010202)",
+                    "Blanket Breeder Material (M$)",
+                    step2201010202,
+                )
+                po.ocosts(
+                    self.outfile,
+                    "(step2201010203)",
+                    "Blanket Steel Costs (M$)",
+                    step2201010203,
+                )
+                po.ocosts(
+                    self.outfile,
+                    "(step22010102)",
+                    "Total Blanket Cost (M$)",
+                    step22010102,
+                )
+                po.oblnkl(self.outfile)
+                po.ocosts(
+                    self.outfile,
+                    "(step220101)",
+                    "Total Account 22.01.01 Cost (M$)",
+                    step220101,
+                )
+                po.oblnkl(self.outfile)
+            elif cv.ifueltyp == 1:
+                po.ocosts(
+                    self.outfile,
+                    "(step220101)",
+                    "Blanket and First Wall (Treated as Fuel) (M$)",
+                    step220101,
+                )
+
+            po.ocosts(self.outfile, "(step220102)", "Shield (M$)", step220102)
+            po.ocosts(self.outfile, "(step22010301)", "TF Coils (M$)", step22010301)
+            po.ocosts(self.outfile, "(step22010302)", "PF Coils (M$)", step22010302)
+            po.ocosts(
+                self.outfile, "(step22010303)", "Central Solenoid (M$)", step22010303
+            )
+            po.ocosts(
+                self.outfile, "(step22010304)", "Control Coils (M$)", step22010304
+            )
+
+            if cv.ifueltyp == 0:
+                po.ocosts(
+                    self.outfile,
+                    "(step220104)",
+                    "Auxiliary Heating and Current Drive (M$)",
+                    step220104,
+                )
+            elif cv.ifueltyp == 1:
+                po.ocosts(
+                    self.outfile,
+                    "(step220104)",
+                    "Auxiliary Heating and Current Drive (Fraction as Fuel) (M$)",
+                    step220104,
+                )
+
+            po.ocosts(
+                self.outfile,
+                "(step220105)",
+                "Primary Structure and Support (M$)",
+                step220105,
+            )
+            po.ocosts(
+                self.outfile, "(step220106)", "Reactor Vacuum System (M$)", step220106
+            )
+            po.ocosts(self.outfile, "(step220107)", "Power Supplies (M$)", step220107)
+            po.ocosts(self.outfile, "(step220108)", "Impurity Control (M$)", step220108)
+            po.ocosts(
+                self.outfile, "(step220109)", "ECRH Plasma Breakdown (M$)", step220109
+            )
+            po.ocosts(self.outfile, "(step220110)", "Divertor (M$)", step220110)
+            po.oblnkl(self.outfile)
+            po.ocosts(
+                self.outfile, "(step2201)", "Total Account 22.01 Cost (M$)", step2201
+            )
+            po.oblnkl(self.outfile)
+
+        return step2201, spares

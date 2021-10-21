@@ -276,7 +276,7 @@ def test_step_a2201(monkeypatch, costs_step):
     
     exp1 = 1.9762381e3
     exp2 = 3.86957425e2
-    step2201, spares = cs.step_a2201(0, 0)
+    step2201, spares = costs_step.step_a2201()
     assert pytest.approx(step2201) == exp1
     assert pytest.approx(spares) == exp2
 
