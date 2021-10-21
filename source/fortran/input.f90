@@ -1667,7 +1667,7 @@ contains
                'Central solenoid steel fraction')
        case ('foh_stress')
           call parse_real_variable('foh_stress', foh_stress, 1.0D-3, 1.0D0, &
-               'F-value for CS coil Tresca stress limit')
+               'F-value for CS coil Tresca yield criterion')
        !       case ('fwith')
        !          call parse_real_variable('fwith', fwith, 0.0D0, 10.0D0, &
        !               'Inboard first wall thickness, initial estimate (m)')

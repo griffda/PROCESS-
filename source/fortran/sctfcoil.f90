@@ -1777,26 +1777,26 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! TF Inboard leg Von-Mises stress r distribution at mid-plane [Pa]
         
     real(8), dimension(n_tf_layer*n_radial_array) :: sig_tf_tresca 
-    !! TF Inboard leg TRESCA stress r distribution at mid-plane [Pa]
+    !! TF Inboard leg maximum shear stress (Tresca criterion) r distribution at mid-plane [Pa]
     
     real(8), dimension(n_tf_layer*n_radial_array) :: s_tresca_cond_cea
-    !! Conduit Tresca stress with CEA adjustment factors [Pa]
+    !! Conduit maximum shear stress (Tresca criterion) with CEA adjustment factors [Pa]
     
     real(8), dimension(n_tf_layer) :: sig_tf_r_max
-    !! Radial stress of the point of maximum TRESCA stress (for each layers) [Pa]
+    !! Radial stress of the point of maximum shear stress of each layer [Pa]
     
     real(8), dimension(n_tf_layer) :: sig_tf_t_max 
-    !! Toroidal stress of the point of maximum TRESCA stress (for each layers) [Pa]
+    !! Toroidal stress of the point of maximum shear stress of each layer [Pa]
     
     real(8), dimension(n_tf_layer) :: sig_tf_z_max
-    !! Vertical stress of the point of maximum TRESCA stress (for each layers) [Pa]
+    !! Vertical stress of the point of maximum shear stress of each layer [Pa]
     !! Rem : Currently constant but will be r dependent in the future
     
     real(8), dimension(n_tf_layer) :: sig_tf_vmises_max 
-    !! Von-Mises stress of the point of maximum TRESCA stress (for each layers) [Pa]
+    !! Von-Mises stress of the point of maximum shear stress of each layer [Pa]
     
     real(8), dimension(n_tf_layer) :: sig_tf_tresca_max
-    !! Maximum TRESCA stress (for each layers) [Pa]
+    !! Maximum shear stress, for the Tresca yield criterion of each layer [Pa]
     !! If the CEA correction is addopted, the CEA corrected value is used
     
     real(8), dimension(n_tf_layer*n_radial_array) :: strain_tf_r
@@ -1843,10 +1843,10 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! do loop indexes
 
     integer :: ii_max
-    !! Index of the maximum TRESCA stress
+    !! Index of the maximum shear stress (Tresca criterion)
 
     real(8) :: sig_max
-    !! Working float to find maximum TRESCA stress index [Pa]
+    !! Working float to find index of the maximum shear stress (Tresca criterion) [Pa]
 
     real(8) :: tcbs
     !! Radial cable dimension [m]
@@ -2364,7 +2364,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! ---
 
 
-    ! TRESCA/VM stress calculations
+    ! Tresca / Von Mises yield criteria calculations
     ! -----------------------------
     ! Array equation
     sig_tf_tresca = max( abs(sig_tf_r - sig_tf_t), &
@@ -2397,7 +2397,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                 sig_tf_vmises(ii) = max(svmxz, svmyz)
             end if
 
-            ! TRESCA stress using CEA calculation [Pa]
+            ! Maximum shear stress for the Tresca yield criterion using CEA calculation [Pa]
             s_tresca_cond_cea(ii) = 1.02D0*abs(sig_tf_r(ii)) + 1.6D0*sig_tf_z(ii)
         end do
     end if
@@ -2406,7 +2406,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
 
 
-    ! Output formating : Maximum TRESCA per layers
+    ! Output formating : Maximum shear stress of each layer for the Tresca yield criterion
     ! ----------------
     do ii = 1, n_tf_layer
         sig_max = 0.0D0
@@ -2421,7 +2421,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                     ii_max = jj
                 end if
 
-            ! Conventionnal TRESCA
+            ! Conventional Tresca
             else 
                 if ( sig_max < sig_tf_tresca(jj) ) then
                     sig_max = sig_tf_tresca(jj)
@@ -2438,7 +2438,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             sig_tf_vmises_max(ii) = sig_tf_vmises(ii_max)
         end if
 
-        ! Maximum TRESCA (or CEA OOP correction)
+        ! Maximum shear stress for the Tresca yield criterion (or CEA OOP correction)
         if ( i_tf_tresca == 1 .and. i_tf_sup == 1 .and. ii >= i_tf_bucking + 1 ) then
             sig_tf_tresca_max(ii) = s_tresca_cond_cea(ii_max)
         else
@@ -2446,7 +2446,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         end if
     end do
 
-    ! Constrains equation TRESCA stress values
+    ! Constraint equation for the Tresca yield criterion
     sig_tf_wp = sig_tf_tresca_max(n_tf_bucking + 1) ! Maximum assumed in the first graded layer
     if ( i_tf_bucking >= 1 ) sig_tf_case = sig_tf_tresca_max(n_tf_bucking)
     if ( i_tf_bucking >= 2 ) sig_tf_cs_bucked = sig_tf_tresca_max(1)
@@ -2484,7 +2484,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         call ovarre(outfile, 'Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)', &
         '(sig_tf_wp_max)',sig_tf_wp_max)
         if ( i_tf_tresca == 1  .and. i_tf_sup == 1) then
-            call ocmmnt(outfile, 'WP conduit TRESCA stress corrected using CEA formula (i_tf_tresca = 1)')
+            call ocmmnt(outfile, 'WP conduit Tresca criterion corrected using CEA formula (i_tf_tresca = 1)')
         end if
 
         if ( i_tf_bucking >= 3) then
@@ -2492,9 +2492,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             call ocmmnt(outfile, '  -> Too much unknow on it material choice/properties')
         end if 
 
-        ! OUT.DAT data on maximum TRESCA stress values
-        call ocmmnt(outfile, 'Structural materal stress of the point of maximum TRESCA stress per layer')
-        call ocmmnt(outfile, 'Please use utility/plot_TF_stress.py for radial plots plots summary')
+        ! OUT.DAT data on maximum shear stress values for the Tresca criterion
+        call ocmmnt(outfile, 'Materal stress of the point of maximum shear stress (Tresca criterion) for each layer')
+        call ocmmnt(outfile, 'Please use utilities/plot_stress_tf.py for radial plots plots summary')
 
         select case (i_tf_bucking)
             case (0)
@@ -2524,22 +2524,22 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                 end if
         end select
         
-        write(outfile,'(t2, "Radial"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') &
+        write(outfile,'(t2, "Radial"    ," stress", t30, "(MPa)",t36, *(F11.3,3x))') &
               sig_tf_r_max*1.0D-6
-        write(outfile,'(t2, "toroidal"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') &
+        write(outfile,'(t2, "toroidal"  ," stress", t30, "(MPa)",t36, *(F11.3,3x))') &
               sig_tf_t_max*1.0D-6
-        write(outfile,'(t2, "Vertical"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') &
+        write(outfile,'(t2, "Vertical"  ," stress", t30, "(MPa)",t36, *(F11.3,3x))') &
               sig_tf_z_max*1.0D-6
-        write(outfile,'(t2, "Von-Mises" ," stress", t20, "(MPa)",t26, *(F11.3,3x))') &
+        write(outfile,'(t2, "Von-Mises" ," stress", t30, "(MPa)",t36, *(F11.3,3x))') &
               sig_tf_vmises_max*1.0D-6
         if ( i_tf_tresca == 1 .and. i_tf_sup == 1 ) then
-            write(outfile,'(t2, "CEA TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
+            write(outfile,'(t2, "Shear (CEA Tresca)"    ," stress", t30, "(MPa)",t36, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
         else 
-            write(outfile,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
+            write(outfile,'(t2, "Shear (Tresca)"    ," stress", t30, "(MPa)",t36, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
         end if
         write(outfile, *) ''
-        write(outfile,'(t2, "Toroidal"    ," modulus", t20, "(GPa)",t26, *(F11.3,3x))') eyoung_p * 1.0D-9
-        write(outfile,'(t2, "Vertical"    ," modulus", t20, "(GPa)",t26, *(F11.3,3x))') eyoung_z * 1.0D-9
+        write(outfile,'(t2, "Toroidal"    ," modulus", t30, "(GPa)",t36, *(F11.3,3x))') eyoung_p * 1.0D-9
+        write(outfile,'(t2, "Vertical"    ," modulus", t30, "(GPa)",t36, *(F11.3,3x))') eyoung_z * 1.0D-9
         write(outfile,* ) ''
         call ovarre(outfile,'WP toroidal modulus (GPa)','(eyoung_wp_t*1.0D-9)', eyoung_wp_t*1.0D-9, 'OP ')
         call ovarre(outfile,'WP vertical modulus (GPa)','(eyoung_wp_z*1.0D-9)', eyoung_wp_z*1.0D-9, 'OP ')
@@ -2547,19 +2547,19 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! MFILE.DAT data
         do ii = 1, n_tf_bucking + 1
             intstring = int2char(ii)    
-            call ovarre(mfile,'Radial    stress at maximum TRESCA of layer '//intstring// &
+            call ovarre(mfile,'Radial    stress at maximum shear of layer '//intstring// &
                         ' (Pa)', '(sig_tf_r_max('//intstring//'))', sig_tf_r_max(ii) )
-            call ovarre(mfile,'toroidal  stress at maximum TRESCA of layer '//intstring// &
+            call ovarre(mfile,'toroidal  stress at maximum shear of layer '//intstring// &
                         ' (Pa)', '(sig_tf_t_max('//intstring//'))', sig_tf_t_max(ii) )
-            call ovarre(mfile,'Vertical  stress at maximum TRESCA of layer '//intstring// &
+            call ovarre(mfile,'Vertical  stress at maximum shear of layer '//intstring// &
                         ' (Pa)', '(sig_tf_z_max('//intstring//'))', sig_tf_z_max(ii) )
-            call ovarre(mfile,'Von-Mises stress at maximum TRESCA of layer '//intstring// &
+            call ovarre(mfile,'Von-Mises stress at maximum shear of layer '//intstring// &
                         ' (Pa)', '(sig_tf_vmises_max('//intstring//'))', sig_tf_vmises_max(ii) )
             if ( i_tf_tresca == 1 .and. i_tf_sup == 1 ) then
-                call ovarre(mfile,'Maximum CEA TRESCA stress '//intstring// &
+                call ovarre(mfile,'Maximum shear stress for CEA Tresca yield criterion '//intstring// &
                            ' (Pa)', '(sig_tf_tresca_max('//intstring//'))', sig_tf_tresca_max(ii) )
             else           
-                call ovarre(mfile,'Maximum TRESCA stress '//intstring// &
+                call ovarre(mfile,'Maximum shear stress for the Tresca yield criterion '//intstring// &
                             ' (Pa)', '(sig_tf_tresca_max('//intstring//'))', sig_tf_tresca_max(ii) )
             end if
         end do
@@ -2575,11 +2575,11 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         write(sig_file,'(t2, "toroidal"  ," smeared stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_smeared_t*1.0D-6
         write(sig_file,'(t2, "vertical"  ," smeared stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_smeared_z*1.0D-6
         write(sig_file,'(t2, "Von-Mises" ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_vmises*1.0D-6
-        write(sig_file,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca*1.0D-6
+        write(sig_file,'(t2, "Tresca"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca*1.0D-6
         if ( i_tf_sup == 1 ) then
-            write(sig_file,'(t2, "CEA TRESCA"," stress", t20, "(MPa)",t26, *(F11.3,3x))') s_tresca_cond_cea*1.0D-6
+            write(sig_file,'(t2, "CEA Tresca"," stress", t20, "(MPa)",t26, *(F11.3,3x))') s_tresca_cond_cea*1.0D-6
         else 
-            write(sig_file,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca*1.0D-6
+            write(sig_file,'(t2, "Tresca"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca*1.0D-6
         end if 
         write(sig_file,*) 
         write(sig_file,*) 'Displacement'         
@@ -3941,7 +3941,7 @@ end function eyngzwp
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 function sig_tresca(sx,sy,sz)
-    !! Calculates TRESCA stress in a TF coil
+    !! Calculates Maximum shear stress in a TF coil, for the Tresca yield criterion
     !! author: S Kahn
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

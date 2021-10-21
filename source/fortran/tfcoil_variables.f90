@@ -36,10 +36,10 @@ module tfcoil_variables
   !! winding pack turn insulation area per coil (m2)
 
   real(8) :: sig_tf_case_max
-  !! Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+  !! Allowable maximum shear stress (Tresca criterion) in TF coil case (Pa)
 
   real(8) :: sig_tf_wp_max
-  !! Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
+  !! Allowable maximum shear stress (Tresca criterion) in TF coil conduit (Pa)
 
   ! TODO remove below IF not needed 
   ! real(8) :: alstrtf
@@ -364,22 +364,22 @@ module tfcoil_variables
   !! TF Inboard leg Von-Mises stress in steel r distribution at mid-plane [Pa]
       
   real(8), dimension(2*n_radial_array) :: sig_tf_tresca
-  !! TF Inboard leg TRESCA stress in steel r distribution at mid-plane [Pa]
+  !! TF Inboard leg maximum shear stress (Tresca criterion) in steel r distribution at mid-plane [Pa]
 
   real(8) :: sig_tf_cs_bucked
 
   ! TODO is this needed?
   ! real(8) :: strtf0
-  !! Maximum TRESCA stress in CS structures at CS flux swing [Pa]:
+  !! Maximum shear stress (Tresca criterion) in CS structures at CS flux swing [Pa]:
   !!
-  !!  - If superconducting CS (ipfres = 0): turn steel conduits TRESCA stress
-  !!  - If resistive       CS (ipfres = 1): copper conductor TRESCA stress 
+  !!  - If superconducting CS (ipfres = 0): turn steel conduits stress
+  !!  - If resistive       CS (ipfres = 1): copper conductor stress 
   !!
   !! Quantity only computed for bucked and wedged design (`i_tf_bucking >= 2`)
   !! Def : CS Flux swing, instant when the current changes sign in CS (null current) 
 
   real(8) :: sig_tf_case
-  !! Maximum TRESCA stress in TF casing steel structures (Pa)
+  !! Maximum shear stress (Tresca criterion) in TF casing steel structures (Pa)
   
   real(8) :: sig_tf_wp
 
