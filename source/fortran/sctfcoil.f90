@@ -2879,10 +2879,10 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
 
     integer, intent(in) :: i_tf_bucking
     !! Switch for bucking cylinder (case)
-    !!   0 : No casing/bucking cylinder
-    !!   1 : casing/buling cylinder
-    !!   2 : Bucked and wedged design
-    !!   3 : Bucked and wedged design with CS-TF interlayer
+    !!   0 : Free standing TF without case/bucking cyliner (only a conductor layer)
+    !!   1 : Free standing TF with a case/bucking cylinder (material depends on i_tf_sup)
+    !!   2 : Bucked and wedged design, CS frictionally decoupled from TF (no interlayer)
+    !!   3 : Bucked and wedged design, CS and Kapton interlayer decoupled from TF
 
     real(8), dimension(nlayers), intent(in) :: nu_p
     !! Toroidal plan's Poisson's ratios 
@@ -3367,10 +3367,10 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
 
     integer, intent(in) :: i_tf_bucking
     !! Switch for bucking cylinder (case)
-    !!   0 : No casing/bucking cylinder
-    !!   1 : casing/buling cylinder
-    !!   2 : Bucked and wedged design
-    !!   3 : Bucked and wedged design with CS-TF interlayer
+    !!   0 : Free standing TF without case/bucking cyliner (only a conductor layer)
+    !!   1 : Free standing TF with a case/bucking cylinder (material depends on i_tf_sup)
+    !!   2 : Bucked and wedged design, CS frictionally decoupled from TF (no interlayer)
+    !!   3 : Bucked and wedged design, CS and Kapton interlayer decoupled from TF
 
     real(dp), dimension(nlayers), intent(in) :: nu_t
     !! Transverse Poisson's ratios 

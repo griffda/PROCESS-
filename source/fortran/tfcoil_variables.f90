@@ -257,10 +257,13 @@ module tfcoil_variables
   !!     - if copper resistive     TF (i_tf_sup = 0) : used defined bucking cylinder
   !!     - if Superconducting      TF (i_tf_sup = 1) : Steel casing
   !!     - if aluminium resisitive TF (i_tf_sup = 2) : used defined bucking cylinder
-  !! - =2 : The TF is in contact with the CS : "bucked and weged design"
+  !! - =2 : The TF is in contact with the CS : "bucked and wedged design"
   !!       Fast version : thin TF-CS interface neglected in the stress calculations (3 layers)
-  !! - =3 : The TF is in contact with the CS : "bucked and weged design"
+  !!                      The CS is frictionally decoupled from the TF, does not carry axial tension
+  !! - =3 : The TF is in contact with the CS : "bucked and wedged design"
   !!       Full version : thin TF-CS Kapton interface introduced in the stress calculations (4 layers)
+  !!                      The CS and kaptop are frictionally decoupled from the TF, do not carry
+  !!                      axial tension
 
   integer :: n_tf_graded_layers
   !! Number of layers of different stress properties in the WP. If `n_tf_graded_layers > 1`, 
