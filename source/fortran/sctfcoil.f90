@@ -2252,6 +2252,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! ---
     else if ( i_tf_plane_stress == 0) then
         ! Generalized plane strain calculation [Pa]
+        ! Issues #977 and #991
+        ! bore > 0, O(n^3) in layers
         call generalized_plane_strain( poisson_p, poisson_z, eyoung_p, eyoung_z,  & ! Inputs
                                        radtf, jeff, vforce_eff,                   & ! Inputs
                                        n_tf_layer, n_radial_array, n_tf_bucking,  & ! Inputs
@@ -2259,6 +2261,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                                        strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
     else if ( i_tf_plane_stress == 2) then
         ! Extended plane strain calculation [Pa]
+        ! Issues #1414 and #998
+        ! Permits bore >= 0, O(n) in layers
+        ! If bore > 0, same result as generalized plane strain calculation
         call extended_plane_strain( poisson_p, poisson_z, eyoung_p, eyoung_z,  & ! Inputs
                                        radtf, jeff, vforce_eff,                   & ! Inputs
                                        n_tf_layer, n_radial_array, n_tf_bucking,  & ! Inputs
