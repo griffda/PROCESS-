@@ -2868,7 +2868,7 @@ module pfcoil_module
  
      write(outfile,20) (k,rpf(k),zpf(k),(rb(k)-ra(k)),abs(zh(k)-zl(k)), &
           turns(k),pfcaseth(k),k=1,nef)
- 20  format('  PF',i1,t10,6f12.2)
+ 20  format('  PF',i2,t10,6f12.2)
  
      do k = 1,nef
         intstring = int_to_string2(k)
@@ -2955,7 +2955,7 @@ module pfcoil_module
      !  to prevent a known compiler 'feature' from apparently
      !  multiplying the f-formatted numbers by 10.
  
- 90  format('  PF',i1,f8.2,2(1pe11.3),0p,f6.2,1pe10.3,1pe12.3,1pe13.3)
+ 90  format('  PF',i2,f8.2,2(1pe11.3),0p,f6.2,1pe10.3,1pe12.3,1pe13.3)
  
      !  Central Solenoid, if present
  
