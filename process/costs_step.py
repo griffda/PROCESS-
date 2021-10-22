@@ -244,7 +244,7 @@ class CostsStep:
         step2298 += spares
 
         #  Account 22.02 : Heat Transfer Systems
-        cs.step22 += cs.step_a2202(self.outfile, self.iprint)
+        cs.step22 += self.step_a2202()
 
         #  Account 22.03 : Cryogenic Cooling System
         cs.step22 += cs.step_a2203(self.outfile, self.iprint)
@@ -818,3 +818,23 @@ class CostsStep:
         )
 
         return step22010302
+
+    def step_a2202(self):
+        """Account 22.02: Heat Transfer System.
+
+        :return: cost 2202
+        :rtype: float
+        """
+        step2202 = cs.step_a2202(htv.pgrossmw)
+
+        # Output costs
+        if (self.iprint == 1) and (cv.output_costs == 1):
+            po.write(self.outfile, "******************* 22.02 Heat Transfer System")
+            po.ocosts(self.outfile, "(step2202)", "Heat Transfer System (M$)", step2202)
+            po.oblnkl(self.outfile)
+            po.ocosts(
+                self.outfile, "(step2202)", "Total Account 22.02 Cost (M$)", step2202
+            )
+            po.oblnkl(self.outfile)
+
+        return step2202

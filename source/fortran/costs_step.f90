@@ -593,46 +593,23 @@ contains
 
     end subroutine step_a22010302
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a2202(outfile,iprint, step2202)
-
+  subroutine step_a2202(pgrossmw, step2202)
     !! Account 22.02 : Heat Transfer System
     !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 22.02 (Heat Transfer System)
     !! costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-    use cost_variables, only: output_costs
-    use process_output, only: ocosts, oblnkl
-    use heat_transport_variables, only: pgrossmw
     ! pgrossmw is gross electric power of the plant in MW
-
     implicit none
   
     ! Arguments
-    integer, intent(in) :: iprint,outfile
+    real(8), intent(in) :: pgrossmw
     real(8), intent(out) :: step2202
   
-    ! Initialise as zero
-    step2202 = 0.0D0
-     
     ! 22.02 Heat Transfer System
     ! #TODO Needs reference for values
     step2202 = 9.2238D4 * pgrossmw * 1.0D-6
     ! Converted to M$
-  
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      write(outfile,*) '******************* 22.02 Heat Transfer System'
-      call ocosts(outfile,'(step2202)','Heat Transfer System (M$)', step2202)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step2202)','Total Account 22.02 Cost (M$)', step2202)
-      call oblnkl(outfile)
-    end if
   end subroutine step_a2202
 
   subroutine step_a2203(outfile,iprint, step2203)
