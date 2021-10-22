@@ -327,11 +327,13 @@ def test_step_a220101(monkeypatch, costs_step):
     assert pytest.approx(step220101) == 0.09505
 
 
-def test_step_a22010301(monkeypatch):
+def test_step_a22010301(monkeypatch, costs_step):
     """Cost of TF coils for different materials (22.01.03.01).
 
     :param monkeypatch: fixture for mocking variables
     :type monkeypatch: MonkeyPatch
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
     # Mock dependencies with realistic values
     monkeypatch.setattr(cv, "step_ref", np.zeros(68, order="F"))
@@ -354,21 +356,21 @@ def test_step_a22010301(monkeypatch):
     
     # Copper coils
     monkeypatch.setattr(tfv, "i_tf_sup", 0)
-    expected = 7.475000
-    observed = cs.step_a22010301()
-    assert pytest.approx(observed) == expected
+    exp = 7.475000
+    obs = costs_step.step_a22010301()
+    assert pytest.approx(obs) == exp
 
     # Superconducting coils
     monkeypatch.setattr(tfv, "i_tf_sup", 1)
-    expected = 93.30563
-    observed = cs.step_a22010301()
-    assert pytest.approx(observed) == expected
+    exp = 93.30563
+    obs = costs_step.step_a22010301()
+    assert pytest.approx(obs) == exp
 
     # Cryo-aluminium coils
     monkeypatch.setattr(tfv, "i_tf_sup", 2)
     expected = 15.552
-    observed = cs.step_a22010301()
-    assert pytest.approx(observed) == expected
+    obs = costs_step.step_a22010301()
+    assert pytest.approx(obs) == expected
 
 def test_step_a22010302(monkeypatch):
     """Test evaluation of account 22.01.03.02 (PF magnet) costs

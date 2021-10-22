@@ -217,9 +217,9 @@ contains
     ! Arguments
     real(8), dimension(:), intent(in) :: step_ref
     real(8), intent(in) :: fwarea, ifueltyp, fcdfuel, &
-      pinjmw, rmajor, rminor, step220101
+      pinjmw, rmajor, rminor, step220101, step22010301
     real(8), intent(out) :: step2201, spares, divcst, cdcost, &
-      step220102, step22010301, step22010302, step22010303, step22010304, &
+      step220102, step22010302, step22010303, step22010304, &
       step220104, step220105, step220106, step220107, step220108, step220109, &
       step220110
   
@@ -237,7 +237,6 @@ contains
     spares = 9.985D-2 *  step220102
   
     ! 22.01.03.01 TF Coils
-    step22010301 = step_a22010301()
     ! Add TF coil cost to total cost, step2201, in M$
     step2201 = step2201 + step22010301
 
@@ -416,18 +415,18 @@ contains
 
   end subroutine step_a220101
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  function step_a22010301() result(step22010301)
+  subroutine step_a22010301(step_ref, ifueltyp, step_uc_cryo_al, &
+    step_mc_cryo_al_per, uccpcl1, uccpclb, &
+    i_tf_sup, whtconal, n_tf, whttflgs, whtcp, itart, step22010301, cpstcst)
     !! 22.01.03.01 TF Coils
-    !! Returns cost of TF coils
-    use cost_variables, only: step_ref, cpstcst, ifueltyp, step_uc_cryo_al, &
-      step_mc_cryo_al_per, uccpcl1, uccpclb
-    use tfcoil_variables, only: i_tf_sup, whtconal, n_tf, whttflgs, whtcp
-    use physics_variables, only: itart
     implicit none
-
-    ! Result
-    real(8) :: step22010301
+    
+    ! Arguments
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: ifueltyp, step_uc_cryo_al, &
+      step_mc_cryo_al_per, uccpcl1, uccpclb, &
+      i_tf_sup, whtconal, n_tf, whttflgs, whtcp, itart
+    real(8), intent(out) :: step22010301, cpstcst
     !! Cost of TF coils in M$
     
     ! Declare local vars
@@ -489,8 +488,7 @@ contains
         cpstcst = c_tf_inboard_legs
       end if
     endif
-  end function step_a22010301
-
+  end subroutine step_a22010301
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

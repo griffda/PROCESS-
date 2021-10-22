@@ -11,6 +11,7 @@ from process.fortran import buildings_variables as bldgsv
 from process.fortran import times_variables as tv
 from process.utilities.f2py_string_patch import f2py_compatible_to_string
 from process.fortran import current_drive_variables as cdv
+from process.fortran import tfcoil_variables as tfv
 
 
 class CostsStep:
@@ -571,13 +572,14 @@ class CostsStep:
             step2201010203,
         ) = self.step_a220101()
 
+        step22010301 = self.step_a22010301()
+
         (
             step2201,
             spares,
             cv.divcst,
             cv.cdcost,
             step220102,
-            step22010301,
             step22010302,
             step22010303,
             step22010304,
@@ -597,6 +599,7 @@ class CostsStep:
             pv.rmajor,
             pv.rminor,
             step220101,
+            step22010301,
         )
 
         # Output costs
@@ -752,3 +755,26 @@ class CostsStep:
             step2201010202,
             step2201010203,
         )
+
+    def step_a22010301(self):
+        """22.01.03.01 TF Coils.
+
+        :return: cost of 22010301
+        :rtype: float
+        """
+        step22010301, cv.cpstcst = cs.step_a22010301(
+            cv.step_ref,
+            cv.ifueltyp,
+            cv.step_uc_cryo_al,
+            cv.step_mc_cryo_al_per,
+            cv.uccpcl1,
+            cv.uccpclb,
+            tfv.i_tf_sup,
+            tfv.whtconal,
+            tfv.n_tf,
+            tfv.whttflgs,
+            tfv.whtcp,
+            pv.itart,
+        )
+
+        return step22010301
