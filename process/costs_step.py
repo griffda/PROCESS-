@@ -12,6 +12,8 @@ from process.fortran import times_variables as tv
 from process.utilities.f2py_string_patch import f2py_compatible_to_string
 from process.fortran import current_drive_variables as cdv
 from process.fortran import tfcoil_variables as tfv
+from process.fortran import pfcoil_variables as pfv
+from process.fortran import structure_variables as sv
 
 
 class CostsStep:
@@ -573,6 +575,7 @@ class CostsStep:
         ) = self.step_a220101()
 
         step22010301 = self.step_a22010301()
+        step22010302 = self.step_a22010302()
 
         (
             step2201,
@@ -580,7 +583,6 @@ class CostsStep:
             cv.divcst,
             cv.cdcost,
             step220102,
-            step22010302,
             step22010303,
             step22010304,
             step220104,
@@ -600,6 +602,7 @@ class CostsStep:
             pv.rminor,
             step220101,
             step22010301,
+            step22010302,
         )
 
         # Output costs
@@ -778,3 +781,40 @@ class CostsStep:
         )
 
         return step22010301
+
+    def step_a22010302(self):
+        """Account 22.01.03.02 PF Coils: PF magnet assemblies.
+
+        :return: cost 22010302
+        :rtype: float
+        """
+        step22010302 = cs.step_a22010302(
+            bv.iohcl,
+            constants.twopi,
+            constants.dcopper,
+            cv.step_uccase,
+            cv.step_uccu,
+            cv.step_cconshpf,
+            cv.step_ucfnc,
+            cv.step_cconfix,
+            cv.step_ucsc,
+            cv.step_ucwindpf,
+            pfv.rjconpf,
+            pfv.ipfres,
+            pfv.vfohc,
+            pfv.nohc,
+            pfv.turns,
+            pfv.isumatpf,
+            pfv.whtpfs,
+            pfv.ric,
+            pfv.rpf,
+            pfv.isumatoh,
+            pfv.fcupfsu,
+            pfv.fcuohsu,
+            pfv.vf,
+            pfv.awpoh,
+            sv.fncmass,
+            tfv.dcond,
+        )
+
+        return step22010302

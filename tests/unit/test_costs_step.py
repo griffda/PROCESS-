@@ -372,14 +372,14 @@ def test_step_a22010301(monkeypatch, costs_step):
     obs = costs_step.step_a22010301()
     assert pytest.approx(obs) == expected
 
-def test_step_a22010302(monkeypatch):
+def test_step_a22010302(monkeypatch, costs_step):
     """Test evaluation of account 22.01.03.02 (PF magnet) costs
     :param monkeypatch: fixture for mocking variables
     :type monkeypatch: MonkeyPatch
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
-
     #Mock module vars used in subroutine
-
     monkeypatch.setattr(pfv, "nohc", 2.0)
     monkeypatch.setattr(pfv, "turns", np.full(18, 5.0, order="F"))
     monkeypatch.setattr(pfv, "rpf", np.full(18, 5.0, order="F"))
@@ -391,7 +391,7 @@ def test_step_a22010302(monkeypatch):
     monkeypatch.setattr(pfv, "rjconpf", np.full(18, 1.0e7, order="F"))
 
     exp = 1.167792821192398e1 
-    obs = cs.step_a22010302()
+    obs = costs_step.step_a22010302()
     assert pytest.approx(obs) == exp
 
 

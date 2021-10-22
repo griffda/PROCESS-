@@ -202,8 +202,8 @@ contains
   end subroutine step_a21
 
   subroutine step_a2201(step_ref, fwarea, ifueltyp, fcdfuel, &
-    pinjmw, rmajor, rminor, step220101, step2201, spares, divcst, cdcost, &
-    step220102, step22010301, step22010302, step22010303, step22010304, &
+    pinjmw, rmajor, rminor, step220101, step22010301, step22010302, step2201, &
+    spares, divcst, cdcost, step220102, step22010303, step22010304, &
     step220104, step220105, step220106, step220107, step220108, step220109, &
     step220110)
     !! Account 22.01 : Reactor Equipment
@@ -217,9 +217,9 @@ contains
     ! Arguments
     real(8), dimension(:), intent(in) :: step_ref
     real(8), intent(in) :: fwarea, ifueltyp, fcdfuel, &
-      pinjmw, rmajor, rminor, step220101, step22010301
+      pinjmw, rmajor, rminor, step220101, step22010301, step22010302
     real(8), intent(out) :: step2201, spares, divcst, cdcost, &
-      step220102, step22010302, step22010303, step22010304, &
+      step220102, step22010303, step22010304, &
       step220104, step220105, step220106, step220107, step220108, step220109, &
       step220110
   
@@ -241,7 +241,6 @@ contains
     step2201 = step2201 + step22010301
 
     ! 22.01.03.02 PF Coils
-    step22010302 = step_a22010302()
     step2201 = step2201 + step22010302
     ! STARFIRE percentage for spares
     spares = spares + 3.269D-1 * step22010302
@@ -490,13 +489,12 @@ contains
     endif
   end subroutine step_a22010301
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  function step_a22010302() result(step22010302)
-
+  subroutine step_a22010302(iohcl, twopi, dcopper, step_uccase, step_uccu, &
+    step_cconshpf, step_ucfnc, step_cconfix, step_ucsc, step_ucwindpf, &
+		rjconpf, ipfres, vfohc, nohc, turns, isumatpf, whtpfs, ric, rpf, isumatoh, &
+    fcupfsu, fcuohsu, vf, awpoh, fncmass, dcond, step22010302)
     !! Account 22.01.03.02 PF Coils : PF magnet assemblies
     !! author: A J Pearce, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 22.01.03.02 (PF magnet) costs.
     !! Conductor costs previously used an algorithm devised by R. Hancox,
     !! January 1994, under contract to Culham, which took into
@@ -506,34 +504,27 @@ contains
     !! are used instead.
     !! Maximum values for current, current density and field
     !! are used. 
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-		use build_variables, only: iohcl 
-		use constants, only: twopi, dcopper
-		use cost_variables, only: step_uccase, step_uccu, step_cconshpf, step_ucfnc, &
-      step_cconfix, step_ucsc, step_ucwindpf
-		use pfcoil_variables, only: rjconpf, ipfres, vfohc, nohc, turns, isumatpf, &
-      whtpfs, ric, rpf, isumatoh, fcupfsu, fcuohsu, vf, awpoh 
-		use structure_variables, only: fncmass 
-    use tfcoil_variables, only: dcond
     implicit none
 
-    !  Result
-    real(8) :: step22010302
+    ! Arguments
+    real(8), intent(in) :: iohcl, twopi, dcopper, step_uccase, step_uccu, &
+      step_cconshpf, step_ucfnc, step_cconfix, step_ucwindpf, &
+      ipfres, vfohc, whtpfs, fcupfsu, fcuohsu, awpoh, fncmass
+    integer, intent(in) :: nohc, isumatoh, isumatpf
+    real(8), dimension(:), intent(in) :: dcond, ric, rpf, rjconpf, step_ucsc, &
+      turns, vf
+    real(8), intent(out) :: step22010302
      
     !  Local variables
     real(8) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
          pfwndl, step2201030201, step2201030202, step2201030203, step2201030204
     integer :: i,npf
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
     !  Total length of PF coil windings (m)
 
     pfwndl = 0.0D0
     do i = 1,nohc
-       pfwndl = pfwndl + twopi*rpf(i)*turns(i)
+      pfwndl = pfwndl + twopi*rpf(i)*turns(i)
     end do
 
     !  Account 22.01.03.02.01 : Conductor
@@ -600,7 +591,7 @@ contains
     !  Total account 22.01.03.02
     step22010302 = step2201030201 + step2201030202 + step2201030203 + step2201030204
 
-    end function step_a22010302
+    end subroutine step_a22010302
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
