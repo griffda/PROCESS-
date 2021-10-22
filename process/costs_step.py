@@ -241,26 +241,26 @@ class CostsStep:
         step2298 += spares
 
         #  Account 22.02 : Heat Transfer Systems
-        cs.step22 += cs.step_a2202(self.outfile,self.iprint)
+        cs.step22 += cs.step_a2202(self.outfile, self.iprint)
 
         #  Account 22.03 : Cryogenic Cooling System
-        cs.step22 += cs.step_a2203(self.outfile,self.iprint)
+        cs.step22 += cs.step_a2203(self.outfile, self.iprint)
 
         #  Account 22.04 : Waste Treatment and Disposal
-        cs.step22 += cs.step_a2204(self.outfile,self.iprint)
+        cs.step22 += cs.step_a2204(self.outfile, self.iprint)
 
         #  Account 22.05 : Fuel Handling and Storage
-        step2205, spares = cs.step_a2205(self.outfile,self.iprint)
+        step2205, spares = cs.step_a2205(self.outfile, self.iprint)
         cs.step22 += step2205
         step2298 += spares
 
         #  Account 22.06 : Other Reactor Plant Equipment
-        step2206, spares = cs.step_a2206(self.outfile,self.iprint)
+        step2206, spares = cs.step_a2206(self.outfile, self.iprint)
         cs.step22 += step2206
         step2298 += spares
 
         #  Account 22.07 : Instrumentation and Control
-        cs.step22 += cs.step_a2207(self.outfile,self.iprint)
+        cs.step22 += cs.step_a2207(self.outfile, self.iprint)
 
         # 22.98 Spares
         # STARFIRE percentage of components
@@ -563,16 +563,19 @@ class CostsStep:
         :rtype: tuple[float, float]
         """
         (
-            step2201,
-            spares,
-            cv.divcst,
-            cv.cdcost,
             step220101,
             step22010101,
             step22010102,
             step2201010201,
             step2201010202,
             step2201010203,
+        ) = self.step_a220101()
+
+        (
+            step2201,
+            spares,
+            cv.divcst,
+            cv.cdcost,
             step220102,
             step22010301,
             step22010302,
@@ -593,6 +596,7 @@ class CostsStep:
             cdv.pinjmw,
             pv.rmajor,
             pv.rminor,
+            step220101,
         )
 
         # Output costs
@@ -697,3 +701,54 @@ class CostsStep:
             po.oblnkl(self.outfile)
 
         return step2201, spares
+
+    def step_a220101(self):
+        """22.01.01 Blanket and First Wall.
+
+        :return: 220101 cost and sub-costs
+        :rtype: tuple[float, float, float, float, float, float,]
+        """
+        (
+            step220101,
+            step22010101,
+            step22010102,
+            step2201010201,
+            step2201010202,
+            step2201010203,
+            cv.fwallcst,
+            cv.blkcst,
+        ) = cs.step_a220101(
+            cv.step_ucblss,
+            cv.step_ucblbreed,
+            cv.step_ucblbe,
+            cv.ucblli,
+            cv.step_ucblvd,
+            cv.ucblli2o,
+            cv.ucbllipb,
+            cv.ifueltyp,
+            cv.step_ucfws,
+            cv.step_ucfwps,
+            cv.step_ucfwa,
+            fwbsv.blktmodel,
+            fwbsv.whtblli,
+            fwbsv.blkttype,
+            fwbsv.wtblli2o,
+            fwbsv.whtblbreed,
+            fwbsv.whtblvd,
+            fwbsv.whtblbe,
+            fwbsv.whtblss,
+            fwbsv.wtbllipb,
+            fwbsv.fw_armour_mass,
+            fwbsv.fwmass,
+            bv.fwarea,
+            htv.ipowerflow,
+        )
+
+        return (
+            step220101,
+            step22010101,
+            step22010102,
+            step2201010201,
+            step2201010202,
+            step2201010203,
+        )

@@ -280,11 +280,13 @@ def test_step_a2201(monkeypatch, costs_step):
     assert pytest.approx(step2201) == exp1
     assert pytest.approx(spares) == exp2
 
-def test_step_a220101(monkeypatch):
+def test_step_a220101(monkeypatch, costs_step):
     """Validate sum of cost account 22.01.01.
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
     monkeypatch.setattr(cv, "fwallcst", 0.0)
     monkeypatch.setattr(fwbs, "fw_armour_mass", 5.0)
@@ -304,18 +306,24 @@ def test_step_a220101(monkeypatch):
     monkeypatch.setattr(cv, "step_ucblvd", 200)
 
     #Account 22.01.01.01 : First wall
-    cs.step_a220101(0, 0, 0, 0, 0)
-    expected_fwallcst = 5.0e-5
-    observed_fwallcst = cv.fwallcst
-    assert pytest.approx(observed_fwallcst) == expected_fwallcst
+    (
+        step220101,
+        step22010101,
+        step22010102,
+        step2201010201,
+        step2201010202,
+        step2201010203,
+    ) = costs_step.step_a220101()
+    fwallcst_exp = 5.0e-5
+    fwallcst_obs = cv.fwallcst
+    assert pytest.approx(fwallcst_obs) == fwallcst_exp
 
     #Test blkcst is correct
-    exp = 0.095
-    obs = cv.blkcst
-    assert pytest.approx(obs) == exp
+    blkcst_exp = 0.095
+    blkcst_obs = cv.blkcst
+    assert pytest.approx(blkcst_obs) == blkcst_exp
 
     #Test that the value of step220101 is calculated correctly
-    step220101 = cs.step_a220101(0, 0, 0, 0, 0)
     assert pytest.approx(step220101) == 0.09505
 
 

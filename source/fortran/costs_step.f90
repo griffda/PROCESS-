@@ -202,11 +202,9 @@ contains
   end subroutine step_a21
 
   subroutine step_a2201(step_ref, fwarea, ifueltyp, fcdfuel, &
-    pinjmw, rmajor, rminor, step2201, spares, divcst, cdcost, step220101, &
-    step22010101, step22010102, step2201010201, &
-    step2201010202, step2201010203, step220102, step22010301, &
-    step22010302, step22010303, step22010304, step220104, &
-    step220105, step220106, step220107, step220108, step220109, &
+    pinjmw, rmajor, rminor, step220101, step2201, spares, divcst, cdcost, &
+    step220102, step22010301, step22010302, step22010303, step22010304, &
+    step220104, step220105, step220106, step220107, step220108, step220109, &
     step220110)
     !! Account 22.01 : Reactor Equipment
     !! author: S I Muldrew, CCFE, Culham Science Centre
@@ -219,22 +217,17 @@ contains
     ! Arguments
     real(8), dimension(:), intent(in) :: step_ref
     real(8), intent(in) :: fwarea, ifueltyp, fcdfuel, &
-      pinjmw, rmajor, rminor
-    real(8), intent(out) :: step2201, spares, divcst, cdcost, step220101, &
-      step22010101, step22010102, step2201010201, &
-      step2201010202, step2201010203, step220102, step22010301, &
-      step22010302, step22010303, step22010304, step220104, &
-      step220105, step220106, step220107, step220108, step220109, &
+      pinjmw, rmajor, rminor, step220101
+    real(8), intent(out) :: step2201, spares, divcst, cdcost, &
+      step220102, step22010301, step22010302, step22010303, step22010304, &
+      step220104, step220105, step220106, step220107, step220108, step220109, &
       step220110
   
     ! Initialise as zero
-    step2201 = 0.0D0
     spares = 0.0D0
 
     ! 22.01.01 Blanket and First Wall
-    call step_a220101(step220101, step22010101, step22010102, step2201010201, &
-                      step2201010202, step2201010203)
-    step2201 = step2201 + step220101
+    step2201 = step220101
 
     ! 22.01.02 Shield
     ! Original STARFIRE value, scaling with first wall area
@@ -323,12 +316,14 @@ contains
     step2201 = step2201 + step220110
   end subroutine step_a2201
 
-  subroutine step_a220101(step220101, step22010101, step22010102, step2201010201, &
-                          step2201010202, step2201010203)
-
+  subroutine step_a220101(step_ucblss, step_ucblbreed, step_ucblbe, ucblli, &
+    step_ucblvd, ucblli2o, ucbllipb, ifueltyp, step_ucfws, step_ucfwps, &
+    step_ucfwa, blktmodel, whtblli, blkttype, wtblli2o, whtblbreed, whtblvd, &
+    whtblbe, whtblss, wtbllipb, fw_armour_mass, fwmass, fwarea, ipowerflow, &
+    step220101, step22010101, step22010102, step2201010201, step2201010202, &
+    step2201010203, fwallcst, blkcst)
     !! Account 22.01.01 : Blanket and First Wall 
     !! author: A J Pearce, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 22.01.01 (BB+FW) costs.
     !! If ifueltyp = 0, the blanket cost is treated as capital cost
     !! If ifueltyp = 1, the blanket cost is treated as a fuel cost,
@@ -336,26 +331,17 @@ contains
     !! If ifueltyp = 2, the initial blanket is included as a capital cost
     !! and the replacement blanket costs are treated as a fuel cost.
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-		use cost_variables, only: step_ucblss, step_ucblbreed, step_ucblbe, ucblli, &
-      step_ucblvd, ucblli2o, blkcst, ucbllipb, ifueltyp, step_ucfws, &
-      fwallcst, step_ucfwps, step_ucfwa
-		use fwbs_variables, only: blktmodel, whtblli, blkttype, wtblli2o, &
-      whtblbreed, whtblvd, whtblbe, whtblss, wtbllipb, fw_armour_mass, fwmass 
-    use build_variables, only: fwarea 
-		use heat_transport_variables, only: ipowerflow 
-    
     implicit none
-    real(8), intent(inout) :: step22010101, step22010102, step2201010201, &
-                               step2201010202, step2201010203
-    real(8), intent(out) :: step220101
+
+    real(8), intent(in) :: step_ucblss, step_ucblbreed, step_ucblbe, ucblli, &
+      step_ucblvd, ucblli2o, ucbllipb, ifueltyp, step_ucfws, step_ucfwps, &
+      step_ucfwa, blktmodel, whtblli, blkttype, wtblli2o, whtblbreed, whtblvd, &
+      whtblbe, whtblss, wtbllipb, fw_armour_mass, fwmass, fwarea, ipowerflow 
+    real(8), intent(out) :: step22010101, step22010102, step2201010201, &
+      step2201010202, step2201010203, step220101, fwallcst, blkcst
 
     !  Local variables
     real(8) :: step2201010204, step2201010205, step2201010206, step2201010207
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !! Account 22.01.01.01 : First wall
     step22010101 = 1.0D-6 * (fw_armour_mass * step_ucfwa + fwmass * step_ucfws) 
