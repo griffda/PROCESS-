@@ -247,7 +247,7 @@ class CostsStep:
         cs.step22 += self.step_a2202()
 
         #  Account 22.03 : Cryogenic Cooling System
-        cs.step22 += cs.step_a2203(self.outfile, self.iprint)
+        cs.step22 += self.step_a2203()
 
         #  Account 22.04 : Waste Treatment and Disposal
         cs.step22 += cs.step_a2204(self.outfile, self.iprint)
@@ -838,3 +838,39 @@ class CostsStep:
             po.oblnkl(self.outfile)
 
         return step2202
+
+    def step_a2203(self):
+        """Account 22.03: Cryogenic Cooling System.
+
+        :return: cost 2203
+        :rtype: float
+        """
+        (step220301, step220302, step220303, step220304, step2203) = cs.step_a2203(
+            cv.step_ref
+        )
+
+        # Output costs
+        if (self.iprint == 1) and (cv.output_costs == 1):
+            po.write(self.outfile, "******************* 22.03 Cryogenic Cooling System")
+            po.ocosts(
+                self.outfile, "(step220301)", "Helium Refrigerator (M$)", step220301
+            )
+            po.ocosts(
+                self.outfile,
+                "(step220302)",
+                "Liquid Helium Transfer and Storage (M$)",
+                step220302,
+            )
+            po.ocosts(
+                self.outfile, "(step220303)", "Gas Helium Storage (M$)", step220303
+            )
+            po.ocosts(
+                self.outfile, "(step220304)", "Liquid Nitrogen Storage (M$)", step220304
+            )
+            po.oblnkl(self.outfile)
+            po.ocosts(
+                self.outfile, "(step2203)", "Total Account 22.03 Cost (M$)", step2203
+            )
+            po.oblnkl(self.outfile)
+
+        return step2203

@@ -413,7 +413,7 @@ def test_step_a2203(costs_step):
     :type costs_step: process.costs_step.CostsStep
     """
     exp = 1.490e1
-    obs = cs.step_a2203(0, 0)
+    obs = costs_step.step_a2203()
     assert pytest.approx(obs) == exp
 
 

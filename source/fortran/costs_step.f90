@@ -612,29 +612,20 @@ contains
     ! Converted to M$
   end subroutine step_a2202
 
-  subroutine step_a2203(outfile,iprint, step2203)
-
+  subroutine step_a2203(step_ref, step220301, step220302, step220303, &
+    step220304, step2203)
     !! Account 22.03 : Cryogenic Cooling System
     !! author: S I Muldrew, CCFE, Culham Science Centre
     !! None
     !! This routine evaluates the Account 22.03 (Cryogenic Cooling
     !! System) costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-    use cost_variables, only: output_costs, step_ref
-    use process_output, only: ocosts, oblnkl
-
     implicit none
   
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-    real(8), intent(out) :: step2203
-  
-    ! Local variables
-    real(8):: &
-    step220301, step220302, step220303, step220304
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(out) :: step220301, step220302, step220303, step220304, &
+      step2203
   
     ! Initialise as zero
     step2203 = 0.0D0
@@ -658,18 +649,6 @@ contains
     ! Original STARFIRE value, scaling with fusion island volume
     step220304 = step_ref(37) * (vfi / vfi_star)**(2.0D0/3.0D0)
     step2203 = step2203 + step220304
-  
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      write(outfile,*) '******************* 22.03 Cryogenic Cooling System'
-      call ocosts(outfile,'(step220301)','Helium Refrigerator (M$)', step220301)
-      call ocosts(outfile,'(step220302)','Liquid Helium Transfer and Storage (M$)', step220302)
-      call ocosts(outfile,'(step220303)','Gas Helium Storage (M$)', step220303)
-      call ocosts(outfile,'(step220304)','Liquid Nitrogen Storage (M$)', step220304)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step2203)','Total Account 22.03 Cost (M$)', step2203)
-      call oblnkl(outfile)
-    end if
   end subroutine step_a2203
 
   subroutine step_a2204(outfile,iprint, step2204)
