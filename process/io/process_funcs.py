@@ -253,6 +253,7 @@ def process_stopped(wdir='.'):
     Checks the process Mfile whether it has
     prematurely stopped.
     """
+    # Check for MFILE
     try:
         m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
     except FileNotFoundError as err:
@@ -260,11 +261,18 @@ def process_stopped(wdir='.'):
         print("Code continues to run!", file=stderr)
         return True
 
-    error_status = m_file.data['error_status'].get_scan(-1)
-
-    if error_status >= 3:
+    # Get error status; missing key indicates premature exit of Process
+    # (usually a STOP 1)
+    try:
+        error_status = m_file.data['error_status'].get_scan(-1)
+    except KeyError:
         return True
 
+    if error_status >= 3:
+        # Fatal error
+        return True
+
+    # Process did not prematurely exit
     return False
 
 ########################################

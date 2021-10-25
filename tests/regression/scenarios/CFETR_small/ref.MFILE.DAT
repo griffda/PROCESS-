@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
- Date_of_run_____________________________________________________________ (date)________________________     "01/10/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "16:22"
- User____________________________________________________________________ (username)____________________     "apearce" 
+ Date_of_run_____________________________________________________________ (date)________________________     "11/10/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "10:24"
+ User____________________________________________________________________ (username)____________________     "rhicha"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     ""CFETR small (5.7m) reference file"                                                                
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-381-gba6b4b73"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "issue-1399-elongation-scaling-aspect-ratio-stability-margin"                                       
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-646-g57e098e2"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1407-update-of-shield-cost-calculations"                                                           
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-apearce/pytest-14/test_scenario_CFETR_small_0/IN.DAT                                                                                                                                     "
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-149/test_scenario_CFETR_small_0/IN.DAT                                                                                                                                     "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -18,8 +18,8 @@
  Number_of_constraints_(total)___________________________________________ (neqns+nineqns)_______________             23    
  Optimisation_switch_____________________________________________________ (ioptimz)_____________________              1    
  Figure_of_merit_switch__________________________________________________ (minmax)______________________             10    
- Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      5.1976E-10 OP 
- VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      6.7574E-22 OP 
+ Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      5.1975E-10 OP 
+ VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      6.7624E-22 OP 
  Number_of_VMCON_iterations______________________________________________ (nviter)______________________             12 OP 
  te______________________________________________________________________ (itvar001)____________________      9.1463E+00    
  te_(final_value/initial_value)__________________________________________ (xcm001)______________________      7.0902E-01    
@@ -80,7 +80,7 @@
  fjprot_(range_normalised)_______________________________________________ (nitvar019)___________________      6.0543E-01    
  q_______________________________________________________________________ (itvar020)____________________      2.9000E+00    
  q_(final_value/initial_value)___________________________________________ (xcm020)______________________      9.6667E-01    
- q_(range_normalised)____________________________________________________ (nitvar020)___________________      1.1216E-10    
+ q_(range_normalised)____________________________________________________ (nitvar020)___________________      1.1217E-10    
  fimpvar_________________________________________________________________ (itvar021)____________________      5.8103E-03    
  fimpvar_(final_value/initial_value)_____________________________________ (xcm021)______________________      3.6314E+00    
  fimpvar_(range_normalised)______________________________________________ (nitvar021)___________________      5.2389E-01    
@@ -144,25 +144,25 @@
  Beta_consistency__________________normalised_residue____________________ (normres001)__________________     -3.3367E-07    
  Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________      8.2361E-07    
  TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres003)__________________     -3.0201E-10    
- Density_upper_limit_______________normalised_residue____________________ (normres004)__________________      6.6613E-16    
- Radial_build_consistency__________normalised_residue____________________ (normres005)__________________     -0.0000E+00    
+ Density_upper_limit_______________normalised_residue____________________ (normres004)__________________     -8.8818E-16    
+ Radial_build_consistency__________normalised_residue____________________ (normres005)__________________      2.2204E-16    
  Psep_/_R_upper_limit______________normalised_residue____________________ (normres006)__________________      4.2064E-06    
  Injection_power_upper_limit_______normalised_residue____________________ (normres007)__________________     -3.5068E-06    
  Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres008)__________________      9.0553E-07    
- TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres009)__________________     -1.7023E-11    
- TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres010)__________________      1.3640E-11    
+ TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres009)__________________     -1.7054E-11    
+ TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres010)__________________      1.3613E-11    
  J_winding_pack/J_protection_limit_normalised_residue____________________ (normres011)__________________     -1.9685E-10    
  I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres012)__________________     -1.9899E-10    
  Radiation_fraction_upper_limit____normalised_residue____________________ (normres013)__________________     -2.6568E-06    
- Dump_voltage_upper_limit__________normalised_residue____________________ (normres014)__________________     -1.6653E-15    
+ Dump_voltage_upper_limit__________normalised_residue____________________ (normres014)__________________     -3.3307E-16    
  Burn_time_lower_limit_____________normalised_residue____________________ (normres015)__________________     -0.0000E+00    
  L-H_power_threshold_limit_________normalised_residue____________________ (normres016)__________________     -4.2067E-06    
- CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres017)__________________     -2.5535E-15    
- CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres018)__________________     -3.7748E-15    
+ CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres017)__________________      3.1086E-15    
+ CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres018)__________________      3.1086E-15    
  taup/taueff_______________________normalised_residue____________________ (normres019)__________________     -1.2105E-06    
- Peak_toroidal_field_upper_limit___normalised_residue____________________ (normres020)__________________     -0.0000E+00    
+ Peak_toroidal_field_upper_limit___normalised_residue____________________ (normres020)__________________      2.2204E-16    
  Beam_ion_density_consistency______normalised_residue____________________ (normres021)__________________     -3.5071E-06    
- Beta_upper_limit__________________normalised_residue____________________ (normres022)__________________     -8.8818E-16    
+ Beta_upper_limit__________________normalised_residue____________________ (normres022)__________________     -7.7716E-16    
  Fusion_power_upper_limit__________normalised_residue____________________ (normres023)__________________      9.0511E-07    
  # Final Feasible Point #
  # Plant Availability #
@@ -511,7 +511,7 @@
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      5.9200E+08    
  WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      1.0255E+02 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      1.0382E+02 OP 
- Radial____stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_r_max(1))_____________      1.2212E-08    
+ Radial____stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_r_max(1))_____________      2.4424E-08    
  toroidal__stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_t_max(1))_____________     -1.9204E+08    
  Vertical__stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_z_max(1))_____________      1.1470E+08    
  Von-Mises_stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_vmises_max(1))________      2.6844E+08    

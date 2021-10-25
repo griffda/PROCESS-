@@ -13,141 +13,141 @@ module build_variables
 
   public
 
-  real(dp) :: aplasmin
+  real(8) :: aplasmin
   !! minimum minor radius (m)
 
-  real(dp) :: available_radial_space
+  real(8) :: available_radial_space
   !! Minimal radial space between plasma and coils (m)
 
-  real(dp) :: blarea
+  real(8) :: blarea
   !! blanket total surface area (m2)
 
-  real(dp) :: blareaib
+  real(8) :: blareaib
   !! inboard blanket surface area (m2)
 
-  real(dp) :: blareaob
+  real(8) :: blareaob
   !! outboard blanket surface area (m2)
 
-  real(dp) :: blbmith
+  real(8) :: blbmith
   !! inboard blanket box manifold thickness (m) (`blktmodel>0`)
   !#TODO: remove blktmodel and similar below
 
-  real(dp) :: blbmoth
+  real(8) :: blbmoth
   !! outboard blanket box manifold thickness (m) (`blktmodel>0`)
 
-  real(dp) :: blbpith
+  real(8) :: blbpith
   !! inboard blanket base plate thickness (m) (`blktmodel>0`)
 
-  real(dp) :: blbpoth
+  real(8) :: blbpoth
   !! outboard blanket base plate thickness (m) (`blktmodel>0`)
 
-  real(dp) :: blbuith
+  real(8) :: blbuith
   !! inboard blanket breeding zone thickness (m) (`blktmodel>0`) (`iteration variable 90`)
 
-  real(dp) :: blbuoth
+  real(8) :: blbuoth
   !! outboard blanket breeding zone thickness (m) (`blktmodel>0`) (`iteration variable 91`)
 
-  real(dp) :: blnkith
+  real(8) :: blnkith
   !! inboard blanket thickness (m); (calculated if `blktmodel>0`) (=0.0 if `iblnkith=0`)
 
-  real(dp) :: blnkoth
+  real(8) :: blnkoth
   !! outboard blanket thickness (m); calculated if `blktmodel>0`
 
-  real(dp) :: blnktth
+  real(8) :: blnktth
   !! top blanket thickness (m), = mean of inboard and outboard blanket thicknesses
 
-  real(dp) :: bore
+  real(8) :: bore
   !! central solenoid inboard radius (m) (`iteration variable 29`)
 
-  real(dp) :: clhsf
+  real(8) :: clhsf
   !! cryostat lid height scaling factor (tokamaks)
 
-  real(dp) :: ddwex
+  real(8) :: ddwex
   !! cryostat thickness (m)
 
-  real(dp) :: d_vv_in
+  real(8) :: d_vv_in
   !! vacuum vessel inboard thickness (TF coil / shield) (m)
 
-  real(dp) :: d_vv_out
+  real(8) :: d_vv_out
   !! vacuum vessel outboard thickness (TF coil / shield) (m)
 
-  real(dp) :: d_vv_top
+  real(8) :: d_vv_top
   !! vacuum vessel topside thickness (TF coil / shield) (m) (= d_vv_bot if double-null)
 
-  real(dp) :: d_vv_bot
+  real(8) :: d_vv_bot
   !! vacuum vessel underside thickness (TF coil / shield) (m)
 
-  real(dp) :: f_avspace
+  real(8) :: f_avspace
   !! F-value for stellarator radial space check (`constraint equation 83`)
 
-  real(dp) :: fcspc
+  real(8) :: fcspc
   !! Fraction of space occupied by CS pre-compression structure
 
-  real(dp) :: fmsbc
+  real(8) :: fmsbc
   !! Martensitic fraction of steel in (non-existent!) bucking cylinder
 
-  real(dp) :: fmsbl
+  real(8) :: fmsbl
   !! Martensitic fraction of steel in blanket
 
-  real(dp) :: fmsdwe
+  real(8) :: fmsdwe
   !! Martensitic fraction of steel in cryostat
 
-  real(dp) :: fmsdwi
+  real(8) :: fmsdwi
   !! Martensitic fraction of steel in vacuum vessel
 
-  real(dp) :: fmsfw
+  real(8) :: fmsfw
   !! Martensitic fraction of steel in first wall
 
-  real(dp) :: fmsoh
+  real(8) :: fmsoh
   !! Martensitic fraction of steel in central solenoid
 
-  real(dp) :: fmssh
+  real(8) :: fmssh
   !! Martensitic fraction of steel in shield
 
-  real(dp) :: fmstf
+  real(8) :: fmstf
   !! Martensitic fraction of steel in TF coil
 
-  real(dp) :: fseppc
+  real(8) :: fseppc
   !! Separation force in CS coil pre-compression structure
 
-  real(dp) :: fwarea
+  real(8) :: fwarea
   !! first wall total surface area (m2)
 
-  real(dp) :: fwareaib
+  real(8) :: fwareaib
   !! inboard first wall surface area (m2)
 
-  real(dp) :: fwareaob
+  real(8) :: fwareaob
   !! outboard first wall surface area (m2)
 
-  real(dp) :: fwith
+  real(8) :: fwith
   !! inboard first wall thickness, initial estimate as calculated (m)
 
-  real(dp) :: fwoth
+  real(8) :: fwoth
   !! outboard first wall thickness, initial estimate as calculated (m)
 
-  real(dp) :: gapds
+  real(8) :: gapds
   !! gap between inboard vacuum vessel and thermal shield (m) (`iteration variable 61`)
 
-  real(dp) :: gapoh
+  real(8) :: gapoh
   !! gap between central solenoid and TF coil (m) (`iteration variable 42`)
 
-  real(dp) :: gapomin
+  real(8) :: gapomin
   !! minimum gap between outboard vacuum vessel and TF coil (m) (`iteration variable 31`)
 
-  real(dp) :: gapsto
+  real(8) :: gapsto
   !! gap between outboard vacuum vessel and TF coil (m)
 
-  real(dp) :: hmax
+  real(8) :: hmax
   !! maximum (half-)height of TF coil (inside edge) (m)
 
-  real(dp) :: hpfdif
+  real(8) :: hpfdif
   !! difference in distance from midplane of upper and lower portions of TF
   !! legs (non-zero for single-null devices) (m)
 
-  real(dp) :: hpfu
+  real(8) :: hpfu
   !! height to top of (upper) TF coil leg (m)
 
-  real(dp) :: hr1
+  real(8) :: hr1
   !! half-height of TF coil inboard leg straight section (m)
 
   integer :: iohcl
@@ -162,46 +162,46 @@ module build_variables
   !! - =0 no pre-compression structure
   !! - =1 calculated pre-compression structure
 
-  real(dp) :: ohcth
+  real(8) :: ohcth
   !! Central solenoid thickness (m) (`iteration variable 16`)
 
-  real(dp) :: precomp
+  real(8) :: precomp
   !! CS coil precompression structure thickness (m)
 
-  real(dp) :: rbld
+  real(8) :: rbld
   !! sum of thicknesses to the major radius (m)
 
-  real(dp) :: required_radial_space
+  real(8) :: required_radial_space
   !! Required space between coil and plasma for blanket shield wall etc (m)
 
-  real(dp) :: rinboard
+  real(8) :: rinboard
   !! plasma inboard radius (m) (`consistency equation 29`)
 
-  real(dp) :: rsldi
+  real(8) :: rsldi
   !! radius to inboard shield (inside point) (m)
 
-  real(dp) :: rsldo
+  real(8) :: rsldo
   !! radius to outboard shield (outside point) (m)
 
-  real(dp) :: r_vv_inboard_out
+  real(8) :: r_vv_inboard_out
   !! Radial plasma facing side position of inboard vacuum vessel [m]
 
-  real(dp) :: r_sh_inboard_in
+  real(8) :: r_sh_inboard_in
   !! Radial inner side position of inboard neutronic shield [m]
 
-  real(dp) :: r_sh_inboard_out
+  real(8) :: r_sh_inboard_out
   !! Radial plasma facing side position of inboard neutronic shield [m]
 
-  real(dp) :: r_tf_inboard_in
+  real(8) :: r_tf_inboard_in
  	!! Mid-plane inboard TF coil leg radius at the centre-machine side [m]
 
-  real(dp) :: r_tf_inboard_mid
+  real(8) :: r_tf_inboard_mid
   !! Mid-plane inboard TF coil leg radius at middle of the coil [m]
 
-  real(dp) :: r_tf_inboard_out
+  real(8) :: r_tf_inboard_out
   !! Mid-plane inboard TF coil leg radius at the plasma side [m]
 
-  real(dp) :: r_tf_outboard_mid
+  real(8) :: r_tf_outboard_mid
   !! Mid-plane outboard TF coil leg radius at the middle of the coil [m]
 
   integer :: i_r_cp_top
@@ -210,99 +210,99 @@ module build_variables
   !!  1 : `r_cp_top` is a user input
   !!  2 : `r_cp_top` is set using the CP top and midplane CP radius ratio 
 
-  real(dp) :: r_cp_top
+  real(8) :: r_cp_top
   !! Top outer radius of the centropost (ST only) (m)
 
-  real(dp) :: f_r_cp
+  real(8) :: f_r_cp
   !! Ratio between the top and the midplane TF CP outer radius [-] 
   !! Not used by default (-1) must be larger than 1 otherwise
 
-  real(dp) :: dr_tf_inner_bore
+  real(8) :: dr_tf_inner_bore
   !! TF coil horizontal inner bore (m)
 
-  real(dp) :: dh_tf_inner_bore
+  real(8) :: dh_tf_inner_bore
   !! TF coil vertical inner bore (m)
 
-  real(dp) :: scrapli
+  real(8) :: scrapli
   !! Gap between plasma and first wall, inboard side (m) (if `iscrp=1`) 
   !! Iteration variable: ixc = 73
   !! Scan variable: nsweep = 58
 
-  real(dp) :: scraplo
+  real(8) :: scraplo
   !! Gap between plasma and first wall, outboard side (m) (if `iscrp=1`)
   !! Iteration variable: ixc = 74
   !! Scan variable: nsweep = 59
 
-  real(dp) :: sharea
+  real(8) :: sharea
   !! shield total surface area (m2)
 
-  real(dp) :: shareaib
+  real(8) :: shareaib
   !! inboard shield surface area (m2)
 
-  real(dp) :: shareaob
+  real(8) :: shareaob
   !! outboard shield surface area (m2)
 
-  real(dp) :: shldith
+  real(8) :: shldith
   !! inboard shield thickness (m) (`iteration variable 93`)
 
-  real(dp) :: shldlth
+  real(8) :: shldlth
   !! lower (under divertor) shield thickness (m)
 
-  real(dp) :: shldoth
+  real(8) :: shldoth
   !! outboard shield thickness (m) (`iteration variable 94`)
 
-  real(dp) :: shldtth
+  real(8) :: shldtth
   !! upper/lower shield thickness (m); calculated if `blktmodel > 0` (= shldlth if double-null)
 
-  real(dp) :: sigallpc
+  real(8) :: sigallpc
   !! allowable stress in CSpre-compression structure (Pa)
 
   !#TODO: Issue #514 Make tfcth an output not an iteration variable
-  real(dp) :: tfcth
+  real(8) :: tfcth
   !! inboard TF coil thickness, (centrepost for ST) (m)
   !! (input, calculated or `iteration variable 13`)
 
-  real(dp) :: tfoffset
+  real(8) :: tfoffset
   !! vertical distance between centre of TF coils and centre of plasma (m)
 
-  real(dp) :: tfootfi
+  real(8) :: tfootfi
   !! TF coil outboard leg / inboard leg radial thickness
   !! ratio (`i_tf_sup=0` only) (`iteration variable 75`)
 
-  real(dp) :: tfthko
+  real(8) :: tfthko
   !! Outboard TF coil thickness (m)
 
-  real(dp) :: tftsgap
+  real(8) :: tftsgap
   !! Minimum metal-to-metal gap between TF coil and thermal shield (m)
 
-  real(dp) :: thshield
+  real(8) :: thshield
   !! TF-VV thermal shield thickness (m)
 
-  real(dp) :: vgap2
+  real(8) :: vgap2
   !! vertical gap between vacuum vessel and thermal shields (m)
 
-  real(dp) :: vgap
+  real(8) :: vgap
   !! vertical gap between x-point and divertor (m) (if = 0, it is calculated)
 
-  real(dp) :: vgaptop
+  real(8) :: vgaptop
   !! vertical gap between top of plasma and first wall (m) (= vgap if double-null)
 
-  real(dp) :: vvblgap
+  real(8) :: vvblgap
   !! gap between vacuum vessel and blanket (m)
 
-  real(dp) :: plleni
+  real(8) :: plleni
   !! length of inboard divertor plate (m)
 
-  real(dp) :: plleno
+  real(8) :: plleno
   !! length of outboard divertor plate (m)
 
-  real(dp) :: plsepi
+  real(8) :: plsepi
   !! poloidal length, x-point to inboard strike point (m)
 
-  real(dp) :: plsepo
+  real(8) :: plsepo
   !! poloidal length, x-point to outboard strike point (m)
 
-  real(dp) :: rspo
+  real(8) :: rspo
   !! outboard strike point radius (m)
 
   contains
