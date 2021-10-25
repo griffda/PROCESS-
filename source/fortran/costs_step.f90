@@ -682,24 +682,17 @@ contains
     step2204 = step2204 + step220403
   end subroutine step_a2204
 
-  subroutine step_a2205(outfile,iprint, step2205, spares)
-
+  subroutine step_a2205(step_ref, pth, ptherm_star, step2205, spares)
     !! Account 22.05 : Fuel Handling and Storage
     !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 22.05 (Fuel Handling
     !! and Storage) costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-    use cost_variables, only: output_costs, step_ref
-    use process_output, only: ocosts, oblnkl
-
     implicit none
   
     ! Arguments
-    integer, intent(in) :: iprint,outfile
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: pth, ptherm_star
     real(8), intent(out) :: step2205, spares
   
     ! Initialise as zero
@@ -712,15 +705,6 @@ contains
 
     ! STARFIRE percentage for spares
     spares = spares + 5.026D-2 * step2205
-
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      write(outfile,*) '******************* 22.05 Fuel Handling and Storage'
-      call ocosts(outfile,'(step2205)','Fuel Handling and Storage (M$)', step2205)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step2205)','Total Account 22.05 Cost (M$)', step2205)
-      call oblnkl(outfile)
-    end if
   end subroutine step_a2205
 
   subroutine step_a2206(outfile,iprint, step2206, spares)
