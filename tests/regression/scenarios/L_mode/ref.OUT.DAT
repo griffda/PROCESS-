@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-378-g8e646ccf
-    Branch : 1345-elongation-scaleable-with-aspect-ratio
+   Tag No. : v2.1-381-gba6b4b73 code contains untracked changes
+    Branch : issue-1399-elongation-scaling-aspect-ratio-stability-margin
    Git log : COMMIT_MSG
- Date/time : 30 Sep 2021 12:03:21 +01:00(hh:mm) UTC
-      User : rhicha
-  Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-130/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-130/test_scenario_L_mode_0/IN.DAT
+ Date/time :  1 Oct 2021 16:23:55 +01:00(hh:mm) UTC
+      User : apearce
+  Computer : H0892
+ Directory : /tmp/pytest-of-apearce/pytest-14/test_solver0
+     Input : /tmp/pytest-of-apearce/pytest-14/test_scenario_L_mode_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
