@@ -427,10 +427,6 @@ def test_vmcon(case):
     :param case: a Vmcon scenario and its expected result
     :type case: test_vmcon.Case
     """
-    # TODO The cause of these memory errors needs to be found
-    if case.name in ["4", "5"]:
-        pytest.skip("test_vmcon cases 4 and 5 cause memory errors")
-    
     logger.debug("Initial solution estimate:")
     for i in range(case.vmcon.n):
        logger.debug(f"x[{i}] = {case.vmcon.x[i]}")

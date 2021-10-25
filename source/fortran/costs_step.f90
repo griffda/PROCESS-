@@ -230,8 +230,10 @@ contains
     step2201 = step220101
 
     ! 22.01.02 Shield
-    ! Original STARFIRE value, scaling with first wall area
-    step220102 = step_ref(21) * (fwarea / fwarea_star)
+    ! Inboard shield costs:
+    step220102 = step_a220102()
+    ! Note: outboard shield costs currently set to zero.
+    ! Add shield cost to total cost, step2201, in M$
     step2201 = step2201 + step220102
     ! STARFIRE percentage for spares
     spares = 9.985D-2 *  step220102
@@ -414,9 +416,79 @@ contains
 
   end subroutine step_a220101
 
+  function step_a220102() result(step220102)
+    !! 22.01.02
+    !! Returns cost of inboard shield
+    !! Note: outboard shield costs currently set to zero
+
+    use build_variables, only: rsldi, shldith, shldtth, vgap, &
+      scrapli, scraplo, fwith, fwoth, blnktth, d_vv_in
+    use fwbs_variables, only: i_shield_mat, denw, denwc
+    use divertor_variables, only: divfix
+    use cost_variables, only: step_ucshw, step_ucshwc
+    use physics_variables, only: rminor, kappa, idivrt
+    use constants, only: pi
+    implicit none
+
+    ! Result
+    real(8) :: step220102
+    !! Cost of shield in M$
+
+    ! Local variables
+    real(8):: inb_sh_v, r1, hbot, htop, hshld, &
+      inb_sh_v_mtl, inb_sh_m, sh_mtl_d, sh_mtl_c, shldith_corr    
+
+    ! Volume of inboard shield found using same method as in CCFE HCPB blanket model:
+    ! inboard shield is assumed to be a cylinder of uniform thickness
+
+    ! Calculate shield internal half-height (m)
+    hbot = rminor*kappa + vgap + divfix
+    ! if a double null machine then symmetric otherwise asymmetric
+    if ( idivrt == 2 ) then
+      htop = hbot
+    else
+      htop = rminor*kappa + 0.5D0*(scrapli+scraplo + fwith+fwoth) + blnktth
+    end if
+    ! Average of top and bottom (m)
+    hshld = 0.5D0*(htop + hbot)
+
+    ! Radius to outer edge of inboard shield (m)
+    r1 = rsldi + shldith
+
+    ! Corrected shield thickness: allows for 300mm vacuum vessel
+    ! Justification: requirement from K. Taylor, neutronics
+    ! # TODO: replace this correction when valid (VV + shield) is used
+    shldith_corr = (d_vv_in + shldith) - 0.3D0
+    ! Volume of inboard cylindrical shell (m3)
+    inb_sh_v = 2.0D0*(hshld+shldtth) * pi*(r1**2 - (r1-shldith_corr)**2)
+
+    ! Scale shield material volume (allow for 10% volume coolant, 5% steel)
+    inb_sh_v_mtl = 0.85D0 * inb_sh_v
+    
+    ! Define shield material density (sh_mtl_d [kg/m3]) and cost (sh_mtl_c [$/kg])
+    if ( i_shield_mat == 1 ) then
+      ! tungsten carbide
+      sh_mtl_d = denwc
+      sh_mtl_c = step_ucshwc
+    else
+      ! tungsten (default)
+      sh_mtl_d = denw
+      sh_mtl_c = step_ucshw
+    end if
+
+    ! Find inboard shield mass (kg) 
+    inb_sh_m = inb_sh_v_mtl * sh_mtl_d
+
+    ! Find inboard shield cost (converted to M$2017)
+    step220102 = (inb_sh_m * sh_mtl_c) / 1.0D6*(229.0D0/264.71D0)
+
+    ! Note: outboard shield costs currently set to zero
+
+  end function step_a220102
+
   subroutine step_a22010301(step_ref, ifueltyp, step_uc_cryo_al, &
-    step_mc_cryo_al_per, uccpcl1, uccpclb, &
-    i_tf_sup, whtconal, n_tf, whttflgs, whtcp, itart, step22010301, cpstcst)
+      step_mc_cryo_al_per, uccpcl1, uccpclb, &
+      i_tf_sup, whtconal, n_tf, whttflgs, whtcp, itart, step22010301, cpstcst)    
     !! 22.01.03.01 TF Coils
     implicit none
     

@@ -259,7 +259,7 @@ contains
       npdiv, peaking_factor, primary_pumping, rpf2dewar, secondary_cycle, &
       denstl, declfw, nphcdout, iblnkith, vfpblkt, fwinlet, wallpf, fblbe, &
       fhole, fwbsshape, coolp, tfwmatmax, irefprop, fw_channel_length, &
-      li6enrich, etaiso, nblktmodto, fvoldw 
+      li6enrich, etaiso, nblktmodto, fvoldw, i_shield_mat 
     use heat_transport_variables, only: htpmw_fw, baseel, fmgdmw, htpmw_div, &
       pwpm2, etath, vachtmw, iprimshld, fpumpdiv, pinjmax, htpmw_blkt, etatf, &
       htpmw_min, fpumpblkt, ipowerflow, htpmw_shld, fpumpshld, trithtmw, &
@@ -333,7 +333,7 @@ contains
       i_tf_plane_stress, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
       i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti, &
       i_cp_joints, n_tf_turn, f_t_turn_tf, t_turn_tf_max, t_cable_tf, &
-      sig_tf_wp_max
+      sig_tf_wp_max, hts_tape_width, hts_tape_thickness
 
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
@@ -1948,7 +1948,7 @@ contains
           call parse_int_variable('i_tf_bucking', i_tf_bucking, 0, 3, &
                'Switch for bucking cylinder (case)')
        case ('i_tf_sc_mat')
-          call parse_int_variable('i_tf_sc_mat', i_tf_sc_mat, 1, 8, &
+          call parse_int_variable('i_tf_sc_mat', i_tf_sc_mat, 1, 9, &
                'TF coil superconductor material')
           if (i_tf_sc_mat == 2) then
              write(outfile,*) ' '
@@ -1959,6 +1959,12 @@ contains
              write(outfile,*) '**********'
              write(outfile,*) ' '
           end if
+       case('hts_tape_width')
+          call parse_real_variable('hts_tape_width', hts_tape_width, 1.0D-3, 10.0D-3, &
+               'Width of HTS tape (m)')
+       case('hts_tape_thickness')
+          call parse_real_variable('hts_tape_thickness', hts_tape_thickness, 0.5D-6, 5.0D-6, &
+               'Thickness of HTS tape layer (m)')
        case ('itfmod')
           write(outfile,*) ' '
           write(outfile,*) '**********'
@@ -2302,6 +2308,9 @@ contains
        case ('htpmw_shld')
           call parse_real_variable('htpmw_shld', htpmw_shld, 0.0D0, 1.0D3, &
                'shield and vacuum vessel coolant mechanical pumping power (MW)')
+       case ('i_shield_mat')
+         call parse_int_variable('i_shield_mat', i_shield_mat, 0, 1, &
+               'Switch for shield material)')
 
 
        case ('secondary_cycle')
