@@ -147,7 +147,8 @@ subroutine run_summary
        call ocmmnt(outfile, '  Tag No. : '//tagno)
      end if
      call ocmmnt(outfile, '   Branch : '//branch_name) 
-     call ocmmnt(outfile, '  Git log : '//COMMSG)  !  Last git com message
+     call ocmmnt(outfile, '  Git log : '// &
+     COMMSG)  !  Last git com message
      call ocmmnt(outfile, progid(3))  !  date/time
      call ocmmnt(outfile, progid(4))  !  user
      call ocmmnt(outfile, progid(5))  !  computer
