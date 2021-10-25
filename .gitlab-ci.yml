@@ -14,6 +14,7 @@
 # supported due to modifying the Docker containers used here after they are run
 
 stages:
+  - containers
   - build
   - testing
   - step
@@ -21,8 +22,43 @@ stages:
   - pages
   - tracking
 
+#-----------------
+#  Containers
+#-----------------
+# should be first because the rest of the CI system uses the CI image
+build_docker_ci_image:
+  stage: containers
+  image: docker:19.03.12
+  services:
+    - docker:19.03.12-dind
+  script:
+    - cd docker/ci
+    - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN
+    - docker build -t $CI_REGISTRY/process/process/ci-image:latest .
+    - docker push $CI_REGISTRY/process/process/ci-image:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+      changes: 
+        - docker/ci/Dockerfile
+
+build_docker_dev_image:
+  stage: containers
+  image: docker:19.03.12
+  services:
+    - docker:19.03.12-dind
+  script:
+    - cd docker/dev
+    - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN
+    - docker build -t $CI_REGISTRY/process/process/dev:latest .
+    - docker push $CI_REGISTRY/process/process/dev:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+      changes: 
+        - docker/dev/Dockerfile
+
+
 .before_test_template: &test-setup
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9_pyenv
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   before_script:
     - source ~/.venv_$PY_VERSION/bin/activate
     - python -m pip install --upgrade pip
@@ -51,7 +87,7 @@ stages:
 #-----------------
 .make:
   stage: build
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9_pyenv
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   artifacts:
     paths:
       - process_dist_$PY_VERSION/process-*.tar.gz
@@ -229,7 +265,7 @@ baseline_2018-py38:
 line_length:
   when: on_success
   stage: quality
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   script:
     - pwd
     - python3 utilities/line_length_standard.py
@@ -245,7 +281,7 @@ pages:
   only:
     - develop
   stage: pages
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   script:
     - pwd
     
