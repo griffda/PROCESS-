@@ -3,16 +3,15 @@ from process.costs_step import CostsStep
 from process.fortran import costs_step_module as cs
 from process.fortran import tfcoil_variables as tfv
 from process.fortran import cost_variables as cv
-from process.fortran import buildings_variables as bv
+from process.fortran import buildings_variables as bldgsv
 from process.fortran import heat_transport_variables as htv
 from process.fortran import physics_variables as pv
-from process.fortran import build_variables as buildvar
+from process.fortran import build_variables as bv
 from process.fortran import current_drive_variables as cdv
-from process.fortran import fwbs_variables as fwbs
+from process.fortran import fwbs_variables as fwbsv
 from process.fortran import pfcoil_variables as pfv
 from process.fortran import times_variables as tv
 from process.fortran import divertor_variables as dv
-from process.fortran import build_variables as buildv
 
 
 import numpy as np
@@ -108,7 +107,7 @@ def costs_step(monkeypatch):
     # Mock commonly-used Fortran module vars for testing
     monkeypatch.setattr(cv, "step_ref", step_ref)
     monkeypatch.setattr(cv, "step_con", 1.5e-1)
-    monkeypatch.setattr(bv, "efloor", 1e4)
+    monkeypatch.setattr(bldgsv, "efloor", 1e4)
     monkeypatch.setattr(htv, "pgrossmw", 5e2)
     monkeypatch.setattr(cs, "vfi", 6.737e3)
     monkeypatch.setattr(cs, "vfi_star", 6.737e3)
@@ -154,13 +153,13 @@ def test_costs_step(monkeypatch, costs_step):
     #Mock module vars
     monkeypatch.setattr(cv, "cdirt", 0.0)
     monkeypatch.setattr(cv, "concost", 0.0)
-    monkeypatch.setattr(buildvar, "r_tf_outboard_mid", 10.0)
-    monkeypatch.setattr(buildvar, "tfthko", 10.0)
-    monkeypatch.setattr(buildvar, "hpfu", 10.0)
-    monkeypatch.setattr(buildvar, "hmax", 10.0)
-    monkeypatch.setattr(buildvar, "tfcth", 10.0)
+    monkeypatch.setattr(bv, "r_tf_outboard_mid", 10.0)
+    monkeypatch.setattr(bv, "tfthko", 10.0)
+    monkeypatch.setattr(bv, "hpfu", 10.0)
+    monkeypatch.setattr(bv, "hmax", 10.0)
+    monkeypatch.setattr(bv, "tfcth", 10.0)
     monkeypatch.setattr(pv, "powfmw", 10.0)
-    monkeypatch.setattr(fwbs, "emultmw", 10.0)
+    monkeypatch.setattr(fwbsv, "emultmw", 10.0)
     monkeypatch.setattr(htv, "pinjwp", 10.0)
 
     costs_step.run()
@@ -242,7 +241,7 @@ def test_step_a22(monkeypatch, costs_step):
     """
     # Mock module vars
     monkeypatch.setattr(cs, "step22", 0.0)
-    monkeypatch.setattr(buildvar, "fwarea", 9.42e2)
+    monkeypatch.setattr(bv, "fwarea", 9.42e2)
     monkeypatch.setattr(cs, "fwarea_star", 9.42e2)
     monkeypatch.setattr(pv, "rmajor", 1e2)
     monkeypatch.setattr(pv, "rmajor", 1e1)
@@ -267,7 +266,7 @@ def test_step_a2201(monkeypatch, costs_step):
     """
     # Mock module var set in subroutine: increase is value of step2201
     monkeypatch.setattr(cs, "step22", 0.0)
-    monkeypatch.setattr(buildvar, "fwarea", 9.42e2)
+    monkeypatch.setattr(bv, "fwarea", 9.42e2)
     monkeypatch.setattr(cs, "fwarea_star", 9.42e2)
     monkeypatch.setattr(pv, "rmajor", 1e2)
     monkeypatch.setattr(pv, "rmajor", 1e1)
@@ -291,20 +290,20 @@ def test_step_a220101(monkeypatch, costs_step):
     :type costs_step: process.costs_step.CostsStep
     """
     monkeypatch.setattr(cv, "fwallcst", 0.0)
-    monkeypatch.setattr(fwbs, "fw_armour_mass", 5.0)
+    monkeypatch.setattr(fwbsv, "fw_armour_mass", 5.0)
     monkeypatch.setattr(cv, "step_ucfwa", 5.0)
-    monkeypatch.setattr(fwbs, "fwmass", 5.0)
+    monkeypatch.setattr(fwbsv, "fwmass", 5.0)
     monkeypatch.setattr(cv, "step_ucfws", 5.0)
     monkeypatch.setattr(cv, "ifueltyp", 2)
     monkeypatch.setattr(htv, "ipowerflow", 1)
-    monkeypatch.setattr(fwbs, "blkttype", 3)
-    monkeypatch.setattr(fwbs, "whtblbe", 10.0)
+    monkeypatch.setattr(fwbsv, "blkttype", 3)
+    monkeypatch.setattr(fwbsv, "whtblbe", 10.0)
     monkeypatch.setattr(cv, "step_ucblbe", 8000)
-    monkeypatch.setattr(fwbs, "wtblli2o", 10.0)
+    monkeypatch.setattr(fwbsv, "wtblli2o", 10.0)
     monkeypatch.setattr(cv, "step_ucblbreed", 800)
-    monkeypatch.setattr(fwbs, "whtblss", 10.0)
+    monkeypatch.setattr(fwbsv, "whtblss", 10.0)
     monkeypatch.setattr(cv, "step_ucblss", 500)
-    monkeypatch.setattr(fwbs, "whtblvd", 10.0)
+    monkeypatch.setattr(fwbsv, "whtblvd", 10.0)
     monkeypatch.setattr(cv, "step_ucblvd", 200)
 
     #Account 22.01.01.01 : First wall
@@ -336,19 +335,19 @@ def test_step_a220102(monkeypatch, costs_step):
     :param costs_step: fixture to mock commonly-used cost vars
     :type costs_step: process.costs_step.CostsStep
     """
-    monkeypatch.setattr(buildv, "rsldi", 1.0)
-    monkeypatch.setattr(buildv, "shldith", 0.5)
-    monkeypatch.setattr(buildv, "shldtth", 0.5)
-    monkeypatch.setattr(buildv, "vgap", 0.5)
-    monkeypatch.setattr(buildv, "scrapli", 0.14)
-    monkeypatch.setattr(buildv, "scraplo", 0.15)
-    monkeypatch.setattr(buildv, "fwith", 0.5)
-    monkeypatch.setattr(buildv, "fwoth", 0.5)
-    monkeypatch.setattr(buildv, "blnktth", 0.5)
-    monkeypatch.setattr(buildv, "d_vv_in", 0.07)
-    monkeypatch.setattr(fwbs, "i_shield_mat", 0)
-    monkeypatch.setattr(fwbs, "denw", 19250.0)
-    monkeypatch.setattr(fwbs, "denwc", 15630.0)
+    monkeypatch.setattr(bv, "rsldi", 1.0)
+    monkeypatch.setattr(bv, "shldith", 0.5)
+    monkeypatch.setattr(bv, "shldtth", 0.5)
+    monkeypatch.setattr(bv, "vgap", 0.5)
+    monkeypatch.setattr(bv, "scrapli", 0.14)
+    monkeypatch.setattr(bv, "scraplo", 0.15)
+    monkeypatch.setattr(bv, "fwith", 0.5)
+    monkeypatch.setattr(bv, "fwoth", 0.5)
+    monkeypatch.setattr(bv, "blnktth", 0.5)
+    monkeypatch.setattr(bv, "d_vv_in", 0.07)
+    monkeypatch.setattr(fwbsv, "i_shield_mat", 0)
+    monkeypatch.setattr(fwbsv, "denw", 19250.0)
+    monkeypatch.setattr(fwbsv, "denwc", 15630.0)
     monkeypatch.setattr(dv, "divfix", 1.0)
     monkeypatch.setattr(cv, "step_ucshw", 269.638)
     monkeypatch.setattr(cv, "step_ucshwc", 930.251)
@@ -417,7 +416,7 @@ def test_step_a22010302(monkeypatch, costs_step):
     monkeypatch.setattr(pfv, "turns", np.full(18, 5.0, order="F"))
     monkeypatch.setattr(pfv, "rpf", np.full(18, 5.0, order="F"))
     monkeypatch.setattr(pfv, "ipfres", 1.0)
-    monkeypatch.setattr(buildvar, "iohcl", 0.0)
+    monkeypatch.setattr(bv, "iohcl", 0.0)
     monkeypatch.setattr(cv, "step_uccu", 82.0)
     monkeypatch.setattr(pfv, "vf", np.full(18, 0.5, order="F"))
     monkeypatch.setattr(pfv, "ric", np.full(18, 5.0, order="F"))
@@ -602,7 +601,7 @@ def test_coelc_step(monkeypatch, costs_step):
     monkeypatch.setattr(cv, "fcap0", 10.0)
     monkeypatch.setattr(cv, "fcr0", 10.0)
     monkeypatch.setattr(cv, "discount_rate", 0.5)
-    monkeypatch.setattr(fwbs, "bktlife", 10.0)
+    monkeypatch.setattr(fwbsv, "bktlife", 10.0)
     monkeypatch.setattr(cs, "fwblkcost", 10.0)
     monkeypatch.setattr(cv, "fcap0cp", 10.0)
     monkeypatch.setattr(cv, "divlife", 2.0)
