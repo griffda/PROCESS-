@@ -9919,7 +9919,7 @@
         "lwa": "",
         "m": "",
         "m_res": "poloidal resonance number",
-        "m_s_limit": "vertical stablity margin limit",
+        "m_s_limit": "margin to vertical stability",
         "mach0": "Mach number at target (must be just less than 1)",
         "machname": "",
         "mact": "",
