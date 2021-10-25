@@ -549,7 +549,7 @@ module physics_variables
   !! central ion density (/m3)
 
   real(dp) :: m_s_limit 
-  !! vertical stablity margin limit
+  !! margin to vertical stability
 
   real(dp) :: p0
   !! central total plasma pressure (Pa)
