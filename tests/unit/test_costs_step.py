@@ -129,8 +129,8 @@ def test_init_costs_step():
     assert cs.vfi == 0
     assert cs.vfi_star == 0
     assert cs.ptherm_star == 0
-    assert cs.pinjmw_star == 0
-    assert cs.fwarea_star == 0
+    #assert cs.pinjmw_star == 0
+    #assert cs.fwarea_star == 0
     assert cs.rmajor_star == 0
     assert cs.rminor_star == 0
     assert cs.pth == 0
@@ -169,8 +169,8 @@ def test_costs_step(monkeypatch, shared_cost_vars):
     #Test that module variables are assigned correctly
     assert cs.vfi_star == 6.737e3 
     assert cs.ptherm_star == 4.15e3
-    assert cs.pinjmw_star == 9.04e1
-    assert cs.fwarea_star == 9.42e2
+    #assert cs.pinjmw_star == 9.04e1
+    #assert cs.fwarea_star == 9.42e2
     assert cs.rmajor_star == 7.0e0
     assert cs.rminor_star == 7.0/3.6
 
@@ -235,16 +235,17 @@ def test_step_a22(monkeypatch, shared_cost_vars):
     # Mock module vars
     monkeypatch.setattr(cs, "step22", 0.0)
     monkeypatch.setattr(buildvar, "fwarea", 9.42e2)
-    monkeypatch.setattr(cs, "fwarea_star", 9.42e2)
+    #monkeypatch.setattr(cs, "fwarea_star", 9.42e2)
     monkeypatch.setattr(pv, "rmajor", 1e2)
     monkeypatch.setattr(pv, "rmajor", 1e1)
     monkeypatch.setattr(cdv, "pinjmw", 4.15e3)
-    monkeypatch.setattr(cs, "pinjmw_star", 9.04e1)
+    #monkeypatch.setattr(cs, "pinjmw_star", 9.04e1)
     monkeypatch.setattr(cs, "rmajor_star", 1e3)
     monkeypatch.setattr(cs, "rminor_star", 1e3)
     # Run and assert result in M$
     cs.step_a22(0, 0)
-    exp = 2.64905413e3
+    #exp = 2.64905413e3
+    exp = 468.17394240
     obs = cs.step22
     assert pytest.approx(obs) == exp
 
@@ -259,15 +260,16 @@ def test_step_a2201(monkeypatch, shared_cost_vars):
     # Mock module var set in subroutine: increase is value of step2201
     monkeypatch.setattr(cs, "step22", 0.0)
     monkeypatch.setattr(buildvar, "fwarea", 9.42e2)
-    monkeypatch.setattr(cs, "fwarea_star", 9.42e2)
+    #monkeypatch.setattr(cs, "fwarea_star", 9.42e2)
     monkeypatch.setattr(pv, "rmajor", 1e2)
     monkeypatch.setattr(pv, "rmajor", 1e1)
     monkeypatch.setattr(cdv, "pinjmw", 4.15e3)
-    monkeypatch.setattr(cs, "pinjmw_star", 9.04e1)
+    #monkeypatch.setattr(cs, "pinjmw_star", 9.04e1)
     monkeypatch.setattr(cs, "rmajor_star", 1e3)
     monkeypatch.setattr(cs, "rminor_star", 1e3)
     cs.step_a2201(0, 0, 0)
-    exp = 1.7982872e3
+    #exp = 1.7982872e3
+    exp = 260.8591657
     obs = cs.step22
     assert pytest.approx(obs) == exp
 
@@ -353,6 +355,7 @@ def test_step_a22010301(monkeypatch):
     observed = cs.step_a22010301()
     assert pytest.approx(observed) == expected
 
+
 def test_step_a22010302(monkeypatch):
     """Test evaluation of account 22.01.03.02 (PF magnet) costs
     :param monkeypatch: fixture for mocking variables
@@ -373,6 +376,35 @@ def test_step_a22010302(monkeypatch):
 
     exp = 1.167792821192398e1 
     obs = cs.step_a22010302()
+    assert pytest.approx(obs) == exp
+
+
+def test_step_a220104(monkeypatch):
+    """Test evaluation of account costs: 22.01.04 
+    (Auxiliary Heating and Current Drive)
+
+    :param monkeypatch: fixture for mocking variables
+    :type monkeypatch: MonkeyPatch
+    """
+
+    # Mock module vars used in subroutine
+
+    monkeypatch.setattr(cv, "fcdfuel", 0.1)
+    monkeypatch.setattr(cv, "cdcost", 0.0)
+    monkeypatch.setattr(cv, "ucich", 3.0)
+    monkeypatch.setattr(cv, "uclh", 3.3)
+    monkeypatch.setattr(cv, "ifueltyp", 0.0)
+    monkeypatch.setattr(cdv, "iefrf", 10.0)
+    monkeypatch.setattr(cdv, "echpwr", 90.0)
+    #monkeypatch.setattr(cdv, "pnbitot", 103.578)
+    #monkeypatch.setattr(cdv, "plhybd", 100.0)
+    monkeypatch.setattr(cv, "step_ref", np.zeros(70, order="F"))
+    # Only mock used array elements
+    cv.step_ref[68] = 19.21
+    cv.step_ref[69] = 12.85
+
+    exp = 1.02317454e3
+    obs = cs.step_a220104()
     assert pytest.approx(obs) == exp
 
 
@@ -553,7 +585,8 @@ def test_step_a27(monkeypatch):
     observed = cs.step_a22010301()
     assert pytest.approx(observed) == expected
 
-    exp = 10.0
+    #exp = 10.0
+    exp = 304.798694
     cs.step_a27(0, 0)
     obs = cs.step27
 
