@@ -275,7 +275,7 @@ def test_step_a2201(monkeypatch, costs_step):
     monkeypatch.setattr(cs, "rminor_star", 1e3)
     
     exp1 = 1.7982872e3
-    exp2 = 3.86957425e2
+    exp2 = 3.69189035e2
     step2201, spares = costs_step.step_a2201()
     assert pytest.approx(step2201) == exp1
     assert pytest.approx(spares) == exp2
