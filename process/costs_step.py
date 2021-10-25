@@ -14,6 +14,7 @@ from process.fortran import current_drive_variables as cdv
 from process.fortran import tfcoil_variables as tfv
 from process.fortran import pfcoil_variables as pfv
 from process.fortran import structure_variables as sv
+from process.fortran import divertor_variables as dv
 
 
 class CostsStep:
@@ -574,6 +575,8 @@ class CostsStep:
             step2201010203,
         ) = self.step_a220101()
 
+        step220102 = self.step_a220102()
+
         step22010301 = self.step_a22010301()
         step22010302 = self.step_a22010302()
 
@@ -582,7 +585,6 @@ class CostsStep:
             spares,
             cv.divcst,
             cv.cdcost,
-            step220102,
             step22010303,
             step22010304,
             step220104,
@@ -601,6 +603,7 @@ class CostsStep:
             pv.rmajor,
             pv.rminor,
             step220101,
+            step220102,
             step22010301,
             step22010302,
         )
@@ -758,6 +761,37 @@ class CostsStep:
             step2201010202,
             step2201010203,
         )
+
+    def step_a220102(self):
+        """22.01.02 Inboard shield.
+
+        :return: 220102 cost
+        :rtype: float
+        """
+        step220102 = cs.step_a220102(
+            bv.rsldi,
+            bv.shldith,
+            bv.shldtth,
+            bv.vgap,
+            bv.scrapli,
+            bv.scraplo,
+            bv.fwith,
+            bv.fwoth,
+            bv.blnktth,
+            bv.d_vv_in,
+            fwbsv.i_shield_mat,
+            fwbsv.denw,
+            fwbsv.denwc,
+            dv.divfix,
+            cv.step_ucshw,
+            cv.step_ucshwc,
+            pv.rminor,
+            pv.kappa,
+            pv.idivrt,
+            constants.pi,
+        )
+
+        return step220102
 
     def step_a22010301(self):
         """22.01.03.01 TF Coils.

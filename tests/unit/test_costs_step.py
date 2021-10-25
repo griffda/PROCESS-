@@ -11,6 +11,8 @@ from process.fortran import current_drive_variables as cdv
 from process.fortran import fwbs_variables as fwbs
 from process.fortran import pfcoil_variables as pfv
 from process.fortran import times_variables as tv
+from process.fortran import divertor_variables as dv
+from process.fortran import build_variables as buildv
 
 
 import numpy as np
@@ -326,6 +328,37 @@ def test_step_a220101(monkeypatch, costs_step):
     #Test that the value of step220101 is calculated correctly
     assert pytest.approx(step220101) == 0.09505
 
+def test_step_a220102(monkeypatch, costs_step):
+    """Validate sum of cost account 22.01.02.
+
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
+    """
+    monkeypatch.setattr(buildv, "rsldi", 1.0)
+    monkeypatch.setattr(buildv, "shldith", 0.5)
+    monkeypatch.setattr(buildv, "shldtth", 0.5)
+    monkeypatch.setattr(buildv, "vgap", 0.5)
+    monkeypatch.setattr(buildv, "scrapli", 0.14)
+    monkeypatch.setattr(buildv, "scraplo", 0.15)
+    monkeypatch.setattr(buildv, "fwith", 0.5)
+    monkeypatch.setattr(buildv, "fwoth", 0.5)
+    monkeypatch.setattr(buildv, "blnktth", 0.5)
+    monkeypatch.setattr(buildv, "d_vv_in", 0.07)
+    monkeypatch.setattr(fwbs, "i_shield_mat", 0)
+    monkeypatch.setattr(fwbs, "denw", 19250.0)
+    monkeypatch.setattr(fwbs, "denwc", 15630.0)
+    monkeypatch.setattr(dv, "divfix", 1.0)
+    monkeypatch.setattr(cv, "step_ucshw", 269.638)
+    monkeypatch.setattr(cv, "step_ucshwc", 930.251)
+    monkeypatch.setattr(pv, "rminor", 1.0)
+    monkeypatch.setattr(pv, "kappa", 1.792)
+    monkeypatch.setattr(pv, "idivrt", 1)
+
+    obs = costs_step.step_a220102()
+    exp = 6.38925762e1
+    assert pytest.approx(obs) == exp
 
 def test_step_a22010301(monkeypatch, costs_step):
     """Cost of TF coils for different materials (22.01.03.01).

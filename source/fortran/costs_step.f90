@@ -202,10 +202,10 @@ contains
   end subroutine step_a21
 
   subroutine step_a2201(step_ref, fwarea, ifueltyp, fcdfuel, &
-    pinjmw, rmajor, rminor, step220101, step22010301, step22010302, step2201, &
-    spares, divcst, cdcost, step220102, step22010303, step22010304, &
-    step220104, step220105, step220106, step220107, step220108, step220109, &
-    step220110)
+    pinjmw, rmajor, rminor, step220101, step220102, step22010301, &
+    step22010302, step2201, spares, divcst, cdcost, step22010303, &
+    step22010304, step220104, step220105, step220106, step220107, step220108, &
+    step220109, step220110)
     !! Account 22.01 : Reactor Equipment
     !! author: S I Muldrew, CCFE, Culham Science Centre
     !! None
@@ -217,11 +217,10 @@ contains
     ! Arguments
     real(8), dimension(:), intent(in) :: step_ref
     real(8), intent(in) :: fwarea, ifueltyp, fcdfuel, &
-      pinjmw, rmajor, rminor, step220101, step22010301, step22010302
+      pinjmw, rmajor, rminor, step220101, step220102, step22010301, step22010302
     real(8), intent(out) :: step2201, spares, divcst, cdcost, &
-      step220102, step22010303, step22010304, &
-      step220104, step220105, step220106, step220107, step220108, step220109, &
-      step220110
+      step22010303, step22010304, step220104, step220105, step220106, &
+      step220107, step220108, step220109, step220110
   
     ! Initialise as zero
     spares = 0.0D0
@@ -231,7 +230,6 @@ contains
 
     ! 22.01.02 Shield
     ! Inboard shield costs:
-    step220102 = step_a220102()
     ! Note: outboard shield costs currently set to zero.
     ! Add shield cost to total cost, step2201, in M$
     step2201 = step2201 + step220102
@@ -416,22 +414,19 @@ contains
 
   end subroutine step_a220101
 
-  function step_a220102() result(step220102)
+  subroutine step_a220102(rsldi, shldith, shldtth, vgap, scrapli, scraplo, &
+    fwith, fwoth, blnktth, d_vv_in, i_shield_mat, denw, denwc, divfix, &
+    step_ucshw, step_ucshwc, rminor, kappa, idivrt, pi, step220102)
     !! 22.01.02
     !! Returns cost of inboard shield
     !! Note: outboard shield costs currently set to zero
-
-    use build_variables, only: rsldi, shldith, shldtth, vgap, &
-      scrapli, scraplo, fwith, fwoth, blnktth, d_vv_in
-    use fwbs_variables, only: i_shield_mat, denw, denwc
-    use divertor_variables, only: divfix
-    use cost_variables, only: step_ucshw, step_ucshwc
-    use physics_variables, only: rminor, kappa, idivrt
-    use constants, only: pi
     implicit none
 
     ! Result
-    real(8) :: step220102
+    real(8), intent(in) :: rsldi, shldith, shldtth, vgap, scrapli, scraplo, &
+    fwith, fwoth, blnktth, d_vv_in, i_shield_mat, denw, denwc, divfix, &
+    step_ucshw, step_ucshwc, rminor, kappa, idivrt, pi
+    real(8), intent(out) :: step220102
     !! Cost of shield in M$
 
     ! Local variables
@@ -484,7 +479,7 @@ contains
 
     ! Note: outboard shield costs currently set to zero
 
-  end function step_a220102
+  end subroutine step_a220102
 
   subroutine step_a22010301(step_ref, ifueltyp, step_uc_cryo_al, &
       step_mc_cryo_al_per, uccpcl1, uccpclb, &
