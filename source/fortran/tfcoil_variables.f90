@@ -144,7 +144,7 @@ module tfcoil_variables
   real(8) :: dcase
   !! density of coil case (kg/m3)
 
-  real(8), dimension(8) :: dcond
+  real(8), dimension(9) :: dcond
   !! density of superconductor type given by i_tf_sc_mat/isumatoh/isumatpf (kg/m3)
   
   real(8) :: dcondins
@@ -173,6 +173,12 @@ module tfcoil_variables
   !! account for stress, fatigue, radiation, AC losses, joints or manufacturing 
   !! variations; 1.0 would be very optimistic)
   
+  real(8) :: hts_tape_width
+  !! Width of HTS tape [m] (if i_tf_sc_mat = 9)
+
+  real(8) :: hts_tape_thickness
+  !! Thickness of HTS tape layer [m] (if i_tf_sc_mat = 9)
+
   real(8) :: insstrain
   !! Radial strain in insulator
 
@@ -218,6 +224,7 @@ module tfcoil_variables
   !! - =6 REBCO HTS tape in CroCo strand
   !! - =7 Durham Ginzburg-Landau critical surface model for Nb-Ti
   !! - =8 Durham Ginzburg-Landau critical surface model for REBCO
+  !! - =9 Hazelton experimental data + Zhai conceptual model for REBCO
 
   integer :: i_tf_sup
   !! Switch for TF coil conductor model:
@@ -810,6 +817,8 @@ module tfcoil_variables
     max_force_density = 0.0D0
     fcutfsu = 0.69D0
     fhts = 0.5D0
+    hts_tape_width = 4.0D-3
+    hts_tape_thickness = 1.0D-6
     insstrain = 0.0D0
     i_tf_plane_stress = 1
     i_tf_tresca = 0
