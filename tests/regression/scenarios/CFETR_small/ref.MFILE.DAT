@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
- Date_of_run_____________________________________________________________ (date)________________________     "20/10/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "14:09"
+ Date_of_run_____________________________________________________________ (date)________________________     "25/10/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "13:02"
  User____________________________________________________________________ (username)____________________     "rhicha"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     ""CFETR small (5.7m) reference file"                                                                
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-661-g3493036b"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1350-higher-current-density-material-in-tf-coil"                                                   
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-171/test_scenario_CFETR_small_0/IN.DAT                                                                                                                                     "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-680-ge8618ef4"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1304-update-hcd-costs-in-cost-model-2"                                                             
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |develop|\ into\ 1304-update-hcd-costs-in-cost-model-2"                             
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-188/test_scenario_CFETR_small_0/IN.DAT                                                                                                                                     "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
