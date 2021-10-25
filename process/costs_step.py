@@ -258,7 +258,7 @@ class CostsStep:
         step2298 += spares
 
         #  Account 22.06 : Other Reactor Plant Equipment
-        step2206, spares = cs.step_a2206(self.outfile, self.iprint)
+        step2206, spares = self.step_a2206()
         cs.step22 += step2206
         step2298 += spares
 
@@ -924,3 +924,56 @@ class CostsStep:
             po.oblnkl(self.outfile)
 
         return step2205, spares
+
+    def step_a2206(self):
+        """Account 22.06: Other Reactor Plant Equipment.
+
+        :return: 2206 cost and spares
+        :rtype: tuple[float, float]
+        """
+        (
+            step2206,
+            spares,
+            step220601,
+            step220602,
+            step220603,
+            step220604,
+            step220605,
+            step220606,
+            step220607,
+            step220608,
+        ) = cs.step_a2206(cv.step_ref, cs.pth, cs.ptherm_star)
+
+        # Output costs
+        if self.iprint == 1 and cv.output_costs == 1:
+            po.write(
+                self.outfile, "******************* 22.06 Other Reactor Plant Equipment"
+            )
+            po.ocosts(
+                self.outfile, "(step220601)", "Maintenance Equipment (M$)", step220601
+            )
+            po.ocosts(
+                self.outfile, "(step220602)", "Special Heating Systems (M$)", step220602
+            )
+            po.ocosts(self.outfile, "(step220603)", "Coolant Storage (M$)", step220603)
+            po.ocosts(self.outfile, "(step220604)", "Gas System (M$)", step220604)
+            # po.ocosts(self.outfile,'(step220605)','Inert Atmosphere System (M$)', step220605)
+            po.ocosts(
+                self.outfile, "(step220606)", "Fluid Leak Detection (M$)", step220606
+            )
+            po.ocosts(
+                self.outfile,
+                "(step220607)",
+                "Closed Loop Coolant System (M$)",
+                step220607,
+            )
+            po.ocosts(
+                self.outfile, "(step220608)", "Standby Cooling System (M$)", step220608
+            )
+            po.oblnkl(self.outfile)
+            po.ocosts(
+                self.outfile, "(step2206)", "Total Account 22.06 Cost (M$)", step2206
+            )
+            po.oblnkl(self.outfile)
+
+        return step2206, spares

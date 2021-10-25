@@ -447,7 +447,7 @@ def test_step_a2206(costs_step):
     """
     exp1 = 5.45e0
     exp2 = 8.3e-1
-    step2206, spares = cs.step_a2206(0, 0)
+    step2206, spares = costs_step.step_a2206()
     assert pytest.approx(step2206) == exp1
     assert pytest.approx(spares) == exp2
 

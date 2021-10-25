@@ -710,30 +710,21 @@ contains
     spares = spares + 5.026D-2 * step2205
   end subroutine step_a2205
 
-  subroutine step_a2206(outfile,iprint, step2206, spares)
-
+  subroutine step_a2206(step_ref, pth, ptherm_star, step2206, spares, &
+    step220601, step220602, step220603, step220604, step220605, step220606, &
+    step220607, step220608)
     !! Account 22.06 : Other Reactor Plant Equipment
     !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 22.06 (Other Reactor
     !! Plant Equipment) costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
-    use cost_variables, only: output_costs, step_ref
-    use process_output, only: ocosts, oblnkl
-
     implicit none
   
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-    real(8), intent(out) :: step2206, spares
-  
-    ! Local variables
-    real(8):: &
-    step220601, step220602, step220603, step220604, step220605, &
-    step220606, step220607, step220608
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: pth, ptherm_star
+    real(8), intent(out) :: step2206, spares, step220601, step220602, &
+      step220603, step220604, step220605, step220606, step220607, step220608
   
     ! Initialise as zero
     step2206 = 0.0D0
@@ -783,22 +774,6 @@ contains
     ! Original STARFIRE value, scaling with thermal power
     step220608 = step_ref(49) * (pth / ptherm_star)**0.6D0
     step2206 = step2206 + step220608
-  
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      write(outfile,*) '******************* 22.06 Other Reactor Plant Equipment'
-      call ocosts(outfile,'(step220601)','Maintenance Equipment (M$)', step220601)
-      call ocosts(outfile,'(step220602)','Special Heating Systems (M$)', step220602)
-      call ocosts(outfile,'(step220603)','Coolant Storage (M$)', step220603)
-      call ocosts(outfile,'(step220604)','Gas System (M$)', step220604)
-      ! call ocosts(outfile,'(step220605)','Inert Atmosphere System (M$)', step220605)
-      call ocosts(outfile,'(step220606)','Fluid Leak Detection (M$)', step220606)
-      call ocosts(outfile,'(step220607)','Closed Loop Coolant System (M$)', step220607)
-      call ocosts(outfile,'(step220608)','Standby Cooling System (M$)', step220608)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step2206)','Total Account 22.06 Cost (M$)', step2206)
-      call oblnkl(outfile)
-    end if
   end subroutine step_a2206
  
   subroutine step_a2207(outfile,iprint, step2207)
