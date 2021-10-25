@@ -651,29 +651,17 @@ contains
     step2203 = step2203 + step220304
   end subroutine step_a2203
 
-  subroutine step_a2204(outfile,iprint, step2204)
-
+  subroutine step_a2204(step_ref, step2204, step220401, step220402, step220403)
     !! Account 22.04 : Waste Treatment and Disposal
     !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 22.04 (Waste Treatment
     !! and Disposal) costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-    use cost_variables, only: output_costs, step_ref
-    use process_output, only: ocosts, oblnkl
-
     implicit none
   
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-    real(8), intent(out) :: step2204
-  
-    ! Local variables
-    real(8):: &
-    step220401, step220402, step220403
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(out) :: step2204, step220401, step220402, step220403
   
     ! Initialise as zero
     step2204 = 0.0D0
@@ -692,17 +680,6 @@ contains
     ! Original STARFIRE value, scaling with thermal power
     step220403 = step_ref(40) * (pth / ptherm_star)**0.6D0 
     step2204 = step2204 + step220403
-  
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      write(outfile,*) '******************* 22.04 Waste Treatment and Disposal'
-      call ocosts(outfile,'(step220401)','Liquid Waste (M$)', step220401)
-      call ocosts(outfile,'(step220402)','Gaseous Waste (M$)', step220402)
-      call ocosts(outfile,'(step220403)','Solid Waste (M$)', step220403)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step2204)','Total Account 22.04 Cost (M$)', step2204)
-      call oblnkl(outfile)
-    end if
   end subroutine step_a2204
 
   subroutine step_a2205(outfile,iprint, step2205, spares)

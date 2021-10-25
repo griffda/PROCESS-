@@ -250,7 +250,7 @@ class CostsStep:
         cs.step22 += self.step_a2203()
 
         #  Account 22.04 : Waste Treatment and Disposal
-        cs.step22 += cs.step_a2204(self.outfile, self.iprint)
+        cs.step22 += self.step_a2204()
 
         #  Account 22.05 : Fuel Handling and Storage
         step2205, spares = cs.step_a2205(self.outfile, self.iprint)
@@ -874,3 +874,27 @@ class CostsStep:
             po.oblnkl(self.outfile)
 
         return step2203
+
+    def step_a2204(self):
+        """Account 22.04: Waste Treatment and Disposal.
+
+        :return: cost 2204
+        :rtype: float
+        """
+        step2204, step220401, step220402, step220403 = cs.step_a2204(cv.step_ref)
+
+        # Output costs
+        if self.iprint == 1 and cv.output_costs == 1:
+            po.write(
+                self.outfile, "******************* 22.04 Waste Treatment and Disposal"
+            )
+            po.ocosts(self.outfile, "(step220401)", "Liquid Waste (M$)", step220401)
+            po.ocosts(self.outfile, "(step220402)", "Gaseous Waste (M$)", step220402)
+            po.ocosts(self.outfile, "(step220403)", "Solid Waste (M$)", step220403)
+            po.oblnkl(self.outfile)
+            po.ocosts(
+                self.outfile, "(step2204)", "Total Account 22.04 Cost (M$)", step2204
+            )
+            po.oblnkl(self.outfile)
+
+        return step2204
