@@ -263,7 +263,7 @@ class CostsStep:
         step2298 += spares
 
         #  Account 22.07 : Instrumentation and Control
-        cs.step22 += cs.step_a2207(self.outfile, self.iprint)
+        cs.step22 += self.step_a2207()
 
         # 22.98 Spares
         # STARFIRE percentage of components
@@ -977,3 +977,27 @@ class CostsStep:
             po.oblnkl(self.outfile)
 
         return step2206, spares
+
+    def step_a2207(self):
+        """Account 22.07: Instrumentation and Control.
+
+        :return: cost 2207
+        :rtype: float
+        """
+        step2207 = cs.step_a2207(cv.step_ref, cs.pth, cs.ptherm_star)
+
+        # Output costs
+        if self.iprint == 1 and cv.output_costs == 1:
+            po.write(
+                self.outfile, "******************* 22.07 Instrumentation and Control"
+            )
+            po.ocosts(
+                self.outfile, "(step2207)", "Instrumentation and Control (M$)", step2207
+            )
+            po.oblnkl(self.outfile)
+            po.ocosts(
+                self.outfile, "(step2207)", "Total Account 22.07 Cost (M$)", step2207
+            )
+            po.oblnkl(self.outfile)
+
+        return step2207

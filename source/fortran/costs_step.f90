@@ -776,24 +776,17 @@ contains
     step2206 = step2206 + step220608
   end subroutine step_a2206
  
-  subroutine step_a2207(outfile,iprint, step2207)
-
+  subroutine step_a2207(step_ref, pth, ptherm_star, step2207)
     !! Account 22.07 : Instrumentation and Control
     !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 22.07 (Instrumentation
     !! and Control) costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-    use cost_variables, only: output_costs,step_ref
-    use process_output, only: ocosts, oblnkl
-
     implicit none
   
     ! Arguments
-    integer, intent(in) :: iprint,outfile
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: pth, ptherm_star
     real(8), intent(out) :: step2207
 
     ! Initialise as zero
@@ -802,15 +795,6 @@ contains
     ! 22.07 Instrumentation and Control
     ! Original STARFIRE value, scaling with thermal power
     step2207 = step_ref(50) * (pth / ptherm_star)**0.6D0
-
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      write(outfile,*) '******************* 22.07 Instrumentation and Control'
-      call ocosts(outfile,'(step2207)','Instrumentation and Control (M$)', step2207)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step2207)','Total Account 22.07 Cost (M$)', step2207)
-      call oblnkl(outfile)
-    end if
   end subroutine step_a2207
 
   subroutine step_a23(step_ref, step_con, pgrossmw, step23a, step2303, &
