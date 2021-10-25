@@ -15,14 +15,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-378-g294e3fc3 code contains untracked changes
-    Branch : 1304-update-hcd-costs-in-cost-model-2
+   Tag No. : v2.1-661-g3493036b
+    Branch : 1350-higher-current-density-material-in-tf-coil
    Git log : COMMIT_MSG
- Date/time : 20 Sep 2021 11:05:00 +01:00(hh:mm) UTC
+ Date/time : 20 Oct 2021 14:09:34 +01:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-128/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-128/test_scenario_CFETR_small_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-171/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-171/test_scenario_CFETR_small_0/IN.DAT
  Run title : "CFETR small (5.7m) reference file"
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  

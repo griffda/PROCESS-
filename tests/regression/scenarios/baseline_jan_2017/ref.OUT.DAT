@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-378-g294e3fc3 code contains untracked changes
-    Branch : 1304-update-hcd-costs-in-cost-model-2
+   Tag No. : v2.1-661-g3493036b
+    Branch : 1350-higher-current-density-material-in-tf-coil
    Git log : COMMIT_MSG
- Date/time : 20 Sep 2021 11:04:54 +01:00(hh:mm) UTC
+ Date/time : 20 Oct 2021 14:09:26 +01:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-128/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-128/test_scenario_baseline_jan_2010/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-171/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-171/test_scenario_baseline_jan_2010/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
