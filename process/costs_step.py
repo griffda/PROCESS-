@@ -846,7 +846,7 @@ class CostsStep:
         :rtype: float
         """
         (step220301, step220302, step220303, step220304, step2203) = cs.step_a2203(
-            cv.step_ref
+            cv.step_ref, cs.vfi, cs.vfi_star
         )
 
         # Output costs
@@ -881,7 +881,9 @@ class CostsStep:
         :return: cost 2204
         :rtype: float
         """
-        step2204, step220401, step220402, step220403 = cs.step_a2204(cv.step_ref)
+        step2204, step220401, step220402, step220403 = cs.step_a2204(
+            cv.step_ref, cs.pth, cs.ptherm_star
+        )
 
         # Output costs
         if self.iprint == 1 and cv.output_costs == 1:

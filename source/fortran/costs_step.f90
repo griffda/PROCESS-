@@ -612,8 +612,8 @@ contains
     ! Converted to M$
   end subroutine step_a2202
 
-  subroutine step_a2203(step_ref, step220301, step220302, step220303, &
-    step220304, step2203)
+  subroutine step_a2203(step_ref, vfi, vfi_star, step220301, step220302, &
+    step220303, step220304, step2203)
     !! Account 22.03 : Cryogenic Cooling System
     !! author: S I Muldrew, CCFE, Culham Science Centre
     !! None
@@ -624,6 +624,7 @@ contains
   
     ! Arguments
     real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: vfi, vfi_star
     real(8), intent(out) :: step220301, step220302, step220303, step220304, &
       step2203
   
@@ -651,7 +652,8 @@ contains
     step2203 = step2203 + step220304
   end subroutine step_a2203
 
-  subroutine step_a2204(step_ref, step2204, step220401, step220402, step220403)
+  subroutine step_a2204(step_ref, pth, ptherm_star, step2204, step220401, &
+    step220402, step220403)
     !! Account 22.04 : Waste Treatment and Disposal
     !! author: S I Muldrew, CCFE, Culham Science Centre
     !! This routine evaluates the Account 22.04 (Waste Treatment
@@ -661,6 +663,7 @@ contains
   
     ! Arguments
     real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: pth, ptherm_star
     real(8), intent(out) :: step2204, step220401, step220402, step220403
   
     ! Initialise as zero
