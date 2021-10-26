@@ -42,8 +42,4 @@ RUN python -m pip install --upgrade pip && \
     pytest \
     scipy \
     toposort \
-    wheel && \
-    # Install f90wrap independently as numpy is a prerequisite for its setup.py!
-    #TODO: Temporary fix for numpy-f90wrap bug using commit id whilst awaiting 
-    # a tagged release for f90wrap
-    python -m pip install git+https://github.com/jameskermode/f90wrap.git@78918e84
+    wheel
