@@ -18,23 +18,23 @@ subroutine jcrit_rebco(temperature, b, jcrit, validity, iprint)
     implicit none
 
     !  Arguments
-    real(dp), intent(in) :: temperature, b
-    real(dp), intent(out) :: jcrit
+    real(8), intent(in) :: temperature, b
+    real(8), intent(out) :: jcrit
     logical, intent(out) :: validity
     integer, intent(in) :: iprint
 
     !  Local variables
-    real(dp) :: birr, factor, tcb
+    real(8) :: birr, factor, tcb
 
     !  Parameters
-    real(dp), parameter :: tc0 = 90.0d0        !  (K)
-    real(dp), parameter :: birr0 = 132.5d0     !  (T)
-    real(dp), parameter :: a = 1.82962d8       ! scaling constant
-    real(dp), parameter :: p = 0.5875d0        ! exponent
-    real(dp), parameter :: q = 1.7d0           ! exponent
-    real(dp), parameter :: alpha =1.54121d0    ! exponent
-    real(dp), parameter :: beta = 1.96679d0    ! exponent
-    real(dp), parameter :: oneoveralpha = 1d0 / alpha  ! inverse
+    real(8), parameter :: tc0 = 90.0d0        !  (K)
+    real(8), parameter :: birr0 = 132.5d0     !  (T)
+    real(8), parameter :: a = 1.82962d8       ! scaling constant
+    real(8), parameter :: p = 0.5875d0        ! exponent
+    real(8), parameter :: q = 1.7d0           ! exponent
+    real(8), parameter :: alpha =1.54121d0    ! exponent
+    real(8), parameter :: beta = 1.96679d0    ! exponent
+    real(8), parameter :: oneoveralpha = 1d0 / alpha  ! inverse
 
     validity = .true.
     if((temperature<4.2d0).or.(temperature>72.0d0) )validity = .false.
@@ -86,12 +86,12 @@ subroutine current_sharing_rebco(current_sharing_t, bfield, j)
     implicit none
 
     !  Arguments
-    real(dp), intent(in) :: j, bfield
-    real(dp), intent(out) :: current_sharing_t
-    real(dp)::x1,x2         ! Initial guesses for temperature
+    real(8), intent(in) :: j, bfield
+    real(8), intent(out) :: current_sharing_t
+    real(8)::x1,x2         ! Initial guesses for temperature
     logical::error                   ! True if the solver does not converge
-    real(dp)::residual      ! Residual current density error
-    real(dp), parameter ::opt_tol = 1d7 ! Tolerance in current density
+    real(8)::residual      ! Residual current density error
+    real(8), parameter ::opt_tol = 1d7 ! Tolerance in current density
 
     x1 = 4d0
     x2 = 20d0
@@ -106,10 +106,10 @@ contains
         ! This needs to be 'contained' because 'bfield' must be available but cannot
         ! be passed, because secant_solve requires a function of one variable!
         ! Also j must be available.
-        real(dp), intent(in) :: temperature
-        real(dp)::deltaj_rebco, jcritical
+        real(8), intent(in) :: temperature
+        real(8)::deltaj_rebco, jcritical
         logical :: validity
-        integer :: iprint
+        integer :: iprint = 0
 
         call jcrit_rebco(temperature, bfield, jcritical, validity, iprint)
         deltaj_rebco = jcritical - j
@@ -121,10 +121,10 @@ end subroutine current_sharing_rebco
 function function_jcrit_rebco(temperature,b)
     ! Required because secant_solve requires a function not a subroutine
     ! All we do is throw away the second output, 'validity'!
-    real(dp), intent(in) :: temperature, b
-    real(dp)::function_jcrit_rebco
+    real(8), intent(in) :: temperature, b
+    real(8)::function_jcrit_rebco
     logical :: validity
-    integer :: iprint
+    integer :: iprint = 0
 
     call jcrit_rebco(temperature, b, function_jcrit_rebco, validity, iprint)
 end function function_jcrit_rebco
@@ -135,11 +135,11 @@ subroutine test_quench()
     use resistive_materials, only: resistive_material
     implicit none
 
-    real(dp) :: jcrit
-    real(dp) :: B, delta_b,jcrit42,jcrit14,jcrit22, jcrit33
-    real(dp) :: jcrit50, jcrit65, jcrit72, jcrit90
-    real(dp) :: T, delta_t, copper0, copper10, hastelloyB, RRR
-    real(dp) :: copper0B, copper10B
+    real(8) :: jcrit
+    real(8) :: B, delta_b,jcrit42,jcrit14,jcrit22, jcrit33
+    real(8) :: jcrit50, jcrit65, jcrit72, jcrit90
+    real(8) :: T, delta_t, copper0, copper10, hastelloyB, RRR
+    real(8) :: copper0B, copper10B
     
     integer::i
     logical :: validity
@@ -186,11 +186,11 @@ subroutine test_quench()
     write(1,*)'Solids: Cp as a function of Temperature (J/kg/K), and Helium: Cp x density J/K/m3'
     write(1,30)'', 'solder', 'solder(B)','jacket', 'hastell', 'hastell(B)','copper', 'copper(B)', 'He Cp*rho'
     do i=1,297
-        call solder_properties(T,solder)
-        call jacket_properties(T, jacket)
-        call hastelloy_properties(T, hastelloy)
-        call copper_properties2(T,0.0d0, copper)
-        call helium_properties(T,helium)
+        call solder_properties(T, solder%cp)
+        call jacket_properties(T, jacket%cp)
+        call hastelloy_properties(T, hastelloy%cp)
+        call copper_properties(T,0.0d0, copper%resistivity, copper%rrr, copper%cp)
+        call helium_properties(T, helium%cp_density)
         hastelloyB = cHastelloyC276(T)
 
         write(1,20) T, solder%cp, cSn40Pb(sngl(T)), jacket%cp, hastelloy%cp, &
@@ -205,9 +205,9 @@ subroutine test_quench()
     RRR = copper%rrr
     write(1,30)'Temp (K)', '0 T', '10 T', '0 T (B)', '10 T (B)'
     do i=1,297
-        call copper_properties2(T,0.0d0, copper)
+        call copper_properties(T,0.0d0, copper%resistivity, copper%rrr, copper%cp)
         copper0 = copper%resistivity
-        call copper_properties2(T,10.0d0, copper)
+        call copper_properties(T,10.0d0, copper%resistivity, copper%rrr, copper%cp)
         copper10 = copper%resistivity
         copper0B = rCu(sngl(T),0.0,sngl(RRR))
         copper10B = rCu(sngl(T),10.0,sngl(RRR))
@@ -253,29 +253,29 @@ subroutine itersc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
 
   !  Arguments
 
-  real(dp), intent(in) :: thelium, bmax, strain, bc20max, tc0max
-  real(dp), intent(out) :: jcrit, bcrit, tcrit
+  real(8), intent(in) :: thelium, bmax, strain, bc20max, tc0max
+  real(8), intent(out) :: jcrit, bcrit, tcrit
 
   !  Local variables
 
   !  Parameters named in Bottura
 
-  !real(dp), parameter :: csc = 16500.0D6 !  scaling constant C
-  real(dp), parameter :: csc = 19922.0D6 !  scaling constant C
-  real(dp), parameter :: p = 0.63D0      !  low field exponent p
-  real(dp), parameter :: q = 2.1D0       !  high field exponent q
-  !real(dp), parameter :: ca1 = 44.0D0    !  strain fitting constant C_{a1}
-  real(dp), parameter :: ca1 = 44.48D0    !  strain fitting constant C_{a1}
-  !real(dp), parameter :: ca2 = 4.0D0     !  strain fitting constant C_{a2}
-  real(dp), parameter :: ca2 = 0.0D0     !  strain fitting constant C_{a2}
-  real(dp), parameter :: eps0a = 0.00256D0  !  epsilon_{0,a}
-  !real(dp), parameter :: epsmax = -0.003253075D0  !  epsilon_{max} (not used)
-  !real(dp), parameter :: epsmax = -1.1D-3  !  epsilon_{max} (not used)
+  !real(8), parameter :: csc = 16500.0D6 !  scaling constant C
+  real(8), parameter :: csc = 19922.0D6 !  scaling constant C
+  real(8), parameter :: p = 0.63D0      !  low field exponent p
+  real(8), parameter :: q = 2.1D0       !  high field exponent q
+  !real(8), parameter :: ca1 = 44.0D0    !  strain fitting constant C_{a1}
+  real(8), parameter :: ca1 = 44.48D0    !  strain fitting constant C_{a1}
+  !real(8), parameter :: ca2 = 4.0D0     !  strain fitting constant C_{a2}
+  real(8), parameter :: ca2 = 0.0D0     !  strain fitting constant C_{a2}
+  real(8), parameter :: eps0a = 0.00256D0  !  epsilon_{0,a}
+  !real(8), parameter :: epsmax = -0.003253075D0  !  epsilon_{max} (not used)
+  !real(8), parameter :: epsmax = -1.1D-3  !  epsilon_{max} (not used)
 
-  real(dp), parameter :: diter = 0.82D0  !  ITER strand diameter (mm)
-  real(dp), parameter :: cuiter = 0.5D0  !  ITER strand copper fraction
+  real(8), parameter :: diter = 0.82D0  !  ITER strand diameter (mm)
+  real(8), parameter :: cuiter = 0.5D0  !  ITER strand copper fraction
 
-  real(dp) :: bred, epssh, t, bc20eps, &
+  real(8) :: bred, epssh, t, bc20eps, &
        tc0eps, bzero, strfun, jc1, jc2, jc3, scalefac
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -376,12 +376,12 @@ subroutine bi2212(bmax,jstrand,tsc,fhts,jcrit,tmarg)
 
     !  Arguments
 
-    real(dp), intent(in) :: bmax, jstrand, tsc, fhts
-    real(dp), intent(out) :: jcrit, tmarg
+    real(8), intent(in) :: bmax, jstrand, tsc, fhts
+    real(8), intent(out) :: jcrit, tmarg
 
     !  Local variables
 
-    real(dp) :: b
+    real(8) :: b
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -439,11 +439,11 @@ subroutine jcrit_nbti(temperature,bmax,c0,bc20max,tc0max,jcrit,tcrit)
     implicit none
 
     !  Arguments
-    real(dp), intent(in) :: temperature, bmax, c0, bc20max, tc0max
-    real(dp), intent(out) :: jcrit, tcrit
+    real(8), intent(in) :: temperature, bmax, c0, bc20max, tc0max
+    real(8), intent(out) :: jcrit, tcrit
 
     !  Local variables
-    real(dp) :: bratio, tbar
+    real(8) :: bratio, tbar
     !-----------------------------------
     bratio = bmax/bc20max
 
@@ -495,27 +495,27 @@ subroutine GL_nbti(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit)
     implicit none
 
     !  Arguments
-    real(dp), intent(in) :: thelium, bmax, strain, bc20max, t_c0
-    real(dp), intent(out) :: jcrit, tcrit, bcrit
+    real(8), intent(in) :: thelium, bmax, strain, bc20max, t_c0
+    real(8), intent(out) :: jcrit, tcrit, bcrit
 
     !  Local variables
-    real(dp) :: strain_func, T_e, A_e, b_reduced, t_reduced, epsilon_I
+    real(8) :: strain_func, T_e, A_e, b_reduced, t_reduced, epsilon_I
     !critical current density prefactor (strand non-copper J_c)
-    real(dp), parameter :: A_0 = 1102D6
+    real(8), parameter :: A_0 = 1102D6
     !flux pinning field scaling parameters
-    real(dp), parameter :: p = 0.49D0
-    real(dp), parameter :: q = 0.56D0
-    real(dp), parameter :: n = 1.83D0
+    real(8), parameter :: p = 0.49D0
+    real(8), parameter :: q = 0.56D0
+    real(8), parameter :: n = 1.83D0
     !temperatute scaling parameter
-    real(dp), parameter :: v = 1.42D0
+    real(8), parameter :: v = 1.42D0
     !strain scaling parameters
-    real(dp), parameter :: c2 = -0.0025D0
-    real(dp), parameter :: c3 = -0.0003D0
-    real(dp), parameter :: c4 = -0.0001D0
-    real(dp), parameter :: em = -0.002D-2
+    real(8), parameter :: c2 = -0.0025D0
+    real(8), parameter :: c3 = -0.0003D0
+    real(8), parameter :: c4 = -0.0001D0
+    real(8), parameter :: em = -0.002D-2
     !strain conversion parameters
-    real(dp), parameter :: u = 0.0D0
-    real(dp), parameter :: w = 2.2D0
+    real(8), parameter :: u = 0.0D0
+    real(8), parameter :: w = 2.2D0
 
     epsilon_I = strain - em
 
@@ -569,27 +569,27 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
     implicit none
 
     ! Arguments
-    real(dp), intent(in) :: temperature, bmax, strain, bc20max, tc0max
-    real(dp), intent(out) :: jcrit, bcrit, tcrit
+    real(8), intent(in) :: temperature, bmax, strain, bc20max, tc0max
+    real(8), intent(out) :: jcrit, bcrit, tcrit
 
     ! Local variables
 
     ! Scaling constant C [AT/mm2]
-    real(dp), parameter :: csc = 83075.0D0
+    real(8), parameter :: csc = 83075.0D0
     ! Low field exponent p
-    real(dp), parameter :: p = 0.593D0
+    real(8), parameter :: p = 0.593D0
     ! High field exponent q
-    real(dp), parameter :: q = 2.156D0
+    real(8), parameter :: q = 2.156D0
     ! Strain fitting constant C_{a1}
-    real(dp), parameter :: ca1 = 50.06D0
+    real(8), parameter :: ca1 = 50.06D0
     ! Strain fitting constant C_{a2}
-    real(dp), parameter :: ca2 = 0.0D0
+    real(8), parameter :: ca2 = 0.0D0
     ! epsilon_{0,a}
-    real(dp), parameter :: eps0a = 0.00312D0
+    real(8), parameter :: eps0a = 0.00312D0
 
-    !real(dp), parameter :: epsmax = -1.1D-3  !  epsilon_{max} (not used)
+    !real(8), parameter :: epsmax = -1.1D-3  !  epsilon_{max} (not used)
 
-    real(dp) :: bred, epssh, t, bc20eps, &
+    real(8) :: bred, epssh, t, bc20eps, &
     tc0eps, bzero, strfun, jc1, jc2, jc3, scalefac
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -730,27 +730,27 @@ subroutine GL_REBCO(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit) !SCM add
   implicit none
 
   !  Arguments
-  real(dp), intent(in) :: thelium, bmax, strain, bc20max, t_c0
-  real(dp), intent(out) :: jcrit, tcrit, bcrit
+  real(8), intent(in) :: thelium, bmax, strain, bc20max, t_c0
+  real(8), intent(out) :: jcrit, tcrit, bcrit
 
   !  Local variables
-  real(dp) :: strain_func, T_e, A_e, b_reduced, t_reduced, epsilon_I
+  real(8) :: strain_func, T_e, A_e, b_reduced, t_reduced, epsilon_I
   !critical current density prefactor
-  real(dp), parameter :: A_0 = 2.95D2
+  real(8), parameter :: A_0 = 2.95D2
   !flux pinning field scaling parameters
-  real(dp), parameter :: p = 0.32D0
-  real(dp), parameter :: q = 2.50D0
-  real(dp), parameter :: n = 3.33D0
+  real(8), parameter :: p = 0.32D0
+  real(8), parameter :: q = 2.50D0
+  real(8), parameter :: n = 3.33D0
   !temperatute scaling parameter
-  real(dp), parameter :: s = 5.27D0
+  real(8), parameter :: s = 5.27D0
   !strain scaling parameters
-  real(dp), parameter :: c2 = -0.0191D0
-  real(dp), parameter :: c3 = 0.0039D0
-  real(dp), parameter :: c4 = 0.00103D0
-  real(dp), parameter :: em = 0.058D0
+  real(8), parameter :: c2 = -0.0191D0
+  real(8), parameter :: c3 = 0.0039D0
+  real(8), parameter :: c4 = 0.00103D0
+  real(8), parameter :: em = 0.058D0
   !strain conversion parameters
-  real(dp), parameter :: u = 0.0D0
-  real(dp), parameter :: w = 2.2D0
+  real(8), parameter :: u = 0.0D0
+  real(8), parameter :: w = 2.2D0
 
   epsilon_I = strain - em
 
@@ -773,13 +773,96 @@ subroutine GL_REBCO(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit) !SCM add
   !  Critical current density (A/m2)
   jcrit = A_e * (T_e*(1-t_reduced**2))**2 * bcrit**(n-3) * b_reduced**(p-1) * (1 - b_reduced)**q 
 
-
-
 end subroutine GL_REBCO
+
+!--------------------------------------------------------------------------
+
+subroutine HIJC_REBCO(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit) 
+
+    !! Implementation of High Current Density REBCO tape
+    !! author: R Chapman, UKAEA
+    !! thelium : input real : SC temperature (K)
+    !! bmax : input real : Magnetic field at conductor (T)
+    !! strain : input real : Strain in superconductor
+    !! bc20max : input real : Upper critical field (T) for superconductor
+    !! at zero temperature and strain
+    !! t_c0 : input real : Critical temperature (K) at zero field and strain
+    !! jcrit : output real : Critical current density in superconductor (A/m2)
+    !! bcrit : output real : Critical field (T)
+    !! tcrit : output real : Critical temperature (K)
+    !!
+    !! Returns the critical current of a REBCO tape based on a critical surface  
+    !! (field, temperature) parameterization. Based in part on the parameterization 
+    !! described in: M. J. Wolf, N. Bagrets, W. H. Fietz, C. Lange and K. Weiss, 
+    !! "Critical Current Densities of 482 A/mm2 in HTS CrossConductors at 4.2 K and 12 T," 
+    !! in IEEE Transactions on Applied Superconductivity, vol. 28, no. 4, pp. 1-4, 
+    !! June 2018, Art no. 4802404, doi: 10.1109/TASC.2018.2815767. And on the experimental 
+    !! data presented here: "2G HTS Wire Development at SuperPower", Drew W. Hazelton, 
+    !! February 16, 2017 https://indico.cern.ch/event/588810/contributions/2473740/
+    !! The high Ic parameterization is a result of modifications based on Ic values 
+    !! observed in: "Conceptual design of HTS magnets for fusion nuclear science facility", 
+    !! Yuhu Zhai, Danko van der Laan, Patrick Connolly, Charles Kessel, 2021, 
+    !! https://doi.org/10.1016/j.fusengdes.2021.112611
+    !! The parameter A is transformed into a function A(T) based on a Newton polynomial fit 
+    !! considering A(4.2 K) = 2.2e8, A(20 K) = 2.3e8 and A(65 K) = 3.5e8. These values were 
+    !! selected manually. A good fit to the pubished data can be seen in the 4-10 T range 
+    !! but the fit deviates at very low or very high field.
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use tfcoil_variables, only: hts_tape_width, hts_tape_thickness
+    implicit none
+  
+    !  Arguments
+    real(dp), intent(in) :: thelium, bmax, strain, bc20max, t_c0
+    real(dp), intent(out) :: jcrit, tcrit, bcrit
+
+    !  Local variables
+    real(dp) :: A_t
+    real(dp), parameter :: a = 1.4D0
+    real(dp), parameter :: b = 2.005D0
+    !critical current density prefactor
+    real(dp), parameter :: A_0 = 2.2D8
+    !flux pinning field scaling parameters
+    real(dp), parameter :: p = 0.39D0
+    real(dp), parameter :: q = 0.9D0
+    !strain conversion parameters
+    real(dp), parameter :: u = 33450.0D0
+    real(dp), parameter :: v = -176577.0D0
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    ! Critical Field (T)
+    !  B_crit(T) calculated using temperature and critical temperature
+    bcrit = bc20max * (1.0D0 - thelium/t_c0)**a
+
+    ! Critical temperature (K)  
+    !  scaled to match behaviour in GL_REBCO routine,
+    !  ONLY TO BE USED until a better suggestion is received
+    tcrit = 0.999965D0 * t_c0
+
+    ! finding A(T); constants based on a Newton polynomial fit to pubished data
+    A_t = A_0 + ( u * thelium**2 ) + ( v * thelium )
+
+    ! Critical current density (A/m2)
+
+    jcrit = ( A_t / bmax ) * bcrit**b * ( bmax / bcrit )**p * ( 1 - bmax/bcrit )**q
+
+    ! Jc times HTS area: default area is width 4mm times HTS layer thickness 1 um, 
+    ! divided by the tape area to provide engineering Jc per tape, then multiplied by fraction 0.4
+    ! to reach the level of current density expected in the space where the tapes are wound in A/m^2!
+    jcrit = jcrit * (hts_tape_width * hts_tape_thickness) / (4.0D-3 * 6.5D-5) * 0.4D0
+
+end subroutine HIJC_REBCO
 
 !----------------------------------------------------------------
 
-subroutine croco(jcritsc,croco_strand,conductor,croco_od,croco_thick)
+subroutine croco(jcritsc, croco_strand_area, croco_strand_critical_current, &
+    conductor_copper_area, conductor_copper_fraction, conductor_copper_bar_area, &
+    conductor_hastelloy_area, conductor_hastelloy_fraction, conductor_helium_area, &
+    conductor_helium_fraction, conductor_solder_area, conductor_solder_fraction, &
+    conductor_rebco_area, conductor_rebco_fraction, conductor_critical_current, &
+    conductor_area, croco_od,croco_thick)
 
     !! "CroCo" (cross-conductor) strand and cable design for
     !! "REBCO" 2nd generation HTS superconductor
@@ -791,10 +874,24 @@ subroutine croco(jcritsc,croco_strand,conductor,croco_od,croco_thick)
     use resistive_materials, only: volume_fractions, supercon_strand
     use constants, only: pi
     implicit none
-    real(dp), intent(in) ::jcritsc
-    type(volume_fractions), intent(inout)::conductor
-    type(supercon_strand), intent(inout)::croco_strand
-    real(dp) :: d, scaling, croco_od, croco_thick
+    real(8), intent(in) ::jcritsc
+    real(8) :: d, scaling, croco_od, croco_thick
+
+    ! conductor
+    real(8), intent(inout) :: conductor_copper_area,  conductor_copper_fraction
+    real(8), intent(inout) :: conductor_copper_bar_area
+    real(8), intent(inout) :: conductor_hastelloy_area, conductor_hastelloy_fraction
+    real(8), intent(inout) :: conductor_helium_area, conductor_helium_fraction
+    real(8), intent(inout) :: conductor_solder_area, conductor_solder_fraction
+    real(8), intent(inout) :: conductor_rebco_area,  conductor_rebco_fraction
+    real(8), intent(inout) :: conductor_critical_current                 
+    real(8), intent(in) :: conductor_area
+
+    ! croco_strand
+    real(8), intent(inout) :: croco_strand_area
+    real(8), intent(inout) :: croco_strand_critical_current
+
+
     ! Define local alias
     d = croco_od
     !d = conductor_width / 3.0d0 - thwcndut * ( 2.0d0 / 3.0d0 )
@@ -819,131 +916,64 @@ subroutine croco(jcritsc,croco_strand,conductor,croco_od,croco_thick)
     solder_area = pi / 4.0d0 * croco_id**2 - stack_thickness * tape_width
 
     rebco_area = rebco_thickness * tape_width * tapes
-    croco_strand%area =  pi / 4.0d0 * d**2
-    croco_strand%critical_current = jcritsc * rebco_area
+    croco_strand_area =  pi / 4.0d0 * d**2
+    croco_strand_critical_current = jcritsc * rebco_area
 
     ! Conductor properties
-    !conductor%number_croco = conductor%acs*(1d0-cable_helium_fraction-copper_bar)/croco_strand%area
-    conductor%critical_current = croco_strand%critical_current * 6.0d0
+    !conductor%number_croco = conductor%acs*(1d0-cable_helium_fraction-copper_bar)/croco_strand_area
+    conductor_critical_current = croco_strand_critical_current * 6.0d0
     ! Area of core = area of strand
-    conductor%copper_bar_area = croco_strand%area
-    conductor%copper_area = copper_area * 6.0d0 + conductor%copper_bar_area
-    conductor%copper_fraction = conductor%copper_area / conductor%area
+    conductor_copper_bar_area = croco_strand_area
+    conductor_copper_area = copper_area * 6.0d0 + conductor_copper_bar_area
+    conductor_copper_fraction = conductor_copper_area / conductor_area
 
     ! Helium area is set by the user.
-    !conductor%helium_area = cable_helium_fraction * conductor%acs
-    conductor%helium_area = pi / 2.0d0 * d**2
-    conductor%helium_fraction = conductor%helium_area / conductor%area
+    !conductor_helium_area = cable_helium_fraction * conductor_acs
+    conductor_helium_area = pi / 2.0d0 * d**2
+    conductor_helium_fraction = conductor_helium_area / conductor_area
 
-    conductor%hastelloy_area = hastelloy_area * 6.0d0
-    conductor%hastelloy_fraction = conductor%hastelloy_area / conductor%area
+    conductor_hastelloy_area = hastelloy_area * 6.0d0
+    conductor_hastelloy_fraction = conductor_hastelloy_area / conductor_area
 
-    conductor%solder_area = solder_area * 6.0d0
-    conductor%solder_fraction = conductor%solder_area / conductor%area
+    conductor_solder_area = solder_area * 6.0d0
+    conductor_solder_fraction = conductor_solder_area / conductor_area
 
-    conductor%rebco_area = rebco_area * 6.0d0
-    conductor%rebco_fraction = conductor%rebco_area / conductor%area
+    conductor_rebco_area = rebco_area * 6.0d0
+    conductor_rebco_fraction = conductor_rebco_area / conductor_area
 
 end subroutine croco
-!--------------------------------------------------------------------------
 
-subroutine copper_properties(T,copper)
-    ! RRR=100, B=12 T
-    ! Cryodata Software Package, CRYOCOMP, v 3.0, Florence, SC, 1997
-    ! Data are available up to 1000 K.
-    use resistive_materials, only: resistive_material
-    use constants, only: pi
-    implicit none
-
-    type(resistive_material)::copper
-    real(dp), intent(in) :: T   ! temperature
-
-    if(T<40.0d0)then
-        copper%cp = -1.6113+0.60915*T-0.07152*T**2+0.00398*T**3-4.07673E-5*T**4
-    else if((40.0d0<T).and.(T<300.0d0))then
-        copper%cp = -196.51325+7.84244*T-0.04493*T**2+1.24263E-4*T**3-1.33845E-7*T**4
-    else if((300.0d0<T).and.(T<1000.0d0))then
-        copper%cp = 274.99376+0.70709*T-0.0015*T**2+1.35186E-6*T**3-4.34609E-10*T**4
-    endif
-
-    if(T<70.0d0)then
-        copper%resistivity = 6.19659E-10+7.13979E-12*T-5.36171E-13*T**2+1.47182E-14*T**3-6.68583E-17*T**4
-    else if((70.0d0<T).and.(T<1000.0d0))then
-        copper%resistivity = -3.3449E-9 +7.6628E-11*T-3.94931E-14*T**2+6.36545E-17*T**3-2.87882E-20*T**4
-    endif
-
-end subroutine copper_properties
-!--------------------------------------------------------------------------
-! subroutine copper_properties_nist(T,B,copper)
-!     ! Properties of copper and copper alloys,
-!     ! N. J. Simon, E. S. Drexler, and R. P. Reed
-!     ! NIST Monograph 177 (1992)
-!     ! Note that some papers that copy this formula have confused the units.
-!     ! They also seem to have misread the sign in the exponent term "P2+P4".
-!     ! Unfortunately the NIST website doesn't seem to work, so it is hard to verify.
-!
-!     type(resistive_material)::copper
-!     real(dp), intent(in) :: T, B   ! temperature, field
-!     ! Fitting constants
-!     real(dp), parameter::P1 = 1.171d-17
-!     real(dp), parameter::P2 = 4.49
-!     real(dp), parameter::P3 = 3.841d10
-!     real(dp), parameter::P4 = 1.14
-!     real(dp), parameter::P5 = 50
-!     real(dp), parameter::P6 = 6.428
-!     real(dp), parameter::P7 = 0.4531
-!
-!     real(dp), parameter::a0 = -0.2662d0
-!     real(dp), parameter::a1 = 0.3168d0
-!     real(dp), parameter::a2 = 0.6229d0
-!     real(dp), parameter::a3 = -0.1839d0
-!     real(dp), parameter::a4 = 0.01827
-!
-!     real(dp)::rho0, rhoi, rhoi0    ! Resistivity terms (nano-ohm.m)
-!     real(dp)::denominator, x
-!
-!
-!     rho0 = 15.53 / copper%rrr
-!     denominator = 1 + P1*P3*T**(P2+P4)*exp(-(P5/T)**P6)
-!     rhoi = P1*T**P2 / denominator
-!     rhoi0 = P7*rhoi*rho0 / (rhoi+rho0)
-!     copper%resistivity = 1.0d-9*rhoi0
-!
-!     ! Effect of magnetic field
-!     x = 15.53 / copper%rrr
-! end subroutine copper_properties_nist
-! -------------------------------------------------------------------------
-
-subroutine copper_properties2(T,B, copper)
+subroutine copper_properties(T,B, copper_resistivity, copper_rrr, copper_cp)
     ! Review of ROXIE's Material Properties Database for Quench Simulation,
     ! Author: Giulio Manfreda, December 2011
     ! https://espace.cern.ch/roxie/Documentation/Materials.pdf
     ! Different models use different definitions for residual resistivity ratio RRR.
     ! CUDI: resistivity at 290 K / 4 K.
     ! The range of validity of this t is between 4 K and 300 K.
-    use resistive_materials, only: resistive_material
     implicit none
 
-    type(resistive_material)::copper
-    real(dp), intent(in) :: T, B   ! temperature, field
-    real(dp):: bracket, logt, sum
+    real(8), intent(in) :: T, B   ! temperature, field
+    real(8), intent(out) :: copper_resistivity
+    real(8), intent(in) :: copper_rrr
+    real(8), intent(out) :: copper_cp
+    real(8):: bracket, logt, sum
     ! Fitting constants: resistivity
-    real(dp), parameter:: t5 = 2.32547d9
-    real(dp), parameter:: t3 = 9.57137d5
-    real(dp), parameter:: t1 = 1.62735d2
-    real(dp), parameter:: mr = 5.0d-11     ! ohm.m/T
-    real(dp), parameter:: a = 1.7          ! ohm.m
+    real(8), parameter:: t5 = 2.32547d9
+    real(8), parameter:: t3 = 9.57137d5
+    real(8), parameter:: t1 = 1.62735d2
+    real(8), parameter:: mr = 5.0d-11     ! ohm.m/T
+    real(8), parameter:: a = 1.7          ! ohm.m
     ! Fitting constants: specific heat (p.13)
     ! Checked against
     ! http://cryogenics.nist.gov/MPropsMAY/OFHC%20Copper/OFHC_Copper_rev1.htm
-    real(dp), parameter::a0 = -1.91844d0
-    real(dp), parameter::a1 = -0.15973d0
-    real(dp), parameter::a2 =  8.61013d0
-    real(dp), parameter::a3 = -18.996d0
-    real(dp), parameter::a4 =  21.9661d0
-    real(dp), parameter::a5 = -12.7328d0
-    real(dp), parameter::a6 =  3.54322d0
-    real(dp), parameter::a7 = -0.3797d0
+    real(8), parameter::a0 = -1.91844d0
+    real(8), parameter::a1 = -0.15973d0
+    real(8), parameter::a2 =  8.61013d0
+    real(8), parameter::a3 = -18.996d0
+    real(8), parameter::a4 =  21.9661d0
+    real(8), parameter::a5 = -12.7328d0
+    real(8), parameter::a6 =  3.54322d0
+    real(8), parameter::a7 = -0.3797d0
 
     ! page 5: Copper resistivity is computed in CUDI with the t function similar
     ! to the one of McAshan [McA88]
@@ -951,23 +981,22 @@ subroutine copper_properties2(T,B, copper)
 
     bracket = 1d0 / (t5/T**5 + t3/T**3 + t1/T)
 
-    copper%resistivity = 1.d-8 * (a/copper%rrr + bracket) + mr*B
+    copper_resistivity = 1.d-8 * (a/copper_rrr + bracket) + mr*B
 
     ! Specific heat
     ! NIST typical polynomial interpolation, equation 4 page 3
     logt = log10(T)
     sum = a0 + a1*logt + a2*logt**2 + a3*logt**3 + a4*logt**4 + a5*logt**5 + a6*logt**6 +a7*logt**7
-    copper%cp = 10**sum
+    copper_cp = 10**sum
 
-end subroutine copper_properties2
+end subroutine copper_properties
 ! -------------------------------------------------------------------------
-subroutine hastelloy_properties(temperature,hastelloy)
-    use resistive_materials, only: resistive_material
+subroutine hastelloy_properties(temperature, hastelloy_cp)
     implicit none
 
-    type(resistive_material)::hastelloy
-    real(dp), intent(in) :: temperature   ! temperature
-    real(dp) :: T
+    real(8), intent(in) :: temperature   ! temperature
+    real(8), intent(out) :: hastelloy_cp
+    real(8) :: T
 
     T = temperature
     if(temperature>300d0) T=300.0d0
@@ -978,9 +1007,9 @@ subroutine hastelloy_properties(temperature,hastelloy)
     ! J. Appl. Phys. 103(6) 2008 064908
 
     if(T<42.2571d0)then
-        hastelloy%cp = 0.60796d0 + 0.15309d0*T - 0.00237d0*T**2 + 6.76732d-4*T**3
+        hastelloy_cp = 0.60796d0 + 0.15309d0*T - 0.00237d0*T**2 + 6.76732d-4*T**3
     else if(T.ge.42.2571d0)then
-        hastelloy%cp = -147.06251d0 + 5.43432d0*T - 0.01937d0*T**2 + 2.71669d-5*T**3   &
+        hastelloy_cp = -147.06251d0 + 5.43432d0*T - 0.01937d0*T**2 + 2.71669d-5*T**3   &
                        -8.12438d-9*T**4
     endif
 
@@ -992,68 +1021,65 @@ subroutine hastelloy_properties(temperature,hastelloy)
     ! endif
 end subroutine hastelloy_properties
 ! --------------------------------------------------------------------------
-subroutine solder_properties(T,solder)
-    use resistive_materials, only: resistive_material
+subroutine solder_properties(T, solder_cp)
     use constants, only: pi
     implicit none
 
-    type(resistive_material)::solder
-    real(dp), intent(in) :: T   ! temperature
+    real(8), intent(in) :: T   ! temperature
+    real(8), intent(out) :: solder_cp
 
     ! Reinhard Heller: obtained by fitting data
     ! Material Database from Cryodata Software Package, CRYOCOMP, version 3.0, Florence, SC
 
     if(T<20.0d0)then
-        solder%cp = 4.88028d0 - 2.92865d0*T + 0.52736d0*T**2 - 0.01861d0*T**3 + 2.36019d-4*T**4
+        solder_cp = 4.88028d0 - 2.92865d0*T + 0.52736d0*T**2 - 0.01861d0*T**3 + 2.36019d-4*T**4
     else if((T.ge.20.0d0).and.(T<300.0d0))then
-        solder%cp = -10.15269d0 + 3.70087d0*T - 0.02947d0*T**2 + 1.02933d-4*T**3 - 1.29518d-7*T**4
+        solder_cp = -10.15269d0 + 3.70087d0*T - 0.02947d0*T**2 + 1.02933d-4*T**3 - 1.29518d-7*T**4
     else
-        solder%cp = 181.29d0
+        solder_cp = 181.29d0
     endif
 end subroutine solder_properties
 ! -------------------------------------------------------------------------
-subroutine jacket_properties(T, jacket)
-    use resistive_materials, only: resistive_material
+subroutine jacket_properties(T, jacket_cp)
     implicit none
 
-    type(resistive_material)::jacket
-    real(dp), intent(in) :: T   ! temperature
-    real(dp):: logt, sum
+    real(8), intent(in) :: T   ! temperature
+    real(8), intent(out) :: jacket_cp
+    real(8):: logt, sum
     ! Fitting constants: specific heat (p.13)
     ! http://cryogenics.nist.gov/MPropsMAY/304Stainless/304Stainless_rev.htm
-    real(dp), parameter::a0 = 22.0061
-    real(dp), parameter::a1 = -127.5528
-    real(dp), parameter::a2 = 303.647
-    real(dp), parameter::a3 = -381.0098
-    real(dp), parameter::a4 = 274.0328
-    real(dp), parameter::a5 = -112.9212
-    real(dp), parameter::a6 = 24.7593
-    real(dp), parameter::a7 = -2.239153
+    real(8), parameter::a0 = 22.0061
+    real(8), parameter::a1 = -127.5528
+    real(8), parameter::a2 = 303.647
+    real(8), parameter::a3 = -381.0098
+    real(8), parameter::a4 = 274.0328
+    real(8), parameter::a5 = -112.9212
+    real(8), parameter::a6 = 24.7593
+    real(8), parameter::a7 = -2.239153
 
     logt = log10(T)
     if(T>300) logt = log10(300d0)
     sum = a0 + a1*logt + a2*logt**2 + a3*logt**3 + a4*logt**4 + a5*logt**5 + &
                          a6*logt**6 + a7*logt**7
-    jacket%cp = 10**sum
+    jacket_cp = 10**sum
 
 end subroutine jacket_properties
 ! ----------------------------------------------------------------------------
-subroutine helium_properties(T,helium)
-    use resistive_materials, only: resistive_material
+subroutine helium_properties(T, helium_cp_density)
     implicit none
   
     ! Isobaric Data for P = 0.60000 MPa
     ! http://webbook.nist.gov/chemistry/fluid/
     ! See very approximate fits in quench_data.xlsx (Issue #522)
 
-    real(dp), intent(in) :: T   ! temperature
-    type(resistive_material)::helium
+    real(8), intent(in) :: T   ! temperature
+    real(8), intent(out) :: helium_cp_density
     ! Cp x density J/K/m3
     if((T>=4d0).and.(T<10d0))then
-        helium%cp_density = 12.285d3*T**3 - 309.92d3*T**2 + 2394.6d3*T - 5044.8d3
+        helium_cp_density = 12.285d3*T**3 - 309.92d3*T**2 + 2394.6d3*T - 5044.8d3
     else if(T>=10d0)then
         ! This probably works OK for arbitrarily high temperature
-        helium%cp_density = 1745.1d3*T**(-1.031d0)
+        helium_cp_density = 1745.1d3*T**(-1.031d0)
     else
         write(*,*)'temperature is below the range of helium data fit (>4 K): ', T
     end if
@@ -1359,7 +1385,7 @@ real function dHastelloyC276(T)
 ! For Intel compliance add "end function"
 end function dHastelloyC276
 !#####################################################################
-real(dp) function cHastelloyC276(T)
+real(8) function cHastelloyC276(T)
     !#####################################################################
     !
     ! Specific heat (not density) of Hastelloy C276
@@ -1383,10 +1409,10 @@ real(dp) function cHastelloyC276(T)
     !#####################################################################
     implicit none
     ! external variables
-    real(dp)     T
+    real(8)     T
     ! fit variables
-    real(dp)     AA,BB,CC,DD,a,b,c,d,na,nb,nc,nd
-    real(dp)     Tmin,Tmax
+    real(8)     AA,BB,CC,DD,a,b,c,d,na,nb,nc,nd
+    real(8)     Tmin,Tmax
     data     AA  / 18.46314493  / ,  BB  / 1298.042986 / ,&
     CC  /-1105.076534  / ,  DD  / 2.226310361 /
     data     a   /  2.634486768 / ,  b   /  13.0796954 / ,&
@@ -1396,7 +1422,7 @@ real(dp) function cHastelloyC276(T)
     data     Tmin / 1.0/, Tmax / 300.0/
     save
     ! local variables
-    real(dp)     TT
+    real(8)     TT
 
     TT=T
     TT=min(TT,Tmax)

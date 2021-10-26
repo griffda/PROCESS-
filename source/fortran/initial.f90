@@ -663,8 +663,8 @@ subroutine check
 
         icase  = 'Tight aspect ratio tokamak model'
 
-        ! Forcing that no inboard breeding blanket is used
-        iblnkith = 0
+        ! Disabled Forcing that no inboard breeding blanket is used 
+        ! Disabled iblnkith = 0
 
         ! Check if the choice of plasma current is addapted for ST
         ! 2 : Peng Ip scaling (See STAR code documentation)
@@ -1059,7 +1059,7 @@ subroutine check
     errors_on = .false.
 
     ! Cannot use temperature margin constraint with REBCO TF coils
-    if(any(icc == 36) .and. (i_tf_sc_mat == 8)) then
+    if(any(icc == 36) .and. ((i_tf_sc_mat == 8).or.(i_tf_sc_mat == 9))) then
         call report_error(265)
     endif
 

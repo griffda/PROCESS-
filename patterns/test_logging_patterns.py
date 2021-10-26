@@ -67,7 +67,7 @@ def test_log_fortran(caplog, monkeypatch):
     """
     # Mock the Fortran return value of ifail
     ifail = 1
-    monkeypatch.setattr(fortran.main_module, "eqslv", lambda: ifail)
+    monkeypatch.setattr(fortran.vmcon_module, "info", ifail)
 
     # Set the log level to be low enough to catch info-level logs
     caplog.set_level(logging.INFO)

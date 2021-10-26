@@ -32,9 +32,9 @@ DEFAULT_COMPARE_PARAMS = [
     "sarea", "vol", "n_tf", "shldith", "shldoth", "blnkith", "blnkoth",
     "powfmw", "plascur/1d6", "bt", "q95", "betap", "te", "dene",
     "hfact", "vstot", "bt", "bmaxtfrp", "tmarg", "iooic",
-    "strtf1", "strtf2", "alstrtf", "pgrossmw", "htpmw",
-    "pnetelmw", "wallmw", "ralpne", "pcoreradmw", "pradmw",
-    "pnucblkt", "pnucshld", "pdivt", "pheat", "bootipf",
+    "sig_tf_case", "sig_tf_wp", "sig_tf_case_max", "sig_tf_wp_max", 
+    "pgrossmw", "htpmw", "pnetelmw", "wallmw", "ralpne", "pcoreradmw", 
+    "pradmw", "pnucblkt", "pnucshld", "pdivt", "pheat", "bootipf",
     "faccd", "facoh", "gamnb", "enbeam", "powerht"]
 
 BASELINE_LIST = [
