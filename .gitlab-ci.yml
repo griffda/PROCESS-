@@ -282,8 +282,11 @@ pages:
     - develop
   stage: pages
   image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  variables:
+    PY_VERSION: py38
   script:
     - pwd
+    - source ~/.venv_$PY_VERSION/bin/activate
     
     # FORD documentation
     - python3 -m pip install git+https://github.com/jonMaddockUkaea/ford
