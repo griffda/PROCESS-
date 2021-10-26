@@ -33,10 +33,16 @@ module buildings_variables
   
     real(8) :: convol
     !! volume of control, protection and i&c building (m3)
+    
+    real(8) :: crane_arm_h
+    !! vertical dimension of crane arm, operating over reactor (m)
   
     real(8) :: cryvol
     !! volume of cryoplant building (m3)
-  
+
+    real(8) :: cryostat_clrnc
+    !! vertical clearance from TF coil to cryostat (m)
+   
     real(8) :: efloor
     !! effective total floor space (m2)
   
@@ -47,7 +53,19 @@ module buildings_variables
     !! volume of energy storage equipment building (m3) (not used if `lpulse=0`)
   
     real(8) :: fndt
-    !! foundation thickness (m)
+    !! foundation thickness (m) - RMC remove?!
+
+    real(8) :: gas_buildings_l
+    !! air & gas supply (amalgamated) buildings length (m)
+    
+    real(8) :: gas_buildings_w
+    !! air & gas supply (amalgamated) buildings width (m)
+    
+    real(8) :: gas_buildings_h
+    !! air & gas supply (amalgamated) buildings height (m)
+
+    real(8) :: ground_clrnc
+    !! clearance beneath TF coil (m)
   
     real(8) :: hccl
     !! clearance around components in hot cell (m)
@@ -65,7 +83,7 @@ module buildings_variables
     !! power injection building volume (m3)
   
     real(8) :: rbrt
-    !! reactor building roof thickness (m)
+    !! reactor building roof thickness (m) - RMC remove?!
   
     real(8) :: rbvfac
     !! reactor building volume multiplication factor
@@ -74,16 +92,55 @@ module buildings_variables
     !! reactor building volume (m3)
   
     real(8) :: rbwt
-    !! reactor building wall thickness (m)
+    !! reactor building wall thickness (m) - RMC remove?!
+
+    real(8) :: reactor_hall_l
+    !! reactor building length (m)
+
+    real(8) :: reactor_hall_w
+    !! reactor building width (m)
+
+    real(8) :: reactor_hall_h
+    !! reactor building height (m)
   
+    real(8) :: reactor_wall_thk 
+    !! reactor building wall thickness (m)
+
+    real(8) :: reactor_roof_thk
+    !! reactor building roof thickness (m)
+
+    real(8) :: reactor_fndtn_thk
+    !! reactor building foundation thickness (m)
+
     real(8) :: rmbvol
     !! volume of maintenance and assembly building (m3)
   
     real(8) :: row
-    !! clearance to building wall for crane operation (m)
+    !! clearance to building wall for crane operation (m) - RMC remove?!
   
     real(8) :: rxcl
+    !! clearance around reactor (m) - RMC remove?!
+
+    real(8) :: reactor_clrnc
     !! clearance around reactor (m)
+
+    real(8) :: transp_clrnc
+    !! transportation clearance between components (m)
+
+    real(8) :: crane_clrnc_h
+    !! horizontal clearance to building wall for crane operation (m)
+
+    real(8) :: crane_clrnc_v
+    !! vertical clearance for crane operation (m)
+
+    real(8) :: sec_buildings_l 
+    !! security & safety buildings length (m)
+
+    real(8) :: sec_buildings_w 
+    !! security & safety buildings width (m)
+  
+    real(8) :: sec_buildings_h
+    !! security & safety buildings height (m)
   
     real(8) :: shmf
     !! fraction of shield mass per TF coil to be moved in the maximum shield lift
@@ -95,22 +152,49 @@ module buildings_variables
     !! volume of shops and buildings for plant auxiliaries (m3)
   
     real(8) :: stcl
-    !! clearance above crane to roof (m)
+    !! clearance above crane to roof (m)  - RMC remove?!
   
     real(8) :: tfcbv
     !! volume of TF coil power supply building (m3) (calculated if TF coils are superconducting)
   
     real(8) :: trcl
-    !! transportation clearance between components (m)
+    !! transportation clearance between components (m) - RMC remove?!
   
     real(8) :: triv
     !! volume of tritium, fuel handling and health physics buildings (m3)
   
+    real(8) :: turbine_hall_l
+    !! turbine hall length (m)
+
+    real(8) :: turbine_hall_w
+    !! turbine hall width (m)
+
+    real(8) :: turbine_hall_h
+    !! turbine hall height (m)
+
     real(8) :: volnucb
     !! sum of nuclear buildings volumes (m3)
   
     real(8) :: volrci
     !! internal volume of reactor building (m3)
+
+    real(8) :: warm_shop_l 
+    !! warm shop length (m)
+
+    real(8) :: warm_shop_w
+    !! warm shop width (m)
+
+    real(8) :: warm_shop_h
+    !! warm shop height (m)
+
+    real(8) :: water_buildings_l 
+    !! water, laundry & drainage buildings length (m)
+
+    real(8) :: water_buildings_w 
+    !! water, laundry & drainage buildings width (m)
+
+    real(8) :: water_buildings_h
+    !! water, laundry & drainage buildings height (m)
   
     real(8) :: wgt
     !! reactor building crane capacity (kg) (calculated if 0 is input)
@@ -119,7 +203,7 @@ module buildings_variables
     !! hot cell crane capacity (kg) (calculated if 0 is input)
   
     real(8) :: wrbi
-    !! distance from centre of machine to building wall (m), i.e. reactor building half-width
+    !! distance from centre of machine to building wall (m), i.e. reactor building half-width  - RMC remove?!
   
     real(8) :: wsvfac
     !! warm shop building volume multiplication factor
@@ -128,43 +212,43 @@ module buildings_variables
     !! volume of warm shop building (m3)
 
     real(8) :: a_reactor_bldg
-    !! Floor area of reactor building in m^2
+    !! Floor area of reactor building in m^2 - RMC remove?!
 
     real(8) :: a_ee_ps_bldg
-    !! Floor area of electrical equipment and power supply building in m^2
+    !! Floor area of electrical equipment and power supply building in m^2 - RMC remove?!
 
     real(8) :: a_aux_services_bldg
-    !! Floor area of auxiliary services building in m^2
+    !! Floor area of auxiliary services building in m^2 - RMC remove?!
 
     real(8) :: a_hot_cell_bldg
-    !! Floor area of hot cell building in m^2
+    !! Floor area of hot cell building in m^2 - RMC remove?!
 
     real(8) :: a_reactor_service_bldg
-    !! Floor area of reactor service building in m^2
+    !! Floor area of reactor service building in m^2 - RMC remove?!
 
     real(8) :: a_service_water_bldg
-    !! Floor area of service water building in m^2
+    !! Floor area of service water building in m^2 - RMC remove?!
 
     real(8) :: a_fuel_handling_bldg
-    !! Floor area of fuel handling and storage building in m^2
+    !! Floor area of fuel handling and storage building in m^2 - RMC remove?!
 
     real(8) :: a_control_room_bldg
-    !! Floor area of controlroom building in m^2
+    !! Floor area of controlroom building in m^2 - RMC remove?!
 
     real(8) :: a_ac_ps_bldg
-    !! Floor area of AC power supply building in m^2
+    !! Floor area of AC power supply building in m^2 - RMC remove?!
 
     real(8) :: a_admin_bldg
-    !! Floor area of admin building in m^2
+    !! Floor area of admin building in m^2 - RMC remove?!
 
     real(8) :: a_site_service_bldg
-    !! Floor area of site service building in m^2
+    !! Floor area of site service building in m^2 - RMC remove?!
 
     real(8) :: a_cryo_inert_gas_bldg
-    !! Floor area of cryogenics and inert gas storage building in m^2
+    !! Floor area of cryogenics and inert gas storage building in m^2 - RMC remove?!
 
     real(8) :: a_security_bldg
-    !! Floor area of security building in m^2
+    !! Floor area of security building in m^2 - RMC remove?!
 
     contains
 
@@ -178,11 +262,17 @@ module buildings_variables
       clh2 = 15.0D0
       conv = 6.0D4
       convol = 0.0D0
+      crane_arm_h = 10.0D0
+      cryostat_clrnc = 2.5D0
       cryvol = 0.0D0
       efloor = 0.0D0
       elevol = 0.0D0
       esbldgm3 = 1.0D3
       fndt = 2.0D0
+      gas_buildings_l = 25.0D0
+      gas_buildings_w = 15.0D0
+      gas_buildings_h = 5.0D0
+      ground_clrnc = 5.0D0
       hccl = 5.0D0
       hcwt = 1.5D0
       mbvfac = 2.8D0
@@ -192,9 +282,18 @@ module buildings_variables
       rbvfac = 1.6D0
       rbvol = 0.0D0
       rbwt = 2.0D0
+      reactor_hall_l = 0.0D0
+      reactor_hall_w = 0.0D0
+      reactor_hall_h = 0.0D0
+      reactor_wall_thk = 2.0D0
+      reactor_roof_thk = 1.0D0
+      reactor_fndtn_thk = 2.0D0
       rmbvol = 0.0D0
       row = 4.0D0
       rxcl = 4.0D0
+      sec_buildings_l = 30.0D0
+      sec_buildings_w = 25.0D0
+      sec_buildings_h = 6.0D0
       shmf = 0.5D0
       shov = 1.0D5
       shovol = 0.0D0
@@ -202,8 +301,17 @@ module buildings_variables
       tfcbv = 2.0D4
       trcl = 1.0D0
       triv = 4.0D4
+      turbine_hall_l = 109.0D0
+      turbine_hall_w = 62.0D0
+      turbine_hall_h = 15.0D0
       volnucb = 0.0D0
       volrci = 0.0D0
+      warm_shop_l = 100.0D0
+      warm_shop_w = 50.0D0
+      warm_shop_h = 10.0D0
+      water_buildings_l = 110.0D0
+      water_buildings_w = 10.0D0
+      water_buildings_h = 5.0D0
       wgt = 5.0D5
       wgt2 = 1.0D5
       wrbi = 0.0D0
@@ -222,5 +330,11 @@ module buildings_variables
       a_site_service_bldg = 8.3D3
       a_cryo_inert_gas_bldg = 1.838D4
       a_security_bldg = 4.552D3
+      
+      reactor_clrnc = 4.0D0
+      transp_clrnc = 1.0D0
+      crane_clrnc_h = 4.0D0
+      crane_clrnc_v = 3.0D0
+      
     end subroutine init_buildings_variables
   end module buildings_variables
