@@ -401,7 +401,7 @@ def test_descriptions(ref_dicts, new_dicts):
         
         # Remove spaces and newlines for comparison; bizarrely these change 
         # based on the local environment so ignore any diffs
-        for char in [" ", "\n"]:
+        for char in [" ", "\n", "<br>"]:
             new_value = new_value.replace(char, "")
             old_value = old_value.replace(char, "")
 

@@ -69,9 +69,9 @@ contains
 
     integer :: i
 
-    real(dp):: rmajor, rminor, bt, plascur, q, t_target, &
+    real(8):: rmajor, rminor, bt, plascur, q, t_target, &
                         q_target_total, target_angle, b_pol
-    real(dp):: dummy, dummy2, dummy3
+    real(8):: dummy, dummy2, dummy3
 
     ! This section just for reproducing the original numbers
     rmajor = 8.0D0
@@ -121,7 +121,10 @@ contains
                             unit_test=.false., &
                             bp=b_pol, &
                             psep_kallenbach=dummy, teomp=dummy2, neomp=dummy3, &
-                            outfile=nout,iprint=1)
+                            outfile=nout,iprint=0)
+                            ! iprint turned off by default to stop _divertor.txt debug file being written
+                            ! turn iprint to 1 for such a debug file. Possible flag in input file can
+                            ! be added if requested
 
     call ocmmnt(nout, 'Testing the reading of atomic rates and impurity radiative functions.')
     call ocmmnt(nout, 'Use "output_divertor.xlsx" in K:\Power Plant Physics and Technology\PROCESS\SOL & Divertor')
@@ -161,11 +164,11 @@ contains
       netau_sol, ttarget, qtargettotal, targetangle
     implicit none
 
-    real(dp):: b_pol
+    real(8):: b_pol
 
-    real(dp):: dummy, dummy2, dummy3
+    real(8):: dummy, dummy2, dummy3
 
-    real(dp) :: xi, thetai, xo, thetao
+    real(8) :: xi, thetai, xo, thetao
 
     ! Calculate plasma geometry
     rminor = rmajor/aspect
@@ -208,7 +211,10 @@ contains
                             unit_test=.false., &
                             bp=b_pol, &
                             psep_kallenbach=dummy, teomp=dummy2, neomp=dummy3, &
-                            outfile=nout,iprint=1)
+                            outfile=nout,iprint=0)
+                            ! iprint turned off by default to stop _divertor.txt debug file being written
+                            ! turn iprint to 1 for such a debug file. Possible flag in input file can
+                            ! be added if requested
 
     call ocmmnt(nout, 'Testing the reading of atomic rates and impurity radiative functions.')
     call ocmmnt(nout, 'Use "output_divertor.xlsx" in K:\Power Plant Physics and Technology\PROCESS\SOL & Divertor')
@@ -248,11 +254,11 @@ contains
 
     integer :: i
 
-    real(dp):: b_pol, step_value
+    real(8):: b_pol, step_value
 
-    real(dp):: dummy, dummy2, dummy3
+    real(8):: dummy, dummy2, dummy3
 
-    real(dp) :: xi, thetai, xo, thetao
+    real(8) :: xi, thetai, xo, thetao
 
     ! Calculate plasma geometry
     rminor = rmajor/aspect
@@ -323,7 +329,10 @@ contains
                             unit_test=.false., &
                             bp=b_pol, &
                             psep_kallenbach=dummy, teomp=dummy2, neomp=dummy3, &
-                            outfile=nout,iprint=1)
+                            outfile=nout,iprint=0)
+                            ! iprint turned off by default to stop _divertor.txt debug file being written
+                            ! turn iprint to 1 for such a debug file. Possible flag in input file can
+                            ! be added if requested
   
         select case (kallenbach_scan_var)
           case(0)

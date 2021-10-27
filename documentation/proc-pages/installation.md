@@ -1,6 +1,8 @@
 # Installation
 ## Supported environments
-PROCESS is supported on Ubuntu 20 and Windows 10 (via Windows Subsystem for Linux). It is not supported natively in Windows (through MinGW for example). It can be run on Mac or in other environments via a Docker container. It is not currently supported on the Freia or Heimdal clusters.
+PROCESS is natively supported on Ubuntu 20. Other Linux distributions will be able to successfully build and execute PROCESS however may give inconsistent results due to version disparities of dynamically linked libraries.
+
+Using the Windows Subsystem for Linux (on Windows) or a containerised environment is the recommended way to build, test, and run PROCESS on any OS other than Ubuntu 20. 
 
 ## Ubuntu and Windows (using Windows Subsystem for Linux)
 *It is highly recommended users create a Python virtual environment in order to use the PROCESS Python package, as this ensures that installations of required package versions don't affect other packages that require different versions in your environment. It isn't necessary, however.*
@@ -10,7 +12,7 @@ To install Windows Subsystem for Linux (WSL) follow the 'Manual Installation Ste
 
 Install Visual Studio Code [here](https://code.visualstudio.com/).
 
-This installation is known to work on Ubuntu 20 (under Windows Subsystem for Linux or not). For Mac, see below.
+
 
 GFortran version 9 or above is needed for successful installation and execution of PROCESS. Versions below GFortran-9 will be rejected by CMake by default since, while PROCESS might compile successfully with lower GFortran versions, other aspects of PROCESS (tests, coverage, etc.) will fail.
 
@@ -19,7 +21,7 @@ If you have previously modified your `$PYTHONPATH` environment variable to inclu
 echo $PYTHONPATH
 ```
 
-This modification is not required to run Process now, and it may result in Ford failing during the build process otherwise.
+This modification is not required to run PROCESS now, and it may result in Ford failing during the build process otherwise.
 
 Firstly, open the terminal and install cmake, gfortran and pip, lcov:
 ```bash
@@ -115,7 +117,7 @@ Now run the container:
 ```
 docker run -it -v ~/process:/root/process process-dev
 ```
-This runs a container which is an instance of the process-dev image. `-it` runs the container in interactive mode (`-i`, allows `stdin`) with a terminal (`-t`, allows bash-like interaction). `-v` specifies the bind mount to use; mount the host `~/process` directory to the `/root/process` directory in the container. This means that the container has read and write access to the `process` project directory on the host filesystem and will stay in sync with it.
+This runs a container which is an instance of the process-dev image. `-it` runs the container in interactive mode (`-i`, allows `stdin`) with a terminal (`-t`, allows bash-like interaction). `-v` specifies the bind mount to use; mount the host `~/process` directory to the `/root/process` directory in the container. This means that the container has read and write access to the `process` project directory on the host filesystem and will stay in sync with it. Please be aware that changes made in a Docker container outside of mounted folders will not be saved on exiting the container.
 
 Now the container is running, configure, clean and build from the project root directory inside the container:
 ```
@@ -130,7 +132,19 @@ Once Process has built inside the container, it can be tested (as in the followi
 
 There is also a VS Code extension for Docker containers that may be helpful.
 
+## Singularity container
+Singularity is a container environment similar to Docker. This means a user can run PROCESS with all required dependencies installed. Singularity, however, is designed to work with user-level permissions and, as such, is supported by many shared resource administrators (unlike Docker, which poses a security risk).
+ 
+Singularity can convert OCI compliant containers into the Singularity Image Format (SIF) to run the Docker container above. Download, and convert the Docker container by running: `singularity pull --docker-login process.sif docker://git.ccfe.ac.uk:4567/process/process/dev:latest`. Singularity will then ask for a username and password, your CCFE GitLab short username and password.
+ 
+Singularity will write the container into your current directory, it can then be moved or copied like any file.
+ 
+Running `singularity shell process.sif` will load a Singularity shell with the dependencies for PROCESS installed. Singularity will automatically mount your home (`$HOME`) directory into the container. Therefore, if PROCESS lives in `~/process` on your system, it will also live inside of `~/process` in the shell environment.
+ 
+It should also be noted that while the Singularity container has a Python 3.8 by default, it will be impossible to pip install any packages without getting a `Read-only file system` error. This is because you are treated as a non-admin user within the container, and, as such, you cannot update the system Python. For this reason, it is recommended that you still use a virtual environment within the Singularity container (as described above). `pip install <package> --user` will work; however, it will cause conflicts with existing Python packages you have installed outside of your container.
+
 ## Testing
+### Check for a successful installation
 As a first basic test that the setup has been successful try importing the package from outside of the repository folder in a Python interactive interpreter:
 ```bash
 cd
@@ -143,31 +157,34 @@ import process
 process
 ```
 
-... should output:
+... should output something similar to:
 ```bash
 <module 'process' from '/home/jmaddock/process/process/__init__.py'>
 ```
 
-This indicates that the Process Python package has been installed.
+This indicates that the PROCESS Python package has been installed.
 To exit the Python interpreter you can use 
 ```BASH
 exit() 
 ```
 and press enter, or use `Ctrl-Z`. 
 
-For thorough testing, the test suite needs to be run. If you have just exited the Python interpreter, you will need to navigate back to the process project directory for this by using:
+### PROCESS test suite
+The PROCESS test suite provides through tests that can be used to confirm a successful installation; the tests can then be used to verify changes you make have not affected the wider codebase.
+
+Firstly, ensure you are in the PROCESS root directory.
 ```BASH
 cd process
 ```
- The included tests are run using PyTest, and requirements for the tests are installed by running the following:
-```BASH
-pip install .[test]
-```
 
-PyTest can then be run on the tests folder:
+The test suite uses PyTest and can be fully run using:
 ```BASH
-pytest tests
+pytest
 ```
+which runs unit, integration, and regression tests. 
+
+A more in-depth discussion of testing can be found at 
+[development/testing](http://process.gitpages.ccfe.ac.uk/process/development/testing/)
 
 If everything passes, this indicates a successful installation. If anything fails, this indicates that your environment produces different results to what is expected. You might consider creating an issue in Gitlab, or trying out the Docker container instead.
 

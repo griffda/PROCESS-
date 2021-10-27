@@ -368,7 +368,6 @@ contains
     use physics_variables, only: rmajor, rminor, sarea
     use process_output, only: oheadr, obuild, ovarre
 		use constants, only: mfile
-		use maths_library, only: hybrd
     implicit none
 
     !  Arguments
@@ -2590,7 +2589,7 @@ contains
       tfcryoarea, tficrn, tfleng, tfocrn, tfsai, tfsao, tftmp, tftort, &
       thicndut, thkcas, dr_tf_wp, thwcndut, tinstf, n_tf_turn, vftf, whtcas, whtgw, &
       whtcon, whtconcu, whtconsc, whtconsh, whttf, wwp1, dcond, awphec, dcondins, &
-      i_tf_sc_mat, jwdgpro, max_force_density, sigvvall, strtf2, taucq, &
+      i_tf_sc_mat, jwdgpro, max_force_density, sigvvall, sig_tf_wp, taucq, &
       tdmptf, tmaxpro, toroidalgap, vtfkv, whtconin, wwp2, vdalw, bcritsc, fhts, &
       tcritsc, vtfskv, t_turn_tf, b_crit_upper_nbti, t_crit_nbti
 		use constants, only: rmu0, twopi, pi, dcopper
@@ -2893,10 +2892,10 @@ contains
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !!!!!! Forces scaling !!!!!!!!!!!!!!
-    !
-    ! The force density scaling is according to ~I*B/A/N which is (apart from the N scaling) exact
-    ! Units MN/m^3
     max_force_density = config%max_force_density *f_I/f_N * bmaxtf/config%WP_bmax *config%WP_area/awptf
+
+    ! Approximate, very simple maxiumum stress: (needed for limitation of icc 32)
+    sig_tf_wp = max_force_density * dr_tf_wp *1.0D6 ! in Pa
 
     ! Units: MN/m
     max_force_density_MNm = config%max_force_density_MNm *f_I/f_N * bmaxtf/config%WP_bmax
@@ -3449,6 +3448,7 @@ contains
       call ovarre(outfile,'Maximal toroidally and radially av. force density (MN/m3)','(max_force_density)',max_force_density)
       call ovarre(outfile,'Maximal force density (MN/m)','(max_force_density_Mnm)',max_force_density_Mnm)
       call ovarre(outfile,'Maximal stress (approx.) (MPa)','(strtf2)',strtf2*1.0D-6)
+      call ovarre(outfile,'Maximal stress (approx.) (MPa)','(sig_tf_wp)',sig_tf_wp*1.0D-6)
 
       call ovarre(outfile,'Maximal lateral force density (MN/m3)','(max_lateral_force_density)',max_lateral_force_density)
       call ovarre(outfile,'Maximal radial force density (MN/m3)','(max_radial_force_density)',max_radial_force_density)

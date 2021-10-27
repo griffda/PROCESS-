@@ -519,14 +519,16 @@ different ways:
     conductor layer on the material take the most of stress that supports.
     For superconducting TF coils, the stress limit is applied on the steel case
     jacket/conduit while for resistive coil, the stress limit is applied on the
-    conductor itself.
+    conductor itself. Set the maximum stress using the variable
+    `sig_tf_wp_max`. This constraint can also be used with a stellarator.
   </p>
 - <p style='text-align: justify;'>
     **Centring support structure stress limit (`icc = 31`):** stress limit on the
     coil centering support structures. For superconducting coils, this stress
     limit is applied on the nose case (machine center direction) while for
     resistive coil this stress limit is applied on a cylindrical bucking
-    cylinder.
+    cylinder. Set the maximum stress using the variable `sig_tf_case_max`.
+    This constraint can not be used with a stellarator.
   </p>
 
 ### Vertical tension

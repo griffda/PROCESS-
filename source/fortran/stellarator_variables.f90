@@ -23,34 +23,34 @@ module stellarator_variables
   !! - =2 use stellarator model: Helias4-b
   !! - =3 use stellarator model: Helias3-b
 
-  real(dp) :: bmn
+  real(8) :: bmn
   !! relative radial field perturbation
 
-  real(dp) :: f_asym
+  real(8) :: f_asym
   !! divertor heat load peaking factor
 
-  real(dp) :: f_rad
+  real(8) :: f_rad
   !! radiated power fraction in SOL
 
-  real(dp) :: f_w
+  real(8) :: f_w
   !! island size fraction factor
 
-  real(dp) :: fdivwet
+  real(8) :: fdivwet
   !! wetted fraction of the divertor area
 
-  real(dp) :: flpitch
+  real(8) :: flpitch
   !! field line pitch (rad)
 
-  real(dp) :: hportamax
+  real(8) :: hportamax
   !! maximum available area for horizontal ports (m2)
 
-  real(dp) :: hportpmax
+  real(8) :: hportpmax
   !! maximum available poloidal extent for horizontal ports (m)
 
-  real(dp) :: hporttmax
+  real(8) :: hporttmax
   !! maximum available toroidal extent for horizontal ports (m)
 
-  real(dp) :: iotabar
+  real(8) :: iotabar
   !! rotational transform (reciprocal of tokamak q) for stellarator confinement time scaling laws
 
   integer :: isthtr
@@ -63,25 +63,25 @@ module stellarator_variables
   integer :: m_res
   !! poloidal resonance number (1)
 
-  real(dp) :: max_gyrotron_frequency
+  real(8) :: max_gyrotron_frequency
   !! Maximal available gyrotron frequency (input parameter) (Hz)
 
   integer :: n_res
   !! toroidal resonance number (1)
 
-  real(dp) :: shear
+  real(8) :: shear
   !! magnetic shear, derivative of iotabar (1)
 
-  real(dp) :: te0_ecrh_achievable
+  real(8) :: te0_ecrh_achievable
   !! maximal central electron temperature as achievable by the ECRH, input. (keV)
 
-  real(dp) :: vportamax
+  real(8) :: vportamax
   !! maximum available area for vertical ports (m2)
 
-  real(dp) :: vportpmax
+  real(8) :: vportpmax
   !! maximum available poloidal extent for vertical ports (m)
 
-  real(dp) :: vporttmax
+  real(8) :: vporttmax
   !! maximum available toroidal extent for vertical ports (m)
   
   contains

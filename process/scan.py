@@ -1,8 +1,8 @@
 from process.fortran import error_handling
-from process.fortran import final_module
 from process.fortran import scan_module
 from process.fortran import numerics
 from process.optimiser import Optimiser
+from process import final
 import numpy as np
 
 class Scan():
@@ -25,7 +25,7 @@ class Scan():
 
         if scan_module.isweep == 0:
             self.doopt()
-            final_module.final(self.optimiser.vmcon.ifail)
+            final.finalise(self.optimiser.vmcon.ifail)
             return
 
         if scan_module.isweep > scan_module.ipnscns:
@@ -61,8 +61,11 @@ class Scan():
             scan_module.scan_1d_write_point_header(iscan)
             self.doopt()
 
+            final.finalise(self.optimiser.vmcon.ifail)
+            
             # outvar is an intent(out) of scan_1d_store_output()
-            scan_module.scan_1d_store_output(iscan, self.optimiser.vmcon.ifail, outvar)
+            outvar = scan_module.scan_1d_store_output(iscan, self.optimiser.vmcon.ifail, \
+                scan_module.noutvars, scan_module.ipnscns)
 
         # outvar now contains results
         scan_module.scan_1d_write_plot(iscan, outvar)
@@ -90,8 +93,10 @@ class Scan():
                 )
                 self.doopt()
                 
-                scan_module.scan_2d_store_output(self.optimiser.vmcon.ifail, iscan_1,
-                    iscan_R, iscan, outvar, sweep_1_vals, sweep_2_vals
+                final.finalise(self.optimiser.vmcon.ifail)
+                
+                outvar, sweep_1_vals, sweep_2_vals = scan_module.scan_2d_store_output(self.optimiser.vmcon.ifail, iscan_1,
+                    iscan_R, iscan, scan_module.noutvars, scan_module.ipnscns, 
                 )
 
                 iscan = iscan + 1

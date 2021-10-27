@@ -1970,12 +1970,20 @@ def plot_current_drive_info(axis, mfile_data, scan):
     iefrf = mfile_data.data["iefrf"].get_scan(scan)
     nbi = False
     ecrh = False
+    ebw = False    
     if((iefrf == 5)or(iefrf==8)):
         nbi = True
         axis.text(-0.05, 1, 'Neutral Beam Current Drive:', ha='left', va='center')
     if((iefrf == 3)or(iefrf==7)or(iefrf==10)or(iefrf==11)):
         ecrh = True
         axis.text(-0.05, 1, 'Electron Cyclotron Current Drive:', ha='left', va='center')
+    if((iefrf == 12)):
+        ebw = True
+        axis.text(-0.05, 1, 'Electron Bernstein Wave Drive:', ha='left', va='center')
+    if((iefrf == 1)or(iefrf == 2)or(iefrf == 4)or(iefrf == 6)or(iefrf == 9)):
+        print("Options 1, 2, 4, 6 and 9 not implemented yet in this python script plot_proc.py\n")
+        print("NEEDS TO BE IMPLEMENTED in plot_current_drive_info subroutine!!\n")
+
     axis.set_ylim([ymin, ymax])
     axis.set_xlim([xmin, xmax])
     axis.set_axis_off()
@@ -2035,7 +2043,21 @@ def plot_current_drive_info(axis, mfile_data, scan):
              r"$\times 10^{-20}$ MW m$^{2}$"),
             (flh, r"$\frac{P_{\mathrm{div}}}{P_{\mathrm{LH}}}$", ""),
             (hstar, "H* (non-rad. corr.)", "")]
+	    
+    if ebw:
+        data = [(pinjie, "Steady state auxiliary power", "MW"),
+            ("pheat", "Power for heating only", "MW"),
+            ("bootipf", "Bootstrap fraction", ""),
+            ("faccd", "Auxiliary fraction", ""),
+            ("facoh", "Inductive fraction", ""),
+            ("powerht", "Plasma heating used for H factor", "MW"),
+            (pdivr, r"$\frac{P_{\mathrm{div}}}{R_{0}}$", "MW m$^{-1}$"),
+            (pdivnr, r"$\frac{P_{\mathrm{div}}}{<n> R_{0}}$",
+             r"$\times 10^{-20}$ MW m$^{2}$"),
+            (flh, r"$\frac{P_{\mathrm{div}}}{P_{\mathrm{LH}}}$", ""),
+            (hstar, "H* (non-rad. corr.)", "")]
 
+	    
     coe = mfile_data.data["coe"].get_scan(scan)
     if coe == 0.0 :   
         data.append(("", "", ""))

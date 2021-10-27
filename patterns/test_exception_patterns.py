@@ -112,7 +112,7 @@ def test_assert_fortran_value(ifail, monkeypatch):
     :type monkeypatch: object
     """
     # Mock fortran.main_module.eqslv() return value with ifail
-    monkeypatch.setattr(fortran.main_module, "eqslv", lambda: ifail)
+    monkeypatch.setattr(fortran.vmcon_module, "info", ifail)
     
     if ifail == 0:
         # Assert evaluates to True, no exception

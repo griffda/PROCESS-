@@ -13,28 +13,20 @@ module physics_module
   use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
 
-  private
-  public :: bpol,fhfac,igmarcal,outplas,outtim,pcond,phyaux, &
-    physics,plasma_composition,pohm, rether, subr, &
-    diamagnetic_fraction_hender, diamagnetic_fraction_scene, &
-    ps_fraction_scene, init_physics_module
-    ! diamagnetic_fraction_hender, diamagnetic_fraction_scene,
-    ! ps_fraction_scene made public for testing via interface
-
   !  Module-level variables
 
   integer :: iscz
   integer :: err242, err243
-  real(dp) :: rad_fraction_core
-  real(dp) :: total_plasma_internal_energy  ! [J]
-  real(dp) :: total_loss_power        ! [W]
-  real(dp) :: total_energy_conf_time  ! [s]
-  real(dp) :: ptarmw, lambdaio, drsep
-  real(dp) :: fio, fLI, fLO, fUI, fUO, pLImw, pLOmw, pUImw, pUOmw
-  real(dp) :: rho_star  
-  real(dp) :: nu_star  
-  real(dp) :: beta_mcdonald
-  real(dp) :: itart_r
+  real(8) :: rad_fraction_core
+  real(8) :: total_plasma_internal_energy  ! [J]
+  real(8) :: total_loss_power        ! [W]
+  real(8) :: total_energy_conf_time  ! [s]
+  real(8) :: ptarmw, lambdaio, drsep
+  real(8) :: fio, fLI, fLO, fUI, fUO, pLImw, pLOmw, pUImw, pUOmw
+  real(8) :: rho_star  
+  real(8) :: nu_star  
+  real(8) :: beta_mcdonald
+  real(8) :: itart_r
 
   ! Var in subroutine plasma_composition which requires re-initialisation on
   ! each new run
@@ -143,7 +135,7 @@ module physics_module
     implicit none
     !  Local variables
 
-    real(dp) :: betat,betpth,fusrat,pddpv,pdtpv,pdhe3pv, &
+    real(8) :: betat,betpth,fusrat,pddpv,pdtpv,pdhe3pv, &
          pinj,sbar,sigvdt,zion, fsep, fgw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -596,7 +588,7 @@ module physics_module
        !calculate separatrix temperature, if Reinke criterion is used
        tesep = reinke_tsep(bt, flhthresh, q95, rmajor, eps, fgw, kappa, lhat)
        fzmin =  reinke_fzmin(bt, flhthresh, q95, rmajor, eps, fsep, fgw, kappa, lhat, &
-            netau_sol, tesep, impvardiv, impurity_arr, impurity_enrichment)
+            netau_sol, tesep, impvardiv, impurity_arr%frac, impurity_enrichment)
 
        if (fzmin >= 1.0D0) then
           call report_error(217)
@@ -728,16 +720,16 @@ module physics_module
     use constants, only: pi, rmu0
     implicit none
 
-    real(dp) :: bootstrap_fraction_iter89
+    real(8) :: bootstrap_fraction_iter89
 
     !  Arguments
 
-    real(dp), intent(in) :: aspect, beta, bt, cboot, &
+    real(8), intent(in) :: aspect, beta, bt, cboot, &
          plascur, q95, q0, rmajor, vol
 
     !  Local variables
 
-    real(dp) :: betapbs, bpbs, cbs, xbs, bootipf
+    real(8) :: betapbs, bpbs, cbs, xbs, bootipf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -787,17 +779,17 @@ module physics_module
       use maths_library, only: quanc8
     implicit none
 
-    real(dp) :: bootstrap_fraction_nevins
+    real(8) :: bootstrap_fraction_nevins
 
     !  Arguments
 
-    real(dp), intent(in) :: alphan,alphat,betat,bt,dene,plascur, &
+    real(8), intent(in) :: alphan,alphat,betat,bt,dene,plascur, &
          q0,q95,rmajor,rminor,ten,zeff
 
     !  Local variables
 
     integer :: nofun
-    real(dp) :: aibs,ainteg,betae0,dum1,fibs,flag
+    real(8) :: aibs,ainteg,betae0,dum1,fibs,flag
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -834,15 +826,15 @@ module physics_module
 
       implicit none
 
-      real(dp) :: bsinteg
+      real(8) :: bsinteg
 
       !  Arguments
 
-      real(dp), intent(in) :: y
+      real(8), intent(in) :: y
 
       !  Local variables
 
-      real(dp) :: alphai,al1,al2,a1,a2,betae,c1,c2,c3, &
+      real(8) :: alphai,al1,al2,a1,a2,betae,c1,c2,c3, &
            d,del,pratio,q,x,z
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -907,18 +899,18 @@ module physics_module
 		use maths_library, only: linesolv
     implicit none
 
-    real(dp) :: bootstrap_fraction_wilson
+    real(8) :: bootstrap_fraction_wilson
 
     !  Arguments
 
-    real(dp), intent(in) :: alphaj,alphap,alphat,betpth, &
+    real(8), intent(in) :: alphaj,alphap,alphat,betpth, &
          q0,qpsi,rmajor,rminor
 
     !  Local variables
 
     integer :: i
-    real(dp), dimension(12) :: a, b
-    real(dp) :: aj,alfpnw,alftnw,eps1,r1,r2, &
+    real(8), dimension(12) :: a, b
+    real(8) :: aj,alfpnw,alftnw,eps1,r1,r2, &
          saj,seps1,sss,termj,termp,termt,term1,term2,z
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1028,7 +1020,7 @@ module physics_module
 		use plasmod_variables, only: radp, ped
     implicit none
 
-    real(dp) :: bootstrap_fraction_sauter
+    real(8) :: bootstrap_fraction_sauter
 
     !  Arguments
 
@@ -1036,9 +1028,9 @@ module physics_module
 
     integer, parameter :: nr = 200
     integer :: ir
-    real(dp) :: da,drho,iboot,jboot,roa
-    real(dp) :: dlogne_drho,dlogte_drho,dlogti_drho
-    real(dp), dimension(nr) :: amain,mu,ne,ni,rho,sqeps,tempe,tempi,zef,zmain
+    real(8) :: da,drho,iboot,jboot,roa
+    real(8) :: dlogne_drho,dlogte_drho,dlogti_drho
+    real(8), dimension(nr) :: amain,mu,ne,ni,rho,sqeps,tempe,tempi,zef,zmain
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1130,7 +1122,7 @@ module physics_module
 
       implicit none
 
-      real(dp) :: beta_poloidal_local
+      real(8) :: beta_poloidal_local
 
       !  Arguments
 
@@ -1172,7 +1164,7 @@ module physics_module
 
       implicit none
 
-      real(dp) :: beta_poloidal_local_total
+      real(8) :: beta_poloidal_local_total
 
       !  Arguments
 
@@ -1215,7 +1207,7 @@ module physics_module
 
       implicit none
 
-      real(dp) :: nues
+      real(8) :: nues
 
       !  Arguments
 
@@ -1250,7 +1242,7 @@ module physics_module
 
       implicit none
 
-      real(dp) :: nuee
+      real(8) :: nuee
 
       !  Arguments
 
@@ -1284,7 +1276,7 @@ module physics_module
 
       implicit none
 
-      real(dp) :: coulg
+      real(8) :: coulg
 
       !  Arguments
 
@@ -1317,7 +1309,7 @@ module physics_module
 
       implicit none
 
-      real(dp) :: nuis
+      real(8) :: nuis
 
       !  Arguments
 
@@ -1348,7 +1340,7 @@ module physics_module
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      real(dp) :: nui
+      real(8) :: nui
 
       !  Arguments
 
@@ -1389,7 +1381,7 @@ module physics_module
 
       implicit none
 
-      real(dp) :: dcsa
+      real(8) :: dcsa
 
       !  Arguments
 
@@ -1397,7 +1389,7 @@ module physics_module
 
       !  Local variables
 
-      real(dp) :: zz,zft,zdf
+      real(8) :: zz,zft,zdf
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1444,7 +1436,7 @@ module physics_module
 
       implicit none
 
-      real(dp) :: hcsa
+      real(8) :: hcsa
 
       !  Arguments
 
@@ -1452,8 +1444,8 @@ module physics_module
 
       !  Local variables
 
-      real(dp) :: zz,zft,zdf,zfte,zfte2,zfte3,zfte4
-      real(dp) :: zfti,zfti2,zfti3,zfti4,hcee,hcei
+      real(8) :: zz,zft,zdf,zfte,zfte2,zfte3,zfte4
+      real(8) :: zfti,zfti2,zfti3,zfti4,hcee,hcei
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1517,7 +1509,7 @@ module physics_module
 
       implicit none
 
-      real(dp) :: xcsa
+      real(8) :: xcsa
 
       !  Arguments
 
@@ -1525,7 +1517,7 @@ module physics_module
 
       !  Local variables
 
-      real(dp) :: zz,zft,zdf,a0,alp,a1,zfte
+      real(8) :: zz,zft,zdf,a0,alp,a1,zfte
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1583,7 +1575,7 @@ module physics_module
 
       implicit none
 
-      real(dp) :: tpf
+      real(8) :: tpf
 
       !  Arguments
 
@@ -1593,7 +1585,7 @@ module physics_module
 
       integer, parameter :: ASTRA=1, SAUTER2002=2, SAUTER2013=3
 
-      real(dp) :: eps,epseff,g,s,zz
+      real(8) :: eps,epseff,g,s,zz
 
       integer, parameter :: fit = ASTRA
 
@@ -1733,8 +1725,8 @@ module physics_module
 
    !  Arguments
 
-   real(dp), intent(in) ::  beta
-   real(dp), intent(out) :: diacf
+   real(8), intent(in) ::  beta
+   real(8), intent(out) :: diacf
 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1757,8 +1749,8 @@ module physics_module
 
     !  Arguments
 
-    real(dp), intent(in) ::  beta, q95, q0
-    real(dp), intent(out) :: diacf
+    real(8), intent(in) ::  beta, q95, q0
+    real(8), intent(out) :: diacf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1780,8 +1772,8 @@ module physics_module
 
     !  Arguments
 
-    real(dp), intent(in) ::  beta
-    real(dp), intent(out) :: pscf
+    real(8), intent(in) ::  beta
+    real(8), intent(out) :: pscf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1852,14 +1844,14 @@ module physics_module
     !  Arguments
 
     integer, intent(in) :: icurr, iprofile
-    real(dp), intent(inout) :: alphaj, rli
-    real(dp), intent(in) :: alphap, bt, eps, kappa, &
+    real(8), intent(inout) :: alphaj, rli
+    real(8), intent(in) :: alphap, bt, eps, kappa, &
          kappa95, p0, pperim, q0, qpsi, rmajor, rminor, sf, triang, triang95
-    real(dp), intent(out) :: bp, qstar, plascur
+    real(8), intent(out) :: bp, qstar, plascur
 
     !  Local variables
 
-    real(dp) :: asp, curhat, fq, w07
+    real(8) :: asp, curhat, fq, w07
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1990,15 +1982,15 @@ module physics_module
 
       implicit none
 
-      real(dp) :: plasc
+      real(8) :: plasc
 
       !  Arguments
 
-      real(dp), intent(in) :: aspect,bt,delta,kappa,qbar,rminor
+      real(8), intent(in) :: aspect,bt,delta,kappa,qbar,rminor
 
       !  Local variables
 
-      real(dp) :: c1,c2,d1,d2,eps,e1,e2,f1,f2,ff1,ff2,g,h1,h2,y1,y2
+      real(8) :: c1,c2,d1,d2,eps,e1,e2,f1,f2,ff1,ff2,g,h1,h2,y1,y2
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2071,12 +2063,12 @@ module physics_module
 
       !  Arguments
 
-      real(dp), intent(in) :: alphaj,alphap,bt,delta95,eps,kappa95,p0
-      real(dp), intent(out) :: fq
+      real(8), intent(in) :: alphaj,alphap,bt,delta95,eps,kappa95,p0
+      real(8), intent(out) :: fq
 
       !  Local variables
 
-      real(dp) :: beta0, deltap, deltar, eprime, er, kap1, &
+      real(8) :: beta0, deltap, deltar, eprime, er, kap1, &
            lambda, lamp1, li, nu, tprime, tr
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2166,16 +2158,16 @@ module physics_module
 		use constants, only: pi, rmu0
     implicit none
 
-    real(dp) :: bpol
+    real(8) :: bpol
 
     !  Arguments
 
     integer, intent(in) :: icurr
-    real(dp), intent(in) :: aspect,bt,delta,ip,kappa,perim,qbar
+    real(8), intent(in) :: aspect,bt,delta,ip,kappa,perim,qbar
 
     !  Local variables
 
-    real(dp) :: c1,c2,d1,d2,eps,f1,f2,ff1,ff2,g,h1,h2,y1,y2
+    real(8) :: c1,c2,d1,d2,eps,f1,f2,ff1,ff2,g,h1,h2,y1,y2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2258,8 +2250,8 @@ module physics_module
 
     !  Arguments
 
-    real(dp), intent(in) :: bt, dnbeta, plascur, rminor
-    real(dp), intent(out) :: betalim
+    real(8), intent(in) :: bt, dnbeta, plascur, rminor
+    real(8), intent(out) :: betalim
 
     !  Local variables
 
@@ -2299,7 +2291,7 @@ module physics_module
 
     !  Local variables
 
-    real(dp) :: znimp, pc, znfuel
+    real(8) :: znimp, pc, znfuel
     integer :: imp
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2495,14 +2487,14 @@ module physics_module
     !  Arguments
 
     integer, intent(inout) :: idensl
-    real(dp), intent(in) :: bt, pdivt, plascur, prn1, q95, &
+    real(8), intent(in) :: bt, pdivt, plascur, prn1, q95, &
          qcyl, rmajor, rminor, sarea, zeff
-    real(dp), intent(out) :: dnelimt
-    real(dp), dimension(7), intent(out) :: dlimit
+    real(8), intent(out) :: dnelimt
+    real(8), dimension(7), intent(out) :: dlimit
 
     !  Local variables
 
-    real(dp) :: denom, dlim, qperp
+    real(8) :: denom, dlim, qperp
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2656,15 +2648,15 @@ module physics_module
 
     !  Arguments
     integer, intent(in) :: iinvqd, isc, ignite
-    real(dp), intent(in) :: afuel, palpmw, aspect, bt, dene, &
+    real(8), intent(in) :: afuel, palpmw, aspect, bt, dene, &
          dnitot, dnla, eps, hfact, kappa, kappa95, pchargemw, pinjmw, &
          plascur, pcoreradpv, q, qstar, rmajor, rminor, te, &
          ten, tin, vol, xarea, zeff
-    real(dp), intent(out) :: kappaa, powerht, ptrepv, ptripv, &
+    real(8), intent(out) :: kappaa, powerht, ptrepv, ptripv, &
          tauee, taueff, tauei
 
     !  Local variables
-    real(dp) :: chii,ck2,denfac,dnla19,dnla20,eps2,gjaeri,iotabar, &
+    real(8) :: chii,ck2,denfac,dnla19,dnla20,eps2,gjaeri,iotabar, &
          n20,pcur,qhat,ratio,rll,str2,str5,taueena,tauit1,tauit2, &
          term1,term2, h, qratio, nratio, nGW, taunstx,taupetty
 
@@ -3333,13 +3325,13 @@ module physics_module
 
     !  Arguments
 
-    real(dp), intent(in) :: csawth, eps, facoh, gamma, kappa, &
+    real(8), intent(in) :: csawth, eps, facoh, gamma, kappa, &
          plascur, rli, rmajor, rplas, tburn, theat
-    real(dp), intent(out) :: phiint, rlp, vsbrn, vsind, vsres, vsstt
+    real(8), intent(out) :: phiint, rlp, vsbrn, vsind, vsres, vsstt
 
     !  Local variables
 
-    real(dp) :: aeps,beps,rlpext,rlpint,vburn
+    real(8) :: aeps,beps,rlpext,rlpint,vburn
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3419,9 +3411,9 @@ module physics_module
 
     !  Arguments
 
-    real(dp), intent(in) :: aspect, dene, deni, dnalp, &
+    real(8), intent(in) :: aspect, dene, deni, dnalp, &
          fusionrate, alpharate, plascur, sbar, taueff, vol
-    real(dp), intent(out) :: burnup, dntau, figmer, fusrat, &
+    real(8), intent(out) :: burnup, dntau, figmer, fusrat, &
          qfuel, rndfuel, taup
 
     !  Local variables
@@ -3495,13 +3487,13 @@ module physics_module
 
     !  Arguments
 
-    real(dp), intent(in) :: alphan, alphat, dene, dlamie, &
+    real(8), intent(in) :: alphan, alphat, dene, dlamie, &
          te, ti, zeffai
-    real(dp), intent(out) :: piepv
+    real(8), intent(out) :: piepv
 
     !  Local variables
 
-    real(dp) :: conie, profie
+    real(8) :: conie, profie
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3548,13 +3540,13 @@ module physics_module
 
     !  Arguments
 
-    real(dp), intent(in) :: facoh, kappa95, plascur, rmajor, &
+    real(8), intent(in) :: facoh, kappa95, plascur, rmajor, &
          rminor, ten, vol, zeff
-    real(dp), intent(out) :: pohmpv, pohmmw, rpfac, rplas
+    real(8), intent(out) :: pohmpv, pohmmw, rpfac, rplas
 
     !  Local variables
 
-    real(dp) :: t10
+    real(8) :: t10
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3620,8 +3612,8 @@ module physics_module
     !  Local variables
 
     integer :: iisc
-    real(dp), parameter :: d1 = 1.0D0
-    real(dp) :: powerhtz, ptrez, ptriz, &
+    real(8), parameter :: d1 = 1.0D0
+    real(8) :: powerhtz, ptrez, ptriz, &
          taueez, taueffz, taueiz
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3668,7 +3660,7 @@ module physics_module
 		use maths_library, only: zeroin
     implicit none
 
-    real(dp) :: fhfac
+    real(8) :: fhfac
 
     !  Arguments
 
@@ -3676,9 +3668,9 @@ module physics_module
 
     !  Local variables
 
-    real(dp), parameter :: abserr = 0.003D0  !  numerical tolerance
-    real(dp), parameter :: xlow = 0.01D0     !  minimum bound on H-factor
-    real(dp), parameter :: xhigh = 100.0D0   !  maximum bound on H-factor
+    real(8), parameter :: abserr = 0.003D0  !  numerical tolerance
+    real(8), parameter :: xlow = 0.01D0     !  minimum bound on H-factor
+    real(8), parameter :: xhigh = 100.0D0   !  maximum bound on H-factor
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3713,15 +3705,15 @@ module physics_module
       ignite, aspect, qstar, q, afuel, plascur, pcoreradpv
     implicit none
 
-    real(dp) :: fhz
+    real(8) :: fhz
 
     !  Arguments
 
-    real(dp), intent(in) :: hhh
+    real(8), intent(in) :: hhh
 
     !  Local variables
 
-    real(dp) :: powerhtz,ptrez,ptriz,taueezz,taueiz,taueffz
+    real(8) :: powerhtz,ptrez,ptriz,taueezz,taueiz,taueffz
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3811,13 +3803,13 @@ module physics_module
 
     !  Local variables
 
-    real(dp) :: betath
+    real(8) :: betath, tot_power_plasma, normalised_toroidal_beta
     ! pinj
     integer :: imp
     character(len=30) :: tauelaw
     character(len=30) :: str1,str2
-    real(dp) :: fgwped_out ! neped/dlimit(7)
-    real(dp) :: fgwsep_out ! nesep/dlimit(7)
+    real(8) :: fgwped_out ! neped/dlimit(7)
+    real(8) :: fgwsep_out ! nesep/dlimit(7)
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ! Dimensionless plasma parameters. See reference below.    
@@ -3873,6 +3865,9 @@ module physics_module
           call ovarrf(outfile,'Zohm scaling adjustment factor', '(fkzohm)',fkzohm)
        case (4,5,7)
           call ovarrf(outfile,'Elongation, X-point (calculated from kappa95)', '(kappa)',kappa, 'OP ')
+       case (9)
+          call ovarrf(outfile,'Elongation, X-point (calculated from aspect ratio and li(3))', &
+               '(kappa)',kappa, 'OP ')
        case default
           idiags(1) = ishape ; call report_error(86)
        end select
@@ -3889,7 +3884,7 @@ module physics_module
        call ovarrf(outfile,'Elongation, area ratio calc.','(kappaa)',kappaa, 'OP ')
 
        select case (ishape)
-       case (0,2,6,8)
+       case (0,2,6,8,9)
           call ovarrf(outfile,'Triangularity, X-point (input value used)', &
                '(triang)',triang, 'IP ')
        case (1)
@@ -3933,6 +3928,7 @@ module physics_module
 
     if (istell == 0) then
        call ovarrf(outfile,'Plasma current (MA)','(plascur/1D6)',plascur/1.0D6, 'OP ')
+       !call ovarrf(outfile,'Plasma current (A)','(plascur)',plascur, 'OP ')
        if (iprofile == 1) then
             call ovarrf(outfile,'Current density profile factor','(alphaj)',alphaj, 'OP ')
        else
@@ -3998,7 +3994,9 @@ module physics_module
        call ovarrf(outfile,'Normalised thermal beta',' ',1.0D8*betath*rminor*bt/plascur, 'OP ')
        !call ovarrf(outfile,'Normalised total beta',' ',1.0D8*beta*rminor*bt/plascur, 'OP ')
        call ovarrf(outfile,'Normalised total beta',' ',normalised_total_beta, 'OP ')
-       call ovarrf(outfile,'Normalised toroidal beta',' ',normalised_total_beta*(btot/bt)**2, 'OP ')
+       !call ovarrf(outfile,'Normalised toroidal beta',' ',normalised_total_beta*(btot/bt)**2, 'OP ')
+       normalised_toroidal_beta=normalised_total_beta*(btot/bt)**2
+       call ovarrf(outfile,'Normalised toroidal beta','(normalised_toroidal_beta)',normalised_toroidal_beta, 'OP ')       
     end if
 
     if (iculbl == 0) then
@@ -4163,7 +4161,9 @@ module physics_module
     call ovarre(outfile,'Alpha power: beam-plasma (MW)','(palpnb)',palpnb, 'OP ')
     call ovarre(outfile,'Neutron power (MW)','(pneutmw)',pneutmw, 'OP ')
     call ovarre(outfile,'Charged particle power (excluding alphas) (MW)', '(pchargemw)',pchargemw, 'OP ')
-    call ovarre(outfile,'Total power deposited in plasma (MW)','()',falpha*palpmw+pchargemw+pohmmw+pinjmw, 'OP ')
+    tot_power_plasma=falpha*palpmw+pchargemw+pohmmw+pinjmw
+    call ovarre(outfile,'Total power deposited in plasma (MW)','(tot_power_plasma)',tot_power_plasma, 'OP ')
+    !call ovarre(outfile,'Total power deposited in plasma (MW)','()',falpha*palpmw+pchargemw+pohmmw+pinjmw, 'OP ')
 
     call osubhd(outfile,'Radiation Power (excluding SOL):')
     call ovarre(outfile,'Bremsstrahlung radiation power (MW)','(pbrempv*vol)', pbrempv*vol, 'OP ')
