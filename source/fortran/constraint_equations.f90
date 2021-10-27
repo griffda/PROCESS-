@@ -3299,40 +3299,42 @@ contains
    end subroutine constraint_eqn_087
 
 
-subroutine constraint_eqn_088(args)
-   !! Equation for checking if the design point is ECRH ignitable 
-   !! at lower values for n and B
-   !! author: J Lion, IPP Greifswald
-   !! args : output structure : residual error; constraint value; 
-   !! residual error in physical units; output string; units string
-   !!  te0_ecrh_achievable > te_ECRH_needed
-   !! #=# physics
-   !! #=#=# fecrh_ignition, powerht_local, powerscaling
-   !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-   !! fecrh_ignition : input real : f-value for constraint te0_ecrh_achievable > te_ECRH_needed
-   !! bt : input real :  Lower limit for beta
-   !! max_gyrotron_frequency : input real :  Max. av. gyrotron frequency
-   !! te0_ecrh_achievable : input real : Alpha particle beta
+   subroutine constraint_eqn_088(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
+      !! Equation for checking if the design point is ECRH ignitable 
+      !! at lower values for n and B
+      !! author: J Lion, IPP Greifswald
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !!  te0_ecrh_achievable > te_ECRH_needed
+      !! #=# physics
+      !! #=#=# fecrh_ignition, powerht_local, powerscaling
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! fecrh_ignition : input real : f-value for constraint te0_ecrh_achievable > te_ECRH_needed
+      !! bt : input real :  Lower limit for beta
+      !! max_gyrotron_frequency : input real :  Max. av. gyrotron frequency
+      !! te0_ecrh_achievable : input real : Alpha particle beta
 
-   use constraint_variables, only: fecrh_ignition
-   use stellarator_module, only: power_at_ignition_point
-   use stellarator_variables, only: max_gyrotron_frequency, te0_ecrh_achievable
-   implicit none
+      use constraint_variables, only: fecrh_ignition
+      use stellarator_module, only: power_at_ignition_point
+      use stellarator_variables, only: max_gyrotron_frequency, te0_ecrh_achievable
+      implicit none
+            real(8), intent(out) :: tmp_cc
+      real(8), intent(out) :: tmp_con
+      real(8), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
+      real(dp) :: te0_ECRH_needed,b_ECRH,powerht_local,powerscaling
 
-   type (constraint_args_type), intent(out) :: args
-   real(dp) :: te0_ECRH_needed,b_ECRH,powerht_local,powerscaling
+      call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht_local,powerscaling)
 
-   call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht_local,powerscaling)
+      ! Achievable ECRH te needs to be larger than needed te for igntion
+      tmp_cc = 1.0D0 - fecrh_ignition* powerht_local/powerscaling
+      tmp_con = powerscaling * (1.0D0 - tmp_cc)
+      tmp_err = powerht_local * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'MW'
 
-   ! Achievable ECRH te needs to be larger than needed te for igntion
-   args%cc = 1.0D0 - fecrh_ignition* powerht_local/powerscaling
-   args%con = powerscaling * (1.0D0 - args%cc)
-   args%err = powerht_local * args%cc
-   args%symbol = '<'
-   args%units = 'MW'
-
-
-end subroutine constraint_eqn_088
+   end subroutine constraint_eqn_088
 
 end module constraints
 

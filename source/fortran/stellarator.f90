@@ -411,9 +411,9 @@ contains
     ! that ensures that there is enough space between coils and plasma.
     required_radial_space = (tfcth/2.0D0 + gapds + d_vv_in + shldith + blnkith + fwith + scrapli)
 
-    ! 
-    ! available_radial_space = f_r*(config%rminor_ref+config%min_plasma_coil_distance) - rminor
-    available_radial_space = f_r*(config%derivative_min_LCFS_coils_dist*config%rminor_ref*(1/f_aspect-1) + config%min_plasma_coil_distance)
+    ! derivative_min_LCFS_coils_dist  for how strong the stellarator shape changes wrt to aspect ratio
+    available_radial_space = f_r*(config%derivative_min_LCFS_coils_dist*config%rminor_ref*(1/f_aspect-1) + &
+         config%min_plasma_coil_distance)
 
     !  Radius to inner edge of inboard shield
     rsldi = rmajor - rminor - scrapli - fwith - blnkith - shldith
@@ -2907,10 +2907,6 @@ contains
     centering_force_max_MN = config%centering_force_max_MN *f_I/f_N * bmaxtf/config%WP_bmax * config%coillength/n_tf/tfleng
     centering_force_min_MN = config%centering_force_min_MN *f_I/f_N * bmaxtf/config%WP_bmax * config%coillength/n_tf/tfleng
     centering_force_avg_MN = config%centering_force_avg_MN *f_I/f_N * bmaxtf/config%WP_bmax * config%coillength/n_tf/tfleng
-
-    ! Approximate, very simple maximum stress: (needed for limitation of icc 32)
-    ! This should be the stress on the ground insulation
-    strtf2 = max_force_density *dr_tf_wp *1.0D6 ! in Pa
     !
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3447,7 +3443,6 @@ contains
       call osubhd(outfile,'Forces and Stress :')
       call ovarre(outfile,'Maximal toroidally and radially av. force density (MN/m3)','(max_force_density)',max_force_density)
       call ovarre(outfile,'Maximal force density (MN/m)','(max_force_density_Mnm)',max_force_density_Mnm)
-      call ovarre(outfile,'Maximal stress (approx.) (MPa)','(strtf2)',strtf2*1.0D-6)
       call ovarre(outfile,'Maximal stress (approx.) (MPa)','(sig_tf_wp)',sig_tf_wp*1.0D-6)
 
       call ovarre(outfile,'Maximal lateral force density (MN/m3)','(max_lateral_force_density)',max_lateral_force_density)
