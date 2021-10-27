@@ -64,6 +64,15 @@ module buildings_variables
     real(8) :: gas_buildings_h
     !! air & gas supply (amalgamated) buildings height (m)
 
+    real(8) :: hcd_building_l
+    !! HCD building length (m)
+
+    real(8) :: hcd_building_w
+    !! HCD building width (m)
+
+    real(8) :: hcd_building_h
+    !! HCD building height (m)
+
     real(8) :: ground_clrnc
     !! clearance beneath TF coil (m)
   
@@ -76,6 +85,24 @@ module buildings_variables
     real(8) :: mbvfac
     !! maintenance building volume multiplication factor
   
+    real(8) :: magnet_pulse_l
+    !! pulsed magnet power building length (m)
+
+    real(8) :: magnet_pulse_w
+    !! pulsed magnet power building width (m)
+
+    real(8) :: magnet_pulse_h
+    !! pulsed magnet power building height (m)
+
+    real(8) :: magnet_trains_l
+    !! steady state magnet power trains building length (m)
+    
+    real(8) :: magnet_trains_w
+    !! steady state magnet power trains building width (m)
+    
+    real(8) :: magnet_trains_h
+    !! steady state magnet power trains building height (m)
+
     real(8) :: pfbldgm3
     !! volume of PF coil power supply building (m3)
   
@@ -141,6 +168,12 @@ module buildings_variables
   
     real(8) :: sec_buildings_h
     !! security & safety buildings height (m)
+
+    real(8) :: staff_buildings_h
+    !! staff buildings height (m)
+
+    real(8) :: staff_buildings_area 
+    !! footprint of staff buildings (m2)
   
     real(8) :: shmf
     !! fraction of shield mass per TF coil to be moved in the maximum shield lift
@@ -272,10 +305,19 @@ module buildings_variables
       gas_buildings_l = 25.0D0
       gas_buildings_w = 15.0D0
       gas_buildings_h = 5.0D0
+      hcd_building_l = 70.0D0
+      hcd_building_w = 40.0D0
+      hcd_building_h = 25.0D0
       ground_clrnc = 5.0D0
       hccl = 5.0D0
       hcwt = 1.5D0
       mbvfac = 2.8D0
+      magnet_pulse_l = 105.0D0
+      magnet_pulse_w = 40.0D0
+      magnet_pulse_h = 5.0D0
+      magnet_trains_l = 120.0D0
+      magnet_trains_w = 90.0D0
+      magnet_trains_h = 5.0D0
       pfbldgm3 = 2.0D4
       pibv = 2.0D4
       rbrt = 1.0D0
@@ -294,6 +336,8 @@ module buildings_variables
       sec_buildings_l = 30.0D0
       sec_buildings_w = 25.0D0
       sec_buildings_h = 6.0D0
+      staff_buildings_h = 5.0D0
+      staff_buildings_area = 5.0D5
       shmf = 0.5D0
       shov = 1.0D5
       shovol = 0.0D0

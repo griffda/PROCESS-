@@ -113,7 +113,8 @@ contains
       turbine_hall_l, turbine_hall_w, turbine_hall_h, &
       gas_buildings_l, gas_buildings_w, gas_buildings_h, &
       water_buildings_l, water_buildings_w, water_buildings_h, &
-      sec_buildings_l, sec_buildings_w, sec_buildings_h
+      sec_buildings_l, sec_buildings_w, sec_buildings_h, &
+      staff_buildings_area, staff_buildings_h
     use cost_variables, only: tlife
     use constants, only: pi
     use process_output, only: oheadr, ovarre
@@ -137,7 +138,7 @@ contains
 
     real(8) :: width_reactor_piece
     !! radial width of largest reactor component (m)
-    real(8) :: half_width
+    real(8) :: key_width
     !! half-width of reactor building (m)
     real(8) :: height_clrnc
     !! vertical clearance required in reactor building (m)
@@ -163,6 +164,23 @@ contains
     real(8) :: reactor_building_vol
     !! volume of reactor hall + basement (m3)
 
+    real(8) :: hcd_building_area
+    !! footprint of HCD building (m2)
+    real(8) :: hcd_building_vol
+    !! volume of HCD building (m3)
+    real(8) :: magnet_trains_area
+    !! footprint of steady state magnet power trains (m2)
+    real(8) :: magnet_trains_vol
+    !! volume of steady state magnet power trains (m3)
+    real(8) :: magnet_pulse_area
+    !! footprint of pulsed magnet power (m2)
+    real(8) :: magnet_pulse_vol
+    !! volume of pulsed magnet power (m3)
+    real(8) :: power_buildings_area
+    !! footprint of power buildings (m2)
+    real(8) :: power_buildings_volume
+    !! volume of power buildings (m3)
+
     real(8) :: warm_shop_area
     !! area of warm shop (m2)
     real(8) :: warm_shop_vol
@@ -186,34 +204,38 @@ contains
     real(8) :: sec_buildings_vol
     !! volume of security & safety buildings (m3)
 
-    real(8) :: staff_buildings_area 
-    !! footprint of staff buildings (m2)
+    ! real(8) :: staff_buildings_area 
+    ! !! footprint of staff buildings (m2)
     real(8) :: staff_buildings_vol
     !! volume of staff buildings (m3)
 
+
+    
     !! footprint of  buildings (m2)
     !! volume of  buildings (m3)
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Reactor building
+    
 
     ! Lateral size driven by radial width of largest component, from:
     !  PF coil max radius, cryostat radius, TF coil outer radius
     width_reactor_piece = max(pfrmax, rdewex, tf_radial_dim)
 
-    ! Calculate half-width of building (m)
+    ! Calculate key-width of building (m)
     ! include radial width of largest component *twice*, to allow for construction;
     ! include clearance around reactor, transportation clearance between components,
     ! clearance to building wall for crane operation
-    half_width = (2.0D0 * width_reactor_piece) + reactor_clrnc + transp_clrnc + crane_clrnc_h
+    key_width = (2.0D0 * width_reactor_piece) + reactor_clrnc + transp_clrnc + crane_clrnc_h
 
     ! Width of reactor building
-    reactor_hall_w = 2.0D0 * half_width
-    
-    ! Length of reactor building found from width + half-width:
     ! allows for laydown of large components during construction
-    reactor_hall_l = reactor_hall_w + half_width
+    reactor_hall_w = 3.0D0 * key_width
+    
+    ! Length of reactor building    
+    ! includes space for Fuel Cycle Outer Loop Facility
+    reactor_hall_l = 3.0D0 * key_width
     
     ! Calculate vertical clearance required (above and below reactor):
     ! include clearance around reactor, transportation clearance between components,
@@ -262,10 +284,44 @@ contains
     ! reactor auxiliary
     !**********************************************************
 
-    ! power
-    !**********************************************************
+    ! Power
+    
+    ! Heating and Current Drive facility
+    
+    ! iefrf = switch for current drive efficiency model
+    if ( (iefrf == 5) .or. (iefrf == 8) ) then
+      ! NBI technology will be situated within the reactor building
+      hcd_building_area = 0.0D0
+      hcd_building_vol = 0.0D0
+    else 
+      ! Assume building designed for EC or EBW is appropriate
+      ! Dimensions based upon estimate from M. Henderson, HCD Development Group
+      hcd_building_area = hcd_building_l * hcd_building_w
+      hcd_building_vol = hcd_building_area * hcd_building_h
+    end if
 
-    ! control
+    ! Magnet power facilities
+    
+    ! Providing specific electrical supplies for reactor magnets;
+    ! based upon dimensions of comparable equipment at ITER site.
+
+    ! Steady state power trains:
+    magnet_trains_area = magnet_trains_l * magnet_trains_w
+    magnet_trains_vol = magnet_trains_area * magnet_trains_h
+    
+    ! Pulsed power for central solenoid
+    magnet_pulse_area = magnet_pulse_l * magnet_pulse_w
+    magnet_pulse_vol = magnet_pulse_area * magnet_pulse_h
+
+    ! Total power buildings areas and volumes
+    power_buildings_area = hcd_building_area + magnet_trains_area + magnet_pulse_area
+    power_buildings_vol = hcd_building_vol + magnet_trains_vol + magnet_pulse_vol
+
+
+    ! Control
+
+
+
     !**********************************************************
 
     ! decon, hot cell, warm shop
@@ -419,10 +475,8 @@ contains
     ! includes main office buildings, contractor offices, staff restaurant and cafe,
     ! staff induction and training facilities, main gate and reception, access control
     ! and site pass office, occupational health centre.
-    ! These values amalgamate the estimates of floor area for all individual buildings,
-    ! and use an average building height of 5m.
-    staff_buildings_area = 5.0D5
-    staff_buildings_vol = staff_buildings_area * 5.0D0
+    ! Amalgamates estimates of floor area for all individual buildings, uses average height.
+    staff_buildings_vol = staff_buildings_area * staff_buildings_h
     
     ! Output    
     if (iprint == 0) return
@@ -437,6 +491,15 @@ contains
     call ovarre(outfile,'Footprint of Reactor Basement (m2)', '(reactor_basement_area)', reactor_basement_area) ! RMC check
     call ovarre(outfile,'Volume of Reactor Basement (m3)', '(reactor_basement_vol)', reactor_basement_vol)
     call ovarre(outfile,'Volume of Reactor Hall + Basement (m3)', '(reactor_building_vol)', reactor_building_vol)
+
+    call ovarre(outfile,'hcd_building_area (m2)', '(hcd_building_area)', hcd_building_area)
+    call ovarre(outfile,'hcd_building_vol (m3)', '(hcd_building_vol)', hcd_building_vol)
+    call ovarre(outfile,'magnet_trains_area (m2)', '(magnet_trains_area)', magnet_trains_area)
+    call ovarre(outfile,'magnet_trains_vol (m3)', '(magnet_trains_vol)', magnet_trains_vol)
+    call ovarre(outfile,'magnet_pulse_area (m2)', '(magnet_pulse_area)', magnet_pulse_area)
+    call ovarre(outfile,'magnet_pulse_vol (m3)', '(magnet_pulse_vol)', magnet_pulse_vol)
+    call ovarre(outfile,'power_buildings_area (m2)', '(power_buildings_area)', power_buildings_area)
+    call ovarre(outfile,'power_buildings_vol (m3)', '(power_buildings_vol)', power_buildings_vol)
 
     call ovarre(outfile,'warm_shop_l (m)', '(warm_shop_l)', warm_shop_l)
     call ovarre(outfile,'warm_shop_w (m)', '(warm_shop_w)', warm_shop_w)
@@ -456,6 +519,7 @@ contains
     call ovarre(outfile,'Volume of water supply buildings (m3)', '(water_buildings_vol)', water_buildings_vol)
     call ovarre(outfile,'Footprint of Security & Safety buildings (m2)', '(sec_buildings_area)', sec_buildings_area)
     call ovarre(outfile,'Volume of Security & Safety buildings (m3)', '(sec_buildings_vol)', sec_buildings_vol)
+    call ovarre(outfile,'height of staff buildings (m)', '(staff_buildings_h)', staff_buildings_h)
     call ovarre(outfile,'Footprint of staff buildings (m2)', '(staff_buildings_area)', staff_buildings_area)
     call ovarre(outfile,'Volume of staff buildings (m3)', '(staff_buildings_vol)', staff_buildings_vol)
 
