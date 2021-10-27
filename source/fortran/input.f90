@@ -2076,7 +2076,7 @@ contains
           call parse_real_variable('n_tf_turn', n_tf_turn, 0.0D0, 100.0D0, &
                'number of turns per TF coil')
        case ('tftmp')
-          call parse_real_variable('tftmp', tftmp, 0.01D0, 140.0D0, &
+          call parse_real_variable('tftmp', tftmp, 0.01D0, 40.0D0, &
                'Peak TF coil He coolant temp. (K)')      
        case ('t_turn_tf')
           call parse_real_variable('t_turn_tf', t_turn_tf, 0.0D0, 0.1D0, &
@@ -2875,7 +2875,7 @@ contains
           call parse_real_variable('ucdiv', ucdiv, 1.0D3, 1.0D7, &
                'Cost of divertor blade ($)')
        case ('ucech')
-          call parse_real_variable('ucech', ucech, 1.0D0, 10.0D2, &
+          call parse_real_variable('ucech', ucech, 1.0D0, 10.0D0, &
                'ECH system cost ($/W)')
        case ('ucf1')
           call parse_real_variable('ucf1', ucf1, 1.0D6, 50.0D6, &
@@ -2975,7 +2975,7 @@ contains
           call parse_real_variable('ucwindpf', ucwindpf, 100.0D0, 1.0D3, &
                'Cost of SCPF windings ($/m)')
        case ('ucwindtf')
-          call parse_real_variable('ucwindtf', ucwindtf, 100.0D0, 1.0D4, &
+          call parse_real_variable('ucwindtf', ucwindtf, 100.0D0, 1.0D3, &
                'Cost of SCTF windings ($/m)')
        case ('ucwst')
           call parse_real_array('ucwst', ucwst, isub1, 4, &
