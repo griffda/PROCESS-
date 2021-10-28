@@ -808,7 +808,7 @@ module tfcoil_variables
     cpttf_max = 9.0e4
     dcase = 8000.0D0
     dcond = (/6080.0D0, 6080.0D0, 6070.0D0, 6080.0D0, 6080.0D0, 8500.0D0, &
-      6070.0D0, 8500.0D0/)
+      6070.0D0, 8500.0D0, 8500.0D0/)
     dcondins = 1800.0D0
     dhecoil = 0.005D0
     estotftgj = 0.0D0
