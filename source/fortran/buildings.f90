@@ -114,9 +114,19 @@ contains
       gas_buildings_l, gas_buildings_w, gas_buildings_h, &
       water_buildings_l, water_buildings_w, water_buildings_h, &
       sec_buildings_l, sec_buildings_w, sec_buildings_h, &
-      staff_buildings_area, staff_buildings_h
-    use cost_variables, only: tlife
-    use constants, only: pi
+      staff_buildings_area, staff_buildings_h, &
+      hcd_building_l, hcd_building_w, hcd_building_h, &
+      magnet_pulse_l, magnet_pulse_w, magnet_pulse_h, &
+      magnet_trains_l, magnet_trains_w, magnet_trains_h, &
+      control_buildings_l, control_buildings_w, control_buildings_h, &
+      ilw_smelter_l, ilw_smelter_w, ilw_smelter_h, &
+      ilw_storage_l, ilw_storage_w, ilw_storage_h, &
+      llw_storage_l, llw_storage_w, llw_storage_h, &
+      hw_storage_l, hw_storage_w, hw_storage_h, &
+      tw_storage_l, tw_storage_w, tw_storage_h
+    use current_drive_variables, only: iefrf
+    ! use cost_variables, only: tlife rmc remove
+    ! use constants, only: pi rmc remove
     use process_output, only: oheadr, ovarre
 
     implicit none
@@ -143,81 +153,69 @@ contains
     real(8) :: height_clrnc
     !! vertical clearance required in reactor building (m)
 
-    real(8) :: reactor_hall_area
-    !! footprint of reactor hall (m2)
-    real(8) :: reactor_hall_vol
-    !! volume of reactor hall (m3)
+    real(8) :: reactor_hall_area, reactor_hall_vol
+    !! reactor hall footprint (m2), volume (m3)
     real(8) :: reactor_hall_area_ext
     !! footprint of reactor hall, including walls (m2)
     real(8) :: reactor_hall_vol_ext
     !! volume of reactor hall, including walls, roof, foundation (m3)
-    real(8) :: reactor_basement_l
-    !! reactor length (m)
-    real(8) :: reactor_basement_w
-    !! reactor width (m)
-    real(8) :: reactor_basement_h
-    !! reactor height (m)
-    real(8) :: reactor_basement_area
-    !! footprint of reactor basement (m2)
-    real(8) :: reactor_basement_vol
-    !! volume of reactor basement (m3)
+    real(8) :: reactor_basement_l, reactor_basement_w, reactor_basement_h
+    !! reactor length, width, height (m)
+    real(8) :: reactor_basement_area, reactor_basement_vol
+    !! reactor basement footprint (m2), volume (m3)
     real(8) :: reactor_building_vol
     !! volume of reactor hall + basement (m3)
 
-    real(8) :: hcd_building_area
-    !! footprint of HCD building (m2)
-    real(8) :: hcd_building_vol
-    !! volume of HCD building (m3)
-    real(8) :: magnet_trains_area
-    !! footprint of steady state magnet power trains (m2)
-    real(8) :: magnet_trains_vol
-    !! volume of steady state magnet power trains (m3)
-    real(8) :: magnet_pulse_area
-    !! footprint of pulsed magnet power (m2)
-    real(8) :: magnet_pulse_vol
-    !! volume of pulsed magnet power (m3)
-    real(8) :: power_buildings_area
-    !! footprint of power buildings (m2)
-    real(8) :: power_buildings_volume
-    !! volume of power buildings (m3)
+    real(8) :: hcd_building_area, hcd_building_vol
+    !! HCD building footprint (m2), volume (m3)
+    real(8) :: magnet_trains_area, magnet_trains_vol
+    !! steady state magnet power trains building footprint (m2), volume (m3)
+    real(8) :: magnet_pulse_area, magnet_pulse_vol
+    !! pulsed magnet power building footprint (m2), volume (m3)
+    real(8) :: power_buildings_area, power_buildings_vol
+    !! power buildings footprint (m2), volume (m3)
 
-    real(8) :: warm_shop_area
-    !! area of warm shop (m2)
-    real(8) :: warm_shop_vol
-    !! volume of warm shop (m3)
+    real(8) :: control_buildings_area, control_buildings_vol 
+    !! control buildings footprint (m2), volume (m3)
 
-    real(8) :: turbine_hall_area
-    !! footprint of turbine hall (m2)
-    real(8) :: turbine_hall_vol
-    !! volume of turbine hall (m3)
+    real(8) :: warm_shop_area, warm_shop_vol
+    !! warm shop footprint (m2), volume (m3)
 
-    real(8) :: gas_buildings_area
-    !! footprint of air & gas supply buildings (m2)
-    real(8) :: gas_buildings_vol
-    !! volume of air & gas supply buildings (m3)    
-    real(8) :: water_buildings_area
-    !! footprint of water, laundry & drainage buildings (m2)
-    real(8) :: water_buildings_vol
-    !! volume of water, laundry & drainage buildings (m3)
-    real(8) :: sec_buildings_area
-    !! footprint of security & safety buildings (m2)
-    real(8) :: sec_buildings_vol
-    !! volume of security & safety buildings (m3)
+    real(8) :: turbine_hall_area, turbine_hall_vol
+    !! turbine hall footprint (m2), volume (m3)
 
-    ! real(8) :: staff_buildings_area 
-    ! !! footprint of staff buildings (m2)
+    real(8) :: ilw_smelter_area, ilw_smelter_vol
+    !! radioactive waste smelting facility footprint (m2), volume (m3)
+    real(8) :: ilw_storage_area, ilw_storage_vol
+    !! ILW storage building footprint (m2), volume (m3)       
+    real(8) :: llw_storage_area, llw_storage_vol
+    !! LLW storage building footprint (m2), volume (m3)
+    real(8) :: hw_storage_area, hw_storage_vol
+    !! hazardous waste building footprint (m2), volume (m3)
+    real(8) :: tw_storage_area, tw_storage_vol
+    !! tritiated building footprint (m2), volume (m3)
+    real(8) :: waste_buildings_area, waste_buildings_vol
+    !! waste buildings (amalgamated) footprint (m2), volume (m3)
+
+    real(8) :: gas_buildings_area, gas_buildings_vol
+    !! air & gas supply buildings footprint (m2), volume (m3)
+    real(8) :: water_buildings_area, water_buildings_vol
+    !! water, laundry & drainage buildings footprint (m2), volume (m3)
+    real(8) :: sec_buildings_area, sec_buildings_vol
+    !! security & safety buildings footprint (m2), volume (m3)
+
     real(8) :: staff_buildings_vol
-    !! volume of staff buildings (m3)
+    !! staff buildings volume (m3)
 
 
-    
+    !!  building footprint (m2), volume (m3)
     !! footprint of  buildings (m2)
     !! volume of  buildings (m3)
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! Reactor building
-    
+
+    ! Reactor building    
 
     ! Lateral size driven by radial width of largest component, from:
     !  PF coil max radius, cryostat radius, TF coil outer radius
@@ -284,10 +282,10 @@ contains
     ! reactor auxiliary
     !**********************************************************
 
+
     ! Power
     
     ! Heating and Current Drive facility
-    
     ! iefrf = switch for current drive efficiency model
     if ( (iefrf == 5) .or. (iefrf == 8) ) then
       ! NBI technology will be situated within the reactor building
@@ -299,27 +297,32 @@ contains
       hcd_building_area = hcd_building_l * hcd_building_w
       hcd_building_vol = hcd_building_area * hcd_building_h
     end if
-
-    ! Magnet power facilities
     
+    ! Magnet power facilities
     ! Providing specific electrical supplies for reactor magnets;
     ! based upon dimensions of comparable equipment at ITER site.
-
+    !
     ! Steady state power trains:
     magnet_trains_area = magnet_trains_l * magnet_trains_w
     magnet_trains_vol = magnet_trains_area * magnet_trains_h
-    
+    !   
     ! Pulsed power for central solenoid
     magnet_pulse_area = magnet_pulse_l * magnet_pulse_w
     magnet_pulse_vol = magnet_pulse_area * magnet_pulse_h
-
+    
     ! Total power buildings areas and volumes
     power_buildings_area = hcd_building_area + magnet_trains_area + magnet_pulse_area
     power_buildings_vol = hcd_building_vol + magnet_trains_vol + magnet_pulse_vol
 
 
-    ! Control
-
+    ! Control    
+    ! Derived from W. Smith's estimates of necessary facilities and their sizes:
+    ! includes Main Control Room, Back-up Control Room, 
+    ! Signal Processing and Distribution Centres [Safety Train A, Safety Train B], 
+    ! HP offices & Data Logging centre, Data Storage centre;
+    ! these values amalgamate multiple individual buildings.
+    control_buildings_area = control_buildings_l * control_buildings_w
+    control_buildings_vol = control_buildings_area * control_buildings_h
 
 
     !**********************************************************
@@ -335,9 +338,9 @@ contains
     ! ! The storage area required is derived from the sizes and number of components, allowing
     ! ! for a margin in component numbers as set by the quantity safety factor (qnty_sfty_fac).
 
+        ! number of hot cells, their size and functions can only sensibly be determined once the failure modes and recovery process (if any) of each IVC has been identified.
     
     ! hot_store_building_area = 0.0D0
-
 
         
     ! ! outboard first wall + shield + blanket
@@ -381,52 +384,19 @@ contains
     ! compt_store_area = compt_store_l * compt_store_w
     ! compt_store_vol = compt_store_area * hot_store_building_h
     
+ 
 
-
-    ! step22010301 = step_a22010301()
-
-    ! function step_a22010301() result(step22010301)
-    !   !! 22.01.03.01 TF Coils
-    !   !! Returns cost of TF coils
-    !   use cost_variables, only: step_ref, cpstcst, ifueltyp, step_uc_cryo_al, &
-    !     step_mc_cryo_al_per, uccpcl1, uccpclb
-    !   use tfcoil_variables, only: i_tf_sup, whtconal, n_tf, whttflgs, whtcp
-    !   use physics_variables, only: itart
-    !   implicit none
-  
-    !   ! Result
-    !   real(dp) :: step22010301
-    !   !! Cost of TF coils in M$
-
-    ! end function step_a22010301
-  
-
-    
-    ! ! 
-    ! Maintenance
-
-
-    ! number of hot cells, their size and functions can only sensibly be determined once the failure modes and recovery process (if any)  of each IVC has been identified.
-
-
-    ! ! Reactor building internal footprint and volume
-    ! reactor_hall_area
-    ! reactor_hall_vol
-
-    ! ! Reactor building external footprint and volume
-    ! reactor_hall_area_ext
-
-    ! reactor_hall_vol_ext
 
 
     ! Warm Shop
-    ! Values taken from W. Smith's estimates of necessary facilities (and related sizes):
-    !  'hands on maintenance workshops for low RA dose equipment'
+    ! Values taken from W. Smith's estimates of necessary facility size:
+    ! 'hands on maintenance workshops for low RA dose equipment'
     warm_shop_area = warm_shop_l * warm_shop_w
     warm_shop_vol = warm_shop_area * warm_shop_h
 
 
-    ! maintenance
+    ! Maintenance
+
     !**********************************************************
 
     ! cryo & cooling
@@ -444,31 +414,61 @@ contains
     turbine_hall_area = turbine_hall_l * turbine_hall_w
     turbine_hall_vol = turbine_hall_area * turbine_hall_h
 
-    ! waste
-    !**********************************************************
+
+    ! Waste
+    ! Derived from W. Smith's estimates of necessary facilities and their sizes.
+
+    ! Intermediate Level Waste
+    ! Radioactive waste melt, separation and size reduction facility
+    ilw_smelter_area = ilw_smelter_l * ilw_smelter_w
+    ilw_smelter_vol = ilw_smelter_area * ilw_smelter_h
+    ! ILW process and storage, amalgamated buildings
+    ilw_storage_area = ilw_storage_l * ilw_storage_w
+    ilw_storage_vol = ilw_storage_area * ilw_storage_h
+    
+    ! Low Level Waste process and storage, amalgamated buildings
+    llw_storage_area = llw_storage_l * llw_storage_w
+    llw_storage_vol = llw_storage_area * llw_storage_h
+
+    ! Hazardous Waste process and storage, amalgamated buildings
+    hw_storage_area = hw_storage_l * hw_storage_w
+    hw_storage_vol = hw_storage_area * hw_storage_h
+
+    ! Tritiated Waste Store
+    tw_storage_area = tw_storage_l * tw_storage_w
+    tw_storage_vol = tw_storage_area * tw_storage_h
+
+    ! Total waste buildings areas and volumes
+    waste_buildings_area = ilw_smelter_area + ilw_storage_area + &
+      llw_storage_area + hw_storage_area + tw_storage_area
+    waste_buildings_vol = ilw_smelter_vol + ilw_storage_vol + &
+      llw_storage_vol + hw_storage_vol + tw_storage_vol
+
 
     ! Site Services
+    
     ! Derived from W. Smith's estimates of necessary facilities and their sizes; 
     ! buildings grouped by function.
-    !
+    
     ! Air & Gas supplies
     ! Includes compressed air facility, common gas systems facility, bottled gas 
     ! storage compounds; these values amalgamate multiple individual buildings.
     gas_buildings_area = gas_buildings_l * gas_buildings_w
     gas_buildings_vol = gas_buildings_area * gas_buildings_h
-    !
+    
     ! Water, Laundry & Drainage
     ! Includes facilities for potable water, firewater, chilled water; PPE laundry & 
     ! Respiratory Protective Equipment cleaning; industrial drains & sewage 
     ! process and discharge; these values amalgamate multiple individual buildings.
     water_buildings_area = water_buildings_l * water_buildings_w
     water_buildings_vol = water_buildings_area * water_buildings_h
-    !
+    
     ! Site Security & Safety
     ! Includes Security Control Centre and Fire and Ambulance Garages; 
     ! these values amalgamate multiple individual buildings.
     sec_buildings_area = sec_buildings_l * sec_buildings_w
     sec_buildings_vol = sec_buildings_area * sec_buildings_h
+
 
     ! Staff Services
     ! Derived from W. Smith's estimates of necessary facilities and their sizes; 
@@ -500,6 +500,9 @@ contains
     call ovarre(outfile,'magnet_pulse_vol (m3)', '(magnet_pulse_vol)', magnet_pulse_vol)
     call ovarre(outfile,'power_buildings_area (m2)', '(power_buildings_area)', power_buildings_area)
     call ovarre(outfile,'power_buildings_vol (m3)', '(power_buildings_vol)', power_buildings_vol)
+    
+    call ovarre(outfile,'control_buildings_area (m2)', '(control_buildings_area)', control_buildings_area)
+    call ovarre(outfile,'control_buildings_vol (m3)', '(control_buildings_vol)', control_buildings_vol)
 
     call ovarre(outfile,'warm_shop_l (m)', '(warm_shop_l)', warm_shop_l)
     call ovarre(outfile,'warm_shop_w (m)', '(warm_shop_w)', warm_shop_w)
@@ -512,6 +515,9 @@ contains
     call ovarre(outfile,'turbine_hall_h (m)', '(turbine_hall_h)', turbine_hall_h)
     call ovarre(outfile,'Footprint of Turbine Hall (m2)', '(turbine_hall_area)', turbine_hall_area)
     call ovarre(outfile,'Volume of Turbine Hall (m3)', '(turbine_hall_vol)', turbine_hall_vol)
+
+    call ovarre(outfile,'Footprint of waste buildings (m2)', '(waste_buildings_area)', waste_buildings_area)
+    call ovarre(outfile,'Volume of waste buildings (m3)', '(waste_buildings_vol)', waste_buildings_vol)
 
     call ovarre(outfile,'Footprint of air & gas supply buildings (m2)', '(gas_buildings_area)', gas_buildings_area)
     call ovarre(outfile,'Volume of air & gas supply buildings (m3)', '(gas_buildings_vol)', gas_buildings_vol)
@@ -526,79 +532,6 @@ contains
     !call ovarre(outfile,' (m)', '()', )
     !call ovarre(outfile,'Footprint of  buildings (m2)', '(_buildings_area)', _buildings_area)
     !call ovarre(outfile,'Volume of  buildings (m3)', '(_buildings_vol)', _buildings_vol)
-
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-
-
-    ! ! Maintenance building
-    ! ! The reactor maintenance building includes the hot cells, the
-    ! ! decontamination chamber, the transfer corridors, and the waste
-    ! ! treatment building.  The dimensions of these areas are scaled
-    ! ! from a reference design based on the shield sector size.
-
-    ! ! Transport corridor size
-    ! ! hcwt : hot cell wall thickness, m
-    ! tcw = shro-shri + 4.0D0*trcl
-    ! tcl = 5.0D0*tcw + 2.0D0*hcwt
-
-    ! ! Decontamination cell size
-    ! dcw = 2.0D0*tcw + 1.0D0
-    ! dcl = 2.0D0*tcw + 1.0D0
-
-    ! ! Hot cell size
-    ! ! hccl : clearance around components in hot cell, m
-    ! hcw = shro-shri + 3.0D0*hccl + 2.0D0
-    ! hcl = 3.0D0*(shro-shri) + 4.0D0*hccl + tcw
-
-    ! ! Radioactive waste treatment
-    ! rww = dcw
-    ! rwl = hcl - dcl - hcwt
-
-    ! ! Maintenance building dimensions
-    ! rmbw = hcw + dcw + 3.0D0*hcwt
-    ! rmbl = hcl + 2.0D0*hcwt
-
-    ! ! Height
-    ! ! wgt2 : hot cell crane capacity (kg)
-    ! !        Calculated if 0 is input
-    ! if (wgt2 >  1.0D0) then
-    !    wgts = wgt2
-    ! else
-    !    wgts = shmf*shm/n_tf
-    ! end if
-    ! cran = 9.41D-6*wgts + 5.1D0
-    ! rmbh = 10.0D0 + shh + trcl + cran + stcl + fndt
-    ! tch = shh + stcl + fndt
-
-    ! ! Volume
-    ! rmbv = mbvfac * rmbw*rmbl*rmbh + tcw*tcl*tch
-
-    ! ! Warm shop and hot cell gallery
-    ! wsa = (rmbw+7.0D0)*20.0D0 + rmbl*7.0D0
-    ! wsv = wsvfac * wsa*rmbh
-
-    ! ! Cryogenic building volume
-    ! cryv = 55.0D0 * sqrt(helpow)
-
-    ! ! Other building volumes
-    ! ! pibv : power injection building volume, m3
-    ! ! esbldgm3 is forced to be zero if no energy storage is required (lpulse=0)
-    ! elev = tfcbv + pfbldgm3 + esbldgm3 + pibv
-
-    ! ! Calculate effective floor area for ac power module
-    ! efloor = (rbv+rmbv+wsv+triv+elev+conv+cryv+admv+shov)/6.0D0
-    ! admvol = admv
-    ! shovol = shov
-    ! convol = conv
-
-    ! ! Total volume of nuclear buildings
-    ! volnucb = ( vrci + rmbv + wsv + triv + cryv )
-
-
-
 
   end subroutine bldgs_sizes
 

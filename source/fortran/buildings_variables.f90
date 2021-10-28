@@ -33,7 +33,10 @@ module buildings_variables
   
     real(8) :: convol
     !! volume of control, protection and i&c building (m3)
-    
+
+    real(8) :: control_buildings_l, control_buildings_w, control_buildings_h
+    !! control building length, width, height (m)
+
     real(8) :: crane_arm_h
     !! vertical dimension of crane arm, operating over reactor (m)
   
@@ -55,53 +58,41 @@ module buildings_variables
     real(8) :: fndt
     !! foundation thickness (m) - RMC remove?!
 
-    real(8) :: gas_buildings_l
-    !! air & gas supply (amalgamated) buildings length (m)
-    
-    real(8) :: gas_buildings_w
-    !! air & gas supply (amalgamated) buildings width (m)
-    
-    real(8) :: gas_buildings_h
-    !! air & gas supply (amalgamated) buildings height (m)
-
-    real(8) :: hcd_building_l
-    !! HCD building length (m)
-
-    real(8) :: hcd_building_w
-    !! HCD building width (m)
-
-    real(8) :: hcd_building_h
-    !! HCD building height (m)
+    real(8) :: gas_buildings_l, gas_buildings_w, gas_buildings_h
+    !! air & gas supply (amalgamated) buildings length, width, height (m)
 
     real(8) :: ground_clrnc
     !! clearance beneath TF coil (m)
+
+    real(8) :: hw_storage_l, hw_storage_w, hw_storage_h
+    !! hazardous waste storage building length, width, height (m)
   
+    real(8) :: hcd_building_l, hcd_building_w, hcd_building_h
+    !! HCD building length, width, height (m)
+
     real(8) :: hccl
     !! clearance around components in hot cell (m)
   
     real(8) :: hcwt
     !! hot cell wall thickness (m)
+
+    real(8) :: ilw_smelter_l, ilw_smelter_w, ilw_smelter_h
+    !! radioactive waste smelting facility length, width, height (m)
+    
+    real(8) :: ilw_storage_l, ilw_storage_w, ilw_storage_h
+    !! ILW waste storage building length, width, height (m)
+
+    real(8) :: llw_storage_l, llw_storage_w, llw_storage_h
+    !! LLW waste storage building length, width, height (m)
   
     real(8) :: mbvfac
     !! maintenance building volume multiplication factor
   
-    real(8) :: magnet_pulse_l
-    !! pulsed magnet power building length (m)
+    real(8) :: magnet_pulse_l, magnet_pulse_w, magnet_pulse_h
+    !! pulsed magnet power building length, width, height (m)
 
-    real(8) :: magnet_pulse_w
-    !! pulsed magnet power building width (m)
-
-    real(8) :: magnet_pulse_h
-    !! pulsed magnet power building height (m)
-
-    real(8) :: magnet_trains_l
-    !! steady state magnet power trains building length (m)
-    
-    real(8) :: magnet_trains_w
-    !! steady state magnet power trains building width (m)
-    
-    real(8) :: magnet_trains_h
-    !! steady state magnet power trains building height (m)
+    real(8) :: magnet_trains_l, magnet_trains_w, magnet_trains_h
+    !! steady state magnet power trains building length, width, height (m)
 
     real(8) :: pfbldgm3
     !! volume of PF coil power supply building (m3)
@@ -121,14 +112,8 @@ module buildings_variables
     real(8) :: rbwt
     !! reactor building wall thickness (m) - RMC remove?!
 
-    real(8) :: reactor_hall_l
-    !! reactor building length (m)
-
-    real(8) :: reactor_hall_w
-    !! reactor building width (m)
-
-    real(8) :: reactor_hall_h
-    !! reactor building height (m)
+    real(8) :: reactor_hall_l, reactor_hall_w, reactor_hall_h
+    !! reactor building length, width, height (m)
   
     real(8) :: reactor_wall_thk 
     !! reactor building wall thickness (m)
@@ -160,14 +145,8 @@ module buildings_variables
     real(8) :: crane_clrnc_v
     !! vertical clearance for crane operation (m)
 
-    real(8) :: sec_buildings_l 
-    !! security & safety buildings length (m)
-
-    real(8) :: sec_buildings_w 
-    !! security & safety buildings width (m)
-  
-    real(8) :: sec_buildings_h
-    !! security & safety buildings height (m)
+    real(8) :: sec_buildings_l, sec_buildings_w, sec_buildings_h
+    !! security & safety buildings length, width, height (m)
 
     real(8) :: staff_buildings_h
     !! staff buildings height (m)
@@ -196,14 +175,11 @@ module buildings_variables
     real(8) :: triv
     !! volume of tritium, fuel handling and health physics buildings (m3)
   
-    real(8) :: turbine_hall_l
-    !! turbine hall length (m)
+    real(8) :: turbine_hall_l, turbine_hall_w, turbine_hall_h
+    !! turbine hall length, width, height (m)
 
-    real(8) :: turbine_hall_w
-    !! turbine hall width (m)
-
-    real(8) :: turbine_hall_h
-    !! turbine hall height (m)
+    real(8) :: tw_storage_l, tw_storage_w, tw_storage_h
+    !! tritiated waste storage building length, width, height (m)
 
     real(8) :: volnucb
     !! sum of nuclear buildings volumes (m3)
@@ -211,23 +187,11 @@ module buildings_variables
     real(8) :: volrci
     !! internal volume of reactor building (m3)
 
-    real(8) :: warm_shop_l 
-    !! warm shop length (m)
+    real(8) :: warm_shop_l, warm_shop_w, warm_shop_h 
+    !! warm shop length, width, height (m)
 
-    real(8) :: warm_shop_w
-    !! warm shop width (m)
-
-    real(8) :: warm_shop_h
-    !! warm shop height (m)
-
-    real(8) :: water_buildings_l 
-    !! water, laundry & drainage buildings length (m)
-
-    real(8) :: water_buildings_w 
-    !! water, laundry & drainage buildings width (m)
-
-    real(8) :: water_buildings_h
-    !! water, laundry & drainage buildings height (m)
+    real(8) :: water_buildings_l, water_buildings_w, water_buildings_h
+    !! water, laundry & drainage buildings length, width, height (m)
   
     real(8) :: wgt
     !! reactor building crane capacity (kg) (calculated if 0 is input)
@@ -295,6 +259,9 @@ module buildings_variables
       clh2 = 15.0D0
       conv = 6.0D4
       convol = 0.0D0
+      control_buildings_l = 80.0D0
+      control_buildings_w = 60.0D0
+      control_buildings_h = 6.0D0
       crane_arm_h = 10.0D0
       cryostat_clrnc = 2.5D0
       cryvol = 0.0D0
@@ -308,9 +275,21 @@ module buildings_variables
       hcd_building_l = 70.0D0
       hcd_building_w = 40.0D0
       hcd_building_h = 25.0D0
+      hw_storage_l = 20.0D0
+      hw_storage_w = 10.0D0
+      hw_storage_h = 5.0D0
       ground_clrnc = 5.0D0
       hccl = 5.0D0
       hcwt = 1.5D0
+      ilw_smelter_l = 50.0D0
+      ilw_smelter_w = 30.0D0
+      ilw_smelter_h = 30.0D0
+      ilw_storage_l = 60.0D0
+      ilw_storage_w = 50.0D0
+      ilw_storage_h = 5.0D0
+      llw_storage_l = 45.0D0
+      llw_storage_w = 20.0D0
+      llw_storage_h = 5.0D0
       mbvfac = 2.8D0
       magnet_pulse_l = 105.0D0
       magnet_pulse_w = 40.0D0
@@ -348,6 +327,9 @@ module buildings_variables
       turbine_hall_l = 109.0D0
       turbine_hall_w = 62.0D0
       turbine_hall_h = 15.0D0
+      tw_storage_l = 90.0D0
+      tw_storage_w = 30.0D0
+      tw_storage_h = 5.0D0
       volnucb = 0.0D0
       volrci = 0.0D0
       warm_shop_l = 100.0D0
@@ -380,5 +362,7 @@ module buildings_variables
       crane_clrnc_h = 4.0D0
       crane_clrnc_v = 3.0D0
       
+
+
     end subroutine init_buildings_variables
   end module buildings_variables
