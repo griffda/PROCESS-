@@ -292,7 +292,6 @@ pages:
     
     # FORD documentation
     - python3 -m pip install git+https://github.com/jonMaddockUkaea/ford
-    - python3 -m pip install pdoc3
     - ford documentation/ford/index.md
 
     # python docs documentation
