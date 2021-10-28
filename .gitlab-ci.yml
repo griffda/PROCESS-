@@ -89,12 +89,15 @@ build_docker_dev_image:
   stage: build
   image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   artifacts:
+    when: on_success
+    untracked: true
     paths:
       - process_dist_$PY_VERSION/process-*.tar.gz
       - process_dist_$PY_VERSION/process-*.whl
       - build/CMakeFiles/process.dir/source/fortran/*.gcno
       - lcov_results
       - python_modules.txt
+      - process/
     expire_in: 1 week
   script:
     - source ~/.venv_$PY_VERSION/bin/activate
