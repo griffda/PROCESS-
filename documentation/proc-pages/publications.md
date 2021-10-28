@@ -2,19 +2,35 @@
 [PDF of webpage](pdf/publications.pdf)
 
 ## Physics and Engineering Model Papers
-The [physics](http://www.sciencedirect.com/science/article/pii/S0920379614005961) and [engineering](http://www.euro-fusionscipub.org/wp-content/uploads/2015/08/WPPMIPR1505.pdf) papers outline the physics and engineering models in PROCESS, both published in Fusion Engineering and Design.
+The [physics](http://www.sciencedirect.com/science/article/pii/S0920379614005961) and [engineering](http://www.euro-fusionscipub.org/wp-content/uploads/2015/08/WPPMIPR1505.pdf) papers outline the models used in PROCESS, both published in Fusion Engineering and Design.
 
-Below is a list of publications using PROCESS by year:
+Below is a list of publications using or citing PROCESS by year:
 
 ## 2021
 
-[Design uncertainty for a HELIAS 5-B stellarator fusion power plant](https://www.sciencedirect.com/science/article/pii/S0920379621004841)   
-S.I. Muldrew, F. Warmer, J. Lion, H. Lux    
-Fusion Engineering and Design (2021) in press   
+[Fusion energy: A global effort – A UK opportunity](https://imeche.org/policy-and-press/reports/detail/fusion-energy-a-global-effort-a-uk-opportunity)   
+M. Rooney, T. Roulstone, G. Locatelli, B. Lindley  
+Institution of Mechanical Engineers/Assystem (2021)  
+
+[A general stellarator version of the systems code PROCESS](https://iopscience.iop.org/article/10.1088/1741-4326/ac2dbf)   
+J. Lion, F. Warmer, H. Wang, C.D. Beidler, S.I. Muldrew, R.C. Wolf  
+Nuclear Fusion (2021) in press  
+
+[Analysis of supercritical carbon dioxide Brayton cycles for a helium-cooled pebble bed blanket DEMO-like fusion power plant](https://www.sciencedirect.com/science/article/pii/S0920379621006360?via%3Dihub)   
+J. Hidalgo-Salaverri, P. Cano-Megias, R. Chacartegui, J. Ayllon-Guerola   
+Fusion Engineering and Design 173 (2021) 112860  
+
+[Preparing systems codes for power plant conceptual design](https://iopscience.iop.org/article/10.1088/1741-4326/ac18dd)   
+J. Morris, M. Coleman, S. Kahn, S.I. Muldrew, A.J. Pearce, D. Short, J.E. Cook, S. Desai, L. Humphrey, M. Kovari, J. Maddock, D. Vaccaro  
+Nuclear Fusion 61 (2021) 116020  
 
 [Feasibility of D-D start-up under realistic technological assumptions for EU-DEMO](https://www.sciencedirect.com/science/article/pii/S0920379621003306)   
 M. Siccinio, P. Chiovaro, F. Cismondi, M. Coleman, C. Day, E. Fable, G. Federici, T. Härtl, J. Schwenzer, G.A. Spagnuolo   
 Fusion Engineering and Design 171 (2021) 112554  
+
+[Design uncertainty for a HELIAS 5-B stellarator fusion power plant](https://www.sciencedirect.com/science/article/pii/S0920379621004841)   
+S.I. Muldrew, F. Warmer, J. Lion, H. Lux    
+Fusion Engineering and Design 170 (2021) 112708  
 
 ## 2020
 

@@ -376,7 +376,7 @@ module cost_variables
   real(8) :: step_ucwst
   !! cost of waste disposal (M$/y/1200MW)
 
-  real(8), dimension(8) :: step_ucsc
+  real(8), dimension(9) :: step_ucsc
   !! cost of superconductor ($/kg) (if cost model = 2)
 
   real(8) :: step_ucfnc
@@ -601,7 +601,7 @@ module cost_variables
   real(8) :: ucrb
   !! cost of reactor building (M$/m3)
 
-  real(8), dimension(8) :: ucsc
+  real(8), dimension(9) :: ucsc
   !! cost of superconductor ($/kg)
 
   real(8) :: step_uc_cryo_al
@@ -783,8 +783,8 @@ module cost_variables
     step_ucfwa = 774.05D0
     step_ucfws = 5115.7D0 
     step_ucfwps = 0.0D0
-    step_ucsc = (/1230.0D0, 1230.0D0, 443.0D0, 1230.0D0, 1230.0D0, 2567.0D0, &
-      443.0D0, 2567.0D0/)
+    step_ucsc = (/ 1230.0D0, 1230.0D0, 443.0D0, 1230.0D0, 1230.0D0, 2567.0D0, &
+      443.0D0, 2567.0D0, 2567.0D0/)
     step_ucshw = 269.638D0
     step_ucshwc = 930.251D0
     !step_ucsc = (/ 600.0D0, 600.0D0, 443.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0,1200.0D0 /)
@@ -846,8 +846,9 @@ module cost_variables
     ucpfic = 1.0D4
     ucpfps = 3.5D4
     ucrb = 400.0D0
-    ucsc = &
-      (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0,1200.0D0/)
+    ucsc = & 
+      (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0, 300.0D0, 1200.0D0, &
+      1200.0D0/)
     ucshld = 32.0D0
     uctfbr = 1.22D0
     uctfbus = 100.0D0
