@@ -3,7 +3,12 @@ docs_dir: "documentation/proc-pages/"
 nav:
     - Home: index.md
     - PROCESS Sources Documentation:
-        - FORD docs: ford_site
+        - FORD Documentation: ford_site
+        - Python Documentation:
+            - process: python/process.md 
+            - process.io: python/process.io.md
+            - process.utilities: python/process.utilities.md
+            - process.fortran: python/f2py.md
     - Introduction:
         - Installation Guide: installation.md
         - Usage Guide: usage.md
@@ -75,6 +80,7 @@ extra_javascript:
 markdown_extensions:
   - footnotes
   - admonition
+  - codehilite
   - pymdownx.arithmatex
   - pymdownx.betterem:
       smart_enable: all
@@ -89,5 +95,17 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
+
+plugins:
+  - autorefs
+  - search
+  - mkdocstrings:
+        handlers:
+            python:
+                selection:
+                    docstring_style: "restructured-text"
+                rendering:
+                    show_source: false
+                    show_root_heading: true
 
 extra_css: [vardes.css]
