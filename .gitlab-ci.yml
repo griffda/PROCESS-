@@ -275,7 +275,6 @@ line_length:
 #-----------------
 #  Pages
 #-----------------
-
 pages:
   when: on_success
   only:
@@ -284,13 +283,24 @@ pages:
   image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   variables:
     PY_VERSION: py38
+  <<: *test-setup-py38
+  dependencies:
+    - make-py38
   script:
     - pwd
     - source ~/.venv_$PY_VERSION/bin/activate
     
     # FORD documentation
     - python3 -m pip install git+https://github.com/jonMaddockUkaea/ford
+    - python3 -m pip install pdoc3
     - ford documentation/ford/index.md
+
+    # python docs documentation
+    - python3 -m pip install mkdocstrings
+    - cd ${CI_PROJECT_DIR}/scripts
+    - python3 document_fortran_interface.py
+    - cd ${CI_PROJECT_DIR}
+    - python3 -m pip install -e .
     
     # Build the MkDocs site (after FORD has been used to create the vardes)
     - mkdocs build
@@ -332,6 +342,8 @@ pages:
     expire_in: 1 week
     paths:
     - public
+
+
 
 #-----------------
 #  STEP
