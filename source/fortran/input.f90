@@ -1670,7 +1670,7 @@ contains
                'Central solenoid steel fraction')
        case ('foh_stress')
           call parse_real_variable('foh_stress', foh_stress, 1.0D-3, 1.0D0, &
-               'F-value for CS coil Tresca stress limit')
+               'F-value for CS coil Tresca yield criterion')
        !       case ('fwith')
        !          call parse_real_variable('fwith', fwith, 0.0D0, 10.0D0, &
        !               'Inboard first wall thickness, initial estimate (m)')
@@ -1933,7 +1933,7 @@ contains
           call parse_real_variable('eff_tf_cryo', eff_tf_cryo, 0.0D0, 1.0D0, &
                'TF coil cryo-plane efficiency')  
        case ('i_tf_plane_stress')
-         call parse_int_variable('i_tf_plane_stress', i_tf_plane_stress, 0, 1, &
+         call parse_int_variable('i_tf_plane_stress', i_tf_plane_stress, 0, 2, &
                'Switch for the TF stress model')
        case ('i_tf_tresca')
           call parse_int_variable('i_tf_tresca', i_tf_tresca, 0, 1, &

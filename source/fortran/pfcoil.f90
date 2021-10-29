@@ -2719,7 +2719,7 @@ module pfcoil_module
                 '(sig_hoop)', sig_hoop, 'OP ')
            call ovarre(outfile,'Axial stress in CS steel (Pa)', &
                 '(sig_axial)', sig_axial, 'OP ')
-           call ovarre(outfile,'Tresca stress in CS steel (Pa)', &
+           call ovarre(outfile,'Maximum shear stress in CS steel for the Tresca criterion (Pa)', &
                 '(s_tresca_oh)', s_tresca_oh, 'OP ')
            call ovarre(outfile,'Axial force in CS (N)', &
                 '(axial_force)', axial_force, 'OP ')

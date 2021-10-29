@@ -2,15 +2,15 @@
  # Power Reactor Optimisation Code #
  # PROCESS #
  # Power Reactor Optimisation Code #
- PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
- Date_of_run_____________________________________________________________ (date)________________________     "20/10/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "14:09"
+ PROCESS_version_number__________________________________________________ (procver)_____________________     "2.2.0   R"
+ Date_of_run_____________________________________________________________ (date)________________________     "29/10/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "11:45"
  User____________________________________________________________________ (username)____________________     "rhicha"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-661-g3493036b"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1350-higher-current-density-material-in-tf-coil"                                                   
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-171/test_scenario_Bucked_and_wedge0/IN.DAT                                                                                                                                 "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-713-gb9b5cd80"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1422-incorrect-variable-passed-to-function-eyngeff"                                                
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |develop|\ into\ 1422-incorrect-variable-passed-to-function-eyngeff"                
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-194/test_scenario_Bucked_and_wedge0/IN.DAT                                                                                                                                 "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -165,7 +165,7 @@
  Dump_time_set_by_VV_stress________normalised_residue____________________ (normres019)__________________      6.4393E-15    
  TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres020)__________________     -1.9301E-12    
  CS_temperature_margin_lower_limit_normalised_residue____________________ (normres021)__________________     -7.5672E-09    
- CS_Tresca_stress_limit____________normalised_residue____________________ (normres022)__________________      5.4401E-13    
+ CS_Tresca_yield_criterion_________normalised_residue____________________ (normres022)__________________      5.4401E-13    
  Peak_toroidal_field_upper_limit___normalised_residue____________________ (normres023)__________________     -9.9920E-16    
  taup/taueff_______________________normalised_residue____________________ (normres024)__________________      5.7598E-13    
  # Final Feasible Point #
@@ -500,26 +500,26 @@
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      5.8000E+08    
  WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      2.9801E+01 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      8.9802E+01 OP 
- Radial____stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_r_max(1))_____________      0.0000E+00    
- toroidal__stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_t_max(1))_____________     -4.0564E+08    
- Vertical__stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_z_max(1))_____________      0.0000E+00    
- Von-Mises_stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_vmises_max(1))________      4.0564E+08    
- Maximum_TRESCA_stress_1_(Pa)____________________________________________ (sig_tf_tresca_max(1))________      4.0564E+08    
- Radial____stress_at_maximum_TRESCA_of_layer_2_(Pa)______________________ (sig_tf_r_max(2))_____________     -4.4266E+07    
- toroidal__stress_at_maximum_TRESCA_of_layer_2_(Pa)______________________ (sig_tf_t_max(2))_____________     -1.8591E+07    
- Vertical__stress_at_maximum_TRESCA_of_layer_2_(Pa)______________________ (sig_tf_z_max(2))_____________      0.0000E+00    
- Von-Mises_stress_at_maximum_TRESCA_of_layer_2_(Pa)______________________ (sig_tf_vmises_max(2))________      3.8499E+07    
- Maximum_TRESCA_stress_2_(Pa)____________________________________________ (sig_tf_tresca_max(2))________      4.4266E+07    
- Radial____stress_at_maximum_TRESCA_of_layer_3_(Pa)______________________ (sig_tf_r_max(3))_____________     -4.4169E+07    
- toroidal__stress_at_maximum_TRESCA_of_layer_3_(Pa)______________________ (sig_tf_t_max(3))_____________     -3.1423E+08    
- Vertical__stress_at_maximum_TRESCA_of_layer_3_(Pa)______________________ (sig_tf_z_max(3))_____________      2.6577E+08    
- Von-Mises_stress_at_maximum_TRESCA_of_layer_3_(Pa)______________________ (sig_tf_vmises_max(3))________      5.0269E+08    
- Maximum_TRESCA_stress_3_(Pa)____________________________________________ (sig_tf_tresca_max(3))________      5.8000E+08    
- Radial____stress_at_maximum_TRESCA_of_layer_4_(Pa)______________________ (sig_tf_r_max(4))_____________     -1.5431E+08    
- toroidal__stress_at_maximum_TRESCA_of_layer_4_(Pa)______________________ (sig_tf_t_max(4))_____________     -3.1193E+08    
- Vertical__stress_at_maximum_TRESCA_of_layer_4_(Pa)______________________ (sig_tf_z_max(4))_____________      2.6577E+08    
- Von-Mises_stress_at_maximum_TRESCA_of_layer_4_(Pa)______________________ (sig_tf_vmises_max(4))________      5.0084E+08    
- Maximum_TRESCA_stress_4_(Pa)____________________________________________ (sig_tf_tresca_max(4))________      5.7770E+08    
+ Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      0.0000E+00    
+ toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -4.0564E+08    
+ Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      0.0000E+00    
+ Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      4.0564E+08    
+ Maximum_shear_stress_for_the_Tresca_yield_criterion_1_(Pa)______________ (sig_tf_tresca_max(1))________      4.0564E+08    
+ Radial____stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_r_max(2))_____________     -4.4266E+07    
+ toroidal__stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_t_max(2))_____________     -1.8591E+07    
+ Vertical__stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_z_max(2))_____________      0.0000E+00    
+ Von-Mises_stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_vmises_max(2))________      3.8499E+07    
+ Maximum_shear_stress_for_the_Tresca_yield_criterion_2_(Pa)______________ (sig_tf_tresca_max(2))________      4.4266E+07    
+ Radial____stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_r_max(3))_____________     -4.4169E+07    
+ toroidal__stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_t_max(3))_____________     -3.1423E+08    
+ Vertical__stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_z_max(3))_____________      2.6577E+08    
+ Von-Mises_stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_vmises_max(3))________      5.0269E+08    
+ Maximum_shear_stress_for_the_Tresca_yield_criterion_3_(Pa)______________ (sig_tf_tresca_max(3))________      5.8000E+08    
+ Radial____stress_at_maximum_shear_of_layer_4_(Pa)_______________________ (sig_tf_r_max(4))_____________     -1.5431E+08    
+ toroidal__stress_at_maximum_shear_of_layer_4_(Pa)_______________________ (sig_tf_t_max(4))_____________     -3.1193E+08    
+ Vertical__stress_at_maximum_shear_of_layer_4_(Pa)_______________________ (sig_tf_z_max(4))_____________      2.6577E+08    
+ Von-Mises_stress_at_maximum_shear_of_layer_4_(Pa)_______________________ (sig_tf_vmises_max(4))________      5.0084E+08    
+ Maximum_shear_stress_for_the_Tresca_yield_criterion_4_(Pa)______________ (sig_tf_tresca_max(4))________      5.7770E+08    
  Maximum_radial_deflection_at_midplane_(m)_______________________________ (deflect)_____________________     -3.7307E-03 OP 
  Vertical_strain_on_casing_______________________________________________ (casestr)_____________________      1.2964E-03 OP 
  Vertical_strain_on_winding_pack_________________________________________ (windstrain)__________________      2.8323E-03 OP 
@@ -655,7 +655,7 @@
  Allowable_stress_in_CS_steel_(Pa)_______________________________________ (alstroh)_____________________      6.6000E+08    
  Hoop_stress_in_CS_steel_(Pa)____________________________________________ (sig_hoop)____________________      6.5530E+08 OP 
  Axial_stress_in_CS_steel_(Pa)___________________________________________ (sig_axial)___________________     -7.8176E+08 OP 
- Tresca_stress_in_CS_steel_(Pa)__________________________________________ (s_tresca_oh)_________________      6.5530E+08 OP 
+ Maximum_shear_stress_in_CS_steel_for_the_Tresca_criterion_(Pa)__________ (s_tresca_oh)_________________      6.5530E+08 OP 
  Axial_force_in_CS_(N)___________________________________________________ (axial_force)_________________     -1.8597E+09 OP 
  Strain_on_CS_superconductor_____________________________________________ (strncon_cs)__________________     -5.0000E-03    
  Copper_fraction_in_strand_______________________________________________ (fcuohsu)_____________________      7.0000E-01    

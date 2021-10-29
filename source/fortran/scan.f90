@@ -79,7 +79,7 @@ module scan_module
   !!         <LI> 41 blnkoth
   !!         <LI> 42 Argon fraction fimp(9)
   !!         <LI> 43 normalised minor radius at which electron cyclotron current drive is maximum
-  !!         <LI> 44 Allowable tresca stress in tf coil structural material
+  !!         <LI> 44 Allowable maximum shear stress (Tresca) in tf coil structural material
   !!         <LI> 45 Minimum allowable temperature margin ; tf coils
   !!         <LI> 46 boundu(150) fgwsep
   !!         <LI> 47 impurity_enrichment(9) Argon impurity enrichment
