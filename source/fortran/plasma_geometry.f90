@@ -146,7 +146,7 @@ contains
 
       ! kappa95 found from aspect ratio and stabilty margin
       ! Based on fit to CREATE data. ref Issue #1399
-      ! valid for EU-DEMO ile machine - aspect ratio 2.6 - 3.6
+      ! valid for EU-DEMO like machine - aspect ratio 2.6 - 3.6
       a = 8.39148185D0
       b = -0.17713049D0
       c = 1.9031585D0

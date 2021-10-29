@@ -754,7 +754,7 @@ contains
                'Electron density at separatrix (/m3)')
        case('m_s_limit')
          call parse_real_variable('m_s_limit', m_s_limit, 0.0D0, 1.0D0, &
-               'vertical stablity margin limit')
+               'Vertical stablity margin limit')
        case ('plasma_res_factor')
           call parse_real_variable('plasma_res_factor', plasma_res_factor, 0.0D0, 1.0D0, &
                'Plasma resistivity pre-factor')

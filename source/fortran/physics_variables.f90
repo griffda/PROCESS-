@@ -510,7 +510,7 @@ module physics_variables
   !! - =7 use input kappa95, triang95 to calculate separatrix values based on fit to FIESTA (ST)
   !! - =8 use input kappa, triang to calculate 95% values based on fit to FIESTA (ST)
   !! - =9 set kappa to the natural elongation value (PROCESS-STEP issue #70), triang input
-  !! - =10 set kappa to maxium stable value at a goven aspect ratio (PROCESS issue #1399), triang input
+  !! - =10 set kappa to maximum stable value at a given aspect ratio (2.6<A<3.6)), triang input (#1399)
 
   integer :: itart
   !! switch for spherical tokamak (ST) models:
