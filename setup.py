@@ -11,7 +11,7 @@ if platform.system() == 'Darwin':
 
 setup_kwargs = {
     "name": MODULE_NAME,
-    "version": "2.1.2",
+    "version": "2.2.0",
     "description": (
         "Power Reactor Optimisation Code for Environmental and Safety Studies"
     ),
@@ -37,7 +37,7 @@ setup_kwargs = {
         "process.data.impuritydata": ["*"]
     },
     "test_suite" : "pytest",
-    "install_requires" : ["numpy", "f90wrap", "importlib-resources ; python_version<'3.7'"],
+    "install_requires" : ["numpy", "importlib-resources ; python_version<'3.7'"],
     "extras_require" : {'test' : ['pytest', 'scipy']},
     "entry_points": {
         "console_scripts": [

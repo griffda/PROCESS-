@@ -198,7 +198,7 @@ ripmax   = 1.0      *Maximum allowable toroidal field ripple amplitude at plasma
 n_tf     = 12       *Number of TF coil  
 vcool    = 5.0      *Max centrepost coolant flow speed at midplane (m/s)
 vftf     = 0.2      *Coolant fraction of TFC 'cable' (i_tf_sup=1) or of TFC leg (i_tf_sup=0)
-i_tf_plane_stress = 0 
+i_tf_plane_stress = 2
 *Iteration variables: cdtfleg fcoolcp oacdcp tcpav
 
 *-------------Current Drive Variables--------------*
