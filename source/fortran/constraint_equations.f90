@@ -246,7 +246,7 @@ contains
         case (70); call constraint_eqn_070(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
         ! Separatrix density consistency
         case (71); call constraint_eqn_071(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
-	      ! Central Solenoid Tresca stress limit
+	      ! Central Solenoid Tresca yield criterion
         case (72); call constraint_eqn_072(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
         ! ensure separatrix power is greater than the L-H power + auxiliary power
         case (73); call constraint_eqn_073(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
@@ -2772,11 +2772,11 @@ contains
    end subroutine constraint_eqn_071
 		   
    subroutine constraint_eqn_072(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
-      !! Central Solenoid Tresca stress limit
+      !! Central Solenoid Tresca yield criterion
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
       !! residual error in physical units; output string; units string
-      !! Central Solenoid Tresca stress limit
+      !! Central Solenoid Tresca yield criterion
       !! #=# pfcoil
       !! #=#=# foh_stress, alstroh
       !! In the case if the bucked and wedged option ( i_tf_bucking >= 2 ) the constrained
@@ -2790,10 +2790,10 @@ contains
       !! This will have no effect if it is used as an equality constraint because it will be squared.
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !! foh_stress : input real : f-value for Tresca stress limit in Central Solenoid
+      !! foh_stress : input real : f-value for Tresca yield criterion in Central Solenoid
       !! alstroh : input real :  allowable hoop stress in Central Solenoid structural material (Pa)
-      !! s_tresca_oh : input real : Tresca stress coils/central solenoid (Pa)
-      !! sig_tf_cs_bucked : input real : Tresca stress in CS case at flux swing (no current in CS)
+      !! s_tresca_oh : input real : Maximum shear stress coils/central solenoid (Pa)
+      !! sig_tf_cs_bucked : input real : Maximum shear stress in CS case at flux swing (no current in CS)
       !!                       can be significant for the bucked and weged design
       !! i_tf_bucking : input integer : switch for TF structure design 
       use constraint_variables, only: foh_stress

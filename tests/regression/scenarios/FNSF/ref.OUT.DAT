@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-661-g3493036b
-    Branch : 1350-higher-current-density-material-in-tf-coil
-   Git log : COMMIT_MSG
- Date/time : 20 Oct 2021 14:09:42 +01:00(hh:mm) UTC
-      User : rhicha
-  Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-171/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-171/test_scenario_FNSF_0/IN.DAT
+   Tag No. : v2.1-694-g2d1c57ce
+    Branch : axisymmetric-extended-plane-strain
+   Git log : Merged\ in\ develop.\ Still\ need\ to\ commit\ my\ own\ tests.
+ Date/time : 21 Oct 2021 15:02:36 -04:00(hh:mm) UTC
+      User : cswan
+  Computer : cswan-2017-desktop
+ Directory : /home/cswan/process/process
+     Input : /tmp/pytest-of-cswan/pytest-4/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -555,6 +555,29 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Thermal shield                               0.000          -4.371   (thshield)          
  Gap                                          0.050          -4.421   (tftsgap)           
  TF coil                                      0.541          -4.962   (tfcth)             
+ 
+ ************************************************* TF coils  **************************************************
+ 
+ 
+ TF Coil Stresses (CCFE model) :
+ 
+ Generalized plane strain model
+ Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)   (sig_tf_case_max)         6.000E+08     
+ Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa (sig_tf_wp_max)           6.000E+08     
+ Materal stress of the point of maximum shear stress (Tresca criterion) for each layer
+ Please use utilities/plot_stress_tf.py for radial plots plots summary
+ Layers                    conductor
+ Radial stress               (MPa)     -70.212
+ toroidal stress             (MPa)     -70.212
+ Vertical stress             (MPa)      60.249
+ Von-Mises stress            (MPa)     130.461
+ Shear (Tresca) stress       (MPa)     130.461
+ 
+ Toroidal modulus            (GPa)     117.000
+ Vertical modulus            (GPa)      99.029
+ 
+ WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      1.170E+02  OP 
+ WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      9.903E+01  OP 
  
  TF design
  
@@ -1423,8 +1446,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
 272     2   Double-null: Upper vertical build forced to match lower                         
  62     1   RADIALB: Ripple result may be inaccurate, as the fit has been extrapolated      
 143     1   RADIALB: (TF coil ripple calculation) (R+a)/rtot out of fitted range            
-245     2   [sctfcoil] Invalid stress model (r_tf_inboard = 0), stress constraint switched o
- Final error identifier                                                   (error_id)                      245     
+ Final error identifier                                                   (error_id)                      143     
  
  ******************************************* End of PROCESS Output ********************************************
  
@@ -1631,7 +1653,7 @@ ripmax   = 1.0      *Maximum allowable toroidal field ripple amplitude at plasma
 n_tf     = 12       *Number of TF coil  
 vcool    = 5.0      *Max centrepost coolant flow speed at midplane (m/s)
 vftf     = 0.2      *Coolant fraction of TFC 'cable' (i_tf_sup=1) or of TFC leg (i_tf_sup=0)
-i_tf_plane_stress = 0 
+i_tf_plane_stress = 2
 *Iteration variables: cdtfleg fcoolcp oacdcp tcpav
 
 *-------------Current Drive Variables--------------*
