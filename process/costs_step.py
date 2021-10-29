@@ -473,85 +473,96 @@ class CostsStep:
             constants.n_day_year,
         )
 
-        if self.iprint == 0 or cv.output_costs == 0:
-            return
+        if self.iprint != 0 and cv.output_costs != 0:
+            # Output section
+            po.oshead(self.outfile, "Interest during Construction")
+            po.ocosts(
+                self.outfile,
+                "(moneyint)",
+                "Interest during construction (M$)",
+                cv.moneyint,
+            )
+            po.oshead(self.outfile, "Total Capital Investment")
+            po.ocosts(
+                self.outfile, "(capcost)", "Total capital investment (M$)", cv.capcost
+            )
 
-        # Output section
-        po.oshead(self.outfile, "Interest during Construction")
-        po.ocosts(
-            self.outfile, "(moneyint)", "Interest during construction (M$)", cv.moneyint
-        )
-        po.oshead(self.outfile, "Total Capital Investment")
-        po.ocosts(
-            self.outfile, "(capcost)", "Total capital investment (M$)", cv.capcost
-        )
+            title = "Cost of Electricity, " + f2py_compatible_to_string(
+                cv.step_currency
+            )
+            po.oheadr(self.outfile, title)
 
-        title = "Cost of Electricity, " + f2py_compatible_to_string(cv.step_currency)
-        po.oheadr(self.outfile, title)
-
-        po.ovarrf(
-            self.outfile, "First wall / blanket life (years)", "(fwbllife)", fwbllife
-        )
-        po.ovarrf(self.outfile, "Divertor life (years)", "(divlife.)", cv.divlife)
-        if pv.itart == 1:
-            po.ovarrf(self.outfile, "Centrepost life (years)", "(cplife.)", cv.cplife)
-
-        po.ovarrf(self.outfile, "Cost of electricity (m$/kWh)", "(coe)", cv.coe)
-        po.osubhd(self.outfile, "Power Generation Costs :")
-
-        if annfwbl != annfwbl or annfwbl > 1.0e10 or annfwbl < 0.0:
-            po.ocmmnt(self.outfile, "Problem with annfwbl")
-            po.ocmmnt(self.outfile, "fwblkcost=", cv.fwallcst)
-            po.ocmmnt(self.outfile, "crffwbl=", crffwbl, "  fcap0cp=", cv.fcap0cp)
-            po.ocmmnt(self.outfile, "feffwbl=", feffwbl, "  fwbllife=", fwbllife)
-
-        po.write(
-            self.outfile, "\t" * 36 + "Annual Costs, M$" + "\t" * 6 + "COE, m$/kWh"
-        )
-        po.dblcol(self.outfile, "Capital Investment", anncap, cv.coecap)
-        po.dblcol(self.outfile, "Operation & Maintenance", annoam, cv.coeoam)
-        po.dblcol(self.outfile, "Decommissioning Fund", anndecom, coedecom)
-        po.write(self.outfile, "Fuel Charge Breakdown")
-        po.dblcol(self.outfile, "\tBlanket & first wall", annfwbl, coefwbl)
-        po.dblcol(self.outfile, "\tDivertors", anndiv, coediv)
-        po.dblcol(self.outfile, "\tCentrepost (TART only)", anncp, coecp)
-        po.dblcol(self.outfile, "\tAuxiliary Heating", anncdr, coecdr)
-        po.dblcol(self.outfile, "\tActual Fuel", annfuel, coefuel)
-        po.dblcol(self.outfile, "\tWaste Disposal", annwst, coewst)
-        po.dblcol(self.outfile, "Total Fuel Cost", annfuelt, cv.coefuelt)
-        po.dblcol(self.outfile, "Total Cost", anntot, cv.coe)
-
-        if cv.ifueltyp == 1:
-            po.oshead(self.outfile, "Replaceable Components Direct Capital Cost")
             po.ovarrf(
                 self.outfile,
-                "First wall and Blanket direct capital cost (M$)",
-                "(fwblkcost)",
-                cv.fwblkcost,
+                "First wall / blanket life (years)",
+                "(fwbllife)",
+                fwbllife,
             )
-            po.ovarrf(
-                self.outfile, "Divertor direct capital cost (M$)", "(divcst)", cv.divcst
-            )
+            po.ovarrf(self.outfile, "Divertor life (years)", "(divlife.)", cv.divlife)
             if pv.itart == 1:
                 po.ovarrf(
-                    self.outfile,
-                    "Centrepost direct capital cost (M$)",
-                    "(cpstcst)",
-                    cv.cpstcst,
+                    self.outfile, "Centrepost life (years)", "(cplife.)", cv.cplife
                 )
 
-            po.ovarrf(
-                self.outfile,
-                "Plasma heating/CD system cap cost (M$)",
-                "",
-                cv.cdcost * cv.fcdfuel / (1.0e0 - cv.fcdfuel),
+            po.ovarrf(self.outfile, "Cost of electricity (m$/kWh)", "(coe)", cv.coe)
+            po.osubhd(self.outfile, "Power Generation Costs :")
+
+            if annfwbl != annfwbl or annfwbl > 1.0e10 or annfwbl < 0.0:
+                po.ocmmnt(self.outfile, "Problem with annfwbl")
+                po.ocmmnt(self.outfile, "fwblkcost=", cv.fwallcst)
+                po.ocmmnt(self.outfile, "crffwbl=", crffwbl, "  fcap0cp=", cv.fcap0cp)
+                po.ocmmnt(self.outfile, "feffwbl=", feffwbl, "  fwbllife=", fwbllife)
+
+            po.write(
+                self.outfile, "\t" * 36 + "Annual Costs, M$" + "\t" * 6 + "COE, m$/kWh"
             )
-            po.ovarrf(
-                self.outfile,
-                "Fraction of CD cost --> fuel cost",
-                "(fcdfuel)",
-                cv.fcdfuel,
-            )
+            po.dblcol(self.outfile, "Capital Investment", anncap, cv.coecap)
+            po.dblcol(self.outfile, "Operation & Maintenance", annoam, cv.coeoam)
+            po.dblcol(self.outfile, "Decommissioning Fund", anndecom, coedecom)
+            po.write(self.outfile, "Fuel Charge Breakdown")
+            po.dblcol(self.outfile, "\tBlanket & first wall", annfwbl, coefwbl)
+            po.dblcol(self.outfile, "\tDivertors", anndiv, coediv)
+            po.dblcol(self.outfile, "\tCentrepost (TART only)", anncp, coecp)
+            po.dblcol(self.outfile, "\tAuxiliary Heating", anncdr, coecdr)
+            po.dblcol(self.outfile, "\tActual Fuel", annfuel, coefuel)
+            po.dblcol(self.outfile, "\tWaste Disposal", annwst, coewst)
+            po.dblcol(self.outfile, "Total Fuel Cost", annfuelt, cv.coefuelt)
+            po.dblcol(self.outfile, "Total Cost", anntot, cv.coe)
+
+            if cv.ifueltyp == 1:
+                po.oshead(self.outfile, "Replaceable Components Direct Capital Cost")
+                po.ovarrf(
+                    self.outfile,
+                    "First wall and Blanket direct capital cost (M$)",
+                    "(fwblkcost)",
+                    cv.fwblkcost,
+                )
+                po.ovarrf(
+                    self.outfile,
+                    "Divertor direct capital cost (M$)",
+                    "(divcst)",
+                    cv.divcst,
+                )
+                if pv.itart == 1:
+                    po.ovarrf(
+                        self.outfile,
+                        "Centrepost direct capital cost (M$)",
+                        "(cpstcst)",
+                        cv.cpstcst,
+                    )
+
+                po.ovarrf(
+                    self.outfile,
+                    "Plasma heating/CD system cap cost (M$)",
+                    "",
+                    cv.cdcost * cv.fcdfuel / (1.0e0 - cv.fcdfuel),
+                )
+                po.ovarrf(
+                    self.outfile,
+                    "Fraction of CD cost --> fuel cost",
+                    "(fcdfuel)",
+                    cv.fcdfuel,
+                )
 
     def step_a2201(self):
         """Account 22.01 : Reactor Equipment.
