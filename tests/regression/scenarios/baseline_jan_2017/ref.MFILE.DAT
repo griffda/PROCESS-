@@ -4,13 +4,13 @@
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.2.0   R"
  Date_of_run_____________________________________________________________ (date)________________________     "29/10/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "11:45"
- User____________________________________________________________________ (username)____________________     "rhicha"  
+ Time_of_run_____________________________________________________________ (time)________________________     "13:42"
+ User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-713-gb9b5cd80"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1422-incorrect-variable-passed-to-function-eyngeff"                                                
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |develop|\ into\ 1422-incorrect-variable-passed-to-function-eyngeff"                
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-194/test_scenario_baseline_jan_2010/IN.DAT                                                                                                                                 "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-726-g2ddeb970"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "issue-1399-elongation-scaling-aspect-ratio-stability-margin"                                       
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |develop|\ into\ issue-1399-elongation-scaling-aspect-ratio-stability-margin"       
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-1/test_scenario_baseline_jan_2010/IN.DAT                                                                                                                                     "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
