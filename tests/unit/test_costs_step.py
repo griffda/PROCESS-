@@ -388,13 +388,13 @@ def test_step_a220104(monkeypatch):
     """
 
     # Mock module vars used in subroutine
-
+    
     monkeypatch.setattr(cv, "fcdfuel", 0.1)
-    monkeypatch.setattr(cv, "cdcost", 0.0)
     monkeypatch.setattr(cv, "ucich", 3.0)
     monkeypatch.setattr(cv, "uclh", 3.3)
     monkeypatch.setattr(cv, "ifueltyp", 0.0)
-    monkeypatch.setattr(cdv, "iefrf", 10.0)
+    monkeypatch.setattr(cdv, "iefrf", 5.0)
+    monkeypatch.setattr(cdv, "iefrffix", 5.0)
     monkeypatch.setattr(cdv, "echpwr", 90.0)
     #monkeypatch.setattr(cdv, "pnbitot", 103.578)
     #monkeypatch.setattr(cdv, "plhybd", 100.0)
