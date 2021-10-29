@@ -990,17 +990,21 @@ contains
     ! Cost per Watt depends on technology/hardware used
 
     ! iefrf = switch for current drive efficiency model
+    if (iefrf == 2) then
+      ! Ion Cyclotron current drive
+      ! costed as per Cost Model 0
+      step220104 = 1.0D-6 * ucich * (1.0D6*plhybd)
+      ! 1900 to 2017 inflation factor applied
+      step220104 = step220104 * (229.0D0/76.7D0)
 
-    if ( (iefrf == 1) .or. (iefrf == 2) .or. (iefrf == 4) .or. (iefrf == 6) ) then
-      ! these systems costed as per Cost Model 0
-      if (iefrf == 2) then
-        ! Ion Cyclotron current drive
-        step220104 = 1.0D-6 * ucich * (1.0D6*plhybd)
-      else if ( (iefrf == 1) .or. (iefrf == 4) .or. (iefrf == 6) ) then
-        ! lower hybrid system
-        step220104 = 1.0D-6 * uclh * (1.0D6*plhybd)
-      end if
-      ! note `iefrf = 9` option removed in PROCESS (issue #508)
+    else if ( (iefrf == 1) .or. (iefrf == 4) .or. (iefrf == 6) ) then
+      ! lower hybrid system
+      ! costed as per Cost Model 0
+      step220104 = 1.0D-6 * uclh * (1.0D6*plhybd)
+      ! 1900 to 2017 inflation factor applied
+      step220104 = step220104 * (229.0D0/76.7D0)
+
+    ! note `iefrf = 9` option removed in PROCESS (issue #508)
 
     else if ( (iefrf == 5) .or. (iefrf == 8) ) then
       ! NBI: use NBI cost per injected Watt
