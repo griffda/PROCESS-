@@ -108,7 +108,7 @@ module constraint_variables
   !! (`constraint equation 76`, `iteration variable 144`)
 
   real(dp) :: foh_stress
-  !! f-value for Tresca stress in Central Solenoid
+  !! f-value for Tresca yield criterion in Central Solenoid
   !! (`constraint equation 72`, `iteration variable 123`)
 
   real(dp) :: fpeakb
@@ -155,11 +155,11 @@ module constraint_variables
   !! f-value for minor radius limit (`constraint equation 21`, `iteration variable 32`)
 
   real(dp) :: fstrcase
-  !! f-value for maximum TF coil case TRESCA stress
+  !! f-value for maximum TF coil case Tresca yield criterion
   !! (`constraint equation 31`, `iteration variable 48`)
 
   real(dp) :: fstrcond
-  !! f-value for maxiumum TF coil conduit TRESCA stress
+  !! f-value for maxiumum TF coil conduit Tresca yield criterion
   !! (`constraint equation 32`, `iteration variable 49`)
 
   real(dp) :: ftaucq

@@ -172,7 +172,7 @@ module numerics
   !!  <LI> (70) ensure that teomp = separatrix temperature in the pedestal profile,
   !!            (itv 119 (tesep))
   !!  <LI> (71) ensure that neomp = separatrix density (nesep) x neratio
-  !!  <LI> (72) central solenoid Tresca stress limit (itv 123 foh_stress)
+  !!  <LI> (72) central solenoid shear stress limit (Tresca yield criterion) (itv 123 foh_stress)
   !!  <LI> (73) Psep >= Plh + Paux (itv 137 (fplhsep))
   !!  <LI> (74) TFC quench < tmax_croco (itv 141 (fcqt))
   !!  <LI> (75) TFC current/copper area < Maximum (itv 143 f_coppera_m2)
@@ -318,7 +318,7 @@ module numerics
   !! <LI> (120) ttarget: Plasma temperature adjacent to divertor sheath [eV]
   !! <LI> (121) neratio: ratio of mean SOL density at OMP to separatrix density at OMP
   !! <LI> (122) oh_steel_frac : streel fraction of Central Solenoid
-  !! <LI> (123) foh_stress : f-value for CS coil Tresca stress limit (f-value for eq. 72)
+  !! <LI> (123) foh_stress : f-value for CS coil Tresca yield criterion (f-value for eq. 72)
   !! <LI> (124) qtargettotal : Power density on target including surface recombination [W/m2]
   !! <LI> (125) fimp(3) :  Beryllium density fraction relative to electron density
   !! <LI> (126) fimp(4) :  Carbon density fraction relative to electron density
@@ -516,7 +516,7 @@ contains
       'pdivt < psep_kallenbach divertor ', &
       'Separatrix temp consistency      ', &
       'Separatrix density consistency   ', &
-      'CS Tresca stress limit           ', &
+      'CS Tresca yield criterion        ', &
       'Psep >= Plh + Paux               ', &
       'TFC quench < tmax_croco          ', &
       'TFC current/copper area < Max    ', &
