@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-726-g2ddeb970
-    Branch : issue-1399-elongation-scaling-aspect-ratio-stability-margin
-   Git log : Merge\ branch\ |develop|\ into\ issue-1399-elongation-scaling-aspect-ratio-stability-margin
- Date/time : 29 Oct 2021 13:45:23 +00:00(hh:mm) UTC
+   Tag No. : v2.1-728-g1dfa3f06
+    Branch : develop
+   Git log : Merge\ branch\ |1418-pf-placement|\ into\ |develop|
+ Date/time : 29 Oct 2021 16:25:37 +00:00(hh:mm) UTC
       User : root
   Computer : 6f802edae655
- Directory : /tmp/pytest-of-root/pytest-1/test_solver0
-     Input : /tmp/pytest-of-root/pytest-1/test_scenario_QH_mode_0/IN.DAT
+ Directory : /tmp/pytest-of-root/pytest-6/test_solver0
+     Input : /tmp/pytest-of-root/pytest-6/test_scenario_QH_mode_0/IN.DAT
  Run title : Example QH-mode plasma scenario
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -878,12 +878,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  coil           R(m)        Z(m)        dR(m)       dZ(m)       turns     steel thickness(m)
  
-  PF1            6.13        9.67        1.26        1.26      412.45        0.12
-  PF2            6.13      -11.19        1.36        1.36      480.22        0.14
-  PF3           18.12        2.80        1.18        1.18      198.03        0.09
-  PF4           18.12       -2.80        1.18        1.18      198.03        0.09
-  PF5           16.57        7.85        0.83        0.83      128.46        0.07
-  PF6           16.57       -7.85        0.83        0.83      128.46        0.07
+  PF 1           6.13        9.67        1.26        1.26      412.45        0.12
+  PF 2           6.13      -11.19        1.36        1.36      480.22        0.14
+  PF 3          18.12        2.80        1.18        1.18      198.03        0.09
+  PF 4          18.12       -2.80        1.18        1.18      198.03        0.09
+  PF 5          16.57        7.85        0.83        0.83      128.46        0.07
+  PF 6          16.57       -7.85        0.83        0.83      128.46        0.07
   CS             2.41        0.00        0.51       16.12     4237.00        0.14
  Plasma          8.69        0.00        5.61       10.36        1.00
  
@@ -892,12 +892,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  coil  current  allowed J  actual J   J   cond. mass   steel mass     field
          (MA)    (A/m2)     (A/m2)  ratio    (kg)          (kg)        (T)
  
-  PF1   17.41  4.527E+08  1.100E+07  0.02 3.840E+05   1.994E+05    5.525E+00
-  PF2   20.27  4.000E+08  1.100E+07  0.03 4.471E+05   2.491E+05    6.030E+00
-  PF3   -8.36  7.534E+08  6.000E+06  0.01 9.990E+05   4.143E+05    2.738E+00
-  PF4   -8.36  7.534E+08  6.000E+06  0.01 9.990E+05   4.143E+05    2.738E+00
-  PF5   -5.52  7.636E+08  8.000E+06  0.01 4.529E+05   2.149E+05    2.646E+00
-  PF6   -5.52  7.636E+08  8.000E+06  0.01 4.529E+05   2.149E+05    2.646E+00
+  PF 1   17.41  4.527E+08  1.100E+07  0.02 3.840E+05   1.994E+05    5.525E+00
+  PF 2   20.27  4.000E+08  1.100E+07  0.03 4.471E+05   2.491E+05    6.030E+00
+  PF 3   -8.36  7.534E+08  6.000E+06  0.01 9.990E+05   4.143E+05    2.738E+00
+  PF 4   -8.36  7.534E+08  6.000E+06  0.01 9.990E+05   4.143E+05    2.738E+00
+  PF 5   -5.52  7.636E+08  8.000E+06  0.01 4.529E+05   2.149E+05    2.646E+00
+  PF 6   -5.52  7.636E+08  8.000E+06  0.01 4.529E+05   2.149E+05    2.646E+00
   CS  -182.19  3.815E+07  2.236E+07  0.59 3.352E+05   5.469E+05    1.338E+01
        ------                             ---------   ---------
        247.62                             4.070E+06   2.254E+06

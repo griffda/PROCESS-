@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-726-g2ddeb970
-    Branch : issue-1399-elongation-scaling-aspect-ratio-stability-margin
-   Git log : Merge\ branch\ |develop|\ into\ issue-1399-elongation-scaling-aspect-ratio-stability-margin
- Date/time : 29 Oct 2021 13:45:46 +00:00(hh:mm) UTC
+   Tag No. : v2.1-728-g1dfa3f06
+    Branch : develop
+   Git log : Merge\ branch\ |1418-pf-placement|\ into\ |develop|
+ Date/time : 29 Oct 2021 16:25:52 +00:00(hh:mm) UTC
       User : root
   Computer : 6f802edae655
- Directory : /tmp/pytest-of-root/pytest-1/test_solver0
-     Input : /tmp/pytest-of-root/pytest-1/test_scenario_stellarator_0/IN.DAT
+ Directory : /tmp/pytest-of-root/pytest-6/test_solver0
+     Input : /tmp/pytest-of-root/pytest-6/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  

@@ -2833,7 +2833,7 @@ contains
           call parse_real_variable('fcontng', fcontng, 0.0D0, 1.0D0, &
                'Project contingency factor')
        case ('step_ref')
-          call parse_real_array('step_ref', step_ref, isub1, 68, &
+          call parse_real_array('step_ref', step_ref, isub1, 70, &
                'Reference values for cost model 2', icode)
        case ('step91_per')
           call parse_real_variable('step91_per', step91_per, 1.0D0, 1.0D2, &

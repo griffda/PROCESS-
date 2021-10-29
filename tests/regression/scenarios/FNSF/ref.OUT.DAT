@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-726-g2ddeb970
-    Branch : issue-1399-elongation-scaling-aspect-ratio-stability-margin
-   Git log : Merge\ branch\ |develop|\ into\ issue-1399-elongation-scaling-aspect-ratio-stability-margin
- Date/time : 29 Oct 2021 13:42:57 +00:00(hh:mm) UTC
+   Tag No. : v2.1-728-g1dfa3f06
+    Branch : develop
+   Git log : Merge\ branch\ |1418-pf-placement|\ into\ |develop|
+ Date/time : 29 Oct 2021 16:24:26 +00:00(hh:mm) UTC
       User : root
   Computer : 6f802edae655
- Directory : /tmp/pytest-of-root/pytest-1/test_solver0
-     Input : /tmp/pytest-of-root/pytest-1/test_scenario_FNSF_0/IN.DAT
+ Directory : /tmp/pytest-of-root/pytest-6/test_solver0
+     Input : /tmp/pytest-of-root/pytest-6/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -761,10 +761,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  coil           R(m)        Z(m)        dR(m)       dZ(m)       turns     steel thickness(m)
  
-  PF1            0.91        3.62        0.48        0.48      164.00        0.00
-  PF2            0.91       -3.62        0.48        0.48      164.00        0.00
-  PF3            5.15        1.17        0.35        0.35       89.32        0.00
-  PF4            5.15       -1.17        0.35        0.35       89.32        0.00
+  PF 1           0.91        3.62        0.48        0.48      164.00        0.00
+  PF 2           0.91       -3.62        0.48        0.48      164.00        0.00
+  PF 3           5.15        1.17        0.35        0.35       89.32        0.00
+  PF 4           5.15       -1.17        0.35        0.35       89.32        0.00
  Plasma          1.70        0.00        1.94        5.34        1.00
  
  PF Coil Information at Peak Current:
@@ -772,10 +772,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  coil  current  allowed J  actual J   J   cond. mass   steel mass     field
          (MA)    (A/m2)     (A/m2)  ratio    (kg)          (kg)        (T)
  
-  PF1    6.89 -1.000E+00  3.000E+07  1.00 8.163E+03   0.000E+00    7.015E+00
-  PF2    6.89 -1.000E+00  3.000E+07  1.00 8.163E+03   0.000E+00    7.015E+00
-  PF3   -3.75 -1.000E+00  3.000E+07  1.00 2.521E+04   0.000E+00    3.960E+00
-  PF4   -3.75 -1.000E+00  3.000E+07  1.00 2.521E+04   0.000E+00    3.960E+00
+  PF 1    6.89 -1.000E+00  3.000E+07  1.00 8.163E+03   0.000E+00    7.015E+00
+  PF 2    6.89 -1.000E+00  3.000E+07  1.00 8.163E+03   0.000E+00    7.015E+00
+  PF 3   -3.75 -1.000E+00  3.000E+07  1.00 2.521E+04   0.000E+00    3.960E+00
+  PF 4   -3.75 -1.000E+00  3.000E+07  1.00 2.521E+04   0.000E+00    3.960E+00
        ------                             ---------   ---------
         21.28                             6.674E+04   0.000E+00
  
