@@ -292,7 +292,7 @@ contains
       teped, fhe3, iwalld, gamma, falpha, fgwped, gtscale, tbeta, ibss, &
       iradloss, te, alphan, rmajor, kappa, ifispact, iinvqd, fkzohm, beamfus0, &
       tauratio, idensl, ieped, bt, iscrp, ipnlaws, betalim, betalim_lower, &
-      idia, ips
+      idia, ips, m_s_limit
     use pf_power_variables, only: iscenr, maxpoloidalpower 
     use plasmod_variables, only: plasmod_x_control, plasmod_i_modeltype, &
       plasmod_nx, plasmod_chisaw, plasmod_contrpovr, plasmod_dtmax, &
@@ -727,7 +727,7 @@ contains
           call parse_int_variable('iscrp', iscrp, 0, 1, &
                'Switch for scrapeoff width')
        case ('ishape')
-          call parse_int_variable('ishape', ishape, 0, 9, &
+          call parse_int_variable('ishape', ishape, 0, 10, &
                'Switch for plasma shape vs. aspect')
        case ('itart')
           call parse_int_variable('itart', itart, 0, 1, &
@@ -753,6 +753,9 @@ contains
        case ('nesep')
           call parse_real_variable('nesep', nesep, 0.0D0, 1.0D21, &
                'Electron density at separatrix (/m3)')
+       case('m_s_limit')
+         call parse_real_variable('m_s_limit', m_s_limit, 0.0D0, 1.0D0, &
+               'Vertical stablity margin limit')
        case ('plasma_res_factor')
           call parse_real_variable('plasma_res_factor', plasma_res_factor, 0.0D0, 1.0D0, &
                'Plasma resistivity pre-factor')

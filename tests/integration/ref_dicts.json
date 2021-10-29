@@ -3100,6 +3100,7 @@
         "lwa": null,
         "m": null,
         "m_res": 5.0,
+        "m_s_limit": 0.3,
         "mach0": 0.999,
         "machname": null,
         "mact": null,
@@ -3368,7 +3369,7 @@
         "phi_tfc_ob": 0.0,
         "phiint": 0.0,
         "photon_wall": 0.0,
-        "pi": "3.141592653589793_wp_",
+        "pi": 3.141592653589793,
         "pibv": 20000.0,
         "piepv": 0.0,
         "pifecr": 10.0,
@@ -9851,7 +9852,7 @@
         "iscenr": "Switch for PF coil energy storage option:\n<ul>\n<li>=1 all power from MGF (motor-generator flywheel) units</li>\n<li>=2 all pulsed power from line</li>\n<li>=3 PF power from MGF, heating from line</li>\n</ul>",
         "iscrp": "switch for plasma-first wall clearances:\n<ul>\n<li>=0 use 10% of rminor</li>\n<li>=1 use input (scrapli and scraplo)</li>\n</ul>",
         "iscz": "",
-        "ishape": "switch for plasma cross-sectional shape calculation:\n<ul>\n<li>=0 use input kappa, triang to calculate 95% values</li>\n<li>=1 scale qlim, kappa, triang with aspect ratio (ST)</li>\n<li>=2 set kappa to the natural elongation value (Zohm ITER scaling), triang input</li>\n<li>=3 set kappa to the natural elongation value (Zohm ITER scaling), triang95 input</li>\n<li>=4 use input kappa95, triang95 to calculate separatrix values</li>\n<li>=5 use input kappa95, triang95 to calculate separatrix values based on MAST scaling (ST)</li>\n<li>=6 use input kappa, triang to calculate 95% values based on MAST scaling (ST)</li>\n<li>=7 use input kappa95, triang95 to calculate separatrix values based on fit to FIESTA (ST)</li>\n<li>=8 use input kappa, triang to calculate 95% values based on fit to FIESTA (ST)</li>\n<li>=9 set kappa to the natural elongation value (PROCESS-STEP issue #70), triang input</li>\n</ul>",
+        "ishape": "switch for plasma cross-sectional shape calculation:\n<ul>\n<li>=0 use input kappa, triang to calculate 95% values</li>\n<li>=1 scale qlim, kappa, triang with aspect ratio (ST)</li>\n<li>=2 set kappa to the natural elongation value (Zohm ITER scaling), triang input</li>\n<li>=3 set kappa to the natural elongation value (Zohm ITER scaling), triang95 input</li>\n<li>=4 use input kappa95, triang95 to calculate separatrix values</li>\n<li>=5 use input kappa95, triang95 to calculate separatrix values based on MAST scaling (ST)</li>\n<li>=6 use input kappa, triang to calculate 95% values based on MAST scaling (ST)</li>\n<li>=7 use input kappa95, triang95 to calculate separatrix values based on fit to FIESTA (ST)</li>\n<li>=8 use input kappa, triang to calculate 95% values based on fit to FIESTA (ST)</li>\n<li>=9 set kappa to the natural elongation value (PROCESS-STEP issue #70), triang input</li>\n<li>=10 set kappa to maximum stable value at a given aspect ratio (2.6<A<3.6)), triang input (#1399)</li>\n</ul>",
         "istell": "Switch for stellarator option (set via `device.dat`):\n<ul>\n<li>=0 use tokamak model</li>\n<li>=1 use stellarator model: Helias5-b</li>\n<li>=2 use stellarator model: Helias4-b</li>\n<li>=3 use stellarator model: Helias3-b</li>\n</ul>",
         "isthtr": "Switch for stellarator auxiliary heating method:\n<ul>\n<li>= 1electron cyclotron resonance heating</li>\n<li>= 2lower hybrid heating</li>\n<li>= 3neutral beam injection</li>\n</ul>",
         "istore": "Switch for thermal storage method:\n<ul>\n<li>=1 option 1 of Electrowatt report, AEA FUS 205</li>\n<li>=2 option 2 of Electrowatt report, AEA FUS 205</li>\n<li>=3 stainless steel block</li>\n</ul>",
@@ -9891,9 +9892,9 @@
         "kallenbach_switch": "switch to turn on the 1D Kallenbach divertor model:\n<ul>\n<li>=1 on</li>\n<li>=0 off</li>\n</ul>",
         "kallenbach_test_option": "switch to choose kallenbach test option:\n<ul>\n<li>=0 Test case with user inputs</li>\n<li>=1 Test case for Kallenbach paper</li>\n</ul>",
         "kallenbach_tests": "switch to run tests of 1D Kallenbach divertor model:\n<ul>\n<li>=1 on</li>\n<li>=0 off</li>\n</ul>",
-        "kappa": "plasma separatrix elongation (calculated if `ishape = 1-5, 7 or 9`)",
+        "kappa": "plasma separatrix elongation (calculated if `ishape = 1-5, 7 or 9-10`)",
         "kappa0": "",
-        "kappa95": "plasma elongation at 95% surface (calculated if `ishape = 0-3, 6, 8 or 9`)",
+        "kappa95": "plasma elongation at 95% surface (calculated if `ishape = 0-3, 6, or 8-10`)",
         "kappaa": "plasma elongation calculated as xarea/(pi.a^2)",
         "kappaa_IPB": "Volume measure of plasma elongation",
         "keV_": "",
@@ -9961,6 +9962,7 @@
         "lwa": "",
         "m": "",
         "m_res": "poloidal resonance number",
+        "m_s_limit": "margin to vertical stability",
         "mach0": "Mach number at target (must be just less than 1)",
         "machname": "",
         "mact": "",
@@ -13273,7 +13275,7 @@
         },
         "ishape": {
             "lb": 0,
-            "ub": 9
+            "ub": 10
         },
         "istell": {
             "lb": 0,
@@ -13390,6 +13392,10 @@
         "m_res": {
             "lb": 1,
             "ub": 10
+        },
+        "m_s_limit": {
+            "lb": 0.0,
+            "ub": 1.0
         },
         "mach0": {
             "lb": 0.0,
@@ -18886,6 +18892,7 @@
             "kappaa_IPB",
             "ne0",
             "ni0",
+            "m_s_limit",
             "p0",
             "palppv",
             "palpepv",
@@ -20266,6 +20273,7 @@
         "lpulse": "int_variable",
         "lsa": "int_variable",
         "m_res": "int_variable",
+        "m_s_limit": "real_variable",
         "mach0": "real_variable",
         "maintenance_fwbs": "real_variable",
         "maintenance_gen": "real_variable",
