@@ -67,15 +67,11 @@ ENV PROCESS_PYTHON_PACKAGES="cmake \
 
 # Install Python packages into virtualenv for Python 3.6
 # cmake, MKdocs
-# Install f90wrap separately: f90wrap's setup.py contains a numpy import which
-# is not handled correctly. Need to ensure numpy is installed before installing
-# f90wrap.
 RUN python -m pip install --upgrade pip && \
     python -m pip install virtualenv && \
     python -m virtualenv ~/.venv_py36 && \
     . ~/.venv_py36/bin/activate && \
     python -m pip install ${PROCESS_PYTHON_PACKAGES} && \
-    python -m pip install f90wrap && \
     deactivate
 
 # Set the python version back to system as default.
@@ -88,7 +84,6 @@ RUN python -m pip install --upgrade pip && \
     python -m virtualenv ~/.venv_py38 && \
     . ~/.venv_py38/bin/activate && \
     python -m pip install ${PROCESS_PYTHON_PACKAGES} && \
-    python -m pip install f90wrap && \
     deactivate
 
 # Clear build-only environment variable.
