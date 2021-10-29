@@ -1065,8 +1065,8 @@ contains
     tcycle, n_day_year, &
     anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
     annfuelt, annfwbl, annoam, anntot, annwst, coecdr,  &
-    coecp, coedecom, coediv, coefuel, coefwbl, coewst, crfcdr, crfcp, &
-    crfdiv, crffwbl, fefcdr, fefcp, fefdiv, feffwbl, fwbllife, kwhpy, &
+    coecp, coedecom, coediv, coefuel, coefwbl, coewst, &
+    crffwbl, feffwbl, fwbllife, &
     moneyint, capcost, coecap, coeoam, coefuelt, coe, title)
     !! Routine to calculate the cost of electricity for a fusion power plant
     !! author: S I Muldrew,  CCFE, Culham Science Centre
@@ -1088,11 +1088,14 @@ contains
     character(len=50), intent(in) :: step_currency
     real(8), intent(out) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
       annfuelt,annfwbl,annoam,anntot,annwst,coecdr, &
-      coecp,coedecom,coediv,coefuel,coefwbl,coewst,crfcdr,crfcp, &
-      crfdiv,crffwbl,fefcdr,fefcp,fefdiv,feffwbl,fwbllife,kwhpy,moneyint, &
+      coecp,coedecom,coediv,coefuel,coefwbl,coewst, &
+      crffwbl,feffwbl,fwbllife,moneyint, &
       capcost, coecap, coeoam, coefuelt, coe
     character(len=80), intent(out) :: title
          
+    ! Variables
+    real(8) :: crfcdr, crfcp, crfdiv, fefcdr, fefcp, fefdiv, kwhpy
+
     ! Number of kWh generated each year
     kwhpy = 1.0D3 * pnetelmw * (24.0D0*n_day_year) * cfactr * tburn/tcycle
 
