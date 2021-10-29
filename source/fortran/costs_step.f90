@@ -977,7 +977,7 @@ contains
     !! HCD cost = cost per injected Watt of power * injected Watts
 
     use cost_variables, only: step_ref, fcdfuel, cdcost, ucich, uclh, ifueltyp
-    use current_drive_variables, only: iefrf, echpwr, pnbitot, plhybd
+    use current_drive_variables, only: iefrf, iefrffix, echpwr, pnbitot, plhybd
 
     implicit none
 
@@ -987,45 +987,39 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! Cost per Watt depends on technology/hardware used
+    step220104 = 0.0D0
 
-    ! iefrf = switch for current drive efficiency model
-    if (iefrf == 2) then
-      ! Ion Cyclotron current drive
-      ! costed as per Cost Model 0
-      step220104 = 1.0D-6 * ucich * (1.0D6*plhybd)
-      ! 1900 to 2017 inflation factor applied
-      step220104 = step220104 * (229.0D0/76.7D0)
+    ! Cost per Watt depends on technology/hardware used;
+    ! inflation adjustment applied as appropriate to source for costs
+    ! (tech adjusted from 1990 $ is costed as per Cost Model 0)
 
-    else if ( (iefrf == 1) .or. (iefrf == 4) .or. (iefrf == 6) ) then
-      ! lower hybrid system
-      ! costed as per Cost Model 0
-      step220104 = 1.0D-6 * uclh * (1.0D6*plhybd)
-      ! 1900 to 2017 inflation factor applied
-      step220104 = step220104 * (229.0D0/76.7D0)
+    ! NBI cost per injected Watt (adjusted from 2020 $):
+    step220104 = step220104 + &
+               ( pnbitot * step_ref(69) * (229.0D0/258.84D0) )
 
-    ! note `iefrf = 9` option removed in PROCESS (issue #508)
+    ! EC or EBW cost per injected Watt (adjusted from 2020 $):
+    step220104 = step220104 + & 
+               ( echpwr * step_ref(70) * (229.0D0/258.84D0) )
 
-    else if ( (iefrf == 5) .or. (iefrf == 8) ) then
-      ! NBI: use NBI cost per injected Watt
-      step220104 = pnbitot * step_ref(69)
-      ! adjust for inflation (hardware is in 2020 prices):
-      step220104 = step220104 * (229.0D0/258.84D0)
-
-    else if ( (iefrf == 3) .or. (iefrf == 7) .or. (iefrf == 10) &
-       .or. (iefrf == 11) .or. (iefrf == 12) ) then
-      ! EC or EBW: use EC cost per injected Watt
-      step220104 = echpwr * step_ref(70)
-      ! adjust for inflation (hardware is in 2020 prices):
-      step220104 = step220104 * (229.0D0/258.84D0)
-    
+    if ( (iefrf == 2) .or. (iefrffix == 2) ) then
+      ! Ion Cyclotron current drive (adjusted from 1990 $):
+      step220104 = step220104 + &
+                ( 1.0D-6 * ucich * (1.0D6*plhybd) * (229.0D0/76.7D0) )
     end if
 
-   if ( ifueltyp == 1 ) then
-    ! fraction `fcdfuel` of HCD cost treated as fuel cost
-    step220104 = (1.0D0-fcdfuel) * step220104 
-    cdcost = step220104
-   end if
+    if ( (iefrf == 1) .or. (iefrffix == 1) .or. &
+              (iefrf == 4) .or. (iefrffix == 4) .or. &
+              (iefrf == 6) .or. (iefrffix == 6) ) then
+      ! Lower Hybrid system (adjusted from 1990 $):
+      step220104 = step220104 + &
+                ( 1.0D-6 * uclh * (1.0D6*plhybd) * (229.0D0/76.7D0) )    
+    end if
+
+    if ( ifueltyp == 1 ) then
+      ! fraction `fcdfuel` of HCD cost treated as fuel cost
+      step220104 = (1.0D0-fcdfuel) * step220104 
+      cdcost = step220104
+    end if
 
   end function step_a220104
 
