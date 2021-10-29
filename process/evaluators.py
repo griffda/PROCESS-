@@ -28,7 +28,7 @@ class Evaluators:
         """
         self.caller = Caller(models)
 
-    def fcnvmc1(self, n, m, xv, ifail_in, first_call):
+    def fcnvmc1(self, n, m, xv, ifail, first_call):
         """Function evaluator for VMCON.
 
         This routine is the function evaluator for the VMCON
@@ -45,12 +45,12 @@ class Evaluators:
         :type m: int
         :param xv: scaled variable values, length n
         :type xv: numpy.array
-        :param ifail_in: ifail_in error flag (<0 stops calculation)
-        :type ifail_in: int
+        :param ifail: ifail error flag
+        :type ifail: int
         :param first_call: first call of fcnvmc1() for this Vmcon run
         :type first_call: bool
         :return: tuple containing: objfn objective function, conf(m) constraint
-        functions, ifail_out error flag (<0 stops calculation)
+        functions
         :rtype: tuple
         """
         # Output array for constraint functions
@@ -89,10 +89,6 @@ class Evaluators:
         # Evaluate constraint equations
         conf, _, _, _, _ = constraints.constraint_eqns(m, -1)
 
-        # To stop the program, set ifail < 0 here.
-        # TODO Not sure this serves any purpose
-        ifail_out = 1 * ifail_in
-
         # Verbose diagnostics
         if gv.verbose == 1:
             summ = 0.0
@@ -102,7 +98,7 @@ class Evaluators:
             sqsumconfsq = math.sqrt(summ)
             logger.debug(
                 numerics.nviter,
-                (1 - (ifail_out % 7)) - 1,
+                (1 - (ifail % 7)) - 1,
                 (numerics.nviter % 2) - 1,
                 pv.te,
                 cv.coe,
@@ -114,9 +110,9 @@ class Evaluators:
                 xv,
             )
 
-        return objf, conf, ifail_out
+        return objf, conf
 
-    def fcnvmc2(self, n, m, xv, lcnorm, ifail_in):
+    def fcnvmc2(self, n, m, xv, lcnorm):
         """Gradient function evaluator for VMCON.
 
         This routine is the gradient function evaluator for the VMCON
@@ -135,12 +131,9 @@ class Evaluators:
         :type xv: numpy.array
         :param lcnorm: number of columns in cnorm
         :type lcnorm: int
-        :param ifail_in: error flag, <0 stops calculation
-        :type ifail_in: int
         :return: fgrdm (numpy.array (n)) gradient of the objective function
         cnorm (numpy.array (lcnorm, m)) constraint gradients, i.e. cnorm[i, j] is
         the derivative of constraint j w.r.t. variable i
-        ifail_out (int), <0 stops calculation
         :rtype: tuple
         """
         xfor = np.zeros(numerics.ipnvars, dtype=np.float64, order="F")
@@ -185,8 +178,4 @@ class Evaluators:
         # smaller (i.e. its xbac value above).
         self.caller.call_models(xv, n)
 
-        # To stop the program, set ifail < 0 here.
-        # TODO Not sure this serves any purpose
-        ifail_out = 1 * ifail_in
-
-        return fgrd, cnorm, ifail_out
+        return fgrd, cnorm

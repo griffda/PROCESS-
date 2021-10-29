@@ -299,7 +299,7 @@ class Vmcon():
 
         See comments on differing array sizes in fcnvmc1_wrapper().
         """
-        self.objf, self.conf[0:self.m], self.ifail = self.evaluators.fcnvmc1(self.n, self.m, 
+        self.objf, self.conf[0:self.m] = self.evaluators.fcnvmc1(self.n, self.m, 
             self.x, self.ifail, self.fcnvmc1_first_call
         )
 
@@ -357,5 +357,4 @@ class Vmcon():
         (
             self.fgrd[0:self.n],
             self.cnorm[0:self.lcnorm, 0:self.m],
-            self.ifail,
-        ) = self.evaluators.fcnvmc2(self.n, self.m, self.x, self.lcnorm, self.ifail)
+        ) = self.evaluators.fcnvmc2(self.n, self.m, self.x, self.lcnorm)
