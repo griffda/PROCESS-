@@ -2,15 +2,15 @@
  # Power Reactor Optimisation Code #
  # PROCESS #
  # Power Reactor Optimisation Code #
- PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
- Date_of_run_____________________________________________________________ (date)________________________     "21/10/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "15:02"
- User____________________________________________________________________ (username)____________________     "cswan"   
+ PROCESS_version_number__________________________________________________ (procver)_____________________     "2.2.0   R"
+ Date_of_run_____________________________________________________________ (date)________________________     "29/10/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "11:45"
+ User____________________________________________________________________ (username)____________________     "rhicha"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "FNSF (Menard et al. 2016)                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-694-g2d1c57ce"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "axisymmetric-extended-plane-strain"                                                                
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merged\ in\ develop.\ Still\ need\ to\ commit\ my\ own\ tests."                                    
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-4/test_scenario_FNSF_0/IN.DAT                                                                                                                                               "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-713-gb9b5cd80"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1422-incorrect-variable-passed-to-function-eyngeff"                                                
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |develop|\ into\ 1422-incorrect-variable-passed-to-function-eyngeff"                
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-194/test_scenario_FNSF_0/IN.DAT                                                                                                                                            "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -411,11 +411,11 @@
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.0000E+08    
  WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      1.1700E+02 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      9.9029E+01 OP 
- Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________     -7.0212E+07    
- toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -7.0212E+07    
- Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      6.0249E+07    
- Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      1.3046E+08    
- Maximum_shear_stress_for_the_Tresca_yield_criterion_1_(Pa)______________ (sig_tf_tresca_max(1))________      1.3046E+08    
+ Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________     -7.7566E+12    
+ toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________      7.7565E+12    
+ Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________     -3.6215E+07    
+ Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      1.3435E+13    
+ Maximum_shear_stress_for_the_Tresca_yield_criterion_1_(Pa)______________ (sig_tf_tresca_max(1))________      1.5513E+13    
  Conductor_technology____________________________________________________ (i_tf_sup)____________________              0    
  Presence_of_TF_demountable_joints_______________________________________ (itart)_______________________              1    
  TF_inboard_leg_support_strategy_________________________________________ (i_tf_bucking)________________              0    

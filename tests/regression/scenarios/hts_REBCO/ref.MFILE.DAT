@@ -2,15 +2,15 @@
  # Power Reactor Optimisation Code #
  # PROCESS #
  # Power Reactor Optimisation Code #
- PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
- Date_of_run_____________________________________________________________ (date)________________________     "20/10/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "14:10"
+ PROCESS_version_number__________________________________________________ (procver)_____________________     "2.2.0   R"
+ Date_of_run_____________________________________________________________ (date)________________________     "29/10/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "11:46"
  User____________________________________________________________________ (username)____________________     "rhicha"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "hts model using "croco" conductor based on kit design                                              
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-661-g3493036b"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1350-higher-current-density-material-in-tf-coil"                                                   
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-171/test_scenario_hts_REBCO_0/IN.DAT                                                                                                                                       "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-713-gb9b5cd80"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1422-incorrect-variable-passed-to-function-eyngeff"                                                
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |develop|\ into\ 1422-incorrect-variable-passed-to-function-eyngeff"                
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-194/test_scenario_hts_REBCO_0/IN.DAT                                                                                                                                       "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -150,7 +150,7 @@
  CS_temperature_margin_lower_limit_normalised_residue____________________ (normres016)__________________     -2.8251E-06    
  Dump_time_set_by_VV_stress________normalised_residue____________________ (normres017)__________________      1.6448E-11    
  Upper_Lim._on_Psep_*_Bt_/_q_A_R___normalised_residue____________________ (normres018)__________________      1.6758E-09    
- CS_Tresca_stress_limit____________normalised_residue____________________ (normres019)__________________     -5.5833E-08    
+ CS_Tresca_yield_criterion_________normalised_residue____________________ (normres019)__________________     -5.5833E-08    
  TFC_current/copper_area_<_Max_____normalised_residue____________________ (normres020)__________________     -1.9518E-12    
  # Final Feasible Point #
  # Plant Availability #
@@ -503,16 +503,16 @@
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.0000E+08    
  WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      2.3638E+01 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      8.1466E+01 OP 
- Radial____stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_r_max(1))_____________      0.0000E+00    
- toroidal__stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_t_max(1))_____________     -3.9786E+08    
- Vertical__stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_z_max(1))_____________      2.0214E+08    
- Von-Mises_stress_at_maximum_TRESCA_of_layer_1_(Pa)______________________ (sig_tf_vmises_max(1))________      5.2875E+08    
- Maximum_TRESCA_stress_1_(Pa)____________________________________________ (sig_tf_tresca_max(1))________      6.0000E+08    
- Radial____stress_at_maximum_TRESCA_of_layer_2_(Pa)______________________ (sig_tf_r_max(2))_____________     -3.2211E+08    
- toroidal__stress_at_maximum_TRESCA_of_layer_2_(Pa)______________________ (sig_tf_t_max(2))_____________     -3.5635E+08    
- Vertical__stress_at_maximum_TRESCA_of_layer_2_(Pa)______________________ (sig_tf_z_max(2))_____________      2.0214E+08    
- Von-Mises_stress_at_maximum_TRESCA_of_layer_2_(Pa)______________________ (sig_tf_vmises_max(2))________      4.8978E+08    
- Maximum_TRESCA_stress_2_(Pa)____________________________________________ (sig_tf_tresca_max(2))________      5.5850E+08    
+ Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      0.0000E+00    
+ toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -3.9786E+08    
+ Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      2.0214E+08    
+ Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      5.2875E+08    
+ Maximum_shear_stress_for_the_Tresca_yield_criterion_1_(Pa)______________ (sig_tf_tresca_max(1))________      6.0000E+08    
+ Radial____stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_r_max(2))_____________     -3.2211E+08    
+ toroidal__stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_t_max(2))_____________     -3.5635E+08    
+ Vertical__stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_z_max(2))_____________      2.0214E+08    
+ Von-Mises_stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_vmises_max(2))________      4.8978E+08    
+ Maximum_shear_stress_for_the_Tresca_yield_criterion_2_(Pa)______________ (sig_tf_tresca_max(2))________      5.5850E+08    
  Maximum_radial_deflection_at_midplane_(m)_______________________________ (deflect)_____________________     -6.0242E-03 OP 
  Vertical_strain_on_casing_______________________________________________ (casestr)_____________________      9.8607E-04 OP 
  Vertical_strain_on_winding_pack_________________________________________ (windstrain)__________________      2.9241E-03 OP 
@@ -661,7 +661,7 @@
  Allowable_stress_in_CS_steel_(Pa)_______________________________________ (alstroh)_____________________      6.0000E+08    
  Hoop_stress_in_CS_steel_(Pa)____________________________________________ (sig_hoop)____________________      6.0000E+08 OP 
  Axial_stress_in_CS_steel_(Pa)___________________________________________ (sig_axial)___________________     -6.9713E+08 OP 
- Tresca_stress_in_CS_steel_(Pa)__________________________________________ (s_tresca_oh)_________________      6.0000E+08 OP 
+ Maximum_shear_stress_in_CS_steel_for_the_Tresca_criterion_(Pa)__________ (s_tresca_oh)_________________      6.0000E+08 OP 
  Axial_force_in_CS_(N)___________________________________________________ (axial_force)_________________     -1.9373E+09 OP 
  Strain_on_CS_superconductor_____________________________________________ (strncon_cs)__________________     -6.6000E-03    
  Copper_fraction_in_strand_______________________________________________ (fcuohsu)_____________________      7.0000E-01    

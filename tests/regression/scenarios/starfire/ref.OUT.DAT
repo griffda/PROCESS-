@@ -5,15 +5,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-661-g3493036b
-    Branch : 1350-higher-current-density-material-in-tf-coil
-   Git log : COMMIT_MSG
- Date/time : 20 Oct 2021 14:11:00 +01:00(hh:mm) UTC
+   Version : 2.2.0   Release Date :: 2021-10-26
+   Tag No. : v2.1-713-gb9b5cd80
+    Branch : 1422-incorrect-variable-passed-to-function-eyngeff
+   Git log : Merge\ branch\ |develop|\ into\ 1422-incorrect-variable-passed-to-function-eyngeff
+ Date/time : 29 Oct 2021 11:49:11 +01:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-171/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-171/test_scenario_starfire_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-194/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-194/test_scenario_starfire_0/IN.DAT
  Run title : starfire
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -753,17 +753,17 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Plane stress model with smeared properties
  Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)   (sig_tf_case_max)         6.000E+08     
  Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa (sig_tf_wp_max)           6.000E+08     
- Structural materal stress of the point of maximum TRESCA stress per layer
- Please use utility/plot_TF_stress.py for radial plots plots summary
+ Materal stress of the point of maximum shear stress (Tresca criterion) for each layer
+ Please use utilities/plot_stress_tf.py for radial plots plots summary
  Layers                   Steel case         WP
- Radial stress     (MPa)      -0.000        -3.029
- toroidal stress   (MPa)    -178.055      -178.055
- Vertical stress   (MPa)     421.945       421.945
- Von-Mises stress  (MPa)     533.733       533.733
- TRESCA stress     (MPa)     600.000       600.000
+ Radial stress               (MPa)      -0.000        -3.029
+ toroidal stress             (MPa)    -178.055      -178.055
+ Vertical stress             (MPa)     421.945       421.945
+ Von-Mises stress            (MPa)     533.733       533.733
+ Shear (Tresca) stress       (MPa)     600.000       600.000
  
- Toroidal modulus  (GPa)     205.000       525.341
- Vertical modulus  (GPa)     205.000     -3982.781
+ Toroidal modulus            (GPa)     205.000       525.341
+ Vertical modulus            (GPa)     205.000     -3982.781
  
  WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      5.754E+02  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)     -4.216E+03  OP 
@@ -974,7 +974,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Allowable stress in CS steel (Pa)                                        (alstroh)                 6.000E+08     
  Hoop stress in CS steel (Pa)                                             (sig_hoop)                2.237E+08  OP 
  Axial stress in CS steel (Pa)                                            (sig_axial)              -2.443E+08  OP 
- Tresca stress in CS steel (Pa)                                           (s_tresca_oh)             2.237E+08  OP 
+ Maximum shear stress in CS steel for the Tresca criterion (Pa)           (s_tresca_oh)             2.237E+08  OP 
  Axial force in CS (N)                                                    (axial_force)            -7.185E+08  OP 
  Strain on CS superconductor                                              (strncon_cs)             -5.000E-03     
  Copper fraction in strand                                                (fcuohsu)                 7.000E-01     

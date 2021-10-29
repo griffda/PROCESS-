@@ -13,15 +13,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-694-g2d1c57ce
-    Branch : axisymmetric-extended-plane-strain
-   Git log : Merged\ in\ develop.\ Still\ need\ to\ commit\ my\ own\ tests.
- Date/time : 21 Oct 2021 15:02:36 -04:00(hh:mm) UTC
-      User : cswan
-  Computer : cswan-2017-desktop
- Directory : /home/cswan/process/process
-     Input : /tmp/pytest-of-cswan/pytest-4/test_scenario_FNSF_0/IN.DAT
+   Version : 2.2.0   Release Date :: 2021-10-26
+   Tag No. : v2.1-713-gb9b5cd80
+    Branch : 1422-incorrect-variable-passed-to-function-eyngeff
+   Git log : Merge\ branch\ |develop|\ into\ 1422-incorrect-variable-passed-to-function-eyngeff
+ Date/time : 29 Oct 2021 11:45:57 +01:00(hh:mm) UTC
+      User : rhicha
+  Computer : l0500
+ Directory : /tmp/pytest-of-rhicha/pytest-194/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-194/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -567,11 +567,11 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Materal stress of the point of maximum shear stress (Tresca criterion) for each layer
  Please use utilities/plot_stress_tf.py for radial plots plots summary
  Layers                    conductor
- Radial stress               (MPa)     -70.212
- toroidal stress             (MPa)     -70.212
- Vertical stress             (MPa)      60.249
- Von-Mises stress            (MPa)     130.461
- Shear (Tresca) stress       (MPa)     130.461
+ Radial stress               (MPa) ***********
+ toroidal stress             (MPa) 7756511.071
+ Vertical stress             (MPa)     -36.215
+ Von-Mises stress            (MPa) ***********
+ Shear (Tresca) stress       (MPa) ***********
  
  Toroidal modulus            (GPa)     117.000
  Vertical modulus            (GPa)      99.029
