@@ -804,7 +804,8 @@ subroutine check
     !    Generate a lvl 3 error proposing not to use any stress constraints
     if (       ( .not. ( any(ixc == 16 ) .or. any(ixc == 29 ) .or. any(ixc == 42 ) ) ) & ! No bore,gapoh, ohcth iteration  
          .and. ( abs(bore + gapoh + ohcth + precomp) < epsilon(bore) )                 & ! bore + gapoh + ohcth = 0
-         .and. ( any(icc == 31) .or. any(icc == 32) ) ) then                                                     ! Stress constraint (31) is used 
+         .and. ( any(icc == 31) .or. any(icc == 32) )                                  & ! Stress constraints (31 or 32) is used 
+         .and. ( i_tf_plane_stress /= 2 ) ) then                                         ! TF stress model can't handle no bore                                           
 
         call report_error(246)
         stop 1
@@ -1059,7 +1060,7 @@ subroutine check
     errors_on = .false.
 
     ! Cannot use temperature margin constraint with REBCO TF coils
-    if(any(icc == 36) .and. (i_tf_sc_mat == 8)) then
+    if(any(icc == 36) .and. ((i_tf_sc_mat == 8).or.(i_tf_sc_mat == 9))) then
         call report_error(265)
     endif
 

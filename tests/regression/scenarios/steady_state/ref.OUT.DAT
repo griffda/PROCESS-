@@ -5,15 +5,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-646-g57e098e2
-    Branch : 1407-update-of-shield-cost-calculations
-   Git log : COMMIT_MSG
- Date/time : 11 Oct 2021 10:26:17 +01:00(hh:mm) UTC
+   Version : 2.2.0   Release Date :: 2021-10-26
+   Tag No. : v2.1-713-gb9b5cd80
+    Branch : 1422-incorrect-variable-passed-to-function-eyngeff
+   Git log : Merge\ branch\ |develop|\ into\ 1422-incorrect-variable-passed-to-function-eyngeff
+ Date/time : 29 Oct 2021 11:49:17 +01:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-149/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-149/test_scenario_steady_state_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-194/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-194/test_scenario_steady_state_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -154,7 +154,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    21  taup/taueff                           >  5.0000E+00             -1.0837E-11                 2.1674E-12
    22  Dump time set by VV stress            >  2.8464E+01 s           -4.2127E-01 s               5.4996E-12
    23  Upper Lim. on Psep * Bt / q A R       <  9.2000E+00 MWT/m        4.6052E-10 MWT/m          -5.0056E-11
-   24  CS Tresca stress limit                <  6.6000E+08 Pa          -5.5587E-04 Pa             -8.4222E-13
+   24  CS Tresca yield criterion             <  6.6000E+08 Pa          -5.5587E-04 Pa             -8.4222E-13
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -608,17 +608,17 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Plane stress model with smeared properties
  Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)   (sig_tf_case_max)         5.800E+08     
  Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa (sig_tf_wp_max)           5.800E+08     
- Structural materal stress of the point of maximum TRESCA stress per layer
- Please use utility/plot_TF_stress.py for radial plots plots summary
+ Materal stress of the point of maximum shear stress (Tresca criterion) for each layer
+ Please use utilities/plot_stress_tf.py for radial plots plots summary
  Layers                   Steel case         WP
- Radial stress     (MPa)       0.000      -132.076
- toroidal stress   (MPa)    -381.387      -413.195
- Vertical stress   (MPa)     166.805       166.805
- Von-Mises stress  (MPa)     486.721       517.182
- TRESCA stress     (MPa)     548.192       580.000
+ Radial stress               (MPa)       0.000      -132.076
+ toroidal stress             (MPa)    -381.387      -413.195
+ Vertical stress             (MPa)     166.805       166.805
+ Von-Mises stress            (MPa)     486.721       517.182
+ Shear (Tresca) stress       (MPa)     548.192       580.000
  
- Toroidal modulus  (GPa)     205.000        31.487
- Vertical modulus  (GPa)     205.000       126.983
+ Toroidal modulus            (GPa)     205.000        31.487
+ Vertical modulus            (GPa)     205.000       126.983
  
  WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      2.367E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      9.656E+01  OP 
@@ -833,7 +833,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Allowable stress in CS steel (Pa)                                        (alstroh)                 6.600E+08     
  Hoop stress in CS steel (Pa)                                             (sig_hoop)                6.600E+08  OP 
  Axial stress in CS steel (Pa)                                            (sig_axial)              -8.254E+08  OP 
- Tresca stress in CS steel (Pa)                                           (s_tresca_oh)             6.600E+08  OP 
+ Maximum shear stress in CS steel for the Tresca criterion (Pa)           (s_tresca_oh)             6.600E+08  OP 
  Axial force in CS (N)                                                    (axial_force)            -8.121E+08  OP 
  Strain on CS superconductor                                              (strncon_cs)             -5.000E-03     
  Copper fraction in strand                                                (fcuohsu)                 7.000E-01     

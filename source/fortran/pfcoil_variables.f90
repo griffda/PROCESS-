@@ -275,7 +275,7 @@ module pfcoil_variables
   !!   (r = rmajor + rref*rminor)
 
   real(8) :: s_tresca_oh
-  !! Tresca stress coils/central solenoid [MPa]
+  !! Maximum shear stress (Tresca criterion) coils/central solenoid [MPa]
 
   real(8) :: sigpfcalw
   !! maximum permissible tensile stress (MPa) in steel coil cases for superconducting 
