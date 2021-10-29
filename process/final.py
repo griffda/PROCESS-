@@ -1,7 +1,7 @@
 """Final output at the end of a scan."""
 from process import fortran as ft
 from process.fortran import final_module as fm
-from process import output
+from process import output as op
 
 
 def finalise(models, ifail):
@@ -20,6 +20,6 @@ def finalise(models, ifail):
         fm.no_optimisation()
 
     # Write output to OUT.DAT
-    output.write(models, ft.constants.nout)
+    op.write(models, ft.constants.nout)
 
     fm.final_output()
