@@ -86,6 +86,7 @@ contains
     pinjimwfix = 0.0 
     auxiliary_cdfix = 0.0
     faccdfix = 0.0
+    gamcdfix = 0.0D0
 
     ! To stop issues with input file we force
     ! zero secondary heating if no injection method  
