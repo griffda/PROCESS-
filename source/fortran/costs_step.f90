@@ -22,7 +22,7 @@ module costs_step_module
               step27, step91, step92, step93, fwblkcost
 
   ! Scaling Properties
-  real(8) :: vfi, vfi_star, ptherm_star, pinjmw_star, fwarea_star, &
+  real(8) :: vfi, vfi_star, ptherm_star, &
               rmajor_star, rminor_star, pth
 
 contains
@@ -45,8 +45,6 @@ contains
     vfi = 0.0D0
     vfi_star = 0.0D0
     ptherm_star = 0.0D0
-    pinjmw_star = 0.0D0
-    fwarea_star = 0.0D0
     rmajor_star = 0.0D0
     rminor_star = 0.0D0
     pth = 0.0D0
@@ -201,8 +199,8 @@ contains
     step21 = step21 + step2199
   end subroutine step_a21
 
-  subroutine step_a2201(step_ref, fwarea, ifueltyp, fcdfuel, &
-    pinjmw, rmajor, rminor, step220101, step220102, step22010301, &
+  subroutine step_a2201(step_ref, ifueltyp, fcdfuel, &
+    rmajor, rminor, step220101, step220102, step22010301, &
     step22010302, step2201, spares, divcst, cdcost, step22010303, &
     step22010304, step220104, step220105, step220106, step220107, step220108, &
     step220109, step220110)
@@ -216,8 +214,8 @@ contains
   
     ! Arguments
     real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: fwarea, ifueltyp, fcdfuel, &
-      pinjmw, rmajor, rminor, step220101, step220102, step22010301, step22010302
+    real(8), intent(in) :: ifueltyp, fcdfuel, &
+      rmajor, rminor, step220101, step220102, step22010301, step22010302
     real(8), intent(out) :: step2201, spares, divcst, cdcost, &
       step22010303, step22010304, step220104, step220105, step220106, &
       step220107, step220108, step220109, step220110
@@ -260,12 +258,8 @@ contains
     spares = spares + 1.075D-1 * step22010304
   
     ! 22.01.04 Auxiliary Heating and Current Drive
-    ! Original STARFIRE value, scaling with auxiliary power
-    step220104 = step_ref(26) * (pinjmw / pinjmw_star)
-    if (ifueltyp==1) then
-      step220104 = (1.0D0-fcdfuel) * step220104 
-      cdcost = step220104
-    end if
+    ! HCD cost = cost per injected Watt of power * injected Watts
+    step220104 = step_a220104()
     step2201 = step2201 + step220104
     ! STARFIRE percentage for spares
     spares = spares + 2.335D-1 * step220104
@@ -658,7 +652,60 @@ contains
     !  Total account 22.01.03.02
     step22010302 = step2201030201 + step2201030202 + step2201030203 + step2201030204
 
-    end subroutine step_a22010302
+  end subroutine step_a22010302
+
+  function step_a220104() result(step220104)
+
+    !! 22.01.04 Auxiliary Heating and Current Drive
+    !! Returns cost of auxiliary HCD
+    !! HCD cost = cost per injected Watt of power * injected Watts
+
+    use cost_variables, only: step_ref, fcdfuel, cdcost, ucich, uclh, ifueltyp
+    use current_drive_variables, only: iefrf, iefrffix, echpwr, pnbitot, plhybd
+
+    implicit none
+
+    ! Result
+    real(8) :: step220104
+    !! Cost of HCD in M$
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    step220104 = 0.0D0
+
+    ! Cost per Watt depends on technology/hardware used;
+    ! inflation adjustment applied as appropriate to source for costs
+    ! (tech adjusted from 1990 $ is costed as per Cost Model 0)
+
+    ! NBI cost per injected Watt (adjusted from 2020 $):
+    step220104 = step220104 + &
+               ( pnbitot * step_ref(69) * (229.0D0/258.84D0) )
+
+    ! EC or EBW cost per injected Watt (adjusted from 2020 $):
+    step220104 = step220104 + & 
+               ( echpwr * step_ref(70) * (229.0D0/258.84D0) )
+
+    if ( (iefrf == 2) .or. (iefrffix == 2) ) then
+      ! Ion Cyclotron current drive (adjusted from 1990 $):
+      step220104 = step220104 + &
+                ( 1.0D-6 * ucich * (1.0D6*plhybd) * (229.0D0/76.7D0) )
+    end if
+
+    if ( (iefrf == 1) .or. (iefrffix == 1) .or. &
+              (iefrf == 4) .or. (iefrffix == 4) .or. &
+              (iefrf == 6) .or. (iefrffix == 6) ) then
+      ! Lower Hybrid system (adjusted from 1990 $):
+      step220104 = step220104 + &
+                ( 1.0D-6 * uclh * (1.0D6*plhybd) * (229.0D0/76.7D0) )    
+    end if
+
+    if ( ifueltyp == 1 ) then
+      ! fraction `fcdfuel` of HCD cost treated as fuel cost
+      step220104 = (1.0D0-fcdfuel) * step220104 
+      cdcost = step220104
+    end if
+
+  end function step_a220104
 
   subroutine step_a2202(pgrossmw, step2202)
     !! Account 22.02 : Heat Transfer System

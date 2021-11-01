@@ -88,6 +88,8 @@ step_ref = np.array(
         1.235e1,
         6.22,
         7.5e-1,
+        19.21, 
+        12.85,
     ]
 )
 
@@ -136,8 +138,8 @@ def test_init_costs_step():
     assert cs.vfi == 0
     assert cs.vfi_star == 0
     assert cs.ptherm_star == 0
-    assert cs.pinjmw_star == 0
-    assert cs.fwarea_star == 0
+    #assert cs.pinjmw_star == 0
+    #assert cs.fwarea_star == 0
     assert cs.rmajor_star == 0
     assert cs.rminor_star == 0
     assert cs.pth == 0
@@ -175,8 +177,8 @@ def test_costs_step(monkeypatch, costs_step):
     #Test that module variables are assigned correctly
     assert cs.vfi_star == 6.737e3 
     assert cs.ptherm_star == 4.15e3
-    assert cs.pinjmw_star == 9.04e1
-    assert cs.fwarea_star == 9.42e2
+    #assert cs.pinjmw_star == 9.04e1
+    #assert cs.fwarea_star == 9.42e2
     assert cs.rmajor_star == 7.0e0
     assert cs.rminor_star == 7.0/3.6
 
@@ -242,17 +244,15 @@ def test_step_a22(monkeypatch, costs_step):
     # Mock module vars
     monkeypatch.setattr(cs, "step22", 0.0)
     monkeypatch.setattr(bv, "fwarea", 9.42e2)
-    monkeypatch.setattr(cs, "fwarea_star", 9.42e2)
     monkeypatch.setattr(pv, "rmajor", 1e2)
     monkeypatch.setattr(pv, "rmajor", 1e1)
     monkeypatch.setattr(cdv, "pinjmw", 4.15e3)
-    monkeypatch.setattr(cs, "pinjmw_star", 9.04e1)
     monkeypatch.setattr(cs, "rmajor_star", 1e3)
     monkeypatch.setattr(cs, "rminor_star", 1e3)
     
     # Run and assert result in M$
     costs_step.step_a22()
-    exp = 2.64905413e3
+    exp = 468.17394240
     obs = cs.step22
     assert pytest.approx(obs) == exp
 
@@ -267,16 +267,14 @@ def test_step_a2201(monkeypatch, costs_step):
     # Mock module var set in subroutine: increase is value of step2201
     monkeypatch.setattr(cs, "step22", 0.0)
     monkeypatch.setattr(bv, "fwarea", 9.42e2)
-    monkeypatch.setattr(cs, "fwarea_star", 9.42e2)
     monkeypatch.setattr(pv, "rmajor", 1e2)
     monkeypatch.setattr(pv, "rmajor", 1e1)
     monkeypatch.setattr(cdv, "pinjmw", 4.15e3)
-    monkeypatch.setattr(cs, "pinjmw_star", 9.04e1)
     monkeypatch.setattr(cs, "rmajor_star", 1e3)
     monkeypatch.setattr(cs, "rminor_star", 1e3)
     
-    exp1 = 1.7982872e3
-    exp2 = 3.69189035e2
+    exp1 = 2.60859165e2
+    exp2 = 1.0199574292e1
     step2201, spares = costs_step.step_a2201()
     assert pytest.approx(step2201) == exp1
     assert pytest.approx(spares) == exp2
@@ -368,7 +366,7 @@ def test_step_a22010301(monkeypatch, costs_step):
     :type costs_step: process.costs_step.CostsStep
     """
     # Mock dependencies with realistic values
-    monkeypatch.setattr(cv, "step_ref", np.zeros(68, order="F"))
+    monkeypatch.setattr(cv, "step_ref", np.zeros(70, order="F"))
     # Only mock used array elements
     cv.step_ref[21] = 1.2572e2
     monkeypatch.setattr(cv, "cpstcst", 0.0)
@@ -424,6 +422,31 @@ def test_step_a22010302(monkeypatch, costs_step):
 
     exp = 1.167792821192398e1 
     obs = costs_step.step_a22010302()
+    assert pytest.approx(obs) == exp
+
+
+def test_step_a220104(monkeypatch):
+    """Test evaluation of account costs: 22.01.04 
+    (Auxiliary Heating and Current Drive)
+
+    :param monkeypatch: fixture for mocking variables
+    :type monkeypatch: MonkeyPatch
+    """
+    # Mock module vars used in subroutine
+    monkeypatch.setattr(cv, "fcdfuel", 0.1)
+    monkeypatch.setattr(cv, "ucich", 3.0)
+    monkeypatch.setattr(cv, "uclh", 3.3)
+    monkeypatch.setattr(cv, "ifueltyp", 0.0)
+    monkeypatch.setattr(cdv, "iefrf", 5.0)
+    monkeypatch.setattr(cdv, "iefrffix", 5.0)
+    monkeypatch.setattr(cdv, "echpwr", 90.0)
+    monkeypatch.setattr(cv, "step_ref", np.zeros(70, order="F"))
+    # Only mock used array elements
+    cv.step_ref[68] = 19.21
+    cv.step_ref[69] = 12.85
+
+    exp = 1.02317454e3
+    obs = cs.step_a220104()
     assert pytest.approx(obs) == exp
 
 
@@ -551,16 +574,32 @@ def test_step_a27(monkeypatch, costs_step):
     :param costs_step: fixture to mock commonly-used cost vars
     :type costs_step: process.costs_step.CostsStep
     """
-    # Mock module vars passed as subroutine arguments
-    monkeypatch.setattr(cs, "step27", 0.0)
-    monkeypatch.setattr(cv, "step_rh_costfrac", 5.0)
-    monkeypatch.setattr(cv, "cdirt", 2.0)
+    # Mock dependencies with realistic values
+    monkeypatch.setattr(cv, "step_ref", np.zeros(70, order="F"))
+    # Only mock used array elements
+    cv.step_ref[21] = 1.2572e2
+    monkeypatch.setattr(cv, "cpstcst", 0.0)
+    cv.cfind[3] = 0.29
+    monkeypatch.setattr(cv, "ifueltyp", 0)
+    monkeypatch.setattr(cv, "step_uc_cryo_al", 81.0)
+    monkeypatch.setattr(cv, "step_mc_cryo_al_per", 0.2)
+    monkeypatch.setattr(cv, "uccpcl1", 250.0)
+    monkeypatch.setattr(cv, "uccpclb", 150.0)
+    monkeypatch.setattr(tfv, "whtconal", 1.0e4)
+    monkeypatch.setattr(tfv, "n_tf", 16.0)
+    monkeypatch.setattr(tfv, "whttflgs", 0.0)
+    monkeypatch.setattr(tfv, "whtcp", 1.0e4)
+    monkeypatch.setattr(pv, "itart", 0)
+    monkeypatch.setattr(cs, "vfi", 5e3)
+    monkeypatch.setattr(cs, "vfi_star", 6.737e3)
+    
+    # Copper coils
+    monkeypatch.setattr(tfv, "i_tf_sup", 0)
 
-    exp = 10.0
+    exp = 304.798694
     costs_step.step_a27()
     obs = cs.step27
-
-    assert pytest.approx(obs) == exp    
+    assert pytest.approx(obs) == exp
 
 def test_step_indirect_costs(monkeypatch, costs_step):
     """Test indirect cost calculations.

@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-713-gb9b5cd80
-    Branch : 1422-incorrect-variable-passed-to-function-eyngeff
-   Git log : Merge\ branch\ |develop|\ into\ 1422-incorrect-variable-passed-to-function-eyngeff
- Date/time : 29 Oct 2021 11:49:28 +01:00(hh:mm) UTC
-      User : rhicha
-  Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-194/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-194/test_scenario_stellarator_0/IN.DAT
+   Tag No. : v2.1-728-g1dfa3f06
+    Branch : develop
+   Git log : Merge\ branch\ |1418-pf-placement|\ into\ |develop|
+ Date/time : 29 Oct 2021 16:25:52 +00:00(hh:mm) UTC
+      User : root
+  Computer : 6f802edae655
+ Directory : /tmp/pytest-of-root/pytest-6/test_solver0
+     Input : /tmp/pytest-of-root/pytest-6/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  
