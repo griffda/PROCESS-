@@ -57,12 +57,8 @@ class CostsStep:
         cs.pth = pv.powfmw + fwbsv.emultmw + htv.pinjwp
 
         # STARFIRE Reference Values
-        # vfi_star = 5.1  # Volume of Fusion Island (m3)
         cs.vfi_star = 6.737e3  # Volume of Fusion Island (m3)
         cs.ptherm_star = 4.15e3  # Thermal Power (MW)
-        cs.pinjmw_star = 9.04e1  # Auxiliary Power (MW)
-        # fwarea_star = 7.8D2  # First Wall Area (m2)
-        cs.fwarea_star = 9.42e2  # First Wall Area (m2)
         cs.rmajor_star = 7.0  # Major Radius (m)
         cs.rminor_star = cs.rmajor_star / 3.6  # Minor Radius (m)
 
@@ -600,10 +596,8 @@ class CostsStep:
             step220110,
         ) = cs.step_a2201(
             cv.step_ref,
-            bv.fwarea,
             cv.ifueltyp,
             cv.fcdfuel,
-            cdv.pinjmw,
             pv.rmajor,
             pv.rminor,
             step220101,
