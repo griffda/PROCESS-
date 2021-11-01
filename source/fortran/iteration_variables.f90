@@ -2741,7 +2741,7 @@ contains
   !---------------------------------
 
   subroutine init_itv_123
-    !! <LI> (123) foh_stress : f-value for CS coil Tresca stress limit (f-value for eq. 72)
+    !! <LI> (123) foh_stress : f-value for CS coil Tresca yield criterion (f-value for eq. 72)
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(123) = 'foh_stress    '
