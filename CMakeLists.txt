@@ -136,6 +136,7 @@ LIST(APPEND PROCESS_SRCS
     current_drive_variables.f90
     pfcoil_variables.f90
     structure_variables.f90
+    output.f90
     init_module.f90
     main_module.f90
     error_handling.f90
