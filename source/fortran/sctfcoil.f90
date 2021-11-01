@@ -1779,29 +1779,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_vmises
     !! TF Inboard leg Von-Mises stress r distribution at mid-plane [Pa]
         
-<<<<<<< HEAD
-    real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_tresca 
-    !! TF Inboard leg TRESCA stress r distribution at mid-plane [Pa]
-    
-    real(dp), dimension(n_tf_layer*n_radial_array) :: s_tresca_cond_cea
-    !! Conduit Tresca stress with CEA adjustment factors [Pa]
-    
-    real(dp), dimension(n_tf_layer) :: sig_tf_r_max
-    !! Radial stress of the point of maximum TRESCA stress (for each layers) [Pa]
-    
-    real(dp), dimension(n_tf_layer) :: sig_tf_t_max 
-    !! Toroidal stress of the point of maximum TRESCA stress (for each layers) [Pa]
-    
-    real(dp), dimension(n_tf_layer) :: sig_tf_z_max
-    !! Vertical stress of the point of maximum TRESCA stress (for each layers) [Pa]
-    !! Rem : Currently constant but will be r dependent in the future
-    
-    real(dp), dimension(n_tf_layer) :: sig_tf_vmises_max 
-    !! Von-Mises stress of the point of maximum TRESCA stress (for each layers) [Pa]
-    
-    real(dp), dimension(n_tf_layer) :: sig_tf_tresca_max
-    !! Maximum TRESCA stress (for each layers) [Pa]
-=======
     real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_tresca 
     !! TF Inboard leg maximum shear stress (Tresca criterion) r distribution at mid-plane [Pa]
     
@@ -1823,7 +1800,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     
     real(dp), dimension(n_tf_layer) :: sig_tf_tresca_max
     !! Maximum shear stress, for the Tresca yield criterion of each layer [Pa]
->>>>>>> develop
     !! If the CEA correction is addopted, the CEA corrected value is used
     
     real(dp), dimension(n_tf_layer*n_radial_array) :: strain_tf_r
