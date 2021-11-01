@@ -425,12 +425,14 @@ def test_step_a22010302(monkeypatch, costs_step):
     assert pytest.approx(obs) == exp
 
 
-def test_step_a220104(monkeypatch):
+def test_step_a220104(monkeypatch, costs_step):
     """Test evaluation of account costs: 22.01.04 
     (Auxiliary Heating and Current Drive)
 
     :param monkeypatch: fixture for mocking variables
     :type monkeypatch: MonkeyPatch
+    :param costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
     """
     # Mock module vars used in subroutine
     monkeypatch.setattr(cv, "fcdfuel", 0.1)
@@ -446,7 +448,7 @@ def test_step_a220104(monkeypatch):
     cv.step_ref[69] = 12.85
 
     exp = 1.02317454e3
-    obs = cs.step_a220104()
+    obs = costs_step.step_a220104()
     assert pytest.approx(obs) == exp
 
 

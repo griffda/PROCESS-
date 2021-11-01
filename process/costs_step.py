@@ -579,6 +579,7 @@ class CostsStep:
 
         step22010301 = self.step_a22010301()
         step22010302 = self.step_a22010302()
+        step220104 = self.step_a220104()
 
         (
             step2201,
@@ -587,7 +588,6 @@ class CostsStep:
             cv.cdcost,
             step22010303,
             step22010304,
-            step220104,
             step220105,
             step220106,
             step220107,
@@ -604,6 +604,7 @@ class CostsStep:
             step220102,
             step22010301,
             step22010302,
+            step220104,
         )
 
         # Output costs
@@ -850,6 +851,27 @@ class CostsStep:
         )
 
         return step22010302
+
+    def step_a220104(self):
+        """22.01.04 Auxiliary Heating and Current Drive.
+
+        :return: cost 220104
+        :rtype: float
+        """
+        step220104, cv.cdcost = cs.step_a220104(
+            cv.step_ref,
+            cv.fcdfuel,
+            cv.ucich,
+            cv.uclh,
+            cv.ifueltyp,
+            cdv.iefrf,
+            cdv.iefrffix,
+            cdv.echpwr,
+            cdv.pnbitot,
+            cdv.plhybd,
+        )
+
+        return step220104
 
     def step_a2202(self):
         """Account 22.02: Heat Transfer System.

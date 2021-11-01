@@ -201,8 +201,8 @@ contains
 
   subroutine step_a2201(step_ref, ifueltyp, fcdfuel, &
     rmajor, rminor, step220101, step220102, step22010301, &
-    step22010302, step2201, spares, divcst, cdcost, step22010303, &
-    step22010304, step220104, step220105, step220106, step220107, step220108, &
+    step22010302, step220104, step2201, spares, divcst, cdcost, step22010303, &
+    step22010304, step220105, step220106, step220107, step220108, &
     step220109, step220110)
     !! Account 22.01 : Reactor Equipment
     !! author: S I Muldrew, CCFE, Culham Science Centre
@@ -215,9 +215,10 @@ contains
     ! Arguments
     real(8), dimension(:), intent(in) :: step_ref
     real(8), intent(in) :: ifueltyp, fcdfuel, &
-      rmajor, rminor, step220101, step220102, step22010301, step22010302
+      rmajor, rminor, step220101, step220102, step22010301, step22010302, &
+      step220104
     real(8), intent(out) :: step2201, spares, divcst, cdcost, &
-      step22010303, step22010304, step220104, step220105, step220106, &
+      step22010303, step22010304, step220105, step220106, &
       step220107, step220108, step220109, step220110
   
     ! Initialise as zero
@@ -259,7 +260,6 @@ contains
   
     ! 22.01.04 Auxiliary Heating and Current Drive
     ! HCD cost = cost per injected Watt of power * injected Watts
-    step220104 = step_a220104()
     step2201 = step2201 + step220104
     ! STARFIRE percentage for spares
     spares = spares + 2.335D-1 * step220104
@@ -654,24 +654,18 @@ contains
 
   end subroutine step_a22010302
 
-  function step_a220104() result(step220104)
-
+  subroutine step_a220104(step_ref, fcdfuel, ucich, uclh, ifueltyp, &
+    iefrf, iefrffix, echpwr, pnbitot, plhybd, step220104, cdcost)
     !! 22.01.04 Auxiliary Heating and Current Drive
     !! Returns cost of auxiliary HCD
     !! HCD cost = cost per injected Watt of power * injected Watts
-
-    use cost_variables, only: step_ref, fcdfuel, cdcost, ucich, uclh, ifueltyp
-    use current_drive_variables, only: iefrf, iefrffix, echpwr, pnbitot, plhybd
-
     implicit none
 
-    ! Result
-    real(8) :: step220104
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: fcdfuel, ucich, uclh, ifueltyp, iefrf, &
+      iefrffix, echpwr, pnbitot, plhybd
+    real(8), intent(out) :: step220104, cdcost
     !! Cost of HCD in M$
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    step220104 = 0.0D0
 
     ! Cost per Watt depends on technology/hardware used;
     ! inflation adjustment applied as appropriate to source for costs
@@ -704,8 +698,7 @@ contains
       step220104 = (1.0D0-fcdfuel) * step220104 
       cdcost = step220104
     end if
-
-  end function step_a220104
+  end subroutine step_a220104
 
   subroutine step_a2202(pgrossmw, step2202)
     !! Account 22.02 : Heat Transfer System
