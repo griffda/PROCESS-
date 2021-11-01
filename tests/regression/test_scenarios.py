@@ -114,10 +114,6 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt, keep_mf
     :param overwrite_refs_opt: option to overwrite reference MFILE and OUT.DAT
     :type tmp_path: bool
     """
-    # TODO The memory errors need to be investigated and the tests re-instated
-    if scenario.name in ["2D_scan", "kit_blanket"]:
-        pytest.skip("2D scan and kit_blanket currently introduce memory errors")
-
     # hybrd() has been temporarily commented out. Please see the comment in
     # function_evaluator.fcnhyb() for an explanation.
     # TODO Re-implement the IFE test using vmcon

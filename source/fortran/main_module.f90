@@ -48,7 +48,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=98) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '2.1.2   Release Date :: 2021-07-01'
+       '2.2.0   Release Date :: 2021-10-26'
   character(len = 50) :: dt_time
   character(len=72), dimension(10) :: id
 
@@ -149,7 +149,8 @@ subroutine run_summary
        call ocmmnt(outfile, '  Tag No. : '//tagno)
      end if
      call ocmmnt(outfile, '   Branch : '//branch_name) 
-     call ocmmnt(outfile, '  Git log : '//COMMSG)  !  Last git com message
+     call ocmmnt(outfile, '  Git log : '// &
+     COMMSG)  !  Last git com message
      call ocmmnt(outfile, progid(3))  !  date/time
      call ocmmnt(outfile, progid(4))  !  user
      call ocmmnt(outfile, progid(5))  !  computer

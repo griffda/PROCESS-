@@ -605,7 +605,8 @@ sweep    = 500 * sweep(ipnscns) /;;/; actual values to use in scan
 
 *-----------------tfcoil_variables-----------------*
 
-alstrtf  = 5.5d8 * alstrtf /6;0D8/ ; allowable Tresca stress in TF coil structural material (Pa)
+sig_tf_case_max  = 5.5E8 * Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+sig_tf_wp_max    = 5.5E8 * Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
 casths   = 0.1 * casths /0;0/ ; EITHER; inboard TF coil sidewall case thickness (m)
 cpttf    = 65000.0 * cpttf /7;0e4/ ; TF coil current per turn (A);
 fcutfsu  = 0.9337536028978365 * fcutfsu /0;69/ ; copper fraction of cable conductor (TF coils)

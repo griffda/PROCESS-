@@ -209,7 +209,8 @@ icc = 31 * TF coil case stress upper limit
 ixc = 48 * fstrcase
 icc = 32 * TF coil conduit stress upper limit
 ixc = 49 * fstrcond
-alstrtf = 6.6e8
+sig_tf_case_max  = 6.6E8 * Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+sig_tf_wp_max    = 6.6E8 * Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
 
 * Iteration Variables *
 ***********************

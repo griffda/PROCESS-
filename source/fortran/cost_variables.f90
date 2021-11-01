@@ -363,13 +363,19 @@ module cost_variables
   real(dp) :: step_ucfwps 
   !! first wall passive stabiliser cost ($) (if cost model = 2)
 
+  real(dp) :: step_ucshw
+  !! unit cost for shield tungsten ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucshwc
+  !! unit cost for shield tungsten carbide ($/kg) (if cost model = 2)
+
   real(dp) :: step_ucoam
   !! annual cost of operation and maintenance (M$/year/1200MW**0.5)
 
   real(dp) :: step_ucwst
   !! cost of waste disposal (M$/y/1200MW)
 
-  real(dp), dimension(8) :: step_ucsc
+  real(dp), dimension(9) :: step_ucsc
   !! cost of superconductor ($/kg) (if cost model = 2)
 
   real(dp) :: step_ucfnc
@@ -381,7 +387,7 @@ module cost_variables
   real(dp) :: step_rh_costfrac
   !! fraction of capital cost for remote handling (if cost_model = 2)
   
-  real(dp), dimension(68) :: step_ref
+  real(dp), dimension(70) :: step_ref
   !! Reference values for cost model 2
 
   real(dp) :: step91_per
@@ -585,7 +591,7 @@ module cost_variables
   real(dp) :: ucrb
   !! cost of reactor building (M$/m3)
 
-  real(dp), dimension(8) :: ucsc
+  real(dp), dimension(9) :: ucsc
   !! cost of superconductor ($/kg)
 
   real(dp) :: step_uc_cryo_al
@@ -766,7 +772,11 @@ module cost_variables
     step_ucfwa = 774.05D0
     step_ucfws = 5115.7D0 
     step_ucfwps = 0.0D0
-    step_ucsc = (/ 600.0D0, 600.0D0, 443.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0,1200.0D0 /)
+    step_ucsc = &
+      (/ 600.0D0, 600.0D0, 443.0D0, 600.0D0, 600.0D0, 600.0D0, 300.0D0, 1200.0D0, &
+      1200.0D0 /)
+    step_ucshw = 269.638D0
+    step_ucshwc = 930.251D0
     step_ucfnc = 104.3D0 
     step_ucoam = 74.4D0
     step_ucwst = 7.88D0
@@ -779,7 +789,8 @@ module cost_variables
       4.305D2, 1.994D1, 2.295D1, 1.364D2, 5.6836D2, 3.643D1, 1.703D1, 1.325D1, 3.79D0, 1.383D1, &
       1.465D1, 1.058D1, 3.1413D2, 0.0D0, 0.0D0, 1.95D0, 6.5D-2, 0.0D0, 1.628D1, 1.603D1, 9.44D0, &
       1.9051D2, 1.9585D2, 1.107D1, 1.319D2, 4.858D1, 2.793D1, 1.2876D2, 2.588D1, 3.01D1, &
-      4.14D1, 1.895D1, 5.13D0, 4.228D1, 8.744D1, 1.992D1, 4.664D1, 3.674D1, 1.85D1, 2.23D0 /)
+      4.14D1, 1.895D1, 5.13D0, 4.228D1, 8.744D1, 1.992D1, 4.664D1, 3.674D1, 1.85D1, 2.23D0, &
+      19.21D0, 12.85D0 /)
     step91_per = 3.0D-1
     step92_per = 3.25D-1
     step93_per = 1.5D-1
@@ -822,8 +833,9 @@ module cost_variables
     ucpfic = 1.0D4
     ucpfps = 3.5D4
     ucrb = 400.0D0
-    ucsc = &
-      (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0,1200.0D0/)
+    ucsc = & 
+      (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0, 300.0D0, 1200.0D0, &
+      1200.0D0/)
     ucshld = 32.0D0
     uctfbr = 1.22D0
     uctfbus = 100.0D0

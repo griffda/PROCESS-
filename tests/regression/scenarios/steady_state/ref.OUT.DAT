@@ -5,15 +5,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-538-g66f889bd
-    Branch : 1397-remove-f90wrap-from-build-process-tim2
-   Git log : COMMIT_MSG
- Date/time : 29 Sep 2021 10:39:01 +00:00(hh:mm) UTC
+   Version : 2.2.0   Release Date :: 2021-10-26
+   Tag No. : v2.1-728-g1dfa3f06
+    Branch : develop
+   Git log : Merge\ branch\ |1418-pf-placement|\ into\ |develop|
+ Date/time : 29 Oct 2021 16:25:46 +00:00(hh:mm) UTC
       User : root
-  Computer : c510c7d65104
- Directory : /root/process
-     Input : /tmp/pytest-of-root/pytest-10/test_scenario_steady_state_0/IN.DAT
+  Computer : 6f802edae655
+ Directory : /tmp/pytest-of-root/pytest-6/test_solver0
+     Input : /tmp/pytest-of-root/pytest-6/test_scenario_steady_state_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -51,7 +51,7 @@
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          1     
  Square root of the sum of squares of the constraint residuals            (sqsumsq)                 1.968E-09  OP 
- VMCON convergence parameter                                              (convergence_parameter)   0.000E+00  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   2.591E-10  OP 
  Number of VMCON iterations                                               (nviter)                         19  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit          MAJOR RADIUS.
@@ -154,7 +154,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    21  taup/taueff                           >  5.0000E+00             -1.0837E-11                 2.1674E-12
    22  Dump time set by VV stress            >  2.8464E+01 s           -4.2127E-01 s               5.4996E-12
    23  Upper Lim. on Psep * Bt / q A R       <  9.2000E+00 MWT/m        4.6052E-10 MWT/m          -5.0056E-11
-   24  CS Tresca stress limit                <  6.6000E+08 Pa          -5.5587E-04 Pa             -8.4222E-13
+   24  CS Tresca yield criterion             <  6.6000E+08 Pa          -5.5587E-04 Pa             -8.4222E-13
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -221,7 +221,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Beta g coefficient                                                       (dnbeta)                      4.555  OP 
  Normalised thermal beta                                                                                3.447  OP 
  Normalised total beta                                                                                  4.053  OP 
- Normalised toroidal beta                                                                               4.268  OP 
+ Normalised toroidal beta                                                 (normalised_toroidal          4.268  OP 
  Limit on thermal beta                                                    (betalim)                     0.075  OP 
  Plasma thermal energy (J)                                                                          2.376E+09  OP 
  Total plasma internal energy (J)                                         (total_plasma_internal_en 2.793E+09  OP 
@@ -311,7 +311,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Alpha power: beam-plasma (MW)                                            (palpnb)                  0.000E+00  OP 
  Neutron power (MW)                                                       (pneutmw)                 2.456E+03  OP 
  Charged particle power (excluding alphas) (MW)                           (pchargemw)               3.166E+00  OP 
- Total power deposited in plasma (MW)                                     ()                        8.111E+02  OP 
+ Total power deposited in plasma (MW)                                     (tot_power_plasma)        8.111E+02  OP 
  
  Radiation Power (excluding SOL):
  
@@ -476,11 +476,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Auxiliary power used for plasma heating only (MW)                        (pheat)                   1.739E+00  ITV
  Power injected for current drive (MW)                                    (pcurrentdrivemw)         2.233E+02     
+ Maximum Allowed Bootstrap current fraction                               (bscfmax)                 9.900E-01     
  Fusion gain factor Q                                                     (bigq)                    1.366E+01  OP 
  Auxiliary current drive (A)                                              (auxiliary_cd)            1.189E+07  OP 
  Current drive efficiency (A/W)                                           (effcd)                   5.324E-02  OP 
  Normalised current drive efficiency, gamma (10^20 A/W-m2)                (gamcd)                   3.000E-01  OP 
  Wall plug to injector efficiency                                         (etacd)                   4.000E-01     
+ ECRH plasma heating efficiency                                           (gamma_ecrh)              3.000E-01     
  
  Fractions of current drive :
  
@@ -604,18 +606,19 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF Coil Stresses (CCFE model) :
  
  Plane stress model with smeared properties
- Allowable Tresca stress limit (Pa)                                       (alstrtf)                 5.800E+08     
- Structural materal stress of the point of maximum TRESCA stress per layer
- Please use utility/plot_TF_stress.py for radial plots plots summary
+ Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)   (sig_tf_case_max)         5.800E+08     
+ Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa (sig_tf_wp_max)           5.800E+08     
+ Materal stress of the point of maximum shear stress (Tresca criterion) for each layer
+ Please use utilities/plot_stress_tf.py for radial plots plots summary
  Layers                   Steel case         WP
- Radial stress     (MPa)       0.000      -132.076
- toroidal stress   (MPa)    -381.387      -413.195
- Vertical stress   (MPa)     166.805       166.805
- Von-Mises stress  (MPa)     486.721       517.182
- TRESCA stress     (MPa)     548.192       580.000
+ Radial stress               (MPa)       0.000      -132.076
+ toroidal stress             (MPa)    -381.387      -413.195
+ Vertical stress             (MPa)     166.805       166.805
+ Von-Mises stress            (MPa)     486.721       517.182
+ Shear (Tresca) stress       (MPa)     548.192       580.000
  
- Toroidal modulus  (GPa)     205.000        31.487
- Vertical modulus  (GPa)     205.000       126.983
+ Toroidal modulus            (GPa)     205.000        31.487
+ Vertical modulus            (GPa)     205.000       126.983
  
  WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      2.367E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      9.656E+01  OP 
@@ -662,7 +665,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF cross-section (total) (m2)                                            (tfareain)                2.461E+01     
  Total steel cross-section (m2)                                           (a_tf_steel*n_tf)         1.755E+01     
  Total steel TF fraction                                                  (f_tf_steel)              7.131E-01     
- Total Insulation cross-section (total) (m2)                              (a_tf_ins*n_tf)           1.755E+01     
+ Total Insulation cross-section (total) (m2)                              (a_tf_ins*n_tf)           2.154E+00     
  Total Insulation fraction                                                (f_tf_ins)                8.754E-02     
  
  External steel Case Information :
@@ -830,7 +833,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Allowable stress in CS steel (Pa)                                        (alstroh)                 6.600E+08     
  Hoop stress in CS steel (Pa)                                             (sig_hoop)                6.600E+08  OP 
  Axial stress in CS steel (Pa)                                            (sig_axial)              -8.254E+08  OP 
- Tresca stress in CS steel (Pa)                                           (s_tresca_oh)             6.600E+08  OP 
+ Maximum shear stress in CS steel for the Tresca criterion (Pa)           (s_tresca_oh)             6.600E+08  OP 
  Axial force in CS (N)                                                    (axial_force)            -8.121E+08  OP 
  Strain on CS superconductor                                              (strncon_cs)             -5.000E-03     
  Copper fraction in strand                                                (fcuohsu)                 7.000E-01     
@@ -853,12 +856,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  coil           R(m)        Z(m)        dR(m)       dZ(m)       turns     steel thickness(m)
  
-  PF1            5.44       11.38        1.06        1.06      294.28        0.05
-  PF2            5.44      -12.90        1.10        1.10      314.26        0.04
-  PF3           19.44        3.67        1.38        1.38      272.56        0.13
-  PF4           19.44       -3.67        1.38        1.38      272.56        0.13
-  PF5           16.91       10.27        0.94        0.94      163.57        0.09
-  PF6           16.91      -10.27        0.94        0.94      163.57        0.09
+  PF 1           5.44       11.38        1.06        1.06      294.28        0.05
+  PF 2           5.44      -12.90        1.10        1.10      314.26        0.04
+  PF 3          19.44        3.67        1.38        1.38      272.56        0.13
+  PF 4          19.44       -3.67        1.38        1.38      272.56        0.13
+  PF 5          16.91       10.27        0.94        0.94      163.57        0.09
+  PF 6          16.91      -10.27        0.94        0.94      163.57        0.09
   CS             1.49        0.00        0.50       18.99     5226.48        0.11
  Plasma          8.78        0.00        7.34       13.56        1.00
  
@@ -867,12 +870,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  coil  current  allowed J  actual J   J   cond. mass   steel mass     field
          (MA)    (A/m2)     (A/m2)  ratio    (kg)          (kg)        (T)
  
-  PF1   12.42  6.904E+08  1.100E+07  0.02 2.430E+05   5.701E+04    3.311E+00
-  PF2   13.26  7.287E+08  1.100E+07  0.02 2.595E+05   5.285E+04    2.963E+00
-  PF3  -11.50  6.999E+08  6.000E+06  0.01 1.475E+06   7.651E+05    3.225E+00
-  PF4  -11.50  6.999E+08  6.000E+06  0.01 1.475E+06   7.651E+05    3.225E+00
-  PF5   -7.03  7.231E+08  8.000E+06  0.01 5.886E+05   3.182E+05    3.013E+00
-  PF6   -7.03  7.231E+08  8.000E+06  0.01 5.886E+05   3.182E+05    3.013E+00
+  PF 1   12.42  6.904E+08  1.100E+07  0.02 2.430E+05   5.701E+04    3.311E+00
+  PF 2   13.26  7.287E+08  1.100E+07  0.02 2.595E+05   5.285E+04    2.963E+00
+  PF 3  -11.50  6.999E+08  6.000E+06  0.01 1.475E+06   7.651E+05    3.225E+00
+  PF 4  -11.50  6.999E+08  6.000E+06  0.01 1.475E+06   7.651E+05    3.225E+00
+  PF 5   -7.03  7.231E+08  8.000E+06  0.01 5.886E+05   3.182E+05    3.013E+00
+  PF 6   -7.03  7.231E+08  8.000E+06  0.01 5.886E+05   3.182E+05    3.013E+00
   CS  -224.74  4.278E+07  2.367E+07  0.55 3.241E+05   2.915E+05    1.405E+01
        ------                             ---------   ---------
        287.49                             4.955E+06   2.568E+06
@@ -1026,7 +1029,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Fraction of FW and blanket thermal power required for pumping            (fpump)                   8.946E-02  OP 
  Total power absorbed by FW & blanket (MW)                                (p_plasma)                3.359E+03  OP 
  Inlet temperature of FW & blanket coolant pump (K)                       (t_in_compressor)         5.570E+02  OP 
- Outlet temperature of FW & blanket coolant pump (K)                      (t_in_bb)                 5.731E+02     
+ Coolant pump outlet/Inlet temperature of FW & blanket (K)                (t_in_bb)                 5.731E+02     
+ Outlet temperature of FW & blanket (K)                                   (t_out_bb)                7.731E+02     
  Mechanical pumping power for FW and blanket cooling loop including heat  (htpmw_fw_blkt)           3.300E+02  OP 
  Mechanical pumping power for divertor (MW)                               (htpmw_div)               2.607E+00  OP 
  Mechanical pumping power for shield and vacuum vessel (MW)               (htpmw_shld)              1.263E-02  OP 
@@ -1367,7 +1371,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heat extracted from shield  (MW)                                         (pthermshld)                  2.539  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                 523.916  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
- Total (MW)                                                                                          4215.467  OP 
+ Nuclear power lost to TF (MW)                                            (ptfnuc)                      0.082  OP 
+ Total (MW)                                                                                          4215.549  OP 
  
  Electrical Power Balance :
  --------------------------
@@ -1381,6 +1386,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electric power for TF coils (MW)                                         (tfacpd)                      6.949  OP 
  Electric power for PF coils (MW)                                         (pfwpmw)                      0.736  OP 
  All other internal electric power requirements (MW)                      (fachtmw)                    74.293  OP 
+ Total (MW)                                                               (tot_plant_power)          1580.800  OP 
  Total (MW)                                                                                          1580.800  OP 
  
  Gross electrical output* (MW)                                            (pgrossmw)                 1580.800  OP 
@@ -2037,7 +2043,8 @@ lpulse   = 0 * Switch for reactor model;
 
 *-----------------Tfcoil Variables-----------------*
 
-alstrtf  = 5.8e8 * Allowable Tresca stress in TF coil structural material (Pa)
+sig_tf_case_max  = 5.8E8 * Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+sig_tf_wp_max    = 5.8E8 * Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
 casthi   = 0.06 * inboard TF coil case plasma side thickness (m) (calculated for stellarators)
 casths   = 0.05 * inboard TF coil sidewall case thickness (m) (calculated for stellarators)
 cpttf    = 60000.0 * TF coil current per turn (A); (calculated for stellarators) (calculated for 

@@ -389,7 +389,7 @@ contains
     cf = 0.0D0
     
     ! Specific heat at constant pressure for He at 8 MPa and 400C (J/kg/K)
-    cp_he = 5.19D3
+    cp_he = 5190.0D0
     
     ! Density of Helium (kg/m3 at 8MPa, 400 C)
     denhe = 5.4D0

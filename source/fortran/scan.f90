@@ -21,7 +21,7 @@ module scan_module
   integer, parameter :: ipnscns = 1000
   !! Maximum number of scan points
 
-  integer, parameter :: ipnscnv = 59
+  integer, parameter :: ipnscnv = 60
   !! Number of available scan variables
 
   integer, parameter :: noutvars = 84
@@ -81,7 +81,7 @@ module scan_module
   !!         <LI> 41 blnkoth
   !!         <LI> 42 Argon fraction fimp(9)
   !!         <LI> 43 normalised minor radius at which electron cyclotron current drive is maximum
-  !!         <LI> 44 Allowable tresca stress in tf coil structural material
+  !!         <LI> 44 Allowable maximum shear stress (Tresca) in tf coil structural material
   !!         <LI> 45 Minimum allowable temperature margin ; tf coils
   !!         <LI> 46 boundu(150) fgwsep
   !!         <LI> 47 impurity_enrichment(9) Argon impurity enrichment
@@ -95,7 +95,9 @@ module scan_module
   !!         <LI> 56 crypmw_max: Maximum cryogenic power (ixx=164, ixc=87)
   !!         <LI> 57 `bt` lower boundary 
   !!         <LI> 58 `scrapli` : Inboard plasma-first wall gap
-  !!         <LI> 59 `scraplo` : Outboard plasma-first wall gap  </UL>
+  !!         <LI> 59 `scraplo` : Outboard plasma-first wall gap
+  !!         <Li> 60 Allowable stress in TF Coil conduit (Tresca) </UL>
+
 
   integer :: nsweep_2
   !! nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
@@ -172,7 +174,7 @@ contains
     use pf_power_variables, only: srcktpm
     use process_output, only: oblnkl
     use numerics, only: sqsumsq
-    use tfcoil_variables, only: tfareain, wwp2, strtf2, tfcmw, tcpmax, oacdcp, &
+    use tfcoil_variables, only: tfareain, wwp2, sig_tf_wp, tfcmw, tcpmax, oacdcp, &
       tfcpmw, fcutfsu, acond, fcoolcp, rcool, whttf, ppump, vcool, wwp1, n_tf, &
       dr_tf_wp, b_crit_upper_nbti
     use fwbs_variables, only: tpeak
@@ -231,7 +233,7 @@ contains
     outvar(34,iscan) = hldiv
     outvar(35,iscan) = tfcmw
     outvar(36,iscan) = whttf
-    outvar(37,iscan) = strtf2
+    outvar(37,iscan) = sig_tf_wp
     outvar(38,iscan) = oacdcp/1.0D6
     outvar(39,iscan) = tcpmax
     outvar(40,iscan) = tfcpmw
@@ -477,10 +479,10 @@ contains
     integer, intent(in) :: iscan_1
     integer, intent(in) :: iscan_R
     integer, intent(in) :: iscan
-    ! size of outvar
     integer, intent(in) :: noutvars_, ipnscns_
+    ! Required for shape of intent(out) arrays
     real(dp), dimension(noutvars_,ipnscns_), intent(out) :: outvar
-    real(dp), dimension(:), intent(out) :: sweep_1_vals, sweep_2_vals
+    real(dp), dimension(ipnscns_), intent(out) :: sweep_1_vals, sweep_2_vals
 
     call scan_1d_store_output(iscan, ifail, noutvars_, ipnscns_, outvar)
 
@@ -537,7 +539,7 @@ contains
     plabel(34) = 'Divertor_Heat_(MW/m^2)___'
     plabel(35) = 'TF_coil_Power_(MW)_______'
     plabel(36) = 'TF_coil_weight_(kg)______'
-    plabel(37) = 'vM_stress_in_TF_case_(Pa)'
+    plabel(37) = 'vM_stress_in_TF_cond_(Pa)'
     plabel(38) = 'J_TF_inboard_leg_(MA/m^2)'
     plabel(39) = 'Centrepost_max_T_(TART)__'
     plabel(40) = 'Res_TF_inbrd_leg_Pwr_(MW)'
@@ -618,8 +620,8 @@ contains
     use physics_variables, only: kappa, dnbeta, te, aspect, ftar, bt, &
         rad_fraction_sol, triang, rmajor, beamfus0, hfact
     use numerics, only: epsvmc, boundu, boundl
-    use tfcoil_variables, only: tmargmin_tf, alstrtf, n_pancake, oacdcp, &
-      n_layer, b_crit_upper_nbti
+    use tfcoil_variables, only: tmargmin_tf, sig_tf_case_max, n_pancake, oacdcp, &
+      n_layer, b_crit_upper_nbti, sig_tf_wp_max
     use div_kal_vars, only: lcon_factor, impurity_enrichment, &
       target_spread, lambda_q_omp, qtargettotal, ttarget
     use heat_transport_variables, only: crypmw_max 
@@ -768,8 +770,8 @@ contains
             rho_ecrh = swp(iscn)
             vlab = 'rho_ecrh' ; xlab = 'rho at which ECCD is max'
         case (44)
-            alstrtf = swp(iscn)
-            vlab = 'alstrtf' ; xlab = 'Allowable_tresca_stress_in_tf_coil_(pa)'
+            sig_tf_case_max = swp(iscn)
+            vlab = 'sig_tf_case_max' ; xlab = 'Allowable_stress_in_tf_coil_case_Tresca_(pa)'
         case (45)
             tmargmin_tf = swp(iscn)
             vlab = 'tmargmin_tf' ; xlab = 'Minimum_allowable_temperature_margin'
@@ -816,6 +818,9 @@ contains
         case(59)
             scraplo = swp(iscn)
             vlab = 'scraplo' ; xlab = 'Outboard FW-plasma sep gap'
+        case (60)
+            sig_tf_wp_max = swp(iscn)
+            vlab = 'sig_tf_wp_max' ; xlab = 'Allowable_stress_in_tf_coil_conduit_Tresca_(pa)'
         case default
             idiags(1) = nwp ; call report_error(96)
 

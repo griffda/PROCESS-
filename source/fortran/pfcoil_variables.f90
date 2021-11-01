@@ -15,7 +15,7 @@ module pfcoil_variables
 
   public
 
-  integer, parameter :: ngrpmx = 8
+  integer, parameter :: ngrpmx = 10
   !! maximum number of groups of PF coils
 
   integer, parameter :: nclsmx = 2
@@ -64,6 +64,14 @@ module pfcoil_variables
   real(dp), dimension(ngc2) :: bpf
   !! peak field at coil i (T)
   
+  real(dp), dimension(ngrpmx) :: ccl0_ma
+  !! PF group current array, flux-swing cancellation current (MA)
+  !! Input if i_pf_current=0, computed otherwise
+  
+  real(dp), dimension(ngrpmx) :: ccls_ma
+  !! PF group current array, equilibrium current (MA)
+  !! Input if i_pf_current=0, computed otherwise
+  
   real(dp) :: cohbop
   !! Central solenoid overall current density at beginning of pulse (A/m2)
   
@@ -77,13 +85,16 @@ module pfcoil_variables
   !! peak current per turn input for PF coil i (A)
 
   real(dp), dimension(ngc2) :: curpfb
-  !! PF coil current work array beginning of pulse
+  !! PF coil current array, at beginning of pulse (MA)
+  !! Indexed by coil number, not group number
 
   real(dp), dimension(ngc2) :: curpff
-  !! PF coil current work array flat top
+  !! PF coil current array, at flat top (MA)
+  !! Indexed by coil number, not group number
 
   real(dp), dimension(ngc2) :: curpfs
-  !! PF coil current work array end of pulse
+  !! PF coil current array, at end of pulse (MA)
+  !! Indexed by coil number, not group number
 
   real(dp) :: etapsu
   !! Efficiency of transfer of PF stored energy into or out of storage.
@@ -104,12 +115,13 @@ module pfcoil_variables
   real(dp) :: fvssu
   !! F-value for `constraint equation 51` 
 
-  integer, dimension(ngc) :: ipfloc
-  !! switch for locating scheme of PF coil group i:
+  integer, dimension(ngrpmx) :: ipfloc
+  !! Switch for location of PF coil group i:
   !!
-  !! - =1 PF coil on top of central solenoid
-  !! - =2 PF coil on top of TF coil
-  !! - =3 PF coil outside of TF coil
+  !! - =1 PF coil on top of central solenoid (flux ramp only)
+  !! - =2 PF coil on top of TF coil (flux ramp only)
+  !! - =3 PF coil outside of TF coil (equilibrium coil)
+  !! - =4 PF coil, general location (equilibrium coil)
 
   integer :: ipfres
   !! switch for PF coil type:
@@ -142,6 +154,23 @@ module pfcoil_variables
   !! - =3 NbTi
   !! - =4 ITER Nb3Sn model with user-specified parameters
   !! - =5 WST Nb3Sn parameterisation
+  
+  integer :: i_pf_current
+  !! Switch for controlling the current of the PF coils:
+  !!
+  !! - =0 Input via the variables curpfb, curpff, curpfs
+  !! - =1 SVD targets zero field across midplane (flux swing 
+  !!   coils) and the correct vertical field at the plasma
+  !!   center (equilibrium coils)
+  
+  integer :: i_sup_pf_shape
+  !! Switch for the placement of Location 3 (outboard) PF coils
+  !! when the TF coils are superconducting (i_tf_sup = 1)
+  !!
+  !! - =0 (Default) Outboard PF coils follow TF shape 
+  !!   in an ellipsoidal winding surface
+  !! - =1 Outboard PF coils all have same radius, cylindrical
+  !!   winding surface
 
   real(dp) :: jscoh_bop
   !! central solenoid superconductor critical current density (A/m2) at beginning-of-pulse
@@ -236,9 +265,19 @@ module pfcoil_variables
   real(dp) :: rpf2
   !! offset (m) of radial position of `ipfloc=2` PF coils from being at 
   !! rmajor (offset = rpf2*triang*rminor)
+  
+  real(dp), dimension(ngrpmx) :: rref
+  !! PF coil radial positioning adjuster:
+  !!
+  !! - for groups j with ipfloc(j) = 1; rref(j) is ignored
+  !! - for groups j with ipfloc(j) = 2; rref(j) is ignored
+  !! - for groups j with ipfloc(j) = 3; rref(j) is ignored
+  !! - for groups j with ipfloc(j) = 4; rref(j) is radius of
+  !!   the coil in units of minor radii from the major radius
+  !!   (r = rmajor + rref*rminor)
 
   real(dp) :: s_tresca_oh
-  !! Tresca stress coils/central solenoid [MPa]
+  !! Maximum shear stress (Tresca criterion) coils/central solenoid [MPa]
 
   real(dp) :: sigpfcalw
   !! maximum permissible tensile stress (MPa) in steel coil cases for superconducting 
@@ -323,6 +362,8 @@ module pfcoil_variables
   !!   within the TF coil)
   !! - for groups j with ipfloc(j) = 3; zref(j) = ratio of
   !!   height of coil group j to plasma minor radius</UL>
+  !! - for groups j with ipfloc(j) = 4; zref(j) = ratio of
+  !!   height of coil group j to plasma minor radius</UL>
 
   real(dp) :: bmaxcs_lim
   !! Central solenoid max field limit [T]
@@ -345,6 +386,10 @@ module pfcoil_variables
     bmaxoh = 0.0D0
     bmaxoh0 = 0.0D0
     bpf = 0.0D0
+    ccl0_ma = (/0.0D0, 0.0D0, 0.0D0, &
+      0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0/)
+    ccls_ma = (/0.0D0, 0.0D0, 0.0D0, &
+      0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0/)
     cohbop = 0.0D0
     coheof = 1.85D7
     cpt = 0.0D0
@@ -358,17 +403,19 @@ module pfcoil_variables
     fcuohsu = 0.7D0
     fcupfsu = 0.69D0
     fvssu = 1.0
-    ipfloc = (/2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0/)
+    ipfloc = (/2,2,3,0,0,0,0,0,0,0/)
     ipfres = 0
     itr_sum = 0.0D0
     isumatoh = 1
     isumatpf = 1
+    i_pf_current = 1
+    i_sup_pf_shape = 0
     jscoh_bop = 0.0D0
     jscoh_eof = 0.0D0
     jstrandoh_bop = 0.0D0
     jstrandoh_eof = 0.0D0
     ncirt = 0
-    ncls = (/1,1,2,0,0,0,0,0,0,0/)
+    ncls = (/1,1,2,0,0,0,0,0,0,0,0,0/)
     nfxfh = 7
     ngrp = 3
     nohc = 0
@@ -393,6 +440,8 @@ module pfcoil_variables
     rpf = 0.0D0
     rpf1 = 0.0D0
     rpf2 = -1.63D0
+    rref = (/7.0D0, 7.0D0, 7.0D0, &
+      7.0D0, 7.0D0, 7.0D0, 7.0D0, 7.0D0, 7.0D0, 7.0D0/)
     s_tresca_oh = 0.0D0
     sigpfcalw = 500.0D0
     sigpfcf = 0.666D0
@@ -419,7 +468,7 @@ module pfcoil_variables
     zl = 0.0D0
     zpf = 0.0D0
     zref = (/3.6D0, 1.2D0, 2.5D0, &
-      1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0/)
+      1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0/)
     bmaxcs_lim = 13.0
     fbmaxcs = 13.0
   end subroutine init_pfcoil_variables

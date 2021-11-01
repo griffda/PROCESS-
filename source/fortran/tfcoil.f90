@@ -302,8 +302,10 @@ module tfcoil_module
     ! Prandlt number  
     prndtl = coolant_cp * coolant_visco / coolant_th_cond
 
-    ! Film temperature difference calculations
-    nuselt = 0.023D0 * reyn**0.8D0 * prndtl**0.3D0
+    ! Film temperature difference calculations    
+    ! Originally prandtl was prndtl**0.3D0 but this is incorrect as from
+    ! Dittus-Boelter correlation where the fluid is being heated it should be as below    
+    nuselt = 0.023D0 * reyn**0.8D0 * prndtl**0.4D0
     h = nuselt * coolant_th_cond / dcool
     dtfilmav = ptot / (h * 2.0D0*pi*rcool * ncool * lcool)
 

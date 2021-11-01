@@ -24,7 +24,7 @@ module costs_step_module
               step27, step91, step92, step93, fwblkcost
 
   ! Scaling Properties
-  real(dp) :: vfi, vfi_star, ptherm_star, pinjmw_star, fwarea_star, &
+  real(dp) :: vfi, vfi_star, ptherm_star, &
               rmajor_star, rminor_star, pth
 
 contains
@@ -47,8 +47,6 @@ contains
     vfi = 0.0D0
     vfi_star = 0.0D0
     ptherm_star = 0.0D0
-    pinjmw_star = 0.0D0
-    fwarea_star = 0.0D0
     rmajor_star = 0.0D0
     rminor_star = 0.0D0
     pth = 0.0D0
@@ -96,12 +94,8 @@ contains
     pth = powfmw + emultmw + pinjwp
 
     !  STARFIRE Reference Values
-    ! vfi_star = 5.1D3                    ! Volume of Fusion Island (m3)
     vfi_star = 6.737D3                  ! Volume of Fusion Island (m3)
     ptherm_star = 4.15D3                ! Thermal Power (MW)
-    pinjmw_star = 9.04D1                ! Auxiliary Power (MW)
-    ! fwarea_star = 7.8D2                 ! First Wall Area (m2)
-    fwarea_star = 9.42D2                ! First Wall Area (m2)
     rmajor_star = 7.0D0                 ! Major Radius (m)
     rminor_star = rmajor_star / 3.6D0   ! Minor Radius (m)
 
@@ -452,13 +446,12 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables, only: fwarea
     use cost_variables, only: output_costs, step_ref, ifueltyp, fcdfuel, &
       divcst, cdcost
-    use current_drive_variables, only: pinjmw
     use physics_variables, only: rmajor, rminor
+    use constants, only: pi
     use process_output, only: ocosts, oblnkl
-    
+
     implicit none
   
     ! Arguments
@@ -483,12 +476,14 @@ contains
     step2201 = step2201 + step220101
 
     ! 22.01.02 Shield
-    ! Original STARFIRE value, scaling with first wall area
-    step220102 = step_ref(21) * (fwarea / fwarea_star)
+    ! Inboard shield costs:
+    step220102 = step_a220102()
+    ! Note: outboard shield costs currently set to zero.
+    ! Add shield cost to total cost, step2201, in M$
     step2201 = step2201 + step220102
     ! STARFIRE percentage for spares
     step2298 = step2298 + 9.985D-2 *  step220102
-  
+
     ! 22.01.03.01 TF Coils
     step22010301 = step_a22010301()
     ! Add TF coil cost to total cost, step2201, in M$
@@ -515,12 +510,8 @@ contains
     step2298 = step2298 + 1.075D-1 * step22010304
   
     ! 22.01.04 Auxiliary Heating and Current Drive
-    ! Original STARFIRE value, scaling with auxiliary power
-    step220104 = step_ref(26) * (pinjmw / pinjmw_star)
-    if (ifueltyp==1) then
-      step220104 = (1.0D0-fcdfuel) * step220104 
-      cdcost = step220104
-    end if
+    ! HCD cost = cost per injected Watt of power * injected Watts
+    step220104 = step_a220104()
     step2201 = step2201 + step220104
     ! STARFIRE percentage for spares
     step2298 = step2298 + 2.335D-1 * step220104
@@ -719,6 +710,79 @@ contains
   end subroutine step_a220101
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function step_a220102() result(step220102)
+    !! 22.01.02
+    !! Returns cost of inboard shield
+    !! Note: outboard shield costs currently set to zero
+
+    use build_variables, only: rsldi, shldith, shldtth, vgap, &
+      scrapli, scraplo, fwith, fwoth, blnktth, d_vv_in
+    use fwbs_variables, only: i_shield_mat, denw, denwc
+    use divertor_variables, only: divfix
+    use cost_variables, only: step_ucshw, step_ucshwc
+    use physics_variables, only: rminor, kappa, idivrt
+    use constants, only: pi
+    implicit none
+
+    ! Result
+    real(dp) :: step220102
+    !! Cost of shield in M$
+
+    ! Local variables
+    real(dp):: inb_sh_v, r1, hbot, htop, hshld, &
+      inb_sh_v_mtl, inb_sh_m, sh_mtl_d, sh_mtl_c, shldith_corr    
+
+    ! Volume of inboard shield found using same method as in CCFE HCPB blanket model:
+    ! inboard shield is assumed to be a cylinder of uniform thickness
+
+    ! Calculate shield internal half-height (m)
+    hbot = rminor*kappa + vgap + divfix
+    ! if a double null machine then symmetric otherwise asymmetric
+    if ( idivrt == 2 ) then
+      htop = hbot
+    else
+      htop = rminor*kappa + 0.5D0*(scrapli+scraplo + fwith+fwoth) + blnktth
+    end if
+    ! Average of top and bottom (m)
+    hshld = 0.5D0*(htop + hbot)
+
+    ! Radius to outer edge of inboard shield (m)
+    r1 = rsldi + shldith
+
+    ! Corrected shield thickness: allows for 300mm vacuum vessel
+    ! Justification: requirement from K. Taylor, neutronics
+    ! # TODO: replace this correction when valid (VV + shield) is used
+    shldith_corr = (d_vv_in + shldith) - 0.3D0
+    ! Volume of inboard cylindrical shell (m3)
+    inb_sh_v = 2.0D0*(hshld+shldtth) * pi*(r1**2 - (r1-shldith_corr)**2)
+
+    ! Scale shield material volume (allow for 10% volume coolant, 5% steel)
+    inb_sh_v_mtl = 0.85D0 * inb_sh_v
+    
+    ! Define shield material density (sh_mtl_d [kg/m3]) and cost (sh_mtl_c [$/kg])
+    if ( i_shield_mat == 1 ) then
+      ! tungsten carbide
+      sh_mtl_d = denwc
+      sh_mtl_c = step_ucshwc
+    else
+      ! tungsten (default)
+      sh_mtl_d = denw
+      sh_mtl_c = step_ucshw
+    end if
+
+    ! Find inboard shield mass (kg) 
+    inb_sh_m = inb_sh_v_mtl * sh_mtl_d
+
+    ! Find inboard shield cost (converted to M$2017)
+    step220102 = (inb_sh_m * sh_mtl_c) / 1.0D6*(229.0D0/264.71D0)
+
+    ! Note: outboard shield costs currently set to zero
+
+  end function step_a220102
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   function step_a22010301() result(step22010301)
     !! 22.01.03.01 TF Coils
     !! Returns cost of TF coils
@@ -904,9 +968,64 @@ contains
     !  Total account 22.01.03.02
     step22010302 = step2201030201 + step2201030202 + step2201030203 + step2201030204
 
-    end function step_a22010302
+  end function step_a22010302
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
+
+  function step_a220104() result(step220104)
+
+    !! 22.01.04 Auxiliary Heating and Current Drive
+    !! Returns cost of auxiliary HCD
+    !! HCD cost = cost per injected Watt of power * injected Watts
+
+    use cost_variables, only: step_ref, fcdfuel, cdcost, ucich, uclh, ifueltyp
+    use current_drive_variables, only: iefrf, iefrffix, echpwr, pnbitot, plhybd
+
+    implicit none
+
+    ! Result
+    real(dp) :: step220104
+    !! Cost of HCD in M$
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    step220104 = 0.0D0
+
+    ! Cost per Watt depends on technology/hardware used;
+    ! inflation adjustment applied as appropriate to source for costs
+    ! (tech adjusted from 1990 $ is costed as per Cost Model 0)
+
+    ! NBI cost per injected Watt (adjusted from 2020 $):
+    step220104 = step220104 + &
+               ( pnbitot * step_ref(69) * (229.0D0/258.84D0) )
+
+    ! EC or EBW cost per injected Watt (adjusted from 2020 $):
+    step220104 = step220104 + & 
+               ( echpwr * step_ref(70) * (229.0D0/258.84D0) )
+
+    if ( (iefrf == 2) .or. (iefrffix == 2) ) then
+      ! Ion Cyclotron current drive (adjusted from 1990 $):
+      step220104 = step220104 + &
+                ( 1.0D-6 * ucich * (1.0D6*plhybd) * (229.0D0/76.7D0) )
+    end if
+
+    if ( (iefrf == 1) .or. (iefrffix == 1) .or. &
+              (iefrf == 4) .or. (iefrffix == 4) .or. &
+              (iefrf == 6) .or. (iefrffix == 6) ) then
+      ! Lower Hybrid system (adjusted from 1990 $):
+      step220104 = step220104 + &
+                ( 1.0D-6 * uclh * (1.0D6*plhybd) * (229.0D0/76.7D0) )    
+    end if
+
+    if ( ifueltyp == 1 ) then
+      ! fraction `fcdfuel` of HCD cost treated as fuel cost
+      step220104 = (1.0D0-fcdfuel) * step220104 
+      cdcost = step220104
+    end if
+
+  end function step_a220104
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine step_a2202(outfile,iprint)
 

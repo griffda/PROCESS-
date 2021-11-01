@@ -511,6 +511,8 @@ module physics_variables
   !! - =6 use input kappa, triang to calculate 95% values based on MAST scaling (ST)
   !! - =7 use input kappa95, triang95 to calculate separatrix values based on fit to FIESTA (ST)
   !! - =8 use input kappa, triang to calculate 95% values based on fit to FIESTA (ST)
+  !! - =9 set kappa to the natural elongation value (PROCESS-STEP issue #70), triang input
+  !! - =10 set kappa to maximum stable value at a given aspect ratio (2.6<A<3.6)), triang input (#1399)
 
   integer :: itart
   !! switch for spherical tokamak (ST) models:
@@ -531,10 +533,10 @@ module physics_variables
   !! - =2 use first wall area directly
 
   real(dp) :: kappa
-  !! plasma separatrix elongation (calculated if `ishape = 1-5 or 7`)
+  !! plasma separatrix elongation (calculated if `ishape = 1-5, 7 or 9-10`)
 
   real(dp) :: kappa95
-  !! plasma elongation at 95% surface (calculated if `ishape = 0-3, 6 or 8`)
+  !! plasma elongation at 95% surface (calculated if `ishape = 0-3, 6, or 8-10`)
 
   real(dp) :: kappaa
   !! plasma elongation calculated as xarea/(pi.a^2)
@@ -547,6 +549,9 @@ module physics_variables
 
   real(dp) :: ni0
   !! central ion density (/m3)
+
+  real(dp) :: m_s_limit 
+  !! margin to vertical stability
 
   real(dp) :: p0
   !! central total plasma pressure (Pa)
@@ -844,7 +849,7 @@ module physics_variables
   !! plasma separatrix triangularity (calculated if `ishape = 1, 3-5 or 7`)
 
   real(dp) :: triang95
-  !! plasma triangularity at 95% surface (calculated if `ishape = 0-2, 6 or 8`)
+  !! plasma triangularity at 95% surface (calculated if `ishape = 0-2, 6, 8 or 9`)
 
   real(dp) :: vol
   !! plasma volume (m3)
@@ -992,6 +997,7 @@ module physics_variables
     kappaa_IPB = 0.d0  
     ne0 = 0.0D0  
     ni0 = 0.0D0  
+    m_s_limit = 0.3D0
     p0 = 0.0D0  
     palppv = 0.0D0    
     palpepv = 0.0D0  

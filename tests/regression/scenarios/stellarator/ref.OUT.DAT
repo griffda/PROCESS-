@@ -13,15 +13,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-538-g66f889bd
-    Branch : 1397-remove-f90wrap-from-build-process-tim2
-   Git log : COMMIT_MSG
- Date/time : 29 Sep 2021 10:39:10 +00:00(hh:mm) UTC
+   Version : 2.2.0   Release Date :: 2021-10-26
+   Tag No. : v2.1-728-g1dfa3f06
+    Branch : develop
+   Git log : Merge\ branch\ |1418-pf-placement|\ into\ |develop|
+ Date/time : 29 Oct 2021 16:25:52 +00:00(hh:mm) UTC
       User : root
-  Computer : c510c7d65104
- Directory : /root/process
-     Input : /tmp/pytest-of-root/pytest-10/test_scenario_stellarator_0/IN.DAT
+  Computer : 6f802edae655
+ Directory : /tmp/pytest-of-root/pytest-6/test_solver0
+     Input : /tmp/pytest-of-root/pytest-6/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  
@@ -59,7 +59,7 @@
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          7     
  Square root of the sum of squares of the constraint residuals            (sqsumsq)                 2.424E-07  OP 
- VMCON convergence parameter                                              (convergence_parameter)   0.000E+00  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   2.481E-07  OP 
  Number of VMCON iterations                                               (nviter)                          6  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit          CAPITAL COST.
@@ -406,7 +406,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Alpha power: beam-plasma (MW)                                            (palpnb)                  0.000E+00  OP 
  Neutron power (MW)                                                       (pneutmw)                 2.520E+03  OP 
  Charged particle power (excluding alphas) (MW)                           (pchargemw)               2.235E+00  OP 
- Total power deposited in plasma (MW)                                     ()                        6.004E+02  OP 
+ Total power deposited in plasma (MW)                                     (tot_power_plasma)        6.004E+02  OP 
  
  Radiation Power (excluding SOL):
  
@@ -600,7 +600,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Forces and Stress :
  
  Maximal force density (MN/m3)                                            (max_force_density)       2.398E+02     
- Maximal stress (approx.) (MPa)                                           (strtf2)                  1.421E+02     
+ Maximal stress (approx.) (MPa)                                           (sig_tf_wp)               1.421E+02     
  
  Quench Restrictions :
  
@@ -933,6 +933,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heat extracted from shield  (MW)                                         (pthermshld)                  0.098  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                 429.597  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
+ Nuclear power lost to TF (MW)                                            (ptfnuc)                      0.000  OP 
  Total (MW)                                                                                          3667.451  OP 
  
  Electrical Power Balance :
@@ -947,6 +948,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electric power for TF coils (MW)                                         (tfacpd)                     98.046  OP 
  Electric power for PF coils (MW)                                         (pfwpmw)                      0.000  OP 
  All other internal electric power requirements (MW)                      (fachtmw)                    81.795  OP 
+ Total (MW)                                                               (tot_plant_power)          1466.980  OP 
  Total (MW)                                                                                          1466.980  OP 
  
  Gross electrical output* (MW)                                            (pgrossmw)                 1466.980  OP 

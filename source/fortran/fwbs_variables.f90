@@ -33,6 +33,9 @@ module fwbs_variables
   !! density of tungsten (kg/m3)
   !#TODO: same as above with steel?
 
+  real(dp) :: denwc
+  !! density of tungsten carbide (kg/m3)
+
   real(dp) :: dewmkg
   !! total mass of vacuum vessel + cryostat (kg) (calculated if blktmodel>0)
   !# TODO: blktmodel needs consolidating with iblanket
@@ -260,6 +263,12 @@ module fwbs_variables
   !! - =1 User sets pump power as a fraction of thermal power (fpumpblkt, fpumpfw, fpumpdiv, fpumpshld)
   !! - =2 Mechanical pumping power is calculated
   !! - =3 Mechanical pumping power is calculated using specified pressure drop
+
+  integer :: i_shield_mat
+  !! Switch for shield material - *currently only applied in costing routines* `cost_model = 2`
+  !!
+  !! - =0 Tungsten (default)
+  !! - =1 Tungsten carbide
 
   integer :: secondary_cycle
   !! Switch for power conversion cycle:
@@ -505,6 +514,7 @@ module fwbs_variables
     vvmass = 0.0D0  
     denstl = 7800.0D0
     denw = 19250.0D0 
+    denwc = 15630.0D0
     dewmkg = 0.0D0   
     emult = 1.269D0  
     emultmw = 0.0D0  
@@ -561,6 +571,7 @@ module fwbs_variables
     whtblbe = 0.0D0  
     iblanket_thickness = 2  
     primary_pumping = 2  
+    i_shield_mat = 0
     secondary_cycle = 0  
     coolwh = 1
     afwi = 0.008D0
