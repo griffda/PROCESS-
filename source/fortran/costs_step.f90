@@ -552,109 +552,109 @@ contains
   !   endif
   ! end subroutine step_a22010301
 
-  subroutine step_a22010302(iohcl, twopi, dcopper, step_uccase, step_uccu, &
-    step_cconshpf, step_ucfnc, step_cconfix, step_ucsc, step_ucwindpf, &
-		rjconpf, ipfres, vfohc, nohc, turns, isumatpf, whtpfs, ric, rpf, isumatoh, &
-    fcupfsu, fcuohsu, vf, awpoh, fncmass, dcond, step22010302)
-    !! Account 22.01.03.02 PF Coils : PF magnet assemblies
-    !! author: A J Pearce, CCFE, Culham Science Centre
-    !! This routine evaluates the Account 22.01.03.02 (PF magnet) costs.
-    !! Conductor costs previously used an algorithm devised by R. Hancox,
-    !! January 1994, under contract to Culham, which took into
-    !! account the fact that the superconductor/copper ratio in
-    !! the conductor is proportional to the maximum field that
-    !! each coil will experience. Now, the input copper fractions
-    !! are used instead.
-    !! Maximum values for current, current density and field
-    !! are used. 
-    implicit none
+  ! subroutine step_a22010302(iohcl, twopi, dcopper, step_uccase, step_uccu, &
+  !   step_cconshpf, step_ucfnc, step_cconfix, step_ucsc, step_ucwindpf, &
+	! 	rjconpf, ipfres, vfohc, nohc, turns, isumatpf, whtpfs, ric, rpf, isumatoh, &
+  !   fcupfsu, fcuohsu, vf, awpoh, fncmass, dcond, step22010302)
+  !   !! Account 22.01.03.02 PF Coils : PF magnet assemblies
+  !   !! author: A J Pearce, CCFE, Culham Science Centre
+  !   !! This routine evaluates the Account 22.01.03.02 (PF magnet) costs.
+  !   !! Conductor costs previously used an algorithm devised by R. Hancox,
+  !   !! January 1994, under contract to Culham, which took into
+  !   !! account the fact that the superconductor/copper ratio in
+  !   !! the conductor is proportional to the maximum field that
+  !   !! each coil will experience. Now, the input copper fractions
+  !   !! are used instead.
+  !   !! Maximum values for current, current density and field
+  !   !! are used. 
+  !   implicit none
 
-    ! Arguments
-    real(8), intent(in) :: iohcl, twopi, dcopper, step_uccase, step_uccu, &
-      step_cconshpf, step_ucfnc, step_cconfix, step_ucwindpf, &
-      ipfres, vfohc, whtpfs, fcupfsu, fcuohsu, awpoh, fncmass
-    integer, intent(in) :: nohc, isumatoh, isumatpf
-    real(8), dimension(:), intent(in) :: dcond, ric, rpf, rjconpf, step_ucsc, &
-      turns, vf
-    real(8), intent(out) :: step22010302
+  !   ! Arguments
+  !   real(8), intent(in) :: iohcl, twopi, dcopper, step_uccase, step_uccu, &
+  !     step_cconshpf, step_ucfnc, step_cconfix, step_ucwindpf, &
+  !     ipfres, vfohc, whtpfs, fcupfsu, fcuohsu, awpoh, fncmass
+  !   integer, intent(in) :: nohc, isumatoh, isumatpf
+  !   real(8), dimension(:), intent(in) :: dcond, ric, rpf, rjconpf, step_ucsc, &
+  !     turns, vf
+  !   real(8), intent(out) :: step22010302
      
-    !  Local variables
-    real(8) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
-         pfwndl, step2201030201, step2201030202, step2201030203, step2201030204
-    integer :: i,npf
+  !   !  Local variables
+  !   real(8) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
+  !        pfwndl, step2201030201, step2201030202, step2201030203, step2201030204
+  !   integer :: i,npf
 
-    !  Total length of PF coil windings (m)
+  !   !  Total length of PF coil windings (m)
 
-    pfwndl = 0.0D0
-    do i = 1,nohc
-      pfwndl = pfwndl + twopi*rpf(i)*turns(i)
-    end do
+  !   pfwndl = 0.0D0
+  !   do i = 1,nohc
+  !     pfwndl = pfwndl + twopi*rpf(i)*turns(i)
+  !   end do
 
-    !  Account 22.01.03.02.01 : Conductor
+  !   !  Account 22.01.03.02.01 : Conductor
 
-    !  The following lines take care of resistive coils.
-    !  costpfsh is the cost per metre of the steel conduit/sheath around
-    !  each superconducting cable (so is zero for resistive coils)
+  !   !  The following lines take care of resistive coils.
+  !   !  costpfsh is the cost per metre of the steel conduit/sheath around
+  !   !  each superconducting cable (so is zero for resistive coils)
 
-    if (ipfres == 1) then
-       costpfsh = 0.0D0
-    else
-       costpfsh = step_cconshpf
-    end if
+  !   if (ipfres == 1) then
+  !      costpfsh = 0.0D0
+  !   else
+  !      costpfsh = step_cconshpf
+  !   end if
 
-    !  Non-Central Solenoid coils
+  !   !  Non-Central Solenoid coils
 
-    if (iohcl == 1) then
-       npf = nohc-1
-    else
-       npf = nohc
-    end if
+  !   if (iohcl == 1) then
+  !      npf = nohc-1
+  !   else
+  !      npf = nohc
+  !   end if
     
-    step2201030201 = 0.0D0
-    do i = 1,npf
+  !   step2201030201 = 0.0D0
+  !   do i = 1,npf
 
-       !  Superconductor ($/m)
-       if (ipfres == 0) then
-          costpfsc = step_ucsc(isumatpf) * (1.0D0-fcupfsu)*(1.0D0-vf(i)) * &
-               abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcond(isumatpf)
-       else
-          costpfsc = 0.0D0
-       end if
+  !      !  Superconductor ($/m)
+  !      if (ipfres == 0) then
+  !         costpfsc = step_ucsc(isumatpf) * (1.0D0-fcupfsu)*(1.0D0-vf(i)) * &
+  !              abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcond(isumatpf)
+  !      else
+  !         costpfsc = 0.0D0
+  !      end if
 
-       !  Copper ($/m)
-       if (ipfres == 0) then
-          costpfcu = step_uccu * fcupfsu*(1.0D0-vf(i)) * &
-               abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcopper
-       else
-          costpfcu = step_uccu * (1.0D0-vf(i)) * &
-               abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcopper
-       end if
+  !      !  Copper ($/m)
+  !      if (ipfres == 0) then
+  !         costpfcu = step_uccu * fcupfsu*(1.0D0-vf(i)) * &
+  !              abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcopper
+  !      else
+  !         costpfcu = step_uccu * (1.0D0-vf(i)) * &
+  !              abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcopper
+  !      end if
 
-       !  Total cost/metre of superconductor and copper wire
-       costwire = costpfsc + costpfcu
+  !      !  Total cost/metre of superconductor and copper wire
+  !      costwire = costpfsc + costpfcu
 
-       !  Total cost/metre of conductor (including sheath and fixed costs)
-       cpfconpm = costwire + costpfsh + step_cconfix
+  !      !  Total cost/metre of conductor (including sheath and fixed costs)
+  !      cpfconpm = costwire + costpfsh + step_cconfix
 
-       !  Total account 222.2.1 (PF coils excluding Central Solenoid)
-       step2201030201 = step2201030201 + (1.0D-6 * twopi * rpf(i) * turns(i) * &
-            cpfconpm)
+  !      !  Total account 222.2.1 (PF coils excluding Central Solenoid)
+  !      step2201030201 = step2201030201 + (1.0D-6 * twopi * rpf(i) * turns(i) * &
+  !           cpfconpm)
 
-    end do
+  !   end do
 
-    !  Account 22.01.03.02.02 : Winding
-    step2201030202 = 1.0D-6 * step_ucwindpf * pfwndl
+  !   !  Account 22.01.03.02.02 : Winding
+  !   step2201030202 = 1.0D-6 * step_ucwindpf * pfwndl
  
-    !  Account 22.01.03.02.03 : Steel case - will be zero for resistive coils
-    step2201030203 = 1.0D-6 * step_uccase * whtpfs
+  !   !  Account 22.01.03.02.03 : Steel case - will be zero for resistive coils
+  !   step2201030203 = 1.0D-6 * step_uccase * whtpfs
  
-    !  Account 22.01.03.02.04 : Support structure
-    step2201030204 = 1.0D-6 * step_ucfnc * fncmass
+  !   !  Account 22.01.03.02.04 : Support structure
+  !   step2201030204 = 1.0D-6 * step_ucfnc * fncmass
 
-    !  Total account 22.01.03.02
-    step22010302 = step2201030201 + step2201030202 + step2201030203 + step2201030204
+  !   !  Total account 22.01.03.02
+  !   step22010302 = step2201030201 + step2201030202 + step2201030203 + step2201030204
 
-  end subroutine step_a22010302
+  ! end subroutine step_a22010302
 
   subroutine step_a220104(step_ref, fcdfuel, ucich, uclh, ifueltyp, &
     iefrf, iefrffix, echpwr, pnbitot, plhybd, step220104, cdcost)

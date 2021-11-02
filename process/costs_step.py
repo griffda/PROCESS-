@@ -1010,39 +1010,85 @@ class CostsStep:
         return step22010301
 
     def step_a22010302(self):
-        """Account 22.01.03.02 PF Coils: PF magnet assemblies.
+        """Account 22.01.03.02 PF Coils : PF magnet assemblies
+        author: A J Pearce, CCFE, Culham Science Centre
+        This routine evaluates the Account 22.01.03.02 (PF magnet) costs.
+        Conductor costs previously used an algorithm devised by R. Hancox,
+        January 1994, under contract to Culham, which took into
+        account the fact that the superconductor/copper ratio in
+        the conductor is proportional to the maximum field that
+        each coil will experience. Now, the input copper fractions
+        are used instead.
+        Maximum values for current, current density and field
+        are used. 
 
         :return: cost 22010302
         :rtype: float
         """
-        step22010302 = cs.step_a22010302(
-            bv.iohcl,
-            constants.twopi,
-            constants.dcopper,
-            cv.step_uccase,
-            cv.step_uccu,
-            cv.step_cconshpf,
-            cv.step_ucfnc,
-            cv.step_cconfix,
-            cv.step_ucsc,
-            cv.step_ucwindpf,
-            pfv.rjconpf,
-            pfv.ipfres,
-            pfv.vfohc,
-            pfv.nohc,
-            pfv.turns,
-            pfv.isumatpf,
-            pfv.whtpfs,
-            pfv.ric,
-            pfv.rpf,
-            pfv.isumatoh,
-            pfv.fcupfsu,
-            pfv.fcuohsu,
-            pfv.vf,
-            pfv.awpoh,
-            sv.fncmass,
-            tfv.dcond,
-        )
+        # Total length of PF coil windings (m)
+        pfwndl = 0.0e0
+
+        for i in range(pfv.nohc):
+            pfwndl += constants.twopi*pfv.rpf[i]*pfv.turns[i]
+
+        # Account 22.01.03.02.01 : Conductor
+
+        # The following lines take care of resistive coils.
+        # costpfsh is the cost per metre of the steel conduit/sheath around
+        # each superconducting cable (so is zero for resistive coils)
+
+        if (pfv.ipfres == 1):
+            costpfsh = 0.0e0
+        else:
+            costpfsh = cv.step_cconshpf
+
+        # Non-Central Solenoid coils
+
+        if (bv.iohcl == 1):
+            npf = pfv.nohc-1
+        else:
+            npf = pfv.nohc
+        
+        step2201030201 = 0.0e0
+
+        for i in range(npf):
+
+            # Superconductor ($/m)
+            if (pfv.ipfres == 0):
+                costpfsc = cv.step_ucsc[pfv.isumatpf-1] * (1.0e0-pfv.fcupfsu)*(1.0e0-pfv.vf[i]) * \
+                    abs(pfv.ric[i]/pfv.turns[i])*1.0e6 / pfv.rjconpf[i] * tfv.dcond[pfv.isumatpf-1]
+            else:
+                costpfsc = 0.0e0
+
+            # Copper ($/m)
+            if (pfv.ipfres == 0):
+                costpfcu = cv.step_uccu * pfv.fcupfsu*(1.0e0-pfv.vf[i]) * \
+                    abs(pfv.ric[i]/pfv.turns[i])*1.0e6 / pfv.rjconpf[i] * constants.dcopper
+            else:
+                costpfcu = cv.step_uccu * (1.0e0-pfv.vf[i]) * \
+                    abs(pfv.ric[i]/pfv.turns[i])*1.0e6 / pfv.rjconpf[i] * constants.dcopper
+
+            # Total cost/metre of superconductor and copper wire
+            costwire = costpfsc + costpfcu
+
+            # Total cost/metre of conductor (including sheath and fixed costs)
+            cpfconpm = costwire + costpfsh + cv.step_cconfix
+
+            # Total account 222.2.1 (PF coils excluding Central Solenoid)
+            step2201030201 = step2201030201 + (1.0e-6 * constants.twopi * pfv.rpf[i] * pfv.turns[i] * \
+                    cpfconpm)
+
+        # Account 22.01.03.02.02 : Winding
+        step2201030202 = 1.0e-6 * cv.step_ucwindpf * pfwndl
+    
+        # Account 22.01.03.02.03 : Steel case - will be zero for resistive coils
+        step2201030203 = 1.0e-6 * cv.step_uccase * pfv.whtpfs
+    
+        # Account 22.01.03.02.04 : Support structure
+        step2201030204 = 1.0e-6 * cv.step_ucfnc * sv.fncmass
+
+        # Total account 22.01.03.02
+        step22010302 = step2201030201 + step2201030202 + step2201030203 + step2201030204
 
         return step22010302
 
