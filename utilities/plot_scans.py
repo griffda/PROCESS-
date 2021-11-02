@@ -282,9 +282,6 @@ if __name__ == '__main__':
     legend_size    = 12
     axis_font_size = 18
     # -------------
-    quick_fix = ['600MPa','600MPa','800MPa','800MPa']
-    quick_fix_2 = ['b','b','g','g']
-    #quick_fix = {r'$\sigma_{\mathrm{oh}}^{\mathrm{max}}=600MPa$', r'$\sigma_{\mathrm{oh}}^{\mathrm{max}}=600MPa$', r'$\sigma_{\mathrm{oh}}^{\mathrm{max}}=800MPa$', r'$\sigma_{\mathrm{oh}}^{\mathrm{max}}=800MPa$'}
 
     # Case of a set of 1D scans 
     # ----------------------------------------------------------------------------------------------
