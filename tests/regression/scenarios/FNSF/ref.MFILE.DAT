@@ -2,15 +2,15 @@
  # Power Reactor Optimisation Code #
  # PROCESS #
  # Power Reactor Optimisation Code #
- PROCESS_version_number__________________________________________________ (procver)_____________________     "2.1.2   R"
- Date_of_run_____________________________________________________________ (date)________________________     "11/10/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "10:25"
- User____________________________________________________________________ (username)____________________     "rhicha"  
+ PROCESS_version_number__________________________________________________ (procver)_____________________     "2.2.0   R"
+ Date_of_run_____________________________________________________________ (date)________________________     "29/10/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "16:24"
+ User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "FNSF (Menard et al. 2016)                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-646-g57e098e2"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1407-update-of-shield-cost-calculations"                                                           
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "COMMIT_MSG"                                                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-149/test_scenario_FNSF_0/IN.DAT                                                                                                                                            "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-728-g1dfa3f06"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "develop"                                                                                           
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |1418-pf-placement|\ into\ |develop|"                                               
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-6/test_scenario_FNSF_0/IN.DAT                                                                                                                                                "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -406,6 +406,16 @@
  External_cryostat_thickness_(m)_________________________________________ (ddwex)_______________________      7.0000E-02    
  Ratio_of_Central_solenoid_height_to_TF_coil_internal_height_____________ (ohhghf)______________________      7.1000E-01    
  Width_of_neutral_beam_duct_where_it_passes_between_the_TF_coils_(m)_____ (beamwd)______________________      3.1000E-01    
+ # TF coils  #
+ Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.0000E+08    
+ Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.0000E+08    
+ WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      1.1700E+02 OP 
+ WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      9.9029E+01 OP 
+ Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________     -7.7566E+12    
+ toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________      7.7565E+12    
+ Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________     -3.6215E+07    
+ Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      1.3435E+13    
+ Maximum_shear_stress_for_the_Tresca_yield_criterion_1_(Pa)______________ (sig_tf_tresca_max(1))________      1.5513E+13    
  Conductor_technology____________________________________________________ (i_tf_sup)____________________              0    
  Presence_of_TF_demountable_joints_______________________________________ (itart)_______________________              1    
  TF_inboard_leg_support_strategy_________________________________________ (i_tf_bucking)________________              0    
@@ -901,7 +911,7 @@
  # Errors and Warnings #
  # Errors and Warnings #
  PROCESS_error_status_flag_______________________________________________ (error_status)________________              2    
- Final_error_identifier__________________________________________________ (error_id)____________________            245    
+ Final_error_identifier__________________________________________________ (error_id)____________________            143    
  # End of PROCESS Output #
  # End of PROCESS Output #
  # Copy of PROCESS Input Follows #
@@ -1105,7 +1115,7 @@ ripmax   = 1.0      *Maximum allowable toroidal field ripple amplitude at plasma
 n_tf     = 12       *Number of TF coil  
 vcool    = 5.0      *Max centrepost coolant flow speed at midplane (m/s)
 vftf     = 0.2      *Coolant fraction of TFC 'cable' (i_tf_sup=1) or of TFC leg (i_tf_sup=0)
-i_tf_plane_stress = 0 
+i_tf_plane_stress = 2
 *Iteration variables: cdtfleg fcoolcp oacdcp tcpav
 
 *-------------Current Drive Variables--------------*

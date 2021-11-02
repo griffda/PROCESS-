@@ -65,7 +65,6 @@ subroutine init_all_module_vars
   use reinke_variables, only: init_reinke_variables
   use costs_module, only: init_costs_module
   use costs_2015_module, only: init_costs_2015
-  use costs_step_module, only: init_costs_step
   use divertor_ode_var, only: init_divertor_ode_var
   use green_func_ext, only: init_green_func_ext
   use kit_hcll_module, only: init_kit_hcll_module
@@ -124,7 +123,6 @@ subroutine init_all_module_vars
   call init_reinke_variables
   call init_costs_module
   call init_costs_2015
-  call init_costs_step
   call init_divertor_ode_var
   call init_green_func_ext
   call init_kit_hcll_module
