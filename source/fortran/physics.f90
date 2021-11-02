@@ -194,7 +194,29 @@ module physics_module
 
     else  ! Run PLASMOD
 
-       call setupPlasmod(num,geom,comp,ped,inp0,i_flag)
+       call setupPlasmod(i_flag, &
+         geom%k, geom%d, geom%ip, geom%k95, geom%d95, &
+         geom%r, geom%a, geom%q95, geom%bt, geom%counter, &
+         comp%fcoreraditv, comp%qdivt, comp%pradfrac, &
+         comp%pradpos, comp%psep_r, comp%psepb_q95AR, comp%protium, &
+         comp%psepplh_inf, comp%psepplh_sup, comp%c_car, comp%fuelmix, &
+         comp%comparray, comp%globtau, comp%imptype, &
+         inp0%car_qdivt, inp0%chisaw, inp0%chisawpos, inp0%contrpovr, &
+         inp0%contrpovs, inp0%cxe_psepfac, &
+         inp0%eccdeff, inp0%f_gw, inp0%f_gws, &
+         inp0%f_ni, inp0%fcdp, inp0%fpellet, inp0%fpion, inp0%gamcdothers, &
+         inp0%Hfac_inp, inp0%maxpauxor, inp0%nbcdeff, inp0%nbi_energy, &
+         inp0%pech, inp0%pfus, inp0%pheatmax, inp0%PLH, inp0%pnbi, &
+         inp0%q_control, inp0%qcd, inp0%qfus, inp0%qheat, inp0%qnbi_psepfac, &
+         inp0%sawpertau, inp0%spellet, inp0%V_loop, &
+         inp0%x_heat, inp0%x_cd, inp0%x_fus, inp0%x_control, &
+         inp0%dx_heat, inp0%dx_cd, inp0%dx_fus, inp0%dx_control, &
+         num%Ainc, num%capA, num%dgy, num%dt, num%dtinc, num%dtmax, num%dtmaxmax, &
+         num%dtmaxmin, num%dtmin, num%eopt, num%i_equiltype, num%i_impmodel, &
+         num%i_modeltype, num%ipedestal, num%iprocess, num%isawt, num%maxA, &
+         num%nchannels, num%nx, num%nxt, num%test, num%tol, num%tolmin, &
+         ped%tesep, ped%rho_t, ped%rho_n, ped%pedscal, ped%teped &
+    )
 
        if(verbose == 1) then
 
