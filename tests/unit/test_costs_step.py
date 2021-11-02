@@ -113,8 +113,10 @@ def costs_step(monkeypatch):
     monkeypatch.setattr(htv, "pgrossmw", 5e2)
     monkeypatch.setattr(costs_step, "vfi", 6.737e3)
     monkeypatch.setattr(costs_step, "vfi_star", 6.737e3)
-    monkeypatch.setattr(cs, "pth", 4.15e3)
-    monkeypatch.setattr(cs, "ptherm_star", 4.15e3)
+    monkeypatch.setattr(costs_step, "pth", 4.15e3)
+    monkeypatch.setattr(costs_step, "ptherm_star", 4.15e3)
+    monkeypatch.setattr(costs_step, "rmajor_star", 7.0)
+    monkeypatch.setattr(costs_step, "rminor_star", 7/3.6)
     # vfi values taken from Starfire reference in costs_step_module
 
     return costs_step
@@ -137,12 +139,12 @@ def test_init_costs_step():
     assert cs.fwblkcost == 0
     # assert costs_step.vfi == 0
     # assert costs_step.vfi_star == 0
-    assert cs.ptherm_star == 0
+    # assert cs.ptherm_star == 0
     #assert cs.pinjmw_star == 0
     #assert cs.fwarea_star == 0
-    assert cs.rmajor_star == 0
-    assert cs.rminor_star == 0
-    assert cs.pth == 0
+    # assert cs.rmajor_star == 0
+    # assert cs.rminor_star == 0
+    # assert cs.pth == 0
 
 def test_costs_step(monkeypatch, costs_step):
     """Test the costs_step subroutine
@@ -172,17 +174,17 @@ def test_costs_step(monkeypatch, costs_step):
     obs_vfi = costs_step.vfi
     exp_vfi = 2.120575e4
     assert pytest.approx(obs_vfi) == exp_vfi
-    obs_pth = cs.pth
+    obs_pth = costs_step.pth
     exp_pth = 30.0
     assert pytest.approx(obs_pth) == exp_pth
 
     #Test that module variables are assigned correctly
     assert costs_step.vfi_star == 6.737e3 
-    assert cs.ptherm_star == 4.15e3
+    assert costs_step.ptherm_star == 4.15e3
     #assert cs.pinjmw_star == 9.04e1
     #assert cs.fwarea_star == 9.42e2
-    assert cs.rmajor_star == 7.0e0
-    assert cs.rminor_star == 7.0/3.6
+    assert costs_step.rmajor_star == 7.0e0
+    assert costs_step.rminor_star == 7.0/3.6
 
     #Total plant direct cost with remote handling
     exp = 4.063982e3
@@ -250,8 +252,8 @@ def test_step_a22(monkeypatch, costs_step):
     monkeypatch.setattr(pv, "rmajor", 1e2)
     monkeypatch.setattr(pv, "rmajor", 1e1)
     monkeypatch.setattr(cdv, "pinjmw", 4.15e3)
-    monkeypatch.setattr(cs, "rmajor_star", 1e3)
-    monkeypatch.setattr(cs, "rminor_star", 1e3)
+    monkeypatch.setattr(costs_step, "rmajor_star", 1e3)
+    monkeypatch.setattr(costs_step, "rminor_star", 1e3)
     monkeypatch.setattr(costs_step, "vfi", 5e3)
     monkeypatch.setattr(costs_step, "vfi_star", 6.737e3)
     
@@ -275,8 +277,8 @@ def test_step_a2201(monkeypatch, costs_step):
     monkeypatch.setattr(pv, "rmajor", 1e2)
     monkeypatch.setattr(pv, "rmajor", 1e1)
     monkeypatch.setattr(cdv, "pinjmw", 4.15e3)
-    monkeypatch.setattr(cs, "rmajor_star", 1e3)
-    monkeypatch.setattr(cs, "rminor_star", 1e3)
+    monkeypatch.setattr(costs_step, "rmajor_star", 1e3)
+    monkeypatch.setattr(costs_step, "rminor_star", 1e3)
     monkeypatch.setattr(costs_step, "vfi", 5e3)
     monkeypatch.setattr(costs_step, "vfi_star", 6.737e3)
     
