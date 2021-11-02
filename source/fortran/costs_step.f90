@@ -309,105 +309,105 @@ contains
     step2201 = step2201 + step220110
   end subroutine step_a2201
 
-  subroutine step_a220101(step_ucblss, step_ucblbreed, step_ucblbe, ucblli, &
-    step_ucblvd, ucblli2o, ucbllipb, ifueltyp, step_ucfws, step_ucfwps, &
-    step_ucfwa, blktmodel, whtblli, blkttype, wtblli2o, whtblbreed, whtblvd, &
-    whtblbe, whtblss, wtbllipb, fw_armour_mass, fwmass, fwarea, ipowerflow, &
-    step220101, step22010101, step22010102, step2201010201, step2201010202, &
-    step2201010203, fwallcst, blkcst)
-    !! Account 22.01.01 : Blanket and First Wall 
-    !! author: A J Pearce, CCFE, Culham Science Centre
-    !! This routine evaluates the Account 22.01.01 (BB+FW) costs.
-    !! If ifueltyp = 0, the blanket cost is treated as capital cost
-    !! If ifueltyp = 1, the blanket cost is treated as a fuel cost,
-    !! rather than as a capital cost.
-    !! If ifueltyp = 2, the initial blanket is included as a capital cost
-    !! and the replacement blanket costs are treated as a fuel cost.
-    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    implicit none
+  ! subroutine step_a220101(step_ucblss, step_ucblbreed, step_ucblbe, ucblli, &
+  !   step_ucblvd, ucblli2o, ucbllipb, ifueltyp, step_ucfws, step_ucfwps, &
+  !   step_ucfwa, blktmodel, whtblli, blkttype, wtblli2o, whtblbreed, whtblvd, &
+  !   whtblbe, whtblss, wtbllipb, fw_armour_mass, fwmass, fwarea, ipowerflow, &
+  !   step220101, step22010101, step22010102, step2201010201, step2201010202, &
+  !   step2201010203, fwallcst, blkcst)
+  !   !! Account 22.01.01 : Blanket and First Wall 
+  !   !! author: A J Pearce, CCFE, Culham Science Centre
+  !   !! This routine evaluates the Account 22.01.01 (BB+FW) costs.
+  !   !! If ifueltyp = 0, the blanket cost is treated as capital cost
+  !   !! If ifueltyp = 1, the blanket cost is treated as a fuel cost,
+  !   !! rather than as a capital cost.
+  !   !! If ifueltyp = 2, the initial blanket is included as a capital cost
+  !   !! and the replacement blanket costs are treated as a fuel cost.
+  !   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !   implicit none
 
-    real(8), intent(in) :: step_ucblss, step_ucblbreed, step_ucblbe, ucblli, &
-      step_ucblvd, ucblli2o, ucbllipb, ifueltyp, step_ucfws, step_ucfwps, &
-      step_ucfwa, blktmodel, whtblli, blkttype, wtblli2o, whtblbreed, whtblvd, &
-      whtblbe, whtblss, wtbllipb, fw_armour_mass, fwmass, fwarea, ipowerflow 
-    real(8), intent(out) :: step22010101, step22010102, step2201010201, &
-      step2201010202, step2201010203, step220101, fwallcst, blkcst
+  !   real(8), intent(in) :: step_ucblss, step_ucblbreed, step_ucblbe, ucblli, &
+  !     step_ucblvd, ucblli2o, ucbllipb, ifueltyp, step_ucfws, step_ucfwps, &
+  !     step_ucfwa, blktmodel, whtblli, blkttype, wtblli2o, whtblbreed, whtblvd, &
+  !     whtblbe, whtblss, wtbllipb, fw_armour_mass, fwmass, fwarea, ipowerflow 
+  !   real(8), intent(out) :: step22010101, step22010102, step2201010201, &
+  !     step2201010202, step2201010203, step220101, fwallcst, blkcst
 
-    !  Local variables
-    real(8) :: step2201010204, step2201010205, step2201010206, step2201010207
+  !   !  Local variables
+  !   real(8) :: step2201010204, step2201010205, step2201010206, step2201010207
 
-    !! Account 22.01.01.01 : First wall
-    step22010101 = 1.0D-6 * (fw_armour_mass * step_ucfwa + fwmass * step_ucfws) 
+  !   !! Account 22.01.01.01 : First wall
+  !   step22010101 = 1.0D-6 * (fw_armour_mass * step_ucfwa + fwmass * step_ucfws) 
 
-    if (ifueltyp == 1) then
-       fwallcst = step22010101
-       step22010101 = 0.0D0
-    elseif (ifueltyp == 2) then
-       fwallcst = step22010101
-    else
-       fwallcst = 0.0D0
-    end if
+  !   if (ifueltyp == 1) then
+  !      fwallcst = step22010101
+  !      step22010101 = 0.0D0
+  !   elseif (ifueltyp == 2) then
+  !      fwallcst = step22010101
+  !   else
+  !      fwallcst = 0.0D0
+  !   end if
 
-    !! Account 22.01.01.02 : Breeder Blanket
+  !   !! Account 22.01.01.02 : Breeder Blanket
 
-    if (ipowerflow == 0) then
+  !   if (ipowerflow == 0) then
       
-      !! Account 22.01.01.02.01 : Blanket Multiplier Material 
-      step2201010201 = 1.0D-6 * whtblbe * step_ucblbe
+  !     !! Account 22.01.01.02.01 : Blanket Multiplier Material 
+  !     step2201010201 = 1.0D-6 * whtblbe * step_ucblbe
           
-      !! Account 22.01.01.02.02 : Blanket Breeder Material
-      if (blktmodel == 0) then
-             step2201010202 = 1.0D-6 * wtblli2o * step_ucblbreed
-      else
-             step2201010202 = 1.0D-6 * whtblbreed * step_ucblbreed
-      end if
-    else
-      if ((blkttype == 1).or.(blkttype == 2)) then
-         !  Liquid blanket (LiPb + Li)
-         !! Account 22.01.01.02.01 : Blanket Multiplier Material 
-        step2201010201 = 1.0D-6 * wtbllipb * ucbllipb * 2.99D0
-         !! Account 22.01.01.02.02 : Blanket Breeder Material 
-        step2201010202 = 1.0D-6 * whtblli * ucblli * 2.99D0
-      else
-         !  Solid blanket (Li2O + Be)
-         !! Account 22.01.01.02.01 : Blanket Multiplier Material 
-        step2201010201 = 1.0D-6 * whtblbe * step_ucblbe
-         !! Account 22.01.01.02.02 : Blanket Breeder Material
-        step2201010202 = 1.0D-6 * wtblli2o * step_ucblbreed
-      end if
-    end if
+  !     !! Account 22.01.01.02.02 : Blanket Breeder Material
+  !     if (blktmodel == 0) then
+  !            step2201010202 = 1.0D-6 * wtblli2o * step_ucblbreed
+  !     else
+  !            step2201010202 = 1.0D-6 * whtblbreed * step_ucblbreed
+  !     end if
+  !   else
+  !     if ((blkttype == 1).or.(blkttype == 2)) then
+  !        !  Liquid blanket (LiPb + Li)
+  !        !! Account 22.01.01.02.01 : Blanket Multiplier Material 
+  !       step2201010201 = 1.0D-6 * wtbllipb * ucbllipb * 2.99D0
+  !        !! Account 22.01.01.02.02 : Blanket Breeder Material 
+  !       step2201010202 = 1.0D-6 * whtblli * ucblli * 2.99D0
+  !     else
+  !        !  Solid blanket (Li2O + Be)
+  !        !! Account 22.01.01.02.01 : Blanket Multiplier Material 
+  !       step2201010201 = 1.0D-6 * whtblbe * step_ucblbe
+  !        !! Account 22.01.01.02.02 : Blanket Breeder Material
+  !       step2201010202 = 1.0D-6 * wtblli2o * step_ucblbreed
+  !     end if
+  !   end if
 
-    !! Account 22.01.01.02.03 : Blanket Steel Costs
-    step2201010203 = 1.0D-6 * whtblss * step_ucblss
+  !   !! Account 22.01.01.02.03 : Blanket Steel Costs
+  !   step2201010203 = 1.0D-6 * whtblss * step_ucblss
     
-    !! Account 22.01.01.02.04 : Blanket Vanadium Costs
-    step2201010204 = 1.0D-6 * whtblvd * step_ucblvd
+  !   !! Account 22.01.01.02.04 : Blanket Vanadium Costs
+  !   step2201010204 = 1.0D-6 * whtblvd * step_ucblvd
        
-    !! Account 22.01.01.02.05 : Blanket Carbon Cloth Costs
-    step2201010205 = 0.0D0
+  !   !! Account 22.01.01.02.05 : Blanket Carbon Cloth Costs
+  !   step2201010205 = 0.0D0
        
-    !! Account 22.01.01.02.06 : Blanket Concrete Costs
-    step2201010206 = 0.0D0
+  !   !! Account 22.01.01.02.06 : Blanket Concrete Costs
+  !   step2201010206 = 0.0D0
 
-    !! Account 22.01.01.02.07 : Blanket FLiBe Costs
-    step2201010207 = 0.0D0
+  !   !! Account 22.01.01.02.07 : Blanket FLiBe Costs
+  !   step2201010207 = 0.0D0
 
-    step22010102 = step2201010201 + step2201010202 + step2201010203 + step2201010204 &
-     + step2201010205 + step2201010206 + step2201010207
+  !   step22010102 = step2201010201 + step2201010202 + step2201010203 + step2201010204 &
+  !    + step2201010205 + step2201010206 + step2201010207
 
-    if (ifueltyp == 1) then
-       blkcst = step22010102
-       step22010102 = 0.0D0
-    elseif (ifueltyp == 2) then
-       blkcst = step22010102
-    else
-       blkcst = 0.0D0
-    end if
+  !   if (ifueltyp == 1) then
+  !      blkcst = step22010102
+  !      step22010102 = 0.0D0
+  !   elseif (ifueltyp == 2) then
+  !      blkcst = step22010102
+  !   else
+  !      blkcst = 0.0D0
+  !   end if
 
-    !! Total for Account 22.01.01
-    step220101 = step22010101 + step22010102 
+  !   !! Total for Account 22.01.01
+  !   step220101 = step22010101 + step22010102 
 
-  end subroutine step_a220101
+  ! end subroutine step_a220101
 
   subroutine step_a220102(rsldi, shldith, shldtth, vgap, scrapli, scraplo, &
     fwith, fwoth, blnktth, d_vv_in, i_shield_mat, denw, denwc, divfix, &

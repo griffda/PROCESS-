@@ -808,46 +808,85 @@ class CostsStep:
         return step2201, spares
 
     def step_a220101(self):
-        """22.01.01 Blanket and First Wall.
+        """Account 22.01.01 : Blanket and First Wall 
+        author: A J Pearce, CCFE, Culham Science Centre
+        This routine evaluates the Account 22.01.01 (BB+FW) costs.
+        If ifueltyp = 0, the blanket cost is treated as capital cost
+        If ifueltyp = 1, the blanket cost is treated as a fuel cost,
+        rather than as a capital cost.
+        If ifueltyp = 2, the initial blanket is included as a capital cost
+        and the replacement blanket costs are treated as a fuel cost.
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
         :return: 220101 cost and sub-costs
         :rtype: tuple[float, float, float, float, float, float,]
         """
-        (
-            step220101,
-            step22010101,
-            step22010102,
-            step2201010201,
-            step2201010202,
-            step2201010203,
-            cv.fwallcst,
-            cv.blkcst,
-        ) = cs.step_a220101(
-            cv.step_ucblss,
-            cv.step_ucblbreed,
-            cv.step_ucblbe,
-            cv.ucblli,
-            cv.step_ucblvd,
-            cv.ucblli2o,
-            cv.ucbllipb,
-            cv.ifueltyp,
-            cv.step_ucfws,
-            cv.step_ucfwps,
-            cv.step_ucfwa,
-            fwbsv.blktmodel,
-            fwbsv.whtblli,
-            fwbsv.blkttype,
-            fwbsv.wtblli2o,
-            fwbsv.whtblbreed,
-            fwbsv.whtblvd,
-            fwbsv.whtblbe,
-            fwbsv.whtblss,
-            fwbsv.wtbllipb,
-            fwbsv.fw_armour_mass,
-            fwbsv.fwmass,
-            bv.fwarea,
-            htv.ipowerflow,
-        )
+
+        # Account 22.01.01.01 : First wall
+        step22010101 = 1.0e-6 * (fwbsv.fw_armour_mass * cv.step_ucfwa + fwbsv.fwmass * cv.step_ucfws) 
+
+        if (cv.ifueltyp == 1):
+            cv.fwallcst = step22010101
+            step22010101 = 0.0e0
+        elif (cv.ifueltyp == 2):
+           cv.fwallcst = step22010101
+        else:
+            cv.fwallcst = 0.0e0
+
+        # Account 22.01.01.02 : Breeder Blanket
+
+        if (htv.ipowerflow == 0):
+      
+            #Account 22.01.01.02.01 : Blanket Multiplier Material 
+            step2201010201 = 1.0e-6 * fwbsv.whtblbe * cv.step_ucblbe
+                
+            #Account 22.01.01.02.02 : Blanket Breeder Material
+            if (fwbsv.blktmodel == 0):
+                    step2201010202 = 1.0e-6 * fwbsv.wtblli2o * cv.step_ucblbreed
+            else:
+                    step2201010202 = 1.0e-6 * fwbsv.whtblbreed * cv.step_ucblbreed
+        else:
+            if ((fwbsv.blkttype == 1) or (fwbsv.blkttype == 2)):
+                # Liquid blanket (LiPb + Li)
+                # Account 22.01.01.02.01 : Blanket Multiplier Material 
+                step2201010201 = 1.0e-6 * fwbsv.wtbllipb * cv.ucbllipb * 2.99e0
+                # Account 22.01.01.02.02 : Blanket Breeder Material 
+                step2201010202 = 1.0e-6 * fwbsv.whtblli * cv.ucblli * 2.99e0
+            else:
+                #  Solid blanket (Li2O + Be)
+                #Account 22.01.01.02.01 : Blanket Multiplier Material 
+                step2201010201 = 1.0e-6 * fwbsv.whtblbe * cv.step_ucblbe
+                #Account 22.01.01.02.02 : Blanket Breeder Material
+                step2201010202 = 1.0e-6 * fwbsv.wtblli2o * cv.step_ucblbreed
+
+        # Account 22.01.01.02.03 : Blanket Steel Costs
+        step2201010203 = 1.0e-6 * fwbsv.whtblss * cv.step_ucblss
+        
+        # Account 22.01.01.02.04 : Blanket Vanadium Costs
+        step2201010204 = 1.0e-6 * fwbsv.whtblvd * cv.step_ucblvd
+        
+        # Account 22.01.01.02.05 : Blanket Carbon Cloth Costs
+        step2201010205 = 0.0e0
+        
+        # Account 22.01.01.02.06 : Blanket Concrete Costs
+        step2201010206 = 0.0e0
+
+        # Account 22.01.01.02.07 : Blanket FLiBe Costs
+        step2201010207 = 0.0e0
+
+        step22010102 = step2201010201 + step2201010202 + step2201010203 + step2201010204 \
+        + step2201010205 + step2201010206 + step2201010207
+
+        if (cv.ifueltyp == 1):
+            cv.blkcst = step22010102
+            step22010102 = 0.0e0
+        elif (cv.ifueltyp == 2):
+            cv.blkcst = step22010102
+        else:
+            cv.blkcst = 0.0e0
+
+        # Total for Account 22.01.01
+        step220101 = step22010101 + step22010102 
 
         return (
             step220101,
