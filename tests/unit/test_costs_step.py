@@ -254,7 +254,7 @@ def test_step_a22(monkeypatch, costs_step):
     monkeypatch.setattr(cdv, "pinjmw", 4.15e3)
     monkeypatch.setattr(costs_step, "rmajor_star", 1e3)
     monkeypatch.setattr(costs_step, "rminor_star", 1e3)
-    monkeypatch.setattr(costs_step, "vfi", 5e3)
+    monkeypatch.setattr(costs_step, "vfi", 6.737e3)
     monkeypatch.setattr(costs_step, "vfi_star", 6.737e3)
     
     # Run and assert result in M$
@@ -279,7 +279,10 @@ def test_step_a2201(monkeypatch, costs_step):
     monkeypatch.setattr(cdv, "pinjmw", 4.15e3)
     monkeypatch.setattr(costs_step, "rmajor_star", 1e3)
     monkeypatch.setattr(costs_step, "rminor_star", 1e3)
-    monkeypatch.setattr(costs_step, "vfi", 5e3)
+    # TODO was this a bug or intended?
+    # vfi and vfi_star were both this value for only testing of 
+    # a22 and a2201, was this intentional? should fvi be 5.0e3?
+    monkeypatch.setattr(costs_step, "vfi", 6.737e3)
     monkeypatch.setattr(costs_step, "vfi_star", 6.737e3)
     
     exp1 = 2.60859165e2
