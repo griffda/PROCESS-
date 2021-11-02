@@ -77,7 +77,7 @@ class CostsStep:
         Sheffield & Milora (2016), Fusion Science and Technology, 70, 14
         """
         # Fusion Island Volume as defined by Sheffield & Milora (2016)
-        cs.vfi = (
+        self.vfi = (
             constants.pi
             * (bv.r_tf_outboard_mid + 0.5 * bv.tfthko) ** 2
             * (bv.hpfu + bv.hmax + bv.tfcth)
@@ -85,7 +85,7 @@ class CostsStep:
         cs.pth = pv.powfmw + fwbsv.emultmw + htv.pinjwp
 
         # STARFIRE Reference Values
-        cs.vfi_star = 6.737e3  # Volume of Fusion Island (m3)
+        self.vfi_star = 6.737e3  # Volume of Fusion Island (m3)
         cs.ptherm_star = 4.15e3  # Thermal Power (MW)
         cs.rmajor_star = 7.0  # Major Radius (m)
         cs.rminor_star = cs.rmajor_star / 3.6  # Minor Radius (m)
@@ -702,6 +702,8 @@ class CostsStep:
             step22010301,
             step22010302,
             step220104,
+            self.vfi,
+            self.vfi_star
         )
 
         # Output costs
@@ -957,20 +959,53 @@ class CostsStep:
         :return: cost of 22010301
         :rtype: float
         """
-        step22010301, cv.cpstcst = cs.step_a22010301(
-            cv.step_ref,
-            cv.ifueltyp,
-            cv.step_uc_cryo_al,
-            cv.step_mc_cryo_al_per,
-            cv.uccpcl1,
-            cv.uccpclb,
-            tfv.i_tf_sup,
-            tfv.whtconal,
-            tfv.n_tf,
-            tfv.whttflgs,
-            tfv.whtcp,
-            pv.itart,
-        )
+        # Initialise local vars
+        c_tf_inboard_legs = 0.0e0
+        c_tf_outboard_legs = 0.0e0
+        
+        # Copper coils
+        if (tfv.i_tf_sup == 0):
+            # Calculation taken from cost model 0: simply the cost of copper conductor
+            # masses
+            # Inflating from 1990 $ to 2017 $ at nuclear rate equates to a factor of 
+            # 2.99
+            # Inboard TF coil legs
+            c_tf_inboard_legs = 1.0e-6 * tfv.whtcp * cv.uccpcl1 * 2.99e0
+            
+            # Outboard TF coil legs
+            c_tf_outboard_legs = 1.0e-6 * tfv.whttflgs * cv.uccpclb * 2.99e0
+            
+            # Total TF coil cost
+            step22010301 = c_tf_inboard_legs + c_tf_outboard_legs
+        
+        # Superconducting coils
+        elif (tfv.i_tf_sup == 1):
+            # Original STARFIRE value in M$, scaling with fusion island volume
+            step22010301 = cv.step_ref[21] * (self.vfi / self.vfi_star)
+        
+        # Cryogenic aluminium coils
+        elif (tfv.i_tf_sup == 2):
+            # Cost approximated as the material cost of conducting Al * a 
+            # manufacturing cost factor
+            # Al conductor mass per coil * number of coils * cost per kilo *
+            # manufacturing cost factor, converted to M$
+            # step_mc_cryo_al_per = 0.2: 20% manufacturing cost
+            step22010301 = (tfv.whtconal * tfv.n_tf * cv.step_uc_cryo_al) * \
+                (cv.step_mc_cryo_al_per + 1.0e0) * 1.0e-6
+
+        # ifueltyp: consider centrepost cost as fuel, capital or both?
+        # cpstcst used later in coelc_step()
+        cv.cpstcst = 0.0e0  # TART centrepost
+        if (pv.itart == 1):
+            if (cv.ifueltyp == 1):
+                # Treat centrepost cost as fuel cost
+                cv.cpstcst = c_tf_inboard_legs
+                if (tfv.i_tf_sup == 0):
+                    # Subtract from capital cost
+                    step22010301 = step22010301 - c_tf_inboard_legs
+            elif (cv.ifueltyp == 2):
+                # Treat centrepost cost as capital and fuel cost
+                cv.cpstcst = c_tf_inboard_legs
 
         return step22010301
 
@@ -1059,7 +1094,7 @@ class CostsStep:
         :rtype: float
         """
         (step220301, step220302, step220303, step220304, step2203) = cs.step_a2203(
-            cv.step_ref, cs.vfi, cs.vfi_star
+            cv.step_ref, self.vfi, self.vfi_star
         )
 
         # Output costs
@@ -1155,7 +1190,7 @@ class CostsStep:
             step220606,
             step220607,
             step220608,
-        ) = cs.step_a2206(cv.step_ref, cs.pth, cs.ptherm_star)
+        ) = cs.step_a2206(cv.step_ref, cs.pth, cs.ptherm_star, self.vfi, self.vfi_star)
 
         # Output costs
         if self.iprint == 1 and cv.output_costs == 1:

@@ -23,7 +23,8 @@ module costs_step_module
               step27, step91, step92, step93, fwblkcost
 
   ! Scaling Properties
-  real(8) :: vfi, vfi_star, ptherm_star, &
+  ! vfi, vfi_star
+  real(8) ::  ptherm_star, &
               rmajor_star, rminor_star, pth
 
 contains
@@ -43,8 +44,8 @@ contains
     step92 = 0.0D0
     step93 = 0.0D0
     fwblkcost = 0.0D0
-    vfi = 0.0D0
-    vfi_star = 0.0D0
+    ! vfi = 0.0D0
+    ! vfi_star = 0.0D0
     ptherm_star = 0.0D0
     rmajor_star = 0.0D0
     rminor_star = 0.0D0
@@ -204,7 +205,7 @@ contains
     rmajor, rminor, step220101, step220102, step22010301, &
     step22010302, step220104, step2201, spares, divcst, cdcost, step22010303, &
     step22010304, step220105, step220106, step220107, step220108, &
-    step220109, step220110)
+    step220109, step220110, vfi, vfi_star)
     !! Account 22.01 : Reactor Equipment
     !! author: S I Muldrew, CCFE, Culham Science Centre
     !! None
@@ -217,7 +218,7 @@ contains
     real(8), dimension(:), intent(in) :: step_ref
     real(8), intent(in) :: ifueltyp, fcdfuel, &
       rmajor, rminor, step220101, step220102, step22010301, step22010302, &
-      step220104
+      step220104, vfi, vfi_star
     real(8), intent(out) :: step2201, spares, divcst, cdcost, &
       step22010303, step22010304, step220105, step220106, &
       step220107, step220108, step220109, step220110
@@ -476,80 +477,80 @@ contains
 
   ! end subroutine step_a220102
 
-  subroutine step_a22010301(step_ref, ifueltyp, step_uc_cryo_al, &
-      step_mc_cryo_al_per, uccpcl1, uccpclb, &
-      i_tf_sup, whtconal, n_tf, whttflgs, whtcp, itart, step22010301, cpstcst)    
-    !! 22.01.03.01 TF Coils
-    implicit none
+  ! subroutine step_a22010301(step_ref, ifueltyp, step_uc_cryo_al, &
+  !     step_mc_cryo_al_per, uccpcl1, uccpclb, &
+  !     i_tf_sup, whtconal, n_tf, whttflgs, whtcp, itart, step22010301, cpstcst)    
+  !   !! 22.01.03.01 TF Coils
+  !   implicit none
     
-    ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: ifueltyp, step_uc_cryo_al, &
-      step_mc_cryo_al_per, uccpcl1, uccpclb, &
-      i_tf_sup, whtconal, n_tf, whttflgs, whtcp, itart
-    real(8), intent(out) :: step22010301, cpstcst
-    !! Cost of TF coils in M$
+  !   ! Arguments
+  !   real(8), dimension(:), intent(in) :: step_ref
+  !   real(8), intent(in) :: ifueltyp, step_uc_cryo_al, &
+  !     step_mc_cryo_al_per, uccpcl1, uccpclb, &
+  !     i_tf_sup, whtconal, n_tf, whttflgs, whtcp, itart
+  !   real(8), intent(out) :: step22010301, cpstcst
+  !   !! Cost of TF coils in M$
     
-    ! Declare local vars
-    real(8) :: c_tf_inboard_legs
-    !! Cost of TF coil inboard legs in M$
-    real(8) :: c_tf_outboard_legs
-    !! Cost of TF coil outboard legs in M$
+  !   ! Declare local vars
+  !   real(8) :: c_tf_inboard_legs
+  !   !! Cost of TF coil inboard legs in M$
+  !   real(8) :: c_tf_outboard_legs
+  !   !! Cost of TF coil outboard legs in M$
     
-    ! Initialise local vars
-    c_tf_inboard_legs = 0.0D0
-    c_tf_outboard_legs = 0.0D0
+  !   ! Initialise local vars
+  !   c_tf_inboard_legs = 0.0D0
+  !   c_tf_outboard_legs = 0.0D0
     
-    ! Copper coils
-    if (i_tf_sup == 0) then
-      ! Calculation taken from cost model 0: simply the cost of copper conductor
-      ! masses
-      ! Inflating from 1990 $ to 2017 $ at nuclear rate equates to a factor of 
-      ! 2.99
-      ! Inboard TF coil legs
-      c_tf_inboard_legs = 1.0D-6 * whtcp * uccpcl1 * 2.99D0
+  !   ! Copper coils
+  !   if (i_tf_sup == 0) then
+  !     ! Calculation taken from cost model 0: simply the cost of copper conductor
+  !     ! masses
+  !     ! Inflating from 1990 $ to 2017 $ at nuclear rate equates to a factor of 
+  !     ! 2.99
+  !     ! Inboard TF coil legs
+  !     c_tf_inboard_legs = 1.0D-6 * whtcp * uccpcl1 * 2.99D0
       
-      ! Outboard TF coil legs
-      c_tf_outboard_legs = 1.0D-6 * whttflgs * uccpclb * 2.99D0
+  !     ! Outboard TF coil legs
+  !     c_tf_outboard_legs = 1.0D-6 * whttflgs * uccpclb * 2.99D0
       
-      ! Total TF coil cost
-      step22010301 = c_tf_inboard_legs + c_tf_outboard_legs
-    endif
+  !     ! Total TF coil cost
+  !     step22010301 = c_tf_inboard_legs + c_tf_outboard_legs
+  !   endif
       
-    ! Superconducting coils
-    if (i_tf_sup == 1) then
-      ! Original STARFIRE value in M$, scaling with fusion island volume
-      step22010301 = step_ref(22) * (vfi / vfi_star)
-    endif
+  !   ! Superconducting coils
+  !   if (i_tf_sup == 1) then
+  !     ! Original STARFIRE value in M$, scaling with fusion island volume
+  !     step22010301 = step_ref(22) * (vfi / vfi_star)
+  !   endif
     
-    ! Cryogenic aluminium coils
-    if (i_tf_sup == 2) then
-      ! Cost approximated as the material cost of conducting Al * a 
-      ! manufacturing cost factor
-      ! Al conductor mass per coil * number of coils * cost per kilo *
-      ! manufacturing cost factor, converted to M$
-      ! step_mc_cryo_al_per = 0.2: 20% manufacturing cost
-      step22010301 = (whtconal * n_tf * step_uc_cryo_al) * &
-        (step_mc_cryo_al_per + 1.0D0) * 1.0D-6
-    endif
+  !   ! Cryogenic aluminium coils
+  !   if (i_tf_sup == 2) then
+  !     ! Cost approximated as the material cost of conducting Al * a 
+  !     ! manufacturing cost factor
+  !     ! Al conductor mass per coil * number of coils * cost per kilo *
+  !     ! manufacturing cost factor, converted to M$
+  !     ! step_mc_cryo_al_per = 0.2: 20% manufacturing cost
+  !     step22010301 = (whtconal * n_tf * step_uc_cryo_al) * &
+  !       (step_mc_cryo_al_per + 1.0D0) * 1.0D-6
+  !   endif
 
-    ! ifueltyp: consider centrepost cost as fuel, capital or both?
-    ! cpstcst used later in coelc_step()
-    cpstcst = 0.0D0  ! TART centrepost
-    if (itart == 1) then
-      if (ifueltyp == 1) then
-        ! Treat centrepost cost as fuel cost
-        cpstcst = c_tf_inboard_legs
-        if (i_tf_sup == 0) then
-          ! Subtract from capital cost
-          step22010301 = step22010301 - c_tf_inboard_legs
-        endif
-      elseif (ifueltyp == 2) then
-        ! Treat centrepost cost as capital and fuel cost
-        cpstcst = c_tf_inboard_legs
-      end if
-    endif
-  end subroutine step_a22010301
+  !   ! ifueltyp: consider centrepost cost as fuel, capital or both?
+  !   ! cpstcst used later in coelc_step()
+  !   cpstcst = 0.0D0  ! TART centrepost
+  !   if (itart == 1) then
+  !     if (ifueltyp == 1) then
+  !       ! Treat centrepost cost as fuel cost
+  !       cpstcst = c_tf_inboard_legs
+  !       if (i_tf_sup == 0) then
+  !         ! Subtract from capital cost
+  !         step22010301 = step22010301 - c_tf_inboard_legs
+  !       endif
+  !     elseif (ifueltyp == 2) then
+  !       ! Treat centrepost cost as capital and fuel cost
+  !       cpstcst = c_tf_inboard_legs
+  !     end if
+  !   endif
+  ! end subroutine step_a22010301
 
   subroutine step_a22010302(iohcl, twopi, dcopper, step_uccase, step_uccu, &
     step_cconshpf, step_ucfnc, step_cconfix, step_ucsc, step_ucwindpf, &
@@ -820,7 +821,7 @@ contains
 
   subroutine step_a2206(step_ref, pth, ptherm_star, step2206, spares, &
     step220601, step220602, step220603, step220604, step220605, step220606, &
-    step220607, step220608)
+    step220607, step220608, vfi, vfi_star)
     !! Account 22.06 : Other Reactor Plant Equipment
     !! author: S I Muldrew, CCFE, Culham Science Centre
     !! This routine evaluates the Account 22.06 (Other Reactor
@@ -830,7 +831,7 @@ contains
   
     ! Arguments
     real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: pth, ptherm_star
+    real(8), intent(in) :: pth, ptherm_star, vfi, vfi_star
     real(8), intent(out) :: step2206, spares, step220601, step220602, &
       step220603, step220604, step220605, step220606, step220607, step220608
   

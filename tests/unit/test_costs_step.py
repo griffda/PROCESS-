@@ -111,8 +111,8 @@ def costs_step(monkeypatch):
     monkeypatch.setattr(cv, "step_con", 1.5e-1)
     monkeypatch.setattr(bldgsv, "efloor", 1e4)
     monkeypatch.setattr(htv, "pgrossmw", 5e2)
-    monkeypatch.setattr(cs, "vfi", 6.737e3)
-    monkeypatch.setattr(cs, "vfi_star", 6.737e3)
+    monkeypatch.setattr(costs_step, "vfi", 6.737e3)
+    monkeypatch.setattr(costs_step, "vfi_star", 6.737e3)
     monkeypatch.setattr(cs, "pth", 4.15e3)
     monkeypatch.setattr(cs, "ptherm_star", 4.15e3)
     # vfi values taken from Starfire reference in costs_step_module
@@ -135,8 +135,8 @@ def test_init_costs_step():
     assert cs.step92 == 0
     assert cs.step93 == 0
     assert cs.fwblkcost == 0
-    assert cs.vfi == 0
-    assert cs.vfi_star == 0
+    # assert costs_step.vfi == 0
+    # assert costs_step.vfi_star == 0
     assert cs.ptherm_star == 0
     #assert cs.pinjmw_star == 0
     #assert cs.fwarea_star == 0
@@ -163,11 +163,13 @@ def test_costs_step(monkeypatch, costs_step):
     monkeypatch.setattr(pv, "powfmw", 10.0)
     monkeypatch.setattr(fwbsv, "emultmw", 10.0)
     monkeypatch.setattr(htv, "pinjwp", 10.0)
+    monkeypatch.setattr(costs_step, "vfi", 5e3)
+    monkeypatch.setattr(costs_step, "vfi_star", 6.737e3)
 
     costs_step.run()
 
     #Test that module variables are calculated correctly
-    obs_vfi = cs.vfi
+    obs_vfi = costs_step.vfi
     exp_vfi = 2.120575e4
     assert pytest.approx(obs_vfi) == exp_vfi
     obs_pth = cs.pth
@@ -175,7 +177,7 @@ def test_costs_step(monkeypatch, costs_step):
     assert pytest.approx(obs_pth) == exp_pth
 
     #Test that module variables are assigned correctly
-    assert cs.vfi_star == 6.737e3 
+    assert costs_step.vfi_star == 6.737e3 
     assert cs.ptherm_star == 4.15e3
     #assert cs.pinjmw_star == 9.04e1
     #assert cs.fwarea_star == 9.42e2
@@ -225,7 +227,7 @@ def test_step_a21(monkeypatch, costs_step):
     :type costs_step: process.costs_step.CostsStep
     """
     # Mock module vars
-    monkeypatch.setattr(cs, "step21", 0.0)
+    monkeypatch.setattr(costs_step, "step21", 0.0)
 
     # Run and assert result in M$
     costs_step.step_a21()
@@ -250,6 +252,8 @@ def test_step_a22(monkeypatch, costs_step):
     monkeypatch.setattr(cdv, "pinjmw", 4.15e3)
     monkeypatch.setattr(cs, "rmajor_star", 1e3)
     monkeypatch.setattr(cs, "rminor_star", 1e3)
+    monkeypatch.setattr(costs_step, "vfi", 5e3)
+    monkeypatch.setattr(costs_step, "vfi_star", 6.737e3)
     
     # Run and assert result in M$
     costs_step.step_a22()
@@ -273,6 +277,8 @@ def test_step_a2201(monkeypatch, costs_step):
     monkeypatch.setattr(cdv, "pinjmw", 4.15e3)
     monkeypatch.setattr(cs, "rmajor_star", 1e3)
     monkeypatch.setattr(cs, "rminor_star", 1e3)
+    monkeypatch.setattr(costs_step, "vfi", 5e3)
+    monkeypatch.setattr(costs_step, "vfi_star", 6.737e3)
     
     exp1 = 2.60859165e2
     exp2 = 1.0199574292e1
@@ -382,8 +388,8 @@ def test_step_a22010301(monkeypatch, costs_step):
     monkeypatch.setattr(tfv, "whttflgs", 0.0)
     monkeypatch.setattr(tfv, "whtcp", 1.0e4)
     monkeypatch.setattr(pv, "itart", 0)
-    monkeypatch.setattr(cs, "vfi", 5e3)
-    monkeypatch.setattr(cs, "vfi_star", 6.737e3)
+    monkeypatch.setattr(costs_step, "vfi", 5e3)
+    monkeypatch.setattr(costs_step, "vfi_star", 6.737e3)
     
     # Copper coils
     monkeypatch.setattr(tfv, "i_tf_sup", 0)
@@ -593,8 +599,8 @@ def test_step_a27(monkeypatch, costs_step):
     monkeypatch.setattr(tfv, "whttflgs", 0.0)
     monkeypatch.setattr(tfv, "whtcp", 1.0e4)
     monkeypatch.setattr(pv, "itart", 0)
-    monkeypatch.setattr(cs, "vfi", 5e3)
-    monkeypatch.setattr(cs, "vfi_star", 6.737e3)
+    monkeypatch.setattr(costs_step, "vfi", 5e3)
+    monkeypatch.setattr(costs_step, "vfi_star", 6.737e3)
     
     # Copper coils
     monkeypatch.setattr(tfv, "i_tf_sup", 0)
