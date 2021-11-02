@@ -130,12 +130,12 @@ def test_init_costs_step():
     # assert cs.step21 == 0
     # assert cs.step22 == 0
     # assert cs.step23 == 0
-    assert cs.step24 == 0
-    assert cs.step25 == 0
-    assert cs.step27 == 0
-    assert cs.step91 == 0
-    assert cs.step92 == 0
-    assert cs.step93 == 0
+    # assert cs.step24 == 0
+    # assert cs.step25 == 0
+    # assert cs.step27 == 0
+    # assert cs.step91 == 0
+    # assert cs.step92 == 0
+    # assert cs.step93 == 0
     assert cs.fwblkcost == 0
     # assert costs_step.vfi == 0
     # assert costs_step.vfi_star == 0
@@ -557,11 +557,11 @@ def test_step_a24(monkeypatch, costs_step):
     :type costs_step: process.costs_step.CostsStep
     """
     # Mock module var set in subroutine
-    monkeypatch.setattr(cs, "step24", 0.0)
+    monkeypatch.setattr(costs_step, "step24", 0.0)
 
     exp = 9.168104e1
     costs_step.step_a24()
-    obs = cs.step24
+    obs = costs_step.step24
     assert pytest.approx(obs) == exp
 
 def test_step_a25(monkeypatch, costs_step):
@@ -573,11 +573,11 @@ def test_step_a25(monkeypatch, costs_step):
     :type costs_step: process.costs_step.CostsStep
     """
     # Mock module var set in subroutine
-    monkeypatch.setattr(cs, "step25", 0.0)
+    monkeypatch.setattr(costs_step, "step25", 0.0)
 
     exp = 1.050024e2
     costs_step.step_a25()
-    obs = cs.step25
+    obs = costs_step.step25
     assert pytest.approx(obs) == exp
 
 def test_step_a27(monkeypatch, costs_step):
@@ -612,7 +612,7 @@ def test_step_a27(monkeypatch, costs_step):
 
     exp = 304.798694
     costs_step.step_a27()
-    obs = cs.step27
+    obs = costs_step.step27
     assert pytest.approx(obs) == exp
 
 def test_step_indirect_costs(monkeypatch, costs_step):
@@ -625,15 +625,15 @@ def test_step_indirect_costs(monkeypatch, costs_step):
     """
     # Mock module vars passed and being set
     monkeypatch.setattr(cv, "cdirt", 1.0e3)
-    monkeypatch.setattr(cs, "step91", 0.0)
-    monkeypatch.setattr(cs, "step92", 0.0)
-    monkeypatch.setattr(cs, "step93", 0.0)
+    monkeypatch.setattr(costs_step, "step91", 0.0)
+    monkeypatch.setattr(costs_step, "step92", 0.0)
+    monkeypatch.setattr(costs_step, "step93", 0.0)
     
     # Run and assert module vars for costs
     costs_step.step_indirect_costs()
-    assert cs.step91 == 300
-    assert cs.step92 == 325
-    assert cs.step93 == 150
+    assert costs_step.step91 == 300
+    assert costs_step.step92 == 325
+    assert costs_step.step93 == 150
 
 def test_coelc_step(monkeypatch, costs_step):
     """Test electricity cost calculations

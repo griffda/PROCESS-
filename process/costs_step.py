@@ -114,13 +114,13 @@ class CostsStep:
         self.step_a25()
 
         # Total plant direct cost without remote handling
-        cv.cdirt = self.step20 + self.step21 + self.step22 + self.step23 + cs.step24 + cs.step25
+        cv.cdirt = self.step20 + self.step21 + self.step22 + self.step23 + self.step24 + self.step25
 
         # Account 27 : Remote Handling
         self.step_a27()
 
         # Total plant direct cost with remote handling
-        cv.cdirt = cv.cdirt + cs.step27
+        cv.cdirt = cv.cdirt + self.step27
         if self.iprint == 1 and cv.output_costs == 1:
             po.oshead(self.outfile, "Plant Direct Cost")
             po.ocosts(self.outfile, "(cdirt)", "Plant direct cost (M$)", cv.cdirt)
@@ -129,7 +129,7 @@ class CostsStep:
         self.step_indirect_costs()
 
         # Constructed cost
-        cv.concost = cv.cdirt + cs.step91 + cs.step92 + cs.step93
+        cv.concost = cv.cdirt + self.step91 + self.step92 + self.step93
         if self.iprint == 1 and cv.output_costs == 1:
             po.oshead(self.outfile, "Constructed Cost")
             po.ocosts(self.outfile, "(concost)", "Constructed Cost (M$)", cv.concost)
