@@ -1093,23 +1093,38 @@ class CostsStep:
         return step22010302
 
     def step_a220104(self):
-        """22.01.04 Auxiliary Heating and Current Drive.
+        """22.01.04 Auxiliary Heating and Current Drive
+        Returns cost of auxiliary HCD
+        HCD cost = cost per injected Watt of power * injected Watts
 
         :return: cost 220104
         :rtype: float
         """
-        step220104, cv.cdcost = cs.step_a220104(
-            cv.step_ref,
-            cv.fcdfuel,
-            cv.ucich,
-            cv.uclh,
-            cv.ifueltyp,
-            cdv.iefrf,
-            cdv.iefrffix,
-            cdv.echpwr,
-            cdv.pnbitot,
-            cdv.plhybd,
-        )
+        # Cost per Watt depends on technology/hardware used;
+        # inflation adjustment applied as appropriate to source for costs
+        # (tech adjusted from 1990 $ is costed as per Cost Model 0)
+
+        # NBI cost per injected Watt (adjusted from 2020 $):
+        step220104 = cdv.pnbitot * cv.step_ref[68] * (229.0e0/258.84e0)
+
+        # EC or EBW cost per injected Watt (adjusted from 2020 $):
+        step220104 += cdv.echpwr * cv.step_ref[69] * (229.0e0/258.84e0)
+
+        if ( (cdv.iefrf == 2) or (cdv.iefrffix == 2) ):
+            # Ion Cyclotron current drive (adjusted from 1990 $):
+            step220104 += 1.0e-6 * cv.ucich * (1.0e6*cdv.plhybd) * (229.0e0/76.7e0) 
+
+        if ( (cdv.iefrf == 1) or (cdv.iefrf == 1) or \
+                (cdv.iefrf == 4) or (cdv.iefrf == 4) or \
+                (cdv.iefrf == 6) or (cdv.iefrf == 6) ):
+            # Lower Hybrid system (adjusted from 1990 $):
+            step220104 += 1.0e-6 * cv.uclh * (1.0e6*cdv.plhybd) * (229.0e0/76.7e0)
+
+        if ( cv.ifueltyp == 1 ):
+            # fraction `fcdfuel` of HCD cost treated as fuel cost
+            # step220104 and cv.cdcost: Cost of HCD in M$
+            step220104 *= 1.0e0-cv.fcdfuel
+            cv.cdcost = step220104
 
         return step220104
 
