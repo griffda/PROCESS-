@@ -134,6 +134,11 @@ if __name__ == '__main__':
     labels["plascur/1d6"] = r'$I_{\mathrm{p}}$[$MA$]'
     labels["n_cycle"] = r'$N_{\mathrm{cycle}}$'
     labels['alstroh'] = r'$\sigma_{\mathrm{oh}}^{\mathrm{max}}$[$Pa$]'
+    labels['ohcth'] = r'$\Delta R_{\mathrm{CS}}$[$m$]'
+    labels['bore'] = r'$\Delta R_{\mathrm{bore}}$[$m$]'
+    labels['dnla'] = r'$\bar{n}_{\mathrm{e}}$[$m^{-3}$]'
+    labels['dnla_gw'] = r'$f_{\mathrm{GW}}$'
+    labels['normalised_toroidal_beta'] = r'$\beta_{N,\mathrm{tor}}$'
     # ------------
 
     # nsweep varible dict
@@ -277,7 +282,9 @@ if __name__ == '__main__':
     legend_size    = 12
     axis_font_size = 18
     # -------------
-
+    quick_fix = ['600MPa','600MPa','800MPa','800MPa']
+    quick_fix_2 = ['b','b','g','g']
+    #quick_fix = {r'$\sigma_{\mathrm{oh}}^{\mathrm{max}}=600MPa$', r'$\sigma_{\mathrm{oh}}^{\mathrm{max}}=600MPa$', r'$\sigma_{\mathrm{oh}}^{\mathrm{max}}=800MPa$', r'$\sigma_{\mathrm{oh}}^{\mathrm{max}}=800MPa$'}
 
     # Case of a set of 1D scans 
     # ----------------------------------------------------------------------------------------------
@@ -369,7 +376,7 @@ if __name__ == '__main__':
                     print("{} : {}".format(output_name, output_arrays[input_file][output_name]))
                 print()
 
-
+        i=0
         # Plot section
         # ------------
         for output_name in output_names:
@@ -382,7 +389,6 @@ if __name__ == '__main__':
             for input_file in input_files:
                 
                 # Legend label formating
-                labl = input_file
                 if "/MFILE.DAT" in input_file:
                     labl = input_file[:-10]
                 elif "MFILE.DAT" in input_file:
