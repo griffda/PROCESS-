@@ -1212,14 +1212,29 @@ class CostsStep:
         return step2203
 
     def step_a2204(self):
-        """Account 22.04: Waste Treatment and Disposal.
+        """Account 22.04 : Waste Treatment and Disposal
+        author: S I Muldrew, CCFE, Culham Science Centre
+        This routine evaluates the Account 22.04 (Waste Treatment
+        and Disposal) costs.
+        STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
 
         :return: cost 2204
         :rtype: float
         """
-        step2204, step220401, step220402, step220403 = cs.step_a2204(
-            cv.step_ref, cs.pth, cs.ptherm_star
-        )
+        # 22.04.01 Liquid Waste
+        # Original STARFIRE value, scaling with thermal power
+        step220401 = cv.step_ref[37] * (cs.pth / cs.ptherm_star)**0.6e0 
+        step2204 = step220401
+    
+        # 22.04.02 Gaseous Waste
+        # Original STARFIRE value, scaling with thermal power
+        step220402 = cv.step_ref[38] * (cs.pth / cs.ptherm_star)**0.6e0 
+        step2204 += step220402
+    
+        # 22.04.03 Solid Waste
+        # Original STARFIRE value, scaling with thermal power
+        step220403 = cv.step_ref[39] * (cs.pth / cs.ptherm_star)**0.6e0 
+        step2204 += step220403
 
         # Output costs
         if self.iprint == 1 and cv.output_costs == 1:
@@ -1238,12 +1253,21 @@ class CostsStep:
         return step2204
 
     def step_a2205(self):
-        """Account 22.05: Fuel Handling and Storage.
+        """Account 22.05 : Fuel Handling and Storage
+        author: S I Muldrew, CCFE, Culham Science Centre
+        This routine evaluates the Account 22.05 (Fuel Handling
+        and Storage) costs.
+        STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
 
         :return: 2205 cost and spares
         :rtype: tuple[float, float]
         """
-        step2205, spares = cs.step_a2205(cv.step_ref, cs.pth, cs.ptherm_star)
+        # 22.05 Fuel Handling and Storage
+        # Original STARFIRE value, scaling with thermal power
+        step2205 = cv.step_ref[40] * (cs.pth / cs.ptherm_star)**0.6e0 
+
+        # STARFIRE percentage for spares
+        spares = 5.026e-2 * step2205
 
         # Output costs
         if self.iprint == 1 and cv.output_costs == 1:
@@ -1262,23 +1286,60 @@ class CostsStep:
         return step2205, spares
 
     def step_a2206(self):
-        """Account 22.06: Other Reactor Plant Equipment.
+        """Account 22.06 : Other Reactor Plant Equipment
+        author: S I Muldrew, CCFE, Culham Science Centre
+        This routine evaluates the Account 22.06 (Other Reactor
+        Plant Equipment) costs.
+        STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
 
         :return: 2206 cost and spares
         :rtype: tuple[float, float]
         """
-        (
-            step2206,
-            spares,
-            step220601,
-            step220602,
-            step220603,
-            step220604,
-            step220605,
-            step220606,
-            step220607,
-            step220608,
-        ) = cs.step_a2206(cv.step_ref, cs.pth, cs.ptherm_star, self.vfi, self.vfi_star)
+
+        # 22.06.01 Maintenance Equipment
+        # Original STARFIRE value, scaling with fusion island volume
+        # Depreciated by the remote handling scaling in cost account 27. 
+        step220601 = 0.0 # step_ref(42) * (vfi / vfi_star)**(2.0D0/3.0D0)
+        step2206 = step220601
+        # STARFIRE percentage for spares
+        spares =  4.308e-1 * step220601
+    
+        # 22.06.02 Special Heating Systems
+        # Original STARFIRE value, scaling with thermal power
+        step220602 = cv.step_ref[42] * (cs.pth / cs.ptherm_star)**0.6e0
+        step2206 += step220602
+    
+        # 22.06.03 Coolant Storage
+        # Original STARFIRE value, scaling with thermal power
+        step220603 = cv.step_ref[43] * (cs.pth / cs.ptherm_star)**0.6e0
+        step2206 += step220603
+    
+        # 22.06.04 Gas System
+        # Original STARFIRE value, scaling with fusion island volume
+        step220604 = cv.step_ref[44] * (self.vfi / self.vfi_star)**(2.0e0/3.0e0)
+        step2206 += step220604
+    
+        # 22.06.05 Inert Atmosphere System
+        # Original STARFIRE value, scaling with thermal power
+        step220605 = cv.step_ref[45] * (cs.pth / cs.ptherm_star)**0.6e0
+        step2206 += step220605
+    
+        # 22.06.06 Fluid Leak Detection
+        # Original STARFIRE value, scaling with thermal power
+        step220606 = cv.step_ref[46] * (cs.pth / cs.ptherm_star)**0.6e0
+        step2206 += step220606
+    
+        # 22.06.07 Closed Loop Coolant System
+        # Original STARFIRE value, scaling with thermal power
+        step220607 = cv.step_ref[47] * (cs.pth / cs.ptherm_star)**0.6e0
+        step2206 += step220607
+        # STARFIRE percentage for spares
+        spares += 8.3e-1 * (cs.pth / cs.ptherm_star)**0.6e0
+    
+        # 22.06.08 Standby Cooling System
+        # Original STARFIRE value, scaling with thermal power
+        step220608 = cv.step_ref[48] * (cs.pth / cs.ptherm_star)**0.6e0
+        step2206 += step220608
 
         # Output costs
         if self.iprint == 1 and cv.output_costs == 1:

@@ -761,129 +761,129 @@ contains
   !   step2203 = step2203 + step220304
   ! end subroutine step_a2203
 
-  subroutine step_a2204(step_ref, pth, ptherm_star, step2204, step220401, &
-    step220402, step220403)
-    !! Account 22.04 : Waste Treatment and Disposal
-    !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! This routine evaluates the Account 22.04 (Waste Treatment
-    !! and Disposal) costs.
-    !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    implicit none
+  ! subroutine step_a2204(step_ref, pth, ptherm_star, step2204, step220401, &
+  !   step220402, step220403)
+  !   !! Account 22.04 : Waste Treatment and Disposal
+  !   !! author: S I Muldrew, CCFE, Culham Science Centre
+  !   !! This routine evaluates the Account 22.04 (Waste Treatment
+  !   !! and Disposal) costs.
+  !   !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+  !   implicit none
   
-    ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: pth, ptherm_star
-    real(8), intent(out) :: step2204, step220401, step220402, step220403
+  !   ! Arguments
+  !   real(8), dimension(:), intent(in) :: step_ref
+  !   real(8), intent(in) :: pth, ptherm_star
+  !   real(8), intent(out) :: step2204, step220401, step220402, step220403
   
-    ! Initialise as zero
-    step2204 = 0.0D0
+  !   ! Initialise as zero
+  !   step2204 = 0.0D0
      
-    ! 22.04.01 Liquid Waste
-    ! Original STARFIRE value, scaling with thermal power
-    step220401 = step_ref(38) * (pth / ptherm_star)**0.6D0 
-    step2204 = step2204 + step220401
+  !   ! 22.04.01 Liquid Waste
+  !   ! Original STARFIRE value, scaling with thermal power
+  !   step220401 = step_ref(38) * (pth / ptherm_star)**0.6D0 
+  !   step2204 = step2204 + step220401
   
-    ! 22.04.02 Gaseous Waste
-    ! Original STARFIRE value, scaling with thermal power
-    step220402 = step_ref(39) * (pth / ptherm_star)**0.6D0 
-    step2204 = step2204 + step220402
+  !   ! 22.04.02 Gaseous Waste
+  !   ! Original STARFIRE value, scaling with thermal power
+  !   step220402 = step_ref(39) * (pth / ptherm_star)**0.6D0 
+  !   step2204 = step2204 + step220402
   
-    ! 22.04.03 Solid Waste
-    ! Original STARFIRE value, scaling with thermal power
-    step220403 = step_ref(40) * (pth / ptherm_star)**0.6D0 
-    step2204 = step2204 + step220403
-  end subroutine step_a2204
+  !   ! 22.04.03 Solid Waste
+  !   ! Original STARFIRE value, scaling with thermal power
+  !   step220403 = step_ref(40) * (pth / ptherm_star)**0.6D0 
+  !   step2204 = step2204 + step220403
+  ! end subroutine step_a2204
 
-  subroutine step_a2205(step_ref, pth, ptherm_star, step2205, spares)
-    !! Account 22.05 : Fuel Handling and Storage
-    !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! This routine evaluates the Account 22.05 (Fuel Handling
-    !! and Storage) costs.
-    !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    implicit none
+  ! subroutine step_a2205(step_ref, pth, ptherm_star, step2205, spares)
+  !   !! Account 22.05 : Fuel Handling and Storage
+  !   !! author: S I Muldrew, CCFE, Culham Science Centre
+  !   !! This routine evaluates the Account 22.05 (Fuel Handling
+  !   !! and Storage) costs.
+  !   !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+  !   implicit none
   
-    ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: pth, ptherm_star
-    real(8), intent(out) :: step2205, spares
+  !   ! Arguments
+  !   real(8), dimension(:), intent(in) :: step_ref
+  !   real(8), intent(in) :: pth, ptherm_star
+  !   real(8), intent(out) :: step2205, spares
   
-    ! Initialise as zero
-    step2205 = 0.0D0
-    spares = 0.0D0
+  !   ! Initialise as zero
+  !   step2205 = 0.0D0
+  !   spares = 0.0D0
      
-    ! 22.05 Fuel Handling and Storage
-    ! Original STARFIRE value, scaling with thermal power
-    step2205 = step_ref(41) * (pth / ptherm_star)**0.6D0 
+  !   ! 22.05 Fuel Handling and Storage
+  !   ! Original STARFIRE value, scaling with thermal power
+  !   step2205 = step_ref(41) * (pth / ptherm_star)**0.6D0 
 
-    ! STARFIRE percentage for spares
-    spares = spares + 5.026D-2 * step2205
-  end subroutine step_a2205
+  !   ! STARFIRE percentage for spares
+  !   spares = spares + 5.026D-2 * step2205
+  ! end subroutine step_a2205
 
-  subroutine step_a2206(step_ref, pth, ptherm_star, step2206, spares, &
-    step220601, step220602, step220603, step220604, step220605, step220606, &
-    step220607, step220608, vfi, vfi_star)
-    !! Account 22.06 : Other Reactor Plant Equipment
-    !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! This routine evaluates the Account 22.06 (Other Reactor
-    !! Plant Equipment) costs.
-    !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    implicit none
+  ! subroutine step_a2206(step_ref, pth, ptherm_star, step2206, spares, &
+  !   step220601, step220602, step220603, step220604, step220605, step220606, &
+  !   step220607, step220608, vfi, vfi_star)
+  !   !! Account 22.06 : Other Reactor Plant Equipment
+  !   !! author: S I Muldrew, CCFE, Culham Science Centre
+  !   !! This routine evaluates the Account 22.06 (Other Reactor
+  !   !! Plant Equipment) costs.
+  !   !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+  !   implicit none
   
-    ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: pth, ptherm_star, vfi, vfi_star
-    real(8), intent(out) :: step2206, spares, step220601, step220602, &
-      step220603, step220604, step220605, step220606, step220607, step220608
+  !   ! Arguments
+  !   real(8), dimension(:), intent(in) :: step_ref
+  !   real(8), intent(in) :: pth, ptherm_star, vfi, vfi_star
+  !   real(8), intent(out) :: step2206, spares, step220601, step220602, &
+  !     step220603, step220604, step220605, step220606, step220607, step220608
   
-    ! Initialise as zero
-    step2206 = 0.0D0
-    spares = 0.0D0
+  !   ! Initialise as zero
+  !   step2206 = 0.0D0
+  !   spares = 0.0D0
      
-    ! 22.06.01 Maintenance Equipment
-    ! Original STARFIRE value, scaling with fusion island volume
-    ! Depreciated by the remote handling scaling in cost account 27. 
-    step220601 = 0.0 ! step_ref(42) * (vfi / vfi_star)**(2.0D0/3.0D0)
-    step2206 = step2206 + step220601
-    ! STARFIRE percentage for spares
-    spares = spares + 4.308D-1 * step220601
+  !   ! 22.06.01 Maintenance Equipment
+  !   ! Original STARFIRE value, scaling with fusion island volume
+  !   ! Depreciated by the remote handling scaling in cost account 27. 
+  !   step220601 = 0.0 ! step_ref(42) * (vfi / vfi_star)**(2.0D0/3.0D0)
+  !   step2206 = step2206 + step220601
+  !   ! STARFIRE percentage for spares
+  !   spares = spares + 4.308D-1 * step220601
   
-    ! 22.06.02 Special Heating Systems
-    ! Original STARFIRE value, scaling with thermal power
-    step220602 = step_ref(43) * (pth / ptherm_star)**0.6D0
-    step2206 = step2206 + step220602
+  !   ! 22.06.02 Special Heating Systems
+  !   ! Original STARFIRE value, scaling with thermal power
+  !   step220602 = step_ref(43) * (pth / ptherm_star)**0.6D0
+  !   step2206 = step2206 + step220602
   
-    ! 22.06.03 Coolant Storage
-    ! Original STARFIRE value, scaling with thermal power
-    step220603 = step_ref(44) * (pth / ptherm_star)**0.6D0
-    step2206 = step2206 + step220603
+  !   ! 22.06.03 Coolant Storage
+  !   ! Original STARFIRE value, scaling with thermal power
+  !   step220603 = step_ref(44) * (pth / ptherm_star)**0.6D0
+  !   step2206 = step2206 + step220603
   
-    ! 22.06.04 Gas System
-    ! Original STARFIRE value, scaling with fusion island volume
-    step220604 = step_ref(45) * (vfi / vfi_star)**(2.0D0/3.0D0)
-    step2206 = step2206 + step220604
+  !   ! 22.06.04 Gas System
+  !   ! Original STARFIRE value, scaling with fusion island volume
+  !   step220604 = step_ref(45) * (vfi / vfi_star)**(2.0D0/3.0D0)
+  !   step2206 = step2206 + step220604
   
-    ! 22.06.05 Inert Atmosphere System
-    ! Original STARFIRE value, scaling with thermal power
-    step220605 = step_ref(46) * (pth / ptherm_star)**0.6D0
-    step2206 = step2206 + step220605
+  !   ! 22.06.05 Inert Atmosphere System
+  !   ! Original STARFIRE value, scaling with thermal power
+  !   step220605 = step_ref(46) * (pth / ptherm_star)**0.6D0
+  !   step2206 = step2206 + step220605
   
-    ! 22.06.06 Fluid Leak Detection
-    ! Original STARFIRE value, scaling with thermal power
-    step220606 = step_ref(47) * (pth / ptherm_star)**0.6D0
-    step2206 = step2206 + step220606
+  !   ! 22.06.06 Fluid Leak Detection
+  !   ! Original STARFIRE value, scaling with thermal power
+  !   step220606 = step_ref(47) * (pth / ptherm_star)**0.6D0
+  !   step2206 = step2206 + step220606
   
-    ! 22.06.07 Closed Loop Coolant System
-    ! Original STARFIRE value, scaling with thermal power
-    step220607 = step_ref(48) * (pth / ptherm_star)**0.6D0
-    step2206 = step2206 + step220607
-    ! STARFIRE percentage for spares
-    spares = spares + 8.3D-1 * (pth / ptherm_star)**0.6D0
+  !   ! 22.06.07 Closed Loop Coolant System
+  !   ! Original STARFIRE value, scaling with thermal power
+  !   step220607 = step_ref(48) * (pth / ptherm_star)**0.6D0
+  !   step2206 = step2206 + step220607
+  !   ! STARFIRE percentage for spares
+  !   spares = spares + 8.3D-1 * (pth / ptherm_star)**0.6D0
   
-    ! 22.06.08 Standby Cooling System
-    ! Original STARFIRE value, scaling with thermal power
-    step220608 = step_ref(49) * (pth / ptherm_star)**0.6D0
-    step2206 = step2206 + step220608
-  end subroutine step_a2206
+  !   ! 22.06.08 Standby Cooling System
+  !   ! Original STARFIRE value, scaling with thermal power
+  !   step220608 = step_ref(49) * (pth / ptherm_star)**0.6D0
+  !   step2206 = step2206 + step220608
+  ! end subroutine step_a2206
  
   subroutine step_a2207(step_ref, pth, ptherm_star, step2207)
     !! Account 22.07 : Instrumentation and Control
