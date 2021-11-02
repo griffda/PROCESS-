@@ -2755,7 +2755,7 @@ module pfcoil_module
                 '(t_structural_vertical)', t_structural_vertical)
            call ovarre(outfile, 'CS structural radial thickness (m)', &
                 '(t_structural_radial)', t_structural_radial)
-           call ovarre(outfile, 'Number of cycles till CS fracture', &
+           call ovarre(outfile, 'Allowable number of cycles till CS fracture', &
                 '(N_cycle)', N_cycle, 'OP ')
            ! Check whether CS coil is hitting any limits
            ! iteration variable (39) fjohc0
