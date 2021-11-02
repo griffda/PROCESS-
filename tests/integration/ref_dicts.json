@@ -2010,7 +2010,6 @@
         "fwarea": 0.0,
         "fwareaib": 0.0,
         "fwareaob": 0.0,
-        "fwblkcost": 0.0,
         "fwbs_nref": 20000.0,
         "fwbs_nu": 40000.0,
         "fwbs_prob_fail": 0.0002,
@@ -9621,7 +9620,6 @@
         "fwarea": "first wall total surface area (m2)",
         "fwareaib": "inboard first wall surface area (m2)",
         "fwareaob": "outboard first wall surface area (m2)",
-        "fwblkcost": "",
         "fwbs_nref": "Reference value for cycle life of blanket",
         "fwbs_nu": "The cycle when the blanket fails with 100% probability",
         "fwbs_prob_fail": "Fwbs probability of failure (per op day)",
@@ -17456,9 +17454,6 @@
             "cpp",
             "cppa",
             "c22128"
-        ],
-        "costs_step_module": [
-            "fwblkcost"
         ],
         "current_drive_module": [],
         "current_drive_variables": [

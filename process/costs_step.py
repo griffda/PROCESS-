@@ -1,5 +1,4 @@
 from process import fortran as ft
-from process.fortran import costs_step_module as cs
 from process.fortran import constants
 from process.fortran import build_variables as bv
 from process.fortran import cost_variables as cv
@@ -596,71 +595,190 @@ class CostsStep:
             po.ocosts(self.outfile, "(step93)", "Other Costs (M$)", self.step93)
 
     def coelc_step(self):
-        """Cost of electricity."""
-        (
-            anncap,
-            anncdr,
-            anncp,
-            anndecom,
-            anndiv,
-            annfuel,
-            annfuelt,
-            annfwbl,
-            annoam,
-            anntot,
-            annwst,
-            coecdr,
-            coecp,
-            coedecom,
-            coediv,
-            coefuel,
-            coefwbl,
-            coewst,
-            crffwbl,
-            feffwbl,
-            fwbllife,
-            cv.moneyint,
-            cv.capcost,
-            cv.coecap,
-            cv.coeoam,
-            cv.coefuelt,
-            cv.coe,
-            title,
-        ) = cs.coelc_step(
-            cv.discount_rate,
-            cv.tlife,
-            cv.ucfuel,
-            cv.uche3,
-            cv.cdcost,
-            cv.divcst,
-            cv.fcdfuel,
-            cv.ifueltyp,
-            cv.fwallcst,
-            cv.fcr0,
-            cv.fcap0cp,
-            cv.fcap0,
-            cv.dtlife,
-            cv.divlife,
-            cv.dintrt,
-            cv.decomf,
-            cv.cpstcst,
-            cv.cplife,
-            cv.concost,
-            cv.cfactr,
-            cv.cdrlife,
-            cv.step_ref,
-            cv.step_currency,
-            cv.step_ucoam,
-            cv.step_ucwst,
-            fwbsv.bktlife,
-            htv.pnetelmw,
-            pv.fhe3,
-            pv.itart,
-            pv.wtgpd,
-            tv.tburn,
-            tv.tcycle,
-            constants.n_day_year,
-        )
+        """Routine to calculate the cost of electricity for a fusion power plant
+        author: S I Muldrew,  CCFE, Culham Science Centre
+        This routine performs the calculation of the cost of electricity
+        for a fusion power plant.
+        Annual costs are in megadollars/year, electricity costs are in
+        millidollars/kWh, while other costs are in megadollars.
+        All values are based on 1980 dollars.
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+        """
+
+        # Number of kWh generated each year
+        kwhpy = 1.0e3 * htv.pnetelmw * (24.0e0*constants.n_day_year) * cv.cfactr * tv.tburn/tv.tcycle
+
+        # Costs due to reactor plant
+        # ==========================
+
+        # Interest on construction costs
+        cv.moneyint = cv.concost * (cv.fcap0 - 1.0e0)
+
+        # Capital costs
+        cv.capcost = cv.concost + cv.moneyint
+
+        # Annual cost of plant capital cost
+        anncap = cv.capcost * cv.fcr0
+
+        # Cost of electricity due to plant capital cost
+        cv.coecap = 1.0e9 * anncap / kwhpy
+
+        # Costs due to first wall and blanket renewal
+        # ===========================================
+
+        # Operational life
+        fwbllife = fwbsv.bktlife
+
+        # Compound interest factor
+        feffwbl = (1.0e0 + cv.discount_rate)**fwbllife
+
+        # Capital recovery factor
+        crffwbl = (feffwbl*cv.discount_rate) / (feffwbl-1.0e0)
+
+        # Annual cost of replacements
+        annfwbl = self.fwblkcost * cv.fcap0cp * crffwbl
+
+        # Cost of electricity due to first wall/blanket replacements
+        coefwbl = 1.0e9 * annfwbl / kwhpy
+
+        # Costs due to divertor renewal
+        # =============================
+
+        # Compound interest factor
+        fefdiv = (1.0e0 + cv.discount_rate)**cv.divlife
+
+        # Capital recovery factor
+        crfdiv = (fefdiv*cv.discount_rate) / (fefdiv-1.0e0)
+
+        # Annual cost of replacements
+        anndiv = cv.divcst * cv.fcap0cp * crfdiv
+
+        # Cost of electricity due to divertor replacements
+        coediv = 1.0e9 * anndiv / kwhpy
+
+        # Costs due to centrepost renewal
+        # ===============================
+
+        if (pv.itart == 1):
+            # Compound interest factor
+            fefcp = (1.0e0 + cv.discount_rate)**cv.cplife
+
+            # Capital recovery factor
+            crfcp = (fefcp*cv.discount_rate) / (fefcp-1.0e0)
+
+            # Annual cost of replacements
+            anncp = cv.cpstcst * cv.fcap0cp * crfcp
+
+            # Cost of electricity due to centrepost replacements
+            coecp = 1.0e9 * anncp / kwhpy
+        else:
+            anncp = 0.0e0
+            coecp = 0.0e0
+
+
+        # Costs due to partial current drive system renewal
+        # =================================================
+
+        # Compound interest factor
+        fefcdr = (1.0e0 + cv.discount_rate)**cv.cdrlife
+
+        # Capital recovery factor
+        crfcdr = (fefcdr*cv.discount_rate) / (fefcdr-1.0e0)
+
+        # Annual cost of replacements
+        if (cv.ifueltyp == 0):
+            anncdr = 0.0e0
+        else:
+            anncdr = cv.cdcost * cv.fcdfuel/(1.0e0-cv.fcdfuel) * cv.fcap0cp * crfcdr
+
+
+        # Cost of electricity due to current drive system replacements
+        coecdr = 1.0e9 * anncdr / kwhpy
+
+        # Costs due to operation and maintenance
+        # ======================================
+
+        # Annual cost of operation and maintenance
+        annoam = cv.step_ucoam * (htv.pnetelmw/1200.0e0)**0.5
+
+        # Additional cost due to pulsed reactor thermal storage
+        # See F/MPE/MOD/CAG/PROCESS/PULSE/0008
+        
+        # if (lpulse.eq.1) then
+        #   if (istore.eq.1) then
+        #     annoam1 = 51.0D0
+        #   else if (istore.eq.2) then
+        #     annoam1 = 22.2D0
+        #   else
+        #     continue
+        #   end if
+        
+        #   Scale with net electric power
+        #   annoam1 = annoam1 * pnetelmw/1200.0D0
+        
+        #   It is necessary to convert from 1992 pounds to 1990 dollars
+        #   Reasonable guess for the exchange rate + inflation factor
+        #   inflation = 5% per annum; exchange rate = 1.5 dollars per pound
+        
+        #   annoam1 = annoam1 * 1.36D0
+        
+        #   annoam = annoam + annoam1
+        
+        #  end if
+
+        #  Cost of electricity due to operation and maintenance
+        cv.coeoam = 1.0e9 * annoam / kwhpy
+
+        #  Costs due to reactor fuel
+        #  =========================
+
+        #  Annual cost of fuel
+
+        #  Sum D-T fuel cost and He3 fuel cost
+        annfuel = cv.ucfuel * htv.pnetelmw/1200.0e0 + 1.0e-6 * pv.fhe3 * pv.wtgpd * 1.0e-3 * cv.uche3 * constants.n_day_year * cv.cfactr
+
+        #  Cost of electricity due to reactor fuel
+        coefuel = 1.0e9 * annfuel / kwhpy
+
+        #  Costs due to waste disposal
+        #  ===========================
+
+        #  Annual cost of waste disposal
+        annwst = cv.step_ucwst * (htv.pnetelmw/1200.0e0)**0.5
+
+        #  Cost of electricity due to waste disposal
+        coewst = 1.0e9 * annwst / kwhpy
+
+        #  Costs due to decommissioning fund
+        #  =================================
+
+        #  Annual contributions to fund for decommissioning
+        #  A fraction decomf of the construction cost is set aside for
+        #  this purpose at the start of the plant life.
+        #  Final factor takes into account inflation over the plant lifetime
+        #  (suggested by Tim Hender 07/03/96)
+        #  Difference (dintrt) between borrowing and saving interest rates is
+        #  included, along with the possibility of completing the fund dtlife
+        #  years before the end of the plant's lifetime
+        anndecom = cv.decomf * cv.concost * cv.fcr0 / (1.0e0+cv.discount_rate-cv.dintrt)**(cv.tlife-cv.dtlife)
+
+        #  Cost of electricity due to decommissioning fund
+        coedecom = 1.0e9 * anndecom / kwhpy
+
+        #  Total costs
+        #  ===========
+
+        #  Annual costs due to 'fuel-like' components
+        annfuelt = annfwbl + anndiv + anncdr + anncp + annfuel + annwst
+
+        #  Total cost of electricity due to 'fuel-like' components
+        cv.coefuelt = coefwbl + coediv + coecdr + coecp + coefuel + coewst
+
+        #  Total annual costs
+        anntot = anncap + annfuelt + annoam + anndecom
+
+        #  Total cost of electricity
+        cv.coe = cv.coecap + cv.coefuelt + cv.coeoam + coedecom
 
         if self.iprint != 0 and cv.output_costs != 0:
             # Output section
@@ -724,7 +842,7 @@ class CostsStep:
                     self.outfile,
                     "First wall and Blanket direct capital cost (M$)",
                     "(fwblkcost)",
-                    cv.fwblkcost,
+                    self.fwblkcost,
                 )
                 po.ovarrf(
                     self.outfile,

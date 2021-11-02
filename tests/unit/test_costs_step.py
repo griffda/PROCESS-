@@ -1,6 +1,5 @@
 """Unit tests for costs_step.f90."""
 from process.costs_step import CostsStep
-from process.fortran import costs_step_module as cs
 from process.fortran import tfcoil_variables as tfv
 from process.fortran import cost_variables as cv
 from process.fortran import buildings_variables as bldgsv
@@ -125,26 +124,26 @@ def costs_step(monkeypatch):
 def test_init_costs_step():
     """Test initialisation of variables"""
     #Assert module vars are initialised correctly
-    cs.init_costs_step()
-    # assert cs.step20 == 0
-    # assert cs.step21 == 0
-    # assert cs.step22 == 0
-    # assert cs.step23 == 0
-    # assert cs.step24 == 0
-    # assert cs.step25 == 0
-    # assert cs.step27 == 0
-    # assert cs.step91 == 0
-    # assert cs.step92 == 0
-    # assert cs.step93 == 0
-    assert cs.fwblkcost == 0
-    # assert costs_step.vfi == 0
-    # assert costs_step.vfi_star == 0
-    # assert cs.ptherm_star == 0
-    #assert cs.pinjmw_star == 0
-    #assert cs.fwarea_star == 0
-    # assert cs.rmajor_star == 0
-    # assert cs.rminor_star == 0
-    # assert cs.pth == 0
+    costs_step_object = CostsStep()
+    assert costs_step_object.step20 == 0
+    assert costs_step_object.step21 == 0
+    assert costs_step_object.step22 == 0
+    assert costs_step_object.step23 == 0
+    assert costs_step_object.step24 == 0
+    assert costs_step_object.step25 == 0
+    assert costs_step_object.step27 == 0
+    assert costs_step_object.step91 == 0
+    assert costs_step_object.step92 == 0
+    assert costs_step_object.step93 == 0
+    assert costs_step_object.fwblkcost == 0
+    assert costs_step_object.vfi == 0
+    assert costs_step_object.vfi_star == 0
+    assert costs_step_object.ptherm_star == 0
+    # assert costs_step_object.pinjmw_star == 0
+    # assert costs_step_object.fwarea_star == 0
+    assert costs_step_object.rmajor_star == 0
+    assert costs_step_object.rminor_star == 0
+    assert costs_step_object.pth == 0
 
 def test_costs_step(monkeypatch, costs_step):
     """Test the costs_step subroutine
@@ -655,7 +654,7 @@ def test_coelc_step(monkeypatch, costs_step):
     monkeypatch.setattr(cv, "fcr0", 10.0)
     monkeypatch.setattr(cv, "discount_rate", 0.5)
     monkeypatch.setattr(fwbsv, "bktlife", 10.0)
-    monkeypatch.setattr(cs, "fwblkcost", 10.0)
+    monkeypatch.setattr(costs_step, "fwblkcost", 10.0)
     monkeypatch.setattr(cv, "fcap0cp", 10.0)
     monkeypatch.setattr(cv, "divlife", 2.0)
     monkeypatch.setattr(cv, "divcst", 2.0)
