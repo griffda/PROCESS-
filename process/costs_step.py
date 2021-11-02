@@ -381,10 +381,6 @@ class CostsStep:
         costs.
         STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
         """
-        # step23a, step2303, step2398, step2399, cs.step23 = cs.step_a23(
-        #     cv.step_ref, cv.step_con, htv.pgrossmw
-        # )
-
         # 23.01 Turbine Generators
         # 23.02 Steam System
         # 23.04 Condensing System
@@ -421,19 +417,49 @@ class CostsStep:
             po.ocosts(self.outfile, "(step23)", "Total Account 23 Cost (M$)", self.step23)
 
     def step_a24(self):
-        """Account 24 : Electric Plant Equipment."""
-        (
-            step2401,
-            step2402,
-            step2403,
-            step2404,
-            step2405,
-            step2406,
-            step2407,
-            step2498,
-            step2499,
-            cs.step24,
-        ) = cs.step_a24(cv.step_ref, cv.step_con, htv.pgrossmw)
+        """ Account 24 : Electric Plant Equipment
+        author: S I Muldrew, CCFE, Culham Science Centre
+        This routine evaluates the Account 24 (Electric Plant 
+        Equipment) costs.
+        STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+        """
+        # 24.01 Switch Gear
+        step2401 = 1.8906e4 * htv.pgrossmw * 1.0e-6
+        self.step24 = step2401
+        
+        # 24.02 Station Service Equipment
+        step2402 = 5.1412e4 * htv.pgrossmw * 1.0e-6
+        self.step24 += step2402
+        
+        # 24.03 Switchboards
+        step2403 = 2.985e3 * htv.pgrossmw * 1.0e-6
+        self.step24 += step2403
+        
+        # 24.04 Protective Equipment
+        step2404 = ((3.05e4 * (htv.pgrossmw / 1.2e3) * 18.0e0) + (4.0e6 * (htv.pgrossmw / 1.2e3))) * 1.0e-6
+        self.step24 = self.step24 + step2404
+        
+        # 24.05 Electrical Structures
+        step2405 = ((3.05e4 * (htv.pgrossmw / 1.2e3) * 1.3e2) + (4.0e6 * 9.0e0 * (htv.pgrossmw / 1.2e3))) * 1.0e-6
+        self.step24 = self.step24 + step2405
+        
+        # 24.06 Power and Control Wiring
+        step2406 = 2.8989e4 * htv.pgrossmw * 1.0e-6
+        self.step24 += step2406
+        
+        # 24.07 Electric Lighting
+        step2407 = ((3.05e4 * (htv.pgrossmw / 1.2e3) * 2.0e2) + (4.0e6 * 4.0e0 * (htv.pgrossmw / 1.2e3))) * 1.0e-6
+        self.step24 += step2407
+
+        # 24.98 Spares
+        # STARFIRE percentage
+        step2498 = 1.0403e-2 * self.step24
+        self.step24 += step2498
+
+        # 24.99 Contingency
+        # STARFIRE 15%
+        step2499 = cv.step_con * self.step24
+        self.step24 += step2499
 
         # Output costs
         if self.iprint == 1 and cv.output_costs == 1:
@@ -454,7 +480,7 @@ class CostsStep:
             po.ocosts(self.outfile, "(step2498)", "Spares (M$)", step2498)
             po.ocosts(self.outfile, "(step2499)", "Contingency (M$)", step2499)
             po.oblnkl(self.outfile)
-            po.ocosts(self.outfile, "(step24)", "Total Account 24 Cost (M$)", cs.step24)
+            po.ocosts(self.outfile, "(step24)", "Total Account 24 Cost (M$)", self.step24)
 
     def step_a25(self):
         """Account 25 : Miscellaneous Plant Equipment."""

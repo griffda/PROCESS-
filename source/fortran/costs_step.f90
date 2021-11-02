@@ -949,63 +949,63 @@ contains
   !   step23 = step23 + step2399
   ! end subroutine step_a23
 
-  subroutine step_a24(step_ref, step_con, pgrossmw, step2401, step2402, &
-    step2403, step2404, step2405, step2406, step2407, step2498, step2499, &
-    step24)
-    !! Account 24 : Electric Plant Equipment
-    !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! This routine evaluates the Account 24 (Electric Plant 
-    !! Equipment) costs.
-    !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    implicit none
+  ! subroutine step_a24(step_ref, step_con, pgrossmw, step2401, step2402, &
+  !   step2403, step2404, step2405, step2406, step2407, step2498, step2499, &
+  !   step24)
+  !   !! Account 24 : Electric Plant Equipment
+  !   !! author: S I Muldrew, CCFE, Culham Science Centre
+  !   !! This routine evaluates the Account 24 (Electric Plant 
+  !   !! Equipment) costs.
+  !   !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+  !   implicit none
 
-    ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: step_con, pgrossmw
-    real(8), intent(out) :: step2401, step2402, step2403, step2404, step2405, &
-    step2406, step2407, step2498, step2499, step24
+  !   ! Arguments
+  !   real(8), dimension(:), intent(in) :: step_ref
+  !   real(8), intent(in) :: step_con, pgrossmw
+  !   real(8), intent(out) :: step2401, step2402, step2403, step2404, step2405, &
+  !   step2406, step2407, step2498, step2499, step24
 
-    ! Initialise as zero M$
-    step24 = 0.0D0
+  !   ! Initialise as zero M$
+  !   step24 = 0.0D0
     
-    ! 24.01 Switch Gear
-    step2401 = 1.8906D4 * pgrossmw * 1.0D-6
-    step24 = step24 + step2401
+  !   ! 24.01 Switch Gear
+  !   step2401 = 1.8906D4 * pgrossmw * 1.0D-6
+  !   step24 = step24 + step2401
     
-    ! 24.02 Station Service Equipment
-    step2402 = 5.1412D4 * pgrossmw * 1.0D-6
-    step24 = step24 + step2402
+  !   ! 24.02 Station Service Equipment
+  !   step2402 = 5.1412D4 * pgrossmw * 1.0D-6
+  !   step24 = step24 + step2402
     
-    ! 24.03 Switchboards
-    step2403 = 2.985D3 * pgrossmw * 1.0D-6
-    step24 = step24 + step2403
+  !   ! 24.03 Switchboards
+  !   step2403 = 2.985D3 * pgrossmw * 1.0D-6
+  !   step24 = step24 + step2403
     
-    ! 24.04 Protective Equipment
-    step2404 = ((3.05D4 * (pgrossmw / 1.2D3) * 18.0D0) + (4.0D6 * (pgrossmw / 1.2D3))) * 1.0D-6
-    step24 = step24 + step2404
+  !   ! 24.04 Protective Equipment
+  !   step2404 = ((3.05D4 * (pgrossmw / 1.2D3) * 18.0D0) + (4.0D6 * (pgrossmw / 1.2D3))) * 1.0D-6
+  !   step24 = step24 + step2404
     
-    ! 24.05 Electrical Structures
-    step2405 = ((3.05D4 * (pgrossmw / 1.2D3) * 1.3D2) + (4.0D6 * 9.0D0 * (pgrossmw / 1.2D3))) * 1.0D-6
-    step24 = step24 + step2405
+  !   ! 24.05 Electrical Structures
+  !   step2405 = ((3.05D4 * (pgrossmw / 1.2D3) * 1.3D2) + (4.0D6 * 9.0D0 * (pgrossmw / 1.2D3))) * 1.0D-6
+  !   step24 = step24 + step2405
     
-    ! 24.06 Power and Control Wiring
-    step2406 = 2.8989D4 * pgrossmw * 1.0D-6
-    step24 = step24 + step2406
+  !   ! 24.06 Power and Control Wiring
+  !   step2406 = 2.8989D4 * pgrossmw * 1.0D-6
+  !   step24 = step24 + step2406
     
-    ! 24.07 Electric Lighting
-    step2407 = ((3.05D4 * (pgrossmw / 1.2D3) * 2.0D2) + (4.0D6 * 4.0D0 * (pgrossmw / 1.2D3))) * 1.0D-6
-    step24 = step24 + step2407
+  !   ! 24.07 Electric Lighting
+  !   step2407 = ((3.05D4 * (pgrossmw / 1.2D3) * 2.0D2) + (4.0D6 * 4.0D0 * (pgrossmw / 1.2D3))) * 1.0D-6
+  !   step24 = step24 + step2407
 
-    ! 24.98 Spares
-    ! STARFIRE percentage
-    step2498 = 1.0403D-2 * step24
-    step24 = step24 + step2498
+  !   ! 24.98 Spares
+  !   ! STARFIRE percentage
+  !   step2498 = 1.0403D-2 * step24
+  !   step24 = step24 + step2498
 
-    ! 24.99 Contingency
-    ! STARFIRE 15%
-    step2499 = step_con * step24
-    step24 = step24 + step2499
-  end subroutine step_a24
+  !   ! 24.99 Contingency
+  !   ! STARFIRE 15%
+  !   step2499 = step_con * step24
+  !   step24 = step24 + step2499
+  ! end subroutine step_a24
 
   subroutine step_a25(step_ref, step_con, pgrossmw, wgt, step2501, step2502, &
     step2503, step2504, step2598, step2599, step25)
