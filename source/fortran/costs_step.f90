@@ -18,8 +18,8 @@ module costs_step_module
   implicit none
 
   !  Various cost account values (M$)
-  ! step20, step21
-  real(8) :: step22, step23, step24, step25, &
+  ! step20, step21, step22
+  real(8) :: step23, step24, step25, &
               step27, step91, step92, step93, fwblkcost
 
   ! Scaling Properties
@@ -34,7 +34,7 @@ contains
 
     ! step20 = 0.0D0
     ! step21 = 0.0D0
-    step22 = 0.0D0
+    ! step22 = 0.0D0
     step23 = 0.0D0
     step24 = 0.0D0
     step25 = 0.0D0

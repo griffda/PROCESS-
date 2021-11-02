@@ -128,7 +128,7 @@ def test_init_costs_step():
     cs.init_costs_step()
     # assert cs.step20 == 0
     # assert cs.step21 == 0
-    assert cs.step22 == 0
+    # assert cs.step22 == 0
     assert cs.step23 == 0
     assert cs.step24 == 0
     assert cs.step25 == 0
@@ -247,7 +247,7 @@ def test_step_a22(monkeypatch, costs_step):
     :type costs_step: process.costs_step.CostsStep
     """
     # Mock module vars
-    monkeypatch.setattr(cs, "step22", 0.0)
+    monkeypatch.setattr(costs_step, "step22", 0.0)
     monkeypatch.setattr(bv, "fwarea", 9.42e2)
     monkeypatch.setattr(pv, "rmajor", 1e2)
     monkeypatch.setattr(pv, "rmajor", 1e1)
@@ -260,7 +260,7 @@ def test_step_a22(monkeypatch, costs_step):
     # Run and assert result in M$
     costs_step.step_a22()
     exp = 468.17394240
-    obs = cs.step22
+    obs = costs_step.step22
     assert pytest.approx(obs) == exp
 
 def test_step_a2201(monkeypatch, costs_step):
@@ -272,7 +272,7 @@ def test_step_a2201(monkeypatch, costs_step):
     :type costs_step: process.costs_step.CostsStep
     """
     # Mock module var set in subroutine: increase is value of step2201
-    monkeypatch.setattr(cs, "step22", 0.0)
+    monkeypatch.setattr(costs_step, "step22", 0.0)
     monkeypatch.setattr(bv, "fwarea", 9.42e2)
     monkeypatch.setattr(pv, "rmajor", 1e2)
     monkeypatch.setattr(pv, "rmajor", 1e1)
