@@ -1129,12 +1129,18 @@ class CostsStep:
         return step220104
 
     def step_a2202(self):
-        """Account 22.02: Heat Transfer System.
+        """Account 22.02 : Heat Transfer System
+        author: S I Muldrew, CCFE, Culham Science Centre
+        This routine evaluates the Account 22.02 (Heat Transfer System)
+        costs.
+        STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
 
         :return: cost 2202
         :rtype: float
         """
-        step2202 = cs.step_a2202(htv.pgrossmw)
+        # pgrossmw is gross electric power of the plant in MW
+        # step2202 = cs.step_a2202(htv.pgrossmw)
+        step2202 = 9.2238e4 * htv.pgrossmw * 1.0e-6
 
         # Output costs
         if (self.iprint == 1) and (cv.output_costs == 1):
@@ -1149,14 +1155,35 @@ class CostsStep:
         return step2202
 
     def step_a2203(self):
-        """Account 22.03: Cryogenic Cooling System.
+        """Account 22.03 : Cryogenic Cooling System
+        author: S I Muldrew, CCFE, Culham Science Centre
+        None
+        This routine evaluates the Account 22.03 (Cryogenic Cooling
+        System) costs.
+        STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
 
         :return: cost 2203
         :rtype: float
         """
-        (step220301, step220302, step220303, step220304, step2203) = cs.step_a2203(
-            cv.step_ref, self.vfi, self.vfi_star
-        )
+        # 22.03.01 Helium Refrigerator
+        # Original STARFIRE value, scaling with fusion island volume
+        step220301 = cv.step_ref[33] * (self.vfi / self.vfi_star)**(2.0e0/3.0e0)
+        step2203 = step220301
+    
+        # 22.03.02 Liquid Helium Transfer and Storage
+        # Original STARFIRE value, scaling with fusion island volume
+        step220302 = cv.step_ref[34] * (self.vfi / self.vfi_star)**(2.0e0/3.0e0)
+        step2203 += step220302
+    
+        # 22.03.03 Gas Helium Storage
+        # Original STARFIRE value, scaling with fusion island volume
+        step220303 = cv.step_ref[35] * (self.vfi / self.vfi_star)**(2.0e0/3.0e0)
+        step2203 += step220303
+    
+        # 22.03.04 Liquid Nitrogen Storage
+        # Original STARFIRE value, scaling with fusion island volume
+        step220304 = cv.step_ref[36] * (self.vfi / self.vfi_star)**(2.0e0/3.0e0)
+        step2203 += step220304
 
         # Output costs
         if (self.iprint == 1) and (cv.output_costs == 1):
