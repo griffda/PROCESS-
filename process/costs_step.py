@@ -18,13 +18,41 @@ from process.fortran import divertor_variables as dv
 
 
 class CostsStep:
-    """STEP fusion power plant costings."""
+    """STEP fusion power plant costings.
+
+    Module containing STEP fusion power plant costing algorithms
+    author: S I Muldrew, CCFE, Culham Science Centre
+    N/A
+    This module contains the STEP fusion power plant costing model,
+    developed by Nizar Ben Ayed, Tim Hender and Stuart Muldrew, based
+    on the STARFIRE costing framework.
+    STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+    Sheffield et al. (1986), Fusion Technology, 9, 199
+    Sheffield & Milora (2016), Fusion Science and Technology, 70, 14
+    """
 
     def __init__(self):
         """Initialise Fortran module variables."""
         self.outfile = ft.constants.nout  # output file unit
         self.iprint = 0  # switch for writing to output file (1=yes)
-        cs.init_costs_step()
+        
+        self.step20: float = 0
+        self.step21: float = 0
+        self.step22: float = 0
+        self.step23: float = 0
+        self.step24: float = 0
+        self.step25: float = 0
+        self.step27: float = 0
+        self.step91: float = 0
+        self.step92: float = 0
+        self.step93: float = 0
+        self.fwblkcost: float = 0
+        self.vfi: float = 0
+        self.vfi_star: float = 0
+        self.ptherm_star: float = 0
+        self.rmajor_star: float = 0
+        self.rminor_star: float = 0
+        self.pth: float = 0
 
     def run(self):
         """Run main costs_step subroutine."""
@@ -86,7 +114,7 @@ class CostsStep:
         self.step_a25()
 
         # Total plant direct cost without remote handling
-        cv.cdirt = cs.step20 + cs.step21 + cs.step22 + cs.step23 + cs.step24 + cs.step25
+        cv.cdirt = self.step20 + cs.step21 + cs.step22 + cs.step23 + cs.step24 + cs.step25
 
         # Account 27 : Remote Handling
         self.step_a27()
@@ -111,8 +139,24 @@ class CostsStep:
             self.coelc_step()
 
     def step_a20(self):
-        """Account 20: Land and Rights."""
-        step2001, step2002, cs.step20 = cs.step_a20(cv.step_ref, cv.sitecost)
+        """Account 20 : Land and Rights
+        author: S I Muldrew, CCFE, Culham Science Centre
+        This method evaluates the Account 20 (Land and Rights)
+        costs.
+        STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+        """
+        # 20.01 Land
+        # Fixed site cost (2017 M$); read from input, default = 100 M$
+        step2001 = cv.sitecost / 1e6
+
+        # step20 should be 0 at this point so I have removed
+        # step20 = step20 + step2001
+        self.step20 = step2001
+
+        # 20.02 Site Preparation
+        # Original STARFIRE value
+        step2002 = cv.step_ref[1]
+        self.step20 += step2002
 
         # Write output
         if self.iprint == 1 and cv.output_costs == 1:
@@ -120,7 +164,7 @@ class CostsStep:
             po.ocosts(self.outfile, "(step2001)", "Land (M$)", step2001)
             po.ocosts(self.outfile, "(step2002)", "Site Preparation (M$)", step2002)
             po.oblnkl(self.outfile)
-            po.ocosts(self.outfile, "(step20)", "Total Account 20 Cost (M$)", cs.step20)
+            po.ocosts(self.outfile, "(step20)", "Total Account 20 Cost (M$)", self.step20)
 
     def step_a21(self):
         """Account 21 : Building and Site Service Infrastructure."""

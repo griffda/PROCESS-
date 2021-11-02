@@ -124,7 +124,7 @@ def test_init_costs_step():
     """Test initialisation of variables"""
     #Assert module vars are initialised correctly
     cs.init_costs_step()
-    assert cs.step20 == 0
+    # assert cs.step20 == 0
     assert cs.step21 == 0
     assert cs.step22 == 0
     assert cs.step23 == 0
@@ -205,12 +205,13 @@ def test_step_a20(monkeypatch, costs_step):
     costs_step = CostsStep()
     
     # Mock module vars
-    monkeypatch.setattr(cs, "step20", 0.0)
+    monkeypatch.setattr(costs_step, "step20", 0.0)
+    monkeypatch.setattr(cv, "sitecost", 1e8)
 
     # Run and assert result in M$
     costs_step.step_a20()
     exp = 1.003e2
-    obs = cs.step20
+    obs = costs_step.step20
     assert pytest.approx(obs) == exp
 
 

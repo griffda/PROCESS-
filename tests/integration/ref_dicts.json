@@ -1556,7 +1556,7 @@
         "degrad": 0.01745329251,
         "degree": "pi/180.0D0",
         "delld": 1.0,
-        "delta": null,
+        "delta": 0.0001,
         "delta_eta": 0.0,
         "delta_var": null,
         "dendiv": 0.0,
@@ -5271,7 +5271,6 @@
         "ssync": 0.6,
         "stack_thickness": null,
         "stcl": 3.0,
-        "step20": 0.0,
         "step21": 0.0,
         "step22": 0.0,
         "step23": 0.0,
@@ -10635,7 +10634,6 @@
         "ssync": "synchrotron wall reflectivity factor",
         "stack_thickness": "",
         "stcl": "clearance above crane to roof (m)",
-        "step20": "",
         "step21": "",
         "step22": "",
         "step23": "",
@@ -17490,7 +17488,6 @@
             "c22128"
         ],
         "costs_step_module": [
-            "step20",
             "step21",
             "step22",
             "step23",
@@ -18613,7 +18610,6 @@
         ],
         "ode_mod": [],
         "optimiz_module": [],
-        "output_module": [],
         "param": [
             "pi",
             "c"

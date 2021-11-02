@@ -18,7 +18,8 @@ module costs_step_module
   implicit none
 
   !  Various cost account values (M$)
-  real(8) :: step20, step21, step22, step23, step24, step25, &
+  ! step20
+  real(8) :: step21, step22, step23, step24, step25, &
               step27, step91, step92, step93, fwblkcost
 
   ! Scaling Properties
@@ -31,7 +32,7 @@ contains
     !! Initialise module variables
     implicit none
 
-    step20 = 0.0D0
+    ! step20 = 0.0D0
     step21 = 0.0D0
     step22 = 0.0D0
     step23 = 0.0D0
@@ -50,32 +51,32 @@ contains
     pth = 0.0D0
   end subroutine init_costs_step
 
-  subroutine step_a20(step_ref, sitecost, step2001, step2002, step20)
-    !! Account 20 : Land and Rights
-    !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! This routine evaluates the Account 20 (Land and Rights)
-    !! costs.
-    !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    implicit none
+  ! subroutine step_a20(step_ref, sitecost, step2001, step2002, step20)
+  !   !! Account 20 : Land and Rights
+  !   !! author: S I Muldrew, CCFE, Culham Science Centre
+  !   !! This routine evaluates the Account 20 (Land and Rights)
+  !   !! costs.
+  !   !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+  !   implicit none
 
-    ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: sitecost
-    real(8), intent(out) :: step2001, step2002, step20
+  !   ! Arguments
+  !   real(8), dimension(:), intent(in) :: step_ref
+  !   real(8), intent(in) :: sitecost
+  !   real(8), intent(out) :: step2001, step2002, step20
 
-    ! Initialise as zero
-    step20 = 0.0D0
+  !   ! Initialise as zero
+  !   step20 = 0.0D0
 
-    ! 20.01 Land
-    ! Fixed site cost (2017 M$); read from input, default = 100 M$
-    step2001 = sitecost / 1.0D6
-    step20 = step20 + step2001
+  !   ! 20.01 Land
+  !   ! Fixed site cost (2017 M$); read from input, default = 100 M$
+  !   step2001 = sitecost / 1.0D6
+  !   step20 = step20 + step2001
 
-    ! 20.02 Site Preparation
-    ! Original STARFIRE value
-    step2002 = step_ref(2)
-    step20 = step20 + step2002
-  end subroutine step_a20
+  !   ! 20.02 Site Preparation
+  !   ! Original STARFIRE value
+  !   step2002 = step_ref(2)
+  !   step20 = step20 + step2002
+  ! end subroutine step_a20
 
   subroutine step_a21(step_ref, step_con, wfbuilding, a_reactor_bldg, &
     a_ee_ps_bldg, a_aux_services_bldg, a_hot_cell_bldg, &
