@@ -10,19 +10,19 @@ module CS_fatigue_variables
   !! residual hoop stress in strucutal material (Pa) 
   
   real(8) :: N_cycle
-  !! Number of cycles till CS fracture
+  !! Allowable number of cycles for CS
   
   real(8) :: t_crack_radial
-  !! Inital radial crack size (m)
+  !! Initial depth of crack in thickness of conduit (m)
 
   real(8) :: t_crack_vertical
   !! Inital vertical crack size (m)
 
   real(8) :: t_structural_radial
-  !! CS structural radial thickness (m)
+  !! Thickness of CS conductor conduit (m)
   
   real(8) :: t_structural_vertical
-  !! CS structural vertical thickness (m)
+  !! Vertical thickness of CS conductor conduit (m)
 
   contains
 

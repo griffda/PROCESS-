@@ -25,8 +25,8 @@ subroutine Ncycle(N_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_cr
 
     ! local variables
     real(8) :: Const, C0, m, R, delta, deltaN 
-    real(8) :: Kmax, Ka, Kc, a, c
-    real(8) :: max_hoop_stress_MPa, residual_stress_MPa
+    real(8) :: Kmax, Ka, Kc, a, c, N_pulse
+    real(8) :: max_hoop_stress_MPa, residual_stress_MPa, delta_hoop_stress_MPa
 
 
     ! Set material parameters
@@ -45,6 +45,7 @@ subroutine Ncycle(N_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_cr
     c = t_crack_radial
 
     !mean stress ratio
+    delta_hoop_stress_MPa = max_hoop_stress_MPa - residual_stress_MPa
     R = residual_stress_MPa / (max_hoop_stress_MPa + residual_stress_MPa)
     ! mean stress corrected C - without using walker equaution 
     C0 = 1.0 
@@ -54,14 +55,15 @@ subroutine Ncycle(N_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_cr
 
     !Initialise number of cycles
     N_cycle = 0.0
+    N_pulse = 0.0
     Kmax = 0.0
 
     ! factor 2 taken as saftey factors in the crack sizes
     ! CS steel undergoes fast fracture when SIF > 200 MPa, under a saftey factor 2 we use 100MPa 
     do while ((a.le.t_structural_vertical/2.0D0).and.(c.le.t_structural_radial/2.0D0).and.(Kmax.le.1.0D2))
         ! find SIF max from SIF_a and SIF_c
-        Ka = surface_stress_intensity_factor(max_hoop_stress_MPa, t_structural_vertical, t_structural_radial, a, c, pi/2.0D0)
-        Kc = surface_stress_intensity_factor(max_hoop_stress_MPa, t_structural_vertical, t_structural_radial, a, c, 0.0D0)
+        Ka = surface_stress_intensity_factor(delta_hoop_stress_MPa, t_structural_vertical, t_structural_radial, a, c, pi/2.0D0)
+        Kc = surface_stress_intensity_factor(delta_hoop_stress_MPa, t_structural_vertical, t_structural_radial, a, c, 0.0D0)
         Kmax = max(Ka,Kc)
 
         ! run euler_method and find number of cycles needed to give crack increase
@@ -70,7 +72,10 @@ subroutine Ncycle(N_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_cr
         ! update a and c, N
         a = a + delta * (Ka / Kmax) ** m
         c = c + delta * (Kc / Kmax) ** m 
-        N_cycle = N_cycle + deltaN
+        N_pulse = N_pulse + deltaN
+    
+    ! two pulses - ramp to Vsmax and ramp down per cycle
+    N_cycle = N_pulse / 2.0D0
     end do
 
 end subroutine Ncycle
