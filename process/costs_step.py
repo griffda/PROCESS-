@@ -547,21 +547,37 @@ class CostsStep:
             po.ocosts(self.outfile, "(step25)", "Total Account 25 Cost (M$)", self.step25)
 
     def step_a27(self):
-        """Account 27: Remote Handling."""
-        step2701, cs.step27 = cs.step_a27(cv.cdirt, cv.step_rh_costfrac)
+        """Account 27 : Remote Handling
+        author: A J Pearce, CCFE, Culham Science Centre
+        This routine evaluates the Account 27 (Remote Handling)
+        costs.
+        STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+        """
+        # 27.01 Remote Handling 
+        # From report by T. Hender CD-STEP-01030, scales with direct capital costs
+        step2701 = cv.step_rh_costfrac * cv.cdirt 
+        
+        self.step27 = step2701
 
         # Output costs
         if self.iprint == 1 and cv.output_costs == 1:
             po.oshead(self.outfile, "27. Remote Handling")
             po.ocosts(self.outfile, "(step2701)", "Remote Handing (M$)", step2701)
             po.oblnkl(self.outfile)
-            po.ocosts(self.outfile, "(step27)", "Total Account 27 Cost (M$)", cs.step27)
+            po.ocosts(self.outfile, "(step27)", "Total Account 27 Cost (M$)", self.step27)
 
     def step_indirect_costs(self):
-        """Accounts 91-93: Indirect costs."""
-        cs.step91, cs.step92, cs.step93 = cs.step_indirect_costs(
-            cv.cdirt, cv.step91_per, cv.step92_per, cv.step93_per
-        )
+        """Accounts 91-93: Indirect costs
+        Calculate the indirect costs and print
+        """
+        # Account 91 : Construction Facilities, Equipment and Services (default 30%)
+        self.step91 = cv.step91_per * cv.cdirt
+
+        # Account 92 : Engineering and Costruction Management Services (default 32.5%)
+        self.step92 = cv.step92_per * cv.cdirt
+
+        # Account 93 : Other Costs (default 5%)
+        self.step93 = cv.step93_per * cv.cdirt
 
         if self.iprint == 1 and cv.output_costs == 1:
             po.oshead(self.outfile, "Indirect Cost")
@@ -569,15 +585,15 @@ class CostsStep:
                 self.outfile,
                 "(step91)",
                 "Construction Facilities, Equipment and Services (M$)",
-                cs.step91,
+                self.step91,
             )
             po.ocosts(
                 self.outfile,
                 "(step92)",
                 "Engineering and Costruction Management Services (M$)",
-                cs.step92,
+                self.step92,
             )
-            po.ocosts(self.outfile, "(step93)", "Other Costs (M$)", cs.step93)
+            po.ocosts(self.outfile, "(step93)", "Other Costs (M$)", self.step93)
 
     def coelc_step(self):
         """Cost of electricity."""

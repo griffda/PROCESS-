@@ -18,8 +18,8 @@ module costs_step_module
   implicit none
 
   !  Various cost account values (M$)
-  ! step20, step21, step22, step23, step24, step25
-  real(8) :: step27, step91, step92, step93, fwblkcost
+  ! step20, step21, step22, step23, step24, step25, step27, step91, step92, step93
+  real(8) :: fwblkcost
 
   ! Scaling Properties
   ! vfi, vfi_star, rmajor_star, rminor_star
@@ -37,10 +37,10 @@ contains
     ! step23 = 0.0D0
     ! step24 = 0.0D0
     ! step25 = 0.0D0
-    step27 = 0.0D0
-    step91 = 0.0D0
-    step92 = 0.0D0
-    step93 = 0.0D0
+    ! step27 = 0.0D0
+    ! step91 = 0.0D0
+    ! step92 = 0.0D0
+    ! step93 = 0.0D0
     fwblkcost = 0.0D0
     ! vfi = 0.0D0
     ! vfi_star = 0.0D0
@@ -1055,47 +1055,47 @@ contains
   !   step25 = step25 + step2599
   ! end subroutine step_a25
 
-  subroutine step_a27(cdirt, step_rh_costfrac, step2701, step27)
-    !! Account 27 : Remote Handling
-    !! author: A J Pearce, CCFE, Culham Science Centre
-    !! This routine evaluates the Account 27 (Remote Handling)
-    !! costs.
-    !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    implicit none
+  ! subroutine step_a27(cdirt, step_rh_costfrac, step2701, step27)
+  !   !! Account 27 : Remote Handling
+  !   !! author: A J Pearce, CCFE, Culham Science Centre
+  !   !! This routine evaluates the Account 27 (Remote Handling)
+  !   !! costs.
+  !   !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+  !   implicit none
 
-    ! Arguments
-    real(8), intent(in) :: cdirt, step_rh_costfrac
-    real(8), intent(out) :: step2701, step27
+  !   ! Arguments
+  !   real(8), intent(in) :: cdirt, step_rh_costfrac
+  !   real(8), intent(out) :: step2701, step27
 
-    ! Initialise as zero
-    step27 = 0.0D0
+  !   ! Initialise as zero
+  !   step27 = 0.0D0
    
-    ! 27.01 Remote Handling 
-    ! From report by T. Hender CD-STEP-01030, scales with direct capital costs
-    step2701 = step_rh_costfrac * cdirt 
+  !   ! 27.01 Remote Handling 
+  !   ! From report by T. Hender CD-STEP-01030, scales with direct capital costs
+  !   step2701 = step_rh_costfrac * cdirt 
     
-    step27 = step2701
-  end subroutine step_a27
+  !   step27 = step2701
+  ! end subroutine step_a27
 
-  subroutine step_indirect_costs(cdirt, step91_per, step92_per, step93_per, &
-    step91, step92, step93)
-    !! Accounts 91-93: Indirect costs
-    !! Calculate the indirect costs and print
-    implicit none
+  ! subroutine step_indirect_costs(cdirt, step91_per, step92_per, step93_per, &
+  !   step91, step92, step93)
+  !   !! Accounts 91-93: Indirect costs
+  !   !! Calculate the indirect costs and print
+  !   implicit none
     
-    ! Arguments
-    real(8), intent(in) :: cdirt, step91_per, step92_per, step93_per
-    real(8), intent(out) :: step91, step92, step93
+  !   ! Arguments
+  !   real(8), intent(in) :: cdirt, step91_per, step92_per, step93_per
+  !   real(8), intent(out) :: step91, step92, step93
 
-    ! Account 91 : Construction Facilities, Equipment and Services (default 30%)
-    step91 = step91_per * cdirt
+  !   ! Account 91 : Construction Facilities, Equipment and Services (default 30%)
+  !   step91 = step91_per * cdirt
 
-    ! Account 92 : Engineering and Costruction Management Services (default 32.5%)
-    step92 = step92_per * cdirt
+  !   ! Account 92 : Engineering and Costruction Management Services (default 32.5%)
+  !   step92 = step92_per * cdirt
 
-    ! Account 93 : Other Costs (default 5%)
-    step93 = step93_per * cdirt
-  end subroutine step_indirect_costs
+  !   ! Account 93 : Other Costs (default 5%)
+  !   step93 = step93_per * cdirt
+  ! end subroutine step_indirect_costs
 
   subroutine coelc_step(discount_rate, tlife, ucfuel, uche3, cdcost, &
     divcst, fcdfuel, ifueltyp, fwallcst, fcr0, fcap0cp, &
