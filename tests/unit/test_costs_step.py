@@ -125,7 +125,7 @@ def test_init_costs_step():
     #Assert module vars are initialised correctly
     cs.init_costs_step()
     # assert cs.step20 == 0
-    assert cs.step21 == 0
+    # assert cs.step21 == 0
     assert cs.step22 == 0
     assert cs.step23 == 0
     assert cs.step24 == 0
@@ -230,7 +230,7 @@ def test_step_a21(monkeypatch, costs_step):
     # Run and assert result in M$
     costs_step.step_a21()
     exp = 2.115588e3
-    obs = cs.step21
+    obs = costs_step.step21
     assert pytest.approx(obs) == exp
 
 

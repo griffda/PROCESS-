@@ -18,8 +18,8 @@ module costs_step_module
   implicit none
 
   !  Various cost account values (M$)
-  ! step20
-  real(8) :: step21, step22, step23, step24, step25, &
+  ! step20, step21
+  real(8) :: step22, step23, step24, step25, &
               step27, step91, step92, step93, fwblkcost
 
   ! Scaling Properties
@@ -33,7 +33,7 @@ contains
     implicit none
 
     ! step20 = 0.0D0
-    step21 = 0.0D0
+    ! step21 = 0.0D0
     step22 = 0.0D0
     step23 = 0.0D0
     step24 = 0.0D0
@@ -78,127 +78,127 @@ contains
   !   step20 = step20 + step2002
   ! end subroutine step_a20
 
-  subroutine step_a21(step_ref, step_con, wfbuilding, a_reactor_bldg, &
-    a_ee_ps_bldg, a_aux_services_bldg, a_hot_cell_bldg, &
-    a_reactor_service_bldg, a_service_water_bldg, a_fuel_handling_bldg, &
-    a_control_room_bldg, a_ac_ps_bldg, a_admin_bldg, a_site_service_bldg, &
-    a_cryo_inert_gas_bldg, a_security_bldg, pgrossmw, &
-    pth, ptherm_star, &
-    step2101, step2102, step2103, step2104, step2105, &
-    step2106, step2107, step2108,  step2109, step2110, step2111, step2112, &
-    step2113, step2114, step2115, step2116, step2117, step2118, step2198, &
-    step2199, step21)
-    !! Account 21 : Building and Site Service Infrastructure
-    !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! This routine evaluates the Account 21 (Building and Site
-    !! Service Infrastructure) costs.
-    !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    ! #TODO Add reference for STEP cost values
-    ! Floor areas in m^2 for buildings
-    ! pgrossmw is gross electric power of the plant in MW
-    implicit none
+  ! subroutine step_a21(step_ref, step_con, wfbuilding, a_reactor_bldg, &
+  !   a_ee_ps_bldg, a_aux_services_bldg, a_hot_cell_bldg, &
+  !   a_reactor_service_bldg, a_service_water_bldg, a_fuel_handling_bldg, &
+  !   a_control_room_bldg, a_ac_ps_bldg, a_admin_bldg, a_site_service_bldg, &
+  !   a_cryo_inert_gas_bldg, a_security_bldg, pgrossmw, &
+  !   pth, ptherm_star, &
+  !   step2101, step2102, step2103, step2104, step2105, &
+  !   step2106, step2107, step2108,  step2109, step2110, step2111, step2112, &
+  !   step2113, step2114, step2115, step2116, step2117, step2118, step2198, &
+  !   step2199, step21)
+  !   !! Account 21 : Building and Site Service Infrastructure
+  !   !! author: S I Muldrew, CCFE, Culham Science Centre
+  !   !! This routine evaluates the Account 21 (Building and Site
+  !   !! Service Infrastructure) costs.
+  !   !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+  !   ! #TODO Add reference for STEP cost values
+  !   ! Floor areas in m^2 for buildings
+  !   ! pgrossmw is gross electric power of the plant in MW
+  !   implicit none
 
-    ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: step_con, wfbuilding, a_reactor_bldg, &
-      a_ee_ps_bldg, a_aux_services_bldg, a_hot_cell_bldg, &
-      a_reactor_service_bldg, a_service_water_bldg, a_fuel_handling_bldg, &
-      a_control_room_bldg, a_ac_ps_bldg, a_admin_bldg, a_site_service_bldg, &
-      a_cryo_inert_gas_bldg, a_security_bldg, pgrossmw, pth, ptherm_star
-    real(8), intent(out) :: step2101, step2102, step2103, step2104, step2105, &
-      step2106, step2107, step2108, step2109, step2110, step2111, step2112, &
-      step2113, step2114, step2115, step2116, step2117, step2118, step2198, &
-      step2199, step21
+  !   ! Arguments
+  !   real(8), dimension(:), intent(in) :: step_ref
+  !   real(8), intent(in) :: step_con, wfbuilding, a_reactor_bldg, &
+  !     a_ee_ps_bldg, a_aux_services_bldg, a_hot_cell_bldg, &
+  !     a_reactor_service_bldg, a_service_water_bldg, a_fuel_handling_bldg, &
+  !     a_control_room_bldg, a_ac_ps_bldg, a_admin_bldg, a_site_service_bldg, &
+  !     a_cryo_inert_gas_bldg, a_security_bldg, pgrossmw, pth, ptherm_star
+  !   real(8), intent(out) :: step2101, step2102, step2103, step2104, step2105, &
+  !     step2106, step2107, step2108, step2109, step2110, step2111, step2112, &
+  !     step2113, step2114, step2115, step2116, step2117, step2118, step2198, &
+  !     step2199, step21
 
-    ! Initialise as zero
-    step21 = 0.0D0
+  !   ! Initialise as zero
+  !   step21 = 0.0D0
    
-    ! 21.01 Site Improvements
-    ! Original STARFIRE value
-    step2101 = step_ref(3)
-    step21 = step21 + step2101
+  !   ! 21.01 Site Improvements
+  !   ! Original STARFIRE value
+  !   step2101 = step_ref(3)
+  !   step21 = step21 + step2101
     
-    ! 21.02 Reactor Building
-    step2102 = 8.665D3 * a_reactor_bldg**1.2132 * 1.0D-6
-    ! * 1.0D-6 converts to M$
-    step21 = step21 + step2102
+  !   ! 21.02 Reactor Building
+  !   step2102 = 8.665D3 * a_reactor_bldg**1.2132 * 1.0D-6
+  !   ! * 1.0D-6 converts to M$
+  !   step21 = step21 + step2102
     
-    ! 21.03 Turbine Building
-    step2103 = 3.14310D5 * pgrossmw * 1.0D-6
-    step21 = step21 + step2103
+  !   ! 21.03 Turbine Building
+  !   step2103 = 3.14310D5 * pgrossmw * 1.0D-6
+  !   step21 = step21 + step2103
 
-    ! 21.04 Cooling System Structures
-    step2104 = 1.08155D5 * pgrossmw * 1.0D-6
-    step21 = step21 + step2104
+  !   ! 21.04 Cooling System Structures
+  !   step2104 = 1.08155D5 * pgrossmw * 1.0D-6
+  !   step21 = step21 + step2104
 
-    ! 21.05 Electrical Equipment and Power Supply Building
-    step2105 = ((4.688D3 * a_ee_ps_bldg) + 3.185967D6) * 1.0D-6
-    step21 = step21 + step2105
+  !   ! 21.05 Electrical Equipment and Power Supply Building
+  !   step2105 = ((4.688D3 * a_ee_ps_bldg) + 3.185967D6) * 1.0D-6
+  !   step21 = step21 + step2105
 
-    ! 21.06 Auxiliary Services Building
-    step2106 = ((3.107D3 * a_aux_services_bldg) + 1.206225D6) * 1.0D-6
-    step21 = step21 + step2106
+  !   ! 21.06 Auxiliary Services Building
+  !   step2106 = ((3.107D3 * a_aux_services_bldg) + 1.206225D6) * 1.0D-6
+  !   step21 = step21 + step2106
 
-    ! 21.07 Hot Cell
-    step2107 = ((1.9773D4 * a_hot_cell_bldg) + 5.975425D6) * 1.0D-6
-    step21 = step21 + step2107
+  !   ! 21.07 Hot Cell
+  !   step2107 = ((1.9773D4 * a_hot_cell_bldg) + 5.975425D6) * 1.0D-6
+  !   step21 = step21 + step2107
 
-    ! 21.08 Reactor Service Building
-    step2108 = ((8.563D3 * a_reactor_service_bldg) + 3.657324D6) * 1.0D-6
-    step21 = step21 + step2108
+  !   ! 21.08 Reactor Service Building
+  !   step2108 = ((8.563D3 * a_reactor_service_bldg) + 3.657324D6) * 1.0D-6
+  !   step21 = step21 + step2108
 
-    ! 21.09 Service Water Building
-    step2109 = ((3.288D3 * a_service_water_bldg) + 3.19189D5) * 1.0D-6
-    step21 = step21 + step2109
+  !   ! 21.09 Service Water Building
+  !   step2109 = ((3.288D3 * a_service_water_bldg) + 3.19189D5) * 1.0D-6
+  !   step21 = step21 + step2109
 
-    ! 21.10 Fuel Handling and Storage Building
-    step2110 = ((3.1528D4 * a_fuel_handling_bldg) + 9.181501D6) * 1.0D-6
-    step21 = step21 + step2110
+  !   ! 21.10 Fuel Handling and Storage Building
+  !   step2110 = ((3.1528D4 * a_fuel_handling_bldg) + 9.181501D6) * 1.0D-6
+  !   step21 = step21 + step2110
 
-    ! 21.11 Control Room
-    step2111 = ((1.2393D4 * a_control_room_bldg) + 1.924890D6) * 1.0D-6
-    step21 = step21 + step2111
+  !   ! 21.11 Control Room
+  !   step2111 = ((1.2393D4 * a_control_room_bldg) + 1.924890D6) * 1.0D-6
+  !   step21 = step21 + step2111
 
-    ! 21.12 AC Power Supply Building
-    step2112 = ((4.9755D4 * a_ac_ps_bldg) + 1.1591271D7) * 1.0D-6
-    step21 = step21 + step2112
+  !   ! 21.12 AC Power Supply Building
+  !   step2112 = ((4.9755D4 * a_ac_ps_bldg) + 1.1591271D7) * 1.0D-6
+  !   step21 = step21 + step2112
 
-    ! 21.13 Admin Building
-    step2113 = ((3.417D3 * a_admin_bldg) + 3.017077D6) * 1.0D-6
-    step21 = step21 + step2113
+  !   ! 21.13 Admin Building
+  !   step2113 = ((3.417D3 * a_admin_bldg) + 3.017077D6) * 1.0D-6
+  !   step21 = step21 + step2113
 
-    ! 21.14 Site Service
-    step2114 = ((3.842D3 * a_site_service_bldg) + 1.193549D6) * 1.0D-6
-    step21 = step21 + step2114
+  !   ! 21.14 Site Service
+  !   step2114 = ((3.842D3 * a_site_service_bldg) + 1.193549D6) * 1.0D-6
+  !   step21 = step21 + step2114
 
-    ! 21.15 Cryogenics and Inert Gas Storage Building
-    step2115 = ((7.031D3 * a_cryo_inert_gas_bldg) + 8.19004D5) * 1.0D-6
-    step21 = step21 + step2115
+  !   ! 21.15 Cryogenics and Inert Gas Storage Building
+  !   step2115 = ((7.031D3 * a_cryo_inert_gas_bldg) + 8.19004D5) * 1.0D-6
+  !   step21 = step21 + step2115
 
-    ! 21.16 Security Building
-    step2116 = ((3.227D3 * a_security_bldg) + 2.06804D5) * 1.0D-6
-    step21 = step21 + step2116
+  !   ! 21.16 Security Building
+  !   step2116 = ((3.227D3 * a_security_bldg) + 2.06804D5) * 1.0D-6
+  !   step21 = step21 + step2116
 
-    ! 21.17 Ventilation Stack
-    ! Original STARFIRE value, scaling with thermal power
-    step2117 = step_ref(19) * (pth / ptherm_star)**0.6D0  
-    step21 = step21 + step2117
+  !   ! 21.17 Ventilation Stack
+  !   ! Original STARFIRE value, scaling with thermal power
+  !   step2117 = step_ref(19) * (pth / ptherm_star)**0.6D0  
+  !   step21 = step21 + step2117
 
-    ! 21.18 Waste Facilities Buildings
-    ! Fixed cost (2017 M$); read from input, default = 100 M$
-    step2118 = wfbuilding / 1.0D6
-    step21 = step21 + step2118
+  !   ! 21.18 Waste Facilities Buildings
+  !   ! Fixed cost (2017 M$); read from input, default = 100 M$
+  !   step2118 = wfbuilding / 1.0D6
+  !   step21 = step21 + step2118
 
-    ! 21.98 Spares
-    ! STARFIRE percentage
-    step2198 = 6.541D-3 * step21
-    step21 = step21 + step2198
+  !   ! 21.98 Spares
+  !   ! STARFIRE percentage
+  !   step2198 = 6.541D-3 * step21
+  !   step21 = step21 + step2198
 
-    ! 21.99 Contingency
-    ! STARFIRE 15%
-    step2199 = step_con * step21
-    step21 = step21 + step2199
-  end subroutine step_a21
+  !   ! 21.99 Contingency
+  !   ! STARFIRE 15%
+  !   step2199 = step_con * step21
+  !   step21 = step21 + step2199
+  ! end subroutine step_a21
 
   subroutine step_a2201(step_ref, ifueltyp, fcdfuel, &
     rmajor, rminor, step220101, step220102, step22010301, &

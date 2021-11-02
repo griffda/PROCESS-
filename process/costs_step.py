@@ -114,7 +114,7 @@ class CostsStep:
         self.step_a25()
 
         # Total plant direct cost without remote handling
-        cv.cdirt = self.step20 + cs.step21 + cs.step22 + cs.step23 + cs.step24 + cs.step25
+        cv.cdirt = self.step20 + self.step21 + cs.step22 + cs.step23 + cs.step24 + cs.step25
 
         # Account 27 : Remote Handling
         self.step_a27()
@@ -167,50 +167,103 @@ class CostsStep:
             po.ocosts(self.outfile, "(step20)", "Total Account 20 Cost (M$)", self.step20)
 
     def step_a21(self):
-        """Account 21 : Building and Site Service Infrastructure."""
-        (
-            step2101,
-            step2102,
-            step2103,
-            step2104,
-            step2105,
-            step2106,
-            step2107,
-            step2108,
-            step2109,
-            step2110,
-            step2111,
-            step2112,
-            step2113,
-            step2114,
-            step2115,
-            step2116,
-            step2117,
-            step2118,
-            step2198,
-            step2199,
-            cs.step21,
-        ) = cs.step_a21(
-            cv.step_ref,
-            cv.step_con,
-            cv.wfbuilding,
-            bldgsv.a_reactor_bldg,
-            bldgsv.a_ee_ps_bldg,
-            bldgsv.a_aux_services_bldg,
-            bldgsv.a_hot_cell_bldg,
-            bldgsv.a_reactor_service_bldg,
-            bldgsv.a_service_water_bldg,
-            bldgsv.a_fuel_handling_bldg,
-            bldgsv.a_control_room_bldg,
-            bldgsv.a_ac_ps_bldg,
-            bldgsv.a_admin_bldg,
-            bldgsv.a_site_service_bldg,
-            bldgsv.a_cryo_inert_gas_bldg,
-            bldgsv.a_security_bldg,
-            htv.pgrossmw,
-            cs.pth,
-            cs.ptherm_star,
-        )
+        """Account 21 : Building and Site Service Infrastructure.
+        author: S I Muldrew, CCFE, Culham Science Centre
+        This routine evaluates the Account 21 (Building and Site
+        Service Infrastructure) costs.
+        STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+        """
+        # TODO Add reference for STEP cost values
+        # Floor areas in m^2 for buildings
+        # pgrossmw is gross electric power of the plant in MW
+   
+        # 21.01 Site Improvements
+        # Original STARFIRE value
+        step2101 = cv.step_ref[2]
+        # step21 should be 0 at this point so I have removed
+        # step21 = step21 + step2101
+        self.step21 = step2101
+        
+        # 21.02 Reactor Building
+        step2102 = 8.665e3 * bldgsv.a_reactor_bldg**1.2132 * 1.0e-6
+        # * 1.0D-6 converts to M$
+        self.step21 += step2102
+        
+        # 21.03 Turbine Building
+        step2103 = 3.14310e5 * htv.pgrossmw * 1.0e-6
+        self.step21 += step2103
+
+        # 21.04 Cooling System Structures
+        step2104 = 1.08155e5 * htv.pgrossmw * 1.0e-6
+        self.step21 += step2104
+
+        # 21.05 Electrical Equipment and Power Supply Building
+        step2105 = ((4.688e3 * bldgsv.a_ee_ps_bldg) + 3.185967e6) * 1.0e-6
+        self.step21 += step2105
+
+        # 21.06 Auxiliary Services Building
+        step2106 = ((3.107e3 * bldgsv.a_aux_services_bldg) + 1.206225e6) * 1.0e-6
+        self.step21 += step2106
+
+        # 21.07 Hot Cell
+        step2107 = ((1.9773e4 * bldgsv.a_hot_cell_bldg) + 5.975425e6) * 1.0e-6
+        self.step21 += step2107
+
+        # 21.08 Reactor Service Building
+        step2108 = ((8.563e3 * bldgsv.a_reactor_service_bldg) + 3.657324e6) * 1.0e-6
+        self.step21 += step2108
+
+        # 21.09 Service Water Building
+        step2109 = ((3.288e3 * bldgsv.a_service_water_bldg) + 3.19189e5) * 1.0e-6
+        self.step21 += step2109
+
+        # 21.10 Fuel Handling and Storage Building
+        step2110 = ((3.1528e4 * bldgsv.a_fuel_handling_bldg) + 9.181501e6) * 1.0e-6
+        self.step21 += step2110
+
+        # 21.11 Control Room
+        step2111 = ((1.2393e4 * bldgsv.a_control_room_bldg) + 1.924890e6) * 1.0e-6
+        self.step21 += step2111
+
+        # 21.12 AC Power Supply Building
+        step2112 = ((4.9755e4 * bldgsv.a_ac_ps_bldg) + 1.1591271e7) * 1.0e-6
+        self.step21 += step2112
+
+        # 21.13 Admin Building
+        step2113 = ((3.417e3 * bldgsv.a_admin_bldg) + 3.017077e6) * 1.0e-6
+        self.step21 += step2113
+
+        # 21.14 Site Service
+        step2114 = ((3.842e3 * bldgsv.a_site_service_bldg) + 1.193549e6) * 1.0e-6
+        self.step21 += step2114
+
+        # 21.15 Cryogenics and Inert Gas Storage Building
+        step2115 = ((7.031e3 * bldgsv.a_cryo_inert_gas_bldg) + 8.19004e5) * 1.0e-6
+        self.step21 += step2115
+
+        # 21.16 Security Building
+        step2116 = ((3.227e3 * bldgsv.a_security_bldg) + 2.06804e5) * 1.0e-6
+        self.step21 += step2116
+
+        # 21.17 Ventilation Stack
+        # Original STARFIRE value, scaling with thermal power
+        step2117 = cv.step_ref[18] * (cs.pth / cs.ptherm_star)**0.6e0  
+        self.step21 += step2117
+
+        # 21.18 Waste Facilities Buildings
+        # Fixed cost (2017 M$); read from input, default = 100 M$
+        step2118 = cv.wfbuilding / 1.0e6
+        self.step21 += step2118
+
+        # 21.98 Spares
+        # STARFIRE percentage
+        step2198 = 6.541e-3 * self.step21
+        self.step21 += step2198
+
+        # 21.99 Contingency
+        # STARFIRE 15%
+        step2199 = cv.step_con * self.step21
+        self.step21 += step2199
 
         # Output costs
         if self.iprint == 1 and cv.output_costs == 1:

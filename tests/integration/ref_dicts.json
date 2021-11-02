@@ -5271,7 +5271,6 @@
         "ssync": 0.6,
         "stack_thickness": null,
         "stcl": 3.0,
-        "step21": 0.0,
         "step22": 0.0,
         "step23": 0.0,
         "step24": 0.0,
@@ -10634,7 +10633,6 @@
         "ssync": "synchrotron wall reflectivity factor",
         "stack_thickness": "",
         "stcl": "clearance above crane to roof (m)",
-        "step21": "",
         "step22": "",
         "step23": "",
         "step24": "",
@@ -17488,7 +17486,6 @@
             "c22128"
         ],
         "costs_step_module": [
-            "step21",
             "step22",
             "step23",
             "step24",
