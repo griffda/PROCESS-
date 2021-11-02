@@ -18,9 +18,8 @@ module costs_step_module
   implicit none
 
   !  Various cost account values (M$)
-  ! step20, step21, step22, step23
-  real(8) :: step24, step25, &
-              step27, step91, step92, step93, fwblkcost
+  ! step20, step21, step22, step23, step24, step25
+  real(8) :: step27, step91, step92, step93, fwblkcost
 
   ! Scaling Properties
   ! vfi, vfi_star, rmajor_star, rminor_star
@@ -36,8 +35,8 @@ contains
     ! step21 = 0.0D0
     ! step22 = 0.0D0
     ! step23 = 0.0D0
-    step24 = 0.0D0
-    step25 = 0.0D0
+    ! step24 = 0.0D0
+    ! step25 = 0.0D0
     step27 = 0.0D0
     step91 = 0.0D0
     step92 = 0.0D0
@@ -1007,54 +1006,54 @@ contains
   !   step24 = step24 + step2499
   ! end subroutine step_a24
 
-  subroutine step_a25(step_ref, step_con, pgrossmw, wgt, step2501, step2502, &
-    step2503, step2504, step2598, step2599, step25)
-    !! Account 25 : Miscellaneous Plant Equipment
-    !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
-    !! This routine evaluates the Account 25 (Miscellaneous Plant 
-    !! Equipment) costs.
-    !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    ! #TODO Need to add reference for cost calculations
-    implicit none
+  ! subroutine step_a25(step_ref, step_con, pgrossmw, wgt, step2501, step2502, &
+  !   step2503, step2504, step2598, step2599, step25)
+  !   !! Account 25 : Miscellaneous Plant Equipment
+  !   !! author: S I Muldrew, CCFE, Culham Science Centre
+  !   !! None
+  !   !! This routine evaluates the Account 25 (Miscellaneous Plant 
+  !   !! Equipment) costs.
+  !   !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+  !   ! #TODO Need to add reference for cost calculations
+  !   implicit none
   
-    ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: step_con, pgrossmw, wgt
-    real(8), intent(out) :: step2501, step2502, step2503, step2504, step2598, &
-      step2599, step25
+  !   ! Arguments
+  !   real(8), dimension(:), intent(in) :: step_ref
+  !   real(8), intent(in) :: step_con, pgrossmw, wgt
+  !   real(8), intent(out) :: step2501, step2502, step2503, step2504, step2598, &
+  !     step2599, step25
 
-    ! Initialise as zero
-    step25 = 0.0D0
+  !   ! Initialise as zero
+  !   step25 = 0.0D0
     
-    ! 25.01 Transport and Lifting Equipment
-    step2501 = ((3.8005D4 * (wgt / 1.0D3)) + 1.529727D6) * 1.0D-6
-    ! wgt is reactor building crane capacity (kg)
-    ! #TODO Check that wgt is the correct variable to use here
-    step25 = step25 + step2501
+  !   ! 25.01 Transport and Lifting Equipment
+  !   step2501 = ((3.8005D4 * (wgt / 1.0D3)) + 1.529727D6) * 1.0D-6
+  !   ! wgt is reactor building crane capacity (kg)
+  !   ! #TODO Check that wgt is the correct variable to use here
+  !   step25 = step25 + step2501
     
-    ! 25.02 Air and Water Service System
-    step2502 = 1.20689D5 * pgrossmw * 1.0D-6
-    step25 = step25 + step2502
+  !   ! 25.02 Air and Water Service System
+  !   step2502 = 1.20689D5 * pgrossmw * 1.0D-6
+  !   step25 = step25 + step2502
     
-    ! 25.03 Communications Equipment
-    step2503 = ((3.05D4 * (pgrossmw / 1.2D3) * 2.18D2) + (4.0D6 * 3.0D0 * (pgrossmw / 1.2D3))) * 1.0D-6
-    step25 = step25 + step2503
+  !   ! 25.03 Communications Equipment
+  !   step2503 = ((3.05D4 * (pgrossmw / 1.2D3) * 2.18D2) + (4.0D6 * 3.0D0 * (pgrossmw / 1.2D3))) * 1.0D-6
+  !   step25 = step25 + step2503
     
-    ! 25.04 Furnishing and Fixtures
-    step2504 = 3.0D3 * pgrossmw * 1.0D-6
-    step25 = step25 + step2504
+  !   ! 25.04 Furnishing and Fixtures
+  !   step2504 = 3.0D3 * pgrossmw * 1.0D-6
+  !   step25 = step25 + step2504
   
-    ! 25.98 Spares
-    ! Original STARFIRE value, no scaling
-    step2598 = 1.286D-2 * step25
-    step25 = step25 + step2598
+  !   ! 25.98 Spares
+  !   ! Original STARFIRE value, no scaling
+  !   step2598 = 1.286D-2 * step25
+  !   step25 = step25 + step2598
   
-    ! 25.99 Contingency
-    ! STARFIRE 15%
-    step2599 = step_con * step25
-    step25 = step25 + step2599
-  end subroutine step_a25
+  !   ! 25.99 Contingency
+  !   ! STARFIRE 15%
+  !   step2599 = step_con * step25
+  !   step25 = step25 + step2599
+  ! end subroutine step_a25
 
   subroutine step_a27(cdirt, step_rh_costfrac, step2701, step27)
     !! Account 27 : Remote Handling

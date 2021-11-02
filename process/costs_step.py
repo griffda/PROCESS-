@@ -483,16 +483,42 @@ class CostsStep:
             po.ocosts(self.outfile, "(step24)", "Total Account 24 Cost (M$)", self.step24)
 
     def step_a25(self):
-        """Account 25 : Miscellaneous Plant Equipment."""
-        (
-            step2501,
-            step2502,
-            step2503,
-            step2504,
-            step2598,
-            step2599,
-            cs.step25,
-        ) = cs.step_a25(cv.step_ref, cv.step_con, htv.pgrossmw, bldgsv.wgt)
+        """Account 25 : Miscellaneous Plant Equipment
+        author: S I Muldrew, CCFE, Culham Science Centre
+        None
+        This routine evaluates the Account 25 (Miscellaneous Plant 
+        Equipment) costs.
+        STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+        """
+        #TODO Need to add reference for cost calculations
+
+        # 25.01 Transport and Lifting Equipment
+        step2501 = ((3.8005e4 * (bldgsv.wgt / 1.0e3)) + 1.529727e6) * 1.0e-6
+        # wgt is reactor building crane capacity (kg)
+        # #TODO Check that wgt is the correct variable to use here
+        self.step25 = step2501
+        
+        # 25.02 Air and Water Service System
+        step2502 = 1.20689e5 * htv.pgrossmw * 1.0e-6
+        self.step25 += step2502
+        
+        # 25.03 Communications Equipment
+        step2503 = ((3.05e4 * (htv.pgrossmw / 1.2e3) * 2.18e2) + (4.0e6 * 3.0e0 * (htv.pgrossmw / 1.2e3))) * 1.0e-6
+        self.step25 += step2503
+        
+        # 25.04 Furnishing and Fixtures
+        step2504 = 3.0e3 * htv.pgrossmw * 1.0e-6
+        self.step25 += step2504
+    
+        # 25.98 Spares
+        # Original STARFIRE value, no scaling
+        step2598 = 1.286e-2 * self.step25
+        self.step25 += step2598
+    
+        # 25.99 Contingency
+        # STARFIRE 15%
+        step2599 = cv.step_con * self.step25
+        self.step25 += step2599
 
         # Output costs
         if self.iprint == 1 and cv.output_costs == 1:
@@ -518,7 +544,7 @@ class CostsStep:
             po.ocosts(self.outfile, "(step2598)", "Spares (M$)", step2598)
             po.ocosts(self.outfile, "(step2599)", "Contingency (M$)", step2599)
             po.oblnkl(self.outfile)
-            po.ocosts(self.outfile, "(step25)", "Total Account 25 Cost (M$)", cs.step25)
+            po.ocosts(self.outfile, "(step25)", "Total Account 25 Cost (M$)", self.step25)
 
     def step_a27(self):
         """Account 27: Remote Handling."""
