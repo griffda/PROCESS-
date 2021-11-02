@@ -18,8 +18,8 @@ module costs_step_module
   implicit none
 
   !  Various cost account values (M$)
-  ! step20, step21, step22
-  real(8) :: step23, step24, step25, &
+  ! step20, step21, step22, step23
+  real(8) :: step24, step25, &
               step27, step91, step92, step93, fwblkcost
 
   ! Scaling Properties
@@ -35,7 +35,7 @@ contains
     ! step20 = 0.0D0
     ! step21 = 0.0D0
     ! step22 = 0.0D0
-    step23 = 0.0D0
+    ! step23 = 0.0D0
     step24 = 0.0D0
     step25 = 0.0D0
     step27 = 0.0D0
@@ -905,49 +905,49 @@ contains
   !   step2207 = step_ref(50) * (pth / ptherm_star)**0.6D0
   ! end subroutine step_a2207
 
-  subroutine step_a23(step_ref, step_con, pgrossmw, step23a, step2303, &
-    step2398, step2399, step23)
-    !! Account 23 : Turbine Plant Equipment
-    !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
-    !! This routine evaluates the Account 23 (Turbine Plant Equipment)
-    !! costs.
-    !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    implicit none
+  ! subroutine step_a23(step_ref, step_con, pgrossmw, step23a, step2303, &
+  !   step2398, step2399, step23)
+  !   !! Account 23 : Turbine Plant Equipment
+  !   !! author: S I Muldrew, CCFE, Culham Science Centre
+  !   !! None
+  !   !! This routine evaluates the Account 23 (Turbine Plant Equipment)
+  !   !! costs.
+  !   !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+  !   implicit none
 
-    ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: step_con, pgrossmw
-    real(8), intent(out) :: step23a, step2303, step2398, step2399, step23
+  !   ! Arguments
+  !   real(8), dimension(:), intent(in) :: step_ref
+  !   real(8), intent(in) :: step_con, pgrossmw
+  !   real(8), intent(out) :: step23a, step2303, step2398, step2399, step23
 
-    ! Initialise as zero
-    step23 = 0.0D0
+  !   ! Initialise as zero
+  !   step23 = 0.0D0
    
-    ! 23.01 Turbine Generators
-    ! 23.02 Steam System
-    ! 23.04 Condensing System
-    ! 23.05 Feedwater Heating System
-    ! 23.06 Other Turbine Equipment
-    ! 23.07 Instrumentation and Control
-    ! step23a is the sum of the above accounts: total turbine system
-    ! cost, not treating cooling towers as part of the turbine system
-    step23a = 5.55440D5 * pgrossmw * 1.0D-6
-    step23 = step23 + step23a
+  !   ! 23.01 Turbine Generators
+  !   ! 23.02 Steam System
+  !   ! 23.04 Condensing System
+  !   ! 23.05 Feedwater Heating System
+  !   ! 23.06 Other Turbine Equipment
+  !   ! 23.07 Instrumentation and Control
+  !   ! step23a is the sum of the above accounts: total turbine system
+  !   ! cost, not treating cooling towers as part of the turbine system
+  !   step23a = 5.55440D5 * pgrossmw * 1.0D-6
+  !   step23 = step23 + step23a
 
-    ! 23.03 Heat Rejection
-    step2303 = ((8.0437D4 * pgrossmw) + 2.2264895D7) * 1.0D-6
-    step23 = step23 + step2303
+  !   ! 23.03 Heat Rejection
+  !   step2303 = ((8.0437D4 * pgrossmw) + 2.2264895D7) * 1.0D-6
+  !   step23 = step23 + step2303
 
-    ! 23.98 Spares
-    ! STARFIRE percentage
-    step2398 = 1.401D-2 * step23
-    step23 = step23 + step2398
+  !   ! 23.98 Spares
+  !   ! STARFIRE percentage
+  !   step2398 = 1.401D-2 * step23
+  !   step23 = step23 + step2398
 
-    ! 23.99 Contingency
-    ! STARFIRE 15%
-    step2399 = step_con * step23
-    step23 = step23 + step2399
-  end subroutine step_a23
+  !   ! 23.99 Contingency
+  !   ! STARFIRE 15%
+  !   step2399 = step_con * step23
+  !   step23 = step23 + step2399
+  ! end subroutine step_a23
 
   subroutine step_a24(step_ref, step_con, pgrossmw, step2401, step2402, &
     step2403, step2404, step2405, step2406, step2407, step2498, step2499, &

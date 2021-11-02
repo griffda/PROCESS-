@@ -114,7 +114,7 @@ class CostsStep:
         self.step_a25()
 
         # Total plant direct cost without remote handling
-        cv.cdirt = self.step20 + self.step21 + self.step22 + cs.step23 + cs.step24 + cs.step25
+        cv.cdirt = self.step20 + self.step21 + self.step22 + self.step23 + cs.step24 + cs.step25
 
         # Account 27 : Remote Handling
         self.step_a27()
@@ -374,10 +374,41 @@ class CostsStep:
             po.ocosts(self.outfile, "(step22)", "Total Account 22 Cost (M$)", self.step22)
 
     def step_a23(self):
-        """Account 23 : Turbine Plant Equipment."""
-        step23a, step2303, step2398, step2399, cs.step23 = cs.step_a23(
-            cv.step_ref, cv.step_con, htv.pgrossmw
-        )
+        """Account 23 : Turbine Plant Equipment
+        author: S I Muldrew, CCFE, Culham Science Centre
+        None
+        This routine evaluates the Account 23 (Turbine Plant Equipment)
+        costs.
+        STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+        """
+        # step23a, step2303, step2398, step2399, cs.step23 = cs.step_a23(
+        #     cv.step_ref, cv.step_con, htv.pgrossmw
+        # )
+
+        # 23.01 Turbine Generators
+        # 23.02 Steam System
+        # 23.04 Condensing System
+        # 23.05 Feedwater Heating System
+        # 23.06 Other Turbine Equipment
+        # 23.07 Instrumentation and Control
+        # step23a is the sum of the above accounts: total turbine system
+        # cost, not treating cooling towers as part of the turbine system
+        step23a = 5.55440e5 * htv.pgrossmw * 1.0e-6
+        self.step23 = step23a
+
+        # 23.03 Heat Rejection
+        step2303 = ((8.0437e4 * htv.pgrossmw) + 2.2264895e7) * 1.0e-6
+        self.step23 += step2303
+
+        # 23.98 Spares
+        # STARFIRE percentage
+        step2398 = 1.401e-2 * self.step23
+        self.step23 += step2398
+
+        # 23.99 Contingency
+        # STARFIRE 15%
+        step2399 = cv.step_con * self.step23
+        self.step23 += step2399
 
         # Output costs
         if self.iprint == 1 and cv.output_costs == 1:
@@ -387,7 +418,7 @@ class CostsStep:
             po.ocosts(self.outfile, "(step2398)", "Spares (M$)", step2398)
             po.ocosts(self.outfile, "(step2399)", "Contingency (M$)", step2399)
             po.oblnkl(self.outfile)
-            po.ocosts(self.outfile, "(step23)", "Total Account 23 Cost (M$)", cs.step23)
+            po.ocosts(self.outfile, "(step23)", "Total Account 23 Cost (M$)", self.step23)
 
     def step_a24(self):
         """Account 24 : Electric Plant Equipment."""

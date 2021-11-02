@@ -129,7 +129,7 @@ def test_init_costs_step():
     # assert cs.step20 == 0
     # assert cs.step21 == 0
     # assert cs.step22 == 0
-    assert cs.step23 == 0
+    # assert cs.step23 == 0
     assert cs.step24 == 0
     assert cs.step25 == 0
     assert cs.step27 == 0
@@ -541,11 +541,11 @@ def test_step_a23(monkeypatch, costs_step):
     :type costs_step: process.costs_step.CostsStep
     """
     # Mock module var set in subroutine
-    monkeypatch.setattr(cs, "step23", 0.0)
+    monkeypatch.setattr(costs_step, "step23", 0.0)
 
     costs_step.step_a23()
     exp = 3.967150e2
-    obs = cs.step23
+    obs = costs_step.step23
     assert pytest.approx(obs) == exp
 
 def test_step_a24(monkeypatch, costs_step):
