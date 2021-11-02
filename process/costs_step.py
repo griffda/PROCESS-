@@ -899,32 +899,55 @@ class CostsStep:
 
     def step_a220102(self):
         """22.01.02 Inboard shield.
+        Note: outboard shield costs currently set to zero
 
         :return: 220102 cost
         :rtype: float
         """
-        step220102 = cs.step_a220102(
-            bv.rsldi,
-            bv.shldith,
-            bv.shldtth,
-            bv.vgap,
-            bv.scrapli,
-            bv.scraplo,
-            bv.fwith,
-            bv.fwoth,
-            bv.blnktth,
-            bv.d_vv_in,
-            fwbsv.i_shield_mat,
-            fwbsv.denw,
-            fwbsv.denwc,
-            dv.divfix,
-            cv.step_ucshw,
-            cv.step_ucshwc,
-            pv.rminor,
-            pv.kappa,
-            pv.idivrt,
-            constants.pi,
-        )
+        # Volume of inboard shield found using same method as in CCFE HCPB blanket model:
+        # inboard shield is assumed to be a cylinder of uniform thickness
+
+        # Calculate shield internal half-height (m)
+        hbot = pv.rminor*pv.kappa + bv.vgap + dv.divfix
+        # if a double null machine then symmetric otherwise asymmetric
+        if ( pv.idivrt == 2 ):
+            htop = hbot
+        else:
+            htop = pv.rminor*pv.kappa + 0.5e0*(bv.scrapli+bv.scraplo + bv.fwith+bv.fwoth) + bv.blnktth
+
+        # Average of top and bottom (m)
+        hshld = 0.5e0*(htop + hbot)
+
+        #Radius to outer edge of inboard shield (m)
+        r1 = bv.rsldi + bv.shldith
+
+        #Corrected shield thickness: allows for 300mm vacuum vessel
+        #Justification: requirement from K. Taylor, neutronics
+        ## TODO: replace this correction when valid (VV + shield) is used
+        shldith_corr = (bv.d_vv_in + bv.shldith) - 0.3e0
+        #Volume of inboard cylindrical shell (m3)
+        inb_sh_v = 2.0e0*(hshld+bv.shldtth) * constants.pi*(r1**2 - (r1-shldith_corr)**2)
+
+        #Scale shield material volume (allow for 10% volume coolant, 5% steel)
+        inb_sh_v_mtl = 0.85e0 * inb_sh_v
+        
+        #Define shield material density (sh_mtl_d [kg/m3]) and cost (sh_mtl_c [$/kg])
+        if ( fwbsv.i_shield_mat == 1 ):
+            #tungsten carbide
+            sh_mtl_d = fwbsv.denwc
+            sh_mtl_c = cv.step_ucshwc
+        else:
+            #tungsten (default)
+            sh_mtl_d = fwbsv.denw
+            sh_mtl_c = cv.step_ucshw
+
+        #Find inboard shield mass (kg) 
+        inb_sh_m = inb_sh_v_mtl * sh_mtl_d
+
+        #Find inboard shield cost (converted to M$2017)
+        step220102 = (inb_sh_m * sh_mtl_c) / 1.0e6*(229.0e0/264.71e0)
+
+        #Note: outboard shield costs currently set to zero
 
         return step220102
 
