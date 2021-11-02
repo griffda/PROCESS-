@@ -82,13 +82,13 @@ class CostsStep:
             * (bv.r_tf_outboard_mid + 0.5 * bv.tfthko) ** 2
             * (bv.hpfu + bv.hmax + bv.tfcth)
         )
-        cs.pth = pv.powfmw + fwbsv.emultmw + htv.pinjwp
+        self.pth = pv.powfmw + fwbsv.emultmw + htv.pinjwp
 
         # STARFIRE Reference Values
         self.vfi_star = 6.737e3  # Volume of Fusion Island (m3)
-        cs.ptherm_star = 4.15e3  # Thermal Power (MW)
-        cs.rmajor_star = 7.0  # Major Radius (m)
-        cs.rminor_star = cs.rmajor_star / 3.6  # Minor Radius (m)
+        self.ptherm_star = 4.15e3  # Thermal Power (MW)
+        self.rmajor_star = 7.0  # Major Radius (m)
+        self.rminor_star = self.rmajor_star / 3.6  # Minor Radius (m)
 
         # Output header
         if self.iprint == 1 and cv.output_costs == 1:
@@ -247,7 +247,7 @@ class CostsStep:
 
         # 21.17 Ventilation Stack
         # Original STARFIRE value, scaling with thermal power
-        step2117 = cv.step_ref[18] * (cs.pth / cs.ptherm_star)**0.6e0  
+        step2117 = cv.step_ref[18] * (self.pth / self.ptherm_star)**0.6e0  
         self.step21 += step2117
 
         # 21.18 Waste Facilities Buildings
@@ -658,7 +658,12 @@ class CostsStep:
                 )
 
     def step_a2201(self):
-        """Account 22.01 : Reactor Equipment.
+        """Account 22.01 : Reactor Equipment
+        author: S I Muldrew, CCFE, Culham Science Centre
+        None
+        This routine evaluates the Account 22.01 (Reactor Equipment)
+        costs.
+        STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
 
         :return: 2201 cost and spares
         :rtype: tuple[float, float]
@@ -678,33 +683,88 @@ class CostsStep:
         step22010302 = self.step_a22010302()
         step220104 = self.step_a220104()
 
-        (
-            step2201,
-            spares,
-            cv.divcst,
-            cv.cdcost,
-            step22010303,
-            step22010304,
-            step220105,
-            step220106,
-            step220107,
-            step220108,
-            step220109,
-            step220110,
-        ) = cs.step_a2201(
-            cv.step_ref,
-            cv.ifueltyp,
-            cv.fcdfuel,
-            pv.rmajor,
-            pv.rminor,
-            step220101,
-            step220102,
-            step22010301,
-            step22010302,
-            step220104,
-            self.vfi,
-            self.vfi_star
-        )
+        # 22.01.01 Blanket and First Wall
+        step2201 = step220101
+
+        # 22.01.02 Shield
+        # Inboard shield costs:
+        # Note: outboard shield costs currently set to zero.
+        # Add shield cost to total cost, step2201, in M$
+        step2201 += step220102
+        # STARFIRE percentage for spares
+        spares = 9.985e-2 *  step220102
+    
+        # 22.01.03.01 TF Coils
+        # Add TF coil cost to total cost, step2201, in M$
+        step2201 += step22010301
+
+        # 22.01.03.02 PF Coils
+        step2201 += step22010302
+        # STARFIRE percentage for spares
+        spares += 3.269e-1 * step22010302
+
+        # 22.01.03.03 Central Solenoid
+        # Original STARFIRE value, scaling with fusion island volume
+        step22010303 = cv.step_ref[23] * (self.vfi / self.vfi_star)
+        step2201 += step22010303
+        # STARFIRE percentage for spares
+        spares += 6.124e-1 * step22010303
+
+        # 22.01.03.04 Control Coils
+        # Original STARFIRE value, scaling with fusion island volume
+        step22010304 = cv.step_ref[24] * (self.vfi / self.vfi_star)
+        step2201 += step22010304
+        # STARFIRE percentage for spares
+        spares += 1.075e-1 * step22010304
+    
+        # 22.01.04 Auxiliary Heating and Current Drive
+        # HCD cost = cost per injected Watt of power * injected Watts
+        step2201 += step220104
+        # STARFIRE percentage for spares
+        spares += 2.335e-1 * step220104
+    
+        # 22.01.05 Primary Structure and Support
+        # Original STARFIRE value, scaling with fusion island volume
+        step220105 = cv.step_ref[26] * (self.vfi / self.vfi_star)
+        step2201 += step220105
+        # STARFIRE percentage for spares
+        spares += 6.824e-2 * step220105
+    
+        # 22.01.06 Reactor Vacuum System
+        # Original STARFIRE value, scaling with fusion island volume
+        step220106 = cv.step_ref[27] * (self.vfi / self.vfi_star)**(2.0e0/3.0e0)
+        step2201 += step220106
+        # STARFIRE percentage for spares
+        spares += 1.893e-1 * step220106
+    
+        # 22.01.07 Power Supplies
+        # Original STARFIRE value, scaling with fusion island volume
+        step220107 = cv.step_ref[28] * (self.vfi / self.vfi_star)**(2.0e0/3.0e0)
+        step2201 += step220107
+    
+        # 22.01.08 Impurity Control
+        # Original STARFIRE value, no scaling
+        step220108 = cv.step_ref[29]
+        step2201 += step220108
+    
+        # 22.01.09 ECRH Plasma Breakdown
+        # Original STARFIRE value, no scaling
+        step220109 = cv.step_ref[30]
+        step2201 += step220109
+
+        # 22.01.10 Divertor
+        # Cost Model 0 cost for STARFIRE sized device
+        # 58.62% increase between 1980 and 1990 
+        # http://www.in2013dollars.com/1980-dollars-in-1990
+        # Scaling with product of rmajor and rminor
+        step220110 = cv.step_ref[31] * ((pv.rmajor*pv.rminor)/(self.rmajor_star*self.rminor_star)) 
+        if (cv.ifueltyp == 1):
+            cv.divcst = step220110
+            step220110 = 0.0e0
+        else:
+            cv.divcst = 0.0e0
+
+        step2201 += step220110
 
         # Output costs
         if (self.iprint == 1) and (cv.output_costs == 1):
@@ -1139,7 +1199,6 @@ class CostsStep:
         :rtype: float
         """
         # pgrossmw is gross electric power of the plant in MW
-        # step2202 = cs.step_a2202(htv.pgrossmw)
         step2202 = 9.2238e4 * htv.pgrossmw * 1.0e-6
 
         # Output costs
@@ -1223,17 +1282,17 @@ class CostsStep:
         """
         # 22.04.01 Liquid Waste
         # Original STARFIRE value, scaling with thermal power
-        step220401 = cv.step_ref[37] * (cs.pth / cs.ptherm_star)**0.6e0 
+        step220401 = cv.step_ref[37] * (self.pth / self.ptherm_star)**0.6e0 
         step2204 = step220401
     
         # 22.04.02 Gaseous Waste
         # Original STARFIRE value, scaling with thermal power
-        step220402 = cv.step_ref[38] * (cs.pth / cs.ptherm_star)**0.6e0 
+        step220402 = cv.step_ref[38] * (self.pth / self.ptherm_star)**0.6e0 
         step2204 += step220402
     
         # 22.04.03 Solid Waste
         # Original STARFIRE value, scaling with thermal power
-        step220403 = cv.step_ref[39] * (cs.pth / cs.ptherm_star)**0.6e0 
+        step220403 = cv.step_ref[39] * (self.pth / self.ptherm_star)**0.6e0 
         step2204 += step220403
 
         # Output costs
@@ -1264,7 +1323,7 @@ class CostsStep:
         """
         # 22.05 Fuel Handling and Storage
         # Original STARFIRE value, scaling with thermal power
-        step2205 = cv.step_ref[40] * (cs.pth / cs.ptherm_star)**0.6e0 
+        step2205 = cv.step_ref[40] * (self.pth / self.ptherm_star)**0.6e0 
 
         # STARFIRE percentage for spares
         spares = 5.026e-2 * step2205
@@ -1306,12 +1365,12 @@ class CostsStep:
     
         # 22.06.02 Special Heating Systems
         # Original STARFIRE value, scaling with thermal power
-        step220602 = cv.step_ref[42] * (cs.pth / cs.ptherm_star)**0.6e0
+        step220602 = cv.step_ref[42] * (self.pth / self.ptherm_star)**0.6e0
         step2206 += step220602
     
         # 22.06.03 Coolant Storage
         # Original STARFIRE value, scaling with thermal power
-        step220603 = cv.step_ref[43] * (cs.pth / cs.ptherm_star)**0.6e0
+        step220603 = cv.step_ref[43] * (self.pth / self.ptherm_star)**0.6e0
         step2206 += step220603
     
         # 22.06.04 Gas System
@@ -1321,24 +1380,24 @@ class CostsStep:
     
         # 22.06.05 Inert Atmosphere System
         # Original STARFIRE value, scaling with thermal power
-        step220605 = cv.step_ref[45] * (cs.pth / cs.ptherm_star)**0.6e0
+        step220605 = cv.step_ref[45] * (self.pth / self.ptherm_star)**0.6e0
         step2206 += step220605
     
         # 22.06.06 Fluid Leak Detection
         # Original STARFIRE value, scaling with thermal power
-        step220606 = cv.step_ref[46] * (cs.pth / cs.ptherm_star)**0.6e0
+        step220606 = cv.step_ref[46] * (self.pth / self.ptherm_star)**0.6e0
         step2206 += step220606
     
         # 22.06.07 Closed Loop Coolant System
         # Original STARFIRE value, scaling with thermal power
-        step220607 = cv.step_ref[47] * (cs.pth / cs.ptherm_star)**0.6e0
+        step220607 = cv.step_ref[47] * (self.pth / self.ptherm_star)**0.6e0
         step2206 += step220607
         # STARFIRE percentage for spares
-        spares += 8.3e-1 * (cs.pth / cs.ptherm_star)**0.6e0
+        spares += 8.3e-1 * (self.pth / self.ptherm_star)**0.6e0
     
         # 22.06.08 Standby Cooling System
         # Original STARFIRE value, scaling with thermal power
-        step220608 = cv.step_ref[48] * (cs.pth / cs.ptherm_star)**0.6e0
+        step220608 = cv.step_ref[48] * (self.pth / self.ptherm_star)**0.6e0
         step2206 += step220608
 
         # Output costs
@@ -1376,12 +1435,18 @@ class CostsStep:
         return step2206, spares
 
     def step_a2207(self):
-        """Account 22.07: Instrumentation and Control.
+        """Account 22.07 : Instrumentation and Control
+        author: S I Muldrew, CCFE, Culham Science Centre
+        This routine evaluates the Account 22.07 (Instrumentation
+        and Control) costs.
+        STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
 
         :return: cost 2207
         :rtype: float
         """
-        step2207 = cs.step_a2207(cv.step_ref, cs.pth, cs.ptherm_star)
+        # 22.07 Instrumentation and Control
+        # Original STARFIRE value, scaling with thermal power
+        step2207 = cv.step_ref[49] * (self.pth / self.ptherm_star)**0.6e0
 
         # Output costs
         if self.iprint == 1 and cv.output_costs == 1:

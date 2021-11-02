@@ -23,9 +23,8 @@ module costs_step_module
               step27, step91, step92, step93, fwblkcost
 
   ! Scaling Properties
-  ! vfi, vfi_star
-  real(8) ::  ptherm_star, &
-              rmajor_star, rminor_star, pth
+  ! vfi, vfi_star, rmajor_star, rminor_star
+  ! real(8) ::  ptherm_star, pth
 
 contains
 
@@ -46,10 +45,10 @@ contains
     fwblkcost = 0.0D0
     ! vfi = 0.0D0
     ! vfi_star = 0.0D0
-    ptherm_star = 0.0D0
-    rmajor_star = 0.0D0
-    rminor_star = 0.0D0
-    pth = 0.0D0
+    ! ptherm_star = 0.0D0
+    ! rmajor_star = 0.0D0
+    ! rminor_star = 0.0D0
+    ! pth = 0.0D0
   end subroutine init_costs_step
 
   ! subroutine step_a20(step_ref, sitecost, step2001, step2002, step20)
@@ -201,114 +200,114 @@ contains
   !   step21 = step21 + step2199
   ! end subroutine step_a21
 
-  subroutine step_a2201(step_ref, ifueltyp, fcdfuel, &
-    rmajor, rminor, step220101, step220102, step22010301, &
-    step22010302, step220104, step2201, spares, divcst, cdcost, step22010303, &
-    step22010304, step220105, step220106, step220107, step220108, &
-    step220109, step220110, vfi, vfi_star)
-    !! Account 22.01 : Reactor Equipment
-    !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
-    !! This routine evaluates the Account 22.01 (Reactor Equipment)
-    !! costs.
-    !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    implicit none
+  ! subroutine step_a2201(step_ref, ifueltyp, fcdfuel, &
+  !   rmajor, rminor, step220101, step220102, step22010301, &
+  !   step22010302, step220104, step2201, spares, divcst, cdcost, step22010303, &
+  !   step22010304, step220105, step220106, step220107, step220108, &
+  !   step220109, step220110, vfi, vfi_star)
+  !   !! Account 22.01 : Reactor Equipment
+  !   !! author: S I Muldrew, CCFE, Culham Science Centre
+  !   !! None
+  !   !! This routine evaluates the Account 22.01 (Reactor Equipment)
+  !   !! costs.
+  !   !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+  !   implicit none
   
-    ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: ifueltyp, fcdfuel, &
-      rmajor, rminor, step220101, step220102, step22010301, step22010302, &
-      step220104, vfi, vfi_star
-    real(8), intent(out) :: step2201, spares, divcst, cdcost, &
-      step22010303, step22010304, step220105, step220106, &
-      step220107, step220108, step220109, step220110
+  !   ! Arguments
+  !   real(8), dimension(:), intent(in) :: step_ref
+  !   real(8), intent(in) :: ifueltyp, fcdfuel, &
+  !     rmajor, rminor, step220101, step220102, step22010301, step22010302, &
+  !     step220104, vfi, vfi_star
+  !   real(8), intent(out) :: step2201, spares, divcst, cdcost, &
+  !     step22010303, step22010304, step220105, step220106, &
+  !     step220107, step220108, step220109, step220110
   
-    ! Initialise as zero
-    spares = 0.0D0
+  !   ! Initialise as zero
+  !   spares = 0.0D0
 
-    ! 22.01.01 Blanket and First Wall
-    step2201 = step220101
+  !   ! 22.01.01 Blanket and First Wall
+  !   step2201 = step220101
 
-    ! 22.01.02 Shield
-    ! Inboard shield costs:
-    ! Note: outboard shield costs currently set to zero.
-    ! Add shield cost to total cost, step2201, in M$
-    step2201 = step2201 + step220102
-    ! STARFIRE percentage for spares
-    spares = 9.985D-2 *  step220102
+  !   ! 22.01.02 Shield
+  !   ! Inboard shield costs:
+  !   ! Note: outboard shield costs currently set to zero.
+  !   ! Add shield cost to total cost, step2201, in M$
+  !   step2201 = step2201 + step220102
+  !   ! STARFIRE percentage for spares
+  !   spares = 9.985D-2 *  step220102
   
-    ! 22.01.03.01 TF Coils
-    ! Add TF coil cost to total cost, step2201, in M$
-    step2201 = step2201 + step22010301
+  !   ! 22.01.03.01 TF Coils
+  !   ! Add TF coil cost to total cost, step2201, in M$
+  !   step2201 = step2201 + step22010301
 
-    ! 22.01.03.02 PF Coils
-    step2201 = step2201 + step22010302
-    ! STARFIRE percentage for spares
-    spares = spares + 3.269D-1 * step22010302
+  !   ! 22.01.03.02 PF Coils
+  !   step2201 = step2201 + step22010302
+  !   ! STARFIRE percentage for spares
+  !   spares = spares + 3.269D-1 * step22010302
 
-    ! 22.01.03.03 Central Solenoid
-    ! Original STARFIRE value, scaling with fusion island volume
-    step22010303 = step_ref(24) * (vfi / vfi_star)
-    step2201 = step2201 + step22010303
-    ! STARFIRE percentage for spares
-    spares = spares + 6.124D-1 * step22010303
+  !   ! 22.01.03.03 Central Solenoid
+  !   ! Original STARFIRE value, scaling with fusion island volume
+  !   step22010303 = step_ref(24) * (vfi / vfi_star)
+  !   step2201 = step2201 + step22010303
+  !   ! STARFIRE percentage for spares
+  !   spares = spares + 6.124D-1 * step22010303
 
-    ! 22.01.03.04 Control Coils
-    ! Original STARFIRE value, scaling with fusion island volume
-    step22010304 = step_ref(25) * (vfi / vfi_star)
-    step2201 = step2201 + step22010304
-    ! STARFIRE percentage for spares
-    spares = spares + 1.075D-1 * step22010304
+  !   ! 22.01.03.04 Control Coils
+  !   ! Original STARFIRE value, scaling with fusion island volume
+  !   step22010304 = step_ref(25) * (vfi / vfi_star)
+  !   step2201 = step2201 + step22010304
+  !   ! STARFIRE percentage for spares
+  !   spares = spares + 1.075D-1 * step22010304
   
-    ! 22.01.04 Auxiliary Heating and Current Drive
-    ! HCD cost = cost per injected Watt of power * injected Watts
-    step2201 = step2201 + step220104
-    ! STARFIRE percentage for spares
-    spares = spares + 2.335D-1 * step220104
+  !   ! 22.01.04 Auxiliary Heating and Current Drive
+  !   ! HCD cost = cost per injected Watt of power * injected Watts
+  !   step2201 = step2201 + step220104
+  !   ! STARFIRE percentage for spares
+  !   spares = spares + 2.335D-1 * step220104
   
-    ! 22.01.05 Primary Structure and Support
-    ! Original STARFIRE value, scaling with fusion island volume
-    step220105 = step_ref(27) * (vfi / vfi_star)
-    step2201 = step2201 + step220105
-    ! STARFIRE percentage for spares
-    spares = spares + 6.824D-2 * step220105
+  !   ! 22.01.05 Primary Structure and Support
+  !   ! Original STARFIRE value, scaling with fusion island volume
+  !   step220105 = step_ref(27) * (vfi / vfi_star)
+  !   step2201 = step2201 + step220105
+  !   ! STARFIRE percentage for spares
+  !   spares = spares + 6.824D-2 * step220105
   
-    ! 22.01.06 Reactor Vacuum System
-    ! Original STARFIRE value, scaling with fusion island volume
-    step220106 = step_ref(28) * (vfi / vfi_star)**(2.0D0/3.0D0)
-    step2201 = step2201 + step220106
-    ! STARFIRE percentage for spares
-    spares = spares + 1.893D-1 * step220106
+  !   ! 22.01.06 Reactor Vacuum System
+  !   ! Original STARFIRE value, scaling with fusion island volume
+  !   step220106 = step_ref(28) * (vfi / vfi_star)**(2.0D0/3.0D0)
+  !   step2201 = step2201 + step220106
+  !   ! STARFIRE percentage for spares
+  !   spares = spares + 1.893D-1 * step220106
   
-    ! 22.01.07 Power Supplies
-    ! Original STARFIRE value, scaling with fusion island volume
-    step220107 = step_ref(29) * (vfi / vfi_star)**(2.0D0/3.0D0)
-    step2201 = step2201 + step220107
+  !   ! 22.01.07 Power Supplies
+  !   ! Original STARFIRE value, scaling with fusion island volume
+  !   step220107 = step_ref(29) * (vfi / vfi_star)**(2.0D0/3.0D0)
+  !   step2201 = step2201 + step220107
   
-    ! 22.01.08 Impurity Control
-    ! Original STARFIRE value, no scaling
-    step220108 = step_ref(30)
-    step2201 = step2201 + step220108
+  !   ! 22.01.08 Impurity Control
+  !   ! Original STARFIRE value, no scaling
+  !   step220108 = step_ref(30)
+  !   step2201 = step2201 + step220108
   
-    ! 22.01.09 ECRH Plasma Breakdown
-    ! Original STARFIRE value, no scaling
-    step220109 = step_ref(31) 
-    step2201 = step2201 + step220109
+  !   ! 22.01.09 ECRH Plasma Breakdown
+  !   ! Original STARFIRE value, no scaling
+  !   step220109 = step_ref(31) 
+  !   step2201 = step2201 + step220109
 
-    ! 22.01.10 Divertor
-    ! Cost Model 0 cost for STARFIRE sized device
-    ! 58.62% increase between 1980 and 1990 
-    ! http://www.in2013dollars.com/1980-dollars-in-1990
-    ! Scaling with product of rmajor and rminor
-    step220110 = step_ref(32) * ((rmajor*rminor)/(rmajor_star*rminor_star)) 
-    if (ifueltyp == 1) then
-      divcst = step220110
-      step220110 = 0.0D0
-    else
-      divcst = 0.0D0
-    end if
-    step2201 = step2201 + step220110
-  end subroutine step_a2201
+  !   ! 22.01.10 Divertor
+  !   ! Cost Model 0 cost for STARFIRE sized device
+  !   ! 58.62% increase between 1980 and 1990 
+  !   ! http://www.in2013dollars.com/1980-dollars-in-1990
+  !   ! Scaling with product of rmajor and rminor
+  !   step220110 = step_ref(32) * ((rmajor*rminor)/(rmajor_star*rminor_star)) 
+  !   if (ifueltyp == 1) then
+  !     divcst = step220110
+  !     step220110 = 0.0D0
+  !   else
+  !     divcst = 0.0D0
+  !   end if
+  !   step2201 = step2201 + step220110
+  ! end subroutine step_a2201
 
   ! subroutine step_a220101(step_ucblss, step_ucblbreed, step_ucblbe, ucblli, &
   !   step_ucblvd, ucblli2o, ucbllipb, ifueltyp, step_ucfws, step_ucfwps, &
@@ -885,26 +884,26 @@ contains
   !   step2206 = step2206 + step220608
   ! end subroutine step_a2206
  
-  subroutine step_a2207(step_ref, pth, ptherm_star, step2207)
-    !! Account 22.07 : Instrumentation and Control
-    !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! This routine evaluates the Account 22.07 (Instrumentation
-    !! and Control) costs.
-    !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    implicit none
+  ! subroutine step_a2207(step_ref, pth, ptherm_star, step2207)
+  !   !! Account 22.07 : Instrumentation and Control
+  !   !! author: S I Muldrew, CCFE, Culham Science Centre
+  !   !! This routine evaluates the Account 22.07 (Instrumentation
+  !   !! and Control) costs.
+  !   !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+  !   implicit none
   
-    ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: pth, ptherm_star
-    real(8), intent(out) :: step2207
+  !   ! Arguments
+  !   real(8), dimension(:), intent(in) :: step_ref
+  !   real(8), intent(in) :: pth, ptherm_star
+  !   real(8), intent(out) :: step2207
 
-    ! Initialise as zero
-    step2207 = 0.0D0
+  !   ! Initialise as zero
+  !   step2207 = 0.0D0
 
-    ! 22.07 Instrumentation and Control
-    ! Original STARFIRE value, scaling with thermal power
-    step2207 = step_ref(50) * (pth / ptherm_star)**0.6D0
-  end subroutine step_a2207
+  !   ! 22.07 Instrumentation and Control
+  !   ! Original STARFIRE value, scaling with thermal power
+  !   step2207 = step_ref(50) * (pth / ptherm_star)**0.6D0
+  ! end subroutine step_a2207
 
   subroutine step_a23(step_ref, step_con, pgrossmw, step23a, step2303, &
     step2398, step2399, step23)
