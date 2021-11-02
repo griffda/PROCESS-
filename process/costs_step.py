@@ -316,7 +316,7 @@ class CostsStep:
             po.ocosts(self.outfile, "(step2198)", "Spares (M$)", step2198)
             po.ocosts(self.outfile, "(step2199)", "Contingency (M$)", step2199)
             po.oblnkl(self.outfile)
-            po.ocosts(self.outfile, "(step21)", "Total Account 21 Cost (M$)", cs.step21)
+            po.ocosts(self.outfile, "(step21)", "Total Account 21 Cost (M$)", self.step21)
 
     def step_a22(self):
         """Account 22 : Reactor Plant Equipment.
