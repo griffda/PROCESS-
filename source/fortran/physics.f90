@@ -246,8 +246,24 @@ module physics_module
           close(32)
        endif
 
-       call convert_Plasmod2PROCESS(geom,comp,ped,radp,mhd,loss,theat,tburn,&
-							& fusrat)
+       call convert_Plasmod2PROCESS(theat, tburn, fusrat, &
+         geom%k, geom%d, geom%perim, geom%ip, geom%q95, &
+         comp%comparray, comp%globtau, comp%cxe, comp%che, comp%car, &
+         ped%teped, ped%nped, ped%nsep, ped%tesep, &
+         radp%te, radp%ti, radp%av_te, radp%av_ten, radp%av_ti, radp%av_ne, &
+         radp%ne, radp%av_ni, radp%av_nhe, radp%av_nd, radp%av_nz, radp%zeff, &
+         radp%jcd, radp%jpar, radp%ipol, radp%qprof, radp%Volum, radp%vp, &
+         radp%cc, radp%palph, radp%nions, radp%psi, &
+         loss%alpharate, loss%betaft, loss%dfuelreq, loss%fusionrate, loss%h, &
+         loss%palpe, loss%palpi, loss%pbrehms, loss%pdiv, loss%peaux, loss%pfus, &
+         loss%pfusdd, loss%piaux, loss%piepv, loss%plh, loss%pline, loss%pnbi, &
+         loss%pohm, loss%prad, loss%pradcore, loss%pradedge, loss%psep, &
+         loss%psepe, loss%psepi, loss%psync, loss%qcd, loss%qfus, loss%qheat, &
+         loss%qtot, loss%rplas, loss%tauee, loss%taueff, loss%tauei, loss%wth, &
+         mhd%betan, mhd%bp, mhd%equilcheck, mhd%f_ni, mhd%fbs, mhd%ip_out, &
+         mhd%q, mhd%q_sep, mhd%qstar, mhd%rli, mhd%sp, mhd%torsurf, mhd%vloop, &
+         mhd%vp &
+       )
 
     endif
 

@@ -325,21 +325,36 @@ contains
 
   end subroutine setupPlasmod
 
-  subroutine convert_Plasmod2PROCESS(geom,comp,ped,radp,mhd,loss,theat,&
-		& tburn,fusrat)
-
+  subroutine convert_Plasmod2PROCESS(theat, tburn, fusrat, &
+    geom_k, geom_d, geom_perim, geom_ip, geom_q95, &
+    comp_comparray, comp_globtau, comp_cxe, comp_che, comp_car, &
+    ped_teped, ped_nped, ped_nsep, ped_tesep, &
+    radp_te, radp_ti, radp_av_te, radp_av_ten, radp_av_ti, radp_av_ne, &
+    radp_ne, radp_av_ni, radp_av_nhe, radp_av_nd, radp_av_nz, radp_zeff, &
+    radp_jcd, radp_jpar, radp_ipol, radp_qprof, radp_Volum, radp_vp, &
+    radp_cc, radp_palph, radp_nions, radp_psi, &
+    loss_alpharate, loss_betaft, loss_dfuelreq, loss_fusionrate, loss_h, &
+    loss_palpe, loss_palpi, loss_pbrehms, loss_pdiv, loss_peaux, loss_pfus, &
+    loss_pfusdd, loss_piaux, loss_piepv, loss_plh, loss_pline, loss_pnbi, &
+    loss_pohm, loss_prad, loss_pradcore, loss_pradedge, loss_psep, &
+    loss_psepe, loss_psepi, loss_psync, loss_qcd, loss_qfus, loss_qheat, &
+    loss_qtot, loss_rplas, loss_tauee, loss_taueff, loss_tauei, loss_wth, &
+    mhd_betan, mhd_bp, mhd_equilcheck, mhd_f_ni, mhd_fbs, mhd_ip_out, &
+    mhd_q, mhd_q_sep, mhd_qstar, mhd_rli, mhd_sp, mhd_torsurf, mhd_vloop, &
+    mhd_vp &
+    )
     !! Routine to set up the PLASMOD input params
     !! author: K Ellis, UKAEA, Culham Science Centre
-    !! num : derived type :
-    !! geom : derived type :
-    !! comp : derived type :
-    !! ped : derived type :
+    !! geom_*: decomposed contents of geometry derived type
+    !! comp_*: decomposed contents of composition derived type
+    !! ped_*: decomposed contents of pedestal derived type
+    !! radp_*: decomposed contents of radial_profiles derived type
+    !! mhd_*: decomposed contents of mhd_eq derived type
+    !! loss_*: decomposed contents of power_losses derived type
+    !! Arguments are contents of the derived types found in the structs module
     !! This routine writes out the times of the various stages
     !! during a single plant cycle.
     !! E. Fable et al., Fusion Engineering and Design, Volume 130, May 2018, Pages 131-136
-
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use current_drive_variables, only: pinjimw, bootipf, pinjemw, pinjmw, &
         ftritbm, plasipf
@@ -371,12 +386,35 @@ contains
     implicit none
 
     !  Arguments
-    type (geometry), intent(inout) :: geom
-    type (composition), intent(inout) :: comp
-    type (pedestal), intent(inout) :: ped
-    type (radial_profiles), intent(inout) :: radp
-    type (MHD_EQ), intent(inout) :: mhd
-    type (power_losses), intent(inout) :: loss
+    ! geometry type
+    real(8), intent(in) :: geom_k, geom_d, geom_perim, geom_ip, geom_q95
+    
+    ! composition type
+    real(8), intent(in) :: comp_cxe, comp_che, comp_car
+    real(8), dimension(:), intent(in) :: comp_comparray, comp_globtau
+    
+    ! pedestal type
+    real(8), intent(in) :: ped_teped, ped_nped, ped_nsep, ped_tesep
+    
+    ! radial_profiles type
+    real(8), intent(in) :: radp_av_te, radp_av_ten, radp_av_ti, radp_av_ne, &
+      radp_av_ni, radp_av_nhe, radp_av_nd, radp_av_nz, radp_zeff
+    real(8), dimension(:), intent(in) :: radp_ne, radp_psi, radp_te, radp_ti, &
+      radp_jcd, radp_jpar, radp_ipol, radp_qprof, radp_Volum, radp_vp, &
+      radp_cc, radp_palph, radp_nions
+    
+    ! power_losses type
+    real(8), intent(in) :: loss_alpharate, loss_betaft, loss_dfuelreq, loss_fusionrate, loss_h, &
+      loss_palpe, loss_palpi, loss_pbrehms, loss_pdiv, loss_peaux, loss_pfus, &
+      loss_pfusdd, loss_piaux, loss_piepv, loss_plh, loss_pline, loss_pnbi, &
+      loss_pohm, loss_prad, loss_pradcore, loss_pradedge, loss_psep, &
+      loss_psepe, loss_psepi, loss_psync, loss_qcd, loss_qfus, loss_qheat, &
+      loss_qtot, loss_rplas, loss_tauee, loss_taueff, loss_tauei, loss_wth
+    
+    ! mhd_eq type
+    real(8), intent(in) :: mhd_betan, mhd_bp, mhd_equilcheck, mhd_f_ni, mhd_fbs, mhd_ip_out, &
+      mhd_q, mhd_q_sep, mhd_qstar, mhd_rli, mhd_sp, mhd_torsurf, mhd_vloop, &
+      mhd_vp
 
     real(kind(1.0D0)) :: theat,tburn,aeps,beps,rlpext,rlpint,vburn,fusrat
     real(kind(1.0D0)) :: znimp, znfuel
@@ -403,9 +441,9 @@ contains
        write(*,*) 'N.B. If reducing time step size doesnt work, try changing the parameters, particularly H factor'
     endif
 
-    ! mhd%equilcheck will likely be depricated in the future, as it is covered
+    ! mhd_equilcheck will likely be depricated in the future, as it is covered
     ! by i_flag
-    if (i_flag.ne.1 .or. mhd%equilcheck.ne.1)then
+    if (i_flag.ne.1 .or. mhd_equilcheck.ne.1)then
        idiags(1) = i_flag
        call report_error(174)
     endif
@@ -413,39 +451,39 @@ contains
     !------------------------------------------------
     !Quantities previously calculated by geomty in plasma_geometry
     !kappa95 and triang95 are inputs and not recalculated! (#646)
-    kappa    = geom%k
-    triang   = geom%d
-    xarea    = mhd%torsurf !Plasma cross-sectional area (m2)
-    sarea    = mhd%sp
+    kappa    = geom_k
+    triang   = geom_d
+    xarea    = mhd_torsurf !Plasma cross-sectional area (m2)
+    sarea    = mhd_sp
     !sareao   =  !outboard plasma surface area
     kappaa   = xarea/(3.141592*rminor**2)
-    pperim = geom%perim !Plasma poloidal perimeter (m)
+    pperim = geom_perim !Plasma poloidal perimeter (m)
     sf = pperim / (2.0D0*pi*rminor)
     ! Issue 879 remove the line in Plasmod that overwrites 'vol'
-    ! vol = mhd%vp ! plasma volume (m^3)
+    ! vol = mhd_vp ! plasma volume (m^3)
     ! write(*,*)'convert_Plasmod2PROCESS: Plasma volume  ', vol
 
     !------------------------------------------------
     !Temperature outputs otherwise input or
     !calculated in plasma_profiles
-    te0   = radp%te(1)
-    ti0   = radp%ti(1) !ion temperature on axis
-    teped = ped%teped !only computed, if ieped = 2
-    te    = radp%av_te
-    ten   = radp%av_Ten
-    ti    = radp%av_ti
+    te0   = radp_te(1)
+    ti0   = radp_ti(1) !ion temperature on axis
+    teped = ped_teped !only computed, if ieped = 2
+    te    = radp_av_te
+    ten   = radp_av_Ten
+    ti    = radp_av_ti
     tin   = ti/te * ten
 
     !------------------------------------------------
     !Density outputs otherwise inputs or
     !calculated in plasma_profiles
-    dene  = radp%av_ne*1.d19
-    ne0   = radp%ne(1)*1.d19
-    neped = ped%nped*1.d19
-    nesep = ped%nsep*1.d19
-    dnitot = radp%av_ni * 1.0d19 !Ion density (/m3)
+    dene  = radp_av_ne*1.d19
+    ne0   = radp_ne(1)*1.d19
+    neped = ped_nped*1.d19
+    nesep = ped_nsep*1.d19
+    dnitot = radp_av_ni * 1.0d19 !Ion density (/m3)
     ni0   = dnitot/dene * ne0
-    dnla  = sum(radp%ne)/size(radp%ne)*1.d19
+    dnla  = sum(radp_ne)/size(radp_ne)*1.d19
 
     !  Central pressure (Pa), from ideal gas law : p = nkT
     p0 = (ne0*te0 + ni0*ti0) * 1.0D3 * echarge
@@ -458,9 +496,9 @@ contains
     !impurity_arr is used for the composition calculations and
     !the radiation model
 
-    ralpne = comp%comparray(2)
+    ralpne = comp_comparray(2)
 
-    dnalp = radp%av_nhe*1.d19 ! Helium ion density (thermalised ions only) (/m3)
+    dnalp = radp_av_nhe*1.d19 ! Helium ion density (thermalised ions only) (/m3)
     if ((dnalp - dene*ralpne)/dnalp > 1e-6) then
        fdiags(1) = dnalp; fdiags(2) = dene; fdiags(3) = ralpne;
        call report_error(192)
@@ -475,7 +513,7 @@ contains
     end if
 
     do imp=1,nimp
-       impurity_arr(imp)%frac=comp%comparray(imp)
+       impurity_arr(imp)%frac=comp_comparray(imp)
     enddo
 
     if (.false.) then !This cannot be used as PLASMOD cannot vary Z with Te yet
@@ -493,14 +531,14 @@ contains
        znfuel = dene - 2.0D0*dnalp - dnprot - dnbeam - znimp
        deni   = znfuel/(1.0D0+fhe3)! Fuel density (/m3)
 
-       if ((deni - radp%av_nd*1.d19)/deni > 1e-6) then
-          fdiags(1) = deni; fdiags(2) = radp%av_nd*1.d19; fdiags(3) = znfuel; fdiags(4) = fhe3
+       if ((deni - radp_av_nd*1.d19)/deni > 1e-6) then
+          fdiags(1) = deni; fdiags(2) = radp_av_nd*1.d19; fdiags(3) = znfuel; fdiags(4) = fhe3
           call report_error(193)
        endif
 
     endif
 
-    deni  = radp%av_nd*1.d19 ! Fuel density (/m3)
+    deni  = radp_av_nd*1.d19 ! Fuel density (/m3)
 
     !  Ensure that deni is never negative or zero - KE: deni could be zero with this inequality
     if (deni < 0.0D0) then
@@ -525,12 +563,12 @@ contains
           end if
        end do
 
-       if ( (dnz - radp%av_nz*1.d19)/dnz > 1e-6) then
-          fdiags(1) = dnz; fdiags(2) = radp%av_nz*1.d19
+       if ( (dnz - radp_av_nz*1.d19)/dnz > 1e-6) then
+          fdiags(1) = dnz; fdiags(2) = radp_av_nz*1.d19
           call report_error(194)
        endif
     else
-       dnz = radp%av_nz*1.d19
+       dnz = radp_av_nz*1.d19
     endif
 
     !  Total ion density
@@ -562,12 +600,12 @@ contains
           zeff = zeff + impurity_arr(imp)%frac * Zav_of_te(impurity_arr(imp),te)**2
        end do
 
-       if ((zeff - radp%zeff)/zeff > 1e-6) then
-          fdiags(1) = zeff; fdiags(2) = radp%zeff
+       if ((zeff - radp_zeff)/zeff > 1e-6) then
+          fdiags(1) = zeff; fdiags(2) = radp_zeff
           call report_error(195)
        endif
     endif
-    zeff = radp%zeff
+    zeff = radp_zeff
 
     !  Define coulomb logarithm
     !  (collisions: ion-electron, electron-electron)
@@ -575,8 +613,8 @@ contains
     dlamee = 31.0D0 - (log(dene)/2.0D0) + log(te*1000.0D0)
     dlamie = 31.3D0 - (log(dene)/2.0D0) + log(te*1000.0D0)
 
-    falpe = loss%palpe/(loss%palpe+loss%palpi)
-    falpi = loss%palpi/(loss%palpe+loss%palpi)
+    falpe = loss_palpe/(loss_palpe+loss_palpi)
+    falpi = loss_palpi/(loss_palpe+loss_palpi)
 
 
     !  Average atomic masses
@@ -612,34 +650,34 @@ contains
     !if plasmod_i_equiltype = 1 q95 is an input and plascur an output
     !if plasmod_i_equiltype = 2 plascur is an input and q95 an output
     !Reassign both for simplicity
-    plascur = geom%ip * 1.0D6 !Plasma current in Ampere
+    plascur = geom_ip * 1.0D6 !Plasma current in Ampere
     !Edge safety factor
-    q95 = geom%q95
+    q95 = geom_q95
     !duplicate variables that might get deprecated!
-    !plascur = mhd%ip_out  * 1.0D6
-    !q95 = mhd%q
+    !plascur = mhd_ip_out  * 1.0D6
+    !q95 = mhd_q
 
-    qstar = mhd%qstar ! equivalent cylindrical safety factor (shaped)
-    bp    = mhd%bp ! poloidal field in (T)
-    rli   = mhd%rli !plasma inductance internal (H)
+    qstar = mhd_qstar ! equivalent cylindrical safety factor (shaped)
+    bp    = mhd_bp ! poloidal field in (T)
+    rli   = mhd_rli !plasma inductance internal (H)
 
     !------------------------------------------------
     !beta is now an output, is an input with (ipedestal .ne. 3)
-    beta  = mhd%betan * geom%ip / (rminor * bt)/100.
-    normalised_total_beta = mhd%betan
+    beta  = mhd_betan * geom_ip / (rminor * bt)/100.
+    normalised_total_beta = mhd_betan
 
     !------------------------------------------------
     !replacing parametrised bootstrap models
-    bootipf= mhd%fbs
+    bootipf= mhd_fbs
     plasipf = bootipf
 
     !See #645 for discussion on fvsbrnni
-    fvsbrnni = mhd%f_ni
-    facoh = max(1.0D-10, (1.-mhd%f_ni))
-    faccd = max(0., mhd%f_ni - bootipf )
+    fvsbrnni = mhd_f_ni
+    facoh = max(1.0D-10, (1.-mhd_f_ni))
+    faccd = max(0., mhd_f_ni - bootipf )
 
-    !mhd%q_sep !q at separatrix
-    !mhd%vloop !loop voltage in V ! Check this is consistent with our volt-seconds requirements routine in physics.f90
+    !mhd_q_sep !q at separatrix
+    !mhd_vloop !loop voltage in V ! Check this is consistent with our volt-seconds requirements routine in physics.f90
 
     ! This should match that input value and therefore should not need to be reassigned
     ! One could implement a reference check?
@@ -647,21 +685,21 @@ contains
     !-----------------------------------------------
     !Fusion power and fast alpha pressure calculations
     !previously calculated by palph
-    palppv     = loss%Pfus/(5.0*vol) !alpha particle fusion power per volume (MW/m3)
+    palppv     = loss_Pfus/(5.0*vol) !alpha particle fusion power per volume (MW/m3)
     pchargepv  = 0d0 !other charged particle fusion power/volume (MW/m3)
     !pneutpv calculated in palph2 section below
     !missing e.g. beam power as calculated in beamfus
     !sigvdt = 0.0d0
-    fusionrate = loss%fusionrate !fusion reaction rate (reactions/m3/s)
-    alpharate  = loss%alpharate !alpha particle production rate (/m3/s)
+    fusionrate = loss_fusionrate !fusion reaction rate (reactions/m3/s)
+    alpharate  = loss_alpharate !alpha particle production rate (/m3/s)
     protonrate = 0.0d0
-    pdt        = loss%Pfus !D-T fusion power (MW)
+    pdt        = loss_Pfus !D-T fusion power (MW)
     pdtpv      = pdt / vol
 
     !Eventually PLASMOD will generate these other interactions more completely.
     !For now, set values to zero.
     pdhe3      = 0d0 !KE !D-He3 fusion power (MW) !PLASMOD does not calc.
-    pdd        = loss%pfusdd !D-D fusion power (MW)
+    pdd        = loss_pfusdd !D-D fusion power (MW)
     !pddpv      = pdd / vol !KE - not a global variable, is this required?
 
     !---------------------------------------------
@@ -676,19 +714,19 @@ contains
     !previously calculated in palph2 - recalculates quantities to changes units
     !e.g. per volume to MW, and to include beam fusion, e.g:
      !neutrons
-    pneutpv   = loss%Pfus/(5.0 * vol) * 4.0  !neutron fusion power (MW/m3), updated below
+    pneutpv   = loss_Pfus/(5.0 * vol) * 4.0  !neutron fusion power (MW/m3), updated below
     pneutpv   = pneutpv + 4.0D0*palpnb/vol !updating with neutral beam power (currently zero)
     pneutmw   = pneutpv * vol !neutron fusion power including beam fusion (currently zero) (MW)
      !alphas
     falpha    =1.0
-    palpepv   = loss%palpe/vol !alpha power per volume to electrons (MW/m3)
-    palpipv   = loss%palpi/vol !alpha power per volume to ions (MW/m3)
+    palpepv   = loss_palpe/vol !alpha power per volume to electrons (MW/m3)
+    palpipv   = loss_palpi/vol !alpha power per volume to ions (MW/m3)
     palppv    = palppv + palpnb/vol !updating with neutral beam power (currently zero) (MW/m3)
-    palpmw    = loss%Pfus/5.0 !alpha power (MW)
-    betaft    = loss%betaft !fast alpha beta component
+    palpmw    = loss_Pfus/5.0 !alpha power (MW)
+    betaft    = loss_betaft !fast alpha beta component
      !non-alpha charged particles
     pchargemw = 0d0 !other charged particle fusion power, excluding alphas (MW) !This comes from reactions other than DT
-    pfuscmw   = loss%Pfus/5.0 !charged particle fusion power (MW) !
+    pfuscmw   = loss_Pfus/5.0 !charged particle fusion power (MW) !
     !KE - not sure above is correct? Definition in PROCESS: pfuscmw = palpmw + pchargemw
     !KE - in PROCESS, below is, powfmw = palpmw + pneutmw + pchargemw
     powfmw    = pdt + pdd + pdhe3 !Same calculation as in ASTRA, complete formula with cross section, should be equivalent to PROCESS  !Total power deposited in plasma (MW)
@@ -696,35 +734,35 @@ contains
     !---------------------------------------
     betath = beta-betaft-betanb
     gammaft = (betaft+betanb)/betath !(Fast alpha + beam beta)/(thermal beta)
-    hfact  = loss%H
-    pradmw     = loss%prad ! fradpwr is total radiation fraction
-    pedgeradmw = loss%pradedge
-    pcoreradmw = loss%pradcore
-    psyncpv    = loss%psync/vol
-    pbrempv    = loss%pbrehms/vol
-    plinepv    = loss%pline/vol
+    hfact  = loss_H
+    pradmw     = loss_prad ! fradpwr is total radiation fraction
+    pedgeradmw = loss_pradedge
+    pcoreradmw = loss_pradcore
+    psyncpv    = loss_psync/vol
+    pbrempv    = loss_pbrehms/vol
+    plinepv    = loss_pline/vol
 
-    piepv      = loss%piepv
-    pinjemw    = loss%peaux
-    pinjimw    = loss%piaux
-    pdivt      = loss%Psep
-    plhthresh  = loss%PLH
+    piepv      = loss_piepv
+    pinjemw    = loss_peaux
+    pinjimw    = loss_piaux
+    pdivt      = loss_Psep
+    plhthresh  = loss_PLH
 
     !-----------------------------------------
     !previously calculated by pcond
-    ptrepv  =  loss%psepe/vol !electron transport power (MW/m3)
-    ptripv  =  loss%psepi/vol !ion transport power (MW/m3)
-    tauee   =  loss%tauee !electron energy confinement time (s) !Emiliano todo
-    tauei   =  loss%tauei !ion energy confinement time (s)
-    powerht =  loss%qtot !heating power (MW) assumed in calculation of confinement scaling
-    taueff  =  loss%taueff   !global energy confinement time (s)
+    ptrepv  =  loss_psepe/vol !electron transport power (MW/m3)
+    ptripv  =  loss_psepi/vol !ion transport power (MW/m3)
+    tauee   =  loss_tauee !electron energy confinement time (s) !Emiliano todo
+    tauei   =  loss_tauei !ion energy confinement time (s)
+    powerht =  loss_qtot !heating power (MW) assumed in calculation of confinement scaling
+    taueff  =  loss_taueff   !global energy confinement time (s)
 
     !-----------------------------------------
     !previously calculated by pohm
-    pohmpv = loss%pohm/vol !ohmic heating power per unit volume (MW/m3)
-    pohmmw = loss%pohm !ohmic heating power (MW)
+    pohmpv = loss_pohm/vol !ohmic heating power per unit volume (MW/m3)
+    pohmmw = loss_pohm !ohmic heating power (MW)
     rpfac = 1.0d0 !neoclassical resistivity enhancement factor
-    rplas=loss%rplas
+    rplas=loss_rplas
     !-----------------------------------------
 
     rlpint = rmu0 * rmajor * rli/2.0D0
@@ -737,29 +775,29 @@ contains
 
     !-----------------------------------------
     ! previously calculated by vscalc
-    phiint = radp%psi(size(radp%psi)) !internal plasma volt-seconds (Wb)
+    phiint = radp_psi(size(radp_psi)) !internal plasma volt-seconds (Wb)
     rlp = rlpext + rlpint
     vburn = plascur * rplas * facoh * csawth !volt-seconds needed during flat-top (heat+burn) (Wb)
     vsbrn = vburn*(theat + tburn)
-    vsind = rlp * geom%ip*1.d6 !internal and external plasma inductance V-s (Wb)
-    vsres = gamma * rmu0*geom%ip*1.d6*rmajor !resistive losses in start-up volt-seconds (Wb)
+    vsind = rlp * geom_ip*1.d6 !internal and external plasma inductance V-s (Wb)
+    vsres = gamma * rmu0*geom_ip*1.d6*rmajor !resistive losses in start-up volt-seconds (Wb)
     vsstt = vsres + vsind + vsbrn !total volt-seconds needed (Wb)
 
     !----------------------------------------
     ! previously calculated by phyaux:
-    qfuel = loss%dfuelreq * 2.0*1.d19 !qfuel is for nucleus pairs
-    dntau = radp%av_ne*taueff*1.d19 !plasma average n-tau (s/m3)
+    qfuel = loss_dfuelreq * 2.0*1.d19 !qfuel is for nucleus pairs
+    dntau = radp_av_ne*taueff*1.d19 !plasma average n-tau (s/m3)
     rndfuel = fusionrate*vol !fuel burnup rate (reactions/s)
-    taup = loss%taueff*comp%globtau(3) !(alpha) particle confinement time (s)
+    taup = loss_taueff*comp_globtau(3) !(alpha) particle confinement time (s)
     burnup = rndfuel/qfuel*2.d0 !fractional plasma burnup
     fusrat=fusionrate*vol
     figmer=plascur*1.d-6*aspect
     !---------------------------------------
 
-    pinjmw =loss%pnbi
-    pradpv = loss%Prad/vol !Total radiation power (MW)
-    ptrimw = loss%psepi !Ion transport (MW)
-    ptremw = loss%psepe !Electron transport (MW)
+    pinjmw =loss_pnbi
+    pradpv = loss_Prad/vol !Total radiation power (MW)
+    ptrimw = loss_psepi !Ion transport (MW)
+    ptremw = loss_psepe !Electron transport (MW)
 
   end subroutine convert_Plasmod2PROCESS
 
