@@ -181,7 +181,7 @@ integration-py36:
       - tests/regression/scenarios/starfire/out.MFILE.DAT
     expire_in: 1 week
   script:
-    - pytest -v tests/regression -s --keep=starfire | tee tests/regression/pytest.log
+    - pytest -v tests/regression -s | tee tests/regression/pytest.log
     - lcov --gcov-tool gcov --capture --directory build/CMakeFiles/process.dir/source/fortran/ --output-file lcov_results/coverage.info
     - genhtml --output-directory lcov_results/html lcov_results/coverage.info
   tags:
@@ -239,6 +239,22 @@ baseline_2018-py38:
   artifacts:
     paths:
       - tracking/baseline_2018/baseline_2018_MFILE.DAT
+    expire_in: 1 week
+  tags:
+    - ubuntu
+
+starfire-py38:
+  when: on_success
+  only:
+    - develop
+  stage: testing
+  <<: *test-setup-py38
+  script:
+    - process -i tests/regression/scenarios/starfire/IN.DAT
+    - mv tests/regression/scenarios/starfire/MFILE.DAT tests/regression/scenarios/starfire/starfire_MFILE.DAT 
+  artifacts:
+    paths:
+      - tests/regression/scenarios/starfire/starfire_MFILE.DAT
     expire_in: 1 week
   tags:
     - ubuntu
