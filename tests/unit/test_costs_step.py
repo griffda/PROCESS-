@@ -238,7 +238,7 @@ def test_step_a22(monkeypatch, shared_cost_vars):
     monkeypatch.setattr(buildvar, "fwarea", 9.42e2)
     #monkeypatch.setattr(cs, "fwarea_star", 9.42e2)
     monkeypatch.setattr(pv, "rmajor", 1e2)
-    monkeypatch.setattr(pv, "rmajor", 1e1)
+    monkeypatch.setattr(pv, "rminor", 1e1)
     monkeypatch.setattr(cdv, "pinjmw", 4.15e3)
     #monkeypatch.setattr(cs, "pinjmw_star", 9.04e1)
     monkeypatch.setattr(cs, "rmajor_star", 1e3)
@@ -250,7 +250,7 @@ def test_step_a22(monkeypatch, shared_cost_vars):
     obs = cs.step22
     assert pytest.approx(obs) == exp
 
-def test_step_a2201(monkeypatch, shared_cost_vars):
+def test_step_a2201(monkeypatch, shared_cost_vars): # rmc
     """Validate sum of cost account 22.01.
 
     :param monkeypatch: mocking fixture
@@ -260,14 +260,26 @@ def test_step_a2201(monkeypatch, shared_cost_vars):
     """
     # Mock module var set in subroutine: increase is value of step2201
     monkeypatch.setattr(cs, "step22", 0.0)
-    monkeypatch.setattr(buildvar, "fwarea", 9.42e2)
-    #monkeypatch.setattr(cs, "fwarea_star", 9.42e2)
-    monkeypatch.setattr(pv, "rmajor", 1e2)
-    monkeypatch.setattr(pv, "rmajor", 1e1)
-    monkeypatch.setattr(cdv, "pinjmw", 4.15e3)
-    #monkeypatch.setattr(cs, "pinjmw_star", 9.04e1)
-    monkeypatch.setattr(cs, "rmajor_star", 1e3)
-    monkeypatch.setattr(cs, "rminor_star", 1e3)
+    monkeypatch.setattr(cv, "step_ref", np.zeros(70, order="F"))
+    # Only mock used array elements
+    cv.step_ref[23] = 5.9e1
+    cv.step_ref[24] = 3.254e1
+    cv.step_ref[25] = 2.7254e2
+    cv.step_ref[26] = 4.292e2
+    cv.step_ref[27] = 3.955e1
+    cv.step_ref[28] = 4.305e2
+    cv.step_ref[29] = 1.994e1
+    cv.step_ref[30] = 2.295e1
+    cv.step_ref[31] = 1.364e2
+    monkeypatch.setattr(cv, "ifueltyp", 0)
+    monkeypatch.setattr(cv, "fcdfuel", 0.5)
+    monkeypatch.setattr(pv, "rmajor", 6.0)
+    monkeypatch.setattr(pv, "rminor", 3.0)
+    monkeypatch.setattr(cdv, "pinjmw", 1.2e2)
+    monkeypatch.setattr(cs, "pinjmw_star", 9.04e1)
+    monkeypatch.setattr(cs, "rmajor_star", 7.0)
+    monkeypatch.setattr(cs, "rminor_star", 1.9)
+
     cs.step_a2201(0, 0, 0)
     #exp = 1.7982872e3
     exp = 260.8591657
@@ -387,7 +399,7 @@ def test_step_a22010302(monkeypatch):
     monkeypatch.setattr(pfv, "ric", np.full(22, 5.0, order="F"))
     monkeypatch.setattr(pfv, "rjconpf", np.full(22, 1.0e7, order="F"))
 
-    exp = 1.167792821192398e1 
+    exp = 11.682954760169723
     obs = cs.step_a22010302()
     assert pytest.approx(obs) == exp
 
