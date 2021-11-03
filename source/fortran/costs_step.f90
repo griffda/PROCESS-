@@ -433,7 +433,7 @@ contains
   
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine step_a2201(step2298,outfile,iprint) ! rmc
+  subroutine step_a2201(step2298,outfile,iprint)
 
     !! Account 22.01 : Reactor Equipment
     !! author: S I Muldrew, CCFE, Culham Science Centre
@@ -447,7 +447,6 @@ contains
     use cost_variables, only: output_costs, step_ref, ifueltyp, fcdfuel, &
       divcst, cdcost
     use physics_variables, only: rmajor, rminor
-    !use constants, only: pi rmc
     use process_output, only: ocosts, oblnkl
 
     implicit none
@@ -483,16 +482,12 @@ contains
     step2298 = step2298 + 9.985D-2 * step220102
 
     ! 22.01.03.01 TF Coils
-    write(*,*) step22010301   ! rmc
     step22010301 = step_a22010301()
-    write(*,*) step22010301   ! rmc
     ! Add TF coil cost to total cost, step2201, in M$
     step2201 = step2201 + step22010301
 
     ! 22.01.03.02 PF Coils
-    write(*,*) step22010302   ! rmc
     step22010302 = step_a22010302()
-    write(*,*) step22010302   ! rmc
     step2201 = step2201 + step22010302
     ! STARFIRE percentage for spares
     step2298 = step2298 + 3.269D-1 * step22010302
@@ -625,7 +620,6 @@ contains
       fwallcst, step_ucfwps, step_ucfwa
 		use fwbs_variables, only: blktmodel, whtblli, blkttype, wtblli2o, &
       whtblbreed, whtblvd, whtblbe, whtblss, wtbllipb, fw_armour_mass, fwmass 
-    use build_variables, only: fwarea 
 		use heat_transport_variables, only: ipowerflow 
     
     implicit none
@@ -827,8 +821,6 @@ contains
     real(8) :: costtfgss
     !! Gravity support structure (M$)
     
-    real(8) :: step2201030101, step2201030102, step2201030103
-
     ! Initialise local vars
     c_tf_inboard_legs = 0.0D0
     c_tf_outboard_legs = 0.0D0
@@ -857,7 +849,7 @@ contains
       c_tf_outboard_legs = 1.0D-6 * whttflgs * uccpclb * 2.99D0
       
       ! Total TF coil cost
-      step2201030101 = c_tf_inboard_legs + c_tf_outboard_legs
+      step22010301 = c_tf_inboard_legs + c_tf_outboard_legs
     endif
       
     ! Superconducting coils
@@ -888,8 +880,7 @@ contains
       costtfgss = 1.0D-6 * clgsmass * step_ucgss
 
       ! Total superconducting TF coil costs
-      step2201030102 = ctfcontot + costtfwind + costtfcas + costtfint + costtfgss
- 
+      step22010301 = ctfcontot + costtfwind + costtfcas + costtfint + costtfgss 
     endif
     
     ! Cryogenic aluminium coils
@@ -899,11 +890,11 @@ contains
       ! Al conductor mass per coil * number of coils * cost per kilo *
       ! manufacturing cost factor, converted to M$
       ! step_mc_cryo_al_per = 0.2: 20% manufacturing cost
-      step2201030103 = (whtconal * n_tf * step_uc_cryo_al) * &
+      step22010301 = (whtconal * n_tf * step_uc_cryo_al) * &
         (step_mc_cryo_al_per + 1.0D0) * 1.0D-6
     endif
 
-    step22010301 = step2201030101 + step2201030102 + step2201030103
+    !step22010301 = step2201030101 + step2201030102 + step2201030103
 
     ! ifueltyp: consider centrepost cost as fuel, capital or both?
     ! cpstcst used later in coelc_step()
