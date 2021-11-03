@@ -46,6 +46,26 @@ stages:
     PY_VERSION: py36
   <<: *test-setup
 
+.setup-ssh: &setup-ssh |
+    mkdir -p ~/.ssh
+    chmod 700 ~/.ssh
+    echo "-----BEGIN OPENSSH PRIVATE KEY-----" > ~/.ssh/id_rsa
+    echo "$CI_RUNNER_PRIVATE_KEY" >> ~/.ssh/id_rsa
+    echo "-----END OPENSSH PRIVATE KEY-----" >> ~/.ssh/id_rsa
+    chmod 700 ~/.ssh/id_rsa
+    command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )
+    eval $(ssh-agent -s)
+    ssh-add ~/.ssh/id_rsa
+    echo $(ssh-keygen -E md5 -lf ~/.ssh/id_rsa)
+    ssh-keyscan -t ecdsa -H git.ccfe.ac.uk > ~/.ssh/known_hosts
+    ssh-keyscan -t ecdsa -H 194.81.223.100 >> ~/.ssh/known_hosts
+    ssh-keygen -H -F git.ccfe.ac.uk
+    ssh-keygen -H -F 194.81.223.100
+    cat ~/.ssh/known_hosts
+    git config --global user.name "${CI_RUNNER_DESCRIPTION}"
+    git config --global user.email "${CI_RUNNER_ID}@git.ccfe.ac.uk"
+
+
 #-----------------
 #  Build
 #-----------------
@@ -245,7 +265,6 @@ tracking_rtv:
   image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   only: 
     - develop
-    - 1344-docs-test
   stage: tracking
   <<: *test-setup-py38
   script:
