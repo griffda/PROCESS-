@@ -180,8 +180,8 @@ def test_costs_step(monkeypatch, costs_step):
     #Test that module variables are assigned correctly
     assert costs_step.vfi_star == 6.737e3 
     assert costs_step.ptherm_star == 4.15e3
-    #assert cs.pinjmw_star == 9.04e1
-    #assert cs.fwarea_star == 9.42e2
+    #assert costs_step.pinjmw_star == 9.04e1
+    #assert costs_step.fwarea_star == 9.42e2
     assert costs_step.rmajor_star == 7.0e0
     assert costs_step.rminor_star == 7.0/3.6
 
@@ -681,5 +681,20 @@ def test_coelc_step(monkeypatch, costs_step):
     expected_coe = 1.0369639053239339e-1
     observed_coe = cv.coe
     assert pytest.approx(observed_coe) == expected_coe
+
+    expected_moneyinit = 90
+    assert pytest.approx(cv.moneyint) == expected_moneyinit
+
+    expected_capcost = 100
+    assert pytest.approx(cv.capcost) == expected_capcost
+
+    expected_coecap = 0.05703973
+    assert pytest.approx(cv.coecap) == expected_coecap
+
+    expected_coeoam = 0.00520699
+    assert pytest.approx(cv.coeoam) == expected_coeoam
+
+    expected_coefuelt = 0.03859768
+    assert pytest.approx(cv.coefuelt) == expected_coefuelt
 
 
