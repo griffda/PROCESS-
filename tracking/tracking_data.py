@@ -45,8 +45,8 @@ class ProcessTrackerGenerator:
         "ne0", "faccd", "dnz", "taueff", "te0", "pdivt", "nesep", 
         "vol", "sarea", "pnetelmw", "etath", "pgrossmw", "tftmp", 
         "n_tf", "bmaxtf", "vstot", "dnitot", "tburn", "divlife", 
-        "step20", "step21", "step2101", "step2202", "step2203", 
-        "step22", "step23", "step24", "step25", "cdirt", "concost"
+        "CostsStep.step20", "CostsStep.step21", "step2101", "step2202", "step2203", 
+        "CostsStep.step22", "CostsStep.step23", "CostsStep.step24", "CostsStep.step25", "cdirt", "concost"
     }
 
 
@@ -163,6 +163,11 @@ def plot_tracking_data(database):
 
         parent = PythonFortranInterfaceVariables.parent_module(k)
 
+        if not parent:
+            print(f'Variable {k} is not a module variable of any Fortran module, please provide the python class which this variable can be found under as CLASS.VARIABLE noting that VARIABLE must be a variable present in the output file and does not necessarily need to correspond to an actual class variable, VARIABLE, of CLASS')
+            continue
+
+
         if figures.get(parent) is None:
             figures[parent] = []
         
@@ -216,6 +221,8 @@ def plot_tracking_data(database):
     
     panels = []
 
+    print(figures.keys())
+
     for grp, fig in figures.items():
         gplot = gridplot([fig[i:i+2] for i in range(0, len(fig), 2)])
         panels.append(Panel(child=gplot, title=grp))
@@ -246,8 +253,6 @@ class PythonFortranInterfaceVariables:
                 classes[name] = cls._get_variables(module)
         
         cls.tree = classes
-
-        print(cls.tree)
 
 
     @classmethod
