@@ -34,7 +34,7 @@ class CostsStep:
         """Initialise Fortran module variables."""
         self.outfile = ft.constants.nout  # output file unit
         self.iprint = 0  # switch for writing to output file (1=yes)
-        
+
         self.step20: float = 0
         self.step21: float = 0
         self.step22: float = 0
@@ -113,7 +113,14 @@ class CostsStep:
         self.step_a25()
 
         # Total plant direct cost without remote handling
-        cv.cdirt = self.step20 + self.step21 + self.step22 + self.step23 + self.step24 + self.step25
+        cv.cdirt = (
+            self.step20
+            + self.step21
+            + self.step22
+            + self.step23
+            + self.step24
+            + self.step25
+        )
 
         # Account 27 : Remote Handling
         self.step_a27()
@@ -163,7 +170,9 @@ class CostsStep:
             po.ocosts(self.outfile, "(step2001)", "Land (M$)", step2001)
             po.ocosts(self.outfile, "(step2002)", "Site Preparation (M$)", step2002)
             po.oblnkl(self.outfile)
-            po.ocosts(self.outfile, "(step20)", "Total Account 20 Cost (M$)", self.step20)
+            po.ocosts(
+                self.outfile, "(step20)", "Total Account 20 Cost (M$)", self.step20
+            )
 
     def step_a21(self):
         """Account 21 : Building and Site Service Infrastructure.
@@ -175,19 +184,19 @@ class CostsStep:
         # TODO Add reference for STEP cost values
         # Floor areas in m^2 for buildings
         # pgrossmw is gross electric power of the plant in MW
-   
+
         # 21.01 Site Improvements
         # Original STARFIRE value
         step2101 = cv.step_ref[2]
         # step21 should be 0 at this point so I have removed
         # step21 = step21 + step2101
         self.step21 = step2101
-        
+
         # 21.02 Reactor Building
-        step2102 = 8.665e3 * bldgsv.a_reactor_bldg**1.2132 * 1.0e-6
+        step2102 = 8.665e3 * bldgsv.a_reactor_bldg ** 1.2132 * 1.0e-6
         # * 1.0D-6 converts to M$
         self.step21 += step2102
-        
+
         # 21.03 Turbine Building
         step2103 = 3.14310e5 * htv.pgrossmw * 1.0e-6
         self.step21 += step2103
@@ -246,7 +255,7 @@ class CostsStep:
 
         # 21.17 Ventilation Stack
         # Original STARFIRE value, scaling with thermal power
-        step2117 = cv.step_ref[18] * (self.pth / self.ptherm_star)**0.6e0  
+        step2117 = cv.step_ref[18] * (self.pth / self.ptherm_star) ** 0.6e0
         self.step21 += step2117
 
         # 21.18 Waste Facilities Buildings
@@ -315,7 +324,9 @@ class CostsStep:
             po.ocosts(self.outfile, "(step2198)", "Spares (M$)", step2198)
             po.ocosts(self.outfile, "(step2199)", "Contingency (M$)", step2199)
             po.oblnkl(self.outfile)
-            po.ocosts(self.outfile, "(step21)", "Total Account 21 Cost (M$)", self.step21)
+            po.ocosts(
+                self.outfile, "(step21)", "Total Account 21 Cost (M$)", self.step21
+            )
 
     def step_a22(self):
         """Account 22 : Reactor Plant Equipment.
@@ -370,7 +381,9 @@ class CostsStep:
             po.ocosts(self.outfile, "(step2298)", "Spares (M$)", step2298)
             po.ocosts(self.outfile, "(step2299)", "Contingency (M$)", step2299)
             po.oblnkl(self.outfile)
-            po.ocosts(self.outfile, "(step22)", "Total Account 22 Cost (M$)", self.step22)
+            po.ocosts(
+                self.outfile, "(step22)", "Total Account 22 Cost (M$)", self.step22
+            )
 
     def step_a23(self):
         """Account 23 : Turbine Plant Equipment
@@ -413,41 +426,52 @@ class CostsStep:
             po.ocosts(self.outfile, "(step2398)", "Spares (M$)", step2398)
             po.ocosts(self.outfile, "(step2399)", "Contingency (M$)", step2399)
             po.oblnkl(self.outfile)
-            po.ocosts(self.outfile, "(step23)", "Total Account 23 Cost (M$)", self.step23)
+            po.ocosts(
+                self.outfile, "(step23)", "Total Account 23 Cost (M$)", self.step23
+            )
 
     def step_a24(self):
-        """ Account 24 : Electric Plant Equipment
+        """Account 24 : Electric Plant Equipment
         author: S I Muldrew, CCFE, Culham Science Centre
-        This routine evaluates the Account 24 (Electric Plant 
+        This routine evaluates the Account 24 (Electric Plant
         Equipment) costs.
         STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
         """
         # 24.01 Switch Gear
         step2401 = 1.8906e4 * htv.pgrossmw * 1.0e-6
         self.step24 = step2401
-        
+
         # 24.02 Station Service Equipment
         step2402 = 5.1412e4 * htv.pgrossmw * 1.0e-6
         self.step24 += step2402
-        
+
         # 24.03 Switchboards
         step2403 = 2.985e3 * htv.pgrossmw * 1.0e-6
         self.step24 += step2403
-        
+
         # 24.04 Protective Equipment
-        step2404 = ((3.05e4 * (htv.pgrossmw / 1.2e3) * 18.0e0) + (4.0e6 * (htv.pgrossmw / 1.2e3))) * 1.0e-6
+        step2404 = (
+            (3.05e4 * (htv.pgrossmw / 1.2e3) * 18.0e0)
+            + (4.0e6 * (htv.pgrossmw / 1.2e3))
+        ) * 1.0e-6
         self.step24 = self.step24 + step2404
-        
+
         # 24.05 Electrical Structures
-        step2405 = ((3.05e4 * (htv.pgrossmw / 1.2e3) * 1.3e2) + (4.0e6 * 9.0e0 * (htv.pgrossmw / 1.2e3))) * 1.0e-6
+        step2405 = (
+            (3.05e4 * (htv.pgrossmw / 1.2e3) * 1.3e2)
+            + (4.0e6 * 9.0e0 * (htv.pgrossmw / 1.2e3))
+        ) * 1.0e-6
         self.step24 = self.step24 + step2405
-        
+
         # 24.06 Power and Control Wiring
         step2406 = 2.8989e4 * htv.pgrossmw * 1.0e-6
         self.step24 += step2406
-        
+
         # 24.07 Electric Lighting
-        step2407 = ((3.05e4 * (htv.pgrossmw / 1.2e3) * 2.0e2) + (4.0e6 * 4.0e0 * (htv.pgrossmw / 1.2e3))) * 1.0e-6
+        step2407 = (
+            (3.05e4 * (htv.pgrossmw / 1.2e3) * 2.0e2)
+            + (4.0e6 * 4.0e0 * (htv.pgrossmw / 1.2e3))
+        ) * 1.0e-6
         self.step24 += step2407
 
         # 24.98 Spares
@@ -479,41 +503,46 @@ class CostsStep:
             po.ocosts(self.outfile, "(step2498)", "Spares (M$)", step2498)
             po.ocosts(self.outfile, "(step2499)", "Contingency (M$)", step2499)
             po.oblnkl(self.outfile)
-            po.ocosts(self.outfile, "(step24)", "Total Account 24 Cost (M$)", self.step24)
+            po.ocosts(
+                self.outfile, "(step24)", "Total Account 24 Cost (M$)", self.step24
+            )
 
     def step_a25(self):
         """Account 25 : Miscellaneous Plant Equipment
         author: S I Muldrew, CCFE, Culham Science Centre
         None
-        This routine evaluates the Account 25 (Miscellaneous Plant 
+        This routine evaluates the Account 25 (Miscellaneous Plant
         Equipment) costs.
         STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
         """
-        #TODO Need to add reference for cost calculations
+        # TODO Need to add reference for cost calculations
 
         # 25.01 Transport and Lifting Equipment
         step2501 = ((3.8005e4 * (bldgsv.wgt / 1.0e3)) + 1.529727e6) * 1.0e-6
         # wgt is reactor building crane capacity (kg)
         # #TODO Check that wgt is the correct variable to use here
         self.step25 = step2501
-        
+
         # 25.02 Air and Water Service System
         step2502 = 1.20689e5 * htv.pgrossmw * 1.0e-6
         self.step25 += step2502
-        
+
         # 25.03 Communications Equipment
-        step2503 = ((3.05e4 * (htv.pgrossmw / 1.2e3) * 2.18e2) + (4.0e6 * 3.0e0 * (htv.pgrossmw / 1.2e3))) * 1.0e-6
+        step2503 = (
+            (3.05e4 * (htv.pgrossmw / 1.2e3) * 2.18e2)
+            + (4.0e6 * 3.0e0 * (htv.pgrossmw / 1.2e3))
+        ) * 1.0e-6
         self.step25 += step2503
-        
+
         # 25.04 Furnishing and Fixtures
         step2504 = 3.0e3 * htv.pgrossmw * 1.0e-6
         self.step25 += step2504
-    
+
         # 25.98 Spares
         # Original STARFIRE value, no scaling
         step2598 = 1.286e-2 * self.step25
         self.step25 += step2598
-    
+
         # 25.99 Contingency
         # STARFIRE 15%
         step2599 = cv.step_con * self.step25
@@ -543,7 +572,9 @@ class CostsStep:
             po.ocosts(self.outfile, "(step2598)", "Spares (M$)", step2598)
             po.ocosts(self.outfile, "(step2599)", "Contingency (M$)", step2599)
             po.oblnkl(self.outfile)
-            po.ocosts(self.outfile, "(step25)", "Total Account 25 Cost (M$)", self.step25)
+            po.ocosts(
+                self.outfile, "(step25)", "Total Account 25 Cost (M$)", self.step25
+            )
 
     def step_a27(self):
         """Account 27 : Remote Handling
@@ -552,10 +583,10 @@ class CostsStep:
         costs.
         STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
         """
-        # 27.01 Remote Handling 
+        # 27.01 Remote Handling
         # From report by T. Hender CD-STEP-01030, scales with direct capital costs
-        step2701 = cv.step_rh_costfrac * cv.cdirt 
-        
+        step2701 = cv.step_rh_costfrac * cv.cdirt
+
         self.step27 = step2701
 
         # Output costs
@@ -563,7 +594,9 @@ class CostsStep:
             po.oshead(self.outfile, "27. Remote Handling")
             po.ocosts(self.outfile, "(step2701)", "Remote Handing (M$)", step2701)
             po.oblnkl(self.outfile)
-            po.ocosts(self.outfile, "(step27)", "Total Account 27 Cost (M$)", self.step27)
+            po.ocosts(
+                self.outfile, "(step27)", "Total Account 27 Cost (M$)", self.step27
+            )
 
     def step_indirect_costs(self):
         """Accounts 91-93: Indirect costs
@@ -606,7 +639,14 @@ class CostsStep:
         """
 
         # Number of kWh generated each year
-        kwhpy = 1.0e3 * htv.pnetelmw * (24.0e0*constants.n_day_year) * cv.cfactr * tv.tburn/tv.tcycle
+        kwhpy = (
+            1.0e3
+            * htv.pnetelmw
+            * (24.0e0 * constants.n_day_year)
+            * cv.cfactr
+            * tv.tburn
+            / tv.tcycle
+        )
 
         # Costs due to reactor plant
         # ==========================
@@ -630,10 +670,10 @@ class CostsStep:
         fwbllife = fwbsv.bktlife
 
         # Compound interest factor
-        feffwbl = (1.0e0 + cv.discount_rate)**fwbllife
+        feffwbl = (1.0e0 + cv.discount_rate) ** fwbllife
 
         # Capital recovery factor
-        crffwbl = (feffwbl*cv.discount_rate) / (feffwbl-1.0e0)
+        crffwbl = (feffwbl * cv.discount_rate) / (feffwbl - 1.0e0)
 
         # Annual cost of replacements
         annfwbl = self.fwblkcost * cv.fcap0cp * crffwbl
@@ -645,10 +685,10 @@ class CostsStep:
         # =============================
 
         # Compound interest factor
-        fefdiv = (1.0e0 + cv.discount_rate)**cv.divlife
+        fefdiv = (1.0e0 + cv.discount_rate) ** cv.divlife
 
         # Capital recovery factor
-        crfdiv = (fefdiv*cv.discount_rate) / (fefdiv-1.0e0)
+        crfdiv = (fefdiv * cv.discount_rate) / (fefdiv - 1.0e0)
 
         # Annual cost of replacements
         anndiv = cv.divcst * cv.fcap0cp * crfdiv
@@ -659,12 +699,12 @@ class CostsStep:
         # Costs due to centrepost renewal
         # ===============================
 
-        if (pv.itart == 1):
+        if pv.itart == 1:
             # Compound interest factor
-            fefcp = (1.0e0 + cv.discount_rate)**cv.cplife
+            fefcp = (1.0e0 + cv.discount_rate) ** cv.cplife
 
             # Capital recovery factor
-            crfcp = (fefcp*cv.discount_rate) / (fefcp-1.0e0)
+            crfcp = (fefcp * cv.discount_rate) / (fefcp - 1.0e0)
 
             # Annual cost of replacements
             anncp = cv.cpstcst * cv.fcap0cp * crfcp
@@ -675,22 +715,20 @@ class CostsStep:
             anncp = 0.0e0
             coecp = 0.0e0
 
-
         # Costs due to partial current drive system renewal
         # =================================================
 
         # Compound interest factor
-        fefcdr = (1.0e0 + cv.discount_rate)**cv.cdrlife
+        fefcdr = (1.0e0 + cv.discount_rate) ** cv.cdrlife
 
         # Capital recovery factor
-        crfcdr = (fefcdr*cv.discount_rate) / (fefcdr-1.0e0)
+        crfcdr = (fefcdr * cv.discount_rate) / (fefcdr - 1.0e0)
 
         # Annual cost of replacements
-        if (cv.ifueltyp == 0):
+        if cv.ifueltyp == 0:
             anncdr = 0.0e0
         else:
-            anncdr = cv.cdcost * cv.fcdfuel/(1.0e0-cv.fcdfuel) * cv.fcap0cp * crfcdr
-
+            anncdr = cv.cdcost * cv.fcdfuel / (1.0e0 - cv.fcdfuel) * cv.fcap0cp * crfcdr
 
         # Cost of electricity due to current drive system replacements
         coecdr = 1.0e9 * anncdr / kwhpy
@@ -699,11 +737,11 @@ class CostsStep:
         # ======================================
 
         # Annual cost of operation and maintenance
-        annoam = cv.step_ucoam * (htv.pnetelmw/1200.0e0)**0.5
+        annoam = cv.step_ucoam * (htv.pnetelmw / 1200.0e0) ** 0.5
 
         # Additional cost due to pulsed reactor thermal storage
         # See F/MPE/MOD/CAG/PROCESS/PULSE/0008
-        
+
         # if (lpulse.eq.1) then
         #   if (istore.eq.1) then
         #     annoam1 = 51.0D0
@@ -712,18 +750,18 @@ class CostsStep:
         #   else
         #     continue
         #   end if
-        
+
         #   Scale with net electric power
         #   annoam1 = annoam1 * pnetelmw/1200.0D0
-        
+
         #   It is necessary to convert from 1992 pounds to 1990 dollars
         #   Reasonable guess for the exchange rate + inflation factor
         #   inflation = 5% per annum; exchange rate = 1.5 dollars per pound
-        
+
         #   annoam1 = annoam1 * 1.36D0
-        
+
         #   annoam = annoam + annoam1
-        
+
         #  end if
 
         #  Cost of electricity due to operation and maintenance
@@ -735,7 +773,16 @@ class CostsStep:
         #  Annual cost of fuel
 
         #  Sum D-T fuel cost and He3 fuel cost
-        annfuel = cv.ucfuel * htv.pnetelmw/1200.0e0 + 1.0e-6 * pv.fhe3 * pv.wtgpd * 1.0e-3 * cv.uche3 * constants.n_day_year * cv.cfactr
+        annfuel = (
+            cv.ucfuel * htv.pnetelmw / 1200.0e0
+            + 1.0e-6
+            * pv.fhe3
+            * pv.wtgpd
+            * 1.0e-3
+            * cv.uche3
+            * constants.n_day_year
+            * cv.cfactr
+        )
 
         #  Cost of electricity due to reactor fuel
         coefuel = 1.0e9 * annfuel / kwhpy
@@ -744,7 +791,7 @@ class CostsStep:
         #  ===========================
 
         #  Annual cost of waste disposal
-        annwst = cv.step_ucwst * (htv.pnetelmw/1200.0e0)**0.5
+        annwst = cv.step_ucwst * (htv.pnetelmw / 1200.0e0) ** 0.5
 
         #  Cost of electricity due to waste disposal
         coewst = 1.0e9 * annwst / kwhpy
@@ -760,7 +807,12 @@ class CostsStep:
         #  Difference (dintrt) between borrowing and saving interest rates is
         #  included, along with the possibility of completing the fund dtlife
         #  years before the end of the plant's lifetime
-        anndecom = cv.decomf * cv.concost * cv.fcr0 / (1.0e0+cv.discount_rate-cv.dintrt)**(cv.tlife-cv.dtlife)
+        anndecom = (
+            cv.decomf
+            * cv.concost
+            * cv.fcr0
+            / (1.0e0 + cv.discount_rate - cv.dintrt) ** (cv.tlife - cv.dtlife)
+        )
 
         #  Cost of electricity due to decommissioning fund
         coedecom = 1.0e9 * anndecom / kwhpy
@@ -906,8 +958,8 @@ class CostsStep:
         # Add shield cost to total cost, step2201, in M$
         step2201 += step220102
         # STARFIRE percentage for spares
-        spares = 9.985e-2 *  step220102
-    
+        spares = 9.985e-2 * step220102
+
         # 22.01.03.01 TF Coils
         # Add TF coil cost to total cost, step2201, in M$
         step2201 += step22010301
@@ -930,37 +982,37 @@ class CostsStep:
         step2201 += step22010304
         # STARFIRE percentage for spares
         spares += 1.075e-1 * step22010304
-    
+
         # 22.01.04 Auxiliary Heating and Current Drive
         # HCD cost = cost per injected Watt of power * injected Watts
         step2201 += step220104
         # STARFIRE percentage for spares
         spares += 2.335e-1 * step220104
-    
+
         # 22.01.05 Primary Structure and Support
         # Original STARFIRE value, scaling with fusion island volume
         step220105 = cv.step_ref[26] * (self.vfi / self.vfi_star)
         step2201 += step220105
         # STARFIRE percentage for spares
         spares += 6.824e-2 * step220105
-    
+
         # 22.01.06 Reactor Vacuum System
         # Original STARFIRE value, scaling with fusion island volume
-        step220106 = cv.step_ref[27] * (self.vfi / self.vfi_star)**(2.0e0/3.0e0)
+        step220106 = cv.step_ref[27] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
         step2201 += step220106
         # STARFIRE percentage for spares
         spares += 1.893e-1 * step220106
-    
+
         # 22.01.07 Power Supplies
         # Original STARFIRE value, scaling with fusion island volume
-        step220107 = cv.step_ref[28] * (self.vfi / self.vfi_star)**(2.0e0/3.0e0)
+        step220107 = cv.step_ref[28] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
         step2201 += step220107
-    
+
         # 22.01.08 Impurity Control
         # Original STARFIRE value, no scaling
         step220108 = cv.step_ref[29]
         step2201 += step220108
-    
+
         # 22.01.09 ECRH Plasma Breakdown
         # Original STARFIRE value, no scaling
         step220109 = cv.step_ref[30]
@@ -968,11 +1020,13 @@ class CostsStep:
 
         # 22.01.10 Divertor
         # Cost Model 0 cost for STARFIRE sized device
-        # 58.62% increase between 1980 and 1990 
+        # 58.62% increase between 1980 and 1990
         # http://www.in2013dollars.com/1980-dollars-in-1990
         # Scaling with product of rmajor and rminor
-        step220110 = cv.step_ref[31] * ((pv.rmajor*pv.rminor)/(self.rmajor_star*self.rminor_star)) 
-        if (cv.ifueltyp == 1):
+        step220110 = cv.step_ref[31] * (
+            (pv.rmajor * pv.rminor) / (self.rmajor_star * self.rminor_star)
+        )
+        if cv.ifueltyp == 1:
             cv.divcst = step220110
             step220110 = 0.0e0
         else:
@@ -981,7 +1035,7 @@ class CostsStep:
         step2201 += step220110
 
         # Output costs
-        if (self.iprint == 1) and (cv.output_costs == 1):
+        if self.iprint == 1 and cv.output_costs == 1:
             po.write(self.outfile, "******************* 22.01 Reactor Equipment")
             if cv.ifueltyp == 0:
                 po.write(
@@ -1084,7 +1138,7 @@ class CostsStep:
         return step2201, spares
 
     def step_a220101(self):
-        """Account 22.01.01 : Blanket and First Wall 
+        """Account 22.01.01 : Blanket and First Wall
         author: A J Pearce, CCFE, Culham Science Centre
         This routine evaluates the Account 22.01.01 (BB+FW) costs.
         If ifueltyp = 0, the blanket cost is treated as capital cost
@@ -1099,70 +1153,79 @@ class CostsStep:
         """
 
         # Account 22.01.01.01 : First wall
-        step22010101 = 1.0e-6 * (fwbsv.fw_armour_mass * cv.step_ucfwa + fwbsv.fwmass * cv.step_ucfws) 
+        step22010101 = 1.0e-6 * (
+            fwbsv.fw_armour_mass * cv.step_ucfwa + fwbsv.fwmass * cv.step_ucfws
+        )
 
-        if (cv.ifueltyp == 1):
+        if cv.ifueltyp == 1:
             cv.fwallcst = step22010101
             step22010101 = 0.0e0
-        elif (cv.ifueltyp == 2):
-           cv.fwallcst = step22010101
+        elif cv.ifueltyp == 2:
+            cv.fwallcst = step22010101
         else:
             cv.fwallcst = 0.0e0
 
         # Account 22.01.01.02 : Breeder Blanket
 
-        if (htv.ipowerflow == 0):
-      
-            #Account 22.01.01.02.01 : Blanket Multiplier Material 
+        if htv.ipowerflow == 0:
+
+            # Account 22.01.01.02.01 : Blanket Multiplier Material
             step2201010201 = 1.0e-6 * fwbsv.whtblbe * cv.step_ucblbe
-                
-            #Account 22.01.01.02.02 : Blanket Breeder Material
-            if (fwbsv.blktmodel == 0):
-                    step2201010202 = 1.0e-6 * fwbsv.wtblli2o * cv.step_ucblbreed
+
+            # Account 22.01.01.02.02 : Blanket Breeder Material
+            if fwbsv.blktmodel == 0:
+                step2201010202 = 1.0e-6 * fwbsv.wtblli2o * cv.step_ucblbreed
             else:
-                    step2201010202 = 1.0e-6 * fwbsv.whtblbreed * cv.step_ucblbreed
+                step2201010202 = 1.0e-6 * fwbsv.whtblbreed * cv.step_ucblbreed
         else:
-            if ((fwbsv.blkttype == 1) or (fwbsv.blkttype == 2)):
+            if fwbsv.blkttype == 1 or fwbsv.blkttype == 2:
                 # Liquid blanket (LiPb + Li)
-                # Account 22.01.01.02.01 : Blanket Multiplier Material 
+                # Account 22.01.01.02.01 : Blanket Multiplier Material
                 step2201010201 = 1.0e-6 * fwbsv.wtbllipb * cv.ucbllipb * 2.99e0
-                # Account 22.01.01.02.02 : Blanket Breeder Material 
+                # Account 22.01.01.02.02 : Blanket Breeder Material
                 step2201010202 = 1.0e-6 * fwbsv.whtblli * cv.ucblli * 2.99e0
             else:
                 #  Solid blanket (Li2O + Be)
-                #Account 22.01.01.02.01 : Blanket Multiplier Material 
+                # Account 22.01.01.02.01 : Blanket Multiplier Material
                 step2201010201 = 1.0e-6 * fwbsv.whtblbe * cv.step_ucblbe
-                #Account 22.01.01.02.02 : Blanket Breeder Material
+                # Account 22.01.01.02.02 : Blanket Breeder Material
                 step2201010202 = 1.0e-6 * fwbsv.wtblli2o * cv.step_ucblbreed
 
         # Account 22.01.01.02.03 : Blanket Steel Costs
         step2201010203 = 1.0e-6 * fwbsv.whtblss * cv.step_ucblss
-        
+
         # Account 22.01.01.02.04 : Blanket Vanadium Costs
         step2201010204 = 1.0e-6 * fwbsv.whtblvd * cv.step_ucblvd
-        
+
         # Account 22.01.01.02.05 : Blanket Carbon Cloth Costs
         step2201010205 = 0.0e0
-        
+
         # Account 22.01.01.02.06 : Blanket Concrete Costs
         step2201010206 = 0.0e0
 
         # Account 22.01.01.02.07 : Blanket FLiBe Costs
         step2201010207 = 0.0e0
 
-        step22010102 = step2201010201 + step2201010202 + step2201010203 + step2201010204 \
-        + step2201010205 + step2201010206 + step2201010207
+        step22010102 = (
+            step2201010201
+            + step2201010202
+            + step2201010203
+            + step2201010204
+            + step2201010205
+            + step2201010206
+            + step2201010207
+        )
 
-        if (cv.ifueltyp == 1):
+        if cv.ifueltyp == 1:
             cv.blkcst = step22010102
             step22010102 = 0.0e0
-        elif (cv.ifueltyp == 2):
+        elif cv.ifueltyp == 2:
             cv.blkcst = step22010102
         else:
             cv.blkcst = 0.0e0
 
         # Total for Account 22.01.01
-        step220101 = step22010101 + step22010102 
+        step220101 = step22010101 + step22010102
 
         return (
             step220101,
@@ -1184,46 +1247,55 @@ class CostsStep:
         # inboard shield is assumed to be a cylinder of uniform thickness
 
         # Calculate shield internal half-height (m)
-        hbot = pv.rminor*pv.kappa + bv.vgap + dv.divfix
+        hbot = pv.rminor * pv.kappa + bv.vgap + dv.divfix
         # if a double null machine then symmetric otherwise asymmetric
-        if ( pv.idivrt == 2 ):
+        if pv.idivrt == 2:
             htop = hbot
         else:
-            htop = pv.rminor*pv.kappa + 0.5e0*(bv.scrapli+bv.scraplo + bv.fwith+bv.fwoth) + bv.blnktth
+            htop = (
+                pv.rminor * pv.kappa
+                + 0.5e0 * (bv.scrapli + bv.scraplo + bv.fwith + bv.fwoth)
+                + bv.blnktth
+            )
 
         # Average of top and bottom (m)
-        hshld = 0.5e0*(htop + hbot)
+        hshld = 0.5e0 * (htop + hbot)
 
-        #Radius to outer edge of inboard shield (m)
+        # Radius to outer edge of inboard shield (m)
         r1 = bv.rsldi + bv.shldith
 
-        #Corrected shield thickness: allows for 300mm vacuum vessel
-        #Justification: requirement from K. Taylor, neutronics
-        ## TODO: replace this correction when valid (VV + shield) is used
+        # Corrected shield thickness: allows for 300mm vacuum vessel
+        # Justification: requirement from K. Taylor, neutronics
+        # TODO: replace this correction when valid (VV + shield) is used
         shldith_corr = (bv.d_vv_in + bv.shldith) - 0.3e0
-        #Volume of inboard cylindrical shell (m3)
-        inb_sh_v = 2.0e0*(hshld+bv.shldtth) * constants.pi*(r1**2 - (r1-shldith_corr)**2)
+        # Volume of inboard cylindrical shell (m3)
+        inb_sh_v = (
+            2.0e0
+            * (hshld + bv.shldtth)
+            * constants.pi
+            * (r1 ** 2 - (r1 - shldith_corr) ** 2)
+        )
 
-        #Scale shield material volume (allow for 10% volume coolant, 5% steel)
+        # Scale shield material volume (allow for 10% volume coolant, 5% steel)
         inb_sh_v_mtl = 0.85e0 * inb_sh_v
-        
-        #Define shield material density (sh_mtl_d [kg/m3]) and cost (sh_mtl_c [$/kg])
-        if ( fwbsv.i_shield_mat == 1 ):
-            #tungsten carbide
+
+        # Define shield material density (sh_mtl_d [kg/m3]) and cost (sh_mtl_c [$/kg])
+        if fwbsv.i_shield_mat == 1:
+            # tungsten carbide
             sh_mtl_d = fwbsv.denwc
             sh_mtl_c = cv.step_ucshwc
         else:
-            #tungsten (default)
+            # tungsten (default)
             sh_mtl_d = fwbsv.denw
             sh_mtl_c = cv.step_ucshw
 
-        #Find inboard shield mass (kg) 
+        # Find inboard shield mass (kg)
         inb_sh_m = inb_sh_v_mtl * sh_mtl_d
 
-        #Find inboard shield cost (converted to M$2017)
-        step220102 = (inb_sh_m * sh_mtl_c) / 1.0e6*(229.0e0/264.71e0)
+        # Find inboard shield cost (converted to M$2017)
+        step220102 = (inb_sh_m * sh_mtl_c) / 1.0e6 * (229.0e0 / 264.71e0)
 
-        #Note: outboard shield costs currently set to zero
+        # Note: outboard shield costs currently set to zero
 
         return step220102
 
@@ -1236,48 +1308,51 @@ class CostsStep:
         # Initialise local vars
         c_tf_inboard_legs = 0.0e0
         c_tf_outboard_legs = 0.0e0
-        
+
         # Copper coils
-        if (tfv.i_tf_sup == 0):
+        if tfv.i_tf_sup == 0:
             # Calculation taken from cost model 0: simply the cost of copper conductor
             # masses
-            # Inflating from 1990 $ to 2017 $ at nuclear rate equates to a factor of 
+            # Inflating from 1990 $ to 2017 $ at nuclear rate equates to a factor of
             # 2.99
             # Inboard TF coil legs
             c_tf_inboard_legs = 1.0e-6 * tfv.whtcp * cv.uccpcl1 * 2.99e0
-            
+
             # Outboard TF coil legs
             c_tf_outboard_legs = 1.0e-6 * tfv.whttflgs * cv.uccpclb * 2.99e0
-            
+
             # Total TF coil cost
             step22010301 = c_tf_inboard_legs + c_tf_outboard_legs
-        
+
         # Superconducting coils
-        elif (tfv.i_tf_sup == 1):
+        elif tfv.i_tf_sup == 1:
             # Original STARFIRE value in M$, scaling with fusion island volume
             step22010301 = cv.step_ref[21] * (self.vfi / self.vfi_star)
-        
+
         # Cryogenic aluminium coils
-        elif (tfv.i_tf_sup == 2):
-            # Cost approximated as the material cost of conducting Al * a 
+        elif tfv.i_tf_sup == 2:
+            # Cost approximated as the material cost of conducting Al * a
             # manufacturing cost factor
             # Al conductor mass per coil * number of coils * cost per kilo *
             # manufacturing cost factor, converted to M$
             # step_mc_cryo_al_per = 0.2: 20% manufacturing cost
-            step22010301 = (tfv.whtconal * tfv.n_tf * cv.step_uc_cryo_al) * \
-                (cv.step_mc_cryo_al_per + 1.0e0) * 1.0e-6
+            step22010301 = (
+                (tfv.whtconal * tfv.n_tf * cv.step_uc_cryo_al)
+                * (cv.step_mc_cryo_al_per + 1.0e0)
+                * 1.0e-6
+            )
 
         # ifueltyp: consider centrepost cost as fuel, capital or both?
         # cpstcst used later in coelc_step()
         cv.cpstcst = 0.0e0  # TART centrepost
-        if (pv.itart == 1):
-            if (cv.ifueltyp == 1):
+        if pv.itart == 1:
+            if cv.ifueltyp == 1:
                 # Treat centrepost cost as fuel cost
                 cv.cpstcst = c_tf_inboard_legs
-                if (tfv.i_tf_sup == 0):
+                if tfv.i_tf_sup == 0:
                     # Subtract from capital cost
                     step22010301 = step22010301 - c_tf_inboard_legs
-            elif (cv.ifueltyp == 2):
+            elif cv.ifueltyp == 2:
                 # Treat centrepost cost as capital and fuel cost
                 cv.cpstcst = c_tf_inboard_legs
 
@@ -1294,7 +1369,7 @@ class CostsStep:
         each coil will experience. Now, the input copper fractions
         are used instead.
         Maximum values for current, current density and field
-        are used. 
+        are used.
 
         :return: cost 22010302
         :rtype: float
@@ -1303,7 +1378,7 @@ class CostsStep:
         pfwndl = 0.0e0
 
         for i in range(pfv.nohc):
-            pfwndl += constants.twopi*pfv.rpf[i]*pfv.turns[i]
+            pfwndl += constants.twopi * pfv.rpf[i] * pfv.turns[i]
 
         # Account 22.01.03.02.01 : Conductor
 
@@ -1311,36 +1386,56 @@ class CostsStep:
         # costpfsh is the cost per metre of the steel conduit/sheath around
         # each superconducting cable (so is zero for resistive coils)
 
-        if (pfv.ipfres == 1):
+        if pfv.ipfres == 1:
             costpfsh = 0.0e0
         else:
             costpfsh = cv.step_cconshpf
 
         # Non-Central Solenoid coils
 
-        if (bv.iohcl == 1):
-            npf = pfv.nohc-1
+        if bv.iohcl == 1:
+            npf = pfv.nohc - 1
         else:
             npf = pfv.nohc
-        
+
         step2201030201 = 0.0e0
 
         for i in range(npf):
 
             # Superconductor ($/m)
-            if (pfv.ipfres == 0):
-                costpfsc = cv.step_ucsc[pfv.isumatpf-1] * (1.0e0-pfv.fcupfsu)*(1.0e0-pfv.vf[i]) * \
-                    abs(pfv.ric[i]/pfv.turns[i])*1.0e6 / pfv.rjconpf[i] * tfv.dcond[pfv.isumatpf-1]
+            if pfv.ipfres == 0:
+                costpfsc = (
+                    cv.step_ucsc[pfv.isumatpf - 1]
+                    * (1.0e0 - pfv.fcupfsu)
+                    * (1.0e0 - pfv.vf[i])
+                    * abs(pfv.ric[i] / pfv.turns[i])
+                    * 1.0e6
+                    / pfv.rjconpf[i]
+                    * tfv.dcond[pfv.isumatpf - 1]
+                )
             else:
                 costpfsc = 0.0e0
 
             # Copper ($/m)
-            if (pfv.ipfres == 0):
-                costpfcu = cv.step_uccu * pfv.fcupfsu*(1.0e0-pfv.vf[i]) * \
-                    abs(pfv.ric[i]/pfv.turns[i])*1.0e6 / pfv.rjconpf[i] * constants.dcopper
+            if pfv.ipfres == 0:
+                costpfcu = (
+                    cv.step_uccu
+                    * pfv.fcupfsu
+                    * (1.0e0 - pfv.vf[i])
+                    * abs(pfv.ric[i] / pfv.turns[i])
+                    * 1.0e6
+                    / pfv.rjconpf[i]
+                    * constants.dcopper
+                )
             else:
-                costpfcu = cv.step_uccu * (1.0e0-pfv.vf[i]) * \
-                    abs(pfv.ric[i]/pfv.turns[i])*1.0e6 / pfv.rjconpf[i] * constants.dcopper
+                costpfcu = (
+                    cv.step_uccu
+                    * (1.0e0 - pfv.vf[i])
+                    * abs(pfv.ric[i] / pfv.turns[i])
+                    * 1.0e6
+                    / pfv.rjconpf[i]
+                    * constants.dcopper
+                )
 
             # Total cost/metre of superconductor and copper wire
             costwire = costpfsc + costpfcu
@@ -1349,15 +1444,16 @@ class CostsStep:
             cpfconpm = costwire + costpfsh + cv.step_cconfix
 
             # Total account 222.2.1 (PF coils excluding Central Solenoid)
-            step2201030201 = step2201030201 + (1.0e-6 * constants.twopi * pfv.rpf[i] * pfv.turns[i] * \
-                    cpfconpm)
+            step2201030201 = step2201030201 + (
+                1.0e-6 * constants.twopi * pfv.rpf[i] * pfv.turns[i] * cpfconpm
+            )
 
         # Account 22.01.03.02.02 : Winding
         step2201030202 = 1.0e-6 * cv.step_ucwindpf * pfwndl
-    
+
         # Account 22.01.03.02.03 : Steel case - will be zero for resistive coils
         step2201030203 = 1.0e-6 * cv.step_uccase * pfv.whtpfs
-    
+
         # Account 22.01.03.02.04 : Support structure
         step2201030204 = 1.0e-6 * cv.step_ucfnc * sv.fncmass
 
@@ -1379,25 +1475,31 @@ class CostsStep:
         # (tech adjusted from 1990 $ is costed as per Cost Model 0)
 
         # NBI cost per injected Watt (adjusted from 2020 $):
-        step220104 = cdv.pnbitot * cv.step_ref[68] * (229.0e0/258.84e0)
+        step220104 = cdv.pnbitot * cv.step_ref[68] * (229.0e0 / 258.84e0)
 
         # EC or EBW cost per injected Watt (adjusted from 2020 $):
-        step220104 += cdv.echpwr * cv.step_ref[69] * (229.0e0/258.84e0)
+        step220104 += cdv.echpwr * cv.step_ref[69] * (229.0e0 / 258.84e0)
 
-        if ( (cdv.iefrf == 2) or (cdv.iefrffix == 2) ):
+        if cdv.iefrf == 2 or cdv.iefrffix == 2:
             # Ion Cyclotron current drive (adjusted from 1990 $):
-            step220104 += 1.0e-6 * cv.ucich * (1.0e6*cdv.plhybd) * (229.0e0/76.7e0) 
+            step220104 += 1.0e-6 * cv.ucich * (1.0e6 * cdv.plhybd) * (229.0e0 / 76.7e0)
 
-        if ( (cdv.iefrf == 1) or (cdv.iefrf == 1) or \
-                (cdv.iefrf == 4) or (cdv.iefrf == 4) or \
-                (cdv.iefrf == 6) or (cdv.iefrf == 6) ):
+        # TODO why is there a duplicate of everything below?
+        if (
+            (cdv.iefrf == 1)
+            or (cdv.iefrf == 1)
+            or (cdv.iefrf == 4)
+            or (cdv.iefrf == 4)
+            or (cdv.iefrf == 6)
+            or (cdv.iefrf == 6)
+        ):
             # Lower Hybrid system (adjusted from 1990 $):
-            step220104 += 1.0e-6 * cv.uclh * (1.0e6*cdv.plhybd) * (229.0e0/76.7e0)
+            step220104 += 1.0e-6 * cv.uclh * (1.0e6 * cdv.plhybd) * (229.0e0 / 76.7e0)
 
-        if ( cv.ifueltyp == 1 ):
+        if cv.ifueltyp == 1:
             # fraction `fcdfuel` of HCD cost treated as fuel cost
             # step220104 and cv.cdcost: Cost of HCD in M$
-            step220104 *= 1.0e0-cv.fcdfuel
+            step220104 *= 1.0e0 - cv.fcdfuel
             cv.cdcost = step220104
 
         return step220104
@@ -1440,22 +1542,22 @@ class CostsStep:
         """
         # 22.03.01 Helium Refrigerator
         # Original STARFIRE value, scaling with fusion island volume
-        step220301 = cv.step_ref[33] * (self.vfi / self.vfi_star)**(2.0e0/3.0e0)
+        step220301 = cv.step_ref[33] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
         step2203 = step220301
-    
+
         # 22.03.02 Liquid Helium Transfer and Storage
         # Original STARFIRE value, scaling with fusion island volume
-        step220302 = cv.step_ref[34] * (self.vfi / self.vfi_star)**(2.0e0/3.0e0)
+        step220302 = cv.step_ref[34] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
         step2203 += step220302
-    
+
         # 22.03.03 Gas Helium Storage
         # Original STARFIRE value, scaling with fusion island volume
-        step220303 = cv.step_ref[35] * (self.vfi / self.vfi_star)**(2.0e0/3.0e0)
+        step220303 = cv.step_ref[35] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
         step2203 += step220303
-    
+
         # 22.03.04 Liquid Nitrogen Storage
         # Original STARFIRE value, scaling with fusion island volume
-        step220304 = cv.step_ref[36] * (self.vfi / self.vfi_star)**(2.0e0/3.0e0)
+        step220304 = cv.step_ref[36] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
         step2203 += step220304
 
         # Output costs
@@ -1496,17 +1598,17 @@ class CostsStep:
         """
         # 22.04.01 Liquid Waste
         # Original STARFIRE value, scaling with thermal power
-        step220401 = cv.step_ref[37] * (self.pth / self.ptherm_star)**0.6e0 
+        step220401 = cv.step_ref[37] * (self.pth / self.ptherm_star) ** 0.6e0
         step2204 = step220401
-    
+
         # 22.04.02 Gaseous Waste
         # Original STARFIRE value, scaling with thermal power
-        step220402 = cv.step_ref[38] * (self.pth / self.ptherm_star)**0.6e0 
+        step220402 = cv.step_ref[38] * (self.pth / self.ptherm_star) ** 0.6e0
         step2204 += step220402
-    
+
         # 22.04.03 Solid Waste
         # Original STARFIRE value, scaling with thermal power
-        step220403 = cv.step_ref[39] * (self.pth / self.ptherm_star)**0.6e0 
+        step220403 = cv.step_ref[39] * (self.pth / self.ptherm_star) ** 0.6e0
         step2204 += step220403
 
         # Output costs
@@ -1537,7 +1639,7 @@ class CostsStep:
         """
         # 22.05 Fuel Handling and Storage
         # Original STARFIRE value, scaling with thermal power
-        step2205 = cv.step_ref[40] * (self.pth / self.ptherm_star)**0.6e0 
+        step2205 = cv.step_ref[40] * (self.pth / self.ptherm_star) ** 0.6e0
 
         # STARFIRE percentage for spares
         spares = 5.026e-2 * step2205
@@ -1571,47 +1673,47 @@ class CostsStep:
 
         # 22.06.01 Maintenance Equipment
         # Original STARFIRE value, scaling with fusion island volume
-        # Depreciated by the remote handling scaling in cost account 27. 
-        step220601 = 0.0 # step_ref(42) * (vfi / vfi_star)**(2.0D0/3.0D0)
+        # Depreciated by the remote handling scaling in cost account 27.
+        step220601 = 0.0  # step_ref(42) * (vfi / vfi_star)**(2.0D0/3.0D0)
         step2206 = step220601
         # STARFIRE percentage for spares
-        spares =  4.308e-1 * step220601
-    
+        spares = 4.308e-1 * step220601
+
         # 22.06.02 Special Heating Systems
         # Original STARFIRE value, scaling with thermal power
-        step220602 = cv.step_ref[42] * (self.pth / self.ptherm_star)**0.6e0
+        step220602 = cv.step_ref[42] * (self.pth / self.ptherm_star) ** 0.6e0
         step2206 += step220602
-    
+
         # 22.06.03 Coolant Storage
         # Original STARFIRE value, scaling with thermal power
-        step220603 = cv.step_ref[43] * (self.pth / self.ptherm_star)**0.6e0
+        step220603 = cv.step_ref[43] * (self.pth / self.ptherm_star) ** 0.6e0
         step2206 += step220603
-    
+
         # 22.06.04 Gas System
         # Original STARFIRE value, scaling with fusion island volume
-        step220604 = cv.step_ref[44] * (self.vfi / self.vfi_star)**(2.0e0/3.0e0)
+        step220604 = cv.step_ref[44] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
         step2206 += step220604
-    
+
         # 22.06.05 Inert Atmosphere System
         # Original STARFIRE value, scaling with thermal power
-        step220605 = cv.step_ref[45] * (self.pth / self.ptherm_star)**0.6e0
+        step220605 = cv.step_ref[45] * (self.pth / self.ptherm_star) ** 0.6e0
         step2206 += step220605
-    
+
         # 22.06.06 Fluid Leak Detection
         # Original STARFIRE value, scaling with thermal power
-        step220606 = cv.step_ref[46] * (self.pth / self.ptherm_star)**0.6e0
+        step220606 = cv.step_ref[46] * (self.pth / self.ptherm_star) ** 0.6e0
         step2206 += step220606
-    
+
         # 22.06.07 Closed Loop Coolant System
         # Original STARFIRE value, scaling with thermal power
-        step220607 = cv.step_ref[47] * (self.pth / self.ptherm_star)**0.6e0
+        step220607 = cv.step_ref[47] * (self.pth / self.ptherm_star) ** 0.6e0
         step2206 += step220607
         # STARFIRE percentage for spares
-        spares += 8.3e-1 * (self.pth / self.ptherm_star)**0.6e0
-    
+        spares += 8.3e-1 * (self.pth / self.ptherm_star) ** 0.6e0
+
         # 22.06.08 Standby Cooling System
         # Original STARFIRE value, scaling with thermal power
-        step220608 = cv.step_ref[48] * (self.pth / self.ptherm_star)**0.6e0
+        step220608 = cv.step_ref[48] * (self.pth / self.ptherm_star) ** 0.6e0
         step2206 += step220608
 
         # Output costs
@@ -1660,7 +1762,7 @@ class CostsStep:
         """
         # 22.07 Instrumentation and Control
         # Original STARFIRE value, scaling with thermal power
-        step2207 = cv.step_ref[49] * (self.pth / self.ptherm_star)**0.6e0
+        step2207 = cv.step_ref[49] * (self.pth / self.ptherm_star) ** 0.6e0
 
         # Output costs
         if self.iprint == 1 and cv.output_costs == 1:
