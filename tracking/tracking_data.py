@@ -232,6 +232,7 @@ def write_tracking_html_file(database, output):
     with open(output, 'w') as f:
         f.write(tracking_html)
 
+
 class PythonFortranInterfaceVariables:
 
     tree = {}
@@ -246,13 +247,15 @@ class PythonFortranInterfaceVariables:
         
         cls.tree = classes
 
+        print(cls.tree)
+
 
     @classmethod
     def _get_variables(cls, fortran_module):
         functions = []
 
         for name, function in inspect.getmembers(fortran_module):
-            if type(fortran_module) == type(fortran.main_module.inform) and function.__doc__ is None:
+            if type(function) != type(fortran.main_module.inform):
                 functions.append(name)
         
         return functions
