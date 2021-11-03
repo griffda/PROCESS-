@@ -50,131 +50,18 @@ contains
     pth = 0.0D0
   end subroutine init_costs_step
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine costs_step(outfile,iprint)
-
-    !! STEP cost accounting for a fusion power plant
-    !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! outfile : input integer : output file unit
-    !! iprint : input integer : switch for writing to output file (1=yes)
-    !! This routine performs the cost accounting for a fusion power plant.
-    !! The direct costs are calculated based on parameters input
-    !! from other sections of the code.
-    !! <P>The code is arranged in the order of the standard accounts.
-    !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !! Sheffield et al. (1986), Fusion Technology, 9, 199
-    !! Sheffield & Milora (2016), Fusion Science and Technology, 70, 14
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use constants, only: pi
-    use build_variables, only: r_tf_outboard_mid, tfthko, hpfu, hmax, tfcth
-    use cost_variables, only: output_costs, cdirt, concost, ireactor, ipnet, &
-             step_ref, step_currency
-    use fwbs_variables, only: emultmw
-    use heat_transport_variables, only: pinjwp
-    use physics_variables, only: powfmw
-    use process_output, only: oshead, ocosts, oheadr
-
-    implicit none
-
-    ! Arguments
-    integer, intent(in) :: iprint,outfile
-    character(len=80) :: title
-
-    ! Local variables
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Fusion Island Volume as defined by Sheffield & Milora (2016)
-    vfi = pi * (r_tf_outboard_mid + 0.5D0*tfthko)**2 * (hpfu + hmax + tfcth)
-    pth = powfmw + emultmw + pinjwp
-
-    !  STARFIRE Reference Values
-    vfi_star = 6.737D3                  ! Volume of Fusion Island (m3)
-    ptherm_star = 4.15D3                ! Thermal Power (MW)
-    rmajor_star = 7.0D0                 ! Major Radius (m)
-    rminor_star = rmajor_star / 3.6D0   ! Minor Radius (m)
-
-    ! Output header
-    if ((iprint==1).and.(output_costs == 1)) then
-      title = 'STEP Costing Model ('// trim(step_currency) // ')'
-      call oheadr(outfile,trim(title))
-    end if
-    
-    ! Account 20 : Land and Rights
-    call step_a20(outfile,iprint)
-
-    ! Account 21 : Building and Site Service Infrastructure
-    call step_a21(outfile,iprint)
-
-    ! Account 22 : Reactor Plant Equipment
-    call step_a22(outfile,iprint)
-
-    ! Account 23 : Turbine Plant Equipment
-    call step_a23(outfile,iprint)
-
-    ! Account 24 : Electric Plant Equipment
-    call step_a24(outfile,iprint)
-
-    ! Account 25 : Miscellaneous Plant Equipment
-    call step_a25(outfile,iprint)
-
-    ! Total plant direct cost without remote handling
-    cdirt = step20 + step21 + step22 + step23 + step24 + step25
-
-    ! Account 27 : Remote Handling
-    call step_a27(outfile,iprint) 
-
-    ! Total plant direct cost with remote handling
-    cdirt = cdirt + step27
-    if ((iprint==1).and.(output_costs == 1)) then
-      call oshead(outfile,'Plant Direct Cost')
-      call ocosts(outfile,'(cdirt)','Plant direct cost (M$)',cdirt)
-    endif
-
-    ! Accounts 91-93: Indirect costs
-    call step_indirect_costs(outfile, iprint)
-
-    ! Constructed cost
-    concost = cdirt + step91 + step92 + step93
-    if ((iprint==1).and.(output_costs == 1)) then
-      call oshead(outfile,'Constructed Cost')
-      call ocosts(outfile,'(concost)','Constructed Cost (M$)',concost)
-    end if
-
-    !  Cost of electricity
-    if ((ireactor == 1).and.(ipnet == 0)) then 
-      call coelc_step(outfile,iprint) 
-    end if 
-  end subroutine costs_step
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a20(outfile,iprint)
-
+  subroutine step_a20(step_ref, sitecost, step2001, step2002, step20)
     !! Account 20 : Land and Rights
     !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 20 (Land and Rights)
     !! costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use cost_variables, only: output_costs, step_ref, sitecost
-    use process_output, only: oshead, ocosts, oblnkl
-
     implicit none
 
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-
-    ! Local variables
-    real(8):: step2001, step2002
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: sitecost
+    real(8), intent(out) :: step2001, step2002, step20
 
     ! Initialise as zero
     step20 = 0.0D0
@@ -188,55 +75,39 @@ contains
     ! Original STARFIRE value
     step2002 = step_ref(2)
     step20 = step20 + step2002
-
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      call oshead(outfile,'20. Land and Rights')
-      call ocosts(outfile,'(step2001)','Land (M$)', step2001)
-      call ocosts(outfile,'(step2002)','Site Preparation (M$)', step2002)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step20)','Total Account 20 Cost (M$)', step20)
-    end if
-
   end subroutine step_a20
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a21(outfile,iprint)
-
+  subroutine step_a21(step_ref, step_con, wfbuilding, a_reactor_bldg, &
+    a_ee_ps_bldg, a_aux_services_bldg, a_hot_cell_bldg, &
+    a_reactor_service_bldg, a_service_water_bldg, a_fuel_handling_bldg, &
+    a_control_room_bldg, a_ac_ps_bldg, a_admin_bldg, a_site_service_bldg, &
+    a_cryo_inert_gas_bldg, a_security_bldg, pgrossmw, &
+    pth, ptherm_star, &
+    step2101, step2102, step2103, step2104, step2105, &
+    step2106, step2107, step2108,  step2109, step2110, step2111, step2112, &
+    step2113, step2114, step2115, step2116, step2117, step2118, step2198, &
+    step2199, step21)
     !! Account 21 : Building and Site Service Infrastructure
     !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 21 (Building and Site
     !! Service Infrastructure) costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ! #TODO Add reference for STEP cost values
-    use cost_variables, only: output_costs, step_con, step_ref, wfbuilding
-    use process_output, only: oshead, ocosts, oblnkl
-    use buildings_variables, only: a_reactor_bldg, a_ee_ps_bldg, &
-      a_aux_services_bldg, a_hot_cell_bldg, a_reactor_service_bldg, &
-      a_service_water_bldg, a_fuel_handling_bldg, a_control_room_bldg, &
-      a_ac_ps_bldg, a_admin_bldg, a_site_service_bldg, a_cryo_inert_gas_bldg, &
-      a_security_bldg
     ! Floor areas in m^2 for buildings
-    use heat_transport_variables, only: pgrossmw
     ! pgrossmw is gross electric power of the plant in MW
-
     implicit none
 
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-
-    ! Local variables
-    real(8):: &
-    step2101, step2102, step2103, step2104, step2105, step2106, &
-    step2107, step2108, step2109, step2110, step2111, step2112, &
-    step2113, step2114, step2115, step2116, step2117, step2118, &
-    step2198, step2199
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: step_con, wfbuilding, a_reactor_bldg, &
+      a_ee_ps_bldg, a_aux_services_bldg, a_hot_cell_bldg, &
+      a_reactor_service_bldg, a_service_water_bldg, a_fuel_handling_bldg, &
+      a_control_room_bldg, a_ac_ps_bldg, a_admin_bldg, a_site_service_bldg, &
+      a_cryo_inert_gas_bldg, a_security_bldg, pgrossmw, pth, ptherm_star
+    real(8), intent(out) :: step2101, step2102, step2103, step2104, step2105, &
+      step2106, step2107, step2108, step2109, step2110, step2111, step2112, &
+      step2113, step2114, step2115, step2116, step2117, step2118, step2198, &
+      step2199, step21
 
     ! Initialise as zero
     step21 = 0.0D0
@@ -326,115 +197,13 @@ contains
     ! STARFIRE 15%
     step2199 = step_con * step21
     step21 = step21 + step2199
-
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      call oshead(outfile,'21. Building and Site Service Infrastructure')
-      call ocosts(outfile,'(step2101)','Site Improvements (M$)', step2101)
-      call ocosts(outfile,'(step2102)','Reactor Building (M$)', step2102)
-      call ocosts(outfile,'(step2103)','Turbine Building (M$)', step2103)
-      call ocosts(outfile,'(step2104)','Cooling System Structures (M$)', step2104)
-      call ocosts(outfile,'(step2105)','Electrical Equipment and Power Supply Building (M$)', step2105)
-      call ocosts(outfile,'(step2106)','Auxiliary Services Building (M$)', step2106)
-      call ocosts(outfile,'(step2107)','Hot Cell (M$)', step2107)
-      call ocosts(outfile,'(step2108)','Reactor Service Building (M$)', step2108)
-      call ocosts(outfile,'(step2109)','Service Water Building (M$)', step2109)
-      call ocosts(outfile,'(step2110)','Fuel Handling and Storage Building (M$)', step2110)
-      call ocosts(outfile,'(step2111)','Control Room (M$)', step2111)
-      call ocosts(outfile,'(step2112)','AC Power Supply Building (M$)', step2112)
-      call ocosts(outfile,'(step2113)','Admin Building (M$)', step2113)
-      call ocosts(outfile,'(step2114)','Site Service (M$)', step2114)
-      call ocosts(outfile,'(step2115)','Cryogenics and Inert Gas Storage Building (M$)', step2115)
-      call ocosts(outfile,'(step2116)','Security Building (M$)', step2116)
-      call ocosts(outfile,'(step2117)','Ventilation Stack (M$)', step2117)
-      call ocosts(outfile,'(step2118)','Waste Facilities Buildings (M$)', step2118)
-      call ocosts(outfile,'(step2198)','Spares (M$)', step2198)
-      call ocosts(outfile,'(step2199)','Contingency (M$)', step2199)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step21)','Total Account 21 Cost (M$)', step21)
-    end if
-
   end subroutine step_a21
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a22(outfile,iprint)
-
-    !! Account 22 : Reactor Plant Equipment
-    !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
-    !! This routine evaluates the Account 22 (Reactor Plant Equipment)
-    !! costs.
-    !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
-    use process_output, only: oshead, ocosts, oblnkl
-    use cost_variables, only: output_costs, step_con, step_rh_costfrac
-
-    implicit none
-  
-    ! Arguments
-    integer, intent(in) :: iprint,outfile
-  
-    ! Local variables
-    real(8):: step2297, step2298, step2299
-  
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-    ! Initialise as zero
-    step22 = 0.0D0
-    step2298 = 0.0D0   ! Contingency
-  
-    if ((iprint==1).and.(output_costs == 1)) then
-      call oshead(outfile,'22. Reactor Plant Equipment')
-    end if
-
-    !  Account 22.01 : Reactor Equipment
-    call step_a2201(step2298,outfile,iprint)
-
-    !  Account 22.02 : Heat Transfer Systems
-    call step_a2202(outfile,iprint)
-
-    !  Account 22.03 : Cryogenic Cooling System
-    call step_a2203(outfile,iprint)
-
-    !  Account 22.04 : Waste Treatment and Disposal
-    call step_a2204(outfile,iprint)
-
-    !  Account 22.05 : Fuel Handling and Storage
-    call step_a2205(step2298,outfile,iprint)
-
-    !  Account 22.06 : Other Reactor Plant Equipment
-    call step_a2206(step2298,outfile,iprint)
-
-    !  Account 22.07 : Instrumentation and Control
-    call step_a2207(outfile,iprint)
-
-    ! 22.98 Spares
-    ! STARFIRE percentage of components
-    step22 = step22 + step2298
-
-    ! 21.99 Contingency
-    ! STARFIRE 15%
-    step2299 = step_con * step22
-    step22 = step22 + step2299
-
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      write(outfile,*) '******************* '
-      call ocosts(outfile,'(step2298)','Spares (M$)', step2298)
-      call ocosts(outfile,'(step2299)','Contingency (M$)', step2299)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step22)','Total Account 22 Cost (M$)', step22)
-    end if
-  
-  end subroutine step_a22
-  
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a2201(step2298,outfile,iprint)
-
+  subroutine step_a2201(step_ref, ifueltyp, fcdfuel, &
+    rmajor, rminor, step220101, step220102, step22010301, &
+    step22010302, step220104, step2201, spares, divcst, cdcost, step22010303, &
+    step22010304, step220105, step220106, step220107, step220108, &
+    step220109, step220110)
     !! Account 22.01 : Reactor Equipment
     !! author: S I Muldrew, CCFE, Culham Science Centre
     !! None
@@ -452,80 +221,71 @@ contains
     implicit none
   
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-    real(8), intent(inout) :: step2298
-
-    ! Local variables
-    real(8):: step2201, step220101, step22010101, step22010102, step2201010201, &
-               step2201010202, step2201010203, step220102, step22010301, &
-               step22010302, step22010303, step22010304, step220104, &
-               step220105, step220106, step220107, step220108, step220109, &
-               step220110
-  
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: ifueltyp, fcdfuel, &
+      rmajor, rminor, step220101, step220102, step22010301, step22010302, &
+      step220104
+    real(8), intent(out) :: step2201, spares, divcst, cdcost, &
+      step22010303, step22010304, step220105, step220106, &
+      step220107, step220108, step220109, step220110
   
     ! Initialise as zero
-    step2201 = 0.0D0
-     
+    spares = 0.0D0
+
     ! 22.01.01 Blanket and First Wall
-    call step_a220101(step220101, step22010101, step22010102, step2201010201, &
-                      step2201010202, step2201010203)
-    step2201 = step2201 + step220101
+    step2201 = step220101
 
     ! 22.01.02 Shield
     ! Inboard shield costs:
-    step220102 = step_a220102()
     ! Note: outboard shield costs currently set to zero.
     ! Add shield cost to total cost, step2201, in M$
     step2201 = step2201 + step220102
     ! STARFIRE percentage for spares
     step2298 = step2298 + 9.985D-2 * step220102
-
+    spares = 9.985D-2 *  step220102
+  
     ! 22.01.03.01 TF Coils
-    step22010301 = step_a22010301()
     ! Add TF coil cost to total cost, step2201, in M$
     step2201 = step2201 + step22010301
 
     ! 22.01.03.02 PF Coils
-    step22010302 = step_a22010302()
     step2201 = step2201 + step22010302
     ! STARFIRE percentage for spares
-    step2298 = step2298 + 3.269D-1 * step22010302
+    spares = spares + 3.269D-1 * step22010302
 
     ! 22.01.03.03 Central Solenoid
     ! Original STARFIRE value, scaling with fusion island volume
     step22010303 = step_ref(24) * (vfi / vfi_star)
     step2201 = step2201 + step22010303
     ! STARFIRE percentage for spares
-    step2298 = step2298 + 6.124D-1 * step22010303
+    spares = spares + 6.124D-1 * step22010303
 
     ! 22.01.03.04 Control Coils
     ! Original STARFIRE value, scaling with fusion island volume
     step22010304 = step_ref(25) * (vfi / vfi_star)
     step2201 = step2201 + step22010304
     ! STARFIRE percentage for spares
-    step2298 = step2298 + 1.075D-1 * step22010304
+    spares = spares + 1.075D-1 * step22010304
   
     ! 22.01.04 Auxiliary Heating and Current Drive
     ! HCD cost = cost per injected Watt of power * injected Watts
-    step220104 = step_a220104()
     step2201 = step2201 + step220104
     ! STARFIRE percentage for spares
-    step2298 = step2298 + 2.335D-1 * step220104
+    spares = spares + 2.335D-1 * step220104
   
     ! 22.01.05 Primary Structure and Support
     ! Original STARFIRE value, scaling with fusion island volume
     step220105 = step_ref(27) * (vfi / vfi_star)
     step2201 = step2201 + step220105
     ! STARFIRE percentage for spares
-    step2298 = step2298 + 6.824D-2 * step220105
+    spares = spares + 6.824D-2 * step220105
   
     ! 22.01.06 Reactor Vacuum System
     ! Original STARFIRE value, scaling with fusion island volume
     step220106 = step_ref(28) * (vfi / vfi_star)**(2.0D0/3.0D0)
     step2201 = step2201 + step220106
     ! STARFIRE percentage for spares
-    step2298 = step2298 + 1.893D-1 * step220106
+    spares = spares + 1.893D-1 * step220106
   
     ! 22.01.07 Power Supplies
     ! Original STARFIRE value, scaling with fusion island volume
@@ -555,56 +315,16 @@ contains
       divcst = 0.0D0
     end if
     step2201 = step2201 + step220110
-  
-    ! Add to Account 22 total
-    step22 = step22 + step2201
-
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      write(outfile,*) '******************* 22.01 Reactor Equipment'
-      if (ifueltyp==0)then
-        write(outfile,*) '******************* 22.01.01 Blanket and First Wall Equipment'
-        call ocosts(outfile,'(step22010101)','Total First Wall Cost (M$)', step22010101)
-        call oblnkl(outfile)
-        call ocosts(outfile,'(step2201010201)','Blanket Multiplier Material (M$)', step2201010201)
-        call ocosts(outfile,'(step2201010202)','Blanket Breeder Material (M$)', step2201010202)
-        call ocosts(outfile,'(step2201010203)','Blanket Steel Costs (M$)', step2201010203)
-        call ocosts(outfile,'(step22010102)','Total Blanket Cost (M$)', step22010102)
-        call oblnkl(outfile)
-        call ocosts(outfile,'(step220101)','Total Account 22.01.01 Cost (M$)', step220101)
-        call oblnkl(outfile)
-      else if (ifueltyp==1)then
-        call ocosts(outfile,'(step220101)','Blanket and First Wall (Treated as Fuel) (M$)', step220101)
-      end if
-      call ocosts(outfile,'(step220102)','Shield (M$)', step220102)
-      call ocosts(outfile,'(step22010301)','TF Coils (M$)', step22010301)
-      call ocosts(outfile,'(step22010302)','PF Coils (M$)', step22010302)
-      call ocosts(outfile,'(step22010303)','Central Solenoid (M$)', step22010303)
-      call ocosts(outfile,'(step22010304)','Control Coils (M$)', step22010304)
-      if (ifueltyp==0)then
-        call ocosts(outfile,'(step220104)','Auxiliary Heating and Current Drive (M$)', step220104)
-      else if (ifueltyp==1)then
-        call ocosts(outfile,'(step220104)','Auxiliary Heating and Current Drive (Fraction as Fuel) (M$)', step220104)
-      end if
-      call ocosts(outfile,'(step220105)','Primary Structure and Support (M$)', step220105)
-      call ocosts(outfile,'(step220106)','Reactor Vacuum System (M$)', step220106)
-      call ocosts(outfile,'(step220107)','Power Supplies (M$)', step220107)
-      call ocosts(outfile,'(step220108)','Impurity Control (M$)', step220108)
-      call ocosts(outfile,'(step220109)','ECRH Plasma Breakdown (M$)', step220109)
-      call ocosts(outfile,'(step220110)','Divertor (M$)', step220110)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step2201)','Total Account 22.01 Cost (M$)', step2201)
-      call oblnkl(outfile)
-    end if
-  
   end subroutine step_a2201
 
-  subroutine step_a220101(step220101, step22010101, step22010102, step2201010201, &
-                          step2201010202, step2201010203)
-
+  subroutine step_a220101(step_ucblss, step_ucblbreed, step_ucblbe, ucblli, &
+    step_ucblvd, ucblli2o, ucbllipb, ifueltyp, step_ucfws, step_ucfwps, &
+    step_ucfwa, blktmodel, whtblli, blkttype, wtblli2o, whtblbreed, whtblvd, &
+    whtblbe, whtblss, wtbllipb, fw_armour_mass, fwmass, fwarea, ipowerflow, &
+    step220101, step22010101, step22010102, step2201010201, step2201010202, &
+    step2201010203, fwallcst, blkcst)
     !! Account 22.01.01 : Blanket and First Wall 
     !! author: A J Pearce, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 22.01.01 (BB+FW) costs.
     !! If ifueltyp = 0, the blanket cost is treated as capital cost
     !! If ifueltyp = 1, the blanket cost is treated as a fuel cost,
@@ -623,14 +343,16 @@ contains
 		use heat_transport_variables, only: ipowerflow 
     
     implicit none
-    real(8), intent(inout) :: step22010101, step22010102, step2201010201, &
-                               step2201010202, step2201010203
-    real(8), intent(out) :: step220101
+
+    real(8), intent(in) :: step_ucblss, step_ucblbreed, step_ucblbe, ucblli, &
+      step_ucblvd, ucblli2o, ucbllipb, ifueltyp, step_ucfws, step_ucfwps, &
+      step_ucfwa, blktmodel, whtblli, blkttype, wtblli2o, whtblbreed, whtblvd, &
+      whtblbe, whtblss, wtbllipb, fw_armour_mass, fwmass, fwarea, ipowerflow 
+    real(8), intent(out) :: step22010101, step22010102, step2201010201, &
+      step2201010202, step2201010203, step220101, fwallcst, blkcst
 
     !  Local variables
     real(8) :: step2201010204, step2201010205, step2201010206, step2201010207
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !! Account 22.01.01.01 : First wall
     step22010101 = 1.0D-6 * (fw_armour_mass * step_ucfwa + fwmass * step_ucfws) 
@@ -705,24 +427,19 @@ contains
 
   end subroutine step_a220101
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  function step_a220102() result(step220102)
+  subroutine step_a220102(rsldi, shldith, shldtth, vgap, scrapli, scraplo, &
+    fwith, fwoth, blnktth, d_vv_in, i_shield_mat, denw, denwc, divfix, &
+    step_ucshw, step_ucshwc, rminor, kappa, idivrt, pi, step220102)
     !! 22.01.02
     !! Returns cost of inboard shield
     !! Note: outboard shield costs currently set to zero
-
-    use build_variables, only: rsldi, shldith, shldtth, vgap, &
-      scrapli, scraplo, fwith, fwoth, blnktth, d_vv_in
-    use fwbs_variables, only: i_shield_mat, denw, denwc
-    use divertor_variables, only: divfix
-    use cost_variables, only: step_ucshw, step_ucshwc
-    use physics_variables, only: rminor, kappa, idivrt
-    use constants, only: pi
     implicit none
 
     ! Result
-    real(8) :: step220102
+    real(8), intent(in) :: rsldi, shldith, shldtth, vgap, scrapli, scraplo, &
+    fwith, fwoth, blnktth, d_vv_in, i_shield_mat, denw, denwc, divfix, &
+    step_ucshw, step_ucshwc, rminor, kappa, idivrt, pi
+    real(8), intent(out) :: step220102
     !! Cost of shield in M$
 
     ! Local variables
@@ -775,11 +492,11 @@ contains
 
     ! Note: outboard shield costs currently set to zero
 
-  end function step_a220102
+  end subroutine step_a220102
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  function step_a22010301() result(step22010301)
+  subroutine step_a22010301(step_ref, ifueltyp, step_uc_cryo_al, &
+      step_mc_cryo_al_per, uccpcl1, uccpclb, &
+      i_tf_sup, whtconal, n_tf, whttflgs, whtcp, itart, step22010301, cpstcst)    
     !! 22.01.03.01 TF Coils
     !! Returns cost of TF coils
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -794,9 +511,13 @@ contains
     use structure_variables, only: clgsmass, aintmass 
 
     implicit none
-
-    ! Result
-    real(8) :: step22010301
+    
+    ! Arguments
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: ifueltyp, step_uc_cryo_al, &
+      step_mc_cryo_al_per, uccpcl1, uccpclb, &
+      i_tf_sup, whtconal, n_tf, whttflgs, whtcp, itart
+    real(8), intent(out) :: step22010301, cpstcst
     !! Cost of TF coils in M$
     
     ! Declare local vars
@@ -912,16 +633,14 @@ contains
         cpstcst = c_tf_inboard_legs
       end if
     endif
-  end function step_a22010301
+  end subroutine step_a22010301
 
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  function step_a22010302() result(step22010302)
-
+  subroutine step_a22010302(iohcl, twopi, dcopper, step_uccase, step_uccu, &
+    step_cconshpf, step_ucfnc, step_cconfix, step_ucsc, step_ucwindpf, &
+		rjconpf, ipfres, vfohc, nohc, turns, isumatpf, whtpfs, ric, rpf, isumatoh, &
+    fcupfsu, fcuohsu, vf, awpoh, fncmass, dcond, step22010302)
     !! Account 22.01.03.02 PF Coils : PF magnet assemblies
     !! author: A J Pearce, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 22.01.03.02 (PF magnet) costs.
     !! Conductor costs previously used an algorithm devised by R. Hancox,
     !! January 1994, under contract to Culham, which took into
@@ -931,34 +650,27 @@ contains
     !! are used instead.
     !! Maximum values for current, current density and field
     !! are used. 
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-		use build_variables, only: iohcl 
-		use constants, only: twopi, dcopper
-		use cost_variables, only: step_uccase, step_uccu, step_cconshpf, step_ucfnc, &
-      step_cconfix, step_ucsc, step_ucwindpf
-		use pfcoil_variables, only: rjconpf, ipfres, vfohc, nohc, turns, isumatpf, &
-      whtpfs, ric, rpf, isumatoh, fcupfsu, fcuohsu, vf, awpoh 
-		use structure_variables, only: fncmass 
-    use tfcoil_variables, only: dcond
     implicit none
 
-    !  Result
-    real(8) :: step22010302
+    ! Arguments
+    real(8), intent(in) :: iohcl, twopi, dcopper, step_uccase, step_uccu, &
+      step_cconshpf, step_ucfnc, step_cconfix, step_ucwindpf, &
+      ipfres, vfohc, whtpfs, fcupfsu, fcuohsu, awpoh, fncmass
+    integer, intent(in) :: nohc, isumatoh, isumatpf
+    real(8), dimension(:), intent(in) :: dcond, ric, rpf, rjconpf, step_ucsc, &
+      turns, vf
+    real(8), intent(out) :: step22010302
      
     !  Local variables
     real(8) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
          pfwndl, step2201030201, step2201030202, step2201030203, step2201030204
     integer :: i,npf
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
     !  Total length of PF coil windings (m)
 
     pfwndl = 0.0D0
     do i = 1,nohc
-       pfwndl = pfwndl + twopi*rpf(i)*turns(i)
+      pfwndl = pfwndl + twopi*rpf(i)*turns(i)
     end do
 
     !  Account 22.01.03.02.01 : Conductor
@@ -1025,28 +737,20 @@ contains
     !  Total account 22.01.03.02
     step22010302 = step2201030201 + step2201030202 + step2201030203 + step2201030204
 
-  end function step_a22010302
+  end subroutine step_a22010302
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
-
-  function step_a220104() result(step220104)
-
+  subroutine step_a220104(step_ref, fcdfuel, ucich, uclh, ifueltyp, &
+    iefrf, iefrffix, echpwr, pnbitot, plhybd, step220104, cdcost)
     !! 22.01.04 Auxiliary Heating and Current Drive
     !! Returns cost of auxiliary HCD
     !! HCD cost = cost per injected Watt of power * injected Watts
-
-    use cost_variables, only: step_ref, fcdfuel, cdcost, ucich, uclh, ifueltyp
-    use current_drive_variables, only: iefrf, iefrffix, echpwr, pnbitot, plhybd
-
     implicit none
 
-    ! Result
-    real(8) :: step220104
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: fcdfuel, ucich, uclh, ifueltyp, iefrf, &
+      iefrffix, echpwr, pnbitot, plhybd
+    real(8), intent(out) :: step220104, cdcost
     !! Cost of HCD in M$
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    step220104 = 0.0D0
 
     ! Cost per Watt depends on technology/hardware used;
     ! inflation adjustment applied as appropriate to source for costs
@@ -1079,85 +783,42 @@ contains
       step220104 = (1.0D0-fcdfuel) * step220104 
       cdcost = step220104
     end if
+  end subroutine step_a220104
 
-  end function step_a220104
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a2202(outfile,iprint)
-
+  subroutine step_a2202(pgrossmw, step2202)
     !! Account 22.02 : Heat Transfer System
     !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 22.02 (Heat Transfer System)
     !! costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-    use cost_variables, only: output_costs
-    use process_output, only: ocosts, oblnkl
-    use heat_transport_variables, only: pgrossmw
     ! pgrossmw is gross electric power of the plant in MW
-
     implicit none
   
     ! Arguments
-    integer, intent(in) :: iprint,outfile
+    real(8), intent(in) :: pgrossmw
+    real(8), intent(out) :: step2202
   
-    ! Local variables
-    real(8):: step2202
-  
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-    ! Initialise as zero
-    step2202 = 0.0D0
-     
     ! 22.02 Heat Transfer System
     ! #TODO Needs reference for values
     step2202 = 9.2238D4 * pgrossmw * 1.0D-6
     ! Converted to M$
-  
-    ! Add to Account 22 total
-    step22 = step22 + step2202
-
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      write(outfile,*) '******************* 22.02 Heat Transfer System'
-      call ocosts(outfile,'(step2202)','Heat Transfer System (M$)', step2202)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step2202)','Total Account 22.02 Cost (M$)', step2202)
-      call oblnkl(outfile)
-    end if
-  
   end subroutine step_a2202
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a2203(outfile,iprint)
-
+  subroutine step_a2203(step_ref, vfi, vfi_star, step220301, step220302, &
+    step220303, step220304, step2203)
     !! Account 22.03 : Cryogenic Cooling System
     !! author: S I Muldrew, CCFE, Culham Science Centre
     !! None
     !! This routine evaluates the Account 22.03 (Cryogenic Cooling
     !! System) costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-    use cost_variables, only: output_costs, step_ref
-    use process_output, only: ocosts, oblnkl
-
     implicit none
   
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-  
-    ! Local variables
-    real(8):: &
-    step220301, step220302, step220303, step220304, step2203
-  
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: vfi, vfi_star
+    real(8), intent(out) :: step220301, step220302, step220303, step220304, &
+      step2203
   
     ! Initialise as zero
     step2203 = 0.0D0
@@ -1181,50 +842,21 @@ contains
     ! Original STARFIRE value, scaling with fusion island volume
     step220304 = step_ref(37) * (vfi / vfi_star)**(2.0D0/3.0D0)
     step2203 = step2203 + step220304
-  
-    ! Add to Account 22 total
-    step22 = step22 + step2203
-
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      write(outfile,*) '******************* 22.03 Cryogenic Cooling System'
-      call ocosts(outfile,'(step220301)','Helium Refrigerator (M$)', step220301)
-      call ocosts(outfile,'(step220302)','Liquid Helium Transfer and Storage (M$)', step220302)
-      call ocosts(outfile,'(step220303)','Gas Helium Storage (M$)', step220303)
-      call ocosts(outfile,'(step220304)','Liquid Nitrogen Storage (M$)', step220304)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step2203)','Total Account 22.03 Cost (M$)', step2203)
-      call oblnkl(outfile)
-    end if
-  
   end subroutine step_a2203
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a2204(outfile,iprint)
-
+  subroutine step_a2204(step_ref, pth, ptherm_star, step2204, step220401, &
+    step220402, step220403)
     !! Account 22.04 : Waste Treatment and Disposal
     !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 22.04 (Waste Treatment
     !! and Disposal) costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-    use cost_variables, only: output_costs, step_ref
-    use process_output, only: ocosts, oblnkl
-
     implicit none
   
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-  
-    ! Local variables
-    real(8):: &
-    step220401, step220402, step220403, step2204
-  
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: pth, ptherm_star
+    real(8), intent(out) :: step2204, step220401, step220402, step220403
   
     ! Initialise as zero
     step2204 = 0.0D0
@@ -1243,104 +875,52 @@ contains
     ! Original STARFIRE value, scaling with thermal power
     step220403 = step_ref(40) * (pth / ptherm_star)**0.6D0 
     step2204 = step2204 + step220403
-  
-    ! Add to Account 22 total
-    step22 = step22 + step2204
-
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      write(outfile,*) '******************* 22.04 Waste Treatment and Disposal'
-      call ocosts(outfile,'(step220401)','Liquid Waste (M$)', step220401)
-      call ocosts(outfile,'(step220402)','Gaseous Waste (M$)', step220402)
-      call ocosts(outfile,'(step220403)','Solid Waste (M$)', step220403)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step2204)','Total Account 22.04 Cost (M$)', step2204)
-      call oblnkl(outfile)
-    end if
-  
   end subroutine step_a2204
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a2205(step2298,outfile,iprint)
-
+  subroutine step_a2205(step_ref, pth, ptherm_star, step2205, spares)
     !! Account 22.05 : Fuel Handling and Storage
     !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 22.05 (Fuel Handling
     !! and Storage) costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-    use cost_variables, only: output_costs, step_ref
-    use process_output, only: ocosts, oblnkl
-
     implicit none
   
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-    real(8), intent(inout) :: step2298
-  
-    ! Local variables
-    real(8):: step2205
-  
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: pth, ptherm_star
+    real(8), intent(out) :: step2205, spares
   
     ! Initialise as zero
     step2205 = 0.0D0
+    spares = 0.0D0
      
     ! 22.05 Fuel Handling and Storage
     ! Original STARFIRE value, scaling with thermal power
     step2205 = step_ref(41) * (pth / ptherm_star)**0.6D0 
 
-    ! Add to Account 22 total
-    step22 = step22 + step2205
     ! STARFIRE percentage for spares
-    step2298 = step2298 + 5.026D-2 * step2205
-
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      write(outfile,*) '******************* 22.05 Fuel Handling and Storage'
-      call ocosts(outfile,'(step2205)','Fuel Handling and Storage (M$)', step2205)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step2205)','Total Account 22.05 Cost (M$)', step2205)
-      call oblnkl(outfile)
-    end if
-  
+    spares = spares + 5.026D-2 * step2205
   end subroutine step_a2205
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a2206(step2298,outfile,iprint)
-
+  subroutine step_a2206(step_ref, pth, ptherm_star, step2206, spares, &
+    step220601, step220602, step220603, step220604, step220605, step220606, &
+    step220607, step220608)
     !! Account 22.06 : Other Reactor Plant Equipment
     !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 22.06 (Other Reactor
     !! Plant Equipment) costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
-    use cost_variables, only: output_costs, step_ref
-    use process_output, only: ocosts, oblnkl
-
     implicit none
   
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-    real(8), intent(inout) :: step2298
-  
-    ! Local variables
-    real(8):: &
-    step220601, step220602, step220603, step220604, step220605, &
-    step220606, step220607, step220608, step2206
-  
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: pth, ptherm_star
+    real(8), intent(out) :: step2206, spares, step220601, step220602, &
+      step220603, step220604, step220605, step220606, step220607, step220608
   
     ! Initialise as zero
     step2206 = 0.0D0
+    spares = 0.0D0
      
     ! 22.06.01 Maintenance Equipment
     ! Original STARFIRE value, scaling with fusion island volume
@@ -1348,7 +928,7 @@ contains
     step220601 = 0.0 ! step_ref(42) * (vfi / vfi_star)**(2.0D0/3.0D0)
     step2206 = step2206 + step220601
     ! STARFIRE percentage for spares
-    step2298 = step2298 + 4.308D-1 * step220601
+    spares = spares + 4.308D-1 * step220601
   
     ! 22.06.02 Special Heating Systems
     ! Original STARFIRE value, scaling with thermal power
@@ -1380,106 +960,49 @@ contains
     step220607 = step_ref(48) * (pth / ptherm_star)**0.6D0
     step2206 = step2206 + step220607
     ! STARFIRE percentage for spares
-    step2298 = step2298 + 8.3D-1 * (pth / ptherm_star)**0.6D0
+    spares = spares + 8.3D-1 * (pth / ptherm_star)**0.6D0
   
     ! 22.06.08 Standby Cooling System
     ! Original STARFIRE value, scaling with thermal power
     step220608 = step_ref(49) * (pth / ptherm_star)**0.6D0
     step2206 = step2206 + step220608
-  
-    ! Add to Account 22 total
-    step22 = step22 + step2206
-
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      write(outfile,*) '******************* 22.06 Other Reactor Plant Equipment'
-      call ocosts(outfile,'(step220601)','Maintenance Equipment (M$)', step220601)
-      call ocosts(outfile,'(step220602)','Special Heating Systems (M$)', step220602)
-      call ocosts(outfile,'(step220603)','Coolant Storage (M$)', step220603)
-      call ocosts(outfile,'(step220604)','Gas System (M$)', step220604)
-      ! call ocosts(outfile,'(step220605)','Inert Atmosphere System (M$)', step220605)
-      call ocosts(outfile,'(step220606)','Fluid Leak Detection (M$)', step220606)
-      call ocosts(outfile,'(step220607)','Closed Loop Coolant System (M$)', step220607)
-      call ocosts(outfile,'(step220608)','Standby Cooling System (M$)', step220608)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step2206)','Total Account 22.06 Cost (M$)', step2206)
-      call oblnkl(outfile)
-    end if
-  
   end subroutine step_a2206
  
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a2207(outfile,iprint)
-
+  subroutine step_a2207(step_ref, pth, ptherm_star, step2207)
     !! Account 22.07 : Instrumentation and Control
     !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 22.07 (Instrumentation
     !! and Control) costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-    use cost_variables, only: output_costs,step_ref
-    use process_output, only: ocosts, oblnkl
-
     implicit none
   
     ! Arguments
-    integer, intent(in) :: iprint,outfile
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: pth, ptherm_star
+    real(8), intent(out) :: step2207
 
-    ! Local variables
-    real(8):: step2207
-  
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
     ! Initialise as zero
     step2207 = 0.0D0
 
     ! 22.07 Instrumentation and Control
     ! Original STARFIRE value, scaling with thermal power
     step2207 = step_ref(50) * (pth / ptherm_star)**0.6D0
-    ! Add to Account 22 total
-    step22 = step22 + step2207
-
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      write(outfile,*) '******************* 22.07 Instrumentation and Control'
-      call ocosts(outfile,'(step2207)','Instrumentation and Control (M$)', step2207)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step2207)','Total Account 22.07 Cost (M$)', step2207)
-      call oblnkl(outfile)
-    end if
-  
   end subroutine step_a2207
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a23(outfile,iprint)
-
+  subroutine step_a23(step_ref, step_con, pgrossmw, step23a, step2303, &
+    step2398, step2399, step23)
     !! Account 23 : Turbine Plant Equipment
     !! author: S I Muldrew, CCFE, Culham Science Centre
     !! None
     !! This routine evaluates the Account 23 (Turbine Plant Equipment)
     !! costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use cost_variables, only: output_costs, step_con, step_ref
-    use process_output, only: oshead, ocosts, oblnkl
-    use heat_transport_variables, only: pgrossmw
-
     implicit none
 
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-
-    ! Local variables
-    real(8):: step23a, step2303, step2398, step2399
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: step_con, pgrossmw
+    real(8), intent(out) :: step23a, step2303, step2398, step2399, step23
 
     ! Initialise as zero
     step23 = 0.0D0
@@ -1508,47 +1031,23 @@ contains
     ! STARFIRE 15%
     step2399 = step_con * step23
     step23 = step23 + step2399
-
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      call oshead(outfile,'23. Turbine Plant Equipment')
-      call ocosts(outfile,'(step23a)','Turbine System (M$)', step23a)
-      call ocosts(outfile,'(step2303)','Heat Rejection (M$)', step2303)
-      call ocosts(outfile,'(step2398)','Spares (M$)', step2398)
-      call ocosts(outfile,'(step2399)','Contingency (M$)', step2399)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step23)','Total Account 23 Cost (M$)', step23)
-    end if
   end subroutine step_a23
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a24(outfile,iprint)
-
+  subroutine step_a24(step_ref, step_con, pgrossmw, step2401, step2402, &
+    step2403, step2404, step2405, step2406, step2407, step2498, step2499, &
+    step24)
     !! Account 24 : Electric Plant Equipment
     !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 24 (Electric Plant 
     !! Equipment) costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use cost_variables, only: output_costs, step_con, step_ref
-    use process_output, only: oshead, ocosts, oblnkl
-    use heat_transport_variables, only: pgrossmw
-
     implicit none
 
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-
-    ! Local variables
-    real(8):: &
-    step2401, step2402, step2403, step2404, step2405, step2406, &
-    step2407, step2498, step2499
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: step_con, pgrossmw
+    real(8), intent(out) :: step2401, step2402, step2403, step2404, step2405, &
+    step2406, step2407, step2498, step2499, step24
 
     ! Initialise as zero M$
     step24 = 0.0D0
@@ -1590,54 +1089,25 @@ contains
     ! STARFIRE 15%
     step2499 = step_con * step24
     step24 = step24 + step2499
-
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      call oshead(outfile,'24. Electric Plant Equipment')
-      call ocosts(outfile,'(step2401)','Switch Gear (M$)', step2401)
-      call ocosts(outfile,'(step2402)','Station Service Equipment (M$)', step2402)
-      call ocosts(outfile,'(step2403)','Switchboards (M$)', step2403)
-      call ocosts(outfile,'(step2404)','Protective Equipment (M$)', step2404)
-      call ocosts(outfile,'(step2405)','Electrical Structures (M$)', step2405)
-      call ocosts(outfile,'(step2406)','Power and Control Wiring (M$)', step2406)
-      call ocosts(outfile,'(step2407)','Electric Lighting (M$)', step2407)
-      call ocosts(outfile,'(step2498)','Spares (M$)', step2498)
-      call ocosts(outfile,'(step2499)','Contingency (M$)', step2499)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step24)','Total Account 24 Cost (M$)', step24)
-    end if
-
   end subroutine step_a24
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a25(outfile,iprint)
-
+  subroutine step_a25(step_ref, step_con, pgrossmw, wgt, step2501, step2502, &
+    step2503, step2504, step2598, step2599, step25)
     !! Account 25 : Miscellaneous Plant Equipment
     !! author: S I Muldrew, CCFE, Culham Science Centre
     !! None
     !! This routine evaluates the Account 25 (Miscellaneous Plant 
     !! Equipment) costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ! #TODO Need to add reference for cost calculations
-    use cost_variables, only: output_costs, step_con, step_ref
-    use process_output, only: oshead, ocosts, oblnkl
-    use heat_transport_variables, only: pgrossmw
-    use buildings_variables, only: wgt
-    
     implicit none
   
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-    
-    ! Local variables
-    real(8):: &
-    step2501, step2502, step2503, step2504, step2598, step2599
-    
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
+    real(8), dimension(:), intent(in) :: step_ref
+    real(8), intent(in) :: step_con, pgrossmw, wgt
+    real(8), intent(out) :: step2501, step2502, step2503, step2504, step2598, &
+      step2599, step25
+
     ! Initialise as zero
     step25 = 0.0D0
     
@@ -1668,47 +1138,19 @@ contains
     ! STARFIRE 15%
     step2599 = step_con * step25
     step25 = step25 + step2599
-  
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      call oshead(outfile,'25. Miscellaneous Plant Equipment')
-      call ocosts(outfile,'(step2501)','Transport and Lifting Equipment (M$)', step2501)
-      call ocosts(outfile,'(step2502)','Air and Water Service System (M$)', step2502)
-      call ocosts(outfile,'(step2503)','Communications Equipment (M$)', step2503)
-      call ocosts(outfile,'(step2504)','Furnishing and Fixtures (M$)', step2504)
-      call ocosts(outfile,'(step2598)','Spares (M$)', step2598)
-      call ocosts(outfile,'(step2599)','Contingency (M$)', step2599)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step25)','Total Account 25 Cost (M$)', step25)
-    end if
-  
   end subroutine step_a25
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine step_a27(outfile,iprint)
-
+  subroutine step_a27(cdirt, step_rh_costfrac, step2701, step27)
     !! Account 27 : Remote Handling
     !! author: A J Pearce, CCFE, Culham Science Centre
-    !! None
     !! This routine evaluates the Account 27 (Remote Handling)
     !! costs.
     !! STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use cost_variables, only: output_costs, cdirt, step_rh_costfrac
-    use process_output, only: oshead, ocosts, oblnkl
-
     implicit none
 
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-
-    ! Local variables
-    real(8):: step2701
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    real(8), intent(in) :: cdirt, step_rh_costfrac
+    real(8), intent(out) :: step2701, step27
 
     ! Initialise as zero
     step27 = 0.0D0
@@ -1718,27 +1160,17 @@ contains
     step2701 = step_rh_costfrac * cdirt 
     
     step27 = step2701
-
-    ! Output costs
-    if ((iprint==1).and.(output_costs == 1)) then
-      call oshead(outfile,'27. Remote Handling')
-      call ocosts(outfile,'(step2701)','Remote Handing (M$)', step2701)
-      call oblnkl(outfile)
-      call ocosts(outfile,'(step27)','Total Account 27 Cost (M$)', step27)
-    end if
-
   end subroutine step_a27
 
-  subroutine step_indirect_costs(outfile, iprint)
+  subroutine step_indirect_costs(cdirt, step91_per, step92_per, step93_per, &
+    step91, step92, step93)
     !! Accounts 91-93: Indirect costs
     !! Calculate the indirect costs and print
-    use cost_variables, only: cdirt, output_costs
-    use process_output, only: oshead, ocosts
-    use cost_variables, only: step91_per, step92_per, step93_per
     implicit none
-
+    
     ! Arguments
-    integer, intent(in) :: outfile, iprint
+    real(8), intent(in) :: cdirt, step91_per, step92_per, step93_per
+    real(8), intent(out) :: step91, step92, step93
 
     ! Account 91 : Construction Facilities, Equipment and Services (default 30%)
     step91 = step91_per * cdirt
@@ -1748,56 +1180,46 @@ contains
 
     ! Account 93 : Other Costs (default 5%)
     step93 = step93_per * cdirt
-
-    if ((iprint==1).and.(output_costs == 1)) then
-      call oshead(outfile,'Indirect Cost')
-      call ocosts(outfile,'(step91)','Construction Facilities, Equipment and Services (M$)',step91)
-      call ocosts(outfile,'(step92)','Engineering and Costruction Management Services (M$)',step92)
-      call ocosts(outfile,'(step93)','Other Costs (M$)',step93)
-    endif
   end subroutine step_indirect_costs
 
-  subroutine coelc_step(outfile,iprint)
-
+  subroutine coelc_step(discount_rate, tlife, ucfuel, uche3, cdcost, &
+    divcst, fcdfuel, ifueltyp, fwallcst, fcr0, fcap0cp, &
+    fcap0, dtlife, divlife, dintrt, decomf, cpstcst, cplife, concost, &
+    cfactr, cdrlife, step_ref, step_currency, &
+    step_ucoam, step_ucwst, bktlife, pnetelmw, fhe3, itart, wtgpd, tburn, &
+    tcycle, n_day_year, &
+    anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
+    annfuelt, annfwbl, annoam, anntot, annwst, coecdr,  &
+    coecp, coedecom, coediv, coefuel, coefwbl, coewst, &
+    crffwbl, feffwbl, fwbllife, &
+    moneyint, capcost, coecap, coeoam, coefuelt, coe, title)
     !! Routine to calculate the cost of electricity for a fusion power plant
-    !! author: S I Muldrew, CCFE, Culham Science Centre
-    !! outfile : input integer : output file unit
-    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! author: S I Muldrew,  CCFE, Culham Science Centre
     !! This routine performs the calculation of the cost of electricity
     !! for a fusion power plant.
-    !! <P>Annual costs are in megadollars/year, electricity costs are in
+    !! Annual costs are in megadollars/year, electricity costs are in
     !! millidollars/kWh, while other costs are in megadollars.
     !! All values are based on 1980 dollars.
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use cost_variables, only: output_costs, discount_rate, tlife, ucfuel, uche3, cdcost, &
-      divcst, fcdfuel, ifueltyp, moneyint, fwallcst, fcr0, fcap0cp, &
-      fcap0, dtlife, divlife, dintrt, decomf, cpstcst, cplife, concost, coeoam, &
-      coefuelt, coecap, coe, cfactr, cdrlife, capcost, step_ref, step_currency, &
-      step_ucoam, step_ucwst
-    use fwbs_variables, only: bktlife
-    use heat_transport_variables, only: pnetelmw
-    use physics_variables, only: fhe3, itart, wtgpd
-    use times_variables, only: tburn, tcycle
-    use process_output, only: oshead, ocosts, oblnkl,  ovarrf, osubhd, oheadr
-    use constants, only: n_day_year
-
     implicit none
 
     ! Arguments
-    integer, intent(in) :: iprint,outfile
-
-    ! Local variables
-    real(8) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
-         annfuelt,annfwbl,annoam,anntot,annwst,coecdr, &
-         coecp,coedecom,coediv,coefuel,coefwbl,coewst,crfcdr,crfcp, &
-         crfdiv,crffwbl,fefcdr,fefcp,fefdiv,feffwbl,fwbllife,kwhpy
-    character(len=80) :: title
-         ! annoam1,
+    real(8), intent(in) :: discount_rate, tlife, ucfuel, uche3, cdcost, &
+      divcst, fcdfuel, ifueltyp, fwallcst, fcr0, fcap0cp, &
+      fcap0, dtlife, divlife, dintrt, decomf, cpstcst, cplife, concost, &
+      cfactr, cdrlife, step_ref, &
+      step_ucoam, step_ucwst, bktlife, pnetelmw, fhe3, itart, wtgpd, tburn, &
+      tcycle, n_day_year
+    character(len=50), intent(in) :: step_currency
+    real(8), intent(out) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
+      annfuelt,annfwbl,annoam,anntot,annwst,coecdr, &
+      coecp,coedecom,coediv,coefuel,coefwbl,coewst, &
+      crffwbl,feffwbl,fwbllife,moneyint, &
+      capcost, coecap, coeoam, coefuelt, coe
+    character(len=80), intent(out) :: title
          
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! Variables
+    real(8) :: crfcdr, crfcp, crfdiv, fefcdr, fefcp, fefdiv, kwhpy
 
     ! Number of kWh generated each year
     kwhpy = 1.0D3 * pnetelmw * (24.0D0*n_day_year) * cfactr * tburn/tcycle
@@ -1973,74 +1395,5 @@ contains
 
   !  Total cost of electricity
   coe = coecap + coefuelt + coeoam + coedecom
-
-  if ((iprint == 0).or.(output_costs == 0)) return
-  
-  !  Output section
-  call oshead(outfile,'Interest during Construction')
-  call ocosts(outfile,'(moneyint)','Interest during construction (M$)',moneyint)
-  call oshead(outfile,'Total Capital Investment')
-  call ocosts(outfile,'(capcost)','Total capital investment (M$)',capcost)
-
-  title = 'Cost of Electricity ('// trim(step_currency) // ')'
-  call oheadr(outfile,trim(title))
-
-  call ovarrf(outfile,'First wall / blanket life (years)','(fwbllife)',fwbllife)
-  call ovarrf(outfile,'Divertor life (years)','(divlife.)',divlife)
-  if (itart == 1) then
-    call ovarrf(outfile,'Centrepost life (years)','(cplife.)',cplife)
-  end if
-  call ovarrf(outfile,'Cost of electricity (m$/kWh)','(coe)',coe)
-  call osubhd(outfile,'Power Generation Costs :')
-
-  if ((annfwbl /= annfwbl).or.(annfwbl > 1.0D10).or.(annfwbl < 0.0D0)) then
-    write(outfile,*)'Problem with annfwbl'
-    write(outfile,*)'fwblkcost=', fwallcst
-    write(outfile,*)'crffwbl=', crffwbl,   '  fcap0cp=', fcap0cp
-    write(outfile,*)'feffwbl=', feffwbl,   '  fwbllife=', fwbllife
-  end if
-
-  write(outfile,200) &
-        anncap,coecap, &
-        annoam,coeoam, &
-        anndecom,coedecom, &
-        annfwbl,coefwbl, &
-        anndiv,coediv, &
-        anncp,coecp, &
-        anncdr,coecdr, &
-        annfuel,coefuel, &
-        annwst,coewst, &
-        annfuelt,coefuelt, &
-        anntot,coe
-
-  200 format( &
-        t76,'Annual Costs, M$       COE, m$/kWh'// &
-        1x,'Capital Investment',t80,f10.2,10x,f10.2/ &
-        1x,'Operation & Maintenance',t80,f10.2,10x,f10.2/ &
-        1x,'Decommissioning Fund',t80,f10.2,10x,f10.2/ &
-        1x,'Fuel Charge Breakdown'// &
-        5x,'Blanket & first wall',t72,f10.2,10x,f10.2/ &
-        5x,'Divertors',t72,f10.2,10x,f10.2/ &
-        5x,'Centrepost (TART only)',t72,f10.2,10x,f10.2/ &
-        5x,'Auxiliary Heating',t72,f10.2,10x,f10.2/ &
-        5x,'Actual Fuel',t72,f10.2,10x,f10.2/ &
-        5x,'Waste Disposal',t72,f10.2,10x,f10.2/ &
-        1x,'Total Fuel Cost',t80,f10.2,10x,f10.2// &
-        1x,'Total Cost',t80,f10.2,10x,f10.2 )
-
-  if (ifueltyp == 1) then
-    call oshead(outfile,'Replaceable Components Direct Capital Cost')
-    call ovarrf(outfile,'First wall and Blanket direct capital cost (M$)','(fwblkcost)',fwblkcost)
-
-    call ovarrf(outfile,'Divertor direct capital cost (M$)','(divcst)',divcst)
-    if (itart == 1) then
-      call ovarrf(outfile,'Centrepost direct capital cost (M$)','(cpstcst)',cpstcst)
-    end if
-    call ovarrf(outfile,'Plasma heating/CD system cap cost (M$)','',cdcost*fcdfuel/(1.0D0-fcdfuel))
-    call ovarrf(outfile,'Fraction of CD cost --> fuel cost','(fcdfuel)',fcdfuel)
-
-  end if
-
   end subroutine coelc_step
-
 end module costs_step_module
