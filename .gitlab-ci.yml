@@ -18,8 +18,8 @@ stages:
   - testing
   - step
   - quality
-  - pages
   - tracking
+  - pages
 
 .before_test_template: &test-setup
   image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9_pyenv
@@ -237,6 +237,35 @@ line_length:
     - ubuntu
 
 #-----------------
+#  Tracking
+#-----------------
+
+tracking_rtv:
+  when: on_success
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  only: 
+    - develop
+    - 1344-docs-test
+  stage: tracking
+  <<: *test-setup-py38
+  script:
+    - *setup-ssh
+    - pip install pandas
+    - pip install bokeh
+    - git clone git@git.ccfe.ac.uk:tnunn/process-tracking-database.git ${CI_PROJECT_DIR}/process_rtv_data/
+    - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track --db ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/baseline_2018/baseline_2018_MFILE.DAT
+    - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track --db ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/baseline_2019/baseline_2019_MFILE.DAT
+    - python ${CI_PROJECT_DIR}/tracking/tracking_data.py plot --db ${CI_PROJECT_DIR}/process_rtv_data/ --out ${CI_PROJECT_DIR}/tracking.html
+    - cd ${CI_PROJECT_DIR}/process_rtv_data/
+    - git add .
+    - git commit -m "${CI_PIPELINE_URL} - ${CI_PIPELINE_CREATED_AT}"
+  artifacts:
+    when: always
+    paths:
+      - ${CI_PROJECT_DIR}/tracking.html
+
+
+#-----------------
 #  Pages
 #-----------------
 
@@ -307,20 +336,3 @@ step_trigger:
   allow_failure: true
   script:
     - trigger -u https://git.ccfe.ac.uk/api/v4/projects/4023 -b master -T $CI_JOB_TOKEN -P $CI_JOB_PRIVATE_TOKEN
-
-#-----------------
-#  Tracking
-#-----------------
-
-rtv_trigger:
-  when: on_success
-  image: git.ccfe.ac.uk:4567/tnunn/gitlab-multi-project-pipeline/trigger:latest
-  only: 
-    - develop
-  stage: tracking
-  allow_failure: true
-  script:
-    - trigger -u https://git.ccfe.ac.uk/api/v4/projects/5447 -b master -T $CI_JOB_TOKEN -P $CI_JOB_PRIVATE_TOKEN
-  needs:
-    - job: step_trigger
-      artifacts: false
