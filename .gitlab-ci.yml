@@ -291,7 +291,7 @@ tracking_rtv:
     - git clone git@git.ccfe.ac.uk:tnunn/process-tracking-database.git ${CI_PROJECT_DIR}/process_rtv_data/
     - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track --db ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/baseline_2018/baseline_2018_MFILE.DAT
     - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track --db ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/baseline_2019/baseline_2019_MFILE.DAT
-    - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track --db ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tests/regression/scenarios/starfire/out.MFILE.DAT
+    - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track --db ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tests/regression/scenarios/starfire/starfire_MFILE.DAT
     - python ${CI_PROJECT_DIR}/tracking/tracking_data.py plot --db ${CI_PROJECT_DIR}/process_rtv_data/ --out ${CI_PROJECT_DIR}/tracking.html
     - cd ${CI_PROJECT_DIR}/process_rtv_data/
     - git add .
