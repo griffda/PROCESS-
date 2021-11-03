@@ -229,20 +229,21 @@ regression-py38-5-percent:
   script:
     - pytest -v tests/regression -s --reg-tolerance=5 | tee tests/regression/pytest_5_percent.log
 
-baseline_2019-py38:
-  when: on_success
-  only:
-    - develop
-  stage: testing
-  <<: *test-setup-py38
-  script:
-    - process -i tracking/baseline_2019/baseline_2019_IN.DAT
-  artifacts:
-    paths:
-      - tracking/baseline_2019/baseline_2019_MFILE.DAT
-    expire_in: 1 week
-  tags:
-    - ubuntu
+# Temporarily disabled whilst #1450 (plasmod wrapping) is fixed
+# baseline_2019-py38:
+#   when: on_success
+#   only:
+#     - develop
+#   stage: testing
+#   <<: *test-setup-py38
+#   script:
+#     - process -i tracking/baseline_2019/baseline_2019_IN.DAT
+#   artifacts:
+#     paths:
+#       - tracking/baseline_2019/baseline_2019_MFILE.DAT
+#     expire_in: 1 week
+#   tags:
+#     - ubuntu
 
 baseline_2018-py38:
   when: on_success
