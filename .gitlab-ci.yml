@@ -326,6 +326,7 @@ pages:
     - ls site
     - mv site public
     - mv ford_site public
+    - mv tracking.html public
 
     # Install requirements for Code Quality
     - python3 -m pip install flinter==0.3.0
