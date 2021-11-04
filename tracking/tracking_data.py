@@ -86,9 +86,16 @@ class ProcessTrackerGenerator:
 
         # tracking data
         for var in self.tracking_variables:
+            if '.' in var:
+                try:
+                    _, var = var.split('.')
+                except:
+                    print(f'{var} is a dotted variable and must be in the form OVERRIDINGNAME.VARIABLE')
+
             data = self.mfile.data.get(var,DataDoesNotExist())
 
             if isinstance(data, DataDoesNotExist):
+                print(f'{var} is not present in the MFile and will be skipped.')
                 continue
 
             if data.get_number_of_scans() > 1:
@@ -169,10 +176,12 @@ def plot_tracking_data(database):
         except:
             continue
 
+    print(f'{overrides=}')
     for k, v in data.tracked_variables.items():
         df = v.as_dataframe()
 
         parent = overrides.get(k) or PythonFortranInterfaceVariables.parent_module(k)
+        print(f'{parent=}, {k=}')
 
         if not parent:
             print(f'Variable {k} is not a module variable of any Fortran module, please provide the python class which this variable can be found under as CLASS.VARIABLE noting that VARIABLE must be a variable present in the output file and does not necessarily need to correspond to an actual class variable, VARIABLE, of CLASS')
