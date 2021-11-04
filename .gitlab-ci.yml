@@ -319,6 +319,7 @@ tracking_rtv:
   only: 
     - develop
   stage: tracking
+  allow_failure: true
   <<: *test-setup-py38
   script:
     - *setup-ssh
@@ -366,7 +367,8 @@ pages:
     - ls site
     - mv site public
     - mv ford_site public
-    - mv tracking.html public
+    # if tracking.html doesn't exist, put an error404 in its place
+    - mv tracking.html public || cp public/404.html public/tracking.html
 
     # Install requirements for Code Quality
     - python3 -m pip install flinter==0.3.0
