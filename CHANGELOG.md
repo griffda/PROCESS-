@@ -5,6 +5,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.2.0] - 2021-10-26
+### Added
+- Add pumping variables as inputs for varying the efficiency of thermal to electrical conversion in develop-stable (#1374)
+- Added xi_ebw input variable and set default value (#1371)
+- Remove f90wrap from build process (#1397)
+- Unit tests for costs_step added (#1372)
+- Tracking for cost model (#1344)
+- Convert caller.f90 to Python (#1354)
+- EBW heating system (#1262)
+- Call fcnvmc1 and 2 from Python (#1079)
+
+## Changed
+- Fix the blnkith variable so that an Inboard blanket can be used whilst itart = 1 (Spherical Tokamak) (#1388)
+- Elongation should be scaleable with aspect ratio (#1345)
+- PROCESS TF geometry output issue (#1328)
+- TF coil stress constraints using different limits for case and WP (#1327)
+- Add centrepost nuclear heating to TF nuclear heating (#1331)
+- Updated proc_plot.py for EBW plasma heating fix (#1387)
+- change the formulae for the dittus-boelter eqn in tfcoil.f90 as it is wrong in develop-stable (#1375)
+- Higher current density required in TF coil REBCO tape" - new sc material (#1350)
+- Update of Shield Cost Calculations (#1407)
+- PROCESS TF geometry output issue (#1328)
+- Remove Cost Model 2 link to LSA (#1361)
+- Issue 935 power plant water use (#935)
+- Secondary EBW Heating Missing (#1324)
+
 ## [2.1.2] - 2021-07-01
 ### Added
 - Add costs and temperature margin to Durham REBCO model (#1333)

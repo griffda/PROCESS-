@@ -1514,6 +1514,7 @@
             9000.0,
             9000.0,
             9000.0,
+            9000.0,
             9000.0
         ],
         "dcondins": 1800.0,
@@ -2199,6 +2200,8 @@
         "htpmwe_fw_blkt": 0.0,
         "htpmwe_shld": 0.0,
         "htpsecmw": 0.0,
+        "hts_tape_thickness": 1e-06,
+        "hts_tape_width": 0.004,
         "hvv": 0.0,
         "hydrogenicpowerlost": null,
         "i": null,
@@ -5340,6 +5343,7 @@
             600.0,
             600.0,
             300.0,
+            1200.0,
             1200.0
         ],
         "step_ucshw": 269.638,
@@ -7707,6 +7711,7 @@
             600.0,
             600.0,
             300.0,
+            1200.0,
             1200.0
         ],
         "ucsh": 115.0,
@@ -9691,6 +9696,8 @@
         "htpmwe_fw_blkt": "",
         "htpmwe_shld": "",
         "htpsecmw": "Waste power lost from primary coolant pumps (MW)",
+        "hts_tape_thickness": "Thickness of HTS tape layer [m] (if i_tf_sc_mat = 9)",
+        "hts_tape_width": "Width of HTS tape [m] (if i_tf_sc_mat = 9)",
         "hvv": "Vacuum vessel internal half-height (m)",
         "hydrogenicpowerlost": "Power lost due to hydrogenic radiation [W]",
         "i": "",
@@ -9705,7 +9712,7 @@
         "i_tf_bucking": "Switch for TF inboard suport structure design:\nDefault setting for backward compatibility\n     - if copper resistive TF (i_tf_sup = 0) : Free standing TF without bucking structure \n     - if Superconducting TF  (i_tf_sup = 1) : Free standing TF with a steel casing<br>\n     - if aluminium  TF       (i_tf_sup = 2) : Free standing TF with a bucking structure\n     Rem : the case is a bucking structure\n - =0 : Free standing TF without case/bucking cyliner (only a conductor layer)\n - =1 : Free standing TF with a case/bucking cylinder made of \n     - if copper resistive     TF (i_tf_sup = 0) : used defined bucking cylinder\n     - if Superconducting      TF (i_tf_sup = 1) : Steel casing\n     - if aluminium resisitive TF (i_tf_sup = 2) : used defined bucking cylinder\n - =2 : The TF is in contact with the CS : \"bucked and weged design\"\n       Fast version : thin TF-CS interface neglected in the stress calculations (3 layers)\n - =3 : The TF is in contact with the CS : \"bucked and weged design\"\n       Full version : thin TF-CS Kapton interface introduced in the stress calculations (4 layers)",
         "i_tf_case_geom": "Switch for TF case geometry selection\n   0 : Circular front case (ITER design)\n   1 : Straight front case",
         "i_tf_plane_stress": "Switch for the TF coil stress model\n   0 : New generalized plane strain formulation \n   1 : Old plane stress model (only for SC)",
-        "i_tf_sc_mat": "Switch for superconductor material in TF coils:\n<ul>\n<li>=1 ITER Nb3Sn critical surface model with standard\n   ITER parameters</li>\n<li>=2 Bi-2212 high temperature superconductor (range of\n   validity T < 20K, adjusted field b < 104 T, B > 6 T)</li>\n<li>=3 NbTi</li>\n<li>=4 ITER Nb3Sn model with user-specified parameters</li>\n<li>=5 WST Nb3Sn parameterisation</li>\n<li>=6 REBCO HTS tape in CroCo strand</li>\n<li>=7 Durham Ginzburg-Landau critical surface model for Nb-Ti</li>\n<li>=8 Durham Ginzburg-Landau critical surface model for REBCO</li>\n</ul>",
+        "i_tf_sc_mat": "Switch for superconductor material in TF coils:\n<ul>\n<li>=1 ITER Nb3Sn critical surface model with standard\n   ITER parameters</li>\n<li>=2 Bi-2212 high temperature superconductor (range of\n   validity T < 20K, adjusted field b < 104 T, B > 6 T)</li>\n<li>=3 NbTi</li>\n<li>=4 ITER Nb3Sn model with user-specified parameters</li>\n<li>=5 WST Nb3Sn parameterisation</li>\n<li>=6 REBCO HTS tape in CroCo strand</li>\n<li>=7 Durham Ginzburg-Landau critical surface model for Nb-Ti</li>\n<li>=8 Durham Ginzburg-Landau critical surface model for REBCO</li>\n<li>=9 Hazelton experimental data + Zhai conceptual model for REBCO</li>\n</ul>",
         "i_tf_shape": "Switch for TF coil toroidal shape:\n<ul>\n<li>=0  Default value : Picture frame coil for TART / PROCESS D-shape for non itart</li>\n<li>=1  PROCESS D-shape : parametrise with 2 arcs </li>\n<li>=2  Picture frame coils </li>\n</ul>",
         "i_tf_sup": "Switch for TF coil conductor model:\n<ul>\n<li>=0 copper</li>\n<li>=1 superconductor</li>\n<li>=2 Cryogenic aluminium</li>\n</ul>",
         "i_tf_tresca": "Switch for TF coil conduit Tresca stress criterion:\n   0 : Tresca (no adjustment);\n   1 : Tresca with CEA adjustment factors (radial+2%, vertical+60%) </UL>",
@@ -12969,6 +12976,14 @@
             "lb": 0.0,
             "ub": 1000.0
         },
+        "hts_tape_thickness": {
+            "lb": 5e-07,
+            "ub": 5e-06
+        },
+        "hts_tape_width": {
+            "lb": 0.001,
+            "ub": 0.01
+        },
         "i_cp_joints": {
             "lb": 0,
             "ub": 1
@@ -13007,7 +13022,7 @@
         },
         "i_tf_sc_mat": {
             "lb": 1,
-            "ub": 8
+            "ub": 9
         },
         "i_tf_shape": {
             "lb": 0,
@@ -19282,6 +19297,8 @@
             "max_force_density",
             "fcutfsu",
             "fhts",
+            "hts_tape_width",
+            "hts_tape_thickness",
             "insstrain",
             "i_tf_plane_stress",
             "i_tf_tresca",
@@ -20092,6 +20109,8 @@
         "htpmw_ife": "real_variable",
         "htpmw_min": "real_variable",
         "htpmw_shld": "real_variable",
+        "hts_tape_thickness": "real_variable",
+        "hts_tape_width": "real_variable",
         "i_cp_joints": "int_variable",
         "i_cp_lifetime": "int_variable",
         "i_cs_stress": "int_variable",
