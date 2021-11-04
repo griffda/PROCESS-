@@ -5,6 +5,7 @@ import itertools
 import pandas as pd
 import inspect
 import argparse
+import re
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, HoverTool
 from bokeh.layouts import gridplot
@@ -45,8 +46,9 @@ class ProcessTrackerGenerator:
         "ne0", "faccd", "dnz", "taueff", "te0", "pdivt", "nesep", 
         "vol", "sarea", "pnetelmw", "etath", "pgrossmw", "tftmp", 
         "n_tf", "bmaxtf", "vstot", "dnitot", "tburn", "divlife", 
-        "CostsStep.step20", "CostsStep.step21", "step2101", "step2202", "step2203", 
-        "CostsStep.step22", "CostsStep.step23", "CostsStep.step24", "CostsStep.step25", "cdirt", "concost"
+        "CostsStep.step20", "CostsStep.step21", "CostsStep.step2101", 
+        "CostsStep.step2202", "CostsStep.step2203", "CostsStep.step22", 
+        "CostsStep.step23", "CostsStep.step24", "CostsStep.step25", "cdirt", "concost"
     }
 
 
@@ -158,10 +160,19 @@ def plot_tracking_data(database):
 
     figures = {}
 
+    overrides = {}
+
+    for i in ProcessTrackerGenerator.tracking_variables:
+        try:
+            overriden_name, variable = i.split('.')
+            overrides[variable] = overriden_name
+        except:
+            continue
+
     for k, v in data.tracked_variables.items():
         df = v.as_dataframe()
 
-        parent = PythonFortranInterfaceVariables.parent_module(k)
+        parent = overrides.get(k) or PythonFortranInterfaceVariables.parent_module(k)
 
         if not parent:
             print(f'Variable {k} is not a module variable of any Fortran module, please provide the python class which this variable can be found under as CLASS.VARIABLE noting that VARIABLE must be a variable present in the output file and does not necessarily need to correspond to an actual class variable, VARIABLE, of CLASS')
@@ -220,8 +231,6 @@ def plot_tracking_data(database):
         figures[parent].append(figur)
     
     panels = []
-
-    print(figures.keys())
 
     for grp, fig in figures.items():
         gplot = gridplot([fig[i:i+2] for i in range(0, len(fig), 2)])
