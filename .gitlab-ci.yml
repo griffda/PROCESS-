@@ -332,6 +332,7 @@ tracking_rtv:
     - cd ${CI_PROJECT_DIR}/process_rtv_data/
     - git add .
     - git commit -m "${CI_PIPELINE_URL} - ${CI_PIPELINE_CREATED_AT}"
+    - git push
   artifacts:
     when: always
     paths:
