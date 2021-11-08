@@ -5,15 +5,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-646-g57e098e2
-    Branch : 1407-update-of-shield-cost-calculations
-   Git log : COMMIT_MSG
- Date/time : 11 Oct 2021 10:25:42 +01:00(hh:mm) UTC
-      User : rhicha
-  Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-149/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-149/test_scenario_Hybrid_mode_0/IN.DAT
+   Version : 2.2.0   Release Date :: 2021-10-26
+   Tag No. : v2.1-728-g1dfa3f06
+    Branch : develop
+   Git log : Merge\ branch\ |1418-pf-placement|\ into\ |develop|
+ Date/time : 29 Oct 2021 16:24:47 +00:00(hh:mm) UTC
+      User : root
+  Computer : 6f802edae655
+ Directory : /tmp/pytest-of-root/pytest-6/test_solver0
+     Input : /tmp/pytest-of-root/pytest-6/test_scenario_Hybrid_mode_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -150,7 +150,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    21  taup/taueff                           >  5.0000E+00             -2.3092E-09                 4.6185E-10
    22  Dump time set by VV stress            >  3.7709E+01 s           -1.2079E-12 s               3.3529E-14
    23  Upper Lim. on Psep * Bt / q A R       <  9.2000E+00 MWT/m       -2.8744E-08 MWT/m           3.1243E-09
-   24  CS Tresca stress limit                <  6.6000E+08 Pa          -3.7432E-05 Pa             -5.6732E-14
+   24  CS Tresca yield criterion             <  6.6000E+08 Pa          -3.7432E-05 Pa             -5.6732E-14
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -628,17 +628,17 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Plane stress model with smeared properties
  Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)   (sig_tf_case_max)         5.800E+08     
  Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa (sig_tf_wp_max)           5.800E+08     
- Structural materal stress of the point of maximum TRESCA stress per layer
- Please use utility/plot_TF_stress.py for radial plots plots summary
+ Materal stress of the point of maximum shear stress (Tresca criterion) for each layer
+ Please use utilities/plot_stress_tf.py for radial plots plots summary
  Layers                   Steel case         WP
- Radial stress     (MPa)       0.000      -307.838
- toroidal stress   (MPa)    -381.830      -302.877
- Vertical stress   (MPa)     198.170       198.170
- Von-Mises stress  (MPa)     510.620       441.634
- TRESCA stress     (MPa)     580.000       506.009
+ Radial stress               (MPa)       0.000      -307.838
+ toroidal stress             (MPa)    -381.830      -302.877
+ Vertical stress             (MPa)     198.170       198.170
+ Von-Mises stress            (MPa)     510.620       441.634
+ Shear (Tresca) stress       (MPa)     580.000       506.009
  
- Toroidal modulus  (GPa)     205.000        35.452
- Vertical modulus  (GPa)     205.000        91.843
+ Toroidal modulus            (GPa)     205.000        35.452
+ Vertical modulus            (GPa)     205.000        91.843
  
  WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      3.159E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      7.510E+01  OP 
@@ -853,7 +853,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Allowable stress in CS steel (Pa)                                        (alstroh)                 6.600E+08     
  Hoop stress in CS steel (Pa)                                             (sig_hoop)                6.600E+08  OP 
  Axial stress in CS steel (Pa)                                            (sig_axial)              -6.732E+08  OP 
- Tresca stress in CS steel (Pa)                                           (s_tresca_oh)             6.600E+08  OP 
+ Maximum shear stress in CS steel for the Tresca criterion (Pa)           (s_tresca_oh)             6.600E+08  OP 
  Axial force in CS (N)                                                    (axial_force)            -8.060E+08  OP 
  Strain on CS superconductor                                              (strncon_cs)             -5.000E-03     
  Copper fraction in strand                                                (fcuohsu)                 7.000E-01     
@@ -876,12 +876,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  coil           R(m)        Z(m)        dR(m)       dZ(m)       turns     steel thickness(m)
  
-  PF1            7.14       10.72        1.01        1.01      263.92        0.05
-  PF2            7.14      -12.24        1.07        1.07      296.63        0.16
-  PF3           20.82        3.26        1.20        1.20      205.76        0.11
-  PF4           20.82       -3.26        1.20        1.20      205.76        0.11
-  PF5           18.99        9.14        0.84        0.84      131.33        0.08
-  PF6           18.99       -9.14        0.84        0.84      131.33        0.08
+  PF 1           7.14       10.72        1.01        1.01      263.92        0.05
+  PF 2           7.14      -12.24        1.07        1.07      296.63        0.16
+  PF 3          20.82        3.26        1.20        1.20      205.76        0.11
+  PF 4          20.82       -3.26        1.20        1.20      205.76        0.11
+  PF 5          18.99        9.14        0.84        0.84      131.33        0.08
+  PF 6          18.99       -9.14        0.84        0.84      131.33        0.08
   CS             2.86        0.00        1.15       17.64     2556.79        0.07
  Plasma         10.11        0.00        6.53       12.06        1.00
  
@@ -890,12 +890,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  coil  current  allowed J  actual J   J   cond. mass   steel mass     field
          (MA)    (A/m2)     (A/m2)  ratio    (kg)          (kg)        (T)
  
-  PF1   11.14  8.133E+08  1.100E+07  0.01 2.860E+05   7.843E+04    2.199E+00
-  PF2   12.52  1.873E+08  1.100E+07  0.06 3.215E+05   2.805E+05    8.149E+00
-  PF3   -8.68  7.530E+08  6.000E+06  0.01 1.192E+06   5.747E+05    2.742E+00
-  PF4   -8.68  7.530E+08  6.000E+06  0.01 1.192E+06   5.747E+05    2.742E+00
-  PF5   -5.65  7.650E+08  8.000E+06  0.01 5.305E+05   2.894E+05    2.634E+00
-  PF6   -5.65  7.650E+08  8.000E+06  0.01 5.305E+05   2.894E+05    2.634E+00
+  PF 1   11.14  8.133E+08  1.100E+07  0.01 2.860E+05   7.843E+04    2.199E+00
+  PF 2   12.52  1.873E+08  1.100E+07  0.06 3.215E+05   2.805E+05    8.149E+00
+  PF 3   -8.68  7.530E+08  6.000E+06  0.01 1.192E+06   5.747E+05    2.742E+00
+  PF 4   -8.68  7.530E+08  6.000E+06  0.01 1.192E+06   5.747E+05    2.742E+00
+  PF 5   -5.65  7.650E+08  8.000E+06  0.01 5.305E+05   2.894E+05    2.634E+00
+  PF 6   -5.65  7.650E+08  8.000E+06  0.01 5.305E+05   2.894E+05    2.634E+00
   CS  -109.94  2.575E+08  5.414E+06  0.02 2.030E+06   3.296E+05    7.941E+00
        ------                             ---------   ---------
        162.26                             6.084E+06   2.417E+06
