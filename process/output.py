@@ -60,7 +60,7 @@ def write(models, outfile):
 
     # Writing
     if ft.physics_variables.ipedestal == 2 or ft.physics_variables.ipedestal == 3:
-        ft.plasmod_module.outputPlasmod(outfile)
+        ft.plasmod_module.outputplasmod(outfile)
 
     # TODO what is this? not in caller.f90
     ft.physics_module.igmarcal(outfile)
