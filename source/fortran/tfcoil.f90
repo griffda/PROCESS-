@@ -12,9 +12,7 @@ module tfcoil_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   use, intrinsic :: iso_fortran_env, only: dp=>real64
   implicit none
-  private
-  
-  public :: tfcoil, cntrpst
+
 
   contains
 
@@ -428,7 +426,8 @@ module tfcoil_module
     call ovarre(outfile,'Pump power (W)','(ppump)',ppump)
 
 
-    contains 
+    end subroutine cntrpst
+     
     subroutine he_density( temp, density )
       !! Author : S. Kahn
       !! Subroutine calculating temperature dependent helium density at 100 bar
@@ -662,7 +661,5 @@ module tfcoil_module
        end if 
 
     end subroutine al_th_cond
-
-  end subroutine cntrpst
 
 end module tfcoil_module
