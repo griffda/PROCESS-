@@ -1,4 +1,4 @@
-"""Unit tests for costs_step.f90."""
+"""Unit tests for tfcoil.f90."""
 
 import pytest
 
@@ -11,6 +11,14 @@ from process.fortran import tfcoil_module as tf
     (43.6, 85.26924709595201)
 ])
 def test_he_density(temperature, expected_density):
+    """Tests `he_density` subroutine.
+
+    :param temperature: test asset passed to the routine representing the temperature, in Kelvin.
+    :type temperature: float
+
+    :param expected_density: expected result of the routine.
+    :type expected_density: float
+    """
     density = tf.he_density(temperature)
 
     assert pytest.approx(density) == expected_density
@@ -22,6 +30,15 @@ def test_he_density(temperature, expected_density):
     (43.6, 5673.218322000001)
 ])
 def test_he_cp(temperature, expected_cp):
+    """Tests `he_cp` subroutine.
+
+    :param temperature: test asset passed to the routine representing the temperature, in Kelvin.
+    :type temperature: float
+
+    :param expected_cp: expected result of the routine.
+    :type expected_cp: float
+    """
+    
     cp = tf.he_cp(temperature)
 
     assert pytest.approx(cp) == expected_cp
@@ -33,6 +50,14 @@ def test_he_cp(temperature, expected_cp):
     (43.6, 7.717393982e-06)
 ])
 def test_he_visco(temperature, expected_visco):
+    """Tests `he_visco` subroutine.
+
+    :param temperature: test asset passed to the routine representing the temperature, in Kelvin.
+    :type temperature: float
+
+    :param expected_visco: expected result of the routine.
+    :type expected_visco: float
+    """
     visco = tf.he_visco(temperature)
 
     assert pytest.approx(visco) == expected_visco
@@ -46,6 +71,14 @@ def test_he_visco(temperature, expected_visco):
     (54.4, 0.065706872)
 ])
 def test_he_th_cond(temperature, expected_th_cond):
+    """Tests `he_th_cond` subroutine.
+
+    :param temperature: test asset passed to the routine representing the temperature, in Kelvin.
+    :type temperature: float
+
+    :param expected_th_cond: expected result of the routine.
+    :type expected_th_cond: float
+    """
     th_cond = tf.he_th_cond(temperature)
 
     assert pytest.approx(th_cond) == expected_th_cond
@@ -58,6 +91,14 @@ def test_he_th_cond(temperature, expected_th_cond):
     (151, 250.4911087866094),
 ])
 def test_al_th_cond(temperature, expected_th_cond):
+    """Tests `he_th_cond` subroutine.
+
+    :param temperature: test asset passed to the routine representing the temperature, in Kelvin.
+    :type temperature: float
+
+    :param al_th_cond: expected result of the routine.
+    :type al_th_cond: float
+    """
     th_cond = tf.al_th_cond(temperature)
 
     assert pytest.approx(th_cond) == expected_th_cond
