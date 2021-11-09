@@ -137,6 +137,7 @@ LIST(APPEND PROCESS_SRCS
     pfcoil_variables.f90
     structure_variables.f90
     output.f90
+    plasmod.f90
 )
 
 LIST(APPEND PREPROCESS_SOURCES
