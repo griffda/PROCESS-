@@ -959,7 +959,6 @@ class CostsStep:
         step2201 += step220102
         # STARFIRE percentage for spares
         step2298 = 9.985e-2 * step220102
-        print(f'{step2298=}')
         spares = 9.985e-2 * step220102
 
         # 22.01.03.01 TF Coils
@@ -1322,39 +1321,43 @@ class CostsStep:
 
         step22010301 = 0.0e0
 
-
         # Copper coils
         if tfv.i_tf_sup == 0:
             # Calculation taken from cost model 0: simply the cost of copper conductor masses.
             # Inflating from 1990 $ to 2017 $ at nuclear rate equates to a factor of 2.99.
-            
+
             # Inboard TF coil legs
             c_tf_inboard_legs = 1.0e-6 * tfv.whtcp * cv.uccpcl1 * 2.99e0
-            
+
             # Outboard TF coil legs
             c_tf_outboard_legs = 1.0e-6 * tfv.whttflgs * cv.uccpclb * 2.99e0
-            
+
             # Total TF coil cost
             step22010301 = c_tf_inboard_legs + c_tf_outboard_legs
-
 
         # Superconducting coils
         elif tfv.i_tf_sup == 1:
             # Calculation taken from cost model 0:
-            # Superconductor magnets are costed using a method devised by R. Hancox, 1994. 
-            
+            # Superconductor magnets are costed using a method devised by R. Hancox, 1994.
+
             # Conductor
             # Superconductor material cost ($/m)
-            costtfsc = cv.step_ucsc[tfv.i_tf_sc_mat-1] * tfv.whtconsc / (tfv.tfleng*tfv.n_tf_turn)       
+            costtfsc = (
+                cv.step_ucsc[tfv.i_tf_sc_mat - 1]
+                * tfv.whtconsc
+                / (tfv.tfleng * tfv.n_tf_turn)
+            )
             # Copper material cost ($/m)
-            costtfcu = cv.step_uccu * tfv.whtconcu / (tfv.tfleng*tfv.n_tf_turn)
+            costtfcu = cv.step_uccu * tfv.whtconcu / (tfv.tfleng * tfv.n_tf_turn)
             # Cost/metre of whole conductor: superconductor + copper + sheath + fixed costs
             ctfconpm = costtfsc + costtfcu + cv.step_cconshtf + cv.step_cconfix
             # Total conductor costs (M$)
             ctfcontot = 1.0e-6 * ctfconpm * tfv.n_tf * tfv.tfleng * tfv.n_tf_turn
 
             # Winding (M$)
-            costtfwind = 1.0e-6 * cv.step_ucwindtf * tfv.n_tf * tfv.tfleng * tfv.n_tf_turn
+            costtfwind = (
+                1.0e-6 * cv.step_ucwindtf * tfv.n_tf * tfv.tfleng * tfv.n_tf_turn
+            )
 
             # Case (M$)
             costtfcas = 1.0e-6 * (tfv.whtcas * cv.step_uccase) * tfv.n_tf
@@ -1368,15 +1371,18 @@ class CostsStep:
             # Total superconducting TF coil costs
             step22010301 = ctfcontot + costtfwind + costtfcas + costtfint + costtfgss
 
-
         # Cryogenic aluminium coils
         elif tfv.i_tf_sup == 2:
-            # Cost approximated as the material cost of conducting Al * a 
+            # Cost approximated as the material cost of conducting Al * a
             # manufacturing cost factor
             # Al conductor mass per coil * number of coils * cost per kilo *
             # manufacturing cost factor, converted to M$
             # step_mc_cryo_al_per = 0.2: 20% manufacturing cost
-            step22010301 = (tfv.whtconal * tfv.n_tf * cv.step_uc_cryo_al) * (cv.step_mc_cryo_al_per + 1.0e0) * 1.0e-6
+            step22010301 = (
+                (tfv.whtconal * tfv.n_tf * cv.step_uc_cryo_al)
+                * (cv.step_mc_cryo_al_per + 1.0e0)
+                * 1.0e-6
+            )
 
         # step22010301 = step2201030101 + step2201030102 + step2201030103
 
