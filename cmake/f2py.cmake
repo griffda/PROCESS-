@@ -23,7 +23,7 @@ MACRO(F2PY)
         ADD_CUSTOM_COMMAND(
             OUTPUT ${F2PY_TARGET} ${F2PY_OUTPUT}
             DEPENDS ${PREPROCESS_TARGET_NAMES}
-            COMMAND echo \"Running f2py:\"\; LDFLAGS=-Wl,-rpath=\\$$ORIGIN/lib ${F2PY_NAME} --f90flags="-fcheck='all'" -c -L../process/lib/ -l${PROJECT_NAME} ${PREPROCESSED_SOURCE_FILES_PATH} --build-dir ${CMAKE_BINARY_DIR} -m fortran
+            COMMAND echo \"Running f2py:\"\; LDFLAGS=-Wl,-rpath=\\$$ORIGIN/lib ${F2PY_NAME} -c -L../process/lib/ -l${PROJECT_NAME} ${PREPROCESSED_SOURCE_FILES_PATH} --build-dir ${CMAKE_BINARY_DIR} -m fortran
             COMMAND ${CMAKE_COMMAND} -E copy ${F2PY_TARGET} ${F2PY_OUTPUT}
         )
     ELSE()
@@ -31,7 +31,7 @@ MACRO(F2PY)
             OUTPUT ${F2PY_TARGET} ${F2PY_OUTPUT}
             DEPENDS ${PREPROCESS_TARGET_NAMES}
             COMMAND echo "Running f2py to produce target '${F2PY_TARGET}':"
-            COMMAND ${F2PY_NAME}-${F90WRAP_NAME} -c  -L../process/lib -l${PROJECT_NAME} ${PROCESS_SRCS} --build-dir ${CMAKE_BINARY_DIR}
+            COMMAND ${F2PY_NAME}-${F90WRAP_NAME} -c  -L../process/lib -l${PROJECT_NAME} ${PREPROCESSED_SOURCE_FILES_PATH} --build-dir ${CMAKE_BINARY_DIR}
             COMMAND ${CMAKE_COMMAND} -E copy ${F2PY_TARGET} ${F2PY_OUTPUT}
         )
     ENDIF()

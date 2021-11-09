@@ -138,6 +138,7 @@ LIST(APPEND PROCESS_SRCS
     pfcoil_variables.f90
     structure_variables.f90
     output.f90
+    plasmod.f90
     init_module.f90
     main_module.f90
     error_handling.f90
