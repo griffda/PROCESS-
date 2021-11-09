@@ -20,6 +20,7 @@ PROJECT(process LANGUAGES Fortran)
 # Read in external CMake scripts for preprocessing, f2py, ford, etc.
 INCLUDE(${CMAKE_SOURCE_DIR}/cmake/pip.cmake)
 INCLUDE(${CMAKE_SOURCE_DIR}/cmake/process_preprocessing.cmake)
+INCLUDE(${CMAKE_SOURCE_DIR}/cmake/preprocess.cmake)
 INCLUDE(${CMAKE_SOURCE_DIR}/cmake/f2py.cmake)
 INCLUDE(${CMAKE_SOURCE_DIR}/cmake/ford.cmake)
 INCLUDE(${CMAKE_SOURCE_DIR}/cmake/gfortranlibs.cmake)
@@ -143,31 +144,7 @@ LIST(APPEND PROCESS_SRCS
     global_variables.f90
 )
 
-#######
-# Preprocess all files
-SET(PREPROCESS_ALL_NAME "preprocessAllForF2Py")
-SET(CONTEXT_FILE ${CMAKE_BINARY_DIR}/preprocess.txt)
-FILE(WRITE ${CONTEXT_FILE} "${PROCESS_SRCS} 
-${PROCESS_SRC_DIR}
-${CMAKE_BINARY_DIR}
-INSTALLDIR=${CMAKE_SOURCE_DIR};COMMSG=${COMMIT_MSG};branch_name=${GIT_BRANCH};tagno=${GIT_TAG};untracked=${GIT_DIFF};dp=8
-")
-
-LIST(TRANSFORM PROCESS_SRCS PREPEND ${CMAKE_BINARY_DIR}/ OUTPUT_VARIABLE PREPROCESSED_SOURCE_FILES_PATH)
-
-ADD_CUSTOM_TARGET(
-    ${PREPROCESS_ALL_NAME} 
-    DEPENDS ${PREPROCESSED_SOURCE_FILES_PATH}
-)
-
-ADD_CUSTOM_COMMAND (
-    OUTPUT ${PREPROCESSED_SOURCE_FILES_PATH}
-    COMMAND python ${CMAKE_SOURCE_DIR}/cmake/preprocess.py "${CONTEXT_FILE}"
-    DEPENDS ${CONTEXT_FILE}
-)
-
-
-
+PREPROCESS()
 
 # Install all requirements in the current Python environment
 PIP_INSTALL()
