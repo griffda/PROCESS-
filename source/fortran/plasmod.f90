@@ -97,18 +97,18 @@ contains
     integer, intent(out) :: i_flag
     
     ! geometry type
-    real(8), intent(out) :: geom_k, geom_d, geom_ip, geom_k95, geom_d95, &
+    real(dp), intent(out) :: geom_k, geom_d, geom_ip, geom_k95, geom_d95, &
       geom_r, geom_a, geom_q95, geom_bt, geom_counter
     
     ! composition type
-    real(8), intent(out) :: comp_fcoreraditv, comp_qdivt, comp_pradfrac, &
+    real(dp), intent(out) :: comp_fcoreraditv, comp_qdivt, comp_pradfrac, &
       comp_pradpos, comp_psep_r, comp_psepb_q95AR, comp_protium, &
       comp_psepplh_inf, comp_psepplh_sup, comp_c_car, comp_fuelmix
-    real(8), dimension(:), intent(out) :: comp_comparray, comp_globtau
+    real(dp), dimension(:), intent(out) :: comp_comparray, comp_globtau
     integer, dimension(:), intent(out) :: comp_imptype
     
     ! inputs type
-    real(8), intent(out) :: inp0_car_qdivt, inp0_chisaw, inp0_chisawpos, inp0_contrpovr, &
+    real(dp), intent(out) :: inp0_car_qdivt, inp0_chisaw, inp0_chisawpos, inp0_contrpovr, &
       inp0_contrpovs, inp0_cxe_psepfac, &
       inp0_eccdeff, inp0_f_gw, inp0_f_gws, &
       inp0_f_ni, inp0_fcdp, inp0_fpellet, inp0_fpion, inp0_gamcdothers, &
@@ -117,11 +117,11 @@ contains
       inp0_q_control, inp0_qcd, inp0_qfus, inp0_qheat, inp0_qnbi_psepfac, &
       inp0_sawpertau, inp0_spellet, inp0_V_loop
     integer, intent(out) :: inp0_PLH
-    real(8), dimension(:), intent(out) :: inp0_x_heat, inp0_x_cd, inp0_x_fus, inp0_x_control, &
+    real(dp), dimension(:), intent(out) :: inp0_x_heat, inp0_x_cd, inp0_x_fus, inp0_x_control, &
       inp0_dx_heat, inp0_dx_cd, inp0_dx_fus, inp0_dx_control
     
     ! numerics_transp type
-    real(8), intent(out) :: num_Ainc, num_capA, num_dgy, num_dt, num_dtinc, &
+    real(dp), intent(out) :: num_Ainc, num_capA, num_dgy, num_dt, num_dtinc, &
       num_dtmax, num_dtmaxmax, &
       num_dtmaxmin, num_dtmin, num_eopt, &
       num_maxA, &
@@ -131,7 +131,7 @@ contains
       num_nxt
     
     ! pedestal type
-    real(8), intent(out) :: ped_tesep, ped_rho_t, ped_rho_n, ped_pedscal, &
+    real(dp), intent(out) :: ped_tesep, ped_rho_t, ped_rho_n, ped_pedscal, &
       ped_teped
 
     ! all fixed input variables that cannot change within a PROCESS iteration go here!
@@ -389,24 +389,24 @@ contains
 
     !  Arguments
     ! geometry type
-    real(8), intent(in) :: geom_k, geom_d, geom_perim, geom_ip, geom_q95
+    real(dp), intent(in) :: geom_k, geom_d, geom_perim, geom_ip, geom_q95
     
     ! composition type
-    real(8), intent(in) :: comp_cxe, comp_che, comp_car
-    real(8), dimension(:), intent(in) :: comp_comparray, comp_globtau
+    real(dp), intent(in) :: comp_cxe, comp_che, comp_car
+    real(dp), dimension(:), intent(in) :: comp_comparray, comp_globtau
     
     ! pedestal type
-    real(8), intent(in) :: ped_teped, ped_nped, ped_nsep, ped_tesep
+    real(dp), intent(in) :: ped_teped, ped_nped, ped_nsep, ped_tesep
     
     ! radial_profiles type
-    real(8), intent(in) :: radp_av_te, radp_av_ten, radp_av_ti, radp_av_ne, &
+    real(dp), intent(in) :: radp_av_te, radp_av_ten, radp_av_ti, radp_av_ne, &
       radp_av_ni, radp_av_nhe, radp_av_nd, radp_av_nz, radp_zeff
-    real(8), dimension(:), intent(in) :: radp_ne, radp_psi, radp_te, radp_ti, &
+    real(dp), dimension(:), intent(in) :: radp_ne, radp_psi, radp_te, radp_ti, &
       radp_jcd, radp_jpar, radp_ipol, radp_qprof, radp_Volum, radp_vp, &
       radp_cc, radp_palph, radp_nions
     
     ! power_losses type
-    real(8), intent(in) :: loss_alpharate, loss_betaft, loss_dfuelreq, loss_fusionrate, loss_h, &
+    real(dp), intent(in) :: loss_alpharate, loss_betaft, loss_dfuelreq, loss_fusionrate, loss_h, &
       loss_palpe, loss_palpi, loss_pbrehms, loss_pdiv, loss_peaux, loss_pfus, &
       loss_pfusdd, loss_piaux, loss_piepv, loss_plh, loss_pline, loss_pnbi, &
       loss_pohm, loss_prad, loss_pradcore, loss_pradedge, loss_psep, &
@@ -414,7 +414,7 @@ contains
       loss_qtot, loss_rplas, loss_tauee, loss_taueff, loss_tauei, loss_wth
     
     ! mhd_eq type
-    real(8), intent(in) :: mhd_betan, mhd_bp, mhd_equilcheck, mhd_f_ni, mhd_fbs, mhd_ip_out, &
+    real(dp), intent(in) :: mhd_betan, mhd_bp, mhd_equilcheck, mhd_f_ni, mhd_fbs, mhd_ip_out, &
       mhd_q, mhd_q_sep, mhd_qstar, mhd_rli, mhd_sp, mhd_torsurf, mhd_vloop, &
       mhd_vp
 
