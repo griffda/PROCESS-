@@ -121,7 +121,6 @@ LIST(APPEND PROCESS_SRCS
     vmcon.f90
     evaluators.f90
     water_usage_variables.f90
-    costs_step.f90
     constraint_equations.f90
     stellarator.f90
     machine_build.f90
