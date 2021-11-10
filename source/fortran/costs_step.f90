@@ -14,15 +14,17 @@ module costs_step_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
 
   !  Various cost account values (M$)
-  real(8) :: step20, step21, step22, step23, step24, step25, &
+  real(dp) :: step20, step21, step22, step23, step24, step25, &
               step27, step91, step92, step93, fwblkcost
 
   ! Scaling Properties
-  real(8) :: vfi, vfi_star, ptherm_star, &
+  real(dp) :: vfi, vfi_star, ptherm_star, &
               rmajor_star, rminor_star, pth
 
 contains
@@ -59,9 +61,9 @@ contains
     implicit none
 
     ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: sitecost
-    real(8), intent(out) :: step2001, step2002, step20
+    real(dp), dimension(:), intent(in) :: step_ref
+    real(dp), intent(in) :: sitecost
+    real(dp), intent(out) :: step2001, step2002, step20
 
     ! Initialise as zero
     step20 = 0.0D0
@@ -98,13 +100,13 @@ contains
     implicit none
 
     ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: step_con, wfbuilding, a_reactor_bldg, &
+    real(dp), dimension(:), intent(in) :: step_ref
+    real(dp), intent(in) :: step_con, wfbuilding, a_reactor_bldg, &
       a_ee_ps_bldg, a_aux_services_bldg, a_hot_cell_bldg, &
       a_reactor_service_bldg, a_service_water_bldg, a_fuel_handling_bldg, &
       a_control_room_bldg, a_ac_ps_bldg, a_admin_bldg, a_site_service_bldg, &
       a_cryo_inert_gas_bldg, a_security_bldg, pgrossmw, pth, ptherm_star
-    real(8), intent(out) :: step2101, step2102, step2103, step2104, step2105, &
+    real(dp), intent(out) :: step2101, step2102, step2103, step2104, step2105, &
       step2106, step2107, step2108, step2109, step2110, step2111, step2112, &
       step2113, step2114, step2115, step2116, step2117, step2118, step2198, &
       step2199, step21
@@ -213,11 +215,11 @@ contains
     implicit none
   
     ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: ifueltyp, fcdfuel, &
+    real(dp), dimension(:), intent(in) :: step_ref
+    real(dp), intent(in) :: ifueltyp, fcdfuel, &
       rmajor, rminor, step220101, step220102, step22010301, step22010302, &
       step220104
-    real(8), intent(out) :: step2201, spares, divcst, cdcost, &
+    real(dp), intent(out) :: step2201, spares, divcst, cdcost, &
       step22010303, step22010304, step220105, step220106, &
       step220107, step220108, step220109, step220110
   
@@ -325,15 +327,15 @@ contains
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     implicit none
 
-    real(8), intent(in) :: step_ucblss, step_ucblbreed, step_ucblbe, ucblli, &
+    real(dp), intent(in) :: step_ucblss, step_ucblbreed, step_ucblbe, ucblli, &
       step_ucblvd, ucblli2o, ucbllipb, ifueltyp, step_ucfws, step_ucfwps, &
       step_ucfwa, blktmodel, whtblli, blkttype, wtblli2o, whtblbreed, whtblvd, &
       whtblbe, whtblss, wtbllipb, fw_armour_mass, fwmass, fwarea, ipowerflow 
-    real(8), intent(out) :: step22010101, step22010102, step2201010201, &
+    real(dp), intent(out) :: step22010101, step22010102, step2201010201, &
       step2201010202, step2201010203, step220101, fwallcst, blkcst
 
     !  Local variables
-    real(8) :: step2201010204, step2201010205, step2201010206, step2201010207
+    real(dp) :: step2201010204, step2201010205, step2201010206, step2201010207
 
     !! Account 22.01.01.01 : First wall
     step22010101 = 1.0D-6 * (fw_armour_mass * step_ucfwa + fwmass * step_ucfws) 
@@ -417,14 +419,14 @@ contains
     implicit none
 
     ! Result
-    real(8), intent(in) :: rsldi, shldith, shldtth, vgap, scrapli, scraplo, &
+    real(dp), intent(in) :: rsldi, shldith, shldtth, vgap, scrapli, scraplo, &
     fwith, fwoth, blnktth, d_vv_in, i_shield_mat, denw, denwc, divfix, &
     step_ucshw, step_ucshwc, rminor, kappa, idivrt, pi
-    real(8), intent(out) :: step220102
+    real(dp), intent(out) :: step220102
     !! Cost of shield in M$
 
     ! Local variables
-    real(8):: inb_sh_v, r1, hbot, htop, hshld, &
+    real(dp):: inb_sh_v, r1, hbot, htop, hshld, &
       inb_sh_v_mtl, inb_sh_m, sh_mtl_d, sh_mtl_c, shldith_corr    
 
     ! Volume of inboard shield found using same method as in CCFE HCPB blanket model:
@@ -482,17 +484,17 @@ contains
     implicit none
     
     ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: ifueltyp, step_uc_cryo_al, &
+    real(dp), dimension(:), intent(in) :: step_ref
+    real(dp), intent(in) :: ifueltyp, step_uc_cryo_al, &
       step_mc_cryo_al_per, uccpcl1, uccpclb, &
       i_tf_sup, whtconal, n_tf, whttflgs, whtcp, itart
-    real(8), intent(out) :: step22010301, cpstcst
+    real(dp), intent(out) :: step22010301, cpstcst
     !! Cost of TF coils in M$
     
     ! Declare local vars
-    real(8) :: c_tf_inboard_legs
+    real(dp) :: c_tf_inboard_legs
     !! Cost of TF coil inboard legs in M$
-    real(8) :: c_tf_outboard_legs
+    real(dp) :: c_tf_outboard_legs
     !! Cost of TF coil outboard legs in M$
     
     ! Initialise local vars
@@ -568,16 +570,16 @@ contains
     implicit none
 
     ! Arguments
-    real(8), intent(in) :: iohcl, twopi, dcopper, step_uccase, step_uccu, &
+    real(dp), intent(in) :: iohcl, twopi, dcopper, step_uccase, step_uccu, &
       step_cconshpf, step_ucfnc, step_cconfix, step_ucwindpf, &
       ipfres, vfohc, whtpfs, fcupfsu, fcuohsu, awpoh, fncmass
     integer, intent(in) :: nohc, isumatoh, isumatpf
-    real(8), dimension(:), intent(in) :: dcond, ric, rpf, rjconpf, step_ucsc, &
+    real(dp), dimension(:), intent(in) :: dcond, ric, rpf, rjconpf, step_ucsc, &
       turns, vf
-    real(8), intent(out) :: step22010302
+    real(dp), intent(out) :: step22010302
      
     !  Local variables
-    real(8) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
+    real(dp) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
          pfwndl, step2201030201, step2201030202, step2201030203, step2201030204
     integer :: i,npf
 
@@ -661,10 +663,10 @@ contains
     !! HCD cost = cost per injected Watt of power * injected Watts
     implicit none
 
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: fcdfuel, ucich, uclh, ifueltyp, iefrf, &
+    real(dp), dimension(:), intent(in) :: step_ref
+    real(dp), intent(in) :: fcdfuel, ucich, uclh, ifueltyp, iefrf, &
       iefrffix, echpwr, pnbitot, plhybd
-    real(8), intent(out) :: step220104, cdcost
+    real(dp), intent(out) :: step220104, cdcost
     !! Cost of HCD in M$
 
     ! Cost per Watt depends on technology/hardware used;
@@ -710,8 +712,8 @@ contains
     implicit none
   
     ! Arguments
-    real(8), intent(in) :: pgrossmw
-    real(8), intent(out) :: step2202
+    real(dp), intent(in) :: pgrossmw
+    real(dp), intent(out) :: step2202
   
     ! 22.02 Heat Transfer System
     ! #TODO Needs reference for values
@@ -730,9 +732,9 @@ contains
     implicit none
   
     ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: vfi, vfi_star
-    real(8), intent(out) :: step220301, step220302, step220303, step220304, &
+    real(dp), dimension(:), intent(in) :: step_ref
+    real(dp), intent(in) :: vfi, vfi_star
+    real(dp), intent(out) :: step220301, step220302, step220303, step220304, &
       step2203
   
     ! Initialise as zero
@@ -769,9 +771,9 @@ contains
     implicit none
   
     ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: pth, ptherm_star
-    real(8), intent(out) :: step2204, step220401, step220402, step220403
+    real(dp), dimension(:), intent(in) :: step_ref
+    real(dp), intent(in) :: pth, ptherm_star
+    real(dp), intent(out) :: step2204, step220401, step220402, step220403
   
     ! Initialise as zero
     step2204 = 0.0D0
@@ -801,9 +803,9 @@ contains
     implicit none
   
     ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: pth, ptherm_star
-    real(8), intent(out) :: step2205, spares
+    real(dp), dimension(:), intent(in) :: step_ref
+    real(dp), intent(in) :: pth, ptherm_star
+    real(dp), intent(out) :: step2205, spares
   
     ! Initialise as zero
     step2205 = 0.0D0
@@ -828,9 +830,9 @@ contains
     implicit none
   
     ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: pth, ptherm_star
-    real(8), intent(out) :: step2206, spares, step220601, step220602, &
+    real(dp), dimension(:), intent(in) :: step_ref
+    real(dp), intent(in) :: pth, ptherm_star
+    real(dp), intent(out) :: step2206, spares, step220601, step220602, &
       step220603, step220604, step220605, step220606, step220607, step220608
   
     ! Initialise as zero
@@ -892,9 +894,9 @@ contains
     implicit none
   
     ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: pth, ptherm_star
-    real(8), intent(out) :: step2207
+    real(dp), dimension(:), intent(in) :: step_ref
+    real(dp), intent(in) :: pth, ptherm_star
+    real(dp), intent(out) :: step2207
 
     ! Initialise as zero
     step2207 = 0.0D0
@@ -915,9 +917,9 @@ contains
     implicit none
 
     ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: step_con, pgrossmw
-    real(8), intent(out) :: step23a, step2303, step2398, step2399, step23
+    real(dp), dimension(:), intent(in) :: step_ref
+    real(dp), intent(in) :: step_con, pgrossmw
+    real(dp), intent(out) :: step23a, step2303, step2398, step2399, step23
 
     ! Initialise as zero
     step23 = 0.0D0
@@ -959,9 +961,9 @@ contains
     implicit none
 
     ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: step_con, pgrossmw
-    real(8), intent(out) :: step2401, step2402, step2403, step2404, step2405, &
+    real(dp), dimension(:), intent(in) :: step_ref
+    real(dp), intent(in) :: step_con, pgrossmw
+    real(dp), intent(out) :: step2401, step2402, step2403, step2404, step2405, &
     step2406, step2407, step2498, step2499, step24
 
     ! Initialise as zero M$
@@ -1018,9 +1020,9 @@ contains
     implicit none
   
     ! Arguments
-    real(8), dimension(:), intent(in) :: step_ref
-    real(8), intent(in) :: step_con, pgrossmw, wgt
-    real(8), intent(out) :: step2501, step2502, step2503, step2504, step2598, &
+    real(dp), dimension(:), intent(in) :: step_ref
+    real(dp), intent(in) :: step_con, pgrossmw, wgt
+    real(dp), intent(out) :: step2501, step2502, step2503, step2504, step2598, &
       step2599, step25
 
     ! Initialise as zero
@@ -1064,8 +1066,8 @@ contains
     implicit none
 
     ! Arguments
-    real(8), intent(in) :: cdirt, step_rh_costfrac
-    real(8), intent(out) :: step2701, step27
+    real(dp), intent(in) :: cdirt, step_rh_costfrac
+    real(dp), intent(out) :: step2701, step27
 
     ! Initialise as zero
     step27 = 0.0D0
@@ -1084,8 +1086,8 @@ contains
     implicit none
     
     ! Arguments
-    real(8), intent(in) :: cdirt, step91_per, step92_per, step93_per
-    real(8), intent(out) :: step91, step92, step93
+    real(dp), intent(in) :: cdirt, step91_per, step92_per, step93_per
+    real(dp), intent(out) :: step91, step92, step93
 
     ! Account 91 : Construction Facilities, Equipment and Services (default 30%)
     step91 = step91_per * cdirt
@@ -1119,14 +1121,14 @@ contains
     implicit none
 
     ! Arguments
-    real(8), intent(in) :: discount_rate, tlife, ucfuel, uche3, cdcost, &
+    real(dp), intent(in) :: discount_rate, tlife, ucfuel, uche3, cdcost, &
       divcst, fcdfuel, ifueltyp, fwallcst, fcr0, fcap0cp, &
       fcap0, dtlife, divlife, dintrt, decomf, cpstcst, cplife, concost, &
       cfactr, cdrlife, step_ref, &
       step_ucoam, step_ucwst, bktlife, pnetelmw, fhe3, itart, wtgpd, tburn, &
       tcycle, n_day_year
     character(len=50), intent(in) :: step_currency
-    real(8), intent(out) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
+    real(dp), intent(out) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
       annfuelt,annfwbl,annoam,anntot,annwst,coecdr, &
       coecp,coedecom,coediv,coefuel,coefwbl,coewst, &
       crffwbl,feffwbl,fwbllife,moneyint, &
@@ -1134,7 +1136,7 @@ contains
     character(len=80), intent(out) :: title
          
     ! Variables
-    real(8) :: crfcdr, crfcp, crfdiv, fefcdr, fefcp, fefdiv, kwhpy
+    real(dp) :: crfcdr, crfcp, crfdiv, fefcdr, fefcp, fefdiv, kwhpy
 
     ! Number of kWh generated each year
     kwhpy = 1.0D3 * pnetelmw * (24.0D0*n_day_year) * cfactr * tburn/tcycle
