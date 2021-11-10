@@ -7,9 +7,7 @@ from pathlib import Path
 from shutil import copy
 import os
 from pkg_resources import resource_filename
-import numpy as np
 
-from process.fortran import error_handling as eh
 
 @pytest.fixture
 def temp_data(tmp_path):
@@ -30,6 +28,7 @@ def temp_data(tmp_path):
     # Return tmp_path, now containing files copied from data dir
     return tmp_path
 
+
 @pytest.fixture
 def temp_data_cwd(temp_data):
     """Change cwd to temp_data dir, then yield it.
@@ -48,6 +47,7 @@ def temp_data_cwd(temp_data):
     # Teardown by changing back to previous dir
     os.chdir(old_wd)
 
+
 @pytest.fixture
 def mfile_name():
     """Return the name of the mfile to test.
@@ -56,6 +56,7 @@ def mfile_name():
     :rtype: str
     """
     return "baseline_2018_MFILE.DAT"
+
 
 @pytest.fixture(scope="session", autouse=True)
 def overwrite_ref_dicts(request):
@@ -73,20 +74,3 @@ def overwrite_ref_dicts(request):
         src_path = Path(dicts_fn)
         dst_path = Path(__file__).parent / "ref_dicts.json"
         copy(src_path, dst_path)
-
-
-@pytest.fixture
-def initialise_error_module(monkeypatch):
-    """pytest fixture to initialise error module
-
-    Any routine which can raise an error should initialise
-    the error module otherwise segmentation faults can occur.
-
-    This fixture also resets the `fdiags` array to 0's.
-
-    :param monkeypatch: Mock fixture
-    :type monkeypatch: object
-    """
-    eh.init_error_handling()
-    eh.initialise_error_list()
-    monkeypatch.setattr(eh, 'fdiags', np.zeros(8))
