@@ -85,14 +85,20 @@ module buildings_variables
     real(8) :: llw_storage_l, llw_storage_w, llw_storage_h
     !! LLW waste storage building length, width, height (m)
   
+    integer :: i_v_bldgs
+    !! switch to turn verbose output for buildings
+
     real(8) :: mbvfac
     !! maintenance building volume multiplication factor
-  
+
     real(8) :: magnet_pulse_l, magnet_pulse_w, magnet_pulse_h
     !! pulsed magnet power building length, width, height (m)
 
     real(8) :: magnet_trains_l, magnet_trains_w, magnet_trains_h
     !! steady state magnet power trains building length, width, height (m)
+
+    real(8) :: maint_cont_l, maint_cont_w, maint_cont_h
+    !! maintenance control building length, width, height (m)
 
     real(8) :: pfbldgm3
     !! volume of PF coil power supply building (m3)
@@ -135,6 +141,9 @@ module buildings_variables
 
     real(8) :: reactor_clrnc
     !! clearance around reactor (m)
+
+    real(8) :: robotics_l, robotics_w, robotics_h
+    !! robotics buildings length, width, height (m)
 
     real(8) :: transp_clrnc
     !! transportation clearance between components (m)
@@ -192,6 +201,9 @@ module buildings_variables
 
     real(8) :: water_buildings_l, water_buildings_w, water_buildings_h
     !! water, laundry & drainage buildings length, width, height (m)
+
+    real(8) :: workshop_l, workshop_w, workshop_h
+    !! [cold] workshop buildings length, width, height (m)
   
     real(8) :: wgt
     !! reactor building crane capacity (kg) (calculated if 0 is input)
@@ -290,6 +302,7 @@ module buildings_variables
       llw_storage_l = 45.0D0
       llw_storage_w = 20.0D0
       llw_storage_h = 5.0D0
+      i_v_bldgs = 0
       mbvfac = 2.8D0
       magnet_pulse_l = 105.0D0
       magnet_pulse_w = 40.0D0
@@ -297,6 +310,9 @@ module buildings_variables
       magnet_trains_l = 120.0D0
       magnet_trains_w = 90.0D0
       magnet_trains_h = 5.0D0
+      maint_cont_l = 100.0D0
+      maint_cont_w = 100.0D0
+      maint_cont_h = 6.0D0
       pfbldgm3 = 2.0D4
       pibv = 2.0D4
       rbrt = 1.0D0
@@ -310,6 +326,9 @@ module buildings_variables
       reactor_roof_thk = 1.0D0
       reactor_fndtn_thk = 2.0D0
       rmbvol = 0.0D0
+      robotics_l = 50.0D0
+      robotics_w = 30.0D0
+      robotics_h = 30.0D0
       row = 4.0D0
       rxcl = 4.0D0
       sec_buildings_l = 30.0D0
@@ -338,6 +357,9 @@ module buildings_variables
       water_buildings_l = 110.0D0
       water_buildings_w = 10.0D0
       water_buildings_h = 5.0D0
+      workshop_l = 150.0D0
+      workshop_w = 120.0D0
+      workshop_h = 10.0D0
       wgt = 5.0D5
       wgt2 = 1.0D5
       wrbi = 0.0D0

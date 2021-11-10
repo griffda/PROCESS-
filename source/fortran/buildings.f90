@@ -105,11 +105,15 @@ contains
     !!
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use buildings_variables, only: reactor_wall_thk, reactor_roof_thk, reactor_fndtn_thk, &
+    use buildings_variables, only: i_v_bldgs, &
+      reactor_wall_thk, reactor_roof_thk, reactor_fndtn_thk, &
       reactor_clrnc, transp_clrnc, cryostat_clrnc, ground_clrnc, &
       crane_clrnc_h, crane_clrnc_v, crane_arm_h, &
       reactor_hall_l, reactor_hall_w, reactor_hall_h, &
       warm_shop_l, warm_shop_w, warm_shop_h, &
+      workshop_l, workshop_w, workshop_h, &
+      robotics_l, robotics_w, robotics_h, &
+      maint_cont_l, maint_cont_w, maint_cont_h, &
       turbine_hall_l, turbine_hall_w, turbine_hall_h, &
       gas_buildings_l, gas_buildings_w, gas_buildings_h, &
       water_buildings_l, water_buildings_w, water_buildings_h, &
@@ -181,6 +185,15 @@ contains
     real(8) :: warm_shop_area, warm_shop_vol
     !! warm shop footprint (m2), volume (m3)
 
+    real(8) :: workshop_area, workshop_vol
+    !! [cold] workshop footprint (m2), volume (m3)
+    real(8) :: robotics_area, robotics_vol
+    !!robotics building footprint (m2), volume (m3)
+    real(8) :: maint_cont_area, maint_cont_vol
+    !! maintenance control buildings footprint (m2), volume (m3)
+    real(8) :: maintenance_area, maintenance_vol
+    !! maintenance buildings footprint (m2), volume (m3)
+
     real(8) :: turbine_hall_area, turbine_hall_vol
     !! turbine hall footprint (m2), volume (m3)
 
@@ -213,6 +226,7 @@ contains
     !! volume of  buildings (m3)
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    i_v_bldgs = 1 ! rmc debug
 
 
     ! Reactor building    
@@ -273,7 +287,7 @@ contains
 
     reactor_basement_vol = reactor_basement_area * reactor_basement_h
     
-    ! Calculate external volume of reactor hall + maintenace basement and tunnel
+    ! Calculate external volume of reactor hall + maintenance basement and tunnel
     reactor_building_vol = reactor_hall_vol_ext + reactor_basement_vol
 
 
@@ -309,7 +323,7 @@ contains
     ! Pulsed power for central solenoid
     magnet_pulse_area = magnet_pulse_l * magnet_pulse_w
     magnet_pulse_vol = magnet_pulse_area * magnet_pulse_h
-    
+    !
     ! Total power buildings areas and volumes
     power_buildings_area = hcd_building_area + magnet_trains_area + magnet_pulse_area
     power_buildings_vol = hcd_building_vol + magnet_trains_vol + magnet_pulse_vol
@@ -396,8 +410,31 @@ contains
 
 
     ! Maintenance
+    ! Derived from W. Smith's estimates of necessary facilities and their sizes;
+    ! these values amalgamate multiple individual buildings.
+    !
+    ! Maintenance workshops and clean rooms for components with *no* radiation 
+    ! inventory; should include allowance for overhead gantry and crane access
+    workshop_area = workshop_l * workshop_w
+    workshop_vol = workshop_area * workshop_h
+    !
+    ! Robot construction, testing, mock-up facilities
+    ! To allow robots to be fully assembled, commissioned and tested 
+    ! in mock-ups of the real environment. Height should allow for mock-up of
+    ! central column, but building also houses offices and classrooms. 
+    robotics_area = robotics_l * robotics_w
+    robotics_vol = robotics_area * robotics_h
+    !
+    ! Maintenance control and inspection facilities: includes operations centre,
+    ! inbound inspection and QA storage facilities.
+    maint_cont_area = maint_cont_l * maint_cont_w
+    maint_cont_vol = maint_cont_area * maint_cont_h
+    !
+    maintenance_area = workshop_area + robotics_area + maint_cont_area
+    maintenance_vol = workshop_vol + robotics_vol + maint_cont_vol
 
-    !**********************************************************
+
+
 
     ! cryo & cooling
     !**********************************************************
@@ -417,7 +454,7 @@ contains
 
     ! Waste
     ! Derived from W. Smith's estimates of necessary facilities and their sizes.
-
+    !
     ! Intermediate Level Waste
     ! Radioactive waste melt, separation and size reduction facility
     ilw_smelter_area = ilw_smelter_l * ilw_smelter_w
@@ -425,19 +462,19 @@ contains
     ! ILW process and storage, amalgamated buildings
     ilw_storage_area = ilw_storage_l * ilw_storage_w
     ilw_storage_vol = ilw_storage_area * ilw_storage_h
-    
+    !
     ! Low Level Waste process and storage, amalgamated buildings
     llw_storage_area = llw_storage_l * llw_storage_w
     llw_storage_vol = llw_storage_area * llw_storage_h
-
+    !
     ! Hazardous Waste process and storage, amalgamated buildings
     hw_storage_area = hw_storage_l * hw_storage_w
     hw_storage_vol = hw_storage_area * hw_storage_h
-
+    !
     ! Tritiated Waste Store
     tw_storage_area = tw_storage_l * tw_storage_w
     tw_storage_vol = tw_storage_area * tw_storage_h
-
+    !
     ! Total waste buildings areas and volumes
     waste_buildings_area = ilw_smelter_area + ilw_storage_area + &
       llw_storage_area + hw_storage_area + tw_storage_area
@@ -445,24 +482,23 @@ contains
       llw_storage_vol + hw_storage_vol + tw_storage_vol
 
 
-    ! Site Services
-    
+    ! Site Services    
     ! Derived from W. Smith's estimates of necessary facilities and their sizes; 
     ! buildings grouped by function.
-    
+    !
     ! Air & Gas supplies
     ! Includes compressed air facility, common gas systems facility, bottled gas 
     ! storage compounds; these values amalgamate multiple individual buildings.
     gas_buildings_area = gas_buildings_l * gas_buildings_w
     gas_buildings_vol = gas_buildings_area * gas_buildings_h
-    
+    !
     ! Water, Laundry & Drainage
     ! Includes facilities for potable water, firewater, chilled water; PPE laundry & 
     ! Respiratory Protective Equipment cleaning; industrial drains & sewage 
     ! process and discharge; these values amalgamate multiple individual buildings.
     water_buildings_area = water_buildings_l * water_buildings_w
     water_buildings_vol = water_buildings_area * water_buildings_h
-    
+    !
     ! Site Security & Safety
     ! Includes Security Control Centre and Fire and Ambulance Garages; 
     ! these values amalgamate multiple individual buildings.
@@ -492,42 +528,63 @@ contains
     call ovarre(outfile,'Volume of Reactor Basement (m3)', '(reactor_basement_vol)', reactor_basement_vol)
     call ovarre(outfile,'Volume of Reactor Hall + Basement (m3)', '(reactor_building_vol)', reactor_building_vol)
 
-    call ovarre(outfile,'hcd_building_area (m2)', '(hcd_building_area)', hcd_building_area)
-    call ovarre(outfile,'hcd_building_vol (m3)', '(hcd_building_vol)', hcd_building_vol)
-    call ovarre(outfile,'magnet_trains_area (m2)', '(magnet_trains_area)', magnet_trains_area)
-    call ovarre(outfile,'magnet_trains_vol (m3)', '(magnet_trains_vol)', magnet_trains_vol)
-    call ovarre(outfile,'magnet_pulse_area (m2)', '(magnet_pulse_area)', magnet_pulse_area)
-    call ovarre(outfile,'magnet_pulse_vol (m3)', '(magnet_pulse_vol)', magnet_pulse_vol)
-    call ovarre(outfile,'power_buildings_area (m2)', '(power_buildings_area)', power_buildings_area)
-    call ovarre(outfile,'power_buildings_vol (m3)', '(power_buildings_vol)', power_buildings_vol)
-    
-    call ovarre(outfile,'control_buildings_area (m2)', '(control_buildings_area)', control_buildings_area)
-    call ovarre(outfile,'control_buildings_vol (m3)', '(control_buildings_vol)', control_buildings_vol)
+    if (i_v_bldgs == 1) then
 
-    call ovarre(outfile,'warm_shop_l (m)', '(warm_shop_l)', warm_shop_l)
-    call ovarre(outfile,'warm_shop_w (m)', '(warm_shop_w)', warm_shop_w)
-    call ovarre(outfile,'warm_shop_h (m)', '(warm_shop_h)', warm_shop_h)
-    call ovarre(outfile,'Footprint of Warm Shop (m2)', '(warm_shop_area)', warm_shop_area)
-    call ovarre(outfile,'Volume of Warm Shop (m2)', '(warm_shop_vol)', warm_shop_vol)
+      call ovarre(outfile,'hcd_building_area (m2)', '(hcd_building_area)', hcd_building_area)
+      call ovarre(outfile,'hcd_building_vol (m3)', '(hcd_building_vol)', hcd_building_vol)
+      call ovarre(outfile,'magnet_trains_area (m2)', '(magnet_trains_area)', magnet_trains_area)
+      call ovarre(outfile,'magnet_trains_vol (m3)', '(magnet_trains_vol)', magnet_trains_vol)
+      call ovarre(outfile,'magnet_pulse_area (m2)', '(magnet_pulse_area)', magnet_pulse_area)
+      call ovarre(outfile,'magnet_pulse_vol (m3)', '(magnet_pulse_vol)', magnet_pulse_vol)
+      call ovarre(outfile,'power_buildings_area (m2)', '(power_buildings_area)', power_buildings_area)
+      call ovarre(outfile,'power_buildings_vol (m3)', '(power_buildings_vol)', power_buildings_vol)
+      
+      call ovarre(outfile,'control_buildings_area (m2)', '(control_buildings_area)', control_buildings_area)
+      call ovarre(outfile,'control_buildings_vol (m3)', '(control_buildings_vol)', control_buildings_vol)
 
-    call ovarre(outfile,'turbine_hall_l (m)', '(turbine_hall_l)', turbine_hall_l)
-    call ovarre(outfile,'turbine_hall_w (m)', '(turbine_hall_w)', turbine_hall_w)
-    call ovarre(outfile,'turbine_hall_h (m)', '(turbine_hall_h)', turbine_hall_h)
-    call ovarre(outfile,'Footprint of Turbine Hall (m2)', '(turbine_hall_area)', turbine_hall_area)
-    call ovarre(outfile,'Volume of Turbine Hall (m3)', '(turbine_hall_vol)', turbine_hall_vol)
+      call ovarre(outfile,'warm_shop_l (m)', '(warm_shop_l)', warm_shop_l)
+      call ovarre(outfile,'warm_shop_w (m)', '(warm_shop_w)', warm_shop_w)
+      call ovarre(outfile,'warm_shop_h (m)', '(warm_shop_h)', warm_shop_h)
+      call ovarre(outfile,'Footprint of Warm Shop (m2)', '(warm_shop_area)', warm_shop_area)
+      call ovarre(outfile,'Volume of Warm Shop (m3)', '(warm_shop_vol)', warm_shop_vol)
+      call ovarre(outfile,'workshop_l (m)', '(workshop_l)', workshop_l)
+      call ovarre(outfile,'workshop_w (m)', '(workshop_w)', workshop_w)
+      call ovarre(outfile,'workshop_h (m)', '(workshop_h)', workshop_h)
+      call ovarre(outfile,'Footprint of Workshop (m2)', '(workshop_area)', workshop_area)
+      call ovarre(outfile,'Volume of Workshop (m3)', '(workshop_vol)', workshop_vol)
+      call ovarre(outfile,'robotics_l (m)', '(robotics_l)', robotics_l)
+      call ovarre(outfile,'robotics_w (m)', '(robotics_w)', robotics_w)
+      call ovarre(outfile,'robotics_h (m)', '(robotics_h)', robotics_h)
+      call ovarre(outfile,'Footprint of Robotics building (m2)', '(robotics_area)', robotics_area)
+      call ovarre(outfile,'Volume of Robotics building (m3)', '(robotics_vol)', robotics_vol)
+      call ovarre(outfile,'maint_cont_l (m)', '(maint_cont_l)', maint_cont_l)
+      call ovarre(outfile,'maint_cont_w (m)', '(maint_cont_w)', maint_cont_w)
+      call ovarre(outfile,'maint_cont_h (m)', '(maint_cont_h)', maint_cont_h)
+      call ovarre(outfile,'Footprint of Maint. Cont. buildings (m2)', '(maint_cont_area)', maint_cont_area)
+      call ovarre(outfile,'Volume of Maint. Cont. buildings (m3)', '(maint_cont_vol)', maint_cont_vol)
+      call ovarre(outfile,'Footprint of Maintenance buildings (m2)', '(maintenance_area)', maintenance_area)
+      call ovarre(outfile,'Volume of Maintenance buildings (m3)', '(maintenance_vol)', maintenance_vol)
 
-    call ovarre(outfile,'Footprint of waste buildings (m2)', '(waste_buildings_area)', waste_buildings_area)
-    call ovarre(outfile,'Volume of waste buildings (m3)', '(waste_buildings_vol)', waste_buildings_vol)
+      call ovarre(outfile,'turbine_hall_l (m)', '(turbine_hall_l)', turbine_hall_l)
+      call ovarre(outfile,'turbine_hall_w (m)', '(turbine_hall_w)', turbine_hall_w)
+      call ovarre(outfile,'turbine_hall_h (m)', '(turbine_hall_h)', turbine_hall_h)
+      call ovarre(outfile,'Footprint of Turbine Hall (m2)', '(turbine_hall_area)', turbine_hall_area)
+      call ovarre(outfile,'Volume of Turbine Hall (m3)', '(turbine_hall_vol)', turbine_hall_vol)
 
-    call ovarre(outfile,'Footprint of air & gas supply buildings (m2)', '(gas_buildings_area)', gas_buildings_area)
-    call ovarre(outfile,'Volume of air & gas supply buildings (m3)', '(gas_buildings_vol)', gas_buildings_vol)
-    call ovarre(outfile,'Footprint of water supply buildings (m2)', '(water_buildings_area)', water_buildings_area)
-    call ovarre(outfile,'Volume of water supply buildings (m3)', '(water_buildings_vol)', water_buildings_vol)
-    call ovarre(outfile,'Footprint of Security & Safety buildings (m2)', '(sec_buildings_area)', sec_buildings_area)
-    call ovarre(outfile,'Volume of Security & Safety buildings (m3)', '(sec_buildings_vol)', sec_buildings_vol)
-    call ovarre(outfile,'height of staff buildings (m)', '(staff_buildings_h)', staff_buildings_h)
-    call ovarre(outfile,'Footprint of staff buildings (m2)', '(staff_buildings_area)', staff_buildings_area)
-    call ovarre(outfile,'Volume of staff buildings (m3)', '(staff_buildings_vol)', staff_buildings_vol)
+      call ovarre(outfile,'Footprint of waste buildings (m2)', '(waste_buildings_area)', waste_buildings_area)
+      call ovarre(outfile,'Volume of waste buildings (m3)', '(waste_buildings_vol)', waste_buildings_vol)
+
+      call ovarre(outfile,'Footprint of air & gas supply buildings (m2)', '(gas_buildings_area)', gas_buildings_area)
+      call ovarre(outfile,'Volume of air & gas supply buildings (m3)', '(gas_buildings_vol)', gas_buildings_vol)
+      call ovarre(outfile,'Footprint of water supply buildings (m2)', '(water_buildings_area)', water_buildings_area)
+      call ovarre(outfile,'Volume of water supply buildings (m3)', '(water_buildings_vol)', water_buildings_vol)
+      call ovarre(outfile,'Footprint of Security & Safety buildings (m2)', '(sec_buildings_area)', sec_buildings_area)
+      call ovarre(outfile,'Volume of Security & Safety buildings (m3)', '(sec_buildings_vol)', sec_buildings_vol)
+      call ovarre(outfile,'height of staff buildings (m)', '(staff_buildings_h)', staff_buildings_h)
+      call ovarre(outfile,'Footprint of staff buildings (m2)', '(staff_buildings_area)', staff_buildings_area)
+      call ovarre(outfile,'Volume of staff buildings (m3)', '(staff_buildings_vol)', staff_buildings_vol)
+
+    end if 
 
     !call ovarre(outfile,' (m)', '()', )
     !call ovarre(outfile,'Footprint of  buildings (m2)', '(_buildings_area)', _buildings_area)
