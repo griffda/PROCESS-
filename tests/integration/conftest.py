@@ -7,6 +7,9 @@ from pathlib import Path
 from shutil import copy
 import os
 from pkg_resources import resource_filename
+import numpy as np
+
+from process.fortran import error_handling as eh
 
 @pytest.fixture
 def temp_data(tmp_path):
@@ -70,3 +73,20 @@ def overwrite_ref_dicts(request):
         src_path = Path(dicts_fn)
         dst_path = Path(__file__).parent / "ref_dicts.json"
         copy(src_path, dst_path)
+
+
+@pytest.fixture
+def initialise_error_module(monkeypatch):
+    """pytest fixture to initialise error module
+
+    Any routine which can raise an error should initialise
+    the error module otherwise segmentation faults can occur.
+
+    This fixture also resets the `fdiags` array to 0's.
+
+    :param monkeypatch: Mock fixture
+    :type monkeypatch: object
+    """
+    eh.init_error_handling()
+    eh.initialise_error_list()
+    monkeypatch.setattr(eh, 'fdiags', np.zeros(8))
