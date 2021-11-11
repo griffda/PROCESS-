@@ -117,7 +117,7 @@ def write(models, outfile):
     ft.build_module.vbuild(outfile, 1)
 
     # Toroidal field coil model
-    ft.tfcoil_module.tfcoil(outfile, 1)
+    models.tfcoil.output()
 
     # Toroidal field coil superconductor model
     if ft.tfcoil_variables.i_tf_sup == 1:

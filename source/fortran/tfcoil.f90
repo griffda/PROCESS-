@@ -18,40 +18,40 @@ module tfcoil_module
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine tfcoil(outfile,iprint)
+!   subroutine tfcoil(outfile,iprint)
 
-    !! TF coil module
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! outfile : input integer : output file unit
-    !! iprint : input integer : switch for writing to output file (1=yes)
-    !! This subroutine calculates various parameters for the TF coil set.
-    !! If the TF coils are superconducting the calculations are performed
-    !! in routine <A HREF="sctfcoil.html">sctfcoil</A> instead.
-    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+!     !! TF coil module
+!     !! author: P J Knight, CCFE, Culham Science Centre
+!     !! outfile : input integer : output file unit
+!     !! iprint : input integer : switch for writing to output file (1=yes)
+!     !! This subroutine calculates various parameters for the TF coil set.
+!     !! If the TF coils are superconducting the calculations are performed
+!     !! in routine <A HREF="sctfcoil.html">sctfcoil</A> instead.
+!     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
-   use build_module, only: portsz
-   use process_output, only: int2char, oheadr, ovarre, osubhd, oblnkl, &
-      ocmmnt
-   use sctfcoil_module, only: sctfcoil
-   use tfcoil_variables, only: bmaxtf, cforce, estotftgj, i_tf_sup, n_tf, &
-      ripmax, ripple, ritfc, vforce, xarc, yarc
-   use constants, only: mfile
-    implicit none
+!    use build_module, only: portsz
+!    use process_output, only: int2char, oheadr, ovarre, osubhd, oblnkl, &
+!       ocmmnt
+!    use sctfcoil_module, only: sctfcoil
+!    use tfcoil_variables, only: bmaxtf, cforce, estotftgj, i_tf_sup, n_tf, &
+!       ripmax, ripple, ritfc, vforce, xarc, yarc
+!    use constants, only: mfile
+!     implicit none
 
-    !  Arguments
-    integer, intent(in) :: outfile,iprint
+!     !  Arguments
+!     integer, intent(in) :: outfile,iprint
     
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     
-    ! TF coil calculations
-    call sctfcoil(outfile,iprint)
+!     ! TF coil calculations
+!     call sctfcoil(outfile,iprint)
 
-    !  Port size calculation
-    call portsz
+!     !  Port size calculation
+!     call portsz
 
 
-  end subroutine tfcoil
+!   end subroutine tfcoil
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

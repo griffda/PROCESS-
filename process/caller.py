@@ -66,7 +66,7 @@ class Caller:
         # call startup(ft.constants.nout,0)  !  commented-out for speed reasons
 
         # Toroidal field coil model
-        ft.tfcoil_module.tfcoil(ft.constants.nout, 0)
+        self.models.tfcoil.run()
 
         # Toroidal field coil superconductor model
         if ft.tfcoil_variables.i_tf_sup == 1:
