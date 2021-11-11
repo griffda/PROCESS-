@@ -172,7 +172,7 @@ contains
       ! and Pilot Plants Based on the Spherical Tokamak."
       ! Nucl. Fusion, 2016, 44.
 
-      kappa = 0.95 * (1.9 + 1.9 / aspect ** 1.4)
+      kappa = 0.95D0 * (1.9D0 + 1.9D0 / aspect ** 1.4D0)
       kappa95 = kappa / 1.12D0
       triang95 = triang / 1.50D0
 

@@ -227,7 +227,8 @@ module physics_variables
   !! switch for a/R scaling of dnbeta (`iprofile=0` only):
   !! 
   !! - =0 do not scale dnbeta with eps
-  !! - =1 scale dnbeta with eps
+  !! - =1 scale dnbeta with eps, original scaling
+  !! - =2 scale dnbeta with eps, Menard scaling
 
   real(dp), dimension(ipnlaws) :: hfac
   !! H factors for an ignited plasma for each energy confinement time scaling law

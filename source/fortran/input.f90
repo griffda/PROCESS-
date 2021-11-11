@@ -623,7 +623,7 @@ contains
           call parse_real_variable('gamma', gamma, 0.1D0, 1.0D0, &
                'Ejima coefficient for resistive V-s formula')
        case ('gtscale')
-          call parse_int_variable('gtscale', gtscale, 0, 1, &
+          call parse_int_variable('gtscale', gtscale, 0, 2, &
                'Flag to scale beta coefficient with R/a')
        case ('hfact')
           call parse_real_variable('hfact', hfact, 0.01D0, 10.0D0, &

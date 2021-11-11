@@ -549,10 +549,23 @@ module physics_module
     !  Calculate beta limit
     if (iprofile == 0) then
 
-       if (gtscale == 1) then
-          dnbeta = 2.7D0 * (1.0D0 + 5.0D0*eps**3.5D0)
-          !... otherwise use input value for dnbeta
-       end if
+       select case (gtscale)
+
+          case (1)  
+          
+             !  Original scaling law
+             dnbeta = 2.7D0 * (1.0D0 + 5.0D0*eps**3.5D0)
+          
+          case (2)
+              
+             ! See Issue #1439
+             ! dnbeta found from aspect ratio scaling on p32 of Menard:
+             ! Menard, et al. "Fusion Nuclear Science Facilities
+             ! and Pilot Plants Based on the Spherical Tokamak."
+             ! Nucl. Fusion, 2016, 44.
+             dnbeta = 3.12D0 + 3.5D0*eps**1.7D0
+             
+       end select
 
     else
        !  Relation between beta limit and plasma internal inductance
