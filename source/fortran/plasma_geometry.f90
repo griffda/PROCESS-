@@ -162,6 +162,19 @@ contains
       
       kappa = 1.12d0 * kappa95
       triang95 = triang / 1.50D0
+      
+    case (11)
+    
+      ! See Issue #1439
+      ! triang is an input 
+      ! kappa found from aspect ratio scaling on p32 of Menard:
+      ! Menard, et al. “Fusion Nuclear Science Facilities
+      ! and Pilot Plants Based on the Spherical Tokamak.”
+      ! Nucl. Fusion, 2016, 44.
+
+      kappa = 0.95 * (1.9 + 1.9 / aspect ** 1.4)
+      kappa95 = kappa / 1.12D0
+      triang95 = triang / 1.50D0
 
     end select
 

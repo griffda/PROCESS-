@@ -3908,7 +3908,10 @@ module physics_module
           call ovarrf(outfile,'Elongation, X-point (calculated from aspect ratio and li(3))', &
                '(kappa)',kappa, 'OP ')
        case (10)
-         call ovarrf(outfile,'Elongation, X-point (calculated from aspect ratio and stability margin', &
+         call ovarrf(outfile,'Elongation, X-point (calculated from aspect ratio and stability margin)', &
+         '(kappa)',kappa, 'OP ')
+       case (11)
+         call ovarrf(outfile,'Elongation, X-point (calculated from aspect ratio via Menard 2016)', &
          '(kappa)',kappa, 'OP ')
        case default
           idiags(1) = ishape ; call report_error(86)
@@ -3926,7 +3929,7 @@ module physics_module
        call ovarrf(outfile,'Elongation, area ratio calc.','(kappaa)',kappaa, 'OP ')
 
        select case (ishape)
-       case (0,2,6,8,9,10)
+       case (0,2,6,8,9,10,11)
           call ovarrf(outfile,'Triangularity, X-point (input value used)', &
                '(triang)',triang, 'IP ')
        case (1)
