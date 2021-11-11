@@ -150,7 +150,7 @@ class Caller:
 
         # Tight aspect ratio machine model
         if ft.physics_variables.itart == 1 and ft.tfcoil_variables.i_tf_sup != 1:
-            ft.tfcoil_module.cntrpst(ft.constants.nout, 0)
+            self.models.tfcoil.cntrpst()
 
         # Toroidal field coil power model
         ft.power_module.tfpwr(ft.constants.nout, 0)

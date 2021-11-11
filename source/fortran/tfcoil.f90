@@ -55,378 +55,378 @@ module tfcoil_module
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine cntrpst(outfile,iprint)
+!   subroutine cntrpst(outfile,iprint)
 
-    !! Evaluates the properties of a TART centrepost
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! outfile : input integer : output file unit
-    !! iprint : input integer : switch for writing to output file (1=yes)
-    !! This subroutine evaluates the parameters of the centrepost for a
-    !! tight aspect ratio tokamak. The centrepost is assumed to be tapered,
-    !! i.e. narrowest on the midplane (z=0).
-    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!     !! Evaluates the properties of a TART centrepost
+!     !! author: P J Knight, CCFE, Culham Science Centre
+!     !! outfile : input integer : output file unit
+!     !! iprint : input integer : switch for writing to output file (1=yes)
+!     !! This subroutine evaluates the parameters of the centrepost for a
+!     !! tight aspect ratio tokamak. The centrepost is assumed to be tapered,
+!     !! i.e. narrowest on the midplane (z=0).
+!     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+!     !
+!     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   use build_variables, only: hmax, tfthko
-   use fwbs_variables, only: pnuc_cp_tf
-   use process_output, only: oheadr, ovarre, osubhd
-   use tfcoil_variables, only: dtiocool, etapump, fcoolcp, &
-      i_tf_sup, ncool, ppump, prescp, rbmax, rcool, &
-      rhocp, tcoolin, tcpav, tcpav2, tcpmax, a_cp_cool, n_tf, vcool, vol_cond_cp
-   use constants, only: pi, cph2o, denh2o, k_copper, kh2o, muh2o
-   use error_handling, only: fdiags, report_error 
-   implicit none
+!    use build_variables, only: hmax, tfthko
+!    use fwbs_variables, only: pnuc_cp_tf
+!    use process_output, only: oheadr, ovarre, osubhd
+!    use tfcoil_variables, only: dtiocool, etapump, fcoolcp, &
+!       i_tf_sup, ncool, ppump, prescp, rbmax, rcool, &
+!       rhocp, tcoolin, tcpav, tcpav2, tcpmax, a_cp_cool, n_tf, vcool, vol_cond_cp
+!    use constants, only: pi, cph2o, denh2o, k_copper, kh2o, muh2o
+!    use error_handling, only: fdiags, report_error 
+!    implicit none
 
-    !  Arguments
-    integer, intent(in) :: outfile,iprint
+!     !  Arguments
+!     integer, intent(in) :: outfile,iprint
 
-    !  Local variables
-    real(8) :: acool
-    !! Total CP cooling area [m2]
+!     !  Local variables
+!     real(8) :: acool
+!     !! Total CP cooling area [m2]
 
-    real(8) :: acpav
-    !! Average conductor layer area (including cooling area) [m2]
+!     real(8) :: acpav
+!     !! Average conductor layer area (including cooling area) [m2]
 
-    real(8) :: dcool
-    !! Cooling channel diamater [m]
+!     real(8) :: dcool
+!     !! Cooling channel diamater [m]
 
-    real(8) :: lcool
-    !! Cooling channel (vertical) length [m]
+!     real(8) :: lcool
+!     !! Cooling channel (vertical) length [m]
 
-    real(8) :: ro
-    !! Average radius covered by a cooling channel [m]
+!     real(8) :: ro
+!     !! Average radius covered by a cooling channel [m]
 
-    real(8) :: dpres
-    !! Pressure drop 
+!     real(8) :: dpres
+!     !! Pressure drop 
 
-    real(8) :: dtcncpav
-    !! Average conductor temperature rise [K]
+!     real(8) :: dtcncpav
+!     !! Average conductor temperature rise [K]
     
-    real(8) :: dtconcpmx
-    !! Peak conductop temperature rise [K]
+!     real(8) :: dtconcpmx
+!     !! Peak conductop temperature rise [K]
     
-    real(8) :: dtfilmav
-    !! Film temperature rise [K]
+!     real(8) :: dtfilmav
+!     !! Film temperature rise [K]
     
-    real(8) :: fc
-    !! Parameter use in saturation pressure calculation
+!     real(8) :: fc
+!     !! Parameter use in saturation pressure calculation
     
-    real(8) :: fricfac
-    !! Friction factor
+!     real(8) :: fricfac
+!     !! Friction factor
     
-    real(8) :: h
-    !! h factor used in film temperature rise calculation
+!     real(8) :: h
+!     !! h factor used in film temperature rise calculation
     
-    real(8) :: nuselt
-    !! Nusselt number used in film temperature rise calculation
+!     real(8) :: nuselt
+!     !! Nusselt number used in film temperature rise calculation
     
-    real(8) :: prndtl
-    !! Prandlt number used in film temperature rise calculation
+!     real(8) :: prndtl
+!     !! Prandlt number used in film temperature rise calculation
     
-    real(8) :: reyn
-    !! Reynolds number used in film temperature rise calculation
+!     real(8) :: reyn
+!     !! Reynolds number used in film temperature rise calculation
     
-    real(8) :: pcrt
-    !! Critical pressure in saturation pressure calculations [Pa]
-    !! Rem : Currently only input for water 
+!     real(8) :: pcrt
+!     !! Critical pressure in saturation pressure calculations [Pa]
+!     !! Rem : Currently only input for water 
     
-    real(8) :: presin
-    !! Coolant pressure drop [Pa]
+!     real(8) :: presin
+!     !! Coolant pressure drop [Pa]
     
-    real(8) :: psat
-    !! Saturation pressure [Pa]
-    !! Rem : Calcultation to be revised for Helium cooling 
+!     real(8) :: psat
+!     !! Saturation pressure [Pa]
+!     !! Rem : Calcultation to be revised for Helium cooling 
     
-    real(8) :: ptot
-    !! Total heating to be dissipated ( resistive + nuclear ) [W]
+!     real(8) :: ptot
+!     !! Total heating to be dissipated ( resistive + nuclear ) [W]
     
-    real(8) :: dptot
-    !! Ptot (total power to dissipte) increment used in the coolant temperature rise [W]
+!     real(8) :: dptot
+!     !! Ptot (total power to dissipte) increment used in the coolant temperature rise [W]
     
-    real(8) :: roughrat
-    !! Roughting factor
+!     real(8) :: roughrat
+!     !! Roughting factor
     
-    real(8) :: sum
-    !! A sum
+!     real(8) :: sum
+!     !! A sum
     
-    real(8) :: tclmx
-    !! Temperature used in staturation pressure calculation [K]
+!     real(8) :: tclmx
+!     !! Temperature used in staturation pressure calculation [K]
     
-    real(8) :: tclmxs
-    !! Temperature used in staturation pressure calculation [K]
+!     real(8) :: tclmxs
+!     !! Temperature used in staturation pressure calculation [K]
     
-    real(8) :: tcoolmx
-    !! Maximum coolant temperature [K]
+!     real(8) :: tcoolmx
+!     !! Maximum coolant temperature [K]
     
-    real(8) :: tmarg
-    !! Temperature margins used in saturation pressure calculation [K]
+!     real(8) :: tmarg
+!     !! Temperature margins used in saturation pressure calculation [K]
 
-    real(8) :: cool_mass_flow
-    !! Coolant mass flow rate [kg/s]
+!     real(8) :: cool_mass_flow
+!     !! Coolant mass flow rate [kg/s]
 
-    real(8) :: vcool_max
-    !! Maximum coolant velocity [m/s]
+!     real(8) :: vcool_max
+!     !! Maximum coolant velocity [m/s]
 
-    real(8) :: coolant_density
-    !! Coolant density [kg/m3]
+!     real(8) :: coolant_density
+!     !! Coolant density [kg/m3]
     
-    real(8) :: coolant_th_cond
-    !! Coolant thermal conductivity [W/(m.K)]
+!     real(8) :: coolant_th_cond
+!     !! Coolant thermal conductivity [W/(m.K)]
     
-    real(8) :: coolant_visco
-    !! Coolant viscosity [SA]
+!     real(8) :: coolant_visco
+!     !! Coolant viscosity [SA]
     
-    real(8) :: coolant_cp
-    !! Coolant thermal capacity
+!     real(8) :: coolant_cp
+!     !! Coolant thermal capacity
     
-    real(8) :: conductor_th_cond
-    !! Conductor thermal conductivity [W/(m.K)]
+!     real(8) :: conductor_th_cond
+!     !! Conductor thermal conductivity [W/(m.K)]
     
-    real(8) :: tcool_calc
-    !! coolant temperature used in the temperature rise calculations (not an output) [K]
+!     real(8) :: tcool_calc
+!     !! coolant temperature used in the temperature rise calculations (not an output) [K]
 
-    real(8) :: tcool_av
-    !! Average bulk coolant temperature (not an output) [K]
+!     real(8) :: tcool_av
+!     !! Average bulk coolant temperature (not an output) [K]
 
-    real(8) :: tcool_film
-    !! Coolant temperature at the pipe surface calculated from the average bulk
-    !! temperature (not an output) [K]
+!     real(8) :: tcool_film
+!     !! Coolant temperature at the pipe surface calculated from the average bulk
+!     !! temperature (not an output) [K]
 
-    integer, parameter :: n_tcool_it = 20
-    !! Number of integral step used for the coolant temperature rise
+!     integer, parameter :: n_tcool_it = 20
+!     !! Number of integral step used for the coolant temperature rise
 
-    integer :: ii
-    !! Loop increment
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!     integer :: ii
+!     !! Loop increment
+!     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     
-    !  Temperature margin used in calculations (K)
-    tmarg = 10.0D0
+!     !  Temperature margin used in calculations (K)
+!     tmarg = 10.0D0
     
-    ! Coolant channels:
-    acool = a_cp_cool * n_tf        !  Cooling cross-sectional area
-    dcool = 2.0D0 * rcool           !  Diameter
-    lcool = 2.0D0 * (hmax + tfthko) !  Length
-    ncool = acool/( pi * rcool**2)  !  Number
+!     ! Coolant channels:
+!     acool = a_cp_cool * n_tf        !  Cooling cross-sectional area
+!     dcool = 2.0D0 * rcool           !  Diameter
+!     lcool = 2.0D0 * (hmax + tfthko) !  Length
+!     ncool = acool/( pi * rcool**2)  !  Number
 
-    ! Average conductor cross-sectional area to cool (with cooling area)
-    acpav = 0.5D0 * vol_cond_cp/(hmax + tfthko) + acool
-    ro = sqrt( acpav/(pi*ncool) )
+!     ! Average conductor cross-sectional area to cool (with cooling area)
+!     acpav = 0.5D0 * vol_cond_cp/(hmax + tfthko) + acool
+!     ro = sqrt( acpav/(pi*ncool) )
 
-    !  Inner legs total heating power (to be removed by coolant)
-    ptot = prescp + pnuc_cp_tf * 1.0D6
+!     !  Inner legs total heating power (to be removed by coolant)
+!     ptot = prescp + pnuc_cp_tf * 1.0D6
 
-    !  Temperature calculations
-    ! -------------------------
-    !  Temperature rise in coolant (inlet to outlet)
-    ! **********************************************
-    ! Water coollant
-    ! --------------
-    if ( i_tf_sup ==  0 ) then
+!     !  Temperature calculations
+!     ! -------------------------
+!     !  Temperature rise in coolant (inlet to outlet)
+!     ! **********************************************
+!     ! Water coollant
+!     ! --------------
+!     if ( i_tf_sup ==  0 ) then
          
-       ! Water coolant physical properties
-       coolant_density = denh2o
-       coolant_cp      = cph2o
-       coolant_visco   = muh2o
-       coolant_th_cond = kh2o
+!        ! Water coolant physical properties
+!        coolant_density = denh2o
+!        coolant_cp      = cph2o
+!        coolant_visco   = muh2o
+!        coolant_th_cond = kh2o
 
-       ! Mass flow rate [kg/s]
-       cool_mass_flow = acool * coolant_density * vcool
+!        ! Mass flow rate [kg/s]
+!        cool_mass_flow = acool * coolant_density * vcool
 
-       ! Water temperature rise
-       dtiocool = ptot / (cool_mass_flow*coolant_cp)
+!        ! Water temperature rise
+!        dtiocool = ptot / (cool_mass_flow*coolant_cp)
 
-       ! Constant coolant velocity
-       vcool_max = vcool
-    ! --------------
+!        ! Constant coolant velocity
+!        vcool_max = vcool
+!     ! --------------
 
        
-    ! Helium coolant
-    ! --------------
-    else if ( i_tf_sup ==  2 ) then
+!     ! Helium coolant
+!     ! --------------
+!     else if ( i_tf_sup ==  2 ) then
 
-       ! Inlet coolant density [kg/m3]
-       call he_density( tcoolin, coolant_density )
+!        ! Inlet coolant density [kg/m3]
+!        call he_density( tcoolin, coolant_density )
 
-       ! Mass flow rate [kg/s]
-       cool_mass_flow = acool * coolant_density * vcool
+!        ! Mass flow rate [kg/s]
+!        cool_mass_flow = acool * coolant_density * vcool
  
-       ! Infinitesimal power deposition used in the integral
-       dptot = ptot / real( n_tcool_it, kind(1.0D0) )
+!        ! Infinitesimal power deposition used in the integral
+!        dptot = ptot / real( n_tcool_it, kind(1.0D0) )
 
-       tcool_calc = tcoolin ! K
-       do ii = 1, n_tcool_it
+!        tcool_calc = tcoolin ! K
+!        do ii = 1, n_tcool_it
 
-          ! Thermal capacity Cp
-          call he_cp(tcool_calc, coolant_cp)
+!           ! Thermal capacity Cp
+!           call he_cp(tcool_calc, coolant_cp)
 
-          ! Temperature infinitesimal increase
-          tcool_calc = tcool_calc + dptot / ( cool_mass_flow * coolant_cp )
-       end do
+!           ! Temperature infinitesimal increase
+!           tcool_calc = tcool_calc + dptot / ( cool_mass_flow * coolant_cp )
+!        end do
 
-       ! Outlet coolant density (minimal coolant density value)
-       call he_density(tcool_calc, coolant_density)
+!        ! Outlet coolant density (minimal coolant density value)
+!        call he_density(tcool_calc, coolant_density)
        
-       ! Maxium coolant velocity
-       vcool_max = cool_mass_flow / ( acool * coolant_density )
+!        ! Maxium coolant velocity
+!        vcool_max = cool_mass_flow / ( acool * coolant_density )
 
-       ! Getting the global in-outlet temperature increase 
-       dtiocool = tcool_calc - tcoolin
-    end if
-    ! --------------
+!        ! Getting the global in-outlet temperature increase 
+!        dtiocool = tcool_calc - tcoolin
+!     end if
+!     ! --------------
 
-    ! Average coolant temperature
-    tcool_av = tcoolin + 0.5D0 * dtiocool
-    ! **********************************************
+!     ! Average coolant temperature
+!     tcool_av = tcoolin + 0.5D0 * dtiocool
+!     ! **********************************************
 
 
-    ! Film temperature rise
-    ! *********************
-    ! Rem : The helium cooling properties are calculated using the outlet ones
-    ! this is not an exact approximation for average temperature rise
+!     ! Film temperature rise
+!     ! *********************
+!     ! Rem : The helium cooling properties are calculated using the outlet ones
+!     ! this is not an exact approximation for average temperature rise
 
-    ! Helium viscosity
-    if ( i_tf_sup == 2 ) call he_visco(tcool_av, coolant_visco)
+!     ! Helium viscosity
+!     if ( i_tf_sup == 2 ) call he_visco(tcool_av, coolant_visco)
 
-    ! Reynolds number
-    reyn = coolant_density * vcool * dcool / coolant_visco
+!     ! Reynolds number
+!     reyn = coolant_density * vcool * dcool / coolant_visco
    
-    ! Helium thermal conductivity [W/(m.K)]
-    if ( i_tf_sup == 2 ) call he_th_cond( tcool_av, coolant_th_cond )
+!     ! Helium thermal conductivity [W/(m.K)]
+!     if ( i_tf_sup == 2 ) call he_th_cond( tcool_av, coolant_th_cond )
   
-    ! Prandlt number  
-    prndtl = coolant_cp * coolant_visco / coolant_th_cond
+!     ! Prandlt number  
+!     prndtl = coolant_cp * coolant_visco / coolant_th_cond
 
-    ! Film temperature difference calculations    
-    ! Originally prandtl was prndtl**0.3D0 but this is incorrect as from
-    ! Dittus-Boelter correlation where the fluid is being heated it should be as below    
-    nuselt = 0.023D0 * reyn**0.8D0 * prndtl**0.4D0
-    h = nuselt * coolant_th_cond / dcool
-    dtfilmav = ptot / (h * 2.0D0*pi*rcool * ncool * lcool)
+!     ! Film temperature difference calculations    
+!     ! Originally prandtl was prndtl**0.3D0 but this is incorrect as from
+!     ! Dittus-Boelter correlation where the fluid is being heated it should be as below    
+!     nuselt = 0.023D0 * reyn**0.8D0 * prndtl**0.4D0
+!     h = nuselt * coolant_th_cond / dcool
+!     dtfilmav = ptot / (h * 2.0D0*pi*rcool * ncool * lcool)
 
-    ! Average film temperature (in contact with te conductor)
-    tcool_film = tcool_av + dtfilmav
-    ! *********************
+!     ! Average film temperature (in contact with te conductor)
+!     tcool_film = tcool_av + dtfilmav
+!     ! *********************
 
 
-    !  Temperature rise in conductor
-    ! ------------------------------
-    ! Conductor thermal conductivity
-    ! ******
-    !  Copper conductor
-    if ( i_tf_sup ==  0 ) then
-       conductor_th_cond = k_copper
+!     !  Temperature rise in conductor
+!     ! ------------------------------
+!     ! Conductor thermal conductivity
+!     ! ******
+!     !  Copper conductor
+!     if ( i_tf_sup ==  0 ) then
+!        conductor_th_cond = k_copper
     
-    ! Aluminium 
-    else if ( i_tf_sup == 2 ) then
-      call al_th_cond( tcool_film, conductor_th_cond )
-    end if
-    ! ******
+!     ! Aluminium 
+!     else if ( i_tf_sup == 2 ) then
+!       call al_th_cond( tcool_film, conductor_th_cond )
+!     end if
+!     ! ******
 
-    ! Average temperature rise : To be changed with Garry Voss' better documented formula ? 
-    dtcncpav = (ptot/vol_cond_cp)/(2.0D0*conductor_th_cond*(ro**2 - rcool**2) ) * &
-               ( ro**2*rcool**2 - 0.25D0*rcool**4 - 0.75D0*ro**4 + ro**4 * log(ro/rcool) )
+!     ! Average temperature rise : To be changed with Garry Voss' better documented formula ? 
+!     dtcncpav = (ptot/vol_cond_cp)/(2.0D0*conductor_th_cond*(ro**2 - rcool**2) ) * &
+!                ( ro**2*rcool**2 - 0.25D0*rcool**4 - 0.75D0*ro**4 + ro**4 * log(ro/rcool) )
 
-    ! Peak temperature rise : To be changed with Garry Voss' better documented formula ?
-    dtconcpmx = (ptot/vol_cond_cp)/(2.0D0*conductor_th_cond) * &
-                ( (rcool**2 - ro**2)/2.0D0 + ro**2 * log(ro/rcool) )
+!     ! Peak temperature rise : To be changed with Garry Voss' better documented formula ?
+!     dtconcpmx = (ptot/vol_cond_cp)/(2.0D0*conductor_th_cond) * &
+!                 ( (rcool**2 - ro**2)/2.0D0 + ro**2 * log(ro/rcool) )
 
 
-    ! If the average conductor temperature difference is negative, set it to 0 
-    if ( dtcncpav < 0.0D0 ) then 
-      call report_error(249)
-      dtcncpav = 0.0D0
-    end if
+!     ! If the average conductor temperature difference is negative, set it to 0 
+!     if ( dtcncpav < 0.0D0 ) then 
+!       call report_error(249)
+!       dtcncpav = 0.0D0
+!     end if
 
-    ! If the average conductor temperature difference is negative, set it to 0  
-    if ( dtconcpmx < 0.0D0 ) then 
-      call report_error(250)
-      dtconcpmx = 0.0D0
-    end if
+!     ! If the average conductor temperature difference is negative, set it to 0  
+!     if ( dtconcpmx < 0.0D0 ) then 
+!       call report_error(250)
+!       dtconcpmx = 0.0D0
+!     end if
     
-    !  Average conductor temperature
-    tcpav2 = tcoolin + dtcncpav + dtfilmav + 0.5D0*dtiocool
+!     !  Average conductor temperature
+!     tcpav2 = tcoolin + dtcncpav + dtfilmav + 0.5D0*dtiocool
 
-    !  Peak wall temperature
-    tcpmax  = tcoolin + dtiocool + dtfilmav + dtconcpmx
-    tcoolmx = tcoolin + dtiocool + dtfilmav
-    ! -------------------------
+!     !  Peak wall temperature
+!     tcpmax  = tcoolin + dtiocool + dtfilmav + dtconcpmx
+!     tcoolmx = tcoolin + dtiocool + dtfilmav
+!     ! -------------------------
 
     
-    !  Thermal hydraulics: friction factor from Z. Olujic, Chemical
-    !  Engineering, Dec. 1981, p. 91
-    roughrat = 4.6D-5 / dcool
-    fricfac  = 1.0D0/ (-2.0D0 * log10(roughrat/3.7D0 - 5.02D0/reyn  &
-             * log10( roughrat/3.7D0 + 14.5D0/reyn) ) )**2
+!     !  Thermal hydraulics: friction factor from Z. Olujic, Chemical
+!     !  Engineering, Dec. 1981, p. 91
+!     roughrat = 4.6D-5 / dcool
+!     fricfac  = 1.0D0/ (-2.0D0 * log10(roughrat/3.7D0 - 5.02D0/reyn  &
+!              * log10( roughrat/3.7D0 + 14.5D0/reyn) ) )**2
 
-    ! Pumping efficiency
-    if      ( i_tf_sup == 0 ) then ! Water cooled
-      etapump = 0.8D0
-    else if ( i_tf_sup == 2 ) then ! Cryogenic helium
-      etapump = 0.6D0
-    end if
+!     ! Pumping efficiency
+!     if      ( i_tf_sup == 0 ) then ! Water cooled
+!       etapump = 0.8D0
+!     else if ( i_tf_sup == 2 ) then ! Cryogenic helium
+!       etapump = 0.6D0
+!     end if
 
-    ! Pressure drop calculation
-    dpres = fricfac * (lcool/dcool) * coolant_density * 0.5D0*vcool**2
-    ppump = dpres * acool * vcool / etapump
+!     ! Pressure drop calculation
+!     dpres = fricfac * (lcool/dcool) * coolant_density * 0.5D0*vcool**2
+!     ppump = dpres * acool * vcool / etapump
 
-    !  Critical pressure in saturation pressure calculations (Pa)
-    pcrt = 2.24D7
+!     !  Critical pressure in saturation pressure calculations (Pa)
+!     pcrt = 2.24D7
 
-    ! Saturation pressure
-    ! Ref : Keenan, Keyes, Hill, Moore, steam tables, Wiley & Sons, 1969
-    ! Rem 1 : ONLY VALID FOR WATER !
-    ! Rem 2 : Not used anywhere else in the code ...
-    tclmx = tcoolmx + tmarg
-    tclmxs = min(tclmx, 374.0D0)
-    fc = 0.65D0 - 0.01D0 * tclmxs
-    sum = -741.9242D0 - 29.721D0*fc - 11.55286D0*fc**2 &
-         - 0.8685635D0*fc**3 + 0.1094098D0*fc**4 &
-         + 0.439993D0*fc**5 + 0.2520658D0*fc**6 &
-         + 0.0518684D0*fc**7
-    psat = pcrt * exp(0.01D0/(tclmxs + 273.0D0) * (374.0D0 - tclmxs) * sum )
-    presin = psat + dpres
-
-
-
-    !  Output section    
-    if (iprint == 0) return
-    call oheadr(outfile,'Centrepost Coolant Parameters')
-    call ovarre(outfile,'Centrepost coolant fraction','(fcoolcp)',fcoolcp)
-    call ovarre(outfile,'Average coolant channel diameter (m)','(dcool)',dcool)
-    call ovarre(outfile,'Coolant channel length (m)','(lcool)',lcool)
-    call ovarre(outfile,'Inlet coolant flow speed (m/s)','(vcool)',vcool)
-    call ovarre(outfile,'Outlet coolant flow speed (m/s)','(vcool_max)',vcool_max)
-    call ovarre(outfile,'Coolant mass flow rate (kg/s)','(cool_mass_flow)',cool_mass_flow)
-    call ovarre(outfile,'Number of coolant tubes','(ncool)',ncool)
-    call ovarre(outfile,'Reynolds number','(reyn)',reyn)
-    call ovarre(outfile,'Prandtl number','(prndtl)',prndtl)
-    call ovarre(outfile,'Nusselt number','(nuselt)',nuselt)
-
-    call osubhd(outfile,'Resistive Heating :')
-    call ovarre(outfile,'Average conductor resistivity (ohm.m)','(rhocp)',rhocp)
-    call ovarre(outfile,'Resistive heating (MW)','(prescp/1.0D6)',prescp/1.0D6)
-    call ovarre(outfile,'Nuclear heating (MW)','(pnuc_cp_tf)',pnuc_cp_tf)
-    call ovarre(outfile,'Total heating (MW)','(ptot/1.0D6)',ptot/1.0D6)
-
-    call osubhd(outfile,'Temperatures :')
-    call ovarre(outfile,'Input coolant temperature (K)','(tcoolin)',tcoolin)
-    call ovarre(outfile,'Input-output coolant temperature rise (K)','(dtiocool)',dtiocool)
-    call ovarre(outfile,'Film temperature rise (K)','(dtfilmav)',dtfilmav)
-    call ovarre(outfile,'Average temp gradient in conductor (K/m)','(dtcncpav)',dtcncpav)
-    call ovarre(outfile,'Average centrepost temperature (K)','(tcpav2)',tcpav2)
-    call ovarre(outfile,'Peak centrepost temperature (K)','(tcpmax)',tcpmax)
-
-    call osubhd(outfile,'Pump Power :')
-    call ovarre(outfile,'Coolant pressure drop (Pa)','(dpres)',dpres)
-    if ( i_tf_sup == 0 ) then ! Saturation pressure calculated with Water data ...
-       call ovarre(outfile,'Coolant inlet pressure (Pa)','(presin)',presin)
-    end if
-    call ovarre(outfile,'Pump power (W)','(ppump)',ppump)
+!     ! Saturation pressure
+!     ! Ref : Keenan, Keyes, Hill, Moore, steam tables, Wiley & Sons, 1969
+!     ! Rem 1 : ONLY VALID FOR WATER !
+!     ! Rem 2 : Not used anywhere else in the code ...
+!     tclmx = tcoolmx + tmarg
+!     tclmxs = min(tclmx, 374.0D0)
+!     fc = 0.65D0 - 0.01D0 * tclmxs
+!     sum = -741.9242D0 - 29.721D0*fc - 11.55286D0*fc**2 &
+!          - 0.8685635D0*fc**3 + 0.1094098D0*fc**4 &
+!          + 0.439993D0*fc**5 + 0.2520658D0*fc**6 &
+!          + 0.0518684D0*fc**7
+!     psat = pcrt * exp(0.01D0/(tclmxs + 273.0D0) * (374.0D0 - tclmxs) * sum )
+!     presin = psat + dpres
 
 
-    end subroutine cntrpst
+
+!     !  Output section    
+!     if (iprint == 0) return
+!     call oheadr(outfile,'Centrepost Coolant Parameters')
+!     call ovarre(outfile,'Centrepost coolant fraction','(fcoolcp)',fcoolcp)
+!     call ovarre(outfile,'Average coolant channel diameter (m)','(dcool)',dcool)
+!     call ovarre(outfile,'Coolant channel length (m)','(lcool)',lcool)
+!     call ovarre(outfile,'Inlet coolant flow speed (m/s)','(vcool)',vcool)
+!     call ovarre(outfile,'Outlet coolant flow speed (m/s)','(vcool_max)',vcool_max)
+!     call ovarre(outfile,'Coolant mass flow rate (kg/s)','(cool_mass_flow)',cool_mass_flow)
+!     call ovarre(outfile,'Number of coolant tubes','(ncool)',ncool)
+!     call ovarre(outfile,'Reynolds number','(reyn)',reyn)
+!     call ovarre(outfile,'Prandtl number','(prndtl)',prndtl)
+!     call ovarre(outfile,'Nusselt number','(nuselt)',nuselt)
+
+!     call osubhd(outfile,'Resistive Heating :')
+!     call ovarre(outfile,'Average conductor resistivity (ohm.m)','(rhocp)',rhocp)
+!     call ovarre(outfile,'Resistive heating (MW)','(prescp/1.0D6)',prescp/1.0D6)
+!     call ovarre(outfile,'Nuclear heating (MW)','(pnuc_cp_tf)',pnuc_cp_tf)
+!     call ovarre(outfile,'Total heating (MW)','(ptot/1.0D6)',ptot/1.0D6)
+
+!     call osubhd(outfile,'Temperatures :')
+!     call ovarre(outfile,'Input coolant temperature (K)','(tcoolin)',tcoolin)
+!     call ovarre(outfile,'Input-output coolant temperature rise (K)','(dtiocool)',dtiocool)
+!     call ovarre(outfile,'Film temperature rise (K)','(dtfilmav)',dtfilmav)
+!     call ovarre(outfile,'Average temp gradient in conductor (K/m)','(dtcncpav)',dtcncpav)
+!     call ovarre(outfile,'Average centrepost temperature (K)','(tcpav2)',tcpav2)
+!     call ovarre(outfile,'Peak centrepost temperature (K)','(tcpmax)',tcpmax)
+
+!     call osubhd(outfile,'Pump Power :')
+!     call ovarre(outfile,'Coolant pressure drop (Pa)','(dpres)',dpres)
+!     if ( i_tf_sup == 0 ) then ! Saturation pressure calculated with Water data ...
+!        call ovarre(outfile,'Coolant inlet pressure (Pa)','(presin)',presin)
+!     end if
+!     call ovarre(outfile,'Pump power (W)','(ppump)',ppump)
+
+
+!     end subroutine cntrpst
      
     subroutine he_density( temp, density )
       !! Author : S. Kahn

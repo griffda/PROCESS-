@@ -125,7 +125,9 @@ def write(models, outfile):
 
     # Tight aspect ratio machine model
     if ft.physics_variables.itart == 1 and ft.tfcoil_variables.i_tf_sup != 1:
-        ft.tfcoil_module.cntrpst(outfile, 1)
+        models.tfcoil.iprint = 1
+        models.tfcoil.cntrpst()
+        models.tfcoil.iprint = 0
 
     # Poloidal field coil model !
     ft.pfcoil_module.outpf(outfile)
