@@ -168,8 +168,8 @@ contains
       ! See Issue #1439
       ! triang is an input 
       ! kappa found from aspect ratio scaling on p32 of Menard:
-      ! Menard, et al. “Fusion Nuclear Science Facilities
-      ! and Pilot Plants Based on the Spherical Tokamak.”
+      ! Menard, et al. "Fusion Nuclear Science Facilities
+      ! and Pilot Plants Based on the Spherical Tokamak."
       ! Nucl. Fusion, 2016, 44.
 
       kappa = 0.95 * (1.9 + 1.9 / aspect ** 1.4)
