@@ -1483,7 +1483,7 @@
         "cp1": 0.1,
         "cp2": 0.2,
         "cp5": 0.5,
-        "cp_he": 5190.0,
+        "cp_he": "5.195.0D3",
         "cpfact": 0.0,
         "cph2o": 4180.0,
         "cplife": 0.0,
@@ -3369,7 +3369,7 @@
         "phi_tfc_ob": 0.0,
         "phiint": 0.0,
         "photon_wall": 0.0,
-        "pi": 3.141592653589793,
+        "pi": "3.14159265358979e0_rkind",
         "pibv": 20000.0,
         "piepv": 0.0,
         "pifecr": 10.0,
@@ -9693,7 +9693,7 @@
         "green_func_emp_first": "",
         "gsmass": "reactor core gravity support mass (kg)",
         "gtaue": "offset term in energy confinement time scaling",
-        "gtscale": "switch for a/R scaling of dnbeta (`iprofile=0` only):\n<ul>\n<li>=0 do not scale dnbeta with eps</li>\n<li>=1 scale dnbeta with eps</li>\n</ul>",
+        "gtscale": "switch for a/R scaling of dnbeta (`iprofile=0` only):\n<ul>\n<li>=0 do not scale dnbeta with eps</li>\n<li>=1 scale dnbeta with eps, original scaling</li>\n<li>=2 scale dnbeta with eps, Menard scaling</li>\n</ul>",
         "h": "",
         "h_cp_top": "Vertical distance from the midplane to the top of the tapered section [m]",
         "h_ib": "",
@@ -9852,7 +9852,7 @@
         "iscenr": "Switch for PF coil energy storage option:\n<ul>\n<li>=1 all power from MGF (motor-generator flywheel) units</li>\n<li>=2 all pulsed power from line</li>\n<li>=3 PF power from MGF, heating from line</li>\n</ul>",
         "iscrp": "switch for plasma-first wall clearances:\n<ul>\n<li>=0 use 10% of rminor</li>\n<li>=1 use input (scrapli and scraplo)</li>\n</ul>",
         "iscz": "",
-        "ishape": "switch for plasma cross-sectional shape calculation:\n<ul>\n<li>=0 use input kappa, triang to calculate 95% values</li>\n<li>=1 scale qlim, kappa, triang with aspect ratio (ST)</li>\n<li>=2 set kappa to the natural elongation value (Zohm ITER scaling), triang input</li>\n<li>=3 set kappa to the natural elongation value (Zohm ITER scaling), triang95 input</li>\n<li>=4 use input kappa95, triang95 to calculate separatrix values</li>\n<li>=5 use input kappa95, triang95 to calculate separatrix values based on MAST scaling (ST)</li>\n<li>=6 use input kappa, triang to calculate 95% values based on MAST scaling (ST)</li>\n<li>=7 use input kappa95, triang95 to calculate separatrix values based on fit to FIESTA (ST)</li>\n<li>=8 use input kappa, triang to calculate 95% values based on fit to FIESTA (ST)</li>\n<li>=9 set kappa to the natural elongation value (PROCESS-STEP issue #70), triang input</li>\n<li>=10 set kappa to maximum stable value at a given aspect ratio (2.6<A<3.6)), triang input (#1399)</li>\n</ul>",
+        "ishape": "switch for plasma cross-sectional shape calculation:\n<ul>\n<li>=0 use input kappa, triang to calculate 95% values</li>\n<li>=1 scale qlim, kappa, triang with aspect ratio (ST)</li>\n<li>=2 set kappa to the natural elongation value (Zohm ITER scaling), triang input</li>\n<li>=3 set kappa to the natural elongation value (Zohm ITER scaling), triang95 input</li>\n<li>=4 use input kappa95, triang95 to calculate separatrix values</li>\n<li>=5 use input kappa95, triang95 to calculate separatrix values based on MAST scaling (ST)</li>\n<li>=6 use input kappa, triang to calculate 95% values based on MAST scaling (ST)</li>\n<li>=7 use input kappa95, triang95 to calculate separatrix values based on fit to FIESTA (ST)</li>\n<li>=8 use input kappa, triang to calculate 95% values based on fit to FIESTA (ST)</li>\n<li>=9 set kappa to the natural elongation value (PROCESS-STEP issue #70), triang input</li>\n<li>=10 set kappa to maximum stable value at a given aspect ratio (2.6<A<3.6)), triang input (#1399)</li>\n<li>=11 set kappa Menard 2016 aspect-ratio-dependent scaling, triang input (#1439)</li>\n</ul>",
         "istell": "Switch for stellarator option (set via `device.dat`):\n<ul>\n<li>=0 use tokamak model</li>\n<li>=1 use stellarator model: Helias5-b</li>\n<li>=2 use stellarator model: Helias4-b</li>\n<li>=3 use stellarator model: Helias3-b</li>\n</ul>",
         "isthtr": "Switch for stellarator auxiliary heating method:\n<ul>\n<li>= 1electron cyclotron resonance heating</li>\n<li>= 2lower hybrid heating</li>\n<li>= 3neutral beam injection</li>\n</ul>",
         "istore": "Switch for thermal storage method:\n<ul>\n<li>=1 option 1 of Electrowatt report, AEA FUS 205</li>\n<li>=2 option 2 of Electrowatt report, AEA FUS 205</li>\n<li>=3 stainless steel block</li>\n</ul>",
@@ -12967,7 +12967,7 @@
         },
         "gtscale": {
             "lb": 0,
-            "ub": 1
+            "ub": 2
         },
         "harnum": {
             "lb": 1.0,
@@ -13275,7 +13275,7 @@
         },
         "ishape": {
             "lb": 0,
-            "ub": 10
+            "ub": 11
         },
         "istell": {
             "lb": 0,
@@ -18613,7 +18613,6 @@
         ],
         "ode_mod": [],
         "optimiz_module": [],
-        "output_module": [],
         "param": [
             "pi",
             "c"
