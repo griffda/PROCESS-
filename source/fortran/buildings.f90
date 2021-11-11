@@ -127,7 +127,13 @@ contains
       ilw_storage_l, ilw_storage_w, ilw_storage_h, &
       llw_storage_l, llw_storage_w, llw_storage_h, &
       hw_storage_l, hw_storage_w, hw_storage_h, &
-      tw_storage_l, tw_storage_w, tw_storage_h
+      tw_storage_l, tw_storage_w, tw_storage_h, &
+      auxcool_l, auxcool_w, auxcool_h, &
+      cryomag_l, cryomag_w, cryomag_h, &
+      cryostore_l, cryostore_w, cryostore_h, &
+      elecdist_l, elecdist_w, elecdist_h, & 
+      elecstore_l, elecstore_w, elecstore_h, & 
+      elecload_l, elecload_w, elecload_h
     use current_drive_variables, only: iefrf
     ! use cost_variables, only: tlife rmc remove
     ! use constants, only: pi rmc remove
@@ -194,6 +200,24 @@ contains
     real(8) :: maintenance_area, maintenance_vol
     !! maintenance buildings footprint (m2), volume (m3)
 
+    real(8) :: cryomag_area, cryomag_vol
+    !! Cryogenic Buildings for Magnet and Fuel Cycle footprint (m2), volume (m3)
+    real(8) :: cryostore_area, cryostore_vol
+    !!  Magnet Cryo Storage Tanks footprint (m2), volume (m3)
+    real(8) :: auxcool_area, auxcool_vol    
+    !! Auxiliary Cooling Water facility footprint (m2), volume (m3)
+    real(8) :: cryocool_area, cryocool_vol
+    !! Cryogenic & cooling buildings footprint (m2), volume (m3)
+
+    real(8) :: elecdist_area, elecdist_vol
+    !! Transformers and electrical distribution footprint (m2), volume (m3)
+    real(8) :: elecload_area, elecload_vol
+    !! Electric (eesential and non-essential) load centres footprint (m2), volume (m3)
+    real(8) :: elecstore_area, elecstore_vol
+    !! Energy Storage facilities footprint (m2), volume (m3)
+    real(8) :: elec_buildings_area, elec_buildings_vol
+    !! Electrical buildings footprint (m2), volume (m3)
+    
     real(8) :: turbine_hall_area, turbine_hall_vol
     !! turbine hall footprint (m2), volume (m3)
 
@@ -434,14 +458,47 @@ contains
     maintenance_vol = workshop_vol + robotics_vol + maint_cont_vol
 
 
+    ! Cryogenic & cooling facilities
+    ! Derived from W. Smith's estimates of necessary facilities and their sizes.
+    !
+    ! Cryogenic Buildings for Magnet and Fuel Cycle
+    cryomag_area = cryomag_l * cryomag_w
+    cryomag_vol = cryomag_area * cryomag_h
+    !
+    ! Magnet Cryo Storage Tanks
+    cryostore_area = cryostore_l * cryostore_w
+    cryostore_vol = cryostore_area * cryostore_h
+    !
+    ! Site-Wide Auxiliary Cooling Water facility, including pumping, 
+    ! chemical dosing, filtration and heat exchangers.
+    auxcool_area = auxcool_l * auxcool_w
+    auxcool_vol = auxcool_area * auxcool_h
+    !
+    cryocool_area = cryomag_area + cryostore_area + auxcool_area
+    cryocool_vol = cryomag_vol + cryostore_vol + auxcool_vol
 
+    
+    ! Electrical
+    ! Derived from W. Smith's estimates of necessary facilities and their sizes;
+    ! these values amalgamate multiple individual buildings.
+    !
+    ! Transformers and electrical distribution facilities; includes
+    ! main step down & step up transformers and substation, reactive power buildings,
+    elecdist_area = elecdist_l * elecdist_w
+    elecdist_vol = elecdist_area * elecdist_h
+    !
+    ! Load centres (essential and non-essential supplies)
+    elecload_area = elecload_l * elecload_w
+    elecload_vol = elecload_area * elecload_h
+    !
+    ! Energy Storage Systems (batteries & flywheels) and back-up generators
+    elecstore_area = elecstore_l * elecstore_w
+    elecstore_vol = elecstore_area * elecstore_h
+    !
+    elec_buildings_area = elecdist_area + elecload_area + elecstore_area
+    elec_buildings_vol = elecdist_vol + elecload_vol + elecstore_vol
 
-    ! cryo & cooling
-    !**********************************************************
-
-    ! electrical
-    !**********************************************************
-  
+    
     ! Turbine Hall
     ! As proposed by R. Gowland, based on assessment of 18 existing fission power plants: 
     ! turbine hall size is largely independent of plant output power. 
@@ -564,6 +621,42 @@ contains
       call ovarre(outfile,'Volume of Maint. Cont. buildings (m3)', '(maint_cont_vol)', maint_cont_vol)
       call ovarre(outfile,'Footprint of Maintenance buildings (m2)', '(maintenance_area)', maintenance_area)
       call ovarre(outfile,'Volume of Maintenance buildings (m3)', '(maintenance_vol)', maintenance_vol)
+
+      call ovarre(outfile,'cryomag_l (m)', '(cryomag_l)', cryomag_l)
+      call ovarre(outfile,'cryomag_w (m)', '(cryomag_w)', cryomag_w)
+      call ovarre(outfile,'cryomag_h (m)', '(cryomag_h)', cryomag_h)
+      call ovarre(outfile,'Footprint of Cryogenic Buildings (m2)', '(cryomag_area)', cryomag_area)
+      call ovarre(outfile,'Volume of Cryogenic Buildings (m3)', '(cryomag_vol)', cryomag_vol)
+      call ovarre(outfile,'cryostore_l (m)', '(cryostore_l)', cryostore_l)
+      call ovarre(outfile,'cryostore_w (m)', '(cryostore_w)', cryostore_w)
+      call ovarre(outfile,'cryostore_h (m)', '(cryostore_h)', cryostore_h)  
+      call ovarre(outfile,'Footprint of Magnet Cryo Storage Tanks (m2)', '(cryostore_area)', cryostore_area)
+      call ovarre(outfile,'Volume of Magnet Cryo Storage Tanks (m3)', '(cryostore_vol)', cryostore_vol)
+      call ovarre(outfile,'auxcool_l (m)', '(auxcool_l)', auxcool_l)
+      call ovarre(outfile,'auxcool_w (m)', '(auxcool_w)', auxcool_w)
+      call ovarre(outfile,'auxcool_h (m)', '(auxcool_h)', auxcool_h)
+      call ovarre(outfile,'Footprint of Auxiliary Cooling buildings (m2)', '(auxcool_area)', auxcool_area)
+      call ovarre(outfile,'Volume of Auxiliary Cooling buildings (m3)', '(auxcool_vol)', auxcool_vol)
+      call ovarre(outfile,'Footprint of Cryogenic & cooling buildings (m2)', '(cryocool_area)', cryocool_area)
+      call ovarre(outfile,'Volume of Cryogenic & cooling building (m3)', '(cryocool_vol)', cryocool_vol)
+
+      call ovarre(outfile,'elecdist_l (m)', '(elecdist_l)', elecdist_l)
+      call ovarre(outfile,'elecdist_w (m)', '(elecdist_w)', elecdist_w)
+      call ovarre(outfile,'elecdist_h (m)', '(elecdist_h)', elecdist_h)
+      call ovarre(outfile,'Footprint of transformers (m2)', '(elecdist_area)', elecdist_area)
+      call ovarre(outfile,'Volume of transformers (m3)', '(elecdist_vol)', elecdist_vol)
+      call ovarre(outfile,'elecload_l (m)', '(elecload_l)', elecload_l)
+      call ovarre(outfile,'elecload_w (m)', '(elecload_w)', elecload_w)
+      call ovarre(outfile,'elecload_h (m)', '(elecload_h)', elecload_h)
+      call ovarre(outfile,'Footprint of electrical load centres (m2)', '(elecload_area)', elecload_area)
+      call ovarre(outfile,'Volume of electrical load centres (m3)', '(elecload_vol)', elecload_vol)     
+      call ovarre(outfile,'elecstore_l (m)', '(elecstore_l)', elecstore_l)
+      call ovarre(outfile,'elecstore_w (m)', '(elecstore_w)', elecstore_w)
+      call ovarre(outfile,'elecstore_h (m)', '(elecstore_h)', elecstore_h)
+      call ovarre(outfile,'Footprint of Energy Storage Systems (m2)', (elecstore_area), elecstore_area)
+      call ovarre(outfile,'Volume of Energy Storage Systems (m3)', (elecstore_vol), elecstore_vol)
+      call ovarre(outfile,'Footprint of electrical buildings (m2)', '(elec_buildings_area)', elec_buildings_area)
+      call ovarre(outfile,'Volume of electrical buildings (m3)', '(elec_buildings_vol)', elec_buildings_vol)
 
       call ovarre(outfile,'turbine_hall_l (m)', '(turbine_hall_l)', turbine_hall_l)
       call ovarre(outfile,'turbine_hall_w (m)', '(turbine_hall_w)', turbine_hall_w)

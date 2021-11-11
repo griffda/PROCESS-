@@ -21,7 +21,10 @@ module buildings_variables
   
     real(8) :: admvol
     !! volume of administration buildings (m3)
-  
+
+    real(8) :: auxcool_l, auxcool_w, auxcool_h
+    !! Site-Wide Auxiliary Cooling Water facility length, width, height (m)
+    
     real(8) :: clh1
     !! vertical clearance from TF coil to cryostat (m) (calculated for tokamaks)
   
@@ -45,10 +48,25 @@ module buildings_variables
 
     real(8) :: cryostat_clrnc
     !! vertical clearance from TF coil to cryostat (m)
-   
+  
+    real(8) :: cryomag_l, cryomag_w, cryomag_h
+    !! Cryogenic Buildings for Magnet and Fuel Cycle length, width, height (m)
+
+    real(8) :: cryostore_l, cryostore_w, cryostore_h
+    !! Magnet Cryo Storage Tanks length, width, height (m)  
+
     real(8) :: efloor
     !! effective total floor space (m2)
   
+    real(8) :: elecdist_l, elecdist_w, elecdist_h
+    !! Transformers and electrical distribution facilities length, width, height (m)
+
+    real(8) :: elecload_l, elecload_w, elecload_h
+    !! Electric (eesential and non-essential) load centres length, width, height (m)
+
+    real(8) :: elecstore_l, elecstore_w, elecstore_h
+    !! Energy Storage facilities length, width, height (m)
+
     real(8) :: elevol
     !! volume of electrical equipment building (m3)
   
@@ -266,7 +284,10 @@ module buildings_variables
       implicit none
 
       admv = 1.0D5
-      admvol = 0.0D0
+      admvol = 0.0D0     
+      auxcool_l = 20.0D0
+      auxcool_w = 10.0D0
+      auxcool_h = 5.0D0
       clh1 = 2.5D0
       clh2 = 15.0D0
       conv = 6.0D4
@@ -275,9 +296,24 @@ module buildings_variables
       control_buildings_w = 60.0D0
       control_buildings_h = 6.0D0
       crane_arm_h = 10.0D0
+      cryomag_l = 120.0D0
+      cryomag_w = 90.0D0
+      cryomag_h = 5.0D0
+      cryostore_l = 160.0D0
+      cryostore_w = 25.0D0
+      cryostore_h = 20.0D0
       cryostat_clrnc = 2.5D0
       cryvol = 0.0D0
       efloor = 0.0D0
+      elecdist_l = 400.0D0
+      elecdist_w = 350.0D0
+      elecdist_h = 5.0D0
+      elecload_l = 100.0D0
+      elecload_w = 90.0D0
+      elecload_h = 3.0D0
+      elecstore_l = 100.0D0
+      elecstore_w = 60.0D0
+      elecstore_h = 12.0D0
       elevol = 0.0D0
       esbldgm3 = 1.0D3
       fndt = 2.0D0
