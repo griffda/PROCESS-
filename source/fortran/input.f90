@@ -2133,7 +2133,7 @@ contains
        !       call parse_real_variable('tmax_jacket', tmax_jacket, 4.0D0, 1.0D3, &
        !            'Jacket: maximum temp during a quench (K)')
        case ('tmpcry')
-          call parse_real_variable('tmpcry', tmpcry, 0.01D0, 10.0D0, &
+          call parse_real_variable('tmpcry', tmpcry, 0.01D0, 100.0D0, &
                'Cryogenic temperature (K)')
        case ('vcool')
           call parse_real_variable('vcool', vcool, 0.001D0, 100.0D0, &
