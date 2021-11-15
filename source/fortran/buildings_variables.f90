@@ -22,6 +22,9 @@ module buildings_variables
     real(8) :: admvol
     !! volume of administration buildings (m3)
 
+    real(8) :: aux_build_l, aux_build_w, aux_build_h
+    !! aux building supporting tokamak processes length, width, height (m)
+
     real(8) :: auxcool_l, auxcool_w, auxcool_h
     !! Site-Wide Auxiliary Cooling Water facility length, width, height (m)
     
@@ -31,6 +34,9 @@ module buildings_variables
     real(8) :: clh2
     !! clearance beneath TF coil to foundation (including basement) (m)
   
+    real(8) :: chemlab_l, chemlab_w, chemlab_h
+    !! Chemistry labs and treatment buldings length, width, height (m)
+
     real(8) :: conv
     !! control building volume (m3)
   
@@ -81,6 +87,9 @@ module buildings_variables
 
     real(8) :: ground_clrnc
     !! clearance beneath TF coil (m)
+
+    real(8) :: heat_sink_l, heat_sink_w, heat_sink_h
+    !! heat sinks length, width, height (m)
 
     real(8) :: hw_storage_l, hw_storage_w, hw_storage_h
     !! hazardous waste storage building length, width, height (m)
@@ -285,11 +294,17 @@ module buildings_variables
 
       admv = 1.0D5
       admvol = 0.0D0     
+      aux_build_l = 50.0D0
+      aux_build_w = 30.0D0
+      aux_build_h = 5.0D0
       auxcool_l = 20.0D0
       auxcool_w = 10.0D0
       auxcool_h = 5.0D0
       clh1 = 2.5D0
       clh2 = 15.0D0
+      chemlab_l = 40.0D0
+      chemlab_w = 25.0D0
+      chemlab_h = 6.0D0
       conv = 6.0D4
       convol = 0.0D0
       control_buildings_l = 80.0D0
@@ -327,6 +342,9 @@ module buildings_variables
       hw_storage_w = 10.0D0
       hw_storage_h = 5.0D0
       ground_clrnc = 5.0D0
+      heat_sink_l = 160.0D0
+      heat_sink_w = 80.0D0
+      heat_sink_h = 12.0D0
       hccl = 5.0D0
       hcwt = 1.5D0
       ilw_smelter_l = 50.0D0

@@ -133,7 +133,10 @@ contains
       cryostore_l, cryostore_w, cryostore_h, &
       elecdist_l, elecdist_w, elecdist_h, & 
       elecstore_l, elecstore_w, elecstore_h, & 
-      elecload_l, elecload_w, elecload_h
+      elecload_l, elecload_w, elecload_h, & 
+      chemlab_l, chemlab_w, chemlab_h, &
+      heat_sink_l, heat_sink_w, heat_sink_h, &
+      aux_build_l, aux_build_w, aux_build_h
     use current_drive_variables, only: iefrf
     ! use cost_variables, only: tlife rmc remove
     ! use constants, only: pi rmc remove
@@ -175,6 +178,15 @@ contains
     !! reactor basement footprint (m2), volume (m3)
     real(8) :: reactor_building_vol
     !! volume of reactor hall + basement (m3)
+
+    real(8) :: chemlab_area, chemlab_vol
+    !! chemistry labs footprint (m2), volume (m3)
+    real(8) :: heat_sink_area, heat_sink_vol
+    !! heat sink footprint (m2), volume (m3)
+    real(8) :: aux_build_area, aux_build_vol
+    !! auxiliary building supporting reactor systems footprint (m2), volume (m3)
+    real(8) :: reactor_aux_area, reactor_aux_vol
+    !! total aux buildings supporting reactor systems footprint (m2), volume (m3)
 
     real(8) :: hcd_building_area, hcd_building_vol
     !! HCD building footprint (m2), volume (m3)
@@ -315,14 +327,40 @@ contains
     reactor_building_vol = reactor_hall_vol_ext + reactor_basement_vol
 
 
+
+    ! ! Hot Buildings
+        ! decon, hot cell, warm shop
+    !derived from reactor size... 
+
  
     
-    ! reactor auxiliary
-    !**********************************************************
-
+    ! Reactor Auxiliary Buildings
+    ! Derived from W. Smith's estimates of necessary facilities and their sizes;
+    ! these values amalgamate multiple individual buildings.
+    !
+    ! Chemistry labs: includes RA, non-RA and environmental labs, 
+    ! and chemical treatment facilities for coolant circuits
+    chemlab_area = chemlab_l * chemlab_w
+    chemlab_vol = chemlab_area * chemlab_h
+    !
+    ! Heat sink facilities, includes aux heat sink at heat energy island,
+    ! low temp and emergency heat sink facilities, ultimate heat sink facility 
+    ! to sea/river/cooling towers, including pumping, chemical dosing and heat exchangers
+    heat_sink_area = heat_sink_l * heat_sink_w
+    heat_sink_vol = heat_sink_area * heat_sink_h
+    !
+    ! auxiliary buildings supporting tokamak processes & systems, includes non-RA
+    ! interfacing services such as, hydraulics, compressed air, chilled water...
+    aux_build_area = aux_build_l * aux_build_w
+    aux_build_vol = aux_build_area * aux_build_h
+    !
+    ! Total auxiliary buildings supporting reactor processes & systems
+    reactor_aux_area = chemlab_area + heat_sink_area + aux_build_area
+    reactor_aux_vol = chemlab_vol + heat_sink_vol + aux_build_vol    
+ 
 
     ! Power
-    
+    !
     ! Heating and Current Drive facility
     ! iefrf = switch for current drive efficiency model
     if ( (iefrf == 5) .or. (iefrf == 8) ) then
@@ -335,7 +373,7 @@ contains
       hcd_building_area = hcd_building_l * hcd_building_w
       hcd_building_vol = hcd_building_area * hcd_building_h
     end if
-    
+    !
     ! Magnet power facilities
     ! Providing specific electrical supplies for reactor magnets;
     ! based upon dimensions of comparable equipment at ITER site.
@@ -365,10 +403,7 @@ contains
 
     !**********************************************************
 
-    ! decon, hot cell, warm shop
-    !derived from reactor size... 
-    
-    ! ! Hot Buildings
+
 
     ! ! Hot Storage
     ! ! A simplification of R. Gowland's estimates of Operational Active Waste Storage,
@@ -571,6 +606,7 @@ contains
     ! Amalgamates estimates of floor area for all individual buildings, uses average height.
     staff_buildings_vol = staff_buildings_area * staff_buildings_h
     
+
     ! Output    
     if (iprint == 0) return
     call oheadr(outfile,'Plant Buildings System - RMC') ! rmc
@@ -586,6 +622,24 @@ contains
     call ovarre(outfile,'Volume of Reactor Hall + Basement (m3)', '(reactor_building_vol)', reactor_building_vol)
 
     if (i_v_bldgs == 1) then
+
+      call ovarre(outfile,'chemlab_l (m)', '(chemlab_l)', chemlab_l)
+      call ovarre(outfile,'chemlab_w (m)', '(chemlab_w)', chemlab_w)
+      call ovarre(outfile,'chemlab_h (m)', '(chemlab_h)', chemlab_h)
+      call ovarre(outfile,'Footprint of chemistry labs and facilities (m2)', '(chemlab_area)', chemlab_area)
+      call ovarre(outfile,'Volume of chemistry labs and facilities (m3)', '(chemlab_vol)', chemlab_vol)
+      call ovarre(outfile,'aux_build_l (m)', '(aux_build_l)', aux_build_l)
+      call ovarre(outfile,'aux_build_w (m)', '(aux_build_w)', aux_build_w)
+      call ovarre(outfile,'aux_build_h (m)', '(aux_build_h)', aux_build_h)
+      call ovarre(outfile,'Footprint of reactor-supporting buildings (m2)', '(aux_build_area)', aux_build_area)
+      call ovarre(outfile,'Volume of reactor-supporting buildings (m3)', '(aux_build_vol)', aux_build_vol)
+      call ovarre(outfile,'heat_sink_l (m)', '(heat_sink_l)', heat_sink_l)
+      call ovarre(outfile,'heat_sink_w (m)', '(heat_sink_w)', heat_sink_w)
+      call ovarre(outfile,'heat_sink_h (m)', '(heat_sink_h)', heat_sink_h)
+      call ovarre(outfile,'Footprint of Heat Sinks (m2)', '(heat_sink_area)', heat_sink_area)
+      call ovarre(outfile,'Volume of Heat Sinks (m2)', '(heat_sink_vol)', heat_sink_vol)
+      call ovarre(outfile,'Footprint of reactor auxiliary buildings (m2)', '(reactor_aux_area)', reactor_aux_area)
+      call ovarre(outfile,'Volume of reactor auxiliary buildings (m3)', '(reactor_aux_vol)', reactor_aux_vol)
 
       call ovarre(outfile,'hcd_building_area (m2)', '(hcd_building_area)', hcd_building_area)
       call ovarre(outfile,'hcd_building_vol (m3)', '(hcd_building_vol)', hcd_building_vol)
@@ -653,8 +707,8 @@ contains
       call ovarre(outfile,'elecstore_l (m)', '(elecstore_l)', elecstore_l)
       call ovarre(outfile,'elecstore_w (m)', '(elecstore_w)', elecstore_w)
       call ovarre(outfile,'elecstore_h (m)', '(elecstore_h)', elecstore_h)
-      call ovarre(outfile,'Footprint of Energy Storage Systems (m2)', (elecstore_area), elecstore_area)
-      call ovarre(outfile,'Volume of Energy Storage Systems (m3)', (elecstore_vol), elecstore_vol)
+      call ovarre(outfile,'Footprint of Energy Storage Systems (m2)', '(elecstore_area)', elecstore_area)
+      call ovarre(outfile,'Volume of Energy Storage Systems (m3)', '(elecstore_vol)', elecstore_vol)
       call ovarre(outfile,'Footprint of electrical buildings (m2)', '(elec_buildings_area)', elec_buildings_area)
       call ovarre(outfile,'Volume of electrical buildings (m3)', '(elec_buildings_vol)', elec_buildings_vol)
 
