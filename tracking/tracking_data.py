@@ -22,6 +22,13 @@ before being processed into a dataframe. This dataframe is then processed into a
 * Lines: each line represents many datapoints for a single variable, over a period of time, 
 that all come from the same run title
 * Datapoints: the value of a variable at a point in time during a given run
+
+
+To add a variable to track:
+
+Add the variable to ProcessTracker.tracking_variables (in this file).
+If the variable is not a fortran module variable, ensure to override its parent module name
+e.g. FOO.bar says `bar`'s parent module is `FOO`.
 """
 
 import datetime
@@ -43,8 +50,8 @@ from bokeh.embed import file_html
 from process.io import mfile as mf
 from process import fortran
 
-logging.basicConfig(level=logging.INFO, filename='tracker.log')
-logger = logging.getLogger('PROCESS Tracker')
+logging.basicConfig(level=logging.INFO, filename="tracker.log")
+logger = logging.getLogger("PROCESS Tracker")
 
 
 ### Tracking ###
@@ -192,6 +199,9 @@ class ProcessTracker:
         """
         Generates metadata for all metadata variables in ProcessTracker.meta_variables
         Generates tracking data for all variables in ProcessTracker.tracking_variables.
+
+        Extracts the various meta/variable data from the mfile into our internal
+        data store
         """
         # meta data
         for var in self.meta_variables:
@@ -270,7 +280,7 @@ class TrackedVariable:
 
     def as_dataframe(self):
         """
-        Converts our internal data representation of this graph as a dataframe.
+        Converts our internal data representation of this variable's history as a dataframe.
 
         title -> title
         timestamp -> date
@@ -285,6 +295,7 @@ class TrackedVariable:
 
 class TrackedData:
     """Holds the entire tracking history of a database"""
+
     def __init__(self, database) -> None:
         self.database = pathlib.Path(database)
 
@@ -294,7 +305,10 @@ class TrackedData:
         self._track()
 
     def _add_variables(self, json_file_data):
-        """Adds the `data` of an entire JSON tracking file to an internal store before being transformed into a dataframe, to then be plotted."""
+        """Adds the `data` of an entire JSON tracking 
+        file to an internal store before being 
+        transformed into a dataframe, to then be plotted.
+        """
 
         # extract the metadata from our file as all datapoints of this file will require them
         metadata = json_file_data["meta"]
@@ -307,13 +321,17 @@ class TrackedData:
         data_time_str = f"{date_str.strip()} - {time_str.strip()}"
         date_time = datetime.datetime.strptime(data_time_str, "%d/%m/%Y - %H:%M")
 
-        tracking_data = json_file_data.get("tracking", []) # the JSON data of one run of PROCESS in python datastructures
+        tracking_data = json_file_data.get(
+            "tracking", []
+        )  # the JSON data of one run of PROCESS in python datastructures
         for variable, value in tracking_data.items():
             # create a new TrackedVariable when we see a variable we do not know
             if not variable in self.tracked_variables.keys():
                 self.tracked_variables[variable] = TrackedVariable(variable)
 
-            self.tracked_variables.get(variable).add_datapoint(title, value, message, date_time)
+            self.tracked_variables.get(variable).add_datapoint(
+                title, value, message, date_time
+            )
 
     def _track(self):
         """Loads the entire history, for all runs that are stored in the database."""
@@ -349,10 +367,14 @@ def plot_tracking_data(database):
             continue
 
     for variable, history in loaded_tracking_database_data.tracked_variables.items():
-        df = history.as_dataframe()  # all the data for one tracked variable as a dataframe
+        df = (
+            history.as_dataframe()
+        )  # all the data for one tracked variable as a dataframe
 
         # overrides trumps fortran scrapping
-        parent = overrides.get(variable) or PythonFortranInterfaceVariables.parent_module(
+        parent = overrides.get(
+            variable
+        ) or PythonFortranInterfaceVariables.parent_module(
             variable
         )  # module name (or given name if overridden)
 
@@ -369,12 +391,16 @@ def plot_tracking_data(database):
             df["title"].to_numpy()
         )  # all scenarios this variable is tracked in
 
-        figur = figure(title=variable, x_axis_type="datetime", plot_width=600, plot_height=600)
+        figur = figure(
+            title=variable, x_axis_type="datetime", plot_width=600, plot_height=600
+        )
 
-        colours = itertools.cycle(Bokeh[8]) # hardcode at 8
+        colours = itertools.cycle(Bokeh[8])  # hardcode at 8
         # each title (different scenario) has a different line colour
         for t in titles:
-            run_title_dataframe = df[df["title"] == t] # the variable history for each (applicable) run title
+            run_title_dataframe = df[
+                df["title"] == t
+            ]  # the variable history for each (applicable) run title
             subsource = ColumnDataSource(
                 run_title_dataframe
             )  # convert dataframe into Bokeh compatible
@@ -417,10 +443,10 @@ def plot_tracking_data(database):
 
     # each module/overriden name e.g. CostsStep has a panel which holds graphs for all variables under that scope
     for parent_module_name, figs in figures.items():
-        if len(figs)%2 != 0:
+        if len(figs) % 2 != 0:
             gplot = gridplot([figs[i : i + 2] for i in range(0, len(figs), 2)])
         else:
-            gplot = gridplot([figs[i : i + 2] for i in range(0, len(figs)-1, 2)])
+            gplot = gridplot([figs[i : i + 2] for i in range(0, len(figs) - 1, 2)])
 
         panels.append(Panel(child=gplot, title=parent_module_name))
 
@@ -451,11 +477,11 @@ class PythonFortranInterfaceVariables:
         Scrape all the data into an internal data storage
         """
         classes = {}
-        
+
         for name, module in inspect.getmembers(fortran):
             # there is technically a `fortran` type
             # that is not clear where it is held
-            # this allow checking that module is a 
+            # this allow checking that module is a
             # fortran module and is the next best
             # thing to check this is a module.
             # main_module is just the chosen arbitrary module

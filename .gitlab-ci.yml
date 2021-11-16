@@ -287,10 +287,10 @@ starfire-py38:
   <<: *test-setup-py38
   script:
     - process -i tests/regression/scenarios/starfire/IN.DAT
-    - mv tests/regression/scenarios/starfire/MFILE.DAT tests/regression/scenarios/starfire/starfire_MFILE.DAT 
+    - mv tests/regression/scenarios/starfire/MFILE.DAT tracking/starfire_MFILE.DAT 
   artifacts:
     paths:
-      - tests/regression/scenarios/starfire/starfire_MFILE.DAT
+      - tracking/starfire_MFILE.DAT 
     expire_in: 1 week
   tags:
     - ubuntu
@@ -330,7 +330,7 @@ tracking_rtv:
     # write new tracking json files for each of our baseline tracking jobs
     - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/baseline_2018/baseline_2018_MFILE.DAT
     - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track {CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/baseline_2019/baseline_2019_MFILE.DAT
-    - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tests/regression/scenarios/starfire/starfire_MFILE.DAT
+    - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/starfire_MFILE.DAT 
     # create the new tracking dashboard
     - python ${CI_PROJECT_DIR}/tracking/tracking_data.py plot ${CI_PROJECT_DIR}/process_rtv_data/ --out ${CI_PROJECT_DIR}/tracking.html
     # commit the new .json data files to the database repo and pushes them
