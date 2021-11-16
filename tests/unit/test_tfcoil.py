@@ -1,20 +1,25 @@
 """Unit and Integration tests for tfcoil.f90."""
 
 import pytest
-import numpy as np
 import collections
 
 from process.tfcoil import TFcoil
 
-from process.fortran import tfcoil_module as tf
 from process.fortran import tfcoil_variables as tfv
 from process.fortran import build_variables as bv
 from process.fortran import fwbs_variables as fwbsv
-from process import fortran as ft
 
 
 @pytest.fixture
 def tfcoil(monkeypatch):
+    """Provides TFcoil object for testing.
+    
+    :param monkeypatch: pytest mocking fixture
+    :type monkeypatch: MonkeyPatch
+
+    :return tfcoil: initialised TFcoil object
+    :type tfcoil: process.tfcoil.TFcoil
+    """
     return TFcoil()
 
 
@@ -22,7 +27,7 @@ def tfcoil(monkeypatch):
     "temperature, expected_density",
     [(24.6, 130.02434313053487), (30.2, 113.09539723009078), (43.6, 85.26924709595201)],
 )
-def test_he_density(temperature, expected_density):
+def test_he_density(temperature, expected_density, tfcoil):
     """Tests `he_density` subroutine.
 
     :param temperature: test asset passed to the routine representing the temperature, in Kelvin.
@@ -30,8 +35,11 @@ def test_he_density(temperature, expected_density):
 
     :param expected_density: expected result of the routine.
     :type expected_density: float
+
+    :param tfcoil: fixture containing an initialised `TFcoil` object
+    :type tfcoil: tests.unit.test_tfcoil.tfcoil (functional fixture)
     """
-    density = tf.he_density(temperature)
+    density = tfcoil.he_density(temperature)
 
     assert pytest.approx(density) == expected_density
 
@@ -40,7 +48,7 @@ def test_he_density(temperature, expected_density):
     "temperature, expected_cp",
     [(24.6, 5674.909063980127), (30.2, 5798.42049712345), (43.6, 5673.218322000001)],
 )
-def test_he_cp(temperature, expected_cp):
+def test_he_cp(temperature, expected_cp, tfcoil):
     """Tests `he_cp` subroutine.
 
     :param temperature: test asset passed to the routine representing the temperature, in Kelvin.
@@ -48,9 +56,12 @@ def test_he_cp(temperature, expected_cp):
 
     :param expected_cp: expected result of the routine.
     :type expected_cp: float
+
+    :param tfcoil: fixture containing an initialised `TFcoil` object
+    :type tfcoil: tests.unit.test_tfcoil.tfcoil (functional fixture)
     """
 
-    cp = tf.he_cp(temperature)
+    cp = tfcoil.he_cp(temperature)
 
     assert pytest.approx(cp) == expected_cp
 
@@ -63,7 +74,7 @@ def test_he_cp(temperature, expected_cp):
         (43.6, 7.717393982e-06),
     ],
 )
-def test_he_visco(temperature, expected_visco):
+def test_he_visco(temperature, expected_visco, tfcoil):
     """Tests `he_visco` subroutine.
 
     :param temperature: test asset passed to the routine representing the temperature, in Kelvin.
@@ -71,8 +82,11 @@ def test_he_visco(temperature, expected_visco):
 
     :param expected_visco: expected result of the routine.
     :type expected_visco: float
+
+    :param tfcoil: fixture containing an initialised `TFcoil` object
+    :type tfcoil: tests.unit.test_tfcoil.tfcoil (functional fixture)
     """
-    visco = tf.he_visco(temperature)
+    visco = tfcoil.he_visco(temperature)
 
     assert pytest.approx(visco) == expected_visco
 
@@ -88,7 +102,7 @@ def test_he_visco(temperature, expected_visco):
         (54.4, 0.065706872),
     ],
 )
-def test_he_th_cond(temperature, expected_th_cond, initialise_error_module):
+def test_he_th_cond(temperature, expected_th_cond, initialise_error_module, tfcoil):
     """Tests `he_th_cond` subroutine.
 
     :param temperature: test asset passed to the routine representing the temperature, in Kelvin.
@@ -99,8 +113,11 @@ def test_he_th_cond(temperature, expected_th_cond, initialise_error_module):
 
     :param initialise_error_module: does some default setup for the error handling
     :type initialise_error_module: tests.integration.conftest.initialise_error_module
+
+    :param tfcoil: fixture containing an initialised `TFcoil` object
+    :type tfcoil: tests.unit.test_tfcoil.tfcoil (functional fixture)
     """
-    th_cond = tf.he_th_cond(temperature)
+    th_cond = tfcoil.he_th_cond(temperature)
 
     assert pytest.approx(th_cond) == expected_th_cond
 
@@ -114,7 +131,7 @@ def test_he_th_cond(temperature, expected_th_cond, initialise_error_module):
         (151, 250.4911087866094),
     ],
 )
-def test_al_th_cond(temperature, expected_th_cond):
+def test_al_th_cond(temperature, expected_th_cond, tfcoil):
     """Tests `he_th_cond` subroutine.
 
     :param temperature: test asset passed to the routine representing the temperature, in Kelvin.
@@ -122,8 +139,11 @@ def test_al_th_cond(temperature, expected_th_cond):
 
     :param al_th_cond: expected result of the routine.
     :type al_th_cond: float
+
+    :param tfcoil: fixture containing an initialised `TFcoil` object
+    :type tfcoil: tests.unit.test_tfcoil.tfcoil (functional fixture)
     """
-    th_cond = tf.al_th_cond(temperature)
+    th_cond = tfcoil.al_th_cond(temperature)
 
     assert pytest.approx(th_cond) == expected_th_cond
 
@@ -187,6 +207,9 @@ def test_cntrpst(cntrpst_asset, monkeypatch, initialise_error_module, tfcoil):
 
     :param initialise_error_module: Fixture to setup error handling module
     :type initialise_error_module: tests.integration.conftest.initialise_error_module
+
+    :param tfcoil: fixture containing an initialised `TFcoil` object
+    :type tfcoil: tests.unit.test_tfcoil.tfcoil (functional fixture)
     """
     monkeypatch.setattr(tfv, "a_cp_cool", 1)
     monkeypatch.setattr(tfv, "n_tf", 16)

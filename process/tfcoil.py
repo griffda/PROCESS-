@@ -452,8 +452,7 @@ class TFcoil:
         # Order 4 polynomial exponential fit in [4-25] K
         if temp < 22.5e0:
             visco = np.exp(
-                -9.19688182e0 - 4.83007225e-1 * temp + 3.47720002e-2 * temp ** 2
-                & -1.17501538e-3 * temp ** 3 + 1.54218249e-5 * temp ** 4
+                -9.19688182e0 - 4.83007225e-1 * temp + 3.47720002e-2 * temp ** 2 -1.17501538e-3 * temp ** 3 + 1.54218249e-5 * temp ** 4
             )
 
         # Linear interpolation between the fits to avoid discontinuity
