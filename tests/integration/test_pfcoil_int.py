@@ -1,7 +1,15 @@
-"""Integration tests for the PFCoil module."""
+"""Integration tests for the PFCoil module.
+
+Vaguely realistic mocked values are taken from baseline2019 output, init values
+in the pfcoil_variables module, or where necessary, guesses.
+
+Many of these subroutines are long and perform multiple gets/sets on many "use" 
+dependencies. As a result, many mocks are required to isolate the tests. There
+are also many variables that could be asserted, so a few key variables central
+to the testing of the subroutine have been chosen.
+"""
 import numpy as np
 import pytest
-from process.pfcoil import PFCoil
 from process.fortran import pfcoil_module as pf
 from process.fortran import build_variables as bv
 from process.fortran import pfcoil_variables as pfv
@@ -13,28 +21,12 @@ from process.fortran import times_variables as tv
 from process.fortran import constants
 
 
-@pytest.fixture
-def pfcoil():
-    """Fixture to create a PFCoil object.
-
-    :return: an instance of PFCoil
-    :rtype: process.pfcoil.PFCoil
-    """
-    pfcoil = PFCoil()
-
-    return pfcoil
-
-
-def test_pfcoil(monkeypatch, pfcoil):
+def test_pfcoil(monkeypatch):
     """Test pfcoil subroutine.
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param pfcoil: PFCoil object
-    :type pfcoil: process.pfcoil.PFCoil
     """
-    # Mocked values are taken from baseline2019 output, init values in the
-    # pfcoil_variables module, or where necessary, guesses
     monkeypatch.setattr(bv, "iohcl", 1)
     monkeypatch.setattr(bv, "hpfdif", 0.0)
     monkeypatch.setattr(bv, "hpfu", 4.0)  # guess
@@ -136,8 +128,6 @@ def test_pfcoil(monkeypatch, pfcoil):
 
     pf.pfcoil()
 
-    # There are many variables that could be asserted here, so a few important
-    # variables have been chosen
     assert pytest.approx(pv.bvert) == -0.65121393
     assert pytest.approx(pfv.zpf) == np.array(
         [
@@ -165,3 +155,72 @@ def test_pfcoil(monkeypatch, pfcoil):
             0.0,
         ]
     )
+
+
+def test_ohcalc(monkeypatch):
+    """Test ohcalc subroutine.
+
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
+    """
+    monkeypatch.setattr(bv, "hmax", 8.864)
+    monkeypatch.setattr(bv, "ohcth", 6.510e-1)
+    monkeypatch.setattr(fwbsv, "denstl", 7.8e3)
+    monkeypatch.setattr(eh, "idiags", np.full(8, 0))
+    monkeypatch.setattr(pfv, "nohc", 5)
+    monkeypatch.setattr(pfv, "bmaxoh", 1.4e1)
+    monkeypatch.setattr(pfv, "i_cs_stress", 0)
+    monkeypatch.setattr(pfv, "coheof", 1.693e7)
+    monkeypatch.setattr(pfv, "rohc", 0.0)
+    monkeypatch.setattr(pfv, "vfohc", 3.0e-1)
+    monkeypatch.setattr(pfv, "jstrandoh_bop", 1.069e8)
+    monkeypatch.setattr(pfv, "fcuohsu", 7.000e-1)
+    monkeypatch.setattr(pfv, "isumatoh", 5)
+    monkeypatch.setattr(pfv, "ohhghf", 0.9)
+    monkeypatch.setattr(pfv, "areaoh", 1.039e1)
+    monkeypatch.setattr(pfv, "powpfres", 0.0)
+    monkeypatch.setattr(pfv, "jstrandoh_eof", 1.427e8)
+    monkeypatch.setattr(pfv, "powohres", 0.0)
+    monkeypatch.setattr(pfv, "rjohc0", 3.048e7)
+    monkeypatch.setattr(pfv, "s_tresca_oh", 5.718e8)
+    monkeypatch.setattr(pfv, "awpoh", 4.232)
+    monkeypatch.setattr(pfv, "oh_steel_frac", 5.926e-1)
+    monkeypatch.setattr(pfv, "bmaxoh0", 1.4e1)
+    monkeypatch.setattr(pfv, "rjohc", 4.070e7)
+    monkeypatch.setattr(pfv, "tmargoh", 1.5)
+    monkeypatch.setattr(pfv, "ipfres", 0)
+    monkeypatch.setattr(pfv, "rjpfalw", np.full(22, 0.0))
+    monkeypatch.setattr(pfv, "pfclres", 2.8e-8)
+    monkeypatch.setattr(pfv, "vf", np.full(22, 0.3))
+    monkeypatch.setattr(pfv, "ric", np.full(22, 0.0))
+    monkeypatch.setattr(pfv, "bpf", np.full(22, 0.0))
+    monkeypatch.setattr(pfv, "jscoh_eof", 4.758e8)
+    monkeypatch.setattr(pfv, "zpf", np.full(22, 0.0))
+    monkeypatch.setattr(pfv, "rb", np.full(22, 0.0))
+    monkeypatch.setattr(pfv, "ra", np.full(22, 0.0))
+    monkeypatch.setattr(pfv, "jscoh_bop", 3.562e8)
+    monkeypatch.setattr(pfv, "cptdin", np.full(22, 4.22e4))
+    monkeypatch.setattr(pfv, "pfcaseth", np.full(22, 0.0))
+    monkeypatch.setattr(pfv, "rpf", np.full(22, 0.0))
+    monkeypatch.setattr(pfv, "cohbop", 1.693e7)
+    monkeypatch.setattr(pfv, "zh", np.full(22, 0.0))
+    monkeypatch.setattr(pfv, "wtc", np.full(22, 0.0))
+    monkeypatch.setattr(pfv, "zl", np.full(22, 0.0))
+    monkeypatch.setattr(pfv, "turns", np.full(22, 0.0))
+    monkeypatch.setattr(pfv, "wts", np.full(22, 0.0))
+    monkeypatch.setattr(pfv, "a_oh_turn", 0.0)
+    monkeypatch.setattr(tfv, "dcond", np.full(9, 9.0e3))
+    monkeypatch.setattr(tfv, "tftmp", 4.750)
+    monkeypatch.setattr(tfv, "tcritsc", 1.6e1)
+    monkeypatch.setattr(tfv, "strncon_cs", -5.000e-3)
+    monkeypatch.setattr(tfv, "fhts", 0.5)
+    monkeypatch.setattr(tfv, "bcritsc", 2.4e1)
+    monkeypatch.setattr(tfv, "b_crit_upper_nbti", 1.486e1)
+    monkeypatch.setattr(tfv, "t_crit_nbti", 9.04)
+    monkeypatch.setattr(constants, "dcopper", 8.9e3)
+    monkeypatch.setattr(pfv, "curpfs", np.full(22, -175.84911993600002))
+
+    pf.ohcalc()
+
+    assert pytest.approx(pfv.bpf[4]) == 9.286960e2
+    assert pytest.approx(pfv.rjohc) == -7.717510e9
