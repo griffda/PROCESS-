@@ -10085,7 +10085,7 @@
         "nfixmx": "maximum number of fixed current PF coils",
         "nflutf": "peak fast neutron fluence on TF coil superconductor (n/m2) (`iblanket=2` (KIT HCPB))",
         "nflutfi": "Fast neutron fluence on IB TF coil [n/cm2]",
-        "nflutfmax": "max fast neutron fluence on TF coil (n/m2) (`blktmodel>0`) (`constraint equation 53`)\n Also used for demontable magnets (itart = 1) and superconducting coils (i_tf_sup = 1)\n To set the CP lifetime",
+        "nflutfmax": "max fast neutron fluence on TF coil (n/m2) (`blktmodel>0`) (`constraint equation 53`)\n Also used for demontable magnets (itart = 1) and superconducting coils (i_tf_sup = 1)\n To set the CP lifetime (`constraint equation 85`)",
         "nflutfo": "Fast neutron fluence on OB TF coil [n/cm2]",
         "nfxf": "",
         "nfxfh": "number of filaments the top and bottom of the central solenoid should be broken \n into during scaling (5 - 10 is good)",
