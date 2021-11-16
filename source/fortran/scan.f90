@@ -11,7 +11,9 @@ module scan_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
 
   public
@@ -100,10 +102,10 @@ module scan_module
   integer :: nsweep_2
   !! nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
 
-  real(8), dimension(ipnscns) :: sweep
+  real(dp), dimension(ipnscns) :: sweep
   !! sweep(ipnscns) /../: actual values to use in scan
 
-  real(8), dimension(ipnscns) :: sweep_2
+  real(dp), dimension(ipnscns) :: sweep_2
   !! sweep_2(ipnscns) /../: actual values to use in 2D scan
 
   ! Vars in subroutines scan_1d and scan_2d requiring re-initialising before 
@@ -189,7 +191,7 @@ contains
     integer, intent(in) :: ifail
     ! outvar
     integer, intent(in) :: noutvars_, ipnscns_
-    real(8), dimension(noutvars_,ipnscns_), intent(out) :: outvar
+    real(dp), dimension(noutvars_,ipnscns_), intent(out) :: outvar
 
     ! Turn off error reporting (until next output)
     errors_on = .false.
@@ -292,7 +294,7 @@ contains
     implicit none
 
     integer, intent(inout) :: iscan
-    real(8), dimension(:,:), intent(in) :: outvar
+    real(dp), dimension(:,:), intent(in) :: outvar
     
     character(len=48) :: tlabel
     integer :: ivar
@@ -479,8 +481,8 @@ contains
     integer, intent(in) :: iscan
     integer, intent(in) :: noutvars_, ipnscns_
     ! Required for shape of intent(out) arrays
-    real(8), dimension(noutvars_,ipnscns_), intent(out) :: outvar
-    real(8), dimension(ipnscns_), intent(out) :: sweep_1_vals, sweep_2_vals
+    real(dp), dimension(noutvars_,ipnscns_), intent(out) :: outvar
+    real(dp), dimension(ipnscns_), intent(out) :: sweep_1_vals, sweep_2_vals
 
     call scan_1d_store_output(iscan, ifail, noutvars_, ipnscns_, outvar)
 
@@ -494,8 +496,8 @@ contains
     implicit none
 
     integer, intent(inout) :: iscan
-    real(8), dimension(:,:), intent(in) :: outvar
-    real(8), dimension(:), intent(in) :: sweep_1_vals, sweep_2_vals
+    real(dp), dimension(:,:), intent(in) :: outvar
+    real(dp), dimension(:), intent(in) :: sweep_1_vals, sweep_2_vals
 
     integer :: ivar
     character(len=48) :: tlabel
@@ -627,7 +629,7 @@ contains
 
     ! Arguments
     integer, intent(in) :: nwp, iscn
-    real(8), intent(in), dimension(:) :: swp
+    real(dp), intent(in), dimension(:) :: swp
     character(len=25), intent(out) :: vlab, xlab
 
     select case (nwp)
@@ -855,8 +857,8 @@ contains
 
   !  Local variables
   integer :: ii,inn,iflag
-  real(8) :: summ,xcval,xmaxx,xminn,f,xnorm
-  real(8), dimension(ipeqns) :: con1, con2, err
+  real(dp) :: summ,xcval,xmaxx,xminn,f,xnorm
+  real(dp), dimension(ipeqns) :: con1, con2, err
   character(len=1), dimension(ipeqns) :: sym
   character(len=10), dimension(ipeqns) :: lab
   character(len=30) :: strfom

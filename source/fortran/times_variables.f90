@@ -7,37 +7,39 @@ module times_variables
   !!
   !! - AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   implicit none
 
   public
 
-  real(8) :: pulsetimings
+  real(dp) :: pulsetimings
   !! Switch for pulse timings (if lpulse=1):
   !!
   !! - =0, tohs = Ip(MA)/0.1 tramp, tqnch = input
   !! - =1, tohs = iteration var or input. tramp/tqnch max of input or tohs
 
-  real(8) :: tburn
+  real(dp) :: tburn
   !! burn time (s) (calculated if `lpulse=1`)
 
-  real(8) :: tburn0
+  real(dp) :: tburn0
   !! burn time (s) - used for internal consistency
 
-  real(8) :: tcycle
+  real(dp) :: tcycle
   !! full cycle time (s)
 
-  real(8) :: tdown
+  real(dp) :: tdown
   !! down time (s)
 
-  real(8) :: tdwell
+  real(dp) :: tdwell
   !! time between pulses in a pulsed reactor (s) (`iteration variable 17`)
 
-  real(8) :: theat
+  real(dp) :: theat
   !! heating time, after current ramp up (s)
 
-  real(8), dimension(6) :: tim
+  real(dp), dimension(6) :: tim
   !! array of time points during plasma pulse (s)
 
   character(len=11), dimension(6) :: timelabel
@@ -46,23 +48,23 @@ module times_variables
   character(len=11), dimension(5) :: intervallabel
   !! time intervals - as strings (s)
 
-  real(8) :: tohs
+  real(dp) :: tohs
   !! plasma current ramp-up time for current initiation (s) (calculated if `lpulse=0`)
   !! (`iteration variable 65`)
 
-  real(8) :: tohsin
+  real(dp) :: tohsin
   !! Switch for plasma current ramp-up time (if lpulse=0):
   !!
   !! - = 0, tohs = tramp = tqnch = Ip(MA)/0.5
   !! - <>0, tohs = tohsin; tramp, tqnch are input
 
-  real(8) :: tpulse
+  real(dp) :: tpulse
   !! pulse length = tohs + theat + tburn + tqnch
 
-  real(8) :: tqnch
+  real(dp) :: tqnch
   !! shut down time for PF coils (s); if pulsed, = tohs
 
-  real(8) :: tramp
+  real(dp) :: tramp
   !! initial PF coil charge time (s); if pulsed, = tohs
 
   contains
