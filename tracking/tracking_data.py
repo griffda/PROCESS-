@@ -305,8 +305,8 @@ class TrackedData:
         self._track()
 
     def _add_variables(self, json_file_data):
-        """Adds the `data` of an entire JSON tracking 
-        file to an internal store before being 
+        """Adds the `data` of an entire JSON tracking
+        file to an internal store before being
         transformed into a dataframe, to then be plotted.
         """
 
