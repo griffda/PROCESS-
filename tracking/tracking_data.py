@@ -501,8 +501,8 @@ def track_entrypoint(arguments):
 
     Generates a tracking JSOn file for the provided MFile.
     """
-    if not arguments.db or not arguments.mfile:
-        raise ValueError("track requires --db and --mfile be set")
+    if not arguments.mfile:
+        raise ValueError("track requires --mfile be set")
 
     ProcessTracker(mfile=arguments.mfile, database=arguments.db)
 
@@ -513,8 +513,8 @@ def plot_entrypoint(arguments):
 
     Plots all tracking data into a single tracking.html file
     """
-    if not arguments.db or not arguments.out:
-        raise ValueError("plot requires --db and --out be set")
+    if not arguments.out:
+        raise ValueError("plot requires --out be set")
 
     write_tracking_html_file(database=arguments.db, output=arguments.out)
 
@@ -524,7 +524,7 @@ if __name__ == "__main__":
 
     parser.add_argument("mode", type=str, choices=["track", "plot"])
 
-    parser.add_argument("-d", "--db", type=str, default=None)
+    parser.add_argument("db", type=str)
     parser.add_argument("-o", "--out", type=str, default=None)
     parser.add_argument("-m", "--mfile", type=str, default=None)
 
