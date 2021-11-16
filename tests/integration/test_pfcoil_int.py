@@ -163,6 +163,7 @@ def test_ohcalc(monkeypatch):
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     """
+    # Mocks for ohcalc()
     monkeypatch.setattr(bv, "hmax", 8.864)
     monkeypatch.setattr(bv, "ohcth", 6.510e-1)
     monkeypatch.setattr(fwbsv, "denstl", 7.8e3)
@@ -218,9 +219,29 @@ def test_ohcalc(monkeypatch):
     monkeypatch.setattr(tfv, "b_crit_upper_nbti", 1.486e1)
     monkeypatch.setattr(tfv, "t_crit_nbti", 9.04)
     monkeypatch.setattr(constants, "dcopper", 8.9e3)
+    
+    # Mocks for peakb()
+    monkeypatch.setattr(bv, "iohcl", 1)
+    monkeypatch.setattr(pfv, "waves", np.full([22, 6], 0.0))
+    monkeypatch.setattr(pfv, "ngrp", 4)
+    monkeypatch.setattr(pfv, "ncls", np.array([1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0]))
+    monkeypatch.setattr(pfv, "curpfb", np.full(22, 0.0))
+    monkeypatch.setattr(pfv, "curpff", np.full(22, 0.0))
     monkeypatch.setattr(pfv, "curpfs", np.full(22, -175.84911993600002))
+    monkeypatch.setattr(pv, "rmajor", 8.938)
+    monkeypatch.setattr(pv, "plascur", 1.8254e7)
+
+    # Mocks for hoop_stress()
+    monkeypatch.setattr(tfv, "poisson_steel", 3.0e-1)
+
+    # Mocks for superconpf()
+    monkeypatch.setattr(eh, "fdiags", np.full(8, -9.99999e5))
+    monkeypatch.setattr(tfv, "tmargmin_cs", 1.5)
+    monkeypatch.setattr(tfv, "temp_margin", 0.0)
+    monkeypatch.setattr(tfv, "b_crit_upper_nbti", 1.486e1)
+    monkeypatch.setattr(tfv, "b_crit_upper_nbti", 9.04)
 
     pf.ohcalc()
 
-    assert pytest.approx(pfv.bpf[4]) == 9.286960e2
-    assert pytest.approx(pfv.rjohc) == -7.717510e9
+    assert pytest.approx(pfv.bpf[4]) == 9.299805e2
+    assert pytest.approx(pfv.rjohc) == -7.728453e9
