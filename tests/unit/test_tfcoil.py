@@ -13,7 +13,7 @@ from process.fortran import fwbs_variables as fwbsv
 @pytest.fixture
 def tfcoil(monkeypatch):
     """Provides TFcoil object for testing.
-    
+
     :param monkeypatch: pytest mocking fixture
     :type monkeypatch: MonkeyPatch
 
@@ -146,7 +146,6 @@ def test_al_th_cond(temperature, expected_th_cond, tfcoil):
     th_cond = tfcoil.al_th_cond(temperature)
 
     assert pytest.approx(th_cond) == expected_th_cond
-
 
 
 CntrpstTestAsset = collections.namedtuple(

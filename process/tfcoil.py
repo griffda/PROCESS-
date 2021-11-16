@@ -353,7 +353,8 @@ class TFcoil:
 
             po.ovarre(self.outfile, "Pump power (W)", "(ppump)", tfv.ppump)
 
-    def he_density(self, temp: float) -> float:
+    @staticmethod
+    def he_density(temp: float) -> float:
         """Author : S. Kahn
         Subroutine calculating temperature dependent helium density at 100 bar
         from fit using the following data, valid in [4-50] K
@@ -390,7 +391,8 @@ class TFcoil:
 
         return density
 
-    def he_cp(self, temp: float) -> float:
+    @staticmethod
+    def he_cp(temp: float) -> float:
         """Author : S. Kahn
         Subroutine calculating temperature dependent thermal capacity at
         constant pressures at 100 Bar from fit using the following data
@@ -431,7 +433,8 @@ class TFcoil:
         # conversion to [K/(kg.K)] and return
         return cp * 1.0e3
 
-    def he_visco(self, temp: float) -> float:
+    @staticmethod
+    def he_visco(temp: float) -> float:
         """Author : S. Kahn
         Subroutine calculating temperature dependent He viscosity at 100 Bar
         from fit using the following data, valid in [4-50] K
@@ -452,7 +455,11 @@ class TFcoil:
         # Order 4 polynomial exponential fit in [4-25] K
         if temp < 22.5e0:
             visco = np.exp(
-                -9.19688182e0 - 4.83007225e-1 * temp + 3.47720002e-2 * temp ** 2 -1.17501538e-3 * temp ** 3 + 1.54218249e-5 * temp ** 4
+                -9.19688182e0
+                - 4.83007225e-1 * temp
+                + 3.47720002e-2 * temp ** 2
+                - 1.17501538e-3 * temp ** 3
+                + 1.54218249e-5 * temp ** 4
             )
 
         # Linear interpolation between the fits to avoid discontinuity
@@ -465,7 +472,8 @@ class TFcoil:
 
         return visco
 
-    def he_th_cond(self, temp: float) -> float:
+    @staticmethod
+    def he_th_cond(temp: float) -> float:
         """Author : S. Kahn
         Subroutine calculating temperature dependent He thermal conductivity
         at 100 Bar from fit using the following data, valid in [4-50] K
@@ -516,7 +524,8 @@ class TFcoil:
 
         return th_cond
 
-    def al_th_cond(self, temp: float) -> float:
+    @staticmethod
+    def al_th_cond(temp: float) -> float:
         """Author : S. Kahn
         Subroutine calculating temperature dependent Al thermal conductivity
 
