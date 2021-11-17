@@ -6,9 +6,6 @@ import pytest
 from system_check import system_compatible
 import warnings
 
-# Exclude utf_tests from collection until side-effect bugs fixed
-collect_ignore_glob = ["uft_tests*"]
-
 
 def pytest_addoption(parser):
     """Add custom CLI options to pytest.
