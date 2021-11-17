@@ -1,3 +1,4 @@
+from typing import Literal
 from process import fortran as ft
 from process.fortran import constants
 from process.fortran import build_variables as bv
@@ -33,25 +34,25 @@ class CostsStep:
     def __init__(self):
         """Initialise Fortran module variables."""
         self.outfile = ft.constants.nout  # output file unit
-        self.iprint = 0  # switch for writing to output file (1=yes)
+        self.iprint: Literal[0,1] = 0  # switch for writing to output file (1=yes)
 
-        self.step20: float = 0
-        self.step21: float = 0
-        self.step22: float = 0
-        self.step23: float = 0
-        self.step24: float = 0
-        self.step25: float = 0
-        self.step27: float = 0
-        self.step91: float = 0
-        self.step92: float = 0
-        self.step93: float = 0
-        self.fwblkcost: float = 0
-        self.vfi: float = 0
-        self.vfi_star: float = 0
-        self.ptherm_star: float = 0
-        self.rmajor_star: float = 0
-        self.rminor_star: float = 0
-        self.pth: float = 0
+        self.step20: float = 0.0
+        self.step21: float = 0.0
+        self.step22: float = 0.0
+        self.step23: float = 0.0
+        self.step24: float = 0.0
+        self.step25: float = 0.0
+        self.step27: float = 0.0
+        self.step91: float = 0.0
+        self.step92: float = 0.0
+        self.step93: float = 0.0
+        self.fwblkcost: float = 0.0
+        self.vfi: float = 0.0
+        self.vfi_star: float = 0.0
+        self.ptherm_star: float = 0.0
+        self.rmajor_star: float = 0.0
+        self.rminor_star: float = 0.0
+        self.pth: float = 0.0
 
     def run(self):
         """Run main costs_step subroutine."""
