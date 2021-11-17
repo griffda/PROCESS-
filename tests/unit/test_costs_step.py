@@ -139,8 +139,6 @@ def test_init_costs_step():
     assert costs_step_object.vfi == 0
     assert costs_step_object.vfi_star == 0
     assert costs_step_object.ptherm_star == 0
-    # assert costs_step_object.pinjmw_star == 0
-    # assert costs_step_object.fwarea_star == 0
     assert costs_step_object.rmajor_star == 0
     assert costs_step_object.rminor_star == 0
     assert costs_step_object.pth == 0
@@ -180,8 +178,6 @@ def test_costs_step(monkeypatch, costs_step):
     #Test that module variables are assigned correctly
     assert costs_step.vfi_star == 6.737e3 
     assert costs_step.ptherm_star == 4.15e3
-    #assert costs_step.pinjmw_star == 9.04e1
-    #assert costs_step.fwarea_star == 9.42e2
     assert costs_step.rmajor_star == 7.0e0
     assert costs_step.rminor_star == 7.0/3.6
 
@@ -278,9 +274,6 @@ def test_step_a2201(monkeypatch, costs_step):
     monkeypatch.setattr(cdv, "pinjmw", 4.15e3)
     monkeypatch.setattr(costs_step, "rmajor_star", 1e3)
     monkeypatch.setattr(costs_step, "rminor_star", 1e3)
-    # TODO was this a bug or intended?
-    # vfi and vfi_star were both this value for only testing of 
-    # a22 and a2201, was this intentional? should fvi be 5.0e3?
     monkeypatch.setattr(costs_step, "vfi", 6.737e3)
     monkeypatch.setattr(costs_step, "vfi_star", 6.737e3)
     
