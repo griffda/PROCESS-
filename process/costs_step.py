@@ -36,6 +36,7 @@ class CostsStep:
         self.outfile = ft.constants.nout  # output file unit
         self.iprint: Literal[0,1] = 0  # switch for writing to output file (1=yes)
 
+        # Various cost account values (M$)
         self.step20: float = 0.0
         self.step21: float = 0.0
         self.step22: float = 0.0
@@ -46,6 +47,8 @@ class CostsStep:
         self.step91: float = 0.0
         self.step92: float = 0.0
         self.step93: float = 0.0
+        
+        # Scaling Properties
         self.fwblkcost: float = 0.0
         self.vfi: float = 0.0
         self.vfi_star: float = 0.0
