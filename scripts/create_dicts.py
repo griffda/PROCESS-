@@ -388,7 +388,7 @@ class DefaultValues(ProjectDictionary):
         Once found, send on for parsing individually.
         """
         # Fetch all Fortran source files
-        sources = Path(SOURCEDIR).glob("*.f90")
+        sources = sorted(Path(SOURCEDIR).glob("*.f90"))
 
         for source in sources:
             with open(source) as f:
