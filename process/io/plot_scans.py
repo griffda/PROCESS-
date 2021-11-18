@@ -1,33 +1,30 @@
-"""
-    Python utility for plotting the output of a PROCESS scan
+"""Python utility for plotting the output of a PROCESS scan.
 
-    Depending of the type of scans, different actions will be taken:
-     - 1D SCANS: a simple graph using the scanned variable for x axis
-       and the selected variable on the y axis. 
-        * Any number of output variables can be selected, a plot will be
-          made for each
-        * Several inputs files can be used at the same time if the same variable
-          is scanned. The the different runs results will be plotted in the same
-          graph.
-        * If several inputs are used, the folder name or the file is used as 
-          a legend
-     - 2D SCANS: n_scan_1 graph will be plotted using the second scanned variable
-       as x axis and the selected output as y axis
-        * Only one 2D scan can be ploted at once.
-    
-    Performed checks:
-     - Non converged points are not plotted
-     - Only outputs existing in the MFILE.DAT are plotted
-     - A LaTeX label dicts is integrated, there is a check if the requested
-       variable is set. Otherwise the sad and gloomy PROCESS name is used
-     - No plot is made if the MFILE does not exists
-     - If the file is a folder, the contained MFILE is used as an input.
+Depending of the type of scans, different actions will be taken:
+1D SCANS: a simple graph using the scanned variable for x axis
+and the selected variable on the y axis. 
+- Any number of output variables can be selected, a plot will be
+made for each
+- Several inputs files can be used at the same time if the same variable
+is scanned. The different runs results will be plotted in the same
+graph.
+- If several inputs are used, the folder name or the file is used as 
+a legend
+
+- 2D SCANS: n_scan_1 graph will be plotted using the second scanned variable
+as x axis and the selected output as y axis
+- Only one 2D scan can be ploted at once.
+
+Performed checks:
+- Non converged points are not plotted
+- Only outputs existing in the MFILE.DAT are plotted
+- A LaTeX label dicts is integrated, there is a check if the requested
+variable is set. Otherwise the sad and gloomy PROCESS name is used
+- No plot is made if the MFILE does not exists
+- If the file is a folder, the contained MFILE is used as an input.
 """
 
-import matplotlib
 import matplotlib.pyplot as plt
-import matplotlib.lines as mlines
-import matplotlib.ticker as ticker
 import numpy as np
 import os
 import argparse
@@ -38,10 +35,14 @@ from process.io.python_fortran_dicts import get_dicts
 import process.io.mfile as mf
 
 
-if __name__ == "__main__":
-    #####################################################
-    ##            PARSING USER PARAMETERS              ##
-    #####################################################
+def parse_args(args):
+    """Parse supplied arguments.
+
+    :param args: arguments to parse
+    :type args: list, None
+    :return: parsed arguments
+    :rtype: Namespace
+    """
     parser = argparse.ArgumentParser(
         description="Plot optimization information",
         formatter_class=RawTextHelpFormatter,
@@ -51,14 +52,25 @@ if __name__ == "__main__":
         "-f",
         "--input_files",
         default="MFILE.DAT",
-        help="Specify input file(s) path(s) (default = MFILE.DAT) \n More than one input file can be used eg: -f 'A_MFILE.DAT B_MFILE.DAT'.\n You can only specify the folder containing the MFILE.\n The different files scan will be plotted on the same graph.\n The scans must use the same scan variation.",
+        help=(
+            "Specify input file(s) path(s) (default = MFILE.DAT)\n"
+            "More than one input file can be used eg: -f 'A_MFILE.DAT "
+            "B_MFILE.DAT'.\nYou can only specify the folder containing the "
+            "MFILE.\nThe different files scan will be plotted on the same "
+            "graph.\nThe scans must use the same scan variation."
+        ),
     )
 
+    # At least one output variable must be supplied in order to plot
     parser.add_argument(
         "-yv",
         "--y_vars",
-        default="None",
-        help="Select the output variables (default = None) \n More than one output can be plotted eg: -yv 'var1 var2'\n A separate plot will be created for each inputs",
+        required=True,
+        help=(
+            "Select the output variables\nMore than one output can be plotted "
+            "eg: -yv 'var1 var2'\nA separate plot will be created for each "
+            "inputs"
+        ),
     )
 
     parser.add_argument(
@@ -85,9 +97,19 @@ if __name__ == "__main__":
         type=int,
     )
 
+    return parser.parse_args(args)
+
+
+def main(args=None):
+    """Main plot scans script.
+
+    :param args: optional command-line args from test function, defaults to None
+    :type args: list, optional
+    """
+    args = parse_args(args)
+
     # Parameters to be used as function input
     # ---------------------------------------
-    args = parser.parse_args()
     input_files = str(args.input_files)
     output_names = str(args.y_vars)
     save_format = str(args.save_format)
@@ -562,3 +584,7 @@ if __name__ == "__main__":
             )
             plt.clf()
             plt.cla()
+
+
+if __name__ == "__main__":
+    main()
