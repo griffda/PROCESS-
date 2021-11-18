@@ -7,7 +7,9 @@ module buildings_module
   !! parameters of the fusion power plant buildings.
   !!
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   implicit none
 
@@ -47,16 +49,16 @@ contains
 
     !  Local variables
 
-    real(8) :: tf_radial_dim
+    real(dp) :: tf_radial_dim
     !! Radial dimension of TF coil (m)
 
-    real(8) :: tf_vertical_dim
+    real(dp) :: tf_vertical_dim
     !! Vertical dimension of TF coil (m)
 
-    ! real(8) :: tfh
-    ! real(8) :: tfmtn
-    ! real(8) :: tfri
-    ! real(8) :: tfro
+    ! real(dp) :: tfh
+    ! real(dp) :: tfmtn
+    ! real(dp) :: tfri
+    ! real(dp) :: tfro
 
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -146,114 +148,114 @@ contains
 
     !  Arguments 
     
-    real(8), intent(in) :: pfrmax
+    real(dp), intent(in) :: pfrmax
     !! radius of largest PF coil (m)
-    real(8), intent(in) :: rdewex
+    real(dp), intent(in) :: rdewex
     !! cryostat radius (m)
-    real(8), intent(in) :: tf_radial_dim
+    real(dp), intent(in) :: tf_radial_dim
     !! Radial dimension of TF coil (m)
-    real(8), intent(in) :: tf_vertical_dim
+    real(dp), intent(in) :: tf_vertical_dim
     !! Vertical dimension of TF coil (m)
 
     integer, intent(in) :: outfile, iprint
 
     !  Local variables
 
-    real(8) :: width_reactor_piece
+    real(dp) :: width_reactor_piece
     !! radial width of largest reactor component (m)
-    real(8) :: key_width
+    real(dp) :: key_width
     !! half-width of reactor building (m)
-    real(8) :: height_clrnc
+    real(dp) :: height_clrnc
     !! vertical clearance required in reactor building (m)
 
-    real(8) :: reactor_hall_area, reactor_hall_vol
+    real(dp) :: reactor_hall_area, reactor_hall_vol
     !! reactor hall footprint (m2), volume (m3)
-    real(8) :: reactor_hall_area_ext
+    real(dp) :: reactor_hall_area_ext
     !! footprint of reactor hall, including walls (m2)
-    real(8) :: reactor_hall_vol_ext
+    real(dp) :: reactor_hall_vol_ext
     !! volume of reactor hall, including walls, roof, foundation (m3)
-    real(8) :: reactor_basement_l, reactor_basement_w, reactor_basement_h
+    real(dp) :: reactor_basement_l, reactor_basement_w, reactor_basement_h
     !! reactor length, width, height (m)
-    real(8) :: reactor_basement_area, reactor_basement_vol
+    real(dp) :: reactor_basement_area, reactor_basement_vol
     !! reactor basement footprint (m2), volume (m3)
-    real(8) :: reactor_building_vol
+    real(dp) :: reactor_building_vol
     !! volume of reactor hall + basement (m3)
 
-    real(8) :: chemlab_area, chemlab_vol
+    real(dp) :: chemlab_area, chemlab_vol
     !! chemistry labs footprint (m2), volume (m3)
-    real(8) :: heat_sink_area, heat_sink_vol
+    real(dp) :: heat_sink_area, heat_sink_vol
     !! heat sink footprint (m2), volume (m3)
-    real(8) :: aux_build_area, aux_build_vol
+    real(dp) :: aux_build_area, aux_build_vol
     !! auxiliary building supporting reactor systems footprint (m2), volume (m3)
-    real(8) :: reactor_aux_area, reactor_aux_vol
+    real(dp) :: reactor_aux_area, reactor_aux_vol
     !! total aux buildings supporting reactor systems footprint (m2), volume (m3)
 
-    real(8) :: hcd_building_area, hcd_building_vol
+    real(dp) :: hcd_building_area, hcd_building_vol
     !! HCD building footprint (m2), volume (m3)
-    real(8) :: magnet_trains_area, magnet_trains_vol
+    real(dp) :: magnet_trains_area, magnet_trains_vol
     !! steady state magnet power trains building footprint (m2), volume (m3)
-    real(8) :: magnet_pulse_area, magnet_pulse_vol
+    real(dp) :: magnet_pulse_area, magnet_pulse_vol
     !! pulsed magnet power building footprint (m2), volume (m3)
-    real(8) :: power_buildings_area, power_buildings_vol
+    real(dp) :: power_buildings_area, power_buildings_vol
     !! power buildings footprint (m2), volume (m3)
 
-    real(8) :: control_buildings_area, control_buildings_vol 
+    real(dp) :: control_buildings_area, control_buildings_vol 
     !! control buildings footprint (m2), volume (m3)
 
-    real(8) :: warm_shop_area, warm_shop_vol
+    real(dp) :: warm_shop_area, warm_shop_vol
     !! warm shop footprint (m2), volume (m3)
 
-    real(8) :: workshop_area, workshop_vol
+    real(dp) :: workshop_area, workshop_vol
     !! [cold] workshop footprint (m2), volume (m3)
-    real(8) :: robotics_area, robotics_vol
+    real(dp) :: robotics_area, robotics_vol
     !!robotics building footprint (m2), volume (m3)
-    real(8) :: maint_cont_area, maint_cont_vol
+    real(dp) :: maint_cont_area, maint_cont_vol
     !! maintenance control buildings footprint (m2), volume (m3)
-    real(8) :: maintenance_area, maintenance_vol
+    real(dp) :: maintenance_area, maintenance_vol
     !! maintenance buildings footprint (m2), volume (m3)
 
-    real(8) :: cryomag_area, cryomag_vol
+    real(dp) :: cryomag_area, cryomag_vol
     !! Cryogenic Buildings for Magnet and Fuel Cycle footprint (m2), volume (m3)
-    real(8) :: cryostore_area, cryostore_vol
+    real(dp) :: cryostore_area, cryostore_vol
     !!  Magnet Cryo Storage Tanks footprint (m2), volume (m3)
-    real(8) :: auxcool_area, auxcool_vol    
+    real(dp) :: auxcool_area, auxcool_vol    
     !! Auxiliary Cooling Water facility footprint (m2), volume (m3)
-    real(8) :: cryocool_area, cryocool_vol
+    real(dp) :: cryocool_area, cryocool_vol
     !! Cryogenic & cooling buildings footprint (m2), volume (m3)
 
-    real(8) :: elecdist_area, elecdist_vol
+    real(dp) :: elecdist_area, elecdist_vol
     !! Transformers and electrical distribution footprint (m2), volume (m3)
-    real(8) :: elecload_area, elecload_vol
+    real(dp) :: elecload_area, elecload_vol
     !! Electric (eesential and non-essential) load centres footprint (m2), volume (m3)
-    real(8) :: elecstore_area, elecstore_vol
+    real(dp) :: elecstore_area, elecstore_vol
     !! Energy Storage facilities footprint (m2), volume (m3)
-    real(8) :: elec_buildings_area, elec_buildings_vol
+    real(dp) :: elec_buildings_area, elec_buildings_vol
     !! Electrical buildings footprint (m2), volume (m3)
     
-    real(8) :: turbine_hall_area, turbine_hall_vol
+    real(dp) :: turbine_hall_area, turbine_hall_vol
     !! turbine hall footprint (m2), volume (m3)
 
-    real(8) :: ilw_smelter_area, ilw_smelter_vol
+    real(dp) :: ilw_smelter_area, ilw_smelter_vol
     !! radioactive waste smelting facility footprint (m2), volume (m3)
-    real(8) :: ilw_storage_area, ilw_storage_vol
+    real(dp) :: ilw_storage_area, ilw_storage_vol
     !! ILW storage building footprint (m2), volume (m3)       
-    real(8) :: llw_storage_area, llw_storage_vol
+    real(dp) :: llw_storage_area, llw_storage_vol
     !! LLW storage building footprint (m2), volume (m3)
-    real(8) :: hw_storage_area, hw_storage_vol
+    real(dp) :: hw_storage_area, hw_storage_vol
     !! hazardous waste building footprint (m2), volume (m3)
-    real(8) :: tw_storage_area, tw_storage_vol
+    real(dp) :: tw_storage_area, tw_storage_vol
     !! tritiated building footprint (m2), volume (m3)
-    real(8) :: waste_buildings_area, waste_buildings_vol
+    real(dp) :: waste_buildings_area, waste_buildings_vol
     !! waste buildings (amalgamated) footprint (m2), volume (m3)
 
-    real(8) :: gas_buildings_area, gas_buildings_vol
+    real(dp) :: gas_buildings_area, gas_buildings_vol
     !! air & gas supply buildings footprint (m2), volume (m3)
-    real(8) :: water_buildings_area, water_buildings_vol
+    real(dp) :: water_buildings_area, water_buildings_vol
     !! water, laundry & drainage buildings footprint (m2), volume (m3)
-    real(8) :: sec_buildings_area, sec_buildings_vol
+    real(dp) :: sec_buildings_area, sec_buildings_vol
     !! security & safety buildings footprint (m2), volume (m3)
 
-    real(8) :: staff_buildings_vol
+    real(dp) :: staff_buildings_vol
     !! staff buildings volume (m3)
 
 

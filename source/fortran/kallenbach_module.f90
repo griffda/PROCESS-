@@ -11,7 +11,9 @@ module kallenbach_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   !---------------------------------------------------------------------------
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 contains
 
   !---------------------------------------------------------------------------
@@ -69,9 +71,9 @@ contains
 
     integer :: i
 
-    real(8):: rmajor, rminor, bt, plascur, q, t_target, &
+    real(dp):: rmajor, rminor, bt, plascur, q, t_target, &
                         q_target_total, target_angle, b_pol
-    real(8):: dummy, dummy2, dummy3
+    real(dp):: dummy, dummy2, dummy3
 
     ! This section just for reproducing the original numbers
     rmajor = 8.0D0
@@ -164,11 +166,11 @@ contains
       netau_sol, ttarget, qtargettotal, targetangle
     implicit none
 
-    real(8):: b_pol
+    real(dp):: b_pol
 
-    real(8):: dummy, dummy2, dummy3
+    real(dp):: dummy, dummy2, dummy3
 
-    real(8) :: xi, thetai, xo, thetao
+    real(dp) :: xi, thetai, xo, thetao
 
     ! Calculate plasma geometry
     rminor = rmajor/aspect
@@ -254,11 +256,11 @@ contains
 
     integer :: i
 
-    real(8):: b_pol, step_value
+    real(dp):: b_pol, step_value
 
-    real(8):: dummy, dummy2, dummy3
+    real(dp):: dummy, dummy2, dummy3
 
-    real(8) :: xi, thetai, xo, thetao
+    real(dp) :: xi, thetai, xo, thetao
 
     ! Calculate plasma geometry
     rminor = rmajor/aspect

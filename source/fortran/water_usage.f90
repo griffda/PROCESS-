@@ -21,10 +21,12 @@ module water_use_module
    !!
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
-   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#ifndef dp
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
    implicit none
  
-   real(8), parameter :: secday = 86400.0D0
+   real(dp), parameter :: secday = 86400.0D0
    !! seconds in a day, s
  
  contains
@@ -53,9 +55,9 @@ module water_use_module
  
      !  Local variables
  
-     real(8) :: rejected_heat
+     real(dp) :: rejected_heat
      !! heat rejected by main power conversion circuit (MW)
-     real(8) :: wastethermeng
+     real(dp) :: wastethermeng
      !! waste thermal energy to be rejected per [time], MJ
  
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -102,7 +104,7 @@ module water_use_module
  
      !  Arguments
      integer, intent(in) :: outfile, iprint
-     real(8), intent(in) :: wastetherm
+     real(dp), intent(in) :: wastetherm
  
      !  Local variables
  
@@ -159,27 +161,27 @@ module water_use_module
  
     !  Arguments
     integer, intent(in) :: outfile, iprint
-    real(8), intent(in) :: wastetherm
+    real(dp), intent(in) :: wastetherm
  
     !  Local variables
  
     integer :: icool
     !! switch between different water-body cooling options
  
-    real(8) :: heatload, heatloadmet, a, b, c, d, e, f, g, h, i, j
-    real(8) :: windspeedmph, heatloadimp, satvapdelta, evapsum, evapmean
+    real(dp) :: heatload, heatloadmet, a, b, c, d, e, f, g, h, i, j
+    real(dp) :: windspeedmph, heatloadimp, satvapdelta, evapsum, evapmean
     !! coefficients and intermediate calculation variables
  
-    real(8) :: heatratio
+    real(dp) :: heatratio
     !! ratio of resultant water temperature increase to input heat loading
  
-    real(8) :: watertempheated
+    real(dp) :: watertempheated
     !! resultant temperature of the water, following waste heat introduction
  
-    real(8) :: windfunction
+    real(dp) :: windfunction
     !! strongly influences evaporation; various, all found through experimentation
    
-    real(8) :: deltaE
+    real(dp) :: deltaE
     !! difference in evaporative heat loss due to heating of water (J/(m2.day))
  
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

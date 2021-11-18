@@ -12,7 +12,9 @@ module plasma_geometry_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
 
   private
@@ -44,14 +46,15 @@ contains
     use constants, only: twopi, pi
     use physics_variables, only: eps, pperim, sareao, rminor, kappa95, sarea, &
       triang95, fkzohm, vol, ishape, xarea, igeom, qlim, sf, iscrp, triang, &
-      cvol, rmajor, kappa, aspect, rli
+      cvol, rmajor, kappa, aspect, rli, m_s_limit
     implicit none
 
     !  Arguments
 
     !  Local variables
 
-    real(8) :: sa,so,xsi,xso,thetai,thetao,xi,xo
+    real(dp) :: sa,so,xsi,xso,thetai,thetao,xi,xo
+    real(dp) :: a, b, c, d, e, f 
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -140,7 +143,26 @@ contains
 
        kappa95 = kappa / 1.12D0
        triang95 = triang / 1.50D0
+
+    case (10)
+
+      ! kappa95 found from aspect ratio and stabilty margin
+      ! Based on fit to CREATE data. ref Issue #1399
+      ! valid for EU-DEMO like machine - aspect ratio 2.6 - 3.6
+      a = 8.39148185D0
+      b = -0.17713049D0
+      c = 1.9031585D0
+      d = -37.17364535D0
+      e = -2.54598909D0
+      f = 38.75101822D0
+  
+      kappa95 = ( ( -d - c * aspect - sqrt( (c ** 2.0d0 - 4.0d0 * a * b) * aspect ** 2.0d0 &
+             + (2.0d0 * d * c - 4.0d0 * a * e) * aspect + d ** 2.0d0 - 4.0d0 * a * f &
+             + 4.0d0 * a * m_s_limit) ) / (2.0d0 * a) ) **0.98D0
       
+      kappa = 1.12d0 * kappa95
+      triang95 = triang / 1.50D0
+
     end select
 
     !  Scrape-off layer thicknesses
@@ -213,12 +235,12 @@ contains
 
       !  Arguments
 
-      real(8), intent(in) :: a,r,k,d
-      real(8), intent(out) :: sa,so
+      real(dp), intent(in) :: a,r,k,d
+      real(dp), intent(out) :: sa,so
 
       !  Local variables
 
-      real(8) :: b,radci,radco,si,thti,thto
+      real(dp) :: b,radci,radco,si,thti,thto
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -262,16 +284,16 @@ contains
 
       implicit none
 
-      real(8) :: xsect0
+      real(dp) :: xsect0
 
       !  Arguments
 
-      real(8), intent(in) :: a,kap,tri
+      real(dp), intent(in) :: a,kap,tri
 
       !  Local variables
 
-      real(8) :: denomi,denomo,thetai,thetao,xli,xlo
-      real(8) :: cti,sti,cto,sto
+      real(dp) :: denomi,denomo,thetai,thetao,xli,xlo
+      real(dp) :: cti,sti,cto,sto
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -321,15 +343,15 @@ contains
 
       implicit none
 
-      real(8) :: fvol
+      real(dp) :: fvol
 
       !  Arguments
 
-      real(8), intent(in) :: r,a,kap,tri
+      real(dp), intent(in) :: r,a,kap,tri
 
       !  Local variables
 
-      real(8) :: c1,c2,rc2,rc1,vin,vout,zn
+      real(dp) :: c1,c2,rc2,rc1,vin,vout,zn
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -373,11 +395,11 @@ contains
 
       implicit none
 
-      real(8) :: xsecta
+      real(dp) :: xsecta
 
       !  Arguments
 
-      real(8), intent(in) :: xi,thetai,xo,thetao
+      real(dp), intent(in) :: xi,thetai,xo,thetao
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -408,15 +430,15 @@ contains
 
       implicit none
 
-      real(8) :: xvol
+      real(dp) :: xvol
 
       !  Arguments
 
-      real(8), intent(in) :: rmajor,rminor,xi,thetai,xo,thetao
+      real(dp), intent(in) :: rmajor,rminor,xi,thetai,xo,thetao
 
       !  Local variables
 
-      real(8) :: rc,third,vin,vout
+      real(dp) :: rc,third,vin,vout
 
       !--End of preamble--CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
@@ -468,12 +490,12 @@ contains
 
       !  Arguments
 
-      real(8), intent(in) :: rmajor,rminor,xi,thetai,xo,thetao
-      real(8), intent(out) :: xsi,xso
+      real(dp), intent(in) :: rmajor,rminor,xi,thetai,xo,thetao
+      real(dp), intent(out) :: xsi,xso
 
       !  Local variables
 
-      real(8) :: fourpi,rc
+      real(dp) :: fourpi,rc
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -508,15 +530,15 @@ contains
 
     implicit none
 
-    real(8) :: perim
+    real(dp) :: perim
 
     !  Arguments
 
-    real(8), intent(in) :: a,kap,tri
+    real(dp), intent(in) :: a,kap,tri
 
     !  Local variables
 
-    real(8) :: denomi,denomo,thetai,thetao,xli,xlo
+    real(dp) :: denomi,denomo,thetai,thetao,xli,xlo
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -563,12 +585,12 @@ contains
 
     !  Arguments
 
-    real(8), intent(in) :: a,kap,tri
-    real(8), intent(out) :: xi,thetai,xo,thetao
+    real(dp), intent(in) :: a,kap,tri
+    real(dp), intent(out) :: xi,thetai,xo,thetao
 
     !  Local variables
 
-    real(8) :: denomi,denomo,n,t
+    real(dp) :: denomi,denomo,n,t
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

@@ -11,7 +11,9 @@ module scan_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
 
   public
@@ -79,7 +81,7 @@ module scan_module
   !!         <LI> 41 blnkoth
   !!         <LI> 42 Argon fraction fimp(9)
   !!         <LI> 43 normalised minor radius at which electron cyclotron current drive is maximum
-  !!         <LI> 44 Allowable tresca stress in tf coil structural material
+  !!         <LI> 44 Allowable maximum shear stress (Tresca) in tf coil structural material
   !!         <LI> 45 Minimum allowable temperature margin ; tf coils
   !!         <LI> 46 boundu(150) fgwsep
   !!         <LI> 47 impurity_enrichment(9) Argon impurity enrichment
@@ -100,10 +102,10 @@ module scan_module
   integer :: nsweep_2
   !! nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
 
-  real(8), dimension(ipnscns) :: sweep
+  real(dp), dimension(ipnscns) :: sweep
   !! sweep(ipnscns) /../: actual values to use in scan
 
-  real(8), dimension(ipnscns) :: sweep_2
+  real(dp), dimension(ipnscns) :: sweep_2
   !! sweep_2(ipnscns) /../: actual values to use in 2D scan
 
   ! Vars in subroutines scan_1d and scan_2d requiring re-initialising before 
@@ -189,7 +191,7 @@ contains
     integer, intent(in) :: ifail
     ! outvar
     integer, intent(in) :: noutvars_, ipnscns_
-    real(8), dimension(noutvars_,ipnscns_), intent(out) :: outvar
+    real(dp), dimension(noutvars_,ipnscns_), intent(out) :: outvar
 
     ! Turn off error reporting (until next output)
     errors_on = .false.
@@ -292,7 +294,7 @@ contains
     implicit none
 
     integer, intent(inout) :: iscan
-    real(8), dimension(:,:), intent(in) :: outvar
+    real(dp), dimension(:,:), intent(in) :: outvar
     
     character(len=48) :: tlabel
     integer :: ivar
@@ -479,8 +481,8 @@ contains
     integer, intent(in) :: iscan
     integer, intent(in) :: noutvars_, ipnscns_
     ! Required for shape of intent(out) arrays
-    real(8), dimension(noutvars_,ipnscns_), intent(out) :: outvar
-    real(8), dimension(ipnscns_), intent(out) :: sweep_1_vals, sweep_2_vals
+    real(dp), dimension(noutvars_,ipnscns_), intent(out) :: outvar
+    real(dp), dimension(ipnscns_), intent(out) :: sweep_1_vals, sweep_2_vals
 
     call scan_1d_store_output(iscan, ifail, noutvars_, ipnscns_, outvar)
 
@@ -494,8 +496,8 @@ contains
     implicit none
 
     integer, intent(inout) :: iscan
-    real(8), dimension(:,:), intent(in) :: outvar
-    real(8), dimension(:), intent(in) :: sweep_1_vals, sweep_2_vals
+    real(dp), dimension(:,:), intent(in) :: outvar
+    real(dp), dimension(:), intent(in) :: sweep_1_vals, sweep_2_vals
 
     integer :: ivar
     character(len=48) :: tlabel
@@ -627,7 +629,7 @@ contains
 
     ! Arguments
     integer, intent(in) :: nwp, iscn
-    real(8), intent(in), dimension(:) :: swp
+    real(dp), intent(in), dimension(:) :: swp
     character(len=25), intent(out) :: vlab, xlab
 
     select case (nwp)
@@ -855,8 +857,8 @@ contains
 
   !  Local variables
   integer :: ii,inn,iflag
-  real(8) :: summ,xcval,xmaxx,xminn,f,xnorm
-  real(8), dimension(ipeqns) :: con1, con2, err
+  real(dp) :: summ,xcval,xmaxx,xminn,f,xnorm
+  real(dp), dimension(ipeqns) :: con1, con2, err
   character(len=1), dimension(ipeqns) :: sym
   character(len=10), dimension(ipeqns) :: lab
   character(len=30) :: strfom
@@ -867,7 +869,29 @@ contains
   ! Calculate PLASMOD after everything else has finished for comparison
   if (ipedestal == 2) then
 
-     call setupPlasmod(num,geom,comp,ped,inp0,i_flag)
+     call setupPlasmod(i_flag, &
+        geom%k, geom%d, geom%ip, geom%k95, geom%d95, &
+        geom%r, geom%a, geom%q95, geom%bt, geom%counter, &
+        comp%fcoreraditv, comp%qdivt, comp%pradfrac, &
+        comp%pradpos, comp%psep_r, comp%psepb_q95AR, comp%protium, &
+        comp%psepplh_inf, comp%psepplh_sup, comp%c_car, comp%fuelmix, &
+        comp%comparray, comp%globtau, comp%imptype, &
+        inp0%car_qdivt, inp0%chisaw, inp0%chisawpos, inp0%contrpovr, &
+        inp0%contrpovs, inp0%cxe_psepfac, &
+        inp0%eccdeff, inp0%f_gw, inp0%f_gws, &
+        inp0%f_ni, inp0%fcdp, inp0%fpellet, inp0%fpion, inp0%gamcdothers, &
+        inp0%Hfac_inp, inp0%maxpauxor, inp0%nbcdeff, inp0%nbi_energy, &
+        inp0%pech, inp0%pfus, inp0%pheatmax, inp0%PLH, inp0%pnbi, &
+        inp0%q_control, inp0%qcd, inp0%qfus, inp0%qheat, inp0%qnbi_psepfac, &
+        inp0%sawpertau, inp0%spellet, inp0%V_loop, &
+        inp0%x_heat, inp0%x_cd, inp0%x_fus, inp0%x_control, &
+        inp0%dx_heat, inp0%dx_cd, inp0%dx_fus, inp0%dx_control, &
+        num%Ainc, num%capA, num%dgy, num%dt, num%dtinc, num%dtmax, num%dtmaxmax, &
+        num%dtmaxmin, num%dtmin, num%eopt, num%i_equiltype, num%i_impmodel, &
+        num%i_modeltype, num%ipedestal, num%iprocess, num%isawt, num%maxA, &
+        num%nchannels, num%nx, num%nxt, num%test, num%tol, num%tolmin, &
+        ped%tesep, ped%rho_t, ped%rho_n, ped%pedscal, ped%teped &
+     )
 
      call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
 
