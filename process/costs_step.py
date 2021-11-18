@@ -191,8 +191,6 @@ class CostsStep:
         # 21.01 Site Improvements
         # Original STARFIRE value
         step2101 = self.step_a2101()
-        # step21 should be 0 at this point so I have removed
-        # step21 = step21 + step2101
         self.step21 = step2101
 
         # 21.02 Reactor Building
