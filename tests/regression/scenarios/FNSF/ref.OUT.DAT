@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-728-g1dfa3f06
-    Branch : develop
-   Git log : Merge\ branch\ |1418-pf-placement|\ into\ |develop|
- Date/time : 29 Oct 2021 16:24:26 +00:00(hh:mm) UTC
-      User : root
-  Computer : 6f802edae655
- Directory : /tmp/pytest-of-root/pytest-6/test_solver0
-     Input : /tmp/pytest-of-root/pytest-6/test_scenario_FNSF_0/IN.DAT
+   Tag No. : v2.1-901-ga12ba209
+    Branch : 1343-update-lts-hts-cost-model-2
+   Git log : Merge\ branch\ |develop|\ into\ 1343-update-lts-hts-cost-model-2
+ Date/time : 18 Nov 2021 17:02:04 +00:00(hh:mm) UTC
+      User : rhicha
+  Computer : l0500
+ Directory : /tmp/pytest-of-rhicha/pytest-205/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-205/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -568,8 +568,8 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Please use utilities/plot_stress_tf.py for radial plots plots summary
  Layers                    conductor
  Radial stress               (MPa) ***********
- toroidal stress             (MPa) 7756511.071
- Vertical stress             (MPa)     -36.215
+ toroidal stress             (MPa) 7756473.508
+ Vertical stress             (MPa)     -36.214
  Von-Mises stress            (MPa) ***********
  Shear (Tresca) stress       (MPa) ***********
  
