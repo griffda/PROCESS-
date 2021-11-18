@@ -105,6 +105,12 @@ module buildings_variables
     real(dp) :: hcwt
     !! hot cell wall thickness (m)
 
+    real(dp) :: hot_cell_facility_h
+    !! hot cell storage and maintenance facility height (m)
+
+    real(dp) :: hot_sepdist
+    !! hot cell storage component separation distance (m)
+
     real(dp) :: ilw_smelter_l, ilw_smelter_w, ilw_smelter_h
     !! radioactive waste smelting facility length, width, height (m)
     
@@ -349,6 +355,8 @@ module buildings_variables
       heat_sink_h = 12.0D0
       hccl = 5.0D0
       hcwt = 1.5D0
+      hot_cell_facility_h = 12.0D0
+      hot_sepdist = 2.0D0
       ilw_smelter_l = 50.0D0
       ilw_smelter_w = 30.0D0
       ilw_smelter_h = 30.0D0
@@ -435,10 +443,12 @@ module buildings_variables
       a_cryo_inert_gas_bldg = 1.838D4
       a_security_bldg = 4.552D3
       
+      ! rmc
       reactor_clrnc = 4.0D0
       transp_clrnc = 1.0D0
       crane_clrnc_h = 4.0D0
       crane_clrnc_v = 3.0D0
+      qnty_sfty_fac = 2.0D0
       
 
 

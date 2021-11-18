@@ -97,9 +97,10 @@ contains
   subroutine bldgs_sizes(pfrmax, rdewex, tf_radial_dim, tf_vertical_dim, &
     outfile, iprint)
 
-    !! Subroutine that estimates the sizes (areas and volumes) of 
+    !! Subroutine that estimates the sizes (footprints and volumes) of 
     !! buildings within a fusion power plant.
     !! Some estimates are scaled with parameters of the fusion plant,
+    !! some are based on engineering/specialist assumptions,
     !! some are derived from footprints/volumes based on 
     !! assessment of other power plants and/or similar facilities.
     !!
@@ -138,10 +139,13 @@ contains
       elecload_l, elecload_w, elecload_h, & 
       chemlab_l, chemlab_w, chemlab_h, &
       heat_sink_l, heat_sink_w, heat_sink_h, &
-      aux_build_l, aux_build_w, aux_build_h
+      aux_build_l, aux_build_w, aux_build_h, &
+      qnty_sfty_fac, hot_cell_facility_h, hot_sepdist
     use current_drive_variables, only: iefrf
-    ! use cost_variables, only: tlife rmc remove
-    ! use constants, only: pi rmc remove
+    use tfcoil_variables, only: n_tf
+    use cost_variables, only: tlife
+    use fwbs_variables, only: bktlife
+    use constants, only: pi
     use process_output, only: oheadr, ovarre
 
     implicit none
@@ -180,6 +184,9 @@ contains
     !! reactor basement footprint (m2), volume (m3)
     real(dp) :: reactor_building_vol
     !! volume of reactor hall + basement (m3)
+
+    real(dp) :: hotcell_facility_area, hotcell_facility_vol
+    !! reactor hall footprint (m2), volume (m3)
 
     real(dp) :: chemlab_area, chemlab_vol
     !! chemistry labs footprint (m2), volume (m3)
@@ -263,8 +270,11 @@ contains
     !! footprint of  buildings (m2)
     !! volume of  buildings (m3)
 
+    !real(8) :: fwbllife !! rmc fix this!
+
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     i_v_bldgs = 1 ! rmc debug
+    !fwbllife = 9.0D0 !! rmc fix this!
 
 
     ! Reactor building    
@@ -299,6 +309,22 @@ contains
     ! include height of TF coil *twice*, to allow for construction/maintenance
     reactor_hall_h = (2.0D0 * tf_vertical_dim) + height_clrnc             
    
+    ! Heating and Current Drive facility
+    ! Dimensions based upon estimates from M. Henderson, HCD Development Group
+    ! iefrf = switch for current drive model
+    if ( (iefrf == 5) .or. (iefrf == 8) ) then
+      ! NBI technology will be situated within the reactor building
+      reactor_hall_l = reactor_hall_l + 225.0D0 + reactor_clrnc + transp_clrnc
+      reactor_hall_w = reactor_hall_w + 185.0D0 + reactor_clrnc + transp_clrnc
+      ! Yes, it's really big. 
+      hcd_building_area = 0.0D0     
+      hcd_building_vol = 0.0D0
+    else 
+      ! Assume external building designed for EC or EBW is appropriate
+      hcd_building_area = hcd_building_l * hcd_building_w
+      hcd_building_vol = hcd_building_area * hcd_building_h
+    end if
+
     ! Reactor building internal footprint and volume
     reactor_hall_area = reactor_hall_l * reactor_hall_w
     reactor_hall_vol = reactor_hall_area * reactor_hall_h
@@ -310,9 +336,7 @@ contains
     reactor_hall_vol_ext = reactor_hall_area_ext * &
                           (reactor_hall_h + reactor_roof_thk + reactor_fndtn_thk) 
     
-
     ! Reactor maintenance basement and tunnel
-
     ! Architecture proposed here is a basement directly beneath the reactor enabling the
     ! downwards extraction of hot components. The footprint estimated here is oversized to 
     ! include allowance for a tunnel to the hot cell storage/maintenance building.
@@ -328,93 +352,93 @@ contains
     ! Calculate external volume of reactor hall + maintenance basement and tunnel
     reactor_building_vol = reactor_hall_vol_ext + reactor_basement_vol
 
-
-
-    ! ! Hot Buildings
-        ! decon, hot cell, warm shop
-    !derived from reactor size... 
-
- 
-    
-    ! Reactor Auxiliary Buildings
-    ! Derived from W. Smith's estimates of necessary facilities and their sizes;
-    ! these values amalgamate multiple individual buildings.
+   
+    ! Hot Cell Facility
+    ! Provides hot cell facilities to maintain or dismantle highly radioactive components.
+    ! These are simplifications of R. Gowland's estimates of Operational Active Waste Storage,
+    ! which assumes all IVC components used through the life of the plant will need storage.
+    ! The storage area required is derived from the sizes and number of components, allowing
+    ! for a margin in component numbers as set by the quantity safety factor (qnty_sfty_fac).
+    ! Footprints and volumes required for storage include hot separation distance (hot_sepdist).
     !
-    ! Chemistry labs: includes RA, non-RA and environmental labs, 
-    ! and chemical treatment facilities for coolant circuits
-    chemlab_area = chemlab_l * chemlab_w
-    chemlab_vol = chemlab_area * chemlab_h
+    ! assumptions: 
+    ! tokomak is toroidally segmented based on number of TF coils (n_tf);
+    ! component will be stored with the largest dimension oriented horizontally;
+    ! height is the largest dimension    
     !
-    ! Heat sink facilities, includes aux heat sink at heat energy island,
-    ! low temp and emergency heat sink facilities, ultimate heat sink facility 
-    ! to sea/river/cooling towers, including pumping, chemical dosing and heat exchangers
-    heat_sink_area = heat_sink_l * heat_sink_w
-    heat_sink_vol = heat_sink_area * heat_sink_h
+    ! Inboard 'component': shield, blanket, first wall: 
+    ! find height, maximum radial dimension, maximum toroidal dimension
+    comp_height = 2 * ( hmax - (tfcth + tftsgap + thshield + vgap2) )
+    comp_rad_thk = shldith + blnkith + fwith
+    comp_tor_thk = ( 2 * pi * (rmajor - (rminor + scrapli + fwith + blnkith + shldith)) ) &
+                     / n_tf
+    ! find footprint and volume for storing component
+    comp_footprint = ( comp_height + hot_sepdist ) &
+                     * ( max(comp_rad_thk,comp_tor_thk) + hot_sepdist )
+    comp_vol = comp_footprint * ( min(comp_rad_thk,comp_tor_thk) + hot_sepdist )
+    ! required lifetime supply of components = 
+    !   ( number in build / (plant lifetime / component lifetime) ) * quantity safety factor
+    comp_req_supply = ( n_tf / (tlife / bktlife) ) * qnty_sfty_fac
+    ! total storage space for required supply of inboard shield-blanket-wall
+    ib_hotcell_vol = comp_req_supply * comp_vol
     !
-    ! auxiliary buildings supporting tokamak processes & systems, includes non-RA
-    ! interfacing services such as, hydraulics, compressed air, chilled water...
-    aux_build_area = aux_build_l * aux_build_w
-    aux_build_vol = aux_build_area * aux_build_h
+    ! Outboard 'component': first wall, blanket, shield
+    comp_height = 2 * ( hmax - (tfcth + tftsgap + thshield + vgap2) )
+    comp_rad_thk = fwoth + blnkoth + shldoth
+    comp_tor_thk = ( 2 * pi * ( rmajor + rminor + scraplo + fwoth + blnkoth + shldoth ) ) &
+                     / n_tf
+    comp_footprint = ( comp_height + hot_sepdist ) &
+                     * ( max(comp_rad_thk,comp_tor_thk) + hot_sepdist )
+    comp_vol = comp_footprint * ( min(comp_rad_thk,comp_tor_thk) + hot_sepdist )
+    comp_req_supply = ( n_tf / (tlife / bktlife) ) * qnty_sfty_fac
+    ! total storage space for required supply of outboard wall-blanket-shield
+    ob_hotcell_vol = comp_req_supply * comp_vol
     !
-    ! Total auxiliary buildings supporting reactor processes & systems
-    reactor_aux_area = chemlab_area + heat_sink_area + aux_build_area
-    reactor_aux_vol = chemlab_vol + heat_sink_vol + aux_build_vol    
- 
-
-    ! Power
+    ! Divertor
+    ! Notes: 
+    !  i) this estimation developed before the divertor design has been finalised
+    !  ii) a 'corrected' divertor lifetime is used here (divlife_corr)
+    comp_height = divfix
+    comp_rad_thk = 2 * rminor
+    comp_tor_thk = rmajor + rminor
+    comp_footprint = ( comp_height + hot_sepdist ) &
+                     * ( max(comp_rad_thk,comp_tor_thk) + hot_sepdist )
+    comp_vol = comp_footprint * ( min(comp_rad_thk,comp_tor_thk) + hot_sepdist )
+    divlife_corr = 2.0D0  ! based on DEMO studies
+    comp_req_supply = ( n_tf / (tlife / divlife_corr) ) * qnty_sfty_fac
+    ! total storage space for required supply of divertor segments
+    div_hotcell_vol = comp_req_supply * comp_vol
     !
-    ! Heating and Current Drive facility
-    ! iefrf = switch for current drive efficiency model
-    if ( (iefrf == 5) .or. (iefrf == 8) ) then
-      ! NBI technology will be situated within the reactor building
-      hcd_building_area = 0.0D0
-      hcd_building_vol = 0.0D0
-    else 
-      ! Assume building designed for EC or EBW is appropriate
-      ! Dimensions based upon estimate from M. Henderson, HCD Development Group
-      hcd_building_area = hcd_building_l * hcd_building_w
-      hcd_building_vol = hcd_building_area * hcd_building_h
+    ! Centre post
+    if ( i_tf_sup /= 1 ) then
+      comp_height = 2 * hmax
+      comp_rad_thk = r_cp_top
+      comp_footprint = ( comp_height + hot_sepdist ) * ( comp_rad_thk + hot_sepdist )
+      comp_vol = comp_footprint * ( comp_rad_thk + hot_sepdist )
+      comp_req_supply = ( n_tf / (tlife / cplife) ) * qnty_sfty_fac
+      ! total storage space for required supply of centre posts
+      cp_hotcell_vol = comp_req_supply * comp_vol
+    else
+      cp_hotcell_vol = 0.0D0
     end if
     !
-    ! Magnet power facilities
-    ! Providing specific electrical supplies for reactor magnets;
-    ! based upon dimensions of comparable equipment at ITER site.
-    !
-    ! Steady state power trains:
-    magnet_trains_area = magnet_trains_l * magnet_trains_w
-    magnet_trains_vol = magnet_trains_area * magnet_trains_h
-    !   
-    ! Pulsed power for central solenoid
-    magnet_pulse_area = magnet_pulse_l * magnet_pulse_w
-    magnet_pulse_vol = magnet_pulse_area * magnet_pulse_h
-    !
-    ! Total power buildings areas and volumes
-    power_buildings_area = hcd_building_area + magnet_trains_area + magnet_pulse_area
-    power_buildings_vol = hcd_building_vol + magnet_trains_vol + magnet_pulse_vol
+    ! hot cell building footprint
+    hotcell_facility_vol = ib_hotcell_vol + ob_hotcell_vol &
+                           + div_hotcell_vol + cp_hotcell_vol
+    ! building footprint derived from assumed building height
+    hotcell_facility_area = hotcell_building_vol / hot_cell_facility_h
+    
 
+    hotcell_facility_area, hotcell_facility_vol
 
-    ! Control    
-    ! Derived from W. Smith's estimates of necessary facilities and their sizes:
-    ! includes Main Control Room, Back-up Control Room, 
-    ! Signal Processing and Distribution Centres [Safety Train A, Safety Train B], 
-    ! HP offices & Data Logging centre, Data Storage centre;
-    ! these values amalgamate multiple individual buildings.
-    control_buildings_area = control_buildings_l * control_buildings_w
-    control_buildings_vol = control_buildings_area * control_buildings_h
+    
 
-
-    !**********************************************************
-
-
-
-    ! ! Hot Storage
-    ! ! A simplification of R. Gowland's estimates of Operational Active Waste Storage,
-    ! ! this assumes all IVC components used through the life of the plant will need storage.
-    ! ! The storage area required is derived from the sizes and number of components, allowing
-    ! ! for a margin in component numbers as set by the quantity safety factor (qnty_sfty_fac).
 
         ! number of hot cells, their size and functions can only sensibly be determined once the failure modes and recovery process (if any) of each IVC has been identified.
     
+
+
+
     ! hot_store_building_area = 0.0D0
 
         
@@ -461,6 +485,61 @@ contains
     
  
 
+
+
+
+
+
+ 
+    
+    ! Reactor Auxiliary Buildings
+    ! Derived from W. Smith's estimates of necessary facilities and their sizes;
+    ! these values amalgamate multiple individual buildings.
+    !
+    ! Chemistry labs: includes RA, non-RA and environmental labs, 
+    ! and chemical treatment facilities for coolant circuits
+    chemlab_area = chemlab_l * chemlab_w
+    chemlab_vol = chemlab_area * chemlab_h
+    !
+    ! Heat sink facilities, includes aux heat sink at heat energy island,
+    ! low temp and emergency heat sink facilities, ultimate heat sink facility 
+    ! to sea/river/cooling towers, including pumping, chemical dosing and heat exchangers
+    heat_sink_area = heat_sink_l * heat_sink_w
+    heat_sink_vol = heat_sink_area * heat_sink_h
+    !
+    ! auxiliary buildings supporting tokamak processes & systems, includes non-RA
+    ! interfacing services such as, hydraulics, compressed air, chilled water...
+    aux_build_area = aux_build_l * aux_build_w
+    aux_build_vol = aux_build_area * aux_build_h
+    !
+    ! Total auxiliary buildings supporting reactor processes & systems
+    reactor_aux_area = chemlab_area + heat_sink_area + aux_build_area
+    reactor_aux_vol = chemlab_vol + heat_sink_vol + aux_build_vol    
+ 
+
+    ! Magnet power facilities
+    ! Providing specific electrical supplies for reactor magnets;
+    ! based upon dimensions of comparable equipment at ITER site.
+    ! Steady state power trains:
+    magnet_trains_area = magnet_trains_l * magnet_trains_w
+    magnet_trains_vol = magnet_trains_area * magnet_trains_h
+    ! Pulsed power for central solenoid
+    magnet_pulse_area = magnet_pulse_l * magnet_pulse_w
+    magnet_pulse_vol = magnet_pulse_area * magnet_pulse_h
+    !
+    ! Total power buildings areas and volumes
+    power_buildings_area = hcd_building_area + magnet_trains_area + magnet_pulse_area
+    power_buildings_vol = hcd_building_vol + magnet_trains_vol + magnet_pulse_vol
+
+
+    ! Control    
+    ! Derived from W. Smith's estimates of necessary facilities and their sizes:
+    ! includes Main Control Room, Back-up Control Room, 
+    ! Signal Processing and Distribution Centres [Safety Train A, Safety Train B], 
+    ! HP offices & Data Logging centre, Data Storage centre;
+    ! these values amalgamate multiple individual buildings.
+    control_buildings_area = control_buildings_l * control_buildings_w
+    control_buildings_vol = control_buildings_area * control_buildings_h
 
 
     ! Warm Shop
@@ -609,6 +688,20 @@ contains
     staff_buildings_vol = staff_buildings_area * staff_buildings_h
     
 
+    ! ****************************** rmc rmc rmc 
+!   ! Calculate effective floor area for ac power module
+!   efloor = (rbv+rmbv+wsv+triv+elev+conv+cryv+admv+shov)/6.0D0
+!   admvol = admv
+!   shovol = shov
+!   convol = conv
+
+!   ! Total volume of nuclear buildings
+!   volnucb = ( vrci + rmbv + wsv + triv + cryv )
+    ! ******************************
+
+
+
+
     ! Output    
     if (iprint == 0) return
     call oheadr(outfile,'Plant Buildings System - RMC') ! rmc
@@ -622,9 +715,12 @@ contains
     call ovarre(outfile,'Footprint of Reactor Basement (m2)', '(reactor_basement_area)', reactor_basement_area) ! RMC check
     call ovarre(outfile,'Volume of Reactor Basement (m3)', '(reactor_basement_vol)', reactor_basement_vol)
     call ovarre(outfile,'Volume of Reactor Hall + Basement (m3)', '(reactor_building_vol)', reactor_building_vol)
+    if ( (iefrf == 5) .or. (iefrf == 8) ) then
+      call ocmmnt(outfile,'NBI HCD facility included within reactor building')
+    end if
 
     if (i_v_bldgs == 1) then
-
+      ! verbose output of building sizes, areas and volumes
       call ovarre(outfile,'chemlab_l (m)', '(chemlab_l)', chemlab_l)
       call ovarre(outfile,'chemlab_w (m)', '(chemlab_w)', chemlab_w)
       call ovarre(outfile,'chemlab_h (m)', '(chemlab_h)', chemlab_h)
@@ -642,9 +738,12 @@ contains
       call ovarre(outfile,'Volume of Heat Sinks (m2)', '(heat_sink_vol)', heat_sink_vol)
       call ovarre(outfile,'Footprint of reactor auxiliary buildings (m2)', '(reactor_aux_area)', reactor_aux_area)
       call ovarre(outfile,'Volume of reactor auxiliary buildings (m3)', '(reactor_aux_vol)', reactor_aux_vol)
-
-      call ovarre(outfile,'hcd_building_area (m2)', '(hcd_building_area)', hcd_building_area)
-      call ovarre(outfile,'hcd_building_vol (m3)', '(hcd_building_vol)', hcd_building_vol)
+      if ( (iefrf == 5) .or. (iefrf == 8) ) then
+        call ocmmnt(outfile,'NBI HCD facility included within reactor building')
+      else 
+        call ovarre(outfile,'hcd_building_area (m2)', '(hcd_building_area)', hcd_building_area)
+        call ovarre(outfile,'hcd_building_vol (m3)', '(hcd_building_vol)', hcd_building_vol)
+      end if
       call ovarre(outfile,'magnet_trains_area (m2)', '(magnet_trains_area)', magnet_trains_area)
       call ovarre(outfile,'magnet_trains_vol (m3)', '(magnet_trains_vol)', magnet_trains_vol)
       call ovarre(outfile,'magnet_pulse_area (m2)', '(magnet_pulse_area)', magnet_pulse_area)
@@ -742,224 +841,3 @@ contains
   end subroutine bldgs_sizes
 
 end module buildings_module
-
-! subroutine bldgs(pfr,pfm,tfro,tfri,tfh,tfm,n_tf,shro,shri, &
-!   shh,shm,crr,helpow,iprint,outfile,cryv,vrci,rbv,rmbv,wsv,elev)
-!   !! Determines the sizes of the plant buildings
-!   !! author: P J Knight, CCFE, Culham Science Centre
-!   !! author: P C Shipe, ORNL
-!   !! pfr : input/output real :  largest PF coil outer radius, m
-!   !! pfm : : input real : largest PF coil mass, tonne
-!   !! tfro : input real : outer radius of TF coil, m
-!   !! tfri : input real : inner radius of TF coil, m
-!   !! tfh : input real : full height of TF coil, m
-!   !! tfm : input real : mass of one TF coil, tonne
-!   !! tfno : input real : number of tf coils
-!   !! shro : input real : outer radius of attached shield, m
-!   !! shri : input real : inner radius of attached shield, m
-!   !! shh : input real : height of attached shield, m
-!   !! shm : input real : total mass of attached shield, kg
-!   !! crr : input real : outer radius of common cryostat, m
-!   !! helpow : input real : total cryogenic load, W
-!   !! iprint : input integer : switch for writing to output file (1=yes)
-!   !! outfile : input integer : output file unit
-!   !! cryv : output real : volume of cryogenic building, m3
-!   !! vrci : output real : inner volume of reactor building, m3
-!   !! rbv : output real : outer volume of reactor building, m3
-!   !! rmbv : output real : volume of reactor maintenance building, m3
-!   !! wsv : output real : volume of warm shop, m3
-!   !! elev : output real : volume of electrical buildings, m3
-!   !! This routine determines the size of the plant buildings.
-!   !! The reactor building and maintenance building are sized
-!   !! based on the tokamak dimensions. The cryogenic building volume is
-!   !! scaled based on the total cryogenic load. The other building
-!   !! sizes are input from other modules or by the user.
-!   !! This routine was modified to include fudge factors (fac1,2,...)
-!   !! to fit the ITER design, September 1990 (J. Galambos).
-!   !! This routine was included in PROCESS in January 1992 by
-!   !! P. C. Shipe.
-!   !! None
-!   !
-!   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!   use buildings_variables, only: wrbi, rxcl, trcl, row, wgt, shmf, clh2, clh1, &
-!     stcl, rbvfac, rbwt, rbrt, fndt, hcwt, hccl, wgt2, mbvfac, wsvfac, &
-!     tfcbv, pfbldgm3, esbldgm3, pibv, efloor, admvol, triv, conv, admv, shov, &
-!     shovol, convol, volnucb
-!   use process_output, only: oheadr, ovarre
-
-!   implicit none
-
-!   ! Arguments
-!   integer, intent(in) :: iprint, outfile
-!   real(dp), intent(inout) :: pfr
-!   real(dp), intent(in) :: pfm,tfro,tfri,tfh,tfm,n_tf,shro, &
-!        shri,shh,shm,crr,helpow
-
-!   real(dp), intent(out) :: cryv,vrci,rbv,rmbv,wsv,elev
-
-!   ! Local variables !
-!   ! !!!!!!!!!!!!!!!!!!
-
-!   real(dp) :: ang, bmr, coill, crcl, cran, dcl,dcw, drbi, &
-!        hcl, hcw, hrbi, hy, layl, rbh, rbl, rbw, rmbh, rmbl, rmbw, rwl, rww, &
-!        sectl, tch, tcl, tcw, wgts, wsa, wt
-
-!   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!   ! Reactor building
-
-!   ! Determine basic machine radius (m)
-!   ! crr  :  cryostat radius (m)
-!   ! pfr  :  radius of largest PF coil (m)
-!   ! tfro :  outer radius of TF coil (m)
-!   bmr = max(crr,pfr,tfro)
-
-!   ! Determine largest transported piece
-!   sectl = shro - shri  ! Shield thicknes (m)
-!   coill = tfro - tfri  ! TF coil thickness (m)
-!   sectl = max(coill, sectl)
-
-!   ! Calculate half width of building (m)
-!   ! rxcl : clearance around reactor, m
-!   ! trcl : transportation clearance between components, m
-!   ! row  : clearance to building wall for crane operation, m
-!   wrbi = bmr + rxcl + sectl + trcl + row
-
-!   ! Calculate length to allow PF or cryostat laydown (m)
-
-!   ! Laydown length (m)
-!   layl = max(crr,pfr)
-
-!   ! Diagnoal length (m)
-!   hy = bmr + rxcl + sectl + trcl + layl
-
-!   ! Angle between diagnoal length and floor (m)
-!   ang = (wrbi-trcl-layl)/hy
-
-!   ! Cap angle at 1
-!   if (abs(ang) > 1.0D0) then
-!     ang = abs(ang)/ang
-!   end if
-
-!   ! Length to allow laydown (m)
-!   drbi = trcl + layl + hy*sin(acos(ang)) + wrbi
-
-!   ! Crane height based on maximum lift (m)
-!   ! wgt : reactor building crane capacity (kg)
-!   !       Calculated if 0 is input
-!   ! shmf : fraction of shield mass per TF coil to be moved in
-!   !        the maximum shield lift
-!   if (wgt > 1.0D0) then
-!      wt = wgt
-!   else
-!      wt = shmf*shm/n_tf
-!      wt = max(wt, 1.0D3*pfm, 1.0D3*tfm)
-!   end if
-
-!   ! Crane height (m)
-!   crcl = 9.41D-6*wt + 5.1D0
-
-!   ! Building height (m)
-!   ! clh1 : clearance from TF coil to cryostat top, m
-!   ! clh2 : clearance beneath TF coil to foundation, including basement, m
-!   ! stcl : clearance above crane to roof, m
-!   ! Additional tfh allows TF coil to be lifted right out
-!   hrbi = clh2 + 2.0D0*tfh + clh1 + trcl + crcl + stcl
-
-!   ! Internal volume (m3)
-!   vrci = rbvfac * 2.0D0*wrbi*drbi*hrbi
-
-!   ! External dimensions of reactor building (m)
-!   ! rbwt : reactor building wall thickness, m
-!   ! rbrt : reactor building roof thickness, m
-!   ! fndt : foundation thickness, m
-!   rbw = 2.0D0*wrbi + 2.0D0*rbwt
-!   rbl = drbi + 2.0D0*rbwt
-!   rbh = hrbi + rbrt + fndt
-!   rbv = rbvfac * rbw*rbl*rbh
-
-!   ! Maintenance building
-!   ! The reactor maintenance building includes the hot cells, the
-!   ! decontamination chamber, the transfer corridors, and the waste
-!   ! treatment building.  The dimensions of these areas are scaled
-!   ! from a reference design based on the shield sector size.
-
-!   ! Transport corridor size
-!   ! hcwt : hot cell wall thickness, m
-!   tcw = shro-shri + 4.0D0*trcl
-!   tcl = 5.0D0*tcw + 2.0D0*hcwt
-
-!   ! Decontamination cell size
-!   dcw = 2.0D0*tcw + 1.0D0
-!   dcl = 2.0D0*tcw + 1.0D0
-
-!   ! Hot cell size
-!   ! hccl : clearance around components in hot cell, m
-!   hcw = shro-shri + 3.0D0*hccl + 2.0D0
-!   hcl = 3.0D0*(shro-shri) + 4.0D0*hccl + tcw
-
-!   ! Radioactive waste treatment
-!   rww = dcw
-!   rwl = hcl - dcl - hcwt
-
-!   ! Maintenance building dimensions
-!   rmbw = hcw + dcw + 3.0D0*hcwt
-!   rmbl = hcl + 2.0D0*hcwt
-
-!   ! Height
-!   ! wgt2 : hot cell crane capacity (kg)
-!   !        Calculated if 0 is input
-!   if (wgt2 >  1.0D0) then
-!      wgts = wgt2
-!   else
-!      wgts = shmf*shm/n_tf
-!   end if
-!   cran = 9.41D-6*wgts + 5.1D0
-!   rmbh = 10.0D0 + shh + trcl + cran + stcl + fndt
-!   tch = shh + stcl + fndt
-
-!   ! Volume
-!   rmbv = mbvfac * rmbw*rmbl*rmbh + tcw*tcl*tch
-
-!   ! Warm shop and hot cell gallery
-!   wsa = (rmbw+7.0D0)*20.0D0 + rmbl*7.0D0
-!   wsv = wsvfac * wsa*rmbh
-
-!   ! Cryogenic building volume
-!   cryv = 55.0D0 * sqrt(helpow)
-
-!   ! Other building volumes
-!   ! pibv : power injection building volume, m3
-!   ! esbldgm3 is forced to be zero if no energy storage is required (lpulse=0)
-!   elev = tfcbv + pfbldgm3 + esbldgm3 + pibv
-
-!   ! Calculate effective floor area for ac power module
-!   efloor = (rbv+rmbv+wsv+triv+elev+conv+cryv+admv+shov)/6.0D0
-!   admvol = admv
-!   shovol = shov
-!   convol = conv
-
-!   ! Total volume of nuclear buildings
-!   volnucb = ( vrci + rmbv + wsv + triv + cryv )
-
-!   ! Output !
-!   ! !!!!!!!!!
-  
-!   if (iprint == 0) return
-!   call oheadr(outfile,'Plant Buildings System')
-!   call ovarre(outfile,'Internal volume of reactor building (m3)', '(vrci)', vrci)
-!   call ovarre(outfile,'Dist from centre of torus to bldg wall (m)', '(wrbi)', wrbi)
-!   call ovarre(outfile,'Effective floor area (m2)','(efloor)',efloor)
-!   call ovarre(outfile,'Reactor building volume (m3)','(rbv)',rbv)
-!   call ovarre(outfile,'Reactor maintenance building volume (m3)', '(rmbv)', rmbv)
-!   call ovarre(outfile,'Warmshop volume (m3)','(wsv)',wsv)
-!   call ovarre(outfile,'Tritium building volume (m3)','(triv)',triv)
-!   call ovarre(outfile,'Electrical building volume (m3)','(elev)',elev)
-!   call ovarre(outfile,'Control building volume (m3)','(conv)',conv)
-!   call ovarre(outfile,'Cryogenics building volume (m3)','(cryv)',cryv)
-!   call ovarre(outfile,'Administration building volume (m3)','(admv)',admv)
-!   call ovarre(outfile,'Shops volume (m3)','(shov)',shov)
-!   call ovarre(outfile,'Total volume of nuclear buildings (m3)', '(volnucb)', volnucb)
-
-! end subroutine bldgs
