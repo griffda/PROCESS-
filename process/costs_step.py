@@ -35,23 +35,26 @@ class CostsStep:
         self.outfile = ft.constants.nout  # output file unit
         self.iprint = 0  # switch for writing to output file (1=yes)
 
-        self.step20: float = 0
-        self.step21: float = 0
-        self.step22: float = 0
-        self.step23: float = 0
-        self.step24: float = 0
-        self.step25: float = 0
-        self.step27: float = 0
-        self.step91: float = 0
-        self.step92: float = 0
-        self.step93: float = 0
-        self.fwblkcost: float = 0
-        self.vfi: float = 0
-        self.vfi_star: float = 0
-        self.ptherm_star: float = 0
-        self.rmajor_star: float = 0
-        self.rminor_star: float = 0
-        self.pth: float = 0
+        # Various cost account values (M$)
+        self.step20: float = 0.0
+        self.step21: float = 0.0
+        self.step22: float = 0.0
+        self.step23: float = 0.0
+        self.step24: float = 0.0
+        self.step25: float = 0.0
+        self.step27: float = 0.0
+        self.step91: float = 0.0
+        self.step92: float = 0.0
+        self.step93: float = 0.0
+
+        # Scaling Properties
+        self.fwblkcost: float = 0.0
+        self.vfi: float = 0.0
+        self.vfi_star: float = 0.0
+        self.ptherm_star: float = 0.0
+        self.rmajor_star: float = 0.0
+        self.rminor_star: float = 0.0
+        self.pth: float = 0.0
 
     def run(self):
         """Run main costs_step subroutine."""
