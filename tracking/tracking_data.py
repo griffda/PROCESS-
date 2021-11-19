@@ -58,7 +58,10 @@ logger = logging.getLogger("PROCESS Tracker")
 
 
 class TrackingFile:
-    """Acts as the data storage for a given JSON file ie. holds the data from a run of PROCESS"""
+    """Acts as the data storage for a given JSON file ie. holds the data from a run of PROCESS
+    
+    e.g. starfire_MFILE-<date>-<time>.json
+    """
 
     def __init__(self) -> None:
         self.meta: dict = {}
