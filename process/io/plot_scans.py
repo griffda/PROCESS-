@@ -195,8 +195,10 @@ def main(args=None):
 
     # nsweep varible dict
     # -------------------
-    # ToDo : WOULD BE GREAT TO HAVE IT AUTOMATICALLY GENERATED ON THE PROCESS CMAKE!
+    # TODO WOULD BE GREAT TO HAVE IT AUTOMATICALLY GENERATED ON THE PROCESS CMAKE!
     #        THE SAME WAY THE DICTS ARE
+    # This needs to be kept in sync automatically; this will break frequently 
+    # otherwise
     # Rem : Some variables are not in the MFILE, making the defintion rather tricky...
     nsweep_dict = dict()
     nsweep_dict[1] = "aspect"
@@ -259,6 +261,7 @@ def main(args=None):
     nsweep_dict[57] = "bt"  # Genuinly bt lower bound
     nsweep_dict[58] = "scrapli"
     nsweep_dict[59] = "scraplo"
+    nsweep_dict[60] = "sig_tf_wp_max"
     # -------------------
 
     # Load PROCESS dicts from JSON files
