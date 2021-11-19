@@ -166,27 +166,6 @@ integration-py36:
   extends: ".integration"
   <<: *test-setup-py36
 
-.unitfort:
-  when: on_success
-  stage: testing
-  script:
-    - python3 -m pip install tabulate
-    - pytest tests/ -m unitfort
-    - python3 tests/uft_tests/coverage.py
-  tags:
-    - ubuntu
-
-.unitfort-py38:
-  extends: ".unitfort"
-  <<: *test-setup-py38
-
-.unitfort-py36:
-  only:
-    - master
-    - develop
-  extends: ".unitfort"
-  <<: *test-setup-py36
-
 .regression:
   when: on_success
   stage: testing

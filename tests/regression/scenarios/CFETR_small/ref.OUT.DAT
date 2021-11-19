@@ -15,14 +15,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-728-g1dfa3f06
-    Branch : develop
-   Git log : Merge\ branch\ |1418-pf-placement|\ into\ |develop|
- Date/time : 29 Oct 2021 16:24:20 +00:00(hh:mm) UTC
-      User : root
-  Computer : 6f802edae655
- Directory : /tmp/pytest-of-root/pytest-6/test_solver0
-     Input : /tmp/pytest-of-root/pytest-6/test_scenario_CFETR_small_0/IN.DAT
+   Tag No. : v2.1-901-ga12ba209
+    Branch : 1343-update-lts-hts-cost-model-2
+   Git log : Merge\ branch\ |develop|\ into\ 1343-update-lts-hts-cost-model-2
+ Date/time : 18 Nov 2021 17:01:58 +00:00(hh:mm) UTC
+      User : rhicha
+  Computer : l0500
+ Directory : /tmp/pytest-of-rhicha/pytest-205/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-205/test_scenario_CFETR_small_0/IN.DAT
  Run title : "CFETR small (5.7m) reference file"
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -743,13 +743,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  TF coil mass:
  
- Superconductor mass per coil (kg)                                        (whtconsc)                3.677E+03  OP 
+ Superconductor mass per coil (kg)                                        (whtconsc)                2.484E+03  OP 
  Copper mass per coil (kg)                                                (whtconcu)                2.330E+04  OP 
  Steel conduit mass per coil (kg)                                         (whtconsh)                5.858E+04  OP 
  Conduit insulation mass per coil (kg)                                    (whtconin)                1.320E+03  OP 
- Total conduit mass per coil (kg)                                         (whtcon)                  8.688E+04  OP 
- Mass of each TF coil (kg)                                                (whttf/n_tf)              4.251E+05  OP 
- Total TF coil mass (kg)                                                  (whttf)                   6.801E+06     
+ Total conduit mass per coil (kg)                                         (whtcon)                  8.568E+04  OP 
+ Mass of each TF coil (kg)                                                (whttf/n_tf)              4.239E+05  OP 
+ Total TF coil mass (kg)                                                  (whttf)                   6.782E+06     
  
  Maximum B field and currents:
  
@@ -888,13 +888,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  coil  current  allowed J  actual J   J   cond. mass   steel mass     field
          (MA)    (A/m2)     (A/m2)  ratio    (kg)          (kg)        (T)
  
-  PF 1   11.33  2.850E+08  3.000E+07  0.11 6.961E+04   1.124E+05    7.941E+00
-  PF 2   14.28  9.004E+07  3.000E+07  0.33 8.776E+04   2.292E+05    1.362E+01
-  PF 3   -7.39  4.670E+08  3.000E+07  0.06 1.174E+05   3.299E+05    5.217E+00
-  PF 4   -7.39  4.670E+08  3.000E+07  0.06 1.174E+05   3.299E+05    5.217E+00
-  CS  -116.41  2.029E+07  2.060E+07  1.02 1.583E+05   1.960E+05    1.641E+01
+  PF 1   11.33  2.850E+08  3.000E+07  0.11 4.703E+04   1.124E+05    7.941E+00
+  PF 2   14.28  9.004E+07  3.000E+07  0.33 5.929E+04   2.292E+05    1.362E+01
+  PF 3   -7.39  4.670E+08  3.000E+07  0.06 7.928E+04   3.299E+05    5.217E+00
+  PF 4   -7.39  4.670E+08  3.000E+07  0.06 7.928E+04   3.299E+05    5.217E+00
+  CS  -116.41  2.029E+07  2.060E+07  1.02 1.069E+05   1.960E+05    1.641E+01
        ------                             ---------   ---------
-       156.80                             5.504E+05   1.197E+06
+       156.80                             3.718E+05   1.197E+06
  
  PF coil current scaling information :
  
@@ -1000,11 +1000,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Outer PF coil fence mass (kg)                                            (fncmass)                 2.122E+04  OP 
  Intercoil support structure mass (kg)                                    (aintmass)                9.681E+05  OP 
- Mass of cooled components (kg)                                           (coldmass)                1.661E+07  OP 
- Gravity support structure mass (kg)                                      (clgsmass)                4.393E+05  OP 
+ Mass of cooled components (kg)                                           (coldmass)                1.641E+07  OP 
+ Gravity support structure mass (kg)                                      (clgsmass)                4.341E+05  OP 
  Torus leg support mass (kg)                                              (gsm1)                    5.026E+04  OP 
- Ring beam mass (kg)                                                      (gsm2)                    2.091E+05  OP 
- Ring legs mass (kg)                                                      (gsm3)                    2.517E+05  OP 
+ Ring beam mass (kg)                                                      (gsm2)                    2.075E+05  OP 
+ Ring legs mass (kg)                                                      (gsm3)                    2.478E+05  OP 
  
  ******************************************** PF Coil Inductances *********************************************
  
@@ -1188,7 +1188,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Nuclear heating :
  
- Total nuclear heating in TF+PF coils (CS is negligible) (MW)             (ptfnuc)                  1.948E-03  OP 
+ Total nuclear heating in TF+PF coils (CS is negligible) (MW)             (ptfnuc)                  1.942E-03  OP 
  Total nuclear heating in FW (MW)                                         (pnucfw)                  1.259E+01  OP 
  Total nuclear heating in the blanket (including emult) (MW)              (pnucblkt)                2.103E+02  OP 
  (Note: emult is fixed for this model inside the code)
@@ -1351,7 +1351,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Tritium building volume (m3)                                             (triv)                    4.000E+04     
  Electrical building volume (m3)                                          (elev)                    4.773E+04     
  Control building volume (m3)                                             (conv)                    6.000E+04     
- Cryogenics building volume (m3)                                          (cryv)                    1.191E+04     
+ Cryogenics building volume (m3)                                          (cryv)                    1.189E+04     
  Administration building volume (m3)                                      (admv)                    1.000E+05     
  Shops volume (m3)                                                        (shov)                    1.000E+05     
  Total volume of nuclear buildings (m3)                                   (volnucb)                 8.851E+05     
@@ -1360,7 +1360,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Facility base load (MW)                                                  (basemw)                  5.000E+00     
  Divertor coil power supplies (MW)                                        (bdvmw)                   0.000E+00     
- Cryoplant electric power (MW)                                            (crymw)                   2.311E+01  OP 
+ Cryoplant electric power (MW)                                            (crymw)                   2.304E+01  OP 
  Primary coolant pumps (MW)                                               (htpmw..)                 6.410E-01  OP 
  PF coil power supplies (MW)                                              (ppfmw)                   3.338E+02  OP 
  TF coil power supplies (MW)                                              (ptfmw)                   6.544E+00  OP 
@@ -1368,20 +1368,20 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Tritium processing (MW)                                                  (trithtmw..)              1.500E+01     
  Vacuum pumps  (MW)                                                       (vachtmw..)               5.000E-01     
  
- Total pulsed power (MW)                                                  (pacpmw)                  7.423E+02  OP 
+ Total pulsed power (MW)                                                  (pacpmw)                  7.422E+02  OP 
  Total base power required at all times (MW)                              (fcsht)                   3.693E+01  OP 
  
  ************************************************* Cryogenics *************************************************
  
- Conduction and radiation heat loads on cryogenic components (MW)         (qss/1.0D6)               7.140E-03  OP 
- Nuclear heating of cryogenic components (MW)                             (qnuc/1.0D6)              1.948E-03  OP 
+ Conduction and radiation heat loads on cryogenic components (MW)         (qss/1.0D6)               7.055E-03  OP 
+ Nuclear heating of cryogenic components (MW)                             (qnuc/1.0D6)              1.942E-03  OP 
  AC losses in cryogenic components (MW)                                   (qac/1.0D6)               8.550E-03  OP 
  Resistive losses in current leads (MW)                                   (qcl/1.0D6)               1.468E-02  OP 
- 45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             1.454E-02  OP 
- Sum = Total heat removal at cryogenic temperatures (W)                   (helpow/1.0D6)            4.686E-02  OP 
+ 45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             1.450E-02  OP 
+ Sum = Total heat removal at cryogenic temperatures (W)                   (helpow/1.0D6)            4.673E-02  OP 
  Temperature of cryogenic components (K)                                  (tmpcry)                  4.500E+00     
  Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                           2.028E-03  OP 
- Electric power for cryogenic plant (MW)                                  (crypmw)                  2.311E+01  OP 
+ Electric power for cryogenic plant (MW)                                  (crypmw)                  2.304E+01  OP 
  
  ************************************ Plant Power / Heat Transport Balance ************************************
  
@@ -1466,7 +1466,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Other secondary thermal power constituents :
  
- Heat removal from cryogenic plant (MW)                                   (crypmw)                     23.108  OP 
+ Heat removal from cryogenic plant (MW)                                   (crypmw)                     23.044  OP 
  Heat removal from facilities (MW)                                        (fachtmw)                    36.928  OP 
  Coolant pumping efficiency losses (MW)                                   (htpsecmw)                    0.032  OP 
  Heat removal from injection power (MW)                                   (pinjht)                    228.034  OP 
@@ -1474,7 +1474,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heat removal from vacuum pumps (MW)                                      (vachtmw)                     0.500  OP 
  TF coil resistive power (MW)                                             (tfcmw)                       0.000  OP 
  
- Total low-grade thermal power (MW)                                       (psechtmw)                  433.750  OP 
+ Total low-grade thermal power (MW)                                       (psechtmw)                  433.685  OP 
  Total High-grade thermal power (MW)                                      (pthermmw)                  272.779  OP 
  
  Number of primary heat exchangers                                        (nphx)                            1  OP 
@@ -1512,13 +1512,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Electrical Power Balance :
  --------------------------
- Net electric power output(MW)                                            (pnetelmw.)                -298.723  OP 
+ Net electric power output(MW)                                            (pnetelmw.)                -298.658  OP 
  Required Net electric power output(MW)                                   (pnetelin)                 1000.000     
  Electric power for heating and current drive (MW)                        (pinjwp)                    325.763  OP 
  Electric power for primary coolant pumps (MW)                            (htpmw)                       0.641  OP 
  Electric power for vacuum pumps (MW)                                     (vachtmw)                     0.500     
  Electric power for tritium plant (MW)                                    (trithtmw)                   15.000     
- Electric power for cryoplant (MW)                                        (crypmw)                     23.108  OP 
+ Electric power for cryoplant (MW)                                        (crypmw)                     23.044  OP 
  Electric power for TF coils (MW)                                         (tfacpd)                      6.544  OP 
  Electric power for PF coils (MW)                                         (pfwpmw)                      2.351  OP 
  All other internal electric power requirements (MW)                      (fachtmw)                    36.928  OP 
@@ -1534,19 +1534,19 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                    47.274  OP 
  Total (MW)                                                                                           295.607  OP 
  
- Net electrical output (MW)	                                              (pnetelmw)                 -298.723  OP 
+ Net electrical output (MW)	                                              (pnetelmw)                 -298.658  OP 
  Heat rejected by main power conversion circuit (MW)                      (rejected_main)             160.667  OP 
- Heat rejected by other cooling circuits (MW)                             (psechtmw)                  433.750  OP 
+ Heat rejected by other cooling circuits (MW)                             (psechtmw)                  433.685  OP 
  Total (MW)                                                                                           295.694  OP 
  
  
  Plant efficiency measures :
  
- Net electric power / total nuclear power (%)                             (pnetelmw/(powfmw+em       -101.054  OP 
- Net electric power / total fusion power (%)                              (pnetelmw/powfmw)          -120.292  OP 
+ Net electric power / total nuclear power (%)                             (pnetelmw/(powfmw+em       -101.032  OP 
+ Net electric power / total fusion power (%)                              (pnetelmw/powfmw)          -120.265  OP 
  Gross electric power* / high grade heat (%)                              (etath)                      41.100     
  (*Power for pumps in secondary circuit already subtracted)
- Recirculating power fraction                                             (cirpowfr)                    3.665  OP 
+ Recirculating power fraction                                             (cirpowfr)                    3.664  OP 
  
  Time-dependent power usage
  
@@ -1562,13 +1562,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                  System   tramp      tohs     theat     tburn     tqnch    tdwell
                                  ------   -----      ----     -----     -----     -----    ------
                         Primary cooling    0.64      0.64      0.64      0.64      0.64      0.64
-                              Cyroplant   23.11     23.11     23.11     23.11     23.11     23.11
+                              Cyroplant   23.04     23.04     23.04     23.04     23.04     23.04
                                  Vacuum    0.50      0.50      0.50      0.50      0.50      0.50
                                 Tritium   15.00     15.00     15.00     15.00     15.00     15.00
                                      TF    6.54      6.54      6.54      6.54      6.54      6.54
                              Facilities   36.93     36.93     36.93     36.93     36.93     36.93
                                  ------   -----      ----     -----     -----     -----    ------
-                                  Total   82.72     82.72     82.72     82.72     82.72     82.72
+                                  Total   82.66     82.66     82.66     82.66     82.66     82.66
                                  ------   -----      ----     -----     -----     -----    ------
  
          Intermittent power usage [MWe]:
@@ -1586,7 +1586,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                           tramp      tohs     theat     tburn     tqnch    tdwell       avg
                                           -----      ----     -----     -----     -----    ------       ---
                             Gross power    0.00      0.00      0.00    112.11      0.00      0.00
-                              Net power -552.34   -378.45   -482.72   -299.54     84.72    -82.72   -163.30
+                              Net power -552.28   -378.39   -482.66   -299.48     84.79    -82.66   -163.23
                                  ------   -----      ----     -----     -----     -----    ------
  
  

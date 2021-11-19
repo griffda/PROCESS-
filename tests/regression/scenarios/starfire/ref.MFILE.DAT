@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.2.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "29/10/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "16:25"
- User____________________________________________________________________ (username)____________________     "root"    
+ Date_of_run_____________________________________________________________ (date)________________________     "18/11/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "17:03"
+ User____________________________________________________________________ (username)____________________     "rhicha"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "starfire                                                                                           
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-728-g1dfa3f06"                                                                                
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "develop"                                                                                           
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |1418-pf-placement|\ into\ |develop|"                                               
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-6/test_scenario_starfire_0/IN.DAT                                                                                                                                            "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-901-ga12ba209"                                                                                
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1343-update-lts-hts-cost-model-2"                                                                  
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |develop|\ into\ 1343-update-lts-hts-cost-model-2"                                  
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-205/test_scenario_starfire_0/IN.DAT                                                                                                                                        "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -112,7 +112,7 @@
  TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres011)__________________     -2.9786E-12    
  Dump_time_set_by_VV_stress________normalised_residue____________________ (normres012)__________________      2.2204E-16    
  # Final Feasible Point #
- # STEP Costing Model (2017 US$) #
+ # STEP Costing Model (b'2017 US$                                          ') #
  # 20. Land and Rights #
  Land_(M$)_______________________________________________________________ (step2001)____________________      1.0000E+02    
  Site_Preparation_(M$)___________________________________________________ (step2002)____________________      8.9000E-01    
@@ -120,8 +120,8 @@
  # 21. Building and Site Service Infrastructure #
  Site_Improvements_(M$)__________________________________________________ (step2101)____________________      3.3170E+01    
  Reactor_Building_(M$)___________________________________________________ (step2102)____________________      4.9393E+02    
- Turbine_Building_(M$)___________________________________________________ (step2103)____________________      5.3581E+02    
- Cooling_System_Structures_(M$)__________________________________________ (step2104)____________________      1.8437E+02    
+ Turbine_Building_(M$)___________________________________________________ (step2103)____________________      5.3583E+02    
+ Cooling_System_Structures_(M$)__________________________________________ (step2104)____________________      1.8438E+02    
  Electrical_Equipment_and_Power_Supply_Building_(M$)_____________________ (step2105)____________________      1.0318E+02    
  Auxiliary_Services_Building_(M$)________________________________________ (step2106)____________________      4.3132E+00    
  Hot_Cell_(M$)___________________________________________________________ (step2107)____________________      1.7266E+02    
@@ -137,7 +137,7 @@
  Ventilation_Stack_(M$)__________________________________________________ (step2117)____________________      8.7823E+00    
  Waste_Facilities_Buildings_(M$)_________________________________________ (step2118)____________________      1.0000E+02    
  Spares_(M$)_____________________________________________________________ (step2198)____________________      1.5474E+01    
- Contingency_(M$)________________________________________________________ (step2199)____________________      3.5716E+02    
+ Contingency_(M$)________________________________________________________ (step2199)____________________      3.5717E+02    
  Total_Account_21_Cost_(M$)______________________________________________ (step21)______________________      2.7383E+03    
  # 22. Reactor Plant Equipment #
  Total_First_Wall_Cost_(M$)______________________________________________ (step22010101)________________      5.1584E+02    
@@ -147,8 +147,8 @@
  Total_Blanket_Cost_(M$)_________________________________________________ (step22010102)________________      2.0973E+03    
  Total_Account_22.01.01_Cost_(M$)________________________________________ (step220101)__________________      2.6131E+03    
  Shield_(M$)_____________________________________________________________ (step220102)__________________      2.9270E+02    
- TF_Coils_(M$)___________________________________________________________ (step22010301)________________      1.0323E+03    
- PF_Coils_(M$)___________________________________________________________ (step22010302)________________      5.8655E+02    
+ TF_Coils_(M$)___________________________________________________________ (step22010301)________________      3.9535E+03    
+ PF_Coils_(M$)___________________________________________________________ (step22010302)________________      5.9551E+02    
  Central_Solenoid_(M$)___________________________________________________ (step22010303)________________      5.9536E+01    
  Control_Coils_(M$)______________________________________________________ (step22010304)________________      3.2835E+01    
  Auxiliary_Heating_and_Current_Drive_(M$)________________________________ (step220104)__________________      8.9068E+02    
@@ -158,9 +158,9 @@
  Impurity_Control_(M$)___________________________________________________ (step220108)__________________      1.9940E+01    
  ECRH_Plasma_Breakdown_(M$)______________________________________________ (step220109)__________________      2.2950E+01    
  Divertor_(M$)___________________________________________________________ (step220110)__________________      1.3640E+02    
- Total_Account_22.01_Cost_(M$)___________________________________________ (step2201)____________________      6.5930E+03    
- Heat_Transfer_System_(M$)_______________________________________________ (step2202)____________________      1.5724E+02    
- Total_Account_22.02_Cost_(M$)___________________________________________ (step2202)____________________      1.5724E+02    
+ Total_Account_22.01_Cost_(M$)___________________________________________ (step2201)____________________      9.5231E+03    
+ Heat_Transfer_System_(M$)_______________________________________________ (step2202)____________________      1.5725E+02    
+ Total_Account_22.02_Cost_(M$)___________________________________________ (step2202)____________________      1.5725E+02    
  Helium_Refrigerator_(M$)________________________________________________ (step220301)__________________      3.6650E+01    
  Liquid_Helium_Transfer_and_Storage_(M$)_________________________________ (step220302)__________________      1.7133E+01    
  Gas_Helium_Storage_(M$)_________________________________________________ (step220303)__________________      1.3330E+01    
@@ -182,53 +182,53 @@
  Total_Account_22.06_Cost_(M$)___________________________________________ (step2206)____________________      4.4900E+01    
  Instrumentation_and_Control_(M$)________________________________________ (step2207)____________________      1.9546E+02    
  Total_Account_22.07_Cost_(M$)___________________________________________ (step2207)____________________      1.9546E+02    
- Spares_(M$)_____________________________________________________________ (step2298)____________________      5.2307E+02    
- Contingency_(M$)________________________________________________________ (step2299)____________________      1.1920E+03    
- Total_Account_22_Cost_(M$)______________________________________________ (step22)______________________      9.1390E+03    
+ Spares_(M$)_____________________________________________________________ (step2298)____________________      5.2600E+02    
+ Contingency_(M$)________________________________________________________ (step2299)____________________      1.6320E+03    
+ Total_Account_22_Cost_(M$)______________________________________________ (step22)______________________      1.2512E+04    
  # 23. Turbine Plant Equipment #
- Turbine_System_(M$)_____________________________________________________ (step23a)_____________________      9.4686E+02    
+ Turbine_System_(M$)_____________________________________________________ (step23a)_____________________      9.4690E+02    
  Heat_Rejection_(M$)_____________________________________________________ (step2303)____________________      1.5939E+02    
  Spares_(M$)_____________________________________________________________ (step2398)____________________      1.5499E+01    
- Contingency_(M$)________________________________________________________ (step2399)____________________      1.6826E+02    
- Total_Account_23_Cost_(M$)______________________________________________ (step23)______________________      1.2900E+03    
+ Contingency_(M$)________________________________________________________ (step2399)____________________      1.6827E+02    
+ Total_Account_23_Cost_(M$)______________________________________________ (step23)______________________      1.2901E+03    
  # 24. Electric Plant Equipment #
- Switch_Gear_(M$)________________________________________________________ (step2401)____________________      3.2229E+01    
- Station_Service_Equipment_(M$)__________________________________________ (step2402)____________________      8.7642E+01    
- Switchboards_(M$)_______________________________________________________ (step2403)____________________      5.0885E+00    
- Protective_Equipment_(M$)_______________________________________________ (step2404)____________________      6.4622E+00    
- Electrical_Structures_(M$)______________________________________________ (step2405)____________________      5.6774E+01    
- Power_and_Control_Wiring_(M$)___________________________________________ (step2406)____________________      4.9418E+01    
- Electric_Lighting_(M$)__________________________________________________ (step2407)____________________      3.1395E+01    
- Spares_(M$)_____________________________________________________________ (step2498)____________________      2.7985E+00    
- Contingency_(M$)________________________________________________________ (step2499)____________________      4.0771E+01    
- Total_Account_24_Cost_(M$)______________________________________________ (step24)______________________      3.1258E+02    
+ Switch_Gear_(M$)________________________________________________________ (step2401)____________________      3.2231E+01    
+ Station_Service_Equipment_(M$)__________________________________________ (step2402)____________________      8.7646E+01    
+ Switchboards_(M$)_______________________________________________________ (step2403)____________________      5.0888E+00    
+ Protective_Equipment_(M$)_______________________________________________ (step2404)____________________      6.4625E+00    
+ Electrical_Structures_(M$)______________________________________________ (step2405)____________________      5.6776E+01    
+ Power_and_Control_Wiring_(M$)___________________________________________ (step2406)____________________      4.9420E+01    
+ Electric_Lighting_(M$)__________________________________________________ (step2407)____________________      3.1396E+01    
+ Spares_(M$)_____________________________________________________________ (step2498)____________________      2.7986E+00    
+ Contingency_(M$)________________________________________________________ (step2499)____________________      4.0773E+01    
+ Total_Account_24_Cost_(M$)______________________________________________ (step24)______________________      3.1259E+02    
  # 25. Miscellaneous Plant Equipment #
  Transport_and_Lifting_Equipment_(M$)____________________________________ (step2501)____________________      2.0532E+01    
- Air_and_Water_Service_System_(M$)_______________________________________ (step2502)____________________      2.0574E+02    
- Communications_Equipment_(M$)___________________________________________ (step2503)____________________      2.6493E+01    
- Furnishing_and_Fixtures_(M$)____________________________________________ (step2504)____________________      5.1141E+00    
- Spares_(M$)_____________________________________________________________ (step2598)____________________      3.3163E+00    
- Contingency_(M$)________________________________________________________ (step2599)____________________      3.9179E+01    
- Total_Account_25_Cost_(M$)______________________________________________ (step25)______________________      3.0037E+02    
+ Air_and_Water_Service_System_(M$)_______________________________________ (step2502)____________________      2.0575E+02    
+ Communications_Equipment_(M$)___________________________________________ (step2503)____________________      2.6494E+01    
+ Furnishing_and_Fixtures_(M$)____________________________________________ (step2504)____________________      5.1143E+00    
+ Spares_(M$)_____________________________________________________________ (step2598)____________________      3.3164E+00    
+ Contingency_(M$)________________________________________________________ (step2599)____________________      3.9181E+01    
+ Total_Account_25_Cost_(M$)______________________________________________ (step25)______________________      3.0039E+02    
  # 27. Remote Handling #
- Remote_Handing_(M$)_____________________________________________________ (step2701)____________________      1.0411E+03    
- Total_Account_27_Cost_(M$)______________________________________________ (step27)______________________      1.0411E+03    
+ Remote_Handing_(M$)_____________________________________________________ (step2701)____________________      1.2941E+03    
+ Total_Account_27_Cost_(M$)______________________________________________ (step27)______________________      1.2941E+03    
  # Plant Direct Cost #
- Plant_direct_cost_(M$)__________________________________________________ (cdirt)_______________________      1.4922E+04    
+ Plant_direct_cost_(M$)__________________________________________________ (cdirt)_______________________      1.8548E+04    
  # Indirect Cost #
- Construction_Facilities,_Equipment_and_Services_(M$)____________________ (step91)______________________      4.4767E+03    
- Engineering_and_Costruction_Management_Services_(M$)____________________ (step92)______________________      4.8497E+03    
- Other_Costs_(M$)________________________________________________________ (step93)______________________      2.2383E+03    
+ Construction_Facilities,_Equipment_and_Services_(M$)____________________ (step91)______________________      5.5645E+03    
+ Engineering_and_Costruction_Management_Services_(M$)____________________ (step92)______________________      6.0282E+03    
+ Other_Costs_(M$)________________________________________________________ (step93)______________________      2.7822E+03    
  # Constructed Cost #
- Constructed_Cost_(M$)___________________________________________________ (concost)_____________________      2.6487E+04    
+ Constructed_Cost_(M$)___________________________________________________ (concost)_____________________      3.2923E+04    
  # Interest during Construction #
- Interest_during_construction_(M$)_______________________________________ (moneyint)____________________      3.9730E+03    
+ Interest_during_construction_(M$)_______________________________________ (moneyint)____________________      4.9385E+03    
  # Total Capital Investment #
- Total_capital_investment_(M$)___________________________________________ (capcost)_____________________      3.0460E+04    
- # Cost of Electricity (2017 US$) #
+ Total_capital_investment_(M$)___________________________________________ (capcost)_____________________      3.7862E+04    
+ # Cost of Electricity, 2017 US$ #
  First_wall_/_blanket_life_(years)_______________________________________ (fwbllife)____________________      5.3433E+00    
  Divertor_life_(years)___________________________________________________ (divlife.)____________________      2.8556E-01    
- Cost_of_electricity_(m$/kWh)____________________________________________ (coe)_________________________      2.7218E+02    
+ Cost_of_electricity_(m$/kWh)____________________________________________ (coe)_________________________      3.3547E+02    
  # Plant Availability #
  Allowable_blanket_neutron_fluence_(MW-yr/m2)____________________________ (abktflnc)____________________      1.5000E+01    
  Allowable_divertor_heat_fluence_(MW-yr/m2)______________________________ (adivflnc)____________________      2.0000E+01    
@@ -619,13 +619,13 @@
  Check_total_area_fractions_in_winding_pack_=_1__________________________ ______________________________      1.0000E+00    
  minimum_TF_conductor_temperature_margin__(K)____________________________ (tmargmin_tf)_________________      1.5000E+00    
  TF_conductor_temperature_margin_(K)_____________________________________ (tmargtf)_____________________      4.7082E+00    
- Superconductor_mass_per_coil_(kg)_______________________________________ (whtconsc)____________________      1.6895E+05 OP 
+ Superconductor_mass_per_coil_(kg)_______________________________________ (whtconsc)____________________      1.1414E+05 OP 
  Copper_mass_per_coil_(kg)_______________________________________________ (whtconcu)____________________      1.6707E+05 OP 
  Steel_conduit_mass_per_coil_(kg)________________________________________ (whtconsh)____________________     -4.2867E+05 OP 
  Conduit_insulation_mass_per_coil_(kg)___________________________________ (whtconin)____________________      3.9671E+02 OP 
- Total_conduit_mass_per_coil_(kg)________________________________________ (whtcon)______________________     -9.2251E+04 OP 
- Mass_of_each_TF_coil_(kg)_______________________________________________ (whttf/n_tf)__________________      1.3798E+06 OP 
- Total_TF_coil_mass_(kg)_________________________________________________ (whttf)_______________________      1.6557E+07    
+ Total_conduit_mass_per_coil_(kg)________________________________________ (whtcon)______________________     -1.4707E+05 OP 
+ Mass_of_each_TF_coil_(kg)_______________________________________________ (whttf/n_tf)__________________      1.3249E+06 OP 
+ Total_TF_coil_mass_(kg)_________________________________________________ (whttf)_______________________      1.5899E+07    
  Nominal_peak_field_assuming_toroidal_symmetry_(T)_______________________ (bmaxtf)______________________      1.0870E+01 OP 
  Total_current_in_all_TF_coils_(MA)______________________________________ (ritfc/1.D6)__________________      2.0300E+02 OP 
  TF_coil_current_(summed_over_all_coils)_(A)_____________________________ (ritfc)_______________________      2.0300E+08    
@@ -808,22 +808,22 @@
  # Support Structure #
  Outer_PF_coil_fence_mass_(kg)___________________________________________ (fncmass)_____________________      1.0301E+05 OP 
  Intercoil_support_structure_mass_(kg)___________________________________ (aintmass)____________________      2.9417E+06 OP 
- Mass_of_cooled_components_(kg)__________________________________________ (coldmass)____________________      3.2726E+07 OP 
- Gravity_support_structure_mass_(kg)_____________________________________ (clgsmass)____________________      1.0631E+06 OP 
+ Mass_of_cooled_components_(kg)__________________________________________ (coldmass)____________________      3.1161E+07 OP 
+ Gravity_support_structure_mass_(kg)_____________________________________ (clgsmass)____________________      1.0122E+06 OP 
  Torus_leg_support_mass_(kg)_____________________________________________ (gsm1)________________________      2.8230E+04 OP 
- Ring_beam_mass_(kg)_____________________________________________________ (gsm2)________________________      3.5362E+05 OP 
- Ring_legs_mass_(kg)_____________________________________________________ (gsm3)________________________      4.8995E+05 OP 
+ Ring_beam_mass_(kg)_____________________________________________________ (gsm2)________________________      3.4270E+05 OP 
+ Ring_legs_mass_(kg)_____________________________________________________ (gsm3)________________________      4.6015E+05 OP 
  # PF Coil Inductances #
  # Pumping for primary coolant (helium) #
  Pressure_drop_in_FW_and_blanket_coolant_incl._hx_and_pipes_(Pa)_________ (dp_he)_______________________      5.5000E+05    
  Fraction_of_FW_and_blanket_thermal_power_required_for_pumping___________ (fpump)_______________________      8.0517E-02 OP 
- Total_power_absorbed_by_FW_&_blanket_(MW)_______________________________ (p_plasma)____________________      3.1572E+03 OP 
+ Total_power_absorbed_by_FW_&_blanket_(MW)_______________________________ (p_plasma)____________________      3.1574E+03 OP 
  Inlet_temperature_of_FW_&_blanket_coolant_pump_(K)______________________ (t_in_compressor)_____________      5.5703E+02 OP 
  Coolant_pump_outlet/Inlet_temperature_of_FW_&_blanket_(K)_______________ (t_in_bb)_____________________      5.7313E+02    
  Outlet_temperature_of_FW_&_blanket_(K)__________________________________ (t_out_bb)____________________      7.7313E+02    
- Mechanical_pumping_power_for_FW_and_blanket_cooling_loop_including_heat_ (htpmw_fw_blkt)_______________      2.7647E+02 OP 
+ Mechanical_pumping_power_for_FW_and_blanket_cooling_loop_including_heat_ (htpmw_fw_blkt)_______________      2.7649E+02 OP 
  Mechanical_pumping_power_for_divertor_(MW)______________________________ (htpmw_div)___________________      5.1782E+00 OP 
- Mechanical_pumping_power_for_shield_and_vacuum_vessel_(MW)______________ (htpmw_shld)__________________      3.5495E-01 OP 
+ Mechanical_pumping_power_for_shield_and_vacuum_vessel_(MW)______________ (htpmw_shld)__________________      3.5497E-01 OP 
  # First wall and blanket : CCFE HCPB model #
  Titanium_beryllide_fraction_____________________________________________ (fbltibe12)___________________      3.7500E-01    
  Lithium_orthosilicate_fraction__________________________________________ (fblli2sio4)__________________      3.7500E-01    
@@ -844,10 +844,10 @@
  Total_mass_of_armour,_first_wall_and_blanket_(kg)_______________________ (armour_fw_bl_mass)___________      7.9687E+05 OP 
  Shield_Mass_(kg)________________________________________________________ (whtshld)_____________________      1.0911E+06 OP 
  Vacuum_vessel_mass_(kg)_________________________________________________ (vvmass)______________________      4.6565E+06 OP 
- Total_nuclear_heating_in_TF+PF_coils_(CS_is_negligible)_(MW)____________ (ptfnuc)______________________      4.7498E+00 OP 
- Total_nuclear_heating_in_FW_(MW)________________________________________ (pnucfw)______________________      2.6282E+02 OP 
- Total_nuclear_heating_in_the_blanket_(including_emult)_(MW)_____________ (pnucblkt)____________________      2.8126E+03 OP 
- Total_nuclear_heating_in_the_shield_(MW)________________________________ (pnucshld)____________________      7.0990E+01 OP 
+ Total_nuclear_heating_in_TF+PF_coils_(CS_is_negligible)_(MW)____________ (ptfnuc)______________________      4.5614E+00 OP 
+ Total_nuclear_heating_in_FW_(MW)________________________________________ (pnucfw)______________________      2.6284E+02 OP 
+ Total_nuclear_heating_in_the_blanket_(including_emult)_(MW)_____________ (pnucblkt)____________________      2.8128E+03 OP 
+ Total_nuclear_heating_in_the_shield_(MW)________________________________ (pnucshld)____________________      7.0995E+01 OP 
  Total_nuclear_heating_in_the_divertor_(MW)______________________________ (pnucdiv)_____________________      3.2292E+02 OP 
  Blanket_exponential_factor______________________________________________ (exp_blanket)_________________      7.9483E-01 OP 
  Shield:_first_exponential_______________________________________________ (exp_shield1)_________________      8.0301E-02 OP 
@@ -941,39 +941,39 @@
  # Plant Buildings System #
  Internal_volume_of_reactor_building_(m3)________________________________ (vrci)________________________      6.3272E+05    
  Dist_from_centre_of_torus_to_bldg_wall_(m)______________________________ (wrbi)________________________      3.4364E+01    
- Effective_floor_area_(m2)_______________________________________________ (efloor)______________________      2.3732E+05    
+ Effective_floor_area_(m2)_______________________________________________ (efloor)______________________      2.3730E+05    
  Reactor_building_volume_(m3)____________________________________________ (rbv)_________________________      7.3219E+05    
  Reactor_maintenance_building_volume_(m3)________________________________ (rmbv)________________________      2.3898E+05    
  Warmshop_volume_(m3)____________________________________________________ (wsv)_________________________      9.2467E+04    
  Tritium_building_volume_(m3)____________________________________________ (triv)________________________      4.0000E+04    
  Electrical_building_volume_(m3)_________________________________________ (elev)________________________      4.6546E+04    
  Control_building_volume_(m3)____________________________________________ (conv)________________________      6.0000E+04    
- Cryogenics_building_volume_(m3)_________________________________________ (cryv)________________________      1.3725E+04    
+ Cryogenics_building_volume_(m3)_________________________________________ (cryv)________________________      1.3617E+04    
  Administration_building_volume_(m3)_____________________________________ (admv)________________________      1.0000E+05    
  Shops_volume_(m3)_______________________________________________________ (shov)________________________      1.0000E+05    
- Total_volume_of_nuclear_buildings_(m3)__________________________________ (volnucb)_____________________      1.0179E+06    
+ Total_volume_of_nuclear_buildings_(m3)__________________________________ (volnucb)_____________________      1.0178E+06    
  # Electric Power Requirements #
  Facility_base_load_(MW)_________________________________________________ (basemw)______________________      5.0000E+00    
  Divertor_coil_power_supplies_(MW)_______________________________________ (bdvmw)_______________________      0.0000E+00    
- Cryoplant_electric_power_(MW)___________________________________________ (crymw)_______________________      3.0709E+01 OP 
- Primary_coolant_pumps_(MW)______________________________________________ (htpmw..)_____________________      2.8200E+02 OP 
+ Cryoplant_electric_power_(MW)___________________________________________ (crymw)_______________________      3.0227E+01 OP 
+ Primary_coolant_pumps_(MW)______________________________________________ (htpmw..)_____________________      2.8202E+02 OP 
  PF_coil_power_supplies_(MW)_____________________________________________ (ppfmw)_______________________      5.5021E+02 OP 
  TF_coil_power_supplies_(MW)_____________________________________________ (ptfmw)_______________________      7.5585E+00 OP 
  Plasma_heating_supplies_(MW)____________________________________________ (pheatingmw)__________________      1.5322E+02 OP 
  Tritium_processing_(MW)_________________________________________________ (trithtmw..)__________________      1.5000E+01    
  Vacuum_pumps__(MW)______________________________________________________ (vachtmw..)___________________      5.0000E-01    
- Total_pulsed_power_(MW)_________________________________________________ (pacpmw)______________________      1.0798E+03 OP 
- Total_base_power_required_at_all_times_(MW)_____________________________ (fcsht)_______________________      4.0597E+01 OP 
+ Total_pulsed_power_(MW)_________________________________________________ (pacpmw)______________________      1.0793E+03 OP 
+ Total_base_power_required_at_all_times_(MW)_____________________________ (fcsht)_______________________      4.0595E+01 OP 
  # Cryogenics #
- Conduction_and_radiation_heat_loads_on_cryogenic_components_(MW)________ (qss/1.0D6)___________________      1.4072E-02 OP 
+ Conduction_and_radiation_heat_loads_on_cryogenic_components_(MW)________ (qss/1.0D6)___________________      1.3399E-02 OP 
  Nuclear_heating_of_cryogenic_components_(MW)____________________________ (qnuc/1.0D6)__________________      1.2920E-02 OP 
  AC_losses_in_cryogenic_components_(MW)__________________________________ (qac/1.0D6)___________________      1.2639E-03 OP 
  Resistive_losses_in_current_leads_(MW)__________________________________ (qcl/1.0D6)___________________      1.4688E-02 OP 
- 45%_allowance_for_heat_loads_in_transfer_lines,_storage_tanks_etc_(MW)__ (qmisc/1.0D6)_________________      1.9325E-02 OP 
- Sum_=_Total_heat_removal_at_cryogenic_temperatures_(W)__________________ (helpow/1.0D6)________________      6.2269E-02 OP 
+ 45%_allowance_for_heat_loads_in_transfer_lines,_storage_tanks_etc_(MW)__ (qmisc/1.0D6)_________________      1.9022E-02 OP 
+ Sum_=_Total_heat_removal_at_cryogenic_temperatures_(W)__________________ (helpow/1.0D6)________________      6.1293E-02 OP 
  Temperature_of_cryogenic_components_(K)_________________________________ (tmpcry)______________________      4.5000E+00    
  Efficiency_(figure_of_merit)_of_cryogenic_plant_is_13%_of_ideal_Carnot_v ______________________________      2.0277E-03 OP 
- Electric_power_for_cryogenic_plant_(MW)_________________________________ (crypmw)______________________      3.0709E+01 OP 
+ Electric_power_for_cryogenic_plant_(MW)_________________________________ (crypmw)______________________      3.0227E+01 OP 
  # Plant Power / Heat Transport Balance #
  Neutron_power_multiplication_in_blanket_________________________________ (emult)_______________________      1.2690E+00    
  Divertor_area_fraction_of_whole_toroid_surface__________________________ (fdiv)________________________      1.1500E-01    
@@ -982,28 +982,28 @@
  Switch_for_pumping_of_primary_coolant___________________________________ (primary_pumping)_____________              3    
  Mechanical_pumping_power_for_FW_cooling_loop_including_heat_exchanger_(M (htpmw_fw)____________________      0.0000E+00 OP 
  Mechanical_pumping_power_for_blanket_cooling_loop_including_heat_exchang (htpmw_blkt)__________________      0.0000E+00 OP 
- Mechanical_pumping_power_for_FW_and_blanket_cooling_loop_including_heat_ (htpmw_fw_blkt)_______________      2.7647E+02 OP 
+ Mechanical_pumping_power_for_FW_and_blanket_cooling_loop_including_heat_ (htpmw_fw_blkt)_______________      2.7649E+02 OP 
  Mechanical_pumping_power_for_divertor_(MW)______________________________ (htpmw_div)___________________      5.1782E+00 OP 
- Mechanical_pumping_power_for_shield_and_vacuum_vessel_(MW)______________ (htpmw_shld)__________________      3.5495E-01 OP 
- Electrical_pumping_power_for_FW_and_blanket_(MW)________________________ (htpmwe_fw_blkt)______________      2.7647E+02 OP 
- Electrical_pumping_power_for_shield_(MW)________________________________ (htpmwe_shld)_________________      3.5495E-01 OP 
+ Mechanical_pumping_power_for_shield_and_vacuum_vessel_(MW)______________ (htpmw_shld)__________________      3.5497E-01 OP 
+ Electrical_pumping_power_for_FW_and_blanket_(MW)________________________ (htpmwe_fw_blkt)______________      2.7649E+02 OP 
+ Electrical_pumping_power_for_shield_(MW)________________________________ (htpmwe_shld)_________________      3.5497E-01 OP 
  Electrical_pumping_power_for_divertor_(MW)______________________________ (htpmwe_div)__________________      5.1782E+00 OP 
- Total_electrical_pumping_power_for_primary_coolant_(MW)_________________ (htpmw)_______________________      2.8200E+02 OP 
+ Total_electrical_pumping_power_for_primary_coolant_(MW)_________________ (htpmw)_______________________      2.8202E+02 OP 
  Coolant_pump_power_/_non-pumping_thermal_power_in_shield________________ (fpumpshld)___________________      5.0000E-03    
  Coolant_pump_power_/_non-pumping_thermal_power_in_divertor______________ (fpumpdiv)____________________      5.0000E-03    
  Electrical_efficiency_of_heat_transport_coolant_pumps___________________ (etahtp)______________________      1.0000E+00    
  Thermal_to_electric_conversion_efficiency_of_the_power_conversion_cycle_ (etath)_______________________      3.7500E-01    
- Fraction_of_total_high-grade_thermal_power_to_divertor__________________ (pdivfraction)________________      2.2896E-01    
- Total_power_leaving_reactor_(across_vacuum_vessel_boundary)_(MW)________ ______________________________      4.2789E+03    
- Heat_removal_from_cryogenic_plant_(MW)__________________________________ (crypmw)______________________      3.0709E+01    
- Heat_removal_from_facilities_(MW)_______________________________________ (fachtmw)_____________________      4.0597E+01    
+ Fraction_of_total_high-grade_thermal_power_to_divertor__________________ (pdivfraction)________________      2.2895E-01    
+ Total_power_leaving_reactor_(across_vacuum_vessel_boundary)_(MW)________ ______________________________      4.2787E+03    
+ Heat_removal_from_cryogenic_plant_(MW)__________________________________ (crypmw)______________________      3.0227E+01    
+ Heat_removal_from_facilities_(MW)_______________________________________ (fachtmw)_____________________      4.0595E+01    
  Coolant_pumping_efficiency_losses_(MW)__________________________________ (htpsecmw)____________________      0.0000E+00    
  Heat_removal_from_injection_power_(MW)__________________________________ (pinjht)______________________      6.2820E+01    
  Heat_removal_from_tritium_plant_(MW)____________________________________ (trithtmw)____________________      1.5000E+01    
  Heat_removal_from_vacuum_pumps_(MW)_____________________________________ (vachtmw)_____________________      5.0000E-01    
  TF_coil_resistive_power_(MW)____________________________________________ (tfcmw)_______________________      0.0000E+00    
- Total_low-grade_thermal_power_(MW)______________________________________ (psechtmw)____________________      1.6222E+02    
- Total_High-grade_thermal_power_(MW)_____________________________________ (pthermmw)____________________      4.5459E+03    
+ Total_low-grade_thermal_power_(MW)______________________________________ (psechtmw)____________________      1.6155E+02    
+ Total_High-grade_thermal_power_(MW)_____________________________________ (pthermmw)____________________      4.5461E+03    
  Number_of_primary_heat_exchangers_______________________________________ (nphx)________________________              5 OP 
  Transport_power_from_scaling_law_(MW)___________________________________ (pscalingmw)__________________      7.5950E+02    
  Total_(MW)______________________________________________________________ ______________________________      7.5950E+02    
@@ -1016,42 +1016,42 @@
  Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      6.6797E+02    
  Injected_power_(MW)_____________________________________________________ (pinjmw.)_____________________      9.0400E+01    
  Ohmic_power_(MW)________________________________________________________ (pohmmw.)_____________________      6.9419E-11    
- Power_deposited_in_primary_coolant_by_pump_(MW)_________________________ (htpmw_mech)__________________      2.8200E+02    
+ Power_deposited_in_primary_coolant_by_pump_(MW)_________________________ (htpmw_mech)__________________      2.8202E+02    
  Total_(MW)______________________________________________________________ ______________________________      4.5504E+03    
- Heat_extracted_from_first_wall_and_blanket_(MW)_________________________ (pthermfw_blkt)_______________      3.4337E+03    
- Heat_extracted_from_shield__(MW)________________________________________ (pthermshld)__________________      7.1345E+01    
+ Heat_extracted_from_first_wall_and_blanket_(MW)_________________________ (pthermfw_blkt)_______________      3.4339E+03    
+ Heat_extracted_from_shield__(MW)________________________________________ (pthermshld)__________________      7.1350E+01    
  Heat_extracted_from_divertor_(MW)_______________________________________ (pthermdiv)___________________      1.0408E+03    
  Nuclear_and_photon_power_lost_to_H/CD_system_(MW)_______________________ (psechcd)_____________________      0.0000E+00    
- Nuclear_power_lost_to_TF_(MW)___________________________________________ (ptfnuc)______________________      4.7498E+00    
+ Nuclear_power_lost_to_TF_(MW)___________________________________________ (ptfnuc)______________________      4.5614E+00    
  Total_(MW)______________________________________________________________ ______________________________      4.5506E+03    
- Net_electric_power_output(MW)___________________________________________ (pnetelmw.)___________________      1.1748E+03    
+ Net_electric_power_output(MW)___________________________________________ (pnetelmw.)___________________      1.1754E+03    
  Required_Net_electric_power_output(MW)__________________________________ (pnetelin)____________________      1.2000E+03    
  Electric_power_for_heating_and_current_drive_(MW)_______________________ (pinjwp)______________________      1.5322E+02    
- Electric_power_for_primary_coolant_pumps_(MW)___________________________ (htpmw)_______________________      2.8200E+02    
+ Electric_power_for_primary_coolant_pumps_(MW)___________________________ (htpmw)_______________________      2.8202E+02    
  Electric_power_for_vacuum_pumps_(MW)____________________________________ (vachtmw)_____________________      5.0000E-01    
  Electric_power_for_tritium_plant_(MW)___________________________________ (trithtmw)____________________      1.5000E+01    
- Electric_power_for_cryoplant_(MW)_______________________________________ (crypmw)______________________      3.0709E+01    
+ Electric_power_for_cryoplant_(MW)_______________________________________ (crypmw)______________________      3.0227E+01    
  Electric_power_for_TF_coils_(MW)________________________________________ (tfacpd)______________________      7.5585E+00    
  Electric_power_for_PF_coils_(MW)________________________________________ (pfwpmw)______________________      2.8283E-01    
- All_other_internal_electric_power_requirements_(MW)_____________________ (fachtmw)_____________________      4.0597E+01    
- Total_(MW)______________________________________________________________ (tot_plant_power)_____________      1.7047E+03    
- Total_(MW)______________________________________________________________ ______________________________      1.7047E+03    
- Gross_electrical_output*_(MW)___________________________________________ (pgrossmw)____________________      1.7047E+03    
+ All_other_internal_electric_power_requirements_(MW)_____________________ (fachtmw)_____________________      4.0595E+01    
+ Total_(MW)______________________________________________________________ (tot_plant_power)_____________      1.7048E+03    
+ Total_(MW)______________________________________________________________ ______________________________      1.7048E+03    
+ Gross_electrical_output*_(MW)___________________________________________ (pgrossmw)____________________      1.7048E+03    
  Fusion_power_(MW)_______________________________________________________ (powfmw.)_____________________      3.5100E+03    
  Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      6.6797E+02    
  Total_(MW)______________________________________________________________ ______________________________      4.1780E+03    
- Net_electrical_output_(MW)	_____________________________________________ (pnetelmw)____________________      1.1748E+03    
- Heat_rejected_by_main_power_conversion_circuit_(MW)_____________________ (rejected_main)_______________      2.8412E+03    
- Heat_rejected_by_other_cooling_circuits_(MW)____________________________ (psechtmw)____________________      1.6222E+02    
+ Net_electrical_output_(MW)	_____________________________________________ (pnetelmw)____________________      1.1754E+03    
+ Heat_rejected_by_main_power_conversion_circuit_(MW)_____________________ (rejected_main)_______________      2.8413E+03    
+ Heat_rejected_by_other_cooling_circuits_(MW)____________________________ (psechtmw)____________________      1.6155E+02    
  Total_(MW)______________________________________________________________ ______________________________      4.1782E+03    
- Net_electric_power_/_total_nuclear_power_(%)____________________________ (pnetelmw/(powfmw+emultmw)____      2.8120E+01    
- Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________      3.3471E+01    
+ Net_electric_power_/_total_nuclear_power_(%)____________________________ (pnetelmw/(powfmw+emultmw)____      2.8133E+01    
+ Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________      3.3486E+01    
  Gross_electric_power*_/_high_grade_heat_(%)_____________________________ (etath)_______________________      3.7500E+01    
- Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      3.1083E-01    
+ Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      3.1054E-01    
  # Water usage during plant operation (secondary cooling) #
- Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      1.2079E+05 OP 
- Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      4.0434E+04 OP 
- Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      3.9626E+06 OP 
+ Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      1.2080E+05 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      4.0436E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      3.9627E+06 OP 
  # Errors and Warnings #
  # Errors and Warnings #
  PROCESS_error_status_flag_______________________________________________ (error_status)________________              2    
