@@ -54,6 +54,15 @@ def mfile_name():
     """
     return "baseline_2018_MFILE.DAT"
 
+@pytest.fixture
+def scan_mfile_name():
+    """Return the name of a scan mfile to test.
+
+    :return: name of the mfile
+    :rtype: str
+    """
+    return "scan_MFILE.DAT"
+
 @pytest.fixture(scope="session", autouse=True)
 def overwrite_ref_dicts(request):
     """Overwrite reference Python-Fortan dictionaries if CLI option supplied.
