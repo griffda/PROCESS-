@@ -29,6 +29,7 @@ import numpy as np
 import os
 import argparse
 from argparse import RawTextHelpFormatter
+from pathlib import Path
 
 # PROCESS libraries
 from process.io.python_fortran_dicts import get_dicts
@@ -71,6 +72,13 @@ def parse_args(args):
             "eg: -yv 'var1 var2'\nA separate plot will be created for each "
             "inputs"
         ),
+    )
+
+    parser.add_argument(
+        "-o",
+        "--outputdir",
+        default=Path.cwd(),
+        help="Output directory for plots, defaults to current working directory.",
     )
 
     parser.add_argument(
@@ -318,11 +326,6 @@ def main(args=None):
 
     # Plot settings
     # -------------
-    # Making the output directory
-    outdir = str("Scan_plots")
-    if not os.path.isdir(outdir):
-        os.mkdir(outdir)
-
     # Plot cosmetic settings
     axis_tick_size = 16
     legend_size = 12
@@ -475,13 +478,13 @@ def main(args=None):
             if output_name == "plascur/1d6":
                 plt.savefig(
                     "{}/scan_{}_vs_{}.{}".format(
-                        outdir, scan_var_name, "plascur", save_format
+                        args.outputdir, scan_var_name, "plascur", save_format
                     )
                 )
             else:
                 plt.savefig(
                     "{}/scan_{}_vs_{}.{}".format(
-                        outdir, scan_var_name, output_name, save_format
+                        args.outputdir, scan_var_name, output_name, save_format
                     )
                 )
             plt.clf()
@@ -579,7 +582,11 @@ def main(args=None):
             plt.tight_layout()
             plt.savefig(
                 "{}/scan_{}_vs_{}_{}.{}".format(
-                    outdir, output_name, scan_var_name, scan_2_var_name, save_format
+                    args.outputdir,
+                    output_name,
+                    scan_var_name,
+                    scan_2_var_name,
+                    save_format,
                 )
             )
             plt.clf()
