@@ -21,52 +21,59 @@ import argparse
 import csv
 import os
 from array import *
+
 ## PROCESS-specific modules
 from process.io.mfile import MFile
 
 
-# == define functions == 
+# == define functions ==
+
 
 def get_user_inputs():
-    parser = argparse.ArgumentParser(description='Read from a PROCESS MFILE and write values into a csv.')
+    parser = argparse.ArgumentParser(
+        description="Read from a PROCESS MFILE and write values into a csv."
+    )
 
-    parser.add_argument("-m", "--mfile",
-                        default='MFILE.DAT',
-                        help="mfile name, default = MFILE.DAT")
+    parser.add_argument(
+        "-m", "--mfile", default="MFILE.DAT", help="mfile name, default = MFILE.DAT"
+    )
 
-    parser.add_argument("-v", "--varfile",
-                        default='varlist.txt',
-                        help="variable textfile name, default = varlist.txt")
+    parser.add_argument(
+        "-v",
+        "--varfile",
+        default="varlist.txt",
+        help="variable textfile name, default = varlist.txt",
+    )
 
     args = parser.parse_args()
 
     return args
 
 
-def get_varlist(varfile='varlist.txt'):
-    print('Fetching list of variables from', varfile)
+def get_varlist(varfile="varlist.txt"):
+    print("Fetching list of variables from", varfile)
     varlist = list([])
 
-    with open(varfile, 'r') as varlist_in:
+    with open(varfile, "r") as varlist_in:
         lines = varlist_in.readlines()
         for l in lines:
-            l = l.rstrip()   # strip trailing characters, e.g. /n
+            l = l.rstrip()  # strip trailing characters, e.g. /n
             varlist.append(l)
-    
+
     return varlist
 
 
-def read_mfile(mfilename='MFILE.DAT',varlist_in=[]):
-    print('Reading from MFILE:', mfilename)
+def read_mfile(mfilename="MFILE.DAT", varlist_in=[]):
+    print("Reading from MFILE:", mfilename)
 
-    #m_file = MFile(args.mfile)
+    # m_file = MFile(args.mfile)
     m_file = MFile(mfilename)
 
     # initialise empty arrays & lists
     names = list([])
-    values = array('d',[])
-    desc = list([])  
-    
+    values = array("d", [])
+    desc = list([])
+
     # for each variable named in the input varfile, get the description and data value
     k = 0
     for var_name in varlist_in:
@@ -75,35 +82,35 @@ def read_mfile(mfilename='MFILE.DAT',varlist_in=[]):
         # In case of a file containing multiple scans, (scan = -1) uses the last scan value
 
         try:  ## mfile module doesn't currently catch a missing var_description error
-            thisdescription = m_file.data[var_name].var_description   
-            names.insert(k,var_name)
-            values.insert(k,thisval)
-            desc.insert(k,thisdescription)
-            k = k+1
+            thisdescription = m_file.data[var_name].var_description
+            names.insert(k, var_name)
+            values.insert(k, thisval)
+            desc.insert(k, thisdescription)
+            k = k + 1
         except AttributeError as error:
-            print(var_name, 'skipped, moving on...')
+            print(var_name, "skipped, moving on...")
 
     return names, values, desc
 
 
-def write_to_csv(mfilename='MFILE.DAT', varnames=[], varvalues=[], vardesc=[]):
+def write_to_csv(mfilename="MFILE.DAT", varnames=[], varvalues=[], vardesc=[]):
 
-    csv_filename = 'mfile_outputs.csv'
-    if '/' in mfilename:  ## very simple string search for the '/' character
+    csv_filename = "mfile_outputs.csv"
+    if "/" in mfilename:  ## very simple string search for the '/' character
         # if input mfile is in a different directory, output the csv file to there
         dirname = os.path.dirname(mfilename)
-        csv_outfile = dirname+'/'+csv_filename
+        csv_outfile = dirname + "/" + csv_filename
     else:
         # otherwise save it locally
         csv_outfile = csv_filename
 
-    print('Writing to csv file:', csv_outfile)
+    print("Writing to csv file:", csv_outfile)
 
-    with open(csv_outfile, 'w') as csv_file:
-        writer = csv.writer(csv_file, delimiter=',')
-        writer.writerow(['Description','varname','value'])
+    with open(csv_outfile, "w") as csv_file:
+        writer = csv.writer(csv_file, delimiter=",")
+        writer.writerow(["Description", "varname", "value"])
 
-        for i in range(0,len(varnames)):
+        for i in range(0, len(varnames)):
             desc = vardesc[i]
             name = varnames[i]
             val = varvalues[i]
@@ -112,7 +119,7 @@ def write_to_csv(mfilename='MFILE.DAT', varnames=[], varvalues=[], vardesc=[]):
 
 
 def main():
-    
+
     # read from command line inputs
     args = get_user_inputs()
 
@@ -131,12 +138,12 @@ def main():
     #     print(vardesc[i], varnames[i], varvalues[i])
 
     # write final line to screen
-    print('Complete.')
-        
+    print("Complete.")
+
 
 # == program ==
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
 
 # == end ==
