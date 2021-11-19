@@ -32,11 +32,17 @@ from process.io.mfile import MFile
 # == define functions ==
 
 
-def get_user_inputs(args):
+def parse_args(args):
+    """Parse supplied arguments.
+
+    :param args: arguments to parse
+    :type args: list, None
+    :return: parsed arguments
+    :rtype: Namespace
+    """
     parser = argparse.ArgumentParser(
         description="Read from a PROCESS MFILE and write values into a csv."
     )
-
     parser.add_argument(
         "-f",
         "--mfile",
@@ -44,7 +50,6 @@ def get_user_inputs(args):
         default="MFILE.DAT",
         help="Specify input mfile name, default = MFILE.DAT",
     )
-
     parser.add_argument(
         "-v",
         "--varfile",
@@ -147,9 +152,8 @@ def main(args=None):
     :param args: optional command-line args for testing, defaults to None
     :type args: list, optional
     """
-
     # read from command line inputs
-    args = get_user_inputs(args)
+    args = parse_args(args)
 
     # read list of required variables from input json file
     jvars = get_vars(args.varfile)
