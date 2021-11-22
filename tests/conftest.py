@@ -26,12 +26,6 @@ def pytest_addoption(parser):
         default=False,
         help="Overwrite test references"
     )
-    parser.addoption(
-        "--keep",
-        default='',
-        type=str,
-        help="Define regression tests to copy the MFile back from the temp directory to the test directory as out.MFILE.DAT"
-    )
 
 
 @pytest.fixture
