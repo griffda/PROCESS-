@@ -82,6 +82,28 @@ build_docker_dev_image:
     PY_VERSION: py36
   <<: *test-setup
 
+
+# a CI deploy token only allows registry access, but not repository write access (it can provide read)
+# https://docs.gitlab.com/ee/user/project/deploy_tokens/
+#
+# For the CI system to read/write to the repository it must have an SSH identity. This SSH identity (public key)
+# can then be added as a Deploy Key (Settings/Repository/Deploy Keys) to provide read (and optionally write) 
+# access to the repository.
+#
+# Put the private key as a CI/CD variable (protected), e.g. CI_RUNNER_PRIVATE_KEY
+# NOTE: RSA keys are not maskable
+
+# due to the way CI/CD variables work: the header and trailer of the key
+# should not be present in CI_RUNNER_PRIVATE_KEY
+# only the actual private key numbers/letters
+
+# setup SSH and add our private key
+
+# add CCFE gitlab instances as known-hosts
+# otherwise git commands to this remote
+# will error out with an unknown host error
+
+# setup our git identity
 .setup-ssh: &setup-ssh |
     mkdir -p ~/.ssh
     chmod 700 ~/.ssh
