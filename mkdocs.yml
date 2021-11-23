@@ -14,6 +14,7 @@ nav:
         - Usage Guide: usage.md
         - Getting Started: getting-started.md
         - Cost Models: cost-models/cost-models.md
+    - Tracking: tracking.html
     - Development: 
         - Version Control (Git): development/git-usage.md
         - Standards: development/standards.md

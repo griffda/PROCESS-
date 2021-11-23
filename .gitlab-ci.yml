@@ -19,8 +19,8 @@ stages:
   - testing
   - step
   - quality
-  - pages
   - tracking
+  - pages
 
 #-----------------
 #  Containers
@@ -81,6 +81,48 @@ build_docker_dev_image:
   variables:
     PY_VERSION: py36
   <<: *test-setup
+
+
+# a CI deploy token only allows registry access, but not repository write access (it can provide read)
+# https://docs.gitlab.com/ee/user/project/deploy_tokens/
+#
+# For the CI system to read/write to the repository it must have an SSH identity. This SSH identity (public key)
+# can then be added as a Deploy Key (Settings/Repository/Deploy Keys) to provide read (and optionally write) 
+# access to the repository.
+#
+# Put the private key as a CI/CD variable (protected), e.g. CI_RUNNER_PRIVATE_KEY
+# NOTE: RSA keys are not maskable
+
+# due to the way CI/CD variables work: the header and trailer of the key
+# should not be present in CI_RUNNER_PRIVATE_KEY
+# only the actual private key numbers/letters
+
+# setup SSH and add our private key
+
+# add CCFE gitlab instances as known-hosts
+# otherwise git commands to this remote
+# will error out with an unknown host error
+
+# setup our git identity
+.setup-ssh: &setup-ssh |
+    mkdir -p ~/.ssh
+    chmod 700 ~/.ssh
+    echo "-----BEGIN OPENSSH PRIVATE KEY-----" > ~/.ssh/id_rsa
+    echo "$CI_RUNNER_PRIVATE_KEY" >> ~/.ssh/id_rsa
+    echo "-----END OPENSSH PRIVATE KEY-----" >> ~/.ssh/id_rsa
+    chmod 700 ~/.ssh/id_rsa
+    command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )
+    eval $(ssh-agent -s)
+    ssh-add ~/.ssh/id_rsa
+    echo $(ssh-keygen -E md5 -lf ~/.ssh/id_rsa)
+    ssh-keyscan -t ecdsa -H git.ccfe.ac.uk > ~/.ssh/known_hosts
+    ssh-keyscan -t ecdsa -H 194.81.223.100 >> ~/.ssh/known_hosts
+    ssh-keygen -H -F git.ccfe.ac.uk
+    ssh-keygen -H -F 194.81.223.100
+    cat ~/.ssh/known_hosts
+    git config --global user.name "${CI_RUNNER_DESCRIPTION}"
+    git config --global user.email "${CI_RUNNER_ID}@git.ccfe.ac.uk"
+
 
 #-----------------
 #  Build
@@ -169,27 +211,6 @@ integration-py36:
   extends: ".integration"
   <<: *test-setup-py36
 
-.unitfort:
-  when: on_success
-  stage: testing
-  script:
-    - python3 -m pip install tabulate
-    - pytest tests/ -m unitfort
-    - python3 tests/uft_tests/coverage.py
-  tags:
-    - ubuntu
-
-.unitfort-py38:
-  extends: ".unitfort"
-  <<: *test-setup-py38
-
-.unitfort-py36:
-  only:
-    - master
-    - develop
-  extends: ".unitfort"
-  <<: *test-setup-py36
-
 .regression:
   when: on_success
   stage: testing
@@ -200,7 +221,7 @@ integration-py36:
       - tests/regression/scenarios/starfire/out.MFILE.DAT
     expire_in: 1 week
   script:
-    - pytest -v tests/regression -s --keep=starfire | tee tests/regression/pytest.log
+    - pytest -v tests/regression -s | tee tests/regression/pytest.log
     - lcov --gcov-tool gcov --capture --directory build/CMakeFiles/process.dir/source/fortran/ --output-file lcov_results/coverage.info
     - genhtml --output-directory lcov_results/html lcov_results/coverage.info
   tags:
@@ -261,6 +282,23 @@ baseline_2018-py38:
     expire_in: 1 week
   tags:
     - ubuntu
+
+starfire-py38:
+  when: on_success
+  only:
+    - develop
+  stage: testing
+  <<: *test-setup-py38
+  script:
+    - process -i tests/regression/scenarios/starfire/IN.DAT
+    - mv tests/regression/scenarios/starfire/MFILE.DAT tracking/starfire_MFILE.DAT 
+  artifacts:
+    paths:
+      - tracking/starfire_MFILE.DAT 
+    expire_in: 1 week
+  tags:
+    - ubuntu
+
 #-----------------
 #  Quality
 #-----------------
@@ -274,6 +312,41 @@ line_length:
     - python3 utilities/line_length_standard.py
   tags:
     - ubuntu
+
+#-----------------
+#  Tracking
+#-----------------
+
+tracking_rtv:
+  when: on_success
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  only: 
+    - develop
+  stage: tracking
+  allow_failure: true
+  <<: *test-setup-py38
+  script:
+    - *setup-ssh
+    - pip install pandas
+    - pip install bokeh
+    # clone the database repo into a known location
+    - git clone git@git.ccfe.ac.uk:tnunn/process-tracking-database.git ${CI_PROJECT_DIR}/process_rtv_data/
+    # write new tracking json files for each of our baseline tracking jobs
+    - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/baseline_2018/baseline_2018_MFILE.DAT
+    - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/baseline_2019/baseline_2019_MFILE.DAT
+    - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/starfire_MFILE.DAT 
+    # create the new tracking dashboard
+    - python ${CI_PROJECT_DIR}/tracking/tracking_data.py plot ${CI_PROJECT_DIR}/process_rtv_data/ --out ${CI_PROJECT_DIR}/tracking.html
+    # commit the new .json data files to the database repo and pushes them
+    - cd ${CI_PROJECT_DIR}/process_rtv_data/
+    - git add .
+    - git commit -m "${CI_PIPELINE_URL} - ${CI_PIPELINE_CREATED_AT}" 
+    - git push
+  artifacts:
+    when: always
+    paths:
+      - ${CI_PROJECT_DIR}/tracking.html
+
 
 #-----------------
 #  Pages
@@ -311,6 +384,8 @@ pages:
     - ls site
     - mv site public
     - mv ford_site public
+    # if tracking.html doesn't exist, put an error404 in its place
+    - mv tracking.html public || cp public/404.html public/tracking.html
 
     # Install requirements for Code Quality
     - python3 -m pip install flinter==0.3.0
@@ -360,20 +435,3 @@ step_trigger:
   allow_failure: true
   script:
     - trigger -u https://git.ccfe.ac.uk/api/v4/projects/4023 -b master -T $CI_JOB_TOKEN -P $CI_JOB_PRIVATE_TOKEN
-
-#-----------------
-#  Tracking
-#-----------------
-
-rtv_trigger:
-  when: on_success
-  image: git.ccfe.ac.uk:4567/tnunn/gitlab-multi-project-pipeline/trigger:latest
-  only: 
-    - develop
-  stage: tracking
-  allow_failure: true
-  script:
-    - trigger -u https://git.ccfe.ac.uk/api/v4/projects/5447 -b master -T $CI_JOB_TOKEN -P $CI_JOB_PRIVATE_TOKEN
-  needs:
-    - job: step_trigger
-      artifacts: false

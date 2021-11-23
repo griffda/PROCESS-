@@ -14,23 +14,48 @@ module plasmod_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
 
   public
 
 contains
 
-  subroutine setupPlasmod(num,geom,comp,ped,inp0,i_flag)
+  subroutine setupPlasmod(i_flag, &
+    geom_k, geom_d, geom_ip, geom_k95, geom_d95, &
+    geom_r, geom_a, geom_q95, geom_bt, geom_counter, &
+    comp_fcoreraditv, comp_qdivt, comp_pradfrac, &
+    comp_pradpos, comp_psep_r, comp_psepb_q95AR, comp_protium, &
+    comp_psepplh_inf, comp_psepplh_sup, comp_c_car, comp_fuelmix, &
+    comp_comparray, comp_globtau, comp_imptype, &
+    inp0_car_qdivt, inp0_chisaw, inp0_chisawpos, inp0_contrpovr, &
+    inp0_contrpovs, inp0_cxe_psepfac, &
+    inp0_eccdeff, inp0_f_gw, inp0_f_gws, &
+    inp0_f_ni, inp0_fcdp, inp0_fpellet, inp0_fpion, inp0_gamcdothers, &
+    inp0_Hfac_inp, inp0_maxpauxor, inp0_nbcdeff, inp0_nbi_energy, &
+    inp0_pech, inp0_pfus, inp0_pheatmax, inp0_PLH, inp0_pnbi, &
+    inp0_q_control, inp0_qcd, inp0_qfus, inp0_qheat, inp0_qnbi_psepfac, &
+    inp0_sawpertau, inp0_spellet, inp0_V_loop, &
+    inp0_x_heat, inp0_x_cd, inp0_x_fus, inp0_x_control, &
+    inp0_dx_heat, inp0_dx_cd, inp0_dx_fus, inp0_dx_control, &
+    num_Ainc, num_capA, num_dgy, num_dt, num_dtinc, num_dtmax, num_dtmaxmax, &
+    num_dtmaxmin, num_dtmin, num_eopt, num_i_equiltype, num_i_impmodel, &
+    num_i_modeltype, num_ipedestal, num_iprocess, num_isawt, num_maxA, &
+    num_nchannels, num_nx, num_nxt, num_test, num_tol, num_tolmin, &
+    ped_tesep, ped_rho_t, ped_rho_n, ped_pedscal, ped_teped &
+    )
 
     !! Routine to set up the PLASMOD input params
     !! author: K Ellis, UKAEA, Culham Science Centre
-    !! num  : derived type : numerics information
-    !! geom : derived type : geometry information
-    !! comp : derived type : composition information
-    !! ped  : derived type :  pedestal information
-    !! inp0 : derived type : miscellaneous input information
     !! i_flag : integer    : PLASMOD error flag
+    !! num_*  : decomposed contents of numerics derived type
+    !! geom_* : decomposed contents of geometry derived type
+    !! comp_* : decomposed contents of composition derived type
+    !! ped_*  : decomposed contents of pedestal derived type
+    !! inp0_* : decomposed contents of miscellaneous input derived type
+    !! Arguments are contents of the derived types found in the structs module
     !! This routine sets up the input parameters for
     !! PLASMOD from PROCESS variables.
     !! E Fable et al. Fus. Eng. & Des. (2018)
@@ -69,166 +94,197 @@ contains
     implicit none
 
     !  Arguments
-
-    type (geometry), intent(inout) :: geom
-    type (composition), intent(inout) :: comp
-    type (pedestal), intent(inout) :: ped
-    type (inputs), intent(inout) :: inp0
-    type (numerics_transp), intent(inout) :: num
-    integer, intent(inout) :: i_flag
-
+    integer, intent(out) :: i_flag
+    
+    ! geometry type
+    real(dp), intent(out) :: geom_k, geom_d, geom_ip, geom_k95, geom_d95, &
+      geom_r, geom_a, geom_q95, geom_bt, geom_counter
+    
+    ! composition type
+    real(dp), intent(out) :: comp_fcoreraditv, comp_qdivt, comp_pradfrac, &
+      comp_pradpos, comp_psep_r, comp_psepb_q95AR, comp_protium, &
+      comp_psepplh_inf, comp_psepplh_sup, comp_c_car, comp_fuelmix
+    real(dp), dimension(:), intent(out) :: comp_comparray, comp_globtau
+    integer, dimension(:), intent(out) :: comp_imptype
+    
+    ! inputs type
+    real(dp), intent(out) :: inp0_car_qdivt, inp0_chisaw, inp0_chisawpos, inp0_contrpovr, &
+      inp0_contrpovs, inp0_cxe_psepfac, &
+      inp0_eccdeff, inp0_f_gw, inp0_f_gws, &
+      inp0_f_ni, inp0_fcdp, inp0_fpellet, inp0_fpion, inp0_gamcdothers, &
+      inp0_Hfac_inp, inp0_maxpauxor, inp0_nbcdeff, inp0_nbi_energy, &
+      inp0_pech, inp0_pfus, inp0_pheatmax, inp0_pnbi, &
+      inp0_q_control, inp0_qcd, inp0_qfus, inp0_qheat, inp0_qnbi_psepfac, &
+      inp0_sawpertau, inp0_spellet, inp0_V_loop
+    integer, intent(out) :: inp0_PLH
+    real(dp), dimension(:), intent(out) :: inp0_x_heat, inp0_x_cd, inp0_x_fus, inp0_x_control, &
+      inp0_dx_heat, inp0_dx_cd, inp0_dx_fus, inp0_dx_control
+    
+    ! numerics_transp type
+    real(dp), intent(out) :: num_Ainc, num_capA, num_dgy, num_dt, num_dtinc, &
+      num_dtmax, num_dtmaxmax, &
+      num_dtmaxmin, num_dtmin, num_eopt, &
+      num_maxA, &
+      num_test, num_tol, num_tolmin
+    integer, intent(out) :: num_i_equiltype, num_i_impmodel, num_isawt, &
+      num_i_modeltype, num_ipedestal, num_iprocess, num_nchannels, num_nx, &
+      num_nxt
+    
+    ! pedestal type
+    real(dp), intent(out) :: ped_tesep, ped_rho_t, ped_rho_n, ped_pedscal, &
+      ped_teped
 
     ! all fixed input variables that cannot change within a PROCESS iteration go here!
     ! They only need to be initialised once.
 
-    if (geom%counter.eq.0.d0) then
+    if (geom_counter.eq.0.d0) then
 
-       num%nx        = plasmod_nx  !number of interpolated grid points
-       num%nxt       = plasmod_nxt !number of reduced grid points
-       num%nchannels = plasmod_nchannels  !leave this at 3
+       num_nx        = plasmod_nx  !number of interpolated grid points
+       num_nxt       = plasmod_nxt !number of reduced grid points
+       num_nchannels = plasmod_nchannels  !leave this at 3
 
        !HL: This is a temporary set up for the moment!
-       comp%psep_r      = pseprmax !Psep/R max value
-       comp%psepb_q95AR = psepbqarmax !Psep B/qAR max value
+       comp_psep_r      = pseprmax !Psep/R max value
+       comp_psepb_q95AR = psepbqarmax !Psep B/qAR max value
 
        ! To selfconsistently compute the He concentration inside PLASMOD
        ! its intial fraction has to be 0.d0. Then globtau is used!
        ! The Xe fraction is used as an iteration variable inside PLASMOD
        ! it adjusts to fulfil psepqbarmax, pseprmax or psepplh_sup.
-       comp%comparray = 0.d0 !array of impurity concentrations
-       comp%comparray(comp%imptype(3)) = impurity_arr(comp%imptype(3))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
-       comp%comparray(comp%imptype(1)) = impurity_arr(comp%imptype(1))%frac
-       comp%protium   = protium !protium is treated separately
+       comp_comparray = 0.d0 !array of impurity concentrations
+       comp_comparray(comp_imptype(3)) = impurity_arr(comp_imptype(3))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
+       comp_comparray(comp_imptype(1)) = impurity_arr(comp_imptype(1))%frac
+       comp_protium   = protium !protium is treated separately
 
        ! Impurities to be used for (1)intrinsic (2)Psep control (3)SOL seeding
-       comp%imptype(1) = plasmod_imptype(1)
-       comp%imptype(2) = plasmod_imptype(2)
-       comp%imptype(3) = plasmod_imptype(3)
+       comp_imptype(1) = plasmod_imptype(1)
+       comp_imptype(2) = plasmod_imptype(2)
+       comp_imptype(3) = plasmod_imptype(3)
 
 
-       comp%psepplh_inf = boundl(103) !Psep/PLH if below this, use nbi
-       comp%psepplh_sup = plasmod_psepplh_sup !Psep/PLH if above this, use Xe
-       inp0%maxpauxor   = plasmod_maxpauxor ! maximum Paux/R allowed
+       comp_psepplh_inf = boundl(103) !Psep/PLH if below this, use nbi
+       comp_psepplh_sup = plasmod_psepplh_sup !Psep/PLH if above this, use Xe
+       inp0_maxpauxor   = plasmod_maxpauxor ! maximum Paux/R allowed
 
-       num%tol    = plasmod_tol !tolerance to be reached, in % variation at each time step
-       num%dtmin  = plasmod_dtmin !min time step
-       num%dtmax  = plasmod_dtmax !max time step
-       num%dt     = plasmod_dt !time step
-       num%dtinc  = plasmod_dtinc !decrease of dt
-       num%Ainc   = plasmod_ainc !increase of dt
-       num%test   = plasmod_test !max iteration number
-       num%tolmin = plasmod_tolmin ! multiplier of etolm that should not be overcome
+       num_tol    = plasmod_tol !tolerance to be reached, in % variation at each time step
+       num_dtmin  = plasmod_dtmin !min time step
+       num_dtmax  = plasmod_dtmax !max time step
+       num_dt     = plasmod_dt !time step
+       num_dtinc  = plasmod_dtinc !decrease of dt
+       num_Ainc   = plasmod_ainc !increase of dt
+       num_test   = plasmod_test !max iteration number
+       num_tolmin = plasmod_tolmin ! multiplier of etolm that should not be overcome
 
-       num%eopt     = plasmod_eopt !exponent of jipperdo
-       num%dtmaxmin = plasmod_dtmaxmin !exponent of jipperdo2
-       num%dtmaxmax = plasmod_dtmaxmax !stabilizing coefficient
-       num%capA     = plasmod_capa !first radial grid point
-       num%maxA     = plasmod_maxa !diagz 0 or 1
-       num%dgy      = plasmod_dgy !Newton differential
+       num_eopt     = plasmod_eopt !exponent of jipperdo
+       num_dtmaxmin = plasmod_dtmaxmin !exponent of jipperdo2
+       num_dtmaxmax = plasmod_dtmaxmax !stabilizing coefficient
+       num_capA     = plasmod_capa !first radial grid point
+       num_maxA     = plasmod_maxa !diagz 0 or 1
+       num_dgy      = plasmod_dgy !Newton differential
 
-       num%iprocess = plasmod_iprocess !0 - use PLASMOD functions, 1 - use PROCESS functions
-       num%i_modeltype = plasmod_i_modeltype !1 - simple gyrobohm scaling with imposed H factor > 1, other models with H in output
-       num%i_equiltype = plasmod_i_equiltype !1 - EMEQ, solve equilibrium
+       num_iprocess = plasmod_iprocess !0 - use PLASMOD functions, 1 - use PROCESS functions
+       num_i_modeltype = plasmod_i_modeltype !1 - simple gyrobohm scaling with imposed H factor > 1, other models with H in output
+       num_i_equiltype = plasmod_i_equiltype !1 - EMEQ, solve equilibrium
        !with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
        !sawtooth inputs
-       num%isawt     = plasmod_isawt !0 - no sawteeth, 1 - solve with sawteeth
-       inp0%chisawpos= plasmod_chisawpos !position where artificial sawtooth diffusivity is added, -1 - uses q=1 position
-       inp0%chisaw   = plasmod_chisaw !artificial diffusivity in m^2/s
-       inp0%sawpertau= plasmod_sawpertau !ratio between sawtooth period and confinement time
+       num_isawt     = plasmod_isawt !0 - no sawteeth, 1 - solve with sawteeth
+       inp0_chisawpos= plasmod_chisawpos !position where artificial sawtooth diffusivity is added, -1 - uses q=1 position
+       inp0_chisaw   = plasmod_chisaw !artificial diffusivity in m^2/s
+       inp0_sawpertau= plasmod_sawpertau !ratio between sawtooth period and confinement time
 
        if(ieped == 0) then
-          num%ipedestal= 1  !fixed temperature pedestal
+          num_ipedestal= 1  !fixed temperature pedestal
        else if (ieped == 1) then
-          num%ipedestal= 2  !Sareelma scaling
+          num_ipedestal= 2  !Sareelma scaling
        else
           call report_error(175) !option not possible
        endif
 
-       num%i_impmodel = plasmod_i_impmodel !impurity model: 0 - fixed
+       num_i_impmodel = plasmod_i_impmodel !impurity model: 0 - fixed
        !concentration, 1 - concentration fixed at pedestal top, then fixed density.
-       comp%globtau(1) = plasmod_globtau(1) !tauparticle/tauE for D, T, He, Xe, Ar
-       comp%globtau(2) = plasmod_globtau(2) !tauparticle/tauE for D, T, He, Xe, Ar
-       comp%globtau(3) = plasmod_globtau(3) !tauparticle/tauE for D, T, He, Xe, Ar
-       comp%globtau(4) = plasmod_globtau(4) !tauparticle/tauE for D, T, He, Xe, Ar Not used for Xe!
-       comp%globtau(5) = plasmod_globtau(5) !tauparticle/tauE for D, T, He, Xe, Ar
-       comp%fuelmix = fdeut !fuel mix
+       comp_globtau(1) = plasmod_globtau(1) !tauparticle/tauE for D, T, He, Xe, Ar
+       comp_globtau(2) = plasmod_globtau(2) !tauparticle/tauE for D, T, He, Xe, Ar
+       comp_globtau(3) = plasmod_globtau(3) !tauparticle/tauE for D, T, He, Xe, Ar
+       comp_globtau(4) = plasmod_globtau(4) !tauparticle/tauE for D, T, He, Xe, Ar Not used for Xe!
+       comp_globtau(5) = plasmod_globtau(5) !tauparticle/tauE for D, T, He, Xe, Ar
+       comp_fuelmix = fdeut !fuel mix
 
        !compression factor between div and
        !core: e.g. 10 means there is 10 more Argon concentration in the
        !divertor than in the core
-       comp%c_car = impurity_enrichment(comp%imptype(3))
+       comp_c_car = impurity_enrichment(comp_imptype(3))
 
 
        !derivatives
-       inp0%qnbi_psepfac = plasmod_qnbi_psepfac !dqnbi/d(1-Psep/PLH)
-       inp0%cxe_psepfac  = plasmod_cxe_psepfac !dcxe/d(1-Psep/PLH)
-       inp0%car_qdivt    = plasmod_car_qdivt !dcar/d(qdivt)
+       inp0_qnbi_psepfac = plasmod_qnbi_psepfac !dqnbi/d(1-Psep/PLH)
+       inp0_cxe_psepfac  = plasmod_cxe_psepfac !dcxe/d(1-Psep/PLH)
+       inp0_car_qdivt    = plasmod_car_qdivt !dcar/d(qdivt)
 
        !deposition locations
-       inp0%x_heat(1)     = plasmod_x_heat(1) !nbi
-       inp0%x_heat(2)     = plasmod_x_heat(2) !ech
-       inp0%x_cd(1)       = plasmod_x_cd(1) !nbi
-       inp0%x_cd(2)       = plasmod_x_cd(2) !ech
-       inp0%x_fus(1)      = plasmod_x_fus(1) !nbi
-       inp0%x_fus(2)      = plasmod_x_fus(2) !ech
-       inp0%x_control(1)  = plasmod_x_control(1) !nbi
-       inp0%x_control(2)  = plasmod_x_control(2) !ech
-       inp0%dx_heat(1)    = plasmod_dx_heat(1) !nbi
-       inp0%dx_heat(2)    = plasmod_dx_heat(2) !ech
-       inp0%dx_cd(1)      = plasmod_dx_cd(1) !nbi
-       inp0%dx_cd(2)      = plasmod_dx_cd(2) !ech
-       inp0%dx_fus(1)     = plasmod_dx_fus(1) !nbi
-       inp0%dx_fus(2)     = plasmod_dx_fus(2) !ech
-       inp0%dx_control(1) = plasmod_dx_control(1) !nbi
-       inp0%dx_control(2) = plasmod_dx_control(2) !ech
-       inp0%nbi_energy    = plasmod_nbi_energy !in keV
+       inp0_x_heat(1)     = plasmod_x_heat(1) !nbi
+       inp0_x_heat(2)     = plasmod_x_heat(2) !ech
+       inp0_x_cd(1)       = plasmod_x_cd(1) !nbi
+       inp0_x_cd(2)       = plasmod_x_cd(2) !ech
+       inp0_x_fus(1)      = plasmod_x_fus(1) !nbi
+       inp0_x_fus(2)      = plasmod_x_fus(2) !ech
+       inp0_x_control(1)  = plasmod_x_control(1) !nbi
+       inp0_x_control(2)  = plasmod_x_control(2) !ech
+       inp0_dx_heat(1)    = plasmod_dx_heat(1) !nbi
+       inp0_dx_heat(2)    = plasmod_dx_heat(2) !ech
+       inp0_dx_cd(1)      = plasmod_dx_cd(1) !nbi
+       inp0_dx_cd(2)      = plasmod_dx_cd(2) !ech
+       inp0_dx_fus(1)     = plasmod_dx_fus(1) !nbi
+       inp0_dx_fus(2)     = plasmod_dx_fus(2) !ech
+       inp0_dx_control(1) = plasmod_dx_control(1) !nbi
+       inp0_dx_control(2) = plasmod_dx_control(2) !ech
+       inp0_nbi_energy    = plasmod_nbi_energy !in keV
 
-       inp0%eccdeff = 0.3  !CD = this * PCD * TE/NE !not used for now
-       inp0%pech    = 0.d0 !ech power !not used for now
-       inp0%pnbi    = 0.d0 !nbi power
-       inp0%qheat   = 0.d0 !
-       inp0%qcd     = 0.d0 !
-       inp0%qfus    = 0.d0 !
-       inp0%gamcdothers = plasmod_gamcdothers
+       inp0_eccdeff = 0.3  !CD = this * PCD * TE/NE !not used for now
+       inp0_pech    = 0.d0 !ech power !not used for now
+       inp0_pnbi    = 0.d0 !nbi power
+       inp0_qheat   = 0.d0 !
+       inp0_qcd     = 0.d0 !
+       inp0_qfus    = 0.d0 !
+       inp0_gamcdothers = plasmod_gamcdothers
 
-       inp0%spellet = 0.d0 !pellet mass in particles of D in 10^19
-       inp0%fpellet = 0.5d0 !pellet frequency in Hz
+       inp0_spellet = 0.d0 !pellet mass in particles of D in 10^19
+       inp0_fpellet = 0.5d0 !pellet frequency in Hz
 
        ! implemented global variables ready for use when required
-       !inp0%eccdeff = plasmod_eccdeff  !CD = this * PCD * TE/NE !not used for now
-       !inp0%pech    = plasmod_pech !ech power !not used for now
-       !inp0%spellet = plasmod_spellet !pellet mass in particles of D in 10^19
-       !inp0%fpellet = plasmod_fpellet !pellet frequency in Hz
+       !inp0_eccdeff = plasmod_eccdeff  !CD = this * PCD * TE/NE !not used for now
+       !inp0_pech    = plasmod_pech !ech power !not used for now
+       !inp0_spellet = plasmod_spellet !pellet mass in particles of D in 10^19
+       !inp0_fpellet = plasmod_fpellet !pellet frequency in Hz
 
 
-       inp0%V_loop = plasmod_v_loop !target loop voltage. If lower than  -1.e5 dont use
-       inp0%pfus   = plasmod_pfus !if 0., not used (otherwise it would be controlled with Pauxheat)
+       inp0_V_loop = plasmod_v_loop !target loop voltage. If lower than  -1.e5 dont use
+       inp0_pfus   = plasmod_pfus !if 0., not used (otherwise it would be controlled with Pauxheat)
        !Only one of the two below should be specified
-       inp0%contrpovs = plasmod_contrpovs !control power in Paux/lateral_area (MW/m2)
-       inp0%contrpovr = plasmod_contrpovr !control power in Paux/R (MW/m)
+       inp0_contrpovs = plasmod_contrpovs !control power in Paux/lateral_area (MW/m2)
+       inp0_contrpovr = plasmod_contrpovr !control power in Paux/R (MW/m)
 
        ! qdivt should be equal to qtargettotal /5.0e6/ if using the
        ! Kallenbach model at the same time
        ! This needs to be implemented when coupling to the Kallenbach model!
-       comp%qdivt       = plasmod_qdivt !divertor heat flux in MW/m^2, if 0, dont use SOL model
-       comp%pradfrac    = coreradiationfraction !fraction of radiation from 'core' region that is subtracted from the loss power
-       comp%pradpos     = coreradius ! position after which radiation is
+       comp_qdivt       = plasmod_qdivt !divertor heat flux in MW/m^2, if 0, dont use SOL model
+       comp_pradfrac    = coreradiationfraction !fraction of radiation from 'core' region that is subtracted from the loss power
+       comp_pradpos     = coreradius ! position after which radiation is
        !counted 0. for tau and other global quantities, i.e. position after
        !which radiation is "edge"
 
 
-       ped%tesep   = tesep  !separatrix temperature
-       ped%rho_t   = rhopedt !pedestal top position T
-       ped%rho_n   = rhopedn !pedestal top position n
-       ped%pedscal = plasmod_pedscal !multiplies the pedestal scaling in PLASMOD
-       ped%teped   = teped !pedestal top temperature
-       inp0%f_gws  = fgwsep !separatrix greenwald fraction
+       ped_tesep   = tesep  !separatrix temperature
+       ped_rho_t   = rhopedt !pedestal top position T
+       ped_rho_n   = rhopedn !pedestal top position n
+       ped_pedscal = plasmod_pedscal !multiplies the pedestal scaling in PLASMOD
+       ped_teped   = teped !pedestal top temperature
+       inp0_f_gws  = fgwsep !separatrix greenwald fraction
 
-       geom%k  = kappa !edge elongation
-       geom%d  = triang !edge triangularity
-       geom%ip = plascur/1.d6
-       geom%k95 = kappa95 !edge elongation
-       geom%d95 = triang95 !edge triangularity
+       geom_k  = kappa !edge elongation
+       geom_d  = triang !edge triangularity
+       geom_ip = plascur/1.d6
+       geom_k95 = kappa95 !edge elongation
+       geom_d95 = triang95 !edge triangularity
 
     endif
 
@@ -237,55 +293,70 @@ contains
 
     i_flag = 1
 
-    geom%r   = rmajor
-    geom%a   = aspect
-    geom%q95 = q95
-    geom%bt  = bt
+    geom_r   = rmajor
+    geom_a   = aspect
+    geom_q95 = q95
+    geom_bt  = bt
 
-    inp0%f_gw      = fgwped !pedestal top greenwald fraction
-    inp0%Hfac_inp  = hfact !input H factor (radiation corrected), if 0., this is not used.
-    inp0%pheatmax  = pinjalw !max allowed power for heating+CD+fusion control
-    inp0%q_control = pheat !minimal power required for control
+    inp0_f_gw      = fgwped !pedestal top greenwald fraction
+    inp0_Hfac_inp  = hfact !input H factor (radiation corrected), if 0., this is not used.
+    inp0_pheatmax  = pinjalw !max allowed power for heating+CD+fusion control
+    inp0_q_control = pheat !minimal power required for control
 
     !fvsbrnni can be an iteration variable!
-    inp0%f_ni   = fvsbrnni !required fraction of non inductive current, if 0 dont use CD
+    inp0_f_ni   = fvsbrnni !required fraction of non inductive current, if 0 dont use CD
 
     !Iterations variables for PLASMOD - see issue #658
-    inp0%fcdp        = plasmod_fcdp !(P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power (PROCESS iteration variable 147)
-    comp%fcoreraditv = plasmod_fradc !Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad) (PROCESS iteration variable 148)
+    inp0_fcdp        = plasmod_fcdp !(P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power (PROCESS iteration variable 147)
+    comp_fcoreraditv = plasmod_fradc !Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad) (PROCESS iteration variable 148)
 
     !Note that this is only a correct input on the second iteration!
-    inp0%fpion = fpion ! Fraction of neutral beam energy to ions
+    inp0_fpion = fpion ! Fraction of neutral beam energy to ions
 
-    if (comp%qdivt.eq.0.d0) then
-       comp%comparray(comp%imptype(3)) = impurity_arr(comp%imptype(3))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
+    if (comp_qdivt.eq.0.d0) then
+       comp_comparray(comp_imptype(3)) = impurity_arr(comp_imptype(3))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
        !else
        !@EF: What should happen, if this is not assigned?
     endif
 
     !uses PROCESS defined LH threshold, if this is > 0
-    inp0%PLH = ilhthresh
+    inp0_PLH = ilhthresh
 
-    inp0%nbcdeff = gamcd ! normalised current drive efficiency (1.0e20 A/W-m2)
+    inp0_nbcdeff = gamcd ! normalised current drive efficiency (1.0e20 A/W-m2)
 
 
   end subroutine setupPlasmod
 
-  subroutine convert_Plasmod2PROCESS(geom,comp,ped,radp,mhd,loss,theat,&
-		& tburn,fusrat)
-
+  subroutine convert_Plasmod2PROCESS(theat, tburn, fusrat, &
+    geom_k, geom_d, geom_perim, geom_ip, geom_q95, &
+    comp_comparray, comp_globtau, comp_cxe, comp_che, comp_car, &
+    ped_teped, ped_nped, ped_nsep, ped_tesep, &
+    radp_te, radp_ti, radp_av_te, radp_av_ten, radp_av_ti, radp_av_ne, &
+    radp_ne, radp_av_ni, radp_av_nhe, radp_av_nd, radp_av_nz, radp_zeff, &
+    radp_jcd, radp_jpar, radp_ipol, radp_qprof, radp_Volum, radp_vp, &
+    radp_cc, radp_palph, radp_nions, radp_psi, &
+    loss_alpharate, loss_betaft, loss_dfuelreq, loss_fusionrate, loss_h, &
+    loss_palpe, loss_palpi, loss_pbrehms, loss_pdiv, loss_peaux, loss_pfus, &
+    loss_pfusdd, loss_piaux, loss_piepv, loss_plh, loss_pline, loss_pnbi, &
+    loss_pohm, loss_prad, loss_pradcore, loss_pradedge, loss_psep, &
+    loss_psepe, loss_psepi, loss_psync, loss_qcd, loss_qfus, loss_qheat, &
+    loss_qtot, loss_rplas, loss_tauee, loss_taueff, loss_tauei, loss_wth, &
+    mhd_betan, mhd_bp, mhd_equilcheck, mhd_f_ni, mhd_fbs, mhd_ip_out, &
+    mhd_q, mhd_q_sep, mhd_qstar, mhd_rli, mhd_sp, mhd_torsurf, mhd_vloop, &
+    mhd_vp &
+    )
     !! Routine to set up the PLASMOD input params
     !! author: K Ellis, UKAEA, Culham Science Centre
-    !! num : derived type :
-    !! geom : derived type :
-    !! comp : derived type :
-    !! ped : derived type :
+    !! geom_*: decomposed contents of geometry derived type
+    !! comp_*: decomposed contents of composition derived type
+    !! ped_*: decomposed contents of pedestal derived type
+    !! radp_*: decomposed contents of radial_profiles derived type
+    !! mhd_*: decomposed contents of mhd_eq derived type
+    !! loss_*: decomposed contents of power_losses derived type
+    !! Arguments are contents of the derived types found in the structs module
     !! This routine writes out the times of the various stages
     !! during a single plant cycle.
     !! E. Fable et al., Fusion Engineering and Design, Volume 130, May 2018, Pages 131-136
-
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use current_drive_variables, only: pinjimw, bootipf, pinjemw, pinjmw, &
         ftritbm, plasipf
@@ -317,12 +388,35 @@ contains
     implicit none
 
     !  Arguments
-    type (geometry), intent(inout) :: geom
-    type (composition), intent(inout) :: comp
-    type (pedestal), intent(inout) :: ped
-    type (radial_profiles), intent(inout) :: radp
-    type (MHD_EQ), intent(inout) :: mhd
-    type (power_losses), intent(inout) :: loss
+    ! geometry type
+    real(dp), intent(in) :: geom_k, geom_d, geom_perim, geom_ip, geom_q95
+    
+    ! composition type
+    real(dp), intent(in) :: comp_cxe, comp_che, comp_car
+    real(dp), dimension(:), intent(in) :: comp_comparray, comp_globtau
+    
+    ! pedestal type
+    real(dp), intent(in) :: ped_teped, ped_nped, ped_nsep, ped_tesep
+    
+    ! radial_profiles type
+    real(dp), intent(in) :: radp_av_te, radp_av_ten, radp_av_ti, radp_av_ne, &
+      radp_av_ni, radp_av_nhe, radp_av_nd, radp_av_nz, radp_zeff
+    real(dp), dimension(:), intent(in) :: radp_ne, radp_psi, radp_te, radp_ti, &
+      radp_jcd, radp_jpar, radp_ipol, radp_qprof, radp_Volum, radp_vp, &
+      radp_cc, radp_palph, radp_nions
+    
+    ! power_losses type
+    real(dp), intent(in) :: loss_alpharate, loss_betaft, loss_dfuelreq, loss_fusionrate, loss_h, &
+      loss_palpe, loss_palpi, loss_pbrehms, loss_pdiv, loss_peaux, loss_pfus, &
+      loss_pfusdd, loss_piaux, loss_piepv, loss_plh, loss_pline, loss_pnbi, &
+      loss_pohm, loss_prad, loss_pradcore, loss_pradedge, loss_psep, &
+      loss_psepe, loss_psepi, loss_psync, loss_qcd, loss_qfus, loss_qheat, &
+      loss_qtot, loss_rplas, loss_tauee, loss_taueff, loss_tauei, loss_wth
+    
+    ! mhd_eq type
+    real(dp), intent(in) :: mhd_betan, mhd_bp, mhd_equilcheck, mhd_f_ni, mhd_fbs, mhd_ip_out, &
+      mhd_q, mhd_q_sep, mhd_qstar, mhd_rli, mhd_sp, mhd_torsurf, mhd_vloop, &
+      mhd_vp
 
     real(kind(1.0D0)) :: theat,tburn,aeps,beps,rlpext,rlpint,vburn,fusrat
     real(kind(1.0D0)) :: znimp, znfuel
@@ -349,9 +443,9 @@ contains
        write(*,*) 'N.B. If reducing time step size doesnt work, try changing the parameters, particularly H factor'
     endif
 
-    ! mhd%equilcheck will likely be depricated in the future, as it is covered
+    ! mhd_equilcheck will likely be depricated in the future, as it is covered
     ! by i_flag
-    if (i_flag.ne.1 .or. mhd%equilcheck.ne.1)then
+    if (i_flag.ne.1 .or. mhd_equilcheck.ne.1)then
        idiags(1) = i_flag
        call report_error(174)
     endif
@@ -359,39 +453,39 @@ contains
     !------------------------------------------------
     !Quantities previously calculated by geomty in plasma_geometry
     !kappa95 and triang95 are inputs and not recalculated! (#646)
-    kappa    = geom%k
-    triang   = geom%d
-    xarea    = mhd%torsurf !Plasma cross-sectional area (m2)
-    sarea    = mhd%sp
+    kappa    = geom_k
+    triang   = geom_d
+    xarea    = mhd_torsurf !Plasma cross-sectional area (m2)
+    sarea    = mhd_sp
     !sareao   =  !outboard plasma surface area
     kappaa   = xarea/(3.141592*rminor**2)
-    pperim = geom%perim !Plasma poloidal perimeter (m)
+    pperim = geom_perim !Plasma poloidal perimeter (m)
     sf = pperim / (2.0D0*pi*rminor)
     ! Issue 879 remove the line in Plasmod that overwrites 'vol'
-    ! vol = mhd%vp ! plasma volume (m^3)
+    ! vol = mhd_vp ! plasma volume (m^3)
     ! write(*,*)'convert_Plasmod2PROCESS: Plasma volume  ', vol
 
     !------------------------------------------------
     !Temperature outputs otherwise input or
     !calculated in plasma_profiles
-    te0   = radp%te(1)
-    ti0   = radp%ti(1) !ion temperature on axis
-    teped = ped%teped !only computed, if ieped = 2
-    te    = radp%av_te
-    ten   = radp%av_Ten
-    ti    = radp%av_ti
+    te0   = radp_te(1)
+    ti0   = radp_ti(1) !ion temperature on axis
+    teped = ped_teped !only computed, if ieped = 2
+    te    = radp_av_te
+    ten   = radp_av_Ten
+    ti    = radp_av_ti
     tin   = ti/te * ten
 
     !------------------------------------------------
     !Density outputs otherwise inputs or
     !calculated in plasma_profiles
-    dene  = radp%av_ne*1.d19
-    ne0   = radp%ne(1)*1.d19
-    neped = ped%nped*1.d19
-    nesep = ped%nsep*1.d19
-    dnitot = radp%av_ni * 1.0d19 !Ion density (/m3)
+    dene  = radp_av_ne*1.d19
+    ne0   = radp_ne(1)*1.d19
+    neped = ped_nped*1.d19
+    nesep = ped_nsep*1.d19
+    dnitot = radp_av_ni * 1.0d19 !Ion density (/m3)
     ni0   = dnitot/dene * ne0
-    dnla  = sum(radp%ne)/size(radp%ne)*1.d19
+    dnla  = sum(radp_ne)/size(radp_ne)*1.d19
 
     !  Central pressure (Pa), from ideal gas law : p = nkT
     p0 = (ne0*te0 + ni0*ti0) * 1.0D3 * echarge
@@ -404,9 +498,9 @@ contains
     !impurity_arr is used for the composition calculations and
     !the radiation model
 
-    ralpne = comp%comparray(2)
+    ralpne = comp_comparray(2)
 
-    dnalp = radp%av_nhe*1.d19 ! Helium ion density (thermalised ions only) (/m3)
+    dnalp = radp_av_nhe*1.d19 ! Helium ion density (thermalised ions only) (/m3)
     if ((dnalp - dene*ralpne)/dnalp > 1e-6) then
        fdiags(1) = dnalp; fdiags(2) = dene; fdiags(3) = ralpne;
        call report_error(192)
@@ -421,7 +515,7 @@ contains
     end if
 
     do imp=1,nimp
-       impurity_arr(imp)%frac=comp%comparray(imp)
+       impurity_arr(imp)%frac=comp_comparray(imp)
     enddo
 
     if (.false.) then !This cannot be used as PLASMOD cannot vary Z with Te yet
@@ -439,14 +533,14 @@ contains
        znfuel = dene - 2.0D0*dnalp - dnprot - dnbeam - znimp
        deni   = znfuel/(1.0D0+fhe3)! Fuel density (/m3)
 
-       if ((deni - radp%av_nd*1.d19)/deni > 1e-6) then
-          fdiags(1) = deni; fdiags(2) = radp%av_nd*1.d19; fdiags(3) = znfuel; fdiags(4) = fhe3
+       if ((deni - radp_av_nd*1.d19)/deni > 1e-6) then
+          fdiags(1) = deni; fdiags(2) = radp_av_nd*1.d19; fdiags(3) = znfuel; fdiags(4) = fhe3
           call report_error(193)
        endif
 
     endif
 
-    deni  = radp%av_nd*1.d19 ! Fuel density (/m3)
+    deni  = radp_av_nd*1.d19 ! Fuel density (/m3)
 
     !  Ensure that deni is never negative or zero - KE: deni could be zero with this inequality
     if (deni < 0.0D0) then
@@ -471,12 +565,12 @@ contains
           end if
        end do
 
-       if ( (dnz - radp%av_nz*1.d19)/dnz > 1e-6) then
-          fdiags(1) = dnz; fdiags(2) = radp%av_nz*1.d19
+       if ( (dnz - radp_av_nz*1.d19)/dnz > 1e-6) then
+          fdiags(1) = dnz; fdiags(2) = radp_av_nz*1.d19
           call report_error(194)
        endif
     else
-       dnz = radp%av_nz*1.d19
+       dnz = radp_av_nz*1.d19
     endif
 
     !  Total ion density
@@ -508,12 +602,12 @@ contains
           zeff = zeff + impurity_arr(imp)%frac * Zav_of_te(impurity_arr(imp),te)**2
        end do
 
-       if ((zeff - radp%zeff)/zeff > 1e-6) then
-          fdiags(1) = zeff; fdiags(2) = radp%zeff
+       if ((zeff - radp_zeff)/zeff > 1e-6) then
+          fdiags(1) = zeff; fdiags(2) = radp_zeff
           call report_error(195)
        endif
     endif
-    zeff = radp%zeff
+    zeff = radp_zeff
 
     !  Define coulomb logarithm
     !  (collisions: ion-electron, electron-electron)
@@ -521,8 +615,8 @@ contains
     dlamee = 31.0D0 - (log(dene)/2.0D0) + log(te*1000.0D0)
     dlamie = 31.3D0 - (log(dene)/2.0D0) + log(te*1000.0D0)
 
-    falpe = loss%palpe/(loss%palpe+loss%palpi)
-    falpi = loss%palpi/(loss%palpe+loss%palpi)
+    falpe = loss_palpe/(loss_palpe+loss_palpi)
+    falpi = loss_palpi/(loss_palpe+loss_palpi)
 
 
     !  Average atomic masses
@@ -558,34 +652,34 @@ contains
     !if plasmod_i_equiltype = 1 q95 is an input and plascur an output
     !if plasmod_i_equiltype = 2 plascur is an input and q95 an output
     !Reassign both for simplicity
-    plascur = geom%ip * 1.0D6 !Plasma current in Ampere
+    plascur = geom_ip * 1.0D6 !Plasma current in Ampere
     !Edge safety factor
-    q95 = geom%q95
+    q95 = geom_q95
     !duplicate variables that might get deprecated!
-    !plascur = mhd%ip_out  * 1.0D6
-    !q95 = mhd%q
+    !plascur = mhd_ip_out  * 1.0D6
+    !q95 = mhd_q
 
-    qstar = mhd%qstar ! equivalent cylindrical safety factor (shaped)
-    bp    = mhd%bp ! poloidal field in (T)
-    rli   = mhd%rli !plasma inductance internal (H)
+    qstar = mhd_qstar ! equivalent cylindrical safety factor (shaped)
+    bp    = mhd_bp ! poloidal field in (T)
+    rli   = mhd_rli !plasma inductance internal (H)
 
     !------------------------------------------------
     !beta is now an output, is an input with (ipedestal .ne. 3)
-    beta  = mhd%betan * geom%ip / (rminor * bt)/100.
-    normalised_total_beta = mhd%betan
+    beta  = mhd_betan * geom_ip / (rminor * bt)/100.
+    normalised_total_beta = mhd_betan
 
     !------------------------------------------------
     !replacing parametrised bootstrap models
-    bootipf= mhd%fbs
+    bootipf= mhd_fbs
     plasipf = bootipf
 
     !See #645 for discussion on fvsbrnni
-    fvsbrnni = mhd%f_ni
-    facoh = max(1.0D-10, (1.-mhd%f_ni))
-    faccd = max(0., mhd%f_ni - bootipf )
+    fvsbrnni = mhd_f_ni
+    facoh = max(1.0D-10, (1.-mhd_f_ni))
+    faccd = max(0., mhd_f_ni - bootipf )
 
-    !mhd%q_sep !q at separatrix
-    !mhd%vloop !loop voltage in V ! Check this is consistent with our volt-seconds requirements routine in physics.f90
+    !mhd_q_sep !q at separatrix
+    !mhd_vloop !loop voltage in V ! Check this is consistent with our volt-seconds requirements routine in physics.f90
 
     ! This should match that input value and therefore should not need to be reassigned
     ! One could implement a reference check?
@@ -593,21 +687,21 @@ contains
     !-----------------------------------------------
     !Fusion power and fast alpha pressure calculations
     !previously calculated by palph
-    palppv     = loss%Pfus/(5.0*vol) !alpha particle fusion power per volume (MW/m3)
+    palppv     = loss_Pfus/(5.0*vol) !alpha particle fusion power per volume (MW/m3)
     pchargepv  = 0d0 !other charged particle fusion power/volume (MW/m3)
     !pneutpv calculated in palph2 section below
     !missing e.g. beam power as calculated in beamfus
     !sigvdt = 0.0d0
-    fusionrate = loss%fusionrate !fusion reaction rate (reactions/m3/s)
-    alpharate  = loss%alpharate !alpha particle production rate (/m3/s)
+    fusionrate = loss_fusionrate !fusion reaction rate (reactions/m3/s)
+    alpharate  = loss_alpharate !alpha particle production rate (/m3/s)
     protonrate = 0.0d0
-    pdt        = loss%Pfus !D-T fusion power (MW)
+    pdt        = loss_Pfus !D-T fusion power (MW)
     pdtpv      = pdt / vol
 
     !Eventually PLASMOD will generate these other interactions more completely.
     !For now, set values to zero.
     pdhe3      = 0d0 !KE !D-He3 fusion power (MW) !PLASMOD does not calc.
-    pdd        = loss%pfusdd !D-D fusion power (MW)
+    pdd        = loss_pfusdd !D-D fusion power (MW)
     !pddpv      = pdd / vol !KE - not a global variable, is this required?
 
     !---------------------------------------------
@@ -622,19 +716,19 @@ contains
     !previously calculated in palph2 - recalculates quantities to changes units
     !e.g. per volume to MW, and to include beam fusion, e.g:
      !neutrons
-    pneutpv   = loss%Pfus/(5.0 * vol) * 4.0  !neutron fusion power (MW/m3), updated below
+    pneutpv   = loss_Pfus/(5.0 * vol) * 4.0  !neutron fusion power (MW/m3), updated below
     pneutpv   = pneutpv + 4.0D0*palpnb/vol !updating with neutral beam power (currently zero)
     pneutmw   = pneutpv * vol !neutron fusion power including beam fusion (currently zero) (MW)
      !alphas
     falpha    =1.0
-    palpepv   = loss%palpe/vol !alpha power per volume to electrons (MW/m3)
-    palpipv   = loss%palpi/vol !alpha power per volume to ions (MW/m3)
+    palpepv   = loss_palpe/vol !alpha power per volume to electrons (MW/m3)
+    palpipv   = loss_palpi/vol !alpha power per volume to ions (MW/m3)
     palppv    = palppv + palpnb/vol !updating with neutral beam power (currently zero) (MW/m3)
-    palpmw    = loss%Pfus/5.0 !alpha power (MW)
-    betaft    = loss%betaft !fast alpha beta component
+    palpmw    = loss_Pfus/5.0 !alpha power (MW)
+    betaft    = loss_betaft !fast alpha beta component
      !non-alpha charged particles
     pchargemw = 0d0 !other charged particle fusion power, excluding alphas (MW) !This comes from reactions other than DT
-    pfuscmw   = loss%Pfus/5.0 !charged particle fusion power (MW) !
+    pfuscmw   = loss_Pfus/5.0 !charged particle fusion power (MW) !
     !KE - not sure above is correct? Definition in PROCESS: pfuscmw = palpmw + pchargemw
     !KE - in PROCESS, below is, powfmw = palpmw + pneutmw + pchargemw
     powfmw    = pdt + pdd + pdhe3 !Same calculation as in ASTRA, complete formula with cross section, should be equivalent to PROCESS  !Total power deposited in plasma (MW)
@@ -642,35 +736,35 @@ contains
     !---------------------------------------
     betath = beta-betaft-betanb
     gammaft = (betaft+betanb)/betath !(Fast alpha + beam beta)/(thermal beta)
-    hfact  = loss%H
-    pradmw     = loss%prad ! fradpwr is total radiation fraction
-    pedgeradmw = loss%pradedge
-    pcoreradmw = loss%pradcore
-    psyncpv    = loss%psync/vol
-    pbrempv    = loss%pbrehms/vol
-    plinepv    = loss%pline/vol
+    hfact  = loss_H
+    pradmw     = loss_prad ! fradpwr is total radiation fraction
+    pedgeradmw = loss_pradedge
+    pcoreradmw = loss_pradcore
+    psyncpv    = loss_psync/vol
+    pbrempv    = loss_pbrehms/vol
+    plinepv    = loss_pline/vol
 
-    piepv      = loss%piepv
-    pinjemw    = loss%peaux
-    pinjimw    = loss%piaux
-    pdivt      = loss%Psep
-    plhthresh  = loss%PLH
+    piepv      = loss_piepv
+    pinjemw    = loss_peaux
+    pinjimw    = loss_piaux
+    pdivt      = loss_Psep
+    plhthresh  = loss_PLH
 
     !-----------------------------------------
     !previously calculated by pcond
-    ptrepv  =  loss%psepe/vol !electron transport power (MW/m3)
-    ptripv  =  loss%psepi/vol !ion transport power (MW/m3)
-    tauee   =  loss%tauee !electron energy confinement time (s) !Emiliano todo
-    tauei   =  loss%tauei !ion energy confinement time (s)
-    powerht =  loss%qtot !heating power (MW) assumed in calculation of confinement scaling
-    taueff  =  loss%taueff   !global energy confinement time (s)
+    ptrepv  =  loss_psepe/vol !electron transport power (MW/m3)
+    ptripv  =  loss_psepi/vol !ion transport power (MW/m3)
+    tauee   =  loss_tauee !electron energy confinement time (s) !Emiliano todo
+    tauei   =  loss_tauei !ion energy confinement time (s)
+    powerht =  loss_qtot !heating power (MW) assumed in calculation of confinement scaling
+    taueff  =  loss_taueff   !global energy confinement time (s)
 
     !-----------------------------------------
     !previously calculated by pohm
-    pohmpv = loss%pohm/vol !ohmic heating power per unit volume (MW/m3)
-    pohmmw = loss%pohm !ohmic heating power (MW)
+    pohmpv = loss_pohm/vol !ohmic heating power per unit volume (MW/m3)
+    pohmmw = loss_pohm !ohmic heating power (MW)
     rpfac = 1.0d0 !neoclassical resistivity enhancement factor
-    rplas=loss%rplas
+    rplas=loss_rplas
     !-----------------------------------------
 
     rlpint = rmu0 * rmajor * rli/2.0D0
@@ -683,29 +777,29 @@ contains
 
     !-----------------------------------------
     ! previously calculated by vscalc
-    phiint = radp%psi(size(radp%psi)) !internal plasma volt-seconds (Wb)
+    phiint = radp_psi(size(radp_psi)) !internal plasma volt-seconds (Wb)
     rlp = rlpext + rlpint
     vburn = plascur * rplas * facoh * csawth !volt-seconds needed during flat-top (heat+burn) (Wb)
     vsbrn = vburn*(theat + tburn)
-    vsind = rlp * geom%ip*1.d6 !internal and external plasma inductance V-s (Wb)
-    vsres = gamma * rmu0*geom%ip*1.d6*rmajor !resistive losses in start-up volt-seconds (Wb)
+    vsind = rlp * geom_ip*1.d6 !internal and external plasma inductance V-s (Wb)
+    vsres = gamma * rmu0*geom_ip*1.d6*rmajor !resistive losses in start-up volt-seconds (Wb)
     vsstt = vsres + vsind + vsbrn !total volt-seconds needed (Wb)
 
     !----------------------------------------
     ! previously calculated by phyaux:
-    qfuel = loss%dfuelreq * 2.0*1.d19 !qfuel is for nucleus pairs
-    dntau = radp%av_ne*taueff*1.d19 !plasma average n-tau (s/m3)
+    qfuel = loss_dfuelreq * 2.0*1.d19 !qfuel is for nucleus pairs
+    dntau = radp_av_ne*taueff*1.d19 !plasma average n-tau (s/m3)
     rndfuel = fusionrate*vol !fuel burnup rate (reactions/s)
-    taup = loss%taueff*comp%globtau(3) !(alpha) particle confinement time (s)
+    taup = loss_taueff*comp_globtau(3) !(alpha) particle confinement time (s)
     burnup = rndfuel/qfuel*2.d0 !fractional plasma burnup
     fusrat=fusionrate*vol
     figmer=plascur*1.d-6*aspect
     !---------------------------------------
 
-    pinjmw =loss%pnbi
-    pradpv = loss%Prad/vol !Total radiation power (MW)
-    ptrimw = loss%psepi !Ion transport (MW)
-    ptremw = loss%psepe !Electron transport (MW)
+    pinjmw =loss_pnbi
+    pradpv = loss_Prad/vol !Total radiation power (MW)
+    ptrimw = loss_psepi !Ion transport (MW)
+    ptremw = loss_psepe !Electron transport (MW)
 
   end subroutine convert_Plasmod2PROCESS
 

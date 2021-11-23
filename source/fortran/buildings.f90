@@ -10,7 +10,9 @@ module buildings_module
   !!
   !! - AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   implicit none
 
@@ -37,10 +39,10 @@ contains
     integer, intent(in) :: outfile
     !! output file unit
 
-    real(8) :: tfh
-    real(8) :: tfmtn
-    real(8) :: tfri
-    real(8) :: tfro
+    real(dp) :: tfh
+    real(dp) :: tfmtn
+    real(dp) :: tfri
+    real(dp) :: tfro
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -114,16 +116,16 @@ contains
 
     ! Arguments
     integer, intent(in) :: iprint, outfile
-    real(8), intent(inout) :: pfr
-    real(8), intent(in) :: pfm,tfro,tfri,tfh,tfm,n_tf,shro, &
+    real(dp), intent(inout) :: pfr
+    real(dp), intent(in) :: pfm,tfro,tfri,tfh,tfm,n_tf,shro, &
          shri,shh,shm,crr,helpow
 
-    real(8), intent(out) :: cryv,vrci,rbv,rmbv,wsv,elev
+    real(dp), intent(out) :: cryv,vrci,rbv,rmbv,wsv,elev
 
     ! Local variables !
     ! !!!!!!!!!!!!!!!!!!
 
-    real(8) :: ang, bmr, coill, crcl, cran, dcl,dcw, drbi, &
+    real(dp) :: ang, bmr, coill, crcl, cran, dcl,dcw, drbi, &
          hcl, hcw, hrbi, hy, layl, rbh, rbl, rbw, rmbh, rmbl, rmbw, rwl, rww, &
          sectl, tch, tcl, tcw, wgts, wsa, wt
 
