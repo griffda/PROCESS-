@@ -219,7 +219,7 @@ def test_ohcalc(monkeypatch):
     monkeypatch.setattr(tfv, "b_crit_upper_nbti", 1.486e1)
     monkeypatch.setattr(tfv, "t_crit_nbti", 9.04)
     monkeypatch.setattr(constants, "dcopper", 8.9e3)
-    
+
     # Mocks for peakb()
     monkeypatch.setattr(bv, "iohcl", 1)
     monkeypatch.setattr(pfv, "waves", np.full([22, 6], 0.0))
@@ -245,3 +245,190 @@ def test_ohcalc(monkeypatch):
 
     assert pytest.approx(pfv.bpf[4]) == 9.299805e2
     assert pytest.approx(pfv.rjohc) == -7.728453e9
+
+
+def test_efc(monkeypatch):
+    """Test efc subroutine.
+
+    efc() requires specific arguments in order to work; these were discovered
+    using gdb to break on the first call of efc() when running the baseline 2019
+    IN.DAT.
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
+    """
+    ngrpmx = 10
+    nclsmx = 2
+    nptsmx = 32
+    nfixmx = 64
+    lrow1 = 2 * nptsmx + ngrpmx
+    lcol1 = ngrpmx
+    npts = 32
+    rpts = np.array(
+        [
+            6.0547741935483881,
+            6.2407887617065567,
+            6.4268033298647254,
+            6.612817898022894,
+            6.7988324661810626,
+            6.9848470343392313,
+            7.1708616024973999,
+            7.3568761706555676,
+            7.5428907388137372,
+            7.7289053069719049,
+            7.9149198751300744,
+            8.1009344432882422,
+            8.2869490114464099,
+            8.4729635796045795,
+            8.658978147762749,
+            8.8449927159209167,
+            9.0310072840790845,
+            9.217021852237254,
+            9.4030364203954235,
+            9.5890509885535913,
+            9.775065556711759,
+            9.9610801248699286,
+            10.147094693028098,
+            10.333109261186266,
+            10.519123829344434,
+            10.705138397502601,
+            10.891152965660771,
+            11.07716753381894,
+            11.263182101977108,
+            11.449196670135276,
+            11.635211238293445,
+            11.821225806451615,
+        ]
+    )
+    zpts = np.full(nptsmx, 0.0)
+    brin = np.full(nptsmx, 0.0)
+    bzin = np.full(nptsmx, 0.0)
+    nfix = 14
+    rfix = np.full(nfixmx, 0.0)
+    rfix[0:14] = 2.3936999999999999
+    zfix = np.full(nfixmx, 0.0)
+    zfix[0:14] = [
+        0.56988544739721259,
+        1.7096563421916378,
+        2.8494272369860631,
+        3.9891981317804879,
+        5.1289690265749135,
+        6.2687399213693382,
+        7.4085108161637638,
+        -0.56988544739721259,
+        -1.7096563421916378,
+        -2.8494272369860631,
+        -3.9891981317804879,
+        -5.1289690265749135,
+        -6.2687399213693382,
+        -7.4085108161637638,
+    ]
+    cfix = np.full(nfixmx, 0.0)
+    cfix[0:14] = 12547065.315963898
+    ngrp = 4
+    ncls = np.array([1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+
+    # This 2D array argument discovered via gdb prints as a 1D array, therefore
+    # needs to be reshaped into its original 2D. Fortran ordering is essential
+    # when passing greater-than-1D arrays from Python to Fortran
+    rcls = np.reshape(
+        [
+            6.7651653417201345,
+            6.7651653417201345,
+            18.597693381136555,
+            17.000392357531304,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            18.597693381136555,
+            17.000392357531304,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ],
+        (10, 2),
+        order="F",
+    )
+    zcls = np.reshape(
+        [
+            9.8904697261474404,
+            -11.124884737289973,
+            2.883225806451613,
+            8.0730322580645151,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            -2.883225806451613,
+            -8.0730322580645151,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ],
+        (10, 2),
+        order="F",
+    )
+    alfa = 5.0e-10
+    bfix = np.full(lrow1, 0.0)
+    gmat = np.full([lrow1, lcol1], 0.0, order="F")
+    bvec = np.full(lrow1, 0.0)
+    rc = np.full(nclsmx, 0.0)
+    zc = np.full(nclsmx, 0.0)
+    cc = np.full(nclsmx, 0.0)
+    xc = np.full(nclsmx, 0.0)
+    umat = np.full([lrow1, lcol1], 0.0, order="F")
+    vmat = np.full([lrow1, lcol1], 0.0, order="F")
+    sigma = np.full(ngrpmx, 0.0)
+    work2 = np.full(ngrpmx, 0.0)
+
+    ssq, ccls = pf.efc(
+        npts,
+        rpts,
+        zpts,
+        brin,
+        bzin,
+        nfix,
+        rfix,
+        zfix,
+        cfix,
+        ngrp,
+        ncls,
+        rcls,
+        zcls,
+        alfa,
+        bfix,
+        gmat,
+        bvec,
+        rc,
+        zc,
+        cc,
+        xc,
+        umat,
+        vmat,
+        sigma,
+        work2,
+    )
+
+    assert pytest.approx(ssq) == 4.208729e-4
+    assert pytest.approx(ccls[0:4]) == np.array(
+        [
+            12846165.42893886,
+            16377261.02000236,
+            579111.6216917,
+            20660782.82356247,
+        ]
+    )
