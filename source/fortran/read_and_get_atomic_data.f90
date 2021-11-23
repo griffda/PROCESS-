@@ -11,7 +11,9 @@ module read_and_get_atomic_data
   ! Modules to import !
   ! !!!!!!!!!!!!!!!!!!!!
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
 
   ! Var for subroutine get_h_rates requiring re-initialisation on each new run

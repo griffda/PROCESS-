@@ -556,6 +556,29 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Gap                                          0.050          -4.421   (tftsgap)           
  TF coil                                      0.541          -4.962   (tfcth)             
  
+ ************************************************* TF coils  **************************************************
+ 
+ 
+ TF Coil Stresses (CCFE model) :
+ 
+ Generalized plane strain model
+ Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)   (sig_tf_case_max)         6.000E+08     
+ Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa (sig_tf_wp_max)           6.000E+08     
+ Materal stress of the point of maximum shear stress (Tresca criterion) for each layer
+ Please use utilities/plot_stress_tf.py for radial plots plots summary
+ Layers                    conductor
+ Radial stress               (MPa) ***********
+ toroidal stress             (MPa) 7756473.508
+ Vertical stress             (MPa)     -36.214
+ Von-Mises stress            (MPa) ***********
+ Shear (Tresca) stress       (MPa) ***********
+ 
+ Toroidal modulus            (GPa)     117.000
+ Vertical modulus            (GPa)      99.029
+ 
+ WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      1.170E+02  OP 
+ WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      9.903E+01  OP 
+ 
  TF design
  
  Conductor technology                                                     (i_tf_sup)                        0     
@@ -738,10 +761,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  coil           R(m)        Z(m)        dR(m)       dZ(m)       turns     steel thickness(m)
  
-  PF1            0.91        3.62        0.48        0.48      164.00        0.00
-  PF2            0.91       -3.62        0.48        0.48      164.00        0.00
-  PF3            5.15        1.17        0.35        0.35       89.32        0.00
-  PF4            5.15       -1.17        0.35        0.35       89.32        0.00
+  PF 1           0.91        3.62        0.48        0.48      164.00        0.00
+  PF 2           0.91       -3.62        0.48        0.48      164.00        0.00
+  PF 3           5.15        1.17        0.35        0.35       89.32        0.00
+  PF 4           5.15       -1.17        0.35        0.35       89.32        0.00
  Plasma          1.70        0.00        1.94        5.34        1.00
  
  PF Coil Information at Peak Current:
@@ -749,10 +772,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  coil  current  allowed J  actual J   J   cond. mass   steel mass     field
          (MA)    (A/m2)     (A/m2)  ratio    (kg)          (kg)        (T)
  
-  PF1    6.89 -1.000E+00  3.000E+07  1.00 8.163E+03   0.000E+00    7.015E+00
-  PF2    6.89 -1.000E+00  3.000E+07  1.00 8.163E+03   0.000E+00    7.015E+00
-  PF3   -3.75 -1.000E+00  3.000E+07  1.00 2.521E+04   0.000E+00    3.960E+00
-  PF4   -3.75 -1.000E+00  3.000E+07  1.00 2.521E+04   0.000E+00    3.960E+00
+  PF 1    6.89 -1.000E+00  3.000E+07  1.00 8.163E+03   0.000E+00    7.015E+00
+  PF 2    6.89 -1.000E+00  3.000E+07  1.00 8.163E+03   0.000E+00    7.015E+00
+  PF 3   -3.75 -1.000E+00  3.000E+07  1.00 2.521E+04   0.000E+00    3.960E+00
+  PF 4   -3.75 -1.000E+00  3.000E+07  1.00 2.521E+04   0.000E+00    3.960E+00
        ------                             ---------   ---------
         21.28                             6.674E+04   0.000E+00
  
@@ -1423,8 +1446,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
 272     2   Double-null: Upper vertical build forced to match lower                         
  62     1   RADIALB: Ripple result may be inaccurate, as the fit has been extrapolated      
 143     1   RADIALB: (TF coil ripple calculation) (R+a)/rtot out of fitted range            
-245     2   [sctfcoil] Invalid stress model (r_tf_inboard = 0), stress constraint switched o
- Final error identifier                                                   (error_id)                      245     
+ Final error identifier                                                   (error_id)                      143     
  
  ******************************************* End of PROCESS Output ********************************************
  
@@ -1631,7 +1653,7 @@ ripmax   = 1.0      *Maximum allowable toroidal field ripple amplitude at plasma
 n_tf     = 12       *Number of TF coil  
 vcool    = 5.0      *Max centrepost coolant flow speed at midplane (m/s)
 vftf     = 0.2      *Coolant fraction of TFC 'cable' (i_tf_sup=1) or of TFC leg (i_tf_sup=0)
-i_tf_plane_stress = 0 
+i_tf_plane_stress = 2
 *Iteration variables: cdtfleg fcoolcp oacdcp tcpav
 
 *-------------Current Drive Variables--------------*
