@@ -96,7 +96,7 @@ module scan_module
   !!         <LI> 57 `bt` lower boundary 
   !!         <LI> 58 `scrapli` : Inboard plasma-first wall gap
   !!         <LI> 59 `scraplo` : Outboard plasma-first wall gap
-  !!         <Li> 60 Allowable stress in TF Coil conduit (Tresca) </UL>
+  !!         <Li> 60 sig_tf_wp_max: Allowable stress in TF Coil conduit (Tresca) </UL>
 
 
   integer :: nsweep_2

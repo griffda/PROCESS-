@@ -75,28 +75,7 @@ def scenario(scenarios_run, request):
     scenario = request.param
     return scenario
 
-
-@pytest.fixture()
-def keep_mfile(request, scenario):
-    """Fixture to decide whether a scenarios MFile should
-    be kept or not. A list can be defined in --keep:
-    e.g. --keep=starfire,kallenbach
-
-    :param request: request fixture to access --keep flag
-    :type request: Fixture
-    :param scenario: scenario fixture for easy access to the scenario name
-    :type scenario: Fixture
-    """
-    keep_assets = request.config.getoption("--keep")
-    keep_assets_list = keep_assets.split(',') if keep_assets else []
-
-    if keep_assets_list and scenario.name in keep_assets_list:
-        return True
-
-    return False
-
-
-def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt, keep_mfile):
+def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
     """Test a scenario in a temporary directory.
 
     A scenario is an input file and its expected outputs from Process. This
@@ -188,11 +167,6 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt, keep_mf
 
     # Check no diffs outside the tolerance have been found
     assert len(scenario.get_diff_items()) == 0
-
-    # Check if mfile should be kept (copied back)
-    if keep_mfile:
-        scenario.keep_mfile()
-    
             
     # TODO Assert no unique vars found
 
