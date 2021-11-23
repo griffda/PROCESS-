@@ -16,14 +16,8 @@ This ultimately provides Process Python with the ability to access variable
 information in the Process Fortran source code.
 """
 import re
-import os
 import logging
-import copy
 import argparse
-from pprint import pformat
-from collections import defaultdict
-import sys
-import os
 import json
 import argparse
 import pickle
@@ -388,7 +382,7 @@ class DefaultValues(ProjectDictionary):
         Once found, send on for parsing individually.
         """
         # Fetch all Fortran source files
-        sources = Path(SOURCEDIR).glob("*.f90")
+        sources = sorted(Path(SOURCEDIR).glob("*.f90"))
 
         for source in sources:
             with open(source) as f:
