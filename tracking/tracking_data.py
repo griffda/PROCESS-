@@ -39,13 +39,16 @@ import itertools
 import pandas as pd
 import inspect
 import argparse
+import math
 from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource, HoverTool
+from bokeh.models import ColumnDataSource, HoverTool, DatetimeTickFormatter
 from bokeh.layouts import gridplot
 from bokeh.models.widgets import Panel, Tabs
 from bokeh.palettes import Bokeh
 from bokeh.resources import CDN
 from bokeh.embed import file_html
+
+import git
 
 from process.io import mfile as mf
 from process import fortran
@@ -59,7 +62,7 @@ logger = logging.getLogger("PROCESS Tracker")
 
 class TrackingFile:
     """Acts as the data storage for a given JSON file ie. holds the data from a run of PROCESS
-    
+
     e.g. starfire_MFILE-<date>-<time>.json
     """
 
@@ -77,7 +80,7 @@ class TrackingFile:
 class ProcessTracker:
     """Manages the creation of tracking data into a JSON file for a run of PROCESS."""
 
-    meta_variables = {"commsg", "date", "time"}
+    meta_variables = {"date", "time"}
     # Variables in an MFile that hold metadata we want to show on the graph
 
     tracking_variables = {
@@ -183,6 +186,11 @@ class ProcessTracker:
         title = pathlib.Path(mfile).stem
         self.add_extra_metadata("title", title)
 
+        commit_message = git.git_commit_message()
+        self.add_extra_metadata("commit_message", commit_message)
+        commit_hash = git.git_commit_hash()
+        self.add_extra_metadata("commit_hash", commit_hash)
+
         if database:
             date = self.tracking_file.meta.get("date").replace("/", "")
             time = self.tracking_file.meta.get("time")
@@ -263,14 +271,15 @@ class TrackedVariable:
         self.name = name
         # Name of the graph this variable is plotted under
         self._data = []
-        # Tuple of (title, timestamp, data, message)
+        # Tuple of (title, timestamp, data, message, hash)
 
         # title: name of the run e.g. starfire or baseline_2018 (not unique)
         # timestamp: date of the specific run this tuple refers to (unique)
         # data: the value of the variable, `name`, on `title` run at time `date` (possibly unique)
         # message: latest commit message when `title` was run at time `date` (possibly unique)
+        # hash: latest commit hash when `title` was run at time `date` (possibly unique)
 
-    def add_datapoint(self, title, data, message, timestamp):
+    def add_datapoint(self, title, data, message, hash, timestamp):
         """
         Adds a tuple to this graph
 
@@ -279,7 +288,7 @@ class TrackedVariable:
         data: the value of the variable, `name`, on `title` run at time `date` (possibly unique)
         message: latest commit message when `title` was run at time `date` (possibly unique)
         """
-        self._data.append((title, timestamp, data, message))
+        self._data.append((title, timestamp, data, message, hash))
 
     def as_dataframe(self):
         """
@@ -291,7 +300,7 @@ class TrackedVariable:
         message -> annotation
         """
         df = pd.DataFrame(self._data)
-        df.columns = ("title", "date", "value", "annotation")
+        df.columns = ("title", "date", "value", "commit", "commit_id")
 
         return df
 
@@ -316,7 +325,8 @@ class TrackedData:
         # extract the metadata from our file as all datapoints of this file will require them
         metadata = json_file_data["meta"]
         title = metadata.get("title")
-        message = metadata.get("commsg")
+        message = metadata.get("commit_message")
+        hash_ = metadata.get("commit_hash")
         date_str = metadata.get("date")
         time_str = metadata.get("time")
 
@@ -333,7 +343,7 @@ class TrackedData:
                 self.tracked_variables[variable] = TrackedVariable(variable)
 
             self.tracked_variables.get(variable).add_datapoint(
-                title, value, message, date_time
+                title, value, message, hash_, date_time
             )
 
     def _track(self):
@@ -397,6 +407,13 @@ def plot_tracking_data(database):
         figur = figure(
             title=variable, x_axis_type="datetime", plot_width=600, plot_height=600
         )
+        figur.xaxis.formatter = DatetimeTickFormatter(
+            hours=["%d %B %Y"],
+            days=["%d %B %Y"],
+            months=["%d %B %Y"],
+            years=["%d %B %Y"],
+        )
+        figur.xaxis.major_label_orientation = math.pi / 4
 
         colours = itertools.cycle(Bokeh[8])  # hardcode at 8
         # each title (different scenario) has a different line colour
@@ -428,13 +445,15 @@ def plot_tracking_data(database):
         hovertool = HoverTool(
             tooltips=[
                 ("Title", "@title"),
-                ("Commit", "@annotation"),
+                ("Commit", "@commit"),
+                ("Commit ID", "@commit_id"),
                 ("Date", "@date{%Y-%m-%d %H:%M}"),
             ],
             formatters={
                 "@title": "printf",
                 "@date": "datetime",
-                "@annotation": "printf",
+                "@commit": "printf",
+                "@commit_id": "printf",
             },
         )
 
