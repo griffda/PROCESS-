@@ -40,7 +40,7 @@ MACRO(DICTS)
         # Custom command needs to re-run whenever the Fortran add_library target
         # detects changes and is recompiled (e.g. Fortran changes are detected)
         # This keeps the dictionaries up-to-date with the Fortran source
-        DEPENDS ${PROJECT_NAME}
+        DEPENDS ${PROJECT_NAME} ${PREPROCESS_TARGET_NAMES} ${PROCESS_PYTHON_SRC_PATHS}
     )
 
     ADD_DEPENDENCIES(${DICTS_NAME} ${FORD_NAME})
