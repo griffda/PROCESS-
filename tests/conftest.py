@@ -6,9 +6,6 @@ import pytest
 from system_check import system_compatible
 import warnings
 
-# Exclude utf_tests from collection until side-effect bugs fixed
-collect_ignore_glob = ["uft_tests*"]
-
 
 def pytest_addoption(parser):
     """Add custom CLI options to pytest.
@@ -28,12 +25,6 @@ def pytest_addoption(parser):
         action="store_true",
         default=False,
         help="Overwrite test references"
-    )
-    parser.addoption(
-        "--keep",
-        default='',
-        type=str,
-        help="Define regression tests to copy the MFile back from the temp directory to the test directory as out.MFILE.DAT"
     )
 
 

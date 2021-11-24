@@ -1852,7 +1852,7 @@ contains
           call parse_real_variable('dcase', dcase, 1.0D3, 1.0D5, &
                'Density of TF coil case (kg/m3)')
        case ('dcond')
-          call parse_real_array('dcond', dcond, isub1, 6, &
+          call parse_real_array('dcond', dcond, isub1, 8, &
                'TF/PF coil superconductor density (kg/m3)', icode)
        case ('dcondins')
           call parse_real_variable('dcondins', dcondins, 5.0D2, 1.0D4, &
