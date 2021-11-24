@@ -395,8 +395,8 @@ pages:
     - python3 anybadge.py -v $MASTER_VERSION -l master -c blue -f mversion.svg
     - python3 anybadge.py -v $DEVELOP_VERSION -l develop -c blue -f dversion.svg
     - python3 anybadge.py -v $CONTRIBUTORS -l contributors -c blue -f contributors.svg -m "%d"
-    - cp tag.svg ../public
-    - cp version.svg ../public
+    - cp mversion.svg ../public
+    - cp dversion.svg ../public
     - cp contributors.svg ../public
     - ls ../public
     - du -shc ../public/*
