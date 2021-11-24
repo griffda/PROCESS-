@@ -1,3 +1,5 @@
+from process.variables import DocableVariable
+
 from process import fortran as ft
 from process.fortran import constants
 from process.fortran import build_variables as bv
@@ -36,16 +38,16 @@ class CostsStep:
         self.iprint = 0  # switch for writing to output file (1=yes)
 
         # Various cost account values (M$)
-        self.step20: float = 0.0
-        self.step21: float = 0.0
-        self.step22: float = 0.0
-        self.step23: float = 0.0
-        self.step24: float = 0.0
-        self.step25: float = 0.0
-        self.step27: float = 0.0
-        self.step91: float = 0.0
-        self.step92: float = 0.0
-        self.step93: float = 0.0
+        self.step20 = DocableVariable(float, 0.0, docstring="account cost M$", units="M$")
+        self.step21 = DocableVariable(float, 0.0, docstring="account cost M$", units="M$")
+        self.step22 = DocableVariable(float, 0.0, docstring="account cost M$", units="M$")
+        self.step23 = DocableVariable(float, 0.0, docstring="account cost M$", units="M$")
+        self.step24 = DocableVariable(float, 0.0, docstring="account cost M$", units="M$")
+        self.step25 = DocableVariable(float, 0.0, docstring="account cost M$", units="M$")
+        self.step27 = DocableVariable(float, 0.0, docstring="account cost M$", units="M$")
+        self.step91 = DocableVariable(float, 0.0, docstring="account cost M$", units="M$")
+        self.step92 = DocableVariable(float, 0.0, docstring="account cost M$", units="M$")
+        self.step93 = DocableVariable(float, 0.0, docstring="account cost M$", units="M$")
 
         # Scaling Properties
         self.fwblkcost: float = 0.0
