@@ -49,12 +49,37 @@ for page_no, page_image in enumerate(pages):
 # <img src="tracking/baseline_2018/plot_proc_2.png" width="1000">
 
 # %% [markdown]
+# ## View key output variables
+# Run the Starfire scenario using `SingleRun` to set some values on the `CostsStep` instance and then print them.
+
+# %%
+# Define working directory relative to project dir and input file name
+wdir_rel = Path("tests/regression/scenarios/starfire")
+input_name = "IN.DAT"
+
+wdir_abs_starfire = Path.cwd() / wdir_rel
+input_path = wdir_abs_starfire / input_name
+
+# Run process on an input file
+single_run = SingleRun(str(input_path))
+
+
+# %%
+print(
+    f"Building and Site Service Infrastructure: {single_run.models.costs_step.step21:.3e} M$"
+)
+print(f"Reactor plant equipment: {single_run.models.costs_step.step22:.3e} M$")
+
+
+# %% [markdown]
 # ## Clean up
 # Currently files are created in locations that can't be easily controlled; this will be changed to a temporary directory with ongoing development. For now, clean these manually here.
 
 # %%
 from os import remove
 
+# TODO This obviously needs sorting out
+# Delete SingleRun baseline2019 files
 delete = (
     "baseline_2018_MFILE.DAT",
     "baseline_2018_OPT.DAT",
