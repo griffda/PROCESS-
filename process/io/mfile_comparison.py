@@ -17,12 +17,8 @@ import process.io.mfile as mf
 from numpy import isfinite
 from process.io.python_fortran_dicts import get_dicts
 
-# Load dicts from dicts JSON file
-process_dicts = get_dicts()
-# Dictionary for variable types
-DICT_VAR_TYPE = process_dicts['DICT_VAR_TYPE']
 # Dictionary for parameter descriptions
-DICT_DESCRIPTIONS = process_dicts['DICT_DESCRIPTIONS']
+DICT_DESCRIPTIONS = get_dicts()['DICT_DESCRIPTIONS']
 
 DEFAULT_COMPARE_PARAMS = [
     "rmajor", "rminor", "aspect", "kappa", "kappa95", "triang", "triang95",
@@ -129,7 +125,7 @@ def main(arg):
 
         values = scipy.zeros(n)
 
-        if v not in DICT_VAR_TYPE.keys():
+        if v not in get_dicts()['DICT_VAR_TYPE'].keys():
             try:
                 eval(mfile_list[0].data[v].get_scan(-1))
             except NameError:
@@ -140,7 +136,7 @@ def main(arg):
             except SyntaxError:
                 pass
 
-        elif DICT_VAR_TYPE[v] == "real_variable" or DICT_VAR_TYPE[v] == "int_variable":
+        elif get_dicts()['DICT_VAR_TYPE'][v] == "real_variable" or get_dicts()['DICT_VAR_TYPE'][v] == "int_variable":
             for m in range(len(mfile_list)):
                 values[m] = (mfile_list[m].data[v].get_scan(-1))
 
@@ -152,8 +148,8 @@ def main(arg):
 
         if len(norm_vals) >= 1:
             key = v.strip(".").strip(" ")
-            if key in DICT_DESCRIPTIONS.keys():
-                des = DICT_DESCRIPTIONS[key]
+            if key in get_dicts()['DICT_DESCRIPTIONS'].keys():
+                des = get_dicts()['DICT_DESCRIPTIONS'][key]
             else:
                 des = "-"
             a = norm_vals >= 1.0 + arg.acc/100.0

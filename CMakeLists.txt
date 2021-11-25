@@ -199,7 +199,7 @@ ADD_CUSTOM_TARGET(install_process ALL
     COMMAND ${PYTHON_EXECUTABLE} -m pip install --no-cache-dir ${CMAKE_SOURCE_DIR}
 )
 
-ADD_DEPENDENCIES(install_process ${PIP_NAME} ${F2PY_NAME} ${FORD_NAME} ${DICTS_NAME} ${GFORTLIB_NAME} coverage_cleanup)
+ADD_DEPENDENCIES(install_process ${PIP_NAME} ${F2PY_NAME} ${FORD_NAME} ${GFORTLIB_NAME} coverage_cleanup)
 
 if (EXISTS ${CMAKE_SOURCE_DIR}/lcov_results)
   execute_process(COMMAND echo "-- Delete existing lcov_coverage directory...")

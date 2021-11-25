@@ -29,7 +29,7 @@ MACRO(DICTS)
     SET(DICTS_OUTPUT_FILE ${CMAKE_BINARY_DIR}/python_fortran_dicts.json)
     SET(DICTS_PYTHON_OUT ${PYTHON_SOURCE_IO_DIR}/python_fortran_dicts.json)
     set(CREATE_DICTS_SCRIPT ${CMAKE_SOURCE_DIR}/scripts/create_dicts.py)
-    ADD_CUSTOM_TARGET(${DICTS_NAME} DEPENDS ${DICTS_OUTPUT_FILE} ${DICTS_PYTHON_OUT})
+    ADD_CUSTOM_TARGET(${DICTS_NAME} ALL DEPENDS ${DICTS_OUTPUT_FILE} ${DICTS_PYTHON_OUT})
 
     ADD_CUSTOM_COMMAND(OUTPUT ${DICTS_OUTPUT_FILE} ${DICTS_PYTHON_OUT}
         # The create_dicts script needs to know the Fortran source dir, the pickled
@@ -40,7 +40,7 @@ MACRO(DICTS)
         # Custom command needs to re-run whenever the Fortran add_library target
         # detects changes and is recompiled (e.g. Fortran changes are detected)
         # This keeps the dictionaries up-to-date with the Fortran source
-        DEPENDS ${PROJECT_NAME} ${PREPROCESS_TARGET_NAMES} ${PROCESS_PYTHON_SRC_PATHS}
+        DEPENDS ${PROJECT_NAME} ${PREPROCESS_TARGET_NAMES} ${PROCESS_PYTHON_SRC_PATHS} install_process
     )
 
     ADD_DEPENDENCIES(${DICTS_NAME} ${FORD_NAME})

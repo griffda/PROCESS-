@@ -31,9 +31,6 @@ else:
 
 from process.io.python_fortran_dicts import get_dicts
 
-# Load dicts from dicts JSON file
-proc_dict = get_dicts()
-
 solenoid = 'pink'
 cscompression = 'red'
 tfc = 'cyan'
@@ -1559,7 +1556,7 @@ def plot_header(axis, mfile_data, scan):
              ("!" + mfile_data.data["date"].get_scan(-1), "Date:", ""),
              ("!" + mfile_data.data["time"].get_scan(-1), "Time:", ""),
              ("!" + mfile_data.data["username"].get_scan(-1), "User:", ""),
-             ("!" + proc_dict['DICT_OPTIMISATION_VARS']
+             ("!" + get_dicts()['DICT_OPTIMISATION_VARS']
              [str(abs(int(mfile_data.data["minmax"].get_scan(-1))))],
              "Optimising:", "")]
 
@@ -1813,7 +1810,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
         i_tf_sc_mat = int(0)
 
     if i_tf_sc_mat > 0:
-        tftype = proc_dict['DICT_TF_TYPE'][str(int(mfile_data.data["i_tf_sc_mat"].get_scan(scan)))]
+        tftype = get_dicts()['DICT_TF_TYPE'][str(int(mfile_data.data["i_tf_sc_mat"].get_scan(scan)))]
     else:
         tftype = "Resistive"
     

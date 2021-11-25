@@ -16,10 +16,6 @@ import collections as col
 import subprocess
 from process.io.python_fortran_dicts import get_dicts
 
-# Load dicts from dicts JSON file
-process_dicts = get_dicts()
-DICT_IXC_SIMPLE = process_dicts['DICT_IXC_SIMPLE']
-
 def get_var_name_or_number(variable):
     """
     Returns the iteration variable ixc number from a variable name,
@@ -42,14 +38,14 @@ def get_var_name_or_number(variable):
     """
 
     if isinstance(variable, str):
-        for key in DICT_IXC_SIMPLE:
-            if DICT_IXC_SIMPLE[key] == variable.lower():
+        for key in get_dicts()['DICT_IXC_SIMPLE']:
+            if get_dicts()['DICT_IXC_SIMPLE'][key] == variable.lower():
                 return int(key)
 
         return False
     elif isinstance(variable, int):
         try:
-            return DICT_IXC_SIMPLE[str(variable)]
+            return get_dicts()['DICT_IXC_SIMPLE'][str(variable)]
         except KeyError:
             return False
 

@@ -34,13 +34,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Load dicts from dicts JSON file
-process_dicts = get_dicts()
-DICT_NSWEEP2IXC = process_dicts['DICT_NSWEEP2IXC']
-DICT_NSWEEP2VARNAME = process_dicts['DICT_NSWEEP2VARNAME']
-DICT_IXC_SIMPLE = process_dicts['DICT_IXC_SIMPLE']
-DICT_INPUT_BOUNDS = process_dicts['DICT_INPUT_BOUNDS']
-
 class ProcessConfig(object):
 
     """
@@ -819,8 +812,8 @@ class UncertaintiesConfig(ProcessConfig, Config):
             nsweep = get_from_indat_or_default(in_dat, 'nsweep')
             ixc = get_from_indat_or_default(in_dat, 'ixc')
             sweep = get_from_indat_or_default(in_dat, 'sweep')
-            if (str(nsweep) in DICT_NSWEEP2IXC.keys()) and\
-                (DICT_NSWEEP2IXC[str(nsweep)] in ixc) and\
+            if (str(nsweep) in get_dicts()['DICT_NSWEEP2IXC'].keys()) and\
+                (get_dicts()['DICT_NSWEEP2IXC'][str(nsweep)] in ixc) and\
                 (not all(sweep[0] == item for item in sweep)):
                 if self.no_scans != isweep:
                     #Change no of sweep points to correct value!!
@@ -838,7 +831,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
         else:
             # create a scan!
             nsweep = '3'
-            if nsweep in DICT_NSWEEP2IXC.keys():
+            if nsweep in get_dicts()['DICT_NSWEEP2IXC'].keys():
                 #TODO: if this ever happens, program this testing whether
                 #a certain variable is used as iteration variable, if not
                 #choose another
@@ -849,7 +842,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
                 set_variable_in_indat(in_dat, 'nsweep', nsweep)
                 set_variable_in_indat(in_dat, 'isweep', self.no_scans)
                 value = get_from_indat_or_default(in_dat,
-                                                  DICT_NSWEEP2VARNAME[nsweep])
+                                                  get_dicts()['DICT_NSWEEP2VARNAME'][nsweep])
                 set_variable_in_indat(in_dat, 'sweep', [value]*self.no_scans)
 
 
@@ -891,7 +884,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
         ixc_list = in_dat.data['ixc'].get_value
         assert isinstance(ixc_list, list)
 
-        ixc_varname_list = [DICT_IXC_SIMPLE[str(x)] for x in ixc_list]
+        ixc_varname_list = [get_dicts()['DICT_IXC_SIMPLE'][str(x)] for x in ixc_list]
 
         for u_dict in self.uncertainties:
             varname = u_dict['varname'].lower()
@@ -909,16 +902,16 @@ class UncertaintiesConfig(ProcessConfig, Config):
                           file=stderr)
                     exit()
 
-                if varname in DICT_INPUT_BOUNDS:
+                if varname in get_dicts()['DICT_INPUT_BOUNDS']:
                     #check bounds are inside input bounds
-                    if lbound < DICT_INPUT_BOUNDS[varname]['lb']:
-                        u_dict['lowerbound'] = DICT_INPUT_BOUNDS[varname]['lb']
+                    if lbound < get_dicts()['DICT_INPUT_BOUNDS'][varname]['lb']:
+                        u_dict['lowerbound'] = get_dicts()['DICT_INPUT_BOUNDS'][varname]['lb']
                         print('Warning: The lower bound of the uncertain variable',
                               varname, 'is lower than the lowest allowed input',
                               'value! \n Corrected value to',
                               u_dict['lowerbound'], file=stderr)
-                    if ubound > DICT_INPUT_BOUNDS[varname]['ub']:
-                        u_dict['upperbound'] = DICT_INPUT_BOUNDS[varname]['ub']
+                    if ubound > get_dicts()['DICT_INPUT_BOUNDS'][varname]['ub']:
+                        u_dict['upperbound'] = get_dicts()['DICT_INPUT_BOUNDS'][varname]['ub']
                         print('Warning: The upper bound of the uncertain variable',
                               varname, 'is higher than the highest allowed input',
                               'value! \n Corrected value to',
@@ -934,33 +927,33 @@ class UncertaintiesConfig(ProcessConfig, Config):
                           varname, 'should never be negative!', file=stderr)
                     exit()
 
-                if varname in DICT_INPUT_BOUNDS:
+                if varname in get_dicts()['DICT_INPUT_BOUNDS']:
                     #check mean is inside input bounds
-                    if u_dict['mean'] < DICT_INPUT_BOUNDS[varname]['lb']:
+                    if u_dict['mean'] < get_dicts()['DICT_INPUT_BOUNDS'][varname]['lb']:
                         print('Error: The mean of the uncertain variable',
                               varname, 'is lower than the lowest allowed input!',
-                              DICT_INPUT_BOUNDS[varname]['lb'], file=stderr)
+                              get_dicts()['DICT_INPUT_BOUNDS'][varname]['lb'], file=stderr)
                         exit()
-                    elif u_dict['mean'] > DICT_INPUT_BOUNDS[varname]['ub']:
+                    elif u_dict['mean'] > get_dicts()['DICT_INPUT_BOUNDS'][varname]['ub']:
                         print('Error: The mean of the uncertain variable',
                               varname, 'is higher than the highest allowed input!',
-                              DICT_INPUT_BOUNDS[varname]['ub'], file=stderr)
+                              get_dicts()['DICT_INPUT_BOUNDS'][varname]['ub'], file=stderr)
                         exit()
 
                     #check bounds are inside input bounds
-                    if lbound < DICT_INPUT_BOUNDS[varname]['lb']:
+                    if lbound < get_dicts()['DICT_INPUT_BOUNDS'][varname]['lb']:
                         u_dict['errortype'] = 'uniform'
-                        u_dict['lowerbound'] = DICT_INPUT_BOUNDS[varname]['lb']
+                        u_dict['lowerbound'] = get_dicts()['DICT_INPUT_BOUNDS'][varname]['lb']
                         u_dict['upperbound'] = ubound
                         print('Warning: The lower bound of the uncertain variable',
                               varname, 'is lower than the lowest allowed input',
                               'value! \n Corrected value to',
                               u_dict['lowerbound'], file=stderr)
-                    if ubound > DICT_INPUT_BOUNDS[varname]['ub']:
+                    if ubound > get_dicts()['DICT_INPUT_BOUNDS'][varname]['ub']:
                         if u_dict['errortype'] != 'uniform':
                             u_dict['errortype'] = 'uniform'
                             u_dict['lowerbound'] = lbound
-                        u_dict['upperbound'] = DICT_INPUT_BOUNDS[varname]['ub']
+                        u_dict['upperbound'] = get_dicts()['DICT_INPUT_BOUNDS'][varname]['ub']
                         print('Warning: The upper bound of the uncertain variable',
                               varname, 'is higher than the highest allowed input',
                               'value! \n Corrected value to',
@@ -969,19 +962,19 @@ class UncertaintiesConfig(ProcessConfig, Config):
             elif u_dict['errortype'].lower() in  ['gaussian', 'lowerhalfgaussian',
                                                   'upperhalfgaussian']:
 
-                if varname in DICT_INPUT_BOUNDS:
+                if varname in get_dicts()['DICT_INPUT_BOUNDS']:
                     #check mean is inside input bounds
-                    if u_dict['mean'] < DICT_INPUT_BOUNDS[varname]['lb']:
+                    if u_dict['mean'] < get_dicts()['DICT_INPUT_BOUNDS'][varname]['lb']:
                         print('Error: The mean of the uncertain variable',
                               varname, 'is lower than the lowest allowed input!',
                               u_dict['mean'], '<',
-                              DICT_INPUT_BOUNDS[varname]['lb'], file=stderr)
+                              get_dicts()['DICT_INPUT_BOUNDS'][varname]['lb'], file=stderr)
                         exit()
-                    elif u_dict['mean'] > DICT_INPUT_BOUNDS[varname]['ub']:
+                    elif u_dict['mean'] > get_dicts()['DICT_INPUT_BOUNDS'][varname]['ub']:
                         print('Error: The mean of the uncertain variable',
                               varname, 'is higher than the highest allowed input!',
                               u_dict['mean'], '>',
-                              DICT_INPUT_BOUNDS[varname]['ub'], file=stderr)
+                              get_dicts()['DICT_INPUT_BOUNDS'][varname]['ub'], file=stderr)
                         exit()
 
 
@@ -997,15 +990,15 @@ class UncertaintiesConfig(ProcessConfig, Config):
                 std = u_dict['std']
                 values = normal(mean, std, self.no_samples)
                 # assures values are inside input bounds!
-                if varname in DICT_INPUT_BOUNDS:
+                if varname in get_dicts()['DICT_INPUT_BOUNDS']:
                     args = argwhere(logical_or(
-                        values < DICT_INPUT_BOUNDS[varname]['lb'],
-                        values > DICT_INPUT_BOUNDS[varname]['ub']))
+                        values < get_dicts()['DICT_INPUT_BOUNDS'][varname]['lb'],
+                        values > get_dicts()['DICT_INPUT_BOUNDS'][varname]['ub']))
                     while len(args) > 0:
                         values[args] = normal(mean, std, args.shape)
                         args = argwhere(logical_or(
-                            values < DICT_INPUT_BOUNDS[varname]['lb'],
-                            values > DICT_INPUT_BOUNDS[varname]['ub']))
+                            values < get_dicts()['DICT_INPUT_BOUNDS'][varname]['lb'],
+                            values > get_dicts()['DICT_INPUT_BOUNDS'][varname]['ub']))
                 else: #cutoff at 0 - typically negative values are meaningless
                     args = argwhere(values < 0.)
                     while len(args) > 0:
@@ -1025,14 +1018,14 @@ class UncertaintiesConfig(ProcessConfig, Config):
                 mean = u_dict['mean']
                 std = u_dict['std']
                 values = normal(mean, std, self.no_samples)
-                if varname in DICT_INPUT_BOUNDS:
+                if varname in get_dicts()['DICT_INPUT_BOUNDS']:
                     args = argwhere(logical_or(
-                        values < DICT_INPUT_BOUNDS[varname]['lb'],
+                        values < get_dicts()['DICT_INPUT_BOUNDS'][varname]['lb'],
                         values > mean))
                     while len(args) > 0:
                         values[args] = normal(mean, std, args.shape)
                         args = argwhere(logical_or(
-                            values < DICT_INPUT_BOUNDS[varname]['lb'],
+                            values < get_dicts()['DICT_INPUT_BOUNDS'][varname]['lb'],
                             values > mean))
                 else:
                     args = argwhere(logical_or(values < 0.,
@@ -1045,15 +1038,15 @@ class UncertaintiesConfig(ProcessConfig, Config):
                 mean = u_dict['mean']
                 std = u_dict['std']
                 values = normal(mean, std, self.no_samples)
-                if varname in DICT_INPUT_BOUNDS:
+                if varname in get_dicts()['DICT_INPUT_BOUNDS']:
                     args = argwhere(logical_or(
                         values < mean,
-                        values > DICT_INPUT_BOUNDS[varname]['ub']))
+                        values > get_dicts()['DICT_INPUT_BOUNDS'][varname]['ub']))
                     while len(args) > 0:
                         values[args] = normal(mean, std, args.shape)
                         args = argwhere(logical_or(
                             values < mean,
-                            values > DICT_INPUT_BOUNDS[varname]['ub']))
+                            values > get_dicts()['DICT_INPUT_BOUNDS'][varname]['ub']))
                 else:
                     args = argwhere(values < mean)
                     while len(args) > 0:
