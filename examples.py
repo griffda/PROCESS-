@@ -72,6 +72,20 @@ print(f"Reactor plant equipment: {single_run.models.costs_step.step22:.3e} M$")
 
 
 # %% [markdown]
+# ## VaryRun
+# Vary iteration parameters until a feasible solution is found, using the `VaryRun` class.
+
+# %%
+from process.main import VaryRun
+
+wdir_rel = Path("tests/integration/data")
+conf_name = "run_process.conf"
+
+wdir_abs_vary = Path.cwd() / wdir_rel
+conf_path = wdir_abs_vary / conf_name
+vary_run = VaryRun(str(conf_path))
+
+# %% [markdown]
 # ## Clean up
 # Currently files are created in locations that can't be easily controlled; this will be changed to a temporary directory with ongoing development. For now, clean these manually here.
 
@@ -92,6 +106,18 @@ delete = (
 )
 
 for file in wdir_abs.glob("*"):
+    if file.name in delete:
+        remove(file)
+
+# Delete VaryRun files
+delete = (
+    "IN.DAT",
+    "OPT.DAT",
+    "SIG_TF.DAT",
+    "README.txt",
+)
+
+for file in wdir_abs_vary.glob("*"):
     if file.name in delete:
         remove(file)
 
