@@ -36,16 +36,18 @@ def get_var_name_or_number(variable):
     Dependencies:
             process_dicts: DICT_IXC_SIMPLE
     """
+    # Load dicts from dicts JSON file
+    dicts = get_dicts()
 
     if isinstance(variable, str):
-        for key in get_dicts()['DICT_IXC_SIMPLE']:
-            if get_dicts()['DICT_IXC_SIMPLE'][key] == variable.lower():
+        for key in dicts['DICT_IXC_SIMPLE']:
+            if dicts['DICT_IXC_SIMPLE'][key] == variable.lower():
                 return int(key)
 
         return False
     elif isinstance(variable, int):
         try:
-            return get_dicts()['DICT_IXC_SIMPLE'][str(variable)]
+            return dicts['DICT_IXC_SIMPLE'][str(variable)]
         except KeyError:
             return False
 

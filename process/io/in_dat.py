@@ -14,25 +14,6 @@ import numpy as np
 from sys import stderr
 from process.io.python_fortran_dicts import get_dicts
 
-
-# Dictionary for variable types
-# DICT_VAR_TYPE = get_dicts()['DICT_VAR_TYPE']
-
-# Dictionary for ixc -> name
-# DICT_IXC_SIMPLE = get_dicts()['DICT_IXC_SIMPLE']
-
-# Dictionary for icc -> name
-# DICT_ICC_FULL = get_dicts()['DICT_ICC_FULL']
-
-# Dictionary for variable modules
-# DICT_MODULE = get_dicts()['DICT_MODULE']
-
-# Dictionary for parameter descriptions
-# DICT_DESCRIPTIONS = get_dicts()['DICT_DESCRIPTIONS']
-
-# Dictionary for parameter defaults
-# DICT_DEFAULT = get_dicts()['DICT_DEFAULT']
-
 # ioptimz values
 ioptimz_des = {"-2": "for no optimisation, no VMCOM or HYBRD",
                "-1": "for no optimisation HYBRD only",
@@ -107,11 +88,13 @@ def is_array(name):
     :param name: Name of the variable
     :return: True/False if name is of an array
     """
+    # Load dicts from dicts JSON file
+    dicts = get_dicts() 
     if '(' in name:
         name = name.split('(')[0]
 
     try:
-        return "array" in get_dicts()['DICT_VAR_TYPE'][name]
+        return "array" in dicts['DICT_VAR_TYPE'][name]
     except KeyError:
         #print("Warning:", name, "is not in DICT_VAR_TYPE")
         return False
@@ -161,10 +144,12 @@ def find_parameter_group(name):
     :param name: Parameter name
     :return: Return the module the parameter belongs to
     """
+    # Load dicts from dicts JSON file
+    dicts = get_dicts()
 
     # Search DICT_MODULES for parameter
-    for key in get_dicts()['DICT_MODULE'].keys():
-        if name in get_dicts()['DICT_MODULE'][key]:
+    for key in dicts['DICT_MODULE'].keys():
+        if name in dicts['DICT_MODULE'][key]:
             return key
 
 def write_title(title, out_file):
@@ -193,6 +178,9 @@ def get_constraint_equations(data):
     :return: dict of the constraint numbers and their comments
     :rtype: dict
     """
+    # Load dicts from dicts JSON file
+    dicts = get_dicts()
+
     constraints = {}
     
     # List of constraint equation numbers in IN.DAT
@@ -200,7 +188,7 @@ def get_constraint_equations(data):
 
     # Find associated comments and create constraint dict
     for constraint_number in constraint_numbers:
-        comment = get_dicts()['DICT_ICC_FULL'][str(constraint_number)]["name"]
+        comment = dicts['DICT_ICC_FULL'][str(constraint_number)]["name"]
         constraints[constraint_number] = comment
 
     return constraints
@@ -236,6 +224,9 @@ def get_iteration_variables(data):
     :rtype: dict
     """
     variables = {}
+
+    # Load dicts from dicts JSON file
+    dicts = get_dicts()
     
     # List of variable numbers in IN.DAT
     variable_numbers = data["ixc"].value
@@ -244,7 +235,7 @@ def get_iteration_variables(data):
     for variable_number in variable_numbers:
         variable = {}
 
-        comment = get_dicts()['DICT_IXC_SIMPLE'][str(variable_number).replace(",", ";").
+        comment = dicts['DICT_IXC_SIMPLE'][str(variable_number).replace(",", ";").
                                   replace(".", ";").replace(":", ";")]
         variable["comment"] = comment
 
@@ -312,6 +303,9 @@ def get_parameters(data, use_string_values=True):
     :return: dict of parameters containing names, values and comments
     :rtype: dict
     """
+    # Load dicts from dicts JSON file
+    dicts = get_dicts()
+
     source_variables = {}
     # dict of all module-level variables in source, grouped by module
     parameters = {}
@@ -322,7 +316,7 @@ def get_parameters(data, use_string_values=True):
     # Change module keys from DICT_MODULE: replace spaces with underscores and 
     # lower the case for consistency in the formatted_input_data_dict
     # Store the key-modified dict in source_variables
-    for old_module_key, variables in get_dicts()['DICT_MODULE'].items():
+    for old_module_key, variables in dicts['DICT_MODULE'].items():
         new_module_key = old_module_key.replace(' ', '_').lower()
         source_variables[new_module_key] = variables
 
@@ -531,16 +525,18 @@ def add_parameter(data, parameter_name, parameter_value):
     :param parameter_value: Value of the parameter to add
     :return: Nothing
     """
+    # Load dicts from dicts JSON file
+    dicts = get_dicts()
 
     # Check that the parameter is not already in the dictionary
     if parameter_name not in data.keys():
 
         parameter_group = find_parameter_group(parameter_name)
         if 'fimp' in parameter_name:
-            comment = get_dicts()['DICT_DESCRIPTIONS']['fimp']
+            comment = dicts['DICT_DESCRIPTIONS']['fimp']
         else:
             try:
-                comment = get_dicts()['DICT_DESCRIPTIONS'][parameter_name]
+                comment = dicts['DICT_DESCRIPTIONS'][parameter_name]
             except KeyError:
                 # The dictionary doesn't recognise the variable name
                 print("Warning: Description for {0}".format(parameter_name),
@@ -667,9 +663,11 @@ def parameter_type(name, value):
     :param value: Value of parameter to format
     :return: Formatted value
     """
+    # Load dicts from dicts JSON file
+    dicts = get_dicts()
 
     # Find parameter type from PROCESS dictionary
-    param_type = get_dicts()['DICT_VAR_TYPE'][name]
+    param_type = dicts['DICT_VAR_TYPE'][name]
 
     # Check if parameter is a list
     if isinstance(value, list):
@@ -941,6 +939,9 @@ class InDat(object):
         :return: Nothing
         """
 
+        # Load dicts from dicts JSON file
+        dicts = get_dicts()
+
         # Create bound variable class using INVariable class if the bounds entry
         # doesn't exist
         if "bounds" not in self.data.keys():
@@ -967,7 +968,7 @@ class InDat(object):
             #if it does not yet exist
             line_commentless = line.split("*")[0]
             array_name = line_commentless.split("(")[0]
-            empty_array = get_dicts()['DICT_DEFAULT'][array_name]
+            empty_array = dicts['DICT_DEFAULT'][array_name]
             # empty_array is what the array is initialised to when it is 
             # declared in the Fortran. If the array is declared but not
             # initialised until later in a separate "init" subroutine, then
@@ -984,7 +985,7 @@ class InDat(object):
                 parameter_group = find_parameter_group(array_name)
 
                 # Get parameter comment/description from dictionary
-                comment = get_dicts()['DICT_DESCRIPTIONS'][array_name].replace(",", ";").\
+                comment = dicts['DICT_DESCRIPTIONS'][array_name].replace(",", ";").\
                         replace(".", ";").replace(":", ";")
                 
                 # Copy the default array from the dicts
@@ -1009,6 +1010,8 @@ class InDat(object):
         :param line: Line from IN.DAT to process
         :return: Nothing
         """
+        # Load dicts from dicts JSON file
+        dicts = get_dicts()
 
         # Remove comment from line to make things easier
         no_comment_line = line.split("*")[0].split("=")
@@ -1038,7 +1041,7 @@ class InDat(object):
         parameter_group = find_parameter_group(name)
 
         # Get parameter comment/description from dictionary
-        comment = get_dicts()['DICT_DESCRIPTIONS'][name].replace(",", ";").\
+        comment = dicts['DICT_DESCRIPTIONS'][name].replace(",", ";").\
             replace(".", ";").replace(":", ";")
 
         # Check that the parameter isn't a duplicate; does the key already 

@@ -32,8 +32,6 @@ from process.io.python_fortran_dicts import get_dicts
 import json
 LOG = logging.getLogger("mfile")
 
-def process_dicts():
-    return get_dicts()
 
 class MFileVariable(dict):
     """Class for containing a single mfile variable """
@@ -473,6 +471,8 @@ def make_plot_dat(mfile_data, custom_keys, filename="make_plot_dat.out",
       file_format --> 'row' or 'column' make_plot_dat.out
 
     """
+    # Load dicts from dicts JSON file
+    dicts = get_dicts()
 
     with open(filename, "w") as plot_dat:
 
@@ -481,7 +481,7 @@ def make_plot_dat(mfile_data, custom_keys, filename="make_plot_dat.out",
         try:
             scan_var = int(mfile_data.data["nsweep"].get_scan(-1))
             plot_dat.write("# Scanning Variable: {}".
-                            format(process_dicts['DICT_NSWEEP2VARNAME'][str(scan_var)] + "\n"))
+                            format(dicts['DICT_NSWEEP2VARNAME'][str(scan_var)] + "\n"))
             sweep_num = int(mfile_data.data["isweep"].get_scan(-1))
             plot_dat.write("# Number of scans: {}".format(str(sweep_num) + "\n"))
             plot_dat.close()
@@ -614,9 +614,11 @@ def write_mplot_conf(filename="make_plot_dat.conf"):
       filename --> config file name
 
     """
+    # Load dicts from dicts JSON file
+    dicts = get_dicts()
     with open(filename, "w") as conf_file:
         conf_file.write("# make_plot_dat.out config file.\n")
-        for item in process_dicts().PARAMETER_DEFAULTS:
+        for item in dicts.PARAMETER_DEFAULTS:
             conf_file.write(item + "\n")
 
 

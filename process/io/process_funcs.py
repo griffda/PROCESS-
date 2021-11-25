@@ -25,7 +25,8 @@ def get_neqns_itervars(wdir='.'):
     returns the number of equations and a list of variable
     names of all iteration variables
     """
-
+    # Load dicts from dicts JSON file
+    dicts = get_dicts()
     in_dat = InDat(pjoin(wdir, "IN.DAT"))
 
     ixc_list = in_dat.data['ixc'].get_value
@@ -33,7 +34,7 @@ def get_neqns_itervars(wdir='.'):
     itervars = []
     for var in ixc_list:
         if var != '':
-            itervars += [get_dicts()['DICT_IXC_SIMPLE'][str(var)]]
+            itervars += [dicts['DICT_IXC_SIMPLE'][str(var)]]
 
 
     assert in_dat.number_of_itvars == len(itervars)
@@ -50,18 +51,19 @@ def update_ixc_bounds(wdir='.'):
     updates the lower and upper bounds in DICT_IXC_BOUNDS
     from IN.DAT
     """
-
+    # Load dicts from dicts JSON file
+    dicts = get_dicts()
     in_dat = InDat(pjoin(wdir, "IN.DAT"))
 
     bounds = in_dat.data['bounds'].get_value
 
     for key, value in bounds.items():
-        name = get_dicts()['DICT_IXC_SIMPLE'][key]
+        name = dicts['DICT_IXC_SIMPLE'][key]
 
         if 'l' in value:
-            get_dicts()['DICT_IXC_BOUNDS'][name]['lb'] = float(value['l'])
+            dicts['DICT_IXC_BOUNDS'][name]['lb'] = float(value['l'])
         if 'u' in value:
-            get_dicts()['DICT_IXC_BOUNDS'][name]['ub'] = float(value['u'])
+            dicts['DICT_IXC_BOUNDS'][name]['ub'] = float(value['u'])
 
 ###############################
 
@@ -80,7 +82,8 @@ def  get_variable_range(itervars, factor, wdir='.'):
     For f-values the allowed range is equal to their process bounds.
 
     """
-
+    # Load dicts from dicts JSON file
+    dicts = get_dicts()
     in_dat = InDat(pjoin(wdir, "IN.DAT"))
 
     lbs = []
@@ -89,9 +92,9 @@ def  get_variable_range(itervars, factor, wdir='.'):
     for varname in itervars:
 
         #for f-values we set the same range as in process
-        if varname[0] == 'f' and (varname not in get_dicts()['NON_F_VALUES']):
-            lbs += [get_dicts()['DICT_IXC_BOUNDS'][varname]['lb']]
-            ubs += [get_dicts()['DICT_IXC_BOUNDS'][varname]['ub']]
+        if varname[0] == 'f' and (varname not in dicts['NON_F_VALUES']):
+            lbs += [dicts['DICT_IXC_BOUNDS'][varname]['lb']]
+            ubs += [dicts['DICT_IXC_BOUNDS'][varname]['ub']]
 
         #for non-f-values we modify the range with the factor
         else:
@@ -107,17 +110,17 @@ def  get_variable_range(itervars, factor, wdir='.'):
                 value = 1.
 
             #assure value is within bounds!
-            if value < get_dicts()['DICT_IXC_BOUNDS'][varname]['lb']:
-                value = get_dicts()['DICT_IXC_BOUNDS'][varname]['lb']
-            elif value > get_dicts()['DICT_IXC_BOUNDS'][varname]['ub']:
-                value = get_dicts()['DICT_IXC_BOUNDS'][varname]['ub']
+            if value < dicts['DICT_IXC_BOUNDS'][varname]['lb']:
+                value = dicts['DICT_IXC_BOUNDS'][varname]['lb']
+            elif value > dicts['DICT_IXC_BOUNDS'][varname]['ub']:
+                value = dicts['DICT_IXC_BOUNDS'][varname]['ub']
 
             if value > 0 :
-                lbs += [max(value/factor, get_dicts()['DICT_IXC_BOUNDS'][varname]['lb'])]
-                ubs += [min(value*factor, get_dicts()['DICT_IXC_BOUNDS'][varname]['ub'])]
+                lbs += [max(value/factor, dicts['DICT_IXC_BOUNDS'][varname]['lb'])]
+                ubs += [min(value*factor, dicts['DICT_IXC_BOUNDS'][varname]['ub'])]
             else :
-                lbs += [min(value/factor, get_dicts()['DICT_IXC_BOUNDS'][varname]['lb'])]
-                ubs += [max(value*factor, get_dicts()['DICT_IXC_BOUNDS'][varname]['ub'])]
+                lbs += [min(value/factor, dicts['DICT_IXC_BOUNDS'][varname]['lb'])]
+                ubs += [max(value*factor, dicts['DICT_IXC_BOUNDS'][varname]['ub'])]
 
         if lbs[-1] > ubs[-1]:
             print('Error: Iteration variable {0} has BOUNDL={1} >\
@@ -137,6 +140,8 @@ def check_in_dat():
 
     """ Tests IN.DAT during setup:
     1)Are ixc bounds outside of allowed input ranges?  """
+    # Load dicts from dicts JSON file
+    dicts = get_dicts()
 
     in_dat = InDat()
 
@@ -149,9 +154,9 @@ def check_in_dat():
     ixc_list = in_dat.data['ixc'].get_value
 
     for itervarno in ixc_list:
-        itervarname = get_dicts()['DICT_IXC_SIMPLE'][str(itervarno)]
+        itervarname = dicts['DICT_IXC_SIMPLE'][str(itervarno)]
         try: 
-            lowerinputbound = get_dicts()['DICT_INPUT_BOUNDS'][itervarname]['lb']
+            lowerinputbound = dicts['DICT_INPUT_BOUNDS'][itervarname]['lb']
         except KeyError as err:
             #arrays do not have input bound checks
             if '(' in itervarname: 
@@ -161,25 +166,25 @@ def check_in_dat():
             print('There seems to be some information missing from the dicts.')
             print('Please flag this up for a developer to investigate!')
             print(itervarname, err)
-            print(get_dicts()['DICT_INPUT_BOUNDS'][itervarname])
+            print(dicts['DICT_INPUT_BOUNDS'][itervarname])
             exit()
 
-        if get_dicts()['DICT_IXC_BOUNDS'][itervarname]['lb'] < lowerinputbound:
+        if dicts['DICT_IXC_BOUNDS'][itervarname]['lb'] < lowerinputbound:
             print("Warning: boundl for ", itervarname,
                   " lies out of allowed input range!\n Reset boundl(",
                   itervarno, ") to ", lowerinputbound, file=stderr)
-            get_dicts()['DICT_IXC_BOUNDS'][itervarname]['lb'] = lowerinputbound
+            dicts['DICT_IXC_BOUNDS'][itervarname]['lb'] = lowerinputbound
             set_variable_in_indat(in_dat, "boundl("+str(itervarno)+")",
                                   lowerinputbound)
             sleep(1)
 
-        upperinputbound = get_dicts()['DICT_INPUT_BOUNDS'][itervarname]['ub']
+        upperinputbound = dicts['DICT_INPUT_BOUNDS'][itervarname]['ub']
 
-        if get_dicts()['DICT_IXC_BOUNDS'][itervarname]['ub'] > upperinputbound:
+        if dicts['DICT_IXC_BOUNDS'][itervarname]['ub'] > upperinputbound:
             print("Warning: boundu for", itervarname,
                   "lies out of allowed input range!\n Reset boundu({}) \
 to".format(itervarno), upperinputbound, file=stderr)
-            get_dicts()['DICT_IXC_BOUNDS'][itervarname]['ub'] = upperinputbound
+            dicts['DICT_IXC_BOUNDS'][itervarname]['ub'] = upperinputbound
             set_variable_in_indat(in_dat, "boundu("+str(itervarno)+")",
                                   upperinputbound)
             sleep(1)
@@ -310,11 +315,13 @@ def no_unfeasible_mfile(wdir='.'):
     """
 
     m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
+    # Load dicts from dicts JSON file
+    dicts = get_dicts()
 
     #no scans
     if not m_file.data['isweep'].exists:
 
-        if m_file.data['ifail'].get_scan(-1) == get_dicts()['IFAIL_SUCCESS']:
+        if m_file.data['ifail'].get_scan(-1) == dicts['IFAIL_SUCCESS']:
             return 0
         else:
             return 1
@@ -323,7 +330,7 @@ def no_unfeasible_mfile(wdir='.'):
 
         ifail = m_file.data['ifail'].get_scans()
         try:
-            return len(ifail) - ifail.count(get_dicts()['IFAIL_SUCCESS'])
+            return len(ifail) - ifail.count(dicts['IFAIL_SUCCESS'])
         except TypeError:
             # This seems to occur, if ifail is not in MFILE!
             # This probably means in the mfile library a KeyError
@@ -374,7 +381,8 @@ def get_solution_from_mfile(neqns, nvars, wdir='.'):
     If the run was a scan, the values of the last scan point
     will be returned.
     """
-
+    # Load dicts from dicts JSON file
+    dicts = get_dicts()
     m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
 
     ifail = m_file.data['ifail'].get_scan(-1)
@@ -395,7 +403,7 @@ def get_solution_from_mfile(neqns, nvars, wdir='.'):
         table_res.append(
             m_file.data['normres{:03}'.format(con_no+1)].get_scan(-1))
 
-    if ifail != get_dicts()['IFAIL_SUCCESS']:
+    if ifail != dicts['IFAIL_SUCCESS']:
         return ifail, '0', '0', ['0']*nvars, ['0']*neqns
 
     return ifail, objective_function, constraints, table_sol, table_res
