@@ -1,5 +1,6 @@
 """Unit and Integration tests for tfcoil.f90."""
 
+from typing import NamedTuple
 import pytest
 import collections
 
@@ -148,33 +149,30 @@ def test_al_th_cond(temperature, expected_th_cond, tfcoil):
     assert pytest.approx(th_cond) == expected_th_cond
 
 
-CntrpstTestAsset = collections.namedtuple(
-    "CntrpstTestAsset",
-    [
-        "i_tf_sup",
-        "tcoolin",
-        "expected_dtiocool",
-        "expected_tcpav2",
-        "expected_tcpmax",
-        "expected_ppump",
-    ],
-)
-"""Test asset for a test case of cntrpst
+class CntrpstTestAsset(NamedTuple):
+    """Test asset for a test case of cntrpst
 
-:i_tf_sup: value for tfcoil_variables.i_tf_sup to be mocked with (0=Copper, 2=Cryogenic aluminium)
-:type i_tf_sup: integer
-:tcoolin: value for tfcoil_variables.tcoolin to be mocked with (centrepost coolant inlet temperature)
-:type tcoolin: float
+    :i_tf_sup: value for tfcoil_variables.i_tf_sup to be mocked with (0=Copper, 2=Cryogenic aluminium)
+    :type i_tf_sup: integer
+    :tcoolin: value for tfcoil_variables.tcoolin to be mocked with (centrepost coolant inlet temperature)
+    :type tcoolin: float
 
-:expected_dtiocool: expected value of tfcoil_variables.dtiocool after tfcoil.cntrpst routine has run
-:type expected_dtiocool: float
-:expected_tcpav2: expected value of tfcoil_variables.tcpav2 after tfcoil.cntrpst routine has run
-:type expected_tcpav2: float
-:expected_tcpmax: expected value of tfcoil_variables.tcpmax after tfcoil.cntrpst routine has run
-:type expected_tcpmax: float
-:expected_ppump: expected value of tfcoil_variables.ppump after tfcoil.cntrpst routine has run
-:type expected_ppump: float
-"""
+    :expected_dtiocool: expected value of tfcoil_variables.dtiocool after tfcoil.cntrpst routine has run
+    :type expected_dtiocool: float
+    :expected_tcpav2: expected value of tfcoil_variables.tcpav2 after tfcoil.cntrpst routine has run
+    :type expected_tcpav2: float
+    :expected_tcpmax: expected value of tfcoil_variables.tcpmax after tfcoil.cntrpst routine has run
+    :type expected_tcpmax: float
+    :expected_ppump: expected value of tfcoil_variables.ppump after tfcoil.cntrpst routine has run
+    :type expected_ppump: float
+    """
+    i_tf_sup: int
+    tcoolin: float
+    expected_dtiocool: float
+    expected_tcpav2: float
+    expected_tcpmax: float
+    expected_ppump: float
+
 
 
 @pytest.mark.parametrize(
