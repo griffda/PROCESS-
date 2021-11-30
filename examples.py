@@ -88,6 +88,24 @@ conf_path = wdir_abs_vary / conf_name
 vary_run = VaryRun(str(conf_path))
 
 # %% [markdown]
+# ## Plot scan
+# Plot a scanned MFILE.
+
+# %%
+from process.io import plot_scans
+
+# Define working directory relative to project dir and input file name
+wdir_rel = Path("tests/integration/data")
+mfile_name = "scan_MFILE.DAT"
+
+wdir_abs_plot_scan = proj_dir / wdir_rel
+mfile_path = wdir_abs_plot_scan / mfile_name
+
+plot_scans.main(
+    args=["-f", str(mfile_name), "-yv", "thwcndut", "--outputdir", str(wdir_abs_plot_scan)]
+)
+
+# %% [markdown]
 # ## Clean up
 # Currently files are created in locations that can't be easily controlled; this will be changed to a temporary directory with ongoing development. For now, clean these manually here.
 
