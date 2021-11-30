@@ -324,11 +324,11 @@ class TrackedData:
 
         # extract the metadata from our file as all datapoints of this file will require them
         metadata = json_file_data["meta"]
-        title = metadata.get("title")
-        message = metadata.get("commit_message")
-        hash_ = metadata.get("commit_hash")
-        date_str = metadata.get("date")
-        time_str = metadata.get("time")
+        title = metadata.get("title","-")
+        message = metadata.get("commit_message","-")
+        hash_ = metadata.get("commit_hash","-")
+        date_str = metadata.get("date","-")
+        time_str = metadata.get("time","-")
 
         # common format for the timestamp of the run
         data_time_str = f"{date_str.strip()} - {time_str.strip()}"
