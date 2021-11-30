@@ -457,6 +457,8 @@ def plot_tracking_data(database):
             },
         )
 
+        figur.add_layout(figur.legend[0], "right")
+
         figur.add_tools(hovertool)
 
         figures[parent].append(figur)
