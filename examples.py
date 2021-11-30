@@ -9,6 +9,7 @@
 # Run Process on an input file using the `SingleRun` class. This outputs an `MFILE.DAT` and an `OUT.DAT`.
 
 # %%
+import process
 from process.main import SingleRun
 from pathlib import Path
 
@@ -16,7 +17,8 @@ from pathlib import Path
 wdir_rel = Path("tracking/baseline_2018")
 input_name = "baseline_2018_IN.DAT"
 
-wdir_abs = Path.cwd() / wdir_rel
+proj_dir = Path(process.__file__).parent.parent
+wdir_abs = proj_dir / wdir_rel
 input_path = wdir_abs / input_name
 
 # Run process on an input file
@@ -57,7 +59,7 @@ for page_no, page_image in enumerate(pages):
 wdir_rel = Path("tests/regression/scenarios/starfire")
 input_name = "IN.DAT"
 
-wdir_abs_starfire = Path.cwd() / wdir_rel
+wdir_abs_starfire = proj_dir / wdir_rel
 input_path = wdir_abs_starfire / input_name
 
 # Run process on an input file
@@ -81,7 +83,7 @@ from process.main import VaryRun
 wdir_rel = Path("tests/integration/data")
 conf_name = "run_process.conf"
 
-wdir_abs_vary = Path.cwd() / wdir_rel
+wdir_abs_vary = proj_dir / wdir_rel
 conf_path = wdir_abs_vary / conf_name
 vary_run = VaryRun(str(conf_path))
 
