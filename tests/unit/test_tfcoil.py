@@ -2,7 +2,6 @@
 
 from typing import NamedTuple
 import pytest
-import collections
 
 from process.tfcoil import TFcoil
 
@@ -12,7 +11,7 @@ from process.fortran import fwbs_variables as fwbsv
 
 
 @pytest.fixture
-def tfcoil(monkeypatch):
+def tfcoil():
     """Provides TFcoil object for testing.
 
     :param monkeypatch: pytest mocking fixture
