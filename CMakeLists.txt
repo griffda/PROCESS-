@@ -124,7 +124,6 @@ LIST(APPEND PROCESS_SRCS
     constraint_equations.f90
     stellarator.f90
     machine_build.f90
-    tfcoil.f90
     pulse.f90
     divertor_ode.f90
     constants.f90
