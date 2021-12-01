@@ -11,13 +11,12 @@
 # This temporary directory function is only required for running the examples below and removing any modifications afterwards, not in regular use of Process where the outputs will want to be preserved. Further development work will unify these disparate ways of running Process into a common Pythonic form.
 
 # %%
-import process
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from shutil import copy
 
 # Define project root dir
-proj_dir = Path(process.__file__).parent.parent
+PROJ_DIR = Path.cwd()
 
 
 def copy_to_temp_dir(input_rel):
@@ -37,7 +36,7 @@ def copy_to_temp_dir(input_rel):
 
     # Define absolute path for input file
     input_rel_path = Path(input_rel)
-    input_abs_path = proj_dir / input_rel_path
+    input_abs_path = PROJ_DIR / input_rel_path
 
     try:
         assert input_abs_path.exists()
@@ -139,7 +138,7 @@ temp_dir, temp_input_path = copy_to_temp_dir(input_rel)
 # .conf file relies on a separate input file too; copy this as well
 # TODO This double input file requirement needs to be removed
 input_rel_2 = "tests/integration/data/ref_IN.DAT"
-copy(proj_dir / input_rel_2, temp_dir.name)
+copy(PROJ_DIR / input_rel_2, temp_dir.name)
 
 # VaryRun uses process_config.py, which changes the current working directory
 # via os.chdir() to the temporary dir. Apart from being bad practice, once the
