@@ -324,11 +324,11 @@ class TrackedData:
 
         # extract the metadata from our file as all datapoints of this file will require them
         metadata = json_file_data["meta"]
-        title = metadata.get("title","-")
-        message = metadata.get("commit_message","-")
-        hash_ = metadata.get("commit_hash","-")
-        date_str = metadata.get("date","-")
-        time_str = metadata.get("time","-")
+        title = metadata.get("title", "-")
+        message = metadata.get("commit_message", "-")
+        hash_ = metadata.get("commit_hash", "-")
+        date_str = metadata.get("date", "-")
+        time_str = metadata.get("time", "-")
 
         # common format for the timestamp of the run
         data_time_str = f"{date_str.strip()} - {time_str.strip()}"
@@ -457,7 +457,16 @@ def plot_tracking_data(database):
             },
         )
 
-        figur.add_layout(figur.legend[0], "right")
+        # each section of the legend is next to each other
+        # in a line rather than the default stack
+        figur.legend.orientation = "horizontal"
+        
+        # legend is positioned in the x center
+        figur.legend.location = "center"
+
+        # legend is above the actual figure
+        # so as not to cover the data
+        figur.add_layout(figur.legend[0], "above")
 
         figur.add_tools(hovertool)
 
