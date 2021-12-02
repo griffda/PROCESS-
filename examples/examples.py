@@ -15,8 +15,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from shutil import copy
 
-# Define project root dir
-PROJ_DIR = Path.cwd()
+# Define project root dir; when running a notebook, the cwd is the dir the notebook is in
+PROJ_DIR = Path.cwd().parent
 
 
 def copy_to_temp_dir(input_rel):
