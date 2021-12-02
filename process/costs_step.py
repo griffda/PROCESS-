@@ -1,4 +1,4 @@
-from process.variables import DocableVariable
+from process.variables import AnnotatedVariable
 
 from process import fortran as ft
 from process.fortran import constants
@@ -38,26 +38,26 @@ class CostsStep:
         self.iprint = 0  # switch for writing to output file (1=yes)
 
         # Various cost account values (M$)
-        self.step20 = DocableVariable(float, 0.0, docstring="step20 account cost", units="M$")
-        self.step21 = DocableVariable(float, 0.0, docstring="step21 account cost", units="M$")
-        self.step22 = DocableVariable(float, 0.0, docstring="step22 account cost", units="M$")
-        self.step23 = DocableVariable(float, 0.0, docstring="step23 account cost", units="M$")
-        self.step24 = DocableVariable(float, 0.0, docstring="step24 account cost", units="M$")
-        self.step25 = DocableVariable(float, 0.0, docstring="step25 account cost", units="M$")
-        self.step27 = DocableVariable(float, 0.0, docstring="step27 account cost", units="M$")
-        self.step91 = DocableVariable(float, 0.0, docstring="step91 account cost", units="M$")
-        self.step92 = DocableVariable(float, 0.0, docstring="step92 account cost", units="M$")
-        self.step93 = DocableVariable(float, 0.0, docstring="step93 account cost", units="M$")
+        self.step20 = AnnotatedVariable(float, 0.0, docstring="step20 account cost", units="M$")
+        self.step21 = AnnotatedVariable(float, 0.0, docstring="step21 account cost", units="M$")
+        self.step22 = AnnotatedVariable(float, 0.0, docstring="step22 account cost", units="M$")
+        self.step23 = AnnotatedVariable(float, 0.0, docstring="step23 account cost", units="M$")
+        self.step24 = AnnotatedVariable(float, 0.0, docstring="step24 account cost", units="M$")
+        self.step25 = AnnotatedVariable(float, 0.0, docstring="step25 account cost", units="M$")
+        self.step27 = AnnotatedVariable(float, 0.0, docstring="step27 account cost", units="M$")
+        self.step91 = AnnotatedVariable(float, 0.0, docstring="step91 account cost", units="M$")
+        self.step92 = AnnotatedVariable(float, 0.0, docstring="step92 account cost", units="M$")
+        self.step93 = AnnotatedVariable(float, 0.0, docstring="step93 account cost", units="M$")
         #TODO provide appropriate docstring for this variable
-        self.fwblkcost = DocableVariable(float, 0.0, docstring="account cost", units="M$")
+        self.fwblkcost = AnnotatedVariable(float, 0.0, docstring="account cost", units="M$")
 
         # Scaling Properties
-        self.vfi = DocableVariable(float, 0.0, docstring="", units="")
-        self.vfi_star = DocableVariable(float, 0.0, docstring="", units="")
-        self.ptherm_star = DocableVariable(float, 0.0, docstring="", units="")
-        self.rmajor_star = DocableVariable(float, 0.0, docstring="", units="")
-        self.rminor_star = DocableVariable(float, 0.0, docstring="", units="")
-        self.pth = DocableVariable(float, 0.0, docstring="", units="")
+        self.vfi = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.vfi_star = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.ptherm_star = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.rmajor_star = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.rminor_star = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.pth = AnnotatedVariable(float, 0.0, docstring="", units="")
 
     def run(self):
         """Run main costs_step subroutine."""

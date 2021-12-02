@@ -3,7 +3,9 @@
 from typing import Type
 
 
-def DocableVariable(tp: Type, *args, docstring:str="", units:str="", __kwargs:dict={}, **kwargs):
+def AnnotatedVariable(
+    tp: Type, *args, docstring: str = "", units: str = "", __kwargs: dict = {}, **kwargs
+):
     """Provides a wrapper around the instantiation of a variable to allow variables to be type hinted. This should be done on physics and engineering class variables to allow for their inclusion in 'the Dictionaries'.
 
     The returned object is a subclass of `tp` and can be operated on as such. The only difference, is that this object has `__doc__` and `__units__` attributes, corresponding, respectively, to `docstring` and `units`.
@@ -30,6 +32,5 @@ def DocableVariable(tp: Type, *args, docstring:str="", units:str="", __kwargs:di
     class _Variable(tp):
         __doc__ = docstring
         __units__ = units
-        
-        
+
     return _Variable(*args, **{**kwargs, **__kwargs})
