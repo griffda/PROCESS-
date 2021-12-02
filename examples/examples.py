@@ -81,17 +81,15 @@ plot_proc.main(args=["-f", str(single_run.mfile_path)])
 summary_pdf = str(single_run.mfile_path) + "SUMMARY.pdf"
 pages = convert_from_path(summary_pdf)
 for page_no, page_image in enumerate(pages):
-    png_path = temp_input_path.parent / f"plot_proc_{page_no + 1}.png"
+    png_path = PROJ_DIR / f"examples/plot_proc_{page_no + 1}.png"
     page_image.save(png_path, "PNG")
-
-# TODO Can't display the markdown pngs below due to temp_input_path being variable
 
 
 # %% [markdown]
 # `plot_proc`'s PDF output.
 # 
-# <img src="tracking/baseline_2018/plot_proc_1.png" width="1000">
-# <img src="tracking/baseline_2018/plot_proc_2.png" width="1000">
+# <img src="plot_proc_1.png" width="1000">
+# <img src="plot_proc_2.png" width="1000">
 
 # %%
 # Delete temp dir
