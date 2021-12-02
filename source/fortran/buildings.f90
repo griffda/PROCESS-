@@ -19,23 +19,11 @@ contains
     !! author: J. Morris, P. Knight, R. Chapman (UKAEA)
     !!
     !! This routine calls the buildings calculations.
-
-  !!!!!!!!!!! ************ !!!!!!!!!!!!!!!!!!!
-    ! use build_variables, only: r_tf_inboard_mid, r_tf_outboard_mid, tfthko, tfcth, &
-    !   hmax, rsldo, d_vv_top, d_vv_bot, vgap2, rsldi
-    ! use fwbs_variables, only: whtshld, rdewex
-    ! use buildings_variables, only: cryvol, volrci, rbvol, rmbvol, wsvol, elevol
-    ! use heat_transport_variables, only: helpow
-    ! use pfcoil_variables, only: pfrmax, pfmmax
-    ! use tfcoil_variables, only: whttf, n_tf
+    !!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use build_variables, only: r_tf_inboard_mid, r_tf_outboard_mid, tfcth, tfthko, &
       hmax
-    use pfcoil_variables, only: pfrmax
-    use fwbs_variables, only: rdewex
-    !use buildings_variables, only: cryvol, volrci, rbvol, rmbvol, wsvol, elevol
-    !use heat_transport_variables, only: helpow    
-    !use tfcoil_variables, only: whttf, n_tf
 
     implicit none
 
@@ -55,14 +43,7 @@ contains
     real(dp) :: tf_vertical_dim
     !! Vertical dimension of TF coil (m)
 
-    ! real(dp) :: tfh
-    ! real(dp) :: tfmtn
-    ! real(dp) :: tfri
-    ! real(dp) :: tfro
-
-
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 
     ! Find width, in radial dimension, of TF coil (m)
     !  = (outboard mid-leg radial position + half-thickness of outboard leg) - 
@@ -74,28 +55,14 @@ contains
     !  = 2 * (mid-plane to TF coil inside edge + thickness of coil)
     tf_vertical_dim = 2.0D0 * ( hmax + tfthko )
 
-
-    ! tfh = (hmax + tfcth)*2.0D0
-    ! !! TF coil vertical height (m)
-    ! ! Rem : SK not valid for single null
-
-  !   ! Reactor vault wall and roof thicknesses are hardwired
-  !   call bldgs(pfrmax,pfmmax,tfro,tfri,tfh,tfmtn,n_tf,rsldo, &
-  !     rsldi,2.0D0*(hmax-vgap2)-d_vv_top-d_vv_bot,whtshld, &
-  !     rdewex,helpow,iprint,outfile,cryvol,volrci,rbvol,rmbvol, &
-  !     wsvol,elevol)
-  ! !!!!!!!!!!! ************ !!!!!!!!!!!!!!!!!!!
-
     ! Calculate building areas and volumes
-    call bldgs_sizes(pfrmax, rdewex, tf_radial_dim, tf_vertical_dim, &
-    outfile, iprint)
+    call bldgs_sizes(tf_radial_dim, tf_vertical_dim, outfile, iprint)
 
   end subroutine bldgcall
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine bldgs_sizes(pfrmax, rdewex, tf_radial_dim, tf_vertical_dim, &
-    outfile, iprint)
+  subroutine bldgs_sizes(tf_radial_dim, tf_vertical_dim, outfile, iprint)
 
     !! Subroutine that estimates the sizes (footprints and volumes) of 
     !! buildings within a fusion power plant.
@@ -108,60 +75,47 @@ contains
     !!
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use buildings_variables, only: i_v_bldgs, &
-      reactor_wall_thk, reactor_roof_thk, reactor_fndtn_thk, &
-      reactor_clrnc, transp_clrnc, cryostat_clrnc, ground_clrnc, &
-      crane_clrnc_h, crane_clrnc_v, crane_arm_h, &
-      reactor_hall_l, reactor_hall_w, reactor_hall_h, &
-      warm_shop_l, warm_shop_w, warm_shop_h, &
-      workshop_l, workshop_w, workshop_h, &
-      robotics_l, robotics_w, robotics_h, &
-      maint_cont_l, maint_cont_w, maint_cont_h, &
-      turbine_hall_l, turbine_hall_w, turbine_hall_h, &
-      gas_buildings_l, gas_buildings_w, gas_buildings_h, &
-      water_buildings_l, water_buildings_w, water_buildings_h, &
-      sec_buildings_l, sec_buildings_w, sec_buildings_h, &
-      staff_buildings_area, staff_buildings_h, &
-      hcd_building_l, hcd_building_w, hcd_building_h, &
-      magnet_pulse_l, magnet_pulse_w, magnet_pulse_h, &
-      magnet_trains_l, magnet_trains_w, magnet_trains_h, &
-      control_buildings_l, control_buildings_w, control_buildings_h, &
-      ilw_smelter_l, ilw_smelter_w, ilw_smelter_h, &
-      ilw_storage_l, ilw_storage_w, ilw_storage_h, &
-      llw_storage_l, llw_storage_w, llw_storage_h, &
-      hw_storage_l, hw_storage_w, hw_storage_h, &
-      tw_storage_l, tw_storage_w, tw_storage_h, &
-      auxcool_l, auxcool_w, auxcool_h, &
-      cryomag_l, cryomag_w, cryomag_h, &
-      cryostore_l, cryostore_w, cryostore_h, &
-      elecdist_l, elecdist_w, elecdist_h, & 
-      elecstore_l, elecstore_w, elecstore_h, & 
-      elecload_l, elecload_w, elecload_h, & 
-      chemlab_l, chemlab_w, chemlab_h, &
-      heat_sink_l, heat_sink_w, heat_sink_h, &
-      aux_build_l, aux_build_w, aux_build_h, &
-      qnty_sfty_fac, hot_cell_facility_h, hot_sepdist
+    use buildings_variables, only: i_v_bldgs, efloor, volnucb, bioshld_thk, reactor_wall_thk, &
+      reactor_roof_thk, reactor_fndtn_thk, reactor_clrnc, transp_clrnc, cryostat_clrnc, & 
+      ground_clrnc, crane_clrnc_h, crane_clrnc_v, crane_arm_h, reactor_hall_l, reactor_hall_w, &
+      reactor_hall_h, nbi_sys_l, nbi_sys_w, warm_shop_l, warm_shop_w, warm_shop_h, &
+      workshop_l, workshop_w, workshop_h, robotics_l, robotics_w, robotics_h, &
+      maint_cont_l, maint_cont_w, maint_cont_h, turbine_hall_l, turbine_hall_w, turbine_hall_h, &
+      gas_buildings_l, gas_buildings_w, gas_buildings_h, water_buildings_l, water_buildings_w, &
+      water_buildings_h, sec_buildings_l, sec_buildings_w, sec_buildings_h, &
+      staff_buildings_area, staff_buildings_h, hcd_building_l, hcd_building_w, hcd_building_h, &
+      magnet_pulse_l, magnet_pulse_w, magnet_pulse_h, magnet_trains_l, magnet_trains_w, &
+      magnet_trains_h, control_buildings_l, control_buildings_w, control_buildings_h, &
+      ilw_smelter_l, ilw_smelter_w, ilw_smelter_h, ilw_storage_l, ilw_storage_w, ilw_storage_h, &
+      llw_storage_l, llw_storage_w, llw_storage_h, hw_storage_l, hw_storage_w, hw_storage_h, &
+      tw_storage_l, tw_storage_w, tw_storage_h, auxcool_l, auxcool_w, auxcool_h, &
+      cryomag_l, cryomag_w, cryomag_h, cryostore_l, cryostore_w, cryostore_h, &
+      elecdist_l, elecdist_w, elecdist_h, elecstore_l, elecstore_w, elecstore_h, & 
+      elecload_l, elecload_w, elecload_h, chemlab_l, chemlab_w, chemlab_h, &
+      heat_sink_l, heat_sink_w, heat_sink_h, aux_build_l, aux_build_w, aux_build_h, &
+      qnty_sfty_fac, hotcell_h, hot_sepdist
     use current_drive_variables, only: iefrf
-    use tfcoil_variables, only: n_tf
-    use cost_variables, only: tlife
-    use fwbs_variables, only: bktlife
+    use tfcoil_variables, only: n_tf, i_tf_sup
+    use pfcoil_variables, only: pfrmax
+    use cost_variables, only: tlife, cplife, divlife
+    use fwbs_variables, only: rdewex, bktlife
+    use build_variables, only: hmax, tfcth, tftsgap, thshield, vgap2, shldith, shldoth, &
+      scrapli, scraplo, fwith, fwoth, blnkith, blnkoth, r_cp_top
+    use divertor_variables, only: divfix
+    use physics_variables, only: rmajor, rminor
     use constants, only: pi
-    use process_output, only: oheadr, ovarre
+    use process_output, only: oheadr, ovarre, ocmmnt, oblnkl
 
     implicit none
 
     !  Arguments 
-    
-    real(dp), intent(in) :: pfrmax
-    !! radius of largest PF coil (m)
-    real(dp), intent(in) :: rdewex
-    !! cryostat radius (m)
+
     real(dp), intent(in) :: tf_radial_dim
     !! Radial dimension of TF coil (m)
     real(dp), intent(in) :: tf_vertical_dim
     !! Vertical dimension of TF coil (m)
-
     integer, intent(in) :: outfile, iprint
+    !! output file and switch for writing to it
 
     !  Local variables
 
@@ -174,19 +128,31 @@ contains
 
     real(dp) :: reactor_hall_area, reactor_hall_vol
     !! reactor hall footprint (m2), volume (m3)
-    real(dp) :: reactor_hall_area_ext
-    !! footprint of reactor hall, including walls (m2)
-    real(dp) :: reactor_hall_vol_ext
-    !! volume of reactor hall, including walls, roof, foundation (m3)
+    real(dp) :: reactor_building_l, reactor_building_w, reactor_building_h
+    !! reactor building (hall + external walls) length, width, height (m)
+    real(dp) :: reactor_building_area
+    !! reactor building footprint (m2), including external walls
+    real(dp) :: reactor_building_vol
+    !! reactor building volume (m3), including ext walls, roof, foundation
     real(dp) :: reactor_basement_l, reactor_basement_w, reactor_basement_h
     !! reactor length, width, height (m)
     real(dp) :: reactor_basement_area, reactor_basement_vol
     !! reactor basement footprint (m2), volume (m3)
-    real(dp) :: reactor_building_vol
-    !! volume of reactor hall + basement (m3)
+    real(dp) :: reactor_build_totvol
+    !! reactor building+basement volume (m3)
 
-    real(dp) :: hotcell_facility_area, hotcell_facility_vol
-    !! reactor hall footprint (m2), volume (m3)
+    real(dp) :: hcomp_height, hcomp_rad_thk, hcomp_tor_thk, hcomp_footprint, hcomp_vol
+    !! individual hot component storage dimensions
+    real(dp) :: hcomp_req_supply
+    !! individual hot component supply requirements, calculated from lifetime
+    real(dp) :: ib_hotcell_vol, ob_hotcell_vol, div_hotcell_vol, cp_hotcell_vol
+    !! total hot component required storage volumes (m3)
+    real(dp) :: hotcell_l, hotcell_w
+    !! hot cell facility length, width (m)
+    real(dp) :: hotcell_area, hotcell_vol
+    !! hot cell facility footprint (m2), volume (m3)
+    real(dp) :: hotcell_area_ext, hotcell_vol_ext
+    !! hot cell facility external footprint (m2), volume (m3)
 
     real(dp) :: chemlab_area, chemlab_vol
     !! chemistry labs footprint (m2), volume (m3)
@@ -265,23 +231,15 @@ contains
     real(dp) :: staff_buildings_vol
     !! staff buildings volume (m3)
 
-
-    !!  building footprint (m2), volume (m3)
-    !! footprint of  buildings (m2)
-    !! volume of  buildings (m3)
-
-    !real(8) :: fwbllife !! rmc fix this!
-
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    i_v_bldgs = 1 ! rmc debug
-    !fwbllife = 9.0D0 !! rmc fix this!
-
 
     ! Reactor building    
 
     ! Lateral size driven by radial width of largest component, from:
     !  PF coil max radius, cryostat radius, TF coil outer radius
     width_reactor_piece = max(pfrmax, rdewex, tf_radial_dim)
+    ! Allow for biological shielding around reactor
+    width_reactor_piece = width_reactor_piece + bioshld_thk
 
     ! Calculate key-width of building (m)
     ! include radial width of largest component *twice*, to allow for construction;
@@ -314,9 +272,8 @@ contains
     ! iefrf = switch for current drive model
     if ( (iefrf == 5) .or. (iefrf == 8) ) then
       ! NBI technology will be situated within the reactor building
-      reactor_hall_l = reactor_hall_l + 225.0D0 + reactor_clrnc + transp_clrnc
-      reactor_hall_w = reactor_hall_w + 185.0D0 + reactor_clrnc + transp_clrnc
-      ! Yes, it's really big. 
+      reactor_hall_l = reactor_hall_l + nbi_sys_l + reactor_clrnc + transp_clrnc
+      reactor_hall_w = reactor_hall_w + nbi_sys_w + reactor_clrnc + transp_clrnc
       hcd_building_area = 0.0D0     
       hcd_building_vol = 0.0D0
     else 
@@ -325,16 +282,19 @@ contains
       hcd_building_vol = hcd_building_area * hcd_building_h
     end if
 
-    ! Reactor building internal footprint and volume
+    ! Reactor hall internal footprint and volume
     reactor_hall_area = reactor_hall_l * reactor_hall_w
     reactor_hall_vol = reactor_hall_area * reactor_hall_h
 
     ! Reactor building external footprint and volume
-    reactor_hall_area_ext = (reactor_hall_l + 2.0D0*reactor_wall_thk) &
-                           * (reactor_hall_w + 2.0D0*reactor_wall_thk)
+    reactor_building_l = reactor_hall_l + 2.0D0*reactor_wall_thk
+    reactor_building_w = reactor_hall_w + 2.0D0*reactor_wall_thk
+    reactor_building_h = reactor_hall_h + reactor_roof_thk + reactor_fndtn_thk
 
-    reactor_hall_vol_ext = reactor_hall_area_ext * &
-                          (reactor_hall_h + reactor_roof_thk + reactor_fndtn_thk) 
+    reactor_building_area = reactor_building_l * reactor_building_w
+
+    reactor_building_vol = reactor_building_area * reactor_building_h
+
     
     ! Reactor maintenance basement and tunnel
     ! Architecture proposed here is a basement directly beneath the reactor enabling the
@@ -349,8 +309,7 @@ contains
 
     reactor_basement_vol = reactor_basement_area * reactor_basement_h
     
-    ! Calculate external volume of reactor hall + maintenance basement and tunnel
-    reactor_building_vol = reactor_hall_vol_ext + reactor_basement_vol
+    reactor_build_totvol = reactor_building_vol + reactor_basement_vol
 
    
     ! Hot Cell Facility
@@ -368,129 +327,73 @@ contains
     !
     ! Inboard 'component': shield, blanket, first wall: 
     ! find height, maximum radial dimension, maximum toroidal dimension
-    comp_height = 2 * ( hmax - (tfcth + tftsgap + thshield + vgap2) )
-    comp_rad_thk = shldith + blnkith + fwith
-    comp_tor_thk = ( 2 * pi * (rmajor - (rminor + scrapli + fwith + blnkith + shldith)) ) &
+    hcomp_height = 2 * ( hmax - (tfcth + tftsgap + thshield + vgap2) )
+    hcomp_rad_thk = shldith + blnkith + fwith
+    hcomp_tor_thk = ( 2 * pi * (rmajor - (rminor + scrapli + fwith + blnkith + shldith)) ) &
                      / n_tf
     ! find footprint and volume for storing component
-    comp_footprint = ( comp_height + hot_sepdist ) &
-                     * ( max(comp_rad_thk,comp_tor_thk) + hot_sepdist )
-    comp_vol = comp_footprint * ( min(comp_rad_thk,comp_tor_thk) + hot_sepdist )
+    hcomp_footprint = ( hcomp_height + hot_sepdist ) &
+                     * ( max(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
+    hcomp_vol = hcomp_footprint * ( min(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
     ! required lifetime supply of components = 
     !   ( number in build / (plant lifetime / component lifetime) ) * quantity safety factor
-    comp_req_supply = ( n_tf / (tlife / bktlife) ) * qnty_sfty_fac
+    hcomp_req_supply = ( n_tf / (tlife / bktlife) ) * qnty_sfty_fac
     ! total storage space for required supply of inboard shield-blanket-wall
-    ib_hotcell_vol = comp_req_supply * comp_vol
+    ib_hotcell_vol = hcomp_req_supply * hcomp_vol
     !
     ! Outboard 'component': first wall, blanket, shield
-    comp_height = 2 * ( hmax - (tfcth + tftsgap + thshield + vgap2) )
-    comp_rad_thk = fwoth + blnkoth + shldoth
-    comp_tor_thk = ( 2 * pi * ( rmajor + rminor + scraplo + fwoth + blnkoth + shldoth ) ) &
+    hcomp_height = 2 * ( hmax - (tfcth + tftsgap + thshield + vgap2) )
+    hcomp_rad_thk = fwoth + blnkoth + shldoth
+    hcomp_tor_thk = ( 2 * pi * ( rmajor + rminor + scraplo + fwoth + blnkoth + shldoth ) ) &
                      / n_tf
-    comp_footprint = ( comp_height + hot_sepdist ) &
-                     * ( max(comp_rad_thk,comp_tor_thk) + hot_sepdist )
-    comp_vol = comp_footprint * ( min(comp_rad_thk,comp_tor_thk) + hot_sepdist )
-    comp_req_supply = ( n_tf / (tlife / bktlife) ) * qnty_sfty_fac
+    hcomp_footprint = ( hcomp_height + hot_sepdist ) &
+                     * ( max(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
+    hcomp_vol = hcomp_footprint * ( min(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
+    hcomp_req_supply = ( n_tf / (tlife / bktlife) ) * qnty_sfty_fac
     ! total storage space for required supply of outboard wall-blanket-shield
-    ob_hotcell_vol = comp_req_supply * comp_vol
+    ob_hotcell_vol = hcomp_req_supply * hcomp_vol
     !
     ! Divertor
-    ! Notes: 
-    !  i) this estimation developed before the divertor design has been finalised
-    !  ii) a 'corrected' divertor lifetime is used here (divlife_corr)
-    comp_height = divfix
-    comp_rad_thk = 2 * rminor
-    comp_tor_thk = rmajor + rminor
-    comp_footprint = ( comp_height + hot_sepdist ) &
-                     * ( max(comp_rad_thk,comp_tor_thk) + hot_sepdist )
-    comp_vol = comp_footprint * ( min(comp_rad_thk,comp_tor_thk) + hot_sepdist )
-    divlife_corr = 2.0D0  ! based on DEMO studies
-    comp_req_supply = ( n_tf / (tlife / divlife_corr) ) * qnty_sfty_fac
+    ! Note: this estimation developed before the divertor design has been finalised
+    hcomp_height = divfix
+    hcomp_rad_thk = 2 * rminor
+    hcomp_tor_thk = rmajor + rminor
+    hcomp_footprint = ( hcomp_height + hot_sepdist ) &
+                     * ( max(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
+    hcomp_vol = hcomp_footprint * ( min(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
+    hcomp_req_supply = ( n_tf / (tlife / divlife) ) * qnty_sfty_fac
     ! total storage space for required supply of divertor segments
-    div_hotcell_vol = comp_req_supply * comp_vol
+    div_hotcell_vol = hcomp_req_supply * hcomp_vol
     !
     ! Centre post
-    if ( i_tf_sup /= 1 ) then
-      comp_height = 2 * hmax
-      comp_rad_thk = r_cp_top
-      comp_footprint = ( comp_height + hot_sepdist ) * ( comp_rad_thk + hot_sepdist )
-      comp_vol = comp_footprint * ( comp_rad_thk + hot_sepdist )
-      comp_req_supply = ( n_tf / (tlife / cplife) ) * qnty_sfty_fac
-      ! total storage space for required supply of centre posts
-      cp_hotcell_vol = comp_req_supply * comp_vol
-    else
-      cp_hotcell_vol = 0.0D0
+    hcomp_height = 2 * hmax
+    if ( i_tf_sup /= 1 ) then 
+      hcomp_rad_thk = r_cp_top
+    else 
+      hcomp_rad_thk = tfcth
     end if
+    hcomp_footprint = ( hcomp_height + hot_sepdist ) * ( hcomp_rad_thk + hot_sepdist )
+    hcomp_vol = hcomp_footprint * ( hcomp_rad_thk + hot_sepdist )
+    hcomp_req_supply = ( tlife / cplife ) * qnty_sfty_fac
+    ! total storage space for required supply of centre posts
+    cp_hotcell_vol = hcomp_req_supply * hcomp_vol
     !
-    ! hot cell building footprint
-    hotcell_facility_vol = ib_hotcell_vol + ob_hotcell_vol &
+    ! building required internal volume and footprint
+    hotcell_vol = ib_hotcell_vol + ob_hotcell_vol &
                            + div_hotcell_vol + cp_hotcell_vol
-    ! building footprint derived from assumed building height
-    hotcell_facility_area = hotcell_building_vol / hot_cell_facility_h
-    
+    ! assumed building height based on R Gowland's estimates
+    hotcell_area = hotcell_vol / hotcell_h
+    !
+    ! derive estimates for length and width by assuming a square building
+    hotcell_l = sqrt(hotcell_area)
+    hotcell_w = hotcell_l
+    !
+    ! external dimensions include same wall and roof thicknesses as reactor building
+    hotcell_area_ext = (hotcell_l + 2.0D0*reactor_wall_thk) &
+                               * (hotcell_w + 2.0D0*reactor_wall_thk)
+    hotcell_vol_ext = hotcell_area_ext * &
+                              (hotcell_h + reactor_roof_thk + reactor_fndtn_thk)
 
-    hotcell_facility_area, hotcell_facility_vol
-
-    
-
-
-        ! number of hot cells, their size and functions can only sensibly be determined once the failure modes and recovery process (if any) of each IVC has been identified.
-    
-
-
-
-    ! hot_store_building_area = 0.0D0
-
-        
-    ! ! outboard first wall + shield + blanket
-    
-    ! ! number of components = num of modules in poloidal direction * num of modules in toroidal direction
-    ! components_in_build = nblktmodpo * nblktmodto
-
-    ! ! number of components required through lifetime of power plant, given an 
-    ! ! estimated lifetime of the component; rounded up to an integer
-    ! components_thru_life = ceiling((tlife / fwbllife) * components_in_build * qnty_sfty_fac)
-    
-    ! ! radial dimension of component = thickness
-    ! dim1 = fwoth + blnkoth + shldoth
-    ! ! vertical dimension of component = (2 * plasma half-height) / (num poloidal components)
-    ! dim2 = 2.0D0 * (rminor * kappa) / nblktmodpo
-    ! ! toroidal dimension of component = (circumference at radius of component) / (num toroidal components)
-    ! dim3 = 2*pi*(rminor+rmajor+scraplo+fwoth+blnkoth+shldoth) / nblktmodto
-
-    ! ! for storage, allow separation distance between parts
-    ! dim1 = dim1 + sepdist
-    ! dim2 = dim2 + sepdist
-    ! dim3 = dim3 + sepdist
-
-    ! ! find storage volume required per component, including separation distance
-    ! compt_store_vol = dim1 * dim2 * dim3
-    ! ! find storage volume required for total components through lifetime of plant
-    ! compt_store_vol = comp_store_vol * components_thru_life
-
-    
-    ! hot_store_building_h = 12.0D0
-    ! ! find footprint required, given set height of building (from RG's estimates)
-    ! compt_store_area = compt_store_vol / hot_store_building_h
-
-    ! ! if area was square, length and width would be:
-    ! sq_len = sqrt(compt_store_area)
-
-    ! ! length including separation to walls and hot cell walls; set width to match
-    ! compt_store_l = sq_len + (2.0D0 * sepdist) + (2.0D0 * hotcell_wall_thk)
-    ! compt_store_w = compt_store_l
-
-    ! compt_store_area = compt_store_l * compt_store_w
-    ! compt_store_vol = compt_store_area * hot_store_building_h
-    
- 
-
-
-
-
-
-
- 
     
     ! Reactor Auxiliary Buildings
     ! Derived from W. Smith's estimates of necessary facilities and their sizes;
@@ -688,155 +591,132 @@ contains
     staff_buildings_vol = staff_buildings_area * staff_buildings_h
     
 
-    ! ****************************** rmc rmc rmc 
-!   ! Calculate effective floor area for ac power module
-!   efloor = (rbv+rmbv+wsv+triv+elev+conv+cryv+admv+shov)/6.0D0
-!   admvol = admv
-!   shovol = shov
-!   convol = conv
-
-!   ! Total volume of nuclear buildings
-!   volnucb = ( vrci + rmbv + wsv + triv + cryv )
-    ! ******************************
+    ! Calculate effective floor area for AC power module
+    efloor = reactor_hall_area + hcd_building_area + hotcell_area + &
+      reactor_aux_area + power_buildings_area + control_buildings_area + warm_shop_area + &
+      maintenance_area + cryocool_area + elec_buildings_area + turbine_hall_area + &
+      waste_buildings_area + gas_buildings_area + water_buildings_area + &
+      sec_buildings_area + staff_buildings_area
 
 
+    ! Total volume of nuclear buildings
+    volnucb = reactor_build_totvol + hotcell_vol_ext
 
 
     ! Output    
     if (iprint == 0) return
-    call oheadr(outfile,'Plant Buildings System - RMC') ! rmc
-    call ovarre(outfile,'reactor_hall_l (m)', '(reactor_hall_l)', reactor_hall_l)
-    call ovarre(outfile,'reactor_hall_w (m)', '(reactor_hall_w)', reactor_hall_w)
-    call ovarre(outfile,'reactor_hall_h (m)', '(reactor_hall_h)', reactor_hall_h)
-    call ovarre(outfile,'Internal footprint of Reactor Hall (m2)', '(reactor_hall_area)', reactor_hall_area)
-    call ovarre(outfile,'Internal volume of Reactor Hall (m3)', '(reactor_hall_vol)', reactor_hall_vol)
-    call ovarre(outfile,'External footprint of Reactor Hall (m2)', '(reactor_hall_area_ext)', reactor_hall_area_ext)
-    call ovarre(outfile,'External volume of Reactor Hall (m3)', '(reactor_hall_vol_ext)', reactor_hall_vol_ext)
-    call ovarre(outfile,'Footprint of Reactor Basement (m2)', '(reactor_basement_area)', reactor_basement_area) ! RMC check
-    call ovarre(outfile,'Volume of Reactor Basement (m3)', '(reactor_basement_vol)', reactor_basement_vol)
-    call ovarre(outfile,'Volume of Reactor Hall + Basement (m3)', '(reactor_building_vol)', reactor_building_vol)
+
+    call oheadr(outfile,'Power Plant Buildings')
+    call ovarre(outfile,'Reactor hall (internal) footprint (m2)', '(reactor_hall_area)', reactor_hall_area)
+    call ovarre(outfile,'Reactor hall (internal) volume (m3)', '(reactor_hall_vol)', reactor_hall_vol)
+    call ovarre(outfile,'   Reactor hall length (m)', '(reactor_hall_l)', reactor_hall_l)
+    call ovarre(outfile,'   Reactor hall width (m)', '(reactor_hall_w)', reactor_hall_w)
+    call ovarre(outfile,'   Reactor hall height (m)', '(reactor_hall_h)', reactor_hall_h)
     if ( (iefrf == 5) .or. (iefrf == 8) ) then
-      call ocmmnt(outfile,'NBI HCD facility included within reactor building')
+      call ocmmnt(outfile,'   NBI HCD facility included within reactor building:')
+      call ovarre(outfile,'      NBI system length (m)', '(nbi_sys_l)', nbi_sys_l)
+      call ovarre(outfile,'      NBI system width (m)', '(nbi_sys_w)', nbi_sys_w)
     end if
+    call ovarre(outfile,'Reactor building external footprint (m2)', '(reactor_building_area)', reactor_building_area)
+    call ovarre(outfile,'Reactor building external volume (m3)', '(reactor_building_vol)', reactor_building_vol)
+    call ovarre(outfile,'   Reactor building length (m)', '(reactor_building_l)', reactor_building_l)
+    call ovarre(outfile,'   Reactor building width (m)', '(reactor_building_w)', reactor_building_w)
+    call ovarre(outfile,'   Reactor building height (m)', '(reactor_building_h)', reactor_building_h)
+    call ovarre(outfile,'Reactor basement footprint (m2)', '(reactor_basement_area)', reactor_basement_area)
+    call ovarre(outfile,'Reactor basement volume (m3)', '(reactor_basement_vol)', reactor_basement_vol)
+    call ovarre(outfile,'Reactor building + basement volume (m3)', '(reactor_build_totvol)', reactor_build_totvol)
+    call oblnkl(outfile)
+    call ovarre(outfile,'Hot cell facility internal footprint (m2)', '(hotcell_area)', hotcell_area)
+    call ovarre(outfile,'Hot cell facility internal volume (m3)', '(hotcell_vol)', hotcell_vol)
+    call ovarre(outfile,'Hot cell facility external footprint (m2)', '(hotcell_area_ext)', hotcell_area_ext)
+    call ovarre(outfile,'Hot cell facility external volume (m3)', '(hotcell_vol_ext)', hotcell_vol_ext)
+    call oblnkl(outfile)
+    if ( (iefrf /= 5) .and. (iefrf /= 8) ) then   
+      call ovarre(outfile,'HCD (EC/EBW) building footprint (m2)', '(hcd_building_area)', hcd_building_area)
+      call ovarre(outfile,'HCD (EC/EBW) building volume (m3)', '(hcd_building_vol)', hcd_building_vol)
+      if (i_v_bldgs == 1) then
+        call ovarre(outfile,'   HCD (EC/EBW) building length (m)', '(hcd_building_l)', hcd_building_l)
+        call ovarre(outfile,'   HCD (EC/EBW) building width (m)', '(hcd_building_w)', hcd_building_w)
+        call ovarre(outfile,'   HCD (EC/EBW) building height (m)', '(hcd_building_h)', hcd_building_h)
+      end if   
+      call oblnkl(outfile)
+    end if   
+    call ovarre(outfile,'Turbine hall footprint (m2)', '(turbine_hall_area)', turbine_hall_area)
+    call ovarre(outfile,'Turbine hall volume (m3)', '(turbine_hall_vol)', turbine_hall_vol)
+    if (i_v_bldgs == 1) then
+      call ovarre(outfile,'   Turbine hall length (m)', '(turbine_hall_l)', turbine_hall_l)
+      call ovarre(outfile,'   Turbine hall width (m)', '(turbine_hall_w)', turbine_hall_w)
+      call ovarre(outfile,'   Turbine hall height (m)', '(turbine_hall_h)', turbine_hall_h)
+    end if
+    call oblnkl(outfile)
+    call ovarre(outfile,'Effective floor area (m2)', '(efloor)', efloor)
+    call ovarre(outfile,'Total volume of nuclear buildings (m3)', '(volnucb)', volnucb)
 
     if (i_v_bldgs == 1) then
+      call oblnkl(outfile)
       ! verbose output of building sizes, areas and volumes
-      call ovarre(outfile,'chemlab_l (m)', '(chemlab_l)', chemlab_l)
-      call ovarre(outfile,'chemlab_w (m)', '(chemlab_w)', chemlab_w)
-      call ovarre(outfile,'chemlab_h (m)', '(chemlab_h)', chemlab_h)
-      call ovarre(outfile,'Footprint of chemistry labs and facilities (m2)', '(chemlab_area)', chemlab_area)
-      call ovarre(outfile,'Volume of chemistry labs and facilities (m3)', '(chemlab_vol)', chemlab_vol)
-      call ovarre(outfile,'aux_build_l (m)', '(aux_build_l)', aux_build_l)
-      call ovarre(outfile,'aux_build_w (m)', '(aux_build_w)', aux_build_w)
-      call ovarre(outfile,'aux_build_h (m)', '(aux_build_h)', aux_build_h)
-      call ovarre(outfile,'Footprint of reactor-supporting buildings (m2)', '(aux_build_area)', aux_build_area)
-      call ovarre(outfile,'Volume of reactor-supporting buildings (m3)', '(aux_build_vol)', aux_build_vol)
-      call ovarre(outfile,'heat_sink_l (m)', '(heat_sink_l)', heat_sink_l)
-      call ovarre(outfile,'heat_sink_w (m)', '(heat_sink_w)', heat_sink_w)
-      call ovarre(outfile,'heat_sink_h (m)', '(heat_sink_h)', heat_sink_h)
-      call ovarre(outfile,'Footprint of Heat Sinks (m2)', '(heat_sink_area)', heat_sink_area)
-      call ovarre(outfile,'Volume of Heat Sinks (m2)', '(heat_sink_vol)', heat_sink_vol)
-      call ovarre(outfile,'Footprint of reactor auxiliary buildings (m2)', '(reactor_aux_area)', reactor_aux_area)
-      call ovarre(outfile,'Volume of reactor auxiliary buildings (m3)', '(reactor_aux_vol)', reactor_aux_vol)
-      if ( (iefrf == 5) .or. (iefrf == 8) ) then
-        call ocmmnt(outfile,'NBI HCD facility included within reactor building')
-      else 
-        call ovarre(outfile,'hcd_building_area (m2)', '(hcd_building_area)', hcd_building_area)
-        call ovarre(outfile,'hcd_building_vol (m3)', '(hcd_building_vol)', hcd_building_vol)
-      end if
-      call ovarre(outfile,'magnet_trains_area (m2)', '(magnet_trains_area)', magnet_trains_area)
-      call ovarre(outfile,'magnet_trains_vol (m3)', '(magnet_trains_vol)', magnet_trains_vol)
-      call ovarre(outfile,'magnet_pulse_area (m2)', '(magnet_pulse_area)', magnet_pulse_area)
-      call ovarre(outfile,'magnet_pulse_vol (m3)', '(magnet_pulse_vol)', magnet_pulse_vol)
-      call ovarre(outfile,'power_buildings_area (m2)', '(power_buildings_area)', power_buildings_area)
-      call ovarre(outfile,'power_buildings_vol (m3)', '(power_buildings_vol)', power_buildings_vol)
-      
-      call ovarre(outfile,'control_buildings_area (m2)', '(control_buildings_area)', control_buildings_area)
-      call ovarre(outfile,'control_buildings_vol (m3)', '(control_buildings_vol)', control_buildings_vol)
+      call ovarre(outfile,'Chemistry labs and facilities footprint (m2)', '(chemlab_area)', chemlab_area)
+      call ovarre(outfile,'Chemistry labs and facilities volume (m3)', '(chemlab_vol)', chemlab_vol)
 
-      call ovarre(outfile,'warm_shop_l (m)', '(warm_shop_l)', warm_shop_l)
-      call ovarre(outfile,'warm_shop_w (m)', '(warm_shop_w)', warm_shop_w)
-      call ovarre(outfile,'warm_shop_h (m)', '(warm_shop_h)', warm_shop_h)
-      call ovarre(outfile,'Footprint of Warm Shop (m2)', '(warm_shop_area)', warm_shop_area)
-      call ovarre(outfile,'Volume of Warm Shop (m3)', '(warm_shop_vol)', warm_shop_vol)
-      call ovarre(outfile,'workshop_l (m)', '(workshop_l)', workshop_l)
-      call ovarre(outfile,'workshop_w (m)', '(workshop_w)', workshop_w)
-      call ovarre(outfile,'workshop_h (m)', '(workshop_h)', workshop_h)
-      call ovarre(outfile,'Footprint of Workshop (m2)', '(workshop_area)', workshop_area)
-      call ovarre(outfile,'Volume of Workshop (m3)', '(workshop_vol)', workshop_vol)
-      call ovarre(outfile,'robotics_l (m)', '(robotics_l)', robotics_l)
-      call ovarre(outfile,'robotics_w (m)', '(robotics_w)', robotics_w)
-      call ovarre(outfile,'robotics_h (m)', '(robotics_h)', robotics_h)
-      call ovarre(outfile,'Footprint of Robotics building (m2)', '(robotics_area)', robotics_area)
-      call ovarre(outfile,'Volume of Robotics building (m3)', '(robotics_vol)', robotics_vol)
-      call ovarre(outfile,'maint_cont_l (m)', '(maint_cont_l)', maint_cont_l)
-      call ovarre(outfile,'maint_cont_w (m)', '(maint_cont_w)', maint_cont_w)
-      call ovarre(outfile,'maint_cont_h (m)', '(maint_cont_h)', maint_cont_h)
-      call ovarre(outfile,'Footprint of Maint. Cont. buildings (m2)', '(maint_cont_area)', maint_cont_area)
-      call ovarre(outfile,'Volume of Maint. Cont. buildings (m3)', '(maint_cont_vol)', maint_cont_vol)
-      call ovarre(outfile,'Footprint of Maintenance buildings (m2)', '(maintenance_area)', maintenance_area)
-      call ovarre(outfile,'Volume of Maintenance buildings (m3)', '(maintenance_vol)', maintenance_vol)
+      call ovarre(outfile,'Reactor support buildings footprint (m2)', '(aux_build_area)', aux_build_area)
+      call ovarre(outfile,'Reactor support buildings volume (m3)', '(aux_build_vol)', aux_build_vol)
+      call ovarre(outfile,'Heat sinks footprint (m2)', '(heat_sink_area)', heat_sink_area)
+      call ovarre(outfile,'Heat sinks volume (m3)', '(heat_sink_vol)', heat_sink_vol)
+      call ovarre(outfile,'Reactor auxiliary buildings footprint (m2)', '(reactor_aux_area)', reactor_aux_area)
+      call ovarre(outfile,'Reactor auxiliary buildings volume (m3)', '(reactor_aux_vol)', reactor_aux_vol)
 
-      call ovarre(outfile,'cryomag_l (m)', '(cryomag_l)', cryomag_l)
-      call ovarre(outfile,'cryomag_w (m)', '(cryomag_w)', cryomag_w)
-      call ovarre(outfile,'cryomag_h (m)', '(cryomag_h)', cryomag_h)
-      call ovarre(outfile,'Footprint of Cryogenic Buildings (m2)', '(cryomag_area)', cryomag_area)
-      call ovarre(outfile,'Volume of Cryogenic Buildings (m3)', '(cryomag_vol)', cryomag_vol)
-      call ovarre(outfile,'cryostore_l (m)', '(cryostore_l)', cryostore_l)
-      call ovarre(outfile,'cryostore_w (m)', '(cryostore_w)', cryostore_w)
-      call ovarre(outfile,'cryostore_h (m)', '(cryostore_h)', cryostore_h)  
-      call ovarre(outfile,'Footprint of Magnet Cryo Storage Tanks (m2)', '(cryostore_area)', cryostore_area)
-      call ovarre(outfile,'Volume of Magnet Cryo Storage Tanks (m3)', '(cryostore_vol)', cryostore_vol)
-      call ovarre(outfile,'auxcool_l (m)', '(auxcool_l)', auxcool_l)
-      call ovarre(outfile,'auxcool_w (m)', '(auxcool_w)', auxcool_w)
-      call ovarre(outfile,'auxcool_h (m)', '(auxcool_h)', auxcool_h)
-      call ovarre(outfile,'Footprint of Auxiliary Cooling buildings (m2)', '(auxcool_area)', auxcool_area)
-      call ovarre(outfile,'Volume of Auxiliary Cooling buildings (m3)', '(auxcool_vol)', auxcool_vol)
-      call ovarre(outfile,'Footprint of Cryogenic & cooling buildings (m2)', '(cryocool_area)', cryocool_area)
-      call ovarre(outfile,'Volume of Cryogenic & cooling building (m3)', '(cryocool_vol)', cryocool_vol)
+      call ovarre(outfile,'Magnet trains footprint (m2)', '(magnet_trains_area)', magnet_trains_area)
+      call ovarre(outfile,'Magnet trains volume (m3)', '(magnet_trains_vol)', magnet_trains_vol)
+      call ovarre(outfile,'Magnet pulse footprint (m2)', '(magnet_pulse_area)', magnet_pulse_area)
+      call ovarre(outfile,'Magnet pulse volume (m3)', '(magnet_pulse_vol)', magnet_pulse_vol)
+      call ovarre(outfile,'Power buildings footprint (m2)', '(power_buildings_area)', power_buildings_area)
+      call ovarre(outfile,'Power buildings volume (m3)', '(power_buildings_vol)', power_buildings_vol)      
 
-      call ovarre(outfile,'elecdist_l (m)', '(elecdist_l)', elecdist_l)
-      call ovarre(outfile,'elecdist_w (m)', '(elecdist_w)', elecdist_w)
-      call ovarre(outfile,'elecdist_h (m)', '(elecdist_h)', elecdist_h)
-      call ovarre(outfile,'Footprint of transformers (m2)', '(elecdist_area)', elecdist_area)
-      call ovarre(outfile,'Volume of transformers (m3)', '(elecdist_vol)', elecdist_vol)
-      call ovarre(outfile,'elecload_l (m)', '(elecload_l)', elecload_l)
-      call ovarre(outfile,'elecload_w (m)', '(elecload_w)', elecload_w)
-      call ovarre(outfile,'elecload_h (m)', '(elecload_h)', elecload_h)
-      call ovarre(outfile,'Footprint of electrical load centres (m2)', '(elecload_area)', elecload_area)
-      call ovarre(outfile,'Volume of electrical load centres (m3)', '(elecload_vol)', elecload_vol)     
-      call ovarre(outfile,'elecstore_l (m)', '(elecstore_l)', elecstore_l)
-      call ovarre(outfile,'elecstore_w (m)', '(elecstore_w)', elecstore_w)
-      call ovarre(outfile,'elecstore_h (m)', '(elecstore_h)', elecstore_h)
-      call ovarre(outfile,'Footprint of Energy Storage Systems (m2)', '(elecstore_area)', elecstore_area)
-      call ovarre(outfile,'Volume of Energy Storage Systems (m3)', '(elecstore_vol)', elecstore_vol)
-      call ovarre(outfile,'Footprint of electrical buildings (m2)', '(elec_buildings_area)', elec_buildings_area)
-      call ovarre(outfile,'Volume of electrical buildings (m3)', '(elec_buildings_vol)', elec_buildings_vol)
+      call ovarre(outfile,'Control buildings area (m2)', '(control_buildings_area)', control_buildings_area)
+      call ovarre(outfile,'Control buildings volume (m3)', '(control_buildings_vol)', control_buildings_vol)
 
-      call ovarre(outfile,'turbine_hall_l (m)', '(turbine_hall_l)', turbine_hall_l)
-      call ovarre(outfile,'turbine_hall_w (m)', '(turbine_hall_w)', turbine_hall_w)
-      call ovarre(outfile,'turbine_hall_h (m)', '(turbine_hall_h)', turbine_hall_h)
-      call ovarre(outfile,'Footprint of Turbine Hall (m2)', '(turbine_hall_area)', turbine_hall_area)
-      call ovarre(outfile,'Volume of Turbine Hall (m3)', '(turbine_hall_vol)', turbine_hall_vol)
+      call ovarre(outfile,'Warm shop footprint (m2)', '(warm_shop_area)', warm_shop_area)
+      call ovarre(outfile,'Warm shop volume (m3)', '(warm_shop_vol)', warm_shop_vol)
+      call ovarre(outfile,'Workshop footprint (m2)', '(workshop_area)', workshop_area)
+      call ovarre(outfile,'Workshop volume (m3)', '(workshop_vol)', workshop_vol)
+      call ovarre(outfile,'Robotics building footprint (m2)', '(robotics_area)', robotics_area)
+      call ovarre(outfile,'Robotics building volume (m3)', '(robotics_vol)', robotics_vol)
+      call ovarre(outfile,'Maintenance control footprint (m2)', '(maint_cont_area)', maint_cont_area)
+      call ovarre(outfile,'Maintenance control volume (m3)', '(maint_cont_vol)', maint_cont_vol)
+      call ovarre(outfile,'Maintenance buildings footprint (m2)', '(maintenance_area)', maintenance_area)
+      call ovarre(outfile,'Maintenance buildings volume (m3)', '(maintenance_vol)', maintenance_vol)
 
-      call ovarre(outfile,'Footprint of waste buildings (m2)', '(waste_buildings_area)', waste_buildings_area)
-      call ovarre(outfile,'Volume of waste buildings (m3)', '(waste_buildings_vol)', waste_buildings_vol)
+      call ovarre(outfile,'Cryogenic buildings footprint (m2)', '(cryomag_area)', cryomag_area)
+      call ovarre(outfile,'Cryogenic buildings volume (m3)', '(cryomag_vol)', cryomag_vol)
+      call ovarre(outfile,'Magnet cryo storage tanks footprint (m2)', '(cryostore_area)', cryostore_area)
+      call ovarre(outfile,'Magnet cryo storage tanks volume (m3)', '(cryostore_vol)', cryostore_vol)
+      call ovarre(outfile,'Auxiliary cooling footprint (m2)', '(auxcool_area)', auxcool_area)
+      call ovarre(outfile,'Auxiliary cooling volume (m3)', '(auxcool_vol)', auxcool_vol)
+      call ovarre(outfile,'Cryogenic & cooling total footprint (m2)', '(cryocool_area)', cryocool_area)
+      call ovarre(outfile,'Cryogenic & cooling total volume (m3)', '(cryocool_vol)', cryocool_vol)
 
-      call ovarre(outfile,'Footprint of air & gas supply buildings (m2)', '(gas_buildings_area)', gas_buildings_area)
-      call ovarre(outfile,'Volume of air & gas supply buildings (m3)', '(gas_buildings_vol)', gas_buildings_vol)
-      call ovarre(outfile,'Footprint of water supply buildings (m2)', '(water_buildings_area)', water_buildings_area)
-      call ovarre(outfile,'Volume of water supply buildings (m3)', '(water_buildings_vol)', water_buildings_vol)
-      call ovarre(outfile,'Footprint of Security & Safety buildings (m2)', '(sec_buildings_area)', sec_buildings_area)
-      call ovarre(outfile,'Volume of Security & Safety buildings (m3)', '(sec_buildings_vol)', sec_buildings_vol)
-      call ovarre(outfile,'height of staff buildings (m)', '(staff_buildings_h)', staff_buildings_h)
-      call ovarre(outfile,'Footprint of staff buildings (m2)', '(staff_buildings_area)', staff_buildings_area)
-      call ovarre(outfile,'Volume of staff buildings (m3)', '(staff_buildings_vol)', staff_buildings_vol)
+      call ovarre(outfile,'Electrical transformers footprint (m2)', '(elecdist_area)', elecdist_area)
+      call ovarre(outfile,'Electrical transformers volume (m3)', '(elecdist_vol)', elecdist_vol)
+      call ovarre(outfile,'Electrical load centres footprint (m2)', '(elecload_area)', elecload_area)
+      call ovarre(outfile,'Electrical load centres volume (m3)', '(elecload_vol)', elecload_vol)     
+      call ovarre(outfile,'Energy storage systems footprint (m2)', '(elecstore_area)', elecstore_area)
+      call ovarre(outfile,'Energy storage systems volume (m3)', '(elecstore_vol)', elecstore_vol)
+      call ovarre(outfile,'Electrical buildings total footprint (m2)', '(elec_buildings_area)', elec_buildings_area)
+      call ovarre(outfile,'Electrical buildings total volume (m3)', '(elec_buildings_vol)', elec_buildings_vol)
+
+      call ovarre(outfile,'Waste buildings footprint (m2)', '(waste_buildings_area)', waste_buildings_area)
+      call ovarre(outfile,'Waste buildings volume (m3)', '(waste_buildings_vol)', waste_buildings_vol)
+
+      call ovarre(outfile,'Air & gas supplies footprint (m2)', '(gas_buildings_area)', gas_buildings_area)
+      call ovarre(outfile,'Air & gas supplies volume (m3)', '(gas_buildings_vol)', gas_buildings_vol)
+      call ovarre(outfile,'Water supplies footprint (m2)', '(water_buildings_area)', water_buildings_area)
+      call ovarre(outfile,'Water supplies volume (m3)', '(water_buildings_vol)', water_buildings_vol)
+      call ovarre(outfile,'Security & Safety buildings footprint (m2)', '(sec_buildings_area)', sec_buildings_area)
+      call ovarre(outfile,'Security & Safety buildings volume (m3)', '(sec_buildings_vol)', sec_buildings_vol)
+      call ovarre(outfile,'Staff buildings footprint (m2)', '(staff_buildings_area)', staff_buildings_area)
+      call ovarre(outfile,'Staff buildings volume (m3)', '(staff_buildings_vol)', staff_buildings_vol)
 
     end if 
-
-    !call ovarre(outfile,' (m)', '()', )
-    !call ovarre(outfile,'Footprint of  buildings (m2)', '(_buildings_area)', _buildings_area)
-    !call ovarre(outfile,'Volume of  buildings (m3)', '(_buildings_vol)', _buildings_vol)
 
   end subroutine bldgs_sizes
 
