@@ -464,7 +464,7 @@ contains
        fact = max(fact,0.0D0)
        fact2 = palppv / palppv_no_nb
        betaft = betath * fact*fact2
-       
+
     else  !  negligible alpha production, palppv = palpnb = 0
        betaft = 0.0D0
     end if

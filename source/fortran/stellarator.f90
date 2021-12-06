@@ -10,7 +10,10 @@ module stellarator_module
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  use, intrinsic :: iso_fortran_env, only: dp=>real64
+#ifndef dp
+   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
+
   use stellarator_configuration, only: stella_config
 
   implicit none
@@ -2604,8 +2607,8 @@ contains
     integer, intent(in) :: outfile,iprint
 
 
-    real(kind(1.0D0)) :: r_coil_major, r_coil_minor, case_thickness_constant, coilcurrent
-    real(kind(1.0D0)) :: t_cable, inductance
+    real(dp) :: r_coil_major, r_coil_minor, case_thickness_constant, coilcurrent
+    real(dp) :: t_cable, inductance
 
     real(dp), allocatable, dimension(:) ::   jcrit_vector,RHS,LHS,wp_width_r, B_max_k
 
