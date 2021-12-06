@@ -1038,115 +1038,6 @@ module pfcoil_module
  
    contains
  
-     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
-     subroutine mtrx(nptsmx,ngrpmx,nclsmx,lrow1,lcol1,npts,rpts,zpts, &
-          brin,bzin,ngrp,ncls,rcls,zcls,alfa,nrws,bfix,gmat,bvec, &
-          rc,zc,cc,xc)
- 
-       !! Set up the matrix equation to calculate the currents
-       !! in a group of ring coils
-       !! author: P J Knight, CCFE, Culham Science Centre
-       !! author: D Strickler, ORNL
-       !! author: J Galambos, ORNL
-       !! nptsmx : input integer : maximum number of points across the
-       !! plasma midplane at which the magnetic
-       !! field is fixed
-       !! ngrpmx : input integer : maximum number of PF coil groups
-       !! nclsmx : input integer : maximum number of coils in one group
-       !! lrow1 : input integer : row length of arrays bfix, bvec, gmat,
-       !! umat, vmat; should be >= (2*nptsmx + ngrpmx)
-       !! lcol1 : input integer : column length of arrays gmat, umat, vmat;
-       !! should be >= ngrpmx
-       !! npts : input integer : number of data points at which field is
-       !! to be fixed; should be <= nptsmx
-       !! rpts(nptsmx),zpts(nptsmx) : input real arrays : coords of data points (m)
-       !! lrow1 : input integer : row length of array bfix; should be >= nptsmx
-       !! npts : input integer : number of data points at which field is
-       !! to be fixed; should be <= nptsmx
-       !! rpts(nptsmx),zpts(nptsmx) : input real arrays : coords of data points (m)
-       !! brin(nptsmx),bzin(nptsmx) : input real arrays : field components at
-       !! data points (T)
-       !! ngrp : input integer : number of coil groups, where all coils in a
-       !! group have the same current, <= ngrpmx
-       !! ncls(ngrpmx+2) : input integer array : number of coils in each group,
-       !! each value <= nclsmx
-       !! rcls(ngrpmx,nclsmx),zcls(ngrpmx,nclsmx) : input real arrays : coords
-       !! R(i,j), Z(i,j) of coil j in group i (m)
-       !! alfa : input real : smoothing parameter (0 = no smoothing,
-       !! 1.0D-9 = large smoothing)
-       !! nrws : output integer : actual number of rows to use
-       !! bfix(lrow1) : input real array : Fields at data points (T)
-       !! gmat(lrow1,lcol1) : output real array : work array
-       !! bvec(lrow1) : output real array : work array
-       !! rc(nclsmx) : output real array : Coordinates of conductor loops (m)
-       !! zc(nclsmx) : output real array : Coordinates of conductor loops (m)
-       !! cc(nclsmx) : output real array : Currents in conductor loops (A)
-       !! xc(nclsmx) : output real array : Mutual inductances (H)
-       !! This routine sets up the matrix equation for calculating the
-       !! currents in a group of ring coils.
-       !! None
-       !
-       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
-       implicit none
- 
-       !  Arguments
- 
-       integer, intent(in) :: nptsmx, ngrpmx, nclsmx, lrow1, lcol1, npts, ngrp
-       integer, dimension(ngrpmx+2), intent(in) :: ncls
-       real(8), intent(in) :: alfa
-       real(8), dimension(ngrpmx,nclsmx), intent(in) :: rcls, zcls
-       real(8), dimension(nptsmx), intent(in) :: brin, bzin, rpts, zpts
-       real(8), dimension(lrow1), intent(in) :: bfix
- 
-       integer, intent(out) :: nrws
-       real(8), dimension(nclsmx), intent(out) :: rc, zc, cc, xc
-       real(8), dimension(lrow1), intent(out) :: bvec
-       real(8), dimension(lrow1,lcol1), intent(out) :: gmat
- 
-       !  Local variables
- 
-       integer :: i, j, k, nc
-       real(8) brw, bzw, psw
- 
-       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
-       do i = 1,npts
-          bvec(i) = brin(i) - bfix(i)
-          bvec(i+npts) = bzin(i) - bfix(i + npts)
-          do j = 1,ngrp
-             nc = ncls(j)
-             do k = 1,nc
-                rc(k) = rcls(j,k)
-                zc(k) = zcls(j,k)
-                cc(k) = 1.0D0
-             end do
-             call bfield(nc,rc,zc,cc,xc,rpts(i),zpts(i),brw,bzw,psw)
-             gmat(i,j) = brw
-             gmat(i+npts,j) = bzw
-          end do
-       end do
- 
-       !  Add constraint equations
- 
-       nrws = 2 * npts
- 
-       do j = 1,ngrp
-          bvec(nrws + j) = 0.0D0
-          do i = 1,ngrp
-             gmat(nrws + j,i) = 0.0D0
-          end do
-          nc = ncls(j)
-          gmat(nrws + j,j) = nc * alfa
-       end do
- 
-       nrws = 2*npts + ngrp
- 
-     end subroutine mtrx
- 
-     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
      subroutine solv(ngrpmx,lrow1,lcol1,ngrp,ccls,nrws,gmat,bvec,umat, &
           vmat,sigma,work2)
  
@@ -1373,8 +1264,111 @@ module pfcoil_module
  
    end subroutine efc
  
-   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
+   subroutine mtrx(nptsmx,ngrpmx,nclsmx,lrow1,lcol1,npts,rpts,zpts, &
+      brin,bzin,ngrp,ncls,rcls,zcls,alfa,nrws,bfix,gmat,bvec, &
+      rc,zc,cc,xc)
+
+      !! Set up the matrix equation to calculate the currents
+      !! in a group of ring coils
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! author: D Strickler, ORNL
+      !! author: J Galambos, ORNL
+      !! nptsmx : input integer : maximum number of points across the
+      !! plasma midplane at which the magnetic
+      !! field is fixed
+      !! ngrpmx : input integer : maximum number of PF coil groups
+      !! nclsmx : input integer : maximum number of coils in one group
+      !! lrow1 : input integer : row length of arrays bfix, bvec, gmat,
+      !! umat, vmat; should be >= (2*nptsmx + ngrpmx)
+      !! lcol1 : input integer : column length of arrays gmat, umat, vmat;
+      !! should be >= ngrpmx
+      !! npts : input integer : number of data points at which field is
+      !! to be fixed; should be <= nptsmx
+      !! rpts(nptsmx),zpts(nptsmx) : input real arrays : coords of data points (m)
+      !! lrow1 : input integer : row length of array bfix; should be >= nptsmx
+      !! npts : input integer : number of data points at which field is
+      !! to be fixed; should be <= nptsmx
+      !! rpts(nptsmx),zpts(nptsmx) : input real arrays : coords of data points (m)
+      !! brin(nptsmx),bzin(nptsmx) : input real arrays : field components at
+      !! data points (T)
+      !! ngrp : input integer : number of coil groups, where all coils in a
+      !! group have the same current, <= ngrpmx
+      !! ncls(ngrpmx+2) : input integer array : number of coils in each group,
+      !! each value <= nclsmx
+      !! rcls(ngrpmx,nclsmx),zcls(ngrpmx,nclsmx) : input real arrays : coords
+      !! R(i,j), Z(i,j) of coil j in group i (m)
+      !! alfa : input real : smoothing parameter (0 = no smoothing,
+      !! 1.0D-9 = large smoothing)
+      !! nrws : output integer : actual number of rows to use
+      !! bfix(lrow1) : input real array : Fields at data points (T)
+      !! gmat(lrow1,lcol1) : output real array : work array
+      !! bvec(lrow1) : output real array : work array
+      !! rc(nclsmx) : output real array : Coordinates of conductor loops (m)
+      !! zc(nclsmx) : output real array : Coordinates of conductor loops (m)
+      !! cc(nclsmx) : output real array : Currents in conductor loops (A)
+      !! xc(nclsmx) : output real array : Mutual inductances (H)
+      !! This routine sets up the matrix equation for calculating the
+      !! currents in a group of ring coils.
+      !! None
+      !
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      implicit none
+
+      !  Arguments
+
+      integer, intent(in) :: nptsmx, ngrpmx, nclsmx, lrow1, lcol1, npts, ngrp
+      integer, dimension(ngrpmx+2), intent(in) :: ncls
+      real(8), intent(in) :: alfa
+      real(8), dimension(ngrpmx,nclsmx), intent(in) :: rcls, zcls
+      real(8), dimension(nptsmx), intent(in) :: brin, bzin, rpts, zpts
+      real(8), dimension(lrow1), intent(in) :: bfix
+
+      integer, intent(out) :: nrws
+      real(8), dimension(nclsmx), intent(out) :: rc, zc, cc, xc
+      real(8), dimension(lrow1), intent(out) :: bvec
+      real(8), dimension(lrow1,lcol1), intent(out) :: gmat
+
+      !  Local variables
+
+      integer :: i, j, k, nc
+      real(8) brw, bzw, psw
+
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      do i = 1,npts
+         bvec(i) = brin(i) - bfix(i)
+         bvec(i+npts) = bzin(i) - bfix(i + npts)
+         do j = 1,ngrp
+            nc = ncls(j)
+            do k = 1,nc
+               rc(k) = rcls(j,k)
+               zc(k) = zcls(j,k)
+               cc(k) = 1.0D0
+            end do
+            call bfield(nc,rc,zc,cc,xc,rpts(i),zpts(i),brw,bzw,psw)
+            gmat(i,j) = brw
+            gmat(i+npts,j) = bzw
+         end do
+      end do
+
+      !  Add constraint equations
+
+      nrws = 2 * npts
+
+      do j = 1,ngrp
+         bvec(nrws + j) = 0.0D0
+         do i = 1,ngrp
+            gmat(nrws + j,i) = 0.0D0
+         end do
+         nc = ncls(j)
+         gmat(nrws + j,j) = nc * alfa
+      end do
+
+      nrws = 2*npts + ngrp
+
+   end subroutine mtrx
+
    subroutine bfield(nc, rc, zc, cc, xc, rp, zp, br, bz, psi)
  
      !! Calculate the field at a point due to currents in a number
