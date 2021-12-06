@@ -1,12 +1,14 @@
 module define_iteration_variables 
    !! Module to define iteration variables
 
-   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#ifndef dp
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
    implicit none
 
    public
 
-   real(8) :: DUMMY
+   real(dp) :: DUMMY
 
 contains
 
@@ -2741,7 +2743,7 @@ contains
   !---------------------------------
 
   subroutine init_itv_123
-    !! <LI> (123) foh_stress : f-value for CS coil Tresca stress limit (f-value for eq. 72)
+    !! <LI> (123) foh_stress : f-value for CS coil Tresca yield criterion (f-value for eq. 72)
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(123) = 'foh_stress    '
@@ -4272,19 +4274,21 @@ contains
     use error_handling, only: idiags, fdiags, report_error
     use numerics, only: ipnvars, scale, ixc, lablxc
     use maths_library, only: variable_error
+#ifndef dp
     use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   
     implicit none
   
     !  Arguments
   
     integer, intent(in) :: nn
-    real(8), dimension(:), intent(in) :: xc
+    real(dp), dimension(:), intent(in) :: xc
   
     !  Local variables
   
     integer :: i
-    real(8)::ratio
+    real(dp)::ratio
   
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   

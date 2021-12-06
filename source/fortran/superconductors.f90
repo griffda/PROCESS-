@@ -1,6 +1,8 @@
 module superconductors
   !! Module containing superconducter critical surfaces and conductor data
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
 contains
 
@@ -18,23 +20,23 @@ subroutine jcrit_rebco(temperature, b, jcrit, validity, iprint)
     implicit none
 
     !  Arguments
-    real(8), intent(in) :: temperature, b
-    real(8), intent(out) :: jcrit
+    real(dp), intent(in) :: temperature, b
+    real(dp), intent(out) :: jcrit
     logical, intent(out) :: validity
     integer, intent(in) :: iprint
 
     !  Local variables
-    real(8) :: birr, factor, tcb
+    real(dp) :: birr, factor, tcb
 
     !  Parameters
-    real(8), parameter :: tc0 = 90.0d0        !  (K)
-    real(8), parameter :: birr0 = 132.5d0     !  (T)
-    real(8), parameter :: a = 1.82962d8       ! scaling constant
-    real(8), parameter :: p = 0.5875d0        ! exponent
-    real(8), parameter :: q = 1.7d0           ! exponent
-    real(8), parameter :: alpha =1.54121d0    ! exponent
-    real(8), parameter :: beta = 1.96679d0    ! exponent
-    real(8), parameter :: oneoveralpha = 1d0 / alpha  ! inverse
+    real(dp), parameter :: tc0 = 90.0d0        !  (K)
+    real(dp), parameter :: birr0 = 132.5d0     !  (T)
+    real(dp), parameter :: a = 1.82962d8       ! scaling constant
+    real(dp), parameter :: p = 0.5875d0        ! exponent
+    real(dp), parameter :: q = 1.7d0           ! exponent
+    real(dp), parameter :: alpha =1.54121d0    ! exponent
+    real(dp), parameter :: beta = 1.96679d0    ! exponent
+    real(dp), parameter :: oneoveralpha = 1d0 / alpha  ! inverse
 
     validity = .true.
     if((temperature<4.2d0).or.(temperature>72.0d0) )validity = .false.
@@ -86,12 +88,12 @@ subroutine current_sharing_rebco(current_sharing_t, bfield, j)
     implicit none
 
     !  Arguments
-    real(8), intent(in) :: j, bfield
-    real(8), intent(out) :: current_sharing_t
-    real(8)::x1,x2         ! Initial guesses for temperature
+    real(dp), intent(in) :: j, bfield
+    real(dp), intent(out) :: current_sharing_t
+    real(dp)::x1,x2         ! Initial guesses for temperature
     logical::error                   ! True if the solver does not converge
-    real(8)::residual      ! Residual current density error
-    real(8), parameter ::opt_tol = 1d7 ! Tolerance in current density
+    real(dp)::residual      ! Residual current density error
+    real(dp), parameter ::opt_tol = 1d7 ! Tolerance in current density
 
     x1 = 4d0
     x2 = 20d0
@@ -106,8 +108,8 @@ contains
         ! This needs to be 'contained' because 'bfield' must be available but cannot
         ! be passed, because secant_solve requires a function of one variable!
         ! Also j must be available.
-        real(8), intent(in) :: temperature
-        real(8)::deltaj_rebco, jcritical
+        real(dp), intent(in) :: temperature
+        real(dp)::deltaj_rebco, jcritical
         logical :: validity
         integer :: iprint = 0
 
@@ -121,8 +123,8 @@ end subroutine current_sharing_rebco
 function function_jcrit_rebco(temperature,b)
     ! Required because secant_solve requires a function not a subroutine
     ! All we do is throw away the second output, 'validity'!
-    real(8), intent(in) :: temperature, b
-    real(8)::function_jcrit_rebco
+    real(dp), intent(in) :: temperature, b
+    real(dp)::function_jcrit_rebco
     logical :: validity
     integer :: iprint = 0
 
@@ -135,11 +137,11 @@ subroutine test_quench()
     use resistive_materials, only: resistive_material
     implicit none
 
-    real(8) :: jcrit
-    real(8) :: B, delta_b,jcrit42,jcrit14,jcrit22, jcrit33
-    real(8) :: jcrit50, jcrit65, jcrit72, jcrit90
-    real(8) :: T, delta_t, copper0, copper10, hastelloyB, RRR
-    real(8) :: copper0B, copper10B
+    real(dp) :: jcrit
+    real(dp) :: B, delta_b,jcrit42,jcrit14,jcrit22, jcrit33
+    real(dp) :: jcrit50, jcrit65, jcrit72, jcrit90
+    real(dp) :: T, delta_t, copper0, copper10, hastelloyB, RRR
+    real(dp) :: copper0B, copper10B
     
     integer::i
     logical :: validity
@@ -254,29 +256,29 @@ subroutine itersc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
 
   !  Arguments
 
-  real(8), intent(in) :: thelium, bmax, strain, bc20max, tc0max
-  real(8), intent(out) :: jcrit, bcrit, tcrit
+  real(dp), intent(in) :: thelium, bmax, strain, bc20max, tc0max
+  real(dp), intent(out) :: jcrit, bcrit, tcrit
 
   !  Local variables
 
   !  Parameters named in Bottura
 
-  !real(8), parameter :: csc = 16500.0D6 !  scaling constant C
-  real(8), parameter :: csc = 19922.0D6 !  scaling constant C
-  real(8), parameter :: p = 0.63D0      !  low field exponent p
-  real(8), parameter :: q = 2.1D0       !  high field exponent q
-  !real(8), parameter :: ca1 = 44.0D0    !  strain fitting constant C_{a1}
-  real(8), parameter :: ca1 = 44.48D0    !  strain fitting constant C_{a1}
-  !real(8), parameter :: ca2 = 4.0D0     !  strain fitting constant C_{a2}
-  real(8), parameter :: ca2 = 0.0D0     !  strain fitting constant C_{a2}
-  real(8), parameter :: eps0a = 0.00256D0  !  epsilon_{0,a}
-  !real(8), parameter :: epsmax = -0.003253075D0  !  epsilon_{max} (not used)
-  !real(8), parameter :: epsmax = -1.1D-3  !  epsilon_{max} (not used)
+  !real(dp), parameter :: csc = 16500.0D6 !  scaling constant C
+  real(dp), parameter :: csc = 19922.0D6 !  scaling constant C
+  real(dp), parameter :: p = 0.63D0      !  low field exponent p
+  real(dp), parameter :: q = 2.1D0       !  high field exponent q
+  !real(dp), parameter :: ca1 = 44.0D0    !  strain fitting constant C_{a1}
+  real(dp), parameter :: ca1 = 44.48D0    !  strain fitting constant C_{a1}
+  !real(dp), parameter :: ca2 = 4.0D0     !  strain fitting constant C_{a2}
+  real(dp), parameter :: ca2 = 0.0D0     !  strain fitting constant C_{a2}
+  real(dp), parameter :: eps0a = 0.00256D0  !  epsilon_{0,a}
+  !real(dp), parameter :: epsmax = -0.003253075D0  !  epsilon_{max} (not used)
+  !real(dp), parameter :: epsmax = -1.1D-3  !  epsilon_{max} (not used)
 
-  real(8), parameter :: diter = 0.82D0  !  ITER strand diameter (mm)
-  real(8), parameter :: cuiter = 0.5D0  !  ITER strand copper fraction
+  real(dp), parameter :: diter = 0.82D0  !  ITER strand diameter (mm)
+  real(dp), parameter :: cuiter = 0.5D0  !  ITER strand copper fraction
 
-  real(8) :: bred, epssh, t, bc20eps, &
+  real(dp) :: bred, epssh, t, bc20eps, &
        tc0eps, bzero, strfun, jc1, jc2, jc3, scalefac
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -377,12 +379,12 @@ subroutine bi2212(bmax,jstrand,tsc,fhts,jcrit,tmarg)
 
     !  Arguments
 
-    real(8), intent(in) :: bmax, jstrand, tsc, fhts
-    real(8), intent(out) :: jcrit, tmarg
+    real(dp), intent(in) :: bmax, jstrand, tsc, fhts
+    real(dp), intent(out) :: jcrit, tmarg
 
     !  Local variables
 
-    real(8) :: b
+    real(dp) :: b
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -440,11 +442,11 @@ subroutine jcrit_nbti(temperature,bmax,c0,bc20max,tc0max,jcrit,tcrit)
     implicit none
 
     !  Arguments
-    real(8), intent(in) :: temperature, bmax, c0, bc20max, tc0max
-    real(8), intent(out) :: jcrit, tcrit
+    real(dp), intent(in) :: temperature, bmax, c0, bc20max, tc0max
+    real(dp), intent(out) :: jcrit, tcrit
 
     !  Local variables
-    real(8) :: bratio, tbar
+    real(dp) :: bratio, tbar
     !-----------------------------------
     bratio = bmax/bc20max
 
@@ -496,27 +498,27 @@ subroutine GL_nbti(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit)
     implicit none
 
     !  Arguments
-    real(8), intent(in) :: thelium, bmax, strain, bc20max, t_c0
-    real(8), intent(out) :: jcrit, tcrit, bcrit
+    real(dp), intent(in) :: thelium, bmax, strain, bc20max, t_c0
+    real(dp), intent(out) :: jcrit, tcrit, bcrit
 
     !  Local variables
-    real(8) :: strain_func, T_e, A_e, b_reduced, t_reduced, epsilon_I
+    real(dp) :: strain_func, T_e, A_e, b_reduced, t_reduced, epsilon_I
     !critical current density prefactor (strand non-copper J_c)
-    real(8), parameter :: A_0 = 1102D6
+    real(dp), parameter :: A_0 = 1102D6
     !flux pinning field scaling parameters
-    real(8), parameter :: p = 0.49D0
-    real(8), parameter :: q = 0.56D0
-    real(8), parameter :: n = 1.83D0
+    real(dp), parameter :: p = 0.49D0
+    real(dp), parameter :: q = 0.56D0
+    real(dp), parameter :: n = 1.83D0
     !temperatute scaling parameter
-    real(8), parameter :: v = 1.42D0
+    real(dp), parameter :: v = 1.42D0
     !strain scaling parameters
-    real(8), parameter :: c2 = -0.0025D0
-    real(8), parameter :: c3 = -0.0003D0
-    real(8), parameter :: c4 = -0.0001D0
-    real(8), parameter :: em = -0.002D-2
+    real(dp), parameter :: c2 = -0.0025D0
+    real(dp), parameter :: c3 = -0.0003D0
+    real(dp), parameter :: c4 = -0.0001D0
+    real(dp), parameter :: em = -0.002D-2
     !strain conversion parameters
-    real(8), parameter :: u = 0.0D0
-    real(8), parameter :: w = 2.2D0
+    real(dp), parameter :: u = 0.0D0
+    real(dp), parameter :: w = 2.2D0
 
     epsilon_I = strain - em
 
@@ -571,27 +573,27 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
     implicit none
 
     ! Arguments
-    real(8), intent(in) :: temperature, bmax, strain, bc20max, tc0max
-    real(8), intent(out) :: jcrit, bcrit, tcrit
+    real(dp), intent(in) :: temperature, bmax, strain, bc20max, tc0max
+    real(dp), intent(out) :: jcrit, bcrit, tcrit
 
     ! Local variables
 
     ! Scaling constant C [AT/mm2]
-    real(8), parameter :: csc = 83075.0D0
+    real(dp), parameter :: csc = 83075.0D0
     ! Low field exponent p
-    real(8), parameter :: p = 0.593D0
+    real(dp), parameter :: p = 0.593D0
     ! High field exponent q
-    real(8), parameter :: q = 2.156D0
+    real(dp), parameter :: q = 2.156D0
     ! Strain fitting constant C_{a1}
-    real(8), parameter :: ca1 = 50.06D0
+    real(dp), parameter :: ca1 = 50.06D0
     ! Strain fitting constant C_{a2}
-    real(8), parameter :: ca2 = 0.0D0
+    real(dp), parameter :: ca2 = 0.0D0
     ! epsilon_{0,a}
-    real(8), parameter :: eps0a = 0.00312D0
+    real(dp), parameter :: eps0a = 0.00312D0
 
-    !real(8), parameter :: epsmax = -1.1D-3  !  epsilon_{max} (not used)
+    !real(dp), parameter :: epsmax = -1.1D-3  !  epsilon_{max} (not used)
 
-    real(8) :: bred, epssh, t, bc20eps, &
+    real(dp) :: bred, epssh, t, bc20eps, &
     tc0eps, bzero, strfun, jc1, jc2, jc3, scalefac
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -732,27 +734,27 @@ subroutine GL_REBCO(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit) !SCM add
   implicit none
 
   !  Arguments
-  real(8), intent(in) :: thelium, bmax, strain, bc20max, t_c0
-  real(8), intent(out) :: jcrit, tcrit, bcrit
+  real(dp), intent(in) :: thelium, bmax, strain, bc20max, t_c0
+  real(dp), intent(out) :: jcrit, tcrit, bcrit
 
   !  Local variables
-  real(8) :: strain_func, T_e, A_e, b_reduced, t_reduced, epsilon_I
+  real(dp) :: strain_func, T_e, A_e, b_reduced, t_reduced, epsilon_I
   !critical current density prefactor
-  real(8), parameter :: A_0 = 2.95D2
+  real(dp), parameter :: A_0 = 2.95D2
   !flux pinning field scaling parameters
-  real(8), parameter :: p = 0.32D0
-  real(8), parameter :: q = 2.50D0
-  real(8), parameter :: n = 3.33D0
+  real(dp), parameter :: p = 0.32D0
+  real(dp), parameter :: q = 2.50D0
+  real(dp), parameter :: n = 3.33D0
   !temperatute scaling parameter
-  real(8), parameter :: s = 5.27D0
+  real(dp), parameter :: s = 5.27D0
   !strain scaling parameters
-  real(8), parameter :: c2 = -0.0191D0
-  real(8), parameter :: c3 = 0.0039D0
-  real(8), parameter :: c4 = 0.00103D0
-  real(8), parameter :: em = 0.058D0
+  real(dp), parameter :: c2 = -0.0191D0
+  real(dp), parameter :: c3 = 0.0039D0
+  real(dp), parameter :: c4 = 0.00103D0
+  real(dp), parameter :: em = 0.058D0
   !strain conversion parameters
-  real(8), parameter :: u = 0.0D0
-  real(8), parameter :: w = 2.2D0
+  real(dp), parameter :: u = 0.0D0
+  real(dp), parameter :: w = 2.2D0
 
   epsilon_I = strain - em
 
@@ -876,22 +878,22 @@ subroutine croco(jcritsc, croco_strand_area, croco_strand_critical_current, &
     use resistive_materials, only: volume_fractions, supercon_strand
     use constants, only: pi
     implicit none
-    real(8), intent(in) ::jcritsc
-    real(8) :: d, scaling, croco_od, croco_thick
+    real(dp), intent(in) ::jcritsc
+    real(dp) :: d, scaling, croco_od, croco_thick
 
     ! conductor
-    real(8), intent(inout) :: conductor_copper_area,  conductor_copper_fraction
-    real(8), intent(inout) :: conductor_copper_bar_area
-    real(8), intent(inout) :: conductor_hastelloy_area, conductor_hastelloy_fraction
-    real(8), intent(inout) :: conductor_helium_area, conductor_helium_fraction
-    real(8), intent(inout) :: conductor_solder_area, conductor_solder_fraction
-    real(8), intent(inout) :: conductor_rebco_area,  conductor_rebco_fraction
-    real(8), intent(inout) :: conductor_critical_current                 
-    real(8), intent(in) :: conductor_area
+    real(dp), intent(inout) :: conductor_copper_area,  conductor_copper_fraction
+    real(dp), intent(inout) :: conductor_copper_bar_area
+    real(dp), intent(inout) :: conductor_hastelloy_area, conductor_hastelloy_fraction
+    real(dp), intent(inout) :: conductor_helium_area, conductor_helium_fraction
+    real(dp), intent(inout) :: conductor_solder_area, conductor_solder_fraction
+    real(dp), intent(inout) :: conductor_rebco_area,  conductor_rebco_fraction
+    real(dp), intent(inout) :: conductor_critical_current                 
+    real(dp), intent(in) :: conductor_area
 
     ! croco_strand
-    real(8), intent(inout) :: croco_strand_area
-    real(8), intent(inout) :: croco_strand_critical_current
+    real(dp), intent(inout) :: croco_strand_area
+    real(dp), intent(inout) :: croco_strand_critical_current
 
 
     ! Define local alias
@@ -954,28 +956,28 @@ subroutine copper_properties(T,B, copper_resistivity, copper_rrr, copper_cp)
     ! The range of validity of this t is between 4 K and 300 K.
     implicit none
 
-    real(8), intent(in) :: T, B   ! temperature, field
-    real(8), intent(out) :: copper_resistivity
-    real(8), intent(in) :: copper_rrr
-    real(8), intent(out) :: copper_cp
-    real(8):: bracket, logt, sum
+    real(dp), intent(in) :: T, B   ! temperature, field
+    real(dp), intent(out) :: copper_resistivity
+    real(dp), intent(in) :: copper_rrr
+    real(dp), intent(out) :: copper_cp
+    real(dp):: bracket, logt, sum
     ! Fitting constants: resistivity
-    real(8), parameter:: t5 = 2.32547d9
-    real(8), parameter:: t3 = 9.57137d5
-    real(8), parameter:: t1 = 1.62735d2
-    real(8), parameter:: mr = 5.0d-11     ! ohm.m/T
-    real(8), parameter:: a = 1.7          ! ohm.m
+    real(dp), parameter:: t5 = 2.32547d9
+    real(dp), parameter:: t3 = 9.57137d5
+    real(dp), parameter:: t1 = 1.62735d2
+    real(dp), parameter:: mr = 5.0d-11     ! ohm.m/T
+    real(dp), parameter:: a = 1.7          ! ohm.m
     ! Fitting constants: specific heat (p.13)
     ! Checked against
     ! http://cryogenics.nist.gov/MPropsMAY/OFHC%20Copper/OFHC_Copper_rev1.htm
-    real(8), parameter::a0 = -1.91844d0
-    real(8), parameter::a1 = -0.15973d0
-    real(8), parameter::a2 =  8.61013d0
-    real(8), parameter::a3 = -18.996d0
-    real(8), parameter::a4 =  21.9661d0
-    real(8), parameter::a5 = -12.7328d0
-    real(8), parameter::a6 =  3.54322d0
-    real(8), parameter::a7 = -0.3797d0
+    real(dp), parameter::a0 = -1.91844d0
+    real(dp), parameter::a1 = -0.15973d0
+    real(dp), parameter::a2 =  8.61013d0
+    real(dp), parameter::a3 = -18.996d0
+    real(dp), parameter::a4 =  21.9661d0
+    real(dp), parameter::a5 = -12.7328d0
+    real(dp), parameter::a6 =  3.54322d0
+    real(dp), parameter::a7 = -0.3797d0
 
     ! page 5: Copper resistivity is computed in CUDI with the t function similar
     ! to the one of McAshan [McA88]
@@ -996,9 +998,9 @@ end subroutine copper_properties
 subroutine hastelloy_properties(temperature, hastelloy_cp)
     implicit none
 
-    real(8), intent(in) :: temperature   ! temperature
-    real(8), intent(out) :: hastelloy_cp
-    real(8) :: T
+    real(dp), intent(in) :: temperature   ! temperature
+    real(dp), intent(out) :: hastelloy_cp
+    real(dp) :: T
 
     T = temperature
     if(temperature>300d0) T=300.0d0
@@ -1027,8 +1029,8 @@ subroutine solder_properties(T, solder_cp)
     use constants, only: pi
     implicit none
 
-    real(8), intent(in) :: T   ! temperature
-    real(8), intent(out) :: solder_cp
+    real(dp), intent(in) :: T   ! temperature
+    real(dp), intent(out) :: solder_cp
 
     ! Reinhard Heller: obtained by fitting data
     ! Material Database from Cryodata Software Package, CRYOCOMP, version 3.0, Florence, SC
@@ -1045,19 +1047,19 @@ end subroutine solder_properties
 subroutine jacket_properties(T, jacket_cp)
     implicit none
 
-    real(8), intent(in) :: T   ! temperature
-    real(8), intent(out) :: jacket_cp
-    real(8):: logt, sum
+    real(dp), intent(in) :: T   ! temperature
+    real(dp), intent(out) :: jacket_cp
+    real(dp):: logt, sum
     ! Fitting constants: specific heat (p.13)
     ! http://cryogenics.nist.gov/MPropsMAY/304Stainless/304Stainless_rev.htm
-    real(8), parameter::a0 = 22.0061
-    real(8), parameter::a1 = -127.5528
-    real(8), parameter::a2 = 303.647
-    real(8), parameter::a3 = -381.0098
-    real(8), parameter::a4 = 274.0328
-    real(8), parameter::a5 = -112.9212
-    real(8), parameter::a6 = 24.7593
-    real(8), parameter::a7 = -2.239153
+    real(dp), parameter::a0 = 22.0061
+    real(dp), parameter::a1 = -127.5528
+    real(dp), parameter::a2 = 303.647
+    real(dp), parameter::a3 = -381.0098
+    real(dp), parameter::a4 = 274.0328
+    real(dp), parameter::a5 = -112.9212
+    real(dp), parameter::a6 = 24.7593
+    real(dp), parameter::a7 = -2.239153
 
     logt = log10(T)
     if(T>300) logt = log10(300d0)
@@ -1074,8 +1076,8 @@ subroutine helium_properties(T, helium_cp_density)
     ! http://webbook.nist.gov/chemistry/fluid/
     ! See very approximate fits in quench_data.xlsx (Issue #522)
 
-    real(8), intent(in) :: T   ! temperature
-    real(8), intent(out) :: helium_cp_density
+    real(dp), intent(in) :: T   ! temperature
+    real(dp), intent(out) :: helium_cp_density
     ! Cp x density J/K/m3
     if((T>=4d0).and.(T<10d0))then
         helium_cp_density = 12.285d3*T**3 - 309.92d3*T**2 + 2394.6d3*T - 5044.8d3
@@ -1387,7 +1389,7 @@ real function dHastelloyC276(T)
 ! For Intel compliance add "end function"
 end function dHastelloyC276
 !#####################################################################
-real(8) function cHastelloyC276(T)
+real(dp) function cHastelloyC276(T)
     !#####################################################################
     !
     ! Specific heat (not density) of Hastelloy C276
@@ -1411,10 +1413,10 @@ real(8) function cHastelloyC276(T)
     !#####################################################################
     implicit none
     ! external variables
-    real(8)     T
+    real(dp)     T
     ! fit variables
-    real(8)     AA,BB,CC,DD,a,b,c,d,na,nb,nc,nd
-    real(8)     Tmin,Tmax
+    real(dp)     AA,BB,CC,DD,a,b,c,d,na,nb,nc,nd
+    real(dp)     Tmin,Tmax
     data     AA  / 18.46314493  / ,  BB  / 1298.042986 / ,&
     CC  /-1105.076534  / ,  DD  / 2.226310361 /
     data     a   /  2.634486768 / ,  b   /  13.0796954 / ,&
@@ -1424,7 +1426,7 @@ real(8) function cHastelloyC276(T)
     data     Tmin / 1.0/, Tmax / 300.0/
     save
     ! local variables
-    real(8)     TT
+    real(dp)     TT
 
     TT=T
     TT=min(TT,Tmax)

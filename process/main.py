@@ -47,6 +47,9 @@ from process.scan import Scan
 from process import final
 from process.utilities.f2py_string_patch import string_to_f2py_compatible, f2py_compatible_to_string
 import argparse
+from process.costs_step import CostsStep
+from process.tfcoil import TFcoil
+from process.caller import Caller
 
 from pathlib import Path
 import sys
@@ -279,9 +282,16 @@ class VaryRun():
         config.error_status2readme()
 
 class SingleRun():
+    """Perform a single run of PROCESS."""
     def __init__(self, input_file):
+        """Read input file, initialise variables and run PROCESS.
+
+        :param input_file: input file named <optional_name>IN.DAT
+        :type input_file: str
+        """
         self.input_file = input_file
         self.init_module_vars()
+        self.models = Models()
         self.set_filenames()
         self.initialise()
         self.run_hare_tests()
@@ -383,9 +393,15 @@ class SingleRun():
     def run_scan(self):
         """Create scan object if required."""
         if fortran.numerics.ioptimz >= 0:
-            self.scan = Scan()
+            self.scan = Scan(self.models)
         else:
-            final.finalise(self.ifail)
+            # If no optimisation will be done, compute the OP variables now
+            if fortran.numerics.ioptimz == -2:
+                caller = Caller(self.models)
+                fortran.define_iteration_variables.loadxc()
+                caller.call_models(fortran.numerics.xcm, fortran.numerics.nvar)
+            
+            final.finalise(self.models, self.ifail)
 
     def show_errors(self):
         """Report all informational/error messages encountered."""
@@ -413,6 +429,20 @@ class SingleRun():
         with open(self.mfile_path, 'a', encoding="utf-8") as mfile_file:
             mfile_file.write("***********************************************")
             mfile_file.writelines(input_lines)
+
+class Models():
+    """Creates instances of physics and engineering model classes.
+
+    Creates objects to interface with corresponding Fortran physics and 
+    engineering modules.
+    """
+    def __init__(self):
+        """Create physics and engineering model objects.
+        
+        This also initialises module variables in the Fortran for that module.
+        """
+        self.costs_step = CostsStep()
+        self.tfcoil = TFcoil()
 
 def main(args=None):
     """Run Process.

@@ -7,7 +7,9 @@ module physics_variables
   !!
   !! - AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   implicit none
 
@@ -16,215 +18,215 @@ module physics_variables
   integer, parameter :: ipnlaws = 48
   !! number of energy confinement time scaling laws
 
-  real(8) :: abeam
+  real(dp) :: abeam
   !! beam ion mass (amu)
 
-  real(8) :: afuel
+  real(dp) :: afuel
   !! average mass of fuel portion of ions (amu)
 
-  real(8) :: aion
+  real(dp) :: aion
   !! average mass of all ions (amu)
 
-  real(8) :: alphaj
+  real(dp) :: alphaj
   !! current profile index (calculated from q_0, q if `iprofile=1`)
 
-  real(8) :: alphan
+  real(dp) :: alphan
   !! density profile index
 
-  real(8) :: alphap
+  real(dp) :: alphap
   !! pressure profile index
 
-  real(8) :: alpharate
+  real(dp) :: alpharate
   !! alpha particle production rate (particles/m3/sec)
 
-  real(8) :: alphat
+  real(dp) :: alphat
   !! temperature profile index
 
-  real(8) :: aspect
+  real(dp) :: aspect
   !! aspect ratio (`iteration variable 1`)
 
-  real(8) :: beamfus0
+  real(dp) :: beamfus0
   !! multiplier for beam-background fusion calculation
 
-  real(8) :: beta
+  real(dp) :: beta
   !! total plasma beta (`iteration variable 5`) (calculated if `ipedestal=3` or stellarator)
 
-  real(8) :: betaft
+  real(dp) :: betaft
   !! fast alpha beta component
 
-  real(8) :: betalim
+  real(dp) :: betalim
   !! allowable beta
 
-  real(8) :: betalim_lower
+  real(dp) :: betalim_lower
   !! allowable lower beta
 
-  real(8) :: betanb
+  real(dp) :: betanb
   !! neutral beam beta component
 
-  real(8) :: betap
+  real(dp) :: betap
   !! poloidal beta
 
-  real(8) :: normalised_total_beta
+  real(dp) :: normalised_total_beta
   !! normaised total beta
 
-  real(8) :: betbm0
+  real(dp) :: betbm0
   !! leading coefficient for NB beta fraction
 
-  real(8) :: bp
+  real(dp) :: bp
   !! poloidal field (T)
 
-  real(8) :: bt
+  real(dp) :: bt
   !! toroidal field on axis (T) (`iteration variable 2`)
 
-  real(8) :: btot
+  real(dp) :: btot
   !! total toroidal + poloidal field (T)
 
-  real(8) :: burnup
+  real(dp) :: burnup
   !! fractional plasma burnup
 
-  real(8) :: bvert
+  real(dp) :: bvert
   !! vertical field at plasma (T)
 
-  real(8) :: csawth
+  real(dp) :: csawth
   !! coeff. for sawteeth effects on burn V-s requirement
 
-  real(8) :: cvol
+  real(dp) :: cvol
   !! multiplying factor times plasma volume (normally=1)
 
-  real(8) :: cwrmax
+  real(dp) :: cwrmax
   !! maximum ratio of conducting wall distance to plasma minor radius for 
   !! vertical stability (`constraint equation 23`)
 
-  real(8) :: dene
+  real(dp) :: dene
   !! electron density (/m3) (`iteration variable 6`) (calculated if `ipedestal=3`)
 
-  real(8) :: deni
+  real(dp) :: deni
   !! fuel ion density (/m3)
 
-  real(8) :: dlamee
+  real(dp) :: dlamee
   !! electron-electron coulomb logarithm
 
-  real(8) :: dlamie
+  real(dp) :: dlamie
   !! ion-electron coulomb logarithm
 
-  real(8), dimension(7) :: dlimit
+  real(dp), dimension(7) :: dlimit
   !! density limit (/m3) as calculated using various models
 
-  real(8) :: dnalp
+  real(dp) :: dnalp
   !! thermal alpha density (/m3)
 
-  real(8) :: dnbeam
+  real(dp) :: dnbeam
   !! hot beam ion density, variable (/m3)
 
-  real(8) :: dnbeam2
+  real(dp) :: dnbeam2
   !! hot beam ion density from calculation (/m3)
 
-  real(8) :: dnbeta
+  real(dp) :: dnbeta
   !! Troyon-like coefficient for beta scaling calculated 
   !! as 4*rli if `iprofile=1` (see also gtscale option)
 
-  real(8) :: dnelimt
+  real(dp) :: dnelimt
   !! density limit (/m3)
 
-  real(8) :: dnitot
+  real(dp) :: dnitot
   !! total ion density (/m3)
 
-  real(8) :: dnla
+  real(dp) :: dnla
   !! line averaged electron density (/m3)
 
-  real(8) :: dnprot
+  real(dp) :: dnprot
   !! proton ash density (/m3)
 
-  real(8) :: dntau
+  real(dp) :: dntau
   !! plasma average "n-tau" (seconds/m3)
 
-  real(8) :: dnz
+  real(dp) :: dnz
   !! high Z ion density (/m3)
 
-  real(8) :: dndrho_max
+  real(dp) :: dndrho_max
   !! Maximum density gradient wrt to normalized r (rho) (/m3)
 
-  real(8) :: dtdrho_max
+  real(dp) :: dtdrho_max
   !! Maximum temperature gradient wrt to normalized r (rho) (keV)
 
-  real(8), parameter :: ealphadt = 3520.0D0
+  real(dp), parameter :: ealphadt = 3520.0D0
   !! alpha birth energy in D-T reaction (keV)
 
-  real(8) :: epbetmax
+  real(dp) :: epbetmax
   !! maximum (eps*beta_poloidal) (`constraint equation 6`). Note: revised issue #346
   !! "Operation at the tokamak equilibrium poloidal beta-limit in TFTR", 1992 Nucl. Fusion 32 1468
 
-  real(8) :: eps
+  real(dp) :: eps
   !! inverse aspect ratio
 
-  real(8) :: faccd
+  real(dp) :: faccd
   !! fraction of plasma current produced by auxiliary current drive
 
-  real(8) :: facoh
+  real(dp) :: facoh
   !! fraction of plasma current produced inductively
 
-  real(8) :: falpe
+  real(dp) :: falpe
   !! fraction of alpha energy to electrons
 
-  real(8) :: falpha
+  real(dp) :: falpha
   !! fraction of alpha power deposited in plasma (Physics of Energetic Ions, p.2489)
 
-  real(8) :: falpi
+  real(dp) :: falpi
   !! fraction of alpha power to ions
 
-  real(8) :: fdeut
+  real(dp) :: fdeut
   !! deuterium fuel fraction
 
-  real(8) :: ftar
+  real(dp) :: ftar
   !! fraction of power to the lower divertor in double null configuration 
   !! (`i_single_null = 0` only) (default assumes SN)
 
-  real(8) :: ffwal
+  real(dp) :: ffwal
   !! factor to convert plasma surface area to first wall area in neutron wall 
   !! load calculation (`iwalld=1`)
 
-  real(8) :: fgwped
+  real(dp) :: fgwped
   !! fraction of Greenwald density to set as pedestal-top density. If `<0`, pedestal-top 
   !! density set manually using neped (`ipedestal>=1`). Needs to be `>0` if `ipedestal = 3`.
   !! (`iteration variable 145`)
 
-  real(8) :: fgwsep
+  real(dp) :: fgwsep
   !! fraction of Greenwald density to set as separatrix density. If `<0`, separatrix 
   !! density set manually using nesep (`ipedestal>=1`). Needs to be `>0` if `ipedestal = 3`.
   !! (`iteration variable 152`)
 
-  real(8) :: fhe3
+  real(dp) :: fhe3
   !! helium-3 fuel fraction
 
-  real(8) :: figmer
+  real(dp) :: figmer
   !! physics figure of merit (= plascur*aspect**sbar, where `sbar=1`)
 
-  real(8) :: fkzohm
+  real(dp) :: fkzohm
   !! Zohm elongation scaling adjustment factor (`ishape=2, 3`)
   
-  real(8) :: fplhsep
+  real(dp) :: fplhsep
   !! F-value for Psep >= Plh + Paux (`constraint equation 73`)
   
-  real(8) :: fpdivlim
+  real(dp) :: fpdivlim
   !! F-value for minimum pdivt (`constraint equation 80`)
 
-  real(8) :: fne0
+  real(dp) :: fne0
   !! f-value for the constraint ne(0) > ne(sep) (`constraint equation 81`)
   !! (`Iteration variable 154`) 
 
-  real(8) :: ftrit
+  real(dp) :: ftrit
   !! tritium fuel fraction
 
-  real(8) :: fusionrate
+  real(dp) :: fusionrate
   !! fusion reaction rate (reactions/m3/sec)
 
-  real(8) :: fvsbrnni
+  real(dp) :: fvsbrnni
   !! fraction of the plasma current produced by non-inductive means (`iteration variable 44`)
 
-  real(8) :: gamma
+  real(dp) :: gamma
   !! Ejima coefficient for resistive startup V-s formula
 
-  real(8) :: gammaft
+  real(dp) :: gammaft
   !! ratio of (fast alpha + neutral beam beta) to thermal beta
 
   integer :: gtscale
@@ -233,14 +235,14 @@ module physics_variables
   !! - =0 do not scale dnbeta with eps
   !! - =1 scale dnbeta with eps
 
-  real(8), dimension(ipnlaws) :: hfac
+  real(dp), dimension(ipnlaws) :: hfac
   !! H factors for an ignited plasma for each energy confinement time scaling law
 
-  real(8) :: hfact
+  real(dp) :: hfact
   !! H factor on energy confinement times, radiation corrected (`iteration variable 10`). If 
   !! `ipedestal=2,3` and `hfact=0`, not used in PLASMOD (see also `plasmod_i_modeltype`) issue #219
 
-  real(8) :: taumax
+  real(dp) :: taumax
   !! Maximum allowed energy confinement time (s)
 
   integer :: ibss
@@ -346,44 +348,44 @@ module physics_variables
   !! - =1 set pedestal-top temperature using EPED scaling (PLASMOD implementation 
   !!   of scaling within PLASMOD, `ipedestal =2,3 (ttps://idm.euro-fusion.org/?uid=2MSZ4T)
 
-  real(8) :: eped_sf
+  real(dp) :: eped_sf
   !! Adjustment factor for EPED scaling to reduce pedestal temperature or pressure 
   !! to mitigate or prevent ELMs
 
-  real(8) :: neped
+  real(dp) :: neped
   !! electron density of pedestal [m-3] (`ipedestal=1,2, calculated if 3`)
 
-  real(8) :: nesep
+  real(dp) :: nesep
   !! electron density at separatrix [m-3] (`ipedestal=1,2, calculated if 3`)
 
-  real(8) :: alpha_crit
+  real(dp) :: alpha_crit
   !! critical ballooning parameter value
 
-  real(8) :: nesep_crit
+  real(dp) :: nesep_crit
   !! critical electron density at separatrix [m-3]
 
-  real(8) :: plasma_res_factor
+  real(dp) :: plasma_res_factor
   !! plasma resistivity pre-factor
 
-  real(8) :: rhopedn
+  real(dp) :: rhopedn
   !! r/a of density pedestal (`ipedestal>=1`)
 
-  real(8) :: rhopedt
+  real(dp) :: rhopedt
   !! r/a of temperature pedestal (`ipedestal>=1`)
 
-  real(8) :: rho_max_dt
+  real(dp) :: rho_max_dt
   !! r/a where the temperature gradient is largest (`ipedestal==0`)
 
-  real(8) :: rho_max_dn
+  real(dp) :: rho_max_dn
   !! r/a where the density gradient is largest (`ipedestal==0`)
 
-  real(8) :: tbeta
+  real(dp) :: tbeta
   !! temperature profile index beta  (`ipedestal=1,2`)
 
-  real(8) :: teped
+  real(dp) :: teped
   !! electron temperature of pedestal (keV) (`ipedestal>=1, ieped=0, calculated for ieped=1`)
 
-  real(8) :: tesep
+  real(dp) :: tesep
   !! electron temperature at separatrix (keV) (`ipedestal>=1`) calculated if reinke 
   !! criterion is used (`icc=78`)
 
@@ -522,6 +524,7 @@ module physics_variables
   !! - =7 use input kappa95, triang95 to calculate separatrix values based on fit to FIESTA (ST)
   !! - =8 use input kappa, triang to calculate 95% values based on fit to FIESTA (ST)
   !! - =9 set kappa to the natural elongation value (PROCESS-STEP issue #70), triang input
+  !! - =10 set kappa to maximum stable value at a given aspect ratio (2.6<A<3.6)), triang input (#1399)
 
   integer :: itart
   !! switch for spherical tokamak (ST) models:
@@ -541,152 +544,155 @@ module physics_variables
   !! - =1 use scaled plasma surface area
   !! - =2 use first wall area directly
 
-  real(8) :: kappa
-  !! plasma separatrix elongation (calculated if `ishape = 1-5, 7 or 9`)
+  real(dp) :: kappa
+  !! plasma separatrix elongation (calculated if `ishape = 1-5, 7 or 9-10`)
 
-  real(8) :: kappa95
-  !! plasma elongation at 95% surface (calculated if `ishape = 0-3, 6, 8 or 9`)
+  real(dp) :: kappa95
+  !! plasma elongation at 95% surface (calculated if `ishape = 0-3, 6, or 8-10`)
 
-  real(8) :: kappaa
+  real(dp) :: kappaa
   !! plasma elongation calculated as xarea/(pi.a^2)
 
-  real(8) :: kappaa_IPB
+  real(dp) :: kappaa_IPB
   !! Volume measure of plasma elongation
 
-  real(8) :: ne0
+  real(dp) :: ne0
   !! central electron density (/m3)
 
-  real(8) :: ni0
+  real(dp) :: ni0
   !! central ion density (/m3)
 
-  real(8) :: p0
+  real(dp) :: m_s_limit 
+  !! margin to vertical stability
+
+  real(dp) :: p0
   !! central total plasma pressure (Pa)
 
-  real(8) :: palppv
+  real(dp) :: palppv
   !! alpha power per volume (MW/m3)
   
-  real(8) :: palpepv
+  real(dp) :: palpepv
   !! alpha power per volume to electrons (MW/m3)
 
-  real(8) :: palpfwmw
+  real(dp) :: palpfwmw
   !! alpha power escaping plasma and reaching first wall (MW)
 
-  real(8) :: palpipv
+  real(dp) :: palpipv
   !! alpha power per volume to ions (MW/m3)
 
-  real(8) :: palpmw
+  real(dp) :: palpmw
   !! alpha power (MW)
 
-  real(8) :: palpnb
+  real(dp) :: palpnb
   !! alpha power from hot neutral beam ions (MW)
 
-  real(8) :: pbrempv
+  real(dp) :: pbrempv
   !! bremsstrahlung power per volume (MW/m3)
 
-  real(8) :: pchargemw
+  real(dp) :: pchargemw
   !! non-alpha charged particle fusion power (MW)
 
-  real(8) :: pchargepv
+  real(dp) :: pchargepv
   !! non-alpha charged particle fusion power per volume (MW/m3)
 
-  real(8) :: pcoef
+  real(dp) :: pcoef
   !! profile factor (= n-weighted T / average T)
 
-  real(8) :: pcoreradmw
+  real(dp) :: pcoreradmw
   !! total core radiation power (MW)
 
-  real(8) :: pcoreradpv
+  real(dp) :: pcoreradpv
   !! total core radiation power per volume (MW/m3)
 
-  real(8) :: pdd
+  real(dp) :: pdd
   !! deuterium-deuterium fusion power (MW)
 
-  real(8) :: pdhe3
+  real(dp) :: pdhe3
   !! deuterium-helium3 fusion power (MW)
 
-  real(8) :: pdivt
+  real(dp) :: pdivt
   !! power to conducted to the divertor region (MW)
 
-  real(8) :: pdivl
+  real(dp) :: pdivl
   !! power conducted to the lower divertor region (calculated if `i_single_null = 0`) (MW)
 
-  real(8) :: pdivu
+  real(dp) :: pdivu
   !! power conducted to the upper divertor region (calculated if `i_single_null = 0`) (MW)
 
-  real(8) :: pdivmax
+  real(dp) :: pdivmax
   !! power conducted to the divertor with most load (calculated if `i_single_null = 0`) (MW)
 
-  real(8) :: pdt
+  real(dp) :: pdt
   !! deuterium-tritium fusion power (MW)
 
-  real(8) :: pedgeradmw
+  real(dp) :: pedgeradmw
   !! edge radiation power (MW)
 
-  real(8) :: pedgeradpv
+  real(dp) :: pedgeradpv
   !! edge radiation power per volume (MW/m3)
 
-  real(8) :: pfuscmw
+  real(dp) :: pfuscmw
   !! charged particle fusion power (MW)
 
-  real(8) :: phiint
+  real(dp) :: phiint
   !! internal plasma V-s
 
-  real(8) :: photon_wall
+  real(dp) :: photon_wall
   !! Nominal mean radiation load on inside surface of reactor (MW/m2)
 
-  real(8) :: piepv
+  real(dp) :: piepv
   !! ion/electron equilibration power per volume (MW/m3)
 
-  real(8) :: plascur
+  real(dp) :: plascur
   !! plasma current (A)
 
-  real(8) :: plinepv
+  real(dp) :: plinepv
   !! line radiation power per volume (MW/m3)
 
-  real(8) :: pneutmw
+  real(dp) :: pneutmw
   !! neutron fusion power (MW)
 
-  real(8) :: pneutpv
+  real(dp) :: pneutpv
   !! neutron fusion power per volume (MW/m3)
 
-  real(8) :: pohmmw
+  real(dp) :: pohmmw
   !! ohmic heating power (MW)
 
-  real(8) :: pohmpv
+  real(dp) :: pohmpv
   !! ohmic heating power per volume (MW/m3)
 
-  real(8) :: powerht
+  real(dp) :: powerht
   !! heating power (= transport loss power) (MW) used in confinement time calculation
 
-  real(8) :: powfmw
+  real(dp) :: powfmw
   !! fusion power (MW)
 
-  real(8) :: pperim
+  real(dp) :: pperim
   !! plasma poloidal perimeter (m)
 
-  real(8) :: pradmw
+  real(dp) :: pradmw
   !! total radiation power (MW)
 
-  real(8) :: pradpv
+  real(dp) :: pradpv
   !! total radiation power per volume (MW/m3)
 
-  real(8) :: protonrate
+  real(dp) :: protonrate
   !! proton production rate (particles/m3/sec)
 
-  real(8) :: psolradmw
+  real(dp) :: psolradmw
   !! SOL radiation power (MW) (`stellarator only`)
 
-  real(8) :: psyncpv
+  real(dp) :: psyncpv
   !! synchrotron radiation power per volume (MW/m3)
 
   integer :: ilhthresh
   !! switch for L-H mode power threshold scaling to use (see pthrmw for list)
 
-  real(8) :: plhthresh
+  real(dp) :: plhthresh
   !! L-H mode power threshold (MW) (chosen via ilhthresh, and enforced if 
   !! constraint equation 15 is on)
 
-  real(8), dimension(21) :: pthrmw
+  real(dp), dimension(21) :: pthrmw
   !! L-H power threshold for various scalings (MW)
   !!
   !! - =1 ITER 1996 scaling: nominal
@@ -711,98 +717,98 @@ module physics_variables
   !! - =20 Martin 2008 aspect ratio corrected scaling: 95% upper bound
   !! - =21 Martin 2008 aspect ratio corrected scaling: 95% lower bound
 
-  real(8) :: ptremw
+  real(dp) :: ptremw
   !! electron transport power (MW)
   
-  real(8) :: ptrepv
+  real(dp) :: ptrepv
   !! electron transport power per volume (MW/m3)
 
-  real(8) :: ptrimw
+  real(dp) :: ptrimw
   !! ion transport power (MW)
 
-  real(8) :: pscalingmw
+  real(dp) :: pscalingmw
   !! Total transport power from scaling law (MW)
 
-  real(8) :: ptripv
+  real(dp) :: ptripv
   !! ion transport power per volume (MW/m3)
 
-  real(8) :: q
+  real(dp) :: q
   !! safety factor 'near' plasma edge (`iteration variable 18`) equal to q95 
   !! (unless `icurr=2` (ST current scaling), in which case q = mean edge safety factor qbar)
 
-  real(8) :: q0
+  real(dp) :: q0
   !! safety factor on axis
 
-  real(8) :: q95
+  real(dp) :: q95
   !! safety factor at 95% surface
 
-  real(8) :: qfuel
+  real(dp) :: qfuel
   !! plasma fuelling rate (nucleus-pairs/s)
 
-  real(8) :: tauratio
+  real(dp) :: tauratio
   !! tauratio /1.0/ : ratio of He and pellet particle confinement times
 
-  real(8) :: qlim
+  real(dp) :: qlim
   !! lower limit for edge safety factor
 
-  real(8) :: qstar
+  real(dp) :: qstar
   !! cylindrical safety factor
 
-  real(8) :: rad_fraction_sol
+  real(dp) :: rad_fraction_sol
   !! SoL radiation fraction 
 
-  real(8) :: rad_fraction
+  real(dp) :: rad_fraction
   !! Radiation fraction = total radiation / total power deposited in plasma
 
-  real(8) :: ralpne
+  real(dp) :: ralpne
   !! thermal alpha density/electron density (`iteration variable 109`) (calculated if `ipedestal=3`)
 
-  real(8) :: protium
+  real(dp) :: protium
   !! Seeded protium density / electron density.
 
-  real(8) :: rli
+  real(dp) :: rli
   !! plasma normalised internal inductance (calculated from alphaj if `iprofile=1`)
 
-  real(8) :: rlp
+  real(dp) :: rlp
   !! plasma inductance (H)
 
-  real(8) :: rmajor
+  real(dp) :: rmajor
   !! plasma major radius (m) (`iteration variable 3`)
 
-  real(8) :: rminor
+  real(dp) :: rminor
   !! plasma minor radius (m)
 
-  real(8) :: rnbeam
+  real(dp) :: rnbeam
   !! hot beam density / n_e (`iteration variable 7`)
 
-  real(8) :: rncne
+  real(dp) :: rncne
   !! n_carbon / n_e
 
-  real(8) :: rndfuel
+  real(dp) :: rndfuel
   !! fuel burnup rate (reactions/second)
 
-  real(8) :: rnfene
+  real(dp) :: rnfene
   !! n_highZ / n_e
 
-  real(8) :: rnone
+  real(dp) :: rnone
   !! n_oxygen / n_e
 
-  real(8) :: rpfac
+  real(dp) :: rpfac
   !! neo-classical correction factor to rplas
 
-  real(8) :: rplas
+  real(dp) :: rplas
   !! plasma resistance (ohm)
 
-  real(8) :: res_time
+  real(dp) :: res_time
   !! plasma current resistive diffusion time (s)
 
-  real(8) :: sarea
+  real(dp) :: sarea
   !! plasma surface area
 
-  real(8) :: sareao
+  real(dp) :: sareao
   !! outboard plasma surface area
 
-  real(8) :: sf
+  real(dp) :: sf
   !! shape factor = plasma poloidal perimeter / (2.pi.rminor)
 
   integer :: i_single_null
@@ -811,83 +817,83 @@ module physics_variables
   !! - =0 for double null
   !! - =1 for single null (diverted side down)
 
-  real(8) :: ssync
+  real(dp) :: ssync
   !! synchrotron wall reflectivity factor
 
-  real(8) :: tauee
+  real(dp) :: tauee
   !! electron energy confinement time (sec)
 
-  real(8) :: tauee_in
+  real(dp) :: tauee_in
   !! Input electron energy confinement time (sec) (`isc=48 only`)
 
-  real(8) :: taueff
+  real(dp) :: taueff
   !! global thermal energy confinement time (sec)
 
-  real(8) :: tauei
+  real(dp) :: tauei
   !! ion energy confinement time (sec)
 
-  real(8) :: taup
+  real(dp) :: taup
   !! alpha particle confinement time (sec)
 
-  real(8) :: te
+  real(dp) :: te
   !! volume averaged electron temperature (keV) (`iteration variable 4`)
   !! (`calculated if ipedestal=3`)
 
-  real(8) :: te0
+  real(dp) :: te0
   !! central electron temperature (keV)
 
-  real(8) :: ten
+  real(dp) :: ten
   !! density weighted average electron temperature (keV)
 
-  real(8) :: ti
+  real(dp) :: ti
   !! volume averaged ion temperature (keV). N.B. calculated from te if `tratio > 0.0`
 
-  real(8) :: ti0
+  real(dp) :: ti0
   !! central ion temperature (keV)
 
-  real(8) :: tin
+  real(dp) :: tin
   !! density weighted average ion temperature (keV)
 
-  real(8) :: tratio
+  real(dp) :: tratio
   !! ion temperature / electron temperature(used to calculate ti if `tratio > 0.0`
 
-  real(8) :: triang
+  real(dp) :: triang
   !! plasma separatrix triangularity (calculated if `ishape = 1, 3-5 or 7`)
 
-  real(8) :: triang95
+  real(dp) :: triang95
   !! plasma triangularity at 95% surface (calculated if `ishape = 0-2, 6, 8 or 9`)
 
-  real(8) :: vol
+  real(dp) :: vol
   !! plasma volume (m3)
 
-  real(8) :: vsbrn
+  real(dp) :: vsbrn
   !! V-s needed during flat-top (heat + burn times) (Wb)
 
-  real(8) :: vshift
+  real(dp) :: vshift
   !! plasma/device midplane vertical shift - single null
 
-  real(8) :: vsind
+  real(dp) :: vsind
   !! internal and external plasma inductance V-s (Wb)
 
-  real(8) :: vsres
+  real(dp) :: vsres
   !! resistive losses in startup V-s (Wb)
 
-  real(8) :: vsstt
+  real(dp) :: vsstt
   !! total V-s needed (Wb)
 
-  real(8) :: wallmw
+  real(dp) :: wallmw
   !! average neutron wall load (MW/m2)
 
-  real(8) :: wtgpd
+  real(dp) :: wtgpd
   !! mass of fuel used per day (g)
 
-  real(8) :: xarea
+  real(dp) :: xarea
   !! plasma cross-sectional area (m2)
 
-  real(8) :: zeff
+  real(dp) :: zeff
   !! plasma effective charge
 
-  real(8) :: zeffai
+  real(dp) :: zeffai
   !! mass weighted plasma effective charge
 
   contains
@@ -1003,6 +1009,7 @@ module physics_variables
     kappaa_IPB = 0.d0  
     ne0 = 0.0D0  
     ni0 = 0.0D0  
+    m_s_limit = 0.3D0
     p0 = 0.0D0  
     palppv = 0.0D0    
     palpepv = 0.0D0  

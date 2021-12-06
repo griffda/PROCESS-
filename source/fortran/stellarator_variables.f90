@@ -9,7 +9,9 @@ module stellarator_variables
   !! - Stellarator Divertor Model for the Systems Code PROCESS, F. Warmer, 21/06/2013
   !! - Stellarator Coil Model for the Systems Code PROCESS, F. Warmer and F. Schauer, 07/10/2013
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   implicit none
 
@@ -23,34 +25,34 @@ module stellarator_variables
   !! - =2 use stellarator model: Helias4-b
   !! - =3 use stellarator model: Helias3-b
 
-  real(8) :: bmn
+  real(dp) :: bmn
   !! relative radial field perturbation
 
-  real(8) :: f_asym
+  real(dp) :: f_asym
   !! divertor heat load peaking factor
 
-  real(8) :: f_rad
+  real(dp) :: f_rad
   !! radiated power fraction in SOL
 
-  real(8) :: f_w
+  real(dp) :: f_w
   !! island size fraction factor
 
-  real(8) :: fdivwet
+  real(dp) :: fdivwet
   !! wetted fraction of the divertor area
 
-  real(8) :: flpitch
+  real(dp) :: flpitch
   !! field line pitch (rad)
 
-  real(8) :: hportamax
+  real(dp) :: hportamax
   !! maximum available area for horizontal ports (m2)
 
-  real(8) :: hportpmax
+  real(dp) :: hportpmax
   !! maximum available poloidal extent for horizontal ports (m)
 
-  real(8) :: hporttmax
+  real(dp) :: hporttmax
   !! maximum available toroidal extent for horizontal ports (m)
 
-  real(8) :: iotabar
+  real(dp) :: iotabar
   !! rotational transform (reciprocal of tokamak q) for stellarator confinement time scaling laws
 
   integer :: isthtr
@@ -63,25 +65,25 @@ module stellarator_variables
   integer :: m_res
   !! poloidal resonance number (1)
 
-  real(8) :: max_gyrotron_frequency
+  real(dp) :: max_gyrotron_frequency
   !! Maximal available gyrotron frequency (input parameter) (Hz)
 
   integer :: n_res
   !! toroidal resonance number (1)
 
-  real(8) :: shear
+  real(dp) :: shear
   !! magnetic shear, derivative of iotabar (1)
 
-  real(8) :: te0_ecrh_achievable
+  real(dp) :: te0_ecrh_achievable
   !! maximal central electron temperature as achievable by the ECRH, input. (keV)
 
-  real(8) :: vportamax
+  real(dp) :: vportamax
   !! maximum available area for vertical ports (m2)
 
-  real(8) :: vportpmax
+  real(dp) :: vportpmax
   !! maximum available poloidal extent for vertical ports (m)
 
-  real(8) :: vporttmax
+  real(dp) :: vporttmax
   !! maximum available toroidal extent for vertical ports (m)
   
   contains
