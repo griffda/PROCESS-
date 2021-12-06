@@ -60,7 +60,7 @@ def write(models, outfile):
 
     # Writing
     if ft.physics_variables.ipedestal == 2 or ft.physics_variables.ipedestal == 3:
-        ft.plasmod_module.outputPlasmod(outfile)
+        ft.plasmod_module.outputplasmod(outfile)
 
     # TODO what is this? not in caller.f90
     ft.physics_module.igmarcal(outfile)
@@ -117,7 +117,7 @@ def write(models, outfile):
     ft.build_module.vbuild(outfile, 1)
 
     # Toroidal field coil model
-    ft.tfcoil_module.tfcoil(outfile, 1)
+    models.tfcoil.output()
 
     # Toroidal field coil superconductor model
     if ft.tfcoil_variables.i_tf_sup == 1:
@@ -125,7 +125,9 @@ def write(models, outfile):
 
     # Tight aspect ratio machine model
     if ft.physics_variables.itart == 1 and ft.tfcoil_variables.i_tf_sup != 1:
-        ft.tfcoil_module.cntrpst(outfile, 1)
+        models.tfcoil.iprint = 1
+        models.tfcoil.cntrpst()
+        models.tfcoil.iprint = 0
 
     # Poloidal field coil model !
     ft.pfcoil_module.outpf(outfile)

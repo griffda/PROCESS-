@@ -8,6 +8,7 @@ from shutil import copy
 import os
 from pkg_resources import resource_filename
 
+
 @pytest.fixture
 def temp_data(tmp_path):
     """Copy data dir contents into temp dir for testing.
@@ -27,6 +28,7 @@ def temp_data(tmp_path):
     # Return tmp_path, now containing files copied from data dir
     return tmp_path
 
+
 @pytest.fixture
 def temp_data_cwd(temp_data):
     """Change cwd to temp_data dir, then yield it.
@@ -45,6 +47,7 @@ def temp_data_cwd(temp_data):
     # Teardown by changing back to previous dir
     os.chdir(old_wd)
 
+
 @pytest.fixture
 def mfile_name():
     """Return the name of the mfile to test.
@@ -53,6 +56,15 @@ def mfile_name():
     :rtype: str
     """
     return "baseline_2018_MFILE.DAT"
+
+@pytest.fixture
+def scan_mfile_name():
+    """Return the name of a scan mfile to test.
+
+    :return: name of the mfile
+    :rtype: str
+    """
+    return "scan_MFILE.DAT"
 
 @pytest.fixture(scope="session", autouse=True)
 def overwrite_ref_dicts(request):
