@@ -78,7 +78,8 @@ contains
     use buildings_variables, only: i_v_bldgs, efloor, volnucb, bioshld_thk, reactor_wall_thk, &
       reactor_roof_thk, reactor_fndtn_thk, reactor_clrnc, transp_clrnc, cryostat_clrnc, & 
       ground_clrnc, crane_clrnc_h, crane_clrnc_v, crane_arm_h, reactor_hall_l, reactor_hall_w, &
-      reactor_hall_h, nbi_sys_l, nbi_sys_w, warm_shop_l, warm_shop_w, warm_shop_h, &
+      reactor_hall_h, nbi_sys_l, nbi_sys_w, fc_building_l, fc_building_w, & 
+      warm_shop_l, warm_shop_w, warm_shop_h, &
       workshop_l, workshop_w, workshop_h, robotics_l, robotics_w, robotics_h, &
       maint_cont_l, maint_cont_w, maint_cont_h, turbine_hall_l, turbine_hall_w, turbine_hall_h, &
       gas_buildings_l, gas_buildings_w, gas_buildings_h, water_buildings_l, water_buildings_w, &
@@ -165,6 +166,8 @@ contains
 
     real(dp) :: hcd_building_area, hcd_building_vol
     !! HCD building footprint (m2), volume (m3)
+    real(dp) :: fc_building_area
+    !! Fuel Cycle facilities footprint (m2)
     real(dp) :: magnet_trains_area, magnet_trains_vol
     !! steady state magnet power trains building footprint (m2), volume (m3)
     real(dp) :: magnet_pulse_area, magnet_pulse_vol
@@ -252,7 +255,6 @@ contains
     reactor_hall_w = 3.0D0 * key_width
     
     ! Length of reactor building    
-    ! includes space for Fuel Cycle Outer Loop Facility
     reactor_hall_l = 3.0D0 * key_width
     
     ! Calculate vertical clearance required (above and below reactor):
@@ -281,6 +283,12 @@ contains
       hcd_building_area = hcd_building_l * hcd_building_w
       hcd_building_vol = hcd_building_area * hcd_building_h
     end if
+
+    ! Fuel Cycle facilities: include within reactor building
+    ! Dimensions based upon estimates from W. Smith
+    fc_building_area = fc_building_l * fc_building_w
+    reactor_hall_l = reactor_hall_l + fc_building_l
+    reactor_hall_w = reactor_hall_w + fc_building_w
 
     ! Reactor hall internal footprint and volume
     reactor_hall_area = reactor_hall_l * reactor_hall_w
@@ -320,7 +328,7 @@ contains
     ! for a margin in component numbers as set by the quantity safety factor (qnty_sfty_fac).
     ! Footprints and volumes required for storage include hot separation distance (hot_sepdist).
     !
-    ! assumptions: 
+    ! Assumptions: 
     ! tokomak is toroidally segmented based on number of TF coils (n_tf);
     ! component will be stored with the largest dimension oriented horizontally;
     ! height is the largest dimension    
@@ -336,8 +344,8 @@ contains
                      * ( max(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
     hcomp_vol = hcomp_footprint * ( min(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
     ! required lifetime supply of components = 
-    !   ( number in build / (plant lifetime / component lifetime) ) * quantity safety factor
-    hcomp_req_supply = ( n_tf / (tlife / bktlife) ) * qnty_sfty_fac
+    !   ( number in build * (plant lifetime / component lifetime) ) * quantity safety factor
+    hcomp_req_supply = ( n_tf * (tlife / bktlife) ) * qnty_sfty_fac
     ! total storage space for required supply of inboard shield-blanket-wall
     ib_hotcell_vol = hcomp_req_supply * hcomp_vol
     !
@@ -349,7 +357,7 @@ contains
     hcomp_footprint = ( hcomp_height + hot_sepdist ) &
                      * ( max(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
     hcomp_vol = hcomp_footprint * ( min(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
-    hcomp_req_supply = ( n_tf / (tlife / bktlife) ) * qnty_sfty_fac
+    hcomp_req_supply = ( n_tf * (tlife / bktlife) ) * qnty_sfty_fac
     ! total storage space for required supply of outboard wall-blanket-shield
     ob_hotcell_vol = hcomp_req_supply * hcomp_vol
     !
@@ -361,7 +369,7 @@ contains
     hcomp_footprint = ( hcomp_height + hot_sepdist ) &
                      * ( max(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
     hcomp_vol = hcomp_footprint * ( min(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
-    hcomp_req_supply = ( n_tf / (tlife / divlife) ) * qnty_sfty_fac
+    hcomp_req_supply = ( n_tf * (tlife / divlife) ) * qnty_sfty_fac
     ! total storage space for required supply of divertor segments
     div_hotcell_vol = hcomp_req_supply * hcomp_vol
     !
@@ -616,7 +624,7 @@ contains
       call ocmmnt(outfile,'   NBI HCD facility included within reactor building:')
       call ovarre(outfile,'      NBI system length (m)', '(nbi_sys_l)', nbi_sys_l)
       call ovarre(outfile,'      NBI system width (m)', '(nbi_sys_w)', nbi_sys_w)
-    end if
+    end if   
     call ovarre(outfile,'Reactor building external footprint (m2)', '(reactor_building_area)', reactor_building_area)
     call ovarre(outfile,'Reactor building external volume (m3)', '(reactor_building_vol)', reactor_building_vol)
     call ovarre(outfile,'   Reactor building length (m)', '(reactor_building_l)', reactor_building_l)

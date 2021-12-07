@@ -5,7 +5,7 @@ module buildings_variables
     !!
     !! Note: 'deprecated' label indicates variable only in use within 
     !! estimates for building in Inertial Fusion Energy power plant 
-    !! and superseded cost calculations.
+    !! and/or in Cost Model 0.
     !! GIFA = Gross Internal Floor Area
     !!
     !!### References
@@ -64,6 +64,9 @@ module buildings_variables
 
     real(dp) :: elecstore_l, elecstore_w, elecstore_h
     !! Energy Storage facilities length, width, height (m)
+
+    real(dp) :: fc_building_l, fc_building_w
+    !! Fuel Cycle facilities length, width (m)
 
     real(dp) :: gas_buildings_l, gas_buildings_w, gas_buildings_h
     !! air & gas supply (amalgamated) buildings length, width, height (m)
@@ -298,15 +301,15 @@ module buildings_variables
 
       admv = 1.0D5
       admvol = 0.0D0     
-      aux_build_l = 50.0D0
+      aux_build_l = 60.0D0
       aux_build_w = 30.0D0
       aux_build_h = 5.0D0
       auxcool_l = 20.0D0
-      auxcool_w = 10.0D0
+      auxcool_w = 20.0D0
       auxcool_h = 5.0D0
       bioshld_thk = 2.50D0
-      chemlab_l = 40.0D0
-      chemlab_w = 25.0D0
+      chemlab_l = 50.0D0
+      chemlab_w = 30.0D0
       chemlab_h = 6.0D0
       clh1 = 2.5D0
       clh2 = 15.0D0
@@ -322,12 +325,12 @@ module buildings_variables
       cryomag_w = 90.0D0
       cryomag_h = 5.0D0
       cryostore_l = 160.0D0
-      cryostore_w = 25.0D0
+      cryostore_w = 30.0D0
       cryostore_h = 20.0D0
       cryostat_clrnc = 2.5D0
       cryvol = 0.0D0
       efloor = 0.0D0
-      elecdist_l = 400.0D0
+      elecdist_l = 380.0D0
       elecdist_w = 350.0D0
       elecdist_h = 5.0D0
       elecload_l = 100.0D0
@@ -338,6 +341,8 @@ module buildings_variables
       elecstore_h = 12.0D0
       elevol = 0.0D0
       esbldgm3 = 1.0D3
+      fc_building_l = 60.0D0
+      fc_building_w = 60.0D0
       fndt = 2.0D0
       gas_buildings_l = 25.0D0
       gas_buildings_w = 15.0D0
@@ -372,7 +377,7 @@ module buildings_variables
       magnet_trains_l = 120.0D0
       magnet_trains_w = 90.0D0
       magnet_trains_h = 5.0D0
-      maint_cont_l = 100.0D0
+      maint_cont_l = 125.0D0
       maint_cont_w = 100.0D0
       maint_cont_h = 6.0D0
       nbi_sys_l = 225.0D0
@@ -398,7 +403,7 @@ module buildings_variables
       sec_buildings_w = 25.0D0
       sec_buildings_h = 6.0D0
       staff_buildings_h = 5.0D0
-      staff_buildings_area = 5.0D5
+      staff_buildings_area = 4.8D5
       shov = 1.0D5
       shovol = 0.0D0
       stcl = 3.0D0
@@ -421,7 +426,7 @@ module buildings_variables
       water_buildings_w = 10.0D0
       water_buildings_h = 5.0D0
       workshop_l = 150.0D0
-      workshop_w = 120.0D0
+      workshop_w = 125.0D0
       workshop_h = 10.0D0
       wgt = 5.0D5
       wgt2 = 1.0D5
