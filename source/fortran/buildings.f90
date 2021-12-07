@@ -234,7 +234,13 @@ contains
     real(dp) :: staff_buildings_vol
     !! staff buildings volume (m3)
 
+    real(dp) :: buildings_total_vol
+    !! cumulative total of building (internal) volumes (m3)
+
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    buildings_total_vol = 0.0D0
+
 
     ! Reactor building    
 
@@ -319,6 +325,9 @@ contains
     
     reactor_build_totvol = reactor_building_vol + reactor_basement_vol
 
+
+    buildings_total_vol = reactor_hall_vol + reactor_basement_vol
+
    
     ! Hot Cell Facility
     ! Provides hot cell facilities to maintain or dismantle highly radioactive components.
@@ -402,7 +411,9 @@ contains
     hotcell_vol_ext = hotcell_area_ext * &
                               (hotcell_h + reactor_roof_thk + reactor_fndtn_thk)
 
+    buildings_total_vol = buildings_total_vol + hotcell_vol
     
+
     ! Reactor Auxiliary Buildings
     ! Derived from W. Smith's estimates of necessary facilities and their sizes;
     ! these values amalgamate multiple individual buildings.
@@ -427,6 +438,8 @@ contains
     reactor_aux_area = chemlab_area + heat_sink_area + aux_build_area
     reactor_aux_vol = chemlab_vol + heat_sink_vol + aux_build_vol    
  
+    buildings_total_vol = buildings_total_vol + reactor_aux_vol
+
 
     ! Magnet power facilities
     ! Providing specific electrical supplies for reactor magnets;
@@ -442,6 +455,8 @@ contains
     power_buildings_area = hcd_building_area + magnet_trains_area + magnet_pulse_area
     power_buildings_vol = hcd_building_vol + magnet_trains_vol + magnet_pulse_vol
 
+    buildings_total_vol = buildings_total_vol + power_buildings_vol
+
 
     ! Control    
     ! Derived from W. Smith's estimates of necessary facilities and their sizes:
@@ -452,12 +467,16 @@ contains
     control_buildings_area = control_buildings_l * control_buildings_w
     control_buildings_vol = control_buildings_area * control_buildings_h
 
+    buildings_total_vol = buildings_total_vol + control_buildings_vol
+    
 
     ! Warm Shop
     ! Values taken from W. Smith's estimates of necessary facility size:
     ! 'hands on maintenance workshops for low RA dose equipment'
     warm_shop_area = warm_shop_l * warm_shop_w
     warm_shop_vol = warm_shop_area * warm_shop_h
+
+    buildings_total_vol = buildings_total_vol + warm_shop_vol
 
 
     ! Maintenance
@@ -484,6 +503,8 @@ contains
     maintenance_area = workshop_area + robotics_area + maint_cont_area
     maintenance_vol = workshop_vol + robotics_vol + maint_cont_vol
 
+    buildings_total_vol = buildings_total_vol + maintenance_vol
+
 
     ! Cryogenic & cooling facilities
     ! Derived from W. Smith's estimates of necessary facilities and their sizes.
@@ -503,6 +524,8 @@ contains
     !
     cryocool_area = cryomag_area + cryostore_area + auxcool_area
     cryocool_vol = cryomag_vol + cryostore_vol + auxcool_vol
+
+    buildings_total_vol = buildings_total_vol + cryocool_vol
 
     
     ! Electrical
@@ -525,6 +548,8 @@ contains
     elec_buildings_area = elecdist_area + elecload_area + elecstore_area
     elec_buildings_vol = elecdist_vol + elecload_vol + elecstore_vol
 
+    buildings_total_vol = buildings_total_vol + elec_buildings_vol
+
     
     ! Turbine Hall
     ! As proposed by R. Gowland, based on assessment of 18 existing fission power plants: 
@@ -534,6 +559,8 @@ contains
     ! produced by Morsons as part of the Year 1 work.
     turbine_hall_area = turbine_hall_l * turbine_hall_w
     turbine_hall_vol = turbine_hall_area * turbine_hall_h
+
+    buildings_total_vol = buildings_total_vol + turbine_hall_vol
 
 
     ! Waste
@@ -565,6 +592,8 @@ contains
     waste_buildings_vol = ilw_smelter_vol + ilw_storage_vol + &
       llw_storage_vol + hw_storage_vol + tw_storage_vol
 
+    buildings_total_vol = buildings_total_vol + waste_buildings_vol
+
 
     ! Site Services    
     ! Derived from W. Smith's estimates of necessary facilities and their sizes; 
@@ -589,6 +618,9 @@ contains
     sec_buildings_area = sec_buildings_l * sec_buildings_w
     sec_buildings_vol = sec_buildings_area * sec_buildings_h
 
+    buildings_total_vol = buildings_total_vol + gas_buildings_vol &
+                        + water_buildings_vol + sec_buildings_vol
+
 
     ! Staff Services
     ! Derived from W. Smith's estimates of necessary facilities and their sizes; 
@@ -598,13 +630,13 @@ contains
     ! Amalgamates estimates of floor area for all individual buildings, uses average height.
     staff_buildings_vol = staff_buildings_area * staff_buildings_h
     
+    buildings_total_vol = buildings_total_vol + staff_buildings_vol
 
-    ! Calculate effective floor area for AC power module
-    efloor = reactor_hall_area + hcd_building_area + hotcell_area + &
-      reactor_aux_area + power_buildings_area + control_buildings_area + warm_shop_area + &
-      maintenance_area + cryocool_area + elec_buildings_area + turbine_hall_area + &
-      waste_buildings_area + gas_buildings_area + water_buildings_area + &
-      sec_buildings_area + staff_buildings_area
+
+    ! Calculate 'effective floor area for AC power module'
+    ! This is the total floor area (m2) across the site, allowing for multiple floors 
+    ! within buildings by assuming an average storey height of 6m:
+    efloor = buildings_total_vol / 6.0D0
 
 
     ! Total volume of nuclear buildings
