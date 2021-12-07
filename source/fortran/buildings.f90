@@ -352,6 +352,10 @@ contains
     hcomp_footprint = ( hcomp_height + hot_sepdist ) &
                      * ( max(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
     hcomp_vol = hcomp_footprint * ( min(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
+    if ( bktlife == 0.0D0 ) then
+      ! catch for regression test / backwards-compatibility
+      bktlife = tlife
+    end if
     ! required lifetime supply of components = 
     !   ( number in build * (plant lifetime / component lifetime) ) * quantity safety factor
     hcomp_req_supply = ( n_tf * (tlife / bktlife) ) * qnty_sfty_fac
@@ -378,6 +382,9 @@ contains
     hcomp_footprint = ( hcomp_height + hot_sepdist ) &
                      * ( max(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
     hcomp_vol = hcomp_footprint * ( min(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
+    if ( divlife == 0.0D0 ) then
+      divlife = tlife
+    end if
     hcomp_req_supply = ( n_tf * (tlife / divlife) ) * qnty_sfty_fac
     ! total storage space for required supply of divertor segments
     div_hotcell_vol = hcomp_req_supply * hcomp_vol
@@ -391,6 +398,9 @@ contains
     end if
     hcomp_footprint = ( hcomp_height + hot_sepdist ) * ( hcomp_rad_thk + hot_sepdist )
     hcomp_vol = hcomp_footprint * ( hcomp_rad_thk + hot_sepdist )
+    if ( cplife == 0.0D0 ) then
+      cplife = tlife
+    end if
     hcomp_req_supply = ( tlife / cplife ) * qnty_sfty_fac
     ! total storage space for required supply of centre posts
     cp_hotcell_vol = hcomp_req_supply * hcomp_vol
@@ -412,7 +422,7 @@ contains
                               (hotcell_h + reactor_roof_thk + reactor_fndtn_thk)
 
     buildings_total_vol = buildings_total_vol + hotcell_vol
-    
+   
 
     ! Reactor Auxiliary Buildings
     ! Derived from W. Smith's estimates of necessary facilities and their sizes;
@@ -637,7 +647,7 @@ contains
     ! This is the total floor area (m2) across the site, allowing for multiple floors 
     ! within buildings by assuming an average storey height of 6m:
     efloor = buildings_total_vol / 6.0D0
-
+    
 
     ! Total volume of nuclear buildings
     volnucb = reactor_build_totvol + hotcell_vol_ext
