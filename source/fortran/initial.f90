@@ -275,7 +275,7 @@ subroutine check
         n_tf_graded_layers, n_tf_stress_layers, tlegav,  i_tf_plane_stress, &
         i_tf_sc_mat, i_tf_wp_geom, i_tf_turns_integer, tinstf, thwcndut, &
         tfinsgap, rcool, dhecoil, thicndut, i_cp_joints, t_turn_tf_is_input, &
-        t_turn_tf, tftmp, t_cable_tf, t_cable_tf_is_input
+        t_turn_tf, tftmp, t_cable_tf, t_cable_tf_is_input, tftmp, tmpcry
     use stellarator_variables, only: istell
     use sctfcoil_module, only: initialise_cables
     use vacuum_variables, only: vacuum_model
@@ -1069,6 +1069,11 @@ subroutine check
     ! Cannot use temperature margin constraint with REBCO CS coils
     if(any(icc == 60) .and. (isumatoh == 8)) then
         call report_error(264)
+    endif
+    
+    ! Cold end of the cryocooler should be colder than the TF
+    if(tmpcry > tftmp) then
+        call report_error(273)
     endif
 
 
