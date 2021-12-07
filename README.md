@@ -5,7 +5,7 @@ can be found on the PROCESS [webpage](https://ccfe.ukaea.uk/resources/process/).
 PROCESS was originally a Fortran code, but is now Python-wrapped Fortran. In order to use PROCESS, the Fortran must be compiled and a Python-Fortran interface generated for the Python to import. Once built, it can be installed and run as a Python package.
 
 ## Getting Started
-Please see the [installation guide](http://process.gitpages.ccfe.ac.uk/process/installation) and the [usage guide](http://process.gitpages.ccfe.ac.uk/process/usage). Once installed, the `examples` directory provides Jupyter notebooks for interactively demonstrating usage, which is a good place to start. The `examples/README.md` provides more help.
+Please see the [installation guide](http://process.gitpages.ccfe.ac.uk/process/installation) and the [usage guide](http://process.gitpages.ccfe.ac.uk/process/usage). Once installed, the `examples` directory provides Jupyter notebooks for interactively demonstrating usage of PROCESS, which is a good place to start. The `examples/README.md` provides more help.
 
 ## Documentation
 To read about how the code works and the modules in it see the [documentation](http://process.gitpages.ccfe.ac.uk/process), which is hosted on Gitlab Pages.
