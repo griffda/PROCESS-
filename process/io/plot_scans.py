@@ -497,8 +497,10 @@ def main(args=None):
                         args.outputdir, scan_var_name, output_name, save_format
                     )
                 )
+            
+            # Display plot (used in Jupyter notebooks)
+            plt.show()
             plt.clf()
-            plt.cla()
         # ------------
 
     # I case of a 2D scan
@@ -599,8 +601,10 @@ def main(args=None):
                     save_format,
                 )
             )
+            
+            # Display plot (used in Jupyter notebooks)
+            plt.show()
             plt.clf()
-            plt.cla()
 
 
 if __name__ == "__main__":
