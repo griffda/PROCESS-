@@ -323,7 +323,7 @@ contains
     ! Hot Cell Facility
     ! Provides hot cell facilities to maintain or dismantle highly radioactive components.
     ! These are simplifications of R. Gowland's estimates of Operational Active Waste Storage,
-    ! which assumes all IVC components used through the life of the plant will need storage.
+    ! which assumes all in-vessel components used through the life of the plant will need storage.
     ! The storage area required is derived from the sizes and number of components, allowing
     ! for a margin in component numbers as set by the quantity safety factor (qnty_sfty_fac).
     ! Footprints and volumes required for storage include hot separation distance (hot_sepdist).
@@ -510,7 +510,7 @@ contains
     ! these values amalgamate multiple individual buildings.
     !
     ! Transformers and electrical distribution facilities; includes
-    ! main step down & step up transformers and substation, reactive power buildings,
+    ! main step down & step up transformers and substation, reactive power buildings
     elecdist_area = elecdist_l * elecdist_w
     elecdist_vol = elecdist_area * elecdist_h
     !
