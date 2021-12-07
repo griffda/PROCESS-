@@ -8,7 +8,9 @@ module CS_fatigue
     ! 
     !
 
+#ifndef dp
     use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
     implicit none
 
 contains
@@ -19,14 +21,14 @@ subroutine Ncycle(N_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_cr
     implicit none
 
     ! Arguments
-    real(8), intent(in) :: max_hoop_stress, residual_stress
-    real(8), intent(in) :: t_crack_vertical, t_structural_vertical, t_structural_radial
-    real(8), intent(inout) :: N_cycle, t_crack_radial
+    real(dp), intent(in) :: max_hoop_stress, residual_stress
+    real(dp), intent(in) :: t_crack_vertical, t_structural_vertical, t_structural_radial
+    real(dp), intent(inout) :: N_cycle, t_crack_radial
 
     ! local variables
-    real(8) :: Const, C0, m, R, delta, deltaN 
-    real(8) :: Kmax, Ka, Kc, a, c, N_pulse
-    real(8) :: max_hoop_stress_MPa, residual_stress_MPa, delta_hoop_stress_MPa
+    real(dp) :: Const, C0, m, R, delta, deltaN 
+    real(dp) :: Kmax, Ka, Kc, a, c, N_pulse
+    real(dp) :: max_hoop_stress_MPa, residual_stress_MPa, delta_hoop_stress_MPa
 
 
     ! Set material parameters
@@ -97,11 +99,11 @@ function embedded_stress_intensity_factor(hoop_stress, t, w, a, c, phi) result(K
     implicit none
 
     ! Arguments
-    real(8), intent(in) :: hoop_stress, t, w, a, c, phi
-    real(8) :: K
+    real(dp), intent(in) :: hoop_stress, t, w, a, c, phi
+    real(dp) :: K
 
     ! local variables
-    real(8) :: Q, m1, m2, m3, g, f_phi, f_w, F
+    real(dp) :: Q, m1, m2, m3, g, f_phi, f_w, F
 
 
     if (a<=c) then
@@ -147,12 +149,12 @@ function surface_stress_intensity_factor(hoop_stress, t, w, a, c, phi) result(K)
     implicit none
 
     ! Arguments
-    real(8), intent(in) :: hoop_stress, t, w, a, c, phi
-    real(8) :: K
+    real(dp), intent(in) :: hoop_stress, t, w, a, c, phi
+    real(dp) :: K
 
     ! local variables
-    real(8) :: Q, m1, m2, m3, g, f_phi, f_w, bending_stress
-    real(8) :: p, Hs, H1, H2, G11, G12, G21, G22, F
+    real(dp) :: Q, m1, m2, m3, g, f_phi, f_w, bending_stress
+    real(dp) :: p, Hs, H1, H2, G11, G12, G21, G22, F
 
     bending_stress = 0.0D0! * 3.0 * M / (w*d**2.0)
 

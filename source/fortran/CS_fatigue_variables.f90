@@ -1,27 +1,29 @@
 module CS_fatigue_variables
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   implicit none
 
   public
 
-  real(8) :: residual_sig_hoop
+  real(dp) :: residual_sig_hoop
   !! residual hoop stress in strucutal material (Pa) 
   
-  real(8) :: N_cycle
+  real(dp) :: N_cycle
   !! Allowable number of cycles for CS
   
-  real(8) :: t_crack_radial
+  real(dp) :: t_crack_radial
   !! Initial depth of crack in thickness of conduit (m)
 
-  real(8) :: t_crack_vertical
+  real(dp) :: t_crack_vertical
   !! Inital vertical crack size (m)
 
-  real(8) :: t_structural_radial
+  real(dp) :: t_structural_radial
   !! Thickness of CS conductor conduit (m)
   
-  real(8) :: t_structural_vertical
+  real(dp) :: t_structural_vertical
   !! Vertical thickness of CS conductor conduit (m)
 
   contains
