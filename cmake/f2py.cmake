@@ -17,14 +17,14 @@ MACRO(F2PY)
     MESSAGE(STATUS "\tTarget: ${F2PY_TARGET}")
     ADD_CUSTOM_TARGET(
         ${F2PY_NAME}
-        DEPENDS ${F2PY_TARGET} ${F2PY_OUTPUT} ${PREPROCESS_TARGET_NAMES}
+        DEPENDS ${F2PY_TARGET} ${F2PY_OUTPUT}
     )
     IF(NOT CMAKE_HOST_APPLE)
         ADD_CUSTOM_COMMAND(
             OUTPUT ${F2PY_TARGET} ${F2PY_OUTPUT}
-            DEPENDS ${PREPROCESS_TARGET_NAMES}
             COMMAND echo \"Running f2py:\"\; LDFLAGS=-Wl,-rpath=\\$$ORIGIN/lib ${F2PY_NAME} -c -L../process/lib/ -l${PROJECT_NAME} ${PREPROCESSED_SOURCE_FILES_PATH} --build-dir ${CMAKE_BINARY_DIR} -m fortran
             COMMAND ${CMAKE_COMMAND} -E copy ${F2PY_TARGET} ${F2PY_OUTPUT}
+            DEPENDS ${PREPROCESS_TARGET_NAMES} ${PREPROCESSED_SOURCE_FILES_PATH} # rerun the wrapping when any of the preprocessed source files change
         )
     ELSE()
         ADD_CUSTOM_COMMAND(
