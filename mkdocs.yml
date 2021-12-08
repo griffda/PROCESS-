@@ -22,6 +22,7 @@ nav:
         - Adding Variables & Constraints: development/add-vars.md
         - Continuous Integration: development/ci-guide.md
         - Testing: development/testing.md
+        - Debugging: development/debugging.md
         - Tools: development/tools.md
         - Versioning: development/versioning.md
     - Engineering Models:
@@ -48,7 +49,7 @@ nav:
         - Python Libraries: io/python-lib-guide.md
         - Test suite: io/test-suite.md
         - Utilities: io/utilities-guide.md
-        - Variable Descriptions: vardes.md
+        # - Variable Descriptions: vardes.md
     - Physics Models:
         - Electron Cyclotron Current Drive: physics-models/CD.md
         - Plasma: physics-models/plasma.md
