@@ -393,8 +393,9 @@ pages:
 
     # Setup badges
     - git clone https://github.com/jmorris-uk/anybadge.git
-    - TAG=$(git describe --abbrev=0)
-    - VERSION=$(git describe)
+    # checks for the tag on the most up-to-date branch (master)
+    - MASTER_VERSION=$(git describe $(git rev-list --tags --max-count=1))
+    - DEVELOP_VERSION=$(git describe)
     - declare -i CONTRIBUTORS=$(git shortlog -s -n --all | wc -l)
     - echo $CONTRIBUTORS
     - bash scripts/coverage_badge.sh source/fortran/ anybadge/
@@ -403,11 +404,11 @@ pages:
     - cp quality.svg public/
     - cp -r code_quality public/
     - cd anybadge
-    - python3 anybadge.py -v $TAG -l tag -c blue -f tag.svg
-    - python3 anybadge.py -v $VERSION -l version -c blue -f version.svg
+    - python3 anybadge.py -v $MASTER_VERSION -l master -c blue -f mversion.svg
+    - python3 anybadge.py -v $DEVELOP_VERSION -l develop -c blue -f dversion.svg
     - python3 anybadge.py -v $CONTRIBUTORS -l contributors -c blue -f contributors.svg -m "%d"
-    - cp tag.svg ../public
-    - cp version.svg ../public
+    - cp mversion.svg ../public
+    - cp dversion.svg ../public
     - cp contributors.svg ../public
     - ls ../public
     - du -shc ../public/*
