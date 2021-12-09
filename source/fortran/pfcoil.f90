@@ -988,7 +988,6 @@ module pfcoil_module
      !
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
-       use maths_library, only: svd
      implicit none
  
      !  Arguments
@@ -1037,82 +1036,6 @@ module pfcoil_module
           brssq,brnrm,bzssq,bznrm,ssq,bfix,gmat)
  
    contains
- 
-     subroutine solv(ngrpmx,lrow1,lcol1,ngrp,ccls,nrws,gmat,bvec,umat, &
-          vmat,sigma,work2)
- 
-       !! Solve a matrix using singular value decomposition
-       !! author: P J Knight, CCFE, Culham Science Centre
-       !! author: D Strickler, ORNL
-       !! author: J Galambos, ORNL
-       !! author: P C Shipe, ORNL
-       !! ngrpmx : input integer : maximum number of PF coil groups
-       !! lrow1 : input integer : row length of arrays bfix, bvec, gmat,
-       !! umat, vmat; should be >= (2*nptsmx + ngrpmx)
-       !! lcol1 : input integer : column length of arrays gmat, umat, vmat;
-       !! should be >= ngrpmx
-       !! ngrp : input integer : number of coil groups, where all coils in a
-       !! group have the same current, <= ngrpmx
-       !! ccls(ngrpmx) : output real array : solution vector of coil currents
-       !! in each group (A)
-       !! nrws : input integer : actual number of rows to use
-       !! gmat(lrow1,lcol1) : input/output real array : work array
-       !! bvec(lrow1) : input/output real array : work array
-       !! umat(lrow1,lcol1) : output real array : work array
-       !! vmat(lrow1,lcol1) : output real array : work array
-       !! sigma(ngrpmx) : output real array : work array
-       !! work2(ngrpmx) : output real array : work array
-       !! This routine solves the matrix equation for calculating the
-       !! currents in a group of ring coils.
-       !! None
-       !
-       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
-       implicit none
- 
-       !  Arguments
- 
-       integer, intent(in) :: ngrpmx,lrow1,lcol1,ngrp,nrws
-       real(8), dimension(lrow1), intent(inout) :: bvec
-       real(8), dimension(lrow1,lcol1), intent(inout) :: gmat
-       real(8), dimension(lrow1,lcol1), intent(out) :: umat,vmat
-       real(8), dimension(ngrpmx), intent(out) :: sigma, work2
-       real(8), dimension(ngrpmx), intent(out) :: ccls
- 
-       !  Local variables
- 
-       integer :: i,j,ierr
-       real(8) :: zvec,eps
-       logical :: truth
- 
-       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
-       truth = .true.
-       eps = 1.0D-10
- 
-       call svd(lrow1,nrws,ngrp,gmat,sigma,truth,umat,truth,vmat,ierr,work2)
- 
-       do i = 1,ngrp
-          work2(i) = 0.0D0
-          do j = 1,nrws
-             work2(i) = work2(i)+umat(j,i)*bvec(j)
-          end do
-       end do
- 
-       !  Compute currents
- 
-       do i = 1,ngrp
-          ccls(i) = 0.0D0
-          zvec = 0.0D0
-          do j = 1,ngrp
-             if (sigma(j) > eps) zvec = work2(j)/sigma(j)
-             ccls(i) = ccls(i)+vmat(i,j)*zvec
-          end do
-       end do
- 
-     end subroutine solv
- 
-     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
      subroutine rsid(nptsmx,ngrpmx,lrow1,lcol1,npts,brin,bzin,nfix, &
           ngrp,ccls,brssq,brnrm,bzssq,bznrm,ssq,bfix,gmat)
@@ -1368,6 +1291,81 @@ module pfcoil_module
       nrws = 2*npts + ngrp
 
    end subroutine mtrx
+
+   subroutine solv(ngrpmx,lrow1,lcol1,ngrp,ccls,nrws,gmat,bvec,umat, &
+      vmat,sigma,work2)
+
+      !! Solve a matrix using singular value decomposition
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! author: D Strickler, ORNL
+      !! author: J Galambos, ORNL
+      !! author: P C Shipe, ORNL
+      !! ngrpmx : input integer : maximum number of PF coil groups
+      !! lrow1 : input integer : row length of arrays bfix, bvec, gmat,
+      !! umat, vmat; should be >= (2*nptsmx + ngrpmx)
+      !! lcol1 : input integer : column length of arrays gmat, umat, vmat;
+      !! should be >= ngrpmx
+      !! ngrp : input integer : number of coil groups, where all coils in a
+      !! group have the same current, <= ngrpmx
+      !! ccls(ngrpmx) : output real array : solution vector of coil currents
+      !! in each group (A)
+      !! nrws : input integer : actual number of rows to use
+      !! gmat(lrow1,lcol1) : input/output real array : work array
+      !! bvec(lrow1) : input/output real array : work array
+      !! umat(lrow1,lcol1) : output real array : work array
+      !! vmat(lrow1,lcol1) : output real array : work array
+      !! sigma(ngrpmx) : output real array : work array
+      !! work2(ngrpmx) : output real array : work array
+      !! This routine solves the matrix equation for calculating the
+      !! currents in a group of ring coils.
+      !! None
+      !
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      use maths_library, only: svd
+      implicit none
+
+      !  Arguments
+
+      integer, intent(in) :: ngrpmx,lrow1,lcol1,ngrp,nrws
+      real(8), dimension(lrow1), intent(inout) :: bvec
+      real(8), dimension(lrow1,lcol1), intent(inout) :: gmat
+      real(8), dimension(lrow1,lcol1), intent(out) :: umat,vmat
+      real(8), dimension(ngrpmx), intent(out) :: sigma, work2
+      real(8), dimension(ngrpmx), intent(out) :: ccls
+
+      !  Local variables
+
+      integer :: i,j,ierr
+      real(8) :: zvec,eps
+      logical :: truth
+
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      truth = .true.
+      eps = 1.0D-10
+
+      call svd(lrow1,nrws,ngrp,gmat,sigma,truth,umat,truth,vmat,ierr,work2)
+
+      do i = 1,ngrp
+         work2(i) = 0.0D0
+         do j = 1,nrws
+            work2(i) = work2(i)+umat(j,i)*bvec(j)
+         end do
+      end do
+
+      !  Compute currents
+
+      do i = 1,ngrp
+         ccls(i) = 0.0D0
+         zvec = 0.0D0
+         do j = 1,ngrp
+            if (sigma(j) > eps) zvec = work2(j)/sigma(j)
+            ccls(i) = ccls(i)+vmat(i,j)*zvec
+         end do
+      end do
+
+   end subroutine solv
 
    subroutine bfield(nc, rc, zc, cc, xc, rp, zp, br, bz, psi)
  

@@ -1616,3 +1616,46 @@ def test_mtrx():
     assert_array_almost_equal(zc, zc_exp)
     assert_array_almost_equal(cc, cc_exp)
     assert_array_almost_equal(xc, xc_exp)
+
+
+def test_solv():
+    """Test solv() with simple arguments.
+
+    Running baseline_2019 results in 2D array args with 740 elements: unfeasible
+    for a unit test. Made-up simplified args are used instead.
+    """
+    ngrpmx = 3
+    ngrp = 3
+    nrws = 3
+    gmat = np.full((3, 3), 2.0, order="F")
+    bvec = np.full(3, 1.0)
+
+    ccls, umat, vmat, sigma, work2 = pf.solv(ngrpmx, ngrp, nrws, gmat, bvec)
+
+    assert_array_almost_equal(ccls, np.array([0.16666667, 0.37079081, -0.03745748]))
+    assert_array_almost_equal(
+        umat,
+        np.array(
+            [
+                [-0.81649658, -0.57735027, 0.0],
+                [0.40824829, -0.57735027, -0.70710678],
+                [0.40824829, -0.57735027, 0.70710678],
+            ]
+        ),
+    )
+    assert_array_almost_equal(
+        vmat,
+        np.array(
+            [
+                [-0.81649658, -0.57735027, 0.0],
+                [0.40824829, -0.57735027, -0.70710678],
+                [0.40824829, -0.57735027, 0.70710678],
+            ]
+        ),
+    )
+    assert_array_almost_equal(
+        sigma, np.array([5.1279005e-16, 6.0000000e00, 0.0000000e00])
+    )
+    assert_array_almost_equal(
+        work2, np.array([-2.22044605e-16, -1.73205081e00, 0.00000000e00])
+    )
