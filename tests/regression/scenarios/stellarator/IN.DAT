@@ -9,30 +9,22 @@
 
 *---------------Constraint Equations---------------*
 
-neqns = 2               *number of equalities
+neqns = 3               *number of equalities
 
 
 *--------------- equaltities
 icc = 2                 *Global power balance (consistency equation)
-*icc = 11                *Radial build (consistency equation)
+icc = 11                *Radial build (consistency equation)
 icc = 16                *Net electric power lower limit
 
 
 *-------------- inequaltities
-icc = 84                * Lower beta limit
-icc = 24                * Upper beta limit
-icc = 83                * Encounter for place for blanket
-*icc = 35                * icc_quench
-*icc = 82                * icc_toroidalbuild
-*icc = 34                * icc_dumbvoltage
-*icc = 65                * icc_stressVV
+icc = 84                *Lower beta limit
+icc = 24                *Upper beta limit
+
+
 
 *---------------Iteration Variables----------------*
-
-
-*ixc = 1                 *aspect
-boundl(1) = 12.
-boundu(1) = 13.
 
 ixc = 4                 *te
 boundl(4) = 4.
@@ -52,13 +44,12 @@ fpnetel = 1.0000        *f-value for net electric power
 boundl(25) = 0.98
 boundu(25) = 1.0
 
-*ixc = 29                *bore
+ixc = 29                *bore
 bore = 17.607           *Central solenoid inboard radius (m)
 boundl(29) = 5.0
 
-ixc = 50                *fiooic
-fiooic = 0.2
-boundu(50) = 0.44
+ixc = 50                * itv_fiooic
+boundu(50) = 0.9
 boundl(50) = 0.001
 
 
@@ -95,20 +86,20 @@ shear    = 0.5          *Magnetic shear, derivative of iotabar
 
 *-----------------Build Variables------------------*
 
-blnkith  = 0.6          *Inboard blanket thickness (m)
-blnkoth  = 0.7          *Outboard blanket thickness (m)
+blnkith  = 0.7          *Inboard blanket thickness (m)
+blnkoth  = 0.8          *Outboard blanket thickness (m)
 ddwex    = 0.15         *Cryostat thickness (m)
-d_vv_in  = 0.25         *Inboard vacuum vessel thickness (tf coil / shield) (m)
-d_vv_out = 0.25         *Outboard vacuum vessel thickness (tf coil / shield) (m)
-d_vv_top = 0.25         *Topside vacuum vessel thickness (tf coil / shield) (m)
-d_vv_bot = 0.25         *Underside vacuum vessel thickness (tf coil / shield) (m)
+d_vv_in  = 0.35         *Inboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_out = 0.35         *Outboard vacuum vessel thickness (tf coil / shield) (m)
+d_vv_top = 0.35         *Topside vacuum vessel thickness (tf coil / shield) (m)
+d_vv_bot = 0.35         *Underside vacuum vessel thickness (tf coil / shield) (m)
 gapds    = 0.025        *Gap between inboard vacuum vessel and tf coil (m)
 gapomin  = 0.025        *Minimum gap between outboard vacuum vessel and TF coil (m)
 scrapli  = 0.15         *Gap between plasma and first wall; inboard side (m)
 scraplo  = 0.3          *Gap between plasma and first wall; outboard side (m)
 shldith  = 0.4          *Inboard shield thickness (m)
-shldoth  = 0.6          *Outboard shield thickness (m)
-shldtth  = 0.6          *Upper/lower shield thickness (m)
+shldoth  = 0.7          *Outboard shield thickness (m)
+shldtth  = 0.7          *Upper/lower shield thickness (m)
 vgap     = 0.0          *Vertical gap between x-point and divertor (m)
 
 *---------------Constraint Variables---------------*
@@ -190,7 +181,6 @@ t_turn_tf = 0.056       *Dimension conductor area including steel and insulation
 thicndut  = 0.002       *Conduit insulation thickness (m)
 thwcndut  = 0.0012      *TF coil conduit case thickness (m)
 vftf      = 0.3         *Coolant fraction of TF coil leg (i_tf_sup=0)
-thkcas   = 0.05          *Thickness of the case (for stellarators this is input value)
 
 *-----------------Pfcoil Variables-----------------*
 
@@ -205,7 +195,7 @@ zref(7)  = 1.0
 zref(8)  = 1.0
 
 *------------------Cost Variables------------------*
-
+cost_model = 0
 abktflnc = 15.0         *Allowable first wall/blanket neutron (MW-yr/m2)
 adivflnc = 25.0         *Allowable divertor heat fluence (MW-yr/m2)
 cfactr   = 0.75         *Total plant capacity fraction

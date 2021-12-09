@@ -1093,7 +1093,7 @@ contains
        precircmw = pcoresystems + pinjwp + htpmw
 
        !  Net electric power
-       pnetelmw = max(0.0D0, pgrossmw - precircmw)
+       pnetelmw = pgrossmw - precircmw
 
        !  Scaling to prevent negative pnetelmw
        ! Do NOT rescale if this is the last run through.
