@@ -340,70 +340,74 @@ contains
     ! Assumptions: 
     ! tokomak is toroidally segmented based on number of TF coils (n_tf);
     ! component will be stored with the largest dimension oriented horizontally;
-    ! height is the largest dimension    
+    ! height is the largest dimension;
+    ! if a component lifetime == 0, that component is not in the current machine build.
     !
     ! Inboard 'component': shield, blanket, first wall: 
     ! find height, maximum radial dimension, maximum toroidal dimension
-    hcomp_height = 2 * ( hmax - (tfcth + tftsgap + thshield + vgap2) )
-    hcomp_rad_thk = shldith + blnkith + fwith
-    hcomp_tor_thk = ( 2 * pi * (rmajor - (rminor + scrapli + fwith + blnkith + shldith)) ) &
-                     / n_tf
-    ! find footprint and volume for storing component
-    hcomp_footprint = ( hcomp_height + hot_sepdist ) &
-                     * ( max(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
-    hcomp_vol = hcomp_footprint * ( min(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
-    if ( bktlife == 0.0D0 ) then
-      ! catch for regression test / backwards-compatibility
-      bktlife = tlife
+    if ( bktlife /= 0.0D0 ) then
+      hcomp_height = 2 * ( hmax - (tfcth + tftsgap + thshield + vgap2) )
+      hcomp_rad_thk = shldith + blnkith + fwith
+      hcomp_tor_thk = ( 2 * pi * (rmajor - (rminor + scrapli + fwith + blnkith + shldith)) ) &
+                      / n_tf
+      ! find footprint and volume for storing component
+      hcomp_footprint = ( hcomp_height + hot_sepdist ) &
+                      * ( max(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
+      hcomp_vol = hcomp_footprint * ( min(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
+      ! required lifetime supply of components = 
+      !   ( number in build * (plant lifetime / component lifetime) ) * quantity safety factor
+      hcomp_req_supply = ( n_tf * (tlife / bktlife) ) * qnty_sfty_fac
+      ! total storage space for required supply of inboard shield-blanket-wall
+      ib_hotcell_vol = hcomp_req_supply * hcomp_vol
+      !
+      ! Outboard 'component': first wall, blanket, shield
+      hcomp_height = 2 * ( hmax - (tfcth + tftsgap + thshield + vgap2) )
+      hcomp_rad_thk = fwoth + blnkoth + shldoth
+      hcomp_tor_thk = ( 2 * pi * ( rmajor + rminor + scraplo + fwoth + blnkoth + shldoth ) ) &
+                      / n_tf
+      hcomp_footprint = ( hcomp_height + hot_sepdist ) &
+                      * ( max(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
+      hcomp_vol = hcomp_footprint * ( min(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
+      hcomp_req_supply = ( n_tf * (tlife / bktlife) ) * qnty_sfty_fac
+      ! total storage space for required supply of outboard wall-blanket-shield
+      ob_hotcell_vol = hcomp_req_supply * hcomp_vol
+    else
+      ib_hotcell_vol = 0.0D0
+      ob_hotcell_vol = 0.0D0
     end if
-    ! required lifetime supply of components = 
-    !   ( number in build * (plant lifetime / component lifetime) ) * quantity safety factor
-    hcomp_req_supply = ( n_tf * (tlife / bktlife) ) * qnty_sfty_fac
-    ! total storage space for required supply of inboard shield-blanket-wall
-    ib_hotcell_vol = hcomp_req_supply * hcomp_vol
-    !
-    ! Outboard 'component': first wall, blanket, shield
-    hcomp_height = 2 * ( hmax - (tfcth + tftsgap + thshield + vgap2) )
-    hcomp_rad_thk = fwoth + blnkoth + shldoth
-    hcomp_tor_thk = ( 2 * pi * ( rmajor + rminor + scraplo + fwoth + blnkoth + shldoth ) ) &
-                     / n_tf
-    hcomp_footprint = ( hcomp_height + hot_sepdist ) &
-                     * ( max(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
-    hcomp_vol = hcomp_footprint * ( min(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
-    hcomp_req_supply = ( n_tf * (tlife / bktlife) ) * qnty_sfty_fac
-    ! total storage space for required supply of outboard wall-blanket-shield
-    ob_hotcell_vol = hcomp_req_supply * hcomp_vol
     !
     ! Divertor
     ! Note: this estimation developed before the divertor design has been finalised
-    hcomp_height = divfix
-    hcomp_rad_thk = 2 * rminor
-    hcomp_tor_thk = rmajor + rminor
-    hcomp_footprint = ( hcomp_height + hot_sepdist ) &
-                     * ( max(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
-    hcomp_vol = hcomp_footprint * ( min(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
-    if ( divlife == 0.0D0 ) then
-      divlife = tlife
+    if ( divlife /= 0.0D0 ) then
+      hcomp_height = divfix
+      hcomp_rad_thk = 2 * rminor
+      hcomp_tor_thk = rmajor + rminor
+      hcomp_footprint = ( hcomp_height + hot_sepdist ) &
+                      * ( max(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
+      hcomp_vol = hcomp_footprint * ( min(hcomp_rad_thk,hcomp_tor_thk) + hot_sepdist )
+      hcomp_req_supply = ( n_tf * (tlife / divlife) ) * qnty_sfty_fac
+      ! total storage space for required supply of divertor segments
+      div_hotcell_vol = hcomp_req_supply * hcomp_vol
+    else
+      div_hotcell_vol = 0.0D0
     end if
-    hcomp_req_supply = ( n_tf * (tlife / divlife) ) * qnty_sfty_fac
-    ! total storage space for required supply of divertor segments
-    div_hotcell_vol = hcomp_req_supply * hcomp_vol
     !
     ! Centre post
-    hcomp_height = 2 * hmax
-    if ( i_tf_sup /= 1 ) then 
-      hcomp_rad_thk = r_cp_top
-    else 
-      hcomp_rad_thk = tfcth
+    if ( cplife /= 0.0D0 ) then
+      hcomp_height = 2 * hmax
+      if ( i_tf_sup /= 1 ) then 
+        hcomp_rad_thk = r_cp_top
+      else 
+        hcomp_rad_thk = tfcth
+      end if
+      hcomp_footprint = ( hcomp_height + hot_sepdist ) * ( hcomp_rad_thk + hot_sepdist )
+      hcomp_vol = hcomp_footprint * ( hcomp_rad_thk + hot_sepdist )
+      hcomp_req_supply = ( tlife / cplife ) * qnty_sfty_fac
+      ! total storage space for required supply of centre posts
+      cp_hotcell_vol = hcomp_req_supply * hcomp_vol
+    else
+      cp_hotcell_vol = 0.0D0
     end if
-    hcomp_footprint = ( hcomp_height + hot_sepdist ) * ( hcomp_rad_thk + hot_sepdist )
-    hcomp_vol = hcomp_footprint * ( hcomp_rad_thk + hot_sepdist )
-    if ( cplife == 0.0D0 ) then
-      cplife = tlife
-    end if
-    hcomp_req_supply = ( tlife / cplife ) * qnty_sfty_fac
-    ! total storage space for required supply of centre posts
-    cp_hotcell_vol = hcomp_req_supply * hcomp_vol
     !
     ! building required internal volume and footprint
     hotcell_vol = ib_hotcell_vol + ob_hotcell_vol &
