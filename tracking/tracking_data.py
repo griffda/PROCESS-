@@ -384,6 +384,9 @@ def plot_tracking_data(database):
             history.as_dataframe()
         )  # all the data for one tracked variable as a dataframe
 
+        # order by date to avoid polygons all over the plot
+        df.sort_values("date", ascending=True, inplace=True)
+
         # overrides trumps fortran scrapping
         parent = overrides.get(
             variable
