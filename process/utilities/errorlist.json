@@ -2,7 +2,7 @@
   "version":  [ "PROCESS version 2.1.1" ],
   "comment1": [ "List of error messages used via error_handling.f90" ],
   "comment2": [ "Increment n_errortypes if an error is added to this list" ],
-  "n_errortypes": 272,
+  "n_errortypes": 273,
   "errors": [
    { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
    { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -275,6 +275,7 @@
    {"no": 269, "level": 3, "message": "CHECK: Impossible to set the TF turn/cable size with the integer turn option (i_tf_turns_integer: 1) "},
    {"no": 270, "level": 3, "message": "CHECK: The LTS conductor temperature (tftmp) has to be lower than 10"},
    {"no": 271, "level": 3, "message": "CHECK: Impossible to set the TF coil turn and cable size simultaneously"}, 
-   {"no": 272, "level": 2, "message": "Double-null: Upper vertical build forced to match lower"}
+   {"no": 272, "level": 2, "message": "Double-null: Upper vertical build forced to match lower"}, 
+   {"no": 273, "level": 2, "message": "CHECK: tmpcry should be lower than tftmp"}
    ]
  }

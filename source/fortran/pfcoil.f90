@@ -757,7 +757,10 @@ module pfcoil_module
          jscoh_eof, zpf, rb, ra, jscoh_bop, cptdin, pfcaseth, rpf, cohbop, zh, &
          wtc, zl, turns, wts, a_oh_turn
      use tfcoil_variables, only: dcond, tftmp, tcritsc, strncon_cs, &
-        fhts, bcritsc,b_crit_upper_nbti, t_crit_nbti
+         fhts, bcritsc,b_crit_upper_nbti, t_crit_nbti
+     use CS_fatigue, only: Ncycle
+     use CS_fatigue_variables, only: N_cycle, residual_sig_hoop, t_crack_vertical, &
+         t_crack_radial, t_structural_vertical, t_structural_radial
      use constants, only: pi, dcopper
      implicit none
  
@@ -854,6 +857,10 @@ module pfcoil_module
         !  Allowable (hoop) stress (Pa) alstroh
         ! Now a user input
         ! alstroh = min( (2.0D0*csytf/3.0D0), (0.5D0*csutf) )
+
+        ! Calculation of CS fatigue
+        call Ncycle(N_cycle, sig_hoop,residual_sig_hoop, t_crack_vertical, t_crack_radial, &
+            t_structural_vertical, t_structural_radial)
  
         ! Now steel area fraction is iteration variable and constraint
         ! equation is used for Central Solenoid stress
@@ -2674,6 +2681,9 @@ module pfcoil_module
      use tfcoil_variables, only: tmargmin_cs, strncon_cs, tftmp, b_crit_upper_nbti,&
        t_crit_nbti, strncon_pf
      use numerics, only: boundu
+     use CS_fatigue_variables, only: residual_sig_hoop, t_crack_radial, t_crack_vertical, &
+         N_cycle, t_structural_vertical, t_structural_radial
+ 
        use constants, only: mfile
      implicit none
  
@@ -2787,6 +2797,18 @@ module pfcoil_module
                 '(tmargoh)',tmargoh, 'OP ')
            call ovarre(outfile,'Minimum permitted temperature margin (K)', &
                 '(tmargmin_cs)',tmargmin_cs)
+           call ovarre(outfile, 'residual hoop stress in CS Steel (Pa)', &
+                '(residual_sig_hoop)', residual_sig_hoop)
+           call ovarre(outfile, 'Initial vertical crack size (m)', &
+                '(t_crack_vertical)', t_crack_vertical)
+           call ovarre(outfile, 'Initial radial crack size (m)', &
+                '(t_crack_radial)', t_crack_radial)
+           call ovarre(outfile, 'CS structural vertical thickness (m)', &
+                '(t_structural_vertical)', t_structural_vertical)
+           call ovarre(outfile, 'CS structural radial thickness (m)', &
+                '(t_structural_radial)', t_structural_radial)
+           call ovarre(outfile, 'Allowable number of cycles till CS fracture', &
+                '(N_cycle)', N_cycle, 'OP ')
            ! Check whether CS coil is hitting any limits
            ! iteration variable (39) fjohc0
            ! iteration variable(38) fjohc
