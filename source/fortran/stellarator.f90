@@ -596,7 +596,7 @@ contains
       !! author: J Lion, IPP Greifswald
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      use process_output, only: oheadr, ovarre, ovarst
+      use process_output, only: oheadr, ovarre, ovarst, ovarin
       use physics_variables, only: te0, ne0
       integer, intent(in) :: outfile
 
@@ -618,9 +618,9 @@ contains
       call ovarre(outfile,'Ignition point: Loss Power (MW)','(pscalingmw_ecrh)',pscalingmw_local)
 
       if (powerht_local .ge. pscalingmw_local) then
-         call ovarst(outfile, 'Operation point ECRH ignitable?', '(ecrh_bool)',"Likely")
+         call ovarin(outfile, 'Operation point ECRH ignitable?', '(ecrh_bool)',1)
       else
-         call ovarst(outfile, 'Operation point ECRH ignitable?', '(ecrh_bool)',"No")
+         call ovarin(outfile, 'Operation point ECRH ignitable?', '(ecrh_bool)',0)
       end if
 
    end subroutine stopt_output
