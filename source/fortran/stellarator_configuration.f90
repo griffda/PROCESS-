@@ -8,7 +8,7 @@ module stellarator_configuration
     !! the possibiltiy to set them via an input file in the future.
     !! The list below will be modified in further commits.
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
+
 #ifndef dp
    use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
