@@ -56,11 +56,5 @@ OBS_VARS = {
     "strtf1": "sig_tf_case",
     "strtf2": "sig_tf_wp",
     "alstrtf": ["sig_tf_case_max", "sig_tf_wp_max"],
-    "strtf0": "sig_tf_cs_bucked",
-    "mbvfac": "None",
-    "pfbldgm3": "None",
-    "wsvfac": "None",
-    "rbvfac": "None",
-    "rxcl": "None",
-    "shmf": "None"
+    "strtf0": "sig_tf_cs_bucked"
 }

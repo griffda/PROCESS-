@@ -3,9 +3,6 @@ module buildings_variables
     !!
     !! Module containing global variables relating to the plant buildings
     !!
-    !! Note: 'deprecated' label indicates variable only in use within 
-    !! estimates for building in Inertial Fusion Energy power plant 
-    !! and/or in Cost Model 0.
     !! GIFA = Gross Internal Floor Area
     !!
     !!### References
@@ -20,6 +17,12 @@ module buildings_variables
   
     public
 
+    real(dp) :: admv
+    !! administration building volume (m3)
+  
+    real(dp) :: admvol
+    !! volume of administration buildings (m3)
+
     real(dp) :: aux_build_l, aux_build_w, aux_build_h
     !! aux building supporting tokamak processes length, width, height (m)
 
@@ -32,8 +35,20 @@ module buildings_variables
     real(dp) :: chemlab_l, chemlab_w, chemlab_h
     !! Chemistry labs and treatment buldings length, width, height (m)
 
+    real(dp) :: clh1
+    !! vertical clearance from TF coil to cryostat (m) (calculated for tokamaks)
+  
+    real(dp) :: clh2
+    !! clearance beneath TF coil to foundation (including basement) (m)
+
     real(dp) :: control_buildings_l, control_buildings_w, control_buildings_h
     !! control building length, width, height (m)
+
+    real(dp) :: conv
+    !! control building volume (m3)
+
+    real(dp) :: convol
+    !! volume of control, protection and i&c building (m3)
 
     real(dp) :: crane_arm_h
     !! vertical dimension of crane arm, operating over reactor (m)  
@@ -53,6 +68,9 @@ module buildings_variables
     real(dp) :: cryostat_clrnc
     !! vertical clearance from TF coil to cryostat (m)
 
+    real(dp) :: cryvol
+    !! volume of cryoplant building (m3)
+
     real(dp) :: efloor
     !! effective total floor space (m2)
   
@@ -65,8 +83,17 @@ module buildings_variables
     real(dp) :: elecstore_l, elecstore_w, elecstore_h
     !! Energy Storage facilities length, width, height (m)
 
+    real(dp) :: elevol
+    !! volume of electrical equipment building (m3)
+
+    real(dp) :: esbldgm3
+    !! volume of energy storage equipment building (m3) (not used if `lpulse=0`)
+
     real(dp) :: fc_building_l, fc_building_w
     !! Fuel Cycle facilities length, width (m)
+
+    real(dp) :: fndt
+    !! foundation thickness (m)
 
     real(dp) :: gas_buildings_l, gas_buildings_w, gas_buildings_h
     !! air & gas supply (amalgamated) buildings length, width, height (m)
@@ -76,6 +103,12 @@ module buildings_variables
 
     real(dp) :: hcd_building_l, hcd_building_w, hcd_building_h
     !! HCD building length, width, height (m)
+
+    real(dp) :: hccl
+    !! clearance around components in hot cell (m)
+  
+    real(dp) :: hcwt
+    !! hot cell wall thickness (m)
 
     real(dp) :: heat_sink_l, heat_sink_w, heat_sink_h
     !! heat sinks length, width, height (m)
@@ -89,8 +122,11 @@ module buildings_variables
     real(dp) :: hw_storage_l, hw_storage_w, hw_storage_h
     !! hazardous waste storage building length, width, height (m)
   
-    integer :: i_v_bldgs
-    !! switch to turn verbose output for buildings
+    integer :: i_bldgs_size
+    !! switch between routines estimating building sizes (0 = default; 1 = STEP-derived)
+
+    integer :: i_bldgs_v
+    !! switch to select verbose output for buildings (1 = verbose)
 
     real(dp) :: ilw_smelter_l, ilw_smelter_w, ilw_smelter_h
     !! radioactive waste smelting facility length, width, height (m)
@@ -110,11 +146,32 @@ module buildings_variables
     real(dp) :: maint_cont_l, maint_cont_w, maint_cont_h
     !! maintenance control building length, width, height (m)
 
+    real(dp) :: mbvfac
+    !! maintenance building volume multiplication factor
+
     real(dp) :: nbi_sys_l, nbi_sys_w
     !! NBI system length, width (m)  
 
+    real(dp) :: pfbldgm3
+    !! volume of PF coil power supply building (m3)
+
+    real(dp) :: pibv
+    !! power injection building volume (m3)
+
     real(dp) :: qnty_sfty_fac
     !! quantity safety factor for component use during plant lifetime
+
+    real(dp) :: rbvfac
+    !! reactor building volume multiplication factor
+    
+    real(dp) :: rbrt
+    !! reactor building roof thickness (m)
+
+    real(dp) :: rbvol
+    !! reactor building volume (m3)
+
+    real(dp) :: rbwt
+    !! reactor building wall thickness (m)
 
     real(dp) :: reactor_clrnc
     !! clearance around reactor (m)
@@ -131,29 +188,59 @@ module buildings_variables
     real(dp) :: reactor_wall_thk 
     !! reactor building wall thickness (m)
 
+    real(dp) :: rmbvol
+    !! volume of maintenance and assembly building (m3)
+
     real(dp) :: robotics_l, robotics_w, robotics_h
     !! robotics buildings length, width, height (m)
 
+    real(dp) :: row
+    !! clearance to building wall for crane operation (m)
+
+    real(dp) :: rxcl
+    !! clearance around reactor (m)
+
     real(dp) :: sec_buildings_l, sec_buildings_w, sec_buildings_h
     !! security & safety buildings length, width, height (m)
+
+    real(dp) :: shmf
+    !! fraction of shield mass per TF coil to be moved in the maximum shield lift
+
+    real(dp) :: shov
+    !! shops and warehouse volume (m3)
+  
+    real(dp) :: shovol
+    !! volume of shops and buildings for plant auxiliaries (m3)
 
     real(dp) :: staff_buildings_area 
     !! footprint of staff buildings (m2)
 
     real(dp) :: staff_buildings_h
     !! staff buildings height (m)
-  
-    real(dp) :: transp_clrnc
-    !! transportation clearance between components (m)
-  
+
+    real(dp) :: stcl
+    !! clearance above crane to roof (m)
+
     real(dp) :: tfcbv
     !! volume of TF coil power supply building (m3) (calculated if TF coils are superconducting)
-      
+
+    real(dp) :: transp_clrnc
+    !! transportation clearance between components (m)
+    
+    real(dp) :: trcl
+    !! transportation clearance between components (m)
+
+    real(dp) :: triv
+    !! volume of tritium, fuel handling and health physics buildings (m3)
+
     real(dp) :: turbine_hall_l, turbine_hall_w, turbine_hall_h
     !! turbine hall length, width, height (m)
 
     real(dp) :: tw_storage_l, tw_storage_w, tw_storage_h
     !! tritiated waste storage building length, width, height (m)
+
+    real(dp) :: volrci
+    !! internal volume of reactor building (m3)
 
     real(dp) :: volnucb
     !! sum of nuclear buildings volumes (m3)
@@ -164,93 +251,24 @@ module buildings_variables
     real(dp) :: water_buildings_l, water_buildings_w, water_buildings_h
     !! water, laundry & drainage buildings length, width, height (m)
 
+    real(dp) :: wgt
+    !! reactor building crane capacity (kg) (calculated if 0 is input)
+  
+    real(dp) :: wgt2
+    !! hot cell crane capacity (kg) (calculated if 0 is input)
+
     real(dp) :: workshop_l, workshop_w, workshop_h
     !! [cold] workshop buildings length, width, height (m)  
   
-
-    real(dp) :: admv
-    !! administration building volume (m3) - deprecated
-  
-    real(dp) :: admvol
-    !! volume of administration buildings (m3) - deprecated
-
-    real(dp) :: rbvol
-    !! reactor building volume (m3) - deprecated
-
-    real(dp) :: rmbvol
-    !! volume of maintenance and assembly building (m3) - deprecated
-
-    real(dp) :: clh1
-    !! vertical clearance from TF coil to cryostat (m) (calculated for tokamaks) - deprecated
-  
-    real(dp) :: clh2
-    !! clearance beneath TF coil to foundation (including basement) (m) - deprecated
-
-    real(dp) :: conv
-    !! control building volume (m3) - deprecated
-
-    real(dp) :: convol
-    !! volume of control, protection and i&c building (m3) - deprecated
-
-    real(dp) :: cryvol
-    !! volume of cryoplant building (m3) - deprecated
-
-    real(dp) :: elevol
-    !! volume of electrical equipment building (m3) - deprecated
-  
-    real(dp) :: esbldgm3
-    !! volume of energy storage equipment building (m3) (not used if `lpulse=0`) - deprecated
-
-    real(dp) :: fndt
-    !! foundation thickness (m) - deprecated
-
-    real(dp) :: hccl
-    !! clearance around components in hot cell (m) - deprecated
-  
-    real(dp) :: hcwt
-    !! hot cell wall thickness (m) - deprecated
-
-    real(dp) :: pibv
-    !! power injection building volume (m3) - deprecated
-
-    real(dp) :: rbrt
-    !! reactor building roof thickness (m) - deprecated
-
-    real(dp) :: rbwt
-    !! reactor building wall thickness (m) - deprecated
-
-    real(dp) :: row
-    !! clearance to building wall for crane operation (m) - deprecated
-
-    real(dp) :: shov
-    !! shops and warehouse volume (m3) - deprecated
-  
-    real(dp) :: shovol
-    !! volume of shops and buildings for plant auxiliaries (m3) - deprecated
-
-    real(dp) :: stcl
-    !! clearance above crane to roof (m) - deprecated
-
-    real(dp) :: trcl
-    !! transportation clearance between components (m) - deprecated
-
-    real(dp) :: triv
-    !! volume of tritium, fuel handling and health physics buildings (m3) - deprecated
-    
-    real(dp) :: volrci
-    !! internal volume of reactor building (m3) - deprecated
-
-    real(dp) :: wgt
-    !! reactor building crane capacity (kg) (calculated if 0 is input) - deprecated
-  
-    real(dp) :: wgt2
-    !! hot cell crane capacity (kg) (calculated if 0 is input) - deprecated
-
     real(dp) :: wrbi
-    !! distance from centre of machine to building wall (m) - deprecated
+    !! distance from centre of machine to building wall (m)
 
     real(dp) :: wsvol
-    !! volume of warm shop building (m3) - deprecated
+    !! volume of warm shop building (m3)
+
+    real(dp) :: wsvfac
+    !! warm shop building volume multiplication factor
+
 
 
     real(dp) :: a_reactor_bldg
@@ -361,7 +379,8 @@ module buildings_variables
       hcwt = 1.5D0
       hot_sepdist = 2.0D0
       hotcell_h = 12.0D0
-      i_v_bldgs = 0
+      i_bldgs_size = 0
+      i_bldgs_v = 0
       ilw_smelter_l = 50.0D0
       ilw_smelter_w = 30.0D0
       ilw_smelter_h = 30.0D0
@@ -380,10 +399,13 @@ module buildings_variables
       maint_cont_l = 125.0D0
       maint_cont_w = 100.0D0
       maint_cont_h = 6.0D0
+      mbvfac = 2.8D0
       nbi_sys_l = 225.0D0
       nbi_sys_w = 185.0D0
+      pfbldgm3 = 2.0D4
       pibv = 2.0D4
       qnty_sfty_fac = 2.0D0
+      rbvfac = 1.6D0
       rbrt = 1.0D0
       rbvol = 0.0D0
       rbwt = 2.0D0
@@ -399,13 +421,15 @@ module buildings_variables
       robotics_w = 30.0D0
       robotics_h = 30.0D0
       row = 4.0D0
+      rxcl = 4.0D0
       sec_buildings_l = 30.0D0
       sec_buildings_w = 25.0D0
       sec_buildings_h = 6.0D0
-      staff_buildings_h = 5.0D0
-      staff_buildings_area = 4.8D5
+      shmf = 0.5D0
       shov = 1.0D5
       shovol = 0.0D0
+      staff_buildings_h = 5.0D0
+      staff_buildings_area = 4.8D5
       stcl = 3.0D0
       tfcbv = 2.0D4
       transp_clrnc = 1.0D0
@@ -431,6 +455,7 @@ module buildings_variables
       wgt = 5.0D5
       wgt2 = 1.0D5
       wrbi = 0.0D0
+      wsvfac = 1.9D0
       wsvol = 0.0D0
 
       a_reactor_bldg = 8.32D3

@@ -23,7 +23,13 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use build_variables, only: r_tf_inboard_mid, r_tf_outboard_mid, tfcth, tfthko, &
-      hmax
+      hmax, rsldo, d_vv_top, d_vv_bot, vgap2, rsldi
+    use fwbs_variables, only: whtshld, rdewex
+    use buildings_variables, only: cryvol, volrci, rbvol, rmbvol, wsvol, elevol, &
+      i_bldgs_size
+    use heat_transport_variables, only: helpow
+    use pfcoil_variables, only: pfrmax, pfmmax
+    use tfcoil_variables, only: whttf, n_tf
 
     implicit none
 
@@ -43,22 +49,270 @@ contains
     real(dp) :: tf_vertical_dim
     !! Vertical dimension of TF coil (m)
 
+    real(dp) :: tfmtn
+    !! mass per TF coil (tonnes)
+
+    real(dp) :: tfri, tfro
+    !! TF coil inner and outer radial positions (m)
+
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    ! Find TF coil radial positions
+    ! outboard edge: outboard mid-leg radial position + half-thickness of outboard leg
+    tfro = r_tf_outboard_mid + ( tfthko * 0.5D0 )
+    ! inboard edge: inboard mid-leg radial position - half-thickness of inboard leg
+    tfri = r_tf_inboard_mid - ( tfcth * 0.5D0 ) 
+
     ! Find width, in radial dimension, of TF coil (m)
-    !  = (outboard mid-leg radial position + half-thickness of outboard leg) - 
-    !    (inboard mid-leg radial position - half-thickness of inboard leg)
-    tf_radial_dim = r_tf_outboard_mid + ( tfthko * 0.5D0 ) - &
-                    r_tf_inboard_mid - ( tfcth * 0.5D0 )
+    tf_radial_dim = tfro - tfri
 
     ! Find full height of TF coil (m)
     !  = 2 * (mid-plane to TF coil inside edge + thickness of coil)
     tf_vertical_dim = 2.0D0 * ( hmax + tfthko )
 
+    ! Find mass of each TF coil, in tonnes
+    tfmtn = 1.0D-3 * whttf/n_tf
+
+
     ! Calculate building areas and volumes
-    call bldgs_sizes(tf_radial_dim, tf_vertical_dim, outfile, iprint)
+
+    if ( i_bldgs_size == 1) then
+      ! STEP building estimates
+      call bldgs_sizes(tf_radial_dim, tf_vertical_dim, outfile, iprint)
+    
+    else
+      ! Previous estimation work 
+      call bldgs(pfrmax,pfmmax,tfro,tfri,tf_vertical_dim,tfmtn,n_tf,rsldo, &
+        rsldi,2.0D0*(hmax-vgap2)-d_vv_top-d_vv_bot,whtshld, &
+        rdewex,helpow,iprint,outfile,cryvol,volrci,rbvol,rmbvol, &
+        wsvol,elevol)
+
+    end if
 
   end subroutine bldgcall
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine bldgs(pfr,pfm,tfro,tfri,tfh,tfm,n_tf,shro,shri, &
+    shh,shm,crr,helpow,iprint,outfile,cryv,vrci,rbv,rmbv,wsv,elev)
+    !! Determines the sizes of the plant buildings
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: P C Shipe, ORNL
+    !! pfr : input/output real :  largest PF coil outer radius, m
+    !! pfm : : input real : largest PF coil mass, tonne
+    !! tfro : input real : outer radius of TF coil, m
+    !! tfri : input real : inner radius of TF coil, m
+    !! tfh : input real : full height of TF coil, m
+    !! tfm : input real : mass of one TF coil, tonne
+    !! tfno : input real : number of tf coils
+    !! shro : input real : outer radius of attached shield, m
+    !! shri : input real : inner radius of attached shield, m
+    !! shh : input real : height of attached shield, m
+    !! shm : input real : total mass of attached shield, kg
+    !! crr : input real : outer radius of common cryostat, m
+    !! helpow : input real : total cryogenic load, W
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! outfile : input integer : output file unit
+    !! cryv : output real : volume of cryogenic building, m3
+    !! vrci : output real : inner volume of reactor building, m3
+    !! rbv : output real : outer volume of reactor building, m3
+    !! rmbv : output real : volume of reactor maintenance building, m3
+    !! wsv : output real : volume of warm shop, m3
+    !! elev : output real : volume of electrical buildings, m3
+    !! This routine determines the size of the plant buildings.
+    !! The reactor building and maintenance building are sized
+    !! based on the tokamak dimensions. The cryogenic building volume is
+    !! scaled based on the total cryogenic load. The other building
+    !! sizes are input from other modules or by the user.
+    !! This routine was modified to include fudge factors (fac1,2,...)
+    !! to fit the ITER design, September 1990 (J. Galambos).
+    !! This routine was included in PROCESS in January 1992 by
+    !! P. C. Shipe.
+    !! None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use buildings_variables, only: wrbi, rxcl, trcl, row, wgt, shmf, clh2, clh1, &
+      stcl, rbvfac, rbwt, rbrt, fndt, hcwt, hccl, wgt2, mbvfac, wsvfac, &
+      tfcbv, pfbldgm3, esbldgm3, pibv, efloor, admvol, triv, conv, admv, shov, &
+      shovol, convol, volnucb
+    use process_output, only: oheadr, ovarre
+
+    implicit none
+
+    ! Arguments
+    integer, intent(in) :: iprint, outfile
+    real(dp), intent(inout) :: pfr
+    real(dp), intent(in) :: pfm,tfro,tfri,tfh,tfm,n_tf,shro, &
+         shri,shh,shm,crr,helpow
+
+    real(dp), intent(out) :: cryv,vrci,rbv,rmbv,wsv,elev
+
+    ! Local variables !
+    ! !!!!!!!!!!!!!!!!!!
+
+    real(dp) :: ang, bmr, coill, crcl, cran, dcl,dcw, drbi, &
+         hcl, hcw, hrbi, hy, layl, rbh, rbl, rbw, rmbh, rmbl, rmbw, rwl, rww, &
+         sectl, tch, tcl, tcw, wgts, wsa, wt
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    ! Reactor building
+
+    ! Determine basic machine radius (m)
+    ! crr  :  cryostat radius (m)
+    ! pfr  :  radius of largest PF coil (m)
+    ! tfro :  outer radius of TF coil (m)
+    bmr = max(crr,pfr,tfro)
+
+    ! Determine largest transported piece
+    sectl = shro - shri  ! Shield thicknes (m)
+    coill = tfro - tfri  ! TF coil thickness (m)
+    sectl = max(coill, sectl)
+
+    ! Calculate half width of building (m)
+    ! rxcl : clearance around reactor, m
+    ! trcl : transportation clearance between components, m
+    ! row  : clearance to building wall for crane operation, m
+    wrbi = bmr + rxcl + sectl + trcl + row
+
+    ! Calculate length to allow PF or cryostat laydown (m)
+
+    ! Laydown length (m)
+    layl = max(crr,pfr)
+
+    ! Diagnoal length (m)
+    hy = bmr + rxcl + sectl + trcl + layl
+
+    ! Angle between diagnoal length and floor (m)
+    ang = (wrbi-trcl-layl)/hy
+
+    ! Cap angle at 1
+    if (abs(ang) > 1.0D0) then
+      ang = abs(ang)/ang
+    end if
+
+    ! Length to allow laydown (m)
+    drbi = trcl + layl + hy*sin(acos(ang)) + wrbi
+
+    ! Crane height based on maximum lift (m)
+    ! wgt : reactor building crane capacity (kg)
+    !       Calculated if 0 is input
+    ! shmf : fraction of shield mass per TF coil to be moved in
+    !        the maximum shield lift
+    if (wgt > 1.0D0) then
+       wt = wgt
+    else
+       wt = shmf*shm/n_tf
+       wt = max(wt, 1.0D3*pfm, 1.0D3*tfm)
+    end if
+
+    ! Crane height (m)
+    crcl = 9.41D-6*wt + 5.1D0
+
+    ! Building height (m)
+    ! clh1 : clearance from TF coil to cryostat top, m
+    ! clh2 : clearance beneath TF coil to foundation, including basement, m
+    ! stcl : clearance above crane to roof, m
+    ! Additional tfh allows TF coil to be lifted right out
+    hrbi = clh2 + 2.0D0*tfh + clh1 + trcl + crcl + stcl
+
+    ! Internal volume (m3)
+    vrci = rbvfac * 2.0D0*wrbi*drbi*hrbi
+
+    ! External dimensions of reactor building (m)
+    ! rbwt : reactor building wall thickness, m
+    ! rbrt : reactor building roof thickness, m
+    ! fndt : foundation thickness, m
+    rbw = 2.0D0*wrbi + 2.0D0*rbwt
+    rbl = drbi + 2.0D0*rbwt
+    rbh = hrbi + rbrt + fndt
+    rbv = rbvfac * rbw*rbl*rbh
+
+    ! Maintenance building
+    ! The reactor maintenance building includes the hot cells, the
+    ! decontamination chamber, the transfer corridors, and the waste
+    ! treatment building.  The dimensions of these areas are scaled
+    ! from a reference design based on the shield sector size.
+
+    ! Transport corridor size
+    ! hcwt : hot cell wall thickness, m
+    tcw = shro-shri + 4.0D0*trcl
+    tcl = 5.0D0*tcw + 2.0D0*hcwt
+
+    ! Decontamination cell size
+    dcw = 2.0D0*tcw + 1.0D0
+    dcl = 2.0D0*tcw + 1.0D0
+
+    ! Hot cell size
+    ! hccl : clearance around components in hot cell, m
+    hcw = shro-shri + 3.0D0*hccl + 2.0D0
+    hcl = 3.0D0*(shro-shri) + 4.0D0*hccl + tcw
+
+    ! Radioactive waste treatment
+    rww = dcw
+    rwl = hcl - dcl - hcwt
+
+    ! Maintenance building dimensions
+    rmbw = hcw + dcw + 3.0D0*hcwt
+    rmbl = hcl + 2.0D0*hcwt
+
+    ! Height
+    ! wgt2 : hot cell crane capacity (kg)
+    !        Calculated if 0 is input
+    if (wgt2 >  1.0D0) then
+       wgts = wgt2
+    else
+       wgts = shmf*shm/n_tf
+    end if
+    cran = 9.41D-6*wgts + 5.1D0
+    rmbh = 10.0D0 + shh + trcl + cran + stcl + fndt
+    tch = shh + stcl + fndt
+
+    ! Volume
+    rmbv = mbvfac * rmbw*rmbl*rmbh + tcw*tcl*tch
+
+    ! Warm shop and hot cell gallery
+    wsa = (rmbw+7.0D0)*20.0D0 + rmbl*7.0D0
+    wsv = wsvfac * wsa*rmbh
+
+    ! Cryogenic building volume
+    cryv = 55.0D0 * sqrt(helpow)
+
+    ! Other building volumes
+    ! pibv : power injection building volume, m3
+    ! esbldgm3 is forced to be zero if no energy storage is required (lpulse=0)
+    elev = tfcbv + pfbldgm3 + esbldgm3 + pibv
+
+    ! Calculate effective floor area for ac power module
+    efloor = (rbv+rmbv+wsv+triv+elev+conv+cryv+admv+shov)/6.0D0
+    admvol = admv
+    shovol = shov
+    convol = conv
+
+    ! Total volume of nuclear buildings
+    volnucb = ( vrci + rmbv + wsv + triv + cryv )
+
+    ! Output !
+    ! !!!!!!!!!
+    
+    if (iprint == 0) return
+    call oheadr(outfile,'Plant Buildings System')
+    call ovarre(outfile,'Internal volume of reactor building (m3)', '(vrci)', vrci)
+    call ovarre(outfile,'Dist from centre of torus to bldg wall (m)', '(wrbi)', wrbi)
+    call ovarre(outfile,'Effective floor area (m2)','(efloor)',efloor)
+    call ovarre(outfile,'Reactor building volume (m3)','(rbv)',rbv)
+    call ovarre(outfile,'Reactor maintenance building volume (m3)', '(rmbv)', rmbv)
+    call ovarre(outfile,'Warmshop volume (m3)','(wsv)',wsv)
+    call ovarre(outfile,'Tritium building volume (m3)','(triv)',triv)
+    call ovarre(outfile,'Electrical building volume (m3)','(elev)',elev)
+    call ovarre(outfile,'Control building volume (m3)','(conv)',conv)
+    call ovarre(outfile,'Cryogenics building volume (m3)','(cryv)',cryv)
+    call ovarre(outfile,'Administration building volume (m3)','(admv)',admv)
+    call ovarre(outfile,'Shops volume (m3)','(shov)',shov)
+    call ovarre(outfile,'Total volume of nuclear buildings (m3)', '(volnucb)', volnucb)
+
+  end subroutine bldgs
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -75,7 +329,7 @@ contains
     !!
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use buildings_variables, only: i_v_bldgs, efloor, volnucb, bioshld_thk, reactor_wall_thk, &
+    use buildings_variables, only: i_bldgs_v, efloor, volnucb, bioshld_thk, reactor_wall_thk, &
       reactor_roof_thk, reactor_fndtn_thk, reactor_clrnc, transp_clrnc, cryostat_clrnc, & 
       ground_clrnc, crane_clrnc_h, crane_clrnc_v, crane_arm_h, reactor_hall_l, reactor_hall_w, &
       reactor_hall_h, nbi_sys_l, nbi_sys_w, fc_building_l, fc_building_w, & 
@@ -652,10 +906,9 @@ contains
     ! within buildings by assuming an average storey height of 6m:
     efloor = buildings_total_vol / 6.0D0
     
-
     ! Total volume of nuclear buildings
     volnucb = reactor_build_totvol + hotcell_vol_ext
-
+    
 
     ! Output    
     if (iprint == 0) return
@@ -688,7 +941,7 @@ contains
     if ( (iefrf /= 5) .and. (iefrf /= 8) ) then   
       call ovarre(outfile,'HCD (EC/EBW) building footprint (m2)', '(hcd_building_area)', hcd_building_area)
       call ovarre(outfile,'HCD (EC/EBW) building volume (m3)', '(hcd_building_vol)', hcd_building_vol)
-      if (i_v_bldgs == 1) then
+      if (i_bldgs_v == 1) then
         call ovarre(outfile,'   HCD (EC/EBW) building length (m)', '(hcd_building_l)', hcd_building_l)
         call ovarre(outfile,'   HCD (EC/EBW) building width (m)', '(hcd_building_w)', hcd_building_w)
         call ovarre(outfile,'   HCD (EC/EBW) building height (m)', '(hcd_building_h)', hcd_building_h)
@@ -697,7 +950,7 @@ contains
     end if   
     call ovarre(outfile,'Turbine hall footprint (m2)', '(turbine_hall_area)', turbine_hall_area)
     call ovarre(outfile,'Turbine hall volume (m3)', '(turbine_hall_vol)', turbine_hall_vol)
-    if (i_v_bldgs == 1) then
+    if (i_bldgs_v == 1) then
       call ovarre(outfile,'   Turbine hall length (m)', '(turbine_hall_l)', turbine_hall_l)
       call ovarre(outfile,'   Turbine hall width (m)', '(turbine_hall_w)', turbine_hall_w)
       call ovarre(outfile,'   Turbine hall height (m)', '(turbine_hall_h)', turbine_hall_h)
@@ -706,7 +959,7 @@ contains
     call ovarre(outfile,'Effective floor area (m2)', '(efloor)', efloor)
     call ovarre(outfile,'Total volume of nuclear buildings (m3)', '(volnucb)', volnucb)
 
-    if (i_v_bldgs == 1) then
+    if (i_bldgs_v == 1) then
       call oblnkl(outfile)
       ! verbose output of building sizes, areas and volumes
       call ovarre(outfile,'Chemistry labs and facilities footprint (m2)', '(chemlab_area)', chemlab_area)

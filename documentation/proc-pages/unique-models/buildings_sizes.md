@@ -1,6 +1,9 @@
 # Power Plant Buildings Sizes
 
 <p style='text-align: justify;'>
+***Note:*** the following documentation applies only to the STEP building estimates, <em>subroutine bldgs_sizes</em>, and does not attempt to explain any prior work. </p>
+
+<p style='text-align: justify;'>
 The routine documented here estimates the sizes (footprints and volumes) of buildings within a fusion power plant. Some estimates are scaled with parameters of the fusion plant, some are based on engineering/specialist assumptions, some are derived from footprints/volumes based on assessment of other power plants and/or similar facilities. </p>
 
 
