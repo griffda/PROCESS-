@@ -44,10 +44,6 @@ fpnetel = 1.0000        *f-value for net electric power
 boundl(25) = 0.98
 boundu(25) = 1.0
 
-ixc = 29                *bore
-bore = 17.607           *Central solenoid inboard radius (m)
-boundl(29) = 5.0
-
 ixc = 50                * itv_fiooic
 boundu(50) = 0.9
 boundl(50) = 0.001
@@ -181,7 +177,7 @@ t_turn_tf = 0.056       *Dimension conductor area including steel and insulation
 thicndut  = 0.002       *Conduit insulation thickness (m)
 thwcndut  = 0.0012      *TF coil conduit case thickness (m)
 vftf      = 0.3         *Coolant fraction of TF coil leg (i_tf_sup=0)
-
+thkcas    = 0.06        * Case thickness
 *-----------------Pfcoil Variables-----------------*
 
 *PF coil vertical positioning adjuster
@@ -195,7 +191,7 @@ zref(7)  = 1.0
 zref(8)  = 1.0
 
 *------------------Cost Variables------------------*
-cost_model = 0
+cost_model = 0          *0: 1990 cost module, the 2015 does not work yet for stellarators
 abktflnc = 15.0         *Allowable first wall/blanket neutron (MW-yr/m2)
 adivflnc = 25.0         *Allowable divertor heat fluence (MW-yr/m2)
 cfactr   = 0.75         *Total plant capacity fraction

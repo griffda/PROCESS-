@@ -302,8 +302,7 @@ contains
     f_B = bt/config%bt_ref            !  B-field scaling factor
  
 
-    !print '(A8,f10.1,A8,f10.1,A8,f10.1,A8,f10.1,A8,f10.1,A8,f10.1)',"rmajor",rmajor,"aspect",&
-    !        aspect,"bt",bt,"te",te,"dene",dene*1e-20,"hfact",hfact
+
   end subroutine stnewconfig
 
   subroutine stgeom
@@ -415,7 +414,7 @@ contains
     required_radial_space = (tfcth/2.0D0 + gapds + d_vv_in + shldith + blnkith + fwith + scrapli)
 
     ! derivative_min_LCFS_coils_dist  for how strong the stellarator shape changes wrt to aspect ratio
-    available_radial_space = f_r*(config%derivative_min_LCFS_coils_dist*config%rminor_ref*(1/f_aspect-1) + &
+    available_radial_space = f_r*(config%derivative_min_LCFS_coils_dist*(-rminor+config%rminor_ref) + &
          config%min_plasma_coil_distance)
 
     !  Radius to inner edge of inboard shield
@@ -571,8 +570,6 @@ contains
 
     ne0_max_ECRH = min(ne0,ne0_max_ECRH)
     bt_ecrh = min(bt,bt_ecrh)
-
-    !print *, "ECRH density limit", dnelimt, " Current density:",dene*1.0d-20
     
     ! Check if the ECRH Calculation is in the icc vector.
     ! If yes: Calculate heating power at ECRH operatable point. Otherwise don't calculate it
@@ -707,7 +704,6 @@ contains
 
     !  Set beta as a consequence:
     !  This replaces constraint equation 1 as it is just an equality.
-
     beta = (betaft + betanb + 2.0D3*rmu0*echarge * (dene*ten + dnitot*tin)/btot**2)
 
 
@@ -732,8 +728,6 @@ contains
     pdt = pdtpv * vol
     pdhe3 = pdhe3pv * vol
     pdd = pddpv * vol
-
-    
 
     !  Calculate neutral beam slowing down effects
     !  If ignited, then ignore beam fusion effects
@@ -805,13 +799,11 @@ contains
 
     pradmw = pradmw + psolradmw
     pradpv = pradmw / vol ! this line OVERWRITES the original definition of pradpv
-    
 
     !  The following line is unphysical, but prevents -ve sqrt argument
     !  Should be obsolete if constraint eqn 17 is turned on (but beware -
     !  this may not be quite correct for stellarators)
     pdivt = max(0.001D0, pdivt)
-
 
     !  Power transported to the first wall by escaped alpha particles
 
@@ -854,8 +846,8 @@ contains
     call phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
          taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
 
-    !  Calculate beta limit. Does nothing atm so commented out
-    !call stblim(betalim)
+    ! Calculate beta limit. Does nothing atm so commented out
+    ! call stblim(betalim)
 
     ! Calculate the neoclassical sanity check with PROCESS parameters
     call calc_neoclassics
@@ -977,6 +969,7 @@ contains
          neo_at_rhocore = init_neoclassics(r_eff=0.6d0,eps_eff=config%epseff,iota = iotabar)!, &
                            !D11_star_mono_input = config%D11_star_mono_input, nu_star_mono_input = config%nu_star_mono_input, &
                            !D13_star_mono_input = config%D11_star_mono_input)
+         ! The commented out lines above are useful once we can pass monoenergetic D11 components to PROCESS. This is a placeholder for now.
          
          
          
@@ -1033,7 +1026,7 @@ contains
          !  a crude approximation (consider this to be a placeholder)
          !  Turkin (2011): https://doi.org/10.1063/1.3553025
          !
-         !  NOT used.
+         !  NOT used at the moment.
          ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
          use physics_variables, only: powerht,alphan,rminor,te0,ne0
          use impurity_radiation_module, only: coreradius
@@ -1288,7 +1281,6 @@ contains
     !  May be recalculated below if ipowerflow=1 and secondary_cycle>0,
     !  and also by the availability model
 
-    
     fwlife = min(abktflnc/wallmw, tlife)
 
     !  First wall inboard, outboard areas (assume 50% of total each)
@@ -2083,9 +2075,6 @@ contains
          exit
       end if
    end do
-
-
-
    
    ! Reverse it and do it again because anything more efficiently isn't suitable with the current implementation
    ! This is bad practice but seems to be necessary as of now:
@@ -2378,7 +2367,7 @@ contains
     !
     !  Values based on regression analysis by Greifswald, March 2014
     M_struc = 1.3483D0 * (1000.0D0 * estotftgj)**0.7821D0
-    aintmass = 1000.0D0*M_struc  !  kg
+    msupstr = 1000.0D0*M_struc  !  kg
 
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2388,14 +2377,15 @@ contains
     ! The coil width is subtracted from that:
     !total_coil_width = b + 2* d_ic + 2* case_thickness_constant
     !total_coil_thickness = h + 2* d_ic + 2* case_thickness_constant
-    !
-    intercoil_surface = config%coilsurface *f_r**2 &
+
+    ! The following line is correct AS LONG AS we do not scale the coil sizes
+    intercoil_surface = config%coilsurface * f_r**2 &
                          - tftort * config%coillength* f_r * f_N 
 
 
     ! This 0.18 m is an effective thickness which is scaled with empirial 1.5 law. 5.6 T is reference point of Helias
     ! The thickness 0.18m was obtained as a measured value from Schauer, F. and Bykov, V. design of Helias 5-B. (Nucl Fus. 2013)
-    !aintmass = 0.18D0 *f_B**2 * intercoil_surface * denstl 
+    aintmass = 0.18D0 *f_B**2 * intercoil_surface * denstl 
     
     clgsmass = 0.2D0*aintmass    ! Very simple approximation for the gravity support.
                                  ! This fits for the Helias 5b reactor design point ( F. and Bykov, V. design of Helias 5-B. (nucl Fus. 2013)).
@@ -2409,10 +2399,10 @@ contains
     if (iprint == 0) return
 
     call oheadr(outfile,'Support Structure')
-    !call ovarre(outfile,'Intercoil support structure mass (from intercoil calculation) (kg)', &
-    !     '(aintmass)',aintmass)
-    call ovarre(outfile,'Intercoil support structure mass (from scaling) (kg)', &
+    call ovarre(outfile,'Intercoil support structure mass (from intercoil calculation) (kg)', &
          '(aintmass)',aintmass)
+    call ovarre(outfile,'Intercoil support structure mass (scaling, for comparison) (kg)', &
+         '(empiricalmass)',msupstr)
     call ovarre(outfile,'Gravity support structure mass (kg)', &
          '(clgsmass)',clgsmass)
     call ovarre(outfile,'Mass of cooled components (kg)', &
@@ -2730,9 +2720,9 @@ contains
     ! case_thickness_constant = thkcas !0.2D0 ! !? Leave this constant for now... Check this!! Should be scaled with forces I think.
     !  For now assumed to be constant in a bolted plate model.
     ! 
-    casthi = thkcas !case_thickness_constant/2.0D0 ! [m] coil case thickness outboard distance (radial)
+    casthi = thkcas ! [m] coil case thickness outboard distance (radial)
     !thkcas = case_thickness_constant/2.0D0 ! [m] coil case thickness inboard distance  (radial).
-    casths = thkcas !case_thickness_constant/2.0D0 ! [m] coil case thickness toroidal distance (toroidal)
+    casths = thkcas ! [m] coil case thickness toroidal distance (toroidal)
  
    ! End of casing calculations
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2787,8 +2777,8 @@ contains
   
      ! [m] Minimal distance in toroidal direction between two stellarator coils (from mid to mid)
      ! Consistency with coil width is checked in constraint equation 82
-     toroidalgap = config%dmin * (rmajor-rminor)/(config%rmajor_ref-config%rminor_ref)
-
+     toroidalgap = config%dmin * (r_coil_major-r_coil_minor)/(config%coil_rmajor-config%coil_rminor)
+     ! Left-Over coil gap between two coils (m)
      coilcoilgap = toroidalgap - tftort
   
      !  Variables for ALL coils.
@@ -2805,7 +2795,7 @@ contains
                    * (ritfc/n_tf)**2 * 1.0D-9             ! [GJ] Total magnetic energy
   
      !  Coil dimensions
-     hmax = 0.5D0 * config%maximal_coil_height *f_r   ! [m] maximum half-height of coil
+     hmax = 0.5D0 * config%maximal_coil_height *(r_coil_minor/config%coil_rminor)   ! [m] maximum half-height of coil
      r_tf_inleg_mid =  r_coil_major-r_coil_minor          ! This is not very well defined for a stellarator.
                                                           ! Though, this is taken as an average value.
      tf_total_h_width = r_coil_minor                      !? not really sure what this is supposed to be. Estimated as
@@ -2815,10 +2805,10 @@ contains
      tfborev = 2.0D0*hmax                   ! [m] estimated vertical coil bore
      
      
-     tfleng = config%coillength*f_r/n_tf                     ! [m] estimated average length of a coil
+     tfleng = config%coillength*(r_coil_minor/config%coil_rminor)/n_tf                     ! [m] estimated average length of a coil
  
      ! [m^2] Total surface area of toroidal shells covering coils
-     tfcryoarea = config%coilsurface * f_r**2 *1.1D0 !1.1 to scale it out a bit. Should be coupled to winding pack maybe.
+     tfcryoarea = config%coilsurface *(r_coil_minor/config%coil_rminor)**2**2 *1.1D0 !1.1 to scale it out a bit. Should be coupled to winding pack maybe.
  
      ! Minimal bending radius:
      min_bending_radius = config%min_bend_radius * f_r * 1/(1-dr_tf_wp/(2*r_coil_minor))
@@ -2884,6 +2874,7 @@ contains
      vd = u_max_protect_V(estotftgj/n_tf*1.0D9,tdmptf,cpttf)
 
      ! comparison
+     ! the new quench protection routine, see #1047
      jwdgpro = j_max_protect_Am2(tdmptf,0.0d0,fcutfsu,1-vftf,tftmp,acstf,t_turn_tf**2)
 
      !print *, "Jmax, comparison: ", jwdgpro, "  ", jwdgpro2,"  ",jwptf/jwdgpro, "   , tdmptf: ",tdmptf, " fcutfsu: ",fcutfsu
@@ -2955,7 +2946,7 @@ contains
   
         logical :: validity
   
-        strain =   -0.005D0 ! for now 0.0D0 
+        strain =   -0.005D0 ! for now a small value
         fhe = vftf     ! this is helium fraction in the superconductor (set it to the fixed global variable here)
   
         fcu = fcutfsu ! fcutfsu is a global variable. Is the copper fraction
@@ -3076,6 +3067,7 @@ contains
       !! temp : input real : Operating He temperature (K)
       !! j_max_protect_Am2 : output real :  Winding pack current density from temperature
       !! rise protection (A/m2)
+      !! issue #1047
       !!
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       use maths_library, only: find_y_nonuniform_x
@@ -3382,9 +3374,9 @@ contains
   
 
       call ovarre(outfile,'Number of modular coils','(n_tf)',n_tf)
-      call ovarre(outfile,'Av. coil major radius','(coil_r)',config%coil_rmajor*f_r)
-      call ovarre(outfile,'Av. coil minor radius','(coil_a)',config%coil_rminor*f_r)
-      call ovarre(outfile,'Av. coil aspect ratio','(coil_aspect)',config%coil_rmajor/config%coil_rminor)
+      call ovarre(outfile,'Av. coil major radius','(coil_r)',r_coil_major)
+      call ovarre(outfile,'Av. coil minor radius','(coil_a)',r_coil_minor)
+      call ovarre(outfile,'Av. coil aspect ratio','(coil_aspect)',r_coil_major/r_coil_minor)
 
       call ovarre(outfile,'Cross-sectional area per coil (m2)','(tfarea/n_tf)', &
                   tfareain/n_tf)

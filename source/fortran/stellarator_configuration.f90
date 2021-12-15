@@ -466,6 +466,10 @@ module stellarator_configuration
           
           case(6)
              ! Init from json
+             ! This requires a file called stella_config.json in the working directory.
+             ! It can either be prepared manually or it can be produced automatically based on a VMEC netcdf
+             ! file and a coils file
+             ! by the pre-sPROCESS Code, https://gitlab.mpcdf.mpg.de/jtl/sprocess/ by jorrit.lion@ipp.mpg.de
              output_config = stella_config_json()
           case default
              ! Return some error here. The index is not implemented yet.
