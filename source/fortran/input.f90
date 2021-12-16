@@ -336,7 +336,7 @@ contains
       i_tf_plane_stress, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
       i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti, &
       i_cp_joints, n_tf_turn, f_t_turn_tf, t_turn_tf_max, t_cable_tf, &
-      sig_tf_wp_max!, hts_tape_width, hts_tape_thickness
+      sig_tf_wp_max
 
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
@@ -1970,12 +1970,6 @@ contains
              write(outfile,*) '**********'
              write(outfile,*) ' '
           end if
-      !  case('hts_tape_width')
-      !     call parse_real_variable('hts_tape_width', hts_tape_width, 1.0D-3, 10.0D-3, &
-      !          'Width of HTS tape (m)')
-      !  case('hts_tape_thickness')
-      !     call parse_real_variable('hts_tape_thickness', hts_tape_thickness, 0.5D-6, 5.0D-6, &
-      !          'Thickness of HTS tape layer (m)')
        case ('itfmod')
           write(outfile,*) ' '
           write(outfile,*) '**********'
