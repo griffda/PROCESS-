@@ -48,6 +48,7 @@
         "NWL_max_IB_PPCS": 1.99,
         "NWL_max_OB_PPCS": 2.41,
         "N_Av": 6.02e+23,
+        "N_cycle": 0.0,
         "Npar_min": 0.01,
         "PA_T": 3.0,
         "PCEXNORMO": null,
@@ -1461,8 +1462,8 @@
         "coolp": 15500000.0,
         "coolwh": 1.0,
         "copper": null,
-        "copperA_m2": null,
-        "copper_area": null,
+        "copperA_m2": 0.0,
+        "copper_area": 0.0,
         "copper_rrr": 100.0,
         "copper_thick": 0.0001,
         "coppera_m2_max": 100000000.0,
@@ -1483,7 +1484,7 @@
         "cp1": 0.1,
         "cp2": 0.2,
         "cp5": 0.5,
-        "cp_he": "5.195.0D3",
+        "cp_he": 5190.0,
         "cpfact": 0.0,
         "cph2o": 4180.0,
         "cplife": 0.0,
@@ -1497,7 +1498,7 @@
         "cpttf": 70000.0,
         "cpttf_max": 90000.0,
         "crctcore": 0.0,
-        "croco_area": null,
+        "croco_area": 0.0,
         "croco_id": 0.0,
         "croco_od": 0.0,
         "croco_quench_temperature": 0.0,
@@ -2139,7 +2140,7 @@
         "h_ob": 0.0,
         "harnum": 1.0,
         "hastelloy": null,
-        "hastelloy_area": null,
+        "hastelloy_area": 0.0,
         "hastelloy_thickness": 5e-05,
         "hblnkt": 0.0,
         "hccl": 5.0,
@@ -2226,8 +2227,6 @@
         "htpmwe_fw_blkt": 0.0,
         "htpmwe_shld": 0.0,
         "htpsecmw": 0.0,
-        "hts_tape_thickness": 1e-06,
-        "hts_tape_width": 0.004,
         "hvv": 0.0,
         "hydrogenicpowerlost": null,
         "i": null,
@@ -3368,7 +3367,7 @@
         "phi_tfc_ob": 0.0,
         "phiint": 0.0,
         "photon_wall": 0.0,
-        "pi": "3.14159265358979e0_rkind",
+        "pi": "3.141592653589793_wp_",
         "pibv": 20000.0,
         "piepv": 0.0,
         "pifecr": 10.0,
@@ -3872,7 +3871,7 @@
         "rdewex": 0.0,
         "real_4_": "selected_real_kind(6, 36)",
         "real_8_": "selected_real_kind(12, 100)",
-        "rebco_area": null,
+        "rebco_area": 0.0,
         "rebco_thickness": 1e-06,
         "redun_vac": 0.0,
         "redun_vacp": 25.0,
@@ -4059,6 +4058,7 @@
             0.0,
             0.0
         ],
+        "residual_sig_hoop": 240000000.0,
         "rfxf": [
             0.0,
             0.0,
@@ -5250,7 +5250,7 @@
         "skind": 512.0,
         "sol_broadening": 0.0,
         "solder": null,
-        "solder_area": null,
+        "solder_area": 0.0,
         "sombdr": 2.7,
         "somtdr": 2.7,
         "sp_": 4.0,
@@ -5264,7 +5264,7 @@
         "srcktpm": 0.0,
         "ssq0": 0.0,
         "ssync": 0.6,
-        "stack_thickness": null,
+        "stack_thickness": 0.0,
         "stcl": 3.0,
         "step91_per": 0.3,
         "step92_per": 0.325,
@@ -7411,12 +7411,16 @@
         "t_conductor": 0.0,
         "t_conductor_radial": 0.0,
         "t_conductor_toroidal": 0.0,
+        "t_crack_radial": 0.006,
+        "t_crack_vertical": 0.002,
         "t_crit_nbti": 9.04,
         "t_in_bb": 573.13,
         "t_lat_case_av": 0.0,
         "t_operation": 0.0,
         "t_out_bb": 773.13,
         "t_plant": 40.0,
+        "t_structural_radial": 0.07,
+        "t_structural_vertical": 0.022,
         "t_turn_radial": 0.0,
         "t_turn_tf": 0.0,
         "t_turn_tf_is_input": ".false.",
@@ -7425,9 +7429,9 @@
         "t_wp_toroidal": 0.0,
         "t_wp_toroidal_av": 0.0,
         "tan_theta_coil": 0.0,
-        "tape_thickness": null,
-        "tape_width": 0.0,
-        "tapes": null,
+        "tape_thickness": 6.5e-05,
+        "tape_width": 0.004,
+        "tapes": 0.0,
         "target_spread": 0.003,
         "targetangle": 30.0,
         "tau2": 0.0,
@@ -8711,6 +8715,7 @@
         "NWL_max_IB_PPCS": "Maximum IB wall load [MW/m^2]",
         "NWL_max_OB_PPCS": "Maximum OB wall load [MW/m^2]",
         "N_Av": "[at/mol] Avogadro number",
+        "N_cycle": "Allowable number of cycles for CS",
         "Npar_min": "",
         "PA_T": "[g/mol] Tritium atomic weight",
         "PCEXNORMO": "",
@@ -9724,8 +9729,6 @@
         "htpmwe_fw_blkt": "",
         "htpmwe_shld": "",
         "htpsecmw": "Waste power lost from primary coolant pumps (MW)",
-        "hts_tape_thickness": "Thickness of HTS tape layer [m] (if i_tf_sc_mat = 9)",
-        "hts_tape_width": "Width of HTS tape [m] (if i_tf_sc_mat = 9)",
         "hvv": "Vacuum vessel internal half-height (m)",
         "hydrogenicpowerlost": "Power lost due to hydrogenic radiation [W]",
         "i": "",
@@ -10476,6 +10479,7 @@
         "required_radial_space": "Required space between coil and plasma for blanket shield wall etc (m)",
         "res_time": "plasma current resistive diffusion time (s)",
         "resdl": "",
+        "residual_sig_hoop": "residual hoop stress in strucutal material (Pa) ",
         "rfxf": "",
         "rho_ecrh": "normalised minor radius at which electron cyclotron current drive is maximum",
         "rho_star": "",
@@ -10679,12 +10683,16 @@
         "t_conductor": "Conductor (cable + steel conduit) area averaged dimension [m]",
         "t_conductor_radial": "Conductor area radial and toroidal dimension (integer turn only) [m]",
         "t_conductor_toroidal": "Conductor area radial and toroidal dimension (integer turn only) [m]",
+        "t_crack_radial": "Initial depth of crack in thickness of conduit (m)",
+        "t_crack_vertical": "Inital vertical crack size (m)",
         "t_crit_nbti": "critical temperature of GL_nbti",
         "t_in_bb": "temperature in FW and blanket coolant at blanket entrance (`primary_pumping=3`) [K]",
         "t_lat_case_av": "Average lateral casing thickness [m]",
         "t_operation": "Operational time (yrs)",
         "t_out_bb": "temperature in FW and blanket coolant at blanket exit (`primary_pumping=3`) [K]",
         "t_plant": "Plant lifetime [FPY]",
+        "t_structural_radial": "Thickness of CS conductor conduit (m)",
+        "t_structural_vertical": "Vertical thickness of CS conductor conduit (m)",
         "t_turn_radial": "Turn radial and toroidal dimension (integer turn only) [m]",
         "t_turn_tf": "TF coil turn edge length including turn insulation [m]\n   If the turn is not a square (i_tf_turns_integer = 1) a squared turn of \n   equivelent size is use to calculated this quantity\n   If the t_turn_tf is non zero, cpttf is calculated",
         "t_turn_tf_is_input": "Boolean switch to activated when the user set the TF coil turn dimensions\n Not an input",
@@ -10693,7 +10701,7 @@
         "t_wp_toroidal": "Minimal toroidal thickness of of winding pack [m]",
         "t_wp_toroidal_av": "Averaged toroidal thickness of of winding pack [m]",
         "tan_theta_coil": "Tan half toroidal angular extent of a single TF coil inboard leg",
-        "tape_thickness": "",
+        "tape_thickness": "thickness of tape, inc. all layers (hts, copper, substrate, etc.) (m)",
         "tape_width": "Mean width of tape (m)",
         "tapes": "",
         "target_spread": "increase in SOL power fall-off length due to spreading, mapped to OMP [m]",
@@ -13955,6 +13963,10 @@
             "lb": 0.0,
             "ub": 0.1
         },
+        "residual_sig_hoop": {
+            "lb": 0.0,
+            "ub": 1000000000.0
+        },
         "rho_ecrh": {
             "lb": 0.0,
             "ub": 1.0
@@ -14215,6 +14227,14 @@
             "lb": 0.0,
             "ub": 0.1
         },
+        "t_crack_radial": {
+            "lb": 0.001,
+            "ub": 1.0
+        },
+        "t_crack_vertical": {
+            "lb": 0.001,
+            "ub": 1.0
+        },
         "t_crit_nbti": {
             "lb": 0.0,
             "ub": 15.0
@@ -14227,6 +14247,14 @@
             "lb": 200.0,
             "ub": 1000.0
         },
+        "t_structural_radial": {
+            "lb": 0.001,
+            "ub": 1.0
+        },
+        "t_structural_vertical": {
+            "lb": 0.001,
+            "ub": 1.0
+        },
         "t_turn_tf": {
             "lb": 0.0,
             "ub": 0.1
@@ -14234,6 +14262,10 @@
         "t_turn_tf_max": {
             "lb": 0.0,
             "ub": 1.0
+        },
+        "tape_thickness": {
+            "lb": 0.0,
+            "ub": 0.1
         },
         "tape_width": {
             "lb": 0.0,
@@ -16748,6 +16780,15 @@
         "vdalw": "52"
     },
     "DICT_MODULE": {
+        "CS_fatigue": [],
+        "CS_fatigue_variables": [
+            "residual_sig_hoop",
+            "N_cycle",
+            "t_crack_radial",
+            "t_crack_vertical",
+            "t_structural_radial",
+            "t_structural_vertical"
+        ],
         "abs_cd": [
             "cdroutine",
             "absroutine",
@@ -19108,21 +19149,21 @@
             "copper_thick",
             "hastelloy_thickness",
             "tape_width",
+            "tape_thickness",
             "croco_od",
             "croco_id",
             "croco_thick",
             "copper_rrr",
+            "copperA_m2",
             "coppera_m2_max",
             "f_coppera_m2",
-            "tape_thickness",
             "stack_thickness",
             "tapes",
             "rebco_area",
             "copper_area",
             "hastelloy_area",
             "solder_area",
-            "croco_area",
-            "copperA_m2"
+            "croco_area"
         ],
         "reinke_module": [
             "vcritx"
@@ -19268,7 +19309,6 @@
             "gsmass"
         ],
         "superconductors": [],
-        "tfcoil_module": [],
         "tfcoil_variables": [
             "acasetf",
             "acasetfo",
@@ -19316,8 +19356,6 @@
             "max_force_density",
             "fcutfsu",
             "fhts",
-            "hts_tape_width",
-            "hts_tape_thickness",
             "insstrain",
             "i_tf_plane_stress",
             "i_tf_tresca",
@@ -20397,6 +20435,7 @@
         "redun_vacp": "real_variable",
         "reinke_mode": "int_variable",
         "relerr_sol": "real_variable",
+        "residual_sig_hoop": "real_variable",
         "rho_ecrh": "real_variable",
         "rho_tf_joints": "real_variable",
         "rhopedn": "real_variable",
@@ -20470,11 +20509,16 @@
         "sweep": "real_array",
         "sweep_2": "real_array",
         "t_cable_tf": "real_variable",
+        "t_crack_radial": "real_variable",
+        "t_crack_vertical": "real_variable",
         "t_crit_nbti": "real_variable",
         "t_in_bb": "real_variable",
         "t_out_bb": "real_variable",
+        "t_structural_radial": "real_variable",
+        "t_structural_vertical": "real_variable",
         "t_turn_tf": "real_variable",
         "t_turn_tf_max": "real_variable",
+        "tape_thickness": "real_variable",
         "tape_width": "real_variable",
         "target_spread": "real_variable",
         "targetangle": "real_variable",
