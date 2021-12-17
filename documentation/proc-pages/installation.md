@@ -23,13 +23,14 @@ echo $PYTHONPATH
 
 This modification is not required to run PROCESS now, and it may result in Ford failing during the build process otherwise.
 
-Firstly, open the terminal and install cmake, gfortran and pip, lcov:
+Firstly, open the terminal and install cmake, gfortran, pip etc.:
 ```bash
 sudo apt update
 sudo apt install cmake
 sudo apt install gfortran
 sudo apt install python3-pip
 sudo apt install lcov
+sudo apt install poppler-utils
 ```
 
 To clone the PROCESS repository from Gitlab you will need to use an SSH key. A guide on how to find if you have an existing SSH key pair or to generate a new SSH key pair can be found on Gitlab [here](https://docs.gitlab.com/ee/ssh/).
