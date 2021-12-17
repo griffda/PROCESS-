@@ -13003,14 +13003,6 @@
             "lb": 0.0,
             "ub": 1000.0
         },
-        "hts_tape_thickness": {
-            "lb": 5e-07,
-            "ub": 5e-06
-        },
-        "hts_tape_width": {
-            "lb": 0.001,
-            "ub": 0.01
-        },
         "i_cp_joints": {
             "lb": 0,
             "ub": 1
@@ -20168,8 +20160,6 @@
         "htpmw_ife": "real_variable",
         "htpmw_min": "real_variable",
         "htpmw_shld": "real_variable",
-        "hts_tape_thickness": "real_variable",
-        "hts_tape_width": "real_variable",
         "i_cp_joints": "int_variable",
         "i_cp_lifetime": "int_variable",
         "i_cs_stress": "int_variable",

@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1017-ge661cc7f
+   Tag No. : v2.1-1022-g9e2decfc
     Branch : 1494-rebco-current-density-incorrectly-calculated
-   Git log : Corrected\ hts-rebco\ variable\ use,\ inputs,\ inits
- Date/time : 16 Dec 2021 14:27:23 +00:00(hh:mm) UTC
+   Git log : Merge\ branch\ |develop|\ into\ 1494-rebco-current-density-incorrectly-calculated
+ Date/time : 17 Dec 2021 16:28:51 +00:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-239/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-239/test_scenario_vacuum_model_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-254/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-254/test_scenario_vacuum_model_0/IN.DAT
  Run title : demo 1 vacuum model test
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
