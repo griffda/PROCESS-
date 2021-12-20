@@ -328,6 +328,7 @@ tmargmin = 1.500 * Minimum allowable temperature margin (cs and tf coils) (k)
 vdalw    = 10.00 * Max voltage across tf coil during quench (kv)
 vftf     = 0.300 * Coolant fraction of tfc 'cable' (i_tf_sup=1); or of tfc leg (i_tf_sup=0)
 i_tf_sc_mat = 5
+i_tf_plane_stress = 2 * Switch for the TF coil stress model (2: Axisymmetric extended plane strain)
 i_tf_bucking = 3    * TF Bucking strategy (3 : full bucked and wedged, CS standing on TF) 
 *strncon = -0.0066
 
