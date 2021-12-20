@@ -36,6 +36,7 @@ MACRO(PREPROCESS)
         ADD_CUSTOM_COMMAND (
             OUTPUT ${output}
             COMMAND gfortran -E -cpp -DINSTALLDIR="'${CMAKE_SOURCE_DIR}'" -DCOMMSG="'${COMMIT_MSG}'" -Dbranch_name="'${GIT_BRANCH}'" -Dtagno="'${GIT_TAG}'" -Duntracked=${GIT_DIFF} -Ddp=8 ${source} -o ${output}
+            DEPENDS ${source} # rerun preprocessing when the source file changes
         )
     ENDFOREACH()
     

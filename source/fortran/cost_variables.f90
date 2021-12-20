@@ -333,6 +333,9 @@ module cost_variables
   real(dp) :: step_cconfix 
   !! fixed cost of superconducting cable ($/m) (if cost model = 2) 
 
+  real(dp) :: step_cconshtf
+  !! cost of TF coil steel conduit/sheath ($/m) (if cost model = 2) 
+
   real(dp) :: step_cconshpf
   !! cost of PF coil steel conduit/sheath ($/m) (if cost model = 2) 
 
@@ -383,6 +386,15 @@ module cost_variables
 
   real(dp) :: step_ucfnc
   !! outer PF coil fence support cost ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucint
+  !! superconductor intercoil structure cost ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucgss
+  !! cost of reactor gravity support structure ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucwindtf
+  !! cost of TF coil superconductor windings ($/m) (if cost model = 2)
 
   real(dp) :: step_ucwindpf 
   !! cost of PF coil superconductor windings ($/m) (if cost model = 2)
@@ -776,24 +788,28 @@ module cost_variables
       409.009163D6, 156.641807D6, 143.192283D6, 59.663451D6, 26.550236D6, 181.496219D6, &
       93.074984D6, 77.562487D6/)
     step_con = 1.5D-1
-    step_cconfix = 217.0D0  
+    step_cconfix = 233.0D0  
+    step_cconshtf = 91.0D0
     step_cconshpf = 91.0D0
     step_currency = "2017 US$"
     step_ucblbe = 8400.4D0
     step_ucblbreed = 802.2D0 
     step_ucblss = 488.3D0 
     step_ucblvd = 200.0D0 
-    step_uccase = 0.0D0
+    step_uccase = 91.0D0
     step_uccu = 82.0D0
     step_ucfwa = 774.05D0
     step_ucfws = 5115.7D0 
     step_ucfwps = 0.0D0
-    step_ucsc = &
-      (/ 600.0D0, 600.0D0, 443.0D0, 600.0D0, 600.0D0, 600.0D0, 300.0D0, 1200.0D0, &
-      1200.0D0 /)
+    step_ucsc = (/ 1230.0D0, 1230.0D0, 443.0D0, 1230.0D0, 1230.0D0, 2567.0D0, &
+      443.0D0, 2567.0D0, 2567.0D0/)
     step_ucshw = 269.638D0
     step_ucshwc = 930.251D0
+    !step_ucsc = (/ 600.0D0, 600.0D0, 443.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0,1200.0D0 /)
     step_ucfnc = 104.3D0 
+    step_ucint = 91.0D0
+    step_ucgss = 91.0D0
+    step_ucwindtf = 1520.0D0
     step_ucoam = 74.4D0
     step_ucwst = 7.88D0
     step_ucwindpf = 465.0D0

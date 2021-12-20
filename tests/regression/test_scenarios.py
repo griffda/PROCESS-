@@ -12,6 +12,7 @@ from pytest import approx
 import logging
 import shutil
 from pathlib import Path
+import math
 
 from scenario import Scenario
 
@@ -75,28 +76,7 @@ def scenario(scenarios_run, request):
     scenario = request.param
     return scenario
 
-
-@pytest.fixture()
-def keep_mfile(request, scenario):
-    """Fixture to decide whether a scenarios MFile should
-    be kept or not. A list can be defined in --keep:
-    e.g. --keep=starfire,kallenbach
-
-    :param request: request fixture to access --keep flag
-    :type request: Fixture
-    :param scenario: scenario fixture for easy access to the scenario name
-    :type scenario: Fixture
-    """
-    keep_assets = request.config.getoption("--keep")
-    keep_assets_list = keep_assets.split(',') if keep_assets else []
-
-    if keep_assets_list and scenario.name in keep_assets_list:
-        return True
-
-    return False
-
-
-def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt, keep_mfile):
+def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
     """Test a scenario in a temporary directory.
 
     A scenario is an input file and its expected outputs from Process. This
@@ -169,14 +149,19 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt, keep_mf
         # Try/except used to collect all diffs outside tolerance, rather than
         # failing entire test on first AssertionError
         try:
-            # Assert with a relative tolerance
-            assert exp == approx(obs, rel=reg_tolerance)
-            # Within tolerance
-            # If different but within tolerance, log
-            # If the same, ignore
-            if exp != obs:
-                logger.info(f"Diff within tolerance: {var_name} was {exp}, now "
-                    f"{obs}, ({chg}%)")
+            if math.isnan(exp) and math.isnan(obs):
+                # expected and observed value is NaN: warn, but don't fail
+                logger.warning(f"{var_name} is NaN")
+            else:
+                # Assert with a relative tolerance
+                assert exp == approx(obs, rel=reg_tolerance)
+                
+                # Within tolerance
+                # If different but within tolerance, log
+                # If the same, ignore
+                if exp != obs:
+                    logger.info(f"Diff within tolerance: {var_name} was {exp}, now "
+                        f"{obs}, ({chg}%)")
         except AssertionError:
             # Outside tolerance: record diff item
             logger.exception(f"Diff outside tolerance: {var_name} was {exp}, "
@@ -188,11 +173,6 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt, keep_mf
 
     # Check no diffs outside the tolerance have been found
     assert len(scenario.get_diff_items()) == 0
-
-    # Check if mfile should be kept (copied back)
-    if keep_mfile:
-        scenario.keep_mfile()
-    
             
     # TODO Assert no unique vars found
 
