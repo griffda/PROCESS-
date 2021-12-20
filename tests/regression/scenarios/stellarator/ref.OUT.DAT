@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-901-ga12ba209
-    Branch : 1343-update-lts-hts-cost-model-2
-   Git log : Merge\ branch\ |develop|\ into\ 1343-update-lts-hts-cost-model-2
- Date/time : 18 Nov 2021 17:03:50 +00:00(hh:mm) UTC
+   Tag No. : v2.1-1028-g82ed4ff2
+    Branch : 1367-add-site-preparation-costs-into-model-2
+   Git log : Merge\ branch\ |develop|\ into\ 1367-add-site-preparation-costs-into-model-2
+ Date/time : 20 Dec 2021 15:14:22 +00:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-205/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-205/test_scenario_stellarator_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-259/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-259/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  

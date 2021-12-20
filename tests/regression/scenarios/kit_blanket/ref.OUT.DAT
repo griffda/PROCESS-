@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-901-ga12ba209
-    Branch : 1343-update-lts-hts-cost-model-2
-   Git log : Merge\ branch\ |develop|\ into\ 1343-update-lts-hts-cost-model-2
- Date/time : 18 Nov 2021 17:03:19 +00:00(hh:mm) UTC
+   Tag No. : v2.1-1028-g82ed4ff2
+    Branch : 1367-add-site-preparation-costs-into-model-2
+   Git log : Merge\ branch\ |develop|\ into\ 1367-add-site-preparation-costs-into-model-2
+ Date/time : 20 Dec 2021 15:13:35 +00:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-205/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-205/test_scenario_kit_blanket_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-259/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-259/test_scenario_kit_blanket_0/IN.DAT
  Run title : Michael's test file
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -853,6 +853,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Helium coolant temperature (K)                                           (tftmp)                   4.750E+00     
  CS temperature margin (K)                                                (tmargoh)                 3.322E+00  OP 
  Minimum permitted temperature margin (K)                                 (tmargmin_cs)             1.700E+00     
+ residual hoop stress in CS Steel (Pa)                                    (residual_sig_hoop)       2.400E+08     
+ Initial vertical crack size (m)                                          (t_crack_vertical)        2.000E-03     
+ Initial radial crack size (m)                                            (t_crack_radial)          6.000E-03     
+ CS structural vertical thickness (m)                                     (t_structural_vertical)   2.200E-02     
+ CS structural radial thickness (m)                                       (t_structural_radial)     7.000E-02     
+ Allowable number of cycles till CS fracture                              (N_cycle)                 3.371E+04  OP 
  
  Superconducting PF coils
  PF coil superconductor material                                          (isumatpf)                        3     
