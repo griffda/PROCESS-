@@ -5,16 +5,15 @@ For the two tools below, running `f2py` with the `--debug` flag will include deb
 ## GDB
 Debuggers provide an alternative to `print` statements littering your code. These statements are often left in (or commented out) and can clutter up source code. When debugging within Fortran, they also mean recompilation is required - which takes a few minutes.
 
-A couple of small "hacks" can be used to run PROCESS with GDB. 
-
-Inside of the `dev` folder, the `process_wrapper.py` script can be found. This script is exactly the same as is run by the `process` command. However, as a Python script, we can now run PROCESS through GDB.
+As well as running Process with `process`. We are also able to run the following: `python process/main.py` as the `process` command is just a wrapper around this file. This means we can easily debug Process as follows:
 
 ```bash
+cd ~/process
 gdb python
->>> run dev/process_wrapper.py -i tracking/baseline_2018/baseline_2018_IN.dat
+>>> run process/main.py -i tracking/baseline_2018/baseline_2018_IN.dat
 ```
 
-You can now perform any GDB action on PROCESS Fortran source.
+You can now perform any GDB action on Process Fortran source.
 
 ### Breakpoints
 
@@ -25,10 +24,10 @@ gdb python
 >>> break vmcon.f90:200
 ```
 
-If, at this point, GDB says it cannot find the source file, select the **y**es option as it will be able to find the source file PROCESS is run.
+If, at this point, GDB says it cannot find the source file, select the **y**es option as it will be able to find the source file Process is run.
 
 ```bash
->>> run dev/process_wrapper.py -i tracking/baseline_2018/baseline_2018_IN.dat
+>>> run process/main.py -i tracking/baseline_2018/baseline_2018_IN.dat
 
 Thread 1 "python" hit Breakpoint 1, vmcon_module::vmcon4 (niter=1, n=41, m=24, mpnppn=<optimized out>, mpnpp1=67, meq=24, lcnorm=176, lb=176, ldel=1232, lh=352, lwa=352, liwa=1143, npp=84, nsix=252,
     np1=42, mpn=65, mp1=25, tol=1e-08, objf=1.7780200000000002, best_sum_so_far_in=999, iwa_in=..., ilower=..., iupper=..., fgrd=..., conf=..., bdl_in=..., bdu_in=..., x=..., delta_in=..., gm_in=...,
@@ -47,14 +46,22 @@ From this point you can then print out variables of interest. This includes modu
 $1 = 24
 ```
 
+!!! note "GDB and pytest can be used in much the same way"
+    `pytest` can be substituted for `python -m pytest` meaning that we can run GDB over our test suite by:
+
+    ```
+    gdb python
+    >>> run -m pytest
+    ```
+
 ## Valgrind
-Valgrind provides, among other things, a memory error checker, `memcheck`. We provide the Python suppression file, that stops errors in the Python binary being reported, in the `dev` folder as `valgrind-python.supp`.
+Valgrind provides, among other things, a memory error checker, `memcheck`. We provide the Python suppression file, that stops errors in the Python binary being reported, `valgrind-python.supp`.
 
 We can then run the valgrind commands to chech for memory errors.
 
 Perform standard analysis that outputs to `valgrind.log` in your current directory:
 ```
-PYTHONMALLOC=malloc valgrind --suppressions=dev/valgrind-python.supp --log-file=valgrind.log process -i tests/regression/scenarios/2D_scan/IN.DAT
+PYTHONMALLOC=malloc valgrind --suppressions=valgrind-python.supp --log-file=valgrind.log process -i tests/regression/scenarios/2D_scan/IN.DAT
 ```
 
 Perform some more detailed analysis that checks for the origin of unitialised values:
