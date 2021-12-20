@@ -3604,6 +3604,7 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     ! ***
     ! M_int(kk) multiplies Lame parameter vector of layer kk (A,B,eps_z,1.0,eps_z_slip) 
     ! and transforms the values at the outer radius to the values at the inner radius
+    M_int = 0.0D0
     do kk = 1, nlayers
         M_int(1,1,kk) = 1.0D0
         M_int(2,2,kk) = 1.0D0
@@ -3623,6 +3624,7 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     ! M_ext(kk) multiplies Lame parameter vector of layer kk (A,B,eps_z,1.0,eps_z_slip) 
     ! and transforms the values at the inner radius to the values at the outer radius
     ! of layer kk-1
+    M_ext = 0.0D0
     do kk = 2, nonslip_layer-1
         ey_fac = ey_bar_t(kk)/ey_bar_t(kk-1)
         M_ext(1,3,kk) = 0.0D0
