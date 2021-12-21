@@ -1721,7 +1721,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         n_tf_graded_layers, i_tf_sup, i_tf_bucking, fcoolcp, eyoung_winding, &
         eyoung_steel, eyoung_res_tf_buck, eyoung_ins, eyoung_al, eyoung_copper, &
         aiwp, aswp, cpttf, n_tf, i_tf_plane_stress, sig_tf_wp_max, &
-        i_tf_turns_integer
+        i_tf_turns_integer, casthi
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
         cohbop, ncls, cptdin
     use constants, only: pi, sig_file
@@ -1919,12 +1919,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! WP area using the stress model circular geometry [m2]
     !! WP + lateral casing area
 
-    real(dp) :: f_vforce_case
-    !! Correction factor for plasma side case vertical stress contribution
-
-    real(dp) :: vforce_eff
-    !! Effective vertical tension used in stess calculation [N]
-
     real(dp) :: eyoung_cond
     !! Resistive conductors Young modulus [Pa]
 
@@ -2098,10 +2092,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
         ! Steel cross-section under the area representing the WP in stress calculations [m2]
         a_wp_steel_eff = a_steel_eff - a_case_nose
-        
-        ! Fraction of the vertical force to be considered in the stress calculation 
-        f_vforce_case = (eyoung_steel*a_steel_eff + eyoung_ins*a_tf_ins) &
-                      / (eyoung_steel*a_tf_steel  + eyoung_ins*a_tf_ins)
 
         ! WP effective insulation thickness (SC only) [m]
         ! include groundwall insulation + insertion gap in thicndut
@@ -2144,9 +2134,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             eyoung_cond = eyoung_al
         end if
 
-        ! No vertical force is assumed to be on the plasma side TF tube 
-        f_vforce_case = 1.0D0
-
         ! Effective WP young modulus in the toroidal direction [Pa]
         ! Rem : effect of cooling pipes and insulation not taken into account 
         !       for now as it needs a radially dependent Young modulus
@@ -2168,9 +2155,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         r_wp_outer_eff = r_wp_outer
 
     end if 
-
-    ! Effective total inboard vertical tension for stress calculation [N]
-    vforce_eff = vforce_inboard_tot * f_vforce_case
 
     ! Thickness of the layer representing the WP in stress calcualtions [m]
     dr_tf_wp_eff = r_wp_outer_eff - r_wp_outer_eff
@@ -2207,9 +2191,18 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             poisson_z(n_tf_bucking + ii) = poisson_al
         end if 
     end do
+    
+    ! Steel case on the plasma side of the inboard TF coil
+    ! As per Issue #1509
+    jeff(n_tf_layer) = 0.0D0
+    radtf(n_tf_layer) = r_wp_outer_eff
+    eyoung_p(n_tf_layer) = eyoung_steel
+    eyoung_z(n_tf_layer) = eyoung_steel
+    poisson_p(n_tf_layer) = poisson_steel
+    poisson_z(n_tf_layer) = poisson_steel
 
     ! last layer radius
-    radtf(n_tf_layer + 1) = r_wp_outer_eff
+    radtf(n_tf_layer + 1) = r_wp_outer_eff + casthi
     ! ---  
     ! ------------------------
 
@@ -2268,7 +2261,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! Issues #977 and #991
         ! bore > 0, O(n^3) in layers
         call generalized_plane_strain( poisson_p, poisson_z, eyoung_p, eyoung_z,  & ! Inputs
-                                       radtf, jeff, vforce_eff,                   & ! Inputs
+                                       radtf, jeff, vforce_inboard_tot,          & ! Inputs
                                        n_tf_layer, n_radial_array, n_tf_bucking,  & ! Inputs
                                        radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
                                        strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
@@ -2278,7 +2271,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! Permits bore >= 0, O(n) in layers
         ! If bore > 0, same result as generalized plane strain calculation
         call extended_plane_strain( poisson_p, poisson_z, eyoung_p, eyoung_z,  & ! Inputs
-                                       radtf, jeff, vforce_eff,                   & ! Inputs
+                                       radtf, jeff, vforce_inboard_tot,          & ! Inputs
                                        n_tf_layer, n_radial_array, n_tf_bucking,  & ! Inputs
                                        radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
                                        strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
@@ -2370,10 +2363,13 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     
     end if
     
-    ! Application of the corrections on the WP layers
+    ! Application of the unsmearing to the WP layers
+    ! For each point within the winding pack / conductor, unsmear the
+    ! stress. This is n_radial_array test points within n_tf_graded_layers
+    ! layers starting at n_tf_bucking + 1 
     ! GRADED MODIF : add another do loop to allow the graded properties
     !                to be taken into account
-    do ii = n_tf_bucking * n_radial_array + 1, n_tf_layer*n_radial_array  
+    do ii = n_tf_bucking * n_radial_array + 1, (n_tf_bucking + n_tf_graded_layers)*n_radial_array  
         sig_tf_wp_av_z(ii - n_tf_bucking * n_radial_array) = sig_tf_z(ii) * fac_sig_z_wp_av
         sig_tf_r(ii) = sig_tf_r(ii) * fac_sig_r
         sig_tf_t(ii) = sig_tf_t(ii) * fac_sig_t
@@ -2517,28 +2513,27 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         select case (i_tf_bucking)
             case (0)
                 if (i_tf_sup == 1 ) then
-                    write(outfile,'(t2, "Layers", t26, *(a11) )') "WP"
+                    write(outfile,'(t2, "Layers", t36, *(a11,3x) )') "WP", "Outer case"
                 else 
-                    write(outfile,'(t2, "Layers", t26, *(a11) )') "conductor"
+                    write(outfile,'(t2, "Layers", t36, *(a11,3x) )') "conductor", "Outer case"
                 end if
             case (1)
                 if (i_tf_sup == 1 ) then
-                    write(outfile,'(t2, "Layers", t26, *(a11) )') "Steel case", "WP"
+                    write(outfile,'(t2, "Layers", t36, *(a11,3x) )') "Steel case", "WP", "Outer case"
                 else 
-                    write(outfile,'(t2, "Layers", t26, *(a11) )') "bucking", "conductor"
+                    write(outfile,'(t2, "Layers", t36, *(a11,3x) )') "bucking", "conductor", "Outer case"
                 end if
             case (2)
                 if (i_tf_sup == 1 ) then
-                    write(outfile,'(t2, "Layers", t26, *(a12) )') "CS", "Steel case", "WP"
+                    write(outfile,'(t2, "Layers", t36, *(a11,3x) )') "CS", "Steel case", "WP", "Outer case"
                 else 
-                    write(outfile,'(t2, "Layers", t26, *(a12) )') "CS", "bucking", "conductor"
+                    write(outfile,'(t2, "Layers", t36, *(a11,3x) )') "CS", "bucking", "conductor", "Outer case"
                 end if
             case (3)
                 if (i_tf_sup == 1 ) then
-
-                    write(outfile,*) "Layers                         CS        interface    Steel case        WP"
+                    write(outfile,'(t2, "Layers", t36, *(a11,3x) )') "CS", "interface", "Steel case", "WP", "Outer case"
                 else 
-                    write(outfile,*) "Layers                         CS        interface      bucking      conductor"
+                    write(outfile,'(t2, "Layers", t36, *(a11,3x) )') "CS", "interface", "bucking", "conductor", "Outer case"
                 end if
         end select
         
@@ -2563,7 +2558,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         call ovarre(outfile,'WP vertical modulus (GPa)','(eyoung_wp_z*1.0D-9)', eyoung_wp_z*1.0D-9, 'OP ')
 
         ! MFILE.DAT data
-        do ii = 1, n_tf_bucking + 1
+        do ii = 1, n_tf_bucking + 2
             intstring = int2char(ii)    
             call ovarre(mfile,'Radial    stress at maximum shear of layer '//intstring// &
                         ' (Pa)', '(sig_tf_r_max('//intstring//'))', sig_tf_r_max(ii) )
