@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-901-ga12ba209
-    Branch : 1343-update-lts-hts-cost-model-2
-   Git log : Merge\ branch\ |develop|\ into\ 1343-update-lts-hts-cost-model-2
- Date/time : 18 Nov 2021 17:01:54 +00:00(hh:mm) UTC
+   Tag No. : v2.1-993-gdc620da4 code contains untracked changes
+    Branch : 1395-incorrect-calculation-of-building-sizes
+   Git log : Improved\ error\ avoidance
+ Date/time : 14 Dec 2021  9:45:44 +00:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-205/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-205/test_scenario_baseline_jan_2010/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-235/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-235/test_scenario_baseline_jan_2010/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  

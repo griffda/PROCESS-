@@ -200,10 +200,10 @@ contains
       ohcth, plsepi, fmsoh, blbmith, gapoh, fcspc, scraplo, vgaptop, &
       blbpoth, gapds, fwith, vgap, shldith, sigallpc, tfootfi, f_avspace,&
       r_cp_top, d_vv_in, d_vv_out, d_vv_top, d_vv_bot, f_r_cp, i_r_cp_top
-
-    use buildings_variables, only: hcwt, conv, wgt, trcl, rxcl, rbwt, mbvfac, &
-      esbldgm3, rbvfac, fndt, row, wgt2, pibv, clh1, stcl, clh2, pfbldgm3, &
-      shmf, tfcbv, hccl, rbrt, triv, shov, admv, wsvfac
+    use buildings_variables, only: hcwt, conv, wgt, trcl, rbwt, &
+      esbldgm3, fndt, row, wgt2, pibv, clh1, stcl, clh2, &
+      tfcbv, hccl, rbrt, triv, shov, admv, i_bldgs_v, i_bldgs_size, &
+      mbvfac, pfbldgm3, wsvfac, rbvfac, rxcl, shmf
     use constraint_variables, only: flhthresh, fpeakb, fpsep, fdivcol, ftcycl, &
       betpmx, fpsepbqar, ftmargtf, fradwall, fptfnuc, fnesep, fportsz, tbrmin, &
       maxradwallload, pseprmax, fdene, fniterpump, fpinj, pnetelin, powfmax, &
@@ -3109,6 +3109,12 @@ contains
 
           !  Buildings settings
 
+       case('i_bldgs_size')
+         call parse_int_variable('i_bldgs_size', i_bldgs_size, 0, 1, &
+               'Switch between routines estimating building sizes')
+       case('i_bldgs_v')
+         call parse_int_variable('i_bldgs_v', i_bldgs_v, 0, 1, &
+               'Switch for verbose buildings output')
        case ('admv')
           call parse_real_variable('admv', admv, 1.0D4, 1.0D6, &
                'Administration building volume (m3)')
@@ -3134,10 +3140,10 @@ contains
           call parse_real_variable('hcwt', hcwt, 0.0D0, 10.0D0, &
                'Hot cell wall thickness (m)')
        case ('mbvfac')
-          call parse_real_variable('mbvfac', mbvfac, 0.9D0, 3.0D0, &
+         call parse_real_variable('mbvfac', mbvfac, 0.9D0, 3.0D0, &
                'Maintenance building volume multiplier')
        case ('pfbldgm3')
-          call parse_real_variable('pfbldgm3', pfbldgm3, 1.0D4, 1.0D6, &
+         call parse_real_variable('pfbldgm3', pfbldgm3, 1.0D4, 1.0D6, &
                'PF coil power conv. bldg volume (m3)')
        case ('pibv')
           call parse_real_variable('pibv', pibv, 1.0D3, 1.0D5, &
@@ -3146,7 +3152,7 @@ contains
           call parse_real_variable('rbrt', rbrt, 0.0D0, 10.0D0, &
                'Reactor building roof thickness (m)')
        case ('rbvfac')
-          call parse_real_variable('rbvfac', rbvfac, 0.9D0, 3.0D0, &
+         call parse_real_variable('rbvfac', rbvfac, 0.9D0, 3.0D0, &
                'Reactor building volume multiplier')
        case ('rbwt')
           call parse_real_variable('rbwt', rbwt, 0.0D0, 10.0D0, &
@@ -3155,10 +3161,10 @@ contains
           call parse_real_variable('row', row, 0.0D0, 10.0D0, &
                'Wall clearance for cranes (m)')
        case ('rxcl')
-          call parse_real_variable('rxcl', rxcl, 0.0D0, 10.0D0, &
+         call parse_real_variable('rxcl', rxcl, 0.0D0, 10.0D0, &
                'Clearance around reactor (m)')
        case ('shmf')
-          call parse_real_variable('shmf', shmf, 0.0D0, 1.0D0, &
+         call parse_real_variable('shmf', shmf, 0.0D0, 1.0D0, &
                'Fraction of TF shield mass per lift')
        case ('shov')
           call parse_real_variable('shov', shov, 1.0D3, 1.0D6, &
@@ -3182,7 +3188,7 @@ contains
           call parse_real_variable('wgt2', wgt2, 1.0D4, 1.0D6, &
                'Hot cell crane capacity (kg)')
        case ('wsvfac')
-          call parse_real_variable('wsvfac', wsvfac, 0.9D0, 3.0D0, &
+         call parse_real_variable('wsvfac', wsvfac, 0.9D0, 3.0D0, &
                'Warm shop building volume multiplier')
 
           !  Energy storage settings
