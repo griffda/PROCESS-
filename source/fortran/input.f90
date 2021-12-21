@@ -1783,6 +1783,16 @@ contains
        case ('rebco_thickness')
           call parse_real_variable('rebco_thickness', rebco_thickness, 0.01D-6, 100.0D-6, &
                'Thickness of REBCO layer in HTS tape (m)')
+          if (rebco_thickness > 1.0D-6) then
+             ! Warning includes concerns raised on Issue #1494
+             write(outfile,*) ' '
+             write(outfile,*) '**********'
+             write(outfile,*) 'WARNING: the relationship between REBCO layer thickness and current density is not linear.'
+             write(outfile,*) 'REBCO layer thicknesses > 1um should be considered an aggressive extrapolation of'
+             write(outfile,*) 'current HTS technology and any results must be considered speculative.'
+             write(outfile,*) '**********'
+             write(outfile,*) ' '
+          end if
        case ('hastelloy_thickness')
           call parse_real_variable('hastelloy_thickness', hastelloy_thickness, 0.01D-6, 1000.0D-6, &
                'Thickness of Hastelloy layer in HTS tape (m)')
