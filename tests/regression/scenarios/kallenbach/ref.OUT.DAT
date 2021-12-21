@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1022-g9e2decfc
-    Branch : 1494-rebco-current-density-incorrectly-calculated
-   Git log : Merge\ branch\ |develop|\ into\ 1494-rebco-current-density-incorrectly-calculated
- Date/time : 17 Dec 2021 16:27:48 +00:00(hh:mm) UTC
+   Tag No. : v2.1-993-gdc620da4 code contains untracked changes
+    Branch : 1395-incorrect-calculation-of-building-sizes
+   Git log : Improved\ error\ avoidance
+ Date/time : 14 Dec 2021  9:46:39 +00:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-254/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-254/test_scenario_kallenbach_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-235/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-235/test_scenario_kallenbach_0/IN.DAT
  Run title : kallenbach divertor model
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
