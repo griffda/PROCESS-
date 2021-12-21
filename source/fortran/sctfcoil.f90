@@ -12,14 +12,12 @@ module sctfcoil_module
 !
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-use, intrinsic :: iso_fortran_env, only: dp=>real64
+#ifndef dp
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 use resistive_materials, only: resistive_material, volume_fractions, &
     supercon_strand
 implicit none
-
-private
-public :: outtf, sctfcoil, stresscl, tfcind, tfspcall, initialise_cables, &
-  init_sctfcoil_module
 
 ! Module variables
 !-----------------
@@ -134,13 +132,28 @@ real(dp), private :: t_cable
 real(dp), private :: vforce_inboard_tot
 !! Total inboard vertical tension (all coils) [N] 
 
-type(resistive_material):: copper
-type(resistive_material):: hastelloy
-type(resistive_material):: solder
-type(resistive_material):: jacket
-type(resistive_material):: helium
-type(volume_fractions):: conductor
-type(supercon_strand)::croco_strand
+type(resistive_material), private :: copper
+type(resistive_material), private :: hastelloy
+type(resistive_material), private :: solder
+type(resistive_material), private :: jacket
+type(resistive_material), private :: helium
+
+! croco_strand
+real(dp) :: croco_strand_area
+real(dp) :: croco_strand_critical_current
+
+! conductor
+real(dp) :: conductor_copper_area,  conductor_copper_fraction
+real(dp) :: conductor_copper_bar_area
+real(dp) :: conductor_hastelloy_area, conductor_hastelloy_fraction
+real(dp) :: conductor_helium_area, conductor_helium_fraction
+real(dp) :: conductor_solder_area, conductor_solder_fraction
+real(dp) :: conductor_jacket_area, conductor_jacket_fraction
+real(dp) :: conductor_rebco_area,  conductor_rebco_fraction
+real(dp) :: conductor_critical_current
+real(dp) :: conductor_acs
+!! Area of cable space inside jacket
+real(dp) :: conductor_area      
 
 real(dp):: T1, time2, tau2, estotft
 ! (OBSOLETE, but leave for moment)
@@ -856,7 +869,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
             acndttf = t_conductor**2 - acstf
 
         ! REBCO turn structure
-        else if (i_tf_sc_mat == 6 ) then  
+        else if ( i_tf_sc_mat == 6 ) then  
 
             ! Diameter of circular cable space inside conduit [m]
             t_cable = t_conductor - 2.0D0*thwcndut
@@ -1712,7 +1725,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         acasetf, sig_tf_case_max, poisson_steel, poisson_copper, poisson_al, &
         n_tf_graded_layers, i_tf_sup, i_tf_bucking, fcoolcp, eyoung_winding, &
         eyoung_steel, eyoung_res_tf_buck, eyoung_ins, eyoung_al, eyoung_copper, &
-        aiwp, aswp, cpttf, n_tf, i_tf_plane_stress, sig_tf_wp_max
+        aiwp, aswp, cpttf, n_tf, i_tf_plane_stress, sig_tf_wp_max, &
+        i_tf_turns_integer
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
         cohbop, ncls, cptdin
     use constants, only: pi, sig_file
@@ -1771,26 +1785,26 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! TF Inboard leg Von-Mises stress r distribution at mid-plane [Pa]
         
     real(dp), dimension(n_tf_layer*n_radial_array) :: sig_tf_tresca 
-    !! TF Inboard leg TRESCA stress r distribution at mid-plane [Pa]
+    !! TF Inboard leg maximum shear stress (Tresca criterion) r distribution at mid-plane [Pa]
     
     real(dp), dimension(n_tf_layer*n_radial_array) :: s_tresca_cond_cea
-    !! Conduit Tresca stress with CEA adjustment factors [Pa]
+    !! Conduit maximum shear stress (Tresca criterion) with CEA adjustment factors [Pa]
     
     real(dp), dimension(n_tf_layer) :: sig_tf_r_max
-    !! Radial stress of the point of maximum TRESCA stress (for each layers) [Pa]
+    !! Radial stress of the point of maximum shear stress of each layer [Pa]
     
     real(dp), dimension(n_tf_layer) :: sig_tf_t_max 
-    !! Toroidal stress of the point of maximum TRESCA stress (for each layers) [Pa]
+    !! Toroidal stress of the point of maximum shear stress of each layer [Pa]
     
     real(dp), dimension(n_tf_layer) :: sig_tf_z_max
-    !! Vertical stress of the point of maximum TRESCA stress (for each layers) [Pa]
+    !! Vertical stress of the point of maximum shear stress of each layer [Pa]
     !! Rem : Currently constant but will be r dependent in the future
     
     real(dp), dimension(n_tf_layer) :: sig_tf_vmises_max 
-    !! Von-Mises stress of the point of maximum TRESCA stress (for each layers) [Pa]
+    !! Von-Mises stress of the point of maximum shear stress of each layer [Pa]
     
     real(dp), dimension(n_tf_layer) :: sig_tf_tresca_max
-    !! Maximum TRESCA stress (for each layers) [Pa]
+    !! Maximum shear stress, for the Tresca yield criterion of each layer [Pa]
     !! If the CEA correction is addopted, the CEA corrected value is used
     
     real(dp), dimension(n_tf_layer*n_radial_array) :: strain_tf_r
@@ -1837,10 +1851,10 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! do loop indexes
 
     integer :: ii_max
-    !! Index of the maximum TRESCA stress
+    !! Index of the maximum shear stress (Tresca criterion)
 
     real(dp) :: sig_max
-    !! Working float to find maximum TRESCA stress index [Pa]
+    !! Working float to find index of the maximum shear stress (Tresca criterion) [Pa]
 
     real(dp) :: tcbs
     !! Radial cable dimension [m]
@@ -1870,6 +1884,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     real(dp) :: t_turn_oh
     !! Central Solenoid (OH) turn dimension [m]
+
+    real(dp) :: t_cable_eyng
+    !! Cable area radial dimension, as passed into YM calculation [m]
 
     real(dp) :: fac_sig_t
     !! Toroidal WP steel conduit stress unsmearing factor
@@ -1933,10 +1950,13 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! Stress model not valid the TF does not contain any hole
     ! Rem SK : Can be easily ameneded playing around the boundary conditions
     if ( abs(r_tf_inboard_in) < epsilon(r_tf_inboard_in) ) then
-        call report_error(245)
-        sig_tf_case = 0.0D0
-        sig_tf_wp = 0.0D0
-        return
+        ! New extended plane strain model can handle it
+        if ( i_tf_plane_stress /= 2 ) then
+            call report_error(245)
+            sig_tf_case = 0.0D0
+            sig_tf_wp = 0.0D0
+            return
+        end if
     end if
 
 
@@ -2097,8 +2117,15 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! The toroidal property drives the stress calculation (J. Last report no 4)
         ! Hence, the radial direction is relevant for the property smearing 
         ! Rem : This assumption might be re-defined for bucked and wedged design
+        if ( i_tf_turns_integer == 0 ) then 
+            ! Non-integer number of turns
+            t_cable_eyng = t_cable
+        else 
+            ! Integer number of turns
+            t_cable_eyng = t_cable_radial
+        end if         
         eyoung_wp_t = eyngeff( eyoung_steel, eyoung_ins, &
-                               t_ins_eff, thwcndut, t_cable_radial )
+                               t_ins_eff, thwcndut, t_cable_eyng )
         
         ! Lateral casing correction (serie)
         eyoung_wp_t_eff = ( 2.0D0 * t_lat_case_av + t_wp_toroidal_av ) &
@@ -2200,8 +2227,14 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !                  to allow stress calculations 
     ! Rem SK : Can be easily ameneded playing around the boundary conditions
     if ( abs(radtf(1)) < epsilon(radtf(1)) ) then
-        call report_error(245)
-        radtf(1) = 1.0D-9
+        ! New extended plane strain model can handle it
+        if ( i_tf_plane_stress /= 2 ) then
+            call report_error(245)
+            radtf(1) = 1.0D-9
+        else if ( abs(radtf(2)) < epsilon(radtf(1)) ) then
+            write(*,*)'ERROR: First TF layer has zero thickness.'
+            write(*,*)'       Perhaps you meant to have thkcas nonzero or i_tf_bucking = 0?'
+        end if
     end if
     ! ---
 
@@ -2235,9 +2268,21 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     ! New generalized plane strain formulation
     ! ---
-    else 
+    else if ( i_tf_plane_stress == 0) then
         ! Generalized plane strain calculation [Pa]
+        ! Issues #977 and #991
+        ! bore > 0, O(n^3) in layers
         call generalized_plane_strain( poisson_p, poisson_z, eyoung_p, eyoung_z,  & ! Inputs
+                                       radtf, jeff, vforce_eff,                   & ! Inputs
+                                       n_tf_layer, n_radial_array, n_tf_bucking,  & ! Inputs
+                                       radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
+                                       strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
+    else if ( i_tf_plane_stress == 2) then
+        ! Extended plane strain calculation [Pa]
+        ! Issues #1414 and #998
+        ! Permits bore >= 0, O(n) in layers
+        ! If bore > 0, same result as generalized plane strain calculation
+        call extended_plane_strain( poisson_p, poisson_z, eyoung_p, eyoung_z,  & ! Inputs
                                        radtf, jeff, vforce_eff,                   & ! Inputs
                                        n_tf_layer, n_radial_array, n_tf_bucking,  & ! Inputs
                                        radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
@@ -2302,7 +2347,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     else if ( i_tf_sup == 1 ) then
 
         ! Vertical WP steel stress unsmearing factor
-        if ( i_tf_plane_stress == 0 ) then
+        if ( i_tf_plane_stress /= 1 ) then
             fac_sig_z = eyoung_steel / eyoung_wp_z_eff
             fac_sig_z_wp_av = eyoung_wp_z / eyoung_wp_z_eff
         else
@@ -2342,7 +2387,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! ---
 
 
-    ! TRESCA/VM stress calculations
+    ! Tresca / Von Mises yield criteria calculations
     ! -----------------------------
     ! Array equation
     sig_tf_tresca = max( abs(sig_tf_r - sig_tf_t), &
@@ -2375,7 +2420,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                 sig_tf_vmises(ii) = max(svmxz, svmyz)
             end if
 
-            ! TRESCA stress using CEA calculation [Pa]
+            ! Maximum shear stress for the Tresca yield criterion using CEA calculation [Pa]
             s_tresca_cond_cea(ii) = 1.02D0*abs(sig_tf_r(ii)) + 1.6D0*sig_tf_z(ii)
         end do
     end if
@@ -2384,11 +2429,11 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
 
 
-    ! Output formating : Maximum TRESCA per layers
+    ! Output formating : Maximum shear stress of each layer for the Tresca yield criterion
     ! ----------------
     do ii = 1, n_tf_layer
         sig_max = 0.0D0
-        ii_max = 0
+        ii_max = 1
 
         do jj = (ii-1)*n_radial_array + 1, ii*n_radial_array
 
@@ -2399,7 +2444,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                     ii_max = jj
                 end if
 
-            ! Conventionnal TRESCA
+            ! Conventional Tresca
             else 
                 if ( sig_max < sig_tf_tresca(jj) ) then
                     sig_max = sig_tf_tresca(jj)
@@ -2416,7 +2461,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             sig_tf_vmises_max(ii) = sig_tf_vmises(ii_max)
         end if
 
-        ! Maximum TRESCA (or CEA OOP correction)
+        ! Maximum shear stress for the Tresca yield criterion (or CEA OOP correction)
         if ( i_tf_tresca == 1 .and. i_tf_sup == 1 .and. ii >= i_tf_bucking + 1 ) then
             sig_tf_tresca_max(ii) = s_tresca_cond_cea(ii_max)
         else
@@ -2424,7 +2469,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         end if
     end do
 
-    ! Constrains equation TRESCA stress values
+    ! Constraint equation for the Tresca yield criterion
     sig_tf_wp = sig_tf_tresca_max(n_tf_bucking + 1) ! Maximum assumed in the first graded layer
     if ( i_tf_bucking >= 1 ) sig_tf_case = sig_tf_tresca_max(n_tf_bucking)
     if ( i_tf_bucking >= 2 ) sig_tf_cs_bucked = sig_tf_tresca_max(1)
@@ -2456,11 +2501,13 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             call ocmmnt(outfile, 'Generalized plane strain model')
         end if
 
-        call ovarre(outfile, 'Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)','(sig_tf_case_max)',sig_tf_case_max)
+        call ovarre(outfile, 'Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)', &
+        '(sig_tf_case_max)',sig_tf_case_max)
         
-        call ovarre(outfile, 'Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)','(sig_tf_wp_max)',sig_tf_wp_max)
+        call ovarre(outfile, 'Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)', &
+        '(sig_tf_wp_max)',sig_tf_wp_max)
         if ( i_tf_tresca == 1  .and. i_tf_sup == 1) then
-            call ocmmnt(outfile, 'WP conduit TRESCA stress corrected using CEA formula (i_tf_tresca = 1)')
+            call ocmmnt(outfile, 'WP conduit Tresca criterion corrected using CEA formula (i_tf_tresca = 1)')
         end if
 
         if ( i_tf_bucking >= 3) then
@@ -2468,9 +2515,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             call ocmmnt(outfile, '  -> Too much unknow on it material choice/properties')
         end if 
 
-        ! OUT.DAT data on maximum TRESCA stress values
-        call ocmmnt(outfile, 'Structural materal stress of the point of maximum TRESCA stress per layer')
-        call ocmmnt(outfile, 'Please use utility/plot_TF_stress.py for radial plots plots summary')
+        ! OUT.DAT data on maximum shear stress values for the Tresca criterion
+        call ocmmnt(outfile, 'Materal stress of the point of maximum shear stress (Tresca criterion) for each layer')
+        call ocmmnt(outfile, 'Please use utilities/plot_stress_tf.py for radial plots plots summary')
 
         select case (i_tf_bucking)
             case (0)
@@ -2500,22 +2547,22 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                 end if
         end select
         
-        write(outfile,'(t2, "Radial"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') &
+        write(outfile,'(t2, "Radial"    ," stress", t30, "(MPa)",t36, *(F11.3,3x))') &
               sig_tf_r_max*1.0D-6
-        write(outfile,'(t2, "toroidal"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') &
+        write(outfile,'(t2, "toroidal"  ," stress", t30, "(MPa)",t36, *(F11.3,3x))') &
               sig_tf_t_max*1.0D-6
-        write(outfile,'(t2, "Vertical"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') &
+        write(outfile,'(t2, "Vertical"  ," stress", t30, "(MPa)",t36, *(F11.3,3x))') &
               sig_tf_z_max*1.0D-6
-        write(outfile,'(t2, "Von-Mises" ," stress", t20, "(MPa)",t26, *(F11.3,3x))') &
+        write(outfile,'(t2, "Von-Mises" ," stress", t30, "(MPa)",t36, *(F11.3,3x))') &
               sig_tf_vmises_max*1.0D-6
         if ( i_tf_tresca == 1 .and. i_tf_sup == 1 ) then
-            write(outfile,'(t2, "CEA TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
+            write(outfile,'(t2, "Shear (CEA Tresca)"    ," stress", t30, "(MPa)",t36, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
         else 
-            write(outfile,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
+            write(outfile,'(t2, "Shear (Tresca)"    ," stress", t30, "(MPa)",t36, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
         end if
         write(outfile, *) ''
-        write(outfile,'(t2, "Toroidal"    ," modulus", t20, "(GPa)",t26, *(F11.3,3x))') eyoung_p * 1.0D-9
-        write(outfile,'(t2, "Vertical"    ," modulus", t20, "(GPa)",t26, *(F11.3,3x))') eyoung_z * 1.0D-9
+        write(outfile,'(t2, "Toroidal"    ," modulus", t30, "(GPa)",t36, *(F11.3,3x))') eyoung_p * 1.0D-9
+        write(outfile,'(t2, "Vertical"    ," modulus", t30, "(GPa)",t36, *(F11.3,3x))') eyoung_z * 1.0D-9
         write(outfile,* ) ''
         call ovarre(outfile,'WP toroidal modulus (GPa)','(eyoung_wp_t*1.0D-9)', eyoung_wp_t*1.0D-9, 'OP ')
         call ovarre(outfile,'WP vertical modulus (GPa)','(eyoung_wp_z*1.0D-9)', eyoung_wp_z*1.0D-9, 'OP ')
@@ -2523,19 +2570,19 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! MFILE.DAT data
         do ii = 1, n_tf_bucking + 1
             intstring = int2char(ii)    
-            call ovarre(mfile,'Radial    stress at maximum TRESCA of layer '//intstring// &
+            call ovarre(mfile,'Radial    stress at maximum shear of layer '//intstring// &
                         ' (Pa)', '(sig_tf_r_max('//intstring//'))', sig_tf_r_max(ii) )
-            call ovarre(mfile,'toroidal  stress at maximum TRESCA of layer '//intstring// &
+            call ovarre(mfile,'toroidal  stress at maximum shear of layer '//intstring// &
                         ' (Pa)', '(sig_tf_t_max('//intstring//'))', sig_tf_t_max(ii) )
-            call ovarre(mfile,'Vertical  stress at maximum TRESCA of layer '//intstring// &
+            call ovarre(mfile,'Vertical  stress at maximum shear of layer '//intstring// &
                         ' (Pa)', '(sig_tf_z_max('//intstring//'))', sig_tf_z_max(ii) )
-            call ovarre(mfile,'Von-Mises stress at maximum TRESCA of layer '//intstring// &
+            call ovarre(mfile,'Von-Mises stress at maximum shear of layer '//intstring// &
                         ' (Pa)', '(sig_tf_vmises_max('//intstring//'))', sig_tf_vmises_max(ii) )
             if ( i_tf_tresca == 1 .and. i_tf_sup == 1 ) then
-                call ovarre(mfile,'Maximum CEA TRESCA stress '//intstring// &
+                call ovarre(mfile,'Maximum shear stress for CEA Tresca yield criterion '//intstring// &
                            ' (Pa)', '(sig_tf_tresca_max('//intstring//'))', sig_tf_tresca_max(ii) )
             else           
-                call ovarre(mfile,'Maximum TRESCA stress '//intstring// &
+                call ovarre(mfile,'Maximum shear stress for the Tresca yield criterion '//intstring// &
                             ' (Pa)', '(sig_tf_tresca_max('//intstring//'))', sig_tf_tresca_max(ii) )
             end if
         end do
@@ -2551,11 +2598,11 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         write(sig_file,'(t2, "toroidal"  ," smeared stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_smeared_t*1.0D-6
         write(sig_file,'(t2, "vertical"  ," smeared stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_smeared_z*1.0D-6
         write(sig_file,'(t2, "Von-Mises" ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_vmises*1.0D-6
-        write(sig_file,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca*1.0D-6
+        write(sig_file,'(t2, "Tresca"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca*1.0D-6
         if ( i_tf_sup == 1 ) then
-            write(sig_file,'(t2, "CEA TRESCA"," stress", t20, "(MPa)",t26, *(F11.3,3x))') s_tresca_cond_cea*1.0D-6
+            write(sig_file,'(t2, "CEA Tresca"," stress", t20, "(MPa)",t26, *(F11.3,3x))') s_tresca_cond_cea*1.0D-6
         else 
-            write(sig_file,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca*1.0D-6
+            write(sig_file,'(t2, "Tresca"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca*1.0D-6
         end if 
         write(sig_file,*) 
         write(sig_file,*) 'Displacement'         
@@ -2568,9 +2615,10 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             write(sig_file,'(t2, "vertical strain" ,t26, *(F11.8,3x))') strain_tf_z
         end if
 
-        if ( i_tf_sup == 1 ) then
-            write(sig_file,'(t2, "WP"    ," smeared stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_wp_av_z*1.0D-6
-        end if 
+        ! TODO sig_tf_wp_av_z is always undefined here. This needs correcting or removing
+        ! if ( i_tf_sup == 1 ) then
+            ! write(sig_file,'(t2, "WP"    ," smeared stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_wp_av_z*1.0D-6
+        ! end if
 
         ! Quantities from the plane stress stress formulation (no resitive coil output)
         if ( i_tf_plane_stress == 1 .and. i_tf_sup == 1 ) then
@@ -2816,7 +2864,7 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     !! Author : S. Kahn, CCFE
     !! Jan 2020
     !! This subroutine estimates the normal stresses/strains and radial displacement
-    !! radial distributions of a multilayer cylinder with forces at its ends,                                     
+    !! radial distributions of a multilayer cylinder with forces at its ends, 
     !! assuming the generalized plain strain formulation. This formlation relies
     !! on the fact that the vertical forces are applied far enough at the ends
     !! so that vertical strain can be approximated radially constant. 
@@ -2849,10 +2897,10 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
 
     integer, intent(in) :: i_tf_bucking
     !! Switch for bucking cylinder (case)
-    !!   0 : No casing/bucking cylinder
-    !!   1 : casing/buling cylinder
-    !!   2 : Bucked and wedged design
-    !!   3 : Bucked and wedged design with CS-TF interlayer
+    !!   0 : Free standing TF without case/bucking cyliner (only a conductor layer)
+    !!   1 : Free standing TF with a case/bucking cylinder (material depends on i_tf_sup)
+    !!   2 : Bucked and wedged design, CS frictionally decoupled from TF (no interlayer)
+    !!   3 : Bucked and wedged design, CS and Kapton interlayer decoupled from TF
 
     real(dp), dimension(nlayers), intent(in) :: nu_p
     !! Toroidal plan's Poisson's ratios 
@@ -2969,7 +3017,7 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     ! radial stress and displacement between layers solved 
     ! The problem is set as aa.cc = bb, cc being the constant we search
     ! ------
-
+    
     ! Layer parameterisation
     ! ***
     ! Vertical poisson's squared coefficient (array equation)
@@ -3290,6 +3338,476 @@ end subroutine generalized_plane_strain
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,   & ! Inputs
+                                     nlayers, n_radial_array, i_tf_bucking,          & ! Inputs
+                                     rradius, sigr, sigt, sigz,              & ! Outputs
+                                     strain_r, strain_t, strain_z, r_deflect ) ! Outputs
+      
+    !! Author : C. Swanson, PPPL and S. Kahn, CCFE
+    !! September 2021
+    !! There is a writeup of the derivation of this model on the gitlab server.
+    !! https://git.ccfe.ac.uk/process/process/-/issues/1414
+    !! This surboutine estimates the radial displacement, stresses, and strains of
+    !! the inboard midplane of the TF. It assumes that structures are axisymmetric
+    !! and long in the axial (z) direction, the "axisymmetric extended plane strain"
+    !! problem. The TF is assumed to be constructed from some number of layers, 
+    !! within which materials properties and current densities are uniform. 
+    !! The 1D radially-resolved solution is reduced to a 0D matrix inversion problem
+    !! using analytic solutions to Lame's thick cylinder problem. Materials may be
+    !! transverse-isotropic in Young's modulus and Poisson's ratio. The consraints
+    !! are: Either zero radial stress or zero radial displacement at the inner
+    !! surface (depending on whether the inner radius is zero), zero radial stress
+    !! at the outer surface, total axial force (tension) is equal to the input, 
+    !! and optionally the axial force of an inner subset of cylinders is zero (slip
+    !! conditions between the inner and outer subset). The matrix inversion / linear
+    !! solve is always 4x4, no matter how many layers there are. 
+    !! The problem is formulated around a solution vector (A,B,eps_z,1.0,eps_z_slip)
+    !! where A and B are the parameters in Lame's solution where u = A*r + B/r, u 
+    !! is the radial displacement. eps_z is the axial strain on the outer, force-
+    !! carrying layers. eps_z_slip is the axial strain on the inner, non-force-
+    !! carrying layers (optionally). The solution vector is A,B at the outermost
+    !! radius, and is transformed via matrix multiplication into those A,B 
+    !! values at other radii. The constraints are inner products with this vector, 
+    !! and so when stacked form a matrix to invert. 
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    use constants, only: rmu0, pi
+    use maths_library, only: linesolv
+    implicit none
+
+    ! Inputs
+    ! ---
+    integer, intent(in) :: n_radial_array
+    !! Number of elements per layers used in stress analysis 
+    !! quantities arrays (stress, strain, displacement) 
+
+    integer, intent(in) :: nlayers
+    !! Total number of layers
+
+    integer, intent(in) :: i_tf_bucking
+    !! Switch for bucking cylinder (case)
+    !!   0 : Free standing TF without case/bucking cyliner (only a conductor layer)
+    !!   1 : Free standing TF with a case/bucking cylinder (material depends on i_tf_sup)
+    !!   2 : Bucked and wedged design, CS frictionally decoupled from TF (no interlayer)
+    !!   3 : Bucked and wedged design, CS and Kapton interlayer decoupled from TF
+
+    real(dp), dimension(nlayers), intent(in) :: nu_t
+    !! Transverse Poisson's ratios 
+
+    real(dp), dimension(nlayers), intent(in) :: nu_zt
+    !! Axial-transverse Poisson's ratio
+    !! (ratio of transverse strain to axial strain upon axial stress) 
+
+    real(dp), dimension(nlayers), intent(in) :: ey_t
+    !! Transverse Young moduli
+
+    real(dp), dimension(nlayers), intent(in) :: ey_z
+    !! Axial Young moduli
+        
+    real(dp), dimension(nlayers), intent(in) :: d_curr
+    !! Layers current densities [A.m-2]
+      
+    real(dp), dimension(nlayers+1), intent(in) :: rad
+    !! Radii of the layers boundaries [m], starting from the innermost
+    !! i.e. the blking/casing cylinder
+        
+    real(dp), intent(in) :: v_force
+    !! Electromecanical vertical forces
+    ! ---
+      
+        
+    ! Outputs
+    ! ---
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: sigr
+    !! Stress distribution in the radial direction (r) [Pa]
+
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: sigt
+    !! Stress distribution in the toroidal direction (t) [Pa]
+
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: sigz
+    !! Stress distribution in the vertical direction (z)
+
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_r
+    !! Strain distribution in the radial direction (r)
+
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_t
+    !! Strain distribution in the toroidal direction (t)
+          
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_z
+    !! Uniform strain in the vertical direction (z)
+
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: r_deflect
+    !! Radial displacement radial distribution [m]
+
+    real(dp), dimension(nlayers*n_radial_array), intent(out) :: rradius
+    !! Radius array [m]
+    ! ---
+
+
+    ! Local variables
+    ! ---
+    ! Inner axial-slip layer parameters
+    integer :: nonslip_layer
+    !! Innermost layer which does not axially slip. All layers
+    !! inward of this have zero total axial force, like the CS.
+    
+    ! Stiffness form of compliance tensor
+    real(dp), dimension(nlayers) :: nu_tz
+    !! Transverse-axial Poisson's ratio
+    !! (ratio of axial strain to transverse strain upon transverse stress) 
+    real(dp), dimension(nlayers) :: ey_bar_z
+    !! Axial effective Young's modulus (zero cross-strains, not stresses) [Pa]
+    real(dp), dimension(nlayers) :: ey_bar_t
+    !! Transverse effective Young's modulus [Pa]
+    real(dp), dimension(nlayers) :: nu_bar_t
+    !! Transverse effective Poisson's ratio
+    real(dp), dimension(nlayers) :: nu_bar_tz
+    !! Transverse-axial effective Poisson's ratio
+    real(dp), dimension(nlayers) :: nu_bar_zt
+    !! Axial-transverse effective Poisson's ratio
+    real(dp) :: ey_fac
+    !! Ratio between Young's Modulus of different layers
+    
+    ! Lorentz force parameters
+    real(dp), dimension(nlayers) :: currents
+    !! Currents in each layer [A]
+    real(dp), dimension(nlayers) :: currents_enclosed
+    !! Currents enclosed by inner radius of each layer [A]
+    real(dp), dimension(nlayers) :: f_lin_fac
+    !! Factor that multiplies r linearly in the force density
+    real(dp), dimension(nlayers) :: f_rec_fac
+    !! Factor that multiplies r reciprocally in the force density
+    real(dp), dimension(nlayers) :: f_int_A
+    !! Force density integral that adds to Lame parameter A
+    real(dp), dimension(nlayers) :: f_int_B
+    !! Force density integral that adds to Lame parameter B
+    
+    ! Layer transfer matrices
+    real(dp), dimension(5, 5, nlayers) :: M_int
+    !! Matrix that transforms the Lame parmeter vector from the
+    !! outer radius to the inner radius of each layer
+    real(dp), dimension(5, 5, nlayers) :: M_ext
+    !! Matrix that transforms the Lame parmeter vector from the
+    !! inner radius of one layer to the outer radius of the 
+    !! next inner.
+    real(dp), dimension(5, 5, nlayers) :: M_tot
+    !! Matrix that transforms the Lame parmeter vector from the
+    !! outer radius of the outer layer to the inner radius of  
+    !! each.
+    
+    ! Axial force inner product
+    real(dp) :: ey_bar_z_area
+    !! Integral of effective axial Young's modulus with area
+    !! for those layers which carry finite axial force
+    real(dp) :: ey_bar_z_area_slip
+    !! Integral of effective axial Young's modulus with area
+    !! for those layers which DO NOT carry axial force
+    real(dp), dimension(1,5) :: v_force_row
+    !! Row vector (matrix multiplication is inner product) to
+    !! obtain the axial force from the force-carrying layers
+    real(dp), dimension(1,5) :: v_force_row_slip
+    !! Row vector (matrix multiplication is inner product) to
+    !! obtain the axial force inner slip layers (no net force)
+    real(dp), dimension(1,5) :: rad_row_helper
+    !! A helper variable to store [radius, 1, 0, 0, 0] in row
+    
+    ! Boundary condition matrix
+    real(dp), dimension(4,5) :: M_bc
+    !! Boundary condition matrix. Multiply this with the 
+    !! outermost solution vector, (A,B,eps_z,1.0,eps_z_slip), 
+    !! to obtain a zero vector.
+    real(dp), dimension(4,4) :: M_toinv
+    !! Matrix to invert to get the solution
+    real(dp), dimension(4) :: RHS_vec
+    !! Right-hand-side vector to divide M_toinv
+    real(dp), dimension(5) :: A_vec_solution
+    !! Solution vector, Lame parameters at outer radius, strain
+    !! of force-carrying layers, and strain of slip layers
+    !! (A,B,eps_z,1,eps_z_slip)
+    
+    ! Constructing the solution everywhere
+    real(dp), dimension(5) :: A_vec_layer
+    !! Lame parameters and strains vector at outer radius
+    !! of each layer
+    real(dp), dimension(5, 5) :: M_int_within
+    !! Matrix that transforms the Lame parmeter vector from the
+    !! outer radius to plotted radius 
+    real(dp) :: A_layer,B_layer,A_plot,B_plot,f_int_A_plot,f_int_B_plot
+    
+    ! Variables used for radial stress distribution     
+    real(dp) :: dradius  
+      
+    ! Indexes
+    integer :: ii  ! Line index in the matrix
+    integer :: jj  ! Column index in the matrix
+    integer :: kk  ! Depth index in the matrix
+    ! ---    
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      
+    ! The stress calcualtion differential equations is analytically sloved
+    ! The final solution is given by the layer boundary conditions on
+    ! radial stress and displacement between layers solved 
+    ! The problem is set as aa.cc = bb, cc being the constant we search
+    ! ------
+    
+    ! Inner slip layers parameters
+    ! Section 15 in the writeup
+    ! [EDIT: Make this more general]
+    ! Innermost layer that takes axial force. Layers inner of this
+    ! have zero net axial force, to include CS decoupling.
+    ! This configuration JUST HAPPENS to work out because of
+    ! the specific i_tf_bucking options; if those are changed, 
+    ! will need a switch here.
+    nonslip_layer = i_tf_bucking
+    if ( nonslip_layer < 1) then
+        nonslip_layer = 1
+    end if
+    
+    ! Stiffness tensor factors
+    ! Section 3 in the writeup
+    ! With Section 12 anisotropic materials properties
+    ! ***
+    ! Dependent Poisson's ratio: nu-transverse-axial 
+    ! from nu-axial-transverse and the Young's moduli
+    nu_tz = nu_zt * ey_t / ey_z
+    
+    ! Effective Young's Moduli and Poisson's ratios
+    ! holding strain, not stress, cross-terms constant
+    ey_bar_z  = ey_z * (1-nu_t) / (1-nu_t-2*nu_tz*nu_zt)
+    ey_bar_t  = ey_t * (1-nu_tz*nu_zt) / (1-nu_t-2*nu_tz*nu_zt) / (1+nu_t)
+    nu_bar_t  = (nu_t+nu_tz*nu_zt) / (1-nu_tz*nu_zt)
+    nu_bar_tz = nu_tz / (1-nu_t)
+    nu_bar_zt = nu_zt * (1+nu_t) / (1-nu_tz*nu_zt)
+    
+    ! Lorentz force parameters
+    ! Section 13 in the writeup
+    ! ***
+    ! Currents in each layer [A]
+    currents = pi * d_curr * (rad(2:nlayers+1)**2 - rad(1:nlayers)**2)
+    ! Currents enclosed by inner radius of each layer [A]
+    currents_enclosed(1) = 0.0D0
+    do ii = 2, nlayers
+        currents_enclosed(ii) = currents_enclosed(ii-1) + currents(ii-1)
+    end do  
+    ! Factor that multiplies r linearly in the force density
+    f_lin_fac = rmu0/2.0D0 * d_curr**2
+    ! Factor that multiplies r reciprocally in the force density
+    f_rec_fac = rmu0/2.0D0 * (d_curr * currents_enclosed / pi - d_curr**2 * rad(1:nlayers)**2)
+    ! Force density integral that adds to Lame parameter A
+    f_int_A   = 0.5D0*f_lin_fac * (rad(2:nlayers+1)**2-rad(1:nlayers)**2) + f_rec_fac * log(rad(2:nlayers+1)/(rad(1:nlayers)))
+    if ( f_rec_fac(1) == 0D0) then
+        f_int_A(1) = 0.5D0*f_lin_fac(1) * (rad(2)**2-rad(1)**2)
+    end if
+
+    ! Force density integral that adds to Lame parameter B
+    f_int_B   = 0.25D0*f_lin_fac * (rad(2:nlayers+1)**4-rad(1:nlayers)**4) &
+        + 0.5D0*f_rec_fac * (rad(2:nlayers+1)**2-rad(1:nlayers)**2)
+
+    ! Transformation matrix from outer to inner Lame parameters
+    ! Section 5 in the writeup
+    ! With Section 12 anisotropic materials properties
+    ! ***
+    ! M_int(kk) multiplies Lame parameter vector of layer kk (A,B,eps_z,1.0,eps_z_slip) 
+    ! and transforms the values at the outer radius to the values at the inner radius
+    do kk = 1, nlayers
+        M_int(1,1,kk) = 1.0D0
+        M_int(2,2,kk) = 1.0D0
+        M_int(3,3,kk) = 1.0D0
+        M_int(4,4,kk) = 1.0D0
+        M_int(5,5,kk) = 1.0D0
+        
+        M_int(1,4,kk) = -0.5D0 / ey_bar_t(kk) * f_int_A(kk);
+        M_int(2,4,kk) =  0.5D0 / ey_bar_t(kk) * f_int_B(kk);
+    end do
+
+    ! Transformation matrix between layers
+    ! Section 6 in the writeup
+    ! With Section 12 anisotropic materials properties
+    ! With Section 15 inner slip-decoupled layers
+    ! ***
+    ! M_ext(kk) multiplies Lame parameter vector of layer kk (A,B,eps_z,1.0,eps_z_slip) 
+    ! and transforms the values at the inner radius to the values at the outer radius
+    ! of layer kk-1
+    do kk = 2, nonslip_layer-1
+        ey_fac = ey_bar_t(kk)/ey_bar_t(kk-1)
+        M_ext(1,3,kk) = 0.0D0
+        M_ext(1,5,kk) = 0.5D0 * (ey_fac*nu_bar_zt(kk) - nu_bar_zt(kk-1))
+    end do
+    if ( nonslip_layer > 1) then
+        kk = nonslip_layer
+        ey_fac = ey_bar_t(kk)/ey_bar_t(kk-1)
+        M_ext(1,3,kk) = 0.5D0 * ey_fac * nu_bar_zt(kk)
+        M_ext(1,5,kk) = 0.5D0 * (-nu_bar_zt(kk-1))  
+    end if
+    do kk = nonslip_layer+1, nlayers
+        ey_fac = ey_bar_t(kk)/ey_bar_t(kk-1)
+        M_ext(1,3,kk) = 0.5D0 * (ey_fac*nu_bar_zt(kk) - nu_bar_zt(kk-1))
+        M_ext(1,5,kk) = 0.0D0
+    end do
+    do kk = 2, nlayers
+        ey_fac = ey_bar_t(kk)/ey_bar_t(kk-1);
+        M_ext(1,1,kk) = 0.5D0*(ey_fac*(1+nu_bar_t(kk))+1-nu_bar_t(kk-1));
+        if (rad(kk) > 0D0) then
+            M_ext(1,2,kk) = 0.5D0/rad(kk)**2*(1-nu_bar_t(kk-1)-ey_fac*(1-nu_bar_t(kk)));
+        end if
+        M_ext(2,1,kk) = rad(kk)**2*(1-M_ext(1,1,kk));
+        M_ext(2,2,kk) = (1-rad(kk)**2*M_ext(1,2,kk));
+        M_ext(2,3,kk) = -rad(kk)**2*M_ext(1,3,kk);
+        M_ext(2,5,kk) = -rad(kk)**2*M_ext(1,5,kk);
+        M_ext(3,3,kk) = 1.0D0;
+        M_ext(4,4,kk) = 1.0D0;
+        M_ext(5,5,kk) = 1.0D0;
+    end do
+    
+    ! Total transformation matrix, from Lame parmeters at outside to
+    ! Lame parameters at inside of each layer
+    ! Section 7 in the writeup
+    ! ***
+    M_tot(:,:,nlayers) = M_int(:,:,nlayers)
+    do kk = nlayers-1, 1, -1
+        M_tot(:,:,kk) = matmul(M_int(:,:,kk),matmul(M_ext(:,:,kk+1),M_tot(:,:,kk+1)));
+    end do
+    
+    ! Axial force inner product. Dot-product this with the 
+    ! outermost solution vector, (A,B,eps_z,1.0,eps_z_slip), 
+    ! to obtain the axial force.
+    ! Section 8 in the writeup
+    ! ***
+    ! Axial stiffness products
+    ey_bar_z_area      = pi*sum(ey_bar_z(nonslip_layer:nlayers)*(rad(nonslip_layer+1:nlayers+1)**2 - rad(nonslip_layer:nlayers)**2))
+    ey_bar_z_area_slip = pi*sum(ey_bar_z(1:nonslip_layer-1)*(rad(2:nonslip_layer)**2 - rad(1:nonslip_layer-1)**2))
+    
+    ! Axial stiffness inner product, for layers which carry axial force
+    rad_row_helper(1,:) = (/rad(nlayers+1)**2, 1D0, 0D0, 0D0, 0D0/)
+    v_force_row = 2D0*pi*ey_bar_z(nlayers)*nu_bar_tz(nlayers)*rad_row_helper 
+    rad_row_helper(1,:) = (/rad(nonslip_layer)**2, 1D0, 0D0, 0D0, 0D0/)
+    v_force_row = v_force_row - 2D0*pi*ey_bar_z(nonslip_layer)*nu_bar_tz(nonslip_layer) &
+        * matmul(rad_row_helper,M_tot(:,:,nonslip_layer))
+    do kk = (nonslip_layer+1), nlayers
+        rad_row_helper(1,:) = (/rad(kk)**2, 1D0, 0D0, 0D0, 0D0/)
+        v_force_row = v_force_row + 2D0*pi*(ey_bar_z(kk-1)*nu_bar_tz(kk-1) &
+            - ey_bar_z(kk)*nu_bar_tz(kk))*matmul(rad_row_helper,M_tot(:,:,kk))
+    end do
+    ! Include the effect of axial stiffness
+    v_force_row(1,3) = v_force_row(1,3) + ey_bar_z_area
+    
+    ! Axial stiffness inner product, for layers which DON'T carry force
+    if ( nonslip_layer > 1) then
+        rad_row_helper(1,:) = (/rad(nonslip_layer)**2, 1D0, 0D0, 0D0, 0D0/)
+        v_force_row_slip = 2D0*pi*ey_bar_z(nonslip_layer-1)*nu_bar_tz(nonslip_layer-1) &
+            * matmul(rad_row_helper,M_tot(:,:,nonslip_layer-1))
+        rad_row_helper(1,:) = (/rad(1)**2, 1D0, 0D0, 0D0, 0D0/)
+        v_force_row_slip = v_force_row_slip - 2D0*pi*ey_bar_z(1)*nu_bar_tz(1)*matmul(rad_row_helper,M_tot(:,:,1))
+        do kk = 2, (nonslip_layer-1)
+            rad_row_helper(1,:) = (/rad(kk)**2, 1D0, 0D0, 0D0, 0D0/)
+            v_force_row_slip = v_force_row_slip + 2D0*pi*(ey_bar_z(kk-1)*nu_bar_tz(kk-1) &
+                - ey_bar_z(kk)*nu_bar_tz(kk))*matmul(rad_row_helper,M_tot(:,:,kk))
+        end do
+        ! Include the effect of axial stiffness
+        v_force_row_slip(1,5) = v_force_row_slip(1,5) + ey_bar_z_area_slip
+    else
+        ! If there's no inner slip layer, still need a finite 5th 
+        ! element to ensure no singular matrix
+        v_force_row_slip(1,:) = (/ 0D0, 0D0, 0D0, 0D0, 1D0 /)
+    end if
+
+    ! Boundary condition matrix. Multiply this with the 
+    ! outermost solution vector, (A,B,eps_z,1.0,eps_z_slip), 
+    ! to obtain a zero vector. 
+    ! Solved to get the Lame parameters.
+    ! Section 9 in the writeup
+    ! ***
+    ! Outer boundary condition row, zero radial stress
+    M_bc(1,:) = (/ (1D0+nu_bar_t(nlayers))*rad(nlayers+1)**2, -1D0+nu_bar_t(nlayers), &
+        nu_bar_zt(nlayers)*rad(nlayers+1)**2, 0D0, 0D0 /)
+    ! Inner boundary condition row, zero radial stress
+    ! or zero displacement if rad(1)=0
+    if ( nonslip_layer > 1) then
+        M_bc(2,:) = (/ (1D0+nu_bar_t(1))*rad(1)**2, -1D0+nu_bar_t(1), 0D0, 0D0, nu_bar_zt(1)*rad(1)**2 /)
+    else
+        M_bc(2,:) = (/ (1D0+nu_bar_t(1))*rad(1)**2, -1D0+nu_bar_t(1), nu_bar_zt(1)*rad(1)**2, 0D0, 0D0 /)
+    end if
+    M_bc(2,:) = matmul(M_bc(2,:),M_tot(:,:,1))
+    ! Axial force boundary condition
+    M_bc(3,:) = v_force_row(1,:)
+    M_bc(3,4) = M_bc(3,4) - v_force
+    ! Axial force boundary condition of slip layers
+    M_bc(4,:) = v_force_row_slip(1,:)
+
+    ! The solution, the outermost Lame parameters A,B
+    ! and the axial strains of the force-carrying and 
+    ! slip layers eps_z and eps_z_slip.
+    ! Section 10 in the writeup
+    ! ***
+    M_toinv = M_bc(:,(/1,2,3,5/))
+    RHS_vec = -M_bc(:,4)
+    call linesolv(M_toinv, 4, RHS_vec, A_vec_solution)
+    A_vec_solution(5) = A_vec_solution(4)
+    A_vec_solution(4) = 1D0
+    
+    ! Radial/toroidal/vertical stress radial distribution
+    ! ------
+    rradius(:) = 0.0D0
+    sigr(:) = 0.0D0
+    sigt(:) = 0.0D0
+    sigz(:) = 0.0D0
+    strain_r(:) = 0.0D0
+    strain_t(:) = 0.0D0
+    strain_z(:) = 0.0D0
+    r_deflect(:) = 0.0D0
+
+    ! Radial displacement, stress and strain distributions
+    A_vec_layer = A_vec_solution
+    do ii = nlayers, 1, -1
+        A_layer = A_vec_layer(1)
+        B_layer = A_vec_layer(2)
+        
+        dradius = (rad(ii+1) - rad(ii)) / dble(n_radial_array - 1 )
+        do jj = (ii-1)*n_radial_array + 1, ii*n_radial_array
+
+            rradius(jj) = rad(ii) + dradius*dble(jj - n_radial_array*(ii-1) - 1)
+            
+            f_int_A_plot = 0.5D0*f_lin_fac(ii) * (rad(ii+1)**2-rradius(jj)**2) &
+                + f_rec_fac(ii) * log(rad(ii+1)/(rradius(jj)))
+            f_int_B_plot = 0.25D0*f_lin_fac(ii) * (rad(ii+1)**4-rradius(jj)**4) &
+                + 0.5D0*f_rec_fac(ii) * (rad(ii+1)**2-rradius(jj)**2)
+            A_plot       = A_layer - 0.5D0 / ey_bar_t(ii) * f_int_A_plot;
+            B_plot       = B_layer + 0.5D0 / ey_bar_t(ii) * f_int_B_plot;
+
+            ! Radial displacement
+            r_deflect(jj) = A_plot*rradius(jj) + B_plot/rradius(jj)
+            
+            ! Radial strain
+            strain_r(jj)  = A_plot - B_plot/rradius(jj)**2
+            ! Azimuthal strain
+            strain_t(jj)  = A_plot + B_plot/rradius(jj)**2
+            ! Axial strain
+            if ( ii < nonslip_layer) then
+                strain_z(jj) = A_vec_solution(5)
+            else
+                strain_z(jj) = A_vec_solution(3)
+            end if
+            
+            ! Radial stress
+            sigr(jj) = ey_bar_t(ii)*(strain_r(jj) + nu_bar_t(ii)*strain_t(jj) + nu_bar_zt(ii)*strain_z(jj))
+            ! Aximuthal stress
+            sigt(jj) = ey_bar_t(ii)*(strain_t(jj) + nu_bar_t(ii)*strain_r(jj) + nu_bar_zt(ii)*strain_z(jj))
+            ! Axial stress
+            sigz(jj) = ey_bar_z(ii)*(strain_z(jj) + nu_bar_tz(ii)*(strain_r(jj) + strain_t(jj)))
+
+
+        end do ! layer array loop
+        
+        ! Move to the outer vector of the next-inner layer
+        A_vec_layer = matmul(M_tot(:,:,ii),A_vec_solution)
+        A_vec_layer = matmul(M_ext(:,:,ii),A_vec_layer)
+    end do ! Layer loop
+    ! ------     
+
+end subroutine extended_plane_strain     
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 function eyngeff(estl,eins,tins,tstl,tcs)
 
     !! Finds the effective Young's modulus of the TF coil winding pack
@@ -3446,7 +3964,7 @@ end function eyngzwp
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 function sig_tresca(sx,sy,sz)
-    !! Calculates TRESCA stress in a TF coil
+    !! Calculates Maximum shear stress in a TF coil, for the Tresca yield criterion
     !! author: S Kahn
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3521,6 +4039,9 @@ subroutine coilshap
     !! Calculates the shape of the INSIDE of the TF coil. The coil is
     !! approximated by a straight inboard section and four elliptical arcs
     !! This is a totally ad hoc model, with no physics or engineering basis.
+    !!
+    !! The referenced equations can be found in draft/unpublished document
+    !! attached in GitLab to issue #1328.
     use physics_variables, only: i_single_null, rminor, rmajor, itart
     use build_variables, only: hmax, hpfu, tfcth, r_tf_outboard_mid, &
         r_tf_inboard_mid, tfthko, r_cp_top, r_tf_inboard_out
@@ -3539,7 +4060,7 @@ subroutine coilshap
     if ( i_tf_shape == 1 .and. itart == 0 ) then
     ! PROCESS D-shape parametrisation
         
-        ! X position of the arcs, eq(15)
+        ! X position of the arcs, eq(21)
         ! The xarc/yarc are defined in the INSIDE part of the TF
         xarc(1) = r_tf_inboard_out
         xarc(2) = rmajor - 0.2D0*rminor
@@ -3576,27 +4097,29 @@ subroutine coilshap
             aa = tfa(ii) + 0.5D0*tfcth
             bb = tfb(ii) + 0.5D0*tfcth
             tfleng = tfleng + 0.25d0 * circumference(aa,bb)
+            ! note: final tfleng includes inboard leg length; eq(22)
         end do
+
 
     ! Centrepost with D-shaped
     ! ---
     else if ( i_tf_shape == 1 .and. itart == 1  ) then
         
-        ! X position of the arcs, eq(17) and text before it
+        ! X position of the arcs, eq(23) and text before it
         xarc(1) = r_cp_top
         xarc(2) = rmajor - 0.2D0*rminor
         xarc(3) = r_tf_outboard_in
         xarc(4) = xarc(2)
         xarc(5) = xarc(1)
 
-        ! Double null, eq(17) and text before it
+        ! Double null, eq(23) and text before it
         yarc(1) = hpfu - tfcth
         yarc(2) = hpfu - tfcth
         yarc(3) = 0
         yarc(4) = -hmax
         yarc(5) = -hmax
 
-        ! TF middle circumference, eq(18)
+        ! TF middle circumference
         tfleng = 2*(xarc(2) - xarc(1))
 
         do ii = 2, 3 
@@ -3607,6 +4130,7 @@ subroutine coilshap
            aa = tfa(ii) + 0.5D0 * tfthko
            bb = tfb(ii) + 0.5D0 * tfthko
            tfleng = tfleng + 0.25d0 * circumference(aa,bb)
+           ! IMPORTANT : THE CENTREPOST LENGTH IS NOT INCLUDED IN TFLENG FOR TART; eq(24)
         end do
     ! ---
 
@@ -3631,9 +4155,9 @@ subroutine coilshap
         yarc(5) = -hmax
 
         ! TF middle circumference
-        ! IMPORTANT : THE CENTREPOST LENGTH IS NOT INCLUDED FOR TART 
-        if ( itart == 0 ) tfleng = 2.0D0 * ( 2.0D0*hmax + tfcth  + r_tf_outboard_mid - r_tf_inboard_mid )    ! eq(19)
-        if ( itart == 1 ) tfleng = hmax + hpfu + 2.0D0 * ( r_tf_outboard_mid - r_cp_top ) ! eq(20)
+        ! IMPORTANT : THE CENTREPOST LENGTH IS NOT INCLUDED IN TFLENG FOR TART 
+        if ( itart == 0 ) tfleng = 2.0D0 * ( 2.0D0*hmax + tfcth  + r_tf_outboard_mid - r_tf_inboard_mid )  ! eq(25)
+        if ( itart == 1 ) tfleng = hmax + hpfu + 2.0D0 * ( r_tf_outboard_mid - r_cp_top )  ! eq(26)
     end if
     ! ---
 
@@ -3838,6 +4362,9 @@ subroutine outtf(outfile, peaktfflag)
             case (8)
                 call ocmmnt(outfile, & 
                     '  ->  Durham Ginzburg-Landau critical surface model for REBCO')
+            case (9)
+                call ocmmnt(outfile, & 
+                    '  ->  Hazelton experimental data + Zhai conceptual model for REBCO')
         end select
     end if
 
@@ -3876,7 +4403,11 @@ subroutine outtf(outfile, peaktfflag)
     call ovarre(outfile,'Total outboard leg radial thickness (m)','(tfthko)',tfthko)
     call ovarre(outfile,'Outboard leg toroidal thickness (m)','(tftort)',tftort, 'OP ')
     call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax, 'OP ')
-    call ovarre(outfile,'Mean coil circumference (m)','(tfleng)',tfleng, 'OP ')
+    if ( itart == 1 ) then
+        call ovarre(outfile,'Mean coil circumference (inboard leg not included) (m)','(tfleng)',tfleng, 'OP ')
+    else
+        call ovarre(outfile,'Mean coil circumference (including inboard leg length) (m)','(tfleng)',tfleng, 'OP ')
+    end if
     
     ! Vertical shape
     call ovarin(outfile,'Vertical TF shape','(i_tf_shape)',i_tf_shape)
@@ -3983,7 +4514,7 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'Inter-turn insulation thickness (m)','(thicndut)',thicndut)
 
         select case (i_tf_sc_mat)
-        case (1,2,3,4,5,7,8)
+        case (1,2,3,4,5,7,8,9)
             call osubhd(outfile,'Conductor information:')
             call ovarre(outfile,'Diameter of central helium channel in cable','(dhecoil)',dhecoil)
             call ocmmnt(outfile,'Fractions by area')
@@ -4279,8 +4810,8 @@ subroutine tfspcall(outfile,iprint)
         tmargtf, thwcndut, t_conductor, fcutfsu, jwdgcrt, tdmptf, cpttf, &
         ritfc, jwptf, bmaxtfrp, tcritsc, acstf, strncon_tf, fhts, bcritsc, &
         i_tf_sc_mat, b_crit_upper_nbti, t_crit_nbti
-    use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, jcrit_nbti, croco, bi2212,&
-    GL_nbti, GL_REBCO
+    use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, &
+        jcrit_nbti, croco, bi2212, GL_nbti, GL_REBCO, HIJC_REBCO
     use global_variables, only: run_tests
     use constants, only: pi
     implicit none
@@ -4470,7 +5001,23 @@ contains
             if (strncon_tf > 0.7D-2 .or. strncon_tf < -0.7D-2) then
                 fdiags(1) = strncon_tf ; call report_error(261)
             end if
+
+        case (9) ! High Current Density REBCO tape
+            bc20m = 138
+            tc0m = 92
+            ! 'high current density' as per parameterisation described in Wolf, 
+            !  and based on Hazelton experimental data and Zhai conceptual model;
+            !  see subroutine for full references
+            call HIJC_REBCO(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
             
+            jcritstr = jcritsc * (1.0D0-fcu)
+            !  Critical current in cable (copper added at this stage in HTS cables)
+            icrit = jcritstr * acs * fcond 
+            
+            !REBCO fractures in strains above ~+/- 0.7%
+            if (strncon_tf > 0.7D-2 .or. strncon_tf < -0.7D-2) then
+                fdiags(1) = strncon_tf ; call report_error(261)
+            end if
 
         end select
 
@@ -4497,7 +5044,8 @@ contains
         end if
 
         !  Temperature margin (already calculated in bi2212 for isumat=2)
-        if ((isumat == 1).or.(isumat == 4).or.(isumat == 3).or.(isumat == 5).or.(isumat == 7).or.(isumat == 8)) then
+        if ((isumat == 1).or.(isumat == 3).or.(isumat == 4).or.(isumat == 5) &
+            .or.(isumat == 7).or.(isumat == 8).or.(isumat == 9)) then
 
             !  Newton-Raphson method; start approx at requested minimum temperature margin
             ttest = thelium + tmargmin_tf + 0.001d0
@@ -4541,6 +5089,11 @@ contains
                     if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
                     call GL_REBCO(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
                     call GL_REBCO(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
+                case (9)
+                    call HIJC_REBCO(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+                    if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
+                    call HIJC_REBCO(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
+                    call HIJC_REBCO(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
                 end select
                 ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)
             end do solve_for_tmarg
@@ -4599,6 +5152,11 @@ contains
         case (8)
             call ocmmnt(outfile,'Superconductor used: REBCO')
             call ocmmnt(outfile, ' (Durham Ginzburg-Landau critical surface model)')
+            call ovarre(outfile,'Critical field at zero temperature and strain (T)','(bc20m)',bc20m)
+            call ovarre(outfile,'Critical temperature at zero field and strain (K)', '(tc0m)',tc0m)
+        case (9)
+            call ocmmnt(outfile,'Superconductor used: REBCO')
+            call ocmmnt(outfile, ' (Hazelton experimental data + Zhai conceptual model)')
             call ovarre(outfile,'Critical field at zero temperature and strain (T)','(bc20m)',bc20m)
             call ovarre(outfile,'Critical temperature at zero field and strain (K)', '(tc0m)',tc0m)
         end select ! isumat
@@ -4663,18 +5221,23 @@ contains
         ! acstf : Cable space - inside area (m2)
         ! Set new croco_od - allowing for scaling of croco_od
         croco_od = t_conductor / 3.0d0 - thwcndut * ( 2.0d0 / 3.0d0 )
-        conductor%acs =  9.d0/4.d0 * pi * croco_od**2
-        acstf = conductor%acs
-        conductor%area =  t_conductor**2 ! does this not assume it's a sqaure???
+        conductor_acs =  9.d0/4.d0 * pi * croco_od**2
+        acstf = conductor_acs
+        conductor_area =  t_conductor**2 ! does this not assume it's a sqaure???
 
-        conductor%jacket_area = conductor%area - conductor%acs
-        acndttf = conductor%jacket_area
+        conductor_jacket_area = conductor_area - conductor_acs
+        acndttf = conductor_jacket_area
         
-        conductor%jacket_fraction = conductor%jacket_area / conductor%area
-        call croco(jcritsc,croco_strand,conductor,croco_od,croco_thick)
-        copperA_m2 = iop / conductor%copper_area
-        icrit = conductor%critical_current
-        jcritstr = croco_strand%critical_current / croco_strand%area
+        conductor_jacket_fraction = conductor_jacket_area / conductor_area
+        call croco(jcritsc, croco_strand_area, croco_strand_critical_current, &
+            conductor_copper_area, conductor_copper_fraction, conductor_copper_bar_area, &
+            conductor_hastelloy_area, conductor_hastelloy_fraction, conductor_helium_area, &
+            conductor_helium_fraction, conductor_solder_area, conductor_solder_fraction, &
+            conductor_rebco_area, conductor_rebco_fraction, conductor_critical_current, &
+            conductor_area, croco_od,croco_thick)
+        copperA_m2 = iop / conductor_copper_area
+        icrit = conductor_critical_current
+        jcritstr = croco_strand_critical_current / croco_strand_area
 
         ! Critical current density in winding pack
         ! aturn : Area per turn (i.e. entire jacketed conductor with insulation) (m2)
@@ -4692,13 +5255,10 @@ contains
         tmarg = current_sharing_t - thelium
         temp_margin = tmarg         ! Only used in the availabilty routine - see comment to Issue #526
 
-        ! Quench thermal model not in use
-        ! call croco_quench(conductor)
-
         if (iprint == 0) return     ! Output ----------------------------------
 
-        total = conductor%copper_area+conductor%hastelloy_area+conductor%solder_area+ &
-        conductor%jacket_area+conductor%helium_area+conductor%rebco_area
+        total = conductor_copper_area+conductor_hastelloy_area+conductor_solder_area+ &
+        conductor_jacket_area+conductor_helium_area+conductor_rebco_area
 
         if (temp_margin <= 0.0D0) then
             write(*,*)'ERROR: Negative TFC temperature margin'
@@ -4726,8 +5286,8 @@ contains
         call ovarre(outfile,'Area of copper in strand (m2)','(copper_area)',copper_area , 'OP ')
         call ovarre(outfile,'Area of hastelloy substrate in strand (m2) ','(hastelloy_area)',hastelloy_area , 'OP ')
         call ovarre(outfile,'Area of solder in strand (m2)  ','(solder_area)',solder_area , 'OP ')
-        call ovarre(outfile,'Total: area of CroCo strand (m2)  ','(croco_strand%area)',croco_strand%area , 'OP ')
-        if(abs(croco_strand%area-(rebco_area+copper_area+hastelloy_area+solder_area))>1d-6)then
+        call ovarre(outfile,'Total: area of CroCo strand (m2)  ','(croco_strand_area)',croco_strand_area , 'OP ')
+        if(abs(croco_strand_area-(rebco_area+copper_area+hastelloy_area+solder_area))>1d-6)then
             call ocmmnt(outfile, "ERROR: Areas in CroCo strand do not add up")
             write(*,*)'ERROR: Areas in CroCo strand do not add up - see OUT.DAT'
         endif
@@ -4741,21 +5301,21 @@ contains
         call ocmmnt(outfile,'Conductor information (includes jacket, not including insulation)')
         call ovarre(outfile,'Width of square conductor (cable + steel jacket) (m)', &
             '(t_conductor)', t_conductor , 'OP ')
-        call ovarre(outfile,'Area of conductor (m2)','(area)', conductor%area , 'OP ')
-        call ovarre(outfile,'REBCO area of conductor (mm2)','(rebco_area)',conductor%rebco_area , 'OP ')
-        call ovarre(outfile,'Area of central copper bar (mm2)', '(copper_bar_area)', conductor%copper_bar_area, 'OP ')
-        call ovarre(outfile,'Total copper area of conductor, total (mm2)','(copper_area)',conductor%copper_area, 'OP ')
-        call ovarre(outfile,'Hastelloy area of conductor (mm2)','(hastelloy_area)',conductor%hastelloy_area, 'OP ')
-        call ovarre(outfile,'Solder area of conductor (mm2)','(solder_area)',conductor%solder_area, 'OP ')
-        call ovarre(outfile,'Jacket area of conductor (mm2)','(jacket_area)',conductor%jacket_area, 'OP ')
-        call ovarre(outfile,'Helium area of conductor (mm2)','(helium_area)',conductor%helium_area, 'OP ')
-        if(abs(total-conductor%area)>1d-8) then
+        call ovarre(outfile,'Area of conductor (m2)','(area)', conductor_area , 'OP ')
+        call ovarre(outfile,'REBCO area of conductor (mm2)','(rebco_area)',conductor_rebco_area , 'OP ')
+        call ovarre(outfile,'Area of central copper bar (mm2)', '(copper_bar_area)', conductor_copper_bar_area, 'OP ')
+        call ovarre(outfile,'Total copper area of conductor, total (mm2)','(copper_area)',conductor_copper_area, 'OP ')
+        call ovarre(outfile,'Hastelloy area of conductor (mm2)','(hastelloy_area)',conductor_hastelloy_area, 'OP ')
+        call ovarre(outfile,'Solder area of conductor (mm2)','(solder_area)',conductor_solder_area, 'OP ')
+        call ovarre(outfile,'Jacket area of conductor (mm2)','(jacket_area)',conductor_jacket_area, 'OP ')
+        call ovarre(outfile,'Helium area of conductor (mm2)','(helium_area)',conductor_helium_area, 'OP ')
+        if(abs(total-conductor_area)>1d-8) then
             call ovarre(outfile, "ERROR: conductor areas do not add up:",'(total)',total , 'OP ')
         endif
-        call ovarre(outfile,'Critical current of CroCo strand (A)','(croco_strand%critical_current)', &
-        croco_strand%critical_current , 'OP ')
-        call ovarre(outfile,'Critical current of conductor (A) ','(conductor%critical_current)', &
-        conductor%critical_current , 'OP ')
+        call ovarre(outfile,'Critical current of CroCo strand (A)','(croco_strand_critical_current)', &
+        croco_strand_critical_current , 'OP ')
+        call ovarre(outfile,'Critical current of conductor (A) ','(conductor_critical_current)', &
+        conductor_critical_current , 'OP ')
 
         if (run_tests==1) then
             call oblnkl(outfile)
@@ -4915,188 +5475,6 @@ function croco_voltage()
 
 end function croco_voltage
 
-! --------------------------------------------------------------------
-subroutine croco_quench(conductor)
-
-    !! Finds the current density limited by the maximum temperatures in quench
-    !! It also finds the dump voltage.
-    use tfcoil_variables, only: tmax_croco, bmaxtf, quench_detection_ef, &
-        tftmp, croco_quench_temperature, jwptf, t_conductor
-    use superconductors, only: copper_properties2, jcrit_rebco
-    use ode_mod, only: ode
-    use maths_library, only: secant_solve
-    implicit none
-
-    type(volume_fractions), intent(in)::conductor
-    real(dp):: current_density_in_conductor
-
-
-    real(dp)::tout     !for the phase 2
-    real(dp), parameter :: relerr= 0.01d0
-    real(dp), parameter :: abserr= 0.01d0
-
-    integer(kind=4), parameter :: neqn = 1
-    integer(kind=4) :: iflag
-    integer(kind=4) :: iwork(5)
-
-    real(dp) :: work(100+21*neqn)
-    real(dp) :: y(neqn)
-
-    real(dp)::residual, t
-    logical::error
-
-    if(quench_detection_ef>1d-10)then
-        ! Two-phase quench model is used.
-        ! Phase 1
-        ! Issue #548, or see K:\Power Plant Physics and Technology\PROCESS\HTS\
-        ! Solve for the temperature at which the quench detection field is reached.
-        ! secant_solve(f,x1,x2,solution,error,residual,opt_tol)
-        current_density_in_conductor = jwptf *  (t_cable / t_conductor)**2
-        call secant_solve(detection_field_error,5d0, 70d0,T1,error,residual)
-        ! T1 = Peak temperature of normal zone before quench is detected
-
-        ! Obsolete but leave here for the moment
-        ! croco_quench_factor = conductor%copper_fraction / jwptf**2
-
-        if(T1>tmax_croco)write(*,*)'Phase 1 of quench is too hot: T1 = ',T1
-    else
-        ! Quench is detected instantly - no phase 1.
-        T1 = tftmp
-    endif
-
-    ! vtfskv : voltage across a TF coil during quench (kV)
-    ! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s) (time-dump-TF)
-    ! For clarity I have copied this into 'time2' or 'tau2' depending on the model.
-
-    ! if(quench_model=='linear')then
-    !     time2 = tdmptf
-    !     vtfskv = 2.0D0/time2 * (estotft/n_tf) / cpttf
-    ! elseif(quench_model=='exponential')then
-    !     tau2 = tdmptf
-    !     vtfskv = 2.0D0/tau2 * (estotft/n_tf) / cpttf
-    ! endif
-
-    ! PHASE 2 OF QUENCH: fast discharge into resistor
-    ! The field declines in proportion to the current.
-    ! The operating current is iop.
-    ! The peak field at the operating current is bmaxtfrp
-    ! This is declared in global_variable.f90, so is in scope.
-    ! Solve the set of differential equations
-    ! subroutine ode ( f, neqn, y, t, tout, relerr, abserr, iflag, work, iwork )
-    ! See ode.f90 for details.
-    !    declare F in an external statement, supply the double precision
-    !      SUBROUTINE F ( T, Y, YP )
-    y(1) = T1
-    tout = 2.0d0 * tau2
-    iflag = 1
-    ! Starting time
-    t = 0d0
-    ! Remember that t will be set to the finish time by the ode solver!
-    ! ODE SOLVER
-    call ode(dtempbydtime, neqn, y, t, tout, relerr, abserr, iflag, work, iwork)
-    if(iflag /= 2)write(*,*)'ODE in subroutine croco_quench failed: iflag =', iflag
-
-    croco_quench_temperature = y(1)
-
-
-contains
-    function detection_field_error(t1)
-        ! Issue #548.
-        ! The difference beteween the actual voltage developed during the first
-        ! phase of the quench and the specified detection voltage
-
-        implicit none
-
-        real(dp)::detection_field_error, deltaj,jcritsc
-
-        real(dp), intent(in) :: t1
-        real(dp):: jc
-        logical :: validity
-        integer :: iprint
-
-        call copper_properties2(t1,bmaxtf,copper)
-        call jcrit_rebco(t1,bmaxtf,jcritsc,validity,iprint)
-
-        ! Critical current density at specified temperature t1, operating maximum field bmaxtf
-        jc = jcritsc * conductor%rebco_fraction
-
-        ! By definition jc=0 below the critical temperature at operating field
-        ! All the current flows in the copper
-        ! Note that the copper  resisitivity is a function of temperature, so it should still
-        ! be possible to solve for the correct detection voltage.
-        if(jc<0) jc = 0d0
-
-        deltaj = (current_density_in_conductor - jc)
-        detection_field_error = deltaj * copper%resistivity / conductor%copper_fraction &
-        - quench_detection_ef
-    end function
-
-end subroutine croco_quench
-
-!-------------------------------------------------------------------
-subroutine dtempbydtime ( qtime, qtemperature, derivative )
-    !! Supplies the right hand side of the ODE for the croco quench phase 2 subroutine
-    !! author: M Kovari, CCFE, Culham Science Centre
-    !! qtime : input real : time, the independent variable
-    !! qtemperature : input real : temperature, the dependent variable
-    !! derivative : output real : the value of dtempbydtime
-
-    ! Time-dependent quantities during the fast discharge local to this subroutine:
-    use tfcoil_variables, only: quench_model, bmaxtfrp, cpttf
-    use superconductors, only: jcrit_rebco
-
-    implicit none
-
-    ! time, the independent variable
-    real(dp),intent(in) :: qtime
-
-    ! Y(), the dependent variable
-    real(dp),intent(in) :: qtemperature(1)
-
-    ! YP(), the value of the derivative
-    real(dp),intent(out) :: derivative(1)
-
-    real(dp)::qj  ! Current density in superconductor during fast discharge
-    real(dp)::qcurrent  ! Total current in cable during fast discharge
-    real(dp)::qbfield  ! Peak magnetic field in cable during fast discharge
-    real(dp)::q_crit_current ! Critical current during fast discharge
-    logical :: validity
-    real(dp)::qratio,qtemp
-
-    !write(*,*)'subroutine dtempbydtime ( qtime, qtemperature, derivative )'
-    !write(*,*)'qtime = ',qtime,' qtemperature = ',qtemperature
-
-    ! For convenience
-    qtemp = qtemperature(1)
-
-    ! The current is a known function of time
-    if(quench_model=='linear')then
-        qcurrent = cpttf * (1 - qtime / time2)
-    elseif(quench_model=='exponential')then
-        qcurrent = cpttf * exp(- qtime / tau2)
-    endif
-
-    ! Field is proportional to current
-    qbfield = bmaxtfrp * qcurrent / cpttf
-
-    ! Critical current 'qj' given field and temperature
-    call jcrit_rebco(qtemp,qbfield,qj,validity,0)
-    q_crit_current = conductor%rebco_area * qj
-
-    ! The jacket is now included in the argument list
-    qratio = resistivity_over_heat_capacity(qtemp,qbfield,copper,hastelloy,solder,helium,jacket)
-
-    ! Derivatives
-
-    derivative(1) = (qcurrent - q_crit_current)**2 * qratio / &
-    (conductor%copper_fraction * conductor%area**2)
-
-
-    !write(*,*)'subroutine dtempbydtime: derivative =',derivative(1)
-    return
-end subroutine dtempbydtime
-
-!-----------------------------------------------------------------------
 subroutine cpost( r_tf_inboard_in, r_tf_inboard_out, r_cp_top, ztop,          & ! Inputs
                   hmaxi, cas_in_th, cas_out_th, gr_ins_th, ins_th, n_tf_turn, & ! Inputs                  
                   curr, rho, fcool,                                           & ! Inputs
@@ -5477,50 +5855,4 @@ subroutine cpost( r_tf_inboard_in, r_tf_inboard_out, r_cp_top, ztop,          & 
     ! --------------------------------------------------------------------
 
 end subroutine cpost
-
-!-----------------------------------------------------------------------
-function resistivity_over_heat_capacity(qtemp,qbfield,copper,hastelloy,solder,helium,jacket)
-    use superconductors, only: hastelloy_properties, solder_properties, &
-        helium_properties, jacket_properties, copper_properties2
-    implicit none
-    
-    real(dp),intent(in):: qtemp,qbfield
-    ! Only those materials that are actually supplied in the arguments are used.
-    type(resistive_material),intent(in),optional::copper,hastelloy,solder,helium,jacket
-    real(dp)::sum,resistivity_over_heat_capacity
-
-    sum = 0d0
-    call copper_properties2(qtemp,qbfield, copper)
-    if(present(copper))then
-        sum = sum + conductor%copper_fraction * copper%density * copper%cp
-    end if
-    if(present(hastelloy))then
-        call hastelloy_properties(qtemp,hastelloy)
-        sum = sum + conductor%hastelloy_fraction * hastelloy%density * hastelloy%cp
-    end if
-    if(present(solder))then
-        call solder_properties(qtemp,solder)
-        sum = sum + conductor%solder_fraction    * solder%density * solder%cp
-    end if
-    if(present(helium))then
-        call helium_properties(qtemp,helium)
-        sum = sum + conductor%helium_fraction    * helium%cp_density
-    end if
-    if(present(jacket))then
-        call jacket_properties(qtemp,jacket)
-        sum = sum + conductor%jacket_fraction    * jacket%density * jacket%cp
-    end if
-
-    resistivity_over_heat_capacity = copper%resistivity / sum
-
-    ! write(*,'(10(1pe10.3), 1x)')qtemp, copper%resistivity, sum,resistivity_over_heat_capacity
-    ! write(*,'(10(1pe10.3), 1x)')conductor%copper_fraction    , copper%density ,copper%cp
-    ! write(*,'(10(1pe10.3), 1x)')conductor%hastelloy_fraction , hastelloy%density , hastelloy%cp
-    ! write(*,'(10(1pe10.3), 1x)')conductor%solder_fraction    , solder%density , solder%cp
-    ! write(*,'(10(1pe10.3), 1x)')conductor%helium_fraction    , helium%cp_density
-
-end function resistivity_over_heat_capacity
-!--------------------------------------------------------------
-
-
 end module sctfcoil_module

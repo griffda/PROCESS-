@@ -16,7 +16,9 @@ module impurity_radiation_module
   !! Kallenbach et al., Plasma Phys. Control. Fus. 55(2013) 124041
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
 
   private
@@ -272,7 +274,7 @@ contains
 
     integer :: status, i
     character(len=12) :: filename
-    character(len=128) :: fullpath
+    character(len=256) :: fullpath
     logical :: iexist
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -320,7 +322,7 @@ contains
             impurity_arr(no)%Temp_keV, impurity_arr(no)%Lz_Wm3, impurity_arr(no)%Zav)
     else
        write(*,*) "# Warning :  Cannot find impurity data please check path."
-       write(*,*) "# Error   :  Current path is: ", impdir()
+       write(*,*) "# Error   :  Current path is: ", trim(fullpath)
        stop 1
     end if
 
@@ -339,13 +341,13 @@ contains
 
     !! Reads two columns of data from file
     !! author: H Lux, CCFE, Culham Science Centre
-    !! filename : input char(len=128)     : input filename
+    !! filename : input char(len=256)     : input filename
     !! nlines   : input integer           : no. of lines to be read
     !! col1(nlines) : output real array   : data in column1
     !! col2(nlines) : output real array   : data in column2
     !! col3(nlines) : output real array   : data in column3
     !! skiprows : optional input integer  : no. of initial rows to skip
-    !! fmt      : optional input char(len=128) : data format
+    !! fmt      : optional input char(len=256) : data format
     !! This routine reads in the data of a two column file and
     !! returns it. The first two rows are skipped by default.
     !! N/A
@@ -357,11 +359,11 @@ contains
 
     !  Arguments
 
-    character(len=128), intent(in) :: filename
+    character(len=256), intent(in) :: filename
     integer, intent(in) :: nlines
     real(dp), dimension(nlines), intent(out) :: col1, col2, col3
     integer, optional, intent(in) :: skiprows
-    character(len=128), optional, intent(in) :: fmt
+    character(len=256), optional, intent(in) :: fmt
 
     !  Local variables
 
@@ -369,7 +371,7 @@ contains
     integer, parameter :: unit = 18
     character(len=25) :: buffer
     real(dp) :: in1, in2, in3
-    character(len=128) :: local_fmt
+    character(len=256) :: local_fmt
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

@@ -12,11 +12,10 @@ module power_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
-
-  private
-  public :: tfpwr, pfpwr, acpow, power1, power2, power3, init_power_module
 
   !  Precision variable
   integer, parameter :: double = 8

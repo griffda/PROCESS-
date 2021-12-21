@@ -12,6 +12,7 @@ from pytest import approx
 import logging
 import shutil
 from pathlib import Path
+import math
 
 from scenario import Scenario
 
@@ -93,6 +94,14 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
     :param overwrite_refs_opt: option to overwrite reference MFILE and OUT.DAT
     :type tmp_path: bool
     """
+    # hybrd() has been temporarily commented out. Please see the comment in
+    # function_evaluator.fcnhyb() for an explanation.
+    # TODO Re-implement the IFE test using vmcon
+    if scenario.name == "IFE":
+        pytest.skip("IFE currently uses the hybrd non-optimising solver, which "
+            "is currently not implemented"
+        )
+
     logger.info(f"Starting test for {scenario.name}")
 
     # TODO Should only be logged once, not for every test
@@ -107,8 +116,7 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
 
     # Run the scenario: use the scenario method to run Process on the input file
     # in the temporary test directory
-    # Assert the run doesn't throw any errors
-    assert scenario.run(tmp_path) == True
+    scenario.run(tmp_path)
     
     # Overwrite reference MFILE and OUT files (ref.MFILE.DAT and ref.OUT.DAT)
     # If overwriting refs, don't bother asserting anything else and return
@@ -141,14 +149,19 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
         # Try/except used to collect all diffs outside tolerance, rather than
         # failing entire test on first AssertionError
         try:
-            # Assert with a relative tolerance
-            assert exp == approx(obs, rel=reg_tolerance)
-            # Within tolerance
-            # If different but within tolerance, log
-            # If the same, ignore
-            if exp != obs:
-                logger.info(f"Diff within tolerance: {var_name} was {exp}, now "
-                    f"{obs}, ({chg}%)")
+            if math.isnan(exp) and math.isnan(obs):
+                # expected and observed value is NaN: warn, but don't fail
+                logger.warning(f"{var_name} is NaN")
+            else:
+                # Assert with a relative tolerance
+                assert exp == approx(obs, rel=reg_tolerance)
+                
+                # Within tolerance
+                # If different but within tolerance, log
+                # If the same, ignore
+                if exp != obs:
+                    logger.info(f"Diff within tolerance: {var_name} was {exp}, now "
+                        f"{obs}, ({chg}%)")
         except AssertionError:
             # Outside tolerance: record diff item
             logger.exception(f"Diff outside tolerance: {var_name} was {exp}, "

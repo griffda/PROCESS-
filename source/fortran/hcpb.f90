@@ -10,12 +10,11 @@ module ccfe_hcpb_module
   !!
   !! - Kovari et al., Fusion Engineering and Design 104 (2016) 9-20  
   
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   implicit none
-
-  private
-  public :: ccfe_hcpb, tbr_shimwell, init_ccfe_hcpb_module
 
   ! Variables for output to file
   integer, private :: ip, ofile
@@ -1276,8 +1275,10 @@ contains
           '(p_plasma)', p_plasma, 'OP ')
         call ovarre(ofile, 'Inlet temperature of FW & blanket coolant pump (K)', &
           '(t_in_compressor)', t_in_compressor, 'OP ')
-        call ovarre(ofile, 'Outlet temperature of FW & blanket coolant pump (K)', &
+        call ovarre(ofile, 'Coolant pump outlet/Inlet temperature of FW & blanket (K)', &
           '(t_in_bb)', t_in_bb)
+        call ovarre(ofile, 'Outlet temperature of FW & blanket (K)', &
+          '(t_out_bb)', t_out_bb)	  
         call ovarre(ofile, 'Mechanical pumping power for FW and blanket cooling loop &
           &including heat exchanger (MW)', '(htpmw_fw_blkt)', htpmw_fw_blkt, 'OP ')
         call ovarre(ofile, 'Mechanical pumping power for divertor (MW)', &
@@ -2445,7 +2446,7 @@ contains
     real(dp), intent(in) :: breeder_f, li6enrich
 
     ! outputs
-    real(dp) :: tbr
+    real(dp), intent(out) :: tbr
 
     ! Local variables
 
@@ -2585,11 +2586,10 @@ module kit_hcpb_module
 
   ! Modules to import !
   ! !!!!!!!!!!!!!!!!!!!!
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
-
-  private
-  public :: kit_hcpb, init_kit_hcpb_module
 
   ! Variables for output to file
   integer, private :: ip, ofile

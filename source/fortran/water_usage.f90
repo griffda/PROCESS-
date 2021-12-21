@@ -21,11 +21,10 @@ module water_use_module
    !!
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  
-   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#ifndef dp
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
    implicit none
-   
-   private
-   public :: waterusecall
  
    real(dp), parameter :: secday = 86400.0D0
    !! seconds in a day, s

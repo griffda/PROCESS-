@@ -11,7 +11,9 @@ module kallenbach_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   !---------------------------------------------------------------------------
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 contains
 
   !---------------------------------------------------------------------------
@@ -121,7 +123,10 @@ contains
                             unit_test=.false., &
                             bp=b_pol, &
                             psep_kallenbach=dummy, teomp=dummy2, neomp=dummy3, &
-                            outfile=nout,iprint=1)
+                            outfile=nout,iprint=0)
+                            ! iprint turned off by default to stop _divertor.txt debug file being written
+                            ! turn iprint to 1 for such a debug file. Possible flag in input file can
+                            ! be added if requested
 
     call ocmmnt(nout, 'Testing the reading of atomic rates and impurity radiative functions.')
     call ocmmnt(nout, 'Use "output_divertor.xlsx" in K:\Power Plant Physics and Technology\PROCESS\SOL & Divertor')
@@ -208,7 +213,10 @@ contains
                             unit_test=.false., &
                             bp=b_pol, &
                             psep_kallenbach=dummy, teomp=dummy2, neomp=dummy3, &
-                            outfile=nout,iprint=1)
+                            outfile=nout,iprint=0)
+                            ! iprint turned off by default to stop _divertor.txt debug file being written
+                            ! turn iprint to 1 for such a debug file. Possible flag in input file can
+                            ! be added if requested
 
     call ocmmnt(nout, 'Testing the reading of atomic rates and impurity radiative functions.')
     call ocmmnt(nout, 'Use "output_divertor.xlsx" in K:\Power Plant Physics and Technology\PROCESS\SOL & Divertor')
@@ -323,7 +331,10 @@ contains
                             unit_test=.false., &
                             bp=b_pol, &
                             psep_kallenbach=dummy, teomp=dummy2, neomp=dummy3, &
-                            outfile=nout,iprint=1)
+                            outfile=nout,iprint=0)
+                            ! iprint turned off by default to stop _divertor.txt debug file being written
+                            ! turn iprint to 1 for such a debug file. Possible flag in input file can
+                            ! be added if requested
   
         select case (kallenbach_scan_var)
           case(0)

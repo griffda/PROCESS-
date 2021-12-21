@@ -8,7 +8,9 @@ module tfcoil_variables
   !! - AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !! - ITER Magnets design description document DDD11-2 v2 2 (2009)
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   implicit none
 
@@ -36,10 +38,14 @@ module tfcoil_variables
   !! winding pack turn insulation area per coil (m2)
 
   real(dp) :: sig_tf_case_max
-  !! Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)
+  !! Allowable maximum shear stress (Tresca criterion) in TF coil case (Pa)
 
   real(dp) :: sig_tf_wp_max
-  !! Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)
+  !! Allowable maximum shear stress (Tresca criterion) in TF coil conduit (Pa)
+
+  ! TODO remove below IF not needed 
+  ! real(dp) :: alstrtf
+  !! Allowable Tresca stress in TF coil structural material (Pa)
 
   real(dp) :: arealeg
   !! outboard TF leg area (m2)
@@ -140,7 +146,7 @@ module tfcoil_variables
   real(dp) :: dcase
   !! density of coil case (kg/m3)
 
-  real(dp), dimension(8) :: dcond
+  real(dp), dimension(9) :: dcond
   !! density of superconductor type given by i_tf_sc_mat/isumatoh/isumatpf (kg/m3)
   
   real(dp) :: dcondins
@@ -169,13 +175,20 @@ module tfcoil_variables
   !! account for stress, fatigue, radiation, AC losses, joints or manufacturing 
   !! variations; 1.0 would be very optimistic)
   
+  real(dp) :: hts_tape_width
+  !! Width of HTS tape [m] (if i_tf_sc_mat = 9)
+
+  real(dp) :: hts_tape_thickness
+  !! Thickness of HTS tape layer [m] (if i_tf_sc_mat = 9)
+
   real(dp) :: insstrain
   !! Radial strain in insulator
 
   integer :: i_tf_plane_stress
   !! Switch for the TF coil stress model
-  !!   0 : New generalized plane strain formulation 
+  !!   0 : Generalized plane strain formulation, Issues #977 and #991, O(n^3)
   !!   1 : Old plane stress model (only for SC)
+  !!   2 : Axisymmetric extended plane strain, Issues #1414 and #998, O(n)
 
   integer :: i_tf_tresca
   !! Switch for TF coil conduit Tresca stress criterion:
@@ -214,6 +227,7 @@ module tfcoil_variables
   !! - =6 REBCO HTS tape in CroCo strand
   !! - =7 Durham Ginzburg-Landau critical surface model for Nb-Ti
   !! - =8 Durham Ginzburg-Landau critical surface model for REBCO
+  !! - =9 Hazelton experimental data + Zhai conceptual model for REBCO
 
   integer :: i_tf_sup
   !! Switch for TF coil conductor model:
@@ -252,10 +266,13 @@ module tfcoil_variables
   !!     - if copper resistive     TF (i_tf_sup = 0) : used defined bucking cylinder
   !!     - if Superconducting      TF (i_tf_sup = 1) : Steel casing
   !!     - if aluminium resisitive TF (i_tf_sup = 2) : used defined bucking cylinder
-  !! - =2 : The TF is in contact with the CS : "bucked and weged design"
+  !! - =2 : The TF is in contact with the CS : "bucked and wedged design"
   !!       Fast version : thin TF-CS interface neglected in the stress calculations (3 layers)
-  !! - =3 : The TF is in contact with the CS : "bucked and weged design"
+  !!                      The CS is frictionally decoupled from the TF, does not carry axial tension
+  !! - =3 : The TF is in contact with the CS : "bucked and wedged design"
   !!       Full version : thin TF-CS Kapton interface introduced in the stress calculations (4 layers)
+  !!                      The CS and kaptop are frictionally decoupled from the TF, do not carry
+  !!                      axial tension
 
   integer :: n_tf_graded_layers
   !! Number of layers of different stress properties in the WP. If `n_tf_graded_layers > 1`, 
@@ -359,23 +376,32 @@ module tfcoil_variables
   !! TF Inboard leg Von-Mises stress in steel r distribution at mid-plane [Pa]
       
   real(dp), dimension(2*n_radial_array) :: sig_tf_tresca
-  !! TF Inboard leg TRESCA stress in steel r distribution at mid-plane [Pa]
+  !! TF Inboard leg maximum shear stress (Tresca criterion) in steel r distribution at mid-plane [Pa]
 
   real(dp) :: sig_tf_cs_bucked
-  !! Maximum TRESCA stress in CS structures at CS flux swing [Pa]:
+
+  ! TODO is this needed?
+  ! real(dp) :: strtf0
+  !! Maximum shear stress (Tresca criterion) in CS structures at CS flux swing [Pa]:
   !!
-  !!  - If superconducting CS (ipfres = 0): turn steel conduits TRESCA stress
-  !!  - If resistive       CS (ipfres = 1): copper conductor TRESCA stress 
+  !!  - If superconducting CS (ipfres = 0): turn steel conduits stress
+  !!  - If resistive       CS (ipfres = 1): copper conductor stress 
   !!
   !! Quantity only computed for bucked and wedged design (`i_tf_bucking >= 2`)
   !! Def : CS Flux swing, instant when the current changes sign in CS (null current) 
 
   real(dp) :: sig_tf_case
-  !! Maximum TRESCA stress in TF casing steel structures (Pa)
+  !! Maximum shear stress (Tresca criterion) in TF casing steel structures (Pa)
   
   real(dp) :: sig_tf_wp
-  !! Maximum TRESCA stress in TF WP conduit steel structures (Pa)
-  !! This is the TF stress condition used in the case of stellarators
+
+  ! TODO is this needed?
+  ! real(dp) :: strtf1
+  ! !! Maximum TRESCA stress in TF casing steel structures (Pa)
+  
+  ! real(dp) :: strtf2
+  ! !! Maximum TRESCA stress in TF WP conduit steel structures (Pa)
+  ! !! This is the TF stress condition used in the case of stellarators
   
   real(dp) :: sigvvall
   !! allowable stress from TF quench in vacuum vessel (Pa)
@@ -787,7 +813,8 @@ module tfcoil_variables
     cpttf = 7.0e4
     cpttf_max = 9.0e4
     dcase = 8000.0D0
-    dcond = 9000.0D0
+    dcond = (/6080.0D0, 6080.0D0, 6070.0D0, 6080.0D0, 6080.0D0, 8500.0D0, &
+      6070.0D0, 8500.0D0, 8500.0D0/)
     dcondins = 1800.0D0
     dhecoil = 0.005D0
     estotftgj = 0.0D0
@@ -797,6 +824,8 @@ module tfcoil_variables
     max_force_density = 0.0D0
     fcutfsu = 0.69D0
     fhts = 0.5D0
+    hts_tape_width = 4.0D-3
+    hts_tape_thickness = 1.0D-6
     insstrain = 0.0D0
     i_tf_plane_stress = 1
     i_tf_tresca = 0

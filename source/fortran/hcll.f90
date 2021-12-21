@@ -8,12 +8,10 @@ module kit_hcll_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   ! Modules to import
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
-
-  !  Subroutine declarations
-  private
-  public :: kit_hcll, init_kit_hcll_module
 
   !  Precision variable
   integer, parameter :: double = 8

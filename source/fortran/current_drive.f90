@@ -11,11 +11,10 @@ module current_drive_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   ! Import modules
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
-
-  private
-  public :: cudriv, culnbi
 
 contains
 
@@ -89,6 +88,7 @@ contains
     pinjimwfix = 0.0 
     auxiliary_cdfix = 0.0
     faccdfix = 0.0
+    gamcdfix = 0.0D0
 
     ! To stop issues with input file we force
     ! zero secondary heating if no injection method  
@@ -391,6 +391,24 @@ contains
           ! Absolute current drive efficiency
           effrfss = gamcd / (dene20 * rmajor)
           effcd = effrfss
+
+          ! EBWs can only couple to plasma if cyclotron harmonic is above plasma density cut-off;
+          !  this behaviour is captured in the following function (ref issue #1262):
+          ! harnum = cyclotron harmonic number (fundamental used as default)
+          ! contant 'a' controls sharpness of transition
+
+          !TODO is the below needed?
+         !  a = 0.1D0
+
+         !  fc = 1.0D0/(2.0D0*pi) * harnum * echarge * bt / emass
+         !  fp = 1.0D0/(2.0D0*pi) * sqrt( dene * echarge**2 / ( emass * epsilon0 ) )
+          
+         !  density_factor = 0.5D0 * ( 1.0D0 + tanh( (2.0D0/a) * ( ( fp - fc )/fp - a) ) )
+
+         !  effcd = effcd * density_factor
+
+         !  effrfss = effrfss * density_factor
+          
 
        case default
           idiags(1) = iefrf

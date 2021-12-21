@@ -12,7 +12,9 @@ module plasma_geometry_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
 
   private
@@ -44,7 +46,7 @@ contains
     use constants, only: twopi, pi
     use physics_variables, only: eps, pperim, sareao, rminor, kappa95, sarea, &
       triang95, fkzohm, vol, ishape, xarea, igeom, qlim, sf, iscrp, triang, &
-      cvol, rmajor, kappa, aspect
+      cvol, rmajor, kappa, aspect, rli, m_s_limit
     implicit none
 
     !  Arguments
@@ -52,6 +54,7 @@ contains
     !  Local variables
 
     real(dp) :: sa,so,xsi,xso,thetai,thetao,xi,xo
+    real(dp) :: a, b, c, d, e, f 
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -132,6 +135,33 @@ contains
        !  Fit to FIESTA (Issue #1086)
        kappa95 = (kappa - 0.39467D0) / 0.90698D0 
        triang95 = (triang - 0.048306D0) / 1.3799D0
+
+    case (9)  !  Use input triang, rli values
+
+       ! kappa found from aspect ratio and plasma internal inductance li(3)
+       kappa = (1.09D0 + 0.26D0/rli) * (1.5D0 / aspect)**0.4D0
+
+       kappa95 = kappa / 1.12D0
+       triang95 = triang / 1.50D0
+
+    case (10)
+
+      ! kappa95 found from aspect ratio and stabilty margin
+      ! Based on fit to CREATE data. ref Issue #1399
+      ! valid for EU-DEMO like machine - aspect ratio 2.6 - 3.6
+      a = 8.39148185D0
+      b = -0.17713049D0
+      c = 1.9031585D0
+      d = -37.17364535D0
+      e = -2.54598909D0
+      f = 38.75101822D0
+  
+      kappa95 = ( ( -d - c * aspect - sqrt( (c ** 2.0d0 - 4.0d0 * a * b) * aspect ** 2.0d0 &
+             + (2.0d0 * d * c - 4.0d0 * a * e) * aspect + d ** 2.0d0 - 4.0d0 * a * f &
+             + 4.0d0 * a * m_s_limit) ) / (2.0d0 * a) ) **0.98D0
+      
+      kappa = 1.12d0 * kappa95
+      triang95 = triang / 1.50D0
 
     end select
 

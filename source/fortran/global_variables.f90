@@ -8,8 +8,9 @@ module global_variables
   !!
   !! - AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
-
+#endif
   implicit none
   
   public

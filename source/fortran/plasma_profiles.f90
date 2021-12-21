@@ -11,7 +11,9 @@ module profiles_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   private
   public :: plasma_profiles, ncore, nprofile, tcore, tprofile
 

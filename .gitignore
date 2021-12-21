@@ -80,3 +80,6 @@ process/io/python_fortran_dicts.json
 documentation/proc-pages/vardes.md
 lcov_results/
 env/
+.venv
+!scenario_examples/*/*.DAT
+!scenario_examples/*/*.pdf

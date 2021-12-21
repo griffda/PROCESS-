@@ -10,16 +10,10 @@ module physics_module
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
-
-  private
-  public :: bpol,fhfac,igmarcal,outplas,outtim,pcond,phyaux, &
-    physics,plasma_composition,pohm, rether, subr, &
-    diamagnetic_fraction_hender, diamagnetic_fraction_scene, &
-    ps_fraction_scene, init_physics_module
-    ! diamagnetic_fraction_hender, diamagnetic_fraction_scene,
-    ! ps_fraction_scene made public for testing via interface
 
   !  Module-level variables
 
@@ -202,7 +196,29 @@ module physics_module
 
     else  ! Run PLASMOD
 
-       call setupPlasmod(num,geom,comp,ped,inp0,i_flag)
+       call setupPlasmod(i_flag, &
+         geom%k, geom%d, geom%ip, geom%k95, geom%d95, &
+         geom%r, geom%a, geom%q95, geom%bt, geom%counter, &
+         comp%fcoreraditv, comp%qdivt, comp%pradfrac, &
+         comp%pradpos, comp%psep_r, comp%psepb_q95AR, comp%protium, &
+         comp%psepplh_inf, comp%psepplh_sup, comp%c_car, comp%fuelmix, &
+         comp%comparray, comp%globtau, comp%imptype, &
+         inp0%car_qdivt, inp0%chisaw, inp0%chisawpos, inp0%contrpovr, &
+         inp0%contrpovs, inp0%cxe_psepfac, &
+         inp0%eccdeff, inp0%f_gw, inp0%f_gws, &
+         inp0%f_ni, inp0%fcdp, inp0%fpellet, inp0%fpion, inp0%gamcdothers, &
+         inp0%Hfac_inp, inp0%maxpauxor, inp0%nbcdeff, inp0%nbi_energy, &
+         inp0%pech, inp0%pfus, inp0%pheatmax, inp0%PLH, inp0%pnbi, &
+         inp0%q_control, inp0%qcd, inp0%qfus, inp0%qheat, inp0%qnbi_psepfac, &
+         inp0%sawpertau, inp0%spellet, inp0%V_loop, &
+         inp0%x_heat, inp0%x_cd, inp0%x_fus, inp0%x_control, &
+         inp0%dx_heat, inp0%dx_cd, inp0%dx_fus, inp0%dx_control, &
+         num%Ainc, num%capA, num%dgy, num%dt, num%dtinc, num%dtmax, num%dtmaxmax, &
+         num%dtmaxmin, num%dtmin, num%eopt, num%i_equiltype, num%i_impmodel, &
+         num%i_modeltype, num%ipedestal, num%iprocess, num%isawt, num%maxA, &
+         num%nchannels, num%nx, num%nxt, num%test, num%tol, num%tolmin, &
+         ped%tesep, ped%rho_t, ped%rho_n, ped%pedscal, ped%teped &
+    )
 
        if(verbose == 1) then
 
@@ -232,8 +248,24 @@ module physics_module
           close(32)
        endif
 
-       call convert_Plasmod2PROCESS(geom,comp,ped,radp,mhd,loss,theat,tburn,&
-							& fusrat)
+       call convert_Plasmod2PROCESS(theat, tburn, fusrat, &
+         geom%k, geom%d, geom%perim, geom%ip, geom%q95, &
+         comp%comparray, comp%globtau, comp%cxe, comp%che, comp%car, &
+         ped%teped, ped%nped, ped%nsep, ped%tesep, &
+         radp%te, radp%ti, radp%av_te, radp%av_ten, radp%av_ti, radp%av_ne, &
+         radp%ne, radp%av_ni, radp%av_nhe, radp%av_nd, radp%av_nz, radp%zeff, &
+         radp%jcd, radp%jpar, radp%ipol, radp%qprof, radp%Volum, radp%vp, &
+         radp%cc, radp%palph, radp%nions, radp%psi, &
+         loss%alpharate, loss%betaft, loss%dfuelreq, loss%fusionrate, loss%h, &
+         loss%palpe, loss%palpi, loss%pbrehms, loss%pdiv, loss%peaux, loss%pfus, &
+         loss%pfusdd, loss%piaux, loss%piepv, loss%plh, loss%pline, loss%pnbi, &
+         loss%pohm, loss%prad, loss%pradcore, loss%pradedge, loss%psep, &
+         loss%psepe, loss%psepi, loss%psync, loss%qcd, loss%qfus, loss%qheat, &
+         loss%qtot, loss%rplas, loss%tauee, loss%taueff, loss%tauei, loss%wth, &
+         mhd%betan, mhd%bp, mhd%equilcheck, mhd%f_ni, mhd%fbs, mhd%ip_out, &
+         mhd%q, mhd%q_sep, mhd%qstar, mhd%rli, mhd%sp, mhd%torsurf, mhd%vloop, &
+         mhd%vp &
+       )
 
     endif
 
@@ -594,7 +626,7 @@ module physics_module
        !calculate separatrix temperature, if Reinke criterion is used
        tesep = reinke_tsep(bt, flhthresh, q95, rmajor, eps, fgw, kappa, lhat)
        fzmin =  reinke_fzmin(bt, flhthresh, q95, rmajor, eps, fsep, fgw, kappa, lhat, &
-            netau_sol, tesep, impvardiv, impurity_arr, impurity_enrichment)
+            netau_sol, tesep, impvardiv, impurity_arr%frac, impurity_enrichment)
 
        if (fzmin >= 1.0D0) then
           call report_error(217)
@@ -3872,6 +3904,12 @@ module physics_module
           call ovarrf(outfile,'Zohm scaling adjustment factor', '(fkzohm)',fkzohm)
        case (4,5,7)
           call ovarrf(outfile,'Elongation, X-point (calculated from kappa95)', '(kappa)',kappa, 'OP ')
+       case (9)
+          call ovarrf(outfile,'Elongation, X-point (calculated from aspect ratio and li(3))', &
+               '(kappa)',kappa, 'OP ')
+       case (10)
+         call ovarrf(outfile,'Elongation, X-point (calculated from aspect ratio and stability margin', &
+         '(kappa)',kappa, 'OP ')
        case default
           idiags(1) = ishape ; call report_error(86)
        end select
@@ -3888,7 +3926,7 @@ module physics_module
        call ovarrf(outfile,'Elongation, area ratio calc.','(kappaa)',kappaa, 'OP ')
 
        select case (ishape)
-       case (0,2,6,8)
+       case (0,2,6,8,9,10)
           call ovarrf(outfile,'Triangularity, X-point (input value used)', &
                '(triang)',triang, 'IP ')
        case (1)

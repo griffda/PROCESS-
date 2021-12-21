@@ -7,7 +7,9 @@ module divertor_ode
   !! This module contains the PROCESS Kallenbach divertor model
   !! 
   
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   use divertor_ode_var, only: nimp
   use constants, only: pi
@@ -16,7 +18,7 @@ module divertor_ode
   ! Module-level declarations !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  logical, public, save :: impurities_present(nimp)
+  logical, public, save :: impurities_present(14)
 
   ! impurity element name - temporary
 
@@ -176,13 +178,13 @@ contains
     ! real(dp), optional, intent(in) :: abserrset
 
     ! Average poloidal field (T)
-    real(dp), optional, intent(in) :: bp
+    real(dp), intent(in) :: bp
 
     ! Power conducted through the separatrix, calculated by divertor model [W]
-    real(dp), optional, intent(out) :: psep_kallenbach
+    real(dp), intent(out) :: psep_kallenbach
 
     ! Temperature (eV) and density (1/m3) at outboard midplane
-    real(dp), optional, intent(out) :: teomp, neomp
+    real(dp), intent(out) :: teomp, neomp
 
     ! Btheta, Bphi and Btotal at OMP (equation 1 of Kallenbach)
     real(dp) :: Bp_omp, Bt_omp, Btotal_omp

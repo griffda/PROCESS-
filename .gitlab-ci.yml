@@ -14,13 +14,51 @@
 # supported due to modifying the Docker containers used here after they are run
 
 stages:
+  - containers
   - build
   - testing
+  - step
   - quality
+  - tracking
   - pages
 
+#-----------------
+#  Containers
+#-----------------
+# should be first because the rest of the CI system uses the CI image
+build_docker_ci_image:
+  stage: containers
+  image: docker:19.03.12
+  services:
+    - docker:19.03.12-dind
+  script:
+    - cd docker/ci
+    - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN
+    - docker build -t $CI_REGISTRY/process/process/ci-image:latest .
+    - docker push $CI_REGISTRY/process/process/ci-image:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+      changes: 
+        - docker/ci/Dockerfile
+
+build_docker_dev_image:
+  stage: containers
+  image: docker:19.03.12
+  services:
+    - docker:19.03.12-dind
+  script:
+    - cd docker/dev
+    - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN
+    - docker build -t $CI_REGISTRY/process/process/dev:latest .
+    - docker push $CI_REGISTRY/process/process/dev:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+      changes: 
+        - docker/dev/Dockerfile
+
+
 .before_test_template: &test-setup
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9_pyenv
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   before_script:
     - source ~/.venv_$PY_VERSION/bin/activate
     - python -m pip install --upgrade pip
@@ -44,12 +82,54 @@ stages:
     PY_VERSION: py36
   <<: *test-setup
 
+
+# a CI deploy token only allows registry access, but not repository write access (it can provide read)
+# https://docs.gitlab.com/ee/user/project/deploy_tokens/
+#
+# For the CI system to read/write to the repository it must have an SSH identity. This SSH identity (public key)
+# can then be added as a Deploy Key (Settings/Repository/Deploy Keys) to provide read (and optionally write) 
+# access to the repository.
+#
+# Put the private key as a CI/CD variable (protected), e.g. CI_RUNNER_PRIVATE_KEY
+# NOTE: RSA keys are not maskable
+
+# due to the way CI/CD variables work: the header and trailer of the key
+# should not be present in CI_RUNNER_PRIVATE_KEY
+# only the actual private key numbers/letters
+
+# setup SSH and add our private key
+
+# add CCFE gitlab instances as known-hosts
+# otherwise git commands to this remote
+# will error out with an unknown host error
+
+# setup our git identity
+.setup-ssh: &setup-ssh |
+    mkdir -p ~/.ssh
+    chmod 700 ~/.ssh
+    echo "-----BEGIN OPENSSH PRIVATE KEY-----" > ~/.ssh/id_rsa
+    echo "$CI_RUNNER_PRIVATE_KEY" >> ~/.ssh/id_rsa
+    echo "-----END OPENSSH PRIVATE KEY-----" >> ~/.ssh/id_rsa
+    chmod 700 ~/.ssh/id_rsa
+    command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )
+    eval $(ssh-agent -s)
+    ssh-add ~/.ssh/id_rsa
+    echo $(ssh-keygen -E md5 -lf ~/.ssh/id_rsa)
+    ssh-keyscan -t ecdsa -H git.ccfe.ac.uk > ~/.ssh/known_hosts
+    ssh-keyscan -t ecdsa -H 194.81.223.100 >> ~/.ssh/known_hosts
+    ssh-keygen -H -F git.ccfe.ac.uk
+    ssh-keygen -H -F 194.81.223.100
+    cat ~/.ssh/known_hosts
+    git config --global user.name "${CI_RUNNER_DESCRIPTION}"
+    git config --global user.email "${CI_RUNNER_ID}@git.ccfe.ac.uk"
+
+
 #-----------------
 #  Build
 #-----------------
 .make:
   stage: build
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9_pyenv
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   artifacts:
     paths:
       - process_dist_$PY_VERSION/process-*.tar.gz
@@ -77,9 +157,6 @@ make-py38:
     PY_VERSION: py38
 
 make-py36:
-  only:
-    - master
-    - develop
   extends: ".make"
   variables:
     PY_VERSION: py36
@@ -131,27 +208,6 @@ integration-py36:
   extends: ".integration"
   <<: *test-setup-py36
 
-.unitfort:
-  when: on_success
-  stage: testing
-  script:
-    - python3 -m pip install tabulate
-    - pytest tests/ -m unitfort
-    - python3 tests/uft_tests/coverage.py
-  tags:
-    - ubuntu
-
-.unitfort-py38:
-  extends: ".unitfort"
-  <<: *test-setup-py38
-
-.unitfort-py36:
-  only:
-    - master
-    - develop
-  extends: ".unitfort"
-  <<: *test-setup-py36
-
 .regression:
   when: on_success
   stage: testing
@@ -159,6 +215,7 @@ integration-py36:
     paths: 
       - lcov_results
       - tests/regression/pytest.log
+      - tests/regression/scenarios/starfire/out.MFILE.DAT
     expire_in: 1 week
   script:
     - pytest -v tests/regression -s | tee tests/regression/pytest.log
@@ -193,21 +250,14 @@ regression-py38-5-percent:
   script:
     - pytest -v tests/regression -s --reg-tolerance=5 | tee tests/regression/pytest_5_percent.log
 
-.baseline_2019:
+baseline_2019-py38:
   when: on_success
+  only:
+    - develop
   stage: testing
+  <<: *test-setup-py38
   script:
     - process -i tracking/baseline_2019/baseline_2019_IN.DAT
-    - > 
-      python3 process/io/mfile_comparison.py
-      -f tracking/baseline_2019/baseline_2019_MFILE.DAT tracking/baseline_2019/ref_baseline_2019_MFILE.DAT 
-      --acc 1.0 
-      --baseline
-    - > 
-      python3 process/io/mfile_comparison.py
-      -f tracking/baseline_2019/baseline_2019_MFILE.DAT tracking/baseline_2019/ref_baseline_2019_MFILE.DAT 
-      --acc 10.0 
-      --baseline
   artifacts:
     paths:
       - tracking/baseline_2019/baseline_2019_MFILE.DAT
@@ -215,32 +265,14 @@ regression-py38-5-percent:
   tags:
     - ubuntu
 
-baseline_2019-py38:
-  extends: ".baseline_2019"
-  <<: *test-setup-py38
-
-baseline_2019-py36:
-  only:
-    - master
-    - develop
-  extends: ".baseline_2019"
-  <<: *test-setup-py36
-
-.baseline_2018:
+baseline_2018-py38:
   when: on_success
+  only:
+    - develop
   stage: testing
+  <<: *test-setup-py38
   script:
     - process -i tracking/baseline_2018/baseline_2018_IN.DAT
-    - > 
-      python3 process/io/mfile_comparison.py
-      -f tracking/baseline_2018/baseline_2018_MFILE.DAT tracking/baseline_2018/ref_baseline_2018_MFILE.DAT 
-      --acc 1.0 
-      --baseline
-    - > 
-      python3 process/io/mfile_comparison.py
-      -f tracking/baseline_2018/baseline_2018_MFILE.DAT tracking/baseline_2018/ref_baseline_2018_MFILE.DAT 
-      --acc 10.0 
-      --baseline
   artifacts:
     paths:
       - tracking/baseline_2018/baseline_2018_MFILE.DAT
@@ -248,40 +280,19 @@ baseline_2019-py36:
   tags:
     - ubuntu
 
-baseline_2018-py38:
-  extends: ".baseline_2018"
-  <<: *test-setup-py38
-
-baseline_2018-py36:
-  only:
-    - master
-    - develop
-  extends: ".baseline_2018"
-  <<: *test-setup-py36
-
-step_input:
+starfire-py38:
   when: on_success
-  only: 
+  only:
     - develop
   stage: testing
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
+  <<: *test-setup-py38
   script:
-    - git config --global user.email "james.morris2@ukaea.uk"
-    - git config --global user.name "James Morris"
-    - git log -1 --format=oneline >> commit_msg.txt
-    - MESSAGE=$(git describe)
-    - echo $MESSAGE
-    - pwd
-    - cat commit_msg.txt
-    - git clone https://gitlab-ci-token:${STP_CI_API_TOKEN}@git.ccfe.ac.uk/smuldrew/process-step.git
-    - cp commit_msg.txt process-step
-    - cd process-step
-    - ls
-    - date >> date_of_push.txt
-    - git add commit_msg.txt date_of_push.txt
-    - git commit -m "PROCESS commit - $MESSAGE"
-    - git config --global push.default matching
-    - git push origin
+    - process -i tests/regression/scenarios/starfire/IN.DAT
+    - mv tests/regression/scenarios/starfire/MFILE.DAT tracking/starfire_MFILE.DAT 
+  artifacts:
+    paths:
+      - tracking/starfire_MFILE.DAT 
+    expire_in: 1 week
   tags:
     - ubuntu
 
@@ -292,12 +303,47 @@ step_input:
 line_length:
   when: on_success
   stage: quality
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   script:
     - pwd
     - python3 utilities/line_length_standard.py
   tags:
     - ubuntu
+
+#-----------------
+#  Tracking
+#-----------------
+
+tracking_rtv:
+  when: on_success
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  only: 
+    - develop
+  stage: tracking
+  allow_failure: true
+  <<: *test-setup-py38
+  script:
+    - *setup-ssh
+    - pip install pandas
+    - pip install bokeh
+    # clone the database repo into a known location
+    - git clone git@git.ccfe.ac.uk:tnunn/process-tracking-database.git ${CI_PROJECT_DIR}/process_rtv_data/
+    # write new tracking json files for each of our baseline tracking jobs
+    - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/baseline_2018/baseline_2018_MFILE.DAT
+    - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/baseline_2019/baseline_2019_MFILE.DAT
+    - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/starfire_MFILE.DAT 
+    # create the new tracking dashboard
+    - python ${CI_PROJECT_DIR}/tracking/tracking_data.py plot ${CI_PROJECT_DIR}/process_rtv_data/ --out ${CI_PROJECT_DIR}/tracking.html
+    # commit the new .json data files to the database repo and pushes them
+    - cd ${CI_PROJECT_DIR}/process_rtv_data/
+    - git add .
+    - git commit -m "${CI_PIPELINE_URL} - ${CI_PIPELINE_CREATED_AT}" 
+    - git push
+  artifacts:
+    when: always
+    paths:
+      - ${CI_PROJECT_DIR}/tracking.html
+
 
 #-----------------
 #  Pages
@@ -308,9 +354,12 @@ pages:
   only:
     - develop
   stage: pages
-  image: git.ccfe.ac.uk:4567/process/process/python-coverage-ci-image:ub20_gf9
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  variables:
+    PY_VERSION: py38
   script:
     - pwd
+    - source ~/.venv_$PY_VERSION/bin/activate
     
     # FORD documentation
     - python3 -m pip install git+https://github.com/jonMaddockUkaea/ford
@@ -323,6 +372,8 @@ pages:
     - ls site
     - mv site public
     - mv ford_site public
+    # if tracking.html doesn't exist, put an error404 in its place
+    - mv tracking.html public || cp public/404.html public/tracking.html
 
     # Install requirements for Code Quality
     - python3 -m pip install flinter==0.3.0
@@ -330,8 +381,9 @@ pages:
 
     # Setup badges
     - git clone https://github.com/jmorris-uk/anybadge.git
-    - TAG=$(git describe --abbrev=0)
-    - VERSION=$(git describe)
+    # checks for the tag on the most up-to-date branch (master)
+    - MASTER_VERSION=$(git describe $(git rev-list --tags --max-count=1))
+    - DEVELOP_VERSION=$(git describe)
     - declare -i CONTRIBUTORS=$(git shortlog -s -n --all | wc -l)
     - echo $CONTRIBUTORS
     - bash scripts/coverage_badge.sh source/fortran/ anybadge/
@@ -340,11 +392,11 @@ pages:
     - cp quality.svg public/
     - cp -r code_quality public/
     - cd anybadge
-    - python3 anybadge.py -v $TAG -l tag -c blue -f tag.svg
-    - python3 anybadge.py -v $VERSION -l version -c blue -f version.svg
+    - python3 anybadge.py -v $MASTER_VERSION -l master -c blue -f mversion.svg
+    - python3 anybadge.py -v $DEVELOP_VERSION -l develop -c blue -f dversion.svg
     - python3 anybadge.py -v $CONTRIBUTORS -l contributors -c blue -f contributors.svg -m "%d"
-    - cp tag.svg ../public
-    - cp version.svg ../public
+    - cp mversion.svg ../public
+    - cp dversion.svg ../public
     - cp contributors.svg ../public
     - ls ../public
     - du -shc ../public/*
@@ -356,3 +408,17 @@ pages:
     expire_in: 1 week
     paths:
     - public
+
+#-----------------
+#  STEP
+#-----------------
+
+step_trigger:
+  when: on_success
+  image: git.ccfe.ac.uk:4567/tnunn/gitlab-multi-project-pipeline/trigger:latest
+  only: 
+    - develop
+  stage: step
+  allow_failure: true
+  script:
+    - trigger -u https://git.ccfe.ac.uk/api/v4/projects/4023 -b master -T $CI_JOB_TOKEN -P $CI_JOB_PRIVATE_TOKEN
