@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1022-ge0a5374f
+   Tag No. : v2.1-1024-g251029af code contains untracked changes
     Branch : 1442-test-bucking
-   Git log : IMPORTANT!\ Initialized\ M_int\ and\ M_ext\ in\ TF\ stress
- Date/time : 20 Dec 2021 15:17:24 -05:00(hh:mm) UTC
+   Git log : Added\ regression\ data\ for\ TF\ plane\ strain\ scenario
+ Date/time : 21 Dec 2021 11:29:50 -05:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
  Directory : /home/cswan/process/process
-     Input : /tmp/pytest-of-cswan/pytest-6/test_scenario_FNSF_0/IN.DAT
+     Input : /tmp/pytest-of-cswan/pytest-16/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
