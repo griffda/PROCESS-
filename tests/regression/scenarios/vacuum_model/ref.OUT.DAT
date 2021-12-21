@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-993-gdc620da4 code contains untracked changes
-    Branch : 1395-incorrect-calculation-of-building-sizes
-   Git log : Improved\ error\ avoidance
- Date/time : 14 Dec 2021  9:47:40 +00:00(hh:mm) UTC
+   Tag No. : v2.1-1047-gaa6f8e3f
+    Branch : 1494-rebco-current-density-incorrectly-calculated
+   Git log : Merge\ branch\ |develop|\ into\ 1494-rebco-current-density-incorrectly-calculated
+ Date/time : 21 Dec 2021 14:23:28 +00:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-235/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-235/test_scenario_vacuum_model_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-261/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-261/test_scenario_vacuum_model_0/IN.DAT
  Run title : demo 1 vacuum model test
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  

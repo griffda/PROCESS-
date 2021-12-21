@@ -5348,7 +5348,7 @@
         "srcktpm": 0.0,
         "ssq0": 0.0,
         "ssync": 0.6,
-        "stack_thickness": null,
+        "stack_thickness": 0.0,
         "staff_buildings_area": 480000.0,
         "staff_buildings_h": 5.0,
         "stcl": 3.0,
@@ -13207,14 +13207,6 @@
             "lb": 0.0,
             "ub": 1000.0
         },
-        "hts_tape_thickness": {
-            "lb": 5e-07,
-            "ub": 5e-06
-        },
-        "hts_tape_width": {
-            "lb": 0.001,
-            "ub": 0.01
-        },
         "i_bldgs_size": {
             "lb": 0,
             "ub": 1
@@ -20482,8 +20474,6 @@
         "htpmw_ife": "real_variable",
         "htpmw_min": "real_variable",
         "htpmw_shld": "real_variable",
-        "hts_tape_thickness": "real_variable",
-        "hts_tape_width": "real_variable",
         "i_bldgs_size": "int_variable",
         "i_bldgs_v": "int_variable",
         "i_cp_joints": "int_variable",
