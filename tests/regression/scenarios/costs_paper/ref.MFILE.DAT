@@ -4,13 +4,13 @@
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.2.0   R"
  Date_of_run_____________________________________________________________ (date)________________________     "21/12/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "10:50"
+ Time_of_run_____________________________________________________________ (time)________________________     "11:03"
  User____________________________________________________________________ (username)____________________     "cswan"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "demo 1 model for cost paper                                                                        
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1024-g251029af"                                                                               
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1026-gc6718562"                                                                               
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1509-outer-tf-case"                                                                                
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Added\ regression\ data\ for\ TF\ plane\ strain\ scenarios"                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-12/test_scenario_costs_paper_0/IN.DAT                                                                                                                                       "
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Rewrote\ test\ results\ with\ updated\ TF\ coil\ stress"                                           
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-14/test_scenario_costs_paper_0/IN.DAT                                                                                                                                       "
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              1    
  # Numerics #

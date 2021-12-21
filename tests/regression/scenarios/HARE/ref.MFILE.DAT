@@ -4,13 +4,13 @@
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.2.0   R"
  Date_of_run_____________________________________________________________ (date)________________________     "21/12/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "10:51"
+ Time_of_run_____________________________________________________________ (time)________________________     "11:04"
  User____________________________________________________________________ (username)____________________     "cswan"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1024-g251029af"                                                                               
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1026-gc6718562"                                                                               
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1509-outer-tf-case"                                                                                
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Added\ regression\ data\ for\ TF\ plane\ strain\ scenarios"                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-12/test_scenario_HARE_0/IN.DAT                                                                                                                                              "
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Rewrote\ test\ results\ with\ updated\ TF\ coil\ stress"                                           
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-14/test_scenario_HARE_0/IN.DAT                                                                                                                                              "
  Binomial_coefficients_C(5,0):_1_________________________________________ (binomial(5,0))_______________      1.0000E+00    
  Binomial_coefficients_C(5,1):_5_________________________________________ (binomial(5,1))_______________      5.0000E+00    
  Binomial_coefficients_C(5,2):_10________________________________________ (binomial(5,2))_______________      1.0000E+01    

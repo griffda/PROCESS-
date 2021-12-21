@@ -812,7 +812,8 @@ subroutine HIJC_REBCO(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use tfcoil_variables, only: hts_tape_width, hts_tape_thickness
+    use rebco_variables, only: tape_thickness, tape_width, rebco_thickness
+
     implicit none
   
     !  Arguments
@@ -853,7 +854,7 @@ subroutine HIJC_REBCO(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit)
     ! Jc times HTS area: default area is width 4mm times HTS layer thickness 1 um, 
     ! divided by the tape area to provide engineering Jc per tape, then multiplied by fraction 0.4
     ! to reach the level of current density expected in the space where the tapes are wound in A/m^2!
-    jcrit = jcrit * (hts_tape_width * hts_tape_thickness) / (4.0D-3 * 6.5D-5) * 0.4D0
+    jcrit = jcrit * (tape_width * rebco_thickness) / (tape_width * tape_thickness) * 0.4D0
 
 end subroutine HIJC_REBCO
 
