@@ -1399,6 +1399,9 @@ subroutine tf_coil_area_and_masses()
 
     real(dp) :: vol_cond_leg
     !! Outboard leg conductor insulator volume [m3]
+
+    real(dp) :: tfleng_sph
+    !! spherical tokamak total TF coil length [m]
     ! ---------------
 
     ! Initialization
@@ -1480,9 +1483,11 @@ subroutine tf_coil_area_and_masses()
         whttf = (whtcas + whtcon + whtgw) * n_tf
         
         ! If spherical tokamak, distribute between centrepost and outboard legs
+        ! (in this case, total TF coil length = inboard `cplen` + outboard `tfleng`)
         if ( itart == 1 ) then
-            whtcp = whttf * cplen / tfleng
-            whttflgs = whttf * (tfleng - cplen) / tfleng
+            tfleng_sph = cplen + tfleng
+            whtcp = whttf * (cplen / tfleng_sph)
+            whttflgs = whttf * (tfleng / tfleng_sph)
         end if
 
     ! Resitivive magnets weights
@@ -4405,6 +4410,7 @@ subroutine outtf(outfile, peaktfflag)
     call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax, 'OP ')
     if ( itart == 1 ) then
         call ovarre(outfile,'Mean coil circumference (inboard leg not included) (m)','(tfleng)',tfleng, 'OP ')
+        call ovarre(outfile,'Length of the inboard segment (m)','(cplen)',cplen, 'OP ')
     else
         call ovarre(outfile,'Mean coil circumference (including inboard leg length) (m)','(tfleng)',tfleng, 'OP ')
     end if
@@ -4575,9 +4581,6 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'Total conduit mass per coil (kg)','(whtcon)',whtcon, 'OP ')
     end if
     if ( itart ==  1 ) then
-        if ( i_tf_sup == 1 ) then
-            call ovarre(outfile,'Length of the inboard segment (m)','(cplen)',cplen, 'OP ')
-        end if
         call ovarre(outfile,'Mass of inboard legs (kg)','(whtcp)',whtcp, 'OP ')
         call ovarre(outfile,'Mass of outboard legs (kg)','(whttflgs)',whttflgs, 'OP ')
     end if 
