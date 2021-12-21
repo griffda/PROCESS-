@@ -17,7 +17,7 @@ You can now perform any GDB action on Process Fortran source.
 
 ### Breakpoints
 
-Adding breakpoints is the most universally useful part of 
+Adding breakpoints is the most universally useful part of debugging:
 
 ```bash
 gdb python
@@ -53,6 +53,9 @@ $1 = 24
     gdb python
     >>> run -m pytest
     ```
+    
+Further basic GDB commands, like breakpoints, can be found at https://users.ece.utexas.edu/~adnan/gdb-refcard.pdf.
+
 
 ## Valgrind
 Valgrind provides, among other things, a memory error checker, `memcheck`. We provide the Python suppression file, that stops errors in the Python binary being reported, `valgrind-python.supp`.
