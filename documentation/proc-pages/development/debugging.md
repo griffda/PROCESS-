@@ -24,7 +24,7 @@ gdb python
 >>> break vmcon.f90:200
 ```
 
-If, at this point, GDB says it cannot find the source file, select the **y**es option as it will be able to find the source file Process is run.
+If, at this point, GDB says it cannot find the source file, select the (y)es option as it will be able to find the source file Process is run.
 
 ```bash
 >>> run process/main.py -i tracking/baseline_2018/baseline_2018_IN.dat
