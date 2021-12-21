@@ -1363,21 +1363,21 @@ end subroutine tf_field_and_force
 subroutine tf_coil_area_and_masses()
     !! Subroutine to calculate the TF coil areas and masses
     use build_variables, only: hr1, r_tf_outboard_mid, tfcth, r_tf_inboard_mid, &
-        r_tf_inboard_in, r_tf_inboard_out
+        r_tf_inboard_in, r_tf_inboard_out, hmax
     use fwbs_variables, only: denstl
     use tfcoil_variables, only: whtconsh, whttf, whtcas, tficrn, tfcryoarea, &
         tfsao, whtgw, tfocrn, whtconsc, whtconcu, whtcon, whtconin, &
         tfsai, vftf, whtconin, tfsai, dcond, dcondins, whtcon, &
         tfleng, dthet, dcase, acndttf, n_tf_turn, n_tf, aiwp, radctf, acasetfo, &
         acasetf, fcutfsu, awphec, acstf, whttflgs, whtcp, whtconal, vol_cond_cp, &
-        i_tf_sup, i_tf_sc_mat, arealeg, thkcas, voltfleg
+        i_tf_sup, i_tf_sc_mat, arealeg, thkcas, voltfleg, cplen
     use constants, only: twopi, dcopper, dalu, pi
     use physics_variables, only: itart
     implicit none
 
     ! Local Variables
     ! ---------------
-    real(dp) :: cplen, wbtf
+    real(dp) :: wbtf
 
     real(dp) :: vol_case
     !! Total TF case volume [m3]
@@ -1403,7 +1403,6 @@ subroutine tf_coil_area_and_masses()
 
     ! Initialization
     ! ---
-    cplen = 0.0D0
     vol_case = 0.0D0
     vol_ins = 0.0D0
     vol_gr_ins = 0.0D0 
@@ -1441,7 +1440,8 @@ subroutine tf_coil_area_and_masses()
         whtgw = tfleng * (awpc-awptf) * dcondins
         
         ! The length of the vertical section is that of the first (inboard) segment
-        cplen = 2.0D0*(radctf(1) + 0.5D0*tfcth) * dthet(1)
+        ! = height of TF coil inner edge + (2 * coil thickness)
+        cplen = (2.0D0 * hmax) + (2.0D0 * tfcth)
         
         ! The 2.2 factor is used as a scaling factor to fit
         ! to the ITER-FDR value of 450 tonnes; see CCFE note T&M/PKNIGHT/PROCESS/026
@@ -4303,7 +4303,7 @@ subroutine outtf(outfile, peaktfflag)
         cpttf, cdtfleg, whttflgs, whtcp, i_tf_bucking, tlegav, rhotfleg, rhocp, &
         presleg, i_tf_shape, fcoolcp, pres_joints, tmargtf, tmargmin_tf, &
         f_vforce_inboard, vforce_outboard, acstf, t_turn_tf, eyoung_res_tf_buck, &
-        sig_tf_wp_max
+        sig_tf_wp_max, cplen
     use physics_variables, only: itart
     use constants, only: mfile, pi
     implicit none
@@ -4575,11 +4575,14 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'Total conduit mass per coil (kg)','(whtcon)',whtcon, 'OP ')
     end if
     if ( itart ==  1 ) then
-        call ovarre(outfile,'Mass of inboard legs (kg)','(whtcp)',whtcp)
-        call ovarre(outfile,'Mass of outboard legs (kg)','(whttflgs)',whttflgs)
+        if ( i_tf_sup == 1 ) then
+            call ovarre(outfile,'Length of the inboard segment (m)','(cplen)',cplen, 'OP ')
+        end if
+        call ovarre(outfile,'Mass of inboard legs (kg)','(whtcp)',whtcp, 'OP ')
+        call ovarre(outfile,'Mass of outboard legs (kg)','(whttflgs)',whttflgs, 'OP ')
     end if 
     call ovarre(outfile,'Mass of each TF coil (kg)','(whttf/n_tf)',whttf/n_tf, 'OP ')
-    call ovarre(outfile,'Total TF coil mass (kg)','(whttf)',whttf)
+    call ovarre(outfile,'Total TF coil mass (kg)','(whttf)',whttf, 'OP ')
 
     ! TF current and field
     call osubhd(outfile,'Maximum B field and currents:')

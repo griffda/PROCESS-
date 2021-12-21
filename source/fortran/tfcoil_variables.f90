@@ -135,6 +135,9 @@ module tfcoil_variables
   real(dp) :: cforce
   !! centering force on inboard leg (per coil) (N/m)
 
+  real(dp) :: cplen
+  !! length of TF coil inboard leg ('centrepost') (`i_tf_sup = 1`)
+
   real(dp) :: cpttf
   !! TF coil current per turn (A). (calculated for stellarators) (calculated for 
   !! integer-turn TF coils `i_tf_turns_integer=1`) (`iteration variable 60`)
@@ -810,6 +813,7 @@ module tfcoil_variables
     acs = 0.0D0
     cdtfleg = 0.0D0
     cforce = 0.0D0
+    cplen = 0.0D0
     cpttf = 7.0e4
     cpttf_max = 9.0e4
     dcase = 8000.0D0
