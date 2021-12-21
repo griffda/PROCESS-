@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-901-ga12ba209
-    Branch : 1343-update-lts-hts-cost-model-2
-   Git log : Merge\ branch\ |develop|\ into\ 1343-update-lts-hts-cost-model-2
- Date/time : 18 Nov 2021 17:03:50 +00:00(hh:mm) UTC
-      User : rhicha
-  Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-205/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-205/test_scenario_stellarator_0/IN.DAT
+   Tag No. : v2.1-1024-g251029af code contains untracked changes
+    Branch : 1509-outer-tf-case
+   Git log : Added\ regression\ data\ for\ TF\ plane\ strain\ scenarios
+ Date/time : 21 Dec 2021 10:52:05 -05:00(hh:mm) UTC
+      User : cswan
+  Computer : cswan-2017-desktop
+ Directory : /home/cswan/process/process
+     Input : /tmp/pytest-of-cswan/pytest-12/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  
