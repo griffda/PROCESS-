@@ -1013,14 +1013,10 @@ class CostsStep:
         step2201 += step220107
 
         # 22.01.08 Impurity Control
-        # Original STARFIRE value, no scaling
-        step220108 = cv.step_ref[29]
-        step2201 += step220108
+        # Superseded and deleted
 
         # 22.01.09 ECRH Plasma Breakdown
-        # Original STARFIRE value, no scaling
-        step220109 = cv.step_ref[30]
-        step2201 += step220109
+        # Superseded and deleted
 
         # 22.01.10 Divertor
         # Cost Model 0 cost for STARFIRE sized device
@@ -1128,10 +1124,6 @@ class CostsStep:
                 self.outfile, "(step220106)", "Reactor Vacuum System (M$)", step220106
             )
             po.ocosts(self.outfile, "(step220107)", "Power Supplies (M$)", step220107)
-            po.ocosts(self.outfile, "(step220108)", "Impurity Control (M$)", step220108)
-            po.ocosts(
-                self.outfile, "(step220109)", "ECRH Plasma Breakdown (M$)", step220109
-            )
             po.ocosts(self.outfile, "(step220110)", "Divertor (M$)", step220110)
             po.oblnkl(self.outfile)
             po.ocosts(
