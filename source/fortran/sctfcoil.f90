@@ -1929,6 +1929,10 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     real(dp) :: dr_tf_wp_eff
     !! Width of the effective WP layer used in the stress calculations [m] 
+    
+    real(dp) :: f_tf_stress_front_case
+    !! The ratio between the true cross sectional area of the 
+    ! front case, and that considered by the plane strain solver
     ! ---
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2197,6 +2201,16 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     ! last layer radius
     radtf(n_tf_layer + 1) = r_wp_outer_eff + casthi
+    
+    ! The ratio between the true cross sectional area of the 
+    ! front case, and that considered by the plane strain solver
+    f_tf_stress_front_case = a_case_front / theta_coil / (radtf(n_tf_layer+1)**2 - radtf(n_tf_layer)**2)
+    
+    ! Correct for the missing axial stiffness from the missing
+    ! outer case steel as per the updated description of 
+    ! Issue #1509
+    eyoung_z(n_tf_layer) = eyoung_z(n_tf_layer) * f_tf_stress_front_case
+    
     ! ---  
     ! ------------------------
 
@@ -2368,6 +2382,14 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         sig_tf_r(ii) = sig_tf_r(ii) * fac_sig_r
         sig_tf_t(ii) = sig_tf_t(ii) * fac_sig_t
         sig_tf_z(ii) = sig_tf_z(ii) * fac_sig_z  
+    end do
+    
+    ! For each point within the front case,
+    ! remove the correction for the missing axial
+    ! stiffness as per the updated description of 
+    ! Issue #1509
+    do ii = (n_tf_bucking + n_tf_graded_layers)*n_radial_array + 1, n_tf_layer*n_radial_array 
+        sig_tf_z(ii) = sig_tf_z(ii) / f_tf_stress_front_case
     end do
     ! ---
 
