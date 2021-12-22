@@ -1067,6 +1067,9 @@ subroutine res_tf_internal_geom()
     ! Total mid-plane cross-sectional area of winding pack, [m2]
     ! including the surrounding ground-wall insulation layer 
     awpc = pi * ( r_wp_outer**2 - r_wp_inner**2 ) / n_tf
+    
+    ! Area of the front case, the plasma-facing case of the inner TF coil [m2]
+    a_case_front = pi * ( (r_wp_outer + casthi)**2 - r_wp_outer**2 ) / n_tf
 
     ! WP mid-plane cross-section excluding ground insulation per coil [m2]
     awptf = pi * ( ( r_wp_outer - tinstf )**2 - ( r_wp_inner + tinstf )**2 ) / n_tf &
