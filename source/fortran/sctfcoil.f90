@@ -1907,10 +1907,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(dp) :: dr_wp_layer
     !! Size of WP layer with homogeneous smeared property 
 
-    real(dp) :: a_steel_eff
-    !! Effective coil steel area used in stress calculations [m2]
-    !! defined as the total steel area - the front casing 
-
     real(dp) :: a_wp_steel_eff
     !! Winding pack stress layer effective steel area [m2] 
     !! WP steel + latera casing area
@@ -2080,18 +2076,16 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! SC coil
     if ( i_tf_sup == 1 ) then
 
-        ! Inner/outer radii of the layer representing the WP in stress calculations [m2]
+        ! Inner/outer radii of the layer representing the WP in stress calculations [m]
+        ! These radii are chosen to preserve the true WP area; see Issue #1048
         r_wp_inner_eff = r_wp_inner * sqrt( tan_theta_coil / theta_coil )
         r_wp_outer_eff = r_wp_outer * sqrt( tan_theta_coil / theta_coil )
         
         ! Area of the cylinder representing the WP in stress calculations [m2]
         a_wp_eff = ( r_wp_outer_eff**2 - r_wp_inner_eff**2 ) * theta_coil
        
-        ! Steel cross-section under the area considered in stress calculations [m2] 
-        a_steel_eff = a_tf_steel - a_case_front
-
         ! Steel cross-section under the area representing the WP in stress calculations [m2]
-        a_wp_steel_eff = a_steel_eff - a_case_nose
+        a_wp_steel_eff = a_tf_steel - a_case_front - a_case_nose
 
         ! WP effective insulation thickness (SC only) [m]
         ! include groundwall insulation + insertion gap in thicndut
