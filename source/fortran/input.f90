@@ -336,7 +336,7 @@ contains
       i_tf_plane_stress, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
       i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti, &
       i_cp_joints, n_tf_turn, f_t_turn_tf, t_turn_tf_max, t_cable_tf, &
-      sig_tf_wp_max, hts_tape_width, hts_tape_thickness
+      sig_tf_wp_max
 
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
@@ -344,7 +344,8 @@ contains
       initialpressure, outgasfactor, prdiv, pumpspeedmax, rat, outgasindex, &
       pumpareafraction, ntype, vacuum_model, pumptp 
     use rebco_variables, only: hastelloy_thickness, f_coppera_m2, &
-      rebco_thickness, copper_rrr, coppera_m2_max, croco_thick, copper_thick 
+      rebco_thickness, tape_thickness, tape_width, &
+      copper_rrr, coppera_m2_max, croco_thick, copper_thick 
     use reinke_variables, only: reinke_mode, fzactual, impvardiv, lhat 
     use water_usage_variables, only: airtemp, watertemp, windspeed
     use CS_fatigue_variables, only: residual_sig_hoop, t_crack_radial, t_crack_vertical, &
@@ -1773,16 +1774,28 @@ contains
           call parse_real_variable('bcritsc', bcritsc, 10.0D0, 50.0D0, &
                'Critical field for superconductor')
 
-       !case ('tape_width')
-       !   call parse_real_variable('tape_width', tape_width, 0.0D0, 0.1D0, &
-       !       'Mean width of HTS tape in CroCo (m)')
-
+       case ('tape_width')
+          call parse_real_variable('tape_width', tape_width, 0.0D0, 0.1D0, &
+               'Mean width of HTS tape (m)')
+       case ('tape_thickness')
+          call parse_real_variable('tape_thickness', tape_thickness, 0.0D0, 0.1D0, &
+               'Thickness of HTS tape (m)')
        case ('rebco_thickness')
           call parse_real_variable('rebco_thickness', rebco_thickness, 0.01D-6, 100.0D-6, &
-               'rebco_thickness')
+               'Thickness of REBCO layer in HTS tape (m)')
+          if (rebco_thickness > 1.0D-6) then
+             ! Warning includes concerns raised on Issue #1494
+             write(outfile,*) ' '
+             write(outfile,*) '**********'
+             write(outfile,*) 'WARNING: the relationship between REBCO layer thickness and current density is not linear.'
+             write(outfile,*) 'REBCO layer thicknesses > 1um should be considered an aggressive extrapolation of'
+             write(outfile,*) 'current HTS technology and any results must be considered speculative.'
+             write(outfile,*) '**********'
+             write(outfile,*) ' '
+          end if
        case ('hastelloy_thickness')
           call parse_real_variable('hastelloy_thickness', hastelloy_thickness, 0.01D-6, 1000.0D-6, &
-               'hastelloy_thickness')
+               'Thickness of Hastelloy layer in HTS tape (m)')
        ! case ('croco_id')
        !   call parse_real_variable('croco_id', croco_id, 0.0D0, 0.1D0, &
        !       'croco_id')
@@ -1967,12 +1980,6 @@ contains
              write(outfile,*) '**********'
              write(outfile,*) ' '
           end if
-       case('hts_tape_width')
-          call parse_real_variable('hts_tape_width', hts_tape_width, 1.0D-3, 10.0D-3, &
-               'Width of HTS tape (m)')
-       case('hts_tape_thickness')
-          call parse_real_variable('hts_tape_thickness', hts_tape_thickness, 0.5D-6, 5.0D-6, &
-               'Thickness of HTS tape layer (m)')
        case ('itfmod')
           write(outfile,*) ' '
           write(outfile,*) '**********'

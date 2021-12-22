@@ -178,12 +178,6 @@ module tfcoil_variables
   !! account for stress, fatigue, radiation, AC losses, joints or manufacturing 
   !! variations; 1.0 would be very optimistic)
   
-  real(dp) :: hts_tape_width
-  !! Width of HTS tape [m] (if i_tf_sc_mat = 9)
-
-  real(dp) :: hts_tape_thickness
-  !! Thickness of HTS tape layer [m] (if i_tf_sc_mat = 9)
-
   real(dp) :: insstrain
   !! Radial strain in insulator
 
@@ -828,8 +822,6 @@ module tfcoil_variables
     max_force_density = 0.0D0
     fcutfsu = 0.69D0
     fhts = 0.5D0
-    hts_tape_width = 4.0D-3
-    hts_tape_thickness = 1.0D-6
     insstrain = 0.0D0
     i_tf_plane_stress = 1
     i_tf_tresca = 0
