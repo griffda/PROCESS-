@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.2.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "21/12/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "11:04"
+ Date_of_run_____________________________________________________________ (date)________________________     "22/12/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "13:49"
  User____________________________________________________________________ (username)____________________     "cswan"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "kallenbach divertor model                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1026-gc6718562"                                                                               
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1059-gfc5b033d"                                                                               
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1509-outer-tf-case"                                                                                
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Rewrote\ test\ results\ with\ updated\ TF\ coil\ stress"                                           
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-14/test_scenario_kallenbach_0/IN.DAT                                                                                                                                        "
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Added\ back\ in\ the\ missing\ front\ case\ steel"                                                 
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-21/test_scenario_kallenbach_0/IN.DAT                                                                                                                                        "
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              1    
  # Numerics #
@@ -577,9 +577,9 @@
  Maximum_shear_stress_for_the_Tresca_yield_criterion_2_(Pa)______________ (sig_tf_tresca_max(2))________      5.2874E+08    
  Radial____stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_r_max(3))_____________      4.3912E+06    
  toroidal__stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_t_max(3))_____________     -2.9585E+08    
- Vertical__stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_z_max(3))_____________      2.0977E+08    
- Von-Mises_stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_vmises_max(3))________      4.3999E+08    
- Maximum_shear_stress_for_the_Tresca_yield_criterion_3_(Pa)______________ (sig_tf_tresca_max(3))________      5.0562E+08    
+ Vertical__stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_z_max(3))_____________      1.1032E+08    
+ Von-Mises_stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_vmises_max(3))________      3.6378E+08    
+ Maximum_shear_stress_for_the_Tresca_yield_criterion_3_(Pa)______________ (sig_tf_tresca_max(3))________      4.0617E+08    
  Maximum_radial_deflection_at_midplane_(m)_______________________________ (deflect)_____________________     -5.7196E-03 OP 
  Vertical_strain_on_casing_______________________________________________ (casestr)_____________________      1.0233E-03 OP 
  Vertical_strain_on_winding_pack_________________________________________ (windstrain)__________________      2.3583E-03 OP 

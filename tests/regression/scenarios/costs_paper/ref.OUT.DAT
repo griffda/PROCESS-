@@ -8,14 +8,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1026-gc6718562 code contains untracked changes
+   Tag No. : v2.1-1059-gfc5b033d code contains untracked changes
     Branch : 1509-outer-tf-case
-   Git log : Rewrote\ test\ results\ with\ updated\ TF\ coil\ stress
- Date/time : 21 Dec 2021 11:03:56 -05:00(hh:mm) UTC
+   Git log : Added\ back\ in\ the\ missing\ front\ case\ steel
+ Date/time : 22 Dec 2021 13:48:44 -05:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
  Directory : /home/cswan/process/process
-     Input : /tmp/pytest-of-cswan/pytest-14/test_scenario_costs_paper_0/IN.DAT
+     Input : /tmp/pytest-of-cswan/pytest-21/test_scenario_costs_paper_0/IN.DAT
  Run title : demo 1 model for cost paper
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -726,12 +726,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Layers                             Steel case            WP    Outer case
  Radial stress               (MPa)       0.000      -294.682         3.594
  toroidal stress             (MPa)    -356.709      -308.117      -280.178
- Vertical stress             (MPa)     193.291       193.291       193.291
- Von-Mises stress            (MPa)     483.272       438.011       412.331
- Shear (Tresca) stress       (MPa)     550.000       501.408       473.469
+ Vertical stress             (MPa)     193.291       193.291       106.291
+ Von-Mises stress            (MPa)     483.272       438.011       345.800
+ Shear (Tresca) stress       (MPa)     550.000       501.408       386.469
  
  Toroidal modulus            (GPa)     205.000        22.194       205.000
- Vertical modulus            (GPa)     205.000        79.727       205.000
+ Vertical modulus            (GPa)     205.000        79.727       372.795
  
  WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      1.876E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      5.402E+01  OP 

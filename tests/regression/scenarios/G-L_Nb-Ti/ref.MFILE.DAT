@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.2.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "21/12/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "11:04"
+ Date_of_run_____________________________________________________________ (date)________________________     "22/12/2021"
+ Time_of_run_____________________________________________________________ (time)________________________     "13:48"
  User____________________________________________________________________ (username)____________________     "cswan"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "TF coil testing                                                                                    
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1026-gc6718562"                                                                               
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1059-gfc5b033d"                                                                               
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1509-outer-tf-case"                                                                                
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Rewrote\ test\ results\ with\ updated\ TF\ coil\ stress"                                           
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-14/test_scenario_G_L_Nb_Ti_0/IN.DAT                                                                                                                                         "
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Added\ back\ in\ the\ missing\ front\ case\ steel"                                                 
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-21/test_scenario_G_L_Nb_Ti_0/IN.DAT                                                                                                                                         "
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              1    
  # Numerics #
@@ -629,9 +629,9 @@
  Maximum_shear_stress_for_the_Tresca_yield_criterion_2_(Pa)______________ (sig_tf_tresca_max(2))________      6.5367E+08    
  Radial____stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_r_max(3))_____________      8.2911E+06    
  toroidal__stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_t_max(3))_____________     -3.7399E+08    
- Vertical__stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_z_max(3))_____________      2.3698E+08    
- Von-Mises_stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_vmises_max(3))________      5.3354E+08    
- Maximum_shear_stress_for_the_Tresca_yield_criterion_3_(Pa)______________ (sig_tf_tresca_max(3))________      6.1098E+08    
+ Vertical__stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_z_max(3))_____________      1.6010E+08    
+ Von-Mises_stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_vmises_max(3))________      4.7474E+08    
+ Maximum_shear_stress_for_the_Tresca_yield_criterion_3_(Pa)______________ (sig_tf_tresca_max(3))________      5.3409E+08    
  Maximum_radial_deflection_at_midplane_(m)_______________________________ (deflect)_____________________     -5.6619E-03 OP 
  Vertical_strain_on_casing_______________________________________________ (casestr)_____________________      1.1560E-03 OP 
  Vertical_strain_on_winding_pack_________________________________________ (windstrain)__________________      1.2372E-02 OP 
@@ -1754,9 +1754,9 @@
  Maximum_shear_stress_for_the_Tresca_yield_criterion_2_(Pa)______________ (sig_tf_tresca_max(2))________      6.5786E+08    
  Radial____stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_r_max(3))_____________      8.2528E+06    
  toroidal__stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_t_max(3))_____________     -3.7359E+08    
- Vertical__stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_z_max(3))_____________      2.3764E+08    
- Von-Mises_stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_vmises_max(3))________      5.3369E+08    
- Maximum_shear_stress_for_the_Tresca_yield_criterion_3_(Pa)______________ (sig_tf_tresca_max(3))________      6.1123E+08    
+ Vertical__stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_z_max(3))_____________      1.6036E+08    
+ Von-Mises_stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_vmises_max(3))________      4.7455E+08    
+ Maximum_shear_stress_for_the_Tresca_yield_criterion_3_(Pa)______________ (sig_tf_tresca_max(3))________      5.3395E+08    
  Maximum_radial_deflection_at_midplane_(m)_______________________________ (deflect)_____________________     -5.6570E-03 OP 
  Vertical_strain_on_casing_______________________________________________ (casestr)_____________________      1.1592E-03 OP 
  Vertical_strain_on_winding_pack_________________________________________ (windstrain)__________________      1.2406E-02 OP 
@@ -2879,9 +2879,9 @@
  Maximum_shear_stress_for_the_Tresca_yield_criterion_2_(Pa)______________ (sig_tf_tresca_max(2))________      6.6000E+08    
  Radial____stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_r_max(3))_____________      8.2114E+06    
  toroidal__stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_t_max(3))_____________     -3.7307E+08    
- Vertical__stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_z_max(3))_____________      2.3806E+08    
- Von-Mises_stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_vmises_max(3))________      5.3355E+08    
- Maximum_shear_stress_for_the_Tresca_yield_criterion_3_(Pa)______________ (sig_tf_tresca_max(3))________      6.1114E+08    
+ Vertical__stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_z_max(3))_____________      1.6047E+08    
+ Von-Mises_stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_vmises_max(3))________      4.7413E+08    
+ Maximum_shear_stress_for_the_Tresca_yield_criterion_3_(Pa)______________ (sig_tf_tresca_max(3))________      5.3354E+08    
  Maximum_radial_deflection_at_midplane_(m)_______________________________ (deflect)_____________________     -5.6553E-03 OP 
  Vertical_strain_on_casing_______________________________________________ (casestr)_____________________      1.1613E-03 OP 
  Vertical_strain_on_winding_pack_________________________________________ (windstrain)__________________      1.2252E-02 OP 
@@ -4004,9 +4004,9 @@
  Maximum_shear_stress_for_the_Tresca_yield_criterion_2_(Pa)______________ (sig_tf_tresca_max(2))________      6.6000E+08    
  Radial____stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_r_max(3))_____________      8.1659E+06    
  toroidal__stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_t_max(3))_____________     -3.7240E+08    
- Vertical__stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_z_max(3))_____________      2.3826E+08    
- Von-Mises_stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_vmises_max(3))________      5.3308E+08    
- Maximum_shear_stress_for_the_Tresca_yield_criterion_3_(Pa)______________ (sig_tf_tresca_max(3))________      6.1066E+08    
+ Vertical__stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_z_max(3))_____________      1.6041E+08    
+ Von-Mises_stress_at_maximum_shear_of_layer_3_(Pa)_______________________ (sig_tf_vmises_max(3))________      4.7345E+08    
+ Maximum_shear_stress_for_the_Tresca_yield_criterion_3_(Pa)______________ (sig_tf_tresca_max(3))________      5.3281E+08    
  Maximum_radial_deflection_at_midplane_(m)_______________________________ (deflect)_____________________     -5.6567E-03 OP 
  Vertical_strain_on_casing_______________________________________________ (casestr)_____________________      1.1622E-03 OP 
  Vertical_strain_on_winding_pack_________________________________________ (windstrain)__________________      1.1920E-02 OP 

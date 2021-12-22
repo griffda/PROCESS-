@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1026-gc6718562 code contains untracked changes
+   Tag No. : v2.1-1059-gfc5b033d code contains untracked changes
     Branch : 1509-outer-tf-case
-   Git log : Rewrote\ test\ results\ with\ updated\ TF\ coil\ stress
- Date/time : 21 Dec 2021 11:04:04 -05:00(hh:mm) UTC
+   Git log : Added\ back\ in\ the\ missing\ front\ case\ steel
+ Date/time : 22 Dec 2021 13:48:52 -05:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
  Directory : /home/cswan/process/process
-     Input : /tmp/pytest-of-cswan/pytest-14/test_scenario_HARE_0/IN.DAT
+     Input : /tmp/pytest-of-cswan/pytest-21/test_scenario_HARE_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -625,12 +625,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Layers                             Steel case            WP    Outer case
  Radial stress               (MPa)       0.000      -327.214         5.276
  toroidal stress             (MPa)    -421.905      -374.139      -334.121
- Vertical stress             (MPa)     238.095       238.095       238.095
- Von-Mises stress            (MPa)     578.918       534.555       497.874
- Shear (Tresca) stress       (MPa)     660.000       612.234       572.216
+ Vertical stress             (MPa)     238.095       238.095       128.798
+ Von-Mises stress            (MPa)     578.918       534.555       413.836
+ Shear (Tresca) stress       (MPa)     660.000       612.234       462.919
  
  Toroidal modulus            (GPa)     205.000        21.818       205.000
- Vertical modulus            (GPa)     205.000        66.155       205.000
+ Vertical modulus            (GPa)     205.000        66.155       378.961
  
  WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      2.003E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      5.227E+01  OP 
@@ -2046,12 +2046,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Layers                             Steel case            WP    Outer case
  Radial stress               (MPa)       0.000      -326.247         5.271
  toroidal stress             (MPa)    -422.002      -374.042      -334.352
- Vertical stress             (MPa)     237.998       237.998       237.998
- Von-Mises stress            (MPa)     578.934       534.390       498.006
- Shear (Tresca) stress       (MPa)     660.000       612.041       572.350
+ Vertical stress             (MPa)     237.998       237.998       128.659
+ Von-Mises stress            (MPa)     578.934       534.390       413.959
+ Shear (Tresca) stress       (MPa)     660.000       612.041       463.011
  
  Toroidal modulus            (GPa)     205.000        21.814       205.000
- Vertical modulus            (GPa)     205.000        66.122       205.000
+ Vertical modulus            (GPa)     205.000        66.122       379.218
  
  WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      2.003E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      5.226E+01  OP 
@@ -3467,12 +3467,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Layers                             Steel case            WP    Outer case
  Radial stress               (MPa)       0.000      -325.401         5.268
  toroidal stress             (MPa)    -422.087      -373.958      -334.555
- Vertical stress             (MPa)     237.913       237.913       237.913
- Von-Mises stress            (MPa)     578.947       534.245       498.122
- Shear (Tresca) stress       (MPa)     660.000       611.872       572.469
+ Vertical stress             (MPa)     237.913       237.913       128.536
+ Von-Mises stress            (MPa)     578.947       534.245       414.067
+ Shear (Tresca) stress       (MPa)     660.000       611.872       463.092
  
  Toroidal modulus            (GPa)     205.000        21.810       205.000
- Vertical modulus            (GPa)     205.000        66.093       205.000
+ Vertical modulus            (GPa)     205.000        66.093       379.443
  
  WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      2.003E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      5.226E+01  OP 
@@ -4888,12 +4888,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Layers                             Steel case            WP    Outer case
  Radial stress               (MPa)       0.000      -323.895         5.261
  toroidal stress             (MPa)    -422.238      -373.809      -334.919
- Vertical stress             (MPa)     237.762       237.762       237.762
- Von-Mises stress            (MPa)     578.971       533.986       498.329
- Shear (Tresca) stress       (MPa)     660.000       611.571       572.681
+ Vertical stress             (MPa)     237.762       237.762       128.318
+ Von-Mises stress            (MPa)     578.971       533.986       414.261
+ Shear (Tresca) stress       (MPa)     660.000       611.571       463.237
  
  Toroidal modulus            (GPa)     205.000        21.804       205.000
- Vertical modulus            (GPa)     205.000        66.041       205.000
+ Vertical modulus            (GPa)     205.000        66.041       379.847
  
  WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      2.003E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      5.226E+01  OP 
@@ -6309,12 +6309,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Layers                             Steel case            WP    Outer case
  Radial stress               (MPa)       0.000      -322.402         5.254
  toroidal stress             (MPa)    -422.389      -373.662      -335.280
- Vertical stress             (MPa)     237.611       237.611       237.611
- Von-Mises stress            (MPa)     578.995       533.731       498.536
- Shear (Tresca) stress       (MPa)     660.000       611.273       572.892
+ Vertical stress             (MPa)     237.611       237.611       128.101
+ Von-Mises stress            (MPa)     578.995       533.731       414.454
+ Shear (Tresca) stress       (MPa)     660.000       611.273       463.381
  
  Toroidal modulus            (GPa)     205.000        21.797       205.000
- Vertical modulus            (GPa)     205.000        65.990       205.000
+ Vertical modulus            (GPa)     205.000        65.990       380.250
  
  WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      2.003E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      5.225E+01  OP 
@@ -7730,12 +7730,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Layers                             Steel case            WP    Outer case
  Radial stress               (MPa)       0.000      -320.886         5.247
  toroidal stress             (MPa)    -422.542      -373.513      -335.650
- Vertical stress             (MPa)     237.458       237.458       237.458
- Von-Mises stress            (MPa)     579.020       533.471       498.748
- Shear (Tresca) stress       (MPa)     660.000       610.970       573.108
+ Vertical stress             (MPa)     237.458       237.458       127.879
+ Von-Mises stress            (MPa)     579.020       533.471       414.653
+ Shear (Tresca) stress       (MPa)     660.000       610.970       463.530
  
  Toroidal modulus            (GPa)     205.000        21.791       205.000
- Vertical modulus            (GPa)     205.000        65.937       205.000
+ Vertical modulus            (GPa)     205.000        65.937       380.662
  
  WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      2.003E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      5.225E+01  OP 
@@ -9151,12 +9151,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Layers                             Steel case            WP    Outer case
  Radial stress               (MPa)       0.000      -319.318         5.240
  toroidal stress             (MPa)    -422.702      -373.359      -336.035
- Vertical stress             (MPa)     237.298       237.298       237.298
- Von-Mises stress            (MPa)     579.045       533.202       498.969
- Shear (Tresca) stress       (MPa)     660.000       610.657       573.333
+ Vertical stress             (MPa)     237.298       237.298       127.649
+ Von-Mises stress            (MPa)     579.045       533.202       414.860
+ Shear (Tresca) stress       (MPa)     660.000       610.657       463.684
  
  Toroidal modulus            (GPa)     205.000        21.784       205.000
- Vertical modulus            (GPa)     205.000        65.883       205.000
+ Vertical modulus            (GPa)     205.000        65.883       381.092
  
  WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      2.003E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      5.224E+01  OP 

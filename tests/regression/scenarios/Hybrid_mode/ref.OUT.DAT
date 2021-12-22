@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1026-gc6718562 code contains untracked changes
+   Tag No. : v2.1-1059-gfc5b033d code contains untracked changes
     Branch : 1509-outer-tf-case
-   Git log : Rewrote\ test\ results\ with\ updated\ TF\ coil\ stress
- Date/time : 21 Dec 2021 11:04:19 -05:00(hh:mm) UTC
+   Git log : Added\ back\ in\ the\ missing\ front\ case\ steel
+ Date/time : 22 Dec 2021 13:49:04 -05:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
  Directory : /home/cswan/process/process
-     Input : /tmp/pytest-of-cswan/pytest-14/test_scenario_Hybrid_mode_0/IN.DAT
+     Input : /tmp/pytest-of-cswan/pytest-21/test_scenario_Hybrid_mode_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -633,12 +633,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Layers                             Steel case            WP    Outer case
  Radial stress               (MPa)       0.000      -289.415         3.275
  toroidal stress             (MPa)    -376.338      -297.762      -273.439
- Vertical stress             (MPa)     203.662       203.662       203.662
- Von-Mises stress            (MPa)     509.661       436.788       414.652
- Shear (Tresca) stress       (MPa)     580.000       501.424       477.101
+ Vertical stress             (MPa)     203.662       203.662        96.406
+ Von-Mises stress            (MPa)     509.661       436.788       332.301
+ Shear (Tresca) stress       (MPa)     580.000       501.424       369.845
  
  Toroidal modulus            (GPa)     205.000        35.459       205.000
- Vertical modulus            (GPa)     205.000        91.910       205.000
+ Vertical modulus            (GPa)     205.000        91.910       433.071
  
  WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      3.159E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      7.515E+01  OP 
