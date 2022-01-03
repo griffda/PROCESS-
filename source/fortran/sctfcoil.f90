@@ -1828,16 +1828,24 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! Layers are labelled from inboard to outbard
     
     real(dp), dimension(n_tf_layer) :: eyoung_p
-    !! Toroidal plan's Young modulae (one per layer) used in the stress models [Pa]
+    !! Young's moduli (one per layer) of the TF coil in the 
+    !! transverse (radial/toroidal) direction. Used in the stress 
+    !! models [Pa]
     
     real(dp), dimension(n_tf_layer) :: eyoung_z
-    !! Vertical direction's Young modulae (one per layer) used in the stress models [Pa]
+    !! Young's moduli (one per layer) of the TF coil in the vertical
+    !! direction used in the stress models [Pa]
     
     real(dp), dimension(n_tf_layer) :: poisson_p
-    !! Toroidal plan's Poisson's ratio (one per layer) used in the stress models
+    !! Poisson's ratios (one per layer) of the TF coil between the 
+    !! two transverse directions (radial and toroidal). Used in the 
+    !! stress models.
     
     real(dp), dimension(n_tf_layer) :: poisson_z
-    !! Toroidal plan's Poisson's ratio (one per layer) used in the stress models
+    !! Poisson's ratios (one per layer) of the TF coil between the 
+    !! vertical and transverse directions (in that order). Used in the
+    !! stress models. d(transverse strain)/d(vertical strain) with
+    !! only vertical stress. 
 
     real(dp), dimension(n_tf_layer) :: jeff
     !! Effective current density [A/m2]
@@ -3971,6 +3979,167 @@ function eyngzwp(estl,eins,ewp,tins,tstl,tcs)
     eyngzwp = eyngzwp / (ttot*ttot)
 
 end function eyngzwp
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine eyngparallel(eyoung_j_1, a_1, poisson_j_perp_1, & ! In/out
+                        eyoung_j_2, a_2, poisson_j_perp_2)   ! Inputs
+      
+    !! Author : C. Swanson, PPPL
+    !! January 2022
+    !! See Issue #1205
+    !! This subroutine gives the smeared elastic properties of two 
+    !! members that are carrying a force in parallel with each other.
+    !! The force goes in direction j.
+    !! This is pretty easy because the smeared properties are simply
+    !! the average weighted by the cross-sectional areas perpendicular
+    !! to j. 
+    !! The assumption is that the strains in j are equal.
+    !! If you're dealing with anisotropy, please pay attention to the
+    !! fact that the specific Young's Modulus used here is that in 
+    !! the j direction, and the specific Poisson's ratio used here is
+    !! that between the j and transverse directions in that order.
+    !! (transverse strain / j strain, under j stress)
+    !! The smeared Poisson's ratio is computed assuming the transverse
+    !! dynamics are isotropic, and that the two members are free to 
+    !! shrink/expand under Poisson effects without interference from
+    !! each other. This may not be true of your case.
+    !!
+    !! The first triplet of properties is intended to be used as a 
+    !! working total, both an input and an output. The second triplet
+    !! is intended to be the properties of the new member to add in, 
+    !! such that if you had many members, you could call:
+    !! call eyngparallel(triplet1, triplet2)
+    !! call eyngparallel(triplet1, triplet3)
+    !! call eyngparallel(triplet1, triplet4)
+    !! ... etc.
+    !! So that triplet1 would eventually have the smeared properties
+    !! of the total composite member. Note that triplet1 properties 
+    !! are overwritten every time it is called. 
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    implicit none
+
+    ! In/outs
+    ! ---
+    real(dp), intent(inout) :: eyoung_j_1
+    !! Young's modulus of Member 1 in the j direction [Pa]
+    
+    real(dp), intent(inout) :: a_1
+    !! Cross-sectional area of Member 1 in the j direction
+    !! [m^2, or consistent units]
+    
+    real(dp), intent(inout) :: poisson_j_perp_1
+    !! Poisson's ratio between the j and transverse directions
+    !! in that order of Member 1
+    !! transverse strain / j strain, under j stress
+    
+    ! Inputs
+    ! ---
+    real(dp), intent(out) :: eyoung_j_2
+    !! Young's modulus of Member 2 in the j direction [Pa]
+    
+    real(dp), intent(out) :: a_2
+    !! Cross-sectional area of Member 2 in the j direction
+    !! [m^2, or consistent units]
+    
+    real(dp), intent(out) :: poisson_j_perp_2
+    !! Poisson's ratio between the j and transverse directions
+    !! in that order of Member 2
+    !! transverse strain / j strain, under j stress
+
+    poisson_j_perp_1 = (poisson_j_perp_1 * a_1 + poisson_j_perp_2 * a_2) / (a_1 + a_2)
+    eyoung_j_1 = (eyoung_j_1 * a_1 + eyoung_j_2 * a_2) / (a_1 + a_2)
+    a_1 = a_1 + a_2
+    
+end subroutine eyngparallel
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine eyngseries(eyoung_j_1, l_1, poisson_j_perp_1, & ! In/out
+                      eyoung_j_2, l_2, poisson_j_perp_2)   ! Inputs
+      
+    !! Author : C. Swanson, PPPL
+    !! January 2022
+    !! See Issue #1205
+    !! This subroutine gives the smeared elastic properties of two 
+    !! members that are carrying a force in series with each other.
+    !! The force goes in direction j.
+    !! The assumption is that the stresses in j are equal.
+    !! The smeared Young's modulus is the inverse of the average of
+    !! the inverse of the Young's moduli, weighted by the length
+    !! of the members in j.
+    !! The smeared Poisson's ratio is the averaged of the Poisson's
+    !! ratios, weighted by the quantity (Young's modulus / length of
+    !! the members in j).
+    !! 
+    !! If you're dealing with anisotropy, please pay attention to the
+    !! fact that the specific Young's Modulus used here is that in 
+    !! the j direction, and the specific Poisson's ratio used here is
+    !! that between the j and transverse directions in that order.
+    !! (transverse strain / j strain, under j stress)
+    !! The smeared Poisson's ratio is computed assuming the transverse
+    !! dynamics are isotropic, and that the two members are free to 
+    !! shrink/expand under Poisson effects without interference from
+    !! each other. This may not be true of your case.
+    !!
+    !! The first triplet of properties is intended to be used as a 
+    !! working total, both an input and an output. The second triplet
+    !! is intended to be the properties of the new member to add in, 
+    !! such that if you had many members, you could call:
+    !! call eyngseries(triplet1, triplet2)
+    !! call eyngseries(triplet1, triplet3)
+    !! call eyngseries(triplet1, triplet4)
+    !! ... etc.
+    !! So that triplet1 would eventually have the smeared properties
+    !! of the total composite member. Note that triplet1 properties 
+    !! are overwritten every time it is called. 
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    implicit none
+
+    ! In/outs
+    ! ---
+    real(dp), intent(inout) :: eyoung_j_1
+    !! Young's modulus of Member 1 in the j direction [Pa]
+    
+    real(dp), intent(inout) :: l_1
+    !! Length of Member 1 in the j direction
+    !! [m, or consistent units]
+    
+    real(dp), intent(inout) :: poisson_j_perp_1
+    !! Poisson's ratio between the j and transverse directions
+    !! in that order of Member 1
+    !! transverse strain / j strain, under j stress
+    
+    ! Inputs
+    ! ---
+    real(dp), intent(out) :: eyoung_j_2
+    !! Young's modulus of Member 2 in the j direction [Pa]
+    
+    real(dp), intent(out) :: l_2
+    !! Length of Member 2 in the j direction
+    !! [m, or consistent units]
+    
+    real(dp), intent(out) :: poisson_j_perp_2
+    !! Poisson's ratio between the j and transverse directions
+    !! in that order of Member 2
+    !! transverse strain / j strain, under j stress
+
+    if ( eyoung_j_1 == 0 ) then
+      l_1 = l_1 + l_2
+    else if ( eyoung_j_2 == 0) then
+      poisson_j_perp_1 = poisson_j_perp_2
+      eyoung_j_1 = 0
+      l_1 = l_1 + l_2
+    else 
+      poisson_j_perp_1 = (poisson_j_perp_1*l_1/eyoung_j_1 + poisson_j_perp_2*l_2/eyoung_j_2) / (l_1/eyoung_j_1 + l_2/eyoung_j_2)
+      eyoung_j_1 = (l_1 + l_2) / (l_1/eyoung_j_1 + l_2/eyoung_j_2)
+      l_1 = l_1 + l_2
+    end if
+    
+    
+end subroutine eyngseries
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
