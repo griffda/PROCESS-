@@ -2042,6 +2042,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             ! stiffest dimension is toroidal and the radial and vertical
             ! dimension are less stiff. Nevertheless this attempts to 
             ! hit the mark.
+            ! [EDIT: eyoung_winding is for the TF coil, not the CS coil]
             
             ! Get transverse properties
             call eyngparallel(eyoung_steel, oh_steel_frac, poisson_steel, &
@@ -2077,6 +2078,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                               eyoung_z(1), a_working, poisson_z(1), &
                               eyoung_z(1), a_working, poisson_z(1))
             
+
         ! resistive CS (copper)
         else
             ! Here is a rough approximation
@@ -4093,14 +4095,14 @@ subroutine eyngparallel(eyoung_j_1, a_1, poisson_j_perp_1, & ! Inputs
     
     ! Outputs
     ! ---
-    real(dp), intent(out) :: eyoung_j_3
+    real(dp), intent(in out) :: eyoung_j_3
     !! Young's modulus of composite member in the j direction [Pa]
     
-    real(dp), intent(out) :: a_3
+    real(dp), intent(in out) :: a_3
     !! Cross-sectional area of composite member 1 in the j direction
     !! [m^2, or consistent units]
     
-    real(dp), intent(out) :: poisson_j_perp_3
+    real(dp), intent(in out) :: poisson_j_perp_3
     !! Poisson's ratio between the j and transverse directions,
     !! in that order, of composite member
     !! (transverse strain / j strain, under j stress)
@@ -4174,14 +4176,14 @@ subroutine eyngseries(eyoung_j_1, l_1, poisson_j_perp_1, & ! Inputs
     
     ! Outputs
     ! ---
-    real(dp), intent(out) :: eyoung_j_3
+    real(dp), intent(in out) :: eyoung_j_3
     !! Young's modulus of composite member in the j direction [Pa]
     
-    real(dp), intent(out) :: l_3
+    real(dp), intent(in out) :: l_3
     !! Length of composite member in the j direction
     !! [m, or consistent units]
     
-    real(dp), intent(out) :: poisson_j_perp_3
+    real(dp), intent(in out) :: poisson_j_perp_3
     !! Poisson's ratio between the j and transverse directions,
     !! in that order, of composite member
     !! (transverse strain / j strain, under j stress)
@@ -4200,7 +4202,6 @@ subroutine eyngseries(eyoung_j_1, l_1, poisson_j_perp_1, & ! Inputs
       eyoung_j_3 = (l_1 + l_2) / (l_1/eyoung_j_1 + l_2/eyoung_j_2)
       l_3 = l_1 + l_2
     end if
-    
     
 end subroutine eyngseries
 
