@@ -1944,6 +1944,26 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(dp) :: f_tf_stress_front_case
     !! The ratio between the true cross sectional area of the 
     ! front case, and that considered by the plane strain solver
+    
+    real(dp) :: a_working
+    !! Working variable to keep track of how much area we've
+    ! considered when assembling the parallel elastic quantities
+    ! of composite members [m^2 or consistent units]
+    
+    real(dp) :: eyoung_working
+    !! Working variable to keep track of how much stiffness we've
+    ! considered when assembling the elastic quantities
+    ! of composite members [Pa]
+    
+    real(dp) :: poisson_working
+    !! Working variable to keep track of how much Poisson effect
+    !  we've considered when assembling the elastic quantities
+    ! of composite members [Pa]
+    
+    real(dp) :: l_working
+    !! Working variable to keep track of how much length we've
+    ! considered when assembling the series elastic quantities
+    ! of composite members [m]
     ! ---
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2016,13 +2036,47 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             t_cable_oh = t_turn_oh - 2.0D0 * ( t_cond_oh + thicndut )
             !-!
 
-            ! Effective young modulus assuming the parallel case
-            ! Rem the oh_steel_fraction is potentially a volumic one ... To be checked 
-            eyoung_p(1) = oh_steel_frac * eyoung_steel + (1.0D0 - oh_steel_frac) * eyoung_winding
-            eyoung_z(1) = eyngeff( eyoung_steel, eyoung_ins, thicndut, t_cond_oh, t_cable_oh )
-            poisson_p(1) = poisson_steel
-            poisson_z(1) = poisson_steel
-
+            ! Smeared elastic properties of the CS
+            ! These smearing functions were written assuming transverse-
+            ! isotropic materials; that is not true of the CS, where the
+            ! stiffest dimension is toroidal and the radial and vertical
+            ! dimension are less stiff. Nevertheless this attempts to 
+            ! hit the mark.
+            
+            ! Get transverse properties
+            call eyngparallel(eyoung_steel, oh_steel_frac, poisson_steel, &
+                              eyoung_winding, 1D0-oh_steel_frac, poisson_steel, & ! Should be Poisson's ratio of winding, not steel
+                              eyoung_p(1),a_working,poisson_p(1))
+            
+            ! Get vertical properties
+            ! Outermost legs, insulation
+            eyoung_z(1)  = eyoung_ins*0 ! [EDIT: To compare against original model, neglected this leg.]
+            poisson_z(1) = poisson_steel ! [EDIT: Should be Poisson's ratio of insulation, not steel]
+            a_working    = 2*thicndut
+            
+            ! Next inner legs, insulation and steel
+            call eyngseries(eyoung_steel, t_cable_oh + 2*t_cond_oh, poisson_steel, &
+                            eyoung_ins, 2*thicndut, poisson_steel, & ! [EDIT: Should be Poisson's ratio of insulation]
+                            eyoung_working, l_working, poisson_working)
+            ! Add this to the properties we're accumulating
+            call eyngparallel(eyoung_working, 2*t_cond_oh, poisson_working, &
+                              eyoung_z(1), a_working, poisson_z(1), &
+                              eyoung_z(1), a_working, poisson_z(1))
+                         
+            ! Next inner leg, the cable space
+            ! Add insulation and steel
+            call eyngseries(eyoung_steel, 2*t_cond_oh, poisson_steel, &
+                            eyoung_ins, 2*thicndut, poisson_steel, & ! [EDIT: Should be Poisson's ratio of insulation]
+                            eyoung_working, l_working, poisson_working)  
+            ! Add cable          
+            call eyngseries(0D0, t_cable_oh, poisson_steel, & ! [EDIT: Should be parameters of the conductor, not zero and steel]
+                            eyoung_working, l_working, poisson_working, &
+                            eyoung_working, l_working, poisson_working) 
+            ! Add this to the properties we're accumulating
+            call eyngparallel(eyoung_working, t_cable_oh, poisson_working, &
+                              eyoung_z(1), a_working, poisson_z(1), &
+                              eyoung_z(1), a_working, poisson_z(1))
+            
         ! resistive CS (copper)
         else
             ! Here is a rough approximation
@@ -3982,8 +4036,9 @@ end function eyngzwp
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine eyngparallel(eyoung_j_1, a_1, poisson_j_perp_1, & ! In/out
-                        eyoung_j_2, a_2, poisson_j_perp_2)   ! Inputs
+subroutine eyngparallel(eyoung_j_1, a_1, poisson_j_perp_1, & ! Inputs
+                        eyoung_j_2, a_2, poisson_j_perp_2, & ! Inputs
+                        eyoung_j_3, a_3, poisson_j_perp_3)   ! Outputs
       
     !! Author : C. Swanson, PPPL
     !! January 2022
@@ -3991,6 +4046,8 @@ subroutine eyngparallel(eyoung_j_1, a_1, poisson_j_perp_1, & ! In/out
     !! This subroutine gives the smeared elastic properties of two 
     !! members that are carrying a force in parallel with each other.
     !! The force goes in direction j.
+    !! Members 1 and 2 are the individual members to be smeared. 
+    !! Member 3 is the effective smeared member (output).
     !! This is pretty easy because the smeared properties are simply
     !! the average weighted by the cross-sectional areas perpendicular
     !! to j. 
@@ -4005,59 +4062,60 @@ subroutine eyngparallel(eyoung_j_1, a_1, poisson_j_perp_1, & ! In/out
     !! shrink/expand under Poisson effects without interference from
     !! each other. This may not be true of your case.
     !!
-    !! The first triplet of properties is intended to be used as a 
-    !! working total, both an input and an output. The second triplet
-    !! is intended to be the properties of the new member to add in, 
-    !! such that if you had many members, you could call:
-    !! call eyngparallel(triplet1, triplet2)
-    !! call eyngparallel(triplet1, triplet3)
-    !! call eyngparallel(triplet1, triplet4)
+    !! To build up a composite smeared member of any number of 
+    !! individual members, you can pass the same properties for 
+    !! members 2 and 3, and call it successively, using the properties
+    !! of each member as the first triplet of arguments. This way, the 
+    !! last triplet acts as a "working sum":
+    !! call eyngparallel(triplet1, triplet2, tripletOUT)
+    !! call eyngparallel(triplet3, tripletOUT, tripletOUT)
+    !! call eyngparallel(triplet4, tripletOUT, tripletOUT)
     !! ... etc.
-    !! So that triplet1 would eventually have the smeared properties
-    !! of the total composite member. Note that triplet1 properties 
-    !! are overwritten every time it is called. 
+    !! So that tripletOUT would eventually have the smeared properties
+    !! of the total composite member.
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
     implicit none
-
-    ! In/outs
-    ! ---
-    real(dp), intent(inout) :: eyoung_j_1
-    !! Young's modulus of Member 1 in the j direction [Pa]
-    
-    real(dp), intent(inout) :: a_1
-    !! Cross-sectional area of Member 1 in the j direction
-    !! [m^2, or consistent units]
-    
-    real(dp), intent(inout) :: poisson_j_perp_1
-    !! Poisson's ratio between the j and transverse directions
-    !! in that order of Member 1
-    !! transverse strain / j strain, under j stress
-    
+        
     ! Inputs
     ! ---
-    real(dp), intent(out) :: eyoung_j_2
-    !! Young's modulus of Member 2 in the j direction [Pa]
+    real(dp), intent(in) :: eyoung_j_1,eyoung_j_2
+    !! Young's modulus of members 1,2 in the j direction [Pa]
     
-    real(dp), intent(out) :: a_2
-    !! Cross-sectional area of Member 2 in the j direction
+    real(dp), intent(in) :: a_1,a_2
+    !! Cross-sectional area of members 1,2 in the j direction
     !! [m^2, or consistent units]
     
-    real(dp), intent(out) :: poisson_j_perp_2
-    !! Poisson's ratio between the j and transverse directions
-    !! in that order of Member 2
-    !! transverse strain / j strain, under j stress
+    real(dp), intent(in) :: poisson_j_perp_1,poisson_j_perp_2
+    !! Poisson's ratio between the j and transverse directions,
+    !! in that order, of members 1,2
+    !! (transverse strain / j strain, under j stress)
+    
+    ! Outputs
+    ! ---
+    real(dp), intent(out) :: eyoung_j_3
+    !! Young's modulus of composite member in the j direction [Pa]
+    
+    real(dp), intent(out) :: a_3
+    !! Cross-sectional area of composite member 1 in the j direction
+    !! [m^2, or consistent units]
+    
+    real(dp), intent(out) :: poisson_j_perp_3
+    !! Poisson's ratio between the j and transverse directions,
+    !! in that order, of composite member
+    !! (transverse strain / j strain, under j stress)
 
-    poisson_j_perp_1 = (poisson_j_perp_1 * a_1 + poisson_j_perp_2 * a_2) / (a_1 + a_2)
-    eyoung_j_1 = (eyoung_j_1 * a_1 + eyoung_j_2 * a_2) / (a_1 + a_2)
-    a_1 = a_1 + a_2
+    poisson_j_perp_3 = (poisson_j_perp_1 * a_1 + poisson_j_perp_2 * a_2) / (a_1 + a_2)
+    eyoung_j_3 = (eyoung_j_1 * a_1 + eyoung_j_2 * a_2) / (a_1 + a_2)
+    a_3 = a_1 + a_2
     
 end subroutine eyngparallel
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine eyngseries(eyoung_j_1, l_1, poisson_j_perp_1, & ! In/out
-                      eyoung_j_2, l_2, poisson_j_perp_2)   ! Inputs
+subroutine eyngseries(eyoung_j_1, l_1, poisson_j_perp_1, & ! Inputs
+                      eyoung_j_2, l_2, poisson_j_perp_2, & ! Inputs
+                      eyoung_j_3, l_3, poisson_j_perp_3)   ! Outputs
       
     !! Author : C. Swanson, PPPL
     !! January 2022
@@ -4069,6 +4127,8 @@ subroutine eyngseries(eyoung_j_1, l_1, poisson_j_perp_1, & ! In/out
     !! The smeared Young's modulus is the inverse of the average of
     !! the inverse of the Young's moduli, weighted by the length
     !! of the members in j.
+    !! Members 1 and 2 are the individual members to be smeared. 
+    !! Member 3 is the effective smeared member (output).
     !! The smeared Poisson's ratio is the averaged of the Poisson's
     !! ratios, weighted by the quantity (Young's modulus / length of
     !! the members in j).
@@ -4083,59 +4143,62 @@ subroutine eyngseries(eyoung_j_1, l_1, poisson_j_perp_1, & ! In/out
     !! shrink/expand under Poisson effects without interference from
     !! each other. This may not be true of your case.
     !!
-    !! The first triplet of properties is intended to be used as a 
-    !! working total, both an input and an output. The second triplet
-    !! is intended to be the properties of the new member to add in, 
-    !! such that if you had many members, you could call:
-    !! call eyngseries(triplet1, triplet2)
-    !! call eyngseries(triplet1, triplet3)
-    !! call eyngseries(triplet1, triplet4)
+    !! To build up a composite smeared member of any number of 
+    !! individual members, you can pass the same properties for 
+    !! members 2 and 3, and call it successively, using the properties
+    !! of each member as the first triplet of arguments. This way, the 
+    !! last triplet acts as a "working sum":
+    !! call eyngseries(triplet1, triplet2, tripletOUT)
+    !! call eyngseries(triplet3, tripletOUT, tripletOUT)
+    !! call eyngseries(triplet4, tripletOUT, tripletOUT)
     !! ... etc.
-    !! So that triplet1 would eventually have the smeared properties
-    !! of the total composite member. Note that triplet1 properties 
-    !! are overwritten every time it is called. 
+    !! So that tripletOUT would eventually have the smeared properties
+    !! of the total composite member.
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
     implicit none
-
-    ! In/outs
-    ! ---
-    real(dp), intent(inout) :: eyoung_j_1
-    !! Young's modulus of Member 1 in the j direction [Pa]
-    
-    real(dp), intent(inout) :: l_1
-    !! Length of Member 1 in the j direction
-    !! [m, or consistent units]
-    
-    real(dp), intent(inout) :: poisson_j_perp_1
-    !! Poisson's ratio between the j and transverse directions
-    !! in that order of Member 1
-    !! transverse strain / j strain, under j stress
     
     ! Inputs
     ! ---
-    real(dp), intent(out) :: eyoung_j_2
-    !! Young's modulus of Member 2 in the j direction [Pa]
+    real(dp), intent(in) :: eyoung_j_1,eyoung_j_2
+    !! Young's modulus of members 1,2 in the j direction [Pa]
     
-    real(dp), intent(out) :: l_2
-    !! Length of Member 2 in the j direction
+    real(dp), intent(in) :: l_1,l_2
+    !! Length of members 1,2 in the j direction
     !! [m, or consistent units]
     
-    real(dp), intent(out) :: poisson_j_perp_2
-    !! Poisson's ratio between the j and transverse directions
-    !! in that order of Member 2
-    !! transverse strain / j strain, under j stress
+    real(dp), intent(in) :: poisson_j_perp_1,poisson_j_perp_2
+    !! Poisson's ratio between the j and transverse directions,
+    !! in that order, of members 1,2
+    !! (transverse strain / j strain, under j stress)
+    
+    ! Outputs
+    ! ---
+    real(dp), intent(out) :: eyoung_j_3
+    !! Young's modulus of composite member in the j direction [Pa]
+    
+    real(dp), intent(out) :: l_3
+    !! Length of composite member in the j direction
+    !! [m, or consistent units]
+    
+    real(dp), intent(out) :: poisson_j_perp_3
+    !! Poisson's ratio between the j and transverse directions,
+    !! in that order, of composite member
+    !! (transverse strain / j strain, under j stress)
 
-    if ( eyoung_j_1 == 0 ) then
-      l_1 = l_1 + l_2
-    else if ( eyoung_j_2 == 0) then
-      poisson_j_perp_1 = poisson_j_perp_2
-      eyoung_j_1 = 0
-      l_1 = l_1 + l_2
+    if ( eyoung_j_1*eyoung_j_2 == 0 ) then
+      !poisson_j_perp_3 = 0
+      if ( eyoung_j_1 == 0) then
+        poisson_j_perp_3 = poisson_j_perp_1 ! [EDIT: What is true Poisson behavior when E = 0? Original says take the Poisson of the E=0 layer; however I contend that cross sections expand/contract less when they have free space to expand/contract into]
+      else
+        poisson_j_perp_3 = poisson_j_perp_2 ! [EDIT: Here, too]
+      end if
+      eyoung_j_3 = 0
+      l_3 = l_1 + l_2
     else 
-      poisson_j_perp_1 = (poisson_j_perp_1*l_1/eyoung_j_1 + poisson_j_perp_2*l_2/eyoung_j_2) / (l_1/eyoung_j_1 + l_2/eyoung_j_2)
-      eyoung_j_1 = (l_1 + l_2) / (l_1/eyoung_j_1 + l_2/eyoung_j_2)
-      l_1 = l_1 + l_2
+      poisson_j_perp_3 = (poisson_j_perp_1*l_1/eyoung_j_1 + poisson_j_perp_2*l_2/eyoung_j_2) / (l_1/eyoung_j_1 + l_2/eyoung_j_2)
+      eyoung_j_3 = (l_1 + l_2) / (l_1/eyoung_j_1 + l_2/eyoung_j_2)
+      l_3 = l_1 + l_2
     end if
     
     
