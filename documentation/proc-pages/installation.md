@@ -2,7 +2,7 @@
 ## Supported environments
 PROCESS is natively supported on Ubuntu 20. Other Linux distributions will be able to successfully build and execute PROCESS however may give inconsistent results due to version disparities of dynamically linked libraries.
 
-Using the Windows Subsystem for Linux (on Windows) or a containerised environment is the recommended way to build, test, and run PROCESS on any OS other than Ubuntu 20. 
+Using the Windows Subsystem for Linux (on Windows) or a containerised environment is the recommended way to build, test, and run PROCESS on any OS other than Ubuntu 20.
 
 ## Ubuntu and Windows (using Windows Subsystem for Linux)
 *It is highly recommended users create a Python virtual environment in order to use the PROCESS Python package, as this ensures that installations of required package versions don't affect other packages that require different versions in your environment. It isn't necessary, however.*
@@ -57,6 +57,15 @@ cmake -S . -B build
 cmake --build build
 ```
 
+If you plan on developing code for Process, you will need to setup **pre-commit** which will run over files you submit before they are allowed to be pushed. CMake should have installed pre-commit as part of the Process installation; `python3.8 -m pip install pre-commit` can also be issued to install pre-commit.
+
+Pre-commit can be configured to automatically run before each git commit by issuing `pre-commit install` in the root directory.
+
+You can find out more about our pre-commit policy here: [development/pre-commit](http://process.gitpages.ccfe.ac.uk/process/development/pre-commit/)
+
+!!! warning "Pre-commit Python version"
+    It is important then pre-commit is running on Python 3.8. Any other Python version may produce code formatted in such a way that our CI system rejects your code.
+
 
 An error may be encountered here because `ford` is installed in `.local/bin`, which is not on the `PATH` in some environments, so you will need to add `.local/bin` to the `PATH` if this error occurs. You can do this using `nano`:
 
@@ -67,7 +76,7 @@ nano ~/.profile
  Then use the arrow keys to navigate to the bottom of the `nano` editor and type:
 ```bash
 export PATH=$PATH:/home/yourusername/.local/bin
-``` 
+```
 where you use your own username in place of `yourusername` above. Then use `Ctrl-X`, then type `Y`, then press enter. Then either close and reopen the terminal, or type:
 ```bash
 source ~/.profile
@@ -79,7 +88,7 @@ CMake needs to be at least version `3.13.0`. This is so that the command `cmake 
 ```bash
 CMake Error: The source directory "/home/process/build" does not exist.
 Specify --help for usage, or press the help button on the CMake GUI.
-``` 
+```
 subsequently making the `build` directory and running the command again results in:
 ```bash
 CMake Error: The source directory "/home/process/build" does not appear to contain CMakeLists.txt.
@@ -134,13 +143,13 @@ There is also a VS Code extension for Docker containers that may be helpful.
 
 ## Singularity container
 Singularity is a container environment similar to Docker. This means a user can run PROCESS with all required dependencies installed. Singularity, however, is designed to work with user-level permissions and, as such, is supported by many shared resource administrators (unlike Docker, which poses a security risk).
- 
+
 Singularity can convert OCI compliant containers into the Singularity Image Format (SIF) to run the Docker container above. Download, and convert the Docker container by running: `singularity pull --docker-login process.sif docker://git.ccfe.ac.uk:4567/process/process/dev:latest`. Singularity will then ask for a username and password, your CCFE GitLab short username and password.
- 
+
 Singularity will write the container into your current directory, it can then be moved or copied like any file.
- 
+
 Running `singularity shell process.sif` will load a Singularity shell with the dependencies for PROCESS installed. Singularity will automatically mount your home (`$HOME`) directory into the container. Therefore, if PROCESS lives in `~/process` on your system, it will also live inside of `~/process` in the shell environment.
- 
+
 It should also be noted that while the Singularity container has a Python 3.8 by default, it will be impossible to pip install any packages without getting a `Read-only file system` error. This is because you are treated as a non-admin user within the container, and, as such, you cannot update the system Python. For this reason, it is recommended that you still use a virtual environment within the Singularity container (as described above). `pip install <package> --user` will work; however, it will cause conflicts with existing Python packages you have installed outside of your container.
 
 ## Testing
@@ -163,11 +172,11 @@ process
 ```
 
 This indicates that the PROCESS Python package has been installed.
-To exit the Python interpreter you can use 
+To exit the Python interpreter you can use
 ```BASH
-exit() 
+exit()
 ```
-and press enter, or use `Ctrl-Z`. 
+and press enter, or use `Ctrl-Z`.
 
 ### PROCESS test suite
 The PROCESS test suite provides through tests that can be used to confirm a successful installation; the tests can then be used to verify changes you make have not affected the wider codebase.
@@ -181,9 +190,9 @@ The test suite uses PyTest and can be fully run using:
 ```BASH
 pytest
 ```
-which runs unit, integration, and regression tests. 
+which runs unit, integration, and regression tests.
 
-A more in-depth discussion of testing can be found at 
+A more in-depth discussion of testing can be found at
 [development/testing](http://process.gitpages.ccfe.ac.uk/process/development/testing/)
 
 If everything passes, this indicates a successful installation. If anything fails, this indicates that your environment produces different results to what is expected. You might consider creating an issue in Gitlab, or trying out the Docker container instead.

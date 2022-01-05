@@ -1,5 +1,6 @@
+---
 site_name: PROCESS
-docs_dir: "documentation/proc-pages/"
+docs_dir: documentation/proc-pages/
 nav:
     - Home: index.md
     - Installation Guide: installation.md
@@ -8,85 +9,85 @@ nav:
     - FORD docs: ford_site/ford.md
     - Tracking: tracking.html
     - Cost Models: cost-models/cost-models.md
-    - Development: 
-        - git Usage: development/git-usage.md
-        - Standards: development/standards.md
-        - Adding Variables & Constraints: development/add-vars.md
-        - Continuous Integration: development/ci-guide.md
-        - Unit Tests: development/unit-tests.md
-        - Tools: development/tools.md
-        - Versioning: development/versioning.md
+    - Development:
+          - git Usage: development/git-usage.md
+          - Pre-commit: development/pre-commit.md
+          - Standards: development/standards.md
+          - Adding Variables & Constraints: development/add-vars.md
+          - Continuous Integration: development/ci-guide.md
+          - Unit Tests: development/unit-tests.md
+          - Tools: development/tools.md
+          - Versioning: development/versioning.md
     - Engineering Models:
-        - Machine Build: eng-models/machine-build.md
-        - Structural Components: eng-models/structural-components.md
-        - Buildings: eng-models/buildings.md
-        - First Wall/Blanket: eng-models/fw-blanket.md
-        - TF Coil : eng-models/tf-coil.md
-        - PF Coil : eng-models/pf-coil.md
-        - Central Solenoid : eng-models/central-solenoid.md
-        - Shield : eng-models/shield.md
-        - Divertor : eng-models/divertor.md
-        - Power conversion and heat dissipation systems: eng-models/power-conversion-and-heat-dissipation-systems.md
-        - Auxiliary Power Systems: eng-models/auxiliary-power-systems.md
-        - Cryostat and vacuum system: eng-models/cryostat-and-vacuum-system.md
-        - Plant Availability: eng-models/plant.md
+          - Machine Build: eng-models/machine-build.md
+          - Structural Components: eng-models/structural-components.md
+          - Buildings: eng-models/buildings.md
+          - First Wall/Blanket: eng-models/fw-blanket.md
+          - TF Coil: eng-models/tf-coil.md
+          - PF Coil: eng-models/pf-coil.md
+          - Central Solenoid: eng-models/central-solenoid.md
+          - Shield: eng-models/shield.md
+          - Divertor: eng-models/divertor.md
+          - Power conversion and heat dissipation systems: eng-models/power-conversion-and-heat-dissipation-systems.md
+          - Auxiliary Power Systems: eng-models/auxiliary-power-systems.md
+          - Cryostat and vacuum system: eng-models/cryostat-and-vacuum-system.md
+          - Plant Availability: eng-models/plant.md
     - Fusion Devices:
-        - Spherical Tokamak: fusion-devices/spherical-tokamak.md
-        - Stellarator Model: fusion-devices/stellarator.md
-        - Inertial Fusion Energy Model: fusion-devices/inertial.md
+          - Spherical Tokamak: fusion-devices/spherical-tokamak.md
+          - Stellarator Model: fusion-devices/stellarator.md
+          - Inertial Fusion Energy Model: fusion-devices/inertial.md
     - I/O:
-        - Input: io/input-guide.md
-        - Output: io/output-guide.md
-        - Python Libraries: io/python-lib-guide.md
-        - Test suite: io/test-suite.md
-        - Utilities: io/utilities-guide.md
-        - Variable Descriptions: vardes.md
+          - Input: io/input-guide.md
+          - Output: io/output-guide.md
+          - Python Libraries: io/python-lib-guide.md
+          - Test suite: io/test-suite.md
+          - Utilities: io/utilities-guide.md
+          - Variable Descriptions: vardes.md
     - Physics Models:
-        - Electron Cyclotron Current Drive: physics-models/CD.md
-        - Plasma: physics-models/plasma.md
-        - PLASMOD: physics-models/plasmod.md
-        - Pulsed Plant Operation: physics-models/pulsed-plant.md
-        - Safety and Environment Models: physics-models/safety.md
+          - Electron Cyclotron Current Drive: physics-models/CD.md
+          - Plasma: physics-models/plasma.md
+          - PLASMOD: physics-models/plasmod.md
+          - Pulsed Plant Operation: physics-models/pulsed-plant.md
+          - Safety and Environment Models: physics-models/safety.md
     - Unique Models:
-        - Water Use: unique-models/water_use.md
+          - Water Use: unique-models/water_use.md
     - Plasma Scenarios:
-        - I Mode: plasma/i-mode.md
-        - QH Mode: plasma/qh-mode.md
-        - L Mode: plasma/l-mode.md
-        - Hybrid Scenario: plasma/hybrid-scenario.md 
+          - I Mode: plasma/i-mode.md
+          - QH Mode: plasma/qh-mode.md
+          - L Mode: plasma/l-mode.md
+          - Hybrid Scenario: plasma/hybrid-scenario.md
     - Solver:
-        - Solver Guide: solver/solver-guide.md
-        - VMCON Optimisation Solver Explained: solver/optsolverdoc.md
-        - Equation Solvers: solver/equation-solver.md
+          - Solver Guide: solver/solver-guide.md
+          - VMCON Optimisation Solver Explained: solver/optsolverdoc.md
+          - Equation Solvers: solver/equation-solver.md
     - Publications: publications.md
     - PDF pages: pdf/pdf.md
 
 repo_url: https://git.ccfe.ac.uk/process/process.git
 
-theme: 
+theme:
     #name: material
     name: readthedocs
 
 extra_javascript:
-  - "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?\
-    config=TeX-MML-AM_CHTML"
+    - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML
 
 markdown_extensions:
-  - footnotes
-  - admonition
-  - pymdownx.arithmatex
-  - pymdownx.betterem:
-      smart_enable: all
-  - pymdownx.caret
-  - pymdownx.critic
-  - pymdownx.details
-  - pymdownx.inlinehilite
-  - pymdownx.magiclink
-  - pymdownx.mark
-  - pymdownx.smartsymbols
-  - pymdownx.superfences
-  - pymdownx.tasklist:
-      custom_checkbox: true
-  - pymdownx.tilde
+    - footnotes
+    - admonition
+    - pymdownx.arithmatex
+    - pymdownx.betterem:
+          smart_enable: all
+    - pymdownx.caret
+    - pymdownx.critic
+    - pymdownx.details
+    - pymdownx.inlinehilite
+    - pymdownx.magiclink
+    - pymdownx.mark
+    - pymdownx.smartsymbols
+    - pymdownx.superfences
+    - pymdownx.tasklist:
+          custom_checkbox: true
+    - pymdownx.tilde
 
 extra_css: [vardes.css]
