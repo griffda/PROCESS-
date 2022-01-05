@@ -300,13 +300,19 @@ starfire-py38:
 #  Quality
 #-----------------
 
-line_length:
+# Python linting
+# Job will fail if ANY violations are detected
+Flake8:
   when: on_success
   stage: quality
   image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   script:
-    - pwd
-    - python3 utilities/line_length_standard.py
+    - python3.8 -m pip install flake8
+    - python3.8 -m flake8 --tee . > flake8.log
+  artifacts:
+    when: always
+    paths:
+      - flake8.log
   tags:
     - ubuntu
 

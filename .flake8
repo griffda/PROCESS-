@@ -1,0 +1,5 @@
+[flake8]
+output-file = flake8.txt ; this option is broken in Python 3.8 https://github.com/pycqa/flake8/issues/725
+max-line-length = 88
+statistics = True
+exclude = E203,E262,E265,E266,E302,E401,E402,E501,E722,W291,W293,W391
