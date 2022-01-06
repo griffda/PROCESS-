@@ -1942,9 +1942,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(dp) :: fac_sig_z_wp_av
     !! WP averaged vertical stress unsmearing factor
 
-    real(dp) :: fac_oh
-    !! Central Solenoid (OH) steel conduit stress unsmearing factor
-
     real(dp) :: svmxz
     !! Von-mises stress in steel setting the radial stress to 0
 
@@ -2002,6 +1999,18 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! Working variable to keep track of how much length we've
     ! considered when assembling the series elastic quantities
     ! of composite members [m]
+    
+    real(dp) :: eyoung_wp_stiffest_leg
+    !! Young's modulus of the stiffest series-composite leg
+    ! of the WP cable layout that is then parallel-composited 
+    ! together with others, required for elastic property
+    ! unsmearing. [Pa] 
+       
+    real(dp) :: eyoung_cs_stiffest_leg
+    !! Young's modulus of the stiffest series-composite leg
+    ! of the CS cable layout that is then parallel-composited 
+    ! together with others, required for elastic property
+    ! unsmearing. [Pa]
     ! ---
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2097,6 +2106,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             call eyngseries(eyoung_steel, t_cable_oh + 2*t_cond_oh, poisson_steel, &
                             eyoung_ins, 2*thicndut, poisson_steel, & ! [EDIT: Should be Poisson's ratio of insulation]
                             eyoung_working, l_working, poisson_working)
+            eyoung_cs_stiffest_leg = eyoung_working ! Stash this eyoung for unsmearing
             ! Add this to the properties we're accumulating
             call eyngparallel(eyoung_working, 2*t_cond_oh, poisson_working, &
                               eyoung_z(1), a_working, poisson_z(1), &
@@ -2209,14 +2219,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             ! Integer number of turns
             t_cable_eyng = t_cable_radial
         end if
-!        eyoung_wp_t = eyngeff( eyoung_steel, eyoung_ins, &
-!                               t_ins_eff, thwcndut, t_cable_eyng )
-                               
-!        print *
-!        print *,"Begin CSwanson diagnostic outputs"
-!        print *,"Old values:"
-!        print *,"eyoung_wp_t = ",eyoung_wp_t
-!        print *,"New values:"
         
         ! Outermost legs, insulation only:
         eyoung_wp_t = eyoung_ins*0 ! [EDIT: For comparison with original model (outermost legs neglected)]
@@ -2227,6 +2229,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         call eyngseries(eyoung_ins,2*t_ins_eff,poisson_steel, & ! [EDIT: Should be Poisson of ins]
                         eyoung_steel,t_cable_eyng+2*thwcndut,poisson_steel, &
                         eyoung_working,l_working,poisson_working)
+        eyoung_wp_stiffest_leg = eyoung_working ! Stash this eyoung for unsmearing
         ! Parallel-composite these two legs together:
         call eyngparallel(eyoung_working,2*thwcndut,poisson_working, &
                           eyoung_wp_t,a_working,poisson_wp_t, &
@@ -2247,31 +2250,13 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         call eyngparallel(eyoung_working,t_cable_eyng,poisson_working, &
                           eyoung_wp_t,a_working,poisson_wp_t, &
                           eyoung_wp_t,a_working,poisson_wp_t)
-!        print *,"eyoung_wp_t = ",eyoung_wp_t
-!        print *,"poisson_wp_t = ",poisson_wp_t
         
         ! Lateral casing correction (series-composition)
-!        eyoung_wp_t_eff = ( 2.0D0 * t_lat_case_av + t_wp_toroidal_av ) &
-!                        / ( 2.0D0 * t_lat_case_av / eyoung_steel  &
-!                          + t_wp_toroidal_av / eyoung_wp_t )
-!        print *,"Old values:"
-!        print *,"eyoung_wp_t_eff = ",eyoung_wp_t_eff
-!        print *,"New values:"
         call eyngseries(eyoung_wp_t,t_wp_toroidal_av,poisson_wp_t, &
                         eyoung_steel,2.0D0*t_lat_case_av,poisson_steel, &
                         eyoung_wp_t_eff,a_working,poisson_wp_t_eff)
-!        print *,"eyoung_wp_t_eff = ",eyoung_wp_t_eff
-!        print *,"poisson_wp_t_eff = ",poisson_wp_t_eff
                           
-        ! Average young WP modulus [Pa]
-!        eyoung_wp_z = ( eyoung_steel * aswp + eyoung_ins * a_tf_ins ) / awpc
-!        print *,"Old values:"
-!        print *,"eyoung_wp_z = ",eyoung_wp_z
-!        print *,"awpc (total) = ",awpc
-!        print *,"acond (cond) = ",acond
-!        print *,"aswp (steel) = ",aswp
-!        print *,"a_tf_ins (insulator) = ",a_tf_ins
-!        print *,"New values:"
+        ! Average WP Young's modulus in the vertical direction
         ! Parallel-composite the steel and insulation
         call eyngparallel(eyoung_steel,aswp,poisson_steel, &
                           eyoung_ins,a_tf_ins,poisson_steel, & ! [EDIT: Should be Poisson of ins]
@@ -2284,16 +2269,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         call eyngparallel(0D0,awpc-a_working,poisson_steel, & ! 
                           eyoung_wp_z,a_working,poisson_wp_z, &                          
                           eyoung_wp_z,a_working,poisson_wp_z)
-!        print *,"eyoung_wp_z = ",eyoung_wp_z
-!        print *,"poisson_wp_z = ",poisson_wp_z
-!        print *,"a_working = ",a_working
 
-        ! Average young modulus used in the WP layer stress calculation [Pa]
-!        eyoung_wp_z_eff = ( eyoung_steel * a_wp_steel_eff + eyoung_ins * a_tf_ins ) &
-!                        / a_wp_eff 
-!        print *,"Old values:"
-!        print *,"eyoung_wp_z_eff = ",eyoung_wp_z_eff
-!        print *,"New values:"
+        ! Average WP Young's modulus in the vertical direction, now including the lateral case
         ! Parallel-composite the steel and insulation, now including the lateral case (sidewalls)
         call eyngparallel(eyoung_steel,a_wp_steel_eff,poisson_steel, &
                           eyoung_ins,a_tf_ins,poisson_steel, & ! [EDIT: Should be Poisson of ins]
@@ -2306,8 +2283,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         call eyngparallel(0D0,a_wp_eff-a_working,poisson_steel, & ! 
                           eyoung_wp_z_eff,a_working,poisson_wp_z_eff, &                          
                           eyoung_wp_z_eff,a_working,poisson_wp_z_eff)
-!        print *,"eyoung_wp_z_eff = ",eyoung_wp_z_eff
-!        print *,"poisson_wp_z_eff = ",poisson_wp_z_eff
 
     ! Resistive coil
     else
@@ -2333,12 +2308,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         a_wp_eff = (r_wp_outer**2 - r_wp_inner**2) * theta_coil
 
         ! Effective conductor region young modulus in the vertical direction [Pa]
-!        eyoung_wp_z = eyoung_ins * a_tf_ins / a_wp_eff &
-!                    + eyoung_cond * (1.0D0 - a_tf_ins / a_wp_eff) * (1.0D0 - fcoolcp)
-!        print *,"Old values:"
-!        print *,"eyoung_wp_z = ",eyoung_wp_z
-!        print *,"a_wp_eff = ",a_wp_eff
-!        print *,"New values:"
         ! Parallel-composite conductor and insulator
         call eyngparallel(eyoung_cond,(a_wp_eff-a_tf_ins)*(1.0D0-fcoolcp),poisson_cond, & 
                           eyoung_ins,a_tf_ins,poisson_cond, & ! [EDIT: Should be Poisson of ins]
@@ -2347,9 +2316,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         call eyngparallel(0D0,(a_wp_eff-a_tf_ins)*fcoolcp,poisson_cond, & 
                           eyoung_wp_z,a_working,poisson_wp_z, &
                           eyoung_wp_z,a_working,poisson_wp_z)
-!        print *,"eyoung_wp_z = ",eyoung_wp_z
-!        print *,"poisson_wp_z = ",poisson_wp_z
-!        print *,"a_working = ",a_working
 
         ! Effective young modulus used in stress calculations
         eyoung_wp_z_eff = eyoung_wp_z
@@ -2455,14 +2421,19 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! agreement with the original code, eyzwp can just become
         ! eyoung_wp_z_eff.]
         eyzwp = eyngzwp(eyoung_steel,eyoung_ins,eyoung_winding,t_ins_eff,thwcndut,tcbs)
+        !eyzwp = eyoung_wp_z_eff
     
         ! Strain in vertical direction on WP
         windstrain = sig_tf_z(n_tf_bucking+1) / eyzwp
     
         ! Radial strain in insulator
-        ! [EDIT: Update this to new elastic composition functions]
-        insstrain = sig_tf_r(n_radial_array) / eyoung_ins * &
-                    edoeeff(eyoung_steel, eyoung_ins, t_ins_eff, thwcndut, tcbs)
+        ! [EDIT: Original code uses (effectively) eyoung_wp_t, but eyoung_wp_t_eff is 
+        ! actually more correct. Switch to eyoung_wp_t_eff when it comes time to break
+        ! agreement with original code. ]
+!        insstrain = sig_tf_r(n_radial_array) / eyoung_ins * &
+!                    edoeeff(eyoung_steel, eyoung_ins, t_ins_eff, thwcndut, tcbs)
+        insstrain = sig_tf_r(n_radial_array) * eyoung_wp_stiffest_leg / eyoung_wp_t / eyoung_ins
+        !insstrain = sig_tf_r(n_radial_array) * eyoung_wp_stiffest_leg / eyoung_wp_t_eff / eyoung_ins
     ! ---
 
 
@@ -2506,16 +2477,14 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! --- 
     if ( i_tf_bucking >= 2 .and. ipfres == 0 ) then
 
-        ! Central Solenoid (OH) steel conduit stress unsmearing factor
-        fac_oh = 0.5D0 * t_turn_oh / t_cond_oh 
+        ! Central Solenoid (OH) steel conduit stress unsmearing factors
 
         do ii = 1, n_radial_array
 
             ! CS (OH) superconducting case stress unsmearing
-            ! [EDIT: Update this to new elastic composition functions]
-            sig_tf_r(ii) = sig_tf_r(ii) * fac_oh
-            sig_tf_t(ii) = sig_tf_t(ii) / oh_steel_frac
-            sig_tf_z(ii) = sig_tf_z(ii) * fac_oh
+            sig_tf_r(ii) = sig_tf_r(ii) * eyoung_cs_stiffest_leg/eyoung_z(1)
+            sig_tf_t(ii) = sig_tf_t(ii) * eyoung_steel/eyoung_p(1)
+            sig_tf_z(ii) = sig_tf_z(ii) * eyoung_cs_stiffest_leg/eyoung_z(1)
         end do
     end if
     ! ---
@@ -2539,7 +2508,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     if ( i_tf_sup == 0 ) then
 
         ! Vertical force unsmearing factor
-        ! [EDIT: Update this to new elastic composition functions]
         fac_sig_z = eyoung_copper / eyoung_wp_z_eff
 
         ! Toroidal WP steel stress unsmearing factor
@@ -2549,7 +2517,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     else if ( i_tf_sup == 1 ) then
 
         ! Vertical WP steel stress unsmearing factor
-        ! [EDIT: Update this to new elastic composition functions]
         if ( i_tf_plane_stress /= 1 ) then
             fac_sig_z = eyoung_steel / eyoung_wp_z_eff
             fac_sig_z_wp_av = eyoung_wp_z / eyoung_wp_z_eff
@@ -2558,15 +2525,10 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         end if  
 
         ! Toroidal WP steel conduit stress unsmearing factor
-        ! Rem : These correction factors are calculated with the genuine WP geom
-        ! [EDIT: Update this to new elastic composition functions]
-        fac_sig_t = ( dr_tf_wp / ( dr_tf_wp - 2.0D0 * ( tinstf + tfinsgap ) ) ) & 
-                  * ( 0.5D0 * t_turn_radial / thwcndut )
-
+        fac_sig_t = eyoung_wp_stiffest_leg / eyoung_wp_t_eff
+        
         ! Radial WP steel conduit stress unsmearing factor
-        ! [EDIT: Update this to new elastic composition functions]
-        fac_sig_r = ( t_wp_toroidal_av / ( t_wp_toroidal_av - 2.0D0 * ( tinstf + tfinsgap ) ) ) & 
-                  * ( 0.5D0 * t_turn_toroidal / thwcndut )
+        fac_sig_r = eyoung_wp_stiffest_leg / eyoung_wp_t_eff
 
     else if ( i_tf_sup == 2 ) then
         
@@ -3767,7 +3729,6 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     
     ! Inner slip layers parameters
     ! Section 15 in the writeup
-    ! [EDIT: Make this more general]
     ! Innermost layer that takes axial force. Layers inner of this
     ! have zero net axial force, to include CS decoupling.
     ! This configuration JUST HAPPENS to work out because of
@@ -4333,9 +4294,9 @@ subroutine eyngseries(eyoung_j_1, l_1, poisson_j_perp_1, & ! Inputs
     if ( eyoung_j_1*eyoung_j_2 == 0 ) then
       !poisson_j_perp_3 = 0
       if ( eyoung_j_1 == 0) then
-        poisson_j_perp_3 = poisson_j_perp_1 ! [EDIT: What is true Poisson behavior when E = 0? Original says take the Poisson of the E=0 layer; however I contend that cross sections expand/contract less when they have free space to expand/contract into]
+        poisson_j_perp_3 = poisson_j_perp_1 
       else
-        poisson_j_perp_3 = poisson_j_perp_2 ! [EDIT: Here, too]
+        poisson_j_perp_3 = poisson_j_perp_2 ! 
       end if
       eyoung_j_3 = 0
       l_3 = l_1 + l_2
