@@ -1946,7 +1946,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! WP + lateral casing area
 
     real(dp) :: eyoung_cond
-    !! Resistive conductors Young modulus [Pa]
+    !! Resistive conductors Young's modulus [Pa]
 
     real(dp) :: r_wp_inner_eff
     !! Inner radius of the stress model effective WP layer [m]
@@ -2187,8 +2187,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             t_cable_eyng = t_cable_radial
         end if         
         ! [EDIT: Update this to new elastic composition functions]
-        eyoung_wp_t = eyngeff( eyoung_steel, eyoung_ins, &
-                               t_ins_eff, thwcndut, t_cable_eyng )
+!        eyoung_wp_t = eyngeff( eyoung_steel, eyoung_ins, &
+!                               t_ins_eff, thwcndut, t_cable_eyng )
                                
 !        print *
 !        print *,"Begin CSwanson diagnostic outputs"
@@ -2196,85 +2196,102 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 !        print *,"eyoung_wp_t = ",eyoung_wp_t
 !        print *,"New values:"
 !        
-!        ! Outermost legs, insulation only:
-!        eyoung_wp_t = eyoung_ins*0 ! [EDIT: For comparison with original model (outermost legs neglected)]
-!        a_working = 2*t_ins_eff
-!        poisson_wp_t = poisson_steel ! [EDIT: Should be params of insulator]
-!        
-!        ! Serial-composite next-inner legs, insulation and conduit:
-!        call eyngseries(eyoung_ins,2*t_ins_eff,poisson_steel, & ! [EDIT: Should be Poisson of ins]
-!                        eyoung_steel,t_cable_eyng+2*thwcndut,poisson_steel, &
-!                        eyoung_working,l_working,poisson_working)
-!        ! Parallel-composite these two legs together:
-!        call eyngparallel(eyoung_working,2*thwcndut,poisson_working, &
-!                          eyoung_wp_t,a_working,poisson_wp_t, &
-!                          eyoung_wp_t,a_working,poisson_wp_t)
-!        
-!        ! Serial-composite innermost leg, insulation + conduit + cable
-!        ! Insulation + conduit first
-!        call eyngseries(eyoung_ins,2*t_ins_eff,poisson_steel, & ! [EDIT: Should be Poisson of ins]
-!                        eyoung_steel,2*thwcndut,poisson_steel, &
-!                        eyoung_working,l_working,poisson_working)
-!        ! Serial-composite in the cable
-!        call eyngseries(0D0,t_cable_eyng,poisson_steel, & ! [EDIT: Should be params of cable]
-!                        eyoung_working,l_working,poisson_working, &
-!                        eyoung_working,l_working,poisson_working)
-!                        
-!        ! Parallel-composite in this last leg:
-!        call eyngparallel(eyoung_working,t_cable_eyng,poisson_working, &
-!                          eyoung_wp_t,a_working,poisson_wp_t, &
-!                          eyoung_wp_t,a_working,poisson_wp_t)
+        ! Outermost legs, insulation only:
+        eyoung_wp_t = eyoung_ins*0 ! [EDIT: For comparison with original model (outermost legs neglected)]
+        a_working = 2*t_ins_eff
+        poisson_wp_t = poisson_steel ! [EDIT: Should be params of insulator]
+        
+        ! Serial-composite next-inner legs, insulation and conduit:
+        call eyngseries(eyoung_ins,2*t_ins_eff,poisson_steel, & ! [EDIT: Should be Poisson of ins]
+                        eyoung_steel,t_cable_eyng+2*thwcndut,poisson_steel, &
+                        eyoung_working,l_working,poisson_working)
+        ! Parallel-composite these two legs together:
+        call eyngparallel(eyoung_working,2*thwcndut,poisson_working, &
+                          eyoung_wp_t,a_working,poisson_wp_t, &
+                          eyoung_wp_t,a_working,poisson_wp_t)
+        
+        ! Serial-composite innermost leg, insulation + conduit + cable
+        ! Insulation + conduit first
+        call eyngseries(eyoung_ins,2*t_ins_eff,poisson_steel, & ! [EDIT: Should be Poisson of ins]
+                        eyoung_steel,2*thwcndut,poisson_steel, &
+                        eyoung_working,l_working,poisson_working)
+        ! Serial-composite in the cable
+        call eyngseries(0D0,t_cable_eyng,poisson_steel, & ! [EDIT: Should be params of cable]
+                        eyoung_working,l_working,poisson_working, &
+                        eyoung_working,l_working,poisson_working)
+                        
+        ! Parallel-composite in this last leg:
+        call eyngparallel(eyoung_working,t_cable_eyng,poisson_working, &
+                          eyoung_wp_t,a_working,poisson_wp_t, &
+                          eyoung_wp_t,a_working,poisson_wp_t)
 !        print *,"eyoung_wp_t = ",eyoung_wp_t
 !        print *,"poisson_wp_t = ",poisson_wp_t
 !        
 !        ! Lateral casing correction (series-composition)
 !        ! [EDIT: Update this to new elastic composition functions]
-        eyoung_wp_t_eff = ( 2.0D0 * t_lat_case_av + t_wp_toroidal_av ) &
-                        / ( 2.0D0 * t_lat_case_av / eyoung_steel  &
-                          + t_wp_toroidal_av / eyoung_wp_t )
+!        eyoung_wp_t_eff = ( 2.0D0 * t_lat_case_av + t_wp_toroidal_av ) &
+!                        / ( 2.0D0 * t_lat_case_av / eyoung_steel  &
+!                          + t_wp_toroidal_av / eyoung_wp_t )
 !        print *,"Old values:"
 !        print *,"eyoung_wp_t_eff = ",eyoung_wp_t_eff
 !        print *,"New values:"
-!        call eyngseries(eyoung_wp_t,t_wp_toroidal_av,poisson_wp_t, &
-!                        eyoung_steel,2.0D0*t_lat_case_av,poisson_steel, &
-!                        eyoung_wp_t_eff,a_working,poisson_wp_t_eff)
+        call eyngseries(eyoung_wp_t,t_wp_toroidal_av,poisson_wp_t, &
+                        eyoung_steel,2.0D0*t_lat_case_av,poisson_steel, &
+                        eyoung_wp_t_eff,a_working,poisson_wp_t_eff)
 !        print *,"eyoung_wp_t_eff = ",eyoung_wp_t_eff
 !        print *,"poisson_wp_t_eff = ",poisson_wp_t_eff
 !                          
 !        ! Average young WP modulus [Pa]
 !        ! [EDIT: Update this to new elastic composition functions]
-        eyoung_wp_z = ( eyoung_steel * aswp + eyoung_ins * a_tf_ins ) / awpc
+!        eyoung_wp_z = ( eyoung_steel * aswp + eyoung_ins * a_tf_ins ) / awpc
 !        print *,"Old values:"
 !        print *,"eyoung_wp_z = ",eyoung_wp_z
 !        print *,"awpc = ",awpc
 !        print *,"New values:"
-!        ! Parallel-composite the steel and insulation
-!        call eyngparallel(eyoung_steel,aswp,poisson_steel, &
-!                          eyoung_ins,a_tf_ins,poisson_steel, & ! [EDIT: Should be Poisson of ins]
-!                          eyoung_wp_z,a_working,poisson_wp_z)
-!        ! Parallel-composite cable into these quantities
-!        call eyngparallel(0D0,acond,poisson_steel, & ! [EDIT: Should be cable properties]
-!                          eyoung_wp_z,a_working,poisson_wp_z, &                          
-!                          eyoung_wp_z,a_working,poisson_wp_z)
-!        ! Parallel-composite voids, insertion gap, and helium into these quantities
-!        call eyngparallel(0D0,awpc-a_working,poisson_steel, & ! 
-!                          eyoung_wp_z,a_working,poisson_wp_z, &                          
-!                          eyoung_wp_z,a_working,poisson_wp_z)
+        ! Parallel-composite the steel and insulation
+        call eyngparallel(eyoung_steel,aswp,poisson_steel, &
+                          eyoung_ins,a_tf_ins,poisson_steel, & ! [EDIT: Should be Poisson of ins]
+                          eyoung_wp_z,a_working,poisson_wp_z)
+        ! Parallel-composite cable into these quantities
+        call eyngparallel(0D0,acond,poisson_steel, & ! [EDIT: Should be cable properties]
+                          eyoung_wp_z,a_working,poisson_wp_z, &                          
+                          eyoung_wp_z,a_working,poisson_wp_z)
+        ! Parallel-composite voids, insertion gap, and helium into these quantities
+        call eyngparallel(0D0,awpc-a_working,poisson_steel, & ! 
+                          eyoung_wp_z,a_working,poisson_wp_z, &                          
+                          eyoung_wp_z,a_working,poisson_wp_z)
 !        print *,"eyoung_wp_z = ",eyoung_wp_z
 !        print *,"poisson_wp_z = ",poisson_wp_z
 !        print *,"a_working = ",a_working
 
         ! Average young modulus used in the WP layer stress calculation [Pa]
         ! [EDIT: Update this to new elastic composition functions]
-        eyoung_wp_z_eff = ( eyoung_steel * a_wp_steel_eff + eyoung_ins * a_tf_ins ) &
-                        / a_wp_eff 
+!        eyoung_wp_z_eff = ( eyoung_steel * a_wp_steel_eff + eyoung_ins * a_tf_ins ) &
+!                        / a_wp_eff 
+!        print *,"Old values:"
+!        print *,"eyoung_wp_z = ",eyoung_wp_z_eff
+!        print *,"New values:"
+        ! Parallel-composite the steel and insulation, now including the lateral case (sidewalls)
+        call eyngparallel(eyoung_steel,a_wp_steel_eff,poisson_steel, &
+                          eyoung_ins,a_tf_ins,poisson_steel, & ! [EDIT: Should be Poisson of ins]
+                          eyoung_wp_z_eff,a_working,poisson_wp_z_eff)
+        ! Parallel-composite cable into these quantities
+        call eyngparallel(0D0,acond,poisson_steel, & ! [EDIT: Should be cable properties]
+                          eyoung_wp_z_eff,a_working,poisson_wp_z_eff, &                          
+                          eyoung_wp_z_eff,a_working,poisson_wp_z_eff)
+        ! Parallel-composite voids, insertion gap, and helium into these quantities
+        call eyngparallel(0D0,a_wp_eff-a_working,poisson_steel, & ! 
+                          eyoung_wp_z_eff,a_working,poisson_wp_z_eff, &                          
+                          eyoung_wp_z_eff,a_working,poisson_wp_z_eff)
+!        print *,"eyoung_wp_z_eff = ",eyoung_wp_z_eff
+!        print *,"poisson_wp_z_eff = ",poisson_wp_z_eff
 
     ! Resistive coil
     else
 
         ! Picking the conductor material Young's modulus
         if ( i_tf_sup == 0 ) then
-            eyoung_cond = eyoung_copper
+            eyoung_cond = eyoung_copper ! [EDIT: Include Poisson's ratios of these materials]
         else if ( i_tf_sup == 2 ) then
             eyoung_cond = eyoung_al
         end if
@@ -2290,8 +2307,23 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
         ! Effective conductor region young modulus in the vertical direction [Pa]
         ! [EDIT: Update this to new elastic composition functions]
-        eyoung_wp_z = eyoung_ins * a_tf_ins / a_wp_eff &
-                    + eyoung_cond * (1.0D0 - a_tf_ins / a_wp_eff) * (1.0D0 - fcoolcp)
+!        eyoung_wp_z = eyoung_ins * a_tf_ins / a_wp_eff &
+!                    + eyoung_cond * (1.0D0 - a_tf_ins / a_wp_eff) * (1.0D0 - fcoolcp)
+!        print *,"Old values:"
+!        print *,"eyoung_wp_z = ",eyoung_wp_z
+!        print *,"a_wp_eff = ",a_wp_eff
+!        print *,"New values:"
+        ! Parallel-composite conductor and insulator
+        call eyngparallel(eyoung_cond,(a_wp_eff-a_tf_ins)*(1.0D0-fcoolcp),poisson_steel, & ! [EDIT: Add poisson_cond here]
+                          eyoung_ins,a_tf_ins,poisson_steel, & ! [EDIT: Should be Poisson of ins]
+                          eyoung_wp_z,a_working,poisson_wp_z)
+        ! Parallel-composite cooling pipes into that
+        call eyngparallel(0D0,(a_wp_eff-a_tf_ins)*fcoolcp,poisson_steel, & 
+                          eyoung_wp_z,a_working,poisson_wp_z, &
+                          eyoung_wp_z,a_working,poisson_wp_z)
+!        print *,"eyoung_wp_z = ",eyoung_wp_z
+!        print *,"poisson_wp_z = ",poisson_wp_z
+!        print *,"a_working = ",a_working
 
         ! Effective young modulus used in stress calculations
         eyoung_wp_z_eff = eyoung_wp_z
@@ -2323,17 +2355,19 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
         ! Poisson's ratio
         if ( i_tf_sup == 0 ) then
-            poisson_p(n_tf_bucking + ii) = poisson_copper
+            poisson_p(n_tf_bucking + ii) = poisson_copper ! [EDIT: Make these uniform]
             poisson_z(n_tf_bucking + ii) = poisson_copper
             
         ! SC magnets smeared properties
         else if ( i_tf_sup == 1 ) then 
-            poisson_p(n_tf_bucking + ii) = poisson_wp_t_eff
-            poisson_z(n_tf_bucking + ii) = poisson_wp_z_eff
+            poisson_p(n_tf_bucking + ii) = poisson_steel ! [EDIT: Use the new Poisson's ratio]
+            poisson_z(n_tf_bucking + ii) = poisson_steel ! [EDIT: Use the new Poisson's ratio]
+!            poisson_p(n_tf_bucking + ii) = poisson_wp_t_eff
+!            poisson_z(n_tf_bucking + ii) = poisson_wp_z_eff
         
         ! Aluminium properties
         else 
-            poisson_p(n_tf_bucking + ii) = poisson_al
+            poisson_p(n_tf_bucking + ii) = poisson_al ! [EDIT: Make these uniform]
             poisson_z(n_tf_bucking + ii) = poisson_al
         end if 
     end do
