@@ -26,10 +26,12 @@ module tfcoil_variables
   !! area of the cable conduit (m2)
 
   real(dp) :: acond
-  !! conductor area (winding pack) (m2)
+  !! Winding pack conductor area [m2]
+  !! Does not include the area of voids and central helium channel
 
   real(dp) :: acstf
-  !! internal area of the cable space (m2)
+  !! Cable space area (per turn)  [m2]
+  !! Includes the area of voids and central helium channel
 
   real(dp) :: insulation_area
   !! single turn insulation area (m2)

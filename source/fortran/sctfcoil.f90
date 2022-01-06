@@ -1724,7 +1724,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         n_tf_graded_layers, i_tf_sup, i_tf_bucking, fcoolcp, eyoung_winding, &
         eyoung_steel, eyoung_res_tf_buck, eyoung_ins, eyoung_al, eyoung_copper, &
         aiwp, aswp, cpttf, n_tf, i_tf_plane_stress, sig_tf_wp_max, &
-        i_tf_turns_integer, casthi
+        i_tf_turns_integer, casthi, acond, avwp, awphec
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
         cohbop, ncls, cptdin
     use constants, only: pi, sig_file
@@ -1815,13 +1815,32 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! Vertical normal strain radial distribution
 
     real(dp) :: eyoung_wp_t
-    !! Effective WP young modulus in the toroidal direction
+    !! Smeared WP Young's modulus in the toroidal direction [Pa]
+    
+    real(dp) :: eyoung_wp_t_eff
+    !! Smeared WP + lateral case Young's modulus in the torodial direction [Pa]
+    !! (Includes the effect of the sidewalls of the steel case)
 
     real(dp) :: eyoung_wp_z
-    !! Smeared WP young modulus in the vertical direction [Pa]
+    !! Smeared WP Young's modulus in the vertical direction [Pa]
 
     real(dp) :: eyoung_wp_z_eff
-    !! Effective WP young modulus used in the stress calculations [Pa]
+    !! Smeared WP + lateral case Young's modulus in the vertical direction [Pa]
+    !! (Includes the effect of the sidewalls of the steel case)
+    
+    real(dp) :: poisson_wp_t
+    !! Smeared WP Poisson's ratio in the transverse-transverse direction
+
+    real(dp) :: poisson_wp_t_eff
+    !! Smeared WP + lateral case Poisson's ratio in the transverse-transverse direction
+    !! (Includes the effect of the sidewalls of the steel case)
+
+    real(dp) :: poisson_wp_z
+    !! Smeared WP Poisson's ratio in the vertical-transverse direction
+
+    real(dp) :: poisson_wp_z_eff
+    !! Smeared WP + lateral case Poisson's ratio in the vertical-transverse direction
+    !! (Includes the effect of the sidewalls of the steel case)
 
     real(dp), dimension(n_tf_layer+1) :: radtf
     !! Radii used to define the layers used in the stress models [m]
@@ -1928,9 +1947,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     real(dp) :: eyoung_cond
     !! Resistive conductors Young modulus [Pa]
-
-    real(dp) :: eyoung_wp_t_eff
-    !! WP young modulus in toroidal direction with lateral casing effect [Pa]
 
     real(dp) :: r_wp_inner_eff
     !! Inner radius of the stress model effective WP layer [m]
@@ -2140,10 +2156,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
  
     ! (Super)conductor layer properties
     ! ---
-    ! Rem : They are only unique for isotropic materials, hence
-    !       the underlying assumption of our models is the anisotropy
-    !       of the material. A good assumption for resistive magnets
-    !       but a doggy one for SC
     ! SC coil
     if ( i_tf_sup == 1 ) then
 
@@ -2174,18 +2186,86 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             ! Integer number of turns
             t_cable_eyng = t_cable_radial
         end if         
+        ! [EDIT: Update this to new elastic composition functions]
         eyoung_wp_t = eyngeff( eyoung_steel, eyoung_ins, &
                                t_ins_eff, thwcndut, t_cable_eyng )
-        
-        ! Lateral casing correction (serie)
+                               
+!        print *
+!        print *,"Begin CSwanson diagnostic outputs"
+!        print *,"Old values:"
+!        print *,"eyoung_wp_t = ",eyoung_wp_t
+!        print *,"New values:"
+!        
+!        ! Outermost legs, insulation only:
+!        eyoung_wp_t = eyoung_ins*0 ! [EDIT: For comparison with original model (outermost legs neglected)]
+!        a_working = 2*t_ins_eff
+!        poisson_wp_t = poisson_steel ! [EDIT: Should be params of insulator]
+!        
+!        ! Serial-composite next-inner legs, insulation and conduit:
+!        call eyngseries(eyoung_ins,2*t_ins_eff,poisson_steel, & ! [EDIT: Should be Poisson of ins]
+!                        eyoung_steel,t_cable_eyng+2*thwcndut,poisson_steel, &
+!                        eyoung_working,l_working,poisson_working)
+!        ! Parallel-composite these two legs together:
+!        call eyngparallel(eyoung_working,2*thwcndut,poisson_working, &
+!                          eyoung_wp_t,a_working,poisson_wp_t, &
+!                          eyoung_wp_t,a_working,poisson_wp_t)
+!        
+!        ! Serial-composite innermost leg, insulation + conduit + cable
+!        ! Insulation + conduit first
+!        call eyngseries(eyoung_ins,2*t_ins_eff,poisson_steel, & ! [EDIT: Should be Poisson of ins]
+!                        eyoung_steel,2*thwcndut,poisson_steel, &
+!                        eyoung_working,l_working,poisson_working)
+!        ! Serial-composite in the cable
+!        call eyngseries(0D0,t_cable_eyng,poisson_steel, & ! [EDIT: Should be params of cable]
+!                        eyoung_working,l_working,poisson_working, &
+!                        eyoung_working,l_working,poisson_working)
+!                        
+!        ! Parallel-composite in this last leg:
+!        call eyngparallel(eyoung_working,t_cable_eyng,poisson_working, &
+!                          eyoung_wp_t,a_working,poisson_wp_t, &
+!                          eyoung_wp_t,a_working,poisson_wp_t)
+!        print *,"eyoung_wp_t = ",eyoung_wp_t
+!        print *,"poisson_wp_t = ",poisson_wp_t
+!        
+!        ! Lateral casing correction (series-composition)
+!        ! [EDIT: Update this to new elastic composition functions]
         eyoung_wp_t_eff = ( 2.0D0 * t_lat_case_av + t_wp_toroidal_av ) &
                         / ( 2.0D0 * t_lat_case_av / eyoung_steel  &
                           + t_wp_toroidal_av / eyoung_wp_t )
-
-        ! Average young WP modulus [Pa]
+!        print *,"Old values:"
+!        print *,"eyoung_wp_t_eff = ",eyoung_wp_t_eff
+!        print *,"New values:"
+!        call eyngseries(eyoung_wp_t,t_wp_toroidal_av,poisson_wp_t, &
+!                        eyoung_steel,2.0D0*t_lat_case_av,poisson_steel, &
+!                        eyoung_wp_t_eff,a_working,poisson_wp_t_eff)
+!        print *,"eyoung_wp_t_eff = ",eyoung_wp_t_eff
+!        print *,"poisson_wp_t_eff = ",poisson_wp_t_eff
+!                          
+!        ! Average young WP modulus [Pa]
+!        ! [EDIT: Update this to new elastic composition functions]
         eyoung_wp_z = ( eyoung_steel * aswp + eyoung_ins * a_tf_ins ) / awpc
+!        print *,"Old values:"
+!        print *,"eyoung_wp_z = ",eyoung_wp_z
+!        print *,"awpc = ",awpc
+!        print *,"New values:"
+!        ! Parallel-composite the steel and insulation
+!        call eyngparallel(eyoung_steel,aswp,poisson_steel, &
+!                          eyoung_ins,a_tf_ins,poisson_steel, & ! [EDIT: Should be Poisson of ins]
+!                          eyoung_wp_z,a_working,poisson_wp_z)
+!        ! Parallel-composite cable into these quantities
+!        call eyngparallel(0D0,acond,poisson_steel, & ! [EDIT: Should be cable properties]
+!                          eyoung_wp_z,a_working,poisson_wp_z, &                          
+!                          eyoung_wp_z,a_working,poisson_wp_z)
+!        ! Parallel-composite voids, insertion gap, and helium into these quantities
+!        call eyngparallel(0D0,awpc-a_working,poisson_steel, & ! 
+!                          eyoung_wp_z,a_working,poisson_wp_z, &                          
+!                          eyoung_wp_z,a_working,poisson_wp_z)
+!        print *,"eyoung_wp_z = ",eyoung_wp_z
+!        print *,"poisson_wp_z = ",poisson_wp_z
+!        print *,"a_working = ",a_working
 
         ! Average young modulus used in the WP layer stress calculation [Pa]
+        ! [EDIT: Update this to new elastic composition functions]
         eyoung_wp_z_eff = ( eyoung_steel * a_wp_steel_eff + eyoung_ins * a_tf_ins ) &
                         / a_wp_eff 
 
@@ -2209,6 +2289,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         a_wp_eff = (r_wp_outer**2 - r_wp_inner**2) * theta_coil
 
         ! Effective conductor region young modulus in the vertical direction [Pa]
+        ! [EDIT: Update this to new elastic composition functions]
         eyoung_wp_z = eyoung_ins * a_tf_ins / a_wp_eff &
                     + eyoung_cond * (1.0D0 - a_tf_ins / a_wp_eff) * (1.0D0 - fcoolcp)
 
@@ -2247,8 +2328,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             
         ! SC magnets smeared properties
         else if ( i_tf_sup == 1 ) then 
-            poisson_p(n_tf_bucking + ii) = poisson_steel
-            poisson_z(n_tf_bucking + ii) = poisson_steel
+            poisson_p(n_tf_bucking + ii) = poisson_wp_t_eff
+            poisson_z(n_tf_bucking + ii) = poisson_wp_z_eff
         
         ! Aluminium properties
         else 
@@ -2286,6 +2367,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! RADIAL STRESS SUBROUTINES CALL 
     ! ------------------------------
     ! Stress model not valid the TF does not contain any hole
+    ! (Except if i_tf_plane_stress == 2; see Issue 1414)
     ! Current action : trigger and error and add a little hole
     !                  to allow stress calculations 
     ! Rem SK : Can be easily ameneded playing around the boundary conditions
@@ -2318,12 +2400,14 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         casestr = sig_tf_z(n_tf_bucking) / eyoung_steel
 
         ! Young's modulus in vertical direction on WP
+        ! [EDIT: Update this to new elastic composition functions]
         eyzwp = eyngzwp(eyoung_steel,eyoung_ins,eyoung_winding,t_ins_eff,thwcndut,tcbs)
     
         ! Strain in vertical direction on WP
         windstrain = sig_tf_z(n_tf_bucking+1) / eyzwp
     
         ! Radial strain in insulator
+        ! [EDIT: Update this to new elastic composition functions]
         insstrain = sig_tf_r(n_radial_array) / eyoung_ins * &
                     edoeeff(eyoung_steel, eyoung_ins, t_ins_eff, thwcndut, tcbs)
     ! ---
@@ -2365,7 +2449,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     ! STRESS DISTRIBUTIONS CORRECTIONS
     ! --------------------------------
-    ! SC central solenoid coil stress unsmeating (bucked and wedged only)
+    ! SC central solenoid coil stress unsmearing (bucked and wedged only)
     ! --- 
     if ( i_tf_bucking >= 2 .and. ipfres == 0 ) then
 
@@ -2375,6 +2459,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         do ii = 1, n_radial_array
 
             ! CS (OH) superconducting case stress unsmearing
+            ! [EDIT: Update this to new elastic composition functions]
             sig_tf_r(ii) = sig_tf_r(ii) * fac_oh
             sig_tf_t(ii) = sig_tf_t(ii) / oh_steel_frac
             sig_tf_z(ii) = sig_tf_z(ii) * fac_oh
@@ -2401,6 +2486,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     if ( i_tf_sup == 0 ) then
 
         ! Vertical force unsmearing factor
+        ! [EDIT: Update this to new elastic composition functions]
         fac_sig_z = eyoung_copper / eyoung_wp_z_eff
 
         ! Toroidal WP steel stress unsmearing factor
@@ -2410,6 +2496,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     else if ( i_tf_sup == 1 ) then
 
         ! Vertical WP steel stress unsmearing factor
+        ! [EDIT: Update this to new elastic composition functions]
         if ( i_tf_plane_stress /= 1 ) then
             fac_sig_z = eyoung_steel / eyoung_wp_z_eff
             fac_sig_z_wp_av = eyoung_wp_z / eyoung_wp_z_eff
@@ -2419,10 +2506,12 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
         ! Toroidal WP steel conduit stress unsmearing factor
         ! Rem : These correction factors are calculated with the genuine WP geom
+        ! [EDIT: Update this to new elastic composition functions]
         fac_sig_t = ( dr_tf_wp / ( dr_tf_wp - 2.0D0 * ( tinstf + tfinsgap ) ) ) & 
                   * ( 0.5D0 * t_turn_radial / thwcndut )
 
         ! Radial WP steel conduit stress unsmearing factor
+        ! [EDIT: Update this to new elastic composition functions]
         fac_sig_r = ( t_wp_toroidal_av / ( t_wp_toroidal_av - 2.0D0 * ( tinstf + tfinsgap ) ) ) & 
                   * ( 0.5D0 * t_turn_toroidal / thwcndut )
 
@@ -2479,7 +2568,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     s_tresca_cond_cea = sig_tf_tresca
 
 
-    ! SC condcuting layer stress distribution corrections
+    ! SC conducting layer stress distribution corrections
     ! ---
     if ( i_tf_sup == 1 ) then
 
