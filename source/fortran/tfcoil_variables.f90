@@ -328,6 +328,10 @@ module tfcoil_variables
   !! Aluminium Poisson's ratio. 
   !! Source : https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html
 
+  real(dp):: poisson_ins
+  !! Insulation Poisson's ratio. Default: Kapton.
+  !! Source : DuPont™ Kapton® HN datasheet.
+
   real(dp) :: rbmax
   !! Radius of maximum TF B-field (m)
 
@@ -850,6 +854,7 @@ module tfcoil_variables
     poisson_steel = 0.3D0
     poisson_copper = 0.35D0
     poisson_al = 0.35D0
+    poisson_ins = 0.34D0
     rbmax = 0.0D0
     tflegres = 0.0D0
     toroidalgap = 1.0D0 ![m]
