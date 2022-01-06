@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.2.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "22/12/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "13:49"
+ Date_of_run_____________________________________________________________ (date)________________________     "06/01/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "14:23"
  User____________________________________________________________________ (username)____________________     "cswan"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "kallenbach divertor model                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1059-gfc5b033d"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1509-outer-tf-case"                                                                                
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Added\ back\ in\ the\ missing\ front\ case\ steel"                                                 
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-21/test_scenario_kallenbach_0/IN.DAT                                                                                                                                        "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1067-gee5d7227"                                                                               
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1205-tf-cond-stiffness"                                                                            
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "All\ smearing\ is\ now\ done\ with\ new\ parallel/series\ "                                        
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-28/test_scenario_kallenbach_0/IN.DAT                                                                                                                                        "
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              1    
  # Numerics #
@@ -20,9 +20,9 @@
  Number_of_constraints_(total)___________________________________________ (neqns+nineqns)_______________             23    
  Optimisation_switch_____________________________________________________ (ioptimz)_____________________              1    
  Figure_of_merit_switch__________________________________________________ (minmax)______________________              1    
- Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      6.8763E-07 OP 
- VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      6.3808E-08 OP 
- Number_of_VMCON_iterations______________________________________________ (nviter)______________________             39 OP 
+ Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      4.5933E-06 OP 
+ VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      3.0156E-07 OP 
+ Number_of_VMCON_iterations______________________________________________ (nviter)______________________             34 OP 
  bt______________________________________________________________________ (itvar001)____________________      5.0976E+00    
  bt_(final_value/initial_value)__________________________________________ (xcm001)______________________      1.0271E+00    
  bt_(range_normalised)___________________________________________________ (nitvar001)___________________      5.0927E-01    
@@ -52,7 +52,7 @@
  fwalld_(range_normalised)_______________________________________________ (nitvar009)___________________      1.3638E-01    
  ohcth___________________________________________________________________ (itvar010)____________________      8.0000E-01    
  ohcth_(final_value/initial_value)_______________________________________ (xcm010)______________________      1.0000E+00    
- ohcth_(range_normalised)________________________________________________ (nitvar010)___________________      0.0000E+00    
+ ohcth_(range_normalised)________________________________________________ (nitvar010)___________________      1.4803E-16    
  q_______________________________________________________________________ (itvar011)____________________      3.0000E+00    
  q_(final_value/initial_value)___________________________________________ (xcm011)______________________      1.0000E+00    
  q_(range_normalised)____________________________________________________ (nitvar011)___________________      0.0000E+00    
@@ -146,29 +146,29 @@
  fimp(13)________________________________________________________________ (itvar041)____________________      4.5929E-04    
  fimp(13)_(final_value/initial_value)____________________________________ (xcm041)______________________      1.3694E+00    
  fimp(13)_(range_normalised)_____________________________________________ (nitvar041)___________________      4.5928E-02    
- Beta_consistency__________________normalised_residue____________________ (normres001)__________________     -1.3258E-12    
- Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -3.2058E-12    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      2.0250E-13    
- Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres004)__________________      2.3153E-12    
- Radial_build_consistency__________normalised_residue____________________ (normres005)__________________     -9.8477E-14    
- Burn_time_lower_limit_____________normalised_residue____________________ (normres006)__________________     -4.5545E-08    
- L-H_power_threshold_limit_________normalised_residue____________________ (normres007)__________________      2.9949E-11    
- Net_electric_power_lower_limit____normalised_residue____________________ (normres008)__________________      4.2638E-06    
- Beta_upper_limit__________________normalised_residue____________________ (normres009)__________________     -2.0584E-13    
- Injection_power_upper_limit_______normalised_residue____________________ (normres010)__________________      3.6656E-11    
- TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres011)__________________     -4.3576E-13    
- TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres012)__________________     -3.9813E-13    
- Dump_voltage_upper_limit__________normalised_residue____________________ (normres013)__________________     -5.9263E-12    
- J_winding_pack/J_protection_limit_normalised_residue____________________ (normres014)__________________     -1.0469E-13    
- TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres015)__________________     -3.1596E-11    
- CS_temperature_margin_lower_limit_normalised_residue____________________ (normres016)__________________     -6.8611E-07    
- taup/taueff_______________________normalised_residue____________________ (normres017)__________________      6.6631E-12    
- Dump_time_set_by_VV_stress________normalised_residue____________________ (normres018)__________________     -1.1021E-12    
- Rate_of_change_of_energy_in_field_normalised_residue____________________ (normres019)__________________     -1.4367E-10    
- pdivt_<_psep_kallenbach_divertor__normalised_residue____________________ (normres020)__________________      2.3105E-09    
- Separatrix_temp_consistency_______normalised_residue____________________ (normres021)__________________      1.0458E-09    
- Separatrix_density_consistency____normalised_residue____________________ (normres022)__________________     -1.0495E-09    
- CS_Tresca_yield_criterion_________normalised_residue____________________ (normres023)__________________      1.5548E-12    
+ Beta_consistency__________________normalised_residue____________________ (normres001)__________________     -4.4993E-12    
+ Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -9.4279E-12    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      9.0172E-13    
+ Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres004)__________________      9.1422E-12    
+ Radial_build_consistency__________normalised_residue____________________ (normres005)__________________     -3.0398E-13    
+ Burn_time_lower_limit_____________normalised_residue____________________ (normres006)__________________     -1.4470E-07    
+ L-H_power_threshold_limit_________normalised_residue____________________ (normres007)__________________      8.6974E-11    
+ Net_electric_power_lower_limit____normalised_residue____________________ (normres008)__________________      4.2911E-06    
+ Beta_upper_limit__________________normalised_residue____________________ (normres009)__________________     -8.9384E-13    
+ Injection_power_upper_limit_______normalised_residue____________________ (normres010)__________________      1.1382E-10    
+ TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres011)__________________     -1.5090E-12    
+ TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres012)__________________     -1.3872E-12    
+ Dump_voltage_upper_limit__________normalised_residue____________________ (normres013)__________________     -1.8517E-11    
+ J_winding_pack/J_protection_limit_normalised_residue____________________ (normres014)__________________     -8.4721E-13    
+ TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres015)__________________     -1.0144E-10    
+ CS_temperature_margin_lower_limit_normalised_residue____________________ (normres016)__________________      4.5909E-06    
+ taup/taueff_______________________normalised_residue____________________ (normres017)__________________      2.1123E-11    
+ Dump_time_set_by_VV_stress________normalised_residue____________________ (normres018)__________________     -3.4099E-12    
+ Rate_of_change_of_energy_in_field_normalised_residue____________________ (normres019)__________________     -4.5421E-10    
+ pdivt_<_psep_kallenbach_divertor__normalised_residue____________________ (normres020)__________________      1.8921E-08    
+ Separatrix_temp_consistency_______normalised_residue____________________ (normres021)__________________      5.8842E-09    
+ Separatrix_density_consistency____normalised_residue____________________ (normres022)__________________     -5.8985E-09    
+ CS_Tresca_yield_criterion_________normalised_residue____________________ (normres023)__________________      2.4905E-12    
  # Final Feasible Point #
  # Plant Availability #
  Allowable_blanket_neutron_fluence_(MW-yr/m2)____________________________ (abktflnc)____________________      5.0000E+00    
@@ -487,7 +487,7 @@
  Power_lost_due_to_charge_exchange__[W]__________________________________ (exchangepowerlost)___________      3.7291E+06 OP 
  Power_lost_due_to_electron_impact_ionisation_[W]________________________ (ionisationpowerlost)_________      4.6924E+06 OP 
  Total_power_lost_due_to_radiation,_ionisation_and_recombination_[W]_____ (totalpowerlost)______________      4.8158E+07 OP 
- Power_balance_error_[W]_________________________________________________ (balance)_____________________      1.8626E-09 OP 
+ Power_balance_error_[W]_________________________________________________ (balance)_____________________      1.4901E-08 OP 
  # Radial Build #
  Machine_bore_(m)________________________________________________________ (bore)________________________      2.1877E+00 ITV
  CS_radial_thickness_(m)_________________________________________________ (ohcth)_______________________      8.0000E-01 ITV
@@ -565,7 +565,7 @@
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.0000E+08    
  WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      3.5539E+01 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      8.2410E+01 OP 
- Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      4.8849E-08    
+ Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      2.4424E-08    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -3.9023E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      2.0977E+08    
  Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      5.2739E+08    
@@ -685,7 +685,7 @@
  Actual_temperature_margin_in_superconductor_(K)_________________________ (tmarg)_______________________      1.5000E+00 OP 
  Critical_current_(A)____________________________________________________ (icrit)_______________________      1.3631E+05 OP 
  Actual_current_(A)______________________________________________________ (cpttf)_______________________      9.0000E+04 ITV
- Actual_current_/_critical_current_______________________________________ (iooic)_______________________      6.6024E-01 OP 
+ Actual_current_/_critical_current_______________________________________ (iooic)_______________________      6.6025E-01 OP 
  # Central Solenoid and PF Coils #
  Central_solenoid_superconductor_material________________________________ (isumatoh)____________________              5    
  Maximum_field_at_Beginning_Of_Pulse_(T)_________________________________ (bmaxoh0)_____________________      1.4559E+01 OP 
@@ -840,7 +840,7 @@
  Intercoil_support_structure_mass_(kg)___________________________________ (aintmass)____________________      5.2748E+06 OP 
  Mass_of_cooled_components_(kg)__________________________________________ (coldmass)____________________      4.3503E+07 OP 
  Gravity_support_structure_mass_(kg)_____________________________________ (clgsmass)____________________      1.7623E+06 OP 
- Torus_leg_support_mass_(kg)_____________________________________________ (gsm1)________________________      9.5454E+04 OP 
+ Torus_leg_support_mass_(kg)_____________________________________________ (gsm1)________________________      9.5455E+04 OP 
  Ring_beam_mass_(kg)_____________________________________________________ (gsm2)________________________      4.9460E+05 OP 
  Ring_legs_mass_(kg)_____________________________________________________ (gsm3)________________________      8.2660E+05 OP 
  # PF Coil Inductances #

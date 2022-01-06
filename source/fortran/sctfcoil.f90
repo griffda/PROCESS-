@@ -4176,13 +4176,6 @@ function eyngzwp(estl,eins,ewp,tins,tstl,tcs)
 
     eyngzwp = eyngzwp / (ttot*ttot)
     
-    print *,"Begin eyngzwp diagnostic outputs:"
-    print *,"Cable area = ",tcs*tcs
-    print *,"Steel area = ",( (tcs + 2.0D0*tstl)**2 - tcs*tcs )
-    print *,"Insul area = ",( (tcs + 2.0D0*(tstl + tins))**2 - (tcs + 2.0D0*tstl)**2 )
-    print *,"Winding area = ",(ttot*ttot)
-    print *,"End eyngzwp diagnostic outputs"
-
 end function eyngzwp
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
