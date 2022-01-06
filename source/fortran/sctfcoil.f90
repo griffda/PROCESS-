@@ -39,7 +39,8 @@ real(dp), private :: awpc
 !! GW insulation and insertion gap [m2]
 
 real(dp), private :: awptf
-!! Total cross-sectional area of winding pack [m2]
+!! Total cross-sectional area of winding pack without 
+!! ground insulation and insertion gap [m2]
 
 real(dp), private :: a_tf_steel
 !! Inboard coil steel coil cross-sectional area [m2]
@@ -452,6 +453,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
     !! Author : S. Kahn, CCFE
     !! Seting the WP, case and tunrs geometry for SC magnets
     
+    use error_handling, only: fdiags, report_error
     use tfcoil_variables, only: acndttf, awphec, cpttf, insulation_area,     &
         n_layer, n_pancake, n_tf_turn, i_tf_sc_mat, jwptf, thicndut, thwcndut, &
         acasetf, acstf, acond, aiwp, avwp, dhecoil, n_tf, aswp, vftf, tfareain
@@ -524,6 +526,21 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
 
     !  Inboard coil insulation fraction [-]
     f_tf_ins = n_tf * a_tf_ins / tfareain 
+    
+    ! Negative areas or fractions error reporting
+    if ( acond <= 0.0D0 .or. avwp <= 0.0D0 .or. aiwp <= 0.0D0 .or. &
+         aswp <= 0.0D0 .or. a_tf_steel <= 0.0D0 .or. f_tf_steel <= 0.0D0 .or. &
+         a_tf_ins <= 0.0D0 .or. f_tf_ins <= 0.0D0 ) then
+        fdiags(1) = acond 
+        fdiags(2) = avwp 
+        fdiags(3) = aiwp 
+        fdiags(4) = aswp 
+        fdiags(5) = a_tf_steel 
+        fdiags(6) = f_tf_steel 
+        fdiags(7) = a_tf_ins 
+        fdiags(8) = f_tf_ins 
+        call report_error(274)
+    end if
     ! -------------------
 
 
@@ -1946,7 +1963,12 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! WP + lateral casing area
 
     real(dp) :: eyoung_cond
-    !! Resistive conductors Young's modulus [Pa]
+    !! Conductor Young's modulus [Pa]
+    !! Only used for resistive TF coils
+    
+    real(dp) :: poisson_cond
+    !! Conductor Poisson's ratio
+    !! Only used for resistive TF coils
 
     real(dp) :: r_wp_inner_eff
     !! Inner radius of the stress model effective WP layer [m]
@@ -2093,6 +2115,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             call eyngparallel(eyoung_working, t_cable_oh, poisson_working, &
                               eyoung_z(1), a_working, poisson_z(1), &
                               eyoung_z(1), a_working, poisson_z(1))
+            ! [EDIT: Add central cooling channel?]
             
 
         ! resistive CS (copper)
@@ -2185,8 +2208,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         else 
             ! Integer number of turns
             t_cable_eyng = t_cable_radial
-        end if         
-        ! [EDIT: Update this to new elastic composition functions]
+        end if
 !        eyoung_wp_t = eyngeff( eyoung_steel, eyoung_ins, &
 !                               t_ins_eff, thwcndut, t_cable_eyng )
                                
@@ -2195,7 +2217,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 !        print *,"Old values:"
 !        print *,"eyoung_wp_t = ",eyoung_wp_t
 !        print *,"New values:"
-!        
+        
         ! Outermost legs, insulation only:
         eyoung_wp_t = eyoung_ins*0 ! [EDIT: For comparison with original model (outermost legs neglected)]
         a_working = 2*t_ins_eff
@@ -2219,6 +2241,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         call eyngseries(0D0,t_cable_eyng,poisson_steel, & ! [EDIT: Should be params of cable]
                         eyoung_working,l_working,poisson_working, &
                         eyoung_working,l_working,poisson_working)
+        ! [EDIT: Add central cooling channel?]
                         
         ! Parallel-composite in this last leg:
         call eyngparallel(eyoung_working,t_cable_eyng,poisson_working, &
@@ -2226,9 +2249,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                           eyoung_wp_t,a_working,poisson_wp_t)
 !        print *,"eyoung_wp_t = ",eyoung_wp_t
 !        print *,"poisson_wp_t = ",poisson_wp_t
-!        
-!        ! Lateral casing correction (series-composition)
-!        ! [EDIT: Update this to new elastic composition functions]
+        
+        ! Lateral casing correction (series-composition)
 !        eyoung_wp_t_eff = ( 2.0D0 * t_lat_case_av + t_wp_toroidal_av ) &
 !                        / ( 2.0D0 * t_lat_case_av / eyoung_steel  &
 !                          + t_wp_toroidal_av / eyoung_wp_t )
@@ -2240,13 +2262,15 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                         eyoung_wp_t_eff,a_working,poisson_wp_t_eff)
 !        print *,"eyoung_wp_t_eff = ",eyoung_wp_t_eff
 !        print *,"poisson_wp_t_eff = ",poisson_wp_t_eff
-!                          
-!        ! Average young WP modulus [Pa]
-!        ! [EDIT: Update this to new elastic composition functions]
+                          
+        ! Average young WP modulus [Pa]
 !        eyoung_wp_z = ( eyoung_steel * aswp + eyoung_ins * a_tf_ins ) / awpc
 !        print *,"Old values:"
 !        print *,"eyoung_wp_z = ",eyoung_wp_z
-!        print *,"awpc = ",awpc
+!        print *,"awpc (total) = ",awpc
+!        print *,"acond (cond) = ",acond
+!        print *,"aswp (steel) = ",aswp
+!        print *,"a_tf_ins (insulator) = ",a_tf_ins
 !        print *,"New values:"
         ! Parallel-composite the steel and insulation
         call eyngparallel(eyoung_steel,aswp,poisson_steel, &
@@ -2265,11 +2289,10 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 !        print *,"a_working = ",a_working
 
         ! Average young modulus used in the WP layer stress calculation [Pa]
-        ! [EDIT: Update this to new elastic composition functions]
 !        eyoung_wp_z_eff = ( eyoung_steel * a_wp_steel_eff + eyoung_ins * a_tf_ins ) &
 !                        / a_wp_eff 
 !        print *,"Old values:"
-!        print *,"eyoung_wp_z = ",eyoung_wp_z_eff
+!        print *,"eyoung_wp_z_eff = ",eyoung_wp_z_eff
 !        print *,"New values:"
         ! Parallel-composite the steel and insulation, now including the lateral case (sidewalls)
         call eyngparallel(eyoung_steel,a_wp_steel_eff,poisson_steel, &
@@ -2291,9 +2314,11 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
         ! Picking the conductor material Young's modulus
         if ( i_tf_sup == 0 ) then
-            eyoung_cond = eyoung_copper ! [EDIT: Include Poisson's ratios of these materials]
+            eyoung_cond = eyoung_copper
+            poisson_cond = poisson_copper
         else if ( i_tf_sup == 2 ) then
             eyoung_cond = eyoung_al
+            poisson_cond = poisson_al
         end if
 
         ! Effective WP young modulus in the toroidal direction [Pa]
@@ -2301,12 +2326,13 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         !       for now as it needs a radially dependent Young modulus
         eyoung_wp_t_eff = eyoung_cond
         eyoung_wp_t = eyoung_cond
+        poisson_wp_t_eff = poisson_cond
+        poisson_wp_t = poisson_cond
 
         ! WP area using the stress model circular geometry (per coil) [m2]
         a_wp_eff = (r_wp_outer**2 - r_wp_inner**2) * theta_coil
 
         ! Effective conductor region young modulus in the vertical direction [Pa]
-        ! [EDIT: Update this to new elastic composition functions]
 !        eyoung_wp_z = eyoung_ins * a_tf_ins / a_wp_eff &
 !                    + eyoung_cond * (1.0D0 - a_tf_ins / a_wp_eff) * (1.0D0 - fcoolcp)
 !        print *,"Old values:"
@@ -2314,11 +2340,11 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 !        print *,"a_wp_eff = ",a_wp_eff
 !        print *,"New values:"
         ! Parallel-composite conductor and insulator
-        call eyngparallel(eyoung_cond,(a_wp_eff-a_tf_ins)*(1.0D0-fcoolcp),poisson_steel, & ! [EDIT: Add poisson_cond here]
-                          eyoung_ins,a_tf_ins,poisson_steel, & ! [EDIT: Should be Poisson of ins]
+        call eyngparallel(eyoung_cond,(a_wp_eff-a_tf_ins)*(1.0D0-fcoolcp),poisson_cond, & 
+                          eyoung_ins,a_tf_ins,poisson_cond, & ! [EDIT: Should be Poisson of ins]
                           eyoung_wp_z,a_working,poisson_wp_z)
         ! Parallel-composite cooling pipes into that
-        call eyngparallel(0D0,(a_wp_eff-a_tf_ins)*fcoolcp,poisson_steel, & 
+        call eyngparallel(0D0,(a_wp_eff-a_tf_ins)*fcoolcp,poisson_cond, & 
                           eyoung_wp_z,a_working,poisson_wp_z, &
                           eyoung_wp_z,a_working,poisson_wp_z)
 !        print *,"eyoung_wp_z = ",eyoung_wp_z
@@ -2327,6 +2353,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
         ! Effective young modulus used in stress calculations
         eyoung_wp_z_eff = eyoung_wp_z
+        poisson_wp_z_eff = poisson_wp_z
 
         ! Effect conductor layer inner/outer radius
         r_wp_inner_eff = r_wp_inner
@@ -2354,22 +2381,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         eyoung_z(n_tf_bucking + ii) = eyoung_wp_z_eff
 
         ! Poisson's ratio
-        if ( i_tf_sup == 0 ) then
-            poisson_p(n_tf_bucking + ii) = poisson_copper ! [EDIT: Make these uniform]
-            poisson_z(n_tf_bucking + ii) = poisson_copper
-            
-        ! SC magnets smeared properties
-        else if ( i_tf_sup == 1 ) then 
-            poisson_p(n_tf_bucking + ii) = poisson_steel ! [EDIT: Use the new Poisson's ratio]
-            poisson_z(n_tf_bucking + ii) = poisson_steel ! [EDIT: Use the new Poisson's ratio]
-!            poisson_p(n_tf_bucking + ii) = poisson_wp_t_eff
-!            poisson_z(n_tf_bucking + ii) = poisson_wp_z_eff
+        poisson_p(n_tf_bucking + ii) = poisson_wp_t_eff
+        poisson_z(n_tf_bucking + ii) = poisson_wp_z_eff
         
-        ! Aluminium properties
-        else 
-            poisson_p(n_tf_bucking + ii) = poisson_al ! [EDIT: Make these uniform]
-            poisson_z(n_tf_bucking + ii) = poisson_al
-        end if 
     end do
     
     ! Steel case on the plasma side of the inboard TF coil
@@ -2434,7 +2448,12 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         casestr = sig_tf_z(n_tf_bucking) / eyoung_steel
 
         ! Young's modulus in vertical direction on WP
-        ! [EDIT: Update this to new elastic composition functions]
+        ! [EDIT: This is a mishmash of different parameters, at odds with 
+        ! the rest of the code. It includes the insertion gap but not the 
+        ! helium channel. It is the ONE place in the TF coil code in which
+        ! eyoung_winding is actually used. When you go to finally break
+        ! agreement with the original code, eyzwp can just become
+        ! eyoung_wp_z_eff.]
         eyzwp = eyngzwp(eyoung_steel,eyoung_ins,eyoung_winding,t_ins_eff,thwcndut,tcbs)
     
         ! Strain in vertical direction on WP
@@ -4156,6 +4175,13 @@ function eyngzwp(estl,eins,ewp,tins,tstl,tcs)
               + eins*( (tcs + 2.0D0*(tstl + tins))**2 - (tcs + 2.0D0*tstl)**2 )
 
     eyngzwp = eyngzwp / (ttot*ttot)
+    
+    print *,"Begin eyngzwp diagnostic outputs:"
+    print *,"Cable area = ",tcs*tcs
+    print *,"Steel area = ",( (tcs + 2.0D0*tstl)**2 - tcs*tcs )
+    print *,"Insul area = ",( (tcs + 2.0D0*(tstl + tins))**2 - (tcs + 2.0D0*tstl)**2 )
+    print *,"Winding area = ",(ttot*ttot)
+    print *,"End eyngzwp diagnostic outputs"
 
 end function eyngzwp
 
@@ -4914,7 +4940,7 @@ subroutine outtf(outfile, peaktfflag)
         call osubhd(outfile,'Inboard TFC conductor sector geometry:')
         call ovarre(outfile,'Inboard TFC conductor sector area with gr insulation (per leg) (m2)' &
             ,'(awpc))',awpc)
-        call ovarre(outfile,'Inboard TFC conductor sector area (per leg) (m2)','(aswp)',awptf )
+        call ovarre(outfile,'Inboard TFC conductor sector area, NO ground & gap (per leg) (m2)','(awptf)',awptf )
         call ovarre(outfile,'Inboard conductor sector radial thickness (m)','(dr_tf_wp)',dr_tf_wp )
         if ( itart == 1 ) then 
             call ovarre(outfile,'Central collumn top conductor sector radial thickness (m)',&
