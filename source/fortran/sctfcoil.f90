@@ -1720,7 +1720,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         acasetf, sig_tf_case_max, poisson_steel, poisson_copper, poisson_al, &
         n_tf_graded_layers, i_tf_sup, i_tf_bucking, fcoolcp, eyoung_winding, &
         eyoung_steel, eyoung_res_tf_buck, eyoung_ins, eyoung_al, eyoung_copper, &
-        aiwp, aswp, cpttf, n_tf, i_tf_plane_stress, sig_tf_wp_max, &
+        aiwp, aswp, cpttf, n_tf, i_tf_stress_model, sig_tf_wp_max, &
         i_tf_turns_integer
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
         cohbop, ncls, cptdin
@@ -1946,7 +1946,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! Rem SK : Can be easily ameneded playing around the boundary conditions
     if ( abs(r_tf_inboard_in) < epsilon(r_tf_inboard_in) ) then
         ! New extended plane strain model can handle it
-        if ( i_tf_plane_stress /= 2 ) then
+        if ( i_tf_stress_model /= 2 ) then
             call report_error(245)
             sig_tf_case = 0.0D0
             sig_tf_wp = 0.0D0
@@ -2223,7 +2223,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! Rem SK : Can be easily ameneded playing around the boundary conditions
     if ( abs(radtf(1)) < epsilon(radtf(1)) ) then
         ! New extended plane strain model can handle it
-        if ( i_tf_plane_stress /= 2 ) then
+        if ( i_tf_stress_model /= 2 ) then
             call report_error(245)
             radtf(1) = 1.0D-9
         else if ( abs(radtf(2)) < epsilon(radtf(1)) ) then
@@ -2236,7 +2236,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     ! Old generalized plane stress model
     ! ---
-    if ( i_tf_plane_stress == 1 ) then
+    if ( i_tf_stress_model == 1 ) then
 
         ! Plane stress calculation (SC) [Pa]
         call plane_stress( poisson_p, radtf, eyoung_p, jeff, & ! Inputs
@@ -2263,7 +2263,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     ! New generalized plane strain formulation
     ! ---
-    else if ( i_tf_plane_stress == 0) then
+    else if ( i_tf_stress_model == 0) then
         ! Generalized plane strain calculation [Pa]
         ! Issues #977 and #991
         ! bore > 0, O(n^3) in layers
@@ -2272,7 +2272,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                                        n_tf_layer, n_radial_array, n_tf_bucking,  & ! Inputs
                                        radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
                                        strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
-    else if ( i_tf_plane_stress == 2) then
+    else if ( i_tf_stress_model == 2) then
         ! Extended plane strain calculation [Pa]
         ! Issues #1414 and #998
         ! Permits bore >= 0, O(n) in layers
@@ -2319,7 +2319,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! ---
     ! This correction is only applied if the plane stress model is used
     ! as the generalized plane strain calculates the vertical stress properly
-    if ( i_tf_bucking >= 2 .and. i_tf_plane_stress == 1 ) then
+    if ( i_tf_bucking >= 2 .and. i_tf_stress_model == 1 ) then
         do ii = 1, (n_tf_bucking-1)*n_radial_array
             sig_tf_z(ii) = 0.0D0
         end do
@@ -2342,7 +2342,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     else if ( i_tf_sup == 1 ) then
 
         ! Vertical WP steel stress unsmearing factor
-        if ( i_tf_plane_stress /= 1 ) then
+        if ( i_tf_stress_model /= 1 ) then
             fac_sig_z = eyoung_steel / eyoung_wp_z_eff
             fac_sig_z_wp_av = eyoung_wp_z / eyoung_wp_z_eff
         else
@@ -2490,7 +2490,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         call oheadr(outfile,'TF coils ')
         call osubhd(outfile,'TF Coil Stresses (CCFE model) :')
         
-        if ( i_tf_plane_stress == 1 ) then
+        if ( i_tf_stress_model == 1 ) then
             call ocmmnt(outfile, 'Plane stress model with smeared properties')
         else 
             call ocmmnt(outfile, 'Generalized plane strain model')
@@ -2602,7 +2602,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         write(sig_file,*) 
         write(sig_file,*) 'Displacement'         
         write(sig_file,'(t2, "rad. displacement", t20, "(mm)",t26, *(F11.5,5x))') deflect*1.0D3
-        if ( i_tf_plane_stress /= 1 ) then
+        if ( i_tf_stress_model /= 1 ) then
             write(sig_file,*)
             write(sig_file,*) 'Strain'    
             write(sig_file,'(t2, "radial strain"   ,t26, *(F11.8,3x))') strain_tf_r
@@ -2616,7 +2616,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! end if
 
         ! Quantities from the plane stress stress formulation (no resitive coil output)
-        if ( i_tf_plane_stress == 1 .and. i_tf_sup == 1 ) then
+        if ( i_tf_stress_model == 1 .and. i_tf_sup == 1 ) then
             ! Other quantities (displacement strain, etc..)
             call ovarre(outfile,'Maximum radial deflection at midplane (m)','(deflect)',&
                                 deflect(n_radial_array), 'OP ')     

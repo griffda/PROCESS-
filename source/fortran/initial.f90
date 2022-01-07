@@ -272,7 +272,7 @@ subroutine check
     use tfcoil_variables, only: casthi, casthi_is_fraction, casths, i_tf_sup, &
         tcoolin, tcpav, tfc_sidewall_is_fraction, tmargmin, tmargmin_cs, &
         tmargmin_tf, eff_tf_cryo, eyoung_ins, i_tf_bucking, i_tf_shape, &
-        n_tf_graded_layers, n_tf_stress_layers, tlegav,  i_tf_plane_stress, &
+        n_tf_graded_layers, n_tf_stress_layers, tlegav,  i_tf_stress_model, &
         i_tf_sc_mat, i_tf_wp_geom, i_tf_turns_integer, tinstf, thwcndut, &
         tfinsgap, rcool, dhecoil, thicndut, i_cp_joints, t_turn_tf_is_input, &
         t_turn_tf, tftmp, t_cable_tf, t_cable_tf_is_input, tftmp, tmpcry
@@ -802,19 +802,20 @@ subroutine check
     ! TF coil
     ! -------
     ! TF stress model not defined of r_tf_inboard = 0
+    ! Unless i_tf_stress_model == 2
     ! -> If bore + gapoh + ohcth = 0 and fixed and stress constraint is used
     !    Generate a lvl 3 error proposing not to use any stress constraints
     if (       ( .not. ( any(ixc == 16 ) .or. any(ixc == 29 ) .or. any(ixc == 42 ) ) ) & ! No bore,gapoh, ohcth iteration  
          .and. ( abs(bore + gapoh + ohcth + precomp) < epsilon(bore) )                 & ! bore + gapoh + ohcth = 0
          .and. ( any(icc == 31) .or. any(icc == 32) )                                  & ! Stress constraints (31 or 32) is used 
-         .and. ( i_tf_plane_stress /= 2 ) ) then                                         ! TF stress model can't handle no bore                                           
+         .and. ( i_tf_stress_model /= 2 ) ) then                                         ! TF stress model can't handle no bore                                           
 
         call report_error(246)
         stop 1
     end if
      
     ! Make sure that plane stress model is not used for resistive magnets
-    if ( i_tf_plane_stress == 1 .and. i_tf_sup /= 1 ) call report_error(253)
+    if ( i_tf_stress_model == 1 .and. i_tf_sup /= 1 ) call report_error(253)
      
     ! bucking cylinder default option setting
     !  - bucking (casing) for SC i_tf_bucking ( i_tf_bucking = 1 )
