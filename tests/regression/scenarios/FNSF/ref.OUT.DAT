@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-901-ga12ba209
-    Branch : 1343-update-lts-hts-cost-model-2
-   Git log : Merge\ branch\ |develop|\ into\ 1343-update-lts-hts-cost-model-2
- Date/time : 18 Nov 2021 17:02:04 +00:00(hh:mm) UTC
-      User : rhicha
-  Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-205/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-205/test_scenario_FNSF_0/IN.DAT
+   Tag No. : v2.1-1060-g8a939d83
+    Branch : 1446-tf-fluence-itart
+   Git log : Merge\ branch\ |develop|\ into\ 1446-tf-fluence-itart
+ Date/time :  7 Jan 2022 13:47:04 +00:00(hh:mm) UTC
+      User : root
+  Computer : 64a8816e7ffc
+ Directory : /tmp/pytest-of-root/pytest-1/test_solver0
+     Input : /tmp/pytest-of-root/pytest-1/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -716,7 +716,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Centrepost coolant fraction                                              (fcoolcp)                 1.433E-01  ITV
  Average coolant channel diameter (m)                                     (dcool)                   6.000E-03     
  Coolant channel length (m)                                               (lcool)                   9.924E+00     
- Inlet coolant flow speed (m/s)                                           (vcool)                   5.000E+00     
+ Inlet coolant flow speed (m/s)                                           (tfv.vcool)               5.000E+00     
  Outlet coolant flow speed (m/s)                                          (vcool_max)               5.000E+00     
  Coolant mass flow rate (kg/s)                                            (cool_mass_flow)          5.761E+02     
  Number of coolant tubes                                                  (ncool)                   4.137E+03     
@@ -727,13 +727,13 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Resistive Heating :
  
  Average conductor resistivity (ohm.m)                                    (rhocp)                   2.181E-08     
- Resistive heating (MW)                                                   (prescp/1.0D6)            1.203E+02     
+ Resistive heating (MW)                                                   (prescp/1.0e6)            1.203E+02     
  Nuclear heating (MW)                                                     (pnuc_cp_tf)              6.367E+00     
- Total heating (MW)                                                       (ptot/1.0D6)              1.267E+02     
+ Total heating (MW)                                                       (ptot/1.0e6)              1.267E+02     
  
  Temperatures :
  
- Input coolant temperature (K)                                            (tcoolin)                 3.131E+02     
+ Input coolant temperature (K)                                            (tfv.tcoolin)             3.131E+02     
  Input-output coolant temperature rise (K)                                (dtiocool)                5.260E+01     
  Film temperature rise (K)                                                (dtfilmav)                6.117E+00     
  Average temp gradient in conductor (K/m)                                 (dtcncpav)                1.026E+00     
