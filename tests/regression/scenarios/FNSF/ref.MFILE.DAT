@@ -4,13 +4,13 @@
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.2.0   R"
  Date_of_run_____________________________________________________________ (date)________________________     "07/01/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "13:47"
- User____________________________________________________________________ (username)____________________     "root"    
+ Time_of_run_____________________________________________________________ (time)________________________     "10:55"
+ User____________________________________________________________________ (username)____________________     "cswan"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "FNSF (Menard et al. 2016)                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1060-g8a939d83"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1446-tf-fluence-itart"                                                                             
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |develop|\ into\ 1446-tf-fluence-itart"                                             
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-1/test_scenario_FNSF_0/IN.DAT                                                                                                                                                "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1068-gc7e1b5b9"                                                                               
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1442-test-bucking"                                                                                 
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Replaced\ i_tf_plane_stress\ in\ source\ and\ regressio"                                           
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-33/test_scenario_FNSF_0/IN.DAT                                                                                                                                              "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -411,11 +411,11 @@
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.0000E+08    
  WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      1.1700E+02 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      9.9029E+01 OP 
- Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________     -7.7566E+12    
- toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________      7.7565E+12    
- Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________     -3.6214E+07    
- Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      1.3435E+13    
- Maximum_shear_stress_for_the_Tresca_yield_criterion_1_(Pa)______________ (sig_tf_tresca_max(1))________      1.5513E+13    
+ Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________     -7.0212E+07    
+ toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -7.0212E+07    
+ Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      6.0249E+07    
+ Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      1.3046E+08    
+ Maximum_shear_stress_for_the_Tresca_yield_criterion_1_(Pa)______________ (sig_tf_tresca_max(1))________      1.3046E+08    
  Conductor_technology____________________________________________________ (i_tf_sup)____________________              0    
  Presence_of_TF_demountable_joints_______________________________________ (itart)_______________________              1    
  TF_inboard_leg_support_strategy_________________________________________ (i_tf_bucking)________________              0    
@@ -1115,7 +1115,7 @@ ripmax   = 1.0      *Maximum allowable toroidal field ripple amplitude at plasma
 n_tf     = 12       *Number of TF coil  
 vcool    = 5.0      *Max centrepost coolant flow speed at midplane (m/s)
 vftf     = 0.2      *Coolant fraction of TFC 'cable' (i_tf_sup=1) or of TFC leg (i_tf_sup=0)
-i_tf_plane_stress = 2
+i_tf_stress_model = 2 *Switch for the TF coil stress model (2: Axisymmetric extended plane strain)
 *Iteration variables: cdtfleg fcoolcp oacdcp tcpav
 
 *-------------Current Drive Variables--------------*
