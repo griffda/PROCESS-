@@ -127,7 +127,7 @@ module cost_variables
 
   integer :: i_cp_lifetime
   !! Switch for the centrepost lifetime constraint 
-  !!  0 : The CP full power year lifetime is set by the user
+  !!  0 : The CP full power year lifetime is set by the user via cplife_input
   !!  1 : The CP lifetime is equal to the divertor lifetime
   !!  2 : The CP lifetime is equal to the breeding blankets lifetime
   !!  3 : The CP lifetime is equal to the plant lifetime
@@ -136,7 +136,7 @@ module cost_variables
   !! owner cost factor
 
   real(dp) :: cplife_input
-  !! User input full power year lifetime of the centrepost (years)
+  !! User input full power year lifetime of the centrepost (years) (i_cp_lifetime = 0)
 
   real(dp) :: cplife
   !! Calculated full power year lifetime of centrepost (years)
