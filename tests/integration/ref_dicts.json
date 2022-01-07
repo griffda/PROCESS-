@@ -3437,7 +3437,7 @@
         "phi_tfc_ob": 0.0,
         "phiint": 0.0,
         "photon_wall": 0.0,
-        "pi": "3.141592653589793_wp_",
+        "pi": 3.141592653589793,
         "pibv": 20000.0,
         "piepv": 0.0,
         "pifecr": 10.0,
@@ -9290,7 +9290,7 @@
         "cpfact": "Total plant capacity factor",
         "cph2o": "specific heat capacity of water (J/kg/K)",
         "cplife": "Calculated full power year lifetime of centrepost (years)",
-        "cplife_input": "User input full power year lifetime of the centrepost (years)",
+        "cplife_input": "User input full power year lifetime of the centrepost (years) (i_cp_lifetime = 0)",
         "cpp": "",
         "cppa": "",
         "cpstcst": "ST centrepost direct cost (M$)",
@@ -9886,7 +9886,7 @@
         "i_bldgs_size": "switch between routines estimating building sizes (0 = default; 1 = STEP-derived)",
         "i_bldgs_v": "switch to select verbose output for buildings (1 = verbose)",
         "i_cp_joints": "Switch for CP demoutable joints type\n  -= 0 : Clampled joints\n  -= 1 : Sliding joints\n Default value (-1) choses : \n   Sliding joints for resistive magnets (i_tf_sup = 0, 2)<br>\n   Clampled joints for superconducting magents (i_tf_sup = 1)",
-        "i_cp_lifetime": "Switch for the centrepost lifetime constraint \n  0 : The CP full power year lifetime is set by the user\n  1 : The CP lifetime is equal to the divertor lifetime\n  2 : The CP lifetime is equal to the breeding blankets lifetime\n  3 : The CP lifetime is equal to the plant lifetime",
+        "i_cp_lifetime": "Switch for the centrepost lifetime constraint \n  0 : The CP full power year lifetime is set by the user via cplife_input\n  1 : The CP lifetime is equal to the divertor lifetime\n  2 : The CP lifetime is equal to the breeding blankets lifetime\n  3 : The CP lifetime is equal to the plant lifetime",
         "i_cs_stress": "Switch for CS stress calculation:\n<ul>\n<li>=0 Hoop stress only</li>\n<li>=1 Hoop + Axial stress</li>\n</ul>",
         "i_flag": "Error flag for PLASMOD",
         "i_pf_current": "Switch for controlling the current of the PF coils:\n<ul>\n<li>=0 Input via the variables curpfb, curpff, curpfs</li>\n<li>=1 SVD targets zero field across midplane (flux swing \n   coils) and the correct vertical field at the plasma\n   center (equilibrium coils)</li>\n</ul>",
@@ -10246,7 +10246,7 @@
         "nfixmx": "maximum number of fixed current PF coils",
         "nflutf": "peak fast neutron fluence on TF coil superconductor (n/m2) (`iblanket=2` (KIT HCPB))",
         "nflutfi": "Fast neutron fluence on IB TF coil [n/cm2]",
-        "nflutfmax": "max fast neutron fluence on TF coil (n/m2) (`blktmodel>0`) (`constraint equation 53`)\n Also used for demontable magnets (itart = 1) and superconducting coils (i_tf_sup = 1)\n To set the CP lifetime",
+        "nflutfmax": "max fast neutron fluence on TF coil (n/m2) (`blktmodel>0`) (`constraint equation 53`)\n Also used for demontable magnets (itart = 1) and superconducting coils (i_tf_sup = 1)\n To set the CP lifetime (`constraint equation 85`)",
         "nflutfo": "Fast neutron fluence on OB TF coil [n/cm2]",
         "nfxf": "",
         "nfxfh": "number of filaments the top and bottom of the central solenoid should be broken \n into during scaling (5 - 10 is good)",
@@ -13696,7 +13696,7 @@
             "ub": 100000.0
         },
         "nflutfmax": {
-            "lb": 1e+22,
+            "lb": 1e+20,
             "ub": 1e+24
         },
         "npdiv": {

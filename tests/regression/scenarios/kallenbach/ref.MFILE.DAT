@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.2.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "21/12/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "14:22"
- User____________________________________________________________________ (username)____________________     "rhicha"  
+ Date_of_run_____________________________________________________________ (date)________________________     "07/01/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "13:47"
+ User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "kallenbach divertor model                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1047-gaa6f8e3f"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1494-rebco-current-density-incorrectly-calculated"                                                 
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |develop|\ into\ 1494-rebco-current-density-incorrectly-calculated"                 
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-261/test_scenario_kallenbach_0/IN.DAT                                                                                                                                      "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1060-g8a939d83"                                                                               
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1446-tf-fluence-itart"                                                                             
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |develop|\ into\ 1446-tf-fluence-itart"                                             
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-1/test_scenario_kallenbach_0/IN.DAT                                                                                                                                          "
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              1    
  # Numerics #

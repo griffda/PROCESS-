@@ -1053,7 +1053,7 @@ contains
           call parse_real_variable('nbshinefmax', nbshinefmax, 1.0D-20, 1.0D-1, &
                'Maximum NB shine-through fraction')
        case ('nflutfmax')
-          call parse_real_variable('nflutfmax', nflutfmax, 1.0D22, 1.0D24, &
+          call parse_real_variable('nflutfmax', nflutfmax, 1.0D20, 1.0D24, &
                'Max fast neutron fluence on TF coil (n/m2)')
        case ('pdivtlim')
           call parse_real_variable('pdivtlim', pdivtlim, 0.1D0, 1.0D3, &
