@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1060-g8a939d83
-    Branch : 1446-tf-fluence-itart
-   Git log : Merge\ branch\ |develop|\ into\ 1446-tf-fluence-itart
- Date/time :  7 Jan 2022 13:48:52 +00:00(hh:mm) UTC
-      User : root
-  Computer : 64a8816e7ffc
- Directory : /tmp/pytest-of-root/pytest-1/test_solver0
-     Input : /tmp/pytest-of-root/pytest-1/test_scenario_stellarator_0/IN.DAT
+   Tag No. : v2.1-1061-gb1f8fce0 code contains untracked changes
+    Branch : 1509-outer-tf-case
+   Git log : Added\ new\ regression\ test\ files
+ Date/time :  7 Jan 2022 11:25:42 -05:00(hh:mm) UTC
+      User : cswan
+  Computer : cswan-2017-desktop
+ Directory : /tmp/pytest-of-cswan/pytest-35/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-35/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  

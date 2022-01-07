@@ -836,7 +836,8 @@ subroutine check
     end if
 
     ! Number of stress calculation layers
-    n_tf_stress_layers = i_tf_bucking + n_tf_graded_layers
+    ! +1 to add in the inboard TF coil case on the plasma side, per Issue #1509
+    n_tf_stress_layers = i_tf_bucking + n_tf_graded_layers + 1
 
     ! If TFC sidewall has not been set by user
     if ( casths < 0.1d-10 ) tfc_sidewall_is_fraction = .true.
