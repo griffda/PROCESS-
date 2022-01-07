@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.2.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "22/12/2021"
- Time_of_run_____________________________________________________________ (time)________________________     "13:48"
+ Date_of_run_____________________________________________________________ (date)________________________     "07/01/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "11:24"
  User____________________________________________________________________ (username)____________________     "cswan"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "FNSF (Menard et al. 2016)                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1059-gfc5b033d"                                                                               
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1061-gb1f8fce0"                                                                               
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1509-outer-tf-case"                                                                                
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Added\ back\ in\ the\ missing\ front\ case\ steel"                                                 
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-21/test_scenario_FNSF_0/IN.DAT                                                                                                                                              "
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Added\ new\ regression\ test\ files"                                                               
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-35/test_scenario_FNSF_0/IN.DAT                                                                                                                                              "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -1120,7 +1120,7 @@ ripmax   = 1.0      *Maximum allowable toroidal field ripple amplitude at plasma
 n_tf     = 12       *Number of TF coil  
 vcool    = 5.0      *Max centrepost coolant flow speed at midplane (m/s)
 vftf     = 0.2      *Coolant fraction of TFC 'cable' (i_tf_sup=1) or of TFC leg (i_tf_sup=0)
-i_tf_plane_stress = 2
+i_tf_stress_model = 2 *Switch for the TF coil stress model (2: Axisymmetric extended plane strain)
 *Iteration variables: cdtfleg fcoolcp oacdcp tcpav
 
 *-------------Current Drive Variables--------------*
