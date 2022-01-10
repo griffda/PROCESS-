@@ -200,10 +200,10 @@ contains
       ohcth, plsepi, fmsoh, blbmith, gapoh, fcspc, scraplo, vgaptop, &
       blbpoth, gapds, fwith, vgap, shldith, sigallpc, tfootfi, f_avspace,&
       r_cp_top, d_vv_in, d_vv_out, d_vv_top, d_vv_bot, f_r_cp, i_r_cp_top
-
-    use buildings_variables, only: hcwt, conv, wgt, trcl, rxcl, rbwt, mbvfac, &
-      esbldgm3, rbvfac, fndt, row, wgt2, pibv, clh1, stcl, clh2, pfbldgm3, &
-      shmf, tfcbv, hccl, rbrt, triv, shov, admv, wsvfac
+    use buildings_variables, only: hcwt, conv, wgt, trcl, rbwt, &
+      esbldgm3, fndt, row, wgt2, pibv, clh1, stcl, clh2, &
+      tfcbv, hccl, rbrt, triv, shov, admv, i_bldgs_v, i_bldgs_size, &
+      mbvfac, pfbldgm3, wsvfac, rbvfac, rxcl, shmf
     use constraint_variables, only: flhthresh, fpeakb, fpsep, fdivcol, ftcycl, &
       betpmx, fpsepbqar, ftmargtf, fradwall, fptfnuc, fnesep, fportsz, tbrmin, &
       maxradwallload, pseprmax, fdene, fniterpump, fpinj, pnetelin, powfmax, &
@@ -333,10 +333,10 @@ contains
       fcoolleg, frholeg, ftoroidalgap, i_tf_sc_mat, i_tf_shape, i_tf_bucking, &
       n_tf_graded_layers, n_tf_joints, n_tf_joints_contact, poisson_al, &
       poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact,&
-      i_tf_plane_stress, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
+      i_tf_stress_model, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
       i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti, &
       i_cp_joints, n_tf_turn, f_t_turn_tf, t_turn_tf_max, t_cable_tf, &
-      sig_tf_wp_max, hts_tape_width, hts_tape_thickness
+      sig_tf_wp_max
 
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
@@ -344,7 +344,8 @@ contains
       initialpressure, outgasfactor, prdiv, pumpspeedmax, rat, outgasindex, &
       pumpareafraction, ntype, vacuum_model, pumptp 
     use rebco_variables, only: hastelloy_thickness, f_coppera_m2, &
-      rebco_thickness, copper_rrr, coppera_m2_max, croco_thick, copper_thick 
+      rebco_thickness, tape_thickness, tape_width, &
+      copper_rrr, coppera_m2_max, croco_thick, copper_thick 
     use reinke_variables, only: reinke_mode, fzactual, impvardiv, lhat 
     use water_usage_variables, only: airtemp, watertemp, windspeed
     use CS_fatigue_variables, only: residual_sig_hoop, t_crack_radial, t_crack_vertical, &
@@ -1052,7 +1053,7 @@ contains
           call parse_real_variable('nbshinefmax', nbshinefmax, 1.0D-20, 1.0D-1, &
                'Maximum NB shine-through fraction')
        case ('nflutfmax')
-          call parse_real_variable('nflutfmax', nflutfmax, 1.0D22, 1.0D24, &
+          call parse_real_variable('nflutfmax', nflutfmax, 1.0D20, 1.0D24, &
                'Max fast neutron fluence on TF coil (n/m2)')
        case ('pdivtlim')
           call parse_real_variable('pdivtlim', pdivtlim, 0.1D0, 1.0D3, &
@@ -1773,16 +1774,28 @@ contains
           call parse_real_variable('bcritsc', bcritsc, 10.0D0, 50.0D0, &
                'Critical field for superconductor')
 
-       !case ('tape_width')
-       !   call parse_real_variable('tape_width', tape_width, 0.0D0, 0.1D0, &
-       !       'Mean width of HTS tape in CroCo (m)')
-
+       case ('tape_width')
+          call parse_real_variable('tape_width', tape_width, 0.0D0, 0.1D0, &
+               'Mean width of HTS tape (m)')
+       case ('tape_thickness')
+          call parse_real_variable('tape_thickness', tape_thickness, 0.0D0, 0.1D0, &
+               'Thickness of HTS tape (m)')
        case ('rebco_thickness')
           call parse_real_variable('rebco_thickness', rebco_thickness, 0.01D-6, 100.0D-6, &
-               'rebco_thickness')
+               'Thickness of REBCO layer in HTS tape (m)')
+          if (rebco_thickness > 1.0D-6) then
+             ! Warning includes concerns raised on Issue #1494
+             write(outfile,*) ' '
+             write(outfile,*) '**********'
+             write(outfile,*) 'WARNING: the relationship between REBCO layer thickness and current density is not linear.'
+             write(outfile,*) 'REBCO layer thicknesses > 1um should be considered an aggressive extrapolation of'
+             write(outfile,*) 'current HTS technology and any results must be considered speculative.'
+             write(outfile,*) '**********'
+             write(outfile,*) ' '
+          end if
        case ('hastelloy_thickness')
           call parse_real_variable('hastelloy_thickness', hastelloy_thickness, 0.01D-6, 1000.0D-6, &
-               'hastelloy_thickness')
+               'Thickness of Hastelloy layer in HTS tape (m)')
        ! case ('croco_id')
        !   call parse_real_variable('croco_id', croco_id, 0.0D0, 0.1D0, &
        !       'croco_id')
@@ -1937,8 +1950,8 @@ contains
        case ('eff_tf_cryo')
           call parse_real_variable('eff_tf_cryo', eff_tf_cryo, 0.0D0, 1.0D0, &
                'TF coil cryo-plane efficiency')  
-       case ('i_tf_plane_stress')
-         call parse_int_variable('i_tf_plane_stress', i_tf_plane_stress, 0, 2, &
+       case ('i_tf_stress_model')
+         call parse_int_variable('i_tf_stress_model', i_tf_stress_model, 0, 2, &
                'Switch for the TF stress model')
        case ('i_tf_tresca')
           call parse_int_variable('i_tf_tresca', i_tf_tresca, 0, 1, &
@@ -1967,12 +1980,6 @@ contains
              write(outfile,*) '**********'
              write(outfile,*) ' '
           end if
-       case('hts_tape_width')
-          call parse_real_variable('hts_tape_width', hts_tape_width, 1.0D-3, 10.0D-3, &
-               'Width of HTS tape (m)')
-       case('hts_tape_thickness')
-          call parse_real_variable('hts_tape_thickness', hts_tape_thickness, 0.5D-6, 5.0D-6, &
-               'Thickness of HTS tape layer (m)')
        case ('itfmod')
           write(outfile,*) ' '
           write(outfile,*) '**********'
@@ -3115,6 +3122,12 @@ contains
 
           !  Buildings settings
 
+       case('i_bldgs_size')
+         call parse_int_variable('i_bldgs_size', i_bldgs_size, 0, 1, &
+               'Switch between routines estimating building sizes')
+       case('i_bldgs_v')
+         call parse_int_variable('i_bldgs_v', i_bldgs_v, 0, 1, &
+               'Switch for verbose buildings output')
        case ('admv')
           call parse_real_variable('admv', admv, 1.0D4, 1.0D6, &
                'Administration building volume (m3)')
@@ -3140,10 +3153,10 @@ contains
           call parse_real_variable('hcwt', hcwt, 0.0D0, 10.0D0, &
                'Hot cell wall thickness (m)')
        case ('mbvfac')
-          call parse_real_variable('mbvfac', mbvfac, 0.9D0, 3.0D0, &
+         call parse_real_variable('mbvfac', mbvfac, 0.9D0, 3.0D0, &
                'Maintenance building volume multiplier')
        case ('pfbldgm3')
-          call parse_real_variable('pfbldgm3', pfbldgm3, 1.0D4, 1.0D6, &
+         call parse_real_variable('pfbldgm3', pfbldgm3, 1.0D4, 1.0D6, &
                'PF coil power conv. bldg volume (m3)')
        case ('pibv')
           call parse_real_variable('pibv', pibv, 1.0D3, 1.0D5, &
@@ -3152,7 +3165,7 @@ contains
           call parse_real_variable('rbrt', rbrt, 0.0D0, 10.0D0, &
                'Reactor building roof thickness (m)')
        case ('rbvfac')
-          call parse_real_variable('rbvfac', rbvfac, 0.9D0, 3.0D0, &
+         call parse_real_variable('rbvfac', rbvfac, 0.9D0, 3.0D0, &
                'Reactor building volume multiplier')
        case ('rbwt')
           call parse_real_variable('rbwt', rbwt, 0.0D0, 10.0D0, &
@@ -3161,10 +3174,10 @@ contains
           call parse_real_variable('row', row, 0.0D0, 10.0D0, &
                'Wall clearance for cranes (m)')
        case ('rxcl')
-          call parse_real_variable('rxcl', rxcl, 0.0D0, 10.0D0, &
+         call parse_real_variable('rxcl', rxcl, 0.0D0, 10.0D0, &
                'Clearance around reactor (m)')
        case ('shmf')
-          call parse_real_variable('shmf', shmf, 0.0D0, 1.0D0, &
+         call parse_real_variable('shmf', shmf, 0.0D0, 1.0D0, &
                'Fraction of TF shield mass per lift')
        case ('shov')
           call parse_real_variable('shov', shov, 1.0D3, 1.0D6, &
@@ -3188,7 +3201,7 @@ contains
           call parse_real_variable('wgt2', wgt2, 1.0D4, 1.0D6, &
                'Hot cell crane capacity (kg)')
        case ('wsvfac')
-          call parse_real_variable('wsvfac', wsvfac, 0.9D0, 3.0D0, &
+         call parse_real_variable('wsvfac', wsvfac, 0.9D0, 3.0D0, &
                'Warm shop building volume multiplier')
 
           !  Energy storage settings

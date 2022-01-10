@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1028-g82ed4ff2
-    Branch : 1367-add-site-preparation-costs-into-model-2
-   Git log : Merge\ branch\ |develop|\ into\ 1367-add-site-preparation-costs-into-model-2
- Date/time : 20 Dec 2021 15:12:16 +00:00(hh:mm) UTC
-      User : rhicha
-  Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-259/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-259/test_scenario_FNSF_0/IN.DAT
+   Tag No. : v2.1-1061-gb1f8fce0 code contains untracked changes
+    Branch : 1509-outer-tf-case
+   Git log : Added\ new\ regression\ test\ files
+ Date/time :  7 Jan 2022 11:24:31 -05:00(hh:mm) UTC
+      User : cswan
+  Computer : cswan-2017-desktop
+ Directory : /tmp/pytest-of-cswan/pytest-35/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-35/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -566,15 +566,15 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa (sig_tf_wp_max)           6.000E+08     
  Materal stress of the point of maximum shear stress (Tresca criterion) for each layer
  Please use utilities/plot_stress_tf.py for radial plots plots summary
- Layers                    conductor
- Radial stress               (MPa) ***********
- toroidal stress             (MPa) 7756473.508
- Vertical stress             (MPa)     -36.214
- Von-Mises stress            (MPa) ***********
- Shear (Tresca) stress       (MPa) ***********
+ Layers                              conductor    Outer case
+ Radial stress               (MPa)     -68.441         1.770
+ toroidal stress             (MPa)     -68.441       -34.546
+ Vertical stress             (MPa)      39.918       159.286
+ Von-Mises stress            (MPa)     108.360       178.467
+ Shear (Tresca) stress       (MPa)     108.360       193.832
  
- Toroidal modulus            (GPa)     117.000
- Vertical modulus            (GPa)      99.029
+ Toroidal modulus            (GPa)     117.000       205.000
+ Vertical modulus            (GPa)      99.029       205.000
  
  WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      1.170E+02  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      9.903E+01  OP 
@@ -1653,7 +1653,7 @@ ripmax   = 1.0      *Maximum allowable toroidal field ripple amplitude at plasma
 n_tf     = 12       *Number of TF coil  
 vcool    = 5.0      *Max centrepost coolant flow speed at midplane (m/s)
 vftf     = 0.2      *Coolant fraction of TFC 'cable' (i_tf_sup=1) or of TFC leg (i_tf_sup=0)
-i_tf_plane_stress = 2
+i_tf_stress_model = 2 *Switch for the TF coil stress model (2: Axisymmetric extended plane strain)
 *Iteration variables: cdtfleg fcoolcp oacdcp tcpav
 
 *-------------Current Drive Variables--------------*
