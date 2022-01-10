@@ -624,7 +624,7 @@ $$
   tension is introduced:
 </p>
 - <p style='text-align: justify;'>
-    **Plane stress (`i_tf_plane_stress = 0`, default):** the calculations are
+    **Plane stress (`i_tf_stress_model = 1`, default):** the calculations are
     made under the plane stress assumption. Plane strain model applies for thin
     layer in the vertical direction and is there fore not applicable to
     this configuration in theory. The radial and toroidal stress calculations
@@ -637,7 +637,7 @@ $$
     code on DEMO designs.
 </p>
 - <p style='text-align: justify;'>
-    **Generalized plane strain (`i_tf_plane_stress = 1`):** the
+    **Generalized plane strain (`i_tf_stress_model = 0,2`):** the
     calculations are made using the generalized plane strain hypothesis that
     applies for tall cylinders with external external force applied at the end
     (vertical tension). This is the correct assumption for inboard mid-plane
@@ -648,7 +648,10 @@ $$
     Poisson's ratio, one for the \(\left(r, \theta\right) \) plane to \(z\) and
     another for the radial to toroidal direction. Although more coherent and
     complete this model is not yet used by default as more FEA validations
-    are needed.
+    are needed. `i_tf_stress_model = 0` is the older model, which is O(n^3)
+    in the number of layers and fails if there is a solid bore. 
+    `i_tf_stress_model = 2` is the newr model, which is O(n) and accepts a solid
+    bore, but is otherwise identical to the older model `i_tf_stress_model = 0`.
   </p>
 
 <p style='text-align: justify;'>
@@ -1427,7 +1430,7 @@ Another subroutine, `tfspcall` is called outside `stfcoil` to estimate to check 
 |  Parameter | description | Iteration variable | Default | Unit |
 | - | - | - | - | - |
 | `f_vforce_inboard` | Fraction of the vertical force supported by the inboard leg | - | 0.5 | - |
-|  `i_tf_plane_stress` | Switch to select the inboard mid-plane stress model <br> 0 : Plane stress <br> 1 : Generalized plane stress | - | 0 | - |
+|  `i_tf_stress_model` | Switch to select the inboard mid-plane stress model <br> 1 : Plane stress <br> 0,2 : Generalized plane stress | - | 0 | - |
 |  `i_tf_bucking` | Switch to select the bucking strategy <br> 0 : No bucking structure <br> 1 : TF bucking structure <br> 2 : TF bucked on CS coil <br> 3 : TF bucked on CS coil (CS-TF layer included in the stress calc.) | - | 0 : if `i_tf_coil \= 1` <br> 1 : if `i_tf_coil = 1` | - |
 
 <br>

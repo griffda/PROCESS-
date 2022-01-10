@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1059-gfc5b033d code contains untracked changes
+   Tag No. : v2.1-1061-gb1f8fce0 code contains untracked changes
     Branch : 1509-outer-tf-case
-   Git log : Added\ back\ in\ the\ missing\ front\ case\ steel
- Date/time : 22 Dec 2021 13:48:46 -05:00(hh:mm) UTC
+   Git log : Added\ new\ regression\ test\ files
+ Date/time :  7 Jan 2022 11:24:31 -05:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /home/cswan/process/process
-     Input : /tmp/pytest-of-cswan/pytest-21/test_scenario_FNSF_0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-35/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-35/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -1653,7 +1653,7 @@ ripmax   = 1.0      *Maximum allowable toroidal field ripple amplitude at plasma
 n_tf     = 12       *Number of TF coil  
 vcool    = 5.0      *Max centrepost coolant flow speed at midplane (m/s)
 vftf     = 0.2      *Coolant fraction of TFC 'cable' (i_tf_sup=1) or of TFC leg (i_tf_sup=0)
-i_tf_plane_stress = 2
+i_tf_stress_model = 2 *Switch for the TF coil stress model (2: Axisymmetric extended plane strain)
 *Iteration variables: cdtfleg fcoolcp oacdcp tcpav
 
 *-------------Current Drive Variables--------------*

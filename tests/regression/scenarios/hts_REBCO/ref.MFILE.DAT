@@ -3,6 +3,7 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.2.0   R"
+<<<<<<< HEAD
  Date_of_run_____________________________________________________________ (date)________________________     "06/01/2022"
  Time_of_run_____________________________________________________________ (time)________________________     "14:23"
  User____________________________________________________________________ (username)____________________     "cswan"   
@@ -11,6 +12,16 @@
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1205-tf-cond-stiffness"                                                                            
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "All\ smearing\ is\ now\ done\ with\ new\ parallel/series\ "                                        
  Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-28/test_scenario_hts_REBCO_0/IN.DAT                                                                                                                                         "
+=======
+ Date_of_run_____________________________________________________________ (date)________________________     "07/01/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "11:24"
+ User____________________________________________________________________ (username)____________________     "cswan"   
+ PROCESS_run_title_______________________________________________________ (runtitle)____________________     "hts model using "croco" conductor based on kit design                                              
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1061-gb1f8fce0"                                                                               
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1509-outer-tf-case"                                                                                
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Added\ new\ regression\ test\ files"                                                               
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-35/test_scenario_hts_REBCO_0/IN.DAT                                                                                                                                         "
+>>>>>>> develop
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #

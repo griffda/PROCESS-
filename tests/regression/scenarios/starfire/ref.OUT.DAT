@@ -6,6 +6,7 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
+<<<<<<< HEAD
    Tag No. : v2.1-1067-gee5d7227 code contains untracked changes
     Branch : 1205-tf-cond-stiffness
    Git log : All\ smearing\ is\ now\ done\ with\ new\ parallel/series\
@@ -14,6 +15,16 @@
   Computer : cswan-2017-desktop
  Directory : /tmp/pytest-of-cswan/pytest-28/test_solver0
      Input : /tmp/pytest-of-cswan/pytest-28/test_scenario_starfire_0/IN.DAT
+=======
+   Tag No. : v2.1-1061-gb1f8fce0 code contains untracked changes
+    Branch : 1509-outer-tf-case
+   Git log : Added\ new\ regression\ test\ files
+ Date/time :  7 Jan 2022 11:25:21 -05:00(hh:mm) UTC
+      User : cswan
+  Computer : cswan-2017-desktop
+ Directory : /tmp/pytest-of-cswan/pytest-35/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-35/test_scenario_starfire_0/IN.DAT
+>>>>>>> develop
  Run title : starfire
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
