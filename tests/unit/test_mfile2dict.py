@@ -6,7 +6,7 @@ import json
 import yaml
 import pickle
 
-from process.utilities import mfile2dict
+from process.io import mfile2dict
 
 
 @pytest.fixture(scope="module")
@@ -27,17 +27,14 @@ def temporary_dir():
     return tempfile.mkdtemp()
 
 
-@pytest.mark.python_tools
 def test_parser_succeed(read_mfile):
     assert read_mfile._mfile_data
 
 
-@pytest.mark.python_tools
 def test_value_read(read_mfile):
     read_mfile.get_parameter_value('xcm013') == 9.7718E-01
 
 
-@pytest.mark.python_tools
 def test_write_json(read_mfile, temporary_dir):
     _json_f = os.path.join(temporary_dir, '2017_baseline.json')
     read_mfile.write(_json_f)
@@ -45,7 +42,6 @@ def test_write_json(read_mfile, temporary_dir):
     assert json.load(open(_json_f))
 
 
-@pytest.mark.python_tools
 def test_write_yaml(read_mfile, temporary_dir):
     _yml_f = os.path.join(temporary_dir, '2017_baseline.yml')
     read_mfile.write(_yml_f)
@@ -53,7 +49,6 @@ def test_write_yaml(read_mfile, temporary_dir):
     assert yaml.load(open(_yml_f), Loader=yaml.BaseLoader)
 
 
-@pytest.mark.python_tools
 def test_write_pickle(read_mfile, temporary_dir):
     _pckl_f = os.path.join(temporary_dir, '2017_baseline.pckl')
     read_mfile.write(_pckl_f)
