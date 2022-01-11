@@ -1742,7 +1742,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         eyoung_steel, eyoung_res_tf_buck, eyoung_ins, eyoung_al, eyoung_copper, &
         aiwp, aswp, cpttf, n_tf, i_tf_stress_model, sig_tf_wp_max, &
         i_tf_turns_integer, casthi, acond, avwp, awphec, poisson_ins, &
-        eyoung_cond_t, poisson_cond_z, poisson_cond_t, dhecoil, fcutfsu
+        eyoung_cond_t, poisson_cond_z, poisson_cond_t, dhecoil, fcutfsu, &
+        strncon_tf
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
         cohbop, ncls, cptdin
     use constants, only: pi, sig_file
