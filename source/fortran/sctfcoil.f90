@@ -5197,7 +5197,7 @@ subroutine tfspcall(outfile,iprint)
         
     else
         call supercon(acstf,aturn,bmaxtfrp,vftf,fcutfsu,cpttf,jwptf,i_tf_sc_mat, &
-        fhts,strncon_tf,tdmptf,tfes,tftmp,tmaxpro,bcritsc,tcritsc,iprint, &
+        fhts,tdmptf,tfes,tftmp,tmaxpro,bcritsc,tcritsc,iprint, &
         outfile,jwdgcrt,vdump,tmargtf)
         
         vtfskv = vdump/1.0D3            !  TFC Quench voltage in kV
@@ -5206,7 +5206,7 @@ subroutine tfspcall(outfile,iprint)
 contains    
 
     subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,jwp,isumat,fhts, &
-        strain,tdmptf,tfes,thelium,tmax,bcritsc,tcritsc,iprint,outfile, &
+        tdmptf,tfes,thelium,tmax,bcritsc,tcritsc,iprint,outfile, &
         jwdgcrt,vd,tmarg)
 
         !! Routine to calculate the TF superconducting conductor  properties
@@ -5231,7 +5231,6 @@ contains
         !! 7 = Durham Ginzburg-Landau Nb-Ti parameterisation
         !! fhts    : input real : Adjustment factor (<= 1) to account for strain,
         !! radiation damage, fatigue or AC losses
-        !! strain : input real : Strain on superconductor at operation conditions
         !! tdmptf : input real : Dump time (sec)
         !! tfes : input real : Energy stored in one TF coil (J)
         !! thelium : input real : He temperature at peak field point (K)
@@ -5255,7 +5254,7 @@ contains
 
         integer, intent(in) :: isumat, iprint, outfile
         real(dp), intent(in) :: acs, aturn, bmax, fcu, fhe, fhts
-        real(dp), intent(in) :: iop, jwp, strain, tdmptf, tfes, thelium, tmax, bcritsc, tcritsc
+        real(dp), intent(in) :: iop, jwp, tdmptf, tfes, thelium, tmax, bcritsc, tcritsc
         real(dp), intent(out) :: jwdgcrt, vd, tmarg
 
         !  Local variables
@@ -5283,7 +5282,7 @@ contains
 
             !  jcritsc returned by itersc is the critical current density in the
             !  superconductor - not the whole strand, which contains copper
-            call itersc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
+            call itersc(thelium,bmax,strncon_tf,bc20m,tc0m,jcritsc,bcrit,tcrit)
             jcritstr = jcritsc * (1.0D0-fcu)
             !  Critical current in cable
             icrit = jcritstr * acs * fcond
@@ -5316,7 +5315,7 @@ contains
         case (4)  !  ITER Nb3Sn parameterization, but user-defined parameters
             bc20m = bcritsc
             tc0m = tcritsc
-            call itersc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
+            call itersc(thelium,bmax,strncon_tf,bc20m,tc0m,jcritsc,bcrit,tcrit)
             jcritstr = jcritsc * (1.0D0-fcu)
             !  Critical current in cable
             icrit = jcritstr * acs * fcond
@@ -5326,7 +5325,7 @@ contains
             tc0m = 16.06D0
             !  jcritsc returned by itersc is the critical current density in the
             !  superconductor - not the whole strand, which contains copper
-            call wstsc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
+            call wstsc(thelium,bmax,strncon_tf,bc20m,tc0m,jcritsc,bcrit,tcrit)
             jcritstr = jcritsc * (1.0D0-fcu)
             !  Critical current in cable
             icrit = jcritstr * acs * fcond
@@ -5340,7 +5339,7 @@ contains
         case (7) ! Durham Ginzburg-Landau Nb-Ti parameterisation
             bc20m = b_crit_upper_nbti
             tc0m = t_crit_nbti 
-            call GL_nbti(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
+            call GL_nbti(thelium,bmax,strncon_tf,bc20m,tc0m,jcritsc,bcrit,tcrit)
             jcritstr = jcritsc  * (1.0D0-fcu)
             !  Critical current in cable
             icrit = jcritstr * acs * fcond
@@ -5348,7 +5347,7 @@ contains
         case (8) ! Branch YCBO model fit to Tallahassee data
             bc20m = 430
             tc0m = 185
-            call GL_REBCO(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
+            call GL_REBCO(thelium,bmax,strncon_tf,bc20m,tc0m,jcritsc,bcrit,tcrit)
             ! A0 calculated for tape cross section already
             jcritstr = jcritsc * (1.0D0-fcu)
             !  Critical current in cable (copper added at this stage in HTS cables)
@@ -5365,7 +5364,7 @@ contains
             ! 'high current density' as per parameterisation described in Wolf, 
             !  and based on Hazelton experimental data and Zhai conceptual model;
             !  see subroutine for full references
-            call HIJC_REBCO(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
+            call HIJC_REBCO(thelium,bmax,strncon_tf,bc20m,tc0m,jcritsc,bcrit,tcrit)
             
             jcritstr = jcritsc * (1.0D0-fcu)
             !  Critical current in cable (copper added at this stage in HTS cables)
@@ -5422,35 +5421,35 @@ contains
                 select case (isumat)
                     ! Issue #483 to be on the safe side, check the fractional as well as the absolute error
                 case (1,4)
-                    call itersc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+                    call itersc(ttest ,bmax,strncon_tf,bc20m,tc0m,jcrit0,b,t)
                     if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
-                    call itersc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
-                    call itersc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
+                    call itersc(ttestm,bmax,strncon_tf,bc20m,tc0m,jcritm,b,t)
+                    call itersc(ttestp,bmax,strncon_tf,bc20m,tc0m,jcritp,b,t)
                 case (3)
                     call jcrit_nbti(ttest ,bmax,c0,bc20m,tc0m,jcrit0,t)
                     if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
                     call jcrit_nbti(ttestm,bmax,c0,bc20m,tc0m,jcritm,t)
                     call jcrit_nbti(ttestp,bmax,c0,bc20m,tc0m,jcritp,t)
                 case (5)
-                    call wstsc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+                    call wstsc(ttest ,bmax,strncon_tf,bc20m,tc0m,jcrit0,b,t)
                     if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
-                    call wstsc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
-                    call wstsc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
+                    call wstsc(ttestm,bmax,strncon_tf,bc20m,tc0m,jcritm,b,t)
+                    call wstsc(ttestp,bmax,strncon_tf,bc20m,tc0m,jcritp,b,t)
                 case (7)
-                    call GL_nbti(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+                    call GL_nbti(ttest ,bmax,strncon_tf,bc20m,tc0m,jcrit0,b,t)
                     if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
-                    call GL_nbti(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
-                    call GL_nbti(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
+                    call GL_nbti(ttestm,bmax,strncon_tf,bc20m,tc0m,jcritm,b,t)
+                    call GL_nbti(ttestp,bmax,strncon_tf,bc20m,tc0m,jcritp,b,t)
                 case (8)
-                    call GL_REBCO(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+                    call GL_REBCO(ttest ,bmax,strncon_tf,bc20m,tc0m,jcrit0,b,t)
                     if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
-                    call GL_REBCO(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
-                    call GL_REBCO(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
+                    call GL_REBCO(ttestm,bmax,strncon_tf,bc20m,tc0m,jcritm,b,t)
+                    call GL_REBCO(ttestp,bmax,strncon_tf,bc20m,tc0m,jcritp,b,t)
                 case (9)
-                    call HIJC_REBCO(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+                    call HIJC_REBCO(ttest ,bmax,strncon_tf,bc20m,tc0m,jcrit0,b,t)
                     if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
-                    call HIJC_REBCO(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
-                    call HIJC_REBCO(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
+                    call HIJC_REBCO(ttestm,bmax,strncon_tf,bc20m,tc0m,jcritm,b,t)
+                    call HIJC_REBCO(ttestp,bmax,strncon_tf,bc20m,tc0m,jcritp,b,t)
                 end select
                 ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)
             end do solve_for_tmarg

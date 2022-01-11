@@ -324,7 +324,7 @@ contains
       casthi, n_pancake, bcritsc, i_tf_sup, strncon_pf, thwcndut, farc4tf, &
       thicndut, tftmp, oacdcp, tmax_croco, ptempalw, tmargmin_tf, tmpcry, &
       sig_tf_case_max, dztop, dcond, strncon_cs, etapump, drtop, vcool, dcondins, &
-      i_tf_tresca, dhecoil, tmaxpro, strncon_tf, n_tf, tcpav, fcutfsu, jbus, &
+      i_tf_tresca, dhecoil, tmaxpro, n_tf, tcpav, fcutfsu, jbus, &
       casthi_fraction, tmargmin_cs, sigvvall, vdalw, dcase, t_turn_tf,&
       cpttf_max, tdmptf, casths, i_tf_turns_integer, quench_model, &
       tcritsc, layer_ins, tinstf, n_layer, tcoolin, ripmax, frhocp, &
@@ -2065,9 +2065,6 @@ contains
        case ('strncon_pf')
           call parse_real_variable('strncon_pf', strncon_pf, -0.02D0, 0.02D0, &
                'Strain in PF superconductor material')
-       case ('strncon_tf')
-          call parse_real_variable('strncon_tf', strncon_tf, -0.02D0, 0.02D0, &
-               'Strain in TF superconductor material')
        case ('tcoolin')
           call parse_real_variable('tcoolin', tcoolin, 4.0D0, 373.15D0, &
                'Centrepost coolant inlet temperature (K)')
