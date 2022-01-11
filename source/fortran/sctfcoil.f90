@@ -1731,7 +1731,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use build_variables, only: tfcth, r_tf_inboard_mid, bore, ohcth, hmax, &
         r_tf_inboard_in
-    use tfcoil_variables, only: eyzwp, casestr, windstrain, n_tf_turn, &
+    use tfcoil_variables, only: casestr, n_tf_turn, &
         dr_tf_wp, i_tf_tresca, acstf, vforce, &
         ritfc, jwptf, sig_tf_cs_bucked, sig_tf_case, sig_tf_wp, &
         thwcndut, insstrain, vforce, tinstf, &
@@ -2422,12 +2422,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
         ! Case strain
         casestr = sig_tf_z(n_tf_bucking) / eyoung_steel
-
-        ! Young's modulus in vertical direction on WP
-        eyzwp = eyoung_wp_z_eff
-    
-        ! Strain in vertical direction on WP
-        windstrain = sig_tf_z(n_tf_bucking+1) / eyzwp
     
         ! Radial strain in insulator
         insstrain = sig_tf_r(n_radial_array) * eyoung_wp_stiffest_leg / eyoung_wp_t_eff / eyoung_ins
@@ -2465,8 +2459,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         sig_tf_smeared_z = sig_tf_z   ! Array equation
     end if
     ! ------------------------------
-
-
+    
+    ! Strain in vertical direction on WP
+    strncon_tf = sig_tf_z(n_tf_bucking+1) / eyoung_wp_z_eff
 
     ! STRESS DISTRIBUTIONS CORRECTIONS
     ! --------------------------------
@@ -2800,7 +2795,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             call ovarre(outfile,'Maximum radial deflection at midplane (m)','(deflect)',&
                                 deflect(n_radial_array), 'OP ')     
             call ovarre(outfile,'Vertical strain on casing','(casestr)', casestr, 'OP ')
-            call ovarre(outfile,'Vertical strain on winding pack','(windstrain)', windstrain, 'OP ')
             call ovarre(outfile,'Radial strain on insulator','(insstrain)', insstrain, 'OP ')
         end if
 
@@ -4634,13 +4628,13 @@ subroutine outtf(outfile, peaktfflag)
         ovarrf, obuild
     use numerics, only: icc
     use tfcoil_variables, only: wwp1, whttf, yarc, xarc, &
-        windstrain, wwp2, whtconsh, tftort, whtconcu, ritfc, &
+        wwp2, whtconsh, tftort, whtconcu, ritfc, &
         tfinsgap, deflect, vtfskv, tmaxpro, fcutfsu, t_conductor, &
         tinstf, n_tf_turn, cforce, i_tf_turns_integer, tdmptf, &
         oacdcp, estotftgj, n_tf, whtconin, jwptf, tfa, &
         tficrn, n_layer, tfleng, thwcndut, casthi, sigvvall, &
         thkcas, casths, vforce, n_pancake, aswp, aiwp, tfareain, acasetf, &
-        vftf, eyzwp, thicndut, dhecoil, insstrain, taucq, ripmax, &
+        vftf, thicndut, dhecoil, insstrain, taucq, ripmax, &
         whtconsc, sig_tf_case_max, bmaxtfrp, vdalw, dr_tf_wp, whtcas, whtcon, &
         ripple, i_tf_tresca, bmaxtf, awphec, avwp, aiwp, acond, acndttf, &
         i_tf_sc_mat, voltfleg, vol_cond_cp, tflegres, tcpav, prescp, i_tf_sup, &

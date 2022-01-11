@@ -58,5 +58,7 @@ OBS_VARS = {
     "alstrtf": ["sig_tf_case_max", "sig_tf_wp_max"],
     "strtf0": "sig_tf_cs_bucked",
     "eyoung_winding": "eyoung_cond_z",
-    "i_tf_plane_stress": "i_tf_stress_model"
+    "i_tf_plane_stress": "i_tf_stress_model",
+    "windstrain": "strncon_tf",
+    "eyzwp": "eyoung_wp_z_eff"
 }

@@ -313,9 +313,6 @@ module tfcoil_variables
   !! Rem SK : Not used in tfcoil to set the current any more. Should not be used as
   !! iteration variable 12 any more. It is now calculated.
 
-  real(dp) :: eyzwp
-  !! Winding pack vertical Young's modulus (Pa)
-
   real(dp) :: eyoung_ins
   !! Insulator Young's modulus [Pa]. Default value (1.0D8) setup the following values
   !!  - SC TF, eyoung_ins = 20 Gpa (default value from DDD11-2 v2 2 (2009))
@@ -445,7 +442,9 @@ module tfcoil_variables
   !! strain in PF superconductor material (used in Nb3Sn critical surface model `isumatph=1,4,5`)
 
   real(dp) :: strncon_tf
-  !! strain in TF superconductor material (used in Nb3Sn critical surface model `i_tf_sc_mat=1,4,5`)
+  !! Strain in TF conductor material 
+  !! used in Nb3Sn critical surface model `i_tf_sc_mat=1,4,5`
+  !! Constrain using constraint equation `[EDIT]`
 
   character(len=12) :: quench_model
   !! switch for TF coil quench model (Only applies to REBCO magnet at present, issue #522):
@@ -691,9 +690,6 @@ module tfcoil_variables
   real(dp) :: whttf
   !! total mass of the TF coils (kg)
 
-  real(dp) :: windstrain
-  !! longitudinal strain in winding pack
-
   real(dp) :: wwp1
   !! width of first step of winding pack (m)
 
@@ -878,7 +874,6 @@ module tfcoil_variables
     jwdgpro = 0.0D0
     jwptf = 0.0D0
     oacdcp = 0.0D0
-    eyzwp = 0.0D0
     eyoung_ins = 1.0D8
     eyoung_steel = 2.05D11
     eyoung_cond_z = 6.6D8
@@ -982,7 +977,6 @@ module tfcoil_variables
     whtconsh = 0.0D0
     whtgw = 0.0D0
     whttf = 0.0D0
-    windstrain = 0.0D0
     wwp1 = 0.0D0
     wwp2 = 0.0D0
     dthet = 0.0D0
