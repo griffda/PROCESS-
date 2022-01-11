@@ -1738,11 +1738,11 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         acstf, jwptf, insstrain, &
         rbmax, thicndut, acndttf, tfinsgap, &
         acasetf, sig_tf_case_max, poisson_steel, poisson_copper, poisson_al, &
-        n_tf_graded_layers, i_tf_sup, i_tf_bucking, fcoolcp, eyoung_winding_z, &
+        n_tf_graded_layers, i_tf_sup, i_tf_bucking, fcoolcp, eyoung_cond_z, &
         eyoung_steel, eyoung_res_tf_buck, eyoung_ins, eyoung_al, eyoung_copper, &
         aiwp, aswp, cpttf, n_tf, i_tf_stress_model, sig_tf_wp_max, &
         i_tf_turns_integer, casthi, acond, avwp, awphec, poisson_ins, &
-        eyoung_winding_t, poisson_winding_z, poisson_winding_t
+        eyoung_cond_t, poisson_cond_z, poisson_cond_t, dhecoil, fcutfsu
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
         cohbop, ncls, cptdin
     use constants, only: pi, sig_file
@@ -2090,11 +2090,11 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             ! stiffest dimension is toroidal and the radial and vertical
             ! dimension are less stiff. Nevertheless this attempts to 
             ! hit the mark.
-            ! [EDIT: eyoung_winding is for the TF coil, not the CS coil]
+            ! [EDIT: eyoung_cond is for the TF coil, not the CS coil]
             
             ! Get transverse properties
             call eyngparallel(eyoung_steel, oh_steel_frac, poisson_steel, &
-                              eyoung_winding_z, 1D0-oh_steel_frac, poisson_winding_z, & 
+                              eyoung_cond_z, 1D0-oh_steel_frac, poisson_cond_z, & 
                               eyoung_p(1),a_working,poisson_p(1))
             
             ! Get vertical properties
@@ -2120,7 +2120,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                             eyoung_ins, 2*thicndut, poisson_ins, & 
                             eyoung_working, l_working, poisson_working)  
             ! Add cable          
-            call eyngseries(eyoung_winding_t, t_cable_oh, poisson_winding_t, &
+            call eyngseries(eyoung_cond_t, t_cable_oh, poisson_cond_t, &
                             eyoung_working, l_working, poisson_working, &
                             eyoung_working, l_working, poisson_working) 
             ! Add this to the properties we're accumulating
@@ -2223,6 +2223,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         end if
         
         
+        
         ! Average WP Young's modulus in the transverse 
         ! (radial and toroidal) direction
         ! Split up into "legs" (slices) of the turn layout
@@ -2241,19 +2242,26 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                           eyoung_wp_t,a_working,poisson_wp_t, &
                           eyoung_wp_t,a_working,poisson_wp_t)
         
-        ! Serial-composite innermost leg, insulation + conduit + cable
+        ! Serial-composite innermost leg, insulation + conduit + conductor + co-wound copper
         ! Insulation + conduit first
         call eyngseries(eyoung_ins,2*t_ins_eff,poisson_ins, & 
                         eyoung_steel,2*thwcndut,poisson_steel, &
                         eyoung_working,l_working,poisson_working)
-        ! Serial-composite in the cable
-        call eyngseries(eyoung_winding_t,t_cable_eyng,poisson_winding_t, & 
+        ! Serial-composite in the conductor
+        call eyngseries(eyoung_cond_t,t_cable_eyng*(1.0D0-fcutfsu),poisson_cond_t, & 
                         eyoung_working,l_working,poisson_working, &
                         eyoung_working,l_working,poisson_working)
-        ! [EDIT: Add central cooling channel?]
+        ! Serial-composite in the co-wound copper (assumed evenly distributed in the volume)
+        call eyngseries(eyoung_copper,t_cable_eyng*fcutfsu,poisson_copper, & 
+                        eyoung_working,l_working,poisson_working, &
+                        eyoung_working,l_working,poisson_working)
                         
         ! Parallel-composite in this last leg:
-        call eyngparallel(eyoung_working,t_cable_eyng,poisson_working, &
+        call eyngparallel(eyoung_working,t_cable_eyng-dhecoil,poisson_working, &
+                          eyoung_wp_t,a_working,poisson_wp_t, &
+                          eyoung_wp_t,a_working,poisson_wp_t)
+        ! Parallel-composite in the helium cooling channel:
+        call eyngparallel(0D0,dhecoil,poisson_steel, &
                           eyoung_wp_t,a_working,poisson_wp_t, &
                           eyoung_wp_t,a_working,poisson_wp_t)
         
@@ -2267,8 +2275,12 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         call eyngparallel(eyoung_steel,aswp,poisson_steel, &
                           eyoung_ins,a_tf_ins,poisson_ins, & 
                           eyoung_wp_z,a_working,poisson_wp_z)
-        ! Parallel-composite cable into these quantities
-        call eyngparallel(eyoung_winding_z,acond,poisson_winding_z, & 
+        ! Parallel-composite conductor into these quantities
+        call eyngparallel(eyoung_cond_z,acond*(1.0D0-fcutfsu),poisson_cond_z, & 
+                          eyoung_wp_z,a_working,poisson_wp_z, &                          
+                          eyoung_wp_z,a_working,poisson_wp_z)
+        ! Parallel-composite co-wound copper into these quantities
+        call eyngparallel(eyoung_copper,acond*fcutfsu,poisson_copper, & 
                           eyoung_wp_z,a_working,poisson_wp_z, &                          
                           eyoung_wp_z,a_working,poisson_wp_z)
         ! Parallel-composite voids, insertion gap, and helium into these quantities
@@ -2278,17 +2290,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
         ! Average WP Young's modulus in the vertical direction, now including the lateral case
         ! Parallel-composite the steel and insulation, now including the lateral case (sidewalls)
-        ! [EDIT: Should be able to do this using eyoung_wp_z]
-        call eyngparallel(eyoung_steel,a_wp_steel_eff,poisson_steel, &
-                          eyoung_ins,a_tf_ins,poisson_ins, & 
-                          eyoung_wp_z_eff,a_working,poisson_wp_z_eff)
-        ! Parallel-composite cable into these quantities
-        call eyngparallel(eyoung_winding_z,acond,poisson_winding_z, & 
-                          eyoung_wp_z_eff,a_working,poisson_wp_z_eff, &                          
-                          eyoung_wp_z_eff,a_working,poisson_wp_z_eff)
-        ! Parallel-composite voids, insertion gap, and helium into these quantities
-        call eyngparallel(0D0,a_wp_eff-a_working,poisson_steel, & ! 
-                          eyoung_wp_z_eff,a_working,poisson_wp_z_eff, &                          
+        call eyngparallel(eyoung_steel,a_wp_steel_eff - aswp,poisson_steel, &
+                          eyoung_wp_z,a_working,poisson_wp_z, &                          
                           eyoung_wp_z_eff,a_working,poisson_wp_z_eff)
 
     ! Resistive coil
@@ -4141,7 +4144,7 @@ subroutine eyngparallel(eyoung_j_1, a_1, poisson_j_perp_1, & ! Inputs
       
     !! Author : C. Swanson, PPPL
     !! January 2022
-    !! See Issue #1205
+    !! See Issue #1205 for derivation PDF
     !! This subroutine gives the smeared elastic properties of two 
     !! members that are carrying a force in parallel with each other.
     !! The force goes in direction j.
@@ -4218,7 +4221,7 @@ subroutine eyngseries(eyoung_j_1, l_1, poisson_j_perp_1, & ! Inputs
       
     !! Author : C. Swanson, PPPL
     !! January 2022
-    !! See Issue #1205
+    !! See Issue #1205 for derivation PDF
     !! This subroutine gives the smeared elastic properties of two 
     !! members that are carrying a force in series with each other.
     !! The force goes in direction j.

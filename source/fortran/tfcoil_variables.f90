@@ -155,7 +155,7 @@ module tfcoil_variables
   !! density of conduit + ground-wall insulation (kg/m3)
 
   real(dp) :: dhecoil
-  !! diameter of He coil in TF winding (m)
+  !! diameter of central helium channel in TF winding (m)
 
   real(dp) :: estotftgj
   !! total stored energy in the toroidal field (GJ)
@@ -306,11 +306,11 @@ module tfcoil_variables
   real(dp) :: eyoung_steel
   !! Steel case Young's modulus (Pa) (default value from DDD11-2 v2 2 (2009))
 
-  real(dp) :: eyoung_winding_z
+  real(dp) :: eyoung_cond_z
   !! SC TF coil conductor Young's modulus in the parallel (along the wire/tape)
   !! direction [Pa]
   
-  real(dp) :: eyoung_winding_t
+  real(dp) :: eyoung_cond_t
   !! SC TF coil conductor Young's modulus in the transverse direction [Pa]
   
   real(dp) :: eyoung_res_tf_buck
@@ -336,10 +336,10 @@ module tfcoil_variables
   !! Insulation Poisson's ratio. Default: Kapton.
   !! Source : DuPont™ Kapton® HN datasheet.
 
-  real(dp) :: poisson_winding_z
+  real(dp) :: poisson_cond_z
   !! SC TF coil conductor Poisson's ratio in the parallel-transverse direction
   
-  real(dp) :: poisson_winding_t
+  real(dp) :: poisson_cond_t
   !! SC TF coil conductor Poisson's ratio in the transverse-transverse direction
 
   real(dp) :: rbmax
@@ -857,8 +857,8 @@ module tfcoil_variables
     eyzwp = 0.0D0
     eyoung_ins = 1.0D8
     eyoung_steel = 2.05D11
-    eyoung_winding_z = 6.6D8
-    eyoung_winding_t = 0.0D0
+    eyoung_cond_z = 6.6D8
+    eyoung_cond_t = 0.0D0
     eyoung_res_tf_buck = 150.0D9 
     eyoung_copper = 117.0D9
     eyoung_al = 69.0D9 
@@ -866,8 +866,8 @@ module tfcoil_variables
     poisson_copper = 0.35D0
     poisson_al = 0.35D0
     poisson_ins = 0.34D0
-    poisson_winding_z = 0.3
-    poisson_winding_t = 0.3
+    poisson_cond_z = 0.3
+    poisson_cond_t = 0.3
     rbmax = 0.0D0
     tflegres = 0.0D0
     toroidalgap = 1.0D0 ![m]
