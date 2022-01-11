@@ -57,32 +57,6 @@ build_docker_dev_image:
         - docker/dev/Dockerfile
 
 
-.before_test_template: &test-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
-  before_script:
-    - source ~/.venv_$PY_VERSION/bin/activate
-    - python -m pip install --upgrade pip
-    # Manually install numpy as including it in requirements doesnt install it
-    # It is a pre-requisite to f90wrap install, although requirements in image
-    # always want latest to detect any immediate future problems
-    - python -m pip install --ignore-installed numpy
-    - python -m pip install --ignore-installed -r requirements.txt
-    - python -m pip install git+https://github.com/jonMaddockUkaea/ford
-    - python -m pip install --find-links=process_dist_$PY_VERSION process
-    - apt update && apt upgrade -y
-    - apt install lcov -y
-
-.before_test_template-py38: &test-setup-py38
-  variables:
-    PY_VERSION: py38
-  <<: *test-setup
-
-.before_test_template-py36: &test-setup-py36
-  variables:
-    PY_VERSION: py36
-  <<: *test-setup
-
-
 # a CI deploy token only allows registry access, but not repository write access (it can provide read)
 # https://docs.gitlab.com/ee/user/project/deploy_tokens/
 #
@@ -127,165 +101,116 @@ build_docker_dev_image:
 #-----------------
 #  Build
 #-----------------
-.make:
+make-py38:
   stage: build
   image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   artifacts:
     paths:
-      - process_dist_$PY_VERSION/process-*.tar.gz
-      - process_dist_$PY_VERSION/process-*.whl
+      - process_dist/process-*.tar.gz
+      - process_dist/process-*.whl
       - build/CMakeFiles/process.dir/source/fortran/*.gcno
       - lcov_results
       - python_modules.txt
     expire_in: 1 week
   script:
-    - source ~/.venv_$PY_VERSION/bin/activate
-    - python -m pip install --upgrade pip
-    - python -m pip install --ignore-installed numpy
-    - python -m pip install --ignore-installed -r requirements.txt
     - cmake -H. -Bbuild
     - cmake --build build
-    - python3 setup.py sdist -d process_dist_$PY_VERSION
-    - python3 setup.py bdist_wheel -d process_dist_$PY_VERSION
+    - python3 setup.py sdist -d process_dist
+    - python3 setup.py bdist_wheel -d process_dist
     - python -m pip freeze > python_modules.txt
-  tags:
-    - ubuntu
 
-make-py38:
-  extends: ".make"
-  variables:
-    PY_VERSION: py38
-
-make-py36:
-  extends: ".make"
-  variables:
-    PY_VERSION: py36
 
 #-----------------
 #  Testing
 #-----------------
-
-.unit:
-  when: on_success
+.test_template:
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   stage: testing
-  script:
-    - pytest tests/unit
-  tags:
-    - ubuntu
+  before_script:
+    - python -m pip install git+https://github.com/jonMaddockUkaea/ford
+    - python -m pip install --find-links=process_dist
+    - apt install lcov -y
+  dependencies:
+    - make-py38
 
 unit-py38:
-  extends: ".unit"
-  <<: *test-setup-py38
-
-unit-py36:
-  only:
-    - master
-    - develop
-  extends: ".unit"
-  <<: *test-setup-py36
-
-.integration:
-  when: on_success
-  stage: testing
+  extends: ".test_template"
+  script:
+    - pytest tests/unit/ -vs | tee tests/unit/pytest.log
+  artifacts:
+    when: on_failure
+    paths:
+      - tests/unit/pytest.log
+    expire_in: 1 week
+  
+integration-py38:
+  extends: ".test_template"
+  script:
+    - pytest tests/integration/ -vs | tee tests/integration/pytest.log
   artifacts:
     when: on_failure
     paths:
       - tests/integration/pytest.log
     expire_in: 1 week
-  script:
-    - pytest -v tests/integration/ -s | tee tests/integration/pytest.log
-  tags:
-    - ubuntu
-
-integration-py38:
-  extends: ".integration"
-  <<: *test-setup-py38
-
-integration-py36:
-  only:
-    - master
-    - develop
-  extends: ".integration"
-  <<: *test-setup-py36
-
-.regression:
-  when: on_success
-  stage: testing
-  artifacts:
-    paths: 
-      - lcov_results
-      - tests/regression/pytest.log
-      - tests/regression/scenarios/starfire/out.MFILE.DAT
-    expire_in: 1 week
-  script:
-    - pytest -v tests/regression -s | tee tests/regression/pytest.log
-    - lcov --gcov-tool gcov --capture --directory build/CMakeFiles/process.dir/source/fortran/ --output-file lcov_results/coverage.info
-    - genhtml --output-directory lcov_results/html lcov_results/coverage.info
-  tags:
-    - ubuntu
 
 regression-py38:
-  extends: ".regression"
-  <<: *test-setup-py38
-  dependencies:
-    - make-py38
+  extends: ".test_template"
+  script:
+    - pytest tests/regression -vs | tee tests/regression/pytest.log
+    - lcov --gcov-tool gcov --capture --directory build/CMakeFiles/process.dir/source/fortran/ --output-file lcov_results/coverage.info
+    - genhtml --output-directory lcov_results/html lcov_results/coverage.info
+  artifacts:
+    when: on_failure
+    paths:
+      - lcov_results
+      - tests/regression/pytest.log
+    expire_in: 1 week
 
-regression-py36:
-  only:
-    - master
-    - develop
-  extends: ".regression"
-  <<: *test-setup-py36
-  dependencies:
-    - make-py36
 
 regression-py38-5-percent:
-  extends: ".regression"
-  <<: *test-setup-py38
-  dependencies:
-    - make-py38
-  artifacts:
-    paths:
-      - tests/regression/pytest_5_percent.log
+  extends: ".test_template"
   script:
-    - pytest -v tests/regression -s --reg-tolerance=5 | tee tests/regression/pytest_5_percent.log
+    - pytest tests/regression -vs --reg-tolerance=5 | tee tests/regression/pytest.log
+  artifacts:
+    when: on_failure
+    paths:
+      - tests/regression/pytest.log
+    expire_in: 1 week
+
 
 baseline_2019-py38:
+  extends: ".test_template"
   when: on_success
   only:
     - develop
   stage: testing
-  <<: *test-setup-py38
   script:
     - process -i tracking/baseline_2019/baseline_2019_IN.DAT
   artifacts:
     paths:
       - tracking/baseline_2019/baseline_2019_MFILE.DAT
     expire_in: 1 week
-  tags:
-    - ubuntu
 
 baseline_2018-py38:
+  extends: ".test_template"
   when: on_success
   only:
     - develop
   stage: testing
-  <<: *test-setup-py38
   script:
     - process -i tracking/baseline_2018/baseline_2018_IN.DAT
   artifacts:
     paths:
       - tracking/baseline_2018/baseline_2018_MFILE.DAT
     expire_in: 1 week
-  tags:
-    - ubuntu
+
 
 starfire-py38:
+  extends: ".test_template"
   when: on_success
   only:
     - develop
   stage: testing
-  <<: *test-setup-py38
   script:
     - process -i tests/regression/scenarios/starfire/IN.DAT
     - mv tests/regression/scenarios/starfire/MFILE.DAT tracking/starfire_MFILE.DAT 
@@ -293,8 +218,6 @@ starfire-py38:
     paths:
       - tracking/starfire_MFILE.DAT 
     expire_in: 1 week
-  tags:
-    - ubuntu
 
 #-----------------
 #  Quality
@@ -315,13 +238,13 @@ line_length:
 #-----------------
 
 tracking_rtv:
+  extends: ".test_template"
   when: on_success
   image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   only: 
     - develop
   stage: tracking
   allow_failure: true
-  <<: *test-setup-py38
   script:
     - *setup-ssh
     - pip install pandas
