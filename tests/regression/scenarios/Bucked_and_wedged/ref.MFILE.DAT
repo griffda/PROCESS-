@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.2.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "07/01/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "11:24"
- User____________________________________________________________________ (username)____________________     "cswan"   
+ Date_of_run_____________________________________________________________ (date)________________________     "10/01/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "17:08"
+ User____________________________________________________________________ (username)____________________     "rhicha"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1061-gb1f8fce0"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1509-outer-tf-case"                                                                                
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Added\ new\ regression\ test\ files"                                                               
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-35/test_scenario_Bucked_and_wedge0/IN.DAT                                                                                                                                   "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1079-g2393fac5"                                                                               
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1432-plot-plot-fails-for-i_tf_sc_mat-9"                                                            
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |1509-outer-tf-case|\ into\ |develop|"                                              
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-270/test_scenario_Bucked_and_wedge0/IN.DAT                                                                                                                                 "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #

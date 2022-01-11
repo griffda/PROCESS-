@@ -13,14 +13,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1061-gb1f8fce0 code contains untracked changes
-    Branch : 1509-outer-tf-case
-   Git log : Added\ new\ regression\ test\ files
- Date/time :  7 Jan 2022 11:24:43 -05:00(hh:mm) UTC
-      User : cswan
-  Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-35/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-35/test_scenario_hts_REBCO_0/IN.DAT
+   Tag No. : v2.1-1079-g2393fac5 code contains untracked changes
+    Branch : 1432-plot-plot-fails-for-i_tf_sc_mat-9
+   Git log : Merge\ branch\ |1509-outer-tf-case|\ into\ |develop|
+ Date/time : 10 Jan 2022 17:08:57 +00:00(hh:mm) UTC
+      User : rhicha
+  Computer : l0500
+ Directory : /tmp/pytest-of-rhicha/pytest-270/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-270/test_scenario_hts_REBCO_0/IN.DAT
  Run title : hts model using "croco" conductor based on kit design
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
