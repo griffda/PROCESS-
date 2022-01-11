@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1047-gaa6f8e3f
-    Branch : 1494-rebco-current-density-incorrectly-calculated
-   Git log : Merge\ branch\ |develop|\ into\ 1494-rebco-current-density-incorrectly-calculated
- Date/time : 21 Dec 2021 14:23:28 +00:00(hh:mm) UTC
+   Tag No. : v2.1-1079-g2393fac5 code contains untracked changes
+    Branch : 1432-plot-plot-fails-for-i_tf_sc_mat-9
+   Git log : Merge\ branch\ |1509-outer-tf-case|\ into\ |develop|
+ Date/time : 10 Jan 2022 17:10:29 +00:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-261/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-261/test_scenario_stellarator_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-270/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-270/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  
