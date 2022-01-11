@@ -4647,7 +4647,7 @@ subroutine outtf(outfile, peaktfflag)
         cpttf, cdtfleg, whttflgs, whtcp, i_tf_bucking, tlegav, rhotfleg, rhocp, &
         presleg, i_tf_shape, fcoolcp, pres_joints, tmargtf, tmargmin_tf, &
         f_vforce_inboard, vforce_outboard, acstf, t_turn_tf, eyoung_res_tf_buck, &
-        sig_tf_wp_max
+        sig_tf_wp_max, i_tf_cond_props, eyoung_cond_z, eyoung_cond_t
     use physics_variables, only: itart
     use constants, only: mfile, pi
     implicit none
@@ -4878,6 +4878,16 @@ subroutine outtf(outfile, peaktfflag)
             call ovarrf(outfile,'minimum TF conductor temperature margin  (K)','(tmargmin_tf)',tmargmin_tf)
             call ovarrf(outfile,'TF conductor temperature margin (K)','(tmargtf)',tmargtf)
 
+            call ovarin(outfile,'Elastic properties behavior', '(i_tf_cond_props)', i_tf_cond_props)
+            if ( i_tf_cond_props == 0 ) then 
+              call ocmmnt(outfile,'  Conductor stiffness neglected')
+            else if ( i_tf_cond_props == 1 ) then 
+              call ocmmnt(outfile,'  Conductor stiffness is user-input')
+            else if ( i_tf_cond_props == 2 ) then 
+              call ocmmnt(outfile,'  Conductor stiffness is set by material-specific default')
+            end if
+            call ovarre(outfile, 'Conductor axial Young''s modulus', '(eyoung_cond_z)', eyoung_cond_z)
+            call ovarre(outfile, 'Conductor transverse Young''s modulus', '(eyoung_cond_t)', eyoung_cond_t)
         end select
     else
 

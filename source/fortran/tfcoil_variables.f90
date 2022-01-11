@@ -238,6 +238,24 @@ module tfcoil_variables
   !! - =0  Default value : Picture frame coil for TART / PROCESS D-shape for non itart
   !! - =1  PROCESS D-shape : parametrise with 2 arcs 
   !! - =2  Picture frame coils 
+  
+  integer :: i_tf_cond_props
+  !! Switch for the behavior of the TF coil conductor elastic properties
+  !!
+  !! - =0  Young's moduli are set to zero, the conductor is not considered
+  !!       in the stress calculation
+  !! - =1  Elastic properties are set by user input, using the variables
+  !!       `eyoung_cond_z`, `eyoung_cond_t`
+  !! - =2  Elastic properties are set to reasonable defaults taking into
+  !!       account the superconducting material `i_tf_sc_mat`
+  
+  integer :: i_tf_transverse_props
+  !! Switch for the behavior of the elastic properties of the TF coil
+  !! in the transverse direction. Only active if `i_tf_cond_props == 2`
+  !!
+  !! - =0  Cable not potted in solder. Transverse Young's modulus set to zero.
+  !! - =1  Cable potted in solder. Transverse Young's modulus set to reasonable
+  !!       default taking into account the superconducting material `i_tf_sc_mat`
 
   integer :: n_pancake
   !! Number of pancakes in TF coil. Only used if `i_tf_turns_integer=1`
@@ -309,9 +327,13 @@ module tfcoil_variables
   real(dp) :: eyoung_cond_z
   !! SC TF coil conductor Young's modulus in the parallel (along the wire/tape)
   !! direction [Pa]
+  !! Set by user input only if `i_tf_cond_props == 1`; otherwise
+  !! set by the behavior of that switch.
   
   real(dp) :: eyoung_cond_t
   !! SC TF coil conductor Young's modulus in the transverse direction [Pa]
+  !! Set by user input only if `i_tf_cond_props == 1`; otherwise
+  !! set by the behavior of that switch.
   
   real(dp) :: eyoung_res_tf_buck
   !! Resistive TF magnets bucking cylinder young modulus (Pa)
@@ -341,7 +363,7 @@ module tfcoil_variables
   
   real(dp) :: poisson_cond_t
   !! SC TF coil conductor Poisson's ratio in the transverse-transverse direction
-
+  
   real(dp) :: rbmax
   !! Radius of maximum TF B-field (m)
 
@@ -843,6 +865,8 @@ module tfcoil_variables
     i_tf_sc_mat = 1
     i_tf_sup = 1
     i_tf_shape = 0
+    i_tf_cond_props = 0
+    i_tf_transverse_props = 0
     n_pancake = 10
     n_layer = 20
     n_rad_per_layer = 100

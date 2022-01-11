@@ -275,7 +275,8 @@ subroutine check
         n_tf_graded_layers, n_tf_stress_layers, tlegav,  i_tf_stress_model, &
         i_tf_sc_mat, i_tf_wp_geom, i_tf_turns_integer, tinstf, thwcndut, &
         tfinsgap, rcool, dhecoil, thicndut, i_cp_joints, t_turn_tf_is_input, &
-        t_turn_tf, tftmp, t_cable_tf, t_cable_tf_is_input, tftmp, tmpcry
+        t_turn_tf, tftmp, t_cable_tf, t_cable_tf_is_input, tftmp, tmpcry, &
+        i_tf_cond_props, eyoung_cond_z, eyoung_cond_t, i_tf_transverse_props
     use stellarator_variables, only: istell
     use sctfcoil_module, only: initialise_cables
     use vacuum_variables, only: vacuum_model
@@ -900,6 +901,30 @@ subroutine check
     if ( i_tf_wp_geom == -1 ) then
         if ( i_tf_turns_integer == 0 ) i_tf_wp_geom = 1
         if ( i_tf_turns_integer == 1 ) i_tf_wp_geom = 0
+    end if 
+    !-!
+    
+    !-! Setting the TF coil conductor elastic properties
+    !-!
+    if ( i_tf_cond_props == 0 ) then
+        eyoung_cond_z = 0
+        eyoung_cond_t = 0
+    else if ( i_tf_cond_props == 2 ) then
+        select case (i_tf_sc_mat)
+            case (1,4,5) !! Nb3Sn
+                eyoung_cond_z = 0 !! [EDIT: Find!]
+            case (2)     !! Bi-2212
+                eyoung_cond_z = 0 !! [EDIT: Find!]
+            case (3,7)   !! NbTi
+                eyoung_cond_z = 0 !! [EDIT: Find!]
+            case (6,8,9) !! REBCO
+                eyoung_cond_z = 0 !! [EDIT: Find!]
+        end select
+        if ( i_tf_transverse_props == 1) then
+            eyoung_cond_t = 0
+        else
+            eyoung_cond_t = eyoung_cond_z
+        end if
     end if 
     !-!
     
