@@ -2419,7 +2419,10 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                            sig_tf_r, sig_tf_t, deflect, radial_array ) ! Outputs
     
         ! Vertical stress [Pa]  
-        sig_tf_z = vforce / (acasetf + acndttf*n_tf_turn) ! Array equation
+        sig_tf_z = vforce / (acasetf + acndttf*n_tf_turn) ! Array equation [EDIT: Are you sure? It doesn't look like one to me]
+        
+        ! Strain in vertical direction on WP
+        strncon_tf = sig_tf_z(n_tf_bucking+1) / eyoung_wp_z_eff
 
         ! Case strain
         casestr = sig_tf_z(n_tf_bucking) / eyoung_steel
@@ -2440,6 +2443,10 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                                        n_tf_layer, n_radial_array, n_tf_bucking,  & ! Inputs
                                        radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
                                        strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
+        
+        !! Strain in TF conductor material
+        strncon_tf = strain_tf_z(n_tf_bucking*n_radial_array+1);
+        
     else if ( i_tf_stress_model == 2) then
         ! Extended plane strain calculation [Pa]
         ! Issues #1414 and #998
@@ -2450,6 +2457,10 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                                        n_tf_layer, n_radial_array, n_tf_bucking,  & ! Inputs
                                        radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
                                        strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
+        
+        !! Strain in TF conductor material
+        strncon_tf = strain_tf_z(n_tf_bucking*n_radial_array+1);
+        
     end if
     ! ---
 
@@ -2460,9 +2471,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         sig_tf_smeared_z = sig_tf_z   ! Array equation
     end if
     ! ------------------------------
-    
-    ! Strain in vertical direction on WP
-    strncon_tf = sig_tf_z(n_tf_bucking+1) / eyoung_wp_z_eff
 
     ! STRESS DISTRIBUTIONS CORRECTIONS
     ! --------------------------------
