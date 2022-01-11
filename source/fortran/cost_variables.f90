@@ -7,7 +7,9 @@ module cost_variables
   !!
   !! - AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   implicit none
 
@@ -56,7 +58,7 @@ module cost_variables
   !! Total plant capacity factor
   
   real(dp), dimension(4) :: cfind
-  !! indirect cost factor (func of lsa)
+  !! indirect cost factor (func of lsa) (cost model = 0)
 
   real(dp) :: cland
   !! cost of land (M$)
@@ -125,7 +127,7 @@ module cost_variables
 
   integer :: i_cp_lifetime
   !! Switch for the centrepost lifetime constraint 
-  !!  0 : The CP full power year lifetime is set by the user
+  !!  0 : The CP full power year lifetime is set by the user via cplife_input
   !!  1 : The CP lifetime is equal to the divertor lifetime
   !!  2 : The CP lifetime is equal to the breeding blankets lifetime
   !!  3 : The CP lifetime is equal to the plant lifetime
@@ -134,7 +136,7 @@ module cost_variables
   !! owner cost factor
 
   real(dp) :: cplife_input
-  !! User input full power year lifetime of the centrepost (years)
+  !! User input full power year lifetime of the centrepost (years) (i_cp_lifetime = 0)
 
   real(dp) :: cplife
   !! Calculated full power year lifetime of centrepost (years)
@@ -316,14 +318,98 @@ module cost_variables
   !! - =0 do not write cost-related outputs to file
   !! - =1 write cost-related outputs to file
 
-  real(dp) :: ratecdol
+  real(dp) :: discount_rate
   !! effective cost of money in constant dollars
+
+  real(dp) :: sitecost
+  !! fixed value for site cost (2017 US$)
 
   real(dp) :: step_con
   !! Contingency Percentage
 
-  real(dp), dimension(68) :: step_ref
+  real(dp) :: step_cconfix 
+  !! fixed cost of superconducting cable ($/m) (if cost model = 2) 
+
+  real(dp) :: step_cconshtf
+  !! cost of TF coil steel conduit/sheath ($/m) (if cost model = 2) 
+
+  real(dp) :: step_cconshpf
+  !! cost of PF coil steel conduit/sheath ($/m) (if cost model = 2) 
+
+  character(len=50) :: step_currency
+  !! description of the constant dollar year used
+
+  real(dp) :: step_ucblbe
+  !! unit cost for blanket Be ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucblbreed 
+  !! unit cost for blanket breeder material ($/kg) (if cost model = 2) 
+
+  real(dp) :: step_ucblss
+  !! unit cost for blanket stainless steel ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucblvd 
+  !! Unit cost for blanket Vd ($/kg) (if cost model = 2)
+
+  real(dp) :: step_uccase
+  !! cost of superconductor case ($/kg) (if cost model = 2)
+
+  real(dp) :: step_uccu
+  !! unit cost for copper in superconducting cable ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucfwa 
+  !! first wall armour cost ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucfws 
+  !! first wall structure cost ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucfwps 
+  !! first wall passive stabiliser cost ($) (if cost model = 2)
+
+  real(dp) :: step_ucshw
+  !! unit cost for shield tungsten ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucshwc
+  !! unit cost for shield tungsten carbide ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucoam
+  !! annual cost of operation and maintenance (M$/year/1200MW**0.5)
+
+  real(dp) :: step_ucwst
+  !! cost of waste disposal (M$/y/1200MW)
+
+  real(dp), dimension(9) :: step_ucsc
+  !! cost of superconductor ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucfnc
+  !! outer PF coil fence support cost ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucint
+  !! superconductor intercoil structure cost ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucgss
+  !! cost of reactor gravity support structure ($/kg) (if cost model = 2)
+
+  real(dp) :: step_ucwindtf
+  !! cost of TF coil superconductor windings ($/m) (if cost model = 2)
+
+  real(dp) :: step_ucwindpf 
+  !! cost of PF coil superconductor windings ($/m) (if cost model = 2)
+
+  real(dp) :: step_rh_costfrac
+  !! fraction of capital cost for remote handling (if cost_model = 2)
+  
+  real(dp), dimension(70) :: step_ref
   !! Reference values for cost model 2
+
+  real(dp) :: step91_per
+  !! Percentage of cdirt used in calculating step91 (3.0D-1 = 30%)
+  
+  real(dp) :: step92_per
+  !! Percentage of cdirt used in calculating step92 (3.0D-1 = 30%)
+  
+  real(dp) :: step93_per
+  !! Percentage of cdirt used in calculating step93 (3.0D-1 = 30%)
 
   real(dp) :: tlife
   !! Full power year plant lifetime (years)
@@ -517,8 +603,15 @@ module cost_variables
   real(dp) :: ucrb
   !! cost of reactor building (M$/m3)
 
-  real(dp), dimension(7) :: ucsc
+  real(dp), dimension(9) :: ucsc
   !! cost of superconductor ($/kg)
+
+  real(dp) :: step_uc_cryo_al
+  !! Unit cost of cryo aluminium ($/kg). Only used in costs_step_module
+
+  real(dp) :: step_mc_cryo_al_per
+  !! Manufacturing cost percentage for cryo aluminium (%). 0.2 means a 20%
+  !! manufacturing cost. Only used in costs_step_module
 
   real(dp), parameter :: ucsh = 115.0D0
   !! cost of shops and warehouses (M$/m3)
@@ -579,6 +672,9 @@ module cost_variables
 
   real(dp), dimension(4) :: ucwst
   !! cost of waste disposal (M$/y/1200MW)
+
+  real(dp) :: wfbuilding
+  !! fixed value for waste facility buildings (2017 US$)
   
   contains
 
@@ -674,16 +770,46 @@ module cost_variables
     lsa = 4
     moneyint = 0.0D0
     output_costs = 1
-    ratecdol = 0.0435D0
+    discount_rate = 0.0435D0
     step_con = 1.5D-1
+    step_cconfix = 233.0D0  
+    step_cconshtf = 91.0D0
+    step_cconshpf = 91.0D0
+    step_currency = "2017 US$"
+    step_ucblbe = 8400.4D0
+    step_ucblbreed = 802.2D0 
+    step_ucblss = 488.3D0 
+    step_ucblvd = 200.0D0 
+    step_uccase = 91.0D0
+    step_uccu = 82.0D0
+    step_ucfwa = 774.05D0
+    step_ucfws = 5115.7D0 
+    step_ucfwps = 0.0D0
+    step_ucsc = (/ 1230.0D0, 1230.0D0, 443.0D0, 1230.0D0, 1230.0D0, 2567.0D0, &
+      443.0D0, 2567.0D0, 2567.0D0/)
+    step_ucshw = 269.638D0
+    step_ucshwc = 930.251D0
+    !step_ucsc = (/ 600.0D0, 600.0D0, 443.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0,1200.0D0 /)
+    step_ucfnc = 104.3D0 
+    step_ucint = 91.0D0
+    step_ucgss = 91.0D0
+    step_ucwindtf = 1520.0D0
+    step_ucoam = 74.4D0
+    step_ucwst = 7.88D0
+    step_ucwindpf = 465.0D0
+    step_rh_costfrac = 7.5D-2
     step_ref = &
-      (/ 3.0D0, 3.0D-1, 1.115D1, 1.5744D2, 3.592D1, 7.96D0, 9.16D0, 3.26D0, 5.369D1, &
-      1.88D0, 6.6D-1, 8.63D0, 3.1D0, 2.05D0, 8.7D-1, 8.7D-1, 9.1D-1, 3.1D-1, 1.81D0, &
-      8.236D1, 1.8607D2, 1.2572D2, 3.46D1, 7.25D0, 4.0D0, 3.349D1, 5.274D1, 4.86D0, &
-      5.29D1, 2.45D0, 2.82D0, 1.676D1, 6.984D1, 7.7D0, 3.6D0, 2.8D0, 8.0D-1, 1.7D0, &
-      1.8D0, 1.3D0, 3.86D1, 3.83D1, 0.0D0, 2.4D-1, 8.0D-2, 0.0D0, 2.0D0, 1.97D0, 1.16D0, &
-      2.341D1, 7.733D1, 4.37D0, 4.434D1, 1.918D1, 9.39D0, 5.084D1, 8.7D0, 1.239D1, &
-      1.704D1, 7.8D0, 2.11D0, 1.74D1, 3.599D1, 8.2D0, 1.568D1, 1.235D1, 6.22D0, 7.5D-1 /)
+      (/ 8.92D0, 8.9D-1, 3.317D1, 7.4491D2, 1.0685D2, 2.368D1, 2.725D1, 9.7D0, 2.5403D2, &
+      8.9D0, 1.96D0, 4.083D1, 1.467D1, 6.1D0, 2.59D0, 2.59D0, 2.71D0, 9.2D-1, 8.56D0, &
+      6.7025D2, 1.51424D3, 1.02302D3, 2.8154D2, 5.9D1, 3.254D1, 2.7254D2, 4.292D2, 3.955D1, &
+      4.305D2, 1.994D1, 2.295D1, 1.364D2, 5.6836D2, 3.643D1, 1.703D1, 1.325D1, 3.79D0, 1.383D1, &
+      1.465D1, 1.058D1, 3.1413D2, 0.0D0, 0.0D0, 1.95D0, 6.5D-2, 0.0D0, 1.628D1, 1.603D1, 9.44D0, &
+      1.9051D2, 1.9585D2, 1.107D1, 1.319D2, 4.858D1, 2.793D1, 1.2876D2, 2.588D1, 3.01D1, &
+      4.14D1, 1.895D1, 5.13D0, 4.228D1, 8.744D1, 1.992D1, 4.664D1, 3.674D1, 1.85D1, 2.23D0, &
+      19.21D0, 12.85D0 /)
+    step91_per = 3.0D-1
+    step92_per = 3.25D-1
+    step93_per = 1.5D-1
     tlife = 30.0D0
     ucblbe = 260.0D0
     ucblbreed = 875.0D0
@@ -723,8 +849,9 @@ module cost_variables
     ucpfic = 1.0D4
     ucpfps = 3.5D4
     ucrb = 400.0D0
-    ucsc = &
-      (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0,300.0D0/)
+    ucsc = & 
+      (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0, 300.0D0, 1200.0D0, &
+      1200.0D0/)
     ucshld = 32.0D0
     uctfbr = 1.22D0
     uctfbus = 100.0D0
@@ -736,5 +863,10 @@ module cost_variables
     ucwst = (/0.0D0, 3.94D0, 5.91D0, 7.88D0/)
     i_cp_lifetime = 0
     cplife_input = 2.0D0
+    step_uc_cryo_al = 8.1D1
+    step_mc_cryo_al_per = 2.0D-1
+    sitecost = 1.0D8
+    wfbuilding = 1.0D8
+
   end subroutine init_cost_variables
 end module cost_variables

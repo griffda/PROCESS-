@@ -43,7 +43,14 @@ Box file T&amp;M/PKNIGHT/PROCESS (from 24/01/12)
 """
 from process import fortran
 from process.io import plot_proc
+from process.scan import Scan
+from process import final
+from process.utilities.f2py_string_patch import string_to_f2py_compatible, f2py_compatible_to_string
 import argparse
+from process.costs_step import CostsStep
+from process.tfcoil import TFcoil
+from process.caller import Caller
+
 from pathlib import Path
 import sys
 import os
@@ -82,7 +89,8 @@ class Process():
         :param args: Arguments to parse
         :type args: list
         """
-        parser = argparse.ArgumentParser(description=("PROCESS\n"
+        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, 
+                                         description=("PROCESS\n"
             "Power Reactor Optimisation Code\n"
             "Usage\n"
             "Running code with IN.DAT        : ./<path_to_executable/process.exe\n"
@@ -274,16 +282,23 @@ class VaryRun():
         config.error_status2readme()
 
 class SingleRun():
+    """Perform a single run of PROCESS."""
     def __init__(self, input_file):
+        """Read input file, initialise variables and run PROCESS.
+
+        :param input_file: input file named <optional_name>IN.DAT
+        :type input_file: str
+        """
         self.input_file = input_file
         self.init_module_vars()
+        self.models = Models()
         self.set_filenames()
         self.initialise()
         self.run_hare_tests()
         self.kallenbach_tests()
         self.kallenbach_scan()
         self.call_solver()
-        self.scan()
+        self.run_scan()
         self.show_errors()
         self.finish()
         self.append_input()
@@ -317,12 +332,13 @@ class SingleRun():
             self.input_path = input_path
             # Set input as Path object
         else:
+            print("-- Info -- run `process --help` for usage")
             raise FileNotFoundError("Input file not found on this path. There "
                 "is no input file named", self.input_file, "in the analysis "
                 "folder")
 
         # Set the input file in the Fortran
-        fortran.global_variables.fileprefix = str(self.input_path.resolve())
+        fortran.global_variables.fileprefix = string_to_f2py_compatible(fortran.global_variables.fileprefix, str(self.input_path.resolve()))
 
     def set_output(self):
         """Set the output file name.
@@ -330,7 +346,7 @@ class SingleRun():
         Set Path object on the Process object, and set the prefix in the Fortran.
         """
         self.output_path = Path(self.filename_prefix + "OUT.DAT")
-        fortran.global_variables.output_prefix = self.filename_prefix
+        fortran.global_variables.output_prefix = string_to_f2py_compatible(fortran.global_variables.output_prefix, self.filename_prefix)
 
     def set_mfile(self):
         """Set the mfile filename."""
@@ -362,14 +378,30 @@ class SingleRun():
 
     def call_solver(self):
         """Call the equation solver (HYBRD)."""
-        self.ifail = fortran.main_module.eqslv()
-
-    def scan(self):
-        """Call scan routine if required."""
-        if fortran.numerics.ioptimz >= 0:
-            fortran.scan_module.scan()
+        # If no HYBRD (non-optimisation) runs are required, return
+        if (fortran.numerics.ioptimz > 0) or (fortran.numerics.ioptimz == -2):
+            return
         else:
-            fortran.final_module.final(self.ifail)
+            # eqslv() has been temporarily commented out. Please see the comment
+            # in fortran.function_evaluator.fcnhyb() for an explanation.
+            # Original call:
+            # self.ifail = fortran.main_module.eqslv()
+            raise NotImplementedError("HYBRD non-optimisation solver is not "
+                "implemented"
+            )
+
+    def run_scan(self):
+        """Create scan object if required."""
+        if fortran.numerics.ioptimz >= 0:
+            self.scan = Scan(self.models)
+        else:
+            # If no optimisation will be done, compute the OP variables now
+            if fortran.numerics.ioptimz == -2:
+                caller = Caller(self.models)
+                fortran.define_iteration_variables.loadxc()
+                caller.call_models(fortran.numerics.xcm, fortran.numerics.nvar)
+            
+            final.finalise(self.models, self.ifail)
 
     def show_errors(self):
         """Report all informational/error messages encountered."""
@@ -397,6 +429,20 @@ class SingleRun():
         with open(self.mfile_path, 'a', encoding="utf-8") as mfile_file:
             mfile_file.write("***********************************************")
             mfile_file.writelines(input_lines)
+
+class Models():
+    """Creates instances of physics and engineering model classes.
+
+    Creates objects to interface with corresponding Fortran physics and 
+    engineering modules.
+    """
+    def __init__(self):
+        """Create physics and engineering model objects.
+        
+        This also initialises module variables in the Fortran for that module.
+        """
+        self.costs_step = CostsStep()
+        self.tfcoil = TFcoil()
 
 def main(args=None):
     """Run Process.

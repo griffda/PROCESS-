@@ -11,11 +11,10 @@ module current_drive_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   ! Import modules
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
-
-  private
-  public :: cudriv, culnbi
 
 contains
 
@@ -44,12 +43,12 @@ contains
       gamcd, gamma_ecrh, rho_ecrh, etalh, etacd, etacdfix, etaech, forbitloss, &
       pinjmw, pwpnb, etanbi, enbeam, effcd, pwplh, echwpow, pnbitot, nbshinemw, &
       pinjemw, pinjimw, bigq, bootipf, bscfmax, taubeam, pinjalw, nbshield, &
-      frbeam, rtanbeam, rtanmax, diaipf, psipf, plasipf
+      frbeam, rtanbeam, rtanmax, diaipf, psipf, plasipf, harnum, xi_ebw
     use physics_variables, only: dene, te, rmajor, ten, zeff, dlamee, beta, &
       rhopedt, rhopedn, te0, teped, tesep, alphat, alphan, ne0, nesep, neped, &
       bt, rminor, tbeta, plascur, ipedestal, faccd, ignite, pohmmw, powfmw, &
       facoh, fvsbrnni
-    use constants, only: nout, echarge, pi
+    use constants, only: nout, echarge, emass, pi, epsilon0
     use hare, only: hare_calc
 
     implicit none
@@ -69,6 +68,7 @@ contains
     real(dp) :: dens_at_rho, te_at_rho
     logical :: Temperature_capped
     real(dp) :: auxiliary_cd
+    real(dp) :: a, fc, fp, density_factor
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -88,6 +88,7 @@ contains
     pinjimwfix = 0.0 
     auxiliary_cdfix = 0.0
     faccdfix = 0.0
+    gamcdfix = 0.0D0
 
     ! To stop issues with input file we force
     ! zero secondary heating if no injection method  
@@ -170,9 +171,11 @@ contains
 
        case (10)  ! ECRH user input gamma
 
+          !  Normalised current drive efficiency gamma
           gamcd = gamma_ecrh
+
+          ! Absolute current drive efficiency
           effrfssfix = gamcd / (dene20 * rmajor)
-          !etacd = etaech
           effcdfix = effrfssfix
 
        case (11)  ! ECRH Poli model "HARE"
@@ -189,6 +192,34 @@ contains
           gamcd = effcdfix * dene20 * rmajor
           effrfssfix = effcdfix
 
+       case (12)  
+       ! EBW scaling
+       ! Scaling author Simon Freethy
+       ! Ref : PROCESS issue 1262
+   
+          !  Normalised current drive efficiency gamma
+          gamcd = (xi_ebw/32.7D0) * te
+            
+          ! Absolute current drive efficiency
+          effrfssfix = gamcd / (dene20 * rmajor)
+          effcdfix = effrfssfix
+   
+          ! EBWs can only couple to plasma if cyclotron harmonic is above plasma density cut-off;
+          !  this behaviour is captured in the following function (ref issue #1262):
+          ! harnum = cyclotron harmonic number (fundamental used as default)
+          ! constant 'a' controls sharpness of transition
+          a = 0.1D0
+   
+          fc = 1.0D0/(2.0D0*pi) * harnum * echarge * bt / emass
+          fp = 1.0D0/(2.0D0*pi) * sqrt( dene * echarge**2 / ( emass * epsilon0 ) )
+            
+          density_factor = 0.5D0 * ( 1.0D0 + tanh( (2.0D0/a) * ( ( fp - fc )/fp - a) ) )
+   
+          effcdfix = effcdfix * density_factor
+   
+          effrfssfix = effrfssfix * density_factor
+
+
        case default
           idiags(1) = iefrffix
           call report_error(126)
@@ -204,22 +235,32 @@ contains
 
           !  Injected power
           pinjemwfix = pinjfixmw
+
           !  Wall plug power
           pinjwpfix = pinjfixmw / etalh
+
           !  Wall plug to injector efficiency
           etacdfix = etalh
+
           !  Normalised current drive efficiency gamma
           gamcdfix = effrfssfix * (dene20 * rmajor)
+
           ! the fixed auxiliary current
           auxiliary_cdfix = effrfssfix * ( pinjfixmw - pheatfix) * 1.0d6
           faccdfix = auxiliary_cdfix / plascur
 
-       case (3,7,10,11)  ! ECCD
+       case (3,7,10,11,12)  ! ECCD
 
-          pinjimwfix = 0.0D0
+          !  Injected power
           pinjemwfix = pinjfixmw
+          
+          !  Wall plug power
           pinjwpfix = pinjfixmw / etaech
+
+          !  Wall plug to injector efficiency
           etacdfix = etaech
+          
+          ! the fixed auxiliary current
           auxiliary_cdfix = effrfssfix * ( pinjfixmw - pheatfix) * 1.0d6
           faccdfix = auxiliary_cdfix / plascur
 
@@ -230,7 +271,7 @@ contains
           ! This includes a second order term in shinethrough*(first orbit loss)
           forbitloss = min(0.999,forbitloss) ! Should never be needed
 
-          if(ipedestal.ne.3)then  ! When not using PLASMOD
+          if(ipedestal.ne.3) then  ! When not using PLASMOD
              pnbitotfix = pinjfixmw / (1.0D0-forbitloss+forbitloss*nbshinef)
           else
              ! Netural beam power calculated by PLASMOD
@@ -319,8 +360,9 @@ contains
        case (10)  ! ECRH user input gamma
 
           gamcd = gamma_ecrh
+          
+          ! Absolute current drive efficiency
           effrfss = gamcd / (dene20 * rmajor)
-          !etacd = etaech
           effcd = effrfss
 
        case (11)  ! ECRH Poli model "HARE"
@@ -337,6 +379,36 @@ contains
           effcd = ampperwatt
           gamcd = effcd * dene20 * rmajor
           effrfss = effcd
+
+       case (12)  
+       ! EBW scaling
+       ! Scaling author Simon Freethy
+       ! Ref : PROCESS issue 1262
+
+          !  Normalised current drive efficiency gamma
+          gamcd = (xi_ebw/32.7D0) * te
+         
+          ! Absolute current drive efficiency
+          effrfss = gamcd / (dene20 * rmajor)
+          effcd = effrfss
+
+          ! EBWs can only couple to plasma if cyclotron harmonic is above plasma density cut-off;
+          !  this behaviour is captured in the following function (ref issue #1262):
+          ! harnum = cyclotron harmonic number (fundamental used as default)
+          ! contant 'a' controls sharpness of transition
+
+          !TODO is the below needed?
+         !  a = 0.1D0
+
+         !  fc = 1.0D0/(2.0D0*pi) * harnum * echarge * bt / emass
+         !  fp = 1.0D0/(2.0D0*pi) * sqrt( dene * echarge**2 / ( emass * epsilon0 ) )
+          
+         !  density_factor = 0.5D0 * ( 1.0D0 + tanh( (2.0D0/a) * ( ( fp - fc )/fp - a) ) )
+
+         !  effcd = effcd * density_factor
+
+         !  effrfss = effrfss * density_factor
+          
 
        case default
           idiags(1) = iefrf
@@ -366,12 +438,16 @@ contains
           gamrf = effrfss * (dene20 * rmajor)
           gamcd = gamrf
 
-       case (3,7,10,11)  ! ECCD
+       case (3,7,10,11,12)  ! ECCD
 
+          !  Injected power (set to close to close the Steady-state current equilibrium)
           echpwr = 1.0D-6 * (faccd - faccdfix) * plascur / effrfss + pheat
-          pinjimw1 = 0.0D0
           pinjemw1 = echpwr
+          
+          !  Wall plug power
           echwpow = echpwr / etaech
+          
+          !  Wall plug to injector efficiency
           pinjwp1 = echwpow
           etacd = etaech
 
@@ -388,7 +464,7 @@ contains
           if(ipedestal.ne.3)then  ! When not using PLASMOD
              pnbitot = power1 / (1.0D0-forbitloss+forbitloss*nbshinef)
           else
-             ! Netural beam power calculated by PLASMOD
+             ! Neutral beam power calculated by PLASMOD
              pnbitot = pinjmw / (1.0D0-forbitloss+forbitloss*nbshinef)
           endif
 
@@ -458,7 +534,7 @@ contains
        call ocmmnt(outfile,'Lower Hybrid Current Drive')
     case (2)
        call ocmmnt(outfile,'Ion Cyclotron Current Drive')
-    case (3,7,11)
+    case (3,7)
        call ocmmnt(outfile,'Electron Cyclotron Current Drive')
     case (5,8)
        call ocmmnt(outfile,'Neutral Beam Current Drive')
@@ -466,6 +542,10 @@ contains
        ! RFP option removed in PROCESS (issue #508)
     case (10)
        call ocmmnt(outfile,'Electron Cyclotron Current Drive (user input gamma_CD)')
+    case (11)
+       call ocmmnt(outfile,'Electron Cyclotron Current Drive (HARE)')
+    case (12)
+       call ocmmnt(outfile,'EBW current drive')
     end select
 
     call ovarin(outfile,'Current drive efficiency model','(iefrf)',iefrf)
@@ -487,6 +567,8 @@ contains
           call ocmmnt(outfile,'Electron Cyclotron Current Drive (user input gamma_CD)')
       case(11)
           call ocmmnt(outfile,'Electron Cyclotron Current Drive (HARE)')
+      case (12)
+          call ocmmnt(outfile,'EBW current drive')
       end select
 
       call ovarin(outfile,'Secondary current drive efficiency model','(iefrffix)',iefrffix)
@@ -505,10 +587,11 @@ contains
     end if
 
     call ovarre(outfile,'Auxiliary power used for plasma heating only (MW)', '(pheat)', pheat + pheatfix)
-    call ovarre(outfile,'Power injected for current drive (MW)','(pcurrentdrivemw)', pinjmw - pheat - pheatfix) 
+    call ovarre(outfile,'Power injected for current drive (MW)','(pcurrentdrivemw)', pinjmw - pheat - pheatfix)
+    call ovarre(outfile,'Maximum Allowed Bootstrap current fraction', '(bscfmax)', bscfmax)    
     if (iefrffix.NE.0) then
       call ovarre(outfile,'Power injected for main current drive (MW)','(pcurrentdrivemw1)', pinjmw1 - pheat) 
-      call ovarre(outfile,'Power injected for secondary current drive (MW)','(pcurrentdrivemw2)', pinjmwfix - pheatfix) 
+      call ovarre(outfile,'Power injected for secondary current drive (MW)','(pcurrentdrivemw2)', pinjmwfix - pheatfix)
     end if
     call ovarre(outfile,'Fusion gain factor Q','(bigq)',bigq, 'OP ')
     call ovarre(outfile,'Auxiliary current drive (A)','(auxiliary_cd)',auxiliary_cd, 'OP ')
@@ -519,6 +602,31 @@ contains
     call ovarre(outfile,'Normalised current drive efficiency, gamma (10^20 A/W-m2)', &
          '(gamcd)',gamcd, 'OP ')
     call ovarre(outfile,'Wall plug to injector efficiency','(etacd)',etacd)
+    
+    select case(iefrf) ! Select plasma heating choice for output in the mfile
+    ! Other heating cases to be added when necessary
+       
+    case(1,2,3,4)
+    
+    case(5,8) !NBI  case(5) and Case(8) NBI is covered elsewhere
+    
+    case(6,7,9,11)
+    
+    case(10) !ECRH/ECCD Heating of Plasma
+    
+          call ovarre(outfile,'ECRH plasma heating efficiency','(gamma_ecrh)',gamma_ecrh)
+	    
+    case(12) !EBW Heating of Plasma
+    
+          call ovarre(outfile,'EBW plasma heating efficiency','(xi_ebw)',xi_ebw)
+	    
+    case default
+          idiags(1) = iefrf
+          call report_error(126)
+
+    end select        
+    
+
     if (iefrffix.NE.0) then
       call ovarre(outfile,'Secondary current drive efficiency (A/W)','(effcdfix)',effcdfix, 'OP ')
       call ovarre(outfile,'Seconday wall plug to injector efficiency','(etacdfix)',etacdfix)

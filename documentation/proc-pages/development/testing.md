@@ -17,7 +17,26 @@ Regression tests detect changes in the entire program's behaviour by checking th
 Process uses the `pytest` testing framework in its test suite. `pytest` tests are modular, quick to write with little code and produce helpful information when they fail. It is used widely in the Python world.
 
 ### Running pytest
-`pytest` can be run locally by running `pytest` in the project root directory. This will run all tests. `pytest` can also be configured to run in the sidebar of VS Code. The Continuous Integration (CI) system also runs the `pytest` test suite in the `testing` stage of the pipeline. Unit, integration and regression tests are run as separate jobs to make it easier to see where failures lie.
+`pytest` can be run locally by running `pytest` in the project root directory. This will run all tests. `pytest` can also be configured to run in the sidebar of VS Code. 
+
+Individual test collections can be run by specifying the test directory to run, e.g.
+```BASH
+pytest tests/unit 
+```
+will only run unit tests.
+
+Furthermore, the `-k` can be used to match tests within a test collection, e.g.
+```BASH
+pytest tests/regression/ -k "IFE or HARE"
+```
+will run only benchmarks that have `IFE` or `HARE` in their name; in practice, this will run only the `IFE` and `HARE` regression tests. However,
+```BASH
+pytest tests/regression/ -k "mode"
+```
+will run all 5 benchmarks containing `mode` in their name:
+`Hybrid_mode`, `L_mode`, `QH_mode`, `i_mode` and `vacuum_model`.
+
+The Continuous Integration (CI) system also runs the `pytest` test suite in the `testing` stage of the pipeline. Unit, integration and regression tests are run as separate jobs to make it easier to see where failures lie.
 
 ### Updating test references
 If code changes affect the result of a test so that the observed output no longer equals the expected output stored in the test suite, the test will fail and the test reference will need to be updated. In Process, this is typical in the regression scenario tests (`tests/regression/test_scenario.py`) and the Python-Fortran dictionary tests (`tests/integration/test_dicts.py`).
@@ -26,7 +45,30 @@ To run the regression tests with a 5% tolerance run `pytest tests/regression --r
 
 To overwrite the references, run `pytest --overwrite` which will re-run the test suite, overwriting both the Python-Fortran dictionaries and the regression scenario reference files. Running the test suite again with `pytest` should then pass.
 
+Please see below (pytest failures on older OS's) for caveats on this process. 
+
 For the correct way to contribute code to Process (including how to update the test references), see CONTRIBUTING.md.
+
+## pytest failures on older OS's
+As discussed in the Installation guide, PROCESS is dependant on a number of dynamically linked libraries. The versions of these libraries are different on different versions of OS's. This introduces floating-point differences in the code which can propogate and show tests failing by ~0.70%. The cause of such issues has been isolated and will be highlighted by a warning message when running pytest:
+
+```
+You are running the PROCESS test suite on an outdated system.
+This can cause floating point rounding errors in regression tests.
+
+Please see documentation for information on running PROCESS (and tests)
+using a Docker/Singularity container.
+```
+
+It is suggested that PROCESS is run, built, and tested via a container when not using Ubuntu 20.
+
+On older OS's that are detected to have this issue, test over-writing is disabled and pytest will exit with an error message:
+```
+Test overwriting is NOT allowed on outdated systems.
+```
+
+In this case, the `pytest --overwrite` command must be run within an Ubuntu 20 container/ subsystem.
+
 
 ## Reasoning behind the CONTRIBUTING.md method
 When reviewing code in a merge request, it is important to understand the effect those changes will have on the output for various regression scenarios. This particularly applies to detecting large unintended changes to the output in certain scenarios.
@@ -44,14 +86,17 @@ If the issue branch was merged to develop without merging develop into the branc
 
 The regression references will always need to be overwritten completely, and different versions of them shoudn't be merged together. Merging develop into the issue branch first avoids this.
 
-### Step 6: Running the test suite locally
+### Step 6: Re-building with changes from `develop`
+`process` now needs to be re-built to build and install the changes that have just been merged from `develop`. This means that when `pytest` is run, the latest `process` is used, rather than an out-of-date installed version.
+
+### Step 7: Running the test suite locally
 It is useful to see which tests fail before pushing to the remote, not least because it is faster to run them locally. If tests other than the Python-Fortran dictionary tests or the regression tests fail, then further work is needed to get those tests to pass, as updating the test references will not fix them.
 
-### Step 7: Pushing despite failing Python-Fortran dictionary and/or regression tests
+### Step 8: Pushing despite failing Python-Fortran dictionary and/or regression tests
 The purpose of this is to run the regression test job with 0 and 5% tolerances. The 0% job will fail, but the 5% job will only fail if there are any changes above 5%. This allows the reviewer to see only the significant changes in the 5% job trace. If there are any failures in the Python-Fortran dictionaries, these will also be clear.
 
-### Step 8: Overwriting the test references and committing them
+### Step 9: Overwriting the test references and committing them
 This allows the code changes and corresponding complete reference changes to be on the same branch and hence easily accountable. After the overwrite, the test suite should pass.
 
-### Step 9: Passing pipeline and merge request review
+### Step 10: Passing pipeline and merge request review
 The pipeline should now pass, and the significant reference changes should be clear to the reviewer by looking at the (possibly failed) 5% tolerance regression job.

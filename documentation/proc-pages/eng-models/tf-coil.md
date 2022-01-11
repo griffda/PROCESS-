@@ -519,14 +519,16 @@ different ways:
     conductor layer on the material take the most of stress that supports.
     For superconducting TF coils, the stress limit is applied on the steel case
     jacket/conduit while for resistive coil, the stress limit is applied on the
-    conductor itself.
+    conductor itself. Set the maximum stress using the variable
+    `sig_tf_wp_max`. This constraint can also be used with a stellarator.
   </p>
 - <p style='text-align: justify;'>
     **Centring support structure stress limit (`icc = 31`):** stress limit on the
     coil centering support structures. For superconducting coils, this stress
     limit is applied on the nose case (machine center direction) while for
     resistive coil this stress limit is applied on a cylindrical bucking
-    cylinder.
+    cylinder. Set the maximum stress using the variable `sig_tf_case_max`.
+    This constraint can not be used with a stellarator.
   </p>
 
 ### Vertical tension
@@ -622,7 +624,7 @@ $$
   tension is introduced:
 </p>
 - <p style='text-align: justify;'>
-    **Plane stress (`i_tf_plane_stress = 0`, default):** the calculations are
+    **Plane stress (`i_tf_stress_model = 1`, default):** the calculations are
     made under the plane stress assumption. Plane strain model applies for thin
     layer in the vertical direction and is there fore not applicable to
     this configuration in theory. The radial and toroidal stress calculations
@@ -635,7 +637,7 @@ $$
     code on DEMO designs.
 </p>
 - <p style='text-align: justify;'>
-    **Generalized plane strain (`i_tf_plane_stress = 1`):** the
+    **Generalized plane strain (`i_tf_stress_model = 0,2`):** the
     calculations are made using the generalized plane strain hypothesis that
     applies for tall cylinders with external external force applied at the end
     (vertical tension). This is the correct assumption for inboard mid-plane
@@ -646,7 +648,10 @@ $$
     Poisson's ratio, one for the \(\left(r, \theta\right) \) plane to \(z\) and
     another for the radial to toroidal direction. Although more coherent and
     complete this model is not yet used by default as more FEA validations
-    are needed.
+    are needed. `i_tf_stress_model = 0` is the older model, which is O(n^3)
+    in the number of layers and fails if there is a solid bore. 
+    `i_tf_stress_model = 2` is the newr model, which is O(n) and accepts a solid
+    bore, but is otherwise identical to the older model `i_tf_stress_model = 0`.
   </p>
 
 <p style='text-align: justify;'>
@@ -1383,6 +1388,7 @@ Another subroutine, `tfspcall` is called outside `stfcoil` to estimate to check 
 | `n_layer` | Number of turns in the radial direction (`i_tf_turns_integer = 1` only) | - | 20 | - |
 | `n_pancake` | Number of turns in the toroidal direction (`i_tf_turns_integer = 1` only) | - | 10 | - |
 | `t_turn_tf` | TF turn squared size | - | No default | m |
+| `t_cable_tf` | TF cable diameter size | - | No default | m |
 | `f_t_turn_tf` | f-value for TF turn squared size constraint (icc = 86) | 175 | 1. | m |
 | `t_turn_tf_max` | Maximum turn squared size for constraint (icc = 86) | - | 0.05 | m |
 | `cpttf` | Current per turn <br> Overwitten if `t_turn_tf` is set by the user | ixc = 60 | $70.10^3$ | A |
@@ -1424,7 +1430,7 @@ Another subroutine, `tfspcall` is called outside `stfcoil` to estimate to check 
 |  Parameter | description | Iteration variable | Default | Unit |
 | - | - | - | - | - |
 | `f_vforce_inboard` | Fraction of the vertical force supported by the inboard leg | - | 0.5 | - |
-|  `i_tf_plane_stress` | Switch to select the inboard mid-plane stress model <br> 0 : Plane stress <br> 1 : Generalized plane stress | - | 0 | - |
+|  `i_tf_stress_model` | Switch to select the inboard mid-plane stress model <br> 1 : Plane stress <br> 0,2 : Generalized plane stress | - | 0 | - |
 |  `i_tf_bucking` | Switch to select the bucking strategy <br> 0 : No bucking structure <br> 1 : TF bucking structure <br> 2 : TF bucked on CS coil <br> 3 : TF bucked on CS coil (CS-TF layer included in the stress calc.) | - | 0 : if `i_tf_coil \= 1` <br> 1 : if `i_tf_coil = 1` | - |
 
 <br>

@@ -12,11 +12,10 @@ module power_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
-
-  private
-  public :: tfpwr, pfpwr, acpow, power1, power2, power3, init_power_module
 
   !  Precision variable
   integer, parameter :: double = 8
@@ -1056,7 +1055,7 @@ contains
 
     !  Local variables
 
-    real(dp) :: cirpowfr, primsum, pinj, secsum, rejected_main, sum
+    real(dp) :: cirpowfr, primsum, pinj, secsum, rejected_main, sum, tot_plant_power
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1424,9 +1423,10 @@ contains
     call ovarrf(outfile,'Heat extracted from shield  (MW)','(pthermshld)',pthermshld, 'OP ')
     call ovarrf(outfile,'Heat extracted from divertor (MW)','(pthermdiv)',pthermdiv, 'OP ')
     call ovarrf(outfile,'Nuclear and photon power lost to H/CD system (MW)','(psechcd)',psechcd, 'OP ')
-    call ovarrf(outfile,'Total (MW)','',pthermfw_blkt+pthermshld+pthermdiv+psechcd, 'OP ')
+    call ovarrf(outfile,'Nuclear power lost to TF (MW)','(ptfnuc)',ptfnuc, 'OP ')
+    call ovarrf(outfile,'Total (MW)','',pthermfw_blkt+pthermshld+pthermdiv+psechcd+ptfnuc, 'OP ')
     call oblnkl(outfile)
-    if (abs(sum - (pthermfw_blkt+pthermshld+pthermdiv+psechcd)) > 5.0D0) then
+    if (abs(sum - (pthermfw_blkt+pthermshld+pthermdiv+psechcd+ptfnuc)) > 5.0D0) then
        write(*,*) 'WARNING: Power balance for reactor is in error by more than 5 MW.'
        call ocmmnt(outfile,'WARNING: Power balance for reactor is in error by more than 5 MW.')
     end if
@@ -1448,6 +1448,8 @@ contains
     call ovarrf(outfile,'Electric power for PF coils (MW)','(pfwpmw)', pfwpmw, 'OP ')
     call ovarrf(outfile,'All other internal electric power requirements (MW)','(fachtmw)', fachtmw, 'OP ')
     sum = pnetelmw+pinjwp+htpmw+vachtmw+trithtmw+crypmw+tfacpd+fachtmw+pfwpmw
+    tot_plant_power=sum
+    call ovarrf(outfile,'Total (MW)','(tot_plant_power)',tot_plant_power, 'OP ')    
     call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
     call oblnkl(outfile)
     call ovarrf(outfile,'Gross electrical output* (MW)','(pgrossmw)',pgrossmw, 'OP ')

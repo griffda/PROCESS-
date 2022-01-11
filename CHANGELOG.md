@@ -1,7 +1,75 @@
 # Changelog
-All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.2.0] - 2021-10-26
+### Added
+- Add pumping variables as inputs for varying the efficiency of thermal to electrical conversion in develop-stable (#1374)
+- Added xi_ebw input variable and set default value (#1371)
+- Remove f90wrap from build process (#1397)
+- Unit tests for costs_step added (#1372)
+- Tracking for cost model (#1344)
+- Convert caller.f90 to Python (#1354)
+- EBW heating system (#1262)
+- Call fcnvmc1 and 2 from Python (#1079)
+
+## Changed
+- Fix the blnkith variable so that an Inboard blanket can be used whilst itart = 1 (Spherical Tokamak) (#1388)
+- Elongation should be scaleable with aspect ratio (#1345)
+- PROCESS TF geometry output issue (#1328)
+- TF coil stress constraints using different limits for case and WP (#1327)
+- Add centrepost nuclear heating to TF nuclear heating (#1331)
+- Updated proc_plot.py for EBW plasma heating fix (#1387)
+- change the formulae for the dittus-boelter eqn in tfcoil.f90 as it is wrong in develop-stable (#1375)
+- Higher current density required in TF coil REBCO tape" - new sc material (#1350)
+- Update of Shield Cost Calculations (#1407)
+- PROCESS TF geometry output issue (#1328)
+- Remove Cost Model 2 link to LSA (#1361)
+- Issue 935 power plant water use (#935)
+- Secondary EBW Heating Missing (#1324)
+
+## [2.1.2] - 2021-07-01
+### Added
+- Add costs and temperature margin to Durham REBCO model (#1333)
+- Parameterised regression test names added in pytest reporting (#1315)
+- BoP cost for Cost model 2 (#1295)
+- Add cryo-aluminium costing (#1272)
+- Option to use toroidal beta in beta limit (#1290)
+- Add array bounds check to Fortran compilation flags (#1294)
+
+### Changed
+- cmake configuration step made more robust (#1326)
+- Pf coil and BB cost model 2 update
+- Enforced up/down symmetry in the vertical build for double-null - (#1309)
+- Update indirect costs in cost model 2 (#1296)
+- Update plot_scan tool labelling
+- dcond dimension fix (#1297)
+- Updated EBW gamma
+- CMake build step fixed when using numpy v1.20.0 (#1258)
+
+## [2.1.1] - 2021-03-17
+### Added
+- Adding the EBW scaling (#1262)
+- Cost model 2 adds remote handing costs
+- Cryopower constraint (#1120)
+- Find a way to only review regression test diffs >5% (#1242)
+- Adding the insulation effect to the Young modulus smearing in the - vertical direction
+- Adding the scan plot utility
+- Create tool for updating test references (#1239)
+
+### Changed
+- Move to semantic versioning (#1241)
+- Move obsolete_vars.py into Python package for Blueprint use (#1279)
+- Joints heating error (#1264)
+- Corrected some power accounting issues in creating the sankey diagram - (#1265)
+- Plot ploc plotting (#1217)
+- Break vmcon into smaller subroutines (#1078)
+- Python-Fortran dictionaries not updating (#1235)
+- Updated core references in documentation (#1247)
 
 ## [2.1] - 2021-01-25
 ### Added

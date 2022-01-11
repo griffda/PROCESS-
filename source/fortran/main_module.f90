@@ -16,7 +16,9 @@
 
 module main_module
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   implicit none
 
@@ -46,7 +48,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=98) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '2.1.0   Release Date :: 2021-01-25'
+       '2.2.0   Release Date :: 2021-10-26'
   character(len = 50) :: dt_time
   character(len=72), dimension(10) :: id
 
@@ -147,7 +149,8 @@ subroutine run_summary
        call ocmmnt(outfile, '  Tag No. : '//tagno)
      end if
      call ocmmnt(outfile, '   Branch : '//branch_name) 
-     call ocmmnt(outfile, '  Git log : '//COMMSG)  !  Last git com message
+     call ocmmnt(outfile, '  Git log : '// &
+     COMMSG)  !  Last git com message
      call ocmmnt(outfile, progid(3))  !  date/time
      call ocmmnt(outfile, progid(4))  !  user
      call ocmmnt(outfile, progid(5))  !  computer
@@ -252,152 +255,152 @@ end subroutine run_summary
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine eqslv(ifail)
+! eqslv() has been temporarily commented out. Please see the comment in
+! function_evaluator.fcnhyb() for an explanation.
 
-  !! Routine to call the non-optimising equation solver
-  !! author: P J Knight, CCFE, Culham Science Centre
-  !! ifail   : output integer : error flag
-  !! This routine calls the non-optimising equation solver.
-  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  use constants, only: nout, mfile, iotty
-  use constraints, only: constraint_eqns
-  use function_evaluator, only: fcnhyb
-  use error_handling, only: idiags, fdiags, errors_on, report_error
-  use numerics, only: ipeqns, epsfcn, factor, ftol, iptnt, ncalls, ioptimz, &
-    neqns, nfev1, nfev2, sqsumsq, xcm, rcm, xcs, resdl, scafc, ixc, lablxc, &
-    icc, lablcc, eqsolv
-  use process_output, only: ovarin, oblnkl, ocmmnt, oheadr, osubhd, &
-    ovarre, int_to_string3
-  use physics_variables, only: bt, aspect, rmajor, powfmw, wallmw 
-  implicit none
+! subroutine eqslv(ifail)
 
-  !  Arguments
-  integer, intent(out) :: ifail
+!   !! Routine to call the non-optimising equation solver
+!   !! author: P J Knight, CCFE, Culham Science Centre
+!   !! ifail   : output integer : error flag
+!   !! This routine calls the non-optimising equation solver.
+!   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+!   !
+!   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!   use constants, only: nout, mfile, iotty
+!   use constraints, only: constraint_eqns
+!   use function_evaluator, only: fcnhyb
+!   use error_handling, only: idiags, fdiags, errors_on, report_error
+!   use numerics, only: ipeqns, epsfcn, factor, ftol, iptnt, ncalls, &
+!     neqns, nfev1, nfev2, sqsumsq, xcm, rcm, xcs, resdl, scafc, ixc, lablxc, &
+!     icc, lablcc, eqsolv
+!   use process_output, only: ovarin, oblnkl, ocmmnt, oheadr, osubhd, &
+!     ovarre, int_to_string3
+!   use physics_variables, only: bt, aspect, rmajor, powfmw, wallmw
+!   use define_iteration_variables, only: loadxc
+!   implicit none
 
-  !  Local variables
-  integer :: inn,nprint,nx
-  real(dp) :: sumsq
-!  real(dp), dimension(iptnt) :: wa
-  real(dp) :: wa(iptnt)
-  real(dp), dimension(ipeqns) :: con1, con2, err
-  character(len = 1), dimension(ipeqns) :: sym
-  character(len = 10), dimension(ipeqns) :: lab
+!   !  Arguments
+!   integer, intent(out) :: ifail
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!   !  Local variables
+!   integer :: inn,nprint,nx
+!   real(dp) :: sumsq
+! !  real(dp), dimension(iptnt) :: wa
+!   real(dp) :: wa(iptnt)
+!   real(dp), dimension(ipeqns) :: con1, con2, err
+!   character(len = 1), dimension(ipeqns) :: sym
+!   character(len = 10), dimension(ipeqns) :: lab
 
-  !  If no HYBRD (non-optimisation) runs are required, exit routine
-  if (ioptimz > 0) return
-  if (ioptimz == -2) return
+!   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  ncalls = 0
-  nfev1 = 0
-  nfev2 = 0
-  nprint = 0
+!   ncalls = 0
+!   nfev1 = 0
+!   nfev2 = 0
+!   nprint = 0
 
-  !  Use HYBRD to find a starting point
-  call loadxc
-  call eqsolv(fcnhyb,neqns,xcm,rcm,ftol,epsfcn,factor,nprint,ifail, &
-       wa,iptnt,resdl,nfev1)
+!   !  Use HYBRD to find a starting point
+!   call loadxc
+!   call eqsolv(fcnhyb,neqns,xcm,rcm,ftol,epsfcn,factor,nprint,ifail, &
+!        wa,iptnt,resdl,nfev1)
 
-  !  Turn on error reporting
-  errors_on = .true.
+!   !  Turn on error reporting
+!   errors_on = .true.
 
-  !  Print out information on solution
-  call oheadr(nout,'Numerics')
-  call ocmmnt(nout, &
-       'PROCESS has performed a HYBRD (non-optimisation) run,')
+!   !  Print out information on solution
+!   call oheadr(nout,'Numerics')
+!   call ocmmnt(nout, &
+!        'PROCESS has performed a HYBRD (non-optimisation) run,')
 
-  if (ifail /= 1) then
-     call ocmmnt(nout,'but could NOT find a feasible set of parameters.')
-     call oblnkl(nout)
-     call ovarin(nout,'Number of iteration variables and constraints','(neqns)',neqns)
-     call ovarin(nout,'HYBRD error flag','(ifail)',ifail)
+!   if (ifail /= 1) then
+!      call ocmmnt(nout,'but could NOT find a feasible set of parameters.')
+!      call oblnkl(nout)
+!      call ovarin(nout,'Number of iteration variables and constraints','(neqns)',neqns)
+!      call ovarin(nout,'HYBRD error flag','(ifail)',ifail)
 
-     call oheadr(iotty,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
-     call ovarin(iotty,'HYBRD error flag (ifail)','',ifail)
-     call oblnkl(iotty)
+!      call oheadr(iotty,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
+!      call ovarin(iotty,'HYBRD error flag (ifail)','',ifail)
+!      call oblnkl(iotty)
 
-     idiags(1) = ifail ; call report_error(131)
+!      idiags(1) = ifail ; call report_error(131)
 
-  else
-     call ocmmnt(nout,'and found a feasible set of parameters.')
-     call oblnkl(nout)
-     call ovarin(nout,'HYBRD error flag','(ifail)',ifail)
-     call oblnkl(nout)
-     call oheadr(iotty,'PROCESS found a feasible solution')
-  end if
+!   else
+!      call ocmmnt(nout,'and found a feasible set of parameters.')
+!      call oblnkl(nout)
+!      call ovarin(nout,'HYBRD error flag','(ifail)',ifail)
+!      call oblnkl(nout)
+!      call oheadr(iotty,'PROCESS found a feasible solution')
+!   end if
 
-  !  Sum the square of the residuals
-  sumsq = 0.0D0
-  do nx = 1,neqns
-     sumsq = sumsq + rcm(nx)**2
-  end do
-  sqsumsq = sqrt(sumsq)
+!   !  Sum the square of the residuals
+!   sumsq = 0.0D0
+!   do nx = 1,neqns
+!      sumsq = sumsq + rcm(nx)**2
+!   end do
+!   sqsumsq = sqrt(sumsq)
 
-  call ovarre(nout,'Square root of the sum of squares of the constraint residuals','(sqsumsq)',sqsumsq, 'OP ')
+!   call ovarre(nout,'Square root of the sum of squares of the constraint residuals','(sqsumsq)',sqsumsq, 'OP ')
 
-  !  If necessary, write out a relevant error message
-  if (ifail /= 1) then
-     call oblnkl(nout)
-     call herror(ifail)
-     call oblnkl(iotty)
-  else
-     !  Show a warning if the constraints appear high even if allegedly converged
-     if (sqsumsq >= 1.0D-2) then
-        call oblnkl(nout)
-        call ocmmnt(nout,'WARNING: Constraint residues are HIGH; consider re-running')
-        call ocmmnt(nout,'   with lower values of FTOL to confirm convergence...')
-        call ocmmnt(nout,'   (should be able to get down to about 1.0E-8 okay)')
+!   !  If necessary, write out a relevant error message
+!   if (ifail /= 1) then
+!      call oblnkl(nout)
+!      call herror(ifail)
+!      call oblnkl(iotty)
+!   else
+!      !  Show a warning if the constraints appear high even if allegedly converged
+!      if (sqsumsq >= 1.0D-2) then
+!         call oblnkl(nout)
+!         call ocmmnt(nout,'WARNING: Constraint residues are HIGH; consider re-running')
+!         call ocmmnt(nout,'   with lower values of FTOL to confirm convergence...')
+!         call ocmmnt(nout,'   (should be able to get down to about 1.0E-8 okay)')
 
-        call ocmmnt(iotty,'WARNING: Constraint residues are HIGH; consider re-running')
-        call ocmmnt(iotty,'   with lower values of FTOL to confirm convergence...')
-        call ocmmnt(iotty,'   (should be able to get down to about 1.0E-8 okay)')
-        call oblnkl(iotty)
+!         call ocmmnt(iotty,'WARNING: Constraint residues are HIGH; consider re-running')
+!         call ocmmnt(iotty,'   with lower values of FTOL to confirm convergence...')
+!         call ocmmnt(iotty,'   (should be able to get down to about 1.0E-8 okay)')
+!         call oblnkl(iotty)
 
-        fdiags(1) = sqsumsq ; call report_error(133)
+!         fdiags(1) = sqsumsq ; call report_error(133)
 
-     end if
-  end if
+!      end if
+!   end if
 
-  call osubhd(nout,'The solution vector is comprised as follows :')
+!   call osubhd(nout,'The solution vector is comprised as follows :')
 
-  write(nout,10)
-10 format(t5,'i',t23,'final',t33,'fractional',t46,'residue')
+!   write(nout,10)
+! 10 format(t5,'i',t23,'final',t33,'fractional',t46,'residue')
 
-  write(nout,20)
-20 format(t23,'value',t35,'change')
+!   write(nout,20)
+! 20 format(t23,'value',t35,'change')
 
-  call oblnkl(nout)
+!   call oblnkl(nout)
 
-  do inn = 1,neqns
-     xcs(inn) = xcm(inn)*scafc(inn)
-     write(nout,30) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn),resdl(inn)
-     call ovarre(mfile,lablxc(ixc(inn)),'(itvar'//int_to_string3(inn)//')',xcs(inn))
-  end do
-!30 format(t2,i4,t8,a9,t19,1pe12.4,1pe12.4,1pe12.4)
-! Make lablxc longer
-30 format(t2,i4,t8,a30,t39,1pe12.4,1pe12.4,1pe12.4)
+!   do inn = 1,neqns
+!      xcs(inn) = xcm(inn)*scafc(inn)
+!      write(nout,30) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn),resdl(inn)
+!      call ovarre(mfile,lablxc(ixc(inn)),'(itvar'//int_to_string3(inn)//')',xcs(inn))
+!   end do
+! !30 format(t2,i4,t8,a9,t19,1pe12.4,1pe12.4,1pe12.4)
+! ! Make lablxc longer
+! 30 format(t2,i4,t8,a30,t39,1pe12.4,1pe12.4,1pe12.4)
 
-  call osubhd(nout, &
-       'The following constraint residues should be close to zero :')
+!   call osubhd(nout, &
+!        'The following constraint residues should be close to zero :')
 
-  call constraint_eqns(neqns,con1,-1,con2,err,sym,lab)
-  write(nout,40)
-40 format(t48,'physical',t73,'constraint',t100,'normalised')
-  write(nout,50)
-50 format(t47,'constraint',t74,'residue',t101,'residue')
-  call oblnkl(nout)
-  do inn = 1,neqns
-     write(nout,60) inn,lablcc(icc(inn)),sym(inn),con2(inn), &
-          lab(inn),err(inn),lab(inn),con1(inn)
-     call ovarre(mfile,lablcc(icc(inn))//' normalised residue', &
-          '(normres'//int_to_string3(inn)//')',con1(inn))
-  end do
-60 format(t2,i4,t8,a33,t46,a1,t47,1pe12.4,t60,a10,t71,1pe12.4,t84,a10,t98,1pe12.4)
+!   call constraint_eqns(neqns,con1,-1,con2,err,sym,lab)
+!   write(nout,40)
+! 40 format(t48,'physical',t73,'constraint',t100,'normalised')
+!   write(nout,50)
+! 50 format(t47,'constraint',t74,'residue',t101,'residue')
+!   call oblnkl(nout)
+!   do inn = 1,neqns
+!      write(nout,60) inn,lablcc(icc(inn)),sym(inn),con2(inn), &
+!           lab(inn),err(inn),lab(inn),con1(inn)
+!      call ovarre(mfile,lablcc(icc(inn))//' normalised residue', &
+!           '(normres'//int_to_string3(inn)//')',con1(inn))
+!   end do
+! 60 format(t2,i4,t8,a33,t46,a1,t47,1pe12.4,t60,a10,t71,1pe12.4,t84,a10,t98,1pe12.4)
 
-end subroutine eqslv
+! end subroutine eqslv
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

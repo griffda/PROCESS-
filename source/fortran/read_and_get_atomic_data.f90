@@ -11,7 +11,9 @@ module read_and_get_atomic_data
   ! Modules to import !
   ! !!!!!!!!!!!!!!!!!!!!
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
 
   ! Var for subroutine get_h_rates requiring re-initialisation on each new run
@@ -78,7 +80,7 @@ contains
     ! Rate coefficients: "_r"
     real(dp), save, dimension(24,29) :: scd_r, acd_r, ccd_r, plt_r,prb_r
 
-    character(len=100) :: acd_file, scd_file, plt_file, prb_file, ccd_file
+    character(len=200) :: acd_file, scd_file, plt_file, prb_file, ccd_file
 
     real(dp) :: logdens, logtemp
 
@@ -218,7 +220,7 @@ contains
     real(dp), dimension(ine) :: density
     real(dp), dimension(ite):: temperature
     real(dp), dimension(ine,ite) :: rates
-    character(len=100), intent(in) :: filename
+    character(len=200), intent(in) :: filename
     logical, intent(in), optional::verbose
     integer, intent(in)::ine,ite
     integer::i, l

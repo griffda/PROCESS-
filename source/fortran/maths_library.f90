@@ -14,7 +14,9 @@ module maths_library
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
  
   !use process_output
 
@@ -22,15 +24,6 @@ module maths_library
 
   !  Precision variable
   integer, parameter :: double = 8
-
-  private
-
-  public :: ellipke,find_y_nonuniform_x,gamfun,hybrd,linesolv,qpsub, &
-       quanc8,sumup3,svd,tril,zeroin, eshellvol, dshellvol, &
-       eshellarea, dshellarea, binomial, binarysearch, interpolate, &
-       secant_solve, test_secant_solve, nearly_equal
-  public::variable_error
-  public :: integer2string, integer3string
 
 contains
 
@@ -324,11 +317,12 @@ contains
   end subroutine ellipke
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  real(dp)  function binomial(n,k) result(coefficient)
+  function binomial(n,k) result(coefficient)
     ! This outputs a real approximation to the coefficient
     ! http://en.wikipedia.org/wiki/Binomial_coefficient#Multiplicative_formula
     implicit none
     integer, intent(in) :: n, k
+    real(dp) :: coefficient
     integer :: numerator, i
     if (k == 0) then
         coefficient = 1
@@ -342,7 +336,7 @@ contains
   end function binomial
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  recursive real(dp) function gamfun(x) result(gamma)
+  recursive function gamfun(x) result(gamma)
 
     !! Calculates the gamma function for arbitrary real x
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -359,6 +353,7 @@ contains
     !  Arguments
 
     real(dp), intent(in) :: x
+    real(dp) :: gamma
 
     !  Local variables
 
@@ -512,8 +507,10 @@ contains
     implicit none
 
     interface
-      function fun(rho)
+      function fun(rho) result(fint)
+#ifndef dp
         use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
         real(dp), intent(in) :: rho
         real(dp) :: fint
       end function fun
@@ -521,7 +518,7 @@ contains
 
     !  Arguments
 
-    real(dp), external :: fun
+    external :: fun
     real(dp), intent(in) :: a, b, abserr, relerr
     real(dp), intent(out) :: result, errest, flag
     integer, intent(out) :: nofun
@@ -734,7 +731,9 @@ contains
 
     interface
       function fhz(hhh)
+#ifndef dp
         use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
         real(dp), intent(in) :: hhh
         real(dp) :: fhz
       end function fhz
@@ -922,8 +921,8 @@ contains
 
     integer, intent(in) :: ih, n
     integer, intent(out) :: info
-    integer, dimension(n), intent(out) :: ipvt
-    real(dp), dimension(ih,ih), intent(inout) :: h
+    integer, dimension(:), intent(out) :: ipvt
+    real(dp), dimension(:,:), intent(inout) :: h
 
     !  Local variables
 
@@ -980,8 +979,8 @@ contains
     !  Arguments
 
     integer, intent(in) :: ix,iy,n,iflag
-    real(dp), dimension(ix*n), intent(in) :: x
-    real(dp), dimension(iy*n), intent(in) :: y
+    real(dp), dimension(:), intent(in) :: x
+    real(dp), dimension(:), intent(in) :: y
     real(dp), intent(in) :: c
     real(dp), intent(out) :: total
 
@@ -1076,7 +1075,7 @@ contains
        !  First solve  transp(u)*y = b
 
        do k = 1, n
-          t = sdot(k-1,a(1,k),1,b(1),1)
+          t = sdot(k-1,a(:,k),1,b(:),1)
           b(k) = (b(k) - t)/a(k,k)
        end do
 
@@ -1085,7 +1084,7 @@ contains
        if (nm1 >= 1) then
           do kb = 1, nm1
              k = n - kb
-             b(k) = b(k) + sdot(n-k,a(k+1,k),1,b(k+1),1)
+             b(k) = b(k) + sdot(n-k,a(k+1:,k),1,b(k+1:),1)
              l = ipvt(k)
              if (l /= k) then
                 t = b(l)
@@ -1570,8 +1569,8 @@ contains
     !  Arguments
 
     integer, intent(in) :: n,incx,incy
-    real(dp), dimension(n*incx), intent(in) :: sx
-    real(dp), dimension(n*incy), intent(in) :: sy
+    real(dp), dimension(:), intent(in) :: sx
+    real(dp), dimension(:), intent(in) :: sy
 
     !  Local variables
 
@@ -2193,13 +2192,13 @@ contains
     IMPLICIT NONE
 
     INTEGER n,m,meq,lcnorm,lb,info,ldel,lh,mact,lwa,liwa
-    INTEGER iwa(liwa),ilower(n),iupper(n)
+    INTEGER iwa(:),ilower(:),iupper(:)
     INTEGER i,iflag,j,k,mode,mtotal,np1,npp
     INTEGER inx
 
-    real(dp) conf(m),cnorm(lcnorm,m),b(lb,lb),gm(*),bdl(*), &
-         bdu(*),delta(ldel),cm(m),h(lh,lh),wa(lwa)
-    real(dp) x(n),bndu(n),bndl(n)
+    real(dp) conf(:),cnorm(:,:),b(:,:),gm(:),bdl(:), &
+         bdu(:),delta(:),cm(:),h(:,:),wa(:)
+    real(dp) x(:),bndu(:),bndl(:)
     real(dp) cd6,cdm6,cp9,one,zero
 
     !+**PJK 24/05/06 Added SAVE command (as a number of variables are
@@ -2303,7 +2302,9 @@ contains
 100 continue
 
     call harwqp(np1,mtotal,b,lb,gm,cnorm,lcnorm,cm,bdl,bdu,delta, &
-         mact,meq,h,lh,iwa,wa,iwa(4*(n+1)+m+1),mode,info)
+         mact,meq,h,lh,iwa,wa,iwa(4*(n+1)+m+1:),mode,info)
+    ! Pass a slice of iwa ending at its upper bound, rather than just the
+    ! starting element: helps catch array out-of-bounds errors
 
     if (info /= 1) then
        if (verbose == 1) then
@@ -2417,6 +2418,7 @@ contains
     !  normal return and set to two when a singular matrix is detected
     !  in HINV.  All other entries in the calling sequence are as
     !  described in the Harwell documentation.
+    !  https://www.hsl.rl.ac.uk/archive/specs/ve02.pdf
     !
     !  Modified 5/22/91 to use implicit none (J. Galambos)
     !
@@ -2430,12 +2432,12 @@ contains
     IMPLICIT NONE
 
     INTEGER n,m,ia,ic,k,ke,ih,mode,info
-    INTEGER iwa(*),lt(*)
+    INTEGER iwa(:),lt(:)
     INTEGER i, ial, ib, ii, j, li, ni, nk, nn, n3,n4,n5,n6
     INTEGER i0,i1,i2,i3
 
-    real(dp) a(ia,*),b(*),c(ic,*),d(*),bdl(*),bdu(*),x(*), &
-         h(ih,*),wa(*)
+    real(dp) a(:,:), c(:,:), h(:,:)
+    real(dp) b(:), d(:), bdl(:), bdu(:), x(:), wa(:)
     real(dp) alpha, cac, cc, chc, ghc, y, z, zz
     real(dp) r0
     real(dp), dimension(2) :: det
@@ -2573,7 +2575,7 @@ contains
 
 118 continue
     do i = 1,n
-       call dotpmc(h(1,i),i1,x(n+1),i1,r0,x(i),nk,i0)
+       call dotpmc(h(:,i),i1,x(n+1:),i1,r0,x(i),nk,i0)
     end do
 
     !  Check feasibility, if not exit to 8
@@ -2591,7 +2593,7 @@ contains
 
 112    continue
        j = i-nn
-       call dotpmc(c(1,j),i1,x(1),i1,d(j),z,n,i2)
+       call dotpmc(c(:,j),i1,x(:),i1,d(j),z,n,i2)
 
 114    continue
        if (z < 0.0D0) goto 8
@@ -2604,7 +2606,7 @@ contains
     !  Find largest multiplier,  exit if not positive
 
     do i = 1,n
-       call dotpmc(a(i,1),ia,x(1),i1,b(i),x(n6+i),n,i2)
+       call dotpmc(a(i,:),i1,x(:),i1,b(i),x(n6+i),n,i2)
     end do
     if (k == 0) goto 1000
 
@@ -2612,7 +2614,7 @@ contains
     z = -1.0D99
     do i = 1,k
        if (lt(nn+lt(i)) == -1) goto 122
-       call dotpmc(h(n+i,1),ih,x(n6+1),i1,r0,zz,n,i3)
+       call dotpmc(h(n+i,:),i1,x(n6+1:),i1,r0,zz,n,i3)
        if (zz <= z) goto 122
        z = zz
        ii = i
@@ -2637,9 +2639,9 @@ contains
 
 136 continue
     do i = 1,n
-       call dotpmc(a(i,1),ia,x(nn+1),i1,r0,x(n+i),n,i0)
+       call dotpmc(a(i,:),i1,x(nn+1:),i1,r0,x(n+i),n,i0)
     end do
-    call dotpmc(x(nn+1),i1,x(n+1),i1,r0,cac,n,i0)
+    call dotpmc(x(nn+1:),i1,x(n+1:),i1,r0,cac,n,i0)
     if (cac > 0.0D0) goto 134
     postiv = .false.
     y = 1.0D0
@@ -2679,9 +2681,9 @@ contains
 
 142    continue
        j = i-nn
-       call dotpmc(c(1,j),i1,x(n5+1),i1,r0,zz,n,i0)
+       call dotpmc(c(:,j),i1,x(n5+1:),i1,r0,zz,n,i0)
        if (zz >= 0.0D0) goto 140
-       call dotpmc(c(1,j),i1,x(1),i1,d(j),cc,n,i1)
+       call dotpmc(c(:,j),i1,x(:),i1,d(j),cc,n,i1)
        cc = cc/zz
 
 143    continue
@@ -2726,9 +2728,9 @@ contains
        x(n5+i) = c(i,ib)
     end do
     do i = j,nk
-       call dotpmc(h(i,1),ih,x(n5+1),i1,r0,x(n3+i),n,i0)
+       call dotpmc(h(i,:),i1,x(n5+1:),i1,r0,x(n3+i),n,i0)
     end do
-    if (k /= n) call dotpmc(x(n5+1),i1,x(n3+1),i1,r0,chc,n,i0)
+    if (k /= n) call dotpmc(x(n5+1:),i1,x(n3+1:),i1,r0,chc,n,i0)
 
 151 continue
     lt(nn+ial) = 0
@@ -2777,17 +2779,17 @@ contains
     !  the constraint is being removed from augmented basis
 
     do i=1,n
-       call dotpmc(a(i,1),ia,x(1),i1,b(i),x(n6+i),n,i2)
+       call dotpmc(a(i,:),i1,x(:),i1,b(i),x(n6+i),n,i2)
        x(nn+i) = h(n+ii,i)
     end do
-    call dotpmc(x(n6+1),i1,x(nn+1),i1,r0,z,n,i3)
+    call dotpmc(x(n6+1:),i1,x(nn+1:),i1,r0,z,n,i3)
     if (z == 0.0D0) goto 178
     goto 136
 
 160 continue
     cc = x(n4+ii)
     y = chc*cac+cc**2
-    call dotpmc(x(n6+1),i1,x(n3+1),i1,r0,ghc,n,i0)
+    call dotpmc(x(n6+1:),i1,x(n3+1:),i1,r0,ghc,n,i0)
     if ((alpha*y) < (chc*(z-alpha*cac)+ghc*cc)) goto 156
 
     !  Apply formula for exchanging new constraint
@@ -2795,7 +2797,7 @@ contains
 
     do i = 1,k
        ni = n+i
-       call dotpmc(h(ni,1),ih,x(n+1),i1,r0,x(n5+i),n,i0)
+       call dotpmc(h(ni,:),i1,x(n+1:),i1,r0,x(n5+i),n,i0)
     end do
     do i = 1,n
        x(n+i) = (chc*x(nn+i)-cc*x(n3+i))/y
@@ -2822,11 +2824,11 @@ contains
     !  Calculate g,  new search direction is -h.g
 
     do i = 1,n
-       call dotpmc(a(i,1),ia,x(1),i1,b(i),x(n+i),n,i2)
+       call dotpmc(a(i,:),i1,x(:),i1,b(i),x(n+i),n,i2)
     end do
     z = 0.0D0
     do i = 1,n
-       call dotpmc(h(i,1),ih,x(n+1),i1,r0,x(n5+i),n,i3)
+       call dotpmc(h(i,:),i1,x(n+1:),i1,r0,x(n5+i),n,i3)
        if (x(n5+i) /= 0.0D0) z = 1.0D0
     end do
     passiv = .false.
@@ -2867,7 +2869,7 @@ contains
     k = k-1
     do i = 1,k
        ni = n+i
-       call dotpmc(h(ni,1),ih,x(n+1),i1,r0,x(n3+i),n,i0)
+       call dotpmc(h(ni,:),i1,x(n+1:),i1,r0,x(n3+i),n,i0)
     end do
     do i = 1,k
        alpha = x(n3+i)/cac
@@ -2960,11 +2962,11 @@ contains
 
     INTEGER n,m,ic,k,ke,ih,info
     INTEGER i, ial, ib, ii, j, jj, kv, li, ni, nj, nn, n3
-    INTEGER iwa(*), lt(*)
+    INTEGER iwa(:), lt(:)
     INTEGER i0,i1,i2,i3
 
-    real(dp) c(ic,*),d(*),bdl(*),bdu(*),x(*),h(ih,*)
-    real(dp) wa(*)
+    real(dp) c(:,:),h(:,:)
+    real(dp) wa(:), d(:), bdu(:), x(:), bdl(:)
     real(dp) alpha, beta, y, z, zz
     real(dp) r0
 
@@ -3052,7 +3054,7 @@ contains
     !  Form m = (vtranspose.v)(-1)
     do i = 1,k
        do j = i,k
-          call dotpmc(h(1,n+i),i1,h(1,n+j),i1,r0,h(i,j),n,i0)
+          call dotpmc(h(:,n+i),i1,h(:,n+j),i1,r0,h(i,j),n,i0)
           h(j,i) = h(i,j)
        end do
     end do
@@ -3073,14 +3075,14 @@ contains
           x(n+j) = h(i,j)
        end do
        do j = 1,n
-          call dotpmc(x(n+1),i1,h(j,n+1),ih,r0,h(i,j),k,i0)
+          call dotpmc(x(n+1:),i1,h(j,n+1:),i1,r0,h(i,j),k,i0)
        end do
     end do
 
     !  Set up diagonal elements of the projection matrix  p = v.vplus
 
     do i = 1,n
-       call dotpmc(h(1,i),i1,h(i,n+1),ih,r0,x(n+i),k,i0)
+       call dotpmc(h(:,i),i1,h(i,n+1:),i1,r0,x(n+i),k,i0)
     end do
     do i = 1,n
        lt(n+i) = 0
@@ -3091,6 +3093,7 @@ contains
 
 29  continue
     z = 1.0D0
+    ii = 1 ! reset ii value in case it is never reset
     do i = 1,n
        if (lt(n+i) == 1) goto 25
        if (x(n+i) >= z) goto 25
@@ -3099,6 +3102,7 @@ contains
 25     continue
     end do
     y = 1.0D0
+
     if ( (x(ii)-bdl(ii)) > (bdu(ii)-x(ii)) ) y = -1.0D0
 
     !  Calculate vectors vplus.e(i) and  u = e(i)-v.vplus.e(i)
@@ -3117,7 +3121,7 @@ contains
 30  continue
     do i = 1,n
        if (lt(n+i) == 1) goto 31
-       call dotpmc(h(i,n+1),ih,x(nn+1),i1,r0,x(n3+i),kv,i3)
+       call dotpmc(h(i,n+1:),i1,x(nn+1:),i1,r0,x(n3+i),kv,i3)
 31     continue
     end do
     do i = 1,n
@@ -3173,7 +3177,7 @@ contains
     !  Calculate position of vertex
 
     do i = 1,n
-       call dotpmc(h(1,i),i1,x(n+1),i1,r0,x(i),n,i0)
+       call dotpmc(h(:,i),i1,x(n+1:),i1,r0,x(i),n,i0)
     end do
 
     !  Calculate the constraint residuals, the number of violated
@@ -3197,7 +3201,7 @@ contains
 
 54     continue
        j = i-nn
-       call dotpmc(c(1,j),i1,x(1),i1,d(j),z,n,i2)
+       call dotpmc(c(:,j),i1,x(:),i1,d(j),z,n,i2)
 
 55     continue
        x(nn+i) = z
@@ -3229,7 +3233,7 @@ contains
     z = 0.0D0
     do i = 1,n
        if (lt(nn+lt(i)) == -1) goto 64
-       call dotpmc(h(i,1),ih,x(n+1),i1,r0,y,n,i0)
+       call dotpmc(h(i,:),i1,x(n+1:),i1,r0,y,n,i0)
        if (y <= z) goto 64
        z = y
        ii = i
@@ -3262,7 +3266,7 @@ contains
 
 74     continue
        jj = i-nn
-       call dotpmc(x(n+1),i1,c(1,jj),i1,r0,z,n,i3)
+       call dotpmc(x(n+1:),i1,c(:,jj),i1,r0,z,n,i3)
 
 75     continue
        if (lt(nn+i) == 2) goto 76
@@ -3314,7 +3318,7 @@ contains
        x(n3+i) = c(i,ib)
     end do
     do i = 1,n
-       call dotpmc(h(i,1),ih,x(n3+1),i1,r0,x(nn+i),n,i0)
+       call dotpmc(h(i,:),i1,x(n3+1:),i1,r0,x(nn+i),n,i0)
     end do
 
 90  continue
@@ -3343,507 +3347,509 @@ contains
   end SUBROUTINE HARWFP
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  SUBROUTINE HYBRD( &
-       fcnhyb,n,x,fvec,xtol,maxfev,ml,mu,epsfcn,diag, &
-       mode,factor,nprint,info,nfev,fjac,ldfjac,r,lr, &
-       qtf,wa1,wa2,wa3,wa4,resdl)
-
-    !  www.math.utah.edu/software/minpack/minpack/hybrd.html
-
-    !  The purpose of HYBRD is to find a zero of a system of
-    !  N nonlinear functions in N variables by a modification
-    !  of the Powell Hybrid method. The user must provide a
-    !  subroutine which calculates the functions. The Jacobian is
-    !  then calculated by a forward-difference approximation.
-    !
-    !  The subroutine statement is
-    !
-    !  subroutine hybrd(fcnhyb,n,x,fvec,xtol,maxfev,ml,mu,epsfcn,
-    !                   diag,mode,factor,nprint,info,nfev,fjac,
-    !                   ldfjac,r,lr,qtf,wa1,wa2,wa3,wa4)
-    !
-    !  where
-    !
-    !  FCNHYB is the name of the user-supplied subroutine which
-    !  calculates the functions. FCNHYB must be declared
-    !  in an external statement in the user calling
-    !  program, and should be written as follows.
-    !
-    !   subroutine fcnhyb(n,x,fvec,iflag)
-    !   integer n,iflag
-    !   real x(n),fvec(n)
-    !   ----------
-    !   calculate the functions at x and
-    !   return this vector in fvec.
-    !   ---------
-    !   return
-    !   end
-    !
-    !  The value of IFLAG should not be changed by FCNHYB unless
-    !  the user wants to terminate execution of HYBRD.
-    !  In this case set IFLAG to a negative integer.
-    !
-    !  N is a positive integer input variable set to the number
-    !  of functions and variables.
-    !
-    !  X is an array of length N. On input X must contain
-    !  an initial estimate of the solution vector. On output X
-    !  contains the final estimate of the solution vector.
-    !
-    !  FVEC is an output array of length N which contains
-    !  the functions evaluated at the output X.
-    !
-    !  XTOL is a nonnegative input variable. Termination
-    !  occurs when the relative error between two consecutive
-    !  iterations is at most XTOL.
-    !
-    !  MAXFEV is a positive integer input variable. Termination
-    !  occurs when the number of calls to FCNHYB is at least MAXFEV
-    !  by the end of an iteration.
-    !
-    !  ML is a nonnegative integer input variable which specifies
-    !  the number of subdiagonals within the band of the
-    !  Jacobian matrix. If the Jacobian is not banded, set
-    !  ML to at least N - 1.
-    !
-    !  MU is a nonnegative integer input variable which specifies
-    !  the number of superdiagonals within the band of the
-    !  Jacobian matrix. If the Jacobian is not banded, set
-    !  MU to at least N - 1.
-    !
-    !  EPSFCN is an input variable used in determining a suitable
-    !  step length for the forward-difference approximation. This
-    !  approximation assumes that the relative errors in the
-    !  functions are of the order of EPSFCN. If EPSFCN is less
-    !  than the machine precision, it is assumed that the relative
-    !  errors in the functions are of the order of the machine
-    !  precision.
-    !
-    !  DIAG is an array of length N. If MODE = 1 (see
-    !  below), DIAG is internally set. If MODE = 2, DIAG
-    !  must contain positive entries that serve as
-    !  multiplicative scale factors for the variables.
-    !
-    !  MODE is an integer input variable. If MODE = 1, the
-    !  variables will be scaled internally. If MODE = 2,
-    !  the scaling is specified by the input DIAG. Other
-    !  values of MODE are equivalent to MODE = 1.
-    !
-    !  FACTOR is a positive input variable used in determining the
-    !  initial step bound. This bound is set to the product of
-    !  FACTOR and the Euclidean norm of DIAG*X if nonzero, or else
-    !  to FACTOR itself. In most cases FACTOR should lie in the
-    !  interval (.1,100.). 100. is a generally recommended value.
-    !
-    !  NPRINT is an integer input variable that enables controlled
-    !  printing of iterations if it is positive. In this case,
-    !  FCNHYB is called with IFLAG = 0 at the beginning of the first
-    !  iteration and every NPRINT iterations thereafter and
-    !  immediately prior to return, with X and FVEC available
-    !  for printing. If NPRINT is not positive, no special calls
-    !  of FCNHYB with IFLAG = 0 are made.
-    !
-    !  INFO is an integer output variable. If the user has
-    !  terminated execution, INFO is set to the (negative)
-    !  value of IFLAG. see description of FCNHYB. Otherwise,
-    !  INFO is set as follows.
-    !
-    !   INFO = 0   improper input parameters.
-    !
-    !   INFO = 1   relative error between two consecutive iterates
-    !              is at most XTOL.
-    !
-    !   INFO = 2   number of calls to FCNHYB has reached or exceeded
-    !              MAXFEV.
-    !
-    !   INFO = 3   XTOL is too small. No further improvement in
-    !              the approximate solution X is possible.
-    !
-    !   INFO = 4   iteration is not making good progress, as
-    !              measured by the improvement from the last
-    !              five Jacobian evaluations.
-    !
-    !   INFO = 5   iteration is not making good progress, as
-    !              measured by the improvement from the last
-    !              ten iterations.
-    !
-    !  NFEV is an integer output variable set to the number of
-    !  calls to FCNHYB.
-    !
-    !  FJAC is an output N by N array which contains the
-    !  orthogonal matrix Q produced by the QR factorization
-    !  of the final approximate Jacobian.
-    !
-    !  LDFJAC is a positive integer input variable not less than N
-    !  which specifies the leading dimension of the array FJAC.
-    !
-    !  R is an output array of length LR which contains the
-    !  upper triangular matrix produced by the QR factorization
-    !  of the final approximate Jacobian, stored rowwise.
-    !
-    !  LR is a positive integer input variable not less than
-    !  (N*(N+1))/2.
-    !
-    !  QTF is an output array of length N which contains
-    !  the vector (Q transpose)*FVEC.
-    !
-    !  WA1, WA2, WA3, and WA4 are work arrays of length N.
-    !
-    !  Subprograms called
-    !
-    !   user-supplied ...... fcnhyb
-    !
-    !   minpack-supplied ... dogleg,spmpar,enorm,fdjac1,
-    !                        qform,qrfac,r1mpyq,r1updt
-    !
-    !  Argonne National Laboratory. Minpack project. March 1980.
-    !  Burton S. Garbow, Kenneth E. Hillstrom, Jorge J. More
-
-    IMPLICIT NONE
-
-    interface
-      subroutine fcnhyb(n, x, fvec, iflag)
-        use, intrinsic :: iso_fortran_env, only: dp=>real64
-        integer, intent(in) :: n
-        real(dp), dimension(n), intent(inout) :: x
-        real(dp), dimension(n), intent(out) :: fvec
-        integer, intent(inout) :: iflag
-      end subroutine fcnhyb
-    end interface
-
-    INTEGER n,maxfev,ml,mu,mode,nprint,info,nfev,ldfjac,lr,irr
-    INTEGER i,iflag,iter,j,jm1,l,msum,ncfail,ncsuc,nslow1,nslow2
-
-    !+**PJK 08/10/92 Possible problems with the following declaration:
-    INTEGER iwa(1)
-
-    real(dp) xtol,epsfcn,factor
-    real(dp) x(n),fvec(n),diag(n),fjac(ldfjac,n),r(lr), &
-         qtf(n),wa1(n),wa2(n),wa3(n),wa4(n),resdl(n)
-    real(dp) actred,delta,epsmch,fnorm,fnorm1,one,pnorm, &
-         prered,p1,p5,p001,p0001,ratio,sum,temp,xnorm,zero
-    logical jeval,sing
-
-    EXTERNAL fcnhyb
-
-    one = 1.0D0
-    p1 = 0.1D0
-    p5 = 0.5D0
-    p001 = 1.0D-3
-    p0001 = 1.0D-4
-    zero = 0.0D0
-
-    !  Machine precision
-
-    epsmch = spmpar(1)
-
-    info = 0
-    iflag = 0
-    nfev = 0
-
-    !  Check the input parameters for errors.
-
-    if ( &
-         (n <= 0)         .or. &
-         (xtol < zero)   .or. &
-         (maxfev <= 0)    .or. &
-         (ml < 0)        .or. &
-         (mu < 0)        .or. &
-         (factor <= zero) .or. &
-         (ldfjac < n)    .or. &
-         (lr < ( ( n*(n + 1) ) /2)) &
-         ) goto 300
-
-    if (mode  /=  2) goto 20
-    do j = 1, n
-       if (diag(j) <= zero) goto 300
-    end do
-
-20  continue
-
-    !  Evaluate the function at the starting point
-    !  and calculate its norm.
-
-    iflag = 1
-    call fcnhyb(n,x,fvec,iflag)
-    nfev = 1
-
-    if (iflag < 0) goto 300
-    fnorm = enorm(n,fvec)
-
-    !  Determine the number of calls to FCNHYB needed to compute
-    !  the Jacobian matrix.
-
-    msum = min(ml+mu+1,n)
-
-    !  Initialize iteration counter and monitors.
-
-    iter = 1
-    ncsuc = 0
-    ncfail = 0
-    nslow1 = 0
-    nslow2 = 0
-
-    !  Beginning of the outer loop.
-
-30  continue
-    jeval = .true.
-
-    !  Calculate the Jacobian matrix.
-
-    iflag = 2
-    call fdjac1( &
-         fcnhyb,n,x,fvec,fjac,ldfjac,iflag,ml,mu,epsfcn,wa1,wa2)
-    nfev = nfev + msum
-    if (iflag < 0) goto 300
-
-    !  Compute the qr factorization of the Jacobian.
-
-    call qrfac(n,n,fjac,ldfjac,.false.,iwa,1,wa1,wa2,wa3)
-
-    !  On the first iteration and if mode is 1, scale according
-    !  to the norms of the columns of the initial Jacobian.
-
-    if (iter  /=  1) goto 70
-    if (mode == 2) goto 50
-    do j = 1, n
-       diag(j) = wa2(j)
-       if (wa2(j) == zero) diag(j) = one
-    end do
-
-50  continue
-
-    !  On the first iteration, calculate the norm of the scaled x
-    !  and initialize the step bound delta.
-
-    do j = 1, n
-       wa3(j) = diag(j)*x(j)
-    end do
-    xnorm = enorm(n,wa3)
-    delta = factor*xnorm
-    if (delta == zero) delta = factor
-
-70  continue
-
-    !  Form (q transpose)*fvec and store in qtf.
-
-    do i = 1, n
-       qtf(i) = fvec(i)
-    end do
-    do j = 1, n
-       if (fjac(j,j) == zero) goto 110
-       sum = zero
-       do i = j, n
-          sum = sum + fjac(i,j)*qtf(i)
-       end do
-       temp = -sum/fjac(j,j)
-       do i = j, n
-          qtf(i) = qtf(i) + fjac(i,j)*temp
-       end do
-
-110    continue
-    end do
-
-    !  Copy the triangular factor of the qr factorization into r.
-
-    sing = .false.
-    do j = 1, n
-       l = j
-       jm1 = j - 1
-       if (jm1 < 1) goto 140
-       do i = 1, jm1
-          r(l) = fjac(i,j)
-          l = l + n - i
-       end do
-
-140    continue
-       r(l) = wa1(j)
-       if (wa1(j) == zero) sing = .true.
-    end do
-
-    !  Accumulate the orthogonal factor in fjac.
-
-    call qform(n,n,fjac,ldfjac,wa1)
-
-    !  Rescale if necessary.
-
-    if (mode == 2) goto 170
-    do j = 1, n
-       diag(j) = max(diag(j),wa2(j))
-    end do
-
-170 continue
-
-    !  Beginning of the inner loop.
-
-180 continue
-
-    !  If requested, call FCNHYB to enable printing of iterates.
-
-    if (nprint <= 0) goto 190
-    iflag = 0
-    if (mod(iter-1,nprint) == 0) call fcnhyb(n,x,fvec,iflag)
-    if (iflag < 0) goto 300
-
-190 continue
-
-    !  Determine the direction p.
-
-    call dogleg(n,r,lr,diag,qtf,delta,wa1,wa2,wa3)
-
-    !  Store the direction p and x + p. Calculate the norm of p.
-
-    do j = 1, n
-       wa1(j) = -wa1(j)
-       wa2(j) = x(j) + wa1(j)
-       wa3(j) = diag(j)*wa1(j)
-    end do
-    pnorm = enorm(n,wa3)
-
-    !  On the first iteration, adjust the initial step bound.
-
-    if (iter == 1) delta = min(delta,pnorm)
-
-    !  Evaluate the function at x + p and calculate its norm.
-
-    iflag = 1
-    call fcnhyb(n,wa2,wa4,iflag)
-    nfev = nfev + 1
-    if (iflag < 0) goto 300
-    fnorm1 = enorm(n,wa4)
-
-    !  Compute the scaled actual reduction.
-
-    actred = -one
-    if (fnorm1 < fnorm) actred = one - (fnorm1/fnorm)**2
-
-    !  Compute the scaled predicted reduction.
-
-    l = 1
-    do i = 1, n
-       sum = zero
-       do j = i, n
-          sum = sum + r(l)*wa1(j)
-          l = l + 1
-       end do
-       wa3(i) = qtf(i) + sum
-    end do
-    temp = enorm(n,wa3)
-    prered = zero
-    if (temp < fnorm) prered = one - (temp/fnorm)**2
-
-    !  Compute the ratio of the actual to the predicted reduction.
-
-    ratio = zero
-    if (prered > zero) ratio = actred/prered
-
-    !  Update the step bound.
-
-    if (ratio >= p1) goto 230
-    ncsuc = 0
-    ncfail = ncfail + 1
-    delta = p5*delta
-    goto 240
-230 continue
-    ncfail = 0
-    ncsuc = ncsuc + 1
-    if (ratio >= p5 .or. ncsuc > 1) &
-         delta = max(delta,pnorm/p5)
-    if (abs(ratio-one) <= p1) delta = pnorm/p5
-240 continue
-
-    !  Test for successful iteration.
-
-    if (ratio < p0001) goto 260
-
-    !  Successful iteration. Update x, fvec, and their norms.
-
-    do j = 1, n
-       x(j) = wa2(j)
-       wa2(j) = diag(j)*x(j)
-       fvec(j) = wa4(j)
-    end do
-    xnorm = enorm(n,wa2)
-    fnorm = fnorm1
-    iter = iter + 1
-260 continue
-
-    !  Determine the progress of the iteration.
-
-    nslow1 = nslow1 + 1
-    if (actred >= p001) nslow1 = 0
-    if (jeval) nslow2 = nslow2 + 1
-    if (actred >= p1) nslow2 = 0
-
-    !  Test for convergence.
-
-    if ((delta <= (xtol*xnorm)) .or. (fnorm == zero)) info = 1
-    if (info  /=  0) goto 300
-
-    !  Tests for termination and stringent tolerances.
-
-    if (nfev >= maxfev) info = 2
-    if ((p1*max(p1*delta,pnorm)) <= (epsmch*xnorm)) info = 3
-    if (nslow2 == 5) info = 4
-    if (nslow1 == 10) info = 5
-    if (info  /=  0) goto 300
-
-    !  Criterion for recalculating Jacobian approximation
-    !  by forward differences.
-
-    if (ncfail == 2) goto 290
-
-    !  Calculate the rank one modification to the Jacobian
-    !  and update qtf if necessary.
-
-    do j = 1, n
-       sum = zero
-       do i = 1, n
-          sum = sum + fjac(i,j)*wa4(i)
-       end do
-       wa2(j) = (sum - wa3(j))/pnorm
-       wa1(j) = diag(j)*((diag(j)*wa1(j))/pnorm)
-       if (ratio >= p0001) qtf(j) = sum
-    end do
-
-    !  Compute the qr factorization of the updated Jacobian.
-
-    call r1updt(n,n,r,lr,wa1,wa2,wa3,sing)
-    call r1mpyq(n,n,fjac,ldfjac,wa2,wa3)
-
-    !+**PJK 02/11/92 Warning produced by QA Fortran :
-    !+**PJK 02/11/92 Arg 3 in call to R1MPYQ has wrong dimensions.
-    !+**PJK 02/11/92 Code works at present, but beware of future
-    !+**PJK 02/11/92 modifications.
-
-    call r1mpyq(1,n,qtf,1,wa2,wa3)
-
-    !  End of the inner loop.
-
-    jeval = .false.
-    goto 180
-
-290 continue
-
-    !  End of the outer loop.
-
-    goto 30
-
-300 continue
-
-    !  Termination, either normal or user imposed.
-
-    if (iflag < 0) info = iflag
-    iflag = 0
-    if (nprint > 0) call fcnhyb(n,x,fvec,iflag)
-
-    do irr=1,n
-       resdl(irr)=abs(qtf(irr))
-    end do
-
-    return
-  end SUBROUTINE HYBRD
+! hybrd() has been temporarily commented out. Please see the comment in
+! function_evaluator.fcnhyb() for an explanation.
+
+!   SUBROUTINE HYBRD( &
+!        fcnhyb,n,x,fvec,xtol,maxfev,ml,mu,epsfcn,diag, &
+!        mode,factor,nprint,info,nfev,fjac,ldfjac,r,lr, &
+!        qtf,wa1,wa2,wa3,wa4,resdl)
+
+!     !  www.math.utah.edu/software/minpack/minpack/hybrd.html
+
+!     !  The purpose of HYBRD is to find a zero of a system of
+!     !  N nonlinear functions in N variables by a modification
+!     !  of the Powell Hybrid method. The user must provide a
+!     !  subroutine which calculates the functions. The Jacobian is
+!     !  then calculated by a forward-difference approximation.
+!     !
+!     !  The subroutine statement is
+!     !
+!     !  subroutine hybrd(fcnhyb,n,x,fvec,xtol,maxfev,ml,mu,epsfcn,
+!     !                   diag,mode,factor,nprint,info,nfev,fjac,
+!     !                   ldfjac,r,lr,qtf,wa1,wa2,wa3,wa4)
+!     !
+!     !  where
+!     !
+!     !  FCNHYB is the name of the user-supplied subroutine which
+!     !  calculates the functions. FCNHYB must be declared
+!     !  in an external statement in the user calling
+!     !  program, and should be written as follows.
+!     !
+!     !   subroutine fcnhyb(n,x,fvec,iflag)
+!     !   integer n,iflag
+!     !   real x(n),fvec(n)
+!     !   ----------
+!     !   calculate the functions at x and
+!     !   return this vector in fvec.
+!     !   ---------
+!     !   return
+!     !   end
+!     !
+!     !  The value of IFLAG should not be changed by FCNHYB unless
+!     !  the user wants to terminate execution of HYBRD.
+!     !  In this case set IFLAG to a negative integer.
+!     !
+!     !  N is a positive integer input variable set to the number
+!     !  of functions and variables.
+!     !
+!     !  X is an array of length N. On input X must contain
+!     !  an initial estimate of the solution vector. On output X
+!     !  contains the final estimate of the solution vector.
+!     !
+!     !  FVEC is an output array of length N which contains
+!     !  the functions evaluated at the output X.
+!     !
+!     !  XTOL is a nonnegative input variable. Termination
+!     !  occurs when the relative error between two consecutive
+!     !  iterations is at most XTOL.
+!     !
+!     !  MAXFEV is a positive integer input variable. Termination
+!     !  occurs when the number of calls to FCNHYB is at least MAXFEV
+!     !  by the end of an iteration.
+!     !
+!     !  ML is a nonnegative integer input variable which specifies
+!     !  the number of subdiagonals within the band of the
+!     !  Jacobian matrix. If the Jacobian is not banded, set
+!     !  ML to at least N - 1.
+!     !
+!     !  MU is a nonnegative integer input variable which specifies
+!     !  the number of superdiagonals within the band of the
+!     !  Jacobian matrix. If the Jacobian is not banded, set
+!     !  MU to at least N - 1.
+!     !
+!     !  EPSFCN is an input variable used in determining a suitable
+!     !  step length for the forward-difference approximation. This
+!     !  approximation assumes that the relative errors in the
+!     !  functions are of the order of EPSFCN. If EPSFCN is less
+!     !  than the machine precision, it is assumed that the relative
+!     !  errors in the functions are of the order of the machine
+!     !  precision.
+!     !
+!     !  DIAG is an array of length N. If MODE = 1 (see
+!     !  below), DIAG is internally set. If MODE = 2, DIAG
+!     !  must contain positive entries that serve as
+!     !  multiplicative scale factors for the variables.
+!     !
+!     !  MODE is an integer input variable. If MODE = 1, the
+!     !  variables will be scaled internally. If MODE = 2,
+!     !  the scaling is specified by the input DIAG. Other
+!     !  values of MODE are equivalent to MODE = 1.
+!     !
+!     !  FACTOR is a positive input variable used in determining the
+!     !  initial step bound. This bound is set to the product of
+!     !  FACTOR and the Euclidean norm of DIAG*X if nonzero, or else
+!     !  to FACTOR itself. In most cases FACTOR should lie in the
+!     !  interval (.1,100.). 100. is a generally recommended value.
+!     !
+!     !  NPRINT is an integer input variable that enables controlled
+!     !  printing of iterations if it is positive. In this case,
+!     !  FCNHYB is called with IFLAG = 0 at the beginning of the first
+!     !  iteration and every NPRINT iterations thereafter and
+!     !  immediately prior to return, with X and FVEC available
+!     !  for printing. If NPRINT is not positive, no special calls
+!     !  of FCNHYB with IFLAG = 0 are made.
+!     !
+!     !  INFO is an integer output variable. If the user has
+!     !  terminated execution, INFO is set to the (negative)
+!     !  value of IFLAG. see description of FCNHYB. Otherwise,
+!     !  INFO is set as follows.
+!     !
+!     !   INFO = 0   improper input parameters.
+!     !
+!     !   INFO = 1   relative error between two consecutive iterates
+!     !              is at most XTOL.
+!     !
+!     !   INFO = 2   number of calls to FCNHYB has reached or exceeded
+!     !              MAXFEV.
+!     !
+!     !   INFO = 3   XTOL is too small. No further improvement in
+!     !              the approximate solution X is possible.
+!     !
+!     !   INFO = 4   iteration is not making good progress, as
+!     !              measured by the improvement from the last
+!     !              five Jacobian evaluations.
+!     !
+!     !   INFO = 5   iteration is not making good progress, as
+!     !              measured by the improvement from the last
+!     !              ten iterations.
+!     !
+!     !  NFEV is an integer output variable set to the number of
+!     !  calls to FCNHYB.
+!     !
+!     !  FJAC is an output N by N array which contains the
+!     !  orthogonal matrix Q produced by the QR factorization
+!     !  of the final approximate Jacobian.
+!     !
+!     !  LDFJAC is a positive integer input variable not less than N
+!     !  which specifies the leading dimension of the array FJAC.
+!     !
+!     !  R is an output array of length LR which contains the
+!     !  upper triangular matrix produced by the QR factorization
+!     !  of the final approximate Jacobian, stored rowwise.
+!     !
+!     !  LR is a positive integer input variable not less than
+!     !  (N*(N+1))/2.
+!     !
+!     !  QTF is an output array of length N which contains
+!     !  the vector (Q transpose)*FVEC.
+!     !
+!     !  WA1, WA2, WA3, and WA4 are work arrays of length N.
+!     !
+!     !  Subprograms called
+!     !
+!     !   user-supplied ...... fcnhyb
+!     !
+!     !   minpack-supplied ... dogleg,spmpar,enorm,fdjac1,
+!     !                        qform,qrfac,r1mpyq,r1updt
+!     !
+!     !  Argonne National Laboratory. Minpack project. March 1980.
+!     !  Burton S. Garbow, Kenneth E. Hillstrom, Jorge J. More
+
+!     IMPLICIT NONE
+
+!     interface
+!       subroutine fcnhyb(n, x, fvec, iflag)
+!         use, intrinsic :: iso_fortran_env, only: dp=>real64
+!         integer, intent(in) :: n
+!         real(dp), dimension(n), intent(inout) :: x
+!         real(dp), dimension(n), intent(out) :: fvec
+!         integer, intent(inout) :: iflag
+!       end subroutine fcnhyb
+!     end interface
+
+!     INTEGER n,maxfev,ml,mu,mode,nprint,info,nfev,ldfjac,lr,irr
+!     INTEGER i,iflag,iter,j,jm1,l,msum,ncfail,ncsuc,nslow1,nslow2
+
+!     !+**PJK 08/10/92 Possible problems with the following declaration:
+!     INTEGER iwa(1)
+
+!     real(dp) xtol,epsfcn,factor
+!     real(dp) x(n),fvec(n),diag(n),fjac(ldfjac,n),r(lr), &
+!          qtf(n),wa1(n),wa2(n),wa3(n),wa4(n),resdl(n)
+!     real(dp) actred,delta,epsmch,fnorm,fnorm1,one,pnorm, &
+!          prered,p1,p5,p001,p0001,ratio,sum,temp,xnorm,zero
+!     logical jeval,sing
+
+!     EXTERNAL fcnhyb
+
+!     one = 1.0D0
+!     p1 = 0.1D0
+!     p5 = 0.5D0
+!     p001 = 1.0D-3
+!     p0001 = 1.0D-4
+!     zero = 0.0D0
+
+!     !  Machine precision
+
+!     epsmch = spmpar(1)
+
+!     info = 0
+!     iflag = 0
+!     nfev = 0
+
+!     !  Check the input parameters for errors.
+
+!     if ( &
+!          (n <= 0)         .or. &
+!          (xtol < zero)   .or. &
+!          (maxfev <= 0)    .or. &
+!          (ml < 0)        .or. &
+!          (mu < 0)        .or. &
+!          (factor <= zero) .or. &
+!          (ldfjac < n)    .or. &
+!          (lr < ( ( n*(n + 1) ) /2)) &
+!          ) goto 300
+
+!     if (mode  /=  2) goto 20
+!     do j = 1, n
+!        if (diag(j) <= zero) goto 300
+!     end do
+
+! 20  continue
+
+!     !  Evaluate the function at the starting point
+!     !  and calculate its norm.
+
+!     iflag = 1
+!     call fcnhyb(n,x,fvec,iflag)
+!     nfev = 1
+
+!     if (iflag < 0) goto 300
+!     fnorm = enorm(n,fvec)
+
+!     !  Determine the number of calls to FCNHYB needed to compute
+!     !  the Jacobian matrix.
+
+!     msum = min(ml+mu+1,n)
+
+!     !  Initialize iteration counter and monitors.
+
+!     iter = 1
+!     ncsuc = 0
+!     ncfail = 0
+!     nslow1 = 0
+!     nslow2 = 0
+
+!     !  Beginning of the outer loop.
+
+! 30  continue
+!     jeval = .true.
+
+!     !  Calculate the Jacobian matrix.
+
+!     iflag = 2
+!     call fdjac1( &
+!          fcnhyb,n,x,fvec,fjac,ldfjac,iflag,ml,mu,epsfcn,wa1,wa2)
+!     nfev = nfev + msum
+!     if (iflag < 0) goto 300
+
+!     !  Compute the qr factorization of the Jacobian.
+
+!     call qrfac(n,n,fjac,ldfjac,.false.,iwa,1,wa1,wa2,wa3)
+
+!     !  On the first iteration and if mode is 1, scale according
+!     !  to the norms of the columns of the initial Jacobian.
+
+!     if (iter  /=  1) goto 70
+!     if (mode == 2) goto 50
+!     do j = 1, n
+!        diag(j) = wa2(j)
+!        if (wa2(j) == zero) diag(j) = one
+!     end do
+
+! 50  continue
+
+!     !  On the first iteration, calculate the norm of the scaled x
+!     !  and initialize the step bound delta.
+
+!     do j = 1, n
+!        wa3(j) = diag(j)*x(j)
+!     end do
+!     xnorm = enorm(n,wa3)
+!     delta = factor*xnorm
+!     if (delta == zero) delta = factor
+
+! 70  continue
+
+!     !  Form (q transpose)*fvec and store in qtf.
+
+!     do i = 1, n
+!        qtf(i) = fvec(i)
+!     end do
+!     do j = 1, n
+!        if (fjac(j,j) == zero) goto 110
+!        sum = zero
+!        do i = j, n
+!           sum = sum + fjac(i,j)*qtf(i)
+!        end do
+!        temp = -sum/fjac(j,j)
+!        do i = j, n
+!           qtf(i) = qtf(i) + fjac(i,j)*temp
+!        end do
+
+! 110    continue
+!     end do
+
+!     !  Copy the triangular factor of the qr factorization into r.
+
+!     sing = .false.
+!     do j = 1, n
+!        l = j
+!        jm1 = j - 1
+!        if (jm1 < 1) goto 140
+!        do i = 1, jm1
+!           r(l) = fjac(i,j)
+!           l = l + n - i
+!        end do
+
+! 140    continue
+!        r(l) = wa1(j)
+!        if (wa1(j) == zero) sing = .true.
+!     end do
+
+!     !  Accumulate the orthogonal factor in fjac.
+
+!     call qform(n,n,fjac,ldfjac,wa1)
+
+!     !  Rescale if necessary.
+
+!     if (mode == 2) goto 170
+!     do j = 1, n
+!        diag(j) = max(diag(j),wa2(j))
+!     end do
+
+! 170 continue
+
+!     !  Beginning of the inner loop.
+
+! 180 continue
+
+!     !  If requested, call FCNHYB to enable printing of iterates.
+
+!     if (nprint <= 0) goto 190
+!     iflag = 0
+!     if (mod(iter-1,nprint) == 0) call fcnhyb(n,x,fvec,iflag)
+!     if (iflag < 0) goto 300
+
+! 190 continue
+
+!     !  Determine the direction p.
+
+!     call dogleg(n,r,lr,diag,qtf,delta,wa1,wa2,wa3)
+
+!     !  Store the direction p and x + p. Calculate the norm of p.
+
+!     do j = 1, n
+!        wa1(j) = -wa1(j)
+!        wa2(j) = x(j) + wa1(j)
+!        wa3(j) = diag(j)*wa1(j)
+!     end do
+!     pnorm = enorm(n,wa3)
+
+!     !  On the first iteration, adjust the initial step bound.
+
+!     if (iter == 1) delta = min(delta,pnorm)
+
+!     !  Evaluate the function at x + p and calculate its norm.
+
+!     iflag = 1
+!     call fcnhyb(n,wa2,wa4,iflag)
+!     nfev = nfev + 1
+!     if (iflag < 0) goto 300
+!     fnorm1 = enorm(n,wa4)
+
+!     !  Compute the scaled actual reduction.
+
+!     actred = -one
+!     if (fnorm1 < fnorm) actred = one - (fnorm1/fnorm)**2
+
+!     !  Compute the scaled predicted reduction.
+
+!     l = 1
+!     do i = 1, n
+!        sum = zero
+!        do j = i, n
+!           sum = sum + r(l)*wa1(j)
+!           l = l + 1
+!        end do
+!        wa3(i) = qtf(i) + sum
+!     end do
+!     temp = enorm(n,wa3)
+!     prered = zero
+!     if (temp < fnorm) prered = one - (temp/fnorm)**2
+
+!     !  Compute the ratio of the actual to the predicted reduction.
+
+!     ratio = zero
+!     if (prered > zero) ratio = actred/prered
+
+!     !  Update the step bound.
+
+!     if (ratio >= p1) goto 230
+!     ncsuc = 0
+!     ncfail = ncfail + 1
+!     delta = p5*delta
+!     goto 240
+! 230 continue
+!     ncfail = 0
+!     ncsuc = ncsuc + 1
+!     if (ratio >= p5 .or. ncsuc > 1) &
+!          delta = max(delta,pnorm/p5)
+!     if (abs(ratio-one) <= p1) delta = pnorm/p5
+! 240 continue
+
+!     !  Test for successful iteration.
+
+!     if (ratio < p0001) goto 260
+
+!     !  Successful iteration. Update x, fvec, and their norms.
+
+!     do j = 1, n
+!        x(j) = wa2(j)
+!        wa2(j) = diag(j)*x(j)
+!        fvec(j) = wa4(j)
+!     end do
+!     xnorm = enorm(n,wa2)
+!     fnorm = fnorm1
+!     iter = iter + 1
+! 260 continue
+
+!     !  Determine the progress of the iteration.
+
+!     nslow1 = nslow1 + 1
+!     if (actred >= p001) nslow1 = 0
+!     if (jeval) nslow2 = nslow2 + 1
+!     if (actred >= p1) nslow2 = 0
+
+!     !  Test for convergence.
+
+!     if ((delta <= (xtol*xnorm)) .or. (fnorm == zero)) info = 1
+!     if (info  /=  0) goto 300
+
+!     !  Tests for termination and stringent tolerances.
+
+!     if (nfev >= maxfev) info = 2
+!     if ((p1*max(p1*delta,pnorm)) <= (epsmch*xnorm)) info = 3
+!     if (nslow2 == 5) info = 4
+!     if (nslow1 == 10) info = 5
+!     if (info  /=  0) goto 300
+
+!     !  Criterion for recalculating Jacobian approximation
+!     !  by forward differences.
+
+!     if (ncfail == 2) goto 290
+
+!     !  Calculate the rank one modification to the Jacobian
+!     !  and update qtf if necessary.
+
+!     do j = 1, n
+!        sum = zero
+!        do i = 1, n
+!           sum = sum + fjac(i,j)*wa4(i)
+!        end do
+!        wa2(j) = (sum - wa3(j))/pnorm
+!        wa1(j) = diag(j)*((diag(j)*wa1(j))/pnorm)
+!        if (ratio >= p0001) qtf(j) = sum
+!     end do
+
+!     !  Compute the qr factorization of the updated Jacobian.
+
+!     call r1updt(n,n,r,lr,wa1,wa2,wa3,sing)
+!     call r1mpyq(n,n,fjac,ldfjac,wa2,wa3)
+
+!     !+**PJK 02/11/92 Warning produced by QA Fortran :
+!     !+**PJK 02/11/92 Arg 3 in call to R1MPYQ has wrong dimensions.
+!     !+**PJK 02/11/92 Code works at present, but beware of future
+!     !+**PJK 02/11/92 modifications.
+
+!     call r1mpyq(1,n,qtf,1,wa2,wa3)
+
+!     !  End of the inner loop.
+
+!     jeval = .false.
+!     goto 180
+
+! 290 continue
+
+!     !  End of the outer loop.
+
+!     goto 30
+
+! 300 continue
+
+!     !  Termination, either normal or user imposed.
+
+!     if (iflag < 0) info = iflag
+!     iflag = 0
+!     if (nprint > 0) call fcnhyb(n,x,fvec,iflag)
+
+!     do irr=1,n
+!        resdl(irr)=abs(qtf(irr))
+!     end do
+
+!     return
+!   end SUBROUTINE HYBRD
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -5200,7 +5206,9 @@ contains
       
       interface
         function f(x)
+#ifndef dp
           use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
           real(dp), intent(in) :: x
           real(dp) :: f
         end function f

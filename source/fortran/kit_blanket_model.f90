@@ -15,7 +15,9 @@ module kit_blanket_model
     !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    use, intrinsic :: iso_fortran_env, only: dp=>real64
+#ifndef dp
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
     implicit none
   
     private
@@ -589,7 +591,6 @@ module kit_blanket_model
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-          use maths_library, only: hybrd
       implicit none
   
       !  Arguments

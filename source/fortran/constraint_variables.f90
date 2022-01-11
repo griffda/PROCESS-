@@ -8,7 +8,9 @@ module constraint_variables
   !!
   !! - AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   implicit none
 
@@ -77,7 +79,9 @@ module constraint_variables
   !! (`constraint equation 33`, `iteration variable 50`)
 
   real(dp) :: fipir
-  !! f-value for Ip/Irod limit (`constraint equation 46`, `iteration variable 72`)
+  !! f-value for Ip/Irod upper limit
+  !! constraint equation icc = 46
+  !! iteration variable ixc = 72
 
   real(dp) :: fjohc
   !! f-value for central solenoid current at end-of-flattop
@@ -106,7 +110,7 @@ module constraint_variables
   !! (`constraint equation 76`, `iteration variable 144`)
 
   real(dp) :: foh_stress
-  !! f-value for Tresca stress in Central Solenoid
+  !! f-value for Tresca yield criterion in Central Solenoid
   !! (`constraint equation 72`, `iteration variable 123`)
 
   real(dp) :: fpeakb
@@ -153,11 +157,11 @@ module constraint_variables
   !! f-value for minor radius limit (`constraint equation 21`, `iteration variable 32`)
 
   real(dp) :: fstrcase
-  !! f-value for maximum TF coil case TRESCA stress
+  !! f-value for maximum TF coil case Tresca yield criterion
   !! (`constraint equation 31`, `iteration variable 48`)
 
   real(dp) :: fstrcond
-  !! f-value for maxiumum TF coil conduit TRESCA stress
+  !! f-value for maxiumum TF coil conduit Tresca yield criterion
   !! (`constraint equation 32`, `iteration variable 49`)
 
   real(dp) :: ftaucq
@@ -218,7 +222,7 @@ module constraint_variables
   real(dp) :: nflutfmax
   !! max fast neutron fluence on TF coil (n/m2) (`blktmodel>0`) (`constraint equation 53`)
   !! Also used for demontable magnets (itart = 1) and superconducting coils (i_tf_sup = 1)
-  !! To set the CP lifetime
+  !! To set the CP lifetime (`constraint equation 85`)
 
   real(dp) :: pdivtlim
   !! Minimum pdivt [MW] (`constraint equation 80`)

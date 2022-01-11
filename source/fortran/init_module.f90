@@ -4,8 +4,6 @@
 
 module init_module
 
-  use, intrinsic :: iso_fortran_env, only: dp=>real64
-
   implicit none
 
 contains
@@ -32,10 +30,8 @@ subroutine init_all_module_vars
   use heat_transport_variables, only: init_heat_transport_variables
   use ife_variables, only: init_ife_variables
   use impurity_radiation_module, only: init_impurity_radiation_module
-  use function_evaluator, only: init_function_evaluator
   use build_module, only: init_build_module
   use vmcon_module, only: init_vmcon_module
-  use vmcon_test, only: init_vmcon_test
   use pfcoil_module, only: init_pfcoil_module
   use physics_module, only: init_physics_module
   use physics_variables, only: init_physics_variables
@@ -67,13 +63,14 @@ subroutine init_all_module_vars
   use reinke_variables, only: init_reinke_variables
   use costs_module, only: init_costs_module
   use costs_2015_module, only: init_costs_2015
-  use costs_step_module, only: init_costs_step
   use divertor_ode_var, only: init_divertor_ode_var
   use green_func_ext, only: init_green_func_ext
   use kit_hcll_module, only: init_kit_hcll_module
   use define_iteration_variables, only: init_define_iteration_variables
   use physics_functions_module, only: init_physics_functions
   use reinke_module, only: init_reinke_module
+  use water_usage_variables, only: init_watuse_variables
+  use CS_fatigue_variables, only: init_CS_fatigue_variables
 
   call init_numerics
   call init_input
@@ -91,10 +88,8 @@ subroutine init_all_module_vars
   call init_heat_transport_variables
   call init_ife_variables
   call init_impurity_radiation_module
-  call init_function_evaluator
   call init_build_module
   call init_vmcon_module
-  call init_vmcon_test
   call init_pfcoil_module
   call init_physics_module
   call init_physics_variables
@@ -126,13 +121,14 @@ subroutine init_all_module_vars
   call init_reinke_variables
   call init_costs_module
   call init_costs_2015
-  call init_costs_step
   call init_divertor_ode_var
   call init_green_func_ext
   call init_kit_hcll_module
   call init_define_iteration_variables
   call init_physics_functions
   call init_reinke_module
+  call init_watuse_variables
+  call init_CS_fatigue_variables
 end subroutine init_all_module_vars
 
 subroutine init

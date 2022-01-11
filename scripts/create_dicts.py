@@ -16,14 +16,8 @@ This ultimately provides Process Python with the ability to access variable
 information in the Process Fortran source code.
 """
 import re
-import os
 import logging
-import copy
 import argparse
-from pprint import pformat
-from collections import defaultdict
-import sys
-import os
 import json
 import argparse
 import pickle
@@ -37,7 +31,7 @@ IFAIL_SUCCESS = 1
 
 # default values for making a plot file from MFILE.DAT
 PARAMETER_DEFAULTS = ["rmajor", "aspect", "rminor", "bt", "powfmw",
-    "pnetelmw", "te", "pdivt", "strtf1", "strtf2"]
+    "pnetelmw", "te", "pdivt", "sig_tf_case", "sig_tf_wp"]
 
 # parameters that start with f, but are not f-values
 NON_F_VALUES = ['fcohbop', 'fvsbrnni', 'feffcd', 'fcutfsu', 'fimpvar']
@@ -388,7 +382,7 @@ class DefaultValues(ProjectDictionary):
         Once found, send on for parsing individually.
         """
         # Fetch all Fortran source files
-        sources = Path(SOURCEDIR).glob("*.f90")
+        sources = sorted(Path(SOURCEDIR).glob("*.f90"))
 
         for source in sources:
             with open(source) as f:

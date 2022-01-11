@@ -1,7 +1,9 @@
 module define_iteration_variables 
    !! Module to define iteration variables
 
-   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#ifndef dp
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
    implicit none
 
    public
@@ -2741,7 +2743,7 @@ contains
   !---------------------------------
 
   subroutine init_itv_123
-    !! <LI> (123) foh_stress : f-value for CS coil Tresca stress limit (f-value for eq. 72)
+    !! <LI> (123) foh_stress : f-value for CS coil Tresca yield criterion (f-value for eq. 72)
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(123) = 'foh_stress    '
@@ -3613,8 +3615,6 @@ contains
   end subroutine set_itv_158
 
   !---------------------------------
-  ! DUMMY variables below here
-  !---------------------------------
 
   subroutine init_itv_159
     !! <LI> (159) ftoroidalgap : F-value for toroidalgap >  tftort constraint (con. 82)
@@ -3733,25 +3733,29 @@ contains
   !---------------------------------
 
   subroutine init_itv_164
-    !! <LI> (164) DUMMY : Description
+    !! (164) f-value for maximum cryogenic plant power
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(164) = 'DUMMY         '
-    boundl(164) = 1.0d-99
-    boundu(164) = 1.0d99
+    lablxc(164) = 'f_crypmw         '
+    boundl(164) = 0.001D0 
+    boundu(164) = 1.000D0  
   end subroutine init_itv_164
 
   real(kind(1.d0)) function itv_164()
+    use heat_transport_variables, only: f_crypmw
     implicit none
-    itv_164 = DUMMY 
+    itv_164 = f_crypmw
   end function itv_164
 
   subroutine set_itv_164(ratio)
+    use heat_transport_variables, only: f_crypmw
     implicit none
     real(kind(1.d0)) :: ratio
-    DUMMY = ratio
+    f_crypmw = ratio
   end subroutine set_itv_164
 
+  !---------------------------------
+  ! DUMMY variables below here
   !---------------------------------
 
   subroutine init_itv_165
@@ -3994,586 +3998,535 @@ contains
     DUMMY = ratio
   end subroutine set_itv_175
 
-!! </UL>
+  subroutine loadxc
+    !! Routine to load the physics and engineering variables into the
+    !! optimisation variables array
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This subroutine loads the physics and engineering variables
+    !! into the optimisation variables array <CODE>XCM</CODE>.
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    use constants, only: nout
+    use maths_library, only: variable_error
+    use error_handling, only: idiags, fdiags, report_error
+    use numerics, only: nvar, xcm, ixc, name_xc, lablxc, scafc, scale
+    use physics_variables, only: icurr
+    use global_variables, only: vlabel
+    implicit none
+  
+    !  Local variables
+    integer :: i
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    do i = 1,nvar
+  
+       select case (ixc(i))
+           case (1);  xcm(i) = itv_1()
+           case (2);  xcm(i) = itv_2()
+           case (3);  xcm(i) = itv_3()
+           case (4);  xcm(i) = itv_4()
+           case (5);  xcm(i) = itv_5()
+           case (6);  xcm(i) = itv_6()
+           case (7);  xcm(i) = itv_7()
+           case (8);  xcm(i) = itv_8()
+           case (9);  xcm(i) = itv_9()
+           case (10);  xcm(i) = itv_10()
+           case (11);  xcm(i) = itv_11()
+           case (12);  xcm(i) = itv_12()
+           case (13);  xcm(i) = itv_13()
+           case (14);  xcm(i) = itv_14()
+           case (15);  xcm(i) = itv_15()
+           case (16);  xcm(i) = itv_16()
+           case (17);  xcm(i) = itv_17()
+           case (18);  xcm(i) = itv_18()
+           case (19);  xcm(i) = itv_19()
+           case (20);  xcm(i) = itv_20()
+           case (21);  xcm(i) = itv_21()
+           case (22);  xcm(i) = itv_22()
+           case (23);  xcm(i) = itv_23()
+           case (24);  xcm(i) = itv_24()
+           case (25);  xcm(i) = itv_25()
+           case (26);  xcm(i) = itv_26()
+           case (27);  xcm(i) = itv_27()
+           case (28);  xcm(i) = itv_28()
+           case (29);  xcm(i) = itv_29()
+           case (30);  xcm(i) = itv_30()
+           case (31);  xcm(i) = itv_31()
+           case (32);  xcm(i) = itv_32()
+           case (33);  xcm(i) = itv_33()
+           case (34);  xcm(i) = itv_34()
+           case (35);  xcm(i) = itv_35()
+           case (36);  xcm(i) = itv_36()
+           case (37);  xcm(i) = itv_37()
+           case (38);  xcm(i) = itv_38()
+           case (39);  xcm(i) = itv_39()
+           case (40);  xcm(i) = itv_40()
+           case (41);  xcm(i) = itv_41()
+           case (42);  xcm(i) = itv_42()
+           case (43);  
+           case (44);  xcm(i) = itv_44()
+           case (45);  xcm(i) = itv_45()
+           case (46);  xcm(i) = itv_46()
+           case (47);  xcm(i) = itv_47()
+           case (48);  xcm(i) = itv_48()
+           case (49);  xcm(i) = itv_49()
+           case (50);  xcm(i) = itv_50()
+           case (51);  xcm(i) = itv_51()
+           case (52);  xcm(i) = itv_52()
+           case (53);  xcm(i) = itv_53()
+           case (54);  xcm(i) = itv_54()
+           case (55);  xcm(i) = itv_55()
+           case (56);  xcm(i) = itv_56()
+           case (57);  xcm(i) = itv_57()
+           case (58);  xcm(i) = itv_58()
+           case (59);  xcm(i) = itv_59()
+           case (60);  xcm(i) = itv_60()
+           case (61);  xcm(i) = itv_61()
+           case (62);  xcm(i) = itv_62()
+           case (63);  xcm(i) = itv_63()
+           case (64);  xcm(i) = itv_64()
+           case (65);  xcm(i) = itv_65()
+           case (66);  xcm(i) = itv_66()
+           case (67);  xcm(i) = itv_67()
+           case (68);  xcm(i) = itv_68()
+           case (69);  xcm(i) = itv_69()
+           case (70);  xcm(i) = itv_70()
+           case (71);  xcm(i) = itv_71()
+           case (72);  xcm(i) = itv_72()
+           case (73);  xcm(i) = itv_73()
+           case (74);  xcm(i) = itv_74()
+           case (75);  xcm(i) = itv_75()
+           case (76);  xcm(i) = itv_76()
+           case (77);  xcm(i) = itv_77()
+           case (78);  xcm(i) = itv_78()
+           case (79);  xcm(i) = itv_79()
+           case (80);  xcm(i) = itv_80()
+           case (81);  xcm(i) = itv_81()
+           case (82);  xcm(i) = itv_82()
+           case (83);  xcm(i) = itv_83()
+           case (84);  xcm(i) = itv_84()
+           case (85);  xcm(i) = itv_85()
+           case (86);  xcm(i) = itv_86()
+           case (87);  
+           case (88);  
+           case (89);  xcm(i) = itv_89()
+           case (90);  xcm(i) = itv_90()
+           case (91);  xcm(i) = itv_91()
+           case (92);  xcm(i) = itv_92()
+           case (93);  xcm(i) = itv_93()
+           case (94);  xcm(i) = itv_94()
+           case (95);  xcm(i) = itv_95()
+           case (96);  xcm(i) = itv_96()
+           case (97);  xcm(i) = itv_97()
+           case (98);  xcm(i) = itv_98()
+           case (99);  
+           case (100);  
+           case (101);  
+           case (102);  xcm(i) = itv_102()
+           case (103);  xcm(i) = itv_103()
+           case (104);  xcm(i) = itv_104()
+           case (105);  xcm(i) = itv_105()
+           case (106);  xcm(i) = itv_106()
+           case (107);  xcm(i) = itv_107()
+           case (108);  xcm(i) = itv_108()
+           case (109);  xcm(i) = itv_109()
+           case (110);  xcm(i) = itv_110()
+           case (111);  xcm(i) = itv_111()
+           case (112);  xcm(i) = itv_112()
+           case (113);  xcm(i) = itv_113()
+           case (114);  xcm(i) = itv_114()
+           case (115);  xcm(i) = itv_115()
+           case (116);  xcm(i) = itv_116()
+           case (117);  xcm(i) = itv_117()
+           case (118);  xcm(i) = itv_118()
+           case (119);  xcm(i) = itv_119()
+           case (120);  xcm(i) = itv_120()
+           case (121);  xcm(i) = itv_121()
+           case (122);  xcm(i) = itv_122()
+           case (123);  xcm(i) = itv_123()
+           case (124);  xcm(i) = itv_124()
+           case (125);  xcm(i) = itv_125()
+           case (126);  xcm(i) = itv_126()
+           case (127);  xcm(i) = itv_127()
+           case (128);  xcm(i) = itv_128()
+           case (129);  xcm(i) = itv_129()
+           case (130);  xcm(i) = itv_130()
+           case (131);  xcm(i) = itv_131()
+           case (132);  xcm(i) = itv_132()
+           case (133);  xcm(i) = itv_133()
+           case (134);  xcm(i) = itv_134()
+           case (135);  xcm(i) = itv_135()
+           case (136);  xcm(i) = itv_136()
+           case (137);  xcm(i) = itv_137()
+           case (138);  xcm(i) = itv_138()
+           case (139);  xcm(i) = itv_139()
+           case (140);  xcm(i) = itv_140()
+           case (141);  xcm(i) = itv_141()
+           case (142);  xcm(i) = itv_142()
+           case (143);  xcm(i) = itv_143()
+           case (144);  xcm(i) = itv_144()
+           case (145);  xcm(i) = itv_145()
+           case (146);  xcm(i) = itv_146()
+           case (147);  xcm(i) = itv_147()
+           case (148);  xcm(i) = itv_148()
+           case (149);  xcm(i) = itv_149()
+           case (150);  xcm(i) = itv_150()
+           case (151);  xcm(i) = itv_151()
+           case (152);  xcm(i) = itv_152()
+           case (153);  xcm(i) = itv_153()
+           case (154);  xcm(i) = itv_154()
+           case (155);  xcm(i) = itv_155()
+           case (156);  xcm(i) = itv_156()
+           case (157);  xcm(i) = itv_157()
+           case (158);  xcm(i) = itv_158()
+           case (159);  xcm(i) = itv_159()
+           case (160);  xcm(i) = itv_160()
+           case (161);  xcm(i) = itv_161()
+           case (162);  xcm(i) = itv_162()
+           case (163);  xcm(i) = itv_163()
+            ! DUMMY Cases
+           case (164);  xcm(i) = itv_164()
+           case (165);  xcm(i) = itv_165()
+           case (166);  xcm(i) = itv_166()
+           case (167);  xcm(i) = itv_167()
+           case (168);  xcm(i) = itv_168()
+           case (169);  xcm(i) = itv_169()
+           case (170);  xcm(i) = itv_170()
+           case (171);  xcm(i) = itv_171()
+           case (172);  xcm(i) = itv_172()
+           case (173);  xcm(i) = itv_173()
+           case (174);  xcm(i) = itv_174()
+           case (175);  xcm(i) = itv_175()
+  
+       case default
+          idiags(1) = i ; idiags(2) = ixc(i)
+          call report_error(54)
+  
+       end select
+       
+  
+        ! Simple list of iteration variable names
+        name_xc(i) = lablxc(ixc(i))
+        ! Note that iteration variable 18 has more than one name:
+        if ((ixc(i) == 18).and.(icurr /= 2)) name_xc(i) = 'q95'
+        if ((ixc(i) == 18).and.(icurr == 2)) name_xc(i) = 'qbar'
+  
+  
+         ! MDK Check if sweep variable is also an iteration variable
+         if (name_xc(i) == vlabel) then
+              write(nout,*) 'WARNING: The sweep variable is also an iteration variable.'
+              write(nout,*) 'The values of the sweep variable will be overwritten by the optimiser.'
+              write(*,*) 'WARNING: The sweep variable is also an iteration variable.'
+         end if
+  
+       !  Check that no iteration variable is zero
+  
+       if (abs(xcm(i)) <= 1.0D-12) then
+          idiags(1) = i ; idiags(2) = ixc(i)
+          write(*,*) 'Iteration variable ',ixc(i),'(',trim(lablxc(ixc(i))),') is zero.'
+          call report_error(55)
+       end if
+  
+       !  Crude method of catching NaN errors
+  
+       !if ( (abs(xcm(i)) > 9.99D99).or.(xcm(i) /= xcm(i)) ) then
+       if ( variable_error(xcm(i)) ) then
+          idiags(1) = i ; idiags(2) = ixc(i) ; fdiags(1) = xcm(i)
+          call report_error(56)
+       end if
+  
+    end do
+  
+    do i = 1,nvar
+       if (abs(xcm(i)) > 1.0D-99) then
+          scale(i) = 1.0D0/xcm(i)
+       else
+          scale(i) = 1.0D0
+       end if
+       scafc(i) = 1.0D0/scale(i)
+       xcm(i) = xcm(i)*scale(i)
+    end do
+  
+  end subroutine loadxc
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  subroutine convxc(xc,nn)
+    
+    !! Routine to convert scaled iteration variables back to
+    !! their real values
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! xc(ipnvars) : input/output real array : scaled iteration variable values
+    !! nn : input integer : number of iteration variables
+    !! This subroutine converts the scaled iteration variables back to
+    !! their real values.
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    use error_handling, only: idiags, fdiags, report_error
+    use numerics, only: ipnvars, scale, ixc, lablxc
+    use maths_library, only: variable_error
+#ifndef dp
+    use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
+  
+    implicit none
+  
+    !  Arguments
+  
+    integer, intent(in) :: nn
+    real(dp), dimension(:), intent(in) :: xc
+  
+    !  Local variables
+  
+    integer :: i
+    real(dp)::ratio
+  
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+    do i = 1,nn
+       ratio = xc(i)/scale(i)
+  
+       select case (ixc(i))
+           case (1);  call set_itv_1(ratio)
+           case (2);  call set_itv_2(ratio)
+           case (3);  call set_itv_3(ratio)
+           case (4);  call set_itv_4(ratio)
+           case (5);  call set_itv_5(ratio)
+           case (6);  call set_itv_6(ratio)
+           case (7);  call set_itv_7(ratio)
+           case (8);  call set_itv_8(ratio)
+           case (9);  call set_itv_9(ratio)
+           case (10);  call set_itv_10(ratio)
+           case (11);  call set_itv_11(ratio)
+           case (12);  call set_itv_12(ratio)
+           case (13);  call set_itv_13(ratio)
+           case (14);  call set_itv_14(ratio)
+           case (15);  call set_itv_15(ratio)
+           case (16);  call set_itv_16(ratio)
+           case (17);  call set_itv_17(ratio)
+           case (18);  call set_itv_18(ratio)
+           case (19);  call set_itv_19(ratio)
+           case (20);  call set_itv_20(ratio)
+           case (21);  call set_itv_21(ratio)
+           case (22);  
+           case (23);  call set_itv_23(ratio)
+           case (24);  
+           case (25);  call set_itv_25(ratio)
+           case (26);  call set_itv_26(ratio)
+           case (27);  call set_itv_27(ratio)
+           case (28);  call set_itv_28(ratio)
+           case (29);  call set_itv_29(ratio)
+           case (30);  call set_itv_30(ratio)
+           case (31);  call set_itv_31(ratio)
+           case (32);  call set_itv_32(ratio)
+           case (33);  call set_itv_33(ratio)
+           case (34);  call set_itv_34(ratio)
+           case (35);  call set_itv_35(ratio)
+           case (36);  call set_itv_36(ratio)
+           case (37);  call set_itv_37(ratio)
+           case (38);  call set_itv_38(ratio)
+           case (39);  call set_itv_39(ratio)
+           case (40);  call set_itv_40(ratio)
+           case (41);  call set_itv_41(ratio)
+           case (42);  call set_itv_42(ratio)
+           case (43);  
+           case (44);  call set_itv_44(ratio)
+           case (45);  call set_itv_45(ratio)
+           case (46);  call set_itv_46(ratio)
+           case (47);  call set_itv_47(ratio)
+           case (48);  call set_itv_48(ratio)
+           case (49);  call set_itv_49(ratio)
+           case (50);  call set_itv_50(ratio)
+           case (51);  call set_itv_51(ratio)
+           case (52);  call set_itv_52(ratio)
+           case (53);  call set_itv_53(ratio)
+           case (54);  call set_itv_54(ratio)
+           case (55);  
+           case (56);  call set_itv_56(ratio)
+           case (57);  call set_itv_57(ratio)
+           case (58);  call set_itv_58(ratio)
+           case (59);  call set_itv_59(ratio)
+           case (60);  call set_itv_60(ratio)
+           case (61);  call set_itv_61(ratio)
+           case (62);  call set_itv_62(ratio)
+           case (63);  call set_itv_63(ratio)
+           case (64);  call set_itv_64(ratio)
+           case (65);  call set_itv_65(ratio)
+           case (66);  call set_itv_66(ratio)
+           case (67);  call set_itv_67(ratio)
+           case (68);  call set_itv_68(ratio)
+           case (69);  call set_itv_69(ratio)
+           case (70);  call set_itv_70(ratio)
+           case (71);  call set_itv_71(ratio)
+           case (72);  call set_itv_72(ratio)
+           case (73);  call set_itv_73(ratio)
+           case (74);  call set_itv_74(ratio)
+           case (75);  call set_itv_75(ratio)
+           case (76);  
+           case (77);  
+           case (78);  
+           case (79);  call set_itv_79(ratio)
+           case (80);  
+           case (81);  call set_itv_81(ratio)
+           case (82);  call set_itv_82(ratio)
+           case (83);  call set_itv_83(ratio)
+           case (84);  call set_itv_84(ratio)
+           case (85);  call set_itv_85(ratio)
+           case (86);  call set_itv_86(ratio)
+           case (87);  
+           case (88);  
+           case (89);  call set_itv_89(ratio)
+           case (90);  call set_itv_90(ratio)
+           case (91);  call set_itv_91(ratio)
+           case (92);  call set_itv_92(ratio)
+           case (93);  call set_itv_93(ratio)
+           case (94);  call set_itv_94(ratio)
+           case (95);  call set_itv_95(ratio)
+           case (96);  call set_itv_96(ratio)
+           case (97);  call set_itv_97(ratio)
+           case (98);  call set_itv_98(ratio)
+           case (99);  
+           case (100);  
+           case (101);  
+           case (102);  call set_itv_102(ratio)
+           case (103);  call set_itv_103(ratio)
+           case (104);  call set_itv_104(ratio)
+           case (105);  call set_itv_105(ratio)
+           case (106);  call set_itv_106(ratio)
+           case (107);  call set_itv_107(ratio)
+           case (108);  call set_itv_108(ratio)
+           case (109);  call set_itv_109(ratio)
+           case (110);  call set_itv_110(ratio)
+           case (111);  call set_itv_111(ratio)
+           case (112);  call set_itv_112(ratio)
+           case (113);  call set_itv_113(ratio)
+           case (114);  call set_itv_114(ratio)
+           case (115);  call set_itv_115(ratio)
+           case (116);  call set_itv_116(ratio)
+           case (117);  call set_itv_117(ratio)
+           case (118);  call set_itv_118(ratio)
+           case (119);  call set_itv_119(ratio)
+           case (120);  call set_itv_120(ratio)
+           case (121);  call set_itv_121(ratio)
+           case (122);  call set_itv_122(ratio)
+           case (123);  call set_itv_123(ratio)
+           case (124);  call set_itv_124(ratio)
+           case (125);  call set_itv_125(ratio)
+           case (126);  call set_itv_126(ratio)
+           case (127);  call set_itv_127(ratio)
+           case (128);  call set_itv_128(ratio)
+           case (129);  call set_itv_129(ratio)
+           case (130);  call set_itv_130(ratio)
+           case (131);  call set_itv_131(ratio)
+           case (132);  call set_itv_132(ratio)
+           case (133);  call set_itv_133(ratio)
+           case (134);  call set_itv_134(ratio)
+           case (135);  call set_itv_135(ratio)
+           case (136);  call set_itv_136(ratio)
+           case (137);  call set_itv_137(ratio)
+           case (138);  call set_itv_138(ratio)
+           case (139);  call set_itv_139(ratio)
+           case (140);  call set_itv_140(ratio)
+           case (141);  call set_itv_141(ratio)
+           case (142);  call set_itv_142(ratio)
+           case (143);  call set_itv_143(ratio)
+           case (144);  call set_itv_144(ratio)
+           case (145);  call set_itv_145(ratio)
+           case (146);  call set_itv_146(ratio)
+           case (147);  call set_itv_147(ratio)
+           case (148);  call set_itv_148(ratio)
+           case (149);  call set_itv_149(ratio)
+           case (150);  call set_itv_150(ratio)
+           case (151);  call set_itv_151(ratio)
+           case (152);  call set_itv_152(ratio)
+           case (153);  call set_itv_153(ratio)
+           case (154);  call set_itv_154(ratio)
+           case (155);  call set_itv_155(ratio)
+           case (156);  call set_itv_156(ratio)
+           case (157);  call set_itv_157(ratio)
+           case (158);  call set_itv_158(ratio)
+           case (159);  call set_itv_159(ratio)
+           case (160);  call set_itv_160(ratio)
+           case (161);  call set_itv_161(ratio)
+           case (162);  call set_itv_162(ratio)
+           case (163);  call set_itv_163(ratio)
+            ! DUMMY Cases
+           case (164);  call set_itv_164(ratio)
+           case (165);  call set_itv_165(ratio)
+           case (166);  call set_itv_166(ratio)
+           case (167);  call set_itv_167(ratio)
+           case (168);  call set_itv_168(ratio)
+           case (169);  call set_itv_169(ratio)
+           case (170);  call set_itv_170(ratio)
+           case (171);  call set_itv_171(ratio)
+           case (172);  call set_itv_172(ratio)    
+           case (173);  call set_itv_173(ratio)     
+           case (174);  call set_itv_174(ratio)     
+           case (175);  call set_itv_175(ratio)     
+  
+           case default
+              call report_error(57)
+  
+       end select
+  
+       !  Check that no iteration variable is zero
+  
+       if (abs(xc(i)) <= 1.0D-12) then
+          idiags(1) = i ; idiags(2) = ixc(i)
+          write(*,*) 'Iteration variable ',ixc(i),'(',trim(lablxc(ixc(i))),') is zero.'
+          call report_error(58)
+       end if
+  
+       !  Crude method of catching NaN errors
+  
+       !if ((abs(xc(i)) > 9.99D99).or.(xc(i) /= xc(i))) then
+       if(variable_error(xc(i)))then
+          idiags(1) = i ; idiags(2) = ixc(i) ; fdiags(1) = xc(i)
+          call report_error(59)
+       end if
+  
+       if (abs(scale(i)) < 1.0D-99) then
+          idiags(1) = i ; idiags(2) = ixc(i)
+          call report_error(60)
+       end if
+  
+    end do
+  
+  end subroutine convxc
+  
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  subroutine boundxc
+  
+    !! Routine to convert variable bounds to their real values
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This subroutine converts the scaled iteration variable bounds
+    !! back to their real values.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+    use numerics, only: nvar, bondl, bondu, scale, ixc, boundl, boundu
+  
+    implicit none
+  
+    !  Local variables
+  
+    integer :: i
+  
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+    do i = 1,nvar
+       bondl(i) = boundl(ixc(i))*scale(i)
+       bondu(i) = boundu(ixc(i))*scale(i)
+    end do
+  
+  end subroutine boundxc
+  
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 end module define_iteration_variables
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-subroutine loadxc
-  !! Routine to load the physics and engineering variables into the
-  !! optimisation variables array
-  !! author: P J Knight, CCFE, Culham Science Centre
-  !! author: J Morris, CCFE, Culham Science Centre
-  !! None
-  !! This subroutine loads the physics and engineering variables
-  !! into the optimisation variables array <CODE>XCM</CODE>.
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-      use constants, only: nout
-      use maths_library, only: variable_error
-      use define_iteration_variables, only: itv_142, itv_16, itv_24, itv_111, & 
-    itv_46, itv_113, itv_170, itv_103, itv_166, itv_117, itv_53, itv_86, &
-    itv_93, itv_3, itv_48, itv_146, itv_27, itv_54, itv_76, itv_162, itv_144, &
-    itv_56, itv_35, itv_138, itv_126, itv_94, itv_139, itv_164, itv_30, &
-    itv_59, itv_168, itv_74, itv_15, itv_153, itv_75, itv_85, itv_20, &
-    itv_105, itv_161, itv_71, itv_140, itv_5, itv_13, itv_9, itv_106, &
-    itv_52, itv_92, itv_66, itv_96, itv_116, itv_1, itv_10, itv_133, &
-    itv_8, itv_39, itv_149, itv_163, itv_155, itv_29, itv_135, itv_14, &
-    itv_47, itv_81, itv_159, itv_110, itv_108, itv_4, itv_36, itv_145, &
-    itv_65, itv_95, itv_118, itv_160, itv_51, itv_143, itv_84, itv_112, &
-    itv_79, itv_141, itv_78, itv_6, itv_136, itv_114, itv_82, itv_49, &
-    itv_55, itv_151, itv_80, itv_125, itv_152, itv_102, itv_60, itv_115, &
-    itv_128, itv_130, itv_41, itv_165, itv_156, itv_34, itv_26, itv_134, &
-    itv_57, itv_40, itv_157, itv_169, itv_44, itv_50, itv_43, itv_148, &
-    itv_91, itv_132, itv_58, itv_73, itv_45, itv_119, itv_124, itv_107, &
-    itv_122, itv_2, itv_21, itv_104, itv_121, itv_25, itv_83, itv_12, &
-    itv_70, itv_61, itv_150, itv_69, itv_127, itv_33, itv_62, itv_98, &
-    itv_158, itv_89, itv_17, itv_131, itv_67, itv_154, itv_23, itv_63, &
-    itv_167, itv_90, itv_97, itv_123, itv_37, itv_19, itv_147, itv_64, &
-    itv_22, itv_7, itv_68, itv_72, itv_28, itv_77, itv_137, itv_120, &
-    itv_129, itv_11, itv_18, itv_42, itv_31, itv_38, itv_109, itv_32, itv_171, &
-    itv_172, itv_173, itv_174, itv_175
-      use error_handling, only: idiags, fdiags, report_error
-      use numerics, only: nvar, xcm, ixc, name_xc, lablxc, scafc, scale
-      use physics_variables, only: icurr
-      use global_variables, only: vlabel
-  implicit none
-
-  !  Local variables
-  integer :: i
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  do i = 1,nvar
-
-     select case (ixc(i))
-         case (1);  xcm(i) = itv_1()
-         case (2);  xcm(i) = itv_2()
-         case (3);  xcm(i) = itv_3()
-         case (4);  xcm(i) = itv_4()
-         case (5);  xcm(i) = itv_5()
-         case (6);  xcm(i) = itv_6()
-         case (7);  xcm(i) = itv_7()
-         case (8);  xcm(i) = itv_8()
-         case (9);  xcm(i) = itv_9()
-         case (10);  xcm(i) = itv_10()
-         case (11);  xcm(i) = itv_11()
-         case (12);  xcm(i) = itv_12()
-         case (13);  xcm(i) = itv_13()
-         case (14);  xcm(i) = itv_14()
-         case (15);  xcm(i) = itv_15()
-         case (16);  xcm(i) = itv_16()
-         case (17);  xcm(i) = itv_17()
-         case (18);  xcm(i) = itv_18()
-         case (19);  xcm(i) = itv_19()
-         case (20);  xcm(i) = itv_20()
-         case (21);  xcm(i) = itv_21()
-         case (22);  xcm(i) = itv_22()
-         case (23);  xcm(i) = itv_23()
-         case (24);  xcm(i) = itv_24()
-         case (25);  xcm(i) = itv_25()
-         case (26);  xcm(i) = itv_26()
-         case (27);  xcm(i) = itv_27()
-         case (28);  xcm(i) = itv_28()
-         case (29);  xcm(i) = itv_29()
-         case (30);  xcm(i) = itv_30()
-         case (31);  xcm(i) = itv_31()
-         case (32);  xcm(i) = itv_32()
-         case (33);  xcm(i) = itv_33()
-         case (34);  xcm(i) = itv_34()
-         case (35);  xcm(i) = itv_35()
-         case (36);  xcm(i) = itv_36()
-         case (37);  xcm(i) = itv_37()
-         case (38);  xcm(i) = itv_38()
-         case (39);  xcm(i) = itv_39()
-         case (40);  xcm(i) = itv_40()
-         case (41);  xcm(i) = itv_41()
-         case (42);  xcm(i) = itv_42()
-         case (43);  
-         case (44);  xcm(i) = itv_44()
-         case (45);  xcm(i) = itv_45()
-         case (46);  xcm(i) = itv_46()
-         case (47);  xcm(i) = itv_47()
-         case (48);  xcm(i) = itv_48()
-         case (49);  xcm(i) = itv_49()
-         case (50);  xcm(i) = itv_50()
-         case (51);  xcm(i) = itv_51()
-         case (52);  xcm(i) = itv_52()
-         case (53);  xcm(i) = itv_53()
-         case (54);  xcm(i) = itv_54()
-         case (55);  xcm(i) = itv_55()
-         case (56);  xcm(i) = itv_56()
-         case (57);  xcm(i) = itv_57()
-         case (58);  xcm(i) = itv_58()
-         case (59);  xcm(i) = itv_59()
-         case (60);  xcm(i) = itv_60()
-         case (61);  xcm(i) = itv_61()
-         case (62);  xcm(i) = itv_62()
-         case (63);  xcm(i) = itv_63()
-         case (64);  xcm(i) = itv_64()
-         case (65);  xcm(i) = itv_65()
-         case (66);  xcm(i) = itv_66()
-         case (67);  xcm(i) = itv_67()
-         case (68);  xcm(i) = itv_68()
-         case (69);  xcm(i) = itv_69()
-         case (70);  xcm(i) = itv_70()
-         case (71);  xcm(i) = itv_71()
-         case (72);  xcm(i) = itv_72()
-         case (73);  xcm(i) = itv_73()
-         case (74);  xcm(i) = itv_74()
-         case (75);  xcm(i) = itv_75()
-         case (76);  xcm(i) = itv_76()
-         case (77);  xcm(i) = itv_77()
-         case (78);  xcm(i) = itv_78()
-         case (79);  xcm(i) = itv_79()
-         case (80);  xcm(i) = itv_80()
-         case (81);  xcm(i) = itv_81()
-         case (82);  xcm(i) = itv_82()
-         case (83);  xcm(i) = itv_83()
-         case (84);  xcm(i) = itv_84()
-         case (85);  xcm(i) = itv_85()
-         case (86);  xcm(i) = itv_86()
-         case (87);  
-         case (88);  
-         case (89);  xcm(i) = itv_89()
-         case (90);  xcm(i) = itv_90()
-         case (91);  xcm(i) = itv_91()
-         case (92);  xcm(i) = itv_92()
-         case (93);  xcm(i) = itv_93()
-         case (94);  xcm(i) = itv_94()
-         case (95);  xcm(i) = itv_95()
-         case (96);  xcm(i) = itv_96()
-         case (97);  xcm(i) = itv_97()
-         case (98);  xcm(i) = itv_98()
-         case (99);  
-         case (100);  
-         case (101);  
-         case (102);  xcm(i) = itv_102()
-         case (103);  xcm(i) = itv_103()
-         case (104);  xcm(i) = itv_104()
-         case (105);  xcm(i) = itv_105()
-         case (106);  xcm(i) = itv_106()
-         case (107);  xcm(i) = itv_107()
-         case (108);  xcm(i) = itv_108()
-         case (109);  xcm(i) = itv_109()
-         case (110);  xcm(i) = itv_110()
-         case (111);  xcm(i) = itv_111()
-         case (112);  xcm(i) = itv_112()
-         case (113);  xcm(i) = itv_113()
-         case (114);  xcm(i) = itv_114()
-         case (115);  xcm(i) = itv_115()
-         case (116);  xcm(i) = itv_116()
-         case (117);  xcm(i) = itv_117()
-         case (118);  xcm(i) = itv_118()
-         case (119);  xcm(i) = itv_119()
-         case (120);  xcm(i) = itv_120()
-         case (121);  xcm(i) = itv_121()
-         case (122);  xcm(i) = itv_122()
-         case (123);  xcm(i) = itv_123()
-         case (124);  xcm(i) = itv_124()
-         case (125);  xcm(i) = itv_125()
-         case (126);  xcm(i) = itv_126()
-         case (127);  xcm(i) = itv_127()
-         case (128);  xcm(i) = itv_128()
-         case (129);  xcm(i) = itv_129()
-         case (130);  xcm(i) = itv_130()
-         case (131);  xcm(i) = itv_131()
-         case (132);  xcm(i) = itv_132()
-         case (133);  xcm(i) = itv_133()
-         case (134);  xcm(i) = itv_134()
-         case (135);  xcm(i) = itv_135()
-         case (136);  xcm(i) = itv_136()
-         case (137);  xcm(i) = itv_137()
-         case (138);  xcm(i) = itv_138()
-         case (139);  xcm(i) = itv_139()
-         case (140);  xcm(i) = itv_140()
-         case (141);  xcm(i) = itv_141()
-         case (142);  xcm(i) = itv_142()
-         case (143);  xcm(i) = itv_143()
-         case (144);  xcm(i) = itv_144()
-         case (145);  xcm(i) = itv_145()
-         case (146);  xcm(i) = itv_146()
-         case (147);  xcm(i) = itv_147()
-         case (148);  xcm(i) = itv_148()
-         case (149);  xcm(i) = itv_149()
-         case (150);  xcm(i) = itv_150()
-         case (151);  xcm(i) = itv_151()
-         case (152);  xcm(i) = itv_152()
-         case (153);  xcm(i) = itv_153()
-         case (154);  xcm(i) = itv_154()
-         case (155);  xcm(i) = itv_155()
-         case (156);  xcm(i) = itv_156()
-         case (157);  xcm(i) = itv_157()
-         case (158);  xcm(i) = itv_158()
-         case (159);  xcm(i) = itv_159()
-         case (160);  xcm(i) = itv_160()
-         case (161);  xcm(i) = itv_161()
-         case (162);  xcm(i) = itv_162()
-         case (163);  xcm(i) = itv_163()
-          ! DUMMY Cases
-         case (164);  xcm(i) = itv_164()
-         case (165);  xcm(i) = itv_165()
-         case (166);  xcm(i) = itv_166()
-         case (167);  xcm(i) = itv_167()
-         case (168);  xcm(i) = itv_168()
-         case (169);  xcm(i) = itv_169()
-         case (170);  xcm(i) = itv_170()
-         case (171);  xcm(i) = itv_171()
-         case (172);  xcm(i) = itv_172()
-         case (173);  xcm(i) = itv_173()
-         case (174);  xcm(i) = itv_174()
-         case (175);  xcm(i) = itv_175()
-
-     case default
-        idiags(1) = i ; idiags(2) = ixc(i)
-        call report_error(54)
-
-     end select
-     
-
-      ! Simple list of iteration variable names
-      name_xc(i) = lablxc(ixc(i))
-      ! Note that iteration variable 18 has more than one name:
-      if ((ixc(i) == 18).and.(icurr /= 2)) name_xc(i) = 'q95'
-      if ((ixc(i) == 18).and.(icurr == 2)) name_xc(i) = 'qbar'
-
-
-       ! MDK Check if sweep variable is also an iteration variable
-       if (name_xc(i) == vlabel) then
-            write(nout,*) 'WARNING: The sweep variable is also an iteration variable.'
-            write(nout,*) 'The values of the sweep variable will be overwritten by the optimiser.'
-            write(*,*) 'WARNING: The sweep variable is also an iteration variable.'
-       end if
-
-     !  Check that no iteration variable is zero
-
-     if (abs(xcm(i)) <= 1.0D-12) then
-        idiags(1) = i ; idiags(2) = ixc(i)
-        write(*,*) 'Iteration variable ',ixc(i),'(',trim(lablxc(ixc(i))),') is zero.'
-        call report_error(55)
-     end if
-
-     !  Crude method of catching NaN errors
-
-     !if ( (abs(xcm(i)) > 9.99D99).or.(xcm(i) /= xcm(i)) ) then
-     if ( variable_error(xcm(i)) ) then
-        idiags(1) = i ; idiags(2) = ixc(i) ; fdiags(1) = xcm(i)
-        call report_error(56)
-     end if
-
-  end do
-
-  do i = 1,nvar
-     if (abs(xcm(i)) > 1.0D-99) then
-        scale(i) = 1.0D0/xcm(i)
-     else
-        scale(i) = 1.0D0
-     end if
-     scafc(i) = 1.0D0/scale(i)
-     xcm(i) = xcm(i)*scale(i)
-  end do
-
-end subroutine loadxc
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine convxc(xc,nn)
-  
-  !! Routine to convert scaled iteration variables back to
-  !! their real values
-  !! author: P J Knight, CCFE, Culham Science Centre
-  !! author: J Morris, CCFE, Culham Science Centre
-  !! xc(ipnvars) : input/output real array : scaled iteration variable values
-  !! nn : input integer : number of iteration variables
-  !! This subroutine converts the scaled iteration variables back to
-  !! their real values.
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-  use define_iteration_variables, only: set_itv_1, set_itv_2, set_itv_3, &
-  set_itv_4, set_itv_5, set_itv_6, set_itv_7, set_itv_8, set_itv_9, &
-  set_itv_10, set_itv_11, set_itv_12, set_itv_13, set_itv_14, set_itv_15, &
-  set_itv_16, set_itv_17, set_itv_18, set_itv_19, set_itv_20, set_itv_21, &
-  set_itv_23, set_itv_25, set_itv_26, set_itv_27, set_itv_28, set_itv_29, &
-  set_itv_30, set_itv_31, set_itv_32, set_itv_33, set_itv_34, set_itv_35, &
-  set_itv_36, set_itv_37, set_itv_38, set_itv_39, set_itv_40, set_itv_41, &
-  set_itv_42, set_itv_44, set_itv_45, set_itv_46, set_itv_47, set_itv_48, &
-  set_itv_49, set_itv_50, set_itv_51, set_itv_52, set_itv_53, set_itv_54, &
-  set_itv_56, set_itv_57, set_itv_58, set_itv_59, set_itv_60, set_itv_61, &
-  set_itv_62, set_itv_63, set_itv_64, set_itv_65, set_itv_66, set_itv_67, &
-  set_itv_68, set_itv_69, set_itv_70, set_itv_71, set_itv_72, set_itv_73, &
-  set_itv_74, set_itv_75, set_itv_79, set_itv_81, set_itv_82, set_itv_83, &
-  set_itv_84, set_itv_85, set_itv_86, set_itv_89, set_itv_90, set_itv_91, &
-  set_itv_92, set_itv_93, set_itv_94, set_itv_95, set_itv_96, set_itv_97, &
-  set_itv_98, set_itv_102, set_itv_103, set_itv_104, set_itv_105, &
-  set_itv_106, set_itv_107, set_itv_108, set_itv_109, set_itv_110, &
-  set_itv_111, set_itv_112, set_itv_113, set_itv_114, set_itv_115, &
-  set_itv_116, set_itv_117, set_itv_118, set_itv_119, set_itv_120, &
-  set_itv_121, set_itv_122, set_itv_123, set_itv_124, set_itv_125, &
-  set_itv_126, set_itv_127, set_itv_128, set_itv_129, set_itv_130, &
-  set_itv_131, set_itv_132, set_itv_133, set_itv_134, set_itv_135, &
-  set_itv_136, set_itv_137, set_itv_138, set_itv_139, set_itv_140, &
-  set_itv_141, set_itv_142, set_itv_143, set_itv_144, set_itv_145, &
-  set_itv_146, set_itv_147, set_itv_148, set_itv_149, set_itv_150, &
-  set_itv_151, set_itv_152, set_itv_153, set_itv_154, set_itv_155, &
-  set_itv_156, set_itv_157, set_itv_158, set_itv_159, set_itv_160, &
-  set_itv_161, set_itv_162, set_itv_163, set_itv_164, set_itv_165, &
-  set_itv_166, set_itv_167, set_itv_168, set_itv_169, set_itv_170, &
-  set_itv_171, set_itv_172, set_itv_173, set_itv_174, set_itv_175
-  use error_handling, only: idiags, fdiags, report_error
-  use numerics, only: ipnvars, scale, ixc, lablxc
-  use maths_library, only: variable_error
-  use, intrinsic :: iso_fortran_env, only: dp=>real64
-
-  implicit none
-
-  !  Arguments
-
-  integer, intent(in) :: nn
-  real(dp), dimension(ipnvars), intent(in) :: xc
-
-  !  Local variables
-
-  integer :: i
-  real(dp)::ratio
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  do i = 1,nn
-     ratio = xc(i)/scale(i)
-
-     select case (ixc(i))
-         case (1);  call set_itv_1(ratio)
-         case (2);  call set_itv_2(ratio)
-         case (3);  call set_itv_3(ratio)
-         case (4);  call set_itv_4(ratio)
-         case (5);  call set_itv_5(ratio)
-         case (6);  call set_itv_6(ratio)
-         case (7);  call set_itv_7(ratio)
-         case (8);  call set_itv_8(ratio)
-         case (9);  call set_itv_9(ratio)
-         case (10);  call set_itv_10(ratio)
-         case (11);  call set_itv_11(ratio)
-         case (12);  call set_itv_12(ratio)
-         case (13);  call set_itv_13(ratio)
-         case (14);  call set_itv_14(ratio)
-         case (15);  call set_itv_15(ratio)
-         case (16);  call set_itv_16(ratio)
-         case (17);  call set_itv_17(ratio)
-         case (18);  call set_itv_18(ratio)
-         case (19);  call set_itv_19(ratio)
-         case (20);  call set_itv_20(ratio)
-         case (21);  call set_itv_21(ratio)
-         case (22);  
-         case (23);  call set_itv_23(ratio)
-         case (24);  
-         case (25);  call set_itv_25(ratio)
-         case (26);  call set_itv_26(ratio)
-         case (27);  call set_itv_27(ratio)
-         case (28);  call set_itv_28(ratio)
-         case (29);  call set_itv_29(ratio)
-         case (30);  call set_itv_30(ratio)
-         case (31);  call set_itv_31(ratio)
-         case (32);  call set_itv_32(ratio)
-         case (33);  call set_itv_33(ratio)
-         case (34);  call set_itv_34(ratio)
-         case (35);  call set_itv_35(ratio)
-         case (36);  call set_itv_36(ratio)
-         case (37);  call set_itv_37(ratio)
-         case (38);  call set_itv_38(ratio)
-         case (39);  call set_itv_39(ratio)
-         case (40);  call set_itv_40(ratio)
-         case (41);  call set_itv_41(ratio)
-         case (42);  call set_itv_42(ratio)
-         case (43);  
-         case (44);  call set_itv_44(ratio)
-         case (45);  call set_itv_45(ratio)
-         case (46);  call set_itv_46(ratio)
-         case (47);  call set_itv_47(ratio)
-         case (48);  call set_itv_48(ratio)
-         case (49);  call set_itv_49(ratio)
-         case (50);  call set_itv_50(ratio)
-         case (51);  call set_itv_51(ratio)
-         case (52);  call set_itv_52(ratio)
-         case (53);  call set_itv_53(ratio)
-         case (54);  call set_itv_54(ratio)
-         case (55);  
-         case (56);  call set_itv_56(ratio)
-         case (57);  call set_itv_57(ratio)
-         case (58);  call set_itv_58(ratio)
-         case (59);  call set_itv_59(ratio)
-         case (60);  call set_itv_60(ratio)
-         case (61);  call set_itv_61(ratio)
-         case (62);  call set_itv_62(ratio)
-         case (63);  call set_itv_63(ratio)
-         case (64);  call set_itv_64(ratio)
-         case (65);  call set_itv_65(ratio)
-         case (66);  call set_itv_66(ratio)
-         case (67);  call set_itv_67(ratio)
-         case (68);  call set_itv_68(ratio)
-         case (69);  call set_itv_69(ratio)
-         case (70);  call set_itv_70(ratio)
-         case (71);  call set_itv_71(ratio)
-         case (72);  call set_itv_72(ratio)
-         case (73);  call set_itv_73(ratio)
-         case (74);  call set_itv_74(ratio)
-         case (75);  call set_itv_75(ratio)
-         case (76);  
-         case (77);  
-         case (78);  
-         case (79);  call set_itv_79(ratio)
-         case (80);  
-         case (81);  call set_itv_81(ratio)
-         case (82);  call set_itv_82(ratio)
-         case (83);  call set_itv_83(ratio)
-         case (84);  call set_itv_84(ratio)
-         case (85);  call set_itv_85(ratio)
-         case (86);  call set_itv_86(ratio)
-         case (87);  
-         case (88);  
-         case (89);  call set_itv_89(ratio)
-         case (90);  call set_itv_90(ratio)
-         case (91);  call set_itv_91(ratio)
-         case (92);  call set_itv_92(ratio)
-         case (93);  call set_itv_93(ratio)
-         case (94);  call set_itv_94(ratio)
-         case (95);  call set_itv_95(ratio)
-         case (96);  call set_itv_96(ratio)
-         case (97);  call set_itv_97(ratio)
-         case (98);  call set_itv_98(ratio)
-         case (99);  
-         case (100);  
-         case (101);  
-         case (102);  call set_itv_102(ratio)
-         case (103);  call set_itv_103(ratio)
-         case (104);  call set_itv_104(ratio)
-         case (105);  call set_itv_105(ratio)
-         case (106);  call set_itv_106(ratio)
-         case (107);  call set_itv_107(ratio)
-         case (108);  call set_itv_108(ratio)
-         case (109);  call set_itv_109(ratio)
-         case (110);  call set_itv_110(ratio)
-         case (111);  call set_itv_111(ratio)
-         case (112);  call set_itv_112(ratio)
-         case (113);  call set_itv_113(ratio)
-         case (114);  call set_itv_114(ratio)
-         case (115);  call set_itv_115(ratio)
-         case (116);  call set_itv_116(ratio)
-         case (117);  call set_itv_117(ratio)
-         case (118);  call set_itv_118(ratio)
-         case (119);  call set_itv_119(ratio)
-         case (120);  call set_itv_120(ratio)
-         case (121);  call set_itv_121(ratio)
-         case (122);  call set_itv_122(ratio)
-         case (123);  call set_itv_123(ratio)
-         case (124);  call set_itv_124(ratio)
-         case (125);  call set_itv_125(ratio)
-         case (126);  call set_itv_126(ratio)
-         case (127);  call set_itv_127(ratio)
-         case (128);  call set_itv_128(ratio)
-         case (129);  call set_itv_129(ratio)
-         case (130);  call set_itv_130(ratio)
-         case (131);  call set_itv_131(ratio)
-         case (132);  call set_itv_132(ratio)
-         case (133);  call set_itv_133(ratio)
-         case (134);  call set_itv_134(ratio)
-         case (135);  call set_itv_135(ratio)
-         case (136);  call set_itv_136(ratio)
-         case (137);  call set_itv_137(ratio)
-         case (138);  call set_itv_138(ratio)
-         case (139);  call set_itv_139(ratio)
-         case (140);  call set_itv_140(ratio)
-         case (141);  call set_itv_141(ratio)
-         case (142);  call set_itv_142(ratio)
-         case (143);  call set_itv_143(ratio)
-         case (144);  call set_itv_144(ratio)
-         case (145);  call set_itv_145(ratio)
-         case (146);  call set_itv_146(ratio)
-         case (147);  call set_itv_147(ratio)
-         case (148);  call set_itv_148(ratio)
-         case (149);  call set_itv_149(ratio)
-         case (150);  call set_itv_150(ratio)
-         case (151);  call set_itv_151(ratio)
-         case (152);  call set_itv_152(ratio)
-         case (153);  call set_itv_153(ratio)
-         case (154);  call set_itv_154(ratio)
-         case (155);  call set_itv_155(ratio)
-         case (156);  call set_itv_156(ratio)
-         case (157);  call set_itv_157(ratio)
-         case (158);  call set_itv_158(ratio)
-         case (159);  call set_itv_159(ratio)
-         case (160);  call set_itv_160(ratio)
-         case (161);  call set_itv_161(ratio)
-         case (162);  call set_itv_162(ratio)
-         case (163);  call set_itv_163(ratio)
-          ! DUMMY Cases
-         case (164);  call set_itv_164(ratio)
-         case (165);  call set_itv_165(ratio)
-         case (166);  call set_itv_166(ratio)
-         case (167);  call set_itv_167(ratio)
-         case (168);  call set_itv_168(ratio)
-         case (169);  call set_itv_169(ratio)
-         case (170);  call set_itv_170(ratio)
-         case (171);  call set_itv_171(ratio)
-         case (172);  call set_itv_172(ratio)    
-         case (173);  call set_itv_173(ratio)     
-         case (174);  call set_itv_174(ratio)     
-         case (175);  call set_itv_175(ratio)     
-
-         case default
-            call report_error(57)
-
-     end select
-
-     !  Check that no iteration variable is zero
-
-     if (abs(xc(i)) <= 1.0D-12) then
-        idiags(1) = i ; idiags(2) = ixc(i)
-        write(*,*) 'Iteration variable ',ixc(i),'(',trim(lablxc(ixc(i))),') is zero.'
-        call report_error(58)
-     end if
-
-     !  Crude method of catching NaN errors
-
-     !if ((abs(xc(i)) > 9.99D99).or.(xc(i) /= xc(i))) then
-     if(variable_error(xc(i)))then
-        idiags(1) = i ; idiags(2) = ixc(i) ; fdiags(1) = xc(i)
-        call report_error(59)
-     end if
-
-     if (abs(scale(i)) < 1.0D-99) then
-        idiags(1) = i ; idiags(2) = ixc(i)
-        call report_error(60)
-     end if
-
-  end do
-
-end subroutine convxc
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine boundxc
-
-  !! Routine to convert variable bounds to their real values
-  !! author: P J Knight, CCFE, Culham Science Centre
-  !! None
-  !! This subroutine converts the scaled iteration variable bounds
-  !! back to their real values.
-  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use numerics, only: nvar, bondl, bondu, scale, ixc, boundl, boundu
-
-  implicit none
-
-  !  Local variables
-
-  integer :: i
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  do i = 1,nvar
-     bondl(i) = boundl(ixc(i))*scale(i)
-     bondu(i) = boundu(ixc(i))*scale(i)
-  end do
-
-end subroutine boundxc
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

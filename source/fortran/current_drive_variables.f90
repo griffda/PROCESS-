@@ -7,7 +7,9 @@ module current_drive_variables
   !!
   !! - AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   implicit none
 
@@ -65,6 +67,9 @@ module current_drive_variables
   real(dp) :: effcd
   !! current drive efficiency (A/W)
 
+  real(dp) :: harnum
+  !! cyclotron harmonic frequency number, used in EBW cut-off
+
   real(dp) :: enbeam
   !! neutral beam energy (keV) (`iteration variable 19`)
 
@@ -117,6 +122,9 @@ module current_drive_variables
   real(dp) :: rho_ecrh
   !! normalised minor radius at which electron cyclotron current drive is maximum
 
+  real(dp) :: xi_ebw
+  !! User scaling input for EBW plasma heating. Default 0.43
+
   integer :: iefrf
   !! Switch for current drive efficiency model:
   !!
@@ -128,10 +136,10 @@ module current_drive_variables
   !!  - =6 new Culham Lower Hybrid model
   !!  - =7 new Culham ECCD model
   !!  - =8 new Culham Neutral Beam model
-  !!  - =9 Simple NBI model (see SYCOMORE HELIOS paper)
+  !!  - =9 RFP option removed in PROCESS (issue #508)
   !!  - =10 ECRH user input gamma
   !!  - =11 ECRH "HARE" model (E. Poli, Physics of Plasmas 2019)
-  !!  - =12 Simple NBI model
+  !!  - =12 EBW user scaling input. Scaling (S. Freethy)
 
   integer :: iefrffix
   !! Switch for 2nd current drive efficiency model:
@@ -145,9 +153,10 @@ module current_drive_variables
   !! - =6 new Culham Lower Hybrid model
   !! - =7 new Culham ECCD model
   !! - =8 new Culham Neutral Beam model
-  !! - =9 Simple NBI model (see SYCOMORE HELIOS paper)
+  !! - =9 RFP option removed in PROCESS (issue #508)
   !! - =10 ECRH user input gamma
   !! - =11 ECRH "HARE" model (E. Poli, Physics of Plasmas 2019)
+  !! - =12 EBW user scaling input. Scaling (S. Freethy)
 
   integer :: irfcd
   !! Switch for current drive calculation:
@@ -237,6 +246,7 @@ module current_drive_variables
     echpwr = 0.0D0  
     echwpow = 0.0D0  
     effcd = 0.0D0  
+    harnum = 1.0D0
     enbeam = 1.0D3  
     etacd = 0.0D0  
     etacdfix = 0.0D0  
@@ -253,7 +263,8 @@ module current_drive_variables
     ftritbm = 1.0D-6  
     gamcd = 0.0D0  
     gamma_ecrh = 0.35D0  
-    rho_ecrh = 0.1D0  
+    rho_ecrh = 0.1D0 
+    xi_ebw = 0.43D0 
     iefrf = 5  
     iefrffix = 0   
     irfcd = 1  

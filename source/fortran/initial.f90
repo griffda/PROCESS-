@@ -39,7 +39,9 @@ subroutine initial
         init_itv_161, init_itv_162, init_itv_163, init_itv_164, init_itv_165, &
         init_itv_166, init_itv_167, init_itv_168, init_itv_169, init_itv_170, &
         init_itv_171, init_itv_172, init_itv_173, init_itv_174, init_itv_175
-    use, intrinsic :: iso_fortran_env, only: dp=>real64
+#ifndef dp
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
     implicit none
 
@@ -245,7 +247,7 @@ subroutine check
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use build_variables, only: blnkith, bore, gapoh, ohcth, precomp, iprecomp, &
-        i_r_cp_top, r_cp_top
+        i_r_cp_top, r_cp_top, vgaptop, vgap, shldtth, shldlth, d_vv_top, d_vv_bot
     use buildings_variables, only: esbldgm3, triv
     use current_drive_variables, only: gamcd, iefrf, irfcd
     use div_kal_vars, only: impurity_enrichment, kallenbach_switch
@@ -270,10 +272,10 @@ subroutine check
     use tfcoil_variables, only: casthi, casthi_is_fraction, casths, i_tf_sup, &
         tcoolin, tcpav, tfc_sidewall_is_fraction, tmargmin, tmargmin_cs, &
         tmargmin_tf, eff_tf_cryo, eyoung_ins, i_tf_bucking, i_tf_shape, &
-        n_tf_graded_layers, n_tf_stress_layers, tlegav,  i_tf_plane_stress, &
+        n_tf_graded_layers, n_tf_stress_layers, tlegav,  i_tf_stress_model, &
         i_tf_sc_mat, i_tf_wp_geom, i_tf_turns_integer, tinstf, thwcndut, &
         tfinsgap, rcool, dhecoil, thicndut, i_cp_joints, t_turn_tf_is_input, &
-        t_turn_tf, tftmp, t_cable_tf, t_cable_tf_is_input
+        t_turn_tf, tftmp, t_cable_tf, t_cable_tf_is_input, tftmp, tmpcry
     use stellarator_variables, only: istell
     use sctfcoil_module, only: initialise_cables
     use vacuum_variables, only: vacuum_model
@@ -646,6 +648,16 @@ subroutine check
         impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
      endif
 
+     if (i_single_null == 0) then
+         idivrt = 2
+         vgaptop = vgap
+         shldtth = shldlth
+         d_vv_top = d_vv_bot
+         call report_error(272)
+     else  !  i_single_null == 1
+         idivrt = 1
+     end if
+
 
     !  Tight aspect ratio options (ST)
     ! --------------------------------
@@ -653,8 +665,8 @@ subroutine check
 
         icase  = 'Tight aspect ratio tokamak model'
 
-        ! Forcing that no inboard breeding blanket is used
-        iblnkith = 0
+        ! Disabled Forcing that no inboard breeding blanket is used 
+        ! Disabled iblnkith = 0
 
         ! Check if the choice of plasma current is addapted for ST
         ! 2 : Peng Ip scaling (See STAR code documentation)
@@ -745,12 +757,6 @@ subroutine check
 
         if (icurr == 2 .or. icurr == 9) call report_error(40)
 
-        if (i_single_null == 0) then
-            idivrt = 2
-        else  !  i_single_null == 1
-            idivrt = 1
-        end if
-
         ! Set the TF coil shape to PROCESS D-shape (if default value)
         if ( i_tf_shape == 0 ) i_tf_shape = 1
 
@@ -796,18 +802,20 @@ subroutine check
     ! TF coil
     ! -------
     ! TF stress model not defined of r_tf_inboard = 0
+    ! Unless i_tf_stress_model == 2
     ! -> If bore + gapoh + ohcth = 0 and fixed and stress constraint is used
     !    Generate a lvl 3 error proposing not to use any stress constraints
     if (       ( .not. ( any(ixc == 16 ) .or. any(ixc == 29 ) .or. any(ixc == 42 ) ) ) & ! No bore,gapoh, ohcth iteration  
          .and. ( abs(bore + gapoh + ohcth + precomp) < epsilon(bore) )                 & ! bore + gapoh + ohcth = 0
-         .and. ( any(icc == 31) .or. any(icc == 32) ) ) then                                                     ! Stress constraint (31) is used 
+         .and. ( any(icc == 31) .or. any(icc == 32) )                                  & ! Stress constraints (31 or 32) is used 
+         .and. ( i_tf_stress_model /= 2 ) ) then                                         ! TF stress model can't handle no bore                                           
 
         call report_error(246)
         stop 1
     end if
      
     ! Make sure that plane stress model is not used for resistive magnets
-    if ( i_tf_plane_stress == 1 .and. i_tf_sup /= 1 ) call report_error(253)
+    if ( i_tf_stress_model == 1 .and. i_tf_sup /= 1 ) call report_error(253)
      
     ! bucking cylinder default option setting
     !  - bucking (casing) for SC i_tf_bucking ( i_tf_bucking = 1 )
@@ -828,7 +836,8 @@ subroutine check
     end if
 
     ! Number of stress calculation layers
-    n_tf_stress_layers = i_tf_bucking + n_tf_graded_layers
+    ! +1 to add in the inboard TF coil case on the plasma side, per Issue #1509
+    n_tf_stress_layers = i_tf_bucking + n_tf_graded_layers + 1
 
     ! If TFC sidewall has not been set by user
     if ( casths < 0.1d-10 ) tfc_sidewall_is_fraction = .true.
@@ -1055,13 +1064,18 @@ subroutine check
     errors_on = .false.
 
     ! Cannot use temperature margin constraint with REBCO TF coils
-    if(any(icc == 36) .and. (i_tf_sc_mat == 8)) then
+    if(any(icc == 36) .and. ((i_tf_sc_mat == 8).or.(i_tf_sc_mat == 9))) then
         call report_error(265)
     endif
 
     ! Cannot use temperature margin constraint with REBCO CS coils
     if(any(icc == 60) .and. (isumatoh == 8)) then
         call report_error(264)
+    endif
+    
+    ! Cold end of the cryocooler should be colder than the TF
+    if(tmpcry > tftmp) then
+        call report_error(273)
     endif
 
 

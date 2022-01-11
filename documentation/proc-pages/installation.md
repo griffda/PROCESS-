@@ -1,21 +1,29 @@
 # Installation
 ## Supported environments
-PROCESS is supported on Ubuntu 20, Mac and Windows 10 (via Windows Subsystem for Linux). It is not supported natively in Windows (through MinGW for example). It is not currently supported on the Freia or Heimdal clusters.
+PROCESS is natively supported on Ubuntu 20. Other Linux distributions will be able to successfully build and execute PROCESS however may give inconsistent results due to version disparities of dynamically linked libraries.
+
+Using the Windows Subsystem for Linux (on Windows) or a containerised environment is the recommended way to build, test, and run PROCESS on any OS other than Ubuntu 20. 
 
 ## Ubuntu and Windows (using Windows Subsystem for Linux)
 *It is highly recommended users create a Python virtual environment in order to use the PROCESS Python package, as this ensures that installations of required package versions don't affect other packages that require different versions in your environment. It isn't necessary, however.*
 *Please note due to bugs in f90wrap, Python3.9 is not yet supported. Running with Python3.9 will cause syntax errors to be raised when running f2py on the f90wrap outputs.*
 
-This installation is known to work on Ubuntu 20 (under Windows Subsystem for Linux or not). For Mac, see below.
+To install Windows Subsystem for Linux (WSL) follow the 'Manual Installation Steps' [here](https://docs.microsoft.com/en-us/windows/wsl/install-win10). Choose WSL 2 and Ubuntu 20 (if installing from the Microsoft store then Ubuntu 20 is installed by default).
+
+Install Visual Studio Code [here](https://code.visualstudio.com/).
+
+
+
+GFortran version 9 or above is needed for successful installation and execution of PROCESS. Versions below GFortran-9 will be rejected by CMake by default since, while PROCESS might compile successfully with lower GFortran versions, other aspects of PROCESS (tests, coverage, etc.) will fail.
 
 If you have previously modified your `$PYTHONPATH` environment variable to include `process/utilities`, perhaps in your `~/.bashrc` file, then please remove this modification. Re-start your terminal for the changes to take effect, and check this is not on your `$PYTHONPATH` with:
 ```bash
 echo $PYTHONPATH
 ```
 
-This modification is not required to run Process now, and it may result in Ford failing during the build process otherwise.
+This modification is not required to run PROCESS now, and it may result in Ford failing during the build process otherwise.
 
-Firstly, install cmake, gfortran and pip, lcov:
+Firstly, open the terminal and install cmake, gfortran and pip, lcov:
 ```bash
 sudo apt update
 sudo apt install cmake
@@ -23,6 +31,8 @@ sudo apt install gfortran
 sudo apt install python3-pip
 sudo apt install lcov
 ```
+
+To clone the PROCESS repository from Gitlab you will need to use an SSH key. A guide on how to find if you have an existing SSH key pair or to generate a new SSH key pair can be found on Gitlab [here](https://docs.gitlab.com/ee/ssh/).
 
 Clone the PROCESS repository from Gitlab, and navigate into the resulting directory:
 ```bash
@@ -47,30 +57,94 @@ cmake -S . -B build
 cmake --build build
 ```
 
+
+An error may be encountered here because `ford` is installed in `.local/bin`, which is not on the `PATH` in some environments, so you will need to add `.local/bin` to the `PATH` if this error occurs. You can do this using `nano`:
+
+First use:
+```bash
+nano ~/.profile
+```
+ Then use the arrow keys to navigate to the bottom of the `nano` editor and type:
+```bash
+export PATH=$PATH:/home/yourusername/.local/bin
+``` 
+where you use your own username in place of `yourusername` above. Then use `Ctrl-X`, then type `Y`, then press enter. Then either close and reopen the terminal, or type:
+```bash
+source ~/.profile
+```
+Now when you try the build process again it should be successful.
+
+
+CMake needs to be at least version `3.13.0`. This is so that the command `cmake -S . -B build` executes correctly. Running this command on an earlier CMake version results in:
+```bash
+CMake Error: The source directory "/home/process/build" does not exist.
+Specify --help for usage, or press the help button on the CMake GUI.
+``` 
+subsequently making the `build` directory and running the command again results in:
+```bash
+CMake Error: The source directory "/home/process/build" does not appear to contain CMakeLists.txt.
+Specify --help for usage, or press the help button on the CMake GUI.
+```
+
 The build step may take some time when run for the first time (~3 mins) as the Fortran code is compiled and then wrapped using `f90wrap` and `f2py` to create the Python libraries. Once this is completed the Process Python package is then automatically installed using `pip` and should be ready to use on Linux. If the installation was successful the command `process` should be available on the command line.
 
 To rebuild, for example after making a change to the Fortran source, run `cmake --build build` again.
 
-## macOS Installation
-For macOS users it is highly recommended you install GCC using Homebrew. This version of PROCESS searches for the `libgfortran` library by using GCC and the build has been proven to work using this compiler. By default, mac will build with Apple Clang which is the default binary when running the `gcc` command. You will need to either specify the compiler when running CMake:
+## Docker container
+Process can be run on Mac or in other environments inside a Docker container. The Process repository, including source and build directories, remain in the host filesystem, but the building and running of Process is performed inside the container. This ensures that Process produces the same results as in other fully-supported environments, such as the CI system. The Ubuntu-based development image used is similar to the one used on the CI system, but it is designed to work immediately with no further installations.
 
+Firstly, [install Docker](https://docs.docker.com/get-docker/). On Mac, this can be accomplished using `homebrew`:
 ```
-cmake -H. -Bbuild -DCMAKE_C_COMPILER=/path/to/gcc/binary
-```
-
-or set your GCC installation to be at the front of the `PATH` variable, e.g. if your installation is in `/usr/local/bin`:
-
-```
-export PATH=/usr/local/bin:$PATH
+brew cask install docker
 ```
 
-Furthermore an additional step is required post-build in which the shared object produced by `f2py` needs to be editted to change the library links using `image_name_tool`, a script has been provided to automate this process. Upon completion of the PROCESS installation Mac users should run:
-
-```bash
-bash scripts/macos_update_shared_objects.sh
+Then login to the Gitlab container registry:
 ```
+docker login git.ccfe.ac.uk:4567
+```
+
+Then download the Docker image from the Process Gitlab container registry:
+```
+docker pull git.ccfe.ac.uk:4567/process/process/dev
+```
+Running `docker image ls` should show the image in your local Docker image repository. Optionally, you can change the image name to something more manageable:
+```
+docker tag git.ccfe.ac.uk:4567/process/process/dev process-dev
+```
+to rename the image to "process-dev" with the "latest" tag: "process:latest".
+
+Now run the container:
+```
+docker run -it -v ~/process:/root/process process-dev
+```
+This runs a container which is an instance of the process-dev image. `-it` runs the container in interactive mode (`-i`, allows `stdin`) with a terminal (`-t`, allows bash-like interaction). `-v` specifies the bind mount to use; mount the host `~/process` directory to the `/root/process` directory in the container. This means that the container has read and write access to the `process` project directory on the host filesystem and will stay in sync with it. Please be aware that changes made in a Docker container outside of mounted folders will not be saved on exiting the container.
+
+Now the container is running, configure, clean and build from the project root directory inside the container:
+```
+cd ~/process
+cmake -S . -B build
+cmake --build build --target clean
+cmake --build build
+```
+The clean step is required to remove any build targets or caches from previous host builds to ensure a completely fresh build from inside the container. This is only required when using the container for the first time.
+
+Once Process has built inside the container, it can be tested (as in the following section) by running `pytest`. Once the test suite passes, this confirms that your Docker container runs Process with the same results as the CI system. Process can now be developed and run as before, with the build and running taking place inside the container.
+
+There is also a VS Code extension for Docker containers that may be helpful.
+
+## Singularity container
+Singularity is a container environment similar to Docker. This means a user can run PROCESS with all required dependencies installed. Singularity, however, is designed to work with user-level permissions and, as such, is supported by many shared resource administrators (unlike Docker, which poses a security risk).
+ 
+Singularity can convert OCI compliant containers into the Singularity Image Format (SIF) to run the Docker container above. Download, and convert the Docker container by running: `singularity pull --docker-login process.sif docker://git.ccfe.ac.uk:4567/process/process/dev:latest`. Singularity will then ask for a username and password, your CCFE GitLab short username and password.
+ 
+Singularity will write the container into your current directory, it can then be moved or copied like any file.
+ 
+Running `singularity shell process.sif` will load a Singularity shell with the dependencies for PROCESS installed. Singularity will automatically mount your home (`$HOME`) directory into the container. Therefore, if PROCESS lives in `~/process` on your system, it will also live inside of `~/process` in the shell environment.
+ 
+It should also be noted that while the Singularity container has a Python 3.8 by default, it will be impossible to pip install any packages without getting a `Read-only file system` error. This is because you are treated as a non-admin user within the container, and, as such, you cannot update the system Python. For this reason, it is recommended that you still use a virtual environment within the Singularity container (as described above). `pip install <package> --user` will work; however, it will cause conflicts with existing Python packages you have installed outside of your container.
 
 ## Testing
+### Check for a successful installation
 As a first basic test that the setup has been successful try importing the package from outside of the repository folder in a Python interactive interpreter:
 ```bash
 cd
@@ -83,24 +157,36 @@ import process
 process
 ```
 
-... should output:
+... should output something similar to:
 ```bash
 <module 'process' from '/home/jmaddock/process/process/__init__.py'>
 ```
 
-This indicates that the Process Python package has been installed.
-
-For thorough testing, the test suite needs to be run. The included tests are run using PyTest, and requirements for the tests are installed by running:
+This indicates that the PROCESS Python package has been installed.
+To exit the Python interpreter you can use 
 ```BASH
-pip install .[test]
+exit() 
+```
+and press enter, or use `Ctrl-Z`. 
+
+### PROCESS test suite
+The PROCESS test suite provides through tests that can be used to confirm a successful installation; the tests can then be used to verify changes you make have not affected the wider codebase.
+
+Firstly, ensure you are in the PROCESS root directory.
+```BASH
+cd process
 ```
 
-PyTest can then be run on the tests folder:
+The test suite uses PyTest and can be fully run using:
 ```BASH
-pytest tests
+pytest
 ```
+which runs unit, integration, and regression tests. 
 
-If everything passes, this indicates a successful installation.
+A more in-depth discussion of testing can be found at 
+[development/testing](http://process.gitpages.ccfe.ac.uk/process/development/testing/)
+
+If everything passes, this indicates a successful installation. If anything fails, this indicates that your environment produces different results to what is expected. You might consider creating an issue in Gitlab, or trying out the Docker container instead.
 
 ### Prepare Release (not required)
 It is possible to build a standalone module which can be distributed without the need for the source code. This exists as a pippable "wheels" module which is build by running:

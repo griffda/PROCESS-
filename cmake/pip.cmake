@@ -32,6 +32,7 @@ MACRO(PIP_INSTALL)
         )
         MESSAGE(STATUS "\tFORD Install: Python module 'ford' found, skipping install.")
     ENDIF()
+
     SET(MODULE_REQUIREMENTS_FILE ${CMAKE_SOURCE_DIR}/requirements.txt)
     STRING(REPLACE "/" "_" PIP_OUT_PREFIX ${PYTHON_EXECUTABLE})
     SET(PIP_COMPLETE_FILE ${CMAKE_BINARY_DIR}/${PIP_OUT_PREFIX}.touch)
@@ -40,8 +41,11 @@ MACRO(PIP_INSTALL)
         DEPENDS ${PIP_COMPLETE_FILE}
     )
 
+    # Manually install numpy as including it in requirements doesnt install it
+    # It is a pre-requisite to f90wrap install
     ADD_CUSTOM_COMMAND(
         OUTPUT ${PIP_COMPLETE_FILE}
+        COMMAND ${PYTHON_EXECUTABLE} -m pip install numpy
         COMMAND ${PYTHON_EXECUTABLE} -m pip install -r ${MODULE_REQUIREMENTS_FILE}
         COMMAND touch ${PIP_COMPLETE_FILE}
     )

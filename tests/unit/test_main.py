@@ -1,12 +1,17 @@
 """Unit tests for the main.py module."""
+import numpy as np
 from process import main
 from process.main import Process
 from process.main import SingleRun
 from process.main import VaryRun
 from process import fortran
+from process import scan
+from process import final
+from process.utilities.f2py_string_patch import string_to_f2py_compatible, f2py_compatible_to_string
 import pytest
 from pathlib import Path
 import argparse
+# import numpy as np
 
 # Real input file for testing
 # TODO Move to own fixture?
@@ -118,7 +123,9 @@ def single_run(monkeypatch):
     :rtype: SingleRun
     """
     monkeypatch.setattr(SingleRun, "__init__", mock_init)
-    return SingleRun()
+    single_run = SingleRun()
+    single_run.models = None
+    return single_run
 
 def test_SingleRun(single_run):
     """Assert SingleRun objects can be created.
@@ -142,15 +149,16 @@ def test_set_input(single_run, monkeypatch):
     monkeypatch.setattr(single_run, "input_file", input_file_path, 
         raising=False)
     
+    # Mocking undo trys to set the value as none
+    # TODO Create our own monkeypatch for strings (if needed)
     # Mock the Fortran set
-    monkeypatch.setattr(fortran.global_variables, "fileprefix", None)
+    # monkeypatch.setattr(fortran.global_variables, "fileprefix", string_to_f2py_compatible(fortran.global_variables.fileprefix,None))
+    # fortran.global_variables.test_setting_string()
 
     # Mocks set up, can now run set_input()
     single_run.set_input()
-
     # Check path has been set in the Fortran (mocked above)
-    result = fortran.global_variables.fileprefix.decode().strip()
-    # Convert string from byte-string for comparison
+    result = f2py_compatible_to_string(fortran.global_variables.fileprefix)
     assert result == expected
 
 def test_set_output(single_run, monkeypatch):
@@ -165,12 +173,15 @@ def test_set_output(single_run, monkeypatch):
     expected = "output_prefix"
     # Mock self.filename_prefix on single_run with the value of expected
     monkeypatch.setattr(single_run, "filename_prefix", expected, raising=False)
+
+    # Mocking undo trys to set the value as none
+    # TODO Create our own monkeypatch for strings (if needed)
     # Mock the Fortran set
-    monkeypatch.setattr(fortran.global_variables, "output_prefix", None)
+    # monkeypatch.setattr(fortran.global_variables, "output_prefix", None)
     # Run the method, and extract the value from the Fortran
     single_run.set_output()
     # Convert string from byte-string for comparison
-    result = fortran.global_variables.output_prefix.decode().strip()
+    result = f2py_compatible_to_string(fortran.global_variables.output_prefix)
     assert result == expected
 
 def test_initialise(single_run, monkeypatch):
@@ -180,7 +191,6 @@ def test_initialise(single_run, monkeypatch):
     :type single_run: SingleRun
     """
     # Mock the init subroutine with a lambda function
-    monkeypatch.setattr(fortran.init_module, "init", lambda: None)
     # Run initialise method; this will fail on a raised exception
     single_run.initialise()
 
@@ -198,7 +208,6 @@ def test_run_hare_tests(single_run, monkeypatch):
     # For now, just check that no exceptions are thrown before calling into 
     # the Fortran
     monkeypatch.setattr(fortran.global_variables, "run_tests", 1)
-    monkeypatch.setattr(fortran.main_module, "runtests", lambda: None)
     single_run.run_hare_tests()
 
 def test_kallenbach_tests(single_run, monkeypatch):
@@ -211,8 +220,6 @@ def test_kallenbach_tests(single_run, monkeypatch):
     """
     # TODO Currently only checking for no exceptions before Fortran mock called
     monkeypatch.setattr(fortran.div_kal_vars, "kallenbach_tests", 1)
-    monkeypatch.setattr(fortran.kallenbach_module, "kallenbach_testing", 
-        lambda: None)
     # Expect a SystemExit, as the code is exited if the Kallenbach tests are run
     with pytest.raises(SystemExit):
         single_run.kallenbach_tests()
@@ -226,44 +233,26 @@ def test_kallenbach_scan(single_run, monkeypatch):
     :type monkeypatch: object
     """
     monkeypatch.setattr(fortran.div_kal_vars, "kallenbach_scan_switch", 1)
-    monkeypatch.setattr(fortran.kallenbach_module, "kallenbach_scan", lambda: 
-        None)
     # Catch a SystemExit after running the scan
     with pytest.raises(SystemExit):
         single_run.kallenbach_scan()
 
 def test_call_solver(single_run, monkeypatch):
-    """Check that the solver is called with the ifail integer.
+    """Attempt to call the hybrd() non-optimising solver.
 
     :param single_run: single_run fixture
     :type single_run: SingleRun
     :param monkeypatch: monkeypatch fixture
     :type monkeypatch: object
     """
-    # Mock the ifail value returned by the solver as 1
-    expected = 1
-    monkeypatch.setattr(fortran.main_module, "eqslv", lambda: expected)
+    # No hybrd() call required
+    monkeypatch.setattr(fortran.numerics, "ioptimz", 1)
     single_run.call_solver()
-    assert single_run.ifail == expected
 
-def test_scan(single_run, monkeypatch):
-    """Test if scan routine runs based on ioptimz value.
-
-    :param single_run: single_run fixture
-    :type single_run: SingleRun
-    :param monkeypatch: monkeypatch fixture
-    :type monkeypatch: object
-    """
-    # Mock ioptimz value and check scan can run
-    monkeypatch.setattr(fortran.numerics, "ioptimz", 0)
-    monkeypatch.setattr(fortran.scan_module, "scan", lambda: None)
-    single_run.scan()
-
-    # If ioptimz < 0, mock call to final
+    # Attempt to use hybrd()
     monkeypatch.setattr(fortran.numerics, "ioptimz", -1)
-    monkeypatch.setattr(single_run, "ifail", 0, raising=False)
-    monkeypatch.setattr(fortran.final_module, "final", lambda x: None)
-    single_run.scan()
+    with pytest.raises(NotImplementedError):
+        single_run.call_solver()
 
 def test_set_mfile(single_run, monkeypatch):
     """Check the mfile filename is being stored correctly.
@@ -288,7 +277,6 @@ def test_show_errors(single_run, monkeypatch):
     :param monkeypatch: monkeypatch fixture
     :type monkeypatch: object
     """
-    monkeypatch.setattr(fortran.error_handling, "show_errors", lambda: None)
     single_run.show_errors()
 
 def test_finish(single_run, monkeypatch):
@@ -299,7 +287,6 @@ def test_finish(single_run, monkeypatch):
     :param monkeypatch: monkeypatch fixture
     :type monkeypatch: object
     """
-    monkeypatch.setattr(fortran.init_module, "finish", lambda: None)
     single_run.finish()
 
 @pytest.fixture

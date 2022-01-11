@@ -198,7 +198,7 @@ ripmax   = 1.0      *Maximum allowable toroidal field ripple amplitude at plasma
 n_tf     = 12       *Number of TF coil  
 vcool    = 5.0      *Max centrepost coolant flow speed at midplane (m/s)
 vftf     = 0.2      *Coolant fraction of TFC 'cable' (i_tf_sup=1) or of TFC leg (i_tf_sup=0)
-i_tf_plane_stress = 0 
+i_tf_stress_model = 2 *Switch for the TF coil stress model (2: Axisymmetric extended plane strain)
 *Iteration variables: cdtfleg fcoolcp oacdcp tcpav
 
 *-------------Current Drive Variables--------------*
@@ -252,7 +252,7 @@ iavail   = 0        *Switch for plant availability model (0: use input value for
 ifueltyp = 1        *Switch (1: treat blanket divertor first wall and fraction fcdfuel of CD equipment as fuel cost)
 lsa      = 2        *Level of safety assurance switch (2: in-between)
 output_costs = 0    *Switch for costs output (0: do not write cost-related outputs to file)
-ratecdol = 0.08     *Effective cost of money in constant dollars 
+discount_rate = 0.08     *Effective cost of money in constant dollars 
 ucblvd   = 280.0    *Unit cost for blanket vanadium ($/kg)
 ucdiv    = 5.0E5    *Cost of divertor blade ($) 
 ucme     = 3.0E8    *Unit cost of maintenance equipment ($/W**0.3) 

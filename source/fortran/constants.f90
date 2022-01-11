@@ -7,7 +7,9 @@ module constants
   !!
   !! - AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   implicit none
 
@@ -40,6 +42,9 @@ module constants
 
   real(dp), parameter :: echarge = 1.60217733D-19
   !! electron charge [C]
+
+  real(dp), parameter :: emass = 9.10938370D-31
+  !! electron mass [kg]
 
   real(dp), parameter :: mproton = 1.6726231D-27
   !! proton mass [kg]

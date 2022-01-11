@@ -10,12 +10,11 @@ module ccfe_hcpb_module
   !!
   !! - Kovari et al., Fusion Engineering and Design 104 (2016) 9-20  
   
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   implicit none
-
-  private
-  public :: ccfe_hcpb, tbr_shimwell, init_ccfe_hcpb_module
 
   ! Variables for output to file
   integer, private :: ip, ofile
@@ -340,12 +339,12 @@ contains
     pnucblkt = ( pnucblkt / pnuc_tot_blk_sector ) * emult  * f_geom_blanket * pneutmw
     
     ! Power to the shield(MW)
-    ! The power deposited in the CP shield is added back 
+    ! The power deposited in the CP shield is added back in powerflow_calc
     pnucshld = ( pnucshld / pnuc_tot_blk_sector ) * emult * f_geom_blanket * pneutmw
 
     ! Power to the TF coils (MW)
-    ! The power deposited in the CP shield is added back 
-    ptfnuc = ( ptfnuc / pnuc_tot_blk_sector ) * emult * f_geom_blanket * pneutmw
+    ! The power deposited in the CP conductor is added back here
+    ptfnuc = ( ptfnuc / pnuc_tot_blk_sector ) * emult * f_geom_blanket * pneutmw + pnuc_cp_tf
 
     ! Power deposited in the CP
     pnuc_cp_sh = f_geom_cp * pneutmw - pnuc_cp_tf
@@ -895,7 +894,7 @@ contains
       volshld, vvmass, vdewin, fw_armour_thickness, ptfnuc
     use physics_variables, only: powfmw, itart
     use process_output, only: oheadr, ovarre
-    use tfcoil_variables, only: whttf
+    use tfcoil_variables, only: whttf, whttflgs
     use global_variables, only: verbose
 
     implicit none
@@ -979,10 +978,21 @@ contains
     ! Shield exponent(/1000 for kg -> tonnes)
     x_shield = (shield_density * th_shield_av + &
               vv_density * (d_vv_in+d_vv_out)/2.0D0) / 1000.D0
+              
+    ! If spherical tokamak, this is outboard only. pnuc_cp_tf is evaluated separately
+    if (itart == 1) then
+    
+        ! Nuclear heating in outobard TF coil legs (whttflgs)
+        ! Unit heating (W/kg/GW of fusion power) x legs mass only (kg)
+        tfc_nuc_heating = e*exp(-a*x_blanket)*exp(-b*x_shield) * whttflgs
+    
+    else
 
-    ! Nuclear heating in TF coil
-    ! Unit heating (W/kg/GW of fusion power) x mass (kg)
-    tfc_nuc_heating = e*exp(-a*x_blanket)*exp(-b*x_shield) * whttf
+        ! Nuclear heating in TF coil
+        ! Unit heating (W/kg/GW of fusion power) x total mass (kg)
+        tfc_nuc_heating = e*exp(-a*x_blanket)*exp(-b*x_shield) * whttf
+    
+    end if
 
     ! Total heating (MW)
     ptfnuc = tfc_nuc_heating * (powfmw / 1000.0D0) / 1.0D6
@@ -1265,8 +1275,10 @@ contains
           '(p_plasma)', p_plasma, 'OP ')
         call ovarre(ofile, 'Inlet temperature of FW & blanket coolant pump (K)', &
           '(t_in_compressor)', t_in_compressor, 'OP ')
-        call ovarre(ofile, 'Outlet temperature of FW & blanket coolant pump (K)', &
+        call ovarre(ofile, 'Coolant pump outlet/Inlet temperature of FW & blanket (K)', &
           '(t_in_bb)', t_in_bb)
+        call ovarre(ofile, 'Outlet temperature of FW & blanket (K)', &
+          '(t_out_bb)', t_out_bb)	  
         call ovarre(ofile, 'Mechanical pumping power for FW and blanket cooling loop &
           &including heat exchanger (MW)', '(htpmw_fw_blkt)', htpmw_fw_blkt, 'OP ')
         call ovarre(ofile, 'Mechanical pumping power for divertor (MW)', &
@@ -2434,7 +2446,7 @@ contains
     real(dp), intent(in) :: breeder_f, li6enrich
 
     ! outputs
-    real(dp) :: tbr
+    real(dp), intent(out) :: tbr
 
     ! Local variables
 
@@ -2574,11 +2586,10 @@ module kit_hcpb_module
 
   ! Modules to import !
   ! !!!!!!!!!!!!!!!!!!!!
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
-
-  private
-  public :: kit_hcpb, init_kit_hcpb_module
 
   ! Variables for output to file
   integer, private :: ip, ofile
