@@ -5,7 +5,7 @@ For the two tools below, running `f2py` with the `--debug` flag will include deb
 ## GDB
 Debuggers provide an alternative to `print` statements littering your code. These statements are often left in (or commented out) and can clutter up source code. When debugging within Fortran, they also mean recompilation is required - which takes a few minutes.
 
-As well as running Process with `process`. We are also able to run the following: `python process/main.py` as the `process` command is just a wrapper around this file. This means we can easily debug Process as follows:
+As well as running Process with `process`, we are also able to run the following: `python process/main.py` as the `process` command is just a wrapper around this file. This means we can easily debug Process as follows:
 
 ```bash
 cd ~/process
@@ -24,7 +24,7 @@ gdb python
 >>> break vmcon.f90:200
 ```
 
-If, at this point, GDB says it cannot find the source file, select the (y)es option as it will be able to find the source file Process is run.
+If, at this point, GDB says it cannot find the source file, select the (y)es option as it will be able to find the source file when Process is run.
 
 ```bash
 >>> run process/main.py -i tracking/baseline_2018/baseline_2018_IN.dat

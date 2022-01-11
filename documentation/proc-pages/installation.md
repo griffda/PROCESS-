@@ -189,7 +189,7 @@ A more in-depth discussion of testing can be found at
 
 If everything passes, this indicates a successful installation. If anything fails, this indicates that your environment produces different results to what is expected. You might consider creating an issue in Gitlab, or trying out the Docker container instead.
 
-### Prepare Release (not required)
+## Prepare Release (not required)
 It is possible to build a standalone module which can be distributed without the need for the source code. This exists as a pippable "wheels" module which is build by running:
 
 ```BASH
