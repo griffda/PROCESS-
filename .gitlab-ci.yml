@@ -32,14 +32,16 @@ build_docker_ci_image:
   services:
     - docker:19.03.12-dind
   script:
+    - cp requirements.txt docker/ci/
     - cd docker/ci
     - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN
-    - docker build -t $CI_REGISTRY/process/process/ci-image:latest .
-    - docker push $CI_REGISTRY/process/process/ci-image:latest
+    - docker build -t $CI_REGISTRY/tnunn/process/ci-image:latest .
+    - docker push $CI_REGISTRY/tnunn/process/ci-image:latest
   rules:
     - if: $CI_COMMIT_BRANCH == "develop"
       changes: 
         - docker/ci/Dockerfile
+        - requirements.txt
 
 build_docker_dev_image:
   stage: containers
@@ -49,8 +51,8 @@ build_docker_dev_image:
   script:
     - cd docker/dev
     - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN
-    - docker build -t $CI_REGISTRY/process/process/dev:latest .
-    - docker push $CI_REGISTRY/process/process/dev:latest
+    - docker build -t $CI_REGISTRY/tnunn/process/process/dev:latest .
+    - docker push $CI_REGISTRY/tnunn/process/process/dev:latest
   rules:
     - if: $CI_COMMIT_BRANCH == "develop"
       changes: 
@@ -103,7 +105,7 @@ build_docker_dev_image:
 #-----------------
 make-py38:
   stage: build
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  image: $CI_REGISTRY/tnunn/process/process/ci-image:latest
   artifacts:
     paths:
       - process_dist/process-*.tar.gz
@@ -124,7 +126,7 @@ make-py38:
 #  Testing
 #-----------------
 .test_template:
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  image: $CI_REGISTRY/tnunn/process/process/ci-image:latest
   stage: testing
   before_script:
     - python -m pip install git+https://github.com/jonMaddockUkaea/ford
@@ -226,7 +228,7 @@ starfire-py38:
 line_length:
   when: on_success
   stage: quality
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  image: $CI_REGISTRY/tnunn/process/process/ci-image:latest
   script:
     - pwd
     - python3 utilities/line_length_standard.py
@@ -240,7 +242,7 @@ line_length:
 tracking_rtv:
   extends: ".test_template"
   when: on_success
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  image: $CI_REGISTRY/tnunn/process/process/ci-image:latest
   only: 
     - develop
   stage: tracking
@@ -277,7 +279,7 @@ pages:
   only:
     - develop
   stage: pages
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  image: $CI_REGISTRY/tnunn/process/process/ci-image:latest
   variables:
     PY_VERSION: py38
   script:
