@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.2.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "07/01/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "11:24"
+ Date_of_run_____________________________________________________________ (date)________________________     "11/01/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "11:20"
  User____________________________________________________________________ (username)____________________     "cswan"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "FNSF (Menard et al. 2016)                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1061-gb1f8fce0"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1509-outer-tf-case"                                                                                
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Added\ new\ regression\ test\ files"                                                               
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-35/test_scenario_FNSF_0/IN.DAT                                                                                                                                              "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1092-g16e26860"                                                                               
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1205-tf-cond-stiffness"                                                                            
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Changed\ properties\ to\ conductor\ and\ fixed\ a\ bug"                                            
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-40/test_scenario_FNSF_0/IN.DAT                                                                                                                                              "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -411,16 +411,16 @@
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.0000E+08    
  WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      1.1700E+02 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      9.9029E+01 OP 
- Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________     -6.8441E+07    
- toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -6.8441E+07    
- Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      3.9918E+07    
- Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      1.0836E+08    
- Maximum_shear_stress_for_the_Tresca_yield_criterion_1_(Pa)______________ (sig_tf_tresca_max(1))________      1.0836E+08    
- Radial____stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_r_max(2))_____________      1.7704E+06    
- toroidal__stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_t_max(2))_____________     -3.4546E+07    
- Vertical__stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_z_max(2))_____________      1.5929E+08    
- Von-Mises_stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_vmises_max(2))________      1.7847E+08    
- Maximum_shear_stress_for_the_Tresca_yield_criterion_2_(Pa)______________ (sig_tf_tresca_max(2))________      1.9383E+08    
+ Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________     -6.8437E+07    
+ toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -6.8438E+07    
+ Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      3.9935E+07    
+ Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      1.0837E+08    
+ Maximum_shear_stress_for_the_Tresca_yield_criterion_1_(Pa)______________ (sig_tf_tresca_max(1))________      1.0837E+08    
+ Radial____stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_r_max(2))_____________      1.7699E+06    
+ toroidal__stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_t_max(2))_____________     -3.4535E+07    
+ Vertical__stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_z_max(2))_____________      1.5927E+08    
+ Von-Mises_stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_vmises_max(2))________      1.7844E+08    
+ Maximum_shear_stress_for_the_Tresca_yield_criterion_2_(Pa)______________ (sig_tf_tresca_max(2))________      1.9381E+08    
  Conductor_technology____________________________________________________ (i_tf_sup)____________________              0    
  Presence_of_TF_demountable_joints_______________________________________ (itart)_______________________              1    
  TF_inboard_leg_support_strategy_________________________________________ (i_tf_bucking)________________              0    
@@ -452,7 +452,7 @@
  Inboard_leg_case_plasma_side_wall_thickness_(m)_________________________ (casthi)______________________      2.7029E-02    
  Inboard_leg_bucking_cylinder_thickness_(m)______________________________ (thkcas)______________________      0.0000E+00    
  Inboard_TFC_conductor_sector_area_with_gr_insulation_(per_leg)_(m2)_____ (awpc))_______________________      6.9043E-02    
- Inboard_TFC_conductor_sector_area_(per_leg)_(m2)________________________ (aswp)________________________      6.9043E-02    
+ Inboard_TFC_conductor_sector_area,_NO_ground_&_gap_(per_leg)_(m2)_______ (awptf)_______________________      6.9043E-02    
  Inboard_conductor_sector_radial_thickness_(m)___________________________ (dr_tf_wp)____________________      5.1354E-01    
  Central_collumn_top_conductor_sector_radial_thickness_(m)_______________ (dr_tf_wp_top)________________      7.5926E-01    
  Ground_wall_insulation_thickness_(m)____________________________________ (tinstf)______________________      0.0000E+00    

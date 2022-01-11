@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1061-gb1f8fce0 code contains untracked changes
-    Branch : 1509-outer-tf-case
-   Git log : Added\ new\ regression\ test\ files
- Date/time :  7 Jan 2022 11:24:31 -05:00(hh:mm) UTC
+   Tag No. : v2.1-1092-g16e26860 code contains untracked changes
+    Branch : 1205-tf-cond-stiffness
+   Git log : Changed\ properties\ to\ conductor\ and\ fixed\ a\ bug
+ Date/time : 11 Jan 2022 11:20:18 -05:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-35/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-35/test_scenario_FNSF_0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-40/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-40/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -567,11 +567,11 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Materal stress of the point of maximum shear stress (Tresca criterion) for each layer
  Please use utilities/plot_stress_tf.py for radial plots plots summary
  Layers                              conductor    Outer case
- Radial stress               (MPa)     -68.441         1.770
- toroidal stress             (MPa)     -68.441       -34.546
- Vertical stress             (MPa)      39.918       159.286
- Von-Mises stress            (MPa)     108.360       178.467
- Shear (Tresca) stress       (MPa)     108.360       193.832
+ Radial stress               (MPa)     -68.437         1.770
+ toroidal stress             (MPa)     -68.438       -34.535
+ Vertical stress             (MPa)      39.935       159.270
+ Von-Mises stress            (MPa)     108.373       178.444
+ Shear (Tresca) stress       (MPa)     108.373       193.805
  
  Toroidal modulus            (GPa)     117.000       205.000
  Vertical modulus            (GPa)      99.029       205.000
@@ -628,7 +628,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Inboard TFC conductor sector geometry:
  
  Inboard TFC conductor sector area with gr insulation (per leg) (m2)      (awpc))                   6.904E-02     
- Inboard TFC conductor sector area (per leg) (m2)                         (aswp)                    6.904E-02     
+ Inboard TFC conductor sector area, NO ground & gap (per leg) (m2)        (awptf)                   6.904E-02     
  Inboard conductor sector radial thickness (m)                            (dr_tf_wp)                5.135E-01     
  Central collumn top conductor sector radial thickness (m)                (dr_tf_wp_top)            7.593E-01     
  Ground wall insulation thickness (m)                                     (tinstf)                  0.000E+00     

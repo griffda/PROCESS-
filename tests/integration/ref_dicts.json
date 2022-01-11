@@ -1783,11 +1783,12 @@
             "zero"
         ],
         "eyoung_al": 69000000000.0,
+        "eyoung_cond_t": 0.0,
+        "eyoung_cond_z": 660000000.0,
         "eyoung_copper": 117000000000.0,
         "eyoung_ins": 100000000.0,
         "eyoung_res_tf_buck": 150000000000.0,
         "eyoung_steel": 205000000000.0,
-        "eyoung_winding": 660000000.0,
         "eyzwp": 0.0,
         "ez": [
             "zero",
@@ -2292,10 +2293,12 @@
         "i_sup_pf_shape": 0.0,
         "i_tf_bucking": -1.0,
         "i_tf_case_geom": 0.0,
+        "i_tf_cond_props": 0.0,
         "i_tf_sc_mat": 1.0,
         "i_tf_shape": 0.0,
         "i_tf_stress_model": 1.0,
         "i_tf_sup": 1.0,
+        "i_tf_transverse_props": 0.0,
         "i_tf_tresca": 0.0,
         "i_tf_turns_integer": 0.0,
         "i_tf_wp_geom": -1.0,
@@ -3578,7 +3581,10 @@
         "pohmmw": 0.0,
         "pohmpv": 0.0,
         "poisson_al": 0.35,
+        "poisson_cond_t": 0.3,
+        "poisson_cond_z": 0.3,
         "poisson_copper": 0.35,
+        "poisson_ins": 0.34,
         "poisson_steel": 0.3,
         "poloidalpower": [
             0.0,
@@ -9377,7 +9383,7 @@
         "dflsa": "",
         "dg": "",
         "dh_tf_inner_bore": "TF coil vertical inner bore (m)",
-        "dhecoil": "diameter of He coil in TF winding (m)",
+        "dhecoil": "diameter of central helium channel in TF winding (m)",
         "diacf_hender": "diamagnetic current fraction, Hender fit",
         "diacf_scene": "diamagnetic current fraction, SCENE fit",
         "diaipf": "diamagnetic current fraction",
@@ -9531,11 +9537,12 @@
         "exp_shield2": "Exponential factors in nuclear heating calcs",
         "ey": "",
         "eyoung_al": "Aluminium young modulus.  Default value taken from wikipedia",
+        "eyoung_cond_t": "SC TF coil conductor Young's modulus in the transverse direction [Pa]\n Set by user input only if `i_tf_cond_props == 1`; otherwise\n set by the behavior of that switch.",
+        "eyoung_cond_z": "SC TF coil conductor Young's modulus in the parallel (along the wire/tape)\n direction [Pa]\n Set by user input only if `i_tf_cond_props == 1`; otherwise\n set by the behavior of that switch.",
         "eyoung_copper": "Copper young modulus. Default value taken from wikipedia",
         "eyoung_ins": "Insulator Young's modulus [Pa]. Default value (1.0D8) setup the following values\n  - SC TF, eyoung_ins = 20 Gpa (default value from DDD11-2 v2 2 (2009))\n  - Al TF, eyoung_ins = 2.5 GPa (Kapton polymer)",
         "eyoung_res_tf_buck": "Resistive TF magnets bucking cylinder young modulus (Pa)",
         "eyoung_steel": "Steel case Young's modulus (Pa) (default value from DDD11-2 v2 2 (2009))",
-        "eyoung_winding": "SC TF coil winding Young's modulus (Pa)",
         "eyzwp": "Winding pack vertical Young's modulus (Pa)",
         "ez": "",
         "fLI": "",
@@ -9896,10 +9903,12 @@
         "i_sup_pf_shape": "Switch for the placement of Location 3 (outboard) PF coils\n when the TF coils are superconducting (i_tf_sup = 1)\n<ul>\n<li>=0 (Default) Outboard PF coils follow TF shape \n   in an ellipsoidal winding surface</li>\n<li>=1 Outboard PF coils all have same radius, cylindrical\n   winding surface</li>\n</ul>",
         "i_tf_bucking": "Switch for TF inboard suport structure design:\nDefault setting for backward compatibility\n     - if copper resistive TF (i_tf_sup = 0) : Free standing TF without bucking structure \n     - if Superconducting TF  (i_tf_sup = 1) : Free standing TF with a steel casing<br>\n     - if aluminium  TF       (i_tf_sup = 2) : Free standing TF with a bucking structure\n     Rem : the case is a bucking structure\n - =0 : Free standing TF without case/bucking cyliner (only a conductor layer)\n - =1 : Free standing TF with a case/bucking cylinder made of \n     - if copper resistive     TF (i_tf_sup = 0) : used defined bucking cylinder\n     - if Superconducting      TF (i_tf_sup = 1) : Steel casing\n     - if aluminium resisitive TF (i_tf_sup = 2) : used defined bucking cylinder\n - =2 : The TF is in contact with the CS : \"bucked and wedged design\"\n       Fast version : thin TF-CS interface neglected in the stress calculations (3 layers)\n                      The CS is frictionally decoupled from the TF, does not carry axial tension\n - =3 : The TF is in contact with the CS : \"bucked and wedged design\"\n       Full version : thin TF-CS Kapton interface introduced in the stress calculations (4 layers)\n                      The CS and kaptop are frictionally decoupled from the TF, do not carry\n                      axial tension",
         "i_tf_case_geom": "Switch for TF case geometry selection\n   0 : Circular front case (ITER design)\n   1 : Straight front case",
+        "i_tf_cond_props": "Switch for the behavior of the TF coil conductor elastic properties\n<ul>\n<li>=0  Young's moduli are set to zero, the conductor is not considered\n       in the stress calculation</li>\n<li>=1  Elastic properties are set by user input, using the variables\n       `eyoung_cond_z`, `eyoung_cond_t`</li>\n<li>=2  Elastic properties are set to reasonable defaults taking into\n       account the superconducting material `i_tf_sc_mat`</li>\n</ul>",
         "i_tf_sc_mat": "Switch for superconductor material in TF coils:\n<ul>\n<li>=1 ITER Nb3Sn critical surface model with standard\n   ITER parameters</li>\n<li>=2 Bi-2212 high temperature superconductor (range of\n   validity T < 20K, adjusted field b < 104 T, B > 6 T)</li>\n<li>=3 NbTi</li>\n<li>=4 ITER Nb3Sn model with user-specified parameters</li>\n<li>=5 WST Nb3Sn parameterisation</li>\n<li>=6 REBCO HTS tape in CroCo strand</li>\n<li>=7 Durham Ginzburg-Landau critical surface model for Nb-Ti</li>\n<li>=8 Durham Ginzburg-Landau critical surface model for REBCO</li>\n<li>=9 Hazelton experimental data + Zhai conceptual model for REBCO</li>\n</ul>",
         "i_tf_shape": "Switch for TF coil toroidal shape:\n<ul>\n<li>=0  Default value : Picture frame coil for TART / PROCESS D-shape for non itart</li>\n<li>=1  PROCESS D-shape : parametrise with 2 arcs </li>\n<li>=2  Picture frame coils </li>\n</ul>",
         "i_tf_stress_model": "Switch for the TF coil stress model\n   0 : Generalized plane strain formulation, Issues #977 and #991, O(n^3)\n   1 : Old plane stress model (only for SC)\n   2 : Axisymmetric extended plane strain, Issues #1414 and #998, O(n)",
         "i_tf_sup": "Switch for TF coil conductor model:\n<ul>\n<li>=0 copper</li>\n<li>=1 superconductor</li>\n<li>=2 Cryogenic aluminium</li>\n</ul>",
+        "i_tf_transverse_props": "Switch for the behavior of the elastic properties of the TF coil\n in the transverse direction. Only active if `i_tf_cond_props == 2`\n<ul>\n<li>=0  Cable not potted in solder. Transverse Young's modulus set to zero.</li>\n<li>=1  Cable potted in solder. Transverse Young's modulus set to reasonable\n       default taking into account the superconducting material `i_tf_sc_mat`</li>\n</ul>",
         "i_tf_tresca": "Switch for TF coil conduit Tresca stress criterion:\n   0 : Tresca (no adjustment);\n   1 : Tresca with CEA adjustment factors (radial+2%, vertical+60%) </UL>",
         "i_tf_turns_integer": "Switch for TF coil integer/non-integer turns:\n   0 : non-integer turns\n   1 : integer turns",
         "i_tf_wp_geom": "Switch for TF WP geometry selection\n   0 : Rectangular geometry \n   1 : Double rectangular geometry \n   2 : Trapezoidal geometry (constant lateral casing thickness)\n Default setting for backward compatibility \n   if i_tf_turns_integer = 0 : Double rectangular\n   if i_tf_turns_integer = 1 : Rectangular ",
@@ -10486,7 +10495,10 @@
         "pohmmw": "ohmic heating power (MW)",
         "pohmpv": "ohmic heating power per volume (MW/m3)",
         "poisson_al": "Aluminium Poisson's ratio. \n Source : https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html",
+        "poisson_cond_t": "SC TF coil conductor Poisson's ratio in the transverse-transverse direction",
+        "poisson_cond_z": "SC TF coil conductor Poisson's ratio in the parallel-transverse direction",
         "poisson_copper": "Copper Poisson's ratio. Source : https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html",
+        "poisson_ins": "Insulation Poisson's ratio. Default: Kapton.\n Source : DuPont\u2122 Kapton\u00ae HN datasheet.",
         "poisson_steel": "Steel Poisson's ratio ",
         "poloidalpower": "Poloidal power usage at time t (MW)",
         "porbitlossmw": "neutral beam power lost after ionisation but before thermalisation (orbit loss power) (MW)",
@@ -12423,6 +12435,14 @@
             "lb": 0.0,
             "ub": 1.0
         },
+        "eyoung_cond_t": {
+            "lb": 0.0,
+            "ub": 10000000000000.0
+        },
+        "eyoung_cond_z": {
+            "lb": 0.0,
+            "ub": 10000000000000.0
+        },
         "eyoung_ins": {
             "lb": 100000000.0,
             "ub": 10000000000000.0
@@ -12432,10 +12452,6 @@
             "ub": 1000000000000.0
         },
         "eyoung_steel": {
-            "lb": 100000000.0,
-            "ub": 10000000000000.0
-        },
-        "eyoung_winding": {
             "lb": 100000000.0,
             "ub": 10000000000000.0
         },
@@ -13255,6 +13271,10 @@
             "lb": 0,
             "ub": 1
         },
+        "i_tf_cond_props": {
+            "lb": 0,
+            "ub": 2
+        },
         "i_tf_sc_mat": {
             "lb": 1,
             "ub": 9
@@ -13270,6 +13290,10 @@
         "i_tf_sup": {
             "lb": 0,
             "ub": 2
+        },
+        "i_tf_transverse_props": {
+            "lb": 0,
+            "ub": 1
         },
         "i_tf_tresca": {
             "lb": 0,
@@ -19671,6 +19695,8 @@
             "i_tf_sc_mat",
             "i_tf_sup",
             "i_tf_shape",
+            "i_tf_cond_props",
+            "i_tf_transverse_props",
             "n_pancake",
             "n_layer",
             "n_rad_per_layer",
@@ -19685,13 +19711,17 @@
             "eyzwp",
             "eyoung_ins",
             "eyoung_steel",
-            "eyoung_winding",
+            "eyoung_cond_z",
+            "eyoung_cond_t",
             "eyoung_res_tf_buck",
             "eyoung_copper",
             "eyoung_al",
             "poisson_steel",
             "poisson_copper",
             "poisson_al",
+            "poisson_ins",
+            "poisson_cond_z",
+            "poisson_cond_t",
             "rbmax",
             "tflegres",
             "toroidalgap",
@@ -20275,10 +20305,11 @@
         "etath": "real_variable",
         "etave": "real_array",
         "eyoung_al": "real_variable",
+        "eyoung_cond_t": "real_variable",
+        "eyoung_cond_z": "real_variable",
         "eyoung_ins": "real_variable",
         "eyoung_res_tf_buck": "real_variable",
         "eyoung_steel": "real_variable",
-        "eyoung_winding": "real_variable",
         "f_asym": "real_variable",
         "f_avspace": "real_variable",
         "f_coppera_m2": "real_variable",
@@ -20486,10 +20517,12 @@
         "i_sup_pf_shape": "int_variable",
         "i_tf_bucking": "int_variable",
         "i_tf_case_geom": "int_variable",
+        "i_tf_cond_props": "int_variable",
         "i_tf_sc_mat": "int_variable",
         "i_tf_shape": "int_variable",
         "i_tf_stress_model": "int_variable",
         "i_tf_sup": "int_variable",
+        "i_tf_transverse_props": "int_variable",
         "i_tf_tresca": "int_variable",
         "i_tf_turns_integer": "int_variable",
         "i_tf_wp_geom": "int_variable",
