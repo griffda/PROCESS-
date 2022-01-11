@@ -227,7 +227,8 @@ module physics_variables
   !! switch for a/R scaling of dnbeta (`iprofile=0` only):
   !! 
   !! - =0 do not scale dnbeta with eps
-  !! - =1 scale dnbeta with eps
+  !! - =1 scale dnbeta with eps, original scaling
+  !! - =2 scale dnbeta with eps, Menard scaling
 
   real(dp), dimension(ipnlaws) :: hfac
   !! H factors for an ignited plasma for each energy confinement time scaling law
@@ -513,6 +514,7 @@ module physics_variables
   !! - =8 use input kappa, triang to calculate 95% values based on fit to FIESTA (ST)
   !! - =9 set kappa to the natural elongation value (PROCESS-STEP issue #70), triang input
   !! - =10 set kappa to maximum stable value at a given aspect ratio (2.6<A<3.6)), triang input (#1399)
+  !! - =11 set kappa Menard 2016 aspect-ratio-dependent scaling, triang input (#1439)
 
   integer :: itart
   !! switch for spherical tokamak (ST) models:
