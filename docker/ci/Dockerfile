@@ -1,12 +1,14 @@
 # Docker image for CI system
-FROM ubuntu:latest
-LABEL Kristian Zarebski <kristian.zarebski@ukaea.uk>
+FROM ubuntu:20.04
+LABEL description="Process Ubuntu 20.04 image for running CI jobs"
+
 
 # Required to get around interactive timezone prompt
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Set encoding to UTF-8 - otherwise f90wrap install fails.
-ENV LANG C.UTF-8
+
+COPY requirements.txt /tmp/requirements.txt
+
 
 # Install apt packages
 # gfortran, debugging tools, git, maths and Latex libraries
@@ -26,7 +28,10 @@ RUN apt-get update && apt-get install -y \
     python-is-python3 \
     texlive-base \
     texlive-font-utils \
-    texlive-latex-extra
+    texlive-latex-extra \
+    lcov \
+    cmake
+
 
 # Install apt packages for pyenv.
 RUN apt-get install -y \
@@ -45,48 +50,19 @@ RUN apt-get install -y \
     tk-dev \
     wget \
     xz-utils \
-    zlib1g-dev
+    zlib1g-dev 
+
 
 # Install pyenv.
 RUN curl https://pyenv.run | bash
 ENV PYENV_ROOT /root/.pyenv
 ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
 
-# Install python version 3.6.9 and set as global.
-RUN pyenv install 3.6.9 && \
-    pyenv global 3.6.9
 
-# Build-only environment variable to store the list of required python packages.
-ENV PROCESS_PYTHON_PACKAGES="cmake \
-    matplotlib \
-    mkdocs \
-    mkdocs-material \
-    numpy \
-    pathlib \
-    pillow \
-    pymdown-extensions \
-    scipy"
+# Install python version 3.8.12 and set as global.
+RUN pyenv install 3.8.12 && \
+    pyenv global 3.8.12
 
-# Install Python packages into virtualenv for Python 3.6
-# cmake, MKdocs
+
 RUN python -m pip install --upgrade pip && \
-    python -m pip install virtualenv && \
-    python -m virtualenv ~/.venv_py36 && \
-    . ~/.venv_py36/bin/activate && \
-    python -m pip install ${PROCESS_PYTHON_PACKAGES} && \
-    deactivate
-
-# Set the python version back to system as default.
-RUN pyenv global system
-
-# Install Python packages into a virtualenv for Python 3.8 (system Python)
-# cmake, MKdocs
-RUN python -m pip install --upgrade pip && \
-    python -m pip install virtualenv && \
-    python -m virtualenv ~/.venv_py38 && \
-    . ~/.venv_py38/bin/activate && \
-    python -m pip install ${PROCESS_PYTHON_PACKAGES} && \
-    deactivate
-
-# Clear build-only environment variable.
-ENV PROCESS_PYTHON_PACKAGES=
+    python -m pip install -r /tmp/requirements.txt
