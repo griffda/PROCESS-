@@ -53,7 +53,7 @@ def write(models, outfile):
     if ft.cost_variables.iavail > 1:
         ft.availability_module.avail_2(outfile, 1)  # Morris model (2015)
     else:
-        ft.availability_module.avail(outfile, 1)  # Taylor and Ward model (1999)
+        models.availability.avail(output=True)  # Taylor and Ward model (1999)
 
     # Writing the output from physics.f90 into OUT.DAT + MFILE.DAT
     ft.physics_module.outplas(outfile)

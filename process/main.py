@@ -42,6 +42,7 @@ Box file F/MI/PJK/PROCESS and F/PL/PJK/PROCESS (15/01/96 to 24/01/12)
 Box file T&amp;M/PKNIGHT/PROCESS (from 24/01/12)
 """
 from process import fortran
+from process.availability import Availability
 from process.io import plot_proc
 from process.scan import Scan
 from process import final
@@ -443,6 +444,7 @@ class Models():
         """
         self.costs_step = CostsStep()
         self.tfcoil = TFcoil()
+        self.availability = Availability()
 
 def main(args=None):
     """Run Process.

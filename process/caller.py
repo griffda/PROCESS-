@@ -1,4 +1,4 @@
-from process import fortran as ft
+from process import fortran as ft, output
 
 
 class Caller:
@@ -176,19 +176,7 @@ class Caller:
         ft.power_module.power3(ft.constants.nout, 0)
 
         # Availability model
-        """Availability switch values
-        No.  |  model
-        ---- | ------
-        0    |  Input value for cfactr
-        1    |  Ward and Taylor model (1999)
-        2    |  Morris model (2015)
-        """
-        if ft.cost_variables.iavail > 1:
-            ft.availability_module.avail_2(ft.constants.nout, 0)  # Morris model (2015)
-        else:
-            ft.availability_module.avail(
-                ft.constants.nout, 0
-            )  # Taylor and Ward model (1999)
+        self.models.availability.run(output=False)
 
         # Water usage in secondary cooling system
         ft.water_use_module.waterusecall(ft.constants.nout, 0)
