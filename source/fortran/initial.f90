@@ -912,13 +912,13 @@ subroutine check
     else if ( i_tf_cond_props == 2 ) then
         select case (i_tf_sc_mat)
             case (1,4,5) !! Nb3Sn
-                eyoung_cond_z = 0 !! [EDIT: Find!]
+                eyoung_cond_z = 32D9 !! Nyilas, A et. al, Superconductor Science and Technology 16, no. 9 (2003): 1036–42. https://doi.org/10.1088/0953-2048/16/9/313.
             case (2)     !! Bi-2212
-                eyoung_cond_z = 0 !! [EDIT: Find!]
+                eyoung_cond_z = 80D9 !! Brown, M. et al, IOP Conference Series: Materials Science and Engineering 279 (2017): 012022. https://doi.org/10.1088/1757-899X/279/1/012022.
             case (3,7)   !! NbTi
-                eyoung_cond_z = 0 !! [EDIT: Find!]
+                eyoung_cond_z = 6.8D9 !! Vedrine, P. et. al, IEEE Transactions on Applied Superconductivity 9, no. 2 (1999): 236–39. https://doi.org/10.1109/77.783280.
             case (6,8,9) !! REBCO
-                eyoung_cond_z = 0 !! [EDIT: Find!]
+                eyoung_cond_z = 145D9 !! Fujishiro, H. et. al, Physica C: Superconductivity, 426–431 (2005): 699–704. https://doi.org/10.1016/j.physc.2005.01.045.
         end select
         if ( i_tf_transverse_props == 1) then
             eyoung_cond_t = 0
