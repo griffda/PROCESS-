@@ -29,67 +29,6 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine calc_u_unplanned_bop(outfile, iprint, u_unplanned_bop)
-    !! Calculates the unplanned unavailability of the balance of plant
-    !! author: J Morris, CCFE, Culham Science Centre
-    !! outfile : input integer : output file unit
-    !! iprint : input integer : switch for writing to output file (1=yes)
-    !! u_unplanned_bop : output real : unplanned unavailability of balance of plant
-    !! This routine calculates the unplanned unavailability of the balance of plant,
-    !! using the methodology outlined in the 2014 EUROfusion
-    !! RAMI report.
-    !! 2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use process_output, only: ocmmnt, ovarre, oblnkl, ovarin
-    use cost_variables, only: t_operation
-    use constants, only : n_day_year
-
-    implicit none
-
-    ! Arguments
-    integer, intent(in) :: outfile, iprint
-    real(dp), intent(out) :: u_unplanned_bop
-
-    ! Local variables !
-    ! !!!!!!!!!!!!!!!!!!
-
-    real(dp) :: bop_fail_rate, bop_mttr
-    integer :: bop_num_failures
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    ! Balance of plant failure rate (failures per hour)
-    ! ENEA study WP13-DTM02-T01
-    bop_fail_rate = 9.39D-5
-
-    ! Number of balance of plant failures in plant operational lifetime
-    bop_num_failures = nint(bop_fail_rate * n_day_year * 24.0D0 * t_operation)
-
-    ! Balance of plant mean time to repair (years)
-    ! ENEA study WP13-DTM02-T01
-    bop_mttr = 96.0D0 / (24.0D0 * n_day_year)
-
-    ! Unplanned downtime balance of plant
-    u_unplanned_bop = (bop_mttr * bop_num_failures)/(t_operation)
-
-    ! Output
-    if (iprint /= 1) return
-    call ocmmnt(outfile,'Balance of plant:')
-    call oblnkl(outfile)
-    call ovarre(outfile,'Failure rate (1/h)', '(bop_fail_rate)', bop_fail_rate)
-    call ovarin(outfile,'Number of failures in lifetime', '(bop_num_failures)', &
-      bop_num_failures, 'OP ')
-    call ovarre(outfile,'Balance of plant MTTR', '(bop_mttr)', bop_mttr)
-    call ovarre(outfile,'Balance of plant unplanned unavailability', '(u_unplanned_bop)', &
-      u_unplanned_bop, 'OP ')
-    call oblnkl(outfile)
-
-  end subroutine calc_u_unplanned_bop
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   subroutine calc_u_unplanned_hcd(u_unplanned_hcd)
     !! Calculates the unplanned unavailability of the heating and current drive system
     !! author: J Morris, CCFE, Culham Science Centre

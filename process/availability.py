@@ -20,11 +20,14 @@ s_handler = logging.StreamHandler()
 s_handler.setLevel(logging.INFO)
 logger.addHandler(s_handler)
 
-DAY = 60 * 60 * 24
-"""Seconds in a day [s]"""
+DAY_SECONDS = 60 * 60 * 24
+"""Number of seconds in a day [s]"""
 
-YEAR = DAY * 365.25
-"""Seconds in a year [s]"""
+DAYS_IN_YEAR = 365.25
+"""Number of days in a year"""
+
+YEAR_SECONDS = DAY_SECONDS * DAYS_IN_YEAR
+"""Number of seconds in a year [s]"""
 
 
 class Availability:
@@ -94,7 +97,7 @@ class Availability:
                 # Rem : only the TF maximum fluence is considered for now
                 if tfv.i_tf_sup == 1:
                     cv.cplife = min(
-                        ctv.nflutfmax / (fwbsv.neut_flux_cp * YEAR), cv.tlife
+                        ctv.nflutfmax / (fwbsv.neut_flux_cp * YEAR_SECONDS), cv.tlife
                     )
 
                 # Aluminium/Copper magnets CP lifetime
@@ -290,7 +293,7 @@ class Availability:
         u_unplanned_fwbs = self.calc_u_unplanned_fwbs()
 
         # Balance of plant
-        u_unplanned_bop = av.calc_u_unplanned_bop(self.outfile, self.iprint)
+        u_unplanned_bop = self.calc_u_unplanned_bop()
 
         # Heating and current drive
         u_unplanned_hcd = av.calc_u_unplanned_hcd()
@@ -391,7 +394,9 @@ class Availability:
             # SC magnets CP lifetime
             # Rem : only the TF maximum fluence is considered for now
             if tfv.i_tf_sup == 1:
-                cv.cplife = min(ctv.nflutfmax / (fwbsv.neut_flux_cp * YEAR), cv.tlife)
+                cv.cplife = min(
+                    ctv.nflutfmax / (fwbsv.neut_flux_cp * YEAR_SECONDS), cv.tlife
+                )
 
             # Aluminium/Copper magnets CP lifetime
             # For now, we keep the original def, developped for GLIDCOP magnets ...
@@ -426,7 +431,7 @@ class Availability:
             mttr_shortest = mttr_blanket
 
         # Number of outages between each combined outage
-        n = math.ceiling(lifetime_longest / lifetime_shortest) - 1
+        n = math.ceil(lifetime_longest / lifetime_shortest) - 1
 
         # Planned unavailability
         u_planned = (n * mttr_shortest + mttr_blanket) / (
@@ -586,11 +591,11 @@ class Availability:
 
         # Calculate cycle limit in terms of days
         # Number of cycles between planned blanket replacements, N
-        n = cv.divlife * YEAR / tv.tcycle
+        n = cv.divlife * YEAR_SECONDS / tv.tcycle
 
         # The probability of failure in one pulse cycle (before the reference cycle life)
-        pf = (cv.div_prob_fail / DAY) * tv.tcycle
-        a0 = 1.0e0 - pf * cv.div_umain_time * YEAR / tv.tcycle
+        pf = (cv.div_prob_fail / DAY_SECONDS) * tv.tcycle
+        a0 = 1.0e0 - pf * cv.div_umain_time * YEAR_SECONDS / tv.tcycle
 
         # Integrating the instantaneous availability gives the mean
         # availability over the planned cycle life N
@@ -679,12 +684,12 @@ class Availability:
         # Calculate cycle limit in terms of days
 
         # Number of cycles between planned blanket replacements, N
-        n = fwbsv.bktlife * YEAR / tv.tcycle
+        n = fwbsv.bktlife * YEAR_SECONDS / tv.tcycle
 
         # The probability of failure in one pulse cycle
         # (before the reference cycle life)
-        pf = (cv.fwbs_prob_fail / DAY) * tv.tcycle
-        a0 = 1.0e0 - pf * cv.fwbs_umain_time * YEAR / tv.tcycle
+        pf = (cv.fwbs_prob_fail / DAY_SECONDS) * tv.tcycle
+        a0 = 1.0e0 - pf * cv.fwbs_umain_time * YEAR_SECONDS / tv.tcycle
 
         if cv.fwbs_nu <= cv.fwbs_nref:
             logger.error(
@@ -750,5 +755,60 @@ class Availability:
                 "OP ",
             )
             po.oblnkl(self.outfile)
-        
+
         return u_unplanned_fwbs
+
+    def calc_u_unplanned_bop(self) -> float:
+        """Calculates the unplanned unavailability of the balance of plant
+        author: J Morris, CCFE, Culham Science Centre
+
+        This routine calculates the unplanned unavailability of the balance of plant,
+        using the methodology outlined in the 2014 EUROfusion
+        RAMI report.
+        2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+
+        :return u_unplanned_bop: unplanned unavailability of balance of plant
+        :type u_unplanned_bop: float
+        """
+
+        # Balance of plant failure rate (failures per hour)
+        # ENEA study WP13-DTM02-T01
+        bop_fail_rate = 9.39e-5
+
+        # Number of balance of plant failures in plant operational lifetime
+        bop_num_failures = math.ceil(
+            bop_fail_rate * DAYS_IN_YEAR * 24.0e0 * cv.t_operation
+        )
+
+        # Balance of plant mean time to repair (years)
+        # ENEA study WP13-DTM02-T01
+        bop_mttr = 96.0e0 / (24.0e0 * DAYS_IN_YEAR)
+
+        # Unplanned downtime balance of plant
+        u_unplanned_bop = (bop_mttr * bop_num_failures) / (cv.t_operation)
+
+        # Output
+        if self.iprint == 1:
+            po.ocmmnt(self.outfile, "Balance of plant:")
+            po.oblnkl(self.outfile)
+            po.ovarre(
+                self.outfile, "Failure rate (1/h)", "(bop_fail_rate)", bop_fail_rate
+            )
+            po.ovarin(
+                self.outfile,
+                "Number of failures in lifetime",
+                "(bop_num_failures)",
+                bop_num_failures,
+                "OP ",
+            )
+            po.ovarre(self.outfile, "Balance of plant MTTR", "(bop_mttr)", bop_mttr)
+            po.ovarre(
+                self.outfile,
+                "Balance of plant unplanned unavailability",
+                "(u_unplanned_bop)",
+                u_unplanned_bop,
+                "OP ",
+            )
+            po.oblnkl(self.outfile)
+
+        return u_unplanned_bop
