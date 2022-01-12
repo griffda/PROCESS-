@@ -296,7 +296,7 @@ class Availability:
         u_unplanned_bop = self.calc_u_unplanned_bop()
 
         # Heating and current drive
-        u_unplanned_hcd = av.calc_u_unplanned_hcd()
+        u_unplanned_hcd = self.calc_u_unplanned_hcd()
 
         # Vacuum systems
 
@@ -812,3 +812,21 @@ class Availability:
             po.oblnkl(self.outfile)
 
         return u_unplanned_bop
+
+    def calc_u_unplanned_hcd(self) -> float:
+        """Calculates the unplanned unavailability of the heating and current drive system
+        author: J Morris, CCFE, Culham Science Centre
+
+        This routine calculates the unplanned unavailability of the heating
+        and current drive system, using the methodology outlined in the
+        2014 EUROfusion RAMI report.
+        2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+
+        :return u_unplanned_hcd: unplanned unavailability of hcd
+        :type u_unplanned_hcd: float
+        """
+
+        # Currently just a fixed value until more information available or Q.
+        # Tran's response provides useful data.
+
+        return 0.02e0

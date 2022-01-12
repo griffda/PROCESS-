@@ -29,34 +29,6 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine calc_u_unplanned_hcd(u_unplanned_hcd)
-    !! Calculates the unplanned unavailability of the heating and current drive system
-    !! author: J Morris, CCFE, Culham Science Centre
-    !! outfile : input integer : output file unit
-    !! iprint : input integer : switch for writing to output file (1=yes)
-    !! u_unplanned_hcd : output real : unplanned unavailability of hcd
-    !! This routine calculates the unplanned unavailability of the heating
-    !! and current drive system, using the methodology outlined in the
-    !! 2014 EUROfusion RAMI report.
-    !! 2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    ! Arguments !
-    ! !!!!!!!!!!!!
-
-    real(dp), intent(out) :: u_unplanned_hcd
-
-    ! Currently just a fixed value until more information available or Q.
-    ! Tran's response provides useful data.
-    u_unplanned_hcd = 0.02D0
-
-  end subroutine calc_u_unplanned_hcd
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   subroutine calc_u_unplanned_vacuum(outfile, iprint, u_unplanned_vacuum)
     !! Calculates the unplanned unavailability of the vacuum system
     !! author: J Morris, CCFE, Culham Science Centre
