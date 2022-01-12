@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1092-g16e26860 code contains untracked changes
+   Tag No. : v2.1-1102-g7770f3b3 code contains untracked changes
     Branch : 1205-tf-cond-stiffness
-   Git log : Changed\ properties\ to\ conductor\ and\ fixed\ a\ bug
- Date/time : 11 Jan 2022 11:20:24 -05:00(hh:mm) UTC
+   Git log : removed\ diagnostic\ outputs
+ Date/time : 12 Jan 2022 13:25:50 -05:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-40/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-40/test_scenario_HARE_0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-45/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-45/test_scenario_HARE_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -66,9 +66,9 @@
  Number of constraints (total)                                            (neqns+nineqns)                  18     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          1     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 2.729E-09  OP 
- VMCON convergence parameter                                              (convergence_parameter)   6.074E-10  OP 
- Number of VMCON iterations                                               (nviter)                         19  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 1.532E-09  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   2.956E-10  OP 
+ Number of VMCON iterations                                               (nviter)                         20  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit          MAJOR RADIUS.
  
@@ -115,7 +115,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    19                  fvsbrnni         4.4338E-01     1.0000
    20                  fstrcase         1.0000E+00     1.0000
    21                  fstrcond         8.3911E-01     0.8425
-   22                  fiooic           3.1550E-01     0.7931
+   22                  fiooic           2.3517E-01     0.5912
    23                  fvdump           7.2657E-01     1.1880
    24                  vdalw            1.5016E+01     1.1880
    25                  fjprot           1.0000E+00     1.0000
@@ -132,24 +132,24 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.2832E-02             -2.4641E-15                 7.5051E-14
-    2  Global power balance consistency      =  1.5254E-01 MW/m3       -7.8395E-12 MW/m3           5.1394E-11
-    3  Density upper limit                   <  8.4634E+19 /m3          2.1299E+05 /m3             2.4425E-15
-    4  Neutron wall load upper limit         <  9.4932E-01 MW/m2       -5.3324E-13 MW/m2          -5.6166E-13
-    5  Radial build consistency              =  9.4669E+00 m            1.7868E-14 m              -1.8874E-15
-    6  Burn time lower limit                 >  7.2000E+03 sec          5.9852E-06 sec            -8.3128E-10
-    7  L-H power threshold limit             >  1.1552E+02 MW           5.2522E-08 MW             -4.5467E-10
-    8  Net electric power lower limit        >  5.0000E+02 MW           1.2080E-07 MW              2.4160E-10
-    9  Beta upper limit                      <  5.6067E-02              4.3021E-15                 7.6605E-14
-   10  CS coil EOF current density limit     <  6.3590E+07 A/m2         7.4228E-02 A/m2            1.1673E-09
-   11  CS coil BOP current density limit     <  5.9300E+07 A/m2         6.5890E-02 A/m2            1.1111E-09
-   12  Injection power upper limit           <  5.0000E+01 MW           7.2102E-08 MW             -1.4420E-09
-   13  TF coil case stress upper limit       <  6.6000E+08 Pa           5.9605E-07 Pa              8.8818E-16
-   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa           1.2517E-05 Pa              1.8874E-14
-   15  I_op / I_critical (TF coil)           <  7.4451E+07 A/m2         2.7904E-07 A/m2           -1.1879E-14
-   16  Dump voltage upper limit              <  1.5016E+01 V            4.1058E+00 V              -1.2568E-13
-   17  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2            1.7764E-15
-   18  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -4.3207E-09 MWT/m           4.5481E-10
+    1  Beta consistency                      =  3.2832E-02             -7.3631E-16                 2.2427E-14
+    2  Global power balance consistency      =  1.5254E-01 MW/m3       -3.9787E-12 MW/m3           2.6084E-11
+    3  Density upper limit                   <  8.4634E+19 /m3         -2.4576E+05 /m3            -2.8866E-15
+    4  Neutron wall load upper limit         <  9.4932E-01 MW/m2       -1.8840E-13 MW/m2          -1.9851E-13
+    5  Radial build consistency              =  9.4669E+00 m            3.1531E-15 m              -3.3307E-16
+    6  Burn time lower limit                 >  7.2000E+03 sec          6.6632E-07 sec            -9.2544E-11
+    7  L-H power threshold limit             >  1.1552E+02 MW           2.6655E-08 MW             -2.3074E-10
+    8  Net electric power lower limit        >  5.0000E+02 MW           4.7233E-08 MW              9.4466E-11
+    9  Beta upper limit                      <  5.6067E-02              1.4017E-15                 2.4869E-14
+   10  CS coil EOF current density limit     <  6.3590E+07 A/m2         5.9297E-02 A/m2            9.3249E-10
+   11  CS coil BOP current density limit     <  5.9300E+07 A/m2         5.2636E-02 A/m2            8.8761E-10
+   12  Injection power upper limit           <  5.0000E+01 MW           3.6560E-08 MW             -7.3120E-10
+   13  TF coil case stress upper limit       <  6.6000E+08 Pa          -3.2783E-05 Pa             -4.9627E-14
+   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -3.6955E-05 Pa             -5.5955E-14
+   15  I_op / I_critical (TF coil)           <  9.9882E+07 A/m2         8.5016E-07 A/m2           -3.6193E-14
+   16  Dump voltage upper limit              <  1.5016E+01 V            4.1058E+00 V              -1.0103E-14
+   17  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2           -9.9920E-16
+   18  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -2.1925E-09 MWT/m           2.3079E-10
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -636,7 +636,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      8.209E+01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -6.819E-03  OP 
  Vertical strain on casing                                                (casestr)                 1.164E-03  OP 
- Vertical strain on winding pack                                          (windstrain)              2.559E-03  OP 
  Radial strain on insulator                                               (insstrain)              -1.380E-02  OP 
  
  TF design
@@ -727,7 +726,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Superconductor fraction of conductor                                     (1-fcutfsu)               3.100E-01     
  Check total area fractions in winding pack = 1                                                         1.000     
  minimum TF conductor temperature margin  (K)                             (tmargmin_tf)                 1.700     
- TF conductor temperature margin (K)                                      (tmargtf)                     3.142     
+ TF conductor temperature margin (K)                                      (tmargtf)                     4.251     
  Elastic properties behavior                                              (i_tf_cond_props)                 0     
    Conductor stiffness neglected
  Conductor axial Young's modulus                                          (eyoung_cond_z)           0.000E+00     
@@ -806,16 +805,16 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Helium temperature at peak field (= superconductor temperature) (K)      (thelium)                 4.750E+00     
  Total helium fraction inside cable space                                 (fhetot)                  3.444E-01  OP 
  Copper fraction of conductor                                             (fcutfsu)                 6.900E-01     
- Strain on superconductor                                                 (strncon_tf)             -5.000E-03     
- Critical current density in superconductor (A/m2)                        (jcritsc)                 5.883E+08  OP 
- Critical current density in strand (A/m2)                                (jcritstr)                1.824E+08  OP 
- Critical current density in winding pack (A/m2)                          (jwdgcrt)                 7.445E+07  OP 
+ Strain on superconductor                                                 (strncon_tf)              2.559E-03     
+ Critical current density in superconductor (A/m2)                        (jcritsc)                 7.892E+08  OP 
+ Critical current density in strand (A/m2)                                (jcritstr)                2.447E+08  OP 
+ Critical current density in winding pack (A/m2)                          (jwdgcrt)                 9.988E+07  OP 
  Actual current density in winding pack (A/m2)                            (jwdgop)                  2.349E+07  OP 
  Minimum allowed temperature margin in superconductor (K)                 (tmargmin_tf)             1.700E+00     
- Actual temperature margin in superconductor (K)                          (tmarg)                   3.142E+00  OP 
- Critical current (A)                                                     (icrit)                   2.060E+05  OP 
+ Actual temperature margin in superconductor (K)                          (tmarg)                   4.251E+00  OP 
+ Critical current (A)                                                     (icrit)                   2.764E+05  OP 
  Actual current (A)                                                       (cpttf)                   6.500E+04  OP 
- Actual current / critical current                                        (iooic)                   3.155E-01  OP 
+ Actual current / critical current                                        (iooic)                   2.352E-01  OP 
  
  *************************************** Central Solenoid and PF Coils ****************************************
  
@@ -967,7 +966,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -8.167E+06 -8.167E+06 -8.167E+06  0.000E+00
    5         0.000E+00  0.000E+00 -5.529E+06 -5.529E+06 -5.529E+06  0.000E+00
    6         0.000E+00  0.000E+00 -5.529E+06 -5.529E+06 -5.529E+06  0.000E+00
-   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00
+   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00 -2.800E-08  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.325E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -9.596E-02  OP 
@@ -1491,8 +1490,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Number of constraints (total)                                            (neqns+nineqns)                  18     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          1     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 4.361E-09  OP 
- VMCON convergence parameter                                              (convergence_parameter)   6.415E-10  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 5.105E-09  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   7.330E-10  OP 
  Number of VMCON iterations                                               (nviter)                         11  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit          MAJOR RADIUS.
@@ -1540,7 +1539,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    19                  fvsbrnni         4.3763E-01     0.9870
    20                  fstrcase         1.0000E+00     1.0000
    21                  fstrcond         8.3889E-01     0.9997
-   22                  fiooic           3.1449E-01     0.9968
+   22                  fiooic           2.3455E-01     0.9974
    23                  fvdump           7.2685E-01     1.0004
    24                  vdalw            1.5022E+01     1.0004
    25                  fjprot           1.0000E+00     1.0000
@@ -1557,24 +1556,24 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.2833E-02             -2.3840E-15                 7.2609E-14
-    2  Global power balance consistency      =  1.5210E-01 MW/m3       -2.5089E-12 MW/m3           1.6496E-11
-    3  Density upper limit                   <  8.4486E+19 /m3          1.8022E+05 /m3             2.2204E-15
-    4  Neutron wall load upper limit         <  9.4759E-01 MW/m2       -6.2494E-13 MW/m2          -6.5947E-13
-    5  Radial build consistency              =  9.4769E+00 m            7.3650E-15 m              -7.7716E-16
-    6  Burn time lower limit                 >  7.2000E+03 sec         -2.0213E-07 sec             2.8074E-11
-    7  L-H power threshold limit             >  1.1555E+02 MW           1.6818E-08 MW             -1.4556E-10
-    8  Net electric power lower limit        >  5.0000E+02 MW          -2.1566E-07 MW             -4.3131E-10
-    9  Beta upper limit                      <  5.6067E-02              4.6491E-15                 8.2823E-14
-   10  CS coil EOF current density limit     <  6.3159E+07 A/m2         1.9626E-01 A/m2            3.1074E-09
-   11  CS coil BOP current density limit     <  5.8906E+07 A/m2         1.7426E-01 A/m2            2.9583E-09
-   12  Injection power upper limit           <  5.0000E+01 MW           2.3332E-08 MW             -4.6664E-10
-   13  TF coil case stress upper limit       <  6.6000E+08 Pa          -5.6386E-05 Pa             -8.5487E-14
-   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -6.6519E-05 Pa             -1.0081E-13
-   15  I_op / I_critical (TF coil)           <  7.4690E+07 A/m2         4.0161E-07 A/m2           -1.7097E-14
-   16  Dump voltage upper limit              <  1.5022E+01 V            4.1032E+00 V               1.9984E-14
-   17  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2           -1.8874E-15
-   18  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -1.3842E-09 MWT/m           1.4571E-10
+    1  Beta consistency                      =  3.2833E-02             -2.7849E-15                 8.4821E-14
+    2  Global power balance consistency      =  1.5210E-01 MW/m3       -1.0331E-12 MW/m3           6.7926E-12
+    3  Density upper limit                   <  8.4486E+19 /m3          4.9152E+04 /m3             6.6613E-16
+    4  Neutron wall load upper limit         <  9.4759E-01 MW/m2       -7.0977E-13 MW/m2          -7.4907E-13
+    5  Radial build consistency              =  9.4769E+00 m            3.1564E-15 m              -3.3307E-16
+    6  Burn time lower limit                 >  7.2000E+03 sec         -5.5576E-07 sec             7.7189E-11
+    7  L-H power threshold limit             >  1.1555E+02 MW           6.9103E-09 MW             -5.9806E-11
+    8  Net electric power lower limit        >  5.0000E+02 MW          -2.9805E-07 MW             -5.9610E-10
+    9  Beta upper limit                      <  5.6067E-02              5.2736E-15                 9.4147E-14
+   10  CS coil EOF current density limit     <  6.3159E+07 A/m2         2.3138E-01 A/m2            3.6634E-09
+   11  CS coil BOP current density limit     <  5.8906E+07 A/m2         2.0544E-01 A/m2            3.4877E-09
+   12  Injection power upper limit           <  5.0000E+01 MW           9.7898E-09 MW             -1.9580E-10
+   13  TF coil case stress upper limit       <  6.6000E+08 Pa          -1.1683E-05 Pa             -1.7653E-14
+   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -1.1086E-05 Pa             -1.6764E-14
+   15  I_op / I_critical (TF coil)           <  1.0015E+08 A/m2         5.3200E-07 A/m2           -2.2649E-14
+   16  Dump voltage upper limit              <  1.5022E+01 V            4.1032E+00 V               3.5971E-14
+   17  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2           -3.2196E-15
+   18  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -5.6978E-10 MWT/m           5.9977E-11
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -2061,7 +2060,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      8.208E+01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -6.837E-03  OP 
  Vertical strain on casing                                                (casestr)                 1.164E-03  OP 
- Vertical strain on winding pack                                          (windstrain)              2.558E-03  OP 
  Radial strain on insulator                                               (insstrain)              -1.376E-02  OP 
  
  TF design
@@ -2152,7 +2150,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Superconductor fraction of conductor                                     (1-fcutfsu)               3.100E-01     
  Check total area fractions in winding pack = 1                                                         1.000     
  minimum TF conductor temperature margin  (K)                             (tmargmin_tf)                 1.700     
- TF conductor temperature margin (K)                                      (tmargtf)                     3.152     
+ TF conductor temperature margin (K)                                      (tmargtf)                     4.260     
  Elastic properties behavior                                              (i_tf_cond_props)                 0     
    Conductor stiffness neglected
  Conductor axial Young's modulus                                          (eyoung_cond_z)           0.000E+00     
@@ -2231,16 +2229,16 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Helium temperature at peak field (= superconductor temperature) (K)      (thelium)                 4.750E+00     
  Total helium fraction inside cable space                                 (fhetot)                  3.444E-01  OP 
  Copper fraction of conductor                                             (fcutfsu)                 6.900E-01     
- Strain on superconductor                                                 (strncon_tf)             -5.000E-03     
- Critical current density in superconductor (A/m2)                        (jcritsc)                 5.902E+08  OP 
- Critical current density in strand (A/m2)                                (jcritstr)                1.829E+08  OP 
- Critical current density in winding pack (A/m2)                          (jwdgcrt)                 7.469E+07  OP 
+ Strain on superconductor                                                 (strncon_tf)              2.558E-03     
+ Critical current density in superconductor (A/m2)                        (jcritsc)                 7.913E+08  OP 
+ Critical current density in strand (A/m2)                                (jcritstr)                2.453E+08  OP 
+ Critical current density in winding pack (A/m2)                          (jwdgcrt)                 1.001E+08  OP 
  Actual current density in winding pack (A/m2)                            (jwdgop)                  2.349E+07  OP 
  Minimum allowed temperature margin in superconductor (K)                 (tmargmin_tf)             1.700E+00     
- Actual temperature margin in superconductor (K)                          (tmarg)                   3.152E+00  OP 
- Critical current (A)                                                     (icrit)                   2.067E+05  OP 
+ Actual temperature margin in superconductor (K)                          (tmarg)                   4.260E+00  OP 
+ Critical current (A)                                                     (icrit)                   2.771E+05  OP 
  Actual current (A)                                                       (cpttf)                   6.500E+04  OP 
- Actual current / critical current                                        (iooic)                   3.145E-01  OP 
+ Actual current / critical current                                        (iooic)                   2.345E-01  OP 
  
  *************************************** Central Solenoid and PF Coils ****************************************
  
@@ -2916,8 +2914,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Number of constraints (total)                                            (neqns+nineqns)                  18     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          1     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 7.843E-09  OP 
- VMCON convergence parameter                                              (convergence_parameter)   3.278E-09  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 8.093E-09  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   3.364E-09  OP 
  Number of VMCON iterations                                               (nviter)                         13  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit          MAJOR RADIUS.
@@ -2965,7 +2963,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    19                  fvsbrnni         4.3257E-01     0.9884
    20                  fstrcase         1.0000E+00     1.0000
    21                  fstrcond         8.3870E-01     0.9998
-   22                  fiooic           3.1361E-01     0.9972
+   22                  fiooic           2.3400E-01     0.9977
    23                  fvdump           7.2710E-01     1.0003
    24                  vdalw            1.5027E+01     1.0003
    25                  fjprot           1.0000E+00     1.0000
@@ -2982,24 +2980,24 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.2834E-02             -1.6929E-14                 5.1559E-13
-    2  Global power balance consistency      =  1.5171E-01 MW/m3       -1.7393E-11 MW/m3           1.1464E-10
-    3  Density upper limit                   <  8.4357E+19 /m3          2.1955E+06 /m3             2.5979E-14
-    4  Neutron wall load upper limit         <  9.4607E-01 MW/m2       -3.6317E-12 MW/m2          -3.8387E-12
+    1  Beta consistency                      =  3.2834E-02             -1.7206E-14                 5.2403E-13
+    2  Global power balance consistency      =  1.5171E-01 MW/m3       -1.8300E-11 MW/m3           1.2063E-10
+    3  Density upper limit                   <  8.4357E+19 /m3          2.1463E+06 /m3             2.5535E-14
+    4  Neutron wall load upper limit         <  9.4607E-01 MW/m2       -3.7160E-12 MW/m2          -3.9279E-12
     5  Radial build consistency              =  9.4857E+00 m            1.2637E-13 m              -1.3323E-14
-    6  Burn time lower limit                 >  7.2000E+03 sec          4.6474E-05 sec            -6.4547E-09
-    7  L-H power threshold limit             >  1.1557E+02 MW           1.1695E-07 MW             -1.0119E-09
-    8  Net electric power lower limit        >  5.0000E+02 MW           6.2589E-07 MW              1.2518E-09
-    9  Beta upper limit                      <  5.6067E-02              2.9171E-14                 5.2047E-13
-   10  CS coil EOF current density limit     <  6.2786E+07 A/m2        -2.5082E-02 A/m2           -3.9949E-10
-   11  CS coil BOP current density limit     <  5.8563E+07 A/m2        -2.2277E-02 A/m2           -3.8040E-10
-   12  Injection power upper limit           <  5.0000E+01 MW           1.6185E-07 MW             -3.2371E-09
-   13  TF coil case stress upper limit       <  6.6000E+08 Pa          -6.3419E-05 Pa             -9.6145E-14
-   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -5.2810E-05 Pa             -8.0158E-14
-   15  I_op / I_critical (TF coil)           <  7.4900E+07 A/m2         1.7916E-06 A/m2           -7.6272E-14
-   16  Dump voltage upper limit              <  1.5027E+01 V            4.1009E+00 V              -6.1240E-13
-   17  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2           -1.2212E-15
-   18  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -9.6229E-09 MWT/m           1.0129E-09
+    6  Burn time lower limit                 >  7.2000E+03 sec          4.7500E-05 sec            -6.5973E-09
+    7  L-H power threshold limit             >  1.1557E+02 MW           1.2306E-07 MW             -1.0648E-09
+    8  Net electric power lower limit        >  5.0000E+02 MW           6.4548E-07 MW              1.2910E-09
+    9  Beta upper limit                      <  5.6067E-02              2.9844E-14                 5.3224E-13
+   10  CS coil EOF current density limit     <  6.2786E+07 A/m2        -2.2818E-02 A/m2           -3.6343E-10
+   11  CS coil BOP current density limit     <  5.8563E+07 A/m2        -2.0266E-02 A/m2           -3.4606E-10
+   12  Injection power upper limit           <  5.0000E+01 MW           1.7027E-07 MW             -3.4053E-09
+   13  TF coil case stress upper limit       <  6.6000E+08 Pa          -7.4029E-05 Pa             -1.1213E-13
+   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -7.4148E-05 Pa             -1.1247E-13
+   15  I_op / I_critical (TF coil)           <  1.0038E+08 A/m2         2.0080E-06 A/m2           -8.5487E-14
+   16  Dump voltage upper limit              <  1.5027E+01 V            4.1009E+00 V              -6.3127E-13
+   17  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2            2.2204E-16
+   18  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -1.0125E-08 MWT/m           1.0658E-09
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -3486,7 +3484,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      8.208E+01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -6.854E-03  OP 
  Vertical strain on casing                                                (casestr)                 1.163E-03  OP 
- Vertical strain on winding pack                                          (windstrain)              2.558E-03  OP 
  Radial strain on insulator                                               (insstrain)              -1.373E-02  OP 
  
  TF design
@@ -3577,7 +3574,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Superconductor fraction of conductor                                     (1-fcutfsu)               3.100E-01     
  Check total area fractions in winding pack = 1                                                         1.000     
  minimum TF conductor temperature margin  (K)                             (tmargmin_tf)                 1.700     
- TF conductor temperature margin (K)                                      (tmargtf)                     3.160     
+ TF conductor temperature margin (K)                                      (tmargtf)                     4.267     
  Elastic properties behavior                                              (i_tf_cond_props)                 0     
    Conductor stiffness neglected
  Conductor axial Young's modulus                                          (eyoung_cond_z)           0.000E+00     
@@ -3656,16 +3653,16 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Helium temperature at peak field (= superconductor temperature) (K)      (thelium)                 4.750E+00     
  Total helium fraction inside cable space                                 (fhetot)                  3.444E-01  OP 
  Copper fraction of conductor                                             (fcutfsu)                 6.900E-01     
- Strain on superconductor                                                 (strncon_tf)             -5.000E-03     
- Critical current density in superconductor (A/m2)                        (jcritsc)                 5.918E+08  OP 
- Critical current density in strand (A/m2)                                (jcritstr)                1.835E+08  OP 
- Critical current density in winding pack (A/m2)                          (jwdgcrt)                 7.490E+07  OP 
+ Strain on superconductor                                                 (strncon_tf)              2.558E-03     
+ Critical current density in superconductor (A/m2)                        (jcritsc)                 7.931E+08  OP 
+ Critical current density in strand (A/m2)                                (jcritstr)                2.459E+08  OP 
+ Critical current density in winding pack (A/m2)                          (jwdgcrt)                 1.004E+08  OP 
  Actual current density in winding pack (A/m2)                            (jwdgop)                  2.349E+07  OP 
  Minimum allowed temperature margin in superconductor (K)                 (tmargmin_tf)             1.700E+00     
- Actual temperature margin in superconductor (K)                          (tmarg)                   3.160E+00  OP 
- Critical current (A)                                                     (icrit)                   2.073E+05  OP 
+ Actual temperature margin in superconductor (K)                          (tmarg)                   4.267E+00  OP 
+ Critical current (A)                                                     (icrit)                   2.778E+05  OP 
  Actual current (A)                                                       (cpttf)                   6.500E+04  OP 
- Actual current / critical current                                        (iooic)                   3.136E-01  OP 
+ Actual current / critical current                                        (iooic)                   2.340E-01  OP 
  
  *************************************** Central Solenoid and PF Coils ****************************************
  
@@ -4341,8 +4338,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Number of constraints (total)                                            (neqns+nineqns)                  18     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          1     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 6.438E-10  OP 
- VMCON convergence parameter                                              (convergence_parameter)   3.289E-10  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 6.501E-10  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   3.342E-10  OP 
  Number of VMCON iterations                                               (nviter)                         11  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit          MAJOR RADIUS.
@@ -4390,7 +4387,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    19                  fvsbrnni         4.2348E-01     0.9790
    20                  fstrcase         1.0000E+00     1.0000
    21                  fstrcond         8.3836E-01     0.9996
-   22                  fiooic           3.1204E-01     0.9950
+   22                  fiooic           2.3304E-01     0.9959
    23                  fvdump           7.2755E-01     1.0006
    24                  vdalw            1.5036E+01     1.0006
    25                  fjprot           1.0000E+00     1.0000
@@ -4407,24 +4404,24 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.2835E-02             -2.6976E-15                 8.2157E-14
-    2  Global power balance consistency      =  1.5102E-01 MW/m3       -3.6237E-12 MW/m3           2.3995E-11
-    3  Density upper limit                   <  8.4125E+19 /m3          3.2768E+04 /m3             4.4409E-16
-    4  Neutron wall load upper limit         <  9.4335E-01 MW/m2       -6.6591E-13 MW/m2          -7.0588E-13
-    5  Radial build consistency              =  9.5015E+00 m            8.4390E-15 m              -8.8818E-16
-    6  Burn time lower limit                 >  7.2000E+03 sec          3.3200E-06 sec            -4.6111E-10
-    7  L-H power threshold limit             >  1.1562E+02 MW           2.4392E-08 MW             -2.1098E-10
-    8  Net electric power lower limit        >  5.0000E+02 MW          -5.3760E-08 MW             -1.0752E-10
-    9  Beta upper limit                      <  5.6067E-02              5.0515E-15                 8.9928E-14
-   10  CS coil EOF current density limit     <  6.2314E+07 A/m2        -1.2316E-05 A/m2           -1.9762E-13
-   11  CS coil BOP current density limit     <  5.8131E+07 A/m2        -1.0669E-05 A/m2           -1.8352E-13
-   12  Injection power upper limit           <  5.0000E+01 MW           3.3883E-08 MW             -6.7765E-10
-   13  TF coil case stress upper limit       <  6.6000E+08 Pa          -2.6703E-05 Pa             -4.0412E-14
-   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -2.6584E-05 Pa             -4.0301E-14
-   15  I_op / I_critical (TF coil)           <  7.5277E+07 A/m2         3.2337E-07 A/m2           -1.3767E-14
-   16  Dump voltage upper limit              <  1.5036E+01 V            4.0967E+00 V              -2.4869E-14
-   17  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2           -2.5535E-15
-   18  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -2.0058E-09 MWT/m           2.1114E-10
+    1  Beta consistency                      =  3.2835E-02             -2.7632E-15                 8.4155E-14
+    2  Global power balance consistency      =  1.5102E-01 MW/m3       -3.6478E-12 MW/m3           2.4154E-11
+    3  Density upper limit                   <  8.4125E+19 /m3          6.5536E+04 /m3             8.8818E-16
+    4  Neutron wall load upper limit         <  9.4335E-01 MW/m2       -6.8101E-13 MW/m2          -7.2187E-13
+    5  Radial build consistency              =  9.5015E+00 m            1.0549E-14 m              -1.1102E-15
+    6  Burn time lower limit                 >  7.2000E+03 sec          3.2986E-06 sec            -4.5814E-10
+    7  L-H power threshold limit             >  1.1562E+02 MW           2.4553E-08 MW             -2.1237E-10
+    8  Net electric power lower limit        >  5.0000E+02 MW          -6.0260E-08 MW             -1.2052E-10
+    9  Beta upper limit                      <  5.6067E-02              5.1556E-15                 9.1926E-14
+   10  CS coil EOF current density limit     <  6.2314E+07 A/m2        -1.4022E-05 A/m2           -2.2504E-13
+   11  CS coil BOP current density limit     <  5.8131E+07 A/m2        -1.2152E-05 A/m2           -2.0905E-13
+   12  Injection power upper limit           <  5.0000E+01 MW           3.4112E-08 MW             -6.8223E-10
+   13  TF coil case stress upper limit       <  6.6000E+08 Pa          -4.5419E-05 Pa             -6.8834E-14
+   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -5.1975E-05 Pa             -7.8604E-14
+   15  I_op / I_critical (TF coil)           <  1.0080E+08 A/m2         1.3587E-06 A/m2           -5.7843E-14
+   16  Dump voltage upper limit              <  1.5036E+01 V            4.0967E+00 V              -2.5202E-14
+   17  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2           -2.6645E-15
+   18  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -2.0191E-09 MWT/m           2.1254E-10
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -4911,7 +4908,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      8.207E+01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -6.882E-03  OP 
  Vertical strain on casing                                                (casestr)                 1.162E-03  OP 
- Vertical strain on winding pack                                          (windstrain)              2.558E-03  OP 
  Radial strain on insulator                                               (insstrain)              -1.367E-02  OP 
  
  TF design
@@ -5002,7 +4998,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Superconductor fraction of conductor                                     (1-fcutfsu)               3.100E-01     
  Check total area fractions in winding pack = 1                                                         1.000     
  minimum TF conductor temperature margin  (K)                             (tmargmin_tf)                 1.700     
- TF conductor temperature margin (K)                                      (tmargtf)                     3.175     
+ TF conductor temperature margin (K)                                      (tmargtf)                     4.280     
  Elastic properties behavior                                              (i_tf_cond_props)                 0     
    Conductor stiffness neglected
  Conductor axial Young's modulus                                          (eyoung_cond_z)           0.000E+00     
@@ -5081,16 +5077,16 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Helium temperature at peak field (= superconductor temperature) (K)      (thelium)                 4.750E+00     
  Total helium fraction inside cable space                                 (fhetot)                  3.444E-01  OP 
  Copper fraction of conductor                                             (fcutfsu)                 6.900E-01     
- Strain on superconductor                                                 (strncon_tf)             -5.000E-03     
- Critical current density in superconductor (A/m2)                        (jcritsc)                 5.948E+08  OP 
- Critical current density in strand (A/m2)                                (jcritstr)                1.844E+08  OP 
- Critical current density in winding pack (A/m2)                          (jwdgcrt)                 7.528E+07  OP 
+ Strain on superconductor                                                 (strncon_tf)              2.558E-03     
+ Critical current density in superconductor (A/m2)                        (jcritsc)                 7.964E+08  OP 
+ Critical current density in strand (A/m2)                                (jcritstr)                2.469E+08  OP 
+ Critical current density in winding pack (A/m2)                          (jwdgcrt)                 1.008E+08  OP 
  Actual current density in winding pack (A/m2)                            (jwdgop)                  2.349E+07  OP 
  Minimum allowed temperature margin in superconductor (K)                 (tmargmin_tf)             1.700E+00     
- Actual temperature margin in superconductor (K)                          (tmarg)                   3.175E+00  OP 
- Critical current (A)                                                     (icrit)                   2.083E+05  OP 
+ Actual temperature margin in superconductor (K)                          (tmarg)                   4.280E+00  OP 
+ Critical current (A)                                                     (icrit)                   2.789E+05  OP 
  Actual current (A)                                                       (cpttf)                   6.500E+04  OP 
- Actual current / critical current                                        (iooic)                   3.120E-01  OP 
+ Actual current / critical current                                        (iooic)                   2.330E-01  OP 
  
  *************************************** Central Solenoid and PF Coils ****************************************
  
@@ -5242,7 +5238,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -8.174E+06 -8.174E+06 -8.174E+06  0.000E+00
    5         0.000E+00  0.000E+00 -5.530E+06 -5.530E+06 -5.530E+06  0.000E+00
    6         0.000E+00  0.000E+00 -5.530E+06 -5.530E+06 -5.530E+06  0.000E+00
-   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00
+   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00 -2.827E-08  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.329E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.066E-01  OP 
@@ -5766,8 +5762,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Number of constraints (total)                                            (neqns+nineqns)                  18     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          1     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 1.810E-09  OP 
- VMCON convergence parameter                                              (convergence_parameter)   4.558E-10  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 1.781E-09  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   4.513E-10  OP 
  Number of VMCON iterations                                               (nviter)                         11  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit          MAJOR RADIUS.
@@ -5815,7 +5811,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    19                  fvsbrnni         4.1435E-01     0.9784
    20                  fstrcase         1.0000E+00     1.0000
    21                  fstrcond         8.3802E-01     0.9996
-   22                  fiooic           3.1049E-01     0.9950
+   22                  fiooic           2.3208E-01     0.9959
    23                  fvdump           7.2799E-01     1.0006
    24                  vdalw            1.5045E+01     1.0006
    25                  fjprot           1.0000E+00     1.0000
@@ -5832,24 +5828,24 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.2836E-02             -1.3634E-15                 4.1522E-14
-    2  Global power balance consistency      =  1.5034E-01 MW/m3       -6.2681E-12 MW/m3           4.1694E-11
-    3  Density upper limit                   <  8.3895E+19 /m3          1.4746E+05 /m3             1.7764E-15
-    4  Neutron wall load upper limit         <  9.4065E-01 MW/m2       -2.8888E-13 MW/m2          -3.0709E-13
-    5  Radial build consistency              =  9.5172E+00 m            1.2679E-14 m              -1.3323E-15
-    6  Burn time lower limit                 >  7.2000E+03 sec          3.1865E-06 sec            -4.4257E-10
-    7  L-H power threshold limit             >  1.1566E+02 MW           4.2362E-08 MW             -3.6627E-10
-    8  Net electric power lower limit        >  5.0000E+02 MW           1.2388E-07 MW              2.4776E-10
-    9  Beta upper limit                      <  5.6067E-02              2.4147E-15                 4.3077E-14
-   10  CS coil EOF current density limit     <  6.2141E+07 A/m2        -5.7146E-06 A/m2           -9.1926E-14
-   11  CS coil BOP current density limit     <  5.7973E+07 A/m2        -5.1036E-06 A/m2           -8.8041E-14
-   12  Injection power upper limit           <  5.0000E+01 MW           5.8523E-08 MW             -1.1705E-09
-   13  TF coil case stress upper limit       <  6.6000E+08 Pa          -3.8505E-05 Pa             -5.8287E-14
-   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -3.6716E-05 Pa             -5.5622E-14
-   15  I_op / I_critical (TF coil)           <  7.5652E+07 A/m2         2.1645E-07 A/m2           -9.2149E-15
-   16  Dump voltage upper limit              <  1.5045E+01 V            4.0925E+00 V              -2.7423E-14
-   17  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2           -2.5535E-15
-   18  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -3.4804E-09 MWT/m           3.6636E-10
+    1  Beta consistency                      =  3.2836E-02             -1.4145E-15                 4.3077E-14
+    2  Global power balance consistency      =  1.5034E-01 MW/m3       -6.1935E-12 MW/m3           4.1197E-11
+    3  Density upper limit                   <  8.3895E+19 /m3          1.1469E+05 /m3             1.3323E-15
+    4  Neutron wall load upper limit         <  9.4065E-01 MW/m2       -2.9143E-13 MW/m2          -3.0986E-13
+    5  Radial build consistency              =  9.5172E+00 m            7.3963E-15 m              -7.7716E-16
+    6  Burn time lower limit                 >  7.2000E+03 sec          3.1878E-06 sec            -4.4275E-10
+    7  L-H power threshold limit             >  1.1566E+02 MW           4.1857E-08 MW             -3.6190E-10
+    8  Net electric power lower limit        >  5.0000E+02 MW           1.2310E-07 MW              2.4620E-10
+    9  Beta upper limit                      <  5.6067E-02              2.3870E-15                 4.2633E-14
+   10  CS coil EOF current density limit     <  6.2141E+07 A/m2        -5.1185E-06 A/m2           -8.2379E-14
+   11  CS coil BOP current density limit     <  5.7973E+07 A/m2        -4.4256E-06 A/m2           -7.6383E-14
+   12  Injection power upper limit           <  5.0000E+01 MW           5.7827E-08 MW             -1.1565E-09
+   13  TF coil case stress upper limit       <  6.6000E+08 Pa          -1.1921E-05 Pa             -1.8097E-14
+   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -1.1206E-05 Pa             -1.6986E-14
+   15  I_op / I_critical (TF coil)           <  1.0121E+08 A/m2         5.7633E-07 A/m2           -2.4536E-14
+   16  Dump voltage upper limit              <  1.5045E+01 V            4.0925E+00 V              -2.6645E-14
+   17  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2           -6.6613E-16
+   18  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -3.4389E-09 MWT/m           3.6199E-10
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -6323,7 +6319,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Materal stress of the point of maximum shear stress (Tresca criterion) for each layer
  Please use utilities/plot_stress_tf.py for radial plots plots summary
  Layers                             Steel case            WP    Outer case
- Radial stress               (MPa)      -0.000      -272.630         5.222
+ Radial stress               (MPa)       0.000      -272.630         5.222
  toroidal stress             (MPa)    -421.846      -314.942      -333.152
  Vertical stress             (MPa)     238.154       238.154       128.413
  Von-Mises stress            (MPa)     578.909       480.531       412.627
@@ -6336,7 +6332,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      8.206E+01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -6.911E-03  OP 
  Vertical strain on casing                                                (casestr)                 1.162E-03  OP 
- Vertical strain on winding pack                                          (windstrain)              2.557E-03  OP 
  Radial strain on insulator                                               (insstrain)              -1.361E-02  OP 
  
  TF design
@@ -6427,7 +6422,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Superconductor fraction of conductor                                     (1-fcutfsu)               3.100E-01     
  Check total area fractions in winding pack = 1                                                         1.000     
  minimum TF conductor temperature margin  (K)                             (tmargmin_tf)                 1.700     
- TF conductor temperature margin (K)                                      (tmargtf)                     3.189     
+ TF conductor temperature margin (K)                                      (tmargtf)                     4.293     
  Elastic properties behavior                                              (i_tf_cond_props)                 0     
    Conductor stiffness neglected
  Conductor axial Young's modulus                                          (eyoung_cond_z)           0.000E+00     
@@ -6506,16 +6501,16 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Helium temperature at peak field (= superconductor temperature) (K)      (thelium)                 4.750E+00     
  Total helium fraction inside cable space                                 (fhetot)                  3.444E-01  OP 
  Copper fraction of conductor                                             (fcutfsu)                 6.900E-01     
- Strain on superconductor                                                 (strncon_tf)             -5.000E-03     
- Critical current density in superconductor (A/m2)                        (jcritsc)                 5.978E+08  OP 
- Critical current density in strand (A/m2)                                (jcritstr)                1.853E+08  OP 
- Critical current density in winding pack (A/m2)                          (jwdgcrt)                 7.565E+07  OP 
+ Strain on superconductor                                                 (strncon_tf)              2.557E-03     
+ Critical current density in superconductor (A/m2)                        (jcritsc)                 7.997E+08  OP 
+ Critical current density in strand (A/m2)                                (jcritstr)                2.479E+08  OP 
+ Critical current density in winding pack (A/m2)                          (jwdgcrt)                 1.012E+08  OP 
  Actual current density in winding pack (A/m2)                            (jwdgop)                  2.349E+07  OP 
  Minimum allowed temperature margin in superconductor (K)                 (tmargmin_tf)             1.700E+00     
- Actual temperature margin in superconductor (K)                          (tmarg)                   3.189E+00  OP 
- Critical current (A)                                                     (icrit)                   2.093E+05  OP 
+ Actual temperature margin in superconductor (K)                          (tmarg)                   4.293E+00  OP 
+ Critical current (A)                                                     (icrit)                   2.801E+05  OP 
  Actual current (A)                                                       (cpttf)                   6.500E+04  OP 
- Actual current / critical current                                        (iooic)                   3.105E-01  OP 
+ Actual current / critical current                                        (iooic)                   2.321E-01  OP 
  
  *************************************** Central Solenoid and PF Coils ****************************************
  
@@ -6667,7 +6662,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -8.177E+06 -8.177E+06 -8.177E+06  0.000E+00
    5         0.000E+00  0.000E+00 -5.530E+06 -5.530E+06 -5.530E+06  0.000E+00
    6         0.000E+00  0.000E+00 -5.530E+06 -5.530E+06 -5.530E+06  0.000E+00
-   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00
+   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  2.832E-08  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.329E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.117E-01  OP 
@@ -7191,8 +7186,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Number of constraints (total)                                            (neqns+nineqns)                  18     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          1     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 4.883E-10  OP 
- VMCON convergence parameter                                              (convergence_parameter)   1.765E-10  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 4.825E-10  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   1.748E-10  OP 
  Number of VMCON iterations                                               (nviter)                         10  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit          MAJOR RADIUS.
@@ -7240,7 +7235,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    19                  fvsbrnni         4.0493E-01     0.9773
    20                  fstrcase         1.0000E+00     1.0000
    21                  fstrcond         8.3768E-01     0.9996
-   22                  fiooic           3.0892E-01     0.9949
+   22                  fiooic           2.3111E-01     0.9958
    23                  fvdump           7.2844E-01     1.0006
    24                  vdalw            1.5055E+01     1.0006
    25                  fjprot           1.0000E+00     1.0000
@@ -7257,24 +7252,24 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.2838E-02             -2.7708E-16                 8.4377E-15
-    2  Global power balance consistency      =  1.4964E-01 MW/m3       -1.4243E-12 MW/m3           9.5179E-12
-    3  Density upper limit                   <  8.3661E+19 /m3          2.6214E+05 /m3             3.1086E-15
-    4  Neutron wall load upper limit         <  9.3790E-01 MW/m2       -5.8953E-14 MW/m2          -6.2839E-14
+    1  Beta consistency                      =  3.2838E-02             -4.3749E-16                 1.3323E-14
+    2  Global power balance consistency      =  1.4964E-01 MW/m3       -1.4118E-12 MW/m3           9.4345E-12
+    3  Density upper limit                   <  8.3661E+19 /m3         -6.5536E+04 /m3            -7.7716E-16
+    4  Neutron wall load upper limit         <  9.3790E-01 MW/m2       -6.4060E-14 MW/m2          -6.8279E-14
     5  Radial build consistency              =  9.5333E+00 m            3.1752E-15 m              -3.3307E-16
-    6  Burn time lower limit                 >  7.2000E+03 sec          1.9283E-06 sec            -2.6782E-10
-    7  L-H power threshold limit             >  1.1570E+02 MW           9.6489E-09 MW             -8.3393E-11
-    8  Net electric power lower limit        >  5.0000E+02 MW           3.7899E-08 MW              7.5798E-11
-    9  Beta upper limit                      <  5.6067E-02              5.2736E-16                 9.3259E-15
-   10  CS coil EOF current density limit     <  6.1968E+07 A/m2         8.6129E-06 A/m2            1.3900E-13
-   11  CS coil BOP current density limit     <  5.7815E+07 A/m2         7.4878E-06 A/m2            1.2945E-13
-   12  Injection power upper limit           <  5.0000E+01 MW           1.3368E-08 MW             -2.6736E-10
-   13  TF coil case stress upper limit       <  6.6000E+08 Pa          -5.7220E-06 Pa             -8.6597E-15
-   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -3.0994E-06 Pa             -4.7740E-15
-   15  I_op / I_critical (TF coil)           <  7.6036E+07 A/m2         7.8235E-08 A/m2           -3.3307E-15
-   16  Dump voltage upper limit              <  1.5055E+01 V            4.0883E+00 V              -1.1879E-14
-   17  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2           -3.3307E-16
-   18  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -7.9249E-10 MWT/m           8.3420E-11
+    6  Burn time lower limit                 >  7.2000E+03 sec          1.9118E-06 sec            -2.6553E-10
+    7  L-H power threshold limit             >  1.1570E+02 MW           9.5612E-09 MW             -8.2635E-11
+    8  Net electric power lower limit        >  5.0000E+02 MW           3.6429E-08 MW              7.2858E-11
+    9  Beta upper limit                      <  5.6067E-02              5.8981E-16                 1.0436E-14
+   10  CS coil EOF current density limit     <  6.1968E+07 A/m2         7.9349E-06 A/m2            1.2812E-13
+   11  CS coil BOP current density limit     <  5.7815E+07 A/m2         6.8620E-06 A/m2            1.1879E-13
+   12  Injection power upper limit           <  5.0000E+01 MW           1.3249E-08 MW             -2.6497E-10
+   13  TF coil case stress upper limit       <  6.6000E+08 Pa          -2.9802E-05 Pa             -4.5186E-14
+   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -3.0398E-05 Pa             -4.6185E-14
+   15  I_op / I_critical (TF coil)           <  1.0164E+08 A/m2         4.5116E-07 A/m2           -1.9207E-14
+   16  Dump voltage upper limit              <  1.5055E+01 V            4.0883E+00 V              -1.8430E-14
+   17  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2           -7.7716E-16
+   18  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -7.8529E-10 MWT/m           8.2662E-11
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -7761,7 +7756,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      8.205E+01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -6.941E-03  OP 
  Vertical strain on casing                                                (casestr)                 1.161E-03  OP 
- Vertical strain on winding pack                                          (windstrain)              2.557E-03  OP 
  Radial strain on insulator                                               (insstrain)              -1.355E-02  OP 
  
  TF design
@@ -7852,7 +7846,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Superconductor fraction of conductor                                     (1-fcutfsu)               3.100E-01     
  Check total area fractions in winding pack = 1                                                         1.000     
  minimum TF conductor temperature margin  (K)                             (tmargmin_tf)                 1.700     
- TF conductor temperature margin (K)                                      (tmargtf)                     3.204     
+ TF conductor temperature margin (K)                                      (tmargtf)                     4.307     
  Elastic properties behavior                                              (i_tf_cond_props)                 0     
    Conductor stiffness neglected
  Conductor axial Young's modulus                                          (eyoung_cond_z)           0.000E+00     
@@ -7931,16 +7925,16 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Helium temperature at peak field (= superconductor temperature) (K)      (thelium)                 4.750E+00     
  Total helium fraction inside cable space                                 (fhetot)                  3.444E-01  OP 
  Copper fraction of conductor                                             (fcutfsu)                 6.900E-01     
- Strain on superconductor                                                 (strncon_tf)             -5.000E-03     
- Critical current density in superconductor (A/m2)                        (jcritsc)                 6.008E+08  OP 
- Critical current density in strand (A/m2)                                (jcritstr)                1.862E+08  OP 
- Critical current density in winding pack (A/m2)                          (jwdgcrt)                 7.604E+07  OP 
+ Strain on superconductor                                                 (strncon_tf)              2.557E-03     
+ Critical current density in superconductor (A/m2)                        (jcritsc)                 8.031E+08  OP 
+ Critical current density in strand (A/m2)                                (jcritstr)                2.490E+08  OP 
+ Critical current density in winding pack (A/m2)                          (jwdgcrt)                 1.016E+08  OP 
  Actual current density in winding pack (A/m2)                            (jwdgop)                  2.349E+07  OP 
  Minimum allowed temperature margin in superconductor (K)                 (tmargmin_tf)             1.700E+00     
- Actual temperature margin in superconductor (K)                          (tmarg)                   3.204E+00  OP 
- Critical current (A)                                                     (icrit)                   2.104E+05  OP 
+ Actual temperature margin in superconductor (K)                          (tmarg)                   4.307E+00  OP 
+ Critical current (A)                                                     (icrit)                   2.813E+05  OP 
  Actual current (A)                                                       (cpttf)                   6.500E+04  OP 
- Actual current / critical current                                        (iooic)                   3.089E-01  OP 
+ Actual current / critical current                                        (iooic)                   2.311E-01  OP 
  
  *************************************** Central Solenoid and PF Coils ****************************************
  
@@ -8092,7 +8086,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -8.180E+06 -8.180E+06 -8.180E+06  0.000E+00
    5         0.000E+00  0.000E+00 -5.531E+06 -5.531E+06 -5.531E+06  0.000E+00
    6         0.000E+00  0.000E+00 -5.531E+06 -5.531E+06 -5.531E+06  0.000E+00
-   7         0.000E+00  0.000E+00  3.547E-09  3.547E-09 -2.838E-08  0.000E+00
+   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  2.838E-08  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.330E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.170E-01  OP 
@@ -8616,8 +8610,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Number of constraints (total)                                            (neqns+nineqns)                  18     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          1     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 3.192E-10  OP 
- VMCON convergence parameter                                              (convergence_parameter)   1.413E-10  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 3.154E-10  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   1.397E-10  OP 
  Number of VMCON iterations                                               (nviter)                         10  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit          MAJOR RADIUS.
@@ -8665,7 +8659,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    19                  fvsbrnni         3.9502E-01     0.9755
    20                  fstrcase         1.0000E+00     1.0000
    21                  fstrcond         8.3732E-01     0.9996
-   22                  fiooic           3.0730E-01     0.9948
+   22                  fiooic           2.3011E-01     0.9957
    23                  fvdump           7.2891E-01     1.0006
    24                  vdalw            1.5064E+01     1.0006
    25                  fjprot           1.0000E+00     1.0000
@@ -8682,24 +8676,24 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.2839E-02             -6.3439E-16                 1.9318E-14
-    2  Global power balance consistency      =  1.4892E-01 MW/m3       -3.5171E-13 MW/m3           2.3617E-12
-    3  Density upper limit                   <  8.3417E+19 /m3          0.0000E+00 /m3            -0.0000E+00
-    4  Neutron wall load upper limit         <  9.3504E-01 MW/m2       -1.1824E-13 MW/m2          -1.2645E-13
-    5  Radial build consistency              =  9.5500E+00 m            5.3013E-15 m              -5.5511E-16
-    6  Burn time lower limit                 >  7.2000E+03 sec          1.8997E-06 sec            -2.6385E-10
-    7  L-H power threshold limit             >  1.1575E+02 MW           2.3924E-09 MW             -2.0669E-11
-    8  Net electric power lower limit        >  5.0000E+02 MW          -8.4762E-09 MW             -1.6952E-11
-    9  Beta upper limit                      <  5.6067E-02              9.8532E-16                 1.7542E-14
-   10  CS coil EOF current density limit     <  6.1789E+07 A/m2         4.2319E-06 A/m2            6.8390E-14
-   11  CS coil BOP current density limit     <  5.7653E+07 A/m2         3.6731E-06 A/m2            6.3727E-14
-   12  Injection power upper limit           <  5.0000E+01 MW           3.3560E-09 MW             -6.7121E-11
-   13  TF coil case stress upper limit       <  6.6000E+08 Pa           4.6372E-05 Pa              7.0166E-14
-   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa           4.5657E-05 Pa              6.9056E-14
-   15  I_op / I_critical (TF coil)           <  7.6437E+07 A/m2         1.0431E-07 A/m2           -4.4409E-15
-   16  Dump voltage upper limit              <  1.5064E+01 V            4.0838E+00 V              -1.8319E-14
-   17  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2           -4.4409E-16
-   18  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -1.9680E-10 MWT/m           2.0716E-11
+    1  Beta consistency                      =  3.2839E-02             -5.3230E-16                 1.6209E-14
+    2  Global power balance consistency      =  1.4892E-01 MW/m3       -3.4857E-13 MW/m3           2.3406E-12
+    3  Density upper limit                   <  8.3417E+19 /m3          1.3107E+05 /m3             1.5543E-15
+    4  Neutron wall load upper limit         <  9.3504E-01 MW/m2       -1.2002E-13 MW/m2          -1.2834E-13
+    5  Radial build consistency              =  9.5500E+00 m            8.4821E-15 m              -8.8818E-16
+    6  Burn time lower limit                 >  7.2000E+03 sec          1.8833E-06 sec            -2.6157E-10
+    7  L-H power threshold limit             >  1.1575E+02 MW           2.3727E-09 MW             -2.0499E-11
+    8  Net electric power lower limit        >  5.0000E+02 MW          -9.4468E-09 MW             -1.8894E-11
+    9  Beta upper limit                      <  5.6067E-02              9.7838E-16                 1.7542E-14
+   10  CS coil EOF current density limit     <  6.1789E+07 A/m2         4.4107E-06 A/m2            7.1276E-14
+   11  CS coil BOP current density limit     <  5.7653E+07 A/m2         3.8669E-06 A/m2            6.7057E-14
+   12  Injection power upper limit           <  5.0000E+01 MW           3.3296E-09 MW             -6.6593E-11
+   13  TF coil case stress upper limit       <  6.6000E+08 Pa           5.1260E-06 Pa              7.7716E-15
+   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa           1.0729E-05 Pa              1.6209E-14
+   15  I_op / I_critical (TF coil)           <  1.0208E+08 A/m2         3.3902E-08 A/m2           -1.4433E-15
+   16  Dump voltage upper limit              <  1.5064E+01 V            4.0838E+00 V              -1.0325E-14
+   17  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2           -1.5543E-15
+   18  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -1.9520E-10 MWT/m           2.0548E-11
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -9186,7 +9180,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      8.204E+01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -6.971E-03  OP 
  Vertical strain on casing                                                (casestr)                 1.160E-03  OP 
- Vertical strain on winding pack                                          (windstrain)              2.557E-03  OP 
  Radial strain on insulator                                               (insstrain)              -1.349E-02  OP 
  
  TF design
@@ -9277,7 +9270,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Superconductor fraction of conductor                                     (1-fcutfsu)               3.100E-01     
  Check total area fractions in winding pack = 1                                                         1.000     
  minimum TF conductor temperature margin  (K)                             (tmargmin_tf)                 1.700     
- TF conductor temperature margin (K)                                      (tmargtf)                     3.220     
+ TF conductor temperature margin (K)                                      (tmargtf)                     4.321     
  Elastic properties behavior                                              (i_tf_cond_props)                 0     
    Conductor stiffness neglected
  Conductor axial Young's modulus                                          (eyoung_cond_z)           0.000E+00     
@@ -9356,16 +9349,16 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Helium temperature at peak field (= superconductor temperature) (K)      (thelium)                 4.750E+00     
  Total helium fraction inside cable space                                 (fhetot)                  3.444E-01  OP 
  Copper fraction of conductor                                             (fcutfsu)                 6.900E-01     
- Strain on superconductor                                                 (strncon_tf)             -5.000E-03     
- Critical current density in superconductor (A/m2)                        (jcritsc)                 6.040E+08  OP 
- Critical current density in strand (A/m2)                                (jcritstr)                1.872E+08  OP 
- Critical current density in winding pack (A/m2)                          (jwdgcrt)                 7.644E+07  OP 
+ Strain on superconductor                                                 (strncon_tf)              2.557E-03     
+ Critical current density in superconductor (A/m2)                        (jcritsc)                 8.066E+08  OP 
+ Critical current density in strand (A/m2)                                (jcritstr)                2.500E+08  OP 
+ Critical current density in winding pack (A/m2)                          (jwdgcrt)                 1.021E+08  OP 
  Actual current density in winding pack (A/m2)                            (jwdgop)                  2.349E+07  OP 
  Minimum allowed temperature margin in superconductor (K)                 (tmargmin_tf)             1.700E+00     
- Actual temperature margin in superconductor (K)                          (tmarg)                   3.220E+00  OP 
- Critical current (A)                                                     (icrit)                   2.115E+05  OP 
+ Actual temperature margin in superconductor (K)                          (tmarg)                   4.321E+00  OP 
+ Critical current (A)                                                     (icrit)                   2.825E+05  OP 
  Actual current (A)                                                       (cpttf)                   6.500E+04  OP 
- Actual current / critical current                                        (iooic)                   3.073E-01  OP 
+ Actual current / critical current                                        (iooic)                   2.301E-01  OP 
  
  *************************************** Central Solenoid and PF Coils ****************************************
  
@@ -9517,7 +9510,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -8.184E+06 -8.184E+06 -8.184E+06  0.000E+00
    5         0.000E+00  0.000E+00 -5.531E+06 -5.531E+06 -5.531E+06  0.000E+00
    6         0.000E+00  0.000E+00 -5.531E+06 -5.531E+06 -5.531E+06  0.000E+00
-   7         0.000E+00  0.000E+00  3.554E-09  3.554E-09 -2.843E-08  0.000E+00
+   7         0.000E+00  0.000E+00 -3.554E-09 -3.554E-09  0.000E+00  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.331E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.223E-01  OP 

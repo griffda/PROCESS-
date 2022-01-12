@@ -13,14 +13,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1092-g16e26860 code contains untracked changes
+   Tag No. : v2.1-1102-g7770f3b3 code contains untracked changes
     Branch : 1205-tf-cond-stiffness
-   Git log : Changed\ properties\ to\ conductor\ and\ fixed\ a\ bug
- Date/time : 11 Jan 2022 11:20:31 -05:00(hh:mm) UTC
+   Git log : removed\ diagnostic\ outputs
+ Date/time : 12 Jan 2022 13:25:57 -05:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-40/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-40/test_scenario_hts_REBCO_0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-45/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-45/test_scenario_hts_REBCO_0/IN.DAT
  Run title : hts model using "croco" conductor based on kit design
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -640,7 +640,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      1.033E+02  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -5.893E-03  OP 
  Vertical strain on casing                                                (casestr)                 1.031E-03  OP 
- Vertical strain on winding pack                                          (windstrain)              1.877E-03  OP 
  Radial strain on insulator                                               (insstrain)              -1.281E-02  OP 
  
  TF design
