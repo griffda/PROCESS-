@@ -11,8 +11,8 @@ from process.fortran import tfcoil_variables as tfv
 from process.fortran import constraint_variables as ctv
 from process.fortran import times_variables as tv
 from process.fortran import process_output as po
-from process.fortran import availability_module as av
 from process.fortran import vacuum_variables as vacv
+from process.fortran import maths_library
 
 logger = logging.getLogger(__name__)
 # Logging handler for console output
@@ -303,7 +303,7 @@ class Availability:
         # Number of redundant pumps
         cv.redun_vac = math.floor(vacv.vpumpn * cv.redun_vacp / 100.0 + 0.5e0)
 
-        u_unplanned_vacuum = av.calc_u_unplanned_vacuum(self.outfile, self.iprint)
+        u_unplanned_vacuum = self.calc_u_unplanned_vacuum()
 
         # Total unplanned unavailability
         u_unplanned = min(
@@ -830,3 +830,94 @@ class Availability:
         # Tran's response provides useful data.
 
         return 0.02e0
+
+    def calc_u_unplanned_vacuum(self) -> float:
+        """Calculates the unplanned unavailability of the vacuum system
+        author: J Morris, CCFE, Culham Science Centre
+
+        This routine calculates the unplanned unavailability of the vacuum system,
+        using the methodology outlined in the 2014 EUROfusion
+        RAMI report.
+        2014 EUROfusion RAMI report, &quot;Availability in
+        PROCESS&quot;
+
+        :return u_unplanned_vacuum: unplanned unavailability of vacuum system
+        :type u_unplanned_vacuum: float
+        """
+
+        # Number of shutdowns
+        n_shutdown: int = round(
+            (cv.tlife - cv.t_operation)
+            / ((21.0e0 * cv.num_rh_systems ** (-0.9e0) + 2.0e0) / 12.0e0)
+        )
+
+        # Operational time between shutdowns
+        t_op_bt = cv.t_operation / (n_shutdown + 1.0e0)
+
+        # Cryopump maintenance time (y) = 2 months
+        cryo_main_time = 1.0e0 / 6.0e0
+
+        # Total pumps = pumps + redundant pumps
+        total_pumps = vacv.vpumpn + cv.redun_vac
+
+        # Cryopump failure rate per machine operational period
+        # From "Selected component failure rate values from fusion
+        # safety assessment tasks", Cadwallader (1994)
+
+        # probability of pump failure per operational period
+        cryo_failure_rate = 2.0e-6 * DAYS_IN_YEAR * 24.0e0 * t_op_bt
+
+        # probability of no pump failure per operational period
+        cryo_nfailure_rate = 1.0e0 - cryo_failure_rate
+
+        sum_prob = 0.0e0
+
+        for n in range(cv.redun_vac + 1, total_pumps + 1):
+
+            # Probability for n failures in the operational period, n > number of redundant pumps
+            # vac_fail_p.append(maths_library.binomial(total_pumps,n) * (cryo_nfailure_rate**(total_pumps-n)) *(cryo_failure_rate**n))
+
+            # calculate sum in formula for downtime
+            sum_prob = sum_prob + maths_library.binomial(total_pumps, n) * (
+                cryo_nfailure_rate ** (total_pumps - n)
+            ) * (cryo_failure_rate ** n) * (n - cv.redun_vac)
+
+        # Total down-time in reactor life
+        t_down = (n_shutdown + 1.0e0) * cryo_main_time * sum_prob
+
+        # Total vacuum unplanned unavailability
+        u_unplanned_vacuum = max(0.005, t_down / (cv.t_operation + t_down))
+
+        # Output
+        if self.iprint == 1:
+            po.ocmmnt(self.outfile, "Vacuum:")
+            po.oblnkl(self.outfile)
+            po.ovarin(
+                self.outfile,
+                "Number of pumps (excluding redundant pumps)",
+                "(vpumpn)",
+                vacv.vpumpn,
+                "OP ",
+            )
+            po.ovarin(
+                self.outfile,
+                "Number of redundant pumps",
+                "(redun_vac)",
+                cv.redun_vac,
+                "OP ",
+            )
+            po.ovarre(
+                self.outfile,
+                "Total unplanned down-time due to pumps, excl fixed 0.5% (years)",
+                "(t_down)",
+                t_down,
+                "OP ",
+            )
+            po.ovarre(
+                self.outfile,
+                "Vacuum unplanned unavailability",
+                "(u_unplanned_vacuum)",
+                u_unplanned_vacuum,
+                "OP ",
+            )
+            po.oblnkl(self.outfile)

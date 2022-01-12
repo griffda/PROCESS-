@@ -94,7 +94,6 @@ LIST(APPEND PROCESS_SRCS
     stellarator_variables.f90
     plant_power.f90
     final_module.f90
-    availability.f90
     cost_variables.f90
     divertor.f90
     divertor_variables.f90
