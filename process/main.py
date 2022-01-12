@@ -446,7 +446,7 @@ class Models():
         self.costs_step = CostsStep()
         self.tfcoil = TFcoil()
         self.availability = Availability()
-        self.ife = IFE()
+        self.ife = IFE(self)
 
 def main(args=None):
     """Run Process.

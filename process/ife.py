@@ -17,8 +17,15 @@ class IFE:
     NOTE: currently the IFE module is only partially wrapped to unblock the wrapping of availability
     """
 
-    def __init__(self) -> None:
-        self.outfile = constants.nout
+    def __init__(self, parent_modules_class) -> None:
+        """Initialises the IFE module's variables
+        
+        :param parent_modules_class: a pointer to the parent Models class, hence allowing for access to other models in the same instantiated parent
+        :type parent_modules_class: process.main.Models
+        """
+
+        self.outfile: int = constants.nout
+        self.parent_modules_class = parent_modules_class
 
     def run(self, output: bool):
         """Routine to output the physics and engineering information
@@ -40,7 +47,7 @@ class IFE:
             cs.costs(self.outfile, 1)
 
             # Plant availability
-            av.avail(self.outfile, 1)
+            self.parent_modules_class.availability.avail(self.outfile, 1)
 
             # IFE physics
             ife.ifephy(self.outfile, 1)
@@ -105,7 +112,7 @@ class IFE:
         ife.ifepw2(constants.nout, 0)
 
         # Plant availability
-        av.avail(constants.nout, 0)
+        self.parent_modules_class.availability.avail(constants.nout, 0)
 
         # Costs
         cs.costs(constants.nout, 0)
