@@ -56,7 +56,7 @@ RUN apt-get install -y \
 # Install pyenv.
 RUN curl https://pyenv.run | bash
 ENV PYENV_ROOT /root/.pyenv
-ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
+ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PYENV_ROOT/versions/3.8.12/bin:$PATH
 
 
 # Install python version 3.8.12 and set as global.
@@ -65,4 +65,5 @@ RUN pyenv install 3.8.12 && \
 
 
 RUN python -m pip install --upgrade pip && \
-    python -m pip install -r /tmp/requirements.txt
+    python -m pip install -r /tmp/requirements.txt && \
+    python -m pip install git+https://github.com/jonMaddockUkaea/ford

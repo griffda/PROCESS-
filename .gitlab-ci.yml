@@ -22,41 +22,54 @@ stages:
   - tracking
   - pages
 
+variables:
+  DOCKER_CI_IMAGE: ci-image
+  DOCKER_CI_IMAGE_VERSION: latest
+
+image: $CI_REGISTRY_IMAGE/$DOCKER_CI_IMAGE:$DOCKER_CI_IMAGE_VERSION
+
 #-----------------
 #  Containers
 #-----------------
 # should be first because the rest of the CI system uses the CI image
-build_docker_ci_image:
+.build_docker_image:
   stage: containers
   image: docker:19.03.12
   services:
     - docker:19.03.12-dind
   script:
-    - cp requirements.txt docker/ci/
-    - cd docker/ci
     - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN
-    - docker build -t $CI_REGISTRY/tnunn/process/ci-image:latest .
-    - docker push $CI_REGISTRY/tnunn/process/ci-image:latest
+    - docker build -t $CI_REGISTRY_IMAGE/$IMAGE_NAME:$IMAGE_TAG .
+    - docker push $CI_REGISTRY_IMAGE/$IMAGE_NAME:$IMAGE_TAG
   rules:
-    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "develop"'
       changes: 
         - docker/ci/Dockerfile
         - requirements.txt
+    # when testing CI, re-build the containers
+    - if: $CI_TEST_BUILD && $CI_DOCKER_BUILD
+  
 
-build_docker_dev_image:
-  stage: containers
-  image: docker:19.03.12
+build_docker_ci_image:
+  extends: ".build_docker_image"
+  variables:
+     IMAGE_NAME: $DOCKER_CI_IMAGE
+     IMAGE_TAG: $DOCKER_CI_IMAGE_VERSION
   services:
     - docker:19.03.12-dind
-  script:
+  before_script:
+    - cp requirements.txt docker/ci/
+    - cd docker/ci
+
+build_docker_dev_image:
+  extends: ".build_docker_image"
+  variables:
+    IMAGE_NAME: dev
+    IMAGE_TAG: latest
+  services:
+    - docker:19.03.12-dind
+  before_script:
     - cd docker/dev
-    - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN
-    - docker build -t $CI_REGISTRY/tnunn/process/process/dev:latest .
-    - docker push $CI_REGISTRY/tnunn/process/process/dev:latest
-  rules:
-    - if: $CI_COMMIT_BRANCH == "develop"
-      changes: 
-        - docker/dev/Dockerfile
 
 
 # a CI deploy token only allows registry access, but not repository write access (it can provide read)
@@ -105,7 +118,6 @@ build_docker_dev_image:
 #-----------------
 make-py38:
   stage: build
-  image: $CI_REGISTRY/tnunn/process/process/ci-image:latest
   artifacts:
     paths:
       - process_dist/process-*.tar.gz
@@ -126,11 +138,9 @@ make-py38:
 #  Testing
 #-----------------
 .test_template:
-  image: $CI_REGISTRY/tnunn/process/process/ci-image:latest
   stage: testing
   before_script:
-    - python -m pip install git+https://github.com/jonMaddockUkaea/ford
-    - python -m pip install --find-links=process_dist
+    - python -m pip install --find-links=process_dist process
     - apt install lcov -y
   dependencies:
     - make-py38
@@ -182,9 +192,6 @@ regression-py38-5-percent:
 
 baseline_2019-py38:
   extends: ".test_template"
-  when: on_success
-  only:
-    - develop
   stage: testing
   script:
     - process -i tracking/baseline_2019/baseline_2019_IN.DAT
@@ -192,12 +199,14 @@ baseline_2019-py38:
     paths:
       - tracking/baseline_2019/baseline_2019_MFILE.DAT
     expire_in: 1 week
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+      when: on_success
+    # when testing CI, baseline 2019 is needed for tracking
+    - if: $CI_TEST_BUILD
 
 baseline_2018-py38:
   extends: ".test_template"
-  when: on_success
-  only:
-    - develop
   stage: testing
   script:
     - process -i tracking/baseline_2018/baseline_2018_IN.DAT
@@ -205,13 +214,15 @@ baseline_2018-py38:
     paths:
       - tracking/baseline_2018/baseline_2018_MFILE.DAT
     expire_in: 1 week
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+      when: on_success
+    # when testing CI, baseline 2018 is needed for tracking
+    - if: $CI_TEST_BUILD
 
 
 starfire-py38:
   extends: ".test_template"
-  when: on_success
-  only:
-    - develop
   stage: testing
   script:
     - process -i tests/regression/scenarios/starfire/IN.DAT
@@ -220,15 +231,18 @@ starfire-py38:
     paths:
       - tracking/starfire_MFILE.DAT 
     expire_in: 1 week
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+      when: on_success
+    # when testing CI, starfire is needed for tracking
+    - if: $CI_TEST_BUILD
 
 #-----------------
 #  Quality
 #-----------------
 
 line_length:
-  when: on_success
   stage: quality
-  image: $CI_REGISTRY/tnunn/process/process/ci-image:latest
   script:
     - pwd
     - python3 utilities/line_length_standard.py
@@ -241,10 +255,6 @@ line_length:
 
 tracking_rtv:
   extends: ".test_template"
-  when: on_success
-  image: $CI_REGISTRY/tnunn/process/process/ci-image:latest
-  only: 
-    - develop
   stage: tracking
   allow_failure: true
   script:
@@ -268,6 +278,11 @@ tracking_rtv:
     when: always
     paths:
       - ${CI_PROJECT_DIR}/tracking.html
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+      when: on_success
+    # when testing CI, run the tracker
+    - if: $CI_TEST_BUILD
 
 
 #-----------------
@@ -275,17 +290,10 @@ tracking_rtv:
 #-----------------
 
 pages:
-  when: on_success
-  only:
-    - develop
   stage: pages
-  image: $CI_REGISTRY/tnunn/process/process/ci-image:latest
   variables:
     PY_VERSION: py38
   script:
-    - pwd
-    - source ~/.venv_$PY_VERSION/bin/activate
-    
     # FORD documentation
     - python3 -m pip install git+https://github.com/jonMaddockUkaea/ford
     - ford documentation/ford/index.md
@@ -326,24 +334,28 @@ pages:
     - ls ../public
     - du -shc ../public/*
     - du -shc ../public/ford_site/*
-  tags:
-    - ubuntu
-    
   artifacts:
     expire_in: 1 week
     paths:
     - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+      when: on_success
+    # when testing CI, generate the documentation
+    - if: $CI_TEST_BUILD
 
 #-----------------
 #  STEP
 #-----------------
 
 step_trigger:
-  when: on_success
-  image: git.ccfe.ac.uk:4567/tnunn/gitlab-multi-project-pipeline/trigger:latest
-  only: 
-    - develop
+  image: $CI_REGISTRY/tnunn/gitlab-multi-project-pipeline/trigger:latest
   stage: step
   allow_failure: true
   script:
-    - trigger -u https://git.ccfe.ac.uk/api/v4/projects/4023 -b master -T $CI_JOB_TOKEN -P $CI_JOB_PRIVATE_TOKEN
+    - trigger -u $CI_API_V4_URL/projects/4023 -b master -T $CI_JOB_TOKEN -P $CI_JOB_PRIVATE_TOKEN
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+      when: on_success
+    # when testing CI, test this hook only if also CI_TEST_EXTERNAL
+    - if: $CI_TEST_BUILD && $CI_TEST_EXTERNAL
