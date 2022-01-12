@@ -531,6 +531,19 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
     if ( acond <= 0.0D0 .or. avwp <= 0.0D0 .or. aiwp <= 0.0D0 .or. &
          aswp <= 0.0D0 .or. a_tf_steel <= 0.0D0 .or. f_tf_steel <= 0.0D0 .or. &
          a_tf_ins <= 0.0D0 .or. f_tf_ins <= 0.0D0 ) then
+        print *
+        print *,"CPS Swanson Diagnostic Outputs:" !! [EDIT: Remove]
+        print *,"acond =",acond
+        print *,"avwp =",avwp
+        print *,"aiwp =",aiwp
+        print *,"aswp =",aswp
+        print *,"a_tf_steel =",a_tf_steel
+        print *,"f_tf_steel =",f_tf_steel
+        print *,"a_tf_ins =",a_tf_ins
+        print *,"f_tf_ins =",f_tf_ins
+        print *,"n_tf_turn =",n_tf_turn
+        print *,"acndttf =",acndttf
+        print *,"i_tf_turns_integer =",i_tf_turns_integer
         fdiags(1) = acond 
         fdiags(2) = avwp 
         fdiags(3) = aiwp 
@@ -895,6 +908,17 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
             acndttf = t_conductor**2 - acstf
         
         end if
+        
+        print *
+        print *,"CPS Swanson Diagnostic Outputs:" !! [EDIT: Remove]
+        print *,"i_tf_sc_mat =",i_tf_sc_mat
+        print *,"acndttf =",acndttf
+        print *,"acstf =",acstf
+        print *,"t_conductor**2 =",t_conductor**2
+        print *,"t_conductor =",t_conductor
+        print *,"t_cable =",t_cable
+        print *,"thwcndut =",thwcndut
+        print *,"t_turn_tf =",t_turn_tf
 
     end subroutine tf_averaged_turn_geom
 
@@ -5262,7 +5286,7 @@ contains
         integer :: lap
         real(dp) :: b,bc20m,bcrit,c0,delt,fcond,icrit,iooic, &
         jcritsc,jcrit0,jcritm,jcritp,jcritstr,jsc,jstrand,jtol,jwdgop, &
-        t,tc0m,tcrit,ttest,ttestm,ttestp, tdump, fhetot
+        t,tc0m,tcrit,ttest,ttestm,ttestp, tdump, fhetot, strain
 
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         ! Rename tdmptf as it is called tdump in this routine and those called from here.
@@ -5272,6 +5296,8 @@ contains
         fhetot = fhe + (pi/4.0d0)*dhecoil*dhecoil/acs
         !  Conductor fraction (including central helium channel)
         fcond = 1.0D0 - fhetot
+        
+        strain = strncon_tf
 
         !  Find critical current density in superconducting strand, jcritstr
         select case (isumat)
@@ -5279,10 +5305,14 @@ contains
         case (1)  !  ITER Nb3Sn critical surface parameterization
             bc20m = 32.97D0
             tc0m = 16.06D0
-
+            ! If strain limit achieved, throw a warning and use the lower strain
+            if (abs(strncon_tf) > 0.5D-2) then
+                fdiags(1) = strncon_tf ; call report_error(261)
+                strain = sign(0.5D-2,strncon_tf)
+            end if
             !  jcritsc returned by itersc is the critical current density in the
             !  superconductor - not the whole strand, which contains copper
-            call itersc(thelium,bmax,strncon_tf,bc20m,tc0m,jcritsc,bcrit,tcrit)
+            call itersc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
             jcritstr = jcritsc * (1.0D0-fcu)
             !  Critical current in cable
             icrit = jcritstr * acs * fcond
@@ -5315,7 +5345,12 @@ contains
         case (4)  !  ITER Nb3Sn parameterization, but user-defined parameters
             bc20m = bcritsc
             tc0m = tcritsc
-            call itersc(thelium,bmax,strncon_tf,bc20m,tc0m,jcritsc,bcrit,tcrit)
+            ! If strain limit achieved, throw a warning and use the lower strain
+            if (abs(strncon_tf) > 0.5D-2) then
+                fdiags(1) = strncon_tf ; call report_error(261)
+                strain = sign(0.5D-2,strncon_tf)
+            end if
+            call itersc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
             jcritstr = jcritsc * (1.0D0-fcu)
             !  Critical current in cable
             icrit = jcritstr * acs * fcond
@@ -5323,9 +5358,21 @@ contains
         case (5) ! WST Nb3Sn parameterisation
             bc20m = 32.97D0
             tc0m = 16.06D0
+            ! If strain limit achieved, throw a warning and use the lower strain
+            if (abs(strncon_tf) > 0.5D-2) then
+                fdiags(1) = strncon_tf ; call report_error(261)
+                strain = sign(0.5D-2,strncon_tf)
+                print *
+                print *,"CPS Swanson Diagnostic Outputs:" !! [EDIT: Remove]
+                print *,"The if statement ran!"
+            end if
+            print *
+            print *,"CPS Swanson Diagnostic Outputs:" !! [EDIT: Remove]
+            print *,"strncon_tf",strncon_tf
+            print *,"strain",strain
             !  jcritsc returned by itersc is the critical current density in the
             !  superconductor - not the whole strand, which contains copper
-            call wstsc(thelium,bmax,strncon_tf,bc20m,tc0m,jcritsc,bcrit,tcrit)
+            call wstsc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
             jcritstr = jcritsc * (1.0D0-fcu)
             !  Critical current in cable
             icrit = jcritstr * acs * fcond
@@ -5339,7 +5386,7 @@ contains
         case (7) ! Durham Ginzburg-Landau Nb-Ti parameterisation
             bc20m = b_crit_upper_nbti
             tc0m = t_crit_nbti 
-            call GL_nbti(thelium,bmax,strncon_tf,bc20m,tc0m,jcritsc,bcrit,tcrit)
+            call GL_nbti(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
             jcritstr = jcritsc  * (1.0D0-fcu)
             !  Critical current in cable
             icrit = jcritstr * acs * fcond
@@ -5347,33 +5394,33 @@ contains
         case (8) ! Branch YCBO model fit to Tallahassee data
             bc20m = 430
             tc0m = 185
-            call GL_REBCO(thelium,bmax,strncon_tf,bc20m,tc0m,jcritsc,bcrit,tcrit)
+            ! If strain limit achieved, throw a warning and use the lower strain
+            if (abs(strncon_tf) > 0.7D-2) then
+                fdiags(1) = strncon_tf ; call report_error(261)
+                strain = sign(0.7D-2,strncon_tf)
+            end if
+            call GL_REBCO(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
             ! A0 calculated for tape cross section already
             jcritstr = jcritsc * (1.0D0-fcu)
             !  Critical current in cable (copper added at this stage in HTS cables)
             icrit = jcritstr * acs * fcond 
-            
-            !REBCO fractures in strains above ~+/- 0.7%
-            if (strncon_tf > 0.7D-2 .or. strncon_tf < -0.7D-2) then
-                fdiags(1) = strncon_tf ; call report_error(261)
-            end if
 
         case (9) ! High Current Density REBCO tape
             bc20m = 138
             tc0m = 92
+            ! If strain limit achieved, throw a warning and use the lower strain
+            if (abs(strncon_tf) > 0.7D-2) then
+                fdiags(1) = strncon_tf ; call report_error(261)
+                strain = sign(0.7D-2,strncon_tf)
+            end if
             ! 'high current density' as per parameterisation described in Wolf, 
             !  and based on Hazelton experimental data and Zhai conceptual model;
             !  see subroutine for full references
-            call HIJC_REBCO(thelium,bmax,strncon_tf,bc20m,tc0m,jcritsc,bcrit,tcrit)
+            call HIJC_REBCO(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
             
             jcritstr = jcritsc * (1.0D0-fcu)
             !  Critical current in cable (copper added at this stage in HTS cables)
             icrit = jcritstr * acs * fcond 
-            
-            !REBCO fractures in strains above ~+/- 0.7%
-            if (strncon_tf > 0.7D-2 .or. strncon_tf < -0.7D-2) then
-                fdiags(1) = strncon_tf ; call report_error(261)
-            end if
 
         end select
 
@@ -5421,35 +5468,35 @@ contains
                 select case (isumat)
                     ! Issue #483 to be on the safe side, check the fractional as well as the absolute error
                 case (1,4)
-                    call itersc(ttest ,bmax,strncon_tf,bc20m,tc0m,jcrit0,b,t)
+                    call itersc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
                     if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
-                    call itersc(ttestm,bmax,strncon_tf,bc20m,tc0m,jcritm,b,t)
-                    call itersc(ttestp,bmax,strncon_tf,bc20m,tc0m,jcritp,b,t)
+                    call itersc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
+                    call itersc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
                 case (3)
                     call jcrit_nbti(ttest ,bmax,c0,bc20m,tc0m,jcrit0,t)
                     if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
                     call jcrit_nbti(ttestm,bmax,c0,bc20m,tc0m,jcritm,t)
                     call jcrit_nbti(ttestp,bmax,c0,bc20m,tc0m,jcritp,t)
                 case (5)
-                    call wstsc(ttest ,bmax,strncon_tf,bc20m,tc0m,jcrit0,b,t)
+                    call wstsc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
                     if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
-                    call wstsc(ttestm,bmax,strncon_tf,bc20m,tc0m,jcritm,b,t)
-                    call wstsc(ttestp,bmax,strncon_tf,bc20m,tc0m,jcritp,b,t)
+                    call wstsc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
+                    call wstsc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
                 case (7)
-                    call GL_nbti(ttest ,bmax,strncon_tf,bc20m,tc0m,jcrit0,b,t)
+                    call GL_nbti(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
                     if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
-                    call GL_nbti(ttestm,bmax,strncon_tf,bc20m,tc0m,jcritm,b,t)
-                    call GL_nbti(ttestp,bmax,strncon_tf,bc20m,tc0m,jcritp,b,t)
+                    call GL_nbti(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
+                    call GL_nbti(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
                 case (8)
-                    call GL_REBCO(ttest ,bmax,strncon_tf,bc20m,tc0m,jcrit0,b,t)
+                    call GL_REBCO(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
                     if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
-                    call GL_REBCO(ttestm,bmax,strncon_tf,bc20m,tc0m,jcritm,b,t)
-                    call GL_REBCO(ttestp,bmax,strncon_tf,bc20m,tc0m,jcritp,b,t)
+                    call GL_REBCO(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
+                    call GL_REBCO(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
                 case (9)
-                    call HIJC_REBCO(ttest ,bmax,strncon_tf,bc20m,tc0m,jcrit0,b,t)
+                    call HIJC_REBCO(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
                     if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
-                    call HIJC_REBCO(ttestm,bmax,strncon_tf,bc20m,tc0m,jcritm,b,t)
-                    call HIJC_REBCO(ttestp,bmax,strncon_tf,bc20m,tc0m,jcritp,b,t)
+                    call HIJC_REBCO(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
+                    call HIJC_REBCO(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
                 end select
                 ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)
             end do solve_for_tmarg
