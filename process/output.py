@@ -19,7 +19,7 @@ def write(models, outfile):
 
     # Call stellarator output routine instead if relevant
     if ft.stellarator_variables.istell != 0:
-        ft.stellarator_module.stout(outfile)
+        models.stellarator.run(output=True)
         return
 
     #  Call IFE output routine instead if relevant

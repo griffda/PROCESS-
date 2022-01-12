@@ -47,6 +47,7 @@ from process.ife import IFE
 from process.io import plot_proc
 from process.scan import Scan
 from process import final
+from process.stellarator import Stellarator
 from process.utilities.f2py_string_patch import string_to_f2py_compatible, f2py_compatible_to_string
 import argparse
 from process.costs_step import CostsStep
@@ -447,6 +448,7 @@ class Models():
         self.tfcoil = TFcoil()
         self.availability = Availability()
         self.ife = IFE(self)
+        self.stellarator = Stellarator(self)
 
 def main(args=None):
     """Run Process.

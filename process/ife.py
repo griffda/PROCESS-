@@ -1,5 +1,4 @@
 from process.fortran import constants
-from process.fortran import availability_module as av
 from process.fortran import costs_module as cs
 from process.fortran import ife_module as ife
 
@@ -47,7 +46,8 @@ class IFE:
             cs.costs(self.outfile, 1)
 
             # Plant availability
-            self.parent_modules_class.availability.avail(self.outfile, 1)
+            self.parent_modules_class.availability.iprint = 1
+            self.parent_modules_class.availability.avail()
 
             # IFE physics
             ife.ifephy(self.outfile, 1)
@@ -112,7 +112,8 @@ class IFE:
         ife.ifepw2(constants.nout, 0)
 
         # Plant availability
-        self.parent_modules_class.availability.avail(constants.nout, 0)
+        self.parent_modules_class.availability.iprint = 0
+        self.parent_modules_class.availability.avail()
 
         # Costs
         cs.costs(constants.nout, 0)
