@@ -1,6 +1,5 @@
 import math
-
-from process.main import logger
+import logging
 
 from process import fortran as ft
 from process.fortran import cost_variables as cv
@@ -14,6 +13,12 @@ from process.fortran import times_variables as tv
 from process.fortran import process_output as po
 from process.fortran import availability_module as av
 from process.fortran import vacuum_variables as vacv
+
+logger = logging.getLogger(__name__)
+# Logging handler for console output
+s_handler = logging.StreamHandler()
+s_handler.setLevel(logging.INFO)
+logger.addHandler(s_handler)
 
 DAY = 60 * 60 * 24
 """Seconds in a day [s]"""
@@ -282,7 +287,7 @@ class Availability:
         u_unplanned_div = self.calc_u_unplanned_divertor()
 
         # First wall and blanket
-        u_unplanned_fwbs = av.calc_u_unplanned_fwbs(self.outfile, self.iprint)
+        u_unplanned_fwbs = self.calc_u_unplanned_fwbs()
 
         # Balance of plant
         u_unplanned_bop = av.calc_u_unplanned_bop(self.outfile, self.iprint)
@@ -293,7 +298,7 @@ class Availability:
         # Vacuum systems
 
         # Number of redundant pumps
-        redun_vac = math.floor(vacv.vpumpn * cv.redun_vacp / 100.0 + 0.5e0)
+        cv.redun_vac = math.floor(vacv.vpumpn * cv.redun_vacp / 100.0 + 0.5e0)
 
         u_unplanned_vacuum = av.calc_u_unplanned_vacuum(self.outfile, self.iprint)
 
@@ -660,3 +665,90 @@ class Availability:
             po.oblnkl(self.outfile)
 
         return u_unplanned_div
+
+    def calc_u_unplanned_fwbs(self) -> float:
+        """Calculates the unplanned unavailability of the first wall and blanket
+        author: J Morris, CCFE, Culham Science Centre
+
+        2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+
+        :return u_unplanned_fwbs: unplanned unavailability of first wall and blanket
+        :type u_unplanned_fwbs: float
+        """
+
+        # Calculate cycle limit in terms of days
+
+        # Number of cycles between planned blanket replacements, N
+        n = fwbsv.bktlife * YEAR / tv.tcycle
+
+        # The probability of failure in one pulse cycle
+        # (before the reference cycle life)
+        pf = (cv.fwbs_prob_fail / DAY) * tv.tcycle
+        a0 = 1.0e0 - pf * cv.fwbs_umain_time * YEAR / tv.tcycle
+
+        if cv.fwbs_nu <= cv.fwbs_nref:
+            logger.error(
+                """fwbs_nu <= fwbs_nref
+            The cycle when the blanket fails with 100% probability <= &Reference value for cycle life of blanket
+            """
+            )
+            po.ocmmnt(
+                self.outfile,
+                "EROROR: The cycle when the blanket fails with 100% probability& <= Reference value for cycle life of blanket",
+            )
+
+        # Integrating the instantaneous availability gives the mean
+        # availability over the planned cycle life N
+        if n <= cv.fwbs_nref:
+            fwbs_avail = a0
+        elif n >= cv.fwbs_nu:
+            fwbs_avail = 0.0e0
+        else:
+            fwbs_avail = (a0 / (cv.fwbs_nu - cv.fwbs_nref)) * (
+                cv.fwbs_nu - 0.5e0 * cv.fwbs_nref ** 2.0e0 / n - 0.5e0 * n
+            )
+
+        # First wall / blanket unplanned unavailability
+        u_unplanned_fwbs = 1.0e0 - fwbs_avail
+
+        # Output
+        if self.iprint == 1:
+            po.ocmmnt(self.outfile, "First wall / Blanket:")
+            po.oblnkl(self.outfile)
+            po.ovarre(
+                self.outfile,
+                "Probability of failure per operational day",
+                "(fwbs_prob_fail)",
+                cv.fwbs_prob_fail,
+            )
+            po.ovarre(
+                self.outfile,
+                "Repair time (years)",
+                "(fwbs_umain_time)",
+                cv.fwbs_umain_time,
+            )
+            po.ovarre(
+                self.outfile,
+                "Reference value for cycle life",
+                "(fwbs_nref)",
+                cv.fwbs_nref,
+            )
+            po.ovarre(
+                self.outfile,
+                "The cycle when failure is 100% certain",
+                "(fwbs_nu)",
+                cv.fwbs_nu,
+            )
+            po.ovarre(
+                self.outfile, "Number of cycles between planned replacements", "(n)", n
+            )
+            po.ovarre(
+                self.outfile,
+                "Unplanned unavailability",
+                "(u_unplanned_fwbs)",
+                u_unplanned_fwbs,
+                "OP ",
+            )
+            po.oblnkl(self.outfile)
+        
+        return u_unplanned_fwbs
