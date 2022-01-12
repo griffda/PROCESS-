@@ -9,8 +9,12 @@
 # ```
 # nsweep = 17 * bmxlim, maximum peak toroidal field (T) (`constraint equation 25`)
 # isweep = 11
-# sweep = 11. , 11.2, 11.4, 11.6, 11.8, 12. , 12.2, 12.4, 12.6, 12.8, 13.
+# sweep = 11., 11.2, 11.4, 11.6, 11.8, 12., 12.2, 12.4, 12.6, 12.8, 13.
 # ```
+# 
+# - `nsweep`: integer denoting the variable to scan (see `scan_module` for options). Here `17` corresponds to `bmxlim` being scanned
+# - `isweep`: the number of scan points to run
+# - `sweep`: array of values for the scanned variable to take; one for each run. Should be of length `isweep`
 
 # %%
 from process.main import SingleRun
