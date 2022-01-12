@@ -23,7 +23,7 @@ class Stellarator:
 
     def __init__(self, parent_modules_class) -> None:
         """Initialises the IFE module's variables
-        
+
         :param parent_modules_class: a pointer to the parent Models class, hence allowing for access to other models in the same instantiated parent
         :type parent_modules_class: process.main.Models
         """
@@ -36,7 +36,7 @@ class Stellarator:
         relevant to stellarators
         author: P J Knight, CCFE, Culham Science Centre
         author: F Warmer, IPP Greifswald
-        
+
         This routine is the caller for the stellarator models.
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
@@ -46,7 +46,7 @@ class Stellarator:
 
         if output:
             # original routine contained the following debug
-            # print statements that have been removed due to 
+            # print statements that have been removed due to
             # f2py derived-type limitations.
             # print *,"Used stellarator configuration: ", config%name
             # print *,"Deviation from reference point"

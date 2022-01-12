@@ -18,7 +18,7 @@ class IFE:
 
     def __init__(self, parent_modules_class) -> None:
         """Initialises the IFE module's variables
-        
+
         :param parent_modules_class: a pointer to the parent Models class, hence allowing for access to other models in the same instantiated parent
         :type parent_modules_class: process.main.Models
         """
@@ -71,7 +71,7 @@ class IFE:
 
             # Vacuum system
             ife.ifevac()
-            
+
             # Buildings
             ife.ifebdg(self.outfile, 1)
 
@@ -121,4 +121,3 @@ class IFE:
 
         # Costs
         cs.costs(constants.nout, 0)
-        
