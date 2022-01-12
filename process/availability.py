@@ -69,7 +69,7 @@ class Availability:
             if (fwbsv.fwlife < 0.0001e0) :
                 fwbsv.bktlife = min(cv.abktflnc/pv.wallmw, cv.tlife)
             else:
-                fwbsv.bktlife = min(fwbsv.wlife, cv.abktflnc/pv.wallmw, cv.tlife)
+                fwbsv.bktlife = min(fwbsv.fwlife, cv.abktflnc/pv.wallmw, cv.tlife)
 
             # TODO Issue #834
             # Add a test for hldiv=0
@@ -99,7 +99,7 @@ class Availability:
         # Taylor and Ward 1999 model (iavail=1)
         if (cv.iavail == 1) :
         # Which component has the shorter life?
-            if (cv.ivlife < fwbsv.bktlife) :
+            if (cv.divlife < fwbsv.bktlife) :
                 ld = cv.divlife
                 lb = fwbsv.bktlife
                 td = cv.tdivrepl
