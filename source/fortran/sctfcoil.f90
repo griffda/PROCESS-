@@ -531,19 +531,6 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
     if ( acond <= 0.0D0 .or. avwp <= 0.0D0 .or. aiwp <= 0.0D0 .or. &
          aswp <= 0.0D0 .or. a_tf_steel <= 0.0D0 .or. f_tf_steel <= 0.0D0 .or. &
          a_tf_ins <= 0.0D0 .or. f_tf_ins <= 0.0D0 ) then
-        print *
-        print *,"CPS Swanson Diagnostic Outputs:" !! [EDIT: Remove]
-        print *,"acond =",acond
-        print *,"avwp =",avwp
-        print *,"aiwp =",aiwp
-        print *,"aswp =",aswp
-        print *,"a_tf_steel =",a_tf_steel
-        print *,"f_tf_steel =",f_tf_steel
-        print *,"a_tf_ins =",a_tf_ins
-        print *,"f_tf_ins =",f_tf_ins
-        print *,"n_tf_turn =",n_tf_turn
-        print *,"acndttf =",acndttf
-        print *,"i_tf_turns_integer =",i_tf_turns_integer
         fdiags(1) = acond 
         fdiags(2) = avwp 
         fdiags(3) = aiwp 
@@ -908,17 +895,6 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
             acndttf = t_conductor**2 - acstf
         
         end if
-        
-        print *
-        print *,"CPS Swanson Diagnostic Outputs:" !! [EDIT: Remove]
-        print *,"i_tf_sc_mat =",i_tf_sc_mat
-        print *,"acndttf =",acndttf
-        print *,"acstf =",acstf
-        print *,"t_conductor**2 =",t_conductor**2
-        print *,"t_conductor =",t_conductor
-        print *,"t_cable =",t_cable
-        print *,"thwcndut =",thwcndut
-        print *,"t_turn_tf =",t_turn_tf
 
     end subroutine tf_averaged_turn_geom
 
@@ -5362,14 +5338,7 @@ contains
             if (abs(strncon_tf) > 0.5D-2) then
                 fdiags(1) = strncon_tf ; call report_error(261)
                 strain = sign(0.5D-2,strncon_tf)
-                print *
-                print *,"CPS Swanson Diagnostic Outputs:" !! [EDIT: Remove]
-                print *,"The if statement ran!"
             end if
-            print *
-            print *,"CPS Swanson Diagnostic Outputs:" !! [EDIT: Remove]
-            print *,"strncon_tf",strncon_tf
-            print *,"strain",strain
             !  jcritsc returned by itersc is the critical current density in the
             !  superconductor - not the whole strand, which contains copper
             call wstsc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)

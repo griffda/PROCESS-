@@ -595,11 +595,6 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
     tc0eps, bzero, strfun, jc1, jc2, jc3, scalefac
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    print *
-    print *,"CPS Swanson Diagnostic Outputs:" !! [EDIT: Remove]
-    print *,"wstsc is now running"
-    print *,"strain",strain
             
     !  $\epsilon_{sh}$
     epssh = (ca2*eps0a)/(sqrt(ca1**2 - ca2**2))
