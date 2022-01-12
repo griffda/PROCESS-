@@ -19,7 +19,7 @@ module numerics
   integer, parameter :: ipnvars = 175
   !!  ipnvars FIX : total number of variables available for iteration
 
-  integer, parameter :: ipeqns = 87
+  integer, parameter :: ipeqns = 88
   !!  ipeqns  FIX : number of constraint equations available
   
   integer, parameter :: ipnfoms = 19
@@ -189,7 +189,8 @@ module numerics
   !!  <LI> (84) Lower limit for beta (itv 173 fbetatry_lower)
   !!  <LI> (85) Constraint for CP lifetime
   !!  <LI> (86) Constraint for TF coil turn dimension
-  !!  <LI> (87) Constraint for cryogenic power</UL>
+  !!  <LI> (87) Constraint for cryogenic power
+  !!  <LI> (88) Constraint for TF coil strain absolute value</UL>
 
   integer, dimension(ipnvars) :: ixc 
   !!  ixc(ipnvars) /0/ :
@@ -362,7 +363,7 @@ module numerics
   !! <LI> (162) r_cp_top : Top outer radius of the centropost (ST only) (m)
   !! <LI> (163) f_t_turn_tf : f-value for TF coils WP trurn squared dimension constraint 
   !! <LI> (164) f_crypmw : f-value for cryogenic plant power
-  !! <LI> (165) EMPTY : Description
+  !! <LI> (165) fstrncon_tf : f-value for TF coil strain absolute value
   !! <LI> (166) EMPTY : Description
   !! <LI> (167) EMPTY : Description
   !! <LI> (168) EMPTY : Description
@@ -533,7 +534,8 @@ contains
       'beta > betalim_lower             ', &
       'CP lifetime                      ', &
       'TFC turn dimension               ', &
-      'Cryogenic plant power            '  &
+      'Cryogenic plant power            ', &
+      'TF coil strain absolute value    '  &
       /)
 
     ! Please note: All strings between '...' above must be exactly 33 chars long

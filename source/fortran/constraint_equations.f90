@@ -280,6 +280,8 @@ contains
         case (86); call constraint_eqn_086(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
          ! Constraint for cryogenic power
         case (87); call constraint_eqn_087(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
+         ! Constraint for TF coil strain
+        case (88); call constraint_eqn_088(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
        case default
 
         idiags(1) = icc(i)
@@ -3297,6 +3299,36 @@ contains
       tmp_symbol = '<'
       tmp_units = 'MW'
    end subroutine constraint_eqn_087
+
+   subroutine constraint_eqn_088(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
+      !! Equation for TF coil vertical strain upper limit (absolute value)
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for TF coil vertical strain upper limit (absolute value)
+      !! #=# tfcoil
+      !! #=#=# fstrncon_tf, strncon_tf_max
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! fstrncon_tf : input real : f-value for TF coil strain
+      !! strncon_tf_max : input real : Allowable maximum TF coil vertical strain
+      !! strncon_tf : input real : Constrained TF coil vertical strain
+      use constraint_variables, only: fstrncon_tf
+      use tfcoil_variables, only: strncon_tf_max, strncon_tf
+      implicit none
+            real(dp), intent(out) :: tmp_cc
+      real(dp), intent(out) :: tmp_con
+      real(dp), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
+
+      tmp_cc =  1.0D0 - fstrncon_tf * strncon_tf_max/abs(strncon_tf)
+      tmp_con = strncon_tf_max
+      tmp_err = strncon_tf_max - abs(strncon_tf) / fstrncon_tf
+      tmp_symbol = '<'
+      tmp_units = ''
+
+   end subroutine constraint_eqn_088
 
 end module constraints
 

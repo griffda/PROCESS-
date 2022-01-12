@@ -214,7 +214,7 @@ contains
       fcqt, fzeffmax, fstrcase, fhldiv, foh_stress, fwalld, gammax, fjprot, &
       ftohs, tcycmn, auxmin, zeffmax, peakfactrad, fdtmp, fpoloidalpower, &
       fnbshinef, freinke, fvvhe, fqval, fq, ftaucq, fbetap, fbeta, fjohc, &
-      fflutf, bmxlim, tbrnmn, fbetatry_lower
+      fflutf, bmxlim, tbrnmn, fbetatry_lower, fstrncon_tf
     use cost_variables, only: ucich, uctfsw, dintrt, ucblbe, uubop, dtlife, &
       cost_factor_vv, cfind, uccry, fcap0cp, uccase, uuves, cconshtf, conf_mag, &
       ucbllipb, ucfuel, uumag, ucpfbs, ireactor, uucd, div_umain_time, div_nu, &
@@ -336,7 +336,8 @@ contains
       i_tf_stress_model, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
       i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti, &
       i_cp_joints, n_tf_turn, f_t_turn_tf, t_turn_tf_max, t_cable_tf, &
-      sig_tf_wp_max, eyoung_cond_t, i_tf_cond_props, i_tf_transverse_props
+      sig_tf_wp_max, eyoung_cond_t, i_tf_cond_props, i_tf_transverse_props, &
+      strncon_tf_max
 
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
@@ -979,6 +980,9 @@ contains
        case ('fstrcond')
           call parse_real_variable('fstrcond', fstrcond, 0.001D0, 10.0D0, &
                'F-value for TF coil conduit stress')
+       case ('fstrncon_tf')
+          call parse_real_variable('fstrncon_tf', fstrncon_tf, 1.0D-9, 10.0D0, &
+               'F-value for TF coil strain absolute value')
        case ('ftaucq')
           call parse_real_variable('ftaucq', ftaucq, 0.001D0, 1.0D0, &
                'F-value for calculated quench time limit')
@@ -2065,6 +2069,9 @@ contains
        case ('strncon_pf')
           call parse_real_variable('strncon_pf', strncon_pf, -0.02D0, 0.02D0, &
                'Strain in PF superconductor material')
+       case ('strncon_tf_max')
+          call parse_real_variable('strncon_tf_max', strncon_tf_max, 0.0D0, 0.3D0, &
+               'Maximum allowed absolute value of the strain in the TF coil')
        case ('tcoolin')
           call parse_real_variable('tcoolin', tcoolin, 4.0D0, 373.15D0, &
                'Centrepost coolant inlet temperature (K)')
