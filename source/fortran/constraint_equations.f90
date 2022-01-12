@@ -3314,19 +3314,31 @@ contains
       !! strncon_tf_max : input real : Allowable maximum TF coil vertical strain
       !! strncon_tf : input real : Constrained TF coil vertical strain
       use constraint_variables, only: fstrncon_tf
-      use tfcoil_variables, only: strncon_tf_max, strncon_tf
+      use tfcoil_variables, only: strncon_tf_max, strncon_tf, i_strncon_tf
       implicit none
             real(dp), intent(out) :: tmp_cc
       real(dp), intent(out) :: tmp_con
       real(dp), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
+      
+      ! Do not permit strncon_tf to be an input:
+      if (i_strncon_tf == 1) then
+        tmp_cc =  1.0D0 - fstrncon_tf * strncon_tf_max/abs(strncon_tf)
+        tmp_con = strncon_tf_max
+        tmp_err = strncon_tf_max - abs(strncon_tf) / fstrncon_tf
+        tmp_symbol = '<'
+        tmp_units = ''
+      else
+        tmp_cc = 0
+        tmp_con = 0
+        tmp_err = 0
+        tmp_symbol = ''
+        tmp_units = ''
+        call report_error(275)
+      end if
 
-      tmp_cc =  1.0D0 - fstrncon_tf * strncon_tf_max/abs(strncon_tf)
-      tmp_con = strncon_tf_max
-      tmp_err = strncon_tf_max - abs(strncon_tf) / fstrncon_tf
-      tmp_symbol = '<'
-      tmp_units = ''
+
 
    end subroutine constraint_eqn_088
 

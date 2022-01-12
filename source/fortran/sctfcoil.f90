@@ -1743,7 +1743,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         aiwp, aswp, cpttf, n_tf, i_tf_stress_model, sig_tf_wp_max, &
         i_tf_turns_integer, casthi, acond, avwp, awphec, poisson_ins, &
         eyoung_cond_t, poisson_cond_z, poisson_cond_t, dhecoil, fcutfsu, &
-        strncon_tf
+        strncon_tf, i_strncon_tf
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
         cohbop, ncls, cptdin
     use constants, only: pi, sig_file
@@ -2422,7 +2422,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         sig_tf_z = vforce / (acasetf + acndttf*n_tf_turn) ! Array equation [EDIT: Are you sure? It doesn't look like one to me]
         
         ! Strain in vertical direction on WP
-        strncon_tf = sig_tf_z(n_tf_bucking+1) / eyoung_wp_z_eff
+        if ( i_strncon_tf == 1) then
+          strncon_tf = sig_tf_z(n_tf_bucking+1) / eyoung_wp_z_eff
+        end if
 
         ! Case strain
         casestr = sig_tf_z(n_tf_bucking) / eyoung_steel
@@ -2445,7 +2447,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                                        strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
         
         !! Strain in TF conductor material
-        strncon_tf = strain_tf_z(n_tf_bucking*n_radial_array+1);
+        if ( i_strncon_tf == 1) then
+          strncon_tf = strain_tf_z(n_tf_bucking*n_radial_array+1);
+        end if
         
     else if ( i_tf_stress_model == 2) then
         ! Extended plane strain calculation [Pa]
@@ -2459,7 +2463,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                                        strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
         
         !! Strain in TF conductor material
-        strncon_tf = strain_tf_z(n_tf_bucking*n_radial_array+1);
+        if ( i_strncon_tf == 1) then
+          strncon_tf = strain_tf_z(n_tf_bucking*n_radial_array+1);
+        end if
         
     end if
     ! ---

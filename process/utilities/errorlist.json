@@ -2,7 +2,7 @@
   "version":  [ "PROCESS version 2.1.1" ],
   "comment1": [ "List of error messages used via error_handling.f90" ],
   "comment2": [ "Increment n_errortypes if an error is added to this list" ],
-  "n_errortypes": 274,
+  "n_errortypes": 275,
   "errors": [
    { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
    { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -277,6 +277,7 @@
    {"no": 271, "level": 3, "message": "CHECK: Impossible to set the TF coil turn and cable size simultaneously"}, 
    {"no": 272, "level": 2, "message": "Double-null: Upper vertical build forced to match lower"}, 
    {"no": 273, "level": 2, "message": "CHECK: tmpcry should be lower than tftmp"}, 
-   {"no": 274, "level": 2, "message": "CHECK: One of the areas or fractions is negative in the internal SC TF coil geometry"}
+   {"no": 274, "level": 2, "message": "CHECK: One of the areas or fractions is negative in the internal SC TF coil geometry"}, 
+   {"no": 275, "level": 3, "message": "CONSTRAINTS: Can't use constraint 88 if i_strncon_tf == 0"}
    ]
  }

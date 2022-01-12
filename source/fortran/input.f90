@@ -337,8 +337,8 @@ contains
       i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti, &
       i_cp_joints, n_tf_turn, f_t_turn_tf, t_turn_tf_max, t_cable_tf, &
       sig_tf_wp_max, eyoung_cond_t, i_tf_cond_props, i_tf_transverse_props, &
-      strncon_tf_max
-
+      strncon_tf_max, strncon_tf, i_strncon_tf
+      
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
     use vacuum_variables, only: dwell_pump, pbase, tn, pumpspeedfactor, &
@@ -2008,6 +2008,9 @@ contains
        case ('i_tf_transverse_props')
          call parse_int_variable('i_tf_transverse_props', i_tf_transverse_props, 0, 1, &
               'Switch for the TF coil conductor transverse behavior')
+       case ('i_strncon_tf')
+         call parse_int_variable('i_strncon_tf', i_strncon_tf, 0, 1, &
+              'Switch for the TF coil strain behavior')
        case ('jbus')
           call parse_real_variable('jbus', jbus, 1.0D4, 1.0D8, &
                'TF coil bus current density (A/m2)')
@@ -2069,6 +2072,9 @@ contains
        case ('strncon_pf')
           call parse_real_variable('strncon_pf', strncon_pf, -0.02D0, 0.02D0, &
                'Strain in PF superconductor material')
+       case ('strncon_tf')
+          call parse_real_variable('strncon_tf', strncon_tf, -0.02D0, 0.02D0, &
+               'Strain in TF superconductor material')
        case ('strncon_tf_max')
           call parse_real_variable('strncon_tf_max', strncon_tf_max, 0.0D0, 0.3D0, &
                'Maximum allowed absolute value of the strain in the TF coil')

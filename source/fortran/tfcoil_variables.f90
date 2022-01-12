@@ -443,12 +443,20 @@ module tfcoil_variables
 
   real(dp) :: strncon_tf
   !! Strain in TF conductor material 
+  !! Input if `i_strncon_tf == 0`; otherwise computed in stresscl
   !! used in Nb3Sn critical surface model `i_tf_sc_mat=1,4,5`
   !! Constrain the absolute value using `constraint equation 88`
+  !! You can't have constraint 88 and i_strncon_tf = 0 at the same time
   
   real(dp) :: strncon_tf_max
   !! Maximum allowed absolute value of the strain in the TF coil
   !! (`Constraint equation 88`)
+  
+  integer :: i_strncon_tf
+  !! Switch for the behavior of the TF strain, strncon_tf
+  !!
+  !! - =0  strncon_tf is an input
+  !! - =1  strncon_tf is computed by the subroutine stresscl
 
   character(len=12) :: quench_model
   !! switch for TF coil quench model (Only applies to REBCO magnet at present, issue #522):
@@ -913,6 +921,7 @@ module tfcoil_variables
     strncon_pf = -0.005D0
     strncon_tf = -0.005D0
     strncon_tf_max = 0.7D-2
+    i_strncon_tf = 1
     quench_model = 'exponential'
     quench_detection_ef = 0D0
     time1 = 0D0
