@@ -266,7 +266,7 @@ class Availability:
 
         # Planned unavailability
 
-        u_planned = av.calc_u_planned(self.outfile, self.iprint)
+        u_planned = self.calc_u_planned(self.outfile, self.iprint)
 
         # Operational time (years)
         cv.t_operation = cv.tlife * (1.0e0 - u_planned)
@@ -357,3 +357,135 @@ class Availability:
             cpfact,
             "OP ",
         )
+
+    def calc_u_planned(self):
+        """Calculates the planned unavailability of the plant
+        author: J Morris, CCFE, Culham Science Centre
+        outfile : input integer : output file unit
+        iprint : input integer : switch for writing to output file (1=yes)
+        u_planned : output real : planned unavailability of plant
+        This routine calculates the planned unavailability of the
+        plant, using the methodology outlined in the 2014 EUROfusion
+        RAMI report.
+        2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+        """
+
+        # Full power lifetimes (in years) !
+
+        # First wall / blanket lifetime (years)
+        fwbsv.bktlife = min(cv.abktflnc / pv.wallmw, cv.tlife)
+
+        # Divertor lifetime (years)
+        cv.divlife = min(cv.adivflnc / dv.hldiv, cv.tlife)
+
+        # Centrepost lifetime (years) (ST only)
+        if pv.itart == 1:
+            # SC magnets CP lifetime
+            # Rem : only the TF maximum fluence is considered for now
+            if tfv.i_tf_sup == 1:
+                cv.cplife = min(ctv.nflutfmax / (fwbsv.neut_flux_cp * YEAR), cv.tlife)
+
+            # Aluminium/Copper magnets CP lifetime
+            # For now, we keep the original def, developped for GLIDCOP magnets ...
+            else:
+                cv.cplife = min(cv.cpstflnc / pv.wallmw, cv.tlife)
+
+        # Current drive lifetime (assumed equal to first wall and blanket lifetime)
+        cv.cdrlife = fwbsv.bktlife
+
+        # Calculate the blanket and divertor replacement times !
+
+        # Blanket replacement time
+        # ( Calculated using scaling from 2014 EUROfusion RAMI report )
+
+        # Mean time to repair blanket is same as replacing both blanket and divertor.
+        # The +2.0 at the end is for the 1 month cooldown and pump down at either end
+        # of the maintenance period
+        mttr_blanket = (21.0e0 * cv.num_rh_systems ** (-0.9e0) + 2.0e0) / 12.0e0
+
+        # Mean time to repair divertor is 70% of time taken to replace blanket
+        # This is taken from Oliver Crofts 2014 paper
+        mttr_divertor = 0.7e0 * mttr_blanket
+
+        #  Which component has the shorter life?
+        if cv.divlife < fwbsv.bktlife:
+            lifetime_shortest = cv.divlife
+            lifetime_longest = fwbsv.bktlife
+            mttr_shortest = mttr_divertor
+        else:
+            lifetime_shortest = fwbsv.bktlife
+            lifetime_longest = cv.divlife
+            mttr_shortest = mttr_blanket
+
+        # Number of outages between each combined outage
+        n = math.ceiling(lifetime_longest / lifetime_shortest) - 1
+
+        # Planned unavailability
+        u_planned = (n * mttr_shortest + mttr_blanket) / (
+            (n + 1) * lifetime_shortest + (n * mttr_shortest + mttr_blanket)
+        )
+
+        # Output
+        if self.iprint == 1:
+
+            po.oheadr(self.outfile, "Plant Availability (2014 Model)")
+
+            po.ocmmnt(self.outfile, "Planned unavailability:")
+            po.oblnkl(self.outfile)
+            po.ovarre(
+                self.outfile,
+                "Allowable blanket neutron fluence (MW-yr/m2)",
+                "(abktflnc)",
+                cv.abktflnc,
+            )
+            po.ovarre(
+                self.outfile,
+                "Allowable divertor heat fluence (MW-yr/m2)",
+                "(adivflnc)",
+                cv.adivflnc,
+            )
+            po.ovarre(
+                self.outfile,
+                "First wall / blanket lifetime (FPY)",
+                "(bktlife)",
+                fwbsv.bktlife,
+                "OP ",
+            )
+            po.ovarre(
+                self.outfile, "Divertor lifetime (FPY)", "(divlife)", cv.divlife, "OP "
+            )
+
+            po.ovarin(
+                self.outfile,
+                "Number of remote handling systems",
+                "(num_rh_systems)",
+                cv.num_rh_systems,
+            )
+            po.ovarre(
+                self.outfile,
+                "Time needed to replace divertor (yrs)",
+                "(mttr_divertor)",
+                mttr_divertor,
+            )
+            po.ovarre(
+                self.outfile,
+                "Time needed to replace blanket (yrs)",
+                "(mttr_blanket)",
+                mttr_blanket,
+            )
+            po.ovarre(
+                self.outfile,
+                "Time needed to replace blkt + div (yrs)",
+                "(mttr_blanket)",
+                mttr_blanket,
+            )
+            po.ovarre(
+                self.outfile,
+                "Total planned unavailability",
+                "(uplanned)",
+                u_planned,
+                "OP ",
+            )
+            po.oblnkl(self.outfile)
+
+        return u_planned
