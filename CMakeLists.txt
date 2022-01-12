@@ -138,6 +138,7 @@ LIST(APPEND PROCESS_SRCS
     error_handling.f90
     global_variables.f90
     constraint_variables.f90
+    vacuum_variables.f90
 )
 
 PREPROCESS()
