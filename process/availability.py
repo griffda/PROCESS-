@@ -40,6 +40,9 @@ class Availability:
         0    |  Input value for cfactr
         1    |  Ward and Taylor model (1999)
         2    |  Morris model (2015)
+
+        :param output: indicate whether output should be written to the output file, or not
+        :type output: boolean
         """
         self.iprint = 1 if output else 0
 

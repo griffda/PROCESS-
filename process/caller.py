@@ -38,7 +38,7 @@ class Caller:
 
         # Inertial Fusion Energy calls
         if ft.ife_variables.ife != 0:
-            ft.ife_module.ifecll()
+            self.models.ife.run(output=False)
             return
 
         # Tokamak calls
