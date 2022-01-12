@@ -10,6 +10,8 @@ from process.fortran import tfcoil_variables as tfv
 from process.fortran import constraint_variables as ctv
 from process.fortran import times_variables as tv
 from process.fortran import process_output as po
+from process.fortran import availability_module as av
+from process.fortran import vacuum_variables as vacv
 
 DAY = 60*60*24
 """Seconds in a day [s]"""
@@ -47,7 +49,7 @@ class Availability:
         self.iprint = 1 if output else 0
 
         if cv.iavail > 1:
-            ft.availability_module.avail_2(ft.constants.nout, self.iprint)  # Morris model (2015)
+            self.avail_2()  # Morris model (2015)
         else:
             self.avail()  # Taylor and Ward model (1999)
 
@@ -184,3 +186,71 @@ class Availability:
             po.ovarre(self.outfile,'Total plant availability fraction', '(cfactr)', cv.cfactr)
         else:
             po.ovarre(self.outfile,'Total plant availability fraction', '(cfactr)', cv.cfactr, 'OP ')
+
+    
+    def avail_2(self):
+        """Routine to calculate component lifetimes and the overall plant availability
+        author: J Morris, CCFE, Culham Science Centre
+        outfile : input integer : output file unit
+        iprint : input integer : switch for writing to output file (1=yes)
+        This routine calculates the component lifetimes and the overall
+        plant availability using an updated model linked to the 2014 EUROfusion
+        RAMI task
+        2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+        """
+
+       # Plant Availability
+
+    # Planned unavailability
+
+        u_planned = av.calc_u_planned(self.outfile, self.iprint)
+
+    # Operational time (years)
+        cv.t_operation = cv.tlife * (1.0e0-u_planned)
+
+    # Un-planned unavailability
+
+    # Magnets
+        u_unplanned_magnets = av.calc_u_unplanned_magnets(self.outfile, self.iprint)
+
+    # Divertor
+        u_unplanned_div = av.calc_u_unplanned_divertor(self.outfile, self.iprint)
+
+    # First wall and blanket
+        u_unplanned_fwbs = av.calc_u_unplanned_fwbs(self.outfile, self.iprint)
+
+    # Balance of plant
+        u_unplanned_bop = av.calc_u_unplanned_bop(self.outfile, self.iprint)
+
+    # Heating and current drive
+        u_unplanned_hcd = av.calc_u_unplanned_hcd()
+
+    # Vacuum systems
+
+    # Number of redundant pumps
+        redun_vac = math.floor(vacv.vpumpn*cv.redun_vacp/100.0 + 0.5e0)
+
+        u_unplanned_vacuum = av.calc_u_unplanned_vacuum(self.outfile,self.iprint)
+
+    # Total unplanned unavailability
+        u_unplanned = min(1.0e0, u_unplanned_magnets + u_unplanned_div + u_unplanned_fwbs + u_unplanned_bop + u_unplanned_hcd + u_unplanned_vacuum)
+
+    # Total availability
+        cv.cfactr = max(1.0e0 - (u_planned + u_unplanned + u_planned*u_unplanned), 0.0e0)
+
+    # Capacity factor
+        cpfact = cv.cfactr * (tv.tburn / tv.tcycle)
+
+    # Output
+        if (self.iprint != 1):
+            return
+
+        po.ocmmnt(self.outfile,'Total unavailability:')
+        po.oblnkl(self.outfile)
+        po.ovarre(self.outfile,'Total planned unavailability', '(u_planned)', u_planned, 'OP ')
+        po.ovarre(self.outfile,'Total unplanned unavailability', '(u_unplanned)', u_unplanned, 'OP ')
+        po.oblnkl(self.outfile)
+        po.ovarre(self.outfile,'Total plant availability fraction', '(cfactr)',cv.cfactr, 'OP ')
+        po.ovarre(self.outfile,'Total DT operational time (years)','(t_operation)',cv.t_operation, 'OP ')
+        po.ovarre(self.outfile,'Total plant lifetime (years)','(tlife)',tv.tlife)
+        po.ovarre(self.outfile,'Capacity factor: total lifetime elec. energy output / output power', '(cpfact)',cpfact, 'OP ')

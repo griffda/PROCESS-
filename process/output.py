@@ -43,17 +43,7 @@ def write(models, outfile):
         models.costs_step.output()
 
     # Availability model
-    # Availability switch values
-    # No.  |  model
-    # ---- | ------
-    # 0    |  Input value for cfactr
-    # 1    |  Ward and Taylor model (1999)
-    # 2    |  Morris model (2015)
-
-    if ft.cost_variables.iavail > 1:
-        ft.availability_module.avail_2(outfile, 1)  # Morris model (2015)
-    else:
-        models.availability.run(output=True)  # Taylor and Ward model (1999)
+    models.availability.run(output=True)
 
     # Writing the output from physics.f90 into OUT.DAT + MFILE.DAT
     ft.physics_module.outplas(outfile)

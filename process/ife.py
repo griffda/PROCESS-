@@ -46,6 +46,8 @@ class IFE:
             cs.costs(self.outfile, 1)
 
             # Plant availability
+            # TODO: can it be assumed that in this case, iavail <= 1
+            # and I can just call run with output=True?
             self.parent_modules_class.availability.iprint = 1
             self.parent_modules_class.availability.avail()
 
@@ -112,6 +114,8 @@ class IFE:
         ife.ifepw2(constants.nout, 0)
 
         # Plant availability
+        # TODO: can it be assumed that in this case, iavail > 1
+        # and I can just call run with output=False?
         self.parent_modules_class.availability.iprint = 0
         self.parent_modules_class.availability.avail()
 

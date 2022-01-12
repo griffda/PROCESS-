@@ -55,6 +55,8 @@ class Stellarator:
             # print *,"n_tf (should be 1)", n_tf/(config%coilspermodule*config%symmetry)
 
             cs.costs(self.outfile, 1)
+            # TODO: can it be assumed that in this case, iavail <= 1
+            # and I can just call run with output=True?
             self.parent_modules_class.availability.iprint = 1
             self.parent_modules_class.availability.avail()
             ph.outplas(self.outfile)
@@ -89,6 +91,8 @@ class Stellarator:
         bm.bldgcall(self.outfile, 0)
         pw.acpow(self.outfile, 0)
         pw.power2(self.outfile, 0)
+        # TODO: can it be assumed that in this case, iavail > 1
+        # and I can just call run with output=False?
         self.parent_modules_class.availability.iprint = 0
         self.parent_modules_class.availability.avail()
         cs.costs(self.outfile, 0)
