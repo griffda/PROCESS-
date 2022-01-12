@@ -1,5 +1,7 @@
 import math
 
+from process.main import logger
+
 from process import fortran as ft
 from process.fortran import cost_variables as cv
 from process.fortran import physics_variables as pv
@@ -274,10 +276,10 @@ class Availability:
         # Un-planned unavailability
 
         # Magnets
-        u_unplanned_magnets = av.calc_u_unplanned_magnets(self.outfile, self.iprint)
+        u_unplanned_magnets = self.calc_u_unplanned_magnets()
 
         # Divertor
-        u_unplanned_div = av.calc_u_unplanned_divertor(self.outfile, self.iprint)
+        u_unplanned_div = self.calc_u_unplanned_divertor()
 
         # First wall and blanket
         u_unplanned_fwbs = av.calc_u_unplanned_fwbs(self.outfile, self.iprint)
@@ -361,13 +363,14 @@ class Availability:
     def calc_u_planned(self) -> float:
         """Calculates the planned unavailability of the plant
         author: J Morris, CCFE, Culham Science Centre
-        outfile : input integer : output file unit
-        iprint : input integer : switch for writing to output file (1=yes)
-        u_planned : output real : planned unavailability of plant
+
         This routine calculates the planned unavailability of the
         plant, using the methodology outlined in the 2014 EUROfusion
         RAMI report.
         2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+
+        :return u_planned: planned unavailability of plant
+        :type u_planned: float
         """
 
         # Full power lifetimes (in years) !
@@ -493,13 +496,14 @@ class Availability:
     def calc_u_unplanned_magnets(self) -> float:
         """Calculates the unplanned unavailability of the magnets
         author: J Morris, CCFE, Culham Science Centre
-        outfile : input integer : output file unit
-        iprint : input integer : switch for writing to output file (1=yes)
-        u_unplanned_magnets : output real : unplanned unavailability of magnets
+
         This routine calculates the unplanned unavailability of the magnets,
         using the methodology outlined in the 2014 EUROfusion
         RAMI report.
         2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+
+        :return u_unplanned_magnets: unplanned unavailability of magnets
+        :type u_unplanned_magnets: float
         """
 
         # Magnet temperature margin limit (K)
@@ -547,7 +551,7 @@ class Availability:
                 self.outfile,
                 "c parameter, determining the temp margin where lifetime declines",
                 "(conf_mag)",
-                conf_mag,
+                cv.conf_mag,
             )
             po.ovarre(
                 self.outfile,
@@ -566,3 +570,93 @@ class Availability:
             po.oblnkl(self.outfile)
 
         return u_unplanned_magnets
+
+    def calc_u_unplanned_divertor(self) -> float:
+        """Calculates the unplanned unavailability of the divertor
+        author: J Morris, CCFE, Culham Science Centre
+
+        :return u_unplanned_divertor: unplanned unavailability of the divertor
+        :type u_unplanned_divertor: float
+        """
+
+        # Calculate cycle limit in terms of days
+        # Number of cycles between planned blanket replacements, N
+        n = cv.divlife * YEAR / tv.tcycle
+
+        # The probability of failure in one pulse cycle (before the reference cycle life)
+        pf = (cv.div_prob_fail / DAY) * tv.tcycle
+        a0 = 1.0e0 - pf * cv.div_umain_time * YEAR / tv.tcycle
+
+        # Integrating the instantaneous availability gives the mean
+        # availability over the planned cycle life N
+        if cv.div_nu <= cv.div_nref:
+            logger.error(
+                """div_nu <= div_nref
+            The cycle when the divertor fails with 100% probability <= & Reference value for cycle life of divertor
+            """
+            )
+            po.ocmmnt(
+                self.outfile,
+                "ERROR: The cycle when the divertor fails with 100% probability & <= Reference value for cycle cycle life of divertor",
+            )
+
+        # Check number of cycles
+
+        # Less than reference (availability is min availability)
+        if n <= cv.div_nref:
+            div_avail = a0
+
+        # Greater than cycle number with 100% failure rate
+        elif n >= cv.div_nu:
+            div_avail = 0.0e0
+
+        # Else number of cycles is inbetween and is given by formula below
+        else:
+            div_avail = (a0 / (cv.div_nu - cv.div_nref)) * (
+                cv.div_nu - 0.5e0 * cv.div_nref ** 2.0e0 / n - 0.5e0 * n
+            )
+
+        # Unplanned unavailability for divertor
+        u_unplanned_div = 1.0e0 - div_avail
+
+        # Output
+        if self.iprint == 1:
+            po.ocmmnt(self.outfile, "Divertor:")
+            po.oblnkl(self.outfile)
+            po.ovarre(
+                self.outfile,
+                "Probability of failure per operational day",
+                "(div_prob_fail)",
+                cv.div_prob_fail,
+            )
+            po.ovarre(
+                self.outfile,
+                "Repair time (years)",
+                "(div_umain_time)",
+                cv.div_umain_time,
+            )
+            po.ovarre(
+                self.outfile,
+                "Reference value for cycle life",
+                "(div_nref)",
+                cv.div_nref,
+            )
+            po.ovarre(
+                self.outfile,
+                "The cycle when failure is 100% certain",
+                "(div_nu)",
+                cv.div_nu,
+            )
+            po.ovarre(
+                self.outfile, "Number of cycles between planned replacements", "(n)", n
+            )
+            po.ovarre(
+                self.outfile,
+                "Unplanned unavailability",
+                "(u_unplanned_div)",
+                u_unplanned_div,
+                "OP ",
+            )
+            po.oblnkl(self.outfile)
+
+        return u_unplanned_div
