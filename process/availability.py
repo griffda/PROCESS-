@@ -358,7 +358,7 @@ class Availability:
             "OP ",
         )
 
-    def calc_u_planned(self):
+    def calc_u_planned(self) -> float:
         """Calculates the planned unavailability of the plant
         author: J Morris, CCFE, Culham Science Centre
         outfile : input integer : output file unit
@@ -489,3 +489,80 @@ class Availability:
             po.oblnkl(self.outfile)
 
         return u_planned
+
+    def calc_u_unplanned_magnets(self) -> float:
+        """Calculates the unplanned unavailability of the magnets
+        author: J Morris, CCFE, Culham Science Centre
+        outfile : input integer : output file unit
+        iprint : input integer : switch for writing to output file (1=yes)
+        u_unplanned_magnets : output real : unplanned unavailability of magnets
+        This routine calculates the unplanned unavailability of the magnets,
+        using the methodology outlined in the 2014 EUROfusion
+        RAMI report.
+        2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+        """
+
+        # Magnet temperature margin limit (K)
+        # Use the lower of the two values.  Issue #526
+        tmargmin = min(tfv.tmargmin_tf, tfv.tmargmin_cs)
+        mag_temp_marg_limit = tmargmin
+
+        # Magnet temperature margin (K)
+        mag_temp_marg = tfv.temp_margin
+
+        # Magnet maintenance time (years)
+        mag_main_time = 0.5e0
+
+        # Minimum unplanned unavailability
+        mag_min_u_unplanned = mag_main_time / (cv.t_operation + mag_main_time)
+
+        # Point at which risk of unplanned unavailability increases
+        # conf_mag is the c factor, which determines the temperature margin at which
+        # lifetime starts to decline.
+        start_of_risk = mag_temp_marg_limit / cv.conf_mag
+
+        # Determine if temperature margin is in region with risk of unplanned unavailability
+        if tfv.temp_margin >= start_of_risk:
+            u_unplanned_magnets = mag_min_u_unplanned
+        else:
+            # Linear decrease in expected lifetime when approaching the limit
+            t_life = max(
+                0.0e0,
+                (cv.t_operation / (start_of_risk - tmargmin))
+                * (tfv.temp_margin - tmargmin),
+            )
+            u_unplanned_magnets = mag_main_time / (t_life + mag_main_time)
+
+        # Output !
+        # !!!!!!!!!
+
+        if self.iprint == 1:
+
+            po.ocmmnt(self.outfile, "Magnets:")
+            po.oblnkl(self.outfile)
+            po.ovarre(
+                self.outfile, "Minimum temperature margin (K)", "(tmargmin)", tmargmin
+            )
+            po.ovarre(
+                self.outfile,
+                "c parameter, determining the temp margin where lifetime declines",
+                "(conf_mag)",
+                conf_mag,
+            )
+            po.ovarre(
+                self.outfile,
+                "Temperature Margin (K)",
+                "(temp_margin)",
+                tfv.temp_margin,
+                "OP ",
+            )
+            po.ovarre(
+                self.outfile,
+                "Magnets unplanned unavailability",
+                "(u_unplanned_magnets)",
+                u_unplanned_magnets,
+                "OP ",
+            )
+            po.oblnkl(self.outfile)
+
+        return u_unplanned_magnets
