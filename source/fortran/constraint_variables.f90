@@ -222,7 +222,7 @@ module constraint_variables
   real(dp) :: nflutfmax
   !! max fast neutron fluence on TF coil (n/m2) (`blktmodel>0`) (`constraint equation 53`)
   !! Also used for demontable magnets (itart = 1) and superconducting coils (i_tf_sup = 1)
-  !! To set the CP lifetime
+  !! To set the CP lifetime (`constraint equation 85`)
 
   real(dp) :: pdivtlim
   !! Minimum pdivt [MW] (`constraint equation 80`)

@@ -83,3 +83,4 @@ env/
 .venv
 !scenario_examples/*/*.DAT
 !scenario_examples/*/*.pdf
+*/.ipynb_checkpoints/
