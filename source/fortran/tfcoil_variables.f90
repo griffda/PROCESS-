@@ -253,9 +253,9 @@ module tfcoil_variables
   !! Switch for the behavior of the elastic properties of the TF coil
   !! in the transverse direction. Only active if `i_tf_cond_props == 2`
   !!
-  !! - =0  Cable not potted in solder. Transverse Young's modulus set to zero.
-  !! - =1  Cable potted in solder. Transverse Young's modulus set to reasonable
+  !! - =0  Cable potted in solder. Transverse Young's modulus set to reasonable
   !!       default taking into account the superconducting material `i_tf_sc_mat`
+  !! - =1  Cable not potted in solder. Transverse Young's modulus set to zero.
 
   integer :: n_pancake
   !! Number of pancakes in TF coil. Only used if `i_tf_turns_integer=1`
