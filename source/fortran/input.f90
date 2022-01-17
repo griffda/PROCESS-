@@ -333,7 +333,7 @@ contains
       fcoolleg, frholeg, ftoroidalgap, i_tf_sc_mat, i_tf_shape, i_tf_bucking, &
       n_tf_graded_layers, n_tf_joints, n_tf_joints_contact, poisson_al, &
       poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact,&
-      i_tf_plane_stress, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
+      i_tf_stress_model, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
       i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti, &
       i_cp_joints, n_tf_turn, f_t_turn_tf, t_turn_tf_max, t_cable_tf, &
       sig_tf_wp_max
@@ -626,7 +626,7 @@ contains
           call parse_real_variable('gamma', gamma, 0.1D0, 1.0D0, &
                'Ejima coefficient for resistive V-s formula')
        case ('gtscale')
-          call parse_int_variable('gtscale', gtscale, 0, 1, &
+          call parse_int_variable('gtscale', gtscale, 0, 2, &
                'Flag to scale beta coefficient with R/a')
        case ('hfact')
           call parse_real_variable('hfact', hfact, 0.01D0, 10.0D0, &
@@ -732,7 +732,7 @@ contains
           call parse_int_variable('iscrp', iscrp, 0, 1, &
                'Switch for scrapeoff width')
        case ('ishape')
-          call parse_int_variable('ishape', ishape, 0, 10, &
+          call parse_int_variable('ishape', ishape, 0, 11, &
                'Switch for plasma shape vs. aspect')
        case ('itart')
           call parse_int_variable('itart', itart, 0, 1, &
@@ -1053,7 +1053,7 @@ contains
           call parse_real_variable('nbshinefmax', nbshinefmax, 1.0D-20, 1.0D-1, &
                'Maximum NB shine-through fraction')
        case ('nflutfmax')
-          call parse_real_variable('nflutfmax', nflutfmax, 1.0D22, 1.0D24, &
+          call parse_real_variable('nflutfmax', nflutfmax, 1.0D20, 1.0D24, &
                'Max fast neutron fluence on TF coil (n/m2)')
        case ('pdivtlim')
           call parse_real_variable('pdivtlim', pdivtlim, 0.1D0, 1.0D3, &
@@ -1950,8 +1950,8 @@ contains
        case ('eff_tf_cryo')
           call parse_real_variable('eff_tf_cryo', eff_tf_cryo, 0.0D0, 1.0D0, &
                'TF coil cryo-plane efficiency')  
-       case ('i_tf_plane_stress')
-         call parse_int_variable('i_tf_plane_stress', i_tf_plane_stress, 0, 2, &
+       case ('i_tf_stress_model')
+         call parse_int_variable('i_tf_stress_model', i_tf_stress_model, 0, 2, &
                'Switch for the TF stress model')
        case ('i_tf_tresca')
           call parse_int_variable('i_tf_tresca', i_tf_tresca, 0, 1, &
