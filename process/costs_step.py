@@ -94,7 +94,7 @@ class CostsStep:
 
         # Output header
         if self.iprint == 1 and cv.output_costs == 1:
-            title = "STEP Costing Model (" + str(cv.step_currency).strip() + ")"
+            title = "STEP Costing Model (" + f2py_compatible_to_string(cv.step_currency) + ")"
             po.oheadr(self.outfile, title.strip())
 
         # Account 20 : Land and Rights
@@ -876,7 +876,7 @@ class CostsStep:
                 po.ocmmnt(self.outfile, "feffwbl=", feffwbl, "  fwbllife=", fwbllife)
 
             po.write(
-                self.outfile, "\t" * 36 + "Annual Costs, M$" + "\t" * 6 + "COE, m$/kWh"
+                self.outfile, "\t" * 9 + "Annual Costs, M$" + "\t" * 1 + " " * 4 + "COE, m$/kWh"
             )
             po.dblcol(self.outfile, "Capital Investment", anncap, cv.coecap)
             po.dblcol(self.outfile, "Operation & Maintenance", annoam, cv.coeoam)
