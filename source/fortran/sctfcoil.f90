@@ -2094,7 +2094,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             ! [EDIT: eyoung_cond is for the TF coil, not the CS coil]
             
             ! Get transverse properties
-            call eyngparallel(eyoung_steel, oh_steel_frac, poisson_steel, &
+            call eyoung_parallel(eyoung_steel, oh_steel_frac, poisson_steel, &
                               eyoung_cond_z, 1D0-oh_steel_frac, poisson_cond_z, & 
                               eyoung_p(1),a_working,poisson_p(1))
             
@@ -2106,26 +2106,26 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             a_working    = 2*thicndut
             
             ! Next inner legs, insulation and steel
-            call eyngseries(eyoung_steel, t_cable_oh + 2*t_cond_oh, poisson_steel, &
+            call eyoung_series(eyoung_steel, t_cable_oh + 2*t_cond_oh, poisson_steel, &
                             eyoung_ins, 2*thicndut, poisson_ins, &
                             eyoung_working, l_working, poisson_working)
             eyoung_cs_stiffest_leg = eyoung_working ! Stash this eyoung for unsmearing
             ! Add this to the properties we're accumulating
-            call eyngparallel(eyoung_working, 2*t_cond_oh, poisson_working, &
+            call eyoung_parallel(eyoung_working, 2*t_cond_oh, poisson_working, &
                               eyoung_z(1), a_working, poisson_z(1), &
                               eyoung_z(1), a_working, poisson_z(1))
                          
             ! Next inner leg, the cable space
             ! Add insulation and steel
-            call eyngseries(eyoung_steel, 2*t_cond_oh, poisson_steel, &
+            call eyoung_series(eyoung_steel, 2*t_cond_oh, poisson_steel, &
                             eyoung_ins, 2*thicndut, poisson_ins, & 
                             eyoung_working, l_working, poisson_working)  
             ! Add cable          
-            call eyngseries(eyoung_cond_t, t_cable_oh, poisson_cond_t, &
+            call eyoung_series(eyoung_cond_t, t_cable_oh, poisson_cond_t, &
                             eyoung_working, l_working, poisson_working, &
                             eyoung_working, l_working, poisson_working) 
             ! Add this to the properties we're accumulating
-            call eyngparallel(eyoung_working, t_cable_oh, poisson_working, &
+            call eyoung_parallel(eyoung_working, t_cable_oh, poisson_working, &
                               eyoung_z(1), a_working, poisson_z(1), &
                               eyoung_z(1), a_working, poisson_z(1))
             ! [EDIT: Add central cooling channel?]
@@ -2234,64 +2234,64 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         poisson_wp_t = poisson_ins
         
         ! Serial-composite next-inner legs, insulation and conduit:
-        call eyngseries(eyoung_ins,2*t_ins_eff,poisson_ins, & 
+        call eyoung_series(eyoung_ins,2*t_ins_eff,poisson_ins, & 
                         eyoung_steel,t_cable_eyng+2*thwcndut,poisson_steel, &
                         eyoung_working,l_working,poisson_working)
         eyoung_wp_stiffest_leg = eyoung_working ! Stash this eyoung for unsmearing
         ! Parallel-composite these two legs together:
-        call eyngparallel(eyoung_working,2*thwcndut,poisson_working, &
+        call eyoung_parallel(eyoung_working,2*thwcndut,poisson_working, &
                           eyoung_wp_t,a_working,poisson_wp_t, &
                           eyoung_wp_t,a_working,poisson_wp_t)
         
         ! Serial-composite innermost leg, insulation + conduit + conductor + co-wound copper
         ! Insulation + conduit first
-        call eyngseries(eyoung_ins,2*t_ins_eff,poisson_ins, & 
+        call eyoung_series(eyoung_ins,2*t_ins_eff,poisson_ins, & 
                         eyoung_steel,2*thwcndut,poisson_steel, &
                         eyoung_working,l_working,poisson_working)
         ! Serial-composite in the conductor
-        call eyngseries(eyoung_cond_t,t_cable_eyng*(1.0D0-fcutfsu),poisson_cond_t, & 
+        call eyoung_series(eyoung_cond_t,t_cable_eyng*(1.0D0-fcutfsu),poisson_cond_t, & 
                         eyoung_working,l_working,poisson_working, &
                         eyoung_working,l_working,poisson_working)
         ! Serial-composite in the co-wound copper (assumed evenly distributed in the volume)
-        call eyngseries(eyoung_copper,t_cable_eyng*fcutfsu,poisson_copper, & 
+        call eyoung_series(eyoung_copper,t_cable_eyng*fcutfsu,poisson_copper, & 
                         eyoung_working,l_working,poisson_working, &
                         eyoung_working,l_working,poisson_working)
                         
         ! Parallel-composite in this last leg:
-        call eyngparallel(eyoung_working,t_cable_eyng-dhecoil,poisson_working, &
+        call eyoung_parallel(eyoung_working,t_cable_eyng-dhecoil,poisson_working, &
                           eyoung_wp_t,a_working,poisson_wp_t, &
                           eyoung_wp_t,a_working,poisson_wp_t)
         ! Parallel-composite in the helium cooling channel:
-        call eyngparallel(0D0,dhecoil,poisson_steel, &
+        call eyoung_parallel(0D0,dhecoil,poisson_steel, &
                           eyoung_wp_t,a_working,poisson_wp_t, &
                           eyoung_wp_t,a_working,poisson_wp_t)
         
         ! Lateral casing correction (series-composition)
-        call eyngseries(eyoung_wp_t,t_wp_toroidal_av,poisson_wp_t, &
+        call eyoung_series(eyoung_wp_t,t_wp_toroidal_av,poisson_wp_t, &
                         eyoung_steel,2.0D0*t_lat_case_av,poisson_steel, &
                         eyoung_wp_t_eff,a_working,poisson_wp_t_eff)
                           
         ! Average WP Young's modulus in the vertical direction
         ! Parallel-composite the steel and insulation
-        call eyngparallel(eyoung_steel,aswp,poisson_steel, &
+        call eyoung_parallel(eyoung_steel,aswp,poisson_steel, &
                           eyoung_ins,a_tf_ins,poisson_ins, & 
                           eyoung_wp_z,a_working,poisson_wp_z)
         ! Parallel-composite conductor into these quantities
-        call eyngparallel(eyoung_cond_z,acond*(1.0D0-fcutfsu),poisson_cond_z, & 
+        call eyoung_parallel(eyoung_cond_z,acond*(1.0D0-fcutfsu),poisson_cond_z, & 
                           eyoung_wp_z,a_working,poisson_wp_z, &                          
                           eyoung_wp_z,a_working,poisson_wp_z)
         ! Parallel-composite co-wound copper into these quantities
-        call eyngparallel(eyoung_copper,acond*fcutfsu,poisson_copper, & 
+        call eyoung_parallel(eyoung_copper,acond*fcutfsu,poisson_copper, & 
                           eyoung_wp_z,a_working,poisson_wp_z, &                          
                           eyoung_wp_z,a_working,poisson_wp_z)
         ! Parallel-composite voids, insertion gap, and helium into these quantities
-        call eyngparallel(0D0,awpc-a_working,poisson_steel, & ! 
+        call eyoung_parallel(0D0,awpc-a_working,poisson_steel, & ! 
                           eyoung_wp_z,a_working,poisson_wp_z, &                          
                           eyoung_wp_z,a_working,poisson_wp_z)
 
         ! Average WP Young's modulus in the vertical direction, now including the lateral case
         ! Parallel-composite the steel and insulation, now including the lateral case (sidewalls)
-        call eyngparallel(eyoung_steel,a_wp_steel_eff - aswp,poisson_steel, &
+        call eyoung_parallel(eyoung_steel,a_wp_steel_eff - aswp,poisson_steel, &
                           eyoung_wp_z,a_working,poisson_wp_z, &                          
                           eyoung_wp_z_eff,a_working,poisson_wp_z_eff)
 
@@ -2320,11 +2320,11 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
         ! Effective conductor region young modulus in the vertical direction [Pa]
         ! Parallel-composite conductor and insulator
-        call eyngparallel(eyoung_cond,(a_wp_eff-a_tf_ins)*(1.0D0-fcoolcp),poisson_cond, & 
+        call eyoung_parallel(eyoung_cond,(a_wp_eff-a_tf_ins)*(1.0D0-fcoolcp),poisson_cond, & 
                           eyoung_ins,a_tf_ins,poisson_ins, & 
                           eyoung_wp_z,a_working,poisson_wp_z)
         ! Parallel-composite cooling pipes into that
-        call eyngparallel(0D0,(a_wp_eff-a_tf_ins)*fcoolcp,poisson_cond, & 
+        call eyoung_parallel(0D0,(a_wp_eff-a_tf_ins)*fcoolcp,poisson_cond, & 
                           eyoung_wp_z,a_working,poisson_wp_z, &
                           eyoung_wp_z,a_working,poisson_wp_z)
 
@@ -4147,7 +4147,7 @@ end function eyngzwp
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine eyngparallel(eyoung_j_1, a_1, poisson_j_perp_1, & ! Inputs
+subroutine eyoung_parallel(eyoung_j_1, a_1, poisson_j_perp_1, & ! Inputs
                         eyoung_j_2, a_2, poisson_j_perp_2, & ! Inputs
                         eyoung_j_3, a_3, poisson_j_perp_3)   ! Outputs
       
@@ -4178,9 +4178,9 @@ subroutine eyngparallel(eyoung_j_1, a_1, poisson_j_perp_1, & ! Inputs
     !! members 2 and 3, and call it successively, using the properties
     !! of each member as the first triplet of arguments. This way, the 
     !! last triplet acts as a "working sum":
-    !! call eyngparallel(triplet1, triplet2, tripletOUT)
-    !! call eyngparallel(triplet3, tripletOUT, tripletOUT)
-    !! call eyngparallel(triplet4, tripletOUT, tripletOUT)
+    !! call eyoung_parallel(triplet1, triplet2, tripletOUT)
+    !! call eyoung_parallel(triplet3, tripletOUT, tripletOUT)
+    !! call eyoung_parallel(triplet4, tripletOUT, tripletOUT)
     !! ... etc.
     !! So that tripletOUT would eventually have the smeared properties
     !! of the total composite member.
@@ -4220,11 +4220,11 @@ subroutine eyngparallel(eyoung_j_1, a_1, poisson_j_perp_1, & ! Inputs
     eyoung_j_3 = (eyoung_j_1 * a_1 + eyoung_j_2 * a_2) / (a_1 + a_2)
     a_3 = a_1 + a_2
     
-end subroutine eyngparallel
+end subroutine eyoung_parallel
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine eyngseries(eyoung_j_1, l_1, poisson_j_perp_1, & ! Inputs
+subroutine eyoung_series(eyoung_j_1, l_1, poisson_j_perp_1, & ! Inputs
                       eyoung_j_2, l_2, poisson_j_perp_2, & ! Inputs
                       eyoung_j_3, l_3, poisson_j_perp_3)   ! Outputs
       
@@ -4259,9 +4259,9 @@ subroutine eyngseries(eyoung_j_1, l_1, poisson_j_perp_1, & ! Inputs
     !! members 2 and 3, and call it successively, using the properties
     !! of each member as the first triplet of arguments. This way, the 
     !! last triplet acts as a "working sum":
-    !! call eyngseries(triplet1, triplet2, tripletOUT)
-    !! call eyngseries(triplet3, tripletOUT, tripletOUT)
-    !! call eyngseries(triplet4, tripletOUT, tripletOUT)
+    !! call eyoung_series(triplet1, triplet2, tripletOUT)
+    !! call eyoung_series(triplet3, tripletOUT, tripletOUT)
+    !! call eyoung_series(triplet4, tripletOUT, tripletOUT)
     !! ... etc.
     !! So that tripletOUT would eventually have the smeared properties
     !! of the total composite member.
@@ -4312,7 +4312,7 @@ subroutine eyngseries(eyoung_j_1, l_1, poisson_j_perp_1, & ! Inputs
       l_3 = l_1 + l_2
     end if
     
-end subroutine eyngseries
+end subroutine eyoung_series
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
