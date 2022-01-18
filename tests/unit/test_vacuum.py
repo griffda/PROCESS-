@@ -1,17 +1,33 @@
 import pytest
 
+from process.vacuum import Vacuum
 from process.fortran import physics_variables as pv
 from process.fortran import vacuum_variables as vacv
-from process.fortran import vacuum_module as vac
 from process.fortran import tfcoil_variables as tfv
 from process.fortran import times_variables as tv
 
 
+@pytest.fixture
+def vacuum():
+    """Provides Vacuum object for testing.
+
+    :return vacuum: initialised Vacuum object
+    :type vacuum: process.vacuum.Vacuum
+    """
+    return Vacuum()
+
+
 class TestVacuum:
-    def test_simple_model(self, monkeypatch):
+    def test_simple_model(self, monkeypatch, vacuum):
         """Tests `vacuum_simple` subroutine.
 
         Values taken from first calling of the model in vacuum_model regression test.
+
+        :param monkeypatch: Mock fixture
+        :type monkeypatch: object
+
+        :param tfcoil: fixture containing an initialised `TFcoil` object
+        :type tfcoil: tests.unit.test_tfcoil.tfcoil (functional fixture)
         """
         monkeypatch.setattr(pv, "qfuel", 7.5745668997694112e22)
         monkeypatch.setattr(pv, "sarea", 1500.3146527709359)
@@ -25,11 +41,11 @@ class TestVacuum:
         monkeypatch.setattr(vacv, "pumpspeedmax", 27.3)
         monkeypatch.setattr(vacv, "pumptp", 1.2155e22)
 
-        niterpump = vac.vacuum_simple(0, 0)
+        niterpump = vacuum.vacuum_simple(output=False)
 
         assert niterpump == pytest.approx(14.082585474801862)
 
-    def test_old_model(self, monkeypatch):
+    def test_old_model(self, monkeypatch, vacuum):
         """Test `vacuum` subroutine.
 
         Values taken from first calling of the model in G-L_Nb-Ti regression test.
@@ -66,7 +82,7 @@ class TestVacuum:
         mvdsh = 0
         dimax = 0
 
-        pumpn, nduct, dlscalc, mvdsh, dimax = vac.vacuum(
+        pumpn, nduct, dlscalc, mvdsh, dimax = vacuum.vacuum(
             pfusmw,
             r0,
             aw,
@@ -83,8 +99,7 @@ class TestVacuum:
             ndiv,
             qtorus,
             gasld,
-            0,
-            0,
+            output=False
         )
 
         assert pumpn == 36.0
