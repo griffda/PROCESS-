@@ -761,6 +761,7 @@ module pfcoil_module
      use CS_fatigue, only: Ncycle
      use CS_fatigue_variables, only: N_cycle, residual_sig_hoop, t_crack_vertical, &
          t_crack_radial, t_structural_vertical, t_structural_radial
+     use physics_variables, only : facoh
      use constants, only: pi, dcopper
      implicit none
  
@@ -859,8 +860,11 @@ module pfcoil_module
         ! alstroh = min( (2.0D0*csytf/3.0D0), (0.5D0*csutf) )
 
         ! Calculation of CS fatigue
-        call Ncycle(N_cycle, sig_hoop,residual_sig_hoop, t_crack_vertical, t_crack_radial, &
-            t_structural_vertical, t_structural_radial)
+        ! this is only valid for pulsed reactor design
+        if (facoh > 0.0D-4 ) then
+            call Ncycle(N_cycle, sig_hoop,residual_sig_hoop, t_crack_vertical, t_crack_radial, &
+               t_structural_vertical, t_structural_radial)
+        end if 
  
         ! Now steel area fraction is iteration variable and constraint
         ! equation is used for Central Solenoid stress
@@ -2675,7 +2679,7 @@ module pfcoil_module
          sigpfcalw, bpf, s_tresca_oh, awpoh, zl, oh_steel_frac, bmaxoh0, ra, &
          turns, rpf, rjohc, tmargoh, ipfres, alfapf, rjpfalw, whtpf, rb, wts, &
          zh, wtc
-       use physics_variables, only: rminor, rmajor, kappa
+       use physics_variables, only: rminor, rmajor, kappa, facoh
      use process_output, only: int_to_string2, ovarin, oheadr, &
        ovarre, osubhd, oblnkl, ocmmnt
      use tfcoil_variables, only: tmargmin_cs, strncon_cs, tftmp, b_crit_upper_nbti,&
@@ -2797,18 +2801,21 @@ module pfcoil_module
                 '(tmargoh)',tmargoh, 'OP ')
            call ovarre(outfile,'Minimum permitted temperature margin (K)', &
                 '(tmargmin_cs)',tmargmin_cs)
-           call ovarre(outfile, 'residual hoop stress in CS Steel (Pa)', &
-                '(residual_sig_hoop)', residual_sig_hoop)
-           call ovarre(outfile, 'Initial vertical crack size (m)', &
-                '(t_crack_vertical)', t_crack_vertical)
-           call ovarre(outfile, 'Initial radial crack size (m)', &
-                '(t_crack_radial)', t_crack_radial)
-           call ovarre(outfile, 'CS structural vertical thickness (m)', &
-                '(t_structural_vertical)', t_structural_vertical)
-           call ovarre(outfile, 'CS structural radial thickness (m)', &
-                '(t_structural_radial)', t_structural_radial)
-           call ovarre(outfile, 'Allowable number of cycles till CS fracture', &
-                '(N_cycle)', N_cycle, 'OP ')
+           ! only output CS fatigue model for pulsed reactor design
+           if (facoh > 0.0D-4 ) then
+                call ovarre(outfile, 'residual hoop stress in CS Steel (Pa)', &
+                     '(residual_sig_hoop)', residual_sig_hoop)
+                call ovarre(outfile, 'Initial vertical crack size (m)', &
+                     '(t_crack_vertical)', t_crack_vertical)
+                call ovarre(outfile, 'Initial radial crack size (m)', &
+                     '(t_crack_radial)', t_crack_radial)
+                call ovarre(outfile, 'CS structural vertical thickness (m)', &
+                     '(t_structural_vertical)', t_structural_vertical)
+                call ovarre(outfile, 'CS structural radial thickness (m)', &
+                     '(t_structural_radial)', t_structural_radial)
+                call ovarre(outfile, 'Allowable number of cycles till CS fracture', &
+                     '(N_cycle)', N_cycle, 'OP ')
+           end if
            ! Check whether CS coil is hitting any limits
            ! iteration variable (39) fjohc0
            ! iteration variable(38) fjohc
