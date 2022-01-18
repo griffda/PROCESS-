@@ -3,7 +3,6 @@ from process.fortran import costs_module as cs
 from process.fortran import physics_module as ph
 from process.fortran import buildings_module as bm
 from process.fortran import power_module as pw
-from process.fortran import vacuum_module as vac
 from process.fortran import stellarator_module as st
 
 # currently the ife module is only partially wrapped
@@ -69,7 +68,7 @@ class Stellarator:
             st.stfwbs(self.outfile, 1)
 
             pw.tfpwr(self.outfile, 1)
-            vac.vaccall(self.outfile, 1)
+            self.parent_modules_class.vacuum.run(output=True)
             bm.bldgcall(self.outfile, 1)
             pw.acpow(self.outfile, 1)
             pw.power2(self.outfile, 1)
@@ -87,7 +86,7 @@ class Stellarator:
 
         pw.tfpwr(self.outfile, 0)
         pw.power1()
-        vac.vaccall(self.outfile, 0)
+        self.parent_modules_class.vacuum.run(output=False)
         bm.bldgcall(self.outfile, 0)
         pw.acpow(self.outfile, 0)
         pw.power2(self.outfile, 0)
