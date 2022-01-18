@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1135-g5763cd3c
+   Tag No. : v2.1-1146-gb851821f code contains untracked changes
     Branch : 1205-tf-cond-stiffness
-   Git log : merged\ in\ develop
- Date/time : 14 Jan 2022  9:10:33 -05:00(hh:mm) UTC
+   Git log : Changed\ the\ name\ of\ the\ eyngseries\ functions\ to\ be
+ Date/time : 18 Jan 2022 13:14:22 -05:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /home/cswan/process/process
-     Input : /tmp/pytest-of-cswan/pytest-51/test_scenario_QH_mode_0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-4/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-4/test_scenario_QH_mode_0/IN.DAT
  Run title : Example QH-mode plasma scenario
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -813,7 +813,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Helium temperature at peak field (= superconductor temperature) (K)      (thelium)                 4.750E+00     
  Total helium fraction inside cable space                                 (fhetot)                  3.474E-01  OP 
  Copper fraction of conductor                                             (fcutfsu)                 8.692E-01  ITV
- Strain on superconductor                                                 (strncon_tf)              1.591E-03     
+ Residual manufacturing strain on superconductor                          (strncon_tf)             -5.000E-03     
+ Self-consistent strain on superconductor                                 (strain_wp)               1.591E-03     
  Critical current density in superconductor (A/m2)                        (jcritsc)                 7.477E+08  OP 
  Critical current density in strand (A/m2)                                (jcritstr)                9.780E+07  OP 
  Critical current density in winding pack (A/m2)                          (jwdgcrt)                 2.832E+07  OP 
