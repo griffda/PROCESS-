@@ -8,7 +8,7 @@ nav:
             - process: python/process.md 
             - process.io: python/process.io.md
             - process.utilities: python/process.utilities.md
-            - process.fortran: python/f2py.md
+            - process.fortran: python/process.fortran.md
     - Introduction:
         - Installation Guide: installation.md
         - Usage Guide: usage.md

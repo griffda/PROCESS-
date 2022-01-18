@@ -23,7 +23,7 @@ module foo
     subroutine say_hello(duck_instance)
         type(duck), intent(in) :: duck_instance
 
-        write(*,*) 'Duck ', duck_instance%first_name, ' (with ID ', duck_instance%id, ') says hello!'
+        write(*,*) 'Duck ', duck_instance%first_name, ' (with ID ', duck_instance%id, ') says quack!'
     end subroutine say_hello
 end module foo
 ```
