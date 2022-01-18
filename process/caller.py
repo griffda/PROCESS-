@@ -162,7 +162,7 @@ class Caller:
         ft.power_module.power1()
 
         # Vacuum model
-        ft.vacuum_module.vaccall(ft.constants.nout, 0)
+        self.models.vacuum.run(output=False)
 
         # Buildings model
         ft.buildings_module.bldgcall(ft.constants.nout, 0)
