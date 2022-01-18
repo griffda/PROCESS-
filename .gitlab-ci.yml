@@ -372,9 +372,10 @@ pages:
 
     # python docs documentation
     - python3 -m pip install mkdocstrings
-    - cd ${CI_PROJECT_DIR}/scripts
-    - python3 document_fortran_interface.py
-    - cd ${CI_PROJECT_DIR}
+    - python3 ${CI_PROJECT_DIR}/scripts/document_fortran_interface.py
+    # mkdocstrings imports process to write its documentation,
+    # process must be reinstalled with _fortran.py available
+    # otherwise mkdcostrings won't be able to find it
     - python3 -m pip install -e .
     
     # Build the MkDocs site (after FORD has been used to create the vardes)

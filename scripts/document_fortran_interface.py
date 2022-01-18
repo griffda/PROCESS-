@@ -16,13 +16,14 @@ fortran (python module)
 
 import inspect
 import os
+from pathlib import Path
 from typing import Any, List, NamedTuple, Set, Union
 
 from process import fortran
 
 
 class FortranModuleMember(NamedTuple):
-    """A container for data about a specific subroutine/function/module variable contained within a wrapped module.
+    """A container for data about a specific subroutine/function/module contained within a wrapped module.
 
     :name: the name of the function/subroutine/module variable this object holds data for
     :type name: str
@@ -36,7 +37,7 @@ class FortranModuleMember(NamedTuple):
 
 
 class FortranModuleVariable(NamedTuple):
-    """A container for data about a specific subroutine/function/module variable contained within a wrapped module.
+    """A container for data about a specific variable contained within a wrapped module.
 
     :name: the name of the function/subroutine/module variable this object holds data for
     :type name: str
@@ -68,7 +69,7 @@ class FortranModule(NamedTuple):
     :type docstring: str
 
     :members: a list of members, ie subroutines/functions/module variables
-    :type members: List[Dict]
+    :type members: List[FortranModuleMember]
     """
 
     name: str
@@ -83,7 +84,7 @@ def get_modules(ftrn) -> List[FortranModule]:
     :type ftrn: f2py-generated Python-Fortran interface
 
     :return classes: the list of modules
-    :type classes: fortran_module
+    :type classes: List[FortranModule]
     """
     classes = []
 
@@ -105,6 +106,9 @@ def get_members(
 
     :param fortran_module: the Fortran module to get the members of
     :type fortran_module: a wrapped Fortran module
+
+    :return members: a list of subroutines, functions, and variables of the fortran_module
+    :type members: List[Union[FortranModuleMember, FortranModuleVariable]]
     """
     members = []
 
@@ -112,7 +116,7 @@ def get_members(
         if name[0:2] == "__":
             continue
 
-        if type(fortran_module) == type(fortran.main_module.inform):
+        if type(member) == type(fortran.main_module.inform):
             docstring = member.__doc__
             if is_variable(member):
                 members.append(
@@ -136,12 +140,14 @@ def is_variable(member) -> bool:
     return member.__doc__ is None
 
 
-def create_module_signature(mod: FortranModule):
+def create_module_signature(mod: FortranModule) -> str:
     """Creates the signature for a wrapped fortran module, corresponding to one class.
     Manages the generation of import statements, variable signatures, and function signatures.
     """
 
-    docstring = f"Abstract representation of the F2Py-generated wrapper around the {mod.name} module"  # f2py gives modules unhelpful docstrings, so I will use my own
+    docstring = f"Abstract representation of the F2Py-generated wrapper around the {mod.name} module"
+    # f2py gives modules unhelpful docstrings, so a more accurate and concise docstring is
+    # created for use in documentation
 
     functions: List[str] = []  # subroutines/functions
     variables: List[str] = []  # module variables
@@ -194,6 +200,8 @@ def create_function_signature(func: FortranModuleMember) -> str:
     In its abstract representation, it is a class method.
     """
     # sometimes f2py puts odd characters in the docstring
+    # this assert statement will show that this has happened
+    # and explain a crash of the script
     assert all(ord(c) != 0 for c in func.docstring)
 
     docstring = func.docstring.replace("\n", "\n\t\t\t").strip("\n\t")
@@ -203,14 +211,17 @@ def create_function_signature(func: FortranModuleMember) -> str:
 if __name__ == "__main__":
     fortran_module_definitions = [
         create_module_signature(i) for i in get_modules(fortran)
-    ][0]
+    ]
 
-    string = "".join(fortran_module_definitions)
+    string = (
+        '"""Abstract definitions of all wrapped modules, including automatically generated docstrings for subroutines/functions created by f2py"""\n\n'
+        + "".join(fortran_module_definitions)
+    )
 
     # write _fortran.py to the process package
     # so it will be autodocumented as if it
     # were a regular source file
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    target_dir = os.path.join(current_dir, "../process")
-    with open(f"{target_dir}/_fortran.py", "w") as file:
+    current_dir = Path(__file__).resolve().parent
+    target_dir = current_dir / "../process"
+    with open(target_dir / "_fortran.py", "w") as file:
         file.write(string)
