@@ -6,7 +6,6 @@ from process.utilities.f2py_string_patch import f2py_compatible_to_string
 from process.fortran import constants
 from process.fortran import physics_variables as pv
 from process.fortran import vacuum_variables as vacv
-from process.fortran import vacuum_module as vac
 from process.fortran import build_variables as buv
 from process.fortran import tfcoil_variables as tfv
 from process.fortran import times_variables as tv
@@ -57,7 +56,7 @@ class Vacuum:
         # vacuum_model required to be compared to a b string
         # as this is what f2py returns
         if self.vacuum_model == "old":
-            pumpn, vacv.nvduct, vacv.dlscal, vacv.vacdshm, vacv.vcdimax = vac.vacuum(
+            pumpn, vacv.nvduct, vacv.dlscal, vacv.vacdshm, vacv.vcdimax = self.vacuum(
                 pv.powfmw,
                 pv.rmajor,
                 pv.rminor,
@@ -74,13 +73,12 @@ class Vacuum:
                 pv.idivrt,
                 qtorus,
                 gasld,
-                int(output),
-                self.outfile,
+                output=output
             )
             # MDK pumpn is real: convert to integer by rounding.
             vacv.vpumpn = math.floor(pumpn + 0.5e0)
         elif self.vacuum_model == "simple":
-            vacv.niterpump = self.vacuum_simple(int(output), self.outfile)
+            vacv.niterpump = self.vacuum_simple(output=output)
         else:
             logger.warning(f"vacuum_model seems to be invalid: {vacv.vacuum_model}")
             po.ocmmnt(
@@ -134,7 +132,7 @@ class Vacuum:
                 self.outfile,
                 "Switch for vacuum pumping model",
                 "(vacuum_model)",
-                '"' // self.vacuum_model // '"',
+                '"' + self.vacuum_model + '"',
             )
             po.ocmmnt(
                 self.outfile,
@@ -386,7 +384,7 @@ class Vacuum:
 
         ITERATIONS_OVER_I = 4
 
-        ceff = []
+        ceff = [None for _ in range(ITERATIONS_OVER_I)]
         d = [None for _ in range(ITERATIONS_OVER_I)]
 
         for i in range(ITERATIONS_OVER_I):
@@ -402,7 +400,7 @@ class Vacuum:
             pumpn1 = 1.0e0 / (sp[i] * (nduct / s[i] - 1.0e0 / ccc))
             pumpn2 = 1.01e0 * s[i] / (sp[i] * nduct)
             pumpn = max(pumpn, pumpn1, pumpn2)
-            ceff.append(1.0e0 / (nduct / s[i] - 1.0e0 / (sp[i] * pumpn)))
+            ceff[i] = 1.0e0 / (nduct / s[i] - 1.0e0 / (sp[i] * pumpn))
 
             #  Newton's method solution for duct diameter
 
@@ -459,8 +457,8 @@ class Vacuum:
 
                     lap = lap + 1
                     if lap > 99:
-                        eh.fdiags[1] = pv.powfmw
-                        eh.fdiags[2] = pv.te
+                        eh.fdiags[0] = pv.powfmw
+                        eh.fdiags[1] = pv.te
                         eh.report_error(124)
                         break
 
@@ -543,13 +541,13 @@ class Vacuum:
                 self.outfile, "Base pressure required (Pa)", "(pbase)", vacv.pbase
             )
             po.ovarre(
-                self.outfile, "Required N2 pump speed (m3/s)", "(s(1))", s(1), "OP "
+                self.outfile, "Required N2 pump speed (m3/s)", "(s(1))", s[0], "OP "
             )
             po.ovarre(
                 self.outfile,
                 "N2 pump speed provided (m3/s)",
                 "(snet(1))",
-                snet(1),
+                snet[0],
                 "OP ",
             )
 
@@ -578,13 +576,13 @@ class Vacuum:
                 tpump,
             )
             po.ovarre(
-                self.outfile, "Required D-T pump speed (m3/s)", "(s(2))", s(2), "OP "
+                self.outfile, "Required D-T pump speed (m3/s)", "(s(2))", s[1], "OP "
             )
             po.ovarre(
                 self.outfile,
                 "D-T pump speed provided (m3/s)",
                 "(snet(2))",
-                snet(2),
+                snet[1],
                 "OP ",
             )
 
@@ -603,26 +601,26 @@ class Vacuum:
                 "OP ",
             )
             po.ovarre(
-                self.outfile, "Required helium pump speed (m3/s)", "(s(3))", s(3), "OP "
+                self.outfile, "Required helium pump speed (m3/s)", "(s(3))", s[2], "OP "
             )
             po.ovarre(
                 self.outfile,
                 "Helium pump speed provided (m3/s)",
                 "(snet(3))",
-                snet(3),
+                snet[2],
                 "OP ",
             )
 
             po.osubhd(self.outfile, "D-T Removal at Fuelling Rate :")
             po.ovarre(self.outfile, "D-T fuelling rate (kg/s)", "(frate)", frate, "OP ")
             po.ovarre(
-                self.outfile, "Required D-T pump speed (m3/s)", "(s(4))", s(4), "OP "
+                self.outfile, "Required D-T pump speed (m3/s)", "(s(4))", s[3], "OP "
             )
             po.ovarre(
                 self.outfile,
                 "D-T pump speed provided (m3/s)",
                 "(snet(4))",
-                snet(4),
+                snet[3],
                 "OP ",
             )
 
@@ -658,7 +656,7 @@ class Vacuum:
                 self.outfile,
                 "Passage diameter, divertor to ducts (m)",
                 "(d(imax))",
-                d(imax),
+                d[imax],
                 "OP ",
             )
             po.ovarre(self.outfile, "Passage length (m)", "(l1)", l1, "OP ")
