@@ -436,27 +436,34 @@ module tfcoil_variables
   !! allowable stress from TF quench in vacuum vessel (Pa)
 
   real(dp) :: strncon_cs
-  !! strain in CS superconductor material (used in Nb3Sn critical surface model `isumatoh=1,4,5`)
+  !! Residual manufacturing strain in CS superconductor material 
 
   real(dp) :: strncon_pf
-  !! strain in PF superconductor material (used in Nb3Sn critical surface model `isumatph=1,4,5`)
+  !! Residual manufacturing strain in PF superconductor material
 
   real(dp) :: strncon_tf
-  !! Strain in TF conductor material 
-  !! Input if `i_strncon_tf == 0`; otherwise computed in stresscl
-  !! used in Nb3Sn critical surface model `i_tf_sc_mat=1,4,5`
+  !! Residual manufacturing strain in TF superconductor material
+  !! If `i_strain_wp == 0`, used to compute the critical surface.
+  !! Otherwise, the self-consistent winding pack `strain_wp` is used.
+  
+  real(dp) :: strain_wp
+  !! Axial (vertical) strain in the TF coil winding pack found by
+  !! self-consistent stress/strain calculation.
+  !! if `i_strain_wp == 1`, used to compute the critical surface.
+  !! Otherwise, the input value `strncon_tf` is used.
   !! Constrain the absolute value using `constraint equation 88`
   !! You can't have constraint 88 and i_strncon_tf = 0 at the same time
   
-  real(dp) :: strncon_tf_max
+  real(dp) :: strain_wp_max
   !! Maximum allowed absolute value of the strain in the TF coil
   !! (`Constraint equation 88`)
   
-  integer :: i_strncon_tf
-  !! Switch for the behavior of the TF strain, strncon_tf
+  integer :: i_strain_wp
+  !! Switch for the behavior of the TF strain used to compute 
+  !! the strain-dependent critical surface:
   !!
-  !! - =0  strncon_tf is an input
-  !! - =1  strncon_tf is computed by the subroutine stresscl
+  !! - =0  strncon_tf is used
+  !! - =1  strain_wp is used
 
   character(len=12) :: quench_model
   !! switch for TF coil quench model (Only applies to REBCO magnet at present, issue #522):
@@ -920,8 +927,9 @@ module tfcoil_variables
     strncon_cs = -0.005D0
     strncon_pf = -0.005D0
     strncon_tf = -0.005D0
-    strncon_tf_max = 0.7D-2
-    i_strncon_tf = 1
+    strain_wp = 0.0D0
+    strain_wp_max = 0.7D-2
+    i_strain_wp = 1
     quench_model = 'exponential'
     quench_detection_ef = 0D0
     time1 = 0D0

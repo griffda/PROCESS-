@@ -3760,22 +3760,22 @@ contains
     !! <LI> (165) f-value for maximum TF coil strain
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(165) = 'fstrncon_tf      '
+    lablxc(165) = 'fstrain_wp       '
     boundl(165) = 1.0d-9
     boundu(165) = 1.0d0
   end subroutine init_itv_165
 
   real(kind(1.d0)) function itv_165()
-    use constraint_variables, only: fstrncon_tf
+    use constraint_variables, only: fstrain_wp
     implicit none
-    itv_165 = fstrncon_tf 
+    itv_165 = fstrain_wp 
   end function itv_165
 
   subroutine set_itv_165(ratio)
-    use constraint_variables, only: fstrncon_tf
+    use constraint_variables, only: fstrain_wp
     implicit none
     real(kind(1.d0)) :: ratio
-    fstrncon_tf = ratio
+    fstrain_wp = ratio
   end subroutine  set_itv_165
 
   !---------------------------------

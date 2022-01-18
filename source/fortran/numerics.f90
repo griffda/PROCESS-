@@ -363,7 +363,7 @@ module numerics
   !! <LI> (162) r_cp_top : Top outer radius of the centropost (ST only) (m)
   !! <LI> (163) f_t_turn_tf : f-value for TF coils WP trurn squared dimension constraint 
   !! <LI> (164) f_crypmw : f-value for cryogenic plant power
-  !! <LI> (165) fstrncon_tf : f-value for TF coil strain absolute value
+  !! <LI> (165) fstrain_wp : f-value for TF coil strain absolute value
   !! <LI> (166) EMPTY : Description
   !! <LI> (167) EMPTY : Description
   !! <LI> (168) EMPTY : Description

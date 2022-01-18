@@ -3307,14 +3307,14 @@ contains
       !! residual error in physical units; output string; units string
       !! Equation for TF coil vertical strain upper limit (absolute value)
       !! #=# tfcoil
-      !! #=#=# fstrncon_tf, strncon_tf_max
+      !! #=#=# fstrain_wp, strain_wp_max
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !! fstrncon_tf : input real : f-value for TF coil strain
-      !! strncon_tf_max : input real : Allowable maximum TF coil vertical strain
-      !! strncon_tf : input real : Constrained TF coil vertical strain
-      use constraint_variables, only: fstrncon_tf
-      use tfcoil_variables, only: strncon_tf_max, strncon_tf, i_strncon_tf
+      !! fstrain_wp : input real : f-value for TF coil strain
+      !! strain_wp_max : input real : Allowable maximum TF coil vertical strain
+      !! strain_wp : input real : Constrained TF coil vertical strain
+      use constraint_variables, only: fstrain_wp
+      use tfcoil_variables, only: strain_wp_max, strain_wp, i_strain_wp
       implicit none
             real(dp), intent(out) :: tmp_cc
       real(dp), intent(out) :: tmp_con
@@ -3322,11 +3322,11 @@ contains
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
       
-      ! Do not permit strncon_tf to be an input:
-      if (i_strncon_tf == 1) then
-        tmp_cc =  1.0D0 - fstrncon_tf * strncon_tf_max/abs(strncon_tf)
-        tmp_con = strncon_tf_max
-        tmp_err = strncon_tf_max - abs(strncon_tf) / fstrncon_tf
+      ! Do not permit strncon_tf to be used:
+      if (i_strain_wp == 1) then
+        tmp_cc =  1.0D0 - fstrain_wp * strain_wp_max/abs(strain_wp)
+        tmp_con = strain_wp_max
+        tmp_err = strain_wp_max - abs(strain_wp) / fstrain_wp
         tmp_symbol = '<'
         tmp_units = ''
       else

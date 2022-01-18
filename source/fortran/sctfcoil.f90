@@ -1743,7 +1743,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         aiwp, aswp, cpttf, n_tf, i_tf_stress_model, sig_tf_wp_max, &
         i_tf_turns_integer, casthi, acond, avwp, awphec, poisson_ins, &
         eyoung_cond_t, poisson_cond_z, poisson_cond_t, dhecoil, fcutfsu, &
-        strncon_tf, i_strncon_tf
+        strain_wp
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
         cohbop, ncls, cptdin
     use constants, only: pi, sig_file
@@ -2422,9 +2422,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         sig_tf_z = vforce / (acasetf + acndttf*n_tf_turn) ! Array equation [EDIT: Are you sure? It doesn't look like one to me]
         
         ! Strain in vertical direction on WP
-        if ( i_strncon_tf == 1) then
-          strncon_tf = sig_tf_z(n_tf_bucking+1) / eyoung_wp_z_eff
-        end if
+        strain_wp = sig_tf_z(n_tf_bucking+1) / eyoung_wp_z_eff
 
         ! Case strain
         casestr = sig_tf_z(n_tf_bucking) / eyoung_steel
@@ -2447,9 +2445,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                                        strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
         
         !! Strain in TF conductor material
-        if ( i_strncon_tf == 1) then
-          strncon_tf = strain_tf_z(n_tf_bucking*n_radial_array+1);
-        end if
+        strain_wp = strain_tf_z(n_tf_bucking*n_radial_array+1);
         
     else if ( i_tf_stress_model == 2) then
         ! Extended plane strain calculation [Pa]
@@ -2463,9 +2459,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                                        strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
         
         !! Strain in TF conductor material
-        if ( i_strncon_tf == 1) then
-          strncon_tf = strain_tf_z(n_tf_bucking*n_radial_array+1);
-        end if
+        strain_wp = strain_tf_z(n_tf_bucking*n_radial_array+1);
         
     end if
     ! ---
@@ -5172,7 +5166,7 @@ subroutine tfspcall(outfile,iprint)
         temp_margin, jwdgpro, tftmp, vtfskv, acndttf, dhecoil, tmaxpro, &
         tmargtf, thwcndut, t_conductor, fcutfsu, jwdgcrt, tdmptf, cpttf, &
         ritfc, jwptf, bmaxtfrp, tcritsc, acstf, strncon_tf, fhts, bcritsc, &
-        i_tf_sc_mat, b_crit_upper_nbti, t_crit_nbti
+        i_tf_sc_mat, b_crit_upper_nbti, t_crit_nbti, strain_wp, i_strain_wp
     use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, &
         jcrit_nbti, croco, bi2212, GL_nbti, GL_REBCO, HIJC_REBCO
     use global_variables, only: run_tests
@@ -5279,7 +5273,11 @@ contains
         !  Conductor fraction (including central helium channel)
         fcond = 1.0D0 - fhetot
         
-        strain = strncon_tf
+        if (i_strain_wp == 0) then
+          strain = strncon_tf
+        else
+          strain = strain_wp
+        end if
 
         !  Find critical current density in superconducting strand, jcritstr
         select case (isumat)
@@ -5288,9 +5286,9 @@ contains
             bc20m = 32.97D0
             tc0m = 16.06D0
             ! If strain limit achieved, throw a warning and use the lower strain
-            if (abs(strncon_tf) > 0.5D-2) then
-                fdiags(1) = strncon_tf ; call report_error(261)
-                strain = sign(0.5D-2,strncon_tf)
+            if (abs(strain) > 0.5D-2) then
+                fdiags(1) = strain ; call report_error(261)
+                strain = sign(0.5D-2,strain)
             end if
             !  jcritsc returned by itersc is the critical current density in the
             !  superconductor - not the whole strand, which contains copper
@@ -5328,9 +5326,9 @@ contains
             bc20m = bcritsc
             tc0m = tcritsc
             ! If strain limit achieved, throw a warning and use the lower strain
-            if (abs(strncon_tf) > 0.5D-2) then
-                fdiags(1) = strncon_tf ; call report_error(261)
-                strain = sign(0.5D-2,strncon_tf)
+            if (abs(strain) > 0.5D-2) then
+                fdiags(1) = strain ; call report_error(261)
+                strain = sign(0.5D-2,strain)
             end if
             call itersc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
             jcritstr = jcritsc * (1.0D0-fcu)
@@ -5341,9 +5339,9 @@ contains
             bc20m = 32.97D0
             tc0m = 16.06D0
             ! If strain limit achieved, throw a warning and use the lower strain
-            if (abs(strncon_tf) > 0.5D-2) then
-                fdiags(1) = strncon_tf ; call report_error(261)
-                strain = sign(0.5D-2,strncon_tf)
+            if (abs(strain) > 0.5D-2) then
+                fdiags(1) = strain ; call report_error(261)
+                strain = sign(0.5D-2,strain)
             end if
             !  jcritsc returned by itersc is the critical current density in the
             !  superconductor - not the whole strand, which contains copper
@@ -5370,9 +5368,9 @@ contains
             bc20m = 430
             tc0m = 185
             ! If strain limit achieved, throw a warning and use the lower strain
-            if (abs(strncon_tf) > 0.7D-2) then
-                fdiags(1) = strncon_tf ; call report_error(261)
-                strain = sign(0.7D-2,strncon_tf)
+            if (abs(strain) > 0.7D-2) then
+                fdiags(1) = strain ; call report_error(261)
+                strain = sign(0.7D-2,strain)
             end if
             call GL_REBCO(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
             ! A0 calculated for tape cross section already
@@ -5384,9 +5382,9 @@ contains
             bc20m = 138
             tc0m = 92
             ! If strain limit achieved, throw a warning and use the lower strain
-            if (abs(strncon_tf) > 0.7D-2) then
-                fdiags(1) = strncon_tf ; call report_error(261)
-                strain = sign(0.7D-2,strncon_tf)
+            if (abs(strain) > 0.7D-2) then
+                fdiags(1) = strain ; call report_error(261)
+                strain = sign(0.7D-2,strain)
             end if
             ! 'high current density' as per parameterisation described in Wolf, 
             !  and based on Hazelton experimental data and Zhai conceptual model;
@@ -5553,7 +5551,8 @@ contains
         call ovarre(outfile,'Helium temperature at peak field (= superconductor temperature) (K)','(thelium)',thelium)
         call ovarre(outfile,'Total helium fraction inside cable space','(fhetot)',fhetot, 'OP ')
         call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcu)
-        call ovarre(outfile,'Strain on superconductor','(strncon_tf)',strncon_tf)
+        call ovarre(outfile,'Residual manufacturing strain on superconductor','(strncon_tf)',strncon_tf)
+        call ovarre(outfile,'Self-consistent strain on superconductor','(strain_wp)',strain_wp)
         call ovarre(outfile,'Critical current density in superconductor (A/m2)','(jcritsc)',jcritsc, 'OP ')
         call ovarre(outfile,'Critical current density in strand (A/m2)','(jcritstr)',jcritstr, 'OP ')
         call ovarre(outfile,'Critical current density in winding pack (A/m2)', '(jwdgcrt)',jwdgcrt, 'OP ')
