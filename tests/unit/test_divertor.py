@@ -3,7 +3,6 @@
 from process.divertor import Divertor
 import pytest
 
-from process.fortran import divertor_module as divm
 from process.fortran import tfcoil_variables as tfv
 
 

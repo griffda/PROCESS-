@@ -1,7 +1,6 @@
 import math
 
 from process.fortran import constants
-from process.fortran import divertor_module as divm
 from process.fortran import build_variables as bv
 from process.fortran import divertor_variables as dv
 from process.fortran import physics_variables as pv
