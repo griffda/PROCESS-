@@ -23,8 +23,8 @@ class TestDivertor:
 
         Uses test data from the first call of this subroutine by baseline 2018.
 
-        :param tfcoil: fixture containing an initialised `Divertor` object
-        :type tfcoil: tests.unit.test_divertor.divertor (functional fixture)
+        :param divertor: fixture containing an initialised `Divertor` object
+        :type divertor: tests.unit.test_divertor.divertor (functional fixture)
         """
         adas = 0.052617908173833536
         aion = 2.5
@@ -149,8 +149,8 @@ class TestDivertor:
 
         Uses test data from the first call of this subroutine by baseline 2018.
 
-        :param tfcoil: fixture containing an initialised `Divertor` object
-        :type tfcoil: tests.unit.test_divertor.divertor (functional fixture)
+        :param divertor: fixture containing an initialised `Divertor` object
+        :type divertor: tests.unit.test_divertor.divertor (functional fixture)
         """
         tdiv = 150
         ndiv = 0.38105131621798821
@@ -161,10 +161,13 @@ class TestDivertor:
 
         assert erprcy == pytest.approx(expected_erprcy)
 
-    def test_ftdiv(self):
+    def test_ftdiv(self, divertor):
         """Test the ftdiv subroutine.
 
         Uses test data from the first call of this subroutine by baseline 2018.
+
+        :param divertor: fixture containing an initialised `Divertor` object
+        :type divertor: tests.unit.test_divertor.divertor (functional fixture)
         """
         aion = 2.5
         coefl = 1.3854518853592164
@@ -181,7 +184,7 @@ class TestDivertor:
 
         expected_ftdiv = 140.7905577701393
 
-        ftdiv = divm.ftdiv(
+        ftdiv = divertor.ftdiv(
             aion,
             coefl,
             delne,
