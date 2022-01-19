@@ -22,7 +22,7 @@ class AnnotatedVariableData(NamedTuple):
     :param name: the name of the variable
     :type name: str
 
-    :param obj: a pointer to the actual variable
+    :param obj: a pointer to the actual variable, therefore holding the initial value of this annotated variable.
     :type obj: _Variable (hidden within AnnotatedVariable)
 
     :param docstring: provide a docstring, description, to the variable.
@@ -58,6 +58,7 @@ def get_non_dunder_class_members(_object: object) -> dict:
     """
     non_dunder_members = {}
     for name, value in inspect.getmembers(_object):
+        # exclude methods or variables starting double-underscore
         if name[0:2] != "__":
             non_dunder_members[name] = value
 
@@ -66,13 +67,13 @@ def get_non_dunder_class_members(_object: object) -> dict:
 
 def get_annotated_variables(parent_name: str, _object) -> List[AnnotatedVariableData]:
     """Given a physics and engineering module, this function extracts and returns all of the
-    annotated variables.
+    annotated variables as a named tuple with important information contained.
 
     :param parent_name: the name of the parent (physics and engineering) module
     :type parent_name: str
 
-    :param _object: the underlying (annotated) class variable
-    :type _object: _Variable (hidden within DocableVariable)
+    :param _object: an instance physics and engineering module to gather annotated variables from
+    :type _object: PROCESS physics and engineering module
 
     :return annotated_variables: array of AnnotatedVariableData
     :type annotated_variables: List[AnnotatedVariableData]
@@ -80,6 +81,8 @@ def get_annotated_variables(parent_name: str, _object) -> List[AnnotatedVariable
     annotated_variables = []
     for name, obj in inspect.getmembers(_object):
         # hackery beget hackery
+        # since the underlying _Variable class is hidden,
+        # this is the only way to check the underlying class
         if (
             obj.__class__.__module__ == _Variable_module_name
             and obj.__class__.__name__ == _Variable_name

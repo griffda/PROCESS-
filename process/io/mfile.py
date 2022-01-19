@@ -18,6 +18,9 @@
     + 19/05/2014: Cleaned up MFile and put some functions outside class.
     + 12/06/2014: Fixed error handling for "variable not in MFILE" errors
     + 16/06/2014: Fixed library path error; fix in get_scans
+    + 24/11/2021: Global dictionary variables moved within the functions
+                  to avoid cyclic dependencies. This is because the dicts
+                  generation script imports, and inspects, process. 
 
   Compatible with PROCESS version 286
 

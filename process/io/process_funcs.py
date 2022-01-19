@@ -3,7 +3,12 @@ A selection of functions for using the PROCESS code
 
 Author: Hanni Lux (Hanni.Lux@ccfe.ac.uk)
 
-Compatible with PROCESS version 368 """
+Compatible with PROCESS version 368 
+
+24/11/2021: Global dictionary variables moved within the functions
+            to avoid cyclic dependencies. This is because the dicts
+            generation script imports, and inspects, process.
+"""
 
 from os.path import join as pjoin
 from sys import stderr

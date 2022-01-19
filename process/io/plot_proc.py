@@ -8,6 +8,10 @@
   CCFE
   Revised by Michael Kovari, 7/1/2016
 
+  24/11/2021: Global dictionary variables moved within the functions
+              to avoid cyclic dependencies. This is because the dicts
+              generation script imports, and inspects, process.
+
 """
 
 import os

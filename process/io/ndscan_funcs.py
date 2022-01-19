@@ -7,6 +7,9 @@ Date: August 2014 - initial released version
 
 Notes:
 22/08/2014 HL moved functions from process_config.py to this file
+24/11/2021 Global dictionary variables moved within the functions
+            to avoid cyclic dependencies. This is because the dicts
+            generation script imports, and inspects, process.
 
 Compatible with PROCESS version 319
 """
