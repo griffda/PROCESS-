@@ -1,4 +1,4 @@
-# Adding variables into the Python
+# Annotating variables in Python for their inclusion in the dictionaries
 As the Python conversion continues, we want to maintain backwards compatibility with our utility tools. These tools rely on the so-called 'dictionaries' to provide some of the meta data used in the utility functions.
 
 The dictionaries, in Fortran, are created by source code analysis using `ford`. With Python, we can use the known code structure to programatically extract this information and include it within the dictionary creation - therefore maintaining backwards compatibility during the conversion work. 
@@ -45,6 +45,8 @@ It only makes sense to use `AnnotatedVariable`s inside of a classes `__init__` m
     
 
     x = SomePhysicsModule()
+    print(f'{type(x.cost)=}')
+    print(f'{x.cost=}')
     print(f'{x.cost.__doc__=}')
     print(f'{x.cost.__units__=}')
     ```
@@ -53,12 +55,14 @@ It only makes sense to use `AnnotatedVariable`s inside of a classes `__init__` m
 
     When running this simple script, we get the following output:
     ```
+    type(x.cost)=<class 'process.variables.AnnotatedVariable.<locals>._Variable'>
+    x.cost=0.0
     x.cost.__doc__='The cost associated with SomePhysicsModule'
     x.cost.__units__='£'
     ```
 
 !!! warning
-    Once we act upon `self.cost` it may lose its `__doc__` and `__units__`. That is why this idea must only be used inside of the `__init__` method.
+    Once we act upon `self.cost`, it may lose its `__doc__` and `__units__`. That is why this idea must only be used inside of the `__init__` method.
 
     ```python
     from process.variables import AnnotatedVariable
@@ -72,6 +76,7 @@ It only makes sense to use `AnnotatedVariable`s inside of a classes `__init__` m
 
     x = SomePhysicsModule()
     x.do_something()
+    print(f'{type(x.cost)=}')
     print(f'{x.cost=}')
     print(f'{x.cost.__doc__=}')
     print(f'{x.cost.__units__=}')
@@ -80,6 +85,7 @@ It only makes sense to use `AnnotatedVariable`s inside of a classes `__init__` m
     And we get that the docstring, `__doc__` has changed and the `__units__` attribute no longer exists.
 
     ```
+    type(x.cost)=<class 'float'>
     x.cost=1000.0
     x.cost.__doc__='Convert a string or number to a floating point number, if possible.'
     Traceback (most recent call last):
