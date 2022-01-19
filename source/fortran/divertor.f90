@@ -389,11 +389,9 @@ contains
          (c27 * xpara * (1.0D0 - tpts**3.5D0) )**0.22222D0 )
     lamp = pdiv*rsrd / (2.0D0 * pi * rmaj * ppdiv)
 
-  contains
+  end subroutine divert
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    function erprcy(tdiv,ndiv)
+  function erprcy(tdiv,ndiv)
 
       !! Function providing the (energy radiated + ionized) per neutral
       !! recycle event from the Harrison / Kukushkin ITER model
@@ -576,8 +574,6 @@ contains
       gammash = ( 8.3D0 - 6.0D0*(0.07D0 - 0.18D0 * log10(3.0D0*tdiv*gcoef) ) )
 
     end function gammash
-
-  end subroutine divert
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
