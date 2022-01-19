@@ -1,13 +1,27 @@
 """Unit tests for divertor.f90 subroutines/functions"""
 
+from process.divertor import Divertor
 import pytest
 
 from process.fortran import divertor_module as divm
 from process.fortran import tfcoil_variables as tfv
 
 
+@pytest.fixture
+def divertor():
+    """Provides TFcoil object for testing.
+
+    :param monkeypatch: pytest mocking fixture
+    :type monkeypatch: MonkeyPatch
+
+    :returns: initialised TFcoil object
+    :rtype: process.tfcoil.TFcoil
+    """
+    return Divertor()
+
+
 class TestDivertor:
-    def test_divert(self):
+    def test_divert(self, divertor):
         """Test the divert subroutine.
 
         Uses test data from the first call of this subroutine by baseline 2018.
@@ -64,7 +78,7 @@ class TestDivertor:
             ptpdiv,
             tdiv,
             tsep,
-        ) = divm.divert(
+        ) = divertor.divert(
             adas,
             aion,
             anginc,
