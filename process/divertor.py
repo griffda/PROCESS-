@@ -21,7 +21,7 @@ class Divertor:
         """Routine to call the divertor model
         author: J Galambos, ORNL
         author: P J Knight, CCFE, Culham Science Centre
-        
+
         This subroutine calls the divertor routine. This routine scales
         dimensions, powers and field levels which are used as input to
         the Harrison divertor model.
@@ -38,7 +38,6 @@ class Divertor:
                 bv.scrapli,
                 bv.vgap,
                 pv.pdivt,
-                dv.hldiv,
                 int(output),
                 self.outfile,
             )
@@ -168,64 +167,5 @@ class Divertor:
 
         dv.rlclolcn = 1.44e-3 * dv.tsep ** 2 / (delne * 15.0e0 * tconl)
 
-        # output disabled until verdict from MDK in #242
-        # if (output):
-        # # MDK Issue #242 Switch off divertor output
-        #     return
-
-        #     po.oheadr(self.outfile,'Divertor')
-        #     po.ocmmnt(self.outfile,'Harrison (ITER) Model')
-        #     po.oblnkl(self.outfile)
-
-        # #  Fixed quantities to divertor model
-
-        #     po.ovarre(self.outfile,'Ion mass (amu)','(aionso)',aionso)
-        #     po.ovarre(self.outfile,'Fitting coefficient','(c1div)',c1div)
-        #     po.ovarre(self.outfile,'Fitting coefficient','(c2div)',c2div)
-        #     po.ovarre(self.outfile,'Fitting coefficient','(c3div)',c3div)
-        #     po.ovarre(self.outfile,'Fitting coefficient','(c4div)',c4div)
-        #     po.ovarre(self.outfile,'Fitting coefficient','(c5div)',c5div)
-        #     po.ovarre(self.outfile,'Fitting coefficient','(c6div)',c6div)
-        #     po.ovarin(self.outfile,'Divertor Zeff model','(divdum)',divdum)
-        #     po.ovarre(self.outfile,'Zeff in scrape-off region','(zeffso)',zeffso)
-        #     po.ovarre(self.outfile,'Coeff of energy distrib. along conn length','(delld)',delld)
-        #     po.ovarre(self.outfile,'Separatrix plasma density (10**20 m-3)','(delne)',delne)
-        #     po.ovarre(self.outfile,'Radial gradient ratio','(fdfs)',fdfs)
-        #     po.ovarre(self.outfile,'Sheath potential factor','(fgamp)',fgamp)
-        #     po.ovarre(self.outfile,'Parameter for sheath coefficient','(fififi)',fififi)
-        #     po.ovarre(self.outfile,'Fraction of radiated power to plate','(frrp)',frrp)
-        #     po.ovarre(self.outfile,'Pressure ratio - (nT)_p/(nT)_s','(omegan)',omegan)
-        #     po.ovarre(self.outfile,'ne-edge / ne-average','(prn1)',prn1)
-        #     po.ovarre(self.outfile,'Parallel heat transport coefficient','(xpara)',xpara)
-        #     po.ovarre(self.outfile,'Radial transport coefficient','(xperp)',xperp)
-
-        # #  Input quantities scaled in divertor caller (dependent on geometry,
-        # #  plasma parameters) - can be different for inner and outer plates
-
-        #     po.osubhd(self.outfile,'Scaled Input Quantities :')
-
-        #     po.ovarre(self.outfile,'Fraction of areas','(adas)',adas)
-        #     po.ovarre(self.outfile,'Angle of incidence (rad)','(anginc)',anginc)
-        #     po.ovarre(self.outfile,'Area of divertor / area of separatrix','(frgd)',frgd)
-        #     po.ovarre(self.outfile,'Power fraction to outer divertor','(ksic)',ksic)
-        #     po.ovarre(self.outfile,'Power to divertor (MW)','(pdiv)',pdiv)
-        #     po.ovarre(self.outfile,'Null to strike length (m)','(plsep)',plsep)
-        #     po.ovarre(self.outfile,'B_p / B_t strike point','(rbpbtc)',rbpbt)
-        #     po.ovarre(self.outfile,'Connection length ratio','(rconl)',rconl)
-        #     po.ovarre(self.outfile,'Radius ratio R_s/R_d','(rsrd)',rsrd)
-        #     po.ovarre(self.outfile,'Strike radius (m)','(rspo)',rspo)
-        #     po.ovarre(self.outfile,'Connection length (m)','(tconl)',tconl)
-
-        # #  Quantities calculated by the Harrison model
-
-        #     po.osubhd(self.outfile,'Divertor Model Output :')
-        #     po.ovarre(self.outfile,'Iteration relative error','(delta)',delta)
-        #     po.ovarre(self.outfile,'Private flux power factor','(omlarg)',omlarg)
-        #     po.ovarre(self.outfile,'Separatrix temperature (eV)','(tsep)',tsep)
-        #     po.ovarre(self.outfile,'Divertor temperature (eV)','(tdiv)',tdiv)
-        #     po.ovarre(self.outfile,'Divertor plasma density (10**20 m-3)','(dendiv)',dendiv)
-        #     po.ovarre(self.outfile,'Peak heat load (MW/m2)','(hldiv)',hldiv)
-        #     po.ovarre(self.outfile,'Divertor peak temperature (eV)','(ptpdiv)',ptpdiv)
-        #     po.ovarre(self.outfile,'D/T plate flux (10**20 m-3)','(gamdt)',gamdt)
-        #     po.ovarre(self.outfile,'Scrape-off thickness (m)','(delw)',delw)
-        #     po.ovarre(self.outfile,'Collision length / connection length','(rlclolcn)',rlclolcn)
+        # output deleted as per discussion in #242.
+        # tnunn: 19/01/2022
