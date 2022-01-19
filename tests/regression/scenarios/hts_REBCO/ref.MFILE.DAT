@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.2.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "18/01/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "13:13"
+ Date_of_run_____________________________________________________________ (date)________________________     "19/01/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "12:06"
  User____________________________________________________________________ (username)____________________     "cswan"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "hts model using "croco" conductor based on kit design                                              
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1146-gb851821f"                                                                               
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1149-gb3ea8001"                                                                               
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1205-tf-cond-stiffness"                                                                            
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Changed\ the\ name\ of\ the\ eyngseries\ functions\ to\ be"                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-4/test_scenario_hts_REBCO_0/IN.DAT                                                                                                                                          "
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Added\ new\ function,\ eyoung_t_nested_squares,\ to\ co"                                           
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-8/test_scenario_hts_REBCO_0/IN.DAT                                                                                                                                          "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -18,9 +18,9 @@
  Number_of_constraints_(total)___________________________________________ (neqns+nineqns)_______________             20    
  Optimisation_switch_____________________________________________________ (ioptimz)_____________________              1    
  Figure_of_merit_switch__________________________________________________ (minmax)______________________              1    
- Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      3.9370E-06 OP 
- VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      1.0609E-06 OP 
- Number_of_VMCON_iterations______________________________________________ (nviter)______________________             72 OP 
+ Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      5.3297E-06 OP 
+ VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      1.3716E-06 OP 
+ Number_of_VMCON_iterations______________________________________________ (nviter)______________________             77 OP 
  bt______________________________________________________________________ (itvar001)____________________      5.4691E+00    
  bt_(final_value/initial_value)__________________________________________ (xcm001)______________________      7.9262E-01    
  bt_(range_normalised)___________________________________________________ (nitvar001)___________________      2.7309E-01    
@@ -50,7 +50,7 @@
  ohcth_(range_normalised)________________________________________________ (nitvar009)___________________      3.2868E-01    
  q_______________________________________________________________________ (itvar010)____________________      3.0000E+00    
  q_(final_value/initial_value)___________________________________________ (xcm010)______________________      8.2077E-01    
- q_(range_normalised)____________________________________________________ (nitvar010)___________________      8.6340E-18    
+ q_(range_normalised)____________________________________________________ (nitvar010)___________________      0.0000E+00    
  bore____________________________________________________________________ (itvar011)____________________      2.5537E+00    
  bore_(final_value/initial_value)________________________________________ (xcm011)______________________      7.8588E-01    
  bore_(range_normalised)_________________________________________________ (nitvar011)___________________      2.4785E-01    
@@ -62,7 +62,7 @@
  coheof_(range_normalised)_______________________________________________ (nitvar013)___________________      1.9060E-01    
  fjohc0__________________________________________________________________ (itvar014)____________________      1.0000E-03    
  fjohc0_(final_value/initial_value)______________________________________ (xcm014)______________________      1.8360E-03    
- fjohc0_(range_normalised)_______________________________________________ (nitvar014)___________________      8.7012E-17    
+ fjohc0_(range_normalised)_______________________________________________ (nitvar014)___________________      0.0000E+00    
  fcohbop_________________________________________________________________ (itvar015)____________________      9.1193E-01    
  fcohbop_(final_value/initial_value)_____________________________________ (xcm015)______________________      1.4292E+00    
  fcohbop_(range_normalised)______________________________________________ (nitvar015)___________________      9.1184E-01    
@@ -81,16 +81,16 @@
  fiooic__________________________________________________________________ (itvar020)____________________      7.3689E-01    
  fiooic_(final_value/initial_value)______________________________________ (xcm020)______________________      2.9722E+00    
  fiooic_(range_normalised)_______________________________________________ (nitvar020)___________________      7.3663E-01    
- fvdump__________________________________________________________________ (itvar021)____________________      3.7551E-01    
- fvdump_(final_value/initial_value)______________________________________ (xcm021)______________________      5.5159E+00    
- fvdump_(range_normalised)_______________________________________________ (nitvar021)___________________      3.7488E-01    
+ fvdump__________________________________________________________________ (itvar021)____________________      3.7553E-01    
+ fvdump_(final_value/initial_value)______________________________________ (xcm021)______________________      5.5163E+00    
+ fvdump_(range_normalised)_______________________________________________ (nitvar021)___________________      3.7491E-01    
  ftmargtf________________________________________________________________ (itvar022)____________________      1.0000E+00    
  ftmargtf_(final_value/initial_value)____________________________________ (xcm022)______________________      1.0062E+00    
  ftmargtf_(range_normalised)_____________________________________________ (nitvar022)___________________      1.0000E+00    
- tdmptf__________________________________________________________________ (itvar023)____________________      6.0248E+01    
- tdmptf_(final_value/initial_value)______________________________________ (xcm023)______________________      1.7478E+00    
- tdmptf_(range_normalised)_______________________________________________ (nitvar023)___________________      6.0208E-01    
- thkcas__________________________________________________________________ (itvar024)____________________      5.0799E-01    
+ tdmptf__________________________________________________________________ (itvar023)____________________      6.0244E+01    
+ tdmptf_(final_value/initial_value)______________________________________ (xcm023)______________________      1.7476E+00    
+ tdmptf_(range_normalised)_______________________________________________ (nitvar023)___________________      6.0204E-01    
+ thkcas__________________________________________________________________ (itvar024)____________________      5.0798E-01    
  thkcas_(final_value/initial_value)______________________________________ (xcm024)______________________      7.7842E-01    
  thkcas_(range_normalised)_______________________________________________ (nitvar024)___________________      5.1331E-01    
  thwcndut________________________________________________________________ (itvar025)____________________      5.0000E-03    
@@ -99,18 +99,18 @@
  cpttf___________________________________________________________________ (itvar026)____________________      9.0000E+04    
  cpttf_(final_value/initial_value)_______________________________________ (xcm026)______________________      1.4377E+00    
  cpttf_(range_normalised)________________________________________________ (nitvar026)___________________      1.0000E+00    
- gapds___________________________________________________________________ (itvar027)____________________      2.8233E-02    
- gapds_(final_value/initial_value)_______________________________________ (xcm027)______________________      1.3015E+00    
- gapds_(range_normalised)________________________________________________ (nitvar027)___________________      8.2499E-04    
+ gapds___________________________________________________________________ (itvar027)____________________      2.8234E-02    
+ gapds_(final_value/initial_value)_______________________________________ (xcm027)______________________      1.3016E+00    
+ gapds_(range_normalised)________________________________________________ (nitvar027)___________________      8.2502E-04    
  flhthresh_______________________________________________________________ (itvar028)____________________      1.1639E+00    
  flhthresh_(final_value/initial_value)___________________________________ (xcm028)______________________      3.1999E-01    
  flhthresh_(range_normalised)____________________________________________ (nitvar028)___________________      1.8208E-02    
  ftmargoh________________________________________________________________ (itvar029)____________________      1.0000E+00    
  ftmargoh_(final_value/initial_value)____________________________________ (xcm029)______________________      1.9064E+00    
  ftmargoh_(range_normalised)_____________________________________________ (nitvar029)___________________      1.0000E+00    
- ftaucq__________________________________________________________________ (itvar030)____________________      4.1383E-01    
- ftaucq_(final_value/initial_value)______________________________________ (xcm030)______________________      1.1583E+00    
- ftaucq_(range_normalised)_______________________________________________ (nitvar030)___________________      4.1324E-01    
+ ftaucq__________________________________________________________________ (itvar030)____________________      4.1385E-01    
+ ftaucq_(final_value/initial_value)______________________________________ (xcm030)______________________      1.1584E+00    
+ ftaucq_(range_normalised)_______________________________________________ (nitvar030)___________________      4.1327E-01    
  fpsepbqar_______________________________________________________________ (itvar031)____________________      1.0000E+00    
  fpsepbqar_(final_value/initial_value)___________________________________ (xcm031)______________________      2.1444E+01    
  fpsepbqar_(range_normalised)____________________________________________ (nitvar031)___________________      1.0000E+00    
@@ -132,26 +132,26 @@
  f_coppera_m2____________________________________________________________ (itvar037)____________________      1.0000E+00    
  f_coppera_m2_(final_value/initial_value)________________________________ (xcm037)______________________      1.0000E+00    
  f_coppera_m2_(range_normalised)_________________________________________ (nitvar037)___________________      1.0000E+00    
- Beta_consistency__________________normalised_residue____________________ (normres001)__________________     -2.5378E-11    
- Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________      4.2453E-11    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      7.4629E-13    
- Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres004)__________________      1.5945E-10    
- Radial_build_consistency__________normalised_residue____________________ (normres005)__________________      6.6303E-13    
- Burn_time_lower_limit_____________normalised_residue____________________ (normres006)__________________      4.8140E-07    
- L-H_power_threshold_limit_________normalised_residue____________________ (normres007)__________________     -5.1408E-10    
- Net_electric_power_lower_limit____normalised_residue____________________ (normres008)__________________      2.5476E-08    
- Beta_upper_limit__________________normalised_residue____________________ (normres009)__________________     -2.4910E-11    
- Injection_power_upper_limit_______normalised_residue____________________ (normres010)__________________      7.7249E-12    
- TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres011)__________________     -2.5049E-06    
- TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres012)__________________     -2.9986E-06    
- I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres013)__________________      8.0846E-13    
- Dump_voltage_upper_limit__________normalised_residue____________________ (normres014)__________________     -4.8054E-11    
- TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres015)__________________      3.7148E-12    
- CS_temperature_margin_lower_limit_normalised_residue____________________ (normres016)__________________     -1.6511E-08    
- Dump_time_set_by_VV_stress________normalised_residue____________________ (normres017)__________________     -5.3549E-11    
- Upper_Lim._on_Psep_*_Bt_/_q_A_R___normalised_residue____________________ (normres018)__________________      4.7625E-10    
- CS_Tresca_yield_criterion_________normalised_residue____________________ (normres019)__________________     -3.9855E-08    
- TFC_current/copper_area_<_Max_____normalised_residue____________________ (normres020)__________________     -3.0020E-13    
+ Beta_consistency__________________normalised_residue____________________ (normres001)__________________     -3.6877E-11    
+ Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________      5.7152E-11    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      3.0327E-12    
+ Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres004)__________________      2.1778E-10    
+ Radial_build_consistency__________normalised_residue____________________ (normres005)__________________      1.0421E-12    
+ Burn_time_lower_limit_____________normalised_residue____________________ (normres006)__________________      7.9201E-07    
+ L-H_power_threshold_limit_________normalised_residue____________________ (normres007)__________________     -6.9061E-10    
+ Net_electric_power_lower_limit____normalised_residue____________________ (normres008)__________________      1.6574E-08    
+ Beta_upper_limit__________________normalised_residue____________________ (normres009)__________________     -3.4377E-11    
+ Injection_power_upper_limit_______normalised_residue____________________ (normres010)__________________      1.6379E-11    
+ TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres011)__________________     -3.2544E-06    
+ TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres012)__________________     -3.8958E-06    
+ I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres013)__________________     -1.2021E-12    
+ Dump_voltage_upper_limit__________normalised_residue____________________ (normres014)__________________     -1.5982E-10    
+ TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres015)__________________      1.0556E-11    
+ CS_temperature_margin_lower_limit_normalised_residue____________________ (normres016)__________________      1.4122E-06    
+ Dump_time_set_by_VV_stress________normalised_residue____________________ (normres017)__________________     -1.5954E-10    
+ Upper_Lim._on_Psep_*_Bt_/_q_A_R___normalised_residue____________________ (normres018)__________________      6.4238E-10    
+ CS_Tresca_yield_criterion_________normalised_residue____________________ (normres019)__________________      1.2338E-07    
+ TFC_current/copper_area_<_Max_____normalised_residue____________________ (normres020)__________________     -1.7798E-12    
  # Final Feasible Point #
  # Plant Availability #
  Allowable_blanket_neutron_fluence_(MW-yr/m2)____________________________ (abktflnc)____________________      5.0000E+00    
@@ -411,7 +411,7 @@
  Burn_time_(s)___________________________________________________________ (tburn)_______________________      7.2000E+03 OP 
  Reset_time_to_zero_current_for_CS_(s)___________________________________ (tqnch)_______________________      2.0032E+02    
  Time_between_pulses_(s)_________________________________________________ (tdwell)______________________      0.0000E+00    
- Total_plant_cycle_time_(s)______________________________________________ (tcycle)______________________      8.1106E+03 OP 
+ Total_plant_cycle_time_(s)______________________________________________ (tcycle)______________________      8.1107E+03 OP 
  kallenbach_switch_______________________________________________________ (kallenbach_switch)___________              0    
  # Radial Build #
  Machine_bore_(m)________________________________________________________ (bore)________________________      2.5537E+00 ITV
@@ -421,7 +421,7 @@
  TF_coil_inboard_leg_(m)_________________________________________________ (tfcth)_______________________      1.0782E+00    
  TF_coil_inboard_leg_insulation_gap_(m)__________________________________ (tftsgap)_____________________      2.1000E-02    
  Thermal_shield_(m)______________________________________________________ (thshield)____________________      5.0000E-02    
- thermal_shield_to_vessel_radial_gap_(m)_________________________________ (gapds)_______________________      2.8233E-02 ITV
+ thermal_shield_to_vessel_radial_gap_(m)_________________________________ (gapds)_______________________      2.8234E-02 ITV
  Inboard_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_in)_____________________      3.0000E-01    
  Inner_radiation_shield_radial_thickness_(m)_____________________________ (shldith)_____________________      3.0000E-01    
  Gap_(m)_________________________________________________________________ (vvblgap)_____________________      2.0000E-02    
@@ -503,7 +503,7 @@
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.0000E+08    
  WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      2.4761E+01 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      1.0330E+02 OP 
- Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      2.4424E-08    
+ Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      0.0000E+00    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -3.8873E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      2.1127E+08    
  Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      5.2714E+08    
@@ -551,7 +551,7 @@
  Total_Insulation_fraction_______________________________________________ (f_tf_ins)____________________      5.3231E-02    
  Casing_cross_section_area_(per_leg)_(m2)________________________________ (acasetf)_____________________      9.8155E-01    
  Inboard_leg_case_plasma_side_wall_thickness_(m)_________________________ (casthi)______________________      6.0000E-02    
- Inboard_leg_case_inboard_"nose"_thickness_(m)___________________________ (thkcas)______________________      5.0799E-01 ITV
+ Inboard_leg_case_inboard_"nose"_thickness_(m)___________________________ (thkcas)______________________      5.0798E-01 ITV
  Inboard_leg_case_sidewall_thickness_at_its_narrowest_point_(m)__________ (casths)______________________      5.0000E-02    
  External_case_mass_per_coil_(kg)________________________________________ (whtcas)______________________      1.0679E+06 OP 
  WP_cross_section_area_with_insulation_and_insertion_(per_coil)_(m2)_____ (awpc)________________________      6.0934E-01    
@@ -594,9 +594,9 @@
  Ripple_amplitude_at_plasma_outboard_midplane_(%)________________________ (ripple)______________________      6.0000E-01 OP 
  Allowable_stress_in_vacuum_vessel_(VV)_due_to_quench_(Pa)_______________ (sigvvall)____________________      9.3000E+07    
  Minimum_allowed_quench_time_due_to_stress_in_VV_(s)_____________________ (taucq)_______________________      2.4932E+01 OP 
- Actual_quench_time_(or_time_constant)_(s)_______________________________ (tdmptf)______________________      6.0248E+01 ITV
+ Actual_quench_time_(or_time_constant)_(s)_______________________________ (tdmptf)______________________      6.0244E+01 ITV
  Maximum_allowed_voltage_during_quench_due_to_insulation_(kV)____________ (vdalw)_______________________      1.0000E+01    
- Actual_quench_voltage_(kV)______________________________________________ (vtfskv)______________________      3.7551E+00 OP 
+ Actual_quench_voltage_(kV)______________________________________________ (vtfskv)______________________      3.7553E+00 OP 
  Maximum_permitted_TF_coil_current_/_copper_area_(A/m2)__________________ (copperA_m2_max)______________      1.0000E+08    
  Actual_TF_coil_current_/_copper_area_(A/m2)_____________________________ (copperA_m2)__________________      1.0000E+08    
  # Superconducting TF Coils #
@@ -850,17 +850,17 @@
  # Superconducting TF Coil Power Conversion #
  TF_coil_current_(kA)____________________________________________________ (itfka)_______________________      9.0000E+01 OP 
  Number_of_TF_coils______________________________________________________ (ntfc)________________________      1.6000E+01    
- Voltage_across_a_TF_coil_during_quench_(kV)_____________________________ (vtfskv)______________________      3.7551E+00 OP 
+ Voltage_across_a_TF_coil_during_quench_(kV)_____________________________ (vtfskv)______________________      3.7553E+00 OP 
  TF_coil_charge_time_(hours)_____________________________________________ (tchghr)______________________      4.0000E+00    
  Total_inductance_of_TF_coils_(H)________________________________________ (ltfth)_______________________      4.0220E+01 OP 
  Total_resistance_of_TF_coils_(ohm)______________________________________ (rcoils)______________________      0.0000E+00 OP 
  TF_coil_charging_voltage_(V)____________________________________________ (tfcv)________________________      3.6253E+02    
  Number_of_DC_circuit_breakers___________________________________________ (ntfbkr)______________________      1.6000E+01    
  Number_of_dump_resistors________________________________________________ (ndumpr)______________________      6.4000E+01    
- Resistance_per_dump_resistor_(ohm)______________________________________ (r1dump)______________________      4.1723E-02 OP 
- Dump_resistor_peak_power_(MW)___________________________________________ (r1ppmw)______________________      8.4489E+01 OP 
+ Resistance_per_dump_resistor_(ohm)______________________________________ (r1dump)______________________      4.1726E-02 OP 
+ Dump_resistor_peak_power_(MW)___________________________________________ (r1ppmw)______________________      8.4495E+01 OP 
  Energy_supplied_per_dump_resistor_(MJ)__________________________________ (r1emj)_______________________      2.5452E+03 OP 
- TF_coil_L/R_time_constant_(s)___________________________________________ (ttfsec)______________________      6.0248E+01 OP 
+ TF_coil_L/R_time_constant_(s)___________________________________________ (ttfsec)______________________      6.0244E+01 OP 
  Power_supply_voltage_(V)________________________________________________ (tfpsv)_______________________      3.8066E+02 OP 
  Power_supply_current_(kA)_______________________________________________ (tfpska)______________________      9.4500E+01 OP 
  DC_power_supply_rating_(kW)_____________________________________________ (tfckw)_______________________      3.5972E+04 OP 
@@ -875,7 +875,7 @@
  TF_coil_bus_voltage_drop_(V)____________________________________________ (vtfbus)______________________      1.1116E+02 OP 
  Dump_resistor_floor_area_(m2)___________________________________________ (drarea)______________________      5.9824E+03 OP 
  TF_coil_power_conversion_floor_space_(m2)_______________________________ (tfcfsp)______________________      1.4249E+03 OP 
- TF_coil_power_conv._building_volume_(m3)________________________________ (tfcbv)_______________________      8.5495E+03 OP 
+ TF_coil_power_conv._building_volume_(m3)________________________________ (tfcbv)_______________________      8.5496E+03 OP 
  TF_coil_AC_inductive_power_demand_(MW)__________________________________ (xpwrmw)______________________      2.5137E+01 OP 
  Total_steady_state_AC_power_demand_(MW)_________________________________ (tfacpd)______________________      1.1116E+01 OP 
  # PF Coils and Central Solenoid: Power and Energy #
@@ -925,7 +925,7 @@
  Reactor_maintenance_building_volume_(m3)________________________________ (rmbv)________________________      4.2296E+05    
  Warmshop_volume_(m3)____________________________________________________ (wsv)_________________________      1.2791E+05    
  Tritium_building_volume_(m3)____________________________________________ (triv)________________________      4.0000E+04    
- Electrical_building_volume_(m3)_________________________________________ (elev)________________________      4.9549E+04    
+ Electrical_building_volume_(m3)_________________________________________ (elev)________________________      4.9550E+04    
  Control_building_volume_(m3)____________________________________________ (conv)________________________      6.0000E+04    
  Cryogenics_building_volume_(m3)_________________________________________ (cryv)________________________      1.6541E+04    
  Administration_building_volume_(m3)_____________________________________ (admv)________________________      1.0000E+05    
