@@ -328,7 +328,7 @@ class Divertor:
             tdivp = tdiv * (1.0e0 + epsilon)
             delty = tdiv * epsilon
 
-            f1 = divm.ftpts(
+            f1 = self.ftpts(
                 aion,
                 coefl,
                 delne,
@@ -358,7 +358,7 @@ class Divertor:
             )
 
             f1dx = (
-                divm.ftpts(
+                self.ftpts(
                     aion,
                     coefl,
                     delne,
@@ -375,7 +375,7 @@ class Divertor:
                 - f1
             ) / deltx
             f1dy = (
-                divm.ftpts(
+                self.ftpts(
                     aion,
                     coefl,
                     delne,
@@ -630,3 +630,88 @@ class Divertor:
         )
 
         return yys - ff
+
+    def ftpts(
+        self,
+        aion: float,
+        coefl: float,
+        delne: float,
+        fififi: float,
+        omegan: float,
+        omlarg: float,
+        qdiv: float,
+        tconl: float,
+        xpara: float,
+        xperp: float,
+        xx: float,
+        yy: float,
+    ) -> float:
+        """Function for divertor model temperature ratio solution
+        author: J Galambos, ORNL
+        author: P J Knight, CCFE, Culham Science Centre
+
+        This function updates the divertor model temperature ratio solution.
+        Report ITER-IL-PH-13-9-e12
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+
+        :param aion: ion mass (assumes fuel only) (AMU)
+        :type aion: real
+
+        :param coefl: little 'l' in Harrison model
+        :type coefl: real
+
+        :param delne: scrapeoff density by main plasma (10**20 m-3)
+        :type delne: real
+
+        :param fififi: coeff. used in sheath energy transfer factor calc.
+        :type fififi: real
+
+        :param omegan: pressure ratio of (plate / main plasma)
+        :type omegan: real
+
+        :param omlarg: factor accounting for power flow
+        :type omlarg: real
+
+        :param qdiv: heat flux across separatrix to divertor (MW/m2)
+        :type qdiv: real
+
+        :param tconl: connection length along field line by main plasma (m)
+        :type tconl: real
+
+        :param xpara: parallel diffusivity in the plasma scrapeoff (m2/s)
+        :type xpara: real
+
+        :param xperp: perpend. diffusivity in the plasma scrapeoff (m2/s)
+        :type xperp: real
+
+        :param xx: T_plate / T_separatrix guess
+        :type xx: real
+
+        :param yy: T_plate guess (eV)
+        :type yy: real
+
+        :returns: an estimate for the divertor temperature (eV)
+        :rtype: float
+        """
+
+        xxs = max(xx, 0.001e0)
+        xxs = min(xxs, 0.99999e0)
+        yys = max(yy, 0.1e0)
+
+        dendiv = delne * omegan / xxs
+        gamdiv = divm.gammash(fififi, yys)
+        eier = self.erprcy(yys, dendiv)
+
+        ff = (
+            xxs ** 3.5e0
+            + 9.66e0
+            * (xxs / aion) ** 0.9e0
+            * (xperp / (qdiv) ** 2) ** 0.8e0
+            * coefl
+            / (2.0e0 * xpara / 7.0e0)
+            * tconl ** 0.2e0
+            * (omlarg * omegan * gamdiv * (1.0e0 + eier / (gamdiv * yys))) ** 1.8e0
+            * delne ** 2.6e0
+        )
+
+        return 1.0e0 - ff

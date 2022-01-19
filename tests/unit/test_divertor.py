@@ -201,10 +201,13 @@ class TestDivertor:
 
         assert ftdiv == pytest.approx(expected_ftdiv)
 
-    def test_ftpts(self):
+    def test_ftpts(self, divertor):
         """Test the ftpts subroutine.
 
         Uses test data from the first call of this subroutine by baseline 2018.
+
+        :param divertor: fixture containing an initialised `Divertor` object
+        :type divertor: tests.unit.test_divertor.divertor (functional fixture)
         """
         aion = 2.5
         coefl = 1.3854518853592164
@@ -221,7 +224,7 @@ class TestDivertor:
 
         expected_ftpts = -7.962899353691732
 
-        ftpts = divm.ftpts(
+        ftpts = divertor.ftpts(
             aion,
             coefl,
             delne,
