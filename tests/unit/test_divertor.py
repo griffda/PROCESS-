@@ -1,13 +1,12 @@
 """Unit tests for divertor.f90 subroutines/functions"""
 
 import pytest
-from typing import NamedTuple
 
 from process.fortran import divertor_module as divm
 from process.fortran import tfcoil_variables as tfv
 
-class TestDivertor:
 
+class TestDivertor:
     def test_divert(self):
         """Test the divert subroutine.
 
@@ -52,7 +51,46 @@ class TestDivertor:
         expected_tdiv = 27.70537887577682
         expected_tsep = 305.08793598453673
 
-        delta,delw,dendiv,densin,gamdt,lamp,omlarg,ppdiv,ppdivr,ptpdiv,tdiv,tsep = divm.divert(adas,aion,anginc,delne,c1div,c2div,c3div,c4div,c5div,delld,fdfs,fififi,frgd,frrp,minstang,omegan,qdiv,pdiv,rbpbt,rconl,rmaj,rsrd,tconl,xpara,xperp)
+        (
+            delta,
+            delw,
+            dendiv,
+            densin,
+            gamdt,
+            lamp,
+            omlarg,
+            ppdiv,
+            ppdivr,
+            ptpdiv,
+            tdiv,
+            tsep,
+        ) = divm.divert(
+            adas,
+            aion,
+            anginc,
+            delne,
+            c1div,
+            c2div,
+            c3div,
+            c4div,
+            c5div,
+            delld,
+            fdfs,
+            fififi,
+            frgd,
+            frrp,
+            minstang,
+            omegan,
+            qdiv,
+            pdiv,
+            rbpbt,
+            rconl,
+            rmaj,
+            rsrd,
+            tconl,
+            xpara,
+            xperp,
+        )
 
         assert delta == pytest.approx(expected_delta)
         assert delw == pytest.approx(expected_delw)
@@ -66,7 +104,7 @@ class TestDivertor:
         assert ptpdiv == pytest.approx(expected_ptpdiv)
         assert tdiv == pytest.approx(expected_tdiv)
         assert tsep == pytest.approx(expected_tsep)
-    
+
     def test_divtart(self, monkeypatch):
         """Test the divtart subroutine.
 
@@ -84,10 +122,10 @@ class TestDivertor:
 
         expected_hldiv = 0.087770426974167357
 
-        hldiv = divm.divtart(rmajor,rminor,triang,scrapli,vgap,pdivt,0,0)
+        hldiv = divm.divtart(rmajor, rminor, triang, scrapli, vgap, pdivt, 0, 0)
 
         assert hldiv == pytest.approx(expected_hldiv)
-    
+
     def test_erprcy(self):
         """Test the erprcy subroutine.
 
@@ -98,10 +136,10 @@ class TestDivertor:
 
         expected_erprcy = 24.949836803003997
 
-        erprcy = divm.erprcy(tdiv,ndiv)
+        erprcy = divm.erprcy(tdiv, ndiv)
 
         assert erprcy == pytest.approx(expected_erprcy)
-    
+
     def test_ftdiv(self):
         """Test the ftdiv subroutine.
 
@@ -122,7 +160,20 @@ class TestDivertor:
 
         expected_ftdiv = 140.7905577701393
 
-        ftdiv = divm.ftdiv(aion,coefl,delne,fififi,omegan,omlarg,qdiv,tconl,xpara,xperp,xx,yy)
+        ftdiv = divm.ftdiv(
+            aion,
+            coefl,
+            delne,
+            fififi,
+            omegan,
+            omlarg,
+            qdiv,
+            tconl,
+            xpara,
+            xperp,
+            xx,
+            yy,
+        )
 
         assert ftdiv == pytest.approx(expected_ftdiv)
 
@@ -146,7 +197,20 @@ class TestDivertor:
 
         expected_ftpts = -7.962899353691732
 
-        ftpts = divm.ftpts(aion,coefl,delne,fififi,omegan,omlarg,qdiv,tconl,xpara,xperp,xx,yy)
+        ftpts = divm.ftpts(
+            aion,
+            coefl,
+            delne,
+            fififi,
+            omegan,
+            omlarg,
+            qdiv,
+            tconl,
+            xpara,
+            xperp,
+            xx,
+            yy,
+        )
 
         assert ftpts == pytest.approx(expected_ftpts)
 
@@ -160,6 +224,6 @@ class TestDivertor:
 
         expected_gammash = 8.155694305511572
 
-        gammash = divm.gammash(gcoef,tdiv)
+        gammash = divm.gammash(gcoef, tdiv)
 
         assert gammash == pytest.approx(expected_gammash)
