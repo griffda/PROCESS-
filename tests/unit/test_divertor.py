@@ -9,13 +9,10 @@ from process.fortran import tfcoil_variables as tfv
 
 @pytest.fixture
 def divertor():
-    """Provides TFcoil object for testing.
+    """Provides Divertor object for testing.
 
-    :param monkeypatch: pytest mocking fixture
-    :type monkeypatch: MonkeyPatch
-
-    :returns: initialised TFcoil object
-    :rtype: process.tfcoil.TFcoil
+    :returns: initialised Divertor object
+    :rtype: process.divertor.Divertor
     """
     return Divertor()
 
@@ -25,6 +22,9 @@ class TestDivertor:
         """Test the divert subroutine.
 
         Uses test data from the first call of this subroutine by baseline 2018.
+
+        :param tfcoil: fixture containing an initialised `Divertor` object
+        :type tfcoil: tests.unit.test_divertor.divertor (functional fixture)
         """
         adas = 0.052617908173833536
         aion = 2.5
@@ -123,6 +123,10 @@ class TestDivertor:
         """Test the divtart subroutine.
 
         Uses test data from the second call of this subroutine by FNSF regression test.
+
+        :param monkeypatch: pytest mocking fixture
+        :type monkeypatch: object
+
         """
 
         monkeypatch.setattr(tfv, "drtop", 0)
@@ -140,17 +144,20 @@ class TestDivertor:
 
         assert hldiv == pytest.approx(expected_hldiv)
 
-    def test_erprcy(self):
+    def test_erprcy(self, divertor):
         """Test the erprcy subroutine.
 
         Uses test data from the first call of this subroutine by baseline 2018.
+
+        :param tfcoil: fixture containing an initialised `Divertor` object
+        :type tfcoil: tests.unit.test_divertor.divertor (functional fixture)
         """
         tdiv = 150
         ndiv = 0.38105131621798821
 
         expected_erprcy = 24.949836803003997
 
-        erprcy = divm.erprcy(tdiv, ndiv)
+        erprcy = divertor.erprcy(tdiv, ndiv)
 
         assert erprcy == pytest.approx(expected_erprcy)
 

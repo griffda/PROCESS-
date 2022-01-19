@@ -453,7 +453,7 @@ class Divertor:
         ptpdiv = tdiv * ct
         gamdiv = divm.gammash(fififi, tdiv)  #  sheath coefficient
         dendiv = delne / (omegan * tpts)
-        eier = divm.erprcy(
+        eier = self.erprcy(
             tdiv, dendiv
         )  #  ionization + radiation energy / recycle event
 
@@ -516,3 +516,28 @@ class Divertor:
             tdiv,
             tsep,
         )
+
+    def erprcy(self, tdiv: float, ndiv: float) -> float:
+        """Function providing the (energy radiated + ionized) per neutral
+        recycle event from the Harrison / Kukushkin ITER model
+        author: J Galambos, ORNL
+        author: P J Knight, CCFE, Culham Science Centre
+
+
+        This function calculates the total energy (in eV) radiated and
+        ionized, per neutral recycle event, from the Harrison / Kukushkin
+        ITER model.
+        Report ITER-IL-PH-13-9-e12
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+
+        :param tdiv: electron temperature at the plate (eV)
+        :type tdiv: float
+
+        :param ndiv: electron density at the plate (10**20 m-3)
+        :type ndiv: float
+
+        :returns: the total energy (in eV) radiated and ionized, per neutral recycle event, from the Harrison / Kukushkin ITER model.
+        :rtype: float
+        """
+
+        return max(17.5e0 + (5.0e0 + 37.5e0 / tdiv) * math.log10(10.0e0 / ndiv), 0.001)
