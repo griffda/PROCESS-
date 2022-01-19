@@ -2254,23 +2254,32 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                         eyoung_wp_t_eff,a_working,poisson_wp_t_eff)
                           
         ! Average WP Young's modulus in the vertical direction
-        ! Parallel-composite the steel and insulation
-        call eyoung_parallel(eyoung_steel,aswp,poisson_steel, &
-                          eyoung_ins,a_tf_ins,poisson_ins, & 
-                          eyoung_wp_z,a_working,poisson_wp_z)
-        ! Parallel-composite conductor into these quantities
-        call eyoung_parallel(eyoung_cond_z,acond*(1.0D0-fcutfsu),poisson_cond_z, & 
-                          eyoung_wp_z,a_working,poisson_wp_z, &                          
-                          eyoung_wp_z,a_working,poisson_wp_z)
-        ! Parallel-composite co-wound copper into these quantities
-        call eyoung_parallel(eyoung_copper,acond*fcutfsu,poisson_copper, & 
-                          eyoung_wp_z,a_working,poisson_wp_z, &                          
-                          eyoung_wp_z,a_working,poisson_wp_z)
-        ! Parallel-composite voids, insertion gap, and helium into these quantities
-        call eyoung_parallel(0D0,awpc-a_working,poisson_steel, & ! 
-                          eyoung_wp_z,a_working,poisson_wp_z, &                          
-                          eyoung_wp_z,a_working,poisson_wp_z)
-
+        ! Split up into "members", concentric squares in cross section
+        ! (described in Figure 10 of the TF coil documentation)
+        !! Steel conduit
+        eyoung_member_array(1)  = eyoung_steel
+        poisson_member_array(1) = poisson_steel
+        l_member_array(1)       = aswp
+        !! Insulation
+        eyoung_member_array(2)  = eyoung_ins
+        poisson_member_array(2) = poisson_ins
+        l_member_array(2)       = a_tf_ins
+        !! Copper
+        eyoung_member_array(3)  = eyoung_copper
+        poisson_member_array(3) = poisson_copper
+        l_member_array(3)       = acond*fcutfsu
+        !! Conductor
+        eyoung_member_array(4)  = eyoung_cond_z
+        poisson_member_array(4) = poisson_cond_z
+        l_member_array(4)       = acond*(1.0D0-fcutfsu)
+        !! Helium and void
+        eyoung_member_array(5)  = 0D0
+        poisson_member_array(5) = poisson_steel
+        l_member_array(5)       = awpc - acond - a_tf_ins - aswp
+        !! Compute the composite / smeared properties:
+        call eyoung_parallel_array(5,eyoung_member_array,l_member_array,poisson_member_array, &
+                                eyoung_wp_z,a_working,poisson_wp_z)
+                                
         ! Average WP Young's modulus in the vertical direction, now including the lateral case
         ! Parallel-composite the steel and insulation, now including the lateral case (sidewalls)
         call eyoung_parallel(eyoung_steel,a_wp_steel_eff - aswp,poisson_steel, &
@@ -4313,18 +4322,18 @@ subroutine eyoung_t_nested_squares(n,eyoung_j_in, l_in, poisson_j_perp_in, & ! I
     ! Inputs
     ! ---
     integer :: n
-    !! Number of nested-squrae-cross-section members
+    !! Number of nested-square-cross-section members
     
     real(dp), dimension(n), intent(in) :: eyoung_j_in
-    !! Young's modulus of members 1,2 in the j direction [Pa]
+    !! Young's modulus of members in the j direction [Pa]
     
     real(dp), dimension(n), intent(in) :: l_in
-    !! Length of members 1,2 in the j direction
+    !! Length of members in the j direction
     !! [m, or consistent units]
     
     real(dp), dimension(n), intent(in) :: poisson_j_perp_in
     !! Poisson's ratio between the j and transverse directions,
-    !! in that order, of members 1,2
+    !! in that order, of members
     !! (transverse strain / j strain, under j stress)
     
     ! Outputs
@@ -4400,6 +4409,68 @@ subroutine eyoung_t_nested_squares(n,eyoung_j_in, l_in, poisson_j_perp_in, & ! I
     end do
 
 end subroutine eyoung_t_nested_squares
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine eyoung_parallel_array(n,eyoung_j_in, a_in, poisson_j_perp_in, & ! Inputs
+                      eyoung_j_out, a_out, poisson_j_perp_out)   ! Outputs
+
+    !! Author : C. Swanson, PPPL
+    !! January 2022
+    !! This subroutine gives the smeared axial elastic 
+    !! properties of n members in parallel. It uses the subroutines
+    !! eyoung_parallel, above, so please be aware of the assumptions
+    !! inherent in that subroutine.
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    ! Inputs
+    ! ---
+    integer :: n
+    !! Number of parallel members
+    
+    real(dp), dimension(n), intent(in) :: eyoung_j_in
+    !! Young's modulus of members 1,2 in the j direction [Pa]
+    
+    real(dp), dimension(n), intent(in) :: a_in
+    !! Length of members 1,2 in the j direction
+    !! [m2, or consistent units]
+    
+    real(dp), dimension(n), intent(in) :: poisson_j_perp_in
+    !! Poisson's ratio between the j and transverse directions,
+    !! in that order, of members 1,2
+    !! (transverse strain / j strain, under j stress)
+    
+    ! Outputs
+    ! ---
+    real(dp), intent(out) :: eyoung_j_out
+    !! Young's modulus of composite member in the j direction [Pa]
+    
+    real(dp), intent(out) :: a_out
+    !! Length of composite member in the j direction
+    !! [m2, or consistent units]
+    
+    real(dp), intent(out) :: poisson_j_perp_out
+    !! Poisson's ratio between the j and transverse directions,
+    !! in that order, of composite member
+    !! (transverse strain / j strain, under j stress)
+    
+    ! Local
+    ! ---
+    integer :: ii !! Indices
+        
+    !! Initialize
+    eyoung_j_out = 0
+    a_out = 0
+    poisson_j_perp_out = 0
+                     
+    !! Parallel-composite them all together
+    do ii = 1,n
+      call eyoung_parallel(eyoung_j_in(ii),a_in(ii),poisson_j_perp_in(ii), &
+                eyoung_j_out,a_out,poisson_j_perp_out, &
+                eyoung_j_out,a_out,poisson_j_perp_out)
+    end do
+
+end subroutine eyoung_parallel_array
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
