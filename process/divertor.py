@@ -451,7 +451,7 @@ class Divertor:
 
         ct = max(0.1e0, (c1div + c2div / (tdiv)))
         ptpdiv = tdiv * ct
-        gamdiv = divm.gammash(fififi, tdiv)  #  sheath coefficient
+        gamdiv = self.gammash(fififi, tdiv)  #  sheath coefficient
         dendiv = delne / (omegan * tpts)
         eier = self.erprcy(
             tdiv, dendiv
@@ -612,7 +612,7 @@ class Divertor:
         yys = max(yy, 0.1e0)
 
         dendiv = delne * omegan / xxs
-        gamdiv = divm.gammash(fififi, yys)
+        gamdiv = self.gammash(fififi, yys)
         eier = self.erprcy(yys, dendiv)
         ff = (
             20.16e0
@@ -699,7 +699,7 @@ class Divertor:
         yys = max(yy, 0.1e0)
 
         dendiv = delne * omegan / xxs
-        gamdiv = divm.gammash(fififi, yys)
+        gamdiv = self.gammash(fififi, yys)
         eier = self.erprcy(yys, dendiv)
 
         ff = (
@@ -715,3 +715,25 @@ class Divertor:
         )
 
         return 1.0e0 - ff
+
+    def gammash(self, gcoef: float, tdiv: float) -> float:
+        """Function to provide the plasma sheath energy transfer coefficient
+        author: J Galambos, ORNL
+        author: P J Knight, CCFE, Culham Science Centre
+
+        This function provides the plasma sheath energy transfer coefficient
+        from the Harrison / Kukushkin ITER model.
+        Report ITER-IL-PH-13-9-e12
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+
+        :param gcoef: coefficient
+        :type gcoef: float
+
+        :param tdiv: electron temperature at the plate (eV)
+        :type tdiv: float
+
+        :returns: plasma sheath energy transfer coefficient
+        :rtype: float
+        """
+
+        return 8.3e0 - 6.0e0 * (0.07e0 - 0.18e0 * math.log10(3.0e0 * tdiv * gcoef))

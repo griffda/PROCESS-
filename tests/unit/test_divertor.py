@@ -241,16 +241,19 @@ class TestDivertor:
 
         assert ftpts == pytest.approx(expected_ftpts)
 
-    def test_gammash(self):
+    def test_gammash(self, divertor):
         """Test the gammash subroutine.
 
         Uses test data from the first call of this subroutine by baseline 2018.
+
+        :param divertor: fixture containing an initialised `Divertor` object
+        :type divertor: tests.unit.test_divertor.divertor (functional fixture)
         """
         gcoef = 0.0040000000000000001
         tdiv = 150
 
         expected_gammash = 8.155694305511572
 
-        gammash = divm.gammash(gcoef, tdiv)
+        gammash = divertor.gammash(gcoef, tdiv)
 
         assert gammash == pytest.approx(expected_gammash)
