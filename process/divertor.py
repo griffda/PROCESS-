@@ -1,10 +1,13 @@
 import math
 
+from process.fortran import constants
 from process.fortran import divertor_module as divm
 from process.fortran import build_variables as bv
 from process.fortran import divertor_variables as dv
 from process.fortran import physics_variables as pv
-from process.fortran import constants
+from process.fortran import tfcoil_variables as tfv
+from process.fortran import process_output as po
+from process.fortran import error_handling as eh
 
 
 class Divertor:
@@ -33,15 +36,14 @@ class Divertor:
         :type output: boolean
         """
         if pv.itart == 1:
-            divm.divtart(
+            self.divtart(
                 pv.rmajor,
                 pv.rminor,
                 pv.triang,
                 bv.scrapli,
                 bv.vgap,
                 pv.pdivt,
-                int(output),
-                self.outfile,
+                output=output,
             )
             return
 
@@ -566,40 +568,40 @@ class Divertor:
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
         :param aion: ion mass (assumes fuel only) (AMU)
-        :type aion: real
+        :type aion: float
 
         :param coefl: little 'l' in Harrison model
-        :type coefl: real
+        :type coefl: float
 
         :param delne: scrapeoff density by main plasma (10**20 m-3)
-        :type delne: real
+        :type delne: float
 
         :param fififi: coeff. used in sheath energy transfer factor calc.
-        :type fififi: real
+        :type fififi: float
 
         :param omegan: pressure ratio of (plate / main plasma)
-        :type omegan: real
+        :type omegan: float
 
         :param omlarg: factor accounting for power flow
-        :type omlarg: real
+        :type omlarg: float
 
         :param qdiv: heat flux across separatrix to divertor (MW/m2)
-        :type qdiv: real
+        :type qdiv: float
 
         :param tconl: connection length along field line by main plasma (m)
-        :type tconl: real
+        :type tconl: float
 
         :param xpara: parallel diffusivity in the plasma scrapeoff (m2/s)
-        :type xpara: real
+        :type xpara: float
 
         :param xperp: perpend. diffusivity in the plasma scrapeoff (m2/s)
-        :type xperp: real
+        :type xperp: float
 
         :param xx: T_plate / T_separatrix guess
-        :type xx: real
+        :type xx: float
 
         :param yy: T_plate guess (eV)
-        :type yy: real
+        :type yy: float
 
         :returns: an estimate for the divertor temperature (eV)
         :rtype: float
@@ -655,40 +657,40 @@ class Divertor:
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
         :param aion: ion mass (assumes fuel only) (AMU)
-        :type aion: real
+        :type aion: float
 
         :param coefl: little 'l' in Harrison model
-        :type coefl: real
+        :type coefl: float
 
         :param delne: scrapeoff density by main plasma (10**20 m-3)
-        :type delne: real
+        :type delne: float
 
         :param fififi: coeff. used in sheath energy transfer factor calc.
-        :type fififi: real
+        :type fififi: float
 
         :param omegan: pressure ratio of (plate / main plasma)
-        :type omegan: real
+        :type omegan: float
 
         :param omlarg: factor accounting for power flow
-        :type omlarg: real
+        :type omlarg: float
 
         :param qdiv: heat flux across separatrix to divertor (MW/m2)
-        :type qdiv: real
+        :type qdiv: float
 
         :param tconl: connection length along field line by main plasma (m)
-        :type tconl: real
+        :type tconl: float
 
         :param xpara: parallel diffusivity in the plasma scrapeoff (m2/s)
-        :type xpara: real
+        :type xpara: float
 
         :param xperp: perpend. diffusivity in the plasma scrapeoff (m2/s)
-        :type xperp: real
+        :type xperp: float
 
         :param xx: T_plate / T_separatrix guess
-        :type xx: real
+        :type xx: float
 
         :param yy: T_plate guess (eV)
-        :type yy: real
+        :type yy: float
 
         :returns: an estimate for the divertor temperature (eV)
         :rtype: float
@@ -737,3 +739,92 @@ class Divertor:
         """
 
         return 8.3e0 - 6.0e0 * (0.07e0 - 0.18e0 * math.log10(3.0e0 * tdiv * gcoef))
+
+    def divtart(
+        self,
+        rmajor: float,
+        rminor: float,
+        triang: float,
+        scrapli: float,
+        vgap: float,
+        pdivt: float,
+        output: bool,
+    ) -> float:
+        """Tight aspect ratio tokamak divertor model
+        author: P J Knight, CCFE, Culham Science Centre
+
+        This subroutine calculates the divertor heat load for a tight aspect
+        ratio machine, by assuming that the power is evenly spread around the
+        divertor chamber by the action of a gaseous target. Each divertor is
+        assumed to be approximately triangular in the R,Z plane.
+        AEA FUS 64: Figure 2
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+
+        :param rmajor: plasma major radius (m)
+        :type rmajor: float
+
+        :param rminor: plasma minor radius (m)
+        :type rminor: float
+
+        :param triang: plasma triangularity
+        :type triang: float
+
+        :param scrapli: inboard scrape-off width (m)
+        :type scrapli: float
+
+        :param vgap: top scrape-off width (m)
+        :type vgap: float
+
+        :param pdivt: power to the divertor (MW)
+        :type pdivt: float
+
+        :returns: divertor heat load for a tight aspect ratio machine
+        :rtype: float
+
+        :param output: indicate whether output should be written to the output file, or not
+        :type output: boolean
+        """
+
+        #  Thickness of centrepost + first wall at divertor height
+
+        r1 = rmajor - rminor * triang - 3.0e0 * scrapli + tfv.drtop
+
+        #  Outer radius of divertor region
+
+        r2 = rmajor + rminor
+
+        #  Angle of diagonal divertor plate from horizontal
+
+        if vgap <= 0.0e0:
+            eh.fdiags[0] = vgap
+            eh.report_error(22)
+
+        theta = math.atan(vgap / (r2 - r1))
+
+        #  Vertical plate area
+
+        a1 = 2.0e0 * constants.pi * r1 * vgap
+
+        #  Horizontal plate area
+
+        a2 = constants.pi * (r2 * r2 - r1 * r1)
+
+        #  Diagonal plate area
+
+        a3 = a2 / (math.cos(theta) * math.cos(theta))
+
+        #  Total divertor area (N.B. there are two of them)
+
+        areadv = 2.0e0 * (a1 + a2 + a3)
+
+        hldiv = pdivt / areadv
+
+        if output:
+            po.osubhd(self.outfile, "Divertor Heat Load")
+            po.ocmmnt(self.outfile, "Assume an expanded divertor with a gaseous target")
+            po.oblnkl(self.outfile)
+            po.ovarre(self.outfile, "Power to the divertor (MW)", "(pdivt.)", pdivt)
+            po.ovarre(self.outfile, "Divertor surface area (m2)", "(areadv)", areadv)
+            po.ovarre(self.outfile, "Divertor heat load (MW/m2)", "(hldiv)", hldiv)
+
+        return hldiv

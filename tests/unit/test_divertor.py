@@ -119,7 +119,7 @@ class TestDivertor:
         assert tdiv == pytest.approx(expected_tdiv)
         assert tsep == pytest.approx(expected_tsep)
 
-    def test_divtart(self, monkeypatch):
+    def test_divtart(self, monkeypatch, divertor):
         """Test the divtart subroutine.
 
         Uses test data from the second call of this subroutine by FNSF regression test.
@@ -127,6 +127,8 @@ class TestDivertor:
         :param monkeypatch: pytest mocking fixture
         :type monkeypatch: object
 
+        :param divertor: fixture containing an initialised `Divertor` object
+        :type divertor: tests.unit.test_divertor.divertor (functional fixture)
         """
 
         monkeypatch.setattr(tfv, "drtop", 0)
@@ -140,7 +142,7 @@ class TestDivertor:
 
         expected_hldiv = 0.087770426974167357
 
-        hldiv = divm.divtart(rmajor, rminor, triang, scrapli, vgap, pdivt, 0, 0)
+        hldiv = divertor.divtart(rmajor, rminor, triang, scrapli, vgap, pdivt, False)
 
         assert hldiv == pytest.approx(expected_hldiv)
 
