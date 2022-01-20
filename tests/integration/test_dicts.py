@@ -200,7 +200,8 @@ def test_default(ref_dicts, new_dicts):
         "nvar",
         "zero",
         "delta",
-        "cp_he"
+        "cp_he",
+        "double",
     ]
     """
     Ignore calltree_data: removed. ctfile, current, error_head, error_tail

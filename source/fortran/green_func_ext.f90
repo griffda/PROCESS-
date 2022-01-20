@@ -655,8 +655,8 @@ USE const_and_precisions, only: wp_, unit, zero, mc2_, comp_eps
  REAL(wp_), INTENT(in)  :: Zeff,fc,u,q,gam
  REAL(wp_), INTENT(out) :: K,dKdu
  INTEGER :: ierr,nfun
- REAL(8) :: gam2,err,flag,Integr
- REAL(8), PARAMETER :: a = 0d0, b = 1d0, rtol = 1d-4, atol = 1d-12
+ real(8) :: gam2,err,flag,Integr
+ real(8), PARAMETER :: a = 0d0, b = 1d0, rtol = 1d-4, atol = 1d-12
 !=======================================================================
  r2 = (1+Zeff)/fc   ! global parameter needed for integrand, HSL_f(t)
 !------------------
@@ -688,8 +688,8 @@ USE const_and_precisions, only: wp_, unit, zero, mc2_, comp_eps
 ! Integrand for the high-speed limit approach (Lin-Liu's formulation)
 !=======================================================================
  IMPLICIT NONE
- REAL(8), INTENT(in) :: t
- REAL(8) :: f,g
+ real(8), INTENT(in) :: t
+ real(8) :: f,g
    g = sqrt(1+t*t*q2)
    f = t**(3+r2)/g**3 * (gp1/(g+1))**r2
  END FUNCTION HSL_f

@@ -55,6 +55,7 @@ OBS_VARS = {
     "ratecdol": "discount_rate",
     "strtf1": "sig_tf_case",
     "strtf2": "sig_tf_wp",
-    "alstrtf": "sig_tf_case_max",
-    "strtf0": "sig_tf_cs_bucked"
+    "alstrtf": ["sig_tf_case_max", "sig_tf_wp_max"],
+    "strtf0": "sig_tf_cs_bucked",
+    "i_tf_plane_stress": "i_tf_stress_model"
 }

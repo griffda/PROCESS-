@@ -16,7 +16,9 @@ module impurity_radiation_module
   !! Kallenbach et al., Plasma Phys. Control. Fus. 55(2013) 124041
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
 
   private

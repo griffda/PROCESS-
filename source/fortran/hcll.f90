@@ -8,15 +8,17 @@ module kit_hcll_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   ! Modules to import
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
 
   !  Precision variable
   integer, parameter :: double = 8
 
   ! TODO - blanket thickness includes the first wall in Fabrizio's model
-  ! real(8) :: blnkith = 0.025D0 + 0.375D0 + 0.21D0
-  ! real(8) :: blnkoth = 0.025D0 + 0.715D0 + 0.21D0
+  ! real(dp) :: blnkith = 0.025D0 + 0.375D0 + 0.21D0
+  ! real(dp) :: blnkoth = 0.025D0 + 0.715D0 + 0.21D0
 
   ! TODO - need checking of the bounds of validity
 
@@ -26,342 +28,342 @@ module kit_hcll_module
   integer, private :: ip, ofile
 
   ! Blanket inlet/outlet He temperatures
-  real(8), private :: T_he_in, T_He_out
+  real(dp), private :: T_he_in, T_He_out
 
   ! Density of lead lithium (kg/m3)
-  real(8), private :: denpbli
+  real(dp), private :: denpbli
 
   ! Density of helium (kg/m3 at 8MPa, 400C)
-  real(8), private :: denhe
+  real(dp), private :: denhe
 
   ! Coverage factor (%)
-  real(8), private :: cf
+  real(dp), private :: cf
 
   ! Energy multiplication in blanket, VV and divertor
-  real(8), private :: emult_all
+  real(dp), private :: emult_all
 
   ! TBR formula correction Factors
-  real(8), private :: ff_ib, ff_ob
+  real(dp), private :: ff_ib, ff_ob
 
   ! Fraction of neutronic current going towards inboard/outboard blankets (%)
-  real(8), private :: j_plus_ib, j_plus_ob
+  real(dp), private :: j_plus_ib, j_plus_ob
 
   ! Specific heat at constant pressure for He at 8 MPa and 400C (J/kg/K)
-  real(8),private :: cp_he
+  real(dp),private :: cp_he
 
   ! Reference thermal blanket power, DEMO 2007 (MW)
-  real(8), private :: P_th_0
+  real(dp), private :: P_th_0
 
   ! Reference He pumping power, DEMO 2007 (MW)
-  real(8),private :: P_pump_0
+  real(dp),private :: P_pump_0
 
   ! Radial position of first wall inboard/outboard side (m)
-  real(8),private :: rad_ib, rad_ob
+  real(dp),private :: rad_ib, rad_ob
 
   ! Breeder zone and back plate size percentage of blanket inboard/outboard (%)
-  real(8),private :: bp_ratio_ib, bp_ratio_ob, bz_ratio_ib, bz_ratio_ob
+  real(dp),private :: bp_ratio_ib, bp_ratio_ob, bz_ratio_ib, bz_ratio_ob
 
   ! Breeder blanket breeder zone thickness (m)
-  real(8), private :: thick_bz_ib, thick_bz_ob
+  real(dp), private :: thick_bz_ib, thick_bz_ob
 
   ! Breeder blanket back plate thickness (m)
-  real(8), private :: thick_bp_ib, thick_bp_ob
+  real(dp), private :: thick_bp_ib, thick_bp_ob
 
   ! First wall thicknesses inboard/outboard (m)
-  real(8),private :: thick_fw_ib, thick_fw_ob
+  real(dp),private :: thick_fw_ib, thick_fw_ob
 
   ! Breeder blanket thicknesses inboard/outboard (m)
-  real(8),private :: dr_bb_ib, dr_bb_ob
+  real(dp),private :: dr_bb_ib, dr_bb_ob
 
   ! TODO Why is this comment here?
   ! Breeder blanket breeder zone thickness (m)
 
   ! Inboard ellipse 1 minor and major radii (m)
-  real(8),private :: r_ib, z_ib
+  real(dp),private :: r_ib, z_ib
 
   ! Outboard ellipse 2 minor and major radii (m)
-  real(8),private :: r_ob, z_ob
+  real(dp),private :: r_ob, z_ob
 
   ! h parameter for ellipse's length formula inboard/outboard
-  real(8), private :: h_ib, h_ob
+  real(dp), private :: h_ib, h_ob
 
   ! ellipse length (m) inboard/outboard
-  real(8), private :: len_ib, len_ob
+  real(dp), private :: len_ib, len_ob
 
   ! Fraction of ideal blanket ellipse length for divertor inboard/outboard
-  real(8), private :: frac_div_ib, frac_div_ob
+  real(dp), private :: frac_div_ib, frac_div_ob
 
   ! ellipse length (accounting for divertor gap) (m) inboard/outboard
-  real(8), private :: len_act_ib, len_act_ob
+  real(dp), private :: len_act_ib, len_act_ob
 
   ! Number of inboard/outboard modules in the poloidal direction
-  real(8), private :: nb_pol_ib, nb_pol_ob
+  real(dp), private :: nb_pol_ib, nb_pol_ob
 
   ! Max allowed (from Maintainance) Poloidal thickness of inboard blanket module (m)
-  real(8), private :: dp_bb_ib_max, dp_bb_ob_max
+  real(dp), private :: dp_bb_ib_max, dp_bb_ob_max
 
   ! Number of inboard/outboard  modules in the toroidal direction (blanket segment)
-  real(8), private :: nb_tor_ib, nb_tor_ob
+  real(dp), private :: nb_tor_ib, nb_tor_ob
 
   ! Max allowed (from RH) toroidal thickness of inboard/outboard blanket module (m)
-  real(8), private :: dt_bb_ib_max, dt_bb_ob_max
+  real(dp), private :: dt_bb_ib_max, dt_bb_ob_max
 
   ! Poloidal length of inboard/outboard blanket module
-  real(8), private :: dp_bb_ib, dp_bb_ob
+  real(dp), private :: dp_bb_ib, dp_bb_ob
 
   ! Toroidal length of inboard/outboard blanket module (m)
-  real(8), private :: dt_bb_ib, dt_bb_ob
+  real(dp), private :: dt_bb_ib, dt_bb_ob
 
   ! Inboard/outboard and total FW area (m2)
-  real(8), private :: area_fw_ib, area_fw_ob, area_fw
+  real(dp), private :: area_fw_ib, area_fw_ob, area_fw
 
   ! Inboard/outboard blanket module side wall thickness
-  real(8), private :: thick_sw_ib, thick_sw_ob
+  real(dp), private :: thick_sw_ib, thick_sw_ob
 
   ! Inboard/outboard blanket module cap thickness (m)
-  real(8), private :: thick_cap_ib, thick_cap_ob
+  real(dp), private :: thick_cap_ib, thick_cap_ob
 
   ! Radial thickness of inboard/outboard breeding zone (m)
-  real(8), private :: dr_bz_ib, dr_bz_ob
+  real(dp), private :: dr_bz_ib, dr_bz_ob
 
   ! Toroidal thickness of inboard/outboard breeding zone (m)
-  real(8), private :: dt_bz_ib, dt_bz_ob
+  real(dp), private :: dt_bz_ib, dt_bz_ob
 
   ! Poloidal thickness of inboard/outboard breeding zone (m)
-  real(8), private :: dp_bz_ib, dp_bz_ob
+  real(dp), private :: dp_bz_ib, dp_bz_ob
 
   ! Number of BU in a inboard/outboard module along the toroidal direction
-  real(8), private :: nb_bu_tor_ib, nb_bu_tor_ob
+  real(dp), private :: nb_bu_tor_ib, nb_bu_tor_ob
 
   ! Number of BU in a inboard/outboard module along the poloidal direction
-  real(8), private :: nb_bu_pol_ib, nb_bu_pol_ob
+  real(dp), private :: nb_bu_pol_ib, nb_bu_pol_ob
 
   ! Toroidal thickness of a inboard/outboard BU (m)
-  real(8), private :: dt_bu_ib, dt_bu_ob
+  real(dp), private :: dt_bu_ib, dt_bu_ob
 
   ! Poloidal thickness of a inboard/outboard BU (m)
-  real(8), private :: dp_bu_ib, dp_bu_ob
+  real(dp), private :: dp_bu_ib, dp_bu_ob
 
   ! Max allowed toroidal/poloidal dimension of BU (m)
-  real(8), private :: dt_bu_max, dp_bu_max
+  real(dp), private :: dt_bu_max, dp_bu_max
 
   ! Inboard/outboard back supporting structure radial thickness (m)
-  real(8), private :: thick_bss_ib, thick_bss_ob
+  real(dp), private :: thick_bss_ib, thick_bss_ob
 
   ! Poloidal thickness of inboard/outboard manifold region (m)
-  real(8), private :: dp_mf_ib, dp_mf_ob
+  real(dp), private :: dp_mf_ib, dp_mf_ob
 
   ! Toroidal thickness of inboard/outboard manifold region (m)
-  real(8), private :: dt_mf_ib, dt_mf_ob
+  real(dp), private :: dt_mf_ib, dt_mf_ob
 
   ! Radial thickness of inboard/outboard manifold region (m)
-  real(8), private :: dr_mf_ib, dr_mf_ob
+  real(dp), private :: dr_mf_ib, dr_mf_ob
 
   ! volume fraction of helium in the FW (calculated in the CEA version) (%)
-  real(8), private :: frac_vol_he_fw
+  real(dp), private :: frac_vol_he_fw
 
   ! Percentage of steel in the FW (%)
-  real(8), private :: frac_vol_steel_fw
+  real(dp), private :: frac_vol_steel_fw
 
   ! FW volume in an inboard/outboard blanket module (m3)
-  real(8), private :: vol_fw_ib, vol_fw_ob
+  real(dp), private :: vol_fw_ib, vol_fw_ob
 
   ! Total FW volume (reactor segment) (m3)
-  real(8), private :: vol_fw
+  real(dp), private :: vol_fw
 
   ! He volume in the FW for in inboard/outboard blanket module (m3)
-  real(8), private :: vol_he_fw_ib, vol_he_fw_ob
+  real(dp), private :: vol_he_fw_ib, vol_he_fw_ob
 
   ! Total He volume in FW (reactor segment) (m3)
-  real(8), private :: vol_he_fw
+  real(dp), private :: vol_he_fw
 
   ! Steel volume in the FW for an inboard outboard blanket module (m3)
-  real(8), private :: vol_steel_fw_ib, vol_steel_fw_ob
+  real(dp), private :: vol_steel_fw_ib, vol_steel_fw_ob
 
   ! Total steel volume in the FW (reactor segment) (m3)
-  real(8), private :: vol_steel_fw
+  real(dp), private :: vol_steel_fw
 
   ! Tungsten volume in the FW for an inboard/outboard blanket module (m3)
-  real(8), private :: vol_w_fw_ib, vol_w_fw_ob
+  real(dp), private :: vol_w_fw_ib, vol_w_fw_ob
 
   ! Volume fraction of tungsten in the FW (%)
-  real(8), private :: frac_vol_w_fw
+  real(dp), private :: frac_vol_w_fw
 
   ! Volume fraction of He in BZ (%)
-  real(8), private :: frac_vol_he_bz
+  real(dp), private :: frac_vol_he_bz
 
   ! Volume fraction of steel in BZ (%)
-  real(8), private :: frac_vol_steel_bz
+  real(dp), private :: frac_vol_steel_bz
 
   ! Volume fraction of PbLi in manifold region (%)
-  real(8), private :: frac_vol_pbli_mf
+  real(dp), private :: frac_vol_pbli_mf
 
   ! Volume fraction of steel in manifold region (%)
-  real(8), private :: frac_vol_steel_mf
+  real(dp), private :: frac_vol_steel_mf
 
   ! Percentage of PbLi in the BZ (%)
-  real(8), private :: frac_vol_pbli_bz
+  real(dp), private :: frac_vol_pbli_bz
 
   ! BZ volume in an inboard/outboard blanket module
-  real(8), private :: vol_bz_ib, vol_bz_ob
+  real(dp), private :: vol_bz_ib, vol_bz_ob
 
   ! Total He volume in inboard/outboard BZ (m3)
-  real(8), private :: vol_he_bz_ib, vol_he_bz_ob
+  real(dp), private :: vol_he_bz_ib, vol_he_bz_ob
 
   ! Total steel volume in the inboard/outboard blanket module (m3)
-  real(8), private :: vol_steel_bz_ib, vol_steel_bz_ob
+  real(dp), private :: vol_steel_bz_ib, vol_steel_bz_ob
 
   ! Total PbLi volume in the inboard/outboard blanket module BZ
-  real(8), private :: vol_pbli_bz_ib, vol_pbli_bz_ob
+  real(dp), private :: vol_pbli_bz_ib, vol_pbli_bz_ob
 
   ! Total He volume in the BZ for a reactor sector (m3)
-  real(8), private :: vol_he_bz
+  real(dp), private :: vol_he_bz
 
   ! Total steel volume in the BZ for a reactor sector (m3)
-  real(8), private :: vol_steel_bz
+  real(dp), private :: vol_steel_bz
 
   ! Total volume in the BZ for a reactor sector (m3)
-  real(8), private :: vol_bz
+  real(dp), private :: vol_bz
 
   ! Total Pb-Li volume in the BZ for a reactor sector (m3)
-  real(8), private :: vol_pbli_bz
+  real(dp), private :: vol_pbli_bz
 
   ! Percentage of He in the manifold region (%)
-  real(8), private :: frac_vol_he_mf
+  real(dp), private :: frac_vol_he_mf
 
   ! Total volume in the inboard/outboard manifold region (m3)
-  real(8), private :: vol_mf_ib, vol_mf_ob
+  real(dp), private :: vol_mf_ib, vol_mf_ob
 
   ! Total PbLi volume in the inboard/outboard manifold region (m3)
-  real(8), private :: vol_pbli_mf_ib, vol_pbli_mf_ob
+  real(dp), private :: vol_pbli_mf_ib, vol_pbli_mf_ob
 
   ! Total He volume in the inboard/outboard manifold region (m3)
-  real(8), private :: vol_he_mf_ib, vol_he_mf_ob
+  real(dp), private :: vol_he_mf_ib, vol_he_mf_ob
 
   ! Total steel volume in the inboard/outboard manifold region (m3)
-  real(8), private :: vol_steel_mf_ib, vol_steel_mf_ob
+  real(dp), private :: vol_steel_mf_ib, vol_steel_mf_ob
 
   ! Total PbLi volume in the manifold region for a reactor sector (m3)
-  real(8), private :: vol_pbli_mf
+  real(dp), private :: vol_pbli_mf
 
   ! Total steel volume in the manifold region for a reactor sector (m3)
-  real(8), private :: vol_steel_mf
+  real(dp), private :: vol_steel_mf
 
   ! Total volume in the manifold region for a reactor sector (m3)
-  real(8), private :: vol_mf
+  real(dp), private :: vol_mf
 
   ! Total steel volume in the manifold region for a reactor sector (m3)
-  real(8), private :: vol_he_mf
+  real(dp), private :: vol_he_mf
 
   ! Helium mass for an inboard/outboard reactor segment (kg)
-  real(8), private :: mass_he_segm_ib, mass_he_segm_ob
+  real(dp), private :: mass_he_segm_ib, mass_he_segm_ob
 
   ! Steel mass for an inboard/outboard reactor segment (kg)
-  real(8), private :: mass_steel_segm_ib, mass_steel_segm_ob
+  real(dp), private :: mass_steel_segm_ib, mass_steel_segm_ob
 
   ! PbLi mass for an inboard/outboard reactor segment (kg)
-  real(8), private :: mass_pbli_segm_ib, mass_pbli_segm_ob
+  real(dp), private :: mass_pbli_segm_ib, mass_pbli_segm_ob
 
   ! Tungsten mass for an inboard/outboard reactor segment (kg)
-  real(8), private :: mass_w_segm_ib, mass_w_segm_ob
+  real(dp), private :: mass_w_segm_ib, mass_w_segm_ob
 
   ! Total mass for an inboard/outboard reactor segment (kg)
-  real(8), private :: mass_segm_ib, mass_segm_ob
+  real(dp), private :: mass_segm_ib, mass_segm_ob
 
   ! Total mass for a blanket sector (kg)
-  real(8), private :: mass_sector
+  real(dp), private :: mass_sector
 
   ! Total He mass for the whole blanket (kg)
-  real(8), private :: mass_he_blanket
+  real(dp), private :: mass_he_blanket
 
   ! Total PbLi mass for the whole blanket (kg)
-  real(8), private :: mass_pbli_blanket
+  real(dp), private :: mass_pbli_blanket
 
   ! Total steel mass for the whole blanket (kg)
-  real(8), private :: mass_steel_blanket
+  real(dp), private :: mass_steel_blanket
 
   ! Total tungsten mass for the whole breeding blanket (kg)
-  real(8), private :: mass_w_blanket
+  real(dp), private :: mass_w_blanket
 
   ! Total blanket mass (kg)
-  real(8), private :: mass_blanket
+  real(dp), private :: mass_blanket
 
   ! Dimensionless inboard/outboard Tritium Production Rate
-  real(8), private :: TPR_ib, TPR_ob
+  real(dp), private :: TPR_ib, TPR_ob
 
   ! TBR from the inboard/outboard blankets
-  real(8), private :: TBR_ib, TBR_ob
+  real(dp), private :: TBR_ib, TBR_ob
 
   ! Fast neutron flux on the inboard/outboard leg (cm-2 s-1)
-  real(8), private :: phi_tfc_ib, phi_tfc_ob
+  real(dp), private :: phi_tfc_ib, phi_tfc_ob
 
   ! He mass flow rate (kg/s)
-  real(8), private :: w_he
+  real(dp), private :: w_he
 
   ! Blanket He pumping power (MW)
-  ! real(8), private :: p_pump
+  ! real(dp), private :: p_pump
 
   ! Surface heat flux on first wall (MW) (sum = pradfw)
-  real(8), private :: psurffwi, psurffwo
+  real(dp), private :: psurffwi, psurffwo
 
   ! Ratio of FW/BKT nuclear power as fraction of total
-  real(8), private :: pnuc_fw_ratio, pnuc_bkt_ratio
+  real(dp), private :: pnuc_fw_ratio, pnuc_bkt_ratio
 
   ! Powerflow calculation variables
 
   ! Inboard/outboard blanket coolant channel length (radial direction) (m)
-  real(8), private :: bldepti, bldepto
+  real(dp), private :: bldepti, bldepto
 
   ! Inboard/outboard blanket flow lengths (m)
-  real(8), private :: bzfllengi, bzfllengo
+  real(dp), private :: bzfllengi, bzfllengo
 
   ! Inboard/outboard coolant velocity in blanket (m/s)
-  real(8), private :: velblkti, velblkto
+  real(dp), private :: velblkti, velblkto
 
   ! Inboard/outboard first wall peak temperature (K)
-  real(8), private :: tpeakfwi, tpeakfwo
+  real(dp), private :: tpeakfwi, tpeakfwo
 
   ! Inboard/outboard first wall nuclear heating (MW)
-  real(8), private :: pnucfwi, pnucfwo
+  real(dp), private :: pnucfwi, pnucfwo
 
   ! Neutron power deposited inboard/outboard blanket blanket (MW)
-  real(8), private :: pnucblkti, pnucblkto
+  real(dp), private :: pnucblkti, pnucblkto
 
   ! Inboard/utboard total number of pipes
-  real(8), private :: npfwi, npfwo
+  real(dp), private :: npfwi, npfwo
 
   ! Inboard/outboard total num of pipes
-  real(8), private :: npblkti, npblkto
+  real(dp), private :: npblkti, npblkto
 
   ! Total mass flow rate for coolant (kg/s)
-  real(8), private :: mftotal
+  real(dp), private :: mftotal
 
   ! Inboard/outboard mass flow rate per coolant pipe (kg/s)
-  real(8), private :: mffwpi, mffwpo
+  real(dp), private :: mffwpi, mffwpo
 
   ! Inboard/outboard total mass flow rate to remove inboard FW power (kg/s)
-  real(8), private :: mffwi, mffwo, mffw
+  real(dp), private :: mffwi, mffwo, mffw
 
   ! Inboard/outboard blanket mass flow rate for coolant (kg/s)
-  real(8), private :: mfblkti, mfblkto, mfblkt
+  real(dp), private :: mfblkti, mfblkto, mfblkt
 
   ! Inboard/outboard mass flow rate per coolant pipe (kg/s)
-  real(8), private :: mfblktpi, mfblktpo
+  real(dp), private :: mfblktpi, mfblktpo
 
   ! Blanket internal half-height (m)
-  real(8), private :: hblnkt
+  real(dp), private :: hblnkt
 
   ! Inboard/outboard blanket segment poloidal length (m)
-  real(8), private :: bllengi, bllengo
+  real(dp), private :: bllengi, bllengo
 
   ! Inboard/outboard blanket mid-plan toroidal circumference for segment (m)
-  real(8), private :: blwidti, blwidto
+  real(dp), private :: blwidti, blwidto
 
   ! Inboard/outboard first wall pumping power (MW)
-  real(8), private :: htpmw_fwi, htpmw_fwo
+  real(dp), private :: htpmw_fwi, htpmw_fwo
 
   ! Inboard/outboard blanket pumping power (MW)
-  real(8), private :: htpmw_blkti, htpmw_blkto
+  real(dp), private :: htpmw_blkti, htpmw_blkto
 
 contains
 
@@ -1018,8 +1020,8 @@ contains
     ! Local variables
 
     ! Dimensions in cm for TBR
-    real(8) :: bz_ri, bz_ro
-    real(8) :: f_steel_bz, f_pbli_bz
+    real(dp) :: bz_ri, bz_ro
+    real(dp) :: f_steel_bz, f_pbli_bz
 
     bz_ri = dr_bz_ib*100.0D0
     bz_ro = dr_bz_ob*100.0D0
@@ -1195,10 +1197,10 @@ contains
     ! Local variables
 
     ! coolant specific heat capacity at constant pressure (J/kg/K)
-    real(8) :: cf
+    real(dp) :: cf
 
     ! coolant density (kg/m3)
-    real(8) :: rhof
+    real(dp) :: rhof
 
     ! Number of 90 degree angle turns in FW and blanket flow channels
     integer :: no90fw, no90bz
@@ -1449,13 +1451,13 @@ contains
      implicit none
 
      ! Function return parameter: Calculated pumping power (MW)
-     real(8) :: pumppower
+     real(dp) :: pumppower
 
      ! Arguments !
      ! !!!!!!!!!!!!
 
-     real(8), intent(in) :: flleng, rad, mf, mfp, etaiso
-     real(8), intent(in) :: temp_in, temp_out, pressure
+     real(dp), intent(in) :: flleng, rad, mf, mfp, etaiso
+     real(dp), intent(in) :: temp_in, temp_out, pressure
      integer, intent(in) :: no90, no180, coolant
      character(len=*), intent(in) :: label
 
@@ -1463,26 +1465,26 @@ contains
      ! !!!!!!!!!!!!!!!!!!
 
      ! Inlet pressure (Pa)
-     real(8) :: coolpin
+     real(dp) :: coolpin
 
      ! Coolant pressure drop (Pa)
-     real(8) :: deltap
+     real(dp) :: deltap
 
      ! Hydraulic diameter (circular channels assumed) (m)
-     real(8) :: dh
+     real(dp) :: dh
 
      ! Fluid specific enthalpy from refprop (J/kg)
-     real(8) :: h1
+     real(dp) :: h1
 
      ! enthalpy
-     !real(8) ::
+     !real(dp) ::
 
-     real(8) :: h2, kelbwn, kelbwt, kstrght, &
+     real(dp) :: h2, kelbwn, kelbwt, kstrght, &
           lambda, reyn, rhof, s1, s2, viscf, xifn, xift, ximn, ximt, vv, &
           temp_mean,pdropstraight, pdrop90, pdrop180
 
      ! TODO Variables that appear not to be used below. Check again before removing
-     !real(8) :: cf
+     !real(dp) :: cf
 
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1619,16 +1621,16 @@ contains
     ! Local variables
 
     ! Mid-plane distance from inboard to outboard side (m)
-    real(8) :: a
+    real(dp) :: a
 
     ! Internal half-height of blanket (m)
-    real(8) :: b
+    real(dp) :: b
 
     ! Calculate ellipse circumference using Ramanujan approximation (m)
-    real(8) :: ptor
+    real(dp) :: ptor
 
     ! Major radius where half-ellipses 'meet' (m)
-    real(8) :: r1
+    real(dp) :: r1
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1701,17 +1703,17 @@ contains
     ! !!!!!!!!!!!!
     
     ! Radial thicknesses of FW, BZ, MF, shield, VV for inboard or outboard (m)
-    real(8), intent(in) :: dr_fw, dr_bz, dr_mf, dr_sh, dr_vv
+    real(dp), intent(in) :: dr_fw, dr_bz, dr_mf, dr_sh, dr_vv
   
     ! Volume fraction of steel and PbLi in BZ (%)
-    real(8), intent(in) :: f_vol_steel_bz, f_vol_pbli_bz
+    real(dp), intent(in) :: f_vol_steel_bz, f_vol_pbli_bz
   
     ! Fast Neutron Flux (cm-2 sec-1)
-    real(8), intent(out) :: fnflux
+    real(dp), intent(out) :: fnflux
     ! Local variables
 
     ! Exponential factor
-    real(8) :: f
+    real(dp) :: f
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

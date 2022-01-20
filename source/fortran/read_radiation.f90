@@ -14,7 +14,9 @@ module read_radiation
   ! Modules to import !
   ! !!!!!!!!!!!!!!!!!!!!
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   use impurity_radiation_module, only: nimp
   implicit none
 

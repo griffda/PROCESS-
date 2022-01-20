@@ -16,14 +16,8 @@ This ultimately provides Process Python with the ability to access variable
 information in the Process Fortran source code.
 """
 import re
-import os
 import logging
-import copy
 import argparse
-from pprint import pformat
-from collections import defaultdict
-import sys
-import os
 import json
 import argparse
 import pickle
@@ -45,7 +39,7 @@ NON_F_VALUES = ['fcohbop', 'fvsbrnni', 'feffcd', 'fcutfsu', 'fimpvar']
 # PROCESS TF Coil types
 DICT_TF_TYPE = {1: "Nb3Sn ITER", 2: "Bi-2212", 3: "NbTi", 4: "Nb3Sn user", 
     5: "Nb3Sn WST", 6: "REBCO Croco", 7: "NbTi Ginzburg-Landau", 
-    8: "REBCO Ginzburg-Landau"}
+    8: "REBCO Ginzburg-Landau", 9: "REBCO Hazelton-Zhai"}
 
 # FIMP Values
 DICT_FIMP = {
@@ -388,7 +382,7 @@ class DefaultValues(ProjectDictionary):
         Once found, send on for parsing individually.
         """
         # Fetch all Fortran source files
-        sources = Path(SOURCEDIR).glob("*.f90")
+        sources = sorted(Path(SOURCEDIR).glob("*.f90"))
 
         for source in sources:
             with open(source) as f:

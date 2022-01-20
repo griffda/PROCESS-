@@ -1,18 +1,23 @@
 from logging import getLogger
 from process.fortran import vmcon_module
-from process.fortran import function_evaluator
 from process.fortran import numerics
 from process.fortran import global_variables
 from process.fortran import define_iteration_variables
-from process import evaluators
+from process.evaluators import Evaluators
 import numpy as np
 
 logger = getLogger(__name__)
 
 class Vmcon():
     """Driver for Fortran vmcon module."""
-    def __init__(self):
-        """Initialise vars for input/output with Fortran vmcon module."""
+    def __init__(self, models):
+        """Initialise vars for input/output with Fortran vmcon module.
+        
+        :param models: physics and engineering model objects
+        :type models: process.main.Models
+        """
+        self.evaluators = Evaluators(models)
+
         # Vars for array dimensions
         ipnvars = numerics.ipnvars
         ippn1 = ipnvars + 1
@@ -294,7 +299,7 @@ class Vmcon():
 
         See comments on differing array sizes in fcnvmc1_wrapper().
         """
-        self.objf, self.conf[0:self.m], self.ifail = evaluators.fcnvmc1(self.n, self.m, 
+        self.objf, self.conf[0:self.m] = self.evaluators.fcnvmc1(self.n, self.m, 
             self.x, self.ifail, self.fcnvmc1_first_call
         )
 
@@ -352,5 +357,4 @@ class Vmcon():
         (
             self.fgrd[0:self.n],
             self.cnorm[0:self.lcnorm, 0:self.m],
-            self.ifail,
-        ) = evaluators.fcnvmc2(self.n, self.m, self.x, self.lcnorm, self.ifail)
+        ) = self.evaluators.fcnvmc2(self.n, self.m, self.x, self.lcnorm)

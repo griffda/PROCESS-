@@ -3,7 +3,7 @@ from process.fortran import numerics
 from process.vmcon import Vmcon
 
 class Optimiser():
-    def __init__(self):
+    def __init__(self, models):
         """Creates and runs a Vmcon instance.
 
         This routine calls the minimisation/maximisation routine VMCON,
@@ -13,8 +13,11 @@ class Optimiser():
         AEA FUS 251: A User's Guide to the PROCESS Systems Code.
 
         This represents the old optimiz subroutine in the numerics module.
+
+        :param models: physics and engineering model objects
+        :type models: process.main.Models
         """
-        self.vmcon = Vmcon()
+        self.vmcon = Vmcon(models)
 
     def run(self):
         """Run vmcon solver and retry if it fails in certain ways."""

@@ -1,5 +1,7 @@
 module reinke_module
-   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#ifndef dp
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
    implicit none
 
   !private
@@ -7,7 +9,7 @@ module reinke_module
   !  Module-level variables
 
   !integer ::
-  real(8) :: vcritx
+  real(dp) :: vcritx
 
 contains
 
@@ -51,16 +53,16 @@ contains
     use impurity_radiation_module, only: nimp, imp_label
     
     implicit none
-    real(8) :: reinke_fzmin
-    real(8) :: bt, flh, qstar, rmajor, eps, fsep, fgw, kappa
-    real(8) :: lhat, netau, tesep, ml_div, sum_fZ_ml_other, ml_z, lz
-    real(8), dimension(14) :: impurity_arr_frac
-    real(8), dimension(14) :: impurity_enrichment
+    real(dp) :: reinke_fzmin
+    real(dp) :: bt, flh, qstar, rmajor, eps, fsep, fgw, kappa
+    real(dp) :: lhat, netau, tesep, ml_div, sum_fZ_ml_other, ml_z, lz
+    real(dp), dimension(14) :: impurity_arr_frac
+    real(dp), dimension(14) :: impurity_enrichment
     integer(kind=4) :: impvardiv
 
     integer(kind=4), parameter :: N = 100
     integer(kind=4) :: i, j
-    real(8) :: binWidth, te
+    real(dp) :: binWidth, te
 
     binWidth = tesep / N
     ! mL =1/tesep * \int_0^tesep L\(T) sqrt(T) dT using trapezoidal rule
@@ -154,9 +156,9 @@ contains
     !! M.L. Reinke 2017 Nucl. Fusion 57 034004
 
     implicit none
-    real(8) :: reinke_tsep
-    real(8) :: bt, flh, qstar, rmajor, eps, fgw, kappa, lhat
-    real(8), parameter :: kappa_0 = 2D3 !Stangeby W/m/eV^(7/2)
+    real(dp) :: reinke_tsep
+    real(dp) :: bt, flh, qstar, rmajor, eps, fgw, kappa, lhat
+    real(dp), parameter :: kappa_0 = 2D3 !Stangeby W/m/eV^(7/2)
 
     reinke_tsep = bt**0.72 * flh**0.29 * fgw**0.21 * qstar**0.08 * rmajor**0.33
     !reinke_tsep = bt**0.72 * flh**0.2857 * fgw**0.2057 * qstar**0.08 * rmajor**0.3314
@@ -175,11 +177,11 @@ contains
     use impurity_radiation_module, only: imp_dat, imp_label
     implicit none
 
-    real(8) :: testResult_fZ_DEMOBASE, testResult_fZ_ASDEXBASE, testInput_tsep
+    real(dp) :: testResult_fZ_DEMOBASE, testResult_fZ_ASDEXBASE, testInput_tsep
     integer :: i, j
-    real(8), parameter :: test_Bt = 5.8547
+    real(dp), parameter :: test_Bt = 5.8547
     type(imp_dat),  dimension(14), save :: test_imp_arr
-    real(8), dimension(14) :: impurity_enrichment
+    real(dp), dimension(14) :: impurity_enrichment
 
     do i=1,14
        test_imp_arr(i)%frac = 0.0d0
