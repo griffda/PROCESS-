@@ -10,7 +10,7 @@ Examples of how to use Process are provided in the form of Jupyter notebooks. Th
 
 ### Notebooks in VS Code
 
-The easiest way to run notebooks is in VS Code. Simply open the `.ipynb` file in VS Code to view and run it.
+The easiest way to run notebooks is in VS Code; this has the additional advantage of being able to debug notebooks. Simply open the `.ipynb` file in VS Code to view and run it. You may be required to select a notebook kernel on first run; be sure to select the virtual environment where Process is installed (e.g. `~/process/.venv`).
 
 ### Notebooks via the Jupyter server
 
@@ -20,7 +20,7 @@ The original way of running Jupyter notebooks has been via a web browser and the
 python -m notebook
 ```
 
-A web browser will open and the notebook can be run from there.
+A web browser will open and the notebook can be run from there. If you're using WSL, you'll have to `ctrl + click` the link.
 
 ### Notebooks in Docker
 To access the notebooks when running inside of a Docker container the Jupyter server port must be forwarded out.
