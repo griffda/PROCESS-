@@ -7,7 +7,9 @@ module divertor_ode
   !! This module contains the PROCESS Kallenbach divertor model
   !! 
   
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   use divertor_ode_var, only: nimp
   use constants, only: pi
@@ -22,48 +24,48 @@ module divertor_ode
 
   ! relative ion mass
   ! Issue #501: change from 2 to 2.5
-  real(8), private :: aplas
+  real(dp), private :: aplas
 
   ! ion mass [kg]
-  real(8), private :: mi
+  real(dp), private :: mi
 
   ! conversion from flux density [el/s] to Pascal [Molecules]
   ! see page 6 of paper.
-  real(8), private :: fluxdens_to_pa
+  real(dp), private :: fluxdens_to_pa
 
   ! Useful values (combinations of other constants/variables)
-  real(8), private :: eightemi, eightemi48,  elEion
-  real(8), private, parameter :: degree=pi/180.0D0
-  real(8), parameter :: ln10=log(10.0D0)
+  real(dp), private :: eightemi, eightemi48,  elEion
+  real(dp), private, parameter :: degree=pi/180.0D0
+  real(dp), parameter :: ln10=log(10.0D0)
 
   ! constant in thermal conductivity (equation 5) [J/(s m eV^7/2)]
-  real(8), private :: kappa0
+  real(dp), private :: kappa0
 
   ! neutral velocity along the flux bundle, groups 1 & 2 [m/s]
-  real(8), private :: v01, v02
+  real(dp), private :: v01, v02
 
   ! Allowable absolute/relative error (UNUSED)
-!   real(8), private :: abserr, relerr
+!   real(dp), private :: abserr, relerr
 
   ! Circumference of plasma at outboard midplane and at target [m]
-  real(8), private :: circumference_omp, circumference_target
+  real(dp), private :: circumference_omp, circumference_target
 
   ! Circumference of normal to helical field line [m]
-  real(8), private :: circumf_bu
+  real(dp), private :: circumf_bu
 
   ! Flux bundle area perp. to B at target and at omp [m2]
-  real(8), private :: area_target, area_omp
+  real(dp), private :: area_target, area_omp
 
   ! Zeff for divertor region
-  real(8) :: zeff_div
+  real(dp) :: zeff_div
 
   ! SOL radial thickness extrapolated to OMP [m]
-  real(8), private :: sol_broadening
+  real(dp), private :: sol_broadening
 
   ! Ratio: psep_kallenbach / Powerup
-  real(8), private, parameter :: seppowerratio=2.3D0
+  real(dp), private, parameter :: seppowerratio=2.3D0
 
-  real(8), private :: lengthofwidesol
+  real(dp), private :: lengthofwidesol
 
 contains
 
@@ -143,128 +145,128 @@ contains
     integer, intent(in) :: iprint
 
     ! Plasma major/minor radius [m]
-    real(8), intent(in) :: rmajor, rminor
+    real(dp), intent(in) :: rmajor, rminor
 
     ! Toroidal field on-axis [T]
-    real(8), intent(in) :: bt
+    real(dp), intent(in) :: bt
 
     ! Plasma current [A]
-    real(8), intent(in) :: plascur
+    real(dp), intent(in) :: plascur
 
     ! Vertical field at plasma [T] UNUSED
-    ! real(8), intent(in) :: bvert
+    ! real(dp), intent(in) :: bvert
 
     ! Plasma safety factor near edge
-    real(8), intent(in) :: q
+    real(dp), intent(in) :: q
 
     ! Target temperature input [eV]
-    real(8), intent(in) :: ttarget
+    real(dp), intent(in) :: ttarget
 
     ! qtargettotal : Power density on target including surface recombination [W/m2]
-    real(8),intent(in) :: qtargettotal
+    real(dp),intent(in) :: qtargettotal
 
-    real(8) :: qtargetcomplete
+    real(dp) :: qtargetcomplete
     !! qtargetcomplete : Total power density on target [W/m2]
 
     ! target angle [deg]
-    real(8),intent(in) :: targetangle
+    real(dp),intent(in) :: targetangle
 
     ! connection length from omp to target [m]
-    real(8) :: lcon
+    real(dp) :: lcon
 
     ! Absolute error input
-    ! real(8), optional, intent(in) :: abserrset
+    ! real(dp), optional, intent(in) :: abserrset
 
     ! Average poloidal field (T)
-    real(8), intent(in) :: bp
+    real(dp), intent(in) :: bp
 
     ! Power conducted through the separatrix, calculated by divertor model [W]
-    real(8), intent(out) :: psep_kallenbach
+    real(dp), intent(out) :: psep_kallenbach
 
     ! Temperature (eV) and density (1/m3) at outboard midplane
-    real(8), intent(out) :: teomp, neomp
+    real(dp), intent(out) :: teomp, neomp
 
     ! Btheta, Bphi and Btotal at OMP (equation 1 of Kallenbach)
-    real(8) :: Bp_omp, Bt_omp, Btotal_omp
+    real(dp) :: Bp_omp, Bt_omp, Btotal_omp
 
     ! Field due to plasma current [T]
-    real(8) :: BpPlasmaOmp
+    real(dp) :: BpPlasmaOmp
 
     ! Kallenbach equation 1 terms
-    ! real(8) :: bu  ! 2018/4/16
+    ! real(dp) :: bu  ! 2018/4/16
 
     ! ion flux density into target [m-2.s-1]
-    real(8) :: partfluxtar
+    real(dp) :: partfluxtar
 
     ! electron energy loss due to ionization [eV]
-    real(8) :: Eion
+    real(dp) :: Eion
 
     ! kinetic energy for the first group of neutrals [eV]
-    real(8) :: Eneutrals
+    real(dp) :: Eneutrals
 
     ! neutral velocity along the flux bundle, group 1 [m/s]
-    real(8) :: v0
+    real(dp) :: v0
 
     ! Electron sheath energy transmission coefficient
-    real(8), parameter :: gammae = 5.5d0
+    real(dp), parameter :: gammae = 5.5d0
     ! Ion energy reflection coefficient
-    real(8), parameter :: energyreflection = 0.5d0
+    real(dp), parameter :: energyreflection = 0.5d0
     ! Ion sheath energy transmission coefficient
     ! Issue #500 item 3. Adjust sheath heat transmission coefficient for ion reflection.
-    real(8), parameter :: gammai = 2.5d0 * (1d0 - energyreflection)
+    real(dp), parameter :: gammai = 2.5d0 * (1d0 - energyreflection)
     ! Sheath energy transmission coefficient (kallenbach paper pg. 4)
-    real(8), parameter :: gammasheath = gammae + gammai
+    real(dp), parameter :: gammasheath = gammae + gammai
 
     ! Recombination energy [eV]
-    real(8) :: Erecomb
+    real(dp) :: Erecomb
 
     ! Volume recombination energy (assumed to be lost as radiation) [eV]
-    real(8) :: Evolrec
+    real(dp) :: Evolrec
 
     ! Ion sound speed near target, and a value slightly less [m/s]
-    real(8) :: cs0, cs0minus
+    real(dp) :: cs0, cs0minus
 
     ! Nominal neutral pressure at target [Pa]
-    real(8) :: p0partflux
+    real(dp) :: p0partflux
 
     ! Target area to target wetted area factor
-    real(8) :: sinfact
+    real(dp) :: sinfact
 
     ! Relative distribution between 2 neutral particle classes
-    real(8) :: neutfrac1, neutfrac2
+    real(dp) :: neutfrac1, neutfrac2
 
     ! factor by which neutral penetration is enhanced
-    real(8) :: neutpenfact2
+    real(dp) :: neutpenfact2
 
     ! neutral density in group 1, 2
-    real(8) :: n010, n020
+    real(dp) :: n010, n020
 
     ! electron temperature [eV]
-    real(8) :: te0
+    real(dp) :: te0
 
     ! n*v [1/m2.s]
-    real(8) :: nv0
+    real(dp) :: nv0
 
     ! Total power running along SOL [W]
-    real(8) :: Power0
+    real(dp) :: Power0
 
     ! impurity element name - temporary
     character(len=2) :: element
 
     ! Poloidal, toroidal and total field at target
-    real(8) :: Bp_target, Bt_target, Btotal_target, pitch_angle, sin_pitch_angle
-    real(8) :: poloidal_flux_expansion
+    real(dp) :: Bp_target, Bt_target, Btotal_target, pitch_angle, sin_pitch_angle
+    real(dp) :: poloidal_flux_expansion
 
-    real(8) ::ptarget_conv
+    real(dp) ::ptarget_conv
     !! ptarget_conv : power deposited on target by convection [W]
-    real(8) ::ptarget_cond
+    real(dp) ::ptarget_cond
     !! ptarget_cond : power deposited on target by conduction [W]
-    real(8) ::ptarget_recomb
+    real(dp) ::ptarget_recomb
     !! ptarget_recomb : power deposited on target by recombination of hydrogenic ions [W]
-    real(8) ::ptarget_isotropic
-    real(8) ::ptarget_total
-    real(8) ::ptarget_complete
-    real(8) ::neutral_target
+    real(dp) ::ptarget_isotropic
+    real(dp) ::ptarget_total
+    real(dp) ::ptarget_complete
+    real(dp) ::neutral_target
 
 
     ! ODE solver parameters
@@ -281,93 +283,93 @@ contains
     integer(kind=4) :: iwork(5)
 
     ! First step [m]
-    real(8) :: step0
+    real(dp) :: step0
 
     ! Ratio between successive step sizes
-    real(8) :: factor
+    real(dp) :: factor
 
-    real(8) :: x
-    real(8) :: xout
-    real(8) :: work(100+21*neqn)
-    real(8) :: y(neqn)
+    real(dp) :: x
+    real(dp) :: xout
+    real(dp) :: work(100+21*neqn)
+    real(dp) :: y(neqn)
 
     ! These are local variables for recalculation at each data point - not used for integration:
-    real(8) :: v, n0, nelsquared
-    real(8) :: s, al, Rcx, plt, prb
-    real(8) :: cxrate, plossdenscx, ionrate1, ionrate2, recrate
-    real(8) :: plossion, lz, raddens, radHdens, qperp_total, qperp_conv, qperp_conducted
-    real(8) :: n, n01, n02, te, nv, pressure, Power, nv24, nel20, Pthermal, n0e20, bracket
-    real(8) :: cs, mach
+    real(dp) :: v, n0, nelsquared
+    real(dp) :: s, al, Rcx, plt, prb
+    real(dp) :: cxrate, plossdenscx, ionrate1, ionrate2, recrate
+    real(dp) :: plossion, lz, raddens, radHdens, qperp_total, qperp_conv, qperp_conducted
+    real(dp) :: n, n01, n02, te, nv, pressure, Power, nv24, nel20, Pthermal, n0e20, bracket
+    real(dp) :: cs, mach
 
-    real(8) :: A_cross
+    real(dp) :: A_cross
     !! A_cross : Area of flux bundle perpendicular to B
 
-    real(8) :: lambda_q_target
+    real(dp) :: lambda_q_target
     !! lambda_q_target : SOL radial thickness at the target, mapped to OMP [m]
 
-    real(8) :: Powerup
+    real(dp) :: Powerup
     !! Powerup : upstream power [W]
 
-    real(8) :: balance
+    real(dp) :: balance
     !! balance : Power balance error - should be zero [W]
 
     ! Plasma thermal pressure
-    real(8) :: nete
+    real(dp) :: nete
 
-    real(8) :: nete0
+    real(dp) :: nete0
     !! nete0 : Plasma thermal pressure near target
 
-    real(8) :: nel0
+    real(dp) :: nel0
     !! nel0 : Electron density near target [m-3]
 
-    real(8) :: qtarget
+    real(dp) :: qtarget
     !! qtarget : Power density on target not including surface recombination [W/m2]
 
-    real(8) :: qtarget_isotropic
+    real(dp) :: qtarget_isotropic
     !! qtarget_isotropic : Power density on target due to isotropic losses from SOL [W/m2]
 
-    real(8) :: receiving_area
+    real(dp) :: receiving_area
     !! receiving_area : Area on which the power due to isotropic losses from SOL energy is incident [m2]
 
     ! Mean charge and quadratic mean charge from ADAS
-    real(8) :: z, qz
+    real(dp) :: z, qz
 
     ! Power density on target due to surface recombination [W/m2]
-    real(8) :: qtargetrecomb
+    real(dp) :: qtargetrecomb
 
     ! Total power on target [W]
-    real(8) :: powertargettotal
+    real(dp) :: powertargettotal
 
 
 
-    real(8) :: WettedArea, WettedAreaComparison
+    real(dp) :: WettedArea, WettedAreaComparison
     !! WettedArea : Wetted area of target [m2]
 
-    real(8) :: WettedLength, WettedLengthComparison
+    real(dp) :: WettedLength, WettedLengthComparison
     !! WettedLength : Wetted length on target measured in poloidal plane [m]
 
-    real(8) :: sab
+    real(dp) :: sab
     !! sab : connection length used for calculating the "near zone" [m]
-    real(8) :: romp
+    real(dp) :: romp
     !! romp : Major radius at outer midplane  [m]
-    real(8) :: ionfluxtarget
+    real(dp) :: ionfluxtarget
     !! ionfluxtarget : Ion flux density on target [m-2s-1]
     ! Typical SOL temperature, used only for estimating zeffective in the SOL [eV]
-    real(8) :: ttypical
+    real(dp) :: ttypical
     ! Impurity radiation by species
-    real(8) :: raddensspecies(nimp)
+    real(dp) :: raddensspecies(nimp)
 
     ! Chodura sheath width [m]
-    real(8) :: lchodura
-    real(8),parameter :: squareroot6 = sqrt(6d0)
+    real(dp) :: lchodura
+    real(dp),parameter :: squareroot6 = sqrt(6d0)
 
     character(len=200) :: filename
     ! Angle between B and the surface normal (deg)
-    real(8) :: psi
+    real(dp) :: psi
     ! Poloidal flux through flux tube at OMP, target 2018/6/15
-    real(8) :: psi_p_omp, psi_p_target
+    real(dp) :: psi_p_omp, psi_p_target
     ! Power loss integrals corrected by subtracting  1
-    real(8) :: y7, y8, y9, y10
+    real(dp) :: y7, y8, y9, y10
 
     !! Initialise local variables
     firstcall = .true.
@@ -1007,18 +1009,18 @@ do i = 2, nimp
 		use divertor_ode_var, only: impurity_concs, imp_label, nimp
     implicit none
 
-    real(8),intent(in) :: t       ! T, the independent variable
-    real(8),intent(in) :: y(10)   ! Y(), the dependent variable
-    real(8),intent(out) :: yp(10) ! YP(), the value of the derivative
+    real(dp),intent(in) :: t       ! T, the independent variable
+    real(dp),intent(in) :: y(10)   ! Y(), the dependent variable
+    real(dp),intent(out) :: yp(10) ! YP(), the value of the derivative
 
-    real(8):: n01, n02, te, nv, pressure, Power, nv24, bracket
-    real(8):: n, v, n0
-    real(8):: s, al, Rcx, plt, prb
-    real(8):: cxrate,plossdenscx,ionrate1,ionrate2,recrate
-    real(8):: plossion,lz,raddens,radHdens,qperp_total,qperp_conv,qperp_conducted
-    real(8):: A_cross, dpdx, dnvdx, dtdx
-    real(8):: numerator, denominator
-    real(8):: LzTotal      ! Combined weighted radiative loss function
+    real(dp):: n01, n02, te, nv, pressure, Power, nv24, bracket
+    real(dp):: n, v, n0
+    real(dp):: s, al, Rcx, plt, prb
+    real(dp):: cxrate,plossdenscx,ionrate1,ionrate2,recrate
+    real(dp):: plossion,lz,raddens,radHdens,qperp_total,qperp_conv,qperp_conducted
+    real(dp):: A_cross, dpdx, dnvdx, dtdx
+    real(dp):: numerator, denominator
+    real(dp):: LzTotal      ! Combined weighted radiative loss function
     integer :: i
 
     ! Rescale to SI units

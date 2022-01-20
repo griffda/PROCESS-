@@ -10,7 +10,9 @@ module plasmod_variables
   
   use structs, only: geometry, pedestal, inputs, radial_profiles, &
     power_losses, numerics_transp, MHD_EQ, composition
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
 
   public

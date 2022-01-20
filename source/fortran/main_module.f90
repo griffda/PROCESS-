@@ -16,7 +16,9 @@
 
 module main_module
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   implicit none
 
@@ -46,7 +48,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=98) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '2.2.0   Release Date :: 2021-10-26'
+       '2.3.0   Release Date :: 2022-01-20'
   character(len = 50) :: dt_time
   character(len=72), dimension(10) :: id
 

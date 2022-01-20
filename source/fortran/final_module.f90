@@ -1,5 +1,7 @@
 module final_module
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
   
   contains
@@ -28,7 +30,7 @@ module final_module
     implicit none
   
     integer :: inn
-    real(8), dimension(ipeqns) :: con1, con2, err
+    real(dp), dimension(ipeqns) :: con1, con2, err
     character(len=1), dimension(ipeqns) :: sym
     character(len=10), dimension(ipeqns) :: lab
   

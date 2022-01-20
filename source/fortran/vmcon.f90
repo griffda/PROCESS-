@@ -1,5 +1,7 @@
 module vmcon_module
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
 
   ! Module variables that are set using the arguments to subroutine vmcon
@@ -7,40 +9,40 @@ module vmcon_module
   integer :: info,nfev,niter
   integer, dimension(:), allocatable :: iwa
   integer, dimension(:), allocatable :: ilower,iupper
-  real(8) :: objf
-  real(8) :: tol
-  real(8), dimension(:), allocatable :: x
-  real(8), dimension(:), allocatable :: bndl,bndu
-  real(8), dimension(:), allocatable :: fgrd
-  real(8), dimension(:), allocatable :: conf
-  real(8), dimension(:), allocatable :: glag,glaga,gamma,eta,xa,bdelta
-  real(8), dimension(:), allocatable :: cm
-  real(8), dimension(:), allocatable :: delta
-  real(8), dimension(:), allocatable :: wa
-  real(8), dimension(:,:), allocatable :: cnorm
-  real(8), dimension(:,:), allocatable :: h
-  real(8), dimension(:,:), allocatable :: b
-  real(8), dimension(:), allocatable :: vlam,vmu,gm,bdl,bdu
-  real(8) :: sum
+  real(dp) :: objf
+  real(dp) :: tol
+  real(dp), dimension(:), allocatable :: x
+  real(dp), dimension(:), allocatable :: bndl,bndu
+  real(dp), dimension(:), allocatable :: fgrd
+  real(dp), dimension(:), allocatable :: conf
+  real(dp), dimension(:), allocatable :: glag,glaga,gamma,eta,xa,bdelta
+  real(dp), dimension(:), allocatable :: cm
+  real(dp), dimension(:), allocatable :: delta
+  real(dp), dimension(:), allocatable :: wa
+  real(dp), dimension(:,:), allocatable :: cnorm
+  real(dp), dimension(:,:), allocatable :: h
+  real(dp), dimension(:,:), allocatable :: b
+  real(dp), dimension(:), allocatable :: vlam,vmu,gm,bdl,bdu
+  real(dp) :: sum
   
   ! Other module variables, originally local to subroutine vmcon
-  real(8), dimension(:), allocatable :: best_solution_vector
-  real(8), dimension(:), allocatable :: delta_var           ! For opt data extraction only
+  real(dp), dimension(:), allocatable :: best_solution_vector
+  real(dp), dimension(:), allocatable :: delta_var           ! For opt data extraction only
   integer :: i,j,k,mact,nfinit,nls,np1,np1j,npp,nqp,nsix,nsixi
   integer :: inx,ki,ml,mlp1,mcon,mp1,mpn,mpnpp1,mpnppn
-  real(8) :: alpha,aux,auxa,calpha,dbd,dflsa,dg, &
+  real(dp) :: alpha,aux,auxa,calpha,dbd,dflsa,dg, &
     fls,flsa,spgdel,temp,thcomp,theta
-  real(8) :: summ, sqsumsq, sqsumsq_tol
-  real(8) :: lowest_valid_fom    
-  real(8), parameter :: zero = 0.0D0
-  real(8), parameter :: cp1 = 0.1D0
-  real(8), parameter :: cp2 = 0.2D0
-  real(8), parameter :: cp5 = 0.5D0
-  real(8), parameter :: one = 1.0D0
+  real(dp) :: summ, sqsumsq, sqsumsq_tol
+  real(dp) :: lowest_valid_fom    
+  real(dp), parameter :: zero = 0.0D0
+  real(dp), parameter :: cp1 = 0.1D0
+  real(dp), parameter :: cp2 = 0.2D0
+  real(dp), parameter :: cp5 = 0.5D0
+  real(dp), parameter :: one = 1.0D0
   character(len=20) :: iteration_progress
 
   ! Var from subroutine vmcon requiring re-initialisation on each new run
-  real(8) :: best_sum_so_far
+  real(dp) :: best_sum_so_far
   
   ! Exit code for module subroutines: determines when to return completely from 
   ! subroutine vmcon
@@ -107,10 +109,10 @@ contains
     ! e.g. input argument mode_ will be assigned to module variable mode
     integer, intent(in) :: mode_,n_,m_,meq_,lcnorm_,lb_,maxfev_,ldel_,lh_,lwa_,liwa_
     integer, dimension(:), intent(in) :: ilower_,iupper_
-    real(8), intent(in) :: tol_
-    real(8), dimension(:), intent(in) :: bndl_,bndu_
-    real(8), dimension(:), intent(in) :: x_
-    real(8), dimension(:,:), intent(in) :: b_
+    real(dp), intent(in) :: tol_
+    real(dp), dimension(:), intent(in) :: bndl_,bndu_
+    real(dp), dimension(:), intent(in) :: x_
+    real(dp), dimension(:,:), intent(in) :: b_
 
     ! Ensure all allocatable arrays are deallocated
     if (allocated(iwa)) deallocate(iwa)
@@ -223,21 +225,21 @@ contains
     ! assumed shape arrays being returned
     integer, intent(in) :: n_, m_, lcnorm_, lb_, ldel_, lh_, lwa_, liwa_
     integer, intent(out) :: info_,nfev_,niter_
-    real(8), intent(out) :: objf_
-    real(8), dimension(n_), intent(out) :: x_
-    real(8), dimension(lb_,lb_), intent(out) :: b_
+    real(dp), intent(out) :: objf_
+    real(dp), dimension(n_), intent(out) :: x_
+    real(dp), dimension(lb_,lb_), intent(out) :: b_
     integer, dimension(liwa_), intent(out) :: iwa_
-    real(8), dimension(n_), intent(out) :: fgrd_
-    real(8), dimension(m_), intent(out) :: conf_
-    real(8), dimension(n_), intent(out) :: glag_,glaga_,gamma_,eta_,xa_,bdelta_
-    real(8), dimension(m_), intent(out) :: cm_
-    real(8), dimension(ldel_), intent(out) :: delta_
-    real(8), dimension(lwa_), intent(out) :: wa_
-    real(8), dimension(lcnorm_,m_), intent(out) :: cnorm_
-    real(8), dimension(lh_,lh_), intent(out) :: h_
-    real(8), dimension(m_+(2*n_)+1), intent(out) :: vlam_, vmu_
-    real(8), dimension(n_+1), intent(out) :: gm_, bdl_, bdu_
-    real(8), intent(out) :: sum_
+    real(dp), dimension(n_), intent(out) :: fgrd_
+    real(dp), dimension(m_), intent(out) :: conf_
+    real(dp), dimension(n_), intent(out) :: glag_,glaga_,gamma_,eta_,xa_,bdelta_
+    real(dp), dimension(m_), intent(out) :: cm_
+    real(dp), dimension(ldel_), intent(out) :: delta_
+    real(dp), dimension(lwa_), intent(out) :: wa_
+    real(dp), dimension(lcnorm_,m_), intent(out) :: cnorm_
+    real(dp), dimension(lh_,lh_), intent(out) :: h_
+    real(dp), dimension(m_+(2*n_)+1), intent(out) :: vlam_, vmu_
+    real(dp), dimension(n_+1), intent(out) :: gm_, bdl_, bdu_
+    real(dp), intent(out) :: sum_
     
     
     !! info_ : output integer : error flag<BR>

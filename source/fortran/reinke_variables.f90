@@ -9,7 +9,9 @@ module reinke_variables
   !!
   !! - M.L. Reinke 2017 Nucl. Fusion 57 034004
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   implicit none
 

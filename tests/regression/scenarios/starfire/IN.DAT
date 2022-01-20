@@ -547,3 +547,32 @@ tramp    = 400.0 * initial PF coil charge time (s); if pulsed; = tohs
 
 *-----------------Vacuum Variables-----------------*
 
+*-----------------Initial guesses------------------*
+
+                  te            =   1.5414E+01  
+                  beta          =   6.0974E-02  
+                  dene          =   1.1200E+20  
+                  fdene         =   7.4986E-01  
+                  hfact         =   2.4964E+00  
+                  tfcth         =   2.4173E-01  
+                  q             =   2.0636E+00  
+                  ffuspow       =   1.0000E+00  
+                  bore          =   2.9756E+00  
+                  fbetatry      =   1.6317E-01  
+                  gapoh         =   5.0364E-02  
+                  fiooic        =   2.2412E-02  
+                  fvdump        =   8.9913E-01  
+                  vdalw         =   6.8167E+00  
+                  fjprot        =   5.0875E-02  
+                  ftmargtf      =   2.9677E-01  
+                  tdmptf        =   1.6509E+01  
+                  thkcas        =   5.2107E-02  
+                  thwcndut      =   9.9962E-02  
+                  fcutfsu       =   7.1592E-01  
+                  cpttf         =   9.0000E+04  
+                  gapds         =   5.2604E-02  
+                  flhthresh     =   7.5033E+00  
+                  ftmargoh      =   7.5108E-01  
+                  ftaucq        =   6.6386E-01  
+                  oh_steel_frac =   6.9449E-01  
+

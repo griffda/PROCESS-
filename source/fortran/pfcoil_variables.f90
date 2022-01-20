@@ -7,7 +7,9 @@ module pfcoil_variables
   !!
   !! - AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   implicit none
 
@@ -32,10 +34,10 @@ module pfcoil_variables
   integer, parameter :: ngc2 = ngc+2
   !! new variable to include 2 additional circuits: plasma and central solenoid
 
-  real(8) :: alfapf
+  real(dp) :: alfapf
   !! smoothing parameter used in PF coil current calculation at the beginning of pulse (BoP)
 
-  real(8) :: alstroh
+  real(dp) :: alstroh
   !! allowable hoop stress in Central Solenoid structural material (Pa)
 
   integer :: i_cs_stress
@@ -44,73 +46,73 @@ module pfcoil_variables
   !! - =0 Hoop stress only
   !! - =1 Hoop + Axial stress
 
-  real(8) :: areaoh
+  real(dp) :: areaoh
   !! Central solenoid vertical cross-sectional area (m2)
 
-  real(8) :: a_oh_turn
+  real(dp) :: a_oh_turn
   !! Central solenoid (OH) trun cross-sectional area (m2)
 
-  real(8) :: awpoh
+  real(dp) :: awpoh
   !! central solenoid conductor+void area (m2)
 
-  real(8) :: bmaxoh
+  real(dp) :: bmaxoh
   !! maximum field in central solenoid at end of flat-top (EoF) (T)
 
-  real(8) :: bmaxoh0
+  real(dp) :: bmaxoh0
   !! maximum field in central solenoid at beginning of pulse (T)
 
-  real(8), dimension(ngc2) :: bpf
+  real(dp), dimension(ngc2) :: bpf
   !! peak field at coil i (T)
   
-  real(8), dimension(ngrpmx) :: ccl0_ma
+  real(dp), dimension(ngrpmx) :: ccl0_ma
   !! PF group current array, flux-swing cancellation current (MA)
   !! Input if i_pf_current=0, computed otherwise
   
-  real(8), dimension(ngrpmx) :: ccls_ma
+  real(dp), dimension(ngrpmx) :: ccls_ma
   !! PF group current array, equilibrium current (MA)
   !! Input if i_pf_current=0, computed otherwise
   
-  real(8) :: cohbop
+  real(dp) :: cohbop
   !! Central solenoid overall current density at beginning of pulse (A/m2)
   
-  real(8) :: coheof
+  real(dp) :: coheof
   !! Central solenoid overall current density at end of flat-top (A/m2) (`iteration variable 37`)
   
-  real(8), dimension(ngc2,6) :: cpt
+  real(dp), dimension(ngc2,6) :: cpt
   !! current per turn in coil i at time j (A)
 
-  real(8), dimension(ngc2) :: cptdin
+  real(dp), dimension(ngc2) :: cptdin
   !! peak current per turn input for PF coil i (A)
 
-  real(8), dimension(ngc2) :: curpfb
+  real(dp), dimension(ngc2) :: curpfb
   !! PF coil current array, at beginning of pulse (MA)
   !! Indexed by coil number, not group number
 
-  real(8), dimension(ngc2) :: curpff
+  real(dp), dimension(ngc2) :: curpff
   !! PF coil current array, at flat top (MA)
   !! Indexed by coil number, not group number
 
-  real(8), dimension(ngc2) :: curpfs
+  real(dp), dimension(ngc2) :: curpfs
   !! PF coil current array, at end of pulse (MA)
   !! Indexed by coil number, not group number
 
-  real(8) :: etapsu
+  real(dp) :: etapsu
   !! Efficiency of transfer of PF stored energy into or out of storage.
 
-  real(8) :: fcohbof
+  real(dp) :: fcohbof
   !! ratio of central solenoid overall current density at beginning of flat-top / end of flat-top
 
-  real(8) :: fcohbop
+  real(dp) :: fcohbop
   !! ratio of central solenoid overall current density at beginning of pulse / end of flat-top
   !! (`iteration variable 41`)
 
-  real(8) :: fcuohsu
+  real(dp) :: fcuohsu
   !! copper fraction of strand in central solenoid
 
-  real(8) :: fcupfsu
+  real(dp) :: fcupfsu
   !! copper fraction of cable conductor (PF coils)
 
-  real(8) :: fvssu
+  real(dp) :: fvssu
   !! F-value for `constraint equation 51` 
 
   integer, dimension(ngrpmx) :: ipfloc
@@ -127,7 +129,7 @@ module pfcoil_variables
   !! - =0 superconducting PF coils
   !! - =1 resistive PF coils
   ! 
-  real(8) :: itr_sum
+  real(dp) :: itr_sum
   !! total sum of I x turns x radius for all PF coils and CS (Am)
 
   integer :: isumatoh
@@ -170,16 +172,16 @@ module pfcoil_variables
   !! - =1 Outboard PF coils all have same radius, cylindrical
   !!   winding surface
 
-  real(8) :: jscoh_bop
+  real(dp) :: jscoh_bop
   !! central solenoid superconductor critical current density (A/m2) at beginning-of-pulse
 
-  real(8) :: jscoh_eof
+  real(dp) :: jscoh_eof
   !! central solenoid superconductor critical current density (A/m2) at end-of-flattop
 
-  real(8) :: jstrandoh_bop
+  real(dp) :: jstrandoh_bop
   !! central solenoid strand critical current density (A/m2) at beginning-of-pulse
 
-  real(8) :: jstrandoh_eof
+  real(dp) :: jstrandoh_eof
   !! central solenoid strand critical current density (A/m2) at end-of-flattop
 
   integer :: ncirt
@@ -198,73 +200,73 @@ module pfcoil_variables
   integer :: nohc
   !! number of PF coils (excluding the central solenoid) + 1
   
-  real(8) :: ohhghf
+  real(dp) :: ohhghf
   !! Central solenoid height / TF coil internal height
   
-  real(8) :: oh_steel_frac
+  real(dp) :: oh_steel_frac
   !! central solenoid steel fraction (`iteration variable 122`)
 
-  real(8), dimension(ngc2) :: pfcaseth
+  real(dp), dimension(ngc2) :: pfcaseth
   !! steel case thickness for PF coil i (m)
 
-  real(8) :: pfclres
+  real(dp) :: pfclres
   !! PF coil resistivity (if ipfres=1) (Ohm-m)
 
-  real(8) :: pfmmax
+  real(dp) :: pfmmax
   !! mass of heaviest PF coil (tonnes)
 
-  real(8) :: pfrmax
+  real(dp) :: pfrmax
   !! radius of largest PF coil (m)
 
-  real(8) :: pfwpmw
+  real(dp) :: pfwpmw
   !! Total mean wall plug power dissipated in PFC and CS power supplies (MW) (issue #713)
 
-  real(8) :: powohres
+  real(dp) :: powohres
   !! central solenoid resistive power during flattop (W)
 
-  real(8) :: powpfres
+  real(dp) :: powpfres
   !! total PF coil resistive losses during flattop (W)
 
-  real(8), dimension(ngc2) :: ra
+  real(dp), dimension(ngc2) :: ra
   !! inner radius of coil i (m)
 
-  real(8), dimension(ngc2) :: rb
+  real(dp), dimension(ngc2) :: rb
   !! outer radius of coil i (m)
 
-  real(8), dimension(ngc2) :: ric
+  real(dp), dimension(ngc2) :: ric
   !! peak current in coil i (MA-turns)
 
-  real(8), dimension(ngc2) :: rjconpf
+  real(dp), dimension(ngc2) :: rjconpf
   !! average winding pack current density of PF coil i (A/m2) at time of peak 
   !! current in that coil (calculated for `ipfloc=1` coils)
 
-  real(8) :: rjohc
+  real(dp) :: rjohc
   !! allowable central solenoid current density at end of flat-top (A/m2)
 
-  real(8) :: rjohc0
+  real(dp) :: rjohc0
   !! allowable central solenoid current density at beginning of pulse (A/m2)
 
-  real(8), dimension(ngc2) :: rjpfalw
+  real(dp), dimension(ngc2) :: rjpfalw
   !! allowable winding pack current density of PF coil i (A/m2)
 
-  real(8) :: rohc
+  real(dp) :: rohc
   !! radius to the centre of the central solenoid (m)
 
-  real(8) :: routr
+  real(dp) :: routr
   !! radial distance (m) from outboard TF coil leg to centre of `ipfloc=3` PF coils
 
-  real(8), dimension(ngc2) :: rpf
+  real(dp), dimension(ngc2) :: rpf
   !! radius of PF coil i (m)
 
-  real(8) :: rpf1
+  real(dp) :: rpf1
   !! offset (m) of radial position of `ipfloc=1` PF coils from being directly above
   !! the central solenoid
 
-  real(8) :: rpf2
+  real(dp) :: rpf2
   !! offset (m) of radial position of `ipfloc=2` PF coils from being at 
   !! rmajor (offset = rpf2*triang*rminor)
   
-  real(8), dimension(ngrpmx) :: rref
+  real(dp), dimension(ngrpmx) :: rref
   !! PF coil radial positioning adjuster:
   !!
   !! - for groups j with ipfloc(j) = 1; rref(j) is ignored
@@ -274,83 +276,83 @@ module pfcoil_variables
   !!   the coil in units of minor radii from the major radius
   !!   (r = rmajor + rref*rminor)
 
-  real(8) :: s_tresca_oh
+  real(dp) :: s_tresca_oh
   !! Maximum shear stress (Tresca criterion) coils/central solenoid [MPa]
 
-  real(8) :: sigpfcalw
+  real(dp) :: sigpfcalw
   !! maximum permissible tensile stress (MPa) in steel coil cases for superconducting 
   !! PF coils (`ipfres=0`)
 
-  real(8) :: sigpfcf
+  real(dp) :: sigpfcf
   !! fraction of JxB hoop force supported by steel case for superconducting PF coils (`ipfres=0`)
 
-  real(8), dimension(ngc2,ngc2) :: sxlg
+  real(dp), dimension(ngc2,ngc2) :: sxlg
   !! mutual inductance matrix (H)
 
-  real(8) :: tmargoh
+  real(dp) :: tmargoh
   !! Central solenoid temperature margin (K)
 
-  real(8), dimension(ngc2) :: turns
+  real(dp), dimension(ngc2) :: turns
   !! number of turns in PF coil i
 
-  real(8), dimension(ngc2) :: vf
+  real(dp), dimension(ngc2) :: vf
   !! winding pack void fraction of PF coil i for coolant
 
-  real(8) :: vfohc
+  real(dp) :: vfohc
   !! void fraction of central solenoid conductor for coolant
 
-  real(8) :: vsbn
+  real(dp) :: vsbn
   !! total flux swing available for burn (Wb)
 
-  real(8) :: vsefbn
+  real(dp) :: vsefbn
   !! flux swing from PF coils for burn (Wb)
 
-  real(8) :: vsefsu
+  real(dp) :: vsefsu
   !! flux swing from PF coils for startup (Wb)
 
-  real(8) :: vseft
+  real(dp) :: vseft
   !! total flux swing from PF coils (Wb)
   
-  real(8) :: vsoh
+  real(dp) :: vsoh
   !! total flux swing from the central solenoid (Wb)
 
-  real(8) :: vsohbn
+  real(dp) :: vsohbn
   !! central solenoid flux swing for burn (Wb)
 
-  real(8) :: vsohsu
+  real(dp) :: vsohsu
   !! central solenoid flux swing for startup (Wb)
 
-  real(8) :: vssu
+  real(dp) :: vssu
   !! total flux swing for startup (`constraint eqn 51` to enforce vssu=vsres+vsind) (Wb)
 
-  real(8) :: vstot
+  real(dp) :: vstot
   !! total flux swing for pulse (Wb)
   
-  real(8), dimension(ngc2,6) :: waves
+  real(dp), dimension(ngc2,6) :: waves
   !! used in current waveform of PF coils/central solenoid
 
-  real(8) :: whtpf
+  real(dp) :: whtpf
   !! total mass of the PF coil conductor (kg)
 
-  real(8) :: whtpfs
+  real(dp) :: whtpfs
   !! total mass of the PF coil structure (kg)
 
-  real(8), dimension(ngc2) :: wtc
+  real(dp), dimension(ngc2) :: wtc
   !! conductor mass for PF coil i (kg)
 
-  real(8), dimension(ngc2) :: wts
+  real(dp), dimension(ngc2) :: wts
   !! structure mass for PF coil i (kg)
 
-  real(8), dimension(ngc2) :: zh
+  real(dp), dimension(ngc2) :: zh
   !! upper point of PF coil i (m)
 
-  real(8), dimension(ngc2) :: zl
+  real(dp), dimension(ngc2) :: zl
   !! lower point of PF coil i (m)
 
-  real(8), dimension(ngc2) :: zpf
+  real(dp), dimension(ngc2) :: zpf
   !! z (height) location of PF coil i (m)
 
-  real(8), dimension(ngrpmx) :: zref
+  real(dp), dimension(ngrpmx) :: zref
   !! PF coil vertical positioning adjuster:
   !!
   !! - for groups j with ipfloc(j) = 1; zref(j) is ignored
@@ -363,10 +365,10 @@ module pfcoil_variables
   !! - for groups j with ipfloc(j) = 4; zref(j) = ratio of
   !!   height of coil group j to plasma minor radius</UL>
 
-  real(8) :: bmaxcs_lim
+  real(dp) :: bmaxcs_lim
   !! Central solenoid max field limit [T]
 
-  real(8) :: fbmaxcs
+  real(dp) :: fbmaxcs
   !! F-value for CS mmax field (`cons. 79`, `itvar 149`)
 
   contains

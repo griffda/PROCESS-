@@ -8,52 +8,54 @@ module fwbs_variables
   !!
   !! - AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
 
   implicit none
 
   public
 
-  real(8) :: bktlife
+  real(dp) :: bktlife
   !! Full power blanket lifetime (years)
 
-  real(8) :: coolmass
+  real(dp) :: coolmass
   !! mass of water coolant (in shield, blanket, first wall, divertor) (kg)
 
-  real(8) :: vvmass
+  real(dp) :: vvmass
   !! vacuum vessel mass (kg)
 
-  real(8) :: denstl
+  real(dp) :: denstl
   !! density of steel (kg/m3)
   !#TODO: should this be in constants. Is currently an input. Should be a list of preapproved options?
 
-  real(8) :: denw
+  real(dp) :: denw
   !! density of tungsten (kg/m3)
   !#TODO: same as above with steel?
 
-  real(8) :: denwc
+  real(dp) :: denwc
   !! density of tungsten carbide (kg/m3)
 
-  real(8) :: dewmkg
+  real(dp) :: dewmkg
   !! total mass of vacuum vessel + cryostat (kg) (calculated if blktmodel>0)
   !# TODO: blktmodel needs consolidating with iblanket
 
-  real(8) :: emult
+  real(dp) :: emult
   !! energy multiplication in blanket and shield
 
-  real(8) :: emultmw
+  real(dp) :: emultmw
   !! power due to energy multiplication in blanket and shield [MW]
 
-  real(8) :: fblss
+  real(dp) :: fblss
   !! KIT blanket model: steel fraction of breeding zone
 
-  real(8) :: fdiv
+  real(dp) :: fdiv
   !! Solid angle fraction taken by one divertor
 
-  real(8) :: fhcd
+  real(dp) :: fhcd
   !! area fraction covered by heating/current drive apparatus plus diagnostics
 
-  real(8) :: fhole
+  real(dp) :: fhole
   !! area fraction taken up by other holes (IFE)
 
   integer :: fwbsshape
@@ -63,19 +65,19 @@ module fwbs_variables
   !! - =2 defined by two ellipses
   !#TODO: change to adopt switch naming convention
 
-  real(8) :: fwlife
+  real(dp) :: fwlife
   !! first wall full-power year lifetime (y)
 
-  real(8) :: fwmass
+  real(dp) :: fwmass
   !! first wall mass (kg)
 
-  real(8) :: fw_armour_mass
+  real(dp) :: fw_armour_mass
   !! first wall armour mass (kg)
 
-  real(8) :: fw_armour_thickness
+  real(dp) :: fw_armour_thickness
   !! first wall armour thickness (m)
 
-  real(8) :: fw_armour_vol
+  real(dp) :: fw_armour_vol
   !! first wall armour volume (m3)
 
   integer :: iblanket
@@ -98,78 +100,78 @@ module fwbs_variables
   !! - =0 Frances Fox model (default)
   !! - =1 Fixed by user (qnuc)
 
-  real(8) :: qnuc
+  real(dp) :: qnuc
   !! nuclear heating in the coils (W) (`inuclear=1`)
 
-  real(8) :: li6enrich
+  real(dp) :: li6enrich
   !! lithium-6 enrichment of breeding material (%)
 
-  real(8) :: pnucblkt
+  real(dp) :: pnucblkt
   !! nuclear heating in the blanket (MW)
 
-  real(8) :: pnuc_cp
+  real(dp) :: pnuc_cp
   !! Total nuclear heating in the ST centrepost (MW)
   
-  real(8) :: pnuc_cp_sh
+  real(dp) :: pnuc_cp_sh
   !! Neutronic shield nuclear heating in the ST centrepost (MW)
   
-  real(8) :: pnuc_cp_tf
+  real(dp) :: pnuc_cp_tf
   !! TF neutronic nuclear heating in the ST centrepost (MW)
 
-  real(8) :: pnucdiv
+  real(dp) :: pnucdiv
   !! nuclear heating in the divertor (MW)
 
-  real(8) :: pnucfw
+  real(dp) :: pnucfw
   !! nuclear heating in the first wall (MW)
 
-  real(8) :: pnuchcd
+  real(dp) :: pnuchcd
   !! nuclear heating in the HCD apparatus and diagnostics (MW)
 
-  real(8) :: pnucloss
+  real(dp) :: pnucloss
   !! nuclear heating lost via holes (MW)
 
-  real(8) :: pnucvvplus
+  real(dp) :: pnucvvplus
   !! nuclear heating to vacuum vessel and beyond(MW)
 
-  real(8) :: pnucshld
+  real(dp) :: pnucshld
   !! nuclear heating in the shield (MW)
 
-  real(8) :: whtblkt
+  real(dp) :: whtblkt
   !! mass of blanket (kg)
 
-  real(8) :: whtblss
+  real(dp) :: whtblss
   !! mass of blanket - steel part (kg)
 
-  real(8) :: armour_fw_bl_mass
+  real(dp) :: armour_fw_bl_mass
   !! Total mass of armour, first wall and blanket (kg)
 
   ! CCFE HCPB Blanket Model (with or without TBR calculation) iblanket=1,3
   ! ----------
 
-  real(8) :: breeder_f
+  real(dp) :: breeder_f
   !! Volume ratio: Li4SiO4/(Be12Ti+Li4SiO4) (`iteration variable 108`)
   
-  real(8) :: breeder_multiplier
+  real(dp) :: breeder_multiplier
   !! combined breeder/multipler fraction of blanket by volume
   
-  real(8) :: vfcblkt
+  real(dp) :: vfcblkt
   !! He coolant fraction of blanket by volume (`iblanket= 1,3` (CCFE HCPB))
   
-  real(8) :: vfpblkt
+  real(dp) :: vfpblkt
   !! He purge gas fraction of blanket by volume (`iblanket= 1,3` (CCFE HCPB))
 
-  real(8) :: whtblli4sio4
+  real(dp) :: whtblli4sio4
   !! mass of lithium orthosilicate in blanket (kg) (`iblanket=1,3` (CCFE HCPB))
   
-  real(8) :: whtbltibe12
+  real(dp) :: whtbltibe12
   !! mass of titanium beryllide in blanket (kg) (`iblanket=1,3` (CCFE HCPB))
 
-  real(8) :: neut_flux_cp
+  real(dp) :: neut_flux_cp
   !! Centrepost TF fast neutron flux (E > 0.1 MeV) [m^(-2).^(-1)]
   !! This variable is only calculated for superconducting (i_tf_sup = 1 )
   !! spherical tokamal magnet designs (itart = 0)
 
-  real(8) :: f_neut_shield
+  real(dp) :: f_neut_shield
   !! Fraction of nuclear power shielded before the CP magnet (ST)
   !! ( neut_absorb = -1 --> a fit on simplified MCNP neutronic
   !! calculation is used assuming water cooled (13%) tungesten carbyde )
@@ -184,25 +186,25 @@ module fwbs_variables
   !! - =2 Lithium methatitanate
   !! - =3 Lithium zirconate
 
-  real(8) :: densbreed
+  real(dp) :: densbreed
   !! density of breeder material (kg/m3) (`iblanket=2` (KIT HCPB))
 
-  real(8) :: fblbe
+  real(dp) :: fblbe
   !! beryllium fraction of blanket by volume (if `iblanket=2`, is Be fraction of breeding zone)
 
-  real(8) :: fblbreed
+  real(dp) :: fblbreed
   !! breeder fraction of blanket breeding zone by volume (`iblanket=2` (KIT HCPB))
 
-  real(8) :: fblhebmi
+  real(dp) :: fblhebmi
   !! helium fraction of inboard blanket box manifold by volume (`iblanket=2` (KIT HCPB))
 
-  real(8) :: fblhebmo
+  real(dp) :: fblhebmo
   !! helium fraction of outboard blanket box manifold by volume (`iblanket=2` (KIT HCPB))
 
-  real(8) :: fblhebpi
+  real(dp) :: fblhebpi
   !! helium fraction of inboard blanket back plate by volume (`iblanket=2` (KIT HCPB))
 
-  real(8) :: fblhebpo
+  real(dp) :: fblhebpo
   !! helium fraction of outboard blanket back plate by volume (`iblanket=2` (KIT HCPB))
   
   integer :: hcdportsize
@@ -212,7 +214,7 @@ module fwbs_variables
   !! - =2 'large'
   !#TODO: switch name and also large and small not descriptive enough
   
-  real(8) :: nflutf
+  real(dp) :: nflutf
   !! peak fast neutron fluence on TF coil superconductor (n/m2) (`iblanket=2` (KIT HCPB))
 
   integer :: npdiv
@@ -224,23 +226,23 @@ module fwbs_variables
   integer :: nphcdout
   !! number of outboard ports for heating/current drive (`iblanket=2` (KIT HCPB))
 
-  real(8) :: tbr
+  real(dp) :: tbr
   !! tritium breeding ratio (`iblanket=2,3` (KIT HCPB/HCLL))
 
-  real(8) :: tritprate
+  real(dp) :: tritprate
   !! tritium production rate (g/day) (`iblanket=2` (KIT HCPB))
 
-  real(8) :: vvhemax
+  real(dp) :: vvhemax
   !! maximum helium concentration in vacuum vessel at end of plant life (appm) 
   !! (`iblanket=2` (KIT HCPB))
 
-  real(8) :: wallpf
+  real(dp) :: wallpf
   !! neutron wall load peaking factor (`iblanket=2` (KIT HCPB))
 
-  real(8) :: whtblbreed 
+  real(dp) :: whtblbreed 
   !! mass of blanket - breeder part (kg) (`iblanket=2` (KIT HCPB))
 
-  real(8) :: whtblbe
+  real(dp) :: whtblbe
   !! mass of blanket - beryllium part (kg)
 
   ! CCFE HCPB model with Tritium Breeding Ratio calculation (iblanket=3)
@@ -284,11 +286,11 @@ module fwbs_variables
   !! - =2 pressurized water
   !#TODO: change switch name to satisfy convention
 
-  real(8) :: afwi
+  real(dp) :: afwi
   !! inner radius of inboard first wall/blanket coolant channels (stellarator only) (m)
   !#TODO move to stellarator?
 
-  real(8) :: afwo
+  real(dp) :: afwo
   !! inner radius of outboard first wall/blanket coolant channels (stellarator only) (m)
   !#TODO move to stellarator?
 
@@ -298,52 +300,52 @@ module fwbs_variables
   !! - 'helium' 
   !! - 'water'
 
-  real(8) :: fw_wall
+  real(dp) :: fw_wall
   !! wall thickness of first wall coolant channels (m)
 
-  real(8) :: afw
+  real(dp) :: afw
   !! radius of first wall cooling channels (m)
   
-  real(8) :: pitch
+  real(dp) :: pitch
   !! pitch of first wall cooling channels (m)
 
-  real(8) :: fwinlet
+  real(dp) :: fwinlet
   !! inlet temperature of first wall coolant (K)
 
-  real(8) :: fwoutlet
+  real(dp) :: fwoutlet
   !! outlet temperature of first wall coolant (K)
 
-  real(8) :: fwpressure
+  real(dp) :: fwpressure
   !! first wall coolant pressure (Pa) (`secondary_cycle>1`)
 
-  real(8) :: tpeak
+  real(dp) :: tpeak
   !! peak first wall temperature (K)
 
-  real(8) :: roughness
+  real(dp) :: roughness
   !! first wall channel roughness epsilon (m)
 
-  real(8) :: fw_channel_length
+  real(dp) :: fw_channel_length
   !! Length of a single first wall channel (all in parallel) (m)
   !! (`iteration variable 114`, useful for `constraint equation 39`)
 
-  real(8) :: peaking_factor
+  real(dp) :: peaking_factor
   !! peaking factor for first wall heat loads. (Applied separately to inboard and outboard loads.
   !! Applies to both neutron and surface loads. Only used to calculate peak temperature - not 
   !! the coolant flow rate.)
 
-  real(8) :: blpressure
+  real(dp) :: blpressure
   !! blanket coolant pressure (Pa) (`secondary_cycle>1`)
 
-  real(8) :: inlet_temp
+  real(dp) :: inlet_temp
   !! inlet temperature of blanket coolant  (K) (`secondary_cycle>1`)
 
-  real(8) :: outlet_temp
+  real(dp) :: outlet_temp
   !! Outlet temperature of blanket coolant (K) (`secondary_cycle>1`)
   !!
   !! - input if `coolwh=1` (helium)
   !! - calculated if `coolwh=2` (water)
 
-  real(8) :: coolp
+  real(dp) :: coolp
   !! blanket coolant pressure (Pa) (stellarator only)
 
   integer :: nblktmodpo
@@ -358,117 +360,117 @@ module fwbs_variables
   integer :: nblktmodti
   !! number of inboard blanket modules in toroidal direction (`secondary_cycle>1`)
 
-  real(8) :: tfwmatmax
+  real(dp) :: tfwmatmax
   !! maximum temperature of first wall material (K) (`secondary_cycle>1`)
 
-  real(8) :: fw_th_conductivity
+  real(dp) :: fw_th_conductivity
   !! thermal conductivity of first wall material at 293 K (W/m/K) (Temperature dependence 
   !! is as for unirradiated Eurofer)
 
-  real(8) :: fvoldw
+  real(dp) :: fvoldw
   !! area coverage factor for vacuum vessel volume
 
-  real(8) :: fvolsi
+  real(dp) :: fvolsi
   !! area coverage factor for inboard shield volume
 
-  real(8) :: fvolso
+  real(dp) :: fvolso
   !! area coverage factor for outboard shield volume
 
-  real(8) :: fwclfr
+  real(dp) :: fwclfr
   !! first wall coolant fraction (calculated if `lpulse=1` or `ipowerflow=1`)
 
-  real(8) :: praddiv
+  real(dp) :: praddiv
   !! Radiation power incident on the divertor (MW)
 
-  real(8) :: pradfw
+  real(dp) :: pradfw
   !! Radiation power incident on the first wall (MW)
 
-  real(8) :: pradhcd
+  real(dp) :: pradhcd
   !! Radiation power incident on the heating and current drive system (MW)
 
-  real(8) :: pradloss
+  real(dp) :: pradloss
   !! Radiation power lost through holes (eventually hits shield) (MW)
   !! Only used for stellarator
 
-  real(8) :: ptfnuc
+  real(dp) :: ptfnuc
   !! nuclear heating in the TF coil (MW)
 
-  real(8) :: ptfnucpm3
+  real(dp) :: ptfnucpm3
   !! nuclear heating in the TF coil (MW/m3) (`blktmodel>0`)
   !#TODO: check usage of old blktmodel. Update to iblanket
 
-  real(8) :: rdewex
+  real(dp) :: rdewex
   !! cryostat radius (m)
 
-  real(8) :: zdewex
+  real(dp) :: zdewex
   !! cryostat height (m)
 
-  real(8) :: rpf2dewar
+  real(dp) :: rpf2dewar
   !! radial distance between outer edge of largest (`ipfloc=3`) PF coil (or stellarator 
   !! modular coil) and cryostat (m)
 
-  real(8) :: vdewex
+  real(dp) :: vdewex
   !! cryostat volume (m3)
 
-  real(8) :: vdewin
+  real(dp) :: vdewin
   !! vacuum vessel volume (m3)
 
-  real(8) :: vfshld
+  real(dp) :: vfshld
   !! coolant void fraction in shield
 
-  real(8) :: volblkt
+  real(dp) :: volblkt
   !! volume of blanket (m3)
 
-  real(8) :: volblkti
+  real(dp) :: volblkti
   !! volume of inboard blanket (m3)
 
-  real(8) :: volblkto
+  real(dp) :: volblkto
   !! volume of outboard blanket (m3)
 
-  real(8) :: volshld
+  real(dp) :: volshld
   !! volume of shield (m3)
 
-  real(8) :: whtshld
+  real(dp) :: whtshld
   !! mass of shield (kg)
 
-  real(8) :: wpenshld
+  real(dp) :: wpenshld
   !! mass of the penetration shield (kg)
 
-  real(8) :: wtshldi
+  real(dp) :: wtshldi
   !! mass of inboard shield (kg)
 
-  real(8) :: wtshldo
+  real(dp) :: wtshldo
   !! mass of outboard shield (kg)
   
   integer :: irefprop
   !! Switch to use REFPROP routines (stellarator only)
   !#TODO: number of stellarator only items here. Also appear in fispact. Tidy needed
 
-  real(8) :: fblli
+  real(dp) :: fblli
   !! lithium fraction of blanket by volume (stellarator only)
 
-  real(8) :: fblli2o
+  real(dp) :: fblli2o
   !! lithium oxide fraction of blanket by volume (stellarator only)
 
-  real(8) :: fbllipb
+  real(dp) :: fbllipb
   !! lithium lead fraction of blanket by volume (stellarator only)
 
-  real(8) :: fblvd
+  real(dp) :: fblvd
   !! vanadium fraction of blanket by volume (stellarator only)
 
-  real(8) :: wtblli2o
+  real(dp) :: wtblli2o
   !! mass of blanket - Li_2O part (kg)
 
-  real(8) :: wtbllipb
+  real(dp) :: wtbllipb
   !! mass of blanket - Li-Pb part (kg)
   
-  real(8) :: whtblvd
+  real(dp) :: whtblvd
   !! mass of blanket - vanadium part (kg)
 
-  real(8) :: whtblli
+  real(dp) :: whtblli
   !! mass of blanket - lithium part (kg)
 
-  real(8) :: vfblkt
+  real(dp) :: vfblkt
   !! coolant void fraction in blanket (`blktmodel=0`), (calculated if `blktmodel > 0`)
 
   integer :: blktmodel
@@ -478,13 +480,13 @@ module fwbs_variables
   !! - =1 KIT model based on a helium-cooled pebble-bed blanket (HCPB) reference design
   !#TODO: this needs investigating and removing after any required functionality is in iblanket
 
-  real(8) :: declblkt
+  real(dp) :: declblkt
   !! neutron power deposition decay length of blanket structural material (m) (stellarators only)
 
-  real(8) :: declfw
+  real(dp) :: declfw
   !! neutron power deposition decay length of first wall structural material (m) (stellarators only)
 
-  real(8) :: declshld
+  real(dp) :: declshld
   !! neutron power deposition decay length of shield structural material (m) (stellarators only)
 
   integer :: blkttype
@@ -495,10 +497,10 @@ module fwbs_variables
   !! - =3 HCPB; efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX
   !#TODO: this needs to be merged into iblanket and then removed.
 
-  real(8) :: etaiso
+  real(dp) :: etaiso
   !! isentropic efficiency of FW and blanket coolant pumps
 
-  real(8) :: etahtp
+  real(dp) :: etahtp
   !! electrical efficiency of primary coolant pumps
 
   contains

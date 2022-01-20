@@ -14,7 +14,9 @@ module build_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+#ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   implicit none
 
   ! Var for subroutine radialb requiring re-initialisation before new run
@@ -75,9 +77,9 @@ contains
     !  Local variables
 
 
-    real(8) :: hbot,hfw,htop,r1,r2,r3,radius,r_tf_outboard_midl,vbuild, vbuild1
+    real(dp) :: hbot,hfw,htop,r1,r2,r3,radius,r_tf_outboard_midl,vbuild, vbuild1
 
-    real(8) :: fwtth
+    real(dp) :: fwtth
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -645,7 +647,7 @@ contains
 
     !  Local variables
 
-    real(8) :: divht
+    real(dp) :: divht
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -707,19 +709,19 @@ contains
 
     integer, intent(in) :: iprint,outfile
 
-    real(8), intent(out) :: divht
+    real(dp), intent(out) :: divht
 
     !  Local variables
 
-    !real(8), parameter :: soleno = 0.2D0  !  length along outboard divertor
+    !real(dp), parameter :: soleno = 0.2D0  !  length along outboard divertor
     !  plate that scrapeoff hits
-    real(8) :: kap,thetao, rci, rco, thetai
-    ! real(8) :: yspointo,xspointo,yprimeb,xpointo, tri, rprimeo, phio
-    ! real(8) :: denomo, alphad
-    real(8) :: triu, tril, rxpt, zxpt
-    real(8) :: rspi, zspi, zspo, rplti, zplti
-    real(8) :: rplbi, zplbi, rplto, zplto, rplbo, zplbo
-    real(8) :: ptop_radial,ptop_vertical
+    real(dp) :: kap,thetao, rci, rco, thetai
+    ! real(dp) :: yspointo,xspointo,yprimeb,xpointo, tri, rprimeo, phio
+    ! real(dp) :: denomo, alphad
+    real(dp) :: triu, tril, rxpt, zxpt
+    real(dp) :: rspi, zspi, zspo, rplti, zplti
+    real(dp) :: rplbi, zplbi, rplto, zplto, rplbo, zplbo
+    real(dp) :: ptop_radial,ptop_vertical
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -958,12 +960,12 @@ contains
 
   !   !  Arguments
 
-  !   real(8), intent(in) :: ripmax,rmajor,rminor,r_tf_outboard_mid,n_tf
-  !   real(8), intent(out) :: ripple,r_tf_outboard_midl
+  !   real(dp), intent(in) :: ripmax,rmajor,rminor,r_tf_outboard_mid,n_tf
+  !   real(dp), intent(out) :: ripple,r_tf_outboard_midl
 
   !   !  Local variables
 
-  !   real(8) :: prip,rotrp,pripc,coeff
+  !   real(dp) :: prip,rotrp,pripc,coeff
 
   !   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1028,18 +1030,18 @@ contains
     ! ---------
     ! Inputs 
     ! ---
-    real(8), intent(in) :: ripmax
+    real(dp), intent(in) :: ripmax
     !! Maximum tolearble outboard plasma ripple
 
-    real(8), intent(in) :: r_tf_outboard_mid
+    real(dp), intent(in) :: r_tf_outboard_mid
     !! Intial outboard middle of the TF coil conducting layer [m]
 
     ! Outputs
     ! ---
-    real(8), intent(out) :: ripple
+    real(dp), intent(out) :: ripple
     !! Calcualted plasma ripple
 
-    real(8), intent(out) :: r_tf_outboard_midmin
+    real(dp), intent(out) :: r_tf_outboard_midmin
     !! Outboard middle of the TF coil conducting layer [m]
     !! calculated with the user input ripple
 
@@ -1049,29 +1051,29 @@ contains
 
     ! Local variables
     ! ---
-    real(8) :: t_wp_max
+    real(dp) :: t_wp_max
     !! Minimal radius where the WP toroidal thickness is maximum [m]
     !! Internal variable corresponding to wwp1
 
-    real(8) :: side_case_th
+    real(dp) :: side_case_th
     !! Locally calculated sidewall case thickness
     !! Internal variable corresponding to casths
 
-    real(8) :: r_wp_min
+    real(dp) :: r_wp_min
     !! Minimal inboard WP radius [m]
     !! Internal variable corresponding to r_wp_inner in sctfcoil
 
-    real(8) :: r_wp_max
+    real(dp) :: r_wp_max
     !! Radius used to define the t_wp_max [m]    
 
-    real(8) :: x
+    real(dp) :: x
     !! Winding pack to iter-coil at plasma centre toroidal lenth ratio
 
-    real(8) :: n
+    real(dp) :: n
     !! Number of TF coils
     !! n_tf converted in real number
 
-    real(8) :: c1, c2
+    real(dp) :: c1, c2
     ! ---
     ! ---------
 
@@ -1168,8 +1170,8 @@ contains
 
     !  Local variables
 
-    real(8) :: a,b,c,d,e,f,g,h
-    real(8) :: alpha,eps,theta,phi,omega
+    real(dp) :: a,b,c,d,e,f,g,h
+    real(dp) :: alpha,eps,theta,phi,omega
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

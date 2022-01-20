@@ -10,6 +10,7 @@ ENV LANG C.UTF-8
 
 # Install apt packages
 # gfortran, debugging tools, git, maths and Latex libraries
+# poppler-utils is required by pdf2image
 # This syntax is recommended by Docker to bust caching
 RUN apt-get update && apt-get install -y \
     gdb \
@@ -20,6 +21,7 @@ RUN apt-get update && apt-get install -y \
     liblapack-dev \
     liblapack3 \
     pandoc \
+    poppler-utils \
     python3-pip \
     python-is-python3 \
     texlive-base \

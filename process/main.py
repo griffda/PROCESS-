@@ -49,6 +49,7 @@ from process.utilities.f2py_string_patch import string_to_f2py_compatible, f2py_
 import argparse
 from process.costs_step import CostsStep
 from process.pfcoil import PFCoil
+from process.tfcoil import TFcoil
 from process.caller import Caller
 
 from pathlib import Path
@@ -443,6 +444,7 @@ class Models():
         """
         self.costs_step = CostsStep()
         self.pfcoil = PFCoil()
+        self.tfcoil = TFcoil()
 
 def main(args=None):
     """Run Process.

@@ -4,8 +4,6 @@
 
 module init_module
 
-  use, intrinsic :: iso_fortran_env, only: dp=>real64
-
   implicit none
 
 contains
@@ -71,6 +69,7 @@ subroutine init_all_module_vars
   use physics_functions_module, only: init_physics_functions
   use reinke_module, only: init_reinke_module
   use water_usage_variables, only: init_watuse_variables
+  use CS_fatigue_variables, only: init_CS_fatigue_variables
 
   call init_numerics
   call init_input
@@ -127,6 +126,7 @@ subroutine init_all_module_vars
   call init_physics_functions
   call init_reinke_module
   call init_watuse_variables
+  call init_CS_fatigue_variables
 end subroutine init_all_module_vars
 
 subroutine init

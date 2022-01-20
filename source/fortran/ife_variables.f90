@@ -7,7 +7,9 @@ module ife_variables
     !!
     !! - AEA FUS 251: A User's Guide to the PROCESS Systems Code
      
-    use, intrinsic :: iso_fortran_env, only: dp=>real64 
+#ifndef dp
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+#endif
   
     implicit none
   
@@ -35,130 +37,130 @@ module ife_variables
     !! - =7 xenon
     !! - =8 lithium
      
-    real(8) :: bldr  
+    real(dp) :: bldr  
     !! radial thickness of IFE blanket (m; calculated `if ifetyp=4`)
   
-    real(8) :: bldrc  
+    real(dp) :: bldrc  
     !! radial thickness of IFE curtain (m; `ifetyp=4`)
   
-    real(8) :: bldzl 
+    real(dp) :: bldzl 
     !! vertical thickness of IFE blanket below chamber (m)
   
-    real(8) :: bldzu 
+    real(dp) :: bldzu 
     !! vertical thickness of IFE blanket above chamber (m)
   
-    real(8), dimension(3,0:maxmat) :: blmatf
+    real(dp), dimension(3,0:maxmat) :: blmatf
     !! IFE blanket material fractions
   
-    real(8), dimension(3,0:maxmat) :: blmatm
+    real(dp), dimension(3,0:maxmat) :: blmatm
     !! IFE blanket material masses (kg)
   
-    real(8), dimension(3,0:maxmat) :: blmatv
+    real(dp), dimension(3,0:maxmat) :: blmatv
     !! IFE blanket material volumes (m3)
   
-    real(8), dimension(3) :: blvol
+    real(dp), dimension(3) :: blvol
     !! IFE blanket volume (m3)
   
-    real(8) :: cdriv0
+    real(dp) :: cdriv0
     !! IFE generic/laser driver cost at edrive=0 (M$)
   
-    real(8) :: cdriv1
+    real(dp) :: cdriv1
     !! IFE low energy heavy ion beam driver cost extrapolated to `edrive=0` (M$)
   
-    real(8) :: cdriv2
+    real(dp) :: cdriv2
     !! IFE high energy heavy ion beam driver cost extrapolated to `edrive=0` (M$)
   
-    real(8) :: cdriv3
+    real(dp) :: cdriv3
     !! IFE driver cost ($/J wall plug) (`ifedrv==3`)
   
-    real(8) :: chdzl
+    real(dp) :: chdzl
     !! vertical thickness of IFE chamber below centre (m)
   
-    real(8) :: chdzu
+    real(dp) :: chdzu
     !! vertical thickness of IFE chamber above centre (m)
   
-    real(8), dimension(0:maxmat) :: chmatf
+    real(dp), dimension(0:maxmat) :: chmatf
     !! IFE chamber material fractions
   
-    real(8), dimension(0:maxmat) :: chmatm
+    real(dp), dimension(0:maxmat) :: chmatm
     !! IFE chamber material masses (kg)
   
-    real(8), dimension(0:maxmat) :: chmatv
+    real(dp), dimension(0:maxmat) :: chmatv
     !! IFE chamber material volumes (m3)
   
-    real(8) :: chrad
+    real(dp) :: chrad
     !! radius of IFE chamber (m) (`iteration variable 84`)
   
-    real(8) :: chvol
+    real(dp) :: chvol
     !! IFE chamber volume (m3)
   
-    real(8) :: dcdrv0
+    real(dp) :: dcdrv0
     !! IFE generic/laser driver cost gradient (M$/MJ)
   
-    real(8) :: dcdrv1
+    real(dp) :: dcdrv1
     !! HIB driver cost gradient at low energy (M$/MJ)
   
-    real(8) :: dcdrv2
+    real(dp) :: dcdrv2
     !! HIB driver cost gradient at high energy (M$/MJ)
   
-    real(8) :: drveff
+    real(dp) :: drveff
     !! IFE driver wall plug to target efficiency (`ifedrv=0,3`) (`iteration variable 82`)
   
-    real(8) :: edrive
+    real(dp) :: edrive
     !! IFE driver energy (J) (`iteration variable 81`)
   
-    real(8) :: etadrv
+    real(dp) :: etadrv
     !! IFE driver wall plug to target efficiency
   
-    real(8) :: etali
+    real(dp) :: etali
     !! IFE lithium pump wall plug efficiency (`ifetyp=4`)
   
-    real(8), dimension(10) :: etave
+    real(dp), dimension(10) :: etave
     !! IFE driver efficiency vs driver energy (`ifedrv=-1`)
   
-    real(8) :: fauxbop
+    real(dp) :: fauxbop
     !! fraction of gross electric power to balance-of-plant (IFE)
   
-    real(8) :: fbreed
+    real(dp) :: fbreed
     !! fraction of breeder external to device core
   
-    real(8) :: fburn 
+    real(dp) :: fburn 
     !! IFE burn fraction (fraction of tritium fused/target)
   
-    real(8) :: flirad
+    real(dp) :: flirad
     !! radius of FLiBe/lithium inlet (m) (`ifetyp=3,4`)
   
-    real(8) :: frrmax
+    real(dp) :: frrmax
     !! f-value for maximum IFE repetition rate (`constraint equation 50`, `iteration variable 86`)
   
-    real(8) :: fwdr
+    real(dp) :: fwdr
     !! radial thickness of IFE first wall (m)
   
-    real(8) :: fwdzl
+    real(dp) :: fwdzl
     !! vertical thickness of IFE first wall below chamber (m)
   
-    real(8) :: fwdzu
+    real(dp) :: fwdzu
     !! vertical thickness of IFE first wall above chamber (m)
   
-    real(8), dimension(3,0:maxmat) :: fwmatf
+    real(dp), dimension(3,0:maxmat) :: fwmatf
     !! IFE first wall material fractions
   
-    real(8), dimension(3,0:maxmat) :: fwmatm
+    real(dp), dimension(3,0:maxmat) :: fwmatm
     !! IFE first wall material masses (kg)
   
-    real(8), dimension(3,0:maxmat) :: fwmatv
+    real(dp), dimension(3,0:maxmat) :: fwmatv
     !! IFE first wall material volumes (kg)
   
-    real(8), dimension(3) :: fwvol
+    real(dp), dimension(3) :: fwvol
     !! IFE first wall volume (m3)
   
-    real(8) :: gain
+    real(dp) :: gain
     !! IFE target gain
   
-    real(8), dimension(10) :: gainve
+    real(dp), dimension(10) :: gainve
     !! IFE target gain vs driver energy (`ifedrv=-1`)
   
-    real(8) :: htpmw_ife
+    real(dp) :: htpmw_ife
     !! IFE heat transport system electrical pump power (MW)
   
     integer :: ife
@@ -185,211 +187,211 @@ module ife_variables
     !! - =3 HYLIFE-II-like build
     !! - =4 2019 build
   
-    real(8) :: lipmw
+    real(dp) :: lipmw
     !! IFE lithium pump power (MW; `ifetyp=4`)
   
-    real(8) :: mcdriv
+    real(dp) :: mcdriv
     !! IFE driver cost multiplier
   
-    real(8) :: mflibe
+    real(dp) :: mflibe
     !! total mass of FLiBe (kg)
   
-    real(8) :: pdrive
+    real(dp) :: pdrive
     !! IFE driver power reaching target (W) (`iteration variable 85`)
     
-    real(8) :: pfusife
+    real(dp) :: pfusife
     !! IFE input fusion power (MW) (`ifedrv=3 only`; `itv 155`)
   
-    real(8) :: pifecr
+    real(dp) :: pifecr
     !! IFE cryogenic power requirements (MW)
   
-    real(8) :: ptargf
+    real(dp) :: ptargf
     !! IFE target factory power at 6 Hz repetition rate (MW)
   
-    real(8) :: r1
+    real(dp) :: r1
     !! IFE device radial build (m)
   
-    real(8) :: r2
+    real(dp) :: r2
     !! IFE device radial build (m)
   
-    real(8) :: r3
+    real(dp) :: r3
     !! IFE device radial build (m)
   
-    real(8) :: r4
+    real(dp) :: r4
     !! IFE device radial build (m)
   
-    real(8) :: r5
+    real(dp) :: r5
     !! IFE device radial build (m)
   
-    real(8) :: r6
+    real(dp) :: r6
     !! IFE device radial build (m)
   
-    real(8) :: r7
+    real(dp) :: r7
     !! IFE device radial build (m)
   
-    real(8) :: reprat
+    real(dp) :: reprat
     !! IFE driver repetition rate (Hz)
   
-    real(8) :: rrin
+    real(dp) :: rrin
     !! Input IFE repetition rate (Hz) (`ifedrv=3 only`; `itv 156`)
   
-    real(8) :: rrmax
+    real(dp) :: rrmax
     !! maximum IFE repetition rate (Hz)
   
-    real(8) :: shdr
+    real(dp) :: shdr
     !! radial thickness of IFE shield (m)
   
-    real(8) :: shdzl
+    real(dp) :: shdzl
     !! vertical thickness of IFE shield below chamber (m)
   
-    real(8) :: shdzu 
+    real(dp) :: shdzu 
     !! vertical thickness of IFE shield above chamber (m)
   
-    real(8), dimension(3,0:maxmat) :: shmatf
+    real(dp), dimension(3,0:maxmat) :: shmatf
     !! IFE shield material fractions
   
-    real(8), dimension(3,0:maxmat) :: shmatm
+    real(dp), dimension(3,0:maxmat) :: shmatm
     !! IFE shield material masses (kg)
   
-    real(8), dimension(3,0:maxmat) :: shmatv
+    real(dp), dimension(3,0:maxmat) :: shmatv
     !! IFE shield material volumes (kg)
   
-    real(8), dimension(3) :: shvol
+    real(dp), dimension(3) :: shvol
     !! IFE shield volume (m3)
   
-    real(8) :: sombdr
+    real(dp) :: sombdr
     !! radius of cylindrical blanket section below chamber (`ifetyp=2`)
   
-    real(8) :: somtdr
+    real(dp) :: somtdr
     !! radius of cylindrical blanket section above chamber (`ifetyp=2`)
   
-    real(8) :: taufall
+    real(dp) :: taufall
     !! Lithium Fall Time (s)
   
-    real(8) :: tdspmw
+    real(dp) :: tdspmw
     !! IFE target delivery system power (MW)
   
-    real(8) :: tfacmw
+    real(dp) :: tfacmw
     !! IFE target factory power (MW)
   
-    real(8) :: tgain
+    real(dp) :: tgain
     !! IFE target gain (if `ifedrv = 0`) (`iteration variable 83`)
   
-    real(8) :: uccarb
+    real(dp) :: uccarb
     !! cost of carbon cloth ($/kg)
   
-    real(8) :: ucconc
+    real(dp) :: ucconc
     !! cost of concrete ($/kg)
   
-    real(8) :: ucflib
+    real(dp) :: ucflib
     !! cost of FLiBe ($/kg)
   
-    real(8) :: uctarg
+    real(dp) :: uctarg
     !! cost of IFE target ($/target)
   
-    real(8) :: v1dr
+    real(dp) :: v1dr
     !! radial thickness of IFE void between first wall and blanket (m)
   
-    real(8) :: v1dzl
+    real(dp) :: v1dzl
     !! vertical thickness of IFE void 1 below chamber (m)
   
-    real(8) :: v1dzu
+    real(dp) :: v1dzu
     !! vertical thickness of IFE void 1 above chamber (m)
   
-    real(8), dimension(3,0:maxmat) :: v1matf
+    real(dp), dimension(3,0:maxmat) :: v1matf
     !! IFE void 1 material fractions
   
-    real(8), dimension(3,0:maxmat) :: v1matm
+    real(dp), dimension(3,0:maxmat) :: v1matm
     !! IFE void 1 material masses (kg)
   
-    real(8), dimension(3,0:maxmat) :: v1matv
+    real(dp), dimension(3,0:maxmat) :: v1matv
     !! IFE void 1 material volumes (kg)
   
-    real(8), dimension(3) :: v1vol
+    real(dp), dimension(3) :: v1vol
     !! IFE void 1 volume (m3)
   
-    real(8) :: v2dr
+    real(dp) :: v2dr
     !! radial thickness of IFE void between blanket and shield (m)
   
-    real(8) :: v2dzl
+    real(dp) :: v2dzl
     !! vertical thickness of IFE void 2 below chamber (m)
   
-    real(8) :: v2dzu
+    real(dp) :: v2dzu
     !! vertical thickness of IFE void 2 above chamber (m)
   
-    real(8), dimension(3,0:maxmat) :: v2matf
+    real(dp), dimension(3,0:maxmat) :: v2matf
     !! IFE void 2 material fractions
   
-    real(8), dimension(3,0:maxmat) :: v2matm
+    real(dp), dimension(3,0:maxmat) :: v2matm
     !! IFE void 2 material masses (kg)
   
-    real(8), dimension(3,0:maxmat) :: v2matv
+    real(dp), dimension(3,0:maxmat) :: v2matv
     !! IFE void 2 material volumes (kg)
   
-    real(8), dimension(3) :: v2vol
+    real(dp), dimension(3) :: v2vol
     !! IFE void 2 volume (m3)
   
-    real(8) :: v3dr  
+    real(dp) :: v3dr  
     !! radial thickness of IFE void outside shield (m)
   
-    real(8) :: v3dzl 
+    real(dp) :: v3dzl 
     !! vertical thickness of IFE void 3 below chamber (m)
   
-    real(8) :: v3dzu 
+    real(dp) :: v3dzu 
     !! vertical thickness of IFE void 3 above chamber (m)
   
-    real(8), dimension(3,0:maxmat) :: v3matf
+    real(dp), dimension(3,0:maxmat) :: v3matf
     !! IFE void 3 material fractions
   
-    real(8), dimension(3,0:maxmat) :: v3matm
+    real(dp), dimension(3,0:maxmat) :: v3matm
     !! IFE void 3 material masses (kg)
   
-    real(8), dimension(3,0:maxmat) :: v3matv
+    real(dp), dimension(3,0:maxmat) :: v3matv
     !! IFE void 3 material volumes (kg)
   
-    real(8), dimension(3) :: v3vol
+    real(dp), dimension(3) :: v3vol
     !! IFE void 3 volume (m3)
   
-    real(8) :: zl1
+    real(dp) :: zl1
     !! IFE vertical build below centre (m)
   
-    real(8) :: zl2
+    real(dp) :: zl2
     !! IFE vertical build below centre (m)
   
-    real(8) :: zl3
+    real(dp) :: zl3
     !! IFE vertical build below centre (m)
   
-    real(8) :: zl4
+    real(dp) :: zl4
     !! IFE vertical build below centre (m)
   
-    real(8) :: zl5
+    real(dp) :: zl5
     !! IFE vertical build below centre (m)
   
-    real(8) :: zl6
+    real(dp) :: zl6
     !! IFE vertical build below centre (m)
   
-    real(8) :: zl7
+    real(dp) :: zl7
     !! IFE vertical build below centre (m)
   
-    real(8) :: zu1
+    real(dp) :: zu1
     !! IFE vertical build above centre (m)
   
-    real(8) :: zu2
+    real(dp) :: zu2
     !! IFE vertical build above centre (m)
   
-    real(8) :: zu3
+    real(dp) :: zu3
     !! IFE vertical build above centre (m)
   
-    real(8) :: zu4
+    real(dp) :: zu4
     !! IFE vertical build above centre (m)
   
-    real(8) :: zu5
+    real(dp) :: zu5
     !! IFE vertical build above centre (m)
   
-    real(8) :: zu6
+    real(dp) :: zu6
     !! IFE vertical build above centre (m)
   
-    real(8) :: zu7
+    real(dp) :: zu7
     !! IFE vertical build above centre (m)
      
     contains
