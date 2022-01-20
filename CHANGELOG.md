@@ -6,6 +6,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.0] - 2022-01-20
+### Added
+- Create scan notebook template (#1497)
+- Create example Jupyter notebook (#1487)
+- CS fatigue model (#1400)
+- Tracking for cost model (#1344)
+
+### Changed
+- Beta-norm and elongation aspect ratio dependence from Menard et al. 2016 (#1439)
+- Convert tfcoil into Python/Hybrid Python-Fortran (#1452)
+- Update LTS/HTS cost model (#1343)
+- Convert costs step to pure python (#1448)
+- Update HCD costs in cost model 2 (#1304)
+- Elongation scaling aspect ratio stability margin (#1399)
+- General PF coil placement (#1418)
+- Axisymmetric extended plane strain (#998, #1414)
+
+### Fixed
+- 5% regression test job missing values (#1503)
+- N_cycle_fix (#1506)
+- Plasma-side case of inboard TF coil (`casthi`) is neglected in computing radial stress distribution (#1509)
+- Generalized plane strain TF coil stress model is not regression tested with a bucking cylinder (#1442)
+- Resolve "REBCO current density incorrectly calculated (#1494)
+- Resolve "Incorrect calculation of building sizes (#1395)
+
 ## [2.2.0] - 2021-10-26
 ### Added
 - Add pumping variables as inputs for varying the efficiency of thermal to electrical conversion in develop-stable (#1374)
