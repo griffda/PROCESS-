@@ -1334,7 +1334,7 @@ module pfcoil_module
       !! None
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+      use maths_library, only: svd
       implicit none
 
       !  Arguments
