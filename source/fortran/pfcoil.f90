@@ -1050,96 +1050,6 @@ module pfcoil_module
  
    contains
  
-     subroutine rsid(nptsmx,ngrpmx,lrow1,lcol1,npts,brin,bzin,nfix, &
-          ngrp,ccls,brssq,brnrm,bzssq,bznrm,ssq,bfix,gmat)
- 
-       !! Computes the norm of the residual vectors
-       !! author: P J Knight, CCFE, Culham Science Centre
-       !! author: D Strickler, ORNL
-       !! author: J Galambos, ORNL
-       !! author: P C Shipe, ORNL
-       !! nptsmx : input integer : maximum number of points across the
-       !! plasma midplane at which the magnetic
-       !! field is fixed
-       !! ngrpmx : input integer : maximum number of PF coil groups
-       !! lrow1 : input integer : row length of arrays bfix, gmat;
-       !! should be >= (2*nptsmx + ngrpmx)
-       !! lcol1 : input integer : column length of array gmat; should be >= ngrpmx
-       !! npts : input integer : number of data points at which field is
-       !! to be fixed; should be <= nptsmx
-       !! brin(nptsmx),bzin(nptsmx) : input real arrays : field components at
-       !! data points (T)
-       !! nfix : input integer : number of coils with fixed currents, <= nfixmx
-       !! ngrp : input integer : number of coil groups, where all coils in a
-       !! group have the same current, <= ngrpmx
-       !! ccls(ngrpmx) : input real array : coil currents in each group (A)
-       !! brssq : output real : sum of squares of radial field residues
-       !! brnrm : output real : radial field residue norm
-       !! bzssq : output real : sum of squares of vertical field residues
-       !! bznrm : output real : vertical field residue norm
-       !! ssq : output real : sum of squares of elements of residual vector
-       !! bfix(lrow1) : input real array : work array
-       !! gmat(lrow1,lcol1) : input real array : work array
-       !! This routine calculates the residuals from the matrix
-       !! equation for calculation of the currents in a group of ring coils.
-       !! None
-       !
-       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
-       implicit none
- 
-       !  Arguments
- 
-       integer, intent(in) :: nptsmx,ngrpmx,lrow1,lcol1,npts,nfix,ngrp
- 
-       real(dp), dimension(ngrpmx), intent(in) :: ccls
-       real(dp), dimension(nptsmx), intent(in) :: brin, bzin
-       real(dp), dimension(lrow1), intent(in) :: bfix
-       real(dp), dimension(lrow1,lcol1), intent(in) :: gmat
- 
-       real(dp), intent(out) :: brssq,brnrm,bzssq,bznrm,ssq
- 
-       !  Local variables
- 
-       integer :: i,j
-       real(dp) :: svec,rvec
- 
-       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
-       brnrm = 0.0D0
-       brssq = 0.0D0
- 
-       do i = 1,npts
-          svec = 0.0D0
-          if (nfix > 0) svec = bfix(i)
-          do j = 1,ngrp
-             svec = svec + gmat(i,j)*ccls(j)
-          end do
-          rvec = svec - brin(i)
-          brnrm = brnrm + brin(i)**2
-          brssq = brssq + rvec**2
-       end do
- 
-       bznrm = 0.0D0
-       bzssq = 0.0D0
- 
-       do i = 1,npts
-          svec = 0.0D0
-          if (nfix > 0) svec = bfix(i+npts)
-          do j = 1,ngrp
-             svec = svec + gmat(i+npts,j)*ccls(j)
-          end do
-          rvec = svec - bzin(i)
-          bznrm = bznrm + bzin(i)**2
-          bzssq = bzssq + rvec**2
-       end do
- 
-       ssq = brssq/(1.0D0 + brnrm) + bzssq/(1.0D0+bznrm)
- 
-     end subroutine rsid
- 
-     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
      subroutine fixb(nptsmx,nfixmx,lrow1,npts,rpts,zpts,nfix,rfix, &
           zfix,cfix,bfix)
  
@@ -1378,6 +1288,94 @@ module pfcoil_module
       end do
 
    end subroutine solv
+
+   subroutine rsid(nptsmx,ngrpmx,lrow1,lcol1,npts,brin,bzin,nfix, &
+      ngrp,ccls,brssq,brnrm,bzssq,bznrm,ssq,bfix,gmat)
+
+      !! Computes the norm of the residual vectors
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! author: D Strickler, ORNL
+      !! author: J Galambos, ORNL
+      !! author: P C Shipe, ORNL
+      !! nptsmx : input integer : maximum number of points across the
+      !! plasma midplane at which the magnetic
+      !! field is fixed
+      !! ngrpmx : input integer : maximum number of PF coil groups
+      !! lrow1 : input integer : row length of arrays bfix, gmat;
+      !! should be >= (2*nptsmx + ngrpmx)
+      !! lcol1 : input integer : column length of array gmat; should be >= ngrpmx
+      !! npts : input integer : number of data points at which field is
+      !! to be fixed; should be <= nptsmx
+      !! brin(nptsmx),bzin(nptsmx) : input real arrays : field components at
+      !! data points (T)
+      !! nfix : input integer : number of coils with fixed currents, <= nfixmx
+      !! ngrp : input integer : number of coil groups, where all coils in a
+      !! group have the same current, <= ngrpmx
+      !! ccls(ngrpmx) : input real array : coil currents in each group (A)
+      !! brssq : output real : sum of squares of radial field residues
+      !! brnrm : output real : radial field residue norm
+      !! bzssq : output real : sum of squares of vertical field residues
+      !! bznrm : output real : vertical field residue norm
+      !! ssq : output real : sum of squares of elements of residual vector
+      !! bfix(lrow1) : input real array : work array
+      !! gmat(lrow1,lcol1) : input real array : work array
+      !! This routine calculates the residuals from the matrix
+      !! equation for calculation of the currents in a group of ring coils.
+      !! None
+      !
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      implicit none
+
+      !  Arguments
+
+      integer, intent(in) :: nptsmx,ngrpmx,lrow1,lcol1,npts,nfix,ngrp
+
+      real(dp), dimension(ngrpmx), intent(in) :: ccls
+      real(dp), dimension(nptsmx), intent(in) :: brin, bzin
+      real(dp), dimension(lrow1), intent(in) :: bfix
+      real(dp), dimension(lrow1,lcol1), intent(in) :: gmat
+
+      real(dp), intent(out) :: brssq,brnrm,bzssq,bznrm,ssq
+
+      !  Local variables
+
+      integer :: i,j
+      real(dp) :: svec,rvec
+
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      brnrm = 0.0D0
+      brssq = 0.0D0
+
+      do i = 1,npts
+         svec = 0.0D0
+         if (nfix > 0) svec = bfix(i)
+         do j = 1,ngrp
+            svec = svec + gmat(i,j)*ccls(j)
+         end do
+         rvec = svec - brin(i)
+         brnrm = brnrm + brin(i)**2
+         brssq = brssq + rvec**2
+      end do
+
+      bznrm = 0.0D0
+      bzssq = 0.0D0
+
+      do i = 1,npts
+         svec = 0.0D0
+         if (nfix > 0) svec = bfix(i+npts)
+         do j = 1,ngrp
+            svec = svec + gmat(i+npts,j)*ccls(j)
+         end do
+         rvec = svec - bzin(i)
+         bznrm = bznrm + bzin(i)**2
+         bzssq = bzssq + rvec**2
+      end do
+
+      ssq = brssq/(1.0D0 + brnrm) + bzssq/(1.0D0+bznrm)
+
+   end subroutine rsid
 
    subroutine bfield(nc, rc, zc, cc, xc, rp, zp, br, bz, psi)
  
