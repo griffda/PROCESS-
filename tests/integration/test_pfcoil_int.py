@@ -1665,7 +1665,7 @@ def test_fixb():
     """Test fixb subroutine.
 
     fixb() requires specific arguments in order to work; these were discovered
-    using gdb to break on the first subroutine call when running the baseline 
+    using gdb to break on the first subroutine call when running the baseline
     2018 IN.DAT.
     """
     nptsmx = 32
@@ -1996,3 +1996,382 @@ def test_fixb():
     bfix = pf.fixb(lrow1, npts, rpts, zpts, nfix, rfix, zfix, cfix)
 
     assert_array_almost_equal(bfix, bfix_exp)
+
+
+def test_peakb(monkeypatch):
+    """Test peakb subroutine.
+
+    peakb() requires specific arguments in order to work; these were discovered
+    using gdb to break on the first subroutine call when running the baseline
+    2018 IN.DAT.
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
+    """
+    monkeypatch.setattr(bv, "iohcl", 1)
+    monkeypatch.setattr(bv, "hmax", 9.0730900215620327)
+    monkeypatch.setattr(bv, "ohcth", 0.55242000000000002)
+    monkeypatch.setattr(
+        eh,
+        "idiags",
+        np.array(
+            [-999999, -999999, -999999, -999999, -999999, -999999, -999999, -999999]
+        ),
+    )
+    monkeypatch.setattr(
+        pfv,
+        "ra",
+        np.array(
+            [
+                5.6944236847973242,
+                5.5985055619292972,
+                17.819978201682968,
+                17.819978201682968,
+                16.385123084628962,
+                16.385123084628962,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        ),
+    )
+    monkeypatch.setattr(pfv, "nohc", 7)
+    monkeypatch.setattr(
+        pfv,
+        "ric",
+        np.array(
+            [
+                14.742063826112622,
+                20.032681634901664,
+                -8.1098913365453491,
+                -8.1098913365453491,
+                -5.5984385047179153,
+                -5.5984385047179153,
+                -186.98751599968148,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        ),
+    )
+    monkeypatch.setattr(pfv, "ohhghf", 0.90000000000000002)
+    monkeypatch.setattr(
+        pfv,
+        "rb",
+        np.array(
+            [
+                6.8520884119768697,
+                6.9480065348448967,
+                18.98258241468535,
+                18.98258241468535,
+                17.22166645654087,
+                17.22166645654087,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        ),
+    )
+    monkeypatch.setattr(
+        pfv,
+        "rpf",
+        np.array(
+            [
+                6.2732560483870969,
+                6.2732560483870969,
+                18.401280308184159,
+                18.401280308184159,
+                16.803394770584916,
+                16.803394770584916,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        ),
+    )
+    monkeypatch.setattr(
+        pfv,
+        "waves",
+        np.array(
+            [
+                [0.0, 1.0, 0.00457346, 0.00457346, 0.00457346, 0.0],
+                [0.0, 1.0, -0.14559845, -0.14559845, -0.14559845, 0.0],
+                [0.0, -0.07156774, 1.0, 1.0, 1.0, 0.0],
+                [0.0, -0.07156774, 1.0, 1.0, 1.0, 0.0],
+                [0.0, -0.07676189, 1.0, 1.0, 1.0, 0.0],
+                [0.0, -0.07676189, 1.0, 1.0, 1.0, 0.0],
+                [0.0, -0.93176, 1.0, 1.0, 1.0, 0.0],
+                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            ],
+            order="F",
+        ),
+    )
+    monkeypatch.setattr(pfv, "coheof", 20726000)
+    monkeypatch.setattr(pfv, "ngrp", 4)
+    monkeypatch.setattr(pfv, "bpf", np.zeros(22, dtype=int))  # maybe
+    monkeypatch.setattr(
+        pfv,
+        "zpf",
+        np.array(
+            [
+                9.606146709677418,
+                -11.141090021562032,
+                2.8677741935483869,
+                -2.8677741935483869,
+                8.0297677419354834,
+                -8.0297677419354834,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        ),
+    )
+    monkeypatch.setattr(pfv, "ncls", np.array([1, 1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0]))
+    monkeypatch.setattr(
+        pfv,
+        "zl",
+        np.array(
+            [
+                9.0273143460876444,
+                -10.466339535104233,
+                2.2864720870471951,
+                -2.2864720870471951,
+                7.6114960559795311,
+                -7.6114960559795311,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        ),
+    )
+    monkeypatch.setattr(
+        pfv,
+        "curpfb",
+        np.array(
+            [
+                0.067422231232391661,
+                -2.9167273287450968,
+                -8.1098913365453491,
+                -8.1098913365453491,
+                -5.5984385047179153,
+                -5.5984385047179153,
+                -186.98751599968148,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        ),
+    )
+    monkeypatch.setattr(
+        pfv,
+        "curpff",
+        np.array(
+            [
+                0.067422231232391661,
+                -2.9167273287450968,
+                -8.1098913365453491,
+                -8.1098913365453491,
+                -5.5984385047179153,
+                -5.5984385047179153,
+                -186.98751599968148,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        ),
+    )
+    monkeypatch.setattr(
+        pfv,
+        "curpfs",
+        np.array(
+            [
+                14.742063826112622,
+                20.032681634901664,
+                0.58040662653667285,
+                0.58040662653667285,
+                0.42974674788703021,
+                0.42974674788703021,
+                174.22748790786324,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        ),
+    )
+    monkeypatch.setattr(pfv, "cohbop", 19311657.760000002)
+    monkeypatch.setattr(
+        pfv,
+        "zh",
+        np.array(
+            [
+                10.184979073267192,
+                -11.815840508019832,
+                3.4490763000495788,
+                -3.4490763000495788,
+                8.4480394278914357,
+                -8.4480394278914357,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        ),
+    )
+    monkeypatch.setattr(pv, "rmajor", 8.8901000000000003)
+    monkeypatch.setattr(pv, "plascur", 17721306.969367817)
+
+    i = 1
+    ii = 1
+    it = 32767
+
+    bri_exp = 0.0
+    bro_exp = 0.0
+    bzi_exp = 0.0
+    bzo_exp = 0.0
+    it_exp = 32767
+
+    bri, bro, bzi, bzo = pf.peakb(i, ii, it)
+
+    assert pytest.approx(bri, bri_exp)
+    assert pytest.approx(bro, bro_exp)
+    assert pytest.approx(bzi, bzi_exp)
+    assert pytest.approx(bzo, bzo_exp)
+    assert_array_almost_equal(it, it_exp)

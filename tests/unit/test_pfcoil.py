@@ -3,6 +3,7 @@ import pytest
 from process.pfcoil import PFCoil
 from process.fortran import pfcoil_module as pf
 import numpy as np
+from numpy.testing import assert_array_almost_equal
 
 
 @pytest.fixture
@@ -33,7 +34,7 @@ def test_rsid():
     """Test rsid subroutine.
 
     rsid() requires specific arguments in order to work; these were discovered
-    using gdb to break on the first subroutine call when running the baseline 
+    using gdb to break on the first subroutine call when running the baseline
     2018 IN.DAT.
     """
     nptsmx = 32
@@ -902,3 +903,97 @@ def test_rsid():
     assert bzssq == pytest.approx(bzssq_exp)
     assert bznrm == pytest.approx(bznrm_exp)
     assert ssq == pytest.approx(ssq_exp)
+
+
+def test_bfield():
+    """Test bfield subroutine.
+
+    bfield() requires specific arguments in order to work; these were discovered
+    using gdb to break on the first subroutine call when running the baseline
+    2018 IN.DAT.
+    """
+    rc = np.array(
+        [
+            2.6084100000000001,
+            2.6084100000000001,
+            2.6084100000000001,
+            2.6084100000000001,
+            2.6084100000000001,
+            2.6084100000000001,
+            2.6084100000000001,
+            2.6084100000000001,
+            2.6084100000000001,
+            2.6084100000000001,
+            2.6084100000000001,
+            2.6084100000000001,
+            2.6084100000000001,
+            2.6084100000000001,
+        ]
+    )
+    zc = np.array(
+        [
+            0.58327007281470211,
+            1.7498102184441064,
+            2.9163503640735104,
+            4.0828905097029144,
+            5.2494306553323193,
+            6.4159708009617233,
+            7.5825109465911273,
+            -0.58327007281470211,
+            -1.7498102184441064,
+            -2.9163503640735104,
+            -4.0828905097029144,
+            -5.2494306553323193,
+            -6.4159708009617233,
+            -7.5825109465911273,
+        ]
+    )
+    cc = np.array(
+        [
+            12444820.564847374,
+            12444820.564847374,
+            12444820.564847374,
+            12444820.564847374,
+            12444820.564847374,
+            12444820.564847374,
+            12444820.564847374,
+            12444820.564847374,
+            12444820.564847374,
+            12444820.564847374,
+            12444820.564847374,
+            12444820.564847374,
+            12444820.564847374,
+            12444820.564847374,
+        ]
+    )
+    rp = 6.0223258064516134
+    zp = 0
+
+    xc_exp = np.array(
+        [
+            2.36278088e-06,
+            2.05233185e-06,
+            1.62139434e-06,
+            1.22298265e-06,
+            9.08339602e-07,
+            6.75290638e-07,
+            5.06601647e-07,
+            2.36278088e-06,
+            2.05233185e-06,
+            1.62139434e-06,
+            1.22298265e-06,
+            9.08339602e-07,
+            6.75290638e-07,
+            5.06601647e-07,
+        ]
+    )
+    br_exp = 0.0
+    bz_exp = 0.0
+    psi_exp = 0.0
+
+    xc, br, bz, psi = pf.bfield(rc, zc, cc, rp, zp)
+
+    assert_array_almost_equal(xc, xc_exp)
+    assert pytest.approx(br, br_exp)
+    assert pytest.approx(bz, bz_exp)
+    assert pytest.approx(psi, psi_exp)
