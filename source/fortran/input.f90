@@ -336,7 +336,7 @@ contains
       i_tf_stress_model, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
       i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti, &
       i_cp_joints, n_tf_turn, f_t_turn_tf, t_turn_tf_max, t_cable_tf, &
-      sig_tf_wp_max, eyoung_cond_t, i_tf_cond_props, i_tf_transverse_props, &
+      sig_tf_wp_max, eyoung_cond_t, i_tf_cond_eyoung_axial, i_tf_cond_eyoung_transverse, &
       strain_wp_max, strncon_tf, i_strain_wp
       
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
@@ -2002,11 +2002,11 @@ contains
        case ('i_tf_shape')
          call parse_int_variable('i_tf_shape', i_tf_shape, 0, 2, &
               'Switch for TF coil shape')
-       case ('i_tf_cond_props')
-         call parse_int_variable('i_tf_cond_props', i_tf_cond_props, 0, 2, &
-              'Switch for the behavior of the TF coil conductor elastic properties')
-       case ('i_tf_transverse_props')
-         call parse_int_variable('i_tf_transverse_props', i_tf_transverse_props, 0, 1, &
+       case ('i_tf_cond_eyoung_axial')
+         call parse_int_variable('i_tf_cond_eyoung_axial', i_tf_cond_eyoung_axial, 0, 2, &
+              'Switch for the behavior of the TF coil conductor elastic axial properties')
+       case ('i_tf_cond_eyoung_transverse')
+         call parse_int_variable('i_tf_cond_eyoung_transverse', i_tf_cond_eyoung_transverse, 0, 1, &
               'Switch for the TF coil conductor transverse behavior')
        case ('i_strain_wp')
          call parse_int_variable('i_strain_wp', i_strain_wp, 0, 1, &

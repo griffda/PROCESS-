@@ -276,7 +276,7 @@ subroutine check
         i_tf_sc_mat, i_tf_wp_geom, i_tf_turns_integer, tinstf, thwcndut, &
         tfinsgap, rcool, dhecoil, thicndut, i_cp_joints, t_turn_tf_is_input, &
         t_turn_tf, tftmp, t_cable_tf, t_cable_tf_is_input, tftmp, tmpcry, &
-        i_tf_cond_props, eyoung_cond_z, eyoung_cond_t, i_tf_transverse_props
+        i_tf_cond_eyoung_axial, eyoung_cond_z, eyoung_cond_t, i_tf_cond_eyoung_transverse
     use stellarator_variables, only: istell
     use sctfcoil_module, only: initialise_cables
     use vacuum_variables, only: vacuum_model
@@ -906,10 +906,10 @@ subroutine check
     
     !-! Setting the TF coil conductor elastic properties
     !-!
-    if ( i_tf_cond_props == 0 ) then
+    if ( i_tf_cond_eyoung_axial == 0 ) then
         eyoung_cond_z = 0
         eyoung_cond_t = 0
-    else if ( i_tf_cond_props == 2 ) then
+    else if ( i_tf_cond_eyoung_axial == 2 ) then
         select case (i_tf_sc_mat)
             case (1,4,5) !! Nb3Sn
                 eyoung_cond_z = 32D9 !! Nyilas, A et. al, Superconductor Science and Technology 16, no. 9 (2003): 1036–42. https://doi.org/10.1088/0953-2048/16/9/313.
@@ -920,7 +920,7 @@ subroutine check
             case (6,8,9) !! REBCO
                 eyoung_cond_z = 145D9 !! Fujishiro, H. et. al, Physica C: Superconductivity, 426–431 (2005): 699–704. https://doi.org/10.1016/j.physc.2005.01.045.
         end select
-        if ( i_tf_transverse_props == 1) then
+        if ( i_tf_cond_eyoung_transverse == 1) then
             eyoung_cond_t = 0
         else
             eyoung_cond_t = eyoung_cond_z

@@ -239,22 +239,24 @@ module tfcoil_variables
   !! - =1  PROCESS D-shape : parametrise with 2 arcs 
   !! - =2  Picture frame coils 
   
-  integer :: i_tf_cond_props
-  !! Switch for the behavior of the TF coil conductor elastic properties
+  integer :: i_tf_cond_eyoung_axial
+  !! Switch for the behavior of the TF coil conductor elastic axial properties
   !!
-  !! - =0  Young's moduli are set to zero, the conductor is not considered
+  !! - =0  Young's modulus is set to zero, and the conductor is not considered
   !!       in the stress calculation
-  !! - =1  Elastic properties are set by user input, using the variables
-  !!       `eyoung_cond_z`, `eyoung_cond_t`
+  !! - =1  Elastic properties are set by user input, using the variable
+  !!       `eyoung_cond_z`
   !! - =2  Elastic properties are set to reasonable defaults taking into
   !!       account the superconducting material `i_tf_sc_mat`
   
-  integer :: i_tf_transverse_props
+  integer :: i_tf_cond_eyoung_transverse
   !! Switch for the behavior of the elastic properties of the TF coil
-  !! in the transverse direction. Only active if `i_tf_cond_props == 2`
+  !! conductorin the transverse direction. Only active if 
+  !! `i_tf_cond_eyoung_axial == 2`
   !!
-  !! - =0  Cable potted in solder. Transverse Young's modulus set to reasonable
-  !!       default taking into account the superconducting material `i_tf_sc_mat`
+  !! - =0  Cable potted in solder. If `i_tf_cond_eyoung_axial == 2`, the 
+  !!       transverse Young's modulus of the conductor is equal to the axial,
+  !!       which is set to a sensible material-dependent default.
   !! - =1  Cable not potted in solder. Transverse Young's modulus set to zero.
 
   integer :: n_pancake
@@ -329,12 +331,12 @@ module tfcoil_variables
   real(dp) :: eyoung_cond_z
   !! SC TF coil conductor Young's modulus in the parallel (along the wire/tape)
   !! direction [Pa]
-  !! Set by user input only if `i_tf_cond_props == 1`; otherwise
+  !! Set by user input only if `i_tf_cond_eyoung_axial == 1`; otherwise
   !! set by the behavior of that switch.
   
   real(dp) :: eyoung_cond_t
   !! SC TF coil conductor Young's modulus in the transverse direction [Pa]
-  !! Set by user input only if `i_tf_cond_props == 1`; otherwise
+  !! Set by user input only if `i_tf_cond_eyoung_axial == 1`; otherwise
   !! set by the behavior of that switch.
   
   real(dp) :: eyoung_res_tf_buck
@@ -457,7 +459,7 @@ module tfcoil_variables
   !! if `i_strain_wp == 1`, used to compute the critical surface.
   !! Otherwise, the input value `strncon_tf` is used.
   !! Constrain the absolute value using `constraint equation 88`
-  !! You can't have constraint 88 and i_strncon_tf = 0 at the same time
+  !! You can't have constraint 88 and i_strain_wp = 0 at the same time
   
   real(dp) :: strain_wp_max
   !! Maximum allowed absolute value of the strain in the TF coil
@@ -885,8 +887,8 @@ module tfcoil_variables
     i_tf_sc_mat = 1
     i_tf_sup = 1
     i_tf_shape = 0
-    i_tf_cond_props = 0
-    i_tf_transverse_props = 0
+    i_tf_cond_eyoung_axial = 0
+    i_tf_cond_eyoung_transverse = 0
     n_pancake = 10
     n_layer = 20
     n_rad_per_layer = 100
