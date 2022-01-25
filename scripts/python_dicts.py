@@ -79,21 +79,21 @@ def get_annotated_variables(parent_name: str, _object) -> List[AnnotatedVariable
     :type annotated_variables: List[AnnotatedVariableData]
     """
     annotated_variables = []
-    for name, obj in inspect.getmembers(_object):
+    for name, member in inspect.getmembers(_object):
         # hackery beget hackery
         # since the underlying _Variable class is hidden,
         # this is the only way to check the underlying class
         if (
-            obj.__class__.__module__ == _Variable_module_name
-            and obj.__class__.__name__ == _Variable_name
+            member.__class__.__module__ == _Variable_module_name
+            and member.__class__.__name__ == _Variable_name
         ):
             annotated_variables.append(
                 AnnotatedVariableData(
                     parent=parent_name,
                     name=name,
-                    obj=obj,
-                    docstring=obj.__doc__,
-                    units=obj.__units__,
+                    obj=member,
+                    docstring=member.__doc__,
+                    units=member.__units__,
                 )
             )
 
