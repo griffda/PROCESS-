@@ -42,7 +42,6 @@ Box file F/MI/PJK/PROCESS and F/PL/PJK/PROCESS (15/01/96 to 24/01/12)
 Box file T&amp;M/PKNIGHT/PROCESS (from 24/01/12)
 """
 from process import fortran
-from process.divertor import Divertor
 from process.io import plot_proc
 from process.scan import Scan
 from process import final
@@ -51,6 +50,10 @@ from process.utilities.f2py_string_patch import string_to_f2py_compatible, f2py_
 import argparse
 from process.costs_step import CostsStep
 from process.tfcoil import TFcoil
+from process.divertor import Divertor
+from process.availability import Availability
+from process.ife import IFE
+from process.stellarator import Stellarator
 from process.caller import Caller
 
 from pathlib import Path
@@ -447,6 +450,9 @@ class Models():
         self.tfcoil = TFcoil()
         self.divertor = Divertor()
         self.structure = Structure()
+        self.availability = Availability()
+        self.ife = IFE(availability=self.availability)
+        self.stellarator = Stellarator(availability=self.availability)
 
 def main(args=None):
     """Run Process.
