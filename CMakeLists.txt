@@ -95,7 +95,6 @@ LIST(APPEND PROCESS_SRCS
     plant_power.f90
     final_module.f90
     cost_variables.f90
-    divertor.f90
     divertor_variables.f90
     fwbs_variables.f90
     physics.f90
