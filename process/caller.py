@@ -143,7 +143,7 @@ class Caller:
             )
         elif ft.div_kal_vars.kallenbach_switch == 0:
             # Old Divertor Model ! Comment this out MDK 30/11/16
-            ft.divertor_module.divcall(ft.constants.nout, 0)
+            self.models.divertor.run(output=False)
 
         # Structure Model
         ft.structure_module.strucall(ft.constants.nout, 0)

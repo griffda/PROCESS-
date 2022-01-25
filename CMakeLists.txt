@@ -46,6 +46,7 @@ MESSAGE(STATUS "\tPROCESS Module Installation Directory: ${PROCESS_MODULE_INSTAL
 # Define various addresses for locations of files
 # relative to the CMake root directory
 SET(PROCESS_SRC_DIR ${CMAKE_SOURCE_DIR}/source/fortran)
+SET(PROCESS_PYTHON_SRC_DIR ${CMAKE_SOURCE_DIR}/process)
 SET(PLASMOD_SRC_DIR ${CMAKE_SOURCE_DIR}/lib/PLASMOD)
 SET(REFPROP_SRC_DIR ${CMAKE_SOURCE_DIR}/lib/REFPROP)
 
@@ -54,6 +55,7 @@ SET(PYTHON_LIBS_DIR ${PYTHON_MODULE_DIR}/lib)
 SET(PYTHON_SOURCE_IO_DIR ${PYTHON_MODULE_DIR}/io)
 
 FILE(GLOB PROCESS_SRC_PATHS ${PROCESS_SRC_DIR}/*.f90 ${PROCESS_SRC_DIR}/*.f)
+FILE(GLOB PROCESS_PYTHON_SRC_PATHS ${PROCESS_PYTHON_SRC_DIR}/*.py)
 
 # 'Cherry Pick' Files to Compile in REFPROP, PLASMOD and PROCESS libraries
 
@@ -95,7 +97,6 @@ LIST(APPEND PROCESS_SRCS
     plant_power.f90
     final_module.f90
     cost_variables.f90
-    divertor.f90
     divertor_variables.f90
     fwbs_variables.f90
     physics.f90
@@ -189,7 +190,7 @@ ADD_CUSTOM_TARGET(install_process ALL
     COMMAND ${PYTHON_EXECUTABLE} -m pip install --no-cache-dir ${CMAKE_SOURCE_DIR}
 )
 
-ADD_DEPENDENCIES(install_process ${PIP_NAME} ${F2PY_NAME} ${FORD_NAME} ${DICTS_NAME} ${GFORTLIB_NAME} coverage_cleanup)
+ADD_DEPENDENCIES(install_process ${PIP_NAME} ${F2PY_NAME} ${FORD_NAME} ${GFORTLIB_NAME} coverage_cleanup)
 
 if (EXISTS ${CMAKE_SOURCE_DIR}/lcov_results)
   execute_process(COMMAND echo "-- Delete existing lcov_coverage directory...")
