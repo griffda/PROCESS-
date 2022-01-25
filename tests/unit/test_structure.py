@@ -1,11 +1,22 @@
-"""Unit tests for structure.f90"""
+"""Unit tests for structure.py"""
 
 import pytest
 
-from process.fortran import structure_module
+from process.structure import Structure
+
+
+@pytest.fixture
+def structure():
+    """Provides Structure object for testing.
+
+    :returns: initialised Structure object
+    :rtype: process.structure.Structure
+    """
+    return Structure()
+
 
 class TestStructure:
-    def test_structure(self):
+    def test_structure(self, structure):
         """Tests the structure subroutine"""
         ai: float = 17721306.969367817
         r0: float = 8.8901
@@ -31,7 +42,26 @@ class TestStructure:
         expected_coldmass: float = 48937690.168336436
         expected_gsm: float = 1685092.6111564008
 
-        fncmass,aintmass,clgsmass,coldmass,gsm = structure_module.structure(ai,r0,a,akappa,b0,i_tf_sup,ipfres,tf_h_width,tfhmax,shldmass,dvrtmass,pfmass,tfmass,fwmass,blmass,coolmass,dewmass, 0, 0)
+        fncmass, aintmass, clgsmass, coldmass, gsm = structure.structure(
+            ai,
+            r0,
+            a,
+            akappa,
+            b0,
+            i_tf_sup,
+            ipfres,
+            tf_h_width,
+            tfhmax,
+            shldmass,
+            dvrtmass,
+            pfmass,
+            tfmass,
+            fwmass,
+            blmass,
+            coolmass,
+            dewmass,
+            output=False
+        )
 
         assert fncmass == pytest.approx(expected_fncmass)
         assert aintmass == pytest.approx(expected_aintmass)
