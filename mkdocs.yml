@@ -20,6 +20,7 @@ nav:
         - Standards: development/standards.md
         - F2Py Standards: development/f2py-standards.md
         - Adding Variables & Constraints: development/add-vars.md
+        - Adding Physics and Engineering Variables to Python: development/annotated-variable.md
         - Continuous Integration: development/ci-guide.md
         - Testing: development/testing.md
         - Debugging: development/debugging.md
