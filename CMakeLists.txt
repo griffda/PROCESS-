@@ -122,7 +122,6 @@ LIST(APPEND PROCESS_SRCS
     pulse.f90
     divertor_ode.f90
     constants.f90
-    structure.f90
     vacuum.f90
     water_usage.f90
     hcll.f90

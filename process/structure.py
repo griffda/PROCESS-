@@ -1,6 +1,5 @@
 import math
 
-from process.fortran import structure_module as st
 from process.fortran import structure_variables as stv
 from process.fortran import pfcoil_variables as pfv
 from process.fortran import physics_variables as pv
@@ -44,7 +43,7 @@ class Structure:
             stv.clgsmass,
             stv.coldmass,
             stv.gsmass,
-        ) = st.structure(
+        ) = self.structure(
             pv.plascur,
             pv.rmajor,
             pv.rminor,
@@ -62,8 +61,7 @@ class Structure:
             fwbsv.whtblkt,
             fwbsv.coolmass,
             fwbsv.dewmkg,
-            self.outfile,
-            int(output),
+            output=output,
         )
 
     def structure(
