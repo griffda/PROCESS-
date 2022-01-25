@@ -21,15 +21,15 @@ class Stellarator:
     NOTE: currently the IFE module is only partially wrapped to unblock the wrapping of availability
     """
 
-    def __init__(self, parent_modules_class) -> None:
+    def __init__(self, availability) -> None:
         """Initialises the IFE module's variables
 
-        :param parent_modules_class: a pointer to the parent Models class, hence allowing for access to other models in the same instantiated parent
-        :type parent_modules_class: process.main.Models
+        :param availability: a pointer to the availability model, allowing use of availability's variables/methods
+        :type availability: process.availability.Availability
         """
 
         self.outfile: int = constants.nout
-        self.parent_modules_class = parent_modules_class
+        self.availability = availability
 
     def run(self, output: bool):
         """Routine to call the physics and engineering modules
@@ -55,10 +55,9 @@ class Stellarator:
             # print *,"n_tf (should be 1)", n_tf/(config%coilspermodule*config%symmetry)
 
             cs.costs(self.outfile, 1)
-            # TODO: can it be assumed that in this case, iavail <= 1
-            # and I can just call run with output=True?
-            self.parent_modules_class.availability.iprint = 1
-            self.parent_modules_class.availability.avail()
+            # TODO: should availability.run be called
+            # rather than availability.avail?
+            self.availability.avail(output=True)
             ph.outplas(self.outfile)
             st.stigma(self.outfile)
             st.stheat(self.outfile, 1)
@@ -91,10 +90,9 @@ class Stellarator:
         bm.bldgcall(self.outfile, 0)
         pw.acpow(self.outfile, 0)
         pw.power2(self.outfile, 0)
-        # TODO: can it be assumed that in this case, iavail > 1
-        # and I can just call run with output=False?
-        self.parent_modules_class.availability.iprint = 0
-        self.parent_modules_class.availability.avail()
+        # TODO: should availability.run be called
+        # rather than availability.avail?
+        self.availability.avail(output=False)
         cs.costs(self.outfile, 0)
 
         st.first_call = False

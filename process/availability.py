@@ -41,7 +41,6 @@ class Availability:
 
     def __init__(self) -> None:
         self.outfile = ft.constants.nout  # output file unit
-        self.iprint = 0  # switch for writing to output file (1=yes)
 
     def run(self, output: bool = False):
         """Run appropriate availability model
@@ -53,23 +52,25 @@ class Availability:
         1    |  Ward and Taylor model (1999)
         2    |  Morris model (2015)
 
-        :param output: indicate whether output should be written to the output file, or not
+        :param output: indicate whether output should be written to the output file, or not (default = False)
         :type output: boolean
         """
-        self.iprint = 1 if output else 0
 
         if cv.iavail > 1:
-            self.avail_2()  # Morris model (2015)
+            self.avail_2(output)  # Morris model (2015)
         else:
-            self.avail()  # Taylor and Ward model (1999)
+            self.avail(output)  # Taylor and Ward model (1999)
 
-    def avail(self):
+    def avail(self, output: bool):
         """Routine to calculate component lifetimes and the overall plant availability
         author: P J Knight, CCFE, Culham Science Centre
 
         This routine calculates the component lifetimes and the overall
         plant availability.
         F/PL/PJK/PROCESS/CODE/043
+
+        :param output: indicate whether output should be written to the output file, or not
+        :type output: boolean
         """
 
         # Full power lifetime (in years)
@@ -164,119 +165,119 @@ class Availability:
         cv.cdrlife = fwbsv.bktlife
 
         # Output section
-        if self.iprint != 1:
-            return
-
-        po.oheadr(self.outfile, "Plant Availability")
-        if fwbsv.blktmodel == 0:
-            po.ovarre(
-                self.outfile,
-                "Allowable blanket neutron fluence (MW-yr/m2)",
-                "(abktflnc)",
-                cv.abktflnc,
-            )
-
-        po.ovarre(
-            self.outfile,
-            "Allowable divertor heat fluence (MW-yr/m2)",
-            "(adivflnc)",
-            cv.adivflnc,
-        )
-        po.ovarre(
-            self.outfile,
-            "First wall / blanket lifetime (years)",
-            "(bktlife)",
-            fwbsv.bktlife,
-            "OP ",
-        )
-        po.ovarre(
-            self.outfile, "Divertor lifetime (years)", "(divlife)", cv.divlife, "OP "
-        )
-
-        if pv.itart == 1:
-            po.ovarre(
-                self.outfile,
-                "Centrepost lifetime (years)",
-                "(cplife)",
-                cv.cplife,
-                "OP ",
-            )
-
-        po.ovarre(
-            self.outfile,
-            "Heating/CD system lifetime (years)",
-            "(cdrlife)",
-            cv.cdrlife,
-            "OP ",
-        )
-        po.ovarre(self.outfile, "Total plant lifetime (years)", "(tlife)", cv.tlife)
-
-        if cv.iavail == 1:
-            if cv.divlife < fwbsv.bktlife:
+        if output:
+            po.oheadr(self.outfile, "Plant Availability")
+            if fwbsv.blktmodel == 0:
                 po.ovarre(
                     self.outfile,
-                    "Time needed to replace divertor (years)",
-                    "(tdivrepl)",
-                    cv.tdivrepl,
+                    "Allowable blanket neutron fluence (MW-yr/m2)",
+                    "(abktflnc)",
+                    cv.abktflnc,
+                )
+
+            po.ovarre(
+                self.outfile,
+                "Allowable divertor heat fluence (MW-yr/m2)",
+                "(adivflnc)",
+                cv.adivflnc,
+            )
+            po.ovarre(
+                self.outfile,
+                "First wall / blanket lifetime (years)",
+                "(bktlife)",
+                fwbsv.bktlife,
+                "OP ",
+            )
+            po.ovarre(
+                self.outfile, "Divertor lifetime (years)", "(divlife)", cv.divlife, "OP "
+            )
+
+            if pv.itart == 1:
+                po.ovarre(
+                    self.outfile,
+                    "Centrepost lifetime (years)",
+                    "(cplife)",
+                    cv.cplife,
+                    "OP ",
+                )
+
+            po.ovarre(
+                self.outfile,
+                "Heating/CD system lifetime (years)",
+                "(cdrlife)",
+                cv.cdrlife,
+                "OP ",
+            )
+            po.ovarre(self.outfile, "Total plant lifetime (years)", "(tlife)", cv.tlife)
+
+            if cv.iavail == 1:
+                if cv.divlife < fwbsv.bktlife:
+                    po.ovarre(
+                        self.outfile,
+                        "Time needed to replace divertor (years)",
+                        "(tdivrepl)",
+                        cv.tdivrepl,
+                    )
+                else:
+                    po.ovarre(
+                        self.outfile,
+                        "Time needed to replace blanket (years)",
+                        "(tbktrepl)",
+                        cv.tbktrepl,
+                    )
+
+                po.ovarre(
+                    self.outfile,
+                    "Time needed to replace blkt + div (years)",
+                    "(tcomrepl)",
+                    cv.tcomrepl,
+                )
+                po.ovarre(
+                    self.outfile,
+                    "Planned unavailability fraction",
+                    "(uplanned)",
+                    uplanned,
+                    "OP ",
+                )
+                po.ovarre(
+                    self.outfile,
+                    "Unplanned unavailability fraction",
+                    "(uutot)",
+                    uutot,
+                    "OP ",
+                )
+
+            if cv.iavail == 0:
+                po.ovarre(
+                    self.outfile, "Total plant availability fraction", "(cfactr)", cv.cfactr
                 )
             else:
                 po.ovarre(
                     self.outfile,
-                    "Time needed to replace blanket (years)",
-                    "(tbktrepl)",
-                    cv.tbktrepl,
+                    "Total plant availability fraction",
+                    "(cfactr)",
+                    cv.cfactr,
+                    "OP ",
                 )
 
-            po.ovarre(
-                self.outfile,
-                "Time needed to replace blkt + div (years)",
-                "(tcomrepl)",
-                cv.tcomrepl,
-            )
-            po.ovarre(
-                self.outfile,
-                "Planned unavailability fraction",
-                "(uplanned)",
-                uplanned,
-                "OP ",
-            )
-            po.ovarre(
-                self.outfile,
-                "Unplanned unavailability fraction",
-                "(uutot)",
-                uutot,
-                "OP ",
-            )
-
-        if cv.iavail == 0:
-            po.ovarre(
-                self.outfile, "Total plant availability fraction", "(cfactr)", cv.cfactr
-            )
-        else:
-            po.ovarre(
-                self.outfile,
-                "Total plant availability fraction",
-                "(cfactr)",
-                cv.cfactr,
-                "OP ",
-            )
-
-    def avail_2(self):
+    def avail_2(self, output: bool):
         """Routine to calculate component lifetimes and the overall plant availability
         author: J Morris, CCFE, Culham Science Centre
-        outfile : input integer : output file unit
-        iprint : input integer : switch for writing to output file (1=yes)
+        
         This routine calculates the component lifetimes and the overall
         plant availability using an updated model linked to the 2014 EUROfusion
         RAMI task
         2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+
+        :param output: indicate whether output should be written to the output file, or not
+        :type output: boolean
         """
 
         # Plant Availability
 
         # Planned unavailability
 
-        u_planned = self.calc_u_planned(self.outfile, self.iprint)
+        u_planned = self.calc_u_planned(output)
 
         # Operational time (years)
         cv.t_operation = cv.tlife * (1.0e0 - u_planned)
@@ -284,16 +285,16 @@ class Availability:
         # Un-planned unavailability
 
         # Magnets
-        u_unplanned_magnets = self.calc_u_unplanned_magnets()
+        u_unplanned_magnets = self.calc_u_unplanned_magnets(output)
 
         # Divertor
-        u_unplanned_div = self.calc_u_unplanned_divertor()
+        u_unplanned_div = self.calc_u_unplanned_divertor(output)
 
         # First wall and blanket
-        u_unplanned_fwbs = self.calc_u_unplanned_fwbs()
+        u_unplanned_fwbs = self.calc_u_unplanned_fwbs(output)
 
         # Balance of plant
-        u_unplanned_bop = self.calc_u_unplanned_bop()
+        u_unplanned_bop = self.calc_u_unplanned_bop(output)
 
         # Heating and current drive
         u_unplanned_hcd = self.calc_u_unplanned_hcd()
@@ -303,7 +304,7 @@ class Availability:
         # Number of redundant pumps
         cv.redun_vac = math.floor(vacv.vpumpn * cv.redun_vacp / 100.0 + 0.5e0)
 
-        u_unplanned_vacuum = self.calc_u_unplanned_vacuum()
+        u_unplanned_vacuum = self.calc_u_unplanned_vacuum(output)
 
         # Total unplanned unavailability
         u_unplanned = min(
@@ -325,50 +326,48 @@ class Availability:
         cpfact = cv.cfactr * (tv.tburn / tv.tcycle)
 
         # Output
-        if self.iprint != 1:
-            return
+        if output:
+            po.ocmmnt(self.outfile, "Total unavailability:")
+            po.oblnkl(self.outfile)
+            po.ovarre(
+                self.outfile,
+                "Total planned unavailability",
+                "(u_planned)",
+                u_planned,
+                "OP ",
+            )
+            po.ovarre(
+                self.outfile,
+                "Total unplanned unavailability",
+                "(u_unplanned)",
+                u_unplanned,
+                "OP ",
+            )
+            po.oblnkl(self.outfile)
+            po.ovarre(
+                self.outfile,
+                "Total plant availability fraction",
+                "(cfactr)",
+                cv.cfactr,
+                "OP ",
+            )
+            po.ovarre(
+                self.outfile,
+                "Total DT operational time (years)",
+                "(t_operation)",
+                cv.t_operation,
+                "OP ",
+            )
+            po.ovarre(self.outfile, "Total plant lifetime (years)", "(tlife)", tv.tlife)
+            po.ovarre(
+                self.outfile,
+                "Capacity factor: total lifetime elec. energy output / output power",
+                "(cpfact)",
+                cpfact,
+                "OP ",
+            )
 
-        po.ocmmnt(self.outfile, "Total unavailability:")
-        po.oblnkl(self.outfile)
-        po.ovarre(
-            self.outfile,
-            "Total planned unavailability",
-            "(u_planned)",
-            u_planned,
-            "OP ",
-        )
-        po.ovarre(
-            self.outfile,
-            "Total unplanned unavailability",
-            "(u_unplanned)",
-            u_unplanned,
-            "OP ",
-        )
-        po.oblnkl(self.outfile)
-        po.ovarre(
-            self.outfile,
-            "Total plant availability fraction",
-            "(cfactr)",
-            cv.cfactr,
-            "OP ",
-        )
-        po.ovarre(
-            self.outfile,
-            "Total DT operational time (years)",
-            "(t_operation)",
-            cv.t_operation,
-            "OP ",
-        )
-        po.ovarre(self.outfile, "Total plant lifetime (years)", "(tlife)", tv.tlife)
-        po.ovarre(
-            self.outfile,
-            "Capacity factor: total lifetime elec. energy output / output power",
-            "(cpfact)",
-            cpfact,
-            "OP ",
-        )
-
-    def calc_u_planned(self) -> float:
+    def calc_u_planned(self, output: bool) -> float:
         """Calculates the planned unavailability of the plant
         author: J Morris, CCFE, Culham Science Centre
 
@@ -377,8 +376,11 @@ class Availability:
         RAMI report.
         2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
 
-        :return u_planned: planned unavailability of plant
-        :type u_planned: float
+        :param output: indicate whether output should be written to the output file, or not
+        :type output: boolean
+
+        :returns: planned unavailability of plant
+        :rtype: float
         """
 
         # Full power lifetimes (in years) !
@@ -439,7 +441,7 @@ class Availability:
         )
 
         # Output
-        if self.iprint == 1:
+        if output:
 
             po.oheadr(self.outfile, "Plant Availability (2014 Model)")
 
@@ -503,7 +505,7 @@ class Availability:
 
         return u_planned
 
-    def calc_u_unplanned_magnets(self) -> float:
+    def calc_u_unplanned_magnets(self, output: bool) -> float:
         """Calculates the unplanned unavailability of the magnets
         author: J Morris, CCFE, Culham Science Centre
 
@@ -512,8 +514,11 @@ class Availability:
         RAMI report.
         2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
 
-        :return u_unplanned_magnets: unplanned unavailability of magnets
-        :type u_unplanned_magnets: float
+        :param output: indicate whether output should be written to the output file, or not
+        :type output: boolean
+
+        :returns: unplanned unavailability of magnets
+        :rtype: float
         """
 
         # Magnet temperature margin limit (K)
@@ -550,7 +555,7 @@ class Availability:
         # Output !
         # !!!!!!!!!
 
-        if self.iprint == 1:
+        if output:
 
             po.ocmmnt(self.outfile, "Magnets:")
             po.oblnkl(self.outfile)
@@ -581,12 +586,15 @@ class Availability:
 
         return u_unplanned_magnets
 
-    def calc_u_unplanned_divertor(self) -> float:
+    def calc_u_unplanned_divertor(self, output: bool) -> float:
         """Calculates the unplanned unavailability of the divertor
         author: J Morris, CCFE, Culham Science Centre
 
-        :return u_unplanned_divertor: unplanned unavailability of the divertor
-        :type u_unplanned_divertor: float
+        :param output: indicate whether output should be written to the output file, or not
+        :type output: boolean
+
+        :returns: unplanned unavailability of the divertor
+        :rtype: float
         """
 
         # Calculate cycle limit in terms of days
@@ -630,7 +638,7 @@ class Availability:
         u_unplanned_div = 1.0e0 - div_avail
 
         # Output
-        if self.iprint == 1:
+        if output:
             po.ocmmnt(self.outfile, "Divertor:")
             po.oblnkl(self.outfile)
             po.ovarre(
@@ -671,14 +679,17 @@ class Availability:
 
         return u_unplanned_div
 
-    def calc_u_unplanned_fwbs(self) -> float:
+    def calc_u_unplanned_fwbs(self, output: bool) -> float:
         """Calculates the unplanned unavailability of the first wall and blanket
         author: J Morris, CCFE, Culham Science Centre
 
         2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
 
-        :return u_unplanned_fwbs: unplanned unavailability of first wall and blanket
-        :type u_unplanned_fwbs: float
+        :param output: indicate whether output should be written to the output file, or not
+        :type output: boolean
+
+        :returns: unplanned unavailability of first wall and blanket
+        :rtype: float
         """
 
         # Calculate cycle limit in terms of days
@@ -717,7 +728,7 @@ class Availability:
         u_unplanned_fwbs = 1.0e0 - fwbs_avail
 
         # Output
-        if self.iprint == 1:
+        if output:
             po.ocmmnt(self.outfile, "First wall / Blanket:")
             po.oblnkl(self.outfile)
             po.ovarre(
@@ -758,7 +769,7 @@ class Availability:
 
         return u_unplanned_fwbs
 
-    def calc_u_unplanned_bop(self) -> float:
+    def calc_u_unplanned_bop(self, output: bool) -> float:
         """Calculates the unplanned unavailability of the balance of plant
         author: J Morris, CCFE, Culham Science Centre
 
@@ -767,8 +778,11 @@ class Availability:
         RAMI report.
         2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
 
-        :return u_unplanned_bop: unplanned unavailability of balance of plant
-        :type u_unplanned_bop: float
+        :param output: indicate whether output should be written to the output file, or not
+        :type output: boolean
+
+        :returns: unplanned unavailability of balance of plant
+        :rtype: float
         """
 
         # Balance of plant failure rate (failures per hour)
@@ -788,7 +802,7 @@ class Availability:
         u_unplanned_bop = (bop_mttr * bop_num_failures) / (cv.t_operation)
 
         # Output
-        if self.iprint == 1:
+        if output:
             po.ocmmnt(self.outfile, "Balance of plant:")
             po.oblnkl(self.outfile)
             po.ovarre(
@@ -822,8 +836,8 @@ class Availability:
         2014 EUROfusion RAMI report.
         2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
 
-        :return u_unplanned_hcd: unplanned unavailability of hcd
-        :type u_unplanned_hcd: float
+        :returns: unplanned unavailability of hcd
+        :rtype: float
         """
 
         # Currently just a fixed value until more information available or Q.
@@ -831,7 +845,7 @@ class Availability:
 
         return 0.02e0
 
-    def calc_u_unplanned_vacuum(self) -> float:
+    def calc_u_unplanned_vacuum(self, output: bool) -> float:
         """Calculates the unplanned unavailability of the vacuum system
         author: J Morris, CCFE, Culham Science Centre
 
@@ -841,8 +855,11 @@ class Availability:
         2014 EUROfusion RAMI report, &quot;Availability in
         PROCESS&quot;
 
-        :return u_unplanned_vacuum: unplanned unavailability of vacuum system
-        :type u_unplanned_vacuum: float
+        :param output: indicate whether output should be written to the output file, or not
+        :type output: boolean
+
+        :returns: unplanned unavailability of vacuum system
+        :rtype: float
         """
 
         # Number of shutdowns
@@ -889,7 +906,7 @@ class Availability:
         u_unplanned_vacuum = max(0.005, t_down / (cv.t_operation + t_down))
 
         # Output
-        if self.iprint == 1:
+        if output:
             po.ocmmnt(self.outfile, "Vacuum:")
             po.oblnkl(self.outfile)
             po.ovarin(

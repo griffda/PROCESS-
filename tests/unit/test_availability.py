@@ -41,7 +41,7 @@ def test_calc_u_unplanned_bop(monkeypatch, availability):
     monkeypatch.setattr(cv, "t_operation", 25.0)
 
     # Call subroutine and check result is within an absolute tolerance
-    result = availability.calc_u_unplanned_bop()
+    result = availability.calc_u_unplanned_bop(output=False)
     assert result == approx(0.009, abs=0.0005)
 
 def calc_u_planned_param(**kwargs):
@@ -134,7 +134,7 @@ def test_calc_u_planned(calc_u_planned_fix, availability):
 
     # Run calc_u_planned() with the current fixture, then assert the result
     # is the expected one
-    result = availability.calc_u_planned()
+    result = availability.calc_u_planned(output=False)
     assert result == calc_u_planned_fix
 
 def calc_u_unplanned_magnets_param(**kwargs):
@@ -212,7 +212,7 @@ def test_calc_u_unplanned_magnets(calc_u_unplanned_magnets_fix, availability):
     outfile = 0
     iprint = 0
 
-    result = availability.calc_u_unplanned_magnets()
+    result = availability.calc_u_unplanned_magnets(output=False)
     assert result == calc_u_unplanned_magnets_fix
 
 def calc_u_unplanned_divertor_param(**kwargs):
@@ -289,7 +289,7 @@ def test_calc_u_unplanned_divertor(calc_u_unplanned_divertor_fix, availability):
     
     # Run calc_u_unplanned_divertor() with the current fixture,
     # then assert the result is the expected one
-    result = availability.calc_u_unplanned_divertor()
+    result = availability.calc_u_unplanned_divertor(output=False)
     assert result == calc_u_unplanned_divertor_fix
 
 def calc_u_unplanned_fwbs_param(**kwargs):
@@ -364,5 +364,5 @@ def test_calc_u_unplanned_fwbs(calc_u_unplanned_fwbs_fix, availability):
     
     # Run calc_u_unplanned_fwbs() with the current fixture,
     # then assert the result is the expected one
-    result = availability.calc_u_unplanned_fwbs()
+    result = availability.calc_u_unplanned_fwbs(output=False)
     assert result == calc_u_unplanned_fwbs_fix

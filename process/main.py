@@ -449,8 +449,8 @@ class Models():
         self.tfcoil = TFcoil()
         self.divertor = Divertor()
         self.availability = Availability()
-        self.ife = IFE(self)
-        self.stellarator = Stellarator(self)
+        self.ife = IFE(availability=self.availability)
+        self.stellarator = Stellarator(availability=self.availability)
 
 def main(args=None):
     """Run Process.
