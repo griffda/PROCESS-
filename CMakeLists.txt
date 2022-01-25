@@ -96,7 +96,6 @@ LIST(APPEND PROCESS_SRCS
     stellarator_variables.f90
     plant_power.f90
     final_module.f90
-    availability.f90
     cost_variables.f90
     divertor_variables.f90
     fwbs_variables.f90
@@ -138,6 +137,8 @@ LIST(APPEND PROCESS_SRCS
     main_module.f90
     error_handling.f90
     global_variables.f90
+    constraint_variables.f90
+    vacuum_variables.f90
 )
 
 PREPROCESS()

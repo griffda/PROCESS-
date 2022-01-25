@@ -1,22 +1,38 @@
 """Unit tests for availability.f90."""
 from process import fortran
+from process.availability import Availability
 from process.fortran import cost_variables as cv
-from process.fortran import availability_module as am
 from process.fortran import tfcoil_variables as tfv
 import pytest
 from pytest import approx
 
-def test_calc_u_unplanned_hcd():
-    """Test calc_u_unplanned_hcd."""
+@pytest.fixture
+def availability():
+    """Provides Availability object for testing.
+
+    :return availability: initialised Availability object
+    :type availability: process.availability.Availability
+    """
+    return Availability()
+
+def test_calc_u_unplanned_hcd(availability):
+    """Test calc_u_unplanned_hcd.
+    
+    :param availability: fixture containing an initialised `Availability` object
+    :type availability: tests.unit.test_availability.availability (functional fixture)
+    """
     expected = 0.02
-    result = fortran.availability_module.calc_u_unplanned_hcd()
+    result = availability.calc_u_unplanned_hcd()
     assert result == expected
 
-def test_calc_u_unplanned_bop(monkeypatch):
+def test_calc_u_unplanned_bop(monkeypatch, availability):
     """Test calc_u_unplanned_bop.
 
     :param monkeypatch: Mock fixture
     :type monkeypatch: object
+
+    :param availability: fixture containing an initialised `Availability` object
+    :type availability: tests.unit.test_availability.availability (functional fixture)
     """
     outfile = 0
     iprint = 0
@@ -25,7 +41,7 @@ def test_calc_u_unplanned_bop(monkeypatch):
     monkeypatch.setattr(cv, "t_operation", 25.0)
 
     # Call subroutine and check result is within an absolute tolerance
-    result = fortran.availability_module.calc_u_unplanned_bop(outfile, iprint)
+    result = availability.calc_u_unplanned_bop(output=False)
     assert result == approx(0.009, abs=0.0005)
 
 def calc_u_planned_param(**kwargs):
@@ -103,11 +119,14 @@ def calc_u_planned_fix(request, monkeypatch):
     # Return the expected result for the given parameter list
     return param['expected']
 
-def test_calc_u_planned(calc_u_planned_fix):
+def test_calc_u_planned(calc_u_planned_fix, availability):
     """Test calc_u_planned.
 
     :param calc_u_planned_fix: Expected value of calc_u_planned()
     :type calc_u_planned_fix: ApproxScalar
+
+    :param availability: fixture containing an initialised `Availability` object
+    :type availability: tests.unit.test_availability.availability (functional fixture)
     """
     # Arguments
     outfile = 0
@@ -115,7 +134,7 @@ def test_calc_u_planned(calc_u_planned_fix):
 
     # Run calc_u_planned() with the current fixture, then assert the result
     # is the expected one
-    result = am.calc_u_planned(outfile, iprint)
+    result = availability.calc_u_planned(output=False)
     assert result == calc_u_planned_fix
 
 def calc_u_unplanned_magnets_param(**kwargs):
@@ -166,6 +185,8 @@ def calc_u_unplanned_magnets_fix(request, monkeypatch):
     :type request: object
     :param monkeypatch: Mock fixture
     :type monkeypatch: object
+    :param availability: fixture containing an initialised `Availability` object
+    :type availability: tests.unit.test_availability.availability (functional fixture)
     :return: Expected return value of calc_u_unplanned_magnets()
     :rtype: ApproxScalar
     """
@@ -180,16 +201,18 @@ def calc_u_unplanned_magnets_fix(request, monkeypatch):
 
     return param['expected']
 
-def test_calc_u_unplanned_magnets(calc_u_unplanned_magnets_fix):
+def test_calc_u_unplanned_magnets(calc_u_unplanned_magnets_fix, availability):
     """Test function for calc_u_unplanned_magnets().
 
     :param calc_u_unplanned_magnets_fix: Expected return value
     :type calc_u_unplanned_magnets_fix: ApproxScalar
+    :param availability: fixture containing an initialised `Availability` object
+    :type availability: tests.unit.test_availability.availability (functional fixture)
     """
     outfile = 0
     iprint = 0
 
-    result = am.calc_u_unplanned_magnets(outfile, iprint)
+    result = availability.calc_u_unplanned_magnets(output=False)
     assert result == calc_u_unplanned_magnets_fix
 
 def calc_u_unplanned_divertor_param(**kwargs):
@@ -250,12 +273,15 @@ def calc_u_unplanned_divertor_fix(request, monkeypatch):
     # Return the expected result for the given parameter list
     return param['expected']
 
-def test_calc_u_unplanned_divertor(calc_u_unplanned_divertor_fix):
+def test_calc_u_unplanned_divertor(calc_u_unplanned_divertor_fix, availability):
     """Test calc_u_unplanned_divertor.
 
     :param calc_u_unplanned_divertor_fix: Expected value of 
     calc_u_unplanned_divertor()
     :type calc_u_unplanned_divertor_fix: ApproxScalar
+
+    :param availability: fixture containing an initialised `Availability` object
+    :type availability: tests.unit.test_availability.availability (functional fixture)
     """
     # Arguments
     outfile = 0
@@ -263,7 +289,7 @@ def test_calc_u_unplanned_divertor(calc_u_unplanned_divertor_fix):
     
     # Run calc_u_unplanned_divertor() with the current fixture,
     # then assert the result is the expected one
-    result = am.calc_u_unplanned_divertor(outfile, iprint)
+    result = availability.calc_u_unplanned_divertor(output=False)
     assert result == calc_u_unplanned_divertor_fix
 
 def calc_u_unplanned_fwbs_param(**kwargs):
@@ -323,11 +349,14 @@ def calc_u_unplanned_fwbs_fix(request, monkeypatch):
     # Return the expected result for the given parameter list
     return param['expected']
 
-def test_calc_u_unplanned_fwbs(calc_u_unplanned_fwbs_fix):
+def test_calc_u_unplanned_fwbs(calc_u_unplanned_fwbs_fix, availability):
     """Test calc_u_unplanned_fwbs.
 
     :param calc_u_unplanned_fwbs_fix: Expected value of calc_u_unplanned_fwbs()
     :type calc_u_unplanned_fwbs_fix: ApproxScalar
+
+    :param availability: fixture containing an initialised `Availability` object
+    :type availability: tests.unit.test_availability.availability (functional fixture)
     """
     # Arguments
     outfile = 0
@@ -335,5 +364,5 @@ def test_calc_u_unplanned_fwbs(calc_u_unplanned_fwbs_fix):
     
     # Run calc_u_unplanned_fwbs() with the current fixture,
     # then assert the result is the expected one
-    result = am.calc_u_unplanned_fwbs(outfile, iprint)
+    result = availability.calc_u_unplanned_fwbs(output=False)
     assert result == calc_u_unplanned_fwbs_fix

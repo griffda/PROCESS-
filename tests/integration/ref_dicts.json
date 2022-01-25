@@ -1551,7 +1551,6 @@
         "data_lz": 0.0,
         "data_qz": 0.0,
         "data_z": 0.0,
-        "day": 86400.0,
         "dbd": null,
         "dcase": 8000.0,
         "dcdrv0": 111.4,
@@ -8690,7 +8689,6 @@
             0.0,
             0.0
         ],
-        "year": 31557600.0,
         "ypd_": 8.0,
         "ypi_": 4.0,
         "z_ib": 0.0,
@@ -9358,7 +9356,6 @@
         "data_lz": "",
         "data_qz": "",
         "data_z": "",
-        "day": "seconds in a day [s]",
         "dbd": "",
         "dcase": "density of coil case (kg/m3)",
         "dcdrv0": "IFE generic/laser driver cost gradient (M$/MJ)",
@@ -11423,7 +11420,6 @@
         "xpertin": "perpendicular heat transport coefficient (m2/s)",
         "yarc": "y location of arc point i on surface (m)",
         "yctfc": "y location of arc centre i (m)",
-        "year": "seconds in a year [s]",
         "ypd_": "",
         "ypi_": "",
         "z_ib": "",
@@ -17032,10 +17028,6 @@
             "absroutine",
             "iastra",
             "profcalc"
-        ],
-        "availability_module": [
-            "year",
-            "day"
         ],
         "bsquar": [
             "conf",
