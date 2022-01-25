@@ -146,7 +146,7 @@ class Caller:
             self.models.divertor.run(output=False)
 
         # Structure Model
-        ft.structure_module.strucall(ft.constants.nout, 0)
+        self.models.structure.run(output=False)
 
         # Tight aspect ratio machine model
         if ft.physics_variables.itart == 1 and ft.tfcoil_variables.i_tf_sup != 1:
