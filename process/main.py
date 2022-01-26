@@ -473,9 +473,9 @@ class Models:
         self.tfcoil = TFcoil()
         self.divertor = Divertor()
         self.availability = Availability()
-        self.ife = IFE(self)
-        self.stellarator = Stellarator(self)
+        self.ife = IFE(self.availability)
         self.vacuum = Vacuum()
+        self.stellarator = Stellarator(self.availability, self.vacuum)
 
 
 def main(args=None):

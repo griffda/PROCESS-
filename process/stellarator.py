@@ -20,7 +20,7 @@ class Stellarator:
     NOTE: currently the IFE module is only partially wrapped to unblock the wrapping of availability
     """
 
-    def __init__(self, availability) -> None:
+    def __init__(self, availability, vacuum) -> None:
         """Initialises the IFE module's variables
 
         :param availability: a pointer to the availability model, allowing use of availability's variables/methods
@@ -29,6 +29,7 @@ class Stellarator:
 
         self.outfile: int = constants.nout
         self.availability = availability
+        self.vacuum = vacuum
 
     def run(self, output: bool):
         """Routine to call the physics and engineering modules
@@ -67,7 +68,7 @@ class Stellarator:
             st.stfwbs(self.outfile, 1)
 
             pw.tfpwr(self.outfile, 1)
-            self.parent_modules_class.vacuum.run(output=True)
+            self.vacuum.run(output=True)
             bm.bldgcall(self.outfile, 1)
             pw.acpow(self.outfile, 1)
             pw.power2(self.outfile, 1)
@@ -85,7 +86,7 @@ class Stellarator:
 
         pw.tfpwr(self.outfile, 0)
         pw.power1()
-        self.parent_modules_class.vacuum.run(output=False)
+        self.vacuum.run(output=False)
         bm.bldgcall(self.outfile, 0)
         pw.acpow(self.outfile, 0)
         pw.power2(self.outfile, 0)
