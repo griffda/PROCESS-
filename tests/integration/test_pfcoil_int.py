@@ -2375,3 +2375,47 @@ def test_peakb(monkeypatch):
     assert pytest.approx(bzi, bzi_exp)
     assert pytest.approx(bzo, bzo_exp)
     assert_array_almost_equal(it, it_exp)
+
+
+def test_superconpf(monkeypatch):
+    """Test superconpf subroutine.
+
+    superconpf() requires specific arguments in order to work; these were
+    discovered using gdb to break on the first subroutine call when running the
+    baseline 2018 IN.DAT.
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
+    """
+    # TODO This test would benefit from parameterisation for different SC
+    # materials (isumat)
+    monkeypatch.setattr(eh, "fdiags", np.zeros(8))
+    monkeypatch.setattr(eh, "idiags", np.zeros(8))
+    monkeypatch.setattr(tfv, "tmargmin_cs", 0.0)
+    monkeypatch.setattr(tfv, "temp_margin", 0.0)
+    monkeypatch.setattr(tfv, "b_crit_upper_nbti", 0.0)
+    monkeypatch.setattr(tfv, "t_crit_nbti", 0.0)
+
+    bmax = 10.514241695080285
+    fhe = 0.29999999999999999
+    fcu = 0.68999999999999995
+    jwp = 11000000
+    isumat = 3
+    fhts = 0.5
+    strain = -0.0050000000000000001
+    thelium = 4.75
+    bcritsc = 24
+    tcritsc = 16
+
+    jcritwp_exp = -2.6716372e7
+    jcritstr_exp = -3.8166246e7
+    jcritsc_exp = -1.23116924e8
+    tmarg_exp = -2.651537e-1
+
+    jcritwp, jcritstr, jcritsc, tmarg = pf.superconpf(
+        bmax, fhe, fcu, jwp, isumat, fhts, strain, thelium, bcritsc, tcritsc
+    )
+
+    assert pytest.approx(jcritwp) == jcritwp_exp
+    assert pytest.approx(jcritstr) == jcritstr_exp
+    assert pytest.approx(jcritsc) == jcritsc_exp
+    assert pytest.approx(tmarg) == tmarg_exp

@@ -2040,6 +2040,11 @@ module pfcoil_module
      ! They need to follow a 'contains' statement because 'jcrit0', 'bmax' and others
      ! must be available but cannot be passed, because secant_solve requires
      ! a function of one variable.
+     ! TODO This nested structure (and above limitations) should be removed
+     ! due to its implicit use of parent scope
+     ! Can't pass functions from Python to Fortran; these functions and
+     ! secant_solv() need to remain in same language if passing function as
+     ! argument
  
      function deltaj_nbti(temperature)
          real(dp), intent(in) :: temperature
