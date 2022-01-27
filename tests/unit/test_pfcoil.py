@@ -2,6 +2,7 @@
 import pytest
 from process.pfcoil import PFCoil
 from process.fortran import pfcoil_module as pf
+from process.fortran import pfcoil_variables as pfv
 import numpy as np
 from numpy.testing import assert_array_almost_equal
 from typing import NamedTuple
@@ -1016,6 +1017,7 @@ class BfmaxTestAsset(NamedTuple):
     solenoid
     :type bfmax_exp: float
     """
+
     a: float
     h: float
     bfmax_exp: float
@@ -1043,3 +1045,169 @@ def test_bfmax(test_asset):
     bfmax = pf.bfmax(rj, test_asset.a, b, test_asset.h)
 
     assert pytest.approx(bfmax) == test_asset.bfmax_exp
+
+
+def test_waveform(monkeypatch):
+    """Test waveform subroutine.
+
+    waveform() requires specific mocked variables in order to work; these were
+    discovered using gdb to break on the first subroutine call when running the
+    baseline 2018 IN.DAT.
+
+    waveform() alters both ric and waves in the pfcoil_variables module, so
+    these are asserted on.
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
+    """
+    ngc2 = 22
+    monkeypatch.setattr(pfv, "ric", np.zeros(ngc2, dtype=int))
+    monkeypatch.setattr(pfv, "nohc", 7)
+    monkeypatch.setattr(pfv, "waves", np.zeros((ngc2, 6), order="F"))
+    monkeypatch.setattr(
+        pfv,
+        "curpfb",
+        np.array(
+            [
+                0.067422231232391661,
+                -2.9167273287450968,
+                -8.1098913365453491,
+                -8.1098913365453491,
+                -5.5984385047179153,
+                -5.5984385047179153,
+                -186.98751599968148,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        ),
+    )
+    monkeypatch.setattr(
+        pfv,
+        "curpff",
+        np.array(
+            [
+                0.067422231232391661,
+                -2.9167273287450968,
+                -8.1098913365453491,
+                -8.1098913365453491,
+                -5.5984385047179153,
+                -5.5984385047179153,
+                -186.98751599968148,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        ),
+    )
+    monkeypatch.setattr(
+        pfv,
+        "curpfs",
+        np.array(
+            [
+                14.742063826112622,
+                20.032681634901664,
+                0.58040662653667285,
+                0.58040662653667285,
+                0.42974674788703021,
+                0.42974674788703021,
+                174.22748790786324,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        ),
+    )
+
+    ric_exp = np.array(
+        [
+            14.74206383,
+            20.03268163,
+            -8.10989134,
+            -8.10989134,
+            -5.5984385,
+            -5.5984385,
+            -186.987516,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ]
+    )
+    waves_exp = np.array(
+        [
+            [0.0, 1.0, 0.00457346, 0.00457346, 0.00457346, 0.0],
+            [0.0, 1.0, -0.14559845, -0.14559845, -0.14559845, 0.0],
+            [0.0, -0.07156774, 1.0, 1.0, 1.0, 0.0],
+            [0.0, -0.07156774, 1.0, 1.0, 1.0, 0.0],
+            [0.0, -0.07676189, 1.0, 1.0, 1.0, 0.0],
+            [0.0, -0.07676189, 1.0, 1.0, 1.0, 0.0],
+            [0.0, -0.93176, 1.0, 1.0, 1.0, 0.0],
+            [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        ],
+    )
+
+    pf.waveform()
+
+    assert_array_almost_equal(pfv.ric, ric_exp)
+    assert_array_almost_equal(pfv.waves, waves_exp)
