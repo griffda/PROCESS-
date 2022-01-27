@@ -989,17 +989,16 @@ def test_bfield():
             5.06601647e-07,
         ]
     )
-    br_exp = 0.0
-    bz_exp = 0.0
-    psi_exp = 0.0
+    br_exp = -2.7755575615628914e-17
+    bz_exp = -0.3537283013510894
+    psi_exp = 232.7112153010189
 
     xc, br, bz, psi = pf.bfield(rc, zc, cc, rp, zp)
 
     assert_array_almost_equal(xc, xc_exp)
-    # TODO Correct incorrect pytest.approx() usage
-    assert pytest.approx(br, br_exp)
-    assert pytest.approx(bz, bz_exp)
-    assert pytest.approx(psi, psi_exp)
+    assert pytest.approx(br) == br_exp
+    assert pytest.approx(bz) == bz_exp
+    assert pytest.approx(psi) == psi_exp
 
 
 class BfmaxTestAsset(NamedTuple):
