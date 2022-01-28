@@ -2419,3 +2419,143 @@ def test_superconpf(monkeypatch):
     assert pytest.approx(jcritstr) == jcritstr_exp
     assert pytest.approx(jcritsc) == jcritsc_exp
     assert pytest.approx(tmarg) == tmarg_exp
+
+
+def test_axial_stress(monkeypatch):
+    """Test axial_stress subroutine.
+
+    axial_stress() requires specific mocked vars in order to work; these were
+    discovered using gdb to break on the first subroutine call when running the
+    baseline 2018 IN.DAT.
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
+    """
+    monkeypatch.setattr(pfv, "oh_steel_frac", 0.57874999999999999)
+    monkeypatch.setattr(pfv, "nohc", 7)
+    monkeypatch.setattr(
+        pfv,
+        "rb",
+        np.array(
+            [
+                6.8520884119768697,
+                6.9480065348448967,
+                18.98258241468535,
+                18.98258241468535,
+                17.22166645654087,
+                17.22166645654087,
+                2.88462,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        ),
+    )
+    monkeypatch.setattr(
+        pfv,
+        "ra",
+        np.array(
+            [
+                5.6944236847973242,
+                5.5985055619292972,
+                17.819978201682968,
+                17.819978201682968,
+                16.385123084628962,
+                16.385123084628962,
+                2.3321999999999998,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        ),
+    )
+    monkeypatch.setattr(
+        pfv,
+        "ric",
+        np.array(
+            [
+                14.742063826112622,
+                20.032681634901664,
+                -8.1098913365453491,
+                -8.1098913365453491,
+                -5.5984385047179153,
+                -5.5984385047179153,
+                -186.98751599968145,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        ),
+    )
+    monkeypatch.setattr(
+        pfv,
+        "zh",
+        np.array(
+            [
+                10.184979073267192,
+                -11.815840508019832,
+                3.4490763000495788,
+                -3.4490763000495788,
+                8.4480394278914357,
+                -8.4480394278914357,
+                8.1657810194058289,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        ),
+    )
+
+    s_axial_exp = -7.468967e8
+    axial_force_exp = -1.956801e9
+    s_axial, axial_force = pf.axial_stress()
+
+    assert pytest.approx(s_axial) == s_axial_exp
+    assert pytest.approx(axial_force) == axial_force_exp

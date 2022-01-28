@@ -3,6 +3,7 @@ import pytest
 from process.pfcoil import PFCoil
 from process.fortran import pfcoil_module as pf
 from process.fortran import pfcoil_variables as pfv
+from process.fortran import tfcoil_variables as tfv
 from process.fortran import build_variables as bv
 import numpy as np
 from numpy.testing import assert_array_almost_equal
@@ -1966,3 +1967,85 @@ def test_vsec(monkeypatch):
 
     assert_array_almost_equal(pfv.vsbn, vsbn_exp)
     assert_array_almost_equal(pfv.vsoh, vsoh_exp)
+
+
+def test_hoop_stress(monkeypatch):
+    """Test hoop_stress subroutine.
+
+    hoop_stress() requires specific mocked variables in order to work; these were
+    discovered using gdb to break on the first subroutine call when running the
+    baseline 2018 IN.DAT.
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
+    """
+    monkeypatch.setattr(pfv, "oh_steel_frac", 0.57874999999999999)
+    monkeypatch.setattr(pfv, "bmaxoh0", 13.522197474024983)
+    monkeypatch.setattr(pfv, "cohbop", 19311657.760000002)
+    monkeypatch.setattr(pfv, "nohc", 7)
+    monkeypatch.setattr(
+        pfv,
+        "rb",
+        np.array(
+            [
+                6.8520884119768697,
+                6.9480065348448967,
+                18.98258241468535,
+                18.98258241468535,
+                17.22166645654087,
+                17.22166645654087,
+                2.88462,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        ),
+    )
+    monkeypatch.setattr(
+        pfv,
+        "ra",
+        np.array(
+            [
+                5.6944236847973242,
+                5.5985055619292972,
+                17.819978201682968,
+                17.819978201682968,
+                16.385123084628962,
+                16.385123084628962,
+                2.3321999999999998,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]
+        ),
+    )
+    monkeypatch.setattr(tfv, "poisson_steel", 0.29999999999999999)
+
+    r = 2.3
+    s_hoop_exp = 6.737108e8
+    s_hoop = pf.hoop_stress(r)
+
+    assert pytest.approx(s_hoop) == s_hoop_exp
