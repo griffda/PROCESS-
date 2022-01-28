@@ -2049,3 +2049,19 @@ def test_hoop_stress(monkeypatch):
     s_hoop = pf.hoop_stress(r)
 
     assert pytest.approx(s_hoop) == s_hoop_exp
+
+
+def test_selfinductance():
+    """Test selfinductance function.
+
+    selfinductance() uses values discovered using gdb to break on the first
+    function call when running the baseline 2018 IN.DAT.
+    """
+    a = 2.6084100000000001
+    b = 16.331562038811658
+    c = 0.55242000000000013
+    n = 4348.5468837135222
+    selfinductance_exp = 2.501393e1
+
+    selfinductance = pf.selfinductance(a, b, c, n)
+    assert pytest.approx(selfinductance) == selfinductance_exp
