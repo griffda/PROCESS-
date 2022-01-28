@@ -191,6 +191,13 @@ def main(args=None):
     labels["triang"] = r"$\delta_\mathrm{sep}$"
     labels["f_tf_steel"] = r"f_\mathrm{steel}^\mathrm{TF}"
     labels["plascur/1d6"] = r"$I_{\mathrm{p}}$[$MA$]"
+    labels["n_cycle"] = r'$N_{\mathrm{cycle}}$'
+    labels['alstroh'] = r'$\sigma_{\mathrm{oh}}^{\mathrm{max}}$[$Pa$]'
+    labels['ohcth'] = r'$\Delta R_{\mathrm{CS}}$[$m$]'
+    labels['bore'] = r'$\Delta R_{\mathrm{bore}}$[$m$]'
+    labels['dnla'] = r'$\bar{n}_{\mathrm{e}}$[$m^{-3}$]'
+    labels['dnla_gw'] = r'$f_{\mathrm{GW}}$'
+    labels['normalised_toroidal_beta'] = r'$\beta_{N,\mathrm{tor}}$'
     # ------------
 
     # nsweep varible dict
@@ -490,8 +497,10 @@ def main(args=None):
                         args.outputdir, scan_var_name, output_name, save_format
                     )
                 )
+            
+            # Display plot (used in Jupyter notebooks)
+            plt.show()
             plt.clf()
-            plt.cla()
         # ------------
 
     # I case of a 2D scan
@@ -592,8 +601,10 @@ def main(args=None):
                     save_format,
                 )
             )
+            
+            # Display plot (used in Jupyter notebooks)
+            plt.show()
             plt.clf()
-            plt.cla()
 
 
 if __name__ == "__main__":

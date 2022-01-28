@@ -2,17 +2,28 @@ site_name: PROCESS
 docs_dir: "documentation/proc-pages/"
 nav:
     - Home: index.md
-    - Installation Guide: installation.md
-    - Usage Guide: usage.md
-    - Getting Started: getting-started.md
-    - FORD docs: ford_site/ford.md
-    - Cost Models: cost-models/cost-models.md
+    - PROCESS Sources Documentation:
+        - FORD Documentation: ford_site
+        - Python Documentation:
+            - process: python/process.md 
+            - process.io: python/process.io.md
+            - process.utilities: python/process.utilities.md
+            - process.fortran: python/process.fortran.md
+    - Introduction:
+        - Installation Guide: installation.md
+        - Usage Guide: usage.md
+        - Getting Started: getting-started.md
+        - Cost Models: cost-models/cost-models.md
+    - Tracking: tracking.html
     - Development: 
-        - git Usage: development/git-usage.md
+        - Version Control (Git): development/git-usage.md
         - Standards: development/standards.md
+        - F2Py Standards: development/f2py-standards.md
         - Adding Variables & Constraints: development/add-vars.md
+        - Adding Physics and Engineering Variables to Python: development/annotated-variable.md
         - Continuous Integration: development/ci-guide.md
-        - Unit Tests: development/unit-tests.md
+        - Testing: development/testing.md
+        - Debugging: development/debugging.md
         - Tools: development/tools.md
         - Versioning: development/versioning.md
     - Engineering Models:
@@ -73,6 +84,7 @@ extra_javascript:
 markdown_extensions:
   - footnotes
   - admonition
+  - codehilite
   - pymdownx.arithmatex
   - pymdownx.betterem:
       smart_enable: all
@@ -87,5 +99,17 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
+
+plugins:
+  - autorefs
+  - search
+  - mkdocstrings:
+        handlers:
+            python:
+                selection:
+                    docstring_style: "restructured-text"
+                rendering:
+                    show_source: false
+                    show_root_heading: true
 
 extra_css: [vardes.css]

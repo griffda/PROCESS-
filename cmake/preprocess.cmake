@@ -15,9 +15,14 @@
 # with the text
 
 MACRO(PREPROCESS)
+    INCLUDE(${CMAKE_SOURCE_DIR}/cmake/utilities.cmake)
+
     LIST(TRANSFORM PROCESS_SRCS PREPEND ${PROCESS_SRC_DIR}/ OUTPUT_VARIABLE PROCESS_SOURCE_FILES_PATH)
     LIST(TRANSFORM PROCESS_SRCS PREPEND ${CMAKE_BINARY_DIR}/ OUTPUT_VARIABLE PREPROCESSED_SOURCE_FILES_PATH)
     LIST(TRANSFORM PROCESS_SRCS PREPEND "preprocess_" OUTPUT_VARIABLE PREPROCESS_TARGET_NAMES)
+
+    ensure_string_length(${COMMIT_MSG} 50 COMMIT_MSG) # 1502 line truncation error fix
+    # f2py has a smaller line length limit so must be truncated more (this won't affect the way the code works)
 
     # Uses the CMake 3.17 ZIP_LISTS feature for brevity:
 #    FOREACH(target_name source output IN ZIP_LISTS PREPROCESS_TARGET_NAMES PROCESS_SOURCE_FILES_PATH PREPROCESSED_SOURCE_FILES_PATH)
@@ -36,6 +41,7 @@ MACRO(PREPROCESS)
         ADD_CUSTOM_COMMAND (
             OUTPUT ${output}
             COMMAND gfortran -E -cpp -DINSTALLDIR="'${CMAKE_SOURCE_DIR}'" -DCOMMSG="'${COMMIT_MSG}'" -Dbranch_name="'${GIT_BRANCH}'" -Dtagno="'${GIT_TAG}'" -Duntracked=${GIT_DIFF} -Ddp=8 ${source} -o ${output}
+            DEPENDS ${source} # rerun preprocessing when the source file changes
         )
     ENDFOREACH()
     

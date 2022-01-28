@@ -1,4 +1,9 @@
 # Usage
+
+## Example Jupyter notebooks
+
+The `examples` directory contains Jupyter notebooks to interactively demonstrate usage of Process. After installation, this is probably the best place to start. The `examples/README.md` contains help on running these notebooks.
+
 ## Running Process
 Process can be run in two main modes, SingleRun (where Process runs once) and VaryRun (where Process runs multiple times, varying iteration parameters until a solution is found (what used to be run_process.py)).
 
