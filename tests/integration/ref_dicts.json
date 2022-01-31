@@ -2192,6 +2192,7 @@
         "heat_sink_w": 80.0,
         "helium": null,
         "helpow": 0.0,
+        "helpow_cryal": 0.0,
         "hfac": [
             0.0,
             0.0,
@@ -3381,7 +3382,6 @@
         "pUOmw": 0.0,
         "p_": "real_8_",
         "p_he": 8000000.0,
-        "p_tf_cryoal_cryo": 0.0,
         "pacpmw": 0.0,
         "palpepv": 0.0,
         "palpfwmw": 0.0,
@@ -3437,7 +3437,7 @@
         "phi_tfc_ob": 0.0,
         "phiint": 0.0,
         "photon_wall": 0.0,
-        "pi": 3.141592653589793,
+        "pi": "3.141592653589793_wp_",
         "pibv": 20000.0,
         "piepv": 0.0,
         "pifecr": 10.0,
@@ -8700,7 +8700,7 @@
         "zeffai": 0.0,
         "zeffdiv": 1.0,
         "zeffmax": 3.6,
-        "zero": 0.0,
+        "zero": "0.0_wp_",
         "zfxf": [
             0.0,
             0.0,
@@ -9859,7 +9859,8 @@
         "heat_sink_l": "heat sinks length, width, height (m)",
         "heat_sink_w": "heat sinks length, width, height (m)",
         "helium": "",
-        "helpow": "heat removal at cryogenic temperatures (W)",
+        "helpow": "Heat removal at cryogenic temperature tmpcry (W)",
+        "helpow_cryal": "Heat removal at cryogenic temperature tcoolin (W)",
         "hfac": "H factors for an ignited plasma for each energy confinement time scaling law",
         "hfact": "H factor on energy confinement times, radiation corrected (`iteration variable 10`). If \n `ipedestal=2,3` and `hfact=0`, not used in PLASMOD (see also `plasmod_i_modeltype`) issue #219",
         "hldiv": "divertor heat load (MW/m2)",
@@ -10338,7 +10339,6 @@
         "pUOmw": "",
         "p_": "",
         "p_he": "pressure in FW and blanket coolant at pump exit (`primary_pumping=3`) [Pa]",
-        "p_tf_cryoal_cryo": "",
         "pacpmw": "total pulsed power system load (MW)",
         "palpepv": "alpha power per volume to electrons (MW/m3)",
         "palpfwmw": "alpha power escaping plasma and reaching first wall (MW)",
@@ -17956,7 +17956,6 @@
             "relerr_sol",
             "mach0"
         ],
-        "divertor_module": [],
         "divertor_ode": [
             "impurities_present",
             "aplas",
@@ -18292,6 +18291,7 @@
             "fpumpshld",
             "htpmw_min",
             "helpow",
+            "helpow_cryal",
             "htpmw",
             "htpmw_blkt",
             "htpmw_div",
@@ -19431,8 +19431,7 @@
             "qac",
             "qcl",
             "qmisc",
-            "iprimdiv",
-            "p_tf_cryoal_cryo"
+            "iprimdiv"
         ],
         "precision_mod": [
             "real_8_",
