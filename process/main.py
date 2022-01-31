@@ -50,6 +50,10 @@ import argparse
 from process.costs_step import CostsStep
 from process.pfcoil import PFCoil
 from process.tfcoil import TFcoil
+from process.divertor import Divertor
+from process.availability import Availability
+from process.ife import IFE
+from process.stellarator import Stellarator
 from process.caller import Caller
 
 from pathlib import Path
@@ -445,6 +449,10 @@ class Models():
         self.costs_step = CostsStep()
         self.pfcoil = PFCoil()
         self.tfcoil = TFcoil()
+        self.divertor = Divertor()
+        self.availability = Availability()
+        self.ife = IFE(availability=self.availability)
+        self.stellarator = Stellarator(availability=self.availability)
 
 def main(args=None):
     """Run Process.
