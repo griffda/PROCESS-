@@ -72,14 +72,8 @@ class Caller:
         if ft.tfcoil_variables.i_tf_sup == 1:
             ft.sctfcoil_module.tfspcall(ft.constants.nout, 0)
 
-        # Poloidal field and Central Solenoid model
-        ft.pfcoil_module.pfcoil()
-
-        # Poloidal field coil inductance calculation
-        ft.pfcoil_module.induct(ft.constants.nout, 0)
-
-        # Volt-second capability of PF coil set
-        ft.pfcoil_module.vsec()
+        # Poloidal field and central solenoid model
+        self.models.pfcoil.run()
 
         # Pulsed reactor model
         ft.pulse_module.pulse(ft.constants.nout, 0)
