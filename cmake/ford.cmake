@@ -42,8 +42,7 @@ MACRO(DICTS)
         # This keeps the dictionaries up-to-date with the Fortran source
         # Python sources should also trigger a re-run to keep the dictionaries up-to-date 
         # with Python-defined variables
-        DEPENDS ${PROJECT_NAME} ${PROCESS_SRC_PATHS} ${PROCESS_PYTHON_SRC_PATHS} install_process
-        # the dictionary creation script imports Process so must be run after install_process
+        DEPENDS ${PROJECT_NAME} ${PROCESS_SRC_PATHS} ${PROCESS_PYTHON_SRC_PATHS}
     )
 
     ADD_DEPENDENCIES(${DICTS_NAME} ${FORD_NAME})
