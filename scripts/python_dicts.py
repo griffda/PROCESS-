@@ -27,16 +27,16 @@ process_spec = importlib.util.spec_from_file_location("process", CURRENT_DIR.par
 # get the module from the above import information
 process_module = importlib.util.module_from_spec(process_spec)
 # add the process_module (from the directory NOT the possibly pre-installed version)
-# to the modules list (meaning we can import "process_temp" ONLY in this 'session' of
-# the interpreter)
-sys.modules["process_temp"] = process_module
+# to the modules list overwritting any other Process install for this "session"
+# of the interpreter
+sys.modules[process_spec.name] = process_module
 # execute the module so we can use it when we come to import it later
 process_spec.loader.exec_module(process_module)
 
-# now that "process_temp" is temporarily available to import
+# now that "process" is temporarily available to import
 # as a package (despite being a directory) we can install what we need
-from process_temp.main import Models
-from process_temp.variables import AnnotatedVariable
+from process.main import Models
+from process.variables import AnnotatedVariable
 
 
 
