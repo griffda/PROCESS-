@@ -6,15 +6,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1079-g2393fac5 code contains untracked changes
-    Branch : 1432-plot-plot-fails-for-i_tf_sc_mat-9
-   Git log : Merge\ branch\ |1509-outer-tf-case|\ into\ |develop|
- Date/time : 10 Jan 2022 17:08:43 +00:00(hh:mm) UTC
-      User : rhicha
-  Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-270/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-270/test_scenario_G_L_Nb_Ti_0/IN.DAT
+   Version : 2.3.0   Release Date :: 2022-01-20
+   Tag No. : v2.1-1203-gdf5c6a4f
+    Branch : 1336-update-cryoplant-cost-22-03-for-cost-model-2
+   Git log : Some\ fixes\ for\ test\ suite\ failures
+ Date/time :  1 Feb 2022 17:07:04 +00:00(hh:mm) UTC
+      User : jg6173
+  Computer : L1088
+ Directory : /tmp/pytest-of-jg6173/pytest-16/test_solver0
+     Input : /tmp/pytest-of-jg6173/pytest-16/test_scenario_G_L_Nb_Ti_0/IN.DAT
  Run title : TF coil testing
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -55,8 +55,8 @@
  Number of constraints (total)                                            (neqns+nineqns)                  20     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          6     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 6.226E-11  OP 
- VMCON convergence parameter                                              (convergence_parameter)   3.104E-10  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 6.224E-11  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   3.101E-10  OP 
  Number of VMCON iterations                                               (nviter)                         15  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit   COST OF ELECTRICITY.
@@ -132,26 +132,26 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  1.0707E-01             -2.3774E-16                 2.2204E-15
-    2  Global power balance consistency      =  1.0140E-01 MW/m3        1.4185E-15 MW/m3          -1.3989E-14
-    3  Density upper limit                   <  6.5911E+19 /m3         -1.7203E+05 /m3            -2.6645E-15
-    4  Neutron wall load upper limit         <  8.2767E-01 MW/m2       -1.4988E-14 MW/m2          -1.8097E-14
-    5  Radial build consistency              =  8.4093E+00 m            9.3362E-15 m              -1.1102E-15
-    6  Burn time lower limit                 >  7.2000E+03 sec          4.4587E-07 sec            -6.1926E-11
-    7  L-H power threshold limit             >  6.5845E+01 MW          -7.0202E-12 MW              1.0658E-13
+    1  Beta consistency                      =  1.0707E-01             -1.4978E-15                 1.3989E-14
+    2  Global power balance consistency      =  1.0140E-01 MW/m3        1.2496E-15 MW/m3          -1.2323E-14
+    3  Density upper limit                   <  6.5911E+19 /m3         -7.3728E+05 /m3            -1.1213E-14
+    4  Neutron wall load upper limit         <  8.2767E-01 MW/m2       -3.4195E-14 MW/m2          -4.1300E-14
+    5  Radial build consistency              =  8.4093E+00 m           -1.4938E-14 m               1.7764E-15
+    6  Burn time lower limit                 >  7.2000E+03 sec          4.4578E-07 sec            -6.1913E-11
+    7  L-H power threshold limit             >  6.5845E+01 MW          -8.8818E-12 MW              1.3489E-13
     8  Net electric power lower limit        >  5.0000E+02 MW           2.3997E-03 MW              4.7993E-06
-    9  Beta upper limit                      <  9.9131E-02             -6.8001E-16                -6.8834E-15
-   10  CS coil EOF current density limit     <  1.1470E+08 A/m2         8.3447E-07 A/m2            7.3275E-15
-   11  CS coil BOP current density limit     <  1.8751E+08 A/m2         1.2517E-06 A/m2            6.6613E-15
-   12  Injection power upper limit           <  5.0000E+01 MW          -1.6342E-12 MW              3.2641E-14
-   13  TF coil case stress upper limit       <  6.6000E+08 Pa           1.8919E-04 Pa              2.8666E-13
-   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa           2.1923E-04 Pa              3.3218E-13
-   15  I_op / I_critical (TF coil)           <  2.7322E+08 A/m2        -2.6694E-08 A/m2            8.8818E-16
-   16  Dump voltage upper limit              <  7.3710E+00 V            4.7421E+00 V              -1.3323E-15
-   17  TF coil temp. margin lower limit      >  1.0000E+00 K            2.6379E-13 K              -2.6379E-13
-   18  J_winding pack/J_protection limit     <  3.0055E+07 A/m2         0.0000E+00 A/m2            2.1094E-14
-   19  Psep / R upper limit                  <  2.5000E+01 MW/m         1.7764E-12 MW/m           -8.8818E-14
-   20  CS Tresca yield criterion             <  6.6000E+08 Pa           3.8147E-06 Pa              5.7732E-15
+    9  Beta upper limit                      <  9.9131E-02             -4.5797E-16                -4.6629E-15
+   10  CS coil EOF current density limit     <  1.1470E+08 A/m2         4.2021E-06 A/m2            3.6637E-14
+   11  CS coil BOP current density limit     <  1.8751E+08 A/m2         3.7849E-06 A/m2            1.9984E-14
+   12  Injection power upper limit           <  5.0000E+01 MW          -1.4495E-12 MW              2.9088E-14
+   13  TF coil case stress upper limit       <  6.6000E+08 Pa          -4.2319E-05 Pa             -6.4171E-14
+   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -6.2823E-05 Pa             -9.5146E-14
+   15  I_op / I_critical (TF coil)           <  2.7322E+08 A/m2         2.2023E-07 A/m2           -7.3275E-15
+   16  Dump voltage upper limit              <  7.3710E+00 V            4.7421E+00 V              -1.1324E-14
+   17  TF coil temp. margin lower limit      >  1.0000E+00 K            2.8066E-13 K              -2.8066E-13
+   18  J_winding pack/J_protection limit     <  3.0055E+07 A/m2         0.0000E+00 A/m2            8.8818E-16
+   19  Psep / R upper limit                  <  2.5000E+01 MW/m         1.8363E-12 MW/m           -9.1815E-14
+   20  CS Tresca yield criterion             <  6.6000E+08 Pa           7.6294E-06 Pa              1.1546E-14
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -1158,7 +1158,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -1.063E+07 -1.063E+07 -1.063E+07  0.000E+00
    5         0.000E+00  0.000E+00 -5.321E+06 -5.321E+06 -5.321E+06  0.000E+00
    6         0.000E+00  0.000E+00 -5.321E+06 -5.321E+06 -5.321E+06  0.000E+00
-   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  2.852E-08  0.000E+00
+   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 6.343E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                 1.515E-01  OP 
@@ -1461,9 +1461,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  AC losses in cryogenic components (MW)                                   (qac/1.0D6)               4.630E-03  OP 
  Resistive losses in current leads (MW)                                   (qcl/1.0D6)               1.591E-02  OP 
  45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             4.600E-02  OP 
- Sum = Total heat removal at cryogenic temperatures (W)                   (helpow/1.0D6)            1.482E-01  OP 
- Temperature of cryogenic components (K)                                  (tmpcry)                  4.500E+00     
+ Sum = Total heat removal at cryogenic temperatures (MW)                  (helpow/1.0D6)            1.482E-01  OP 
+ Temperature of cryogenic superconducting components (K)                  (tmpcry)                  4.500E+00     
+ Temperature of cryogenic aluminium components (K)                        (tcoolin)                 3.131E+02     
  Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                           2.028E-03  OP 
+ Efficiency (figure of merit) of cryogenic aluminium plant is 40% of idea                          -2.020E+00  OP 
  Electric power for cryogenic plant (MW)                                  (crypmw)                  7.310E+01  OP 
  
  ************************************ Plant Power / Heat Transport Balance ************************************
@@ -1692,8 +1694,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Number of constraints (total)                                            (neqns+nineqns)                  20     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          6     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 5.266E-11  OP 
- VMCON convergence parameter                                              (convergence_parameter)   2.606E-10  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 5.264E-11  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   2.608E-10  OP 
  Number of VMCON iterations                                               (nviter)                          9  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit   COST OF ELECTRICITY.
@@ -1769,26 +1771,26 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  1.0465E-01              1.6846E-15                -1.6098E-14
-    2  Global power balance consistency      =  1.0444E-01 MW/m3       -3.7106E-16 MW/m3           3.5527E-15
-    3  Density upper limit                   <  6.6865E+19 /m3         -1.6384E+05 /m3            -2.4425E-15
-    4  Neutron wall load upper limit         <  8.4199E-01 MW/m2       -2.9643E-14 MW/m2          -3.5194E-14
-    5  Radial build consistency              =  8.3754E+00 m            5.1142E-14 m              -6.1062E-15
-    6  Burn time lower limit                 >  7.2000E+03 sec         -3.7695E-07 sec             5.2355E-11
-    7  L-H power threshold limit             >  6.6365E+01 MW           3.9506E-12 MW             -5.9508E-14
+    1  Beta consistency                      =  1.0465E-01              7.0638E-15                -6.7502E-14
+    2  Global power balance consistency      =  1.0444E-01 MW/m3       -1.3915E-15 MW/m3           1.3323E-14
+    3  Density upper limit                   <  6.6865E+19 /m3          5.3248E+05 /m3             7.9936E-15
+    4  Neutron wall load upper limit         <  8.4199E-01 MW/m2        6.9722E-14 MW/m2           8.2823E-14
+    5  Radial build consistency              =  8.3754E+00 m            3.3475E-14 m              -3.9968E-15
+    6  Burn time lower limit                 >  7.2000E+03 sec         -3.7693E-07 sec             5.2351E-11
+    7  L-H power threshold limit             >  6.6365E+01 MW           4.7180E-12 MW             -7.1054E-14
     8  Net electric power lower limit        >  5.0000E+02 MW           2.3927E-03 MW              4.7854E-06
-    9  Beta upper limit                      <  9.7741E-02             -1.9984E-15                -2.0428E-14
-   10  CS coil EOF current density limit     <  1.1300E+08 A/m2        -2.0266E-06 A/m2           -1.7986E-14
-   11  CS coil BOP current density limit     <  1.8505E+08 A/m2        -1.6987E-06 A/m2           -9.1038E-15
-   12  Injection power upper limit           <  5.0000E+01 MW           2.2595E-12 MW             -4.5186E-14
-   13  TF coil case stress upper limit       <  6.6000E+08 Pa          -1.2755E-05 Pa             -1.9318E-14
-   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -6.5565E-06 Pa             -9.9920E-15
-   15  I_op / I_critical (TF coil)           <  2.6911E+08 A/m2         9.0427E-07 A/m2           -3.0087E-14
-   16  Dump voltage upper limit              <  7.4346E+00 V            4.7602E+00 V              -2.1427E-14
-   17  TF coil temp. margin lower limit      >  1.0000E+00 K           -1.8652E-13 K               1.8652E-13
-   18  J_winding pack/J_protection limit     <  3.0055E+07 A/m2         0.0000E+00 A/m2           -1.1324E-14
-   19  Psep / R upper limit                  <  2.5000E+01 MW/m        -1.1280E-12 MW/m            5.6399E-14
-   20  CS Tresca yield criterion             <  6.6000E+08 Pa           0.0000E+00 Pa             -3.3307E-16
+    9  Beta upper limit                      <  9.7741E-02             -2.9282E-15                -2.9976E-14
+   10  CS coil EOF current density limit     <  1.1300E+08 A/m2        -9.2387E-07 A/m2           -8.2157E-15
+   11  CS coil BOP current density limit     <  1.8505E+08 A/m2        -4.4703E-07 A/m2           -2.4425E-15
+   12  Injection power upper limit           <  5.0000E+01 MW          -4.4338E-12 MW              8.8596E-14
+   13  TF coil case stress upper limit       <  6.6000E+08 Pa           4.6492E-06 Pa              7.1054E-15
+   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa           1.0252E-05 Pa              1.5543E-14
+   15  I_op / I_critical (TF coil)           <  2.6911E+08 A/m2         1.9887E-06 A/m2           -6.6169E-14
+   16  Dump voltage upper limit              <  7.4346E+00 V            4.7602E+00 V              -9.3259E-15
+   17  TF coil temp. margin lower limit      >  1.0000E+00 K           -1.4388E-13 K               1.4388E-13
+   18  J_winding pack/J_protection limit     <  3.0055E+07 A/m2         0.0000E+00 A/m2           -2.0983E-14
+   19  Psep / R upper limit                  <  2.5000E+01 MW/m        -2.6290E-12 MW/m            1.3145E-13
+   20  CS Tresca yield criterion             <  6.6000E+08 Pa          -1.1444E-05 Pa             -1.6431E-14
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -3098,9 +3100,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  AC losses in cryogenic components (MW)                                   (qac/1.0D6)               4.609E-03  OP 
  Resistive losses in current leads (MW)                                   (qcl/1.0D6)               1.591E-02  OP 
  45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             4.650E-02  OP 
- Sum = Total heat removal at cryogenic temperatures (W)                   (helpow/1.0D6)            1.498E-01  OP 
- Temperature of cryogenic components (K)                                  (tmpcry)                  4.500E+00     
+ Sum = Total heat removal at cryogenic temperatures (MW)                  (helpow/1.0D6)            1.498E-01  OP 
+ Temperature of cryogenic superconducting components (K)                  (tmpcry)                  4.500E+00     
+ Temperature of cryogenic aluminium components (K)                        (tcoolin)                 3.131E+02     
  Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                           2.028E-03  OP 
+ Efficiency (figure of merit) of cryogenic aluminium plant is 40% of idea                          -2.020E+00  OP 
  Electric power for cryogenic plant (MW)                                  (crypmw)                  7.389E+01  OP 
  
  ************************************ Plant Power / Heat Transport Balance ************************************
@@ -3329,8 +3333,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Number of constraints (total)                                            (neqns+nineqns)                  20     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          6     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 4.658E-11  OP 
- VMCON convergence parameter                                              (convergence_parameter)   2.293E-10  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 4.653E-11  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   2.288E-10  OP 
  Number of VMCON iterations                                               (nviter)                          9  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit   COST OF ELECTRICITY.
@@ -3405,26 +3409,26 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  1.0230E-01              1.1357E-15                -1.1102E-14
-    2  Global power balance consistency      =  1.0754E-01 MW/m3       -2.7700E-15 MW/m3           2.5757E-14
-    3  Density upper limit                   <  6.7821E+19 /m3         -9.1750E+05 /m3            -1.3545E-14
-    4  Neutron wall load upper limit         <  8.5639E-01 MW/m2        1.8541E-14 MW/m2           2.1760E-14
-    5  Radial build consistency              =  8.3428E+00 m            1.1763E-13 m              -1.4100E-14
-    6  Burn time lower limit                 >  7.2000E+03 sec         -3.3341E-07 sec             4.6307E-11
-    7  L-H power threshold limit             >  6.6894E+01 MW           4.9312E-12 MW             -7.3719E-14
+    1  Beta consistency                      =  1.0230E-01             -5.9058E-16                 5.7732E-15
+    2  Global power balance consistency      =  1.0754E-01 MW/m3       -2.7939E-15 MW/m3           2.5979E-14
+    3  Density upper limit                   <  6.7821E+19 /m3         -4.6694E+05 /m3            -6.8834E-15
+    4  Neutron wall load upper limit         <  8.5639E-01 MW/m2        5.5511E-16 MW/m2           6.6613E-16
+    5  Radial build consistency              =  8.3428E+00 m            1.5746E-14 m              -1.8874E-15
+    6  Burn time lower limit                 >  7.2000E+03 sec         -3.3308E-07 sec             4.6261E-11
+    7  L-H power threshold limit             >  6.6894E+01 MW           4.9312E-12 MW             -7.3497E-14
     8  Net electric power lower limit        >  5.0000E+02 MW           2.3859E-03 MW              4.7718E-06
-    9  Beta upper limit                      <  9.6377E-02             -2.8033E-15                -2.9088E-14
-   10  CS coil EOF current density limit     <  1.1135E+08 A/m2         5.9605E-07 A/m2            5.3291E-15
-   11  CS coil BOP current density limit     <  1.8265E+08 A/m2         4.0233E-06 A/m2            2.1982E-14
-   12  Injection power upper limit           <  5.0000E+01 MW           1.1795E-11 MW             -2.3592E-13
-   13  TF coil case stress upper limit       <  6.6000E+08 Pa          -3.4213E-05 Pa             -5.1847E-14
-   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -3.9220E-05 Pa             -5.9397E-14
-   15  I_op / I_critical (TF coil)           <  2.6468E+08 A/m2         2.2787E-06 A/m2           -7.5939E-14
-   16  Dump voltage upper limit              <  7.5052E+00 V            4.7797E+00 V              -6.6613E-15
-   17  TF coil temp. margin lower limit      >  1.0000E+00 K           -1.1724E-13 K               1.1724E-13
-   18  J_winding pack/J_protection limit     <  3.0006E+07 A/m2         0.0000E+00 A/m2           -2.5535E-14
-   19  Psep / R upper limit                  <  2.5000E+01 MW/m        -1.4078E-12 MW/m            7.0388E-14
-   20  CS Tresca yield criterion             <  6.6000E+08 Pa           7.6294E-06 Pa              1.2879E-14
+    9  Beta upper limit                      <  9.6377E-02             -4.1633E-16                -4.3299E-15
+   10  CS coil EOF current density limit     <  1.1135E+08 A/m2         2.9802E-07 A/m2            2.6645E-15
+   11  CS coil BOP current density limit     <  1.8265E+08 A/m2         1.1921E-07 A/m2            6.6613E-16
+   12  Injection power upper limit           <  5.0000E+01 MW           2.9772E-12 MW             -5.9508E-14
+   13  TF coil case stress upper limit       <  6.6000E+08 Pa           6.4373E-05 Pa              9.7478E-14
+   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa           6.5923E-05 Pa              9.9920E-14
+   15  I_op / I_critical (TF coil)           <  2.6468E+08 A/m2         8.0619E-07 A/m2           -2.6867E-14
+   16  Dump voltage upper limit              <  7.5052E+00 V            4.7797E+00 V               1.5099E-14
+   17  TF coil temp. margin lower limit      >  1.0000E+00 K           -1.4744E-13 K               1.4744E-13
+   18  J_winding pack/J_protection limit     <  3.0006E+07 A/m2         0.0000E+00 A/m2           -8.6597E-15
+   19  Psep / R upper limit                  <  2.5000E+01 MW/m        -1.5543E-12 MW/m            7.7716E-14
+   20  CS Tresca yield criterion             <  6.6000E+08 Pa           3.8147E-06 Pa              3.5527E-15
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -4734,9 +4738,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  AC losses in cryogenic components (MW)                                   (qac/1.0D6)               4.590E-03  OP 
  Resistive losses in current leads (MW)                                   (qcl/1.0D6)               1.591E-02  OP 
  45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             4.701E-02  OP 
- Sum = Total heat removal at cryogenic temperatures (W)                   (helpow/1.0D6)            1.515E-01  OP 
- Temperature of cryogenic components (K)                                  (tmpcry)                  4.500E+00     
+ Sum = Total heat removal at cryogenic temperatures (MW)                  (helpow/1.0D6)            1.515E-01  OP 
+ Temperature of cryogenic superconducting components (K)                  (tmpcry)                  4.500E+00     
+ Temperature of cryogenic aluminium components (K)                        (tcoolin)                 3.131E+02     
  Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                           2.028E-03  OP 
+ Efficiency (figure of merit) of cryogenic aluminium plant is 40% of idea                          -2.020E+00  OP 
  Electric power for cryogenic plant (MW)                                  (crypmw)                  7.471E+01  OP 
  
  ************************************ Plant Power / Heat Transport Balance ************************************
@@ -4965,8 +4971,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Number of constraints (total)                                            (neqns+nineqns)                  20     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          6     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 4.112E-11  OP 
- VMCON convergence parameter                                              (convergence_parameter)   2.007E-10  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 4.111E-11  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   2.014E-10  OP 
  Number of VMCON iterations                                               (nviter)                          9  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit   COST OF ELECTRICITY.
@@ -5041,26 +5047,26 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  1.0002E-01             -1.9987E-16                 1.9984E-15
-    2  Global power balance consistency      =  1.1070E-01 MW/m3       -3.1954E-16 MW/m3           2.8866E-15
-    3  Density upper limit                   <  6.8778E+19 /m3          1.8022E+05 /m3             2.6645E-15
-    4  Neutron wall load upper limit         <  8.7086E-01 MW/m2        1.1657E-14 MW/m2           1.3323E-14
-    5  Radial build consistency              =  8.3116E+00 m           -3.1374E-14 m               3.7748E-15
-    6  Burn time lower limit                 >  7.2000E+03 sec         -2.9440E-07 sec             4.0889E-11
-    7  L-H power threshold limit             >  6.7431E+01 MW          -1.7764E-12 MW              2.6312E-14
+    1  Beta consistency                      =  1.0002E-01              2.2097E-15                -2.2093E-14
+    2  Global power balance consistency      =  1.1070E-01 MW/m3       -2.4826E-15 MW/m3           2.2427E-14
+    3  Density upper limit                   <  6.8778E+19 /m3         -1.4909E+06 /m3            -2.1649E-14
+    4  Neutron wall load upper limit         <  8.7086E-01 MW/m2       -1.0103E-14 MW/m2          -1.1546E-14
+    5  Radial build consistency              =  8.3116E+00 m            8.0281E-14 m              -9.6589E-15
+    6  Burn time lower limit                 >  7.2000E+03 sec         -2.9419E-07 sec             4.0860E-11
+    7  L-H power threshold limit             >  6.7431E+01 MW           8.4839E-12 MW             -1.2590E-13
     8  Net electric power lower limit        >  5.0000E+02 MW           2.3793E-03 MW              4.7586E-06
-    9  Beta upper limit                      <  9.5037E-02              3.6776E-15                 3.8636E-14
-   10  CS coil EOF current density limit     <  1.0975E+08 A/m2         1.3262E-06 A/m2            1.1990E-14
-   11  CS coil BOP current density limit     <  1.8030E+08 A/m2        -9.2387E-07 A/m2           -5.1070E-15
-   12  Injection power upper limit           <  5.0000E+01 MW          -1.0246E-11 MW              2.0495E-13
-   13  TF coil case stress upper limit       <  6.6000E+08 Pa           2.6822E-05 Pa              4.0634E-14
-   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa           2.0146E-05 Pa              3.0420E-14
-   15  I_op / I_critical (TF coil)           <  2.5995E+08 A/m2        -6.6409E-08 A/m2            2.2204E-15
-   16  Dump voltage upper limit              <  7.5766E+00 V            4.7990E+00 V              -6.2506E-14
-   17  TF coil temp. margin lower limit      >  1.0000E+00 K           -1.5010E-13 K               1.5010E-13
-   18  J_winding pack/J_protection limit     <  2.9908E+07 A/m2         0.0000E+00 A/m2           -1.1990E-14
-   19  Psep / R upper limit                  <  2.5000E+01 MW/m         6.6613E-14 MW/m           -3.3307E-15
-   20  CS Tresca yield criterion             <  6.6000E+08 Pa           0.0000E+00 Pa             -0.0000E+00
+    9  Beta upper limit                      <  9.5037E-02             -6.3699E-15                -6.6946E-14
+   10  CS coil EOF current density limit     <  1.0975E+08 A/m2        -1.9968E-06 A/m2           -1.8208E-14
+   11  CS coil BOP current density limit     <  1.8030E+08 A/m2        -1.4901E-07 A/m2           -8.8818E-16
+   12  Injection power upper limit           <  5.0000E+01 MW           1.6335E-11 MW             -3.2674E-13
+   13  TF coil case stress upper limit       <  6.6000E+08 Pa          -2.4676E-05 Pa             -3.7415E-14
+   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -2.4080E-05 Pa             -3.6526E-14
+   15  I_op / I_critical (TF coil)           <  2.5995E+08 A/m2         1.8130E-06 A/m2           -6.0618E-14
+   16  Dump voltage upper limit              <  7.5766E+00 V            4.7990E+00 V               8.3933E-14
+   17  TF coil temp. margin lower limit      >  1.0000E+00 K           -1.0214E-13 K               1.0214E-13
+   18  J_winding pack/J_protection limit     <  2.9908E+07 A/m2         0.0000E+00 A/m2           -3.3751E-14
+   19  Psep / R upper limit                  <  2.5000E+01 MW/m        -2.6557E-12 MW/m            1.3278E-13
+   20  CS Tresca yield criterion             <  6.6000E+08 Pa           1.1444E-05 Pa              1.7986E-14
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -6370,9 +6376,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  AC losses in cryogenic components (MW)                                   (qac/1.0D6)               4.571E-03  OP 
  Resistive losses in current leads (MW)                                   (qcl/1.0D6)               1.591E-02  OP 
  45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             4.756E-02  OP 
- Sum = Total heat removal at cryogenic temperatures (W)                   (helpow/1.0D6)            1.532E-01  OP 
- Temperature of cryogenic components (K)                                  (tmpcry)                  4.500E+00     
+ Sum = Total heat removal at cryogenic temperatures (MW)                  (helpow/1.0D6)            1.532E-01  OP 
+ Temperature of cryogenic superconducting components (K)                  (tmpcry)                  4.500E+00     
+ Temperature of cryogenic aluminium components (K)                        (tcoolin)                 3.131E+02     
  Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                           2.028E-03  OP 
+ Efficiency (figure of merit) of cryogenic aluminium plant is 40% of idea                          -2.020E+00  OP 
  Electric power for cryogenic plant (MW)                                  (crypmw)                  7.558E+01  OP 
  
  ************************************ Plant Power / Heat Transport Balance ************************************
