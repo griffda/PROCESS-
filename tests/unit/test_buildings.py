@@ -693,3 +693,255 @@ def test_bldgs_sizes(bldgssizesparam, monkeypatch):
     assert buildings_variables.reactor_hall_h == pytest.approx(
         bldgssizesparam.expected_reactor_hall_h
     )
+
+
+class BldgsParam(NamedTuple):
+    wrbi: Any
+    rxcl: Any
+    trcl: Any
+    row: Any
+    wgt: Any
+    shmf: Any
+    clh2: Any
+    clh1: Any
+    stcl: Any
+    rbvfac: Any
+    rbwt: Any
+    rbrt: Any
+    fndt: Any
+    hcwt: Any
+    hccl: Any
+    wgt2: Any
+    mbvfac: Any
+    wsvfac: Any
+    tfcbv: Any
+    pfbldgm3: Any
+    esbldgm3: Any
+    pibv: Any
+    efloor: Any
+    admvol: Any
+    triv: Any
+    conv: Any
+    admv: Any
+    shov: Any
+    shovol: Any
+    convol: Any
+    volnucb: Any
+    iprint: Any
+    outfile: Any
+    pfr: Any
+    pfm: Any
+    tfro: Any
+    tfri: Any
+    tfh: Any
+    tfm: Any
+    n_tf: Any
+    shro: Any
+    shri: Any
+    shh: Any
+    shm: Any
+    crr: Any
+    helpow: Any
+    expected_wrbi: Any
+    expected_efloor: Any
+    expected_admvol: Any
+    expected_shovol: Any
+    expected_convol: Any
+    expected_volnucb: Any
+    expected_cryv: Any
+    expected_vrci: Any
+    expected_rbv: Any
+    expected_rmbv: Any
+    expected_wsv: Any
+    expected_elev: Any
+
+
+@pytest.mark.parametrize(
+    "bldgsparam",
+    (
+        BldgsParam(
+            wrbi=0,
+            rxcl=4,
+            trcl=1,
+            row=4,
+            wgt=500000,
+            shmf=0.5,
+            clh2=15,
+            clh1=5.7514039424138126,
+            stcl=3,
+            rbvfac=1.6000000000000001,
+            rbwt=2,
+            rbrt=1,
+            fndt=2,
+            hcwt=1.5,
+            hccl=5,
+            wgt2=100000,
+            mbvfac=2.7999999999999998,
+            wsvfac=1.8999999999999999,
+            tfcbv=10601.097615432001,
+            pfbldgm3=20000,
+            esbldgm3=1000,
+            pibv=20000,
+            efloor=0,
+            admvol=0,
+            triv=40000,
+            conv=60000,
+            admv=100000,
+            shov=100000,
+            shovol=0,
+            convol=0,
+            volnucb=0,
+            iprint=0,
+            outfile=11,
+            pfr=18.98258241468535,
+            pfm=1071.5897090529959,
+            tfro=17.123405859443331,
+            tfri=2.9939411851091102,
+            tfh=20.562180043124066,
+            tfm=1327.1818597762153,
+            n_tf=16,
+            shro=13.764874193548387,
+            shri=4.7423258064516141,
+            shh=17.446180043124063,
+            shm=2294873.8131476026,
+            crr=19.48258241468535,
+            helpow=77840.021662652987,
+            expected_wrbi=42.612047089019569,
+            expected_efloor=379235.17804514873,
+            expected_admvol=100000,
+            expected_shovol=100000,
+            expected_convol=60000,
+            expected_volnucb=1812276.5359386117,
+            expected_cryv=15344.903568596488,
+            expected_vrci=1205439.8543893537,
+            expected_rbv=1356973.2891062023,
+            expected_rmbv=421473.52130148414,
+            expected_wsv=130018.25667917728,
+            expected_elev=51601.097615432001,
+        ),
+        BldgsParam(
+            wrbi=42.612047089019569,
+            rxcl=4,
+            trcl=1,
+            row=4,
+            wgt=500000,
+            shmf=0.5,
+            clh2=15,
+            clh1=5.8405005070918357,
+            stcl=3,
+            rbvfac=1.6000000000000001,
+            rbwt=2,
+            rbrt=1,
+            fndt=2,
+            hcwt=1.5,
+            hccl=5,
+            wgt2=100000,
+            mbvfac=2.7999999999999998,
+            wsvfac=1.8999999999999999,
+            tfcbv=10609.268177478583,
+            pfbldgm3=20000,
+            esbldgm3=1000,
+            pibv=20000,
+            efloor=379235.17804514873,
+            admvol=100000,
+            triv=40000,
+            conv=60000,
+            admv=100000,
+            shov=100000,
+            shovol=100000,
+            convol=60000,
+            volnucb=1812276.5359386117,
+            iprint=0,
+            outfile=11,
+            pfr=18.982980877139834,
+            pfm=1073.3372194668184,
+            tfro=17.123405859443331,
+            tfri=2.9939411851091102,
+            tfh=20.562180043124066,
+            tfm=1327.9750836697808,
+            n_tf=16,
+            shro=13.782874193548388,
+            shri=4.7243258064516143,
+            shh=17.446180043124063,
+            shm=2297808.3935174868,
+            crr=19.482980877139834,
+            helpow=221493.99746816326,
+            expected_wrbi=42.612445551474053,
+            expected_efloor=381590.59475257091,
+            expected_admvol=100000,
+            expected_shovol=100000,
+            expected_convol=60000,
+            expected_volnucb=1826281.0182016799,
+            expected_cryv=25884.731838309508,
+            expected_vrci=1206887.4047542624,
+            expected_rbv=1358540.6868905292,
+            expected_rmbv=423252.94369581528,
+            expected_wsv=130255.93791329287,
+            expected_elev=51609.268177478581,
+        ),
+    ),
+)
+def test_bldgs(bldgsparam, monkeypatch):
+    monkeypatch.setattr(buildings_variables, "wrbi", bldgsparam.wrbi)
+    monkeypatch.setattr(buildings_variables, "rxcl", bldgsparam.rxcl)
+    monkeypatch.setattr(buildings_variables, "trcl", bldgsparam.trcl)
+    monkeypatch.setattr(buildings_variables, "row", bldgsparam.row)
+    monkeypatch.setattr(buildings_variables, "wgt", bldgsparam.wgt)
+    monkeypatch.setattr(buildings_variables, "shmf", bldgsparam.shmf)
+    monkeypatch.setattr(buildings_variables, "clh2", bldgsparam.clh2)
+    monkeypatch.setattr(buildings_variables, "clh1", bldgsparam.clh1)
+    monkeypatch.setattr(buildings_variables, "stcl", bldgsparam.stcl)
+    monkeypatch.setattr(buildings_variables, "rbvfac", bldgsparam.rbvfac)
+    monkeypatch.setattr(buildings_variables, "rbwt", bldgsparam.rbwt)
+    monkeypatch.setattr(buildings_variables, "rbrt", bldgsparam.rbrt)
+    monkeypatch.setattr(buildings_variables, "fndt", bldgsparam.fndt)
+    monkeypatch.setattr(buildings_variables, "hcwt", bldgsparam.hcwt)
+    monkeypatch.setattr(buildings_variables, "hccl", bldgsparam.hccl)
+    monkeypatch.setattr(buildings_variables, "wgt2", bldgsparam.wgt2)
+    monkeypatch.setattr(buildings_variables, "mbvfac", bldgsparam.mbvfac)
+    monkeypatch.setattr(buildings_variables, "wsvfac", bldgsparam.wsvfac)
+    monkeypatch.setattr(buildings_variables, "tfcbv", bldgsparam.tfcbv)
+    monkeypatch.setattr(buildings_variables, "pfbldgm3", bldgsparam.pfbldgm3)
+    monkeypatch.setattr(buildings_variables, "esbldgm3", bldgsparam.esbldgm3)
+    monkeypatch.setattr(buildings_variables, "pibv", bldgsparam.pibv)
+    monkeypatch.setattr(buildings_variables, "efloor", bldgsparam.efloor)
+    monkeypatch.setattr(buildings_variables, "admvol", bldgsparam.admvol)
+    monkeypatch.setattr(buildings_variables, "triv", bldgsparam.triv)
+    monkeypatch.setattr(buildings_variables, "conv", bldgsparam.conv)
+    monkeypatch.setattr(buildings_variables, "admv", bldgsparam.admv)
+    monkeypatch.setattr(buildings_variables, "shov", bldgsparam.shov)
+    monkeypatch.setattr(buildings_variables, "shovol", bldgsparam.shovol)
+    monkeypatch.setattr(buildings_variables, "convol", bldgsparam.convol)
+    monkeypatch.setattr(buildings_variables, "volnucb", bldgsparam.volnucb)
+
+    cryv, vrci, rbv, rmbv, wsv, elev = buildings_module.bldgs(
+        iprint=bldgsparam.iprint,
+        outfile=bldgsparam.outfile,
+        pfr=bldgsparam.pfr,
+        pfm=bldgsparam.pfm,
+        tfro=bldgsparam.tfro,
+        tfri=bldgsparam.tfri,
+        tfh=bldgsparam.tfh,
+        tfm=bldgsparam.tfm,
+        n_tf=bldgsparam.n_tf,
+        shro=bldgsparam.shro,
+        shri=bldgsparam.shri,
+        shh=bldgsparam.shh,
+        shm=bldgsparam.shm,
+        crr=bldgsparam.crr,
+        helpow=bldgsparam.helpow,
+    )
+
+    assert buildings_variables.wrbi == pytest.approx(bldgsparam.expected_wrbi)
+    assert buildings_variables.efloor == pytest.approx(bldgsparam.expected_efloor)
+    assert buildings_variables.admvol == pytest.approx(bldgsparam.expected_admvol)
+    assert buildings_variables.shovol == pytest.approx(bldgsparam.expected_shovol)
+    assert buildings_variables.convol == pytest.approx(bldgsparam.expected_convol)
+    assert buildings_variables.volnucb == pytest.approx(bldgsparam.expected_volnucb)
+
+    assert cryv == pytest.approx(bldgsparam.expected_cryv)
+    assert vrci == pytest.approx(bldgsparam.expected_vrci)
+    assert rbv == pytest.approx(bldgsparam.expected_rbv)
+    assert rmbv == pytest.approx(bldgsparam.expected_rmbv)
+    assert wsv == pytest.approx(bldgsparam.expected_wsv)
+    assert elev == pytest.approx(bldgsparam.expected_elev)
