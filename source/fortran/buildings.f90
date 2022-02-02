@@ -142,7 +142,7 @@ contains
 
     ! Arguments
     integer, intent(in) :: iprint, outfile
-    real(dp), intent(inout) :: pfr
+    real(dp), intent(in) :: pfr
     real(dp), intent(in) :: pfm,tfro,tfri,tfh,tfm,n_tf,shro, &
          shri,shh,shm,crr,helpow
 
@@ -174,6 +174,7 @@ contains
     ! rxcl : clearance around reactor, m
     ! trcl : transportation clearance between components, m
     ! row  : clearance to building wall for crane operation, m
+    ! 19.48258241468535 + 4 + max(13.764874193548387 - 4.7423258064516141, 17.123405859443331 - 2.9939411851091102) + 1 + 4 = 42.61204708901957
     wrbi = bmr + rxcl + sectl + trcl + row
 
     ! Calculate length to allow PF or cryostat laydown (m)
