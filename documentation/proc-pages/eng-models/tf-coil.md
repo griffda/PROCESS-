@@ -1280,8 +1280,7 @@ as follows: the upper critical field at zero temperature and strain is set
 using input parameter `bcritsc`, and the critical temperature at zero field and 
 strain is set using input parameter `tcritsc`.
 
-For `i_tf_sc_mat = 6`, the turn design is largely different from the one 
-ITER one. 
+For `i_tf_sc_mat = 6`, the turn design is largely different from the ITER one. 
 
 The current in the TF coils must be sufficient to produce the required
 toroidal field at the centre of the plasma. In tokamaks, the field falls off
