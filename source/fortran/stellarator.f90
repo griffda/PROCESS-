@@ -414,7 +414,7 @@ contains
     required_radial_space = (tfcth/2.0D0 + gapds + d_vv_in + shldith + blnkith + fwith + scrapli)
 
     ! derivative_min_LCFS_coils_dist  for how strong the stellarator shape changes wrt to aspect ratio
-    available_radial_space = f_r*(config%derivative_min_LCFS_coils_dist*(-rminor+config%rminor_ref) + &
+    available_radial_space = f_r*(config%derivative_min_LCFS_coils_dist*config%rminor_ref*(1/f_aspect-1) + &
          config%min_plasma_coil_distance)
 
     !  Radius to inner edge of inboard shield
