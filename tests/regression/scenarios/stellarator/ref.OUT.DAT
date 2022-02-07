@@ -13,15 +13,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1146-gb851821f code contains untracked changes
+   Version : 2.3.0   Release Date :: 2022-01-20
+   Tag No. : v2.1-1176-g8889788a code contains untracked changes
     Branch : 1205-tf-cond-stiffness
-   Git log : Changed\ the\ name\ of\ the\ eyngseries\ functions\ to\ be
- Date/time : 18 Jan 2022 13:14:34 -05:00(hh:mm) UTC
+   Git log : Changed\ the\ name\ of\ the\ TF\ coil\ conductor\ behavior
+ Date/time :  7 Feb 2022 11:26:04 -05:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-4/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-4/test_scenario_stellarator_0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-18/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-18/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  

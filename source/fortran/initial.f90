@@ -264,7 +264,7 @@ subroutine check
     use physics_variables, only: aspect, eped_sf, fdeut, fgwped, fhe3, &
         fgwsep, ftrit, ibss, i_single_null, icurr, ieped, idivrt, ishape, &
         iradloss, isc, ipedestal, ilhthresh, itart, nesep, rhopedn, rhopedt, &
-        rnbeam, ifispact, neped, te, tauee_in, tesep, teped
+        rnbeam, ifispact, neped, te, tauee_in, tesep, teped, itartpf
     use plasmod_variables, only: plasmod_contrpovr, plasmod_i_equiltype, &
         plasmod_i_modeltype, plasmod_contrpovs
     use pulse_variables, only: lpulse
@@ -676,12 +676,15 @@ subroutine check
             idiags(1) = icurr ; call report_error(37)
         end if
 
-        ! Location of the TF coils 
+        !! If using Peng and Strickler (1986) model (itartpf == 0)
+        ! Overwrite the location of the TF coils 
         ! 2 : PF coil on top of TF coil
         ! 3 : PF coil outside of TF coil
-        ipfloc(1) = 2
-        ipfloc(2) = 3
-        ipfloc(3) = 3
+        if (itartpf == 0) then
+          ipfloc(1) = 2
+          ipfloc(2) = 3
+          ipfloc(3) = 3
+        end if
 
         ! Water cooled copper magnets initalisation / checks
         if ( i_tf_sup == 0 ) then

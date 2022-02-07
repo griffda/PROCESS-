@@ -13,15 +13,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1146-gb851821f code contains untracked changes
+   Version : 2.3.0   Release Date :: 2022-01-20
+   Tag No. : v2.1-1176-g8889788a code contains untracked changes
     Branch : 1205-tf-cond-stiffness
-   Git log : Changed\ the\ name\ of\ the\ eyngseries\ functions\ to\ be
- Date/time : 18 Jan 2022 13:13:47 -05:00(hh:mm) UTC
+   Git log : Changed\ the\ name\ of\ the\ TF\ coil\ conductor\ behavior
+ Date/time :  7 Feb 2022 11:24:57 -05:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-4/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-4/test_scenario_FNSF_0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-18/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-18/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -599,6 +599,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Outboard leg toroidal thickness (m)                                      (tftort)                  4.070E-01  OP 
  Maximum inboard edge height (m)                                          (hmax)                    4.421E+00  OP 
  Mean coil circumference (inboard leg not included) (m)                   (tfleng)                  1.657E+01  OP 
+ Length of the inboard segment (m)                                        (cplen)                   0.000E+00  OP 
  Vertical TF shape                                                        (i_tf_shape)                      2     
  
  Picture frame coil, inner surface approximated by
@@ -648,10 +649,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Copper mass per coil (kg)                                                (whtconcu)                3.543E+04  OP 
  Steel conduit mass per coil (kg)                                         (whtconsh)                0.000E+00  OP 
  Conduit insulation mass per coil (kg)                                    (whtconin)                6.929E+01  OP 
- Mass of inboard legs (kg)                                                (whtcp)                   1.236E+05     
- Mass of outboard legs (kg)                                               (whttflgs)                3.099E+05     
+ Mass of inboard legs (kg)                                                (whtcp)                   1.236E+05  OP 
+ Mass of outboard legs (kg)                                               (whttflgs)                3.099E+05  OP 
  Mass of each TF coil (kg)                                                (whttf/n_tf)              3.612E+04  OP 
- Total TF coil mass (kg)                                                  (whttf)                   4.335E+05     
+ Total TF coil mass (kg)                                                  (whttf)                   4.335E+05  OP 
  
  Maximum B field and currents:
  

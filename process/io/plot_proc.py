@@ -8,6 +8,10 @@
   CCFE
   Revised by Michael Kovari, 7/1/2016
 
+  24/11/2021: Global dictionary variables moved within the functions
+              to avoid cyclic dependencies. This is because the dicts
+              generation script imports, and inspects, process.
+
 """
 
 import os
@@ -30,9 +34,6 @@ else:
     import importlib_resources as resources
 
 from process.io.python_fortran_dicts import get_dicts
-
-# Load dicts from dicts JSON file
-proc_dict = get_dicts()
 
 solenoid = 'pink'
 cscompression = 'red'
@@ -1541,6 +1542,9 @@ def plot_header(axis, mfile_data, scan):
         scan --> scan number to use
 
     """
+    # Load dicts from dicts JSON file
+    dicts = get_dicts()
+
     xmin = 0
     xmax = 1
     ymin = -16
@@ -1559,7 +1563,7 @@ def plot_header(axis, mfile_data, scan):
              ("!" + mfile_data.data["date"].get_scan(-1), "Date:", ""),
              ("!" + mfile_data.data["time"].get_scan(-1), "Time:", ""),
              ("!" + mfile_data.data["username"].get_scan(-1), "User:", ""),
-             ("!" + proc_dict['DICT_OPTIMISATION_VARS']
+             ("!" + dicts['DICT_OPTIMISATION_VARS']
              [str(abs(int(mfile_data.data["minmax"].get_scan(-1))))],
              "Optimising:", "")]
 
@@ -1759,6 +1763,9 @@ def plot_magnetics_info(axis, mfile_data, scan):
 
     """
 
+    # Load dicts from dicts JSON file
+    dicts = get_dicts()
+
     # Check for Copper magnets
     if "i_tf_sup" in mfile_data.data.keys():
         i_tf_sup = int(mfile_data.data["i_tf_sup"].get_scan(scan))
@@ -1813,7 +1820,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
         i_tf_sc_mat = int(0)
 
     if i_tf_sc_mat > 0:
-        tftype = proc_dict['DICT_TF_TYPE'][str(int(mfile_data.data["i_tf_sc_mat"].get_scan(scan)))]
+        tftype = dicts['DICT_TF_TYPE'][str(int(mfile_data.data["i_tf_sc_mat"].get_scan(scan)))]
     else:
         tftype = "Resistive"
     
