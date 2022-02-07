@@ -29,7 +29,7 @@ module stellarator_module
   logical :: first_call_stfwbs = .true.
 
   private :: config
-  public :: stcall, stinit, stout
+  public :: stinit
 
 contains
 
@@ -52,66 +52,6 @@ contains
   end subroutine init_stellarator_module
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine stcall
-
-    !! Routine to call the physics and engineering modules
-    !! relevant to stellarators
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! author: F Warmer, IPP Greifswald
-    !! None
-    !! This routine is the caller for the stellarator models.
-    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use availability_module, only: avail
-    use buildings_module, only: bldgcall
-    use cost_variables, only: cost_model
-    use costs_module, only: costs
-    use costs_2015_module, only: costs_2015
-    use power_module, only: tfpwr, power1, acpow, power2
-    use vacuum_module, only: vaccall
-    use constants, only: nout
-
-    implicit none
-
-    !  Arguments
-
-    !  Local variables
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    ! Stellarator Routines      
-    call stnewconfig          
-    call stgeom
-    call stphys(nout,0)
-    call stopt(nout,0)
-    call stcoil(nout,0)
-    call stbild(nout,0)
-    call ststrc(nout,0)
-    call stfwbs(nout,0)
-    call stdiv(nout,0)
-
-    ! Tokamak Routines, where we think they are applicable also for stellarators
-    call tfpwr(nout,0)
-    call power1
-    call vaccall(nout,0)
-    call bldgcall(nout,0)
-    call acpow(nout,0)
-    call power2(nout,0)
-    call avail(nout,0)
-
-    if (cost_model == 0) then
-      call costs(nout,0)
-    else if (cost_model == 1) then
-      call costs_2015(0,0)
-    endif
-
-
-    ! set first call variable to false:
-    first_call  = .false.
-  end subroutine stcall
 
   subroutine stinit
 
@@ -2256,71 +2196,6 @@ contains
    30  format(t2,a24,t34,f7.3,t58,f7.3)
 
   end subroutine stigma
-
-  subroutine stout(outfile)
-
-    !! Routine to print out the final stellarator machine parameters
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! author: F Warmer, IPP Greifswald
-    !! outfile : input integer : output file unit
-    !! This routine prints out the stellarator's parameters at the
-    !! end of a run.
-    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
-    use availability_module, only: avail
-    use buildings_module, only: bldgcall
-    use costs_module, only: costs
-    use physics_module, only: outplas
-    use power_module, only: tfpwr, acpow, power2
-    use vacuum_module, only: vaccall
-    use physics_variables, only: aspect, rmajor
-    use tfcoil_variables, only: n_tf
-    implicit none
-
-    !  Arguments
-
-    integer, intent(in) :: outfile
-
-    !  Local variables
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    ! Some on screen printouts for consistency checks:
-    print *,"Used stellarator configuration: ", config%name
-    print *,"Deviation from reference point"
-    print *,"aspect ratio",aspect/config%aspect_ref
-    print *,"major radius",rmajor/config%rmajor_ref
-    print *,"n_tf (should be 1)", n_tf/(config%coilspermodule*config%symmetry)
-
-    call costs(outfile,1)
-    call avail(outfile,1)
-    call outplas(outfile)
-    call stphys(outfile,1)
-    call stopt(outfile,1)
-    call stigma(outfile)
-    call stheat(outfile,1)
-    call stdiv(outfile,1)
-    call stbild(outfile,1)
-    call stcoil(outfile,1)
-    call ststrc(outfile,1)
-    call stfwbs(outfile,1)
-
-    !if (ifispact == 1) then
-    !   call fispac(0)
-    !   call fispac(1)
-    !   call loca(outfile,0)
-    !   call loca(outfile,1)
-    !end if
-
-    call tfpwr(outfile,1)
-    call vaccall(outfile,1)
-    call bldgcall(outfile,1)
-    call acpow(outfile,1)
-    call power2(outfile,1)
-
-  end subroutine stout
 
   subroutine ststrc(outfile,iprint)
 

@@ -256,7 +256,7 @@
    {"no": 250, "level": 2, "message": "[tfcoil][cntrpst] Negative conductor peak temperature difference, set to 0"},
    {"no": 251, "level": 3, "message": "LOADXC: Beta should not be in ixc if istell>0. Use Constraints 24 and 84 instead."},
    {"no": 252, "level": 3, "message": "CHECK: No CS precompression structure for bucked and wedged, use iprecomp = 0."},
-   {"no": 253, "level": 3, "message": "CHECK: Use generalized plane strain for resistive magnets (i_tf_plane_stress = 0)."},
+   {"no": 253, "level": 3, "message": "CHECK: Use generalized plane strain for resistive magnets (i_tf_stress_model = 0 or 2)."},
    {"no": 254, "level": 3, "message": "CHECK: integer turns (i_tf_turns_integer = 1) not supported for REBCO (i_tf_sc_mat = 6)"},
    {"no": 255, "level": 3, "message": "CHECK: The TF coil WP thickness (dr_tf_wp) must be at least"},
    {"no": 256, "level": 2, "message": "CHECK: Top CP radius larger that its value determined with plasma shape"},

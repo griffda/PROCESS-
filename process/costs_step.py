@@ -1,3 +1,5 @@
+from process.variables import AnnotatedVariable
+
 from process import fortran as ft
 from process.fortran import constants
 from process.fortran import build_variables as bv
@@ -36,25 +38,26 @@ class CostsStep:
         self.iprint = 0  # switch for writing to output file (1=yes)
 
         # Various cost account values (M$)
-        self.step20: float = 0.0
-        self.step21: float = 0.0
-        self.step22: float = 0.0
-        self.step23: float = 0.0
-        self.step24: float = 0.0
-        self.step25: float = 0.0
-        self.step27: float = 0.0
-        self.step91: float = 0.0
-        self.step92: float = 0.0
-        self.step93: float = 0.0
+        self.step20 = AnnotatedVariable(float, 0.0, docstring="step20 account cost", units="M$")
+        self.step21 = AnnotatedVariable(float, 0.0, docstring="step21 account cost", units="M$")
+        self.step22 = AnnotatedVariable(float, 0.0, docstring="step22 account cost", units="M$")
+        self.step23 = AnnotatedVariable(float, 0.0, docstring="step23 account cost", units="M$")
+        self.step24 = AnnotatedVariable(float, 0.0, docstring="step24 account cost", units="M$")
+        self.step25 = AnnotatedVariable(float, 0.0, docstring="step25 account cost", units="M$")
+        self.step27 = AnnotatedVariable(float, 0.0, docstring="step27 account cost", units="M$")
+        self.step91 = AnnotatedVariable(float, 0.0, docstring="step91 account cost", units="M$")
+        self.step92 = AnnotatedVariable(float, 0.0, docstring="step92 account cost", units="M$")
+        self.step93 = AnnotatedVariable(float, 0.0, docstring="step93 account cost", units="M$")
+        #TODO provide appropriate docstring for this variable
+        self.fwblkcost = AnnotatedVariable(float, 0.0, docstring="account cost", units="M$")
 
         # Scaling Properties
-        self.fwblkcost: float = 0.0
-        self.vfi: float = 0.0
-        self.vfi_star: float = 0.0
-        self.ptherm_star: float = 0.0
-        self.rmajor_star: float = 0.0
-        self.rminor_star: float = 0.0
-        self.pth: float = 0.0
+        self.vfi = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.vfi_star = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.ptherm_star = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.rmajor_star = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.rminor_star = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.pth = AnnotatedVariable(float, 0.0, docstring="", units="")
 
     def run(self):
         """Run main costs_step subroutine."""
@@ -94,7 +97,7 @@ class CostsStep:
 
         # Output header
         if self.iprint == 1 and cv.output_costs == 1:
-            title = "STEP Costing Model (" + str(cv.step_currency).strip() + ")"
+            title = "STEP Costing Model (" + f2py_compatible_to_string(cv.step_currency) + ")"
             po.oheadr(self.outfile, title.strip())
 
         # Account 20 : Land and Rights
@@ -876,7 +879,7 @@ class CostsStep:
                 po.ocmmnt(self.outfile, "feffwbl=", feffwbl, "  fwbllife=", fwbllife)
 
             po.write(
-                self.outfile, "\t" * 36 + "Annual Costs, M$" + "\t" * 6 + "COE, m$/kWh"
+                self.outfile, "\t" * 9 + "Annual Costs, M$" + "\t" * 1 + " " * 4 + "COE, m$/kWh"
             )
             po.dblcol(self.outfile, "Capital Investment", anncap, cv.coecap)
             po.dblcol(self.outfile, "Operation & Maintenance", annoam, cv.coeoam)
