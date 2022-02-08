@@ -520,7 +520,7 @@ contains
          write(*,*) 'isthtr is not set to 1 but icc=88 (ECRH) was called.'
       end if
 
-      !call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht_local,pscalingmw_local)
+      call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht_local,pscalingmw_local)
     end if
 
 
@@ -563,10 +563,6 @@ contains
    end subroutine stopt_output
 
   end subroutine stopt
-
-
-
-
 
 
   subroutine stphys(outfile,iprint)
@@ -1947,87 +1943,6 @@ contains
 
   end subroutine stdlim_ecrh
 
-  subroutine ecrh_ignitable(gyro_frequency_max,bt_local,te0_needed,bt_ecrh_max)
-
-   !! Function to calculate if the plasma is ignitable with the current values for the B field. Assumes
-   !! current ECRH achievable peak temperature (which is inaccurate as the cordey pass should be calculated)
-   !! author: J Lion, IPP Greifswald
-   !! gyro_frequency_max     : input real : Maximal available Gyrotron frequency (1/s) NOT (rad/s)
-   !! bt  : input real : Maximal magnetic field on axis (T)
-   !! te0_needed : output real: Needed peak electron temperature, reached by ECRH (keV)
-   !! bt_ecrh_max : output real: Maximal operatable magnetic field strength for ECRH (T)
-   !! This routine calculates the density limit due to an ECRH heating scheme on axis
-   !! Assumes current peak temperature (which is inaccurate as the cordey pass should be calculated)
-   !! Maybe use this: https://doi.org/10.1088/0029-5515/49/8/085026
-   !!
-   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-   use const_and_precisions, only: pi, keV_
-   use physics_variables, only: te, dene, alphan, alphat, powerht, pscalingmw,vol, bt
-   use constants, only: nout
-   implicit none
-
-   !  Arguments
-
-   real(dp), intent(in) :: bt_local, gyro_frequency_max
-   real(dp), intent(out) :: te0_needed, bt_ecrh_max
-
-   !  Local variables
-   integer:: i
-   real(dp) ::ne0_max,te_old,dene_old, bt_old
-
-
-   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   
-   ! This routine calculates the physics again at ecrh density
-
-   ! Save the current values:
-   te0_needed = 7.0d0 ! peak values
-   te_old = te
-   te = te0_needed/(1.0D0+alphat)
-
-   
-   call stdlim_ecrh(gyro_frequency_max, bt_local,ne0_max,bt_ecrh_max)
-
-   dene_old = dene
-   dene = ne0_max/(1.0d0+alphan)
-
-   bt_old = bt
-   bt = bt_ecrh_max
-
-
-   call stphys(nout,0)
-
-
-   ! Iterate it up
-   i = 1
-   do while (powerht< pscalingmw)
-      te0_needed = te0_needed + 2d0
-      te = te0_needed/(1.0D0+alphat)
-      i = i+1
-
-      call stphys(nout,0)
-
-      if(i>8) then
-         te0_needed = 1d3+te0_needed
-         print *, "Heating Power (MW):", powerht, "Loss Power (MW):", pscalingmw,&
-             "bt_ECRH: ",bt_ecrh_max, " bt: ", bt_old, " te_needed: ",te0_needed, "Density: ", ne0_max/(1.0d0+alphan)
-         exit
-      end if
-   end do
-   
-   ! Reverse it and do it again because anything more efficiently isn't suitable with the current implementation
-   ! This is bad practice but seems to be necessary as of now:
-   te = te_old
-   dene = dene_old
-   bt = bt_old
-
-   call stphys(nout,0)
-   
-
-  end subroutine ecrh_ignitable
-
-
   subroutine power_at_ignition_point(gyro_frequency_max,te0_available,powerht_out,pscalingmw_out)
 
    !! Routine to calculate if the plasma is ignitable with the current values for the B field. Assumes
@@ -2056,7 +1971,6 @@ contains
    !  Local variables
    integer:: i
    real(dp) ::ne0_max,te_old,dene_old, bt_old, bt_ecrh_max
-
 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    
