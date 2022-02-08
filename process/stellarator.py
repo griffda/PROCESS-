@@ -77,7 +77,7 @@ class Stellarator:
 
         st.stnewconfig()
         st.stgeom()
-        st.stphys()
+        st.stphys(self.outfile, 0)
         st.stcoil(self.outfile, 0)
         st.stbild(self.outfile, 0)
         st.ststrc(self.outfile, 0)
