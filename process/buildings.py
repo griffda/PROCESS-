@@ -11,7 +11,6 @@ from process.fortran import build_variables
 from process.fortran import divertor_variables
 from process.fortran import heat_transport_variables
 from process.fortran import constants
-from process.fortran import buildings_module
 from process.fortran import process_output as po
 
 
@@ -61,7 +60,8 @@ class Buildings:
                 buildings_variables.rmbvol,
                 buildings_variables.wsvol,
                 buildings_variables.elevol,
-            ) = buildings_module.bldgs(
+            ) = self.bldgs(
+                output,
                 pfcoil_variables.pfrmax,
                 pfcoil_variables.pfmmax,
                 tfro,
@@ -77,8 +77,6 @@ class Buildings:
                 fwbs_variables.whtshld,
                 fwbs_variables.rdewex,
                 heat_transport_variables.helpow,
-                int(output),
-                self.outfile,
             )
 
     def bldgs(
@@ -279,7 +277,7 @@ class Buildings:
         wsv = buildings_variables.wsvfac * wsa * rmbh
 
         # Cryogenic building volume
-        cryv = 55.0e0 * helpow**0.5
+        cryv = 55.0e0 * helpow ** 0.5
         # Other building volumes
         # pibv : power injection building volume, m3
         # esbldgm3 is forced to be zero if no energy storage is required (lpulse=0)
@@ -661,7 +659,7 @@ class Buildings:
         hotcell_area = hotcell_vol / buildings_variables.hotcell_h
 
         # derive estimates for length and width by assuming a square building
-        hotcell_l = hotcell_area**0.5
+        hotcell_l = hotcell_area ** 0.5
         hotcell_w = hotcell_l
 
         # external dimensions include same wall and roof thicknesses as reactor building

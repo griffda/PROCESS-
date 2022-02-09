@@ -10,7 +10,6 @@ from process.fortran import pfcoil_variables
 from process.fortran import tfcoil_variables
 from process.fortran import build_variables
 from process.fortran import divertor_variables
-from process.fortran import buildings_module
 
 
 @pytest.fixture
