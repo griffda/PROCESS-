@@ -49,6 +49,10 @@ from process.utilities.f2py_string_patch import string_to_f2py_compatible, f2py_
 import argparse
 from process.costs_step import CostsStep
 from process.tfcoil import TFcoil
+from process.divertor import Divertor
+from process.availability import Availability
+from process.ife import IFE
+from process.stellarator import Stellarator
 from process.caller import Caller
 
 from pathlib import Path
@@ -443,6 +447,10 @@ class Models():
         """
         self.costs_step = CostsStep()
         self.tfcoil = TFcoil()
+        self.divertor = Divertor()
+        self.availability = Availability()
+        self.ife = IFE(availability=self.availability)
+        self.stellarator = Stellarator(availability=self.availability)
 
 def main(args=None):
     """Run Process.

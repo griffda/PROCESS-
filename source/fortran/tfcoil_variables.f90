@@ -135,6 +135,9 @@ module tfcoil_variables
   real(dp) :: cforce
   !! centering force on inboard leg (per coil) (N/m)
 
+  real(dp) :: cplen
+  !! length of TF coil inboard leg ('centrepost') (`i_tf_sup = 1`)
+
   real(dp) :: cpttf
   !! TF coil current per turn (A). (calculated for stellarators) (calculated for 
   !! integer-turn TF coils `i_tf_turns_integer=1`) (`iteration variable 60`)
@@ -178,7 +181,7 @@ module tfcoil_variables
   real(dp) :: insstrain
   !! Radial strain in insulator
 
-  integer :: i_tf_plane_stress
+  integer :: i_tf_stress_model
   !! Switch for the TF coil stress model
   !!   0 : Generalized plane strain formulation, Issues #977 and #991, O(n^3)
   !!   1 : Old plane stress model (only for SC)
@@ -804,6 +807,7 @@ module tfcoil_variables
     acs = 0.0D0
     cdtfleg = 0.0D0
     cforce = 0.0D0
+    cplen = 0.0D0
     cpttf = 7.0e4
     cpttf_max = 9.0e4
     dcase = 8000.0D0
@@ -819,7 +823,7 @@ module tfcoil_variables
     fcutfsu = 0.69D0
     fhts = 0.5D0
     insstrain = 0.0D0
-    i_tf_plane_stress = 1
+    i_tf_stress_model = 1
     i_tf_tresca = 0
     i_tf_wp_geom = -1
     i_tf_case_geom = 0

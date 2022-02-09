@@ -7,10 +7,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.13)
 
 # Ensure python3 interpreter is used
-if(CMAKE_HOST_APPLE)
-  SET(CMAKE_FIND_FRAMEWORK NEVER)
-  set(CMAKE_MACOSX_RPATH ON)
-endif()
 SET(Python3_FIND_VIRTUALENV FIRST)
 find_package(PythonInterp 3 REQUIRED)
 
@@ -50,6 +46,7 @@ MESSAGE(STATUS "\tPROCESS Module Installation Directory: ${PROCESS_MODULE_INSTAL
 # Define various addresses for locations of files
 # relative to the CMake root directory
 SET(PROCESS_SRC_DIR ${CMAKE_SOURCE_DIR}/source/fortran)
+SET(PROCESS_PYTHON_SRC_DIR ${CMAKE_SOURCE_DIR}/process)
 SET(PLASMOD_SRC_DIR ${CMAKE_SOURCE_DIR}/lib/PLASMOD)
 SET(REFPROP_SRC_DIR ${CMAKE_SOURCE_DIR}/lib/REFPROP)
 
@@ -58,6 +55,7 @@ SET(PYTHON_LIBS_DIR ${PYTHON_MODULE_DIR}/lib)
 SET(PYTHON_SOURCE_IO_DIR ${PYTHON_MODULE_DIR}/io)
 
 FILE(GLOB PROCESS_SRC_PATHS ${PROCESS_SRC_DIR}/*.f90 ${PROCESS_SRC_DIR}/*.f)
+FILE(GLOB PROCESS_PYTHON_SRC_PATHS ${PROCESS_PYTHON_SRC_DIR}/*.py)
 
 # 'Cherry Pick' Files to Compile in REFPROP, PLASMOD and PROCESS libraries
 
@@ -98,9 +96,7 @@ LIST(APPEND PROCESS_SRCS
     stellarator_variables.f90
     plant_power.f90
     final_module.f90
-    availability.f90
     cost_variables.f90
-    divertor.f90
     divertor_variables.f90
     fwbs_variables.f90
     physics.f90
@@ -141,6 +137,8 @@ LIST(APPEND PROCESS_SRCS
     main_module.f90
     error_handling.f90
     global_variables.f90
+    constraint_variables.f90
+    vacuum_variables.f90
 )
 
 PREPROCESS()
@@ -156,19 +154,16 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME}
     PROPERTIES LINKER_LANGUAGE Fortran
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/process/lib
 )
-IF(NOT CMAKE_HOST_APPLE)
-    SET_TARGET_PROPERTIES(${PROJECT_NAME}
-        PROPERTIES BUILD_RPATH $ORIGIN
-    )
-ENDIF()
+
+SET_TARGET_PROPERTIES(${PROJECT_NAME}
+    PROPERTIES BUILD_RPATH $ORIGIN
+)
+
 ADD_DEPENDENCIES(${PROJECT_NAME} ${PIP_NAME})
 
 
-IF(CMAKE_HOST_APPLE)
-    SET(LIBRARY_OUTPUT_SUFFIX ".dylib")
-ELSEIF(CMAKE_HOST_UNIX)
-    SET(LIBRARY_OUTPUT_SUFFIX ".so")
-ENDIF()
+
+SET(LIBRARY_OUTPUT_SUFFIX ".so")
 
 # Stage 3: Run f2py
 # Builds every time to make sure the libprocess.so file is up-to-date
@@ -196,7 +191,7 @@ ADD_CUSTOM_TARGET(install_process ALL
     COMMAND ${PYTHON_EXECUTABLE} -m pip install --no-cache-dir ${CMAKE_SOURCE_DIR}
 )
 
-ADD_DEPENDENCIES(install_process ${PIP_NAME} ${F2PY_NAME} ${FORD_NAME} ${DICTS_NAME} ${GFORTLIB_NAME} coverage_cleanup)
+ADD_DEPENDENCIES(install_process ${PIP_NAME} ${F2PY_NAME} ${FORD_NAME} ${GFORTLIB_NAME} coverage_cleanup)
 
 if (EXISTS ${CMAKE_SOURCE_DIR}/lcov_results)
   execute_process(COMMAND echo "-- Delete existing lcov_coverage directory...")
