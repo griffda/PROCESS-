@@ -283,6 +283,11 @@ tracking_rtv:
       when: on_success
     # when testing CI, run the tracker
     - if: $CI_TEST_BUILD
+  dependencies:
+    - make-py38
+    - baseline_2018-py38
+    - baseline_2019-py38
+    - starfire-py38
 
 
 #-----------------
@@ -343,6 +348,8 @@ pages:
       when: on_success
     # when testing CI, generate the documentation
     - if: $CI_TEST_BUILD
+  dependencies:
+    - tracking_rtv
 
 #-----------------
 #  STEP
