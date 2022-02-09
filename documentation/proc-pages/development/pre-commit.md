@@ -9,11 +9,32 @@ Pre-commit performs some miscellaneous checks such as check merge conflicts have
 If pre-commit modifies any files, that job will **fail** and the modified files will need to be added added (using `git add`) to be commited.
 
 
-!!! note
-    Installation of pre-commit is covered in the [Installation Guide](http://process.gitpages.ccfe.ac.uk/process/installation/).
+## Installation
+When running `cmake --build build/` pre-commit should have been installed automatically. This can be tested by typing `pre-commit -h`; if pre-commit is not installed, then it can be installed by `python3.8 -m pip install pre-commit`. For developers of Process, `pre-commit install` will install pre-commit as a **Git pre-commit hook**. When pre-commit is a hook, it will run on all of the files you have changed before allowing a commit -- if any changes are identified, they will be fixed and you will need to re-add the files that pre-commit has changed.
 
+!!! example "Adding two files"
+    Consider that two files are being `git add`ed.
+    One of the files, `foo.py` has stylistic changes which **Black** objects to.
 
-You can run pre-commit before you `git commit` to avoid the need to re-add files: `pre-commit run -a` to run all hooks on all files. Without the `-a` flag, only staged files will be checked (same as when the automatic Git hook is called).
+    ```
+    > git add foo.py bar.py
+    > git commit -m "Adding foo and bar"
+        Trim Trailing Whitespace.................................................Passed
+        Check for merge conflicts................................................Passed
+        Debug Statements (Python)................................................Passed
+        black....................................................................Failed
+            - hook id: black
+            - exit code: 1
+            - files were modified by this hook
+
+            Fixing foo.py
+        Format YAML files....................................(no files to check)Skipped
+
+    > git add foo.py # since black has modified foo.py
+    > git commit -m "Adding foo and bar"
+    ```
+
+    To avoid the need to re-add files a second time you could run `black .` which will do the formatting (of Python code) that pre-commit would do.
 
 ## Flake8
 [flake8 Docs](https://flake8.pycqa.org/en/latest/index.html)

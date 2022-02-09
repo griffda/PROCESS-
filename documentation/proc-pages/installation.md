@@ -57,7 +57,7 @@ cmake -S . -B build
 cmake --build build
 ```
 
-If you plan on developing code for Process, you will need to setup **pre-commit** which will run over files you submit before they are allowed to be pushed. CMake should have installed pre-commit as part of the Process installation; `python3.8 -m pip install pre-commit` can also be issued to install pre-commit.
+If you plan on developing code for Process, you will need to setup **pre-commit** which will run over files you submit before they are allowed to be pushed. CMake should have installed **pre-commit** as part of the Process installation; `python3.8 -m pip install pre-commit` can also be issued to install pre-commit.
 
 Pre-commit can be configured to automatically run before each git commit by issuing `pre-commit install` in the root directory.
 
