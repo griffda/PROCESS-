@@ -12,6 +12,8 @@ If pre-commit modifies any files, that job will **fail** and the modified files 
 ## Installation
 When running `cmake --build build/` pre-commit should have been installed automatically. This can be tested by typing `pre-commit -h`; if pre-commit is not installed, then it can be installed by `python3.8 -m pip install pre-commit`. For developers of Process, `pre-commit install` will install pre-commit as a **Git pre-commit hook**. When pre-commit is a hook, it will run on all of the files you have changed before allowing a commit -- if any changes are identified, they will be fixed and you will need to re-add the files that pre-commit has changed.
 
+
+
 !!! example "Adding two files"
     Consider that two files are being `git add`ed.
     One of the files, `foo.py` has stylistic changes which **Black** objects to.
@@ -36,18 +38,11 @@ When running `cmake --build build/` pre-commit should have been installed automa
 
     To avoid the need to re-add files a second time you could run `black .` which will do the formatting (of Python code) that pre-commit would do.
 
-## Flake8
-[flake8 Docs](https://flake8.pycqa.org/en/latest/index.html)
-Flake8 is the linter that Process uses to ensure all Python code is of a certain quality. It, among other things, enforces a maximum line length, enforces strict rules around useless imports and unused variables.
+## Using black with VSCode
+In VSCode, use `Ctrl+,` (`Command+,` for Mac users) to open the settings page. From here, use the search bar to find **"Editor: Format On Save"** and tick the box. Next, search for **"Python > Formatting: Provider"** and set it to `black`. Now, upon saving a Python file, the black formatter will run over it.
 
-Flake8 will print a list of problems which should be addressed before a commit is made - these issues will be flagged by the CI system, and the job will fail.
-
-Flake8 has a list of excluded issues that it will not check for.
-
-## Black
-[Black Docs](https://black.readthedocs.io/en/stable/)
-Black is an automatic code formatter for Python. It enforces a "one right-way" system. All code will be formatted to comply with their code style. This allows developers to write code in a style they are familiar with, and format their code before commiting it to the repository.
-
-## yamlfmt
-[yamlfmt on GitHub](https://github.com/jumanjihouse/pre-commit-hook-yamlfmt)
-Formats all YAML files including CI and pre-commit configuration files.
+## Further reading
+The following is a list of references for the tools pre-commit runs:
+- [flake8 Docs](https://flake8.pycqa.org/en/latest/index.html)
+- [Black Docs](https://black.readthedocs.io/en/stable/)
+- [yamlfmt on GitHub](https://github.com/jumanjihouse/pre-commit-hook-yamlfmt)
