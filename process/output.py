@@ -174,7 +174,7 @@ def write(models, outfile):
     ft.power_module.pfpwr(outfile, 1)
 
     # Vacuum model
-    ft.vacuum_module.vaccall(outfile, 1)
+    models.vacuum.run(output=True)
 
     # Buildings model
     models.buildings.run(output=True)
