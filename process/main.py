@@ -477,7 +477,10 @@ class Models:
         self.buildings = Buildings()
         self.vacuum = Vacuum()
         self.ife = IFE(availability=self.availability)
-        self.stellarator = Stellarator(availability=self.availability, buildings=self.buildings)
+        self.stellarator = Stellarator(
+            availability=self.availability, buildings=self.buildings, vacuum=self.vacuum
+        )
+
 
 def main(args=None):
     """Run Process.

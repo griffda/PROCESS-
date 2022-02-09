@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+
+### Changed
+- Converted `buildings_module` to pure Python (#1552)
+
 ### Fixed
 - Divertor's `run` method was not being called with `output=True` from `output.py` (#1553)
 
