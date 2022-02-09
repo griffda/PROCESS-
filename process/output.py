@@ -97,7 +97,7 @@ def write(models, outfile):
 
     else:
         # Old Divertor Model: Comment this out MDK 30/11/16
-        models.divertor.run(output=False)
+        models.divertor.run(output=True)
 
     # Machine Build Model
     # Radial build
