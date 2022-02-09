@@ -165,7 +165,7 @@ class Caller:
         ft.vacuum_module.vaccall(ft.constants.nout, 0)
 
         # Buildings model
-        ft.buildings_module.bldgcall(ft.constants.nout, 0)
+        self.models.buildings.run(output=False)
 
         # Plant AC power requirements
         ft.power_module.acpow(ft.constants.nout, 0)

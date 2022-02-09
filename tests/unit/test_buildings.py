@@ -1,5 +1,6 @@
 import pytest
 from typing import NamedTuple, Any
+from process.buildings import Buildings
 from process.fortran import current_drive_variables
 from process.fortran import fwbs_variables
 from process.fortran import buildings_variables
@@ -10,6 +11,16 @@ from process.fortran import tfcoil_variables
 from process.fortran import build_variables
 from process.fortran import divertor_variables
 from process.fortran import buildings_module
+
+
+@pytest.fixture
+def buildings():
+    """Provides Buildings object for testing.
+
+    :returns buildings: initialised Buildings object
+    :rtype: process.buildings.Buildings
+    """
+    return Buildings()
 
 
 class BldgsSizesParam(NamedTuple):
@@ -429,7 +440,7 @@ class BldgsSizesParam(NamedTuple):
         ),
     ),
 )
-def test_bldgs_sizes(bldgssizesparam, monkeypatch):
+def test_bldgs_sizes(buildings, bldgssizesparam, monkeypatch):
     monkeypatch.setattr(buildings_variables, "i_bldgs_v", bldgssizesparam.i_bldgs_v)
     monkeypatch.setattr(buildings_variables, "efloor", bldgssizesparam.efloor)
     monkeypatch.setattr(buildings_variables, "volnucb", bldgssizesparam.volnucb)
@@ -677,11 +688,10 @@ def test_bldgs_sizes(bldgssizesparam, monkeypatch):
     monkeypatch.setattr(physics_variables, "rmajor", bldgssizesparam.rmajor)
     monkeypatch.setattr(physics_variables, "rminor", bldgssizesparam.rminor)
 
-    buildings_module.bldgs_sizes(
+    buildings.bldgs_sizes(
         tf_radial_dim=bldgssizesparam.tf_radial_dim,
         tf_vertical_dim=bldgssizesparam.tf_vertical_dim,
-        outfile=bldgssizesparam.outfile,
-        iprint=bldgssizesparam.iprint,
+        output=False,
     )
 
     assert buildings_variables.reactor_hall_l == pytest.approx(
@@ -881,7 +891,7 @@ class BldgsParam(NamedTuple):
         ),
     ),
 )
-def test_bldgs(bldgsparam, monkeypatch):
+def test_bldgs(buildings, bldgsparam, monkeypatch):
     monkeypatch.setattr(buildings_variables, "wrbi", bldgsparam.wrbi)
     monkeypatch.setattr(buildings_variables, "rxcl", bldgsparam.rxcl)
     monkeypatch.setattr(buildings_variables, "trcl", bldgsparam.trcl)
@@ -914,9 +924,8 @@ def test_bldgs(bldgsparam, monkeypatch):
     monkeypatch.setattr(buildings_variables, "convol", bldgsparam.convol)
     monkeypatch.setattr(buildings_variables, "volnucb", bldgsparam.volnucb)
 
-    cryv, vrci, rbv, rmbv, wsv, elev = buildings_module.bldgs(
-        iprint=bldgsparam.iprint,
-        outfile=bldgsparam.outfile,
+    cryv, vrci, rbv, rmbv, wsv, elev = buildings.bldgs(
+        output=False,
         pfr=bldgsparam.pfr,
         pfm=bldgsparam.pfm,
         tfro=bldgsparam.tfro,
