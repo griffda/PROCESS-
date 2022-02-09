@@ -23,6 +23,8 @@ import argparse
 import pickle
 from pathlib import Path
 
+from python_dicts import get_python_variables
+
 # Variables, arrays and dictionaries that aren't read from the source files so
 # have to be hard coded
 
@@ -108,9 +110,10 @@ class Dictionary(object):
 
 class ProjectDictionary(Dictionary):
     # Dicts that rely on the Ford project object
-    def __init__(self, name, project, value_type):
+    def __init__(self, name, project, python_variables, value_type):
         Dictionary.__init__(self, name)
         self.project = project # The Ford project object
+        self.python_variables = python_variables # List of AnnotatedVariables from Python PhysEng models
         self.value_type = value_type
         # The attribute in the project to make a dict for
 
@@ -120,6 +123,9 @@ class ProjectDictionary(Dictionary):
         for module in self.project.modules:
             for var in module.variables:
                 self.dict[self.name][var.name] = getattr(var, self.value_type)
+        
+        for annotated_variable in self.python_variables:
+            self.dict[self.name][annotated_variable.name] = getattr(annotated_variable, self.value_type)
 
 class SourceDictionary(Dictionary):
     # Dictionary created from Fortran source
@@ -147,8 +153,8 @@ class HardcodedDictionary(Dictionary):
 
 class VariableDescriptions(ProjectDictionary):
     # Dictionary of variable descriptions
-    def __init__(self, project):
-        ProjectDictionary.__init__(self, 'DICT_DESCRIPTIONS', project, 'doc')
+    def __init__(self, project, python_variables):
+        ProjectDictionary.__init__(self, 'DICT_DESCRIPTIONS', project, python_variables, 'doc')
 
     def make_dict(self):
         # Assign the variable name key to the var description
@@ -166,6 +172,9 @@ class VariableDescriptions(ProjectDictionary):
                 # when only one declaration is commented
                 elif not self.dict[self.name][var.name] and desc:
                     self.dict[self.name][var.name] = desc
+        
+        for annotated_variable in self.python_variables:
+            self.dict[self.name][annotated_variable.name] = annotated_variable.units
 
     def post_process(self):
         for var_name, var_desc in self.dict[self.name].items():
@@ -200,8 +209,8 @@ class DefaultValues(ProjectDictionary):
     the init subroutine. This requires Fortran source regex.
     """
     # Dictionary of default values of variables
-    def __init__(self, project):
-        ProjectDictionary.__init__(self, 'DICT_DEFAULT', project, 'initial')
+    def __init__(self, project, python_variables):
+        ProjectDictionary.__init__(self, 'DICT_DEFAULT', project, python_variables, 'initial')
 
     def make_dict(self):
         # Assign the variable name key to the initial value of the variable
@@ -214,6 +223,13 @@ class DefaultValues(ProjectDictionary):
         # Now fetch values in init subroutines to overwrite Ford's initial
         # values if necessary
         self.parse_init_subroutines()
+
+        for annotated_variable in self.python_variables:
+            self.dict[self.name][annotated_variable.name] = annotated_variable.obj
+            # obj is the initial value also
+
+
+
 
     def process_initial_value(self, var):
         """Process the initial value of a var from Ford.
@@ -523,8 +539,8 @@ class DefaultValues(ProjectDictionary):
 
 class Modules(ProjectDictionary):
     # Dictionary mapping modules to arrays of its module-level variables
-    def __init__(self, project):
-        ProjectDictionary.__init__(self, 'DICT_MODULE', project, 'name')
+    def __init__(self, project, python_variables):
+        ProjectDictionary.__init__(self, 'DICT_MODULE', project, python_variables, 'name')
 
     def make_dict(self):
         for module in self.project.modules:
@@ -533,6 +549,12 @@ class Modules(ProjectDictionary):
             for var in module.variables:
                 # Add module-level variables
                 self.dict[self.name][module.name].append(var.name)
+        
+        for annotated_variable in self.python_variables:
+            if annotated_variable.parent not in self.dict[self.name]:
+                self.dict[self.name][annotated_variable.parent] = []
+            self.dict[self.name][annotated_variable.parent].append(annotated_variable.name)
+            
 
 def to_type(string):
     """Given a string, attempts to convert the string to a numerical
@@ -941,14 +963,16 @@ def create_dicts(project):
 
     dict_objects = []
     # Different dict objects, e.g. variable descriptions
+
+    python_variables = get_python_variables()
     
     # Make dict objects
     # Some dicts depend on other dicts already existing in output_dicts, so
     # be careful if changing the order!
     dict_objects.extend([
-        VariableDescriptions(project),
-        DefaultValues(project),
-        Modules(project),
+        VariableDescriptions(project, python_variables),
+        DefaultValues(project, python_variables),
+        Modules(project, python_variables),
         HardcodedDictionary('DICT_TF_TYPE', DICT_TF_TYPE),
         HardcodedDictionary('DICT_FIMP', DICT_FIMP),
         HardcodedDictionary('DICT_OPTIMISATION_VARS', DICT_OPTIMISATION_VARS),
