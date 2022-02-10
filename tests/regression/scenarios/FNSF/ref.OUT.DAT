@@ -13,15 +13,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.1.2   Release Date :: 2021-07-01
-   Tag No. : v2.1-374-g1aaba1cd
-    Branch : 1303-divertor-costs-into-cost-model-2-stable
-   Git log : COMMIT_MSG
- Date/time :  2 Sep 2021 16:52:11 +01:00(hh:mm) UTC
+   Version : 2.2.0   Release Date :: 2021-10-26
+   Tag No. : v2.1-1116-g4cf3024e
+    Branch : 1358-sc-tf-coil-external-case-mass-redux
+   Git log : Merge\ branch\ |develop|\ into\ 1358-sc-tf-coil-extern
+ Date/time : 14 Jan 2022 13:43:41 +00:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-101/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-101/test_scenario_FNSF_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-273/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-273/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -566,15 +566,15 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa (sig_tf_wp_max)           6.000E+08     
  Materal stress of the point of maximum shear stress (Tresca criterion) for each layer
  Please use utilities/plot_stress_tf.py for radial plots plots summary
- Layers                    conductor
- Radial stress               (MPa) ***********
- toroidal stress             (MPa) 7756473.508
- Vertical stress             (MPa)     -36.214
- Von-Mises stress            (MPa) ***********
- Shear (Tresca) stress       (MPa) ***********
+ Layers                              conductor    Outer case
+ Radial stress               (MPa)     -68.441         1.770
+ toroidal stress             (MPa)     -68.441       -34.546
+ Vertical stress             (MPa)      39.918       159.286
+ Von-Mises stress            (MPa)     108.360       178.467
+ Shear (Tresca) stress       (MPa)     108.360       193.832
  
- Toroidal modulus            (GPa)     117.000
- Vertical modulus            (GPa)      99.029
+ Toroidal modulus            (GPa)     117.000       205.000
+ Vertical modulus            (GPa)      99.029       205.000
  
  WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      1.170E+02  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      9.903E+01  OP 
@@ -599,6 +599,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Outboard leg toroidal thickness (m)                                      (tftort)                  4.070E-01  OP 
  Maximum inboard edge height (m)                                          (hmax)                    4.421E+00  OP 
  Mean coil circumference (inboard leg not included) (m)                   (tfleng)                  1.657E+01  OP 
+ Length of the inboard segment (m)                                        (cplen)                   0.000E+00  OP 
  Vertical TF shape                                                        (i_tf_shape)                      2     
  
  Picture frame coil, inner surface approximated by
@@ -648,10 +649,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Copper mass per coil (kg)                                                (whtconcu)                3.543E+04  OP 
  Steel conduit mass per coil (kg)                                         (whtconsh)                0.000E+00  OP 
  Conduit insulation mass per coil (kg)                                    (whtconin)                6.929E+01  OP 
- Mass of inboard legs (kg)                                                (whtcp)                   1.236E+05     
- Mass of outboard legs (kg)                                               (whttflgs)                3.099E+05     
+ Mass of inboard legs (kg)                                                (whtcp)                   1.236E+05  OP 
+ Mass of outboard legs (kg)                                               (whttflgs)                3.099E+05  OP 
  Mass of each TF coil (kg)                                                (whttf/n_tf)              3.612E+04  OP 
- Total TF coil mass (kg)                                                  (whttf)                   4.335E+05     
+ Total TF coil mass (kg)                                                  (whttf)                   4.335E+05  OP 
  
  Maximum B field and currents:
  
@@ -716,7 +717,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Centrepost coolant fraction                                              (fcoolcp)                 1.433E-01  ITV
  Average coolant channel diameter (m)                                     (dcool)                   6.000E-03     
  Coolant channel length (m)                                               (lcool)                   9.924E+00     
- Inlet coolant flow speed (m/s)                                           (vcool)                   5.000E+00     
+ Inlet coolant flow speed (m/s)                                           (tfv.vcool)               5.000E+00     
  Outlet coolant flow speed (m/s)                                          (vcool_max)               5.000E+00     
  Coolant mass flow rate (kg/s)                                            (cool_mass_flow)          5.761E+02     
  Number of coolant tubes                                                  (ncool)                   4.137E+03     
@@ -727,13 +728,13 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Resistive Heating :
  
  Average conductor resistivity (ohm.m)                                    (rhocp)                   2.181E-08     
- Resistive heating (MW)                                                   (prescp/1.0D6)            1.203E+02     
+ Resistive heating (MW)                                                   (prescp/1.0e6)            1.203E+02     
  Nuclear heating (MW)                                                     (pnuc_cp_tf)              6.367E+00     
- Total heating (MW)                                                       (ptot/1.0D6)              1.267E+02     
+ Total heating (MW)                                                       (ptot/1.0e6)              1.267E+02     
  
  Temperatures :
  
- Input coolant temperature (K)                                            (tcoolin)                 3.131E+02     
+ Input coolant temperature (K)                                            (tfv.tcoolin)             3.131E+02     
  Input-output coolant temperature rise (K)                                (dtiocool)                5.260E+01     
  Film temperature rise (K)                                                (dtfilmav)                6.117E+00     
  Average temp gradient in conductor (K/m)                                 (dtcncpav)                1.026E+00     
@@ -1653,7 +1654,7 @@ ripmax   = 1.0      *Maximum allowable toroidal field ripple amplitude at plasma
 n_tf     = 12       *Number of TF coil  
 vcool    = 5.0      *Max centrepost coolant flow speed at midplane (m/s)
 vftf     = 0.2      *Coolant fraction of TFC 'cable' (i_tf_sup=1) or of TFC leg (i_tf_sup=0)
-i_tf_plane_stress = 2
+i_tf_stress_model = 2 *Switch for the TF coil stress model (2: Axisymmetric extended plane strain)
 *Iteration variables: cdtfleg fcoolcp oacdcp tcpav
 
 *-------------Current Drive Variables--------------*

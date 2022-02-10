@@ -1785,7 +1785,7 @@ contains
     call ovarre(ofile, 'First Wall Mass, excluding armour (kg)', '(fwmass)', fwmass, 'OP ')
     call ovarre(ofile, 'Blanket Mass - Total(kg)', '(whtblkt)', whtblkt, 'OP ')
     call ovarre(ofile, '    Blanket Mass - TiBe12 (kg)', '(whtbltibe12)', whtbltibe12, 'OP ')
-    call ovarre(ofile, '    Blanket Mass - Li2SiO4 (kg)', '(whtblli4sio4)', whtblli4sio4, 'OP ')
+    call ovarre(ofile, '    Blanket Mass - Li4SiO4 (kg)', '(whtblli4sio4)', whtblli4sio4, 'OP ')
     call ovarre(ofile, '    Blanket Mass - Steel (kg)', '(whtblss)', whtblss, 'OP ')
     call ovarre(ofile, 'Total mass of armour, first wall and blanket (kg)', &
       '(armour_fw_bl_mass)', armour_fw_bl_mass, 'OP ')

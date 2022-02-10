@@ -44,7 +44,7 @@ from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, HoverTool, DatetimeTickFormatter
 from bokeh.layouts import gridplot
 from bokeh.models.widgets import Panel, Tabs
-from bokeh.palettes import Bokeh
+from bokeh.palettes import Category10
 from bokeh.resources import CDN
 from bokeh.embed import file_html
 
@@ -260,6 +260,19 @@ class ProcessTracker:
 
 ### Plotting ###
 
+colour_map = {}
+colours = itertools.cycle(Category10[10])  # hardcode at 10 meaning a maximum of 10 different line colours
+
+def get_line_colour(title: str):
+    """Given a run title, return either cached colour or pick a colour and then cache it."""
+    if title in colour_map:
+        return colour_map[title]
+    
+    colour = next(colours)
+    colour_map[title] = colour
+
+    return colour
+
 
 class TrackedVariable:
     """
@@ -384,6 +397,9 @@ def plot_tracking_data(database):
             history.as_dataframe()
         )  # all the data for one tracked variable as a dataframe
 
+        # order by date to avoid polygons all over the plot
+        df.sort_values("date", ascending=True, inplace=True)
+
         # overrides trumps fortran scrapping
         parent = overrides.get(
             variable
@@ -415,7 +431,6 @@ def plot_tracking_data(database):
         )
         figur.xaxis.major_label_orientation = math.pi / 4
 
-        colours = itertools.cycle(Bokeh[8])  # hardcode at 8
         # each title (different scenario) has a different line colour
         for t in titles:
             run_title_dataframe = df[
@@ -424,7 +439,7 @@ def plot_tracking_data(database):
             subsource = ColumnDataSource(
                 run_title_dataframe
             )  # convert dataframe into Bokeh compatible
-            colour = next(colours)
+            colour = get_line_colour(t)
 
             figur.scatter(
                 x="date", y="value", source=subsource, legend_label=t, color=colour

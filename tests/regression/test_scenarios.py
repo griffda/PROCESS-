@@ -154,7 +154,9 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
                 logger.warning(f"{var_name} is NaN")
             else:
                 # Assert with a relative tolerance
-                assert exp == approx(obs, rel=reg_tolerance)
+                # reg_tolerance is a percentage however
+                # rel takes a fraction, /100 to convert
+                assert exp == approx(obs, rel=reg_tolerance/100)
                 
                 # Within tolerance
                 # If different but within tolerance, log

@@ -7,6 +7,9 @@ Date: August 2014 - initial released version
 
 Notes:
 22/08/2014 HL moved functions from process_config.py to this file
+24/11/2021 Global dictionary variables moved within the functions
+            to avoid cyclic dependencies. This is because the dicts
+            generation script imports, and inspects, process.
 
 Compatible with PROCESS version 319
 """
@@ -15,10 +18,6 @@ from process.io.in_dat import InDat
 import collections as col
 import subprocess
 from process.io.python_fortran_dicts import get_dicts
-
-# Load dicts from dicts JSON file
-process_dicts = get_dicts()
-DICT_IXC_SIMPLE = process_dicts['DICT_IXC_SIMPLE']
 
 def get_var_name_or_number(variable):
     """
@@ -40,16 +39,18 @@ def get_var_name_or_number(variable):
     Dependencies:
             process_dicts: DICT_IXC_SIMPLE
     """
+    # Load dicts from dicts JSON file
+    dicts = get_dicts()
 
     if isinstance(variable, str):
-        for key in DICT_IXC_SIMPLE:
-            if DICT_IXC_SIMPLE[key] == variable.lower():
+        for key in dicts['DICT_IXC_SIMPLE']:
+            if dicts['DICT_IXC_SIMPLE'][key] == variable.lower():
                 return int(key)
 
         return False
     elif isinstance(variable, int):
         try:
-            return DICT_IXC_SIMPLE[str(variable)]
+            return dicts['DICT_IXC_SIMPLE'][str(variable)]
         except KeyError:
             return False
 
