@@ -93,8 +93,10 @@ contains
     !  Top/bottom blanket thickness
     blnktth = 0.5D0*(blnkith+blnkoth)
 
-    !  Check if vgaptop has been set too small
-    vgaptop = max(0.5d0*(scrapli+scraplo), vgaptop)
+    if (i_single_null == 0) then
+       !  Check if vgaptop has been set too small
+       vgaptop = max(0.5d0*(scrapli+scraplo), vgaptop)
+    end if
 
     ! Calculate pre-compression structure thickness is iprecomp=1
     if (iprecomp == 1) then
