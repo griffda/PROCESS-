@@ -93,7 +93,7 @@ contains
     !  Top/bottom blanket thickness
     blnktth = 0.5D0*(blnkith+blnkoth)
 
-    if (i_single_null == 0) then
+    if (i_single_null == 1) then
        !  Check if vgaptop has been set too small
        vgaptop = max(0.5d0*(scrapli+scraplo), vgaptop)
     end if
