@@ -13,15 +13,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1079-g2393fac5 code contains untracked changes
-    Branch : 1432-plot-plot-fails-for-i_tf_sc_mat-9
-   Git log : Merge\ branch\ |1509-outer-tf-case|\ into\ |develop|
- Date/time : 10 Jan 2022 17:08:40 +00:00(hh:mm) UTC
+   Version : 2.3.0   Release Date :: 2022-01-20
+   Tag No. : v2.1-1233-g5464a896
+    Branch : 1560-minor-formatting-error-in-vgaptop-output
+   Git log : Corrected\ output\ formatting\ error
+ Date/time : 14 Feb 2022  8:28:20 +00:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-270/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-270/test_scenario_FNSF_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-280/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-280/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -599,6 +599,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Outboard leg toroidal thickness (m)                                      (tftort)                  4.070E-01  OP 
  Maximum inboard edge height (m)                                          (hmax)                    4.421E+00  OP 
  Mean coil circumference (inboard leg not included) (m)                   (tfleng)                  1.657E+01  OP 
+ Length of the inboard segment (m)                                        (cplen)                   0.000E+00  OP 
  Vertical TF shape                                                        (i_tf_shape)                      2     
  
  Picture frame coil, inner surface approximated by
@@ -648,10 +649,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Copper mass per coil (kg)                                                (whtconcu)                3.543E+04  OP 
  Steel conduit mass per coil (kg)                                         (whtconsh)                0.000E+00  OP 
  Conduit insulation mass per coil (kg)                                    (whtconin)                6.929E+01  OP 
- Mass of inboard legs (kg)                                                (whtcp)                   1.236E+05     
- Mass of outboard legs (kg)                                               (whttflgs)                3.099E+05     
+ Mass of inboard legs (kg)                                                (whtcp)                   1.236E+05  OP 
+ Mass of outboard legs (kg)                                               (whttflgs)                3.099E+05  OP 
  Mass of each TF coil (kg)                                                (whttf/n_tf)              3.612E+04  OP 
- Total TF coil mass (kg)                                                  (whttf)                   4.335E+05     
+ Total TF coil mass (kg)                                                  (whttf)                   4.335E+05  OP 
  
  Maximum B field and currents:
  
@@ -1034,7 +1035,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  First Wall Mass, excluding armour (kg)                                   (fwmass)                  1.049E+04  OP 
  Blanket Mass - Total(kg)                                                 (whtblkt)                 1.691E+05  OP 
      Blanket Mass - TiBe12 (kg)                                           (whtbltibe12)             5.722E+04  OP 
-     Blanket Mass - Li2SiO4 (kg)                                          (whtblli4sio4)            6.076E+04  OP 
+     Blanket Mass - Li4SiO4 (kg)                                          (whtblli4sio4)            6.076E+04  OP 
      Blanket Mass - Steel (kg)                                            (whtblss)                 5.111E+04  OP 
  Total mass of armour, first wall and blanket (kg)                        (armour_fw_bl_mass)       1.908E+05  OP 
  Shield Mass (kg)                                                         (whtshld)                 2.575E+05  OP 
@@ -1159,7 +1160,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  D-T pump speed provided (m3/s)                                           (snet(4))                 4.277E+00  OP 
  
  The vacuum pumping system size is governed by the
- requirements for pumpdown between burns.
+ requirements for pumpdown to base pressure.
  
  Number of large pump ducts                                               (nduct)                          24     
  Passage diameter, divertor to ducts (m)                                  (d(imax))                 1.457E-01  OP 
@@ -1169,7 +1170,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Duct length, elbow to pumps (m)                                          (l3)                      2.000E+00     
  Number of pumps                                                          (pumpn)                   4.800E+01  OP 
  
- The vacuum system uses cryo pumps
+ The vacuum system uses cryo  pumps.
  
  ******************************************* Plant Buildings System *******************************************
  
