@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Divertor's `run` method was not being called with `output=True` from `output.py` (#1553)
+- Fixed a typo in the implementation of `extended_plane_strain` from `sctfcoil.f90` (#1565)
 
 ## [2.3.0] - 2022-01-20
 ### Added
