@@ -4,14 +4,17 @@ Code to read from a PROCESS MFILE and write values into a csv
 
 Author: R Chapman (rhian.chapman@ukaea.uk)
 Date: 26/05/2021
+Updated: 14/02/2022
 
 Input files:
 mfile (default MFILE.DAT) as output from PROCESS
-variable list (default varlist.txt) as defined by user
+variable list (default mfile_to_csv_vars.json) as defined by user
 
 Instructions:
-- this script must be run within the python environment, in order to pick up the right modules
-- command line call: python mfile_to_csv.py -m </path/to/mfile.dat> -v </path/to/varfile.txt>
+- command line call: python mfile_to_csv.py -f </path/to/mfile.dat> -v </path/to/varfile.json>
+
+Output file:
+.csv will be saved to the directory of the input file
 
 """
 
@@ -19,8 +22,8 @@ Instructions:
 ## standard python modules
 import argparse
 import csv
-import os
-from array import *
+from os import path as ospath
+import json
 
 ## PROCESS-specific modules
 from process.io.mfile import MFile
@@ -35,14 +38,17 @@ def get_user_inputs():
     )
 
     parser.add_argument(
-        "-m", "--mfile", default="MFILE.DAT", help="mfile name, default = MFILE.DAT"
+        "-f", 
+        "--mfile", 
+        default="MFILE.DAT", 
+        help="Specify input mfile name, default = MFILE.DAT"
     )
 
     parser.add_argument(
         "-v",
         "--varfile",
-        default="varlist.txt",
-        help="variable textfile name, default = varlist.txt",
+        default="mfile_to_csv_vars.json",
+        help="Specify file holding variable names, default = mfile_to_csv_vars.json",
     )
 
     args = parser.parse_args()
@@ -50,72 +56,89 @@ def get_user_inputs():
     return args
 
 
-def get_varlist(varfile="varlist.txt"):
-    print("Fetching list of variables from", varfile)
-    varlist = list([])
+def get_vars(vfile="mfile_to_csv_vars.json"):
+    """Returns variable names from identified file.
 
-    with open(varfile, "r") as varlist_in:
-        lines = varlist_in.readlines()
-        for l in lines:
-            l = l.rstrip()  # strip trailing characters, e.g. /n
-            varlist.append(l)
+    :param args: input JSON filename 
+    :type args: string
+    :return: variable names
+    :rtype: list
+    """
+    print("Fetching list of variables from", vfile)
 
-    return varlist
+    with open(vfile, "r") as varfile:
+        data = varfile.read()
+        obj = json.loads(data)
+        vars = (obj['vars'])
+
+    return vars
 
 
-def read_mfile(mfilename="MFILE.DAT", varlist_in=[]):
+def read_mfile(mfilename="MFILE.DAT", vars=[]):
+    """Returns specified variable values from identified file.
+
+    :param args: input filename, variable names
+    :type args: string, list
+    :return: variable descriptions, names, and values
+    :rtype: list of tuples
+    """
     print("Reading from MFILE:", mfilename)
 
-    # m_file = MFile(args.mfile)
     m_file = MFile(mfilename)
 
-    # initialise empty arrays & lists
-    names = list([])
-    values = array("d", [])
-    desc = list([])
+    output_vars = []
 
     # for each variable named in the input varfile, get the description and data value
-    k = 0
-    for var_name in varlist_in:
-
-        thisval = m_file.data[var_name].get_scan(-1)
+    for var_name in vars:
+        var_val = m_file.data[var_name].get_scan(-1)
         # In case of a file containing multiple scans, (scan = -1) uses the last scan value
 
         try:  ## mfile module doesn't currently catch a missing var_description error
-            thisdescription = m_file.data[var_name].var_description
-            names.insert(k, var_name)
-            values.insert(k, thisval)
-            desc.insert(k, thisdescription)
-            k = k + 1
+            description = m_file.data[var_name].var_description
+            var_data = (description, var_name, var_val)
+            output_vars.append(var_data)
+
         except AttributeError as error:
             print(var_name, "skipped, moving on...")
 
-    return names, values, desc
+    return output_vars
 
 
-def write_to_csv(mfilename="MFILE.DAT", varnames=[], varvalues=[], vardesc=[]):
+def get_savenamepath(mfilename="MFILE.DAT"): 
+    """Returns path/filename.csv for file saving.
 
-    csv_filename = "mfile_outputs.csv"
-    if "/" in mfilename:  ## very simple string search for the '/' character
-        # if input mfile is in a different directory, output the csv file to there
-        dirname = os.path.dirname(mfilename)
-        csv_outfile = dirname + "/" + csv_filename
-    else:
-        # otherwise save it locally
+    :param args: input filename
+    :type args: string
+    :return: output filename
+    :rtype: string
+    """
+    if mfilename == "MFILE.DAT":
+        # save it locally
+        csv_filename = "mfile_outputs.csv"
         csv_outfile = csv_filename
+    else:        
+        # output the csv file to the directory of the input file
+        dirname = ospath.dirname(mfilename)
+        s = ospath.basename(mfilename)
+        csv_filename = s.replace(".MFILE.DAT","") + ".csv"
+        csv_outfile = dirname + "/" + csv_filename
 
-    print("Writing to csv file:", csv_outfile)
+    return csv_outfile
 
+
+def write_to_csv(csv_outfile, output_data=[]):
+    """Write to csv file.
+
+    :param args: input filename, variable data
+    :type args: string, list of tuples
+    """
     with open(csv_outfile, "w") as csv_file:
+        print("Writing to csv file:", csv_outfile)
         writer = csv.writer(csv_file, delimiter=",")
-        writer.writerow(["Description", "varname", "value"])
+        writer.writerow(["Description", "Varname", "Value"])
 
-        for i in range(0, len(varnames)):
-            desc = vardesc[i]
-            name = varnames[i]
-            val = varvalues[i]
-
-            writer.writerow([desc, name, val])
+        for vardesc in output_data:
+            writer.writerow(vardesc)
 
 
 def main():
@@ -123,19 +146,17 @@ def main():
     # read from command line inputs
     args = get_user_inputs()
 
-    # read list of required variables from input text file:
-    varlist = get_varlist(args.varfile)
-    ## input text file should contain a single column list of variable names
+    # read list of required variables from input json file
+    jvars = get_vars(args.varfile)
 
-    # read required data from input mfile:
-    varnames, varvalues, vardesc = read_mfile(args.mfile, varlist)
+    # read required data from input mfile
+    output_data = read_mfile(args.mfile, jvars)
+
+    # identify save location
+    output_file = get_savenamepath(args.mfile)
 
     # write to csv
-    write_to_csv(args.mfile, varnames, varvalues, vardesc)
-
-    # # print-to-screen check:
-    # for i in range(0,len(varnames)):
-    #     print(vardesc[i], varnames[i], varvalues[i])
+    write_to_csv(output_file, output_data)
 
     # write final line to screen
     print("Complete.")
