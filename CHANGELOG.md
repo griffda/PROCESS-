@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Divertor's `run` method was not being called with `output=True` from `output.py` (#1553)
 - Tracker's plotting inner loop should run over `set(titles)` to avoid running in `O(n)` opposed to `O(1)` (#1520)
 
+### Removed
+- Removed Python 3.6 support in CI (#1490)
+
 ## [2.3.0] - 2022-01-20
 ### Added
 - Create scan notebook template (#1497)
