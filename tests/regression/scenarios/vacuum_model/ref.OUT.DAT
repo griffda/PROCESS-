@@ -6,15 +6,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1116-g4cf3024e
-    Branch : 1358-sc-tf-coil-external-case-mass-redux
-   Git log : Merge\ branch\ |develop|\ into\ 1358-sc-tf-coil-extern
- Date/time : 14 Jan 2022 13:45:19 +00:00(hh:mm) UTC
+   Version : 2.3.0   Release Date :: 2022-01-20
+   Tag No. : v2.1-1233-g5464a896
+    Branch : 1560-minor-formatting-error-in-vgaptop-output
+   Git log : Corrected\ output\ formatting\ error
+ Date/time : 14 Feb 2022  8:30:26 +00:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-273/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-273/test_scenario_vacuum_model_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-280/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-280/test_scenario_vacuum_model_0/IN.DAT
  Run title : demo 1 vacuum model test
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -1302,7 +1302,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  First Wall Mass, excluding armour (kg)                                   (fwmass)                  1.725E+05  OP 
  Blanket Mass - Total(kg)                                                 (whtblkt)                 2.845E+06  OP 
      Blanket Mass - TiBe12 (kg)                                           (whtbltibe12)             1.055E+06  OP 
-     Blanket Mass - Li2SiO4 (kg)                                          (whtblli4sio4)            9.288E+05  OP 
+     Blanket Mass - Li4SiO4 (kg)                                          (whtblli4sio4)            9.288E+05  OP 
      Blanket Mass - Steel (kg)                                            (whtblss)                 8.617E+05  OP 
  Total mass of armour, first wall and blanket (kg)                        (armour_fw_bl_mass)       3.097E+06  OP 
  Shield Mass (kg)                                                         (whtshld)                 4.059E+06  OP 
