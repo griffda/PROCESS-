@@ -89,17 +89,15 @@ def read_mfile(mfilename="MFILE.DAT", vars=[]):
     output_vars = []
 
     # for each variable named in the input varfile, get the description and data value
-    for var_name in vars:
-        var_val = m_file.data[var_name].get_scan(-1)
-        # In case of a file containing multiple scans, (scan = -1) uses the last scan value
-
-        try:  ## mfile module doesn't currently catch a missing var_description error
+    for var_name in vars:    
+        if not var_name in m_file.data.keys():
+            print("Variable '{}' not in MFILE. Skipping and moving on...".format(var_name))
+        else:
+            # In case of a file containing multiple scans, (scan = -1) uses the last scan value
+            var_val = m_file.data[var_name].get_scan(-1)
             description = m_file.data[var_name].var_description
             var_data = (description, var_name, var_val)
             output_vars.append(var_data)
-
-        except AttributeError as error:
-            print(var_name, "skipped, moving on...")
 
     return output_vars
 
