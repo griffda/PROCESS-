@@ -15,14 +15,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1233-g5464a896
-    Branch : 1560-minor-formatting-error-in-vgaptop-output
-   Git log : Corrected\ output\ formatting\ error
- Date/time : 14 Feb 2022  8:28:12 +00:00(hh:mm) UTC
-      User : rhicha
-  Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-280/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-280/test_scenario_CFETR_small_0/IN.DAT
+   Tag No. : v2.1-1240-g7124046d
+    Branch : 1511-update-heating-and-current-drive-costs
+   Git log : Merge\ branch\ |develop|\ into\ 1511-update-heating-an
+ Date/time : 15 Feb 2022 10:03:06 +00:00(hh:mm) UTC
+      User : jg6173
+  Computer : L1088
+ Directory : /tmp/pytest-of-jg6173/pytest-22/test_solver0
+     Input : /tmp/pytest-of-jg6173/pytest-22/test_scenario_CFETR_small_0/IN.DAT
  Run title : "CFETR small (5.7m) reference file"
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
