@@ -10,11 +10,11 @@
    Tag No. : v2.1-1240-g7124046d
     Branch : 1511-update-heating-and-current-drive-costs
    Git log : Merge\ branch\ |develop|\ into\ 1511-update-heating-an
- Date/time : 15 Feb 2022 10:03:22 +00:00(hh:mm) UTC
+ Date/time : 15 Feb 2022 11:42:43 +00:00(hh:mm) UTC
       User : jg6173
   Computer : L1088
- Directory : /tmp/pytest-of-jg6173/pytest-22/test_solver0
-     Input : /tmp/pytest-of-jg6173/pytest-22/test_scenario_HARE_0/IN.DAT
+ Directory : /tmp/pytest-of-jg6173/pytest-24/test_solver0
+     Input : /tmp/pytest-of-jg6173/pytest-24/test_scenario_HARE_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
