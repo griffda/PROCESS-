@@ -42,6 +42,7 @@ Box file F/MI/PJK/PROCESS and F/PL/PJK/PROCESS (15/01/96 to 24/01/12)
 Box file T&amp;M/PKNIGHT/PROCESS (from 24/01/12)
 """
 from process import fortran
+from process.buildings import Buildings
 from process.io import plot_proc
 from process.scan import Scan
 from process import final
@@ -473,9 +474,12 @@ class Models:
         self.tfcoil = TFcoil()
         self.divertor = Divertor()
         self.availability = Availability()
-        self.ife = IFE(self.availability)
+        self.buildings = Buildings()
         self.vacuum = Vacuum()
-        self.stellarator = Stellarator(self.availability, self.vacuum)
+        self.ife = IFE(availability=self.availability)
+        self.stellarator = Stellarator(
+            availability=self.availability, buildings=self.buildings, vacuum=self.vacuum
+        )
 
 
 def main(args=None):
