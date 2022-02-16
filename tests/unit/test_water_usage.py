@@ -2,7 +2,17 @@ import pytest
 from typing import NamedTuple, Any
 
 from process.fortran import water_usage_variables
-from process.fortran import water_use_module
+from process.water_use import WaterUse
+
+
+@pytest.fixture
+def water_use():
+    """Provides WaterUse object for testing.
+
+    :return water_use: initialised WaterUse object
+    :type water_use: process.water_use.WaterUse
+    """
+    return WaterUse()
 
 
 class CoolingTowersParam(NamedTuple):
@@ -71,7 +81,7 @@ class CoolingTowersParam(NamedTuple):
         ),
     ),
 )
-def test_cooling_towers(coolingtowersparam, monkeypatch):
+def test_cooling_towers(coolingtowersparam, monkeypatch, water_use):
     monkeypatch.setattr(water_usage_variables, "airtemp", coolingtowersparam.airtemp)
     monkeypatch.setattr(
         water_usage_variables, "waterdens", coolingtowersparam.waterdens
@@ -94,11 +104,7 @@ def test_cooling_towers(coolingtowersparam, monkeypatch):
         water_usage_variables, "waterusetower", coolingtowersparam.waterusetower
     )
 
-    water_use_module.cooling_towers(
-        outfile=coolingtowersparam.outfile,
-        iprint=coolingtowersparam.iprint,
-        wastetherm=coolingtowersparam.wastetherm,
-    )
+    water_use.cooling_towers(wastetherm=coolingtowersparam.wastetherm, output=False)
 
     assert water_usage_variables.volheat == pytest.approx(
         coolingtowersparam.expected_volheat
@@ -192,7 +198,7 @@ class CoolingWaterBodyParam(NamedTuple):
         ),
     ),
 )
-def test_cooling_water_body(coolingwaterbodyparam, monkeypatch):
+def test_cooling_water_body(coolingwaterbodyparam, monkeypatch, water_use):
     monkeypatch.setattr(
         water_usage_variables, "watertemp", coolingwaterbodyparam.watertemp
     )
@@ -223,10 +229,8 @@ def test_cooling_water_body(coolingwaterbodyparam, monkeypatch):
         water_usage_variables, "wateruseonethru", coolingwaterbodyparam.wateruseonethru
     )
 
-    water_use_module.cooling_water_body(
-        outfile=coolingwaterbodyparam.outfile,
-        iprint=coolingwaterbodyparam.iprint,
-        wastetherm=coolingwaterbodyparam.wastetherm,
+    water_use.cooling_water_body(
+        wastetherm=coolingwaterbodyparam.wastetherm, output=False
     )
 
     assert water_usage_variables.evapratio == pytest.approx(

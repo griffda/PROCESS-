@@ -77,6 +77,7 @@ from process.io.process_funcs import (
     process_warnings,
 )
 from process.vacuum import Vacuum
+from process.water_use import WaterUse
 
 os.environ["PYTHON_PROCESS_ROOT"] = os.path.join(os.path.dirname(__file__))
 
@@ -476,6 +477,7 @@ class Models:
         self.ife = IFE(self.availability)
         self.vacuum = Vacuum()
         self.stellarator = Stellarator(self.availability, self.vacuum)
+        self.water_use = WaterUse()
 
 
 def main(args=None):
