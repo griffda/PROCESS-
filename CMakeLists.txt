@@ -109,7 +109,6 @@ LIST(APPEND PROCESS_SRCS
     costs.f90
     costs_2015.f90
     heat_transport_variables.f90
-    buildings.f90
     buildings_variables.f90
     maths_library.f90
     iteration_variables.f90
