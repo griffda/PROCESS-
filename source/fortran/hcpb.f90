@@ -1050,6 +1050,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use error_handling, only: fdiags, report_error
     use fwbs_variables, only: whtblkt, pnucblkt
     use physics_variables, only: powfmw
 
@@ -1077,12 +1078,13 @@ contains
     exp_blanket = 1-exp(-b*mass)
     pnucblkt = powfmw * a * exp_blanket
 
-    ! error handling (should ba a lvl 3 error no?)
+    ! error handling. < 1 MW or NaN indicates possible error.
     if ((pnucblkt<1.0d0).or.(pnucblkt /= pnucblkt)) then
-        write(*,*)'Error in nuclear_heating_blanket. '
-        write(*,*)'pnucblkt =', pnucblkt, ' exp_blanket =', exp_blanket
-        write(*,*)'powfmw =', powfmw, ' mass =', mass
-        stop 1
+        fdiags(1) = pnucblkt
+        fdiags(2) = exp_blanket
+        fdiags(3) = powfmw
+        fdiags(4) = mass 
+        call report_error(274)
     end if
 
   end subroutine nuclear_heating_blanket
