@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1203-gdf5c6a4f
-    Branch : 1336-update-cryoplant-cost-22-03-for-cost-model-2
-   Git log : Some\ fixes\ for\ test\ suite\ failures
- Date/time :  1 Feb 2022 17:09:03 +00:00(hh:mm) UTC
-      User : jg6173
-  Computer : L1088
- Directory : /tmp/pytest-of-jg6173/pytest-16/test_solver0
-     Input : /tmp/pytest-of-jg6173/pytest-16/test_scenario_stellarator_0/IN.DAT
+   Tag No. : v2.1-1233-g5464a896
+    Branch : 1560-minor-formatting-error-in-vgaptop-output
+   Git log : Corrected\ output\ formatting\ error
+ Date/time : 14 Feb 2022  8:30:25 +00:00(hh:mm) UTC
+      User : rhicha
+  Computer : l0500
+ Directory : /tmp/pytest-of-rhicha/pytest-280/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-280/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  
@@ -757,7 +757,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  D-T pump speed provided (m3/s)                                           (snet(4))                 7.195E+01  OP 
  
  The vacuum pumping system size is governed by the
- requirements for helium ash removal.
+ requirements for pumpdown between burns.
  
  Number of large pump ducts                                               (nduct)                          50     
  Passage diameter, divertor to ducts (m)                                  (d(imax))                 3.284E-01  OP 
@@ -767,7 +767,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Duct length, elbow to pumps (m)                                          (l3)                      2.000E+00     
  Number of pumps                                                          (pumpn)                   1.000E+02  OP 
  
- The vacuum system uses cryo pumps
+ The vacuum system uses cryo  pumps.
  
  ******************************************* Plant Buildings System *******************************************
  

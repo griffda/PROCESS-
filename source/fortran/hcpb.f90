@@ -1050,6 +1050,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use error_handling, only: fdiags, report_error
     use fwbs_variables, only: whtblkt, pnucblkt
     use physics_variables, only: powfmw
 
@@ -1077,12 +1078,13 @@ contains
     exp_blanket = 1-exp(-b*mass)
     pnucblkt = powfmw * a * exp_blanket
 
-    ! error handling (should ba a lvl 3 error no?)
+    ! error handling. < 1 MW or NaN indicates possible error.
     if ((pnucblkt<1.0d0).or.(pnucblkt /= pnucblkt)) then
-        write(*,*)'Error in nuclear_heating_blanket. '
-        write(*,*)'pnucblkt =', pnucblkt, ' exp_blanket =', exp_blanket
-        write(*,*)'powfmw =', powfmw, ' mass =', mass
-        stop 1
+        fdiags(1) = pnucblkt
+        fdiags(2) = exp_blanket
+        fdiags(3) = powfmw
+        fdiags(4) = mass 
+        call report_error(274)
     end if
 
   end subroutine nuclear_heating_blanket
@@ -1785,7 +1787,7 @@ contains
     call ovarre(ofile, 'First Wall Mass, excluding armour (kg)', '(fwmass)', fwmass, 'OP ')
     call ovarre(ofile, 'Blanket Mass - Total(kg)', '(whtblkt)', whtblkt, 'OP ')
     call ovarre(ofile, '    Blanket Mass - TiBe12 (kg)', '(whtbltibe12)', whtbltibe12, 'OP ')
-    call ovarre(ofile, '    Blanket Mass - Li2SiO4 (kg)', '(whtblli4sio4)', whtblli4sio4, 'OP ')
+    call ovarre(ofile, '    Blanket Mass - Li4SiO4 (kg)', '(whtblli4sio4)', whtblli4sio4, 'OP ')
     call ovarre(ofile, '    Blanket Mass - Steel (kg)', '(whtblss)', whtblss, 'OP ')
     call ovarre(ofile, 'Total mass of armour, first wall and blanket (kg)', &
       '(armour_fw_bl_mass)', armour_fw_bl_mass, 'OP ')

@@ -261,13 +261,16 @@ class ProcessTracker:
 ### Plotting ###
 
 colour_map = {}
-colours = itertools.cycle(Category10[10])  # hardcode at 10 meaning a maximum of 10 different line colours
+colours = itertools.cycle(
+    Category10[10]
+)  # hardcode at 10 meaning a maximum of 10 different line colours
+
 
 def get_line_colour(title: str):
     """Given a run title, return either cached colour or pick a colour and then cache it."""
     if title in colour_map:
         return colour_map[title]
-    
+
     colour = next(colours)
     colour_map[title] = colour
 
@@ -432,7 +435,7 @@ def plot_tracking_data(database):
         figur.xaxis.major_label_orientation = math.pi / 4
 
         # each title (different scenario) has a different line colour
-        for t in titles:
+        for t in set(titles):
             run_title_dataframe = df[
                 df["title"] == t
             ]  # the variable history for each (applicable) run title
@@ -475,7 +478,7 @@ def plot_tracking_data(database):
         # each section of the legend is next to each other
         # in a line rather than the default stack
         figur.legend.orientation = "horizontal"
-        
+
         # legend is positioned in the x center
         figur.legend.location = "center"
 
