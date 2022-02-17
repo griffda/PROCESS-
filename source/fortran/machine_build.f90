@@ -93,8 +93,10 @@ contains
     !  Top/bottom blanket thickness
     blnktth = 0.5D0*(blnkith+blnkoth)
 
-    !  Check if vgaptop has been set too small
-    vgaptop = max(0.5d0*(scrapli+scraplo), vgaptop)
+    if (i_single_null == 1) then
+       !  Check if vgaptop has been set too small
+       vgaptop = max(0.5d0*(scrapli+scraplo), vgaptop)
+    end if
 
     ! Calculate pre-compression structure thickness is iprecomp=1
     if (iprecomp == 1) then
@@ -481,7 +483,7 @@ contains
        vbuild = vbuild - divfix
 
        call obuild(outfile,'Top scrape-off',vgaptop,vbuild,'(vgaptop)')
-       call ovarre(mfile,'Top scrape-off vertical thickness (m)', 'vgaptop', vgaptop)
+       call ovarre(mfile,'Top scrape-off vertical thickness (m)', '(vgaptop)', vgaptop)
        vbuild = vbuild - vgaptop
 
        call obuild(outfile,'Plasma top',rminor*kappa,vbuild,'(rminor*kappa)')
@@ -561,11 +563,11 @@ contains
 
        fwtth = 0.5D0*(fwith+fwoth)
        call obuild(outfile,'Top first wall',fwtth,vbuild,'(fwtth)')
-       call ovarre(mfile,'Top first wall vertical thickness (m)', 'fwtth',fwtth)
+       call ovarre(mfile,'Top first wall vertical thickness (m)', '(fwtth)',fwtth)
        vbuild = vbuild - fwtth
 
        call obuild(outfile,'Top scrape-off',vgaptop,vbuild,'(vgaptop)')
-       call ovarre(mfile,'Top scrape-off vertical thickness (m)', 'vgaptop', vgaptop)
+       call ovarre(mfile,'Top scrape-off vertical thickness (m)', '(vgaptop)', vgaptop)
        vbuild = vbuild - vgaptop
 
        call obuild(outfile,'Plasma top',rminor*kappa,vbuild,'(rminor*kappa)')

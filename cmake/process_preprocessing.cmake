@@ -6,6 +6,8 @@
 #   variables during the PROCESS build
 
 MACRO(FindPreprocessingVars)
+    INCLUDE(${CMAKE_SOURCE_DIR}/cmake/utilities.cmake)
+
     EXECUTE_PROCESS (
         COMMAND bash -c "git -C ${CMAKE_SOURCE_DIR} show -s --format=format:%s"
         OUTPUT_VARIABLE COMMIT_MSG
@@ -80,8 +82,12 @@ MACRO(FindPreprocessingVars)
     MESSAGE(STATUS "\tFortran compiler version : ${CMAKE_Fortran_COMPILER_VERSION}")
     # ------------------------------------------------------------ #
     ADD_DEFINITIONS(-DINSTALLDIR="${CMAKE_SOURCE_DIR}")
-    ADD_DEFINITIONS(-DCOMMSG="${COMMIT_MSG}")
     ADD_DEFINITIONS(-Dtagno="${GIT_TAG}")
     ADD_DEFINITIONS(-Dbranch_name="${GIT_BRANCH}")
     ADD_DEFINITIONS(-Duntracked=${GIT_DIFF})
+    
+    ensure_string_length(${COMMIT_MSG} 145 COMMIT_MSG) # 1502 line truncation error fix
+
+    ADD_DEFINITIONS(-DCOMMSG="${COMMIT_MSG}")
+    MESSAGE(STATUS "\tTruncated commit message length : ${COMMIT_MSG}")
 ENDMACRO()

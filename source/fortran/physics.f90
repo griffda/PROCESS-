@@ -549,10 +549,23 @@ module physics_module
     !  Calculate beta limit
     if (iprofile == 0) then
 
-       if (gtscale == 1) then
-          dnbeta = 2.7D0 * (1.0D0 + 5.0D0*eps**3.5D0)
-          !... otherwise use input value for dnbeta
-       end if
+       select case (gtscale)
+
+          case (1)  
+          
+             !  Original scaling law
+             dnbeta = 2.7D0 * (1.0D0 + 5.0D0*eps**3.5D0)
+          
+          case (2)
+              
+             ! See Issue #1439
+             ! dnbeta found from aspect ratio scaling on p32 of Menard:
+             ! Menard, et al. "Fusion Nuclear Science Facilities
+             ! and Pilot Plants Based on the Spherical Tokamak."
+             ! Nucl. Fusion, 2016, 44.
+             dnbeta = 3.12D0 + 3.5D0*eps**1.7D0
+             
+       end select
 
     else
        !  Relation between beta limit and plasma internal inductance
@@ -3908,7 +3921,10 @@ module physics_module
           call ovarrf(outfile,'Elongation, X-point (calculated from aspect ratio and li(3))', &
                '(kappa)',kappa, 'OP ')
        case (10)
-         call ovarrf(outfile,'Elongation, X-point (calculated from aspect ratio and stability margin', &
+         call ovarrf(outfile,'Elongation, X-point (calculated from aspect ratio and stability margin)', &
+         '(kappa)',kappa, 'OP ')
+       case (11)
+         call ovarrf(outfile,'Elongation, X-point (calculated from aspect ratio via Menard 2016)', &
          '(kappa)',kappa, 'OP ')
        case default
           idiags(1) = ishape ; call report_error(86)
@@ -3926,7 +3942,7 @@ module physics_module
        call ovarrf(outfile,'Elongation, area ratio calc.','(kappaa)',kappaa, 'OP ')
 
        select case (ishape)
-       case (0,2,6,8,9,10)
+       case (0,2,6,8,9,10,11)
           call ovarrf(outfile,'Triangularity, X-point (input value used)', &
                '(triang)',triang, 'IP ')
        case (1)
