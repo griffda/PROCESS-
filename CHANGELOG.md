@@ -5,9 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+
+### Changed
+- Converted `buildings_module` to pure Python (#1552)
+
 ### Fixed
 - Divertor's `run` method was not being called with `output=True` from `output.py` (#1553)
 - Tracker's plotting inner loop should run over `set(titles)` to avoid running in `O(n)` opposed to `O(1)` (#1520)
+- Fixed a typo in the implementation of `extended_plane_strain` from `sctfcoil.f90` (#1565)
 
 ## [2.3.0] - 2022-01-20
 ### Added
