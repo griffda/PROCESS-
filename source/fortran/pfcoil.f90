@@ -1833,6 +1833,9 @@ module pfcoil_module
        itersc, current_sharing_rebco, Gl_nbti, GL_REBCO
        use tfcoil_variables, only: tmargmin_cs, temp_margin, b_crit_upper_nbti, t_crit_nbti 
        use maths_library, only: variable_error, secant_solve
+       use rebco_variables, only: copperAoh_m2, copperAoh_m2_max, f_copperaoh_m2 ! added by me
+       use build_variables, only: hmax, ohcth ! added by me
+       use pfcoil_variables, only: ohhghf, coheof, awpoh ! added by me
      implicit none
  
      !  Arguments
@@ -1847,7 +1850,7 @@ module pfcoil_module
  
      integer :: lap
      real(dp) :: b,bc20m,bcrit,c0,delt,jcrit0,jcritm, &
-          jcritp,jsc,jstrand,jtol,t,tc0m,tcrit,ttest,ttestm,ttestp, icrit, iop
+          jcritp,jsc,jstrand,jtol,t,tc0m,tcrit,ttest,ttestm,ttestp, icrit, iop, ioheof ! last var added by me
  
      real(dp) :: current_sharing_t
      real(dp)::x1,x2         ! Initial guesses for temperature
@@ -1911,6 +1914,8 @@ module pfcoil_module
      case (6) ! "REBCO" 2nd generation HTS superconductor in CrCo strand
         call jcrit_rebco(thelium,bmax,jcritsc,validity,0)
         jcritstr = jcritsc * (1.0D0-fcu)
+        ioheof = -hmax*ohhghf*ohcth*2.0D0*coheof  ! added by me
+        copperAoh_m2 = ioheof / awpoh * (1.0D0-fcu) ! added by me
  
     case (7) ! Durham Ginzburg-Landau Nb-Ti parameterisation
           bc20m = b_crit_upper_nbti

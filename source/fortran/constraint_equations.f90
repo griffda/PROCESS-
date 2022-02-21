@@ -280,6 +280,8 @@ contains
         case (86); call constraint_eqn_086(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
          ! Constraint for cryogenic power
         case (87); call constraint_eqn_087(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
+         ! ensure that OH coil current / copper area < Maximum value ONLY used for croco HTS coil
+        case (88); call constraint_eqn_088(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
        case default
 
         idiags(1) = icc(i)
@@ -3298,5 +3300,35 @@ contains
       tmp_units = 'MW'
    end subroutine constraint_eqn_087
 
-end module constraints
+   subroutine constraint_eqn_088(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
+      !! Ensure that the Central Solenoid [OH] coil current / copper area < Maximum value
+      !! author: G Turkington, P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for fusion power upper limit
+      !! #=# physics
+      !! #=#=# ffuspow, powfmax
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! ffuspow : input real : f-value for maximum fusion power
+      !! powfmax : input real : maximum fusion power (MW)
+      !! powfmw : input real : fusion power (MW)
+      use rebco_variables, only: copperAoh_m2, copperAoh_m2_max, f_copperaoh_m2
+      implicit none
+                  real(dp), intent(out) :: tmp_cc
+      real(dp), intent(out) :: tmp_con
+      real(dp), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
 
+      tmp_cc = 1.0d0 - f_copperaoh_m2 * copperAoh_m2_max / copperAoh_m2
+      tmp_con = copperAoh_m2
+      tmp_err = copperAoh_m2 * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'A/m2'
+
+   end subroutine constraint_eqn_088
+
+
+
+end module constraints
