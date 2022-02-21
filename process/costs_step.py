@@ -979,6 +979,7 @@ class CostsStep:
         # 22.01.03.03 Central Solenoid
         # Original STARFIRE value, scaling with fusion island volume
         step22010303 = cv.step_ref[23] * (self.vfi / self.vfi_star)
+        step22010303 = cv.fkind * step22010303
         step2201 += step22010303
         # STARFIRE percentage for spares
         spares += 6.124e-1 * step22010303
@@ -986,6 +987,7 @@ class CostsStep:
         # 22.01.03.04 Control Coils
         # Original STARFIRE value, scaling with fusion island volume
         step22010304 = cv.step_ref[24] * (self.vfi / self.vfi_star)
+        step22010304 = cv.fkind * step22010304
         step2201 += step22010304
         # STARFIRE percentage for spares
         spares += 1.075e-1 * step22010304
@@ -999,6 +1001,7 @@ class CostsStep:
         # 22.01.05 Primary Structure and Support
         # Original STARFIRE value, scaling with fusion island volume
         step220105 = cv.step_ref[26] * (self.vfi / self.vfi_star)
+        step220105 = cv.fkind * step220105
         step2201 += step220105
         # STARFIRE percentage for spares
         spares += 6.824e-2 * step220105
@@ -1006,6 +1009,7 @@ class CostsStep:
         # 22.01.06 Reactor Vacuum System
         # Original STARFIRE value, scaling with fusion island volume
         step220106 = cv.step_ref[27] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
+        step220106 = cv.fkind * step220106
         step2201 += step220106
         # STARFIRE percentage for spares
         spares += 1.893e-1 * step220106
@@ -1038,6 +1042,8 @@ class CostsStep:
             step220110 = 0.0e0
         else:
             cv.divcst = 0.0e0
+
+        step220110 = cv.fkind * step220110
 
         step2201 += step220110
 
@@ -1164,6 +1170,8 @@ class CostsStep:
             fwbsv.fw_armour_mass * cv.step_ucfwa + fwbsv.fwmass * cv.step_ucfws
         )
 
+        step22010101 = cv.fkind * step22010101
+
         if cv.ifueltyp == 1:
             cv.fwallcst = step22010101
             step22010101 = 0.0e0
@@ -1198,20 +1206,28 @@ class CostsStep:
                 # Account 22.01.01.02.02 : Blanket Breeder Material
                 step2201010202 = 1.0e-6 * fwbsv.wtblli2o * cv.step_ucblbreed
 
+        step2201010201 = cv.fkind * step2201010201
+        step2201010202 = cv.fkind * step2201010202
+        
         # Account 22.01.01.02.03 : Blanket Steel Costs
         step2201010203 = 1.0e-6 * fwbsv.whtblss * cv.step_ucblss
+        step2201010203 = cv.fkind * step2201010203
 
         # Account 22.01.01.02.04 : Blanket Vanadium Costs
         step2201010204 = 1.0e-6 * fwbsv.whtblvd * cv.step_ucblvd
+        step2201010204 = cv.fkind * step2201010204
 
         # Account 22.01.01.02.05 : Blanket Carbon Cloth Costs
         step2201010205 = 0.0e0
+        step2201010205 = cv.fkind * step2201010205
 
         # Account 22.01.01.02.06 : Blanket Concrete Costs
         step2201010206 = 0.0e0
+        step2201010206 = cv.fkind * step2201010206
 
         # Account 22.01.01.02.07 : Blanket FLiBe Costs
         step2201010207 = 0.0e0
+        step2201010207 = cv.fkind * step2201010207
 
         step22010102 = (
             step2201010201
@@ -1301,6 +1317,8 @@ class CostsStep:
 
         # Find inboard shield cost (converted to M$2017)
         step220102 = (inb_sh_m * sh_mtl_c) / 1.0e6 * (229.0e0 / 264.71e0)
+
+        step220102 = cv.fkind * step220102
 
         # Note: outboard shield costs currently set to zero
 
@@ -1406,6 +1424,8 @@ class CostsStep:
                 # Treat centrepost cost as capital and fuel cost
                 cv.cpstcst = c_tf_inboard_legs
 
+        step22010301 = cv.fkind * step22010301
+
         return step22010301
 
     def step_a22010302(self):
@@ -1498,14 +1518,19 @@ class CostsStep:
                 1.0e-6 * constants.twopi * pfv.rpf[i] * pfv.turns[i] * cpfconpm
             )
 
+        step2201030201 = cv.fkind * step2201030201
+
         # Account 22.01.03.02.02 : Winding
         step2201030202 = 1.0e-6 * cv.step_ucwindpf * pfwndl
+        step2201030202 = cv.fkind * step2201030202
 
         # Account 22.01.03.02.03 : Steel case - will be zero for resistive coils
         step2201030203 = 1.0e-6 * cv.step_uccase * pfv.whtpfs
+        step2201030203 = cv.fkind * step2201030203
 
         # Account 22.01.03.02.04 : Support structure
         step2201030204 = 1.0e-6 * cv.step_ucfnc * sv.fncmass
+        step2201030204 = cv.fkind * step2201030204
 
         # Total account 22.01.03.02
         step22010302 = step2201030201 + step2201030202 + step2201030203 + step2201030204
@@ -1552,6 +1577,8 @@ class CostsStep:
             step220104 *= 1.0e0 - cv.fcdfuel
             cv.cdcost = step220104
 
+        step220104 = cv.fkind * step220104
+
         return step220104
 
     def step_a2202(self):
@@ -1566,6 +1593,7 @@ class CostsStep:
         """
         # pgrossmw is gross electric power of the plant in MW
         step2202 = 9.2238e4 * htv.pgrossmw * 1.0e-6
+        step2202 = cv.fkind * step2202
 
         # Output costs
         if (self.iprint == 1) and (cv.output_costs == 1):
@@ -1649,16 +1677,19 @@ class CostsStep:
         # 22.04.01 Liquid Waste
         # Original STARFIRE value, scaling with thermal power
         step220401 = cv.step_ref[37] * (self.pth / self.ptherm_star) ** 0.6e0
+        step220401 = cv.fkind * step220401
         step2204 = step220401
 
         # 22.04.02 Gaseous Waste
         # Original STARFIRE value, scaling with thermal power
         step220402 = cv.step_ref[38] * (self.pth / self.ptherm_star) ** 0.6e0
+        step220402 = cv.fkind * step220402
         step2204 += step220402
 
         # 22.04.03 Solid Waste
         # Original STARFIRE value, scaling with thermal power
         step220403 = cv.step_ref[39] * (self.pth / self.ptherm_star) ** 0.6e0
+        step220403 = cv.fkind * step220403
         step2204 += step220403
 
         # Output costs
@@ -1690,9 +1721,11 @@ class CostsStep:
         # 22.05 Fuel Handling and Storage
         # Original STARFIRE value, scaling with thermal power
         step2205 = cv.step_ref[40] * (self.pth / self.ptherm_star) ** 0.6e0
+        step2205 = cv.fkind * step2205
 
         # STARFIRE percentage for spares
         spares = 5.026e-2 * step2205
+        spares = cv.fkind * spares
 
         # Output costs
         if self.iprint == 1 and cv.output_costs == 1:
@@ -1732,31 +1765,37 @@ class CostsStep:
         # 22.06.02 Special Heating Systems
         # Original STARFIRE value, scaling with thermal power
         step220602 = cv.step_ref[42] * (self.pth / self.ptherm_star) ** 0.6e0
+        step220602 = cv.fkind * step220602
         step2206 += step220602
 
         # 22.06.03 Coolant Storage
         # Original STARFIRE value, scaling with thermal power
         step220603 = cv.step_ref[43] * (self.pth / self.ptherm_star) ** 0.6e0
+        step220603 = cv.fkind * step220603
         step2206 += step220603
 
         # 22.06.04 Gas System
         # Original STARFIRE value, scaling with fusion island volume
         step220604 = cv.step_ref[44] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
+        step220604 = cv.fkind * step220604
         step2206 += step220604
 
         # 22.06.05 Inert Atmosphere System
         # Original STARFIRE value, scaling with thermal power
         step220605 = cv.step_ref[45] * (self.pth / self.ptherm_star) ** 0.6e0
+        step220605 = cv.fkind * step220605
         step2206 += step220605
 
         # 22.06.06 Fluid Leak Detection
         # Original STARFIRE value, scaling with thermal power
         step220606 = cv.step_ref[46] * (self.pth / self.ptherm_star) ** 0.6e0
+        step220606 = cv.fkind * step220606
         step2206 += step220606
 
         # 22.06.07 Closed Loop Coolant System
         # Original STARFIRE value, scaling with thermal power
         step220607 = cv.step_ref[47] * (self.pth / self.ptherm_star) ** 0.6e0
+        step220607 = cv.fkind * step220607
         step2206 += step220607
         # STARFIRE percentage for spares
         spares += 8.3e-1 * (self.pth / self.ptherm_star) ** 0.6e0
@@ -1764,6 +1803,7 @@ class CostsStep:
         # 22.06.08 Standby Cooling System
         # Original STARFIRE value, scaling with thermal power
         step220608 = cv.step_ref[48] * (self.pth / self.ptherm_star) ** 0.6e0
+        step220608 = cv.fkind * step220608
         step2206 += step220608
 
         # Output costs
@@ -1813,6 +1853,7 @@ class CostsStep:
         # 22.07 Instrumentation and Control
         # Original STARFIRE value, scaling with thermal power
         step2207 = cv.step_ref[49] * (self.pth / self.ptherm_star) ** 0.6e0
+        step2207 = cv.fkind * step2207
 
         # Output costs
         if self.iprint == 1 and cv.output_costs == 1:
