@@ -3997,6 +3997,31 @@ contains
     real(kind(1.d0)) :: ratio
     DUMMY = ratio
   end subroutine set_itv_175
+  
+  !------------------------------------------------------
+  
+  subroutine init_itv_176
+    !! <LI> (176) f_copperAoh_m2 : CS coil current / copper area < Maximum value
+    !!            (f-value for equation 75)
+    use numerics, only: lablxc, boundl, boundu
+    implicit none
+    lablxc(176) = 'f_copperaoh_m2'
+    boundl(176) = 0.001D0
+    boundu(176) = 1.000D0
+  end subroutine init_itv_176
+
+  real(kind(1.d0)) function itv_176()
+    use rebco_variables, only: f_copperaoh_m2
+    implicit none
+    itv_176 = f_copperAoh_m2 
+  end function itv_176
+
+  subroutine set_itv_176(ratio)
+    use rebco_variables, only: f_copperaoh_m2
+    implicit none
+    real(kind(1.d0)) :: ratio
+    f_copperaoh_m2 = ratio
+  end subroutine set_itv_176
 
   subroutine loadxc
     !! Routine to load the physics and engineering variables into the
@@ -4199,7 +4224,7 @@ contains
            case (173);  xcm(i) = itv_173()
            case (174);  xcm(i) = itv_174()
            case (175);  xcm(i) = itv_175()
-  
+           case (176);  xcm(i) = itv_176()
        case default
           idiags(1) = i ; idiags(2) = ixc(i)
           call report_error(54)
@@ -4466,7 +4491,7 @@ contains
            case (173);  call set_itv_173(ratio)     
            case (174);  call set_itv_174(ratio)     
            case (175);  call set_itv_175(ratio)     
-  
+           case (176);  call set_itv_176(ratio)  
            case default
               call report_error(57)
   

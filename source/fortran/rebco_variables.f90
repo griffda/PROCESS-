@@ -53,13 +53,13 @@ module rebco_variables
   !! f-value for constraint 75: TF coil current / copper area < copperA_m2_max
 
   real(dp) :: copperAoh_m2       
-  !! TF coil current / copper area (A/m2) 
+  !! CS coil current / copper area (A/m2) 
 
   real(dp) :: copperaoh_m2_max
-  !! Maximum TF coil current / copper area (A/m2)
+  !! Maximum CS coil current / copper area (A/m2)
 
   real(dp) :: f_copperaoh_m2
-  !! f-value for constraint 75: TF coil current / copper area < copperA_m2_max
+  !! f-value for constraint 88: CS coil current / copper area < copperA_m2_max
 
   !#TODO: variables need descriptions and units
   real(dp) :: stack_thickness
@@ -95,5 +95,8 @@ module rebco_variables
     solder_area = 0.0D0
     croco_area = 0.0D0
     copperA_m2 = 0.0D0
+    copperaoh_m2_max = 1D8
+    f_copperaoh_m2 = 1d0
+    copperAoh_m2 = 0.0D0
   end subroutine init_rebco_variables
 end module rebco_variables

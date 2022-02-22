@@ -16,10 +16,10 @@ module numerics
 
   public
 
-  integer, parameter :: ipnvars = 175
+  integer, parameter :: ipnvars = 177
   !!  ipnvars FIX : total number of variables available for iteration
 
-  integer, parameter :: ipeqns = 87
+  integer, parameter :: ipeqns = 88
   !!  ipeqns  FIX : number of constraint equations available
   
   integer, parameter :: ipnfoms = 19
@@ -190,6 +190,7 @@ module numerics
   !!  <LI> (85) Constraint for CP lifetime
   !!  <LI> (86) Constraint for TF coil turn dimension
   !!  <LI> (87) Constraint for cryogenic power</UL>
+  !!  <LI> (88) CS current/copper area < Maximum (itv 176 f_copperaoh_m2)
 
   integer, dimension(ipnvars) :: ixc 
   !!  ixc(ipnvars) /0/ :
@@ -373,6 +374,7 @@ module numerics
   !! <LI> (173) EMPTY : Description
   !! <LI> (174) EMPTY : Description
   !! <LI> (175) EMPTY : Description
+  !! <LI> (176) f_copperAoh_m2 : CS coil current / copper area < Maximum value
   ! Issue 287 iteration variables are now defined in module define_iteration_variables in iteration variables.f90
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -533,7 +535,8 @@ contains
       'beta > betalim_lower             ', &
       'CP lifetime                      ', &
       'TFC turn dimension               ', &
-      'Cryogenic plant power            '  &
+      'Cryogenic plant power            ', &
+      'CS current/copper area < Max     '  &
       /)
 
     ! Please note: All strings between '...' above must be exactly 33 chars long
