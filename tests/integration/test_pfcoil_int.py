@@ -2362,19 +2362,17 @@ def test_peakb(monkeypatch):
     ii = 1
     it = 32767
 
-    bri_exp = 0.0
-    bro_exp = 0.0
-    bzi_exp = 0.0
-    bzo_exp = 0.0
-    it_exp = 32767
+    bri_exp = 2.337612e-2
+    bro_exp = 2.727955e-2
+    bzi_exp = 5.143727
+    bzo_exp = -3.020362
 
     bri, bro, bzi, bzo = pf.peakb(i, ii, it)
 
-    assert pytest.approx(bri, bri_exp)
-    assert pytest.approx(bro, bro_exp)
-    assert pytest.approx(bzi, bzi_exp)
-    assert pytest.approx(bzo, bzo_exp)
-    assert_array_almost_equal(it, it_exp)
+    assert pytest.approx(bri) == bri_exp
+    assert pytest.approx(bro) == bro_exp
+    assert pytest.approx(bzi) == bzi_exp
+    assert pytest.approx(bzo) == bzo_exp
 
 
 def test_superconpf(monkeypatch):
