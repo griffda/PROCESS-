@@ -145,85 +145,56 @@
 ! *** Elemental composition (same for both inboard and
 ! *** outboard blankets)
 
-      if (ipowerflow == 0) then
-
-!        *** Old blanket model
-         if (coolwh.eq.1) then
-            do j = 1,83
-               welemp(j) = 100.0 * REAL( &
-                    fblss*(1.0D0-fmsbl)*ecss(j) + &
-                    fblss*fmsbl*ecms(j) + &
-                    fblvd*ecvd(j) + &
-                    fblli2o*ecli2o(j) + &
-                    fblbe*ecbe(j) + &
-                    vfblkt*eche(j) )
-            end do
-         else
-            do j = 1,83
-               welemp(j) = 100.0 * REAL( &
-                    fblss*(1.0D0-fmsbl)*ecss(j) + &
-                    fblss*fmsbl*ecms(j) + &
-                    fblvd*ecvd(j) + &
-                    fblli2o*ecli2o(j) + &
-                    fblbe*ecbe(j) + &
-                    vfblkt*ech2o(j) )
-            end do
-         end if
-
+      if (iblanket == 4) then
+            !  Liquid blanket (LiPb + Li)    
+            if (coolwh.eq.1) then    
+                  ! He Coolant    
+                  do j = 1,83
+                        welemp(j) = 100.0 * REAL( &
+                        fblss*(1.0D0-fmsbl)*ecss(j) + &
+                        fblss*fmsbl*ecms(j) + &
+                        fblvd*ecvd(j) + &
+                        fbllipb*eclipb(j) + &
+                        fblli*ecli(j) + &
+                        vfblkt*eche(j) )
+                  end do        
+            else	    
+                  ! H2O Coolant 
+                  do j = 1,83
+                        welemp(j) = 100.0 * REAL( &
+                        fblss*(1.0D0-fmsbl)*ecss(j) + &
+                        fblss*fmsbl*ecms(j) + &
+                        fblvd*ecvd(j) + &
+                        fbllipb*eclipb(j) + &
+                        fblli*ecli(j) + &
+                        vfblkt*ech2o(j) )
+                   end do      
+            end if    
       else
-
-!        *** New blanket model
-
-         if (blkttype == 3) then
-
-!           *** Li2O/Be solid blanket
-            if (coolwh.eq.1) then
-               do j = 1,83
-                  welemp(j) = 100.0 * REAL( &
-                       fblss*(1.0D0-fmsbl)*ecss(j) + &
-                       fblss*fmsbl*ecms(j) + &
-                       fblvd*ecvd(j) + &
-                       fblli2o*ecli2o(j) + &
-                       fblbe*ecbe(j) + &
-                       vfblkt*eche(j) )
-               end do
-            else
-               do j = 1,83
-                  welemp(j) = 100.0 * REAL( &
-                       fblss*(1.0D0-fmsbl)*ecss(j) + &
-                       fblss*fmsbl*ecms(j) + &
-                       fblvd*ecvd(j) + &
-                       fblli2o*ecli2o(j) + &
-                       fblbe*ecbe(j) + &
-                       vfblkt*ech2o(j) )
-               end do
-            end if
-
-         else
-
-!           *** LiPb/Li liquid blanket
-            if (coolwh.eq.1) then
-               do j = 1,83
-                  welemp(j) = 100.0 * REAL( &
-                       fblss*(1.0D0-fmsbl)*ecss(j) + &
-                       fblss*fmsbl*ecms(j) + &
-                       fblvd*ecvd(j) + &
-                       fbllipb*eclipb(j) + &
-                       fblli*ecli(j) + &
-                       vfblkt*eche(j) )
-               end do
-            else
-               do j = 1,83
-                  welemp(j) = 100.0 * REAL( &
-                       fblss*(1.0D0-fmsbl)*ecss(j) + &
-                       fblss*fmsbl*ecms(j) + &
-                       fblvd*ecvd(j) + &
-                       fbllipb*eclipb(j) + &
-                       fblli*ecli(j) + &
-                       vfblkt*ech2o(j) )
-               end do
-            end if
-         end if
+            !  Solid blanket (Li2O + Be)    
+            if (coolwh.eq.1) then    
+                  ! He Coolant       
+                  do j = 1,83
+                        welemp(j) = 100.0 * REAL( &
+                        fblss*(1.0D0-fmsbl)*ecss(j) + &
+                        fblss*fmsbl*ecms(j) + &
+                        fblvd*ecvd(j) + &
+                        fblli2o*ecli2o(j) + &
+                        fblbe*ecbe(j) + &
+                        vfblkt*eche(j) )
+                  end do        
+            else	        
+                  ! H2O Coolant    
+                  do j = 1,83
+                        welemp(j) = 100.0 * REAL( &
+                        fblss*(1.0D0-fmsbl)*ecss(j) + &
+                        fblss*fmsbl*ecms(j) + &
+                        fblvd*ecvd(j) + &
+                        fblli2o*ecli2o(j) + &
+                        fblbe*ecbe(j) + &
+                        vfblkt*ech2o(j) )
+                  end do        
+            endif
       end if
 
 ! *** Irradiation time
