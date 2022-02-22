@@ -126,6 +126,7 @@ def test_pfcoil(monkeypatch):
     monkeypatch.setattr(tv, "tqnch", 1.82538e2)
     monkeypatch.setattr(tv, "theat", 1.0e1)
     monkeypatch.setattr(constants, "dcopper", 8.9e3)
+    monkeypatch.setattr(pf, "first_call", True)
 
     pf.pfcoil()
 
