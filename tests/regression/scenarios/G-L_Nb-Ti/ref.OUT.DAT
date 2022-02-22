@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1233-g5464a896
-    Branch : 1560-minor-formatting-error-in-vgaptop-output
-   Git log : Corrected\ output\ formatting\ error
- Date/time : 14 Feb 2022  8:28:24 +00:00(hh:mm) UTC
+   Tag No. : v2.1-1238-g0543b5a2
+    Branch : 1561-incorrect-adjustment-of-vgaptop-in-double-null-case
+   Git log : Merge\ branch\ |develop|\ into\ 1561-incorrect-adjustm
+ Date/time : 14 Feb 2022 12:15:16 +00:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-280/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-280/test_scenario_G_L_Nb_Ti_0/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-283/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-283/test_scenario_G_L_Nb_Ti_0/IN.DAT
  Run title : TF coil testing
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  

@@ -177,7 +177,7 @@ def write(models, outfile):
     models.vacuum.run(output=True)
 
     # Buildings model
-    ft.buildings_module.bldgcall(outfile, 1)
+    models.buildings.run(output=True)
 
     # Plant AC power requirements
     ft.power_module.acpow(outfile, 1)
