@@ -592,6 +592,7 @@ class CostsStep:
         # 27.01 Remote Handling
         # From report by T. Hender CD-STEP-01030, scales with direct capital costs
         step2701 = cv.step_rh_costfrac * cv.cdirt
+        step2701 = cv.fkind * step2701
 
         self.step27 = step2701
 
