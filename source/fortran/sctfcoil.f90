@@ -2743,8 +2743,10 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         write(outfile,'(t2, "Toroidal"    ," modulus", t30, "(GPa)",t36, *(F11.3,3x))') eyoung_p * 1.0D-9
         write(outfile,'(t2, "Vertical"    ," modulus", t30, "(GPa)",t36, *(F11.3,3x))') eyoung_z * 1.0D-9
         write(outfile,* ) ''
-        call ovarre(outfile,'WP toroidal modulus (GPa)','(eyoung_wp_t*1.0D-9)', eyoung_wp_t*1.0D-9, 'OP ')
+        call ovarre(outfile,'WP transverse modulus (GPa)','(eyoung_wp_t*1.0D-9)', eyoung_wp_t*1.0D-9, 'OP ')
         call ovarre(outfile,'WP vertical modulus (GPa)','(eyoung_wp_z*1.0D-9)', eyoung_wp_z*1.0D-9, 'OP ')
+        call ovarre(outfile,'WP transverse Poisson''s ratio','(poisson_wp_t)', poisson_wp_t, 'OP ')
+        call ovarre(outfile,'WP vertical-transverse Pois. rat.','(poisson_wp_z)', poisson_wp_z, 'OP ')
 
         ! MFILE.DAT data
         do ii = 1, n_tf_bucking + 2
