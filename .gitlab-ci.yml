@@ -325,14 +325,10 @@ Black:
   stage: quality
   image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   allow_failure: true
+  before_script:
+    - python3.8 -m pip install black
   script:
     - python3.8 -m black --check . > black.log
-  artifacts:
-    when: always
-    paths:
-      - black.log
-  tags:
-    - ubuntu
 
 #-----------------
 #  Tracking
