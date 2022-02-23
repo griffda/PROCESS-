@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1176-g8889788a code contains untracked changes
+   Tag No. : v2.1-1259-g2bf9b76f code contains untracked changes
     Branch : 1205-tf-cond-stiffness
-   Git log : Changed\ the\ name\ of\ the\ TF\ coil\ conductor\ behavior
- Date/time :  7 Feb 2022 11:24:46 -05:00(hh:mm) UTC
+   Git log : Added\ Poisson|s\ ratio\ to\ output
+ Date/time : 23 Feb 2022 11:12:42 -05:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-18/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-18/test_scenario_Bucked_and_wedge0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-25/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-25/test_scenario_Bucked_and_wedge0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -51,7 +51,7 @@
  Number of constraints (total)                                            (neqns+nineqns)                  25     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          1     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 3.214E-09  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 3.215E-09  OP 
  VMCON convergence parameter                                              (convergence_parameter)   1.254E-10  OP 
  Number of VMCON iterations                                               (nviter)                         41  OP 
  
@@ -130,31 +130,31 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.9616E-02             -4.5742E-16                 1.1546E-14
-    2  Global power balance consistency      =  1.4295E-01 MW/m3        4.1422E-15 MW/m3          -2.8977E-14
-    3  Density upper limit                   <  7.5516E+19 /m3          1.6384E+04 /m3             2.2204E-16
-    4  Neutron wall load upper limit         <  9.5777E-01 MW/m2       -9.3148E-14 MW/m2          -9.7256E-14
-    5  Radial build consistency              =  8.5348E+00 m           -1.8951E-15 m               2.2204E-16
-    6  Burn time lower limit                 >  7.2000E+03 sec          1.8169E-06 sec            -2.5235E-10
-    7  L-H power threshold limit             >  9.7889E+01 MW          -2.9658E-11 MW              3.0309E-13
-    8  Net electric power lower limit        >  5.0000E+02 MW          -4.5556E-08 MW             -9.1112E-11
-    9  Beta upper limit                      <  6.8096E-02              9.9920E-16                 1.4655E-14
-   10  CS coil EOF current density limit     <  3.8419E+07 A/m2        -5.1111E-06 A/m2           -1.3300E-13
-   11  CS coil BOP current density limit     <  3.8439E+07 A/m2        -5.0589E-06 A/m2           -1.3167E-13
-   12  Injection power upper limit           <  5.1000E+01 MW           0.0000E+00 MW             -0.0000E+00
-   13  TF coil case stress upper limit       <  5.8000E+08 Pa           1.1444E-05 Pa              1.9540E-14
-   14  TF coil conduit stress upper lim      <  5.8000E+08 Pa           9.5367E-06 Pa              1.6431E-14
-   15  I_op / I_critical (TF coil)           <  2.5038E+07 A/m2         8.5814E-08 A/m2           -4.6629E-15
-   16  Dump voltage upper limit              <  9.9830E+00 V            1.7015E-02 V              -6.9944E-15
-   17  J_winding pack/J_protection limit     <  1.8403E+07 A/m2         0.0000E+00 A/m2           -9.9920E-16
-   18  Upper Lim. on Psep * Bt / q A R       <  9.2000E+00 MWT/m        2.5882E-12 MWT/m          -2.8155E-13
-   19  Dump time set by VV stress            >  2.4453E+01 s            7.1054E-14 s              -2.8866E-15
-   20  TF coil temp. margin lower limit      >  1.5000E+00 K           -2.4247E-13 K               1.6165E-13
-   21  CS temperature margin lower limit     >  1.5000E+00 K            4.8044E-09 K              -3.2030E-09
-   22  CS Tresca yield criterion             <  6.6000E+08 Pa          -2.8014E-05 Pa             -4.2411E-14
-   23  Peak toroidal field upper limit       <  1.1200E+01 T            3.7303E-15 T              -3.3307E-16
-   24  taup/taueff                           >  5.0000E+00              9.9365E-14                -1.9873E-14
-   25  TF coil strain absolute value         <  7.0000E-03              5.9848E-17                 8.6597E-15
+    1  Beta consistency                      =  3.9616E-02             -3.4307E-16                 8.6597E-15
+    2  Global power balance consistency      =  1.4295E-01 MW/m3        3.8090E-15 MW/m3          -2.6645E-14
+    3  Density upper limit                   <  7.5516E+19 /m3          6.5536E+04 /m3             8.8818E-16
+    4  Neutron wall load upper limit         <  9.5777E-01 MW/m2       -9.4369E-14 MW/m2          -9.8477E-14
+    5  Radial build consistency              =  8.5348E+00 m            0.0000E+00 m              -0.0000E+00
+    6  Burn time lower limit                 >  7.2000E+03 sec          1.8173E-06 sec            -2.5241E-10
+    7  L-H power threshold limit             >  9.7889E+01 MW          -2.9758E-11 MW              3.0398E-13
+    8  Net electric power lower limit        >  5.0000E+02 MW          -4.5607E-08 MW             -9.1213E-11
+    9  Beta upper limit                      <  6.8096E-02              9.7145E-16                 1.4433E-14
+   10  CS coil EOF current density limit     <  3.8419E+07 A/m2        -5.1335E-06 A/m2           -1.3367E-13
+   11  CS coil BOP current density limit     <  3.8439E+07 A/m2        -5.1036E-06 A/m2           -1.3278E-13
+   12  Injection power upper limit           <  5.1000E+01 MW           7.1054E-14 MW             -1.4433E-15
+   13  TF coil case stress upper limit       <  5.8000E+08 Pa          -3.1829E-05 Pa             -5.4845E-14
+   14  TF coil conduit stress upper lim      <  5.8000E+08 Pa          -3.3617E-05 Pa             -5.7954E-14
+   15  I_op / I_critical (TF coil)           <  2.5038E+07 A/m2         2.2066E-07 A/m2           -1.1990E-14
+   16  Dump voltage upper limit              <  9.9830E+00 V            1.7015E-02 V              -7.1054E-15
+   17  J_winding pack/J_protection limit     <  1.8403E+07 A/m2         0.0000E+00 A/m2           -0.0000E+00
+   18  Upper Lim. on Psep * Bt / q A R       <  9.2000E+00 MWT/m        2.5544E-12 MWT/m          -2.7744E-13
+   19  Dump time set by VV stress            >  2.4453E+01 s            1.0303E-13 s              -3.7748E-15
+   20  TF coil temp. margin lower limit      >  1.5000E+00 K           -2.0162E-13 K               1.3434E-13
+   21  CS temperature margin lower limit     >  1.5000E+00 K            4.8051E-09 K              -3.2034E-09
+   22  CS Tresca yield criterion             <  6.6000E+08 Pa          -2.6941E-05 Pa             -4.0856E-14
+   23  Peak toroidal field upper limit       <  1.1200E+01 T            4.9738E-15 T              -4.4409E-16
+   24  taup/taueff                           >  5.0000E+00              8.2712E-14                -1.6542E-14
+   25  TF coil strain absolute value         <  7.0000E-03             -6.0282E-16                -8.6264E-14
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -621,7 +621,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Materal stress of the point of maximum shear stress (Tresca criterion) for each layer
  Please use utilities/plot_stress_tf.py for radial plots plots summary
  Layers                                     CS     interface    Steel case            WP    Outer case
- Radial stress               (MPa)      -0.000       -41.463       -41.398      -164.930         3.710
+ Radial stress               (MPa)       0.000       -41.463       -41.398      -164.930         3.710
  toroidal stress             (MPa)    -422.110       -24.286      -291.395      -213.580      -213.573
  Vertical stress             (MPa)       0.978       -18.281       180.112       227.226       244.444
  Von-Mises stress            (MPa)     422.600        20.839       408.585       381.810       396.954
@@ -630,8 +630,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Toroidal modulus            (GPa)     114.094         2.500       205.000        38.026       205.000
  Vertical modulus            (GPa)      45.157         2.500       205.000       133.085       363.502
  
- WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      3.149E+01  OP 
+ WP transverse modulus (GPa)                                              (eyoung_wp_t*1.0D-9)      3.149E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      1.148E+02  OP 
+ WP transverse Poisson's ratio                                            (poisson_wp_t)            3.060E-01  OP 
+ WP vertical-transverse Pois. rat.                                        (poisson_wp_z)            3.169E-01  OP 
  
  TF design
  
@@ -960,7 +962,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -8.571E+06 -8.571E+06 -8.571E+06  0.000E+00
    5         0.000E+00  0.000E+00 -5.364E+06 -5.364E+06 -5.364E+06  0.000E+00
    6         0.000E+00  0.000E+00 -5.364E+06 -5.364E+06 -5.364E+06  0.000E+00
-   7         0.000E+00  0.000E+00 -1.336E-10 -1.336E-10  0.000E+00  0.000E+00
+   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.204E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -3.804E-03  OP 
@@ -1077,7 +1079,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  First Wall Mass, excluding armour (kg)                                   (fwmass)                  1.925E+05  OP 
  Blanket Mass - Total(kg)                                                 (whtblkt)                 3.741E+06  OP 
      Blanket Mass - TiBe12 (kg)                                           (whtbltibe12)             1.266E+06  OP 
-     Blanket Mass - Li2SiO4 (kg)                                          (whtblli4sio4)            1.344E+06  OP 
+     Blanket Mass - Li4SiO4 (kg)                                          (whtblli4sio4)            1.344E+06  OP 
      Blanket Mass - Steel (kg)                                            (whtblss)                 1.131E+06  OP 
  Total mass of armour, first wall and blanket (kg)                        (armour_fw_bl_mass)       4.080E+06  OP 
  Shield Mass (kg)                                                         (whtshld)                 2.438E+06  OP 
@@ -1210,7 +1212,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  D-T pump speed provided (m3/s)                                           (snet(4))                 9.107E+01  OP 
  
  The vacuum pumping system size is governed by the
- requirements for helium ash removal.
+ requirements for pumpdown between burns.
  
  Number of large pump ducts                                               (nduct)                          16     
  Passage diameter, divertor to ducts (m)                                  (d(imax))                 5.722E-01  OP 
@@ -1220,7 +1222,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Duct length, elbow to pumps (m)                                          (l3)                      2.000E+00     
  Number of pumps                                                          (pumpn)                   4.805E+01  OP 
  
- The vacuum system uses cryo pumps
+ The vacuum system uses cryo  pumps.
  
  ******************************************* Plant Buildings System *******************************************
  

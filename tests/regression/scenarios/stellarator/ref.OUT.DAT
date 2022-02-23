@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1176-g8889788a code contains untracked changes
+   Tag No. : v2.1-1259-g2bf9b76f code contains untracked changes
     Branch : 1205-tf-cond-stiffness
-   Git log : Changed\ the\ name\ of\ the\ TF\ coil\ conductor\ behavior
- Date/time :  7 Feb 2022 11:26:04 -05:00(hh:mm) UTC
+   Git log : Added\ Poisson|s\ ratio\ to\ output
+ Date/time : 23 Feb 2022 11:14:06 -05:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-18/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-18/test_scenario_stellarator_0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-25/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-25/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  
@@ -721,6 +721,22 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF coil AC inductive power demand (MW)                                   (xpwrmw)                  2.199E+01  OP 
  Total steady state AC power demand (MW)                                  (tfacpd)                  8.763E+01  OP 
  
+ ******************************************* Plant Buildings System *******************************************
+ 
+ Internal volume of reactor building (m3)                                 (vrci)                    2.097E+06     
+ Dist from centre of torus to bldg wall (m)                               (wrbi)                    6.344E+01     
+ Effective floor area (m2)                                                (efloor)                  5.135E+05     
+ Reactor building volume (m3)                                             (rbv)                     2.324E+06     
+ Reactor maintenance building volume (m3)                                 (rmbv)                    2.690E+05     
+ Warmshop volume (m3)                                                     (wsv)                     9.869E+04     
+ Tritium building volume (m3)                                             (triv)                    4.000E+04     
+ Electrical building volume (m3)                                          (elev)                    6.755E+04     
+ Control building volume (m3)                                             (conv)                    6.000E+04     
+ Cryogenics building volume (m3)                                          (cryv)                    2.155E+04     
+ Administration building volume (m3)                                      (admv)                    1.000E+05     
+ Shops volume (m3)                                                        (shov)                    1.000E+05     
+ Total volume of nuclear buildings (m3)                                   (volnucb)                 2.527E+06     
+ 
  *********************************************** Vacuum System ************************************************
  
  Pumpdown to Base Pressure :
@@ -757,7 +773,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  D-T pump speed provided (m3/s)                                           (snet(4))                 7.195E+01  OP 
  
  The vacuum pumping system size is governed by the
- requirements for helium ash removal.
+ requirements for pumpdown between burns.
  
  Number of large pump ducts                                               (nduct)                          50     
  Passage diameter, divertor to ducts (m)                                  (d(imax))                 3.284E-01  OP 
@@ -767,23 +783,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Duct length, elbow to pumps (m)                                          (l3)                      2.000E+00     
  Number of pumps                                                          (pumpn)                   1.000E+02  OP 
  
- The vacuum system uses cryo pumps
- 
- ******************************************* Plant Buildings System *******************************************
- 
- Internal volume of reactor building (m3)                                 (vrci)                    2.097E+06     
- Dist from centre of torus to bldg wall (m)                               (wrbi)                    6.344E+01     
- Effective floor area (m2)                                                (efloor)                  5.135E+05     
- Reactor building volume (m3)                                             (rbv)                     2.324E+06     
- Reactor maintenance building volume (m3)                                 (rmbv)                    2.690E+05     
- Warmshop volume (m3)                                                     (wsv)                     9.869E+04     
- Tritium building volume (m3)                                             (triv)                    4.000E+04     
- Electrical building volume (m3)                                          (elev)                    6.755E+04     
- Control building volume (m3)                                             (conv)                    6.000E+04     
- Cryogenics building volume (m3)                                          (cryv)                    2.155E+04     
- Administration building volume (m3)                                      (admv)                    1.000E+05     
- Shops volume (m3)                                                        (shov)                    1.000E+05     
- Total volume of nuclear buildings (m3)                                   (volnucb)                 2.527E+06     
+ The vacuum system uses cryo  pumps.
  
  **************************************** Electric Power Requirements *****************************************
  

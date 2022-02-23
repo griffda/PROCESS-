@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.3.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "07/02/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "11:25"
+ Date_of_run_____________________________________________________________ (date)________________________     "23/02/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "11:13"
  User____________________________________________________________________ (username)____________________     "cswan"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1176-g8889788a"                                                                               
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1259-g2bf9b76f"                                                                               
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1205-tf-cond-stiffness"                                                                            
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Changed\ the\ name\ of\ the\ TF\ coil\ conductor\ behavior"                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-18/test_scenario_HARE_0/IN.DAT                                                                                                                                              "
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Added\ Poisson|s\ ratio\ to\ output"                                                               
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-25/test_scenario_HARE_0/IN.DAT                                                                                                                                              "
  Binomial_coefficients_C(5,0):_1_________________________________________ (binomial(5,0))_______________      1.0000E+00    
  Binomial_coefficients_C(5,1):_5_________________________________________ (binomial(5,1))_______________      5.0000E+00    
  Binomial_coefficients_C(5,2):_10________________________________________ (binomial(5,2))_______________      1.0000E+01    
@@ -438,8 +438,8 @@
  Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.2000E-01    
  Top_radiation_shield_thickness_(m)______________________________________ (shldtth)_____________________      3.0000E-01    
  Top_blanket_vertical_thickness_(m)______________________________________ (blnktth)_____________________      1.0150E+00    
- Top_first_wall_vertical_thickness_(m)___________________________________ fwtth_________________________      1.8000E-02    
- Top_scrape-off_vertical_thickness_(m)___________________________________ vgaptop_______________________      6.0000E-01    
+ Top_first_wall_vertical_thickness_(m)___________________________________ (fwtth)_______________________      1.8000E-02    
+ Top_scrape-off_vertical_thickness_(m)___________________________________ (vgaptop)_____________________      6.0000E-01    
  Plasma_half-height_(m)__________________________________________________ (rminor*kappa)________________      5.4366E+00    
  Bottom_scrape-off_vertical_thickness_(m)________________________________ (vgap)________________________      1.6000E+00    
  Divertor_structure_vertical_thickness_(m)_______________________________ (divfix)______________________      6.2100E-01    
@@ -484,8 +484,10 @@
  # TF coils  #
  Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.6000E+08    
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.6000E+08    
- WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      2.1222E+01 OP 
+ WP_transverse_modulus_(GPa)_____________________________________________ (eyoung_wp_t*1.0D-9)__________      2.1222E+01 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      8.2085E+01 OP 
+ WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_t)________________      3.0478E-01 OP 
+ WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_z)________________      3.1843E-01 OP 
  Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      2.4424E-08    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -4.2137E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      2.3863E+08    
@@ -786,7 +788,7 @@
  First_Wall_Mass,_excluding_armour_(kg)__________________________________ (fwmass)______________________      1.8977E+05 OP 
  Blanket_Mass_-_Total(kg)________________________________________________ (whtblkt)_____________________      4.5929E+06 OP 
  ____Blanket_Mass_-_TiBe12_(kg)__________________________________________ (whtbltibe12)_________________      1.5542E+06 OP 
- ____Blanket_Mass_-_Li2SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6505E+06 OP 
+ ____Blanket_Mass_-_Li4SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6505E+06 OP 
  ____Blanket_Mass_-_Steel_(kg)___________________________________________ (whtblss)_____________________      1.3882E+06 OP 
  Total_mass_of_armour,_first_wall_and_blanket_(kg)_______________________ (armour_fw_bl_mass)___________      4.9323E+06 OP 
  Shield_Mass_(kg)________________________________________________________ (whtshld)_____________________      2.5168E+06 OP 
@@ -1423,8 +1425,8 @@
  Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.2000E-01    
  Top_radiation_shield_thickness_(m)______________________________________ (shldtth)_____________________      3.0000E-01    
  Top_blanket_vertical_thickness_(m)______________________________________ (blnktth)_____________________      1.0150E+00    
- Top_first_wall_vertical_thickness_(m)___________________________________ fwtth_________________________      1.8000E-02    
- Top_scrape-off_vertical_thickness_(m)___________________________________ vgaptop_______________________      6.0000E-01    
+ Top_first_wall_vertical_thickness_(m)___________________________________ (fwtth)_______________________      1.8000E-02    
+ Top_scrape-off_vertical_thickness_(m)___________________________________ (vgaptop)_____________________      6.0000E-01    
  Plasma_half-height_(m)__________________________________________________ (rminor*kappa)________________      5.4424E+00    
  Bottom_scrape-off_vertical_thickness_(m)________________________________ (vgap)________________________      1.6000E+00    
  Divertor_structure_vertical_thickness_(m)_______________________________ (divfix)______________________      6.2100E-01    
@@ -1469,8 +1471,10 @@
  # TF coils  #
  Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.6000E+08    
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.6000E+08    
- WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      2.1222E+01 OP 
+ WP_transverse_modulus_(GPa)_____________________________________________ (eyoung_wp_t*1.0D-9)__________      2.1222E+01 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      8.2080E+01 OP 
+ WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_t)________________      3.0478E-01 OP 
+ WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_z)________________      3.1843E-01 OP 
  Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      0.0000E+00    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -4.2147E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      2.3853E+08    
@@ -1771,7 +1775,7 @@
  First_Wall_Mass,_excluding_armour_(kg)__________________________________ (fwmass)______________________      1.9014E+05 OP 
  Blanket_Mass_-_Total(kg)________________________________________________ (whtblkt)_____________________      4.6017E+06 OP 
  ____Blanket_Mass_-_TiBe12_(kg)__________________________________________ (whtbltibe12)_________________      1.5572E+06 OP 
- ____Blanket_Mass_-_Li2SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6536E+06 OP 
+ ____Blanket_Mass_-_Li4SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6536E+06 OP 
  ____Blanket_Mass_-_Steel_(kg)___________________________________________ (whtblss)_____________________      1.3909E+06 OP 
  Total_mass_of_armour,_first_wall_and_blanket_(kg)_______________________ (armour_fw_bl_mass)___________      4.9417E+06 OP 
  Shield_Mass_(kg)________________________________________________________ (whtshld)_____________________      2.5213E+06 OP 
@@ -2408,8 +2412,8 @@
  Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.2000E-01    
  Top_radiation_shield_thickness_(m)______________________________________ (shldtth)_____________________      3.0000E-01    
  Top_blanket_vertical_thickness_(m)______________________________________ (blnktth)_____________________      1.0150E+00    
- Top_first_wall_vertical_thickness_(m)___________________________________ fwtth_________________________      1.8000E-02    
- Top_scrape-off_vertical_thickness_(m)___________________________________ vgaptop_______________________      6.0000E-01    
+ Top_first_wall_vertical_thickness_(m)___________________________________ (fwtth)_______________________      1.8000E-02    
+ Top_scrape-off_vertical_thickness_(m)___________________________________ (vgaptop)_____________________      6.0000E-01    
  Plasma_half-height_(m)__________________________________________________ (rminor*kappa)________________      5.4475E+00    
  Bottom_scrape-off_vertical_thickness_(m)________________________________ (vgap)________________________      1.6000E+00    
  Divertor_structure_vertical_thickness_(m)_______________________________ (divfix)______________________      6.2100E-01    
@@ -2454,8 +2458,10 @@
  # TF coils  #
  Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.6000E+08    
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.6000E+08    
- WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      2.1222E+01 OP 
+ WP_transverse_modulus_(GPa)_____________________________________________ (eyoung_wp_t*1.0D-9)__________      2.1222E+01 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      8.2076E+01 OP 
+ WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_t)________________      3.0478E-01 OP 
+ WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_z)________________      3.1843E-01 OP 
  Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      2.4424E-08    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -4.2156E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      2.3844E+08    
@@ -2756,7 +2762,7 @@
  First_Wall_Mass,_excluding_armour_(kg)__________________________________ (fwmass)______________________      1.9047E+05 OP 
  Blanket_Mass_-_Total(kg)________________________________________________ (whtblkt)_____________________      4.6093E+06 OP 
  ____Blanket_Mass_-_TiBe12_(kg)__________________________________________ (whtbltibe12)_________________      1.5598E+06 OP 
- ____Blanket_Mass_-_Li2SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6564E+06 OP 
+ ____Blanket_Mass_-_Li4SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6564E+06 OP 
  ____Blanket_Mass_-_Steel_(kg)___________________________________________ (whtblss)_____________________      1.3932E+06 OP 
  Total_mass_of_armour,_first_wall_and_blanket_(kg)_______________________ (armour_fw_bl_mass)___________      4.9500E+06 OP 
  Shield_Mass_(kg)________________________________________________________ (whtshld)_____________________      2.5252E+06 OP 
@@ -3393,8 +3399,8 @@
  Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.2000E-01    
  Top_radiation_shield_thickness_(m)______________________________________ (shldtth)_____________________      3.0000E-01    
  Top_blanket_vertical_thickness_(m)______________________________________ (blnktth)_____________________      1.0150E+00    
- Top_first_wall_vertical_thickness_(m)___________________________________ fwtth_________________________      1.8000E-02    
- Top_scrape-off_vertical_thickness_(m)___________________________________ vgaptop_______________________      6.0000E-01    
+ Top_first_wall_vertical_thickness_(m)___________________________________ (fwtth)_______________________      1.8000E-02    
+ Top_scrape-off_vertical_thickness_(m)___________________________________ (vgaptop)_____________________      6.0000E-01    
  Plasma_half-height_(m)__________________________________________________ (rminor*kappa)________________      5.4565E+00    
  Bottom_scrape-off_vertical_thickness_(m)________________________________ (vgap)________________________      1.6000E+00    
  Divertor_structure_vertical_thickness_(m)_______________________________ (divfix)______________________      6.2100E-01    
@@ -3439,8 +3445,10 @@
  # TF coils  #
  Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.6000E+08    
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.6000E+08    
- WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      2.1222E+01 OP 
+ WP_transverse_modulus_(GPa)_____________________________________________ (eyoung_wp_t*1.0D-9)__________      2.1222E+01 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      8.2068E+01 OP 
+ WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_t)________________      3.0478E-01 OP 
+ WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_z)________________      3.1843E-01 OP 
  Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      0.0000E+00    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -4.2171E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      2.3829E+08    
@@ -3741,7 +3749,7 @@
  First_Wall_Mass,_excluding_armour_(kg)__________________________________ (fwmass)______________________      1.9106E+05 OP 
  Blanket_Mass_-_Total(kg)________________________________________________ (whtblkt)_____________________      4.6230E+06 OP 
  ____Blanket_Mass_-_TiBe12_(kg)__________________________________________ (whtbltibe12)_________________      1.5644E+06 OP 
- ____Blanket_Mass_-_Li2SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6613E+06 OP 
+ ____Blanket_Mass_-_Li4SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6613E+06 OP 
  ____Blanket_Mass_-_Steel_(kg)___________________________________________ (whtblss)_____________________      1.3973E+06 OP 
  Total_mass_of_armour,_first_wall_and_blanket_(kg)_______________________ (armour_fw_bl_mass)___________      4.9648E+06 OP 
  Shield_Mass_(kg)________________________________________________________ (whtshld)_____________________      2.5322E+06 OP 
@@ -4378,8 +4386,8 @@
  Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.2000E-01    
  Top_radiation_shield_thickness_(m)______________________________________ (shldtth)_____________________      3.0000E-01    
  Top_blanket_vertical_thickness_(m)______________________________________ (blnktth)_____________________      1.0150E+00    
- Top_first_wall_vertical_thickness_(m)___________________________________ fwtth_________________________      1.8000E-02    
- Top_scrape-off_vertical_thickness_(m)___________________________________ vgaptop_______________________      6.0000E-01    
+ Top_first_wall_vertical_thickness_(m)___________________________________ (fwtth)_______________________      1.8000E-02    
+ Top_scrape-off_vertical_thickness_(m)___________________________________ (vgaptop)_____________________      6.0000E-01    
  Plasma_half-height_(m)__________________________________________________ (rminor*kappa)________________      5.4655E+00    
  Bottom_scrape-off_vertical_thickness_(m)________________________________ (vgap)________________________      1.6000E+00    
  Divertor_structure_vertical_thickness_(m)_______________________________ (divfix)______________________      6.2100E-01    
@@ -4424,8 +4432,10 @@
  # TF coils  #
  Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.6000E+08    
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.6000E+08    
- WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      2.1222E+01 OP 
+ WP_transverse_modulus_(GPa)_____________________________________________ (eyoung_wp_t*1.0D-9)__________      2.1222E+01 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      8.2060E+01 OP 
+ WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_t)________________      3.0478E-01 OP 
+ WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_z)________________      3.1843E-01 OP 
  Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      2.4424E-08    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -4.2186E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      2.3814E+08    
@@ -4726,7 +4736,7 @@
  First_Wall_Mass,_excluding_armour_(kg)__________________________________ (fwmass)______________________      1.9165E+05 OP 
  Blanket_Mass_-_Total(kg)________________________________________________ (whtblkt)_____________________      4.6367E+06 OP 
  ____Blanket_Mass_-_TiBe12_(kg)__________________________________________ (whtbltibe12)_________________      1.5690E+06 OP 
- ____Blanket_Mass_-_Li2SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6662E+06 OP 
+ ____Blanket_Mass_-_Li4SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6662E+06 OP 
  ____Blanket_Mass_-_Steel_(kg)___________________________________________ (whtblss)_____________________      1.4015E+06 OP 
  Total_mass_of_armour,_first_wall_and_blanket_(kg)_______________________ (armour_fw_bl_mass)___________      4.9795E+06 OP 
  Shield_Mass_(kg)________________________________________________________ (whtshld)_____________________      2.5392E+06 OP 
@@ -5363,8 +5373,8 @@
  Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.2000E-01    
  Top_radiation_shield_thickness_(m)______________________________________ (shldtth)_____________________      3.0000E-01    
  Top_blanket_vertical_thickness_(m)______________________________________ (blnktth)_____________________      1.0150E+00    
- Top_first_wall_vertical_thickness_(m)___________________________________ fwtth_________________________      1.8000E-02    
- Top_scrape-off_vertical_thickness_(m)___________________________________ vgaptop_______________________      6.0000E-01    
+ Top_first_wall_vertical_thickness_(m)___________________________________ (fwtth)_______________________      1.8000E-02    
+ Top_scrape-off_vertical_thickness_(m)___________________________________ (vgaptop)_____________________      6.0000E-01    
  Plasma_half-height_(m)__________________________________________________ (rminor*kappa)________________      5.4748E+00    
  Bottom_scrape-off_vertical_thickness_(m)________________________________ (vgap)________________________      1.6000E+00    
  Divertor_structure_vertical_thickness_(m)_______________________________ (divfix)______________________      6.2100E-01    
@@ -5409,8 +5419,10 @@
  # TF coils  #
  Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.6000E+08    
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.6000E+08    
- WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      2.1222E+01 OP 
+ WP_transverse_modulus_(GPa)_____________________________________________ (eyoung_wp_t*1.0D-9)__________      2.1222E+01 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      8.2051E+01 OP 
+ WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_t)________________      3.0478E-01 OP 
+ WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_z)________________      3.1843E-01 OP 
  Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      0.0000E+00    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -4.2201E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      2.3799E+08    
@@ -5711,7 +5723,7 @@
  First_Wall_Mass,_excluding_armour_(kg)__________________________________ (fwmass)______________________      1.9225E+05 OP 
  Blanket_Mass_-_Total(kg)________________________________________________ (whtblkt)_____________________      4.6508E+06 OP 
  ____Blanket_Mass_-_TiBe12_(kg)__________________________________________ (whtbltibe12)_________________      1.5738E+06 OP 
- ____Blanket_Mass_-_Li2SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6713E+06 OP 
+ ____Blanket_Mass_-_Li4SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6713E+06 OP 
  ____Blanket_Mass_-_Steel_(kg)___________________________________________ (whtblss)_____________________      1.4057E+06 OP 
  Total_mass_of_armour,_first_wall_and_blanket_(kg)_______________________ (armour_fw_bl_mass)___________      4.9947E+06 OP 
  Shield_Mass_(kg)________________________________________________________ (whtshld)_____________________      2.5464E+06 OP 
@@ -6348,8 +6360,8 @@
  Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.2000E-01    
  Top_radiation_shield_thickness_(m)______________________________________ (shldtth)_____________________      3.0000E-01    
  Top_blanket_vertical_thickness_(m)______________________________________ (blnktth)_____________________      1.0150E+00    
- Top_first_wall_vertical_thickness_(m)___________________________________ fwtth_________________________      1.8000E-02    
- Top_scrape-off_vertical_thickness_(m)___________________________________ vgaptop_______________________      6.0000E-01    
+ Top_first_wall_vertical_thickness_(m)___________________________________ (fwtth)_______________________      1.8000E-02    
+ Top_scrape-off_vertical_thickness_(m)___________________________________ (vgaptop)_____________________      6.0000E-01    
  Plasma_half-height_(m)__________________________________________________ (rminor*kappa)________________      5.4844E+00    
  Bottom_scrape-off_vertical_thickness_(m)________________________________ (vgap)________________________      1.6000E+00    
  Divertor_structure_vertical_thickness_(m)_______________________________ (divfix)______________________      6.2100E-01    
@@ -6394,8 +6406,10 @@
  # TF coils  #
  Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.6000E+08    
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.6000E+08    
- WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      2.1222E+01 OP 
+ WP_transverse_modulus_(GPa)_____________________________________________ (eyoung_wp_t*1.0D-9)__________      2.1222E+01 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      8.2043E+01 OP 
+ WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_t)________________      3.0478E-01 OP 
+ WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_z)________________      3.1843E-01 OP 
  Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      2.4424E-08    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -4.2217E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      2.3783E+08    
@@ -6696,7 +6710,7 @@
  First_Wall_Mass,_excluding_armour_(kg)__________________________________ (fwmass)______________________      1.9288E+05 OP 
  Blanket_Mass_-_Total(kg)________________________________________________ (whtblkt)_____________________      4.6654E+06 OP 
  ____Blanket_Mass_-_TiBe12_(kg)__________________________________________ (whtbltibe12)_________________      1.5787E+06 OP 
- ____Blanket_Mass_-_Li2SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6765E+06 OP 
+ ____Blanket_Mass_-_Li4SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6765E+06 OP 
  ____Blanket_Mass_-_Steel_(kg)___________________________________________ (whtblss)_____________________      1.4101E+06 OP 
  Total_mass_of_armour,_first_wall_and_blanket_(kg)_______________________ (armour_fw_bl_mass)___________      5.0105E+06 OP 
  Shield_Mass_(kg)________________________________________________________ (whtshld)_____________________      2.5539E+06 OP 

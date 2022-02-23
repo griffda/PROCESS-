@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1176-g8889788a code contains untracked changes
+   Tag No. : v2.1-1259-g2bf9b76f code contains untracked changes
     Branch : 1205-tf-cond-stiffness
-   Git log : Changed\ the\ name\ of\ the\ TF\ coil\ conductor\ behavior
- Date/time :  7 Feb 2022 11:25:45 -05:00(hh:mm) UTC
+   Git log : Added\ Poisson|s\ ratio\ to\ output
+ Date/time : 23 Feb 2022 11:13:45 -05:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-18/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-18/test_scenario_kit_blanket_0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-25/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-25/test_scenario_kit_blanket_0/IN.DAT
  Run title : Michael's test file
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -636,8 +636,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Toroidal modulus            (GPa)     205.000        40.273       205.000
  Vertical modulus            (GPa)     205.000       118.243       401.088
  
- WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      3.485E+01  OP 
+ WP transverse modulus (GPa)                                              (eyoung_wp_t*1.0D-9)      3.485E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      1.015E+02  OP 
+ WP transverse Poisson's ratio                                            (poisson_wp_t)            3.078E-01  OP 
+ WP vertical-transverse Pois. rat.                                        (poisson_wp_z)            3.151E-01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -5.741E-03  OP 
  Vertical strain on casing                                                (casestr)                 9.399E-04  OP 
  Radial strain on insulator                                               (insstrain)              -7.703E-03  OP 
@@ -1170,7 +1172,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  D-T pump speed provided (m3/s)                                           (snet(4))                 9.289E+01  OP 
  
  The vacuum pumping system size is governed by the
- requirements for helium ash removal.
+ requirements for pumpdown between burns.
  
  Number of large pump ducts                                               (nduct)                          18     
  Passage diameter, divertor to ducts (m)                                  (d(imax))                 5.593E-01  OP 
@@ -1180,7 +1182,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Duct length, elbow to pumps (m)                                          (l3)                      2.000E+00     
  Number of pumps                                                          (pumpn)                   4.901E+01  OP 
  
- The vacuum system uses cryo pumps
+ The vacuum system uses cryo  pumps.
  
  ******************************************* Plant Buildings System *******************************************
  

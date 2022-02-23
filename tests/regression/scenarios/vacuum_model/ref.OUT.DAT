@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1176-g8889788a code contains untracked changes
+   Tag No. : v2.1-1259-g2bf9b76f code contains untracked changes
     Branch : 1205-tf-cond-stiffness
-   Git log : Changed\ the\ name\ of\ the\ TF\ coil\ conductor\ behavior
- Date/time :  7 Feb 2022 11:26:04 -05:00(hh:mm) UTC
+   Git log : Added\ Poisson|s\ ratio\ to\ output
+ Date/time : 23 Feb 2022 11:14:06 -05:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-18/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-18/test_scenario_vacuum_model_0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-25/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-25/test_scenario_vacuum_model_0/IN.DAT
  Run title : demo 1 vacuum model test
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -734,8 +734,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Toroidal modulus            (GPa)     205.000        24.450       205.000
  Vertical modulus            (GPa)     205.000       104.505       374.472
  
- WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      2.072E+01  OP 
+ WP transverse modulus (GPa)                                              (eyoung_wp_t*1.0D-9)      2.072E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      8.395E+01  OP 
+ WP transverse Poisson's ratio                                            (poisson_wp_t)            3.069E-01  OP 
+ WP vertical-transverse Pois. rat.                                        (poisson_wp_z)            3.212E-01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -5.446E-03  OP 
  Vertical strain on casing                                                (casestr)                 9.480E-04  OP 
  Radial strain on insulator                                               (insstrain)              -1.078E-02  OP 
@@ -1306,7 +1308,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  First Wall Mass, excluding armour (kg)                                   (fwmass)                  1.717E+05  OP 
  Blanket Mass - Total(kg)                                                 (whtblkt)                 2.833E+06  OP 
      Blanket Mass - TiBe12 (kg)                                           (whtbltibe12)             1.048E+06  OP 
-     Blanket Mass - Li2SiO4 (kg)                                          (whtblli4sio4)            9.278E+05  OP 
+     Blanket Mass - Li4SiO4 (kg)                                          (whtblli4sio4)            9.278E+05  OP 
      Blanket Mass - Steel (kg)                                            (whtblss)                 8.580E+05  OP 
  Total mass of armour, first wall and blanket (kg)                        (armour_fw_bl_mass)       3.084E+06  OP 
  Shield Mass (kg)                                                         (whtshld)                 4.042E+06  OP 

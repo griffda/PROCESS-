@@ -17186,7 +17186,6 @@
             "plsepo",
             "rspo"
         ],
-        "buildings_module": [],
         "buildings_variables": [
             "admv",
             "admvol",
@@ -19707,7 +19706,6 @@
             "vportpmax",
             "vporttmax"
         ],
-        "structure_module": [],
         "structure_variables": [
             "aintmass",
             "clgsmass",
@@ -19949,7 +19947,6 @@
             "green_func_emp_first"
         ],
         "utilities": [],
-        "vacuum_module": [],
         "vacuum_variables": [
             "vacuum_model",
             "niterpump",

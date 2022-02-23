@@ -109,7 +109,6 @@ LIST(APPEND PROCESS_SRCS
     costs.f90
     costs_2015.f90
     heat_transport_variables.f90
-    buildings.f90
     buildings_variables.f90
     maths_library.f90
     iteration_variables.f90
@@ -123,8 +122,6 @@ LIST(APPEND PROCESS_SRCS
     pulse.f90
     divertor_ode.f90
     constants.f90
-    structure.f90
-    vacuum.f90
     water_usage.f90
     hcll.f90
     build_variables.f90
@@ -191,7 +188,7 @@ ADD_CUSTOM_TARGET(install_process ALL
     COMMAND ${PYTHON_EXECUTABLE} -m pip install --no-cache-dir ${CMAKE_SOURCE_DIR}
 )
 
-ADD_DEPENDENCIES(install_process ${PIP_NAME} ${F2PY_NAME} ${FORD_NAME} ${GFORTLIB_NAME} coverage_cleanup)
+ADD_DEPENDENCIES(install_process ${PIP_NAME} ${F2PY_NAME} ${FORD_NAME} ${GFORTLIB_NAME} ${DICTS_NAME} coverage_cleanup)
 
 if (EXISTS ${CMAKE_SOURCE_DIR}/lcov_results)
   execute_process(COMMAND echo "-- Delete existing lcov_coverage directory...")

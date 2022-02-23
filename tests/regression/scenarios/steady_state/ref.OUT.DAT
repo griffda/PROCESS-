@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1176-g8889788a code contains untracked changes
+   Tag No. : v2.1-1259-g2bf9b76f code contains untracked changes
     Branch : 1205-tf-cond-stiffness
-   Git log : Changed\ the\ name\ of\ the\ TF\ coil\ conductor\ behavior
- Date/time :  7 Feb 2022 11:26:01 -05:00(hh:mm) UTC
+   Git log : Added\ Poisson|s\ ratio\ to\ output
+ Date/time : 23 Feb 2022 11:14:03 -05:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-18/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-18/test_scenario_steady_state_0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-25/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-25/test_scenario_steady_state_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -620,8 +620,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Toroidal modulus            (GPa)     205.000        32.825       205.000
  Vertical modulus            (GPa)     205.000       144.054       354.767
  
- WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      2.463E+01  OP 
+ WP transverse modulus (GPa)                                              (eyoung_wp_t*1.0D-9)      2.463E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      1.199E+02  OP 
+ WP transverse Poisson's ratio                                            (poisson_wp_t)            3.037E-01  OP 
+ WP vertical-transverse Pois. rat.                                        (poisson_wp_z)            3.162E-01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -3.697E-03  OP 
  Vertical strain on casing                                                (casestr)                 8.559E-04  OP 
  Radial strain on insulator                                               (insstrain)              -1.025E-02  OP 
@@ -1070,7 +1072,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  First Wall Mass, excluding armour (kg)                                   (fwmass)                  2.167E+05  OP 
  Blanket Mass - Total(kg)                                                 (whtblkt)                 4.228E+06  OP 
      Blanket Mass - TiBe12 (kg)                                           (whtbltibe12)             1.431E+06  OP 
-     Blanket Mass - Li2SiO4 (kg)                                          (whtblli4sio4)            1.520E+06  OP 
+     Blanket Mass - Li4SiO4 (kg)                                          (whtblli4sio4)            1.520E+06  OP 
      Blanket Mass - Steel (kg)                                            (whtblss)                 1.278E+06  OP 
  Total mass of armour, first wall and blanket (kg)                        (armour_fw_bl_mass)       4.614E+06  OP 
  Shield Mass (kg)                                                         (whtshld)                 2.736E+06  OP 
@@ -1203,7 +1205,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  D-T pump speed provided (m3/s)                                           (snet(4))                 4.031E+02  OP 
  
  The vacuum pumping system size is governed by the
- requirements for pumpdown between burns.
+ requirements for pumpdown to base pressure.
  
  Number of large pump ducts                                               (nduct)                          16     
  Passage diameter, divertor to ducts (m)                                  (d(imax))                 1.266E+00  OP 
@@ -1213,7 +1215,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Duct length, elbow to pumps (m)                                          (l3)                      2.000E+00     
  Number of pumps                                                          (pumpn)                   6.449E+01  OP 
  
- The vacuum system uses cryo pumps
+ The vacuum system uses cryo  pumps.
  
  ******************************************* Plant Buildings System *******************************************
  

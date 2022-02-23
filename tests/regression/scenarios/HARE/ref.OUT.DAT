@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1176-g8889788a code contains untracked changes
+   Tag No. : v2.1-1259-g2bf9b76f code contains untracked changes
     Branch : 1205-tf-cond-stiffness
-   Git log : Changed\ the\ name\ of\ the\ TF\ coil\ conductor\ behavior
- Date/time :  7 Feb 2022 11:25:05 -05:00(hh:mm) UTC
+   Git log : Added\ Poisson|s\ ratio\ to\ output
+ Date/time : 23 Feb 2022 11:13:01 -05:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-18/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-18/test_scenario_HARE_0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-25/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-25/test_scenario_HARE_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -632,8 +632,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Toroidal modulus            (GPa)     205.000        23.107       205.000
  Vertical modulus            (GPa)     205.000        93.270       378.848
  
- WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      2.122E+01  OP 
+ WP transverse modulus (GPa)                                              (eyoung_wp_t*1.0D-9)      2.122E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      8.209E+01  OP 
+ WP transverse Poisson's ratio                                            (poisson_wp_t)            3.048E-01  OP 
+ WP vertical-transverse Pois. rat.                                        (poisson_wp_z)            3.184E-01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -6.818E-03  OP 
  Vertical strain on casing                                                (casestr)                 1.164E-03  OP 
  Radial strain on insulator                                               (insstrain)              -1.379E-02  OP 
@@ -1072,7 +1074,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  First Wall Mass, excluding armour (kg)                                   (fwmass)                  1.898E+05  OP 
  Blanket Mass - Total(kg)                                                 (whtblkt)                 4.593E+06  OP 
      Blanket Mass - TiBe12 (kg)                                           (whtbltibe12)             1.554E+06  OP 
-     Blanket Mass - Li2SiO4 (kg)                                          (whtblli4sio4)            1.650E+06  OP 
+     Blanket Mass - Li4SiO4 (kg)                                          (whtblli4sio4)            1.650E+06  OP 
      Blanket Mass - Steel (kg)                                            (whtblss)                 1.388E+06  OP 
  Total mass of armour, first wall and blanket (kg)                        (armour_fw_bl_mass)       4.932E+06  OP 
  Shield Mass (kg)                                                         (whtshld)                 2.517E+06  OP 
@@ -1210,7 +1212,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  D-T pump speed provided (m3/s)                                           (snet(4))                 5.548E+01  OP 
  
  The vacuum pumping system size is governed by the
- requirements for helium ash removal.
+ requirements for pumpdown between burns.
  
  Number of large pump ducts                                               (nduct)                          16     
  Passage diameter, divertor to ducts (m)                                  (d(imax))                 4.783E-01  OP 
@@ -1220,7 +1222,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Duct length, elbow to pumps (m)                                          (l3)                      2.000E+00     
  Number of pumps                                                          (pumpn)                   3.200E+01  OP 
  
- The vacuum system uses cryo pumps
+ The vacuum system uses cryo  pumps.
  
  ******************************************* Plant Buildings System *******************************************
  
@@ -2057,8 +2059,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Toroidal modulus            (GPa)     205.000        23.102       205.000
  Vertical modulus            (GPa)     205.000        93.241       379.105
  
- WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      2.122E+01  OP 
+ WP transverse modulus (GPa)                                              (eyoung_wp_t*1.0D-9)      2.122E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      8.208E+01  OP 
+ WP transverse Poisson's ratio                                            (poisson_wp_t)            3.048E-01  OP 
+ WP vertical-transverse Pois. rat.                                        (poisson_wp_z)            3.184E-01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -6.836E-03  OP 
  Vertical strain on casing                                                (casestr)                 1.164E-03  OP 
  Radial strain on insulator                                               (insstrain)              -1.375E-02  OP 
@@ -2497,7 +2501,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  First Wall Mass, excluding armour (kg)                                   (fwmass)                  1.901E+05  OP 
  Blanket Mass - Total(kg)                                                 (whtblkt)                 4.602E+06  OP 
      Blanket Mass - TiBe12 (kg)                                           (whtbltibe12)             1.557E+06  OP 
-     Blanket Mass - Li2SiO4 (kg)                                          (whtblli4sio4)            1.654E+06  OP 
+     Blanket Mass - Li4SiO4 (kg)                                          (whtblli4sio4)            1.654E+06  OP 
      Blanket Mass - Steel (kg)                                            (whtblss)                 1.391E+06  OP 
  Total mass of armour, first wall and blanket (kg)                        (armour_fw_bl_mass)       4.942E+06  OP 
  Shield Mass (kg)                                                         (whtshld)                 2.521E+06  OP 
@@ -2635,7 +2639,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  D-T pump speed provided (m3/s)                                           (snet(4))                 5.552E+01  OP 
  
  The vacuum pumping system size is governed by the
- requirements for helium ash removal.
+ requirements for pumpdown between burns.
  
  Number of large pump ducts                                               (nduct)                          16     
  Passage diameter, divertor to ducts (m)                                  (d(imax))                 4.784E-01  OP 
@@ -2645,7 +2649,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Duct length, elbow to pumps (m)                                          (l3)                      2.000E+00     
  Number of pumps                                                          (pumpn)                   3.200E+01  OP 
  
- The vacuum system uses cryo pumps
+ The vacuum system uses cryo  pumps.
  
  ******************************************* Plant Buildings System *******************************************
  
@@ -3482,8 +3486,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Toroidal modulus            (GPa)     205.000        23.098       205.000
  Vertical modulus            (GPa)     205.000        93.216       379.330
  
- WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      2.122E+01  OP 
+ WP transverse modulus (GPa)                                              (eyoung_wp_t*1.0D-9)      2.122E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      8.208E+01  OP 
+ WP transverse Poisson's ratio                                            (poisson_wp_t)            3.048E-01  OP 
+ WP vertical-transverse Pois. rat.                                        (poisson_wp_z)            3.184E-01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -6.852E-03  OP 
  Vertical strain on casing                                                (casestr)                 1.163E-03  OP 
  Radial strain on insulator                                               (insstrain)              -1.372E-02  OP 
@@ -3922,7 +3928,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  First Wall Mass, excluding armour (kg)                                   (fwmass)                  1.905E+05  OP 
  Blanket Mass - Total(kg)                                                 (whtblkt)                 4.609E+06  OP 
      Blanket Mass - TiBe12 (kg)                                           (whtbltibe12)             1.560E+06  OP 
-     Blanket Mass - Li2SiO4 (kg)                                          (whtblli4sio4)            1.656E+06  OP 
+     Blanket Mass - Li4SiO4 (kg)                                          (whtblli4sio4)            1.656E+06  OP 
      Blanket Mass - Steel (kg)                                            (whtblss)                 1.393E+06  OP 
  Total mass of armour, first wall and blanket (kg)                        (armour_fw_bl_mass)       4.950E+06  OP 
  Shield Mass (kg)                                                         (whtshld)                 2.525E+06  OP 
@@ -4060,7 +4066,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  D-T pump speed provided (m3/s)                                           (snet(4))                 5.554E+01  OP 
  
  The vacuum pumping system size is governed by the
- requirements for helium ash removal.
+ requirements for pumpdown between burns.
  
  Number of large pump ducts                                               (nduct)                          16     
  Passage diameter, divertor to ducts (m)                                  (d(imax))                 4.784E-01  OP 
@@ -4070,7 +4076,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Duct length, elbow to pumps (m)                                          (l3)                      2.000E+00     
  Number of pumps                                                          (pumpn)                   3.200E+01  OP 
  
- The vacuum system uses cryo pumps
+ The vacuum system uses cryo  pumps.
  
  ******************************************* Plant Buildings System *******************************************
  
@@ -4907,8 +4913,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Toroidal modulus            (GPa)     205.000        23.092       205.000
  Vertical modulus            (GPa)     205.000        93.170       379.735
  
- WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      2.122E+01  OP 
+ WP transverse modulus (GPa)                                              (eyoung_wp_t*1.0D-9)      2.122E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      8.207E+01  OP 
+ WP transverse Poisson's ratio                                            (poisson_wp_t)            3.048E-01  OP 
+ WP vertical-transverse Pois. rat.                                        (poisson_wp_z)            3.184E-01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -6.881E-03  OP 
  Vertical strain on casing                                                (casestr)                 1.162E-03  OP 
  Radial strain on insulator                                               (insstrain)              -1.366E-02  OP 
@@ -5347,7 +5355,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  First Wall Mass, excluding armour (kg)                                   (fwmass)                  1.911E+05  OP 
  Blanket Mass - Total(kg)                                                 (whtblkt)                 4.623E+06  OP 
      Blanket Mass - TiBe12 (kg)                                           (whtbltibe12)             1.564E+06  OP 
-     Blanket Mass - Li2SiO4 (kg)                                          (whtblli4sio4)            1.661E+06  OP 
+     Blanket Mass - Li4SiO4 (kg)                                          (whtblli4sio4)            1.661E+06  OP 
      Blanket Mass - Steel (kg)                                            (whtblss)                 1.397E+06  OP 
  Total mass of armour, first wall and blanket (kg)                        (armour_fw_bl_mass)       4.965E+06  OP 
  Shield Mass (kg)                                                         (whtshld)                 2.532E+06  OP 
@@ -5485,7 +5493,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  D-T pump speed provided (m3/s)                                           (snet(4))                 5.560E+01  OP 
  
  The vacuum pumping system size is governed by the
- requirements for helium ash removal.
+ requirements for pumpdown between burns.
  
  Number of large pump ducts                                               (nduct)                          16     
  Passage diameter, divertor to ducts (m)                                  (d(imax))                 4.786E-01  OP 
@@ -5495,7 +5503,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Duct length, elbow to pumps (m)                                          (l3)                      2.000E+00     
  Number of pumps                                                          (pumpn)                   3.200E+01  OP 
  
- The vacuum system uses cryo pumps
+ The vacuum system uses cryo  pumps.
  
  ******************************************* Plant Buildings System *******************************************
  
@@ -6332,8 +6340,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Toroidal modulus            (GPa)     205.000        23.085       205.000
  Vertical modulus            (GPa)     205.000        93.125       380.137
  
- WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      2.122E+01  OP 
+ WP transverse modulus (GPa)                                              (eyoung_wp_t*1.0D-9)      2.122E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      8.206E+01  OP 
+ WP transverse Poisson's ratio                                            (poisson_wp_t)            3.048E-01  OP 
+ WP vertical-transverse Pois. rat.                                        (poisson_wp_z)            3.184E-01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -6.910E-03  OP 
  Vertical strain on casing                                                (casestr)                 1.162E-03  OP 
  Radial strain on insulator                                               (insstrain)              -1.360E-02  OP 
@@ -6772,7 +6782,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  First Wall Mass, excluding armour (kg)                                   (fwmass)                  1.916E+05  OP 
  Blanket Mass - Total(kg)                                                 (whtblkt)                 4.637E+06  OP 
      Blanket Mass - TiBe12 (kg)                                           (whtbltibe12)             1.569E+06  OP 
-     Blanket Mass - Li2SiO4 (kg)                                          (whtblli4sio4)            1.666E+06  OP 
+     Blanket Mass - Li4SiO4 (kg)                                          (whtblli4sio4)            1.666E+06  OP 
      Blanket Mass - Steel (kg)                                            (whtblss)                 1.401E+06  OP 
  Total mass of armour, first wall and blanket (kg)                        (armour_fw_bl_mass)       4.980E+06  OP 
  Shield Mass (kg)                                                         (whtshld)                 2.539E+06  OP 
@@ -6910,7 +6920,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  D-T pump speed provided (m3/s)                                           (snet(4))                 5.565E+01  OP 
  
  The vacuum pumping system size is governed by the
- requirements for helium ash removal.
+ requirements for pumpdown between burns.
  
  Number of large pump ducts                                               (nduct)                          16     
  Passage diameter, divertor to ducts (m)                                  (d(imax))                 4.787E-01  OP 
@@ -6920,7 +6930,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Duct length, elbow to pumps (m)                                          (l3)                      2.000E+00     
  Number of pumps                                                          (pumpn)                   3.200E+01  OP 
  
- The vacuum system uses cryo pumps
+ The vacuum system uses cryo  pumps.
  
  ******************************************* Plant Buildings System *******************************************
  
@@ -7757,8 +7767,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Toroidal modulus            (GPa)     205.000        23.078       205.000
  Vertical modulus            (GPa)     205.000        93.079       380.550
  
- WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      2.122E+01  OP 
+ WP transverse modulus (GPa)                                              (eyoung_wp_t*1.0D-9)      2.122E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      8.205E+01  OP 
+ WP transverse Poisson's ratio                                            (poisson_wp_t)            3.048E-01  OP 
+ WP vertical-transverse Pois. rat.                                        (poisson_wp_z)            3.184E-01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -6.939E-03  OP 
  Vertical strain on casing                                                (casestr)                 1.161E-03  OP 
  Radial strain on insulator                                               (insstrain)              -1.354E-02  OP 
@@ -8197,7 +8209,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  First Wall Mass, excluding armour (kg)                                   (fwmass)                  1.922E+05  OP 
  Blanket Mass - Total(kg)                                                 (whtblkt)                 4.651E+06  OP 
      Blanket Mass - TiBe12 (kg)                                           (whtbltibe12)             1.574E+06  OP 
-     Blanket Mass - Li2SiO4 (kg)                                          (whtblli4sio4)            1.671E+06  OP 
+     Blanket Mass - Li4SiO4 (kg)                                          (whtblli4sio4)            1.671E+06  OP 
      Blanket Mass - Steel (kg)                                            (whtblss)                 1.406E+06  OP 
  Total mass of armour, first wall and blanket (kg)                        (armour_fw_bl_mass)       4.995E+06  OP 
  Shield Mass (kg)                                                         (whtshld)                 2.546E+06  OP 
@@ -8335,7 +8347,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  D-T pump speed provided (m3/s)                                           (snet(4))                 5.570E+01  OP 
  
  The vacuum pumping system size is governed by the
- requirements for helium ash removal.
+ requirements for pumpdown between burns.
  
  Number of large pump ducts                                               (nduct)                          16     
  Passage diameter, divertor to ducts (m)                                  (d(imax))                 4.789E-01  OP 
@@ -8345,7 +8357,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Duct length, elbow to pumps (m)                                          (l3)                      2.000E+00     
  Number of pumps                                                          (pumpn)                   3.200E+01  OP 
  
- The vacuum system uses cryo pumps
+ The vacuum system uses cryo  pumps.
  
  ******************************************* Plant Buildings System *******************************************
  
@@ -9182,8 +9194,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Toroidal modulus            (GPa)     205.000        23.071       205.000
  Vertical modulus            (GPa)     205.000        93.031       380.980
  
- WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      2.122E+01  OP 
+ WP transverse modulus (GPa)                                              (eyoung_wp_t*1.0D-9)      2.122E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      8.204E+01  OP 
+ WP transverse Poisson's ratio                                            (poisson_wp_t)            3.048E-01  OP 
+ WP vertical-transverse Pois. rat.                                        (poisson_wp_z)            3.184E-01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -6.970E-03  OP 
  Vertical strain on casing                                                (casestr)                 1.160E-03  OP 
  Radial strain on insulator                                               (insstrain)              -1.348E-02  OP 
@@ -9622,7 +9636,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  First Wall Mass, excluding armour (kg)                                   (fwmass)                  1.929E+05  OP 
  Blanket Mass - Total(kg)                                                 (whtblkt)                 4.665E+06  OP 
      Blanket Mass - TiBe12 (kg)                                           (whtbltibe12)             1.579E+06  OP 
-     Blanket Mass - Li2SiO4 (kg)                                          (whtblli4sio4)            1.677E+06  OP 
+     Blanket Mass - Li4SiO4 (kg)                                          (whtblli4sio4)            1.677E+06  OP 
      Blanket Mass - Steel (kg)                                            (whtblss)                 1.410E+06  OP 
  Total mass of armour, first wall and blanket (kg)                        (armour_fw_bl_mass)       5.011E+06  OP 
  Shield Mass (kg)                                                         (whtshld)                 2.554E+06  OP 
@@ -9760,7 +9774,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  D-T pump speed provided (m3/s)                                           (snet(4))                 5.575E+01  OP 
  
  The vacuum pumping system size is governed by the
- requirements for helium ash removal.
+ requirements for pumpdown between burns.
  
  Number of large pump ducts                                               (nduct)                          16     
  Passage diameter, divertor to ducts (m)                                  (d(imax))                 4.790E-01  OP 
@@ -9770,7 +9784,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Duct length, elbow to pumps (m)                                          (l3)                      2.000E+00     
  Number of pumps                                                          (pumpn)                   3.200E+01  OP 
  
- The vacuum system uses cryo pumps
+ The vacuum system uses cryo  pumps.
  
  ******************************************* Plant Buildings System *******************************************
  

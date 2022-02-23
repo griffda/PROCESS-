@@ -25,14 +25,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1176-g8889788a code contains untracked changes
+   Tag No. : v2.1-1259-g2bf9b76f code contains untracked changes
     Branch : 1205-tf-cond-stiffness
-   Git log : Changed\ the\ name\ of\ the\ TF\ coil\ conductor\ behavior
- Date/time :  7 Feb 2022 11:25:26 -05:00(hh:mm) UTC
+   Git log : Added\ Poisson|s\ ratio\ to\ output
+ Date/time : 23 Feb 2022 11:13:24 -05:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-18/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-18/test_scenario_i_mode_0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-25/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-25/test_scenario_i_mode_0/IN.DAT
  Run title : I-mode 2019 PMU
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -656,8 +656,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Toroidal modulus            (GPa)     205.000        45.280       205.000
  Vertical modulus            (GPa)     205.000       124.451       413.917
  
- WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      4.119E+01  OP 
+ WP transverse modulus (GPa)                                              (eyoung_wp_t*1.0D-9)      4.119E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      1.142E+02  OP 
+ WP transverse Poisson's ratio                                            (poisson_wp_t)            3.032E-01  OP 
+ WP vertical-transverse Pois. rat.                                        (poisson_wp_z)            3.160E-01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -6.087E-03  OP 
  Vertical strain on casing                                                (casestr)                 1.135E-03  OP 
  Radial strain on insulator                                               (insstrain)              -1.252E-02  OP 
@@ -1102,7 +1104,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  First Wall Mass, excluding armour (kg)                                   (fwmass)                  2.041E+05  OP 
  Blanket Mass - Total(kg)                                                 (whtblkt)                 3.922E+06  OP 
      Blanket Mass - TiBe12 (kg)                                           (whtbltibe12)             1.327E+06  OP 
-     Blanket Mass - Li2SiO4 (kg)                                          (whtblli4sio4)            1.409E+06  OP 
+     Blanket Mass - Li4SiO4 (kg)                                          (whtblli4sio4)            1.409E+06  OP 
      Blanket Mass - Steel (kg)                                            (whtblss)                 1.185E+06  OP 
  Total mass of armour, first wall and blanket (kg)                        (armour_fw_bl_mass)       4.279E+06  OP 
  Shield Mass (kg)                                                         (whtshld)                 3.146E+06  OP 
@@ -1235,7 +1237,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  D-T pump speed provided (m3/s)                                           (snet(4))                 7.901E+01  OP 
  
  The vacuum pumping system size is governed by the
- requirements for helium ash removal.
+ requirements for pumpdown between burns.
  
  Number of large pump ducts                                               (nduct)                          16     
  Passage diameter, divertor to ducts (m)                                  (d(imax))                 5.598E-01  OP 
@@ -1245,7 +1247,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Duct length, elbow to pumps (m)                                          (l3)                      2.000E+00     
  Number of pumps                                                          (pumpn)                   4.169E+01  OP 
  
- The vacuum system uses cryo pumps
+ The vacuum system uses cryo  pumps.
  
  ******************************************* Plant Buildings System *******************************************
  
