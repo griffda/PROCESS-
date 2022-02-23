@@ -3716,7 +3716,7 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     if ( nonslip_layer > 1) then
         rad_row_helper(1,:) = (/rad(nonslip_layer)**2, 1D0, 0D0, 0D0, 0D0/)
         v_force_row_slip = 2D0*pi*ey_bar_z(nonslip_layer-1)*nu_bar_tz(nonslip_layer-1) &
-            * matmul(rad_row_helper,M_tot(:,:,nonslip_layer-1))
+            * matmul(rad_row_helper,M_tot(:,:,nonslip_layer))
         rad_row_helper(1,:) = (/rad(1)**2, 1D0, 0D0, 0D0, 0D0/)
         v_force_row_slip = v_force_row_slip - 2D0*pi*ey_bar_z(1)*nu_bar_tz(1)*matmul(rad_row_helper,M_tot(:,:,1))
         do kk = 2, (nonslip_layer-1)

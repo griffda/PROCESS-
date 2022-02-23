@@ -383,6 +383,7 @@ pages:
   <<: *test-setup-py38
   dependencies:
     - make-py38
+    - tracking_rtv
   script:
     - pwd
     - source ~/.venv_$PY_VERSION/bin/activate
