@@ -13,6 +13,21 @@
 # All jobs are run on ubuntu-tagged runners; freia-tagged runners are not 
 # supported due to modifying the Docker containers used here after they are run
 
+#-----------------
+#  Testing CI
+#-----------------
+# When running a pipeline via the "Run pipeline" button on the CI/CD page
+# there is an option to add variables. The following variables can be set
+# to modify the behaviour of the CI and test it:
+
+# Setting CI_TEST_BUILD as "true" will cause the tracker (and required testing jobs), and pages job to run
+# When set in conjunction with CI_TEST_BUILD=true, setting CI_DOCKER_BUILD as "true" will cause the docker containers to be rebuilt
+# When set in conjunction with CI_TEST_BUILD=true, setting CI_TEST_EXTERNAL as "true" will cause the STEP trigger to run
+# The Docker image used by all the jobs can be set using DOCKER_CI_IMAGE where it defaults to "ci-image"; this corresponds to git.ccfe.ac.uk:4567/process/process/ci-image
+# The Docker image tag used by all the jobs can be set using DOCKER_CI_IMAGE_VERSION where it defaults to "latest". 
+  # This means that when neither DOCKER_CI_IMAGE or DOCKER_CI_IMAGE_VERSION are set the default image used will be "ci-image:latest"
+
+
 stages:
   - containers
   - build
@@ -27,6 +42,10 @@ variables:
   DOCKER_CI_IMAGE_VERSION: latest
 
 image: $CI_REGISTRY_IMAGE/$DOCKER_CI_IMAGE:$DOCKER_CI_IMAGE_VERSION
+
+default:
+  tags:
+      - ubuntu
 
 #-----------------
 #  Containers
@@ -55,8 +74,6 @@ build_docker_ci_image:
   variables:
      IMAGE_NAME: $DOCKER_CI_IMAGE
      IMAGE_TAG: $DOCKER_CI_IMAGE_VERSION
-  services:
-    - docker:19.03.12-dind
   before_script:
     - cp requirements.txt docker/ci/
     - cd docker/ci
@@ -66,8 +83,6 @@ build_docker_dev_image:
   variables:
     IMAGE_NAME: dev
     IMAGE_TAG: latest
-  services:
-    - docker:19.03.12-dind
   before_script:
     - cd docker/dev
 
@@ -252,8 +267,6 @@ line_length:
   script:
     - pwd
     - python3 utilities/line_length_standard.py
-  tags:
-    - ubuntu
 
 #-----------------
 #  Tracking
@@ -290,7 +303,6 @@ tracking_rtv:
     # when testing CI, run the tracker
     - if: $CI_TEST_BUILD
   dependencies:
-    - make-py38
     - baseline_2018-py38
     - baseline_2019-py38
     - starfire-py38
@@ -306,7 +318,6 @@ pages:
     PY_VERSION: py38
   script:
     # FORD documentation
-    - python3 -m pip install git+https://github.com/jonMaddockUkaea/ford
     - ford documentation/ford/index.md
 
     # python docs documentation
