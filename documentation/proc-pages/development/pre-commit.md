@@ -4,10 +4,13 @@
 
 Pre-commit is Process' way of ensuring all code pushed to our repository is of a certain quality and style. One common style ensures Process can be easily navigated and understood by all users. It also reduces the "diffs" when reviewing code changes as often small style changes (such as the addition of a new-line) will litter the "diffs" and make reviewing harder.
 
-Pre-commit works on staged files (ie those that have been `git add`ed) after you issue the `git commit` command but before the commit is made. If any pre-commit job **failed** then the commit will not be made. On a failure, one of two things can happen:
+Pre-commit works on staged files (ie those that have been `git add`ed) after you issue the `git commit` command but before the commit is actually made. If any pre-commit job **failed** then the commit will not be made. On a failure, one of two things can happen:
 
 1. Pre-commit plugins will rectify the mistakes made. This will happen with code formatters (whose job it is to edit your files to the correct style). The files the plugins have changed can then be `git add`ed again and the `git commit` command re-issued.
 2. A pre-commit plugin will identify the mistake but will NOT fix it. This will happen with `flake8` which is a linter and warns of code mistakes but does not correct them. You will need to fix these mistakes manually. Now, the changed files can be `git add`ed and the `git commit` command re-issued.
+
+!!! note "VSCode GUI users"
+    On the VSCode GUI, you will see that files pre-commit modifies will change from green as there are changes that need to made. Follow your usual workflow to re-add these files and re-do the commit as usual.
 
 I would advise you become familiar with the *What does pre-commit check for?* section of this document. This will allow you to understand whether a mistake has been automatically fixed or not.
 
@@ -42,6 +45,24 @@ When running `cmake --build build/` pre-commit should have been installed automa
     ```
 
     To avoid the need to re-add files a second time you could run `black .` which will do the formatting (of Python code) that pre-commit would do.
+
+!!! example "black won't fix all flake8 issues"
+    Flake8 (as has been stressed on this documentation) is a linter and not a formatter. This means flake8 will never make any changes to your Python source code. 
+
+    Consider the following file very simple file, `example.py`:
+    
+    ```python
+    from process.fortran import tfcoil_variables, fwbs_variables
+
+    def get_whttf():
+        return tfcoil_variables.whttf
+    ```
+
+    Flake8 will return the following trace for this file:
+    ```
+    example.py:1:47 F401 Module fwbs_variables imported but never used
+    ```
+    because `fwbs_variables` is imported, but never used. However, this is not a style issue, it is a semantic issue. Therefore, `black` will not fix this issue. It is up to the developer to rectify this issue manually, `git add` the fixed file, and finally re-do the `git commit` command.
 
 
 ## Pre-commit and the `quality` CI stage
