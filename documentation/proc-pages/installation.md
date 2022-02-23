@@ -58,14 +58,8 @@ cmake -S . -B build
 cmake --build build
 ```
 
-If you plan on developing code for Process, you will need to setup **pre-commit** which will run over files you submit before they are allowed to be pushed. CMake should have installed **pre-commit** as part of the Process installation; `python3.8 -m pip install pre-commit` can also be issued to install pre-commit.
+If you plan on developing code for Process, please see the `pre-commit` documentation for installing this tool required by developers: [development/pre-commit](http://process.gitpages.ccfe.ac.uk/process/development/pre-commit/)
 
-Pre-commit can be configured to automatically run before each git commit by issuing `pre-commit install` in the root directory.
-
-You can find out more about our pre-commit policy here: [development/pre-commit](http://process.gitpages.ccfe.ac.uk/process/development/pre-commit/)
-
-!!! warning "Pre-commit Python version"
-    It is important then pre-commit is running on Python 3.8. Any other Python version may produce code formatted in such a way that our CI system rejects your code.
 
 
 An error may be encountered here because `ford` is installed in `.local/bin`, which is not on the `PATH` in some environments, so you will need to add `.local/bin` to the `PATH` if this error occurs. You can do this using `nano`:
