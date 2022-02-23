@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1233-g5464a896
-    Branch : 1560-minor-formatting-error-in-vgaptop-output
-   Git log : Corrected\ output\ formatting\ error
- Date/time : 14 Feb 2022  8:28:01 +00:00(hh:mm) UTC
+   Tag No. : v2.1-1238-g0543b5a2
+    Branch : 1561-incorrect-adjustment-of-vgaptop-in-double-null-case
+   Git log : Merge\ branch\ |develop|\ into\ 1561-incorrect-adjustm
+ Date/time : 14 Feb 2022 12:14:55 +00:00(hh:mm) UTC
       User : rhicha
   Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-280/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-280/test_scenario_baseline_jan_2010/IN.DAT
+ Directory : /tmp/pytest-of-rhicha/pytest-283/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-283/test_scenario_baseline_jan_2010/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
