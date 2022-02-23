@@ -47,6 +47,7 @@ from process.io import plot_proc
 from process.scan import Scan
 from process import final
 from process.stellarator import Stellarator
+from process.structure import Structure
 from process.utilities.f2py_string_patch import (
     string_to_f2py_compatible,
     f2py_compatible_to_string,
@@ -473,6 +474,7 @@ class Models:
         self.costs_step = CostsStep()
         self.tfcoil = TFcoil()
         self.divertor = Divertor()
+        self.structure = Structure()
         self.availability = Availability()
         self.buildings = Buildings()
         self.vacuum = Vacuum()

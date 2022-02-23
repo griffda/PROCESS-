@@ -126,7 +126,7 @@ def write(models, outfile):
     ft.pfcoil_module.outvolt(outfile)
 
     # Structure Model
-    ft.structure_module.strucall(outfile, 1)
+    models.structure.run(output=True)
 
     # Poloidal field coil inductance calculation
     ft.pfcoil_module.induct(outfile, 1)
