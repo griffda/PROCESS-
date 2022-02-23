@@ -318,6 +318,22 @@ Flake8:
   tags:
     - ubuntu
 
+# black style checks
+# Job will fail if black thinks ANY changes are required
+Black:
+  when: on_success
+  stage: quality
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  allow_failure: true
+  script:
+    - python3.8 -m black --check . > black.log
+  artifacts:
+    when: always
+    paths:
+      - black.log
+  tags:
+    - ubuntu
+
 #-----------------
 #  Tracking
 #-----------------
