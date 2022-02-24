@@ -146,7 +146,7 @@ class Caller:
             self.models.divertor.run(output=False)
 
         # Structure Model
-        ft.structure_module.strucall(ft.constants.nout, 0)
+        self.models.structure.run(output=False)
 
         # Tight aspect ratio machine model
         if ft.physics_variables.itart == 1 and ft.tfcoil_variables.i_tf_sup != 1:
@@ -165,7 +165,7 @@ class Caller:
         self.models.vacuum.run(output=False)
 
         # Buildings model
-        ft.buildings_module.bldgcall(ft.constants.nout, 0)
+        self.models.buildings.run(output=False)
 
         # Plant AC power requirements
         ft.power_module.acpow(ft.constants.nout, 0)

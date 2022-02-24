@@ -1050,6 +1050,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use error_handling, only: fdiags, report_error
     use fwbs_variables, only: whtblkt, pnucblkt
     use physics_variables, only: powfmw
 
@@ -1077,12 +1078,13 @@ contains
     exp_blanket = 1-exp(-b*mass)
     pnucblkt = powfmw * a * exp_blanket
 
-    ! error handling (should ba a lvl 3 error no?)
+    ! error handling. < 1 MW or NaN indicates possible error.
     if ((pnucblkt<1.0d0).or.(pnucblkt /= pnucblkt)) then
-        write(*,*)'Error in nuclear_heating_blanket. '
-        write(*,*)'pnucblkt =', pnucblkt, ' exp_blanket =', exp_blanket
-        write(*,*)'powfmw =', powfmw, ' mass =', mass
-        stop 1
+        fdiags(1) = pnucblkt
+        fdiags(2) = exp_blanket
+        fdiags(3) = powfmw
+        fdiags(4) = mass 
+        call report_error(274)
     end if
 
   end subroutine nuclear_heating_blanket
@@ -1966,7 +1968,7 @@ contains
     ! ---
 
     ! Steel support structure effective WC shield thickness reduction
-    sh_width_eff = sh_width / ( 1.0D0 - f_steel_struct ) 
+    sh_width_eff = sh_width * ( 1.0D0 - f_steel_struct ) 
 
     ! Aluminium CP
     ! ------------
@@ -1987,6 +1989,10 @@ contains
     ! so the TF is mostly copper, making the calculation also valid for 
     ! Copper TF centrepost 
     else 
+    
+      ! This subroutine uses an shielding length per decade (/10 drop in neutron heating)
+      ! of 15.5 cm, within to the "15 - 16 cm" of Menard et al. 2016.
+      ! (This is an e-folding lenth of 6.72 cm.)
       
       ! Nuclear powers fits for a 800 MW plasma neutron source
       ! ***
@@ -2061,6 +2067,9 @@ contains
     !! with a variable tungsten carbyde shield with 13% water cooling. The 
     !! TF size is kept constant in the MCNP runs in such a way tha it increases
     !! size.  
+    ! This subroutine uses an shielding length per decade (/10 drop in flux)
+    ! of 16.6 cm, close to the "15 - 16 cm" of Menard et al. 2016.
+    ! (This is an e-folding lenth of 7.22 cm.)
 
     use tfcoil_variables, only: i_tf_sup
 
@@ -2094,7 +2103,7 @@ contains
 
     if ( i_tf_sup == 1 ) then 
       
-      sh_width_eff = sh_width / ( 1.0D0 - f_steel_struct ) 
+      sh_width_eff = sh_width * ( 1.0D0 - f_steel_struct ) 
 
       ! Fit [10^{-13}.cm^{-2}]
       neut_flux_cp = 5.835D0 * exp( -15.392D0 * sh_width_eff ) &
