@@ -3314,7 +3314,7 @@ contains
       !! strain_wp_max : input real : Allowable maximum TF coil vertical strain
       !! strain_wp : input real : Constrained TF coil vertical strain
       use constraint_variables, only: fstrain_wp
-      use tfcoil_variables, only: strain_wp_max, strain_wp, i_strain_wp
+      use tfcoil_variables, only: strain_wp_max, strain_wp
       implicit none
             real(dp), intent(out) :: tmp_cc
       real(dp), intent(out) :: tmp_con
