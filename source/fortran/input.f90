@@ -321,9 +321,9 @@ contains
       f_w, bmn, shear, m_res, f_rad, flpitch, istell
     use tfcoil_variables, only: fcoolcp, tfinsgap, vftf, &
       quench_detection_ef, fhts, dr_tf_wp, rcool, rhotfleg, thkcas, &
-      casthi, n_pancake, bcritsc, i_tf_sup, strncon_pf, thwcndut, farc4tf, &
+      casthi, n_pancake, bcritsc, i_tf_sup, str_pf_con_res, thwcndut, farc4tf, &
       thicndut, tftmp, oacdcp, tmax_croco, ptempalw, tmargmin_tf, tmpcry, &
-      sig_tf_case_max, dztop, dcond, strncon_cs, etapump, drtop, vcool, dcondins, &
+      sig_tf_case_max, dztop, dcond, str_cs_con_res, etapump, drtop, vcool, dcondins, &
       i_tf_tresca, dhecoil, tmaxpro, n_tf, tcpav, fcutfsu, jbus, &
       casthi_fraction, tmargmin_cs, sigvvall, vdalw, dcase, t_turn_tf,&
       cpttf_max, tdmptf, casths, i_tf_turns_integer, quench_model, &
@@ -337,7 +337,7 @@ contains
       i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti, &
       i_cp_joints, n_tf_turn, f_t_turn_tf, t_turn_tf_max, t_cable_tf, &
       sig_tf_wp_max, eyoung_cond_t, i_tf_cond_eyoung_axial, i_tf_cond_eyoung_transverse, &
-      strain_wp_max, strncon_tf, i_strain_wp
+      strain_wp_max, str_tf_con_res, i_strain_wp
       
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
@@ -2066,14 +2066,14 @@ contains
        case ('sigvvall')
           call parse_real_variable('sigvvall', sigvvall, 0.1D6, 500.0D6, &
                'Allowable stress in vacuum vessel for TF quench (Pa)')
-       case ('strncon_cs')
-          call parse_real_variable('strncon_cs', strncon_cs, -0.02D0, 0.02D0, &
+       case ('str_cs_con_res')
+          call parse_real_variable('str_cs_con_res', str_cs_con_res, -0.02D0, 0.02D0, &
                'Residual manufacturing strain in CS superconductor material')
-       case ('strncon_pf')
-          call parse_real_variable('strncon_pf', strncon_pf, -0.02D0, 0.02D0, &
+       case ('str_pf_con_res')
+          call parse_real_variable('str_pf_con_res', str_pf_con_res, -0.02D0, 0.02D0, &
                'Residual manufacturing strain in PF superconductor material')
-       case ('strncon_tf')
-          call parse_real_variable('strncon_tf', strncon_tf, -0.02D0, 0.02D0, &
+       case ('str_tf_con_res')
+          call parse_real_variable('str_tf_con_res', str_tf_con_res, -0.02D0, 0.02D0, &
                'Residual manufacturing strain in TF superconductor material')
        case ('strain_wp_max')
           call parse_real_variable('strain_wp_max', strain_wp_max, 0.0D0, 0.3D0, &

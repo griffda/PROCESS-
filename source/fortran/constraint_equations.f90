@@ -3302,7 +3302,7 @@ contains
 
    subroutine constraint_eqn_088(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for TF coil vertical strain upper limit (absolute value)
-      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! author: CPS Swanson, PPPL, USA
       !! args : output structure : residual error; constraint value; 
       !! residual error in physical units; output string; units string
       !! Equation for TF coil vertical strain upper limit (absolute value)
@@ -3322,24 +3322,11 @@ contains
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
       
-      ! Do not permit strncon_tf to be used:
-      if (i_strain_wp == 1) then
-        tmp_cc =  1.0D0 - fstrain_wp * strain_wp_max/abs(strain_wp)
-        tmp_con = strain_wp_max
-        tmp_err = strain_wp_max - abs(strain_wp) / fstrain_wp
-        tmp_symbol = '<'
-        tmp_units = ''
-      else
-        tmp_cc = 0
-        tmp_con = 0
-        tmp_err = 0
-        tmp_symbol = ''
-        tmp_units = ''
-        call report_error(275)
-      end if
-
-
-
+      tmp_cc =  1.0D0 - fstrain_wp * strain_wp_max/abs(strain_wp)
+      tmp_con = strain_wp_max
+      tmp_err = strain_wp_max - abs(strain_wp) / fstrain_wp
+      tmp_symbol = '<'
+      tmp_units = ''
    end subroutine constraint_eqn_088
 
 end module constraints

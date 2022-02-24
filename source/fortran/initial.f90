@@ -910,20 +910,26 @@ subroutine check
     !-! Setting the TF coil conductor elastic properties
     !-!
     if ( i_tf_cond_eyoung_axial == 0 ) then
+        !! Conductor stiffness is not considered
         eyoung_cond_z = 0
         eyoung_cond_t = 0
     else if ( i_tf_cond_eyoung_axial == 2 ) then
         select case (i_tf_sc_mat)
-            case (1,4,5) !! Nb3Sn
-                eyoung_cond_z = 32D9 !! Nyilas, A et. al, Superconductor Science and Technology 16, no. 9 (2003): 1036–42. https://doi.org/10.1088/0953-2048/16/9/313.
-            case (2)     !! Bi-2212
-                eyoung_cond_z = 80D9 !! Brown, M. et al, IOP Conference Series: Materials Science and Engineering 279 (2017): 012022. https://doi.org/10.1088/1757-899X/279/1/012022.
-            case (3,7)   !! NbTi
-                eyoung_cond_z = 6.8D9 !! Vedrine, P. et. al, IEEE Transactions on Applied Superconductivity 9, no. 2 (1999): 236–39. https://doi.org/10.1109/77.783280.
-            case (6,8,9) !! REBCO
-                eyoung_cond_z = 145D9 !! Fujishiro, H. et. al, Physica C: Superconductivity, 426–431 (2005): 699–704. https://doi.org/10.1016/j.physc.2005.01.045.
+            case (1,4,5)
+                !! Nb3Sn: Nyilas, A et. al, Superconductor Science and Technology 16, no. 9 (2003): 1036–42. https://doi.org/10.1088/0953-2048/16/9/313.
+                eyoung_cond_z = 32D9
+            case (2)
+                !! Bi-2212: Brown, M. et al, IOP Conference Series: Materials Science and Engineering 279 (2017): 012022. https://doi.org/10.1088/1757-899X/279/1/012022.
+                eyoung_cond_z = 80D9
+            case (3,7)
+                !! NbTi: Vedrine, P. et. al, IEEE Transactions on Applied Superconductivity 9, no. 2 (1999): 236–39. https://doi.org/10.1109/77.783280.
+                eyoung_cond_z = 6.8D9
+            case (6,8,9)
+                !! REBCO: !! Fujishiro, H. et. al, Physica C: Superconductivity, 426–431 (2005): 699–704. https://doi.org/10.1016/j.physc.2005.01.045.
+                eyoung_cond_z = 145D9
         end select
-        if ( i_tf_cond_eyoung_transverse == 1) then
+        
+        if ( i_tf_cond_eyoung_transverse == 0) then
             eyoung_cond_t = 0
         else
             eyoung_cond_t = eyoung_cond_z
@@ -1089,8 +1095,6 @@ subroutine check
         call report_error(222)
     end if
 
-    errors_on = .false.
-
     ! Cannot use temperature margin constraint with REBCO TF coils
     if(any(icc == 36) .and. ((i_tf_sc_mat == 8).or.(i_tf_sc_mat == 9))) then
         call report_error(265)
@@ -1105,6 +1109,13 @@ subroutine check
     if(tmpcry > tftmp) then
         call report_error(273)
     endif
+    
+    ! Cannot use TF coil strain limit if i_strain_tf is off:
+    if(any(icc = 88) .and. (i_strain_wp == 0)) then
+        call report_error(275)
+    endif
+
+    errors_on = .false.
 
 
 end subroutine check

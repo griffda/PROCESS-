@@ -246,7 +246,9 @@ module tfcoil_variables
   !! Switch for the behavior of the TF coil conductor elastic axial properties
   !!
   !! - =0  Young's modulus is set to zero, and the conductor is not considered
-  !!       in the stress calculation
+  !!       in the stress calculation. This corresponds to the case that the 
+  !!       conductor is much less stiff than the conduit, or the case that the
+  !!       conductor is prevented (isolated) from taking axial loads.
   !! - =1  Elastic properties are set by user input, using the variable
   !!       `eyoung_cond_z`
   !! - =2  Elastic properties are set to reasonable defaults taking into
@@ -257,10 +259,10 @@ module tfcoil_variables
   !! conductorin the transverse direction. Only active if 
   !! `i_tf_cond_eyoung_axial == 2`
   !!
-  !! - =0  Cable potted in solder. If `i_tf_cond_eyoung_axial == 2`, the 
+  !! - =0  Cable not potted in solder. Transverse Young's modulus set to zero.
+  !! - =1  Cable potted in solder. If `i_tf_cond_eyoung_axial == 2`, the 
   !!       transverse Young's modulus of the conductor is equal to the axial,
   !!       which is set to a sensible material-dependent default.
-  !! - =1  Cable not potted in solder. Transverse Young's modulus set to zero.
 
   integer :: n_pancake
   !! Number of pancakes in TF coil. Only used if `i_tf_turns_integer=1`
@@ -445,13 +447,13 @@ module tfcoil_variables
   real(dp) :: sigvvall
   !! allowable stress from TF quench in vacuum vessel (Pa)
 
-  real(dp) :: strncon_cs
+  real(dp) :: str_cs_con_res
   !! Residual manufacturing strain in CS superconductor material 
 
-  real(dp) :: strncon_pf
+  real(dp) :: str_pf_con_res
   !! Residual manufacturing strain in PF superconductor material
 
-  real(dp) :: strncon_tf
+  real(dp) :: str_tf_con_res
   !! Residual manufacturing strain in TF superconductor material
   !! If `i_strain_wp == 0`, used to compute the critical surface.
   !! Otherwise, the self-consistent winding pack `strain_wp` is used.
@@ -460,7 +462,7 @@ module tfcoil_variables
   !! Axial (vertical) strain in the TF coil winding pack found by
   !! self-consistent stress/strain calculation.
   !! if `i_strain_wp == 1`, used to compute the critical surface.
-  !! Otherwise, the input value `strncon_tf` is used.
+  !! Otherwise, the input value `str_tf_con_res` is used.
   !! Constrain the absolute value using `constraint equation 88`
   !! You can't have constraint 88 and i_strain_wp = 0 at the same time
   
@@ -472,7 +474,7 @@ module tfcoil_variables
   !! Switch for the behavior of the TF strain used to compute 
   !! the strain-dependent critical surface:
   !!
-  !! - =0  strncon_tf is used
+  !! - =0  str_tf_con_res is used
   !! - =1  strain_wp is used
 
   character(len=12) :: quench_model
@@ -892,7 +894,7 @@ module tfcoil_variables
     i_tf_sup = 1
     i_tf_shape = 0
     i_tf_cond_eyoung_axial = 0
-    i_tf_cond_eyoung_transverse = 0
+    i_tf_cond_eyoung_transverse = 1
     n_pancake = 10
     n_layer = 20
     n_rad_per_layer = 100
@@ -936,9 +938,9 @@ module tfcoil_variables
     sig_tf_case = 0.0D0
     sig_tf_wp = 0.0D0
     sigvvall = 9.3D7
-    strncon_cs = -0.005D0
-    strncon_pf = -0.005D0
-    strncon_tf = -0.005D0
+    str_cs_con_res = -0.005D0
+    str_pf_con_res = -0.005D0
+    str_tf_con_res = -0.005D0
     strain_wp = 0.0D0
     strain_wp_max = 0.7D-2
     i_strain_wp = 1

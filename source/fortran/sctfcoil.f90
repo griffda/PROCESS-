@@ -5343,7 +5343,7 @@ subroutine tfspcall(outfile,iprint)
     use tfcoil_variables, only: tmargmin_tf, n_tf_turn, n_tf, vftf, &
         temp_margin, jwdgpro, tftmp, vtfskv, acndttf, dhecoil, tmaxpro, &
         tmargtf, thwcndut, t_conductor, fcutfsu, jwdgcrt, tdmptf, cpttf, &
-        ritfc, jwptf, bmaxtfrp, tcritsc, acstf, strncon_tf, fhts, bcritsc, &
+        ritfc, jwptf, bmaxtfrp, tcritsc, acstf, str_tf_con_res, fhts, bcritsc, &
         i_tf_sc_mat, b_crit_upper_nbti, t_crit_nbti, strain_wp, i_strain_wp
     use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, &
         jcrit_nbti, croco, bi2212, GL_nbti, GL_REBCO, HIJC_REBCO
@@ -5452,7 +5452,7 @@ contains
         fcond = 1.0D0 - fhetot
         
         if (i_strain_wp == 0) then
-          strain = strncon_tf
+          strain = str_tf_con_res
         else
           strain = strain_wp
         end if
@@ -5729,7 +5729,7 @@ contains
         call ovarre(outfile,'Helium temperature at peak field (= superconductor temperature) (K)','(thelium)',thelium)
         call ovarre(outfile,'Total helium fraction inside cable space','(fhetot)',fhetot, 'OP ')
         call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcu)
-        call ovarre(outfile,'Residual manufacturing strain on superconductor','(strncon_tf)',strncon_tf)
+        call ovarre(outfile,'Residual manufacturing strain on superconductor','(str_tf_con_res)',str_tf_con_res)
         call ovarre(outfile,'Self-consistent strain on superconductor','(strain_wp)',strain_wp)
         call ovarre(outfile,'Critical current density in superconductor (A/m2)','(jcritsc)',jcritsc, 'OP ')
         call ovarre(outfile,'Critical current density in strand (A/m2)','(jcritstr)',jcritstr, 'OP ')

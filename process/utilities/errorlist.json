@@ -277,7 +277,7 @@
    {"no": 271, "level": 3, "message": "CHECK: Impossible to set the TF coil turn and cable size simultaneously"}, 
    {"no": 272, "level": 2, "message": "Double-null: Upper vertical build forced to match lower"}, 
    {"no": 273, "level": 2, "message": "CHECK: tmpcry should be lower than tftmp"},
-   {"no": 275, "level": 3, "message": "CONSTRAINTS: Can't use constraint 88 if i_strncon_tf == 0"},
+   {"no": 275, "level": 3, "message": "CONSTRAINTS: Can't use constraint 88 if i_strain_tf == 0"},
    {"no": 274, "level": 2, "message": "[HCPB]: Blanket heating is <1 MW or NaN. Is something wrong?"},
    {"no": 276, "level": 2, "message": "CHECK: One of the areas or fractions is negative in the internal SC TF coil geometry"}
    ]
