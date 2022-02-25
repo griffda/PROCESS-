@@ -1914,10 +1914,8 @@ module pfcoil_module
      case (6) ! "REBCO" 2nd generation HTS superconductor in CrCo strand
         call jcrit_rebco(thelium,bmax,jcritsc,validity,0)
         jcritstr = jcritsc * (1.0D0-fcu)
-        ioheof = hmax*ohhghf*ohcth*2.0D0*coheof  ! current at eof. the previously
-        ! used equations include a negative sign but this prevents a solution from
-        ! being found.
-        copperaoh_m2 = ioheof / awpoh * (1.0D0-fcu) ! added by me
+        ioheof = hmax*ohhghf*ohcth*2.0D0*coheof  ! The CS coil current at EOF 
+        copperaoh_m2 = ioheof / awpoh * (1.0D0-fcu) ! The copper area calculation for quench protection
  
     case (7) ! Durham Ginzburg-Landau Nb-Ti parameterisation
           bc20m = b_crit_upper_nbti
