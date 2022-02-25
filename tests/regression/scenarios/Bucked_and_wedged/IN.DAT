@@ -95,7 +95,7 @@ ixc = 122 * oh_steel_frac
 ixc = 123 * foh_stress
 ixc = 109 * ralpne
 ixc = 110 * ftaulimit
-ixc = 165 * fstrain_tf
+ixc = 165 * fstr_tf
 
 *isweep = 3
 *nsweep = 17
@@ -332,7 +332,7 @@ vftf     = 0.300 * Coolant fraction of tfc 'cable' (i_tf_sup=1); or of tfc leg (
 i_tf_sc_mat = 5
 i_tf_stress_model = 2 *Switch for the TF coil stress model (2: Axisymmetric extended plane strain)
 i_tf_bucking = 3    * TF Bucking strategy (3 : full bucked and wedged, CS standing on TF) 
-strain_wp_max = 7.0D-3 * Maximum allowed absolute value of the strain in the TF coil
+str_wp_max = 7.0D-3 * Maximum allowed absolute value of the strain in the TF coil
 
 n_pancake = 20
 n_layer = 10

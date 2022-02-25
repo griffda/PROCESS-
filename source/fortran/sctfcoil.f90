@@ -1753,7 +1753,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         aiwp, aswp, cpttf, n_tf, i_tf_stress_model, sig_tf_wp_max, &
         i_tf_turns_integer, casthi, acond, avwp, awphec, poisson_ins, &
         eyoung_cond_t, poisson_cond_z, poisson_cond_t, dhecoil, fcutfsu, &
-        strain_wp, n_tf_members_max
+        str_wp, n_tf_members_max
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
         cohbop, ncls, cptdin
     use constants, only: pi, sig_file
@@ -1834,13 +1834,13 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! Maximum shear stress, for the Tresca yield criterion of each layer [Pa]
     !! If the CEA correction is addopted, the CEA corrected value is used
     
-    real(dp), dimension(n_tf_layer*n_radial_array) :: strain_tf_r
+    real(dp), dimension(n_tf_layer*n_radial_array) :: str_tf_r
     !! Radial normal strain radial distribution
     
-    real(dp), dimension(n_tf_layer*n_radial_array) :: strain_tf_t
+    real(dp), dimension(n_tf_layer*n_radial_array) :: str_tf_t
     !! Toroidal normal strain radial distribution
      
-    real(dp), dimension(n_tf_layer*n_radial_array) :: strain_tf_z
+    real(dp), dimension(n_tf_layer*n_radial_array) :: str_tf_z
     !! Vertical normal strain radial distribution
 
     real(dp) :: eyoung_wp_t
@@ -2423,7 +2423,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         sig_tf_z = vforce / (acasetf + acndttf*n_tf_turn) ! Array equation [EDIT: Are you sure? It doesn't look like one to me]
         
         ! Strain in vertical direction on WP
-        strain_wp = sig_tf_z(n_tf_bucking+1) / eyoung_wp_z_eff
+        str_wp = sig_tf_z(n_tf_bucking+1) / eyoung_wp_z_eff
 
         ! Case strain
         casestr = sig_tf_z(n_tf_bucking) / eyoung_steel
@@ -2443,10 +2443,10 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                                        radtf, jeff, vforce_inboard_tot,          & ! Inputs
                                        n_tf_layer, n_radial_array, n_tf_bucking,  & ! Inputs
                                        radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
-                                       strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
+                                       str_tf_r, str_tf_t, str_tf_z, deflect ) ! Outputs
         
         !! Strain in TF conductor material
-        strain_wp = strain_tf_z(n_tf_bucking*n_radial_array+1);
+        str_wp = str_tf_z(n_tf_bucking*n_radial_array+1);
         
     else if ( i_tf_stress_model == 2) then
         ! Extended plane strain calculation [Pa]
@@ -2457,10 +2457,10 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                                        radtf, jeff, vforce_inboard_tot,          & ! Inputs
                                        n_tf_layer, n_radial_array, n_tf_bucking,  & ! Inputs
                                        radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
-                                       strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
+                                       str_tf_r, str_tf_t, str_tf_z, deflect ) ! Outputs
         
         !! Strain in TF conductor material
-        strain_wp = strain_tf_z(n_tf_bucking*n_radial_array+1);
+        str_wp = str_tf_z(n_tf_bucking*n_radial_array+1);
         
     end if
     ! ---
@@ -2791,9 +2791,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         if ( i_tf_stress_model /= 1 ) then
             write(sig_file,*)
             write(sig_file,*) 'Strain'    
-            write(sig_file,'(t2, "radial strain"   ,t26, *(F11.8,3x))') strain_tf_r
-            write(sig_file,'(t2, "toroidal strain" ,t26, *(F11.8,3x))') strain_tf_t
-            write(sig_file,'(t2, "vertical strain" ,t26, *(F11.8,3x))') strain_tf_z
+            write(sig_file,'(t2, "radial strain"   ,t26, *(F11.8,3x))') str_tf_r
+            write(sig_file,'(t2, "toroidal strain" ,t26, *(F11.8,3x))') str_tf_t
+            write(sig_file,'(t2, "vertical strain" ,t26, *(F11.8,3x))') str_tf_z
         end if
 
         ! TODO sig_tf_wp_av_z is always undefined here. This needs correcting or removing
@@ -3039,7 +3039,7 @@ end subroutine plane_stress
 subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_force,   & ! Inputs
                                      nlayers, n_radial_array, i_tf_bucking,          & ! Inputs
                                      rradius, sigr, sigt, sigz,              & ! Outputs
-                                     strain_r, strain_t, strain_z, r_deflect ) ! Outputs
+                                     str_r, str_t, str_z, r_deflect ) ! Outputs
       
     !! Author : S. Kahn, CCFE
     !! Jan 2020
@@ -3117,13 +3117,13 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     real(dp), dimension(n_radial_array*nlayers), intent(out) :: sigz
     !! Stress distribution in the vertical direction (z)
 
-    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_r
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: str_r
     !! Strain distribution in the radial direction (r)
 
-    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_t
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: str_t
     !! Strain distribution in the toroidal direction (t)
           
-    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_z
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: str_z
     !! Uniform strain in the vertical direction (z)
 
     real(dp), dimension(n_radial_array*nlayers), intent(out) :: r_deflect
@@ -3183,7 +3183,7 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     real(dp) :: inner_layer_curr
       
     ! Constraint strains for calculation (on for TF and CS systems)
-    real(dp), dimension(2) :: strain_z_calc
+    real(dp), dimension(2) :: str_z_calc
       
     ! Indexes
     integer :: ii  ! Line in the aa matrix
@@ -3434,23 +3434,23 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     sigr(:) = 0.0D0
     sigt(:) = 0.0D0
     sigz(:) = 0.0D0
-    strain_r(:) = 0.0D0
-    strain_t(:) = 0.0D0
-    strain_z(:) = 0.0D0
+    str_r(:) = 0.0D0
+    str_t(:) = 0.0D0
+    str_z(:) = 0.0D0
     r_deflect(:) = 0.0D0
 
     ! CS system vertical strain
     if ( i_tf_bucking >= 2 ) then
-        strain_z_calc(1) = aleph(1)
+        str_z_calc(1) = aleph(1)
         do ii = 1, i_tf_bucking - 1
-            strain_z_calc(1) = strain_z_calc(1) + c1(ii) * beth(ii)
+            str_z_calc(1) = str_z_calc(1) + c1(ii) * beth(ii)
         end do
     end if
     
     ! TF system vertical normal strain (constant) WRONG IF GRADED COIL
-    strain_z_calc(2) = aleph(nlayers) 
+    str_z_calc(2) = aleph(nlayers) 
     do ii = max( 1, i_tf_bucking ), nlayers
-        strain_z_calc(2) = strain_z_calc(2) + c1(ii) * beth(ii)
+        str_z_calc(2) = str_z_calc(2) + c1(ii) * beth(ii)
     end do
 
 
@@ -3479,30 +3479,30 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
 
             ! No vertical strain effect on CS / TF-CS inter layer
             if ( ii >= i_tf_bucking ) then ! TF system
-                sigr(jj) = sigr(jj) + kk_p(ii) * strain_z_calc(2) * nu_z(ii) 
-                sigt(jj) = sigt(jj) + kk_p(ii) * strain_z_calc(2) * nu_z(ii)
-                sigz(jj) = sigz(jj) + kk_z(ii) * strain_z_calc(2) * (1.0D0 - nu_p(ii))
+                sigr(jj) = sigr(jj) + kk_p(ii) * str_z_calc(2) * nu_z(ii) 
+                sigt(jj) = sigt(jj) + kk_p(ii) * str_z_calc(2) * nu_z(ii)
+                sigz(jj) = sigz(jj) + kk_z(ii) * str_z_calc(2) * (1.0D0 - nu_p(ii))
             else ! CS system
-                sigr(jj) = sigr(jj) + kk_p(ii) * strain_z_calc(1) * nu_z(ii) 
-                sigt(jj) = sigt(jj) + kk_p(ii) * strain_z_calc(1) * nu_z(ii)
-                sigz(jj) = sigz(jj) + kk_z(ii) * strain_z_calc(1) * (1.0D0 - nu_p(ii))
+                sigr(jj) = sigr(jj) + kk_p(ii) * str_z_calc(1) * nu_z(ii) 
+                sigt(jj) = sigt(jj) + kk_p(ii) * str_z_calc(1) * nu_z(ii)
+                sigz(jj) = sigz(jj) + kk_z(ii) * str_z_calc(1) * (1.0D0 - nu_p(ii))
             end if
                     
             ! Radial normal strain
-            strain_r(jj) = c1(ii) - c2(ii) / rradius(jj)**2                      &
+            str_r(jj) = c1(ii) - c2(ii) / rradius(jj)**2                      &
                            + 0.375D0*alpha(ii) * rradius(jj)**2 + 0.5D0*beta(ii) &
                            * (1.0D0 + log(rradius(jj)))
       
             ! Toroidal normal strain
-            strain_t(jj) = c1(ii) + c2(ii) / rradius(jj)**2                       &
+            str_t(jj) = c1(ii) + c2(ii) / rradius(jj)**2                       &
                             + 0.125D0*alpha(ii) * rradius(jj)**2 + 0.5D0*beta(ii) & 
                             * log(rradius(jj))
                     
             ! Vertical normal strain
             if ( ii >= i_tf_bucking ) then
-                strain_z(jj) = strain_z_calc(2)
+                str_z(jj) = str_z_calc(2)
             else 
-                strain_z(jj) = strain_z_calc(1)
+                str_z(jj) = str_z_calc(1)
             end if
 
             ! Radial displacement
@@ -3521,7 +3521,7 @@ end subroutine generalized_plane_strain
 subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,   & ! Inputs
                                      nlayers, n_radial_array, i_tf_bucking,          & ! Inputs
                                      rradius, sigr, sigt, sigz,              & ! Outputs
-                                     strain_r, strain_t, strain_z, r_deflect ) ! Outputs
+                                     str_r, str_t, str_z, r_deflect ) ! Outputs
       
     !! Author : C. Swanson, PPPL and S. Kahn, CCFE
     !! September 2021
@@ -3606,13 +3606,13 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     real(dp), dimension(n_radial_array*nlayers), intent(out) :: sigz
     !! Stress distribution in the vertical direction (z)
 
-    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_r
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: str_r
     !! Strain distribution in the radial direction (r)
 
-    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_t
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: str_t
     !! Strain distribution in the toroidal direction (t)
           
-    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_z
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: str_z
     !! Uniform strain in the vertical direction (z)
 
     real(dp), dimension(n_radial_array*nlayers), intent(out) :: r_deflect
@@ -3932,9 +3932,9 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     sigr(:) = 0.0D0
     sigt(:) = 0.0D0
     sigz(:) = 0.0D0
-    strain_r(:) = 0.0D0
-    strain_t(:) = 0.0D0
-    strain_z(:) = 0.0D0
+    str_r(:) = 0.0D0
+    str_t(:) = 0.0D0
+    str_z(:) = 0.0D0
     r_deflect(:) = 0.0D0
 
     ! Radial displacement, stress and strain distributions
@@ -3959,22 +3959,22 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
             r_deflect(jj) = A_plot*rradius(jj) + B_plot/rradius(jj)
             
             ! Radial strain
-            strain_r(jj)  = A_plot - B_plot/rradius(jj)**2
+            str_r(jj)  = A_plot - B_plot/rradius(jj)**2
             ! Azimuthal strain
-            strain_t(jj)  = A_plot + B_plot/rradius(jj)**2
+            str_t(jj)  = A_plot + B_plot/rradius(jj)**2
             ! Axial strain
             if ( ii < nonslip_layer) then
-                strain_z(jj) = A_vec_solution(5)
+                str_z(jj) = A_vec_solution(5)
             else
-                strain_z(jj) = A_vec_solution(3)
+                str_z(jj) = A_vec_solution(3)
             end if
             
             ! Radial stress
-            sigr(jj) = ey_bar_t(ii)*(strain_r(jj) + nu_bar_t(ii)*strain_t(jj) + nu_bar_zt(ii)*strain_z(jj))
+            sigr(jj) = ey_bar_t(ii)*(str_r(jj) + nu_bar_t(ii)*str_t(jj) + nu_bar_zt(ii)*str_z(jj))
             ! Aximuthal stress
-            sigt(jj) = ey_bar_t(ii)*(strain_t(jj) + nu_bar_t(ii)*strain_r(jj) + nu_bar_zt(ii)*strain_z(jj))
+            sigt(jj) = ey_bar_t(ii)*(str_t(jj) + nu_bar_t(ii)*str_r(jj) + nu_bar_zt(ii)*str_z(jj))
             ! Axial stress
-            sigz(jj) = ey_bar_z(ii)*(strain_z(jj) + nu_bar_tz(ii)*(strain_r(jj) + strain_t(jj)))
+            sigz(jj) = ey_bar_z(ii)*(str_z(jj) + nu_bar_tz(ii)*(str_r(jj) + str_t(jj)))
 
 
         end do ! layer array loop
@@ -5344,7 +5344,7 @@ subroutine tfspcall(outfile,iprint)
         temp_margin, jwdgpro, tftmp, vtfskv, acndttf, dhecoil, tmaxpro, &
         tmargtf, thwcndut, t_conductor, fcutfsu, jwdgcrt, tdmptf, cpttf, &
         ritfc, jwptf, bmaxtfrp, tcritsc, acstf, str_tf_con_res, fhts, bcritsc, &
-        i_tf_sc_mat, b_crit_upper_nbti, t_crit_nbti, strain_wp, i_strain_wp
+        i_tf_sc_mat, b_crit_upper_nbti, t_crit_nbti, str_wp, i_str_wp
     use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, &
         jcrit_nbti, croco, bi2212, GL_nbti, GL_REBCO, HIJC_REBCO
     use global_variables, only: run_tests
@@ -5451,10 +5451,10 @@ contains
         !  Conductor fraction (including central helium channel)
         fcond = 1.0D0 - fhetot
         
-        if (i_strain_wp == 0) then
+        if (i_str_wp == 0) then
           strain = str_tf_con_res
         else
-          strain = strain_wp
+          strain = str_wp
         end if
 
         !  Find critical current density in superconducting strand, jcritstr
@@ -5730,7 +5730,7 @@ contains
         call ovarre(outfile,'Total helium fraction inside cable space','(fhetot)',fhetot, 'OP ')
         call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcu)
         call ovarre(outfile,'Residual manufacturing strain on superconductor','(str_tf_con_res)',str_tf_con_res)
-        call ovarre(outfile,'Self-consistent strain on superconductor','(strain_wp)',strain_wp)
+        call ovarre(outfile,'Self-consistent strain on superconductor','(str_wp)',str_wp)
         call ovarre(outfile,'Critical current density in superconductor (A/m2)','(jcritsc)',jcritsc, 'OP ')
         call ovarre(outfile,'Critical current density in strand (A/m2)','(jcritstr)',jcritstr, 'OP ')
         call ovarre(outfile,'Critical current density in winding pack (A/m2)', '(jwdgcrt)',jwdgcrt, 'OP ')

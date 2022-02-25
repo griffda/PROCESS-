@@ -455,27 +455,27 @@ module tfcoil_variables
 
   real(dp) :: str_tf_con_res
   !! Residual manufacturing strain in TF superconductor material
-  !! If `i_strain_wp == 0`, used to compute the critical surface.
-  !! Otherwise, the self-consistent winding pack `strain_wp` is used.
+  !! If `i_str_wp == 0`, used to compute the critical surface.
+  !! Otherwise, the self-consistent winding pack `str_wp` is used.
   
-  real(dp) :: strain_wp
+  real(dp) :: str_wp
   !! Axial (vertical) strain in the TF coil winding pack found by
   !! self-consistent stress/strain calculation.
-  !! if `i_strain_wp == 1`, used to compute the critical surface.
+  !! if `i_str_wp == 1`, used to compute the critical surface.
   !! Otherwise, the input value `str_tf_con_res` is used.
   !! Constrain the absolute value using `constraint equation 88`
-  !! You can't have constraint 88 and i_strain_wp = 0 at the same time
+  !! You can't have constraint 88 and i_str_wp = 0 at the same time
   
-  real(dp) :: strain_wp_max
+  real(dp) :: str_wp_max
   !! Maximum allowed absolute value of the strain in the TF coil
   !! (`Constraint equation 88`)
   
-  integer :: i_strain_wp
+  integer :: i_str_wp
   !! Switch for the behavior of the TF strain used to compute 
   !! the strain-dependent critical surface:
   !!
   !! - =0  str_tf_con_res is used
-  !! - =1  strain_wp is used
+  !! - =1  str_wp is used
 
   character(len=12) :: quench_model
   !! switch for TF coil quench model (Only applies to REBCO magnet at present, issue #522):
@@ -941,9 +941,9 @@ module tfcoil_variables
     str_cs_con_res = -0.005D0
     str_pf_con_res = -0.005D0
     str_tf_con_res = -0.005D0
-    strain_wp = 0.0D0
-    strain_wp_max = 0.7D-2
-    i_strain_wp = 1
+    str_wp = 0.0D0
+    str_wp_max = 0.7D-2
+    i_str_wp = 1
     quench_model = 'exponential'
     quench_detection_ef = 0D0
     time1 = 0D0

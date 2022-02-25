@@ -277,7 +277,7 @@ subroutine check
         tfinsgap, rcool, dhecoil, thicndut, i_cp_joints, t_turn_tf_is_input, &
         t_turn_tf, tftmp, t_cable_tf, t_cable_tf_is_input, tftmp, tmpcry, &
         i_tf_cond_eyoung_axial, eyoung_cond_z, eyoung_cond_t, &
-        i_tf_cond_eyoung_transverse, i_strain_wp
+        i_tf_cond_eyoung_transverse, i_str_wp
     use stellarator_variables, only: istell
     use sctfcoil_module, only: initialise_cables
     use vacuum_variables, only: vacuum_model
@@ -1111,8 +1111,8 @@ subroutine check
         call report_error(273)
     endif
     
-    ! Cannot use TF coil strain limit if i_strain_wp is off:
-    if(any(icc == 88) .and. (i_strain_wp == 0)) then
+    ! Cannot use TF coil strain limit if i_str_wp is off:
+    if(any(icc == 88) .and. (i_str_wp == 0)) then
         call report_error(275)
     endif
 

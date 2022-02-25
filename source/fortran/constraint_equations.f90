@@ -3307,14 +3307,14 @@ contains
       !! residual error in physical units; output string; units string
       !! Equation for TF coil vertical strain upper limit (absolute value)
       !! #=# tfcoil
-      !! #=#=# fstrain_wp, strain_wp_max
+      !! #=#=# fstr_wp, str_wp_max
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !! fstrain_wp : input real : f-value for TF coil strain
-      !! strain_wp_max : input real : Allowable maximum TF coil vertical strain
-      !! strain_wp : input real : Constrained TF coil vertical strain
-      use constraint_variables, only: fstrain_wp
-      use tfcoil_variables, only: strain_wp_max, strain_wp
+      !! fstr_wp : input real : f-value for TF coil strain
+      !! str_wp_max : input real : Allowable maximum TF coil vertical strain
+      !! str_wp : input real : Constrained TF coil vertical strain
+      use constraint_variables, only: fstr_wp
+      use tfcoil_variables, only: str_wp_max, str_wp
       implicit none
             real(dp), intent(out) :: tmp_cc
       real(dp), intent(out) :: tmp_con
@@ -3322,9 +3322,9 @@ contains
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
       
-      tmp_cc =  1.0D0 - fstrain_wp * strain_wp_max/abs(strain_wp)
-      tmp_con = strain_wp_max
-      tmp_err = strain_wp_max - abs(strain_wp) / fstrain_wp
+      tmp_cc =  1.0D0 - fstr_wp * str_wp_max/abs(str_wp)
+      tmp_con = str_wp_max
+      tmp_err = str_wp_max - abs(str_wp) / fstr_wp
       tmp_symbol = '<'
       tmp_units = ''
    end subroutine constraint_eqn_088
