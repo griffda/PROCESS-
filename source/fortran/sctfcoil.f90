@@ -153,8 +153,8 @@ real(dp) :: conductor_jacket_area, conductor_jacket_fraction
 real(dp) :: conductor_rebco_area,  conductor_rebco_fraction
 real(dp) :: conductor_critical_current
 real(dp) :: conductor_acs
-!! Area of cable space inside jacket
 real(dp) :: conductor_area      
+!! Area of cable space inside jacket
 
 real(dp):: T1, time2, tau2, estotft
 ! (OBSOLETE, but leave for moment)
@@ -1847,28 +1847,28 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! Smeared WP Young's modulus in the toroidal direction [Pa]
     
     real(dp) :: eyoung_wp_t_eff
-    !! Smeared WP + lateral case Young's modulus in the torodial direction [Pa]
+    !! Smeared WP and lateral case Young's modulus in the torodial direction [Pa]
     !! (Includes the effect of the sidewalls of the steel case)
 
     real(dp) :: eyoung_wp_z
     !! Smeared WP Young's modulus in the vertical direction [Pa]
 
     real(dp) :: eyoung_wp_z_eff
-    !! Smeared WP + lateral case Young's modulus in the vertical direction [Pa]
+    !! Smeared WP and lateral case Young's modulus in the vertical direction [Pa]
     !! (Includes the effect of the sidewalls of the steel case)
     
     real(dp) :: poisson_wp_t
     !! Smeared WP Poisson's ratio in the transverse-transverse direction
 
     real(dp) :: poisson_wp_t_eff
-    !! Smeared WP + lateral case Poisson's ratio in the transverse-transverse direction
+    !! Smeared WP and lateral case Poisson's ratio in the transverse-transverse direction
     !! (Includes the effect of the sidewalls of the steel case)
 
     real(dp) :: poisson_wp_z
     !! Smeared WP Poisson's ratio in the vertical-transverse direction
 
     real(dp) :: poisson_wp_z_eff
-    !! Smeared WP + lateral case Poisson's ratio in the vertical-transverse direction
+    !! Smeared WP and lateral case Poisson's ratio in the vertical-transverse direction
     !! (Includes the effect of the sidewalls of the steel case)
 
     real(dp), dimension(n_tf_layer+1) :: radtf
@@ -1990,27 +1990,27 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     
     real(dp) :: f_tf_stress_front_case
     !! The ratio between the true cross sectional area of the 
-    ! front case, and that considered by the plane strain solver
+    !! front case, and that considered by the plane strain solver
     
     real(dp) :: a_working
     !! Working variable to keep track of how much area we've
-    ! considered when assembling the parallel elastic quantities
-    ! of composite members [m^2 or consistent units]
+    !! considered when assembling the parallel elastic quantities
+    !! of composite members [m^2 or consistent units]
     
     real(dp) :: eyoung_working
     !! Working variable to keep track of how much stiffness we've
-    ! considered when assembling the elastic quantities
-    ! of composite members [Pa]
+    !! considered when assembling the elastic quantities
+    !! of composite members [Pa]
     
     real(dp) :: poisson_working
     !! Working variable to keep track of how much Poisson effect
-    !  we've considered when assembling the elastic quantities
-    ! of composite members [Pa]
+    !! we've considered when assembling the elastic quantities
+    !! of composite members [Pa]
     
     real(dp) :: l_working
     !! Working variable to keep track of how much length we've
-    ! considered when assembling the series elastic quantities
-    ! of composite members [m]
+    !! considered when assembling the series elastic quantities
+    !! of composite members [m]
     
     real(dp), dimension(n_tf_members_max) :: eyoung_member_array
     !! Array to store the Young's moduli of the members to composite into smeared
@@ -2026,15 +2026,15 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     
     real(dp) :: eyoung_wp_stiffest_leg
     !! Young's modulus of the stiffest series-composite leg
-    ! of the WP cable layout that is then parallel-composited 
-    ! together with others, required for elastic property
-    ! unsmearing. [Pa] 
+    !! of the WP cable layout that is then parallel-composited 
+    !! together with others, required for elastic property
+    !! unsmearing. [Pa] 
        
     real(dp) :: eyoung_cs_stiffest_leg
     !! Young's modulus of the stiffest series-composite leg
-    ! of the CS cable layout that is then parallel-composited 
-    ! together with others, required for elastic property
-    ! unsmearing. [Pa]
+    !! of the CS cable layout that is then parallel-composited 
+    !! together with others, required for elastic property
+    !! unsmearing. [Pa]
     ! ---
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2872,30 +2872,30 @@ subroutine plane_stress( nu, rad, ey, j,          & ! Inputs
 
     ! Local variables
     ! ---
-    ! Lorentz body force parametres
     real(dp), dimension(nlayers) :: alpha
     real(dp), dimension(nlayers) :: beta
+    !! Lorentz body force parametres
 
-    ! Strain to stress hooke's law coeficient
     real(dp), dimension(nlayers) :: kk
+    !! Strain to stress hooke's law coeficient
 
-    ! Layer area
     real(dp), dimension(nlayers) :: area
+    !! Layer area
     
-    ! Matrix encoding the integration constant cc coeficients 
     real(dp), dimension(2*nlayers, 2*nlayers) :: aa
+    !! Matrix encoding the integration constant cc coeficients 
     
-    ! Vector encoding the alpha/beta (lorentz forces) contribution
     real(dp), dimension(2*nlayers) :: bb
+    !! Vector encoding the alpha/beta (lorentz forces) contribution
 
-    ! Integration constants vector (solution)
     real(dp), dimension(2*nlayers) :: cc
     real(dp), dimension(nlayers) :: c1, c2
+    !! Integration constants vector (solution)
 
-    ! Variables used for radial stress distribution  
     real(dp) :: dradius
     real(dp) :: inner_layer_curr
     real(dp) :: rad_c
+    !! Variables used for radial stress distribution  
 
     integer :: ii
     integer :: jj
@@ -3136,58 +3136,58 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
 
     ! Local variables
     ! ---
-    ! Lorentz body force parametres
     real(dp), dimension(nlayers) :: alpha
     real(dp), dimension(nlayers) :: beta
+    !! Lorentz body force parametres
       
-    ! Toroidal plane / vertical direction hooke's law coeficient
     real(dp), dimension(nlayers) :: kk_p
     real(dp), dimension(nlayers) :: kk_z
+    !! Toroidal plane / vertical direction hooke's law coeficient
 
-    ! Toroidal plan to vertical direction poisson's squared coefficient
     real(dp), dimension(nlayers) :: nu_z_eff2
+    !! Toroidal plan to vertical direction poisson's squared coefficient
     
-    ! Body force parameter in displacement differential equation
     real(dp), dimension(nlayers) :: fr_par
+    !! Body force parameter in displacement differential equation
 
-    ! Radial/toroidal stress constant parameters
     real(dp), dimension(nlayers) :: cc_par_sig
     real(dp), dimension(nlayers) :: alpha_par_sigr
     real(dp), dimension(nlayers) :: alpha_par_sigt
     real(dp), dimension(nlayers) :: beta_par_sigr
     real(dp), dimension(nlayers) :: beta_par_sigt
+    !! Radial/toroidal stress constant parameters
 
-    ! Layer area
     real(dp), dimension(nlayers) :: area
+    !! Layer area
 
-    ! Vertical strain parameters
     real(dp) :: sum_1
     real(dp) :: sum_2
     real(dp), dimension(nlayers) :: aleph
     real(dp), dimension(nlayers) :: beth
     real(dp), dimension(nlayers) :: par_1
     real(dp), dimension(nlayers) :: par_2
+    !! Vertical strain parameters
 
-    ! Matrix encoding the integration constant cc coeficients 
     real(dp), dimension(2*nlayers, 2*nlayers) :: aa
+    !! Matrix encoding the integration constant cc coeficients 
 
-    ! Vector encoding the alpha/beta (lorentz forces) contribution
     real(dp), dimension(2*nlayers) :: bb
+    !! Vector encoding the alpha/beta (lorentz forces) contribution
 
-    ! Integration constants vector (solution)
     real(dp), dimension(2*nlayers) :: cc
     real(dp), dimension(nlayers) :: c1, c2
-
-    ! Variables used for radial stress distribution     
+    !! Integration constants vector (solution)
+    
     real(dp) :: dradius  
     real(dp) :: inner_layer_curr
+    !! Variables used for radial stress distribution 
       
-    ! Constraint strains for calculation (on for TF and CS systems)
     real(dp), dimension(2) :: str_z_calc
+    !! Constraint strains for calculation (on for TF and CS systems)
       
-    ! Indexes
     integer :: ii  ! Line in the aa matrix
     integer :: jj  ! Collumn in the aa matrix 
+    !! Indices
     ! ---    
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3716,10 +3716,10 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     ! Variables used for radial stress distribution     
     real(dp) :: dradius  
       
-    ! Indexes
     integer :: ii  ! Line index in the matrix
     integer :: jj  ! Column index in the matrix
     integer :: kk  ! Depth index in the matrix
+    !! Indices
     ! ---    
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -4468,7 +4468,8 @@ subroutine eyoung_parallel_array(n,eyoung_j_in, a_in, poisson_j_perp_in, & ! Inp
     
     ! Local
     ! ---
-    integer :: ii !! Indices
+    integer :: ii 
+    !! Indices
         
     !! Initialize
     eyoung_j_out = 0
