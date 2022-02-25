@@ -363,7 +363,7 @@ module numerics
   !! <LI> (162) r_cp_top : Top outer radius of the centropost (ST only) (m)
   !! <LI> (163) f_t_turn_tf : f-value for TF coils WP trurn squared dimension constraint 
   !! <LI> (164) f_crypmw : f-value for cryogenic plant power
-  !! <LI> (165) EMPTY : Description
+  !! <LI> (165) f_copperaoh_m2 : CS coil current / copper area < Maximum value
   !! <LI> (166) EMPTY : Description
   !! <LI> (167) EMPTY : Description
   !! <LI> (168) EMPTY : Description
@@ -374,7 +374,7 @@ module numerics
   !! <LI> (173) EMPTY : Description
   !! <LI> (174) EMPTY : Description
   !! <LI> (175) EMPTY : Description
-  !! <LI> (176) f_copperAoh_m2 : CS coil current / copper area < Maximum value
+
   ! Issue 287 iteration variables are now defined in module define_iteration_variables in iteration variables.f90
 
   character(len=14), dimension(:), allocatable :: name_xc

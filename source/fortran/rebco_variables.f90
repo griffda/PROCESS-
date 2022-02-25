@@ -52,7 +52,7 @@ module rebco_variables
   real(dp) :: f_coppera_m2
   !! f-value for constraint 75: TF coil current / copper area < copperA_m2_max
 
-  real(dp) :: copperAoh_m2       
+  real(dp) :: copperaoh_m2       
   !! CS coil current / copper area (A/m2) 
 
   real(dp) :: copperaoh_m2_max
@@ -97,6 +97,6 @@ module rebco_variables
     copperA_m2 = 0.0D0
     copperaoh_m2_max = 1D8
     f_copperaoh_m2 = 1d0
-    copperAoh_m2 = 0.0D0
+    copperaoh_m2 = 0.0D0
   end subroutine init_rebco_variables
 end module rebco_variables

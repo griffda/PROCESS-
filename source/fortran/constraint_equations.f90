@@ -3313,7 +3313,7 @@ contains
       !! ffuspow : input real : f-value for maximum fusion power
       !! powfmax : input real : maximum fusion power (MW)
       !! powfmw : input real : fusion power (MW)
-      use rebco_variables, only: copperAoh_m2, copperAoh_m2_max, f_copperaoh_m2
+      use rebco_variables, only: copperaoh_m2, copperaoh_m2_max, f_copperaoh_m2
       implicit none
                   real(dp), intent(out) :: tmp_cc
       real(dp), intent(out) :: tmp_con
@@ -3321,14 +3321,13 @@ contains
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
 
-      tmp_cc = 1.0d0 - f_copperaoh_m2 * copperAoh_m2_max / copperAoh_m2
-      tmp_con = copperAoh_m2
-      tmp_err = copperAoh_m2 * tmp_cc
+      tmp_cc = 1.0d0 - f_copperaoh_m2 * copperaoh_m2_max / copperaoh_m2
+      tmp_con = copperaoh_m2
+      tmp_err = copperaoh_m2 * tmp_cc
       tmp_symbol = '<'
       tmp_units = 'A/m2'
 
    end subroutine constraint_eqn_088
 
-
-
+   
 end module constraints
