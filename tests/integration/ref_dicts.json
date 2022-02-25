@@ -2297,7 +2297,7 @@
         "i_tf_bucking": -1.0,
         "i_tf_case_geom": 0.0,
         "i_tf_cond_eyoung_axial": 0.0,
-        "i_tf_cond_eyoung_transverse": 0.0,
+        "i_tf_cond_eyoung_transverse": 1.0,
         "i_tf_sc_mat": 1.0,
         "i_tf_shape": 0.0,
         "i_tf_stress_model": 1.0,
@@ -5490,11 +5490,11 @@
         "step_ucwindpf": 465.0,
         "step_ucwindtf": 1520.0,
         "step_ucwst": 7.88,
+        "str_cs_con_res": -0.005,
+        "str_pf_con_res": -0.005,
+        "str_tf_con_res": -0.005,
         "strain_wp": 0.0,
         "strain_wp_max": 0.007,
-        "strncon_cs": -0.005,
-        "strncon_pf": -0.005,
-        "strncon_tf": -0.005,
         "subscript_present": ".false.",
         "sum": null,
         "summ": null,
@@ -9923,12 +9923,12 @@
         "i_r_cp_top": "Switch selecting the he parametrization of the outer radius of the top of the CP part of the TF coil\n  0 : `r_cp_top` is set by the plasma shape\n  1 : `r_cp_top` is a user input\n  2 : `r_cp_top` is set using the CP top and midplane CP radius ratio ",
         "i_shield_mat": "Switch for shield material - <em>currently only applied in costing routines</em> `cost_model = 2`\n<ul>\n<li>=0 Tungsten (default)</li>\n<li>=1 Tungsten carbide</li>\n</ul>",
         "i_single_null": "switch for single null / double null plasma:\n<ul>\n<li>=0 for double null</li>\n<li>=1 for single null (diverted side down)</li>\n</ul>",
-        "i_strain_wp": "Switch for the behavior of the TF strain used to compute \n the strain-dependent critical surface:\n<ul>\n<li>=0  strncon_tf is used</li>\n<li>=1  strain_wp is used</li>\n</ul>",
+        "i_strain_wp": "Switch for the behavior of the TF strain used to compute \n the strain-dependent critical surface:\n<ul>\n<li>=0  str_tf_con_res is used</li>\n<li>=1  strain_wp is used</li>\n</ul>",
         "i_sup_pf_shape": "Switch for the placement of Location 3 (outboard) PF coils\n when the TF coils are superconducting (i_tf_sup = 1)\n<ul>\n<li>=0 (Default) Outboard PF coils follow TF shape \n   in an ellipsoidal winding surface</li>\n<li>=1 Outboard PF coils all have same radius, cylindrical\n   winding surface</li>\n</ul>",
         "i_tf_bucking": "Switch for TF inboard suport structure design:\nDefault setting for backward compatibility\n     - if copper resistive TF (i_tf_sup = 0) : Free standing TF without bucking structure \n     - if Superconducting TF  (i_tf_sup = 1) : Free standing TF with a steel casing<br>\n     - if aluminium  TF       (i_tf_sup = 2) : Free standing TF with a bucking structure\n     Rem : the case is a bucking structure\n - =0 : Free standing TF without case/bucking cyliner (only a conductor layer)\n - =1 : Free standing TF with a case/bucking cylinder made of \n     - if copper resistive     TF (i_tf_sup = 0) : used defined bucking cylinder\n     - if Superconducting      TF (i_tf_sup = 1) : Steel casing\n     - if aluminium resisitive TF (i_tf_sup = 2) : used defined bucking cylinder\n - =2 : The TF is in contact with the CS : \"bucked and wedged design\"\n       Fast version : thin TF-CS interface neglected in the stress calculations (3 layers)\n                      The CS is frictionally decoupled from the TF, does not carry axial tension\n - =3 : The TF is in contact with the CS : \"bucked and wedged design\"\n       Full version : thin TF-CS Kapton interface introduced in the stress calculations (4 layers)\n                      The CS and kaptop are frictionally decoupled from the TF, do not carry\n                      axial tension",
         "i_tf_case_geom": "Switch for TF case geometry selection\n   0 : Circular front case (ITER design)\n   1 : Straight front case",
-        "i_tf_cond_eyoung_axial": "Switch for the behavior of the TF coil conductor elastic axial properties\n<ul>\n<li>=0  Young's modulus is set to zero, and the conductor is not considered\n       in the stress calculation</li>\n<li>=1  Elastic properties are set by user input, using the variable\n       `eyoung_cond_z`</li>\n<li>=2  Elastic properties are set to reasonable defaults taking into\n       account the superconducting material `i_tf_sc_mat`</li>\n</ul>",
-        "i_tf_cond_eyoung_transverse": "Switch for the behavior of the elastic properties of the TF coil\n conductorin the transverse direction. Only active if \n `i_tf_cond_eyoung_axial == 2`\n<ul>\n<li>=0  Cable potted in solder. If `i_tf_cond_eyoung_axial == 2`, the \n       transverse Young's modulus of the conductor is equal to the axial,\n       which is set to a sensible material-dependent default.</li>\n<li>=1  Cable not potted in solder. Transverse Young's modulus set to zero.</li>\n</ul>",
+        "i_tf_cond_eyoung_axial": "Switch for the behavior of the TF coil conductor elastic axial properties\n<ul>\n<li>=0  Young's modulus is set to zero, and the conductor is not considered\n       in the stress calculation. This corresponds to the case that the \n       conductor is much less stiff than the conduit, or the case that the\n       conductor is prevented (isolated) from taking axial loads.</li>\n<li>=1  Elastic properties are set by user input, using the variable\n       `eyoung_cond_z`</li>\n<li>=2  Elastic properties are set to reasonable defaults taking into\n       account the superconducting material `i_tf_sc_mat`</li>\n</ul>",
+        "i_tf_cond_eyoung_transverse": "Switch for the behavior of the elastic properties of the TF coil\n conductorin the transverse direction. Only active if \n `i_tf_cond_eyoung_axial == 2`\n<ul>\n<li>=0  Cable not potted in solder. Transverse Young's modulus set to zero.</li>\n<li>=1  Cable potted in solder. If `i_tf_cond_eyoung_axial == 2`, the \n       transverse Young's modulus of the conductor is equal to the axial,\n       which is set to a sensible material-dependent default.</li>\n</ul>",
         "i_tf_sc_mat": "Switch for superconductor material in TF coils:\n<ul>\n<li>=1 ITER Nb3Sn critical surface model with standard\n   ITER parameters</li>\n<li>=2 Bi-2212 high temperature superconductor (range of\n   validity T < 20K, adjusted field b < 104 T, B > 6 T)</li>\n<li>=3 NbTi</li>\n<li>=4 ITER Nb3Sn model with user-specified parameters</li>\n<li>=5 WST Nb3Sn parameterisation</li>\n<li>=6 REBCO HTS tape in CroCo strand</li>\n<li>=7 Durham Ginzburg-Landau critical surface model for Nb-Ti</li>\n<li>=8 Durham Ginzburg-Landau critical surface model for REBCO</li>\n<li>=9 Hazelton experimental data + Zhai conceptual model for REBCO</li>\n</ul>",
         "i_tf_shape": "Switch for TF coil toroidal shape:\n<ul>\n<li>=0  Default value : Picture frame coil for TART / PROCESS D-shape for non itart</li>\n<li>=1  PROCESS D-shape : parametrise with 2 arcs </li>\n<li>=2  Picture frame coils </li>\n</ul>",
         "i_tf_stress_model": "Switch for the TF coil stress model\n   0 : Generalized plane strain formulation, Issues #977 and #991, O(n^3)\n   1 : Old plane stress model (only for SC)\n   2 : Axisymmetric extended plane strain, Issues #1414 and #998, O(n)",
@@ -10891,11 +10891,11 @@
         "step_ucwindpf": "cost of PF coil superconductor windings ($/m) (if cost model = 2)",
         "step_ucwindtf": "cost of TF coil superconductor windings ($/m) (if cost model = 2)",
         "step_ucwst": "cost of waste disposal (M$/y/1200MW)",
-        "strain_wp": "Axial (vertical) strain in the TF coil winding pack found by\n self-consistent stress/strain calculation.\n if `i_strain_wp == 1`, used to compute the critical surface.\n Otherwise, the input value `strncon_tf` is used.\n Constrain the absolute value using `constraint equation 88`\n You can't have constraint 88 and i_strain_wp = 0 at the same time",
+        "str_cs_con_res": "Residual manufacturing strain in CS superconductor material ",
+        "str_pf_con_res": "Residual manufacturing strain in PF superconductor material",
+        "str_tf_con_res": "Residual manufacturing strain in TF superconductor material\n If `i_strain_wp == 0`, used to compute the critical surface.\n Otherwise, the self-consistent winding pack `strain_wp` is used.",
+        "strain_wp": "Axial (vertical) strain in the TF coil winding pack found by\n self-consistent stress/strain calculation.\n if `i_strain_wp == 1`, used to compute the critical surface.\n Otherwise, the input value `str_tf_con_res` is used.\n Constrain the absolute value using `constraint equation 88`\n You can't have constraint 88 and i_strain_wp = 0 at the same time",
         "strain_wp_max": "Maximum allowed absolute value of the strain in the TF coil\n (`Constraint equation 88`)",
-        "strncon_cs": "Residual manufacturing strain in CS superconductor material ",
-        "strncon_pf": "Residual manufacturing strain in PF superconductor material",
-        "strncon_tf": "Residual manufacturing strain in TF superconductor material\n If `i_strain_wp == 0`, used to compute the critical surface.\n Otherwise, the self-consistent winding pack `strain_wp` is used.",
         "subscript_present": "",
         "sum": "",
         "summ": "",
@@ -14491,21 +14491,21 @@
             "lb": 0.1,
             "ub": 100.0
         },
+        "str_cs_con_res": {
+            "lb": -0.02,
+            "ub": 0.02
+        },
+        "str_pf_con_res": {
+            "lb": -0.02,
+            "ub": 0.02
+        },
+        "str_tf_con_res": {
+            "lb": -0.02,
+            "ub": 0.02
+        },
         "strain_wp_max": {
             "lb": 0.0,
             "ub": 0.3
-        },
-        "strncon_cs": {
-            "lb": -0.02,
-            "ub": 0.02
-        },
-        "strncon_pf": {
-            "lb": -0.02,
-            "ub": 0.02
-        },
-        "strncon_tf": {
-            "lb": -0.02,
-            "ub": 0.02
         },
         "t_cable_tf": {
             "lb": 0.0,
@@ -19817,9 +19817,9 @@
             "sig_tf_case",
             "sig_tf_wp",
             "sigvvall",
-            "strncon_cs",
-            "strncon_pf",
-            "strncon_tf",
+            "str_cs_con_res",
+            "str_pf_con_res",
+            "str_tf_con_res",
             "strain_wp",
             "strain_wp_max",
             "i_strain_wp",
@@ -20922,10 +20922,10 @@
         "step_ucoam": "real_variable",
         "step_ucsc": "real_array",
         "step_ucwst": "real_variable",
+        "str_cs_con_res": "real_variable",
+        "str_pf_con_res": "real_variable",
+        "str_tf_con_res": "real_variable",
         "strain_wp_max": "real_variable",
-        "strncon_cs": "real_variable",
-        "strncon_pf": "real_variable",
-        "strncon_tf": "real_variable",
         "sweep": "real_array",
         "sweep_2": "real_array",
         "t_cable_tf": "real_variable",
