@@ -1748,11 +1748,11 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         acstf, jwptf, insstrain, &
         rbmax, thicndut, acndttf, tfinsgap, &
         acasetf, sig_tf_case_max, poisson_steel, poisson_copper, poisson_al, &
-        n_tf_graded_layers, i_tf_sup, i_tf_bucking, fcoolcp, eyoung_cond_z, &
+        n_tf_graded_layers, i_tf_sup, i_tf_bucking, fcoolcp, eyoung_cond_axial, &
         eyoung_steel, eyoung_res_tf_buck, eyoung_ins, eyoung_al, eyoung_copper, &
         aiwp, aswp, cpttf, n_tf, i_tf_stress_model, sig_tf_wp_max, &
         i_tf_turns_integer, casthi, acond, avwp, awphec, poisson_ins, &
-        eyoung_cond_t, poisson_cond_z, poisson_cond_t, dhecoil, fcutfsu, &
+        eyoung_cond_trans, poisson_cond_axial, poisson_cond_trans, dhecoil, fcutfsu, &
         str_wp, n_tf_members_max
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
         cohbop, ncls, cptdin
@@ -2117,15 +2117,15 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             
             ! Get transverse properties
             call eyoung_transarallel(eyoung_steel, oh_steel_frac, poisson_steel, &
-                              eyoung_cond_z, 1D0-oh_steel_frac, poisson_cond_z, & 
+                              eyoung_cond_axial, 1D0-oh_steel_frac, poisson_cond_axial, & 
                               eyoung_trans(1),a_working,poisson_trans(1))
             
             ! Get vertical properties
             ! Split up into "members", concentric squares in cross section
             ! (described in Figure 10 of the TF coil documentation)
             !! Conductor 
-            eyoung_member_array(1)  = eyoung_cond_t
-            poisson_member_array(1) = poisson_cond_t
+            eyoung_member_array(1)  = eyoung_cond_trans
+            poisson_member_array(1) = poisson_cond_trans
             l_member_array(1)       = t_cable_oh
             !! Steel conduit
             eyoung_member_array(2)  = eyoung_steel
@@ -2242,7 +2242,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         poisson_member_array(1) = poisson_steel
         l_member_array(1)       = dhecoil
         !! Conductor and co-wound copper
-        call eyoung_series(eyoung_cond_t,(t_cable_eyng-dhecoil)*(1.0D0-fcutfsu),poisson_cond_t, & 
+        call eyoung_series(eyoung_cond_trans,(t_cable_eyng-dhecoil)*(1.0D0-fcutfsu),poisson_cond_trans, & 
                         eyoung_copper,(t_cable_eyng-dhecoil)*fcutfsu,poisson_copper, & 
                         eyoung_member_array(2),l_member_array(2),poisson_member_array(2))
         !! Steel conduit
@@ -2279,8 +2279,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         poisson_member_array(3) = poisson_copper
         l_member_array(3)       = acond*fcutfsu
         !! Conductor
-        eyoung_member_array(4)  = eyoung_cond_z
-        poisson_member_array(4) = poisson_cond_z
+        eyoung_member_array(4)  = eyoung_cond_axial
+        poisson_member_array(4) = poisson_cond_axial
         l_member_array(4)       = acond*(1.0D0-fcutfsu)
         !! Helium and void
         eyoung_member_array(5)  = 0D0
@@ -4827,8 +4827,8 @@ subroutine outtf(outfile, peaktfflag)
         cpttf, cdtfleg, whttflgs, whtcp, i_tf_bucking, tlegav, rhotfleg, rhocp, &
         presleg, i_tf_shape, fcoolcp, pres_joints, tmargtf, tmargmin_tf, &
         f_vforce_inboard, vforce_outboard, acstf, t_turn_tf, eyoung_res_tf_buck, &
-        sig_tf_wp_max, cplen, i_tf_cond_eyoung_axial, eyoung_cond_z, &
-        eyoung_cond_t
+        sig_tf_wp_max, cplen, i_tf_cond_eyoung_axial, eyoung_cond_axial, &
+        eyoung_cond_trans
     use physics_variables, only: itart
     use constants, only: mfile, pi
     implicit none
@@ -5068,8 +5068,8 @@ subroutine outtf(outfile, peaktfflag)
             else if ( i_tf_cond_eyoung_axial == 2 ) then 
               call ocmmnt(outfile,'  Conductor stiffness is set by material-specific default')
             end if
-            call ovarre(outfile, 'Conductor axial Young''s modulus', '(eyoung_cond_z)', eyoung_cond_z)
-            call ovarre(outfile, 'Conductor transverse Young''s modulus', '(eyoung_cond_t)', eyoung_cond_t)
+            call ovarre(outfile, 'Conductor axial Young''s modulus', '(eyoung_cond_axial)', eyoung_cond_axial)
+            call ovarre(outfile, 'Conductor transverse Young''s modulus', '(eyoung_cond_trans)', eyoung_cond_trans)
         end select
     else
 

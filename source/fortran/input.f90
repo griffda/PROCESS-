@@ -329,14 +329,14 @@ contains
       cpttf_max, tdmptf, casths, i_tf_turns_integer, quench_model, &
       tcritsc, layer_ins, tinstf, n_layer, tcoolin, ripmax, frhocp, &
       cpttf, tmargmin, casths_fraction, eff_tf_cryo, eyoung_ins, &
-      eyoung_steel, eyoung_res_tf_buck, eyoung_cond_z, f_vforce_inboard, &
+      eyoung_steel, eyoung_res_tf_buck, eyoung_cond_axial, f_vforce_inboard, &
       fcoolleg, frholeg, ftoroidalgap, i_tf_sc_mat, i_tf_shape, i_tf_bucking, &
       n_tf_graded_layers, n_tf_joints, n_tf_joints_contact, poisson_al, &
       poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact,&
       i_tf_stress_model, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
       i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti, &
       i_cp_joints, n_tf_turn, f_t_turn_tf, t_turn_tf_max, t_cable_tf, &
-      sig_tf_wp_max, eyoung_cond_t, i_tf_cond_eyoung_axial, i_tf_cond_eyoung_transverse, &
+      sig_tf_wp_max, eyoung_cond_trans, i_tf_cond_eyoung_axial, i_tf_cond_eyoung_trans, &
       str_wp_max, str_tf_con_res, i_str_wp
       
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
@@ -1900,11 +1900,11 @@ contains
        case ('eyoung_ins')
           call parse_real_variable('eyoung_ins', eyoung_ins, 1.0D8, 1.0D13, &
                'Insulator Youngs Modulus (Pa)')
-       case ('eyoung_cond_z')
-          call parse_real_variable('eyoung_cond_z', eyoung_cond_z, 0.0D0, 1.0D13, &
+       case ('eyoung_cond_axial')
+          call parse_real_variable('eyoung_cond_axial', eyoung_cond_axial, 0.0D0, 1.0D13, &
                'SC TF coil Youngs Modulus, axial (Pa)')
-       case ('eyoung_cond_t')
-          call parse_real_variable('eyoung_cond_t', eyoung_cond_t, 0.0D0, 1.0D13, &
+       case ('eyoung_cond_trans')
+          call parse_real_variable('eyoung_cond_trans', eyoung_cond_trans, 0.0D0, 1.0D13, &
                'SC TF coil Youngs Modulus, transverse (Pa)')
        case ('eyoung_al')
           call parse_real_variable('eyoung_al', eyoung_al, 0.0D0, 1.0D0, &
@@ -2005,8 +2005,8 @@ contains
        case ('i_tf_cond_eyoung_axial')
          call parse_int_variable('i_tf_cond_eyoung_axial', i_tf_cond_eyoung_axial, 0, 2, &
               'Switch for the behavior of the TF coil conductor elastic axial properties')
-       case ('i_tf_cond_eyoung_transverse')
-         call parse_int_variable('i_tf_cond_eyoung_transverse', i_tf_cond_eyoung_transverse, 0, 1, &
+       case ('i_tf_cond_eyoung_trans')
+         call parse_int_variable('i_tf_cond_eyoung_trans', i_tf_cond_eyoung_trans, 0, 1, &
               'Switch for the TF coil conductor transverse behavior')
        case ('i_str_wp')
          call parse_int_variable('i_str_wp', i_str_wp, 0, 1, &

@@ -250,11 +250,11 @@ module tfcoil_variables
   !!       conductor is much less stiff than the conduit, or the case that the
   !!       conductor is prevented (isolated) from taking axial loads.
   !! - =1  Elastic properties are set by user input, using the variable
-  !!       `eyoung_cond_z`
+  !!       `eyoung_cond_axial`
   !! - =2  Elastic properties are set to reasonable defaults taking into
   !!       account the superconducting material `i_tf_sc_mat`
   
-  integer :: i_tf_cond_eyoung_transverse
+  integer :: i_tf_cond_eyoung_trans
   !! Switch for the behavior of the elastic properties of the TF coil
   !! conductorin the transverse direction. Only active if 
   !! `i_tf_cond_eyoung_axial == 2`
@@ -333,13 +333,13 @@ module tfcoil_variables
   real(dp) :: eyoung_steel
   !! Steel case Young's modulus (Pa) (default value from DDD11-2 v2 2 (2009))
 
-  real(dp) :: eyoung_cond_z
+  real(dp) :: eyoung_cond_axial
   !! SC TF coil conductor Young's modulus in the parallel (along the wire/tape)
   !! direction [Pa]
   !! Set by user input only if `i_tf_cond_eyoung_axial == 1`; otherwise
   !! set by the behavior of that switch.
   
-  real(dp) :: eyoung_cond_t
+  real(dp) :: eyoung_cond_trans
   !! SC TF coil conductor Young's modulus in the transverse direction [Pa]
   !! Set by user input only if `i_tf_cond_eyoung_axial == 1`; otherwise
   !! set by the behavior of that switch.
@@ -367,10 +367,10 @@ module tfcoil_variables
   !! Insulation Poisson's ratio. Default: Kapton.
   !! Source : DuPont™ Kapton® HN datasheet.
 
-  real(dp) :: poisson_cond_z
+  real(dp) :: poisson_cond_axial
   !! SC TF coil conductor Poisson's ratio in the parallel-transverse direction
   
-  real(dp) :: poisson_cond_t
+  real(dp) :: poisson_cond_trans
   !! SC TF coil conductor Poisson's ratio in the transverse-transverse direction
   
   real(dp) :: rbmax
@@ -894,7 +894,7 @@ module tfcoil_variables
     i_tf_sup = 1
     i_tf_shape = 0
     i_tf_cond_eyoung_axial = 0
-    i_tf_cond_eyoung_transverse = 1
+    i_tf_cond_eyoung_trans = 1
     n_pancake = 10
     n_layer = 20
     n_rad_per_layer = 100
@@ -909,8 +909,8 @@ module tfcoil_variables
     oacdcp = 0.0D0
     eyoung_ins = 1.0D8
     eyoung_steel = 2.05D11
-    eyoung_cond_z = 6.6D8
-    eyoung_cond_t = 0.0D0
+    eyoung_cond_axial = 6.6D8
+    eyoung_cond_trans = 0.0D0
     eyoung_res_tf_buck = 150.0D9 
     eyoung_copper = 117.0D9
     eyoung_al = 69.0D9 
@@ -918,8 +918,8 @@ module tfcoil_variables
     poisson_copper = 0.35D0
     poisson_al = 0.35D0
     poisson_ins = 0.34D0
-    poisson_cond_z = 0.3
-    poisson_cond_t = 0.3
+    poisson_cond_axial = 0.3
+    poisson_cond_trans = 0.3
     rbmax = 0.0D0
     tflegres = 0.0D0
     toroidalgap = 1.0D0 ![m]
