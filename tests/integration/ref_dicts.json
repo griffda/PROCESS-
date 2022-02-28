@@ -1499,6 +1499,7 @@
         "cp_he": 5190.0,
         "cpfact": 0.0,
         "cph2o": 4180.0,
+        "cplen": 0.0,
         "cplife": 0.0,
         "cplife_input": 2.0,
         "cpp": 0.0,
@@ -1578,7 +1579,7 @@
         "degrad": 0.01745329251,
         "degree": "pi/180.0D0",
         "delld": 1.0,
-        "delta": 0.0001,
+        "delta": null,
         "delta_eta": 0.0,
         "delta_var": null,
         "dendiv": 0.0,
@@ -3437,7 +3438,7 @@
         "phi_tfc_ob": 0.0,
         "phiint": 0.0,
         "photon_wall": 0.0,
-        "pi": 3.141592653589793,
+        "pi": "3.141592653589793_wp_",
         "pibv": 20000.0,
         "piepv": 0.0,
         "pifecr": 10.0,
@@ -9304,6 +9305,7 @@
         "cp_he": "",
         "cpfact": "Total plant capacity factor",
         "cph2o": "specific heat capacity of water (J/kg/K)",
+        "cplen": "length of TF coil inboard leg ('centrepost') (`i_tf_sup = 1`)",
         "cplife": "Calculated full power year lifetime of centrepost (years)",
         "cplife_input": "User input full power year lifetime of the centrepost (years) (i_cp_lifetime = 0)",
         "cpp": "",
@@ -17956,7 +17958,6 @@
             "relerr_sol",
             "mach0"
         ],
-        "divertor_module": [],
         "divertor_ode": [
             "impurities_present",
             "aplas",
@@ -19694,6 +19695,7 @@
             "acs",
             "cdtfleg",
             "cforce",
+            "cplen",
             "cpttf",
             "cpttf_max",
             "dcase",
@@ -19884,7 +19886,6 @@
             "green_func_emp_first"
         ],
         "utilities": [],
-        "vacuum_module": [],
         "vacuum_variables": [
             "vacuum_model",
             "niterpump",
