@@ -199,6 +199,18 @@ module cost_variables
   !! - =1 calculate cfactr using Taylor and Ward 1999 model
   !! - =2 calculate cfactr using new (2015) model
 
+  integer :: ibkt_life
+  !! Switch for fw/blanket lifetime calculation in availability module:
+  !!
+  !! - =0 use neutron fluence model
+  !! - =1 use fusion power model (DEMO only)
+
+  real(dp) :: life_dpa
+  !! Allowable DPA from DEMO fw/blanket lifetime calculation in availability module
+
+  real(dp) :: bktcycles
+  !! Number of fusion cycles to reach allowable DPA from DEMO fw/blanket lifetime calculation
+
   real(dp) :: avail_min
   !! Minimum availability (`constraint equation 61`)
 
@@ -737,6 +749,9 @@ module cost_variables
     fkind = 1.0D0
     fwallcst = 0.0D0
     iavail= 2
+    ibkt_life = 0
+    life_dpa = 50
+    bktcycles = 1.0D3
     avail_min = 0.75D0
     tok_build_cost_per_vol = 1283.0D0
     light_build_cost_per_vol = 270.0D0
