@@ -269,6 +269,7 @@ def main(args=None):
     nsweep_dict[58] = "scrapli"
     nsweep_dict[59] = "scraplo"
     nsweep_dict[60] = "sig_tf_wp_max"
+    nsweep_dict[61] = "copperaoh_m2"
     # -------------------
 
     # Load PROCESS dicts from JSON files

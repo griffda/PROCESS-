@@ -21,7 +21,7 @@ module scan_module
   integer, parameter :: ipnscns = 1000
   !! Maximum number of scan points
 
-  integer, parameter :: ipnscnv = 60
+  integer, parameter :: ipnscnv = 61
   !! Number of available scan variables
 
   integer, parameter :: noutvars = 84
@@ -96,8 +96,8 @@ module scan_module
   !!         <LI> 57 `bt` lower boundary 
   !!         <LI> 58 `scrapli` : Inboard plasma-first wall gap
   !!         <LI> 59 `scraplo` : Outboard plasma-first wall gap
-  !!         <Li> 60 sig_tf_wp_max: Allowable stress in TF Coil conduit (Tresca) </UL>
-
+  !!         <LI> 60 sig_tf_wp_max: Allowable stress in TF Coil conduit (Tresca) </UL>
+  !!         <LI> 61 `copperaoh_m2` : CS coil current / copper area
 
   integer :: nsweep_2
   !! nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
@@ -625,6 +625,7 @@ contains
     use div_kal_vars, only: lcon_factor, impurity_enrichment, &
       target_spread, lambda_q_omp, qtargettotal, ttarget
     use heat_transport_variables, only: crypmw_max 
+    use rebco_variables, only: copperaoh_m2
     implicit none
 
     ! Arguments
@@ -820,7 +821,10 @@ contains
             vlab = 'scraplo' ; xlab = 'Outboard FW-plasma sep gap'
         case (60)
             sig_tf_wp_max = swp(iscn)
-            vlab = 'sig_tf_wp_max' ; xlab = 'Allowable_stress_in_tf_coil_conduit_Tresca_(pa)'
+            vlab = 'sig_tf_wp_max' ; xlab = 'Allowable_stress_in_tf_coil_conduit_Tresca_(pa)'        
+        case (61)
+            copperaoh_m2 = swp(iscn)
+            vlab = 'copperaoh_m2' ; xlab = 'CS coil current / copper area'
         case default
             idiags(1) = nwp ; call report_error(96)
 
