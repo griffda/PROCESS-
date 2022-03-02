@@ -4,14 +4,23 @@ PROCESS is natively supported on Ubuntu 20. Other Linux distributions will be ab
 
 Using the Windows Subsystem for Linux (on Windows) or a containerised environment is the recommended way to build, test, and run PROCESS on any OS other than Ubuntu 20. 
 
-## Ubuntu and Windows (using Windows Subsystem for Linux)
-*It is highly recommended users create a Python virtual environment in order to use the PROCESS Python package, as this ensures that installations of required package versions don't affect other packages that require different versions in your environment. It isn't necessary, however.*
+## Ubuntu and Windows (using Windows Subsystem for Linux) and Installing Visual Studio Code
 *Please note due to bugs in f90wrap, Python3.9 is not yet supported. Running with Python3.9 will cause syntax errors to be raised when running f2py on the f90wrap outputs.*
 
-To install Windows Subsystem for Linux (WSL) follow the 'Manual Installation Steps' [here](https://docs.microsoft.com/en-us/windows/wsl/install-win10). Choose WSL 2 and Ubuntu 20 (if installing from the Microsoft store then Ubuntu 20 is installed by default).
+To install Windows Subsystem for Linux (WSL) follow the 'Manual Installation Steps' [here](https://docs.microsoft.com/en-us/windows/wsl/install-win10). Choose WSL 2 and Ubuntu 20 (if installing from the Microsoft store then Ubuntu 20 is installed by default). 
+
+
+The following command is used to install WSL:
+```bash
+wsl --install
+```
+
+However, you need admin privilages to perfom this command. Please ask support to grant you these rights temporarily so you can successsfully install WSL. This can be done via a Marval ticket or email to support if you are a new starter and do not have Nucleus access yet.
+
 
 Install Visual Studio Code [here](https://code.visualstudio.com/).
 
+To connect WSL to VS Code, the following extension should be installed in VS Code upon opening: `Remote - WSL`. This allows for opening of any folder in the Windows Subsystem for Linux. This is performed by using `Ctrl+Shift+X` on VS Code, searching for `Remote - WSL` and then installing.
 
 
 GFortran version 9 or above is needed for successful installation and execution of PROCESS. Versions below GFortran-9 will be rejected by CMake by default since, while PROCESS might compile successfully with lower GFortran versions, other aspects of PROCESS (tests, coverage, etc.) will fail.
@@ -42,6 +51,8 @@ cd process
 ```
 
 Create and activate a virtual environment if you'd like to use one:
+
+*It is highly recommended users create a Python virtual environment in order to use the PROCESS Python package, as this ensures that installations of required package versions don't affect other packages that require different versions in your environment. It isn't necessary, however.*
 ```bash
 python3 -m venv env
 source env/bin/activate
@@ -91,7 +102,9 @@ The build step may take some time when run for the first time (~3 mins) as the F
 
 To rebuild, for example after making a change to the Fortran source, run `cmake --build build` again.
 
-## Docker container
+## Docker container (not essential- read below)
+*If you are using a windows system with WSL and have followed the above steps then this next section is not essential and you may skip to testing your installation [here](#testing).*
+
 Process can be run on Mac or in other environments inside a Docker container. The Process repository, including source and build directories, remain in the host filesystem, but the building and running of Process is performed inside the container. This ensures that Process produces the same results as in other fully-supported environments, such as the CI system. The Ubuntu-based development image used is similar to the one used on the CI system, but it is designed to work immediately with no further installations.
 
 *Please note due to recent changes in the Docker Desktop ToS, you will require either a Docker Desktop license to run on Mac, or you will require a Linux environment by other means, such as a virtual machine.
@@ -164,6 +177,11 @@ process
 <module 'process' from '/home/jmaddock/process/process/__init__.py'>
 ```
 
+This may look like:
+```bash
+<module 'process' from (namespace)>
+```
+
 This indicates that the PROCESS Python package has been installed.
 To exit the Python interpreter you can use 
 ```BASH
@@ -189,6 +207,13 @@ A more in-depth discussion of testing can be found at
 [development/testing](http://process.gitpages.ccfe.ac.uk/process/development/testing/)
 
 If everything passes, this indicates a successful installation. If anything fails, this indicates that your environment produces different results to what is expected. You might consider creating an issue in Gitlab, or trying out the Docker container instead.
+
+## Automatically activating virtual environment on VS Code Open
+When VS Code is first opened, you are able to set it such that the command:
+```bash
+source env/bin/activate
+```
+is executed automatically. This saves manually activating the virtual environment everytime you open the application. This is done by first using `Ctrl+Shift+P` and searching for `Python:Select Interpreter`. The select: `Python *version* ('env':venv) ./env/bin/python`. This should be starred as the recommended version. Now, close your terminal and close VS Code. Reopen and open a new terminal which should now automatically point to the virtual environmnet signalled by an `(env)` in front of your user. 
 
 ## Prepare Release (not required)
 It is possible to build a standalone module which can be distributed without the need for the source code. This exists as a pippable "wheels" module which is build by running:
