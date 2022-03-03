@@ -198,8 +198,12 @@ def main(args=None):
     labels['dnla'] = r'$\bar{n}_{\mathrm{e}}$[$m^{-3}$]'
     labels['dnla_gw'] = r'$f_{\mathrm{GW}}$'
     labels['normalised_toroidal_beta'] = r'$\beta_{N,\mathrm{tor}}$'
-    labels["copperaoh_m2"] = r"$I_{cs} : CuF_{cs} [$A M$^{-2}$$]$"
-    
+    labels["copperaoh_m2"] = r"$I_{CS} : CuF_{CS} [$A M$^{-2}$$]$"
+    labels["copperaoh_m2_max"] = r"$Max I_{CS} : CuF_{CS} [$A M$^{-2}$$]$"   
+    labels["coreradius"] = r"$r_{core} [M]$"
+    labels["fcuohsu"] = r"$CuFr$"
+    labels["coheof"] = r"$J [A M^{-2}]$"
+
     # ------------
 
     # nsweep varible dict
@@ -272,6 +276,7 @@ def main(args=None):
     nsweep_dict[59] = "scraplo"
     nsweep_dict[60] = "sig_tf_wp_max"
     nsweep_dict[61] = "copperaoh_m2"
+    nsweep_dict[62] = "coheof"
     # -------------------
 
     # Load PROCESS dicts from JSON files
