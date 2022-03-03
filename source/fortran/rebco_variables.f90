@@ -53,13 +53,13 @@ module rebco_variables
   !! f-value for constraint 75: TF coil current / copper area < copperA_m2_max
 
   real(dp) :: copperaoh_m2       
-  !! CS coil current / copper area (A/m2) 
+  !! CS coil current / copper area (A/m2) (`sweep variable 61`)
 
   real(dp) :: copperaoh_m2_max
   !! Maximum CS coil current / copper area (A/m2)
 
   real(dp) :: f_copperaoh_m2
-  !! f-value for constraint 88: CS coil current / copper area < copperA_m2_max
+  !! f-value for constraint 88: CS coil current / copper area < copperA_m2_max 
 
   !#TODO: variables need descriptions and units
   real(dp) :: stack_thickness

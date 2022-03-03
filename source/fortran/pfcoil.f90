@@ -1914,8 +1914,11 @@ module pfcoil_module
      case (6) ! "REBCO" 2nd generation HTS superconductor in CrCo strand
         call jcrit_rebco(thelium,bmax,jcritsc,validity,0)
         jcritstr = jcritsc * (1.0D0-fcu)
-        ioheof = hmax*ohhghf*ohcth*2.0D0*coheof  ! The CS coil current at EOF 
-        copperaoh_m2 = ioheof / awpoh * (1.0D0-fcu) ! The copper area calculation for quench protection
+        
+        ! The CS coil current at EOF
+        ioheof = hmax*ohhghf*ohcth*2.0D0*coheof 
+        ! The CS coil current/copper area calculation for quench protection  
+        copperaoh_m2 = ioheof / awpoh * (1.0D0-fcu) 
  
     case (7) ! Durham Ginzburg-Landau Nb-Ti parameterisation
           bc20m = b_crit_upper_nbti
@@ -1929,7 +1932,11 @@ module pfcoil_module
            call GL_REBCO(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit) 
            ! A0 calculated for tape cross section already
            jcritstr = jcritsc * (1.0D0-fcu)
-  
+         
+        ! The CS coil current at EOF
+        ioheof = hmax*ohhghf*ohcth*2.0D0*coheof 
+        ! The CS coil current/copper area calculation for quench protection  
+        copperaoh_m2 = ioheof / awpoh * (1.0D0-fcu) 
            
        
           
@@ -2674,7 +2681,8 @@ module pfcoil_module
      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
      !
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
+      
+       use rebco_variables, only: copperaoh_m2, copperaoh_m2_max
        use build_variables, only: iohcl, ohcth, gapoh, bore
        use error_handling, only: report_error
      use pfcoil_variables, only: whtpfs, cohbop, nohc, jscoh_eof, bmaxoh, &
@@ -2732,6 +2740,8 @@ module pfcoil_module
                    '  (ITER Nb3Sn critical surface model, user-defined parameters)')
            case (5)
               call ocmmnt(outfile, ' (WST Nb3Sn critical surface model)')
+           case (6)
+              call ocmmnt(outfile, ' ("REBCO" 2nd generation HTS superconductor in CrCo strand)')
            case (7)
                call ocmmnt(outfile, ' (Durham Ginzburg-Landau critical surface model for Nb-Ti)')
             case (8)
@@ -2798,6 +2808,13 @@ module pfcoil_module
                 '(strncon_cs)',strncon_cs)
            call ovarre(outfile,'Copper fraction in strand', &
                 '(fcuohsu)',fcuohsu)
+           ! If REBCO material is used, print copperaoh_m2
+          if (isumatoh == 6 .or. isumatoh == 8 ) then
+             call ovarre(outfile,'CS current/copper area (A/m2)', &
+             '(copperaoh_m2)',copperaoh_m2)
+             call ovarre(outfile,'Max CS current/copper area (A/m2)', &
+             '(copperaoh_m2_max)',copperaoh_m2_max)
+          end if                  
            call ovarre(outfile,'Void (coolant) fraction in conductor', &
                 '(vfohc)',vfohc)
            call ovarre(outfile,'Helium coolant temperature (K)', &

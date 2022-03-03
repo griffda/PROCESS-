@@ -198,6 +198,8 @@ def main(args=None):
     labels['dnla'] = r'$\bar{n}_{\mathrm{e}}$[$m^{-3}$]'
     labels['dnla_gw'] = r'$f_{\mathrm{GW}}$'
     labels['normalised_toroidal_beta'] = r'$\beta_{N,\mathrm{tor}}$'
+    labels["copperaoh_m2"] = r"$I_{cs} : CuF_{cs} [$A M$^{-2}$$]$"
+    
     # ------------
 
     # nsweep varible dict

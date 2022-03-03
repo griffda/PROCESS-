@@ -346,7 +346,7 @@ contains
     use rebco_variables, only: hastelloy_thickness, f_coppera_m2, &
       rebco_thickness, tape_thickness, tape_width, &
       copper_rrr, coppera_m2_max, croco_thick, copper_thick, f_copperaoh_m2, & 
-      copperaoh_m2_max
+      copperaoh_m2, copperaoh_m2_max
     use reinke_variables, only: reinke_mode, fzactual, impvardiv, lhat 
     use water_usage_variables, only: airtemp, watertemp, windspeed
     use CS_fatigue_variables, only: residual_sig_hoop, t_crack_radial, t_crack_vertical, &
@@ -2322,12 +2322,15 @@ contains
           call parse_int_variable('lpulse', lpulse, 0, 1, &
                'Switch for pulsed reactor model')
 
+       case ('copperaoh_m2')
+          call parse_real_variable('copperaoh_m2', copperAoh_m2, 1.0D0, 1.0D10, &
+              'CS coil current / copper area (A/m2)')
        case ('copperaoh_m2_max')
           call parse_real_variable('copperaoh_m2_max', copperAoh_m2_max, 1.0D6, 1.0D10, &
                'Maximum CS coil current / copper area (A/m2)')
        case ('f_copperaoh_m2')
           call parse_real_variable('f_copperaoh_m2', f_copperaoh_m2, 1.0D-3, 1.0D1, &
-               'f-value for constraint 75: CS coil current / copper area < copperA_m2oh_max')
+               'f-value for constraint 75: CS coil current / copper area < copperaoh_m2_max')
 
           !  First wall, blanket, shield settings
 
