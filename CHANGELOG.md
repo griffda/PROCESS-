@@ -6,9 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-
 ### Changed
 - Converted `buildings_module` to pure Python (#1552)
+- Converted `water_usage.f90` to Python (#1570)
 
 ### Fixed
 - Divertor's `run` method was not being called with `output=True` from `output.py` (#1553)
