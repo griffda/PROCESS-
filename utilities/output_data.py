@@ -20,7 +20,7 @@ Revisions
 """
 
 import argparse
-import process_io_lib.mfile as mf
+import process.io.mfile as mf
 try:
     import process_io_lib.process_dicts as proc_dict
 except ImportError:

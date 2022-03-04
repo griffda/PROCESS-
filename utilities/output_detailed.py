@@ -18,8 +18,8 @@ from collections import OrderedDict
 from grip import export
 
 # PROCESS libraries
-from process_io_lib.in_dat import InDat
-from process_io_lib.mfile import MFile
+from process.io.in_dat import InDat
+from process.io.mfile import MFile
 from process_io_lib.process_plots import plot_pulse_timings, radial_bar_plot, \
     plasma_profiles_plot
 

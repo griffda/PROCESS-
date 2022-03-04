@@ -15,8 +15,8 @@ from collections import OrderedDict
 from grip import export
 
 # PROCESS libraries
-from process_io_lib.in_dat import InDat
-from process_io_lib.mfile import MFile
+from process.io.in_dat import InDat
+from process.io.mfile import MFile
 try:
     import process_io_lib.process_dicts as proc_dict
 except ImportError:

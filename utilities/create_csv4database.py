@@ -18,7 +18,7 @@ Initial version output_data.py by Richard Kemp,  08/10/2014
 """
 
 import argparse
-import process_io_lib.mfile as mf
+import process.io.mfile as mf
 try:
     import process_io_lib.process_dicts as proc_dict
 except ImportError:

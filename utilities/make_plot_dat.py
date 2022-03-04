@@ -17,8 +17,8 @@
 
 import os
 import argparse
-import process_io_lib.mfile as mf
-from process_io_lib.mfile import make_plot_dat
+import process.io.mfile as mf
+from process.io.mfile import make_plot_dat
 # from process_io_lib.process_dicts import PARAMETER_DEFAULTS
 
 from create_dicts import get_dicts

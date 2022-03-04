@@ -28,8 +28,8 @@ import argparse
 from SALib.sample.saltelli import sample
 from SALib.analyze import sobol
 from process_io_lib.process_config import RunProcessConfig
-from process_io_lib.in_dat import InDat
-from process_io_lib.mfile import MFile
+from process.io.in_dat import InDat
+from process.io.mfile import MFile
 from process_io_lib.process_funcs import set_variable_in_indat, process_stopped
 import numpy as np
 import json

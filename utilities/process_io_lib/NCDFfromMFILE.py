@@ -20,7 +20,7 @@ Variables (variables)
 """
 
 from getpass import getuser
-from process_io_lib.mfile import MFile
+from process.io.mfile import MFile
 from numpy import array, transpose
 from netCDF4 import Dataset
 from datetime import datetime
