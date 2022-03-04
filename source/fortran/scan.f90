@@ -21,7 +21,7 @@ module scan_module
   integer, parameter :: ipnscns = 1000
   !! Maximum number of scan points
 
-  integer, parameter :: ipnscnv = 62
+  integer, parameter :: ipnscnv = 64
   !! Number of available scan variables
 
   integer, parameter :: noutvars = 84
@@ -98,8 +98,9 @@ module scan_module
   !!         <LI> 59 `scraplo` : Outboard plasma-first wall gap
   !!         <LI> 60 sig_tf_wp_max: Allowable stress in TF Coil conduit (Tresca) 
   !!         <LI> 61 copperaoh_m2_max : CS coil current / copper area
-  !!         <LI> 62 coheof : CS coil current density at EOF </UL>
-
+  !!         <LI> 62 coheof : CS coil current density at EOF
+  !!         <LI> 63 ohcth : CS thickness (m)
+  !!         <LI> 64 ohhghf : CS height (m) </UL>
   integer :: nsweep_2
   !! nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
 
@@ -610,7 +611,7 @@ contains
     !! author: J Morris, UKAEA, Culham Science Centre
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	use build_variables, only: blnkoth, shldith, scrapli, scraplo
+	use build_variables, only: blnkoth, shldith, scrapli, scraplo, ohcth
     use constraint_variables, only: fiooic, walalw, bmxlim, fqval, taulimit, &
         gammax, tbrnmn, tbrmin, fjprot, pnetelin, powfmax
 	use cost_variables, only: cfactr, iavail
@@ -627,7 +628,7 @@ contains
       target_spread, lambda_q_omp, qtargettotal, ttarget
     use heat_transport_variables, only: crypmw_max 
     use rebco_variables, only: copperaoh_m2_max
-    use pfcoil_variables, only: coheof
+    use pfcoil_variables, only: coheof, ohhghf
     implicit none
 
     ! Arguments
@@ -830,6 +831,12 @@ contains
         case (62)
             coheof = swp(iscn)
             vlab = 'coheof' ; xlab = 'CS coil current density at EOF (A/m2)'
+        case (63)
+            ohcth = swp(iscn)
+            vlab = 'ohcth' ; xlab = 'CS coil thickness (m)'
+        case (64)
+            ohhghf = swp(iscn)
+            vlab = 'ohhghf' ; xlab = 'CS height (m)'
         case default
             idiags(1) = nwp ; call report_error(96)
 
