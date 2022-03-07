@@ -19,13 +19,13 @@ Output file:
 """
 
 # == import modules ==
-## standard python modules
+# standard python modules
 import argparse
 import csv
-from os import path as ospath
+from pathlib import Path, PurePath
 import json
 
-## PROCESS-specific modules
+# PROCESS-specific modules
 from process.io.mfile import MFile
 
 
@@ -38,10 +38,10 @@ def get_user_inputs():
     )
 
     parser.add_argument(
-        "-f", 
-        "--mfile", 
-        default="MFILE.DAT", 
-        help="Specify input mfile name, default = MFILE.DAT"
+        "-f",
+        "--mfile",
+        default="MFILE.DAT",
+        help="Specify input mfile name, default = MFILE.DAT",
     )
 
     parser.add_argument(
@@ -59,7 +59,7 @@ def get_user_inputs():
 def get_vars(vfile="mfile_to_csv_vars.json"):
     """Returns variable names from identified file.
 
-    :param args: input JSON filename 
+    :param args: input JSON filename
     :type args: string
     :return: variable names
     :rtype: list
@@ -69,7 +69,7 @@ def get_vars(vfile="mfile_to_csv_vars.json"):
     with open(vfile, "r") as varfile:
         data = varfile.read()
         obj = json.loads(data)
-        vars = (obj['vars'])
+        vars = obj["vars"]
 
     return vars
 
@@ -89,9 +89,11 @@ def read_mfile(mfilename="MFILE.DAT", vars=[]):
     output_vars = []
 
     # for each variable named in the input varfile, get the description and data value
-    for var_name in vars:    
-        if not var_name in m_file.data.keys():
-            print("Variable '{}' not in MFILE. Skipping and moving on...".format(var_name))
+    for var_name in vars:
+        if var_name not in m_file.data.keys():
+            print(
+                "Variable '{}' not in MFILE. Skipping and moving on...".format(var_name)
+            )
         else:
             # In case of a file containing multiple scans, (scan = -1) uses the last scan value
             var_val = m_file.data[var_name].get_scan(-1)
@@ -102,24 +104,24 @@ def read_mfile(mfilename="MFILE.DAT", vars=[]):
     return output_vars
 
 
-def get_savenamepath(mfilename="MFILE.DAT"): 
+def get_savenamepath(mfilename="MFILE.DAT"):
     """Returns path/filename.csv for file saving.
 
     :param args: input filename
     :type args: string
     :return: output filename
-    :rtype: string
+    :rtype: pathlib.PurePosixPath
     """
+
     if mfilename == "MFILE.DAT":
         # save it locally
-        csv_filename = "mfile_outputs.csv"
-        csv_outfile = csv_filename
-    else:        
+        dirname = Path.cwd()
+    else:
         # output the csv file to the directory of the input file
-        dirname = ospath.dirname(mfilename)
-        s = ospath.basename(mfilename)
-        csv_filename = s.replace(".MFILE.DAT","") + ".csv"
-        csv_outfile = dirname + "/" + csv_filename
+        dirname = PurePath(mfilename).parent
+
+    csv_filename = PurePath(mfilename).stem
+    csv_outfile = PurePath(dirname, csv_filename + ".csv")
 
     return csv_outfile
 
@@ -140,6 +142,11 @@ def write_to_csv(csv_outfile, output_data=[]):
 
 
 def main():
+    """Extract certain variables from an MFILE.DAT and output to CSV.
+
+    :param args: optional command-line args for testing, defaults to None
+    :type args: list, optional
+    """
 
     # read from command line inputs
     args = get_user_inputs()
