@@ -159,11 +159,13 @@ def test_pfcoil(monkeypatch):
     )
 
 
-def test_ohcalc(monkeypatch):
+def test_ohcalc(monkeypatch, reinitialise_error_module):
     """Test ohcalc subroutine.
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
+    :param reinitialise_error_module: teardown any error side-effects
+    :type reinitialise_error_module: None
     """
     # Mocks for ohcalc()
     monkeypatch.setattr(bv, "hmax", 8.864)
