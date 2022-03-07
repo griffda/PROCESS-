@@ -1,6 +1,3 @@
-* Test IN.DAT for quench protection on CS coils    *
-* icc = 88 is the new constraint equation          *
-* ixc = 165 is associated itr variable             *
 *---------------Constraint Equations---------------*
 
 icc = 1 * Beta
@@ -107,16 +104,16 @@ boundu(165) = 1.0
 *nsweep = 29
 *sweep = 11.8, 12.2, 12.5, 13.36, 13.80
 
-*isweep = 9
-*nsweep = 61 *copperaoh_m2_max
-*sweep = 9e7, 8e7, 7e7, 6e7, 5e7, 4e7, 3e7, 2e7, 1e7
+isweep = 9
+nsweep = 61 *copperaoh_m2_max
+sweep = 9e7, 8e7, 7e7, 6e7, 5e7, 4e7, 3e7, 2e7, 1e7
 
 *isweep = 11
 *nsweep = 62 *coheof
 *sweep = 1e7, 2e7, 2.2e7, 2.5e7, 2.7e7, 3e7, 3.2e7, 3.4e7, 3.6e7, 5e7, 8e7
 
 *isweep = 8
-*nsweep = 63 *ohcth
+*nsweep = 63 *copperaoh_m2_max
 *sweep = 0.2, 0.3, 0.4, 0.5, 0.8, 1.1, 1.6, 2.0
 
 *isweep = 8
@@ -141,7 +138,7 @@ gapds    = 0.12 * Gap between inboard vacuum vessel and tf coil (m)
 gapoh    = 0.05 * Gap between central solenoid and tf coil (m)
 gapomin  = 0.20 * Minimum gap between outboard vacuum vessel and tf coil (m)
 iohcl    = 1 * Switch for existence of central solenoid;
-ohcth    = 0.8181 * Central solenoid thickness (m)
+*ohcth    = 0.8181 * Central solenoid thickness (m)
 scrapli  = 0.225 * Gap between plasma and first wall; inboard side (m)
 scraplo  = 0.225 * Gap between plasma and first wall; outboard side (m)
 shldith  = 0.30 * Inboard shield thickness (m)
@@ -263,7 +260,7 @@ ipfloc   = 2,2,3,3 * Switch for locating scheme of pf coil group i;
 isumatpf = 5 * Switch for superconductor material in pf coils;
 ncls     = 1,1,2,2, * Number of pf coils in group j
 ngrp     = 4 * Number of groups of pf coils;
-ohhghf   = 0.9 * Central solenoid height / tf coil internal height
+*ohhghf   = 0.9 * Central solenoid height / tf coil internal height
 rjconpf  = 1.1d7, 1.1d7, 6.d6, 6.d6, 8.d6, 8.0d6, 8.0d6, 8.0d6, * Average winding pack current density of pf coil i (a/m2)
 rpf2     = -1.825 * Offset (m) of radial position of ipfloc=2 pf coils
 
@@ -282,8 +279,8 @@ isumatoh = 8 * WST Nb3Sn parameterisation
 oh_steel_frac = 0.8
 
 
-copperaoh_m2_max = 5e9 * copperaoh_m2_max /1e8/ ; Maximum CS coil current / copper area (A/m2)
-f_copperaoh_m2 = 6.7e-2 * f_copperaoh_m2 /1/ ; f-value for constraint 88; CS coil current / copper area &lt; copperaoh_m2_max
+*copperaoh_m2_max = 5e9 * copperaoh_m2_max /1e8/ ; Maximum CS coil current / copper area (A/m2)
+*f_copperaoh_m2 = 6.7e-2 * f_copperaoh_m2 /1/ ; f-value for constraint 88; CS coil current / copper area &lt; copperaoh_m2_max
 
 *----------------Physics Variables-----------------*
 
@@ -382,7 +379,7 @@ tburn    = 1.0d4 * Burn time (s) (calculated if lpulse=1)
                      oacdcp         =  8.6739E+06
                      tfcth          =  1.2080E+00
                      fwalld         =  1.3100E-01
-                     ohcth          =  5.5242E-01
+                     *ohcth          =  5.5242E-01
                      q              =  3.5000E+00
                      bore           =  2.3322E+00
                      fbetatry       =  4.8251E-01

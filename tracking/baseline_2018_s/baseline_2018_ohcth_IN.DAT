@@ -115,9 +115,9 @@ boundu(165) = 1.0
 *nsweep = 62 *coheof
 *sweep = 1e7, 2e7, 2.2e7, 2.5e7, 2.7e7, 3e7, 3.2e7, 3.4e7, 3.6e7, 5e7, 8e7
 
-*isweep = 8
-*nsweep = 63 *ohcth
-*sweep = 0.2, 0.3, 0.4, 0.5, 0.8, 1.1, 1.6, 2.0
+isweep = 8
+nsweep = 63 *ohcth
+sweep = 0.2, 0.3, 0.4, 0.5, 0.8, 1.1, 1.6, 2.0
 
 *isweep = 8
 *nsweep = 64 *ohhgf
