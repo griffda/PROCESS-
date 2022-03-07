@@ -20,6 +20,7 @@ from process.fortran import fwbs_variables as fwbsv
 from process.fortran import tfcoil_variables as tfv
 from process.fortran import times_variables as tv
 from process.fortran import constants
+from process.pfcoil import PFCoil
 
 
 def test_pfcoil(monkeypatch):
@@ -28,6 +29,8 @@ def test_pfcoil(monkeypatch):
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     """
+    pfcoil = PFCoil()
+
     monkeypatch.setattr(bv, "iohcl", 1)
     monkeypatch.setattr(bv, "hpfdif", 0.0)
     monkeypatch.setattr(bv, "hpfu", 4.0)  # guess
@@ -128,7 +131,7 @@ def test_pfcoil(monkeypatch):
     monkeypatch.setattr(constants, "dcopper", 8.9e3)
     monkeypatch.setattr(pf, "first_call", True)
 
-    pf.pfcoil()
+    pfcoil.pfcoil()
 
     assert pytest.approx(pv.bvert) == -0.65121393
     assert pytest.approx(pfv.zpf) == np.array(
