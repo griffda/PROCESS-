@@ -20,18 +20,20 @@ Variables (variables)
 """
 
 from getpass import getuser
-from process_io_lib.mfile import MFile
+from process.io.mfile import MFile
 from numpy import array, transpose
 from netCDF4 import Dataset
 from datetime import datetime
-from process_io_lib.configuration import Config
+from process.io.configuration import Config
+
 
 class NCDFconverter(Config):
     """
     Contains all of the necessary methods to convert MFILEs from a scan
     to a NetCDF file.
     """
-    def __init__(self, configfilename='ndscan.json', verbosity=1):
+
+    def __init__(self, configfilename="ndscan.json", verbosity=1):
         """
         Specifies which configuration file to read.
         Arguments:
@@ -50,7 +52,7 @@ class NCDFconverter(Config):
                                       variable of interest
             stepstring--------------> String which represents the current step
                                       along the coordinates.
-            mfiledir----------------> Directory name in which the MFILES are 
+            mfiledir----------------> Directory name in which the MFILES are
                                       stored.
 
         """
@@ -68,8 +70,11 @@ class NCDFconverter(Config):
         self.configfilename = configfilename
         self.output_vars = self.get("output_vars", default=[])
         if len(self.output_vars) == 0:
-            print("No output variables specified in config file.",
-                  self.configfilename, "\nNo NetCDF file created!")
+            print(
+                "No output variables specified in config file.",
+                self.configfilename,
+                "\nNo NetCDF file created!",
+            )
             exit()
 
         self.time = str(datetime.now())
@@ -78,12 +83,10 @@ class NCDFconverter(Config):
 
         self.title = self.get("title", default="NdscanOutput")
         self.author = self.get("author", default=getuser())
-        #self.author = self.get("author", default="No author given")
-        self.description = self.get("description",
-                                    default="No description given")
+        # self.author = self.get("author", default="No author given")
+        self.description = self.get("description", default="No description given")
 
         self.axes = self.get("axes", default=[])
-
 
     def convert_mfilelibrary(self):
         """
@@ -120,14 +123,12 @@ class NCDFconverter(Config):
 
         self.start_automated_extraction()
 
-
-        ncfile.scanvars = ','.join(self.axestuple)
+        ncfile.scanvars = ",".join(self.axestuple)
         ncfile.scansteps = self.steptuple
 
         self.store_variables_from_collector(ncfile, compressionlevel)
 
         self.print_ncfile_variables(ncfile)
-
 
     def increment_current_step(self):
         """
@@ -158,21 +159,28 @@ class NCDFconverter(Config):
         if self.verbosity > 1:
             print("Current step is now ", self.currentstep)
 
-        #Checks to see if increasing the current step by 1 resulted in a
-        #dimension overflow
+        # Checks to see if increasing the current step by 1 resulted in a
+        # dimension overflow
         # if so- reset it to 0, and increment the next dimension by 1.
         for i in range(len(self.currentstep)):
             # Check to see if we are evaluating the last step. If so, an
             # overflow must be treated differently.
             if self.currentstep[-1] == self.steptuple[-1]:
-                print("A serious error has occured, and the total counts\
- have overflowed.")
-                print("Currentstep[-1] is", self.currentstep[-1], "and\
- steptuple[-1] is", self.steptuple[-1])
+                print(
+                    "A serious error has occured, and the total counts\
+ have overflowed."
+                )
+                print(
+                    "Currentstep[-1] is",
+                    self.currentstep[-1],
+                    "and\
+ steptuple[-1] is",
+                    self.steptuple[-1],
+                )
                 exit()
             if self.currentstep[i] == self.steptuple[i]:
                 self.currentstep[i] = 0
-                self.currentstep[i+1] += 1
+                self.currentstep[i + 1] += 1
 
     def get_next_mfile(self, currentstep):
         """
@@ -194,12 +202,12 @@ class NCDFconverter(Config):
 
         """
 
-        stepstring = 'M.'
+        stepstring = "M."
         for i in range(len(currentstep)):
-            stepstring += str(currentstep[i])+'.'
-        stepstring += 'DAT'
+            stepstring += str(currentstep[i]) + "."
+        stepstring += "DAT"
 
-        mfile = MFile(self.mfiledir+ '/' +stepstring)
+        mfile = MFile(self.mfiledir + "/" + stepstring)
 
         return mfile
 
@@ -215,17 +223,16 @@ class NCDFconverter(Config):
         varoutput----->List of values corresponding with the variables in
                        varstofind.
         """
-        varoutput = [-1]*len(self.output_vars)
+        varoutput = [-1] * len(self.output_vars)
 
-        error_status = mfile.data['error_status'].get_scan(-1)
+        error_status = mfile.data["error_status"].get_scan(-1)
         if error_status < 3:
             for ind, varname in enumerate(self.output_vars):
                 varoutput[ind] = mfile.data[varname].get_scan(-1)
-        #else:
+        # else:
         #    print('Unsuccessful PROCESS run, MFILE being ignored!')
 
         return varoutput
-
 
     def determine_compression(self):
         """
@@ -239,7 +246,7 @@ class NCDFconverter(Config):
         compressionlevel-----> An integer which will be valued either 4, 6, 8,
                                or 9.
 
-                               """
+        """
 
         # Default level established first
         compressionlevel = 4
@@ -273,7 +280,7 @@ class NCDFconverter(Config):
         description, and author.
         """
 
-        ncfile = Dataset(self.title + ".nc", 'w')
+        ncfile = Dataset(self.title + ".nc", "w")
         ncfile.title = self.title
         ncfile.time = self.time
         ncfile.description = self.description
@@ -308,11 +315,14 @@ class NCDFconverter(Config):
                 axissize = int(self.axes[i]["steps"])
 
             if self.verbosity > 1:
-                print("Creating dimension:", self.axes[i]["varname"],
-                      "with size", axissize)
+                print(
+                    "Creating dimension:",
+                    self.axes[i]["varname"],
+                    "with size",
+                    axissize,
+                )
 
-            ncfile.createDimension(dimname=self.axes[i]["varname"],
-                                   size=axissize)
+            ncfile.createDimension(dimname=self.axes[i]["varname"], size=axissize)
 
             self.currentstep.append(0)
             self.stepstring += "0."
@@ -339,24 +349,22 @@ class NCDFconverter(Config):
         others for efficiency, and is handled as a seperate function
         before the automated extraction begins.
         """
-        mstring = self.mfiledir + '/' + self.stepstring
+        mstring = self.mfiledir + "/" + self.stepstring
 
         try:
             currentmfile = MFile(mstring)
         except FileNotFoundError:
             print("Error: The first Mfile could not be found.")
-            print('\t', mstring)
+            print("\t", mstring)
             print("Stopped creation of NetCDF file!")
             exit()
 
-        #Scan the MFILE for the variables of interest
+        # Scan the MFILE for the variables of interest
         recentoutput = self.get_mfile_variables(currentmfile)
 
-        #Store output in the collector trays for each variable of interest
+        # Store output in the collector trays for each variable of interest
         for collectnumber in range(len(recentoutput)):
-            self.variablecollector[collectnumber].append(
-                recentoutput[collectnumber])
-
+            self.variablecollector[collectnumber].append(recentoutput[collectnumber])
 
     def start_automated_extraction(self):
         """
@@ -381,7 +389,7 @@ class NCDFconverter(Config):
         for i in self.steptuple:
             totalsteps *= i
 
-        for step in range(totalsteps-1):
+        for step in range(totalsteps - 1):
 
             self.increment_current_step()
             currentmfile = self.get_next_mfile(self.currentstep)
@@ -389,8 +397,8 @@ class NCDFconverter(Config):
 
             for collectnumber in range(len(recentoutput)):
                 self.variablecollector[collectnumber].append(
-                    recentoutput[collectnumber])
-
+                    recentoutput[collectnumber]
+                )
 
     def store_variables_from_collector(self, ncfile, compressionlevel=4):
         """
@@ -408,24 +416,24 @@ class NCDFconverter(Config):
 
         """
         steptuple = self.steptuple
-        elputpets = steptuple[::-1] # Reverses the steptuple because the
-        #format NCfiles store in is different from Python.
-
+        elputpets = steptuple[::-1]  # Reverses the steptuple because the
+        # format NCfiles store in is different from Python.
 
         for i in range(len(self.variablecollector)):
-            variablearray = array(self.variablecollector[i], order='C')
+            variablearray = array(self.variablecollector[i], order="C")
             # IMPORTANT- I use column major ordering because I think it
             # makes more sense
             # in the context of the process ndscan suite.
             if len(elputpets) > 1:
                 variablearray.shape = elputpets
-            self.variablepointers[i] = \
-                ncfile.createVariable(self.output_vars[i],
-                                      "f4",
-                                      tuple(self.axestuple),
-                                      zlib=True,
-                                      complevel=compressionlevel,
-                                      least_significant_digit=4)
+            self.variablepointers[i] = ncfile.createVariable(
+                self.output_vars[i],
+                "f4",
+                tuple(self.axestuple),
+                zlib=True,
+                complevel=compressionlevel,
+                least_significant_digit=4,
+            )
 
             self.variablepointers[i][:] = transpose(variablearray[:])
 
@@ -434,15 +442,19 @@ class NCDFconverter(Config):
         for ind, axis in enumerate(self.axes):
             scanvarname = "SCAN" + axis["varname"]
             scanvarpointers.append(0)
-            scanvarpointers[ind] = \
-                ncfile.createVariable(scanvarname, "f4", axis["varname"])
+            scanvarpointers[ind] = ncfile.createVariable(
+                scanvarname, "f4", axis["varname"]
+            )
             if type(axis["steps"]) is list:
                 scanvarpointers[ind][:] = array(axis["steps"])
             else:
-                coords = [axis["lowerbound"] + \
-                              j * (axis["upperbound"] - axis["lowerbound"]) \
-                              / (axis["steps"]-1) \
-                              for j in range(int(axis["steps"]))]
+                coords = [
+                    axis["lowerbound"]
+                    + j
+                    * (axis["upperbound"] - axis["lowerbound"])
+                    / (axis["steps"] - 1)
+                    for j in range(int(axis["steps"]))
+                ]
                 scanvarpointers[ind][:] = array(coords)
 
     def print_ncfile_variables(self, ncfile):
@@ -459,4 +471,3 @@ class NCDFconverter(Config):
                 print("-----------------------")
                 print(var)
                 print(ncfile.variables[var][:])
-
