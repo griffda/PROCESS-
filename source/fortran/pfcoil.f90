@@ -20,15 +20,23 @@ module pfcoil_module
    public
  
    !  Local variables
- 
+   
    integer :: nef,nfxf
    real(dp) :: ricpf, ssq0, sig_axial, sig_hoop
    real(dp) :: axial_force
-   real(dp), dimension(nfixmx), private :: rfxf,zfxf,cfxf,xind
-   real(dp), dimension(ngrpmx,nclsmx), private :: rcls,zcls
-   real(dp), dimension(ngrpmx), private :: ccls,ccl0
-   real(dp), dimension(ngc2), private :: bpf2
-   real(dp), dimension(ngc2,3), private :: vsdum
+   ! Private module variable arrays have variable dimensions; can't be wrapped
+   ! with f2py if made public
+   ! #TODO Temporarily hardcode dimensions in order to make public and wrap
+   ! real(dp), dimension(nfixmx), private :: rfxf,zfxf,cfxf,xind
+   ! real(dp), dimension(ngrpmx,nclsmx), private :: rcls,zcls
+   ! real(dp), dimension(ngrpmx), private :: ccls,ccl0
+   ! real(dp), dimension(ngc2), private :: bpf2
+   ! real(dp), dimension(ngc2,3), private :: vsdum
+   real(dp), dimension(64) :: rfxf,zfxf,cfxf,xind
+   real(dp), dimension(10,2) :: rcls,zcls
+   real(dp), dimension(10) :: ccls,ccl0
+   real(dp), dimension(22) :: bpf2
+   real(dp), dimension(22,3) :: vsdum
  
    ! pfcoil subroutine var requiring re-initialisation before each new run
    logical :: first_call
