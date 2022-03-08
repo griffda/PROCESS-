@@ -29,7 +29,7 @@ History:
 """
 # Imported libraries
 import argparse
-import process_io_lib.mfile as mf
+import process.io.mfile as mf
 import numpy as np
 import matplotlib.pyplot as plt
 import sys

@@ -15,7 +15,7 @@
 
 import argparse
 import matplotlib.pyplot as plt
-import process_io_lib.mfile as mf
+import process.io.mfile as mf
 
 
 def plot_scan(cargs, m_file_data):
