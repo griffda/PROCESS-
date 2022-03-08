@@ -3438,7 +3438,7 @@
         "phi_tfc_ob": 0.0,
         "phiint": 0.0,
         "photon_wall": 0.0,
-        "pi": "3.141592653589793_wp_",
+        "pi": 3.141592653589793,
         "pibv": 20000.0,
         "piepv": 0.0,
         "pifecr": 10.0,
@@ -5256,7 +5256,6 @@
         "sec_buildings_h": 6.0,
         "sec_buildings_l": 30.0,
         "sec_buildings_w": 25.0,
-        "secday": 86400.0,
         "secondary_cycle": 0.0,
         "seppowerratio": 2.3,
         "sf": 0.0,
@@ -10763,7 +10762,6 @@
         "sec_buildings_h": "security &amp; safety buildings length, width, height (m)",
         "sec_buildings_l": "security &amp; safety buildings length, width, height (m)",
         "sec_buildings_w": "security &amp; safety buildings length, width, height (m)",
-        "secday": "seconds in a day, s",
         "secondary_cycle": "Switch for power conversion cycle:\n<ul>\n<li>=0 Set efficiency for chosen blanket, from detailed models (divertor heat not used)</li>\n<li>=1 Set efficiency for chosen blanket, from detailed models (divertor heat used)</li>\n<li>=2 user input thermal-electric efficiency (etath)</li>\n<li>=3 steam Rankine cycle</li>\n<li>=4 supercritical CO2 cycle</li>\n</ul>",
         "seppowerratio": "",
         "sf": "shape factor = plasma poloidal perimeter / (2.pi.rminor)",
@@ -20025,9 +20023,6 @@
             "waterusetower",
             "wateruserecirc",
             "wateruseonethru"
-        ],
-        "water_use_module": [
-            "secday"
         ]
     },
     "DICT_NSWEEP2IXC": {
