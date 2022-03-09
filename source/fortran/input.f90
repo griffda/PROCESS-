@@ -2323,10 +2323,10 @@ contains
                'Switch for pulsed reactor model')
 
        case ('copperaoh_m2')
-          call parse_real_variable('copperaoh_m2', copperAoh_m2, 1.0D0, 1.0D10, &
+          call parse_real_variable('copperaoh_m2', copperaoh_m2, 1.0D0, 1.0D10, &
               'CS coil current / copper area (A/m2)')
        case ('copperaoh_m2_max')
-          call parse_real_variable('copperaoh_m2_max', copperAoh_m2_max, 1.0D6, 1.0D10, &
+          call parse_real_variable('copperaoh_m2_max', copperaoh_m2_max, 1.0D6, 1.0D10, &
                'Maximum CS coil current / copper area (A/m2)')
        case ('f_copperaoh_m2')
           call parse_real_variable('f_copperaoh_m2', f_copperaoh_m2, 1.0D-3, 1.0D1, &
