@@ -3305,14 +3305,13 @@ contains
       !! author: G Turkington, P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
       !! residual error in physical units; output string; units string
-      !! Equation for fusion power upper limit
       !! #=# physics
-      !! #=#=# ffuspow, powfmax
+      !! #=#=# f_copperaoh_m2, copperaoh_m2_max
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !! ffuspow : input real : f-value for maximum fusion power
-      !! powfmax : input real : maximum fusion power (MW)
-      !! powfmw : input real : fusion power (MW)
+      !! copperaoh_m2 : input real : CS coil current at EOF / copper area [A/m2]
+      !! copperaoh_m2_max : input real : maximum coil current / copper area [A/m2]
+      !! f_copperaoh_m2 : input real : f-value for CS coil current / copper area
       use rebco_variables, only: copperaoh_m2, copperaoh_m2_max, f_copperaoh_m2
       implicit none
                   real(dp), intent(out) :: tmp_cc
