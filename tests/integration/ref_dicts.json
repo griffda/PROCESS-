@@ -12127,14 +12127,6 @@
             "lb": 1000000.0,
             "ub": 10000000000.0
         },
-        "copperAoh_m2": {
-            "lb": 1.0,
-            "ub": 10000000000.0
-        },
-        "copperAoh_m2_max": {
-            "lb": 1000000.0,
-            "ub": 10000000000.0
-        },
         "copper_bar": {
             "lb": 0.0,
             "ub": 0.9
@@ -12146,6 +12138,14 @@
         "copper_thick": {
             "lb": 0.0,
             "ub": 0.001
+        },
+        "copperaoh_m2": {
+            "lb": 1.0,
+            "ub": 10000000000.0
+        },
+        "copperaoh_m2_max": {
+            "lb": 1000000.0,
+            "ub": 10000000000.0
         },
         "coreradiationfraction": {
             "lb": 0.0,
@@ -20292,11 +20292,11 @@
         "conv": "real_variable",
         "coolp": "real_variable",
         "copperA_m2_max": "real_variable",
-        "copperAoh_m2": "real_variable",
-        "copperAoh_m2_max": "real_variable",
         "copper_bar": "real_variable",
         "copper_rrr": "real_variable",
         "copper_thick": "real_variable",
+        "copperaoh_m2": "real_variable",
+        "copperaoh_m2_max": "real_variable",
         "coreradiationfraction": "real_variable",
         "coreradius": "real_variable",
         "cost_factor_bop": "real_variable",
