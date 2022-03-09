@@ -15,7 +15,7 @@ import sys
 import argparse
 
 # PROCESS libraries
-from process_io_lib.in_dat import InDat
+from process.io.in_dat import InDat
 
 # Constants
 

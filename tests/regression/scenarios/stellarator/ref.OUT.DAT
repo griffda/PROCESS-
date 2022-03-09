@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1263-g1bf85bb8 code contains untracked changes
+   Tag No. : v2.1-1266-g4a9a3249 code contains untracked changes
     Branch : 1582-cryo-cost
-   Git log : Merge\ branch\ |1445-cp-flux-typo-2|\ into\ |develop|
- Date/time : 21 Feb 2022 15:33:49 -05:00(hh:mm) UTC
+   Git log : New\ stellarator\ regression\ reference
+ Date/time :  9 Mar 2022  9:46:39 -05:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-24/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-24/test_scenario_stellarator_0/IN.DAT
+ Directory : /home/cswan/process/process
+     Input : /tmp/pytest-of-cswan/pytest-0/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  
@@ -922,7 +922,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power Balance for Reactor - Summary :
  -------------------------------------
- Fusion power (MW)                                                        (powfmw.)                  3122.983  OP 
+ Fusion power (MW)                                                        (powfmw)                   3122.983  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   314.567  OP 
  Injected power (MW)                                                      (pinjmw.)                     0.000  OP 
  Ohmic power (MW)                                                         (pohmmw.)                     0.000  OP 
@@ -956,7 +956,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power balance for power plant :
  -------------------------------
- Fusion power (MW)                                                        (powfmw.)                  3122.983  OP 
+ Fusion power (MW)                                                        (powfmw)                   3122.983  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   314.567  OP 
  Total (MW)                                                                                          3437.550  OP 
  
