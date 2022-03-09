@@ -21,79 +21,24 @@ import argparse
 import json
 import argparse
 import pickle
+import create_dicts_config
 from pathlib import Path
 
 from python_dicts import get_python_variables
 
-# Variables, arrays and dictionaries that aren't read from the source files so
-# have to be hard coded
-
-# ifail value of a successful process run
-IFAIL_SUCCESS = 1
-
-# default values for making a plot file from MFILE.DAT
-PARAMETER_DEFAULTS = ["rmajor", "aspect", "rminor", "bt", "powfmw",
-    "pnetelmw", "te", "pdivt", "sig_tf_case", "sig_tf_wp"]
-
-# parameters that start with f, but are not f-values
-NON_F_VALUES = ['fcohbop', 'fvsbrnni', 'feffcd', 'fcutfsu', 'fimpvar']
-
-# PROCESS TF Coil types
-DICT_TF_TYPE = {1: "Nb3Sn ITER", 2: "Bi-2212", 3: "NbTi", 4: "Nb3Sn user", 
-    5: "Nb3Sn WST", 6: "REBCO Croco", 7: "NbTi Ginzburg-Landau", 
-    8: "REBCO Ginzburg-Landau", 9: "REBCO Hazelton-Zhai"}
-
-# FIMP Values
-DICT_FIMP = {
-    "fimp(1)":"Hydrogen (fraction calculated by code)",
-    "fimp(2)":"Helium",
-    "fimp(3)":"Beryllium",
-    "fimp(4)":"Carbon",
-    "fimp(5)":"Nitrogen",
-    "fimp(6)":"Oxygen",
-    "fimp(7)":"Neon",
-    "fimp(8)":"Silicon",
-    "fimp(9)":"Argon",
-    "fimp(10)":"Iron",
-    "fimp(11)":"Nickel",
-    "fimp(12)":"Krypton",
-    "fimp(13)":"Xenon",
-    "fimp(14)":"Tungsten"
-    }
-
-# Optimisation variable dictionary
-DICT_OPTIMISATION_VARS = {
-    1: 'Plasma major radius',
-    2: 'ratio fusion power:input power',
-    3: 'neutron wall load',
-    4: 'total TF + PF coil power',
-    5: 'ratio fusion power:injection power',
-    6: 'cost of electricity',
-    7: 'constructed cost',
-    8: 'aspect ratio',
-    9: 'divertor heat load',
-    10: 'toroidal field on axis',
-    11: 'injection power',
-    12: 'hydrogen production capital cost',
-    13: 'hydrogen production rate',
-    14: 'pulse length',
-    15: 'plant availability factor',
-    16: 'linear combination of major radius (minimised) and pulse length (maximised)',
-    17: 'net electrical output'
-    }
 
 output_dict = {}
-# Dict of nested dicts e.g. output_dict['DICT_DESCRIPTIONS'] = 
+# Dict of nested dicts e.g. output_dict['DICT_DESCRIPTIONS'] =
 # {descriptions_dict}
-# Dicts stored in output_dict are used to create other derivative dicts 
+# Dicts stored in output_dict are used to create other derivative dicts
 
 # Classes for the various dictionary types
 class Dictionary(object):
     # Base Dictionary class for all dicts
     def __init__(self, name):
-        self.name = name # Dict name
-        self.dict = {} # Contains the dict
-        self.dict[self.name] = {} # Structures this dict: key = dict name, 
+        self.name = name  # Dict name
+        self.dict = {}  # Contains the dict
+        self.dict[self.name] = {}  # Structures this dict: key = dict name,
         # value = nested dict of variable info
 
     def make_dict(self):
@@ -108,24 +53,30 @@ class Dictionary(object):
         # Add the finished dictionary to the output dict
         output_dict.update(self.dict)
 
+
 class ProjectDictionary(Dictionary):
     # Dicts that rely on the Ford project object
     def __init__(self, name, project, python_variables, value_type):
         Dictionary.__init__(self, name)
-        self.project = project # The Ford project object
-        self.python_variables = python_variables # List of AnnotatedVariables from Python PhysEng models
+        self.project = project  # The Ford project object
+        self.python_variables = (
+            python_variables  # List of AnnotatedVariables from Python PhysEng models
+        )
         self.value_type = value_type
         # The attribute in the project to make a dict for
 
     def make_dict(self):
-        # Assign the variable name key to the value of an attribute of 
+        # Assign the variable name key to the value of an attribute of
         # the var object in the project ([var_name] = some_value_of_var)
         for module in self.project.modules:
             for var in module.variables:
                 self.dict[self.name][var.name] = getattr(var, self.value_type)
-        
+
         for annotated_variable in self.python_variables:
-            self.dict[self.name][annotated_variable.name] = getattr(annotated_variable, self.value_type)
+            self.dict[self.name][annotated_variable.name] = getattr(
+                annotated_variable, self.value_type
+            )
+
 
 class SourceDictionary(Dictionary):
     # Dictionary created from Fortran source
@@ -138,12 +89,13 @@ class SourceDictionary(Dictionary):
         # Make entire nested dict from function
         self.dict[self.name] = self.dict_creator_func()
 
+
 class HardcodedDictionary(Dictionary):
     # Dictionary created from a hardcoded dict in this file
     def __init__(self, name, hardcoded_dict):
         Dictionary.__init__(self, name)
         self.dict[self.name] = None
-        # Hardcoded value isn't always a dict; override to None to allow the 
+        # Hardcoded value isn't always a dict; override to None to allow the
         # value to be set to any type
         self.hardcoded_dict = hardcoded_dict
 
@@ -151,34 +103,37 @@ class HardcodedDictionary(Dictionary):
         # Set the nested value to a hardcoded int, list or dict
         self.dict[self.name] = self.hardcoded_dict
 
+
 class VariableDescriptions(ProjectDictionary):
     # Dictionary of variable descriptions
     def __init__(self, project, python_variables):
-        ProjectDictionary.__init__(self, 'DICT_DESCRIPTIONS', project, python_variables, 'doc')
+        ProjectDictionary.__init__(
+            self, "DICT_DESCRIPTIONS", project, python_variables, "doc"
+        )
 
     def make_dict(self):
         # Assign the variable name key to the var description
         for module in self.project.modules:
             for var in module.variables:
                 desc = getattr(var, self.value_type)
-                
+
                 # If var key doesn't exist, add it
                 if var.name not in self.dict[self.name]:
                     self.dict[self.name][var.name] = desc
 
-                # Only overwrite description if it's falsey and we're 
+                # Only overwrite description if it's falsey and we're
                 # overwriting with something truthy
                 # Guards against multiple declarations in different modules,
                 # when only one declaration is commented
                 elif not self.dict[self.name][var.name] and desc:
                     self.dict[self.name][var.name] = desc
-        
+
         for annotated_variable in self.python_variables:
             self.dict[self.name][annotated_variable.name] = annotated_variable.units
 
     def post_process(self):
         for var_name, var_desc in self.dict[self.name].items():
-            # Strip the <p> and </p> tags from the description; not 
+            # Strip the <p> and </p> tags from the description; not
             # required in output
             desc_sub = re.sub(r"</?p>", r"", var_desc)
             # Some characters are modified in Ford; convert them back here
@@ -189,15 +144,16 @@ class VariableDescriptions(ProjectDictionary):
             desc_sub = re.sub(r"&lt;", r"<", desc_sub)
             self.dict[self.name][var_name] = desc_sub
 
+
 class DefaultValues(ProjectDictionary):
     """This is a nightmare. It takes combined declared/initialised values from
-    Ford's project and combines them with Fortran source regex parsing for 
-    values that are declared separately and initialised only in an init 
+    Ford's project and combines them with Fortran source regex parsing for
+    values that are declared separately and initialised only in an init
     subroutine. e.g.:
 
     Case 1:
     integer, parameter :: n_radial_array = 50
-    Declared and initialised in same line: parameter, does not require 
+    Declared and initialised in same line: parameter, does not require
     re-initialisation. Use Ford project's value for this variable.
 
     Case 2:
@@ -208,9 +164,12 @@ class DefaultValues(ProjectDictionary):
     The Ford project value will be None, but we want to extract the value from
     the init subroutine. This requires Fortran source regex.
     """
+
     # Dictionary of default values of variables
     def __init__(self, project, python_variables):
-        ProjectDictionary.__init__(self, 'DICT_DEFAULT', project, python_variables, 'initial')
+        ProjectDictionary.__init__(
+            self, "DICT_DEFAULT", project, python_variables, "initial"
+        )
 
     def make_dict(self):
         # Assign the variable name key to the initial value of the variable
@@ -228,9 +187,6 @@ class DefaultValues(ProjectDictionary):
             self.dict[self.name][annotated_variable.name] = annotated_variable.obj
             # obj is the initial value also
 
-
-
-
     def process_initial_value(self, var):
         """Process the initial value of a var from Ford.
 
@@ -242,9 +198,9 @@ class DefaultValues(ProjectDictionary):
         # The initial value could be an array that hasn't been picked up by Ford
         # Ford can't handle implicit array initialisation
         # e.g. real(kind(1.0D0)), dimension(14) :: impurity_enrichment = 5.0D0
-        # Ford's initial variable value is 5.0D0, but should be an array of 
+        # Ford's initial variable value is 5.0D0, but should be an array of
         # 14 5.0D0 values
-        
+
         # The array dimension attribute
         size_arg = None
 
@@ -263,19 +219,19 @@ class DefaultValues(ProjectDictionary):
         if size_arg:
             # Check for size being a hardcoded int first
             size = self.find_int_array_dimension(size_arg)
-            
+
             if size is None:
                 # Check for size being a variable
                 size = self.find_var_array_dimension(size_arg)
 
-            if size:            
+            if size:
                 # The variable is an array
                 var.dimension = size
-                
+
                 # Modify the initial value if we have one
                 if var.initial:
                     if "(/" in var.initial:
-                        # Initial value is already an array; convert to str to 
+                        # Initial value is already an array; convert to str to
                         # list
                         var.initial = var.initial.replace("(/", "")
                         var.initial = var.initial.replace("/)", "")
@@ -284,15 +240,15 @@ class DefaultValues(ProjectDictionary):
                         var.initial = [i.strip() + "'" for i in var.initial]
                         var.initial[-1] = var.initial[-1][:-1]
                     else:
-                        # Single initial value: replace with array of identical 
+                        # Single initial value: replace with array of identical
                         # initial values of length size
                         var.initial = [var.initial for i in range(size)]
 
         # If the var wasn't an array, return the original initial value
-        # If it was an array and had an initial value, return an array of the 
+        # If it was an array and had an initial value, return an array of the
         # initial value
         # If it was an array and had no initial value, return None (but with
-        # an updated dimension on the var). This will be overwritten by the 
+        # an updated dimension on the var). This will be overwritten by the
         # init subroutine parsing in overwrite_ford_init_value()
         return var.initial
 
@@ -337,13 +293,13 @@ class DefaultValues(ProjectDictionary):
                             pass
 
             # If size_arg doesn't match a var.name or var.initial can't be
-            # converted to int: they probably aren't a numerical value and 
+            # converted to int: they probably aren't a numerical value and
             # require further evaluation, e.g. var.initial = ngc+2
             # Too complicated and probably not worth it: ignore
         return size
 
     def post_process(self):
-        # Most default values are numbers saved as strings, but some 
+        # Most default values are numbers saved as strings, but some
         # are lists of these
         # Attempt to convert strings to floats: 1.57812D3 to 1578.12
         working_dict = self.dict[self.name]
@@ -367,7 +323,7 @@ class DefaultValues(ProjectDictionary):
         # Might not convert successfully; in which case return original value
         try:
             value = value.lower()
-            value = value.replace('d', 'E')
+            value = value.replace("d", "E")
             value = float(value)
             return value
         except:
@@ -382,9 +338,9 @@ class DefaultValues(ProjectDictionary):
 
         if type(working_list) is not list:
             # Ford list: convert string to an array of strings
-            working_list = working_list.replace('(/', '')
-            working_list = working_list.replace('/)', '')
-            working_list = working_list.split(', ')
+            working_list = working_list.replace("(/", "")
+            working_list = working_list.replace("/)", "")
+            working_list = working_list.split(", ")
 
         # Convert list values to floats
         for value in working_list:
@@ -407,13 +363,13 @@ class DefaultValues(ProjectDictionary):
             # Parse file for init subroutine
             # Match on a "subroutine init_" to "end subroutine" block
             init_match = re.search(
-                r"(?:subroutine\sinit_)" # non-capturing group
-                r"(\w+)" # capture "name" of "subroutine init_name"
-                r"(.*?end\ssubroutine)", # capture all subroutine contents
+                r"(?:subroutine\sinit_)"  # non-capturing group
+                r"(\w+)"  # capture "name" of "subroutine init_name"
+                r"(.*?end\ssubroutine)",  # capture all subroutine contents
                 lines,
-                re.S # Dot matches newline characters (allows multiline matches)
+                re.S,  # Dot matches newline characters (allows multiline matches)
             )
-            
+
             if init_match:
                 module_init_name = init_match.group(1)
                 module_init_contents = init_match.group(2)
@@ -429,18 +385,18 @@ class DefaultValues(ProjectDictionary):
         :param init_contents: the init subroutine contents
         :type init_contents: str
         """
-        # Extract the init values of the variables from the init subroutine 
+        # Extract the init values of the variables from the init subroutine
         # contents
         matches = re.finditer(
-            r"\s*(\w+)\s*=" # capture var name before =
-            r"\s*(.+?)\s*\n" # lazily capture value (can be multiline), then \n
-            r"(?=(?:(?:\s+\w+\s*=)|" # positive lookahead, non-capturing group
-                # for next var assignment
-            r"(?:\s*end)|" # or end of subroutine
-            r"(?:\s*!))|" # or a comment
-            r"(?:\s*if\s))", # or an if statement
+            r"\s*(\w+)\s*="  # capture var name before =
+            r"\s*(.+?)\s*\n"  # lazily capture value (can be multiline), then \n
+            r"(?=(?:(?:\s+\w+\s*=)|"  # positive lookahead, non-capturing group
+            # for next var assignment
+            r"(?:\s*end)|"  # or end of subroutine
+            r"(?:\s*!))|"  # or a comment
+            r"(?:\s*if\s))",  # or an if statement
             init_contents,
-            re.S # Allow multiline matches
+            re.S,  # Allow multiline matches
         )
 
         # Now process captured value
@@ -457,7 +413,7 @@ class DefaultValues(ProjectDictionary):
             # Used mainly for multiline arrays
             value = value.replace("\n", "")
             value = value.replace("&", "")
-            
+
             # Remove space either side of value
             value = value.strip()
 
@@ -473,7 +429,7 @@ class DefaultValues(ProjectDictionary):
             if match:
                 value = match.group(1)
                 value = value.replace(" ", "")
-                
+
                 # Some arrays of strings contain commas inside the strings
                 # Try to avoid splitting these mid-string by splitting using ','
                 comma_list = value.split("','")
@@ -501,7 +457,7 @@ class DefaultValues(ProjectDictionary):
         """
         if var not in self.dict[self.name]:
             # If the var is not in the dict (picked up by Ford), discard it
-            # This probably means that something was picked up by the init 
+            # This probably means that something was picked up by the init
             # subroutine regex in error
             return
         elif self.dict[self.name][var] == None:
@@ -512,16 +468,17 @@ class DefaultValues(ProjectDictionary):
                 for mod_var in module.variables:
                     if var == mod_var.name:
                         if mod_var.dimension:
-                            # The var has a dimension, so needs to be 
+                            # The var has a dimension, so needs to be
                             # initialised as a list
                             if type(value) is list:
-                                assert mod_var.dimension == len(value), ("Array"
+                                assert mod_var.dimension == len(value), (
+                                    "Array"
                                     f" {var} has length {mod_var.dimension} "
                                     f"according to Ford, but {len(value)} "
                                     "in the init subroutine. Perhaps the "
                                     "ford_project.pickle needs to be updated?"
                                 )
-                                # The value list length and Ford variable dimension 
+                                # The value list length and Ford variable dimension
                                 # match; just use the list in value
                                 # Update Ford project var and self.dict value
                                 mod_var.initial = value
@@ -532,15 +489,18 @@ class DefaultValues(ProjectDictionary):
                                 # Set the Ford project var and the dictionary values
                                 mod_var.initial = [value] * mod_var.dimension
                                 self.dict[self.name][var] = mod_var.initial
-                            
+
             # If it's not an array, set it to the value in the init subroutine
             if self.dict[self.name][var] == None:
                 self.dict[self.name][var] = value
 
+
 class Modules(ProjectDictionary):
     # Dictionary mapping modules to arrays of its module-level variables
     def __init__(self, project, python_variables):
-        ProjectDictionary.__init__(self, 'DICT_MODULE', project, python_variables, 'name')
+        ProjectDictionary.__init__(
+            self, "DICT_MODULE", project, python_variables, "name"
+        )
 
     def make_dict(self):
         for module in self.project.modules:
@@ -549,84 +509,88 @@ class Modules(ProjectDictionary):
             for var in module.variables:
                 # Add module-level variables
                 self.dict[self.name][module.name].append(var.name)
-        
+
         for annotated_variable in self.python_variables:
             if annotated_variable.parent not in self.dict[self.name]:
                 self.dict[self.name][annotated_variable.parent] = []
-            self.dict[self.name][annotated_variable.parent].append(annotated_variable.name)
-            
+            self.dict[self.name][annotated_variable.parent].append(
+                annotated_variable.name
+            )
+
 
 def to_type(string):
     """Given a string, attempts to convert the string to a numerical
-       value. If the string can't be simply converted, the function
-       looks to see if it begins with a integer and returns that (since
-       some lines have clarification text after the number). If this
-       also fails, return string.strip()
-       Args:
-            string --> String to be converted
-       Returns:
-            value --> Either a float, int or string depending on input
+    value. If the string can't be simply converted, the function
+    looks to see if it begins with a integer and returns that (since
+    some lines have clarification text after the number). If this
+    also fails, return string.strip()
+    Args:
+         string --> String to be converted
+    Returns:
+         value --> Either a float, int or string depending on input
     """
 
     try:
         if "." in string:
-            #try a float conversion
+            # try a float conversion
             string_mod = string.strip().lower().replace("d", "e")
             return float(string_mod)
         else:
-            #try an int conversion
+            # try an int conversion
             return int(string.strip())
     except ValueError:
         match = re.match(r"\s*(\d+)", string)
         if match:
-            #if the string starts with an integer return that
+            # if the string starts with an integer return that
             return int(match.group(1))
 
-        #otherwise return the string unchanged but with whitespace removed
+        # otherwise return the string unchanged but with whitespace removed
         return string.strip()
+
 
 def grep(file, regexp, flags=re.U):
     """Implements an in-python grep. Returns the lines that match
-       as a list.
-       Args:
-            file --> Name of file to be read
-            regexp --> Regular expression to search for
-            flags --> re flags to use in search. Default is re.U which has
-                        no effect
-       Returns:
-            lines --> List of matching lines
+    as a list.
+    Args:
+         file --> Name of file to be read
+         regexp --> Regular expression to search for
+         flags --> re flags to use in search. Default is re.U which has
+                     no effect
+    Returns:
+         lines --> List of matching lines
     """
 
     lines = []
 
     try:
-     with open(file, "r", encoding="utf-8") as file_open:
-        for line in file_open.readlines():
-          if re.search(regexp, line, flags):
-            lines.append(line)
-        file_open.close()
+        with open(file, "r", encoding="utf-8") as file_open:
+            for line in file_open.readlines():
+                if re.search(regexp, line, flags):
+                    lines.append(line)
+            file_open.close()
     except OSError:
-      logging.warning("File : %s not found\n", file)
+        logging.warning("File : %s not found\n", file)
     return lines
+
 
 def slice_file(file, re1, re2):
     """Returns a slice of a file that is bounded by lines containing a
-       substring matching the given regular expressions. The first match
-       to re1 in the file marks the start of the slice, the first match
-       to re2 after that marks the end of the slice. The list of lines
-       returned includes the two bounding lines.
-       Args:
-            file --> Name of file to read through
-            re1 --> Starting regular expression
-            re2 --> Ending regular expression
-       Returns:
-            lines --> List of lines from file between re1 and re2 inclusive
+    substring matching the given regular expressions. The first match
+    to re1 in the file marks the start of the slice, the first match
+    to re2 after that marks the end of the slice. The list of lines
+    returned includes the two bounding lines.
+    Args:
+         file --> Name of file to read through
+         re1 --> Starting regular expression
+         re2 --> Ending regular expression
+    Returns:
+         lines --> List of lines from file between re1 and re2 inclusive
     """
 
-    filetext = open(file,"r",encoding="utf-8").readlines()
+    filetext = open(file, "r", encoding="utf-8").readlines()
     start = None
     for i in range(len(filetext)):
-        #look for first match
+        # look for first match
         if re.search(re1, filetext[i]):
             start = i
             break
@@ -635,26 +599,26 @@ def slice_file(file, re1, re2):
         return ""
     end = None
     for i in range(start, len(filetext)):
-        #look for second match
+        # look for second match
         if re.search(re2, filetext[i]):
             end = i
             break
     if end == None:
-        logging.warning("Could not match %s in file %s\n", \
-                        re2, file)
+        logging.warning("Could not match %s in file %s\n", re2, file)
         return ""
-    #return slice
-    return filetext[start:end+1]
+    # return slice
+    return filetext[start : end + 1]
+
 
 def remove_comments(line):
     """Function to remove comments from a fortran line. Works by simply
-       removing everything after the first '!' in the line. This will
-       cause problems in the case of '!' characters contained within strings
-       so am assuming this won't happen. Need to change this.
-       Args:
-            line --> Line to strip comments from
-       Returns
-            modified_line --> Line with comments removed
+    removing everything after the first '!' in the line. This will
+    cause problems in the case of '!' characters contained within strings
+    so am assuming this won't happen. Need to change this.
+    Args:
+         line --> Line to strip comments from
+    Returns
+         modified_line --> Line with comments removed
     """
     if "!" in line:
         line = line[: line.find("!")]
@@ -665,9 +629,10 @@ def remove_comments(line):
         line = line[:-1]
     return line
 
+
 def dict_ixc2nsweep():
-    """Returns a dict mapping ixc_no to nsweep_no, if both exist for a 
-    particular variable. Looks in scan.f90 for mapping from nsweep_no to 
+    """Returns a dict mapping ixc_no to nsweep_no, if both exist for a
+    particular variable. Looks in scan.f90 for mapping from nsweep_no to
     iteration variable name, and uses ixc_full to map variable name to ixc_no.
 
     Example of a fragment we are looking for:
@@ -681,30 +646,30 @@ def dict_ixc2nsweep():
 
     ixc2nsweep = {}
     file = SOURCEDIR + "/scan.f90"
-    #slice the file to get the switch statement relating to nsweep
+    # slice the file to get the switch statement relating to nsweep
     lines = slice_file(file, r"select case \(nwp\)", r"case default")
 
-    #remove extra lines that aren't case(#) or varname = sweep(iscan) lines
+    # remove extra lines that aren't case(#) or varname = sweep(iscan) lines
     modlines = []
     for line in lines[1:-1]:
         if "case" in line or "swp(iscn)" in line:
-            line = remove_comments(line).replace(' ', '')
+            line = remove_comments(line).replace(" ", "")
             modlines.append(line)
 
-    #create a dictionary that maps iteration variable names to ixc_no
+    # create a dictionary that maps iteration variable names to ixc_no
     ixc_full = dict_ixc_full()
     ixc_simple_rev = {}
     for num, value in ixc_full.items():
         ixc_simple_rev[value["name"]] = num
 
     for i in range(len(modlines)):
-        #get the number from the case statement
+        # get the number from the case statement
         match = re.match(r"case\((\d+)\)", modlines[i])
         if match:
             num = match.group(1)
-            #if the case statement matched, get the variable name
-            #from the next line
-            match_2 = re.match(r"(.*?)=swp\(iscn\)", modlines[i+1])
+            # if the case statement matched, get the variable name
+            # from the next line
+            match_2 = re.match(r"(.*?)=swp\(iscn\)", modlines[i + 1])
             if not match_2:
                 logging.warning("Error in dict_ixc2nsweep\n")
             else:
@@ -715,48 +680,51 @@ def dict_ixc2nsweep():
 
     return ixc2nsweep
 
+
 def dict_nsweep2ixc():
-    """Returns a dict mapping nsweep_no to ixc_no; the inverse of 
+    """Returns a dict mapping nsweep_no to ixc_no; the inverse of
     dict_ixc2nsweep"""
 
     # Use dict_ixc2nsweep from output_dict to produce dict_nsweep2ixc
-    ixc2nsweep = output_dict['DICT_IXC2NSWEEP']
-    nsweep2ixc = {b:a for a, b in ixc2nsweep.items()}
+    ixc2nsweep = output_dict["DICT_IXC2NSWEEP"]
+    nsweep2ixc = {b: a for a, b in ixc2nsweep.items()}
     return nsweep2ixc
+
 
 def dict_var_type():
     """Function to return a dictionary mapping variable name to variable type
-       eg. 'real_variable' or 'int_array'. Looks in input.f90 at the process
-       functions that read in variables from IN.DAT.
+    eg. 'real_variable' or 'int_array'. Looks in input.f90 at the process
+    functions that read in variables from IN.DAT.
 
-       Example of line we are looking for:
-           call parse_real_variable('BETA', beta, 0.0D0, 1.0D0, &
+    Example of line we are looking for:
+        call parse_real_variable('BETA', beta, 0.0D0, 1.0D0, &
 
-       Example dictionary entry:
-           DICT_VAR_TYPE['beta'] = 'real_variable'
+    Example dictionary entry:
+        DICT_VAR_TYPE['beta'] = 'real_variable'
     """
     di = {}
     regexp = r"call parse_(real|int)_(array|variable)\("
     lines = grep(SOURCEDIR + "/input.f90", regexp)
     for line in lines:
-        args = line.split('(')[1]
-        name = args.split(',')[1].strip()
+        args = line.split("(")[1]
+        name = args.split(",")[1].strip()
         var_type = re.search(regexp, line).group(1)
         scalar = re.search(regexp, line).group(2)
         di[name] = var_type + "_" + scalar
     return di
 
+
 def dict_icc_full():
     """Function to return a dictionary matching str(icc_no) to a dictionary
-       containing the name of that constraint equation. Looks in
-       numerics.f90 at !+ad_varc lines in lablcc to get icc_no and
-       variable names.
+    containing the name of that constraint equation. Looks in
+    numerics.f90 at !+ad_varc lines in lablcc to get icc_no and
+    variable names.
 
-       Example of a lablxc line we are looking for:
-           !+ad_varc  <LI> ( 5) * beta
+    Example of a lablxc line we are looking for:
+        !+ad_varc  <LI> ( 5) * beta
 
-       Example dictionary entry:
-           DICT_IXC_FULL['5'] = {'name' : 'beta'}
+    Example dictionary entry:
+        DICT_IXC_FULL['5'] = {'name' : 'beta'}
     """
 
     di = dict()
@@ -778,7 +746,7 @@ def dict_icc_full():
                                #in group 2
               """
     lcc = []
-    #ignore first and last lines
+    # ignore first and last lines
     for line in lcctext[1:-1]:
         match = re.search(regexp, line, re.VERBOSE)
         if match:
@@ -788,22 +756,23 @@ def dict_icc_full():
             assert num == len(lcc)
 
     for i in range(len(lcc)):
-        assign = {"name" : lcc[i]}
-        di[str(i+1)] = assign
+        assign = {"name": lcc[i]}
+        di[str(i + 1)] = assign
 
     return di
 
+
 def dict_input_bounds():
     """Returns a dictionary matching variable names to dictionary containing
-       upper and lower bounds that PROCESS checks variable lies between when
-       reading IN.DAT. Looks in input.f90 for parse_real_variable and
-       parse_int_variable.
+    upper and lower bounds that PROCESS checks variable lies between when
+    reading IN.DAT. Looks in input.f90 for parse_real_variable and
+    parse_int_variable.
 
-       Example of a line we are looking for:
-            call parse_real_variable('BETA', beta, 0.0D0, 1.0D0, &
+    Example of a line we are looking for:
+         call parse_real_variable('BETA', beta, 0.0D0, 1.0D0, &
 
-       Example dictionary entry:
-            DICT_INPUT_BOUNDS['beta'] = {'lb' : 0.0, 'ub' : 1.0}
+    Example dictionary entry:
+         DICT_INPUT_BOUNDS['beta'] = {'lb' : 0.0, 'ub' : 1.0}
     """
     di = {}
     failedlines = []
@@ -813,15 +782,15 @@ def dict_input_bounds():
     for line in lines:
         match = re.search(regexp, line)
         try:
-            name = match.group(2).split(',')[1].strip()
-            lb = to_type(match.group(2).split(',')[2])
-            ub = to_type(match.group(2).split(',')[3])
+            name = match.group(2).split(",")[1].strip()
+            lb = to_type(match.group(2).split(",")[2])
+            ub = to_type(match.group(2).split(",")[3])
             if match.group(1) == "real":
                 assert isinstance(lb, float)
             else:
                 assert isinstance(lb, int)
             assert ub >= lb
-            di[name] = {"lb" : lb, "ub" : ub}
+            di[name] = {"lb": lb, "ub": ub}
         except (IndexError, AttributeError, AssertionError, TypeError):
             failedlines.append(line)
 
@@ -833,6 +802,7 @@ def dict_input_bounds():
 
     return di
 
+
 def dict_nsweep2varname():
     # This function creates the nsweep2varname dictionary from the fortran code
     # It maps the sweep variable number to its variable name
@@ -840,44 +810,45 @@ def dict_nsweep2varname():
     di = {}
     file = SOURCEDIR + "/scan.f90"
 
-    #slice the file to get the switch statement relating to nsweep
+    # slice the file to get the switch statement relating to nsweep
     lines = slice_file(file, r"select case \(nwp\)", r"case default")
 
-    #remove extra lines that aren't case(#) or varname = sweep(iscan) lines
+    # remove extra lines that aren't case(#) or varname = sweep(iscan) lines
     modlines = []
     for line in lines[1:-1]:
         if "case" in line or "swp(iscn)" in line:
-            line = remove_comments(line).replace(' ', '')
+            line = remove_comments(line).replace(" ", "")
             modlines.append(line)
 
-    for i in range(len(modlines)//2):
-        line1 = modlines[i*2]
-        no = line1.replace('case(', '')
-        no = no.replace(')', '')
-        line2 = modlines[i*2+1]
-        varname = line2.replace('=swp(iscn)', '')
+    for i in range(len(modlines) // 2):
+        line1 = modlines[i * 2]
+        no = line1.replace("case(", "")
+        no = no.replace(")", "")
+        line2 = modlines[i * 2 + 1]
+        varname = line2.replace("=swp(iscn)", "")
         di[no] = varname
 
     return di
 
+
 def dict_ixc_full():
     """Function to return a dictionary matching str(ixc_no) to a dictionary
-       containing the name, lower and upper bounds of that variable. Looks in
-       numerics.f90 at !+ad_varc lines in lablxc to get ixc_no and
-       variable names, and looks at boundu and boundl for upper and
-       lower bounds.
+    containing the name, lower and upper bounds of that variable. Looks in
+    numerics.f90 at !+ad_varc lines in lablxc to get ixc_no and
+    variable names, and looks at boundu and boundl for upper and
+    lower bounds.
 
-       Example of a lablxc line we are looking for:
-           lablxc(1) = 'aspect        '
+    Example of a lablxc line we are looking for:
+        lablxc(1) = 'aspect        '
 
-       Example of a boundl line we are looking for:
-           boundl(1) = 0.0D0
+    Example of a boundl line we are looking for:
+        boundl(1) = 0.0D0
 
-       Example of a boundu line we are looking for:
-           boundu(1) = 1.0D0
+    Example of a boundu line we are looking for:
+        boundu(1) = 1.0D0
 
-       Example dictionary entry:
-           DICT_IXC_FULL['5'] = {'name' : 'beta', 'lb' : 0.001, 'ub' : 1.0}
+    Example dictionary entry:
+        DICT_IXC_FULL['5'] = {'name' : 'beta', 'lb' : 0.001, 'ub' : 1.0}
     """
 
     with open(SOURCEDIR + "/iteration_variables.f90") as myFile:
@@ -897,38 +868,40 @@ def dict_ixc_full():
                 labl_num = line.split("(")[1].split(")")[0]
                 labl = line.split("=")[-1].strip("\n").replace(" ", "").replace("'", "")
                 ixc_full[labl_num]["name"] = labl
-        
+
         if "boundl(" in line and "=" in line:
             if "boundl(i)" not in line and "boundl(ixc(i))" not in line:
                 boundl_num = line.split("(")[1].split(")")[0]
                 boundl_val = line.split("=")[-1].strip("\n").lower().replace("d", "e")
-                ixc_full[boundl_num]["lb"]= float(boundl_val)
-    
+                ixc_full[boundl_num]["lb"] = float(boundl_val)
+
         if "boundu(" in line and "=" in line:
             if "boundu(i)" not in line and "boundu(ixc(i))" not in line:
                 boundu_num = line.split("(")[1].split(")")[0]
                 boundu_val = line.split("=")[-1].strip("\n").lower().replace("d", "e")
-                ixc_full[boundu_num]["ub"]= float(boundu_val)
+                ixc_full[boundu_num]["ub"] = float(boundu_val)
 
     return ixc_full
 
+
 def dict_ixc_bounds():
     # Returns dictionary mapping iteration variable name to bounds
-    ixc_full = output_dict['DICT_IXC_FULL']
+    ixc_full = output_dict["DICT_IXC_FULL"]
     ixc_bounds = {}
     for key, value in ixc_full.items():
         lb = value["lb"]
         ub = value["ub"]
-        temp = {"lb" : lb, "ub" : ub}
+        temp = {"lb": lb, "ub": ub}
         ixc_bounds[value["name"]] = temp
 
     return ixc_bounds
 
+
 def dict_ixc_default():
     # Returns dictionary mapping iteration variable name to default value
     ixc_default = {}
-    default = output_dict['DICT_DEFAULT']
-    ixc_full = output_dict['DICT_IXC_FULL']
+    default = output_dict["DICT_DEFAULT"]
+    ixc_full = output_dict["DICT_IXC_FULL"]
 
     for key, value in ixc_full.items():
         name = value["name"]
@@ -936,61 +909,71 @@ def dict_ixc_default():
         if name in default:
             ixc_default[name] = default[name]
         else:
-            logging.warning("print_dict_ixc could not find %s"\
-                            " in DICT_DEFAULT\n", name)
+            logging.warning(
+                "print_dict_ixc could not find %s" " in DICT_DEFAULT\n", name
+            )
 
     return ixc_default
-    
+
+
 def dict_ixc_simple():
     # Returns dictionary mapping ixc no to iteration variable name
     ixc_simple = {}
-    ixc_full = output_dict['DICT_IXC_FULL']
+    ixc_full = output_dict["DICT_IXC_FULL"]
     for key, value in ixc_full.items():
         ixc_simple[key] = value["name"]
 
     return ixc_simple
 
+
 def dict_ixc_simple_rev():
     # Returns dictionary mapping iteration variable name to ixc no
-    ixc_simple = output_dict['DICT_IXC_SIMPLE']
-    ixc_simple_rev = {b:a for a, b in ixc_simple.items()}
-    
+    ixc_simple = output_dict["DICT_IXC_SIMPLE"]
+    ixc_simple_rev = {b: a for a, b in ixc_simple.items()}
+
     return ixc_simple_rev
 
+
 def create_dicts(project):
-    # There are 3 sources of dicts: from the Ford project object, from the 
+    # There are 3 sources of dicts: from the Ford project object, from the
     # Fortran source and hardcoded ones from this file
 
     dict_objects = []
     # Different dict objects, e.g. variable descriptions
 
     python_variables = get_python_variables()
-    
+
     # Make dict objects
     # Some dicts depend on other dicts already existing in output_dicts, so
     # be careful if changing the order!
-    dict_objects.extend([
-        VariableDescriptions(project, python_variables),
-        DefaultValues(project, python_variables),
-        Modules(project, python_variables),
-        HardcodedDictionary('DICT_TF_TYPE', DICT_TF_TYPE),
-        HardcodedDictionary('DICT_FIMP', DICT_FIMP),
-        HardcodedDictionary('DICT_OPTIMISATION_VARS', DICT_OPTIMISATION_VARS),
-        HardcodedDictionary('IFAIL_SUCCESS', IFAIL_SUCCESS),
-        HardcodedDictionary('PARAMETER_DEFAULTS', PARAMETER_DEFAULTS),
-        HardcodedDictionary('NON_F_VALUES', NON_F_VALUES),
-        SourceDictionary('DICT_INPUT_BOUNDS', dict_input_bounds),
-        SourceDictionary('DICT_NSWEEP2VARNAME', dict_nsweep2varname),
-        SourceDictionary('DICT_VAR_TYPE', dict_var_type),
-        SourceDictionary('DICT_ICC_FULL', dict_icc_full),
-        SourceDictionary('DICT_IXC2NSWEEP', dict_ixc2nsweep),
-        SourceDictionary('DICT_NSWEEP2IXC', dict_nsweep2ixc),
-        SourceDictionary('DICT_IXC_FULL', dict_ixc_full),
-        SourceDictionary('DICT_IXC_BOUNDS', dict_ixc_bounds),
-        SourceDictionary('DICT_IXC_DEFAULT', dict_ixc_default),
-        SourceDictionary('DICT_IXC_SIMPLE', dict_ixc_simple),
-        SourceDictionary('DICT_IXC_SIMPLE_REV', dict_ixc_simple_rev)
-    ])
+    dict_objects.extend(
+        [
+            VariableDescriptions(project, python_variables),
+            DefaultValues(project, python_variables),
+            Modules(project, python_variables),
+            HardcodedDictionary("DICT_TF_TYPE", create_dicts_config.DICT_TF_TYPE),
+            HardcodedDictionary("DICT_FIMP", create_dicts_config.DICT_FIMP),
+            HardcodedDictionary(
+                "DICT_OPTIMISATION_VARS", create_dicts_config.DICT_OPTIMISATION_VARS
+            ),
+            HardcodedDictionary("IFAIL_SUCCESS", create_dicts_config.IFAIL_SUCCESS),
+            HardcodedDictionary(
+                "PARAMETER_DEFAULTS", create_dicts_config.PARAMETER_DEFAULTS
+            ),
+            HardcodedDictionary("NON_F_VALUES", create_dicts_config.NON_F_VALUES),
+            SourceDictionary("DICT_INPUT_BOUNDS", dict_input_bounds),
+            SourceDictionary("DICT_NSWEEP2VARNAME", dict_nsweep2varname),
+            SourceDictionary("DICT_VAR_TYPE", dict_var_type),
+            SourceDictionary("DICT_ICC_FULL", dict_icc_full),
+            SourceDictionary("DICT_IXC2NSWEEP", dict_ixc2nsweep),
+            SourceDictionary("DICT_NSWEEP2IXC", dict_nsweep2ixc),
+            SourceDictionary("DICT_IXC_FULL", dict_ixc_full),
+            SourceDictionary("DICT_IXC_BOUNDS", dict_ixc_bounds),
+            SourceDictionary("DICT_IXC_DEFAULT", dict_ixc_default),
+            SourceDictionary("DICT_IXC_SIMPLE", dict_ixc_simple),
+            SourceDictionary("DICT_IXC_SIMPLE_REV", dict_ixc_simple_rev),
+        ]
+    )
 
     # Make individual dicts within dict objects, process, then add to output_dict
     for dict_object in dict_objects:
@@ -999,21 +982,23 @@ def create_dicts(project):
         dict_object.publish()
 
     # Save output_dict as JSON, to be used by utilities scripts
-    with open(DICTS_FILENAME, 'w') as dicts_file:
+    with open(DICTS_FILENAME, "w") as dicts_file:
         json.dump(output_dict, dicts_file, indent=4, sort_keys=True)
+
 
 if __name__ == "__main__":
     # TODO This has been written to cause minimal disruption to the original
     # create_dicts.py. This module would benefit from more class structuring
 
     # Called from make; parse arguments from make
-    parser = argparse.ArgumentParser(description="Create Fortran-Python "
-        "dictionaries")
+    parser = argparse.ArgumentParser(
+        description="Create Fortran-Python " "dictionaries"
+    )
     parser.add_argument("fortran_source", help="Fortran source dir")
     parser.add_argument("ford_project", help="The pickled Ford project filename")
     parser.add_argument("dicts_filename", help="The output dicts filename")
     args = parser.parse_args()
-    
+
     # Load the pickled Ford project
     with open(args.ford_project, "rb") as f:
         project = pickle.load(f)
