@@ -185,12 +185,12 @@ def test_costs_step(monkeypatch, costs_step):
     assert costs_step.rminor_star == 7.0/3.6
 
     #Total plant direct cost with remote handling
-    exp = 6476.2205930
+    exp = 3700.3758089
     obs = cv.cdirt
     assert pytest.approx(obs) == exp
 
     #Constructed cost
-    exp_concost = 11495.291552
+    exp_concost = 6568.16706084
     obs_concost = cv.concost
     assert pytest.approx(obs_concost) == exp_concost
 
@@ -266,7 +266,7 @@ def test_step_a22(monkeypatch, costs_step):
     
     # Run and assert result in M$
     costs_step.step_a22()
-    exp = 676.5516457
+    exp = 670.4911458
     obs = costs_step.step22
     assert pytest.approx(obs) == exp
 
@@ -299,7 +299,7 @@ def test_step_a2201(monkeypatch, costs_step):
     monkeypatch.setattr(costs_step, "rmajor_star", 7.0)
     monkeypatch.setattr(costs_step, "rminor_star", 1.9)
     
-    exp1 = 1387.8337432
+    exp1 = 1344.9437432
     #TODO update spares expected value
     # exp2 = 1.0199574292e1
     step2201, spares = costs_step.step_a2201()
@@ -489,7 +489,7 @@ def test_step_a220104(monkeypatch, costs_step):
     cv.step_ref[68] = 19.21
     cv.step_ref[69] = 12.85
 
-    exp = 1.02317454e3
+    exp = 2.04634910e3
     obs = costs_step.step_a220104()
     assert pytest.approx(obs) == exp
 

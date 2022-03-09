@@ -258,7 +258,8 @@ contains
       step_cconfix, step_cconshpf, step_currency, step_uccase, step_uccu, &
       step_ucsc, step_ucfnc, step_ucfwa, step_ucfws, step_ucfwps, step91_per, &
       step92_per, step93_per, step_uc_cryo_al, step_mc_cryo_al_per, sitecost, &
-      wfbuilding, whole_site_area, site_imp_uc, step_ucoam, step_ucwst
+      wfbuilding, whole_site_area, site_imp_uc, step_ucoam, step_ucwst, &
+      startupratio
     use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
@@ -2799,6 +2800,9 @@ contains
        case ('whole_site_area')
           call parse_real_variable('whole_site_area', whole_site_area, 0.0D0, 1.0D9, &
                'Area of whole plant site (m2)')
+       case ('startupratio')
+          call parse_real_variable('startupratio', startupratio, 0.0D0, 10.0D0, &
+               'Ratio (additional HCD power for start-up) / (flat-top operational requirements)')
 
           !  Unit cost settings
 
