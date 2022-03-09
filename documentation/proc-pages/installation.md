@@ -174,12 +174,7 @@ process
 
 ... should output something similar to:
 ```bash
-<module 'process' from '/home/jmaddock/process/process/__init__.py'>
-```
-
-This may look like:
-```bash
-<module 'process' from (namespace)>
+<module 'process' from 'path/to/process/root/__init__.py'>
 ```
 
 This indicates that the PROCESS Python package has been installed.
