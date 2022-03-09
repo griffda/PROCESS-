@@ -66,7 +66,7 @@ contains
     use physics_variables, only: itart, i_single_null, idivrt, kappa, triang, &
       rminor, rmajor
     use process_output, only: ocmmnt, oheadr, ovarre, ovarin, obuild, oblnkl
-    use tfcoil_variables, only: ripple, tinstf, wwp1, drtop, i_tf_sup, n_tf, &
+    use tfcoil_variables, only: ripple, wwp1, drtop, i_tf_sup, n_tf, &
       dr_tf_wp, ripmax, thkcas, casthi
     implicit none
 
@@ -934,65 +934,8 @@ contains
    
     
     end if
-
+   !!! end break
   end subroutine divgeom
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  ! subroutine rippl(ripmax,rmajor,rminor,r_tf_outboard_mid,n_tf,ripple,r_tf_outboard_midl)
-
-  !   !! TF ripple calculation
-  !   !! P J Knight, CCFE, Culham Science Centre
-  !   !! ripmax : input real : max ripple at plasma edge (peak to average) (%)
-  !   !! rmajor : input real : plasma major radius (m)
-  !   !! rminor : input real : plasma minor radius (m)
-  !   !! rtot   : input real : default radius to the outboard TF coil leg (m)
-  !   !! tfno   : input real(!) : number of TF coils
-  !   !! ripple : output real : ripple at plasma edge (%)
-  !   !! rtotl  : output real : required minimum radius to the centre
-  !   !!                        of the outboard TF coil leg (m)
-  !   !! Subroutine to calculate TFC ripple and outboard TFC leg radius.
-  !   !! Input the max. ripple and default outboard leg location and the
-  !   !! routine checks to see if the ripple is OK. If not it moves
-  !   !! the outboard leg appropriately.
-  !   !
-  !   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !   implicit none
-
-  !   !  Arguments
-
-  !   real(dp), intent(in) :: ripmax,rmajor,rminor,r_tf_outboard_mid,n_tf
-  !   real(dp), intent(out) :: ripple,r_tf_outboard_midl
-
-  !   !  Local variables
-
-  !   real(dp) :: prip,rotrp,pripc,coeff
-
-  !   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !   coeff = 1.03333D0 &
-  !        + 0.210480D0 * n_tf &
-  !        - 4.45253D-2 * n_tf**2 &
-  !        + 3.50210D-3 * n_tf**3 &
-  !        - 1.28945D-4 * n_tf**4 &
-  !        + 1.84776D-6 * n_tf**5
-
-  !   prip = 0.01D0 * ripmax/coeff
-  !   rotrp = 1.023D0*(rmajor+rminor)/prip**(1.0D0/n_tf)
-
-  !   if (rotrp > r_tf_outboard_mid) then
-  !      r_tf_outboard_midl = rotrp
-  !      pripc = prip * 100.0D0
-  !      ripple = pripc * coeff
-  !   else
-  !      r_tf_outboard_midl = r_tf_outboard_mid
-  !      prip = (1.023D0*(rmajor+rminor)/r_tf_outboard_mid)**(n_tf)
-  !      pripc = prip*100.0D0
-  !      ripple = pripc * coeff
-  !   end if
-
-  ! end subroutine rippl
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1021,7 +964,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use physics_variables, only: rminor, rmajor
-      use tfcoil_variables, only: tinstf, wwp1, n_tf, tftort, casths, dr_tf_wp, &
+      use tfcoil_variables, only: tinstf, n_tf, tftort, casths, dr_tf_wp, &
          thkcas, casths_fraction, i_tf_sup, i_tf_wp_geom, tfinsgap, &
          tfc_sidewall_is_fraction
       use constants, only: pi
@@ -1139,7 +1082,7 @@ contains
     if ((n_tf < 16).or.(n_tf > 20)) flag = 2
     if ( ((rmajor+rminor)/r_tf_outboard_mid < 0.7D0).or. &
          ((rmajor+rminor)/r_tf_outboard_mid > 0.8D0) ) flag = 3
-
+      !!! end break
   end subroutine ripple_amplitude
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1230,7 +1173,7 @@ contains
        rtanmax = 0.0D0
 
     end if
-
+   !!! end break
   end subroutine portsz
 
 end module build_module
