@@ -376,7 +376,7 @@ pages:
     - if: $CI_TEST_BUILD
   dependencies:
     - make-py38
-    - tracking_rtv
+    - tracking_rtv # needed to ensure tracking.html is present in this job
 
 
 
