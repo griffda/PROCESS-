@@ -474,7 +474,8 @@ class Models:
         This also initialises module variables in the Fortran for that module.
         """
         self.costs_step = CostsStep()
-        self.tfcoil = TFcoil()
+        self.build = Build()
+        self.tfcoil = TFcoil(build=self.build)
         self.divertor = Divertor()
         self.structure = Structure()
         self.availability = Availability()
@@ -485,7 +486,6 @@ class Models:
         self.stellarator = Stellarator(
             availability=self.availability, buildings=self.buildings, vacuum=self.vacuum
         )
-        self.build = Build()
 
 
 def main(args=None):
