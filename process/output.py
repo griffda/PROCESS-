@@ -126,7 +126,7 @@ def write(models, outfile):
     ft.pfcoil_module.outvolt(outfile)
 
     # Structure Model
-    ft.structure_module.strucall(outfile, 1)
+    models.structure.run(output=True)
 
     # Poloidal field coil inductance calculation
     ft.pfcoil_module.induct(outfile, 1)
@@ -187,4 +187,4 @@ def write(models, outfile):
     ft.power_module.power3(ft.constants.nout, 1)
 
     # Water usage in secondary cooling system
-    ft.water_use_module.waterusecall(outfile, 1)
+    models.water_use.run(output=True)
