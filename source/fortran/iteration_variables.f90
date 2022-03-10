@@ -3756,7 +3756,7 @@ contains
 
   subroutine init_itv_165
     !! <LI> (165) f_copperaoh_m2 : CS coil current / copper area < Maximum value
-    !!            (f-value for equation 75)
+    !! (f-value for equation 75)
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(165) = 'f_copperaoh_m2'
