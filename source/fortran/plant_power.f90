@@ -872,7 +872,7 @@ contains
     implicit none
 
     ! Local variables
-    real(8) :: p_tf_cryoal_cryo
+    real(dp) :: p_tf_cryoal_cryo
     !! Cryogenic plant electrical power requirement due to cryo-aluminium (MW)
 
     !! Cryo-aluminium cryoplant power consumption
@@ -1115,6 +1115,7 @@ contains
 
     if (iprint == 0) return
 
+    !TODO: Can output unphysical values if there are no cryogenics - could be omitted from OUT.DAT in this case but leave in for MFILE?
     !  Output section
     call oheadr(outfile,'Cryogenics')
     call ovarre(outfile,'Conduction and radiation heat loads on cryogenic components (MW)', '(qss/1.0D6)', qss/1.0D6, 'OP ')
@@ -1125,8 +1126,8 @@ contains
     call ovarre(outfile,'45% allowance for heat loads in transfer lines, storage tanks etc (MW)', &
         '(qmisc/1.0D6)', qmisc/1.0D6, 'OP ')
 
-    call ovarre(outfile,'Sum = Total heat removal at cryogenic temperatures (MW)', &
-        '(helpow/1.0D6)', (helpow + helpow_cryal) * 1.0D-6, 'OP ')
+    call ovarre(outfile,'Sum = Total heat removal at cryogenic temperatures (tmpcry & tcoolin) (MW)', &
+        '(helpow + helpow_cryal/1.0D6)', (helpow + helpow_cryal) * 1.0D-6, 'OP ')
     call ovarre(outfile,'Temperature of cryogenic superconducting components (K)', '(tmpcry)', tmpcry)
     call ovarre(outfile,'Temperature of cryogenic aluminium components (K)', '(tcoolin)', tcoolin)
     call ovarre(outfile,'Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot value:', &
