@@ -2,15 +2,15 @@
  # Power Reactor Optimisation Code #
  # PROCESS #
  # Power Reactor Optimisation Code #
- PROCESS_version_number__________________________________________________ (procver)_____________________     "2.2.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "14/01/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "13:43"
- User____________________________________________________________________ (username)____________________     "rhicha"  
+ PROCESS_version_number__________________________________________________ (procver)_____________________     "2.3.0   R"
+ Date_of_run_____________________________________________________________ (date)________________________     "15/02/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "11:42"
+ User____________________________________________________________________ (username)____________________     "jg6173"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1116-g4cf3024e"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1358-sc-tf-coil-external-case-mass-redux"                                                          
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |develop|\ into\ 1358-sc-tf-coil-extern"                                            
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-273/test_scenario_HARE_0/IN.DAT                                                                                                                                            "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1240-g7124046d"                                                                               
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1511-update-heating-and-current-drive-costs"                                                       
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |develop|\ into\ 1511-update-heating-an"                                            
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jg6173/pytest-24/test_scenario_HARE_0/IN.DAT                                                                                                                                             "
  Binomial_coefficients_C(5,0):_1_________________________________________ (binomial(5,0))_______________      1.0000E+00    
  Binomial_coefficients_C(5,1):_5_________________________________________ (binomial(5,1))_______________      5.0000E+00    
  Binomial_coefficients_C(5,2):_10________________________________________ (binomial(5,2))_______________      1.0000E+01    
@@ -438,8 +438,8 @@
  Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.2000E-01    
  Top_radiation_shield_thickness_(m)______________________________________ (shldtth)_____________________      3.0000E-01    
  Top_blanket_vertical_thickness_(m)______________________________________ (blnktth)_____________________      1.0150E+00    
- Top_first_wall_vertical_thickness_(m)___________________________________ fwtth_________________________      1.8000E-02    
- Top_scrape-off_vertical_thickness_(m)___________________________________ vgaptop_______________________      6.0000E-01    
+ Top_first_wall_vertical_thickness_(m)___________________________________ (fwtth)_______________________      1.8000E-02    
+ Top_scrape-off_vertical_thickness_(m)___________________________________ (vgaptop)_____________________      6.0000E-01    
  Plasma_half-height_(m)__________________________________________________ (rminor*kappa)________________      5.4379E+00    
  Bottom_scrape-off_vertical_thickness_(m)________________________________ (vgap)________________________      1.6000E+00    
  Divertor_structure_vertical_thickness_(m)_______________________________ (divfix)______________________      6.2100E-01    
@@ -783,7 +783,7 @@
  First_Wall_Mass,_excluding_armour_(kg)__________________________________ (fwmass)______________________      1.8985E+05 OP 
  Blanket_Mass_-_Total(kg)________________________________________________ (whtblkt)_____________________      4.5949E+06 OP 
  ____Blanket_Mass_-_TiBe12_(kg)__________________________________________ (whtbltibe12)_________________      1.5549E+06 OP 
- ____Blanket_Mass_-_Li2SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6512E+06 OP 
+ ____Blanket_Mass_-_Li4SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6512E+06 OP 
  ____Blanket_Mass_-_Steel_(kg)___________________________________________ (whtblss)_____________________      1.3888E+06 OP 
  Total_mass_of_armour,_first_wall_and_blanket_(kg)_______________________ (armour_fw_bl_mass)___________      4.9344E+06 OP 
  Shield_Mass_(kg)________________________________________________________ (whtshld)_____________________      2.5178E+06 OP 
@@ -1420,8 +1420,8 @@
  Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.2000E-01    
  Top_radiation_shield_thickness_(m)______________________________________ (shldtth)_____________________      3.0000E-01    
  Top_blanket_vertical_thickness_(m)______________________________________ (blnktth)_____________________      1.0150E+00    
- Top_first_wall_vertical_thickness_(m)___________________________________ fwtth_________________________      1.8000E-02    
- Top_scrape-off_vertical_thickness_(m)___________________________________ vgaptop_______________________      6.0000E-01    
+ Top_first_wall_vertical_thickness_(m)___________________________________ (fwtth)_______________________      1.8000E-02    
+ Top_scrape-off_vertical_thickness_(m)___________________________________ (vgaptop)_____________________      6.0000E-01    
  Plasma_half-height_(m)__________________________________________________ (rminor*kappa)________________      5.4437E+00    
  Bottom_scrape-off_vertical_thickness_(m)________________________________ (vgap)________________________      1.6000E+00    
  Divertor_structure_vertical_thickness_(m)_______________________________ (divfix)______________________      6.2100E-01    
@@ -1765,7 +1765,7 @@
  First_Wall_Mass,_excluding_armour_(kg)__________________________________ (fwmass)______________________      1.9022E+05 OP 
  Blanket_Mass_-_Total(kg)________________________________________________ (whtblkt)_____________________      4.6036E+06 OP 
  ____Blanket_Mass_-_TiBe12_(kg)__________________________________________ (whtbltibe12)_________________      1.5578E+06 OP 
- ____Blanket_Mass_-_Li2SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6543E+06 OP 
+ ____Blanket_Mass_-_Li4SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6543E+06 OP 
  ____Blanket_Mass_-_Steel_(kg)___________________________________________ (whtblss)_____________________      1.3915E+06 OP 
  Total_mass_of_armour,_first_wall_and_blanket_(kg)_______________________ (armour_fw_bl_mass)___________      4.9438E+06 OP 
  Shield_Mass_(kg)________________________________________________________ (whtshld)_____________________      2.5223E+06 OP 
@@ -2402,8 +2402,8 @@
  Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.2000E-01    
  Top_radiation_shield_thickness_(m)______________________________________ (shldtth)_____________________      3.0000E-01    
  Top_blanket_vertical_thickness_(m)______________________________________ (blnktth)_____________________      1.0150E+00    
- Top_first_wall_vertical_thickness_(m)___________________________________ fwtth_________________________      1.8000E-02    
- Top_scrape-off_vertical_thickness_(m)___________________________________ vgaptop_______________________      6.0000E-01    
+ Top_first_wall_vertical_thickness_(m)___________________________________ (fwtth)_______________________      1.8000E-02    
+ Top_scrape-off_vertical_thickness_(m)___________________________________ (vgaptop)_____________________      6.0000E-01    
  Plasma_half-height_(m)__________________________________________________ (rminor*kappa)________________      5.4487E+00    
  Bottom_scrape-off_vertical_thickness_(m)________________________________ (vgap)________________________      1.6000E+00    
  Divertor_structure_vertical_thickness_(m)_______________________________ (divfix)______________________      6.2100E-01    
@@ -2747,7 +2747,7 @@
  First_Wall_Mass,_excluding_armour_(kg)__________________________________ (fwmass)______________________      1.9055E+05 OP 
  Blanket_Mass_-_Total(kg)________________________________________________ (whtblkt)_____________________      4.6113E+06 OP 
  ____Blanket_Mass_-_TiBe12_(kg)__________________________________________ (whtbltibe12)_________________      1.5604E+06 OP 
- ____Blanket_Mass_-_Li2SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6571E+06 OP 
+ ____Blanket_Mass_-_Li4SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6571E+06 OP 
  ____Blanket_Mass_-_Steel_(kg)___________________________________________ (whtblss)_____________________      1.3938E+06 OP 
  Total_mass_of_armour,_first_wall_and_blanket_(kg)_______________________ (armour_fw_bl_mass)___________      4.9520E+06 OP 
  Shield_Mass_(kg)________________________________________________________ (whtshld)_____________________      2.5262E+06 OP 
@@ -3384,8 +3384,8 @@
  Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.2000E-01    
  Top_radiation_shield_thickness_(m)______________________________________ (shldtth)_____________________      3.0000E-01    
  Top_blanket_vertical_thickness_(m)______________________________________ (blnktth)_____________________      1.0150E+00    
- Top_first_wall_vertical_thickness_(m)___________________________________ fwtth_________________________      1.8000E-02    
- Top_scrape-off_vertical_thickness_(m)___________________________________ vgaptop_______________________      6.0000E-01    
+ Top_first_wall_vertical_thickness_(m)___________________________________ (fwtth)_______________________      1.8000E-02    
+ Top_scrape-off_vertical_thickness_(m)___________________________________ (vgaptop)_____________________      6.0000E-01    
  Plasma_half-height_(m)__________________________________________________ (rminor*kappa)________________      5.4578E+00    
  Bottom_scrape-off_vertical_thickness_(m)________________________________ (vgap)________________________      1.6000E+00    
  Divertor_structure_vertical_thickness_(m)_______________________________ (divfix)______________________      6.2100E-01    
@@ -3729,7 +3729,7 @@
  First_Wall_Mass,_excluding_armour_(kg)__________________________________ (fwmass)______________________      1.9114E+05 OP 
  Blanket_Mass_-_Total(kg)________________________________________________ (whtblkt)_____________________      4.6250E+06 OP 
  ____Blanket_Mass_-_TiBe12_(kg)__________________________________________ (whtbltibe12)_________________      1.5651E+06 OP 
- ____Blanket_Mass_-_Li2SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6620E+06 OP 
+ ____Blanket_Mass_-_Li4SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6620E+06 OP 
  ____Blanket_Mass_-_Steel_(kg)___________________________________________ (whtblss)_____________________      1.3979E+06 OP 
  Total_mass_of_armour,_first_wall_and_blanket_(kg)_______________________ (armour_fw_bl_mass)___________      4.9669E+06 OP 
  Shield_Mass_(kg)________________________________________________________ (whtshld)_____________________      2.5332E+06 OP 
@@ -4366,8 +4366,8 @@
  Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.2000E-01    
  Top_radiation_shield_thickness_(m)______________________________________ (shldtth)_____________________      3.0000E-01    
  Top_blanket_vertical_thickness_(m)______________________________________ (blnktth)_____________________      1.0150E+00    
- Top_first_wall_vertical_thickness_(m)___________________________________ fwtth_________________________      1.8000E-02    
- Top_scrape-off_vertical_thickness_(m)___________________________________ vgaptop_______________________      6.0000E-01    
+ Top_first_wall_vertical_thickness_(m)___________________________________ (fwtth)_______________________      1.8000E-02    
+ Top_scrape-off_vertical_thickness_(m)___________________________________ (vgaptop)_____________________      6.0000E-01    
  Plasma_half-height_(m)__________________________________________________ (rminor*kappa)________________      5.4668E+00    
  Bottom_scrape-off_vertical_thickness_(m)________________________________ (vgap)________________________      1.6000E+00    
  Divertor_structure_vertical_thickness_(m)_______________________________ (divfix)______________________      6.2100E-01    
@@ -4711,7 +4711,7 @@
  First_Wall_Mass,_excluding_armour_(kg)__________________________________ (fwmass)______________________      1.9173E+05 OP 
  Blanket_Mass_-_Total(kg)________________________________________________ (whtblkt)_____________________      4.6387E+06 OP 
  ____Blanket_Mass_-_TiBe12_(kg)__________________________________________ (whtbltibe12)_________________      1.5697E+06 OP 
- ____Blanket_Mass_-_Li2SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6669E+06 OP 
+ ____Blanket_Mass_-_Li4SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6669E+06 OP 
  ____Blanket_Mass_-_Steel_(kg)___________________________________________ (whtblss)_____________________      1.4021E+06 OP 
  Total_mass_of_armour,_first_wall_and_blanket_(kg)_______________________ (armour_fw_bl_mass)___________      4.9816E+06 OP 
  Shield_Mass_(kg)________________________________________________________ (whtshld)_____________________      2.5402E+06 OP 
@@ -5348,8 +5348,8 @@
  Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.2000E-01    
  Top_radiation_shield_thickness_(m)______________________________________ (shldtth)_____________________      3.0000E-01    
  Top_blanket_vertical_thickness_(m)______________________________________ (blnktth)_____________________      1.0150E+00    
- Top_first_wall_vertical_thickness_(m)___________________________________ fwtth_________________________      1.8000E-02    
- Top_scrape-off_vertical_thickness_(m)___________________________________ vgaptop_______________________      6.0000E-01    
+ Top_first_wall_vertical_thickness_(m)___________________________________ (fwtth)_______________________      1.8000E-02    
+ Top_scrape-off_vertical_thickness_(m)___________________________________ (vgaptop)_____________________      6.0000E-01    
  Plasma_half-height_(m)__________________________________________________ (rminor*kappa)________________      5.4761E+00    
  Bottom_scrape-off_vertical_thickness_(m)________________________________ (vgap)________________________      1.6000E+00    
  Divertor_structure_vertical_thickness_(m)_______________________________ (divfix)______________________      6.2100E-01    
@@ -5693,7 +5693,7 @@
  First_Wall_Mass,_excluding_armour_(kg)__________________________________ (fwmass)______________________      1.9233E+05 OP 
  Blanket_Mass_-_Total(kg)________________________________________________ (whtblkt)_____________________      4.6527E+06 OP 
  ____Blanket_Mass_-_TiBe12_(kg)__________________________________________ (whtbltibe12)_________________      1.5744E+06 OP 
- ____Blanket_Mass_-_Li2SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6720E+06 OP 
+ ____Blanket_Mass_-_Li4SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6720E+06 OP 
  ____Blanket_Mass_-_Steel_(kg)___________________________________________ (whtblss)_____________________      1.4063E+06 OP 
  Total_mass_of_armour,_first_wall_and_blanket_(kg)_______________________ (armour_fw_bl_mass)___________      4.9968E+06 OP 
  Shield_Mass_(kg)________________________________________________________ (whtshld)_____________________      2.5474E+06 OP 
@@ -6330,8 +6330,8 @@
  Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.2000E-01    
  Top_radiation_shield_thickness_(m)______________________________________ (shldtth)_____________________      3.0000E-01    
  Top_blanket_vertical_thickness_(m)______________________________________ (blnktth)_____________________      1.0150E+00    
- Top_first_wall_vertical_thickness_(m)___________________________________ fwtth_________________________      1.8000E-02    
- Top_scrape-off_vertical_thickness_(m)___________________________________ vgaptop_______________________      6.0000E-01    
+ Top_first_wall_vertical_thickness_(m)___________________________________ (fwtth)_______________________      1.8000E-02    
+ Top_scrape-off_vertical_thickness_(m)___________________________________ (vgaptop)_____________________      6.0000E-01    
  Plasma_half-height_(m)__________________________________________________ (rminor*kappa)________________      5.4857E+00    
  Bottom_scrape-off_vertical_thickness_(m)________________________________ (vgap)________________________      1.6000E+00    
  Divertor_structure_vertical_thickness_(m)_______________________________ (divfix)______________________      6.2100E-01    
@@ -6675,7 +6675,7 @@
  First_Wall_Mass,_excluding_armour_(kg)__________________________________ (fwmass)______________________      1.9296E+05 OP 
  Blanket_Mass_-_Total(kg)________________________________________________ (whtblkt)_____________________      4.6674E+06 OP 
  ____Blanket_Mass_-_TiBe12_(kg)__________________________________________ (whtbltibe12)_________________      1.5794E+06 OP 
- ____Blanket_Mass_-_Li2SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6772E+06 OP 
+ ____Blanket_Mass_-_Li4SiO4_(kg)_________________________________________ (whtblli4sio4)________________      1.6772E+06 OP 
  ____Blanket_Mass_-_Steel_(kg)___________________________________________ (whtblss)_____________________      1.4107E+06 OP 
  Total_mass_of_armour,_first_wall_and_blanket_(kg)_______________________ (armour_fw_bl_mass)___________      5.0126E+06 OP 
  Shield_Mass_(kg)________________________________________________________ (whtshld)_____________________      2.5549E+06 OP 

@@ -5257,7 +5257,6 @@
         "sec_buildings_h": 6.0,
         "sec_buildings_l": 30.0,
         "sec_buildings_w": 25.0,
-        "secday": 86400.0,
         "secondary_cycle": 0.0,
         "seppowerratio": 2.3,
         "sf": 0.0,
@@ -5357,6 +5356,8 @@
         "stack_thickness": 0.0,
         "staff_buildings_area": 480000.0,
         "staff_buildings_h": 5.0,
+        "startuppwr": 0.0,
+        "startupratio": 1.0,
         "stcl": 3.0,
         "step20": 0.0,
         "step21": 0.0,
@@ -8702,7 +8703,7 @@
         "zeffai": 0.0,
         "zeffdiv": 1.0,
         "zeffmax": 3.6,
-        "zero": 0.0,
+        "zero": "0.0_wp_",
         "zfxf": [
             0.0,
             0.0,
@@ -10762,7 +10763,6 @@
         "sec_buildings_h": "security &amp; safety buildings length, width, height (m)",
         "sec_buildings_l": "security &amp; safety buildings length, width, height (m)",
         "sec_buildings_w": "security &amp; safety buildings length, width, height (m)",
-        "secday": "seconds in a day, s",
         "secondary_cycle": "Switch for power conversion cycle:\n<ul>\n<li>=0 Set efficiency for chosen blanket, from detailed models (divertor heat not used)</li>\n<li>=1 Set efficiency for chosen blanket, from detailed models (divertor heat used)</li>\n<li>=2 user input thermal-electric efficiency (etath)</li>\n<li>=3 steam Rankine cycle</li>\n<li>=4 supercritical CO2 cycle</li>\n</ul>",
         "seppowerratio": "",
         "sf": "shape factor = plasma poloidal perimeter / (2.pi.rminor)",
@@ -10830,6 +10830,8 @@
         "stack_thickness": "",
         "staff_buildings_area": "footprint of staff buildings (m2)",
         "staff_buildings_h": "staff buildings height (m)",
+        "startuppwr": "cost associated with additional HCD system power required on start-up ($)",
+        "startupratio": "ratio of additional HCD power for start-up to flat-top operational requirements",
         "stcl": "clearance above crane to roof (m)",
         "step20": "M$",
         "step21": "M$",
@@ -14384,6 +14386,10 @@
             "lb": 0.0,
             "ub": 1.0
         },
+        "startupratio": {
+            "lb": 0.0,
+            "ub": 10.0
+        },
         "stcl": {
             "lb": 0.0,
             "ub": 10.0
@@ -17612,6 +17618,8 @@
             "moneyint",
             "output_costs",
             "discount_rate",
+            "startupratio",
+            "startuppwr",
             "sitecost",
             "step_con",
             "step_cconfix",
@@ -17959,7 +17967,6 @@
             "relerr_sol",
             "mach0"
         ],
-        "divertor_module": [],
         "divertor_ode": [
             "impurities_present",
             "aplas",
@@ -19888,7 +19895,6 @@
             "green_func_emp_first"
         ],
         "utilities": [],
-        "vacuum_module": [],
         "vacuum_variables": [
             "vacuum_model",
             "niterpump",
@@ -20018,9 +20024,6 @@
             "waterusetower",
             "wateruserecirc",
             "wateruseonethru"
-        ],
-        "water_use_module": [
-            "secday"
         ]
     },
     "DICT_NSWEEP2IXC": {
@@ -20840,6 +20843,7 @@
         "sombdr": "real_variable",
         "somtdr": "real_variable",
         "ssync": "real_variable",
+        "startupratio": "real_variable",
         "stcl": "real_variable",
         "step91_per": "real_variable",
         "step92_per": "real_variable",

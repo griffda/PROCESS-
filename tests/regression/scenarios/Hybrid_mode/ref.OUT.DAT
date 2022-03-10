@@ -5,15 +5,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.2.0   Release Date :: 2021-10-26
-   Tag No. : v2.1-1116-g4cf3024e
-    Branch : 1358-sc-tf-coil-external-case-mass-redux
-   Git log : Merge\ branch\ |develop|\ into\ 1358-sc-tf-coil-extern
- Date/time : 14 Jan 2022 13:44:09 +00:00(hh:mm) UTC
-      User : rhicha
-  Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-273/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-273/test_scenario_Hybrid_mode_0/IN.DAT
+   Version : 2.3.0   Release Date :: 2022-01-20
+   Tag No. : v2.1-1240-g7124046d
+    Branch : 1511-update-heating-and-current-drive-costs
+   Git log : Merge\ branch\ |develop|\ into\ 1511-update-heating-an
+ Date/time : 15 Feb 2022 11:43:07 +00:00(hh:mm) UTC
+      User : jg6173
+  Computer : L1088
+ Directory : /tmp/pytest-of-jg6173/pytest-24/test_solver0
+     Input : /tmp/pytest-of-jg6173/pytest-24/test_scenario_Hybrid_mode_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -1086,7 +1086,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  First Wall Mass, excluding armour (kg)                                   (fwmass)                  2.298E+05  OP 
  Blanket Mass - Total(kg)                                                 (whtblkt)                 4.406E+06  OP 
      Blanket Mass - TiBe12 (kg)                                           (whtbltibe12)             1.491E+06  OP 
-     Blanket Mass - Li2SiO4 (kg)                                          (whtblli4sio4)            1.583E+06  OP 
+     Blanket Mass - Li4SiO4 (kg)                                          (whtblli4sio4)            1.583E+06  OP 
      Blanket Mass - Steel (kg)                                            (whtblss)                 1.332E+06  OP 
  Total mass of armour, first wall and blanket (kg)                        (armour_fw_bl_mass)       4.810E+06  OP 
  Shield Mass (kg)                                                         (whtshld)                 2.846E+06  OP 
@@ -1219,7 +1219,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  D-T pump speed provided (m3/s)                                           (snet(4))                 8.726E+01  OP 
  
  The vacuum pumping system size is governed by the
- requirements for helium ash removal.
+ requirements for pumpdown between burns.
  
  Number of large pump ducts                                               (nduct)                          16     
  Passage diameter, divertor to ducts (m)                                  (d(imax))                 5.787E-01  OP 
@@ -1229,7 +1229,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Duct length, elbow to pumps (m)                                          (l3)                      2.000E+00     
  Number of pumps                                                          (pumpn)                   4.604E+01  OP 
  
- The vacuum system uses cryo pumps
+ The vacuum system uses cryo  pumps.
  
  ******************************************* Plant Buildings System *******************************************
  

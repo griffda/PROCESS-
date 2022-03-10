@@ -321,6 +321,12 @@ module cost_variables
   real(dp) :: discount_rate
   !! effective cost of money in constant dollars
 
+  real(dp) :: startupratio
+  !! ratio of additional HCD power for start-up to flat-top operational requirements
+
+  real(dp) :: startuppwr
+  !! cost associated with additional HCD system power required on start-up ($)
+
   real(dp) :: sitecost
   !! fixed value for site cost (2017 US$)
 
@@ -771,6 +777,8 @@ module cost_variables
     moneyint = 0.0D0
     output_costs = 1
     discount_rate = 0.0435D0
+    startupratio = 1.0
+    startuppwr = 0.0
     step_con = 1.5D-1
     step_cconfix = 233.0D0  
     step_cconshtf = 91.0D0

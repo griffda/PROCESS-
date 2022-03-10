@@ -1064,8 +1064,6 @@ subroutine check
         call report_error(222)
     end if
 
-    errors_on = .false.
-
     ! Cannot use temperature margin constraint with REBCO TF coils
     if(any(icc == 36) .and. ((i_tf_sc_mat == 8).or.(i_tf_sc_mat == 9))) then
         call report_error(265)
@@ -1080,6 +1078,10 @@ subroutine check
     if(tmpcry > tftmp) then
         call report_error(273)
     endif
+
+    ! Disable error logging only after all checks have been performed.
+    ! (CPSS #1582: Why is error logging disabled at all?)
+    errors_on = .false.
 
 
 end subroutine check

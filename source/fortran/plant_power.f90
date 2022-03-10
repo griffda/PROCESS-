@@ -1410,7 +1410,7 @@ contains
 
     call ocmmnt(outfile,'Power Balance for Reactor - Summary :')
     call ocmmnt(outfile,'-------------------------------------')
-    call ovarrf(outfile,'Fusion power (MW)','(powfmw.)',powfmw, 'OP ')
+    call ovarrf(outfile,'Fusion power (MW)','(powfmw)',powfmw, 'OP ')
     call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw, 'OP ')
     call ovarrf(outfile,'Injected power (MW)','(pinjmw.)',pinj, 'OP ')
     call ovarrf(outfile,'Ohmic power (MW)','(pohmmw.)',pohmmw, 'OP ')
@@ -1462,7 +1462,7 @@ contains
 
     call ocmmnt(outfile,'Power balance for power plant :')
     call ocmmnt(outfile,'-------------------------------')
-    call ovarrf(outfile,'Fusion power (MW)','(powfmw.)',powfmw, 'OP ')
+    call ovarrf(outfile,'Fusion power (MW)','(powfmw)',powfmw, 'OP ')
     call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw, 'OP ')
     sum = powfmw + emultmw
     call ovarrf(outfile,'Total (MW)','',sum, 'OP ')

@@ -17,37 +17,43 @@
 
 import os
 import argparse
-import process_io_lib.mfile as mf
-from process_io_lib.mfile import make_plot_dat
-# from process_io_lib.process_dicts import PARAMETER_DEFAULTS
+import process.io.mfile as mf
+from process.io.mfile import make_plot_dat
 
-from create_dicts import get_dicts
-# Load dicts from dicts JSON file
-proc_dict = get_dicts()
+# from process_io_lib.process_dicts import PARAMETER_DEFAULTS
+from dict_tools import proc_dict
+
 
 if __name__ == "__main__":
 
     # Setup command line arguments
-    parser = argparse.ArgumentParser(description='Process MFILE.DAT into '
-                                     'make_plot_dat.out.')
+    parser = argparse.ArgumentParser(
+        description="Process MFILE.DAT into " "make_plot_dat.out."
+    )
 
-    parser.add_argument('-p', metavar='p', type=str, nargs='+',
-                        help='new variables for the output plot.dat')
+    parser.add_argument(
+        "-p",
+        metavar="p",
+        type=str,
+        nargs="+",
+        help="new variables for the output plot.dat",
+    )
 
-    parser.add_argument('-f', metavar='f', type=str,
-                        help='File to read as MFILE.DAT')
+    parser.add_argument("-f", metavar="f", type=str, help="File to read as MFILE.DAT")
 
-    parser.add_argument("--defaults", help="run with default params",
-                        action="store_true")
+    parser.add_argument(
+        "--defaults", help="run with default params", action="store_true"
+    )
 
-    parser.add_argument("--reset-config", help="Reset make_plot_dat.conf",
-                        action="store_true")
+    parser.add_argument(
+        "--reset-config", help="Reset make_plot_dat.conf", action="store_true"
+    )
 
-    parser.add_argument("--columns", help="Write make_plot_dat.out in columns",
-                        action="store_true")
-    
-    parser.add_argument("--all", help="Output entire MFILE",
-                        action="store_true")
+    parser.add_argument(
+        "--columns", help="Write make_plot_dat.out in columns", action="store_true"
+    )
+
+    parser.add_argument("--all", help="Output entire MFILE", action="store_true")
 
     args = parser.parse_args()
 
@@ -85,11 +91,15 @@ if __name__ == "__main__":
 
             # If user has specified column format
             if args.columns:
-                make_plot_dat(M, proc_dicts[PARAMETER_DEFAULTS], file_format="column")
+                make_plot_dat(
+                    M,
+                    proc_dict.get_dicts()[proc_dict.PARAMETER_DEFAULTS],
+                    file_format="column",
+                )
 
             # If user has specified row format
             else:
-                make_plot_dat(M, proc_dicts[PARAMETER_DEFAULTS])
+                make_plot_dat(M, proc_dict.get_dicts()[proc_dict.PARAMETER_DEFAULTS])
         else:
 
             # If user has specified column format
