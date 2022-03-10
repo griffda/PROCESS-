@@ -1,6 +1,6 @@
 import pytest
-import numpy
 from typing import NamedTuple, Any
+from process.build import Build
 
 
 from process.fortran import build_variables
@@ -13,7 +13,15 @@ from process.fortran import tfcoil_variables
 
 from process.fortran import current_drive_variables
 
-from process.fortran import build_module
+
+@pytest.fixture
+def build():
+    """Provides Build object for testing.
+
+    :returns build: initialised Build object
+    :rtype: process.build.Build
+    """
+    return Build()
 
 
 class DivgeomParam(NamedTuple):
@@ -137,7 +145,7 @@ class RippleAmplitudeParam(NamedTuple):
         ),
     ),
 )
-def test_divgeom(divgeomparam, monkeypatch):
+def test_divgeom(divgeomparam, monkeypatch, build):
     """
     Automatically generated Regression Unit Test for divgeom.
 
@@ -148,6 +156,9 @@ def test_divgeom(divgeomparam, monkeypatch):
 
     :param monkeypatch: pytest fixture used to mock module/class variables
     :type monkeypatch: _pytest.monkeypatch.monkeypatch
+
+    :param build: fixture containing an initialised `Build` object
+    :type build: tests.unit.test_build.build (functional fixture)
     """
 
     monkeypatch.setattr(build_variables, "rspo", divgeomparam.rspo)
@@ -178,9 +189,7 @@ def test_divgeom(divgeomparam, monkeypatch):
 
     monkeypatch.setattr(physics_variables, "triang", divgeomparam.triang)
 
-    divht = build_module.divgeom(
-        iprint=divgeomparam.iprint, outfile=divgeomparam.outfile
-    )
+    divht = build.divgeom(output=False)
 
     assert divht == pytest.approx(divgeomparam.expected_divht)
 
@@ -232,7 +241,7 @@ def test_divgeom(divgeomparam, monkeypatch):
         ),
     ),
 )
-def test_ripple_amplitude(rippleamplitudeparam, monkeypatch):
+def test_ripple_amplitude(rippleamplitudeparam, monkeypatch, build):
     """
     Automatically generated Regression Unit Test for ripple_amplitude.
 
@@ -243,6 +252,9 @@ def test_ripple_amplitude(rippleamplitudeparam, monkeypatch):
 
     :param monkeypatch: pytest fixture used to mock module/class variables
     :type monkeypatch: _pytest.monkeypatch.monkeypatch
+
+    :param build: fixture containing an initialised `Build` object
+    :type build: tests.unit.test_build.build (functional fixture)
     """
 
     monkeypatch.setattr(physics_variables, "rminor", rippleamplitudeparam.rminor)
@@ -283,7 +295,7 @@ def test_ripple_amplitude(rippleamplitudeparam, monkeypatch):
         build_variables, "r_tf_inboard_in", rippleamplitudeparam.r_tf_inboard_in
     )
 
-    ripple, r_tf_outboard_midmin, flag = build_module.ripple_amplitude(
+    ripple, r_tf_outboard_midmin, flag = build.ripple_amplitude(
         ripmax=rippleamplitudeparam.ripmax,
         r_tf_outboard_mid=rippleamplitudeparam.r_tf_outboard_mid,
     )
@@ -357,7 +369,7 @@ class PortszParam(NamedTuple):
         ),
     ),
 )
-def test_portsz(portszparam, monkeypatch):
+def test_portsz(portszparam, monkeypatch, build):
     """
     Automatically generated Regression Unit Test for portsz.
 
@@ -368,6 +380,9 @@ def test_portsz(portszparam, monkeypatch):
 
     :param monkeypatch: pytest fixture used to mock module/class variables
     :type monkeypatch: _pytest.monkeypatch.monkeypatch
+
+    :param build: fixture containing an initialised `Build` object
+    :type build: tests.unit.test_build.build (functional fixture)
     """
 
     monkeypatch.setattr(
@@ -392,7 +407,7 @@ def test_portsz(portszparam, monkeypatch):
 
     monkeypatch.setattr(tfcoil_variables, "n_tf", portszparam.n_tf)
 
-    build_module.portsz()
+    build.portsz()
 
     assert current_drive_variables.rtanbeam == pytest.approx(
         portszparam.expected_rtanbeam

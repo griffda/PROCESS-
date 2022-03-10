@@ -48,6 +48,7 @@ from process.scan import Scan
 from process import final
 from process.stellarator import Stellarator
 from process.structure import Structure
+from process.build import Build
 from process.utilities.f2py_string_patch import (
     string_to_f2py_compatible,
     f2py_compatible_to_string,
@@ -484,6 +485,7 @@ class Models:
         self.stellarator = Stellarator(
             availability=self.availability, buildings=self.buildings, vacuum=self.vacuum
         )
+        self.build = Build()
 
 
 def main(args=None):
