@@ -341,7 +341,7 @@ class Build:
                 po.ovarrf(
                     self.outfile,
                     "TF coil vertical offset (m)",
-                    "(build_variables.tfoffset)",
+                    "(tfoffset)",
                     build_variables.tfoffset,
                     "OP ",
                 )
@@ -386,37 +386,37 @@ class Build:
                 po.ovarrf(
                     self.outfile,
                     "Poloidal plane angle between inner leg and plate (rad)",
-                    "(divertor_variables.betai)",
+                    "(betai)",
                     divertor_variables.betai,
                 )
                 po.ovarrf(
                     self.outfile,
                     "Poloidal plane angle between outer leg and plate (rad)",
-                    "(divertor_variables.betao)",
+                    "(betao)",
                     divertor_variables.betao,
                 )
                 po.ovarrf(
                     self.outfile,
                     "Inner divertor leg poloidal length (m)",
-                    "(build_variables.plsepi)",
+                    "(plsepi)",
                     build_variables.plsepi,
                 )
                 po.ovarrf(
                     self.outfile,
                     "Outer divertor leg poloidal length (m)",
-                    "(build_variables.plsepo)",
+                    "(plsepo)",
                     build_variables.plsepo,
                 )
                 po.ovarrf(
                     self.outfile,
                     "Inner divertor plate length (m)",
-                    "(build_variables.plleni)",
+                    "(plleni)",
                     build_variables.plleni,
                 )
                 po.ovarrf(
                     self.outfile,
                     "Outer divertor plate length (m)",
-                    "(build_variables.plleno)",
+                    "(plleno)",
                     build_variables.plleno,
                 )
                 po.ovarrf(
@@ -460,7 +460,7 @@ class Build:
                 po.ovarrf(
                     self.outfile,
                     "Outer strike point, radial (m)",
-                    "(build_variables.rspo)",
+                    "(rspo)",
                     build_variables.rspo,
                     "OP ",
                 )
@@ -863,10 +863,7 @@ class Build:
             # Calculated maximum toroidal WP toroidal thickness [m]
             if tfcoil_variables.tfc_sidewall_is_fraction:
                 t_wp_max = 2.0e0 * (
-                    (
-                        r_wp_max
-                        - tfcoil_variables.tfcoil_variables.casths_fraction * r_wp_min
-                    )
+                    (r_wp_max - tfcoil_variables.casths_fraction * r_wp_min)
                     * numpy.tan(numpy.pi / n)
                     - tfcoil_variables.tinstf
                     - tfcoil_variables.tfinsgap
@@ -1368,908 +1365,908 @@ class Build:
             error_handling.fdiags[1] = fwbs_variables.fhcd
             error_handling.report_error(61)
 
-    #
-
-    # if output:
-
-    #     #  Print out device build
-
-    #     po.oheadr(self.outfile, "Radial Build")
-
-    #     if self.ripflag != 0:
-    #         po.ocmmnt(
-    #             self.outfile,
-    #             "(Ripple result may not be accurate, as the fit was outside",
-    #         )
-    #         po.ocmmnt(self.outfile, " its range of applicability.)")
-    #         po.oblnkl(self.outfile)
-    #         error_handling.report_error(62)
-
-    #         if self.ripflag == 1:
-    #             error_handling.fdiags[0] = (
-    #                 tfcoil_variables.wwp1
-    #                 * tfcoil_variables.n_tf
-    #                 / physics_variables.rmajor
-    #             )
-    #             error_handling.report_error(141)
-    #         elif self.ripflag == 2:
-    #             # Convert to integer as idiags is integer array
-    #             error_handling.idiags[0] = int(tfcoil_variables.n_tf)
-    #             error_handling.report_error(142)
-    #         else:
-    #             error_handling.fdiags[0] = (
-    #                 physics_variables.rmajor + physics_variables.rminor
-    #             ) / build_variables.r_tf_outboard_mid
-    #             error_handling.report_error(143)
-
-    #     # write(self.outfile,10)
-    #     # 10  format(t43,'Thickness (m)',t60,'Radius (m)')
-
-    #     radius = 0.0e0
-    #     po.obuild(self.outfile, "Device centreline", 0.0e0, radius)
-
-    #     radius = radius + build_variables.bore
-    #     po.obuild(
-    #         self.outfile,
-    #         "Machine build_variables.bore",
-    #         build_variables.bore,
-    #         radius,
-    #         "(build_variables.bore)",
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "Machine build_variables.bore (m)",
-    #         "(build_variables.bore)",
-    #         build_variables.bore,
-    #     )
-
-    #     radius = radius + build_variables.ohcth
-    #     po.obuild(
-    #         self.outfile,
-    #         "Central solenoid",
-    #         build_variables.ohcth,
-    #         radius,
-    #         "(build_variables.ohcth)",
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "CS radial thickness (m)",
-    #         "(build_variables.ohcth)",
-    #         build_variables.ohcth,
-    #     )
-
-    #     radius = radius + build_variables.precomp
-    #     po.obuild(
-    #         self.outfile,
-    #         "CS build_variables.precompression",
-    #         build_variables.precomp,
-    #         radius,
-    #         "(build_variables.precomp)",
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "CS build_variables.precompression (m)",
-    #         "(build_variables.precomp)",
-    #         build_variables.precomp,
-    #     )
-
-    #     radius = radius + build_variables.gapoh
-    #     po.obuild(
-    #         self.outfile,
-    #         "Gap",
-    #         build_variables.gapoh,
-    #         radius,
-    #         "(build_variables.gapoh)",
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "CS build_variables.precompresion to TF coil radial gap (m)",
-    #         "(build_variables.gapoh)",
-    #         build_variables.gapoh,
-    #     )
-
-    #     radius = radius + build_variables.tfcth
-    #     po.obuild(
-    #         self.outfile,
-    #         "TF coil inboard leg",
-    #         build_variables.tfcth,
-    #         radius,
-    #         "(build_variables.tfcth)",
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "TF coil inboard leg (m)",
-    #         "(build_variables.tfcth)",
-    #         build_variables.tfcth,
-    #     )
-
-    #     radius = radius + build_variables.tftsgap
-    #     po.obuild(
-    #         self.outfile,
-    #         "Gap",
-    #         build_variables.tftsgap,
-    #         radius,
-    #         "(build_variables.tftsgap)",
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "TF coil inboard leg insulation gap (m)",
-    #         "(build_variables.tftsgap)",
-    #         build_variables.tftsgap,
-    #     )
-
-    #     radius = radius + build_variables.thshield
-    #     po.obuild(
-    #         self.outfile,
-    #         "Thermal shield",
-    #         build_variables.thshield,
-    #         radius,
-    #         "(build_variables.thshield)",
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "Thermal shield (m)",
-    #         "(build_variables.thshield)",
-    #         build_variables.thshield,
-    #     )
-
-    #     radius = radius + build_variables.gapds
-    #     po.obuild(
-    #         self.outfile,
-    #         "Gap",
-    #         build_variables.gapds,
-    #         radius,
-    #         "(build_variables.gapds)",
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "thermal shield to vessel radial gap (m)",
-    #         "(build_variables.gapds)",
-    #         build_variables.gapds,
-    #     )
-
-    #     radius = radius + build_variables.d_vv_in + build_variables.shldith
-    #     po.obuild(
-    #         self.outfile,
-    #         "Vacuum vessel (and shielding)",
-    #         build_variables.d_vv_in + build_variables.shldith,
-    #         radius,
-    #         "(build_variables.d_vv_in + build_variables.shldith)",
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "Inboard vacuum vessel radial thickness (m)",
-    #         "(build_variables.d_vv_in)",
-    #         build_variables.d_vv_in,
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "Inner radiation shield radial thickness (m)",
-    #         "(build_variables.shldith)",
-    #         build_variables.shldith,
-    #     )
-
-    #     radius = radius + build_variables.vvblgap
-    #     po.obuild(
-    #         self.outfile,
-    #         "Gap",
-    #         build_variables.vvblgap,
-    #         radius,
-    #         "(build_variables.vvblgap)",
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "Gap (m)",
-    #         "(build_variables.vvblgap)",
-    #         build_variables.vvblgap,
-    #     )
-
-    #     radius = radius + build_variables.blnkith
-    #     po.obuild(
-    #         self.outfile,
-    #         "Inboard blanket",
-    #         build_variables.blnkith,
-    #         radius,
-    #         "(build_variables.blnkith)",
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "Inboard blanket radial thickness (m)",
-    #         "(build_variables.blnkith)",
-    #         build_variables.blnkith,
-    #     )
-
-    #     radius = radius + build_variables.fwith
-    #     po.obuild(
-    #         self.outfile,
-    #         "Inboard first wall",
-    #         build_variables.fwith,
-    #         radius,
-    #         "(build_variables.fwith)",
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "Inboard first wall radial thickness (m)",
-    #         "(build_variables.fwith)",
-    #         build_variables.fwith,
-    #     )
-
-    #     radius = radius + build_variables.scrapli
-    #     po.obuild(
-    #         self.outfile,
-    #         "Inboard scrape-off",
-    #         build_variables.scrapli,
-    #         radius,
-    #         "(build_variables.scrapli)",
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "Inboard scrape-off radial thickness (m)",
-    #         "(build_variables.scrapli)",
-    #         build_variables.scrapli,
-    #     )
-
-    #     radius = radius + physics_variables.rminor
-    #     po.obuild(
-    #         self.outfile,
-    #         "Plasma geometric centre",
-    #         physics_variables.rminor,
-    #         radius,
-    #         "(physics_variables.rminor)",
-    #     )
-
-    #     radius = radius + physics_variables.rminor
-    #     po.obuild(
-    #         self.outfile,
-    #         "Plasma outboard edge",
-    #         physics_variables.rminor,
-    #         radius,
-    #         "(physics_variables.rminor)",
-    #     )
-
-    #     radius = radius + build_variables.scraplo
-    #     po.obuild(
-    #         self.outfile,
-    #         "Outboard scrape-off",
-    #         build_variables.scraplo,
-    #         radius,
-    #         "(build_variables.scraplo)",
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "Outboard scrape-off radial thickness (m)",
-    #         "(build_variables.scraplo)",
-    #         build_variables.scraplo,
-    #     )
-
-    #     radius = radius + build_variables.fwoth
-    #     po.obuild(
-    #         self.outfile,
-    #         "Outboard first wall",
-    #         build_variables.fwoth,
-    #         radius,
-    #         "(build_variables.fwoth)",
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "Outboard first wall radial thickness (m)",
-    #         "(build_variables.fwoth)",
-    #         build_variables.fwoth,
-    #     )
-
-    #     radius = radius + build_variables.blnkoth
-    #     po.obuild(
-    #         self.outfile,
-    #         "Outboard blanket",
-    #         build_variables.blnkoth,
-    #         radius,
-    #         "(build_variables.blnkoth)",
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "Outboard blanket radial thickness (m)",
-    #         "(build_variables.blnkoth)",
-    #         build_variables.blnkoth,
-    #     )
-
-    #     radius = radius + build_variables.vvblgap
-    #     po.obuild(
-    #         self.outfile,
-    #         "Gap",
-    #         build_variables.vvblgap,
-    #         radius,
-    #         "(build_variables.vvblgap)",
-    #     )
-
-    #     radius = radius + build_variables.d_vv_out + build_variables.shldoth
-    #     po.obuild(
-    #         self.outfile,
-    #         "Vacuum vessel (and shielding)",
-    #         build_variables.d_vv_out + build_variables.shldoth,
-    #         radius,
-    #         "(build_variables.d_vv_out+build_variables.shldoth)",
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "Outer radiation shield radial thickness (m)",
-    #         "(build_variables.shldoth)",
-    #         build_variables.shldoth,
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "Outboard vacuum vessel radial thickness (m)",
-    #         "(build_variables.d_vv_out)",
-    #         build_variables.d_vv_out,
-    #     )
-
-    #     radius = radius + build_variables.gapsto
-    #     po.obuild(
-    #         self.outfile,
-    #         "Gap",
-    #         build_variables.gapsto,
-    #         radius,
-    #         "(build_variables.gapsto)",
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "Vessel to TF radial gap (m)",
-    #         "(build_variables.gapsto)",
-    #         build_variables.gapsto,
-    #     )
-
-    #     radius = radius + build_variables.thshield
-    #     po.obuild(
-    #         self.outfile,
-    #         "Thermal shield",
-    #         build_variables.thshield,
-    #         radius,
-    #         "(build_variables.thshield)",
-    #     )
-
-    #     radius = radius + build_variables.tftsgap
-    #     po.obuild(
-    #         self.outfile,
-    #         "Gap",
-    #         build_variables.tftsgap,
-    #         radius,
-    #         "(build_variables.tftsgap)",
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "Gap (m)",
-    #         "(build_variables.tftsgap)",
-    #         build_variables.tftsgap,
-    #     )
-
-    #     radius = radius + build_variables.tfthko
-    #     po.obuild(
-    #         self.outfile,
-    #         "TF coil outboard leg",
-    #         build_variables.tfthko,
-    #         radius,
-    #         "(build_variables.tfthko)",
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "TF coil outboard leg radial thickness (m)",
-    #         "(build_variables.tfthko)",
-    #         build_variables.tfthko,
-    #     )
-
-    #     #  Vertical build
-
-    #     po.oheadr(self.outfile, "Vertical Build")
-
-    #     po.ovarin(
-    #         self.mfile,
-    #         "Divertor null switch",
-    #         "(physics_variables.i_single_null)",
-    #         physics_variables.i_single_null,
-    #     )
-
-    #     if physics_variables.i_single_null == 0:
-    #         po.ocmmnt(self.outfile, "Double null case")
-
-    #         # write(self.outfile,20)
-    #         # 20 format(t43,'Thickness (m)',t60,'Height (m)')
-
-    #         vbuild = (
-    #             build_variables.tfcth
-    #             + build_variables.tftsgap
-    #             + build_variables.thshield
-    #             + build_variables.vgap2
-    #             + build_variables.d_vv_top
-    #             + build_variables.shldtth
-    #             + divertor_variables.divfix
-    #             + build_variables.vgaptop
-    #             + physics_variables.rminor * physics_variables.kappa
-    #         )
-
-    #         # To calculate vertical offset between TF coil centre and plasma centre
-    #         vbuile1 = vbuild
-
-    #         po.obuild(
-    #             self.outfile,
-    #             "TF coil",
-    #             build_variables.tfcth,
-    #             vbuild,
-    #             "(build_variables.tfcth)",
-    #         )
-    #         vbuild = vbuild - build_variables.tfcth
-
-    #         po.obuild(
-    #             self.outfile,
-    #             "Gap",
-    #             build_variables.tftsgap,
-    #             vbuild,
-    #             "(build_variables.tftsgap)",
-    #         )
-    #         vbuild = vbuild - build_variables.tftsgap
-
-    #         po.obuild(
-    #             self.outfile,
-    #             "Thermal shield",
-    #             build_variables.thshield,
-    #             vbuild,
-    #             "(build_variables.thshield)",
-    #         )
-    #         vbuild = vbuild - build_variables.thshield
-
-    #         po.obuild(
-    #             self.outfile,
-    #             "Gap",
-    #             build_variables.vgap2,
-    #             vbuild,
-    #             "(build_variables.vgap2)",
-    #         )
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Vessel - TF coil vertical gap (m)",
-    #             "(build_variables.vgap2)",
-    #             build_variables.vgap2,
-    #         )
-    #         vbuild = vbuild - build_variables.vgap2
-
-    #         po.obuild(
-    #             self.outfile,
-    #             "Vacuum vessel (and shielding)",
-    #             build_variables.d_vv_top + build_variables.shldtth,
-    #             vbuild,
-    #             "(build_variables.d_vv_top+build_variables.shldtth)",
-    #         )
-    #         vbuild = vbuild - build_variables.d_vv_top - build_variables.shldtth
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Topside vacuum vessel radial thickness (m)",
-    #             "(build_variables.d_vv_top)",
-    #             build_variables.d_vv_top,
-    #         )
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Top radiation shield thickness (m)",
-    #             "(build_variables.shldtth)",
-    #             build_variables.shldtth,
-    #         )
-
-    #         po.obuild(
-    #             self.outfile,
-    #             "Divertor structure",
-    #             divertor_variables.divfix,
-    #             vbuild,
-    #             "(divertor_variables.divfix)",
-    #         )
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Divertor structure vertical thickness (m)",
-    #             "(divertor_variables.divfix)",
-    #             divertor_variables.divfix,
-    #         )
-    #         vbuild = vbuild - divertor_variables.divfix
-
-    #         po.obuild(
-    #             self.outfile,
-    #             "Top scrape-off",
-    #             build_variables.vgaptop,
-    #             vbuild,
-    #             "(build_variables.vgaptop)",
-    #         )
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Top scrape-off vertical thickness (m)",
-    #             "(build_variables.vgaptop)",
-    #             build_variables.vgaptop,
-    #         )
-    #         vbuild = vbuild - build_variables.vgaptop
-
-    #         po.obuild(
-    #             self.outfile,
-    #             "Plasma top",
-    #             physics_variables.rminor * physics_variables.kappa,
-    #             vbuild,
-    #             "(physics_variables.rminor*physics_variables.kappa)",
-    #         )
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Plasma half-height (m)",
-    #             "(physics_variables.rminor*physics_variables.kappa)",
-    #             physics_variables.rminor * physics_variables.kappa,
-    #         )
-    #         vbuild = vbuild - physics_variables.rminor * physics_variables.kappa
-
-    #         po.obuild(self.outfile, "Midplane", 0.0e0, vbuild)
-
-    #         vbuild = vbuild - physics_variables.rminor * physics_variables.kappa
-    #         po.obuild(
-    #             self.outfile,
-    #             "Plasma bottom",
-    #             physics_variables.rminor * physics_variables.kappa,
-    #             vbuild,
-    #             "(physics_variables.rminor*physics_variables.kappa)",
-    #         )
-
-    #         vbuild = vbuild - build_variables.vgap
-    #         po.obuild(
-    #             self.outfile,
-    #             "Lower scrape-off",
-    #             build_variables.vgap,
-    #             vbuild,
-    #             "(build_variables.vgap)",
-    #         )
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Bottom scrape-off vertical thickness (m)",
-    #             "(build_variables.vgap)",
-    #             build_variables.vgap,
-    #         )
-
-    #         vbuild = vbuild - divertor_variables.divfix
-    #         po.obuild(
-    #             self.outfile,
-    #             "Divertor structure",
-    #             divertor_variables.divfix,
-    #             vbuild,
-    #             "(divertor_variables.divfix)",
-    #         )
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Divertor structure vertical thickness (m)",
-    #             "(divertor_variables.divfix)",
-    #             divertor_variables.divfix,
-    #         )
-
-    #         vbuild = vbuild - build_variables.shldlth
-
-    #         vbuild = vbuild - build_variables.d_vv_bot
-    #         po.obuild(
-    #             self.outfile,
-    #             "Vacuum vessel (and shielding)",
-    #             build_variables.d_vv_bot + build_variables.shldlth,
-    #             vbuild,
-    #             "(build_variables.d_vv_bot+build_variables.shldlth)",
-    #         )
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Bottom radiation shield thickness (m)",
-    #             "(build_variables.shldlth)",
-    #             build_variables.shldlth,
-    #         )
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Underside vacuum vessel radial thickness (m)",
-    #             "(build_variables.d_vv_bot)",
-    #             build_variables.d_vv_bot,
-    #         )
-
-    #         vbuild = vbuild - build_variables.vgap2
-    #         po.obuild(
-    #             self.outfile,
-    #             "Gap",
-    #             build_variables.vgap2,
-    #             vbuild,
-    #             "(build_variables.vgap2)",
-    #         )
-
-    #         vbuild = vbuild - build_variables.thshield
-    #         po.obuild(
-    #             self.outfile,
-    #             "Thermal shield",
-    #             build_variables.thshield,
-    #             vbuild,
-    #             "(build_variables.thshield)",
-    #         )
-
-    #         vbuild = vbuild - build_variables.tftsgap
-    #         po.obuild(
-    #             self.outfile,
-    #             "Gap",
-    #             build_variables.tftsgap,
-    #             vbuild,
-    #             "(build_variables.tftsgap)",
-    #         )
-
-    #         vbuild = vbuild - build_variables.tfcth
-    #         po.obuild(
-    #             self.outfile,
-    #             "TF coil",
-    #             build_variables.tfcth,
-    #             vbuild,
-    #             "(build_variables.tfcth)",
-    #         )
-
-    #         # To calculate vertical offset between TF coil centre and plasma centre
-    #         build_variables.tfoffset = (vbuile1 + vbuild) / 2.0e0
-
-    #         # end of Double null case
-    #     else:
-    #         #  po.ocmmnt(self.outfile, "Single null case")
-    #         #  write(self.outfile, 20)
-
-    #         vbuild = (
-    #             build_variables.tfcth
-    #             + build_variables.tftsgap
-    #             + build_variables.thshield
-    #             + build_variables.vgap2
-    #             + 0.5e0 * (build_variables.d_vv_top + build_variables.d_vv_bot)
-    #             + build_variables.vvblgap
-    #             + build_variables.shldtth
-    #             + build_variables.blnktth
-    #             + 0.5e0 * (build_variables.fwith + build_variables.fwoth)
-    #             + build_variables.vgaptop
-    #             + physics_variables.rminor * physics_variables.kappa
-    #         )
-
-    #         # To calculate vertical offset between TF coil centre and plasma centre
-    #         vbuile1 = vbuild
-
-    #         po.obuild(
-    #             self.outfile,
-    #             "TF coil",
-    #             build_variables.tfcth,
-    #             vbuild,
-    #             "(build_variables.tfcth)",
-    #         )
-    #         vbuild = vbuild - build_variables.tfcth
-
-    #         po.obuild(
-    #             self.outfile,
-    #             "Gap",
-    #             build_variables.tftsgap,
-    #             vbuild,
-    #             "(build_variables.tftsgap)",
-    #         )
-    #         vbuild = vbuild - build_variables.tftsgap
-
-    #         po.obuild(
-    #             self.outfile,
-    #             "Thermal shield",
-    #             build_variables.thshield,
-    #             vbuild,
-    #             "(build_variables.thshield)",
-    #         )
-    #         vbuild = vbuild - build_variables.thshield
-
-    #         po.obuild(
-    #             self.outfile,
-    #             "Gap",
-    #             build_variables.vgap2,
-    #             vbuild,
-    #             "(build_variables.vgap2)",
-    #         )
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Vessel - TF coil vertical gap (m)",
-    #             "(build_variables.vgap2)",
-    #             build_variables.vgap2,
-    #         )
-    #         vbuild = vbuild - build_variables.vgap2
-
-    #         po.obuild(
-    #             self.outfile,
-    #             "Vacuum vessel (and shielding)",
-    #             build_variables.d_vv_top + build_variables.shldtth,
-    #             vbuild,
-    #             "(build_variables.d_vv_top+build_variables.shldtth)",
-    #         )
-    #         vbuild = vbuild - build_variables.d_vv_top - build_variables.shldtth
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Topside vacuum vessel radial thickness (m)",
-    #             "(build_variables.d_vv_top)",
-    #             build_variables.d_vv_top,
-    #         )
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Top radiation shield thickness (m)",
-    #             "(build_variables.shldtth)",
-    #             build_variables.shldtth,
-    #         )
-
-    #         po.obuild(
-    #             self.outfile,
-    #             "Gap",
-    #             build_variables.vvblgap,
-    #             vbuild,
-    #             "(build_variables.vvblgap)",
-    #         )
-    #         vbuild = vbuild - build_variables.vvblgap
-
-    #         po.obuild(
-    #             self.outfile,
-    #             "Top blanket",
-    #             build_variables.blnktth,
-    #             vbuild,
-    #             "(build_variables.blnktth)",
-    #         )
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Top blanket vertical thickness (m)",
-    #             "(build_variables.blnktth)",
-    #             build_variables.blnktth,
-    #         )
-    #         vbuild = vbuild - build_variables.blnktth
-
-    #         fwtth = 0.5e0 * (build_variables.fwith + build_variables.fwoth)
-    #         po.obuild(self.outfile, "Top first wall", fwtth, vbuild, "(fwtth)")
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Top first wall vertical thickness (m)",
-    #             "(fwtth)",
-    #             fwtth,
-    #         )
-    #         vbuild = vbuild - fwtth
-
-    #         po.obuild(
-    #             self.outfile,
-    #             "Top scrape-off",
-    #             build_variables.vgaptop,
-    #             vbuild,
-    #             "(build_variables.vgaptop)",
-    #         )
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Top scrape-off vertical thickness (m)",
-    #             "(build_variables.vgaptop)",
-    #             build_variables.vgaptop,
-    #         )
-    #         vbuild = vbuild - build_variables.vgaptop
-
-    #         po.obuild(
-    #             self.outfile,
-    #             "Plasma top",
-    #             physics_variables.rminor * physics_variables.kappa,
-    #             vbuild,
-    #             "(physics_variables.rminor*physics_variables.kappa)",
-    #         )
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Plasma half-height (m)",
-    #             "(physics_variables.rminor*physics_variables.kappa)",
-    #             physics_variables.rminor * physics_variables.kappa,
-    #         )
-    #         vbuild = vbuild - physics_variables.rminor * physics_variables.kappa
-
-    #         po.obuild(self.outfile, "Midplane", 0.0e0, vbuild)
-
-    #         vbuild = vbuild - physics_variables.rminor * physics_variables.kappa
-    #         po.obuild(
-    #             self.outfile,
-    #             "Plasma bottom",
-    #             physics_variables.rminor * physics_variables.kappa,
-    #             vbuild,
-    #             "(physics_variables.rminor*physics_variables.kappa)",
-    #         )
-
-    #         vbuild = vbuild - build_variables.vgap
-    #         po.obuild(
-    #             self.outfile,
-    #             "Lower scrape-off",
-    #             build_variables.vgap,
-    #             vbuild,
-    #             "(build_variables.vgap)",
-    #         )
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Bottom scrape-off vertical thickness (m)",
-    #             "(build_variables.vgap)",
-    #             build_variables.vgap,
-    #         )
-
-    #         vbuild = vbuild - divertor_variables.divfix
-    #         po.obuild(
-    #             self.outfile,
-    #             "Divertor structure",
-    #             divertor_variables.divfix,
-    #             vbuild,
-    #             "(divertor_variables.divfix)",
-    #         )
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Divertor structure vertical thickness (m)",
-    #             "(divertor_variables.divfix)",
-    #             divertor_variables.divfix,
-    #         )
-
-    #         vbuild = vbuild - build_variables.shldlth
-
-    #         vbuild = vbuild - build_variables.d_vv_bot
-    #         po.obuild(
-    #             self.outfile,
-    #             "Vacuum vessel (and shielding)",
-    #             build_variables.d_vv_bot + build_variables.shldlth,
-    #             vbuild,
-    #             "(build_variables.d_vv_bot+build_variables.shldlth)",
-    #         )
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Bottom radiation shield thickness (m)",
-    #             "(build_variables.shldlth)",
-    #             build_variables.shldlth,
-    #         )
-    #         po.ovarre(
-    #             self.mfile,
-    #             "Underside vacuum vessel radial thickness (m)",
-    #             "(build_variables.d_vv_bot)",
-    #             build_variables.d_vv_bot,
-    #         )
-
-    #         vbuild = vbuild - build_variables.vgap2
-    #         po.obuild(
-    #             self.outfile,
-    #             "Gap",
-    #             build_variables.vgap2,
-    #             vbuild,
-    #             "(build_variables.vgap2)",
-    #         )
-
-    #         vbuild = vbuild - build_variables.thshield
-    #         po.obuild(
-    #             self.outfile,
-    #             "Thermal shield",
-    #             build_variables.thshield,
-    #             vbuild,
-    #             "(build_variables.thshield)",
-    #         )
-
-    #         vbuild = vbuild - build_variables.tftsgap
-    #         po.obuild(
-    #             self.outfile,
-    #             "Gap",
-    #             build_variables.tftsgap,
-    #             vbuild,
-    #             "(build_variables.tftsgap)",
-    #         )
-
-    #         vbuild = vbuild - build_variables.tfcth
-    #         po.obuild(
-    #             self.outfile,
-    #             "TF coil",
-    #             build_variables.tfcth,
-    #             vbuild,
-    #             "(build_variables.tfcth)",
-    #         )
-
-    #         # To calculate vertical offset between TF coil centre and plasma centre
-    #         build_variables.tfoffset = (vbuile1 + vbuild) / 2.0e0
-
-    #         # end of Single null case
-
-    #     #  Other build quantities
-
-    #     po.ovarre(
-    #         self.mfile,
-    #         "External cryostat thickness (m)",
-    #         "(build_variables.ddwex)",
-    #         build_variables.ddwex,
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "Ratio of Central solenoid height to TF coil internal height",
-    #         "(pfcoil_variables.ohhghf)",
-    #         pfcoil_variables.ohhghf,
-    #     )
-    #     po.ovarre(
-    #         self.mfile,
-    #         "Width of neutral beam duct where it passes between the TF coils (m)",
-    #         "(current_drive_variables.beamwd)",
-    #         current_drive_variables.beamwd,
-    #     )
+        #
+
+        if output:
+
+            #  Print out device build
+
+            po.oheadr(self.outfile, "Radial Build")
+
+            if self.ripflag != 0:
+                po.ocmmnt(
+                    self.outfile,
+                    "(Ripple result may not be accurate, as the fit was outside",
+                )
+                po.ocmmnt(self.outfile, " its range of applicability.)")
+                po.oblnkl(self.outfile)
+                error_handling.report_error(62)
+
+                if self.ripflag == 1:
+                    error_handling.fdiags[0] = (
+                        tfcoil_variables.wwp1
+                        * tfcoil_variables.n_tf
+                        / physics_variables.rmajor
+                    )
+                    error_handling.report_error(141)
+                elif self.ripflag == 2:
+                    # Convert to integer as idiags is integer array
+                    error_handling.idiags[0] = int(tfcoil_variables.n_tf)
+                    error_handling.report_error(142)
+                else:
+                    error_handling.fdiags[0] = (
+                        physics_variables.rmajor + physics_variables.rminor
+                    ) / build_variables.r_tf_outboard_mid
+                    error_handling.report_error(143)
+
+            # write(self.outfile,10)
+            # 10  format(t43,'Thickness (m)',t60,'Radius (m)')
+
+            radius = 0.0e0
+            po.obuild(self.outfile, "Device centreline", 0.0e0, radius)
+
+            radius = radius + build_variables.bore
+            po.obuild(
+                self.outfile,
+                "Machine build_variables.bore",
+                build_variables.bore,
+                radius,
+                "(bore)",
+            )
+            po.ovarre(
+                self.mfile,
+                "Machine build_variables.bore (m)",
+                "(bore)",
+                build_variables.bore,
+            )
+
+            radius = radius + build_variables.ohcth
+            po.obuild(
+                self.outfile,
+                "Central solenoid",
+                build_variables.ohcth,
+                radius,
+                "(ohcth)",
+            )
+            po.ovarre(
+                self.mfile,
+                "CS radial thickness (m)",
+                "(ohcth)",
+                build_variables.ohcth,
+            )
+
+            radius = radius + build_variables.precomp
+            po.obuild(
+                self.outfile,
+                "CS precompression",
+                build_variables.precomp,
+                radius,
+                "(precomp)",
+            )
+            po.ovarre(
+                self.mfile,
+                "CS precompression (m)",
+                "(precomp)",
+                build_variables.precomp,
+            )
+
+            radius = radius + build_variables.gapoh
+            po.obuild(
+                self.outfile,
+                "Gap",
+                build_variables.gapoh,
+                radius,
+                "(gapoh)",
+            )
+            po.ovarre(
+                self.mfile,
+                "CS precompresion to TF coil radial gap (m)",
+                "(gapoh)",
+                build_variables.gapoh,
+            )
+
+            radius = radius + build_variables.tfcth
+            po.obuild(
+                self.outfile,
+                "TF coil inboard leg",
+                build_variables.tfcth,
+                radius,
+                "(tfcth)",
+            )
+            po.ovarre(
+                self.mfile,
+                "TF coil inboard leg (m)",
+                "(tfcth)",
+                build_variables.tfcth,
+            )
+
+            radius = radius + build_variables.tftsgap
+            po.obuild(
+                self.outfile,
+                "Gap",
+                build_variables.tftsgap,
+                radius,
+                "(tftsgap)",
+            )
+            po.ovarre(
+                self.mfile,
+                "TF coil inboard leg insulation gap (m)",
+                "(tftsgap)",
+                build_variables.tftsgap,
+            )
+
+            radius = radius + build_variables.thshield
+            po.obuild(
+                self.outfile,
+                "Thermal shield",
+                build_variables.thshield,
+                radius,
+                "(thshield)",
+            )
+            po.ovarre(
+                self.mfile,
+                "Thermal shield (m)",
+                "(thshield)",
+                build_variables.thshield,
+            )
+
+            radius = radius + build_variables.gapds
+            po.obuild(
+                self.outfile,
+                "Gap",
+                build_variables.gapds,
+                radius,
+                "(gapds)",
+            )
+            po.ovarre(
+                self.mfile,
+                "thermal shield to vessel radial gap (m)",
+                "(gapds)",
+                build_variables.gapds,
+            )
+
+            radius = radius + build_variables.d_vv_in + build_variables.shldith
+            po.obuild(
+                self.outfile,
+                "Vacuum vessel (and shielding)",
+                build_variables.d_vv_in + build_variables.shldith,
+                radius,
+                "(d_vv_in + shldith)",
+            )
+            po.ovarre(
+                self.mfile,
+                "Inboard vacuum vessel radial thickness (m)",
+                "(d_vv_in)",
+                build_variables.d_vv_in,
+            )
+            po.ovarre(
+                self.mfile,
+                "Inner radiation shield radial thickness (m)",
+                "(shldith)",
+                build_variables.shldith,
+            )
+
+            radius = radius + build_variables.vvblgap
+            po.obuild(
+                self.outfile,
+                "Gap",
+                build_variables.vvblgap,
+                radius,
+                "(vvblgap)",
+            )
+            po.ovarre(
+                self.mfile,
+                "Gap (m)",
+                "(vvblgap)",
+                build_variables.vvblgap,
+            )
+
+            radius = radius + build_variables.blnkith
+            po.obuild(
+                self.outfile,
+                "Inboard blanket",
+                build_variables.blnkith,
+                radius,
+                "(blnkith)",
+            )
+            po.ovarre(
+                self.mfile,
+                "Inboard blanket radial thickness (m)",
+                "(blnkith)",
+                build_variables.blnkith,
+            )
+
+            radius = radius + build_variables.fwith
+            po.obuild(
+                self.outfile,
+                "Inboard first wall",
+                build_variables.fwith,
+                radius,
+                "(fwith)",
+            )
+            po.ovarre(
+                self.mfile,
+                "Inboard first wall radial thickness (m)",
+                "(fwith)",
+                build_variables.fwith,
+            )
+
+            radius = radius + build_variables.scrapli
+            po.obuild(
+                self.outfile,
+                "Inboard scrape-off",
+                build_variables.scrapli,
+                radius,
+                "(scrapli)",
+            )
+            po.ovarre(
+                self.mfile,
+                "Inboard scrape-off radial thickness (m)",
+                "(scrapli)",
+                build_variables.scrapli,
+            )
+
+            radius = radius + physics_variables.rminor
+            po.obuild(
+                self.outfile,
+                "Plasma geometric centre",
+                physics_variables.rminor,
+                radius,
+                "(rminor)",
+            )
+
+            radius = radius + physics_variables.rminor
+            po.obuild(
+                self.outfile,
+                "Plasma outboard edge",
+                physics_variables.rminor,
+                radius,
+                "(rminor)",
+            )
+
+            radius = radius + build_variables.scraplo
+            po.obuild(
+                self.outfile,
+                "Outboard scrape-off",
+                build_variables.scraplo,
+                radius,
+                "(scraplo)",
+            )
+            po.ovarre(
+                self.mfile,
+                "Outboard scrape-off radial thickness (m)",
+                "(scraplo)",
+                build_variables.scraplo,
+            )
+
+            radius = radius + build_variables.fwoth
+            po.obuild(
+                self.outfile,
+                "Outboard first wall",
+                build_variables.fwoth,
+                radius,
+                "(fwoth)",
+            )
+            po.ovarre(
+                self.mfile,
+                "Outboard first wall radial thickness (m)",
+                "(fwoth)",
+                build_variables.fwoth,
+            )
+
+            radius = radius + build_variables.blnkoth
+            po.obuild(
+                self.outfile,
+                "Outboard blanket",
+                build_variables.blnkoth,
+                radius,
+                "(blnkoth)",
+            )
+            po.ovarre(
+                self.mfile,
+                "Outboard blanket radial thickness (m)",
+                "(blnkoth)",
+                build_variables.blnkoth,
+            )
+
+            radius = radius + build_variables.vvblgap
+            po.obuild(
+                self.outfile,
+                "Gap",
+                build_variables.vvblgap,
+                radius,
+                "(vvblgap)",
+            )
+
+            radius = radius + build_variables.d_vv_out + build_variables.shldoth
+            po.obuild(
+                self.outfile,
+                "Vacuum vessel (and shielding)",
+                build_variables.d_vv_out + build_variables.shldoth,
+                radius,
+                "(d_vv_out+shldoth)",
+            )
+            po.ovarre(
+                self.mfile,
+                "Outer radiation shield radial thickness (m)",
+                "(shldoth)",
+                build_variables.shldoth,
+            )
+            po.ovarre(
+                self.mfile,
+                "Outboard vacuum vessel radial thickness (m)",
+                "(d_vv_out)",
+                build_variables.d_vv_out,
+            )
+
+            radius = radius + build_variables.gapsto
+            po.obuild(
+                self.outfile,
+                "Gap",
+                build_variables.gapsto,
+                radius,
+                "(gapsto)",
+            )
+            po.ovarre(
+                self.mfile,
+                "Vessel to TF radial gap (m)",
+                "(gapsto)",
+                build_variables.gapsto,
+            )
+
+            radius = radius + build_variables.thshield
+            po.obuild(
+                self.outfile,
+                "Thermal shield",
+                build_variables.thshield,
+                radius,
+                "(thshield)",
+            )
+
+            radius = radius + build_variables.tftsgap
+            po.obuild(
+                self.outfile,
+                "Gap",
+                build_variables.tftsgap,
+                radius,
+                "(tftsgap)",
+            )
+            po.ovarre(
+                self.mfile,
+                "Gap (m)",
+                "(tftsgap)",
+                build_variables.tftsgap,
+            )
+
+            radius = radius + build_variables.tfthko
+            po.obuild(
+                self.outfile,
+                "TF coil outboard leg",
+                build_variables.tfthko,
+                radius,
+                "(tfthko)",
+            )
+            po.ovarre(
+                self.mfile,
+                "TF coil outboard leg radial thickness (m)",
+                "(tfthko)",
+                build_variables.tfthko,
+            )
+
+            #  Vertical build
+
+            po.oheadr(self.outfile, "Vertical Build")
+
+            po.ovarin(
+                self.mfile,
+                "Divertor null switch",
+                "(i_single_null)",
+                physics_variables.i_single_null,
+            )
+
+            if physics_variables.i_single_null == 0:
+                po.ocmmnt(self.outfile, "Double null case")
+
+                # write(self.outfile,20)
+                # 20 format(t43,'Thickness (m)',t60,'Height (m)')
+
+                vbuild = (
+                    build_variables.tfcth
+                    + build_variables.tftsgap
+                    + build_variables.thshield
+                    + build_variables.vgap2
+                    + build_variables.d_vv_top
+                    + build_variables.shldtth
+                    + divertor_variables.divfix
+                    + build_variables.vgaptop
+                    + physics_variables.rminor * physics_variables.kappa
+                )
+
+                # To calculate vertical offset between TF coil centre and plasma centre
+                vbuile1 = vbuild
+
+                po.obuild(
+                    self.outfile,
+                    "TF coil",
+                    build_variables.tfcth,
+                    vbuild,
+                    "(tfcth)",
+                )
+                vbuild = vbuild - build_variables.tfcth
+
+                po.obuild(
+                    self.outfile,
+                    "Gap",
+                    build_variables.tftsgap,
+                    vbuild,
+                    "(tftsgap)",
+                )
+                vbuild = vbuild - build_variables.tftsgap
+
+                po.obuild(
+                    self.outfile,
+                    "Thermal shield",
+                    build_variables.thshield,
+                    vbuild,
+                    "(thshield)",
+                )
+                vbuild = vbuild - build_variables.thshield
+
+                po.obuild(
+                    self.outfile,
+                    "Gap",
+                    build_variables.vgap2,
+                    vbuild,
+                    "(vgap2)",
+                )
+                po.ovarre(
+                    self.mfile,
+                    "Vessel - TF coil vertical gap (m)",
+                    "(vgap2)",
+                    build_variables.vgap2,
+                )
+                vbuild = vbuild - build_variables.vgap2
+
+                po.obuild(
+                    self.outfile,
+                    "Vacuum vessel (and shielding)",
+                    build_variables.d_vv_top + build_variables.shldtth,
+                    vbuild,
+                    "(d_vv_top+shldtth)",
+                )
+                vbuild = vbuild - build_variables.d_vv_top - build_variables.shldtth
+                po.ovarre(
+                    self.mfile,
+                    "Topside vacuum vessel radial thickness (m)",
+                    "(d_vv_top)",
+                    build_variables.d_vv_top,
+                )
+                po.ovarre(
+                    self.mfile,
+                    "Top radiation shield thickness (m)",
+                    "(shldtth)",
+                    build_variables.shldtth,
+                )
+
+                po.obuild(
+                    self.outfile,
+                    "Divertor structure",
+                    divertor_variables.divfix,
+                    vbuild,
+                    "(divfix)",
+                )
+                po.ovarre(
+                    self.mfile,
+                    "Divertor structure vertical thickness (m)",
+                    "(divfix)",
+                    divertor_variables.divfix,
+                )
+                vbuild = vbuild - divertor_variables.divfix
+
+                po.obuild(
+                    self.outfile,
+                    "Top scrape-off",
+                    build_variables.vgaptop,
+                    vbuild,
+                    "(vgaptop)",
+                )
+                po.ovarre(
+                    self.mfile,
+                    "Top scrape-off vertical thickness (m)",
+                    "(vgaptop)",
+                    build_variables.vgaptop,
+                )
+                vbuild = vbuild - build_variables.vgaptop
+
+                po.obuild(
+                    self.outfile,
+                    "Plasma top",
+                    physics_variables.rminor * physics_variables.kappa,
+                    vbuild,
+                    "(rminor*kappa)",
+                )
+                po.ovarre(
+                    self.mfile,
+                    "Plasma half-height (m)",
+                    "(rminor*kappa)",
+                    physics_variables.rminor * physics_variables.kappa,
+                )
+                vbuild = vbuild - physics_variables.rminor * physics_variables.kappa
+
+                po.obuild(self.outfile, "Midplane", 0.0e0, vbuild)
+
+                vbuild = vbuild - physics_variables.rminor * physics_variables.kappa
+                po.obuild(
+                    self.outfile,
+                    "Plasma bottom",
+                    physics_variables.rminor * physics_variables.kappa,
+                    vbuild,
+                    "(rminor*kappa)",
+                )
+
+                vbuild = vbuild - build_variables.vgap
+                po.obuild(
+                    self.outfile,
+                    "Lower scrape-off",
+                    build_variables.vgap,
+                    vbuild,
+                    "(vgap)",
+                )
+                po.ovarre(
+                    self.mfile,
+                    "Bottom scrape-off vertical thickness (m)",
+                    "(vgap)",
+                    build_variables.vgap,
+                )
+
+                vbuild = vbuild - divertor_variables.divfix
+                po.obuild(
+                    self.outfile,
+                    "Divertor structure",
+                    divertor_variables.divfix,
+                    vbuild,
+                    "(divfix)",
+                )
+                po.ovarre(
+                    self.mfile,
+                    "Divertor structure vertical thickness (m)",
+                    "(divfix)",
+                    divertor_variables.divfix,
+                )
+
+                vbuild = vbuild - build_variables.shldlth
+
+                vbuild = vbuild - build_variables.d_vv_bot
+                po.obuild(
+                    self.outfile,
+                    "Vacuum vessel (and shielding)",
+                    build_variables.d_vv_bot + build_variables.shldlth,
+                    vbuild,
+                    "(d_vv_bot+shldlth)",
+                )
+                po.ovarre(
+                    self.mfile,
+                    "Bottom radiation shield thickness (m)",
+                    "(shldlth)",
+                    build_variables.shldlth,
+                )
+                po.ovarre(
+                    self.mfile,
+                    "Underside vacuum vessel radial thickness (m)",
+                    "(d_vv_bot)",
+                    build_variables.d_vv_bot,
+                )
+
+                vbuild = vbuild - build_variables.vgap2
+                po.obuild(
+                    self.outfile,
+                    "Gap",
+                    build_variables.vgap2,
+                    vbuild,
+                    "(vgap2)",
+                )
+
+                vbuild = vbuild - build_variables.thshield
+                po.obuild(
+                    self.outfile,
+                    "Thermal shield",
+                    build_variables.thshield,
+                    vbuild,
+                    "(thshield)",
+                )
+
+                vbuild = vbuild - build_variables.tftsgap
+                po.obuild(
+                    self.outfile,
+                    "Gap",
+                    build_variables.tftsgap,
+                    vbuild,
+                    "(tftsgap)",
+                )
+
+                vbuild = vbuild - build_variables.tfcth
+                po.obuild(
+                    self.outfile,
+                    "TF coil",
+                    build_variables.tfcth,
+                    vbuild,
+                    "(tfcth)",
+                )
+
+                # To calculate vertical offset between TF coil centre and plasma centre
+                build_variables.tfoffset = (vbuile1 + vbuild) / 2.0e0
+
+                # end of Double null case
+            else:
+                #  po.ocmmnt(self.outfile, "Single null case")
+                #  write(self.outfile, 20)
+
+                vbuild = (
+                    build_variables.tfcth
+                    + build_variables.tftsgap
+                    + build_variables.thshield
+                    + build_variables.vgap2
+                    + 0.5e0 * (build_variables.d_vv_top + build_variables.d_vv_bot)
+                    + build_variables.vvblgap
+                    + build_variables.shldtth
+                    + build_variables.blnktth
+                    + 0.5e0 * (build_variables.fwith + build_variables.fwoth)
+                    + build_variables.vgaptop
+                    + physics_variables.rminor * physics_variables.kappa
+                )
+
+                # To calculate vertical offset between TF coil centre and plasma centre
+                vbuile1 = vbuild
+
+                po.obuild(
+                    self.outfile,
+                    "TF coil",
+                    build_variables.tfcth,
+                    vbuild,
+                    "(tfcth)",
+                )
+                vbuild = vbuild - build_variables.tfcth
+
+                po.obuild(
+                    self.outfile,
+                    "Gap",
+                    build_variables.tftsgap,
+                    vbuild,
+                    "(tftsgap)",
+                )
+                vbuild = vbuild - build_variables.tftsgap
+
+                po.obuild(
+                    self.outfile,
+                    "Thermal shield",
+                    build_variables.thshield,
+                    vbuild,
+                    "(thshield)",
+                )
+                vbuild = vbuild - build_variables.thshield
+
+                po.obuild(
+                    self.outfile,
+                    "Gap",
+                    build_variables.vgap2,
+                    vbuild,
+                    "(vgap2)",
+                )
+                po.ovarre(
+                    self.mfile,
+                    "Vessel - TF coil vertical gap (m)",
+                    "(vgap2)",
+                    build_variables.vgap2,
+                )
+                vbuild = vbuild - build_variables.vgap2
+
+                po.obuild(
+                    self.outfile,
+                    "Vacuum vessel (and shielding)",
+                    build_variables.d_vv_top + build_variables.shldtth,
+                    vbuild,
+                    "(d_vv_top+shldtth)",
+                )
+                vbuild = vbuild - build_variables.d_vv_top - build_variables.shldtth
+                po.ovarre(
+                    self.mfile,
+                    "Topside vacuum vessel radial thickness (m)",
+                    "(d_vv_top)",
+                    build_variables.d_vv_top,
+                )
+                po.ovarre(
+                    self.mfile,
+                    "Top radiation shield thickness (m)",
+                    "(shldtth)",
+                    build_variables.shldtth,
+                )
+
+                po.obuild(
+                    self.outfile,
+                    "Gap",
+                    build_variables.vvblgap,
+                    vbuild,
+                    "(vvblgap)",
+                )
+                vbuild = vbuild - build_variables.vvblgap
+
+                po.obuild(
+                    self.outfile,
+                    "Top blanket",
+                    build_variables.blnktth,
+                    vbuild,
+                    "(blnktth)",
+                )
+                po.ovarre(
+                    self.mfile,
+                    "Top blanket vertical thickness (m)",
+                    "(blnktth)",
+                    build_variables.blnktth,
+                )
+                vbuild = vbuild - build_variables.blnktth
+
+                fwtth = 0.5e0 * (build_variables.fwith + build_variables.fwoth)
+                po.obuild(self.outfile, "Top first wall", fwtth, vbuild, "(fwtth)")
+                po.ovarre(
+                    self.mfile,
+                    "Top first wall vertical thickness (m)",
+                    "(fwtth)",
+                    fwtth,
+                )
+                vbuild = vbuild - fwtth
+
+                po.obuild(
+                    self.outfile,
+                    "Top scrape-off",
+                    build_variables.vgaptop,
+                    vbuild,
+                    "(vgaptop)",
+                )
+                po.ovarre(
+                    self.mfile,
+                    "Top scrape-off vertical thickness (m)",
+                    "(vgaptop)",
+                    build_variables.vgaptop,
+                )
+                vbuild = vbuild - build_variables.vgaptop
+
+                po.obuild(
+                    self.outfile,
+                    "Plasma top",
+                    physics_variables.rminor * physics_variables.kappa,
+                    vbuild,
+                    "(rminor*kappa)",
+                )
+                po.ovarre(
+                    self.mfile,
+                    "Plasma half-height (m)",
+                    "(rminor*kappa)",
+                    physics_variables.rminor * physics_variables.kappa,
+                )
+                vbuild = vbuild - physics_variables.rminor * physics_variables.kappa
+
+                po.obuild(self.outfile, "Midplane", 0.0e0, vbuild)
+
+                vbuild = vbuild - physics_variables.rminor * physics_variables.kappa
+                po.obuild(
+                    self.outfile,
+                    "Plasma bottom",
+                    physics_variables.rminor * physics_variables.kappa,
+                    vbuild,
+                    "(rminor*kappa)",
+                )
+
+                vbuild = vbuild - build_variables.vgap
+                po.obuild(
+                    self.outfile,
+                    "Lower scrape-off",
+                    build_variables.vgap,
+                    vbuild,
+                    "(vgap)",
+                )
+                po.ovarre(
+                    self.mfile,
+                    "Bottom scrape-off vertical thickness (m)",
+                    "(vgap)",
+                    build_variables.vgap,
+                )
+
+                vbuild = vbuild - divertor_variables.divfix
+                po.obuild(
+                    self.outfile,
+                    "Divertor structure",
+                    divertor_variables.divfix,
+                    vbuild,
+                    "(divfix)",
+                )
+                po.ovarre(
+                    self.mfile,
+                    "Divertor structure vertical thickness (m)",
+                    "(divfix)",
+                    divertor_variables.divfix,
+                )
+
+                vbuild = vbuild - build_variables.shldlth
+
+                vbuild = vbuild - build_variables.d_vv_bot
+                po.obuild(
+                    self.outfile,
+                    "Vacuum vessel (and shielding)",
+                    build_variables.d_vv_bot + build_variables.shldlth,
+                    vbuild,
+                    "(d_vv_bot+shldlth)",
+                )
+                po.ovarre(
+                    self.mfile,
+                    "Bottom radiation shield thickness (m)",
+                    "(shldlth)",
+                    build_variables.shldlth,
+                )
+                po.ovarre(
+                    self.mfile,
+                    "Underside vacuum vessel radial thickness (m)",
+                    "(d_vv_bot)",
+                    build_variables.d_vv_bot,
+                )
+
+                vbuild = vbuild - build_variables.vgap2
+                po.obuild(
+                    self.outfile,
+                    "Gap",
+                    build_variables.vgap2,
+                    vbuild,
+                    "(vgap2)",
+                )
+
+                vbuild = vbuild - build_variables.thshield
+                po.obuild(
+                    self.outfile,
+                    "Thermal shield",
+                    build_variables.thshield,
+                    vbuild,
+                    "(thshield)",
+                )
+
+                vbuild = vbuild - build_variables.tftsgap
+                po.obuild(
+                    self.outfile,
+                    "Gap",
+                    build_variables.tftsgap,
+                    vbuild,
+                    "(tftsgap)",
+                )
+
+                vbuild = vbuild - build_variables.tfcth
+                po.obuild(
+                    self.outfile,
+                    "TF coil",
+                    build_variables.tfcth,
+                    vbuild,
+                    "(tfcth)",
+                )
+
+                # To calculate vertical offset between TF coil centre and plasma centre
+                build_variables.tfoffset = (vbuile1 + vbuild) / 2.0e0
+
+                # end of Single null case
+
+            #  Other build quantities
+
+            po.ovarre(
+                self.mfile,
+                "External cryostat thickness (m)",
+                "(ddwex)",
+                build_variables.ddwex,
+            )
+            po.ovarre(
+                self.mfile,
+                "Ratio of Central solenoid height to TF coil internal height",
+                "(ohhghf)",
+                pfcoil_variables.ohhghf,
+            )
+            po.ovarre(
+                self.mfile,
+                "Width of neutral beam duct where it passes between the TF coils (m)",
+                "(beamwd)",
+                current_drive_variables.beamwd,
+            )
