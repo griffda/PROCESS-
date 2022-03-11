@@ -1130,6 +1130,7 @@ contains
         '(helpow + helpow_cryal/1.0D6)', (helpow + helpow_cryal) * 1.0D-6, 'OP ')
     call ovarre(outfile,'Temperature of cryogenic superconducting components (K)', '(tmpcry)', tmpcry)
     call ovarre(outfile,'Temperature of cryogenic aluminium components (K)', '(tcoolin)', tcoolin)
+    !TODO: Both of these efficiencies are printed when it should be either 13% (ITER) or 40% (Strawbrige) - subset of TODO on line 1118
     call ovarre(outfile,'Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot value:', &
         '', (eff_tf_cryo*tmpcry)/(293.0D0 - tmpcry), 'OP ')
     call ovarre(outfile,'Efficiency (figure of merit) of cryogenic aluminium plant is 40% of ideal Carnot value:', &
