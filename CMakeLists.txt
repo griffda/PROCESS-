@@ -29,7 +29,7 @@ IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
     SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -fPIC -ftest-coverage -fprofile-arcs -fcheck=all,no-array-temps -finit-local-zero -g -O0")
 
 ELSE()
-    SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -fPIC -fcheck=all,no-array-temps -finit-local-zero")
+    SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -fPIC -ftest-coverage -fcheck=all,no-array-temps -finit-local-zero")
 ENDIF()
 
 # Get System information, log as much information as we can
