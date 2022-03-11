@@ -148,7 +148,7 @@ make-py38:
       - process/
     expire_in: 1 week
   script:
-    - cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Debug
+    - cmake -H. -Bbuild
     - cmake --build build
     - python3 setup.py sdist -d process_dist
     - python3 setup.py bdist_wheel -d process_dist
