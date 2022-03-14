@@ -12,7 +12,7 @@
 import argparse
 
 # Local libraries
-import process_io_lib.in_dat as indat
+import process.io.in_dat as indat
 
 
 if __name__ == "__main__":

@@ -20,7 +20,7 @@
 #rc('figure.subplot',left=0.19)
 #rc('figure.subplot',right=0.81)
 
-import process_io_lib.mfile as mf
+import process.io.mfile as mf
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_pdf as bpdf
 import argparse

@@ -187,4 +187,4 @@ def write(models, outfile):
     ft.power_module.power3(ft.constants.nout, 1)
 
     # Water usage in secondary cooling system
-    ft.water_use_module.waterusecall(outfile, 1)
+    models.water_use.run(output=True)

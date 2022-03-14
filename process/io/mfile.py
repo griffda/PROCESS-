@@ -2,7 +2,7 @@
 
   PROCESS MFILE.DAT IO library
 
-  process_io_lib.mfile.
+  process.io.mfile.
 
   James Morris
   CCFE
