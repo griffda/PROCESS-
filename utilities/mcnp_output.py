@@ -15,7 +15,7 @@
 """
 
 import argparse
-from process_io_lib.mfile import MFile
+from process.io.mfile import MFile
 
 
 RADIAL_BUILD = ["bore", "ohcth", "gapoh", "tfcth", "gapds",

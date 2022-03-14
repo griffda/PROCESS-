@@ -19,7 +19,7 @@ import numpy as np
 import argparse
 
 # import mfile library
-import process_io_lib.mfile as mf
+import process.io.mfile as mf
 
 # Import matplotlib libraries for plotting
 import matplotlib.pyplot as plt

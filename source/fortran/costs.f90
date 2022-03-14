@@ -2334,7 +2334,7 @@ contains
 
 		use cost_variables, only: uccry, lsa, fkind
 		use heat_transport_variables, only: helpow 
-		use tfcoil_variables, only: tftmp 
+		use tfcoil_variables, only: tmpcry 
     implicit none
 
     !  Local variables
@@ -2349,7 +2349,7 @@ contains
     cmlsa(3) = 0.8500D0
     cmlsa(4) = 1.0000D0
 
-    c2263 = 1.0D-6 * uccry * 4.5D0/tftmp * helpow**expcry
+    c2263 = 1.0D-6 * uccry * 4.5D0/tmpcry * helpow**expcry
 
     !  Apply Nth kind and safety factors
     c2263 = fkind * c2263 * cmlsa(lsa)

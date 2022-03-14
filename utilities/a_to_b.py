@@ -46,8 +46,8 @@ import os
 import subprocess
 import argparse
 
-import process_io_lib.in_dat as inmod
-import process_io_lib.mfile as mfmod
+import process.io.in_dat as inmod
+import process.io.mfile as mfmod
 try:
     from process_io_lib.process_dicts import DICT_IXC_SIMPLE, DICT_VAR_TYPE, \
         DICT_DEFAULT, DICT_IXC_BOUNDS, IFAIL_SUCCESS, \
