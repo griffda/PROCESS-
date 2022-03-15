@@ -1,0 +1,4 @@
+## [{{process_version}}] - {{date_of_upgrade}}{% for header in changelog_dict: %}
+### {{header}}{% for change in changelog_dict[header]%}
+- {{change}}{% endfor %}
+{% endfor %}
