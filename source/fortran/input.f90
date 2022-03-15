@@ -222,8 +222,8 @@ contains
       cconshpf, uche3, ucpfdr1, ucech, uudiv, cost_model, adivflnc, &
       cost_factor_rh, cost_factor_bop, ifueltyp, fcontng, fwbs_nref, &
       cost_factor_buildings, favail, cconfix, ucblli2o, abktflnc, ucf1, ucfnc, &
-      ucpfps, iavail, ucpfbk, cost_factor_tf_coils, costexp_pebbles, ucmisc, &
-      cpstflnc, uccryo, costexp, fwbs_nu, ucpfic, ucblbreed, tcomrepl, uufuel, &
+      ucpfps, iavail, ibkt_life, life_dpa, ucpfbk, cost_factor_tf_coils, costexp_pebbles, &
+      ucmisc, cpstflnc, uccryo, costexp, fwbs_nu, ucpfic, ucblbreed, tcomrepl, uufuel, &
       ucdiv, uccpcl1, discount_rate, uctfbr, uccpclb, ucoam, div_prob_fail, ucnbi, &
       uccu, ucwst, cfactr, div_nref, amortization, ucwindtf, ucme, csi, cowner, &
       cost_factor_misc, fcr0, step_rh_costfrac, cturbb, lsa, fcap0, output_costs, &
@@ -235,7 +235,7 @@ contains
       step_cconfix, step_cconshpf, step_currency, step_uccase, step_uccu, &
       step_ucsc, step_ucfnc, step_ucfwa, step_ucfws, step_ucfwps, step91_per, &
       step92_per, step93_per, step_uc_cryo_al, step_mc_cryo_al_per, sitecost, &
-      wfbuilding, step_ucoam, step_ucwst
+      wfbuilding, step_ucoam, step_ucwst, startupratio
     use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
@@ -2773,6 +2773,9 @@ contains
        case ('wfbuilding')
           call parse_real_variable('wfbuilding', wfbuilding, 0.0D0, 1.0D9, &
                'Fixed cost Waste Facility buildings ($)')
+       case ('startupratio')
+          call parse_real_variable('startupratio', startupratio, 0.0D0, 10.0D0, &
+               'Ratio (additional HCD power for start-up) / (flat-top operational requirements)')
 
           !  Unit cost settings
 
@@ -3012,6 +3015,12 @@ contains
        case ('iavail')
           call parse_int_variable('iavail', iavail, 0, 2, &
                'Switch for plant availability model')
+       case ('ibkt_life')
+          call parse_int_variable('ibkt_life', ibkt_life, 0, 2, &
+               'Switch for DEMO fw/blanket lifetime calculation')
+       case ('life_dpa')
+          call parse_real_variable('life_dpa', life_dpa, 1.0D1, 1.0D2, &
+               'Allowable DPA for DEMO fw/blanket lifetime calculation')
        case ('avail_min')
           call parse_real_variable('avail_min', avail_min, 0.0D0, 1.0D0, &
                'Required minimum availability (constraint equation 61)')

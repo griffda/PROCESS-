@@ -3106,7 +3106,7 @@ contains
     !! <LI> (138) rebco_thickness : thickness of REBCO layer in tape (m)
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(138) = 'rebco_thicknes'
+    lablxc(138) = 'rebco_thickness'
     boundl(138) = 0.01D-6
     boundu(138) = 100.0D-6
   end subroutine init_itv_138
