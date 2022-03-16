@@ -179,7 +179,7 @@ class Caller:
         self.models.availability.run(output=False)
 
         # Water usage in secondary cooling system
-        ft.water_use_module.waterusecall(ft.constants.nout, 0)
+        self.models.water_use.run(output=False)
 
         # Costs model
         """Cost switch values

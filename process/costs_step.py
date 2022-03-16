@@ -1016,14 +1016,10 @@ class CostsStep:
         step2201 += step220107
 
         # 22.01.08 Impurity Control
-        # Original STARFIRE value, no scaling
-        step220108 = cv.step_ref[29]
-        step2201 += step220108
+        # Superseded and deleted
 
         # 22.01.09 ECRH Plasma Breakdown
-        # Original STARFIRE value, no scaling
-        step220109 = cv.step_ref[30]
-        step2201 += step220109
+        # Superseded and deleted
 
         # 22.01.10 Divertor
         # Caveat: rough estimate, using rmajor (rather than e.g. rnull) and 
@@ -1143,10 +1139,6 @@ class CostsStep:
                 self.outfile, "(step220106)", "Reactor Vacuum System (M$)", step220106
             )
             po.ocosts(self.outfile, "(step220107)", "Power Supplies (M$)", step220107)
-            po.ocosts(self.outfile, "(step220108)", "Impurity Control (M$)", step220108)
-            po.ocosts(
-                self.outfile, "(step220109)", "ECRH Plasma Breakdown (M$)", step220109
-            )
             po.ocosts(self.outfile, "(step220110)", "Divertor (M$)", step220110)
             po.oblnkl(self.outfile)
             po.ocosts(
@@ -1535,18 +1527,24 @@ class CostsStep:
         # Cost per Watt depends on technology/hardware used;
         # inflation adjustment applied as appropriate to source for costs
         # (tech adjusted from 1990 $ is costed as per Cost Model 0)
+        # Note: NBI and EC/EBW acounts will be zero if this tech is not included.
+
+        ## HCD requirements for flat-top operation
 
         # NBI cost per injected Watt (adjusted from 2020 $):
         step220104 = cdv.pnbitot * cv.step_ref[68] * (229.0e0 / 258.84e0)
+        # (if this method is not used, result is zero)
 
         # EC or EBW cost per injected Watt (adjusted from 2020 $):
         step220104 += cdv.echpwr * cv.step_ref[69] * (229.0e0 / 258.84e0)
+        # (if this method is not used, result is zero)
 
         if cdv.iefrf == 2 or cdv.iefrffix == 2:
+            # if primary *or* secondary current drive efficiency model is
             # Ion Cyclotron current drive (adjusted from 1990 $):
             step220104 += 1.0e-6 * cv.ucich * (1.0e6 * cdv.plhybd) * (229.0e0 / 76.7e0)
 
-        # TODO why is there a duplicate of everything below?
+        # if primary current drive efficiency model is any of the following...
         if (
             (cdv.iefrf == 1)
             or (cdv.iefrf == 1)
@@ -1555,8 +1553,13 @@ class CostsStep:
             or (cdv.iefrf == 6)
             or (cdv.iefrf == 6)
         ):
-            # Lower Hybrid system (adjusted from 1990 $):
+            # ...use calculation for Lower Hybrid system (adjusted from 1990 $):
             step220104 += 1.0e-6 * cv.uclh * (1.0e6 * cdv.plhybd) * (229.0e0 / 76.7e0)
+
+        ## HCD requirements for start-up and ramp-down
+        cv.startuppwr = step220104 * cv.startupratio
+        step220104 += cv.startuppwr
+        
 
         if cv.ifueltyp == 1:
             # fraction `fcdfuel` of HCD cost treated as fuel cost
