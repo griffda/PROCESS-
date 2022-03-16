@@ -19,7 +19,17 @@ from process.fortran import constraint_variables
 
 from process.fortran import pfcoil_variables
 
-from process.fortran import pulse_module
+from process.pulse import Pulse
+
+
+@pytest.fixture
+def pulse():
+    """Provides Pulse object for testing.
+
+    :returns: initialised Pulse object
+    :rtype: process.pulse.Pulse
+    """
+    return Pulse()
 
 
 class TohswgParam(NamedTuple):
@@ -1203,7 +1213,7 @@ class BurnParam(NamedTuple):
         ),
     ),
 )
-def test_tohswg(tohswgparam, monkeypatch):
+def test_tohswg(tohswgparam, monkeypatch, pulse):
     """
     Automatically generated Regression Unit Test for tohswg.
 
@@ -1246,7 +1256,7 @@ def test_tohswg(tohswgparam, monkeypatch):
 
     monkeypatch.setattr(pulse_variables, "lpulse", tohswgparam.lpulse)
 
-    pulse_module.tohswg(outfile=tohswgparam.outfile, iprint=tohswgparam.iprint)
+    pulse.tohswg(output=False)
 
     assert constraint_variables.tohsmn == pytest.approx(tohswgparam.expected_tohsmn)
 
@@ -1288,7 +1298,7 @@ def test_tohswg(tohswgparam, monkeypatch):
         ),
     ),
 )
-def test_burn(burnparam, monkeypatch, initialise_error_module):
+def test_burn(burnparam, monkeypatch, initialise_error_module, pulse):
     """
     Automatically generated Regression Unit Test for burn.
 
@@ -1323,34 +1333,6 @@ def test_burn(burnparam, monkeypatch, initialise_error_module):
 
     monkeypatch.setattr(times_variables, "theat", burnparam.theat)
 
-    pulse_module.burn(outfile=burnparam.outfile, iprint=burnparam.iprint)
+    pulse.burn(output=True)
 
     assert times_variables.tburn == pytest.approx(burnparam.expected_tburn)
-
-
-# Thread 1 "python" hit Breakpoint 1, pulse_module::burn (outfile=11, iprint=0) at /root/process/source/fortran/pulse.f90:218
-# warning: Source file is more recent than executable.
-# 218	    !!! end break
-# (gdb) print tburn
-# $1 = 10000
-# (gdb) c
-# Continuing.
-
-# Thread 1 "python" hit Breakpoint 1, pulse_module::burn (outfile=11, iprint=0) at /root/process/source/fortran/pulse.f90:218
-# 218	    !!! end break
-# (gdb) print tburn
-# $2 = 0
-# (gdb) c
-# Continuing.
-
-# Thread 1 "python" hit Breakpoint 1, pulse_module::burn (outfile=11, iprint=0) at /root/process/source/fortran/pulse.f90:218
-# 218	    !!! end break
-# (gdb) print tburn
-# $3 = 10230.533336387545
-# (gdb) c
-# Continuing.
-
-# Thread 1 "python" hit Breakpoint 1, pulse_module::burn (outfile=11, iprint=0) at /root/process/source/fortran/pulse.f90:218
-# 218	    !!! end break
-# (gdb) print tburn
-# $4 = 10234.092022756307

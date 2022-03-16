@@ -59,7 +59,7 @@ def write(models, outfile):
     ft.current_drive_module.cudriv(outfile, 1)
 
     # Pulsed reactor model
-    ft.pulse_module.pulse(outfile, 1)
+    models.pulse.run(output=True)
     ft.physics_module.outtim(outfile)
 
     # Divertor Model
