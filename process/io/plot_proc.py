@@ -192,8 +192,9 @@ def plot_plasma(axis, mfile_data, scan):
     ys2 = r2 * np.sin(angs2)
     axis.plot(xs1, ys1, color='black')
     axis.plot(xs2, ys2, color='black')
-    axis.fill(xs1, ys1, color=plasma)
-    axis.fill(xs2, ys2, color=plasma)
+    axis.fill_betweenx(ys1, xs1, xs2,where =\
+         (xs2<xs1) & (ys1>(-a*kappa)) & (ys1<(a*kappa)),color=plasma)
+    axis.fill_betweenx(ys1, xs1, xs2,where = (xs2>xs1), color='none')
 
 
 def plot_centre_cross(axis, mfile_data, scan):
