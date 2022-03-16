@@ -245,8 +245,8 @@ contains
       cconshpf, uche3, ucpfdr1, ucech, uudiv, cost_model, adivflnc, &
       cost_factor_rh, cost_factor_bop, ifueltyp, fcontng, fwbs_nref, &
       cost_factor_buildings, favail, cconfix, ucblli2o, abktflnc, ucf1, ucfnc, &
-      ucpfps, iavail, ucpfbk, cost_factor_tf_coils, costexp_pebbles, ucmisc, &
-      cpstflnc, uccryo, costexp, fwbs_nu, ucpfic, ucblbreed, tcomrepl, uufuel, &
+      ucpfps, iavail, ibkt_life, life_dpa, ucpfbk, cost_factor_tf_coils, costexp_pebbles, &
+      ucmisc, cpstflnc, uccryo, costexp, fwbs_nu, ucpfic, ucblbreed, tcomrepl, uufuel, &
       ucdiv, uccpcl1, discount_rate, uctfbr, uccpclb, ucoam, div_prob_fail, ucnbi, &
       uccu, ucwst, cfactr, div_nref, amortization, ucwindtf, ucme, csi, cowner, &
       cost_factor_misc, fcr0, step_rh_costfrac, cturbb, lsa, fcap0, output_costs, &
@@ -3045,6 +3045,12 @@ contains
        case ('iavail')
           call parse_int_variable('iavail', iavail, 0, 2, &
                'Switch for plant availability model')
+       case ('ibkt_life')
+          call parse_int_variable('ibkt_life', ibkt_life, 0, 2, &
+               'Switch for DEMO fw/blanket lifetime calculation')
+       case ('life_dpa')
+          call parse_real_variable('life_dpa', life_dpa, 1.0D1, 1.0D2, &
+               'Allowable DPA for DEMO fw/blanket lifetime calculation')
        case ('avail_min')
           call parse_real_variable('avail_min', avail_min, 0.0D0, 1.0D0, &
                'Required minimum availability (constraint equation 61)')

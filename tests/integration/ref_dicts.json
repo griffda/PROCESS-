@@ -3438,7 +3438,7 @@
         "phi_tfc_ob": 0.0,
         "phiint": 0.0,
         "photon_wall": 0.0,
-        "pi": 3.141592653589793,
+        "pi": "3.141592653589793_wp_",
         "pibv": 20000.0,
         "piepv": 0.0,
         "pifecr": 10.0,
@@ -15732,7 +15732,7 @@
             "lb": 0.001,
             "ub": 0.01
         },
-        "rebco_thicknes": {
+        "rebco_thickness": {
             "lb": 1e-08,
             "ub": 0.0001
         },
@@ -15940,6 +15940,7 @@
         "r_cp_top": 0.0,
         "ralpne": 0.1,
         "rcool": 0.005,
+        "rebco_thickness": 1e-06,
         "rmajor": 8.14,
         "rnbeam": 0.005,
         "rrin": 6.0,
@@ -16170,7 +16171,7 @@
         },
         "138": {
             "lb": 1e-08,
-            "name": "rebco_thicknes",
+            "name": "rebco_thickness",
             "ub": 0.0001
         },
         "139": {
@@ -16816,7 +16817,7 @@
         "135": "fimp(13)",
         "136": "fimp(14)",
         "137": "fplhsep",
-        "138": "rebco_thicknes",
+        "138": "rebco_thickness",
         "139": "copper_thick",
         "14": "fwalld",
         "140": "dr_tf_wp",
@@ -17069,7 +17070,7 @@
         "r_cp_top": "162",
         "ralpne": "109",
         "rcool": "69",
-        "rebco_thicknes": "138",
+        "rebco_thickness": "138",
         "rmajor": "3",
         "rnbeam": "7",
         "rrin": "156",
@@ -17209,7 +17210,6 @@
             "plsepo",
             "rspo"
         ],
-        "buildings_module": [],
         "buildings_variables": [
             "admv",
             "admvol",
@@ -19733,7 +19733,6 @@
             "vportpmax",
             "vporttmax"
         ],
-        "structure_module": [],
         "structure_variables": [
             "aintmass",
             "clgsmass",
