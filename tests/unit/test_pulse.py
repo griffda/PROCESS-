@@ -5,8 +5,6 @@ from typing import NamedTuple, Any
 
 from process.fortran import numerics
 
-from process.fortran import pulse_module
-
 from process.fortran import physics_variables
 
 from process.fortran import pulse_variables
