@@ -2,9 +2,9 @@ import numpy
 
 from process.fortran import tfcoil_variables
 from process.fortran import divertor_variables
-from process.fortran import maths_library
 from process.fortran import current_drive_variables
 from process.fortran import physics_variables
+from process.fortran import maths_library
 from process.fortran import constants
 from process.fortran import pfcoil_variables
 from process.fortran import build_variables
@@ -1276,18 +1276,11 @@ class Build:
             # the interface so has been reimplemented here
             # as a test
 
-            build_variables.fwareaib = 4 * hfw * numpy.pi * r1
-            elong = hfw / r2
-            build_variables.fwareaob = (
-                constants.twopi * elong * (numpy.pi * r1 * r2 + 2 * r2 * r2)
-            )
-            build_variables.fwarea = build_variables.fwareaib + build_variables.fwareaob
-
-            # (
-            #     build_variables.fwareaib,
-            #     build_variables.fwareaob,
-            #     build_variables.fwarea,
-            # ) = maths_library.dshellarea(r1, r2, hfw)
+            (
+                build_variables.fwareaib,
+                build_variables.fwareaob,
+                build_variables.fwarea,
+            ) = maths_library.dshellarea(r1, r2, hfw)
 
         else:  #  Cross-section is assumed to be defined by two ellipses
 
@@ -1321,23 +1314,11 @@ class Build:
             # the interface so has been reimplemented here
             # as a test
 
-            elong = hfw / r2
-            build_variables.fwareaib = (
-                constants.twopi * elong * (numpy.pi * r1 * r2 - 2 * r2 * r2)
-            )
-
-            elong = hfw / r3
-            build_variables.fwareaob = (
-                constants.twopi * elong * (numpy.pi * r1 * r3 + 2 * r3 * r3)
-            )
-
-            build_variables.fwarea = build_variables.fwareaib + build_variables.fwareaob
-
-            # (
-            #     build_variables.fwareaib,
-            #     build_variables.fwareaob,
-            #     build_variables.fwarea,
-            # ) = maths_library.eshellarea(r1, r2, r3, hfw)
+            (
+                build_variables.fwareaib,
+                build_variables.fwareaob,
+                build_variables.fwarea,
+            ) = maths_library.eshellarea(r1, r2, r3, hfw)
 
         #  Apply area coverage factor
 
