@@ -32,7 +32,7 @@ Deprecated:
 
 Removed:
   - List any features you have removed here
-  - Another addition
+  - Another removal
 
 Fixed:
   - List any bug fixes here
@@ -100,7 +100,7 @@ Fixed:
 Also, as seen above, if you haven't made changes, sections can be left empty. In this case we do not have a `Security` tag as there should be no changes invovled that would lead to any vulnerabilities. 
 
 ### Step 5
-All you need to do now is save your YAML file once you have added the changes to it, commit these changes and that is all. No changes need to be made ot the CHANGELOG.md as this will be done automatically upon Process upversioning. 
+All you need to do now is save your YAML file once you have added the changes to it, commit these changes and that is all. No changes need to be made to the CHANGELOG.md as this will be done automatically upon Process upversioning. 
 
 ## What warrants a changelog entry?
 You can see the current CHANGELOG.md in the process directory, which has previous examples of what should be included in the changelog. Using [Gitlab guides](https://docs.gitlab.com/ee/development/changelog.html), a few key changelog entries are:
@@ -113,15 +113,15 @@ You can see the current CHANGELOG.md in the process directory, which has previou
 # Instructions for the RSE updating the CHANGELOG on upgrade of PROCESS
 
 ### Step 1
-*This process should only be followed upon PROCESS upgrade i.e. from 2.4 to 2.5.*
+*This process should only be followed upon PROCESS upgrade i.e. from `2.4.0` to `2.5.0`.*
 
-The Python script uses `ArgParse` with the argument 'version' to specify the newest version of Process that is being implemented. This requires an extra argument to be included in the command when running the script. It takes a string as the 'version' argument. For example, if you were upversioning to Process 2.5.1, you would use the following to run the Python script:
+The Python script uses `ArgParse` with the argument `version` to specify the version being unversioned to. This requires an extra argument to be included in the command when running the script. It takes a string as the `version` argument. For example, if you were up versioning to Process 2.5.1, you would use the following to run the Python script:
 
 From the terminal, run:
 ```bash
 python changelog_update/changelog_upversion.py 2.5.1
 ```
-This script will take the .yaml files in the `changelog_update` directory and using the jinja2 template, will combine the changes since the last Process upgrade by header as defined in the changelog dict (the headers seen above). Whoever is running the script will be asked whihc version of Process we are upgrading to. 
+This script will take the .yaml files in the `changelog_update` directory and using the jinja2 template, will combine the changes since the last Process upgrade by header as defined in the changelog dict (the headers seen above).
 
 A markdown file- `changelogupdate.md`, will be created in the same directory and all the YAML files will be removed so they cannot be uploaded more than once.
 

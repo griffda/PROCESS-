@@ -13,9 +13,9 @@ if __name__ == "__main__":
     yaml_files = CURRENTDIR.glob("*.yaml")
 
     parser = argparse.ArgumentParser(
-        description="Add version of process being upversioned too"
+        description="Create the Changelog markdown for a new Process release"
     )
-    parser.add_argument("version", type=str, help="new version of process")
+    parser.add_argument("version", type=str, help="New version of process")
     args = parser.parse_args()
 
     # Creating the version argument to be used in the command line so the user can define which version of Process is being implemented
