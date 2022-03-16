@@ -12,13 +12,14 @@ from process.fortran import numerics
 from process.fortran import fwbs_variables
 from process.fortran import error_handling
 from process.fortran import process_output as po
+from process.variables import AnnotatedVariable
 
 
 class Build:
     def __init__(self):
         self.outfile = constants.nout
         self.mfile = constants.mfile
-        self.ripflag = 0
+        self.ripflag = AnnotatedVariable(int, 0)
 
     def portsz(self):
         """Port size calculation
