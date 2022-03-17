@@ -303,9 +303,9 @@ module tfcoil_variables
   !! Number of layers considered for the inboard TF stress calculations
   !! set in initial.f90 from i_tf_bucking and n_tf_graded_layers
   
-  integer :: n_tf_members_max
+  integer :: n_tf_wp_layers
   !! Maximum number of layers that can be considered in the TF coil composited/smeared 
-  !! stress analysis.
+  !! stress analysis. This is the layers of one turn, not the entire WP. 
   !! Default: 5. void, conductor, copper, conduit, insulation.
 
   real(dp) :: jbus
@@ -901,7 +901,7 @@ module tfcoil_variables
     i_tf_bucking = -1
     n_tf_graded_layers = 1
     n_tf_stress_layers = 0
-    n_tf_members_max = 5
+    n_tf_wp_layers = 5
     jbus = 1.25D6
     jwdgcrt = 0.0D0
     jwdgpro = 0.0D0

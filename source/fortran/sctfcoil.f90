@@ -1753,7 +1753,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         aiwp, aswp, cpttf, n_tf, i_tf_stress_model, sig_tf_wp_max, &
         i_tf_turns_integer, casthi, acond, avwp, awphec, poisson_ins, &
         eyoung_cond_trans, poisson_cond_axial, poisson_cond_trans, dhecoil, fcutfsu, &
-        str_wp, n_tf_members_max
+        str_wp, n_tf_wp_layers
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
         cohbop, ncls, cptdin
     use constants, only: pi, sig_file
@@ -2012,15 +2012,15 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! considered when assembling the series elastic quantities
     !! of composite members [m]
     
-    real(dp), dimension(n_tf_members_max) :: eyoung_member_array
+    real(dp), dimension(n_tf_wp_layers) :: eyoung_member_array
     !! Array to store the Young's moduli of the members to composite into smeared
     !! properties [Pa]
     
-    real(dp), dimension(n_tf_members_max) :: poisson_member_array
+    real(dp), dimension(n_tf_wp_layers) :: poisson_member_array
     !! Array to store the Poisson's ratios of the members to composite into smeared
     !! properties
     
-    real(dp), dimension(n_tf_members_max) :: l_member_array
+    real(dp), dimension(n_tf_wp_layers) :: l_member_array
     !! Array to store the linear dimension (thickness) of the members to composite into smeared
     !! properties [m]
     
@@ -2116,30 +2116,41 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             ! [EDIT: eyoung_cond is for the TF coil, not the CS coil]
             
             ! Get transverse properties
-            call eyoung_transarallel(eyoung_steel, oh_steel_frac, poisson_steel, &
-                              eyoung_cond_axial, 1D0-oh_steel_frac, poisson_cond_axial, & 
-                              eyoung_trans(1),a_working,poisson_trans(1))
+            call eyoung_parallel(eyoung_steel, &
+                                 oh_steel_frac, &
+                                 poisson_steel, &
+                                 eyoung_cond_axial, &
+                                 1D0-oh_steel_frac, &
+                                 poisson_cond_axial, & 
+                                 eyoung_trans(1), &
+                                 a_working, &
+                                 poisson_trans(1))
             
             ! Get vertical properties
             ! Split up into "members", concentric squares in cross section
             ! (described in Figure 10 of the TF coil documentation)
-            !! Conductor 
+            ! Conductor 
             eyoung_member_array(1)  = eyoung_cond_trans
             poisson_member_array(1) = poisson_cond_trans
             l_member_array(1)       = t_cable_oh
-            !! Steel conduit
+            ! Steel conduit
             eyoung_member_array(2)  = eyoung_steel
             poisson_member_array(2) = poisson_steel
             l_member_array(2)       = 2*t_cond_oh
-            !! Insulation
+            ! Insulation
             eyoung_member_array(3)  = eyoung_ins
             poisson_member_array(3) = poisson_ins
             l_member_array(3)       = 2*thicndut
             ! [EDIT: Add central cooling channel? Would be new member #1]
         
-            !! Compute the composited (smeared) properties
-            call eyoung_t_nested_squares(3,eyoung_member_array,l_member_array,poisson_member_array, &
-                                       eyoung_axial(1),a_working,poisson_axial(1),eyoung_cs_stiffest_leg)
+            ! Compute the composited (smeared) properties
+            call eyoung_t_nested_squares(3, &
+                                         eyoung_member_array, &
+                                         l_member_array, &
+                                         poisson_member_array, &
+                                         eyoung_axial(1), &
+                                         a_working,poisson_axial(1), &
+                                         eyoung_cs_stiffest_leg)
    
         ! resistive CS (copper)
         else
@@ -2237,64 +2248,92 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! (radial and toroidal) direction
         ! Split up into "members", concentric squares in cross section
         ! (described in Figure 10 of the TF coil documentation)
-        !! Helium
+        ! Helium
         eyoung_member_array(1)  = 0D0
         poisson_member_array(1) = poisson_steel
         l_member_array(1)       = dhecoil
-        !! Conductor and co-wound copper
-        call eyoung_series(eyoung_cond_trans,(t_cable_eyng-dhecoil)*(1.0D0-fcutfsu),poisson_cond_trans, & 
-                        eyoung_copper,(t_cable_eyng-dhecoil)*fcutfsu,poisson_copper, & 
-                        eyoung_member_array(2),l_member_array(2),poisson_member_array(2))
-        !! Steel conduit
+        ! Conductor and co-wound copper
+        call eyoung_series(eyoung_cond_trans, &
+                           (t_cable_eyng-dhecoil)*(1.0D0-fcutfsu), &
+                           poisson_cond_trans, & 
+                           eyoung_copper, &
+                           (t_cable_eyng-dhecoil)*fcutfsu, &
+                           poisson_copper, & 
+                           eyoung_member_array(2), &
+                           l_member_array(2), &
+                           poisson_member_array(2))
+        ! Steel conduit
         eyoung_member_array(3)  = eyoung_steel
         poisson_member_array(3) = poisson_steel
         l_member_array(3)       = 2*thwcndut
-        !! Insulation
+        ! Insulation
         eyoung_member_array(4)  = eyoung_ins
         poisson_member_array(4) = poisson_ins
         l_member_array(4)       = 2*t_ins_eff
         
-        !! Compute the composited (smeared) properties
-        call eyoung_t_nested_squares(4,eyoung_member_array,l_member_array,poisson_member_array, &
-                                   eyoung_wp_trans,a_working,poisson_wp_trans,eyoung_wp_stiffest_leg)
+        ! Compute the composited (smeared) properties
+        call eyoung_t_nested_squares(4, &
+                                     eyoung_member_array, &
+                                     l_member_array, &
+                                     poisson_member_array, &
+                                     eyoung_wp_trans, &
+                                     a_working, &
+                                     poisson_wp_trans, &
+                                     eyoung_wp_stiffest_leg)
                                     
         ! Lateral casing correction (series-composition)
-        call eyoung_series(eyoung_wp_trans,t_wp_toroidal_av,poisson_wp_trans, &
-                        eyoung_steel,2.0D0*t_lat_case_av,poisson_steel, &
-                        eyoung_wp_trans_eff,a_working,poisson_wp_trans_eff)
+        call eyoung_series(eyoung_wp_trans, &
+                           t_wp_toroidal_av, &
+                           poisson_wp_trans, &
+                           eyoung_steel, &
+                           2.0D0*t_lat_case_av, &
+                           poisson_steel, &
+                           eyoung_wp_trans_eff, &
+                           a_working, &
+                           poisson_wp_trans_eff)
                           
         ! Average WP Young's modulus in the vertical direction
         ! Split up into "members", concentric squares in cross section
         ! (described in Figure 10 of the TF coil documentation)
-        !! Steel conduit
+        ! Steel conduit
         eyoung_member_array(1)  = eyoung_steel
         poisson_member_array(1) = poisson_steel
         l_member_array(1)       = aswp
-        !! Insulation
+        ! Insulation
         eyoung_member_array(2)  = eyoung_ins
         poisson_member_array(2) = poisson_ins
         l_member_array(2)       = a_tf_ins
-        !! Copper
+        ! Copper
         eyoung_member_array(3)  = eyoung_copper
         poisson_member_array(3) = poisson_copper
         l_member_array(3)       = acond*fcutfsu
-        !! Conductor
+        ! Conductor
         eyoung_member_array(4)  = eyoung_cond_axial
         poisson_member_array(4) = poisson_cond_axial
         l_member_array(4)       = acond*(1.0D0-fcutfsu)
-        !! Helium and void
+        ! Helium and void
         eyoung_member_array(5)  = 0D0
         poisson_member_array(5) = poisson_steel
         l_member_array(5)       = awpc - acond - a_tf_ins - aswp
-        !! Compute the composite / smeared properties:
-        call eyoung_transarallel_array(5,eyoung_member_array,l_member_array,poisson_member_array, &
-                                eyoung_wp_axial,a_working,poisson_wp_axial)
+        ! Compute the composite / smeared properties:
+        call eyoung_parallel_array(5, &
+                                   eyoung_member_array, &
+                                   l_member_array, &
+                                   poisson_member_array, &
+                                   eyoung_wp_axial, &
+                                   a_working, &
+                                   poisson_wp_axial)
                                 
         ! Average WP Young's modulus in the vertical direction, now including the lateral case
         ! Parallel-composite the steel and insulation, now including the lateral case (sidewalls)
-        call eyoung_transarallel(eyoung_steel,a_wp_steel_eff - aswp,poisson_steel, &
-                          eyoung_wp_axial,a_working,poisson_wp_axial, &                          
-                          eyoung_wp_axial_eff,a_working,poisson_wp_axial_eff)
+        call eyoung_parallel(eyoung_steel, &
+                             a_wp_steel_eff - aswp,poisson_steel, &
+                             eyoung_wp_axial, &
+                             a_working, &
+                             poisson_wp_axial, &                          
+                             eyoung_wp_axial_eff, &
+                             a_working, &
+                             poisson_wp_axial_eff)
 
     ! Resistive coil
     else
@@ -2321,13 +2360,24 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
         ! Effective conductor region young modulus in the vertical direction [Pa]
         ! Parallel-composite conductor and insulator
-        call eyoung_transarallel(eyoung_cond,(a_wp_eff-a_tf_ins)*(1.0D0-fcoolcp),poisson_cond, & 
-                          eyoung_ins,a_tf_ins,poisson_ins, & 
-                          eyoung_wp_axial,a_working,poisson_wp_axial)
+        call eyoung_parallel(eyoung_cond, &
+                             (a_wp_eff-a_tf_ins)*(1.0D0-fcoolcp), &
+                             poisson_cond, & 
+                             eyoung_ins, &
+                             a_tf_ins, &
+                             poisson_ins, & 
+                             eyoung_wp_axial, &
+                             a_working, &
+                             poisson_wp_axial)
         ! Parallel-composite cooling pipes into that
-        call eyoung_transarallel(0D0,(a_wp_eff-a_tf_ins)*fcoolcp,poisson_cond, & 
-                          eyoung_wp_axial,a_working,poisson_wp_axial, &
-                          eyoung_wp_axial,a_working,poisson_wp_axial)
+        call eyoung_parallel(0D0, &
+                             (a_wp_eff-a_tf_ins)*fcoolcp,poisson_cond, & 
+                             eyoung_wp_axial, &
+                             a_working, &
+                             poisson_wp_axial, &
+                             eyoung_wp_axial, &
+                             a_working, &
+                             poisson_wp_axial)
 
         ! Effective young modulus used in stress calculations
         eyoung_wp_axial_eff = eyoung_wp_axial
@@ -2445,7 +2495,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                                        radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
                                        str_tf_r, str_tf_t, str_tf_z, deflect ) ! Outputs
         
-        !! Strain in TF conductor material
+        ! Strain in TF conductor material
         str_wp = str_tf_z(n_tf_bucking*n_radial_array+1);
         
     else if ( i_tf_stress_model == 2) then
@@ -2459,7 +2509,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                                        radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
                                        str_tf_r, str_tf_t, str_tf_z, deflect ) ! Outputs
         
-        !! Strain in TF conductor material
+        ! Strain in TF conductor material
         str_wp = str_tf_z(n_tf_bucking*n_radial_array+1);
         
     end if
@@ -4144,7 +4194,7 @@ end function eyngzwp
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine eyoung_transarallel(eyoung_j_1, a_1, poisson_j_perp_1, & ! Inputs
+subroutine eyoung_parallel(eyoung_j_1, a_1, poisson_j_perp_1, & ! Inputs
                         eyoung_j_2, a_2, poisson_j_perp_2, & ! Inputs
                         eyoung_j_3, a_3, poisson_j_perp_3)   ! Outputs
       
@@ -4175,9 +4225,9 @@ subroutine eyoung_transarallel(eyoung_j_1, a_1, poisson_j_perp_1, & ! Inputs
     !! members 2 and 3, and call it successively, using the properties
     !! of each member as the first triplet of arguments. This way, the 
     !! last triplet acts as a "working sum":
-    !! call eyoung_transarallel(triplet1, triplet2, tripletOUT)
-    !! call eyoung_transarallel(triplet3, tripletOUT, tripletOUT)
-    !! call eyoung_transarallel(triplet4, tripletOUT, tripletOUT)
+    !! call eyoung_parallel(triplet1, triplet2, tripletOUT)
+    !! call eyoung_parallel(triplet3, tripletOUT, tripletOUT)
+    !! call eyoung_parallel(triplet4, tripletOUT, tripletOUT)
     !! ... etc.
     !! So that tripletOUT would eventually have the smeared properties
     !! of the total composite member.
@@ -4217,7 +4267,7 @@ subroutine eyoung_transarallel(eyoung_j_1, a_1, poisson_j_perp_1, & ! Inputs
     eyoung_j_3 = (eyoung_j_1 * a_1 + eyoung_j_2 * a_2) / (a_1 + a_2)
     a_3 = a_1 + a_2
     
-end subroutine eyoung_transarallel
+end subroutine eyoung_parallel
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4321,7 +4371,7 @@ subroutine eyoung_t_nested_squares(n,eyoung_j_in, l_in, poisson_j_perp_in, & ! I
     !! This subroutine gives the smeared transverse elastic 
     !! properties of n members whose cross sectional areas are 
     !! nested squares. It uses the subroutines eyoung_series and 
-    !! eyoung_transarallel, above, so please be aware of the assumptions
+    !! eyoung_parallel, above, so please be aware of the assumptions
     !! inherent in those subroutines.
     !! 
     !! It assumes that each "leg" of the square cross section 
@@ -4378,7 +4428,7 @@ subroutine eyoung_t_nested_squares(n,eyoung_j_in, l_in, poisson_j_perp_in, & ! I
     real(dp), dimension(n) :: poisson_j_perp_working
     !! Working array of the Poissin's ratios of the legs
     
-    !! Initialize
+    ! Initialize
     eyoung_j_working = 0
     l_working = 0
     poisson_j_perp_working = 0
@@ -4387,18 +4437,18 @@ subroutine eyoung_t_nested_squares(n,eyoung_j_in, l_in, poisson_j_perp_in, & ! I
     poisson_j_perp_out = 0
     eyoung_stiffest = 0
     
-    !! First member
+    ! First member
     eyoung_j_working(1) = eyoung_j_in(1)
     l_working(1) = l_in(1)
     poisson_j_perp_working(1) = poisson_j_perp_in(1)
     
     do ii = 2,n
-      !! Initialize the leg of which this is the new member
+      ! Initialize the leg of which this is the new member
       eyoung_j_working(ii) = eyoung_j_in(ii)
       l_working(ii) = l_working(ii-1) + l_in(ii)
       poisson_j_perp_working(ii) = poisson_j_perp_in(ii)
       
-      !! Serial-composite the new layer of this member into the previous legs
+      ! Serial-composite the new layer of this member into the previous legs
       do jj = 1,(ii-1)
         call eyoung_series(eyoung_j_working(ii),l_in(ii),poisson_j_perp_working(ii), &
                 eyoung_j_working(jj),l_working(jj),poisson_j_perp_working(jj), &
@@ -4406,16 +4456,16 @@ subroutine eyoung_t_nested_squares(n,eyoung_j_in, l_in, poisson_j_perp_in, & ! I
       end do
     end do
     
-    !! Find stiffest leg
+    ! Find stiffest leg
     do ii = 1,n
       if (eyoung_stiffest < eyoung_j_working(ii)) then
         eyoung_stiffest = eyoung_j_working(ii)
       end if
     end do
                  
-    !! Parallel-composite them all together
+    ! Parallel-composite them all together
     do ii = 1,n
-      call eyoung_transarallel(eyoung_j_working(ii),l_in(ii),poisson_j_perp_working(ii), &
+      call eyoung_parallel(eyoung_j_working(ii),l_in(ii),poisson_j_perp_working(ii), &
                 eyoung_j_out,l_out,poisson_j_perp_out, &
                 eyoung_j_out,l_out,poisson_j_perp_out)
     end do
@@ -4424,14 +4474,14 @@ end subroutine eyoung_t_nested_squares
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine eyoung_transarallel_array(n,eyoung_j_in, a_in, poisson_j_perp_in, & ! Inputs
+subroutine eyoung_parallel_array(n,eyoung_j_in, a_in, poisson_j_perp_in, & ! Inputs
                       eyoung_j_out, a_out, poisson_j_perp_out)   ! Outputs
 
     !! Author : C. Swanson, PPPL
     !! January 2022
     !! This subroutine gives the smeared axial elastic 
     !! properties of n members in parallel. It uses the subroutines
-    !! eyoung_transarallel, above, so please be aware of the assumptions
+    !! eyoung_parallel, above, so please be aware of the assumptions
     !! inherent in that subroutine.
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
@@ -4471,19 +4521,19 @@ subroutine eyoung_transarallel_array(n,eyoung_j_in, a_in, poisson_j_perp_in, & !
     integer :: ii 
     !! Indices
         
-    !! Initialize
+    ! Initialize
     eyoung_j_out = 0
     a_out = 0
     poisson_j_perp_out = 0
                      
-    !! Parallel-composite them all together
+    ! Parallel-composite them all together
     do ii = 1,n
-      call eyoung_transarallel(eyoung_j_in(ii),a_in(ii),poisson_j_perp_in(ii), &
+      call eyoung_parallel(eyoung_j_in(ii),a_in(ii),poisson_j_perp_in(ii), &
                 eyoung_j_out,a_out,poisson_j_perp_out, &
                 eyoung_j_out,a_out,poisson_j_perp_out)
     end do
 
-end subroutine eyoung_transarallel_array
+end subroutine eyoung_parallel_array
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
