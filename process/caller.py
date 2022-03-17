@@ -47,10 +47,10 @@ class Caller:
 
         # Machine Build Model
         # Radial build
-        ft.build_module.radialb(ft.constants.nout, 0)
+        self.models.build.radialb(output=False)
 
         # Vertical build
-        ft.build_module.vbuild(ft.constants.nout, 0)
+        self.models.build.vbuild(output=False)
 
         ft.physics_module.physics()
 
