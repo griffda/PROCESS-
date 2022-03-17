@@ -1,6 +1,6 @@
 import argparse
 import os
-from sys import stderr
+import sys
 import yaml
 import jinja2
 from pathlib import Path
@@ -43,11 +43,13 @@ if __name__ == "__main__":
 
             except yaml.YAMLError as exc:
                 print(
-                    f"Failed to open and include content of {yaml_file} - please check headers match changelog_dict."
+                    f"Failed to open and include content of {file} - please check headers match changelog_dict and that the structure of your yaml file matches that in `README.md` (i.e. space between hyphen and entry)."
                 )
+                sys.exit()
 
     # Looping through and reading YAML files in CURRENTDIR
-    # Here, headers are the different values under which an entry to the changelog can be made i.e 'Fixed', 'Removed' etc.
+    # Here, headers are the different values under which an entry to the changelog can be made i.e 'Fixed', 'Removed' etc. The script will exit
+    # if the structure of one of the .yaml files is incorrect.
 
     for header in changelog_dict:
         changelog_dict[header] = [

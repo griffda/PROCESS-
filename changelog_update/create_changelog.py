@@ -20,7 +20,14 @@ if __name__ == "__main__":
         cwd=CURRENTDIR,
         check=True,
     )
+
+    git_branch_name = branch_name.stdout.decode()
     git_branch_no = branch_name.stdout.decode().split("-")[0]
+
+    if git_branch_no.isdigit() == True:
+        git_branch_no == git_branch_no
+    else:
+        git_branch_no == git_branch_name
 
     # Finding the name of the current git branch which shulde have the follwowing structure
     # 1234-issue-name-from-merge-request
