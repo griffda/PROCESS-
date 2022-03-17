@@ -45,14 +45,24 @@ MACRO(F2PY)
         ${F2PY_NAME}
         DEPENDS ${F2PY_TARGET} ${F2PY_OUTPUT}
     )
+
+    IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
     ADD_CUSTOM_COMMAND(
         OUTPUT ${F2PY_TARGET} ${F2PY_OUTPUT}
-        COMMAND echo \"Running f2py:\"\; LDFLAGS=-Wl,-rpath=\\$$ORIGIN/lib ${F2PY_NAME} -L../process/lib/ -l${PROJECT_NAME} -c ${F2PY_SIGNATURE_TARGET} ${PREPROCESSED_SOURCE_FILES_PATH} --build-dir ${CMAKE_BINARY_DIR} -m ${F2PY_MODULE_NAME}
+        COMMAND echo \"Running f2py:\"\; LDFLAGS=-Wl,-rpath=\\$$ORIGIN/lib ${F2PY_NAME} -L../process/lib/ -l${PROJECT_NAME} --opt="-O0" --debug -c ${F2PY_SIGNATURE_TARGET} ${PREPROCESSED_SOURCE_FILES_PATH} --build-dir ${CMAKE_BINARY_DIR} -m ${F2PY_MODULE_NAME}
         COMMAND ${CMAKE_COMMAND} -E copy ${F2PY_TARGET} ${F2PY_OUTPUT}
         DEPENDS ${F2PY_SIGNATURE_TARGET} # rerun the wrapping when the signature file changes
         # this means that changes to the source files that do not change the 
         # subroutine signature do not force a rewrap of the fortran
     )
+    ELSE()
+    ADD_CUSTOM_COMMAND(
+        OUTPUT ${F2PY_TARGET} ${F2PY_OUTPUT}
+        COMMAND echo \"Running f2py:\"\; LDFLAGS=-Wl,-rpath=\\$$ORIGIN/lib ${F2PY_NAME} -L../process/lib/ -l${PROJECT_NAME} -c ${F2PY_SIGNATURE_TARGET} ${PREPROCESSED_SOURCE_FILES_PATH} --build-dir ${CMAKE_BINARY_DIR} -m ${F2PY_MODULE_NAME}
+        COMMAND ${CMAKE_COMMAND} -E copy ${F2PY_TARGET} ${F2PY_OUTPUT}
+        DEPENDS ${F2PY_SIGNATURE_TARGET}
+    )   
+    ENDIF()
 
     ADD_DEPENDENCIES(${F2PY_NAME} ${PIP_NAME} ${PROJECT_NAME})
 ENDMACRO()

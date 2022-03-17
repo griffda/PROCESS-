@@ -4217,7 +4217,7 @@
         "ric": 0.0,
         "ricpf": 0.0,
         "rinboard": 0.651,
-        "ripflag": 0.0,
+        "ripflag": 0,
         "ripmax": 1.0,
         "ripple": 0.0,
         "ritfc": 0.0,
@@ -8702,7 +8702,7 @@
         "zeffai": 0.0,
         "zeffdiv": 1.0,
         "zeffmax": 3.6,
-        "zero": "0.0_wp_",
+        "zero": 0.0,
         "zfxf": [
             0.0,
             0.0,
@@ -17043,7 +17043,7 @@
             "conf2",
             "qb2"
         ],
-        "build_module": [
+        "build": [
             "ripflag"
         ],
         "build_variables": [
