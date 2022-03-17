@@ -47,20 +47,21 @@ class Caller:
 
         # Machine Build Model
         # Radial build
-        ft.build_module.radialb(ft.constants.nout, 0)
+        self.models.build.radialb(output=False)
 
         # Vertical build
-        ft.build_module.vbuild(ft.constants.nout, 0)
+        self.models.build.vbuild(output=False)
 
         ft.physics_module.physics()
 
         # call build subroutines again if PLASMOD used, issue #650
         if ft.physics_variables.ipedestal == 3:
             # Radial build
-            ft.build_module.radialb(ft.constants.nout, 0)
+            self.models.build.radialb(output=False)
 
+            # TODO: is the vertical build needed again?
             # Vertical build
-            ft.build_module.vbuild(ft.constants.nout, 0)
+            self.models.build.vbuild(output=False)
 
         # startup model (not used)
         # call startup(ft.constants.nout,0)  !  commented-out for speed reasons
@@ -140,7 +141,7 @@ class Caller:
             self.models.divertor.run(output=False)
 
         # Structure Model
-        ft.structure_module.strucall(ft.constants.nout, 0)
+        self.models.structure.run(output=False)
 
         # Tight aspect ratio machine model
         if ft.physics_variables.itart == 1 and ft.tfcoil_variables.i_tf_sup != 1:
@@ -156,10 +157,10 @@ class Caller:
         ft.power_module.power1()
 
         # Vacuum model
-        ft.vacuum_module.vaccall(ft.constants.nout, 0)
+        self.models.vacuum.run(output=False)
 
         # Buildings model
-        ft.buildings_module.bldgcall(ft.constants.nout, 0)
+        self.models.buildings.run(output=False)
 
         # Plant AC power requirements
         ft.power_module.acpow(ft.constants.nout, 0)
@@ -173,7 +174,7 @@ class Caller:
         self.models.availability.run(output=False)
 
         # Water usage in secondary cooling system
-        ft.water_use_module.waterusecall(ft.constants.nout, 0)
+        self.models.water_use.run(output=False)
 
         # Costs model
         """Cost switch values

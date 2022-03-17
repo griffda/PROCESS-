@@ -42,10 +42,17 @@ Box file F/MI/PJK/PROCESS and F/PL/PJK/PROCESS (15/01/96 to 24/01/12)
 Box file T&amp;M/PKNIGHT/PROCESS (from 24/01/12)
 """
 from process import fortran
+from process.buildings import Buildings
 from process.io import plot_proc
 from process.scan import Scan
 from process import final
-from process.utilities.f2py_string_patch import string_to_f2py_compatible, f2py_compatible_to_string
+from process.stellarator import Stellarator
+from process.structure import Structure
+from process.build import Build
+from process.utilities.f2py_string_patch import (
+    string_to_f2py_compatible,
+    f2py_compatible_to_string,
+)
 import argparse
 from process.costs_step import CostsStep
 from process.pfcoil import PFCoil
@@ -64,11 +71,19 @@ import logging
 
 # For VaryRun
 from process.io.process_config import RunProcessConfig
-from process.io.process_funcs import (get_neqns_itervars,
-    get_variable_range, check_input_error, process_stopped,
-    no_unfeasible_mfile, vary_iteration_variables, process_warnings)
+from process.io.process_funcs import (
+    get_neqns_itervars,
+    get_variable_range,
+    check_input_error,
+    process_stopped,
+    no_unfeasible_mfile,
+    vary_iteration_variables,
+    process_warnings,
+)
+from process.vacuum import Vacuum
+from process.water_use import WaterUse
 
-os.environ['PYTHON_PROCESS_ROOT'] =  os.path.join(os.path.dirname(__file__))
+os.environ["PYTHON_PROCESS_ROOT"] = os.path.join(os.path.dirname(__file__))
 
 logger = logging.getLogger(__name__)
 # Logging handler for console output
@@ -76,8 +91,10 @@ s_handler = logging.StreamHandler()
 s_handler.setLevel(logging.INFO)
 logger.addHandler(s_handler)
 
-class Process():
+
+class Process:
     """The main Process class."""
+
     def __init__(self, args=None):
         """Run Process.
 
@@ -94,41 +111,39 @@ class Process():
         :param args: Arguments to parse
         :type args: list
         """
-        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, 
-                                         description=("PROCESS\n"
-            "Power Reactor Optimisation Code\n"
-            "Usage\n"
-            "Running code with IN.DAT        : ./<path_to_executable/process.exe\n"
-            "Running code with named IN.DAT  : ./<path_to_executable/process.exe <path_to_input>/<file_prefix>IN.DAT\n"
-            "Help info                       : ./<path_to_executable/process.exe help\n"
-        
-            "Example Usage\n"
-            "Executable in current dir and input called IN.DAT in current dir  : ./process.exe\n"
-            "Executable in current dir and named input in current dir          : ./process.exe tokamak_IN.DAT\n"
-            "Executable in other dir and named input in other dir              : ./bin/process.exe ../../ITER_IN.DAT\n"
-            "Executable in other dir and input called IN.DAT in current dir    : ./bin/process.exe\n"
-    
-            "Input\n"
-            "Input file naming convention : <file_prefix>IN.DAT\n"
-        
-            "Input file syntax\n"
-            "Constraint equation             : icc = <constraint_number>\n"
-            "Iteration variable              : ixc = <iteration_variable_number>\n"
-            "Iteration variable lower bound  : boundl(<iteration_variable_number\n> = <bound_value>\n"
-            "Iteration variable upper bound  : boundu(<iteration_variable_number\n> = <bound_value>\n"
-            "Parameter                       : <parameter_name> = <parameter_value>\n"
-            "Array                           : <array_name>(<array_index\n> = <index_value>\n"
-        
-            "Output\n"
-            "Output files naming convention : <file_prefix>OUT.DAT\n"
-            "                               : <file_prefix>MFILE.DAT\n"
-            "                               : <file_prefix>PLOT.DAT\n"
-            
-            "Contact\n"
-            "James Morris  : james.morris2@ukaea.uk\n"
-            "Hanni Lux     : hanni.lux@ukaea.uk\n"
-            "GitLab        : git.ccfe.ac.uk\n")
-            )
+        parser = argparse.ArgumentParser(
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            description=(
+                "PROCESS\n"
+                "Power Reactor Optimisation Code\n"
+                "Usage\n"
+                "Running code with IN.DAT        : ./<path_to_executable/process.exe\n"
+                "Running code with named IN.DAT  : ./<path_to_executable/process.exe <path_to_input>/<file_prefix>IN.DAT\n"
+                "Help info                       : ./<path_to_executable/process.exe help\n"
+                "Example Usage\n"
+                "Executable in current dir and input called IN.DAT in current dir  : ./process.exe\n"
+                "Executable in current dir and named input in current dir          : ./process.exe tokamak_IN.DAT\n"
+                "Executable in other dir and named input in other dir              : ./bin/process.exe ../../ITER_IN.DAT\n"
+                "Executable in other dir and input called IN.DAT in current dir    : ./bin/process.exe\n"
+                "Input\n"
+                "Input file naming convention : <file_prefix>IN.DAT\n"
+                "Input file syntax\n"
+                "Constraint equation             : icc = <constraint_number>\n"
+                "Iteration variable              : ixc = <iteration_variable_number>\n"
+                "Iteration variable lower bound  : boundl(<iteration_variable_number\n> = <bound_value>\n"
+                "Iteration variable upper bound  : boundu(<iteration_variable_number\n> = <bound_value>\n"
+                "Parameter                       : <parameter_name> = <parameter_value>\n"
+                "Array                           : <array_name>(<array_index\n> = <index_value>\n"
+                "Output\n"
+                "Output files naming convention : <file_prefix>OUT.DAT\n"
+                "                               : <file_prefix>MFILE.DAT\n"
+                "                               : <file_prefix>PLOT.DAT\n"
+                "Contact\n"
+                "James Morris  : james.morris2@ukaea.uk\n"
+                "Hanni Lux     : hanni.lux@ukaea.uk\n"
+                "GitLab        : git.ccfe.ac.uk\n"
+            ),
+        )
 
         # Optional args
         parser.add_argument(
@@ -137,38 +152,33 @@ class Process():
             default="IN.DAT",
             metavar="input_file_path",
             type=str,
-            help="The path to the input file that Process runs on"
+            help="The path to the input file that Process runs on",
         )
         parser.add_argument(
             "-v",
             "--varyiterparams",
             action="store_true",
-            help="Vary iteration parameters"
+            help="Vary iteration parameters",
         )
         parser.add_argument(
             "-c",
             "--varyiterparamsconfig",
             metavar="config_file",
             default="run_process.conf",
-            help="configuration file for varying iteration parameters"
+            help="configuration file for varying iteration parameters",
         )
-        parser.add_argument(
-            "-p",
-            "--plot",
-            action="store_true",
-            help="plot an mfile"
-        )
+        parser.add_argument("-p", "--plot", action="store_true", help="plot an mfile")
         parser.add_argument(
             "-m",
             "--mfile",
             default="MFILE.DAT",
-            help="mfile for post-processing/plotting"
+            help="mfile for post-processing/plotting",
         )
 
         # If args is not None, then parse the supplied arguments. This is likely
-        # to come from the test suite when testing command-line arguments; the 
+        # to come from the test suite when testing command-line arguments; the
         # method is being run from the test suite.
-        # If args is None, then use actual command-line arguments (e.g. 
+        # If args is None, then use actual command-line arguments (e.g.
         # sys.argv), as the method is being run from the command-line.
         self.args = parser.parse_args(args)
         # Store namespace object of the args
@@ -184,20 +194,21 @@ class Process():
     def post_process(self):
         """Perform post-run actions, like plotting the mfile."""
         # TODO Currently, Process will always run on an input file beforehand.
-        # It would be better to not require this, so just plot_proc could be 
+        # It would be better to not require this, so just plot_proc could be
         # run, for example.
         if self.args.plot:
             # Check mfile exists, then plot
             mfile = Path(self.args.mfile)
             mfile_str = str(mfile.resolve())
             if mfile.exists():
-                # TODO Get --show arg to work: actually show the plot, don't 
+                # TODO Get --show arg to work: actually show the plot, don't
                 # just save it
                 plot_proc.main(args=["-f", mfile_str])
             else:
                 logger.error("mfile to be used for plotting doesn't exist")
 
-class VaryRun():
+
+class VaryRun:
     """Vary iteration parameters until a solution is found.
 
     This is the old run_process.py utility.
@@ -219,12 +230,13 @@ class VaryRun():
     process.log - logfile of PROCESS output to stdout
     README.txt  - contains comments from config file
     """
+
     def __init__(self, config_file):
         # Store the absolute path to the config file immediately: various
         # dir changes happen in old run_process code
         self.config_file = Path(config_file).resolve()
         self.run()
-    
+
     def run(self):
         # The input path for the varied input file
         input_path = self.config_file.parent / "IN.DAT"
@@ -251,14 +263,14 @@ class VaryRun():
 
         # TODO add diff ixc summary part
         for i in range(config.niter):
-            print(i, end=' ')
+            print(i, end=" ")
 
             # Run single runs (SingleRun()) of process as subprocesses. This
-            # is the only way to deal with Fortran "stop" statements when 
-            # running VaryRun(), which otherwise cause the Python 
-            # interpreter to exit, when we want to vary the parameters and 
+            # is the only way to deal with Fortran "stop" statements when
+            # running VaryRun(), which otherwise cause the Python
+            # interpreter to exit, when we want to vary the parameters and
             # run again
-            # TODO Don't do this; remove stop statements from Fortran and 
+            # TODO Don't do this; remove stop statements from Fortran and
             # handle error codes
             # Run process on an IN.DAT file
             config.run_process(input_path)
@@ -269,16 +281,22 @@ class VaryRun():
                 no_unfeasible = no_unfeasible_mfile()
                 if no_unfeasible <= config.no_allowed_unfeasible:
                     if no_unfeasible > 0:
-                        print("WARNING: Non feasible point(s) in sweep, "
-                            "But finished anyway! {} ".format(no_unfeasible))
+                        print(
+                            "WARNING: Non feasible point(s) in sweep, "
+                            "But finished anyway! {} ".format(no_unfeasible)
+                        )
                     if process_warnings():
-                        print("\nThere were warnings in the final PROCESS run. "
-                            "Please check the log file!\n")
+                        print(
+                            "\nThere were warnings in the final PROCESS run. "
+                            "Please check the log file!\n"
+                        )
                     # This means success: feasible solution found
                     break
                 else:
-                    print("WARNING: {} non-feasible point(s) in sweep! "
-                        "Rerunning!".format(no_unfeasible))
+                    print(
+                        "WARNING: {} non-feasible point(s) in sweep! "
+                        "Rerunning!".format(no_unfeasible)
+                    )
             else:
                 print("PROCESS has stopped without finishing!")
 
@@ -286,8 +304,10 @@ class VaryRun():
 
         config.error_status2readme()
 
-class SingleRun():
+
+class SingleRun:
     """Perform a single run of PROCESS."""
+
     def __init__(self, input_file):
         """Read input file, initialise variables and run PROCESS.
 
@@ -328,7 +348,7 @@ class SingleRun():
         # (the part before the IN.DAT)
         if self.input_file[-6:] != "IN.DAT":
             raise ValueError("Input filename must end in IN.DAT.")
-        
+
         self.filename_prefix = self.input_file[:-6]
 
         # Check input file exists (path specified as CLI argument)
@@ -338,20 +358,26 @@ class SingleRun():
             # Set input as Path object
         else:
             print("-- Info -- run `process --help` for usage")
-            raise FileNotFoundError("Input file not found on this path. There "
-                "is no input file named", self.input_file, "in the analysis "
-                "folder")
+            raise FileNotFoundError(
+                "Input file not found on this path. There " "is no input file named",
+                self.input_file,
+                "in the analysis " "folder",
+            )
 
         # Set the input file in the Fortran
-        fortran.global_variables.fileprefix = string_to_f2py_compatible(fortran.global_variables.fileprefix, str(self.input_path.resolve()))
+        fortran.global_variables.fileprefix = string_to_f2py_compatible(
+            fortran.global_variables.fileprefix, str(self.input_path.resolve())
+        )
 
     def set_output(self):
         """Set the output file name.
-        
+
         Set Path object on the Process object, and set the prefix in the Fortran.
         """
         self.output_path = Path(self.filename_prefix + "OUT.DAT")
-        fortran.global_variables.output_prefix = string_to_f2py_compatible(fortran.global_variables.output_prefix, self.filename_prefix)
+        fortran.global_variables.output_prefix = string_to_f2py_compatible(
+            fortran.global_variables.output_prefix, self.filename_prefix
+        )
 
     def set_mfile(self):
         """Set the mfile filename."""
@@ -391,8 +417,8 @@ class SingleRun():
             # in fortran.function_evaluator.fcnhyb() for an explanation.
             # Original call:
             # self.ifail = fortran.main_module.eqslv()
-            raise NotImplementedError("HYBRD non-optimisation solver is not "
-                "implemented"
+            raise NotImplementedError(
+                "HYBRD non-optimisation solver is not " "implemented"
             )
 
     def run_scan(self):
@@ -405,7 +431,7 @@ class SingleRun():
                 caller = Caller(self.models)
                 fortran.define_iteration_variables.loadxc()
                 caller.call_models(fortran.numerics.xcm, fortran.numerics.nvar)
-            
+
             final.finalise(self.models, self.ifail)
 
     def show_errors(self):
@@ -414,7 +440,7 @@ class SingleRun():
 
     def finish(self):
         """Run the finish subroutine to close files open in the Fortran.
-        
+
         Files being handled by Fortran must be closed before attempting to
         write to them using Python, otherwise only parts are written.
         """
@@ -423,42 +449,52 @@ class SingleRun():
     def append_input(self):
         """Append the input file to the output file and mfile."""
         # Read IN.DAT input file
-        with open(self.input_path, 'r', encoding="utf-8") as input_file:
+        with open(self.input_path, "r", encoding="utf-8") as input_file:
             input_lines = input_file.readlines()
 
         # Append the input file to the output file
-        with open(self.output_path, 'a', encoding="utf-8") as output_file:
+        with open(self.output_path, "a", encoding="utf-8") as output_file:
             output_file.writelines(input_lines)
 
         # Append the input file to the mfile
-        with open(self.mfile_path, 'a', encoding="utf-8") as mfile_file:
+        with open(self.mfile_path, "a", encoding="utf-8") as mfile_file:
             mfile_file.write("***********************************************")
             mfile_file.writelines(input_lines)
 
-class Models():
+
+class Models:
     """Creates instances of physics and engineering model classes.
 
-    Creates objects to interface with corresponding Fortran physics and 
+    Creates objects to interface with corresponding Fortran physics and
     engineering modules.
     """
+
     def __init__(self):
         """Create physics and engineering model objects.
-        
+
         This also initialises module variables in the Fortran for that module.
         """
         self.costs_step = CostsStep()
         self.pfcoil = PFCoil()
-        self.tfcoil = TFcoil()
+        self.build = Build()
+        self.tfcoil = TFcoil(build=self.build)
         self.divertor = Divertor()
+        self.structure = Structure()
         self.availability = Availability()
+        self.buildings = Buildings()
+        self.vacuum = Vacuum()
+        self.water_use = WaterUse()
         self.ife = IFE(availability=self.availability)
-        self.stellarator = Stellarator(availability=self.availability)
+        self.stellarator = Stellarator(
+            availability=self.availability, buildings=self.buildings, vacuum=self.vacuum
+        )
+
 
 def main(args=None):
     """Run Process.
 
     The args parameter is used to control command-line arguments when running
-    tests. Optional args can be supplied by different tests, which are then 
+    tests. Optional args can be supplied by different tests, which are then
     used instead of command-line arguments by argparse. This allows testing of
     different command-line arguments from the test suite.
 
@@ -466,6 +502,7 @@ def main(args=None):
     :type args: list, optional
     """
     Process(args)
+
 
 if __name__ == "__main__":
     main()

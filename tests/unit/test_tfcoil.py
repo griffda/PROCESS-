@@ -8,6 +8,7 @@ from process.tfcoil import TFcoil
 from process.fortran import tfcoil_variables as tfv
 from process.fortran import build_variables as bv
 from process.fortran import fwbs_variables as fwbsv
+from process.build import Build
 
 
 @pytest.fixture
@@ -20,7 +21,7 @@ def tfcoil():
     :return tfcoil: initialised TFcoil object
     :type tfcoil: process.tfcoil.TFcoil
     """
-    return TFcoil()
+    return TFcoil(build=Build())
 
 
 @pytest.mark.parametrize(
@@ -165,13 +166,13 @@ class CntrpstTestAsset(NamedTuple):
     :expected_ppump: expected value of tfcoil_variables.ppump after tfcoil.cntrpst routine has run
     :type expected_ppump: float
     """
+
     i_tf_sup: int
     tcoolin: float
     expected_dtiocool: float
     expected_tcpav2: float
     expected_tcpmax: float
     expected_ppump: float
-
 
 
 @pytest.mark.parametrize(

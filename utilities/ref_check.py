@@ -16,7 +16,7 @@ import argparse
 import collections
 
 # PROCESS libraries
-from process_io_lib.mfile import MFile
+from process.io.mfile import MFile
 
 # Constants
 

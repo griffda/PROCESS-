@@ -6,6 +6,18 @@ The [physics](http://www.sciencedirect.com/science/article/pii/S0920379614005961
 
 Below is a list of publications using or citing PROCESS by year:
 
+## 2022
+[EU-DEMO design space exploration and design drivers](https://www.sciencedirect.com/science/article/pii/S0920379622000801?via%3Dihub)   
+R. Kembleton, J. Morris, M. Siccinio, F. Maviglia, the PROCESS team   
+Fusion Engineering and Design 178 (2022) 113080   
+
+[Development of the plasma scenario for EU-DEMO: Status and plans](https://www.sciencedirect.com/science/article/pii/S0920379622000473)   
+M. Siccinio, J.P. Graves, R. Kembleton, H. Lux, F. Maviglia, A.W. Morris, J. Morris, H. Zohm   
+Fusion Engineering and Design 176 (2022) 113047   
+
+[The DEMO magnet system – Status and future challenges](https://www.sciencedirect.com/science/article/pii/S0920379621007468)   
+V. Corato, C. Vorpahl, K. Sedlak, V.A. Anvar, J. Bennet, M.E. Biancolini, F. Bonne, R. Bonifetto, D.P. Boso, A. Brighenti, P. Bruzzone, G. Celentano, A. della Corte, G. De Marzi, V. D'Auria, F. Demattè, A. Dembkowska, O. Dicuonzo, C. Fiamozzi Zignani, W.H. Fietz, C. Frittitta, L. Giannini, F. Giorgetti, R. Guarino, R. Heller, C. Hoa, M. Huguet, G. Jiolat, M. Kumar, B. Lacroix, M. Lewandowska, N. Misiara, L. Morici, L. Muzzi, D.S. Nickel, S. Nicollet, A. Nijhuis, F. Nunio, C. Portafaix, X. Sarasola, L. Savoldi, I. Tiseanu, G. Tomassetti, A. Torre, S. Turtù, D. Uglietti, R. Vallcorba, K.-P. Weiss, R. Wesche, M.J. Wolf, K. Yagotintsev, L. Zani, R. Zanino, A. Zappatore   
+Fusion Engineering and Design 174 (2022) 112971
 ## 2021
 
 [Fusion energy: A global effort – A UK opportunity](https://imeche.org/policy-and-press/reports/detail/fusion-energy-a-global-effort-a-uk-opportunity)   
@@ -14,7 +26,7 @@ Institution of Mechanical Engineers/Assystem (2021)
 
 [A general stellarator version of the systems code PROCESS](https://iopscience.iop.org/article/10.1088/1741-4326/ac2dbf)   
 J. Lion, F. Warmer, H. Wang, C.D. Beidler, S.I. Muldrew, R.C. Wolf  
-Nuclear Fusion (2021) in press  
+Nuclear Fusion 61 (2021) 126021  
 
 [Analysis of supercritical carbon dioxide Brayton cycles for a helium-cooled pebble bed blanket DEMO-like fusion power plant](https://www.sciencedirect.com/science/article/pii/S0920379621006360?via%3Dihub)   
 J. Hidalgo-Salaverri, P. Cano-Megias, R. Chacartegui, J. Ayllon-Guerola   

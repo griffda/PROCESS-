@@ -264,7 +264,7 @@ subroutine check
     use physics_variables, only: aspect, eped_sf, fdeut, fgwped, fhe3, &
         fgwsep, ftrit, ibss, i_single_null, icurr, ieped, idivrt, ishape, &
         iradloss, isc, ipedestal, ilhthresh, itart, nesep, rhopedn, rhopedt, &
-        rnbeam, ifispact, neped, te, tauee_in, tesep, teped
+        rnbeam, ifispact, neped, te, tauee_in, tesep, teped, itartpf
     use plasmod_variables, only: plasmod_contrpovr, plasmod_i_equiltype, &
         plasmod_i_modeltype, plasmod_contrpovs
     use pulse_variables, only: lpulse
@@ -675,12 +675,15 @@ subroutine check
             idiags(1) = icurr ; call report_error(37)
         end if
 
-        ! Location of the TF coils 
+        !! If using Peng and Strickler (1986) model (itartpf == 0)
+        ! Overwrite the location of the TF coils 
         ! 2 : PF coil on top of TF coil
         ! 3 : PF coil outside of TF coil
-        ipfloc(1) = 2
-        ipfloc(2) = 3
-        ipfloc(3) = 3
+        if (itartpf == 0) then
+          ipfloc(1) = 2
+          ipfloc(2) = 3
+          ipfloc(3) = 3
+        end if
 
         ! Water cooled copper magnets initalisation / checks
         if ( i_tf_sup == 0 ) then
@@ -1061,8 +1064,6 @@ subroutine check
         call report_error(222)
     end if
 
-    errors_on = .false.
-
     ! Cannot use temperature margin constraint with REBCO TF coils
     if(any(icc == 36) .and. ((i_tf_sc_mat == 8).or.(i_tf_sc_mat == 9))) then
         call report_error(265)
@@ -1077,6 +1078,10 @@ subroutine check
     if(tmpcry > tftmp) then
         call report_error(273)
     endif
+
+    ! Disable error logging only after all checks have been performed.
+    ! (CPSS #1582: Why is error logging disabled at all?)
+    errors_on = .false.
 
 
 end subroutine check
