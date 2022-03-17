@@ -3,6 +3,7 @@ Added:
 Changed: 
 - Converted `buildings_module` to pure Python (#1552)
 - Converted `water_usage.f90` to Python (#1570)
+- Convert `machine_build.f90` to Python (#1576)
 Deprecated:  
 - 
 Fixed:  
