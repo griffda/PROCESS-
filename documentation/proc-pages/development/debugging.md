@@ -2,6 +2,12 @@
 
 For the two tools below, running `f2py` with the `--debug` flag will include debug information into the compilation, and may provide some additional information to GDB and Valgrind outputs. If an error exists within unwrapped Fortran, `libprocess.so` should be compiled with the `-g` flag to include debug information within it.
 
+This can all be achieved by building Process in debug mode:
+
+```
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+```
+
 ## GDB
 Debuggers provide an alternative to `print` statements littering your code. These statements are often left in (or commented out) and can clutter up source code. When debugging within Fortran, they also mean recompilation is required - which takes a few minutes.
 
