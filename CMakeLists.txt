@@ -27,7 +27,8 @@ FindPreprocessingVars()
 SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -fPIC -ftest-coverage -fprofile-arcs -fcheck=all,no-array-temps -finit-local-zero")
 
 IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    STRING(CONCAT CMAKE_Fortran_FLAGS ${CMAKE_Fortran_FLAGS} "-g -O0")
+    # space before -g is very necessary
+    STRING(CONCAT CMAKE_Fortran_FLAGS ${CMAKE_Fortran_FLAGS} " -g -O0")
 ENDIF()
 
 # Get System information, log as much information as we can
