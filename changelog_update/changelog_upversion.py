@@ -1,4 +1,6 @@
 import argparse
+import os
+from sys import stderr
 import yaml
 import jinja2
 from pathlib import Path
@@ -45,6 +47,7 @@ if __name__ == "__main__":
                 )
 
     # Looping through and reading YAML files in CURRENTDIR
+    # Here, headers are the different values under which an entry to the changelog can be made i.e 'Fixed', 'Removed' etc.
 
     for header in changelog_dict:
         changelog_dict[header] = [
@@ -75,18 +78,15 @@ if __name__ == "__main__":
     # changelog upon process upversioning. It takes todays date so you know when the script/changelog was updated and asks the user
     # for the version of process that is being utilised in the upgrade via the command line ArgParse method.
 
-    with open(CURRENTDIR / "changelogupdate.md", "w") as f:
+    with open(CURRENTDIR / "changelog_update.md", "w") as f:
         f.write(template.render(**context))
 
-    # Using the above logic, a file named 'changelogupdate.md' is output in the CURRENTDIR- a markdown file.
+    # Using the above logic, a file named 'changelog_update.md' is output in the CURRENTDIR- a markdown file.
 
     files_to_remove = CURRENTDIR.glob("*.yaml")
     for f in files_to_remove:
-        try:
-            f.unlink()
-        except OSError as e:
-            print("Error: %s : %s" % (f, e.strerror))
+        f.unlink(missing_ok=True)
 
-    # Checks the files in the CURRENTDIR after creating the changelog.md file for this upversion. It then finds which
+    # Checks the files in the CURRENTDIR after creating the changelog_update.md file for this upversion. It then finds which
     # are .yaml files and removes them so that once they are uploaded, they are not stored and get uploaded twice in the next merge.
     # This is safe as if the .yaml files did need to be accessed they would be in a previous commit.
