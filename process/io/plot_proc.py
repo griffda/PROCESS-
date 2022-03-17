@@ -1347,14 +1347,14 @@ def plot_tf_coils(axis, mfile_data, scan):
     if y3 != 0:
         print("TF coil geometry: The value of yarc(3) is not zero, but should be.")
     
-    # Check for Copper magnets
-    if "i_tf_sup" in mfile_data.data.keys():
-        i_tf_sup = int(mfile_data.data["i_tf_sup"].get_scan(scan))
+    # Check for TF coil shape
+    if "i_tf_shape" in mfile_data.data.keys():
+        i_tf_shape = int(mfile_data.data["i_tf_shape"].get_scan(scan))
     else:
-        i_tf_sup = int(1)
+        i_tf_shape = int(1)
   
-    # Superconducting TF coils are D-shaped (i_tf_sup=1), but copper TF coils are rectangular (i_tf_sup=0)
-    if i_tf_sup != 1:
+    #  D-shaped (i_tf_shape=1), Picture frame (i_tf_shape=2)
+    if i_tf_shape == 2:
         # Inboard leg   
         rect1 = patches.Rectangle([x5-tfcth, y5-tfcth], tfcth, (y1-y5+2.0*tfcth), lw=0, facecolor='cyan')
         # Outboard leg vertical
