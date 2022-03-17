@@ -1118,5 +1118,9 @@ subroutine check
 
     errors_on = .false.
 
+    ! Disable error logging only after all checks have been performed.
+    ! (CPSS #1582: Why is error logging disabled at all?)
+    errors_on = .false.
+
 
 end subroutine check

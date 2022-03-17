@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1259-g2bf9b76f code contains untracked changes
+   Tag No. : v2.1-1332-g22754d6e code contains untracked changes
     Branch : 1205-tf-cond-stiffness
-   Git log : Added\ Poisson|s\ ratio\ to\ output
- Date/time : 23 Feb 2022 11:14:01 -05:00(hh:mm) UTC
+   Git log : NOW\ added\ correct\ ref\ dicts
+ Date/time : 17 Mar 2022 11:50:15 -04:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-25/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-25/test_scenario_starfire_0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-2/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-2/test_scenario_starfire_0/IN.DAT
  Run title : starfire
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -173,15 +173,13 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  (step22010302)      PF Coils (M$)                                                                               546.73
  (step22010303)      Central Solenoid (M$)                                                                        67.30
  (step22010304)      Control Coils (M$)                                                                           37.12
- (step220104)        Auxiliary Heating and Current Drive (M$)                                                    890.68
+ (step220104)        Auxiliary Heating and Current Drive (M$)                                                   1781.36
  (step220105)        Primary Structure and Support (M$)                                                          489.60
  (step220106)        Reactor Vacuum System (M$)                                                                   43.18
  (step220107)        Power Supplies (M$)                                                                         469.99
- (step220108)        Impurity Control (M$)                                                                        19.94
- (step220109)        ECRH Plasma Breakdown (M$)                                                                   22.95
  (step220110)        Divertor (M$)                                                                               136.40
  
- (step2201)          Total Account 22.01 Cost (M$)                                                              7514.45
+ (step2201)          Total Account 22.01 Cost (M$)                                                              8362.24
  
  ******************* 22.02 Heat Transfer System
  (step2202)          Heat Transfer System (M$)                                                                   157.28
@@ -225,10 +223,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  (step2207)          Total Account 22.07 Cost (M$)                                                               195.46
  
  ********************
- (step2298)          Spares (M$)                                                                                 519.77
- (step2299)          Contingency (M$)                                                                           1330.68
+ (step2298)          Spares (M$)                                                                                 727.74
+ (step2299)          Contingency (M$)                                                                           1489.04
  
- (step22)            Total Account 22 Cost (M$)                                                                10201.87
+ (step22)            Total Account 22 Cost (M$)                                                                11416.00
  
  ************************* 23. Turbine Plant Equipment **************************
  
@@ -266,44 +264,44 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ***************************** 27. Remote Handling ******************************
  
- (step2701)          Remote Handing (M$)                                                                        1120.85
+ (step2701)          Remote Handing (M$)                                                                        1211.91
  
- (step27)            Total Account 27 Cost (M$)                                                                 1120.85
+ (step27)            Total Account 27 Cost (M$)                                                                 1211.91
  
  ****************************** Plant Direct Cost *******************************
  
- (cdirt)             Plant direct cost (M$)                                                                    16065.55
+ (cdirt)             Plant direct cost (M$)                                                                    17370.74
  
  ******************************** Indirect Cost *********************************
  
- (step91)            Construction Facilities, Equipment and Services (M$)                                       4819.66
- (step92)            Engineering and Costruction Management Services (M$)                                       5221.30
- (step93)            Other Costs (M$)                                                                           2409.83
+ (step91)            Construction Facilities, Equipment and Services (M$)                                       5211.22
+ (step92)            Engineering and Costruction Management Services (M$)                                       5645.49
+ (step93)            Other Costs (M$)                                                                           2605.61
  
  ******************************* Constructed Cost *******************************
  
- (concost)           Constructed Cost (M$)                                                                     28516.35
+ (concost)           Constructed Cost (M$)                                                                     30833.06
  
  ************************* Interest during Construction *************************
  
- (moneyint)          Interest during construction (M$)                                                          4277.45
+ (moneyint)          Interest during construction (M$)                                                          4624.96
  
  *************************** Total Capital Investment ***************************
  
- (capcost)           Total capital investment (M$)                                                             32793.80
+ (capcost)           Total capital investment (M$)                                                             35458.02
  
  *************************************** Cost of Electricity, 2017 US$ ****************************************
  
  First wall / blanket life (years)                                        (fwbllife)                    5.343     
  Divertor life (years)                                                    (divlife.)                    0.286     
- Cost of electricity (m$/kWh)                                             (coe)                       292.433     
+ Cost of electricity (m$/kWh)                                             (coe)                       315.290     
  
  Power Generation Costs :
  
  									Annual Costs, M$	    COE, m$/kWh
- Capital Investment                                                          2131.60                   278.98
+ Capital Investment                                                          2304.77                   301.65
  Operation & Maintenance                                                       73.58                     9.63
- Decommissioning Fund                                                          18.02                     2.36
+ Decommissioning Fund                                                          19.48                     2.55
  Fuel Charge Breakdown
  	Blanket & first wall                                                          0.00                     0.00
  	Divertors                                                                     0.00                     0.00
@@ -312,7 +310,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  	Actual Fuel                                                                   3.37                     0.44
  	Waste Disposal                                                                7.79                     1.02
  Total Fuel Cost                                                               11.17                     1.46
- Total Cost                                                                  2234.37                   292.43
+ Total Cost                                                                  2409.01                   315.29
  
  ********************************************* Plant Availability *********************************************
  
@@ -323,6 +321,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Heating/CD system lifetime (years)                                       (cdrlife)                 5.343E+00  OP 
  Total plant lifetime (years)                                             (tlife)                   4.000E+01     
  Total plant availability fraction                                        (cfactr)                  7.500E-01     
+ Number of fusion cycles to reach allowable fw/blanket DPA                (bktcycles)               1.252E+04     
  
  *************************************************** Plasma ***************************************************
  
@@ -654,9 +653,8 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  (Ripple result may not be accurate, as the fit was outside
   its range of applicability.)
  
-                                          Thickness (m)    Radius (m)
  Device centreline                            0.000           0.000                       
- Machine bore                                 0.110           0.110   (bore)              
+ Machine build_variables.bore                 0.110           0.110   (bore)              
  Central solenoid                             0.600           0.710   (ohcth)             
  CS precompression                            0.378           1.087   (precomp)           
  Gap                                          0.050           1.137   (gapoh)             
@@ -683,8 +681,6 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  *********************************************** Vertical Build ***********************************************
  
- Single null case
-                                          Thickness (m)    Height (m)
  TF coil                                      1.727           6.531   (tfcth)             
  Gap                                          0.050           4.804   (tftsgap)           
  Thermal shield                               0.050           4.754   (thshield)          
@@ -711,10 +707,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Plasma top position, radial (m)                                          (ptop_radial)                 6.028  OP 
  Plasma top position, vertical (m)                                        (ptop_vertical)               3.111  OP 
- Plasma geometric centre, radial (m)                                      (rmajor.)                     7.000  OP 
+ Plasma geometric centre, radial (m)                                      (physics_variables.r          7.000  OP 
  Plasma geometric centre, vertical (m)                                    (0.0)                         0.000  OP 
- Plasma lower triangularity                                               (tril)                        0.500  OP 
- Plasma elongation                                                        (kappa.)                      1.600  OP 
+ Plasma lower physics_variables.triangularity                             (tril)                        0.500  OP 
+ Plasma elongation                                                        (physics_variables.k          1.600  OP 
  TF coil vertical offset (m)                                              (tfoffset)                   -0.539  OP 
  Plasma outer arc radius of curvature (m)                                 (rco)                         3.118  OP 
  Plasma inner arc radius of curvature (m)                                 (rci)                         5.464  OP 
@@ -762,10 +758,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Toroidal modulus            (GPa)     205.000        41.169       205.000
  Vertical modulus            (GPa)     205.000       124.584       435.604
  
- WP transverse modulus (GPa)                                              (eyoung_wp_t*1.0D-9)      3.450E+01  OP 
- WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      1.051E+02  OP 
- WP transverse Poisson's ratio                                            (poisson_wp_t)            3.050E-01  OP 
- WP vertical-transverse Pois. rat.                                        (poisson_wp_z)            3.159E-01  OP 
+ WP transverse modulus (GPa)                                              (eyoung_wp_trans*1.0D-9)  3.450E+01  OP 
+ WP vertical modulus (GPa)                                                (eyoung_wp_axial*1.0D-9)  1.051E+02  OP 
+ WP transverse Poisson's ratio                                            (poisson_wp_trans)        3.050E-01  OP 
+ WP vertical-transverse Pois. rat.                                        (poisson_wp_axial)        3.159E-01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -1.990E-03  OP 
  Vertical strain on casing                                                (casestr)                 1.105E-03  OP 
  Radial strain on insulator                                               (insstrain)              -1.865E-02  OP 
@@ -861,8 +857,8 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  TF conductor temperature margin (K)                                      (tmargtf)                     1.648     
  Elastic properties behavior                                              (i_tf_cond_eyoung_axial)          0     
    Conductor stiffness neglected
- Conductor axial Young's modulus                                          (eyoung_cond_z)           0.000E+00     
- Conductor transverse Young's modulus                                     (eyoung_cond_t)           0.000E+00     
+ Conductor axial Young's modulus                                          (eyoung_cond_axial)       0.000E+00     
+ Conductor transverse Young's modulus                                     (eyoung_cond_trans)       0.000E+00     
  
  TF coil mass:
  
@@ -931,8 +927,8 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Helium temperature at peak field (= superconductor temperature) (K)      (thelium)                 4.750E+00     
  Total helium fraction inside cable space                                 (fhetot)                  3.331E-01  OP 
  Copper fraction of conductor                                             (fcutfsu)                 7.189E-01  ITV
- Residual manufacturing strain on superconductor                          (strncon_tf)             -5.000E-03     
- Self-consistent strain on superconductor                                 (strain_wp)               1.819E-03     
+ Residual manufacturing strain on superconductor                          (str_tf_con_res)         -5.000E-03     
+ Self-consistent strain on superconductor                                 (str_wp)                  1.819E-03     
  Critical current density in superconductor (A/m2)                        (jcritsc)                 3.647E+08  OP 
  Critical current density in strand (A/m2)                                (jcritstr)                1.025E+08  OP 
  Critical current density in winding pack (A/m2)                          (jwdgcrt)                 3.505E+07  OP 
@@ -979,7 +975,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Axial stress in CS steel (Pa)                                            (sig_axial)              -1.205E+08  OP 
  Maximum shear stress in CS steel for the Tresca criterion (Pa)           (s_tresca_oh)             7.850E+07  OP 
  Axial force in CS (N)                                                    (axial_force)            -6.461E+07  OP 
- Strain on CS superconductor                                              (strncon_cs)             -5.000E-03     
+ Residual manufacturing strain in CS superconductor material              (str_cs_con_res)         -5.000E-03     
  Copper fraction in strand                                                (fcuohsu)                 7.000E-01     
  Void (coolant) fraction in conductor                                     (vfohc)                   3.000E-01     
  Helium coolant temperature (K)                                           (tftmp)                   4.750E+00     
@@ -1510,7 +1506,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Power Balance for Reactor - Summary :
  -------------------------------------
- Fusion power (MW)                                                        (powfmw.)                  3510.000  OP 
+ Fusion power (MW)                                                        (powfmw)                   3510.000  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   667.974  OP 
  Injected power (MW)                                                      (pinjmw.)                    90.400  OP 
  Ohmic power (MW)                                                         (pohmmw.)                     0.000  OP 
@@ -1544,7 +1540,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Power balance for power plant :
  -------------------------------
- Fusion power (MW)                                                        (powfmw.)                  3510.000  OP 
+ Fusion power (MW)                                                        (powfmw)                   3510.000  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   667.974  OP 
  Total (MW)                                                                                          4177.974  OP 
  

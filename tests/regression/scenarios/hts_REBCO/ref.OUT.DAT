@@ -13,14 +13,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1259-g2bf9b76f code contains untracked changes
+   Tag No. : v2.1-1332-g22754d6e code contains untracked changes
     Branch : 1205-tf-cond-stiffness
-   Git log : Added\ Poisson|s\ ratio\ to\ output
- Date/time : 23 Feb 2022 11:13:10 -05:00(hh:mm) UTC
+   Git log : NOW\ added\ correct\ ref\ dicts
+ Date/time : 17 Mar 2022 11:49:15 -04:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-25/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-25/test_scenario_hts_REBCO_0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-2/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-2/test_scenario_hts_REBCO_0/IN.DAT
  Run title : hts model using "croco" conductor based on kit design
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -162,6 +162,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heating/CD system lifetime (years)                                       (cdrlife)                 5.450E+00  OP 
  Total plant lifetime (years)                                             (tlife)                   4.000E+01     
  Total plant availability fraction                                        (cfactr)                  7.500E-01     
+ Number of fusion cycles to reach allowable fw/blanket DPA                (bktcycles)               1.590E+04     
  
  *************************************************** Plasma ***************************************************
  
@@ -516,9 +517,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ************************************************ Radial Build ************************************************
  
-                                          Thickness (m)    Radius (m)
  Device centreline                            0.000           0.000                       
- Machine bore                                 2.553           2.553   (bore)              
+ Machine build_variables.bore                 2.553           2.553   (bore)              
  Central solenoid                             0.560           3.113   (ohcth)             
  CS precompression                            0.055           3.168   (precomp)           
  Gap                                          0.050           3.218   (gapoh)             
@@ -546,7 +546,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  *********************************************** Vertical Build ***********************************************
  
  Double null case
-                                          Thickness (m)    Height (m)
  TF coil                                      1.078           9.588   (tfcth)             
  Gap                                          0.021           8.510   (tftsgap)           
  Thermal shield                               0.050           8.489   (thshield)          
@@ -573,7 +572,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Plasma top position, vertical (m)                                        (ptop_vertical)               5.098  OP 
  Plasma geometric centre, radial (m)                                      (rmajor.)                     8.876  OP 
  Plasma geometric centre, vertical (m)                                    (0.0)                         0.000  OP 
- Plasma triangularity                                                     (tril)                        0.500  OP 
+ Plasma physics_variables.triangularity                                   (tril)                        0.500  OP 
  Plasma elongation                                                        (kappa.)                      1.781  OP 
  TF coil vertical offset (m)                                              (tfoffset)                    0.000  OP 
  Plasma upper X-pt, radial (m)                                            (rxpt)                        7.444  OP 
@@ -588,7 +587,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Poloidal plane angle between outer leg and plate (rad)                   (betao)                       1.000     
  Inner divertor leg poloidal length (m)                                   (plsepi)                      1.000     
  Outer divertor leg poloidal length (m)                                   (plsepo)                      1.500     
- Inner divertor plate length (m)                                          (plleni)                      1.000     
+ Inner divertor plate length (m)                                          (lleni)                       1.000     
  Outer divertor plate length (m)                                          (plleno)                      1.000     
  Upper inner strike point, radial (m)                                     (rspi)                        6.459  OP 
  Upper inner strike point, vertical (m)                                   (-zspi)                       5.268  OP 
@@ -636,10 +635,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Toroidal modulus            (GPa)     205.000        26.913       205.000
  Vertical modulus            (GPa)     205.000       112.545       397.299
  
- WP transverse modulus (GPa)                                              (eyoung_wp_t*1.0D-9)      2.476E+01  OP 
- WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      1.033E+02  OP 
- WP transverse Poisson's ratio                                            (poisson_wp_t)            3.049E-01  OP 
- WP vertical-transverse Pois. rat.                                        (poisson_wp_z)            3.149E-01  OP 
+ WP transverse modulus (GPa)                                              (eyoung_wp_trans*1.0D-9)  2.476E+01  OP 
+ WP vertical modulus (GPa)                                                (eyoung_wp_axial*1.0D-9)  1.033E+02  OP 
+ WP transverse Poisson's ratio                                            (poisson_wp_trans)        3.049E-01  OP 
+ WP vertical-transverse Pois. rat.                                        (poisson_wp_axial)        3.149E-01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -5.892E-03  OP 
  Vertical strain on casing                                                (casestr)                 1.031E-03  OP 
  Radial strain on insulator                                               (insstrain)              -1.280E-02  OP 
@@ -866,7 +865,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Axial stress in CS steel (Pa)                                            (sig_axial)              -6.973E+08  OP 
  Maximum shear stress in CS steel for the Tresca criterion (Pa)           (s_tresca_oh)             6.000E+08  OP 
  Axial force in CS (N)                                                    (axial_force)            -1.946E+09  OP 
- Strain on CS superconductor                                              (strncon_cs)             -6.600E-03     
+ Residual manufacturing strain in CS superconductor material              (str_cs_con_res)         -6.600E-03     
  Copper fraction in strand                                                (fcuohsu)                 7.000E-01     
  Void (coolant) fraction in conductor                                     (vfohc)                   3.000E-01     
  Helium coolant temperature (K)                                           (tftmp)                   4.750E+00     
@@ -1387,7 +1386,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power Balance for Reactor - Summary :
  -------------------------------------
- Fusion power (MW)                                                        (powfmw.)                  2273.125  OP 
+ Fusion power (MW)                                                        (powfmw)                   2273.125  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   376.402  OP 
  Injected power (MW)                                                      (pinjmw.)                    50.000  OP 
  Ohmic power (MW)                                                         (pohmmw.)                     1.049  OP 
@@ -1421,7 +1420,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power balance for power plant :
  -------------------------------
- Fusion power (MW)                                                        (powfmw.)                  2273.125  OP 
+ Fusion power (MW)                                                        (powfmw)                   2273.125  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   376.402  OP 
  Total (MW)                                                                                          2649.527  OP 
  
@@ -2073,7 +2072,7 @@ i_tf_sc_mat = 6 * i_tf_sc_mat /1/ ; switch for superconductor material in TF coi
 oacdcp   = 9580100.0 * oacdcp /1;4e7/ ; overall current density in TF coil inboard legs midplane (A/m2)
 ripmax   = 0.6 * ripmax /1;0/ ; maximum allowable toroidal field ripple amplitude
 sigvvall = 9.3e7 * sigvvall /9;3e7/ ; allowable stress from TF quench in vacuum vessel (Pa)
-strncon_cs = -0.0066 * strncon_cs /-0;005/ ; strain in CS superconductor material
+str_cs_con_res = -0.0066 * str_cs_con_res /-0;005/ ; strain in CS superconductor material
 quench_model = exponential * quench_model /exponential/ ; switch for TF coil quench model;
 quench_detection_ef = 0.1 * quench_detection_ef /0;0/ ; Electric field at which TF quench is detected and discharge begins (V/m)
 tdmptf   = 34.471723217859086 * tdmptf /10;0/ ; fast discharge time for TF coil in event of quench (s)

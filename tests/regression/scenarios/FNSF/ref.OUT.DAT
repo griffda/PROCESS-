@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1259-g2bf9b76f code contains untracked changes
+   Tag No. : v2.1-1332-g22754d6e code contains untracked changes
     Branch : 1205-tf-cond-stiffness
-   Git log : Added\ Poisson|s\ ratio\ to\ output
- Date/time : 23 Feb 2022 11:12:53 -05:00(hh:mm) UTC
+   Git log : NOW\ added\ correct\ ref\ dicts
+ Date/time : 17 Mar 2022 11:48:56 -04:00(hh:mm) UTC
       User : cswan
   Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-25/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-25/test_scenario_FNSF_0/IN.DAT
+ Directory : /tmp/pytest-of-cswan/pytest-2/test_solver0
+     Input : /tmp/pytest-of-cswan/pytest-2/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -132,6 +132,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Heating/CD system lifetime (years)                                       (cdrlife)                 2.619E+01  OP 
  Total plant lifetime (years)                                             (tlife)                   3.000E+01     
  Total plant availability fraction                                        (cfactr)                  7.500E-01     
+ Number of fusion cycles to reach allowable fw/blanket DPA                (bktcycles)               5.316E+05     
  
  *************************************************** Plasma ***************************************************
  
@@ -507,9 +508,8 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  (Ripple result may not be accurate, as the fit was outside
   its range of applicability.)
  
-                                          Thickness (m)    Radius (m)
  Device centreline                            0.000           0.000                       
- Machine bore                                 0.000           0.000   (bore)              
+ Machine build_variables.bore                 0.000           0.000   (bore)              
  Central solenoid                             0.000           0.000   (ohcth)             
  CS precompression                            0.000           0.000   (precomp)           
  Gap                                          0.000           0.000   (gapoh)             
@@ -537,7 +537,6 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  *********************************************** Vertical Build ***********************************************
  
  Double null case
-                                          Thickness (m)    Height (m)
  TF coil                                      0.541           4.962   (tfcth)             
  Gap                                          0.050           4.421   (tftsgap)           
  Thermal shield                               0.000           4.371   (thshield)          
@@ -576,10 +575,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Toroidal modulus            (GPa)     117.000       205.000
  Vertical modulus            (GPa)      99.029       205.000
  
- WP transverse modulus (GPa)                                              (eyoung_wp_t*1.0D-9)      1.170E+02  OP 
- WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      9.903E+01  OP 
- WP transverse Poisson's ratio                                            (poisson_wp_t)            3.500E-01  OP 
- WP vertical-transverse Pois. rat.                                        (poisson_wp_z)            3.499E-01  OP 
+ WP transverse modulus (GPa)                                              (eyoung_wp_trans*1.0D-9)  1.170E+02  OP 
+ WP vertical modulus (GPa)                                                (eyoung_wp_axial*1.0D-9)  9.903E+01  OP 
+ WP transverse Poisson's ratio                                            (poisson_wp_trans)        3.500E-01  OP 
+ WP vertical-transverse Pois. rat.                                        (poisson_wp_axial)        3.499E-01  OP 
  
  TF design
  
@@ -1336,7 +1335,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Power Balance for Reactor - Summary :
  -------------------------------------
- Fusion power (MW)                                                        (powfmw.)                   162.001  OP 
+ Fusion power (MW)                                                        (powfmw)                    162.001  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                    22.592  OP 
  Injected power (MW)                                                      (pinjmw.)                    80.002  OP 
  Ohmic power (MW)                                                         (pohmmw.)                     0.000  OP 
@@ -1370,7 +1369,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Power balance for power plant :
  -------------------------------
- Fusion power (MW)                                                        (powfmw.)                   162.001  OP 
+ Fusion power (MW)                                                        (powfmw)                    162.001  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                    22.592  OP 
  Total (MW)                                                                                           184.593  OP 
  

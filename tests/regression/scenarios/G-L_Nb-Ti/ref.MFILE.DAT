@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.3.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "23/02/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "11:12"
+ Date_of_run_____________________________________________________________ (date)________________________     "17/03/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "11:48"
  User____________________________________________________________________ (username)____________________     "cswan"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "TF coil testing                                                                                    
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1259-g2bf9b76f"                                                                               
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1332-g22754d6e"                                                                               
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1205-tf-cond-stiffness"                                                                            
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Added\ Poisson|s\ ratio\ to\ output"                                                               
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-25/test_scenario_G_L_Nb_Ti_0/IN.DAT                                                                                                                                         "
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "NOW\ added\ correct\ ref\ dicts"                                                                   
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-2/test_scenario_G_L_Nb_Ti_0/IN.DAT                                                                                                                                          "
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              1    
  # Numerics #
@@ -293,6 +293,7 @@
  Heating/CD_system_lifetime_(years)______________________________________ (cdrlife)_____________________      2.4193E+01 OP 
  Total_plant_lifetime_(years)____________________________________________ (tlife)_______________________      4.0000E+01    
  Total_plant_availability_fraction_______________________________________ (cfactr)______________________      7.5000E-01    
+ Number_of_fusion_cycles_to_reach_allowable_fw/blanket_DPA_______________ (bktcycles)___________________      6.2897E+04    
  # Plasma #
  Tokamak_aspect_ratio_=_Conventional,_itart_=_0__________________________ (itart)_______________________      0.0000E+00    
  Major_radius_(m)________________________________________________________ (rmajor)______________________      8.4042E+00 ITV
@@ -541,7 +542,7 @@
  Total_plant_cycle_time_(s)______________________________________________ (tcycle)______________________      9.1040E+03 OP 
  kallenbach_switch_______________________________________________________ (kallenbach_switch)___________              0    
  # Radial Build #
- Machine_bore_(m)________________________________________________________ (bore)________________________      2.5100E+00 ITV
+ Machine_build_variables.bore_(m)________________________________________ (bore)________________________      2.5100E+00 ITV
  CS_radial_thickness_(m)_________________________________________________ (ohcth)_______________________      1.4656E-01 ITV
  CS_precompression_(m)___________________________________________________ (precomp)_____________________      5.9898E-02    
  CS_precompresion_to_TF_coil_radial_gap_(m)______________________________ (gapoh)_______________________      5.1000E-02 ITV
@@ -582,10 +583,10 @@
  # Divertor build and plasma position #
  Plasma_top_position,_radial_(m)_________________________________________ (ptop_radial)_________________      6.4605E+00    
  Plasma_top_position,_vertical_(m)_______________________________________ (ptop_vertical)_______________      7.6879E+00    
- Plasma_geometric_centre,_radial_(m)_____________________________________ (rmajor.)_____________________      8.4042E+00    
+ Plasma_geometric_centre,_radial_(m)_____________________________________ (physics_variables.rmajor.)___      8.4042E+00    
  Plasma_geometric_centre,_vertical_(m)___________________________________ (0.0)_________________________      0.0000E+00    
- Plasma_lower_triangularity______________________________________________ (tril)________________________      5.0000E-01    
- Plasma_elongation_______________________________________________________ (kappa.)______________________      1.9776E+00    
+ Plasma_lower_physics_variables.triangularity____________________________ (tril)________________________      5.0000E-01    
+ Plasma_elongation_______________________________________________________ (physics_variables.kappa.)____      1.9776E+00    
  TF_coil_vertical_offset_(m)_____________________________________________ (tfoffset)____________________     -6.3650E-01    
  Plasma_outer_arc_radius_of_curvature_(m)________________________________ (rco)_________________________      7.9835E+00    
  Plasma_inner_arc_radius_of_curvature_(m)________________________________ (rci)_________________________      1.6176E+01    
@@ -615,10 +616,10 @@
  # TF coils  #
  Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.6000E+08    
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.6000E+08    
- WP_transverse_modulus_(GPa)_____________________________________________ (eyoung_wp_t*1.0D-9)__________      6.6886E+00 OP 
- WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      5.2044E+01 OP 
- WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_t)________________      3.0364E-01 OP 
- WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_z)________________      3.2207E-01 OP 
+ WP_transverse_modulus_(GPa)_____________________________________________ (eyoung_wp_trans*1.0D-9)______      6.6886E+00 OP 
+ WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_axial*1.0D-9)______      5.2044E+01 OP 
+ WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_trans)____________      3.0364E-01 OP 
+ WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_axial)____________      3.2207E-01 OP 
  Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      4.8849E-08    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -4.2207E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      2.3793E+08    
@@ -697,8 +698,8 @@
  minimum_TF_conductor_temperature_margin__(K)____________________________ (tmargmin_tf)_________________      1.0000E+00    
  TF_conductor_temperature_margin_(K)_____________________________________ (tmargtf)_____________________      1.0000E+00    
  Elastic_properties_behavior_____________________________________________ (i_tf_cond_eyoung_axial)______              0    
- Conductor_axial_Young's_modulus_________________________________________ (eyoung_cond_z)_______________      0.0000E+00    
- Conductor_transverse_Young's_modulus____________________________________ (eyoung_cond_t)_______________      0.0000E+00    
+ Conductor_axial_Young's_modulus_________________________________________ (eyoung_cond_axial)___________      0.0000E+00    
+ Conductor_transverse_Young's_modulus____________________________________ (eyoung_cond_trans)___________      0.0000E+00    
  Superconductor_mass_per_coil_(kg)_______________________________________ (whtconsc)____________________      1.1210E+04 OP 
  Copper_mass_per_coil_(kg)_______________________________________________ (whtconcu)____________________      3.7760E+04 OP 
  Steel_conduit_mass_per_coil_(kg)________________________________________ (whtconsh)____________________      7.2998E+03 OP 
@@ -731,8 +732,8 @@
  Helium_temperature_at_peak_field_(=_superconductor_temperature)_(K)_____ (thelium)_____________________      4.5000E+00    
  Total_helium_fraction_inside_cable_space________________________________ (fhetot)______________________      3.4440E-01 OP 
  Copper_fraction_of_conductor____________________________________________ (fcutfsu)_____________________      6.9000E-01    
- Residual_manufacturing_strain_on_superconductor_________________________ (strncon_tf)__________________     -5.0000E-03    
- Self-consistent_strain_on_superconductor________________________________ (strain_wp)___________________      3.3949E-03    
+ Residual_manufacturing_strain_on_superconductor_________________________ (str_tf_con_res)______________     -5.0000E-03    
+ Self-consistent_strain_on_superconductor________________________________ (str_wp)______________________      3.3949E-03    
  Critical_current_density_in_superconductor_(A/m2)_______________________ (jcritsc)_____________________      1.6882E+09 OP 
  Critical_current_density_in_strand_(A/m2)_______________________________ (jcritstr)____________________      5.2335E+08 OP 
  Critical_current_density_in_winding_pack_(A/m2)_________________________ (jwdgcrt)_____________________      2.7322E+08 OP 
@@ -769,7 +770,7 @@
  Axial_stress_in_CS_steel_(Pa)___________________________________________ (sig_axial)___________________     -1.5675E+09 OP 
  Maximum_shear_stress_in_CS_steel_for_the_Tresca_criterion_(Pa)__________ (s_tresca_oh)_________________      6.6000E+08 OP 
  Axial_force_in_CS_(N)___________________________________________________ (axial_force)_________________     -9.3220E+08 OP 
- Strain_on_CS_superconductor_____________________________________________ (strncon_cs)__________________     -5.0000E-03    
+ Residual_manufacturing_strain_in_CS_superconductor_material_____________ (str_cs_con_res)______________     -5.0000E-03    
  Copper_fraction_in_strand_______________________________________________ (fcuohsu)_____________________      7.0000E-01    
  Void_(coolant)_fraction_in_conductor____________________________________ (vfohc)_______________________      3.0000E-01    
  Helium_coolant_temperature_(K)__________________________________________ (tftmp)_______________________      4.5000E+00    
@@ -1101,7 +1102,7 @@
  Ohmic_heating_(MW)______________________________________________________ (pohmmw.)_____________________      6.7967E-01    
  Injected_power_deposited_in_plasma_(MW)_________________________________ (pinjmw)______________________      5.0000E+01    
  Total_(MW)______________________________________________________________ ______________________________      4.4766E+02    
- Fusion_power_(MW)_______________________________________________________ (powfmw.)_____________________      2.0825E+03    
+ Fusion_power_(MW)_______________________________________________________ (powfmw)______________________      2.0825E+03    
  Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      3.9632E+02    
  Injected_power_(MW)_____________________________________________________ (pinjmw.)_____________________      5.0000E+01    
  Ohmic_power_(MW)________________________________________________________ (pohmmw.)_____________________      6.7967E-01    
@@ -1126,7 +1127,7 @@
  Total_(MW)______________________________________________________________ (tot_plant_power)_____________      9.4234E+02    
  Total_(MW)______________________________________________________________ ______________________________      9.4234E+02    
  Gross_electrical_output*_(MW)___________________________________________ (pgrossmw)____________________      9.4234E+02    
- Fusion_power_(MW)_______________________________________________________ (powfmw.)_____________________      2.0825E+03    
+ Fusion_power_(MW)_______________________________________________________ (powfmw)______________________      2.0825E+03    
  Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      3.9632E+02    
  Total_(MW)______________________________________________________________ ______________________________      2.4789E+03    
  Net_electrical_output_(MW)	_____________________________________________ (pnetelmw)____________________      5.0000E+02    
@@ -1423,6 +1424,7 @@
  Heating/CD_system_lifetime_(years)______________________________________ (cdrlife)_____________________      2.3782E+01 OP 
  Total_plant_lifetime_(years)____________________________________________ (tlife)_______________________      4.0000E+01    
  Total_plant_availability_fraction_______________________________________ (cfactr)______________________      7.5000E-01    
+ Number_of_fusion_cycles_to_reach_allowable_fw/blanket_DPA_______________ (bktcycles)___________________      6.1829E+04    
  # Plasma #
  Tokamak_aspect_ratio_=_Conventional,_itart_=_0__________________________ (itart)_______________________      0.0000E+00    
  Major_radius_(m)________________________________________________________ (rmajor)______________________      8.3702E+00 ITV
@@ -1671,7 +1673,7 @@
  Total_plant_cycle_time_(s)______________________________________________ (tcycle)______________________      9.1040E+03 OP 
  kallenbach_switch_______________________________________________________ (kallenbach_switch)___________              0    
  # Radial Build #
- Machine_bore_(m)________________________________________________________ (bore)________________________      2.5100E+00 ITV
+ Machine_build_variables.bore_(m)________________________________________ (bore)________________________      2.5100E+00 ITV
  CS_radial_thickness_(m)_________________________________________________ (ohcth)_______________________      1.4975E-01 ITV
  CS_precompression_(m)___________________________________________________ (precomp)_____________________      5.9861E-02    
  CS_precompresion_to_TF_coil_radial_gap_(m)______________________________ (gapoh)_______________________      5.1000E-02 ITV
@@ -1712,10 +1714,10 @@
  # Divertor build and plasma position #
  Plasma_top_position,_radial_(m)_________________________________________ (ptop_radial)_________________      6.4491E+00    
  Plasma_top_position,_vertical_(m)_______________________________________ (ptop_vertical)_______________      7.5743E+00    
- Plasma_geometric_centre,_radial_(m)_____________________________________ (rmajor.)_____________________      8.3702E+00    
+ Plasma_geometric_centre,_radial_(m)_____________________________________ (physics_variables.rmajor.)___      8.3702E+00    
  Plasma_geometric_centre,_vertical_(m)___________________________________ (0.0)_________________________      0.0000E+00    
- Plasma_lower_triangularity______________________________________________ (tril)________________________      5.0000E-01    
- Plasma_elongation_______________________________________________________ (kappa.)______________________      1.9714E+00    
+ Plasma_lower_physics_variables.triangularity____________________________ (tril)________________________      5.0000E-01    
+ Plasma_elongation_______________________________________________________ (physics_variables.kappa.)____      1.9714E+00    
  TF_coil_vertical_offset_(m)_____________________________________________ (tfoffset)____________________     -6.3650E-01    
  Plasma_outer_arc_radius_of_curvature_(m)________________________________ (rco)_________________________      7.8589E+00    
  Plasma_inner_arc_radius_of_curvature_(m)________________________________ (rci)_________________________      1.5892E+01    
@@ -1745,10 +1747,10 @@
  # TF coils  #
  Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.6000E+08    
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.6000E+08    
- WP_transverse_modulus_(GPa)_____________________________________________ (eyoung_wp_t*1.0D-9)__________      6.6905E+00 OP 
- WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      5.2127E+01 OP 
- WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_t)________________      3.0363E-01 OP 
- WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_z)________________      3.2208E-01 OP 
+ WP_transverse_modulus_(GPa)_____________________________________________ (eyoung_wp_trans*1.0D-9)______      6.6905E+00 OP 
+ WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_axial*1.0D-9)______      5.2127E+01 OP 
+ WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_trans)____________      3.0363E-01 OP 
+ WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_axial)____________      3.2208E-01 OP 
  Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      4.8849E-08    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -4.2146E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      2.3854E+08    
@@ -1827,8 +1829,8 @@
  minimum_TF_conductor_temperature_margin__(K)____________________________ (tmargmin_tf)_________________      1.0000E+00    
  TF_conductor_temperature_margin_(K)_____________________________________ (tmargtf)_____________________      1.0000E+00    
  Elastic_properties_behavior_____________________________________________ (i_tf_cond_eyoung_axial)______              0    
- Conductor_axial_Young's_modulus_________________________________________ (eyoung_cond_z)_______________      0.0000E+00    
- Conductor_transverse_Young's_modulus____________________________________ (eyoung_cond_t)_______________      0.0000E+00    
+ Conductor_axial_Young's_modulus_________________________________________ (eyoung_cond_axial)___________      0.0000E+00    
+ Conductor_transverse_Young's_modulus____________________________________ (eyoung_cond_trans)___________      0.0000E+00    
  Superconductor_mass_per_coil_(kg)_______________________________________ (whtconsc)____________________      1.1291E+04 OP 
  Copper_mass_per_coil_(kg)_______________________________________________ (whtconcu)____________________      3.8034E+04 OP 
  Steel_conduit_mass_per_coil_(kg)________________________________________ (whtconsh)____________________      7.3527E+03 OP 
@@ -1861,8 +1863,8 @@
  Helium_temperature_at_peak_field_(=_superconductor_temperature)_(K)_____ (thelium)_____________________      4.5000E+00    
  Total_helium_fraction_inside_cable_space________________________________ (fhetot)______________________      3.4440E-01 OP 
  Copper_fraction_of_conductor____________________________________________ (fcutfsu)_____________________      6.9000E-01    
- Residual_manufacturing_strain_on_superconductor_________________________ (strncon_tf)__________________     -5.0000E-03    
- Self-consistent_strain_on_superconductor________________________________ (strain_wp)___________________      3.4009E-03    
+ Residual_manufacturing_strain_on_superconductor_________________________ (str_tf_con_res)______________     -5.0000E-03    
+ Self-consistent_strain_on_superconductor________________________________ (str_wp)______________________      3.4009E-03    
  Critical_current_density_in_superconductor_(A/m2)_______________________ (jcritsc)_____________________      1.6628E+09 OP 
  Critical_current_density_in_strand_(A/m2)_______________________________ (jcritstr)____________________      5.1547E+08 OP 
  Critical_current_density_in_winding_pack_(A/m2)_________________________ (jwdgcrt)_____________________      2.6911E+08 OP 
@@ -1899,7 +1901,7 @@
  Axial_stress_in_CS_steel_(Pa)___________________________________________ (sig_axial)___________________     -1.5554E+09 OP 
  Maximum_shear_stress_in_CS_steel_for_the_Tresca_criterion_(Pa)__________ (s_tresca_oh)_________________      6.6000E+08 OP 
  Axial_force_in_CS_(N)___________________________________________________ (axial_force)_________________     -9.4572E+08 OP 
- Strain_on_CS_superconductor_____________________________________________ (strncon_cs)__________________     -5.0000E-03    
+ Residual_manufacturing_strain_in_CS_superconductor_material_____________ (str_cs_con_res)______________     -5.0000E-03    
  Copper_fraction_in_strand_______________________________________________ (fcuohsu)_____________________      7.0000E-01    
  Void_(coolant)_fraction_in_conductor____________________________________ (vfohc)_______________________      3.0000E-01    
  Helium_coolant_temperature_(K)__________________________________________ (tftmp)_______________________      4.5000E+00    
@@ -2231,7 +2233,7 @@
  Ohmic_heating_(MW)______________________________________________________ (pohmmw.)_____________________      6.8531E-01    
  Injected_power_deposited_in_plasma_(MW)_________________________________ (pinjmw)______________________      5.0000E+01    
  Total_(MW)______________________________________________________________ ______________________________      4.4753E+02    
- Fusion_power_(MW)_______________________________________________________ (powfmw.)_____________________      2.0818E+03    
+ Fusion_power_(MW)_______________________________________________________ (powfmw)______________________      2.0818E+03    
  Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      3.9619E+02    
  Injected_power_(MW)_____________________________________________________ (pinjmw.)_____________________      5.0000E+01    
  Ohmic_power_(MW)________________________________________________________ (pohmmw.)_____________________      6.8531E-01    
@@ -2256,7 +2258,7 @@
  Total_(MW)______________________________________________________________ (tot_plant_power)_____________      9.4227E+02    
  Total_(MW)______________________________________________________________ ______________________________      9.4227E+02    
  Gross_electrical_output*_(MW)___________________________________________ (pgrossmw)____________________      9.4227E+02    
- Fusion_power_(MW)_______________________________________________________ (powfmw.)_____________________      2.0818E+03    
+ Fusion_power_(MW)_______________________________________________________ (powfmw)______________________      2.0818E+03    
  Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      3.9619E+02    
  Total_(MW)______________________________________________________________ ______________________________      2.4780E+03    
  Net_electrical_output_(MW)	_____________________________________________ (pnetelmw)____________________      5.0000E+02    
@@ -2553,6 +2555,7 @@
  Heating/CD_system_lifetime_(years)______________________________________ (cdrlife)_____________________      2.3383E+01 OP 
  Total_plant_lifetime_(years)____________________________________________ (tlife)_______________________      4.0000E+01    
  Total_plant_availability_fraction_______________________________________ (cfactr)______________________      7.5000E-01    
+ Number_of_fusion_cycles_to_reach_allowable_fw/blanket_DPA_______________ (bktcycles)___________________      6.0790E+04    
  # Plasma #
  Tokamak_aspect_ratio_=_Conventional,_itart_=_0__________________________ (itart)_______________________      0.0000E+00    
  Major_radius_(m)________________________________________________________ (rmajor)______________________      8.3372E+00 ITV
@@ -2801,7 +2804,7 @@
  Total_plant_cycle_time_(s)______________________________________________ (tcycle)______________________      9.1040E+03 OP 
  kallenbach_switch_______________________________________________________ (kallenbach_switch)___________              0    
  # Radial Build #
- Machine_bore_(m)________________________________________________________ (bore)________________________      2.5100E+00 ITV
+ Machine_build_variables.bore_(m)________________________________________ (bore)________________________      2.5100E+00 ITV
  CS_radial_thickness_(m)_________________________________________________ (ohcth)_______________________      1.5293E-01 ITV
  CS_precompression_(m)___________________________________________________ (precomp)_____________________      5.9824E-02    
  CS_precompresion_to_TF_coil_radial_gap_(m)______________________________ (gapoh)_______________________      5.1000E-02 ITV
@@ -2842,10 +2845,10 @@
  # Divertor build and plasma position #
  Plasma_top_position,_radial_(m)_________________________________________ (ptop_radial)_________________      6.4384E+00    
  Plasma_top_position,_vertical_(m)_______________________________________ (ptop_vertical)_______________      7.4635E+00    
- Plasma_geometric_centre,_radial_(m)_____________________________________ (rmajor.)_____________________      8.3372E+00    
+ Plasma_geometric_centre,_radial_(m)_____________________________________ (physics_variables.rmajor.)___      8.3372E+00    
  Plasma_geometric_centre,_vertical_(m)___________________________________ (0.0)_________________________      0.0000E+00    
- Plasma_lower_triangularity______________________________________________ (tril)________________________      5.0000E-01    
- Plasma_elongation_______________________________________________________ (kappa.)______________________      1.9653E+00    
+ Plasma_lower_physics_variables.triangularity____________________________ (tril)________________________      5.0000E-01    
+ Plasma_elongation_______________________________________________________ (physics_variables.kappa.)____      1.9653E+00    
  TF_coil_vertical_offset_(m)_____________________________________________ (tfoffset)____________________     -6.3650E-01    
  Plasma_outer_arc_radius_of_curvature_(m)________________________________ (rco)_________________________      7.7376E+00    
  Plasma_inner_arc_radius_of_curvature_(m)________________________________ (rci)_________________________      1.5617E+01    
@@ -2875,10 +2878,10 @@
  # TF coils  #
  Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.6000E+08    
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.6000E+08    
- WP_transverse_modulus_(GPa)_____________________________________________ (eyoung_wp_t*1.0D-9)__________      6.6923E+00 OP 
- WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      5.2209E+01 OP 
- WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_t)________________      3.0363E-01 OP 
- WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_z)________________      3.2209E-01 OP 
+ WP_transverse_modulus_(GPa)_____________________________________________ (eyoung_wp_trans*1.0D-9)______      6.6923E+00 OP 
+ WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_axial*1.0D-9)______      5.2209E+01 OP 
+ WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_trans)____________      3.0363E-01 OP 
+ WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_axial)____________      3.2209E-01 OP 
  Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      0.0000E+00    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -4.2088E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      2.3912E+08    
@@ -2957,8 +2960,8 @@
  minimum_TF_conductor_temperature_margin__(K)____________________________ (tmargmin_tf)_________________      1.0000E+00    
  TF_conductor_temperature_margin_(K)_____________________________________ (tmargtf)_____________________      1.0000E+00    
  Elastic_properties_behavior_____________________________________________ (i_tf_cond_eyoung_axial)______              0    
- Conductor_axial_Young's_modulus_________________________________________ (eyoung_cond_z)_______________      0.0000E+00    
- Conductor_transverse_Young's_modulus____________________________________ (eyoung_cond_t)_______________      0.0000E+00    
+ Conductor_axial_Young's_modulus_________________________________________ (eyoung_cond_axial)___________      0.0000E+00    
+ Conductor_transverse_Young's_modulus____________________________________ (eyoung_cond_trans)___________      0.0000E+00    
  Superconductor_mass_per_coil_(kg)_______________________________________ (whtconsc)____________________      1.1373E+04 OP 
  Copper_mass_per_coil_(kg)_______________________________________________ (whtconcu)____________________      3.8308E+04 OP 
  Steel_conduit_mass_per_coil_(kg)________________________________________ (whtconsh)____________________      7.4059E+03 OP 
@@ -2991,8 +2994,8 @@
  Helium_temperature_at_peak_field_(=_superconductor_temperature)_(K)_____ (thelium)_____________________      4.5000E+00    
  Total_helium_fraction_inside_cable_space________________________________ (fhetot)______________________      3.4440E-01 OP 
  Copper_fraction_of_conductor____________________________________________ (fcutfsu)_____________________      6.9000E-01    
- Residual_manufacturing_strain_on_superconductor_________________________ (strncon_tf)__________________     -5.0000E-03    
- Self-consistent_strain_on_superconductor________________________________ (strain_wp)___________________      3.4065E-03    
+ Residual_manufacturing_strain_on_superconductor_________________________ (str_tf_con_res)______________     -5.0000E-03    
+ Self-consistent_strain_on_superconductor________________________________ (str_wp)______________________      3.4065E-03    
  Critical_current_density_in_superconductor_(A/m2)_______________________ (jcritsc)_____________________      1.6381E+09 OP 
  Critical_current_density_in_strand_(A/m2)_______________________________ (jcritstr)____________________      5.0783E+08 OP 
  Critical_current_density_in_winding_pack_(A/m2)_________________________ (jwdgcrt)_____________________      2.6511E+08 OP 
@@ -3029,7 +3032,7 @@
  Axial_stress_in_CS_steel_(Pa)___________________________________________ (sig_axial)___________________     -1.5436E+09 OP 
  Maximum_shear_stress_in_CS_steel_for_the_Tresca_criterion_(Pa)__________ (s_tresca_oh)_________________      6.6000E+08 OP 
  Axial_force_in_CS_(N)___________________________________________________ (axial_force)_________________     -9.5910E+08 OP 
- Strain_on_CS_superconductor_____________________________________________ (strncon_cs)__________________     -5.0000E-03    
+ Residual_manufacturing_strain_in_CS_superconductor_material_____________ (str_cs_con_res)______________     -5.0000E-03    
  Copper_fraction_in_strand_______________________________________________ (fcuohsu)_____________________      7.0000E-01    
  Void_(coolant)_fraction_in_conductor____________________________________ (vfohc)_______________________      3.0000E-01    
  Helium_coolant_temperature_(K)__________________________________________ (tftmp)_______________________      4.5000E+00    
@@ -3361,7 +3364,7 @@
  Ohmic_heating_(MW)______________________________________________________ (pohmmw.)_____________________      6.9067E-01    
  Injected_power_deposited_in_plasma_(MW)_________________________________ (pinjmw)______________________      5.0000E+01    
  Total_(MW)______________________________________________________________ ______________________________      4.4742E+02    
- Fusion_power_(MW)_______________________________________________________ (powfmw.)_____________________      2.0812E+03    
+ Fusion_power_(MW)_______________________________________________________ (powfmw)______________________      2.0812E+03    
  Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      3.9607E+02    
  Injected_power_(MW)_____________________________________________________ (pinjmw.)_____________________      5.0000E+01    
  Ohmic_power_(MW)________________________________________________________ (pohmmw.)_____________________      6.9067E-01    
@@ -3386,7 +3389,7 @@
  Total_(MW)______________________________________________________________ (tot_plant_power)_____________      9.4225E+02    
  Total_(MW)______________________________________________________________ ______________________________      9.4225E+02    
  Gross_electrical_output*_(MW)___________________________________________ (pgrossmw)____________________      9.4225E+02    
- Fusion_power_(MW)_______________________________________________________ (powfmw.)_____________________      2.0812E+03    
+ Fusion_power_(MW)_______________________________________________________ (powfmw)______________________      2.0812E+03    
  Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      3.9607E+02    
  Total_(MW)______________________________________________________________ ______________________________      2.4773E+03    
  Net_electrical_output_(MW)	_____________________________________________ (pnetelmw)____________________      5.0000E+02    
@@ -3683,6 +3686,7 @@
  Heating/CD_system_lifetime_(years)______________________________________ (cdrlife)_____________________      2.2993E+01 OP 
  Total_plant_lifetime_(years)____________________________________________ (tlife)_______________________      4.0000E+01    
  Total_plant_availability_fraction_______________________________________ (cfactr)______________________      7.5000E-01    
+ Number_of_fusion_cycles_to_reach_allowable_fw/blanket_DPA_______________ (bktcycles)___________________      5.9778E+04    
  # Plasma #
  Tokamak_aspect_ratio_=_Conventional,_itart_=_0__________________________ (itart)_______________________      0.0000E+00    
  Major_radius_(m)________________________________________________________ (rmajor)______________________      8.3051E+00 ITV
@@ -3931,7 +3935,7 @@
  Total_plant_cycle_time_(s)______________________________________________ (tcycle)______________________      9.1040E+03 OP 
  kallenbach_switch_______________________________________________________ (kallenbach_switch)___________              0    
  # Radial Build #
- Machine_bore_(m)________________________________________________________ (bore)________________________      2.5100E+00 ITV
+ Machine_build_variables.bore_(m)________________________________________ (bore)________________________      2.5100E+00 ITV
  CS_radial_thickness_(m)_________________________________________________ (ohcth)_______________________      1.5611E-01 ITV
  CS_precompression_(m)___________________________________________________ (precomp)_____________________      5.9788E-02    
  CS_precompresion_to_TF_coil_radial_gap_(m)______________________________ (gapoh)_______________________      5.1000E-02 ITV
@@ -3972,10 +3976,10 @@
  # Divertor build and plasma position #
  Plasma_top_position,_radial_(m)_________________________________________ (ptop_radial)_________________      6.4281E+00    
  Plasma_top_position,_vertical_(m)_______________________________________ (ptop_vertical)_______________      7.3554E+00    
- Plasma_geometric_centre,_radial_(m)_____________________________________ (rmajor.)_____________________      8.3051E+00    
+ Plasma_geometric_centre,_radial_(m)_____________________________________ (physics_variables.rmajor.)___      8.3051E+00    
  Plasma_geometric_centre,_vertical_(m)___________________________________ (0.0)_________________________      0.0000E+00    
- Plasma_lower_triangularity______________________________________________ (tril)________________________      5.0000E-01    
- Plasma_elongation_______________________________________________________ (kappa.)______________________      1.9593E+00    
+ Plasma_lower_physics_variables.triangularity____________________________ (tril)________________________      5.0000E-01    
+ Plasma_elongation_______________________________________________________ (physics_variables.kappa.)____      1.9593E+00    
  TF_coil_vertical_offset_(m)_____________________________________________ (tfoffset)____________________     -6.3650E-01    
  Plasma_outer_arc_radius_of_curvature_(m)________________________________ (rco)_________________________      7.6194E+00    
  Plasma_inner_arc_radius_of_curvature_(m)________________________________ (rci)_________________________      1.5350E+01    
@@ -4005,10 +4009,10 @@
  # TF coils  #
  Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.6000E+08    
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.6000E+08    
- WP_transverse_modulus_(GPa)_____________________________________________ (eyoung_wp_t*1.0D-9)__________      6.6940E+00 OP 
- WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      5.2289E+01 OP 
- WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_t)________________      3.0362E-01 OP 
- WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_z)________________      3.2210E-01 OP 
+ WP_transverse_modulus_(GPa)_____________________________________________ (eyoung_wp_trans*1.0D-9)______      6.6940E+00 OP 
+ WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_axial*1.0D-9)______      5.2289E+01 OP 
+ WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_trans)____________      3.0362E-01 OP 
+ WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_axial)____________      3.2210E-01 OP 
  Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      0.0000E+00    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -4.2034E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      2.3966E+08    
@@ -4087,8 +4091,8 @@
  minimum_TF_conductor_temperature_margin__(K)____________________________ (tmargmin_tf)_________________      1.0000E+00    
  TF_conductor_temperature_margin_(K)_____________________________________ (tmargtf)_____________________      1.0000E+00    
  Elastic_properties_behavior_____________________________________________ (i_tf_cond_eyoung_axial)______              0    
- Conductor_axial_Young's_modulus_________________________________________ (eyoung_cond_z)_______________      0.0000E+00    
- Conductor_transverse_Young's_modulus____________________________________ (eyoung_cond_t)_______________      0.0000E+00    
+ Conductor_axial_Young's_modulus_________________________________________ (eyoung_cond_axial)___________      0.0000E+00    
+ Conductor_transverse_Young's_modulus____________________________________ (eyoung_cond_trans)___________      0.0000E+00    
  Superconductor_mass_per_coil_(kg)_______________________________________ (whtconsc)____________________      1.1455E+04 OP 
  Copper_mass_per_coil_(kg)_______________________________________________ (whtconcu)____________________      3.8585E+04 OP 
  Steel_conduit_mass_per_coil_(kg)________________________________________ (whtconsh)____________________      7.4593E+03 OP 
@@ -4121,8 +4125,8 @@
  Helium_temperature_at_peak_field_(=_superconductor_temperature)_(K)_____ (thelium)_____________________      4.5000E+00    
  Total_helium_fraction_inside_cable_space________________________________ (fhetot)______________________      3.4440E-01 OP 
  Copper_fraction_of_conductor____________________________________________ (fcutfsu)_____________________      6.9000E-01    
- Residual_manufacturing_strain_on_superconductor_________________________ (strncon_tf)__________________     -5.0000E-03    
- Self-consistent_strain_on_superconductor________________________________ (strain_wp)___________________      3.4116E-03    
+ Residual_manufacturing_strain_on_superconductor_________________________ (str_tf_con_res)______________     -5.0000E-03    
+ Self-consistent_strain_on_superconductor________________________________ (str_wp)______________________      3.4116E-03    
  Critical_current_density_in_superconductor_(A/m2)_______________________ (jcritsc)_____________________      1.6142E+09 OP 
  Critical_current_density_in_strand_(A/m2)_______________________________ (jcritstr)____________________      5.0039E+08 OP 
  Critical_current_density_in_winding_pack_(A/m2)_________________________ (jwdgcrt)_____________________      2.6123E+08 OP 
@@ -4159,7 +4163,7 @@
  Axial_stress_in_CS_steel_(Pa)___________________________________________ (sig_axial)___________________     -1.5321E+09 OP 
  Maximum_shear_stress_in_CS_steel_for_the_Tresca_criterion_(Pa)__________ (s_tresca_oh)_________________      6.6000E+08 OP 
  Axial_force_in_CS_(N)___________________________________________________ (axial_force)_________________     -9.7232E+08 OP 
- Strain_on_CS_superconductor_____________________________________________ (strncon_cs)__________________     -5.0000E-03    
+ Residual_manufacturing_strain_in_CS_superconductor_material_____________ (str_cs_con_res)______________     -5.0000E-03    
  Copper_fraction_in_strand_______________________________________________ (fcuohsu)_____________________      7.0000E-01    
  Void_(coolant)_fraction_in_conductor____________________________________ (vfohc)_______________________      3.0000E-01    
  Helium_coolant_temperature_(K)__________________________________________ (tftmp)_______________________      4.5000E+00    
@@ -4491,7 +4495,7 @@
  Ohmic_heating_(MW)______________________________________________________ (pohmmw.)_____________________      6.9575E-01    
  Injected_power_deposited_in_plasma_(MW)_________________________________ (pinjmw)______________________      5.0000E+01    
  Total_(MW)______________________________________________________________ ______________________________      4.4734E+02    
- Fusion_power_(MW)_______________________________________________________ (powfmw.)_____________________      2.0807E+03    
+ Fusion_power_(MW)_______________________________________________________ (powfmw)______________________      2.0807E+03    
  Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      3.9598E+02    
  Injected_power_(MW)_____________________________________________________ (pinjmw.)_____________________      5.0000E+01    
  Ohmic_power_(MW)________________________________________________________ (pohmmw.)_____________________      6.9575E-01    
@@ -4516,7 +4520,7 @@
  Total_(MW)______________________________________________________________ (tot_plant_power)_____________      9.4227E+02    
  Total_(MW)______________________________________________________________ ______________________________      9.4227E+02    
  Gross_electrical_output*_(MW)___________________________________________ (pgrossmw)____________________      9.4227E+02    
- Fusion_power_(MW)_______________________________________________________ (powfmw.)_____________________      2.0807E+03    
+ Fusion_power_(MW)_______________________________________________________ (powfmw)______________________      2.0807E+03    
  Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      3.9598E+02    
  Total_(MW)______________________________________________________________ ______________________________      2.4767E+03    
  Net_electrical_output_(MW)	_____________________________________________ (pnetelmw)____________________      5.0000E+02    

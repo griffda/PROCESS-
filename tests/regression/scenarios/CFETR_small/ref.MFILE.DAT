@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.3.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "23/02/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "11:12"
+ Date_of_run_____________________________________________________________ (date)________________________     "17/03/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "11:48"
  User____________________________________________________________________ (username)____________________     "cswan"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     ""CFETR small (5.7m) reference file"                                                                
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1259-g2bf9b76f"                                                                               
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1332-g22754d6e"                                                                               
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1205-tf-cond-stiffness"                                                                            
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Added\ Poisson|s\ ratio\ to\ output"                                                               
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-25/test_scenario_CFETR_small_0/IN.DAT                                                                                                                                       "
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "NOW\ added\ correct\ ref\ dicts"                                                                   
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-cswan/pytest-2/test_scenario_CFETR_small_0/IN.DAT                                                                                                                                        "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -435,7 +435,7 @@
  Total_plant_cycle_time_(s)______________________________________________ (tcycle)______________________      2.8571E+03 OP 
  kallenbach_switch_______________________________________________________ (kallenbach_switch)___________              0    
  # Radial Build #
- Machine_bore_(m)________________________________________________________ (bore)________________________      1.0900E+00    
+ Machine_build_variables.bore_(m)________________________________________ (bore)________________________      1.0900E+00    
  CS_radial_thickness_(m)_________________________________________________ (ohcth)_______________________      6.5000E-01    
  CS_precompression_(m)___________________________________________________ (precomp)_____________________      0.0000E+00    
  CS_precompresion_to_TF_coil_radial_gap_(m)______________________________ (gapoh)_______________________      1.1600E-01    
@@ -476,10 +476,10 @@
  # Divertor build and plasma position #
  Plasma_top_position,_radial_(m)_________________________________________ (ptop_radial)_________________      5.0610E+00    
  Plasma_top_position,_vertical_(m)_______________________________________ (ptop_vertical)_______________      2.8801E+00    
- Plasma_geometric_centre,_radial_(m)_____________________________________ (rmajor.)_____________________      5.7010E+00    
+ Plasma_geometric_centre,_radial_(m)_____________________________________ (physics_variables.rmajor.)___      5.7010E+00    
  Plasma_geometric_centre,_vertical_(m)___________________________________ (0.0)_________________________      0.0000E+00    
- Plasma_lower_triangularity______________________________________________ (tril)________________________      4.0000E-01    
- Plasma_elongation_______________________________________________________ (kappa.)______________________      1.8000E+00    
+ Plasma_lower_physics_variables.triangularity____________________________ (tril)________________________      4.0000E-01    
+ Plasma_elongation_______________________________________________________ (physics_variables.kappa.)____      1.8000E+00    
  TF_coil_vertical_offset_(m)_____________________________________________ (tfoffset)____________________     -5.2335E-01    
  Plasma_outer_arc_radius_of_curvature_(m)________________________________ (rco)_________________________      2.9715E+00    
  Plasma_inner_arc_radius_of_curvature_(m)________________________________ (rci)_________________________      4.8002E+00    
@@ -509,10 +509,10 @@
  # TF coils  #
  Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      5.9200E+08    
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      5.9200E+08    
- WP_transverse_modulus_(GPa)_____________________________________________ (eyoung_wp_t*1.0D-9)__________      5.3513E+01 OP 
- WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      1.2533E+02 OP 
- WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_t)________________      3.0461E-01 OP 
- WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_z)________________      3.1204E-01 OP 
+ WP_transverse_modulus_(GPa)_____________________________________________ (eyoung_wp_trans*1.0D-9)______      5.3513E+01 OP 
+ WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_axial*1.0D-9)______      1.2533E+02 OP 
+ WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_trans)____________      3.0461E-01 OP 
+ WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_axial)____________      3.1204E-01 OP 
  Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      2.4424E-08    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -2.2295E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      1.1645E+08    
@@ -591,8 +591,8 @@
  minimum_TF_conductor_temperature_margin__(K)____________________________ (tmargmin_tf)_________________      2.0000E+00    
  TF_conductor_temperature_margin_(K)_____________________________________ (tmargtf)_____________________      2.2209E+00    
  Elastic_properties_behavior_____________________________________________ (i_tf_cond_eyoung_axial)______              0    
- Conductor_axial_Young's_modulus_________________________________________ (eyoung_cond_z)_______________      0.0000E+00    
- Conductor_transverse_Young's_modulus____________________________________ (eyoung_cond_t)_______________      0.0000E+00    
+ Conductor_axial_Young's_modulus_________________________________________ (eyoung_cond_axial)___________      0.0000E+00    
+ Conductor_transverse_Young's_modulus____________________________________ (eyoung_cond_trans)___________      0.0000E+00    
  Superconductor_mass_per_coil_(kg)_______________________________________ (whtconsc)____________________      2.4832E+03 OP 
  Copper_mass_per_coil_(kg)_______________________________________________ (whtconcu)____________________      2.3523E+04 OP 
  Steel_conduit_mass_per_coil_(kg)________________________________________ (whtconsh)____________________      5.8611E+04 OP 
@@ -626,8 +626,8 @@
  Helium_temperature_at_peak_field_(=_superconductor_temperature)_(K)_____ (thelium)_____________________      4.5000E+00    
  Total_helium_fraction_inside_cable_space________________________________ (fhetot)______________________      4.1464E-01 OP 
  Copper_fraction_of_conductor____________________________________________ (fcutfsu)_____________________      8.4829E-01 ITV
- Residual_manufacturing_strain_on_superconductor_________________________ (strncon_tf)__________________     -5.0000E-03    
- Self-consistent_strain_on_superconductor________________________________ (strain_wp)___________________      8.7019E-04    
+ Residual_manufacturing_strain_on_superconductor_________________________ (str_tf_con_res)______________     -5.0000E-03    
+ Self-consistent_strain_on_superconductor________________________________ (str_wp)______________________      8.7019E-04    
  Critical_current_density_in_superconductor_(A/m2)_______________________ (jcritsc)_____________________      9.2447E+08 OP 
  Critical_current_density_in_strand_(A/m2)_______________________________ (jcritstr)____________________      1.4025E+08 OP 
  Critical_current_density_in_winding_pack_(A/m2)_________________________ (jwdgcrt)_____________________      3.2286E+07 OP 
@@ -664,7 +664,7 @@
  Axial_stress_in_CS_steel_(Pa)___________________________________________ (sig_axial)___________________     -6.5843E+08 OP 
  Maximum_shear_stress_in_CS_steel_for_the_Tresca_criterion_(Pa)__________ (s_tresca_oh)_________________      5.9544E+08 OP 
  Axial_force_in_CS_(N)___________________________________________________ (axial_force)_________________     -9.5126E+08 OP 
- Strain_on_CS_superconductor_____________________________________________ (strncon_cs)__________________     -5.0000E-03    
+ Residual_manufacturing_strain_in_CS_superconductor_material_____________ (str_cs_con_res)______________     -5.0000E-03    
  Copper_fraction_in_strand_______________________________________________ (fcuohsu)_____________________      7.0000E-01    
  Void_(coolant)_fraction_in_conductor____________________________________ (vfohc)_______________________      3.0000E-01    
  Helium_coolant_temperature_(K)__________________________________________ (tftmp)_______________________      4.5000E+00    
@@ -1088,7 +1088,7 @@
  Ohmic_heating_(MW)______________________________________________________ (pohmmw.)_____________________      7.8367E-02    
  Injected_power_deposited_in_plasma_(MW)_________________________________ (pinjmw)______________________      9.7688E+01    
  Total_(MW)______________________________________________________________ ______________________________      1.4504E+02    
- Fusion_power_(MW)_______________________________________________________ (powfmw.)_____________________      2.4833E+02    
+ Fusion_power_(MW)_______________________________________________________ (powfmw)______________________      2.4833E+02    
  Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      4.7274E+01    
  Injected_power_(MW)_____________________________________________________ (pinjmw.)_____________________      9.7688E+01    
  Ohmic_power_(MW)________________________________________________________ (pohmmw.)_____________________      7.8367E-02    
@@ -1113,7 +1113,7 @@
  Total_(MW)______________________________________________________________ (tot_plant_power)_____________      1.1211E+02    
  Total_(MW)______________________________________________________________ ______________________________      1.1211E+02    
  Gross_electrical_output*_(MW)___________________________________________ (pgrossmw)____________________      1.1211E+02    
- Fusion_power_(MW)_______________________________________________________ (powfmw.)_____________________      2.4833E+02    
+ Fusion_power_(MW)_______________________________________________________ (powfmw)______________________      2.4833E+02    
  Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      4.7274E+01    
  Total_(MW)______________________________________________________________ ______________________________      2.9561E+02    
  Net_electrical_output_(MW)	_____________________________________________ (pnetelmw)____________________     -2.9818E+02    
@@ -1430,4 +1430,4 @@ sig_tf_wp_max    = 5.92E8 * Allowable maximum shear stress in TF coil conduit (T
 tftmp   = 4.5        * Temperature for superconductor (K)
 tmargmin = 2.0       * Minimum temperature margin (K)
 tinstf = 0.005   * Ground wall insulation thickness (m)
-i_strain_wp = 0 * strncon_tf is used for the critical surface
+i_str_wp = 0 * str_tf_con_res is used for the critical surface

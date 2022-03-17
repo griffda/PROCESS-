@@ -11,7 +11,7 @@
 
 import sys
 import argparse
-import process_io_lib.mfile as mf
+import process.io.mfile as mf
 import matplotlib
 matplotlib.rcParams["figure.max_open_warning"] = 40
 import matplotlib.pyplot as plt

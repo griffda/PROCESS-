@@ -24,7 +24,7 @@ rc('figure.subplot', right=0.81)
 
 
 from pylab import figure, xlabel, ylabel, plot, show, savefig
-import process_io_lib.mfile as mf
+import process.io.mfile as mf
 
 
 

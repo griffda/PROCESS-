@@ -304,6 +304,7 @@
         "bigq": 0.0,
         "bigqmin": 10.0,
         "bioshld_thk": 2.5,
+        "bktcycles": 1000.0,
         "bktlife": 0.0,
         "blanket_density": 0.0,
         "blarea": 0.0,
@@ -2307,6 +2308,7 @@
         "i_tf_wp_geom": -1.0,
         "iastra": null,
         "iavail": 2.0,
+        "ibkt_life": 0.0,
         "iblanket": 1.0,
         "iblanket_thickness": 2.0,
         "iblnkith": 1.0,
@@ -3139,6 +3141,7 @@
         "lh": null,
         "lhat": 4.33,
         "li6enrich": 30.0,
+        "life_dpa": 50.0,
         "light_build_cost_per_vol": 270.0,
         "line": "",
         "linelen": 0.0,
@@ -4228,7 +4231,7 @@
         "ric": 0.0,
         "ricpf": 0.0,
         "rinboard": 0.651,
-        "ripflag": 0.0,
+        "ripflag": 0,
         "ripmax": 1.0,
         "ripple": 0.0,
         "ritfc": 0.0,
@@ -5366,6 +5369,8 @@
         "stack_thickness": 0.0,
         "staff_buildings_area": 480000.0,
         "staff_buildings_h": 5.0,
+        "startuppwr": 0.0,
+        "startupratio": 1.0,
         "stcl": 3.0,
         "step20": 0.0,
         "step21": 0.0,
@@ -9004,6 +9009,7 @@
         "bigq": "Fusion gain; P_fusion / (P_injection + P_ohmic)",
         "bigqmin": "minimum fusion gain Q (`constraint equation 28`)",
         "bioshld_thk": "Radial thickness of bio-shield around reactor (m) ",
+        "bktcycles": "Number of fusion cycles to reach allowable DPA from DEMO fw/blanket lifetime calculation",
         "bktlife": "Full power blanket lifetime (years)",
         "blanket_density": "Blanket density [kg/m3]",
         "blarea": "blanket total surface area (m2)",
@@ -9937,6 +9943,7 @@
         "i_tf_wp_geom": "Switch for TF WP geometry selection\n   0 : Rectangular geometry \n   1 : Double rectangular geometry \n   2 : Trapezoidal geometry (constant lateral casing thickness)\n Default setting for backward compatibility \n   if i_tf_turns_integer = 0 : Double rectangular\n   if i_tf_turns_integer = 1 : Rectangular ",
         "iastra": "",
         "iavail": "Switch for plant availability model:\n<ul>\n<li>=0 use input value for cfactr</li>\n<li>=1 calculate cfactr using Taylor and Ward 1999 model</li>\n<li>=2 calculate cfactr using new (2015) model</li>\n</ul>",
+        "ibkt_life": "Switch for fw/blanket lifetime calculation in availability module:\n<ul>\n<li>=0 use neutron fluence model</li>\n<li>=1 use fusion power model (DEMO only)</li>\n</ul>",
         "iblanket": "switch for blanket model:\n<ul>\n<li>=1 CCFE HCPB model</li>\n<li>=2 KIT HCPB model</li>\n<li>=3 CCFE HCPB model with Tritium Breeding Ratio calculation</li>\n<li>=4 KIT HCLL model</li>\n</ul>",
         "iblanket_thickness": "Blanket thickness switch (Do not set blnkith, blnkoth, fwith or fwoth when `iblanket=3`):\n<ul>\n<li>=1 thin    0.53 m inboard, 0.91 m outboard</li>\n<li>=2 medium  0.64 m inboard, 1.11 m outboard</li>\n<li>=3 thick   0.75 m inboard, 1.30 m outboard</li>\n</ul>",
         "iblnkith": "switch for inboard blanket:\n<ul>\n<li>=0 No inboard blanket (blnkith=0.0)</li>\n<li>=1 Inboard blanket present</li>\n</ul>",
@@ -10118,6 +10125,7 @@
         "lh": "",
         "lhat": "Connection length factor L|| = lhat qstar R for Reinke criterion, default value from\n Post et al. 1995 J. Nucl. Mat.  220-2 1014",
         "li6enrich": "lithium-6 enrichment of breeding material (%)",
+        "life_dpa": "Allowable DPA from DEMO fw/blanket lifetime calculation in availability module",
         "light_build_cost_per_vol": "Unit cost for unshielded non-active buildings ($/m3)",
         "line": "",
         "linelen": "",
@@ -10847,6 +10855,8 @@
         "stack_thickness": "",
         "staff_buildings_area": "footprint of staff buildings (m2)",
         "staff_buildings_h": "staff buildings height (m)",
+        "startuppwr": "cost associated with additional HCD system power required on start-up ($)",
+        "startupratio": "ratio of additional HCD power for start-up to flat-top operational requirements",
         "stcl": "clearance above crane to roof (m)",
         "step20": "M$",
         "step21": "M$",
@@ -13361,6 +13371,10 @@
             "lb": 0,
             "ub": 2
         },
+        "ibkt_life": {
+            "lb": 0,
+            "ub": 2
+        },
         "iblanket": {
             "lb": 1,
             "ub": 4
@@ -13639,6 +13653,10 @@
         },
         "li6enrich": {
             "lb": 7.4,
+            "ub": 100.0
+        },
+        "life_dpa": {
+            "lb": 10.0,
             "ub": 100.0
         },
         "lpulse": {
@@ -14424,6 +14442,10 @@
         "ssync": {
             "lb": 0.0,
             "ub": 1.0
+        },
+        "startupratio": {
+            "lb": 0.0,
+            "ub": 10.0
         },
         "stcl": {
             "lb": 0.0,
@@ -15705,7 +15727,7 @@
             "lb": 0.001,
             "ub": 0.01
         },
-        "rebco_thicknes": {
+        "rebco_thickness": {
             "lb": 1e-08,
             "ub": 0.0001
         },
@@ -15914,6 +15936,7 @@
         "r_cp_top": 0.0,
         "ralpne": 0.1,
         "rcool": 0.005,
+        "rebco_thickness": 1e-06,
         "rmajor": 8.14,
         "rnbeam": 0.005,
         "rrin": 6.0,
@@ -16144,7 +16167,7 @@
         },
         "138": {
             "lb": 1e-08,
-            "name": "rebco_thicknes",
+            "name": "rebco_thickness",
             "ub": 0.0001
         },
         "139": {
@@ -16790,7 +16813,7 @@
         "135": "fimp(13)",
         "136": "fimp(14)",
         "137": "fplhsep",
-        "138": "rebco_thicknes",
+        "138": "rebco_thickness",
         "139": "copper_thick",
         "14": "fwalld",
         "140": "dr_tf_wp",
@@ -17044,7 +17067,7 @@
         "r_cp_top": "162",
         "ralpne": "109",
         "rcool": "69",
-        "rebco_thicknes": "138",
+        "rebco_thickness": "138",
         "rmajor": "3",
         "rnbeam": "7",
         "rrin": "156",
@@ -17088,7 +17111,7 @@
             "conf2",
             "qb2"
         ],
-        "build_module": [
+        "build": [
             "ripflag"
         ],
         "build_variables": [
@@ -17629,6 +17652,9 @@
             "fkind",
             "fwallcst",
             "iavail",
+            "ibkt_life",
+            "life_dpa",
+            "bktcycles",
             "avail_min",
             "tok_build_cost_per_vol",
             "light_build_cost_per_vol",
@@ -17663,6 +17689,8 @@
             "moneyint",
             "output_costs",
             "discount_rate",
+            "startupratio",
+            "startuppwr",
             "sitecost",
             "step_con",
             "step_cconfix",
@@ -20602,6 +20630,7 @@
         "i_tf_turns_integer": "int_variable",
         "i_tf_wp_geom": "int_variable",
         "iavail": "int_variable",
+        "ibkt_life": "int_variable",
         "iblanket": "int_variable",
         "iblanket_thickness": "int_variable",
         "iblnkith": "int_variable",
@@ -20680,6 +20709,7 @@
         "lcon_factor": "real_variable",
         "lhat": "real_variable",
         "li6enrich": "real_variable",
+        "life_dpa": "real_variable",
         "lpulse": "int_variable",
         "lsa": "int_variable",
         "m_res": "int_variable",
@@ -20898,6 +20928,7 @@
         "sombdr": "real_variable",
         "somtdr": "real_variable",
         "ssync": "real_variable",
+        "startupratio": "real_variable",
         "stcl": "real_variable",
         "step91_per": "real_variable",
         "step92_per": "real_variable",

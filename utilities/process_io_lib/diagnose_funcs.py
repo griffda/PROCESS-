@@ -11,7 +11,7 @@ Compatible with PROCESS version 319
 """
 
 
-from process_io_lib.mfile import MFile
+from process.io.mfile import MFile
 from pylab import figure, plot, xticks, subplots_adjust, grid
 
 
