@@ -7,6 +7,8 @@ from process.fortran import physics_variables as pv
 from process.fortran import tfcoil_variables as tfv
 from process.fortran import fwbs_variables as fwbsv
 from process.fortran import constants
+from process.fortran import cs_fatigue as csf
+from process.fortran import cs_fatigue_variables as csfv
 from process import fortran as ft
 import math
 import numpy as np
@@ -714,7 +716,7 @@ class PFCoil:
 
         #  Find Central Solenoid information
         if bv.iohcl != 0:
-            pf.ohcalc()
+            self.ohcalc()
 
         #  Summation of weights and current
         pfv.whtpf = 0.0e0
@@ -748,3 +750,233 @@ class PFCoil:
         pfv.cpt[pfv.ncirt - 1, 3] = pv.plascur
         pfv.cpt[pfv.ncirt - 1, 4] = pv.plascur
         pfv.cpt[pfv.ncirt - 1, 5] = 0.0e0
+
+    def ohcalc(self):
+        """Routine to perform calculations for the Central Solenoid solenoid.
+        
+        author: P J Knight, CCFE, Culham Science Centre
+        This subroutine performs the calculations for the
+        Central Solenoid solenoid coil.
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+        """
+        hohc = bv.hmax * pfv.ohhghf
+
+        #  Z coordinates of coil edges
+        pfv.zh[pfv.nohc - 1] = hohc
+        pfv.zl[pfv.nohc - 1] = -pfv.zh[pfv.nohc - 1]
+
+        #  (R,Z) coordinates of coil centre
+        pfv.rpf[pfv.nohc - 1] = pfv.rohc
+        pfv.zpf[pfv.nohc - 1] = 0.0e0
+
+        #  Radius of outer edge
+        pfv.rb[pfv.nohc - 1] = pfv.rohc + 0.5e0 * bv.ohcth
+
+        #  Radius of inner edge
+        pfv.ra[pfv.nohc - 1] = pfv.rb[pfv.nohc - 1] - bv.ohcth
+
+        #  Total cross-sectional area
+        pfv.areaoh = 2.0e0 * hohc * bv.ohcth
+
+        #  Maximum current (MA-pfv.turns) in Centpfv.ral Solenoid, at either BOP or EOF
+        if pfv.cohbop > pfv.coheof:
+            sgn = 1.0e0
+            pfv.ric[pfv.nohc - 1] = sgn * 1.0e-6 * pfv.cohbop * pfv.areaoh
+        else:
+            sgn = -1.0e0
+            pfv.ric[pfv.nohc - 1] = sgn * 1.0e-6 * pfv.coheof * pfv.areaoh
+
+        #  Number of pfv.turns
+        pfv.turns[pfv.nohc - 1] = (
+            1.0e6 * abs(pfv.ric[pfv.nohc - 1]) / pfv.cptdin[pfv.nohc - 1]
+        )
+
+        # Turn vertical cross-sectionnal area
+        pfv.a_oh_turn = pfv.areaoh / pfv.turns[pfv.nohc - 1]
+
+        #  Non-steel area void fpfv.raction for coolant
+        pfv.vf[pfv.nohc - 1] = pfv.vfohc
+
+        #  Peak field at the End-Of-Flattop (EOF)
+        #  Occurs at inner edge of coil; bmaxoh2 and bzi are of opposite sign at EOF
+
+        #  Peak field due to Centpfv.ral Solenoid itself
+        bmaxoh2 = pf.bfmax(
+            pfv.coheof, pfv.ra[pfv.nohc - 1], pfv.rb[pfv.nohc - 1], hohc
+        )
+
+        #  Peak field due to other PF coils plus plasma
+        timepoint = 5
+        bri, bro, bzi, bzo = pf.peakb(pfv.nohc, 99, timepoint)
+
+        pfv.bmaxoh = abs(bzi - bmaxoh2)
+        bohci = pfv.bmaxoh
+
+        #  Peak field on outboard side of Centpfv.ral Solenoid
+        #  (self-field is assumed to be zero - long solenoid approximation)
+        bohco = abs(bzo)
+
+        #  Peak field at the Beginning-Of-Pulse (BOP)
+        #  Occurs at inner edge of coil; pfv.bmaxoh0 and bzi are of same sign at BOP
+        pfv.bmaxoh0 = pf.bfmax(
+            pfv.cohbop, pfv.ra[pfv.nohc - 1], pfv.rb[pfv.nohc - 1], hohc
+        )
+        timepoint = 2
+        bri, bro, bzi, bzo = pf.peakb(pfv.nohc, 99, timepoint)
+
+        pfv.bmaxoh0 = abs(pfv.bmaxoh0 + bzi)
+
+        #  Maximum field values
+        pfv.bpf[pfv.nohc - 1] = max(pfv.bmaxoh, abs(pfv.bmaxoh0))
+        pf.bpf2[pfv.nohc - 1] = max(bohco, abs(bzo))
+
+        #  (J x B) hoop force on Centpfv.ral Solenoid (N)
+        forcepf = (
+            0.5e6
+            * (pfv.bpf[pfv.nohc - 1] + pf.bpf2[pfv.nohc - 1])
+            * abs(pfv.ric[pfv.nohc - 1])
+            * pfv.rpf[pfv.nohc - 1]
+        )
+
+        #  Stress ==> cross-sectional area of supporting steel to use
+        if pfv.ipfres == 0:
+
+            #  Superconducting coil
+
+            # New calculation from M. N. Wilson for hoop stress
+            pf.sig_hoop = pf.hoop_stress(pfv.ra[pfv.nohc - 1])
+
+            # New calculation from Y. Iwasa for axial stress
+            pf.sig_axial, pf.axial_force = pf.axial_stress()
+
+            #  Allowable (hoop) stress (Pa) alstroh
+            # Now a user input
+            # alstroh = min( (2.0e0*csytf/3.0e0), (0.5e0*csutf) )
+
+            # Calculation of CS fatigue
+            # this is only valid for pulsed reactor design
+            if pv.facoh > 0.0e-4:
+                csf.ncycle(
+                    csfv.n_cycle,
+                    pf.sig_hoop,
+                    csfv.residual_sig_hoop,
+                    csfv.t_crack_vertical,
+                    csfv.t_crack_radial,
+                    csfv.t_structural_vertical,
+                    csfv.t_structural_radial,
+                )
+
+            # Now steel area fpfv.raction is itepfv.ration variable and constpfv.raint
+            # equation is used for Centpfv.ral Solenoid stress
+
+            # Area of steel in Centpfv.ral Solenoid
+            areaspf = pfv.oh_steel_frac * pfv.areaoh
+            # areaspf = forcepf / alstroh
+
+            if pfv.i_cs_stress == 1:
+                pfv.s_tresca_oh = max(
+                    abs(pf.sig_hoop - pf.sig_axial),
+                    abs(pf.sig_axial - 0.0e0),
+                    abs(0.0e0 - pf.sig_hoop),
+                )
+            else:
+                pfv.s_tresca_oh = max(
+                    abs(pf.sig_hoop - 0.0e0), abs(0.0e0 - 0.0e0), abs(0.0e0 - pf.sig_hoop)
+                )
+
+            #  Thickness of hypothetical steel cylinders assumed to encase the CS along
+            #  its inside and outside edges; in reality, the steel is distributed
+            #  throughout the conductor
+            pfv.pfcaseth[pfv.nohc - 1] = 0.25e0 * areaspf / hohc
+
+        else:
+            areaspf = 0.0e0  #  Resistive Central Solenoid - no steel needed
+            pfv.pfcaseth[pfv.nohc - 1] = 0.0e0
+
+        #  Weight of steel
+        pfv.wts[pfv.nohc - 1] = (
+            areaspf * 2.0e0 * constants.pi * pfv.rpf[pfv.nohc - 1] * fwbsv.denstl
+        )
+
+        #  Non-steel cross-sectional area
+        pfv.awpoh = pfv.areaoh - areaspf
+
+        #  Issue #97. Fudge to ensure pfv.awpoh is positive; result is continuous, smooth and
+        #  monotonically decreases
+
+        da = 0.0001e0  #  1 cm^2
+        if pfv.awpoh < da:
+            pfv.awpoh = da * da / (2.0e0 * da - pfv.awpoh)
+
+        #  Weight of conductor in Centpfv.ral Solenoid
+        if pfv.ipfres == 0:
+            pfv.wtc[pfv.nohc - 1] = (
+                pfv.awpoh
+                * (1.0e0 - pfv.vfohc)
+                * 2.0e0
+                * constants.pi
+                * pfv.rpf[pfv.nohc - 1]
+                * tfv.dcond[pfv.isumatoh-1]
+            )
+        else:
+            pfv.wtc[pfv.nohc - 1] = (
+                pfv.awpoh
+                * (1.0e0 - pfv.vfohc)
+                * 2.0e0
+                * constants.pi
+                * pfv.rpf[pfv.nohc - 1]
+                * constants.dcopper
+            )
+
+        if pfv.ipfres == 0:
+
+            #  Allowable coil ovepfv.rall current density at EOF
+            #  (superconducting coils only)
+
+            jcritwp, pfv.jstrandoh_eof, pfv.jscoh_eof, tmarg1 = pf.superconpf(
+                pfv.bmaxoh,
+                pfv.vfohc,
+                pfv.fcuohsu,
+                (abs(pfv.ric[pfv.nohc - 1]) / pfv.awpoh) * 1.0e6,
+                pfv.isumatoh,
+                tfv.fhts,
+                tfv.strncon_cs,
+                tfv.tftmp,
+                tfv.bcritsc,
+                tfv.tcritsc,
+            )
+
+            pfv.rjohc = jcritwp * pfv.awpoh / pfv.areaoh
+
+            #  Allowable coil ovepfv.rall current density at BOP
+
+            jcritwp, pfv.jstrandoh_bop, pfv.jscoh_bop, tmarg2 = pf.superconpf(
+                pfv.bmaxoh0,
+                pfv.vfohc,
+                pfv.fcuohsu,
+                (abs(pfv.ric[pfv.nohc - 1]) / pfv.awpoh) * 1.0e6,
+                pfv.isumatoh,
+                tfv.fhts,
+                tfv.strncon_cs,
+                tfv.tftmp,
+                tfv.bcritsc,
+                tfv.tcritsc,
+            )
+
+            pfv.rjpfalw[pfv.nohc - 1] = jcritwp * pfv.awpoh / pfv.areaoh
+            pfv.rjohc0 = pfv.rjpfalw[pfv.nohc - 1]
+
+            pfv.tmargoh = min(tmarg1, tmarg2)
+
+        else:
+            #  Resistive power losses (non-superconducting coil)
+
+            pfv.powohres = (
+                2.0e0
+                * constants.pi
+                * pfv.rohc
+                * pfv.pfclres
+                / (pfv.areaoh * (1.0e0 - pfv.vfohc))
+                * (1.0e6 * pfv.ric[pfv.nohc - 1]) ** 2
+            )
+            pfv.powpfres = pfv.powpfres + pfv.powohres

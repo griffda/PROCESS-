@@ -15,7 +15,8 @@ module CS_fatigue
 
 contains
 
-subroutine Ncycle(N_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_crack_radial,t_structural_vertical,t_structural_radial)
+subroutine Ncycle(N_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_crack_radial, &
+    t_structural_vertical,t_structural_radial)
 
     use constants, only: pi
     implicit none

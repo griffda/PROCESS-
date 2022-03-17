@@ -22,14 +22,23 @@ from process.fortran import times_variables as tv
 from process.fortran import constants
 from process.pfcoil import PFCoil
 
+@pytest.fixture
+def pfcoil():
+    """Fixture to create PFCoil object.
 
-def test_pfcoil(monkeypatch):
+    :return: a PFCoil instance
+    :rtype: process.pfcoil.PFCoil
+    """
+    return PFCoil()
+
+def test_pfcoil(monkeypatch, pfcoil):
     """Test pfcoil subroutine.
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
+    :param pfcoil: a PFCoil instance
+    :type pfcoil: process.pfcoil.PFCoil
     """
-    pfcoil = PFCoil()
 
     monkeypatch.setattr(bv, "iohcl", 1)
     monkeypatch.setattr(bv, "hpfdif", 0.0)
@@ -162,13 +171,15 @@ def test_pfcoil(monkeypatch):
     )
 
 
-def test_ohcalc(monkeypatch, reinitialise_error_module):
+def test_ohcalc(monkeypatch, reinitialise_error_module, pfcoil):
     """Test ohcalc subroutine.
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     :param reinitialise_error_module: teardown any error side-effects
     :type reinitialise_error_module: None
+    :param pfcoil: a PFCoil instance
+    :type pfcoil: process.pfcoil.PFCoil
     """
     # Mocks for ohcalc()
     monkeypatch.setattr(bv, "hmax", 8.864)
@@ -248,7 +259,7 @@ def test_ohcalc(monkeypatch, reinitialise_error_module):
     monkeypatch.setattr(tfv, "b_crit_upper_nbti", 1.486e1)
     monkeypatch.setattr(tfv, "b_crit_upper_nbti", 9.04)
 
-    pf.ohcalc()
+    pfcoil.ohcalc()
 
     assert pytest.approx(pfv.bpf[4]) == 9.299805e2
     assert pytest.approx(pfv.rjohc) == -7.728453e9

@@ -139,6 +139,8 @@ LIST(APPEND PROCESS_SRCS
     global_variables.f90
     constraint_variables.f90
     vacuum_variables.f90
+    CS_fatigue.f90
+    CS_fatigue_variables.f90
 )
 
 PREPROCESS()
