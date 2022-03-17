@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1240-g7124046d
-    Branch : 1511-update-heating-and-current-drive-costs
-   Git log : Merge\ branch\ |develop|\ into\ 1511-update-heating-an
- Date/time : 15 Feb 2022 11:42:37 +00:00(hh:mm) UTC
-      User : jg6173
-  Computer : L1088
- Directory : /tmp/pytest-of-jg6173/pytest-24/test_solver0
-     Input : /tmp/pytest-of-jg6173/pytest-24/test_scenario_G_L_Nb_Ti_0/IN.DAT
+   Tag No. : v2.1-1348-g7a3a4dda
+    Branch : 1367-add-site-preparation-costs-into-model-2
+   Git log : Merge\ branch\ |develop|\ into\ 1367-add-site-preparat
+ Date/time : 17 Mar 2022 12:01:50 +00:00(hh:mm) UTC
+      User : rhicha
+  Computer : l0500
+ Directory : /tmp/pytest-of-rhicha/pytest-292/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-292/test_scenario_G_L_Nb_Ti_0/IN.DAT
  Run title : TF coil testing
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -377,6 +377,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heating/CD system lifetime (years)                                       (cdrlife)                 2.419E+01  OP 
  Total plant lifetime (years)                                             (tlife)                   4.000E+01     
  Total plant availability fraction                                        (cfactr)                  7.500E-01     
+ Number of fusion cycles to reach allowable fw/blanket DPA                (bktcycles)               6.289E+04     
  
  *************************************************** Plasma ***************************************************
  
@@ -1575,7 +1576,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power Balance for Reactor - Summary :
  -------------------------------------
- Fusion power (MW)                                                        (powfmw.)                  2083.110  OP 
+ Fusion power (MW)                                                        (powfmw)                   2083.110  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   396.430  OP 
  Injected power (MW)                                                      (pinjmw.)                    50.000  OP 
  Ohmic power (MW)                                                         (pohmmw.)                     0.680  OP 
@@ -1609,7 +1610,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power balance for power plant :
  -------------------------------
- Fusion power (MW)                                                        (powfmw.)                  2083.110  OP 
+ Fusion power (MW)                                                        (powfmw)                   2083.110  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   396.430  OP 
  Total (MW)                                                                                          2479.540  OP 
  
@@ -2014,6 +2015,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heating/CD system lifetime (years)                                       (cdrlife)                 2.378E+01  OP 
  Total plant lifetime (years)                                             (tlife)                   4.000E+01     
  Total plant availability fraction                                        (cfactr)                  7.500E-01     
+ Number of fusion cycles to reach allowable fw/blanket DPA                (bktcycles)               6.183E+04     
  
  *************************************************** Plasma ***************************************************
  
@@ -3212,7 +3214,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power Balance for Reactor - Summary :
  -------------------------------------
- Fusion power (MW)                                                        (powfmw.)                  2082.385  OP 
+ Fusion power (MW)                                                        (powfmw)                   2082.385  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   396.292  OP 
  Injected power (MW)                                                      (pinjmw.)                    50.000  OP 
  Ohmic power (MW)                                                         (pohmmw.)                     0.685  OP 
@@ -3246,7 +3248,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power balance for power plant :
  -------------------------------
- Fusion power (MW)                                                        (powfmw.)                  2082.385  OP 
+ Fusion power (MW)                                                        (powfmw)                   2082.385  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   396.292  OP 
  Total (MW)                                                                                          2478.677  OP 
  
@@ -3650,6 +3652,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heating/CD system lifetime (years)                                       (cdrlife)                 2.338E+01  OP 
  Total plant lifetime (years)                                             (tlife)                   4.000E+01     
  Total plant availability fraction                                        (cfactr)                  7.500E-01     
+ Number of fusion cycles to reach allowable fw/blanket DPA                (bktcycles)               6.079E+04     
  
  *************************************************** Plasma ***************************************************
  
@@ -4848,7 +4851,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power Balance for Reactor - Summary :
  -------------------------------------
- Fusion power (MW)                                                        (powfmw.)                  2081.829  OP 
+ Fusion power (MW)                                                        (powfmw)                   2081.829  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   396.186  OP 
  Injected power (MW)                                                      (pinjmw.)                    50.000  OP 
  Ohmic power (MW)                                                         (pohmmw.)                     0.691  OP 
@@ -4882,7 +4885,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power balance for power plant :
  -------------------------------
- Fusion power (MW)                                                        (powfmw.)                  2081.829  OP 
+ Fusion power (MW)                                                        (powfmw)                   2081.829  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   396.186  OP 
  Total (MW)                                                                                          2478.015  OP 
  
@@ -5286,6 +5289,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heating/CD system lifetime (years)                                       (cdrlife)                 2.299E+01  OP 
  Total plant lifetime (years)                                             (tlife)                   4.000E+01     
  Total plant availability fraction                                        (cfactr)                  7.500E-01     
+ Number of fusion cycles to reach allowable fw/blanket DPA                (bktcycles)               5.978E+04     
  
  *************************************************** Plasma ***************************************************
  
@@ -6484,7 +6488,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power Balance for Reactor - Summary :
  -------------------------------------
- Fusion power (MW)                                                        (powfmw.)                  2081.445  OP 
+ Fusion power (MW)                                                        (powfmw)                   2081.445  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   396.113  OP 
  Injected power (MW)                                                      (pinjmw.)                    50.000  OP 
  Ohmic power (MW)                                                         (pohmmw.)                     0.696  OP 
@@ -6518,7 +6522,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power balance for power plant :
  -------------------------------
- Fusion power (MW)                                                        (powfmw.)                  2081.445  OP 
+ Fusion power (MW)                                                        (powfmw)                   2081.445  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   396.113  OP 
  Total (MW)                                                                                          2477.557  OP 
  
