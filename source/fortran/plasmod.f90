@@ -67,7 +67,7 @@ contains
     use div_kal_vars, only: impurity_enrichment
     use error_handling, only: report_error
     use impurity_radiation_module, only: coreradiationfraction, &
-        impurity_arr, coreradius
+        impurity_arr_frac, coreradius
     use physics_variables, only: hfact, tesep, bt, protium, teped, rhopedn, &
         triang95, triang, plascur, ieped, fgwped, aspect, kappa95, q95, &
         kappa, ilhthresh, fdeut, fvsbrnni, rhopedt, fgwsep, rmajor
@@ -152,8 +152,8 @@ contains
        ! The Xe fraction is used as an iteration variable inside PLASMOD
        ! it adjusts to fulfil psepqbarmax, pseprmax or psepplh_sup.
        comp_comparray = 0.d0 !array of impurity concentrations
-       comp_comparray(comp_imptype(3)) = impurity_arr(comp_imptype(3))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
-       comp_comparray(comp_imptype(1)) = impurity_arr(comp_imptype(1))%frac
+       comp_comparray(comp_imptype(3)) = impurity_arr_frac(comp_imptype(3)) !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
+       comp_comparray(comp_imptype(1)) = impurity_arr_frac(comp_imptype(1))
        comp_protium   = protium !protium is treated separately
 
        ! Impurities to be used for (1)intrinsic (2)Psep control (3)SOL seeding
@@ -314,7 +314,7 @@ contains
     inp0_fpion = fpion ! Fraction of neutral beam energy to ions
 
     if (comp_qdivt.eq.0.d0) then
-       comp_comparray(comp_imptype(3)) = impurity_arr(comp_imptype(3))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
+       comp_comparray(comp_imptype(3)) = impurity_arr_frac(comp_imptype(3)) !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
        !else
        !@EF: What should happen, if this is not assigned?
     endif
@@ -362,8 +362,8 @@ contains
         ftritbm, plasipf
 		use div_kal_vars, only: netau_sol
 		use error_handling, only: idiags, fdiags, report_error
-    use impurity_radiation_module, only: impurity_arr, nimp, element2index, &
-        zav_of_te
+    use impurity_radiation_module, only: impurity_arr_amass, impurity_arr_frac, impurity_arr_Z, &
+      nimp, element2index, zav_of_te
     use physics_variables, only: rplas, tin, pohmmw, sf, facoh, eps, &
         pneutmw, pdt, p0, powerht, faccd, gammaft, dnla, bp, ptripv, &
         plhthresh, plascur, psyncpv, dlamee, q95, pradpv, dnalp, aion, &
@@ -515,7 +515,7 @@ contains
     end if
 
     do imp=1,nimp
-       impurity_arr(imp)%frac=comp_comparray(imp)
+       impurity_arr_frac(imp)=comp_comparray(imp)
     enddo
 
     if (.false.) then !This cannot be used as PLASMOD cannot vary Z with Te yet
@@ -523,8 +523,8 @@ contains
        !  Sum of Zi.ni for all impurity ions (those with charge > helium)
        znimp = 0.0D0
        do imp = 1,nimp
-          if (impurity_arr(imp)%Z > 2) then
-             znimp = znimp + Zav_of_te(impurity_arr(imp),te)*(impurity_arr(imp)%frac * dene)
+          if (impurity_arr_Z(imp) > 2) then
+             znimp = znimp + Zav_of_te(imp,te)*(impurity_arr_frac(imp) * dene)
           end if
        end do
 
@@ -551,17 +551,17 @@ contains
 
     !  Set hydrogen and helium impurity fractions for
     !  radiation calculations
-    impurity_arr(element2index('H_'))%frac = &
+    impurity_arr_frac(element2index('H_')) = &
          (dnprot + (fdeut+ftrit)*deni + dnbeam)/dene
 
-    impurity_arr(element2index('He'))%frac = fhe3*deni/dene + ralpne
+    impurity_arr_frac(element2index('He')) = fhe3*deni/dene + ralpne
 
     if (plasmod_i_impmodel == 0 ) then
        !  Total impurity density (/m3)
        dnz = 0.0D0
        do imp = 1,nimp
-          if (impurity_arr(imp)%Z > 2) then
-             dnz = dnz + impurity_arr(imp)%frac*dene
+          if (impurity_arr_Z(imp) > 2) then
+             dnz = dnz + impurity_arr_frac(imp)*dene
           end if
        end do
 
@@ -582,8 +582,8 @@ contains
 
     !  Set some (obsolescent) impurity fraction variables
     !  for the benefit of other routines
-    rncne = impurity_arr(element2index('C_'))%frac
-    rnone = impurity_arr(element2index('O_'))%frac
+    rncne = impurity_arr_frac(element2index('C_'))
+    rnone = impurity_arr_frac(element2index('O_'))
 
     ! Issue #261 Remove zfear.  Use the sum of Fe and Ar concentrations
     ! if (zfear == 0) then
@@ -591,7 +591,7 @@ contains
     ! else
     !    rnfene = impurity_arr(element2index('Ar'))%frac
     ! end if
-    rnfene = impurity_arr(element2index('Fe'))%frac + impurity_arr(element2index('Ar'))%frac
+    rnfene = impurity_arr_frac(element2index('Fe')) + impurity_arr_frac(element2index('Ar'))
 
     !  Effective charge
     !  Calculation should be sum(ni.Zi^2) / sum(ni.Zi),
@@ -599,7 +599,7 @@ contains
     if (.false.) then !This cannot be used as PLASMOD cannot vary Z with Te yet
        zeff = 0.0D0
        do imp = 1,nimp
-          zeff = zeff + impurity_arr(imp)%frac * Zav_of_te(impurity_arr(imp),te)**2
+          zeff = zeff + impurity_arr_frac(imp) * Zav_of_te(imp,te)**2
        end do
 
        if ((zeff - radp_zeff)/zeff > 1e-6) then
@@ -628,8 +628,8 @@ contains
 
     aion = afuel*deni + 4.0D0*dnalp + dnprot + abeam*dnbeam
     do imp = 1,nimp
-       if (impurity_arr(imp)%Z > 2) then
-          aion = aion + dene*impurity_arr(imp)%frac*impurity_arr(imp)%amass
+       if (impurity_arr_Z(imp) > 2) then
+          aion = aion + dene*impurity_arr_frac(imp)*impurity_arr_amass(imp)
        end if
     end do
     aion = aion/dnitot
@@ -640,9 +640,9 @@ contains
          dnalp + dnprot + (1.0D0-ftritbm)*dnbeam/2.0D0 + ftritbm*dnbeam/3.0D0 &
          ) / dene
     do imp = 1,nimp
-       if (impurity_arr(imp)%Z > 2) then
-          zeffai = zeffai + impurity_arr(imp)%frac &
-               * Zav_of_te(impurity_arr(imp),te)**2 / impurity_arr(imp)%amass
+       if (impurity_arr_Z(imp) > 2) then
+          zeffai = zeffai + impurity_arr_frac(imp) &
+               * Zav_of_te(imp,te)**2 / impurity_arr_amass(imp)
        end if
     end do
 

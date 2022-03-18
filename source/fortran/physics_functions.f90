@@ -1224,8 +1224,8 @@ contains
     !! - L(z) data (coronal equilibrium) from Marco Sertoli, ASDEX-U, private communication
 !! - Kallenbach et al., Plasma Phys. Control. Fus. 55 (2013) 124041
 
-    use impurity_radiation_module, only: impurity_arr, coreradius, &
-        coreradiationfraction, fradcore, impradprofile
+    use impurity_radiation_module, only: coreradius, &
+        coreradiationfraction, fradcore, impradprofile, impurity_arr_frac
     use physics_variables, only: rhopedt, rhopedn, te0, teped, tesep, alphan, &
         alphat, tbeta, ne0, neped, nesep
     use profiles_module, only: tprofile, nprofile
@@ -1269,11 +1269,11 @@ contains
       trho = tprofile(rho, rhopedt, te0, teped, tesep, alphat, tbeta)
       nrho = nprofile(rho, rhopedn, ne0, neped, nesep, alphan)
 
-      do imp = 1, size(impurity_arr)
+      do imp = 1, size(impurity_arr_frac)
 
-        if (impurity_arr(imp)%frac > 1.0D-30) then
+        if (impurity_arr_frac(imp) > 1.0D-30) then
 
-          call impradprofile(impurity_arr(imp), nrho, trho, pimp, pbrem, pline)
+          call impradprofile(imp, nrho, trho, pimp, pbrem, pline)
 
           radtot  = radtot  + pimp*rho
           radcore = radcore + pimp*rho * fradcore(rho,coreradius,coreradiationfraction)

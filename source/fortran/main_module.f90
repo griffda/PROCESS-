@@ -628,7 +628,7 @@ subroutine runtests
   use process_output, only: ocmmnt, ovarre
   use pfcoil_module, only: brookscoil
   use superconductors, only: test_quench
-  use reinke_module, only: test_reinke
+!   use reinke_module, only: test_reinke
   implicit none
   real(dp) :: fshift, xf, enpa,ftherm,fpp,cdeff, ampperwatt
   logical :: Temperature_capped
@@ -642,7 +642,8 @@ subroutine runtests
   call test_quench()
   call brookscoil(nout)
   call test_secant_solve()
-  call test_reinke()
+  ! Disabled for ease of #1542 - Tim
+!   call test_reinke()
 
   call hare_calc(10.5d19,5.66d0, 9.072d0,2.920d0,0.1d0,32.d0, 2.d0,        &
                        fshift,xf,enpa,ftherm,fpp,cdeff,ampperwatt, &

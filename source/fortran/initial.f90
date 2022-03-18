@@ -257,7 +257,7 @@ subroutine check
     use global_variables, only: icase
     use heat_transport_variables, only: trithtmw
     use ife_variables, only: ife
-    use impurity_radiation_module, only: nimp, impurity_arr, fimp
+    use impurity_radiation_module, only: nimp, impurity_arr_frac, fimp
     use numerics, only: ixc, icc, ioptimz, neqns, nineqns, nvar, boundl, &
         boundu
     use pfcoil_variables, only: ipfres, ngrp, pfclres, ipfloc, ncls, isumatoh
@@ -354,7 +354,7 @@ subroutine check
 
     !  Impurity fractions
     do imp = 1,nimp
-        impurity_arr(imp)%frac = fimp(imp)
+        impurity_arr_frac(imp) = fimp(imp)
     end do
 
     ! The 1/R B field dependency constraint variable is being depreciated
@@ -645,7 +645,7 @@ subroutine check
      !if using Reinke iteration variable fzactual, then assign to imp. array
      ! This is also done in iteration_variables.f90 - leave it in for the moment.
      if (any(ixc == 148)) then
-        impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
+        impurity_arr_frac(impvardiv) = fzactual / impurity_enrichment(impvardiv)
      endif
 
      if (i_single_null == 0) then
