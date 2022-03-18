@@ -280,6 +280,8 @@ contains
         case (86); call constraint_eqn_086(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
          ! Constraint for cryogenic power
         case (87); call constraint_eqn_087(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
+         ! Constraint for TF coil strain
+        case (88); call constraint_eqn_088(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
        case default
 
         idiags(1) = icc(i)
@@ -3297,6 +3299,35 @@ contains
       tmp_symbol = '<'
       tmp_units = 'MW'
    end subroutine constraint_eqn_087
+
+   subroutine constraint_eqn_088(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
+      !! Equation for TF coil vertical strain upper limit (absolute value)
+      !! author: CPS Swanson, PPPL, USA
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for TF coil vertical strain upper limit (absolute value)
+      !! #=# tfcoil
+      !! #=#=# fstr_wp, str_wp_max
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! fstr_wp : input real : f-value for TF coil strain
+      !! str_wp_max : input real : Allowable maximum TF coil vertical strain
+      !! str_wp : input real : Constrained TF coil vertical strain
+      use constraint_variables, only: fstr_wp
+      use tfcoil_variables, only: str_wp_max, str_wp
+      implicit none
+            real(dp), intent(out) :: tmp_cc
+      real(dp), intent(out) :: tmp_con
+      real(dp), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
+      
+      tmp_cc =  1.0D0 - fstr_wp * str_wp_max/abs(str_wp)
+      tmp_con = str_wp_max
+      tmp_err = str_wp_max - abs(str_wp) / fstr_wp
+      tmp_symbol = '<'
+      tmp_units = ''
+   end subroutine constraint_eqn_088
 
 end module constraints
 

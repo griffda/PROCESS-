@@ -101,10 +101,10 @@ def write(models, outfile):
 
     # Machine Build Model
     # Radial build
-    ft.build_module.radialb(outfile, 1)
+    models.build.radialb(output=True)
 
     # Vertical build
-    ft.build_module.vbuild(outfile, 1)
+    models.build.vbuild(output=True)
 
     # Toroidal field coil model
     models.tfcoil.output()

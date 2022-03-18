@@ -47,20 +47,21 @@ class Caller:
 
         # Machine Build Model
         # Radial build
-        ft.build_module.radialb(ft.constants.nout, 0)
+        self.models.build.radialb(output=False)
 
         # Vertical build
-        ft.build_module.vbuild(ft.constants.nout, 0)
+        self.models.build.vbuild(output=False)
 
         ft.physics_module.physics()
 
         # call build subroutines again if PLASMOD used, issue #650
         if ft.physics_variables.ipedestal == 3:
             # Radial build
-            ft.build_module.radialb(ft.constants.nout, 0)
+            self.models.build.radialb(output=False)
 
+            # TODO: is the vertical build needed again?
             # Vertical build
-            ft.build_module.vbuild(ft.constants.nout, 0)
+            self.models.build.vbuild(output=False)
 
         # startup model (not used)
         # call startup(ft.constants.nout,0)  !  commented-out for speed reasons
