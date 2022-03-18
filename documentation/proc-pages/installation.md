@@ -2,12 +2,18 @@
 Below are instructions of how to install the applications, code and dependencies such that you can begin working on Process. 
 
 ## Supported environments
+**Please note, only Python3.8 is supported, Python3.9 and Python3.6 are not.**
 PROCESS is natively supported on Ubuntu 20. Other Linux distributions will be able to successfully build and execute PROCESS however may give inconsistent results due to version disparities of dynamically linked libraries.
+
+There are three supported ways to run Process on a non-native Ubuntu 20.04 machine:
+1. WSL (Windows Subsytem for Linux- if you are a Widnows user)- go [here](#ubuntu-and-windows-using-windows-subsystem-for-linux-and-installing-visual-studio-code).
+1. Docker (for users on privileged machines that are of the wrong OS)- go [here](#docker-container).
+1. Singularity (mainly for use on shared resources e.g. Freia)- go [here](#singularity-container).
 
 Using the Windows Subsystem for Linux (on Windows) or a containerised environment is the recommended way to build, test, and run PROCESS on any OS other than Ubuntu 20. Documentation on Ubuntu for WSL can be found [here](https://ubuntu.com/wsl) for a deeper description of how they function together and the advantages of use.
 
 ## Ubuntu and Windows (using Windows Subsystem for Linux) and Installing Visual Studio Code
-**Please note, only Python3.8 is supported, Python3.9 and Python3.6 are not.**
+*This section is for users on a Windows system, if you are a MacOS or priviledged machine user please go [here](#docker-container), or if you are a using a shared resource, please go [here](#singularity-container).*
 
 To install Windows Subsystem for Linux (WSL) follow the 'Manual Installation Steps' [here](https://docs.microsoft.com/en-us/windows/wsl/install-win10). Choose WSL 2 and Ubuntu 20 (if installing from the Microsoft store then Ubuntu 20 is installed by default). 
 
@@ -106,7 +112,11 @@ The build step may take some time when run for the first time (~3 mins) as the F
 
 To rebuild, for example after making a change to the Fortran source, run `cmake --build build` again.
 
-## Docker container (not always essential- read below)
+Now, skip to [testing](#testing).
+
+## Docker container 
+*This section is for users of a priviledged machine of the wrong OS e.g MacOS. If you are a using a shared resource e.g. Freia, please go [here](#singularity-container).*
+
 ### **If you are using a Windows system with WSL and have followed the above steps then this next section is not necessary and you may skip to testing your installation [here](#testing).**
 
 Process can be run on Mac or in other environments inside a Docker container. The Process repository, including source and build directories, remain in the host filesystem, but the building and running of Process is performed inside the container. This ensures that Process produces the same results as in other fully-supported environments, such as the CI system. The Ubuntu-based development image used is similar to the one used on the CI system, but it is designed to work immediately with no further installations.
@@ -150,6 +160,8 @@ The clean step is required to remove any build targets or caches from previous h
 Once Process has built inside the container, it can be tested (as in the following section) by running `pytest`. Once the test suite passes, this confirms that your Docker container runs Process with the same results as the CI system. Process can now be developed and run as before, with the build and running taking place inside the container.
 
 There is also a VS Code extension for Docker containers that may be helpful.
+
+Now, skip to [testing](#testing).
 
 ## Singularity container
 Singularity is a container environment similar to Docker. This means a user can run PROCESS with all required dependencies installed. Singularity, however, is designed to work with user-level permissions and, as such, is supported by many shared resource administrators (unlike Docker, which poses a security risk).
