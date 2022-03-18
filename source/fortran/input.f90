@@ -214,7 +214,7 @@ contains
       fcqt, fzeffmax, fstrcase, fhldiv, foh_stress, fwalld, gammax, fjprot, &
       ftohs, tcycmn, auxmin, zeffmax, peakfactrad, fdtmp, fpoloidalpower, &
       fnbshinef, freinke, fvvhe, fqval, fq, ftaucq, fbetap, fbeta, fjohc, &
-      fflutf, bmxlim, tbrnmn, fbetatry_lower
+      fflutf, bmxlim, tbrnmn, fbetatry_lower, fstr_wp
     use cost_variables, only: ucich, uctfsw, dintrt, ucblbe, uubop, dtlife, &
       cost_factor_vv, cfind, uccry, fcap0cp, uccase, uuves, cconshtf, conf_mag, &
       ucbllipb, ucfuel, uumag, ucpfbs, ireactor, uucd, div_umain_time, div_nu, &
@@ -321,23 +321,24 @@ contains
       f_w, bmn, shear, m_res, f_rad, flpitch, istell
     use tfcoil_variables, only: fcoolcp, tfinsgap, vftf, &
       quench_detection_ef, fhts, dr_tf_wp, rcool, rhotfleg, thkcas, &
-      casthi, n_pancake, bcritsc, i_tf_sup, strncon_pf, thwcndut, farc4tf, &
+      casthi, n_pancake, bcritsc, i_tf_sup, str_pf_con_res, thwcndut, farc4tf, &
       thicndut, tftmp, oacdcp, tmax_croco, ptempalw, tmargmin_tf, tmpcry, &
-      sig_tf_case_max, dztop, dcond, strncon_cs, etapump, drtop, vcool, dcondins, &
-      i_tf_tresca, dhecoil, tmaxpro, strncon_tf, n_tf, tcpav, fcutfsu, jbus, &
+      sig_tf_case_max, dztop, dcond, str_cs_con_res, etapump, drtop, vcool, dcondins, &
+      i_tf_tresca, dhecoil, tmaxpro, n_tf, tcpav, fcutfsu, jbus, &
       casthi_fraction, tmargmin_cs, sigvvall, vdalw, dcase, t_turn_tf,&
       cpttf_max, tdmptf, casths, i_tf_turns_integer, quench_model, &
       tcritsc, layer_ins, tinstf, n_layer, tcoolin, ripmax, frhocp, &
       cpttf, tmargmin, casths_fraction, eff_tf_cryo, eyoung_ins, &
-      eyoung_steel, eyoung_res_tf_buck, eyoung_winding, f_vforce_inboard, &
+      eyoung_steel, eyoung_res_tf_buck, eyoung_cond_axial, f_vforce_inboard, &
       fcoolleg, frholeg, ftoroidalgap, i_tf_sc_mat, i_tf_shape, i_tf_bucking, &
       n_tf_graded_layers, n_tf_joints, n_tf_joints_contact, poisson_al, &
       poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact,&
       i_tf_stress_model, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
       i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti, &
       i_cp_joints, n_tf_turn, f_t_turn_tf, t_turn_tf_max, t_cable_tf, &
-      sig_tf_wp_max
-
+      sig_tf_wp_max, eyoung_cond_trans, i_tf_cond_eyoung_axial, i_tf_cond_eyoung_trans, &
+      str_wp_max, str_tf_con_res, i_str_wp
+      
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
     use vacuum_variables, only: dwell_pump, pbase, tn, pumpspeedfactor, &
@@ -979,6 +980,9 @@ contains
        case ('fstrcond')
           call parse_real_variable('fstrcond', fstrcond, 0.001D0, 10.0D0, &
                'F-value for TF coil conduit stress')
+       case ('fstr_wp')
+          call parse_real_variable('fstr_wp', fstr_wp, 1.0D-9, 10.0D0, &
+               'F-value for TF coil strain absolute value')
        case ('ftaucq')
           call parse_real_variable('ftaucq', ftaucq, 0.001D0, 1.0D0, &
                'F-value for calculated quench time limit')
@@ -1896,9 +1900,12 @@ contains
        case ('eyoung_ins')
           call parse_real_variable('eyoung_ins', eyoung_ins, 1.0D8, 1.0D13, &
                'Insulator Youngs Modulus (Pa)')
-       case ('eyoung_winding')
-          call parse_real_variable('eyoung_winding', eyoung_winding, 1.0D8, 1.0D13, &
-               'Winding pack Youngs Modulus (Pa)')
+       case ('eyoung_cond_axial')
+          call parse_real_variable('eyoung_cond_axial', eyoung_cond_axial, 0.0D0, 1.0D13, &
+               'SC TF coil Youngs Modulus, axial (Pa)')
+       case ('eyoung_cond_trans')
+          call parse_real_variable('eyoung_cond_trans', eyoung_cond_trans, 0.0D0, 1.0D13, &
+               'SC TF coil Youngs Modulus, transverse (Pa)')
        case ('eyoung_al')
           call parse_real_variable('eyoung_al', eyoung_al, 0.0D0, 1.0D0, &
                'Reinforced aluminium Young modulus for TF stress calc.')
@@ -1995,6 +2002,15 @@ contains
        case ('i_tf_shape')
          call parse_int_variable('i_tf_shape', i_tf_shape, 0, 2, &
               'Switch for TF coil shape')
+       case ('i_tf_cond_eyoung_axial')
+         call parse_int_variable('i_tf_cond_eyoung_axial', i_tf_cond_eyoung_axial, 0, 2, &
+              'Switch for the behavior of the TF coil conductor elastic axial properties')
+       case ('i_tf_cond_eyoung_trans')
+         call parse_int_variable('i_tf_cond_eyoung_trans', i_tf_cond_eyoung_trans, 0, 1, &
+              'Switch for the TF coil conductor transverse behavior')
+       case ('i_str_wp')
+         call parse_int_variable('i_str_wp', i_str_wp, 0, 1, &
+              'Switch for the TF coil strain behavior')
        case ('jbus')
           call parse_real_variable('jbus', jbus, 1.0D4, 1.0D8, &
                'TF coil bus current density (A/m2)')
@@ -2050,15 +2066,18 @@ contains
        case ('sigvvall')
           call parse_real_variable('sigvvall', sigvvall, 0.1D6, 500.0D6, &
                'Allowable stress in vacuum vessel for TF quench (Pa)')
-       case ('strncon_cs')
-          call parse_real_variable('strncon_cs', strncon_cs, -0.02D0, 0.02D0, &
-               'Strain in CS superconductor material')
-       case ('strncon_pf')
-          call parse_real_variable('strncon_pf', strncon_pf, -0.02D0, 0.02D0, &
-               'Strain in PF superconductor material')
-       case ('strncon_tf')
-          call parse_real_variable('strncon_tf', strncon_tf, -0.02D0, 0.02D0, &
-               'Strain in TF superconductor material')
+       case ('str_cs_con_res')
+          call parse_real_variable('str_cs_con_res', str_cs_con_res, -0.02D0, 0.02D0, &
+               'Residual manufacturing strain in CS superconductor material')
+       case ('str_pf_con_res')
+          call parse_real_variable('str_pf_con_res', str_pf_con_res, -0.02D0, 0.02D0, &
+               'Residual manufacturing strain in PF superconductor material')
+       case ('str_tf_con_res')
+          call parse_real_variable('str_tf_con_res', str_tf_con_res, -0.02D0, 0.02D0, &
+               'Residual manufacturing strain in TF superconductor material')
+       case ('str_wp_max')
+          call parse_real_variable('str_wp_max', str_wp_max, 0.0D0, 0.3D0, &
+               'Maximum allowed absolute value of the strain in the TF coil')
        case ('tcoolin')
           call parse_real_variable('tcoolin', tcoolin, 4.0D0, 373.15D0, &
                'Centrepost coolant inlet temperature (K)')

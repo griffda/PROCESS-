@@ -77,10 +77,16 @@ to anyone using PROCESS outputs or models based on them.
 - [James Morris](mailto:james.morris2@ukaea.uk)
 - [Michael Kovari](mailto:michael.kovari@ukaea.uk)
 - [Stuart Muldrew](mailto:stuart.muldrew@ukaea.uk)
-- [Alex Pearce](mailto:alex.pearce@ukaea.uk)
-- [Sebastien Kahn](mailto:sebastien.kahn@ukaea.uk)
-- [Adam Brown](mailto:adam.brown@ukaea.uk)
+- [Alex Pearce](mailto:alexander.pearce@ukaea.uk)
 - [Jonathan Maddock](mailto:jonathan.maddock@ukaea.uk)
+- [Charles Griesel](mailto:charles.griesel@ukaea.uk)
+- [Rhian Chapman](mailto:rhian.chapman@ukaea.uk)
+- [Timothy Nunn](mailto:timothy.nunn@ukaea.uk)
+- [Christopher Ashe](mailto:christopher.ashe@ukaea.uk)
+- [Georgina Graham](mailto:georgina.graham@ukaea.uk)
+- [Jack Foster](mailto:jack.foster@ukaea.uk)
+- [Graeme Turkington](mailto:graeme.turkington@ukaea.uk)
+- [Sam Gubbins](mailto:sam.gubbins@ukaea.uk)
 <br><br>
 
 ## References
