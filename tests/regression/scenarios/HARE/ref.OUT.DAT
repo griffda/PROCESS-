@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1332-g22754d6e code contains untracked changes
-    Branch : 1205-tf-cond-stiffness
-   Git log : NOW\ added\ correct\ ref\ dicts
- Date/time : 17 Mar 2022 11:49:04 -04:00(hh:mm) UTC
-      User : cswan
-  Computer : cswan-2017-desktop
- Directory : /tmp/pytest-of-cswan/pytest-2/test_solver0
-     Input : /tmp/pytest-of-cswan/pytest-2/test_scenario_HARE_0/IN.DAT
+   Tag No. : v2.1-1435-g41f5dda2
+    Branch : 1367-add-site-preparation-costs-into-model-2
+   Git log : Merge\ branch\ |develop|\ into\ 1367-add-site-preparat
+ Date/time : 18 Mar 2022 10:33:51 +00:00(hh:mm) UTC
+      User : rhicha
+  Computer : l0500
+ Directory : /tmp/pytest-of-rhicha/pytest-295/test_solver0
+     Input : /tmp/pytest-of-rhicha/pytest-295/test_scenario_HARE_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  

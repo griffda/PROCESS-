@@ -3449,7 +3449,7 @@
         "phi_tfc_ob": 0.0,
         "phiint": 0.0,
         "photon_wall": 0.0,
-        "pi": "3.14159265358979e0_rkind",
+        "pi": "3.141592653589793_wp_",
         "pibv": 20000.0,
         "piepv": 0.0,
         "pifecr": 10.0,
@@ -13946,6 +13946,18 @@
             "lb": 10.0,
             "ub": 100.0
         },
+        "llw_storage_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "llw_storage_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "llw_storage_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
         "lpulse": {
             "lb": 0,
             "ub": 1
@@ -21230,6 +21242,9 @@
         "lhat": "real_variable",
         "li6enrich": "real_variable",
         "life_dpa": "real_variable",
+        "llw_storage_h": "real_variable",
+        "llw_storage_l": "real_variable",
+        "llw_storage_w": "real_variable",
         "lpulse": "int_variable",
         "lsa": "int_variable",
         "m_res": "int_variable",
