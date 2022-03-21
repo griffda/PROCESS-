@@ -204,6 +204,7 @@
             ".false.",
             ".false.",
             ".false.",
+            ".false.",
             ".false."
         ],
         "adas": 0.0,
@@ -303,6 +304,7 @@
         "bigq": 0.0,
         "bigqmin": 10.0,
         "bioshld_thk": 2.5,
+        "bktcycles": 1000.0,
         "bktlife": 0.0,
         "blanket_density": 0.0,
         "blarea": 0.0,
@@ -1579,7 +1581,7 @@
         "degrad": 0.01745329251,
         "degree": "pi/180.0D0",
         "delld": 1.0,
-        "delta": 0.0001,
+        "delta": null,
         "delta_eta": 0.0,
         "delta_var": null,
         "dendiv": 0.0,
@@ -1783,12 +1785,12 @@
             "zero"
         ],
         "eyoung_al": 69000000000.0,
+        "eyoung_cond_axial": 660000000.0,
+        "eyoung_cond_trans": 0.0,
         "eyoung_copper": 117000000000.0,
         "eyoung_ins": 100000000.0,
         "eyoung_res_tf_buck": 150000000000.0,
         "eyoung_steel": 205000000000.0,
-        "eyoung_winding": 660000000.0,
-        "eyzwp": 0.0,
         "ez": [
             "zero",
             "zero",
@@ -2005,6 +2007,7 @@
         "frrmax": 1.0,
         "frrp": 0.4,
         "fseppc": 350000000.0,
+        "fstr_wp": 1.0,
         "fstrcase": 1.0,
         "fstrcond": 1.0,
         "ftar": 1.0,
@@ -2291,9 +2294,12 @@
         "i_r_cp_top": 0.0,
         "i_shield_mat": 0.0,
         "i_single_null": 1.0,
+        "i_str_wp": 1.0,
         "i_sup_pf_shape": 0.0,
         "i_tf_bucking": -1.0,
         "i_tf_case_geom": 0.0,
+        "i_tf_cond_eyoung_axial": 0.0,
+        "i_tf_cond_eyoung_trans": 1.0,
         "i_tf_sc_mat": 1.0,
         "i_tf_shape": 0.0,
         "i_tf_stress_model": 1.0,
@@ -2303,12 +2309,14 @@
         "i_tf_wp_geom": -1.0,
         "iastra": null,
         "iavail": 2.0,
+        "ibkt_life": 0.0,
         "iblanket": 1.0,
         "iblanket_thickness": 2.0,
         "iblnkith": 1.0,
         "ibss": 3.0,
         "icase": "'Steady-state tokamak model'",
         "icc": [
+            0.0,
             0.0,
             0.0,
             0.0,
@@ -2545,7 +2553,7 @@
         "iotty": 6.0,
         "ip": 0.0,
         "ipedestal": 1.0,
-        "ipeqns": 87.0,
+        "ipeqns": 88.0,
         "ipfloc": [
             2.0,
             2.0,
@@ -2899,7 +2907,8 @@
             "beta>betalim_lower",
             "CPlifetime",
             "TFCturndimension",
-            "Cryogenicplantpower"
+            "Cryogenicplantpower",
+            "TFcoilstrainabsolutevalue"
         ],
         "lablmm": [
             "majorradius.",
@@ -3133,6 +3142,7 @@
         "lh": null,
         "lhat": 4.33,
         "li6enrich": 30.0,
+        "life_dpa": 50.0,
         "light_build_cost_per_vol": 270.0,
         "line": "",
         "linelen": 0.0,
@@ -3252,6 +3262,7 @@
         "n_tf_joints_contact": 6.0,
         "n_tf_stress_layers": 0.0,
         "n_tf_turn": 0.0,
+        "n_tf_wp_layers": 5.0,
         "name_xc": "",
         "nb_bu_pol_ib": 0.0,
         "nb_bu_pol_ob": 0.0,
@@ -3579,7 +3590,10 @@
         "pohmmw": 0.0,
         "pohmpv": 0.0,
         "poisson_al": 0.35,
+        "poisson_cond_axial": 0.3,
+        "poisson_cond_trans": 0.3,
         "poisson_copper": 0.35,
+        "poisson_ins": 0.34,
         "poisson_steel": 0.3,
         "poloidalpower": [
             0.0,
@@ -4217,7 +4231,7 @@
         "ric": 0.0,
         "ricpf": 0.0,
         "rinboard": 0.651,
-        "ripflag": 0.0,
+        "ripflag": 0,
         "ripmax": 1.0,
         "ripple": 0.0,
         "ritfc": 0.0,
@@ -5334,6 +5348,70 @@
         "sigpfcf": 0.666,
         "sigvvall": 93000000.0,
         "single": "selected_real_kind(6, 37)",
+        "site_imp_uc": [
+            10.0,
+            30.0,
+            60.0,
+            50.0,
+            20000000.0,
+            30000000.0,
+            700000.0,
+            10.0,
+            20.0,
+            500000.0,
+            10.0,
+            40.0,
+            10.0,
+            10.0,
+            10.0,
+            10.0,
+            20.0,
+            10.0,
+            200000000.0,
+            10000.0,
+            10000.0,
+            10000000.0,
+            10000000.0,
+            10000000.0,
+            10000000.0,
+            50.0,
+            500000000.0,
+            10000000.0,
+            10000000.0,
+            20000000.0,
+            500000000.0,
+            20000000.0,
+            10000000.0,
+            30000000.0,
+            500000000.0,
+            30000000.0,
+            10000000.0,
+            1000000.0,
+            10000000.0,
+            10000000.0,
+            10000000.0,
+            20000000.0,
+            10000000.0,
+            20000000.0,
+            1000000.0,
+            700000.0,
+            10000000.0,
+            200000.0,
+            500000.0,
+            90000.0,
+            50000.0,
+            10000000.0,
+            100000000.0,
+            50000000.0,
+            1000000000.0,
+            500000000.0,
+            200000000.0,
+            80000000.0,
+            30000000.0,
+            200000000.0,
+            100000000.0,
+            70000000.0
+        ],
         "sitecost": 100000000.0,
         "skind": 512.0,
         "sol_broadening": 0.0,
@@ -5480,9 +5558,11 @@
         "step_ucwindpf": 465.0,
         "step_ucwindtf": 1520.0,
         "step_ucwst": 7.88,
-        "strncon_cs": -0.005,
-        "strncon_pf": -0.005,
-        "strncon_tf": -0.005,
+        "str_cs_con_res": -0.005,
+        "str_pf_con_res": -0.005,
+        "str_tf_con_res": -0.005,
+        "str_wp": 0.0,
+        "str_wp_max": 0.007,
         "subscript_present": ".false.",
         "sum": null,
         "summ": null,
@@ -8158,6 +8238,7 @@
         "wfbuilding": 100000000.0,
         "wgt": 500000.0,
         "wgt2": 100000.0,
+        "whole_site_area": 1000000.0,
         "whtblbe": 0.0,
         "whtblbreed": 0.0,
         "whtblkt": 0.0,
@@ -8182,7 +8263,6 @@
         "whttflgs": 0.0,
         "width": 110.0,
         "windspeed": 4.0,
-        "windstrain": 0.0,
         "workshop_h": 10.0,
         "workshop_l": 150.0,
         "workshop_w": 125.0,
@@ -8702,7 +8782,7 @@
         "zeffai": 0.0,
         "zeffdiv": 1.0,
         "zeffmax": 3.6,
-        "zero": "0.0_wp_",
+        "zero": 0.0,
         "zfxf": [
             0.0,
             0.0,
@@ -8899,10 +8979,10 @@
         "acasetf": "external case area per coil (inboard leg) (m2)",
         "acasetfo": "external case area per coil (outboard leg) (m2)",
         "acndttf": "area of the cable conduit (m2)",
-        "acond": "conductor area (winding pack) (m2)",
+        "acond": "Winding pack conductor area [m2]\n Does not include the area of voids and central helium channel",
         "acptmax": "average of currents in PF circuits (kA)",
         "acs": "Area of space inside conductor (m2)",
-        "acstf": "internal area of the cable space (m2)",
+        "acstf": "Cable space area (per turn)  [m2]\n Includes the area of voids and central helium channel",
         "active_constraints": "active_constraints(ipeqns) : Logical array showing which constraints are active",
         "adas": "area divertor / area main plasma (along separatrix)",
         "adivflnc": "allowable divertor heat fluence (MW-yr/m2)",
@@ -8965,7 +9045,7 @@
         "awpc": "Total cross-sectional area of winding pack including\n GW insulation and insertion gap [m2]",
         "awphec": "winding pack He coil area (m2)",
         "awpoh": "central solenoid conductor+void area (m2)",
-        "awptf": "Total cross-sectional area of winding pack [m2]",
+        "awptf": "Total cross-sectional area of winding pack without \n ground insulation and insertion gap [m2]",
         "axial_force": "",
         "b": "",
         "b_crit_upper_nbti": "upper critical field of GL_nbti",
@@ -8994,6 +9074,7 @@
         "bigq": "Fusion gain; P_fusion / (P_injection + P_ohmic)",
         "bigqmin": "minimum fusion gain Q (`constraint equation 28`)",
         "bioshld_thk": "Radial thickness of bio-shield around reactor (m) ",
+        "bktcycles": "Number of fusion cycles to reach allowable DPA from DEMO fw/blanket lifetime calculation",
         "bktlife": "Full power blanket lifetime (years)",
         "blanket_density": "Blanket density [kg/m3]",
         "blarea": "blanket total surface area (m2)",
@@ -9249,8 +9330,8 @@
         "comp_tiny": "",
         "comp_tinylog": "",
         "concost": "plant construction cost (M$)",
-        "conductor_acs": "Area of cable space inside jacket",
-        "conductor_area": "",
+        "conductor_acs": "",
+        "conductor_area": "Area of cable space inside jacket",
         "conductor_copper_area": "",
         "conductor_copper_bar_area": "",
         "conductor_copper_fraction": "",
@@ -9394,7 +9475,7 @@
         "dflsa": "",
         "dg": "",
         "dh_tf_inner_bore": "TF coil vertical inner bore (m)",
-        "dhecoil": "diameter of He coil in TF winding (m)",
+        "dhecoil": "diameter of central helium channel in TF winding (m)",
         "diacf_hender": "diamagnetic current fraction, Hender fit",
         "diacf_scene": "diamagnetic current fraction, SCENE fit",
         "diaipf": "diamagnetic current fraction",
@@ -9548,12 +9629,12 @@
         "exp_shield2": "Exponential factors in nuclear heating calcs",
         "ey": "",
         "eyoung_al": "Aluminium young modulus.  Default value taken from wikipedia",
+        "eyoung_cond_axial": "SC TF coil conductor Young's modulus in the parallel (along the wire/tape)\n direction [Pa]\n Set by user input only if `i_tf_cond_eyoung_axial == 1`; otherwise\n set by the behavior of that switch.",
+        "eyoung_cond_trans": "SC TF coil conductor Young's modulus in the transverse direction [Pa]\n Set by user input only if `i_tf_cond_eyoung_axial == 1`; otherwise\n set by the behavior of that switch.",
         "eyoung_copper": "Copper young modulus. Default value taken from wikipedia",
         "eyoung_ins": "Insulator Young's modulus [Pa]. Default value (1.0D8) setup the following values\n  - SC TF, eyoung_ins = 20 Gpa (default value from DDD11-2 v2 2 (2009))\n  - Al TF, eyoung_ins = 2.5 GPa (Kapton polymer)",
         "eyoung_res_tf_buck": "Resistive TF magnets bucking cylinder young modulus (Pa)",
         "eyoung_steel": "Steel case Young's modulus (Pa) (default value from DDD11-2 v2 2 (2009))",
-        "eyoung_winding": "SC TF coil winding Young's modulus (Pa)",
-        "eyzwp": "Winding pack vertical Young's modulus (Pa)",
         "ez": "",
         "fLI": "",
         "fLO": "",
@@ -9742,6 +9823,7 @@
         "frrmax": "f-value for maximum IFE repetition rate (`constraint equation 50`, `iteration variable 86`)",
         "frrp": "fraction of radiated power to plate",
         "fseppc": "Separation force in CS coil pre-compression structure",
+        "fstr_wp": "f-value for maxiumum TF coil strain absolute value\n (`constraint equation 88`, `iteration variable 165`)",
         "fstrcase": "f-value for maximum TF coil case Tresca yield criterion\n (`constraint equation 31`, `iteration variable 48`)",
         "fstrcond": "f-value for maxiumum TF coil conduit Tresca yield criterion\n (`constraint equation 32`, `iteration variable 49`)",
         "ftar": "fraction of power to the lower divertor in double null configuration \n (`i_single_null = 0` only) (default assumes SN)",
@@ -9912,9 +9994,12 @@
         "i_r_cp_top": "Switch selecting the he parametrization of the outer radius of the top of the CP part of the TF coil\n  0 : `r_cp_top` is set by the plasma shape\n  1 : `r_cp_top` is a user input\n  2 : `r_cp_top` is set using the CP top and midplane CP radius ratio ",
         "i_shield_mat": "Switch for shield material - <em>currently only applied in costing routines</em> `cost_model = 2`\n<ul>\n<li>=0 Tungsten (default)</li>\n<li>=1 Tungsten carbide</li>\n</ul>",
         "i_single_null": "switch for single null / double null plasma:\n<ul>\n<li>=0 for double null</li>\n<li>=1 for single null (diverted side down)</li>\n</ul>",
+        "i_str_wp": "Switch for the behavior of the TF strain used to compute \n the strain-dependent critical surface:\n<ul>\n<li>=0  str_tf_con_res is used</li>\n<li>=1  str_wp is used</li>\n</ul>",
         "i_sup_pf_shape": "Switch for the placement of Location 3 (outboard) PF coils\n when the TF coils are superconducting (i_tf_sup = 1)\n<ul>\n<li>=0 (Default) Outboard PF coils follow TF shape \n   in an ellipsoidal winding surface</li>\n<li>=1 Outboard PF coils all have same radius, cylindrical\n   winding surface</li>\n</ul>",
         "i_tf_bucking": "Switch for TF inboard suport structure design:\nDefault setting for backward compatibility\n     - if copper resistive TF (i_tf_sup = 0) : Free standing TF without bucking structure \n     - if Superconducting TF  (i_tf_sup = 1) : Free standing TF with a steel casing<br>\n     - if aluminium  TF       (i_tf_sup = 2) : Free standing TF with a bucking structure\n     Rem : the case is a bucking structure\n - =0 : Free standing TF without case/bucking cyliner (only a conductor layer)\n - =1 : Free standing TF with a case/bucking cylinder made of \n     - if copper resistive     TF (i_tf_sup = 0) : used defined bucking cylinder\n     - if Superconducting      TF (i_tf_sup = 1) : Steel casing\n     - if aluminium resisitive TF (i_tf_sup = 2) : used defined bucking cylinder\n - =2 : The TF is in contact with the CS : \"bucked and wedged design\"\n       Fast version : thin TF-CS interface neglected in the stress calculations (3 layers)\n                      The CS is frictionally decoupled from the TF, does not carry axial tension\n - =3 : The TF is in contact with the CS : \"bucked and wedged design\"\n       Full version : thin TF-CS Kapton interface introduced in the stress calculations (4 layers)\n                      The CS and kaptop are frictionally decoupled from the TF, do not carry\n                      axial tension",
         "i_tf_case_geom": "Switch for TF case geometry selection\n   0 : Circular front case (ITER design)\n   1 : Straight front case",
+        "i_tf_cond_eyoung_axial": "Switch for the behavior of the TF coil conductor elastic axial properties\n<ul>\n<li>=0  Young's modulus is set to zero, and the conductor is not considered\n       in the stress calculation. This corresponds to the case that the \n       conductor is much less stiff than the conduit, or the case that the\n       conductor is prevented (isolated) from taking axial loads.</li>\n<li>=1  Elastic properties are set by user input, using the variable\n       `eyoung_cond_axial`</li>\n<li>=2  Elastic properties are set to reasonable defaults taking into\n       account the superconducting material `i_tf_sc_mat`</li>\n</ul>",
+        "i_tf_cond_eyoung_trans": "Switch for the behavior of the elastic properties of the TF coil\n conductorin the transverse direction. Only active if \n `i_tf_cond_eyoung_axial == 2`\n<ul>\n<li>=0  Cable not potted in solder. Transverse Young's modulus set to zero.</li>\n<li>=1  Cable potted in solder. If `i_tf_cond_eyoung_axial == 2`, the \n       transverse Young's modulus of the conductor is equal to the axial,\n       which is set to a sensible material-dependent default.</li>\n</ul>",
         "i_tf_sc_mat": "Switch for superconductor material in TF coils:\n<ul>\n<li>=1 ITER Nb3Sn critical surface model with standard\n   ITER parameters</li>\n<li>=2 Bi-2212 high temperature superconductor (range of\n   validity T < 20K, adjusted field b < 104 T, B > 6 T)</li>\n<li>=3 NbTi</li>\n<li>=4 ITER Nb3Sn model with user-specified parameters</li>\n<li>=5 WST Nb3Sn parameterisation</li>\n<li>=6 REBCO HTS tape in CroCo strand</li>\n<li>=7 Durham Ginzburg-Landau critical surface model for Nb-Ti</li>\n<li>=8 Durham Ginzburg-Landau critical surface model for REBCO</li>\n<li>=9 Hazelton experimental data + Zhai conceptual model for REBCO</li>\n</ul>",
         "i_tf_shape": "Switch for TF coil toroidal shape:\n<ul>\n<li>=0  Default value : Picture frame coil for TART / PROCESS D-shape for non itart</li>\n<li>=1  PROCESS D-shape : parametrise with 2 arcs </li>\n<li>=2  Picture frame coils </li>\n</ul>",
         "i_tf_stress_model": "Switch for the TF coil stress model\n   0 : Generalized plane strain formulation, Issues #977 and #991, O(n^3)\n   1 : Old plane stress model (only for SC)\n   2 : Axisymmetric extended plane strain, Issues #1414 and #998, O(n)",
@@ -9924,6 +10009,7 @@
         "i_tf_wp_geom": "Switch for TF WP geometry selection\n   0 : Rectangular geometry \n   1 : Double rectangular geometry \n   2 : Trapezoidal geometry (constant lateral casing thickness)\n Default setting for backward compatibility \n   if i_tf_turns_integer = 0 : Double rectangular\n   if i_tf_turns_integer = 1 : Rectangular ",
         "iastra": "",
         "iavail": "Switch for plant availability model:\n<ul>\n<li>=0 use input value for cfactr</li>\n<li>=1 calculate cfactr using Taylor and Ward 1999 model</li>\n<li>=2 calculate cfactr using new (2015) model</li>\n</ul>",
+        "ibkt_life": "Switch for fw/blanket lifetime calculation in availability module:\n<ul>\n<li>=0 use neutron fluence model</li>\n<li>=1 use fusion power model (DEMO only)</li>\n</ul>",
         "iblanket": "switch for blanket model:\n<ul>\n<li>=1 CCFE HCPB model</li>\n<li>=2 KIT HCPB model</li>\n<li>=3 CCFE HCPB model with Tritium Breeding Ratio calculation</li>\n<li>=4 KIT HCLL model</li>\n</ul>",
         "iblanket_thickness": "Blanket thickness switch (Do not set blnkith, blnkoth, fwith or fwoth when `iblanket=3`):\n<ul>\n<li>=1 thin    0.53 m inboard, 0.91 m outboard</li>\n<li>=2 medium  0.64 m inboard, 1.11 m outboard</li>\n<li>=3 thick   0.75 m inboard, 1.30 m outboard</li>\n</ul>",
         "iblnkith": "switch for inboard blanket:\n<ul>\n<li>=0 No inboard blanket (blnkith=0.0)</li>\n<li>=1 Inboard blanket present</li>\n</ul>",
@@ -10068,9 +10154,9 @@
         "ki": "",
         "kron": "",
         "ksic": "power fraction for outboard double-null scrape-off plasma",
-        "lablcc": "lablcc(ipeqns) : labels describing constraint equations (corresponding itvs)<UL>\n<br>\n<LI> ( 1) Beta (consistency equation) (itv 5)\n  <LI> ( 2) Global power balance (consistency equation) (itv 10,1,2,3,4,6,11)\n  <LI> ( 3) Ion power balance DEPRECATED (itv 10,1,2,3,4,6,11)\n  <LI> ( 4) Electron power balance DEPRECATED (itv 10,1,2,3,4,6,11)\n  <LI> ( 5) Density upper limit (itv 9,1,2,3,4,5,6)\n  <LI> ( 6) (Epsilon x beta poloidal) upper limit (itv 8,1,2,3,4,6)\n  <LI> ( 7) Beam ion density (NBI) (consistency equation) (itv 7)\n  <LI> ( 8) Neutron wall load upper limit (itv 14,1,2,3,4,6)\n  <LI> ( 9) Fusion power upper limit (itv 26,1,2,3,4,6)\n  <LI> (10) Toroidal field 1/R (consistency equation) (itv 12,1,2,3,13 )\n  <LI> (11) Radial build (consistency equation) (itv 3,1,13,16,29,42,61)\n  <LI> (12) Volt second lower limit (STEADY STATE) (itv 15,1,2,3)\n  <LI> (13) Burn time lower limit (PULSE) (itv 21,1,16,17,29,42,44,61)\n            (itv 19,1,2,3,6)\n  <LI> (14) Neutral beam decay lengths to plasma centre (NBI) (consistency equation)\n  <LI> (15) LH power threshold limit (itv 103)\n  <LI> (16) Net electric power lower limit (itv 25,1,2,3)\n  <LI> (17) Radiation fraction upper limit (itv 28)\n  <LI> (18) Divertor heat load upper limit (itv 27)\n  <LI> (19) MVA upper limit (itv 30)\n  <LI> (20) Neutral beam tangency radius upper limit (NBI) (itv 33,31,3,13)\n  <LI> (21) Plasma minor radius lower limit (itv 32)\n  <LI> (22) Divertor collisionality upper limit (itv 34,43)\n  <LI> (23) Conducting shell to plasma minor radius ratio upper limit\n            (itv 104,1,74)\n  <LI> (24) Beta upper limit (itv 36,1,2,3,4,6,18)\n  <LI> (25) Peak toroidal field upper limit (itv 35,3,13,29)\n  <LI> (26) Central solenoid EOF current density upper limit (ipfres=0)\n            (itv 38,37,41,12)\n  <LI> (27) Central solenoid BOP current density upper limit (ipfres=0)\n            (itv 39,37,41,12)\n  <LI> (28) Fusion gain Q lower limit (itv 45,47,40)\n  <LI> (29) Inboard radial build consistency (itv 3,1,13,16,29,42,61)\n  <LI> (30) Injection power upper limit (itv 46,47,11)\n  <LI> (31) TF coil case stress upper limit (SCTF) (itv 48,56,57,58,59,60,24)\n  <LI> (32) TF coil conduit stress upper limit (SCTF) (itv 49,56,57,58,59,60,24)\n  <LI> (33) I_op / I_critical (TF coil) (SCTF) (itv 50,56,57,58,59,60,24)\n  <LI> (34) Dump voltage upper limit (SCTF) (itv 51,52,56,57,58,59,60,24)\n  <LI> (35) J_winding pack/J_protection upper limit (SCTF) (itv 53,56,57,58,59,60,24)\n  <LI> (36) TF coil temperature margin lower limit (SCTF) (itv 54,55,56,57,58,59,60,24)\n  <LI> (37) Current drive gamma upper limit (itv 40,47)\n  <LI> (38) First wall coolant temperature rise upper limit (itv 62)\n  <LI> (39) First wall peak temperature upper limit (itv 63)\n  <LI> (40) Start-up injection power lower limit (PULSE) (itv 64)\n  <LI> (41) Plasma current ramp-up time lower limit (PULSE) (itv  66,65)\n  <LI> (42) Cycle time lower limit (PULSE) (itv 17,67,65)\n  <LI> (43) Average centrepost temperature\n            (TART) (consistency equation) (itv 13,20,69,70)\n  <LI> (44) Peak centrepost temperature upper limit (TART) (itv 68,69,70)\n  <LI> (45) Edge safety factor lower limit (TART) (itv 71,1,2,3)\n  <LI> (46) Equation for Ip/Irod upper limit (TART) (itv 72,2,60)\n  <LI> (47) NOT USED\n  <LI> (48) Poloidal beta upper limit (itv 79,2,3,18)\n  <LI> (49) NOT USED\n  <LI> (50) IFE repetition rate upper limit (IFE)\n  <LI> (51) Startup volt-seconds consistency (PULSE) (itv 16,29,3,1)\n  <LI> (52) Tritium breeding ratio lower limit (itv 89,90,91)\n  <LI> (53) Neutron fluence on TF coil upper limit (itv 92,93,94)\n  <LI> (54) Peak TF coil nuclear heating upper limit (itv 95,93,94)\n  <LI> (55) Vacuum vessel helium concentration upper limit iblanket =2 (itv 96,93,94)\n  <LI> (56) Pseparatrix/Rmajor upper limit (itv 97,1,3,102)\n  <LI> (57) NOT USED\n  <LI> (58) NOT USED\n  <LI> (59) Neutral beam shine-through fraction upper limit (NBI) (itv 105,6,19,4 )\n  <LI> (60) Central solenoid temperature margin lower limit (SCTF) (itv 106)\n  <LI> (61) Minimum availability value (itv 107)\n  <LI> (62) taup/taueff the ratio of particle to energy confinement times (itv 110)\n  <LI> (63) The number of ITER-like vacuum pumps niterpump < tfno (itv 111)\n  <LI> (64) Zeff less than or equal to zeffmax (itv 112)\n  <LI> (65) Dump time set by VV loads (itv 56, 113)\n  <LI> (66) Limit on rate of change of energy in poloidal field\n            (Use iteration variable 65(tohs), 115)\n  <LI> (67) Simple Radiation Wall load limit (itv 116, 102, 4,6)\n  <LI> (68) Psep * Bt / qAR upper limit (itv 117)\n  <LI> (69) ensure separatrix power = the value from Kallenbach divertor (itv 118)\n  <LI> (70) ensure that teomp = separatrix temperature in the pedestal profile,\n            (itv 119 (tesep))\n  <LI> (71) ensure that neomp = separatrix density (nesep) x neratio\n  <LI> (72) central solenoid shear stress limit (Tresca yield criterion) (itv 123 foh_stress)\n  <LI> (73) Psep >= Plh + Paux (itv 137 (fplhsep))\n  <LI> (74) TFC quench < tmax_croco (itv 141 (fcqt))\n  <LI> (75) TFC current/copper area < Maximum (itv 143 f_coppera_m2)\n  <LI> (76) Eich critical separatrix density\n  <LI> (77) TF coil current per turn upper limit\n  <LI> (78) Reinke criterion impurity fraction lower limit (itv  147 freinke)\n  <LI> (79) Peak CS field upper limit (itv  149 fbmaxcs)\n  <LI> (80) Divertor power lower limit pdivt (itv  153 fpdivlim)\n  <LI> (81) Ne(0) > ne(ped) constraint (itv  154 fne0)\n  <LI> (82) toroidalgap >  tftort constraint (itv  171 ftoroidalgap)\n  <LI> (83) Radial build consistency for stellarators (itv 172 f_avspace)\n  <LI> (84) Lower limit for beta (itv 173 fbetatry_lower)\n  <LI> (85) Constraint for CP lifetime\n  <LI> (86) Constraint for TF coil turn dimension\n  <LI> (87) Constraint for cryogenic power</UL>\n\n\n",
+        "lablcc": "lablcc(ipeqns) : labels describing constraint equations (corresponding itvs)<UL>\n<br>\n<LI> ( 1) Beta (consistency equation) (itv 5)\n  <LI> ( 2) Global power balance (consistency equation) (itv 10,1,2,3,4,6,11)\n  <LI> ( 3) Ion power balance DEPRECATED (itv 10,1,2,3,4,6,11)\n  <LI> ( 4) Electron power balance DEPRECATED (itv 10,1,2,3,4,6,11)\n  <LI> ( 5) Density upper limit (itv 9,1,2,3,4,5,6)\n  <LI> ( 6) (Epsilon x beta poloidal) upper limit (itv 8,1,2,3,4,6)\n  <LI> ( 7) Beam ion density (NBI) (consistency equation) (itv 7)\n  <LI> ( 8) Neutron wall load upper limit (itv 14,1,2,3,4,6)\n  <LI> ( 9) Fusion power upper limit (itv 26,1,2,3,4,6)\n  <LI> (10) Toroidal field 1/R (consistency equation) (itv 12,1,2,3,13 )\n  <LI> (11) Radial build (consistency equation) (itv 3,1,13,16,29,42,61)\n  <LI> (12) Volt second lower limit (STEADY STATE) (itv 15,1,2,3)\n  <LI> (13) Burn time lower limit (PULSE) (itv 21,1,16,17,29,42,44,61)\n            (itv 19,1,2,3,6)\n  <LI> (14) Neutral beam decay lengths to plasma centre (NBI) (consistency equation)\n  <LI> (15) LH power threshold limit (itv 103)\n  <LI> (16) Net electric power lower limit (itv 25,1,2,3)\n  <LI> (17) Radiation fraction upper limit (itv 28)\n  <LI> (18) Divertor heat load upper limit (itv 27)\n  <LI> (19) MVA upper limit (itv 30)\n  <LI> (20) Neutral beam tangency radius upper limit (NBI) (itv 33,31,3,13)\n  <LI> (21) Plasma minor radius lower limit (itv 32)\n  <LI> (22) Divertor collisionality upper limit (itv 34,43)\n  <LI> (23) Conducting shell to plasma minor radius ratio upper limit\n            (itv 104,1,74)\n  <LI> (24) Beta upper limit (itv 36,1,2,3,4,6,18)\n  <LI> (25) Peak toroidal field upper limit (itv 35,3,13,29)\n  <LI> (26) Central solenoid EOF current density upper limit (ipfres=0)\n            (itv 38,37,41,12)\n  <LI> (27) Central solenoid BOP current density upper limit (ipfres=0)\n            (itv 39,37,41,12)\n  <LI> (28) Fusion gain Q lower limit (itv 45,47,40)\n  <LI> (29) Inboard radial build consistency (itv 3,1,13,16,29,42,61)\n  <LI> (30) Injection power upper limit (itv 46,47,11)\n  <LI> (31) TF coil case stress upper limit (SCTF) (itv 48,56,57,58,59,60,24)\n  <LI> (32) TF coil conduit stress upper limit (SCTF) (itv 49,56,57,58,59,60,24)\n  <LI> (33) I_op / I_critical (TF coil) (SCTF) (itv 50,56,57,58,59,60,24)\n  <LI> (34) Dump voltage upper limit (SCTF) (itv 51,52,56,57,58,59,60,24)\n  <LI> (35) J_winding pack/J_protection upper limit (SCTF) (itv 53,56,57,58,59,60,24)\n  <LI> (36) TF coil temperature margin lower limit (SCTF) (itv 54,55,56,57,58,59,60,24)\n  <LI> (37) Current drive gamma upper limit (itv 40,47)\n  <LI> (38) First wall coolant temperature rise upper limit (itv 62)\n  <LI> (39) First wall peak temperature upper limit (itv 63)\n  <LI> (40) Start-up injection power lower limit (PULSE) (itv 64)\n  <LI> (41) Plasma current ramp-up time lower limit (PULSE) (itv  66,65)\n  <LI> (42) Cycle time lower limit (PULSE) (itv 17,67,65)\n  <LI> (43) Average centrepost temperature\n            (TART) (consistency equation) (itv 13,20,69,70)\n  <LI> (44) Peak centrepost temperature upper limit (TART) (itv 68,69,70)\n  <LI> (45) Edge safety factor lower limit (TART) (itv 71,1,2,3)\n  <LI> (46) Equation for Ip/Irod upper limit (TART) (itv 72,2,60)\n  <LI> (47) NOT USED\n  <LI> (48) Poloidal beta upper limit (itv 79,2,3,18)\n  <LI> (49) NOT USED\n  <LI> (50) IFE repetition rate upper limit (IFE)\n  <LI> (51) Startup volt-seconds consistency (PULSE) (itv 16,29,3,1)\n  <LI> (52) Tritium breeding ratio lower limit (itv 89,90,91)\n  <LI> (53) Neutron fluence on TF coil upper limit (itv 92,93,94)\n  <LI> (54) Peak TF coil nuclear heating upper limit (itv 95,93,94)\n  <LI> (55) Vacuum vessel helium concentration upper limit iblanket =2 (itv 96,93,94)\n  <LI> (56) Pseparatrix/Rmajor upper limit (itv 97,1,3,102)\n  <LI> (57) NOT USED\n  <LI> (58) NOT USED\n  <LI> (59) Neutral beam shine-through fraction upper limit (NBI) (itv 105,6,19,4 )\n  <LI> (60) Central solenoid temperature margin lower limit (SCTF) (itv 106)\n  <LI> (61) Minimum availability value (itv 107)\n  <LI> (62) taup/taueff the ratio of particle to energy confinement times (itv 110)\n  <LI> (63) The number of ITER-like vacuum pumps niterpump < tfno (itv 111)\n  <LI> (64) Zeff less than or equal to zeffmax (itv 112)\n  <LI> (65) Dump time set by VV loads (itv 56, 113)\n  <LI> (66) Limit on rate of change of energy in poloidal field\n            (Use iteration variable 65(tohs), 115)\n  <LI> (67) Simple Radiation Wall load limit (itv 116, 102, 4,6)\n  <LI> (68) Psep * Bt / qAR upper limit (itv 117)\n  <LI> (69) ensure separatrix power = the value from Kallenbach divertor (itv 118)\n  <LI> (70) ensure that teomp = separatrix temperature in the pedestal profile,\n            (itv 119 (tesep))\n  <LI> (71) ensure that neomp = separatrix density (nesep) x neratio\n  <LI> (72) central solenoid shear stress limit (Tresca yield criterion) (itv 123 foh_stress)\n  <LI> (73) Psep >= Plh + Paux (itv 137 (fplhsep))\n  <LI> (74) TFC quench < tmax_croco (itv 141 (fcqt))\n  <LI> (75) TFC current/copper area < Maximum (itv 143 f_coppera_m2)\n  <LI> (76) Eich critical separatrix density\n  <LI> (77) TF coil current per turn upper limit\n  <LI> (78) Reinke criterion impurity fraction lower limit (itv  147 freinke)\n  <LI> (79) Peak CS field upper limit (itv  149 fbmaxcs)\n  <LI> (80) Divertor power lower limit pdivt (itv  153 fpdivlim)\n  <LI> (81) Ne(0) > ne(ped) constraint (itv  154 fne0)\n  <LI> (82) toroidalgap >  tftort constraint (itv  171 ftoroidalgap)\n  <LI> (83) Radial build consistency for stellarators (itv 172 f_avspace)\n  <LI> (84) Lower limit for beta (itv 173 fbetatry_lower)\n  <LI> (85) Constraint for CP lifetime\n  <LI> (86) Constraint for TF coil turn dimension\n  <LI> (87) Constraint for cryogenic power\n  <LI> (88) Constraint for TF coil strain absolute value</UL>\n\n\n",
         "lablmm": "lablmm(ipnfoms) : labels describing figures of merit:<UL>\n<br>\n<LI> ( 1) major radius\n  <LI> ( 2) not used\n  <LI> ( 3) neutron wall load\n  <LI> ( 4) P_tf + P_pf\n  <LI> ( 5) fusion gain Q\n  <LI> ( 6) cost of electricity\n  <LI> ( 7) capital cost (direct cost if ireactor=0,\n                          constructed cost otherwise)\n  <LI> ( 8) aspect ratio\n  <LI> ( 9) divertor heat load\n  <LI> (10) toroidal field\n  <LI> (11) total injected power\n  <LI> (12) hydrogen plant capital cost OBSOLETE\n  <LI> (13) hydrogen production rate OBSOLETE\n  <LI> (14) pulse length\n  <LI> (15) plant availability factor (N.B. requires\n            iavail=1 to be set)\n  <LI> (16) linear combination of major radius (minimised) and pulse length (maximised)\n              note: FoM should be minimised only!\n  <LI> (17) net electrical output\n  <LI> (18) Null Figure of Merit\n  <LI> (19) linear combination of big Q and pulse length (maximised)\n              note: FoM should be minimised only!</UL>\n\n\n",
-        "lablxc": "lablxc(ipnvars) : labels describing iteration variables<UL>\n<br>\n<LI> ( 1) aspect\n  <LI> ( 2) bt\n  <LI> ( 3) rmajor\n <LI> ( 4) te\n <LI> ( 5) beta\n <LI> ( 6) dene\n <LI> ( 7) rnbeam\n <LI> ( 8) fbeta (f-value for equation 6)\n <LI> ( 9) fdene (f-value for equation 5)\n <LI> (10) hfact\n <LI> (11) pheat\n <LI> (12) oacdcp\n <LI> (13) tfcth (NOT RECOMMENDED)\n <LI> (14) fwalld (f-value for equation 8)\n <LI> (15) fvs (f-value for equation 12)\n <LI> (16) ohcth\n <LI> (17) tdwell\n <LI> (18) q\n <LI> (19) enbeam\n <LI> (20) tcpav\n <LI> (21) ftburn (f-value for equation 13)\n <LI> (22) NOT USED\n <LI> (23) fcoolcp\n <LI> (24) NOT USED\n <LI> (25) fpnetel (f-value for equation 16)\n <LI> (26) ffuspow (f-value for equation 9)\n <LI> (27) fhldiv (f-value for equation 18)\n <LI> (28) fradpwr (f-value for equation 17), total radiation fraction\n <LI> (29) bore\n <LI> (30) fmva (f-value for equation 19)\n <LI> (31) gapomin\n <LI> (32) frminor (f-value for equation 21)\n <LI> (33) fportsz (f-value for equation 20)\n <LI> (34) fdivcol (f-value for equation 22)\n <LI> (35) fpeakb (f-value for equation 25)\n <LI> (36) fbetatry (f-value for equation 24)\n <LI> (37) coheof\n <LI> (38) fjohc (f-value for equation 26)\n <LI> (39) fjohc0 (f-value for equation 27)\n <LI> (40) fgamcd (f-value for equation 37)\n <LI> (41) fcohbop\n <LI> (42) gapoh\n <LI> (43) NOT USED\n <LI> (44) fvsbrnni\n <LI> (45) fqval (f-value for equation 28)\n <LI> (46) fpinj (f-value for equation 30)\n <LI> (47) feffcd\n <LI> (48) fstrcase (f-value for equation 31)\n <LI> (49) fstrcond (f-value for equation 32)\n <LI> (50) fiooic (f-value for equation 33)\n <LI> (51) fvdump (f-value for equation 34)\n <LI> (52) vdalw\n <LI> (53) fjprot (f-value for equation 35)\n <LI> (54) ftmargtf (f-value for equation 36)\n <LI> (55) NOT USED\n <LI> (56) tdmptf\n <LI> (57) thkcas\n <LI> (58) thwcndut\n <LI> (59) fcutfsu\n <LI> (60) cpttf\n <LI> (61) gapds\n <LI> (62) fdtmp (f-value for equation 38)\n <LI> (63) ftpeak (f-value for equation 39)\n <LI> (64) fauxmn (f-value for equation 40)\n <LI> (65) tohs\n <LI> (66) ftohs (f-value for equation 41)\n <LI> (67) ftcycl (f-value for equation 42)\n <LI> (68) fptemp (f-value for equation 44)\n <LI> (69) rcool\n <LI> (70) vcool\n <LI> (71) fq (f-value for equation 45)\n <LI> (72) fipir (f-value for equation 46)\n <LI> (73) scrapli\n <LI> (74) scraplo\n <LI> (75) tfootfi\n <LI> (76) NOT USED\n <LI> (77) NOT USED\n <LI> (78) NOT USED\n <LI> (79) fbetap (f-value for equation 48)\n <LI> (80) NOT USED\n <LI> (81) edrive\n <LI> (82) drveff\n <LI> (83) tgain\n <LI> (84) chrad\n <LI> (85) pdrive\n <LI> (86) frrmax (f-value for equation 50)\n <LI> (87) NOT USED\n <LI> (88) NOT USED\n <LI> (89) ftbr (f-value for equation 52)\n <LI> (90) blbuith\n <LI> (91) blbuoth\n <LI> (92) fflutf (f-value for equation 53)\n <LI> (93) shldith\n <LI> (94) shldoth\n <LI> (95) fptfnuc (f-value for equation 54)\n <LI> (96) fvvhe (f-value for equation 55)\n <LI> (97) fpsepr (f-value for equation 56)\n <LI> (98) li6enrich\n <LI> (99) NOT USED\n <LI> (100) NOT USED\n <LI> (101) NOT USED\n <LI> (102) fimpvar\n <LI> (103) flhthresh (f-value for equation 15)\n <LI> (104) fcwr (f-value for equation 23)\n <LI> (105) fnbshinef (f-value for equation 59)\n <LI> (106) ftmargoh (f-value for equation 60)\n <LI> (107) favail (f-value for equation 61)\n <LI> (108) breeder_f: Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)\n <LI> (109) ralpne: thermal alpha density / electron density\n <LI> (110) ftaulimit: Lower limit on taup/taueff the ratio of alpha \n <LI> (111) fniterpump: f-value for constraint that number\n <LI> (112) fzeffmax: f-value for max Zeff (f-value for equation 64)\n <LI> (113) ftaucq: f-value for minimum quench time (f-value for equation 65)\n <LI> (114) fw_channel_length: Length of a single first wall channel\n <LI> (115) fpoloidalpower: f-value for max rate of change of \n <LI> (116) fradwall: f-value for radiation wall load limit (eq. 67)\n <LI> (117) fpsepbqar: f-value for  Psep*Bt/qar upper limit (eq. 68)\n <LI> (118) fpsep: f-value to ensure separatrix power is less than\n <LI> (119) tesep:  separatrix temperature calculated by the Kallenbach divertor model\n <LI> (120) ttarget: Plasma temperature adjacent to divertor sheath [eV]\n <LI> (121) neratio: ratio of mean SOL density at OMP to separatrix density at OMP\n <LI> (122) oh_steel_frac : streel fraction of Central Solenoid\n <LI> (123) foh_stress : f-value for CS coil Tresca yield criterion (f-value for eq. 72)\n <LI> (124) qtargettotal : Power density on target including surface recombination [W/m2]\n <LI> (125) fimp(3) :  Beryllium density fraction relative to electron density\n <LI> (126) fimp(4) :  Carbon density fraction relative to electron density\n <LI> (127) fimp(5) :  Nitrogen fraction relative to electron density\n <LI> (128) fimp(6) :  Oxygen density fraction relative to electron density\n <LI> (129) fimp(7) :  Neon density fraction relative to electron density\n <LI> (130) fimp(8) :  Silicon density fraction relative to electron density\n <LI> (131) fimp(9) :  Argon density fraction relative to electron density\n <LI> (132) fimp(10) :  Iron density fraction relative to electron density\n <LI> (133) fimp(11) :  Nickel density fraction relative to electron density\n <LI> (134) fimp(12) :  Krypton density fraction relative to electron density\n <LI> (135) fimp(13) :  Xenon density fraction relative to electron density\n <LI> (136) fimp(14) :  Tungsten density fraction relative to electron density\n <LI> (137) fplhsep (f-value for equation 73)\n <LI> (138) rebco_thickness : thickness of REBCO layer in tape (m)\n <LI> (139) copper_thick : thickness of copper layer in tape (m)\n <LI> (140) dr_tf_wp : radial thickness of TFC winding pack (m)\n <LI> (141) fcqt : TF coil quench temperature < tmax_croco (f-value for equation 74)\n <LI> (142) nesep : electron density at separatrix [m-3]\n <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value\n <LI> (144) fnesep : Eich critical electron density at separatrix \n <LI> (145) fgwped :  fraction of Greenwald density to set as pedestal-top density\n <LI> (146) fcpttf : F-value for TF coil current per turn limit (constraint equation 77)\n <LI> (147) freinke : F-value for Reinke detachment criterion (constraint equation 78)\n <LI> (148) fzactual : fraction of impurity at SOL with Reinke detachment criterion\n <LI> (149) fbmaxcs : F-value for max peak CS field (con. 79, itvar 149)\n <LI> (150) plasmod_fcdp : (P_CD - Pheat)/(Pmax-Pheat) \n <LI> (151) plasmod_fradc : Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad)\n <LI> (152) fbmaxcs : Ratio of separatrix density to Greenwald density\n <LI> (153) fpdivlim : F-value for minimum pdivt (con. 80)\n <LI> (154) fne0 : F-value for ne(0) > ne(ped) (con. 81)\n <LI> (155) pfusife : IFE input fusion power (MW) (ifedrv=3 only)\n <LI> (156) rrin : Input IFE repetition rate (Hz) (ifedrv=3 only)\n <LI> (157) fvssu : F-value for available to required start up flux (con. 51)\n <LI> (158) croco_thick : Thickness of CroCo copper tube (m)\n <LI> (159) ftoroidalgap : F-value for toroidalgap >  tftort constraint (con. 82)\n <LI> (160) f_avspace (f-value for equation 83)\n <LI> (161) fbetatry_lower (f-value for equation 84)\n <LI> (162) r_cp_top : Top outer radius of the centropost (ST only) (m)\n <LI> (163) f_t_turn_tf : f-value for TF coils WP trurn squared dimension constraint \n <LI> (164) f_crypmw : f-value for cryogenic plant power\n <LI> (165) EMPTY : Description\n <LI> (166) EMPTY : Description\n <LI> (167) EMPTY : Description\n <LI> (168) EMPTY : Description\n <LI> (169) EMPTY : Description\n <LI> (170) EMPTY : Description\n <LI> (171) EMPTY : Description\n <LI> (172) EMPTY : Description\n <LI> (173) EMPTY : Description\n <LI> (174) EMPTY : Description\n <LI> (175) EMPTY : Description\n\n\n\n",
+        "lablxc": "lablxc(ipnvars) : labels describing iteration variables<UL>\n<br>\n<LI> ( 1) aspect\n  <LI> ( 2) bt\n  <LI> ( 3) rmajor\n <LI> ( 4) te\n <LI> ( 5) beta\n <LI> ( 6) dene\n <LI> ( 7) rnbeam\n <LI> ( 8) fbeta (f-value for equation 6)\n <LI> ( 9) fdene (f-value for equation 5)\n <LI> (10) hfact\n <LI> (11) pheat\n <LI> (12) oacdcp\n <LI> (13) tfcth (NOT RECOMMENDED)\n <LI> (14) fwalld (f-value for equation 8)\n <LI> (15) fvs (f-value for equation 12)\n <LI> (16) ohcth\n <LI> (17) tdwell\n <LI> (18) q\n <LI> (19) enbeam\n <LI> (20) tcpav\n <LI> (21) ftburn (f-value for equation 13)\n <LI> (22) NOT USED\n <LI> (23) fcoolcp\n <LI> (24) NOT USED\n <LI> (25) fpnetel (f-value for equation 16)\n <LI> (26) ffuspow (f-value for equation 9)\n <LI> (27) fhldiv (f-value for equation 18)\n <LI> (28) fradpwr (f-value for equation 17), total radiation fraction\n <LI> (29) bore\n <LI> (30) fmva (f-value for equation 19)\n <LI> (31) gapomin\n <LI> (32) frminor (f-value for equation 21)\n <LI> (33) fportsz (f-value for equation 20)\n <LI> (34) fdivcol (f-value for equation 22)\n <LI> (35) fpeakb (f-value for equation 25)\n <LI> (36) fbetatry (f-value for equation 24)\n <LI> (37) coheof\n <LI> (38) fjohc (f-value for equation 26)\n <LI> (39) fjohc0 (f-value for equation 27)\n <LI> (40) fgamcd (f-value for equation 37)\n <LI> (41) fcohbop\n <LI> (42) gapoh\n <LI> (43) NOT USED\n <LI> (44) fvsbrnni\n <LI> (45) fqval (f-value for equation 28)\n <LI> (46) fpinj (f-value for equation 30)\n <LI> (47) feffcd\n <LI> (48) fstrcase (f-value for equation 31)\n <LI> (49) fstrcond (f-value for equation 32)\n <LI> (50) fiooic (f-value for equation 33)\n <LI> (51) fvdump (f-value for equation 34)\n <LI> (52) vdalw\n <LI> (53) fjprot (f-value for equation 35)\n <LI> (54) ftmargtf (f-value for equation 36)\n <LI> (55) NOT USED\n <LI> (56) tdmptf\n <LI> (57) thkcas\n <LI> (58) thwcndut\n <LI> (59) fcutfsu\n <LI> (60) cpttf\n <LI> (61) gapds\n <LI> (62) fdtmp (f-value for equation 38)\n <LI> (63) ftpeak (f-value for equation 39)\n <LI> (64) fauxmn (f-value for equation 40)\n <LI> (65) tohs\n <LI> (66) ftohs (f-value for equation 41)\n <LI> (67) ftcycl (f-value for equation 42)\n <LI> (68) fptemp (f-value for equation 44)\n <LI> (69) rcool\n <LI> (70) vcool\n <LI> (71) fq (f-value for equation 45)\n <LI> (72) fipir (f-value for equation 46)\n <LI> (73) scrapli\n <LI> (74) scraplo\n <LI> (75) tfootfi\n <LI> (76) NOT USED\n <LI> (77) NOT USED\n <LI> (78) NOT USED\n <LI> (79) fbetap (f-value for equation 48)\n <LI> (80) NOT USED\n <LI> (81) edrive\n <LI> (82) drveff\n <LI> (83) tgain\n <LI> (84) chrad\n <LI> (85) pdrive\n <LI> (86) frrmax (f-value for equation 50)\n <LI> (87) NOT USED\n <LI> (88) NOT USED\n <LI> (89) ftbr (f-value for equation 52)\n <LI> (90) blbuith\n <LI> (91) blbuoth\n <LI> (92) fflutf (f-value for equation 53)\n <LI> (93) shldith\n <LI> (94) shldoth\n <LI> (95) fptfnuc (f-value for equation 54)\n <LI> (96) fvvhe (f-value for equation 55)\n <LI> (97) fpsepr (f-value for equation 56)\n <LI> (98) li6enrich\n <LI> (99) NOT USED\n <LI> (100) NOT USED\n <LI> (101) NOT USED\n <LI> (102) fimpvar\n <LI> (103) flhthresh (f-value for equation 15)\n <LI> (104) fcwr (f-value for equation 23)\n <LI> (105) fnbshinef (f-value for equation 59)\n <LI> (106) ftmargoh (f-value for equation 60)\n <LI> (107) favail (f-value for equation 61)\n <LI> (108) breeder_f: Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)\n <LI> (109) ralpne: thermal alpha density / electron density\n <LI> (110) ftaulimit: Lower limit on taup/taueff the ratio of alpha \n <LI> (111) fniterpump: f-value for constraint that number\n <LI> (112) fzeffmax: f-value for max Zeff (f-value for equation 64)\n <LI> (113) ftaucq: f-value for minimum quench time (f-value for equation 65)\n <LI> (114) fw_channel_length: Length of a single first wall channel\n <LI> (115) fpoloidalpower: f-value for max rate of change of \n <LI> (116) fradwall: f-value for radiation wall load limit (eq. 67)\n <LI> (117) fpsepbqar: f-value for  Psep*Bt/qar upper limit (eq. 68)\n <LI> (118) fpsep: f-value to ensure separatrix power is less than\n <LI> (119) tesep:  separatrix temperature calculated by the Kallenbach divertor model\n <LI> (120) ttarget: Plasma temperature adjacent to divertor sheath [eV]\n <LI> (121) neratio: ratio of mean SOL density at OMP to separatrix density at OMP\n <LI> (122) oh_steel_frac : streel fraction of Central Solenoid\n <LI> (123) foh_stress : f-value for CS coil Tresca yield criterion (f-value for eq. 72)\n <LI> (124) qtargettotal : Power density on target including surface recombination [W/m2]\n <LI> (125) fimp(3) :  Beryllium density fraction relative to electron density\n <LI> (126) fimp(4) :  Carbon density fraction relative to electron density\n <LI> (127) fimp(5) :  Nitrogen fraction relative to electron density\n <LI> (128) fimp(6) :  Oxygen density fraction relative to electron density\n <LI> (129) fimp(7) :  Neon density fraction relative to electron density\n <LI> (130) fimp(8) :  Silicon density fraction relative to electron density\n <LI> (131) fimp(9) :  Argon density fraction relative to electron density\n <LI> (132) fimp(10) :  Iron density fraction relative to electron density\n <LI> (133) fimp(11) :  Nickel density fraction relative to electron density\n <LI> (134) fimp(12) :  Krypton density fraction relative to electron density\n <LI> (135) fimp(13) :  Xenon density fraction relative to electron density\n <LI> (136) fimp(14) :  Tungsten density fraction relative to electron density\n <LI> (137) fplhsep (f-value for equation 73)\n <LI> (138) rebco_thickness : thickness of REBCO layer in tape (m)\n <LI> (139) copper_thick : thickness of copper layer in tape (m)\n <LI> (140) dr_tf_wp : radial thickness of TFC winding pack (m)\n <LI> (141) fcqt : TF coil quench temperature < tmax_croco (f-value for equation 74)\n <LI> (142) nesep : electron density at separatrix [m-3]\n <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value\n <LI> (144) fnesep : Eich critical electron density at separatrix \n <LI> (145) fgwped :  fraction of Greenwald density to set as pedestal-top density\n <LI> (146) fcpttf : F-value for TF coil current per turn limit (constraint equation 77)\n <LI> (147) freinke : F-value for Reinke detachment criterion (constraint equation 78)\n <LI> (148) fzactual : fraction of impurity at SOL with Reinke detachment criterion\n <LI> (149) fbmaxcs : F-value for max peak CS field (con. 79, itvar 149)\n <LI> (150) plasmod_fcdp : (P_CD - Pheat)/(Pmax-Pheat) \n <LI> (151) plasmod_fradc : Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad)\n <LI> (152) fbmaxcs : Ratio of separatrix density to Greenwald density\n <LI> (153) fpdivlim : F-value for minimum pdivt (con. 80)\n <LI> (154) fne0 : F-value for ne(0) > ne(ped) (con. 81)\n <LI> (155) pfusife : IFE input fusion power (MW) (ifedrv=3 only)\n <LI> (156) rrin : Input IFE repetition rate (Hz) (ifedrv=3 only)\n <LI> (157) fvssu : F-value for available to required start up flux (con. 51)\n <LI> (158) croco_thick : Thickness of CroCo copper tube (m)\n <LI> (159) ftoroidalgap : F-value for toroidalgap >  tftort constraint (con. 82)\n <LI> (160) f_avspace (f-value for equation 83)\n <LI> (161) fbetatry_lower (f-value for equation 84)\n <LI> (162) r_cp_top : Top outer radius of the centropost (ST only) (m)\n <LI> (163) f_t_turn_tf : f-value for TF coils WP trurn squared dimension constraint \n <LI> (164) f_crypmw : f-value for cryogenic plant power\n <LI> (165) fstr_wp : f-value for TF coil strain absolute value\n <LI> (166) EMPTY : Description\n <LI> (167) EMPTY : Description\n <LI> (168) EMPTY : Description\n <LI> (169) EMPTY : Description\n <LI> (170) EMPTY : Description\n <LI> (171) EMPTY : Description\n <LI> (172) EMPTY : Description\n <LI> (173) EMPTY : Description\n <LI> (174) EMPTY : Description\n <LI> (175) EMPTY : Description\n\n\n\n",
         "lambda_EU": "Decay length in EUROFER [cm]",
         "lambda_He_VV": "Decay length [cm]",
         "lambda_n_BZ_IB": "Decay length in IB BZ [cm]",
@@ -10105,6 +10191,7 @@
         "lh": "",
         "lhat": "Connection length factor L|| = lhat qstar R for Reinke criterion, default value from\n Post et al. 1995 J. Nucl. Mat.  220-2 1014",
         "li6enrich": "lithium-6 enrichment of breeding material (%)",
+        "life_dpa": "Allowable DPA from DEMO fw/blanket lifetime calculation in availability module",
         "light_build_cost_per_vol": "Unit cost for unshielded non-active buildings ($/m3)",
         "line": "",
         "linelen": "",
@@ -10224,6 +10311,7 @@
         "n_tf_joints_contact": "Number of contact per turn",
         "n_tf_stress_layers": "Number of layers considered for the inboard TF stress calculations\n set in initial.f90 from i_tf_bucking and n_tf_graded_layers",
         "n_tf_turn": "number of turns per TF coil",
+        "n_tf_wp_layers": "Maximum number of layers that can be considered in the TF coil composited/smeared \n stress analysis. This is the layers of one turn, not the entire WP. \n Default: 5. void, conductor, copper, conduit, insulation.",
         "name_xc": "",
         "nb_bu_pol_ib": "",
         "nb_bu_pol_ob": "",
@@ -10504,7 +10592,10 @@
         "pohmmw": "ohmic heating power (MW)",
         "pohmpv": "ohmic heating power per volume (MW/m3)",
         "poisson_al": "Aluminium Poisson's ratio. \n Source : https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html",
+        "poisson_cond_axial": "SC TF coil conductor Poisson's ratio in the parallel-transverse direction",
+        "poisson_cond_trans": "SC TF coil conductor Poisson's ratio in the transverse-transverse direction",
         "poisson_copper": "Copper Poisson's ratio. Source : https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html",
+        "poisson_ins": "Insulation Poisson's ratio. Default: Kapton.\n Source : DuPont\u2122 Kapton\u00ae HN datasheet.",
         "poisson_steel": "Steel Poisson's ratio ",
         "poloidalpower": "Poloidal power usage at time t (MW)",
         "porbitlossmw": "neutral beam power lost after ionisation but before thermalisation (orbit loss power) (MW)",
@@ -10808,6 +10899,7 @@
         "sigpfcf": "fraction of JxB hoop force supported by steel case for superconducting PF coils (`ipfres=0`)",
         "sigvvall": "allowable stress from TF quench in vacuum vessel (Pa)",
         "single": "",
+        "site_imp_uc": "Unit costs for Site Improvement activities (cost model 2)",
         "sitecost": "fixed value for site cost (2017 US$)",
         "skind": "",
         "sol_broadening": "",
@@ -10873,9 +10965,11 @@
         "step_ucwindpf": "cost of PF coil superconductor windings ($/m) (if cost model = 2)",
         "step_ucwindtf": "cost of TF coil superconductor windings ($/m) (if cost model = 2)",
         "step_ucwst": "cost of waste disposal (M$/y/1200MW)",
-        "strncon_cs": "strain in CS superconductor material (used in Nb3Sn critical surface model `isumatoh=1,4,5`)",
-        "strncon_pf": "strain in PF superconductor material (used in Nb3Sn critical surface model `isumatph=1,4,5`)",
-        "strncon_tf": "strain in TF superconductor material (used in Nb3Sn critical surface model `i_tf_sc_mat=1,4,5`)",
+        "str_cs_con_res": "Residual manufacturing strain in CS superconductor material ",
+        "str_pf_con_res": "Residual manufacturing strain in PF superconductor material",
+        "str_tf_con_res": "Residual manufacturing strain in TF superconductor material\n If `i_str_wp == 0`, used to compute the critical surface.\n Otherwise, the self-consistent winding pack `str_wp` is used.",
+        "str_wp": "Axial (vertical) strain in the TF coil winding pack found by\n self-consistent stress/strain calculation.\n if `i_str_wp == 1`, used to compute the critical surface.\n Otherwise, the input value `str_tf_con_res` is used.\n Constrain the absolute value using `constraint equation 88`\n You can't have constraint 88 and i_str_wp = 0 at the same time",
+        "str_wp_max": "Maximum allowed absolute value of the strain in the TF coil\n (`Constraint equation 88`)",
         "subscript_present": "",
         "sum": "",
         "summ": "",
@@ -11354,6 +11448,7 @@
         "wfbuilding": "fixed value for waste facility buildings (2017 US$)",
         "wgt": "reactor building crane capacity (kg) (calculated if 0 is input)",
         "wgt2": "hot cell crane capacity (kg) (calculated if 0 is input)",
+        "whole_site_area": "area of entire plant site (m2); default 1.0E6 m2 (i.e. 1 km2)",
         "whtblbe": "mass of blanket - beryllium part (kg)",
         "whtblbreed": "mass of blanket - breeder part (kg) (`iblanket=2` (KIT HCPB))",
         "whtblkt": "mass of blanket (kg)",
@@ -11378,7 +11473,6 @@
         "whttflgs": "mass of the TF coil legs (kg)",
         "width": "",
         "windspeed": "wind speed (m/s)",
-        "windstrain": "longitudinal strain in winding pack",
         "workshop_h": "[cold] workshop buildings length, width, height (m)  ",
         "workshop_l": "[cold] workshop buildings length, width, height (m)  ",
         "workshop_w": "[cold] workshop buildings length, width, height (m)  ",
@@ -11732,6 +11826,9 @@
         "87": {
             "name": "Constraint for cryogenic power"
         },
+        "88": {
+            "name": "Constraint for TF coil strain absolute value"
+        },
         "9": {
             "name": "Fusion power upper limit"
         }
@@ -11805,6 +11902,30 @@
             "lb": 1.001,
             "ub": 20.0
         },
+        "aux_build_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "aux_build_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "aux_build_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "auxcool_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "auxcool_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "auxcool_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
         "auxmin": {
             "lb": 0.01,
             "ub": 100.0
@@ -11868,6 +11989,10 @@
         "bigqmin": {
             "lb": 0.01,
             "ub": 100.0
+        },
+        "bioshld_thk": {
+            "lb": 0.25,
+            "ub": 25.0
         },
         "blbmith": {
             "lb": 0.0,
@@ -12053,6 +12178,18 @@
             "lb": 0.0,
             "ub": 10.0
         },
+        "chemlab_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "chemlab_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "chemlab_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
         "chrad": {
             "lb": 0.1,
             "ub": 20.0
@@ -12080,6 +12217,18 @@
         "conf_mag": {
             "lb": 0.9,
             "ub": 1.0
+        },
+        "control_buildings_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "control_buildings_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "control_buildings_w": {
+            "lb": 10.0,
+            "ub": 1000.0
         },
         "conv": {
             "lb": 10000.0,
@@ -12177,6 +12326,18 @@
             "lb": 1.0,
             "ub": 1000000.0
         },
+        "crane_arm_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "crane_clrnc_h": {
+            "lb": 0.0,
+            "ub": 10.0
+        },
+        "crane_clrnc_v": {
+            "lb": 0.0,
+            "ub": 10.0
+        },
         "croco_id": {
             "lb": 0.0,
             "ub": 0.1
@@ -12188,6 +12349,34 @@
         "croco_thick": {
             "lb": 0.001,
             "ub": 0.1
+        },
+        "cryomag_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "cryomag_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "cryomag_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "cryostat_clrnc": {
+            "lb": 0.0,
+            "ub": 10.0
+        },
+        "cryostore_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "cryostore_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "cryostore_w": {
+            "lb": 10.0,
+            "ub": 1000.0
         },
         "crypmw_max": {
             "lb": 0.01,
@@ -12385,6 +12574,42 @@
             "lb": 0.0,
             "ub": 1.0
         },
+        "elecdist_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "elecdist_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "elecdist_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "elecload_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "elecload_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "elecload_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "elecstore_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "elecstore_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "elecstore_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
         "emult": {
             "lb": 1.0,
             "ub": 2.0
@@ -12457,6 +12682,14 @@
             "lb": 0.0,
             "ub": 1.0
         },
+        "eyoung_cond_axial": {
+            "lb": 0.0,
+            "ub": 10000000000000.0
+        },
+        "eyoung_cond_trans": {
+            "lb": 0.0,
+            "ub": 10000000000000.0
+        },
         "eyoung_ins": {
             "lb": 100000000.0,
             "ub": 10000000000000.0
@@ -12466,10 +12699,6 @@
             "ub": 1000000000000.0
         },
         "eyoung_steel": {
-            "lb": 100000000.0,
-            "ub": 10000000000000.0
-        },
-        "eyoung_winding": {
             "lb": 100000000.0,
             "ub": 10000000000000.0
         },
@@ -12608,6 +12837,14 @@
         "fburn": {
             "lb": 0.01,
             "ub": 1.0
+        },
+        "fc_building_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "fc_building_w": {
+            "lb": 10.0,
+            "ub": 1000.0
         },
         "fcap0": {
             "lb": 1.0,
@@ -12977,6 +13214,10 @@
             "lb": 1000000.0,
             "ub": 1000000000.0
         },
+        "fstr_wp": {
+            "lb": 1e-09,
+            "ub": 10.0
+        },
         "fstrcase": {
             "lb": 0.001,
             "ub": 10.0
@@ -13185,6 +13426,22 @@
             "lb": 0.0,
             "ub": 10.0
         },
+        "gas_buildings_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "gas_buildings_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "gas_buildings_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "ground_clrnc": {
+            "lb": 0.0,
+            "ub": 10.0
+        },
         "gtscale": {
             "lb": 0,
             "ub": 2
@@ -13201,6 +13458,18 @@
             "lb": 0.0,
             "ub": 10.0
         },
+        "hcd_building_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "hcd_building_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "hcd_building_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
         "hcdportsize": {
             "lb": 1,
             "ub": 2
@@ -13209,6 +13478,18 @@
             "lb": 0.0,
             "ub": 10.0
         },
+        "heat_sink_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "heat_sink_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "heat_sink_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
         "hfact": {
             "lb": 0.01,
             "ub": 10.0
@@ -13216,6 +13497,14 @@
         "hldivlim": {
             "lb": 0.1,
             "ub": 20.0
+        },
+        "hot_sepdist": {
+            "lb": 0.0,
+            "ub": 10.0
+        },
+        "hotcell_h": {
+            "lb": 1.0,
+            "ub": 100.0
         },
         "htpmw_blkt": {
             "lb": 0.0,
@@ -13239,6 +13528,18 @@
         },
         "htpmw_shld": {
             "lb": 0.0,
+            "ub": 1000.0
+        },
+        "hw_storage_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "hw_storage_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "hw_storage_w": {
+            "lb": 10.0,
             "ub": 1000.0
         },
         "i_bldgs_size": {
@@ -13277,6 +13578,10 @@
             "lb": 0,
             "ub": 1
         },
+        "i_str_wp": {
+            "lb": 0,
+            "ub": 1
+        },
         "i_sup_pf_shape": {
             "lb": 0,
             "ub": 1
@@ -13286,6 +13591,14 @@
             "ub": 3
         },
         "i_tf_case_geom": {
+            "lb": 0,
+            "ub": 1
+        },
+        "i_tf_cond_eyoung_axial": {
+            "lb": 0,
+            "ub": 2
+        },
+        "i_tf_cond_eyoung_trans": {
             "lb": 0,
             "ub": 1
         },
@@ -13318,6 +13631,10 @@
             "ub": 2
         },
         "iavail": {
+            "lb": 0,
+            "ub": 2
+        },
+        "ibkt_life": {
             "lb": 0,
             "ub": 2
         },
@@ -13404,6 +13721,30 @@
         "ilhthresh": {
             "lb": 1,
             "ub": 21
+        },
+        "ilw_smelter_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "ilw_smelter_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "ilw_smelter_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "ilw_storage_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "ilw_storage_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "ilw_storage_w": {
+            "lb": 10.0,
+            "ub": 1000.0
         },
         "impurity_enrichment": {
             "lb": 0.1,
@@ -13601,6 +13942,22 @@
             "lb": 7.4,
             "ub": 100.0
         },
+        "life_dpa": {
+            "lb": 10.0,
+            "ub": 100.0
+        },
+        "llw_storage_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "llw_storage_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "llw_storage_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
         "lpulse": {
             "lb": 0,
             "ub": 1
@@ -13620,6 +13977,42 @@
         "mach0": {
             "lb": 0.0,
             "ub": 1.0
+        },
+        "magnet_pulse_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "magnet_pulse_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "magnet_pulse_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "magnet_trains_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "magnet_trains_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "magnet_trains_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "maint_cont_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "maint_cont_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "maint_cont_w": {
+            "lb": 10.0,
+            "ub": 1000.0
         },
         "maintenance_fwbs": {
             "lb": 0.0,
@@ -13688,6 +14081,14 @@
         "n_tf_turn": {
             "lb": 0.0,
             "ub": 100.0
+        },
+        "nbi_sys_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "nbi_sys_w": {
+            "lb": 10.0,
+            "ub": 1000.0
         },
         "nblktmodpi": {
             "lb": 1,
@@ -14141,6 +14542,10 @@
             "lb": 0.01,
             "ub": 20.0
         },
+        "qnty_sfty_fac": {
+            "lb": 0.0,
+            "ub": 10.0
+        },
         "qnuc": {
             "lb": 0.0,
             "ub": 1000000.0
@@ -14184,6 +14589,34 @@
         "rcool": {
             "lb": 1e-06,
             "ub": 1.0
+        },
+        "reactor_clrnc": {
+            "lb": 0.0,
+            "ub": 10.0
+        },
+        "reactor_fndtn_thk": {
+            "lb": 0.25,
+            "ub": 25.0
+        },
+        "reactor_hall_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "reactor_hall_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "reactor_hall_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "reactor_roof_thk": {
+            "lb": 0.25,
+            "ub": 25.0
+        },
+        "reactor_wall_thk": {
+            "lb": 0.25,
+            "ub": 25.0
         },
         "rebco_thickness": {
             "lb": 1e-08,
@@ -14249,6 +14682,18 @@
             "lb": 0.0,
             "ub": 1.0
         },
+        "robotics_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "robotics_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "robotics_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
         "roughness": {
             "lb": 0.0,
             "ub": 0.01
@@ -14300,6 +14745,18 @@
         "scraplo": {
             "lb": 0.0,
             "ub": 10.0
+        },
+        "sec_buildings_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "sec_buildings_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "sec_buildings_w": {
+            "lb": 10.0,
+            "ub": 1000.0
         },
         "secondary_cycle": {
             "lb": 0,
@@ -14385,6 +14842,14 @@
             "lb": 0.0,
             "ub": 1.0
         },
+        "staff_buildings_area": {
+            "lb": 10000.0,
+            "ub": 1000000.0
+        },
+        "staff_buildings_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
         "startupratio": {
             "lb": 0.0,
             "ub": 10.0
@@ -14453,17 +14918,21 @@
             "lb": 0.1,
             "ub": 100.0
         },
-        "strncon_cs": {
+        "str_cs_con_res": {
             "lb": -0.02,
             "ub": 0.02
         },
-        "strncon_pf": {
+        "str_pf_con_res": {
             "lb": -0.02,
             "ub": 0.02
         },
-        "strncon_tf": {
+        "str_tf_con_res": {
             "lb": -0.02,
             "ub": 0.02
+        },
+        "str_wp_max": {
+            "lb": 0.0,
+            "ub": 0.3
         },
         "t_cable_tf": {
             "lb": 0.0,
@@ -14729,6 +15198,10 @@
             "lb": 0.0,
             "ub": 10000.0
         },
+        "transp_clrnc": {
+            "lb": 0.0,
+            "ub": 10.0
+        },
         "tratio": {
             "lb": 0.0,
             "ub": 2.0
@@ -14756,6 +15229,30 @@
         "ttarget": {
             "lb": 1.0,
             "ub": 10000.0
+        },
+        "turbine_hall_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "turbine_hall_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "turbine_hall_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "tw_storage_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "tw_storage_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "tw_storage_w": {
+            "lb": 10.0,
+            "ub": 1000.0
         },
         "ucblbe": {
             "lb": 1.0,
@@ -15077,6 +15574,30 @@
             "lb": 1.0,
             "ub": 2.0
         },
+        "warm_shop_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "warm_shop_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "warm_shop_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "water_buildings_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "water_buildings_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "water_buildings_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
         "watertemp": {
             "lb": 0.0,
             "ub": 25.0
@@ -15093,9 +15614,25 @@
             "lb": 10000.0,
             "ub": 1000000.0
         },
+        "whole_site_area": {
+            "lb": 0.0,
+            "ub": 1000000000.0
+        },
         "windspeed": {
             "lb": 0.0,
             "ub": 10.0
+        },
+        "workshop_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "workshop_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "workshop_w": {
+            "lb": 10.0,
+            "ub": 1000.0
         },
         "wsvfac": {
             "lb": 0.9,
@@ -15497,6 +16034,10 @@
             "lb": 0.001,
             "ub": 1.0
         },
+        "fstr_wp": {
+            "lb": 1e-09,
+            "ub": 1.0
+        },
         "fstrcase": {
             "lb": 0.001,
             "ub": 1.0
@@ -15828,6 +16369,7 @@
         "freinke": 1.0,
         "frminor": 1.0,
         "frrmax": 1.0,
+        "fstr_wp": 1.0,
         "fstrcase": 1.0,
         "fstrcond": 1.0,
         "ftaucq": 1.0,
@@ -16249,9 +16791,9 @@
             "ub": 1.0
         },
         "165": {
-            "lb": 1e-99,
-            "name": "DUMMY",
-            "ub": 1e+99
+            "lb": 1e-09,
+            "name": "fstr_wp",
+            "ub": 1.0
         },
         "166": {
             "lb": 1e-99,
@@ -16776,7 +17318,7 @@
         "162": "r_cp_top",
         "163": "f_t_turn_tf",
         "164": "f_crypmw",
-        "165": "DUMMY",
+        "165": "fstr_wp",
         "166": "DUMMY",
         "167": "DUMMY",
         "168": "DUMMY",
@@ -16958,6 +17500,7 @@
         "freinke": "147",
         "frminor": "32",
         "frrmax": "86",
+        "fstr_wp": "165",
         "fstrcase": "48",
         "fstrcond": "49",
         "ftaucq": "113",
@@ -17043,7 +17586,7 @@
             "conf2",
             "qb2"
         ],
-        "build_module": [
+        "build": [
             "ripflag"
         ],
         "build_variables": [
@@ -17484,6 +18027,7 @@
             "frminor",
             "fstrcase",
             "fstrcond",
+            "fstr_wp",
             "ftaucq",
             "ftbr",
             "ftburn",
@@ -17583,6 +18127,9 @@
             "fkind",
             "fwallcst",
             "iavail",
+            "ibkt_life",
+            "life_dpa",
+            "bktcycles",
             "avail_min",
             "tok_build_cost_per_vol",
             "light_build_cost_per_vol",
@@ -17620,6 +18167,7 @@
             "startupratio",
             "startuppwr",
             "sitecost",
+            "site_imp_uc",
             "step_con",
             "step_cconfix",
             "step_cconshtf",
@@ -17736,7 +18284,8 @@
             "ucwindtf",
             "ucws",
             "ucwst",
-            "wfbuilding"
+            "wfbuilding",
+            "whole_site_area"
         ],
         "costs_2015_module": [
             "double",
@@ -19725,27 +20274,33 @@
             "i_tf_sc_mat",
             "i_tf_sup",
             "i_tf_shape",
+            "i_tf_cond_eyoung_axial",
+            "i_tf_cond_eyoung_trans",
             "n_pancake",
             "n_layer",
             "n_rad_per_layer",
             "i_tf_bucking",
             "n_tf_graded_layers",
             "n_tf_stress_layers",
+            "n_tf_wp_layers",
             "jbus",
             "jwdgcrt",
             "jwdgpro",
             "jwptf",
             "oacdcp",
-            "eyzwp",
             "eyoung_ins",
             "eyoung_steel",
-            "eyoung_winding",
+            "eyoung_cond_axial",
+            "eyoung_cond_trans",
             "eyoung_res_tf_buck",
             "eyoung_copper",
             "eyoung_al",
             "poisson_steel",
             "poisson_copper",
             "poisson_al",
+            "poisson_ins",
+            "poisson_cond_axial",
+            "poisson_cond_trans",
             "rbmax",
             "tflegres",
             "toroidalgap",
@@ -19765,9 +20320,12 @@
             "sig_tf_case",
             "sig_tf_wp",
             "sigvvall",
-            "strncon_cs",
-            "strncon_pf",
-            "strncon_tf",
+            "str_cs_con_res",
+            "str_pf_con_res",
+            "str_tf_con_res",
+            "str_wp",
+            "str_wp_max",
+            "i_str_wp",
             "quench_model",
             "quench_detection_ef",
             "time1",
@@ -19838,7 +20396,6 @@
             "whtconsh",
             "whtgw",
             "whttf",
-            "windstrain",
             "wwp1",
             "wwp2",
             "dthet",
@@ -20153,6 +20710,12 @@
         "anginc": "real_variable",
         "aplasmin": "real_variable",
         "aspect": "real_variable",
+        "aux_build_h": "real_variable",
+        "aux_build_l": "real_variable",
+        "aux_build_w": "real_variable",
+        "auxcool_h": "real_variable",
+        "auxcool_l": "real_variable",
+        "auxcool_w": "real_variable",
         "auxmin": "real_variable",
         "avail_min": "real_variable",
         "b_crit_upper_nbti": "real_variable",
@@ -20169,6 +20732,7 @@
         "betbm0": "real_variable",
         "betpmx": "real_variable",
         "bigqmin": "real_variable",
+        "bioshld_thk": "real_variable",
         "blbmith": "real_variable",
         "blbmoth": "real_variable",
         "blbpith": "real_variable",
@@ -20221,6 +20785,9 @@
         "cfind": "real_array",
         "chdzl": "real_variable",
         "chdzu": "real_variable",
+        "chemlab_h": "real_variable",
+        "chemlab_l": "real_variable",
+        "chemlab_w": "real_variable",
         "chmatf": "real_array",
         "chrad": "real_variable",
         "cland": "real_variable",
@@ -20229,6 +20796,9 @@
         "clhsf": "real_variable",
         "coheof": "real_variable",
         "conf_mag": "real_variable",
+        "control_buildings_h": "real_variable",
+        "control_buildings_l": "real_variable",
+        "control_buildings_w": "real_variable",
         "conv": "real_variable",
         "coolp": "real_variable",
         "copperA_m2_max": "real_variable",
@@ -20254,9 +20824,19 @@
         "cptdin": "real_array",
         "cpttf": "real_variable",
         "cpttf_max": "real_variable",
+        "crane_arm_h": "real_variable",
+        "crane_clrnc_h": "real_variable",
+        "crane_clrnc_v": "real_variable",
         "croco_id": "real_variable",
         "croco_od": "real_variable",
         "croco_thick": "real_variable",
+        "cryomag_h": "real_variable",
+        "cryomag_l": "real_variable",
+        "cryomag_w": "real_variable",
+        "cryostat_clrnc": "real_variable",
+        "cryostore_h": "real_variable",
+        "cryostore_l": "real_variable",
+        "cryostore_w": "real_variable",
         "crypmw_max": "real_variable",
         "csawth": "real_variable",
         "csi": "real_variable",
@@ -20307,6 +20887,15 @@
         "dztop": "real_variable",
         "edrive": "real_variable",
         "eff_tf_cryo": "real_variable",
+        "elecdist_h": "real_variable",
+        "elecdist_l": "real_variable",
+        "elecdist_w": "real_variable",
+        "elecload_h": "real_variable",
+        "elecload_l": "real_variable",
+        "elecload_w": "real_variable",
+        "elecstore_h": "real_variable",
+        "elecstore_l": "real_variable",
+        "elecstore_w": "real_variable",
         "emult": "real_variable",
         "enbeam": "real_variable",
         "epbetmax": "real_variable",
@@ -20326,10 +20915,11 @@
         "etath": "real_variable",
         "etave": "real_array",
         "eyoung_al": "real_variable",
+        "eyoung_cond_axial": "real_variable",
+        "eyoung_cond_trans": "real_variable",
         "eyoung_ins": "real_variable",
         "eyoung_res_tf_buck": "real_variable",
         "eyoung_steel": "real_variable",
-        "eyoung_winding": "real_variable",
         "f_asym": "real_variable",
         "f_avspace": "real_variable",
         "f_coppera_m2": "real_variable",
@@ -20364,6 +20954,8 @@
         "fbmaxcs": "real_variable",
         "fbreed": "real_variable",
         "fburn": "real_variable",
+        "fc_building_l": "real_variable",
+        "fc_building_w": "real_variable",
         "fcap0": "real_variable",
         "fcap0cp": "real_variable",
         "fcdfuel": "real_variable",
@@ -20457,6 +21049,7 @@
         "frrmax": "real_variable",
         "frrp": "real_variable",
         "fseppc": "real_variable",
+        "fstr_wp": "real_variable",
         "fstrcase": "real_variable",
         "fstrcond": "real_variable",
         "ftar": "real_variable",
@@ -20511,20 +21104,35 @@
         "gapds": "real_variable",
         "gapoh": "real_variable",
         "gapomin": "real_variable",
+        "gas_buildings_h": "real_variable",
+        "gas_buildings_l": "real_variable",
+        "gas_buildings_w": "real_variable",
+        "ground_clrnc": "real_variable",
         "gtscale": "int_variable",
         "harnum": "real_variable",
         "hastelloy_thickness": "real_variable",
         "hccl": "real_variable",
+        "hcd_building_h": "real_variable",
+        "hcd_building_l": "real_variable",
+        "hcd_building_w": "real_variable",
         "hcdportsize": "int_variable",
         "hcwt": "real_variable",
+        "heat_sink_h": "real_variable",
+        "heat_sink_l": "real_variable",
+        "heat_sink_w": "real_variable",
         "hfact": "real_variable",
         "hldivlim": "real_variable",
+        "hot_sepdist": "real_variable",
+        "hotcell_h": "real_variable",
         "htpmw_blkt": "real_variable",
         "htpmw_div": "real_variable",
         "htpmw_fw": "real_variable",
         "htpmw_ife": "real_variable",
         "htpmw_min": "real_variable",
         "htpmw_shld": "real_variable",
+        "hw_storage_h": "real_variable",
+        "hw_storage_l": "real_variable",
+        "hw_storage_w": "real_variable",
         "i_bldgs_size": "int_variable",
         "i_bldgs_v": "int_variable",
         "i_cp_joints": "int_variable",
@@ -20534,9 +21142,12 @@
         "i_r_cp_top": "int_variable",
         "i_shield_mat": "int_variable",
         "i_single_null": "int_variable",
+        "i_str_wp": "int_variable",
         "i_sup_pf_shape": "int_variable",
         "i_tf_bucking": "int_variable",
         "i_tf_case_geom": "int_variable",
+        "i_tf_cond_eyoung_axial": "int_variable",
+        "i_tf_cond_eyoung_trans": "int_variable",
         "i_tf_sc_mat": "int_variable",
         "i_tf_shape": "int_variable",
         "i_tf_stress_model": "int_variable",
@@ -20545,6 +21156,7 @@
         "i_tf_turns_integer": "int_variable",
         "i_tf_wp_geom": "int_variable",
         "iavail": "int_variable",
+        "ibkt_life": "int_variable",
         "iblanket": "int_variable",
         "iblanket_thickness": "int_variable",
         "iblnkith": "int_variable",
@@ -20567,6 +21179,12 @@
         "ignite": "int_variable",
         "iinvqd": "int_variable",
         "ilhthresh": "int_variable",
+        "ilw_smelter_h": "real_variable",
+        "ilw_smelter_l": "real_variable",
+        "ilw_smelter_w": "real_variable",
+        "ilw_storage_h": "real_variable",
+        "ilw_storage_l": "real_variable",
+        "ilw_storage_w": "real_variable",
         "impurity_enrichment": "real_array",
         "impvar": "int_variable",
         "impvardiv": "int_variable",
@@ -20623,11 +21241,24 @@
         "lcon_factor": "real_variable",
         "lhat": "real_variable",
         "li6enrich": "real_variable",
+        "life_dpa": "real_variable",
+        "llw_storage_h": "real_variable",
+        "llw_storage_l": "real_variable",
+        "llw_storage_w": "real_variable",
         "lpulse": "int_variable",
         "lsa": "int_variable",
         "m_res": "int_variable",
         "m_s_limit": "real_variable",
         "mach0": "real_variable",
+        "magnet_pulse_h": "real_variable",
+        "magnet_pulse_l": "real_variable",
+        "magnet_pulse_w": "real_variable",
+        "magnet_trains_h": "real_variable",
+        "magnet_trains_l": "real_variable",
+        "magnet_trains_w": "real_variable",
+        "maint_cont_h": "real_variable",
+        "maint_cont_l": "real_variable",
+        "maint_cont_w": "real_variable",
         "maintenance_fwbs": "real_variable",
         "maintenance_gen": "real_variable",
         "maxcal": "int_variable",
@@ -20646,6 +21277,8 @@
         "n_tf_joints": "int_variable",
         "n_tf_joints_contact": "int_variable",
         "n_tf_turn": "real_variable",
+        "nbi_sys_l": "real_variable",
+        "nbi_sys_w": "real_variable",
         "nblktmodpi": "int_variable",
         "nblktmodpo": "int_variable",
         "nblktmodti": "int_variable",
@@ -20777,6 +21410,7 @@
         "pwpm2": "real_variable",
         "q": "real_variable",
         "q0": "real_variable",
+        "qnty_sfty_fac": "real_variable",
         "qnuc": "real_variable",
         "qtargettotal": "real_variable",
         "quench_detection_ef": "real_variable",
@@ -20788,6 +21422,13 @@
         "rbvfac": "real_variable",
         "rbwt": "real_variable",
         "rcool": "real_variable",
+        "reactor_clrnc": "real_variable",
+        "reactor_fndtn_thk": "real_variable",
+        "reactor_hall_h": "real_variable",
+        "reactor_hall_l": "real_variable",
+        "reactor_hall_w": "real_variable",
+        "reactor_roof_thk": "real_variable",
+        "reactor_wall_thk": "real_variable",
         "rebco_thickness": "real_variable",
         "redun_vacp": "real_variable",
         "reinke_mode": "int_variable",
@@ -20805,6 +21446,9 @@
         "rli": "real_variable",
         "rmajor": "real_variable",
         "rnbeam": "real_variable",
+        "robotics_h": "real_variable",
+        "robotics_l": "real_variable",
+        "robotics_w": "real_variable",
         "roughness": "real_variable",
         "routr": "real_variable",
         "row": "real_variable",
@@ -20819,6 +21463,9 @@
         "scan_dim": "int_variable",
         "scrapli": "real_variable",
         "scraplo": "real_variable",
+        "sec_buildings_h": "real_variable",
+        "sec_buildings_l": "real_variable",
+        "sec_buildings_w": "real_variable",
         "secondary_cycle": "int_variable",
         "shdr": "real_variable",
         "shdzl": "real_variable",
@@ -20837,10 +21484,13 @@
         "sigpfcalw": "real_variable",
         "sigpfcf": "real_variable",
         "sigvvall": "real_variable",
+        "site_imp_uc": "real_array",
         "sitecost": "real_variable",
         "sombdr": "real_variable",
         "somtdr": "real_variable",
         "ssync": "real_variable",
+        "staff_buildings_area": "real_variable",
+        "staff_buildings_h": "real_variable",
         "startupratio": "real_variable",
         "stcl": "real_variable",
         "step91_per": "real_variable",
@@ -20861,9 +21511,10 @@
         "step_ucoam": "real_variable",
         "step_ucsc": "real_array",
         "step_ucwst": "real_variable",
-        "strncon_cs": "real_variable",
-        "strncon_pf": "real_variable",
-        "strncon_tf": "real_variable",
+        "str_cs_con_res": "real_variable",
+        "str_pf_con_res": "real_variable",
+        "str_tf_con_res": "real_variable",
+        "str_wp_max": "real_variable",
         "sweep": "real_array",
         "sweep_2": "real_array",
         "t_cable_tf": "real_variable",
@@ -20932,6 +21583,7 @@
         "tohsin": "real_variable",
         "tqnch": "real_variable",
         "tramp": "real_variable",
+        "transp_clrnc": "real_variable",
         "tratio": "real_variable",
         "trcl": "real_variable",
         "triang": "real_variable",
@@ -20939,6 +21591,12 @@
         "trithtmw": "real_variable",
         "triv": "real_variable",
         "ttarget": "real_variable",
+        "turbine_hall_h": "real_variable",
+        "turbine_hall_l": "real_variable",
+        "turbine_hall_w": "real_variable",
+        "tw_storage_h": "real_variable",
+        "tw_storage_l": "real_variable",
+        "tw_storage_w": "real_variable",
         "ucblbe": "real_variable",
         "ucblbreed": "real_variable",
         "ucblli": "real_variable",
@@ -21028,11 +21686,21 @@
         "vvhealw": "real_variable",
         "walalw": "real_variable",
         "wallpf": "real_variable",
+        "warm_shop_h": "real_variable",
+        "warm_shop_l": "real_variable",
+        "warm_shop_w": "real_variable",
+        "water_buildings_h": "real_variable",
+        "water_buildings_l": "real_variable",
+        "water_buildings_w": "real_variable",
         "watertemp": "real_variable",
         "wfbuilding": "real_variable",
         "wgt": "real_variable",
         "wgt2": "real_variable",
+        "whole_site_area": "real_variable",
         "windspeed": "real_variable",
+        "workshop_h": "real_variable",
+        "workshop_l": "real_variable",
+        "workshop_w": "real_variable",
         "wsvfac": "real_variable",
         "xi_ebw": "real_variable",
         "xparain": "real_variable",
