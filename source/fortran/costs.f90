@@ -1136,6 +1136,9 @@ contains
 
     if (ife /= 1) then
 
+      ! iblanket=4 is used for KIT HCLL model. iblanket<4 are all 
+      ! HCPB (CCFE, KIT and CCFE + Shimwell TBR calculation). 
+
        if (iblanket == 4) then
          !  Liquid blanket (LiPb + Li)
          c22121 = 1.0D-6 * wtbllipb * ucbllipb

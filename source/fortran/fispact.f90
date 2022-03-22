@@ -145,6 +145,12 @@
 ! *** Elemental composition (same for both inboard and
 ! *** outboard blankets)
 
+      ! iblanket=4 is used for KIT HCLL model. iblanket<4 are all 
+      ! HCPB (CCFE, KIT and CCFE + Shimwell TBR calculation). 
+      ! These calculations where originally selected using the 
+      ! ipowerflow and blkttype switches and so there is still an 
+      ! option to select cololant type using the coolwh switch. 
+
       if (iblanket == 4) then
             !  Liquid blanket (LiPb + Li)    
             if (coolwh.eq.1) then    
@@ -217,18 +223,25 @@
 ! *** Neutron flux (neutrons per cm**2 per second)
 !+**PJK 19/02/97 Include energy multiplication, and an e-folding
 !+**PJK 19/02/97 factor for attenuation through half the blanket
+ 
+      ! Previously the ipowerflow and blkttype swithces where being used
+      ! below. For ipowerflow=1, the post-2014 model, you could select 
+      ! liquid or solid breeder blanket material equations using blkttype.
+      ! For ipowerflow=0, the pre-2014 model, only the solid breeder 
+      ! equation was used. For both ipowerflow=0 and ipowerflow=1 this 
+      ! solid type equation was the same and so the ipowerflow switch has 
+      ! been removed. The old switch blkttype has also been replaced with 
+      ! iblanket. N.B. Previous comment stated: "Strictly, this is not 
+      ! correct for ipowerflow=1, but currently I have simply replaced the 
+      ! old usage of lblnkt etc.", so (FIXME) these equations 
+      ! should be checked.
 
-      if (ipowerflow == 1) then
-
-         !  Strictly, this is not correct for ipowerflow=1, but currently
-         !  I have simply replaced the old usage of lblnkt etc.
-         if (blkttype == 3) then
-            dklen = 0.075D0 / (1.0D0 - vfblkt - fblli2o - fblbe)
-         else
+      if (iblanket==4) then 
+            ! If the KIT HCLL model is selected then
             dklen = 0.075D0 / (1.0D0 - vfblkt - fbllipb - fblli)
-         end if
-      else
-         dklen = 0.075D0 / (1.0D0 - vfblkt - fblli2o - fblbe)
+      else 
+            ! If the CCFE or KIT HCPB model is selected then
+            dklen = 0.075D0 / (1.0D0 - vfblkt - fblli2o - fblbe)
       end if
 
       wflux = nneut * REAL( emult*exp(-0.5D0*blnkoth/dklen) / &
