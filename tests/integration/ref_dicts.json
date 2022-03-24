@@ -3449,7 +3449,7 @@
         "phi_tfc_ob": 0.0,
         "phiint": 0.0,
         "photon_wall": 0.0,
-        "pi": "3.14159265358979e0_rkind",
+        "pi": "3.141592653589793_wp_",
         "pibv": 20000.0,
         "piepv": 0.0,
         "pifecr": 10.0,
@@ -5348,6 +5348,70 @@
         "sigpfcf": 0.666,
         "sigvvall": 93000000.0,
         "single": "selected_real_kind(6, 37)",
+        "site_imp_uc": [
+            10.0,
+            30.0,
+            60.0,
+            50.0,
+            20000000.0,
+            30000000.0,
+            700000.0,
+            10.0,
+            20.0,
+            500000.0,
+            10.0,
+            40.0,
+            10.0,
+            10.0,
+            10.0,
+            10.0,
+            20.0,
+            10.0,
+            200000000.0,
+            10000.0,
+            10000.0,
+            10000000.0,
+            10000000.0,
+            10000000.0,
+            10000000.0,
+            50.0,
+            500000000.0,
+            10000000.0,
+            10000000.0,
+            20000000.0,
+            500000000.0,
+            20000000.0,
+            10000000.0,
+            30000000.0,
+            500000000.0,
+            30000000.0,
+            10000000.0,
+            1000000.0,
+            10000000.0,
+            10000000.0,
+            10000000.0,
+            20000000.0,
+            10000000.0,
+            20000000.0,
+            1000000.0,
+            700000.0,
+            10000000.0,
+            200000.0,
+            500000.0,
+            90000.0,
+            50000.0,
+            10000000.0,
+            100000000.0,
+            50000000.0,
+            1000000000.0,
+            500000000.0,
+            200000000.0,
+            80000000.0,
+            30000000.0,
+            200000000.0,
+            100000000.0,
+            70000000.0
+        ],
         "sitecost": 100000000.0,
         "skind": 512.0,
         "sol_broadening": 0.0,
@@ -8174,6 +8238,7 @@
         "wfbuilding": 100000000.0,
         "wgt": 500000.0,
         "wgt2": 100000.0,
+        "whole_site_area": 1000000.0,
         "whtblbe": 0.0,
         "whtblbreed": 0.0,
         "whtblkt": 0.0,
@@ -10834,6 +10899,7 @@
         "sigpfcf": "fraction of JxB hoop force supported by steel case for superconducting PF coils (`ipfres=0`)",
         "sigvvall": "allowable stress from TF quench in vacuum vessel (Pa)",
         "single": "",
+        "site_imp_uc": "Unit costs for Site Improvement activities (cost model 2)",
         "sitecost": "fixed value for site cost (2017 US$)",
         "skind": "",
         "sol_broadening": "",
@@ -11382,6 +11448,7 @@
         "wfbuilding": "fixed value for waste facility buildings (2017 US$)",
         "wgt": "reactor building crane capacity (kg) (calculated if 0 is input)",
         "wgt2": "hot cell crane capacity (kg) (calculated if 0 is input)",
+        "whole_site_area": "area of entire plant site (m2); default 1.0E6 m2 (i.e. 1 km2)",
         "whtblbe": "mass of blanket - beryllium part (kg)",
         "whtblbreed": "mass of blanket - breeder part (kg) (`iblanket=2` (KIT HCPB))",
         "whtblkt": "mass of blanket (kg)",
@@ -11835,6 +11902,30 @@
             "lb": 1.001,
             "ub": 20.0
         },
+        "aux_build_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "aux_build_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "aux_build_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "auxcool_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "auxcool_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "auxcool_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
         "auxmin": {
             "lb": 0.01,
             "ub": 100.0
@@ -11898,6 +11989,10 @@
         "bigqmin": {
             "lb": 0.01,
             "ub": 100.0
+        },
+        "bioshld_thk": {
+            "lb": 0.25,
+            "ub": 25.0
         },
         "blbmith": {
             "lb": 0.0,
@@ -12083,6 +12178,18 @@
             "lb": 0.0,
             "ub": 10.0
         },
+        "chemlab_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "chemlab_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "chemlab_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
         "chrad": {
             "lb": 0.1,
             "ub": 20.0
@@ -12110,6 +12217,18 @@
         "conf_mag": {
             "lb": 0.9,
             "ub": 1.0
+        },
+        "control_buildings_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "control_buildings_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "control_buildings_w": {
+            "lb": 10.0,
+            "ub": 1000.0
         },
         "conv": {
             "lb": 10000.0,
@@ -12207,6 +12326,18 @@
             "lb": 1.0,
             "ub": 1000000.0
         },
+        "crane_arm_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "crane_clrnc_h": {
+            "lb": 0.0,
+            "ub": 10.0
+        },
+        "crane_clrnc_v": {
+            "lb": 0.0,
+            "ub": 10.0
+        },
         "croco_id": {
             "lb": 0.0,
             "ub": 0.1
@@ -12218,6 +12349,34 @@
         "croco_thick": {
             "lb": 0.001,
             "ub": 0.1
+        },
+        "cryomag_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "cryomag_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "cryomag_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "cryostat_clrnc": {
+            "lb": 0.0,
+            "ub": 10.0
+        },
+        "cryostore_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "cryostore_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "cryostore_w": {
+            "lb": 10.0,
+            "ub": 1000.0
         },
         "crypmw_max": {
             "lb": 0.01,
@@ -12414,6 +12573,42 @@
         "eff_tf_cryo": {
             "lb": 0.0,
             "ub": 1.0
+        },
+        "elecdist_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "elecdist_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "elecdist_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "elecload_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "elecload_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "elecload_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "elecstore_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "elecstore_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "elecstore_w": {
+            "lb": 10.0,
+            "ub": 1000.0
         },
         "emult": {
             "lb": 1.0,
@@ -12642,6 +12837,14 @@
         "fburn": {
             "lb": 0.01,
             "ub": 1.0
+        },
+        "fc_building_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "fc_building_w": {
+            "lb": 10.0,
+            "ub": 1000.0
         },
         "fcap0": {
             "lb": 1.0,
@@ -13223,6 +13426,22 @@
             "lb": 0.0,
             "ub": 10.0
         },
+        "gas_buildings_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "gas_buildings_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "gas_buildings_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "ground_clrnc": {
+            "lb": 0.0,
+            "ub": 10.0
+        },
         "gtscale": {
             "lb": 0,
             "ub": 2
@@ -13239,6 +13458,18 @@
             "lb": 0.0,
             "ub": 10.0
         },
+        "hcd_building_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "hcd_building_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "hcd_building_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
         "hcdportsize": {
             "lb": 1,
             "ub": 2
@@ -13247,6 +13478,18 @@
             "lb": 0.0,
             "ub": 10.0
         },
+        "heat_sink_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "heat_sink_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "heat_sink_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
         "hfact": {
             "lb": 0.01,
             "ub": 10.0
@@ -13254,6 +13497,14 @@
         "hldivlim": {
             "lb": 0.1,
             "ub": 20.0
+        },
+        "hot_sepdist": {
+            "lb": 0.0,
+            "ub": 10.0
+        },
+        "hotcell_h": {
+            "lb": 1.0,
+            "ub": 100.0
         },
         "htpmw_blkt": {
             "lb": 0.0,
@@ -13277,6 +13528,18 @@
         },
         "htpmw_shld": {
             "lb": 0.0,
+            "ub": 1000.0
+        },
+        "hw_storage_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "hw_storage_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "hw_storage_w": {
+            "lb": 10.0,
             "ub": 1000.0
         },
         "i_bldgs_size": {
@@ -13458,6 +13721,30 @@
         "ilhthresh": {
             "lb": 1,
             "ub": 21
+        },
+        "ilw_smelter_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "ilw_smelter_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "ilw_smelter_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "ilw_storage_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "ilw_storage_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "ilw_storage_w": {
+            "lb": 10.0,
+            "ub": 1000.0
         },
         "impurity_enrichment": {
             "lb": 0.1,
@@ -13659,6 +13946,18 @@
             "lb": 10.0,
             "ub": 100.0
         },
+        "llw_storage_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "llw_storage_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "llw_storage_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
         "lpulse": {
             "lb": 0,
             "ub": 1
@@ -13678,6 +13977,42 @@
         "mach0": {
             "lb": 0.0,
             "ub": 1.0
+        },
+        "magnet_pulse_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "magnet_pulse_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "magnet_pulse_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "magnet_trains_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "magnet_trains_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "magnet_trains_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "maint_cont_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "maint_cont_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "maint_cont_w": {
+            "lb": 10.0,
+            "ub": 1000.0
         },
         "maintenance_fwbs": {
             "lb": 0.0,
@@ -13746,6 +14081,14 @@
         "n_tf_turn": {
             "lb": 0.0,
             "ub": 100.0
+        },
+        "nbi_sys_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "nbi_sys_w": {
+            "lb": 10.0,
+            "ub": 1000.0
         },
         "nblktmodpi": {
             "lb": 1,
@@ -14199,6 +14542,10 @@
             "lb": 0.01,
             "ub": 20.0
         },
+        "qnty_sfty_fac": {
+            "lb": 0.0,
+            "ub": 10.0
+        },
         "qnuc": {
             "lb": 0.0,
             "ub": 1000000.0
@@ -14242,6 +14589,34 @@
         "rcool": {
             "lb": 1e-06,
             "ub": 1.0
+        },
+        "reactor_clrnc": {
+            "lb": 0.0,
+            "ub": 10.0
+        },
+        "reactor_fndtn_thk": {
+            "lb": 0.25,
+            "ub": 25.0
+        },
+        "reactor_hall_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "reactor_hall_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "reactor_hall_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "reactor_roof_thk": {
+            "lb": 0.25,
+            "ub": 25.0
+        },
+        "reactor_wall_thk": {
+            "lb": 0.25,
+            "ub": 25.0
         },
         "rebco_thickness": {
             "lb": 1e-08,
@@ -14307,6 +14682,18 @@
             "lb": 0.0,
             "ub": 1.0
         },
+        "robotics_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "robotics_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "robotics_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
         "roughness": {
             "lb": 0.0,
             "ub": 0.01
@@ -14358,6 +14745,18 @@
         "scraplo": {
             "lb": 0.0,
             "ub": 10.0
+        },
+        "sec_buildings_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "sec_buildings_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "sec_buildings_w": {
+            "lb": 10.0,
+            "ub": 1000.0
         },
         "secondary_cycle": {
             "lb": 0,
@@ -14442,6 +14841,14 @@
         "ssync": {
             "lb": 0.0,
             "ub": 1.0
+        },
+        "staff_buildings_area": {
+            "lb": 10000.0,
+            "ub": 1000000.0
+        },
+        "staff_buildings_h": {
+            "lb": 1.0,
+            "ub": 100.0
         },
         "startupratio": {
             "lb": 0.0,
@@ -14791,6 +15198,10 @@
             "lb": 0.0,
             "ub": 10000.0
         },
+        "transp_clrnc": {
+            "lb": 0.0,
+            "ub": 10.0
+        },
         "tratio": {
             "lb": 0.0,
             "ub": 2.0
@@ -14818,6 +15229,30 @@
         "ttarget": {
             "lb": 1.0,
             "ub": 10000.0
+        },
+        "turbine_hall_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "turbine_hall_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "turbine_hall_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "tw_storage_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "tw_storage_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "tw_storage_w": {
+            "lb": 10.0,
+            "ub": 1000.0
         },
         "ucblbe": {
             "lb": 1.0,
@@ -15139,6 +15574,30 @@
             "lb": 1.0,
             "ub": 2.0
         },
+        "warm_shop_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "warm_shop_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "warm_shop_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "water_buildings_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "water_buildings_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "water_buildings_w": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
         "watertemp": {
             "lb": 0.0,
             "ub": 25.0
@@ -15155,9 +15614,25 @@
             "lb": 10000.0,
             "ub": 1000000.0
         },
+        "whole_site_area": {
+            "lb": 0.0,
+            "ub": 1000000000.0
+        },
         "windspeed": {
             "lb": 0.0,
             "ub": 10.0
+        },
+        "workshop_h": {
+            "lb": 1.0,
+            "ub": 100.0
+        },
+        "workshop_l": {
+            "lb": 10.0,
+            "ub": 1000.0
+        },
+        "workshop_w": {
+            "lb": 10.0,
+            "ub": 1000.0
         },
         "wsvfac": {
             "lb": 0.9,
@@ -17692,6 +18167,7 @@
             "startupratio",
             "startuppwr",
             "sitecost",
+            "site_imp_uc",
             "step_con",
             "step_cconfix",
             "step_cconshtf",
@@ -17808,7 +18284,8 @@
             "ucwindtf",
             "ucws",
             "ucwst",
-            "wfbuilding"
+            "wfbuilding",
+            "whole_site_area"
         ],
         "costs_2015_module": [
             "double",
@@ -20233,6 +20710,12 @@
         "anginc": "real_variable",
         "aplasmin": "real_variable",
         "aspect": "real_variable",
+        "aux_build_h": "real_variable",
+        "aux_build_l": "real_variable",
+        "aux_build_w": "real_variable",
+        "auxcool_h": "real_variable",
+        "auxcool_l": "real_variable",
+        "auxcool_w": "real_variable",
         "auxmin": "real_variable",
         "avail_min": "real_variable",
         "b_crit_upper_nbti": "real_variable",
@@ -20249,6 +20732,7 @@
         "betbm0": "real_variable",
         "betpmx": "real_variable",
         "bigqmin": "real_variable",
+        "bioshld_thk": "real_variable",
         "blbmith": "real_variable",
         "blbmoth": "real_variable",
         "blbpith": "real_variable",
@@ -20301,6 +20785,9 @@
         "cfind": "real_array",
         "chdzl": "real_variable",
         "chdzu": "real_variable",
+        "chemlab_h": "real_variable",
+        "chemlab_l": "real_variable",
+        "chemlab_w": "real_variable",
         "chmatf": "real_array",
         "chrad": "real_variable",
         "cland": "real_variable",
@@ -20309,6 +20796,9 @@
         "clhsf": "real_variable",
         "coheof": "real_variable",
         "conf_mag": "real_variable",
+        "control_buildings_h": "real_variable",
+        "control_buildings_l": "real_variable",
+        "control_buildings_w": "real_variable",
         "conv": "real_variable",
         "coolp": "real_variable",
         "copperA_m2_max": "real_variable",
@@ -20334,9 +20824,19 @@
         "cptdin": "real_array",
         "cpttf": "real_variable",
         "cpttf_max": "real_variable",
+        "crane_arm_h": "real_variable",
+        "crane_clrnc_h": "real_variable",
+        "crane_clrnc_v": "real_variable",
         "croco_id": "real_variable",
         "croco_od": "real_variable",
         "croco_thick": "real_variable",
+        "cryomag_h": "real_variable",
+        "cryomag_l": "real_variable",
+        "cryomag_w": "real_variable",
+        "cryostat_clrnc": "real_variable",
+        "cryostore_h": "real_variable",
+        "cryostore_l": "real_variable",
+        "cryostore_w": "real_variable",
         "crypmw_max": "real_variable",
         "csawth": "real_variable",
         "csi": "real_variable",
@@ -20387,6 +20887,15 @@
         "dztop": "real_variable",
         "edrive": "real_variable",
         "eff_tf_cryo": "real_variable",
+        "elecdist_h": "real_variable",
+        "elecdist_l": "real_variable",
+        "elecdist_w": "real_variable",
+        "elecload_h": "real_variable",
+        "elecload_l": "real_variable",
+        "elecload_w": "real_variable",
+        "elecstore_h": "real_variable",
+        "elecstore_l": "real_variable",
+        "elecstore_w": "real_variable",
         "emult": "real_variable",
         "enbeam": "real_variable",
         "epbetmax": "real_variable",
@@ -20445,6 +20954,8 @@
         "fbmaxcs": "real_variable",
         "fbreed": "real_variable",
         "fburn": "real_variable",
+        "fc_building_l": "real_variable",
+        "fc_building_w": "real_variable",
         "fcap0": "real_variable",
         "fcap0cp": "real_variable",
         "fcdfuel": "real_variable",
@@ -20593,20 +21104,35 @@
         "gapds": "real_variable",
         "gapoh": "real_variable",
         "gapomin": "real_variable",
+        "gas_buildings_h": "real_variable",
+        "gas_buildings_l": "real_variable",
+        "gas_buildings_w": "real_variable",
+        "ground_clrnc": "real_variable",
         "gtscale": "int_variable",
         "harnum": "real_variable",
         "hastelloy_thickness": "real_variable",
         "hccl": "real_variable",
+        "hcd_building_h": "real_variable",
+        "hcd_building_l": "real_variable",
+        "hcd_building_w": "real_variable",
         "hcdportsize": "int_variable",
         "hcwt": "real_variable",
+        "heat_sink_h": "real_variable",
+        "heat_sink_l": "real_variable",
+        "heat_sink_w": "real_variable",
         "hfact": "real_variable",
         "hldivlim": "real_variable",
+        "hot_sepdist": "real_variable",
+        "hotcell_h": "real_variable",
         "htpmw_blkt": "real_variable",
         "htpmw_div": "real_variable",
         "htpmw_fw": "real_variable",
         "htpmw_ife": "real_variable",
         "htpmw_min": "real_variable",
         "htpmw_shld": "real_variable",
+        "hw_storage_h": "real_variable",
+        "hw_storage_l": "real_variable",
+        "hw_storage_w": "real_variable",
         "i_bldgs_size": "int_variable",
         "i_bldgs_v": "int_variable",
         "i_cp_joints": "int_variable",
@@ -20653,6 +21179,12 @@
         "ignite": "int_variable",
         "iinvqd": "int_variable",
         "ilhthresh": "int_variable",
+        "ilw_smelter_h": "real_variable",
+        "ilw_smelter_l": "real_variable",
+        "ilw_smelter_w": "real_variable",
+        "ilw_storage_h": "real_variable",
+        "ilw_storage_l": "real_variable",
+        "ilw_storage_w": "real_variable",
         "impurity_enrichment": "real_array",
         "impvar": "int_variable",
         "impvardiv": "int_variable",
@@ -20710,11 +21242,23 @@
         "lhat": "real_variable",
         "li6enrich": "real_variable",
         "life_dpa": "real_variable",
+        "llw_storage_h": "real_variable",
+        "llw_storage_l": "real_variable",
+        "llw_storage_w": "real_variable",
         "lpulse": "int_variable",
         "lsa": "int_variable",
         "m_res": "int_variable",
         "m_s_limit": "real_variable",
         "mach0": "real_variable",
+        "magnet_pulse_h": "real_variable",
+        "magnet_pulse_l": "real_variable",
+        "magnet_pulse_w": "real_variable",
+        "magnet_trains_h": "real_variable",
+        "magnet_trains_l": "real_variable",
+        "magnet_trains_w": "real_variable",
+        "maint_cont_h": "real_variable",
+        "maint_cont_l": "real_variable",
+        "maint_cont_w": "real_variable",
         "maintenance_fwbs": "real_variable",
         "maintenance_gen": "real_variable",
         "maxcal": "int_variable",
@@ -20733,6 +21277,8 @@
         "n_tf_joints": "int_variable",
         "n_tf_joints_contact": "int_variable",
         "n_tf_turn": "real_variable",
+        "nbi_sys_l": "real_variable",
+        "nbi_sys_w": "real_variable",
         "nblktmodpi": "int_variable",
         "nblktmodpo": "int_variable",
         "nblktmodti": "int_variable",
@@ -20864,6 +21410,7 @@
         "pwpm2": "real_variable",
         "q": "real_variable",
         "q0": "real_variable",
+        "qnty_sfty_fac": "real_variable",
         "qnuc": "real_variable",
         "qtargettotal": "real_variable",
         "quench_detection_ef": "real_variable",
@@ -20875,6 +21422,13 @@
         "rbvfac": "real_variable",
         "rbwt": "real_variable",
         "rcool": "real_variable",
+        "reactor_clrnc": "real_variable",
+        "reactor_fndtn_thk": "real_variable",
+        "reactor_hall_h": "real_variable",
+        "reactor_hall_l": "real_variable",
+        "reactor_hall_w": "real_variable",
+        "reactor_roof_thk": "real_variable",
+        "reactor_wall_thk": "real_variable",
         "rebco_thickness": "real_variable",
         "redun_vacp": "real_variable",
         "reinke_mode": "int_variable",
@@ -20892,6 +21446,9 @@
         "rli": "real_variable",
         "rmajor": "real_variable",
         "rnbeam": "real_variable",
+        "robotics_h": "real_variable",
+        "robotics_l": "real_variable",
+        "robotics_w": "real_variable",
         "roughness": "real_variable",
         "routr": "real_variable",
         "row": "real_variable",
@@ -20906,6 +21463,9 @@
         "scan_dim": "int_variable",
         "scrapli": "real_variable",
         "scraplo": "real_variable",
+        "sec_buildings_h": "real_variable",
+        "sec_buildings_l": "real_variable",
+        "sec_buildings_w": "real_variable",
         "secondary_cycle": "int_variable",
         "shdr": "real_variable",
         "shdzl": "real_variable",
@@ -20924,10 +21484,13 @@
         "sigpfcalw": "real_variable",
         "sigpfcf": "real_variable",
         "sigvvall": "real_variable",
+        "site_imp_uc": "real_array",
         "sitecost": "real_variable",
         "sombdr": "real_variable",
         "somtdr": "real_variable",
         "ssync": "real_variable",
+        "staff_buildings_area": "real_variable",
+        "staff_buildings_h": "real_variable",
         "startupratio": "real_variable",
         "stcl": "real_variable",
         "step91_per": "real_variable",
@@ -21020,6 +21583,7 @@
         "tohsin": "real_variable",
         "tqnch": "real_variable",
         "tramp": "real_variable",
+        "transp_clrnc": "real_variable",
         "tratio": "real_variable",
         "trcl": "real_variable",
         "triang": "real_variable",
@@ -21027,6 +21591,12 @@
         "trithtmw": "real_variable",
         "triv": "real_variable",
         "ttarget": "real_variable",
+        "turbine_hall_h": "real_variable",
+        "turbine_hall_l": "real_variable",
+        "turbine_hall_w": "real_variable",
+        "tw_storage_h": "real_variable",
+        "tw_storage_l": "real_variable",
+        "tw_storage_w": "real_variable",
         "ucblbe": "real_variable",
         "ucblbreed": "real_variable",
         "ucblli": "real_variable",
@@ -21116,11 +21686,21 @@
         "vvhealw": "real_variable",
         "walalw": "real_variable",
         "wallpf": "real_variable",
+        "warm_shop_h": "real_variable",
+        "warm_shop_l": "real_variable",
+        "warm_shop_w": "real_variable",
+        "water_buildings_h": "real_variable",
+        "water_buildings_l": "real_variable",
+        "water_buildings_w": "real_variable",
         "watertemp": "real_variable",
         "wfbuilding": "real_variable",
         "wgt": "real_variable",
         "wgt2": "real_variable",
+        "whole_site_area": "real_variable",
         "windspeed": "real_variable",
+        "workshop_h": "real_variable",
+        "workshop_l": "real_variable",
+        "workshop_w": "real_variable",
         "wsvfac": "real_variable",
         "xi_ebw": "real_variable",
         "xparain": "real_variable",
