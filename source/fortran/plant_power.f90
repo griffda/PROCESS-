@@ -865,7 +865,7 @@ contains
     use physics_variables, only: pdivt, palpfwmw, ignite
     use structure_variables, only: coldmass
     use tfcoil_variables, only: tfsai, tcoolin, tmpcry, i_tf_sup, presleg, &
-        prescp, dtiocool, n_tf, cpttf, pres_joints, eff_tf_cryo
+        prescp, dtiocool, n_tf, cpttf, pres_joints, eff_tf_cryo, cryo_cool_req
     use times_variables, only: tpulse
     use primary_pumping_variables, only: htpmw_fw_blkt
     use constants, only: rmu0, pi
@@ -984,6 +984,7 @@ contains
     helpow = 0.0D0
     crypmw = 0.0D0
     p_tf_cryoal_cryo = 0.0D0
+    cryo_cool_req = 0.0D0
     
     ! Superconductors TF/PF cryogenic cooling
     if ( i_tf_sup == 1 .or. ipfres == 0 ) then
@@ -1015,6 +1016,10 @@ contains
         ! Add to electric power requirement for cryogenic plant (MW)
         crypmw = crypmw + p_tf_cryoal_cryo
     end if
+
+    ! Calculate cryo cooling requirement at 4.5K (kW)
+    cryo_cool_req = (helpow * ((293/tmpcry) - 1)/((293/4.5) - 1) + helpow_cryal * ((293/tcoolin) - 1)/((293/4.5) - 1)) / 1.0D3
+  
   end subroutine power1
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

@@ -1936,41 +1936,37 @@ class CostsStep:
         """
         # 22.03.01 Helium Refrigerator
         # Original STARFIRE value, scaling with fusion island volume
-        step220301 = cv.step_ref[33] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
-        step2203 = step220301
+        # step220301 = cv.step_ref[33] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
+        # step2203 = step220301
+        # Superceded by parametric cryoplant costing below
 
         # 22.03.02 Liquid Helium Transfer and Storage
         # Original STARFIRE value, scaling with fusion island volume
-        step220302 = cv.step_ref[34] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
-        step2203 += step220302
+        # step220302 = cv.step_ref[34] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
+        # step2203 += step220302
+        # Superceded by parametric cryoplant costing below
 
         # 22.03.03 Gas Helium Storage
         # Original STARFIRE value, scaling with fusion island volume
-        step220303 = cv.step_ref[35] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
-        step2203 += step220303
+        # step220303 = cv.step_ref[35] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
+        # step2203 += step220303
+        # Superceded by parametric cryoplant costing below
 
         # 22.03.04 Liquid Nitrogen Storage
         # Original STARFIRE value, scaling with fusion island volume
-        step220304 = cv.step_ref[36] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
-        step2203 += step220304
+        # step220304 = cv.step_ref[36] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
+        # step2203 += step220304
+        # Superceded by parametric cryoplant costing below
+
+        # Cryoplant - will be zero for resistive coils
+        # Parametric costing of cryo systems based on refrigeration capacity produced at Helium temp of 4.5K
+        step2203 = 6.14e0 * tfv.cryo_cool_req ** 0.63
 
         # Output costs
         if (self.iprint == 1) and (cv.output_costs == 1):
             po.write(self.outfile, "******************* 22.03 Cryogenic Cooling System")
             po.ocosts(
-                self.outfile, "(step220301)", "Helium Refrigerator (M$)", step220301
-            )
-            po.ocosts(
-                self.outfile,
-                "(step220302)",
-                "Liquid Helium Transfer and Storage (M$)",
-                step220302,
-            )
-            po.ocosts(
-                self.outfile, "(step220303)", "Gas Helium Storage (M$)", step220303
-            )
-            po.ocosts(
-                self.outfile, "(step220304)", "Liquid Nitrogen Storage (M$)", step220304
+                self.outfile, "(step2203)", "Cryoplant (M$)", step2203 
             )
             po.oblnkl(self.outfile)
             po.ocosts(

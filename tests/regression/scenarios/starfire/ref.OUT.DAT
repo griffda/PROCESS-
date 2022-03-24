@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1435-g41f5dda2
-    Branch : 1367-add-site-preparation-costs-into-model-2
-   Git log : Merge\ branch\ |develop|\ into\ 1367-add-site-preparat
- Date/time : 18 Mar 2022 10:35:44 +00:00(hh:mm) UTC
-      User : rhicha
-  Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-295/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-295/test_scenario_starfire_0/IN.DAT
+   Tag No. : v2.1-1456-ge3dc2ccc code contains untracked changes
+    Branch : 1336-update-cryoplant-cost-22-03-for-cost-model-2
+   Git log : Merge\ branch\ |develop|\ into\ 1336-update-cryoplant-
+ Date/time : 24 Mar 2022 14:44:01 +00:00(hh:mm) UTC
+      User : jg6173
+  Computer : L1088
+ Directory : /tmp/pytest-of-jg6173/pytest-50/test_solver0
+     Input : /tmp/pytest-of-jg6173/pytest-50/test_scenario_starfire_0/IN.DAT
  Run title : starfire
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -187,12 +187,9 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  (step2202)          Total Account 22.02 Cost (M$)                                                               157.28
  
  ******************* 22.03 Cryogenic Cooling System
- (step220301)        Helium Refrigerator (M$)                                                                     39.77
- (step220302)        Liquid Helium Transfer and Storage (M$)                                                      18.59
- (step220303)        Gas Helium Storage (M$)                                                                      14.47
- (step220304)        Liquid Nitrogen Storage (M$)                                                                  4.14
+ (step2203)          Cryoplant (M$)                                                                               80.73
  
- (step2203)          Total Account 22.03 Cost (M$)                                                                76.97
+ (step2203)          Total Account 22.03 Cost (M$)                                                                80.73
  
  ******************* 22.04 Waste Treatment and Disposal
  (step220401)        Liquid Waste (M$)                                                                            14.19
@@ -224,9 +221,9 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ********************
  (step2298)          Spares (M$)                                                                                 727.74
- (step2299)          Contingency (M$)                                                                           1489.04
+ (step2299)          Contingency (M$)                                                                           1489.61
  
- (step22)            Total Account 22 Cost (M$)                                                                11416.00
+ (step22)            Total Account 22 Cost (M$)                                                                11420.33
  
  ************************* 23. Turbine Plant Equipment **************************
  
@@ -264,42 +261,42 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ***************************** 27. Remote Handling ******************************
  
- (step2701)          Remote Handing (M$)                                                                        1583.29
+ (step2701)          Remote Handing (M$)                                                                        1583.62
  
- (step27)            Total Account 27 Cost (M$)                                                                 1583.29
+ (step27)            Total Account 27 Cost (M$)                                                                 1583.62
  
  ****************************** Plant Direct Cost *******************************
  
- (cdirt)             Plant direct cost (M$)                                                                    22693.85
+ (cdirt)             Plant direct cost (M$)                                                                    22698.51
  
  ******************************** Indirect Cost *********************************
  
- (step91)            Construction Facilities, Equipment and Services (M$)                                       6808.16
- (step92)            Engineering and Costruction Management Services (M$)                                       7375.50
- (step93)            Other Costs (M$)                                                                           3404.08
+ (step91)            Construction Facilities, Equipment and Services (M$)                                       6809.55
+ (step92)            Engineering and Costruction Management Services (M$)                                       7377.02
+ (step93)            Other Costs (M$)                                                                           3404.78
  
  ******************************* Constructed Cost *******************************
  
- (concost)           Constructed Cost (M$)                                                                     40281.59
+ (concost)           Constructed Cost (M$)                                                                     40289.85
  
  ************************* Interest during Construction *************************
  
- (moneyint)          Interest during construction (M$)                                                          6042.24
+ (moneyint)          Interest during construction (M$)                                                          6043.48
  
  *************************** Total Capital Investment ***************************
  
- (capcost)           Total capital investment (M$)                                                             46323.83
+ (capcost)           Total capital investment (M$)                                                             46333.33
  
  *************************************** Cost of Electricity, 2017 US$ ****************************************
  
  First wall / blanket life (years)                                        (fwbllife)                    5.343     
  Divertor life (years)                                                    (divlife.)                    0.286     
- Cost of electricity (m$/kWh)                                             (coe)                       408.509     
+ Cost of electricity (m$/kWh)                                             (coe)                       408.590     
  
  Power Generation Costs :
  
  									Annual Costs, M$	    COE, m$/kWh
- Capital Investment                                                          3011.05                   394.09
+ Capital Investment                                                          3011.67                   394.17
  Operation & Maintenance                                                       73.58                     9.63
  Decommissioning Fund                                                          25.46                     3.33
  Fuel Charge Breakdown
@@ -310,7 +307,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  	Actual Fuel                                                                   3.37                     0.44
  	Waste Disposal                                                                7.79                     1.02
  Total Fuel Cost                                                               11.17                     1.46
- Total Cost                                                                  3121.26                   408.51
+ Total Cost                                                                  3121.88                   408.59
  
  ********************************************* Plant Availability *********************************************
  
@@ -1390,9 +1387,11 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  AC losses in cryogenic components (MW)                                   (qac/1.0D6)               1.082E-03  OP 
  Resistive losses in current leads (MW)                                   (qcl/1.0D6)               1.469E-02  OP 
  45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             1.853E-02  OP 
- Sum = Total heat removal at cryogenic temperatures (W)                   (helpow/1.0D6)            5.970E-02  OP 
- Temperature of cryogenic components (K)                                  (tmpcry)                  4.500E+00     
+ Sum = Total heat removal at cryogenic temperatures (tmpcry & tcoolin) (M (helpow + helpow_cryal/1. 5.970E-02  OP 
+ Temperature of cryogenic superconducting components (K)                  (tmpcry)                  4.500E+00     
+ Temperature of cryogenic aluminium components (K)                        (tcoolin)                 3.131E+02     
  Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                           2.028E-03  OP 
+ Efficiency (figure of merit) of cryogenic aluminium plant is 40% of idea                          -2.020E+00  OP 
  Electric power for cryogenic plant (MW)                                  (crypmw)                  2.944E+01  OP 
  
  ************************************ Plant Power / Heat Transport Balance ************************************

@@ -1524,6 +1524,7 @@
         "croco_strand_area": null,
         "croco_strand_critical_current": null,
         "croco_thick": 0.0025,
+        "cryo_cool_req": 0.0,
         "cryomag_h": 5.0,
         "cryomag_l": 120.0,
         "cryomag_w": 90.0,
@@ -1581,7 +1582,7 @@
         "degrad": 0.01745329251,
         "degree": "pi/180.0D0",
         "delld": 1.0,
-        "delta": null,
+        "delta": 0.0001,
         "delta_eta": 0.0,
         "delta_var": null,
         "dendiv": 0.0,
@@ -8782,7 +8783,7 @@
         "zeffai": 0.0,
         "zeffdiv": 1.0,
         "zeffmax": 3.6,
-        "zero": 0.0,
+        "zero": "0.0_wp_",
         "zfxf": [
             0.0,
             0.0,
@@ -9410,6 +9411,7 @@
         "croco_strand_area": "",
         "croco_strand_critical_current": "",
         "croco_thick": "Thickness of CroCo copper tube (m) (`iteration variable 158`)",
+        "cryo_cool_req": "Cryo cooling requirement at 4.5K (W)",
         "cryomag_h": "Cryogenic Buildings for Magnet and Fuel Cycle length, width, height (m)",
         "cryomag_l": "Cryogenic Buildings for Magnet and Fuel Cycle length, width, height (m)",
         "cryomag_w": "Cryogenic Buildings for Magnet and Fuel Cycle length, width, height (m)",
@@ -20427,7 +20429,8 @@
             "vcool",
             "vol_cond_cp",
             "whtcp",
-            "whttflgs"
+            "whttflgs",
+            "cryo_cool_req"
         ],
         "times_variables": [
             "pulsetimings",
