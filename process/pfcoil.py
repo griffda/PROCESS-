@@ -609,7 +609,7 @@ class PFCoil:
 
                 if ij == 0:
                     # Index args +1ed
-                    bri, bro, bzi, bzo = pf.peakb(
+                    bri, bro, bzi, bzo = self.peakb(
                         i + 1, iii + 1, it
                     )  #  returns pfv.bpf, bpf2
 
@@ -807,7 +807,7 @@ class PFCoil:
 
         #  Peak field due to other PF coils plus plasma
         timepoint = 5
-        bri, bro, bzi, bzo = pf.peakb(pfv.nohc, 99, timepoint)
+        bri, bro, bzi, bzo = self.peakb(pfv.nohc, 99, timepoint)
 
         pfv.bmaxoh = abs(bzi - bmaxoh2)
         bohci = pfv.bmaxoh
@@ -822,7 +822,7 @@ class PFCoil:
             pfv.cohbop, pfv.ra[pfv.nohc - 1], pfv.rb[pfv.nohc - 1], hohc
         )
         timepoint = 2
-        bri, bro, bzi, bzo = pf.peakb(pfv.nohc, 99, timepoint)
+        bri, bro, bzi, bzo = self.peakb(pfv.nohc, 99, timepoint)
 
         pfv.bmaxoh0 = abs(pfv.bmaxoh0 + bzi)
 
@@ -980,3 +980,134 @@ class PFCoil:
                 * (1.0e6 * pfv.ric[pfv.nohc - 1]) ** 2
             )
             pfv.powpfres = pfv.powpfres + pfv.powohres
+
+    def peakb(self, i, ii, it):
+        """Calculates the peak field at a PF coil.
+
+        author: P J Knight, CCFE, Culham Science Centre
+        i : input integer : coil number
+        ii : input integer : group number
+        it : input integer : time point at which field is highest
+        bri : output real : radial field at inner edge (T)
+        bro : output real : radial field at outer edge (T)
+        bzi : output real : vertical field at inner edge (T)
+        bzo : output real : vertical field at outer edge (T)
+        This routine calculates the peak magnetic field components
+        at the inner and outer edges of a given PF coil.
+        The calculation includes the effects from all the coils
+        and the plasma.
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+        """
+        if bv.iohcl != 0 and i == pfv.nohc:
+            #  Peak field is to be calculated at the Central Solenoid itself,
+            #  so exclude its own contribution; its self field is
+            #  dealt with externally using routine BFMAX
+            kk = 0
+        else:
+            #  Check different times for maximum current
+            if abs(pfv.curpfs[i - 1] - pfv.ric[i - 1]) < 1.0e-12:
+                it = 2
+            elif abs(pfv.curpff[i - 1] - pfv.ric[i - 1]) < 1.0e-12:
+                it = 4
+            elif abs(pfv.curpfb[i - 1] - pfv.ric[i - 1]) < 1.0e-12:
+                it = 5
+            else:
+                eh.idiags[0] = it 
+                eh.report_error(72)
+
+            if bv.iohcl == 0:
+                #  No Central Solenoid
+                kk = 0
+            else:
+                if pfv.cohbop > pfv.coheof:
+                    sgn = 1.0e0
+                else:
+                    sgn = -1.0e0
+
+                #  Current in each filament representing part of the Central Solenoid
+                for iohc in range(pf.nfxf):
+                    pf.cfxf[iohc] = (
+                        pfv.waves[pfv.nohc - 1, it - 1]
+                        * pfv.coheof
+                        * sgn
+                        * bv.ohcth
+                        * pfv.ohhghf
+                        * bv.hmax
+                        / pf.nfxf
+                        * 2.0e0
+                    )
+            
+                kk = pf.nfxf
+    
+        #  Non-Central Solenoid coils' contributions
+        jj = 0
+        for iii in range(pfv.ngrp):
+            for jjj in range(pfv.ncls[iii]):
+                
+                jj = jj + 1
+                #  Radius, z-coordinate and current for each coil
+                if iii == ii - 1:
+                    #  Self field from coil (Lyle's Method)
+                    kk = kk + 1
+
+                    dzpf = pfv.zh[jj - 1] - pfv.zl[jj - 1]
+                    pf.rfxf[kk - 1] = pfv.rpf[jj - 1]
+                    pf.zfxf[kk - 1] = pfv.zpf[jj - 1] + dzpf * 0.125e0
+                    pf.cfxf[kk - 1] = (
+                        pfv.ric[jj - 1] * pfv.waves[jj - 1, it - 1] * 0.25e6
+                    )
+                    kk = kk + 1
+                    pf.rfxf[kk - 1] = pfv.rpf[jj - 1]
+                    pf.zfxf[kk - 1] = pfv.zpf[jj - 1] + dzpf * 0.375e0
+                    pf.cfxf[kk - 1] = (
+                        pfv.ric[jj - 1] * pfv.waves[jj - 1, it - 1] * 0.25e6
+                    )
+                    kk = kk + 1
+                    pf.rfxf[kk - 1] = pfv.rpf[jj - 1]
+                    pf.zfxf[kk - 1] = pfv.zpf[jj - 1] - dzpf * 0.125e0
+                    pf.cfxf[kk - 1] = (
+                        pfv.ric[jj - 1] * pfv.waves[jj - 1, it - 1] * 0.25e6
+                    )
+                    kk = kk + 1
+                    pf.rfxf[kk - 1] = pfv.rpf[jj - 1]
+                    pf.zfxf[kk - 1] = pfv.zpf[jj - 1] - dzpf * 0.375e0
+                    pf.cfxf[kk - 1] = (
+                        pfv.ric[jj - 1] * pfv.waves[jj - 1, it - 1] * 0.25e6
+                    )
+        
+                else:
+                    #  Field from different coil
+                    kk = kk + 1
+                    pf.rfxf[kk - 1] = pfv.rpf[jj - 1]
+                    pf.zfxf[kk - 1] = pfv.zpf[jj - 1]
+                    pf.cfxf[kk - 1] = (
+                        pfv.ric[jj - 1] * pfv.waves[jj - 1, it - 1] * 1.0e6
+                    )
+
+        #  Plasma contribution
+        if it > 2:
+            kk = kk + 1
+            pf.rfxf[kk - 1] = pv.rmajor
+            pf.zfxf[kk - 1] = 0.0e0
+            pf.cfxf[kk - 1] = pv.plascur
+
+        #  Calculate the field at the inner and outer edges
+        #  of the coil of interest
+        pf.xind[:kk], bri, bzi, psi = pf.bfield(
+            pf.rfxf[:kk], pf.zfxf[:kk], pf.cfxf[:kk], pfv.ra[i - 1], pfv.zpf[i - 1], kk
+        )
+        pf.xind[:kk], bro, bzo, psi = pf.bfield(
+            pf.rfxf[:kk], pf.zfxf[:kk], pf.cfxf[:kk], pfv.rb[i - 1], pfv.zpf[i - 1], kk
+        )
+
+        #  bpf and bpf2 for the Central Solenoid are calculated in OHCALC
+        if (bv.iohcl != 0) and (i == pfv.nohc):
+            return bri, bro, bzi, bzo
+    
+        bpfin = math.sqrt(bri ** 2 + bzi ** 2)
+        bpfout = math.sqrt(bro ** 2 + bzo ** 2)
+        for n in range(pfv.ncls[ii - 1]):
+            pfv.bpf[i - 1 + n] = bpfin
+            pf.bpf2[i - 1 + n] = bpfout
+
+        return bri, bro, bzi, bzo

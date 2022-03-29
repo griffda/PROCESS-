@@ -22,6 +22,7 @@ from process.fortran import times_variables as tv
 from process.fortran import constants
 from process.pfcoil import PFCoil
 
+
 @pytest.fixture
 def pfcoil():
     """Fixture to create PFCoil object.
@@ -30,6 +31,7 @@ def pfcoil():
     :rtype: process.pfcoil.PFCoil
     """
     return PFCoil()
+
 
 def test_pfcoil(monkeypatch, pfcoil):
     """Test pfcoil subroutine.
@@ -2015,7 +2017,7 @@ def test_fixb():
     assert_array_almost_equal(bfix, bfix_exp)
 
 
-def test_peakb(monkeypatch):
+def test_peakb(monkeypatch, pfcoil):
     """Test peakb subroutine.
 
     peakb() requires specific arguments in order to work; these were discovered
@@ -2023,6 +2025,8 @@ def test_peakb(monkeypatch):
     2018 IN.DAT.
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
+    :param pfcoil: a PFCoil instance
+    :type pfcoil: process.pfcoil.PFCoil
     """
     # Mock module vars
     monkeypatch.setattr(pf, "nfxf", 14)
@@ -2605,7 +2609,7 @@ def test_peakb(monkeypatch):
     bzi_exp = 1.049564e1
     bzo_exp = -6.438987
 
-    bri, bro, bzi, bzo = pf.peakb(i, ii, it)
+    bri, bro, bzi, bzo = pfcoil.peakb(i, ii, it)
 
     assert pytest.approx(bri) == bri_exp
     assert pytest.approx(bro) == bro_exp
