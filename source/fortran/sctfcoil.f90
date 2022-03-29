@@ -39,7 +39,8 @@ real(dp), private :: awpc
 !! GW insulation and insertion gap [m2]
 
 real(dp), private :: awptf
-!! Total cross-sectional area of winding pack [m2]
+!! Total cross-sectional area of winding pack without 
+!! ground insulation and insertion gap [m2]
 
 real(dp), private :: a_tf_steel
 !! Inboard coil steel coil cross-sectional area [m2]
@@ -152,8 +153,8 @@ real(dp) :: conductor_jacket_area, conductor_jacket_fraction
 real(dp) :: conductor_rebco_area,  conductor_rebco_fraction
 real(dp) :: conductor_critical_current
 real(dp) :: conductor_acs
-!! Area of cable space inside jacket
 real(dp) :: conductor_area      
+!! Area of cable space inside jacket
 
 real(dp):: T1, time2, tau2, estotft
 ! (OBSOLETE, but leave for moment)
@@ -452,6 +453,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
     !! Author : S. Kahn, CCFE
     !! Seting the WP, case and tunrs geometry for SC magnets
     
+    use error_handling, only: fdiags, report_error
     use tfcoil_variables, only: acndttf, awphec, cpttf, insulation_area,     &
         n_layer, n_pancake, n_tf_turn, i_tf_sc_mat, jwptf, thicndut, thwcndut, &
         acasetf, acstf, acond, aiwp, avwp, dhecoil, n_tf, aswp, vftf, tfareain
@@ -524,6 +526,21 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
 
     !  Inboard coil insulation fraction [-]
     f_tf_ins = n_tf * a_tf_ins / tfareain 
+    
+    ! Negative areas or fractions error reporting
+    if ( acond <= 0.0D0 .or. avwp <= 0.0D0 .or. aiwp <= 0.0D0 .or. &
+         aswp <= 0.0D0 .or. a_tf_steel <= 0.0D0 .or. f_tf_steel <= 0.0D0 .or. &
+         a_tf_ins <= 0.0D0 .or. f_tf_ins <= 0.0D0 ) then
+        fdiags(1) = acond 
+        fdiags(2) = avwp 
+        fdiags(3) = aiwp 
+        fdiags(4) = aswp 
+        fdiags(5) = a_tf_steel 
+        fdiags(6) = f_tf_steel 
+        fdiags(7) = a_tf_ins 
+        fdiags(8) = f_tf_ins 
+        call report_error(276)
+    end if
     ! -------------------
 
 
@@ -1724,17 +1741,19 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use build_variables, only: tfcth, r_tf_inboard_mid, bore, ohcth, hmax, &
         r_tf_inboard_in
-    use tfcoil_variables, only: eyzwp, casestr, windstrain, n_tf_turn, &
+    use tfcoil_variables, only: casestr, n_tf_turn, &
         dr_tf_wp, i_tf_tresca, acstf, vforce, &
         ritfc, jwptf, sig_tf_cs_bucked, sig_tf_case, sig_tf_wp, &
         thwcndut, insstrain, vforce, tinstf, &
         acstf, jwptf, insstrain, &
         rbmax, thicndut, acndttf, tfinsgap, &
         acasetf, sig_tf_case_max, poisson_steel, poisson_copper, poisson_al, &
-        n_tf_graded_layers, i_tf_sup, i_tf_bucking, fcoolcp, eyoung_winding, &
+        n_tf_graded_layers, i_tf_sup, i_tf_bucking, fcoolcp, eyoung_cond_axial, &
         eyoung_steel, eyoung_res_tf_buck, eyoung_ins, eyoung_al, eyoung_copper, &
         aiwp, aswp, cpttf, n_tf, i_tf_stress_model, sig_tf_wp_max, &
-        i_tf_turns_integer, casthi
+        i_tf_turns_integer, casthi, acond, avwp, awphec, poisson_ins, &
+        eyoung_cond_trans, poisson_cond_axial, poisson_cond_trans, dhecoil, fcutfsu, &
+        str_wp, n_tf_wp_layers
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
         cohbop, ncls, cptdin
     use constants, only: pi, sig_file
@@ -1815,39 +1834,66 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! Maximum shear stress, for the Tresca yield criterion of each layer [Pa]
     !! If the CEA correction is addopted, the CEA corrected value is used
     
-    real(dp), dimension(n_tf_layer*n_radial_array) :: strain_tf_r
+    real(dp), dimension(n_tf_layer*n_radial_array) :: str_tf_r
     !! Radial normal strain radial distribution
     
-    real(dp), dimension(n_tf_layer*n_radial_array) :: strain_tf_t
+    real(dp), dimension(n_tf_layer*n_radial_array) :: str_tf_t
     !! Toroidal normal strain radial distribution
      
-    real(dp), dimension(n_tf_layer*n_radial_array) :: strain_tf_z
+    real(dp), dimension(n_tf_layer*n_radial_array) :: str_tf_z
     !! Vertical normal strain radial distribution
 
-    real(dp) :: eyoung_wp_t
-    !! Effective WP young modulus in the toroidal direction
+    real(dp) :: eyoung_wp_trans
+    !! Smeared WP Young's modulus in the toroidal direction [Pa]
+    
+    real(dp) :: eyoung_wp_trans_eff
+    !! Smeared WP and lateral case Young's modulus in the torodial direction [Pa]
+    !! (Includes the effect of the sidewalls of the steel case)
 
-    real(dp) :: eyoung_wp_z
-    !! Smeared WP young modulus in the vertical direction [Pa]
+    real(dp) :: eyoung_wp_axial
+    !! Smeared WP Young's modulus in the vertical direction [Pa]
 
-    real(dp) :: eyoung_wp_z_eff
-    !! Effective WP young modulus used in the stress calculations [Pa]
+    real(dp) :: eyoung_wp_axial_eff
+    !! Smeared WP and lateral case Young's modulus in the vertical direction [Pa]
+    !! (Includes the effect of the sidewalls of the steel case)
+    
+    real(dp) :: poisson_wp_trans
+    !! Smeared WP Poisson's ratio in the transverse-transverse direction
+
+    real(dp) :: poisson_wp_trans_eff
+    !! Smeared WP and lateral case Poisson's ratio in the transverse-transverse direction
+    !! (Includes the effect of the sidewalls of the steel case)
+
+    real(dp) :: poisson_wp_axial
+    !! Smeared WP Poisson's ratio in the vertical-transverse direction
+
+    real(dp) :: poisson_wp_axial_eff
+    !! Smeared WP and lateral case Poisson's ratio in the vertical-transverse direction
+    !! (Includes the effect of the sidewalls of the steel case)
 
     real(dp), dimension(n_tf_layer+1) :: radtf
     !! Radii used to define the layers used in the stress models [m]
     !! Layers are labelled from inboard to outbard
     
-    real(dp), dimension(n_tf_layer) :: eyoung_p
-    !! Toroidal plan's Young modulae (one per layer) used in the stress models [Pa]
+    real(dp), dimension(n_tf_layer) :: eyoung_trans
+    !! Young's moduli (one per layer) of the TF coil in the 
+    !! transverse (radial/toroidal) direction. Used in the stress 
+    !! models [Pa]
     
-    real(dp), dimension(n_tf_layer) :: eyoung_z
-    !! Vertical direction's Young modulae (one per layer) used in the stress models [Pa]
+    real(dp), dimension(n_tf_layer) :: eyoung_axial
+    !! Young's moduli (one per layer) of the TF coil in the vertical
+    !! direction used in the stress models [Pa]
     
-    real(dp), dimension(n_tf_layer) :: poisson_p
-    !! Toroidal plan's Poisson's ratio (one per layer) used in the stress models
+    real(dp), dimension(n_tf_layer) :: poisson_trans
+    !! Poisson's ratios (one per layer) of the TF coil between the 
+    !! two transverse directions (radial and toroidal). Used in the 
+    !! stress models.
     
-    real(dp), dimension(n_tf_layer) :: poisson_z
-    !! Toroidal plan's Poisson's ratio (one per layer) used in the stress models
+    real(dp), dimension(n_tf_layer) :: poisson_axial
+    !! Poisson's ratios (one per layer) of the TF coil between the 
+    !! vertical and transverse directions (in that order). Used in the
+    !! stress models. d(transverse strain)/d(vertical strain) with
+    !! only vertical stress. 
 
     real(dp), dimension(n_tf_layer) :: jeff
     !! Effective current density [A/m2]
@@ -1908,9 +1954,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(dp) :: fac_sig_z_wp_av
     !! WP averaged vertical stress unsmearing factor
 
-    real(dp) :: fac_oh
-    !! Central Solenoid (OH) steel conduit stress unsmearing factor
-
     real(dp) :: svmxz
     !! Von-mises stress in steel setting the radial stress to 0
 
@@ -1929,10 +1972,12 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! WP + lateral casing area
 
     real(dp) :: eyoung_cond
-    !! Resistive conductors Young modulus [Pa]
-
-    real(dp) :: eyoung_wp_t_eff
-    !! WP young modulus in toroidal direction with lateral casing effect [Pa]
+    !! Conductor Young's modulus [Pa]
+    !! Only used for resistive TF coils
+    
+    real(dp) :: poisson_cond
+    !! Conductor Poisson's ratio
+    !! Only used for resistive TF coils
 
     real(dp) :: r_wp_inner_eff
     !! Inner radius of the stress model effective WP layer [m]
@@ -1945,7 +1990,51 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     
     real(dp) :: f_tf_stress_front_case
     !! The ratio between the true cross sectional area of the 
-    ! front case, and that considered by the plane strain solver
+    !! front case, and that considered by the plane strain solver
+    
+    real(dp) :: a_working
+    !! Working variable to keep track of how much area we've
+    !! considered when assembling the parallel elastic quantities
+    !! of composite members [m^2 or consistent units]
+    
+    real(dp) :: eyoung_working
+    !! Working variable to keep track of how much stiffness we've
+    !! considered when assembling the elastic quantities
+    !! of composite members [Pa]
+    
+    real(dp) :: poisson_working
+    !! Working variable to keep track of how much Poisson effect
+    !! we've considered when assembling the elastic quantities
+    !! of composite members [Pa]
+    
+    real(dp) :: l_working
+    !! Working variable to keep track of how much length we've
+    !! considered when assembling the series elastic quantities
+    !! of composite members [m]
+    
+    real(dp), dimension(n_tf_wp_layers) :: eyoung_member_array
+    !! Array to store the Young's moduli of the members to composite into smeared
+    !! properties [Pa]
+    
+    real(dp), dimension(n_tf_wp_layers) :: poisson_member_array
+    !! Array to store the Poisson's ratios of the members to composite into smeared
+    !! properties
+    
+    real(dp), dimension(n_tf_wp_layers) :: l_member_array
+    !! Array to store the linear dimension (thickness) of the members to composite into smeared
+    !! properties [m]
+    
+    real(dp) :: eyoung_wp_stiffest_leg
+    !! Young's modulus of the stiffest series-composite leg
+    !! of the WP cable layout that is then parallel-composited 
+    !! together with others, required for elastic property
+    !! unsmearing. [Pa] 
+       
+    real(dp) :: eyoung_cs_stiffest_leg
+    !! Young's modulus of the stiffest series-composite leg
+    !! of the CS cable layout that is then parallel-composited 
+    !! together with others, required for elastic property
+    !! unsmearing. [Pa]
     ! ---
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2018,20 +2107,58 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             t_cable_oh = t_turn_oh - 2.0D0 * ( t_cond_oh + thicndut )
             !-!
 
-            ! Effective young modulus assuming the parallel case
-            ! Rem the oh_steel_fraction is potentially a volumic one ... To be checked 
-            eyoung_p(1) = oh_steel_frac * eyoung_steel + (1.0D0 - oh_steel_frac) * eyoung_winding
-            eyoung_z(1) = eyngeff( eyoung_steel, eyoung_ins, thicndut, t_cond_oh, t_cable_oh )
-            poisson_p(1) = poisson_steel
-            poisson_z(1) = poisson_steel
-
+            ! Smeared elastic properties of the CS
+            ! These smearing functions were written assuming transverse-
+            ! isotropic materials; that is not true of the CS, where the
+            ! stiffest dimension is toroidal and the radial and vertical
+            ! dimension are less stiff. Nevertheless this attempts to 
+            ! hit the mark.
+            ! [EDIT: eyoung_cond is for the TF coil, not the CS coil]
+            
+            ! Get transverse properties
+            call eyoung_parallel(eyoung_steel, &
+                                 oh_steel_frac, &
+                                 poisson_steel, &
+                                 eyoung_cond_axial, &
+                                 1D0-oh_steel_frac, &
+                                 poisson_cond_axial, & 
+                                 eyoung_trans(1), &
+                                 a_working, &
+                                 poisson_trans(1))
+            
+            ! Get vertical properties
+            ! Split up into "members", concentric squares in cross section
+            ! (described in Figure 10 of the TF coil documentation)
+            ! Conductor 
+            eyoung_member_array(1)  = eyoung_cond_trans
+            poisson_member_array(1) = poisson_cond_trans
+            l_member_array(1)       = t_cable_oh
+            ! Steel conduit
+            eyoung_member_array(2)  = eyoung_steel
+            poisson_member_array(2) = poisson_steel
+            l_member_array(2)       = 2*t_cond_oh
+            ! Insulation
+            eyoung_member_array(3)  = eyoung_ins
+            poisson_member_array(3) = poisson_ins
+            l_member_array(3)       = 2*thicndut
+            ! [EDIT: Add central cooling channel? Would be new member #1]
+        
+            ! Compute the composited (smeared) properties
+            call eyoung_t_nested_squares(3, &
+                                         eyoung_member_array, &
+                                         l_member_array, &
+                                         poisson_member_array, &
+                                         eyoung_axial(1), &
+                                         a_working,poisson_axial(1), &
+                                         eyoung_cs_stiffest_leg)
+   
         ! resistive CS (copper)
         else
             ! Here is a rough approximation
-            eyoung_p(1) = eyoung_copper
-            eyoung_z(1) = eyoung_copper
-            poisson_p(1) = poisson_copper
-            poisson_z(1) = poisson_copper
+            eyoung_trans(1) = eyoung_copper
+            eyoung_axial(1) = eyoung_copper
+            poisson_trans(1) = poisson_copper
+            poisson_axial(1) = poisson_copper
         end if
     end if
     ! ---
@@ -2049,10 +2176,10 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
         ! Assumed to be Kapton for the moment
         ! Ref : https://www.dupont.com/content/dam/dupont/products-and-services/membranes-and-films/polyimde-films/documents/DEC-Kapton-summary-of-properties.pdf
-        eyoung_p(2) = 2.5D9
-        eyoung_z(2) = 2.5D9
-        poisson_p(2) = 0.34D0  ! Default value for young modulus
-        poisson_z(2) = 0.34D0  ! Default value for young modulus
+        eyoung_trans(2) = 2.5D9
+        eyoung_axial(2) = 2.5D9
+        poisson_trans(2) = 0.34D0  ! Default value for young modulus
+        poisson_axial(2) = 0.34D0  ! Default value for young modulus
     end if 
     ! ---
 
@@ -2065,17 +2192,17 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         jeff(n_tf_bucking) = 0.0D0
 
         if ( i_tf_sup == 1 ) then 
-            eyoung_p(n_tf_bucking) = eyoung_steel
-            eyoung_z(n_tf_bucking) = eyoung_steel
-            poisson_p(n_tf_bucking) = poisson_steel
-            poisson_z(n_tf_bucking) = poisson_steel
+            eyoung_trans(n_tf_bucking) = eyoung_steel
+            eyoung_axial(n_tf_bucking) = eyoung_steel
+            poisson_trans(n_tf_bucking) = poisson_steel
+            poisson_axial(n_tf_bucking) = poisson_steel
 
         ! Bucking cylinder properties
         else 
-            eyoung_p(n_tf_bucking) = eyoung_res_tf_buck
-            eyoung_z(n_tf_bucking) = eyoung_res_tf_buck
-            poisson_p(n_tf_bucking) = poisson_steel ! Seek better value !
-            poisson_z(n_tf_bucking) = poisson_steel ! Seek better value !
+            eyoung_trans(n_tf_bucking) = eyoung_res_tf_buck
+            eyoung_axial(n_tf_bucking) = eyoung_res_tf_buck
+            poisson_trans(n_tf_bucking) = poisson_steel ! Seek better value !
+            poisson_axial(n_tf_bucking) = poisson_steel ! Seek better value !
         end if
         
         ! Innernost TF casing radius
@@ -2086,10 +2213,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
  
     ! (Super)conductor layer properties
     ! ---
-    ! Rem : They are only unique for isotropic materials, hence
-    !       the underlying assumption of our models is the anisotropy
-    !       of the material. A good assumption for resistive magnets
-    !       but a doggy one for SC
     ! SC coil
     if ( i_tf_sup == 1 ) then
 
@@ -2119,21 +2242,98 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         else 
             ! Integer number of turns
             t_cable_eyng = t_cable_radial
-        end if         
-        eyoung_wp_t = eyngeff( eyoung_steel, eyoung_ins, &
-                               t_ins_eff, thwcndut, t_cable_eyng )
+        end if
         
-        ! Lateral casing correction (serie)
-        eyoung_wp_t_eff = ( 2.0D0 * t_lat_case_av + t_wp_toroidal_av ) &
-                        / ( 2.0D0 * t_lat_case_av / eyoung_steel  &
-                          + t_wp_toroidal_av / eyoung_wp_t )
-
-        ! Average young WP modulus [Pa]
-        eyoung_wp_z = ( eyoung_steel * aswp + eyoung_ins * a_tf_ins ) / awpc
-
-        ! Average young modulus used in the WP layer stress calculation [Pa]
-        eyoung_wp_z_eff = ( eyoung_steel * a_wp_steel_eff + eyoung_ins * a_tf_ins ) &
-                        / a_wp_eff 
+        ! Average WP Young's modulus in the transverse 
+        ! (radial and toroidal) direction
+        ! Split up into "members", concentric squares in cross section
+        ! (described in Figure 10 of the TF coil documentation)
+        ! Helium
+        eyoung_member_array(1)  = 0D0
+        poisson_member_array(1) = poisson_steel
+        l_member_array(1)       = dhecoil
+        ! Conductor and co-wound copper
+        call eyoung_series(eyoung_cond_trans, &
+                           (t_cable_eyng-dhecoil)*(1.0D0-fcutfsu), &
+                           poisson_cond_trans, & 
+                           eyoung_copper, &
+                           (t_cable_eyng-dhecoil)*fcutfsu, &
+                           poisson_copper, & 
+                           eyoung_member_array(2), &
+                           l_member_array(2), &
+                           poisson_member_array(2))
+        ! Steel conduit
+        eyoung_member_array(3)  = eyoung_steel
+        poisson_member_array(3) = poisson_steel
+        l_member_array(3)       = 2*thwcndut
+        ! Insulation
+        eyoung_member_array(4)  = eyoung_ins
+        poisson_member_array(4) = poisson_ins
+        l_member_array(4)       = 2*t_ins_eff
+        
+        ! Compute the composited (smeared) properties
+        call eyoung_t_nested_squares(4, &
+                                     eyoung_member_array, &
+                                     l_member_array, &
+                                     poisson_member_array, &
+                                     eyoung_wp_trans, &
+                                     a_working, &
+                                     poisson_wp_trans, &
+                                     eyoung_wp_stiffest_leg)
+                                    
+        ! Lateral casing correction (series-composition)
+        call eyoung_series(eyoung_wp_trans, &
+                           t_wp_toroidal_av, &
+                           poisson_wp_trans, &
+                           eyoung_steel, &
+                           2.0D0*t_lat_case_av, &
+                           poisson_steel, &
+                           eyoung_wp_trans_eff, &
+                           a_working, &
+                           poisson_wp_trans_eff)
+                          
+        ! Average WP Young's modulus in the vertical direction
+        ! Split up into "members", concentric squares in cross section
+        ! (described in Figure 10 of the TF coil documentation)
+        ! Steel conduit
+        eyoung_member_array(1)  = eyoung_steel
+        poisson_member_array(1) = poisson_steel
+        l_member_array(1)       = aswp
+        ! Insulation
+        eyoung_member_array(2)  = eyoung_ins
+        poisson_member_array(2) = poisson_ins
+        l_member_array(2)       = a_tf_ins
+        ! Copper
+        eyoung_member_array(3)  = eyoung_copper
+        poisson_member_array(3) = poisson_copper
+        l_member_array(3)       = acond*fcutfsu
+        ! Conductor
+        eyoung_member_array(4)  = eyoung_cond_axial
+        poisson_member_array(4) = poisson_cond_axial
+        l_member_array(4)       = acond*(1.0D0-fcutfsu)
+        ! Helium and void
+        eyoung_member_array(5)  = 0D0
+        poisson_member_array(5) = poisson_steel
+        l_member_array(5)       = awpc - acond - a_tf_ins - aswp
+        ! Compute the composite / smeared properties:
+        call eyoung_parallel_array(5, &
+                                   eyoung_member_array, &
+                                   l_member_array, &
+                                   poisson_member_array, &
+                                   eyoung_wp_axial, &
+                                   a_working, &
+                                   poisson_wp_axial)
+                                
+        ! Average WP Young's modulus in the vertical direction, now including the lateral case
+        ! Parallel-composite the steel and insulation, now including the lateral case (sidewalls)
+        call eyoung_parallel(eyoung_steel, &
+                             a_wp_steel_eff - aswp,poisson_steel, &
+                             eyoung_wp_axial, &
+                             a_working, &
+                             poisson_wp_axial, &                          
+                             eyoung_wp_axial_eff, &
+                             a_working, &
+                             poisson_wp_axial_eff)
 
     ! Resistive coil
     else
@@ -2141,25 +2341,47 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! Picking the conductor material Young's modulus
         if ( i_tf_sup == 0 ) then
             eyoung_cond = eyoung_copper
+            poisson_cond = poisson_copper
         else if ( i_tf_sup == 2 ) then
             eyoung_cond = eyoung_al
+            poisson_cond = poisson_al
         end if
 
         ! Effective WP young modulus in the toroidal direction [Pa]
         ! Rem : effect of cooling pipes and insulation not taken into account 
         !       for now as it needs a radially dependent Young modulus
-        eyoung_wp_t_eff = eyoung_cond
-        eyoung_wp_t = eyoung_cond
+        eyoung_wp_trans_eff = eyoung_cond
+        eyoung_wp_trans = eyoung_cond
+        poisson_wp_trans_eff = poisson_cond
+        poisson_wp_trans = poisson_cond
 
         ! WP area using the stress model circular geometry (per coil) [m2]
         a_wp_eff = (r_wp_outer**2 - r_wp_inner**2) * theta_coil
 
         ! Effective conductor region young modulus in the vertical direction [Pa]
-        eyoung_wp_z = eyoung_ins * a_tf_ins / a_wp_eff &
-                    + eyoung_cond * (1.0D0 - a_tf_ins / a_wp_eff) * (1.0D0 - fcoolcp)
+        ! Parallel-composite conductor and insulator
+        call eyoung_parallel(eyoung_cond, &
+                             (a_wp_eff-a_tf_ins)*(1.0D0-fcoolcp), &
+                             poisson_cond, & 
+                             eyoung_ins, &
+                             a_tf_ins, &
+                             poisson_ins, & 
+                             eyoung_wp_axial, &
+                             a_working, &
+                             poisson_wp_axial)
+        ! Parallel-composite cooling pipes into that
+        call eyoung_parallel(0D0, &
+                             (a_wp_eff-a_tf_ins)*fcoolcp,poisson_cond, & 
+                             eyoung_wp_axial, &
+                             a_working, &
+                             poisson_wp_axial, &
+                             eyoung_wp_axial, &
+                             a_working, &
+                             poisson_wp_axial)
 
         ! Effective young modulus used in stress calculations
-        eyoung_wp_z_eff = eyoung_wp_z
+        eyoung_wp_axial_eff = eyoung_wp_axial
+        poisson_wp_axial_eff = poisson_wp_axial
 
         ! Effect conductor layer inner/outer radius
         r_wp_inner_eff = r_wp_inner
@@ -2183,34 +2405,23 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         radtf(n_tf_bucking + ii) = r_wp_inner_eff + dble(ii-1)*dr_wp_layer
 
         ! Young modulus
-        eyoung_p(n_tf_bucking + ii) = eyoung_wp_t_eff
-        eyoung_z(n_tf_bucking + ii) = eyoung_wp_z_eff
+        eyoung_trans(n_tf_bucking + ii) = eyoung_wp_trans_eff
+        eyoung_axial(n_tf_bucking + ii) = eyoung_wp_axial_eff
 
         ! Poisson's ratio
-        if ( i_tf_sup == 0 ) then
-            poisson_p(n_tf_bucking + ii) = poisson_copper
-            poisson_z(n_tf_bucking + ii) = poisson_copper
-            
-        ! SC magnets smeared properties
-        else if ( i_tf_sup == 1 ) then 
-            poisson_p(n_tf_bucking + ii) = poisson_steel
-            poisson_z(n_tf_bucking + ii) = poisson_steel
+        poisson_trans(n_tf_bucking + ii) = poisson_wp_trans_eff
+        poisson_axial(n_tf_bucking + ii) = poisson_wp_axial_eff
         
-        ! Aluminium properties
-        else 
-            poisson_p(n_tf_bucking + ii) = poisson_al
-            poisson_z(n_tf_bucking + ii) = poisson_al
-        end if 
     end do
     
     ! Steel case on the plasma side of the inboard TF coil
     ! As per Issue #1509
     jeff(n_tf_layer) = 0.0D0
     radtf(n_tf_layer) = r_wp_outer_eff
-    eyoung_p(n_tf_layer) = eyoung_steel
-    eyoung_z(n_tf_layer) = eyoung_steel
-    poisson_p(n_tf_layer) = poisson_steel
-    poisson_z(n_tf_layer) = poisson_steel
+    eyoung_trans(n_tf_layer) = eyoung_steel
+    eyoung_axial(n_tf_layer) = eyoung_steel
+    poisson_trans(n_tf_layer) = poisson_steel
+    poisson_axial(n_tf_layer) = poisson_steel
 
     ! last layer radius
     radtf(n_tf_layer + 1) = r_wp_outer_eff + casthi
@@ -2222,7 +2433,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! Correct for the missing axial stiffness from the missing
     ! outer case steel as per the updated description of 
     ! Issue #1509
-    eyoung_z(n_tf_layer) = eyoung_z(n_tf_layer) * f_tf_stress_front_case
+    eyoung_axial(n_tf_layer) = eyoung_axial(n_tf_layer) * f_tf_stress_front_case
     
     ! ---  
     ! ------------------------
@@ -2232,6 +2443,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! RADIAL STRESS SUBROUTINES CALL 
     ! ------------------------------
     ! Stress model not valid the TF does not contain any hole
+    ! (Except if i_tf_plane_stress == 2; see Issue 1414)
     ! Current action : trigger and error and add a little hole
     !                  to allow stress calculations 
     ! Rem SK : Can be easily ameneded playing around the boundary conditions
@@ -2253,25 +2465,21 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     if ( i_tf_stress_model == 1 ) then
 
         ! Plane stress calculation (SC) [Pa]
-        call plane_stress( poisson_p, radtf, eyoung_p, jeff, & ! Inputs
+        call plane_stress( poisson_trans, radtf, eyoung_trans, jeff, & ! Inputs
                            n_tf_layer, n_radial_array,       & ! Inputs
                            sig_tf_r, sig_tf_t, deflect, radial_array ) ! Outputs
     
         ! Vertical stress [Pa]  
-        sig_tf_z = vforce / (acasetf + acndttf*n_tf_turn) ! Array equation
+        sig_tf_z = vforce / (acasetf + acndttf*n_tf_turn) ! Array equation [EDIT: Are you sure? It doesn't look like one to me]
+        
+        ! Strain in vertical direction on WP
+        str_wp = sig_tf_z(n_tf_bucking+1) / eyoung_wp_axial_eff
 
         ! Case strain
         casestr = sig_tf_z(n_tf_bucking) / eyoung_steel
-
-        ! Young's modulus in vertical direction on WP
-        eyzwp = eyngzwp(eyoung_steel,eyoung_ins,eyoung_winding,t_ins_eff,thwcndut,tcbs)
-    
-        ! Strain in vertical direction on WP
-        windstrain = sig_tf_z(n_tf_bucking+1) / eyzwp
     
         ! Radial strain in insulator
-        insstrain = sig_tf_r(n_radial_array) / eyoung_ins * &
-                    edoeeff(eyoung_steel, eyoung_ins, t_ins_eff, thwcndut, tcbs)
+        insstrain = sig_tf_r(n_radial_array) * eyoung_wp_stiffest_leg / eyoung_wp_trans_eff / eyoung_ins
     ! ---
 
 
@@ -2281,21 +2489,29 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! Generalized plane strain calculation [Pa]
         ! Issues #977 and #991
         ! bore > 0, O(n^3) in layers
-        call generalized_plane_strain( poisson_p, poisson_z, eyoung_p, eyoung_z,  & ! Inputs
+        call generalized_plane_strain( poisson_trans, poisson_axial, eyoung_trans, eyoung_axial,  & ! Inputs
                                        radtf, jeff, vforce_inboard_tot,          & ! Inputs
                                        n_tf_layer, n_radial_array, n_tf_bucking,  & ! Inputs
                                        radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
-                                       strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
+                                       str_tf_r, str_tf_t, str_tf_z, deflect ) ! Outputs
+        
+        ! Strain in TF conductor material
+        str_wp = str_tf_z(n_tf_bucking*n_radial_array+1);
+        
     else if ( i_tf_stress_model == 2) then
         ! Extended plane strain calculation [Pa]
         ! Issues #1414 and #998
         ! Permits bore >= 0, O(n) in layers
         ! If bore > 0, same result as generalized plane strain calculation
-        call extended_plane_strain( poisson_p, poisson_z, eyoung_p, eyoung_z,  & ! Inputs
+        call extended_plane_strain( poisson_trans, poisson_axial, eyoung_trans, eyoung_axial,  & ! Inputs
                                        radtf, jeff, vforce_inboard_tot,          & ! Inputs
                                        n_tf_layer, n_radial_array, n_tf_bucking,  & ! Inputs
                                        radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
-                                       strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
+                                       str_tf_r, str_tf_t, str_tf_z, deflect ) ! Outputs
+        
+        ! Strain in TF conductor material
+        str_wp = str_tf_z(n_tf_bucking*n_radial_array+1);
+        
     end if
     ! ---
 
@@ -2307,23 +2523,20 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     end if
     ! ------------------------------
 
-
-
     ! STRESS DISTRIBUTIONS CORRECTIONS
     ! --------------------------------
-    ! SC central solenoid coil stress unsmeating (bucked and wedged only)
+    ! SC central solenoid coil stress unsmearing (bucked and wedged only)
     ! --- 
     if ( i_tf_bucking >= 2 .and. ipfres == 0 ) then
 
-        ! Central Solenoid (OH) steel conduit stress unsmearing factor
-        fac_oh = 0.5D0 * t_turn_oh / t_cond_oh 
+        ! Central Solenoid (OH) steel conduit stress unsmearing factors
 
         do ii = 1, n_radial_array
 
             ! CS (OH) superconducting case stress unsmearing
-            sig_tf_r(ii) = sig_tf_r(ii) * fac_oh
-            sig_tf_t(ii) = sig_tf_t(ii) / oh_steel_frac
-            sig_tf_z(ii) = sig_tf_z(ii) * fac_oh
+            sig_tf_r(ii) = sig_tf_r(ii) * eyoung_cs_stiffest_leg/eyoung_axial(1)
+            sig_tf_t(ii) = sig_tf_t(ii) * eyoung_steel/eyoung_trans(1)
+            sig_tf_z(ii) = sig_tf_z(ii) * eyoung_cs_stiffest_leg/eyoung_axial(1)
         end do
     end if
     ! ---
@@ -2347,7 +2560,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     if ( i_tf_sup == 0 ) then
 
         ! Vertical force unsmearing factor
-        fac_sig_z = eyoung_copper / eyoung_wp_z_eff
+        fac_sig_z = eyoung_copper / eyoung_wp_axial_eff
 
         ! Toroidal WP steel stress unsmearing factor
         fac_sig_t = 1.0D0
@@ -2357,25 +2570,22 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
         ! Vertical WP steel stress unsmearing factor
         if ( i_tf_stress_model /= 1 ) then
-            fac_sig_z = eyoung_steel / eyoung_wp_z_eff
-            fac_sig_z_wp_av = eyoung_wp_z / eyoung_wp_z_eff
+            fac_sig_z = eyoung_steel / eyoung_wp_axial_eff
+            fac_sig_z_wp_av = eyoung_wp_axial / eyoung_wp_axial_eff
         else
             fac_sig_z = 1.0D0
         end if  
 
         ! Toroidal WP steel conduit stress unsmearing factor
-        ! Rem : These correction factors are calculated with the genuine WP geom
-        fac_sig_t = ( dr_tf_wp / ( dr_tf_wp - 2.0D0 * ( tinstf + tfinsgap ) ) ) & 
-                  * ( 0.5D0 * t_turn_radial / thwcndut )
-
+        fac_sig_t = eyoung_wp_stiffest_leg / eyoung_wp_trans_eff
+        
         ! Radial WP steel conduit stress unsmearing factor
-        fac_sig_r = ( t_wp_toroidal_av / ( t_wp_toroidal_av - 2.0D0 * ( tinstf + tfinsgap ) ) ) & 
-                  * ( 0.5D0 * t_turn_toroidal / thwcndut )
+        fac_sig_r = eyoung_wp_stiffest_leg / eyoung_wp_trans_eff
 
     else if ( i_tf_sup == 2 ) then
         
         ! Vertical WP steel stress unsmearing factor
-        fac_sig_z = eyoung_al / eyoung_wp_z_eff
+        fac_sig_z = eyoung_al / eyoung_wp_axial_eff
 
         ! Toroidal WP steel stress unsmearing factor
         ! NO CALCULTED FOR THE MOMENT (to be done later)
@@ -2425,7 +2635,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     s_tresca_cond_cea = sig_tf_tresca
 
 
-    ! SC condcuting layer stress distribution corrections
+    ! SC conducting layer stress distribution corrections
     ! ---
     if ( i_tf_sup == 1 ) then
 
@@ -2580,11 +2790,13 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             write(outfile,'(t2, "Shear (Tresca)"    ," stress", t30, "(MPa)",t36, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
         end if
         write(outfile, *) ''
-        write(outfile,'(t2, "Toroidal"    ," modulus", t30, "(GPa)",t36, *(F11.3,3x))') eyoung_p * 1.0D-9
-        write(outfile,'(t2, "Vertical"    ," modulus", t30, "(GPa)",t36, *(F11.3,3x))') eyoung_z * 1.0D-9
+        write(outfile,'(t2, "Toroidal"    ," modulus", t30, "(GPa)",t36, *(F11.3,3x))') eyoung_trans * 1.0D-9
+        write(outfile,'(t2, "Vertical"    ," modulus", t30, "(GPa)",t36, *(F11.3,3x))') eyoung_axial * 1.0D-9
         write(outfile,* ) ''
-        call ovarre(outfile,'WP toroidal modulus (GPa)','(eyoung_wp_t*1.0D-9)', eyoung_wp_t*1.0D-9, 'OP ')
-        call ovarre(outfile,'WP vertical modulus (GPa)','(eyoung_wp_z*1.0D-9)', eyoung_wp_z*1.0D-9, 'OP ')
+        call ovarre(outfile,'WP transverse modulus (GPa)','(eyoung_wp_trans*1.0D-9)', eyoung_wp_trans*1.0D-9, 'OP ')
+        call ovarre(outfile,'WP vertical modulus (GPa)','(eyoung_wp_axial*1.0D-9)', eyoung_wp_axial*1.0D-9, 'OP ')
+        call ovarre(outfile,'WP transverse Poisson''s ratio','(poisson_wp_trans)', poisson_wp_trans, 'OP ')
+        call ovarre(outfile,'WP vertical-transverse Pois. rat.','(poisson_wp_axial)', poisson_wp_axial, 'OP ')
 
         ! MFILE.DAT data
         do ii = 1, n_tf_bucking + 2
@@ -2629,9 +2841,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         if ( i_tf_stress_model /= 1 ) then
             write(sig_file,*)
             write(sig_file,*) 'Strain'    
-            write(sig_file,'(t2, "radial strain"   ,t26, *(F11.8,3x))') strain_tf_r
-            write(sig_file,'(t2, "toroidal strain" ,t26, *(F11.8,3x))') strain_tf_t
-            write(sig_file,'(t2, "vertical strain" ,t26, *(F11.8,3x))') strain_tf_z
+            write(sig_file,'(t2, "radial strain"   ,t26, *(F11.8,3x))') str_tf_r
+            write(sig_file,'(t2, "toroidal strain" ,t26, *(F11.8,3x))') str_tf_t
+            write(sig_file,'(t2, "vertical strain" ,t26, *(F11.8,3x))') str_tf_z
         end if
 
         ! TODO sig_tf_wp_av_z is always undefined here. This needs correcting or removing
@@ -2645,7 +2857,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             call ovarre(outfile,'Maximum radial deflection at midplane (m)','(deflect)',&
                                 deflect(n_radial_array), 'OP ')     
             call ovarre(outfile,'Vertical strain on casing','(casestr)', casestr, 'OP ')
-            call ovarre(outfile,'Vertical strain on winding pack','(windstrain)', windstrain, 'OP ')
             call ovarre(outfile,'Radial strain on insulator','(insstrain)', insstrain, 'OP ')
         end if
 
@@ -2711,30 +2922,30 @@ subroutine plane_stress( nu, rad, ey, j,          & ! Inputs
 
     ! Local variables
     ! ---
-    ! Lorentz body force parametres
     real(dp), dimension(nlayers) :: alpha
     real(dp), dimension(nlayers) :: beta
+    !! Lorentz body force parametres
 
-    ! Strain to stress hooke's law coeficient
     real(dp), dimension(nlayers) :: kk
+    !! Strain to stress hooke's law coeficient
 
-    ! Layer area
     real(dp), dimension(nlayers) :: area
+    !! Layer area
     
-    ! Matrix encoding the integration constant cc coeficients 
     real(dp), dimension(2*nlayers, 2*nlayers) :: aa
+    !! Matrix encoding the integration constant cc coeficients 
     
-    ! Vector encoding the alpha/beta (lorentz forces) contribution
     real(dp), dimension(2*nlayers) :: bb
+    !! Vector encoding the alpha/beta (lorentz forces) contribution
 
-    ! Integration constants vector (solution)
     real(dp), dimension(2*nlayers) :: cc
     real(dp), dimension(nlayers) :: c1, c2
+    !! Integration constants vector (solution)
 
-    ! Variables used for radial stress distribution  
     real(dp) :: dradius
     real(dp) :: inner_layer_curr
     real(dp) :: rad_c
+    !! Variables used for radial stress distribution  
 
     integer :: ii
     integer :: jj
@@ -2878,7 +3089,7 @@ end subroutine plane_stress
 subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_force,   & ! Inputs
                                      nlayers, n_radial_array, i_tf_bucking,          & ! Inputs
                                      rradius, sigr, sigt, sigz,              & ! Outputs
-                                     strain_r, strain_t, strain_z, r_deflect ) ! Outputs
+                                     str_r, str_t, str_z, r_deflect ) ! Outputs
       
     !! Author : S. Kahn, CCFE
     !! Jan 2020
@@ -2956,13 +3167,13 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     real(dp), dimension(n_radial_array*nlayers), intent(out) :: sigz
     !! Stress distribution in the vertical direction (z)
 
-    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_r
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: str_r
     !! Strain distribution in the radial direction (r)
 
-    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_t
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: str_t
     !! Strain distribution in the toroidal direction (t)
           
-    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_z
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: str_z
     !! Uniform strain in the vertical direction (z)
 
     real(dp), dimension(n_radial_array*nlayers), intent(out) :: r_deflect
@@ -2975,58 +3186,58 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
 
     ! Local variables
     ! ---
-    ! Lorentz body force parametres
     real(dp), dimension(nlayers) :: alpha
     real(dp), dimension(nlayers) :: beta
+    !! Lorentz body force parametres
       
-    ! Toroidal plane / vertical direction hooke's law coeficient
     real(dp), dimension(nlayers) :: kk_p
     real(dp), dimension(nlayers) :: kk_z
+    !! Toroidal plane / vertical direction hooke's law coeficient
 
-    ! Toroidal plan to vertical direction poisson's squared coefficient
     real(dp), dimension(nlayers) :: nu_z_eff2
+    !! Toroidal plan to vertical direction poisson's squared coefficient
     
-    ! Body force parameter in displacement differential equation
     real(dp), dimension(nlayers) :: fr_par
+    !! Body force parameter in displacement differential equation
 
-    ! Radial/toroidal stress constant parameters
     real(dp), dimension(nlayers) :: cc_par_sig
     real(dp), dimension(nlayers) :: alpha_par_sigr
     real(dp), dimension(nlayers) :: alpha_par_sigt
     real(dp), dimension(nlayers) :: beta_par_sigr
     real(dp), dimension(nlayers) :: beta_par_sigt
+    !! Radial/toroidal stress constant parameters
 
-    ! Layer area
     real(dp), dimension(nlayers) :: area
+    !! Layer area
 
-    ! Vertical strain parameters
     real(dp) :: sum_1
     real(dp) :: sum_2
     real(dp), dimension(nlayers) :: aleph
     real(dp), dimension(nlayers) :: beth
     real(dp), dimension(nlayers) :: par_1
     real(dp), dimension(nlayers) :: par_2
+    !! Vertical strain parameters
 
-    ! Matrix encoding the integration constant cc coeficients 
     real(dp), dimension(2*nlayers, 2*nlayers) :: aa
+    !! Matrix encoding the integration constant cc coeficients 
 
-    ! Vector encoding the alpha/beta (lorentz forces) contribution
     real(dp), dimension(2*nlayers) :: bb
+    !! Vector encoding the alpha/beta (lorentz forces) contribution
 
-    ! Integration constants vector (solution)
     real(dp), dimension(2*nlayers) :: cc
     real(dp), dimension(nlayers) :: c1, c2
-
-    ! Variables used for radial stress distribution     
+    !! Integration constants vector (solution)
+    
     real(dp) :: dradius  
     real(dp) :: inner_layer_curr
+    !! Variables used for radial stress distribution 
       
-    ! Constraint strains for calculation (on for TF and CS systems)
-    real(dp), dimension(2) :: strain_z_calc
+    real(dp), dimension(2) :: str_z_calc
+    !! Constraint strains for calculation (on for TF and CS systems)
       
-    ! Indexes
     integer :: ii  ! Line in the aa matrix
     integer :: jj  ! Collumn in the aa matrix 
+    !! Indices
     ! ---    
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3273,23 +3484,23 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     sigr(:) = 0.0D0
     sigt(:) = 0.0D0
     sigz(:) = 0.0D0
-    strain_r(:) = 0.0D0
-    strain_t(:) = 0.0D0
-    strain_z(:) = 0.0D0
+    str_r(:) = 0.0D0
+    str_t(:) = 0.0D0
+    str_z(:) = 0.0D0
     r_deflect(:) = 0.0D0
 
     ! CS system vertical strain
     if ( i_tf_bucking >= 2 ) then
-        strain_z_calc(1) = aleph(1)
+        str_z_calc(1) = aleph(1)
         do ii = 1, i_tf_bucking - 1
-            strain_z_calc(1) = strain_z_calc(1) + c1(ii) * beth(ii)
+            str_z_calc(1) = str_z_calc(1) + c1(ii) * beth(ii)
         end do
     end if
     
     ! TF system vertical normal strain (constant) WRONG IF GRADED COIL
-    strain_z_calc(2) = aleph(nlayers) 
+    str_z_calc(2) = aleph(nlayers) 
     do ii = max( 1, i_tf_bucking ), nlayers
-        strain_z_calc(2) = strain_z_calc(2) + c1(ii) * beth(ii)
+        str_z_calc(2) = str_z_calc(2) + c1(ii) * beth(ii)
     end do
 
 
@@ -3318,30 +3529,30 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
 
             ! No vertical strain effect on CS / TF-CS inter layer
             if ( ii >= i_tf_bucking ) then ! TF system
-                sigr(jj) = sigr(jj) + kk_p(ii) * strain_z_calc(2) * nu_z(ii) 
-                sigt(jj) = sigt(jj) + kk_p(ii) * strain_z_calc(2) * nu_z(ii)
-                sigz(jj) = sigz(jj) + kk_z(ii) * strain_z_calc(2) * (1.0D0 - nu_p(ii))
+                sigr(jj) = sigr(jj) + kk_p(ii) * str_z_calc(2) * nu_z(ii) 
+                sigt(jj) = sigt(jj) + kk_p(ii) * str_z_calc(2) * nu_z(ii)
+                sigz(jj) = sigz(jj) + kk_z(ii) * str_z_calc(2) * (1.0D0 - nu_p(ii))
             else ! CS system
-                sigr(jj) = sigr(jj) + kk_p(ii) * strain_z_calc(1) * nu_z(ii) 
-                sigt(jj) = sigt(jj) + kk_p(ii) * strain_z_calc(1) * nu_z(ii)
-                sigz(jj) = sigz(jj) + kk_z(ii) * strain_z_calc(1) * (1.0D0 - nu_p(ii))
+                sigr(jj) = sigr(jj) + kk_p(ii) * str_z_calc(1) * nu_z(ii) 
+                sigt(jj) = sigt(jj) + kk_p(ii) * str_z_calc(1) * nu_z(ii)
+                sigz(jj) = sigz(jj) + kk_z(ii) * str_z_calc(1) * (1.0D0 - nu_p(ii))
             end if
                     
             ! Radial normal strain
-            strain_r(jj) = c1(ii) - c2(ii) / rradius(jj)**2                      &
+            str_r(jj) = c1(ii) - c2(ii) / rradius(jj)**2                      &
                            + 0.375D0*alpha(ii) * rradius(jj)**2 + 0.5D0*beta(ii) &
                            * (1.0D0 + log(rradius(jj)))
       
             ! Toroidal normal strain
-            strain_t(jj) = c1(ii) + c2(ii) / rradius(jj)**2                       &
+            str_t(jj) = c1(ii) + c2(ii) / rradius(jj)**2                       &
                             + 0.125D0*alpha(ii) * rradius(jj)**2 + 0.5D0*beta(ii) & 
                             * log(rradius(jj))
                     
             ! Vertical normal strain
             if ( ii >= i_tf_bucking ) then
-                strain_z(jj) = strain_z_calc(2)
+                str_z(jj) = str_z_calc(2)
             else 
-                strain_z(jj) = strain_z_calc(1)
+                str_z(jj) = str_z_calc(1)
             end if
 
             ! Radial displacement
@@ -3360,7 +3571,7 @@ end subroutine generalized_plane_strain
 subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,   & ! Inputs
                                      nlayers, n_radial_array, i_tf_bucking,          & ! Inputs
                                      rradius, sigr, sigt, sigz,              & ! Outputs
-                                     strain_r, strain_t, strain_z, r_deflect ) ! Outputs
+                                     str_r, str_t, str_z, r_deflect ) ! Outputs
       
     !! Author : C. Swanson, PPPL and S. Kahn, CCFE
     !! September 2021
@@ -3445,13 +3656,13 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     real(dp), dimension(n_radial_array*nlayers), intent(out) :: sigz
     !! Stress distribution in the vertical direction (z)
 
-    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_r
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: str_r
     !! Strain distribution in the radial direction (r)
 
-    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_t
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: str_t
     !! Strain distribution in the toroidal direction (t)
           
-    real(dp), dimension(n_radial_array*nlayers), intent(out) :: strain_z
+    real(dp), dimension(n_radial_array*nlayers), intent(out) :: str_z
     !! Uniform strain in the vertical direction (z)
 
     real(dp), dimension(n_radial_array*nlayers), intent(out) :: r_deflect
@@ -3555,10 +3766,10 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     ! Variables used for radial stress distribution     
     real(dp) :: dradius  
       
-    ! Indexes
     integer :: ii  ! Line index in the matrix
     integer :: jj  ! Column index in the matrix
     integer :: kk  ! Depth index in the matrix
+    !! Indices
     ! ---    
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3571,7 +3782,6 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     
     ! Inner slip layers parameters
     ! Section 15 in the writeup
-    ! [EDIT: Make this more general]
     ! Innermost layer that takes axial force. Layers inner of this
     ! have zero net axial force, to include CS decoupling.
     ! This configuration JUST HAPPENS to work out because of
@@ -3772,9 +3982,9 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     sigr(:) = 0.0D0
     sigt(:) = 0.0D0
     sigz(:) = 0.0D0
-    strain_r(:) = 0.0D0
-    strain_t(:) = 0.0D0
-    strain_z(:) = 0.0D0
+    str_r(:) = 0.0D0
+    str_t(:) = 0.0D0
+    str_z(:) = 0.0D0
     r_deflect(:) = 0.0D0
 
     ! Radial displacement, stress and strain distributions
@@ -3799,22 +4009,22 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
             r_deflect(jj) = A_plot*rradius(jj) + B_plot/rradius(jj)
             
             ! Radial strain
-            strain_r(jj)  = A_plot - B_plot/rradius(jj)**2
+            str_r(jj)  = A_plot - B_plot/rradius(jj)**2
             ! Azimuthal strain
-            strain_t(jj)  = A_plot + B_plot/rradius(jj)**2
+            str_t(jj)  = A_plot + B_plot/rradius(jj)**2
             ! Axial strain
             if ( ii < nonslip_layer) then
-                strain_z(jj) = A_vec_solution(5)
+                str_z(jj) = A_vec_solution(5)
             else
-                strain_z(jj) = A_vec_solution(3)
+                str_z(jj) = A_vec_solution(3)
             end if
             
             ! Radial stress
-            sigr(jj) = ey_bar_t(ii)*(strain_r(jj) + nu_bar_t(ii)*strain_t(jj) + nu_bar_zt(ii)*strain_z(jj))
+            sigr(jj) = ey_bar_t(ii)*(str_r(jj) + nu_bar_t(ii)*str_t(jj) + nu_bar_zt(ii)*str_z(jj))
             ! Aximuthal stress
-            sigt(jj) = ey_bar_t(ii)*(strain_t(jj) + nu_bar_t(ii)*strain_r(jj) + nu_bar_zt(ii)*strain_z(jj))
+            sigt(jj) = ey_bar_t(ii)*(str_t(jj) + nu_bar_t(ii)*str_r(jj) + nu_bar_zt(ii)*str_z(jj))
             ! Axial stress
-            sigz(jj) = ey_bar_z(ii)*(strain_z(jj) + nu_bar_tz(ii)*(strain_r(jj) + strain_t(jj)))
+            sigz(jj) = ey_bar_z(ii)*(str_z(jj) + nu_bar_tz(ii)*(str_r(jj) + str_t(jj)))
 
 
         end do ! layer array loop
@@ -3979,8 +4189,351 @@ function eyngzwp(estl,eins,ewp,tins,tstl,tcs)
               + eins*( (tcs + 2.0D0*(tstl + tins))**2 - (tcs + 2.0D0*tstl)**2 )
 
     eyngzwp = eyngzwp / (ttot*ttot)
-
+    
 end function eyngzwp
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine eyoung_parallel(eyoung_j_1, a_1, poisson_j_perp_1, & ! Inputs
+                        eyoung_j_2, a_2, poisson_j_perp_2, & ! Inputs
+                        eyoung_j_3, a_3, poisson_j_perp_3)   ! Outputs
+      
+    !! Author : C. Swanson, PPPL
+    !! January 2022
+    !! See Issue #1205 for derivation PDF
+    !! This subroutine gives the smeared elastic properties of two 
+    !! members that are carrying a force in parallel with each other.
+    !! The force goes in direction j.
+    !! Members 1 and 2 are the individual members to be smeared. 
+    !! Member 3 is the effective smeared member (output).
+    !! This is pretty easy because the smeared properties are simply
+    !! the average weighted by the cross-sectional areas perpendicular
+    !! to j. 
+    !! The assumption is that the strains in j are equal.
+    !! If you're dealing with anisotropy, please pay attention to the
+    !! fact that the specific Young's Modulus used here is that in 
+    !! the j direction, and the specific Poisson's ratio used here is
+    !! that between the j and transverse directions in that order.
+    !! (transverse strain / j strain, under j stress)
+    !! The smeared Poisson's ratio is computed assuming the transverse
+    !! dynamics are isotropic, and that the two members are free to 
+    !! shrink/expand under Poisson effects without interference from
+    !! each other. This may not be true of your case.
+    !!
+    !! To build up a composite smeared member of any number of 
+    !! individual members, you can pass the same properties for 
+    !! members 2 and 3, and call it successively, using the properties
+    !! of each member as the first triplet of arguments. This way, the 
+    !! last triplet acts as a "working sum":
+    !! call eyoung_parallel(triplet1, triplet2, tripletOUT)
+    !! call eyoung_parallel(triplet3, tripletOUT, tripletOUT)
+    !! call eyoung_parallel(triplet4, tripletOUT, tripletOUT)
+    !! ... etc.
+    !! So that tripletOUT would eventually have the smeared properties
+    !! of the total composite member.
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    implicit none
+        
+    ! Inputs
+    ! ---
+    real(dp), intent(in) :: eyoung_j_1,eyoung_j_2
+    !! Young's modulus of members 1,2 in the j direction [Pa]
+    
+    real(dp), intent(in) :: a_1,a_2
+    !! Cross-sectional area of members 1,2 in the j direction
+    !! [m^2, or consistent units]
+    
+    real(dp), intent(in) :: poisson_j_perp_1,poisson_j_perp_2
+    !! Poisson's ratio between the j and transverse directions,
+    !! in that order, of members 1,2
+    !! (transverse strain / j strain, under j stress)
+    
+    ! Outputs
+    ! ---
+    real(dp), intent(in out) :: eyoung_j_3
+    !! Young's modulus of composite member in the j direction [Pa]
+    
+    real(dp), intent(in out) :: a_3
+    !! Cross-sectional area of composite member 1 in the j direction
+    !! [m^2, or consistent units]
+    
+    real(dp), intent(in out) :: poisson_j_perp_3
+    !! Poisson's ratio between the j and transverse directions,
+    !! in that order, of composite member
+    !! (transverse strain / j strain, under j stress)
+
+    poisson_j_perp_3 = (poisson_j_perp_1 * a_1 + poisson_j_perp_2 * a_2) / (a_1 + a_2)
+    eyoung_j_3 = (eyoung_j_1 * a_1 + eyoung_j_2 * a_2) / (a_1 + a_2)
+    a_3 = a_1 + a_2
+    
+end subroutine eyoung_parallel
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine eyoung_series(eyoung_j_1, l_1, poisson_j_perp_1, & ! Inputs
+                      eyoung_j_2, l_2, poisson_j_perp_2, & ! Inputs
+                      eyoung_j_3, l_3, poisson_j_perp_3)   ! Outputs
+      
+    !! Author : C. Swanson, PPPL
+    !! January 2022
+    !! See Issue #1205 for derivation PDF
+    !! This subroutine gives the smeared elastic properties of two 
+    !! members that are carrying a force in series with each other.
+    !! The force goes in direction j.
+    !! The assumption is that the stresses in j are equal.
+    !! The smeared Young's modulus is the inverse of the average of
+    !! the inverse of the Young's moduli, weighted by the length
+    !! of the members in j.
+    !! Members 1 and 2 are the individual members to be smeared. 
+    !! Member 3 is the effective smeared member (output).
+    !! The smeared Poisson's ratio is the averaged of the Poisson's
+    !! ratios, weighted by the quantity (Young's modulus / length of
+    !! the members in j).
+    !! 
+    !! If you're dealing with anisotropy, please pay attention to the
+    !! fact that the specific Young's Modulus used here is that in 
+    !! the j direction, and the specific Poisson's ratio used here is
+    !! that between the j and transverse directions in that order.
+    !! (transverse strain / j strain, under j stress)
+    !! The smeared Poisson's ratio is computed assuming the transverse
+    !! dynamics are isotropic, and that the two members are free to 
+    !! shrink/expand under Poisson effects without interference from
+    !! each other. This may not be true of your case.
+    !!
+    !! To build up a composite smeared member of any number of 
+    !! individual members, you can pass the same properties for 
+    !! members 2 and 3, and call it successively, using the properties
+    !! of each member as the first triplet of arguments. This way, the 
+    !! last triplet acts as a "working sum":
+    !! call eyoung_series(triplet1, triplet2, tripletOUT)
+    !! call eyoung_series(triplet3, tripletOUT, tripletOUT)
+    !! call eyoung_series(triplet4, tripletOUT, tripletOUT)
+    !! ... etc.
+    !! So that tripletOUT would eventually have the smeared properties
+    !! of the total composite member.
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    implicit none
+    
+    ! Inputs
+    ! ---
+    real(dp), intent(in) :: eyoung_j_1,eyoung_j_2
+    !! Young's modulus of members 1,2 in the j direction [Pa]
+    
+    real(dp), intent(in) :: l_1,l_2
+    !! Length of members 1,2 in the j direction
+    !! [m, or consistent units]
+    
+    real(dp), intent(in) :: poisson_j_perp_1,poisson_j_perp_2
+    !! Poisson's ratio between the j and transverse directions,
+    !! in that order, of members 1,2
+    !! (transverse strain / j strain, under j stress)
+    
+    ! Outputs
+    ! ---
+    real(dp), intent(in out) :: eyoung_j_3
+    !! Young's modulus of composite member in the j direction [Pa]
+    
+    real(dp), intent(in out) :: l_3
+    !! Length of composite member in the j direction
+    !! [m, or consistent units]
+    
+    real(dp), intent(in out) :: poisson_j_perp_3
+    !! Poisson's ratio between the j and transverse directions,
+    !! in that order, of composite member
+    !! (transverse strain / j strain, under j stress)
+
+    if ( eyoung_j_1*eyoung_j_2 == 0 ) then
+      !poisson_j_perp_3 = 0
+      if ( eyoung_j_1 == 0) then
+        poisson_j_perp_3 = poisson_j_perp_1 
+      else
+        poisson_j_perp_3 = poisson_j_perp_2 ! 
+      end if
+      eyoung_j_3 = 0
+      l_3 = l_1 + l_2
+    else 
+      poisson_j_perp_3 = (poisson_j_perp_1*l_1/eyoung_j_1 + poisson_j_perp_2*l_2/eyoung_j_2) / (l_1/eyoung_j_1 + l_2/eyoung_j_2)
+      eyoung_j_3 = (l_1 + l_2) / (l_1/eyoung_j_1 + l_2/eyoung_j_2)
+      l_3 = l_1 + l_2
+    end if
+    
+end subroutine eyoung_series
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine eyoung_t_nested_squares(n,eyoung_j_in, l_in, poisson_j_perp_in, & ! Inputs
+                      eyoung_j_out, l_out, poisson_j_perp_out, eyoung_stiffest)   ! Outputs
+
+    !! Author : C. Swanson, PPPL
+    !! January 2022
+    !! This subroutine gives the smeared transverse elastic 
+    !! properties of n members whose cross sectional areas are 
+    !! nested squares. It uses the subroutines eyoung_series and 
+    !! eyoung_parallel, above, so please be aware of the assumptions
+    !! inherent in those subroutines.
+    !! 
+    !! It assumes that each "leg" of the square cross section 
+    !! (vertical slice, as described in Figure 10 of the TF coil 
+    !! documentation) is composed of several layers under stress in
+    !! series, and each leg is under stress in parallel with every 
+    !! other leg.
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    ! Inputs
+    ! ---
+    integer :: n
+    !! Number of nested-square-cross-section members
+    
+    real(dp), dimension(n), intent(in) :: eyoung_j_in
+    !! Young's modulus of members in the j direction [Pa]
+    
+    real(dp), dimension(n), intent(in) :: l_in
+    !! Length of members in the j direction
+    !! [m, or consistent units]
+    
+    real(dp), dimension(n), intent(in) :: poisson_j_perp_in
+    !! Poisson's ratio between the j and transverse directions,
+    !! in that order, of members
+    !! (transverse strain / j strain, under j stress)
+    
+    ! Outputs
+    ! ---
+    real(dp), intent(out) :: eyoung_j_out
+    !! Young's modulus of composite member in the j direction [Pa]
+    
+    real(dp), intent(out) :: l_out
+    !! Length of composite member in the j direction
+    !! [m, or consistent units]
+    
+    real(dp), intent(out) :: poisson_j_perp_out
+    !! Poisson's ratio between the j and transverse directions,
+    !! in that order, of composite member
+    !! (transverse strain / j strain, under j stress)
+    
+    real(dp), intent(out) :: eyoung_stiffest
+    !! Young's modulus of "leg" with the highest Young's modulus [Pa]
+    
+    ! Local
+    ! ---
+    integer :: ii,jj !! Indices
+    
+    real(dp), dimension(n) :: eyoung_j_working
+    !! Working array of the Young's moduli of the legs [Pa]
+    
+    real(dp), dimension(n) :: l_working
+    !! Working array of the linear dimension of the legs [m]
+    
+    real(dp), dimension(n) :: poisson_j_perp_working
+    !! Working array of the Poissin's ratios of the legs
+    
+    ! Initialize
+    eyoung_j_working = 0
+    l_working = 0
+    poisson_j_perp_working = 0
+    eyoung_j_out = 0
+    l_out = 0
+    poisson_j_perp_out = 0
+    eyoung_stiffest = 0
+    
+    ! First member
+    eyoung_j_working(1) = eyoung_j_in(1)
+    l_working(1) = l_in(1)
+    poisson_j_perp_working(1) = poisson_j_perp_in(1)
+    
+    do ii = 2,n
+      ! Initialize the leg of which this is the new member
+      eyoung_j_working(ii) = eyoung_j_in(ii)
+      l_working(ii) = l_working(ii-1) + l_in(ii)
+      poisson_j_perp_working(ii) = poisson_j_perp_in(ii)
+      
+      ! Serial-composite the new layer of this member into the previous legs
+      do jj = 1,(ii-1)
+        call eyoung_series(eyoung_j_working(ii),l_in(ii),poisson_j_perp_working(ii), &
+                eyoung_j_working(jj),l_working(jj),poisson_j_perp_working(jj), &
+                eyoung_j_working(jj),l_working(jj),poisson_j_perp_working(jj))
+      end do
+    end do
+    
+    ! Find stiffest leg
+    do ii = 1,n
+      if (eyoung_stiffest < eyoung_j_working(ii)) then
+        eyoung_stiffest = eyoung_j_working(ii)
+      end if
+    end do
+                 
+    ! Parallel-composite them all together
+    do ii = 1,n
+      call eyoung_parallel(eyoung_j_working(ii),l_in(ii),poisson_j_perp_working(ii), &
+                eyoung_j_out,l_out,poisson_j_perp_out, &
+                eyoung_j_out,l_out,poisson_j_perp_out)
+    end do
+
+end subroutine eyoung_t_nested_squares
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine eyoung_parallel_array(n,eyoung_j_in, a_in, poisson_j_perp_in, & ! Inputs
+                      eyoung_j_out, a_out, poisson_j_perp_out)   ! Outputs
+
+    !! Author : C. Swanson, PPPL
+    !! January 2022
+    !! This subroutine gives the smeared axial elastic 
+    !! properties of n members in parallel. It uses the subroutines
+    !! eyoung_parallel, above, so please be aware of the assumptions
+    !! inherent in that subroutine.
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    ! Inputs
+    ! ---
+    integer :: n
+    !! Number of parallel members
+    
+    real(dp), dimension(n), intent(in) :: eyoung_j_in
+    !! Young's modulus of members 1,2 in the j direction [Pa]
+    
+    real(dp), dimension(n), intent(in) :: a_in
+    !! Length of members 1,2 in the j direction
+    !! [m2, or consistent units]
+    
+    real(dp), dimension(n), intent(in) :: poisson_j_perp_in
+    !! Poisson's ratio between the j and transverse directions,
+    !! in that order, of members 1,2
+    !! (transverse strain / j strain, under j stress)
+    
+    ! Outputs
+    ! ---
+    real(dp), intent(out) :: eyoung_j_out
+    !! Young's modulus of composite member in the j direction [Pa]
+    
+    real(dp), intent(out) :: a_out
+    !! Length of composite member in the j direction
+    !! [m2, or consistent units]
+    
+    real(dp), intent(out) :: poisson_j_perp_out
+    !! Poisson's ratio between the j and transverse directions,
+    !! in that order, of composite member
+    !! (transverse strain / j strain, under j stress)
+    
+    ! Local
+    ! ---
+    integer :: ii 
+    !! Indices
+        
+    ! Initialize
+    eyoung_j_out = 0
+    a_out = 0
+    poisson_j_perp_out = 0
+                     
+    ! Parallel-composite them all together
+    do ii = 1,n
+      call eyoung_parallel(eyoung_j_in(ii),a_in(ii),poisson_j_perp_in(ii), &
+                eyoung_j_out,a_out,poisson_j_perp_out, &
+                eyoung_j_out,a_out,poisson_j_perp_out)
+    end do
+
+end subroutine eyoung_parallel_array
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4311,20 +4864,21 @@ subroutine outtf(outfile, peaktfflag)
         ovarrf, obuild
     use numerics, only: icc
     use tfcoil_variables, only: wwp1, whttf, yarc, xarc, &
-        windstrain, wwp2, whtconsh, tftort, whtconcu, ritfc, &
+        wwp2, whtconsh, tftort, whtconcu, ritfc, &
         tfinsgap, deflect, vtfskv, tmaxpro, fcutfsu, t_conductor, &
         tinstf, n_tf_turn, cforce, i_tf_turns_integer, tdmptf, &
         oacdcp, estotftgj, n_tf, whtconin, jwptf, tfa, &
         tficrn, n_layer, tfleng, thwcndut, casthi, sigvvall, &
         thkcas, casths, vforce, n_pancake, aswp, aiwp, tfareain, acasetf, &
-        vftf, eyzwp, thicndut, dhecoil, insstrain, taucq, ripmax, &
+        vftf, thicndut, dhecoil, insstrain, taucq, ripmax, &
         whtconsc, sig_tf_case_max, bmaxtfrp, vdalw, dr_tf_wp, whtcas, whtcon, &
         ripple, i_tf_tresca, bmaxtf, awphec, avwp, aiwp, acond, acndttf, &
         i_tf_sc_mat, voltfleg, vol_cond_cp, tflegres, tcpav, prescp, i_tf_sup, &
         cpttf, cdtfleg, whttflgs, whtcp, i_tf_bucking, tlegav, rhotfleg, rhocp, &
         presleg, i_tf_shape, fcoolcp, pres_joints, tmargtf, tmargmin_tf, &
         f_vforce_inboard, vforce_outboard, acstf, t_turn_tf, eyoung_res_tf_buck, &
-        sig_tf_wp_max, cplen
+        sig_tf_wp_max, cplen, i_tf_cond_eyoung_axial, eyoung_cond_axial, &
+        eyoung_cond_trans
     use physics_variables, only: itart
     use constants, only: mfile, pi
     implicit none
@@ -4556,6 +5110,16 @@ subroutine outtf(outfile, peaktfflag)
             call ovarrf(outfile,'minimum TF conductor temperature margin  (K)','(tmargmin_tf)',tmargmin_tf)
             call ovarrf(outfile,'TF conductor temperature margin (K)','(tmargtf)',tmargtf)
 
+            call ovarin(outfile,'Elastic properties behavior', '(i_tf_cond_eyoung_axial)', i_tf_cond_eyoung_axial)
+            if ( i_tf_cond_eyoung_axial == 0 ) then 
+              call ocmmnt(outfile,'  Conductor stiffness neglected')
+            else if ( i_tf_cond_eyoung_axial == 1 ) then 
+              call ocmmnt(outfile,'  Conductor stiffness is user-input')
+            else if ( i_tf_cond_eyoung_axial == 2 ) then 
+              call ocmmnt(outfile,'  Conductor stiffness is set by material-specific default')
+            end if
+            call ovarre(outfile, 'Conductor axial Young''s modulus', '(eyoung_cond_axial)', eyoung_cond_axial)
+            call ovarre(outfile, 'Conductor transverse Young''s modulus', '(eyoung_cond_trans)', eyoung_cond_trans)
         end select
     else
 
@@ -4569,7 +5133,7 @@ subroutine outtf(outfile, peaktfflag)
         call osubhd(outfile,'Inboard TFC conductor sector geometry:')
         call ovarre(outfile,'Inboard TFC conductor sector area with gr insulation (per leg) (m2)' &
             ,'(awpc))',awpc)
-        call ovarre(outfile,'Inboard TFC conductor sector area (per leg) (m2)','(aswp)',awptf )
+        call ovarre(outfile,'Inboard TFC conductor sector area, NO ground & gap (per leg) (m2)','(awptf)',awptf )
         call ovarre(outfile,'Inboard conductor sector radial thickness (m)','(dr_tf_wp)',dr_tf_wp )
         if ( itart == 1 ) then 
             call ovarre(outfile,'Central collumn top conductor sector radial thickness (m)',&
@@ -4830,8 +5394,8 @@ subroutine tfspcall(outfile,iprint)
     use tfcoil_variables, only: tmargmin_tf, n_tf_turn, n_tf, vftf, &
         temp_margin, jwdgpro, tftmp, vtfskv, acndttf, dhecoil, tmaxpro, &
         tmargtf, thwcndut, t_conductor, fcutfsu, jwdgcrt, tdmptf, cpttf, &
-        ritfc, jwptf, bmaxtfrp, tcritsc, acstf, strncon_tf, fhts, bcritsc, &
-        i_tf_sc_mat, b_crit_upper_nbti, t_crit_nbti
+        ritfc, jwptf, bmaxtfrp, tcritsc, acstf, str_tf_con_res, fhts, bcritsc, &
+        i_tf_sc_mat, b_crit_upper_nbti, t_crit_nbti, str_wp, i_str_wp
     use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, &
         jcrit_nbti, croco, bi2212, GL_nbti, GL_REBCO, HIJC_REBCO
     use global_variables, only: run_tests
@@ -4862,7 +5426,7 @@ subroutine tfspcall(outfile,iprint)
         
     else
         call supercon(acstf,aturn,bmaxtfrp,vftf,fcutfsu,cpttf,jwptf,i_tf_sc_mat, &
-        fhts,strncon_tf,tdmptf,tfes,tftmp,tmaxpro,bcritsc,tcritsc,iprint, &
+        fhts,tdmptf,tfes,tftmp,tmaxpro,bcritsc,tcritsc,iprint, &
         outfile,jwdgcrt,vdump,tmargtf)
         
         vtfskv = vdump/1.0D3            !  TFC Quench voltage in kV
@@ -4871,7 +5435,7 @@ subroutine tfspcall(outfile,iprint)
 contains    
 
     subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,jwp,isumat,fhts, &
-        strain,tdmptf,tfes,thelium,tmax,bcritsc,tcritsc,iprint,outfile, &
+        tdmptf,tfes,thelium,tmax,bcritsc,tcritsc,iprint,outfile, &
         jwdgcrt,vd,tmarg)
 
         !! Routine to calculate the TF superconducting conductor  properties
@@ -4896,7 +5460,6 @@ contains
         !! 7 = Durham Ginzburg-Landau Nb-Ti parameterisation
         !! fhts    : input real : Adjustment factor (<= 1) to account for strain,
         !! radiation damage, fatigue or AC losses
-        !! strain : input real : Strain on superconductor at operation conditions
         !! tdmptf : input real : Dump time (sec)
         !! tfes : input real : Energy stored in one TF coil (J)
         !! thelium : input real : He temperature at peak field point (K)
@@ -4920,7 +5483,7 @@ contains
 
         integer, intent(in) :: isumat, iprint, outfile
         real(dp), intent(in) :: acs, aturn, bmax, fcu, fhe, fhts
-        real(dp), intent(in) :: iop, jwp, strain, tdmptf, tfes, thelium, tmax, bcritsc, tcritsc
+        real(dp), intent(in) :: iop, jwp, tdmptf, tfes, thelium, tmax, bcritsc, tcritsc
         real(dp), intent(out) :: jwdgcrt, vd, tmarg
 
         !  Local variables
@@ -4928,7 +5491,7 @@ contains
         integer :: lap
         real(dp) :: b,bc20m,bcrit,c0,delt,fcond,icrit,iooic, &
         jcritsc,jcrit0,jcritm,jcritp,jcritstr,jsc,jstrand,jtol,jwdgop, &
-        t,tc0m,tcrit,ttest,ttestm,ttestp, tdump, fhetot
+        t,tc0m,tcrit,ttest,ttestm,ttestp, tdump, fhetot, strain
 
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         ! Rename tdmptf as it is called tdump in this routine and those called from here.
@@ -4938,6 +5501,12 @@ contains
         fhetot = fhe + (pi/4.0d0)*dhecoil*dhecoil/acs
         !  Conductor fraction (including central helium channel)
         fcond = 1.0D0 - fhetot
+        
+        if (i_str_wp == 0) then
+          strain = str_tf_con_res
+        else
+          strain = str_wp
+        end if
 
         !  Find critical current density in superconducting strand, jcritstr
         select case (isumat)
@@ -4945,7 +5514,11 @@ contains
         case (1)  !  ITER Nb3Sn critical surface parameterization
             bc20m = 32.97D0
             tc0m = 16.06D0
-
+            ! If strain limit achieved, throw a warning and use the lower strain
+            if (abs(strain) > 0.5D-2) then
+                fdiags(1) = strain ; call report_error(261)
+                strain = sign(0.5D-2,strain)
+            end if
             !  jcritsc returned by itersc is the critical current density in the
             !  superconductor - not the whole strand, which contains copper
             call itersc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
@@ -4981,6 +5554,11 @@ contains
         case (4)  !  ITER Nb3Sn parameterization, but user-defined parameters
             bc20m = bcritsc
             tc0m = tcritsc
+            ! If strain limit achieved, throw a warning and use the lower strain
+            if (abs(strain) > 0.5D-2) then
+                fdiags(1) = strain ; call report_error(261)
+                strain = sign(0.5D-2,strain)
+            end if
             call itersc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
             jcritstr = jcritsc * (1.0D0-fcu)
             !  Critical current in cable
@@ -4989,6 +5567,11 @@ contains
         case (5) ! WST Nb3Sn parameterisation
             bc20m = 32.97D0
             tc0m = 16.06D0
+            ! If strain limit achieved, throw a warning and use the lower strain
+            if (abs(strain) > 0.5D-2) then
+                fdiags(1) = strain ; call report_error(261)
+                strain = sign(0.5D-2,strain)
+            end if
             !  jcritsc returned by itersc is the critical current density in the
             !  superconductor - not the whole strand, which contains copper
             call wstsc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
@@ -5013,20 +5596,25 @@ contains
         case (8) ! Branch YCBO model fit to Tallahassee data
             bc20m = 430
             tc0m = 185
+            ! If strain limit achieved, throw a warning and use the lower strain
+            if (abs(strain) > 0.7D-2) then
+                fdiags(1) = strain ; call report_error(261)
+                strain = sign(0.7D-2,strain)
+            end if
             call GL_REBCO(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
             ! A0 calculated for tape cross section already
             jcritstr = jcritsc * (1.0D0-fcu)
             !  Critical current in cable (copper added at this stage in HTS cables)
             icrit = jcritstr * acs * fcond 
-            
-            !REBCO fractures in strains above ~+/- 0.7%
-            if (strncon_tf > 0.7D-2 .or. strncon_tf < -0.7D-2) then
-                fdiags(1) = strncon_tf ; call report_error(261)
-            end if
 
         case (9) ! High Current Density REBCO tape
             bc20m = 138
             tc0m = 92
+            ! If strain limit achieved, throw a warning and use the lower strain
+            if (abs(strain) > 0.7D-2) then
+                fdiags(1) = strain ; call report_error(261)
+                strain = sign(0.7D-2,strain)
+            end if
             ! 'high current density' as per parameterisation described in Wolf, 
             !  and based on Hazelton experimental data and Zhai conceptual model;
             !  see subroutine for full references
@@ -5035,11 +5623,6 @@ contains
             jcritstr = jcritsc * (1.0D0-fcu)
             !  Critical current in cable (copper added at this stage in HTS cables)
             icrit = jcritstr * acs * fcond 
-            
-            !REBCO fractures in strains above ~+/- 0.7%
-            if (strncon_tf > 0.7D-2 .or. strncon_tf < -0.7D-2) then
-                fdiags(1) = strncon_tf ; call report_error(261)
-            end if
 
         end select
 
@@ -5197,7 +5780,8 @@ contains
         call ovarre(outfile,'Helium temperature at peak field (= superconductor temperature) (K)','(thelium)',thelium)
         call ovarre(outfile,'Total helium fraction inside cable space','(fhetot)',fhetot, 'OP ')
         call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcu)
-        call ovarre(outfile,'Strain on superconductor','(strncon_tf)',strncon_tf)
+        call ovarre(outfile,'Residual manufacturing strain on superconductor','(str_tf_con_res)',str_tf_con_res)
+        call ovarre(outfile,'Self-consistent strain on superconductor','(str_wp)',str_wp)
         call ovarre(outfile,'Critical current density in superconductor (A/m2)','(jcritsc)',jcritsc, 'OP ')
         call ovarre(outfile,'Critical current density in strand (A/m2)','(jcritstr)',jcritstr, 'OP ')
         call ovarre(outfile,'Critical current density in winding pack (A/m2)', '(jwdgcrt)',jwdgcrt, 'OP ')
