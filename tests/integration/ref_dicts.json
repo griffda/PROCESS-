@@ -9411,7 +9411,7 @@
         "croco_strand_area": "",
         "croco_strand_critical_current": "",
         "croco_thick": "Thickness of CroCo copper tube (m) (`iteration variable 158`)",
-        "cryo_cool_req": "Cryo cooling requirement at helium temp 4.5K (W)",
+        "cryo_cool_req": "Cryo cooling requirement at helium temp 4.5K (kW)",
         "cryomag_h": "Cryogenic Buildings for Magnet and Fuel Cycle length, width, height (m)",
         "cryomag_l": "Cryogenic Buildings for Magnet and Fuel Cycle length, width, height (m)",
         "cryomag_w": "Cryogenic Buildings for Magnet and Fuel Cycle length, width, height (m)",

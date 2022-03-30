@@ -11,11 +11,11 @@
    Tag No. : v2.1-1456-ge3dc2ccc code contains untracked changes
     Branch : 1336-update-cryoplant-cost-22-03-for-cost-model-2
    Git log : Merge\ branch\ |develop|\ into\ 1336-update-cryoplant-
- Date/time : 24 Mar 2022 16:17:59 +00:00(hh:mm) UTC
+ Date/time : 30 Mar 2022 10:49:41 +01:00(hh:mm) UTC
       User : jg6173
   Computer : L1088
- Directory : /tmp/pytest-of-jg6173/pytest-54/test_solver0
-     Input : /tmp/pytest-of-jg6173/pytest-54/test_scenario_costs_paper_0/IN.DAT
+ Directory : /tmp/pytest-of-jg6173/pytest-57/test_solver0
+     Input : /tmp/pytest-of-jg6173/pytest-57/test_scenario_costs_paper_0/IN.DAT
  Run title : demo 1 model for cost paper
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
