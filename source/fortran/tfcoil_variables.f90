@@ -832,7 +832,7 @@ module tfcoil_variables
   !! mass of the TF coil legs (kg)
 
   real(dp) :: cryo_cool_req
-  !! Cryo cooling requirement at helium temp 4.5K (W)
+  !! Cryo cooling requirement at helium temp 4.5K (kW)
 
   contains
 

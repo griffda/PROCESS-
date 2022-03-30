@@ -1929,35 +1929,10 @@ class CostsStep:
         None
         This routine evaluates the Account 22.03 (Cryogenic Cooling
         System) costs.
-        STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
 
         :return: cost 2203
         :rtype: float
         """
-        # 22.03.01 Helium Refrigerator
-        # Original STARFIRE value, scaling with fusion island volume
-        # step220301 = cv.step_ref[33] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
-        # step2203 = step220301
-        # Superceded by parametric cryoplant costing below
-
-        # 22.03.02 Liquid Helium Transfer and Storage
-        # Original STARFIRE value, scaling with fusion island volume
-        # step220302 = cv.step_ref[34] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
-        # step2203 += step220302
-        # Superceded by parametric cryoplant costing below
-
-        # 22.03.03 Gas Helium Storage
-        # Original STARFIRE value, scaling with fusion island volume
-        # step220303 = cv.step_ref[35] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
-        # step2203 += step220303
-        # Superceded by parametric cryoplant costing below
-
-        # 22.03.04 Liquid Nitrogen Storage
-        # Original STARFIRE value, scaling with fusion island volume
-        # step220304 = cv.step_ref[36] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
-        # step2203 += step220304
-        # Superceded by parametric cryoplant costing below
-
         # Cryoplant - will be zero for resistive coils
         # Parametric costing of cryo systems based on refrigeration capacity produced at Helium temp of 4.5K
         step2203 = 6.14e0 * tfv.cryo_cool_req ** 0.63
