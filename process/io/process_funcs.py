@@ -422,10 +422,12 @@ def get_from_indat_or_default(in_dat, varname):
     """ quick function to get variable value from IN.DAT
         or PROCESS default value """
 
+    dicts = get_dicts()
+
     if varname in in_dat.data.keys():
         return in_dat.data[varname].get_value
     else:
-        return DICT_DEFAULT[varname]
+        return dicts["DICT_DEFAULT"][varname]
 
 
 

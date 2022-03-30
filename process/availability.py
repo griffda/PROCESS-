@@ -332,7 +332,7 @@ class Availability:
         cv.redun_vac = math.floor(vacv.vpumpn * cv.redun_vacp / 100.0 + 0.5e0)
 
         u_unplanned_vacuum = self.calc_u_unplanned_vacuum(output)
-
+        
         # Total unplanned unavailability
         u_unplanned = min(
             1.0e0,
@@ -385,7 +385,7 @@ class Availability:
                 cv.t_operation,
                 "OP ",
             )
-            po.ovarre(self.outfile, "Total plant lifetime (years)", "(tlife)", tv.tlife)
+            po.ovarre(self.outfile, "Total plant lifetime (years)", "(tlife)", cv.tlife)
             po.ovarre(
                 self.outfile,
                 "Capacity factor: total lifetime elec. energy output / output power",
@@ -983,3 +983,5 @@ class Availability:
                 "OP ",
             )
             po.oblnkl(self.outfile)
+
+        return u_unplanned_vacuum
