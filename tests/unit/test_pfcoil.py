@@ -1034,16 +1034,18 @@ class BfmaxTestAsset(NamedTuple):
         BfmaxTestAsset(a=2.0, h=1.0, bfmax_exp=1.4601048e1),
     ],
 )
-def test_bfmax(test_asset):
+def test_bfmax(pfcoil, test_asset):
     """Test bfmax() function.
 
+    :param pfcoil: PFCoil object
+    :type pfcoil: process.pfcoil.PFCoil
     :param test_asset: arguments and expected return value for single test case
     :type test_asset: BfmaxTestAsset
     """
     rj = 2.0e7
     b = 3.0
 
-    bfmax = pf.bfmax(rj, test_asset.a, b, test_asset.h)
+    bfmax = pfcoil.bfmax(rj, test_asset.a, b, test_asset.h)
 
     assert pytest.approx(bfmax) == test_asset.bfmax_exp
 

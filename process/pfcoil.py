@@ -753,7 +753,7 @@ class PFCoil:
 
     def ohcalc(self):
         """Routine to perform calculations for the Central Solenoid solenoid.
-        
+
         author: P J Knight, CCFE, Culham Science Centre
         This subroutine performs the calculations for the
         Central Solenoid solenoid coil.
@@ -801,7 +801,7 @@ class PFCoil:
         #  Occurs at inner edge of coil; bmaxoh2 and bzi are of opposite sign at EOF
 
         #  Peak field due to Centpfv.ral Solenoid itself
-        bmaxoh2 = pf.bfmax(
+        bmaxoh2 = self.bfmax(
             pfv.coheof, pfv.ra[pfv.nohc - 1], pfv.rb[pfv.nohc - 1], hohc
         )
 
@@ -818,7 +818,7 @@ class PFCoil:
 
         #  Peak field at the Beginning-Of-Pulse (BOP)
         #  Occurs at inner edge of coil; pfv.bmaxoh0 and bzi are of same sign at BOP
-        pfv.bmaxoh0 = pf.bfmax(
+        pfv.bmaxoh0 = self.bfmax(
             pfv.cohbop, pfv.ra[pfv.nohc - 1], pfv.rb[pfv.nohc - 1], hohc
         )
         timepoint = 2
@@ -881,7 +881,9 @@ class PFCoil:
                 )
             else:
                 pfv.s_tresca_oh = max(
-                    abs(pf.sig_hoop - 0.0e0), abs(0.0e0 - 0.0e0), abs(0.0e0 - pf.sig_hoop)
+                    abs(pf.sig_hoop - 0.0e0),
+                    abs(0.0e0 - 0.0e0),
+                    abs(0.0e0 - pf.sig_hoop),
                 )
 
             #  Thickness of hypothetical steel cylinders assumed to encase the CS along
@@ -916,7 +918,7 @@ class PFCoil:
                 * 2.0e0
                 * constants.pi
                 * pfv.rpf[pfv.nohc - 1]
-                * tfv.dcond[pfv.isumatoh-1]
+                * tfv.dcond[pfv.isumatoh - 1]
             )
         else:
             pfv.wtc[pfv.nohc - 1] = (
@@ -1012,7 +1014,7 @@ class PFCoil:
             elif abs(pfv.curpfb[i - 1] - pfv.ric[i - 1]) < 1.0e-12:
                 it = 5
             else:
-                eh.idiags[0] = it 
+                eh.idiags[0] = it
                 eh.report_error(72)
 
             if bv.iohcl == 0:
@@ -1036,14 +1038,14 @@ class PFCoil:
                         / pf.nfxf
                         * 2.0e0
                     )
-            
+
                 kk = pf.nfxf
-    
+
         #  Non-Central Solenoid coils' contributions
         jj = 0
         for iii in range(pfv.ngrp):
             for jjj in range(pfv.ncls[iii]):
-                
+
                 jj = jj + 1
                 #  Radius, z-coordinate and current for each coil
                 if iii == ii - 1:
@@ -1074,7 +1076,7 @@ class PFCoil:
                     pf.cfxf[kk - 1] = (
                         pfv.ric[jj - 1] * pfv.waves[jj - 1, it - 1] * 0.25e6
                     )
-        
+
                 else:
                     #  Field from different coil
                     kk = kk + 1
@@ -1103,7 +1105,7 @@ class PFCoil:
         #  bpf and bpf2 for the Central Solenoid are calculated in OHCALC
         if (bv.iohcl != 0) and (i == pfv.nohc):
             return bri, bro, bzi, bzo
-    
+
         bpfin = math.sqrt(bri ** 2 + bzi ** 2)
         bpfout = math.sqrt(bro ** 2 + bzo ** 2)
         for n in range(pfv.ncls[ii - 1]):
@@ -1111,3 +1113,72 @@ class PFCoil:
             pf.bpf2[i - 1 + n] = bpfout
 
         return bri, bro, bzi, bzo
+
+    def bfmax(self, rj, a, b, h):
+        """Calculates the maximum field of a solenoid.
+
+        author: P J Knight, CCFE, Culham Science Centre
+        This routine calculates the peak field (T) at a solenoid's
+        inner radius, using fits taken from the figure
+        on p.22 of M. Wilson's book Superconducting Magnets,
+        Clarendon Press, Oxford, N.Y., 1983
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+        
+        :param rj: overall current density (A/m2)
+        :type rj: float
+        :param a: solenoid inner radius (m)
+        :type a: float
+        :param b: solenoid outer radius (m)
+        :type b: float
+        :param h: solenoid half height (m)
+        :type h: float
+        :return bfmax: maximum field of solenoid
+        :rtype: float
+        """
+        beta = h / a
+        alpha = b / a
+
+        # Fits are for 1 < alpha < 2 , and 0.5 < beta < very large
+        b0 = (
+            rj
+            * constants.rmu0
+            * h
+            * math.log(
+                (alpha + math.sqrt(alpha ** 2 + beta ** 2))
+                / (1.0 + math.sqrt(1.0 + beta ** 2))
+            )
+        )
+
+        if beta > 3.0:
+
+            b1 = constants.rmu0 * rj * (b - a)
+            f = (3.0 / beta) ** 2
+            bfmax = f * b0 * (1.007 + (alpha - 1.0) * 0.0055) + (1.0 - f) * b1
+
+        elif beta > 2.0:
+
+            rat = (1.025 - (beta - 2.0) * 0.018) + (alpha - 1.0) * (
+                0.01 - (beta - 2.0) * 0.0045
+            )
+            bfmax = rat * b0
+
+        elif beta > 1.0:
+
+            rat = (1.117 - (beta - 1.0) * 0.092) + (alpha - 1.0) * (beta - 1.0) * 0.01
+            bfmax = rat * b0
+
+        elif beta > 0.75:
+
+            rat = (1.30 - 0.732 * (beta - 0.75)) + (alpha - 1.0) * (
+                0.2 * (beta - 0.75) - 0.05
+            )
+            bfmax = rat * b0
+
+        else:
+
+            rat = (1.65 - 1.4 * (beta - 0.5)) + (alpha - 1.0) * (
+                0.6 * (beta - 0.5) - 0.20
+            )
+            bfmax = rat * b0
+
+        return bfmax
