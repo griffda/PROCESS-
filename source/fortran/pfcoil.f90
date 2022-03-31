@@ -1835,7 +1835,7 @@ module pfcoil_module
        use maths_library, only: variable_error, secant_solve
        use rebco_variables, only: copperaoh_m2, copperaoh_m2_max, f_copperaoh_m2
        use build_variables, only: hmax, ohcth
-       use pfcoil_variables, only: ohhghf, coheof, awpoh
+       use pfcoil_variables, only: ohhghf, coheof, awpoh, vfohc, fcuohsu
      implicit none
  
      !  Arguments
@@ -1850,7 +1850,7 @@ module pfcoil_module
  
      integer :: lap
      real(dp) :: b,bc20m,bcrit,c0,delt,jcrit0,jcritm, &
-          jcritp,jsc,jstrand,jtol,t,tc0m,tcrit,ttest,ttestm,ttestp, icrit, iop, ioheof ! last var added by me
+          jcritp,jsc,jstrand,jtol,t,tc0m,tcrit,ttest,ttestm,ttestp, icrit, iop, ioheof
  
      real(dp) :: current_sharing_t
      real(dp)::x1,x2         ! Initial guesses for temperature
@@ -1917,8 +1917,9 @@ module pfcoil_module
         
         ! The CS coil current at EOF
         ioheof = hmax*ohhghf*ohcth*2.0D0*coheof 
-        ! The CS coil current/copper area calculation for quench protection  
-        copperaoh_m2 = ioheof / awpoh * (1.0D0-fcu) 
+        ! The CS coil current/copper area calculation for quench protection
+        ! Copper area = (area of coil - area of steel)*(1- void fraction)*(fraction of copper in strands)
+        copperaoh_m2 = ioheof / awpoh * (1.0D0-vfohc)*fcuohsu
  
     case (7) ! Durham Ginzburg-Landau Nb-Ti parameterisation
           bc20m = b_crit_upper_nbti
@@ -1936,7 +1937,7 @@ module pfcoil_module
         ! The CS coil current at EOF
         ioheof = hmax*ohhghf*ohcth*2.0D0*coheof 
         ! The CS coil current/copper area calculation for quench protection  
-        copperaoh_m2 = ioheof / awpoh * (1.0D0-fcu) 
+        copperaoh_m2 = ioheof / awpoh*(1.0D0-vfohc)*fcuohsu
            
        
           
