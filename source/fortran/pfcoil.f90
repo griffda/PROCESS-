@@ -1919,7 +1919,7 @@ module pfcoil_module
         ioheof = hmax*ohhghf*ohcth*2.0D0*coheof 
         ! The CS coil current/copper area calculation for quench protection
         ! Copper area = (area of coil - area of steel)*(1- void fraction)*(fraction of copper in strands)
-        copperaoh_m2 = ioheof / awpoh * (1.0D0-vfohc)*fcuohsu
+        copperaoh_m2 = ioheof / awpoh * (1.0D0-vfohc)* fcuohsu
  
     case (7) ! Durham Ginzburg-Landau Nb-Ti parameterisation
           bc20m = b_crit_upper_nbti
@@ -1937,7 +1937,7 @@ module pfcoil_module
         ! The CS coil current at EOF
         ioheof = hmax*ohhghf*ohcth*2.0D0*coheof 
         ! The CS coil current/copper area calculation for quench protection  
-        copperaoh_m2 = ioheof / awpoh*(1.0D0-vfohc)*fcuohsu
+        copperaoh_m2 = ioheof / awpoh*(1.0D0-vfohc)* fcuohsu
            
        
           
