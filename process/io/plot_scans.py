@@ -198,13 +198,13 @@ def main(args=None):
     labels['dnla'] = r'$\bar{n}_{\mathrm{e}}$[$m^{-3}$]'
     labels['dnla_gw'] = r'$f_{\mathrm{GW}}$'
     labels['normalised_toroidal_beta'] = r'$\beta_{N,\mathrm{tor}}$'
-    labels["copperaoh_m2"] = r"$\frac{I_{CS}}{CuA} [$A M$^{-2}$$]$"
-    labels["copperaoh_m2_max"] = r"$Max\frac{I_{CS}}{CuA} [$A M$^{-2}$$]$"   
+    labels["copperaoh_m2"] = r"$\frac{I_{\mathrm{CS}}}{CuA} [$A m$^{-2}$$]$"
+    labels["copperaoh_m2_max"] = r"$max\frac{I_{\mathrm{CS}}}{CuA} [$A m$^{-2}$$]$"   
     labels["coreradius"] = r"$r_{core} [M]$"
-    labels["fcuohsu"] = r"$CuFrac$"
+    labels["fcuohsu"] = r"$f_{\mathrm{Cu}}^{\mathrm{CS}}$" #copper fraction of strand in central solenoid
     labels["coheof"] = r"$J [A M^{-2}]$"
-    labels["ohcth"] = r"$ ohcth [M]$"   
-    labels["ohhghf"] = r"$ ohghf [M]$" 
+    labels["ohcth"] = r"$ ohcth [m]$"   
+    labels["ohhghf"] = r"$ ohghf [m]$" 
 
     # ------------
 
