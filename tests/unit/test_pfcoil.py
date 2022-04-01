@@ -1216,7 +1216,7 @@ def test_waveform(monkeypatch):
     assert_array_almost_equal(pfv.waves, waves_exp)
 
 
-def test_vsec(monkeypatch):
+def test_vsec(pfcoil, monkeypatch):
     """Test vsec subroutine.
 
     vsec() requires specific mocked variables in order to work; these were
@@ -1224,6 +1224,8 @@ def test_vsec(monkeypatch):
     baseline 2018 IN.DAT.
 
     vsec() modifies many vars, so only a couple are asserted on.
+    :param pfcoil: PFCoil object
+    :type pfcoil: process.pfcoil.PFCoil
     :param monkeypatch: mocking fixture
     :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
     """
@@ -1965,7 +1967,7 @@ def test_vsec(monkeypatch):
     vsbn_exp = np.array(0.0)
     vsoh_exp = np.array(0.0)
 
-    pf.vsec()
+    pfcoil.vsec()
 
     assert_array_almost_equal(pfv.vsbn, vsbn_exp)
     assert_array_almost_equal(pfv.vsoh, vsoh_exp)

@@ -30,7 +30,7 @@ class PFCoil:
         pf.induct(self.outfile, 0)
 
         # Volt-second capability of PF coil set
-        pf.vsec()
+        self.vsec()
 
     def output(self):
         """Output results to output file."""
@@ -1123,7 +1123,7 @@ class PFCoil:
         on p.22 of M. Wilson's book Superconducting Magnets,
         Clarendon Press, Oxford, N.Y., 1983
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
-        
+
         :param rj: overall current density (A/m2)
         :type rj: float
         :param a: solenoid inner radius (m)
@@ -1182,3 +1182,55 @@ class PFCoil:
             bfmax = rat * b0
 
         return bfmax
+
+    def vsec(self):
+        """Calculation of volt-second capability of PF system.
+
+        author: P J Knight, CCFE, Culham Science Centre
+        This routine calculates the volt-second capability of the PF
+        coil system.
+        """
+        if bv.iohcl == 0:
+            #  No Central Solenoid
+            nef = pfv.ncirt - 1
+        else:
+            nef = pfv.ncirt - 2
+
+        pfv.vsefsu = 0.0e0
+
+        for i in range(nef):
+            pf.vsdum[i, 0] = pfv.sxlg[pfv.ncirt - 1, i] * pfv.cpt[i, 1]
+            pf.vsdum[i, 1] = pfv.sxlg[pfv.ncirt - 1, i] * pfv.cpt[i, 2]
+            pfv.vsefsu = pfv.vsefsu + (pf.vsdum[i, 1] - pf.vsdum[i, 0])
+
+        #  Central Solenoid startup volt-seconds
+        if bv.iohcl != 0:
+            pf.vsdum[pfv.nohc - 1, 0] = (
+                pfv.sxlg[pfv.ncirt - 1, pfv.ncirt - 2] * pfv.cpt[pfv.ncirt - 2, 1]
+            )
+            pf.vsdum[pfv.nohc - 1, 1] = (
+                pfv.sxlg[pfv.ncirt - 1, pfv.ncirt - 2] * pfv.cpt[pfv.ncirt - 2, 2]
+            )
+            pfv.vsohsu = pf.vsdum[pfv.nohc - 1, 1] - pf.vsdum[pfv.nohc - 1, 0]
+
+        #  Total available volt-seconds for start-up
+        pfv.vssu = pfv.vsohsu + pfv.vsefsu
+
+        #  Burn volt-seconds
+        if bv.iohcl != 0:
+            pf.vsdum[pfv.nohc - 1, 2] = (
+                pfv.sxlg[pfv.ncirt - 1, pfv.ncirt - 2] * pfv.cpt[pfv.ncirt - 2, 4]
+            )
+            pfv.vsohbn = pf.vsdum[pfv.nohc - 1, 2] - pf.vsdum[pfv.nohc - 1, 1]
+
+        #  PF volt-seconds during burn
+        pfv.vsefbn = 0.0e0
+        for i in range(nef):
+            pf.vsdum[i, 2] = pfv.sxlg[pfv.ncirt - 1, i] * pfv.cpt[i, 4]
+            pfv.vsefbn = pfv.vsefbn + (pf.vsdum[i, 2] - pf.vsdum[i, 1])
+
+        pfv.vsbn = pfv.vsohbn + pfv.vsefbn
+
+        pfv.vstot = pfv.vssu + pfv.vsbn
+        pfv.vseft = pfv.vsefsu + pfv.vsefbn
+        pfv.vsoh = pfv.vsohbn + pfv.vsohsu
