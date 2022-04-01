@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1461-g4cdb932e
-    Branch : 1605-divertor-lifetime-calculation-needs-updating
-   Git log : Merge\ branch\ |develop|\ into\ 1605-divertor-lifetime
- Date/time : 30 Mar 2022 13:21:31 +01:00(hh:mm) UTC
-      User : rhicha
-  Computer : l0500
- Directory : /tmp/pytest-of-rhicha/pytest-297/test_solver0
-     Input : /tmp/pytest-of-rhicha/pytest-297/test_scenario_HARE_0/IN.DAT
+   Tag No. : v2.1-1456-ge3dc2ccc code contains untracked changes
+    Branch : 1336-update-cryoplant-cost-22-03-for-cost-model-2
+   Git log : Merge\ branch\ |develop|\ into\ 1336-update-cryoplant-
+ Date/time : 30 Mar 2022 10:49:58 +01:00(hh:mm) UTC
+      User : jg6173
+  Computer : L1088
+ Directory : /tmp/pytest-of-jg6173/pytest-57/test_solver0
+     Input : /tmp/pytest-of-jg6173/pytest-57/test_scenario_HARE_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -1260,9 +1260,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  AC losses in cryogenic components (MW)                                   (qac/1.0D6)               5.603E-03  OP 
  Resistive losses in current leads (MW)                                   (qcl/1.0D6)               1.414E-02  OP 
  45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             2.552E-02  OP 
- Sum = Total heat removal at cryogenic temperatures (W)                   (helpow/1.0D6)            8.223E-02  OP 
- Temperature of cryogenic components (K)                                  (tmpcry)                  4.500E+00     
+ Sum = Total heat removal at cryogenic temperatures (tmpcry & tcoolin) (M (helpow + helpow_cryal/1. 8.223E-02  OP 
+ Temperature of cryogenic superconducting components (K)                  (tmpcry)                  4.500E+00     
+ Temperature of cryogenic aluminium components (K)                        (tcoolin)                 3.131E+02     
  Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                           2.028E-03  OP 
+ Efficiency (figure of merit) of cryogenic aluminium plant is 40% of idea                          -2.020E+00  OP 
  Electric power for cryogenic plant (MW)                                  (crypmw)                  4.055E+01  OP 
  
  ************************************ Plant Power / Heat Transport Balance ************************************
@@ -2685,9 +2687,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  AC losses in cryogenic components (MW)                                   (qac/1.0D6)               5.641E-03  OP 
  Resistive losses in current leads (MW)                                   (qcl/1.0D6)               1.414E-02  OP 
  45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             2.556E-02  OP 
- Sum = Total heat removal at cryogenic temperatures (W)                   (helpow/1.0D6)            8.237E-02  OP 
- Temperature of cryogenic components (K)                                  (tmpcry)                  4.500E+00     
+ Sum = Total heat removal at cryogenic temperatures (tmpcry & tcoolin) (M (helpow + helpow_cryal/1. 8.237E-02  OP 
+ Temperature of cryogenic superconducting components (K)                  (tmpcry)                  4.500E+00     
+ Temperature of cryogenic aluminium components (K)                        (tcoolin)                 3.131E+02     
  Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                           2.028E-03  OP 
+ Efficiency (figure of merit) of cryogenic aluminium plant is 40% of idea                          -2.020E+00  OP 
  Electric power for cryogenic plant (MW)                                  (crypmw)                  4.062E+01  OP 
  
  ************************************ Plant Power / Heat Transport Balance ************************************
@@ -4110,9 +4114,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  AC losses in cryogenic components (MW)                                   (qac/1.0D6)               5.674E-03  OP 
  Resistive losses in current leads (MW)                                   (qcl/1.0D6)               1.414E-02  OP 
  45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             2.560E-02  OP 
- Sum = Total heat removal at cryogenic temperatures (W)                   (helpow/1.0D6)            8.248E-02  OP 
- Temperature of cryogenic components (K)                                  (tmpcry)                  4.500E+00     
+ Sum = Total heat removal at cryogenic temperatures (tmpcry & tcoolin) (M (helpow + helpow_cryal/1. 8.248E-02  OP 
+ Temperature of cryogenic superconducting components (K)                  (tmpcry)                  4.500E+00     
+ Temperature of cryogenic aluminium components (K)                        (tcoolin)                 3.131E+02     
  Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                           2.028E-03  OP 
+ Efficiency (figure of merit) of cryogenic aluminium plant is 40% of idea                          -2.020E+00  OP 
  Electric power for cryogenic plant (MW)                                  (crypmw)                  4.068E+01  OP 
  
  ************************************ Plant Power / Heat Transport Balance ************************************
@@ -5535,9 +5541,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  AC losses in cryogenic components (MW)                                   (qac/1.0D6)               5.732E-03  OP 
  Resistive losses in current leads (MW)                                   (qcl/1.0D6)               1.414E-02  OP 
  45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             2.566E-02  OP 
- Sum = Total heat removal at cryogenic temperatures (W)                   (helpow/1.0D6)            8.269E-02  OP 
- Temperature of cryogenic components (K)                                  (tmpcry)                  4.500E+00     
+ Sum = Total heat removal at cryogenic temperatures (tmpcry & tcoolin) (M (helpow + helpow_cryal/1. 8.269E-02  OP 
+ Temperature of cryogenic superconducting components (K)                  (tmpcry)                  4.500E+00     
+ Temperature of cryogenic aluminium components (K)                        (tcoolin)                 3.131E+02     
  Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                           2.028E-03  OP 
+ Efficiency (figure of merit) of cryogenic aluminium plant is 40% of idea                          -2.020E+00  OP 
  Electric power for cryogenic plant (MW)                                  (crypmw)                  4.078E+01  OP 
  
  ************************************ Plant Power / Heat Transport Balance ************************************
@@ -6960,9 +6968,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  AC losses in cryogenic components (MW)                                   (qac/1.0D6)               5.783E-03  OP 
  Resistive losses in current leads (MW)                                   (qcl/1.0D6)               1.414E-02  OP 
  45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             2.572E-02  OP 
- Sum = Total heat removal at cryogenic temperatures (W)                   (helpow/1.0D6)            8.288E-02  OP 
- Temperature of cryogenic components (K)                                  (tmpcry)                  4.500E+00     
+ Sum = Total heat removal at cryogenic temperatures (tmpcry & tcoolin) (M (helpow + helpow_cryal/1. 8.288E-02  OP 
+ Temperature of cryogenic superconducting components (K)                  (tmpcry)                  4.500E+00     
+ Temperature of cryogenic aluminium components (K)                        (tcoolin)                 3.131E+02     
  Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                           2.028E-03  OP 
+ Efficiency (figure of merit) of cryogenic aluminium plant is 40% of idea                          -2.020E+00  OP 
  Electric power for cryogenic plant (MW)                                  (crypmw)                  4.087E+01  OP 
  
  ************************************ Plant Power / Heat Transport Balance ************************************
@@ -8385,9 +8395,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  AC losses in cryogenic components (MW)                                   (qac/1.0D6)               5.836E-03  OP 
  Resistive losses in current leads (MW)                                   (qcl/1.0D6)               1.414E-02  OP 
  45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             2.578E-02  OP 
- Sum = Total heat removal at cryogenic temperatures (W)                   (helpow/1.0D6)            8.308E-02  OP 
- Temperature of cryogenic components (K)                                  (tmpcry)                  4.500E+00     
+ Sum = Total heat removal at cryogenic temperatures (tmpcry & tcoolin) (M (helpow + helpow_cryal/1. 8.308E-02  OP 
+ Temperature of cryogenic superconducting components (K)                  (tmpcry)                  4.500E+00     
+ Temperature of cryogenic aluminium components (K)                        (tcoolin)                 3.131E+02     
  Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                           2.028E-03  OP 
+ Efficiency (figure of merit) of cryogenic aluminium plant is 40% of idea                          -2.020E+00  OP 
  Electric power for cryogenic plant (MW)                                  (crypmw)                  4.097E+01  OP 
  
  ************************************ Plant Power / Heat Transport Balance ************************************
@@ -9810,9 +9822,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  AC losses in cryogenic components (MW)                                   (qac/1.0D6)               5.892E-03  OP 
  Resistive losses in current leads (MW)                                   (qcl/1.0D6)               1.414E-02  OP 
  45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             2.585E-02  OP 
- Sum = Total heat removal at cryogenic temperatures (W)                   (helpow/1.0D6)            8.328E-02  OP 
- Temperature of cryogenic components (K)                                  (tmpcry)                  4.500E+00     
+ Sum = Total heat removal at cryogenic temperatures (tmpcry & tcoolin) (M (helpow + helpow_cryal/1. 8.328E-02  OP 
+ Temperature of cryogenic superconducting components (K)                  (tmpcry)                  4.500E+00     
+ Temperature of cryogenic aluminium components (K)                        (tcoolin)                 3.131E+02     
  Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                           2.028E-03  OP 
+ Efficiency (figure of merit) of cryogenic aluminium plant is 40% of idea                          -2.020E+00  OP 
  Electric power for cryogenic plant (MW)                                  (crypmw)                  4.107E+01  OP 
  
  ************************************ Plant Power / Heat Transport Balance ************************************

@@ -831,6 +831,9 @@ module tfcoil_variables
   real(dp) :: whttflgs
   !! mass of the TF coil legs (kg)
 
+  real(dp) :: cryo_cool_req
+  !! Cryo cooling requirement at helium temp 4.5K (kW)
+
   contains
 
   subroutine init_tfcoil_variables
@@ -1047,5 +1050,6 @@ module tfcoil_variables
     whttflgs = 0.0D0
     tfc_sidewall_is_fraction = .false.
     i_cp_joints = -1
+    cryo_cool_req = 0.0D0
   end subroutine init_tfcoil_variables
 end module tfcoil_variables

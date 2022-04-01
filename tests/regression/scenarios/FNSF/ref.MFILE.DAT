@@ -4,13 +4,13 @@
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.3.0   R"
  Date_of_run_____________________________________________________________ (date)________________________     "30/03/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "13:20"
- User____________________________________________________________________ (username)____________________     "rhicha"  
+ Time_of_run_____________________________________________________________ (time)________________________     "10:49"
+ User____________________________________________________________________ (username)____________________     "jg6173"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "FNSF (Menard et al. 2016)                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1461-g4cdb932e"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1605-divertor-lifetime-calculation-needs-updating"                                                 
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |develop|\ into\ 1605-divertor-lifetime"                                            
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-rhicha/pytest-297/test_scenario_FNSF_0/IN.DAT                                                                                                                                            "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1456-ge3dc2ccc"                                                                               
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1336-update-cryoplant-cost-22-03-for-cost-model-2"                                                 
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |develop|\ into\ 1336-update-cryoplant-"                                            
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jg6173/pytest-57/test_scenario_FNSF_0/IN.DAT                                                                                                                                             "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -833,9 +833,11 @@
  AC_losses_in_cryogenic_components_(MW)__________________________________ (qac/1.0D6)___________________      0.0000E+00 OP 
  Resistive_losses_in_current_leads_(MW)__________________________________ (qcl/1.0D6)___________________      0.0000E+00 OP 
  45%_allowance_for_heat_loads_in_transfer_lines,_storage_tanks_etc_(MW)__ (qmisc/1.0D6)_________________      0.0000E+00 OP 
- Sum_=_Total_heat_removal_at_cryogenic_temperatures_(W)__________________ (helpow/1.0D6)________________      0.0000E+00 OP 
- Temperature_of_cryogenic_components_(K)_________________________________ (tmpcry)______________________      4.5000E+00    
- Efficiency_(figure_of_merit)_of_cryogenic_plant_is_13%_of_ideal_Carnot_v ______________________________      2.0277E-03 OP 
+ Sum_=_Total_heat_removal_at_cryogenic_temperatures_(tmpcry_&_tcoolin)_(M (helpow_+_helpow_cryal/1.0D6)_      0.0000E+00 OP 
+ Temperature_of_cryogenic_superconducting_components_(K)_________________ (tmpcry)______________________      4.5000E+00    
+ Temperature_of_cryogenic_aluminium_components_(K)_______________________ (tcoolin)_____________________      3.1315E+02    
+ Efficiency_(figure_of_merit)_of_cryogenic_plant_is_13%_of_ideal_Carnot_v ______________________________     -1.5598E-02 OP 
+ Efficiency_(figure_of_merit)_of_cryogenic_aluminium_plant_is_40%_of_idea ______________________________      1.5541E+01 OP 
  Electric_power_for_cryogenic_plant_(MW)_________________________________ (crypmw)______________________      0.0000E+00 OP 
  # Plant Power / Heat Transport Balance #
  Neutron_power_multiplication_in_blanket_________________________________ (emult)_______________________      1.2690E+00    

@@ -70,7 +70,10 @@ module heat_transport_variables
     !! Minimum total electrical power for primary coolant pumps (MW) (NOT RECOMMENDED)
   
     real(dp) :: helpow
-    !! heat removal at cryogenic temperatures (W)
+    !! Heat removal at cryogenic temperature tmpcry (W)
+    
+    real(dp) :: helpow_cryal
+    !! Heat removal at cryogenic temperature tcoolin (W)
   
     real(dp) :: htpmw
     !! heat transport system electrical pump power (MW)
@@ -202,6 +205,7 @@ module heat_transport_variables
       fpumpshld = 0.005D0
       htpmw_min = 0.0D0
       helpow = 0.0D0
+      helpow_cryal = 0.0D0
       htpmw = 0.0D0
       htpmw_blkt = 0.0D0
       htpmw_div = 0.0D0
