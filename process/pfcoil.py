@@ -9,6 +9,7 @@ from process.fortran import fwbs_variables as fwbsv
 from process.fortran import constants
 from process.fortran import cs_fatigue as csf
 from process.fortran import cs_fatigue_variables as csfv
+from process.fortran import maths_library as ml
 from process import fortran as ft
 import math
 import numpy as np
@@ -847,7 +848,7 @@ class PFCoil:
             pf.sig_hoop = self.hoop_stress(pfv.ra[pfv.nohc - 1])
 
             # New calculation from Y. Iwasa for axial stress
-            pf.sig_axial, pf.axial_force = pf.axial_stress()
+            pf.sig_axial, pf.axial_force = self.axial_stress()
 
             #  Allowable (hoop) stress (Pa) alstroh
             # Now a user input
@@ -1304,3 +1305,58 @@ class PFCoil:
         s_hoop = s_hoop_nom / pfv.oh_steel_frac
 
         return s_hoop
+
+    def axial_stress(self):
+        """Calculation of axial stress of central solenoid.
+
+        author: J Morris, CCFE, Culham Science Centre
+        This routine calculates the axial stress of the central solenoid
+        from "Case studies in superconducting magnets", Y. Iwasa, Springer
+
+        :return: unsmeared axial stress [MPa], axial force [N]
+        :rtype: tuple[float, float]
+        """
+        b = pfv.rb[pfv.nohc - 1]
+
+        # Half height of Centpfv.ral Solenoid [m]
+        hl = pfv.zh[pfv.nohc - 1]
+
+        # Centpfv.ral Solenoid current [A]
+        ni = pfv.ric[pfv.nohc - 1] * 1.0e6
+
+        # kb term for elliptical integpfv.rals
+        # kb2 = SQRT((4.0e0*b**2)/(4.0e0*b**2 + hl**2))
+        kb2 = (4.0e0 * b ** 2) / (4.0e0 * b ** 2 + hl ** 2)
+
+        # k2b term for elliptical integpfv.rals
+        # k2b2 = SQRT((4.0e0*b**2)/(4.0e0*b**2 + 4.0e0*hl**2))
+        k2b2 = (4.0e0 * b ** 2) / (4.0e0 * b ** 2 + 4.0e0 * hl ** 2)
+
+        # term 1
+        axial_term_1 = -(constants.rmu0 / 2.0e0) * (ni / (2.0e0 * hl)) ** 2
+
+        # term 2
+        ekb2_1, ekb2_2 = ml.ellipke(kb2)
+        axial_term_2 = (
+            2.0e0 * hl * (math.sqrt(4.0e0 * b ** 2 + hl ** 2)) * (ekb2_1 - ekb2_2)
+        )
+
+        # term 3
+        ek2b2_1, ek2b2_2 = ml.ellipke(k2b2)
+        axial_term_3 = (
+            2.0e0
+            * hl
+            * (math.sqrt(4.0e0 * b ** 2 + 4.0e0 * hl ** 2))
+            * (ek2b2_1 - ek2b2_2)
+        )
+
+        # calculate axial force [N]
+        axial_force = axial_term_1 * (axial_term_2 - axial_term_3)
+
+        # axial area [m2]
+        area_ax = constants.pi * (pfv.rb[pfv.nohc - 1] ** 2 - pfv.ra[pfv.nohc - 1] ** 2)
+
+        # calculate unsmeared axial stress [MPa]
+        s_axial = axial_force / (pfv.oh_steel_frac * 0.5 * area_ax)
+
+        return s_axial, axial_force

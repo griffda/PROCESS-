@@ -2661,12 +2661,15 @@ def test_superconpf(monkeypatch):
     assert pytest.approx(tmarg) == tmarg_exp
 
 
-def test_axial_stress(monkeypatch):
+def test_axial_stress(pfcoil, monkeypatch):
     """Test axial_stress subroutine.
 
     axial_stress() requires specific mocked vars in order to work; these were
     discovered using gdb to break on the first subroutine call when running the
     baseline 2018 IN.DAT.
+
+    :param pfcoil: a PFCoil instance
+    :type pfcoil: process.pfcoil.PFCoil
     :param monkeypatch: mocking fixture
     :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
     """
@@ -2795,7 +2798,7 @@ def test_axial_stress(monkeypatch):
 
     s_axial_exp = -7.468967e8
     axial_force_exp = -1.956801e9
-    s_axial, axial_force = pf.axial_stress()
+    s_axial, axial_force = pfcoil.axial_stress()
 
     assert pytest.approx(s_axial) == s_axial_exp
     assert pytest.approx(axial_force) == axial_force_exp
