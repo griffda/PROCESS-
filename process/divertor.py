@@ -34,6 +34,7 @@ class Divertor:
         :param output: indicate whether output should be written to the output file, or not
         :type output: boolean
         """
+
         if pv.itart == 1:
             self.divtart(
                 pv.rmajor,
@@ -816,7 +817,7 @@ class Divertor:
 
         areadv = 2.0e0 * (a1 + a2 + a3)
 
-        hldiv = pdivt / areadv
+        dv.hldiv = pdivt / areadv
 
         if output:
             po.osubhd(self.outfile, "Divertor Heat Load")
@@ -824,6 +825,6 @@ class Divertor:
             po.oblnkl(self.outfile)
             po.ovarre(self.outfile, "Power to the divertor (MW)", "(pdivt.)", pdivt)
             po.ovarre(self.outfile, "Divertor surface area (m2)", "(areadv)", areadv)
-            po.ovarre(self.outfile, "Divertor heat load (MW/m2)", "(hldiv)", hldiv)
+            po.ovarre(self.outfile, "Divertor heat load (MW/m2)", "(hldiv)", dv.hldiv)
 
-        return hldiv
+        return dv.hldiv
