@@ -844,7 +844,7 @@ class PFCoil:
             #  Superconducting coil
 
             # New calculation from M. N. Wilson for hoop stress
-            pf.sig_hoop = pf.hoop_stress(pfv.ra[pfv.nohc - 1])
+            pf.sig_hoop = self.hoop_stress(pfv.ra[pfv.nohc - 1])
 
             # New calculation from Y. Iwasa for axial stress
             pf.sig_axial, pf.axial_force = pf.axial_stress()
@@ -1234,3 +1234,73 @@ class PFCoil:
         pfv.vstot = pfv.vssu + pfv.vsbn
         pfv.vseft = pfv.vsefsu + pfv.vsefbn
         pfv.vsoh = pfv.vsohbn + pfv.vsohsu
+
+    def hoop_stress(self, r):
+        """Calculation of hoop stress of central solenoid.
+
+        author: J Morris, CCFE, Culham Science Centre
+        This routine calculates the hoop stress of the central solenoid
+        from "Superconducting magnets", M. N. Wilson OUP
+
+        :param r: radial position a < r < b
+        :type r: float
+        :return: hoop stress (MPa)
+        :rtype: float
+        """
+        a = pfv.ra[pfv.nohc - 1]
+
+        # Outer pfv.radius of Centpfv.ral Solenoid [m]
+        b = pfv.rb[pfv.nohc - 1]
+
+        # alpha
+        alpha = b / a
+
+        # epsilon
+        epsilon = r / a
+
+        # Field at inner pfv.radius of coil [T]
+        B_a = pfv.bmaxoh0
+
+        # Field at outer pfv.radius of coil [T]
+        # Assume to be 0 for now
+        B_b = 0.0e0
+
+        # current density [A/m^2]
+        j = pfv.cohbop
+
+        # K term
+        K = ((alpha * B_a - B_b) * j * a) / (alpha - 1.0e0)
+
+        # M term
+        M = ((B_a - B_b) * j * a) / (alpha - 1.0e0)
+
+        # calculate hoop stress terms
+        hp_term_1 = K * ((2.0e0 + tfv.poisson_steel) / (3.0e0 * (alpha + 1.0e0)))
+
+        hp_term_2 = (
+            alpha ** 2
+            + alpha
+            + 1.0e0
+            + alpha ** 2 / epsilon ** 2
+            - epsilon
+            * (
+                ((1.0e0 + 2.0e0 * tfv.poisson_steel) * (alpha + 1.0e0))
+                / (2.0e0 + tfv.poisson_steel)
+            )
+        )
+
+        hp_term_3 = M * ((3.0e0 + tfv.poisson_steel) / (8.0e0))
+
+        hp_term_4 = (
+            alpha ** 2
+            + 1.0e0
+            + alpha ** 2 / epsilon ** 2
+            - epsilon ** 2
+            * ((1.0e0 + 3.0e0 * tfv.poisson_steel) / (3.0e0 + tfv.poisson_steel))
+        )
+
+        s_hoop_nom = hp_term_1 * hp_term_2 - hp_term_3 * hp_term_4
+
+        s_hoop = s_hoop_nom / pfv.oh_steel_frac
+
+        return s_hoop

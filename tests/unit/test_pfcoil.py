@@ -1973,12 +1973,15 @@ def test_vsec(pfcoil, monkeypatch):
     assert_array_almost_equal(pfv.vsoh, vsoh_exp)
 
 
-def test_hoop_stress(monkeypatch):
+def test_hoop_stress(pfcoil, monkeypatch):
     """Test hoop_stress subroutine.
 
     hoop_stress() requires specific mocked variables in order to work; these were
     discovered using gdb to break on the first subroutine call when running the
     baseline 2018 IN.DAT.
+
+    :param pfcoil: PFCoil object
+    :type pfcoil: process.pfcoil.PFCoil
     :param monkeypatch: mocking fixture
     :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
     """
@@ -2050,7 +2053,7 @@ def test_hoop_stress(monkeypatch):
 
     r = 2.3
     s_hoop_exp = 6.737108e8
-    s_hoop = pf.hoop_stress(r)
+    s_hoop = pfcoil.hoop_stress(r)
 
     assert pytest.approx(s_hoop) == s_hoop_exp
 
