@@ -74,7 +74,7 @@ module process_input
 #endif
 !  public :: upper_case
 
-  integer, parameter :: maxlen = 300  !  maximum line length
+  integer, parameter :: maxlen = 2000  !  maximum line length
   character(len=maxlen) :: line  !  current line of text from input file
   integer :: linelen, lineno  !  current line length, line number
   integer :: iptr             !  current position on line

@@ -3205,7 +3205,7 @@
         "max_force_density": 0.0,
         "maxcal": 200.0,
         "maxfev": null,
-        "maxlen": 300.0,
+        "maxlen": 2000.0,
         "maxmat": 8.0,
         "maxpoloidalpower": 1000.0,
         "maxradwallload": 1.0,
