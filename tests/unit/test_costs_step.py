@@ -185,12 +185,12 @@ def test_costs_step(monkeypatch, costs_step):
     assert costs_step.rminor_star == 7.0/3.6
 
     #Total plant direct cost with remote handling
-    exp = 8408.5738356
+    exp = 8369.0113133
     obs = cv.cdirt
     assert pytest.approx(obs) == exp
 
     #Constructed cost
-    exp_concost = 14925.218558
+    exp_concost = 14854.9950812
     obs_concost = cv.concost
     assert pytest.approx(obs_concost) == exp_concost
 
@@ -266,7 +266,7 @@ def test_step_a22(monkeypatch, costs_step):
     
     # Run and assert result in M$
     costs_step.step_a22()
-    exp = 670.4911458
+    exp = 653.3561458
     obs = costs_step.step22
     assert pytest.approx(obs) == exp
 
@@ -505,13 +505,18 @@ def test_step_a2202(costs_step):
     assert pytest.approx(obs) == exp
 
 
-def test_step_a2203(costs_step):
+def test_step_a2203(monkeypatch, costs_step):
     """Validate sum of cost account 22.03.
 
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
     :type costs_step: process.costs_step.CostsStep
     """
-    exp = 1.490e1
+    # Mock module var set in subroutine
+    monkeypatch.setattr(tfv, "cryo_cool_req", 10.0)
+
+    exp = 26.1919825
     obs = costs_step.step_a2203()
     assert pytest.approx(obs) == exp
 
