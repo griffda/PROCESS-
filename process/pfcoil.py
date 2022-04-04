@@ -10,6 +10,7 @@ from process.fortran import constants
 from process.fortran import cs_fatigue as csf
 from process.fortran import cs_fatigue_variables as csfv
 from process.fortran import maths_library as ml
+from process.fortran import process_output as op
 from process import fortran as ft
 import math
 import numpy as np
@@ -28,7 +29,7 @@ class PFCoil:
         self.pfcoil()
 
         # Poloidal field coil inductance calculation
-        pf.induct(self.outfile, 0)
+        self.induct(False)
 
         # Volt-second capability of PF coil set
         self.vsec()
@@ -40,7 +41,7 @@ class PFCoil:
 
     def output_induct(self):
         """Output poloidal field coil inductance calculation."""
-        ft.pfcoil_module.induct(self.outfile, 1)
+        self.induct(True)
 
     def pfcoil(self):
         """Routine to perform calculations for the PF and Central Solenoid coils.
@@ -1360,3 +1361,229 @@ class PFCoil:
         s_axial = axial_force / (pfv.oh_steel_frac * 0.5 * area_ax)
 
         return s_axial, axial_force
+
+    def induct(self, output):
+        """Calculates PF coil set mutual inductance matrix.
+
+        author: P J Knight, CCFE, Culham Science Centre
+        This routine calculates the mutual inductances between all the
+        PF coils.
+
+        :param output: switch for writing to output file
+        :type output: bool
+        """
+        nohmax = 200
+        nplas = 1
+
+        br = 0.0
+        bz = 0.0
+        psi = 0.0
+        rc = np.zeros(pfv.ngc2 + nohmax)
+        zc = np.zeros(pfv.ngc2 + nohmax)
+        xc = np.zeros(pfv.ngc2 + nohmax)
+        cc = np.zeros(pfv.ngc2 + nohmax)
+        xcin = np.zeros(pfv.ngc2 + nohmax)
+        xcout = np.zeros(pfv.ngc2 + nohmax)
+        rplasma = np.zeros(nplas)
+        zplasma = np.zeros(nplas)
+
+        pfv.sxlg[:, :] = 0.0
+
+        #  Break Central Solenoid into noh segments
+        #
+        #  Choose noh so that the pfv.radial thickness of the coil is not thinner
+        #  than each segment is tall, i.e. the segments are pancake-like,
+        #  for the benefit of the mutual inductance calculations later
+
+        noh = int(
+            math.ceil(
+                2.0e0
+                * pfv.zh[pfv.nohc - 1]
+                / (pfv.rb[pfv.nohc - 1] - pfv.ra[pfv.nohc - 1])
+            )
+        )
+
+        if noh > nohmax:
+            eh.idiags[0] = noh
+            eh.idiags[1] = nohmax
+            eh.fdiags[0] = bv.ohcth
+            eh.report_error(73)
+
+        noh = min(noh, nohmax)
+
+        # TODO In FNSF case, noh = -7! noh should always be positive. Fortran
+        # array allocation with -ve bound previously coerced to 0
+        if noh < 0:
+            noh = 0
+
+        roh = np.zeros(noh)
+        zoh = np.zeros(noh)
+
+        if bv.iohcl != 0:
+            roh[:] = pfv.rohc
+
+            delzoh = (
+                2.0e0 * pfv.zh[pfv.nohc - 1] / noh
+            )  #  pfv.zh(pfv.nohc) is the half-height of the coil
+            for i in range(noh):
+                zoh[i] = pfv.zh[pfv.nohc - 1] - delzoh * (0.5e0 + i)
+
+        rplasma[0] = pv.rmajor  #  assumes nplas==1
+        zplasma[0] = 0.0
+
+        #  Central Solenoid / plasma mutual inductance
+        #
+        #  Improved calculation: Each Central Solenoid segment is now split into two filaments,
+        #  of pfv.radius reqv+deltar and reqv-deltar, respectively. The mutual inductance
+        #  of the segment with a plasma circuit is the mean of that calculated
+        #  using the two equivalent filaments.
+        #  Formulas and tables for the calculation of mutual and self-inductance
+        #  [Revised], Rosa and Grover, Scientific papers of the Bureau of Standards,
+        #  No. 169, 3rd ed., 1916. page 33
+
+        nc = nplas
+        for i in range(nplas):
+            rc[i] = rplasma[i]
+            zc[i] = zplasma[i]
+
+        if bv.iohcl != 0:
+            xohpl = 0.0
+            if bv.ohcth >= delzoh:
+                deltar = math.sqrt((bv.ohcth ** 2 - delzoh ** 2) / 12.0e0)
+            else:
+                eh.fdiags[0] = bv.ohcth
+                eh.fdiags[1] = delzoh
+                eh.report_error(74)
+
+            for i in range(noh):
+                rp = roh[i]
+                zp = zoh[i]
+
+                reqv = rp * (1.0e0 + delzoh ** 2 / (24.0e0 * rp ** 2))
+
+                xcin, br, bz, psi = pf.bfield(rc, zc, cc, reqv - deltar, zp)
+                xcout, br, bz, psi = pf.bfield(rc, zc, cc, reqv + deltar, zp)
+
+                for ii in range(nplas):
+                    xc[ii] = 0.5e0 * (xcin[ii] + xcout[ii])
+                    xohpl = xohpl + xc[ii]
+
+            pfv.sxlg[pfv.ncirt - 1, pfv.nohc - 1] = (
+                xohpl / (nplas * noh) * pfv.turns[pfv.nohc - 1]
+            )
+            pfv.sxlg[pfv.nohc - 1, pfv.ncirt - 1] = pfv.sxlg[
+                pfv.ncirt - 1, pfv.nohc - 1
+            ]
+
+        #  Plasma self inductance
+        pfv.sxlg[pfv.ncirt - 1, pfv.ncirt - 1] = pv.rlp
+
+        #  PF coil / plasma mutual inductances
+        ncoils = 0
+        nc = nplas
+
+        for i in range(pfv.ngrp):
+            xpfpl = 0.0
+            ncoils = ncoils + pfv.ncls[i]
+            rp = pfv.rpf[ncoils - 1]
+            zp = pfv.zpf[ncoils - 1]
+            xc, br, bz, psi = pf.bfield(rc, zc, cc, rp, zp)
+            for ii in range(nplas):
+                xpfpl = xpfpl + xc[ii]
+
+            for j in range(pfv.ncls[i]):
+                ncoilj = ncoils + 1 - (j + 1)
+                pfv.sxlg[ncoilj - 1, pfv.ncirt - 1] = (
+                    xpfpl / nplas * pfv.turns[ncoilj - 1]
+                )
+                pfv.sxlg[pfv.ncirt - 1, ncoilj - 1] = pfv.sxlg[
+                    ncoilj - 1, pfv.ncirt - 1
+                ]
+
+        if bv.iohcl != 0:
+
+            #  Central Solenoid self inductance
+            a = pfv.rohc  #  mean pfv.radius of coil
+            b = 2.0e0 * pfv.zh[pfv.nohc - 1]  #  length of coil
+            c = (
+                pfv.rb[pfv.nohc - 1] - pfv.ra[pfv.nohc - 1]
+            )  #  pfv.radial winding thickness
+            pfv.sxlg[pfv.nohc - 1, pfv.nohc - 1] = pf.selfinductance(
+                a, b, c, pfv.turns[pfv.nohc - 1]
+            )
+
+            #  Central Solenoid / PF coil mutual inductances
+            nc = noh
+            for i in range(noh):
+                rc[i] = roh[i]
+                zc[i] = zoh[i]
+
+            ncoils = 0
+            for i in range(pfv.ngrp):
+                xohpf = 0.0
+                ncoils = ncoils + pfv.ncls[i]
+                rp = pfv.rpf[ncoils - 1]
+                zp = pfv.zpf[ncoils - 1]
+                xc, br, bz, psi = pf.bfield(rc, zc, cc, rp, zp)
+                for ii in range(noh):
+                    xohpf = xohpf + xc[ii]
+
+                for j in range(pfv.ncls[i]):
+                    ncoilj = ncoils + 1 - (j + 1)
+                    pfv.sxlg[ncoilj - 1, pfv.nohc - 1] = (
+                        xohpf * pfv.turns[ncoilj - 1] * pfv.turns[pfv.nohc - 1] / noh
+                    )
+                    pfv.sxlg[pfv.nohc - 1, ncoilj - 1] = pfv.sxlg[
+                        ncoilj - 1, pfv.nohc - 1
+                    ]
+
+        #  PF coil - PF coil inductances
+        if bv.iohcl == 0:
+            nef = pfv.nohc
+        else:
+            nef = pfv.nohc - 1
+
+        nc = nef - 1
+        for i in range(nef):
+            for j in range(nef - 1):
+                if j >= i:
+                    jj = j + 1 + 1
+                else:
+                    jj = j + 1
+
+                zc[j] = pfv.zpf[jj - 1]
+                rc[j] = pfv.rpf[jj - 1]
+
+            rp = pfv.rpf[i]
+            zp = pfv.zpf[i]
+            xc, br, bz, psi = pf.bfield(rc, zc, cc, rp, zp)
+            for k in range(nef):
+                if k < i:
+                    pfv.sxlg[i, k] = xc[k] * pfv.turns[k] * pfv.turns[i]
+                elif k == i:
+                    rl = abs(pfv.zh[k] - pfv.zl[k]) / math.sqrt(constants.pi)
+                    pfv.sxlg[k, k] = (
+                        constants.rmu0
+                        * pfv.turns[k] ** 2
+                        * pfv.rpf[k]
+                        * (math.log(8.0e0 * pfv.rpf[k] / rl) - 1.75e0)
+                    )
+                else:
+                    pfv.sxlg[i, k] = xc[k - 1] * pfv.turns[k] * pfv.turns[i]
+
+        #  Output section
+        if not output:
+            return
+
+        op.oheadr(self.outfile, "PF Coil Inductances")
+        op.ocmmnt(self.outfile, "Inductance matrix [H]:")
+        op.oblnkl(self.outfile)
+
+        with np.printoptions(precision=1):
+            for ig in range(nef):
+                op.write(self.outfile, f"{ig}\t\t\t{pfv.sxlg[:pfv.ncirt,ig]}")
+
+            if bv.iohcl != 0:
+                op.write(self.outfile, f"CS\t\t\t{pfv.sxlg[:pfv.ncirt,pfv.ncirt-2]}")
+
+            op.write(self.outfile, f"Plasma\t{pfv.sxlg[:pfv.ncirt,pfv.ncirt-1]}")

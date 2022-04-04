@@ -2804,12 +2804,15 @@ def test_axial_stress(pfcoil, monkeypatch):
     assert pytest.approx(axial_force) == axial_force_exp
 
 
-def test_induct(monkeypatch):
+def test_induct(pfcoil, monkeypatch):
     """Test induct subroutine.
 
     induct() requires specific mocked vars in order to work; these were
     discovered using gdb to break on the first subroutine call when running the
     baseline 2018 IN.DAT.
+
+    :param pfcoil: a PFCoil instance
+    :type pfcoil: process.pfcoil.PFCoil
     :param monkeypatch: mocking fixture
     :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
     """
@@ -3582,5 +3585,5 @@ def test_induct(monkeypatch):
             ],
         ]
     )
-    pf.induct(outfile, iprint)
+    pfcoil.induct(False)
     assert_array_almost_equal(pfv.sxlg, sxlg_exp)
