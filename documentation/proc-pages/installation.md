@@ -1,11 +1,19 @@
 # Installation
+Below are instructions of how to install the applications, code and dependencies such that you can begin working on Process. 
+
 ## Supported environments
+**Please note, only Python3.8 is supported, Python3.9 and Python3.6 are not.**
 PROCESS is natively supported on Ubuntu 20. Other Linux distributions will be able to successfully build and execute PROCESS however may give inconsistent results due to version disparities of dynamically linked libraries.
 
-Using the Windows Subsystem for Linux (on Windows) or a containerised environment is the recommended way to build, test, and run PROCESS on any OS other than Ubuntu 20. 
+There are three supported ways to run Process on a non-native Ubuntu 20.04 machine:
+1. WSL (Windows Subsytem for Linux- if you are a Widnows user)- go [here](#ubuntu-and-windows-using-windows-subsystem-for-linux-and-installing-visual-studio-code).
+1. Docker (for users on privileged machines that are of the wrong OS)- go [here](#docker-container).
+1. Singularity (mainly for use on shared resources e.g. Freia)- go [here](#singularity-container).
+
+Using the Windows Subsystem for Linux (on Windows) or a containerised environment is the recommended way to build, test, and run PROCESS on any OS other than Ubuntu 20. Documentation on Ubuntu for WSL can be found [here](https://ubuntu.com/wsl) for a deeper description of how they function together and the advantages of use.
 
 ## Ubuntu and Windows (using Windows Subsystem for Linux) and Installing Visual Studio Code
-*Please note due to bugs in f90wrap, Python3.9 is not yet supported. Running with Python3.9 will cause syntax errors to be raised when running f2py on the f90wrap outputs.*
+*This section is for users on a Windows system, if you are a MacOS or priviledged machine user please go [here](#docker-container), or if you are a using a shared resource, please go [here](#singularity-container).*
 
 To install Windows Subsystem for Linux (WSL) follow the 'Manual Installation Steps' [here](https://docs.microsoft.com/en-us/windows/wsl/install-win10). Choose WSL 2 and Ubuntu 20 (if installing from the Microsoft store then Ubuntu 20 is installed by default). 
 
@@ -17,6 +25,7 @@ wsl --install
 
 However, you need admin privilages to perfom this command. Please ask support to grant you these rights temporarily so you can successsfully install WSL. This can be done via a Marval ticket or email to support if you are a new starter and do not have Nucleus access yet.
 
+Next, you will need to install a source code editor so you are able to work with the Process code. Visual Studio Code, or VSCode for short, is a great choice. It is a lightweight but powerful source code editor which runs on your deskotp and is available for Windows, MacOS and Linux. It has a vast extension package allowing ease of use with a range of languages. More information on VSCode can be found [here](https://code.visualstudio.com/docs).
 
 Install Visual Studio Code [here](https://code.visualstudio.com/).
 
@@ -41,6 +50,7 @@ sudo apt install python3-pip
 sudo apt install lcov
 sudo apt install poppler-utils
 ```
+Next, the code will need to be downloaded so you can work with it. The Process code is stored in a GitLab repository and as such needs to be 'cloned' - i.e bought to your VSCode window from GitLab. 
 
 To clone the PROCESS repository from Gitlab you will need to use an SSH key. A guide on how to find if you have an existing SSH key pair or to generate a new SSH key pair can be found on Gitlab [here](https://docs.gitlab.com/ee/ssh/).
 
@@ -102,8 +112,12 @@ The build step may take some time when run for the first time (~3 mins) as the F
 
 To rebuild, for example after making a change to the Fortran source, run `cmake --build build` again.
 
-## Docker container (not essential- read below)
-*If you are using a windows system with WSL and have followed the above steps then this next section is not essential and you may skip to testing your installation [here](#testing).*
+Now, skip to [testing](#testing).
+
+## Docker container 
+*This section is for users of a priviledged machine of the wrong OS e.g MacOS. If you are a using a shared resource e.g. Freia, please go [here](#singularity-container).*
+
+### **If you are using a Windows system with WSL and have followed the above steps then this next section is not necessary and you may skip to testing your installation [here](#testing).**
 
 Process can be run on Mac or in other environments inside a Docker container. The Process repository, including source and build directories, remain in the host filesystem, but the building and running of Process is performed inside the container. This ensures that Process produces the same results as in other fully-supported environments, such as the CI system. The Ubuntu-based development image used is similar to the one used on the CI system, but it is designed to work immediately with no further installations.
 
@@ -146,6 +160,8 @@ The clean step is required to remove any build targets or caches from previous h
 Once Process has built inside the container, it can be tested (as in the following section) by running `pytest`. Once the test suite passes, this confirms that your Docker container runs Process with the same results as the CI system. Process can now be developed and run as before, with the build and running taking place inside the container.
 
 There is also a VS Code extension for Docker containers that may be helpful.
+
+Now, skip to [testing](#testing).
 
 ## Singularity container
 Singularity is a container environment similar to Docker. This means a user can run PROCESS with all required dependencies installed. Singularity, however, is designed to work with user-level permissions and, as such, is supported by many shared resource administrators (unlike Docker, which poses a security risk).
@@ -198,8 +214,7 @@ pytest
 ```
 which runs unit, integration, and regression tests. 
 
-A more in-depth discussion of testing can be found at 
-[development/testing](http://process.gitpages.ccfe.ac.uk/process/development/testing/)
+A more in-depth discussion of testing can be found [here](http://process.gitpages.ccfe.ac.uk/process/development/testing/).
 
 If everything passes, this indicates a successful installation. If anything fails, this indicates that your environment produces different results to what is expected. You might consider creating an issue in Gitlab, or trying out the Docker container instead.
 

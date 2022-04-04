@@ -94,7 +94,7 @@ module pfcoil_module
      use physics_variables, only: bvert, kappa, rli, itartpf, vsres, plascur, &
          triang, rminor, vsind, aspect, itart, betap, rmajor
      use tfcoil_variables, only: tftmp, dcond, i_tf_sup, fhts, &
-         tcritsc, strncon_pf, bcritsc,b_crit_upper_nbti, t_crit_nbti 
+         tcritsc, str_pf_con_res, bcritsc,b_crit_upper_nbti, t_crit_nbti 
      use times_variables, only: tim, tramp, tburn, tohs, tqnch, theat
      use constants, only: pi, nout, dcopper
      implicit none
@@ -617,7 +617,7 @@ module pfcoil_module
            if (ipfres == 0) then
               bmax = max(abs(bpf(i)), abs(bpf2(i)))
               call superconpf(bmax,vf(i),fcupfsu,rjconpf(i),isumatpf,fhts, &
-                   strncon_pf,tftmp,bcritsc,tcritsc,rjpfalw(i),jstrand,jsc,tmarg)
+                   str_pf_con_res,tftmp,bcritsc,tcritsc,rjpfalw(i),jstrand,jsc,tmarg)
            end if
  
            !  Length of conductor
@@ -756,7 +756,7 @@ module pfcoil_module
          bmaxoh0, rjohc, tmargoh, ipfres, rjpfalw, pfclres, vf, ric, bpf, &
          jscoh_eof, zpf, rb, ra, jscoh_bop, cptdin, pfcaseth, rpf, cohbop, zh, &
          wtc, zl, turns, wts, a_oh_turn
-     use tfcoil_variables, only: dcond, tftmp, tcritsc, strncon_cs, &
+     use tfcoil_variables, only: dcond, tftmp, tcritsc, str_cs_con_res, &
          fhts, bcritsc,b_crit_upper_nbti, t_crit_nbti
      use CS_fatigue, only: Ncycle
      use CS_fatigue_variables, only: N_cycle, residual_sig_hoop, t_crack_vertical, &
@@ -914,7 +914,7 @@ module pfcoil_module
         !  (superconducting coils only)
  
         call superconpf(bmaxoh,vfohc,fcuohsu,(abs(ric(nohc))/awpoh)*1.0D6, &
-             isumatoh,fhts,strncon_cs,tftmp,bcritsc,tcritsc,jcritwp, &
+             isumatoh,fhts,str_cs_con_res,tftmp,bcritsc,tcritsc,jcritwp, &
              jstrandoh_eof,jscoh_eof,tmarg1)
  
         rjohc = jcritwp * awpoh/areaoh
@@ -922,7 +922,7 @@ module pfcoil_module
         !  Allowable coil overall current density at BOP
  
         call superconpf(bmaxoh0,vfohc,fcuohsu,(abs(ric(nohc))/awpoh)*1.0D6, &
-             isumatoh,fhts,strncon_cs,tftmp,bcritsc,tcritsc,jcritwp, &
+             isumatoh,fhts,str_cs_con_res,tftmp,bcritsc,tcritsc,jcritwp, &
              jstrandoh_bop,jscoh_bop,tmarg2)
  
         rjpfalw(nohc) = jcritwp * awpoh/areaoh
@@ -2682,8 +2682,8 @@ module pfcoil_module
        use physics_variables, only: rminor, rmajor, kappa, facoh
      use process_output, only: int_to_string2, ovarin, oheadr, &
        ovarre, osubhd, oblnkl, ocmmnt
-     use tfcoil_variables, only: tmargmin_cs, strncon_cs, tftmp, b_crit_upper_nbti,&
-       t_crit_nbti, strncon_pf
+     use tfcoil_variables, only: tmargmin_cs, str_cs_con_res, tftmp, b_crit_upper_nbti,&
+       t_crit_nbti, str_pf_con_res
      use numerics, only: boundu
      use CS_fatigue_variables, only: residual_sig_hoop, t_crack_radial, t_crack_vertical, &
          N_cycle, t_structural_vertical, t_structural_radial
@@ -2789,8 +2789,8 @@ module pfcoil_module
                 '(s_tresca_oh)', s_tresca_oh, 'OP ')
            call ovarre(outfile,'Axial force in CS (N)', &
                 '(axial_force)', axial_force, 'OP ')
-           call ovarre(outfile,'Strain on CS superconductor', &
-                '(strncon_cs)',strncon_cs)
+           call ovarre(outfile,'Residual manufacturing strain in CS superconductor material', &
+                '(str_cs_con_res)',str_cs_con_res)
            call ovarre(outfile,'Copper fraction in strand', &
                 '(fcuohsu)',fcuohsu)
            call ovarre(outfile,'Void (coolant) fraction in conductor', &
@@ -2825,10 +2825,10 @@ module pfcoil_module
            if (.not.CSlimit) call report_error(135)
  
             !REBCO fractures in strains above ~+/- 0.7%
-            if ((isumatoh == 8) .and. strncon_cs > 0.7D-2 .or. strncon_cs < -0.7D-2) then
+            if ((isumatoh == 8) .and. str_cs_con_res > 0.7D-2 .or. str_cs_con_res < -0.7D-2) then
                call report_error(262)
             end if
-            if ((isumatpf == 8) .and. strncon_pf > 0.7D-2 .or. strncon_pf < -0.7D-2) then
+            if ((isumatpf == 8) .and. str_pf_con_res > 0.7D-2 .or. str_pf_con_res < -0.7D-2) then
                call report_error(263)
             end if
  
