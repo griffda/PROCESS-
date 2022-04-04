@@ -44,6 +44,7 @@ Box file T&amp;M/PKNIGHT/PROCESS (from 24/01/12)
 from process import fortran
 from process.buildings import Buildings
 from process.io import plot_proc
+from process.pulse import Pulse
 from process.scan import Scan
 from process import final
 from process.stellarator import Stellarator
@@ -482,6 +483,7 @@ class Models:
         self.buildings = Buildings()
         self.vacuum = Vacuum()
         self.water_use = WaterUse()
+        self.pulse = Pulse()
         self.ife = IFE(availability=self.availability)
         self.stellarator = Stellarator(
             availability=self.availability, buildings=self.buildings, vacuum=self.vacuum
