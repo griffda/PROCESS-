@@ -11,7 +11,7 @@
     use grad_func
     use structs
     use physics_functions_module
-    use impurity_radiation_module, only: impurity_arr, Zav_of_te, impradprofile
+    use impurity_radiation_module, only: impurity_arr_frac, Zav_of_te, impradprofile
     use global_variables
     use physics_variables, only: fhe3, q, rhopedn
 
@@ -718,15 +718,15 @@ if (num%iprocess.eq.0) then
 	prxe=0.
 	prne=0.
 	do jrad=1,size(x)
-		call impradprofile(impurity_arr(comp%imptype(1)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
-			prwol(jrad)=prwol(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(1))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
-			zavwol(jrad)=Zav_of_te(impurity_arr(comp%imptype(1)),tepr(jrad))
-		call impradprofile(impurity_arr(comp%imptype(2)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
-			prxe(jrad)=prxe(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(2))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
-			zavxe(jrad)=Zav_of_te(impurity_arr(comp%imptype(2)),tepr(jrad))
-		call impradprofile(impurity_arr(comp%imptype(3)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
-			prne(jrad)=prne(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(3))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
-			zavne(jrad)=Zav_of_te(impurity_arr(comp%imptype(3)),tepr(jrad))
+		call impradprofile(comp%imptype(1), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
+			prwol(jrad)=prwol(jrad)+pimp/(1.d-14+impurity_arr_frac(comp%imptype(1)))/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
+			zavwol(jrad)=Zav_of_te(comp%imptype(1),tepr(jrad))
+		call impradprofile(comp%imptype(2), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
+			prxe(jrad)=prxe(jrad)+pimp/(1.d-14+impurity_arr_frac(comp%imptype(2)))/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
+			zavxe(jrad)=Zav_of_te(comp%imptype(2),tepr(jrad))
+		call impradprofile(comp%imptype(3), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
+			prne(jrad)=prne(jrad)+pimp/(1.d-14+impurity_arr_frac(comp%imptype(3)))/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
+			zavne(jrad)=Zav_of_te(comp%imptype(3),tepr(jrad))
 	enddo
 !!!!!!!!!!!!!!!!!!!
 	endif
@@ -1696,15 +1696,15 @@ endif
 		prxe=0.
 		prne=0.
 		do jrad=1,nx
-			call impradprofile(impurity_arr(comp%imptype(1)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
-				prwol(jrad)=prwol(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(1))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
-				zavwol(jrad)=Zav_of_te(impurity_arr(comp%imptype(1)),tepr(jrad))
-			call impradprofile(impurity_arr(comp%imptype(2)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
-				prxe(jrad)=prxe(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(2))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
-				zavxe(jrad)=Zav_of_te(impurity_arr(comp%imptype(2)),tepr(jrad))
-			call impradprofile(impurity_arr(comp%imptype(3)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
-				prne(jrad)=prne(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(3))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
-				zavne(jrad)=Zav_of_te(impurity_arr(comp%imptype(3)),tepr(jrad))
+			call impradprofile(comp%imptype(1), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
+				prwol(jrad)=prwol(jrad)+pimp/(1.d-14+impurity_arr_frac(comp%imptype(1)))/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
+				zavwol(jrad)=Zav_of_te(comp%imptype(1),tepr(jrad))
+			call impradprofile(comp%imptype(2), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
+				prxe(jrad)=prxe(jrad)+pimp/(1.d-14+impurity_arr_frac(comp%imptype(2)))/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
+				zavxe(jrad)=Zav_of_te(comp%imptype(2),tepr(jrad))
+			call impradprofile(comp%imptype(3), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
+				prne(jrad)=prne(jrad)+pimp/(1.d-14+impurity_arr_frac(comp%imptype(3)))/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
+				zavne(jrad)=Zav_of_te(comp%imptype(3),tepr(jrad))
 		enddo
 !!!!!!!!!!!!!!!!!!!
 	endif

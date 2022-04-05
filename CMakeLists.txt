@@ -140,6 +140,7 @@ LIST(APPEND PROCESS_SRCS
     global_variables.f90
     constraint_variables.f90
     vacuum_variables.f90
+    impurity_radiation.f90
     pulse_variables.f90
     pf_power_variables.f90
 )

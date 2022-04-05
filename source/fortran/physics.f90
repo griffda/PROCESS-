@@ -99,7 +99,7 @@ module physics_module
     use divertor_variables, only: prn1
     use error_handling, only: idiags, report_error
     use fwbs_variables, only: fhcd, fdiv
-    use impurity_radiation_module, only: fimp, impurity_arr
+    use impurity_radiation_module, only: fimp, impurity_arr_frac
     use physics_functions_module, only: plasma_elongation_ipb, &
       total_mag_field, res_diff_time, t_eped_scaling, beta_poloidal, palph2, &
       radpwr, pthresh, beamfus, palph
@@ -639,14 +639,14 @@ module physics_module
        !calculate separatrix temperature, if Reinke criterion is used
        tesep = reinke_tsep(bt, flhthresh, q95, rmajor, eps, fgw, kappa, lhat)
        fzmin =  reinke_fzmin(bt, flhthresh, q95, rmajor, eps, fsep, fgw, kappa, lhat, &
-            netau_sol, tesep, impvardiv, impurity_arr%frac, impurity_enrichment)
+            netau_sol, tesep, impvardiv, impurity_arr_frac, impurity_enrichment)
 
        if (fzmin >= 1.0D0) then
           call report_error(217)
        endif
 
        write(*,*) 'fzactual, frac, impvardiv = ', fzactual, ', ', &
-         impurity_arr(impvardiv)%frac, ', ',  impvardiv  
+         impurity_arr_frac(impvardiv), ', ',  impvardiv  
 
     endif
 
@@ -2329,8 +2329,8 @@ module physics_module
 
 		use current_drive_variables, only: ftritbm
 		use error_handling, only: fdiags, report_error
-    use impurity_radiation_module, only: nimp, impurity_arr, element2index, &
-      zav_of_te
+    use impurity_radiation_module, only: nimp, impurity_arr_frac, element2index, &
+      zav_of_te, impurity_arr_Z, impurity_arr_amass
     use physics_variables, only: alphat, ignite, falpe, afuel, ftrit, deni, &
       aion, dnitot, protium, zeffai, rncne, rnone, falpi, ralpne, dlamee, &
       rnbeam, zeff, dnz, pcoef, alpharate, rnfene, abeam, dlamie, te, &
@@ -2379,9 +2379,9 @@ module physics_module
 
     znimp = 0.0D0
     do imp = 1,nimp
-       if (impurity_arr(imp)%Z > 2) then
-         ! znimp = znimp + impurity_arr(imp)%Z*(impurity_arr(imp)%frac * dene)
-          znimp = znimp + Zav_of_te(impurity_arr(imp),te)*(impurity_arr(imp)%frac * dene)
+       if (impurity_arr_Z(imp) > 2) then
+         ! znimp = znimp + impurity_arr(imp)%Z*(impurity_arr_frac(imp) * dene)
+          znimp = znimp + Zav_of_te(imp,te)*(impurity_arr_frac(imp) * dene)
        end if
     end do
 
@@ -2406,17 +2406,17 @@ module physics_module
     !  Set hydrogen and helium impurity fractions for
     !  radiation calculations
 
-    impurity_arr(element2index('H_'))%frac = &
+    impurity_arr_frac(element2index('H_')) = &
          (dnprot + (fdeut+ftrit)*deni + dnbeam)/dene
 
-    impurity_arr(element2index('He'))%frac = fhe3*deni/dene + ralpne
+    impurity_arr_frac(element2index('He')) = fhe3*deni/dene + ralpne
 
     !  Total impurity density
 
     dnz = 0.0D0
     do imp = 1,nimp
-       if (impurity_arr(imp)%Z > 2) then
-          dnz = dnz + impurity_arr(imp)%frac*dene
+       if (impurity_arr_Z(imp) > 2) then
+          dnz = dnz + impurity_arr_frac(imp)*dene
        end if
     end do
 
@@ -2427,15 +2427,15 @@ module physics_module
     !  Set some (obsolescent) impurity fraction variables
     !  for the benefit of other routines
 
-    rncne = impurity_arr(element2index('C_'))%frac
-    rnone = impurity_arr(element2index('O_'))%frac
+    rncne = impurity_arr_frac(element2index('C_'))
+    rnone = impurity_arr_frac(element2index('O_'))
     ! Issue #261 Remove zfear.  Use the sum of Fe and Ar concentrations
     ! if (zfear == 0) then
     !    rnfene = impurity_arr(element2index('Fe'))%frac
     ! else
     !    rnfene = impurity_arr(element2index('Ar'))%frac
     ! end if
-    rnfene = impurity_arr(element2index('Fe'))%frac + impurity_arr(element2index('Ar'))%frac
+    rnfene = impurity_arr_frac(element2index('Fe')) + impurity_arr_frac(element2index('Ar'))
 
     !  Effective charge
     !  Calculation should be sum(ni.Zi^2) / sum(ni.Zi),
@@ -2443,8 +2443,8 @@ module physics_module
 
     zeff = 0.0D0
     do imp = 1,nimp
-       !zeff = zeff + impurity_arr(imp)%frac * (impurity_arr(imp)%Z)**2
-       zeff = zeff + impurity_arr(imp)%frac * Zav_of_te(impurity_arr(imp),te)**2
+       !zeff = zeff + impurity_arr_frac(imp) * (impurity_arr(imp)%Z)**2
+       zeff = zeff + impurity_arr_frac(imp) * Zav_of_te(imp,te)**2
     end do
 
     !  Define coulomb logarithm
@@ -2481,8 +2481,8 @@ module physics_module
 
     aion = afuel*deni + 4.0D0*dnalp + dnprot + abeam*dnbeam
     do imp = 1,nimp
-       if (impurity_arr(imp)%Z > 2) then
-          aion = aion + dene*impurity_arr(imp)%frac*impurity_arr(imp)%amass
+       if (impurity_arr_Z(imp) > 2) then
+          aion = aion + dene*impurity_arr_frac(imp)*impurity_arr_amass(imp)
        end if
     end do
     aion = aion/dnitot
@@ -2493,10 +2493,10 @@ module physics_module
          dnalp + dnprot + (1.0D0-ftritbm)*dnbeam/2.0D0 + ftritbm*dnbeam/3.0D0 &
          ) / dene
     do imp = 1,nimp
-       if (impurity_arr(imp)%Z > 2) then
-          zeffai = zeffai + impurity_arr(imp)%frac &
-          !     * (impurity_arr(imp)%Z)**2 / impurity_arr(imp)%amass
-               * Zav_of_te(impurity_arr(imp),te)**2 / impurity_arr(imp)%amass
+       if (impurity_arr_Z(imp) > 2) then
+          zeffai = zeffai + impurity_arr_frac(imp) &
+          !     * (impurity_arr(imp)%Z)**2 / impurity_arr_amass(imp)
+               * Zav_of_te(imp,te)**2 / impurity_arr_amass(imp)
        end if
     end do
 
@@ -3821,7 +3821,7 @@ module physics_module
       psipf, pscf_scene, diacf_hender, diacf_scene, diaipf
 		use error_handling, only: fdiags, idiags, report_error
     use impurity_radiation_module, only: nimp, coreradiationfraction, &
-      coreradius, fimp, impurity_arr
+      coreradius, fimp, impurity_arr_frac, impurity_arr_Label
     use physics_variables, only: ieped, ftar, dnelimt, fgwped, kappaa, deni, &
       betap, iculbl, rad_fraction, palpnb, ten, falpi, iradloss, pthrmw, &
       ralpne, taueff, dntau, dene, rad_fraction_sol, iprofile, rhopedn, &
@@ -4106,12 +4106,12 @@ module physics_module
    call ocmmnt(outfile,'Plasma ion densities / electron density:')
    do imp = 1,nimp
       ! MDK Update fimp, as this will make the ITV output work correctly.
-      fimp(imp) = impurity_arr(imp)%frac
-      str1 = impurity_arr(imp)%label // ' concentration'
+      fimp(imp) = impurity_arr_frac(imp)
+      str1 = impurity_arr_Label(imp) // ' concentration'
       str2 = '(fimp('//int_to_string2(imp)//')'
       ! MDK Add output flag for H which is calculated
       if (imp==1) then
-        !call ovarre(outfile,str1,str2,impurity_arr(imp)%frac, 'OP ')
+        !call ovarre(outfile,str1,str2,impurity_arr_frac(imp), 'OP ')
         call ovarre(outfile,str1,str2,fimp(imp), 'OP ')
       else
         call ovarre(outfile,str1,str2,fimp(imp))
