@@ -26,6 +26,11 @@ FindPreprocessingVars()
 
 SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -fPIC -ftest-coverage -fprofile-arcs -fcheck=all,no-array-temps -finit-local-zero")
 
+IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    # space before -g is very necessary
+    STRING(CONCAT CMAKE_Fortran_FLAGS ${CMAKE_Fortran_FLAGS} " -g -O0")
+ENDIF()
+
 # Get System information, log as much information as we can
 # for ease later on when debugging system specific issues
 CMAKE_HOST_SYSTEM_INFORMATION(RESULT OS_LABEL QUERY OS_NAME)
@@ -42,6 +47,8 @@ MESSAGE(STATUS "\tFortran Compiler: ${CMAKE_Fortran_COMPILER}")
 MESSAGE(STATUS "\tFortran Compiler ID: ${CMAKE_Fortran_COMPILER_ID}")
 MESSAGE(STATUS "\tFortran Compiler Version: ${CMAKE_Fortran_COMPILER_VERSION}")
 MESSAGE(STATUS "\tPROCESS Module Installation Directory: ${PROCESS_MODULE_INSTALL_LOCATION}")
+MESSAGE(STATUS "\tBuild type: ${CMAKE_BUILD_TYPE}")
+MESSAGE(STATUS "\tFortran arguments: ${CMAKE_Fortran_FLAGS}")
 
 # Define various addresses for locations of files
 # relative to the CMake root directory
@@ -118,11 +125,8 @@ LIST(APPEND PROCESS_SRCS
     water_usage_variables.f90
     constraint_equations.f90
     stellarator.f90
-    machine_build.f90
-    pulse.f90
     divertor_ode.f90
     constants.f90
-    water_usage.f90
     hcll.f90
     build_variables.f90
     current_drive_variables.f90
@@ -136,6 +140,8 @@ LIST(APPEND PROCESS_SRCS
     global_variables.f90
     constraint_variables.f90
     vacuum_variables.f90
+    pulse_variables.f90
+    pf_power_variables.f90
 )
 
 PREPROCESS()

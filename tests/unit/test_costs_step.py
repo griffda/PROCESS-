@@ -185,12 +185,12 @@ def test_costs_step(monkeypatch, costs_step):
     assert costs_step.rminor_star == 7.0/3.6
 
     #Total plant direct cost with remote handling
-    exp = 3706.8906972
+    exp = 8369.0113133
     obs = cv.cdirt
     assert pytest.approx(obs) == exp
 
     #Constructed cost
-    exp_concost = 6579.73098757
+    exp_concost = 14854.9950812
     obs_concost = cv.concost
     assert pytest.approx(obs_concost) == exp_concost
 
@@ -231,7 +231,7 @@ def test_step_a21(monkeypatch, costs_step):
 
     # Run and assert result in M$
     costs_step.step_a21()
-    exp = 2.115588e3
+    exp = 6.495334e3
     obs = costs_step.step21
     assert pytest.approx(obs) == exp
 
@@ -266,7 +266,7 @@ def test_step_a22(monkeypatch, costs_step):
     
     # Run and assert result in M$
     costs_step.step_a22()
-    exp = 676.5516457
+    exp = 653.3561458
     obs = costs_step.step22
     assert pytest.approx(obs) == exp
 
@@ -299,7 +299,7 @@ def test_step_a2201(monkeypatch, costs_step):
     monkeypatch.setattr(costs_step, "rmajor_star", 7.0)
     monkeypatch.setattr(costs_step, "rminor_star", 1.9)
     
-    exp1 = 1387.8337432
+    exp1 = 1344.9437432
     #TODO update spares expected value
     # exp2 = 1.0199574292e1
     step2201, spares = costs_step.step_a2201()
@@ -489,7 +489,7 @@ def test_step_a220104(monkeypatch, costs_step):
     cv.step_ref[68] = 19.21
     cv.step_ref[69] = 12.85
 
-    exp = 1.02317454e3
+    exp = 2.04634910e3
     obs = costs_step.step_a220104()
     assert pytest.approx(obs) == exp
 
@@ -505,13 +505,18 @@ def test_step_a2202(costs_step):
     assert pytest.approx(obs) == exp
 
 
-def test_step_a2203(costs_step):
+def test_step_a2203(monkeypatch, costs_step):
     """Validate sum of cost account 22.03.
 
+    :param monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
     :type costs_step: process.costs_step.CostsStep
     """
-    exp = 1.490e1
+    # Mock module var set in subroutine
+    monkeypatch.setattr(tfv, "cryo_cool_req", 10.0)
+
+    exp = 26.1919825
     obs = costs_step.step_a2203()
     assert pytest.approx(obs) == exp
 

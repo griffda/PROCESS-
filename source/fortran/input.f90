@@ -74,7 +74,7 @@ module process_input
 #endif
 !  public :: upper_case
 
-  integer, parameter :: maxlen = 300  !  maximum line length
+  integer, parameter :: maxlen = 2000  !  maximum line length
   character(len=maxlen) :: line  !  current line of text from input file
   integer :: linelen, lineno  !  current line length, line number
   integer :: iptr             !  current position on line
@@ -203,7 +203,30 @@ contains
     use buildings_variables, only: hcwt, conv, wgt, trcl, rbwt, &
       esbldgm3, fndt, row, wgt2, pibv, clh1, stcl, clh2, &
       tfcbv, hccl, rbrt, triv, shov, admv, i_bldgs_v, i_bldgs_size, &
-      mbvfac, pfbldgm3, wsvfac, rbvfac, rxcl, shmf
+      mbvfac, pfbldgm3, wsvfac, rbvfac, rxcl, shmf, &
+      aux_build_l, aux_build_w, aux_build_h, auxcool_l, auxcool_w, auxcool_h, &
+      bioshld_thk, chemlab_l, chemlab_w, chemlab_h, control_buildings_l, &
+      control_buildings_w, control_buildings_h, crane_arm_h, crane_clrnc_h, &
+      crane_clrnc_v, cryomag_l, cryomag_w, cryomag_h, cryostore_l, &
+      cryostore_w, cryostore_h, cryostat_clrnc, elecdist_l, elecdist_w, &
+      elecdist_h, elecload_l, elecload_w, elecload_h, elecstore_l, &
+      elecstore_w, elecstore_h, fc_building_l, fc_building_w, &
+      gas_buildings_l, gas_buildings_w, gas_buildings_h, ground_clrnc, &
+      hcd_building_l, hcd_building_w, hcd_building_h, hw_storage_l, &
+      hw_storage_w, hw_storage_h, heat_sink_l, heat_sink_w, heat_sink_h, &
+      hot_sepdist, hotcell_h, ilw_smelter_l, ilw_smelter_w, ilw_smelter_h, &
+      ilw_storage_l, ilw_storage_w, ilw_storage_h, llw_storage_l, &
+      llw_storage_w, llw_storage_h, magnet_pulse_l, magnet_pulse_w, &
+      magnet_pulse_h, magnet_trains_l, magnet_trains_w, magnet_trains_h, &
+      maint_cont_l, maint_cont_w, maint_cont_h, nbi_sys_l, nbi_sys_w, &
+      qnty_sfty_fac, reactor_clrnc, reactor_fndtn_thk, reactor_hall_l, &
+      reactor_hall_w, reactor_hall_h, reactor_roof_thk, reactor_wall_thk, &
+      robotics_l, robotics_w, robotics_h, sec_buildings_l, sec_buildings_w, &
+      sec_buildings_h, staff_buildings_h, staff_buildings_area, &
+      transp_clrnc, turbine_hall_l, turbine_hall_w, turbine_hall_h, &
+      tw_storage_l, tw_storage_w, tw_storage_h, warm_shop_l, warm_shop_w, &
+      warm_shop_h, water_buildings_l, water_buildings_w, water_buildings_h, &
+      workshop_l, workshop_w, workshop_h
     use constraint_variables, only: flhthresh, fpeakb, fpsep, fdivcol, ftcycl, &
       betpmx, fpsepbqar, ftmargtf, fradwall, fptfnuc, fnesep, fportsz, tbrmin, &
       maxradwallload, pseprmax, fdene, fniterpump, fpinj, pnetelin, powfmax, &
@@ -214,7 +237,7 @@ contains
       fcqt, fzeffmax, fstrcase, fhldiv, foh_stress, fwalld, gammax, fjprot, &
       ftohs, tcycmn, auxmin, zeffmax, peakfactrad, fdtmp, fpoloidalpower, &
       fnbshinef, freinke, fvvhe, fqval, fq, ftaucq, fbetap, fbeta, fjohc, &
-      fflutf, bmxlim, tbrnmn, fbetatry_lower
+      fflutf, bmxlim, tbrnmn, fbetatry_lower, fstr_wp
     use cost_variables, only: ucich, uctfsw, dintrt, ucblbe, uubop, dtlife, &
       cost_factor_vv, cfind, uccry, fcap0cp, uccase, uuves, cconshtf, conf_mag, &
       ucbllipb, ucfuel, uumag, ucpfbs, ireactor, uucd, div_umain_time, div_nu, &
@@ -222,8 +245,8 @@ contains
       cconshpf, uche3, ucpfdr1, ucech, uudiv, cost_model, adivflnc, &
       cost_factor_rh, cost_factor_bop, ifueltyp, fcontng, fwbs_nref, &
       cost_factor_buildings, favail, cconfix, ucblli2o, abktflnc, ucf1, ucfnc, &
-      ucpfps, iavail, ucpfbk, cost_factor_tf_coils, costexp_pebbles, ucmisc, &
-      cpstflnc, uccryo, costexp, fwbs_nu, ucpfic, ucblbreed, tcomrepl, uufuel, &
+      ucpfps, iavail, ibkt_life, life_dpa, ucpfbk, cost_factor_tf_coils, costexp_pebbles, &
+      ucmisc, cpstflnc, uccryo, costexp, fwbs_nu, ucpfic, ucblbreed, tcomrepl, uufuel, &
       ucdiv, uccpcl1, discount_rate, uctfbr, uccpclb, ucoam, div_prob_fail, ucnbi, &
       uccu, ucwst, cfactr, div_nref, amortization, ucwindtf, ucme, csi, cowner, &
       cost_factor_misc, fcr0, step_rh_costfrac, cturbb, lsa, fcap0, output_costs, &
@@ -235,7 +258,8 @@ contains
       step_cconfix, step_cconshpf, step_currency, step_uccase, step_uccu, &
       step_ucsc, step_ucfnc, step_ucfwa, step_ucfws, step_ucfwps, step91_per, &
       step92_per, step93_per, step_uc_cryo_al, step_mc_cryo_al_per, sitecost, &
-      wfbuilding, step_ucoam, step_ucwst
+      wfbuilding, whole_site_area, site_imp_uc, step_ucoam, step_ucwst, &
+      startupratio
     use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
@@ -321,23 +345,24 @@ contains
       f_w, bmn, shear, m_res, f_rad, flpitch, istell
     use tfcoil_variables, only: fcoolcp, tfinsgap, vftf, &
       quench_detection_ef, fhts, dr_tf_wp, rcool, rhotfleg, thkcas, &
-      casthi, n_pancake, bcritsc, i_tf_sup, strncon_pf, thwcndut, farc4tf, &
+      casthi, n_pancake, bcritsc, i_tf_sup, str_pf_con_res, thwcndut, farc4tf, &
       thicndut, tftmp, oacdcp, tmax_croco, ptempalw, tmargmin_tf, tmpcry, &
-      sig_tf_case_max, dztop, dcond, strncon_cs, etapump, drtop, vcool, dcondins, &
-      i_tf_tresca, dhecoil, tmaxpro, strncon_tf, n_tf, tcpav, fcutfsu, jbus, &
+      sig_tf_case_max, dztop, dcond, str_cs_con_res, etapump, drtop, vcool, dcondins, &
+      i_tf_tresca, dhecoil, tmaxpro, n_tf, tcpav, fcutfsu, jbus, &
       casthi_fraction, tmargmin_cs, sigvvall, vdalw, dcase, t_turn_tf,&
       cpttf_max, tdmptf, casths, i_tf_turns_integer, quench_model, &
       tcritsc, layer_ins, tinstf, n_layer, tcoolin, ripmax, frhocp, &
       cpttf, tmargmin, casths_fraction, eff_tf_cryo, eyoung_ins, &
-      eyoung_steel, eyoung_res_tf_buck, eyoung_winding, f_vforce_inboard, &
+      eyoung_steel, eyoung_res_tf_buck, eyoung_cond_axial, f_vforce_inboard, &
       fcoolleg, frholeg, ftoroidalgap, i_tf_sc_mat, i_tf_shape, i_tf_bucking, &
       n_tf_graded_layers, n_tf_joints, n_tf_joints_contact, poisson_al, &
       poisson_copper, poisson_steel, rho_tf_joints, rhotfbus, th_joint_contact,&
       i_tf_stress_model, eyoung_al, i_tf_wp_geom, i_tf_case_geom, &
       i_tf_turns_integer, n_rad_per_layer, b_crit_upper_nbti, t_crit_nbti, &
       i_cp_joints, n_tf_turn, f_t_turn_tf, t_turn_tf_max, t_cable_tf, &
-      sig_tf_wp_max
-
+      sig_tf_wp_max, eyoung_cond_trans, i_tf_cond_eyoung_axial, i_tf_cond_eyoung_trans, &
+      str_wp_max, str_tf_con_res, i_str_wp
+      
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
       tdwell, tohsin 
     use vacuum_variables, only: dwell_pump, pbase, tn, pumpspeedfactor, &
@@ -979,6 +1004,9 @@ contains
        case ('fstrcond')
           call parse_real_variable('fstrcond', fstrcond, 0.001D0, 10.0D0, &
                'F-value for TF coil conduit stress')
+       case ('fstr_wp')
+          call parse_real_variable('fstr_wp', fstr_wp, 1.0D-9, 10.0D0, &
+               'F-value for TF coil strain absolute value')
        case ('ftaucq')
           call parse_real_variable('ftaucq', ftaucq, 0.001D0, 1.0D0, &
                'F-value for calculated quench time limit')
@@ -1896,9 +1924,12 @@ contains
        case ('eyoung_ins')
           call parse_real_variable('eyoung_ins', eyoung_ins, 1.0D8, 1.0D13, &
                'Insulator Youngs Modulus (Pa)')
-       case ('eyoung_winding')
-          call parse_real_variable('eyoung_winding', eyoung_winding, 1.0D8, 1.0D13, &
-               'Winding pack Youngs Modulus (Pa)')
+       case ('eyoung_cond_axial')
+          call parse_real_variable('eyoung_cond_axial', eyoung_cond_axial, 0.0D0, 1.0D13, &
+               'SC TF coil Youngs Modulus, axial (Pa)')
+       case ('eyoung_cond_trans')
+          call parse_real_variable('eyoung_cond_trans', eyoung_cond_trans, 0.0D0, 1.0D13, &
+               'SC TF coil Youngs Modulus, transverse (Pa)')
        case ('eyoung_al')
           call parse_real_variable('eyoung_al', eyoung_al, 0.0D0, 1.0D0, &
                'Reinforced aluminium Young modulus for TF stress calc.')
@@ -1995,6 +2026,15 @@ contains
        case ('i_tf_shape')
          call parse_int_variable('i_tf_shape', i_tf_shape, 0, 2, &
               'Switch for TF coil shape')
+       case ('i_tf_cond_eyoung_axial')
+         call parse_int_variable('i_tf_cond_eyoung_axial', i_tf_cond_eyoung_axial, 0, 2, &
+              'Switch for the behavior of the TF coil conductor elastic axial properties')
+       case ('i_tf_cond_eyoung_trans')
+         call parse_int_variable('i_tf_cond_eyoung_trans', i_tf_cond_eyoung_trans, 0, 1, &
+              'Switch for the TF coil conductor transverse behavior')
+       case ('i_str_wp')
+         call parse_int_variable('i_str_wp', i_str_wp, 0, 1, &
+              'Switch for the TF coil strain behavior')
        case ('jbus')
           call parse_real_variable('jbus', jbus, 1.0D4, 1.0D8, &
                'TF coil bus current density (A/m2)')
@@ -2050,15 +2090,18 @@ contains
        case ('sigvvall')
           call parse_real_variable('sigvvall', sigvvall, 0.1D6, 500.0D6, &
                'Allowable stress in vacuum vessel for TF quench (Pa)')
-       case ('strncon_cs')
-          call parse_real_variable('strncon_cs', strncon_cs, -0.02D0, 0.02D0, &
-               'Strain in CS superconductor material')
-       case ('strncon_pf')
-          call parse_real_variable('strncon_pf', strncon_pf, -0.02D0, 0.02D0, &
-               'Strain in PF superconductor material')
-       case ('strncon_tf')
-          call parse_real_variable('strncon_tf', strncon_tf, -0.02D0, 0.02D0, &
-               'Strain in TF superconductor material')
+       case ('str_cs_con_res')
+          call parse_real_variable('str_cs_con_res', str_cs_con_res, -0.02D0, 0.02D0, &
+               'Residual manufacturing strain in CS superconductor material')
+       case ('str_pf_con_res')
+          call parse_real_variable('str_pf_con_res', str_pf_con_res, -0.02D0, 0.02D0, &
+               'Residual manufacturing strain in PF superconductor material')
+       case ('str_tf_con_res')
+          call parse_real_variable('str_tf_con_res', str_tf_con_res, -0.02D0, 0.02D0, &
+               'Residual manufacturing strain in TF superconductor material')
+       case ('str_wp_max')
+          call parse_real_variable('str_wp_max', str_wp_max, 0.0D0, 0.3D0, &
+               'Maximum allowed absolute value of the strain in the TF coil')
        case ('tcoolin')
           call parse_real_variable('tcoolin', tcoolin, 4.0D0, 373.15D0, &
                'Centrepost coolant inlet temperature (K)')
@@ -2773,6 +2816,12 @@ contains
        case ('wfbuilding')
           call parse_real_variable('wfbuilding', wfbuilding, 0.0D0, 1.0D9, &
                'Fixed cost Waste Facility buildings ($)')
+       case ('whole_site_area')
+          call parse_real_variable('whole_site_area', whole_site_area, 0.0D0, 1.0D9, &
+               'Area of whole plant site (m2)')
+       case ('startupratio')
+          call parse_real_variable('startupratio', startupratio, 0.0D0, 10.0D0, &
+               'Ratio (additional HCD power for start-up) / (flat-top operational requirements)')
 
           !  Unit cost settings
 
@@ -2854,7 +2903,10 @@ contains
                'Percentage of cdirt used in calculating step92 (3.0D-1 = 30%)')
        case ('step93_per')
           call parse_real_variable('step93_per', step93_per, 1.0D0, 1.0D2, &
-               'Percentage of cdirt used in calculating step93 (3.0D-1 = 30%)')
+               'Percentage of cdirt used in calculating step93 (3.0D-1 = 30%)')              
+       case ('site_imp_uc')
+          call parse_real_array('site_imp_uc', site_imp_uc, isub1, 62, &
+               'Site improvement reference values for cost model 2', icode)
        case ('ucblbe')
           call parse_real_variable('ucblbe', ucblbe, 1.0D0, 1.0D3, &
                'Unit cost for blanket Be ($/kg)')
@@ -3012,6 +3064,12 @@ contains
        case ('iavail')
           call parse_int_variable('iavail', iavail, 0, 2, &
                'Switch for plant availability model')
+       case ('ibkt_life')
+          call parse_int_variable('ibkt_life', ibkt_life, 0, 2, &
+               'Switch for DEMO fw/blanket lifetime calculation')
+       case ('life_dpa')
+          call parse_real_variable('life_dpa', life_dpa, 1.0D1, 1.0D2, &
+               'Allowable DPA for DEMO fw/blanket lifetime calculation')
        case ('avail_min')
           call parse_real_variable('avail_min', avail_min, 0.0D0, 1.0D0, &
                'Required minimum availability (constraint equation 61)')
@@ -3197,6 +3255,309 @@ contains
        case ('wsvfac')
          call parse_real_variable('wsvfac', wsvfac, 0.9D0, 3.0D0, &
                'Warm shop building volume multiplier')
+       case ('aux_build_l')
+         call parse_real_variable('aux_build_l', aux_build_l, 10.0D0, 1000.0D0, &
+               'aux building supporting tokamak processes, length (m)')
+       case ('aux_build_w')
+         call parse_real_variable('aux_build_w', aux_build_w, 10.0D0, 1000.0D0, &
+               'aux building supporting tokamak processes, width (m)')
+       case ('aux_build_h')
+         call parse_real_variable('aux_build_h', aux_build_h, 1.0D0, 100.0D0, &
+               'aux building supporting tokamak processes, height (m)')
+       case ('auxcool_l')
+         call parse_real_variable('auxcool_l', auxcool_l, 10.0D0, 1000.0D0, &
+               'Site-Wide Auxiliary Cooling Water facility, length (m)')     
+       case ('auxcool_w')
+         call parse_real_variable('auxcool_w', auxcool_w, 10.0D0, 1000.0D0, &
+               'Site-Wide Auxiliary Cooling Water facility, width (m)')
+       case ('auxcool_h')
+         call parse_real_variable('auxcool_h', auxcool_h, 1.0D0, 100.0D0, &
+               'Site-Wide Auxiliary Cooling Water facility, height (m)')
+       case ('bioshld_thk')
+         call parse_real_variable('bioshld_thk', bioshld_thk, 0.25D0, 25.0D0, &
+               'Radial thickness of bio-shield around reactor (m)')
+       case ('chemlab_l')
+         call parse_real_variable('chemlab_l', chemlab_l, 10.0D0, 1000.0D0, &
+               'Chemistry labs and treatment buldings, length (m)')
+       case ('chemlab_w')
+         call parse_real_variable('chemlab_w', chemlab_w, 10.0D0, 1000.0D0, &
+               'Chemistry labs and treatment buldings, width (m)')
+       case ('chemlab_h')
+         call parse_real_variable('chemlab_h', chemlab_h, 1.0D0, 100.0D0, &
+               'Chemistry labs and treatment buldings, height (m)')
+       case ('control_buildings_l')
+         call parse_real_variable('control_buildings_l', control_buildings_l, 10.0D0, 1000.0D0, &
+               'control building, length (m)')
+       case ('control_buildings_w')
+         call parse_real_variable('control_buildings_w', control_buildings_w, 10.0D0, 1000.0D0, &
+               'control building, width (m)')
+       case ('control_buildings_h')
+         call parse_real_variable('control_buildings_h', control_buildings_h, 1.0D0, 100.0D0, &
+               'control building, height (m)')
+       case ('crane_arm_h')
+         call parse_real_variable('crane_arm_h', crane_arm_h, 1.0D0, 100.0D0, &
+               'vertical dimension of crane arm, operating over reactor (m)')     
+       case ('crane_clrnc_h')
+         call parse_real_variable('crane_clrnc_h', crane_clrnc_h, 0.0D0, 10.0D0, &
+               'horizontal clearance to building wall for crane operation (m)')
+       case ('crane_clrnc_v')
+         call parse_real_variable('crane_clrnc_v', crane_clrnc_v, 0.0D0, 10.0D0, &
+               'vertical clearance for crane operation (m)')
+       case ('cryomag_l')
+         call parse_real_variable('cryomag_l', cryomag_l, 10.0D0, 1000.0D0, &
+               'Cryogenic Buildings for Magnet and Fuel Cycle, length (m)')
+       case ('cryomag_w')
+         call parse_real_variable('cryomag_w', cryomag_w, 10.0D0, 1000.0D0, &
+               'Cryogenic Buildings for Magnet and Fuel Cycle, width (m)')
+       case ('cryomag_h')
+         call parse_real_variable('cryomag_h', cryomag_h, 1.0D0, 100.0D0, &
+               'Cryogenic Buildings for Magnet and Fuel Cycle, height (m)')
+       case ('cryostore_l')
+         call parse_real_variable('cryostore_l', cryostore_l, 10.0D0, 1000.0D0, &
+               'Magnet Cryo Storage Tanks, length (m)')
+       case ('cryostore_w')
+         call parse_real_variable('cryostore_w', cryostore_w, 10.0D0, 1000.0D0, &
+               'Magnet Cryo Storage Tanks, width (m)')
+       case ('cryostore_h')
+         call parse_real_variable('cryostore_h', cryostore_h, 1.0D0, 100.0D0, &
+               'Magnet Cryo Storage Tanks, height (m)')
+       case ('cryostat_clrnc')
+         call parse_real_variable('cryostat_clrnc', cryostat_clrnc, 0.0D0, 10.0D0, &
+               'vertical clearance from TF coil to cryostat (m)')
+       case ('elecdist_l')
+         call parse_real_variable('elecdist_l', elecdist_l, 10.0D0, 1000.0D0, &
+               'Transformers and electrical distribution facilities, length (m)')     
+       case ('elecdist_w')
+         call parse_real_variable('elecdist_w', elecdist_w, 10.0D0, 1000.0D0, &
+               'Transformers and electrical distribution facilities, width (m)')
+       case ('elecdist_h')
+         call parse_real_variable('elecdist_h', elecdist_h, 1.0D0, 100.0D0, &
+               'Transformers and electrical distribution facilities, height (m)')
+       case ('elecload_l')
+         call parse_real_variable('elecload_l', elecload_l, 10.0D0, 1000.0D0, &
+               'Electric (eesential and non-essential) load centres, length (m)')
+       case ('elecload_w')
+         call parse_real_variable('elecload_w', elecload_w, 10.0D0, 1000.0D0, &
+               'Electric (eesential and non-essential) load centres, width (m)')
+       case ('elecload_h')
+         call parse_real_variable('elecload_h', elecload_h, 1.0D0, 100.0D0, &
+               'Electric (eesential and non-essential) load centres, height (m)')
+       case ('elecstore_l')
+         call parse_real_variable('elecstore_l', elecstore_l, 10.0D0, 1000.0D0, &
+               'Energy Storage facilities, length (m)')
+       case ('elecstore_w')
+         call parse_real_variable('elecstore_w', elecstore_w, 10.0D0, 1000.0D0, &
+               'Energy Storage facilities, width (m)')
+       case ('elecstore_h')
+         call parse_real_variable('elecstore_h', elecstore_h, 1.0D0, 100.0D0, &
+               'Energy Storage facilities, height (m)')
+       case ('fc_building_l')
+         call parse_real_variable('fc_building_l', fc_building_l, 10.0D0, 1000.0D0, &
+               'Fuel Cycle facilities, length (m)')
+       case ('fc_building_w')
+         call parse_real_variable('fc_building_w', fc_building_w, 10.0D0, 1000.0D0, &
+               'Fuel Cycle facilities, width (m)')
+       case ('gas_buildings_l')
+         call parse_real_variable('gas_buildings_l', gas_buildings_l, 10.0D0, 1000.0D0, &
+               'air & gas supply (amalgamated) buildings, length (m)')
+       case ('gas_buildings_w')
+         call parse_real_variable('gas_buildings_w', gas_buildings_w, 10.0D0, 1000.0D0, &
+               'air & gas supply (amalgamated) buildings, width (m)')
+       case ('gas_buildings_h')
+         call parse_real_variable('gas_buildings_h', gas_buildings_h, 1.0D0, 100.0D0, &
+               'air & gas supply (amalgamated) buildings, height (m)')
+       case ('ground_clrnc')
+         call parse_real_variable('ground_clrnc', ground_clrnc, 0.0D0, 10.0D0, &
+               'clearance beneath TF coil (m)')
+       case ('hcd_building_l')
+         call parse_real_variable('hcd_building_l', hcd_building_l, 10.0D0, 1000.0D0, &
+               'HCD building, length (m)')
+       case ('hcd_building_w')
+         call parse_real_variable('hcd_building_w', hcd_building_w, 10.0D0, 1000.0D0, &
+               'HCD building, width (m)')
+       case ('hcd_building_h')
+         call parse_real_variable('hcd_building_h', hcd_building_h, 1.0D0, 100.0D0, &
+               'HCD building, height (m)')
+       case ('hw_storage_l')
+         call parse_real_variable('hw_storage_l', hw_storage_l, 10.0D0, 1000.0D0, &
+               'hazardous waste storage building, length (m)')
+       case ('hw_storage_w')
+         call parse_real_variable('hw_storage_w', hw_storage_w, 10.0D0, 1000.0D0, &
+               'hazardous waste storage building, width (m)')
+       case ('hw_storage_h')
+         call parse_real_variable('hw_storage_h', hw_storage_h, 1.0D0, 100.0D0, &
+               'hazardous waste storage building, height (m)')
+       case ('heat_sink_l')
+         call parse_real_variable('heat_sink_l', heat_sink_l, 10.0D0, 1000.0D0, &
+               'heat sinks, length (m)')
+       case ('heat_sink_w')
+         call parse_real_variable('heat_sink_w', heat_sink_w, 10.0D0, 1000.0D0, &
+               'heat sinks, width (m)')
+       case ('heat_sink_h')
+         call parse_real_variable('heat_sink_h', heat_sink_h, 1.0D0, 100.0D0, &
+               'heat sinks, height (m)')
+       case ('hot_sepdist')
+         call parse_real_variable('hot_sepdist', hot_sepdist, 0.0D0, 10.0D0, &
+               '')
+       case ('hotcell_h')
+         call parse_real_variable('hotcell_h', hotcell_h, 1.0D0, 100.0D0, &
+               'hot cell storage component separation distance (m)')
+       case ('ilw_smelter_l')
+         call parse_real_variable('ilw_smelter_l', ilw_smelter_l, 10.0D0, 1000.0D0, &
+               'radioactive waste smelting facility, length (m)')
+       case ('ilw_smelter_w')
+         call parse_real_variable('ilw_smelter_w', ilw_smelter_w, 10.0D0, 1000.0D0, &
+               'radioactive waste smelting facility, width (m)')
+       case ('ilw_smelter_h')
+         call parse_real_variable('ilw_smelter_h', ilw_smelter_h, 1.0D0, 100.0D0, &
+               'radioactive waste smelting facility, height (m)')
+       case ('ilw_storage_l')
+         call parse_real_variable('ilw_storage_l', ilw_storage_l, 10.0D0, 1000.0D0, &
+               'ILW waste storage building, length (m)')
+       case ('ilw_storage_w')
+         call parse_real_variable('ilw_storage_w', ilw_storage_w, 10.0D0, 1000.0D0, &
+               'ILW waste storage building, width (m)')     
+       case ('ilw_storage_h')
+         call parse_real_variable('ilw_storage_h', ilw_storage_h, 1.0D0, 100.0D0, &
+               'ILW waste storage building, height (m)')
+       case ('llw_storage_l')
+         call parse_real_variable('llw_storage_l', llw_storage_l, 10.0D0, 1000.0D0, &
+               'LLW waste storage building, length (m)')
+       case ('llw_storage_w')
+         call parse_real_variable('llw_storage_w', llw_storage_w, 10.0D0, 1000.0D0, &
+               'LLW waste storage building, width (m)')
+       case ('llw_storage_h')
+         call parse_real_variable('llw_storage_h', llw_storage_h, 1.0D0, 100.0D0, &
+               'LLW waste storage building, height (m)')
+       case ('magnet_pulse_l')
+         call parse_real_variable('magnet_pulse_l', magnet_pulse_l, 10.0D0, 1000.0D0, &
+               'pulsed magnet power building, length (m)')
+       case ('magnet_pulse_w')
+         call parse_real_variable('magnet_pulse_w', magnet_pulse_w, 10.0D0, 1000.0D0, &
+               'pulsed magnet power building, width (m)')
+       case ('magnet_pulse_h')
+         call parse_real_variable('magnet_pulse_h', magnet_pulse_h, 1.0D0, 100.0D0, &
+               'pulsed magnet power building, height (m)')
+       case ('magnet_trains_l')
+         call parse_real_variable('magnet_trains_l', magnet_trains_l, 10.0D0, 1000.0D0, &
+               'steady state magnet power trains building, length (m)')
+       case ('magnet_trains_w')
+         call parse_real_variable('magnet_trains_w', magnet_trains_w, 10.0D0, 1000.0D0, &
+               'steady state magnet power trains building, width (m)')
+       case ('magnet_trains_h')
+         call parse_real_variable('magnet_trains_h', magnet_trains_h, 1.0D0, 100.0D0, &
+               'steady state magnet power trains building, height (m)')
+       case ('maint_cont_l')
+         call parse_real_variable('maint_cont_l', maint_cont_l, 10.0D0, 1000.0D0, &
+               'maintenance control building, length (m)')
+       case ('maint_cont_w')
+         call parse_real_variable('maint_cont_w', maint_cont_w, 10.0D0, 1000.0D0, &
+               'maintenance control building, width (m)')
+       case ('maint_cont_h')
+         call parse_real_variable('maint_cont_h', maint_cont_h, 1.0D0, 100.0D0, &
+               'maintenance control building, height (m)')
+       case ('nbi_sys_l')
+         call parse_real_variable('nbi_sys_l', nbi_sys_l, 10.0D0, 1000.0D0, &
+               'NBI system length (m)')
+       case ('nbi_sys_w')
+         call parse_real_variable('nbi_sys_w', nbi_sys_w, 10.0D0, 1000.0D0, &
+               'NBI system width (m)')
+       case ('qnty_sfty_fac')
+         call parse_real_variable('qnty_sfty_fac', qnty_sfty_fac, 0.0D0, 10.0D0, &
+               'quantity safety factor for component use during plant lifetime')
+       case ('reactor_clrnc')
+         call parse_real_variable('reactor_clrnc', reactor_clrnc, 0.0D0, 10.0D0, &
+               'clearance around reactor (m)')
+       case ('reactor_fndtn_thk')
+         call parse_real_variable('reactor_fndtn_thk', reactor_fndtn_thk, 0.25D0, 25.0D0, &
+               'reactor building foundation thickness (m)')
+       case ('reactor_hall_l')
+         call parse_real_variable('reactor_hall_l', reactor_hall_l, 10.0D0, 1000.0D0, &
+               'reactor building, length (m)')
+       case ('reactor_hall_w')
+         call parse_real_variable('reactor_hall_w', reactor_hall_w, 10.0D0, 1000.0D0, &
+               'reactor building, width (m)')
+       case ('reactor_hall_h')
+         call parse_real_variable('reactor_hall_h', reactor_hall_h, 1.0D0, 100.0D0, &
+               'reactor building, height (m)')
+       case ('reactor_roof_thk')
+         call parse_real_variable('reactor_roof_thk', reactor_roof_thk, 0.25D0, 25.0D0, &
+               'reactor building roof thickness (m)')
+       case ('reactor_wall_thk')
+         call parse_real_variable('reactor_wall_thk', reactor_wall_thk, 0.25D0, 25.0D0, &
+               'reactor building wall thickness (m)')
+       case ('robotics_l')
+         call parse_real_variable('robotics_l', robotics_l, 10.0D0, 1000.0D0, &
+               'robotics buildings, length (m)')
+       case ('robotics_w')
+         call parse_real_variable('robotics_w', robotics_w, 10.0D0, 1000.0D0, &
+               'robotics buildings, width (m)')
+       case ('robotics_h')
+         call parse_real_variable('robotics_h', robotics_h, 1.0D0, 100.0D0, &
+               'robotics buildings, height (m)')
+       case ('sec_buildings_l')
+         call parse_real_variable('sec_buildings_l', sec_buildings_l, 10.0D0, 1000.0D0, &
+               'security & safety buildings, length (m)')
+       case ('sec_buildings_w')
+         call parse_real_variable('sec_buildings_w', sec_buildings_w, 10.0D0, 1000.0D0, &
+               'security & safety buildings, width (m)')
+       case ('sec_buildings_h')
+         call parse_real_variable('sec_buildings_h', sec_buildings_h, 1.0D0, 100.0D0, &
+               'security & safety buildings, height (m)')
+       case ('staff_buildings_h')
+         call parse_real_variable('staff_buildings_h', staff_buildings_h, 1.0D0, 100.0D0, &
+               'staff buildings height (m)')     
+       case ('staff_buildings_area')
+         call parse_real_variable('staff_buildings_area', staff_buildings_area, 1.0D4, 1.0D6, &
+               'footprint of staff buildings (m2)')
+       case ('transp_clrnc')
+         call parse_real_variable('transp_clrnc', transp_clrnc, 0.0D0, 10.0D0, &
+               'transportation clearance between components (m)')
+       case ('turbine_hall_l')
+         call parse_real_variable('turbine_hall_l', turbine_hall_l, 10.0D0, 1000.0D0, &
+               'turbine hall, length (m)')
+       case ('turbine_hall_w')
+         call parse_real_variable('turbine_hall_w', turbine_hall_w, 10.0D0, 1000.0D0, &
+               'turbine hall, width (m)')
+       case ('turbine_hall_h')
+         call parse_real_variable('turbine_hall_h', turbine_hall_h, 1.0D0, 100.0D0, &
+               'turbine hall, height (m)')
+       case ('tw_storage_l')
+         call parse_real_variable('tw_storage_l', tw_storage_l, 10.0D0, 1000.0D0, &
+               'tritiated waste storage building, length (m)')
+       case ('tw_storage_w')
+         call parse_real_variable('tw_storage_w', tw_storage_w, 10.0D0, 1000.0D0, &
+               'tritiated waste storage building, width (m)')
+       case ('tw_storage_h')
+         call parse_real_variable('tw_storage_h', tw_storage_h, 1.0D0, 100.0D0, &
+               'tritiated waste storage building, height (m)')
+       case ('warm_shop_l')
+         call parse_real_variable('warm_shop_l', warm_shop_l, 10.0D0, 1000.0D0, &
+               'warm shop, length (m)')
+       case ('warm_shop_w')
+         call parse_real_variable('warm_shop_w', warm_shop_w, 10.0D0, 1000.0D0, &
+               'warm shop, width (m)')
+       case ('warm_shop_h')
+         call parse_real_variable('warm_shop_h', warm_shop_h, 1.0D0, 100.0D0, &
+               'warm shop, height (m)')
+       case ('water_buildings_l')
+         call parse_real_variable('water_buildings_l', water_buildings_l, 10.0D0, 1000.0D0, &
+               'water, laundry & drainage buildings, length (m)')
+       case ('water_buildings_w')
+         call parse_real_variable('water_buildings_w', water_buildings_w, 10.0D0, 1000.0D0, &
+               'water, laundry & drainage buildings, width (m)')
+       case ('water_buildings_h')
+         call parse_real_variable('water_buildings_h', water_buildings_h, 1.0D0, 100.0D0, &
+               'water, laundry & drainage buildings, height (m)')
+       case ('workshop_l')
+         call parse_real_variable('workshop_l', workshop_l, 10.0D0, 1000.0D0, &
+               'workshop buildings, length (m)')
+       case ('workshop_w')
+         call parse_real_variable('workshop_w', workshop_w, 10.0D0, 1000.0D0, &
+               'workshop buildings, width (m)')
+       case ('workshop_h')
+         call parse_real_variable('workshop_h', workshop_h, 1.0D0, 100.0D0, &
+               'workshop buildings, height (m)')
 
           !  Energy storage settings
 

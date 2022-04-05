@@ -3106,7 +3106,7 @@ contains
     !! <LI> (138) rebco_thickness : thickness of REBCO layer in tape (m)
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(138) = 'rebco_thicknes'
+    lablxc(138) = 'rebco_thickness'
     boundl(138) = 0.01D-6
     boundu(138) = 100.0D-6
   end subroutine init_itv_138
@@ -3733,7 +3733,7 @@ contains
   !---------------------------------
 
   subroutine init_itv_164
-    !! (164) f-value for maximum cryogenic plant power
+    !! <LI> (164) f-value for maximum cryogenic plant power
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(164) = 'f_crypmw         '
@@ -3755,29 +3755,31 @@ contains
   end subroutine set_itv_164
 
   !---------------------------------
-  ! DUMMY variables below here
-  !---------------------------------
 
   subroutine init_itv_165
-    !! <LI> (165) DUMMY : Description
+    !! <LI> (165) f-value for maximum TF coil strain
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(165) = 'DUMMY         '
-    boundl(165) = 1.0d-99
-    boundu(165) = 1.0d99
+    lablxc(165) = 'fstr_wp       '
+    boundl(165) = 1.0d-9
+    boundu(165) = 1.0d0
   end subroutine init_itv_165
 
   real(kind(1.d0)) function itv_165()
+    use constraint_variables, only: fstr_wp
     implicit none
-    itv_165 = DUMMY 
+    itv_165 = fstr_wp 
   end function itv_165
 
   subroutine set_itv_165(ratio)
+    use constraint_variables, only: fstr_wp
     implicit none
     real(kind(1.d0)) :: ratio
-    DUMMY = ratio
+    fstr_wp = ratio
   end subroutine  set_itv_165
 
+  !---------------------------------
+  ! DUMMY variables below here
   !---------------------------------
 
   subroutine init_itv_166
@@ -4186,9 +4188,9 @@ contains
            case (161);  xcm(i) = itv_161()
            case (162);  xcm(i) = itv_162()
            case (163);  xcm(i) = itv_163()
-            ! DUMMY Cases
            case (164);  xcm(i) = itv_164()
            case (165);  xcm(i) = itv_165()
+            ! DUMMY Cases
            case (166);  xcm(i) = itv_166()
            case (167);  xcm(i) = itv_167()
            case (168);  xcm(i) = itv_168()
@@ -4453,9 +4455,9 @@ contains
            case (161);  call set_itv_161(ratio)
            case (162);  call set_itv_162(ratio)
            case (163);  call set_itv_163(ratio)
-            ! DUMMY Cases
            case (164);  call set_itv_164(ratio)
            case (165);  call set_itv_165(ratio)
+            ! DUMMY Cases
            case (166);  call set_itv_166(ratio)
            case (167);  call set_itv_167(ratio)
            case (168);  call set_itv_168(ratio)

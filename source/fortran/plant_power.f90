@@ -29,16 +29,12 @@ module power_module
   !  Primary power to divertor factor
   integer, private :: iprimdiv
 
-  ! Var in subroutine power1 requiring re-initialisation on each new run
-  real(dp) :: p_tf_cryoal_cryo
-
 contains
 
   subroutine init_power_module
     !! Initialise module variables
     implicit none
 
-    p_tf_cryoal_cryo = 0.0D0
     qmisc = 0.0D0
     qac = 0.0D0
     qcl = 0.0D0
@@ -863,17 +859,21 @@ contains
     use heat_transport_variables, only: htpmw_shld, htpsecmw, pfwdiv, &
         psecshld, crypmw, htpmw_min, nphx, htpmw_div, psechcd, helpow, &
         htpmw_fw, pinjwp, pthermmw, psecdiv, etath, pinjht, iprimshld, htpmw, &
-        htpmw_blkt
+        htpmw_blkt, helpow_cryal
     use pf_power_variables, only: ensxpfm
     use pfcoil_variables, only: ipfres
     use physics_variables, only: pdivt, palpfwmw, ignite
     use structure_variables, only: coldmass
     use tfcoil_variables, only: tfsai, tcoolin, tmpcry, i_tf_sup, presleg, &
-        prescp, dtiocool, n_tf, cpttf, pres_joints, eff_tf_cryo
+        prescp, dtiocool, n_tf, cpttf, pres_joints, eff_tf_cryo, cryo_cool_req
     use times_variables, only: tpulse
     use primary_pumping_variables, only: htpmw_fw_blkt
     use constants, only: rmu0, pi
     implicit none
+
+    ! Local variables
+    real(dp) :: p_tf_cryoal_cryo
+    !! Cryogenic plant electrical power requirement due to cryo-aluminium (MW)
 
     !! Cryo-aluminium cryoplant power consumption
     
@@ -983,6 +983,8 @@ contains
     ! Initialisation (unchanged if all coil resisitive)
     helpow = 0.0D0
     crypmw = 0.0D0
+    p_tf_cryoal_cryo = 0.0D0
+    cryo_cool_req = 0.0D0
     
     ! Superconductors TF/PF cryogenic cooling
     if ( i_tf_sup == 1 .or. ipfres == 0 ) then
@@ -992,7 +994,8 @@ contains
 
         ! Use 13% of ideal Carnot efficiency to fit J. Miller estimate
         ! Rem SK : This ITER efficiency is very low compare to the Strowbridge curve
-        !          any reasons why? 
+        !          any reasons why?
+        ! Calculate electric power requirement for cryogenic plant at tmpcry (MW)
         crypmw = 1.0D-6 * (293.0D0 - tmpcry)/(eff_tf_cryo*tmpcry) * helpow   
     
     end if
@@ -1003,12 +1006,20 @@ contains
     ! Rem : Nuclear heating on the outer legs assumed to be negligible
     ! Rem : To be updated with 2 cooling loops for TART designs
     if ( i_tf_sup == 2 ) then
-        p_tf_cryoal_cryo = (293.0D0 - tcoolin)/(eff_tf_cryo*tcoolin) * &
-                           ( prescp + presleg + pres_joints + pnuc_cp_tf * 1.0D6 )
-        crypmw = crypmw + 1.0D-6 * p_tf_cryoal_cryo
+        ! Heat removal power at cryogenic temperature tcoolin (W)
+        helpow_cryal = prescp + presleg + pres_joints + pnuc_cp_tf * 1.0D6
+
+        ! Calculate electric power requirement for cryogenic plant at tcoolin (MW)
+        p_tf_cryoal_cryo = 1.0D-6 * (293.0D0 - tcoolin)/(eff_tf_cryo*tcoolin) * &
+                           helpow_cryal
+
+        ! Add to electric power requirement for cryogenic plant (MW)
+        crypmw = crypmw + p_tf_cryoal_cryo
     end if
 
-
+    ! Calculate cryo cooling requirement at 4.5K (kW)
+    cryo_cool_req = (helpow * ((293/tmpcry) - 1)/((293/4.5) - 1) + helpow_cryal * ((293/tcoolin) - 1)/((293/4.5) - 1)) / 1.0D3
+  
   end subroutine power1
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1037,14 +1048,15 @@ contains
         fpumpshld, tturb, pnetelmw, fpumpdiv, fpumpblkt, vachtmw, htpmw_div, &
         nphx, helpow, htpmw_fw, precircmw, pthermmw, fpumpfw, fcsht, &
         iprimshld, pinjwp, fachtmw, pgrossmw, psechtmw, trithtmw, psechcd, &
-        tfacpd, htpmw, etath, crypmw, psecdiv, pinjht, htpsecmw
+        tfacpd, htpmw, etath, crypmw, psecdiv, pinjht, htpsecmw, helpow_cryal
     use pfcoil_variables, only: pfwpmw
     use physics_variables, only: palpmw, ignite, pcoreradmw, pradmw, itart, &
         pdivt, palpfwmw, idivrt, pohmmw, iradloss, powfmw, pchargemw, &
         pscalingmw, falpha
     use process_output, only: ovarin, ocmmnt, ovarrf, oheadr, ovarre, oblnkl, &
         osubhd
-    use tfcoil_variables, only: ppump, i_tf_sup, tfcmw, tmpcry
+    use tfcoil_variables, only: ppump, i_tf_sup, tfcmw, tmpcry, tcoolin, &
+        eff_tf_cryo
     use primary_pumping_variables, only: htpmw_fw_blkt
     use constants, only: rmu0, mfile, pi
     implicit none
@@ -1108,6 +1120,7 @@ contains
 
     if (iprint == 0) return
 
+    !TODO: Can output unphysical values if there are no cryogenics - could be omitted from OUT.DAT in this case but leave in for MFILE?
     !  Output section
     call oheadr(outfile,'Cryogenics')
     call ovarre(outfile,'Conduction and radiation heat loads on cryogenic components (MW)', '(qss/1.0D6)', qss/1.0D6, 'OP ')
@@ -1118,11 +1131,15 @@ contains
     call ovarre(outfile,'45% allowance for heat loads in transfer lines, storage tanks etc (MW)', &
         '(qmisc/1.0D6)', qmisc/1.0D6, 'OP ')
 
-    call ovarre(outfile,'Sum = Total heat removal at cryogenic temperatures (W)', &
-        '(helpow/1.0D6)', helpow/1.0D6, 'OP ')
-    call ovarre(outfile,'Temperature of cryogenic components (K)', '(tmpcry)', tmpcry)
+    call ovarre(outfile,'Sum = Total heat removal at cryogenic temperatures (tmpcry & tcoolin) (MW)', &
+        '(helpow + helpow_cryal/1.0D6)', (helpow + helpow_cryal) * 1.0D-6, 'OP ')
+    call ovarre(outfile,'Temperature of cryogenic superconducting components (K)', '(tmpcry)', tmpcry)
+    call ovarre(outfile,'Temperature of cryogenic aluminium components (K)', '(tcoolin)', tcoolin)
+    !TODO: Both of these efficiencies are printed when it should be either 13% (ITER) or 40% (Strawbrige) - subset of TODO on line 1118
     call ovarre(outfile,'Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot value:', &
-        '', (0.13D0*tmpcry)/(293.0D0 - tmpcry), 'OP ')
+        '', (eff_tf_cryo*tmpcry)/(293.0D0 - tmpcry), 'OP ')
+    call ovarre(outfile,'Efficiency (figure of merit) of cryogenic aluminium plant is 40% of ideal Carnot value:', &
+        '', (eff_tf_cryo*tcoolin)/(293.0D0 - tcoolin), 'OP ')
     call ovarre(outfile,'Electric power for cryogenic plant (MW)', '(crypmw)', crypmw, 'OP ')
 
     call oheadr(outfile,'Plant Power / Heat Transport Balance')
@@ -1410,7 +1427,7 @@ contains
 
     call ocmmnt(outfile,'Power Balance for Reactor - Summary :')
     call ocmmnt(outfile,'-------------------------------------')
-    call ovarrf(outfile,'Fusion power (MW)','(powfmw.)',powfmw, 'OP ')
+    call ovarrf(outfile,'Fusion power (MW)','(powfmw)',powfmw, 'OP ')
     call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw, 'OP ')
     call ovarrf(outfile,'Injected power (MW)','(pinjmw.)',pinj, 'OP ')
     call ovarrf(outfile,'Ohmic power (MW)','(pohmmw.)',pohmmw, 'OP ')
@@ -1462,7 +1479,7 @@ contains
 
     call ocmmnt(outfile,'Power balance for power plant :')
     call ocmmnt(outfile,'-------------------------------')
-    call ovarrf(outfile,'Fusion power (MW)','(powfmw.)',powfmw, 'OP ')
+    call ovarrf(outfile,'Fusion power (MW)','(powfmw)',powfmw, 'OP ')
     call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw, 'OP ')
     sum = powfmw + emultmw
     call ovarrf(outfile,'Total (MW)','',sum, 'OP ')

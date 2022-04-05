@@ -14,7 +14,7 @@ History
 
 # Imported libraries
 import argparse
-import process_io_lib.mfile as mf
+import process.io.mfile as mf
 import matplotlib.pyplot as plt
 import numpy as np
 import sys

@@ -5079,11 +5079,11 @@ contains
     implicit none
 
     !  Arguments
-    real(kind=double), intent(in) :: rmajor,rminor,zminor
-    real(kind=double), intent(out) :: ain,aout,atot
+    real(dp), intent(in) :: rmajor,rminor,zminor
+    real(dp), intent(out) :: ain,aout,atot
 
     !  Local variables
-    real(kind=double) :: elong
+    real(dp) :: elong
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -5126,11 +5126,11 @@ contains
     implicit none
 
     !  Arguments
-    real(kind=double), intent(in) :: rshell,rmini,rmino,zminor
-    real(kind=double), intent(out) :: ain,aout,atot
+    real(dp), intent(in) :: rshell,rmini,rmino,zminor
+    real(dp), intent(out) :: ain,aout,atot
 
     !  Local variables
-    real(kind=double) :: elong
+    real(dp) :: elong
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

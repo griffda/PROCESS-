@@ -29,7 +29,7 @@ plt.rcParams['legend.fontsize'] = 10
 
 # PROCESS libraries import
 try:
-    import process_io_lib.mfile as mfile
+    import process.io.mfile as mfile
 except ImportError:
     print("The PROCESS python libraries are not in your path. Please check PYTHONPATH")
     exit()
