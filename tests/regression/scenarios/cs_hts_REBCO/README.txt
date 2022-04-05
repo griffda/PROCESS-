@@ -1,6 +1,6 @@
 #-------------------------------------#
 
-Test Case: cs_hts_rebco
+Test Case: cs_hts_REBCO
 Author: G. Turkington
 
 Date Created: 04/07/22
