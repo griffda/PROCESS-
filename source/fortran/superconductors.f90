@@ -595,7 +595,7 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
     tc0eps, bzero, strfun, jc1, jc2, jc3, scalefac
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+            
     !  $\epsilon_{sh}$
     epssh = (ca2*eps0a)/(sqrt(ca1**2 - ca2**2))
 
@@ -604,7 +604,7 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
     strfun = sqrt(epssh**2 + eps0a**2) - sqrt((strain-epssh)**2 + eps0a**2)
     strfun = strfun*ca1 - ca2*strain
     strfun = 1.0D0 + (1.0D0/(1.0D0 - ca1*eps0a))*strfun
-    if(strfun<0.d0)write(*,*)'subroutine wstsc: strfun<0.d0. Value =', strfun
+    if(strfun<0.d0)write(*,*)'subroutine wstsc: strfun<0.d0. strfun =', strfun, ', strain = ',strain
 
     !  $B^*_{C2} (0,\epsilon)$
     bc20eps = bc20max*strfun

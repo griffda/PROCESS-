@@ -66,7 +66,7 @@ contains
 		use constants, only: iotty
 		use div_kal_vars, only: target_spread, lambda_q_omp, &
       netau_sol, lcon_factor 
-    use divertor_ode_var, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
 
     integer :: i
@@ -106,12 +106,12 @@ contains
 
     ! Set the impurity fractions to the test values
     do i = 2, nimp
-      impurity_arr(i)%frac = 0.0D0
+      impurity_arr_frac(i) = 0.0D0
     enddo
 
     ! Set the impurity array fraction of Nitrogen 
     ! gives 0.04 in SOL, as in Kallenbach paper
-    impurity_arr(5)%frac = 8.0D-3  
+    impurity_arr_frac(5) = 8.0D-3  
 
     call divertor_Kallenbach(rmajor=rmajor, rminor=rminor, &
                             bt=bt, plascur=plascur, &

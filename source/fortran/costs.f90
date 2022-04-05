@@ -162,9 +162,8 @@ contains
 
     use cost_variables, only: concost, crctcore, fkind, ireactor, moneyint, &
       c222, cdirt, output_costs, ifueltyp, capcost, c221, lsa, ipnet 
-    use fwbs_variables, only: blkttype 
+    use fwbs_variables, only: iblanket 
     use ife_variables, only: ife 
-    use heat_transport_variables, only: ipowerflow 
     use physics_variables, only: itart 
     use process_output, only: ovarin, ovarre, oshead, oblnkl, oheadr, ocosts 
     use tfcoil_variables, only: i_tf_sup 
@@ -241,12 +240,12 @@ contains
     call oshead(outfile,'Reactor Systems')
     call ocosts(outfile,'(c2211)','First wall cost (M$)',c2211)
     if (ife /= 1) then
-    if ((ipowerflow == 0).or.(blkttype == 3)) then
-      call ocosts(outfile,'(c22121)','Blanket beryllium cost (M$)',c22121)
-      call ocosts(outfile,'(c22122)','Blanket breeder material cost (M$)',c22122)
-    else
+    if (iblanket == 4) then
       call ocosts(outfile,'(c22121)','Blanket lithium-lead cost (M$)',c22121)
       call ocosts(outfile,'(c22122)','Blanket lithium cost (M$)',c22122)
+    else
+      call ocosts(outfile,'(c22121)','Blanket beryllium cost (M$)',c22121)
+      call ocosts(outfile,'(c22122)','Blanket breeder material cost (M$)',c22122)
     end if
     call ocosts(outfile,'(c22123)','Blanket stainless steel cost (M$)',c22123)
     call ocosts(outfile,'(c22124)','Blanket vanadium cost (M$)',c22124)
@@ -1108,10 +1107,9 @@ contains
 
 		use cost_variables, only: ucblss, ucblbreed, ucblbe, ucblli, ucblvd, &
       ucblli2o, blkcst, ucbllipb, ifueltyp, lsa, fkind
-		use fwbs_variables, only: blktmodel, whtblli, blkttype, wtblli2o, &
-      whtblbreed, whtblvd, whtblbe, whtblss, wtbllipb 
+		use fwbs_variables, only: iblanket, whtblli, wtblli2o, whtblbreed, whtblvd, whtblbe, &
+      whtblss, wtbllipb 
 		use ife_variables, only: ucflib, blmatm, ife, ucconc, mflibe, uccarb
-		use heat_transport_variables, only: ipowerflow 
     implicit none
 
     !  Arguments
@@ -1138,21 +1136,21 @@ contains
 
     if (ife /= 1) then
 
-       if (ipowerflow == 0) then
-          c22121 = 1.0D-6 * whtblbe * ucblbe
-          if (blktmodel == 0) then
-             c22122 = 1.0D-6 * wtblli2o * ucblli2o
-          else
-             c22122 = 1.0D-6 * whtblbreed * ucblbreed
-          end if
+      ! iblanket=4 is used for KIT HCLL model. iblanket<4 are all 
+      ! HCPB (CCFE, KIT and CCFE + Shimwell TBR calculation). 
+
+       if (iblanket == 4) then
+         !  Liquid blanket (LiPb + Li)
+         c22121 = 1.0D-6 * wtbllipb * ucbllipb
+         c22122 = 1.0D-6 * whtblli * ucblli
        else
-          if ((blkttype == 1).or.(blkttype == 2)) then
-             !  Liquid blanket (LiPb + Li)
-             c22121 = 1.0D-6 * wtbllipb * ucbllipb
-             c22122 = 1.0D-6 * whtblli * ucblli
+         !  Solid blanket (Li2O + Be)
+         c22121 = 1.0D-6 * whtblbe * ucblbe
+          if (iblanket == 2) then
+          ! KIT model
+            c22122 = 1.0D-6 * whtblbreed * ucblbreed
           else
-             !  Solid blanket (Li2O + Be)
-             c22121 = 1.0D-6 * whtblbe * ucblbe
+          ! CCFE model
              c22122 = 1.0D-6 * wtblli2o * ucblli2o
           end if
        end if

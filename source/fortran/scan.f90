@@ -618,7 +618,7 @@ contains
 	use current_drive_variables, only: rho_ecrh, bscfmax
 	use divertor_variables, only: hldivlim
 	use error_handling, only: idiags, report_error
-	use impurity_radiation_module, only: fimp, fimpvar, coreradius, impurity_arr
+	use impurity_radiation_module, only: fimp, fimpvar, coreradius, impurity_arr_frac
     use physics_variables, only: kappa, dnbeta, te, aspect, ftar, bt, &
         rad_fraction_sol, triang, rmajor, beamfus0, hfact
     use numerics, only: epsvmc, boundu, boundl
@@ -768,7 +768,7 @@ contains
             vlab = 'blnkoth' ; xlab = 'Outboard blanket thick.'
         case (42)
             fimp(9) = swp(iscn)
-            impurity_arr(9)%frac = fimp(9)
+            impurity_arr_frac(9) = fimp(9)
             vlab = 'fimp(9)' ; xlab = 'Argon fraction'
         case (43)
             rho_ecrh = swp(iscn)
@@ -793,7 +793,7 @@ contains
             vlab = 'n_layer' ; xlab = 'TF Coil - n_layer'
         case (50)
             fimp(13) = swp(iscn)
-            impurity_arr(13)%frac = fimp(13)
+            impurity_arr_frac(13) = fimp(13)
             vlab = 'fimp(13)' ; xlab = 'Xenon fraction'
         case (51)
             ftar = swp(iscn)

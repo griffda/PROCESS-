@@ -128,9 +128,9 @@ contains
       lambda_q_omp, kallenbach_switch 
 		use build_variables, only: rspo 
 		use physics_variables, only: tesep_keV => tesep
-		use divertor_ode_var, only: nimp, imp_label, &
-      impurity_concs, impurity_arr
+		use divertor_ode_var, only: impurity_concs
 		use divertor_variables, only: hldiv 
+        use impurity_radiation_module, only: impurity_arr_frac, impurity_arr_Label, nimp, imp_label
     implicit none
 
     logical::verbose
@@ -436,7 +436,7 @@ contains
 
         ! Loop over the remaining PROCESS impurities
         do i = 3, nimp
-            if (impurity_arr(i)%frac .gt. 1.d-10) then
+            if (impurity_arr_frac(i) .gt. 1.d-10) then
                 impurities_present(i) = .true.
             end if
         end do
@@ -447,7 +447,7 @@ contains
     ! Get impurity concentrations every time, as they can change
     do i = 2, nimp
         if(impurities_present(i)) then
-           impurity_concs(i)= impurity_arr(i)%frac * impurity_enrichment(i)
+           impurity_concs(i)= impurity_arr_frac(i) * impurity_enrichment(i)
         else
             impurity_concs(i)=0.0d0
         endif
@@ -678,7 +678,7 @@ do i = 2, nimp
               'v_[m/s]', 'mach ',                                                     &
               'n0/1e20/m3', 'Power_[W]', 'perp_area', 'qtot_W/m2', 'qconv_W/m2', 'qcond_W/m2',         &
               'CX_W/m3', 'Ion_W/m3' , 'H_rad_W/m3', 'im_rad_W/m3', 'Y7', 'Y8', 'Y9', 'Y10',    &
-              (impurity_arr(i)%Label, i=2,nimp),'n01/1e20/m3','n02/1e20m-3','nv24','v/ms-1'
+              (impurity_arr_Label(i), i=2,nimp),'n01/1e20/m3','n02/1e20m-3','nv24','v/ms-1'
         !open(unit=10, file='divertor_diagnostics.txt', status='replace')
     endif   ! (iprint.eq.1)
 
@@ -1006,7 +1006,8 @@ do i = 2, nimp
     use read_and_get_atomic_data, only: get_h_rates
     use constants, only: echarge
 		use div_kal_vars, only: abserr_sol, netau_sol 
-		use divertor_ode_var, only: impurity_concs, imp_label, nimp
+		use divertor_ode_var, only: impurity_concs
+        use impurity_radiation_module, only: nimp, imp_label
     implicit none
 
     real(dp),intent(in) :: t       ! T, the independent variable

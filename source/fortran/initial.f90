@@ -257,7 +257,7 @@ subroutine check
     use global_variables, only: icase
     use heat_transport_variables, only: trithtmw
     use ife_variables, only: ife
-    use impurity_radiation_module, only: nimp, impurity_arr, fimp
+    use impurity_radiation_module, only: nimp, impurity_arr_frac, fimp
     use numerics, only: ixc, icc, ioptimz, neqns, nineqns, nvar, boundl, &
         boundu
     use pfcoil_variables, only: ipfres, ngrp, pfclres, ipfloc, ncls, isumatoh
@@ -275,7 +275,9 @@ subroutine check
         n_tf_graded_layers, n_tf_stress_layers, tlegav,  i_tf_stress_model, &
         i_tf_sc_mat, i_tf_wp_geom, i_tf_turns_integer, tinstf, thwcndut, &
         tfinsgap, rcool, dhecoil, thicndut, i_cp_joints, t_turn_tf_is_input, &
-        t_turn_tf, tftmp, t_cable_tf, t_cable_tf_is_input, tftmp, tmpcry
+        t_turn_tf, tftmp, t_cable_tf, t_cable_tf_is_input, tftmp, tmpcry, &
+        i_tf_cond_eyoung_axial, eyoung_cond_axial, eyoung_cond_trans, &
+        i_tf_cond_eyoung_trans, i_str_wp
     use stellarator_variables, only: istell
     use sctfcoil_module, only: initialise_cables
     use vacuum_variables, only: vacuum_model
@@ -354,7 +356,7 @@ subroutine check
 
     !  Impurity fractions
     do imp = 1,nimp
-        impurity_arr(imp)%frac = fimp(imp)
+        impurity_arr_frac(imp) = fimp(imp)
     end do
 
     ! The 1/R B field dependency constraint variable is being depreciated
@@ -645,7 +647,7 @@ subroutine check
      !if using Reinke iteration variable fzactual, then assign to imp. array
      ! This is also done in iteration_variables.f90 - leave it in for the moment.
      if (any(ixc == 148)) then
-        impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
+        impurity_arr_frac(impvardiv) = fzactual / impurity_enrichment(impvardiv)
      endif
 
      if (i_single_null == 0) then
@@ -906,6 +908,39 @@ subroutine check
     end if 
     !-!
     
+    !-! Setting the TF coil conductor elastic properties
+    !-!
+    if ( i_tf_cond_eyoung_axial == 0 ) then
+        ! Conductor stiffness is not considered
+        eyoung_cond_axial = 0
+        eyoung_cond_trans = 0
+    else if ( i_tf_cond_eyoung_axial == 2 ) then
+        ! Select sensible defaults from the literature
+        select case (i_tf_sc_mat)
+            case (1,4,5)
+                ! Nb3Sn: Nyilas, A et. al, Superconductor Science and Technology 16, no. 9 (2003): 1036–42. https://doi.org/10.1088/0953-2048/16/9/313.
+                eyoung_cond_axial = 32D9
+            case (2)
+                ! Bi-2212: Brown, M. et al, IOP Conference Series: Materials Science and Engineering 279 (2017): 012022. https://doi.org/10.1088/1757-899X/279/1/012022.
+                eyoung_cond_axial = 80D9
+            case (3,7)
+                ! NbTi: Vedrine, P. et. al, IEEE Transactions on Applied Superconductivity 9, no. 2 (1999): 236–39. https://doi.org/10.1109/77.783280.
+                eyoung_cond_axial = 6.8D9
+            case (6,8,9)
+                ! REBCO: Fujishiro, H. et. al, Physica C: Superconductivity, 426–431 (2005): 699–704. https://doi.org/10.1016/j.physc.2005.01.045.
+                eyoung_cond_axial = 145D9
+        end select
+        
+        if ( i_tf_cond_eyoung_trans == 0) then
+            ! Transverse stiffness is not considered
+            eyoung_cond_trans = 0
+        else
+            ! Transverse stiffness is significant
+            eyoung_cond_trans = eyoung_cond_axial
+        end if
+    end if 
+    !-!
+    
     ! Check if the WP/conductor radial thickness (dr_tf_wp) is large enough
     ! To contains the insulation, cooling and the support structure
     ! Rem : Only verified if the WP thickness is used
@@ -1078,6 +1113,13 @@ subroutine check
     if(tmpcry > tftmp) then
         call report_error(273)
     endif
+    
+    ! Cannot use TF coil strain limit if i_str_wp is off:
+    if(any(icc == 88) .and. (i_str_wp == 0)) then
+        call report_error(275)
+    endif
+
+    errors_on = .false.
 
     ! Disable error logging only after all checks have been performed.
     ! (CPSS #1582: Why is error logging disabled at all?)

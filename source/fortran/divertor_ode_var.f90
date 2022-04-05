@@ -14,7 +14,7 @@ module divertor_ode_var
 #ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
-  use impurity_radiation_module, only: nimp, imp_label, impurity_arr
+  use impurity_radiation_module, only: nimp
   implicit none
 
   ! Module-level declarations !

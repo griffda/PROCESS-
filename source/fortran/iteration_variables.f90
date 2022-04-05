@@ -2240,20 +2240,20 @@ contains
   end subroutine init_itv_102
 
   real(kind(1.d0)) function itv_102()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     use impurity_radiation_module, only: impvar
     implicit none
-    itv_102 =  impurity_arr(impvar)%frac
+    itv_102 =  impurity_arr_frac(impvar)
   end function itv_102
 
   subroutine set_itv_102(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     use impurity_radiation_module, only: impvar
     use impurity_radiation_module, only: fimpvar
     implicit none
     real(kind(1.d0)) :: ratio
     fimpvar = ratio
-    impurity_arr(impvar)%frac = fimpvar
+    impurity_arr_frac(impvar) = fimpvar
   end subroutine set_itv_102
 
   !---------------------------------
@@ -2800,16 +2800,16 @@ contains
   end subroutine init_itv_125
 
   real(kind(1.d0)) function itv_125()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_125 = impurity_arr(3)%frac 
+    itv_125 = impurity_arr_frac(3)
   end function itv_125
 
   subroutine set_itv_125(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(3)%frac = ratio
+    impurity_arr_frac(3) = ratio
   end subroutine set_itv_125
 
   !---------------------------------
@@ -2824,16 +2824,16 @@ contains
   end subroutine init_itv_126
 
   real(kind(1.d0)) function itv_126()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_126 = impurity_arr(4)%frac 
+    itv_126 = impurity_arr_frac(4)
   end function itv_126
 
   subroutine set_itv_126(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(4)%frac = ratio
+    impurity_arr_frac(4) = ratio
   end subroutine set_itv_126
 
   !---------------------------------
@@ -2848,16 +2848,16 @@ contains
   end subroutine init_itv_127
 
   real(kind(1.d0)) function itv_127()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_127 = impurity_arr(5)%frac 
+    itv_127 = impurity_arr_frac(5)
   end function itv_127
 
   subroutine set_itv_127(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(5)%frac = ratio
+    impurity_arr_frac(5) = ratio
   end subroutine set_itv_127
 
   !---------------------------------
@@ -2872,16 +2872,16 @@ contains
   end subroutine init_itv_128
 
   real(kind(1.d0)) function itv_128()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_128 = impurity_arr(6)%frac 
+    itv_128 = impurity_arr_frac(6) 
   end function itv_128
 
   subroutine set_itv_128(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(6)%frac = ratio
+    impurity_arr_frac(6) = ratio
   end subroutine set_itv_128
 
   !---------------------------------
@@ -2896,16 +2896,16 @@ contains
   end subroutine init_itv_129
 
   real(kind(1.d0)) function itv_129()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_129 = impurity_arr(7)%frac 
+    itv_129 = impurity_arr_frac(7)
   end function itv_129
 
   subroutine set_itv_129(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(7)%frac = ratio
+    impurity_arr_frac(7) = ratio
   end subroutine set_itv_129
 
   !---------------------------------
@@ -2920,16 +2920,16 @@ contains
   end subroutine init_itv_130
 
   real(kind(1.d0)) function itv_130()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_130 = impurity_arr(8)%frac 
+    itv_130 = impurity_arr_frac(8)
   end function itv_130
 
   subroutine set_itv_130(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(8)%frac = ratio
+    impurity_arr_frac(8) = ratio
   end subroutine set_itv_130
 
   !---------------------------------
@@ -2944,16 +2944,16 @@ contains
   end subroutine init_itv_131
 
   real(kind(1.d0)) function itv_131()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_131 = impurity_arr(9)%frac 
+    itv_131 = impurity_arr_frac(9) 
   end function itv_131
 
   subroutine set_itv_131(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(9)%frac = ratio
+    impurity_arr_frac(9) = ratio
   end subroutine set_itv_131
 
   !---------------------------------
@@ -2968,16 +2968,16 @@ contains
   end subroutine init_itv_132
 
   real(kind(1.d0)) function itv_132()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_132 = impurity_arr(10)%frac 
+    itv_132 = impurity_arr_frac(10)
   end function itv_132
 
   subroutine set_itv_132(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(10)%frac = ratio
+    impurity_arr_frac(10) = ratio
   end subroutine set_itv_132
 
   !---------------------------------
@@ -2992,16 +2992,16 @@ contains
   end subroutine init_itv_133
 
   real(kind(1.d0)) function itv_133()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_133 = impurity_arr(11)%frac 
+    itv_133 = impurity_arr_frac(11)
   end function itv_133
 
   subroutine set_itv_133(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(11)%frac = ratio
+    impurity_arr_frac(11) = ratio
   end subroutine set_itv_133
 
   !---------------------------------
@@ -3016,16 +3016,16 @@ contains
   end subroutine init_itv_134
 
   real(kind(1.d0)) function itv_134()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_134 = impurity_arr(12)%frac 
+    itv_134 = impurity_arr_frac(12)
   end function itv_134
 
   subroutine set_itv_134(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(12)%frac = ratio
+    impurity_arr_frac(12) = ratio
   end subroutine set_itv_134
 
   !---------------------------------
@@ -3040,16 +3040,16 @@ contains
   end subroutine init_itv_135
 
   real(kind(1.d0)) function itv_135()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_135 = impurity_arr(13)%frac 
+    itv_135 = impurity_arr_frac(13)
   end function itv_135
 
   subroutine set_itv_135(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(13)%frac = ratio
+    impurity_arr_frac(13) = ratio
   end subroutine set_itv_135
 
   !---------------------------------
@@ -3064,16 +3064,16 @@ contains
   end subroutine init_itv_136
 
   real(kind(1.d0)) function itv_136()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_136 = impurity_arr(14)%frac 
+    itv_136 = impurity_arr_frac(14)
   end function itv_136
 
   subroutine set_itv_136(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(14)%frac = ratio
+    impurity_arr_frac(14) = ratio
   end subroutine set_itv_136
 
   !---------------------------------
@@ -3106,7 +3106,7 @@ contains
     !! <LI> (138) rebco_thickness : thickness of REBCO layer in tape (m)
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(138) = 'rebco_thicknes'
+    lablxc(138) = 'rebco_thickness'
     boundl(138) = 0.01D-6
     boundu(138) = 100.0D-6
   end subroutine init_itv_138
@@ -3355,22 +3355,22 @@ contains
 
   real(kind(1.d0)) function itv_148()
     use div_kal_vars, only: impurity_enrichment
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     use reinke_variables, only: impvardiv
     implicit none
     ! TODO This needs to be clarified!! MDK
     ! It looks like fzactual is not really an iteration variable.
-    itv_148 = impurity_arr(impvardiv)%frac*impurity_enrichment(impvardiv)   !fzactual
+    itv_148 = impurity_arr_frac(impvardiv)*impurity_enrichment(impvardiv)   !fzactual
   end function itv_148
 
   subroutine set_itv_148(ratio)
     use div_kal_vars, only: impurity_enrichment
-    use impurity_radiation_module, only: fimpvar, impurity_arr
+    use impurity_radiation_module, only: fimpvar, impurity_arr_frac
     use reinke_variables, only: fzactual, impvardiv
     implicit none
     real(kind(1.d0)) :: ratio
     fzactual = ratio
-    impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
+    impurity_arr_frac(impvardiv) = fzactual / impurity_enrichment(impvardiv)
   end subroutine set_itv_148
 
   !---------------------------------
@@ -3733,7 +3733,7 @@ contains
   !---------------------------------
 
   subroutine init_itv_164
-    !! (164) f-value for maximum cryogenic plant power
+    !! <LI> (164) f-value for maximum cryogenic plant power
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(164) = 'f_crypmw         '
@@ -3754,53 +3754,57 @@ contains
     f_crypmw = ratio
   end subroutine set_itv_164
 
+  !---------------------------------
+
   subroutine init_itv_165
-    !! <LI> (165) f_copperaoh_m2 : CS coil current / copper area < Maximum value
-    !! (f-value for equation 75)
+    !! <LI> (165) f-value for maximum TF coil strain
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(165) = 'f_copperaoh_m2'
-    boundl(165) = 0.001D0
-    boundu(165) = 1.000D0
+    lablxc(165) = 'fstr_wp       '
+    boundl(165) = 1.0d-9
+    boundu(165) = 1.0d0
   end subroutine init_itv_165
 
   real(kind(1.d0)) function itv_165()
-  use rebco_variables, only: f_copperaoh_m2
+    use constraint_variables, only: fstr_wp
     implicit none
-    itv_165 = f_copperaoh_m2 
+    itv_165 = fstr_wp 
   end function itv_165
 
   subroutine set_itv_165(ratio)
+    use constraint_variables, only: fstr_wp
+    implicit none
+    real(kind(1.d0)) :: ratio
+    fstr_wp = ratio
+  end subroutine  set_itv_165
+
+  !---------------------------------
+
+  subroutine init_itv_166
+    !! <LI> (166) f_copperaoh_m2 : CS coil current / copper area < Maximum value
+    !! (f-value for equation 89)
+    use numerics, only: lablxc, boundl, boundu
+    implicit none
+    lablxc(166) = 'f_copperaoh_m2'
+    boundl(166) = 0.001D0
+    boundu(166) = 1.000D0
+  end subroutine init_itv_166
+
+  real(kind(1.d0)) function itv_166()
+  use rebco_variables, only: f_copperaoh_m2
+    implicit none
+    itv_166 = f_copperaoh_m2 
+  end function itv_166
+
+  subroutine set_itv_166(ratio)
     use rebco_variables, only: f_copperaoh_m2
     implicit none
     real(kind(1.d0)) :: ratio
     f_copperaoh_m2 = ratio
-  end subroutine  set_itv_165
+  end subroutine  set_itv_166
 
-    !---------------------------------
+  !---------------------------------
   ! DUMMY variables below here
-  !-----------------------------------
-
-  subroutine init_itv_166
-    !! <LI> (166) DUMMY : Description
-    use numerics, only: lablxc, boundl, boundu
-    implicit none
-    lablxc(166) = 'DUMMY         '
-    boundl(166) = 1.0d-99
-    boundu(166) = 1.0d99
-  end subroutine init_itv_166
-
-  real(kind(1.d0)) function itv_166()
-    implicit none
-    itv_166 = DUMMY 
-  end function itv_166
-
-  subroutine set_itv_166(ratio)
-    implicit none
-    real(kind(1.d0)) :: ratio
-    DUMMY = ratio
-  end subroutine set_itv_166
-
   !---------------------------------
 
   subroutine init_itv_167
