@@ -1,6 +1,6 @@
 * Input file to test the CS coil REBCO quench protection model
-* Constraint equation 88
-* Iteration variable ixc = 165 [f_copperaoh_m2]
+* Constraint equation 89
+* Iteration variable ixc = 166 [f_copperaoh_m2]
 * Set the CS coil material to REBCO with [isumatoh] = 6
 
 *---------------Constraint Equations---------------*
@@ -31,7 +31,7 @@ icc = 25 * Max TF field
 icc = 62 * taulimit
 
 * CS coil quench protection constrain equation
-icc = 88 * CS coil quench protection
+icc = 89 * CS coil quench protection
 
 *---------------Iteration Variables----------------*
 
@@ -104,9 +104,9 @@ ixc = 109 * ralpne
 ixc = 110 * ftaulimit
 
 * This is the iteration variable used for the CS coil quench protection model
-ixc = 165 * f_copperaoh for CS coil quench model
-boundl(165) = 0.001
-boundu(165) = 1.0
+ixc = 166 * f_copperaoh for CS coil quench model
+boundl(166) = 0.001
+boundu(166) = 1.0
 
 * Set the maximum allower current/copper ratio
 copperaoh_m2_max = 5D7
