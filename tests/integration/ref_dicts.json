@@ -3456,7 +3456,7 @@
         "phi_tfc_ob": 0.0,
         "phiint": 0.0,
         "photon_wall": 0.0,
-        "pi": 3.141592653589793,
+        "pi": "3.141592653589793_wp_",
         "pibv": 20000.0,
         "piepv": 0.0,
         "pifecr": 10.0,
@@ -12146,7 +12146,7 @@
             "ub": 10000000000.0
         },
         "copperaoh_m2_max": {
-            "lb": 1000000.0,
+            "lb": 10000.0,
             "ub": 10000000000.0
         },
         "coreradiationfraction": {
@@ -12531,7 +12531,7 @@
         },
         "f_copperaoh_m2": {
             "lb": 0.001,
-            "ub": 10.0
+            "ub": 1.0
         },
         "f_crypmw": {
             "lb": 0.0,
@@ -19718,7 +19718,6 @@
             "vportpmax",
             "vporttmax"
         ],
-        "structure_module": [],
         "structure_variables": [
             "aintmass",
             "clgsmass",
