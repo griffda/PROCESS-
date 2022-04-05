@@ -2326,10 +2326,10 @@ contains
           call parse_real_variable('copperaoh_m2', copperaoh_m2, 1.0D0, 1.0D10, &
               'CS coil current / copper area (A/m2)')
        case ('copperaoh_m2_max')
-          call parse_real_variable('copperaoh_m2_max', copperaoh_m2_max, 1.0D6, 1.0D10, &
+          call parse_real_variable('copperaoh_m2_max', copperaoh_m2_max, 1.0D4, 1.0D10, &
                'Maximum CS coil current / copper area (A/m2)')
        case ('f_copperaoh_m2')
-          call parse_real_variable('f_copperaoh_m2', f_copperaoh_m2, 1.0D-3, 1.0D1, &
+          call parse_real_variable('f_copperaoh_m2', f_copperaoh_m2, 1.0D-3, 1.0D0, &
                'f-value for constraint 75: CS coil current / copper area < copperaoh_m2_max')
 
           !  First wall, blanket, shield settings
