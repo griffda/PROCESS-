@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1240-g7124046d
-    Branch : 1511-update-heating-and-current-drive-costs
-   Git log : Merge\ branch\ |develop|\ into\ 1511-update-heating-an
- Date/time : 15 Feb 2022 11:42:34 +00:00(hh:mm) UTC
+   Tag No. : v2.1-1456-ge3dc2ccc code contains untracked changes
+    Branch : 1336-update-cryoplant-cost-22-03-for-cost-model-2
+   Git log : Merge\ branch\ |develop|\ into\ 1336-update-cryoplant-
+ Date/time : 30 Mar 2022 10:49:46 +01:00(hh:mm) UTC
       User : jg6173
   Computer : L1088
- Directory : /tmp/pytest-of-jg6173/pytest-24/test_solver0
-     Input : /tmp/pytest-of-jg6173/pytest-24/test_scenario_FNSF_0/IN.DAT
+ Directory : /tmp/pytest-of-jg6173/pytest-57/test_solver0
+     Input : /tmp/pytest-of-jg6173/pytest-57/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -132,6 +132,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Heating/CD system lifetime (years)                                       (cdrlife)                 2.619E+01  OP 
  Total plant lifetime (years)                                             (tlife)                   3.000E+01     
  Total plant availability fraction                                        (cfactr)                  7.500E-01     
+ Number of fusion cycles to reach allowable fw/blanket DPA                (bktcycles)               5.316E+05     
  
  *************************************************** Plasma ***************************************************
  
@@ -507,9 +508,8 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  (Ripple result may not be accurate, as the fit was outside
   its range of applicability.)
  
-                                          Thickness (m)    Radius (m)
  Device centreline                            0.000           0.000                       
- Machine bore                                 0.000           0.000   (bore)              
+ Machine build_variables.bore                 0.000           0.000   (bore)              
  Central solenoid                             0.000           0.000   (ohcth)             
  CS precompression                            0.000           0.000   (precomp)           
  Gap                                          0.000           0.000   (gapoh)             
@@ -537,7 +537,6 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  *********************************************** Vertical Build ***********************************************
  
  Double null case
-                                          Thickness (m)    Height (m)
  TF coil                                      0.541           4.962   (tfcth)             
  Gap                                          0.050           4.421   (tftsgap)           
  Thermal shield                               0.000           4.371   (thshield)          
@@ -567,17 +566,19 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Materal stress of the point of maximum shear stress (Tresca criterion) for each layer
  Please use utilities/plot_stress_tf.py for radial plots plots summary
  Layers                              conductor    Outer case
- Radial stress               (MPa)     -68.441         1.770
- toroidal stress             (MPa)     -68.441       -34.546
- Vertical stress             (MPa)      39.918       159.286
- Von-Mises stress            (MPa)     108.360       178.467
- Shear (Tresca) stress       (MPa)     108.360       193.832
+ Radial stress               (MPa)     -68.437         1.770
+ toroidal stress             (MPa)     -68.438       -34.535
+ Vertical stress             (MPa)      39.935       159.270
+ Von-Mises stress            (MPa)     108.373       178.444
+ Shear (Tresca) stress       (MPa)     108.373       193.805
  
  Toroidal modulus            (GPa)     117.000       205.000
  Vertical modulus            (GPa)      99.029       205.000
  
- WP toroidal modulus (GPa)                                                (eyoung_wp_t*1.0D-9)      1.170E+02  OP 
- WP vertical modulus (GPa)                                                (eyoung_wp_z*1.0D-9)      9.903E+01  OP 
+ WP transverse modulus (GPa)                                              (eyoung_wp_trans*1.0D-9)  1.170E+02  OP 
+ WP vertical modulus (GPa)                                                (eyoung_wp_axial*1.0D-9)  9.903E+01  OP 
+ WP transverse Poisson's ratio                                            (poisson_wp_trans)        3.500E-01  OP 
+ WP vertical-transverse Pois. rat.                                        (poisson_wp_axial)        3.499E-01  OP 
  
  TF design
  
@@ -629,7 +630,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Inboard TFC conductor sector geometry:
  
  Inboard TFC conductor sector area with gr insulation (per leg) (m2)      (awpc))                   6.904E-02     
- Inboard TFC conductor sector area (per leg) (m2)                         (aswp)                    6.904E-02     
+ Inboard TFC conductor sector area, NO ground & gap (per leg) (m2)        (awptf)                   6.904E-02     
  Inboard conductor sector radial thickness (m)                            (dr_tf_wp)                5.135E-01     
  Central collumn top conductor sector radial thickness (m)                (dr_tf_wp_top)            7.593E-01     
  Ground wall insulation thickness (m)                                     (tinstf)                  0.000E+00     
@@ -1210,9 +1211,11 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  AC losses in cryogenic components (MW)                                   (qac/1.0D6)               0.000E+00  OP 
  Resistive losses in current leads (MW)                                   (qcl/1.0D6)               0.000E+00  OP 
  45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             0.000E+00  OP 
- Sum = Total heat removal at cryogenic temperatures (W)                   (helpow/1.0D6)            0.000E+00  OP 
- Temperature of cryogenic components (K)                                  (tmpcry)                  4.500E+00     
- Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                           2.028E-03  OP 
+ Sum = Total heat removal at cryogenic temperatures (tmpcry & tcoolin) (M (helpow + helpow_cryal/1. 0.000E+00  OP 
+ Temperature of cryogenic superconducting components (K)                  (tmpcry)                  4.500E+00     
+ Temperature of cryogenic aluminium components (K)                        (tcoolin)                 3.131E+02     
+ Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                          -1.560E-02  OP 
+ Efficiency (figure of merit) of cryogenic aluminium plant is 40% of idea                           1.554E+01  OP 
  Electric power for cryogenic plant (MW)                                  (crypmw)                  0.000E+00  OP 
  
  ************************************ Plant Power / Heat Transport Balance ************************************
@@ -1334,7 +1337,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Power Balance for Reactor - Summary :
  -------------------------------------
- Fusion power (MW)                                                        (powfmw.)                   162.001  OP 
+ Fusion power (MW)                                                        (powfmw)                    162.001  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                    22.592  OP 
  Injected power (MW)                                                      (pinjmw.)                    80.002  OP 
  Ohmic power (MW)                                                         (pohmmw.)                     0.000  OP 
@@ -1368,7 +1371,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Power balance for power plant :
  -------------------------------
- Fusion power (MW)                                                        (powfmw.)                   162.001  OP 
+ Fusion power (MW)                                                        (powfmw)                    162.001  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                    22.592  OP 
  Total (MW)                                                                                           184.593  OP 
  

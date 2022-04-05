@@ -26,10 +26,12 @@ module tfcoil_variables
   !! area of the cable conduit (m2)
 
   real(dp) :: acond
-  !! conductor area (winding pack) (m2)
+  !! Winding pack conductor area [m2]
+  !! Does not include the area of voids and central helium channel
 
   real(dp) :: acstf
-  !! internal area of the cable space (m2)
+  !! Cable space area (per turn)  [m2]
+  !! Includes the area of voids and central helium channel
 
   real(dp) :: insulation_area
   !! single turn insulation area (m2)
@@ -156,7 +158,7 @@ module tfcoil_variables
   !! density of conduit + ground-wall insulation (kg/m3)
 
   real(dp) :: dhecoil
-  !! diameter of He coil in TF winding (m)
+  !! diameter of central helium channel in TF winding (m)
 
   real(dp) :: estotftgj
   !! total stored energy in the toroidal field (GJ)
@@ -239,6 +241,28 @@ module tfcoil_variables
   !! - =0  Default value : Picture frame coil for TART / PROCESS D-shape for non itart
   !! - =1  PROCESS D-shape : parametrise with 2 arcs 
   !! - =2  Picture frame coils 
+  
+  integer :: i_tf_cond_eyoung_axial
+  !! Switch for the behavior of the TF coil conductor elastic axial properties
+  !!
+  !! - =0  Young's modulus is set to zero, and the conductor is not considered
+  !!       in the stress calculation. This corresponds to the case that the 
+  !!       conductor is much less stiff than the conduit, or the case that the
+  !!       conductor is prevented (isolated) from taking axial loads.
+  !! - =1  Elastic properties are set by user input, using the variable
+  !!       `eyoung_cond_axial`
+  !! - =2  Elastic properties are set to reasonable defaults taking into
+  !!       account the superconducting material `i_tf_sc_mat`
+  
+  integer :: i_tf_cond_eyoung_trans
+  !! Switch for the behavior of the elastic properties of the TF coil
+  !! conductorin the transverse direction. Only active if 
+  !! `i_tf_cond_eyoung_axial == 2`
+  !!
+  !! - =0  Cable not potted in solder. Transverse Young's modulus set to zero.
+  !! - =1  Cable potted in solder. If `i_tf_cond_eyoung_axial == 2`, the 
+  !!       transverse Young's modulus of the conductor is equal to the axial,
+  !!       which is set to a sensible material-dependent default.
 
   integer :: n_pancake
   !! Number of pancakes in TF coil. Only used if `i_tf_turns_integer=1`
@@ -278,6 +302,11 @@ module tfcoil_variables
   integer :: n_tf_stress_layers
   !! Number of layers considered for the inboard TF stress calculations
   !! set in initial.f90 from i_tf_bucking and n_tf_graded_layers
+  
+  integer :: n_tf_wp_layers
+  !! Maximum number of layers that can be considered in the TF coil composited/smeared 
+  !! stress analysis. This is the layers of one turn, not the entire WP. 
+  !! Default: 5. void, conductor, copper, conduit, insulation.
 
   real(dp) :: jbus
   !! bussing current density (A/m2)
@@ -296,9 +325,6 @@ module tfcoil_variables
   !! Rem SK : Not used in tfcoil to set the current any more. Should not be used as
   !! iteration variable 12 any more. It is now calculated.
 
-  real(dp) :: eyzwp
-  !! Winding pack vertical Young's modulus (Pa)
-
   real(dp) :: eyoung_ins
   !! Insulator Young's modulus [Pa]. Default value (1.0D8) setup the following values
   !!  - SC TF, eyoung_ins = 20 Gpa (default value from DDD11-2 v2 2 (2009))
@@ -307,8 +333,16 @@ module tfcoil_variables
   real(dp) :: eyoung_steel
   !! Steel case Young's modulus (Pa) (default value from DDD11-2 v2 2 (2009))
 
-  real(dp) :: eyoung_winding
-  !! SC TF coil winding Young's modulus (Pa)
+  real(dp) :: eyoung_cond_axial
+  !! SC TF coil conductor Young's modulus in the parallel (along the wire/tape)
+  !! direction [Pa]
+  !! Set by user input only if `i_tf_cond_eyoung_axial == 1`; otherwise
+  !! set by the behavior of that switch.
+  
+  real(dp) :: eyoung_cond_trans
+  !! SC TF coil conductor Young's modulus in the transverse direction [Pa]
+  !! Set by user input only if `i_tf_cond_eyoung_axial == 1`; otherwise
+  !! set by the behavior of that switch.
   
   real(dp) :: eyoung_res_tf_buck
   !! Resistive TF magnets bucking cylinder young modulus (Pa)
@@ -329,6 +363,16 @@ module tfcoil_variables
   !! Aluminium Poisson's ratio. 
   !! Source : https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html
 
+  real(dp):: poisson_ins
+  !! Insulation Poisson's ratio. Default: Kapton.
+  !! Source : DuPont™ Kapton® HN datasheet.
+
+  real(dp) :: poisson_cond_axial
+  !! SC TF coil conductor Poisson's ratio in the parallel-transverse direction
+  
+  real(dp) :: poisson_cond_trans
+  !! SC TF coil conductor Poisson's ratio in the transverse-transverse direction
+  
   real(dp) :: rbmax
   !! Radius of maximum TF B-field (m)
 
@@ -403,14 +447,35 @@ module tfcoil_variables
   real(dp) :: sigvvall
   !! allowable stress from TF quench in vacuum vessel (Pa)
 
-  real(dp) :: strncon_cs
-  !! strain in CS superconductor material (used in Nb3Sn critical surface model `isumatoh=1,4,5`)
+  real(dp) :: str_cs_con_res
+  !! Residual manufacturing strain in CS superconductor material 
 
-  real(dp) :: strncon_pf
-  !! strain in PF superconductor material (used in Nb3Sn critical surface model `isumatph=1,4,5`)
+  real(dp) :: str_pf_con_res
+  !! Residual manufacturing strain in PF superconductor material
 
-  real(dp) :: strncon_tf
-  !! strain in TF superconductor material (used in Nb3Sn critical surface model `i_tf_sc_mat=1,4,5`)
+  real(dp) :: str_tf_con_res
+  !! Residual manufacturing strain in TF superconductor material
+  !! If `i_str_wp == 0`, used to compute the critical surface.
+  !! Otherwise, the self-consistent winding pack `str_wp` is used.
+  
+  real(dp) :: str_wp
+  !! Axial (vertical) strain in the TF coil winding pack found by
+  !! self-consistent stress/strain calculation.
+  !! if `i_str_wp == 1`, used to compute the critical surface.
+  !! Otherwise, the input value `str_tf_con_res` is used.
+  !! Constrain the absolute value using `constraint equation 88`
+  !! You can't have constraint 88 and i_str_wp = 0 at the same time
+  
+  real(dp) :: str_wp_max
+  !! Maximum allowed absolute value of the strain in the TF coil
+  !! (`Constraint equation 88`)
+  
+  integer :: i_str_wp
+  !! Switch for the behavior of the TF strain used to compute 
+  !! the strain-dependent critical surface:
+  !!
+  !! - =0  str_tf_con_res is used
+  !! - =1  str_wp is used
 
   character(len=12) :: quench_model
   !! switch for TF coil quench model (Only applies to REBCO magnet at present, issue #522):
@@ -656,9 +721,6 @@ module tfcoil_variables
   real(dp) :: whttf
   !! total mass of the TF coils (kg)
 
-  real(dp) :: windstrain
-  !! longitudinal strain in winding pack
-
   real(dp) :: wwp1
   !! width of first step of winding pack (m)
 
@@ -769,6 +831,9 @@ module tfcoil_variables
   real(dp) :: whttflgs
   !! mass of the TF coil legs (kg)
 
+  real(dp) :: cryo_cool_req
+  !! Cryo cooling requirement at helium temp 4.5K (kW)
+
   contains
 
   subroutine init_tfcoil_variables
@@ -831,27 +896,33 @@ module tfcoil_variables
     i_tf_sc_mat = 1
     i_tf_sup = 1
     i_tf_shape = 0
+    i_tf_cond_eyoung_axial = 0
+    i_tf_cond_eyoung_trans = 1
     n_pancake = 10
     n_layer = 20
     n_rad_per_layer = 100
     i_tf_bucking = -1
     n_tf_graded_layers = 1
     n_tf_stress_layers = 0
+    n_tf_wp_layers = 5
     jbus = 1.25D6
     jwdgcrt = 0.0D0
     jwdgpro = 0.0D0
     jwptf = 0.0D0
     oacdcp = 0.0D0
-    eyzwp = 0.0D0
     eyoung_ins = 1.0D8
     eyoung_steel = 2.05D11
-    eyoung_winding = 6.6D8
+    eyoung_cond_axial = 6.6D8
+    eyoung_cond_trans = 0.0D0
     eyoung_res_tf_buck = 150.0D9 
     eyoung_copper = 117.0D9
     eyoung_al = 69.0D9 
     poisson_steel = 0.3D0
     poisson_copper = 0.35D0
     poisson_al = 0.35D0
+    poisson_ins = 0.34D0
+    poisson_cond_axial = 0.3
+    poisson_cond_trans = 0.3
     rbmax = 0.0D0
     tflegres = 0.0D0
     toroidalgap = 1.0D0 ![m]
@@ -870,9 +941,12 @@ module tfcoil_variables
     sig_tf_case = 0.0D0
     sig_tf_wp = 0.0D0
     sigvvall = 9.3D7
-    strncon_cs = -0.005D0
-    strncon_pf = -0.005D0
-    strncon_tf = -0.005D0
+    str_cs_con_res = -0.005D0
+    str_pf_con_res = -0.005D0
+    str_tf_con_res = -0.005D0
+    str_wp = 0.0D0
+    str_wp_max = 0.7D-2
+    i_str_wp = 1
     quench_model = 'exponential'
     quench_detection_ef = 0D0
     time1 = 0D0
@@ -942,7 +1016,6 @@ module tfcoil_variables
     whtconsh = 0.0D0
     whtgw = 0.0D0
     whttf = 0.0D0
-    windstrain = 0.0D0
     wwp1 = 0.0D0
     wwp2 = 0.0D0
     dthet = 0.0D0
@@ -977,5 +1050,6 @@ module tfcoil_variables
     whttflgs = 0.0D0
     tfc_sidewall_is_fraction = .false.
     i_cp_joints = -1
+    cryo_cool_req = 0.0D0
   end subroutine init_tfcoil_variables
 end module tfcoil_variables
