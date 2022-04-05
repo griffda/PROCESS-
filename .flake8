@@ -1,6 +1,8 @@
 [flake8]
-output-file = flake8.txt ; this option is broken in Python 3.8 https://github.com/pycqa/flake8/issues/725
+ ; this option is broken in Python 3.8 https://github.com/pycqa/flake8/issues/725
+output-file = flake8.txt
+; black has a different default line length to flake8
 max-line-length = 88
 statistics = True
-ignore = E501, W503, E722, F841, W291
+; E203 is disabled as per black docs
 extend-ignore = E203
