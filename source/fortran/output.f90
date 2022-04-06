@@ -463,6 +463,7 @@ contains
     character(len=30) :: dum20
     character(len=20) :: stripped
     character(len=3) :: flag
+    integer :: dotindex
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -474,6 +475,12 @@ contains
     dum20 = varnam
     ! Remove the "(" and ")" from the varnam
     stripped = varnam(2:len(varnam)-1)
+    
+    ! May need to strip Python module name (e.g. the pfv. from pfv.coheof)
+    ! This ensures the ITV flag is still added when required in output files
+    dotindex = scan(stripped,".")
+    stripped = stripped(dotindex+1:)
+
     if (present(output_flag)) then
         flag = output_flag
     else

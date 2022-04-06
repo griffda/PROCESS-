@@ -1787,13 +1787,13 @@ def plot_magnetics_info(axis, mfile_data, scan):
     # Number of coils (1 is OH coil)
     number_of_coils = 0
     for item in mfile_data.data.keys():
-        if "rpf(" in item:
+        if "rpf[" in item:
             number_of_coils += 1
 
     pf_info = []
     for i in range(1, number_of_coils):
         if i % 2 != 0:
-            pf_info.append((mfile_data.data["ric({:02})".format(i)].
+            pf_info.append((mfile_data.data["ric[{:02}]".format(i)].
                             get_scan(scan), "PF {}".format(i)))
 
     if len(pf_info) > 2:

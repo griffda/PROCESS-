@@ -10,11 +10,11 @@
    Tag No. : v2.1-1386-g2155ecdc code contains untracked changes
     Branch : 1456-convert-pfcoil-f90-to-python
    Git log : Regression\ reference\ changes\ to\ kallenbach\ and\ hts
- Date/time :  6 Apr 2022 13:37:14 +01:00(hh:mm) UTC
+ Date/time :  6 Apr 2022 14:03:18 +01:00(hh:mm) UTC
       User : jon
   Computer : jon-Precision-3560
  Directory : /home/jon/code/process
-     Input : /tmp/pytest-of-jon/pytest-75/popen-gw2/test_scenario_HARE_0/IN.DAT
+     Input : /tmp/pytest-of-jon/pytest-76/popen-gw2/test_scenario_HARE_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -814,94 +814,94 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  *************************************** Central Solenoid and PF Coils ****************************************
  
  Superconducting central solenoid
- Central solenoid superconductor material                                 (isumatoh)                        1     
+ Central solenoid superconductor material                                 (pfv.isumatoh)                    1     
    (ITER Nb3Sn critical surface model)
  
  Central Solenoid Current Density Limits :
  
- Maximum field at Beginning Of Pulse (T)                                  (bmaxoh0)                 1.202E+01  OP 
- Critical superconductor current density at BOP (A/m2)                    (jscoh_bop)               5.653E+08  OP 
- Critical strand current density at BOP (A/m2)                            (jstrandoh_bop)           1.696E+08  OP 
- Allowable overall current density at BOP (A/m2)                          (rjohc0)                  5.936E+07  OP 
- Actual overall current density at BOP (A/m2)                             (cohbop)                  1.484E+07  OP 
+ Maximum field at Beginning Of Pulse (T)                                  (pfv.bmaxoh0)             1.202E+01  OP 
+ Critical superconductor current density at BOP (A/m2)                    (pfv.jscoh_bop)           5.653E+08  OP 
+ Critical strand current density at BOP (A/m2)                            (pfv.jstrandoh_bop)       1.696E+08  OP 
+ Allowable overall current density at BOP (A/m2)                          (pfv.rjohc0)              5.936E+07  OP 
+ Actual overall current density at BOP (A/m2)                             (pfv.cohbop)              1.484E+07  OP 
  
- Maximum field at End Of Flattop (T)                                      (bmaxoh)                  1.169E+01  OP 
- Critical superconductor current density at EOF (A/m2)                    (jscoh_eof)               6.062E+08  OP 
- Critical strand current density at EOF (A/m2)                            (jstrandoh_eof)           1.819E+08  OP 
- Allowable overall current density at EOF (A/m2)                          (rjohc)                   6.365E+07  OP 
- Actual overall current density at EOF (A/m2)                             (coheof)                  1.591E+07  ITV
+ Maximum field at End Of Flattop (T)                                      (pfv.bmaxoh)              1.169E+01  OP 
+ Critical superconductor current density at EOF (A/m2)                    (pfv.jscoh_eof)           6.062E+08  OP 
+ Critical strand current density at EOF (A/m2)                            (pfv.jstrandoh_eof)       1.819E+08  OP 
+ Allowable overall current density at EOF (A/m2)                          (pfv.rjohc)               6.365E+07  OP 
+ Actual overall current density at EOF (A/m2)                             (pfv.coheof)              1.591E+07  ITV
  
- CS inside radius (m)                                                     (bore.)                   2.671E+00     
- CS thickness (m)                                                         (ohcth.)                  6.490E-01     
- Gap between central solenoid and TF coil (m)                             (gapoh)                   5.000E-02  ITV
- CS overall cross-sectional area (m2)                                     (areaoh)                  1.040E+01  OP 
- CS conductor+void cross-sectional area (m2)                              (awpoh)                   5.198E+00  OP 
-    CS conductor cross-sectional area (m2)                                (awpoh*(1-vfohc))         3.638E+00  OP 
-    CS void cross-sectional area (m2)                                     (awpoh*vfohc)             1.559E+00  OP 
- CS steel cross-sectional area (m2)                                       (areaoh-awpoh)            5.198E+00  OP 
- CS steel area fraction                                                   (oh_steel_frac)           5.000E-01     
+ CS inside radius (m)                                                     (bv.bore.)                2.671E+00     
+ CS thickness (m)                                                         (bv.ohcth.)               6.490E-01     
+ Gap between central solenoid and TF coil (m)                             (bv.gapoh)                5.000E-02  ITV
+ CS overall cross-sectional area (m2)                                     (pfv.areaoh)              1.040E+01  OP 
+ CS conductor+void cross-sectional area (m2)                              (pfv.awpoh)               5.198E+00  OP 
+    CS conductor cross-sectional area (m2)                                (pfv.awpoh*(1-pfv.vfohc)) 3.638E+00  OP 
+    CS void cross-sectional area (m2)                                     (pfv.awpoh*pfv.vfohc)     1.559E+00  OP 
+ CS steel cross-sectional area (m2)                                       (pfv.areaoh-pfv.awpoh)    5.198E+00  OP 
+ CS steel area fraction                                                   (pfv.oh_steel_frac)       5.000E-01     
  Only hoop stress considered
- Switch for CS stress calculation                                         (i_cs_stress)                     0     
- Allowable stress in CS steel (Pa)                                        (alstroh)                 6.600E+08     
+ Switch for CS stress calculation                                         (pfv.i_cs_stress)                 0     
+ Allowable stress in CS steel (Pa)                                        (pfv.alstroh)             6.600E+08     
  Hoop stress in CS steel (Pa)                                             (sig_hoop)                6.007E+08  OP 
  Axial stress in CS steel (Pa)                                            (sig_axial)              -6.698E+08  OP 
- Maximum shear stress in CS steel for the Tresca criterion (Pa)           (s_tresca_oh)             6.007E+08  OP 
+ Maximum shear stress in CS steel for the Tresca criterion (Pa)           (pfv.s_tresca_oh)         6.007E+08  OP 
  Axial force in CS (N)                                                    (axial_force)            -2.045E+09  OP 
- Strain on CS superconductor                                              (strncon_cs)             -5.000E-03     
- Copper fraction in strand                                                (fcuohsu)                 7.000E-01     
- Void (coolant) fraction in conductor                                     (vfohc)                   3.000E-01     
- Helium coolant temperature (K)                                           (tftmp)                   4.750E+00     
- CS temperature margin (K)                                                (tmargoh)                 3.334E+00  OP 
- Minimum permitted temperature margin (K)                                 (tmargmin_cs)             1.700E+00     
- residual hoop stress in CS Steel (Pa)                                    (residual_sig_hoop)       2.400E+08     
- Initial vertical crack size (m)                                          (t_crack_vertical)        2.000E-03     
- Initial radial crack size (m)                                            (t_crack_radial)          6.000E-03     
- CS structural vertical thickness (m)                                     (t_structural_vertical)   2.200E-02     
- CS structural radial thickness (m)                                       (t_structural_radial)     7.000E-02     
- Allowable number of cycles till CS fracture                              (N_cycle)                 3.281E+04  OP 
+ Strain on CS superconductor                                              (tfcoil_variables.strncon-5.000E-03     
+ Copper fraction in strand                                                (pfv.fcuohsu)             7.000E-01     
+ Void (coolant) fraction in conductor                                     (pfv.vfohc)               3.000E-01     
+ Helium coolant temperature (K)                                           (tfv.tftmp)               4.750E+00     
+ CS temperature margin (K)                                                (pfv.tmargoh)             3.334E+00  OP 
+ Minimum permitted temperature margin (K)                                 (tfv.tmargmin_cs)         1.700E+00     
+ residual hoop stress in CS Steel (Pa)                                    (csfv.residual_sig_hoop)  2.400E+08     
+ Initial vertical crack size (m)                                          (csfv.t_crack_vertical)   2.000E-03     
+ Initial radial crack size (m)                                            (csfv.t_crack_radial)     6.000E-03     
+ CS structural vertical thickness (m)                                     (csfv.t_structural_vertic 2.200E-02     
+ CS structural radial thickness (m)                                       (csfv.t_structural_radial 7.000E-02     
+ Allowable number of cycles till CS fpfv.racture                          (csfv.n_cycle)            3.281E+04  OP 
  
  Superconducting PF coils
- PF coil superconductor material                                          (isumatpf)                        3     
+ PF coil superconductor material                                          (pfv.isumatpf)                    3     
    (NbTi)
- Copper fraction in conductor                                             (fcupfsu)                 6.900E-01     
+ Copper fraction in conductor                                             (pfv.fcupfsu)             6.900E-01     
  
  PF Coil Case Stress :
  
- Maximum permissible tensile stress (MPa)                                 (sigpfcalw)               5.000E+02     
- JxB hoop force fraction supported by case                                (sigpfcf)                 6.660E-01     
+ Maximum permissible tensile stress (MPa)                                 (pfv.sigpfcalw)           5.000E+02     
+ JxB hoop force fraction supported by case                                (pfv.sigpfcf)             6.660E-01     
  
- Geometry of PF coils, central solenoid and plasma :
+ Geometry of PF coils, central solenoid and plasma:
  
- coil           R(m)        Z(m)        dR(m)       dZ(m)       turns     steel thickness(m)
+ coil			R(m)			Z(m)			dR(m)			dZ(m)			pfv.turns		steel thickness(m)
  
-  PF 1           6.68        9.92        1.36        1.36      485.62        0.16
-  PF 2           6.68      -10.86        1.44        1.44      540.41        0.17
-  PF 3          19.39        3.05        1.24        1.24      218.03        0.11
-  PF 4          19.39       -3.05        1.24        1.24      218.03        0.11
-  PF 5          17.67        8.55        0.83        0.83      128.57        0.08
-  PF 6          17.67       -8.55        0.83        0.83      128.57        0.08
-  CS             3.00        0.00        0.65       16.02     3847.22        0.16
- Plasma          9.47        0.00        6.11       10.88        1.00
+ PF 0			6.68e+00	9.92e+00	1.36e+00	1.36e+00	4.86e+02	1.56e-01
+ PF 1			6.68e+00	-1.09e+01	1.44e+00	1.44e+00	5.40e+02	1.72e-01
+ PF 2			1.94e+01	3.05e+00	1.24e+00	1.24e+00	2.18e+02	1.07e-01
+ PF 3			1.94e+01	-3.05e+00	1.24e+00	1.24e+00	2.18e+02	1.07e-01
+ PF 4			1.77e+01	8.55e+00	8.31e-01	8.31e-01	1.29e+02	7.71e-02
+ PF 5			1.77e+01	-8.55e+00	8.31e-01	8.31e-01	1.29e+02	7.71e-02
+ CS				3.00e+00	0.00e+00	6.49e-01	1.60e+01	3.85e+03	1.62e-01
+ Plasma		9.47e+00	0.0e0			6.11e+00	1.09e+01	1.0e0
  
  PF Coil Information at Peak Current:
  
- coil  current  allowed J  actual J   J   cond. mass   steel mass     field
-         (MA)    (A/m2)     (A/m2)  ratio    (kg)          (kg)        (T)
+ coil	current	allowed J		actual J		J			cond. mass	steel mass	field
+ 				(MA)		(A/m2)		(A/m2)		ratio			(kg)			(kg)			(T)
  
-  PF 1   20.49  3.780E+08  1.100E+07  0.03 3.323E+05   3.105E+05    6.243E+00
-  PF 2   22.81  3.405E+08  1.100E+07  0.03 3.698E+05   3.622E+05    6.608E+00
-  PF 3   -9.20  7.411E+08  6.000E+06  0.01 7.938E+05   5.462E+05    2.850E+00
-  PF 4   -9.20  7.411E+08  6.000E+06  0.01 7.938E+05   5.462E+05    2.850E+00
-  PF 5   -5.53  7.590E+08  8.000E+06  0.01 3.260E+05   2.424E+05    2.688E+00
-  PF 6   -5.53  7.590E+08  8.000E+06  0.01 3.260E+05   2.424E+05    2.688E+00
-  CS  -165.43  5.936E+07  1.591E+07  0.27 4.164E+05   7.631E+05    1.202E+01
-       ------                             ---------   ---------
-         0.00                             3.358E+06   3.013E+06
+ PF 0	2.05e+01	3.78e+08	1.10e+07	2.91e-02	3.32e+05	3.10e+05	6.24e+00
+ PF 1	2.28e+01	3.41e+08	1.10e+07	3.23e-02	3.70e+05	3.62e+05	6.61e+00
+ PF 2	-9.20e+00	7.41e+08	6.00e+06	8.10e-03	7.94e+05	5.46e+05	2.85e+00
+ PF 3	-9.20e+00	7.41e+08	6.00e+06	8.10e-03	7.94e+05	5.46e+05	2.85e+00
+ PF 4	-5.53e+00	7.59e+08	8.00e+06	1.05e-02	3.26e+05	2.42e+05	2.69e+00
+ PF 5	-5.53e+00	7.59e+08	8.00e+06	1.05e-02	3.26e+05	2.42e+05	2.69e+00
+ CS		-1.65e+02	5.94e+07	1.59e+07	2.68e-01	4.16e+05	7.63e+05	1.20e+01
+ 				------																---------	---------
+ 				2.38e+02																3.36e+06	3.01e+06
  
  PF coil current scaling information :
  
- Sum of squares of residuals                                              (ssq0)                    3.998E-04  OP 
- Smoothing parameter                                                      (alfapf)                  5.000E-10     
+ Sum of squares of residuals                                              (pf.ssq0)                 3.998E-04  OP 
+ Smoothing parameter                                                      (pfv.alfapf)              5.000E-10     
  
  ****************************************** Volt Second Consumption *******************************************
  
@@ -2228,94 +2228,94 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  *************************************** Central Solenoid and PF Coils ****************************************
  
  Superconducting central solenoid
- Central solenoid superconductor material                                 (isumatoh)                        1     
+ Central solenoid superconductor material                                 (pfv.isumatoh)                    1     
    (ITER Nb3Sn critical surface model)
  
  Central Solenoid Current Density Limits :
  
- Maximum field at Beginning Of Pulse (T)                                  (bmaxoh0)                 1.205E+01  OP 
- Critical superconductor current density at BOP (A/m2)                    (jscoh_bop)               5.616E+08  OP 
- Critical strand current density at BOP (A/m2)                            (jstrandoh_bop)           1.685E+08  OP 
- Allowable overall current density at BOP (A/m2)                          (rjohc0)                  5.897E+07  OP 
- Actual overall current density at BOP (A/m2)                             (cohbop)                  1.474E+07  OP 
+ Maximum field at Beginning Of Pulse (T)                                  (pfv.bmaxoh0)             1.205E+01  OP 
+ Critical superconductor current density at BOP (A/m2)                    (pfv.jscoh_bop)           5.616E+08  OP 
+ Critical strand current density at BOP (A/m2)                            (pfv.jstrandoh_bop)       1.685E+08  OP 
+ Allowable overall current density at BOP (A/m2)                          (pfv.rjohc0)              5.897E+07  OP 
+ Actual overall current density at BOP (A/m2)                             (pfv.cohbop)              1.474E+07  OP 
  
- Maximum field at End Of Flattop (T)                                      (bmaxoh)                  1.173E+01  OP 
- Critical superconductor current density at EOF (A/m2)                    (jscoh_eof)               6.021E+08  OP 
- Critical strand current density at EOF (A/m2)                            (jstrandoh_eof)           1.806E+08  OP 
- Allowable overall current density at EOF (A/m2)                          (rjohc)                   6.322E+07  OP 
- Actual overall current density at EOF (A/m2)                             (coheof)                  1.581E+07  ITV
+ Maximum field at End Of Flattop (T)                                      (pfv.bmaxoh)              1.173E+01  OP 
+ Critical superconductor current density at EOF (A/m2)                    (pfv.jscoh_eof)           6.021E+08  OP 
+ Critical strand current density at EOF (A/m2)                            (pfv.jstrandoh_eof)       1.806E+08  OP 
+ Allowable overall current density at EOF (A/m2)                          (pfv.rjohc)               6.322E+07  OP 
+ Actual overall current density at EOF (A/m2)                             (pfv.coheof)              1.581E+07  ITV
  
- CS inside radius (m)                                                     (bore.)                   2.673E+00     
- CS thickness (m)                                                         (ohcth.)                  6.550E-01     
- Gap between central solenoid and TF coil (m)                             (gapoh)                   5.000E-02  ITV
- CS overall cross-sectional area (m2)                                     (areaoh)                  1.050E+01  OP 
- CS conductor+void cross-sectional area (m2)                              (awpoh)                   5.249E+00  OP 
-    CS conductor cross-sectional area (m2)                                (awpoh*(1-vfohc))         3.675E+00  OP 
-    CS void cross-sectional area (m2)                                     (awpoh*vfohc)             1.575E+00  OP 
- CS steel cross-sectional area (m2)                                       (areaoh-awpoh)            5.249E+00  OP 
- CS steel area fraction                                                   (oh_steel_frac)           5.000E-01     
+ CS inside radius (m)                                                     (bv.bore.)                2.673E+00     
+ CS thickness (m)                                                         (bv.ohcth.)               6.550E-01     
+ Gap between central solenoid and TF coil (m)                             (bv.gapoh)                5.000E-02  ITV
+ CS overall cross-sectional area (m2)                                     (pfv.areaoh)              1.050E+01  OP 
+ CS conductor+void cross-sectional area (m2)                              (pfv.awpoh)               5.249E+00  OP 
+    CS conductor cross-sectional area (m2)                                (pfv.awpoh*(1-pfv.vfohc)) 3.675E+00  OP 
+    CS void cross-sectional area (m2)                                     (pfv.awpoh*pfv.vfohc)     1.575E+00  OP 
+ CS steel cross-sectional area (m2)                                       (pfv.areaoh-pfv.awpoh)    5.249E+00  OP 
+ CS steel area fraction                                                   (pfv.oh_steel_frac)       5.000E-01     
  Only hoop stress considered
- Switch for CS stress calculation                                         (i_cs_stress)                     0     
- Allowable stress in CS steel (Pa)                                        (alstroh)                 6.600E+08     
+ Switch for CS stress calculation                                         (pfv.i_cs_stress)                 0     
+ Allowable stress in CS steel (Pa)                                        (pfv.alstroh)             6.600E+08     
  Hoop stress in CS steel (Pa)                                             (sig_hoop)                5.998E+08  OP 
  Axial stress in CS steel (Pa)                                            (sig_axial)              -6.688E+08  OP 
- Maximum shear stress in CS steel for the Tresca criterion (Pa)           (s_tresca_oh)             5.998E+08  OP 
+ Maximum shear stress in CS steel for the Tresca criterion (Pa)           (pfv.s_tresca_oh)         5.998E+08  OP 
  Axial force in CS (N)                                                    (axial_force)            -2.065E+09  OP 
- Strain on CS superconductor                                              (strncon_cs)             -5.000E-03     
- Copper fraction in strand                                                (fcuohsu)                 7.000E-01     
- Void (coolant) fraction in conductor                                     (vfohc)                   3.000E-01     
- Helium coolant temperature (K)                                           (tftmp)                   4.750E+00     
- CS temperature margin (K)                                                (tmargoh)                 3.325E+00  OP 
- Minimum permitted temperature margin (K)                                 (tmargmin_cs)             1.700E+00     
- residual hoop stress in CS Steel (Pa)                                    (residual_sig_hoop)       2.400E+08     
- Initial vertical crack size (m)                                          (t_crack_vertical)        2.000E-03     
- Initial radial crack size (m)                                            (t_crack_radial)          6.000E-03     
- CS structural vertical thickness (m)                                     (t_structural_vertical)   2.200E-02     
- CS structural radial thickness (m)                                       (t_structural_radial)     7.000E-02     
- Allowable number of cycles till CS fracture                              (N_cycle)                 3.312E+04  OP 
+ Strain on CS superconductor                                              (tfcoil_variables.strncon-5.000E-03     
+ Copper fraction in strand                                                (pfv.fcuohsu)             7.000E-01     
+ Void (coolant) fraction in conductor                                     (pfv.vfohc)               3.000E-01     
+ Helium coolant temperature (K)                                           (tfv.tftmp)               4.750E+00     
+ CS temperature margin (K)                                                (pfv.tmargoh)             3.325E+00  OP 
+ Minimum permitted temperature margin (K)                                 (tfv.tmargmin_cs)         1.700E+00     
+ residual hoop stress in CS Steel (Pa)                                    (csfv.residual_sig_hoop)  2.400E+08     
+ Initial vertical crack size (m)                                          (csfv.t_crack_vertical)   2.000E-03     
+ Initial radial crack size (m)                                            (csfv.t_crack_radial)     6.000E-03     
+ CS structural vertical thickness (m)                                     (csfv.t_structural_vertic 2.200E-02     
+ CS structural radial thickness (m)                                       (csfv.t_structural_radial 7.000E-02     
+ Allowable number of cycles till CS fpfv.racture                          (csfv.n_cycle)            3.312E+04  OP 
  
  Superconducting PF coils
- PF coil superconductor material                                          (isumatpf)                        3     
+ PF coil superconductor material                                          (pfv.isumatpf)                    3     
    (NbTi)
- Copper fraction in conductor                                             (fcupfsu)                 6.900E-01     
+ Copper fraction in conductor                                             (pfv.fcupfsu)             6.900E-01     
  
  PF Coil Case Stress :
  
- Maximum permissible tensile stress (MPa)                                 (sigpfcalw)               5.000E+02     
- JxB hoop force fraction supported by case                                (sigpfcf)                 6.660E-01     
+ Maximum permissible tensile stress (MPa)                                 (pfv.sigpfcalw)           5.000E+02     
+ JxB hoop force fraction supported by case                                (pfv.sigpfcf)             6.660E-01     
  
- Geometry of PF coils, central solenoid and plasma :
+ Geometry of PF coils, central solenoid and plasma:
  
- coil           R(m)        Z(m)        dR(m)       dZ(m)       turns     steel thickness(m)
+ coil			R(m)			Z(m)			dR(m)			dZ(m)			pfv.turns		steel thickness(m)
  
-  PF 1           6.69        9.93        1.37        1.37      487.01        0.16
-  PF 2           6.69      -10.87        1.44        1.44      542.12        0.17
-  PF 3          19.41        3.06        1.24        1.24      218.17        0.11
-  PF 4          19.41       -3.06        1.24        1.24      218.17        0.11
-  PF 5          17.68        8.56        0.83        0.83      128.57        0.08
-  PF 6          17.68       -8.56        0.83        0.83      128.57        0.08
-  CS             3.00        0.00        0.66       16.03     3859.07        0.16
- Plasma          9.48        0.00        6.11       10.89        1.00
+ PF 0			6.69e+00	9.93e+00	1.37e+00	1.37e+00	4.87e+02	1.57e-01
+ PF 1			6.69e+00	-1.09e+01	1.44e+00	1.44e+00	5.42e+02	1.73e-01
+ PF 2			1.94e+01	3.06e+00	1.24e+00	1.24e+00	2.18e+02	1.07e-01
+ PF 3			1.94e+01	-3.06e+00	1.24e+00	1.24e+00	2.18e+02	1.07e-01
+ PF 4			1.77e+01	8.56e+00	8.31e-01	8.31e-01	1.29e+02	7.71e-02
+ PF 5			1.77e+01	-8.56e+00	8.31e-01	8.31e-01	1.29e+02	7.71e-02
+ CS				3.00e+00	0.00e+00	6.55e-01	1.60e+01	3.86e+03	1.64e-01
+ Plasma		9.48e+00	0.0e0			6.11e+00	1.09e+01	1.0e0
  
  PF Coil Information at Peak Current:
  
- coil  current  allowed J  actual J   J   cond. mass   steel mass     field
-         (MA)    (A/m2)     (A/m2)  ratio    (kg)          (kg)        (T)
+ coil	current	allowed J		actual J		J			cond. mass	steel mass	field
+ 				(MA)		(A/m2)		(A/m2)		ratio			(kg)			(kg)			(T)
  
-  PF 1   20.55  3.755E+08  1.100E+07  0.03 3.336E+05   3.131E+05    6.267E+00
-  PF 2   22.88  3.379E+08  1.100E+07  0.03 3.713E+05   3.653E+05    6.634E+00
-  PF 3   -9.21  7.411E+08  6.000E+06  0.01 7.950E+05   5.477E+05    2.850E+00
-  PF 4   -9.21  7.411E+08  6.000E+06  0.01 7.950E+05   5.477E+05    2.850E+00
-  PF 5   -5.53  7.590E+08  8.000E+06  0.01 3.262E+05   2.428E+05    2.688E+00
-  PF 6   -5.53  7.590E+08  8.000E+06  0.01 3.262E+05   2.428E+05    2.688E+00
-  CS  -165.94  5.897E+07  1.581E+07  0.27 4.212E+05   7.720E+05    1.205E+01
-       ------                             ---------   ---------
-         0.00                             3.369E+06   3.032E+06
+ PF 0	2.06e+01	3.75e+08	1.10e+07	2.93e-02	3.34e+05	3.13e+05	6.27e+00
+ PF 1	2.29e+01	3.38e+08	1.10e+07	3.26e-02	3.71e+05	3.65e+05	6.63e+00
+ PF 2	-9.21e+00	7.41e+08	6.00e+06	8.10e-03	7.95e+05	5.48e+05	2.85e+00
+ PF 3	-9.21e+00	7.41e+08	6.00e+06	8.10e-03	7.95e+05	5.48e+05	2.85e+00
+ PF 4	-5.53e+00	7.59e+08	8.00e+06	1.05e-02	3.26e+05	2.43e+05	2.69e+00
+ PF 5	-5.53e+00	7.59e+08	8.00e+06	1.05e-02	3.26e+05	2.43e+05	2.69e+00
+ CS		-1.66e+02	5.90e+07	1.58e+07	2.68e-01	4.21e+05	7.72e+05	1.20e+01
+ 				------																---------	---------
+ 				2.39e+02																3.37e+06	3.03e+06
  
  PF coil current scaling information :
  
- Sum of squares of residuals                                              (ssq0)                    4.030E-04  OP 
- Smoothing parameter                                                      (alfapf)                  5.000E-10     
+ Sum of squares of residuals                                              (pf.ssq0)                 4.030E-04  OP 
+ Smoothing parameter                                                      (pfv.alfapf)              5.000E-10     
  
  ****************************************** Volt Second Consumption *******************************************
  
@@ -3642,94 +3642,94 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  *************************************** Central Solenoid and PF Coils ****************************************
  
  Superconducting central solenoid
- Central solenoid superconductor material                                 (isumatoh)                        1     
+ Central solenoid superconductor material                                 (pfv.isumatoh)                    1     
    (ITER Nb3Sn critical surface model)
  
  Central Solenoid Current Density Limits :
  
- Maximum field at Beginning Of Pulse (T)                                  (bmaxoh0)                 1.207E+01  OP 
- Critical superconductor current density at BOP (A/m2)                    (jscoh_bop)               5.583E+08  OP 
- Critical strand current density at BOP (A/m2)                            (jstrandoh_bop)           1.675E+08  OP 
- Allowable overall current density at BOP (A/m2)                          (rjohc0)                  5.862E+07  OP 
- Actual overall current density at BOP (A/m2)                             (cohbop)                  1.466E+07  OP 
+ Maximum field at Beginning Of Pulse (T)                                  (pfv.bmaxoh0)             1.207E+01  OP 
+ Critical superconductor current density at BOP (A/m2)                    (pfv.jscoh_bop)           5.583E+08  OP 
+ Critical strand current density at BOP (A/m2)                            (pfv.jstrandoh_bop)       1.675E+08  OP 
+ Allowable overall current density at BOP (A/m2)                          (pfv.rjohc0)              5.862E+07  OP 
+ Actual overall current density at BOP (A/m2)                             (pfv.cohbop)              1.466E+07  OP 
  
- Maximum field at End Of Flattop (T)                                      (bmaxoh)                  1.175E+01  OP 
- Critical superconductor current density at EOF (A/m2)                    (jscoh_eof)               5.986E+08  OP 
- Critical strand current density at EOF (A/m2)                            (jstrandoh_eof)           1.796E+08  OP 
- Allowable overall current density at EOF (A/m2)                          (rjohc)                   6.285E+07  OP 
- Actual overall current density at EOF (A/m2)                             (coheof)                  1.571E+07  ITV
+ Maximum field at End Of Flattop (T)                                      (pfv.bmaxoh)              1.175E+01  OP 
+ Critical superconductor current density at EOF (A/m2)                    (pfv.jscoh_eof)           5.986E+08  OP 
+ Critical strand current density at EOF (A/m2)                            (pfv.jstrandoh_eof)       1.796E+08  OP 
+ Allowable overall current density at EOF (A/m2)                          (pfv.rjohc)               6.285E+07  OP 
+ Actual overall current density at EOF (A/m2)                             (pfv.coheof)              1.571E+07  ITV
  
- CS inside radius (m)                                                     (bore.)                   2.675E+00     
- CS thickness (m)                                                         (ohcth.)                  6.603E-01     
- Gap between central solenoid and TF coil (m)                             (gapoh)                   5.000E-02  ITV
- CS overall cross-sectional area (m2)                                     (areaoh)                  1.059E+01  OP 
- CS conductor+void cross-sectional area (m2)                              (awpoh)                   5.295E+00  OP 
-    CS conductor cross-sectional area (m2)                                (awpoh*(1-vfohc))         3.706E+00  OP 
-    CS void cross-sectional area (m2)                                     (awpoh*vfohc)             1.588E+00  OP 
- CS steel cross-sectional area (m2)                                       (areaoh-awpoh)            5.295E+00  OP 
- CS steel area fraction                                                   (oh_steel_frac)           5.000E-01     
+ CS inside radius (m)                                                     (bv.bore.)                2.675E+00     
+ CS thickness (m)                                                         (bv.ohcth.)               6.603E-01     
+ Gap between central solenoid and TF coil (m)                             (bv.gapoh)                5.000E-02  ITV
+ CS overall cross-sectional area (m2)                                     (pfv.areaoh)              1.059E+01  OP 
+ CS conductor+void cross-sectional area (m2)                              (pfv.awpoh)               5.295E+00  OP 
+    CS conductor cross-sectional area (m2)                                (pfv.awpoh*(1-pfv.vfohc)) 3.706E+00  OP 
+    CS void cross-sectional area (m2)                                     (pfv.awpoh*pfv.vfohc)     1.588E+00  OP 
+ CS steel cross-sectional area (m2)                                       (pfv.areaoh-pfv.awpoh)    5.295E+00  OP 
+ CS steel area fraction                                                   (pfv.oh_steel_frac)       5.000E-01     
  Only hoop stress considered
- Switch for CS stress calculation                                         (i_cs_stress)                     0     
- Allowable stress in CS steel (Pa)                                        (alstroh)                 6.600E+08     
+ Switch for CS stress calculation                                         (pfv.i_cs_stress)                 0     
+ Allowable stress in CS steel (Pa)                                        (pfv.alstroh)             6.600E+08     
  Hoop stress in CS steel (Pa)                                             (sig_hoop)                5.990E+08  OP 
  Axial stress in CS steel (Pa)                                            (sig_axial)              -6.679E+08  OP 
- Maximum shear stress in CS steel for the Tresca criterion (Pa)           (s_tresca_oh)             5.990E+08  OP 
+ Maximum shear stress in CS steel for the Tresca criterion (Pa)           (pfv.s_tresca_oh)         5.990E+08  OP 
  Axial force in CS (N)                                                    (axial_force)            -2.082E+09  OP 
- Strain on CS superconductor                                              (strncon_cs)             -5.000E-03     
- Copper fraction in strand                                                (fcuohsu)                 7.000E-01     
- Void (coolant) fraction in conductor                                     (vfohc)                   3.000E-01     
- Helium coolant temperature (K)                                           (tftmp)                   4.750E+00     
- CS temperature margin (K)                                                (tmargoh)                 3.317E+00  OP 
- Minimum permitted temperature margin (K)                                 (tmargmin_cs)             1.700E+00     
- residual hoop stress in CS Steel (Pa)                                    (residual_sig_hoop)       2.400E+08     
- Initial vertical crack size (m)                                          (t_crack_vertical)        2.000E-03     
- Initial radial crack size (m)                                            (t_crack_radial)          6.000E-03     
- CS structural vertical thickness (m)                                     (t_structural_vertical)   2.200E-02     
- CS structural radial thickness (m)                                       (t_structural_radial)     7.000E-02     
- Allowable number of cycles till CS fracture                              (N_cycle)                 3.339E+04  OP 
+ Strain on CS superconductor                                              (tfcoil_variables.strncon-5.000E-03     
+ Copper fraction in strand                                                (pfv.fcuohsu)             7.000E-01     
+ Void (coolant) fraction in conductor                                     (pfv.vfohc)               3.000E-01     
+ Helium coolant temperature (K)                                           (tfv.tftmp)               4.750E+00     
+ CS temperature margin (K)                                                (pfv.tmargoh)             3.317E+00  OP 
+ Minimum permitted temperature margin (K)                                 (tfv.tmargmin_cs)         1.700E+00     
+ residual hoop stress in CS Steel (Pa)                                    (csfv.residual_sig_hoop)  2.400E+08     
+ Initial vertical crack size (m)                                          (csfv.t_crack_vertical)   2.000E-03     
+ Initial radial crack size (m)                                            (csfv.t_crack_radial)     6.000E-03     
+ CS structural vertical thickness (m)                                     (csfv.t_structural_vertic 2.200E-02     
+ CS structural radial thickness (m)                                       (csfv.t_structural_radial 7.000E-02     
+ Allowable number of cycles till CS fpfv.racture                          (csfv.n_cycle)            3.339E+04  OP 
  
  Superconducting PF coils
- PF coil superconductor material                                          (isumatpf)                        3     
+ PF coil superconductor material                                          (pfv.isumatpf)                    3     
    (NbTi)
- Copper fraction in conductor                                             (fcupfsu)                 6.900E-01     
+ Copper fraction in conductor                                             (pfv.fcupfsu)             6.900E-01     
  
  PF Coil Case Stress :
  
- Maximum permissible tensile stress (MPa)                                 (sigpfcalw)               5.000E+02     
- JxB hoop force fraction supported by case                                (sigpfcf)                 6.660E-01     
+ Maximum permissible tensile stress (MPa)                                 (pfv.sigpfcalw)           5.000E+02     
+ JxB hoop force fraction supported by case                                (pfv.sigpfcf)             6.660E-01     
  
- Geometry of PF coils, central solenoid and plasma :
+ Geometry of PF coils, central solenoid and plasma:
  
- coil           R(m)        Z(m)        dR(m)       dZ(m)       turns     steel thickness(m)
+ coil			R(m)			Z(m)			dR(m)			dZ(m)			pfv.turns		steel thickness(m)
  
-  PF 1           6.69        9.93        1.37        1.37      488.22        0.16
-  PF 2           6.69      -10.87        1.44        1.44      543.62        0.17
-  PF 3          19.42        3.06        1.24        1.24      218.29        0.11
-  PF 4          19.42       -3.06        1.24        1.24      218.29        0.11
-  PF 5          17.70        8.57        0.83        0.83      128.57        0.08
-  PF 6          17.70       -8.57        0.83        0.83      128.57        0.08
-  CS             3.01        0.00        0.66       16.04     3869.43        0.17
- Plasma          9.49        0.00        6.12       10.90        1.00
+ PF 0			6.69e+00	9.93e+00	1.37e+00	1.37e+00	4.88e+02	1.58e-01
+ PF 1			6.69e+00	-1.09e+01	1.44e+00	1.44e+00	5.44e+02	1.73e-01
+ PF 2			1.94e+01	3.06e+00	1.24e+00	1.24e+00	2.18e+02	1.07e-01
+ PF 3			1.94e+01	-3.06e+00	1.24e+00	1.24e+00	2.18e+02	1.07e-01
+ PF 4			1.77e+01	8.57e+00	8.31e-01	8.31e-01	1.29e+02	7.72e-02
+ PF 5			1.77e+01	-8.57e+00	8.31e-01	8.31e-01	1.29e+02	7.72e-02
+ CS				3.01e+00	0.00e+00	6.60e-01	1.60e+01	3.87e+03	1.65e-01
+ Plasma		9.49e+00	0.0e0			6.12e+00	1.09e+01	1.0e0
  
  PF Coil Information at Peak Current:
  
- coil  current  allowed J  actual J   J   cond. mass   steel mass     field
-         (MA)    (A/m2)     (A/m2)  ratio    (kg)          (kg)        (T)
+ coil	current	allowed J		actual J		J			cond. mass	steel mass	field
+ 				(MA)		(A/m2)		(A/m2)		ratio			(kg)			(kg)			(T)
  
-  PF 1   20.60  3.733E+08  1.100E+07  0.03 3.347E+05   3.155E+05    6.288E+00
-  PF 2   22.94  3.356E+08  1.100E+07  0.03 3.727E+05   3.682E+05    6.656E+00
-  PF 3   -9.21  7.410E+08  6.000E+06  0.01 7.961E+05   5.490E+05    2.851E+00
-  PF 4   -9.21  7.410E+08  6.000E+06  0.01 7.961E+05   5.490E+05    2.851E+00
-  PF 5   -5.53  7.590E+08  8.000E+06  0.01 3.265E+05   2.432E+05    2.688E+00
-  PF 6   -5.53  7.590E+08  8.000E+06  0.01 3.265E+05   2.432E+05    2.688E+00
-  CS  -166.39  5.862E+07  1.571E+07  0.27 4.255E+05   7.798E+05    1.207E+01
-       ------                             ---------   ---------
-         0.00                             3.378E+06   3.048E+06
+ PF 0	2.06e+01	3.73e+08	1.10e+07	2.95e-02	3.35e+05	3.15e+05	6.29e+00
+ PF 1	2.29e+01	3.36e+08	1.10e+07	3.28e-02	3.73e+05	3.68e+05	6.66e+00
+ PF 2	-9.21e+00	7.41e+08	6.00e+06	8.10e-03	7.96e+05	5.49e+05	2.85e+00
+ PF 3	-9.21e+00	7.41e+08	6.00e+06	8.10e-03	7.96e+05	5.49e+05	2.85e+00
+ PF 4	-5.53e+00	7.59e+08	8.00e+06	1.05e-02	3.26e+05	2.43e+05	2.69e+00
+ PF 5	-5.53e+00	7.59e+08	8.00e+06	1.05e-02	3.26e+05	2.43e+05	2.69e+00
+ CS		-1.66e+02	5.86e+07	1.57e+07	2.68e-01	4.26e+05	7.80e+05	1.21e+01
+ 				------																---------	---------
+ 				2.39e+02																3.38e+06	3.05e+06
  
  PF coil current scaling information :
  
- Sum of squares of residuals                                              (ssq0)                    4.058E-04  OP 
- Smoothing parameter                                                      (alfapf)                  5.000E-10     
+ Sum of squares of residuals                                              (pf.ssq0)                 4.058E-04  OP 
+ Smoothing parameter                                                      (pfv.alfapf)              5.000E-10     
  
  ****************************************** Volt Second Consumption *******************************************
  
@@ -5056,94 +5056,94 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  *************************************** Central Solenoid and PF Coils ****************************************
  
  Superconducting central solenoid
- Central solenoid superconductor material                                 (isumatoh)                        1     
+ Central solenoid superconductor material                                 (pfv.isumatoh)                    1     
    (ITER Nb3Sn critical surface model)
  
  Central Solenoid Current Density Limits :
  
- Maximum field at Beginning Of Pulse (T)                                  (bmaxoh0)                 1.211E+01  OP 
- Critical superconductor current density at BOP (A/m2)                    (jscoh_bop)               5.537E+08  OP 
- Critical strand current density at BOP (A/m2)                            (jstrandoh_bop)           1.661E+08  OP 
- Allowable overall current density at BOP (A/m2)                          (rjohc0)                  5.814E+07  OP 
- Actual overall current density at BOP (A/m2)                             (cohbop)                  1.454E+07  OP 
+ Maximum field at Beginning Of Pulse (T)                                  (pfv.bmaxoh0)             1.211E+01  OP 
+ Critical superconductor current density at BOP (A/m2)                    (pfv.jscoh_bop)           5.537E+08  OP 
+ Critical strand current density at BOP (A/m2)                            (pfv.jstrandoh_bop)       1.661E+08  OP 
+ Allowable overall current density at BOP (A/m2)                          (pfv.rjohc0)              5.814E+07  OP 
+ Actual overall current density at BOP (A/m2)                             (pfv.cohbop)              1.454E+07  OP 
  
- Maximum field at End Of Flattop (T)                                      (bmaxoh)                  1.179E+01  OP 
- Critical superconductor current density at EOF (A/m2)                    (jscoh_eof)               5.935E+08  OP 
- Critical strand current density at EOF (A/m2)                            (jstrandoh_eof)           1.781E+08  OP 
- Allowable overall current density at EOF (A/m2)                          (rjohc)                   6.232E+07  OP 
- Actual overall current density at EOF (A/m2)                             (coheof)                  1.558E+07  ITV
+ Maximum field at End Of Flattop (T)                                      (pfv.bmaxoh)              1.179E+01  OP 
+ Critical superconductor current density at EOF (A/m2)                    (pfv.jscoh_eof)           5.935E+08  OP 
+ Critical strand current density at EOF (A/m2)                            (pfv.jstrandoh_eof)       1.781E+08  OP 
+ Allowable overall current density at EOF (A/m2)                          (pfv.rjohc)               6.232E+07  OP 
+ Actual overall current density at EOF (A/m2)                             (pfv.coheof)              1.558E+07  ITV
  
- CS inside radius (m)                                                     (bore.)                   2.680E+00     
- CS thickness (m)                                                         (ohcth.)                  6.678E-01     
- Gap between central solenoid and TF coil (m)                             (gapoh)                   5.000E-02  ITV
- CS overall cross-sectional area (m2)                                     (areaoh)                  1.072E+01  OP 
- CS conductor+void cross-sectional area (m2)                              (awpoh)                   5.361E+00  OP 
-    CS conductor cross-sectional area (m2)                                (awpoh*(1-vfohc))         3.752E+00  OP 
-    CS void cross-sectional area (m2)                                     (awpoh*vfohc)             1.608E+00  OP 
- CS steel cross-sectional area (m2)                                       (areaoh-awpoh)            5.361E+00  OP 
- CS steel area fraction                                                   (oh_steel_frac)           5.000E-01     
+ CS inside radius (m)                                                     (bv.bore.)                2.680E+00     
+ CS thickness (m)                                                         (bv.ohcth.)               6.678E-01     
+ Gap between central solenoid and TF coil (m)                             (bv.gapoh)                5.000E-02  ITV
+ CS overall cross-sectional area (m2)                                     (pfv.areaoh)              1.072E+01  OP 
+ CS conductor+void cross-sectional area (m2)                              (pfv.awpoh)               5.361E+00  OP 
+    CS conductor cross-sectional area (m2)                                (pfv.awpoh*(1-pfv.vfohc)) 3.752E+00  OP 
+    CS void cross-sectional area (m2)                                     (pfv.awpoh*pfv.vfohc)     1.608E+00  OP 
+ CS steel cross-sectional area (m2)                                       (pfv.areaoh-pfv.awpoh)    5.361E+00  OP 
+ CS steel area fraction                                                   (pfv.oh_steel_frac)       5.000E-01     
  Only hoop stress considered
- Switch for CS stress calculation                                         (i_cs_stress)                     0     
- Allowable stress in CS steel (Pa)                                        (alstroh)                 6.600E+08     
+ Switch for CS stress calculation                                         (pfv.i_cs_stress)                 0     
+ Allowable stress in CS steel (Pa)                                        (pfv.alstroh)             6.600E+08     
  Hoop stress in CS steel (Pa)                                             (sig_hoop)                5.983E+08  OP 
  Axial stress in CS steel (Pa)                                            (sig_axial)              -6.669E+08  OP 
- Maximum shear stress in CS steel for the Tresca criterion (Pa)           (s_tresca_oh)             5.983E+08  OP 
+ Maximum shear stress in CS steel for the Tresca criterion (Pa)           (pfv.s_tresca_oh)         5.983E+08  OP 
  Axial force in CS (N)                                                    (axial_force)            -2.109E+09  OP 
- Strain on CS superconductor                                              (strncon_cs)             -5.000E-03     
- Copper fraction in strand                                                (fcuohsu)                 7.000E-01     
- Void (coolant) fraction in conductor                                     (vfohc)                   3.000E-01     
- Helium coolant temperature (K)                                           (tftmp)                   4.750E+00     
- CS temperature margin (K)                                                (tmargoh)                 3.306E+00  OP 
- Minimum permitted temperature margin (K)                                 (tmargmin_cs)             1.700E+00     
- residual hoop stress in CS Steel (Pa)                                    (residual_sig_hoop)       2.400E+08     
- Initial vertical crack size (m)                                          (t_crack_vertical)        2.000E-03     
- Initial radial crack size (m)                                            (t_crack_radial)          6.000E-03     
- CS structural vertical thickness (m)                                     (t_structural_vertical)   2.200E-02     
- CS structural radial thickness (m)                                       (t_structural_radial)     7.000E-02     
- Allowable number of cycles till CS fracture                              (N_cycle)                 3.362E+04  OP 
+ Strain on CS superconductor                                              (tfcoil_variables.strncon-5.000E-03     
+ Copper fraction in strand                                                (pfv.fcuohsu)             7.000E-01     
+ Void (coolant) fraction in conductor                                     (pfv.vfohc)               3.000E-01     
+ Helium coolant temperature (K)                                           (tfv.tftmp)               4.750E+00     
+ CS temperature margin (K)                                                (pfv.tmargoh)             3.306E+00  OP 
+ Minimum permitted temperature margin (K)                                 (tfv.tmargmin_cs)         1.700E+00     
+ residual hoop stress in CS Steel (Pa)                                    (csfv.residual_sig_hoop)  2.400E+08     
+ Initial vertical crack size (m)                                          (csfv.t_crack_vertical)   2.000E-03     
+ Initial radial crack size (m)                                            (csfv.t_crack_radial)     6.000E-03     
+ CS structural vertical thickness (m)                                     (csfv.t_structural_vertic 2.200E-02     
+ CS structural radial thickness (m)                                       (csfv.t_structural_radial 7.000E-02     
+ Allowable number of cycles till CS fpfv.racture                          (csfv.n_cycle)            3.362E+04  OP 
  
  Superconducting PF coils
- PF coil superconductor material                                          (isumatpf)                        3     
+ PF coil superconductor material                                          (pfv.isumatpf)                    3     
    (NbTi)
- Copper fraction in conductor                                             (fcupfsu)                 6.900E-01     
+ Copper fraction in conductor                                             (pfv.fcupfsu)             6.900E-01     
  
  PF Coil Case Stress :
  
- Maximum permissible tensile stress (MPa)                                 (sigpfcalw)               5.000E+02     
- JxB hoop force fraction supported by case                                (sigpfcf)                 6.660E-01     
+ Maximum permissible tensile stress (MPa)                                 (pfv.sigpfcalw)           5.000E+02     
+ JxB hoop force fraction supported by case                                (pfv.sigpfcf)             6.660E-01     
  
- Geometry of PF coils, central solenoid and plasma :
+ Geometry of PF coils, central solenoid and plasma:
  
- coil           R(m)        Z(m)        dR(m)       dZ(m)       turns     steel thickness(m)
+ coil			R(m)			Z(m)			dR(m)			dZ(m)			pfv.turns		steel thickness(m)
  
-  PF 1           6.70        9.94        1.37        1.37      490.43        0.16
-  PF 2           6.70      -10.88        1.45        1.45      546.35        0.18
-  PF 3          19.45        3.07        1.24        1.24      218.50        0.11
-  PF 4          19.45       -3.07        1.24        1.24      218.50        0.11
-  PF 5          17.72        8.58        0.83        0.83      128.56        0.08
-  PF 6          17.72       -8.58        0.83        0.83      128.56        0.08
-  CS             3.01        0.00        0.67       16.05     3884.81        0.17
- Plasma          9.50        0.00        6.13       10.92        1.00
+ PF 0			6.70e+00	9.94e+00	1.37e+00	1.37e+00	4.90e+02	1.59e-01
+ PF 1			6.70e+00	-1.09e+01	1.45e+00	1.45e+00	5.46e+02	1.75e-01
+ PF 2			1.94e+01	3.07e+00	1.24e+00	1.24e+00	2.19e+02	1.07e-01
+ PF 3			1.94e+01	-3.07e+00	1.24e+00	1.24e+00	2.19e+02	1.07e-01
+ PF 4			1.77e+01	8.58e+00	8.31e-01	8.31e-01	1.29e+02	7.72e-02
+ PF 5			1.77e+01	-8.58e+00	8.31e-01	8.31e-01	1.29e+02	7.72e-02
+ CS				3.01e+00	0.00e+00	6.68e-01	1.61e+01	3.88e+03	1.67e-01
+ Plasma		9.50e+00	0.0e0			6.13e+00	1.09e+01	1.0e0
  
  PF Coil Information at Peak Current:
  
- coil  current  allowed J  actual J   J   cond. mass   steel mass     field
-         (MA)    (A/m2)     (A/m2)  ratio    (kg)          (kg)        (T)
+ coil	current	allowed J		actual J		J			cond. mass	steel mass	field
+ 				(MA)		(A/m2)		(A/m2)		ratio			(kg)			(kg)			(T)
  
-  PF 1   20.70  3.694E+08  1.100E+07  0.03 3.368E+05   3.197E+05    6.327E+00
-  PF 2   23.06  3.315E+08  1.100E+07  0.03 3.752E+05   3.733E+05    6.697E+00
-  PF 3   -9.22  7.410E+08  6.000E+06  0.01 7.980E+05   5.513E+05    2.851E+00
-  PF 4   -9.22  7.410E+08  6.000E+06  0.01 7.980E+05   5.513E+05    2.851E+00
-  PF 5   -5.53  7.591E+08  8.000E+06  0.01 3.269E+05   2.438E+05    2.687E+00
-  PF 6   -5.53  7.591E+08  8.000E+06  0.01 3.269E+05   2.438E+05    2.687E+00
-  CS  -167.05  5.814E+07  1.558E+07  0.27 4.321E+05   7.920E+05    1.211E+01
-       ------                             ---------   ---------
-         0.00                             3.394E+06   3.075E+06
+ PF 0	2.07e+01	3.69e+08	1.10e+07	2.98e-02	3.37e+05	3.20e+05	6.33e+00
+ PF 1	2.31e+01	3.32e+08	1.10e+07	3.32e-02	3.75e+05	3.73e+05	6.70e+00
+ PF 2	-9.22e+00	7.41e+08	6.00e+06	8.10e-03	7.98e+05	5.51e+05	2.85e+00
+ PF 3	-9.22e+00	7.41e+08	6.00e+06	8.10e-03	7.98e+05	5.51e+05	2.85e+00
+ PF 4	-5.53e+00	7.59e+08	8.00e+06	1.05e-02	3.27e+05	2.44e+05	2.69e+00
+ PF 5	-5.53e+00	7.59e+08	8.00e+06	1.05e-02	3.27e+05	2.44e+05	2.69e+00
+ CS		-1.67e+02	5.81e+07	1.56e+07	2.68e-01	4.32e+05	7.92e+05	1.21e+01
+ 				------																---------	---------
+ 				2.40e+02																3.39e+06	3.08e+06
  
  PF coil current scaling information :
  
- Sum of squares of residuals                                              (ssq0)                    4.107E-04  OP 
- Smoothing parameter                                                      (alfapf)                  5.000E-10     
+ Sum of squares of residuals                                              (pf.ssq0)                 4.107E-04  OP 
+ Smoothing parameter                                                      (pfv.alfapf)              5.000E-10     
  
  ****************************************** Volt Second Consumption *******************************************
  
@@ -6470,94 +6470,94 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  *************************************** Central Solenoid and PF Coils ****************************************
  
  Superconducting central solenoid
- Central solenoid superconductor material                                 (isumatoh)                        1     
+ Central solenoid superconductor material                                 (pfv.isumatoh)                    1     
    (ITER Nb3Sn critical surface model)
  
  Central Solenoid Current Density Limits :
  
- Maximum field at Beginning Of Pulse (T)                                  (bmaxoh0)                 1.212E+01  OP 
- Critical superconductor current density at BOP (A/m2)                    (jscoh_bop)               5.522E+08  OP 
- Critical strand current density at BOP (A/m2)                            (jstrandoh_bop)           1.657E+08  OP 
- Allowable overall current density at BOP (A/m2)                          (rjohc0)                  5.798E+07  OP 
- Actual overall current density at BOP (A/m2)                             (cohbop)                  1.450E+07  OP 
+ Maximum field at Beginning Of Pulse (T)                                  (pfv.bmaxoh0)             1.212E+01  OP 
+ Critical superconductor current density at BOP (A/m2)                    (pfv.jscoh_bop)           5.522E+08  OP 
+ Critical strand current density at BOP (A/m2)                            (pfv.jstrandoh_bop)       1.657E+08  OP 
+ Allowable overall current density at BOP (A/m2)                          (pfv.rjohc0)              5.798E+07  OP 
+ Actual overall current density at BOP (A/m2)                             (pfv.cohbop)              1.450E+07  OP 
  
- Maximum field at End Of Flattop (T)                                      (bmaxoh)                  1.181E+01  OP 
- Critical superconductor current density at EOF (A/m2)                    (jscoh_eof)               5.919E+08  OP 
- Critical strand current density at EOF (A/m2)                            (jstrandoh_eof)           1.776E+08  OP 
- Allowable overall current density at EOF (A/m2)                          (rjohc)                   6.215E+07  OP 
- Actual overall current density at EOF (A/m2)                             (coheof)                  1.554E+07  ITV
+ Maximum field at End Of Flattop (T)                                      (pfv.bmaxoh)              1.181E+01  OP 
+ Critical superconductor current density at EOF (A/m2)                    (pfv.jscoh_eof)           5.919E+08  OP 
+ Critical strand current density at EOF (A/m2)                            (pfv.jstrandoh_eof)       1.776E+08  OP 
+ Allowable overall current density at EOF (A/m2)                          (pfv.rjohc)               6.215E+07  OP 
+ Actual overall current density at EOF (A/m2)                             (pfv.coheof)              1.554E+07  ITV
  
- CS inside radius (m)                                                     (bore.)                   2.691E+00     
- CS thickness (m)                                                         (ohcth.)                  6.703E-01     
- Gap between central solenoid and TF coil (m)                             (gapoh)                   5.000E-02  ITV
- CS overall cross-sectional area (m2)                                     (areaoh)                  1.077E+01  OP 
- CS conductor+void cross-sectional area (m2)                              (awpoh)                   5.386E+00  OP 
-    CS conductor cross-sectional area (m2)                                (awpoh*(1-vfohc))         3.770E+00  OP 
-    CS void cross-sectional area (m2)                                     (awpoh*vfohc)             1.616E+00  OP 
- CS steel cross-sectional area (m2)                                       (areaoh-awpoh)            5.386E+00  OP 
- CS steel area fraction                                                   (oh_steel_frac)           5.000E-01     
+ CS inside radius (m)                                                     (bv.bore.)                2.691E+00     
+ CS thickness (m)                                                         (bv.ohcth.)               6.703E-01     
+ Gap between central solenoid and TF coil (m)                             (bv.gapoh)                5.000E-02  ITV
+ CS overall cross-sectional area (m2)                                     (pfv.areaoh)              1.077E+01  OP 
+ CS conductor+void cross-sectional area (m2)                              (pfv.awpoh)               5.386E+00  OP 
+    CS conductor cross-sectional area (m2)                                (pfv.awpoh*(1-pfv.vfohc)) 3.770E+00  OP 
+    CS void cross-sectional area (m2)                                     (pfv.awpoh*pfv.vfohc)     1.616E+00  OP 
+ CS steel cross-sectional area (m2)                                       (pfv.areaoh-pfv.awpoh)    5.386E+00  OP 
+ CS steel area fraction                                                   (pfv.oh_steel_frac)       5.000E-01     
  Only hoop stress considered
- Switch for CS stress calculation                                         (i_cs_stress)                     0     
- Allowable stress in CS steel (Pa)                                        (alstroh)                 6.600E+08     
+ Switch for CS stress calculation                                         (pfv.i_cs_stress)                 0     
+ Allowable stress in CS steel (Pa)                                        (pfv.alstroh)             6.600E+08     
  Hoop stress in CS steel (Pa)                                             (sig_hoop)                5.996E+08  OP 
  Axial stress in CS steel (Pa)                                            (sig_axial)              -6.678E+08  OP 
- Maximum shear stress in CS steel for the Tresca criterion (Pa)           (s_tresca_oh)             5.996E+08  OP 
+ Maximum shear stress in CS steel for the Tresca criterion (Pa)           (pfv.s_tresca_oh)         5.996E+08  OP 
  Axial force in CS (N)                                                    (axial_force)            -2.128E+09  OP 
- Strain on CS superconductor                                              (strncon_cs)             -5.000E-03     
- Copper fraction in strand                                                (fcuohsu)                 7.000E-01     
- Void (coolant) fraction in conductor                                     (vfohc)                   3.000E-01     
- Helium coolant temperature (K)                                           (tftmp)                   4.750E+00     
- CS temperature margin (K)                                                (tmargoh)                 3.302E+00  OP 
- Minimum permitted temperature margin (K)                                 (tmargmin_cs)             1.700E+00     
- residual hoop stress in CS Steel (Pa)                                    (residual_sig_hoop)       2.400E+08     
- Initial vertical crack size (m)                                          (t_crack_vertical)        2.000E-03     
- Initial radial crack size (m)                                            (t_crack_radial)          6.000E-03     
- CS structural vertical thickness (m)                                     (t_structural_vertical)   2.200E-02     
- CS structural radial thickness (m)                                       (t_structural_radial)     7.000E-02     
- Allowable number of cycles till CS fracture                              (N_cycle)                 3.318E+04  OP 
+ Strain on CS superconductor                                              (tfcoil_variables.strncon-5.000E-03     
+ Copper fraction in strand                                                (pfv.fcuohsu)             7.000E-01     
+ Void (coolant) fraction in conductor                                     (pfv.vfohc)               3.000E-01     
+ Helium coolant temperature (K)                                           (tfv.tftmp)               4.750E+00     
+ CS temperature margin (K)                                                (pfv.tmargoh)             3.302E+00  OP 
+ Minimum permitted temperature margin (K)                                 (tfv.tmargmin_cs)         1.700E+00     
+ residual hoop stress in CS Steel (Pa)                                    (csfv.residual_sig_hoop)  2.400E+08     
+ Initial vertical crack size (m)                                          (csfv.t_crack_vertical)   2.000E-03     
+ Initial radial crack size (m)                                            (csfv.t_crack_radial)     6.000E-03     
+ CS structural vertical thickness (m)                                     (csfv.t_structural_vertic 2.200E-02     
+ CS structural radial thickness (m)                                       (csfv.t_structural_radial 7.000E-02     
+ Allowable number of cycles till CS fpfv.racture                          (csfv.n_cycle)            3.318E+04  OP 
  
  Superconducting PF coils
- PF coil superconductor material                                          (isumatpf)                        3     
+ PF coil superconductor material                                          (pfv.isumatpf)                    3     
    (NbTi)
- Copper fraction in conductor                                             (fcupfsu)                 6.900E-01     
+ Copper fraction in conductor                                             (pfv.fcupfsu)             6.900E-01     
  
  PF Coil Case Stress :
  
- Maximum permissible tensile stress (MPa)                                 (sigpfcalw)               5.000E+02     
- JxB hoop force fraction supported by case                                (sigpfcf)                 6.660E-01     
+ Maximum permissible tensile stress (MPa)                                 (pfv.sigpfcalw)           5.000E+02     
+ JxB hoop force fraction supported by case                                (pfv.sigpfcf)             6.660E-01     
  
- Geometry of PF coils, central solenoid and plasma :
+ Geometry of PF coils, central solenoid and plasma:
  
- coil           R(m)        Z(m)        dR(m)       dZ(m)       turns     steel thickness(m)
+ coil			R(m)			Z(m)			dR(m)			dZ(m)			pfv.turns		steel thickness(m)
  
-  PF 1           6.72        9.95        1.37        1.37      492.79        0.16
-  PF 2           6.72      -10.88        1.45        1.45      549.25        0.18
-  PF 3          19.48        3.07        1.24        1.24      218.69        0.11
-  PF 4          19.48       -3.07        1.24        1.24      218.69        0.11
-  PF 5          17.74        8.60        0.83        0.83      128.68        0.08
-  PF 6          17.74       -8.60        0.83        0.83      128.68        0.08
-  CS             3.03        0.00        0.67       16.07     3892.21        0.17
- Plasma          9.52        0.00        6.14       10.93        1.00
+ PF 0			6.72e+00	9.95e+00	1.37e+00	1.37e+00	4.93e+02	1.60e-01
+ PF 1			6.72e+00	-1.09e+01	1.45e+00	1.45e+00	5.49e+02	1.77e-01
+ PF 2			1.95e+01	3.07e+00	1.24e+00	1.24e+00	2.19e+02	1.08e-01
+ PF 3			1.95e+01	-3.07e+00	1.24e+00	1.24e+00	2.19e+02	1.08e-01
+ PF 4			1.77e+01	8.60e+00	8.32e-01	8.32e-01	1.29e+02	7.79e-02
+ PF 5			1.77e+01	-8.60e+00	8.32e-01	8.32e-01	1.29e+02	7.79e-02
+ CS				3.03e+00	0.00e+00	6.70e-01	1.61e+01	3.89e+03	1.68e-01
+ Plasma		9.52e+00	0.0e0			6.14e+00	1.09e+01	1.0e0
  
  PF Coil Information at Peak Current:
  
- coil  current  allowed J  actual J   J   cond. mass   steel mass     field
-         (MA)    (A/m2)     (A/m2)  ratio    (kg)          (kg)        (T)
+ coil	current	allowed J		actual J		J			cond. mass	steel mass	field
+ 				(MA)		(A/m2)		(A/m2)		ratio			(kg)			(kg)			(T)
  
-  PF 1   20.80  3.653E+08  1.100E+07  0.03 3.390E+05   3.242E+05    6.366E+00
-  PF 2   23.18  3.272E+08  1.100E+07  0.03 3.778E+05   3.786E+05    6.739E+00
-  PF 3   -9.23  7.410E+08  6.000E+06  0.01 7.998E+05   5.536E+05    2.851E+00
-  PF 4   -9.23  7.410E+08  6.000E+06  0.01 7.998E+05   5.536E+05    2.851E+00
-  PF 5   -5.53  7.656E+08  8.000E+06  0.01 3.277E+05   2.466E+05    2.629E+00
-  PF 6   -5.53  7.656E+08  8.000E+06  0.01 3.277E+05   2.466E+05    2.629E+00
-  CS  -167.36  5.798E+07  1.554E+07  0.27 4.358E+05   7.988E+05    1.212E+01
-       ------                             ---------   ---------
-         0.00                             3.407E+06   3.102E+06
+ PF 0	2.08e+01	3.65e+08	1.10e+07	3.01e-02	3.39e+05	3.24e+05	6.37e+00
+ PF 1	2.32e+01	3.27e+08	1.10e+07	3.36e-02	3.78e+05	3.79e+05	6.74e+00
+ PF 2	-9.23e+00	7.41e+08	6.00e+06	8.10e-03	8.00e+05	5.54e+05	2.85e+00
+ PF 3	-9.23e+00	7.41e+08	6.00e+06	8.10e-03	8.00e+05	5.54e+05	2.85e+00
+ PF 4	-5.53e+00	7.66e+08	8.00e+06	1.04e-02	3.28e+05	2.47e+05	2.63e+00
+ PF 5	-5.53e+00	7.66e+08	8.00e+06	1.04e-02	3.28e+05	2.47e+05	2.63e+00
+ CS		-1.67e+02	5.80e+07	1.55e+07	2.68e-01	4.36e+05	7.99e+05	1.21e+01
+ 				------																---------	---------
+ 				2.41e+02																3.41e+06	3.10e+06
  
  PF coil current scaling information :
  
- Sum of squares of residuals                                              (ssq0)                    4.150E-04  OP 
- Smoothing parameter                                                      (alfapf)                  5.000E-10     
+ Sum of squares of residuals                                              (pf.ssq0)                 4.150E-04  OP 
+ Smoothing parameter                                                      (pfv.alfapf)              5.000E-10     
  
  ****************************************** Volt Second Consumption *******************************************
  
@@ -7884,94 +7884,94 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  *************************************** Central Solenoid and PF Coils ****************************************
  
  Superconducting central solenoid
- Central solenoid superconductor material                                 (isumatoh)                        1     
+ Central solenoid superconductor material                                 (pfv.isumatoh)                    1     
    (ITER Nb3Sn critical surface model)
  
  Central Solenoid Current Density Limits :
  
- Maximum field at Beginning Of Pulse (T)                                  (bmaxoh0)                 1.213E+01  OP 
- Critical superconductor current density at BOP (A/m2)                    (jscoh_bop)               5.507E+08  OP 
- Critical strand current density at BOP (A/m2)                            (jstrandoh_bop)           1.652E+08  OP 
- Allowable overall current density at BOP (A/m2)                          (rjohc0)                  5.783E+07  OP 
- Actual overall current density at BOP (A/m2)                             (cohbop)                  1.446E+07  OP 
+ Maximum field at Beginning Of Pulse (T)                                  (pfv.bmaxoh0)             1.213E+01  OP 
+ Critical superconductor current density at BOP (A/m2)                    (pfv.jscoh_bop)           5.507E+08  OP 
+ Critical strand current density at BOP (A/m2)                            (pfv.jstrandoh_bop)       1.652E+08  OP 
+ Allowable overall current density at BOP (A/m2)                          (pfv.rjohc0)              5.783E+07  OP 
+ Actual overall current density at BOP (A/m2)                             (pfv.cohbop)              1.446E+07  OP 
  
- Maximum field at End Of Flattop (T)                                      (bmaxoh)                  1.182E+01  OP 
- Critical superconductor current density at EOF (A/m2)                    (jscoh_eof)               5.903E+08  OP 
- Critical strand current density at EOF (A/m2)                            (jstrandoh_eof)           1.771E+08  OP 
- Allowable overall current density at EOF (A/m2)                          (rjohc)                   6.198E+07  OP 
- Actual overall current density at EOF (A/m2)                             (coheof)                  1.549E+07  ITV
+ Maximum field at End Of Flattop (T)                                      (pfv.bmaxoh)              1.182E+01  OP 
+ Critical superconductor current density at EOF (A/m2)                    (pfv.jscoh_eof)           5.903E+08  OP 
+ Critical strand current density at EOF (A/m2)                            (pfv.jstrandoh_eof)       1.771E+08  OP 
+ Allowable overall current density at EOF (A/m2)                          (pfv.rjohc)               6.198E+07  OP 
+ Actual overall current density at EOF (A/m2)                             (pfv.coheof)              1.549E+07  ITV
  
- CS inside radius (m)                                                     (bore.)                   2.702E+00     
- CS thickness (m)                                                         (ohcth.)                  6.728E-01     
- Gap between central solenoid and TF coil (m)                             (gapoh)                   5.000E-02  ITV
- CS overall cross-sectional area (m2)                                     (areaoh)                  1.082E+01  OP 
- CS conductor+void cross-sectional area (m2)                              (awpoh)                   5.411E+00  OP 
-    CS conductor cross-sectional area (m2)                                (awpoh*(1-vfohc))         3.788E+00  OP 
-    CS void cross-sectional area (m2)                                     (awpoh*vfohc)             1.623E+00  OP 
- CS steel cross-sectional area (m2)                                       (areaoh-awpoh)            5.411E+00  OP 
- CS steel area fraction                                                   (oh_steel_frac)           5.000E-01     
+ CS inside radius (m)                                                     (bv.bore.)                2.702E+00     
+ CS thickness (m)                                                         (bv.ohcth.)               6.728E-01     
+ Gap between central solenoid and TF coil (m)                             (bv.gapoh)                5.000E-02  ITV
+ CS overall cross-sectional area (m2)                                     (pfv.areaoh)              1.082E+01  OP 
+ CS conductor+void cross-sectional area (m2)                              (pfv.awpoh)               5.411E+00  OP 
+    CS conductor cross-sectional area (m2)                                (pfv.awpoh*(1-pfv.vfohc)) 3.788E+00  OP 
+    CS void cross-sectional area (m2)                                     (pfv.awpoh*pfv.vfohc)     1.623E+00  OP 
+ CS steel cross-sectional area (m2)                                       (pfv.areaoh-pfv.awpoh)    5.411E+00  OP 
+ CS steel area fraction                                                   (pfv.oh_steel_frac)       5.000E-01     
  Only hoop stress considered
- Switch for CS stress calculation                                         (i_cs_stress)                     0     
- Allowable stress in CS steel (Pa)                                        (alstroh)                 6.600E+08     
+ Switch for CS stress calculation                                         (pfv.i_cs_stress)                 0     
+ Allowable stress in CS steel (Pa)                                        (pfv.alstroh)             6.600E+08     
  Hoop stress in CS steel (Pa)                                             (sig_hoop)                6.009E+08  OP 
  Axial stress in CS steel (Pa)                                            (sig_axial)              -6.688E+08  OP 
- Maximum shear stress in CS steel for the Tresca criterion (Pa)           (s_tresca_oh)             6.009E+08  OP 
+ Maximum shear stress in CS steel for the Tresca criterion (Pa)           (pfv.s_tresca_oh)         6.009E+08  OP 
  Axial force in CS (N)                                                    (axial_force)            -2.147E+09  OP 
- Strain on CS superconductor                                              (strncon_cs)             -5.000E-03     
- Copper fraction in strand                                                (fcuohsu)                 7.000E-01     
- Void (coolant) fraction in conductor                                     (vfohc)                   3.000E-01     
- Helium coolant temperature (K)                                           (tftmp)                   4.750E+00     
- CS temperature margin (K)                                                (tmargoh)                 3.298E+00  OP 
- Minimum permitted temperature margin (K)                                 (tmargmin_cs)             1.700E+00     
- residual hoop stress in CS Steel (Pa)                                    (residual_sig_hoop)       2.400E+08     
- Initial vertical crack size (m)                                          (t_crack_vertical)        2.000E-03     
- Initial radial crack size (m)                                            (t_crack_radial)          6.000E-03     
- CS structural vertical thickness (m)                                     (t_structural_vertical)   2.200E-02     
- CS structural radial thickness (m)                                       (t_structural_radial)     7.000E-02     
- Allowable number of cycles till CS fracture                              (N_cycle)                 3.273E+04  OP 
+ Strain on CS superconductor                                              (tfcoil_variables.strncon-5.000E-03     
+ Copper fraction in strand                                                (pfv.fcuohsu)             7.000E-01     
+ Void (coolant) fraction in conductor                                     (pfv.vfohc)               3.000E-01     
+ Helium coolant temperature (K)                                           (tfv.tftmp)               4.750E+00     
+ CS temperature margin (K)                                                (pfv.tmargoh)             3.298E+00  OP 
+ Minimum permitted temperature margin (K)                                 (tfv.tmargmin_cs)         1.700E+00     
+ residual hoop stress in CS Steel (Pa)                                    (csfv.residual_sig_hoop)  2.400E+08     
+ Initial vertical crack size (m)                                          (csfv.t_crack_vertical)   2.000E-03     
+ Initial radial crack size (m)                                            (csfv.t_crack_radial)     6.000E-03     
+ CS structural vertical thickness (m)                                     (csfv.t_structural_vertic 2.200E-02     
+ CS structural radial thickness (m)                                       (csfv.t_structural_radial 7.000E-02     
+ Allowable number of cycles till CS fpfv.racture                          (csfv.n_cycle)            3.273E+04  OP 
  
  Superconducting PF coils
- PF coil superconductor material                                          (isumatpf)                        3     
+ PF coil superconductor material                                          (pfv.isumatpf)                    3     
    (NbTi)
- Copper fraction in conductor                                             (fcupfsu)                 6.900E-01     
+ Copper fraction in conductor                                             (pfv.fcupfsu)             6.900E-01     
  
  PF Coil Case Stress :
  
- Maximum permissible tensile stress (MPa)                                 (sigpfcalw)               5.000E+02     
- JxB hoop force fraction supported by case                                (sigpfcf)                 6.660E-01     
+ Maximum permissible tensile stress (MPa)                                 (pfv.sigpfcalw)           5.000E+02     
+ JxB hoop force fraction supported by case                                (pfv.sigpfcf)             6.660E-01     
  
- Geometry of PF coils, central solenoid and plasma :
+ Geometry of PF coils, central solenoid and plasma:
  
- coil           R(m)        Z(m)        dR(m)       dZ(m)       turns     steel thickness(m)
+ coil			R(m)			Z(m)			dR(m)			dZ(m)			pfv.turns		steel thickness(m)
  
-  PF 1           6.73        9.95        1.38        1.38      495.21        0.16
-  PF 2           6.73      -10.89        1.46        1.46      552.21        0.18
-  PF 3          19.50        3.08        1.24        1.24      218.88        0.11
-  PF 4          19.50       -3.08        1.24        1.24      218.88        0.11
-  PF 5          17.77        8.61        0.83        0.83      128.91        0.08
-  PF 6          17.77       -8.61        0.83        0.83      128.91        0.08
-  CS             3.04        0.00        0.67       16.09     3899.72        0.17
- Plasma          9.53        0.00        6.15       10.95        1.00
+ PF 0			6.73e+00	9.95e+00	1.38e+00	1.38e+00	4.95e+02	1.62e-01
+ PF 1			6.73e+00	-1.09e+01	1.46e+00	1.46e+00	5.52e+02	1.78e-01
+ PF 2			1.95e+01	3.08e+00	1.24e+00	1.24e+00	2.19e+02	1.08e-01
+ PF 3			1.95e+01	-3.08e+00	1.24e+00	1.24e+00	2.19e+02	1.08e-01
+ PF 4			1.78e+01	8.61e+00	8.32e-01	8.32e-01	1.29e+02	7.82e-02
+ PF 5			1.78e+01	-8.61e+00	8.32e-01	8.32e-01	1.29e+02	7.82e-02
+ CS				3.04e+00	0.00e+00	6.73e-01	1.61e+01	3.90e+03	1.68e-01
+ Plasma		9.53e+00	0.0e0			6.15e+00	1.10e+01	1.0e0
  
  PF Coil Information at Peak Current:
  
- coil  current  allowed J  actual J   J   cond. mass   steel mass     field
-         (MA)    (A/m2)     (A/m2)  ratio    (kg)          (kg)        (T)
+ coil	current	allowed J		actual J		J			cond. mass	steel mass	field
+ 				(MA)		(A/m2)		(A/m2)		ratio			(kg)			(kg)			(T)
  
-  PF 1   20.90  3.611E+08  1.100E+07  0.03 3.412E+05   3.288E+05    6.407E+00
-  PF 2   23.30  3.229E+08  1.100E+07  0.03 3.805E+05   3.842E+05    6.782E+00
-  PF 3   -9.24  7.409E+08  6.000E+06  0.01 8.016E+05   5.559E+05    2.852E+00
-  PF 4   -9.24  7.409E+08  6.000E+06  0.01 8.016E+05   5.559E+05    2.852E+00
-  PF 5   -5.54  7.654E+08  8.000E+06  0.01 3.287E+05   2.479E+05    2.630E+00
-  PF 6   -5.54  7.654E+08  8.000E+06  0.01 3.287E+05   2.479E+05    2.630E+00
-  CS  -167.69  5.783E+07  1.549E+07  0.27 4.396E+05   8.057E+05    1.213E+01
-       ------                             ---------   ---------
-         0.00                             3.422E+06   3.126E+06
+ PF 0	2.09e+01	3.61e+08	1.10e+07	3.05e-02	3.41e+05	3.29e+05	6.41e+00
+ PF 1	2.33e+01	3.23e+08	1.10e+07	3.41e-02	3.80e+05	3.84e+05	6.78e+00
+ PF 2	-9.24e+00	7.41e+08	6.00e+06	8.10e-03	8.02e+05	5.56e+05	2.85e+00
+ PF 3	-9.24e+00	7.41e+08	6.00e+06	8.10e-03	8.02e+05	5.56e+05	2.85e+00
+ PF 4	-5.54e+00	7.65e+08	8.00e+06	1.05e-02	3.29e+05	2.48e+05	2.63e+00
+ PF 5	-5.54e+00	7.65e+08	8.00e+06	1.05e-02	3.29e+05	2.48e+05	2.63e+00
+ CS		-1.68e+02	5.78e+07	1.55e+07	2.68e-01	4.40e+05	8.06e+05	1.21e+01
+ 				------																---------	---------
+ 				2.41e+02																3.42e+06	3.13e+06
  
  PF coil current scaling information :
  
- Sum of squares of residuals                                              (ssq0)                    4.195E-04  OP 
- Smoothing parameter                                                      (alfapf)                  5.000E-10     
+ Sum of squares of residuals                                              (pf.ssq0)                 4.195E-04  OP 
+ Smoothing parameter                                                      (pfv.alfapf)              5.000E-10     
  
  ****************************************** Volt Second Consumption *******************************************
  
@@ -9298,94 +9298,94 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  *************************************** Central Solenoid and PF Coils ****************************************
  
  Superconducting central solenoid
- Central solenoid superconductor material                                 (isumatoh)                        1     
+ Central solenoid superconductor material                                 (pfv.isumatoh)                    1     
    (ITER Nb3Sn critical surface model)
  
  Central Solenoid Current Density Limits :
  
- Maximum field at Beginning Of Pulse (T)                                  (bmaxoh0)                 1.215E+01  OP 
- Critical superconductor current density at BOP (A/m2)                    (jscoh_bop)               5.492E+08  OP 
- Critical strand current density at BOP (A/m2)                            (jstrandoh_bop)           1.647E+08  OP 
- Allowable overall current density at BOP (A/m2)                          (rjohc0)                  5.766E+07  OP 
- Actual overall current density at BOP (A/m2)                             (cohbop)                  1.442E+07  OP 
+ Maximum field at Beginning Of Pulse (T)                                  (pfv.bmaxoh0)             1.215E+01  OP 
+ Critical superconductor current density at BOP (A/m2)                    (pfv.jscoh_bop)           5.492E+08  OP 
+ Critical strand current density at BOP (A/m2)                            (pfv.jstrandoh_bop)       1.647E+08  OP 
+ Allowable overall current density at BOP (A/m2)                          (pfv.rjohc0)              5.766E+07  OP 
+ Actual overall current density at BOP (A/m2)                             (pfv.cohbop)              1.442E+07  OP 
  
- Maximum field at End Of Flattop (T)                                      (bmaxoh)                  1.183E+01  OP 
- Critical superconductor current density at EOF (A/m2)                    (jscoh_eof)               5.885E+08  OP 
- Critical strand current density at EOF (A/m2)                            (jstrandoh_eof)           1.766E+08  OP 
- Allowable overall current density at EOF (A/m2)                          (rjohc)                   6.180E+07  OP 
- Actual overall current density at EOF (A/m2)                             (coheof)                  1.545E+07  ITV
+ Maximum field at End Of Flattop (T)                                      (pfv.bmaxoh)              1.183E+01  OP 
+ Critical superconductor current density at EOF (A/m2)                    (pfv.jscoh_eof)           5.885E+08  OP 
+ Critical strand current density at EOF (A/m2)                            (pfv.jstrandoh_eof)       1.766E+08  OP 
+ Allowable overall current density at EOF (A/m2)                          (pfv.rjohc)               6.180E+07  OP 
+ Actual overall current density at EOF (A/m2)                             (pfv.coheof)              1.545E+07  ITV
  
- CS inside radius (m)                                                     (bore.)                   2.713E+00     
- CS thickness (m)                                                         (ohcth.)                  6.753E-01     
- Gap between central solenoid and TF coil (m)                             (gapoh)                   5.000E-02  ITV
- CS overall cross-sectional area (m2)                                     (areaoh)                  1.088E+01  OP 
- CS conductor+void cross-sectional area (m2)                              (awpoh)                   5.438E+00  OP 
-    CS conductor cross-sectional area (m2)                                (awpoh*(1-vfohc))         3.807E+00  OP 
-    CS void cross-sectional area (m2)                                     (awpoh*vfohc)             1.631E+00  OP 
- CS steel cross-sectional area (m2)                                       (areaoh-awpoh)            5.438E+00  OP 
- CS steel area fraction                                                   (oh_steel_frac)           5.000E-01     
+ CS inside radius (m)                                                     (bv.bore.)                2.713E+00     
+ CS thickness (m)                                                         (bv.ohcth.)               6.753E-01     
+ Gap between central solenoid and TF coil (m)                             (bv.gapoh)                5.000E-02  ITV
+ CS overall cross-sectional area (m2)                                     (pfv.areaoh)              1.088E+01  OP 
+ CS conductor+void cross-sectional area (m2)                              (pfv.awpoh)               5.438E+00  OP 
+    CS conductor cross-sectional area (m2)                                (pfv.awpoh*(1-pfv.vfohc)) 3.807E+00  OP 
+    CS void cross-sectional area (m2)                                     (pfv.awpoh*pfv.vfohc)     1.631E+00  OP 
+ CS steel cross-sectional area (m2)                                       (pfv.areaoh-pfv.awpoh)    5.438E+00  OP 
+ CS steel area fraction                                                   (pfv.oh_steel_frac)       5.000E-01     
  Only hoop stress considered
- Switch for CS stress calculation                                         (i_cs_stress)                     0     
- Allowable stress in CS steel (Pa)                                        (alstroh)                 6.600E+08     
+ Switch for CS stress calculation                                         (pfv.i_cs_stress)                 0     
+ Allowable stress in CS steel (Pa)                                        (pfv.alstroh)             6.600E+08     
  Hoop stress in CS steel (Pa)                                             (sig_hoop)                6.023E+08  OP 
  Axial stress in CS steel (Pa)                                            (sig_axial)              -6.697E+08  OP 
- Maximum shear stress in CS steel for the Tresca criterion (Pa)           (s_tresca_oh)             6.023E+08  OP 
+ Maximum shear stress in CS steel for the Tresca criterion (Pa)           (pfv.s_tresca_oh)         6.023E+08  OP 
  Axial force in CS (N)                                                    (axial_force)            -2.167E+09  OP 
- Strain on CS superconductor                                              (strncon_cs)             -5.000E-03     
- Copper fraction in strand                                                (fcuohsu)                 7.000E-01     
- Void (coolant) fraction in conductor                                     (vfohc)                   3.000E-01     
- Helium coolant temperature (K)                                           (tftmp)                   4.750E+00     
- CS temperature margin (K)                                                (tmargoh)                 3.295E+00  OP 
- Minimum permitted temperature margin (K)                                 (tmargmin_cs)             1.700E+00     
- residual hoop stress in CS Steel (Pa)                                    (residual_sig_hoop)       2.400E+08     
- Initial vertical crack size (m)                                          (t_crack_vertical)        2.000E-03     
- Initial radial crack size (m)                                            (t_crack_radial)          6.000E-03     
- CS structural vertical thickness (m)                                     (t_structural_vertical)   2.200E-02     
- CS structural radial thickness (m)                                       (t_structural_radial)     7.000E-02     
- Allowable number of cycles till CS fracture                              (N_cycle)                 3.227E+04  OP 
+ Strain on CS superconductor                                              (tfcoil_variables.strncon-5.000E-03     
+ Copper fraction in strand                                                (pfv.fcuohsu)             7.000E-01     
+ Void (coolant) fraction in conductor                                     (pfv.vfohc)               3.000E-01     
+ Helium coolant temperature (K)                                           (tfv.tftmp)               4.750E+00     
+ CS temperature margin (K)                                                (pfv.tmargoh)             3.295E+00  OP 
+ Minimum permitted temperature margin (K)                                 (tfv.tmargmin_cs)         1.700E+00     
+ residual hoop stress in CS Steel (Pa)                                    (csfv.residual_sig_hoop)  2.400E+08     
+ Initial vertical crack size (m)                                          (csfv.t_crack_vertical)   2.000E-03     
+ Initial radial crack size (m)                                            (csfv.t_crack_radial)     6.000E-03     
+ CS structural vertical thickness (m)                                     (csfv.t_structural_vertic 2.200E-02     
+ CS structural radial thickness (m)                                       (csfv.t_structural_radial 7.000E-02     
+ Allowable number of cycles till CS fpfv.racture                          (csfv.n_cycle)            3.227E+04  OP 
  
  Superconducting PF coils
- PF coil superconductor material                                          (isumatpf)                        3     
+ PF coil superconductor material                                          (pfv.isumatpf)                    3     
    (NbTi)
- Copper fraction in conductor                                             (fcupfsu)                 6.900E-01     
+ Copper fraction in conductor                                             (pfv.fcupfsu)             6.900E-01     
  
  PF Coil Case Stress :
  
- Maximum permissible tensile stress (MPa)                                 (sigpfcalw)               5.000E+02     
- JxB hoop force fraction supported by case                                (sigpfcf)                 6.660E-01     
+ Maximum permissible tensile stress (MPa)                                 (pfv.sigpfcalw)           5.000E+02     
+ JxB hoop force fraction supported by case                                (pfv.sigpfcf)             6.660E-01     
  
- Geometry of PF coils, central solenoid and plasma :
+ Geometry of PF coils, central solenoid and plasma:
  
- coil           R(m)        Z(m)        dR(m)       dZ(m)       turns     steel thickness(m)
+ coil			R(m)			Z(m)			dR(m)			dZ(m)			pfv.turns		steel thickness(m)
  
-  PF 1           6.74        9.96        1.38        1.38      497.72        0.16
-  PF 2           6.74      -10.90        1.46        1.46      555.30        0.18
-  PF 3          19.53        3.08        1.24        1.24      219.08        0.11
-  PF 4          19.53       -3.08        1.24        1.24      219.08        0.11
-  PF 5          17.79        8.63        0.83        0.83      129.15        0.08
-  PF 6          17.79       -8.63        0.83        0.83      129.15        0.08
-  CS             3.05        0.00        0.68       16.10     3907.54        0.17
- Plasma          9.55        0.00        6.16       10.97        1.00
+ PF 0			6.74e+00	9.96e+00	1.38e+00	1.38e+00	4.98e+02	1.63e-01
+ PF 1			6.74e+00	-1.09e+01	1.46e+00	1.46e+00	5.55e+02	1.80e-01
+ PF 2			1.95e+01	3.08e+00	1.24e+00	1.24e+00	2.19e+02	1.08e-01
+ PF 3			1.95e+01	-3.08e+00	1.24e+00	1.24e+00	2.19e+02	1.08e-01
+ PF 4			1.78e+01	8.63e+00	8.33e-01	8.33e-01	1.29e+02	7.84e-02
+ PF 5			1.78e+01	-8.63e+00	8.33e-01	8.33e-01	1.29e+02	7.84e-02
+ CS				3.05e+00	0.00e+00	6.75e-01	1.61e+01	3.91e+03	1.69e-01
+ Plasma		9.55e+00	0.0e0			6.16e+00	1.10e+01	1.0e0
  
  PF Coil Information at Peak Current:
  
- coil  current  allowed J  actual J   J   cond. mass   steel mass     field
-         (MA)    (A/m2)     (A/m2)  ratio    (kg)          (kg)        (T)
+ coil	current	allowed J		actual J		J			cond. mass	steel mass	field
+ 				(MA)		(A/m2)		(A/m2)		ratio			(kg)			(kg)			(T)
  
-  PF 1   21.00  3.568E+08  1.100E+07  0.03 3.435E+05   3.336E+05    6.449E+00
-  PF 2   23.43  3.184E+08  1.100E+07  0.03 3.833E+05   3.900E+05    6.826E+00
-  PF 3   -9.24  7.409E+08  6.000E+06  0.01 8.036E+05   5.583E+05    2.852E+00
-  PF 4   -9.24  7.409E+08  6.000E+06  0.01 8.036E+05   5.583E+05    2.852E+00
-  PF 5   -5.55  7.653E+08  8.000E+06  0.01 3.298E+05   2.493E+05    2.631E+00
-  PF 6   -5.55  7.653E+08  8.000E+06  0.01 3.298E+05   2.493E+05    2.631E+00
-  CS  -168.02  5.766E+07  1.545E+07  0.27 4.436E+05   8.130E+05    1.215E+01
-       ------                             ---------   ---------
-         0.00                             3.437E+06   3.152E+06
+ PF 0	2.10e+01	3.57e+08	1.10e+07	3.08e-02	3.44e+05	3.34e+05	6.45e+00
+ PF 1	2.34e+01	3.18e+08	1.10e+07	3.45e-02	3.83e+05	3.90e+05	6.83e+00
+ PF 2	-9.24e+00	7.41e+08	6.00e+06	8.10e-03	8.04e+05	5.58e+05	2.85e+00
+ PF 3	-9.24e+00	7.41e+08	6.00e+06	8.10e-03	8.04e+05	5.58e+05	2.85e+00
+ PF 4	-5.55e+00	7.65e+08	8.00e+06	1.05e-02	3.30e+05	2.49e+05	2.63e+00
+ PF 5	-5.55e+00	7.65e+08	8.00e+06	1.05e-02	3.30e+05	2.49e+05	2.63e+00
+ CS		-1.68e+02	5.77e+07	1.54e+07	2.68e-01	4.44e+05	8.13e+05	1.21e+01
+ 				------																---------	---------
+ 				2.42e+02																3.44e+06	3.15e+06
  
  PF coil current scaling information :
  
- Sum of squares of residuals                                              (ssq0)                    4.242E-04  OP 
- Smoothing parameter                                                      (alfapf)                  5.000E-10     
+ Sum of squares of residuals                                              (pf.ssq0)                 4.242E-04  OP 
+ Smoothing parameter                                                      (pfv.alfapf)              5.000E-10     
  
  ****************************************** Volt Second Consumption *******************************************
  
