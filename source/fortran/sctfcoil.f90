@@ -2601,10 +2601,22 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     if ( i_tf_bucking >= 2 ) sig_tf_cs_bucked = sig_tf_tresca_max(1)
     ! ----------------
 
-    if ( iprint == 1 ) call out_stress
+    if ( iprint == 1 ) call out_stress(sig_tf_r_max, sig_tf_t_max, sig_tf_z_max, &
+    sig_tf_vmises_max, sig_tf_tresca_max, deflect, eyoung_axial, eyoung_trans, &
+    eyoung_wp_axial, eyoung_wp_trans, poisson_wp_trans, radial_array, &
+    s_tresca_cond_cea, poisson_wp_axial, &
+    sig_tf_r, sig_tf_smeared_r, sig_tf_smeared_t, sig_tf_smeared_z, &
+    sig_tf_t, sig_tf_tresca, sig_tf_vmises, sig_tf_z, str_tf_r, str_tf_t, str_tf_z, &
+    n_radial_array, n_tf_bucking, outfile, sig_file)
 
-    contains
-    subroutine out_stress
+end subroutine stresscl
+
+subroutine out_stress(sig_tf_r_max, sig_tf_t_max, sig_tf_z_max, sig_tf_vmises_max, &
+sig_tf_tresca_max, deflect, eyoung_axial, eyoung_trans, eyoung_wp_axial, eyoung_wp_trans, &
+poisson_wp_trans, radial_array, s_tresca_cond_cea, poisson_wp_axial, &
+sig_tf_r, sig_tf_smeared_r, sig_tf_smeared_t, sig_tf_smeared_z, sig_tf_t, &
+sig_tf_tresca, sig_tf_vmises, sig_tf_z, str_tf_r, str_tf_t, str_tf_z, &
+n_radial_array, n_tf_bucking, outfile, sig_file)
         !! Subroutine showing the writing the TF midplane stress analysis
         !! in the output file and the stress distribution in the SIG_TF.DAT
         !! file used to plot stress distributions
@@ -2612,9 +2624,36 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
         use process_output, only: osubhd, ocmmnt, oheadr, ovarre, int2char
         use constants, only: mfile
+        use tfcoil_variables, only: casestr, n_tf_turn, &
+        dr_tf_wp, i_tf_tresca, acstf, vforce, &
+        ritfc, jwptf, sig_tf_cs_bucked, sig_tf_case, sig_tf_wp, &
+        thwcndut, insstrain, vforce, tinstf, &
+        acstf, jwptf, insstrain, &
+        rbmax, thicndut, acndttf, tfinsgap, &
+        acasetf, sig_tf_case_max, poisson_steel, poisson_copper, poisson_al, &
+        n_tf_graded_layers, i_tf_sup, i_tf_bucking, fcoolcp, eyoung_cond_axial, &
+        eyoung_steel, eyoung_res_tf_buck, eyoung_ins, eyoung_al, eyoung_copper, &
+        aiwp, aswp, cpttf, n_tf, i_tf_stress_model, sig_tf_wp_max, &
+        i_tf_turns_integer, casthi, acond, avwp, awphec, poisson_ins, &
+        eyoung_cond_trans, poisson_cond_axial, poisson_cond_trans, dhecoil, fcutfsu, &
+        str_wp, n_tf_wp_layers
+
         implicit none
 
+        integer, intent(in) :: n_radial_array, n_tf_bucking, outfile, sig_file
+
+        real(dp), intent(in) :: eyoung_wp_axial, &
+        eyoung_wp_trans, poisson_wp_trans, poisson_wp_axial
+
+        real(dp), dimension(:), intent(in) :: sig_tf_r_max, sig_tf_t_max, &
+        sig_tf_z_max, sig_tf_vmises_max, sig_tf_tresca_max, deflect, &
+        radial_array, s_tresca_cond_cea, &
+        sig_tf_r, sig_tf_smeared_r, sig_tf_smeared_t, sig_tf_smeared_z, sig_tf_t, &
+        sig_tf_tresca, sig_tf_vmises, sig_tf_z, str_tf_r, str_tf_t, str_tf_z, &
+        eyoung_axial, eyoung_trans
+
         character(len=1) :: intstring
+        integer :: ii
         !! Char used for integer convertion to string
 
         ! Stress output section
@@ -2757,8 +2796,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         end if
 
     end subroutine out_stress
-
-end subroutine stresscl
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
