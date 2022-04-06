@@ -5965,29 +5965,6 @@ subroutine protect(aio,tfes,acs,aturn,tdump,fcond,fcu,tba,tmax,ajwpro,vd)
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-function croco_voltage()
-
-    !! Finds the coil voltage during a quench
-
-    ! croco_voltage : voltage across a TF coil during quench (V)
-    ! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s) (time-dump-TF)
-    ! For clarity I have copied this into 'time2' or 'tau2' depending on the model.
-    use tfcoil_variables, only: n_tf, quench_model, tdmptf, cpttf
-
-    implicit none
-
-    real(dp):: croco_voltage
-
-    if(quench_model=='linear')then
-        time2 = tdmptf
-        croco_voltage = 2.0D0/time2 * (estotft/n_tf) / cpttf
-    elseif(quench_model=='exponential')then
-        tau2 = tdmptf
-        croco_voltage = 2.0D0/tau2 * (estotft/n_tf) / cpttf
-    endif
-
-end function croco_voltage
-
 subroutine cpost( r_tf_inboard_in, r_tf_inboard_out, r_cp_top, ztop,          & ! Inputs
                   hmaxi, cas_in_th, cas_out_th, gr_ins_th, ins_th, n_tf_turn, & ! Inputs
                   curr, rho, fcool,                                           & ! Inputs

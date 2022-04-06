@@ -12,6 +12,8 @@ from process.fortran import build_variables
 from process.fortran import constants
 from process.fortran import sctfcoil_module
 
+from process.utilities.f2py_string_patch import f2py_compatible_to_string
+
 
 class Sctfcoil:
     def __init__(self):
@@ -41,7 +43,7 @@ class Sctfcoil:
             )
 
             tfcoil_variables.vtfskv = (
-                sctfcoil_module.croco_voltage() / 1.0e3
+                self.croco_voltage() / 1.0e3
             )  #  TFC Quench voltage in kV
 
         else:
@@ -70,6 +72,28 @@ class Sctfcoil:
             )
 
             tfcoil_variables.vtfskv = vdump / 1.0e3  #  TFC Quench voltage in kV
+
+    def croco_voltage(self) -> float:
+        if f2py_compatible_to_string(tfcoil_variables.quench_model) == "linear":
+            sctfcoil_module.time2 = tfcoil_variables.tdmptf
+            croco_voltage = (
+                2.0e0
+                / sctfcoil_module.time2
+                * (sctfcoil_module.estotft / tfcoil_variables.n_tf)
+                / tfcoil_variables.cpttf
+            )
+        elif f2py_compatible_to_string(tfcoil_variables.quench_model) == "exponential":
+            sctfcoil_module.tau2 = tfcoil_variables.tdmptf
+            croco_voltage = (
+                2.0e0
+                / sctfcoil_module.tau2
+                * (sctfcoil_module.estotft / tfcoil_variables.n_tf)
+                / tfcoil_variables.cpttf
+            )
+        else:
+            return 0.0
+
+        return croco_voltage
 
     def sctfcoil(self, output: bool):
         """TF coil module
