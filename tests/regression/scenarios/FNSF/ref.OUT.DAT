@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1240-g7124046d
-    Branch : 1511-update-heating-and-current-drive-costs
-   Git log : Merge\ branch\ |develop|\ into\ 1511-update-heating-an
- Date/time : 15 Feb 2022 11:42:34 +00:00(hh:mm) UTC
-      User : jg6173
-  Computer : L1088
- Directory : /tmp/pytest-of-jg6173/pytest-24/test_solver0
-     Input : /tmp/pytest-of-jg6173/pytest-24/test_scenario_FNSF_0/IN.DAT
+   Tag No. : v2.1-1386-g2155ecdc code contains untracked changes
+    Branch : 1456-convert-pfcoil-f90-to-python
+   Git log : Regression\ reference\ changes\ to\ kallenbach\ and\ hts
+ Date/time :  6 Apr 2022 13:36:31 +01:00(hh:mm) UTC
+      User : jon
+  Computer : jon-Precision-3560
+ Directory : /home/jon/code/process
+     Input : /tmp/pytest-of-jon/pytest-75/popen-gw2/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -105,18 +105,18 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
     1  Beta consistency                      =  1.4470E-01             -3.2618E-07                 2.2541E-06
     2  Global power balance consistency      =  1.5068E+00 MW/m3        8.0468E-06 MW/m3          -5.3404E-06
-    3  Density upper limit                   <  2.4404E+20 /m3          1.2177E+08 /m3             4.9893E-13
+    3  Density upper limit                   <  2.4404E+20 /m3          1.2203E+08 /m3             5.0004E-13
     4  Beam ion density consistency          =  1.5292E+18 /m3         -3.4171E+13 /m3             2.2346E-05
     5  Neutron wall load upper limit         <  1.0180E+00 MW/m2       -4.0227E-06 MW/m2          -3.9515E-06
     6  Fusion power upper limit              <  1.6200E+02 MW           6.3981E-04 MW             -3.9494E-06
     7  Radial build consistency              =  1.7000E+00 m            0.0000E+00 m              -0.0000E+00
-    8  L-H power threshold limit             <  1.7084E+01 MW          -1.9097E-03 MW              1.1177E-04
+    8  L-H power threshold limit             >  1.7084E+01 MW          -1.9097E-03 MW              1.1177E-04
     9  Radiation fraction upper limit        <  1.5068E+00 MW/m3       -2.1957E-05 MW/m3           1.7227E-05
-   10  Beta upper limit                      <  1.9308E-01              2.4461E-13                 1.2670E-12
+   10  Beta upper limit                      <  1.9308E-01              2.4455E-13                 1.2668E-12
    11  Injection power upper limit           <  8.0000E+01 MW          -1.7881E-03 MW              2.2351E-05
    12  Average centrepost temperature        =  7.3443E+01 deg C        6.6437E-06 deg C          -9.0460E-08
    13  Peak centrepost temp. upper limit     <  2.0000E+02 deg C        1.1919E-05 deg C          -1.1919E-07
-   14  Ip/Irod upper limit                   <  7.6151E-01              1.6332E-16                -4.4409E-16
+   14  Ip/Irod upper limit                   <  7.6151E-01              8.1661E-17                -2.2204E-16
    15  Psep / R upper limit                  <  1.9998E+01 MW/m         1.1234E-03 MW/m           -1.1178E-04
  
  ******************************************** Final Feasible Point ********************************************
@@ -132,6 +132,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Heating/CD system lifetime (years)                                       (cdrlife)                 2.619E+01  OP 
  Total plant lifetime (years)                                             (tlife)                   3.000E+01     
  Total plant availability fraction                                        (cfactr)                  7.500E-01     
+ Number of fusion cycles to reach allowable fw/blanket DPA                (bktcycles)               5.316E+05     
  
  *************************************************** Plasma ***************************************************
  
@@ -507,9 +508,8 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  (Ripple result may not be accurate, as the fit was outside
   its range of applicability.)
  
-                                          Thickness (m)    Radius (m)
  Device centreline                            0.000           0.000                       
- Machine bore                                 0.000           0.000   (bore)              
+ Machine build_variables.bore                 0.000           0.000   (bore)              
  Central solenoid                             0.000           0.000   (ohcth)             
  CS precompression                            0.000           0.000   (precomp)           
  Gap                                          0.000           0.000   (gapoh)             
@@ -537,7 +537,6 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  *********************************************** Vertical Build ***********************************************
  
  Double null case
-                                          Thickness (m)    Height (m)
  TF coil                                      0.541           4.962   (tfcth)             
  Gap                                          0.050           4.421   (tftsgap)           
  Thermal shield                               0.000           4.371   (thshield)          
@@ -778,7 +777,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
   PF 3   -3.75 -1.000E+00  3.000E+07  1.00 2.521E+04   0.000E+00    3.960E+00
   PF 4   -3.75 -1.000E+00  3.000E+07  1.00 2.521E+04   0.000E+00    3.960E+00
        ------                             ---------   ---------
-        21.28                             6.674E+04   0.000E+00
+         0.00                             6.674E+04   0.000E+00
  
  PF coil current scaling information :
  
@@ -801,10 +800,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  circuit       BOP            BOF            EOF
  
-     1        0.000          0.477          0.477
-     2        0.000          0.477          0.477
-     3        0.000         -3.972         -3.972
-     4        0.000         -3.972         -3.972
+
  CS coil      0.000         -3.972         -3.972
  
  ********************************** Waveforms ***********************************
@@ -883,13 +879,13 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ******************************************** PF Coil Inductances *********************************************
  
- Inductance matrix [H] :
+ Inductance matrix [H]:
  
-   1     4.7E-02 9.1E-05 3.4E-03 1.8E-03 1.1E-05
-   2     9.1E-05 4.7E-02 1.8E-03 3.4E-03 1.1E-05
-   3     3.4E-03 1.8E-03 1.8E-01 5.0E-02 9.5E-05
-   4     1.8E-03 3.4E-03 5.0E-02 1.8E-01 9.5E-05
- Plasma  1.1E-05 1.1E-05 9.5E-05 9.5E-05 1.2E-06
+ 0			[4.7e-02 9.1e-05 3.4e-03 1.8e-03 1.1e-05]
+ 1			[9.1e-05 4.7e-02 1.8e-03 3.4e-03 1.1e-05]
+ 2			[3.4e-03 1.8e-03 1.8e-01 5.0e-02 9.5e-05]
+ 3			[1.8e-03 3.4e-03 5.0e-02 1.8e-01 9.5e-05]
+ Plasma	[1.1e-05 1.1e-05 9.5e-05 9.5e-05 1.2e-06]
  
  ********************* Heat transfer parameters at the coolant outlet: Inboard first wall *********************
  
@@ -1334,7 +1330,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Power Balance for Reactor - Summary :
  -------------------------------------
- Fusion power (MW)                                                        (powfmw.)                   162.001  OP 
+ Fusion power (MW)                                                        (powfmw)                    162.001  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                    22.592  OP 
  Injected power (MW)                                                      (pinjmw.)                    80.002  OP 
  Ohmic power (MW)                                                         (pohmmw.)                     0.000  OP 
@@ -1368,7 +1364,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Power balance for power plant :
  -------------------------------
- Fusion power (MW)                                                        (powfmw.)                   162.001  OP 
+ Fusion power (MW)                                                        (powfmw)                    162.001  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                    22.592  OP 
  Total (MW)                                                                                           184.593  OP 
  

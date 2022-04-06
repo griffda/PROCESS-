@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.3.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "15/02/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "11:42"
- User____________________________________________________________________ (username)____________________     "jg6173"  
+ Date_of_run_____________________________________________________________ (date)________________________     "06/04/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "13:36"
+ User____________________________________________________________________ (username)____________________     "jon"     
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "demo 1 model for cost paper                                                                        
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1240-g7124046d"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1511-update-heating-and-current-drive-costs"                                                       
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |develop|\ into\ 1511-update-heating-an"                                            
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jg6173/pytest-24/test_scenario_costs_paper_0/IN.DAT                                                                                                                                      "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1386-g2155ecdc"                                                                               
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1456-convert-pfcoil-f90-to-python"                                                                 
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Regression\ reference\ changes\ to\ kallenbach\ and\ hts"                                          
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jon/pytest-75/popen-gw2/test_scenario_costs_paper_0/IN.DAT                                                                                                                               "
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              1    
  # Numerics #
@@ -58,7 +58,7 @@
  ohcth_(range_normalised)________________________________________________ (nitvar011)___________________      2.2513E-01    
  q_______________________________________________________________________ (itvar012)____________________      3.0000E+00    
  q_(final_value/initial_value)___________________________________________ (xcm012)______________________      9.2974E-01    
- q_(range_normalised)____________________________________________________ (nitvar012)___________________      0.0000E+00    
+ q_(range_normalised)____________________________________________________ (nitvar012)___________________      1.4773E-17    
  ftburn__________________________________________________________________ (itvar013)____________________      1.0000E+00    
  ftburn_(final_value/initial_value)______________________________________ (xcm013)______________________      1.0000E+00    
  ftburn_(range_normalised)_______________________________________________ (nitvar013)___________________      1.0000E+00    
@@ -139,7 +139,7 @@
  breeder_f_(range_normalised)____________________________________________ (nitvar038)___________________      4.5378E-01    
  Beta_consistency__________________normalised_residue____________________ (normres001)__________________      6.9192E-10    
  Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -2.3694E-09    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      4.3605E-12    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      4.3587E-12    
  Beam_ion_density_consistency______normalised_residue____________________ (normres004)__________________      1.9228E-09    
  Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres005)__________________     -6.6070E-09    
  Radial_build_consistency__________normalised_residue____________________ (normres006)__________________      6.4411E-11    
@@ -150,7 +150,7 @@
  Beta_upper_limit__________________normalised_residue____________________ (normres011)__________________      9.1876E-10    
  CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres012)__________________      1.6737E-06    
  CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres013)__________________      1.5875E-06    
- Injection_power_upper_limit_______normalised_residue____________________ (normres014)__________________      4.2457E-10    
+ Injection_power_upper_limit_______normalised_residue____________________ (normres014)__________________      4.2455E-10    
  TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres015)__________________     -2.4705E-07    
  TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres016)__________________     -1.2087E-06    
  I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres017)__________________      8.5982E-06    
@@ -239,6 +239,7 @@
  Heating/CD_system_lifetime_(years)______________________________________ (cdrlife)_____________________      2.8915E+01 OP 
  Total_plant_lifetime_(years)____________________________________________ (tlife)_______________________      4.0000E+01    
  Total_plant_availability_fraction_______________________________________ (cfactr)______________________      5.0000E-01    
+ Number_of_fusion_cycles_to_reach_allowable_fw/blanket_DPA_______________ (bktcycles)___________________      5.8494E+04    
  # Plasma #
  Tokamak_aspect_ratio_=_Conventional,_itart_=_0__________________________ (itart)_______________________      0.0000E+00    
  Major_radius_(m)________________________________________________________ (rmajor)______________________      8.8725E+00 ITV
@@ -501,7 +502,7 @@
  Total_plant_cycle_time_(s)______________________________________________ (tcycle)______________________      7.8000E+03 OP 
  kallenbach_switch_______________________________________________________ (kallenbach_switch)___________              0    
  # Radial Build #
- Machine_bore_(m)________________________________________________________ (bore)________________________      2.5414E+00 ITV
+ Machine_build_variables.bore_(m)________________________________________ (bore)________________________      2.5414E+00 ITV
  CS_radial_thickness_(m)_________________________________________________ (ohcth)_______________________      6.0524E-01 ITV
  CS_precompression_(m)___________________________________________________ (precomp)_____________________      5.4407E-02    
  CS_precompresion_to_TF_coil_radial_gap_(m)______________________________ (gapoh)_______________________      5.0000E-02 ITV
@@ -542,10 +543,10 @@
  # Divertor build and plasma position #
  Plasma_top_position,_radial_(m)_________________________________________ (ptop_radial)_________________      7.4415E+00    
  Plasma_top_position,_vertical_(m)_______________________________________ (ptop_vertical)_______________      5.0965E+00    
- Plasma_geometric_centre,_radial_(m)_____________________________________ (rmajor.)_____________________      8.8725E+00    
+ Plasma_geometric_centre,_radial_(m)_____________________________________ (physics_variables.rmajor.)___      8.8725E+00    
  Plasma_geometric_centre,_vertical_(m)___________________________________ (0.0)_________________________      0.0000E+00    
- Plasma_lower_triangularity______________________________________________ (tril)________________________      5.0000E-01    
- Plasma_elongation_______________________________________________________ (kappa.)______________________      1.7807E+00    
+ Plasma_lower_physics_variables.triangularity____________________________ (tril)________________________      5.0000E-01    
+ Plasma_elongation_______________________________________________________ (physics_variables.kappa.)____      1.7807E+00    
  TF_coil_vertical_offset_(m)_____________________________________________ (tfoffset)____________________     -6.1650E-01    
  Plasma_outer_arc_radius_of_curvature_(m)________________________________ (rco)_________________________      5.1717E+00    
  Plasma_inner_arc_radius_of_curvature_(m)________________________________ (rci)_________________________      9.7908E+00    
@@ -577,7 +578,7 @@
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      5.5000E+08    
  WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      1.8765E+01 OP 
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      5.4029E+01 OP 
- Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      0.0000E+00    
+ Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      2.4424E-08    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -3.5671E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      1.9329E+08    
  Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      4.8327E+08    
@@ -1176,7 +1177,7 @@
  Ohmic_heating_(MW)______________________________________________________ (pohmmw.)_____________________      9.5224E-01    
  Injected_power_deposited_in_plasma_(MW)_________________________________ (pinjmw)______________________      5.0000E+01    
  Total_(MW)______________________________________________________________ ______________________________      4.1800E+02    
- Fusion_power_(MW)_______________________________________________________ (powfmw.)_____________________      1.9265E+03    
+ Fusion_power_(MW)_______________________________________________________ (powfmw)______________________      1.9265E+03    
  Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      3.6666E+02    
  Injected_power_(MW)_____________________________________________________ (pinjmw.)_____________________      5.0000E+01    
  Ohmic_power_(MW)________________________________________________________ (pohmmw.)_____________________      9.5224E-01    
@@ -1201,7 +1202,7 @@
  Total_(MW)______________________________________________________________ (tot_plant_power)_____________      8.7125E+02    
  Total_(MW)______________________________________________________________ ______________________________      8.7125E+02    
  Gross_electrical_output*_(MW)___________________________________________ (pgrossmw)____________________      8.7125E+02    
- Fusion_power_(MW)_______________________________________________________ (powfmw.)_____________________      1.9265E+03    
+ Fusion_power_(MW)_______________________________________________________ (powfmw)______________________      1.9265E+03    
  Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      3.6666E+02    
  Total_(MW)______________________________________________________________ ______________________________      2.2931E+03    
  Net_electrical_output_(MW)	_____________________________________________ (pnetelmw)____________________      5.0000E+02    

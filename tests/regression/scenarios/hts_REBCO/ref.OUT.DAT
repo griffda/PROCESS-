@@ -13,14 +13,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1379-g2ed3d2e5 code contains untracked changes
+   Tag No. : v2.1-1386-g2155ecdc code contains untracked changes
     Branch : 1456-convert-pfcoil-f90-to-python
-   Git log : Merge\ branch\ |develop|\ into\ 1456-convert-pfcoil-f9
- Date/time :  4 Apr 2022 14:10:34 +01:00(hh:mm) UTC
+   Git log : Regression\ reference\ changes\ to\ kallenbach\ and\ hts
+ Date/time :  6 Apr 2022 13:35:42 +01:00(hh:mm) UTC
       User : jon
   Computer : jon-Precision-3560
  Directory : /home/jon/code/process
-     Input : /tmp/pytest-of-jon/pytest-9/test_scenario_hts_REBCO_0/IN.DAT
+     Input : /tmp/pytest-of-jon/pytest-75/popen-gw5/test_scenario_hts_REBCO_0/IN.DAT
  Run title : hts model using "croco" conductor based on kit design
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  

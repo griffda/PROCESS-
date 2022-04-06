@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1266-g4a9a3249 code contains untracked changes
-    Branch : 1582-cryo-cost
-   Git log : New\ stellarator\ regression\ reference
- Date/time :  9 Mar 2022  9:46:39 -05:00(hh:mm) UTC
-      User : cswan
-  Computer : cswan-2017-desktop
- Directory : /home/cswan/process/process
-     Input : /tmp/pytest-of-cswan/pytest-0/test_scenario_stellarator_0/IN.DAT
+   Tag No. : v2.1-1386-g2155ecdc code contains untracked changes
+    Branch : 1456-convert-pfcoil-f90-to-python
+   Git log : Regression\ reference\ changes\ to\ kallenbach\ and\ hts
+ Date/time :  6 Apr 2022 13:44:01 +01:00(hh:mm) UTC
+      User : jon
+  Computer : jon-Precision-3560
+ Directory : /home/jon/code/process
+     Input : /tmp/pytest-of-jon/pytest-75/popen-gw1/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  
@@ -309,6 +309,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heating/CD system lifetime (years)                                       (cdrlife)                 1.698E+01  OP 
  Total plant lifetime (years)                                             (tlife)                   4.000E+01     
  Total plant availability fraction                                        (cfactr)                  7.500E-01     
+ Number of fusion cycles to reach allowable fw/blanket DPA                (bktcycles)               1.373E+01     
  
  *************************************************** Plasma ***************************************************
  

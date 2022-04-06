@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1240-g7124046d
-    Branch : 1511-update-heating-and-current-drive-costs
-   Git log : Merge\ branch\ |develop|\ into\ 1511-update-heating-an
- Date/time : 15 Feb 2022 11:42:18 +00:00(hh:mm) UTC
-      User : jg6173
-  Computer : L1088
- Directory : /tmp/pytest-of-jg6173/pytest-24/test_solver0
-     Input : /tmp/pytest-of-jg6173/pytest-24/test_scenario_baseline_jan_2010/IN.DAT
+   Tag No. : v2.1-1386-g2155ecdc code contains untracked changes
+    Branch : 1456-convert-pfcoil-f90-to-python
+   Git log : Regression\ reference\ changes\ to\ kallenbach\ and\ hts
+ Date/time :  6 Apr 2022 13:42:44 +01:00(hh:mm) UTC
+      User : jon
+  Computer : jon-Precision-3560
+ Directory : /home/jon/code/process
+     Input : /tmp/pytest-of-jon/pytest-75/popen-gw1/test_scenario_baseline_jan_2010/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -117,24 +117,24 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.2833E-02              1.0833E-14                -3.2996E-13
-    2  Global power balance consistency      =  1.5253E-01 MW/m3       -1.3249E-13 MW/m3           8.6864E-13
-    3  Density upper limit                   <  8.4648E+19 /m3          1.0486E+06 /m3             1.2434E-14
-    4  Neutron wall load upper limit         <  9.4880E-01 MW/m2        3.1278E-12 MW/m2           3.2967E-12
-    5  Radial build consistency              =  9.4634E+00 m            1.4709E-14 m              -1.5543E-15
-    6  Burn time lower limit                 >  7.2000E+03 sec         -3.5661E-06 sec             4.9529E-10
-    7  L-H power threshold limit             >  1.1545E+02 MW           9.6603E-10 MW             -8.3675E-12
-    8  Net electric power lower limit        >  5.0000E+02 MW           3.5635E-07 MW              7.1270E-10
-    9  Beta upper limit                      <  5.6067E-02             -2.2191E-14                -3.9568E-13
-   10  CS coil EOF current density limit     <  6.3807E+07 A/m2        -1.4560E-01 A/m2           -2.2819E-09
-   11  CS coil BOP current density limit     <  5.9501E+07 A/m2        -1.2924E-01 A/m2           -2.1720E-09
-   12  Injection power upper limit           <  5.0000E+01 MW           1.5348E-12 MW             -3.0642E-14
-   13  TF coil case stress upper limit       <  6.6000E+08 Pa           3.2783E-05 Pa              4.9738E-14
-   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa           3.6716E-05 Pa              5.5733E-14
-   15  I_op / I_critical (TF coil)           <  7.4455E+07 A/m2        -8.2929E-07 A/m2            3.5305E-14
-   16  Dump voltage upper limit              <  1.5009E+01 V            4.1092E+00 V              -1.8663E-13
-   17  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2            1.0436E-14
-   18  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -7.2987E-11 MWT/m           7.6827E-12
+    1  Beta consistency                      =  3.2833E-02              1.0768E-14                -3.2796E-13
+    2  Global power balance consistency      =  1.5253E-01 MW/m3       -1.3263E-13 MW/m3           8.6953E-13
+    3  Density upper limit                   <  8.4648E+19 /m3          1.1305E+06 /m3             1.3323E-14
+    4  Neutron wall load upper limit         <  9.4880E-01 MW/m2        3.1286E-12 MW/m2           3.2974E-12
+    5  Radial build consistency              =  9.4634E+00 m            8.4052E-15 m              -8.8818E-16
+    6  Burn time lower limit                 >  7.2000E+03 sec         -3.5660E-06 sec             4.9528E-10
+    7  L-H power threshold limit             >  1.1545E+02 MW           9.6631E-10 MW             -8.3700E-12
+    8  Net electric power lower limit        >  5.0000E+02 MW           3.5636E-07 MW              7.1271E-10
+    9  Beta upper limit                      <  5.6067E-02             -2.2149E-14                -3.9502E-13
+   10  CS coil EOF current density limit     <  6.3807E+07 A/m2        -1.4561E-01 A/m2           -2.2821E-09
+   11  CS coil BOP current density limit     <  5.9501E+07 A/m2        -1.2925E-01 A/m2           -2.1722E-09
+   12  Injection power upper limit           <  5.0000E+01 MW           1.3358E-12 MW             -2.6756E-14
+   13  TF coil case stress upper limit       <  6.6000E+08 Pa          -2.8491E-05 Pa             -4.3188E-14
+   14  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -3.2783E-05 Pa             -4.9627E-14
+   15  I_op / I_critical (TF coil)           <  7.4455E+07 A/m2        -8.7623E-07 A/m2            3.7303E-14
+   16  Dump voltage upper limit              <  1.5009E+01 V            4.1092E+00 V              -1.8907E-13
+   17  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2            1.3545E-14
+   18  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -7.3008E-11 MWT/m           7.6852E-12
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -148,6 +148,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heating/CD system lifetime (years)                                       (cdrlife)                 2.108E+01  OP 
  Total plant lifetime (years)                                             (tlife)                   4.000E+01     
  Total plant availability fraction                                        (cfactr)                  7.500E-01     
+ Number of fusion cycles to reach allowable fw/blanket DPA                (bktcycles)               5.483E+04     
  
  *************************************************** Plasma ***************************************************
  
@@ -497,9 +498,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ************************************************ Radial Build ************************************************
  
-                                          Thickness (m)    Radius (m)
  Device centreline                            0.000           0.000                       
- Machine bore                                 2.670           2.670   (bore)              
+ Machine build_variables.bore                 2.670           2.670   (bore)              
  Central solenoid                             0.647           3.317   (ohcth)             
  CS precompression                            0.052           3.369   (precomp)           
  Gap                                          0.050           3.419   (gapoh)             
@@ -526,8 +526,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  *********************************************** Vertical Build ***********************************************
  
- Single null case
-                                          Thickness (m)    Height (m)
  TF coil                                      1.104           9.063   (tfcth)             
  Gap                                          0.050           7.959   (tftsgap)           
  Thermal shield                               0.050           7.909   (thshield)          
@@ -554,10 +552,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Plasma top position, radial (m)                                          (ptop_radial)                 7.937  OP 
  Plasma top position, vertical (m)                                        (ptop_vertical)               5.436  OP 
- Plasma geometric centre, radial (m)                                      (rmajor.)                     9.463  OP 
+ Plasma geometric centre, radial (m)                                      (physics_variables.r          9.463  OP 
  Plasma geometric centre, vertical (m)                                    (0.0)                         0.000  OP 
- Plasma lower triangularity                                               (tril)                        0.500  OP 
- Plasma elongation                                                        (kappa.)                      1.781  OP 
+ Plasma lower physics_variables.triangularity                             (tril)                        0.500  OP 
+ Plasma elongation                                                        (physics_variables.k          1.781  OP 
  TF coil vertical offset (m)                                              (tfoffset)                   -0.469  OP 
  Plasma outer arc radius of curvature (m)                                 (rco)                         5.516  OP 
  Plasma inner arc radius of curvature (m)                                 (rci)                        10.443  OP 
@@ -865,7 +863,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
   PF 6   -5.53  7.590E+08  8.000E+06  0.01 3.259E+05   2.423E+05    2.688E+00
   CS  -165.25  5.950E+07  1.595E+07  0.27 4.146E+05   7.599E+05    1.201E+01
        ------                             ---------   ---------
-       237.96                             3.354E+06   3.006E+06
+         0.00                             3.354E+06   3.006E+06
  
  PF coil current scaling information :
  
@@ -888,12 +886,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  circuit       BOP            BOF            EOF
  
-     1       46.062         53.357         -0.719
-     2       47.560         51.222         -4.611
-     3        9.226        -77.003        -87.833
-     4        9.226        -77.003        -87.833
-     5       -0.146        -39.972        -39.801
-     6       -0.146        -39.972        -39.801
+
  CS coil    223.624         22.722       -239.806
  
  ********************************** Waveforms ***********************************
@@ -930,7 +923,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -8.163E+06 -8.163E+06 -8.163E+06  0.000E+00
    5         0.000E+00  0.000E+00 -5.527E+06 -5.527E+06 -5.527E+06  0.000E+00
    6         0.000E+00  0.000E+00 -5.527E+06 -5.527E+06 -5.527E+06  0.000E+00
-   7         0.000E+00  0.000E+00 -1.748E-09 -1.748E-09  0.000E+00  0.000E+00
+   7         0.000E+00  0.000E+00  1.748E-09  1.748E-09  0.000E+00  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.325E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -9.475E-02  OP 
@@ -999,16 +992,16 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ******************************************** PF Coil Inductances *********************************************
  
- Inductance matrix [H] :
+ Inductance matrix [H]:
  
-   1     4.9E+00 8.8E-02 4.1E-01 2.7E-01 3.3E-01 9.8E-02 1.3E+00 1.3E-03
-   2     8.8E-02 6.0E+00 2.8E-01 4.3E-01 1.0E-01 3.5E-01 1.2E+00 1.2E-03
-   3     4.1E-01 2.8E-01 4.2E+00 1.5E+00 8.5E-01 4.5E-01 6.9E-01 2.1E-03
-   4     2.7E-01 4.3E-01 1.5E+00 4.2E+00 4.5E-01 8.5E-01 6.9E-01 2.1E-03
-   5     3.3E-01 1.0E-01 8.5E-01 4.5E-01 1.5E+00 1.5E-01 3.6E-01 9.3E-04
-   6     9.8E-02 3.5E-01 4.5E-01 8.5E-01 1.5E-01 1.5E+00 3.6E-01 9.3E-04
-  CS     1.3E+00 1.2E+00 6.9E-01 6.9E-01 3.6E-01 3.6E-01 2.6E+01 5.6E-03
- Plasma  1.3E-03 1.2E-03 2.1E-03 2.1E-03 9.3E-04 9.3E-04 5.6E-03 1.7E-05
+ 0			[4.9e+00 8.8e-02 4.1e-01 2.7e-01 3.3e-01 9.8e-02 1.3e+00 1.3e-03]
+ 1			[8.8e-02 6.0e+00 2.8e-01 4.3e-01 1.0e-01 3.5e-01 1.2e+00 1.2e-03]
+ 2			[4.1e-01 2.8e-01 4.2e+00 1.5e+00 8.5e-01 4.5e-01 6.9e-01 2.1e-03]
+ 3			[2.7e-01 4.3e-01 1.5e+00 4.2e+00 4.5e-01 8.5e-01 6.9e-01 2.1e-03]
+ 4			[3.3e-01 1.0e-01 8.5e-01 4.5e-01 1.5e+00 1.5e-01 3.6e-01 9.3e-04]
+ 5			[9.8e-02 3.5e-01 4.5e-01 8.5e-01 1.5e-01 1.5e+00 3.6e-01 9.3e-04]
+ CS			[1.3e+00 1.2e+00 6.9e-01 6.9e-01 3.6e-01 3.6e-01 2.6e+01 5.6e-03]
+ Plasma	[1.3e-03 1.2e-03 2.1e-03 2.1e-03 9.3e-04 9.3e-04 5.6e-03 1.7e-05]
  
  ********************************** First wall and blanket : CCFE HCPB model **********************************
  
@@ -1337,7 +1330,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power Balance for Reactor - Summary :
  -------------------------------------
- Fusion power (MW)                                                        (powfmw.)                  2004.286  OP 
+ Fusion power (MW)                                                        (powfmw)                   2004.286  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   381.451  OP 
  Injected power (MW)                                                      (pinjmw.)                    50.000  OP 
  Ohmic power (MW)                                                         (pohmmw.)                     1.128  OP 
@@ -1371,7 +1364,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power balance for power plant :
  -------------------------------
- Fusion power (MW)                                                        (powfmw.)                  2004.286  OP 
+ Fusion power (MW)                                                        (powfmw)                   2004.286  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   381.451  OP 
  Total (MW)                                                                                          2385.737  OP 
  
